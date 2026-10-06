@@ -145,16 +145,20 @@ theorem responseMatrices_identities {d : ℕ} {U : Domain d} {a : CoeffOn U}
     ResponseMatrixIdentities U a (responseMatrices hM) :=
   Classical.choose_spec hM
 
+/-- The `σ` matrix of a chosen coarse response representation supplied by matrix existence. -/
 @[expose]
 noncomputable def sigmaMatrix {d : ℕ} {U : Domain d} {a : CoeffOn U}
     (hM : ResponseMatrixExists U a) : Mat d :=
   (responseMatrices hM).sigma
 
+/-- The `σ*⁻¹` matrix of a chosen coarse response representation supplied by matrix existence. -/
 @[expose]
 noncomputable def sigmaStarInvMatrix {d : ℕ} {U : Domain d} {a : CoeffOn U}
     (hM : ResponseMatrixExists U a) : Mat d :=
   (responseMatrices hM).sigmaStarInv
 
+/-- The `κ` coupling matrix of a chosen coarse response representation supplied by matrix
+existence. -/
 @[expose]
 noncomputable def kappaMatrix {d : ℕ} {U : Domain d} {a : CoeffOn U}
     (hM : ResponseMatrixExists U a) : Mat d :=

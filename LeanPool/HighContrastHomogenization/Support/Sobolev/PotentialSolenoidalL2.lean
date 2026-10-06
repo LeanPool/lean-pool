@@ -404,6 +404,8 @@ def solenoidalZeroNormalTraceSubmodule (U : Set (Vec d)) : Submodule ℝ (Vector
         by simpa [toVectorL2] using MeasureTheory.MemLp.toLp_const_smul c hg,
         isSolenoidalZeroNormalTraceOn_smul hsol c⟩
 
+/-- The continuous linear functional pairing a vector L² class with the weak gradient of `u` by
+integration over `U`. -/
 @[expose]
 public noncomputable def gradientPairingVectorL2CLM {d : ℕ} {U : Set (Vec d)}
     (u : H1Function U) : VectorL2 U →L[ℝ] ℝ :=
@@ -569,7 +571,7 @@ theorem solenoidalZeroNormalTraceSubmodule_le_solenoidalSubmodule :
   exact ⟨g, hg, hEq, hsol.isSolenoidalOn⟩
 
 theorem
-    blockPotentialZeroTraceSolenoidalZeroNormalTraceSubmodule_le_blockPotentialSolenoidalSubmodule :
+    blockPotentialZeroTraceSolenoidal_le_blockPotentialSolenoidal :
     blockPotentialZeroTraceSolenoidalZeroNormalTraceSubmodule U ≤
       blockPotentialSolenoidalSubmodule U := by
   intro X hX
@@ -635,7 +637,7 @@ noncomputable def ofSubmoduleClosures (U : Set (Vec d)) : PotentialSolenoidalL2D
       change X ∈ closure ((blockPotentialSolenoidalSubmodule U : Submodule ℝ (BlockL2 U)) : Set
         (BlockL2 U))
       exact subset_closure
-        (blockPotentialZeroTraceSolenoidalZeroNormalTraceSubmodule_le_blockPotentialSolenoidalSubmodule hX)
+        (blockPotentialZeroTraceSolenoidal_le_blockPotentialSolenoidal hX)
 
 /--
 Canonical packaged `L²` data attached to a Sobolev-regular domain.
@@ -687,7 +689,7 @@ theorem isSolenoidalOn_of_mem_solenoidal_ofSubmoduleClosures
 
 /-- Membership in the canonical closed zero-normal-trace solenoidal subspace
 recovers the corresponding weak predicate on the represented vector field. -/
-theorem isSolenoidalZeroNormalTraceOn_of_mem_solenoidalZeroNormalTrace_ofSubmoduleClosures
+theorem isSolenoidalZeroNormalTraceOn_of_mem_closures
     (G : VectorL2 U) (hG : G ∈ (ofSubmoduleClosures U).solenoidalZeroNormalTrace) :
     IsSolenoidalZeroNormalTraceOn U G := by
   have hEq : toVectorL2 (MeasureTheory.Lp.memLp G) = G := by
@@ -699,9 +701,10 @@ theorem isSolenoidalZeroNormalTraceOn_of_mem_solenoidalZeroNormalTrace_ofSubmodu
     isSolenoidalZeroNormalTraceOn_of_mem_closure_solenoidalZeroNormalTraceSubmodule
       (MeasureTheory.Lp.memLp G) hG'
 
+/-- The continuous linear functional on vector L² fields given by the integral of their dot
+product with `g` over `U`. -/
 @[expose]
 public noncomputable def vectorPairingCLM
-    [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     {g : Vec d → Vec d} (hg : MemVectorL2 U g) :
     VectorL2 U →L[ℝ] ℝ :=
   (InnerProductSpace.toDual ℝ (HilbertVectorL2 U) (toHilbertVectorL2OfVecField hg)).comp
@@ -741,11 +744,12 @@ private theorem vectorPairingCLM_apply_eq_integral
             (U := U) hg (MeasureTheory.Lp.memLp F)
 
 private theorem scalarInner_eq_integral_local
-    [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)] (f g : ScalarL2 U) :
+    (f g : ScalarL2 U) :
     inner ℝ f g = ∫ x in U, f x * g x ∂MeasureTheory.volume := by
   rw [MeasureTheory.L2.inner_def]
   simp [mul_comm]
 
+/-- The scalar L² class of the constant function one on `U`. -/
 @[expose]
 public noncomputable def oneScalarL2Local
     [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)] : ScalarL2 U :=
@@ -758,6 +762,7 @@ private theorem coeFn_oneScalarL2Local
   HCPolySupport.coeFn_toScalarL2
     (MeasureTheory.memLp_const (μ := volumeMeasureOn U) (p := (2 : ENNReal)) (c := (1 : ℝ)))
 
+/-- The continuous linear functional integrating a scalar L² class over `U`. -/
 @[expose]
 public noncomputable def scalarIntegralCLMLocal
     [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)] : ScalarL2 U →L[ℝ] ℝ :=
@@ -815,12 +820,14 @@ theorem integral_vecDot_eq_zero_of_mem_potentialZeroTrace_ofSubmoduleClosures
       exact vectorPairingCLM_apply_eq_integral (U := U) hg F
     _ = 0 := hzero
 
+/-- The continuous linear functional integrating coordinate `i` of a vector L² class over `U`. -/
 @[expose]
 public noncomputable def coordIntegralCLM
     [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)] (i : Fin d) :
     VectorL2 U →L[ℝ] ℝ :=
   (scalarIntegralCLMLocal (U := U)).comp
     ((ContinuousLinearMap.proj i).compLpL 2 (volumeMeasureOn U))
+
 
 private theorem coordIntegralCLM_apply_eq_integral
     [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)] (i : Fin d) (F : VectorL2 U) :

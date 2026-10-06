@@ -105,7 +105,7 @@ private theorem cubeKPartialSeminorm_le_mul_overlapPartialSeminorm
   have hF : MemLp F (2 : ℝ≥0∞) (normalizedCubeMeasure (originCube d 0)) :=
     F.memLp_originCube_normalizedCubeMeasure
   apply
-    cubeKBesovVectorPartialSeminormTwo_le_mul_cubeBesovOverlappingPositiveVectorPartialSeminormTwo_of_forall_depthSeminorm_le
+    KPartialSeminormTwo_le_mul_overlappingPositivePartialSeminormTwo
   · exact discreteKOverlapAveragingConstant_nonneg d
   · intro j _
     exact
@@ -122,7 +122,7 @@ private theorem overlapPartialSeminorm_le_mul_cubeKPartialSeminorm
   have hF : MemLp F (2 : ℝ≥0∞) (normalizedCubeMeasure (originCube d 0)) :=
     F.memLp_originCube_normalizedCubeMeasure
   simpa only [overlapDiscreteKConstant] using
-    cubeBesovOverlappingPositiveVectorPartialSeminormTwo_le_mul_cubeKBesovVectorPartialSeminormTwo_of_overlapPoincare
+    overlappingPositivePartialSeminormTwo_le_mul_of_overlapPoincare
       (cubeVectorH1OverlapPoincareConstant_nonneg d)
       (cubeVectorH1OverlapPoincareEstimate d)
       (originCube d 0) s.1 N F hF

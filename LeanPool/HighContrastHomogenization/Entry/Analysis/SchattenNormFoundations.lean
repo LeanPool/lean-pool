@@ -463,7 +463,8 @@ theorem absSchattenNorm_add_le {A B : BlockMat d}
       RCLike.ofReal_real_eq_id, id_eq] using hh.symm
   have hsum : absSchattenNorm N (ofFullBlockMat (toFullBlockMat A + toFullBlockMat B)) =
       (∑ i, |T (toFullBlockMat A) i i + T (toFullBlockMat B) i i| ^ N) ^ N⁻¹ := by
-    have hAB : (toFullBlockMat (ofFullBlockMat (toFullBlockMat A + toFullBlockMat B))).IsHermitian := by
+    have hAB : (toFullBlockMat (ofFullBlockMat (toFullBlockMat A + toFullBlockMat
+      B))).IsHermitian := by
       simpa only [toFullBlockMat_ofFullBlockMat] using hA.add hB
     rw [absSchattenNorm_eq_eigenvalues hAB, schattenNormEigen]
     simp only [toFullBlockMat_ofFullBlockMat]

@@ -286,7 +286,7 @@ theorem setIntegral_cubeFaceNeighborSlabSet_faceNeighborSlabReflectedVectorField
 reflection block is one copy of the original cube energy for each reflected
 cell. This is the `MemScalarL2` wrapper around the geometric cell
 change-of-variables theorem. -/
-theorem setIntegral_cubeFaceReflectionBlockSet_cubeCoordinateFoldReflectedScalar_sq_of_memScalarL2
+theorem foldedScalar_sqIntegral_scale_card_of_L2
     {d : ℕ} {F : Vec d → ℝ} (Q : TriadicCube d)
     (hF : MemScalarL2 (openCubeSet Q) F) :
     ∫ x in cubeFaceReflectionBlockSet Q,
@@ -302,7 +302,7 @@ theorem setIntegral_cubeFaceReflectionBlockSet_cubeCoordinateFoldReflectedScalar
 /-- The squared `L²` energy of the all-coordinate reflected scalar on the full
 reflection block, with the cell count normalized to `(3 : ℝ)^d`. -/
 theorem
-  setIntegral_cubeFaceReflectionBlockSet_cubeCoordinateFoldReflectedScalar_sq_of_memScalarL2_three_pow
+  foldedScalar_sqIntegral_scale_of_L2
     {d : ℕ} {F : Vec d → ℝ} (Q : TriadicCube d)
     (hF : MemScalarL2 (openCubeSet Q) F) :
     ∫ x in cubeFaceReflectionBlockSet Q,
@@ -311,7 +311,7 @@ theorem
         ∂MeasureTheory.volume =
       (3 : ℝ) ^ d *
         ∫ y in openCubeSet Q, F y * F y ∂MeasureTheory.volume := by
-  rw [setIntegral_cubeFaceReflectionBlockSet_cubeCoordinateFoldReflectedScalar_sq_of_memScalarL2
+  rw [foldedScalar_sqIntegral_scale_card_of_L2
       Q hF,
     real_card_cubeFaceReflectionChoices]
 
@@ -398,7 +398,7 @@ theorem setIntegral_cubeFaceReflectionBlockSet_cubeCoordinateFoldReflectedScalar
 /-- The reflected scalar cross pairing on the full reflection block, with the
 cell count normalized to `(3 : ℝ)^d`. -/
 theorem
-  setIntegral_cubeFaceReflectionBlockSet_cubeCoordinateFoldReflectedScalar_mul_of_memScalarL2_three_pow
+  setIntegral_cubeReflectionSet_foldedReflectedScalar_mul
     {d : ℕ} {F U : Vec d → ℝ} (Q : TriadicCube d)
     (hF : MemScalarL2 (openCubeSet Q) F)
     (hU : MemScalarL2 (openCubeSet Q) U) :
@@ -515,7 +515,7 @@ theorem integral_indicator_cubeFaceReflectionBlockSet_cubeCoordinateFoldReflecte
     _ = (3 : ℝ) ^ d *
         ∫ y in openCubeSet Q, F y * F y ∂MeasureTheory.volume := by
           simpa [S, FR] using
-            setIntegral_cubeFaceReflectionBlockSet_cubeCoordinateFoldReflectedScalar_sq_of_memScalarL2_three_pow
+            foldedScalar_sqIntegral_scale_of_L2
               Q hF
 
 /-- The all-coordinate reflected vector field is `L²` on the full reflection
@@ -603,7 +603,7 @@ field on the full reflection block is one copy of the original cube energy for
 each reflected cell. This is the `MemVectorL2` wrapper around the geometric
 cell change-of-variables theorem. -/
 theorem
-  setIntegral_cubeFaceReflectionBlockSet_cubeCoordinateFoldReflectedVectorField_self_pairing_of_memVectorL2
+  setIntegral_cubeReflection_foldedVectorSelfPairing_of_memVectorL2
     {d : ℕ} {G : Vec d → Vec d} (Q : TriadicCube d)
     (hG : MemVectorL2 (openCubeSet Q) G) :
     ∫ x in cubeFaceReflectionBlockSet Q,
@@ -627,7 +627,7 @@ theorem
 /-- The vector self-pairing energy of the all-coordinate reflected field on
 the full reflection block, with the cell count normalized to `(3 : ℝ)^d`. -/
 theorem
-  setIntegral_cubeFaceReflectionBlockSet_cubeCoordinateFoldReflectedVectorField_self_pairing_of_memVectorL2_three_pow
+  setIntegral_cubeReflection_foldedVectorSelfPairing
     {d : ℕ} {G : Vec d → Vec d} (Q : TriadicCube d)
     (hG : MemVectorL2 (openCubeSet Q) G) :
     ∫ x in cubeFaceReflectionBlockSet Q,
@@ -637,7 +637,7 @@ theorem
       (3 : ℝ) ^ d *
         ∫ y in openCubeSet Q, vecDot (G y) (G y)
           ∂MeasureTheory.volume := by
-  rw [setIntegral_cubeFaceReflectionBlockSet_cubeCoordinateFoldReflectedVectorField_self_pairing_of_memVectorL2
+  rw [setIntegral_cubeReflection_foldedVectorSelfPairing_of_memVectorL2
       Q hG,
     real_card_cubeFaceReflectionChoices]
 

@@ -149,7 +149,7 @@ theorem profileRow_weighted_tail_le {rhoDr : ℝ}
   simpa only [Ar, mul_assoc] using mul_le_mul_of_nonneg_right hAr hxr
 
 /-- The complete finite row of terminal means has coefficient
-`(1 + D)/(1 - 3⁻³˲²)`. -/
+`(1 + D)/(1 - 3⁻³_right²)`. -/
 theorem profileRow_weighted_one_add_tail_le {rhoDr : ℝ}
     (hrho : rhoDr < 3 / 2) {jStar s : ℤ}
     (x : ℤ → ℝ)

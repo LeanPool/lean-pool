@@ -22,12 +22,12 @@ namespace HCPolySupport
 open MeasureTheory.Measure
 open scoped BigOperators ENNReal
 
-@[simp] theorem cubeBesovPairing_comm {d : ℕ} (Q : TriadicCube d)
+theorem cubeBesovPairing_comm {d : ℕ} (Q : TriadicCube d)
     (f g : Vec d → ℝ) :
     cubeBesovPairing Q f g = cubeBesovPairing Q g f := by
   simp [cubeBesovPairing, mul_comm]
 
-@[simp] theorem cubeBesovPairing_const_left {d : ℕ} (Q : TriadicCube d)
+theorem cubeBesovPairing_const_left {d : ℕ} (Q : TriadicCube d)
     (c : ℝ) (g : Vec d → ℝ) :
     cubeBesovPairing Q (fun _ => c) g = c * cubeAverage Q g := by
   unfold cubeBesovPairing cubeAverage
@@ -59,19 +59,19 @@ theorem abs_cubeBesovPairing_const_left_le_of_dual_test {d : ℕ}
           · exact mul_nonneg (cubeBesovScaleWeight_nonneg (-s) Q) (norm_nonneg _)
     _ = cubeBesovScaleWeight (-s) Q * ‖c‖ := by ring
 
-@[simp] theorem cubeBesovPairing_zero_left {d : ℕ} (Q : TriadicCube d)
+theorem cubeBesovPairing_zero_left {d : ℕ} (Q : TriadicCube d)
     (g : Vec d → ℝ) :
     cubeBesovPairing Q (fun _ => (0 : ℝ)) g = 0 := by
   unfold cubeBesovPairing
   simpa using cubeAverage_const Q (0 : ℝ)
 
-@[simp] theorem cubeBesovPairing_zero_right {d : ℕ} (Q : TriadicCube d)
+theorem cubeBesovPairing_zero_right {d : ℕ} (Q : TriadicCube d)
     (f : Vec d → ℝ) :
     cubeBesovPairing Q f (fun _ => (0 : ℝ)) = 0 := by
   unfold cubeBesovPairing
   simpa using cubeAverage_const Q (0 : ℝ)
 
-@[simp] theorem cubeBesovPairing_neg_left {d : ℕ} (Q : TriadicCube d)
+theorem cubeBesovPairing_neg_left {d : ℕ} (Q : TriadicCube d)
     (f g : Vec d → ℝ) :
     cubeBesovPairing Q (fun x => -f x) g = -cubeBesovPairing Q f g := by
   unfold cubeBesovPairing cubeAverage
@@ -284,13 +284,13 @@ theorem cubeBesovDualTest_const_scaleWeight_neg {d : ℕ}
   constructor
   · intro hr
     rcases hr with ⟨g, hg, rfl⟩
-    simp
+    simp only [cubeBesovPairing_zero_left, abs_zero, Set.mem_singleton_iff]
   · intro hr
     rw [Set.mem_singleton_iff] at hr
     subst hr
     exact zero_mem_cubeBesovDualPartialNormValueSet Q s p q N (fun _ => (0 : ℝ)) hp0 hpTop
 
-@[simp] theorem cubeBesovDualPartialSeminormValueSet_zero {d : ℕ} (Q : TriadicCube d)
+theorem cubeBesovDualPartialSeminormValueSet_zero {d : ℕ} (Q : TriadicCube d)
     (s : ℝ) (p q : ℝ≥0∞) (N : ℕ)
     (hp0 : cubeBesovConjExponent p ≠ 0) (hpTop : cubeBesovConjExponent p ≠ ∞) :
     cubeBesovDualPartialSeminormValueSet Q s p q N (fun _ => (0 : ℝ)) = {0} := by
@@ -298,20 +298,20 @@ theorem cubeBesovDualTest_const_scaleWeight_neg {d : ℕ}
   constructor
   · intro hr
     rcases hr with ⟨g, hg, rfl⟩
-    simp
+    simp only [cubeBesovPairing_zero_left, abs_zero, Set.mem_singleton_iff]
   · intro hr
     rw [Set.mem_singleton_iff] at hr
     subst hr
     exact zero_mem_cubeBesovDualPartialSeminormValueSet Q s p q N (fun _ => (0 : ℝ)) hp0 hpTop
 
-@[simp] theorem cubeBesovDualPartialNorm_zero {d : ℕ} (Q : TriadicCube d) (s : ℝ)
+theorem cubeBesovDualPartialNorm_zero {d : ℕ} (Q : TriadicCube d) (s : ℝ)
     (p q : ℝ≥0∞) (N : ℕ)
     (hp0 : cubeBesovConjExponent p ≠ 0) (hpTop : cubeBesovConjExponent p ≠ ∞) :
     cubeBesovDualPartialNorm Q s p q N (fun _ => (0 : ℝ)) = 0 := by
   rw [cubeBesovDualPartialNorm, cubeBesovDualPartialNormValueSet_zero Q s p q N hp0 hpTop]
   simp
 
-@[simp] theorem cubeBesovDualPartialSeminorm_zero {d : ℕ} (Q : TriadicCube d) (s : ℝ)
+theorem cubeBesovDualPartialSeminorm_zero {d : ℕ} (Q : TriadicCube d) (s : ℝ)
     (p q : ℝ≥0∞) (N : ℕ)
     (hp0 : cubeBesovConjExponent p ≠ 0) (hpTop : cubeBesovConjExponent p ≠ ∞) :
     cubeBesovDualPartialSeminorm Q s p q N (fun _ => (0 : ℝ)) = 0 := by

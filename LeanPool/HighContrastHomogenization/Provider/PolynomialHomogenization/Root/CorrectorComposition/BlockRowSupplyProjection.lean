@@ -62,7 +62,7 @@ that structure carries, **for the sample `a` only**:
 | the row at `a` | `h.row`, at `Book.Ch02.constantBlockMatrix abar` | ✓ **at `a`** |
 | `s` with `0 < s < 1/2` and `rho < 2 * s` | the printed order `(1 + g) / 4`, chosen after `g` | ✓ |
 | `Omega` with `∀ z, translateCoeff z ⁻¹' Omega = Omega`, `a ∈ Omega`, and the row **at every `b ∈
-Omega`** | — | ✗ **the missing field** |
+Omega`** | — | x **the missing field** |
 
 **The single missing field is the translation-invariant event.**  The
 certificate is a per-sample predicate: it carries the row at `a` and at no other

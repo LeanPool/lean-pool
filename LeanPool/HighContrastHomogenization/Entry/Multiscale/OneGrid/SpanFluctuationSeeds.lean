@@ -308,6 +308,107 @@ open MeasureTheory
 
 noncomputable section
 
+private theorem span_history_nonnegative (d : ℕ) (γ : ℝ)
+    (P : Measure (CoeffSpace d)) (q : Mat d) (jStar : ℕ) (n : ℤ)
+    (hmean0 : 0 ≤ meanHistory P γ q jStar n) :
+    0 ≤ history P γ q jStar n := by
+  have hfluc : 0 ≤ fluctuationHistory P γ q jStar n := by
+    apply integral_nonneg
+    intro a
+    apply Real.iSup_nonneg
+    intro j
+    apply Real.iSup_nonneg
+    intro _hj
+    apply mul_nonneg (Real.rpow_nonneg (by norm_num) _)
+    apply Real.iSup_nonneg
+    intro z
+    apply Real.iSup_nonneg
+    intro _hz
+    exact (bigQ_even d γ).pow_nonneg _
+  have hhistory : 0 ≤ history P γ q jStar n := add_nonneg hfluc hmean0
+  exact hhistory
+
+private theorem span_profile_nonnegative (d : ℕ) (γ : ℝ)
+    (P : Measure (CoeffSpace d)) (q : Mat d) (jStar : ℕ) (n m : ℤ)
+    (hhistory : 0 ≤ history P γ q jStar n)
+    (hpen : 0 ≤ meanPenalty (bigQ d γ) (relMean P q n m))
+    (hmean : 0 ≤ meanHistory P γ q n m) :
+    0 ≤ profile P γ q jStar n m := by
+  have hw (t : ℝ) : 0 ≤ (3 : ℝ) ^ (-((1 - γ) / 4) * t) := Real.rpow_nonneg (by norm_num) _
+  have hmomP : ∀ j : ℤ, 0 ≤ ∫ a, absSchattenNorm (bigQ d γ : ℝ)
+      (normalizedFluctuationSelf P q j a) ^ bigQ d γ ∂P :=
+    fun j => integral_nonneg fun _ => (bigQ_even d γ).pow_nonneg _
+  unfold profile
+  apply add_nonneg
+  · exact add_nonneg (mul_nonneg (mul_nonneg (hw _) (by linarith only [hpen])) hhistory) hmean
+  · exact Finset.sum_nonneg fun j _ => mul_nonneg (mul_nonneg (hw _) (Real.exp_nonneg _))
+      (hmomP j)
+
+private theorem span_seed_absorption (Cs Ce Bc C R p x Er Mr E0 : ℝ)
+    (hCs : 0 < Cs) (hCe : 0 < Ce) (hB0 : 0 ≤ Bc) (hp0 : 0 ≤ p) (hR0 : 0 ≤ R)
+    (hCdef : C = Cs / 8 + Bc * (Ce + 1) + 8 * Bc)
+    (hRdef : R = p + Real.exp x - 1) (hErm_eq : Er = E0 * Real.exp x)
+    (hseed_inst : E0 * Mr ≤ Cs * p) (hexpm1_le : E0 - 1 ≤ Ce * p)
+    (hExpX : Real.exp x * p ≤ R) :
+    (1 / 8) * (Er * Mr) + Bc * (Er - 1) ≤ C * R := by
+  have hErmMr : Er * Mr =
+      Real.exp x * (E0 * Mr) := by
+    rw [hErm_eq]; ring
+  have hpart1 : Er * Mr ≤ Real.exp x * (Cs * p) := by
+    rw [hErmMr]
+    exact mul_le_mul_of_nonneg_left hseed_inst (Real.exp_nonneg _)
+  have hpart1' : Er * Mr ≤ Cs * R := by
+    have heq3 : Real.exp x * (Cs * p) = Cs * (Real.exp x * p) := by ring
+    rw [heq3] at hpart1
+    calc Er * Mr ≤ Cs * (Real.exp x * p) := hpart1
+      _ ≤ Cs * R := mul_le_mul_of_nonneg_left hExpX hCs.le
+  have hpart2 : Er - 1 ≤ (Ce + 1) * R := by
+    have heq2 : Er - 1 = Real.exp x *
+        (E0 - 1) + (Real.exp x - 1) := by
+      rw [hErm_eq]; ring
+    rw [heq2]
+    have hb1 : Real.exp x * (E0 - 1) ≤
+        Ce * (Real.exp x * p) := by
+      have hb0 := mul_le_mul_of_nonneg_left hexpm1_le (Real.exp_nonneg x)
+      calc Real.exp x * (E0 - 1) ≤
+          Real.exp x * (Ce * p) := hb0
+        _ = Ce * (Real.exp x * p) := by ring
+    have hb1' : Real.exp x * (E0 - 1) ≤
+        Ce * R := hb1.trans (mul_le_mul_of_nonneg_left hExpX hCe.le)
+    have hb2 : Real.exp x - 1 ≤ R := by rw [hRdef]; linarith only [hp0]
+    linarith only [hb1', hb2]
+  have hCbig : Cs / 8 + Bc * (Ce + 1) ≤ C := by
+    rw [hCdef]; linarith only [hB0]
+  calc (1 / 8) * (Er * Mr) + Bc * (Er - 1) ≤
+      (1 / 8) * (Cs * R) + Bc * ((Ce + 1) * R) := by
+        have h1 := mul_le_mul_of_nonneg_left hpart1' (by norm_num : (0:ℝ) ≤ 1 / 8)
+        have h2 := mul_le_mul_of_nonneg_left hpart2 hB0
+        linarith only [h1, h2]
+    _ = (Cs / 8 + Bc * (Ce + 1)) * R := by ring
+    _ ≤ C * R := mul_le_mul_of_nonneg_right hCbig hR0
+
+private theorem weighted_span_interval_sum_bound (γ : ℝ) (hγ : γ < 1)
+    (m L : ℤ) (hL : 1 ≤ L) (f : ℤ → ℝ) (A : ℝ)
+    (hf : ∀ s, 0 ≤ f s) (hbound : ∀ s ∈ Finset.Icc (m + 1) (m + L), f s ≤ A) :
+    (∑ s ∈ Finset.Icc (m + 1) (m + L),
+      (3 : ℝ) ^ (-((1 - γ) / 4) * (((m + L : ℤ) : ℝ) - (s : ℝ))) * f s) ≤
+        (L : ℝ) * A := by
+  have hterm : ∀ s ∈ Finset.Icc (m + 1) (m + L),
+      (3 : ℝ) ^ (-((1 - γ) / 4) * (((m + L : ℤ) : ℝ) - (s : ℝ))) * f s ≤ A := by
+    intro s hs
+    have hw : (3 : ℝ) ^ (-((1 - γ) / 4) * (((m + L : ℤ) : ℝ) - (s : ℝ))) ≤ 1 := by
+      apply Real.rpow_le_one_of_one_le_of_nonpos (by norm_num)
+      apply mul_nonpos_of_nonpos_of_nonneg (by linarith only [hγ])
+      have hle : (0 : ℤ) ≤ m + L - s := by have := (Finset.mem_Icc.mp hs).2; omega
+      exact_mod_cast hle
+    exact (mul_le_mul_of_nonneg_right hw (hf s)).trans (by simpa using hbound s hs)
+  have hcard : ((Finset.Icc (m + 1) (m + L)).card : ℝ) = (L : ℝ) := by
+    rw [Int.card_Icc, show m + L + 1 - (m + 1) = L by ring]
+    exact_mod_cast Int.toNat_of_nonneg (by omega : (0 : ℤ) ≤ L)
+  calc
+    _ ≤ ∑ _s ∈ Finset.Icc (m + 1) (m + L), A := Finset.sum_le_sum hterm
+    _ = (L : ℝ) * A := by rw [Finset.sum_const, nsmul_eq_mul, hcard]
+
 /-- `e.fixed.geometry.new.fluctuations` (`p.fixed.geometry.one.grid.propagation`): the span-`2Q`
 recurrence, the additivity splittings, and the induction in `s` over the new generations. -/
 theorem new_fluctuations_span_le (d : ℕ) (hd : 2 ≤ d) (γ : ℝ)
@@ -330,7 +431,8 @@ theorem new_fluctuations_span_le (d : ℕ) (hd : 2 ≤ d) (γ : ℝ)
                         ∑ s ∈ Finset.Icc (m + 1) (m + L),
                             (3 : ℝ) ^ (-((1 - γ) / 4) * (((m + L : ℤ) : ℝ) - (s : ℝ))) *
                                 Real.exp ((bigQ d γ : ℝ) *
-                                  detIncrement P (Geometry.explicitRoundedGrid jStar metric) s (m + L)) *
+                                  detIncrement P (Geometry.explicitRoundedGrid jStar metric) s
+                                    (m + L)) *
                               ∫ a, absSchattenNorm (bigQ d γ : ℝ)
                                   (normalizedFluctuationSelf P
                                     (Geometry.explicitRoundedGrid jStar metric) s a) ^ bigQ d γ ∂P ≤
@@ -366,34 +468,16 @@ theorem new_fluctuations_span_le (d : ℕ) (hd : 2 ≤ d) (γ : ℝ)
   have hQZ : 2 * (bigQ d γ : ℤ) ≤ (h : ℤ) := by exact_mod_cast hh
   have hmean0 := meanHistory_nonneg d hd γ hγ P E Ψ K S hP hstat hunit hdag
     jStar hjStar metric hmetric (jStar : ℤ) n le_rfl hn
-  have hfluc : 0 ≤ fluctuationHistory P γ q jStar n := by
-    apply integral_nonneg
-    intro a
-    apply Real.iSup_nonneg
-    intro j
-    apply Real.iSup_nonneg
-    intro _hj
-    apply mul_nonneg (Real.rpow_nonneg (by norm_num) _)
-    apply Real.iSup_nonneg
-    intro z
-    apply Real.iSup_nonneg
-    intro _hz
-    exact (bigQ_even d γ).pow_nonneg _
-  have hhistory : 0 ≤ history P γ q jStar n := add_nonneg hfluc hmean0
+  have hhistory := span_history_nonnegative d γ P q jStar n hmean0
   have hpen := (Annealed.adaptedMean_order_consequences d hd P γ E Ψ K S hstat hdag
     jStar hjStar metric hmetric n m hn hnm0).2.2.2.2.2
-  have hw (t : ℝ) : 0 ≤ (3 : ℝ) ^ (-((1 - γ) / 4) * t) := Real.rpow_nonneg (by norm_num) _
   have hmomP : ∀ j : ℤ, 0 ≤ ∫ a, absSchattenNorm (bigQ d γ : ℝ)
       (normalizedFluctuationSelf P q j a) ^ bigQ d γ ∂P :=
     fun j => integral_nonneg fun _ => (bigQ_even d γ).pow_nonneg _
-  have hprof0 : 0 ≤ profile P γ q jStar n m := by
-    unfold profile
-    apply add_nonneg
-    · exact add_nonneg (mul_nonneg (mul_nonneg (hw _) (by linarith only [hpen])) hhistory)
-        (meanHistory_nonneg d hd γ hγ P E Ψ K S hP hstat hunit hdag
-          jStar hjStar metric hmetric n m hn hnm0)
-    · exact Finset.sum_nonneg fun j _ => mul_nonneg (mul_nonneg (hw _) (Real.exp_nonneg _))
-        (hmomP j)
+  have hprof0 : 0 ≤ profile P γ q jStar n m :=
+    span_profile_nonnegative d γ P q jStar n m hhistory hpen
+      (meanHistory_nonneg d hd γ hγ P E Ψ K S hP hstat hunit hdag
+        jStar hjStar metric hmetric n m hn hnm0)
   set p := profile P γ q jStar n m with hpdef
   clear_value p
   have hp1raw : profile P γ (Geometry.explicitRoundedGrid jStar metric) jStar n m ≤ 1 := by
@@ -499,42 +583,9 @@ theorem new_fluctuations_span_le (d : ℕ) (hd : 2 ≤ d) (γ : ℝ)
         have hExpX : Real.exp x * p ≤ R := by
           rw [hRdef]
           linarith only [exp_mul_le_add_exp_sub_one x p hx0 hprof0 hp1]
-        have hcaseA_bound : (1 / 8) * (Er * Mr) + Bc * (Er - 1) ≤ C * R := by
-          have hErmMr : Er * Mr =
-              Real.exp x * (Real.exp ((bigQ d γ : ℝ) * detIncrement P q r m) * Mr) := by
-            rw [hErm_eq]; ring
-          have hpart1 : Er * Mr ≤ Real.exp x * (Cs * p) := by
-            rw [hErmMr]
-            exact mul_le_mul_of_nonneg_left hseed_inst (Real.exp_nonneg _)
-          have hpart1' : Er * Mr ≤ Cs * R := by
-            have heq3 : Real.exp x * (Cs * p) = Cs * (Real.exp x * p) := by ring
-            rw [heq3] at hpart1
-            calc Er * Mr ≤ Cs * (Real.exp x * p) := hpart1
-              _ ≤ Cs * R := mul_le_mul_of_nonneg_left hExpX hCs.le
-          have hpart2 : Er - 1 ≤ (Ce + 1) * R := by
-            have heq2 : Er - 1 = Real.exp x *
-                (Real.exp ((bigQ d γ : ℝ) * detIncrement P q r m) - 1) + (Real.exp x - 1) := by
-              rw [hErm_eq]; ring
-            rw [heq2]
-            have hb1 : Real.exp x * (Real.exp ((bigQ d γ : ℝ) * detIncrement P q r m) - 1) ≤
-                Ce * (Real.exp x * p) := by
-              have hb0 := mul_le_mul_of_nonneg_left hexpm1_le (Real.exp_nonneg x)
-              calc Real.exp x * (Real.exp ((bigQ d γ : ℝ) * detIncrement P q r m) - 1) ≤
-                  Real.exp x * (Ce * p) := hb0
-                _ = Ce * (Real.exp x * p) := by ring
-            have hb1' : Real.exp x * (Real.exp ((bigQ d γ : ℝ) * detIncrement P q r m) - 1) ≤
-                Ce * R := hb1.trans (mul_le_mul_of_nonneg_left hExpX hCe.le)
-            have hb2 : Real.exp x - 1 ≤ R := by rw [hRdef]; linarith only [hprof0]
-            linarith only [hb1', hb2]
-          have hCbig : Cs / 8 + Bc * (Ce + 1) ≤ C := by
-            rw [hCdef]; linarith only [hB0]
-          calc (1 / 8) * (Er * Mr) + Bc * (Er - 1) ≤
-              (1 / 8) * (Cs * R) + Bc * ((Ce + 1) * R) := by
-                have h1 := mul_le_mul_of_nonneg_left hpart1' (by norm_num : (0:ℝ) ≤ 1 / 8)
-                have h2 := mul_le_mul_of_nonneg_left hpart2 hB0
-                linarith only [h1, h2]
-            _ = (Cs / 8 + Bc * (Ce + 1)) * R := by ring
-            _ ≤ C * R := mul_le_mul_of_nonneg_right hCbig hR0
+        have hcaseA_bound : (1 / 8) * (Er * Mr) + Bc * (Er - 1) ≤ C * R :=
+          span_seed_absorption Cs Ce Bc C R p x Er Mr _ hCs hCe hB0 hprof0 hR0
+            hCdef hRdef hErm_eq hseed_inst hexpm1_le hExpX
         linarith only [hcommon, hcaseA_bound]
       · have hcaseB : m < r := lt_of_not_ge hcaseA
         have hihpre : r ≤ m + L := by omega
@@ -567,56 +618,20 @@ theorem new_fluctuations_span_le (d : ℕ) (hd : 2 ≤ d) (γ : ℝ)
             linarith only [hCs.le, hB0, mul_nonneg hB0 (by linarith only [hCe] : (0:ℝ) ≤ Ce + 1)]
           linarith only [h1, h2, hCbound]
         linarith only [hcommon, hcaseB_bound]
-  have hterm : ∀ s ∈ Finset.Icc (m + 1) (m + L),
-      (3 : ℝ) ^ (-((1 - γ) / 4) * (((m + L : ℤ) : ℝ) - (s : ℝ))) *
-          Real.exp ((bigQ d γ : ℝ) * detIncrement P q s (m + L)) *
-        ∫ a, absSchattenNorm (bigQ d γ : ℝ)
-          (normalizedFluctuationSelf P q s a) ^ bigQ d γ ∂P ≤ C * R := by
-    intro s hs
-    have hs' := Finset.mem_Icc.mp hs
-    have hw1 : (3 : ℝ) ^ (-((1 - γ) / 4) * (((m + L : ℤ) : ℝ) - (s : ℝ))) ≤ 1 := by
-      apply Real.rpow_le_one_of_one_le_of_nonpos (by norm_num)
-      apply mul_nonpos_of_nonpos_of_nonneg (by linarith only [hγ.2])
-      have hle : (0 : ℤ) ≤ m + L - s := by omega
-      exact_mod_cast hle
-    have hL0 : (0 : ℤ) ≤ L := by omega
-    have htoNat : (L.toNat : ℤ) = L := Int.toNat_of_nonneg hL0
-    have hkey := key L.toNat s (by omega) (by omega) (by omega)
-    have hMS0 : 0 ≤ Real.exp ((bigQ d γ : ℝ) * detIncrement P q s (m + L)) *
-        ∫ a, absSchattenNorm (bigQ d γ : ℝ)
-          (normalizedFluctuationSelf P q s a) ^ bigQ d γ ∂P :=
-      mul_nonneg (Real.exp_nonneg _) (hmomP s)
-    calc
-      (3 : ℝ) ^ (-((1 - γ) / 4) * (((m + L : ℤ) : ℝ) - (s : ℝ))) *
-          Real.exp ((bigQ d γ : ℝ) * detIncrement P q s (m + L)) *
-        ∫ a, absSchattenNorm (bigQ d γ : ℝ)
-          (normalizedFluctuationSelf P q s a) ^ bigQ d γ ∂P
-        = (3 : ℝ) ^ (-((1 - γ) / 4) * (((m + L : ℤ) : ℝ) - (s : ℝ))) *
-            (Real.exp ((bigQ d γ : ℝ) * detIncrement P q s (m + L)) *
-              ∫ a, absSchattenNorm (bigQ d γ : ℝ)
-                (normalizedFluctuationSelf P q s a) ^ bigQ d γ ∂P) := by ring
-      _ ≤ 1 * (Real.exp ((bigQ d γ : ℝ) * detIncrement P q s (m + L)) *
-              ∫ a, absSchattenNorm (bigQ d γ : ℝ)
-                (normalizedFluctuationSelf P q s a) ^ bigQ d γ ∂P) :=
-        mul_le_mul_of_nonneg_right hw1 hMS0
-      _ = Real.exp ((bigQ d γ : ℝ) * detIncrement P q s (m + L)) *
-              ∫ a, absSchattenNorm (bigQ d γ : ℝ)
-                (normalizedFluctuationSelf P q s a) ^ bigQ d γ ∂P := one_mul _
-      _ ≤ C * R := hkey
-  have hcard : ((Finset.Icc (m + 1) (m + L)).card : ℝ) = (L : ℝ) := by
-    rw [Int.card_Icc, show m + L + 1 - (m + 1) = L by ring]
-    exact_mod_cast Int.toNat_of_nonneg (by omega : (0 : ℤ) ≤ L)
-  calc
-    ∑ s ∈ Finset.Icc (m + 1) (m + L),
-        (3 : ℝ) ^ (-((1 - γ) / 4) * (((m + L : ℤ) : ℝ) - (s : ℝ))) *
-            Real.exp ((bigQ d γ : ℝ) * detIncrement P q s (m + L)) *
-          ∫ a, absSchattenNorm (bigQ d γ : ℝ)
-              (normalizedFluctuationSelf P q s a) ^ bigQ d γ ∂P
-      ≤ ∑ _s ∈ Finset.Icc (m + 1) (m + L), C * R := Finset.sum_le_sum hterm
-    _ = ((Finset.Icc (m + 1) (m + L)).card : ℝ) * (C * R) := by
-        rw [Finset.sum_const, nsmul_eq_mul]
-    _ = (L : ℝ) * (C * R) := by rw [hcard]
-    _ = C * (L : ℝ) * R := by ring
+  have hbound := weighted_span_interval_sum_bound γ hγ.2 m L hL
+    (fun s => Real.exp ((bigQ d γ : ℝ) * detIncrement P q s (m + L)) *
+      ∫ a, absSchattenNorm (bigQ d γ : ℝ)
+        (normalizedFluctuationSelf P q s a) ^ bigQ d γ ∂P) (C * R)
+    (fun s => mul_nonneg (Real.exp_nonneg _) (hmomP s)) (by
+      intro s hs
+      have hs' := Finset.mem_Icc.mp hs
+      have htoNat : (L.toNat : ℤ) = L := Int.toNat_of_nonneg (by omega)
+      exact key L.toNat s (by omega) (by omega) (by omega))
+  convert hbound using 1
+  · apply Finset.sum_congr rfl
+    intro s _
+    ring
+  · ring
 
 end
 

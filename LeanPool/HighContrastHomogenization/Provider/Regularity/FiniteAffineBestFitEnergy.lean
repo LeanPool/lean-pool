@@ -119,6 +119,169 @@ private theorem finiteAffineMeanResidual_memLp_energy
   simpa only [v, c, H1Function.sub_toFun, finiteAffineSolutionInnerH1_toFun,
     originCubeAffineH1LinearMap_toFun, vecDot_zero_left, add_zero] using! hv
 
+private theorem finiteAffineSlope_le_energy_of_small_error
+    {d : ℕ} [NeZero d] (a : Book.Ch02.TriadicCoeffFamily d)
+    (k m : ℤ) (hkm : k ≤ m) (b : Vec d) (s B delta Ks Kp C : ℝ)
+    (hKs : 0 < Ks) (hKp : 0 < Kp) (hKsBdelta : Ks * B * delta ≤ 1 / 2)
+    (hKsKpC : 2 * Ks * Kp ≤ C) (hweak : scalarIdentityWeakError a s k ≤ 1)
+    (herror : finiteAffineBestFitError a k m hkm b ≤
+      B * delta * euclideanNorm (finiteAffineBestFitSlope a k m hkm b))
+    (hpoincare : ∀ (a : Book.Ch02.TriadicCoeffFamily d) (k : ℤ)
+      (u : Book.Ch03.CubeSolution (originCube d k) a),
+      scalarIdentityWeakError a s k ≤ 1 →
+        cubeBesovScaleWeight 1 (originCube d k) *
+          cubeLpNorm (originCube d k) (2 : ℝ≥0∞)
+            (cubeFluctuation (originCube d k) u.toH1.toFun) ≤
+        Kp * Book.Ch03.h1EnergyNormOnCube (originCube d k) a u.toH1)
+    (hslopeError : ∀ (k : ℤ) (c : ℝ) (e : Vec d),
+      euclideanNorm e ≤ Ks *
+        normalizedAffineCandidateError (originCube d k) (fun _ ↦ 0) c e) :
+    euclideanNorm (finiteAffineBestFitSlope a k m hkm b) ≤
+      C * finiteCenteredCubeSolutionEnergy a m (finiteAffineCubeSolution a m b) k := by
+  have henergy_nonneg : 0 ≤ finiteCenteredCubeSolutionEnergy a m
+      (finiteAffineCubeSolution a m b) k := by
+    unfold finiteCenteredCubeSolutionEnergy Book.Ch03.h1EnergyNormOnCube
+    exact Real.sqrt_nonneg _
+  let uk := finiteAffineSolutionInnerH1 a k m hkm b
+  let cmean := cubeAverage (originCube d k) uk.toFun
+  let cbest := finiteAffineBestFitIntercept a k m hkm b
+  let pbest := finiteAffineBestFitSlope a k m hkm b
+  have hp := hpoincare a k
+    (finiteCubeSolutionRestriction a hkm
+      (finiteAffineCubeSolution a m b)) hweak
+  have hmeanEq : normalizedAffineCandidateError (originCube d k)
+        (finiteAffineSolution a m b).toH1.toFun cmean (0 : Vec d) =
+      cubeBesovScaleWeight 1 (originCube d k) *
+        cubeLpNorm (originCube d k) (2 : ℝ≥0∞)
+          (cubeFluctuation (originCube d k) uk.toFun) := by
+    unfold normalizedAffineCandidateError normalizedCubeL2Distance cubeFluctuation
+    dsimp [cmean, uk]
+    simp only [vecDot_zero_left, add_zero]
+  have henergyEq : Book.Ch03.h1EnergyNormOnCube (originCube d k) a
+        (finiteCubeSolutionRestriction a hkm
+          (finiteAffineCubeSolution a m b)).toH1 =
+      finiteCenteredCubeSolutionEnergy a m
+        (finiteAffineCubeSolution a m b) k := by
+    exact (finiteCenteredCubeSolutionEnergy_eq_of_le a m
+      (finiteAffineCubeSolution a m b) k hkm).symm
+  have hmean : normalizedAffineCandidateError (originCube d k)
+        (finiteAffineSolution a m b).toH1.toFun cmean (0 : Vec d) ≤
+      Kp * finiteCenteredCubeSolutionEnergy a m
+        (finiteAffineCubeSolution a m b) k := by
+    rw [hmeanEq, ← henergyEq]
+    simpa only [uk] using! hp
+  have hresBest := finiteAffineBestFitResidual_memLp_energy a k m
+    hkm b
+  have hresMean := finiteAffineMeanResidual_memLp_energy a k m
+    hkm b
+  have hzero := normalizedAffineCandidateError_zero_sub_le_add_energy
+    (originCube d k) (finiteAffineSolution a m b).toH1.toFun
+    cbest cmean pbest (0 : Vec d) hresBest hresMean
+  have hslope := hslopeError k (cbest - cmean) pbest
+  have hraw : euclideanNorm pbest ≤
+      Ks * (finiteAffineBestFitError a k m hkm b +
+        Kp * finiteCenteredCubeSolutionEnergy a m
+          (finiteAffineCubeSolution a m b) k) := by
+    calc
+      euclideanNorm pbest = euclideanNorm (pbest - (0 : Vec d)) := by simp
+      _ ≤ Ks * normalizedAffineCandidateError (originCube d k) (fun _ ↦ 0)
+            (cbest - cmean) (pbest - (0 : Vec d)) := by
+        simpa only [sub_zero] using hslope
+      _ ≤ Ks * (finiteAffineBestFitError a k m
+            hkm b +
+          normalizedAffineCandidateError (originCube d k)
+            (finiteAffineSolution a m b).toH1.toFun cmean (0 : Vec d)) := by
+        exact mul_le_mul_of_nonneg_left (by
+          simpa only [cbest, cmean, pbest, finiteAffineBestFitError] using hzero) hKs.le
+      _ ≤ Ks * (finiteAffineBestFitError a k m
+            hkm b +
+          Kp * finiteCenteredCubeSolutionEnergy a m
+            (finiteAffineCubeSolution a m b) k) :=
+        mul_le_mul_of_nonneg_left (add_le_add (le_refl _) hmean) hKs.le
+  have habsorb : euclideanNorm pbest ≤
+      2 * Ks * Kp * finiteCenteredCubeSolutionEnergy a m
+        (finiteAffineCubeSolution a m b) k := by
+    have herr := herror
+    have hsmall := mul_le_mul_of_nonneg_right hKsBdelta
+      (euclideanNorm_nonneg pbest)
+    have hE_nonneg := finiteAffineBestFitError_nonneg a k m
+      hkm b
+    nlinarith only [hraw, herr, hsmall, hE_nonneg, henergy_nonneg,
+      hKs.le, hKp.le]
+  exact habsorb.trans (mul_le_mul_of_nonneg_right hKsKpC henergy_nonneg)
+
+private theorem nearTerminalAffineEnergy_le_slope
+    {d : ℕ} [NeZero d] (a : Book.Ch02.TriadicCoeffFamily d)
+    (k m : ℤ) (hkm : k ≤ m) (b : Vec d) (Ke C : ℝ) (hKe : 0 < Ke)
+    (hterminalIndex : k = m ∨ k = m - 1)
+    (hRKeC : 6 * (((3 ^ d : ℕ) : ℝ)) * Ke ≤ C)
+    (houterRaw : Book.Ch03.h1EnergyNormOnCube (originCube d m) a
+      (finiteAffineCubeSolution a m b).toH1 ≤ 2 * Ke * euclideanNorm b)
+    (hbPm : euclideanNorm b ≤ 2 * euclideanNorm (finiteAffineBestFitSlope a m m le_rfl b))
+    (hprevious : k = m - 1 → euclideanNorm (finiteAffineBestFitSlope a m m le_rfl b) ≤
+      (3 / 2 : ℝ) * euclideanNorm (finiteAffineBestFitSlope a (m - 1) m (by omega) b)) :
+    finiteCenteredCubeSolutionEnergy a m (finiteAffineCubeSolution a m b) k ≤
+      C * euclideanNorm (finiteAffineBestFitSlope a k m hkm b) := by
+  let R : ℝ := ((3 ^ d : ℕ) : ℝ)
+  have hR : 0 < R := by dsimp [R]; positivity
+  have hDm : finiteCenteredCubeSolutionEnergy a m
+      (finiteAffineCubeSolution a m b) m ≤ 2 * Ke * euclideanNorm b := by
+    rw [finiteCenteredCubeSolutionEnergy_eq_of_le a m
+      (finiteAffineCubeSolution a m b) m le_rfl]
+    simpa only [Book.Ch03.h1EnergyNormOnCube,
+      Book.Ch03.localizedCoeffEnergyValue, finiteCubeSolutionRestriction_grad] using houterRaw
+  rcases hterminalIndex with hkterminal | hkprev
+  · subst k
+    exact hDm.trans (by
+      calc
+        2 * Ke * euclideanNorm b ≤
+            2 * Ke * (2 * euclideanNorm
+              (finiteAffineBestFitSlope a m m le_rfl b)) :=
+          mul_le_mul_of_nonneg_left hbPm (mul_nonneg (by norm_num) hKe.le)
+        _ = (4 * Ke) * euclideanNorm
+              (finiteAffineBestFitSlope a m m le_rfl b) := by ring
+        _ ≤ (6 * R * Ke) * euclideanNorm
+              (finiteAffineBestFitSlope a m m le_rfl b) := by
+          have hRone : 1 ≤ R := by dsimp [R]; exact_mod_cast
+            Nat.one_le_iff_ne_zero.mpr (pow_ne_zero d (by norm_num : (3 : ℕ) ≠ 0))
+          apply mul_le_mul_of_nonneg_right _ (euclideanNorm_nonneg _)
+          have : (4 : ℝ) ≤ 6 * R := by nlinarith only [hRone]
+          exact mul_le_mul_of_nonneg_right this hKe.le
+        _ ≤ C * euclideanNorm
+              (finiteAffineBestFitSlope a m m le_rfl b) :=
+          mul_le_mul_of_nonneg_right hRKeC (euclideanNorm_nonneg _))
+  · subst k
+    have hPm' := hprevious rfl
+    have hrestrict :=
+      h1EnergyNormOnCube_finiteCubeSolutionRestriction_sub_one_le
+        a m (finiteAffineCubeSolution a m b)
+    rw [finiteCenteredCubeSolutionEnergy_eq_of_le a m
+      (finiteAffineCubeSolution a m b) (m - 1) (by omega)]
+    calc
+      Book.Ch03.h1EnergyNormOnCube (originCube d (m - 1)) a
+          (finiteCubeSolutionRestriction a (by omega)
+            (finiteAffineCubeSolution a m b)).toH1 ≤
+          R * Book.Ch03.h1EnergyNormOnCube (originCube d m) a
+            (finiteAffineCubeSolution a m b).toH1 := by
+        simpa only [R] using hrestrict
+      _ ≤ R * (2 * Ke * euclideanNorm b) :=
+        mul_le_mul_of_nonneg_left houterRaw hR.le
+      _ ≤ R * (2 * Ke * (2 * euclideanNorm
+            (finiteAffineBestFitSlope a m m le_rfl b))) :=
+        mul_le_mul_of_nonneg_left
+          (mul_le_mul_of_nonneg_left hbPm (mul_nonneg (by norm_num) hKe.le)) hR.le
+      _ = (4 * R * Ke) * euclideanNorm
+            (finiteAffineBestFitSlope a m m le_rfl b) := by ring
+      _ ≤ (4 * R * Ke) * ((3 / 2 : ℝ) * euclideanNorm
+            (finiteAffineBestFitSlope a (m - 1) m (by omega) b)) :=
+        mul_le_mul_of_nonneg_left hPm'
+          (mul_nonneg (mul_nonneg (by norm_num) hR.le) hKe.le)
+      _ = (6 * R * Ke) * euclideanNorm
+            (finiteAffineBestFitSlope a (m - 1) m (by omega) b) := by ring
+      _ ≤ C * euclideanNorm
+            (finiteAffineBestFitSlope a (m - 1) m (by omega) b) :=
+        mul_le_mul_of_nonneg_right hRKeC (euclideanNorm_nonneg _)
+
 /-- On a sufficiently good finite row, the inner energy of a fixed-boundary
 affine solution is comparable in both directions to its current best-fit
 slope. This statement is deliberately prior to, and independent of, any
@@ -308,139 +471,24 @@ theorem exists_scalarIdentityFiniteAffineBestFitEnergyConstants
         have hsmall := mul_le_mul_of_nonneg_right hBdelta (euclideanNorm_nonneg b)
         nlinarith only [htri, hterminal, hsmall,
           euclideanNorm_nonneg (finiteAffineBestFitSlope a m m le_rfl b)]
-      rcases hterminalIndex with hkterminal | hkprev
-      · subst k
-        exact hDm.trans (by
-          calc
-            2 * Ke * euclideanNorm b ≤
-                2 * Ke * (2 * euclideanNorm
-                  (finiteAffineBestFitSlope a m m le_rfl b)) :=
-              mul_le_mul_of_nonneg_left hbPm (mul_nonneg (by norm_num) hKe.le)
-            _ = (4 * Ke) * euclideanNorm
-                  (finiteAffineBestFitSlope a m m le_rfl b) := by ring
-            _ ≤ (6 * R * Ke) * euclideanNorm
-                  (finiteAffineBestFitSlope a m m le_rfl b) := by
-              have hRone : 1 ≤ R := by dsimp [R]; exact_mod_cast
-                Nat.one_le_iff_ne_zero.mpr (pow_ne_zero d (by norm_num : (3 : ℕ) ≠ 0))
-              apply mul_le_mul_of_nonneg_right _ (euclideanNorm_nonneg _)
-              have : (4 : ℝ) ≤ 6 * R := by nlinarith only [hRone]
-              exact mul_le_mul_of_nonneg_right this hKe.le
-            _ ≤ C * euclideanNorm
-                  (finiteAffineBestFitSlope a m m le_rfl b) :=
-              mul_le_mul_of_nonneg_right hRKeC (euclideanNorm_nonneg _))
-      · subst k
-        have hm1 : m - 1 ∈ Finset.Icc n m := by
-          exact Finset.mem_Icc.2 ⟨(Finset.mem_Icc.mp hk).1, by omega⟩
-        have hPm := (hpackm.2.2.1 (m - 1) hm1 (by omega)).2
-        have hpow : (1 + B * delta) ^ Int.toNat (m - (m - 1)) ≤ 3 / 2 := by
-          norm_num [Int.toNat_of_nonneg (by omega : 0 ≤ m - (m - 1))]
-          linarith only [hBdelta]
-        have hPm' : euclideanNorm (finiteAffineBestFitSlope a m m le_rfl b) ≤
-            (3 / 2 : ℝ) * euclideanNorm
-              (finiteAffineBestFitSlope a (m - 1) m (by omega) b) :=
-          hPm.trans (mul_le_mul_of_nonneg_right hpow (euclideanNorm_nonneg _))
-        have hrestrict :=
-          h1EnergyNormOnCube_finiteCubeSolutionRestriction_sub_one_le
-            a m (finiteAffineCubeSolution a m b)
-        rw [finiteCenteredCubeSolutionEnergy_eq_of_le a m
-          (finiteAffineCubeSolution a m b) (m - 1) (by omega)]
-        calc
-          Book.Ch03.h1EnergyNormOnCube (originCube d (m - 1)) a
-              (finiteCubeSolutionRestriction a (by omega)
-                (finiteAffineCubeSolution a m b)).toH1 ≤
-              R * Book.Ch03.h1EnergyNormOnCube (originCube d m) a
-                (finiteAffineCubeSolution a m b).toH1 := by
-            simpa only [R] using hrestrict
-          _ ≤ R * (2 * Ke * euclideanNorm b) :=
-            mul_le_mul_of_nonneg_left houterRaw hR.le
-          _ ≤ R * (2 * Ke * (2 * euclideanNorm
-                (finiteAffineBestFitSlope a m m le_rfl b))) :=
-            mul_le_mul_of_nonneg_left
-              (mul_le_mul_of_nonneg_left hbPm (mul_nonneg (by norm_num) hKe.le)) hR.le
-          _ = (4 * R * Ke) * euclideanNorm
-                (finiteAffineBestFitSlope a m m le_rfl b) := by ring
-          _ ≤ (4 * R * Ke) * ((3 / 2 : ℝ) * euclideanNorm
-                (finiteAffineBestFitSlope a (m - 1) m (by omega) b)) :=
-            mul_le_mul_of_nonneg_left hPm'
-              (mul_nonneg (mul_nonneg (by norm_num) hR.le) hKe.le)
-          _ = (6 * R * Ke) * euclideanNorm
-                (finiteAffineBestFitSlope a (m - 1) m (by omega) b) := by ring
-          _ ≤ C * euclideanNorm
-                (finiteAffineBestFitSlope a (m - 1) m (by omega) b) :=
-            mul_le_mul_of_nonneg_right hRKeC (euclideanNorm_nonneg _)
+      apply nearTerminalAffineEnergy_le_slope a k m (Finset.mem_Icc.mp hk).2 b
+        Ke C hKe hterminalIndex hRKeC houterRaw hbPm
+      intro hkprev
+      have hm1 : m - 1 ∈ Finset.Icc n m := Finset.mem_Icc.2 ⟨by
+        rw [← hkprev]
+        exact (Finset.mem_Icc.mp hk).1, by omega⟩
+      have hPm := (hpackm.2.2.1 (m - 1) hm1 (by omega)).2
+      have hpow : (1 + B * delta) ^ Int.toNat (m - (m - 1)) ≤ 3 / 2 := by
+        norm_num [Int.toNat_of_nonneg (by omega : 0 ≤ m - (m - 1))]
+        linarith only [hBdelta]
+      exact hPm.trans (mul_le_mul_of_nonneg_right hpow (euclideanNorm_nonneg _))
   have hlower : euclideanNorm
         (finiteAffineBestFitSlope a k m (Finset.mem_Icc.mp hk).2 b) ≤
       C * finiteCenteredCubeSolutionEnergy a m
-        (finiteAffineCubeSolution a m b) k := by
-    let uk := finiteAffineSolutionInnerH1 a k m (Finset.mem_Icc.mp hk).2 b
-    let cmean := cubeAverage (originCube d k) uk.toFun
-    let cbest := finiteAffineBestFitIntercept a k m (Finset.mem_Icc.mp hk).2 b
-    let pbest := finiteAffineBestFitSlope a k m (Finset.mem_Icc.mp hk).2 b
-    have hweak : scalarIdentityWeakError a s k ≤ 1 :=
-      (hgood.weakError_le hk).trans hdelta_one
-    have hp := hpoincare a k
-      (finiteCubeSolutionRestriction a (Finset.mem_Icc.mp hk).2
-        (finiteAffineCubeSolution a m b)) hweak
-    have hmeanEq : normalizedAffineCandidateError (originCube d k)
-          (finiteAffineSolution a m b).toH1.toFun cmean (0 : Vec d) =
-        cubeBesovScaleWeight 1 (originCube d k) *
-          cubeLpNorm (originCube d k) (2 : ℝ≥0∞)
-            (cubeFluctuation (originCube d k) uk.toFun) := by
-      unfold normalizedAffineCandidateError normalizedCubeL2Distance cubeFluctuation
-      dsimp [cmean, uk]
-      simp only [vecDot_zero_left, add_zero]
-    have henergyEq : Book.Ch03.h1EnergyNormOnCube (originCube d k) a
-          (finiteCubeSolutionRestriction a (Finset.mem_Icc.mp hk).2
-            (finiteAffineCubeSolution a m b)).toH1 =
-        finiteCenteredCubeSolutionEnergy a m
-          (finiteAffineCubeSolution a m b) k := by
-      exact (finiteCenteredCubeSolutionEnergy_eq_of_le a m
-        (finiteAffineCubeSolution a m b) k (Finset.mem_Icc.mp hk).2).symm
-    have hmean : normalizedAffineCandidateError (originCube d k)
-          (finiteAffineSolution a m b).toH1.toFun cmean (0 : Vec d) ≤
-        Kp * finiteCenteredCubeSolutionEnergy a m
-          (finiteAffineCubeSolution a m b) k := by
-      rw [hmeanEq, ← henergyEq]
-      simpa only [uk] using! hp
-    have hresBest := finiteAffineBestFitResidual_memLp_energy a k m
-      (Finset.mem_Icc.mp hk).2 b
-    have hresMean := finiteAffineMeanResidual_memLp_energy a k m
-      (Finset.mem_Icc.mp hk).2 b
-    have hzero := normalizedAffineCandidateError_zero_sub_le_add_energy
-      (originCube d k) (finiteAffineSolution a m b).toH1.toFun
-      cbest cmean pbest (0 : Vec d) hresBest hresMean
-    have hslope := hslopeError k (cbest - cmean) pbest
-    have hraw : euclideanNorm pbest ≤
-        Ks * (finiteAffineBestFitError a k m (Finset.mem_Icc.mp hk).2 b +
-          Kp * finiteCenteredCubeSolutionEnergy a m
-            (finiteAffineCubeSolution a m b) k) := by
-      calc
-        euclideanNorm pbest = euclideanNorm (pbest - (0 : Vec d)) := by simp
-        _ ≤ Ks * normalizedAffineCandidateError (originCube d k) (fun _ ↦ 0)
-              (cbest - cmean) (pbest - (0 : Vec d)) := by
-          simpa only [sub_zero] using hslope
-        _ ≤ Ks * (finiteAffineBestFitError a k m
-              (Finset.mem_Icc.mp hk).2 b +
-            normalizedAffineCandidateError (originCube d k)
-              (finiteAffineSolution a m b).toH1.toFun cmean (0 : Vec d)) := by
-          exact mul_le_mul_of_nonneg_left (by
-            simpa only [cbest, cmean, pbest, finiteAffineBestFitError] using hzero) hKs.le
-        _ ≤ Ks * (finiteAffineBestFitError a k m
-              (Finset.mem_Icc.mp hk).2 b +
-            Kp * finiteCenteredCubeSolutionEnergy a m
-              (finiteAffineCubeSolution a m b) k) :=
-          mul_le_mul_of_nonneg_left (add_le_add (le_refl _) hmean) hKs.le
-    have habsorb : euclideanNorm pbest ≤
-        2 * Ks * Kp * finiteCenteredCubeSolutionEnergy a m
-          (finiteAffineCubeSolution a m b) k := by
-      have herr := hpack.1
-      have hsmall := mul_le_mul_of_nonneg_right hKsBdelta
-        (euclideanNorm_nonneg pbest)
-      have hE_nonneg := finiteAffineBestFitError_nonneg a k m
-        (Finset.mem_Icc.mp hk).2 b
-      nlinarith only [hraw, herr, hsmall, hE_nonneg, henergy_nonneg,
-        hKs.le, hKp.le]
-    exact habsorb.trans (mul_le_mul_of_nonneg_right hKsKpC henergy_nonneg)
+        (finiteAffineCubeSolution a m b) k :=
+    finiteAffineSlope_le_energy_of_small_error a k m (Finset.mem_Icc.mp hk).2 b
+      s B delta Ks Kp C hKs hKp hKsBdelta hKsKpC
+      ((hgood.weakError_le hk).trans hdelta_one) hpack.1 hpoincare hslopeError
   exact ⟨hupper, hlower⟩
 
 end

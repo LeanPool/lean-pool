@@ -33,6 +33,7 @@ open scoped BigOperators ENNReal
 
 noncomputable section
 
+/-- The same globally smooth test field viewed on a subcube. -/
 @[expose]
 public def CubeEuclideanWspSmoothTest.restrictToSubcube {d : ℕ}
     {Q R : TriadicCube d} {s : FractionalOrder} {p : FiniteLpExponent}
@@ -129,6 +130,8 @@ private theorem cubeEuclideanWspFullENorm_descendant_lt_top_of_le_one {d : ℕ}
     simpa [D] using hR
   exact (ENNReal.rpow_lt_top_iff_of_pos ht).mp hterm_top
 
+/-- The smooth fractional Sobolev test obtained by multiplying its vector field by the real scalar
+`c`. -/
 @[expose]
 public def CubeEuclideanWspSmoothTest.scale {d : ℕ}
     {Q : TriadicCube d} {s : FractionalOrder} {p : FiniteLpExponent}
@@ -466,7 +469,6 @@ theorem cubeEuclideanNegativeWspSmoothDualENorm_le_descendantsENNAverage {d : �
     have hR' : R ∈ D := by simpa only using hR
     simp only [dite_eq_left (by simpa [D] using hR')]
     exact hlocal R hR'
-
   have hbeq : descendantsENNAverage Q j (fun R => b R ^
       p.conjugate.exponent.toReal) =
       descendantsENNAverage Q j (fun R =>

@@ -537,7 +537,8 @@ theorem measureReal_shiftedCrudeBottomBadScaleEvent_quenchedProbeEnvelope_eq_zer
   exact le_antisymm hle_zero MeasureTheory.measureReal_nonneg
 
 /-- Endpoint crude-bottom component estimate after summing the weighted rows. -/
-theorem measureReal_shiftedCrudeBottomBadScaleEvent_quenchedProbeEnvelope_le_weighted_kernel_gammaInfinity
+theorem
+  measureReal_shiftedCrudeBottomBadScaleEvent_quenchedProbeEnvelope_le_weighted_kernel_gammaInfinity
     {d : ℕ} [NeZero d]
     (params : QuantitativeCoarseGrainedEllipticityParams d) :
     ∃ Ccrude : ℝ, 0 < Ccrude ∧

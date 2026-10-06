@@ -182,14 +182,14 @@ theorem limitNormalizedJProbeSum_le_four_normalizedProbeSum_of_aelocallyUniforml
             (fullBlockPlusProbe α β) a =
           fullBlockQuadratic M (fullBlockPlusProbe α β) := by
       simpa [M] using
-        limitNormalizedBlockJObservable_eq_limitNormalizedBlockJMatrix_quadratic_of_aelocallyUniformlyEllipticField
+        limitNormalizedBlockJObservable_eq_limitNormalizedBlockJMatrix_quadratic
           hP hStruct hΓ ha Q (fullBlockPlusProbe α β)
     have hscaled :
         limitNormalizedBlockJObservable hP hStruct Q
             ((1 / 2 : ℝ) • fullBlockPlusProbe α β) a =
           fullBlockQuadratic M ((1 / 2 : ℝ) • fullBlockPlusProbe α β) := by
       simpa [M] using
-        limitNormalizedBlockJObservable_eq_limitNormalizedBlockJMatrix_quadratic_of_aelocallyUniformlyEllipticField
+        limitNormalizedBlockJObservable_eq_limitNormalizedBlockJMatrix_quadratic
           hP hStruct hΓ ha Q ((1 / 2 : ℝ) • fullBlockPlusProbe α β)
     rw [hraw, hscaled, fullBlockQuadratic_vec_smul]
     ring
@@ -206,14 +206,14 @@ theorem limitNormalizedJProbeSum_le_four_normalizedProbeSum_of_aelocallyUniforml
             (fullBlockMinusProbe α β) a =
           fullBlockQuadratic M (fullBlockMinusProbe α β) := by
       simpa [M] using
-        limitNormalizedBlockJObservable_eq_limitNormalizedBlockJMatrix_quadratic_of_aelocallyUniformlyEllipticField
+        limitNormalizedBlockJObservable_eq_limitNormalizedBlockJMatrix_quadratic
           hP hStruct hΓ ha Q (fullBlockMinusProbe α β)
     have hscaled :
         limitNormalizedBlockJObservable hP hStruct Q
             ((1 / 2 : ℝ) • fullBlockMinusProbe α β) a =
           fullBlockQuadratic M ((1 / 2 : ℝ) • fullBlockMinusProbe α β) := by
       simpa [M] using
-        limitNormalizedBlockJObservable_eq_limitNormalizedBlockJMatrix_quadratic_of_aelocallyUniformlyEllipticField
+        limitNormalizedBlockJObservable_eq_limitNormalizedBlockJMatrix_quadratic
           hP hStruct hΓ ha Q ((1 / 2 : ℝ) • fullBlockMinusProbe α β)
     rw [hraw, hscaled, fullBlockQuadratic_vec_smul]
     ring
@@ -254,7 +254,7 @@ theorem limitNormalizedJProbeSum_le_four_normalizedProbeSum_of_aelocallyUniforml
 
 /-- One-cube bridge from the Chapter 2 normalized block-response maximum to the
 Section 5.7 finite normalized probe sum. -/
-theorem normalizedBlockResponseMax_scalarMatrix_le_limitNormalizedJNormalizedProbeSum_of_aelocallyUniformlyEllipticField
+theorem BlockResponseMax_scalarMatrix_le_limitNormalizedJNormalizedProbeSum
     {d : ℕ} [NeZero d] {P : Ch04.RestrictionCoeffLaw d}
     (hP : Ch04.RestrictionLawCarrier P) (hStruct : Ch04.RestrictionStructuralLaw P)
     (hΓ : GammaSigmaCoarseGrainedEllipticity P hP hStruct)
@@ -355,7 +355,7 @@ theorem limitNormalizedJNormalizedProbeSum_le_localizedLimitNormalizedJNormalize
 
 /-- Localized bridge from the Chapter 2 descendant response maximum to the
 Section 5.7 finite normalized-probe maximum. -/
-theorem maxDescendantNormalizedBlockResponseAtScale_originCube_scalarMatrix_le_localizedNormalizedProbeJMax_of_aelocallyUniformlyEllipticField
+theorem maxDescendantNormalizedBlockResponse_cube_scalarMatrix_le_NormalizedProbeJMax
     {d : ℕ} [NeZero d] {P : Ch04.RestrictionCoeffLaw d}
     (hP : Ch04.RestrictionLawCarrier P) (hStruct : Ch04.RestrictionStructuralLaw P)
     (hΓ : GammaSigmaCoarseGrainedEllipticity P hP hStruct)
@@ -386,7 +386,7 @@ theorem maxDescendantNormalizedBlockResponseAtScale_originCube_scalarMatrix_le_l
         R ∈ descendantsAtScale (originCube d ((m : ℕ) : ℤ)) ((n : ℕ) : ℤ) := by
       simpa [D] using hR
     have hone :=
-      normalizedBlockResponseMax_scalarMatrix_le_limitNormalizedJNormalizedProbeSum_of_aelocallyUniformlyEllipticField
+      BlockResponseMax_scalarMatrix_le_limitNormalizedJNormalizedProbeSum
         hP hStruct hΓ ha R
     have hloc :=
       limitNormalizedJNormalizedProbeSum_le_localizedLimitNormalizedJNormalizedProbeSumMax
@@ -523,7 +523,7 @@ theorem scaleResponseAtScale_originCube_nat_le_sqrt_const_mul_localizedNormalize
   have hk : ((n : ℕ) : ℤ) ≤ ((m : ℕ) : ℤ) := by
     exact_mod_cast hnm
   have hmax :=
-    maxDescendantNormalizedBlockResponseAtScale_originCube_scalarMatrix_le_localizedNormalizedProbeJMax_of_aelocallyUniformlyEllipticField
+    maxDescendantNormalizedBlockResponse_cube_scalarMatrix_le_NormalizedProbeJMax
       hP hStruct hΓ ha hnm
   have hsqrt :
       Real.sqrt

@@ -87,7 +87,7 @@ theorem abs_cubeAverage_vecDot_scalar_smul_le_singleCubeBoundaryNoteRhs_of_vecto
 
 /-- Note single-cube estimate on a descendant cube using a parent quantitative
 cutoff, after the small-cube coefficient domination has been supplied. -/
-theorem abs_cubeAverage_vecDot_scalar_smul_le_singleCubeBoundaryNoteRhs_of_parentQuantitativeCutoff_on_descendant
+theorem abs_cubeAverage_vectorDot_scalarMultiply_le_singleCubeBoundaryNoteRhs
     {d : ℕ} {Q R : TriadicCube d} {j : ℕ} (hR : R ∈ descendantsAtDepth Q j)
     (a : CoeffField d) (s : ℝ) {ρ₁ ρ₂ : ℝ}
     (flux : Vec d → Vec d) (u : Vec d → ℝ) (G : Vec d → Vec d)
@@ -131,7 +131,7 @@ theorem abs_cubeAverage_vecDot_scalar_smul_le_singleCubeBoundaryNoteRhs_of_paren
         ((Fintype.card (Fin d) : ℝ) * C) k h uL2Sq
         (cubeAverage R energy) := by
   exact le_trans
-    (abs_cubeAverage_vecDot_scalar_smul_le_fluxEnergyExactRhs_of_parentQuantitativeCutoff_on_descendant
+    (abs_cubeAverage_fluxCutoff_le_exactRhs_of_parentCutoff
       (Q := Q) (R := R) (j := j) hR (a := a) (s := s) (flux := flux) (u := u)
       (G := G) (energy := energy) (η := η) (Acirc1 := Acirc1) (AcircS := AcircS)
       (C := C) hs0 hs1 hfluxMem hu hG hfluxEnergy hB hAcircS hBgConst hBgCent

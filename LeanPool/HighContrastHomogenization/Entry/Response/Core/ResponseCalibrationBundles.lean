@@ -47,7 +47,7 @@ Route: the Riccati identity `GeometricMean.geoMean_riccati` gives `M(E) <= E <= 
 (`p.response.transfer`); then `raw.calib_lo`/`raw.calib_hi` at `s`, the comparison `E_t <= E_s <=
 r E_t`
 of `response_imbalance_comparison`, and `GeometricMean.geoMean_mono`.  The congruence cost is
-`sqrt(r(1+xi)/(1-xi)) <= C(d)` because `xi <= 1/2` and `r < e^{d/2}` ; `D`
+`sqrt(r(1+xi)/(1-xi)) <= C(d)` because `xi <= 1/2` and `r < e^{d/2}`; `D`
 commutes with `M_0`.
 
 The premises `_hε`, `_hσ` are carried: without them `1 ≤ B` and `jStar ≤ s`
@@ -137,7 +137,8 @@ theorem response_calibrated_blocks (d : ℕ) (_hd : 2 ≤ d) (γ : ℝ)
             (1 - Real.sqrt S.eps0 * S.eps0)⁻¹ := by ring
   -- matrix data
   have hAf : (toFullBlockMat F).PosDef := posDef_toFullBlockMat raw.symm raw.pos
-  have hm : (explicitCanonicalMetric F).PosDef := Geometry.explicitCanonicalMetric_posDef raw.symm raw.pos
+  have hm : (explicitCanonicalMetric F).PosDef := Geometry.explicitCanonicalMetric_posDef
+    raw.symm raw.pos
   have hAt : (toFullBlockMat (respMean P jStar F t)).PosDef :=
     Annealed.adaptedMean_posDef d _hd P γ E Ψ Kg Src raw.stat raw.ell jStar raw.hj
       (explicitCanonicalMetric F) hm t
@@ -165,7 +166,8 @@ theorem response_calibrated_blocks (d : ℕ) (_hd : 2 ≤ d) (γ : ℝ)
   have hcal_hi : toFullBlockMat (respMean P jStar F s) ≤
       (1 + Real.sqrt ε * σ) • toFullBlockMat F := by
     have h := Analysis.matrixOrder_of_blockMatLoewnerLE hAs.isHermitian
-      ((Analysis.toFullBlockMat_isHermitian_iff _).2 (isSymmetricBlockMat_blockScale _ raw.symm)) raw.calib_hi
+      ((Analysis.toFullBlockMat_isHermitian_iff _).2 (isSymmetricBlockMat_blockScale _
+        raw.symm)) raw.calib_hi
     rwa [toFullBlockMat_blockScale] at h
   have hcal_lo : (1 - Real.sqrt ε * σ) • toFullBlockMat F ≤
       toFullBlockMat (respMean P jStar F s) := by
@@ -216,7 +218,8 @@ theorem response_calibrated_blocks (d : ℕ) (_hd : 2 ≤ d) (γ : ℝ)
     have hx := (GeometricMean.geoMeanPosDef hAf hBf).posSemidef.conjTranspose_mul_mul_same
       (toFullBlockMat (respG F))
     simpa only [Matrix.conjTranspose_eq_transpose_of_trivial] using hx
-  have hlow := respCalib_lower (GeometricMean.geoMeanPosDef hAt hBt).posSemidef hGM hCpos hbaC hNf hNtA
+  have hlow := respCalib_lower (GeometricMean.geoMeanPosDef hAt hBt).posSemidef hGM hCpos hbaC
+    hNf hNtA
   have hupt := respCalib_upper hM0psd hGM (Real.sqrt_nonneg (respKappa P jStar F t)) habC
     hAtN hNt
   have hups := respCalib_upper hM0psd hGM (Real.sqrt_nonneg (respKappa P jStar F s)) hcsC
@@ -428,7 +431,8 @@ theorem vecDot_skew_self_of_matTranspose (h : Mat d) (hh : matTranspose h = -h) 
   rw [hv]; linarith only [key]
 
 /-- The reciprocal normalizations: `p. q = e. e`. -/
-private theorem vecDot_respP_respQ_eq_vecDot_self {A : BlockMat d} (hM : (respM A).PosDef) (e : Vec d) :
+private theorem vecDot_respP_respQ_eq_vecDot_self {A : BlockMat d} (hM : (respM A).PosDef) (e :
+  Vec d) :
     vecDot (respP A e) (respQ A e) = vecDot e e := by
   have hherm : (matSqrt (respM A))ᵀ = matSqrt (respM A) := by
     have h := HCPolySupport.HighContrast.conjTranspose_matSqrt hM.posSemidef

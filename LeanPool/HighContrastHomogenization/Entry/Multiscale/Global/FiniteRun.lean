@@ -147,9 +147,11 @@ theorem explicitCanonicalMetric_projectiveDistance_le_logDet {d : ℕ} (F G : Bl
     have htriv : ∀ A B : Mat 0, MatLoewnerLE A B := by
       intro A B x
       simp [vecDot]
-    have hb : specBound (normalizedMat (explicitCanonicalMetric F) (explicitCanonicalMetric G)) = 0 :=
+    have hb : specBound (normalizedMat (explicitCanonicalMetric F) (explicitCanonicalMetric G))
+      = 0 :=
       le_antisymm (specBound_le le_rfl (htriv _ _)) (specBound_nonneg _)
-    have hs : specMin (normalizedMat (explicitCanonicalMetric F) (explicitCanonicalMetric G)) = 0 := by
+    have hs : specMin (normalizedMat (explicitCanonicalMetric F) (explicitCanonicalMetric G)) =
+      0 := by
       have hset : {t : ℝ | MatLoewnerLE (t • (1 : Mat 0))
           (normalizedMat (explicitCanonicalMetric F) (explicitCanonicalMetric G))} = Set.univ :=
         Set.eq_univ_of_forall fun t => htriv _ _
@@ -167,12 +169,14 @@ theorem explicitCanonicalMetric_projectiveDistance_le_logDet {d : ℕ} (F G : Bl
     norm_num
   · have : NeZero d := ⟨hdpos.ne'⟩
     obtain ⟨hhi, hloss⟩ :=
-      BlockGeometricMean.explicitCanonicalMetric_projectiveDistance_le_logDet_aux_upper F G hFs hF hGs hG hGF
+      BlockGeometricMean.explicitCanonicalMetric_projectiveDistance_le_logDet_aux_upper F G hFs
+        hF hGs hG hGF
     have hκ1 : (1 : ℝ) ≤ Real.exp (blockLogDet F - blockLogDet G) := by
       rw [← Real.exp_zero]
       exact Real.exp_le_exp.mpr hloss
     have hlo : BlockMatLoewnerLE (blockScale (1 : ℝ) G) F :=
-      BlockGeometricMean.explicitCanonicalMetric_projectiveDistance_le_logDet_aux_scale_one_le G F hGs hG hFs hF hGF
+      BlockGeometricMean.explicitCanonicalMetric_projectiveDistance_le_logDet_aux_scale_one_le G
+        F hGs hG hFs hF hGF
     have hhi' : BlockMatLoewnerLE F
         (blockScale (Real.exp (blockLogDet F - blockLogDet G) * 1) G) := by
       rw [mul_one]
@@ -185,10 +189,12 @@ theorem explicitCanonicalMetric_projectiveDistance_le_logDet {d : ℕ} (F G : Bl
 at most `½ log((1+δ)/(1-δ))`; same statement as
 `explicitCanonicalMetric_projectiveDistance_le_of_sandwich`
 in `HCPoly/Entry/InitialFixedGridScale.lean`, proved here from `BlockGeometricMean.sandwich`. -/
-theorem explicitCanonicalMetric_projectiveDistance_le_of_deltaSandwich {d : ℕ} (F G : BlockMat d) (δ : ℝ)
+theorem explicitCanonicalMetric_projectiveDistance_le_of_deltaSandwich {d : ℕ} (F G : BlockMat
+  d) (δ : ℝ)
     (hδ : δ ∈ Set.Ico (0 : ℝ) 1) (hFs : IsSymmetricBlockMat F) (hF : Book.Ch02.BlockPosDef F)
     (hGs : IsSymmetricBlockMat G) (hG : Book.Ch02.BlockPosDef G)
-    (h₁ : BlockMatLoewnerLE (blockScale (1 - δ) F) G) (h₂ : BlockMatLoewnerLE G (blockScale (1 + δ) F)) :
+    (h₁ : BlockMatLoewnerLE (blockScale (1 - δ) F) G) (h₂ : BlockMatLoewnerLE G (blockScale (1 +
+      δ) F)) :
     projectiveDistance (explicitCanonicalMetric F) (explicitCanonicalMetric G) ≤
       1 / 2 * Real.log ((1 + δ) / (1 - δ)) := by
   obtain ⟨hδ0, hδ1⟩ := hδ
@@ -203,9 +209,11 @@ theorem explicitCanonicalMetric_projectiveDistance_le_of_deltaSandwich {d : ℕ}
     have htriv : ∀ A B : Mat 0, MatLoewnerLE A B := by
       intro A B x
       simp [vecDot]
-    have hb : specBound (normalizedMat (explicitCanonicalMetric F) (explicitCanonicalMetric G)) = 0 :=
+    have hb : specBound (normalizedMat (explicitCanonicalMetric F) (explicitCanonicalMetric G))
+      = 0 :=
       le_antisymm (specBound_le le_rfl (htriv _ _)) (specBound_nonneg _)
-    have hs : specMin (normalizedMat (explicitCanonicalMetric F) (explicitCanonicalMetric G)) = 0 := by
+    have hs : specMin (normalizedMat (explicitCanonicalMetric F) (explicitCanonicalMetric G)) =
+      0 := by
       have hset : {t : ℝ | MatLoewnerLE (t • (1 : Mat 0))
           (normalizedMat (explicitCanonicalMetric F) (explicitCanonicalMetric G))} = Set.univ :=
         Set.eq_univ_of_forall fun t => htriv _ _

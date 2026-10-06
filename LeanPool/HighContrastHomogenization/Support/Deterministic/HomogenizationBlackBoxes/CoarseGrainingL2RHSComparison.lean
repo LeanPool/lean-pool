@@ -271,7 +271,7 @@ theorem localizedCoarseFluxResponseRHSEnergyBound_le_coarseGrainingL2FluxDefectE
 Ellipticity-facing version of
 `localizedCoarseFluxResponseRHSEnergyBound_le_coarseGrainingL2FluxDefectEnergyTerm`.
 -/
-theorem localizedCoarseFluxResponseRHSEnergyBound_le_coarseGrainingL2FluxDefectEnergyTerm_of_isEllipticFieldOn
+theorem CoarseFluxRHSEnergyBound_le_coarseGrainingL2FluxDefectEnergyTerm
     {d : ℕ} (Q : TriadicCube d) (a : CoeffField d) (a0 : Mat d)
     {s : ℝ} (j : ℕ) (gradU : Vec d → Vec d) {lam Lam : ℝ}
     (hs : 0 < s)
@@ -373,7 +373,7 @@ theorem localizedCoarseFluxResponseRHSPoincareCorrectionBound_le_mul_of_pointwis
 Component-average forcing correction bound with the descendant-localized
 positive-Besov forcing norm kept visible.
 -/
-theorem localizedCoarseFluxResponseRHSForcingCorrectionBound_le_coeffSum_mul_localizedPositiveBesovForcing_of_pointwise_le
+theorem FluxForcingCorrectionBound_le_coeffSum_mul_PositiveBesovForcing
     {d : ℕ} (Q : TriadicCube d) (a : CoeffField d) (a0 : Mat d)
     {s : ℝ} (j : ℕ) (g : Vec d → Vec d) {C₁ C₂ C₃ : ℝ}
     (hC₁_nonneg : 0 ≤ C₁) (hC₂_nonneg : 0 ≤ C₂) (hC₃_nonneg : 0 ≤ C₃)
@@ -450,7 +450,7 @@ theorem localizedCoarseFluxResponseRHSForcingCorrectionBound_le_coeffSum_mul_loc
 Component-average forcing correction bound with the inverse depth weight
 exposed after applying positive-Besov localization.
 -/
-theorem localizedCoarseFluxResponseRHSForcingCorrectionBound_le_coeffSum_mul_depthWeight_inv_mul_parent_of_pointwise_le_of_bddAbove
+theorem FluxForcingCorrectionBound_le_coeffSum_mul_depthWeight_inv_mul_parent
     {d : ℕ} (Q : TriadicCube d) (a : CoeffField d) (a0 : Mat d)
     {s : ℝ} (j : ℕ) (g : Vec d → Vec d) {C₁ C₂ C₃ : ℝ}
     (hC₁_nonneg : 0 ≤ C₁) (hC₂_nonneg : 0 ≤ C₂) (hC₃_nonneg : 0 ≤ C₃)
@@ -496,7 +496,7 @@ theorem localizedCoarseFluxResponseRHSForcingCorrectionBound_le_coeffSum_mul_dep
           localizedCoarseFluxResponseRHSWeakFluxCorrectionBound Q a s j g +
           localizedCoarseFluxResponseRHSPoincareCorrectionBound Q a a0 s j g ≤
         (C₁ + C₂ + C₃) * A :=
-    localizedCoarseFluxResponseRHSForcingCorrectionBound_le_coeffSum_mul_localizedPositiveBesovForcing_of_pointwise_le
+    FluxForcingCorrectionBound_le_coeffSum_mul_PositiveBesovForcing
       Q a a0 j g hC₁_nonneg hC₂_nonneg hC₃_nonneg hresponse_nonneg
       hweak_nonneg hpoincare_nonneg hresponse_point hweak_point
       hpoincare_point
@@ -515,7 +515,7 @@ Two-exponent component-average forcing correction bound.  The flux-response
 components are evaluated at exponent `s`, while the force is measured in the
 stronger positive-Besov seminorm at exponent `t`.
 -/
-theorem localizedCoarseFluxResponseRHSForcingCorrectionBound_le_coeffSum_mul_localizedPositiveBesovForcing_forceExponent_of_pointwise_le
+theorem FluxForcingCorrectionBound_le_coeffSum_mul_PositiveBesovForcing_forceExponent
     {d : ℕ} (Q : TriadicCube d) (a : CoeffField d) (a0 : Mat d)
     {s t : ℝ} (j : ℕ) (g : Vec d → Vec d) {C₁ C₂ C₃ : ℝ}
     (hC₁_nonneg : 0 ≤ C₁) (hC₂_nonneg : 0 ≤ C₂) (hC₃_nonneg : 0 ≤ C₃)
@@ -596,7 +596,7 @@ theorem localizedCoarseFluxResponseRHSForcingCorrectionBound_le_coeffSum_mul_loc
 Two-exponent component-average forcing correction bound with the inverse
 depth weight exposed at the force exponent.
 -/
-theorem localizedCoarseFluxResponseRHSForcingCorrectionBound_le_coeffSum_mul_depthWeight_inv_mul_parent_forceExponent_of_pointwise_le_of_bddAbove
+theorem FluxForcingCorrectionBound_le_coeffSum_mul_depthWeight_inv_mul_parentExponent
     {d : ℕ} (Q : TriadicCube d) (a : CoeffField d) (a0 : Mat d)
     {s t : ℝ} (j : ℕ) (g : Vec d → Vec d) {C₁ C₂ C₃ : ℝ}
     (hC₁_nonneg : 0 ≤ C₁) (hC₂_nonneg : 0 ≤ C₂) (hC₃_nonneg : 0 ≤ C₃)
@@ -642,7 +642,7 @@ theorem localizedCoarseFluxResponseRHSForcingCorrectionBound_le_coeffSum_mul_dep
           localizedCoarseFluxResponseRHSWeakFluxCorrectionBound Q a s j g +
           localizedCoarseFluxResponseRHSPoincareCorrectionBound Q a a0 s j g ≤
         (C₁ + C₂ + C₃) * A :=
-    localizedCoarseFluxResponseRHSForcingCorrectionBound_le_coeffSum_mul_localizedPositiveBesovForcing_forceExponent_of_pointwise_le
+    FluxForcingCorrectionBound_le_coeffSum_mul_PositiveBesovForcing_forceExponent
       Q a a0 j g hC₁_nonneg hC₂_nonneg hC₃_nonneg hresponse_nonneg
       hweak_nonneg hpoincare_nonneg hresponse_point hweak_point
       hpoincare_point
@@ -662,7 +662,7 @@ forcing term once their pointwise descendant coefficients are bounded by the
 corresponding parent coefficients and the local positive-Besov squares average
 back to the parent seminorm.
 -/
-theorem localizedCoarseFluxResponseRHSForcingCorrectionBound_le_coarseGrainingL2FluxDefectForcingTerm_of_pointwise_parent_coeff_bounds
+theorem FluxForcingCorrectionBound_le_coarseGrainingL2FluxDefectForcingTerm_of_coeff
     {d : ℕ} (Q : TriadicCube d) (a : CoeffField d) (a0 : Mat d)
     {s : ℝ} (j : ℕ) (g : Vec d → Vec d)
     (hs : 0 < s)
@@ -810,9 +810,9 @@ theorem localizedCoarseFluxResponseRHSForcingCorrectionBound_le_coarseGrainingL2
 
 /--
 Bounded-positive-Besov version of
-`localizedCoarseFluxResponseRHSForcingCorrectionBound_le_coarseGrainingL2FluxDefectForcingTerm_of_pointwise_parent_coeff_bounds`.
+`FluxForcingCorrectionBound_le_coarseGrainingL2FluxDefectForcingTerm_of_coeff`.
 -/
-theorem localizedCoarseFluxResponseRHSForcingCorrectionBound_le_coarseGrainingL2FluxDefectForcingTerm_of_pointwise_parent_coeff_bounds_of_bddAbove
+theorem fluxForcingCorrectionBound_le_coarseGrainingForcingTerm_of_parentBounds
     {d : ℕ} (Q : TriadicCube d) (a : CoeffField d) (a0 : Mat d)
     {s : ℝ} (j : ℕ) (g : Vec d → Vec d)
     (hs : 0 < s)
@@ -850,7 +850,7 @@ theorem localizedCoarseFluxResponseRHSForcingCorrectionBound_le_coarseGrainingL2
         localizedCoarseFluxResponseRHSWeakFluxCorrectionBound Q a s j g +
         localizedCoarseFluxResponseRHSPoincareCorrectionBound Q a a0 s j g ≤
       coarseGrainingL2FluxDefectForcingTerm Q a a0 s j g :=
-  localizedCoarseFluxResponseRHSForcingCorrectionBound_le_coarseGrainingL2FluxDefectForcingTerm_of_pointwise_parent_coeff_bounds
+  FluxForcingCorrectionBound_le_coarseGrainingL2FluxDefectForcingTerm_of_coeff
     Q a a0 j g hs
     (cubeBesovPositiveVectorSeminormTwo_nonneg_of_bddAbove Q s g hgBdd)
     (descendantsAverage_sq_cubeBesovPositiveVectorSeminormTwo_le_parent_of_bddAbove
@@ -979,7 +979,7 @@ theorem localizedCoarseFluxResponseRHSBound_le_energy_add_forcing_of_component_a
 Scale-sharp localized RHS comparison with an arbitrary nonnegative descendant
 coefficient envelope for the three forcing correction components.
 -/
-theorem localizedCoarseFluxResponseRHSBound_le_energy_add_coeffSum_mul_depthWeight_inv_mul_parent_of_pointwise_le_of_bddAbove
+theorem CoarseFluxRHSBound_le_energy_add_coeffSum_mul_depthWeight_inv_mul_parent
     {d : ℕ} (Q : TriadicCube d) (a : CoeffField d) (a0 : Mat d)
     {s : ℝ} (j : ℕ) (gradU g : Vec d → Vec d) {E C₁ C₂ C₃ : ℝ}
     (hC₁_nonneg : 0 ≤ C₁) (hC₂_nonneg : 0 ≤ C₂) (hC₃_nonneg : 0 ≤ C₃)
@@ -1026,7 +1026,7 @@ theorem localizedCoarseFluxResponseRHSBound_le_energy_add_coeffSum_mul_depthWeig
       Q a a0 j gradU g henergy_nonneg hresponse_nonneg hweak_nonneg
       hpoincare_nonneg henergy ?_
   exact
-    localizedCoarseFluxResponseRHSForcingCorrectionBound_le_coeffSum_mul_depthWeight_inv_mul_parent_of_pointwise_le_of_bddAbove
+    FluxForcingCorrectionBound_le_coeffSum_mul_depthWeight_inv_mul_parent
       Q a a0 j g hC₁_nonneg hC₂_nonneg hC₃_nonneg hGlobalBdd
       hLocalBdd hresponse_nonneg hweak_nonneg hpoincare_nonneg
       hresponse_point hweak_point hpoincare_point
@@ -1036,7 +1036,7 @@ Two-exponent scale-sharp localized RHS comparison with an arbitrary
 nonnegative descendant coefficient envelope for the forcing correction
 components.
 -/
-theorem localizedCoarseFluxResponseRHSBound_le_energy_add_coeffSum_mul_depthWeight_inv_mul_parent_forceExponent_of_pointwise_le_of_bddAbove
+theorem CoarseFluxRHSBound_le_energy_add_coeffSum_mul_depthWeight_inv_mul_parentExponent
     {d : ℕ} (Q : TriadicCube d) (a : CoeffField d) (a0 : Mat d)
     {s t : ℝ} (j : ℕ) (gradU g : Vec d → Vec d) {E C₁ C₂ C₃ : ℝ}
     (hC₁_nonneg : 0 ≤ C₁) (hC₂_nonneg : 0 ≤ C₂) (hC₃_nonneg : 0 ≤ C₃)
@@ -1083,7 +1083,7 @@ theorem localizedCoarseFluxResponseRHSBound_le_energy_add_coeffSum_mul_depthWeig
       Q a a0 j gradU g henergy_nonneg hresponse_nonneg hweak_nonneg
       hpoincare_nonneg henergy ?_
   exact
-    localizedCoarseFluxResponseRHSForcingCorrectionBound_le_coeffSum_mul_depthWeight_inv_mul_parent_forceExponent_of_pointwise_le_of_bddAbove
+    FluxForcingCorrectionBound_le_coeffSum_mul_depthWeight_inv_mul_parentExponent
       Q a a0 j g hC₁_nonneg hC₂_nonneg hC₃_nonneg hGlobalBdd
       hLocalBdd hresponse_nonneg hweak_nonneg hpoincare_nonneg
       hresponse_point hweak_point hpoincare_point
@@ -1092,7 +1092,7 @@ theorem localizedCoarseFluxResponseRHSBound_le_energy_add_coeffSum_mul_depthWeig
 End-to-end localized comparison corridor with the scale-sharp forcing
 localization kept in the final scalar bound.
 -/
-theorem solution_diff_l2_le_dualityConstant_mul_energy_add_coeffSum_mul_depthWeight_inv_mul_parent_of_descendant_coarseFluxResponseRHSBound_of_pointwise_le_of_bddAbove
+theorem solution_diff_l2_le_dualityConstant_mul_energy_add_weightedParent
     {d : ℕ} [NeZero d] {Cdual : ℝ}
     (hdual : ScalarSolutionComparisonDualityEstimate d Cdual)
     (Q : TriadicCube d) (a : CoeffField d) (a0 : Mat d) (sigma0 : ℝ)
@@ -1155,14 +1155,14 @@ theorem solution_diff_l2_le_dualityConstant_mul_energy_add_coeffSum_mul_depthWei
           (fluxDefect a (scalarMatrix (d := d) sigma0) gradU) j
           ≤ localizedCoarseFluxResponseRHSBound Q a
               (scalarMatrix (d := d) sigma0) s j gradU g :=
-            localizedFluxDefectNegativeBesovAverageTwo_fluxDefect_le_localizedCoarseFluxResponseRHSBound_of_descendant_bounds
+            negativeBesovFluxAverage_le_coarseFluxRHSBound
               Q a (scalarMatrix (d := d) sigma0) s gradU g j hdefect_bdd hRhs
       _ ≤
         E +
           (C₁ + C₂ + C₃) *
             ((Real.rpow (3 : ℝ) (s * (j : ℝ)))⁻¹ *
               cubeBesovPositiveVectorSeminormTwo Q s g) :=
-          localizedCoarseFluxResponseRHSBound_le_energy_add_coeffSum_mul_depthWeight_inv_mul_parent_of_pointwise_le_of_bddAbove
+          CoarseFluxRHSBound_le_energy_add_coeffSum_mul_depthWeight_inv_mul_parent
             Q a (scalarMatrix (d := d) sigma0) j gradU g hC₁_nonneg hC₂_nonneg
             hC₃_nonneg hGlobalBdd hLocalBdd
             (fun R _ =>
@@ -1188,7 +1188,7 @@ Scalar §3.3 RHS comparison from localized component-average bounds.  This is
 the `L²` version of the component-envelope bridge, and is weaker than asking
 for pointwise descendant domination.
 -/
-theorem localizedCoarseFluxResponseRHSBound_le_coarseGrainingL2FluxDefectBound_of_component_average_bounds
+theorem localizedCoarseFluxRhs_le_fluxDefect_of_componentAverages
     {d : ℕ} (Q : TriadicCube d) (a : CoeffField d) (a0 : Mat d)
     {s : ℝ} (j : ℕ) (gradU g : Vec d → Vec d)
     (henergy_nonneg :
@@ -1224,7 +1224,7 @@ theorem localizedCoarseFluxResponseRHSBound_le_coarseGrainingL2FluxDefectBound_o
 Bounded-positive-Besov version of the localized component-average scalar
 comparison.
 -/
-theorem localizedCoarseFluxResponseRHSBound_le_coarseGrainingL2FluxDefectBound_of_component_average_bounds_of_bddAbove
+theorem CoarseFluxRHSBound_le_coarseGrainingFluxBound_of_boundedAbove
     {d : ℕ} (Q : TriadicCube d) (a : CoeffField d) (a0 : Mat d)
     {s : ℝ} (j : ℕ) (gradU g : Vec d → Vec d)
     (hs : 0 < s)
@@ -1242,7 +1242,7 @@ theorem localizedCoarseFluxResponseRHSBound_le_coarseGrainingL2FluxDefectBound_o
         coarseGrainingL2FluxDefectForcingTerm Q a a0 s j g) :
     localizedCoarseFluxResponseRHSBound Q a a0 s j gradU g ≤
       coarseGrainingL2FluxDefectBound Q a a0 s j gradU g :=
-  localizedCoarseFluxResponseRHSBound_le_coarseGrainingL2FluxDefectBound_of_component_average_bounds
+  localizedCoarseFluxRhs_le_fluxDefect_of_componentAverages
     Q a a0 j gradU g
     (fun R _ => coarseFluxResponseRHSEnergyBound_nonneg R a a0 gradU hs)
     (fun R hR =>
@@ -1260,7 +1260,7 @@ theorem localizedCoarseFluxResponseRHSBound_le_coarseGrainingL2FluxDefectBound_o
 §3.3 wrapper where the scalar RHS-average comparison is supplied by localized
 component-average bounds.
 -/
-theorem solution_diff_l2_le_coarseGrainingL2Rhs_of_descendant_coarseFluxResponseRHSBound_of_component_average_bounds
+theorem solution_diff_l2_le_coarseGrainingL2Rhs_of_descendant_fluxRHSBound_of_average
     {d : ℕ} [NeZero d] {Cdual : ℝ}
     (hdual : ScalarSolutionComparisonDualityEstimate d Cdual)
     (Q : TriadicCube d) (a : CoeffField d) (a0 : Mat d) (sigma0 : ℝ)
@@ -1308,7 +1308,7 @@ theorem solution_diff_l2_le_coarseGrainingL2Rhs_of_descendant_coarseFluxResponse
     hdual Q a a0 sigma0 gradU gradV g j hs_pos hs_lt_one hsigma0 ha0eq hEll
     ha0 ha0symm hcomparison
     hdefect_bdd hRhs
-    (localizedCoarseFluxResponseRHSBound_le_coarseGrainingL2FluxDefectBound_of_component_average_bounds
+    (localizedCoarseFluxRhs_le_fluxDefect_of_componentAverages
       Q a a0 j gradU g henergy_nonneg hresponse_nonneg hweak_nonneg
       hpoincare_nonneg henergy hforcing)
 

@@ -21,7 +21,7 @@ namespace HCPolySupport
 
 noncomputable section
 
-theorem descendantsAverage_sq_cubeBesovNegativeVectorSeminormTwo_le_discount_next_add_error_of_localBound
+theorem descendantAverage_sq_negativeVectorSeminorm_le_discountNext_error
     {d : ℕ} (Q : TriadicCube d) (s : ℝ) (u : Vec d → Vec d)
     (j : ℕ) (E : TriadicCube d → ℝ)
     (hlocal :

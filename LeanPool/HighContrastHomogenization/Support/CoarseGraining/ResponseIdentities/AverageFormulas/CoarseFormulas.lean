@@ -559,7 +559,7 @@ theorem basic_cg_identities_average_flux_formula_canonical_of_isResponseMaximize
       U a hS hK hSigma p q hInt u hmax uFlux hmaxFlux
 
 theorem
-  basic_cg_identities_average_gradient_formula_deterministicCoarseBlockMatrix_of_isResponseMaximizer
+  averageGradient_eq_deterministicFormula_of_responseMaximizer
     {d : ℕ} (U : Set (Vec d)) (a : CoeffField d) {sigmaStar kappa : Mat d}
     (hS : IsSigmaStarCoarse U a sigmaStar) (hK : IsKappaCoarse U a sigmaStar kappa)
     (hdet : IsUnit sigmaStar.det)
@@ -630,7 +630,7 @@ theorem basic_cg_identities_average_gradient_formula_coarseBlockMatrix_of_isResp
         matVecMul (coarseBlockMatrix U a).lowerLeft p := by
   rw [coarseBlockMatrix_eq_deterministicCoarseBlockMatrix_of_isCoarseBlockMatrix hA]
   exact
-    basic_cg_identities_average_gradient_formula_deterministicCoarseBlockMatrix_of_isResponseMaximizer
+    averageGradient_eq_deterministicFormula_of_responseMaximizer
     U a hS hK hdet p q hInt u hmax uGrad hmaxGrad
 
 theorem basic_cg_identities_average_flux_formula_coarseBlockMatrix_of_isResponseMaximizer

@@ -203,8 +203,20 @@ theorem assemblyLowerEllipticityFactor_le
       (α := α) (τ := τ) (r := r) (X := X) (aω := aω)
       (m := m) ha hr hlambda
 
+private theorem product_of_lower_and_error_bounds
+    {coefficient lower lowerEnvelope error errorEnvelope : ℝ}
+    (hcoefficient : 0 ≤ coefficient) (herror : 0 ≤ error)
+    (hlowerEnvelope : 0 ≤ lowerEnvelope)
+    (hlower : lower ≤ lowerEnvelope) (hbound : error ≤ errorEnvelope) :
+    coefficient * lower * error ≤ coefficient * lowerEnvelope * errorEnvelope := by
+  exact (mul_le_mul_of_nonneg_right
+    (mul_le_mul_of_nonneg_left hlower hcoefficient) herror).trans
+    (mul_le_mul_of_nonneg_left hbound (mul_nonneg hcoefficient hlowerEnvelope))
+
 /-- Substitute the controlled factors into the repaired scale-separated Ch3
 deterministic RHS. -/
+/-- Finite-`sigma` wrapper for the scale-separated deterministic RHS
+substitution. -/
 theorem assemblyControlledFactors_lhs_le_compressedTwoExponentRHS_ofScalar
     {d : ℕ} [NeZero d] {σ0 : ℝ} (hσ0 : 0 < σ0)
     {Ccg α τ s r r₂ : ℝ} {X : RegCoeffField d → ℝ}
@@ -327,32 +339,8 @@ theorem assemblyControlledFactors_lhs_le_compressedTwoExponentRHS_ofScalar
       exact mul_nonneg
         (mul_nonneg (Real.rpow_nonneg hr.le _) hMhalf_nonneg)
         hdepthHalf_nonneg
-    calc
-      Real.rpow r (-(5 / 2 : ℝ)) *
-          Ch03.constantCoeffMatrixNormHalf a0 *
-          Ch03.coarseGrainingDepthHalfWeight r j *
-          Ch03.poincareLowerEllipticityFactor Q F (r / 2) (.finite 2) *
-          Ch03.coarseGrainingHomogenizationErrorAtDepth Q F a0 r j
-          ≤
-        Real.rpow r (-(5 / 2 : ℝ)) *
-          Ch03.constantCoeffMatrixNormHalf a0 *
-          Ch03.coarseGrainingDepthHalfWeight r j *
-          Lenv *
-          Ch03.coarseGrainingHomogenizationErrorAtDepth Q F a0 r j := by
-            exact mul_le_mul_of_nonneg_right
-              (mul_le_mul_of_nonneg_left hLower hcoeff) hH_nonneg
-      _ ≤
-        Real.rpow r (-(5 / 2 : ℝ)) *
-          Ch03.constantCoeffMatrixNormHalf a0 *
-          Ch03.coarseGrainingDepthHalfWeight r j *
-          Lenv *
-          (Ch03.coarseGrainingDepthWeight r j * B₁) := by
-            have hcoeff₂ :
-                0 ≤ Real.rpow r (-(5 / 2 : ℝ)) *
-                  Ch03.constantCoeffMatrixNormHalf a0 *
-                  Ch03.coarseGrainingDepthHalfWeight r j *
-                  Lenv := mul_nonneg hcoeff hLenv_nonneg
-            exact mul_le_mul_of_nonneg_left hH hcoeff₂
+    exact product_of_lower_and_error_bounds
+      hcoeff hH_nonneg hLenv_nonneg hLower hH
   have hterm₂b :
       Real.rpow r (-(5 / 2 : ℝ)) *
           Ch03.coarseGrainingDepthWeight r j *
@@ -435,8 +423,6 @@ theorem assemblyControlledFactors_lhs_le_compressedTwoExponentRHS_ofScalar
       (mul_le_mul_of_nonneg_left hbracket hCcg_nonneg) houter_nonneg
   exact hcomparison.trans hgeneral_le
 
-/-- Finite-`sigma` wrapper for the scale-separated deterministic RHS
-substitution. -/
 theorem assemblyControlledFactors_lhs_le_compressedTwoExponentRHS
     {d : ℕ} [NeZero d]
     {P : Ch04.RestrictionCoeffLaw d} (hP : Ch04.RestrictionLawCarrier P)

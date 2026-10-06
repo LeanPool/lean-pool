@@ -189,7 +189,8 @@ theorem lqSchattenNorm_congr_le {d : ℕ} {P : Measure (CoeffSpace d)} {N : ℝ}
     apply integral_nonneg_of_ae
     filter_upwards [hH.symmetric] with a ha
     exact Real.rpow_nonneg (absSchattenNorm_nonneg ((toFullBlockMat_isHermitian_iff _).2 ha) hN) _
-  have hcInt : 0 ≤ ∫ a, absSchattenNorm N (ofFullBlockMat (Bᵀ * toFullBlockMat (H a) * B)) ^ N ∂P := by
+  have hcInt : 0 ≤ ∫ a, absSchattenNorm N (ofFullBlockMat (Bᵀ * toFullBlockMat (H a) * B)) ^ N
+    ∂P := by
     apply integral_nonneg_of_ae
     filter_upwards [hc.symmetric] with a ha
     exact Real.rpow_nonneg (absSchattenNorm_nonneg ((toFullBlockMat_isHermitian_iff _).2 ha) hN) _

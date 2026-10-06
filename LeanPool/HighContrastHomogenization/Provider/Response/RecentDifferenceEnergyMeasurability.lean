@@ -543,7 +543,8 @@ theorem aestronglyMeasurable_recentDifferenceEnergy_alignedIndex [NeZero d] {q :
       (ne_of_lt (Recurrence.isOpenBoundedConvexDomain_adaptedCellAt hq s w).volume_lt_top)
   have hbase : Measurable fun b : CoeffSpace d =>
       recentDifferenceEnergy (Response.adaptedDomainAt hq s w) (Response.adaptedDomain hq t)
-        (b.coeffOn (Response.adaptedDomainAt hq s w)) (b.coeffOn (Response.adaptedDomain hq t)) p r :=
+        (b.coeffOn (Response.adaptedDomainAt hq s w)) (b.coeffOn (Response.adaptedDomain hq t))
+          p r :=
     measurable_recentDifferenceEnergy_coeffSpace
       (Recurrence.isOpenBoundedConvexDomain_adaptedCellAt hq s w).isOpen
       (Recurrence.isOpenBoundedConvexDomain_adaptedCellAt hq s w).isBoundedDomain hVvol
@@ -573,7 +574,8 @@ theorem aestronglyMeasurable_adjointRecentDifferenceEnergy_alignedIndex [NeZero 
       (ne_of_lt (Recurrence.isOpenBoundedConvexDomain_adaptedCellAt hq s w).volume_lt_top)
   have hbase : Measurable fun b : CoeffSpace d =>
       recentDifferenceEnergy (Response.adaptedDomainAt hq s w) (Response.adaptedDomain hq t)
-        (b.coeffOn (Response.adaptedDomainAt hq s w)) (b.coeffOn (Response.adaptedDomain hq t)) p r :=
+        (b.coeffOn (Response.adaptedDomainAt hq s w)) (b.coeffOn (Response.adaptedDomain hq t))
+          p r :=
     measurable_recentDifferenceEnergy_coeffSpace
       (Recurrence.isOpenBoundedConvexDomain_adaptedCellAt hq s w).isOpen
       (Recurrence.isOpenBoundedConvexDomain_adaptedCellAt hq s w).isBoundedDomain hVvol

@@ -62,7 +62,6 @@ private theorem sup'_abs_pow_le_sum_abs_pow
           exact Finset.single_le_sum (f := fun j => |X j ω| ^ p) (fun j hj => by positivity) hi
 
 private theorem integrable_sup'_abs_pow_of_integrable_abs_pow
-    [IsProbabilityMeasure μ]
     {X : ι → Ω → ℝ} {s : Finset ι} (hs : s.Nonempty) {p : ℕ}
     (h_meas : ∀ i, Measurable (X i))
     (hLp_int : ∀ i ∈ s, Integrable (fun ω => |X i ω| ^ p) μ) :
@@ -216,7 +215,7 @@ private theorem moment_two_le_sq_of_integral_abs_pow_rpow_inv_le
       simpa [ProbabilityTheory.moment, sq_abs] using hLp
     exact hmoment_lp.trans hK
   have hmoment_nonneg : 0 ≤ ProbabilityTheory.moment X 2 μ := by
-    simp [ProbabilityTheory.moment]
+    simp only [moment, Pi.pow_apply]
     positivity
   have hpow :
       ((ProbabilityTheory.moment X 2 μ) ^ (1 / (2 : ℝ))) ^ (2 : ℕ) ≤ K ^ 2 := by
@@ -229,7 +228,6 @@ private theorem moment_two_le_sq_of_integral_abs_pow_rpow_inv_le
   exact hmoment_eq ▸ hpow
 
 private theorem integral_sum_abs_pow_rpow_inv_le_card_rpow_mul
-    [IsProbabilityMeasure μ]
     {X : ι → Ω → ℝ} {s : Finset ι} {p : ℕ}
     (hp : 1 ≤ p)
     {K : ℝ} (hK_nonneg : 0 ≤ K)
@@ -352,7 +350,7 @@ theorem integral_abs_centeredFinsetSum_pow_rpow_inv_le_rosenthal_polynomial
 
 /-- Rosenthal's polynomial-moment corollary for finite sums of centered
 independent real random variables. -/
-theorem integral_abs_finsetSum_pow_rpow_inv_le_rosenthal_polynomial_of_iIndepFun_of_integral_eq_zero
+theorem integral_absSum_pow_rpow_inv_le_rosenthalPolynomial
     [IsProbabilityMeasure μ]
     {X : ι → Ω → ℝ} {s : Finset ι} (hs : s.Nonempty) {p : ℕ}
     (hp : 2 ≤ p)
@@ -378,7 +376,7 @@ theorem integral_abs_finsetSum_pow_rpow_inv_le_rosenthal_polynomial_of_iIndepFun
 /-- Uniform-`K` polynomial-moment Rosenthal corollary in the note-facing
 finite-sum form. -/
 theorem
-  integral_abs_finsetSum_pow_rpow_inv_le_rosenthal_uniform_polynomial_of_iIndepFun_of_integral_eq_zero
+  centeredIndependent_sum_moment_le_RosenthalBound
     [IsProbabilityMeasure μ]
     {X : ι → Ω → ℝ} {s : Finset ι} (hs : s.Nonempty) {p : ℕ} {K : ℝ}
     (hp : 2 ≤ p)
@@ -398,7 +396,7 @@ theorem
           4 * rosenthalBennettIntegralConst *
             (Real.sqrt p * Real.sqrt (∑ i ∈ s, ProbabilityTheory.moment (X i) 2 μ)) := by
     exact
-      integral_abs_finsetSum_pow_rpow_inv_le_rosenthal_polynomial_of_iIndepFun_of_integral_eq_zero
+      integral_absSum_pow_rpow_inv_le_rosenthalPolynomial
       (μ := μ) (X := X) (s := s) hs hp h_indep h_meas hLp_int hXmean
   have hLp_sum :
       (∑ i ∈ s, ∫ ω, |X i ω| ^ p ∂μ) ^ (1 / (p : ℝ)) ≤
@@ -469,7 +467,6 @@ private theorem sup'_abs_rpow_le_sum_abs_rpow
         (fun j hj => Real.rpow_nonneg (abs_nonneg _) _) hi
 
 private theorem integrable_sup'_abs_rpow_of_integrable_abs_rpow
-    [IsProbabilityMeasure μ]
     {X : ι → Ω → ℝ} {s : Finset ι} (hs : s.Nonempty) {p : ℝ}
     (hp : 0 ≤ p) (h_meas : ∀ i, Measurable (X i))
     (hLp_int : ∀ i ∈ s, Integrable (fun ω => |X i ω| ^ p) μ) :
@@ -596,7 +593,7 @@ private theorem moment_two_le_sq_of_integral_abs_rpow_rpow_inv_le
       simpa [ProbabilityTheory.moment, sq_abs] using hLp
     exact hmoment_lp.trans hK
   have hmoment_nonneg : 0 ≤ ProbabilityTheory.moment X 2 μ := by
-    simp [ProbabilityTheory.moment]
+    simp only [moment, Pi.pow_apply]
     positivity
   have hpow : ((ProbabilityTheory.moment X 2 μ) ^ (1 / (2 : ℝ))) ^ (2 : ℕ) ≤ K ^ 2 := by
     exact pow_le_pow_left₀ (by positivity) hroot 2
@@ -608,7 +605,6 @@ private theorem moment_two_le_sq_of_integral_abs_rpow_rpow_inv_le
   exact hmoment_eq ▸ hpow
 
 private theorem integral_sum_abs_rpow_rpow_inv_le_card_rpow_mul
-    [IsProbabilityMeasure μ]
     {X : ι → Ω → ℝ} {s : Finset ι} {p : ℝ} (hp : 1 ≤ p)
     {K : ℝ} (hK_nonneg : 0 ≤ K)
     (hK : ∀ i ∈ s, (∫ ω, |X i ω| ^ p ∂μ) ^ p⁻¹ ≤ K) :
@@ -743,7 +739,7 @@ theorem
 /-- Uniform real-exponent polynomial-moment Rosenthal corollary in the
 finite-sum form. -/
 theorem
-  integral_abs_finsetSum_rpow_rpow_inv_le_rosenthal_uniform_polynomial_of_iIndepFun_of_integral_eq_zero
+  integral_abs_finiteSum_rpow_rpow_inv_le_rosenthal_uniform_polynomial
     [IsProbabilityMeasure μ]
     {X : ι → Ω → ℝ} {s : Finset ι} (hs : s.Nonempty) {p K : ℝ}
     (hp : 2 ≤ p)

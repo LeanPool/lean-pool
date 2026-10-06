@@ -76,7 +76,7 @@ theorem responseJ_le_tsum_of_partition {d : ℕ} {ι : Type*} {s : Set ι} (hs :
   have hw := summable_volumeRatio (fun i hi => (hopen i hi).measurableSet) hsub hdisj
   have hwt := tsum_volumeRatio_eq_one hs hWvol (fun i hi => (hopen i hi).measurableSet)
     hsub hdisj hnull
-  have hr := summable_volumeRatio_mul_responseJ_of_isEllipticFieldOn_provider
+  have hr := summable_volumeWeightedResponseJ
     hs hopen hsub hdisj hEll p q
   let C : ℝ := lam⁻¹ * (Lam ^ 2 * vecNormSq p + vecNormSq q)
   have hlim := Tendsto.add hr.hasSum
@@ -90,7 +90,7 @@ theorem responseJ_le_tsum_of_partition {d : ℕ} {ι : Type*} {s : Set ι} (hs :
     exact hdisj i.2 j.2 (fun h => hij (Subtype.ext h))
   have hwF := sum_volumeRatio_add_remainder_eq_one F hWvol
     (fun i _ => (hopen i i.2).measurableSet) (fun i _ => hsub i i.2) hdF
-  have hrF := responseJ_le_sum_volumeRatio_mul_responseJ_add_defect_of_isEllipticFieldOn_provider
+  have hrF := responseJ_le_weightedSum_add_remainder
     F hWopen hWvol (fun i _ => hopen i i.2) (fun i _ => hsub i i.2) hdF hEll p q
   change ResponseJ W p q a ≤
     ∑ i ∈ F, (volume (U i)).toReal / (volume W).toReal * ResponseJ (U i) p q a +
@@ -134,7 +134,7 @@ theorem block_bound_of_response_partition {d : ℕ} {ι : Type*} {s : Set ι} (h
   have hw := summable_volumeRatio (fun i hi => (hopen i hi).measurableSet) hsub hdisj
   have hwt := tsum_volumeRatio_eq_one hs hWvol (fun i hi => (hopen i hi).measurableSet)
     hsub hdisj hnull
-  have hr := summable_volumeRatio_mul_responseJ_of_isEllipticFieldOn_provider
+  have hr := summable_volumeWeightedResponseJ
     hs hopen hsub hdisj hEll (-X.1) X.2
   have hUpper : Summable (fun i : s =>
       ((volume (U i)).toReal / (volume W).toReal * c i) * e -
@@ -153,8 +153,10 @@ theorem block_bound_of_response_partition {d : ℕ} {ι : Type*} {s : Set ι} (h
     have ht := mul_le_mul_of_nonneg_left (sub_le_sub_right hbi v) hw0
     dsimp [e, v]
     nlinarith only [ht]
-  rw [(hc.mul_right e).tsum_sub (hw.mul_right v), tsum_mul_right, tsum_mul_right, hwt, one_mul] at hle
-  have hparent := responseJ_le_tsum_of_partition hs hWopen hWvol hopen hsub hdisj hnull hEll (-X.1) X.2
+  rw [(hc.mul_right e).tsum_sub (hw.mul_right v), tsum_mul_right, tsum_mul_right, hwt, one_mul]
+    at hle
+  have hparent := responseJ_le_tsum_of_partition hs hWopen hWvol hopen hsub hdisj hnull hEll
+    (-X.1) X.2
   rw [hA] at hparent
   simp only [neg_neg, Prod.mk.eta] at hparent
   rw [quadratic_blockScale]
@@ -248,7 +250,8 @@ theorem blockOpNorm_le_scale_trace {d : ℕ} {A E : BlockMat d} {c : ℝ}
     blockOpNorm A ≤ c * blockTrace E := by
   have hpsd := fullBlock_posSemidef_of_pos hA hpos
   calc
-    blockOpNorm A ≤ absSchattenNorm 1 A := Analysis.blockOpNorm_le_absSchattenNorm hpsd.isHermitian le_rfl
+    blockOpNorm A ≤ absSchattenNorm 1 A := Analysis.blockOpNorm_le_absSchattenNorm
+      hpsd.isHermitian le_rfl
     _ ≤ blockTrace A := Analysis.absSchattenNorm_le_blockTrace hpsd le_rfl
     _ ≤ blockTrace (blockScale c E) := blockTrace_le_of_order horder
     _ = _ := by simp only [blockTrace, Matrix.trace, Matrix.diag,
@@ -509,10 +512,12 @@ theorem lqSchatten_tsum_convergence {d : ℕ} {ι : Type*} [Countable ι]
     simpa only [ENNReal.toReal_ofReal hN0] using h
   have hpowbound (s : Finset ι) : ∀ᵐ a ∂P, ‖absSchattenNorm N (D s a) ^ N‖ ≤ ‖C * X a‖ ^ N := by
     filter_upwards [hDs, hbound s] with a hs' hb'
-    have hn := Analysis.absSchattenNorm_nonneg ((Analysis.toFullBlockMat_isHermitian_iff _).2 (hs' s)) hN
+    have hn := Analysis.absSchattenNorm_nonneg ((Analysis.toFullBlockMat_isHermitian_iff _).2
+      (hs' s)) hN
     rw [Real.norm_eq_abs, abs_of_nonneg (Real.rpow_nonneg hn N)]
     exact Real.rpow_le_rpow hn (hb'.trans (le_abs_self _)) hN0
-  have hlim : ∀ᵐ a ∂P, Tendsto (fun s : Finset ι => absSchattenNorm N (D s a) ^ N) atTop (nhds 0) := by
+  have hlim : ∀ᵐ a ∂P, Tendsto (fun s : Finset ι => absSchattenNorm N (D s a) ^ N) atTop (nhds
+    0) := by
     filter_upwards [hseries, hDs] with a hsa hds
     have ht : Tendsto (fun s : Finset ι => (∑ i ∈ s, F i a) - ∑' i, F i a) atTop (nhds 0) := by
       simpa only [sub_self] using! hsa.hasSum.sub_const (∑' i, F i a)

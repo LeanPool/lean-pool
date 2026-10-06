@@ -677,7 +677,8 @@ theorem cellAverage_optimizerField_eq_canonical {d : ℕ} {U : Book.Ch02.Domain 
     (hu : IsResponseMaximizer (U : Set (Vec d)) p q b u) :
     cellAverage V (optimizerField b u)
       = cellAverage V (optimizerField f
-          (canonicalAHarmonicFunctionOfCoeffOn (coeffOnOfIsEllipticFieldOn hlam hle hEll) p q)) := by
+          (canonicalAHarmonicFunctionOfCoeffOn (coeffOnOfIsEllipticFieldOn hlam hle hEll) p q))
+            := by
   classical
   let v : ScalarCanonicalMaximizer (U : Set (Vec d)) p q b :=
     ScalarCanonicalMaximizer.ofIsResponseMaximizer u hu

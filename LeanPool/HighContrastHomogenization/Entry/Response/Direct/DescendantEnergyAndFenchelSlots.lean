@@ -198,7 +198,8 @@ theorem integrableOn_cross_optimizerField_respCoeffMinus_adaptedCellAtCenter {d 
           + vecDot Y.1 (optimizerField (respCoeffMinus F a) u x).2|)
         (adaptedCellAtCenter (respGrid jStar F) (t - (m : ℤ)) W) := by
   obtain ⟨hgrad, hflux⟩ :=
-    integrableOn_vecDot_optimizerField_respCoeffMinus_adaptedCellAtCenter jStar hjStar F hm t m a u hW
+    integrableOn_vecDot_optimizerField_respCoeffMinus_adaptedCellAtCenter jStar hjStar F hm t m
+      a u hW
   constructor
   · simpa [MeasureTheory.IntegrableOn] using! (hgrad Y.2).integrable.add (hflux Y.1).integrable
   · simpa [MeasureTheory.IntegrableOn, Pi.add_apply] using
@@ -219,7 +220,8 @@ theorem integrableOn_cross_optimizerField_respCoeffPlus_adaptedCellAtCenter {d :
           + vecDot Y.1 (optimizerField (respCoeffPlus F a) u x).2|)
         (adaptedCellAtCenter (respGrid jStar F) (t - (m : ℤ)) W) := by
   obtain ⟨hgrad, hflux⟩ :=
-    integrableOn_vecDot_optimizerField_respCoeffPlus_adaptedCellAtCenter jStar hjStar F hm t m a u hW
+    integrableOn_vecDot_optimizerField_respCoeffPlus_adaptedCellAtCenter jStar hjStar F hm t m a
+      u hW
   constructor
   · simpa [MeasureTheory.IntegrableOn] using! (hgrad Y.2).integrable.add (hflux Y.1).integrable
   · simpa [MeasureTheory.IntegrableOn, Pi.add_apply] using
@@ -241,7 +243,7 @@ cell is the terminal cell energy (exact partition averaging), and for the maximi
 cell energy is twice the response:
 
 ```
-⨍_{U_t} ⟨∇u_t, S ∇u_t⟩ = 2 J(U_t, p, q^∓ ; a_∓).
+⨍_{U_t} ⟨∇u_t, S ∇u_t⟩ = 2 J(U_t, p, q^∓; a_∓).
 ```
 
 Taking expectations, the annealed flat average of twice the half cell energies is exactly
@@ -603,7 +605,8 @@ theorem integral_avsum_two_mul_doubledEnergy_eq_respEJMinus {d : ℕ} [NeZero d]
           2 * (2 * volumeAverage (adaptedCellAtCenter (respGrid jStar F) (t - (m : ℤ)) W)
             (scalarVariationEnergyIntegrand (respCoeffMinus F a) (uM a)))
         = 4 * ((((triadicIndexBox d m).card : ℝ))⁻¹ * ∑ W ∈ triadicIndexBox d m,
-            2 * ((1 / 2 : ℝ) * volumeAverage (adaptedCellAtCenter (respGrid jStar F) (t - (m : ℤ)) W)
+            2 * ((1 / 2 : ℝ) * volumeAverage (adaptedCellAtCenter (respGrid jStar F) (t - (m :
+              ℤ)) W)
               (scalarVariationEnergyIntegrand (respCoeffMinus F a) (uM a)))) := by
     intro a
     have h1 : ∑ W ∈ triadicIndexBox d m,
@@ -642,7 +645,8 @@ theorem integral_avsum_two_mul_doubledEnergy_eq_respEJPlus {d : ℕ} [NeZero d]
           2 * (2 * volumeAverage (adaptedCellAtCenter (respGrid jStar F) (t - (m : ℤ)) W)
             (scalarVariationEnergyIntegrand (respCoeffPlus F a) (uP a)))
         = 4 * ((((triadicIndexBox d m).card : ℝ))⁻¹ * ∑ W ∈ triadicIndexBox d m,
-            2 * ((1 / 2 : ℝ) * volumeAverage (adaptedCellAtCenter (respGrid jStar F) (t - (m : ℤ)) W)
+            2 * ((1 / 2 : ℝ) * volumeAverage (adaptedCellAtCenter (respGrid jStar F) (t - (m :
+              ℤ)) W)
               (scalarVariationEnergyIntegrand (respCoeffPlus F a) (uP a)))) := by
     intro a
     have h1 : ∑ W ∈ triadicIndexBox d m,

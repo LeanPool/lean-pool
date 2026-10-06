@@ -79,8 +79,10 @@ theorem toFullBlockMat_respM0_inv {F : BlockMat d}
       = (toFullBlockMat (respM0 F))⁻¹ := by
   have hu : IsUnit (explicitCanonicalMetric F).det :=
     (Matrix.isUnit_iff_isUnit_det _).mp hm.isUnit
-  have hmm : (explicitCanonicalMetric F)⁻¹ * explicitCanonicalMetric F = 1 := Matrix.nonsing_inv_mul _ hu
-  have hmm' : explicitCanonicalMetric F * (explicitCanonicalMetric F)⁻¹ = 1 := Matrix.mul_nonsing_inv _ hu
+  have hmm : (explicitCanonicalMetric F)⁻¹ * explicitCanonicalMetric F = 1 :=
+    Matrix.nonsing_inv_mul _ hu
+  have hmm' : explicitCanonicalMetric F * (explicitCanonicalMetric F)⁻¹ = 1 :=
+    Matrix.mul_nonsing_inv _ hu
   refine (Matrix.inv_eq_left_inv ?_).symm
   ext a b
   rw [Matrix.mul_apply, Fintype.sum_sum_type]
@@ -89,7 +91,8 @@ theorem toFullBlockMat_respM0_inv {F : BlockMat d}
     cases b with
     | inl j =>
       have : ∑ k : Fin d, (explicitCanonicalMetric F)⁻¹ i k * explicitCanonicalMetric F k j
-          = ((explicitCanonicalMetric F)⁻¹ * explicitCanonicalMetric F) i j := (Matrix.mul_apply).symm
+          = ((explicitCanonicalMetric F)⁻¹ * explicitCanonicalMetric F) i j :=
+            (Matrix.mul_apply).symm
       simp only [toFullBlockMat, respM0]
       rw [show (∑ k : Fin d, (explicitCanonicalMetric F)⁻¹ i k * explicitCanonicalMetric F k j) +
           (∑ k : Fin d, (0 : Mat d) i k * (0 : Mat d) k j) = _ from rfl]
@@ -102,10 +105,12 @@ theorem toFullBlockMat_respM0_inv {F : BlockMat d}
       simp [toFullBlockMat, respM0]
     | inr j =>
       have : ∑ k : Fin d, explicitCanonicalMetric F i k * (explicitCanonicalMetric F)⁻¹ k j
-          = (explicitCanonicalMetric F * (explicitCanonicalMetric F)⁻¹) i j := (Matrix.mul_apply).symm
+          = (explicitCanonicalMetric F * (explicitCanonicalMetric F)⁻¹) i j :=
+            (Matrix.mul_apply).symm
       simp only [toFullBlockMat, respM0]
       rw [show (∑ k : Fin d, (0 : Mat d) i k * (0 : Mat d) k j) +
-          (∑ k : Fin d, explicitCanonicalMetric F i k * (explicitCanonicalMetric F)⁻¹ k j) = _ from rfl]
+          (∑ k : Fin d, explicitCanonicalMetric F i k * (explicitCanonicalMetric F)⁻¹ k j) = _
+            from rfl]
       simp [this, hmm', Matrix.one_apply]
 
 omit [NeZero d] in
@@ -128,7 +133,8 @@ theorem reflected_defect_metric_le {F E D : BlockMat d}
           blockVecDot x (blockMatVecMul E x) := by
   rw [blockSqrt_qform_blockVecDot hM0.posSemidef, blockVecDot_blockSwap_respM0]
   have hquad : blockVecDot (blockMatVecMul D x)
-      (blockMatVecMul (⟨(explicitCanonicalMetric F)⁻¹, 0, 0, explicitCanonicalMetric F⟩ : BlockMat d)
+      (blockMatVecMul (⟨(explicitCanonicalMetric F)⁻¹, 0, 0, explicitCanonicalMetric F⟩ :
+        BlockMat d)
         (blockMatVecMul D x))
       = (toFullBlockMat D *ᵥ toFullBlockVec x) ⬝ᵥ
           (toFullBlockMat (respM0 F))⁻¹ *ᵥ (toFullBlockMat D *ᵥ toFullBlockVec x) := by

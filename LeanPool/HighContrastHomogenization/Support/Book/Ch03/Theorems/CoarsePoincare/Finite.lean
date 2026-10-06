@@ -368,7 +368,7 @@ theorem finite_gradient_norm_le_of_cubeAverageEnergyControl {d : ℕ} [NeZero d]
         0 ≤ Ch02.maxDescendantSigmaStarInvMatrixNormAtScale Q (Q.scale - (n : ℤ)) a := by
     intro n
     exact Ch02.maxDescendantSigmaStarInvMatrixNormAtScale_nonneg Q
-      (sub_le_self _ (by exact_mod_cast Nat.zero_le n)) a
+      (sub_le_self _ (Nat.cast_nonneg n)) a
   have hbase :
       scaleNormalizedNegativeBesovVectorNorm Q s (.finite q) F ≤
         Real.rpow
@@ -442,7 +442,7 @@ theorem finite_flux_norm_le_of_cubeAverageEnergyControl {d : ℕ} [NeZero d]
         0 ≤ Ch02.maxDescendantBMatrixNormAtScale Q (Q.scale - (n : ℤ)) a := by
     intro n
     exact Ch02.maxDescendantBMatrixNormAtScale_nonneg Q
-      (sub_le_self _ (by exact_mod_cast Nat.zero_le n)) a
+      (sub_le_self _ (Nat.cast_nonneg n)) a
   have hbase :
       scaleNormalizedNegativeBesovVectorNorm Q s (.finite q) F ≤
         Real.rpow

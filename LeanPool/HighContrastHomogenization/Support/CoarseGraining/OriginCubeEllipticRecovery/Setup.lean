@@ -107,7 +107,7 @@ theorem hasOpenCubeEllipticRecoveryData_of_isEllipticFieldOn_of_mu_eq_muCandidat
     HasOpenCubeEllipticRecoveryData (d := d) n R
       (lam := lam) (Lam := Lam) a := by
   exact ⟨hEll,
-    R.muRecoveryCompatibilityData_of_isEllipticFieldOn_of_mu_eq_muCandidate
+    R.muRecoveryData_of_ellipticity_candidateEquality
       hEll (volume_openCubeSet_originCube_toReal_pos (d := d) n) mu_eq_muCandidate⟩
 
 /--

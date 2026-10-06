@@ -466,8 +466,10 @@ child. -/
 theorem integrableOn_optimizerField_respCoeffMinus_at (q : Mat d) (hq : IsUnit q) (k : ℤ)
     (w : Fin d → ℤ) (F : BlockMat d) (a : CoeffSpace d)
     (v : AHarmonicFunction (respCoeffMinus F a) (adaptedCellAtCenter q k w)) (j : Fin d) :
-    IntegrableOn (fun x => (optimizerField (respCoeffMinus F a) v x).1 j) (adaptedCellAtCenter q k w) ∧
-      IntegrableOn (fun x => (optimizerField (respCoeffMinus F a) v x).2 j) (adaptedCellAtCenter q k w) := by
+    IntegrableOn (fun x => (optimizerField (respCoeffMinus F a) v x).1 j) (adaptedCellAtCenter q
+      k w) ∧
+      IntegrableOn (fun x => (optimizerField (respCoeffMinus F a) v x).2 j) (adaptedCellAtCenter
+        q k w) := by
   obtain ⟨lam, Lam, f, _hlam, _hle, hEll, hae⟩ :=
     exists_elliptic_representative_respCoeffMinusAt q hq k w F a
   have hVfin : volume (adaptedCellAtCenter q k w) ≠ ⊤ :=
@@ -492,8 +494,10 @@ theorem integrableOn_optimizerField_respCoeffMinus_at (q : Mat d) (hq : IsUnit q
 theorem integrableOn_optimizerField_respCoeffPlus_at (q : Mat d) (hq : IsUnit q) (k : ℤ)
     (w : Fin d → ℤ) (F : BlockMat d) (a : CoeffSpace d)
     (v : AHarmonicFunction (respCoeffPlus F a) (adaptedCellAtCenter q k w)) (j : Fin d) :
-    IntegrableOn (fun x => (optimizerField (respCoeffPlus F a) v x).1 j) (adaptedCellAtCenter q k w) ∧
-      IntegrableOn (fun x => (optimizerField (respCoeffPlus F a) v x).2 j) (adaptedCellAtCenter q k w) := by
+    IntegrableOn (fun x => (optimizerField (respCoeffPlus F a) v x).1 j) (adaptedCellAtCenter q
+      k w) ∧
+      IntegrableOn (fun x => (optimizerField (respCoeffPlus F a) v x).2 j) (adaptedCellAtCenter
+        q k w) := by
   obtain ⟨lam, Lam, f, _hlam, _hle, hEll, hae⟩ :=
     exists_elliptic_representative_respCoeffPlusAt q hq k w F a
   have hVfin : volume (adaptedCellAtCenter q k w) ≠ ⊤ :=

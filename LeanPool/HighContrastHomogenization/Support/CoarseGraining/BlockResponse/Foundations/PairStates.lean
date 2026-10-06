@@ -29,6 +29,8 @@ their mem_responseSpace / lowerImage_ae_eq / integrability data theorems
 under IsEllipticFieldOn.
 -/
 
+/-- The doubled state `(∇u + ∇v, a∇u - aᵀ∇v)` formed from primal and adjoint harmonic functions.
+-/
 @[expose]
 def blockResponsePairState {d : ℕ} {U : Set (Vec d)} (a : CoeffField d)
     (u : AHarmonicFunction a U) (v : AHarmonicFunction (HCPolySupport.adjointCoeffField a) U) :
@@ -38,6 +40,8 @@ def blockResponsePairState {d : ℕ} {U : Set (Vec d)} (a : CoeffField d)
       matVecMul (a x) (u.toH1.grad x) -
         matVecMul (matTranspose (a x)) (v.toH1.grad x) }
 
+/-- Half the doubled state formed from the sum of primal and adjoint gradients and the difference
+of their fluxes. -/
 @[expose]
 def blockResponsePairHalfState {d : ℕ} {U : Set (Vec d)} (a : CoeffField d)
     (u : AHarmonicFunction a U) (v : AHarmonicFunction (HCPolySupport.adjointCoeffField a) U) :
@@ -224,7 +228,7 @@ theorem blockResponseIntegrabilityData_pair_half_of_isEllipticFieldOn
         isPotentialOn_add u.toH1.isPotentialOn (isPotentialOn_smul v.toH1.isPotentialOn (-1 : ℝ))
     exact isPotentialOn_smul hGradDiff (1 / 2 : ℝ)
   exact
-    blockResponseIntegrabilityData_of_lowerImage_ae_eq_potential_of_mem_responseSpace_of_isEllipticFieldOn
+    blockResponseIntegrabilityData_of_ellipticField
       (hX := by
         simpa [blockResponsePairHalfState] using!
           (blockResponse_pair_half_mem_responseSpace_of_isEllipticFieldOn (a := a) hEll u v))

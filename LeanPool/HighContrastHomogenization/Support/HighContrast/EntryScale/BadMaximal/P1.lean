@@ -293,7 +293,8 @@ private lemma Matrix.IsHermitian.isometry_cfcAux_l2
           have hstep : -hA.cfcAux f + hA.cfcAux g = -(hA.cfcAux f - hA.cfcAux g) := by abel
           rw [hstep, l2OpMatrixNormNeg]
     _ = ‖hA.cfcAux (f - g)‖ := by rw [map_sub]
-    _ = ‖f - g‖ := by simpa only [Matrix.IsHermitian.cfcAux_apply, RCLike.ofReal_real_eq_id, ContinuousMap.coe_sub, CompTriple.comp_eq, Unitary.conjStarAlgAut_apply, u] using hnorm
+    _ = ‖f - g‖ := by simpa only [Matrix.IsHermitian.cfcAux_apply, RCLike.ofReal_real_eq_id,
+      ContinuousMap.coe_sub, CompTriple.comp_eq, Unitary.conjStarAlgAut_apply, u] using hnorm
     _ = dist f g := (dist_eq_norm _ _).symm
 
 private noncomputable local instance fullBlockMat_isometricContinuousFunctionalCalculus
@@ -337,7 +338,8 @@ theorem fullBlockOperatorNorm_posPart_le {d : ℕ}
       rfl
     have hM_eq :
         M = Unitary.conjStarAlgAut ℝ _ hHerm.eigenvectorUnitary D := by
-      simpa only [Unitary.conjStarAlgAut_apply, RCLike.ofReal_real_eq_id, CompTriple.comp_eq] using hHerm.spectral_theorem
+      simpa only [Unitary.conjStarAlgAut_apply, RCLike.ofReal_real_eq_id, CompTriple.comp_eq]
+        using hHerm.spectral_theorem
     have hunit_pos :
         ‖Unitary.conjStarAlgAut ℝ _ hHerm.eigenvectorUnitary Dpos‖ =
           ‖Dpos‖ := by
@@ -464,7 +466,8 @@ private theorem measurable_fullBlockOperatorNorm_posPart {d : ℕ} :
               (𝕜 := ℝ) (A := HCPolySupport.FullBlockMat d)
               (p := IsSelfAdjoint) M' hy hM'_self
           have hy_bound : ‖y‖ ≤ ‖M‖ + 1 := hy_norm.trans hM'_norm
-          simpa only [Metric.mem_closedBall, dist_eq_norm, sub_zero, Real.norm_eq_abs, ge_iff_le] using hy_bound)
+          simpa only [Metric.mem_closedBall, dist_eq_norm, sub_zero, Real.norm_eq_abs,
+            ge_iff_le] using hy_bound)
         (ha' := by
           intro M hM
           exact hM)
@@ -518,7 +521,8 @@ private theorem measurable_fullBlockOperatorNorm_posPart {d : ℕ} :
     · simp only [hM, Set.piecewise_eq_of_mem]
     · have hnot : ¬ IsSelfAdjoint M := by
         simpa only [Set.mem_ofPred_eq, selfAdjointSet] using hM
-      simp only [fullBlockOperatorNorm, hM, not_false_eq_true, Set.piecewise_eq_of_notMem, CFC.posPart_eq_zero_of_not_isSelfAdjoint hnot, map_zero, norm_zero]
+      simp only [fullBlockOperatorNorm, hM, not_false_eq_true, Set.piecewise_eq_of_notMem,
+        CFC.posPart_eq_zero_of_not_isSelfAdjoint hnot, map_zero, norm_zero]
   simpa only [hpw_eq] using hpw_meas
 
 end L2OperatorNorm
@@ -538,7 +542,7 @@ noncomputable def terminalSpectralPositivePartAtScale
     (m : ℕ) (Q : HCPolySupport.TriadicCube d)
     (a : HCPolySupport.RegCoeffField d) : ℝ :=
   fullBlockOperatorNorm
-    ((HCPolySupport.Book.Ch05.Section54.VarianceBoundGoodScale.fullBlockNormalizedFluctuationMatrix
+    ((HCPolySupport.Book.Ch05.Section54.VarianceBoundGoodScale.normalizedFluctuationMatrix
         hP hStruct (m : ℤ)
           (HCPolySupport.cubeSet Q) a)⁺)
 
@@ -559,7 +563,7 @@ theorem aemeasurable_terminalFullBlockNormalizedFluctuationMatrixAtScale
     (m : ℕ) (Q : HCPolySupport.TriadicCube d) :
     AEMeasurable
       (fun a : HCPolySupport.RegCoeffField d =>
-        HCPolySupport.Book.Ch05.Section54.VarianceBoundGoodScale.fullBlockNormalizedFluctuationMatrix
+        HCPolySupport.Book.Ch05.Section54.VarianceBoundGoodScale.normalizedFluctuationMatrix
           hP hStruct (m : ℤ) (HCPolySupport.cubeSet Q) a) P :=
   HCPolySupport.Book.Ch05.Section56.aemeasurable_fullBlockNormalizedFluctuationMatrix_cubeSet
     hP hStruct (m : ℤ) Q
@@ -594,7 +598,9 @@ private theorem fullBlockQuadratic_le_fullBlockOperatorNorm_mul_dotProduct
   have hinner :
       inner ℝ X Y =
         HCPolySupport.Book.Ch05.Section54.VarianceBoundGoodScale.fullBlockQuadratic M x := by
-    simp only [PiLp.inner_apply, RCLike.inner_apply, conj_trivial, mul_comm, Fintype.sum_sum_type, HCPolySupport.Book.Ch05.Section54.VarianceBoundGoodScale.fullBlockQuadratic, dotProduct, X, Y]
+    simp only [PiLp.inner_apply, RCLike.inner_apply, conj_trivial, mul_comm,
+      Fintype.sum_sum_type,
+      HCPolySupport.Book.Ch05.Section54.VarianceBoundGoodScale.fullBlockQuadratic, dotProduct, X, Y]
   have hnormY :
       ‖Y‖ ≤ fullBlockOperatorNorm M * ‖X‖ := by
     simpa only [fullBlockOperatorNorm, hY] using
@@ -630,14 +636,15 @@ private theorem fullBlockQuadratic_le_posPart_of_isSymm
       0 ≤
         HCPolySupport.Book.Ch05.Section54.VarianceBoundGoodScale.fullBlockQuadratic
           (M⁺ - M) x := by
-    simpa only [HCPolySupport.Book.Ch05.Section54.VarianceBoundGoodScale.fullBlockQuadratic, star_trivial]
+    simpa only [HCPolySupport.Book.Ch05.Section54.VarianceBoundGoodScale.fullBlockQuadratic,
+      star_trivial]
       using hdiff.dotProduct_mulVec_nonneg x
   have hsub :=
     HCPolySupport.Book.Ch05.Section54.VarianceBoundGoodScale.fullBlockQuadratic_sub
       M⁺ M x
   linarith only [hdiff_quad, hsub]
 
-theorem fullBlockNormalizedQuadraticObservable_sub_dotProduct_le_terminalSpectralPositivePartAtScale_mul_dotProduct
+theorem normalizedQuadratic_sub_dotProduct_le_spectralPositivePart_mul_dotProduct
     {d : ℕ} [NeZero d] {P : HCPolySupport.Book.Ch04.RestrictionCoeffLaw d}
     (hP : HCPolySupport.Book.Ch04.RestrictionLawCarrier P)
     (hStruct : HCPolySupport.Book.Ch04.RestrictionStructuralLaw P)
@@ -647,29 +654,29 @@ theorem fullBlockNormalizedQuadraticObservable_sub_dotProduct_le_terminalSpectra
     (hSymm : HCPolySupport.IsSymmetricBlockMat
       (HCPolySupport.coarseBlockMatrix (HCPolySupport.cubeSet Q) a))
     (q : HCPolySupport.FullBlockVec d) :
-    HCPolySupport.Book.Ch05.Section54.VarianceBoundGoodScale.fullBlockNormalizedQuadraticObservable
+    HCPolySupport.Book.Ch05.Section54.VarianceBoundGoodScale.normalizedQuadraticObservable
         hP hStruct (m : ℤ) q (HCPolySupport.cubeSet Q) a -
       dotProduct q q ≤
         terminalSpectralPositivePartAtScale hP hStruct m Q a * dotProduct q q := by
   let M :=
-    HCPolySupport.Book.Ch05.Section54.VarianceBoundGoodScale.fullBlockNormalizedFluctuationMatrix
+    HCPolySupport.Book.Ch05.Section54.VarianceBoundGoodScale.normalizedFluctuationMatrix
       hP hStruct (m : ℤ) (HCPolySupport.cubeSet Q) a
   have hM_symm : M.IsSymm := by
     dsimp [M]
     exact
-      HCPolySupport.Book.Ch05.Section54.VarianceBoundGoodScale.fullBlockNormalizedFluctuationMatrix_isSymm_of_isSymmetricBlockMat
+      HCPolySupport.Book.Ch05.Section54.VarianceBoundGoodScale.normalizedFluctuation_isSymm
           hP hStruct (m : ℤ) hSymm
   have hcenter :
-      HCPolySupport.Book.Ch05.Section54.VarianceBoundGoodScale.fullBlockNormalizedQuadraticObservable
+      HCPolySupport.Book.Ch05.Section54.VarianceBoundGoodScale.normalizedQuadraticObservable
           hP hStruct (m : ℤ) q (HCPolySupport.cubeSet Q) a -
         dotProduct q q =
           HCPolySupport.Book.Ch05.Section54.VarianceBoundGoodScale.fullBlockQuadratic M q := by
     dsimp [M]
     exact
-      HCPolySupport.Book.Ch05.Section54.VarianceBoundGoodScale.fullBlockNormalizedQuadraticObservable_sub_dotProduct_eq_fluctuationQuadratic
+      HCPolySupport.Book.Ch05.Section54.VarianceBoundGoodScale.normalizedQuadraticIdentity
           hP hStruct hP4 m q (HCPolySupport.cubeSet Q) a
   calc
-    HCPolySupport.Book.Ch05.Section54.VarianceBoundGoodScale.fullBlockNormalizedQuadraticObservable
+    HCPolySupport.Book.Ch05.Section54.VarianceBoundGoodScale.normalizedQuadraticObservable
         hP hStruct (m : ℤ) q (HCPolySupport.cubeSet Q) a -
       dotProduct q q =
         HCPolySupport.Book.Ch05.Section54.VarianceBoundGoodScale.fullBlockQuadratic M q := hcenter
@@ -687,7 +694,8 @@ theorem upperLeft_posSemidef_of_isSymmetricBlockMat_of_blockPosDef
     A.upperLeft.PosSemidef := by
   refine Matrix.PosSemidef.of_dotProduct_mulVec_nonneg ?_ ?_
   · ext i j
-    simp only [Matrix.conjTranspose, RCLike.star_def, Matrix.map_apply, Matrix.transpose_apply, conj_trivial]
+    simp only [Matrix.conjTranspose, RCLike.star_def, Matrix.map_apply, Matrix.transpose_apply,
+      conj_trivial]
     simpa only [HCPolySupport.blockMatEntry] using hSymm (Sum.inl j) (Sum.inl i)
   · intro x
     by_cases hx : x = 0
@@ -696,7 +704,9 @@ theorem upperLeft_posSemidef_of_isSymmetricBlockMat_of_blockPosDef
         intro hzero
         exact hx (congrArg Prod.fst hzero)
       have hquad := (hPos ((x, 0) : HCPolySupport.BlockVec d) hX).le
-      simpa only [star_trivial, ge_iff_le, HCPolySupport.blockVecDot, HCPolySupport.blockMatVecMul, HCPolySupport.matVecMul_zero, add_zero, HCPolySupport.vecDot_zero_left]
+      simpa only [star_trivial, ge_iff_le, HCPolySupport.blockVecDot,
+        HCPolySupport.blockMatVecMul, HCPolySupport.matVecMul_zero, add_zero,
+        HCPolySupport.vecDot_zero_left]
         using! hquad
 
 theorem lowerRight_posSemidef_of_isSymmetricBlockMat_of_blockPosDef
@@ -706,7 +716,8 @@ theorem lowerRight_posSemidef_of_isSymmetricBlockMat_of_blockPosDef
     A.lowerRight.PosSemidef := by
   refine Matrix.PosSemidef.of_dotProduct_mulVec_nonneg ?_ ?_
   · ext i j
-    simp only [Matrix.conjTranspose, RCLike.star_def, Matrix.map_apply, Matrix.transpose_apply, conj_trivial]
+    simp only [Matrix.conjTranspose, RCLike.star_def, Matrix.map_apply, Matrix.transpose_apply,
+      conj_trivial]
     simpa only [HCPolySupport.blockMatEntry] using hSymm (Sum.inr j) (Sum.inr i)
   · intro x
     by_cases hx : x = 0
@@ -715,7 +726,9 @@ theorem lowerRight_posSemidef_of_isSymmetricBlockMat_of_blockPosDef
         intro hzero
         exact hx (congrArg Prod.snd hzero)
       have hquad := (hPos ((0, x) : HCPolySupport.BlockVec d) hX).le
-      simpa only [star_trivial, ge_iff_le, HCPolySupport.blockVecDot, HCPolySupport.blockMatVecMul, HCPolySupport.matVecMul_zero, zero_add, HCPolySupport.vecDot_zero_left]
+      simpa only [star_trivial, ge_iff_le, HCPolySupport.blockVecDot,
+        HCPolySupport.blockMatVecMul, HCPolySupport.matVecMul_zero, zero_add,
+        HCPolySupport.vecDot_zero_left]
         using! hquad
 
 theorem scalar_one_posSemidef_of_nonneg
@@ -729,7 +742,9 @@ theorem vecDot_matVecMul_smul_one
         (HCPolySupport.matVecMul (c • (1 : HCPolySupport.Mat d)) x) =
       c * HCPolySupport.vecDot x x := by
   classical
-  simp only [HCPolySupport.vecDot, HCPolySupport.matVecMul, Matrix.smul_apply, Matrix.one_apply, smul_eq_mul, mul_ite, mul_one, mul_zero, mul_comm, Finset.sum_ite_eq, Finset.mem_univ, ↓reduceIte, mul_left_comm, Finset.mul_sum]
+  simp only [HCPolySupport.vecDot, HCPolySupport.matVecMul, Matrix.smul_apply, Matrix.one_apply,
+    smul_eq_mul, mul_ite, mul_one, mul_zero, mul_comm, Finset.sum_ite_eq, Finset.mem_univ,
+    ↓reduceIte, mul_left_comm, Finset.mul_sum]
 
 theorem coarseBlockMatrix_cubeSet_symm_of_aelocallyUniformlyEllipticField
     {d : ℕ} [NeZero d] (Q : HCPolySupport.TriadicCube d)
@@ -744,14 +759,14 @@ theorem coarseBlockMatrix_cubeSet_symm_of_aelocallyUniformlyEllipticField
         HCPolySupport.Book.Ch02.coarseBlockMatrix
           (HCPolySupport.Book.Ch02.cubeDomain Q) (F.coeffOn Q) := by
     simpa only using
-      HCPolySupport.Book.Ch04.RestrictionLawCarrier.coarseBlockMatrix_cubeSet_eq_ch02_coarseBlockMatrix_of_aelocallyUniformlyEllipticField
+      HCPolySupport.Book.Ch04.RestrictionLawCarrier.coarseBlockMatrix_cubeSet_eq_chapterCoarse
         ha Q
   rw [hEq]
   exact
     HCPolySupport.Book.Ch02.isSymmetricBlockMat_coarseBlockMatrix
       (HCPolySupport.Book.Ch02.cubeDomain Q) (F.coeffOn Q)
 
-theorem coarseBlockMatrix_cubeSet_blockPosDef_of_aelocallyUniformlyEllipticField
+theorem coarseBlockMatrix_cubeSet_blockPosDef_of_uniformEllipticity
     {d : ℕ} [NeZero d] (Q : HCPolySupport.TriadicCube d)
     {a : HCPolySupport.RegCoeffField d}
     (ha : HCPolySupport.Book.Ch04.AELocallyUniformlyEllipticField a) :
@@ -764,7 +779,7 @@ theorem coarseBlockMatrix_cubeSet_blockPosDef_of_aelocallyUniformlyEllipticField
         HCPolySupport.Book.Ch02.coarseBlockMatrix
           (HCPolySupport.Book.Ch02.cubeDomain Q) (F.coeffOn Q) := by
     simpa only using
-      HCPolySupport.Book.Ch04.RestrictionLawCarrier.coarseBlockMatrix_cubeSet_eq_ch02_coarseBlockMatrix_of_aelocallyUniformlyEllipticField
+      HCPolySupport.Book.Ch04.RestrictionLawCarrier.coarseBlockMatrix_cubeSet_eq_chapterCoarse
         ha Q
   rw [hEq]
   exact
@@ -781,7 +796,7 @@ theorem fullBlockNormalizedQuadraticObservable_upperLift_eq
     let b := hP.barSigmaAtScale hStruct (m : ℤ)
     let xu : HCPolySupport.FullBlockVec d :=
       HCPolySupport.toFullBlockVec ((Real.sqrt b) • e, 0)
-    HCPolySupport.Book.Ch05.Section54.VarianceBoundGoodScale.fullBlockNormalizedQuadraticObservable
+    HCPolySupport.Book.Ch05.Section54.VarianceBoundGoodScale.normalizedQuadraticObservable
         hP hStruct (m : ℤ) xu (HCPolySupport.cubeSet Q) a =
       HCPolySupport.vecDot e
         (HCPolySupport.matVecMul
@@ -806,14 +821,16 @@ theorem fullBlockNormalizedQuadraticObservable_upperLift_eq
     | inl i =>
         dsimp [D]
         rw [Matrix.mulVec_diagonal]
-        simp only [HCPolySupport.Book.Ch04.scalarFullBlockInvSqrtDiag, HCPolySupport.toFullBlockVec, Pi.smul_apply, smul_eq_mul, b, xu]
+        simp only [HCPolySupport.Book.Ch04.scalarFullBlockInvSqrtDiag,
+          HCPolySupport.toFullBlockVec, Pi.smul_apply, smul_eq_mul, b, xu]
         field_simp [ne_of_gt (Real.sqrt_pos.mpr (by simpa only [b] using hb))]
     | inr i =>
         dsimp [D]
         rw [Matrix.mulVec_diagonal]
-        simp only [HCPolySupport.Book.Ch04.scalarFullBlockInvSqrtDiag, HCPolySupport.toFullBlockVec, Pi.zero_apply, mul_zero, xu]
+        simp only [HCPolySupport.Book.Ch04.scalarFullBlockInvSqrtDiag,
+          HCPolySupport.toFullBlockVec, Pi.zero_apply, mul_zero, xu]
   calc
-    HCPolySupport.Book.Ch05.Section54.VarianceBoundGoodScale.fullBlockNormalizedQuadraticObservable
+    HCPolySupport.Book.Ch05.Section54.VarianceBoundGoodScale.normalizedQuadraticObservable
         hP hStruct (m : ℤ) xu (HCPolySupport.cubeSet Q) a =
         HCPolySupport.Book.Ch05.Section54.VarianceBoundGoodScale.fullBlockQuadratic
           (D * HCPolySupport.toFullBlockMat A * D) xu := by
@@ -824,7 +841,7 @@ theorem fullBlockNormalizedQuadraticObservable_upperLift_eq
           (HCPolySupport.blockMatVecMul A
             (HCPolySupport.ofFullBlockVec (Matrix.mulVec D xu))) := by
           exact
-            HCPolySupport.Book.Ch05.Section54.VarianceBoundGoodScale.fullBlockQuadratic_diagonal_toFullBlockMat_eq_blockVecDot
+            HCPolySupport.Book.Ch05.Section54.VarianceBoundGoodScale.diagonalForm_eq_dotProduct
                 (HCPolySupport.Book.Ch04.scalarFullBlockInvSqrtDiag b c) A xu
     _ =
         HCPolySupport.blockVecDot (e, 0)
@@ -835,7 +852,8 @@ theorem fullBlockNormalizedQuadraticObservable_upperLift_eq
         HCPolySupport.vecDot e
           (HCPolySupport.matVecMul
             (HCPolySupport.coarseBlockMatrix (HCPolySupport.cubeSet Q) a).upperLeft e) := by
-          simp only [HCPolySupport.blockVecDot, HCPolySupport.blockMatVecMul, HCPolySupport.matVecMul_zero, add_zero, HCPolySupport.vecDot_zero_left, A]
+          simp only [HCPolySupport.blockVecDot, HCPolySupport.blockMatVecMul,
+            HCPolySupport.matVecMul_zero, add_zero, HCPolySupport.vecDot_zero_left, A]
 
 theorem fullBlockNormalizedQuadraticObservable_lowerLift_eq
     {d : ℕ} [NeZero d] {P : HCPolySupport.Book.Ch04.RestrictionCoeffLaw d}
@@ -847,7 +865,7 @@ theorem fullBlockNormalizedQuadraticObservable_lowerLift_eq
     let c := hP.barSigmaStarAtScale hStruct (m : ℤ)
     let xl : HCPolySupport.FullBlockVec d :=
       HCPolySupport.toFullBlockVec (0, (Real.sqrt c)⁻¹ • e)
-    HCPolySupport.Book.Ch05.Section54.VarianceBoundGoodScale.fullBlockNormalizedQuadraticObservable
+    HCPolySupport.Book.Ch05.Section54.VarianceBoundGoodScale.normalizedQuadraticObservable
         hP hStruct (m : ℤ) xl (HCPolySupport.cubeSet Q) a =
       HCPolySupport.vecDot e
         (HCPolySupport.matVecMul
@@ -872,14 +890,16 @@ theorem fullBlockNormalizedQuadraticObservable_lowerLift_eq
     | inl i =>
         dsimp [D]
         rw [Matrix.mulVec_diagonal]
-        simp only [HCPolySupport.Book.Ch04.scalarFullBlockInvSqrtDiag, HCPolySupport.toFullBlockVec, Pi.zero_apply, mul_zero, xl]
+        simp only [HCPolySupport.Book.Ch04.scalarFullBlockInvSqrtDiag,
+          HCPolySupport.toFullBlockVec, Pi.zero_apply, mul_zero, xl]
     | inr i =>
         dsimp [D]
         rw [Matrix.mulVec_diagonal]
-        simp only [HCPolySupport.Book.Ch04.scalarFullBlockInvSqrtDiag, HCPolySupport.toFullBlockVec, Pi.smul_apply, smul_eq_mul, c, xl]
+        simp only [HCPolySupport.Book.Ch04.scalarFullBlockInvSqrtDiag,
+          HCPolySupport.toFullBlockVec, Pi.smul_apply, smul_eq_mul, c, xl]
         field_simp [ne_of_gt (Real.sqrt_pos.mpr (by simpa only [c] using hc))]
   calc
-    HCPolySupport.Book.Ch05.Section54.VarianceBoundGoodScale.fullBlockNormalizedQuadraticObservable
+    HCPolySupport.Book.Ch05.Section54.VarianceBoundGoodScale.normalizedQuadraticObservable
         hP hStruct (m : ℤ) xl (HCPolySupport.cubeSet Q) a =
         HCPolySupport.Book.Ch05.Section54.VarianceBoundGoodScale.fullBlockQuadratic
           (D * HCPolySupport.toFullBlockMat A * D) xl := by
@@ -890,7 +910,7 @@ theorem fullBlockNormalizedQuadraticObservable_lowerLift_eq
           (HCPolySupport.blockMatVecMul A
             (HCPolySupport.ofFullBlockVec (Matrix.mulVec D xl))) := by
           exact
-            HCPolySupport.Book.Ch05.Section54.VarianceBoundGoodScale.fullBlockQuadratic_diagonal_toFullBlockMat_eq_blockVecDot
+            HCPolySupport.Book.Ch05.Section54.VarianceBoundGoodScale.diagonalForm_eq_dotProduct
                 (HCPolySupport.Book.Ch04.scalarFullBlockInvSqrtDiag b c) A xl
     _ =
         HCPolySupport.blockVecDot (0, e)
@@ -901,7 +921,8 @@ theorem fullBlockNormalizedQuadraticObservable_lowerLift_eq
         HCPolySupport.vecDot e
           (HCPolySupport.matVecMul
             (HCPolySupport.coarseBlockMatrix (HCPolySupport.cubeSet Q) a).lowerRight e) := by
-          simp only [HCPolySupport.blockVecDot, HCPolySupport.blockMatVecMul, HCPolySupport.matVecMul_zero, zero_add, HCPolySupport.vecDot_zero_left, A]
+          simp only [HCPolySupport.blockVecDot, HCPolySupport.blockMatVecMul,
+            HCPolySupport.matVecMul_zero, zero_add, HCPolySupport.vecDot_zero_left, A]
 
 theorem upperLift_dotProduct_eq
     {d : ℕ} {b : ℝ} (hb : 0 ≤ b) (e : HCPolySupport.Vec d) :
@@ -914,7 +935,8 @@ theorem upperLift_dotProduct_eq
         HCPolySupport.blockVecDot ((Real.sqrt b) • e, 0) ((Real.sqrt b) • e, 0) := by
         exact HCPolySupport.dotProduct_toFullBlockVec _ _
     _ = HCPolySupport.vecNormSq ((Real.sqrt b) • e) := by
-        simp only [HCPolySupport.blockVecDot, HCPolySupport.vecDot_zero_left, add_zero, HCPolySupport.vecNormSq]
+        simp only [HCPolySupport.blockVecDot, HCPolySupport.vecDot_zero_left, add_zero,
+          HCPolySupport.vecNormSq]
     _ = b * HCPolySupport.vecDot e e := by
         rw [HCPolySupport.vecNormSq_smul, Real.sq_sqrt hb]
         simp only [HCPolySupport.vecNormSq]
@@ -931,7 +953,8 @@ theorem lowerLift_dotProduct_eq
           (0, (Real.sqrt c)⁻¹ • e) := by
         exact HCPolySupport.dotProduct_toFullBlockVec _ _
     _ = HCPolySupport.vecNormSq ((Real.sqrt c)⁻¹ • e) := by
-        simp only [HCPolySupport.blockVecDot, HCPolySupport.vecDot_zero_left, zero_add, HCPolySupport.vecNormSq]
+        simp only [HCPolySupport.blockVecDot, HCPolySupport.vecDot_zero_left, zero_add,
+          HCPolySupport.vecNormSq]
     _ = c⁻¹ * HCPolySupport.vecDot e e := by
         rw [HCPolySupport.vecNormSq_smul]
         have hsqrt_sq : (Real.sqrt c) ^ 2 = c := Real.sq_sqrt hc

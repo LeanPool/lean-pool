@@ -123,6 +123,29 @@ private theorem prefactor_mul_physical_ratio_le_shifted_decay
         (-kappa * ((k : ℝ) - ((N + L : ℕ) : ℝ))) :=
       Real.rpow_le_rpow_of_exponent_le (by norm_num) hexponent
 
+private theorem square_bound_implies_half_power_decay
+    {error delta kappa gap : ℝ} (herror : 0 ≤ error) (hdelta : 0 ≤ delta)
+    (hsq : error ^ 2 ≤ delta * (3 : ℝ) ^ (-kappa * gap)) :
+    error ≤ Real.sqrt delta * (3 : ℝ) ^ (-(kappa / 2) * gap) := by
+  have hfactorSq :
+      ((3 : ℝ) ^
+        (-(kappa / 2) *
+          gap)) ^ 2 =
+        (3 : ℝ) ^
+          (-kappa * gap) := by
+    rw [← Real.rpow_natCast,
+      ← Real.rpow_mul (by norm_num : (0 : ℝ) ≤ 3)]
+    congr 1
+    ring_nf
+  have htarget0 : 0 ≤ Real.sqrt delta *
+      (3 : ℝ) ^
+        (-(kappa / 2) *
+          gap) :=
+    mul_nonneg (Real.sqrt_nonneg _) (Real.rpow_nonneg (by norm_num) _)
+  apply (sq_le_sq₀ herror htarget0).mp
+  rw [mul_pow, Real.sq_sqrt hdelta, hfactorSq]
+  exact hsq
+
 /-- A physical block row produces one global exactly normalized reference
 family whose identity weak errors retain the square-root amplitude and the
 halved row-decay rate above the shifted triadic scale. -/
@@ -309,24 +332,8 @@ theorem exists_shiftedNormalizedReferencePowerTail_of_hasAllLaterPhysicalBlockRo
         _ ≤ delta * (3 : ℝ) ^
               (-kappa * ((k : ℝ) - ((N + L : ℕ) : ℝ))) :=
           mul_le_mul_of_nonneg_left habsorb' hdelta
-    have hfactorSq :
-        ((3 : ℝ) ^
-          (-(kappa / 2) *
-            ((k : ℝ) - ((N + L : ℕ) : ℝ)))) ^ 2 =
-          (3 : ℝ) ^
-            (-kappa * ((k : ℝ) - ((N + L : ℕ) : ℝ))) := by
-      rw [← Real.rpow_natCast,
-        ← Real.rpow_mul (by norm_num : (0 : ℝ) ≤ 3)]
-      congr 1
-      ring_nf
-    have htarget0 : 0 ≤ Real.sqrt delta *
-        (3 : ℝ) ^
-          (-(kappa / 2) *
-            ((k : ℝ) - ((N + L : ℕ) : ℝ))) :=
-      mul_nonneg (Real.sqrt_nonneg _) (Real.rpow_nonneg (by norm_num) _)
-    apply (sq_le_sq₀ (scalarIdentityWeakError_nonneg aRef s k) htarget0).mp
-    rw [mul_pow, Real.sq_sqrt hdelta, hfactorSq]
-    exact hsq
+    exact square_bound_implies_half_power_decay
+      (scalarIdentityWeakError_nonneg aRef s k) hdelta hsq
   change ScalarIdentityPowerTail aRef s (Real.sqrt delta) (kappa / 2)
     ((3 : ℝ) ^ ((N + L : ℕ) : ℤ))
   intro k hscale

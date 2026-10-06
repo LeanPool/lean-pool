@@ -186,7 +186,7 @@ THE THRESHOLD ESTIMATE IS NOT USED.
 `Annealed.adaptedMean_refBlock_normalization`, BOTH of which require the source threshold
 `⌈Csrc_i · logb 3 (2K)⌉ ≤ j_*` for constants `Csrc_i` they themselves produce.  The all-scale
 maximum bound can supply it because it *produces* `Csrc`
-; the statement quantifies `Csrc`
+The statement quantifies `Csrc`
 universally, so `raw.hsrc` cannot be specialised and that estimate is unavailable here WITHOUT a
 statement change.  The envelope estimate needs no threshold at all.
 
@@ -666,7 +666,8 @@ theorem pathwise_envelope (hd : 2 ≤ d) (γ : ℝ)
     linarith only [h1]
   have hCd0 : (0 : ℝ) ≤ Cd := by rw [hCd]; positivity
   have hEt : (toFullBlockMat (respMean P jStar F t)).PosDef :=
-    Annealed.adaptedMean_posDef d hd P γ E Ψ Kg Src hstat hdag jStar hj (explicitCanonicalMetric F) hm t
+    Annealed.adaptedMean_posDef d hd P γ E Ψ Kg Src hstat hdag jStar hj (explicitCanonicalMetric
+      F) hm t
   obtain ⟨κ, hκ0, hκ⟩ :=
     exists_scale_le (A := E) (R := respMean P jStar F t) hEt
   filter_upwards [henv] with a ha

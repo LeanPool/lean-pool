@@ -63,9 +63,11 @@ theorem determinantDrift_advance (d : ℕ) (hd : 2 ≤ d) (γ : ℝ) (hγ : γ �
           ∀ m L : ℤ, (jStar : ℤ) ≤ m → 1 ≤ L →
             determinantDrift P γ (Geometry.explicitRoundedGrid jStar metric) jStar (m + L) ≤
               (3 : ℝ) ^ (-((1 - γ) / 8) * (L : ℝ)) *
-                    Real.exp (detIncrement P (Geometry.explicitRoundedGrid jStar metric) m (m + L)) *
+                    Real.exp (detIncrement P (Geometry.explicitRoundedGrid jStar metric) m (m +
+                      L)) *
                     determinantDrift P γ (Geometry.explicitRoundedGrid jStar metric) jStar m +
-                  Real.exp (detIncrement P (Geometry.explicitRoundedGrid jStar metric) m (m + L)) - 1 := by
+                  Real.exp (detIncrement P (Geometry.explicitRoundedGrid jStar metric) m (m +
+                    L)) - 1 := by
   intro P E Ψ K S hprob hstat _hunit hdag jStar hjStar metric hmetric m L hm hL
   let : IsProbabilityMeasure P := hprob
   exact
@@ -107,7 +109,8 @@ theorem synchronized_propagation (d : ℕ) (hd : 2 ≤ d) (γ : ℝ)
                             synchCharge P
                               (Geometry.explicitRoundedGrid jStar metric) (h : ℤ) m) *
                           (profile P γ (Geometry.explicitRoundedGrid jStar metric) jStar n m +
-                            determinantDrift P γ (Geometry.explicitRoundedGrid jStar metric) jStar m) +
+                            determinantDrift P γ (Geometry.explicitRoundedGrid jStar metric)
+                              jStar m) +
                         C * (Real.exp ((bigQ d γ : ℝ) *
                           synchCharge P
                             (Geometry.explicitRoundedGrid jStar metric) (h : ℤ) m) - 1) := by
@@ -142,7 +145,8 @@ theorem synchronized_propagation (d : ℕ) (hd : 2 ≤ d) (γ : ℝ)
         synchCharge P (Geometry.explicitRoundedGrid jStar metric) (h : ℤ) m) :=
     Real.exp_le_exp.mpr hDeltaQ
   have hcoef := three_rpow_neg_eighth_span_lt d hd γ hγ h hh
-  have hb1nn : 0 ≤ Real.exp (detIncrement P (Geometry.explicitRoundedGrid jStar metric) m (m + (h : ℤ))) :=
+  have hb1nn : 0 ≤ Real.exp (detIncrement P (Geometry.explicitRoundedGrid jStar metric) m (m +
+    (h : ℤ))) :=
     Real.exp_nonneg _
   have hab : (3 : ℝ) ^ (-((1 - γ) / 8) * (h : ℝ)) *
       Real.exp (detIncrement P (Geometry.explicitRoundedGrid jStar metric) m (m + (h : ℤ))) ≤
@@ -150,12 +154,14 @@ theorem synchronized_propagation (d : ℕ) (hd : 2 ≤ d) (γ : ℝ)
         synchCharge P (Geometry.explicitRoundedGrid jStar metric) (h : ℤ) m) := by
     calc (3 : ℝ) ^ (-((1 - γ) / 8) * (h : ℝ)) *
         Real.exp (detIncrement P (Geometry.explicitRoundedGrid jStar metric) m (m + (h : ℤ)))
-        ≤ 1 / 8 * Real.exp (detIncrement P (Geometry.explicitRoundedGrid jStar metric) m (m + (h : ℤ))) :=
+        ≤ 1 / 8 * Real.exp (detIncrement P (Geometry.explicitRoundedGrid jStar metric) m (m + (h
+          : ℤ))) :=
           mul_le_mul_of_nonneg_right hcoef.le hb1nn
       _ ≤ 1 / 8 * Real.exp ((bigQ d γ : ℝ) *
           synchCharge P (Geometry.explicitRoundedGrid jStar metric) (h : ℤ) m) :=
           mul_le_mul_of_nonneg_left hE (by norm_num)
-  have hDfinal : determinantDrift P γ (Geometry.explicitRoundedGrid jStar metric) jStar (m + (h : ℤ)) ≤
+  have hDfinal : determinantDrift P γ (Geometry.explicitRoundedGrid jStar metric) jStar (m + (h
+    : ℤ)) ≤
       1 / 8 * Real.exp ((bigQ d γ : ℝ) *
           synchCharge P (Geometry.explicitRoundedGrid jStar metric) (h : ℤ) m) *
         determinantDrift P γ (Geometry.explicitRoundedGrid jStar metric) jStar m +

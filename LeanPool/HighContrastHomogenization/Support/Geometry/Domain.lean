@@ -20,6 +20,7 @@ public section
 
 namespace HCPolySupport
 
+/-- The domain lies in a coordinate box of some positive finite radius. -/
 @[expose]
 def IsBoundedDomain {d : ℕ} (U : Set (Vec d)) : Prop :=
   ∃ R : ℝ, 0 < R ∧ ∀ x ∈ U, ∀ i, |x i| ≤ R

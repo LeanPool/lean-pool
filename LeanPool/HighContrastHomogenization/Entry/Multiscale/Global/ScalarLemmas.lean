@@ -296,7 +296,8 @@ theorem weight_choice (d : ℕ) (hd : 0 < d) (C Q ε σ c L H h : ℝ) (hC : 0 <
   · rw [le_div_iff₀ hd']
     have ha1 : 4 * Q * max 1 C * d / C ≤ a := by
       calc 4 * Q * max 1 C * d / C
-          ≤ max (4 * Q * max 1 C * d / C) (max (2 * (Real.log (1 + C * h) + c) / ε) (4 * (Real.log (1 + 2 * C * L) + Real.log (1 + C * H) + c) / (C * ε * σ))) := le_max_left _ _
+          ≤ max (4 * Q * max 1 C * d / C) (max (2 * (Real.log (1 + C * h) + c) / ε) (4 *
+            (Real.log (1 + 2 * C * L) + Real.log (1 + C * H) + c) / (C * ε * σ))) := le_max_left _ _
         _ ≤ a := le_max_right 1 _
     calc 4 * Q * max 1 C * d
         = (4 * Q * max 1 C * d / C) * C := by field_simp [ne_of_gt hC]
@@ -305,8 +306,10 @@ theorem weight_choice (d : ℕ) (hd : 0 < d) (C Q ε σ c L H h : ℝ) (hC : 0 <
   · rw [le_div_iff₀ (by norm_num : (0 : ℝ) < 2)]
     have ha2 : 2 * (Real.log (1 + C * h) + c) / ε ≤ a := by
       calc 2 * (Real.log (1 + C * h) + c) / ε
-          ≤ max (2 * (Real.log (1 + C * h) + c) / ε) (4 * (Real.log (1 + 2 * C * L) + Real.log (1 + C * H) + c) / (C * ε * σ)) := le_max_left _ _
-        _ ≤ max (4 * Q * max 1 C * d / C) (max (2 * (Real.log (1 + C * h) + c) / ε) (4 * (Real.log (1 + 2 * C * L) + Real.log (1 + C * H) + c) / (C * ε * σ))) := le_max_right _ _
+          ≤ max (2 * (Real.log (1 + C * h) + c) / ε) (4 * (Real.log (1 + 2 * C * L) + Real.log
+            (1 + C * H) + c) / (C * ε * σ)) := le_max_left _ _
+        _ ≤ max (4 * Q * max 1 C * d / C) (max (2 * (Real.log (1 + C * h) + c) / ε) (4 *
+          (Real.log (1 + 2 * C * L) + Real.log (1 + C * H) + c) / (C * ε * σ))) := le_max_right _ _
         _ ≤ a := le_max_right 1 _
     calc (Real.log (1 + C * h) + c) * 2
         = 2 * (Real.log (1 + C * h) + c) := by ring
@@ -315,11 +318,14 @@ theorem weight_choice (d : ℕ) (hd : 0 < d) (C Q ε σ c L H h : ℝ) (hC : 0 <
 
   · have ha3 : 4 * (Real.log (1 + 2 * C * L) + Real.log (1 + C * H) + c) / (C * ε * σ) ≤ a := by
       calc 4 * (Real.log (1 + 2 * C * L) + Real.log (1 + C * H) + c) / (C * ε * σ)
-          ≤ max (2 * (Real.log (1 + C * h) + c) / ε) (4 * (Real.log (1 + 2 * C * L) + Real.log (1 + C * H) + c) / (C * ε * σ)) := le_max_right _ _
-        _ ≤ max (4 * Q * max 1 C * d / C) (max (2 * (Real.log (1 + C * h) + c) / ε) (4 * (Real.log (1 + 2 * C * L) + Real.log (1 + C * H) + c) / (C * ε * σ))) := le_max_right _ _
+          ≤ max (2 * (Real.log (1 + C * h) + c) / ε) (4 * (Real.log (1 + 2 * C * L) + Real.log
+            (1 + C * H) + c) / (C * ε * σ)) := le_max_right _ _
+        _ ≤ max (4 * Q * max 1 C * d / C) (max (2 * (Real.log (1 + C * h) + c) / ε) (4 *
+          (Real.log (1 + 2 * C * L) + Real.log (1 + C * H) + c) / (C * ε * σ))) := le_max_right _ _
         _ ≤ a := le_max_right 1 _
     calc 4 * (Real.log (1 + 2 * C * L) + Real.log (1 + C * H) + c)
-        = (4 * (Real.log (1 + 2 * C * L) + Real.log (1 + C * H) + c) / (C * ε * σ)) * (C * ε * σ) := by field_simp [ne_of_gt hC, ne_of_gt hε, ne_of_gt hσ]
+        = (4 * (Real.log (1 + 2 * C * L) + Real.log (1 + C * H) + c) / (C * ε * σ)) * (C * ε *
+          σ) := by field_simp [ne_of_gt hC, ne_of_gt hε, ne_of_gt hσ]
       _ ≤ a * (C * ε * σ) := mul_le_mul_of_nonneg_right ha3 (le_of_lt h_cεσ)
       _ = a * C * ε * σ := by ring
 
@@ -384,7 +390,8 @@ theorem eccentricity_arith (ε C₁ : ℝ) (hε : 0 < ε) (hC₁ : 0 ≤ C₁) :
     have hl3 : 0 < Real.log 3 := Real.log_pos (by norm_num)
     have hl2 : 0 < Real.log 2 := Real.log_pos (by norm_num)
     have h2AR : (0:ℝ) < 2 + AR := by linarith only [hAR]
-    have hlog2le : Real.log 2 ≤ Real.log (2 + AR) := Real.log_le_log (by norm_num) (by linarith only [hAR])
+    have hlog2le : Real.log 2 ≤ Real.log (2 + AR) := Real.log_le_log (by norm_num) (by linarith
+      only [hAR])
     have hxl2 : (2:ℝ) ≤ 2 * Real.log (2 + AR) / Real.log 2 := by
       rw [le_div_iff₀ hl2]
       linarith only [hlog2le]
@@ -414,7 +421,8 @@ theorem scales_arith (Cinit C₁ L H h : ℝ) (hCi : 0 ≤ Cinit) (hC₁ : 0 ≤
           (2 * L + H + h) * (((⌈C₁ * x⌉ : ℤ) : ℝ) + 2) + L + H ≤
         ((⌈(B + C) * x⌉ : ℤ) : ℝ) := by
   refine ⟨Cinit + (2*L+H+h)*(C₁+6) + 2*(L+H) + 4, ?_, ?_⟩
-  · nlinarith only [hCi, hL, hH, mul_nonneg (by linarith only [hL, hH, hh] : (0:ℝ) ≤ 2*L+H+h) (by linarith only [hC₁] : (0:ℝ) ≤ C₁+6)]
+  · nlinarith only [hCi, hL, hH, mul_nonneg (by linarith only [hL, hH, hh] : (0:ℝ) ≤ 2*L+H+h)
+    (by linarith only [hC₁] : (0:ℝ) ≤ C₁+6)]
   · intro x hx B
     have e1 := Int.ceil_lt_add_one (B * x)
     have e2 := Int.ceil_lt_add_one (Cinit * x)
@@ -436,7 +444,8 @@ theorem containment_arith (Cinit C₁ L H h ε d : ℝ) (hCi : 0 ≤ Cinit) (hC�
       ⌈C * (B + 1) * x⌉ ≤ jStar →
       (jStar : ℝ) + ((⌈B * x⌉ : ℤ) : ℝ) + ((⌈Cinit * x⌉ : ℤ) : ℝ) +
           (2 * L + H + h) * (((⌈C₁ * x⌉ : ℤ) : ℝ) + 2) +
-          ((⌈Real.logb 3 (2 * Real.sqrt d) + ε * (((⌈C₁ * x⌉ : ℤ) : ℝ) + 1) / Real.log 3⌉ : ℤ) : ℝ) ≤
+          ((⌈Real.logb 3 (2 * Real.sqrt d) + ε * (((⌈C₁ * x⌉ : ℤ) : ℝ) + 1) / Real.log 3⌉ : ℤ) :
+            ℝ) ≤
         2 * jStar := by
   have hlog3 : 0 < Real.log 3 := Real.log_pos (by norm_num)
   have hsqrtd : (1 : ℝ) ≤ Real.sqrt d := by

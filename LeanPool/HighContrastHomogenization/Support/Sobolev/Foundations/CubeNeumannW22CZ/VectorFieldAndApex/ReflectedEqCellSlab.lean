@@ -199,7 +199,7 @@ theorem lowerFace_reflectedVectorField_weakEquationOnUnion
 notation, using the normalized cube `L²` hypothesis from the endpoint
 interfaces. -/
 theorem
-  upperFace_reflectedVectorField_weakEquationOnUnion_of_compactSupport_of_memLp_normalizedCubeMeasure
+  upperFaceReflection_weakEquation_on_union
     (W : MeanZeroNeumannPoissonSolution Q F)
     (i : Fin d) {φ : Vec d → ℝ} (hφ : ContDiff ℝ (⊤ : ℕ∞) φ)
     (hφs : HasCompactSupport φ)
@@ -254,7 +254,7 @@ theorem
 notation, using the normalized cube `L²` hypothesis from the endpoint
 interfaces. -/
 theorem
-  lowerFace_reflectedVectorField_weakEquationOnUnion_of_compactSupport_of_memLp_normalizedCubeMeasure
+  lowerFaceReflection_weakEquation_on_union
     (W : MeanZeroNeumannPoissonSolution Q F)
     (i : Fin d) {φ : Vec d → ℝ} (hφ : ContDiff ℝ (⊤ : ℕ∞) φ)
     (hφs : HasCompactSupport φ)
@@ -304,6 +304,237 @@ theorem
   exact
     W.lowerFace_reflectedWeakEquationOnUnion_of_compactSupport_of_memLp_normalizedCubeMeasure
       i hφ hφs hmean hF
+
+private theorem integral_reflected_slab_gradient_pairing_eq_sum
+    (i : Fin d) (G : Vec d → Vec d) (hG : MemVectorL2 (openCubeSet Q) G)
+    {φ : Vec d → ℝ} (hφ : ContDiff ℝ (⊤ : ℕ∞) φ) (hφs : HasCompactSupport φ) :
+    (∫ x in cubeFaceNeighborSlabSet Q i,
+      vecDot (faceNeighborSlabReflectedVectorField Q i G x)
+        (euclideanGradient φ x) ∂MeasureTheory.volume) =
+      (∫ x in openCubeSet (cubeLowerFaceNeighbor Q i),
+        vecDot (coordReflectionLinear i (G (cubeLowerFaceReflection Q i x)))
+          (euclideanGradient φ x) ∂MeasureTheory.volume) +
+      (∫ x in openCubeSet Q, vecDot (G x) (euclideanGradient φ x)
+        ∂MeasureTheory.volume) +
+      ∫ x in openCubeSet (cubeUpperFaceNeighbor Q i),
+        vecDot (coordReflectionLinear i (G (cubeUpperFaceReflection Q i x)))
+          (euclideanGradient φ x) ∂MeasureTheory.volume := by
+  let L := openCubeSet (cubeLowerFaceNeighbor Q i)
+  let M := openCubeSet Q
+  let U := openCubeSet (cubeUpperFaceNeighbor Q i)
+  let S := cubeFaceNeighborSlabSet Q i
+  let gradSlab : Vec d → ℝ := fun x =>
+    vecDot (faceNeighborSlabReflectedVectorField Q i G x)
+      (euclideanGradient φ x)
+  let gradL : ℝ :=
+    ∫ x in L,
+      vecDot
+        (coordReflectionLinear i (G (cubeLowerFaceReflection Q i x)))
+        (euclideanGradient φ x) ∂MeasureTheory.volume
+  let gradM : ℝ :=
+    ∫ x in M, vecDot (G x) (euclideanGradient φ x)
+      ∂MeasureTheory.volume
+  let gradU : ℝ :=
+    ∫ x in U,
+      vecDot
+        (coordReflectionLinear i (G (cubeUpperFaceReflection Q i x)))
+        (euclideanGradient φ x) ∂MeasureTheory.volume
+  have hGslab : MemVectorL2 S (faceNeighborSlabReflectedVectorField Q i G) := by
+    simpa [S, M] using
+      memVectorL2_cubeFaceNeighborSlabSet_faceNeighborSlabReflectedVectorField
+        Q i hG
+  have hgradφSlab : MemVectorL2 S (euclideanGradient φ) :=
+    memVectorL2_euclideanGradient_of_contDiff_hasCompactSupport hφ hφs
+  have hgradSlabInt :
+      MeasureTheory.Integrable gradSlab (MeasureTheory.volume.restrict S) := by
+    simpa [MeasureTheory.IntegrableOn, volumeMeasureOn, gradSlab] using
+      integrableOn_vecDot_of_memVectorL2 (U := S) hGslab hgradφSlab
+  have hLsub : L ⊆ S := by
+    intro x hx
+    exact Or.inl (Or.inl hx)
+  have hMsub : M ⊆ S := by
+    intro x hx
+    exact Or.inl (Or.inr hx)
+  have hUsub : U ⊆ S := by
+    intro x hx
+    exact Or.inr hx
+  have hgradL_int :
+      MeasureTheory.Integrable gradSlab (MeasureTheory.volume.restrict L) :=
+    hgradSlabInt.mono_measure
+      (MeasureTheory.Measure.restrict_mono_set MeasureTheory.volume hLsub)
+  have hgradM_int :
+      MeasureTheory.Integrable gradSlab (MeasureTheory.volume.restrict M) :=
+    hgradSlabInt.mono_measure
+      (MeasureTheory.Measure.restrict_mono_set MeasureTheory.volume hMsub)
+  have hgradU_int :
+      MeasureTheory.Integrable gradSlab (MeasureTheory.volume.restrict U) :=
+    hgradSlabInt.mono_measure
+      (MeasureTheory.Measure.restrict_mono_set MeasureTheory.volume hUsub)
+  have hgradL_eq :
+      ∫ x in L, gradSlab x ∂MeasureTheory.volume = gradL := by
+    change
+      ∫ x in L, gradSlab x ∂MeasureTheory.volume =
+        ∫ x in L,
+          vecDot
+            (coordReflectionLinear i (G (cubeLowerFaceReflection Q i x)))
+            (euclideanGradient φ x) ∂MeasureTheory.volume
+    refine MeasureTheory.setIntegral_congr_fun
+      (measurableSet_openCubeSet (cubeLowerFaceNeighbor Q i)) ?_
+    intro x hx
+    simpa [gradSlab, L] using
+      congrArg (fun v => vecDot v (euclideanGradient φ x))
+        (faceNeighborSlabReflectedVectorField_of_mem_lower Q i G
+          (x := x) hx)
+  have hgradM_eq :
+      ∫ x in M, gradSlab x ∂MeasureTheory.volume = gradM := by
+    change
+      ∫ x in M, gradSlab x ∂MeasureTheory.volume =
+        ∫ x in M, vecDot (G x) (euclideanGradient φ x)
+          ∂MeasureTheory.volume
+    refine MeasureTheory.setIntegral_congr_fun
+      (measurableSet_openCubeSet Q) ?_
+    intro x hx
+    simpa [gradSlab, M] using
+      congrArg (fun v => vecDot v (euclideanGradient φ x))
+        (faceNeighborSlabReflectedVectorField_of_mem_cube Q i G
+          (x := x) hx)
+  have hgradU_eq :
+      ∫ x in U, gradSlab x ∂MeasureTheory.volume = gradU := by
+    change
+      ∫ x in U, gradSlab x ∂MeasureTheory.volume =
+        ∫ x in U,
+          vecDot
+            (coordReflectionLinear i (G (cubeUpperFaceReflection Q i x)))
+            (euclideanGradient φ x) ∂MeasureTheory.volume
+    refine MeasureTheory.setIntegral_congr_fun
+      (measurableSet_openCubeSet (cubeUpperFaceNeighbor Q i)) ?_
+    intro x hx
+    simpa [gradSlab, U] using
+      congrArg (fun v => vecDot v (euclideanGradient φ x))
+        (faceNeighborSlabReflectedVectorField_of_mem_upper Q i G
+          (x := x) hx)
+  have hgradSplit :
+      ∫ x in S, gradSlab x ∂MeasureTheory.volume =
+        gradL + gradM + gradU := by
+    calc
+      ∫ x in S, gradSlab x ∂MeasureTheory.volume =
+          ∫ x in L, gradSlab x ∂MeasureTheory.volume +
+          ∫ x in M, gradSlab x ∂MeasureTheory.volume +
+          ∫ x in U, gradSlab x ∂MeasureTheory.volume := by
+            simpa [S, L, M, U] using
+              setIntegral_cubeFaceNeighborSlabSet Q i gradSlab
+                hgradL_int hgradM_int hgradU_int
+      _ = gradL + gradM + gradU := by
+            rw [hgradL_eq, hgradM_eq, hgradU_eq]
+  exact hgradSplit
+
+private theorem integral_reflected_slab_forcing_eq_sum
+    (i : Fin d) (F : Vec d → ℝ) (hF : MemScalarL2 (openCubeSet Q) F)
+    {φ : Vec d → ℝ} (hφ : ContDiff ℝ (⊤ : ℕ∞) φ) (hφs : HasCompactSupport φ) :
+    (∫ x in cubeFaceNeighborSlabSet Q i,
+      faceNeighborSlabReflectedScalar Q i F x * φ x ∂MeasureTheory.volume) =
+      (∫ x in openCubeSet (cubeLowerFaceNeighbor Q i),
+        F (cubeLowerFaceReflection Q i x) * φ x ∂MeasureTheory.volume) +
+      (∫ x in openCubeSet Q, F x * φ x ∂MeasureTheory.volume) +
+      ∫ x in openCubeSet (cubeUpperFaceNeighbor Q i),
+        F (cubeUpperFaceReflection Q i x) * φ x ∂MeasureTheory.volume := by
+  let L := openCubeSet (cubeLowerFaceNeighbor Q i)
+  let M := openCubeSet Q
+  let U := openCubeSet (cubeUpperFaceNeighbor Q i)
+  let S := cubeFaceNeighborSlabSet Q i
+  let forceSlab : Vec d → ℝ := fun x =>
+    faceNeighborSlabReflectedScalar Q i F x * φ x
+  let forceL : ℝ :=
+    ∫ x in L, F (cubeLowerFaceReflection Q i x) * φ x
+      ∂MeasureTheory.volume
+  let forceM : ℝ :=
+    ∫ x in M, F x * φ x ∂MeasureTheory.volume
+  let forceU : ℝ :=
+    ∫ x in U, F (cubeUpperFaceReflection Q i x) * φ x
+      ∂MeasureTheory.volume
+  have hFslab : MemScalarL2 S (faceNeighborSlabReflectedScalar Q i F) := by
+    simpa [S, M] using
+      memScalarL2_cubeFaceNeighborSlabSet_faceNeighborSlabReflectedScalar
+        Q i hF
+  have hφSlab : MemScalarL2 S φ := by
+    have hφ_cont : Continuous φ := (hφ.differentiable (by simp)).continuous
+    simpa [MemScalarL2, volumeMeasureOn, S] using
+      (hφ_cont.memLp_of_hasCompactSupport hφs).restrict S
+  have hforceSlabInt :
+      MeasureTheory.Integrable forceSlab (MeasureTheory.volume.restrict S) := by
+    simpa [forceSlab] using! hFslab.integrable_mul hφSlab
+  have hLsub : L ⊆ S := by
+    intro x hx
+    exact Or.inl (Or.inl hx)
+  have hMsub : M ⊆ S := by
+    intro x hx
+    exact Or.inl (Or.inr hx)
+  have hUsub : U ⊆ S := by
+    intro x hx
+    exact Or.inr hx
+  have hforceL_int :
+      MeasureTheory.Integrable forceSlab (MeasureTheory.volume.restrict L) :=
+    hforceSlabInt.mono_measure
+      (MeasureTheory.Measure.restrict_mono_set MeasureTheory.volume hLsub)
+  have hforceM_int :
+      MeasureTheory.Integrable forceSlab (MeasureTheory.volume.restrict M) :=
+    hforceSlabInt.mono_measure
+      (MeasureTheory.Measure.restrict_mono_set MeasureTheory.volume hMsub)
+  have hforceU_int :
+      MeasureTheory.Integrable forceSlab (MeasureTheory.volume.restrict U) :=
+    hforceSlabInt.mono_measure
+      (MeasureTheory.Measure.restrict_mono_set MeasureTheory.volume hUsub)
+  have hforceL_eq :
+      ∫ x in L, forceSlab x ∂MeasureTheory.volume = forceL := by
+    change
+      ∫ x in L, forceSlab x ∂MeasureTheory.volume =
+        ∫ x in L, F (cubeLowerFaceReflection Q i x) * φ x
+          ∂MeasureTheory.volume
+    refine MeasureTheory.setIntegral_congr_fun
+      (measurableSet_openCubeSet (cubeLowerFaceNeighbor Q i)) ?_
+    intro x hx
+    simpa [forceSlab, L] using
+      congrArg (fun y => y * φ x)
+        (faceNeighborSlabReflectedScalar_of_mem_lower Q i F
+          (x := x) hx)
+  have hforceM_eq :
+      ∫ x in M, forceSlab x ∂MeasureTheory.volume = forceM := by
+    change
+      ∫ x in M, forceSlab x ∂MeasureTheory.volume =
+        ∫ x in M, F x * φ x ∂MeasureTheory.volume
+    refine MeasureTheory.setIntegral_congr_fun
+      (measurableSet_openCubeSet Q) ?_
+    intro x hx
+    simpa [forceSlab, M] using
+      congrArg (fun y => y * φ x)
+        (faceNeighborSlabReflectedScalar_of_mem_cube Q i F (x := x) hx)
+  have hforceU_eq :
+      ∫ x in U, forceSlab x ∂MeasureTheory.volume = forceU := by
+    change
+      ∫ x in U, forceSlab x ∂MeasureTheory.volume =
+        ∫ x in U, F (cubeUpperFaceReflection Q i x) * φ x
+          ∂MeasureTheory.volume
+    refine MeasureTheory.setIntegral_congr_fun
+      (measurableSet_openCubeSet (cubeUpperFaceNeighbor Q i)) ?_
+    intro x hx
+    simpa [forceSlab, U] using
+      congrArg (fun y => y * φ x)
+        (faceNeighborSlabReflectedScalar_of_mem_upper Q i F
+          (x := x) hx)
+  have hforceSplit :
+      ∫ x in S, forceSlab x ∂MeasureTheory.volume =
+        forceL + forceM + forceU := by
+    calc
+      ∫ x in S, forceSlab x ∂MeasureTheory.volume =
+          ∫ x in L, forceSlab x ∂MeasureTheory.volume +
+          ∫ x in M, forceSlab x ∂MeasureTheory.volume +
+          ∫ x in U, forceSlab x ∂MeasureTheory.volume := by
+            simpa [S, L, M, U] using
+              setIntegral_cubeFaceNeighborSlabSet Q i forceSlab
+                hforceL_int hforceM_int hforceU_int
+      _ = forceL + forceM + forceU := by
+            rw [hforceL_eq, hforceM_eq, hforceU_eq]
+  exact hforceSplit
 
 /-- Compact-test weak equation on the lower/original/upper one-coordinate
 reflected slab, in reflected-field notation. Algebraically this is the lower
@@ -450,166 +681,14 @@ theorem faceNeighborSlab_reflectedVectorField_weakEquationOnSlab_of_compactSuppo
     simpa [gradM, forceM, G, M] using
       W.weakEquationOnCube_of_compactSupport
         hφ hφs hmean hF
-  have hGslab : MemVectorL2 S (faceNeighborSlabReflectedVectorField Q i G) := by
-    simpa [S, M] using
-      memVectorL2_cubeFaceNeighborSlabSet_faceNeighborSlabReflectedVectorField
-        Q i hGopen
-  have hgradφSlab : MemVectorL2 S (euclideanGradient φ) :=
-    memVectorL2_euclideanGradient_of_contDiff_hasCompactSupport hφ hφs
-  have hgradSlabInt :
-      MeasureTheory.Integrable gradSlab (MeasureTheory.volume.restrict S) := by
-    simpa [MeasureTheory.IntegrableOn, volumeMeasureOn, gradSlab] using
-      integrableOn_vecDot_of_memVectorL2 (U := S) hGslab hgradφSlab
-  have hFslab : MemScalarL2 S (faceNeighborSlabReflectedScalar Q i F) := by
-    simpa [S, M] using
-      memScalarL2_cubeFaceNeighborSlabSet_faceNeighborSlabReflectedScalar
-        Q i hFopen
-  have hφSlab : MemScalarL2 S φ := by
-    have hφ_cont : Continuous φ := (hφ.differentiable (by simp)).continuous
-    simpa [MemScalarL2, volumeMeasureOn, S] using
-      (hφ_cont.memLp_of_hasCompactSupport hφs).restrict S
-  have hforceSlabInt :
-      MeasureTheory.Integrable forceSlab (MeasureTheory.volume.restrict S) := by
-    simpa [forceSlab] using! hFslab.integrable_mul hφSlab
-  have hLsub : L ⊆ S := by
-    intro x hx
-    exact Or.inl (Or.inl hx)
-  have hMsub : M ⊆ S := by
-    intro x hx
-    exact Or.inl (Or.inr hx)
-  have hUsub : U ⊆ S := by
-    intro x hx
-    exact Or.inr hx
-  have hgradL_int :
-      MeasureTheory.Integrable gradSlab (MeasureTheory.volume.restrict L) :=
-    hgradSlabInt.mono_measure
-      (MeasureTheory.Measure.restrict_mono_set MeasureTheory.volume hLsub)
-  have hgradM_int :
-      MeasureTheory.Integrable gradSlab (MeasureTheory.volume.restrict M) :=
-    hgradSlabInt.mono_measure
-      (MeasureTheory.Measure.restrict_mono_set MeasureTheory.volume hMsub)
-  have hgradU_int :
-      MeasureTheory.Integrable gradSlab (MeasureTheory.volume.restrict U) :=
-    hgradSlabInt.mono_measure
-      (MeasureTheory.Measure.restrict_mono_set MeasureTheory.volume hUsub)
-  have hforceL_int :
-      MeasureTheory.Integrable forceSlab (MeasureTheory.volume.restrict L) :=
-    hforceSlabInt.mono_measure
-      (MeasureTheory.Measure.restrict_mono_set MeasureTheory.volume hLsub)
-  have hforceM_int :
-      MeasureTheory.Integrable forceSlab (MeasureTheory.volume.restrict M) :=
-    hforceSlabInt.mono_measure
-      (MeasureTheory.Measure.restrict_mono_set MeasureTheory.volume hMsub)
-  have hforceU_int :
-      MeasureTheory.Integrable forceSlab (MeasureTheory.volume.restrict U) :=
-    hforceSlabInt.mono_measure
-      (MeasureTheory.Measure.restrict_mono_set MeasureTheory.volume hUsub)
-  have hgradL_eq :
-      ∫ x in L, gradSlab x ∂MeasureTheory.volume = gradL := by
-    change
-      ∫ x in L, gradSlab x ∂MeasureTheory.volume =
-        ∫ x in L,
-          vecDot
-            (coordReflectionLinear i (G (cubeLowerFaceReflection Q i x)))
-            (euclideanGradient φ x) ∂MeasureTheory.volume
-    refine MeasureTheory.setIntegral_congr_fun
-      (measurableSet_openCubeSet (cubeLowerFaceNeighbor Q i)) ?_
-    intro x hx
-    simpa [gradSlab, L] using
-      congrArg (fun v => vecDot v (euclideanGradient φ x))
-        (faceNeighborSlabReflectedVectorField_of_mem_lower Q i G
-          (x := x) hx)
-  have hgradM_eq :
-      ∫ x in M, gradSlab x ∂MeasureTheory.volume = gradM := by
-    change
-      ∫ x in M, gradSlab x ∂MeasureTheory.volume =
-        ∫ x in M, vecDot (G x) (euclideanGradient φ x)
-          ∂MeasureTheory.volume
-    refine MeasureTheory.setIntegral_congr_fun
-      (measurableSet_openCubeSet Q) ?_
-    intro x hx
-    simpa [gradSlab, M] using
-      congrArg (fun v => vecDot v (euclideanGradient φ x))
-        (faceNeighborSlabReflectedVectorField_of_mem_cube Q i G
-          (x := x) hx)
-  have hgradU_eq :
-      ∫ x in U, gradSlab x ∂MeasureTheory.volume = gradU := by
-    change
-      ∫ x in U, gradSlab x ∂MeasureTheory.volume =
-        ∫ x in U,
-          vecDot
-            (coordReflectionLinear i (G (cubeUpperFaceReflection Q i x)))
-            (euclideanGradient φ x) ∂MeasureTheory.volume
-    refine MeasureTheory.setIntegral_congr_fun
-      (measurableSet_openCubeSet (cubeUpperFaceNeighbor Q i)) ?_
-    intro x hx
-    simpa [gradSlab, U] using
-      congrArg (fun v => vecDot v (euclideanGradient φ x))
-        (faceNeighborSlabReflectedVectorField_of_mem_upper Q i G
-          (x := x) hx)
-  have hforceL_eq :
-      ∫ x in L, forceSlab x ∂MeasureTheory.volume = forceL := by
-    change
-      ∫ x in L, forceSlab x ∂MeasureTheory.volume =
-        ∫ x in L, F (cubeLowerFaceReflection Q i x) * φ x
-          ∂MeasureTheory.volume
-    refine MeasureTheory.setIntegral_congr_fun
-      (measurableSet_openCubeSet (cubeLowerFaceNeighbor Q i)) ?_
-    intro x hx
-    simpa [forceSlab, L] using
-      congrArg (fun y => y * φ x)
-        (faceNeighborSlabReflectedScalar_of_mem_lower Q i F
-          (x := x) hx)
-  have hforceM_eq :
-      ∫ x in M, forceSlab x ∂MeasureTheory.volume = forceM := by
-    change
-      ∫ x in M, forceSlab x ∂MeasureTheory.volume =
-        ∫ x in M, F x * φ x ∂MeasureTheory.volume
-    refine MeasureTheory.setIntegral_congr_fun
-      (measurableSet_openCubeSet Q) ?_
-    intro x hx
-    simpa [forceSlab, M] using
-      congrArg (fun y => y * φ x)
-        (faceNeighborSlabReflectedScalar_of_mem_cube Q i F (x := x) hx)
-  have hforceU_eq :
-      ∫ x in U, forceSlab x ∂MeasureTheory.volume = forceU := by
-    change
-      ∫ x in U, forceSlab x ∂MeasureTheory.volume =
-        ∫ x in U, F (cubeUpperFaceReflection Q i x) * φ x
-          ∂MeasureTheory.volume
-    refine MeasureTheory.setIntegral_congr_fun
-      (measurableSet_openCubeSet (cubeUpperFaceNeighbor Q i)) ?_
-    intro x hx
-    simpa [forceSlab, U] using
-      congrArg (fun y => y * φ x)
-        (faceNeighborSlabReflectedScalar_of_mem_upper Q i F
-          (x := x) hx)
   have hgradSplit :
-      ∫ x in S, gradSlab x ∂MeasureTheory.volume =
-        gradL + gradM + gradU := by
-    calc
-      ∫ x in S, gradSlab x ∂MeasureTheory.volume =
-          ∫ x in L, gradSlab x ∂MeasureTheory.volume +
-          ∫ x in M, gradSlab x ∂MeasureTheory.volume +
-          ∫ x in U, gradSlab x ∂MeasureTheory.volume := by
-            simpa [S, L, M, U] using
-              setIntegral_cubeFaceNeighborSlabSet Q i gradSlab
-                hgradL_int hgradM_int hgradU_int
-      _ = gradL + gradM + gradU := by
-            rw [hgradL_eq, hgradM_eq, hgradU_eq]
+      ∫ x in S, gradSlab x ∂MeasureTheory.volume = gradL + gradM + gradU := by
+    simpa only [S, gradSlab, gradL, gradM, gradU, L, M, U] using
+      integral_reflected_slab_gradient_pairing_eq_sum i G hGopen hφ hφs
   have hforceSplit :
-      ∫ x in S, forceSlab x ∂MeasureTheory.volume =
-        forceL + forceM + forceU := by
-    calc
-      ∫ x in S, forceSlab x ∂MeasureTheory.volume =
-          ∫ x in L, forceSlab x ∂MeasureTheory.volume +
-          ∫ x in M, forceSlab x ∂MeasureTheory.volume +
-          ∫ x in U, forceSlab x ∂MeasureTheory.volume := by
-            simpa [S, L, M, U] using
-              setIntegral_cubeFaceNeighborSlabSet Q i forceSlab
-                hforceL_int hforceM_int hforceU_int
-      _ = forceL + forceM + forceU := by
-            rw [hforceL_eq, hforceM_eq, hforceU_eq]
+      ∫ x in S, forceSlab x ∂MeasureTheory.volume = forceL + forceM + forceU := by
+    simpa only [S, forceSlab, forceL, forceM, forceU, L, M, U] using
+      integral_reflected_slab_forcing_eq_sum i F hFopen hφ hφs
   have hAlgebra : gradL + gradM + gradU = forceL + forceM + forceU := by
     calc
       gradL + gradM + gradU =
@@ -627,7 +706,7 @@ theorem faceNeighborSlab_reflectedVectorField_weakEquationOnSlab_of_compactSuppo
 reflected slab, with the right-hand side given in the normalized cube `L²`
 measure used by the endpoint interfaces. -/
 theorem
-  faceNeighborSlab_reflectedVectorField_weakEquationOnSlab_of_compactSupport_of_memLp_normalizedCubeMeasure
+  faceNeighborSlab_reflectedVectorField_weakEquationOnSlab
     (W : MeanZeroNeumannPoissonSolution Q F)
     (i : Fin d) {φ : Vec d → ℝ} (hφ : ContDiff ℝ (⊤ : ℕ∞) φ)
     (hφs : HasCompactSupport φ)

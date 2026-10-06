@@ -153,7 +153,8 @@ theorem exists_one_step_family_of_block_var_at_level_conv_family_split (d : ℕ)
               rowValue2Isotropy d (rowSplitConstant cIso cDeep) kapE
                 (hatExcessAt P (roundedGrid lAl mAl) ((N₀ : ℤ) + (n : ℤ))) +
               weakValueBoundSharpIsotropyAt (Response.recentConstantAtLevel lev)
-            (Response.maxGroupConstantAtLevel lev) (Response.energyGoodConstantAtLevel lev) P mAl (Response.responseSkew (K0 n)) F
+            (Response.maxGroupConstantAtLevel lev) (Response.energyGoodConstantAtLevel lev) P
+              mAl (Response.responseSkew (K0 n)) F
                 (loadScaleOfScalar cF (kapE)) mAl
                 rho (Hw n)
                 (R ^ 4 * badMomentMajorant K

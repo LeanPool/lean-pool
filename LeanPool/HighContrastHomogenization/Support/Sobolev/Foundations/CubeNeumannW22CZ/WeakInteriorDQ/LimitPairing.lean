@@ -278,7 +278,7 @@ theorem openCubeInnerOpenCubeQuotientHessianPairing_eq_integral_mul_backwardDiff
           uQ.toFun x *
             euclideanBackwardDifferenceQuotient step i (fun y => φ.deriv j y) x
           ∂MeasureTheory.volume :=
-    integral_euclideanForwardDifferenceQuotient_mul_eq_neg_integral_mul_euclideanBackwardDifferenceQuotient_of_integrable
+    integral_forwardDifference_mul_eq_neg_integral_mul_of_integrable
       (u := uQ.toFun) (v := fun y => φ.deriv j y) step i
       (by simpa using hshiftInt)
       (by simpa using huvInt)
@@ -306,7 +306,7 @@ theorem openCubeInnerOpenCubeQuotientHessianPairing_eq_integral_mul_backwardDiff
 
 /-- Fixed-step pairing rewrite with the L1 hypotheses discharged from the
 interior support and one-step cube-margin conditions. -/
-theorem openCubeInnerOpenCubeQuotientHessianPairing_eq_integral_mul_backwardDifferenceQuotient_deriv_of_subset_of_shift
+theorem innerCubeHessianPairing_eq_integral_mul_backwardDifference_deriv
     {Q : TriadicCube d} (uQ : H1Function (openCubeSet Q))
     {step : ℝ} (i j : Fin d) {ρ₁ : ℝ}
     (φ : H1WeakTestFunction (scaledOpenCubeSet Q ρ₁))
@@ -452,7 +452,7 @@ theorem openCubeInnerHessianPairingTendsto_of_integral_backwardDifferenceQuotien
             ∂MeasureTheory.volume := by
     funext n
     exact
-      openCubeInnerOpenCubeQuotientHessianPairing_eq_integral_mul_backwardDifferenceQuotient_deriv_of_subset_of_shift
+      innerCubeHessianPairing_eq_integral_mul_backwardDifference_deriv
         uQ i j φ hSV hVU (hVshift n)
   have htarget :
       ∫ x,

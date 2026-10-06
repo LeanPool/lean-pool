@@ -36,6 +36,186 @@ open scoped ENNReal BigOperators
 
 noncomputable section
 
+private theorem integral_additivityCutoffTerm_le_expectedSquareRoots
+    {d : ℕ}
+    [NeZero d]
+    {P : Ch04.RestrictionCoeffLaw d}
+    (hP : Ch04.RestrictionLawCarrier P)
+    (hstat : Ch04.RestrictionStationaryLaw P)
+    {k : ℤ}
+    {m : ℤ}
+    (hkm : k ≤ m)
+    (p : Vec d)
+    (q : Vec d)
+    (hk_nonneg : 0 ≤ k)
+    (C : ℝ)
+    (hC : 0 ≤ C)
+    (hParent : Integrable (Ch04.restrictionResponseJObservableCubeSet (originCube d m) p q) P)
+    (hDesc : ∀ R, R ∈ descendantsAtScale (originCube d m) k →
+      Integrable (Ch04.restrictionResponseJObservableCubeSet R p q) P)
+    :
+    let Q : TriadicCube d := originCube d m
+    let j : ℕ := Int.toNat (m - k)
+    let childAverage : RegCoeffField d → ℝ :=
+      fun a => descendantsAverage Q j (fun R => Ch04.restrictionResponseJObservableCubeSet R p q a)
+    let addPoint : RegCoeffField d → ℝ :=
+      fun a =>
+        (2 * C) *
+          (Real.sqrt (responseJAdditivityDefectAtScale m k p q a) *
+            Real.sqrt (childAverage a))
+    ∫ a, addPoint a ∂P ≤
+        (2 * C) *
+          (Real.sqrt (tauAtScale P m k p q) *
+            Real.sqrt (Ch04.expectedResponseJCubeSet P (originCube d k) p q)) := by
+  classical
+  let : IsProbabilityMeasure P := hP.isProbability
+  dsimp only
+  let Q : TriadicCube d := originCube d m
+  let j : ℕ := Int.toNat (m - k)
+  let childAverage : RegCoeffField d → ℝ :=
+    fun a => descendantsAverage Q j (fun R => Ch04.restrictionResponseJObservableCubeSet R p q a)
+  let addPoint : RegCoeffField d → ℝ :=
+    fun a =>
+      (2 * C) *
+        (Real.sqrt (responseJAdditivityDefectAtScale m k p q a) *
+          Real.sqrt (childAverage a))
+  have hSqrtBound :
+      ∫ a,
+          Real.sqrt (responseJAdditivityDefectAtScale m k p q a) *
+            Real.sqrt (childAverage a) ∂P ≤
+        Real.sqrt (tauAtScale P m k p q) *
+          Real.sqrt (Ch04.expectedResponseJCubeSet P (originCube d k) p q) := by
+    simpa [childAverage, Q, j] using
+      integral_sqrt_responseJAdditivityDefectAtScale_mul_sqrt_childResponseAverage_le
+        hP hstat hk_nonneg hkm p q hParent hDesc
+  have htwoC_nonneg : 0 ≤ 2 * C := by nlinarith
+  calc
+    ∫ a, addPoint a ∂P =
+        (2 * C) *
+          ∫ a,
+            Real.sqrt (responseJAdditivityDefectAtScale m k p q a) *
+              Real.sqrt (childAverage a) ∂P := by
+          simp [addPoint, integral_const_mul]
+    _ ≤
+        (2 * C) *
+          (Real.sqrt (tauAtScale P m k p q) *
+            Real.sqrt (Ch04.expectedResponseJCubeSet P (originCube d k) p q)) :=
+          mul_le_mul_of_nonneg_left hSqrtBound htwoC_nonneg
+
+private theorem integral_manuscriptTerms_eq_sum_integrals
+    {d : ℕ}
+    [NeZero d]
+    {P : Ch04.RestrictionCoeffLaw d}
+    (hP : Ch04.RestrictionLawCarrier P)
+    {k : ℤ}
+    {m : ℤ}
+    (p : Vec d)
+    (q : Vec d)
+    {s : ℝ}
+    {t : ℝ}
+    (C : ℝ)
+    (Cosc : ℝ)
+    (scaleSep : ℝ)
+    (BφS : ℝ)
+    (BφT : ℝ)
+    (Cprod : ℝ)
+    (p0 : Vec d)
+    (q0 : Vec d)
+    :
+    let Q : TriadicCube d := originCube d m
+    let j : ℕ := Int.toNat (m - k)
+    let childAverage : RegCoeffField d → ℝ :=
+      fun a => descendantsAverage Q j (fun R => Ch04.restrictionResponseJObservableCubeSet R p q a)
+    let gradWeak : RegCoeffField d → ℝ :=
+      fun a => Ch04.canonicalScalarResponseGradientWeakNormCubeSet Q s p q p0 a.toFun
+    let fluxWeak : RegCoeffField d → ℝ :=
+      fun a => Ch04.canonicalScalarResponseFluxWeakNormCubeSet Q t p q q0 a.toFun
+    let gradCoeff : ℝ :=
+      (3 : ℝ) ^ ((d : ℝ) + s) * cubeBesovScaleWeight (-s) Q * BφS
+    let fluxCoeff : ℝ :=
+      (3 : ℝ) ^ ((d : ℝ) + t) * cubeBesovScaleWeight (-t) Q * BφT
+    let scaledGrad : RegCoeffField d → ℝ := gradWeak
+    let scaledFlux : RegCoeffField d → ℝ := fluxWeak
+    let addPoint : RegCoeffField d → ℝ :=
+      fun a =>
+        (2 * C) *
+          (Real.sqrt (responseJAdditivityDefectAtScale m k p q a) *
+            Real.sqrt (childAverage a))
+    let oscPoint : RegCoeffField d → ℝ :=
+      fun a => Cosc * scaleSep * Ch04.restrictionResponseJObservableCubeSet Q p q a
+    let gradPoint : RegCoeffField d → ℝ :=
+      fun a =>
+        (1 / 2 : ℝ) * ‖q0‖ *
+          (((Fintype.card (Fin d) : ℝ) * gradCoeff) * gradWeak a)
+    let fluxPoint : RegCoeffField d → ℝ :=
+      fun a =>
+        (1 / 2 : ℝ) * ‖p0‖ *
+          (((Fintype.card (Fin d) : ℝ) * fluxCoeff) * fluxWeak a)
+    let productPoint : RegCoeffField d → ℝ :=
+      fun a => Cprod * (scaledGrad a * scaledFlux a)
+    ∀ (hAddInt : Integrable addPoint P),
+    ∀ (hOscInt : Integrable oscPoint P),
+    ∀ (hGradInt : Integrable gradPoint P),
+    ∀ (hFluxInt : Integrable fluxPoint P),
+    ∀ (hProductInt : Integrable productPoint P),
+    ∀ (hRHS_eq : (fun a : RegCoeffField d =>
+        jUpperWeakNormManuscriptPointwiseRHSAtScale m k s t
+          C Cosc scaleSep BφS BφT Cprod p q p0 q0 a) =
+        fun a => (addPoint a + oscPoint a) + ((gradPoint a + fluxPoint a) + productPoint a)),
+    ∫ a,
+        jUpperWeakNormManuscriptPointwiseRHSAtScale m k s t
+          C Cosc scaleSep BφS BφT Cprod p q p0 q0 a ∂P =
+        ∫ a, addPoint a ∂P +
+          (∫ a, oscPoint a ∂P +
+            ((∫ a, gradPoint a ∂P + ∫ a, fluxPoint a ∂P) +
+              ∫ a, productPoint a ∂P)) := by
+  classical
+  let : IsProbabilityMeasure P := hP.isProbability
+  dsimp only
+  let Q : TriadicCube d := originCube d m
+  let j : ℕ := Int.toNat (m - k)
+  let childAverage : RegCoeffField d → ℝ :=
+    fun a => descendantsAverage Q j (fun R => Ch04.restrictionResponseJObservableCubeSet R p q a)
+  let gradWeak : RegCoeffField d → ℝ :=
+    fun a => Ch04.canonicalScalarResponseGradientWeakNormCubeSet Q s p q p0 a.toFun
+  let fluxWeak : RegCoeffField d → ℝ :=
+    fun a => Ch04.canonicalScalarResponseFluxWeakNormCubeSet Q t p q q0 a.toFun
+  let gradCoeff : ℝ :=
+    (3 : ℝ) ^ ((d : ℝ) + s) * cubeBesovScaleWeight (-s) Q * BφS
+  let fluxCoeff : ℝ :=
+    (3 : ℝ) ^ ((d : ℝ) + t) * cubeBesovScaleWeight (-t) Q * BφT
+  let scaledGrad : RegCoeffField d → ℝ := gradWeak
+  let scaledFlux : RegCoeffField d → ℝ := fluxWeak
+  let addPoint : RegCoeffField d → ℝ :=
+    fun a =>
+      (2 * C) *
+        (Real.sqrt (responseJAdditivityDefectAtScale m k p q a) *
+          Real.sqrt (childAverage a))
+  let oscPoint : RegCoeffField d → ℝ :=
+    fun a => Cosc * scaleSep * Ch04.restrictionResponseJObservableCubeSet Q p q a
+  let gradPoint : RegCoeffField d → ℝ :=
+    fun a =>
+      (1 / 2 : ℝ) * ‖q0‖ *
+        (((Fintype.card (Fin d) : ℝ) * gradCoeff) * gradWeak a)
+  let fluxPoint : RegCoeffField d → ℝ :=
+    fun a =>
+      (1 / 2 : ℝ) * ‖p0‖ *
+        (((Fintype.card (Fin d) : ℝ) * fluxCoeff) * fluxWeak a)
+  let productPoint : RegCoeffField d → ℝ :=
+    fun a => Cprod * (scaledGrad a * scaledFlux a)
+  intro hAddInt hOscInt hGradInt hFluxInt hProductInt hRHS_eq
+  rw [hRHS_eq]
+  rw [integral_add
+    (f := fun a : RegCoeffField d => addPoint a + oscPoint a)
+    (g := fun a : RegCoeffField d => (gradPoint a + fluxPoint a) + productPoint a)
+    (hAddInt.add hOscInt) ((hGradInt.add hFluxInt).add hProductInt)]
+  rw [integral_add (f := addPoint) (g := oscPoint) hAddInt hOscInt]
+  rw [integral_add
+    (f := fun a : RegCoeffField d => gradPoint a + fluxPoint a)
+    (g := productPoint) (hGradInt.add hFluxInt) hProductInt]
+  rw [integral_add (f := gradPoint) (g := fluxPoint) hGradInt hFluxInt]
+  ring
+
 theorem integral_jUpperWeakNormManuscriptPointwiseRHSAtScale_le_manuscriptExpectedRHSAtScale
     {d : ℕ} [NeZero d] {P : Ch04.RestrictionCoeffLaw d}
     (hP : Ch04.RestrictionLawCarrier P) (hstat : Ch04.RestrictionStationaryLaw P)
@@ -172,52 +352,15 @@ theorem integral_jUpperWeakNormManuscriptPointwiseRHSAtScale_le_manuscriptExpect
       fluxPoint, productPoint, childAverage, gradWeak, fluxWeak, scaledGrad,
       scaledFlux, gradCoeff, fluxCoeff, Q, j, add_assoc, add_comm, mul_assoc]
     ring
-  have hIntegral_eq :
-      ∫ a,
-        jUpperWeakNormManuscriptPointwiseRHSAtScale m k s t
-          C Cosc scaleSep BφS BφT Cprod p q p0 q0 a ∂P =
-        ∫ a, addPoint a ∂P +
-          (∫ a, oscPoint a ∂P +
-            ((∫ a, gradPoint a ∂P + ∫ a, fluxPoint a ∂P) +
-              ∫ a, productPoint a ∂P)) := by
-    rw [hRHS_eq]
-    rw [integral_add
-      (f := fun a : RegCoeffField d => addPoint a + oscPoint a)
-      (g := fun a : RegCoeffField d => (gradPoint a + fluxPoint a) + productPoint a)
-      (hAddInt.add hOscInt) ((hGradInt.add hFluxInt).add hProductInt)]
-    rw [integral_add (f := addPoint) (g := oscPoint) hAddInt hOscInt]
-    rw [integral_add
-      (f := fun a : RegCoeffField d => gradPoint a + fluxPoint a)
-      (g := productPoint) (hGradInt.add hFluxInt) hProductInt]
-    rw [integral_add (f := gradPoint) (g := fluxPoint) hGradInt hFluxInt]
-    ring
-  have hSqrtBound :
-      ∫ a,
-          Real.sqrt (responseJAdditivityDefectAtScale m k p q a) *
-            Real.sqrt (childAverage a) ∂P ≤
-        Real.sqrt (tauAtScale P m k p q) *
-          Real.sqrt (Ch04.expectedResponseJCubeSet P (originCube d k) p q) := by
-    simpa [childAverage, Q, j] using
-      integral_sqrt_responseJAdditivityDefectAtScale_mul_sqrt_childResponseAverage_le
-        hP hstat hk_nonneg hkm p q hParent hDesc
-  have hAddBound :
-      ∫ a, addPoint a ∂P ≤
-        (2 * C) *
-          (Real.sqrt (tauAtScale P m k p q) *
-            Real.sqrt (Ch04.expectedResponseJCubeSet P (originCube d k) p q)) := by
-    have htwoC_nonneg : 0 ≤ 2 * C := by nlinarith
-    calc
-      ∫ a, addPoint a ∂P =
-          (2 * C) *
-            ∫ a,
-              Real.sqrt (responseJAdditivityDefectAtScale m k p q a) *
-                Real.sqrt (childAverage a) ∂P := by
-            simp [addPoint, integral_const_mul]
-      _ ≤
-          (2 * C) *
-            (Real.sqrt (tauAtScale P m k p q) *
-              Real.sqrt (Ch04.expectedResponseJCubeSet P (originCube d k) p q)) :=
-            mul_le_mul_of_nonneg_left hSqrtBound htwoC_nonneg
+  have hIntegral_eq := integral_manuscriptTerms_eq_sum_integrals (d := d) (P := P) (hP := hP) (k
+    := k) (m := m)
+    (p := p) (q := q) (s := s) (t := t) (C := C) (Cosc := Cosc) (scaleSep := scaleSep)
+    (BφS := BφS) (BφT := BφT) (Cprod := Cprod) (p0 := p0) (q0 := q0) hAddInt hOscInt hGradInt
+    hFluxInt hProductInt hRHS_eq
+  have hAddBound := integral_additivityCutoffTerm_le_expectedSquareRoots (d := d) (P := P) (hP
+    := hP)
+    (hstat := hstat) (k := k) (m := m) (hkm := hkm) (p := p) (q := q) (hk_nonneg := hk_nonneg)
+    (C := C) (hC := hC) (hParent := hParent) (hDesc := hDesc)
   have hOscIntegral :
       ∫ a, oscPoint a ∂P =
         Cosc * scaleSep * Ch04.expectedResponseJCubeSet P Q p q := by

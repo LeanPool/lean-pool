@@ -63,7 +63,7 @@ theorem
               ((Fintype.card (Fin d) : ℝ) * Bcirc1))) +
         cubeLpNorm Q ∞ ξ * Bpos) := by
   have hpartial :=
-    cubeBesovPositiveVectorPartialSeminormTwo_centered_scalar_smul_le_cutoff_terms_of_contDiff_component_bound
+    cubeBesovPositiveVectorPartialSeminormTwo_centered_scalar_smul_le_cutoff_terms
       Q s N u ξ hB hu hξLp hξ hderiv
   have hraw :
       cubeL2ScalarPartialSeminormTwo Q (s - 1) N (cubeFluctuation Q u) ≤
@@ -107,7 +107,7 @@ theorem
             exact mul_le_mul_of_nonneg_left (add_le_add hterm1 hterm2) (by norm_num)
 
 theorem
-    cubeBesovPositiveVectorPartialSeminormTwo_centered_scalar_smul_le_fullDual_localMultiscale_cutoff_terms
+    positivePartialSeminormTwo_centeredScalarMultiply_le_fullDual_multiscaleCutoff
     {d : ℕ} (Q : TriadicCube d) (s : ℝ) (N : ℕ) (u : Vec d → ℝ)
     (G : Vec d → Vec d) (ξ : Vec d → Vec d) {B C Bcirc1 BcircS : ℝ}
     (hB : 0 ≤ B)
@@ -153,7 +153,7 @@ theorem
             (1 - (3 : ℝ) ^ (-s))⁻¹) *
             ((Fintype.card (Fin d) : ℝ) * BcircS)) := by
     simpa [mul_assoc] using
-      CubeLocalMultiscalePoincareVectorEstimate.fluctuation_positiveScalarPartialSeminormTwo_le_note_rhs_of_component_bound
+      CubeLocalMultiscalePoincareVectorEstimate.fluctuationScalarBesov_le_bound
         (Q := Q)
         (s := s)
         (C := ((3 / 2 : ℝ) * C * (3 : ℝ) ^ ((d : ℝ) + 1)))
@@ -170,77 +170,23 @@ theorem
             ((Fintype.card (Fin d) : ℝ) * BcircS)))
       hB hu hfull hG hξLp hξ hderiv hs1 hC hBcirc1 hGcirc1 hpos
 
-/-- Componentwise dual-test bound for the centered cutoff product, using the
-full-dual Poincare estimate and the full-circ infinite-depth positive
-Poincare route. -/
-theorem
-    cubeBesovDualTestNorm_two_one_component_centered_scalar_smul_le_fullDual_fullCirc_cutoff_terms
-    {d : ℕ} (Q : TriadicCube d) (s : ℝ) (N : ℕ) (u : Vec d → ℝ)
-    (G : Vec d → Vec d) (ξ : Vec d → Vec d) (i : Fin d) {B C Bcirc1 BcircS : ℝ}
-    (hB : 0 ≤ B)
-    (hu : MeasureTheory.MemLp u (2 : ℝ≥0∞) (normalizedCubeMeasure Q))
-    (hfull : ∀ M : ℕ,
-      CubeDescendantDualFullVectorPoincareEstimate Q C (cubeFluctuation Q u) G M)
+private theorem cubeBesovPositiveDepth_le_geometricCircBound
+    {d : ℕ} (Q : TriadicCube d) (s : ℝ) (N : ℕ)
+    (v : Vec d → ℝ) (G : Vec d → Vec d) {C BcircS : ℝ}
+    (hfull : ∀ M : ℕ, CubeDescendantDualFullVectorPoincareEstimate Q C v G M)
     (hG : ∀ i : Fin d,
       MeasureTheory.MemLp (fun x => G x i) (2 : ℝ≥0∞) (normalizedCubeMeasure Q))
-    (hξLp : MeasureTheory.MemLp ξ ∞ (normalizedCubeMeasure Q))
-    (hξ : ∀ i : Fin d, ContDiff ℝ (⊤ : ℕ∞) (fun x => ξ x i))
-    (hderiv : ∀ i : Fin d, ∀ z ∈ cubeSet Q, ‖fderiv ℝ (fun x => ξ x i) z‖ ≤ B)
-    (hs0 : 0 < s) (hs1 : s < 1) (hC : 0 ≤ C)
-    (hBcirc1 : 0 ≤ Bcirc1) (hBcircS : 0 ≤ BcircS)
-    (hGcirc1 : ∀ i : Fin d, ∀ M : ℕ,
-      cubeBesovCircPartialNorm Q 1 (2 : ℝ≥0∞) (1 : ℝ≥0∞) M
-        (fun x => G x i) ≤ Bcirc1)
+    (hs0 : 0 < s) (hs1 : s < 1) (hC : 0 ≤ C) (hBcircS : 0 ≤ BcircS)
     (hGcircS : ∀ i : Fin d, ∀ M : ℕ,
       cubeBesovCircPartialNorm Q (1 - s) (2 : ℝ≥0∞) (1 : ℝ≥0∞) M
         (fun x => G x i) ≤ BcircS) :
-    cubeBesovDualTestNorm Q s (2 : ℝ≥0∞) (1 : ℝ≥0∞) N
-        (fun x => cubeFluctuationVec Q (fun y => (u y - cubeAverage Q u) • ξ y) x i) ≤
-      cubeBesovScaleWeight s Q *
-        (2 * (cubeScaleFactor Q * B *
-            (Real.sqrt ((1 - Real.rpow (3 : ℝ) (2 * (s - 1)))⁻¹) *
-              (((3 / 2 : ℝ) * C * (3 : ℝ) ^ ((d : ℝ) + 1)) *
-                ((Fintype.card (Fin d) : ℝ) * Bcirc1))) +
-          cubeLpNorm Q ∞ ξ *
-            (cubeBesovScaleWeight (-s) Q *
-              ((((3 / 2 : ℝ) * C * (3 : ℝ) ^ ((d : ℝ) + 1)) *
-                (1 - (3 : ℝ) ^ (-s))⁻¹) *
-                ((Fintype.card (Fin d) : ℝ) * BcircS))))) := by
-  classical
-  let v : Vec d → ℝ := cubeFluctuation Q u
-  let prod : Vec d → Vec d := fun x => v x • ξ x
-  let L2B : ℝ :=
-    Real.sqrt ((1 - Real.rpow (3 : ℝ) (2 * (s - 1)))⁻¹) *
-      (((3 / 2 : ℝ) * C * (3 : ℝ) ^ ((d : ℝ) + 1)) *
-        ((Fintype.card (Fin d) : ℝ) * Bcirc1))
-  let PosB : ℝ :=
-    cubeBesovScaleWeight (-s) Q *
-      ((((3 / 2 : ℝ) * C * (3 : ℝ) ^ ((d : ℝ) + 1)) *
-        (1 - (3 : ℝ) ^ (-s))⁻¹) *
-        ((Fintype.card (Fin d) : ℝ) * BcircS))
-  have hv : MeasureTheory.MemLp v (2 : ℝ≥0∞) (normalizedCubeMeasure Q) := by
-    exact hu.sub (MeasureTheory.memLp_const (cubeAverage Q u))
-  have hprodMem :
-      MeasureTheory.MemLp prod (2 : ℝ≥0∞) (normalizedCubeMeasure Q) := by
-    let : ENNReal.HolderTriple (2 : ℝ≥0∞) ∞ (2 : ℝ≥0∞) := by infer_instance
-    simpa [prod] using! hv.smul (q := ∞) (r := (2 : ℝ≥0∞)) hξLp
-  have hconj :
-      cubeBesovConjExponent (1 : ℝ≥0∞) = ∞ := by
-    simpa [cubeBesovConjExponent] using
-      (ENNReal.HolderConjugate.conjExponent_eq (p := (1 : ℝ≥0∞)) (q := (∞ : ℝ≥0∞)))
-  have hpConj :
-      cubeBesovConjExponent (2 : ℝ≥0∞) = (2 : ℝ≥0∞) := by
-    simpa [cubeBesovConjExponent] using
-      (ENNReal.HolderConjugate.conjExponent_eq (p := (2 : ℝ≥0∞)) (q := (2 : ℝ≥0∞)))
-  have havg :
-      cubeAverage Q (fun x => cubeFluctuationVec Q prod x i) = 0 := by
-    simpa [cubeFluctuation_component_eq_cubeFluctuationVec_component Q prod i] using
-      cubeAverage_cubeFluctuation Q (fun x => prod x i)
-  have hL2partial :
-      cubeL2ScalarPartialSeminormTwo Q (s - 1) N v ≤ L2B := by
-    simpa [v, L2B] using
-      cubeL2ScalarPartialSeminormTwo_fluctuation_le_note_rhs_of_dualFullVectorPoincareEstimate
-        Q s N u G hu (hfull N) hG hs1 hC hBcirc1 hGcirc1
+    ∀ j ∈ Finset.range (N + 1), cubeBesovPositiveScalarDepthSeminorm Q s v j ≤
+      cubeBesovScaleWeight (-s) Q *
+        ((((3 / 2 : ℝ) * C * (3 : ℝ) ^ ((d : ℝ) + 1)) *
+          (1 - (3 : ℝ) ^ (-s))⁻¹) * ((Fintype.card (Fin d) : ℝ) * BcircS)) := by
+  let PosB : ℝ := cubeBesovScaleWeight (-s) Q *
+    ((((3 / 2 : ℝ) * C * (3 : ℝ) ^ ((d : ℝ) + 1)) *
+      (1 - (3 : ℝ) ^ (-s))⁻¹) * ((Fintype.card (Fin d) : ℝ) * BcircS))
   have hCfull_nonneg : 0 ≤ C * (3 : ℝ) ^ ((d : ℝ) + 1) := by
     exact mul_nonneg hC (Real.rpow_nonneg (by positivity) _)
   have hcard_nonneg : 0 ≤ (Fintype.card (Fin d) : ℝ) := by
@@ -331,7 +277,8 @@ theorem
       cubeBesovPositiveScalarDepthSeminorm Q s v j
           = cubeBesovScaleWeight (-s) Q *
               cubeBesovDepthSeminorm Q s (2 : ℝ≥0∞) v j := by
-            rw [cubeBesovPositiveScalarDepthSeminorm_eq_scaleWeight_neg_mul_cubeBesovDepthSeminorm_two]
+            rw [
+            cubeBesovPositiveScalarDepthSeminorm_eq_scaleWeight_neg_mul_cubeBesovDepthSeminorm_two]
       _ ≤ cubeBesovScaleWeight (-s) Q *
             (((3 / 2 : ℝ) * C * (3 : ℝ) ^ ((d : ℝ) + 1) *
               (1 - (3 : ℝ) ^ (-s))⁻¹) *
@@ -340,6 +287,83 @@ theorem
               (cubeBesovScaleWeight_nonneg (-s) Q)
       _ = PosB := by
             simp [PosB, mul_assoc, mul_left_comm, mul_comm]
+  exact hposDepth
+
+/-- Componentwise dual-test bound for the centered cutoff product, using the
+full-dual Poincare estimate and the full-circ infinite-depth positive
+Poincare route. -/
+theorem
+    cubeBesovDualTestNorm_component_centered_smul_le_dualCutoff
+    {d : ℕ} (Q : TriadicCube d) (s : ℝ) (N : ℕ) (u : Vec d → ℝ)
+    (G : Vec d → Vec d) (ξ : Vec d → Vec d) (i : Fin d) {B C Bcirc1 BcircS : ℝ}
+    (hB : 0 ≤ B)
+    (hu : MeasureTheory.MemLp u (2 : ℝ≥0∞) (normalizedCubeMeasure Q))
+    (hfull : ∀ M : ℕ,
+      CubeDescendantDualFullVectorPoincareEstimate Q C (cubeFluctuation Q u) G M)
+    (hG : ∀ i : Fin d,
+      MeasureTheory.MemLp (fun x => G x i) (2 : ℝ≥0∞) (normalizedCubeMeasure Q))
+    (hξLp : MeasureTheory.MemLp ξ ∞ (normalizedCubeMeasure Q))
+    (hξ : ∀ i : Fin d, ContDiff ℝ (⊤ : ℕ∞) (fun x => ξ x i))
+    (hderiv : ∀ i : Fin d, ∀ z ∈ cubeSet Q, ‖fderiv ℝ (fun x => ξ x i) z‖ ≤ B)
+    (hs0 : 0 < s) (hs1 : s < 1) (hC : 0 ≤ C)
+    (hBcirc1 : 0 ≤ Bcirc1) (hBcircS : 0 ≤ BcircS)
+    (hGcirc1 : ∀ i : Fin d, ∀ M : ℕ,
+      cubeBesovCircPartialNorm Q 1 (2 : ℝ≥0∞) (1 : ℝ≥0∞) M
+        (fun x => G x i) ≤ Bcirc1)
+    (hGcircS : ∀ i : Fin d, ∀ M : ℕ,
+      cubeBesovCircPartialNorm Q (1 - s) (2 : ℝ≥0∞) (1 : ℝ≥0∞) M
+        (fun x => G x i) ≤ BcircS) :
+    cubeBesovDualTestNorm Q s (2 : ℝ≥0∞) (1 : ℝ≥0∞) N
+        (fun x => cubeFluctuationVec Q (fun y => (u y - cubeAverage Q u) • ξ y) x i) ≤
+      cubeBesovScaleWeight s Q *
+        (2 * (cubeScaleFactor Q * B *
+            (Real.sqrt ((1 - Real.rpow (3 : ℝ) (2 * (s - 1)))⁻¹) *
+              (((3 / 2 : ℝ) * C * (3 : ℝ) ^ ((d : ℝ) + 1)) *
+                ((Fintype.card (Fin d) : ℝ) * Bcirc1))) +
+          cubeLpNorm Q ∞ ξ *
+            (cubeBesovScaleWeight (-s) Q *
+              ((((3 / 2 : ℝ) * C * (3 : ℝ) ^ ((d : ℝ) + 1)) *
+                (1 - (3 : ℝ) ^ (-s))⁻¹) *
+                ((Fintype.card (Fin d) : ℝ) * BcircS))))) := by
+  classical
+  let v : Vec d → ℝ := cubeFluctuation Q u
+  let prod : Vec d → Vec d := fun x => v x • ξ x
+  let L2B : ℝ :=
+    Real.sqrt ((1 - Real.rpow (3 : ℝ) (2 * (s - 1)))⁻¹) *
+      (((3 / 2 : ℝ) * C * (3 : ℝ) ^ ((d : ℝ) + 1)) *
+        ((Fintype.card (Fin d) : ℝ) * Bcirc1))
+  let PosB : ℝ :=
+    cubeBesovScaleWeight (-s) Q *
+      ((((3 / 2 : ℝ) * C * (3 : ℝ) ^ ((d : ℝ) + 1)) *
+        (1 - (3 : ℝ) ^ (-s))⁻¹) *
+        ((Fintype.card (Fin d) : ℝ) * BcircS))
+  have hv : MeasureTheory.MemLp v (2 : ℝ≥0∞) (normalizedCubeMeasure Q) := by
+    exact hu.sub (MeasureTheory.memLp_const (cubeAverage Q u))
+  have hprodMem :
+      MeasureTheory.MemLp prod (2 : ℝ≥0∞) (normalizedCubeMeasure Q) := by
+    let : ENNReal.HolderTriple (2 : ℝ≥0∞) ∞ (2 : ℝ≥0∞) := by infer_instance
+    simpa [prod] using! hv.smul (q := ∞) (r := (2 : ℝ≥0∞)) hξLp
+  have hconj :
+      cubeBesovConjExponent (1 : ℝ≥0∞) = ∞ := by
+    simpa [cubeBesovConjExponent] using
+      (ENNReal.HolderConjugate.conjExponent_eq (p := (1 : ℝ≥0∞)) (q := (∞ : ℝ≥0∞)))
+  have hpConj :
+      cubeBesovConjExponent (2 : ℝ≥0∞) = (2 : ℝ≥0∞) := by
+    simpa [cubeBesovConjExponent] using
+      (ENNReal.HolderConjugate.conjExponent_eq (p := (2 : ℝ≥0∞)) (q := (2 : ℝ≥0∞)))
+  have havg :
+      cubeAverage Q (fun x => cubeFluctuationVec Q prod x i) = 0 := by
+    simpa [cubeFluctuation_component_eq_cubeFluctuationVec_component Q prod i] using
+      cubeAverage_cubeFluctuation Q (fun x => prod x i)
+  have hL2partial :
+      cubeL2ScalarPartialSeminormTwo Q (s - 1) N v ≤ L2B := by
+    simpa [v, L2B] using
+      cubeL2ScalarPartialSeminormTwo_fluctuation_le_note_rhs_of_dualFullVectorPoincareEstimate
+        Q s N u G hu (hfull N) hG hs1 hC hBcirc1 hGcirc1
+  have hposDepth : ∀ j ∈ Finset.range (N + 1),
+      cubeBesovPositiveScalarDepthSeminorm Q s v j ≤ PosB :=
+    cubeBesovPositiveDepth_le_geometricCircBound Q s N v G hfull hG hs0 hs1 hC
+      hBcircS hGcircS
   have hcomponentTop :
       cubeBesovPartialSeminormTop Q s (2 : ℝ≥0∞) N
           (fun x => cubeFluctuationVec Q prod x i) ≤
@@ -395,7 +419,8 @@ theorem
           (fun x => cubeFluctuationVec Q prod x i) j
           ≤ cubeBesovScaleWeight s Q *
               cubeBesovPositiveVectorDepthSeminorm Q s (cubeFluctuationVec Q prod) j := by
-            exact cubeBesovDepthSeminorm_two_component_le_scaleWeight_mul_positiveVectorDepthSeminorm
+            exact
+              cubeBesovDepthSeminorm_two_component_le_scaleWeight_mul_positiveVectorDepthSeminorm
               Q s (cubeFluctuationVec Q prod) i j
               (memLp_cubeFluctuationVec Q prod hprodMem)
       _ = cubeBesovScaleWeight s Q * cubeBesovPositiveVectorDepthSeminorm Q s prod j := by
@@ -459,7 +484,7 @@ theorem
       hGcirc1 (hpos N)
 
 theorem
-    abs_cubeAverage_vecDot_centered_scalar_smul_le_collapsed_average_note_terms_of_partialBounds_of_dualFullVectorPoincareEstimate
+    abs_cubeAverage_vectorDot_centered_scalar_smul_le_noteTerms
     {d : ℕ} (Q : TriadicCube d) (s : ℝ) (flux : Vec d → Vec d)
     (u : Vec d → ℝ) (G : Vec d → Vec d) (ξ : Vec d → Vec d)
     {Bu Bg Bavg Bcirc1 C : ℝ}
@@ -553,7 +578,7 @@ theorem
               exact add_le_add havgTerm le_rfl
 
 theorem
-    abs_cubeAverage_vecDot_centered_scalar_smul_le_collapsed_sharp_average_note_terms_of_partialBounds_of_dualFullVectorPoincareEstimate
+    abs_cubeAverage_vectorDot_centered_scalar_smul_le_sharpNoteTerms
     {d : ℕ} (Q : TriadicCube d) (s : ℝ) (flux : Vec d → Vec d)
     (u : Vec d → ℝ) (G : Vec d → Vec d) (ξ : Vec d → Vec d)
     {Bu Bg Bavg Bcirc1 C : ℝ}
@@ -697,7 +722,7 @@ theorem
         cubeBesovScaleWeight s Q * Bg := by
     intro i N
     exact le_trans
-      (cubeBesovDualTestNorm_two_one_component_centered_scalar_smul_le_fullDual_fullCirc_cutoff_terms
+      (cubeBesovDualTestNorm_component_centered_smul_le_dualCutoff
         Q s N u G ξ i hB hu hfull hG hξLp hξ hderiv hs0 hs1 hC hBcirc1 hBcircS
         hGcirc1 hGcircS)
       (mul_le_mul_of_nonneg_left hBg_bound (cubeBesovScaleWeight_nonneg s Q))
@@ -757,7 +782,7 @@ theorem
               exact add_le_add havgTerm le_rfl
 
 theorem
-    abs_cubeAverage_vecDot_centered_scalar_smul_le_collapsed_sharp_note_terms_of_dualFull_localMultiscale
+    abs_cubeAverage_vectorDot_centered_scalar_smul_le_collapsed_sharp_of_dualFull
     {d : ℕ} (Q : TriadicCube d) (s : ℝ) (flux : Vec d → Vec d)
     (u : Vec d → ℝ) (G : Vec d → Vec d) (ξ : Vec d → Vec d)
     {Bu Bavg Bcirc1 BcircS B C Bg : ℝ}
@@ -809,12 +834,12 @@ theorem
           (fun x => (u x - cubeAverage Q u) • ξ x) ≤ Bg := by
     intro N
     exact le_trans
-      (cubeBesovPositiveVectorPartialSeminormTwo_centered_scalar_smul_le_fullDual_localMultiscale_cutoff_terms
+      (positivePartialSeminormTwo_centeredScalarMultiply_le_fullDual_multiscaleCutoff
         Q s N u G ξ hB hu (hfull N) (hlocal N) hG hξLp hξ hderiv
         hs0 hs1 hC hBcirc1 hBcircS hGcirc1 (fun i => hGcircS i N))
       hBg_bound
   exact
-    abs_cubeAverage_vecDot_centered_scalar_smul_le_collapsed_sharp_average_note_terms_of_partialBounds_of_dualFullVectorPoincareEstimate
+    abs_cubeAverage_vectorDot_centered_scalar_smul_le_sharpNoteTerms
       Q s flux u G ξ hs0 hflux hu hG hξLp hBg hBavg hC hBcirc1
       havg hneg hpos hfull hGcirc1
 

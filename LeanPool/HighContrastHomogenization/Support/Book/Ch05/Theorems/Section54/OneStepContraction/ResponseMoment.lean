@@ -202,7 +202,7 @@ private theorem responseJ_special_pointwise_le_weighted_factors
   have hEq :
       A = Ch02.coarseBlockMatrix (Ch02.cubeDomain Q) (F.coeffOn Q) := by
     simpa [A, F] using
-      Ch04.RestrictionLawCarrier.coarseBlockMatrix_cubeSet_eq_ch02_coarseBlockMatrix_of_aelocallyUniformlyEllipticField
+      Ch04.RestrictionLawCarrier.coarseBlockMatrix_cubeSet_eq_chapterCoarse
         ha Q
   have hSymm : IsSymmetricBlockMat A := by
     rw [hEq]

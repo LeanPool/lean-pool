@@ -159,7 +159,7 @@ theorem publicCoeffField_summable_qtwo_maxDescendantBBlockNormAtScale
       geometricWeight s 2 n *
         maxDescendantBBlockNormAtScale Q (Q.scale - (n : ℤ))
           (publicCoeffField Q a)) :=
-  _root_.HCPolySupport.summable_qtwo_maxDescendantBBlockNormAtScale_of_isEllipticFieldOn_of_openCubeDescendantDeterministicCoarseData
+  _root_.HCPolySupport.summable_qtwo_maxDescendantBBlockNorm_of_ellipticField
     (Q := Q) (a := publicCoeffField Q a) s hs
     (publicCoeffField_isEllipticFieldOn_cubeSet Q a)
     (publicCoeffField_openCubeDescendantDeterministicCoarseData Q a)
@@ -184,7 +184,7 @@ theorem publicCoeffField_summable_qtwo_maxDescendantBBlockNormAtScale_descendant
       geometricWeight s 2 n *
         maxDescendantBBlockNormAtScale R (R.scale - (n : ℤ))
           (publicCoeffField Q a)) :=
-  _root_.HCPolySupport.summable_qtwo_maxDescendantBBlockNormAtScale_of_isEllipticFieldOn_of_openCubeDescendantDeterministicCoarseData
+  _root_.HCPolySupport.summable_qtwo_maxDescendantBBlockNorm_of_ellipticField
     (Q := R) (a := publicCoeffField Q a) s hs
     (publicCoeffField_isEllipticFieldOn_descendant_cubeSet Q a hR)
     (publicCoeffField_openCubeDescendantDeterministicCoarseData_descendant Q a hR)
@@ -659,7 +659,7 @@ theorem homogenizationErrorOnCube_parent_publicCoeffField_descendant_infinity_on
   apply tsum_congr
   intro n
   have hl : R.scale - (n : ℤ) ≤ R.scale :=
-    sub_le_self _ (by exact_mod_cast Nat.zero_le n)
+    sub_le_self _ (Nat.cast_nonneg n)
   rw [← Ch02.geometricWeight_eq_old]
   rw [scaleResponseAtScale_parent_publicCoeffField_descendant_infinity_eq_ch02
     (a := a) hR hl a0]
@@ -677,7 +677,7 @@ theorem homogenizationErrorOnCube_parent_publicCoeffField_descendant_infinity_on
   refine hbook.congr ?_
   intro n
   have hl : R.scale - (n : ℤ) ≤ R.scale :=
-    sub_le_self _ (by exact_mod_cast Nat.zero_le n)
+    sub_le_self _ (Nat.cast_nonneg n)
   rw [Ch02.geometricWeight_eq_old]
   rw [scaleResponseAtScale_parent_publicCoeffField_descendant_infinity_eq_ch02
     (a := a) hR hl a0]
@@ -694,7 +694,7 @@ theorem homogenizationErrorOnCube_publicCoeffField_infinity_one_eq_ch02
   apply tsum_congr
   intro n
   have hk : Q.scale - (n : ℤ) ≤ Q.scale :=
-    sub_le_self _ (by exact_mod_cast Nat.zero_le n)
+    sub_le_self _ (Nat.cast_nonneg n)
   rw [← Ch02.geometricWeight_eq_old]
   rw [scaleResponseAtScale_publicCoeffField_infinity_eq_ch02
     (a := a) Q hk a0]
@@ -711,7 +711,7 @@ theorem homogenizationErrorOnCube_publicCoeffField_infinity_one_terms_summable
   refine hbook.congr ?_
   intro n
   have hk : Q.scale - (n : ℤ) ≤ Q.scale :=
-    sub_le_self _ (by exact_mod_cast Nat.zero_le n)
+    sub_le_self _ (Nat.cast_nonneg n)
   rw [Ch02.geometricWeight_eq_old]
   rw [scaleResponseAtScale_publicCoeffField_infinity_eq_ch02
     (a := a) Q hk a0]

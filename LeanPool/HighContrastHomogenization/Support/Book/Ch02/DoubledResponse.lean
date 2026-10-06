@@ -26,8 +26,11 @@ noncomputable section
 
 /-- Public doubled field, represented by potential and flux components. -/
 structure DoubledField (d : ℕ) where
+  /-- The vector field forming the potential component of the doubled field. -/
   potential : Vec d → Vec d
+  /-- The vector field forming the flux component of the doubled field. -/
   flux : Vec d → Vec d
+
 
 namespace DoubledField
 

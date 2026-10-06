@@ -62,7 +62,7 @@ theorem coarseBBlockNorm_le_inv_geometricWeight_sq_mul_LambdaSq_one_of_mem_desce
           LambdaSq Q s (.finite 1) a := by
       simp [w]
 
-theorem coarseSigmaStarInvBlockNorm_le_inv_geometricWeight_sq_mul_lambdaSq_one_inv_of_mem_descendantsAtScale
+theorem coarseSigmaStarInvBlockNorm_le_weighted_lambdaInv
     {d : ℕ} {Q R : TriadicCube d} {k : ℤ} (a : CoeffField d) (s : ℝ)
     (hs : 0 < s) (hR : R ∈ descendantsAtScale Q k)
     (hsum :
@@ -117,7 +117,8 @@ theorem maxDescendantBBlockNormAtScale_le_inv_geometricWeight_sq_mul_LambdaSq_on
         LambdaSq Q s (.finite 1) a := by
   unfold maxDescendantBBlockNormAtScale finsetSsup
   have hne :
-      ((fun R => coarseBBlockNorm R a) '' (↑(descendantsAtScale Q k) : Set (TriadicCube d))).Nonempty := by
+      ((fun R => coarseBBlockNorm R a) '' (↑(descendantsAtScale Q k) : Set (TriadicCube
+        d))).Nonempty := by
     rcases descendantsAtScale_nonempty Q hk with ⟨R, hR⟩
     exact ⟨coarseBBlockNorm R a, ⟨R, hR, rfl⟩⟩
   refine csSup_le hne ?_
@@ -144,7 +145,7 @@ theorem maxDescendantSigmaStarInvNormAtScale_le_inv_geometricWeight_sq_mul_lambd
     exact ⟨coarseSigmaStarInvBlockNorm R a, ⟨R, hR, rfl⟩⟩
   refine csSup_le hne ?_
   rintro x ⟨R, hR, rfl⟩
-  exact coarseSigmaStarInvBlockNorm_le_inv_geometricWeight_sq_mul_lambdaSq_one_inv_of_mem_descendantsAtScale
+  exact coarseSigmaStarInvBlockNorm_le_weighted_lambdaInv
     (Q := Q) (R := R) (k := k) a s hs hR hsum
 
 theorem multiscale_ellipticity_q1_normalized_scale_bounds {d : ℕ}
@@ -223,7 +224,7 @@ theorem multiscale_ellipticity_q1_normalized_basic_properties_of_isEllipticField
     intro n
     refine Real.rpow_nonneg ?_ _
     exact maxDescendantBBlockNormAtScale_nonneg Q
-      (sub_le_self _ (by exact_mod_cast Nat.zero_le n)) a
+      (sub_le_self _ (Nat.cast_nonneg n)) a
   have hSigmaNonneg :
       ∀ n : ℕ,
         0 ≤ Real.rpow (maxDescendantSigmaStarInvNormAtScale Q (Q.scale - (n : ℤ)) a)
@@ -231,7 +232,7 @@ theorem multiscale_ellipticity_q1_normalized_basic_properties_of_isEllipticField
     intro n
     refine Real.rpow_nonneg ?_ _
     exact maxDescendantSigmaStarInvNormAtScale_nonneg Q
-      (sub_le_self _ (by exact_mod_cast Nat.zero_le n)) a
+      (sub_le_self _ (Nat.cast_nonneg n)) a
   have hBsum_s :
       Summable (fun n : ℕ =>
         geometricWeight s 1 n *

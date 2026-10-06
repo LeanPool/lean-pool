@@ -53,7 +53,8 @@ theorem overlapIntersectingParentEnergy_nonneg {d : ℕ}
 /-- Boundary-layer reduction with a gate back to admissible overlap centers.
 The gate is important because the raw ancestor boundary layer also contains
 fine descendants whose overlap cube may leave `Q`; crossing centers never do. -/
-theorem cubeBesovOverlappingPositiveVectorDepthAverage_cubeIncrementVec_le_admissible_boundaryLayer_sum
+theorem
+  cubeBesovOverlappingPositiveVectorDepthAverage_cubeIncrementVec_le_admissible_boundaryLayer_sum
     {d : ℕ} (Q : TriadicCube d) (u : Vec d → Vec d) {j m : ℕ}
     (hmj : m ≤ j) :
     cubeBesovOverlappingPositiveVectorDepthAverage Q
@@ -118,7 +119,8 @@ theorem cubeBesovOverlappingPositiveVectorDepthAverage_cubeIncrementVec_le_admis
 boundary-layer reduction.  The remaining task after this theorem is purely
 geometric summation: control the admissible boundary-layer neighbor-energy
 sum by the ordinary standard positive depth budgets. -/
-theorem cubeBesovOverlappingPositiveVectorDepthAverage_cubeIncrementVec_le_boundary_neighborEnergy_sum
+theorem
+  cubeBesovOverlappingPositiveVectorDepthAverage_cubeIncrementVec_le_boundary_neighborEnergy_sum
     {d : ℕ} (Q : TriadicCube d) (u : Vec d → Vec d) {j m : ℕ}
     (hmj : m ≤ j)
     (hincLoc :
@@ -159,7 +161,7 @@ theorem cubeBesovOverlappingPositiveVectorDepthAverage_cubeIncrementVec_le_bound
     intro S hS
     by_cases hcenter : S ∈ overlapCentersAtDepth Q j
     · have hlocal :=
-        sq_overlapCubeLpNorm_overlapCubeFluctuationVec_cubeIncrementVec_le_four_mul_overlapIntersectingParentEnergy_sum
+        overlapCubeLpNorm_fluctuationIncrement_le_fourParentEnergySum
           (Q := Q) (S := S) (m := m) u
           (overlapCubeSet_subset_cubeSet_of_mem_overlapCentersAtDepth hcenter)
           (hincLoc S hcenter) huChild
@@ -518,7 +520,7 @@ theorem admissible_boundary_neighborEnergy_sum_le_count_mul_parentEnergy_sum
 /-- One-increment boundary estimate after the local-neighbor budget and a
 supplied parent-hit counting bound.  The remaining geometric theorem should
 provide the count `M ≃ (3^(d-1))^(j-m)`. -/
-theorem cubeBesovOverlappingPositiveVectorDepthAverage_cubeIncrementVec_le_neighbor_count_parentEnergy_sum
+theorem overlappingPositiveDepthAverage_increment_le_neighborParentEnergy
     {d : ℕ} (Q : TriadicCube d) (u : Vec d → Vec d) {j m : ℕ}
     (hmj : m ≤ j) {M : ℝ}
     (hM :
@@ -583,7 +585,8 @@ theorem cubeBesovOverlappingPositiveVectorDepthAverage_cubeIncrementVec_le_neigh
 
 /-- One-increment boundary estimate after the parent-hit count, expressed in
 terms of the ordinary standard positive depth-`m` average. -/
-theorem cubeBesovOverlappingPositiveVectorDepthAverage_cubeIncrementVec_le_neighbor_count_depthAverage
+theorem
+  cubeBesovOverlappingPositiveVectorDepthAverage_cubeIncrementVec_le_neighbor_count_depthAverage
     {d : ℕ} (Q : TriadicCube d) (u : Vec d → Vec d) {j m : ℕ}
     (hmj : m ≤ j) {M : ℝ}
     (hM :
@@ -619,7 +622,7 @@ theorem cubeBesovOverlappingPositiveVectorDepthAverage_cubeIncrementVec_le_neigh
     parentChildEnergy_sum_descendants_le_const_mul_depthAverage
       Q u m huParent
   have hbase :=
-    cubeBesovOverlappingPositiveVectorDepthAverage_cubeIncrementVec_le_neighbor_count_parentEnergy_sum
+    overlappingPositiveDepthAverage_increment_le_neighborParentEnergy
       (Q := Q) (u := u) hmj hM hincLoc huChild
   have hbudget :
       4 *
@@ -643,7 +646,7 @@ theorem cubeBesovOverlappingPositiveVectorDepthAverage_cubeIncrementVec_le_neigh
 
 /-- Scale-separated normalization form of
 `cubeBesovOverlappingPositiveVectorDepthAverage_cubeIncrementVec_le_neighbor_count_depthAverage`. -/
-theorem cubeBesovOverlappingPositiveVectorDepthAverage_cubeIncrementVec_le_pow_inv_neighbor_count_depthAverage
+theorem overlappingPositiveDepthMean_increment_le_inversePower_neighborCount_mean
     {d : ℕ} (Q : TriadicCube d) (u : Vec d → Vec d) {j m : ℕ}
     (hmj : m ≤ j) {M : ℝ}
     (hM :
@@ -699,7 +702,8 @@ theorem cubeBesovOverlappingPositiveVectorDepthAverage_cubeIncrementVec_le_pow_i
 neighbor-count estimates.  This is the downstream form of the remaining
 geometry: supply the hit count for every increment scale, and the projection
 jump is controlled by the corresponding weighted standard positive depths. -/
-theorem cubeBesovOverlappingPositiveVectorDepthSeminorm_gap_zero_le_sum_sqrt_neighbor_count_depthAverage
+theorem
+  cubeBesovOverlappingPositiveVectorDepthSeminorm_gap_zero_le_sum_sqrt_neighbor_count_depthAverage
     {d : ℕ} (Q : TriadicCube d) (s : ℝ) (u : Vec d → Vec d) (j : ℕ)
     (M : ℕ → ℝ)
     (hincLoc :
@@ -731,7 +735,7 @@ theorem cubeBesovOverlappingPositiveVectorDepthSeminorm_gap_zero_le_sum_sqrt_nei
   intro m hm
   have hmj : m ≤ j := Nat.le_of_lt (Finset.mem_range.mp hm)
   have havg :=
-    cubeBesovOverlappingPositiveVectorDepthAverage_cubeIncrementVec_le_pow_inv_neighbor_count_depthAverage
+    overlappingPositiveDepthMean_increment_le_inversePower_neighborCount_mean
       (Q := Q) (u := u) (j := j) (m := m) hmj
       (hM m hm) (fun S hS => hincLoc S hS m hm) (huParent m hm)
   have hweight_nonneg :
@@ -744,7 +748,7 @@ theorem cubeBesovOverlappingPositiveVectorDepthSeminorm_gap_zero_le_sum_sqrt_nei
 This is scale-incorrect for the final theorem, but it is a fully proved
 fallback showing that the hit-count interface composes without any remaining
 analytic hypotheses. -/
-theorem cubeBesovOverlappingPositiveVectorDepthSeminorm_gap_zero_le_sum_sqrt_globalBoundaryLayer_depthAverage
+theorem overlappingPositiveDepthSeminorm_gap_zero_le_sum_sqrt_boundaryLayerMean
     {d : ℕ} (Q : TriadicCube d) (s : ℝ) (u : Vec d → Vec d) (j : ℕ)
     (hincLoc :
       ∀ S ∈ overlapCentersAtDepth Q j, ∀ m ∈ Finset.range j,

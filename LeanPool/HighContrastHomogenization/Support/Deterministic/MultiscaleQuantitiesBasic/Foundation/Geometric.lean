@@ -361,7 +361,8 @@ private theorem rpow_le_rpow_tsum_mul_of_nonneg {f : ℕ → ℝ} {p : ℝ}
   have hterm_le : ∀ n, f n ≤ S := by
     intro n
     have hsingle : f n ≤ ∑ i ∈ Finset.range (n + 1), f i := by
-      exact Finset.single_le_sum (fun i _ => hf_nonneg i) (Finset.mem_range.mpr (Nat.lt_succ_self n))
+      exact Finset.single_le_sum (fun i _ => hf_nonneg i) (Finset.mem_range.mpr
+        (Nat.lt_succ_self n))
     have hprefix :
         ∑ i ∈ Finset.range (n + 1), f i ≤ S := by
       simpa [S] using hf_sum.sum_le_tsum (Finset.range (n + 1))

@@ -68,15 +68,15 @@ theorem coarseFluxResponseRHS_negativeDual_le {d : ℕ} [NeZero d]
         ((d : ℝ) ^ 2 *
           max 1
             (((d : ℝ) * Real.rpow (3 : ℝ) ((d : ℝ) + 1)) *
-              (2 * zeroTraceDirichletCorrectedWeakFluxApexConstant d 1)))
+              (2 * zeroTraceFluxApexConstant d 1)))
         Q a a0 s g u := by
   let A : CoeffField d := publicCoeffField Q a
   let B : ℝ := _root_.HCPolySupport.coarseFluxResponseRHSBound Q A
     a0.matrix s (forcedSolutionGradientField u) g
   let K : ℝ := (d : ℝ) * Real.rpow (3 : ℝ) ((d : ℝ) + s)
   let K₁ : ℝ := (d : ℝ) * Real.rpow (3 : ℝ) ((d : ℝ) + 1)
-  let M : ℝ := zeroTraceDirichletCorrectedWeakFluxApexConstant d s
-  let M₁ : ℝ := zeroTraceDirichletCorrectedWeakFluxApexConstant d 1
+  let M : ℝ := zeroTraceFluxApexConstant d s
+  let M₁ : ℝ := zeroTraceFluxApexConstant d 1
   let C₀ : ℝ := max 1 (K₁ * (2 * M₁))
   let C : ℝ := (d : ℝ) ^ 2 * C₀
   have hs_le : s ≤ 1 := hs_lt.le
@@ -98,13 +98,13 @@ theorem coarseFluxResponseRHS_negativeDual_le {d : ℕ} [NeZero d]
     exact mul_le_mul_of_nonneg_left hpow (by exact_mod_cast Nat.zero_le d)
   have hM_nonneg : 0 ≤ M := by
     dsimp [M]
-    exact zeroTraceDirichletCorrectedWeakFluxApexConstant_nonneg d s
+    exact zeroTraceFluxApexConstant_nonneg d s
   have hM_le : M ≤ M₁ := by
     dsimp [M, M₁]
     have hdisplay :
-        zeroTraceDirichletCorrectedWeakFluxApexDisplayScale d s ≤
-          zeroTraceDirichletCorrectedWeakFluxApexDisplayScale d 1 := by
-      unfold zeroTraceDirichletCorrectedWeakFluxApexDisplayScale
+        zeroTraceFluxApexDisplayScale d s ≤
+          zeroTraceFluxApexDisplayScale d 1 := by
+      unfold zeroTraceFluxApexDisplayScale
       have hpow :
           (3 : ℝ) ^ ((d : ℝ) + s) ≤
             (3 : ℝ) ^ ((d : ℝ) + 1) :=
@@ -115,7 +115,7 @@ theorem coarseFluxResponseRHS_negativeDual_le {d : ℕ} [NeZero d]
             (3 : ℝ) ^ ((d : ℝ) + 1) * Real.sqrt 2 :=
         mul_le_mul_of_nonneg_right hpow (Real.sqrt_nonneg 2)
       exact mul_le_mul_of_nonneg_left hinner (by exact_mod_cast Nat.zero_le d)
-    unfold zeroTraceDirichletCorrectedWeakFluxApexConstant
+    unfold zeroTraceFluxApexConstant
     nlinarith
   have hKM_le_C₀ : K * (2 * M) ≤ C₀ := by
     have htwoM_nonneg : 0 ≤ 2 * M := by nlinarith
@@ -141,7 +141,7 @@ theorem coarseFluxResponseRHS_negativeDual_le {d : ℕ} [NeZero d]
           (fluxDefect A a0.matrix (forcedSolutionGradientField u)) ≤
         2 * M * B := by
     have hraw :=
-      ZeroTraceDirichletCorrectorData.cubeBesovNegativeVectorSeminormTwo_fluxDefect_le_two_mul_const_mul_coarseFluxResponseRHSBound_of_h1DirichletRhsWeakSolutionOn_correctedWeakFlux_averagedCorrectorEnergy
+      ZeroTraceDirichletCorrectorData.besovFluxDefect_le_constant_mul_bound
         (Q := Q) (a := A) (a0 := a0.matrix) (s := s) (g := g)
         (v := publicH1ToCubeSet u.toH1)
         (lam := (a.coeffOn Q).lam) (Lam := (a.coeffOn Q).Lam)
@@ -160,7 +160,7 @@ theorem coarseFluxResponseRHS_negativeDual_le {d : ℕ} [NeZero d]
         K * cubeBesovNegativeVectorSeminormTwo Q s
           (fluxDefect A a0.matrix (forcedSolutionGradientField u)) := by
     simpa [K, A] using
-      forcedSolutionFluxDefect_dualNorm_le_note_constant_mul_cubeBesovNegativeVectorSeminormTwo_publicCoeffField
+      forcedSolutionFluxDefect_dualNorm_le_constant_mul_negativeBesovSeminormTwo
         (Q := Q) (a := a) (a0 := a0) (s := s) u hs
   have hbounded :
       scaleNormalizedDualNegativeBesovVectorNormTwo Q s
@@ -195,7 +195,7 @@ theorem coarseFluxResponseRHS_negativeDual_le {d : ℕ} [NeZero d]
       C₀ * B ≤ coarseFluxResponseWithRHSRHS C Q a a0 s g u := by
     dsimp [B, A, C]
     exact
-      coarseFluxResponseRHSBound_publicCoeffField_le_dim_sq_mul_public_of_homogenizationErrorOnCube_eq
+      coarseFluxResponseBound_le_dimSquared_publicRHS
         C₀ Q a a0 u hC₀_nonneg hs hBsemi_nonneg hH_nonneg herror
   simpa [C] using! hbounded.trans hrhs_le
 
@@ -205,14 +205,14 @@ theorem coarseFluxResponseRHSTheory {d : ℕ} [NeZero d] :
   refine ⟨?_⟩
   refine ⟨(d : ℝ) ^ 2 * max 1
     (((d : ℝ) * Real.rpow (3 : ℝ) ((d : ℝ) + 1)) *
-      (2 * zeroTraceDirichletCorrectedWeakFluxApexConstant d 1)), ?_, ?_⟩
+      (2 * zeroTraceFluxApexConstant d 1)), ?_, ?_⟩
   · have hd_pos : 0 < (d : ℝ) := by
       exact_mod_cast Nat.pos_of_ne_zero (NeZero.ne d)
     exact mul_pos (sq_pos_of_pos hd_pos)
       (lt_of_lt_of_le zero_lt_one
         (le_max_left 1
           (((d : ℝ) * Real.rpow (3 : ℝ) ((d : ℝ) + 1)) *
-            (2 * zeroTraceDirichletCorrectedWeakFluxApexConstant d 1))))
+            (2 * zeroTraceFluxApexConstant d 1))))
   · intro Q a s g a0 u hs hs_lt hg
     exact coarseFluxResponseRHS_negativeDual_le
       (Q := Q) (a := a) (a0 := a0) (u := u) hs hs_lt hg

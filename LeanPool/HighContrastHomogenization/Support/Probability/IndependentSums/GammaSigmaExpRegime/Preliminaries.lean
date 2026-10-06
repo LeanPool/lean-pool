@@ -439,7 +439,6 @@ theorem summable_integral_norm_gammaExpTaylorTail
     (μ := μ) (X := X) (σ := σ) (M := M) (l := l) n hσ hM hl hXmom
 
 lemma integrable_gammaExpSeriesTerm_of_one_le
-    [IsProbabilityMeasure μ]
     {X : Ω → ℝ} {σ M l : ℝ} {n : ℕ}
     (hn : 1 ≤ n)
     (hXm : AEMeasurable X μ)

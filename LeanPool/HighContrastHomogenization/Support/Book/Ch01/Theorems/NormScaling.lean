@@ -116,7 +116,7 @@ theorem volumeAverage_smul_set_comp_smul_of_pos {d : ℕ} {r : ℝ}
 
 /-- Raw set-integral form of positive dilation change of variables. -/
 theorem setIntegral_comp_smul_of_pos {d : ℕ} {E : Type*}
-    [NormedAddCommGroup E] [NormedSpace ℝ E] [CompleteSpace E]
+    [NormedAddCommGroup E] [NormedSpace ℝ E]
     {r : ℝ} (hr : 0 < r) (U : Set (Vec d)) (f : Vec d → E) :
     ∫ x in U, f (r • x) ∂MeasureTheory.volume =
       (r ^ d)⁻¹ • ∫ y in r • U, f y ∂MeasureTheory.volume := by

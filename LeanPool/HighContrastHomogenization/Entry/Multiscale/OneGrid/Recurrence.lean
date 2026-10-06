@@ -105,7 +105,8 @@ theorem lqSchattenNorm_pow_eq_integral (d : ℕ) (hd : 2 ≤ d) (γ : ℝ)
   have hmem : SchattenMemLp P (bigQ d γ : ℝ)
       (normalizedFluctuationSelf P (Geometry.explicitRoundedGrid jStar metric) j) := by
     simpa [normalizedFluctuationSelf] using!
-      HCPolySupport.HighContrast.Annealed.memLqSchatten_normalizedFluctuation d hd P γ E Ψ K S hstat hdag
+      HCPolySupport.HighContrast.Annealed.memLqSchatten_normalizedFluctuation d hd P γ E Ψ K S
+        hstat hdag
         jStar hjStar metric hmetric j j 0 (bigQ d γ : ℝ) hN
   unfold lqSchattenNorm
   rw [Real.rpow_inv_natCast_pow]
@@ -116,6 +117,77 @@ theorem lqSchattenNorm_pow_eq_integral (d : ℕ) (hd : 2 ≤ d) (γ : ℝ)
       (Analysis.absSchattenNorm_nonneg ((Analysis.toFullBlockMat_isHermitian_iff _).2 ha) hN)
       (bigQ d γ : ℝ)
   · exact ne_of_gt (lt_of_lt_of_le (by norm_num : 0 < 2) (bigQ_two_le d γ hγ))
+
+private theorem averaging_term_power_bound (d Q : ℕ) (h : ℤ) (Δ a0 u M : ℝ)
+    (hVj0 : 0 ≤ M) (hJeq : u ^ Q = M)
+    (ha0def : a0 = (Q : ℝ) * (3 : ℝ) ^ ((d : ℝ) / 2) *
+      (1 + (2 * (d : ℝ)) ^ ((Q : ℝ))⁻¹) * (3 : ℝ) ^ (-((d : ℝ) / 2) * (h : ℝ)) *
+        Real.exp Δ * u)
+    (hbase_le : ((Q : ℝ) * (3 : ℝ) ^ ((d : ℝ) / 2) *
+      (1 + (2 * (d : ℝ)) ^ ((Q : ℝ))⁻¹)) ^ Q ≤
+        ((3 : ℝ) ^ d * (Q : ℝ)) ^ Q) :
+    a0 ^ Q ≤
+      ((3 : ℝ) ^ d * (Q : ℝ)) ^ Q *
+        ((3 : ℝ) ^ (-((Q : ℝ) * (d : ℝ) / 2) * (h : ℝ)) *
+          (Real.exp ((Q : ℝ) * Δ) *
+            M)) := by
+  have e1 : ((3 : ℝ) ^ (-((d : ℝ) / 2) * (h : ℝ))) ^ Q =
+      (3 : ℝ) ^ (-((Q : ℝ) * (d : ℝ) / 2) * (h : ℝ)) := by
+    rw [← Real.rpow_natCast ((3 : ℝ) ^ (-((d : ℝ) / 2) * (h : ℝ))) (Q),
+      ← Real.rpow_mul (by norm_num : (0:ℝ) ≤ 3)]
+    congr 1
+    ring
+  have e2 : (Real.exp Δ) ^ Q = Real.exp ((Q : ℝ) * Δ) :=
+    (Real.exp_nat_mul Δ (Q)).symm
+  have hreassoc : a0 =
+      ((Q : ℝ) * (3 : ℝ) ^ ((d : ℝ) / 2) *
+          (1 + (2 * (d : ℝ)) ^ ((Q : ℝ))⁻¹)) *
+        ((3 : ℝ) ^ (-((d : ℝ) / 2) * (h : ℝ)) *
+          (Real.exp Δ *
+            u)) := by
+    rw [ha0def]; ring
+  have step1 :
+      (((Q : ℝ) * (3 : ℝ) ^ ((d : ℝ) / 2) *
+            (1 + (2 * (d : ℝ)) ^ ((Q : ℝ))⁻¹)) *
+          ((3 : ℝ) ^ (-((d : ℝ) / 2) * (h : ℝ)) *
+            (Real.exp Δ *
+              u))) ^
+          Q =
+        ((Q : ℝ) * (3 : ℝ) ^ ((d : ℝ) / 2) *
+            (1 + (2 * (d : ℝ)) ^ ((Q : ℝ))⁻¹)) ^ Q *
+          ((3 : ℝ) ^ (-((d : ℝ) / 2) * (h : ℝ)) *
+              (Real.exp Δ *
+                u)) ^
+            Q :=
+    mul_pow _ _ _
+  have step2 :
+      ((3 : ℝ) ^ (-((d : ℝ) / 2) * (h : ℝ)) *
+            (Real.exp Δ *
+              u)) ^
+          Q =
+        ((3 : ℝ) ^ (-((d : ℝ) / 2) * (h : ℝ))) ^ Q *
+          (Real.exp Δ *
+              u) ^
+            Q :=
+    mul_pow _ _ _
+  have step3 :
+      (Real.exp Δ *
+            u) ^
+          Q =
+        (Real.exp Δ) ^ Q *
+          (u) ^
+            Q :=
+    mul_pow _ _ _
+  have hstep : a0 ^ Q =
+      ((Q : ℝ) * (3 : ℝ) ^ ((d : ℝ) / 2) *
+          (1 + (2 * (d : ℝ)) ^ ((Q : ℝ))⁻¹)) ^ Q *
+        ((3 : ℝ) ^ (-((Q : ℝ) * (d : ℝ) / 2) * (h : ℝ)) *
+          (Real.exp ((Q : ℝ) * Δ) *
+            M)) := by
+    rw [hreassoc, step1, step2, step3, e1, e2, hJeq]
+  rw [hstep]
+  exact mul_le_mul_of_nonneg_right hbase_le
+    (mul_nonneg (Real.rpow_nonneg (by norm_num) _) (mul_nonneg (Real.exp_pos _).le hVj0))
 
 /-- `e.fixed.geometry.parent.child.powered` (`p.fixed.geometry.one.grid.propagation`): apply the
 recurrence with
@@ -146,7 +218,8 @@ theorem parent_child_powered (d : ℕ) (hd : 2 ≤ d) (γ : ℝ) (hγ : γ ∈ S
                     (2 : ℝ) ^ (2 * bigQ d γ - 1) *
                         (1 + (d : ℝ) ^ (1 - ((bigQ d γ : ℝ))⁻¹)) ^ bigQ d γ *
                       (Real.exp ((bigQ d γ : ℝ) *
-                        detIncrement P (Geometry.explicitRoundedGrid jStar metric) j (j + h)) - 1) := by
+                        detIncrement P (Geometry.explicitRoundedGrid jStar metric) j (j + h)) -
+                          1) := by
   obtain ⟨Csrc, hCsrc, hrec⟩ := parent_child_recurrence_input d hd γ hγ
   refine ⟨Csrc, hCsrc, ?_⟩
   intro P E Ψ K S hP hstat hunit hdag jStar hjStar hsrc metric hmetric j h hj hh
@@ -232,14 +305,6 @@ theorem parent_child_powered (d : ℕ) (hd : 2 ≤ d) (γ : ℝ) (hγ : γ ∈ S
       (normalizedFluctuationSelf P (Geometry.explicitRoundedGrid jStar metric) (j + h) a) ^
         bigQ d γ ∂P ≤ (a0 + b0) ^ bigQ d γ := by
     rw [← hAeq]; exact hpow0
-  have e1 : ((3 : ℝ) ^ (-((d : ℝ) / 2) * (h : ℝ))) ^ bigQ d γ =
-      (3 : ℝ) ^ (-((bigQ d γ : ℝ) * (d : ℝ) / 2) * (h : ℝ)) := by
-    rw [← Real.rpow_natCast ((3 : ℝ) ^ (-((d : ℝ) / 2) * (h : ℝ))) (bigQ d γ),
-      ← Real.rpow_mul (by norm_num : (0:ℝ) ≤ 3)]
-    congr 1
-    ring
-  have e2 : (Real.exp Δ) ^ bigQ d γ = Real.exp ((bigQ d γ : ℝ) * Δ) :=
-    (Real.exp_nat_mul Δ (bigQ d γ)).symm
   have e3 : (Real.exp ((1 - ((bigQ d γ : ℝ))⁻¹) * Δ)) ^ bigQ d γ =
       Real.exp (((bigQ d γ : ℝ) - 1) * Δ) := by
     have hQR0 : (bigQ d γ : ℝ) ≠ 0 := by exact_mod_cast hQne
@@ -268,65 +333,8 @@ theorem parent_child_powered (d : ℕ) (hd : 2 ≤ d) (γ : ℝ) (hγ : γ ∈ S
           (Real.exp ((bigQ d γ : ℝ) * Δ) *
             (∫ a, absSchattenNorm (bigQ d γ : ℝ)
                 (normalizedFluctuationSelf P (Geometry.explicitRoundedGrid jStar metric) j a) ^
-                  bigQ d γ ∂P))) := by
-    have hreassoc : a0 =
-        ((bigQ d γ : ℝ) * (3 : ℝ) ^ ((d : ℝ) / 2) *
-            (1 + (2 * (d : ℝ)) ^ ((bigQ d γ : ℝ))⁻¹)) *
-          ((3 : ℝ) ^ (-((d : ℝ) / 2) * (h : ℝ)) *
-            (Real.exp Δ *
-              lqSchattenNorm P (bigQ d γ : ℝ)
-                (normalizedFluctuationSelf P (Geometry.explicitRoundedGrid jStar metric) j))) := by
-      rw [ha0def]; ring
-    have step1 :
-        (((bigQ d γ : ℝ) * (3 : ℝ) ^ ((d : ℝ) / 2) *
-              (1 + (2 * (d : ℝ)) ^ ((bigQ d γ : ℝ))⁻¹)) *
-            ((3 : ℝ) ^ (-((d : ℝ) / 2) * (h : ℝ)) *
-              (Real.exp Δ *
-                lqSchattenNorm P (bigQ d γ : ℝ)
-                  (normalizedFluctuationSelf P (Geometry.explicitRoundedGrid jStar metric) j)))) ^
-            bigQ d γ =
-          ((bigQ d γ : ℝ) * (3 : ℝ) ^ ((d : ℝ) / 2) *
-              (1 + (2 * (d : ℝ)) ^ ((bigQ d γ : ℝ))⁻¹)) ^ bigQ d γ *
-            ((3 : ℝ) ^ (-((d : ℝ) / 2) * (h : ℝ)) *
-                (Real.exp Δ *
-                  lqSchattenNorm P (bigQ d γ : ℝ)
-                    (normalizedFluctuationSelf P (Geometry.explicitRoundedGrid jStar metric) j))) ^
-              bigQ d γ :=
-      mul_pow _ _ _
-    have step2 :
-        ((3 : ℝ) ^ (-((d : ℝ) / 2) * (h : ℝ)) *
-              (Real.exp Δ *
-                lqSchattenNorm P (bigQ d γ : ℝ)
-                  (normalizedFluctuationSelf P (Geometry.explicitRoundedGrid jStar metric) j))) ^
-            bigQ d γ =
-          ((3 : ℝ) ^ (-((d : ℝ) / 2) * (h : ℝ))) ^ bigQ d γ *
-            (Real.exp Δ *
-                lqSchattenNorm P (bigQ d γ : ℝ)
-                  (normalizedFluctuationSelf P (Geometry.explicitRoundedGrid jStar metric) j)) ^
-              bigQ d γ :=
-      mul_pow _ _ _
-    have step3 :
-        (Real.exp Δ *
-              lqSchattenNorm P (bigQ d γ : ℝ)
-                (normalizedFluctuationSelf P (Geometry.explicitRoundedGrid jStar metric) j)) ^
-            bigQ d γ =
-          (Real.exp Δ) ^ bigQ d γ *
-            (lqSchattenNorm P (bigQ d γ : ℝ)
-                (normalizedFluctuationSelf P (Geometry.explicitRoundedGrid jStar metric) j)) ^
-              bigQ d γ :=
-      mul_pow _ _ _
-    have hstep : a0 ^ bigQ d γ =
-        ((bigQ d γ : ℝ) * (3 : ℝ) ^ ((d : ℝ) / 2) *
-            (1 + (2 * (d : ℝ)) ^ ((bigQ d γ : ℝ))⁻¹)) ^ bigQ d γ *
-          ((3 : ℝ) ^ (-((bigQ d γ : ℝ) * (d : ℝ) / 2) * (h : ℝ)) *
-            (Real.exp ((bigQ d γ : ℝ) * Δ) *
-              (∫ a, absSchattenNorm (bigQ d γ : ℝ)
-                  (normalizedFluctuationSelf P (Geometry.explicitRoundedGrid jStar metric) j a) ^
-                    bigQ d γ ∂P))) := by
-      rw [hreassoc, step1, step2, step3, e1, e2, hJeq]
-    rw [hstep]
-    exact mul_le_mul_of_nonneg_right hbase_le
-      (mul_nonneg (Real.rpow_nonneg (by norm_num) _) (mul_nonneg (Real.exp_pos _).le hVj0))
+                  bigQ d γ ∂P))) :=
+    averaging_term_power_bound d (bigQ d γ) h Δ a0 _ _ hVj0 hJeq ha0def hbase_le
   have hexpQ : Real.exp (((bigQ d γ : ℝ) - 1) * Δ) * (Real.exp Δ - 1) ≤
       Real.exp ((bigQ d γ : ℝ) * Δ) - 1 :=
     exp_pred_mul_sub_one_le (bigQ d γ) hQ1 Δ hΔ

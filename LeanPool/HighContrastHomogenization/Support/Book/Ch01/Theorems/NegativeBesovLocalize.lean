@@ -106,7 +106,7 @@ theorem cubeBesovDualLocalMemLpGlobal_restrict_to_descendant {d : ℕ}
   intro n S hS
   exact hg (j + n) S (mem_descendantsAtDepth_add hR hS)
 
-theorem abs_cubeBesovPairing_le_mul_cubeBesovDualFullNorm_of_uniform_bound_two_two_of_nonneg
+theorem abs_cubeBesovPairing_le_dualFullNorm_mul_bound
     {d : ℕ} (Q : Cube d) (s : ℝ) (u g : Vec d → ℝ) {B : ℝ}
     (hs : 0 < s)
     (hu : MeasureTheory.MemLp u (2 : ℝ≥0∞) (normalizedCubeMeasure Q))
@@ -187,7 +187,7 @@ theorem abs_cubeBesovPairing_le_dualNegativeBesovNorm_mul_positiveBesovNormTwo
     have hpartial := positiveBesovPartialNormTwo_le_normTwo_of_bddAbove Q s g hBdd N
     simpa [positiveBesovPartialNormTwo, hpConj] using hpartial
   simpa [dualNegativeBesovNorm] using
-    abs_cubeBesovPairing_le_mul_cubeBesovDualFullNorm_of_uniform_bound_two_two_of_nonneg
+    abs_cubeBesovPairing_le_dualFullNorm_mul_bound
       Q s u g hs hu hB_nonneg hnorm hmem
 
 private theorem integrableOn_mul_of_memLp_two_normalizedCubeMeasure {d : ℕ}

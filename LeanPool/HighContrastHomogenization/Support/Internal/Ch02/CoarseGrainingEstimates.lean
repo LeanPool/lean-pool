@@ -82,6 +82,73 @@ private theorem responseCoarseGrainingEstimatesTheory_zero_dim
     rw [variationEnergyValue_zero_dim U a w]
     simp [vecDot, matVecMul]
 
+private theorem average_fluxSubGradient_eq_sub_averages
+    {d : ℕ} (U : Domain d) (a : CoeffOn U)
+    (hInt : ResponseLinearIntegrabilityData (U : Set (Vec d)) a.toCoeffField)
+    (p q : Vec d) (w : Solution U a) :
+    average U
+        (fun x =>
+          vecDot p (matVecMul (a.toCoeffField x) (w.toH1.grad x)) -
+            vecDot q (w.toH1.grad x)) =
+      volumeAverage (U : Set (Vec d))
+          (fun x => vecDot p (matVecMul (a.toCoeffField x) (w.toH1.grad x))) -
+        volumeAverage (U : Set (Vec d))
+          (fun x => vecDot q (w.toH1.grad x)) := by
+  change
+    volumeAverage (U : Set (Vec d))
+        (fun x =>
+          vecDot p (matVecMul (a.toCoeffField x) (w.toH1.grad x)) -
+            vecDot q (w.toH1.grad x)) =
+      volumeAverage (U : Set (Vec d))
+          (fun x => vecDot p (matVecMul (a.toCoeffField x) (w.toH1.grad x))) -
+        volumeAverage (U : Set (Vec d))
+          (fun x => vecDot q (w.toH1.grad x))
+  exact volumeAverage_sub (hInt.flux p w) (hInt.grad q w)
+
+private theorem averageFlux_energy_le_variationEnergy_of_canonicalCoarseData
+    {d : ℕ} [NeZero d] (U : Domain d) (a : CoeffOn U)
+    (hEll : IsEllipticFieldOn a.lam a.Lam (U : Set (Vec d)) a.toCoeffField)
+    (hS : IsSigmaStarCoarse (U : Set (Vec d)) a.toCoeffField
+      (HCPolySupport.sigmaStarCoarse (U : Set (Vec d)) a.toCoeffField))
+    (hK : IsKappaCoarse (U : Set (Vec d)) a.toCoeffField
+      (HCPolySupport.sigmaStarCoarse (U : Set (Vec d)) a.toCoeffField)
+      (HCPolySupport.kappaCoarse (U : Set (Vec d)) a.toCoeffField))
+    (hSigmaCanon : IsSigmaCoarse (U : Set (Vec d)) a.toCoeffField
+      (HCPolySupport.sigmaCoarse (U : Set (Vec d)) a.toCoeffField)
+      (HCPolySupport.sigmaStarCoarse (U : Set (Vec d)) a.toCoeffField)
+      (HCPolySupport.kappaCoarse (U : Set (Vec d)) a.toCoeffField))
+    (hdet : IsUnit (HCPolySupport.sigmaStarCoarse (U : Set (Vec d)) a.toCoeffField).det)
+    (hInt : ResponseLinearIntegrabilityData (U : Set (Vec d)) a.toCoeffField)
+    (w : Solution U a) :
+    (1 / 2 : ℝ) * vecDot (averageFlux U a w)
+      (matVecMul ((Book.Ch02.bCoarse U a)⁻¹) (averageFlux U a w)) ≤
+      (1 / 2 : ℝ) * variationEnergyValue U a w := by
+  have hb : Book.Ch02.bCoarse U a = HCPolySupport.bCoarse
+      (HCPolySupport.sigmaCoarse (U : Set (Vec d)) a.toCoeffField)
+      (HCPolySupport.sigmaStarCoarse (U : Set (Vec d)) a.toCoeffField)
+      (HCPolySupport.kappaCoarse (U : Set (Vec d)) a.toCoeffField) :=
+    book_coarseMatrices_b_eq_bCoarse_of_isSigmaStarCoarse U a hS
+  let p0 : Vec d := -matVecMul (Book.Ch02.bCoarse U a)⁻¹ (averageFlux U a w)
+  rcases (responseExistenceTheory U a).exists_maximizer p0 0 with
+    ⟨u, _hmean, hmax⟩
+  have hmaxOld :
+      Book.Ch02.IsResponseMaximizer U a
+        (-matVecMul
+          (HCPolySupport.bCoarse
+            (HCPolySupport.sigmaCoarse (U : Set (Vec d)) a.toCoeffField)
+            (HCPolySupport.sigmaStarCoarse (U : Set (Vec d)) a.toCoeffField)
+            (HCPolySupport.kappaCoarse (U : Set (Vec d)) a.toCoeffField))⁻¹
+          (fun i =>
+            volumeAverage (U : Set (Vec d))
+              (fun x => matVecMul (a.toCoeffField x) (w.toH1.grad x) i))) 0 u := by
+    simpa [p0, averageFlux, averageVec, hb] using! hmax
+  have hOld :=
+    basic_cg_identities_energy_average_flux_canonical_of_isSigmaCoarse
+      (U : Set (Vec d)) a.toCoeffField hEll hS hK hSigmaCanon hdet hInt w u
+      hmaxOld
+  simpa [variationEnergyValue, averageFlux, averageVec, hb] using! hOld
+
+
 private theorem responseCoarseGrainingEstimatesTheory_of_isEllipticFieldOn
     {d : ℕ} [NeZero d] (U : Domain d) (a : CoeffOn U)
     (hEll : IsEllipticFieldOn a.lam a.Lam (U : Set (Vec d)) a.toCoeffField) :
@@ -185,17 +252,8 @@ private theorem responseCoarseGrainingEstimatesTheory_of_isEllipticFieldOn
           volumeAverage (U : Set (Vec d))
               (fun x => vecDot p (matVecMul (a.toCoeffField x) (w.toH1.grad x))) -
             volumeAverage (U : Set (Vec d))
-              (fun x => vecDot q (w.toH1.grad x)) := by
-      change
-        volumeAverage (U : Set (Vec d))
-            (fun x =>
-              vecDot p (matVecMul (a.toCoeffField x) (w.toH1.grad x)) -
-                vecDot q (w.toH1.grad x)) =
-          volumeAverage (U : Set (Vec d))
-              (fun x => vecDot p (matVecMul (a.toCoeffField x) (w.toH1.grad x))) -
-            volumeAverage (U : Set (Vec d))
-              (fun x => vecDot q (w.toH1.grad x))
-      exact volumeAverage_sub (hInt.flux p w) (hInt.grad q w)
+              (fun x => vecDot q (w.toH1.grad x)) :=
+      average_fluxSubGradient_eq_sub_averages U a hInt p q w
     rw [hAvg, abs_sub_comm]
     simpa [variationEnergyValue, book_responseJ_eq_ResponseJ U a p q] using! hOld
   · intro p w
@@ -281,25 +339,8 @@ private theorem responseCoarseGrainingEstimatesTheory_of_isEllipticFieldOn
     simpa [variationEnergyValue, averageGradient, averageVec,
       book_sigmaStarCoarse_eq_sigmaStarCoarse U a] using! hOld
   · intro w
-    let p0 : Vec d := -matVecMul (Book.Ch02.bCoarse U a)⁻¹ (averageFlux U a w)
-    rcases (responseExistenceTheory U a).exists_maximizer p0 0 with
-      ⟨u, _hmean, hmax⟩
-    have hmaxOld :
-        Book.Ch02.IsResponseMaximizer U a
-          (-matVecMul
-            (HCPolySupport.bCoarse
-              (HCPolySupport.sigmaCoarse (U : Set (Vec d)) a.toCoeffField)
-              (HCPolySupport.sigmaStarCoarse (U : Set (Vec d)) a.toCoeffField)
-              (HCPolySupport.kappaCoarse (U : Set (Vec d)) a.toCoeffField))⁻¹
-            (fun i =>
-              volumeAverage (U : Set (Vec d))
-                (fun x => matVecMul (a.toCoeffField x) (w.toH1.grad x) i))) 0 u := by
-      simpa [p0, averageFlux, averageVec, hb] using! hmax
-    have hOld :=
-      basic_cg_identities_energy_average_flux_canonical_of_isSigmaCoarse
-        (U : Set (Vec d)) a.toCoeffField hEll hS hK hSigmaCanon hdet hInt w u
-        hmaxOld
-    simpa [variationEnergyValue, averageFlux, averageVec, hb] using! hOld
+    exact averageFlux_energy_le_variationEnergy_of_canonicalCoarseData
+      U a hEll hS hK hSigmaCanon hdet hInt w
 
 private theorem responseCoarseGrainingEstimatesTheory_of_neZero
     {d : ℕ} [NeZero d] (U : Domain d) (a : CoeffOn U) :

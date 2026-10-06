@@ -66,7 +66,7 @@ theorem centeredCubeDirichletDivergence_normalizedEuclideanLpENorm_grad_le
     simpa only [hTwo, centeredCubeEuclideanL2FieldAsCubeTwo] using hproblem
   have hsolution :
       IsCenteredCubeH10ScalarDivergenceSolution m 1 w hTwo.toLpTwo :=
-    _root_.HCPolySupport.Book.Ch03.ABK26.CubeEuclideanL2LpField.to_centeredCubeH10ScalarDivergenceSolution
+    _root_.HCPolySupport.Book.Ch03.ABK26.CubeEuclideanL2LpField.to_centeredH10DivergenceSolution
       m hTwo w hproblemTwo
   have hbound :=
     CubeCalderonZygmund.centeredCubeH10ScalarDivergence_cz_two

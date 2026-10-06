@@ -39,7 +39,7 @@ The remaining tail and force component budgets stay explicit: those are
 different analytic estimates in the notes.  The common energy envelope is the
 piece supplied by the zero-Dirichlet RHS energy estimate.
 -/
-theorem cubeBesovNegativeVectorSeminormTwo_fluxDefect_le_two_mul_const_mul_coarseFluxResponseRHSBound_of_aHarmonicFunction_h1DirichletRhsWeakSolutionOn_component_budgets_of_energy_envelope_of_descendant_depth_zero_inputs
+theorem negativeBesovFluxDefect_le_two_mul_fluxResponseRHSBound_of_energyEnvelope
     {d : ℕ} [NeZero d] (Q : TriadicCube d) (a : CoeffField d) (a0 : Mat d)
     (s : ℝ) (gradU g : Vec d → Vec d)
     (v : H1Function (cubeSet Q))
@@ -216,7 +216,7 @@ theorem cubeBesovNegativeVectorSeminormTwo_fluxDefect_le_two_mul_const_mul_coars
             ring
       _ ≤ BPoincareEnergy := hPoincareEnergyBudget
   exact
-    cubeBesovNegativeVectorSeminormTwo_fluxDefect_le_two_mul_const_mul_coarseFluxResponseRHSBound_of_aHarmonicFunction_h1DirichletRhsWeakSolutionOn_component_budgets_of_descendant_depth_zero_inputs
+    negativeBesovSeminormTwo_fluxDefect_le_two_mul_const_mul_fluxRHSBound_of_inputs
       Q a a0 s gradU g v w C hC_nonneg hs hs_le hEll_open
       ha0 ha0symm hweak hgrad hEll_desc hC_desc hData hsum_desc
       hchildBdd huBdd_desc hgBdd_centered_desc hweakBdd hsum_half

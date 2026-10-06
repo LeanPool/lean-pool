@@ -259,6 +259,52 @@ theorem coarseCaccioppoli_boundary_noteCrossTermBound_of_explicitHeightOfScaleCh
                 (le_add_of_nonneg_left hfirst_nonneg)
                 (Real.rpow_nonneg (sub_nonneg.mpr hlt.le) _)
 
+private theorem coarseCaccioppoliExplicitHeightSplitTerms_nonneg
+    {d : ℕ} (Q : TriadicCube d) (a : CoeffField d) (s t Calpha Ccross uL2Sq : ℝ)
+    (hCalpha : 0 < Calpha) (hCcross : 0 ≤ Ccross)
+    (hs : 0 < s) (ht : 0 < t) (hst : s + t < 1) (hu : 0 ≤ uL2Sq) :
+    0 ≤ (6561 : ℝ) * 6561 * Ccross ^ (2 : ℕ) * LambdaSq Q s (.finite 1) a * uL2Sq ∧
+      0 ≤ ((9 : ℝ) * Real.rpow (4 : ℝ) (coarseCaccioppoliPower s t) *
+        Real.rpow (81 : ℝ) (coarseCaccioppoliPower s t)) * Ccross *
+        coarseCaccioppoliBoundaryRecursionRhsSplit Q a s t Calpha Ccross uL2Sq := by
+  let p : ℝ := coarseCaccioppoliPower s t
+  let M : ℝ :=
+    Calpha / (s * (1 - s)) * Real.rpow (ThetaRatio Q s t a) (1 / 2 : ℝ)
+  have hs1 : s < 1 := by linarith
+  have hM_nonneg : 0 ≤ M := by
+    exact mul_nonneg
+      (div_nonneg hCalpha.le (mul_one_sub_nonneg hs.le hs1.le))
+      (Real.rpow_nonneg (thetaRatio_nonneg Q s t a hs.le ht.le) _)
+  have hLambda_nonneg : 0 ≤ LambdaSq Q s (.finite 1) a :=
+    multiscale_ellipticity_LambdaSq_one_nonneg Q s a hs.le
+  have hrec_nonneg :
+      0 ≤ coarseCaccioppoliBoundaryRecursionRhsSplit
+        Q a s t Calpha Ccross uL2Sq := by
+    unfold coarseCaccioppoliBoundaryRecursionRhsSplit
+    exact mul_nonneg
+      (mul_nonneg (mul_nonneg hCcross (Real.rpow_nonneg hM_nonneg _))
+        hLambda_nonneg)
+      hu
+  have hfirst_nonneg :
+      0 ≤ (6561 : ℝ) * 6561 * Ccross ^ (2 : ℕ) *
+        LambdaSq Q s (.finite 1) a * uL2Sq := by
+    exact mul_nonneg
+      (mul_nonneg (mul_nonneg (by positivity) (sq_nonneg Ccross)) hLambda_nonneg)
+      hu
+  have hsecond_nonneg :
+      0 ≤ ((9 : ℝ) * Real.rpow (4 : ℝ) p * Real.rpow (81 : ℝ) p) *
+        Ccross *
+          coarseCaccioppoliBoundaryRecursionRhsSplit
+            Q a s t Calpha Ccross uL2Sq := by
+    have hcoeff_nonneg :
+        0 ≤ ((9 : ℝ) * Real.rpow (4 : ℝ) p * Real.rpow (81 : ℝ) p) := by
+      exact mul_nonneg
+        (mul_nonneg (by norm_num : 0 ≤ (9 : ℝ))
+          (Real.rpow_nonneg (by norm_num : 0 ≤ (4 : ℝ)) _))
+        (Real.rpow_nonneg (by norm_num : 0 ≤ (81 : ℝ)) _)
+    exact mul_nonneg (mul_nonneg hcoeff_nonneg hCcross) hrec_nonneg
+  exact ⟨hfirst_nonneg, hsecond_nonneg⟩
+
 theorem coarseCaccioppoli_boundary_noteCrossTermBoundSplit_of_explicitHeightOfScaleChoice
     {d : ℕ} (Q : TriadicCube d) (a : CoeffField d)
     (s t Calpha Ccross uL2Sq : ℝ) (k : ℝ → ℝ → ℕ)
@@ -326,32 +372,9 @@ theorem coarseCaccioppoli_boundary_noteCrossTermBoundSplit_of_explicitHeightOfSc
         Real.rpow (coarseCaccioppoliGapInv ρ₁ ρ₂) (2 : ℝ) := by
     symm
     exact Real.rpow_natCast _ 2
-  have hrec_nonneg :
-      0 ≤ coarseCaccioppoliBoundaryRecursionRhsSplit
-        Q a s t Calpha Ccross uL2Sq := by
-    unfold coarseCaccioppoliBoundaryRecursionRhsSplit
-    exact mul_nonneg
-      (mul_nonneg (mul_nonneg hCcross (Real.rpow_nonneg hM_nonneg _))
-        hLambda_nonneg)
-      hu
-  have hfirst_nonneg :
-      0 ≤ (6561 : ℝ) * 6561 * Ccross ^ (2 : ℕ) *
-        LambdaSq Q s (.finite 1) a * uL2Sq := by
-    exact mul_nonneg
-      (mul_nonneg (mul_nonneg (by positivity) (sq_nonneg Ccross)) hLambda_nonneg)
-      hu
-  have hsecond_nonneg :
-      0 ≤ ((9 : ℝ) * Real.rpow (4 : ℝ) p * Real.rpow (81 : ℝ) p) *
-        Ccross *
-          coarseCaccioppoliBoundaryRecursionRhsSplit
-            Q a s t Calpha Ccross uL2Sq := by
-    have hcoeff_nonneg :
-        0 ≤ ((9 : ℝ) * Real.rpow (4 : ℝ) p * Real.rpow (81 : ℝ) p) := by
-      exact mul_nonneg
-        (mul_nonneg (by norm_num : 0 ≤ (9 : ℝ))
-          (Real.rpow_nonneg (by norm_num : 0 ≤ (4 : ℝ)) _))
-        (Real.rpow_nonneg (by norm_num : 0 ≤ (81 : ℝ)) _)
-    exact mul_nonneg (mul_nonneg hcoeff_nonneg hCcross) hrec_nonneg
+  obtain ⟨hfirst_nonneg, hsecond_nonneg⟩ :=
+    coarseCaccioppoliExplicitHeightSplitTerms_nonneg Q a s t Calpha Ccross uL2Sq
+      hCalpha hCcross hs ht hst hu
   by_cases hbranch :
       (((Nat.ceil
           (Real.log (coarseCaccioppoliBoundaryHeightLogArg Q a s t Calpha k0) /

@@ -367,7 +367,8 @@ theorem magic_identity_responseJ_shifted_square_of_isSigmaCoarse {d : ℕ}
               rw [sub_eq_add_neg, add_matVecMul, hNegK]
               rw [sub_eq_add_neg, matVecMul_add, matVecMul_neg]
       _ = p - matVecMul sigmaStar⁻¹ (matVecMul kappa p) := by
-              simpa [sub_eq_add_neg] using congrArg (fun v => v - matVecMul sigmaStar⁻¹ (matVecMul kappa p)) hInvMul
+              simpa [sub_eq_add_neg] using congrArg (fun v => v - matVecMul sigmaStar⁻¹
+                (matVecMul kappa p)) hInvMul
   have hCross :
       vecDot q (matVecMul sigmaStar⁻¹ (matVecMul (sigmaStar - kappa) p)) =
         vecDot p q - vecDot q (matVecMul sigmaStar⁻¹ (matVecMul kappa p)) := by
@@ -910,7 +911,8 @@ theorem basic_cg_identities_coarse_graining_average_pairing_canonical_of_isSigma
           vecDot p (matVecMul (matTranspose (sigmaStarCoarse U a - kappaCoarse U a)) avgGrad) := by
             rw [vecDot_matVecMul_transpose]
       _ = vecDot p
-            (matVecMul (matTranspose (sigmaStarCoarse U a) - matTranspose (kappaCoarse U a)) avgGrad) := by
+            (matVecMul (matTranspose (sigmaStarCoarse U a) - matTranspose (kappaCoarse U a))
+              avgGrad) := by
             simp [matTranspose, Matrix.transpose_sub]
       _ = vecDot p
             (matVecMul (sigmaStarCoarse U a - matTranspose (kappaCoarse U a)) avgGrad) := by
@@ -940,7 +942,7 @@ theorem basic_cg_identities_coarse_graining_average_pairing_canonical_of_isSigma
   simpa [avgGrad, avgFlux] using hcg
 
 theorem
-    basic_cg_identities_coarse_graining_average_pairing_canonical_of_isSigmaCoarse_of_isEllipticFieldOn
+    averagePairingCanonical_of_sigmaCoarse_and_ellipticity
     {d : ℕ}
     (U : Set (Vec d)) (a : CoeffField d) {lam Lam : ℝ}
     [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
@@ -994,7 +996,7 @@ theorem basic_cg_identities_coarse_graining_average_difference_canonical_of_isSi
       U a hEll hS hK hSigma hSAdj hKAdj hSigmaAdj hdet p hInt u hmax w
 
 theorem
-    basic_cg_identities_coarse_graining_average_difference_canonical_of_isSigmaCoarse_of_isEllipticFieldOn
+    basic_cg_identities_coarse_graining_average_difference_canonical
     {d : ℕ}
     (U : Set (Vec d)) (a : CoeffField d) {lam Lam : ℝ}
     [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]

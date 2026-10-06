@@ -44,7 +44,7 @@ theorem one_le_thetaAtScale_of_integrable_coarseFullBlockMatrixAtCube
     (hBlock : Integrable (Ch04.coarseFullBlockMatrixAtCube (originCube d n)) P) :
     1 ≤ thetaAtScale hP hStruct n := by
   simpa [thetaAtScale, Ch04.Internal.thetaAtScale_eq_scalarization_contrast] using
-    Ch04.RestrictionLawCarrier.Internal.one_le_scalar_contrast_of_primitive_of_integrable_coarseFullBlockMatrixAtCube hP
+    Ch04.RestrictionLawCarrier.Internal.one_le_scalarContrast_of_integrableCoarseBlock hP
       (Ch04.Internal.annealedScalarizationTheory_of_structuralLaw hP hStruct)
       (Ch04.Internal.annealedPrimitiveScalarizationData_of_structuralLaw hP hStruct n)
       hBlock

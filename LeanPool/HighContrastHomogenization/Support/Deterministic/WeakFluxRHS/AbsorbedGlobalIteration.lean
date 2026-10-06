@@ -23,7 +23,7 @@ noncomputable section
 
 /-- Scaled bounded-tail weak-flux iteration with the explicit
 corrector-energy local error as the recurrence error. -/
-theorem weakFluxRHSScaledAveragedSeminormSq_le_correctorEnergyLocalError_base_mul_inv_one_sub_of_bddAbove
+theorem weakFluxRhs_scaledAverage_sq_le_correctorEnergyError
     {d : ℕ} (Q : TriadicCube d) (a : CoeffField d) (s : ℝ)
     (u : Vec d → Vec d) (z : TriadicCube d → Vec d → Vec d)
     (hs : 0 < s)
@@ -57,7 +57,8 @@ theorem weakFluxRHSScaledAveragedSeminormSq_le_correctorEnergyLocalError_base_mu
 
 /-- Scaled bounded-tail weak-flux iteration where the corrector-energy local
 error is controlled by separate averaged coefficient-energy bases. -/
-theorem weakFluxRHSScaledAveragedSeminormSq_le_correctorEnergyComponents_base_mul_inv_one_sub_of_bddAbove
+theorem
+  weakFluxRHSScaledAveragedSeminormSq_le_correctorEnergyComponents_base_mul_inv_one_sub_of_bddAbove
     {d : ℕ} (Q : TriadicCube d) (a : CoeffField d) (s : ℝ)
     (u : Vec d → Vec d) (z : TriadicCube d → Vec d → Vec d)
     (hs : 0 < s)
@@ -88,7 +89,7 @@ theorem weakFluxRHSScaledAveragedSeminormSq_le_correctorEnergyComponents_base_mu
     weakFluxRHSScaledAveragedSeminormSq Q a s u m ≤
       (Bcoeff + Bcorr) * (1 - Real.rpow (3 : ℝ) (-s))⁻¹ := by
   refine
-    weakFluxRHSScaledAveragedSeminormSq_le_correctorEnergyLocalError_base_mul_inv_one_sub_of_bddAbove
+    weakFluxRhs_scaledAverage_sq_le_correctorEnergyError
       Q a s u z hs hlocal m hBdd (add_nonneg hBcoeff_nonneg hBcorr_nonneg) ?_
   intro k
   exact
@@ -97,7 +98,7 @@ theorem weakFluxRHSScaledAveragedSeminormSq_le_correctorEnergyComponents_base_mu
 
 /-- Localized flux-defect form of the scaled bounded-tail weak-flux iteration
 with the explicit corrector-energy local-error envelope. -/
-theorem localizedFluxDefectNegativeBesovAverageTwo_matVecMul_le_sqrt_of_scaled_correctorEnergyLocalError_bddAbove
+theorem negativeBesovFluxAverage_matrixVectorMultiply_le_sqrt_of_boundedCorrectorError
     {d : ℕ} (Q : TriadicCube d) (a : CoeffField d) (s : ℝ)
     (u : Vec d → Vec d) (z : TriadicCube d → Vec d → Vec d)
     (hs : 0 < s)
@@ -127,13 +128,13 @@ theorem localizedFluxDefectNegativeBesovAverageTwo_matVecMul_le_sqrt_of_scaled_c
         ((coarsePoincareRHSDepthWeight s m)⁻¹ *
           (B * (1 - Real.rpow (3 : ℝ) (-s))⁻¹)) := by
   exact
-    localizedFluxDefectNegativeBesovAverageTwo_matVecMul_le_sqrt_of_scaled_base_mul_inv_one_sub_bddAbove
+    localizedFluxDefect_negativeBesovAverage_le_sqrt_baseError
       Q a s u
       (fun R => weakFluxRHSCorrectorEnergyLocalError R a u (z R) s)
       hs hlocal m hBdd hB_nonneg hterm
 
 /-- Localized flux-defect form with separate corrector-energy component bases. -/
-theorem localizedFluxDefectNegativeBesovAverageTwo_matVecMul_le_sqrt_of_scaled_correctorEnergyComponents_bddAbove
+theorem negativeBesovFluxAverage_matrixVectorMultiply_le_sqrt_of_boundedAbove
     {d : ℕ} (Q : TriadicCube d) (a : CoeffField d) (s : ℝ)
     (u : Vec d → Vec d) (z : TriadicCube d → Vec d → Vec d)
     (hs : 0 < s)
@@ -167,7 +168,7 @@ theorem localizedFluxDefectNegativeBesovAverageTwo_matVecMul_le_sqrt_of_scaled_c
         ((coarsePoincareRHSDepthWeight s m)⁻¹ *
           ((Bcoeff + Bcorr) * (1 - Real.rpow (3 : ℝ) (-s))⁻¹)) := by
   refine
-    localizedFluxDefectNegativeBesovAverageTwo_matVecMul_le_sqrt_of_scaled_correctorEnergyLocalError_bddAbove
+    negativeBesovFluxAverage_matrixVectorMultiply_le_sqrt_of_boundedCorrectorError
       Q a s u z hs hlocal m hBdd
       (add_nonneg hBcoeff_nonneg hBcorr_nonneg) ?_
   intro k
@@ -264,7 +265,7 @@ theorem weakFluxRHSScaledAveragedSeminormSq_le_absorbedComponents_base_mul_inv_o
 
 /-- Localized flux-defect form of the scaled bounded-tail weak-flux iteration
 with the explicit absorbed local-error envelope. -/
-theorem localizedFluxDefectNegativeBesovAverageTwo_matVecMul_le_sqrt_of_scaled_absorbedLocalError_bddAbove
+theorem localizedFluxDefect_negativeBesovAverage_le_sqrt_absorbedError
     {d : ℕ} (Q : TriadicCube d) (a : CoeffField d) (s η : ℝ)
     (u g : Vec d → Vec d) (v : TriadicCube d → Vec d → Vec d)
     (hs : 0 < s)
@@ -294,13 +295,13 @@ theorem localizedFluxDefectNegativeBesovAverageTwo_matVecMul_le_sqrt_of_scaled_a
         ((coarsePoincareRHSDepthWeight s m)⁻¹ *
           (B * (1 - Real.rpow (3 : ℝ) (-s))⁻¹)) := by
   exact
-    localizedFluxDefectNegativeBesovAverageTwo_matVecMul_le_sqrt_of_scaled_base_mul_inv_one_sub_bddAbove
+    localizedFluxDefect_negativeBesovAverage_le_sqrt_baseError
       Q a s u
       (fun R => weakFluxRHSAbsorbedLocalError R a g u (v R) s η)
       hs hlocal m hBdd hB_nonneg hterm
 
 /-- Localized flux-defect form with separate absorbed component bases. -/
-theorem localizedFluxDefectNegativeBesovAverageTwo_matVecMul_le_sqrt_of_scaled_absorbedComponents_bddAbove
+theorem localizedFluxDefect_negativeBesovAverage_le_sqrt_absorbedComponents
     {d : ℕ} (Q : TriadicCube d) (a : CoeffField d) (s η : ℝ)
     (u g : Vec d → Vec d) (v : TriadicCube d → Vec d → Vec d)
     (hs : 0 < s)
@@ -348,7 +349,7 @@ theorem localizedFluxDefectNegativeBesovAverageTwo_matVecMul_le_sqrt_of_scaled_a
     add_nonneg (add_nonneg (add_nonneg hBcoeff_nonneg hBu_nonneg) hBv_nonneg)
       hBforce_nonneg
   refine
-    localizedFluxDefectNegativeBesovAverageTwo_matVecMul_le_sqrt_of_scaled_absorbedLocalError_bddAbove
+    localizedFluxDefect_negativeBesovAverage_le_sqrt_absorbedError
       Q a s η u g v hs hlocal m hBdd hB_nonneg ?_
   intro k
   exact
@@ -453,7 +454,7 @@ theorem weakFluxRHSScaledAveragedSeminormSq_le_absorbedLocalizedBases_mul_inv_on
 /-- Localized flux-defect form with all localized absorbed component bases
 supplied by the coefficient, `u`, harmonic-remainder, and forcing base
 estimates. -/
-theorem localizedFluxDefectNegativeBesovAverageTwo_matVecMul_le_sqrt_of_scaled_absorbedLocalizedBases_bddAbove
+theorem negativeBesovFluxAverage_matrixVectorMultiply_le_sqrt
     {d : ℕ} [NeZero d] (Q : TriadicCube d) (a : CoeffField d)
     (s η : ℝ) (u g : Vec d → Vec d)
     (v : TriadicCube d → Vec d → Vec d) {lam Lam : ℝ}
@@ -521,7 +522,7 @@ theorem localizedFluxDefectNegativeBesovAverageTwo_matVecMul_le_sqrt_of_scaled_a
       0 ≤ weakFluxRHSWeightedGlobalForceBase Q a g s η m :=
     weakFluxRHSWeightedGlobalForceBase_nonneg Q a g s hη m
   refine
-    localizedFluxDefectNegativeBesovAverageTwo_matVecMul_le_sqrt_of_scaled_absorbedComponents_bddAbove
+    localizedFluxDefect_negativeBesovAverage_le_sqrt_absorbedComponents
       (Q := Q) (a := a) (s := s) (η := η) (u := u) (g := g) (v := v)
       (m := m) (Bcoeff := weakFluxRHSWeightedCoefficientEnergyBase Q a u s)
       (Bu := η * BU) (Bv := η * BV)

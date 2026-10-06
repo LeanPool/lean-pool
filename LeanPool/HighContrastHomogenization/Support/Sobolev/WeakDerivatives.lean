@@ -27,6 +27,7 @@ public section
 
 namespace HCPolySupport
 
+/-- The coordinate basis vector `eᵢ`, with entry one at `i` and zero at every other coordinate. -/
 @[expose]
 def basisVec {d : ℕ} (i : Fin d) : Vec d :=
   Pi.single i (1 : ℝ)
@@ -66,6 +67,8 @@ theorem vecNormSq_basisVec {d : ℕ} (i : Fin d) :
   rw [vecNormSq, vecDot_basisVec_left]
   simp [basisVec]
 
+/-- The integration-by-parts identity `∫ u ∂ᵢφ = -∫ gi φ` holds for every smooth test with compact
+topological support in `U`. -/
 @[expose]
 def HasWeakPartialDerivOn {d : ℕ} (U : Set (Vec d)) (i : Fin d)
     (u gi : Vec d → ℝ) : Prop :=
@@ -76,9 +79,12 @@ def HasWeakPartialDerivOn {d : ℕ} (U : Set (Vec d)) (i : Fin d)
     ∫ x in U, u x * (fderiv ℝ φ x) (basisVec i) ∂MeasureTheory.volume =
       -∫ x in U, gi x * φ x ∂MeasureTheory.volume
 
+/-- Each component of `Du` satisfies the weak partial derivative identity for the corresponding
+coordinate of `u` on `U`. -/
 @[expose]
 def HasWeakGradientOn {d : ℕ} (U : Set (Vec d)) (u : Vec d → ℝ) (Du : Vec d → Vec d) : Prop :=
   ∀ i : Fin d, HasWeakPartialDerivOn U i u (fun x => Du x i)
+
 
 namespace HasWeakPartialDerivOn
 

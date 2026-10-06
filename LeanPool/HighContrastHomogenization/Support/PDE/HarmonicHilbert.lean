@@ -402,8 +402,10 @@ theorem isCoercive_symmCoeffBilin {M : PotentialSolenoidalL2Data U}
   simpa [pow_two, mul_assoc] using
     symmCoeffBilin_self_ge_lam_mul_norm_sq (U := U) (a := a) (M := M) z
 
+/-- The continuous linear functional on vector L² fields given by the integral of their dot
+product with `g` over `U`. -/
 @[expose]
-noncomputable def vectorPairingCLM [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
+noncomputable def vectorPairingCLM
     {g : Vec d → Vec d} (hg : MemVectorL2 U g) :
     VectorL2 U →L[ℝ] ℝ :=
   (InnerProductSpace.toDual ℝ (HilbertVectorL2 U) (toHilbertVectorL2OfVecField hg)).comp
@@ -490,7 +492,6 @@ theorem integral_vecDot_eq_zero_of_mem_potential_closure
     _ = 0 := hzero
 
 theorem integral_vecDot_eq_zero_of_mem_solenoidal_closure
-    [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     (G : VectorL2 U)
     (hG : G ∈ (PotentialSolenoidalL2Data.ofSubmoduleClosures U).solenoidal)
     (φ : H10Function U) :

@@ -66,12 +66,12 @@ open scoped ENNReal
 namespace Legacy
 
 /-- The legacy/restricted fractional Sobolev seminorm
-`[u]_{W̲^{s,p}(□)}`, using the ambient sup-distance Gagliardo kernel. -/
+`[u]_{W_underlined^{s,p}(□)}`, using the ambient sup-distance Gagliardo kernel. -/
 noncomputable abbrev fractionalSobolevSeminorm {d : ℕ} (Q : Cube d) (s : ℝ)
     (p : ℝ≥0∞) (u : Vec d → ℝ) : ℝ :=
   Gagliardo.cubeGagliardoSeminorm Q s p u
 
-/-- The legacy/restricted overlapping Besov seminorm `[u]_{B̲^s_{p,p}(□)}`
+/-- The legacy/restricted overlapping Besov seminorm `[u]_{B_underlined^s_{p,p}(□)}`
 in the finite-truncation / real-`sSup` presentation. -/
 noncomputable abbrev positiveBesovOverlapSeminormDiagonal {d : ℕ} (Q : Cube d)
     (s : ℝ) (p : ℝ≥0∞) (u : Vec d → ℝ) : ℝ :=
@@ -194,7 +194,8 @@ theorem besovOverlapPartial_le_const_mul_gagliardo
   nlinarith [pow_nonneg (show (0:ℝ) ≤ 3 by norm_num) d]
 
 /-- Legacy/restricted two-sided overlap comparison:
-`C(d)⁻¹·[u]_{W̲^{s,p}} ≤ [u]_{B̲^s_{p,p}} ≤ C(d)·[u]_{W̲^{s,p}}` on every
+`C(d)⁻¹·[u]_{W_underlined^{s,p}} ≤ [u]_{B_underlined^s_{p,p}} ≤ C(d)·[u]_{W_underlined^{s,p}}`
+  on every
 triadic cube, with `C(d) = wspVsBsppConstant d` fixed before all other
 quantifiers, uniformly in `s ∈ (0,1]`, `p ∈ [1,∞)`, and the cube. -/
 theorem fractionalSobolevVsBesovSeminorms

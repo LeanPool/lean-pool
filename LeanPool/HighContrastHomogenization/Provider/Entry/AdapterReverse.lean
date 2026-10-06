@@ -50,6 +50,142 @@ noncomputable section
 
 variable {d : ℕ}
 
+private theorem adaptedLowRows_energy_le [NeZero d] {P : Measure (CoeffSpace d)}
+    [IsProbabilityMeasure P] {g : ℝ} {E : BlockMat d} {Ψ : ℝ → ℝ} {K : ℝ}
+    {S : CoeffSpace d → ℝ} (hd : 1 ≤ d)
+    (hstat : HCPoly.Frozen.IsStationaryLaw P)
+    (hdag : HCPoly.Frozen.CoarseEllipticityDagger P g E Ψ K S)
+    {q : Mat d} (hq : q.PosDef) (hqinv : ‖q⁻¹‖ ≤ 101 / 100)
+    {n m J : ℤ} (hnm : n < m) (hJn : J ≤ n) (hg0 : 0 ≤ g) (hg1 : g < 1)
+    {Z : ℤ → Finset (Fin d → ℤ)}
+    (hZ : ∀ r, ↑(Z r) = fillingIndex q n
+      (adaptedCellTranslate (1 : Mat d) m 0) r)
+    (X : BlockVec d)
+    (hE0 : 0 ≤ 1 / 2 * blockVecDot X (blockMatVecMul E X)) :
+    (∑ r ∈ Finset.Ico J n, ∑ w ∈ Z r,
+      (volume (adaptedCellAt q r w)).toReal /
+          (volume (adaptedCellTranslate (1 : Mat d) m 0)).toReal *
+        (1 / 2 * blockVecDot X (blockMatVecMul (annealedBlock P (adaptedCellAt q r w)) X))) ≤
+      ((6 * (d : ℝ) * Real.sqrt d * ‖q‖) * (126 * (d : ℝ) * Real.sqrt d * (1 - g)⁻¹) *
+          (1 / 2 * blockVecDot X (blockMatVecMul E X))) *
+        (20 * transferGauge g K n * (3 : ℝ) ^ (n - m)) := by
+  have hCq0 : (0 : ℝ) ≤ 6 * (d : ℝ) * Real.sqrt d * ‖q‖ := by positivity
+  have hnorm : ‖(1 : Mat d)⁻¹ * q‖ = ‖q‖ := by rw [inv_one, Matrix.one_mul]
+  have hb : ∀ r ∈ Finset.Ico J n,
+      (∑ w ∈ Z r, (volume (adaptedCellAt q r w)).toReal /
+          (volume (adaptedCellTranslate (1 : Mat d) m 0)).toReal *
+        (1 / 2 * blockVecDot X
+          (blockMatVecMul (annealedBlock P (adaptedCellAt q r w)) X))) ≤
+        ((6 * (d : ℝ) * Real.sqrt d * ‖q‖) * (3 : ℝ) ^ (r - m)) *
+          ((126 * (d : ℝ) * Real.sqrt d * (1 - g)⁻¹ *
+              (1 + 9 * K ^ 2 * (3 : ℝ) ^ (-r)) ^ g) *
+            (1 / 2 * blockVecDot X (blockMatVecMul E X))) := by
+    intro r hr
+    refine sum_weight_mul_le ?_ ?_ ?_
+    · refine mul_nonneg ?_ hE0
+      have h1 : (0 : ℝ) ≤ (1 + 9 * K ^ 2 * (3 : ℝ) ^ (-r)) ^ g :=
+        Real.rpow_nonneg (by positivity) g
+      have h2 : (0 : ℝ) ≤ 126 * (d : ℝ) * Real.sqrt d * (1 - g)⁻¹ := by positivity
+      exact mul_nonneg h2 h1
+    · intro w _
+      have hcell := annealedBlock_adaptedCellAt_le hd hstat hdag hq hqinv r w X
+      rw [Sharp.blockVecDot_blockMatVecMul_blockScale] at hcell
+      linarith only [hcell]
+    · have hle := Transport.sum_relative_volume_row_le Matrix.PosDef.one hq
+        (Finset.mem_Ico.mp hr).2 (hZ r)
+      rw [hnorm] at hle
+      exact hle
+  refine le_trans (Finset.sum_le_sum hb) ?_
+  have hrw : ∀ r ∈ Finset.Ico J n,
+      ((6 * (d : ℝ) * Real.sqrt d * ‖q‖) * (3 : ℝ) ^ (r - m)) *
+          ((126 * (d : ℝ) * Real.sqrt d * (1 - g)⁻¹ *
+              (1 + 9 * K ^ 2 * (3 : ℝ) ^ (-r)) ^ g) *
+            (1 / 2 * blockVecDot X (blockMatVecMul E X))) =
+        ((6 * (d : ℝ) * Real.sqrt d * ‖q‖) *
+            (126 * (d : ℝ) * Real.sqrt d * (1 - g)⁻¹) *
+            (1 / 2 * blockVecDot X (blockMatVecMul E X))) *
+          ((3 : ℝ) ^ (r - m) * (1 + 9 * K ^ 2 * (3 : ℝ) ^ (-r)) ^ g) :=
+    fun r _ => by ring
+  rw [Finset.sum_congr rfl hrw, ← Finset.mul_sum]
+  refine mul_le_mul_of_nonneg_left (sum_belowSplit_le hg0 hg1 n m J) ?_
+  have h2 : (0 : ℝ) ≤ 126 * (d : ℝ) * Real.sqrt d * (1 - g)⁻¹ := by positivity
+  exact mul_nonneg (mul_nonneg hCq0 h2) hE0
+
+private theorem reverseCutoffTail_le {g K : ℝ} {n m J : ℤ}
+    (hg0 : 0 ≤ g) (hg1 : g < 1) (hJ0 : J ≤ 0)
+    (hGam1 : 1 ≤ transferGauge g K n)
+    {A B T : ℝ} (hA0 : 0 ≤ A) (hB0 : 0 ≤ B)
+    (hT : T ≤ 2 * K ^ 2)
+    (hJmul : A * B * (1 + (3 : ℝ) ^ m + 6 * K ^ 2) *
+      (2 * (1 - g)⁻¹) * (3 : ℝ) ^ ((J : ℝ) * (1 - g)) ≤ (3 : ℝ) ^ n) :
+    A * (B * ((3 : ℝ) ^ J + (3 : ℝ) ^ m + 3 * T) *
+      (2 * (1 - g)⁻¹ * ((3 : ℝ) ^ (-m) * (3 : ℝ) ^ ((J : ℝ) * (1 - g))))) ≤
+      transferGauge g K n * (3 : ℝ) ^ (n - m) := by
+  have hchain : (3 : ℝ) ^ J + (3 : ℝ) ^ m + 3 * T ≤
+      1 + (3 : ℝ) ^ m + 6 * K ^ 2 := by
+    have h3J : (3 : ℝ) ^ J ≤ 1 := by
+      have := zpow_le_zpow_right₀ (by norm_num : (1 : ℝ) ≤ 3) hJ0
+      rwa [zpow_zero] at this
+    linarith only [h3J, hT]
+  have hpowpos : (0 : ℝ) < (3 : ℝ) ^ ((J : ℝ) * (1 - g)) :=
+    Real.rpow_pos_of_pos (by norm_num) _
+  have hAB : A * B * ((3 : ℝ) ^ J + (3 : ℝ) ^ m + 3 * T) *
+      (2 * (1 - g)⁻¹) * (3 : ℝ) ^ ((J : ℝ) * (1 - g)) ≤ (3 : ℝ) ^ n := by
+    refine le_trans ?_ hJmul
+    have h1 : (0 : ℝ) ≤ A * B := mul_nonneg hA0 hB0
+    have h2 : (0 : ℝ) ≤ 2 * (1 - g)⁻¹ := by positivity
+    have hmono := mul_le_mul_of_nonneg_right (mul_le_mul_of_nonneg_right
+      (mul_le_mul_of_nonneg_left hchain h1) h2) hpowpos.le
+    linarith only [hmono, hpowpos]
+  have h3m : (0 : ℝ) < (3 : ℝ) ^ (-m) := by positivity
+  have h3nm : (3 : ℝ) ^ (-m) * (3 : ℝ) ^ n = (3 : ℝ) ^ (n - m) := by
+    rw [← zpow_add₀ (by norm_num : (3 : ℝ) ≠ 0)]
+    congr 1
+    ring
+  have h3nmpos : (0 : ℝ) < (3 : ℝ) ^ (n - m) := by positivity
+  have hcal : A * (B * ((3 : ℝ) ^ J + (3 : ℝ) ^ m + 3 * T) *
+      (2 * (1 - g)⁻¹ * ((3 : ℝ) ^ (-m) * (3 : ℝ) ^ ((J : ℝ) * (1 - g))))) =
+      (A * B * ((3 : ℝ) ^ J + (3 : ℝ) ^ m + 3 * T) *
+        (2 * (1 - g)⁻¹) * (3 : ℝ) ^ ((J : ℝ) * (1 - g))) * (3 : ℝ) ^ (-m) := by
+    ring
+  rw [hcal]
+  have hmul := mul_le_mul_of_nonneg_right hAB h3m.le
+  rw [mul_comm ((3 : ℝ) ^ n) ((3 : ℝ) ^ (-m)), h3nm] at hmul
+  nlinarith only [hmul, hGam1, h3nmpos]
+
+private theorem integrable_affine_fullBlock {d : ℕ} {P : Measure (CoeffSpace d)}
+    [IsProbabilityMeasure P] {S : CoeffSpace d → ℝ} {J m : ℤ}
+    {A B D : ℝ} (hSint : Integrable S P) (E : BlockMat d) :
+    Integrable (fun a =>
+      (A * (B * ((3 : ℝ) ^ J + (3 : ℝ) ^ m + 3 * S a) * D)) • toFullBlockMat E) P ∧
+    (∫ a, (A * (B * ((3 : ℝ) ^ J + (3 : ℝ) ^ m + 3 * S a) * D)) •
+        toFullBlockMat E ∂P) =
+      (A * (B * ((3 : ℝ) ^ J + (3 : ℝ) ^ m + 3 * ∫ a, S a ∂P) * D)) •
+        toFullBlockMat E := by
+  have haff : Integrable (fun a => (3 : ℝ) ^ J + (3 : ℝ) ^ m + 3 * S a) P :=
+    (integrable_const _).add (hSint.const_mul 3)
+  have hscal : Integrable (fun a =>
+      A * (B * ((3 : ℝ) ^ J + (3 : ℝ) ^ m + 3 * S a) * D)) P :=
+    (((haff.const_mul B).mul_const D).const_mul A)
+  have hfull : Integrable (fun a : CoeffSpace d => fun α β : BlockCoord d =>
+      (A * (B * ((3 : ℝ) ^ J + (3 : ℝ) ^ m + 3 * S a) * D)) *
+        toFullBlockMat E α β) P := by
+    rw [integrable_pi_iff]
+    intro α
+    rw [integrable_pi_iff]
+    intro β
+    exact hscal.mul_const _
+  refine ⟨hfull, ?_⟩
+  rw [integral_smul_const]
+  congr 1
+  have hcong : (fun a => A * (B * ((3 : ℝ) ^ J + (3 : ℝ) ^ m + 3 * S a) * D)) =
+      fun a => (A * B * D * ((3 : ℝ) ^ J + (3 : ℝ) ^ m)) +
+        (A * B * D * 3) * S a := by
+    funext a
+    ring
+  rw [hcong, integral_affine hSint]
+  ring
+
 /-- **The reverse half of the adapted-to-Euclidean comparison.**  For
 `ℓ_al ≤ n < m` the Euclidean mean at generation `m` exceeds the adapted mean at
 generation `n` by at most `C𝔢_qΓ_{g,S}(n)3^{-(m-n)}𝐄`.  The constant exhibited
@@ -106,61 +242,10 @@ theorem centeredCube_sub_adaptedMean_le [NeZero d] {P : Measure (CoeffSpace d)}
   have hSint : Integrable S P := integrable_source hdag
   have haff : Integrable (fun a => (3 : ℝ) ^ J + (3 : ℝ) ^ m + 3 * S a) P :=
     (integrable_const _).add (hSint.const_mul 3)
-  have hGint : Integrable (fun a =>
-      ((6 * (d : ℝ) * Real.sqrt d * ‖q‖) *
-        ((2 * (6 * (d : ℝ) * Real.sqrt d * ‖q⁻¹‖) * (1 - g)⁻¹ + 1) *
-          ((3 : ℝ) ^ J + (3 : ℝ) ^ m + 3 * S a) *
-          (2 * (1 - g)⁻¹ * ((3 : ℝ) ^ (-m) * (3 : ℝ) ^ ((J : ℝ) * (1 - g)))))) •
-        toFullBlockMat E) P := by
-    have hscal : Integrable (fun a => (6 * (d : ℝ) * Real.sqrt d * ‖q‖) *
-        ((2 * (6 * (d : ℝ) * Real.sqrt d * ‖q⁻¹‖) * (1 - g)⁻¹ + 1) *
-          ((3 : ℝ) ^ J + (3 : ℝ) ^ m + 3 * S a) *
-          (2 * (1 - g)⁻¹ * ((3 : ℝ) ^ (-m) * (3 : ℝ) ^ ((J : ℝ) * (1 - g)))))) P :=
-      (((haff.const_mul _).mul_const _).const_mul _)
-    have hGint' : Integrable (fun a : CoeffSpace d => fun α β : BlockCoord d =>
-        ((6 * (d : ℝ) * Real.sqrt d * ‖q‖) *
-          ((2 * (6 * (d : ℝ) * Real.sqrt d * ‖q⁻¹‖) * (1 - g)⁻¹ + 1) *
-            ((3 : ℝ) ^ J + (3 : ℝ) ^ m + 3 * S a) *
-            (2 * (1 - g)⁻¹ * ((3 : ℝ) ^ (-m) * (3 : ℝ) ^ ((J : ℝ) * (1 - g)))))) *
-          toFullBlockMat E α β) P := by
-      rw [integrable_pi_iff]
-      intro α
-      rw [integrable_pi_iff]
-      intro β
-      exact hscal.mul_const _
-    exact hGint'
-  have hkey := Transport.annealedBlock_le_of_ae_le hW hcellint hGint
-    (ae_coarseBlock_centeredCube_le_rows hdag hq hm0 hJn hZ)
-  have hmeanS : ∫ a, S a ∂P ≤ 2 * K ^ 2 := integral_source_le hdag
-  have hmean0 : (0 : ℝ) ≤ ∫ a, S a ∂P := integral_nonneg fun a => hdag.source_nonneg a
-  have hGmean : ∫ a, ((6 * (d : ℝ) * Real.sqrt d * ‖q‖) *
-        ((2 * (6 * (d : ℝ) * Real.sqrt d * ‖q⁻¹‖) * (1 - g)⁻¹ + 1) *
-          ((3 : ℝ) ^ J + (3 : ℝ) ^ m + 3 * S a) *
-          (2 * (1 - g)⁻¹ * ((3 : ℝ) ^ (-m) * (3 : ℝ) ^ ((J : ℝ) * (1 - g)))))) •
-        toFullBlockMat E ∂P =
-      ((6 * (d : ℝ) * Real.sqrt d * ‖q‖) *
-        ((2 * (6 * (d : ℝ) * Real.sqrt d * ‖q⁻¹‖) * (1 - g)⁻¹ + 1) *
-          ((3 : ℝ) ^ J + (3 : ℝ) ^ m + 3 * ∫ a, S a ∂P) *
-          (2 * (1 - g)⁻¹ * ((3 : ℝ) ^ (-m) * (3 : ℝ) ^ ((J : ℝ) * (1 - g)))))) •
-        toFullBlockMat E := by
-    rw [integral_smul_const]
-    congr 1
-    have hcong : (fun a => (6 * (d : ℝ) * Real.sqrt d * ‖q‖) *
-          ((2 * (6 * (d : ℝ) * Real.sqrt d * ‖q⁻¹‖) * (1 - g)⁻¹ + 1) *
-            ((3 : ℝ) ^ J + (3 : ℝ) ^ m + 3 * S a) *
-            (2 * (1 - g)⁻¹ * ((3 : ℝ) ^ (-m) * (3 : ℝ) ^ ((J : ℝ) * (1 - g)))))) =
-        fun a => ((6 * (d : ℝ) * Real.sqrt d * ‖q‖) *
-              (2 * (6 * (d : ℝ) * Real.sqrt d * ‖q⁻¹‖) * (1 - g)⁻¹ + 1) *
-              (2 * (1 - g)⁻¹ * ((3 : ℝ) ^ (-m) * (3 : ℝ) ^ ((J : ℝ) * (1 - g)))) *
-              ((3 : ℝ) ^ J + (3 : ℝ) ^ m)) +
-            ((6 * (d : ℝ) * Real.sqrt d * ‖q‖) *
-              (2 * (6 * (d : ℝ) * Real.sqrt d * ‖q⁻¹‖) * (1 - g)⁻¹ + 1) *
-              (2 * (1 - g)⁻¹ * ((3 : ℝ) ^ (-m) * (3 : ℝ) ^ ((J : ℝ) * (1 - g)))) * 3) *
-              S a := by
-      funext a
-      ring
-    rw [hcong, integral_affine hSint]
-    ring
+  obtain ⟨hGint, hGmean⟩ := integrable_affine_fullBlock hSint E
+    (A := 6 * (d : ℝ) * Real.sqrt d * ‖q‖)
+    (B := 2 * (6 * (d : ℝ) * Real.sqrt d * ‖q⁻¹‖) * (1 - g)⁻¹ + 1)
+    (D := 2 * (1 - g)⁻¹ * ((3 : ℝ) ^ (-m) * (3 : ℝ) ^ ((J : ℝ) * (1 - g)))
   rw [hGmean] at hkey
   rw [← htarget]
   intro X
@@ -232,51 +317,7 @@ theorem centeredCube_sub_adaptedMean_le [NeZero d] {P : Measure (CoeffSpace d)}
     intro w _
     rw [Recurrence.annealedBlock_adaptedCellAt_eq_adaptedMean hstat hgrid hlAl hmeasn w]
   -- the rows below the starting generation
-  have hlow : (∑ r ∈ Finset.Ico J n, ∑ w ∈ Z r,
-      (volume (adaptedCellAt q r w)).toReal /
-          (volume (adaptedCellTranslate (1 : Mat d) m 0)).toReal *
-        (1 / 2 * blockVecDot X (blockMatVecMul (annealedBlock P (adaptedCellAt q r w)) X))) ≤
-      ((6 * (d : ℝ) * Real.sqrt d * ‖q‖) * (126 * (d : ℝ) * Real.sqrt d * (1 - g)⁻¹) *
-          (1 / 2 * blockVecDot X (blockMatVecMul E X))) *
-        (20 * transferGauge g K n * (3 : ℝ) ^ (n - m)) := by
-    have hb : ∀ r ∈ Finset.Ico J n,
-        (∑ w ∈ Z r, (volume (adaptedCellAt q r w)).toReal /
-            (volume (adaptedCellTranslate (1 : Mat d) m 0)).toReal *
-          (1 / 2 * blockVecDot X
-            (blockMatVecMul (annealedBlock P (adaptedCellAt q r w)) X))) ≤
-          ((6 * (d : ℝ) * Real.sqrt d * ‖q‖) * (3 : ℝ) ^ (r - m)) *
-            ((126 * (d : ℝ) * Real.sqrt d * (1 - g)⁻¹ *
-                (1 + 9 * K ^ 2 * (3 : ℝ) ^ (-r)) ^ g) *
-              (1 / 2 * blockVecDot X (blockMatVecMul E X))) := by
-      intro r hr
-      refine sum_weight_mul_le ?_ ?_ ?_
-      · refine mul_nonneg ?_ hE0
-        have h1 : (0 : ℝ) ≤ (1 + 9 * K ^ 2 * (3 : ℝ) ^ (-r)) ^ g :=
-          Real.rpow_nonneg (by positivity) g
-        have h2 : (0 : ℝ) ≤ 126 * (d : ℝ) * Real.sqrt d * (1 - g)⁻¹ := by positivity
-        exact mul_nonneg h2 h1
-      · intro w _
-        have hcell := annealedBlock_adaptedCellAt_le hd hstat hdag hq hqinv r w X
-        rw [Sharp.blockVecDot_blockMatVecMul_blockScale] at hcell
-        linarith only [hcell]
-      · have hle := Transport.sum_relative_volume_row_le hone hq (Finset.mem_Ico.mp hr).2 (hZ r)
-        rw [hnorm] at hle
-        exact hle
-    refine le_trans (Finset.sum_le_sum hb) ?_
-    have hrw : ∀ r ∈ Finset.Ico J n,
-        ((6 * (d : ℝ) * Real.sqrt d * ‖q‖) * (3 : ℝ) ^ (r - m)) *
-            ((126 * (d : ℝ) * Real.sqrt d * (1 - g)⁻¹ *
-                (1 + 9 * K ^ 2 * (3 : ℝ) ^ (-r)) ^ g) *
-              (1 / 2 * blockVecDot X (blockMatVecMul E X)))
-          = ((6 * (d : ℝ) * Real.sqrt d * ‖q‖) *
-              (126 * (d : ℝ) * Real.sqrt d * (1 - g)⁻¹) *
-              (1 / 2 * blockVecDot X (blockMatVecMul E X))) *
-            ((3 : ℝ) ^ (r - m) * (1 + 9 * K ^ 2 * (3 : ℝ) ^ (-r)) ^ g) :=
-      fun r _ => by ring
-    rw [Finset.sum_congr rfl hrw, ← Finset.mul_sum]
-    refine mul_le_mul_of_nonneg_left (sum_belowSplit_le hg0 hg1 n m J) ?_
-    have h2 : (0 : ℝ) ≤ 126 * (d : ℝ) * Real.sqrt d * (1 - g)⁻¹ := by positivity
-    exact mul_nonneg (mul_nonneg hCq0 h2) hE0
+  have hlow := adaptedLowRows_energy_le hd hstat hdag hq hqinv hnm hJn hg0 hg1 hZ X hE0
   -- the tail, under one unit of the printed error
   have hGam1 : (1 : ℝ) ≤ transferGauge g K n := one_le_transferGauge hg0 hg1 n
   have h3nm : (3 : ℝ) ^ (-m) * (3 : ℝ) ^ n = (3 : ℝ) ^ (n - m) := by
@@ -284,44 +325,10 @@ theorem centeredCube_sub_adaptedMean_le [NeZero d] {P : Measure (CoeffSpace d)}
     congr 1
     ring
   have h3nmpos : (0 : ℝ) < (3 : ℝ) ^ (n - m) := by positivity
-  have hchain : (3 : ℝ) ^ J + (3 : ℝ) ^ m + 3 * ∫ a, S a ∂P ≤
-      1 + (3 : ℝ) ^ m + 6 * K ^ 2 := by
-    have h3J : (3 : ℝ) ^ J ≤ 1 := by
-      have := zpow_le_zpow_right₀ (by norm_num : (1 : ℝ) ≤ 3) hJ0
-      rwa [zpow_zero] at this
-    linarith only [h3J, hmeanS]
-  have hpowpos : (0 : ℝ) < (3 : ℝ) ^ ((J : ℝ) * (1 - g)) :=
-    Real.rpow_pos_of_pos (by norm_num) _
-  have hAB : (6 * (d : ℝ) * Real.sqrt d * ‖q‖) *
-      (2 * (6 * (d : ℝ) * Real.sqrt d * ‖q⁻¹‖) * (1 - g)⁻¹ + 1) *
-      ((3 : ℝ) ^ J + (3 : ℝ) ^ m + 3 * ∫ a, S a ∂P) * (2 * (1 - g)⁻¹) *
-      (3 : ℝ) ^ ((J : ℝ) * (1 - g)) ≤ (3 : ℝ) ^ n := by
-    refine le_trans ?_ hJmul
-    have h1 : (0 : ℝ) ≤ (6 * (d : ℝ) * Real.sqrt d * ‖q‖) *
-        (2 * (6 * (d : ℝ) * Real.sqrt d * ‖q⁻¹‖) * (1 - g)⁻¹ + 1) := mul_nonneg hCq0 hB0
-    have h2 : (0 : ℝ) ≤ 2 * (1 - g)⁻¹ := by linarith only [hinv0]
-    have hmono := mul_le_mul_of_nonneg_right (mul_le_mul_of_nonneg_right
-      (mul_le_mul_of_nonneg_left hchain h1) h2) hpowpos.le
-    linarith only [hmono, hpowpos]
-  have htailfinal : (6 * (d : ℝ) * Real.sqrt d * ‖q‖) *
-      ((2 * (6 * (d : ℝ) * Real.sqrt d * ‖q⁻¹‖) * (1 - g)⁻¹ + 1) *
-        ((3 : ℝ) ^ J + (3 : ℝ) ^ m + 3 * ∫ a, S a ∂P) *
-        (2 * (1 - g)⁻¹ * ((3 : ℝ) ^ (-m) * (3 : ℝ) ^ ((J : ℝ) * (1 - g))))) ≤
-      transferGauge g K n * (3 : ℝ) ^ (n - m) := by
-    have h3m : (0 : ℝ) < (3 : ℝ) ^ (-m) := by positivity
-    have hcal : (6 * (d : ℝ) * Real.sqrt d * ‖q‖) *
-        ((2 * (6 * (d : ℝ) * Real.sqrt d * ‖q⁻¹‖) * (1 - g)⁻¹ + 1) *
-          ((3 : ℝ) ^ J + (3 : ℝ) ^ m + 3 * ∫ a, S a ∂P) *
-          (2 * (1 - g)⁻¹ * ((3 : ℝ) ^ (-m) * (3 : ℝ) ^ ((J : ℝ) * (1 - g)))))
-        = ((6 * (d : ℝ) * Real.sqrt d * ‖q‖) *
-            (2 * (6 * (d : ℝ) * Real.sqrt d * ‖q⁻¹‖) * (1 - g)⁻¹ + 1) *
-            ((3 : ℝ) ^ J + (3 : ℝ) ^ m + 3 * ∫ a, S a ∂P) * (2 * (1 - g)⁻¹) *
-            (3 : ℝ) ^ ((J : ℝ) * (1 - g))) * (3 : ℝ) ^ (-m) := by ring
-    rw [hcal]
-    have hmul := mul_le_mul_of_nonneg_right hAB h3m.le
-    rw [mul_comm ((3 : ℝ) ^ n) ((3 : ℝ) ^ (-m)), h3nm] at hmul
-    nlinarith only [hmul, hGam1, h3nmpos]
-  -- the printed constant
+  have htailfinal := reverseCutoffTail_le hg0 hg1 hJ0 hGam1
+    (A := 6 * (d : ℝ) * Real.sqrt d * ‖q‖)
+    (B := 2 * (6 * (d : ℝ) * Real.sqrt d * ‖q⁻¹‖) * (1 - g)⁻¹ + 1)
+    (T := ∫ a, S a ∂P) (by positivity) (by positivity) hmeanS hJmul
   have hGam0 : (0 : ℝ) ≤ transferGauge g K n * (3 : ℝ) ^ (n - m) := by
     nlinarith only [hGam1, h3nmpos]
   have hCdub : (6 * (d : ℝ) * Real.sqrt d * ‖q‖) *

@@ -30,8 +30,11 @@ blockCoeffField definitions, plus symmPart / skewPart / inverse / conjugation
 helpers used throughout.
 -/
 
+/-- A pair of vector fields representing a potential component and a flux component. -/
 structure BlockState (d : ℕ) where
+  /-- The vector field in the potential component of the block state. -/
   potential : Vec d → Vec d
+  /-- The vector field in the flux component of the block state. -/
   flux : Vec d → Vec d
 
 @[ext] theorem BlockState.ext {d : ℕ} {X Y : BlockState d}
@@ -52,6 +55,7 @@ instance {d : ℕ} : SMul ℝ (BlockState d) where
     { potential := c • X.potential
       flux := c • X.flux }
 
+/-- The pair of potential and flux values at a point. -/
 @[expose]
 def BlockState.eval {d : ℕ} (X : BlockState d) (x : Vec d) : BlockVec d :=
   (X.potential x, X.flux x)
@@ -64,6 +68,7 @@ def BlockState.eval {d : ℕ} (X : BlockState d) (x : Vec d) : BlockVec d :=
     (c • X).eval x = c • X.eval x := by
   rfl
 
+/-- Apply the same matrix to both vector fields of a block state pointwise. -/
 @[expose]
 def BlockState.mapMatrix {d : ℕ} (R : Mat d) (X : BlockState d) : BlockState d :=
   { potential := fun x => matVecMul R (X.potential x)
@@ -73,6 +78,7 @@ def BlockState.mapMatrix {d : ℕ} (R : Mat d) (X : BlockState d) : BlockState d
     (X.mapMatrix R).eval x = (matVecMul R (X.potential x), matVecMul R (X.flux x)) := by
   rfl
 
+/-- Negate the flux component of a block state. -/
 @[expose]
 def BlockState.flipFlux {d : ℕ} (X : BlockState d) : BlockState d :=
   { potential := X.potential
@@ -82,10 +88,13 @@ def BlockState.flipFlux {d : ℕ} (X : BlockState d) : BlockState d :=
     X.flipFlux.eval x = (X.potential x, -X.flux x) := by
   rfl
 
+/-- The constant vector field with value `p`. -/
 @[expose]
 def constVecField {d : ℕ} (p : Vec d) : Vec d → Vec d :=
   fun _ => p
 
+/-- The block matrix with blocks `s + kᵀ s⁻¹ k`, `-kᵀ s⁻¹`, `-s⁻¹ k`, and `s⁻¹`, where `s` and
+`k` are the symmetric and skew parts of `A`. -/
 @[expose]
 noncomputable def blockMatrixOfCoeff {d : ℕ} (A : Mat d) : BlockMat d :=
   let s := symmPart A
@@ -96,14 +105,17 @@ noncomputable def blockMatrixOfCoeff {d : ℕ} (A : Mat d) : BlockMat d :=
     lowerLeft := -(sInv * k)
     lowerRight := sInv }
 
+/-- The block coefficient field obtained by applying the block matrix construction pointwise. -/
 @[expose]
 noncomputable def blockCoeffField {d : ℕ} (a : CoeffField d) : Vec d → BlockMat d :=
   fun x => blockMatrixOfCoeff (a x)
 
+/-- Apply `R` to each component of a vector pair. -/
 @[expose]
 def blockVecConj {d : ℕ} (R : Mat d) (X : BlockVec d) : BlockVec d :=
   (matVecMul R X.1, matVecMul R X.2)
 
+/-- Multiply each block of `B` on both sides by `R`. -/
 @[expose]
 def blockMatConj {d : ℕ} (R : Mat d) (B : BlockMat d) : BlockMat d :=
   { upperLeft := R * B.upperLeft * R

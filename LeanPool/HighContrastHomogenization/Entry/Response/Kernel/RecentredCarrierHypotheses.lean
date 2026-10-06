@@ -296,7 +296,8 @@ theorem tailCell_of_bridge (P : Measure (CoeffSpace d)) (γ : ℝ) (jStar : ℕ)
         (optimizerField (aU w).toCoeffField (uFam w))
       = cellAverage (adaptedCellAtCenter (respGrid jStar F) (t - (n : ℤ)) w)
         (optimizerField (respCoeffMinus F a) u) := by
-    refine cellAverage_congr_ae (adaptedCellAtCenter_subset_adaptedCell (respGrid jStar F) t n hw) ?_
+    refine cellAverage_congr_ae (adaptedCellAtCenter_subset_adaptedCell (respGrid jStar F) t n
+      hw) ?_
     filter_upwards [hae.symm] with x hx
     rw [huFam_w]
     simp only [optimizerField, huRep_grad, haU_w, hx]
@@ -537,7 +538,8 @@ theorem headCell_of_bridge (P : Measure (CoeffSpace d)) (γ : ℝ) (jStar : ℕ)
     show (MeasureTheory.volume (adaptedCellAtCenter (respGrid jStar F) (t - (n : ℤ)) w)).toReal⁻¹ *
         ∫ x in (adaptedCellAtCenter (respGrid jStar F) (t - (n : ℤ)) w),
           2 * vecDot (Xf w x).1 (Xf w x).2
-      = 2 * ((MeasureTheory.volume (adaptedCellAtCenter (respGrid jStar F) (t - (n : ℤ)) w)).toReal⁻¹ *
+      = 2 * ((MeasureTheory.volume (adaptedCellAtCenter (respGrid jStar F) (t - (n : ℤ))
+        w)).toReal⁻¹ *
         ∫ x in (adaptedCellAtCenter (respGrid jStar F) (t - (n : ℤ)) w),
           vecDot (Xf w x).1 (Xf w x).2)
     rw [MeasureTheory.integral_const_mul]
@@ -656,7 +658,8 @@ theorem recentHead_carrier_minus (P : Measure (CoeffSpace d)) [IsProbabilityMeas
           Real.sqrt (respLsqMinus P jStar F t e) *
           (weakCellSum (respGrid jStar F) t H (respEhatMinus P jStar F t)
               (respCoeffMinus F a) +
-            weakAverageSum (respGrid jStar F) t H (Quenched.contrastRho γ) (respEhatMinus P jStar F t)
+            weakAverageSum (respGrid jStar F) t H (Quenched.contrastRho γ) (respEhatMinus P
+              jStar F t)
               (respCoeffMinus F a)) := by
   classical
   have hE : (toFullBlockMat (respEhatMinus P jStar F t)).PosDef :=

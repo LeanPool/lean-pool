@@ -129,7 +129,8 @@ theorem rounded_recenter {d : ℕ} [NeZero d]
     exact Set.image_mono hu
   · obtain ⟨z, hz⟩ := Annealed.adaptedCellCenter_eq_intTranslation J m le_rfl v
     have hcent : adaptedCellCenter (explicitRoundedGrid J m) j w =
-        adaptedCellCenter (explicitRoundedGrid J m) j u + HCPolySupport.Source.AKL.intTranslation z := by
+        adaptedCellCenter (explicitRoundedGrid J m) j u +
+          HCPolySupport.Source.AKL.intTranslation z := by
       simp only [Recurrence.adaptedCellCenter_eq] at hz ⊢
       rw [hc, matVecMul_eq_mulVec, Matrix.mulVec_add]
       exact congrArg (fun x => matVecMul (explicitRoundedGrid J m) (standardCellCenter j u) + x) hz
@@ -177,7 +178,8 @@ theorem aligned_source_bound (d : ℕ) (hd : 2 ≤ d) (γ : ℝ)
           ∀ (m : Mat d), m.PosDef →
             adaptedCell (explicitRoundedGrid J m) J ⊆ centeredCube d (2 * (J : ℤ)) →
             ∀ (j : ℤ) (w : Fin d → ℤ),
-              BlockMatLoewnerLE (annealedBlock P (adaptedCellAtCenter (explicitRoundedGrid J m) j w))
+              BlockMatLoewnerLE (annealedBlock P (adaptedCellAtCenter (explicitRoundedGrid J m)
+                j w))
                 (blockScale (C * (3 : ℝ) ^ (γ * max ((J : ℝ) - (j : ℝ)) 0)) E) := by
   let : NeZero d := ⟨by omega⟩
   obtain ⟨Csrc, C₀, hCsrc, _hC₀, hsource⟩ :=
@@ -287,7 +289,8 @@ theorem lower_row_volume {d : ℕ} [NeZero d] {q q' : Mat d} {K : ℝ}
       (finite_maximalAdaptedCellCenters_of_volume_ne_top hq
         (Transport.volume_adaptedCellTranslate_ne_top q' j y) cap r).toFinset.card =
       (finite_maximalCellIndices
-        (Transport.volume_adaptedCellTranslate_ne_top (q⁻¹ * q') j (matVecMul q⁻¹ y)) cap r).toFinset.card := by
+        (Transport.volume_adaptedCellTranslate_ne_top (q⁻¹ * q') j (matVecMul q⁻¹ y)) cap
+          r).toFinset.card := by
     rw [← Set.ncard_eq_toFinset_card _
         (finite_maximalAdaptedCellCenters_of_volume_ne_top hq
           (Transport.volume_adaptedCellTranslate_ne_top q' j y) cap r),
@@ -333,7 +336,8 @@ theorem maximal_mass {d : ℕ} [NeZero d]
   let : IsFiniteMeasure (volumeMeasureOn W) := ⟨by simpa [volumeMeasureOn] using hWfin.lt_top⟩
   have hmeas (i) (_hi : i ∈ s) : MeasurableSet (adaptedCellAtCenter q i.1 i.2) :=
     (isOpen_adaptedCellTranslate hq i.1 (adaptedCellCenter q i.1 i.2)).measurableSet
-  have hw : Summable w := summable_volumeRatio (s := s) (W := W) (U := fun i => adaptedCellAtCenter q i.1 i.2)
+  have hw : Summable w := summable_volumeRatio (s := s) (W := W) (U := fun i =>
+    adaptedCellAtCenter q i.1 i.2)
     hmeas hsub hdis
   have hW0 : (volume W).toReal ≠ 0 := by
     dsimp [W]
@@ -401,7 +405,8 @@ theorem finite_cap_sum {ι : Type*}
   have htop : (∑ i ∈ F with ¬ r i < cap, w i * f i) ≤ a := by
     calc
       _ ≤ ∑ i ∈ F with ¬ r i < cap, w i * a := Finset.sum_le_sum (fun i hi =>
-        mul_le_mul_of_nonneg_left (hcap i (by have := (Finset.mem_filter.mp hi).2; have := hr i; omega)) (hw0 i))
+        mul_le_mul_of_nonneg_left (hcap i (by have := (Finset.mem_filter.mp hi).2; have := hr i;
+          omega)) (hw0 i))
       _ = (∑ i ∈ F with ¬ r i < cap, w i) * a := (Finset.sum_mul ..).symm
       _ ≤ 1 * a := mul_le_mul_of_nonneg_right
         ((hw.sum_le_tsum _ (fun i _ => hw0 i)).trans hmass) ha
@@ -608,10 +613,12 @@ theorem forward_comparison (d : ℕ) (hd : 2 ≤ d) (γ : ℝ)
       Annealed.hasIntegrableCoarseBlock_adapted d hd P γ E Ψ K S hstat hdag J hJ m hm t 0
   have hA : Book.Ch02.BlockPosDef (adaptedMean P q t) :=
     blockPosDef_annealedBlock hintA (fun a => by
-      simpa only [adaptedCellTranslate, zero_add, Set.image_id', HighContrast.adaptedCell, HighContrast.centeredCube] using
+      simpa only [adaptedCellTranslate, zero_add, Set.image_id', HighContrast.adaptedCell,
+        HighContrast.centeredCube] using
         Annealed.blockPosDef_coarseBlock_adapted q hq t 0 a)
   have hintW : HasIntegrableCoarseBlock P (adaptedCellTranslate (1 : Mat d) (t + ℓ) 0) := by
-    simpa only [explicitRoundedGrid_one] using Annealed.hasIntegrableCoarseBlock_adapted d hd P γ E Ψ K S
+    simpa only [explicitRoundedGrid_one] using Annealed.hasIntegrableCoarseBlock_adapted d hd P
+      γ E Ψ K S
       hstat hdag J hJ (1 : Mat d) (one_posDef d) (t + ℓ) 0
   have hInv : InverseNormLE (q⁻¹ * (1 : Mat d)) (2 * Real.sqrt (‖m‖ * ‖m⁻¹‖)) :=
     relative_inverse_bound hq isUnit_one (by
@@ -716,7 +723,8 @@ theorem reverse_comparison (d : ℕ) (hd : 2 ≤ d) (γ : ℝ)
   have hsn := (Int.ceil_mono (mul_le_mul_of_nonneg_right (le_max_right Cs Cn) hlog)).trans hsrc
   let q := explicitRoundedGrid J m
   have hq : IsUnit q := isUnit_roundedGrid hJ hm
-  have hwin1 : adaptedCell (explicitRoundedGrid J (1 : Mat d)) J ⊆ centeredCube d (2 * (J : ℤ)) := by
+  have hwin1 : adaptedCell (explicitRoundedGrid J (1 : Mat d)) J ⊆ centeredCube d (2 * (J : ℤ))
+    := by
     rw [explicitRoundedGrid_one, identity_cell]
     exact Window.centeredCube_mono (by omega)
   have hsrcAll (j : ℤ) (w : Fin d → ℤ) :
@@ -724,7 +732,8 @@ theorem reverse_comparison (d : ℕ) (hd : 2 ≤ d) (γ : ℝ)
         (blockScale (Ca * (3 : ℝ) ^ (γ * max ((J : ℝ) - (j : ℝ)) 0)) E) := by
     simpa only [explicitRoundedGrid_one] using
       hsource P E Ψ K S hstat hdag J hJ hss (1 : Mat d) (one_posDef d) hwin1 j w
-  have hint (j : ℤ) (w : Fin d → ℤ) : HasIntegrableCoarseBlock P (adaptedCellAtCenter (1 : Mat d) j w) := by
+  have hint (j : ℤ) (w : Fin d → ℤ) : HasIntegrableCoarseBlock P (adaptedCellAtCenter (1 : Mat
+    d) j w) := by
     simpa only [explicitRoundedGrid_one] using!
       Annealed.hasIntegrableCoarseBlock_adapted d hd P γ E Ψ K S hstat hdag J hJ
         (1 : Mat d) (one_posDef d) j (adaptedCellCenter (1 : Mat d) j w)
@@ -734,14 +743,16 @@ theorem reverse_comparison (d : ℕ) (hd : 2 ≤ d) (γ : ℝ)
         (1 : Mat d) (one_posDef d) (t + ℓ) 0
   have hM : Book.Ch02.BlockPosDef (adaptedMean P (1 : Mat d) (t + ℓ)) :=
     blockPosDef_annealedBlock hintM (fun a => by
-      simpa only [adaptedCellTranslate, zero_add, Set.image_id', HighContrast.adaptedCell, HighContrast.centeredCube] using
+      simpa only [adaptedCellTranslate, zero_add, Set.image_id', HighContrast.adaptedCell,
+        HighContrast.centeredCube] using
         Annealed.blockPosDef_coarseBlock_adapted (1 : Mat d) isUnit_one (t + ℓ) 0 a)
   have hintA : HasIntegrableCoarseBlock P (adaptedCell q t) := by
     simpa only [adaptedCellTranslate, zero_add, Set.image_id'] using
       Annealed.hasIntegrableCoarseBlock_adapted d hd P γ E Ψ K S hstat hdag J hJ m hm t 0
   have hA : Book.Ch02.BlockPosDef (adaptedMean P q t) :=
     blockPosDef_annealedBlock hintA (fun a => by
-      simpa only [adaptedCellTranslate, zero_add, Set.image_id', HighContrast.adaptedCell, HighContrast.centeredCube] using
+      simpa only [adaptedCellTranslate, zero_add, Set.image_id', HighContrast.adaptedCell,
+        HighContrast.centeredCube] using
         Annealed.blockPosDef_coarseBlock_adapted q hq t 0 a)
   have hintW : HasIntegrableCoarseBlock P (adaptedCellTranslate q (t + ℓ + r) 0) :=
     Annealed.hasIntegrableCoarseBlock_adapted d hd P γ E Ψ K S hstat hdag J hJ m hm (t + ℓ + r) 0
@@ -781,7 +792,9 @@ theorem reverse_comparison (d : ℕ) (hd : 2 ≤ d) (γ : ℝ)
         rw [pow_two]
         simpa only [one_mul] using mul_le_mul_of_nonneg_right he (Real.sqrt_nonneg _)
       _ = ‖m‖ * ‖m⁻¹‖ := hsq
-  have hPi : 0 ≤ aspectRatio E := (HCPolySupport.HighContrast.one_le_aspectRatio_of_coarseEllipticityDagger hdag).trans' zero_le_one
+  have hPi : 0 ≤ aspectRatio E :=
+    (HCPolySupport.HighContrast.one_le_aspectRatio_of_coarseEllipticityDagger hdag).trans'
+    zero_le_one
   have hδ : (Ca * ((6 * (d : ℝ) * 2 * Real.sqrt d) / D) * (3 : ℝ) ^ (-(r : ℝ))) *
       (Cb * aspectRatio E * Real.sqrt (‖m‖ * ‖m⁻¹‖)) ≤
       C * aspectRatio E * (‖m‖ * ‖m⁻¹‖) * (3 : ℝ) ^ (-(r : ℝ)) := by

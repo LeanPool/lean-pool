@@ -75,7 +75,7 @@ theorem mem_descendantsAtScaleColorClass_self {d : ℕ} {Q R : TriadicCube d} {k
     R ∈ descendantsAtScaleColorClass Q k (cubeColor R) := by
   simp [descendantsAtScaleColorClass, hR]
 
-@[simp] theorem card_cubeColor (d : ℕ) : Fintype.card (CubeColor d) = 3 ^ d := by
+theorem card_cubeColor (d : ℕ) : Fintype.card (CubeColor d) = 3 ^ d := by
   simp [CubeColor]
 
 theorem card_image_cubeColor_descendantsAtScale_le {d : ℕ} (Q : TriadicCube d) (k : ℤ) :

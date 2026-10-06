@@ -494,6 +494,69 @@ theorem exists_aboveEntry_quenchedLocalizedEstimate_uniformEndpoint_expLogSq_par
       hshift_a (m := m') (n := n') hXshift_le hn'm'
     simpa [N0, hm_eq, hn_eq, hdiff, hquot] using hresult
 
+private theorem endpoint_normalized_response_le_deterministic_scale
+    {d : ℕ} [NeZero d] {P : Ch04.RestrictionCoeffLaw d}
+    (hP : Ch04.RestrictionLawCarrier P) (hStruct : Ch04.RestrictionStructuralLaw P)
+    (hInf : GammaInfinityCoarseGrainedEllipticity P hP hStruct)
+    (params : QuantitativeCoarseGrainedEllipticityParams d) (hparams : hInf.params = params)
+    (e : FullBlockVec d) (he : dotProduct e e ≤ 1) :
+    ∀ᵐ aω ∂P, ∀ m n : ℕ, n ≤ m →
+      localizedLimitNormalizedJMax hP hStruct m n e aω ≤
+        (quenchedProbeEnvelopeConst d *
+          GammaInfinityCoarseGrainedEllipticity.unitJConst d params) *
+            hInf.thetaHat ^ (2 : ℕ) := by
+  let θ : ℝ := hInf.thetaHat
+  let Kdet : ℝ := quenchedProbeEnvelopeConst d *
+    GammaInfinityCoarseGrainedEllipticity.unitJConst d params
+  let Jscale : ℝ := Kdet * θ ^ (2 : ℕ)
+  rw [MeasureTheory.ae_all_iff]
+  intro m
+  rw [MeasureTheory.ae_all_iff]
+  intro n
+  by_cases hnm_le : n ≤ m
+  · have hprobe :=
+      localizedLimitNormalizedJMax_le_quenchedProbeEnvelope_ae
+        hP hStruct (hInf.toGammaSigma 1 zero_lt_one)
+        hnm_le e he
+    have hmax :=
+      hInf.localizedNormalizedProbeJMax_le_thetaHat_sq_ae
+        (m := m) (n := n) hnm_le
+    filter_upwards [hprobe, hmax] with aω hprobe_a hmax_a _
+    calc
+      localizedLimitNormalizedJMax hP hStruct m n e aω
+          ≤ quenchedProbeEnvelope hP hStruct m n aω := hprobe_a
+      _ ≤ Jscale := by
+          have hK_nonneg : 0 ≤ quenchedProbeEnvelopeConst d :=
+            quenchedProbeEnvelopeConst_nonneg d
+          calc
+            quenchedProbeEnvelope hP hStruct m n aω
+                = quenchedProbeEnvelopeConst d *
+                    localizedNormalizedProbeJMax hP hStruct m n aω := by
+                    simp [quenchedProbeEnvelope]
+            _ ≤ quenchedProbeEnvelopeConst d *
+                (GammaInfinityCoarseGrainedEllipticity.unitJConst d params *
+                  θ ^ (2 : ℕ)) := by
+                simpa [θ, hparams] using
+                  mul_le_mul_of_nonneg_left hmax_a hK_nonneg
+            _ = Jscale := by
+                simp [Jscale, Kdet]
+                ring
+  · exact Filter.Eventually.of_forall fun _ hnm' =>
+      False.elim (hnm_le hnm')
+
+private theorem powered_square_scale_le_exponential_logarithm
+    {K θ α : ℝ} (hθ : 0 ≤ θ) (hα : 0 < α) :
+    (max 1 (K * θ ^ (2 : ℕ))) ^ α⁻¹ ≤
+      Real.exp ((4 * max 0 (Real.log ((max 1 K) ^ α⁻¹)) + 2 * (2 * α⁻¹)) *
+        (Real.log (2 + θ)) ^ (2 : ℕ)) := by
+  have hA : 0 < (max 1 K) ^ α⁻¹ :=
+    Real.rpow_pos_of_pos (lt_of_lt_of_le zero_lt_one (le_max_left 1 K)) _
+  have hp : 0 ≤ 2 * α⁻¹ := by positivity
+  exact (rpow_max_one_mul_sq_le_const_mul_rpow
+    (A := K) (θ := θ) (r := α⁻¹) hθ (inv_nonneg.mpr hα.le)).trans
+    (const_mul_rpow_max_one_le_exp_logSq
+      (A := (max 1 K) ^ α⁻¹) (θ := θ) (p := 2 * α⁻¹) hA hθ hp)
+
 /-- Note-facing quenched homogenization estimate at the uniform ellipticity
 endpoint.
 
@@ -541,15 +604,6 @@ theorem exists_quenchedLocalizedEstimate_uniformEndpoint_expLogSq_parameterAlpha
   let Aextra : ℝ := (max 1 Kdet) ^ α⁻¹
   let pextra : ℝ := 2 * α⁻¹
   let Cextra : ℝ := 4 * max 0 (Real.log Aextra) + 2 * pextra
-  have hKdet_pos : 0 < Kdet := by
-    dsimp [Kdet]
-    exact mul_pos (quenchedProbeEnvelopeConst_pos d)
-      (GammaInfinityCoarseGrainedEllipticity.unitJConst_pos
-        (d := d) params)
-  have hAextra_pos : 0 < Aextra := by
-    dsimp [Aextra]
-    exact Real.rpow_pos_of_pos
-      (lt_of_lt_of_le zero_lt_one (le_max_left 1 Kdet)) α⁻¹
   have hpextra_nonneg : 0 ≤ pextra := by
     dsimp [pextra]
     positivity
@@ -603,23 +657,10 @@ theorem exists_quenchedLocalizedEstimate_uniformEndpoint_expLogSq_parameterAlpha
     calc
       Jscale ≤ max 1 Jscale := le_max_right 1 Jscale
       _ = Dsmall ^ α := hDpow_eq.symm
-  have hDsmall_poly :
-      Dsmall ≤ Aextra * (max 1 θ) ^ pextra := by
-    simpa [Dsmall, Jscale, Kdet, Aextra, pextra, θ] using
-      rpow_max_one_mul_sq_le_const_mul_rpow
-        (A := Kdet) (θ := θ) (r := α⁻¹)
-        hInf.thetaHat_pos.le (inv_nonneg.mpr hα_pos.le)
   have hDsmall_exp :
-      Dsmall ≤
-        Real.exp (Cextra * (Real.log (2 + θ)) ^ (2 : ℕ)) := by
-    calc
-      Dsmall ≤ Aextra * (max 1 θ) ^ pextra := hDsmall_poly
-      _ ≤ Real.exp
-          (Cextra * (Real.log (2 + θ)) ^ (2 : ℕ)) := by
-          simpa [Cextra, θ] using
-            const_mul_rpow_max_one_le_exp_logSq
-              (A := Aextra) (θ := θ) (p := pextra)
-              hAextra_pos hInf.thetaHat_pos.le hpextra_nonneg
+      Dsmall ≤ Real.exp (Cextra * (Real.log (2 + θ)) ^ (2 : ℕ)) := by
+    simpa [Dsmall, Jscale, Cextra, Aextra, pextra] using
+      powered_square_scale_le_exponential_logarithm (K := Kdet) hInf.thetaHat_pos.le hα_pos
   have hG_nonneg : 0 ≤ G := by
     dsimp [G]
     positivity
@@ -678,40 +719,8 @@ theorem exists_quenchedLocalizedEstimate_uniformEndpoint_expLogSq_parameterAlpha
     have hdet_e :
         ∀ᵐ aω ∂P, ∀ m n : ℕ, n ≤ m →
           localizedLimitNormalizedJMax hP hStruct m n e aω ≤ Jscale := by
-      rw [MeasureTheory.ae_all_iff]
-      intro m
-      rw [MeasureTheory.ae_all_iff]
-      intro n
-      by_cases hnm_le : n ≤ m
-      · have hprobe :=
-          localizedLimitNormalizedJMax_le_quenchedProbeEnvelope_ae
-            hP hStruct (hInf.toGammaSigma 1 zero_lt_one)
-            hnm_le e he
-        have hmax :=
-          hInf.localizedNormalizedProbeJMax_le_thetaHat_sq_ae
-            (m := m) (n := n) hnm_le
-        filter_upwards [hprobe, hmax] with aω hprobe_a hmax_a _
-        calc
-          localizedLimitNormalizedJMax hP hStruct m n e aω
-              ≤ quenchedProbeEnvelope hP hStruct m n aω := hprobe_a
-          _ ≤ Jscale := by
-              have hK_nonneg : 0 ≤ quenchedProbeEnvelopeConst d :=
-                quenchedProbeEnvelopeConst_nonneg d
-              calc
-                quenchedProbeEnvelope hP hStruct m n aω
-                    = quenchedProbeEnvelopeConst d *
-                        localizedNormalizedProbeJMax hP hStruct m n aω := by
-                        simp [quenchedProbeEnvelope]
-                _ ≤ quenchedProbeEnvelopeConst d *
-                    (GammaInfinityCoarseGrainedEllipticity.unitJConst d params *
-                      θ ^ (2 : ℕ)) := by
-                    simpa [θ, hparams] using
-                      mul_le_mul_of_nonneg_left hmax_a hK_nonneg
-                _ = Jscale := by
-                    simp [Jscale, Kdet]
-                    ring
-      · exact Filter.Eventually.of_forall fun _ hnm' =>
-          False.elim (hnm_le hnm')
+      exact endpoint_normalized_response_le_deterministic_scale
+        hP hStruct hInf params hparams e he
     filter_upwards [habove_e, hdet_e] with aω habove_a hdet_a
     intro m n hX_le hnm
     by_cases hN0n : N0 ≤ n

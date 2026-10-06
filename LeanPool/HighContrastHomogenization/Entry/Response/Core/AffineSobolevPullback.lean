@@ -84,7 +84,8 @@ theorem head_le_add_max_mul_ite {γ : ℝ} (hγ : γ ∈ Set.Ico (0 : ℝ) 1) (H
     (hgood : M ≤ 1 → Head ≤ Sums + cgood * (3 : ℝ) ^ (-(Quenched.contrastAlpha γ * (H : ℝ))) * Tail)
     (hbad : 1 < M → Head ≤ cbad * Real.sqrt M * Tail) :
     Head ≤ Sums + max cgood cbad *
-      (if 1 < M then Real.sqrt M else (3 : ℝ) ^ (-(Quenched.contrastAlpha γ * (H : ℝ)))) * Tail := by
+      (if 1 < M then Real.sqrt M else (3 : ℝ) ^ (-(Quenched.contrastAlpha γ * (H : ℝ)))) * Tail
+        := by
   have hw0 : 0 ≤ (3 : ℝ) ^ (-(Quenched.contrastAlpha γ * (H : ℝ))) :=
     Real.rpow_nonneg (by norm_num : (0 : ℝ) ≤ 3) _
   have hcgood' : 0 ≤ cgood * Tail := mul_nonneg hcgood hTail
@@ -105,10 +106,12 @@ theorem head_le_add_max_mul_ite {γ : ℝ} (hγ : γ ∈ Set.Ico (0 : ℝ) 1) (H
   have hkey' : Head - Sums ≤ max (cgood * Tail) (cbad * Tail) *
       (if 1 < M then Real.sqrt M else (3 : ℝ) ^ (-(Quenched.contrastAlpha γ * (H : ℝ)))) := by
     simpa only [ite_self] using hkey
-  have hW0 : 0 ≤ (if 1 < M then Real.sqrt M else (3 : ℝ) ^ (-(Quenched.contrastAlpha γ * (H : ℝ)))) := by
+  have hW0 : 0 ≤ (if 1 < M then Real.sqrt M else (3 : ℝ) ^ (-(Quenched.contrastAlpha γ * (H :
+    ℝ)))) := by
     have hmin0 : 0 ≤ min (Real.sqrt M) ((3 : ℝ) ^ (-(Quenched.contrastAlpha γ * (H : ℝ)))) :=
       le_min (Real.sqrt_nonneg M) hw0
-    exact le_trans hmin0 (le_tail_branch M ((3 : ℝ) ^ (-(Quenched.contrastAlpha γ * (H : ℝ)))) hM0 hw0)
+    exact le_trans hmin0 (le_tail_branch M ((3 : ℝ) ^ (-(Quenched.contrastAlpha γ * (H : ℝ))))
+      hM0 hw0)
   have hmax : max (cgood * Tail) (cbad * Tail) ≤ max cgood cbad * Tail := by
     refine max_le ?_ ?_
     · exact mul_le_mul_of_nonneg_right (le_max_left cgood cbad) hTail
@@ -121,7 +124,8 @@ theorem head_le_add_max_mul_ite {γ : ℝ} (hγ : γ ∈ Set.Ico (0 : ℝ) 1) (H
           (if 1 < M then Real.sqrt M else (3 : ℝ) ^ (-(Quenched.contrastAlpha γ * (H : ℝ)))) := by
         linarith only [hstep]
     _ = Sums + max cgood cbad *
-          (if 1 < M then Real.sqrt M else (3 : ℝ) ^ (-(Quenched.contrastAlpha γ * (H : ℝ)))) * Tail := by ring
+          (if 1 < M then Real.sqrt M else (3 : ℝ) ^ (-(Quenched.contrastAlpha γ * (H : ℝ)))) *
+            Tail := by ring
 
 end
 

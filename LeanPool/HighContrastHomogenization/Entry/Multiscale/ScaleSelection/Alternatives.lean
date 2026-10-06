@@ -354,7 +354,8 @@ theorem obstruction_long_alternative (d : ℕ) (γ : ℝ) (L₀ : ℕ) (c₀ ε 
     (hη : profile P γ (Geometry.explicitRoundedGrid jStar m) jStar k n +
         determinantDrift P γ (Geometry.explicitRoundedGrid jStar m) jStar n ≤ c₀ * ε * σ)
     (hlong : (d : ℝ)⁻¹ *
-        detIncrement P (Geometry.explicitRoundedGrid jStar m) n (n + 2 * (selectionLength L₀ σ : ℤ)) >
+        detIncrement P (Geometry.explicitRoundedGrid jStar m) n (n + 2 * (selectionLength L₀ σ :
+          ℤ)) >
       ε * σ) :
     (k < n ∧
         profile P γ (Geometry.explicitRoundedGrid jStar m) jStar k n +

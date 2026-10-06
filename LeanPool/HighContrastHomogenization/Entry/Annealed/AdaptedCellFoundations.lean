@@ -194,7 +194,8 @@ theorem aligned_standard_partition {d : ℕ} (j : ℤ) (h : ℕ) :
     intro w hw
     change standardCellCenter j w ∈ centeredCube d (j + h) at hw
     rw [centeredCube_eq_standardCell] at hw ⊢
-    exact standardCell_subset_of_mem (by omega) (Recurrence.standardCellCenter_mem_standardCell j w) hw
+    exact standardCell_subset_of_mem (by omega) (Recurrence.standardCellCenter_mem_standardCell
+      j w) hw
   refine ⟨hsub, fun w _ v _ hne => standardCell_disjoint_of_ne j hne, ?_⟩
   apply measure_mono_null (t := gridFaces d j) _ (volume_gridFaces j)
   intro x hx

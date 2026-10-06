@@ -213,7 +213,7 @@ theorem exists_harmonic_normalized_affine_candidate_error_decay_at_integer_rate
 /-- Identity-cube specialization of the integer-rate affine improvement.  At
 parameter `p`, a descent of `2 * p * t` variable scales gains the power
 `(2 * p - 1) * t`, up to a fixed initial depth. -/
-theorem exists_identity_harmonic_normalized_affine_candidate_error_decay_at_integer_rate
+theorem exists_identityHarmonic_affineErrorDecay_atIntegerRate
     (d p : ℕ) [NeZero d] (hp : 0 < p) :
     ∃ (depth : ℕ) (C : ℝ), 0 < C ∧
       ∀ t : ℕ,

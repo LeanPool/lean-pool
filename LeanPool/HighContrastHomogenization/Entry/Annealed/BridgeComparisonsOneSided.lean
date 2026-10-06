@@ -114,7 +114,8 @@ private theorem bridge_comparison_enlarge {d : ℕ} (A : ℤ → BlockMat d)
       _ = _ := by ring
   intro v
   apply (h v).trans
-  simp only [bridge_enlarge_quadratic_add, ofFullBlockMat_toFullBlockMat, Source.quadratic_blockScale]
+  simp only [bridge_enlarge_quadratic_add, ofFullBlockMat_toFullBlockMat,
+    Source.quadratic_blockScale]
   apply add_le_add
   · apply mul_le_mul_of_nonneg_right hc
     rw [bridge_quadratic_sum]
@@ -144,7 +145,8 @@ private theorem bridge_forward_rows {d : ℕ} [NeZero d]
         left_inv := fun _ => rfl
         right_inv := fun _ => rfl }
     have hr := (bridge_maximal_row_mass W q hq cap t (hfin t ht) (volume W).toReal).2
-    have he := e.tsum_eq (fun i => (volume (adaptedCellAtCenter q i.1.1.1 i.1.1.2)).toReal / (volume W).toReal)
+    have he := e.tsum_eq (fun i => (volume (adaptedCellAtCenter q i.1.1.1 i.1.1.2)).toReal /
+      (volume W).toReal)
     change (∑' i : {i : {i : I // i.1.1 < cap} // i.1.1.1 = t},
       (volume (adaptedCellAtCenter q i.1.1.1.1 i.1.1.1.2)).toReal / (volume W).toReal) = _ at he
     rw [he, hr]
@@ -206,7 +208,8 @@ theorem bridge_upper_comparison (d : ℕ) (hd : 2 ≤ d) (γ : ℝ)
   have hlog : 0 ≤ Real.logb 3 (2 * K) := (Real.logb_pos (by norm_num)
     (by linarith only [hdag.one_lt_growthWitness] : (1 : ℝ) < 2 * K)).le
   have hsrcs := (Int.ceil_mono (mul_le_mul_of_nonneg_right (le_max_left Cs (Cg γ)) hlog)).trans hsrc
-  have hsrcg := (Int.ceil_mono (mul_le_mul_of_nonneg_right (le_max_right Cs (Cg γ)) hlog)).trans hsrc
+  have hsrcg := (Int.ceil_mono (mul_le_mul_of_nonneg_right (le_max_right Cs (Cg γ)) hlog)).trans
+    hsrc
   have hzero : (0 : Vec d) ∈ adaptedLatticeAtScale qPlus (n + (L : ℤ)) := by
     exact ⟨0, by
       simp only [adaptedCellCenter, Pi.zero_apply, Int.cast_zero]
@@ -218,7 +221,8 @@ theorem bridge_upper_comparison (d : ℕ) (hd : 2 ≤ d) (γ : ℝ)
   have _hcapmass := bridge_whitney_cap_mass_le_one
     (adaptedCellTranslate qPlus (n + (L : ℤ)) 0) q hq (n + (L : ℤ) - (L : ℤ))
     (Transport.volume_adaptedCellTranslate_ne_top _ _ _) hfin hmass
-  simp only [add_sub_cancel_right, adaptedCellTranslate, zero_add, Set.image_id'] at hfin hsub hdis hnull hrow
+  simp only [add_sub_cancel_right, adaptedCellTranslate, zero_add, Set.image_id'] at hfin hsub
+    hdis hnull hrow
   have hforward := hcomp P E Ψ K S hstat hdag jStar hj hsrcs m m mPlus hm hm hmPlus
     n n (n + (L : ℤ)) (n + 2 * (L : ℤ)) hn hn (by omega)
     (Set.Subset.trans Set.subset_union_right hcontain)
@@ -241,7 +245,8 @@ theorem bridge_upper_comparison (d : ℕ) (hd : 2 ≤ d) (γ : ℝ)
     (adaptedMean_posDef d hd P γ E Ψ K S hstat hdag jStar hj m hm _).posSemidef
     jStar n (n + (L : ℤ)) (by omega) Cw Ct C K₀ (aspectRatio E)
     (Real.sqrt (‖m‖ * ‖m⁻¹‖)) (Real.sqrt (‖mPlus‖ * ‖mPlus⁻¹‖)) γ
-    hCw.le hCt.le hC.le hK₀ hCwC hCtC (one_le_aspectRatio_of_coarseEllipticityDagger hdag |>.trans' (by norm_num))
+    hCw.le hCt.le hC.le hK₀ hCwC hCtC (one_le_aspectRatio_of_coarseEllipticityDagger hdag
+      |>.trans' (by norm_num))
     (Real.sqrt_nonneg _) (Real.sqrt_nonneg _) hγ.1 hb
   simpa only [Int.cast_add, Int.cast_natCast, Int.cast_mul, Int.cast_ofNat,
     sub_add_eq_sub_sub, q, qPlus] using h
@@ -307,7 +312,8 @@ theorem bridge_lower_comparison (d : ℕ) (hd : 2 ≤ d) (γ : ℝ)
   have hlog : 0 ≤ Real.logb 3 (2 * K) := (Real.logb_pos (by norm_num)
     (by linarith only [hdag.one_lt_growthWitness] : (1 : ℝ) < 2 * K)).le
   have hsrcs := (Int.ceil_mono (mul_le_mul_of_nonneg_right (le_max_left Cs (Cg γ)) hlog)).trans hsrc
-  have hsrcg := (Int.ceil_mono (mul_le_mul_of_nonneg_right (le_max_right Cs (Cg γ)) hlog)).trans hsrc
+  have hsrcg := (Int.ceil_mono (mul_le_mul_of_nonneg_right (le_max_right Cs (Cg γ)) hlog)).trans
+    hsrc
   have hzero : (0 : Vec d) ∈ adaptedLatticeAtScale q (n + 2 * (L : ℤ)) := by
     exact ⟨0, by
       simp only [adaptedCellCenter, Pi.zero_apply, Int.cast_zero]
@@ -333,7 +339,8 @@ theorem bridge_lower_comparison (d : ℕ) (hd : 2 ≤ d) (γ : ℝ)
     cases i with
     | inl w =>
       cases k with
-      | inl v => exact adaptedCellAtCenter_disjoint_of_ne hqPlus cap (fun he => hne (congrArg Sum.inl he))
+      | inl v => exact adaptedCellAtCenter_disjoint_of_ne hqPlus cap (fun he => hne (congrArg
+        Sum.inl he))
       | inr p => exact hcross w p hi hk
     | inr p =>
       cases k with
@@ -412,7 +419,8 @@ theorem bridge_lower_comparison (d : ℕ) (hd : 2 ≤ d) (γ : ℝ)
     (adaptedMean_posDef d hd P γ E Ψ K S hstat hdag jStar hj m hm _).posSemidef
     jStar cap (n + 2 * (L : ℤ)) (by omega) Cw Ct C K₀ (aspectRatio E)
     (Real.sqrt (‖m‖ * ‖m⁻¹‖)) (Real.sqrt (‖mPlus‖ * ‖mPlus⁻¹‖)) γ
-    hCw.le hCt.le hC.le hK₀ hCwC hCtC (one_le_aspectRatio_of_coarseEllipticityDagger hdag |>.trans' (by norm_num))
+    hCw.le hCt.le hC.le hK₀ hCwC hCtC (one_le_aspectRatio_of_coarseEllipticityDagger hdag
+      |>.trans' (by norm_num))
     (Real.sqrt_nonneg _) (Real.sqrt_nonneg _) hγ.1 hb
   simpa only [Int.cast_add, Int.cast_natCast, Int.cast_mul, Int.cast_ofNat,
     sub_add_eq_sub_sub, q, qPlus, cap] using h

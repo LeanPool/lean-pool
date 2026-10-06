@@ -110,10 +110,10 @@ theorem exists_lawFreeCoarsePoincareRowsConstant
     exact memVectorL2_matVecMul_of_isEllipticFieldOn
       (Book.Ch03.publicCoeffField_isEllipticFieldOn_cubeSet Q a) hgradMem
   have hnoteGrad :=
-    Book.Ch03.scaleNormalizedDualNegativeBesovVectorNormTwo_le_note_constant_mul_cubeBesovNegativeVectorSeminormTwo
+    Book.Ch03.normalizedDualNegativeBesovNormTwo_le_constant_mul_negativeBesovSeminormTwo
       Q s u.toH1.grad hs hgradMem
   have hnoteFlux :=
-    Book.Ch03.scaleNormalizedDualNegativeBesovVectorNormTwo_le_note_constant_mul_cubeBesovNegativeVectorSeminormTwo
+    Book.Ch03.normalizedDualNegativeBesovNormTwo_le_constant_mul_negativeBesovSeminormTwo
       Q s (fun x ↦ matVecMul (Book.Ch03.publicCoeffField Q a x)
         (u.toH1.grad x)) hs hfluxMem
   rw [Book.Ch03.scaleNormalizedDualNegativeBesovVectorNormTwo,
@@ -141,7 +141,7 @@ theorem exists_lawFreeCoarsePoincareRowsConstant
     calc
       _ ≤ Book.Ch03.coarsePoincareGradientRHS Q a s (.finite 2) u := by
         simpa only [Book.Ch03.solutionGradientField,
-          Book.Ch03.scaleNormalizedNegativeBesovVectorNorm_finite_two_eq_cubeBesovNegativeVectorSeminormTwo]
+          Book.Ch03.scaleNegativeBesovVectorNorm_finiteTwo_eq_cubeNegativeSeminorm]
           using hgradRaw
       _ = B * Book.Ch03.poincareLowerEllipticityFactor
           Q a s (.finite 2) * D := by
@@ -167,7 +167,7 @@ theorem exists_lawFreeCoarsePoincareRowsConstant
           s hfluxAE.symm
       _ ≤ Book.Ch03.coarsePoincareFluxRHS Q a s (.finite 2) u := by
         simpa only [Book.Ch03.solutionFluxField,
-          Book.Ch03.scaleNormalizedNegativeBesovVectorNorm_finite_two_eq_cubeBesovNegativeVectorSeminormTwo]
+          Book.Ch03.scaleNegativeBesovVectorNorm_finiteTwo_eq_cubeNegativeSeminorm]
           using! hfluxRaw
       _ = B * Book.Ch03.poincareUpperEllipticityFactor
           Q a s (.finite 2) * D := by

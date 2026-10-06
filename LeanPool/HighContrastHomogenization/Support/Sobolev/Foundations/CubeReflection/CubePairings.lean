@@ -101,7 +101,7 @@ theorem integrable_cubeUpperFaceNeighbor_reflectedField_pairing {d : ℕ}
         (volume.restrict (openCubeSet Q)) := by
     refine hreflected.congr ?_
     filter_upwards with y
-    simp [B]
+    simp only [cubeUpperFaceReflection_involutive, B]
     rw [euclideanGradient_comp_cubeUpperFaceReflection hφ Q i y]
     exact (vecDot_coordReflectionLinear_left i (G y)
       (euclideanGradient φ (cubeUpperFaceReflection Q i y))).symm
@@ -196,7 +196,7 @@ theorem integrable_cubeLowerFaceNeighbor_reflectedField_pairing {d : ℕ}
         (volume.restrict (openCubeSet Q)) := by
     refine hreflected.congr ?_
     filter_upwards with y
-    simp [B]
+    simp only [cubeLowerFaceReflection_involutive, B]
     rw [euclideanGradient_comp_cubeLowerFaceReflection hφ Q i y]
     exact (vecDot_coordReflectionLinear_left i (G y)
       (euclideanGradient φ (cubeLowerFaceReflection Q i y))).symm

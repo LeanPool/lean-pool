@@ -58,7 +58,8 @@ theorem transport_weighted_smallness (γ p D ρ L : ℝ) (hγ : γ < 1) (hL : 0 
     (3 : ℝ) ^ ((1 - γ) / 2 * L) * p ≤ ρ ∧
     (3 : ℝ) ^ ((1 - γ) / 4 * L) * D ≤ ρ := by
   have hw : (3 : ℝ) ^ ((1 - γ) / 4 * L) ≤ (3 : ℝ) ^ ((1 - γ) / 2 * L) :=
-    Real.rpow_le_rpow_of_exponent_le (by norm_num) (by nlinarith only [mul_nonneg (sub_pos.mpr hγ).le hL])
+    Real.rpow_le_rpow_of_exponent_le (by norm_num) (by nlinarith only [mul_nonneg (sub_pos.mpr
+      hγ).le hL])
   have hh := mul_le_mul_of_nonneg_left hsmall
     (by positivity : 0 ≤ (3 : ℝ) ^ ((1 - γ) / 2 * L))
   have he : (3 : ℝ) ^ ((1 - γ) / 2 * L) * (3 : ℝ) ^ (-(1 / 2) * (1 - γ) * L) = 1 := by
@@ -133,9 +134,11 @@ theorem exists_transport_source_absorption (a Q : ℝ) (ha : 0 < a) (hQ : 0 ≤ 
     apply Real.rpow_le_rpow_of_exponent_le (by norm_num)
     linarith only [hexp]
   · have hAexp : A * (3 : ℝ) ^ (-(a / 4) * x) ≤ 1 := by
-      conv_lhs => lhs; rw [← Real.rpow_logb (by norm_num : (0 : ℝ) < 3) (by norm_num : (3 : ℝ) ≠ 1) (zero_lt_one.trans_le hA)]
+      conv_lhs => lhs; rw [← Real.rpow_logb (by norm_num : (0 : ℝ) < 3) (by norm_num : (3 : ℝ) ≠
+        1) (zero_lt_one.trans_le hA)]
       rw [← Real.rpow_add (by norm_num : (0 : ℝ) < 3)]
-      exact Real.rpow_le_one_of_one_le_of_nonpos (by norm_num) (by dsimp only [y] at hquarter; linarith only [hquarter, hL])
+      exact Real.rpow_le_one_of_one_le_of_nonpos (by norm_num) (by dsimp only [y] at hquarter;
+        linarith only [hquarter, hL])
     have hdecay : (3 : ℝ) ^ (-(a / 4) * x) ≤ (3 : ℝ) ^ (-L) :=
       Real.rpow_le_rpow_of_exponent_le (by norm_num) (by linarith only [hquarter, hy])
     have hpoly : (1 + x + L) * (3 : ℝ) ^ (-(a / 2) * x) ≤ Cpoly := by
@@ -155,7 +158,8 @@ theorem exists_transport_source_absorption (a Q : ℝ) (ha : 0 < a) (hQ : 0 ≤ 
         rw [he]
         ring
       _ ≤ 1 * Cpoly * (3 : ℝ) ^ (-L) := mul_le_mul
-        (mul_le_mul hAexp hpoly hnonneg (by norm_num)) hdecay (by positivity) (by dsimp only [Cpoly]; positivity)
+        (mul_le_mul hAexp hpoly hnonneg (by norm_num)) hdecay (by positivity) (by dsimp only
+          [Cpoly]; positivity)
       _ = _ := by rw [one_mul]
 
 /-- Projective proximity bounds the two distinct source brackets by one geometric base. -/
@@ -190,7 +194,8 @@ theorem transport_source_brackets (K₀ : ℝ) (hK₀ : 1 ≤ K₀) :
     simpa only [mul_pow, b₂] using pow_le_pow_left₀ (add_nonneg he0 hep) hh 2
   have hmajor (b : ℝ) (hb : b ≤ B) : 1 + Pi * (b * e ^ 2) ≤ B * ((2 + Pi) * e ^ 2) := by
     have hterm := mul_le_mul_of_nonneg_left (mul_le_mul_of_nonneg_right hb (sq_nonneg e)) hPi0
-    have hBe : 1 ≤ B * e ^ 2 := by nlinarith only [hB, he2, mul_nonneg (sub_nonneg.mpr hB) (sub_nonneg.mpr he2)]
+    have hBe : 1 ≤ B * e ^ 2 := by nlinarith only [hB, he2, mul_nonneg (sub_nonneg.mpr hB)
+      (sub_nonneg.mpr he2)]
     nlinarith only [hterm, hBe]
   constructor
   · apply le_trans _ (hmajor b₁ hb₁B)
@@ -218,7 +223,8 @@ theorem two_grid_transport_roundedGrid
       ∃ Csrc : ℝ, 0 < Csrc ∧
         ∀ ρ : ℝ, ρ ∈ Set.Ioc (0 : ℝ) 1 →
         ∀ δ : ℝ, δ ∈ Set.Icc (0 : ℝ) (1 / 4) →
-          ∀ (P : Measure (CoeffSpace d)) [IsProbabilityMeasure P] (E : BlockMat d) (Ψ : ℝ → ℝ) (K : ℝ)
+          ∀ (P : Measure (CoeffSpace d)) [IsProbabilityMeasure P] (E : BlockMat d) (Ψ : ℝ → ℝ)
+            (K : ℝ)
             (S : CoeffSpace d → ℝ),
             IsStationaryLaw P →
             IsUnitRangeLaw P →
@@ -228,8 +234,10 @@ theorem two_grid_transport_roundedGrid
               ∀ (m mPlus : Mat d), m.PosDef → mPlus.PosDef →
                 ∀ k n : ℤ, (jStar : ℤ) ≤ k → k ≤ n →
                   ∀ L : ℕ,
-                    HighContrast.adaptedCell (Geometry.explicitRoundedGrid jStar m) (n + 2 * (L : ℤ)) ∪
-                        HighContrast.adaptedCell (Geometry.explicitRoundedGrid jStar mPlus) (n + (L : ℤ)) ⊆
+                    HighContrast.adaptedCell (Geometry.explicitRoundedGrid jStar m) (n + 2 * (L
+                      : ℤ)) ∪
+                        HighContrast.adaptedCell (Geometry.explicitRoundedGrid jStar mPlus) (n +
+                          (L : ℤ)) ⊆
                       HighContrast.centeredCube d (2 * (jStar : ℤ)) →
                     C * ((L : ℝ) +
                         Real.logb 3 ((2 + aspectRatio E) * (‖m‖ * ‖m⁻¹‖))) ≤
@@ -247,7 +255,8 @@ theorem two_grid_transport_roundedGrid
                     BlockMatLoewnerLE
                         (adaptedMean P (Geometry.explicitRoundedGrid jStar mPlus) (n + (L : ℤ)))
                         (blockScale (1 + δ)
-                          (adaptedMean P (Geometry.explicitRoundedGrid jStar m) (n + 2 * (L : ℤ)))) →
+                          (adaptedMean P (Geometry.explicitRoundedGrid jStar m) (n + 2 * (L :
+                            ℤ)))) →
                     profile P γ (Geometry.explicitRoundedGrid jStar mPlus) jStar (n + (L : ℤ))
                           (n + (L : ℤ)) +
                         determinantDrift P γ (Geometry.explicitRoundedGrid jStar mPlus) jStar
@@ -299,7 +308,8 @@ theorem two_grid_transport_roundedGrid
   have hsep' : Csep * ((L : ℝ) + Real.logb 3 A) ≤ x :=
     (mul_le_mul_of_nonneg_right hsepC (add_nonneg (Nat.cast_nonneg L) hlogA)).trans hsep
   obtain ⟨hsourceP, hsourceD⟩ := habsorb A L x hA (Nat.cast_nonneg L) hsep'
-  have heq : Real.sqrt (‖m‖ * ‖m⁻¹‖) ^ 2 = ‖m‖ * ‖m⁻¹‖ := Real.sq_sqrt (mul_nonneg (norm_nonneg _) (norm_nonneg _))
+  have heq : Real.sqrt (‖m‖ * ‖m⁻¹‖) ^ 2 = ‖m‖ * ‖m⁻¹‖ := Real.sq_sqrt (mul_nonneg (norm_nonneg
+    _) (norm_nonneg _))
   obtain ⟨hbP, hbD⟩ := hbrackets (aspectRatio E) (Real.sqrt (‖m‖ * ‖m⁻¹‖))
     (Real.sqrt (‖mPlus‖ * ‖mPlus⁻¹‖)) hPi he (Real.sqrt_nonneg _) hePlus
   rw [heq] at hbP hbD
@@ -329,17 +339,21 @@ theorem two_grid_transport_roundedGrid
         dsimp only [x]
         ring
       _ = (Cd * B) * (A * (1 + x + L) * (3 : ℝ) ^ (-a * x)) := by ring
-      _ ≤ (Cd * B) * (Cpoly * (3 : ℝ) ^ (-(L : ℝ))) := mul_le_mul_of_nonneg_left hsourceD (by positivity)
-      _ ≤ _ := by simpa only [mul_assoc] using mul_le_mul_of_nonneg_left hdecay (by positivity : 0 ≤ Cd * B * Cpoly)
+      _ ≤ (Cd * B) * (Cpoly * (3 : ℝ) ^ (-(L : ℝ))) := mul_le_mul_of_nonneg_left hsourceD (by
+        positivity)
+      _ ≤ _ := by simpa only [mul_assoc] using mul_le_mul_of_nonneg_left hdecay (by positivity :
+        0 ≤ Cd * B * Cpoly)
   have hp0 := bridge_profile_nonneg d hd P γ E Ψ K S hstat hdag jStar hj m hm
     k (n + 2 * (L : ℤ)) hk (by omega)
-  have hD0 := bridge_determinantDrift_nonneg d hd P γ E Ψ K S hstat hdag jStar hj m hm (n + 2 * (L : ℤ))
+  have hD0 := bridge_determinantDrift_nonneg d hd P γ E Ψ K S hstat hdag jStar hj m hm (n + 2 *
+    (L : ℤ))
   have hw := transport_weighted_smallness γ _ _ ρ L hγ.2 (Nat.cast_nonneg L) hp0 hD0 hsmall
   have hpbound := mul_le_mul_of_nonneg_left hw.2.1 hCp.le
   have hDbound := mul_le_mul_of_nonneg_left hw.2.2 hCd.le
   have hKd := mul_le_mul_of_nonneg_left hdecay (mul_nonneg hCd.le (zero_le_one.trans hK₀))
   have hfinal : profile P γ (explicitRoundedGrid jStar mPlus) jStar (n + (L : ℤ)) (n + (L : ℤ)) +
-      determinantDrift P γ (explicitRoundedGrid jStar mPlus) jStar (n + (L : ℤ)) ≤ Ct * (δ + ρ) := by
+      determinantDrift P γ (explicitRoundedGrid jStar mPlus) jStar (n + (L : ℤ)) ≤ Ct * (δ + ρ)
+        := by
     have hδpay := mul_le_mul_of_nonneg_right hct hδ.1
     dsimp only [Ct] at hδpay ⊢
     change _ ≤ Cd * (δ + K₀ * (3 : ℝ) ^ (-(L : ℝ)) +

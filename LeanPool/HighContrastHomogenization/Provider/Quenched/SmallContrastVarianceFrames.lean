@@ -208,6 +208,36 @@ theorem hatted_sharp_inverse_bound
     nlinarith only [hBq0, hepsp1]
   linarith only [hSq, hsplitq, hBq, hCq, hp1, hp2, hp3]
 
+private theorem inverse_gap_quadratic_bound
+    {Sj SStarj : Mat d} (hSj : Sj.PosDef) (hStarj : SStarj.PosDef)
+    {epsj : ℝ} (hposj : 0 ≤ epsj) (horderj : SStarj ≤ Sj)
+    (hgapMj : Sj - SStarj ≤ epsj • SStarj) (κ : Mat d) (x y : Vec d) :
+    (y + κ *ᵥ x) ⬝ᵥ SStarj⁻¹ *ᵥ (y + κ *ᵥ x) -
+      (y + κ *ᵥ x) ⬝ᵥ Sj⁻¹ *ᵥ (y + κ *ᵥ x) ≤
+      epsj * ((y + κ *ᵥ x) ⬝ᵥ SStarj⁻¹ *ᵥ (y + κ *ᵥ x)) := by
+  classical
+  have hinvj : SStarj⁻¹ ≤ (1 + epsj) • Sj⁻¹ :=
+    starInv_le_smul_inv hSj hStarj hposj hgapMj
+  have hSjinvle : Sj⁻¹ ≤ SStarj⁻¹ :=
+    inv_le_inv_of_le hStarj hSj horderj
+  have hdiffq : (y + κ *ᵥ x) ⬝ᵥ SStarj⁻¹ *ᵥ (y + κ *ᵥ x) -
+      (y + κ *ᵥ x) ⬝ᵥ Sj⁻¹ *ᵥ (y + κ *ᵥ x) ≤
+      epsj * ((y + κ *ᵥ x) ⬝ᵥ SStarj⁻¹ *ᵥ (y + κ *ᵥ x)) := by
+    have hd : SStarj⁻¹ - Sj⁻¹ ≤ epsj • SStarj⁻¹ := by
+      have h1 : SStarj⁻¹ - Sj⁻¹ ≤ (1 + epsj) • Sj⁻¹ - Sj⁻¹ :=
+        sub_le_sub_right hinvj _
+      have h2 : (1 + epsj) • Sj⁻¹ - Sj⁻¹ = epsj • Sj⁻¹ := by
+        rw [add_smul, one_smul]
+        abel
+      rw [h2] at h1
+      refine h1.trans ?_
+      exact smul_le_smul_of_nonneg_left hSjinvle hposj
+    have h := Initialization.dotProduct_mulVec_le_of_le hd (y + κ *ᵥ x)
+    rw [Matrix.sub_mulVec, dotProduct_sub, Matrix.smul_mulVec,
+      dotProduct_smul, smul_eq_mul] at h
+    exact h
+  exact hdiffq
+
 /-- **The lower-scale recentered sharp gap** is first order in the
 smallness parameter against the terminal frame. -/
 theorem hatted_sharp_gap_bound
@@ -342,26 +372,7 @@ theorem hatted_sharp_gap_bound
     have h4 : (0 : ℝ) ≤ epsj * X + epsj * Yq := hS0
     linarith only [h2, h3, habs2, h4]
   -- the inverse-gap correction
-  have hinvj : SStarj⁻¹ ≤ (1 + epsj) • Sj⁻¹ :=
-    starInv_le_smul_inv hSj hStarj hposj hgapMj
-  have hSjinvle : Sj⁻¹ ≤ SStarj⁻¹ :=
-    inv_le_inv_of_le hStarj hSj horderj
-  have hdiffq : (y + κ *ᵥ x) ⬝ᵥ SStarj⁻¹ *ᵥ (y + κ *ᵥ x) -
-      (y + κ *ᵥ x) ⬝ᵥ Sj⁻¹ *ᵥ (y + κ *ᵥ x) ≤
-      epsj * ((y + κ *ᵥ x) ⬝ᵥ SStarj⁻¹ *ᵥ (y + κ *ᵥ x)) := by
-    have hd : SStarj⁻¹ - Sj⁻¹ ≤ epsj • SStarj⁻¹ := by
-      have h1 : SStarj⁻¹ - Sj⁻¹ ≤ (1 + epsj) • Sj⁻¹ - Sj⁻¹ :=
-        sub_le_sub_right hinvj _
-      have h2 : (1 + epsj) • Sj⁻¹ - Sj⁻¹ = epsj • Sj⁻¹ := by
-        rw [add_smul, one_smul]
-        abel
-      rw [h2] at h1
-      refine h1.trans ?_
-      exact smul_le_smul_of_nonneg_left hSjinvle hposj
-    have h := Initialization.dotProduct_mulVec_le_of_le hd (y + κ *ᵥ x)
-    rw [Matrix.sub_mulVec, dotProduct_sub, Matrix.smul_mulVec,
-      dotProduct_smul, smul_eq_mul] at h
-    exact h
+  have hdiffq := inverse_gap_quadratic_bound hSj hStarj hposj horderj hgapMj κ x y
   -- the frame comparison
   set Fpq : ℝ := x ⬝ᵥ Sp *ᵥ x +
     (y - Khatp *ᵥ x) ⬝ᵥ SStarp⁻¹ *ᵥ (y - Khatp *ᵥ x) with hFpqdef

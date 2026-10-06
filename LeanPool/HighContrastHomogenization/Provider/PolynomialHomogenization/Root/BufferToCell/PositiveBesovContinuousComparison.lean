@@ -244,7 +244,8 @@ private theorem forceSobolevRegularity_of_hsNormSq_lt_top
   · exact scalarGagliardoKernel_aestronglyMeasurable Q sF.1 F
       hBesov.memLp.aestronglyMeasurable (by
         simpa [cubeMeasure,
-          volume_restrict_cubeSet_eq_volume_restrict_openCubeSet] using hFcube.aestronglyMeasurable) i
+          volume_restrict_cubeSet_eq_volume_restrict_openCubeSet] using
+            hFcube.aestronglyMeasurable) i
   · have hcoord :
         (Gagliardo.cubeGagliardoESeminorm Q sF.1 (2 : ℝ≥0∞)
           (fun x => F x i)) ^ (2 : ℝ) ≤
@@ -335,6 +336,116 @@ private theorem cube_hsScale_eq_ofReal [NeZero d]
   rw [← Real.rpow_natCast, ← Real.rpow_mul hell.le]
   congr 1
   field_simp
+
+private theorem positive_sobolev_square_le_fractional_energy
+    [NeZero d] (Q : TriadicCube d) (sF : FractionalOrder) (F : Vec d → Vec d)
+    (hBesov : ForceBesovRegularity Q sF.1 F)
+    (hFcube : MemVectorL2 (openCubeSet Q) F)
+    (hSob : Legacy.ForceSobolevRegularity Q sF.1 F)
+    (hW2top : fracSeminormSq (openCubeSet Q) sF.1 F ≠ ⊤) :
+    (Legacy.scaleNormalizedPositiveSobolevVectorSeminormTwo Q sF.1 F) ^ 2 ≤
+      (cubeScaleFactor Q) ^ (2 * sF.1) *
+        ((d : ℝ) ^ 2 *
+          (cubeEuclideanWspMetricComparisonConstant d FiniteLpExponent.two).toReal *
+          (fracSeminormSq (openCubeSet Q) sF.1 F).toReal) := by
+  let ell : ℝ := cubeScaleFactor Q
+  let M : ℝ := (cubeEuclideanWspMetricComparisonConstant d
+    FiniteLpExponent.two).toReal
+  let W2 : ℝ≥0∞ := fracSeminormSq (openCubeSet Q) sF.1 F
+  have hell : 0 < ell := cubeScaleFactor_pos' Q
+  have hcoord := cubeCoordinateGagliardoPowerEnergy_le_dimension_mul_ambientHilbert
+    Q sF FiniteLpExponent.two F
+  have heuc := cubeAmbientHilbertWspESeminorm_rpow_le_metricComparisonConstant_mul
+    Q sF FiniteLpExponent.two F
+    (cubeAmbientHilbertWspKernel_two_aestronglyMeasurable Q sF F
+      hBesov.memLp.aestronglyMeasurable (by
+        simpa [cubeMeasure,
+          volume_restrict_cubeSet_eq_volume_restrict_openCubeSet] using
+          hFcube.aestronglyMeasurable))
+  have hfrac := cubeEuclideanWspESeminorm_two_sq_eq_fracSeminormSq
+    Q sF F hFcube.aestronglyMeasurable
+  let Coord : ℝ≥0∞ := cubeCoordinateGagliardoPowerEnergy
+    Q sF FiniteLpExponent.two F
+  have hCoordle : Coord ≤ (d : ℝ≥0∞) *
+      cubeEuclideanWspMetricComparisonConstant d FiniteLpExponent.two * W2 := by
+    dsimp only [Coord]
+    calc
+      cubeCoordinateGagliardoPowerEnergy Q sF FiniteLpExponent.two F ≤
+          (d : ℝ≥0∞) *
+            cubeAmbientHilbertWspESeminorm Q sF FiniteLpExponent.two F ^
+              FiniteLpExponent.two.exponent.toReal := hcoord
+      _ ≤ (d : ℝ≥0∞) *
+          (cubeEuclideanWspMetricComparisonConstant d FiniteLpExponent.two *
+            cubeEuclideanWspESeminorm Q sF FiniteLpExponent.two F ^
+              FiniteLpExponent.two.exponent.toReal) :=
+        mul_le_mul_right heuc _
+      _ = (d : ℝ≥0∞) *
+          cubeEuclideanWspMetricComparisonConstant d FiniteLpExponent.two * W2 := by
+        norm_num only [FiniteLpExponent.two_exponent, ENNReal.toReal_ofNat]
+        rw [ENNReal.rpow_two, hfrac]
+        dsimp only [W2]
+        exact (mul_assoc _ _ _).symm
+  have hCoordTop : Coord ≠ ⊤ := (lt_of_le_of_lt hCoordle
+    (ENNReal.mul_lt_top
+      (ENNReal.mul_lt_top (by simp)
+        (cubeEuclideanWspMetricComparisonConstant_lt_top d FiniteLpExponent.two))
+      (lt_top_iff_ne_top.mpr hW2top))).ne
+  let G : Fin d → ℝ := fun i =>
+    Gagliardo.cubeGagliardoSeminorm Q sF.1 (2 : ℝ≥0∞) (fun x => F x i)
+  have hGnonneg : ∀ i, 0 ≤ G i := fun _ => ENNReal.toReal_nonneg
+  have hsumSq : (∑ i, G i) ^ 2 ≤ (d : ℝ) * ∑ i, (G i) ^ 2 := by
+    simpa [Finset.card_univ, Fintype.card_fin] using
+      (sq_sum_le_card_mul_sum_sq (s := (Finset.univ : Finset (Fin d)))
+        (f := G))
+  have hCoordReal : (∑ i, (G i) ^ 2) = Coord.toReal := by
+    dsimp only [Coord, G]
+    unfold cubeCoordinateGagliardoPowerEnergy Gagliardo.cubeGagliardoSeminorm
+    rw [ENNReal.toReal_sum]
+    · apply Finset.sum_congr rfl
+      intro i _hi
+      norm_num only [FiniteLpExponent.two_exponent, ENNReal.toReal_ofNat]
+      rw [ENNReal.rpow_two, ENNReal.toReal_pow]
+    · intro i _hi
+      exact (ENNReal.rpow_lt_top_of_nonneg (by norm_num)
+        (hSob i).2.eSeminorm_lt_top.ne).ne
+  have hCoordRealLe : Coord.toReal ≤ (d : ℝ) * M * W2.toReal := by
+    have hrightTop : (d : ℝ≥0∞) *
+        cubeEuclideanWspMetricComparisonConstant d FiniteLpExponent.two * W2 ≠ ⊤ :=
+      (ENNReal.mul_lt_top
+        (ENNReal.mul_lt_top (by simp)
+          (cubeEuclideanWspMetricComparisonConstant_lt_top d FiniteLpExponent.two))
+        (lt_top_iff_ne_top.mpr hW2top)).ne
+    have := ENNReal.toReal_mono hrightTop hCoordle
+    simpa [M, ENNReal.toReal_mul] using this
+  have hsumLe : (∑ i, G i) ^ 2 ≤ (d : ℝ) ^ 2 * M * W2.toReal := by
+    calc
+      (∑ i, G i) ^ 2 ≤ (d : ℝ) * ∑ i, (G i) ^ 2 := hsumSq
+      _ = (d : ℝ) * Coord.toReal := by rw [hCoordReal]
+      _ ≤ (d : ℝ) * ((d : ℝ) * M * W2.toReal) :=
+        mul_le_mul_of_nonneg_left hCoordRealLe (Nat.cast_nonneg d)
+      _ = (d : ℝ) ^ 2 * M * W2.toReal := by ring_nf
+  have hWformula :
+      Legacy.scaleNormalizedPositiveSobolevVectorSeminormTwo Q sF.1 F =
+        ell ^ sF.1 * ∑ i, G i := by
+    unfold Legacy.scaleNormalizedPositiveSobolevVectorSeminormTwo
+      cubeBesovScaleWeight
+    dsimp only [ell, G]
+    congr 1
+    ring_nf
+  have hWSq :
+      (Legacy.scaleNormalizedPositiveSobolevVectorSeminormTwo Q sF.1 F) ^ 2 ≤
+        ell ^ (2 * sF.1) * ((d : ℝ) ^ 2 * M * W2.toReal) := by
+    rw [hWformula, mul_pow]
+    have hscale0 : 0 ≤ ell ^ (2 * sF.1) := Real.rpow_nonneg hell.le _
+    calc
+      (ell ^ sF.1) ^ 2 * (∑ i, G i) ^ 2 =
+          ell ^ (2 * sF.1) * (∑ i, G i) ^ 2 := by
+        rw [← Real.rpow_natCast, ← Real.rpow_mul hell.le]
+        congr 2
+        ring_nf
+      _ ≤ ell ^ (2 * sF.1) * ((d : ℝ) ^ 2 * M * W2.toReal) :=
+        mul_le_mul_of_nonneg_left hsumLe hscale0
+  exact hWSq
 
 /-- A local Chapter-3 positive Besov square is bounded by the Euclidean
 fractional square, with the exact side-length factor exposed. -/
@@ -436,98 +547,10 @@ theorem positiveBesovNorm_sq_le_continuousFractionalSquare
             Q sF.1 F) ^ 2 := by
     have hp := pow_le_pow_left₀ hSeminonneg hSemi 2
     simpa only [K, mul_pow] using hp
-  have hcoord := cubeCoordinateGagliardoPowerEnergy_le_dimension_mul_ambientHilbert
-    Q sF FiniteLpExponent.two F
-  have heuc := cubeAmbientHilbertWspESeminorm_rpow_le_metricComparisonConstant_mul
-    Q sF FiniteLpExponent.two F
-    (cubeAmbientHilbertWspKernel_two_aestronglyMeasurable Q sF F
-      hBesov.memLp.aestronglyMeasurable (by
-        simpa [cubeMeasure,
-          volume_restrict_cubeSet_eq_volume_restrict_openCubeSet] using
-          hFcube.aestronglyMeasurable))
-  have hfrac := cubeEuclideanWspESeminorm_two_sq_eq_fracSeminormSq
-    Q sF F hFcube.aestronglyMeasurable
-  let Coord : ℝ≥0∞ := cubeCoordinateGagliardoPowerEnergy
-    Q sF FiniteLpExponent.two F
-  have hCoordle : Coord ≤ (d : ℝ≥0∞) *
-      cubeEuclideanWspMetricComparisonConstant d FiniteLpExponent.two * W2 := by
-    dsimp only [Coord]
-    calc
-      cubeCoordinateGagliardoPowerEnergy Q sF FiniteLpExponent.two F ≤
-          (d : ℝ≥0∞) *
-            cubeAmbientHilbertWspESeminorm Q sF FiniteLpExponent.two F ^
-              FiniteLpExponent.two.exponent.toReal := hcoord
-      _ ≤ (d : ℝ≥0∞) *
-          (cubeEuclideanWspMetricComparisonConstant d FiniteLpExponent.two *
-            cubeEuclideanWspESeminorm Q sF FiniteLpExponent.two F ^
-              FiniteLpExponent.two.exponent.toReal) :=
-        mul_le_mul_right heuc _
-      _ = (d : ℝ≥0∞) *
-          cubeEuclideanWspMetricComparisonConstant d FiniteLpExponent.two * W2 := by
-        norm_num only [FiniteLpExponent.two_exponent, ENNReal.toReal_ofNat]
-        rw [ENNReal.rpow_two, hfrac]
-        dsimp only [W2]
-        exact (mul_assoc _ _ _).symm
-  have hCoordTop : Coord ≠ ⊤ := (lt_of_le_of_lt hCoordle
-    (ENNReal.mul_lt_top
-      (ENNReal.mul_lt_top (by simp)
-        (cubeEuclideanWspMetricComparisonConstant_lt_top d FiniteLpExponent.two))
-      (lt_top_iff_ne_top.mpr hW2top))).ne
-  let G : Fin d → ℝ := fun i =>
-    Gagliardo.cubeGagliardoSeminorm Q sF.1 (2 : ℝ≥0∞) (fun x => F x i)
-  have hGnonneg : ∀ i, 0 ≤ G i := fun _ => ENNReal.toReal_nonneg
-  have hsumSq : (∑ i, G i) ^ 2 ≤ (d : ℝ) * ∑ i, (G i) ^ 2 := by
-    simpa [Finset.card_univ, Fintype.card_fin] using
-      (sq_sum_le_card_mul_sum_sq (s := (Finset.univ : Finset (Fin d)))
-        (f := G))
-  have hCoordReal : (∑ i, (G i) ^ 2) = Coord.toReal := by
-    dsimp only [Coord, G]
-    unfold cubeCoordinateGagliardoPowerEnergy Gagliardo.cubeGagliardoSeminorm
-    rw [ENNReal.toReal_sum]
-    · apply Finset.sum_congr rfl
-      intro i _hi
-      norm_num only [FiniteLpExponent.two_exponent, ENNReal.toReal_ofNat]
-      rw [ENNReal.rpow_two, ENNReal.toReal_pow]
-    · intro i _hi
-      exact (ENNReal.rpow_lt_top_of_nonneg (by norm_num)
-        (hSob i).2.eSeminorm_lt_top.ne).ne
-  have hCoordRealLe : Coord.toReal ≤ (d : ℝ) * M * W2.toReal := by
-    have hrightTop : (d : ℝ≥0∞) *
-        cubeEuclideanWspMetricComparisonConstant d FiniteLpExponent.two * W2 ≠ ⊤ :=
-      (ENNReal.mul_lt_top
-        (ENNReal.mul_lt_top (by simp)
-          (cubeEuclideanWspMetricComparisonConstant_lt_top d FiniteLpExponent.two))
-        (lt_top_iff_ne_top.mpr hW2top)).ne
-    have := ENNReal.toReal_mono hrightTop hCoordle
-    simpa [M, ENNReal.toReal_mul] using this
-  have hsumLe : (∑ i, G i) ^ 2 ≤ (d : ℝ) ^ 2 * M * W2.toReal := by
-    calc
-      (∑ i, G i) ^ 2 ≤ (d : ℝ) * ∑ i, (G i) ^ 2 := hsumSq
-      _ = (d : ℝ) * Coord.toReal := by rw [hCoordReal]
-      _ ≤ (d : ℝ) * ((d : ℝ) * M * W2.toReal) :=
-        mul_le_mul_of_nonneg_left hCoordRealLe (Nat.cast_nonneg d)
-      _ = (d : ℝ) ^ 2 * M * W2.toReal := by ring_nf
-  have hWformula :
-      Legacy.scaleNormalizedPositiveSobolevVectorSeminormTwo Q sF.1 F =
-        ell ^ sF.1 * ∑ i, G i := by
-    unfold Legacy.scaleNormalizedPositiveSobolevVectorSeminormTwo
-      cubeBesovScaleWeight
-    dsimp only [ell, G]
-    congr 1
-    ring_nf
   have hWSq :
       (Legacy.scaleNormalizedPositiveSobolevVectorSeminormTwo Q sF.1 F) ^ 2 ≤
-        ell ^ (2 * sF.1) * ((d : ℝ) ^ 2 * M * W2.toReal) := by
-    rw [hWformula, mul_pow]
-    have hscale0 : 0 ≤ ell ^ (2 * sF.1) := Real.rpow_nonneg hell.le _
-    calc
-      (ell ^ sF.1) ^ 2 * (∑ i, G i) ^ 2 =
-          ell ^ (2 * sF.1) * (∑ i, G i) ^ 2 := by
-        rw [← Real.rpow_natCast, ← Real.rpow_mul hell.le]
-        congr 2
-        ring_nf
-      _ ≤ ell ^ (2 * sF.1) * ((d : ℝ) ^ 2 * M * W2.toReal) :=
-        mul_le_mul_of_nonneg_left hsumLe hscale0
+        ell ^ (2 * sF.1) * ((d : ℝ) ^ 2 * M * W2.toReal) :=
+    positive_sobolev_square_le_fractional_energy Q sF F hBesov hFcube hSob hW2top
   have hBsemi :
       scaleNormalizedPositiveBesovVectorSeminormTwo Q sF.1 F ^ 2 ≤
         K ^ 2 * (ell ^ (2 * sF.1) *

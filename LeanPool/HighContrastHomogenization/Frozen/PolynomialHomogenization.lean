@@ -41,10 +41,10 @@ everywhere, with ellipticity constants belonging to the field and entering no
 estimate; `e.qualitative.ellipticity` follows from this.  The domains
 carrying the Dirichlet estimate are the adapted cells of the homogenized
 matrix — translates of the image of a centred triadic cube under the symmetric
-square root of `s̄` — normalized to sit between two concentric adapted
+square root of `s_bar` — normalized to sit between two concentric adapted
 ellipsoids, rather than the bounded Lipschitz domains of the reference text.
 Every domain the development uses is such a cell; the normalization fixes the
-domain's size relative to `s̄`, which is the scale the endpoint constant would
+domain's size relative to `s_bar`, which is the scale the endpoint constant would
 otherwise have to carry, and it is satisfiable at every dimension because the
 window between the two ellipsoids has triadic ratio three.
 Every quantitative object below — `Π`, the gauge and its growth witness, the
@@ -68,7 +68,7 @@ than about a totalized integral that vanishes when that quantity is infinite.
 
 **Constants.**  The endpoint constant of the Dirichlet estimate depends on
 nothing but the dimension, the regularity exponent, and the shape of the adapted
-domain `s̄^{-1/2}U` — the radii of concentric balls trapping it.  That is the
+domain `s_bar^{-1/2}U` — the radii of concentric balls trapping it.  That is the
 dependence the reference text records for it, and its binder accordingly stands
 outside the exponent and outside the law.
 

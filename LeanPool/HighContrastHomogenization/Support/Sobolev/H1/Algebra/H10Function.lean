@@ -698,6 +698,8 @@ noncomputable def mulContDiffHasCompactSupport {d : ℕ} {U : Set (Vec d)}
   by
     simp [H10Function.mulContDiffHasCompactSupport]
 
+/-- The product of a zero-trace H¹ function with a smooth compactly supported cutoff whose
+topological support lies in `U`. -/
 @[expose]
 noncomputable def mulSmoothCutoff {d : ℕ} {U : Set (Vec d)} (u : H10Function U)
     {φ : Vec d → ℝ} (hU : IsOpen U) (hφ : ContDiff ℝ (⊤ : ℕ∞) φ)

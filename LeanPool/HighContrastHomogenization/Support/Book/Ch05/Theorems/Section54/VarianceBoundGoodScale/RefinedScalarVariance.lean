@@ -149,7 +149,7 @@ theorem coordinateProbe_restrictionCenteredDescendantAverage_abs_and_sq_le_refin
         hOrigin.1 (by simpa [K0, Ch04.annealedMomentRoot, one_div] using hOrigin.2)
     simpa [K, coordinateProbeRefinedDescendantAverageK, K0] using hraw
   exact
-    fullBlockNormalizedQuadraticObservable_restrictionCenteredDescendantAverage_abs_and_sq_le_of_root
+    centeredQuadraticObservable_abs_and_sq_le_of_root
       hP hStruct hP4 (q := fullBlockCoordinateProbe α)
       (center := (m : ℤ)) (n := 0) (m := (j : ℤ))
       (by norm_num) (by exact_mod_cast Nat.zero_le j) hOrigin.1 hroot
@@ -206,7 +206,7 @@ private theorem pairProbe_restrictionCenteredDescendantAverage_abs_and_sq_le_ref
         hOrigin.1 (by simpa [K0, Ch04.annealedMomentRoot, one_div] using hOrigin.2)
     simpa [K, pairProbeRefinedDescendantAverageK, K0] using hraw
   exact
-    fullBlockNormalizedQuadraticObservable_restrictionCenteredDescendantAverage_abs_and_sq_le_of_root
+    centeredQuadraticObservable_abs_and_sq_le_of_root
       hP hStruct hP4 (q := probe)
       (center := (m : ℤ)) (n := 0) (m := (j : ℤ))
       (by norm_num) (by exact_mod_cast Nat.zero_le j) hOrigin.1 hroot
@@ -288,7 +288,7 @@ theorem coordinateProbe_scalarVariance_good_origin_le_refined
     (α : BlockCoord d) :
     let K := coordinateProbeRefinedDescendantAverageK hP4 delta j
     ∫ a,
-        |fullBlockNormalizedQuadraticObservable hP hStruct (m : ℤ)
+        |normalizedQuadraticObservable hP hStruct (m : ℤ)
           (fullBlockCoordinateProbe α) (cubeSet (originCube d (j : ℤ))) a -
             dotProduct (fullBlockCoordinateProbe α) (fullBlockCoordinateProbe α)| ^
           (2 : ℕ) ∂P ≤
@@ -299,7 +299,7 @@ theorem coordinateProbe_scalarVariance_good_origin_le_refined
     coordinateProbe_centeredOrigin_momentRoot_le_widetildeTheta_of_good
       hP hStruct hP4 hdelta_nonneg m hgood_upper hgood_lower α
   have hZ_int :=
-    fullBlockNormalizedQuadraticObservable_restrictionCenteredDescendantAverage_abs_and_sq_integrable
+    centeredQuadraticObservable_abs_and_sq_integrable
       hP hStruct hP4 (q := fullBlockCoordinateProbe α)
       (center := (m : ℤ)) (n := 0) (m := (j : ℤ))
       (by norm_num) (by exact_mod_cast Nat.zero_le j) hOrigin.1
@@ -328,7 +328,7 @@ theorem plusProbe_scalarVariance_good_origin_le_refined
     {α β : BlockCoord d} (hαβ : α ≠ β) :
     let K := pairProbeRefinedDescendantAverageK hP4 delta j
     ∫ a,
-        |fullBlockNormalizedQuadraticObservable hP hStruct (m : ℤ)
+        |normalizedQuadraticObservable hP hStruct (m : ℤ)
           (fullBlockPlusProbe α β) (cubeSet (originCube d (j : ℤ))) a -
             dotProduct (fullBlockPlusProbe α β) (fullBlockPlusProbe α β)| ^
           (2 : ℕ) ∂P ≤
@@ -339,7 +339,7 @@ theorem plusProbe_scalarVariance_good_origin_le_refined
     plusProbe_centeredOrigin_momentRoot_le_widetildeTheta_of_good
       hP hStruct hP4 hdelta_nonneg m hgood_upper hgood_lower hαβ
   have hZ_int :=
-    fullBlockNormalizedQuadraticObservable_restrictionCenteredDescendantAverage_abs_and_sq_integrable
+    centeredQuadraticObservable_abs_and_sq_integrable
       hP hStruct hP4 (q := fullBlockPlusProbe α β)
       (center := (m : ℤ)) (n := 0) (m := (j : ℤ))
       (by norm_num) (by exact_mod_cast Nat.zero_le j) hOrigin.1
@@ -368,7 +368,7 @@ theorem minusProbe_scalarVariance_good_origin_le_refined
     {α β : BlockCoord d} (hαβ : α ≠ β) :
     let K := pairProbeRefinedDescendantAverageK hP4 delta j
     ∫ a,
-        |fullBlockNormalizedQuadraticObservable hP hStruct (m : ℤ)
+        |normalizedQuadraticObservable hP hStruct (m : ℤ)
           (fullBlockMinusProbe α β) (cubeSet (originCube d (j : ℤ))) a -
             dotProduct (fullBlockMinusProbe α β) (fullBlockMinusProbe α β)| ^
           (2 : ℕ) ∂P ≤
@@ -379,7 +379,7 @@ theorem minusProbe_scalarVariance_good_origin_le_refined
     minusProbe_centeredOrigin_momentRoot_le_widetildeTheta_of_good
       hP hStruct hP4 hdelta_nonneg m hgood_upper hgood_lower hαβ
   have hZ_int :=
-    fullBlockNormalizedQuadraticObservable_restrictionCenteredDescendantAverage_abs_and_sq_integrable
+    centeredQuadraticObservable_abs_and_sq_integrable
       hP hStruct hP4 (q := fullBlockMinusProbe α β)
       (center := (m : ℤ)) (n := 0) (m := (j : ℤ))
       (by norm_num) (by exact_mod_cast Nat.zero_le j) hOrigin.1

@@ -50,16 +50,20 @@ theorem transport_source_two_powers (Q : ℕ) (hQ : 1 ≤ Q) {A B z : ℝ}
       _ = B ^ Q := by rw [← pow_succ, Nat.sub_add_cancel hQ]
   have h1 : A * B * z ≤ (A + A ^ Q) * B ^ Q * z := by
     apply mul_le_mul_of_nonneg_right _ hz
-    exact mul_le_mul (le_add_of_nonneg_right (pow_nonneg hA Q)) hBB hB0 (add_nonneg hA (pow_nonneg hA Q))
+    exact mul_le_mul (le_add_of_nonneg_right (pow_nonneg hA Q)) hBB hB0 (add_nonneg hA
+      (pow_nonneg hA Q))
   have h2 : (A * B * z) ^ Q ≤ (A + A ^ Q) * B ^ Q * z ^ Q := by
-    rw [mul_pow, mul_pow]; exact mul_le_mul_of_nonneg_right (mul_le_mul_of_nonneg_right (le_add_of_nonneg_left hA) (pow_nonneg hB0 Q)) (pow_nonneg hz Q)
+    rw [mul_pow, mul_pow]; exact mul_le_mul_of_nonneg_right (mul_le_mul_of_nonneg_right
+      (le_add_of_nonneg_left hA) (pow_nonneg hB0 Q)) (pow_nonneg hz Q)
   calc
     _ ≤ _ := add_le_add h1 h2
     _ = _ := by ring
 /-- The cap has mass at most one; only the smaller rows use the boundary
 mass estimate. Weakening 3^(r−j) preserves the printed (1−γ)-decay. -/
-theorem transport_boundary_mean_row_weights {γ Cw : ℝ} (hγ : 0 ≤ γ) (hCw : 0 ≤ Cw) (J cap j : ℤ) (hJ : J ≤ cap) (hcap : cap ≤ j) (lam M : ℤ → ℝ)
-    (hlam : ∀ r ∈ Finset.Icc J cap, 0 ≤ lam r) (hM : ∀ r ∈ Finset.Icc J cap, 0 ≤ M r) (hmass : ∑ r ∈ Finset.Icc J cap, lam r ≤ 1)
+theorem transport_boundary_mean_row_weights {γ Cw : ℝ} (hγ : 0 ≤ γ) (hCw : 0 ≤ Cw) (J cap j : ℤ)
+  (hJ : J ≤ cap) (hcap : cap ≤ j) (lam M : ℤ → ℝ)
+    (hlam : ∀ r ∈ Finset.Icc J cap, 0 ≤ lam r) (hM : ∀ r ∈ Finset.Icc J cap, 0 ≤ M r) (hmass : ∑
+      r ∈ Finset.Icc J cap, lam r ≤ 1)
     (hrow : ∀ r ∈ Finset.Icc J (cap - 1), lam r ≤ Cw * (3 : ℝ) ^ ((r : ℝ) - j)) :
     (∑ r ∈ Finset.Icc J cap, lam r * M r) ≤ (1 + Cw) *
       (M cap + ∑ r ∈ Finset.Icc J (cap - 1), (3 : ℝ) ^ (-(1 - γ) * ((j : ℝ) - r)) * M r) := by
@@ -69,11 +73,15 @@ theorem transport_boundary_mean_row_weights {γ Cw : ℝ} (hγ : 0 ≤ γ) (hCw 
   have hcapmass : lam cap ≤ 1 := (Finset.single_le_sum hlam hc).trans hmass
   have hb (r) (hr : r ∈ Finset.Icc J (cap - 1)) :
       lam r * M r ≤ Cw * ((3 : ℝ) ^ (-(1 - γ) * ((j : ℝ) - r)) * M r) := by
-    have hr' : r ∈ Finset.Icc J cap := Finset.mem_Icc.mpr ⟨(Finset.mem_Icc.mp hr).1, by have := (Finset.mem_Icc.mp hr).2; omega⟩
-    have hgap : 0 ≤ (j : ℝ) - r := by have := (Finset.mem_Icc.mp hr).2; exact_mod_cast (show 0 ≤ j - r by omega)
-    have hw : (3 : ℝ) ^ ((r : ℝ) - j) ≤ (3 : ℝ) ^ (-(1 - γ) * ((j : ℝ) - r)) := Real.rpow_le_rpow_of_exponent_le (by norm_num) (by nlinarith only [mul_nonneg hγ hgap])
+    have hr' : r ∈ Finset.Icc J cap := Finset.mem_Icc.mpr ⟨(Finset.mem_Icc.mp hr).1, by have :=
+      (Finset.mem_Icc.mp hr).2; omega⟩
+    have hgap : 0 ≤ (j : ℝ) - r := by have := (Finset.mem_Icc.mp hr).2; exact_mod_cast (show 0 ≤
+      j - r by omega)
+    have hw : (3 : ℝ) ^ ((r : ℝ) - j) ≤ (3 : ℝ) ^ (-(1 - γ) * ((j : ℝ) - r)) :=
+      Real.rpow_le_rpow_of_exponent_le (by norm_num) (by nlinarith only [mul_nonneg hγ hgap])
     calc
-      _ ≤ (Cw * (3 : ℝ) ^ (-(1 - γ) * ((j : ℝ) - r))) * M r := mul_le_mul_of_nonneg_right ((hrow r hr).trans (mul_le_mul_of_nonneg_left hw hCw)) (hM r hr')
+      _ ≤ (Cw * (3 : ℝ) ^ (-(1 - γ) * ((j : ℝ) - r))) * M r := mul_le_mul_of_nonneg_right ((hrow
+        r hr).trans (mul_le_mul_of_nonneg_left hw hCw)) (hM r hr')
       _ = _ := mul_assoc _ _ _
   have hsum := Finset.sum_le_sum hb
   rw [← Finset.mul_sum] at hsum
@@ -82,14 +90,17 @@ theorem transport_boundary_mean_row_weights {γ Cw : ℝ} (hγ : 0 ≤ γ) (hCw 
       (Finset.mem_Icc.mpr ⟨(Finset.mem_Icc.mp hr).1, by have := (Finset.mem_Icc.mp hr).2; omega⟩))
   rw [← Finset.sum_erase_add _ _ hc, he, add_comm]
   calc
-    _ ≤ M cap + Cw * (∑ r ∈ Finset.Icc J (cap - 1), (3 : ℝ) ^ (-(1 - γ) * ((j : ℝ) - r)) * M r) := add_le_add (by simpa only [one_mul] using mul_le_mul_of_nonneg_right hcapmass (hM cap hc)) hsum
+    _ ≤ M cap + Cw * (∑ r ∈ Finset.Icc J (cap - 1), (3 : ℝ) ^ (-(1 - γ) * ((j : ℝ) - r)) * M r)
+      := add_le_add (by simpa only [one_mul] using mul_le_mul_of_nonneg_right hcapmass (hM cap
+      hc)) hsum
     _ ≤ _ := by nlinarith only [mul_nonneg hCw (hM cap hc), hs0]
 /-- `p.two.grid.transport`, expanded to include its actual premises and derivation. Cfine and Cw
 are the law-independent source and Whitney
 constants. The fine amplitude B is geometric; its two decay powers remain
 separate. Total mass, boundary row mass and the fine-tail hypotheses are exactly
 the corresponding outputs of the Whitney and source constructions. -/
-theorem transport_whitney_mean_bound (d : ℕ) (hd : 2 ≤ d) (γ : ℝ) (hγ : γ ∈ Set.Ico (0 : ℝ) 1) (Q : ℕ) (hQ : 1 ≤ Q)
+theorem transport_whitney_mean_bound (d : ℕ) (hd : 2 ≤ d) (γ : ℝ) (hγ : γ ∈ Set.Ico (0 : ℝ) 1)
+  (Q : ℕ) (hQ : 1 ≤ Q)
     (Cfine Cw : ℝ) (hCfine : 0 ≤ Cfine) (hCw : 0 ≤ Cw) :
     ∃ C : ℝ, 0 < C ∧
       ∀ (P : Measure (CoeffSpace d)) [IsProbabilityMeasure P]
@@ -97,26 +108,31 @@ theorem transport_whitney_mean_bound (d : ℕ) (hd : 2 ≤ d) (γ : ℝ) (hγ : 
         IsStationaryLaw P → CoarseEllipticityDagger P γ E Ψ K S →
         ∀ jStar : ℕ, 2 * d ≤ 3 ^ jStar → ∀ m mPlus : Mat d, m.PosDef → mPlus.PosDef →
         ∀ oldEnd newEnd j cap : ℤ, (jStar : ℤ) ≤ cap → cap ≤ oldEnd → cap ≤ j →
-        ∀ W : Set (Vec d), ∀ hfin : ∀ r ≤ cap, (maximalAdaptedCellCenters W (explicitRoundedGrid jStar m) cap r).Finite,
+        ∀ W : Set (Vec d), ∀ hfin : ∀ r ≤ cap, (maximalAdaptedCellCenters W (explicitRoundedGrid
+          jStar m) cap r).Finite,
         ∀ B : ℝ, 1 ≤ B → ∀ X : CoeffSpace d → ℝ, Integrable X P → (∫ a, X a ∂P ≤ 2) →
         ∀ δ : ℝ, δ ∈ Set.Icc (0 : ℝ) (1 / 4) →
         let q := explicitRoundedGrid jStar m
         let F := adaptedMean P q oldEnd
         let H := adaptedMean P (explicitRoundedGrid jStar mPlus) newEnd
         let I := {p : ℤ × (Fin d → ℤ) // IsMaximalAdaptedCellIn W q cap p.1 p.2}
-        let f := fun (p : I) a => ((volume (adaptedCellAtCenter q p.1.1 p.1.2)).toReal / (volume W).toReal) •
+        let f := fun (p : I) a => ((volume (adaptedCellAtCenter q p.1.1 p.1.2)).toReal / (volume
+          W).toReal) •
           toFullBlockMat (coarseBlock (adaptedCellAtCenter q p.1.1 p.1.2) a)
         let Z := fun r => if hr : r ≤ cap then (hfin r hr).toFinset else ∅
         let lam := fun r => ∑ _z ∈ Z r, (volume (adaptedCell q r)).toReal / (volume W).toReal
         let G := fun a => normalizedBlock (ofFullBlockMat (∑' p, f p a)) H
-        let T := fun a => normalizedBlock (ofFullBlockMat (∑' p : {p : I // p.1.1 < (jStar : ℤ)}, f p a)) H
+        let T := fun a => normalizedBlock (ofFullBlockMat (∑' p : {p : I // p.1.1 < (jStar :
+          ℤ)}, f p a)) H
         let MG := ofFullBlockMat (Matrix.of fun α β => ∫ a, blockMatEntry (G a) α β ∂P)
         let decay := (3 : ℝ) ^ (-(1 - γ) * ((j : ℝ) - jStar))
         BlockMatLoewnerLE (blockScale (1 - δ) F) H → BlockMatLoewnerLE H (blockScale (1 + δ) F) →
         SchattenMemLp P Q G → SchattenMemLp P Q T → (∀ᵐ a ∂P, Summable (fun p => f p a)) →
         (∀ᵐ a ∂P, BlockMatLoewnerLE (ofFullBlockMat 0) (T a)) →
-        (∀ᵐ a ∂P, BlockMatLoewnerLE (T a) (blockScale (Cfine * B * decay * X a) (Book.Ch02.blockIdentity d))) →
-        BlockMatLoewnerLE (Book.Ch02.blockIdentity d) MG → (∑ r ∈ Finset.Icc (jStar : ℤ) cap, lam r) ≤ 1 →
+        (∀ᵐ a ∂P, BlockMatLoewnerLE (T a) (blockScale (Cfine * B * decay * X a)
+          (Book.Ch02.blockIdentity d))) →
+        BlockMatLoewnerLE (Book.Ch02.blockIdentity d) MG → (∑ r ∈ Finset.Icc (jStar : ℤ) cap,
+          lam r) ≤ 1 →
         (∀ r ∈ Finset.Icc (jStar : ℤ) (cap - 1), lam r ≤ Cw * (3 : ℝ) ^ ((r : ℝ) - j)) →
         meanPenalty Q MG ≤ C * (meanPenalty Q (relMean P q cap oldEnd) +
           (∑ r ∈ Finset.Icc (jStar : ℤ) (cap - 1), (3 : ℝ) ^ (-(1 - γ) * ((j : ℝ) - r)) *
@@ -130,8 +146,10 @@ theorem transport_whitney_mean_bound (d : ℕ) (hd : 2 ≤ d) (γ : ℝ) (hγ : 
   have hC₁one : 1 ≤ C₁ := (le_add_of_nonneg_right hCw).trans hC₁w
   have hC₁A : A + A ^ Q ≤ C₁ := by dsimp only [C₁]; linarith only [hCw]
   refine ⟨C₀ * C₁, mul_pos hC₀ hC₁, ?_⟩
-  intro P hP E Ψ K S hstat hdag jStar hjStar m mPlus hm hmPlus oldEnd newEnd j cap hcap hcapOld hcapj
-    W hfin B hB X hX hEX δ hδ q F H I f Z lam G T MG decay hlow hup hG hT hseries hTpos hTbound hIG hmass hrow
+  intro P hP E Ψ K S hstat hdag jStar hjStar m mPlus hm hmPlus oldEnd newEnd j cap hcap hcapOld
+    hcapj
+    W hfin B hB X hX hEX δ hδ q F H I f Z lam G T MG decay hlow hup hG hT hseries hTpos hTbound
+      hIG hmass hrow
   have hQR : 1 ≤ (Q : ℝ) := by exact_mod_cast hQ
   have hB0 := zero_le_one.trans hB
   have hz : 0 ≤ decay := by dsimp only [decay]; positivity
@@ -146,20 +164,26 @@ theorem transport_whitney_mean_bound (d : ℕ) (hd : 2 ≤ d) (γ : ℝ) (hγ : 
   have horder (r) (hr : r ∈ J) : BlockMatLoewnerLE (Book.Ch02.blockIdentity d) (Pm r) :=
     (adaptedMean_order_consequences d hd P γ E Ψ K S hstat hdag jStar hjStar m hm r oldEnd
       (Finset.mem_Icc.mp hr).1 ((Finset.mem_Icc.mp hr).2.trans hcapOld)).1
-  have ht (r) (hr : r ∈ J) : 0 ≤ blockTrace (blockSub (Pm r) (Book.Ch02.blockIdentity d)) := blockTrace_identity_sub_nonneg _ (hsym r) (horder r hr)
-  have hM (r) (hr : r ∈ J) : 0 ≤ meanPenalty Q (Pm r) := meanPenalty_nonneg Q _ (hsym r) (horder r hr)
+  have ht (r) (hr : r ∈ J) : 0 ≤ blockTrace (blockSub (Pm r) (Book.Ch02.blockIdentity d)) :=
+    blockTrace_identity_sub_nonneg _ (hsym r) (horder r hr)
+  have hM (r) (hr : r ∈ J) : 0 ≤ meanPenalty Q (Pm r) := meanPenalty_nonneg Q _ (hsym r) (horder
+    r hr)
   have hlam (r) : 0 ≤ lam r := Finset.sum_nonneg fun _ _ => by positivity
   have hMT := (transport_centered_tail_envelope hQR T hT X hX hEX (Cfine * B * decay)
     (by positivity) hTpos hTbound).1
   have hMT' : blockTrace MT ≤ A * B * decay := hMT.trans_eq (by dsimp only [A]; ring)
   have hmean : toFullBlockMat MG =
-      (∑ r ∈ J, lam r • toFullBlockMat (normalizedBlock (adaptedMean P q r) H)) + toFullBlockMat MT :=
-    transport_whitney_mean_identity d hd P γ E Ψ K S hstat hdag jStar hjStar m hm W cap hcap hfin Q hQR H hT hseries
-  have htrace := transport_mean_trace_split J lam (fun r => adaptedMean P q r) F H MG MT hF hH hδ hlow hup
+      (∑ r ∈ J, lam r • toFullBlockMat (normalizedBlock (adaptedMean P q r) H)) + toFullBlockMat
+        MT :=
+    transport_whitney_mean_identity d hd P γ E Ψ K S hstat hdag jStar hjStar m hm W cap hcap
+      hfin Q hQR H hT hseries
+  have htrace := transport_mean_trace_split J lam (fun r => adaptedMean P q r) F H MG MT hF hH
+    hδ hlow hup
     (fun r _ => hlam r) hmass (fun r _ => (hAr r).posSemidef) ht hmean (A * B * decay) hMT'
   have hMG0 := blockTrace_identity_sub_nonneg MG (isSymmetricBlockMat_integral hG.symmetric) hIG
   have hp := hpen ℤ J lam (fun r => blockTrace (blockSub (Pm r) (Book.Ch02.blockIdentity d)))
-    (fun r _ => hlam r) ht hmass δ (A * B * decay) (blockTrace (blockSub MG (Book.Ch02.blockIdentity d)))
+    (fun r _ => hlam r) ht hmass δ (A * B * decay) (blockTrace (blockSub MG
+      (Book.Ch02.blockIdentity d)))
     ⟨hδ.1, hδ.2.trans (by norm_num)⟩ (by positivity) hMG0 (by simpa only [add_assoc] using! htrace)
   change meanPenalty Q MG ≤ C₀ * ((∑ r ∈ J, lam r * meanPenalty Q (Pm r)) + δ +
     A * B * decay + (A * B * decay) ^ Q) at hp
@@ -170,17 +194,20 @@ theorem transport_whitney_mean_bound (d : ℕ) (hd : 2 ≤ d) (γ : ℝ) (hγ : 
     (Finset.sum_nonneg fun r hr => mul_nonneg (by positivity) (hM r
       (Finset.mem_Icc.mpr ⟨(Finset.mem_Icc.mp hr).1, by have := (Finset.mem_Icc.mp hr).2; omega⟩)))
   have hTail : 0 ≤ Tail := mul_nonneg (pow_nonneg hB0 Q) (add_nonneg hz (pow_nonneg hz Q))
-  have hw : (∑ r ∈ J, lam r * meanPenalty Q (Pm r)) ≤ (1 + Cw) * BulkBoundary := transport_boundary_mean_row_weights hγ.1 hCw jStar cap j hcap hcapj lam
+  have hw : (∑ r ∈ J, lam r * meanPenalty Q (Pm r)) ≤ (1 + Cw) * BulkBoundary :=
+    transport_boundary_mean_row_weights hγ.1 hCw jStar cap j hcap hcapj lam
       (fun r => meanPenalty Q (Pm r)) (fun r _ => hlam r) hM hmass hrow
   have hsrc : A * B * decay + (A * B * decay) ^ Q ≤ (A + A ^ Q) * Tail := by
     simpa only [Tail, mul_assoc] using transport_source_two_powers Q hQ hA hB hz
   calc
     _ ≤ C₀ * (((∑ r ∈ J, lam r * meanPenalty Q (Pm r)) + δ) +
         (A * B * decay + (A * B * decay) ^ Q)) := by convert hp using 1; ring
-    _ ≤ C₀ * (((1 + Cw) * BulkBoundary + δ) + (A + A ^ Q) * Tail) := mul_le_mul_of_nonneg_left (add_le_add (add_le_add hw le_rfl) hsrc) hC₀.le
+    _ ≤ C₀ * (((1 + Cw) * BulkBoundary + δ) + (A + A ^ Q) * Tail) := mul_le_mul_of_nonneg_left
+      (add_le_add (add_le_add hw le_rfl) hsrc) hC₀.le
     _ ≤ C₀ * ((C₁ * BulkBoundary + C₁ * δ) + C₁ * Tail) := by
       apply mul_le_mul_of_nonneg_left _ hC₀.le
-      apply add_le_add (add_le_add (mul_le_mul_of_nonneg_right hC₁w hBB) _) (mul_le_mul_of_nonneg_right hC₁A hTail)
+      apply add_le_add (add_le_add (mul_le_mul_of_nonneg_right hC₁w hBB) _)
+        (mul_le_mul_of_nonneg_right hC₁A hTail)
       simpa only [one_mul] using mul_le_mul_of_nonneg_right hC₁one hδ.1
     _ = _ := by dsimp only [BulkBoundary, Tail, Pm]; ring
 /-- Every source generation occurs for at most the two targets r+1 and r+L. -/
@@ -196,11 +223,14 @@ theorem transport_bulk_generation_fiber (k : ℤ) (L : ℕ) (r : ℤ) :
 /-- The profile pays for each of its three nonnegative components. Its first
 component pays for the fluctuation history while retaining the mean history. -/
 theorem transport_profile_components (d : ℕ) (hd : 2 ≤ d)
-    (P : Measure (CoeffSpace d)) [IsProbabilityMeasure P] (γ : ℝ) (E : BlockMat d) (Ψ : ℝ → ℝ) (K : ℝ)
-    (S : CoeffSpace d → ℝ) (hstat : IsStationaryLaw P) (hdag : CoarseEllipticityDagger P γ E Ψ K S) (jStar : ℕ) (hj : 2 * d ≤ 3 ^ jStar) (m : Mat d) (hm : m.PosDef)
+    (P : Measure (CoeffSpace d)) [IsProbabilityMeasure P] (γ : ℝ) (E : BlockMat d) (Ψ : ℝ → ℝ)
+      (K : ℝ)
+    (S : CoeffSpace d → ℝ) (hstat : IsStationaryLaw P) (hdag : CoarseEllipticityDagger P γ E Ψ K
+      S) (jStar : ℕ) (hj : 2 * d ≤ 3 ^ jStar) (m : Mat d) (hm : m.PosDef)
     (k t : ℤ) (hk : (jStar : ℤ) ≤ k) (hkt : k ≤ t) :
     let q := explicitRoundedGrid jStar m
-    let A := (3 : ℝ) ^ (-((1 - γ) / 4) * ((t : ℝ) - k)) * (1 + meanPenalty (bigQ d γ) (relMean P q k t))
+    let A := (3 : ℝ) ^ (-((1 - γ) / 4) * ((t : ℝ) - k)) * (1 + meanPenalty (bigQ d γ) (relMean P
+      q k t))
     A * fluctuationHistory P γ q jStar k ≤ profile P γ q jStar k t ∧
     A * history P γ q jStar k ≤ profile P γ q jStar k t ∧
     meanHistory P γ q k t ≤ profile P γ q jStar k t ∧
@@ -255,7 +285,8 @@ theorem transport_geometric_Icc (a : ℝ) (ha : 0 < a) (J cap : ℤ) :
       (∑ r ∈ Finset.Icc J cap, (3 : ℝ) ^ (-a * ((cap : ℝ) - r))) ≤
         1 / (1 - (3 : ℝ) ^ (-a)) := by
   have hq0 : 0 ≤ (3 : ℝ) ^ (-a) := by positivity
-  have hq1 : (3 : ℝ) ^ (-a) < 1 := Real.rpow_lt_one_of_one_lt_of_neg (by norm_num) (neg_neg_of_pos ha)
+  have hq1 : (3 : ℝ) ^ (-a) < 1 := Real.rpow_lt_one_of_one_lt_of_neg (by norm_num)
+    (neg_neg_of_pos ha)
   refine ⟨sub_pos.mpr hq1, ?_⟩
   classical
   let I := Finset.Icc J cap
@@ -280,7 +311,8 @@ theorem transport_geometric_Icc (a : ℝ) (ha : 0 < a) (J cap : ℤ) :
       simpa only [one_div] using tsum_geometric_of_lt_one hq0 hq1
 /-- The actual bulk generation map charges each old summand at most twice.
 This remains valid when either finite range is empty. -/
-theorem transport_bulk_generation_sum (k : ℤ) (L : ℕ) (S T : Finset ℤ) (f : ℤ → ℝ) (hf : ∀ r ∈ T, 0 ≤ f r)
+theorem transport_bulk_generation_sum (k : ℤ) (L : ℕ) (S T : Finset ℤ) (f : ℤ → ℝ) (hf : ∀ r ∈
+  T, 0 ≤ f r)
     (hmap : ∀ j ∈ S, j - (if j ≤ k + (L : ℤ) then 1 else (L : ℤ)) ∈ T) :
     (∑ j ∈ S, f (j - (if j ≤ k + (L : ℤ) then 1 else (L : ℤ)))) ≤ 2 * ∑ r ∈ T, f r := by
   classical
@@ -291,7 +323,8 @@ theorem transport_bulk_generation_sum (k : ℤ) (L : ℕ) (S T : Finset ℤ) (f 
   have hsub : S.filter (fun j => g j = r) ⊆ {r + 1, r + L} := by
     intro j hj
     have hh := transport_bulk_generation_fiber k L r (Finset.mem_filter.mp hj).2
-    simpa only [Finset.mem_insert, Finset.mem_singleton, Set.mem_insert_iff, Set.mem_singleton_iff] using hh
+    simpa only [Finset.mem_insert, Finset.mem_singleton, Set.mem_insert_iff,
+      Set.mem_singleton_iff] using hh
   have hc : (S.filter (fun j => g j = r)).card ≤ 2 :=
     (Finset.card_le_card hsub).trans (by
       simpa only [Finset.card_singleton] using Finset.card_insert_le (r + 1) {r + L})
@@ -302,7 +335,8 @@ theorem transport_bulk_generation_sum (k : ℤ) (L : ℕ) (S T : Finset ℤ) (f 
   rw [he]; exact mul_le_mul_of_nonneg_right (by exact_mod_cast hc) (hf r hr)
 /-- Weighted convexity uses a bound on total weight, without charging the
 number of summands. The missing weight is placed at zero. -/
-theorem transport_weighted_power_sum {ι : Type*} (Q : ℕ) (hQ : 0 < Q) (s : Finset ι) (w x : ι → ℝ) (hw : ∀ i ∈ s, 0 ≤ w i)
+theorem transport_weighted_power_sum {ι : Type*} (Q : ℕ) (hQ : 0 < Q) (s : Finset ι) (w x : ι →
+  ℝ) (hw : ∀ i ∈ s, 0 ≤ w i)
     (hx : ∀ i ∈ s, 0 ≤ x i) {M : ℝ} (hM : 1 ≤ M) (hs : ∑ i ∈ s, w i ≤ M) :
     (∑ i ∈ s, w i * x i) ^ Q ≤ M ^ Q * ∑ i ∈ s, w i * x i ^ Q := by
   have hM0 : 0 < M := lt_of_lt_of_le zero_lt_one hM
@@ -326,7 +360,8 @@ theorem transport_weighted_power_sum {ι : Type*} (Q : ℕ) (hQ : 0 < Q) (s : Fi
 empty generation ranges. Positivity and finite moments are explicit guards. -/
 theorem transport_weighted_moment_sum {α ι : Type*} [MeasurableSpace α]
     {P : Measure α} (Q : ℕ) (hQ : 0 < Q) (s : Finset ι) (w : ι → ℝ)
-    (hw : ∀ i ∈ s, 0 < w i) (f : ι → α → ℝ) (hf0 : ∀ i ∈ s, ∀ᵐ a ∂P, 0 ≤ f i a) (hf : ∀ i ∈ s, MemLp (f i) (ENNReal.ofReal (Q : ℝ)) P)
+    (hw : ∀ i ∈ s, 0 < w i) (f : ι → α → ℝ) (hf0 : ∀ i ∈ s, ∀ᵐ a ∂P, 0 ≤ f i a) (hf : ∀ i ∈ s,
+      MemLp (f i) (ENNReal.ofReal (Q : ℝ)) P)
     {M : ℝ} (hM : 1 ≤ M) (hs : ∑ i ∈ s, w i ≤ M) :
     Integrable (fun a => (∑ i ∈ s, f i a) ^ Q) P ∧
       (∫ a, (∑ i ∈ s, f i a) ^ Q ∂P) ≤
@@ -334,7 +369,8 @@ theorem transport_weighted_moment_sum {α ι : Type*} [MeasurableSpace α]
   have hQr : 0 < (Q : ℝ) := by exact_mod_cast hQ
   have hmoment (g : α → ℝ) (hg0 : ∀ᵐ a ∂P, 0 ≤ g a)
       (hg : MemLp g (ENNReal.ofReal (Q : ℝ)) P) : Integrable (fun a => g a ^ Q) P := by
-    apply (hg.integrable_norm_rpow (ne_of_gt (ENNReal.ofReal_pos.mpr hQr)) ENNReal.ofReal_ne_top).congr
+    apply (hg.integrable_norm_rpow (ne_of_gt (ENNReal.ofReal_pos.mpr hQr))
+      ENNReal.ofReal_ne_top).congr
     filter_upwards [hg0] with a ha
     simp only [Real.norm_of_nonneg ha, ENNReal.toReal_ofReal hQr.le, Real.rpow_natCast]
   have hs0 : ∀ᵐ a ∂P, 0 ≤ ∑ i ∈ s, f i a :=
@@ -347,7 +383,8 @@ theorem transport_weighted_moment_sum {α ι : Type*} [MeasurableSpace α]
   apply integral_mono_ae hint ((integrable_finsetSum s hri).const_mul (M ^ Q))
   filter_upwards [(Filter.eventually_all_finset s).mpr hf0] with a ha
   have hh := transport_weighted_power_sum Q hQ s w (fun i => (w i)⁻¹ * f i a)
-    (fun i hi => (hw i hi).le) (fun i hi => mul_nonneg (inv_nonneg.mpr (hw i hi).le) (ha i hi)) hM hs
+    (fun i hi => (hw i hi).le) (fun i hi => mul_nonneg (inv_nonneg.mpr (hw i hi).le) (ha i hi))
+      hM hs
   have he : ∑ i ∈ s, w i * ((w i)⁻¹ * f i a) = ∑ i ∈ s, f i a := by
     apply Finset.sum_congr rfl
     intro i hi; rw [← mul_assoc, mul_inv_cancel₀ (hw i hi).ne', one_mul]
@@ -375,7 +412,8 @@ theorem transport_geometric_forward (a : ℝ) (ha : 0 < a) (J cap : ℤ) :
     _ ≤ _ := (transport_geometric_Icc a ha (-cap) (-J)).2
 /-- Interchanging the finite target/source sums costs only one geometric
 mass, even when the generation ranges depend on the target generation. -/
-theorem transport_geometric_convolution (a : ℝ) (ha : 0 < a) (S U : Finset ℤ) (T : ℤ → Finset ℤ) (t : ℤ) (hst : ∀ j ∈ S, j ≤ t) (hTU : ∀ j ∈ S, T j ⊆ U) (hTj : ∀ j ∈ S, ∀ r ∈ T j, r ≤ j)
+theorem transport_geometric_convolution (a : ℝ) (ha : 0 < a) (S U : Finset ℤ) (T : ℤ → Finset ℤ)
+  (t : ℤ) (hst : ∀ j ∈ S, j ≤ t) (hTU : ∀ j ∈ S, T j ⊆ U) (hTj : ∀ j ∈ S, ∀ r ∈ T j, r ≤ j)
     (F : ℤ → ℝ) (hF : ∀ r ∈ U, 0 ≤ F r) :
     (∑ j ∈ S, ∑ r ∈ T j, (3 : ℝ) ^ (-a * ((j : ℝ) - r)) * F r) ≤
       (1 / (1 - (3 : ℝ) ^ (-a))) * ∑ r ∈ U, F r := by
@@ -397,12 +435,15 @@ theorem transport_geometric_convolution (a : ℝ) (ha : 0 < a) (S U : Finset ℤ
       apply Finset.sum_le_sum
       intro r hr; rw [← Finset.sum_mul]
       apply mul_le_mul_of_nonneg_right _ (hF r hr)
-      apply (Finset.sum_le_sum_of_subset_of_nonneg (t := Finset.Icc r t) ?_ (fun _ _ _ => by positivity)).trans
+      apply (Finset.sum_le_sum_of_subset_of_nonneg (t := Finset.Icc r t) ?_ (fun _ _ _ => by
+        positivity)).trans
         (transport_geometric_forward a ha r t)
-      intro j hj; exact Finset.mem_Icc.mpr ⟨(Finset.mem_filter.mp hj).2, hst j (Finset.mem_filter.mp hj).1⟩
+      intro j hj; exact Finset.mem_Icc.mpr ⟨(Finset.mem_filter.mp hj).2, hst j
+        (Finset.mem_filter.mp hj).1⟩
     _ = _ := (Finset.mul_sum U _ _).symm
 /-- Any selected target family has the actual aligned target-count bound. -/
-theorem transport_target_fiber_card {d : ℕ} (I : Finset (ℤ × (Fin d → ℤ))) (t : ℤ) (hgen : ∀ i ∈ I, i.1 ≤ t) (hcenter : ∀ i ∈ I, standardCellCenter i.1 i.2 ∈ centeredCube d t)
+theorem transport_target_fiber_card {d : ℕ} (I : Finset (ℤ × (Fin d → ℤ))) (t : ℤ) (hgen : ∀ i ∈
+  I, i.1 ≤ t) (hcenter : ∀ i ∈ I, standardCellCenter i.1 i.2 ∈ centeredCube d t)
     (j : ℤ) (hj : j ∈ I.image Prod.fst) :
     ((I.filter (fun i => i.1 = j)).card : ℝ) ≤ (3 : ℝ) ^ ((d : ℝ) * ((t : ℝ) - j)) := by
   classical
@@ -413,7 +454,8 @@ theorem transport_target_fiber_card {d : ℕ} (I : Finset (ℤ × (Fin d → ℤ
   obtain ⟨hfin, hc⟩ := alignedCenterSet_finite_card d i.1 h
   let Z := I.filter (fun p => p.1 = i.1)
   have hinj : Set.InjOn (Prod.snd : ℤ × (Fin d → ℤ) → (Fin d → ℤ)) (Z : Set _) := by
-    intro p hp q hq he; exact Prod.ext ((Finset.mem_filter.mp hp).2.trans (Finset.mem_filter.mp hq).2.symm) he
+    intro p hp q hq he; exact Prod.ext ((Finset.mem_filter.mp hp).2.trans (Finset.mem_filter.mp
+      hq).2.symm) he
   have hsub : Z.image Prod.snd ⊆ hfin.toFinset := by
     intro u hu
     obtain ⟨p, hp, rfl⟩ := Finset.mem_image.mp hu
@@ -438,13 +480,15 @@ theorem transport_maximal_centers_subset {d : ℕ} (W : Set (Vec d)) (q : Mat d)
     maximalAdaptedCellCenters W q cap r ⊆ adaptedLatticeAtScale q r ∩ W := by
   rintro z ⟨u, hu, rfl⟩
   refine ⟨⟨u, rfl⟩, hu.1.2 ?_⟩
-  rw [adaptedCellAtCenter_eq_affine_standardCell]; exact ⟨standardCellCenter r u, Recurrence.standardCellCenter_mem_standardCell r u,
+  rw [adaptedCellAtCenter_eq_affine_standardCell]; exact ⟨standardCellCenter r u,
+    Recurrence.standardCellCenter_mem_standardCell r u,
     (Recurrence.adaptedCellCenter_eq q r u).symm⟩
 /-- Two nonnegative random families can be combined under the same joint
 maximum, paying only the fixed power constant. -/
 theorem transport_joint_sum_moment {α ι : Type*} [MeasurableSpace α]
     {P : Measure α} (Q : ℕ) (hQ : 0 < Q) (I : Finset ι) (hI : I.Nonempty)
-    (f g : ι → α → ℝ) (hf0 : ∀ i ∈ I, ∀ᵐ a ∂P, 0 ≤ f i a) (hg0 : ∀ i ∈ I, ∀ᵐ a ∂P, 0 ≤ g i a) (hf : ∀ i ∈ I, MemLp (f i) (ENNReal.ofReal (Q : ℝ)) P)
+    (f g : ι → α → ℝ) (hf0 : ∀ i ∈ I, ∀ᵐ a ∂P, 0 ≤ f i a) (hg0 : ∀ i ∈ I, ∀ᵐ a ∂P, 0 ≤ g i a)
+      (hf : ∀ i ∈ I, MemLp (f i) (ENNReal.ofReal (Q : ℝ)) P)
     (hg : ∀ i ∈ I, MemLp (g i) (ENNReal.ofReal (Q : ℝ)) P) :
     (∫ a, (⨆ i ∈ (I : Set ι), f i a + g i a) ^ (Q : ℝ) ∂P) ≤
       (2 : ℝ) ^ Q * ((∫ a, (⨆ i ∈ (I : Set ι), f i a) ^ (Q : ℝ) ∂P) +
@@ -468,8 +512,10 @@ theorem transport_joint_sum_moment {α ι : Type*} [MeasurableSpace α]
   simp only [Real.rpow_natCast]
   obtain ⟨i, hi⟩ := hI
   have hI : I.Nonempty := ⟨i, hi⟩
-  have hF : 0 ≤ I.sup' hI (fun i => f i a) := (ha i hi).trans (Finset.le_sup' (fun i : ι => f i a) hi)
-  have hG : 0 ≤ I.sup' hI (fun i => g i a) := (hb i hi).trans (Finset.le_sup' (fun i : ι => g i a) hi)
+  have hF : 0 ≤ I.sup' hI (fun i => f i a) := (ha i hi).trans (Finset.le_sup' (fun i : ι => f i
+    a) hi)
+  have hG : 0 ≤ I.sup' hI (fun i => g i a) := (hb i hi).trans (Finset.le_sup' (fun i : ι => g i
+    a) hi)
   have hs : I.sup' hI (fun i => f i a + g i a) ≤
       I.sup' hI (fun i => f i a) + I.sup' hI (fun i => g i a) :=
     Finset.sup'_le hI _ (fun j hj => add_le_add (Finset.le_sup' (fun j : ι => f j a) hj)
@@ -479,7 +525,8 @@ theorem transport_joint_sum_moment {α ι : Type*} [MeasurableSpace α]
   apply (pow_le_pow_left₀ hsnonneg hs Q).trans
   have hh := transport_weighted_power_sum Q hQ Finset.univ (fun _ : Bool => (1 : ℝ))
     (fun b => if b then I.sup' hI (fun i => f i a) else I.sup' hI (fun i => g i a))
-    (by intro b _; norm_num) (by intro b _; cases b <;> simp only [Bool.false_eq_true, ↓reduceIte]; exact hG; exact hF) (M := 2) (by norm_num) (by norm_num [Fintype.sum_bool])
+    (by intro b _; norm_num) (by intro b _; cases b <;> simp only [Bool.false_eq_true,
+      ↓reduceIte]; exact hG; exact hF) (M := 2) (by norm_num) (by norm_num [Fintype.sum_bool])
   simpa only [Fintype.sum_bool, Bool.false_eq_true, ↓reduceIte, one_mul, add_comm] using hh
 /-- A union of target families is paid by the sum of their moments.
 Either subfamily may be empty; no generation-count factor is introduced. -/
@@ -496,9 +543,11 @@ theorem transport_joint_union_moment {α ι : Type*} [MeasurableSpace α] [Decid
     · have hQr : 0 < (Q : ℝ) := by exact_mod_cast hQ
       have hU := hI.mono (Finset.subset_union_left (s₂ := J))
       have hfi := (transport_target_max_moment hQr I hI f
-        (fun i hi => hf0 i (Finset.mem_union_left J hi)) (fun i hi => hf i (Finset.mem_union_left J hi))).1
+        (fun i hi => hf0 i (Finset.mem_union_left J hi)) (fun i hi => hf i
+          (Finset.mem_union_left J hi))).1
       have hfj := (transport_target_max_moment hQr J hJ f
-        (fun i hi => hf0 i (Finset.mem_union_right I hi)) (fun i hi => hf i (Finset.mem_union_right I hi))).1
+        (fun i hi => hf0 i (Finset.mem_union_right I hi)) (fun i hi => hf i
+          (Finset.mem_union_right I hi))).1
       rw [← integral_add hfi hfj]
       apply integral_mono_ae (transport_target_max_moment hQr (I ∪ J) hU f hf0 hf).1 (hfi.add hfj)
       filter_upwards [(Filter.eventually_all_finset (I ∪ J)).mpr hf0] with a ha
@@ -541,7 +590,8 @@ theorem exists_transport_lattice_row_average (d : ℕ) (hd : 2 ≤ d)
       ∀ (N : ℕ), 2 ≤ N → Even N → ∀ (jStar : ℕ), 2 * d ≤ 3 ^ jStar →
       ⌈Csrc * Real.logb 3 (2 * K)⌉ ≤ (jStar : ℤ) →
       ∀ (m : Mat d), m.PosDef → ∀ (j : ℤ), (jStar : ℤ) ≤ j →
-      ∀ (Z : Finset (Vec d)), (Z : Set (Vec d)) ⊆ adaptedLatticeAtScale (explicitRoundedGrid jStar m) j →
+      ∀ (Z : Finset (Vec d)), (Z : Set (Vec d)) ⊆ adaptedLatticeAtScale (explicitRoundedGrid
+        jStar m) j →
       ∀ (R : BlockMat d), IsSymmetricBlockMat R → Book.Ch02.BlockPosDef R →
       ∀ (v : ℝ), 0 ≤ v →
       lqSchattenNorm P (N : ℝ) (fun a => ofFullBlockMat
@@ -568,7 +618,8 @@ theorem exists_transport_lattice_row_average (d : ℕ) (hd : 2 ≤ d)
       simpa only [Finset.smul_sum, id_eq] using hmem
     simp_rw [transport_uniform_row_average Z hne v]
     have he := lqSchattenNorm_smul hN1 hmem' ((Z.card : ℝ) * v)
-    simp only [toFullBlockMat_ofFullBlockMat, abs_of_nonneg (mul_nonneg (Nat.cast_nonneg _) hv)] at he
+    simp only [toFullBlockMat_ofFullBlockMat, abs_of_nonneg (mul_nonneg (Nat.cast_nonneg _) hv)]
+      at he
     rw [he]
     exact (mul_le_mul_of_nonneg_left
       (havg P E Ψ K S hP hstat hunit hdag N hN hNeven jStar hj hsrc m hm j hjgen Z hne hZ R hRs hRp)
@@ -594,9 +645,11 @@ theorem transport_row_square_sum_bound {ι : Type*} (Z : Finset ι)
     congr 1; ring
   rw [hs]
   calc
-    _ ≤ Real.sqrt (C * (3 : ℝ) ^ b) * (C * (3 : ℝ) ^ (-a)) := mul_le_mul (Real.sqrt_le_sqrt hcard) hvol hv (Real.sqrt_nonneg _)
+    _ ≤ Real.sqrt (C * (3 : ℝ) ^ b) * (C * (3 : ℝ) ^ (-a)) := mul_le_mul (Real.sqrt_le_sqrt
+      hcard) hvol hv (Real.sqrt_nonneg _)
     _ = _ := by
-      rw [Real.sqrt_mul hC, hr]; rw [show b / 2 - a = b / 2 + (-a) by ring, Real.rpow_add (by norm_num : (0 : ℝ) < 3)]; ring
+      rw [Real.sqrt_mul hC, hr]; rw [show b / 2 - a = b / 2 + (-a) by ring, Real.rpow_add (by
+        norm_num : (0 : ℝ) < 3)]; ring
 /-- Boundary averaging has still more geometric decay than bulk averaging. -/
 theorem transport_boundary_decay_pos (d : ℕ) (hd : 2 ≤ d) (γ : ℝ)
     (hγ : γ ∈ Set.Ico (0 : ℝ) 1) :
@@ -605,7 +658,8 @@ theorem transport_boundary_decay_pos (d : ℕ) (hd : 2 ≤ d) (γ : ℝ)
   linarith only [h]
 /-- The old-history factor uses the trace penalty at scale k, with the d/Q
 loss from counting the old parents. -/
-theorem transport_old_history_factor (d : ℕ) (hd : 2 ≤ d) (γ : ℝ) (hγ : γ ∈ Set.Ico (0 : ℝ) 1) (M : BlockMat d) (hM : (toFullBlockMat M).IsHermitian)
+theorem transport_old_history_factor (d : ℕ) (hd : 2 ≤ d) (γ : ℝ) (hγ : γ ∈ Set.Ico (0 : ℝ) 1)
+  (M : BlockMat d) (hM : (toFullBlockMat M).IsHermitian)
     (hIM : BlockMatLoewnerLE (Book.Ch02.blockIdentity d) M)
     (n k : ℤ) (hnk : k ≤ n) (L : ℕ) :
     (3 : ℝ) ^ (-(rhoMax d γ - (d : ℝ) / (bigQ d γ : ℝ)) * ((n : ℝ) + L - k)) *
@@ -614,10 +668,12 @@ theorem transport_old_history_factor (d : ℕ) (hd : 2 ≤ d) (γ : ℝ) (hγ : 
         (3 : ℝ) ^ (-(1 - γ) / (4 * (bigQ d γ : ℝ)) * ((n : ℝ) + 2 * L - k)) *
         (1 + meanPenalty (bigQ d γ) M) ^ (bigQ d γ : ℝ)⁻¹ := by
   have hnorm := blockOpNorm_le_one_add_trace M hM hIM
-  have hbase : 0 ≤ 1 + blockTrace (blockSub M (Book.Ch02.blockIdentity d)) := (norm_nonneg _).trans hnorm
+  have hbase : 0 ≤ 1 + blockTrace (blockSub M (Book.Ch02.blockIdentity d)) := (norm_nonneg
+    _).trans hnorm
   have hroot : (1 + meanPenalty (bigQ d γ) M) ^ (bigQ d γ : ℝ)⁻¹ =
       1 + blockTrace (blockSub M (Book.Ch02.blockIdentity d)) := by
-    rw [meanPenalty, add_sub_cancel, ← Real.rpow_natCast]; exact Real.rpow_rpow_inv hbase (bigQ_real_pos d γ hγ).ne'
+    rw [meanPenalty, add_sub_cancel, ← Real.rpow_natCast]; exact Real.rpow_rpow_inv hbase
+      (bigQ_real_pos d γ hγ).ne'
   have hgap : 0 ≤ (n : ℝ) + L - k := by
     have hn : (k : ℝ) ≤ n := by exact_mod_cast hnk
     linarith only [hn, Nat.cast_nonneg (α := ℝ) L]
@@ -702,7 +758,8 @@ theorem transport_parent_fluctuation_shift (d : ℕ) (jStar : ℕ) (m : Mat d)
     ∃ p : Fin d → ℤ, ∀ (P : Measure (CoeffSpace d)) (r t : ℤ), r ≤ k →
       ∀ w : Fin d → ℤ, adaptedCellCenter (explicitRoundedGrid jStar m) r w ∈
         adaptedCellAtCenter (explicitRoundedGrid jStar m) k v →
-      ∃ z ∈ adaptedLatticeAtScale (explicitRoundedGrid jStar m) r ∩ adaptedCell (explicitRoundedGrid jStar m) k,
+      ∃ z ∈ adaptedLatticeAtScale (explicitRoundedGrid jStar m) r ∩ adaptedCell
+        (explicitRoundedGrid jStar m) k,
         ∀ a : CoeffSpace d,
           normalizedFluctuation P (explicitRoundedGrid jStar m) r t
             (adaptedCellCenter (explicitRoundedGrid jStar m) r w) a =
@@ -746,7 +803,8 @@ theorem transport_history_centers {d : ℕ} (q : Mat d) (hq : IsUnit q)
   constructor <;> nlinarith only [hp]
 /-- A chosen child moment is bounded by the single joint history integrand.
 No sum over source generations is introduced. -/
-theorem transport_history_pointwise {d : ℕ} (P : Measure (CoeffSpace d)) (γ : ℝ) (q : Mat d) (hq : IsUnit q) (jStar : ℕ) (k r : ℤ) (hr : r ∈ Set.Icc (jStar : ℤ) k)
+theorem transport_history_pointwise {d : ℕ} (P : Measure (CoeffSpace d)) (γ : ℝ) (q : Mat d) (hq
+  : IsUnit q) (jStar : ℕ) (k r : ℤ) (hr : r ∈ Set.Icc (jStar : ℤ) k)
     (z : Vec d) (hz : z ∈ adaptedLatticeAtScale q r ∩ adaptedCell q k) (a : CoeffSpace d) :
     (3 : ℝ) ^ (-(bigQ d γ : ℝ) * rhoMax d γ * ((k : ℝ) - r)) *
         blockOpNorm (normalizedFluctuation P q r k z a) ^ bigQ d γ ≤
@@ -761,7 +819,8 @@ theorem transport_history_pointwise {d : ℕ} (P : Measure (CoeffSpace d)) (γ :
         blockOpNorm (normalizedFluctuation P q j k y a) ^ bigQ d γ) =
       (hinner j hj).1.toFinset.sup' ((hinner j hj).1.toFinset_nonempty.mpr (hinner j hj).2)
         (fun y => blockOpNorm (normalizedFluctuation P q j k y a) ^ bigQ d γ) := by
-    simpa only [Set.Finite.coe_toFinset] using! iSup_mem_finset_eq_finset_sup (hinner j hj).1.toFinset
+    simpa only [Set.Finite.coe_toFinset] using! iSup_mem_finset_eq_finset_sup (hinner j
+      hj).1.toFinset
       ((hinner j hj).1.toFinset_nonempty.mpr (hinner j hj).2) _
       (fun _ _ => pow_nonneg (norm_nonneg _) _)
   have hpos (j : ℤ) (hj : j ∈ Finset.Icc (jStar : ℤ) k) :

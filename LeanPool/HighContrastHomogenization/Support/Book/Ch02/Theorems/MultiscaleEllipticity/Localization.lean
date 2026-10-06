@@ -79,7 +79,7 @@ theorem descendant_LambdaSq_infinity_le {d : ℕ} [NeZero d]
   rintro M ⟨n, rfl⟩
   let l : ℤ := R.scale - (n : ℤ)
   have hl : l ≤ R.scale :=
-    sub_le_self _ (by exact_mod_cast Nat.zero_le n)
+    sub_le_self _ (Nat.cast_nonneg n)
   have hRscale : R.scale = k :=
     HCPolySupport.descendant_scale_eq_of_mem_descendantsAtScale hR
   have hscale :
@@ -179,7 +179,7 @@ theorem descendant_lambdaSq_infinity_inv_le {d : ℕ} [NeZero d]
   rintro M ⟨n, rfl⟩
   let l : ℤ := R.scale - (n : ℤ)
   have hl : l ≤ R.scale :=
-    sub_le_self _ (by exact_mod_cast Nat.zero_le n)
+    sub_le_self _ (Nat.cast_nonneg n)
   have hRscale : R.scale = k :=
     HCPolySupport.descendant_scale_eq_of_mem_descendantsAtScale hR
   have hscale :
@@ -319,7 +319,7 @@ theorem descendant_LambdaSq_finite_le {d : ℕ} [NeZero d]
         HCPolySupport.geometricWeight_nonneg n (mul_nonneg hs.le hqpos.le)
     · refine Real.rpow_nonneg ?_ _
       exact maxDescendantBMatrixNormAtScale_nonneg Q
-        (sub_le_self _ (by exact_mod_cast Nat.zero_le n)) a
+        (sub_le_self _ (Nat.cast_nonneg n)) a
   have hfactorNonneg : 0 ≤ factor := by
     dsimp [factor]
     exact Real.rpow_nonneg (by norm_num : 0 ≤ (3 : ℝ)) _
@@ -333,7 +333,7 @@ theorem descendant_LambdaSq_finite_le {d : ℕ} [NeZero d]
         maxDescendantBMatrixNormAtScale R (R.scale - (n : ℤ)) a ≤
           maxDescendantBMatrixNormAtScale Q (Q.scale - ((n + h : ℕ) : ℤ)) a := by
       have hl : R.scale - (n : ℤ) ≤ R.scale :=
-        sub_le_self _ (by exact_mod_cast Nat.zero_le n)
+        sub_le_self _ (Nat.cast_nonneg n)
       simpa [hscale] using
         (maxDescendantBMatrixNormAtScale_le_of_mem_descendantsAtScale
           (Q := Q) (R := R) (k := k) (l := R.scale - (n : ℤ)) a hR hl)
@@ -345,7 +345,7 @@ theorem descendant_LambdaSq_finite_le {d : ℕ} [NeZero d]
               (Q.scale - ((n + h : ℕ) : ℤ)) a) (q / 2) := by
       refine Real.rpow_le_rpow
         (maxDescendantBMatrixNormAtScale_nonneg R
-          (sub_le_self _ (by exact_mod_cast Nat.zero_le n)) a)
+          (sub_le_self _ (Nat.cast_nonneg n)) a)
         hmax ?_
       positivity
     have hweight :
@@ -381,7 +381,7 @@ theorem descendant_LambdaSq_finite_le {d : ℕ} [NeZero d]
         HCPolySupport.geometricWeight_nonneg n (mul_nonneg hs.le hqpos.le)
     · refine Real.rpow_nonneg ?_ _
       exact maxDescendantBMatrixNormAtScale_nonneg R
-        (sub_le_self _ (by exact_mod_cast Nat.zero_le n)) a
+        (sub_le_self _ (Nat.cast_nonneg n)) a
   have hbase :
       Real.rpow (LambdaSq R s (.finite q) a) (q / 2) ≤
         factor * Real.rpow (LambdaSq Q s (.finite q) a) (q / 2) := by
@@ -451,7 +451,7 @@ theorem descendant_lambdaSq_finite_inv_le {d : ℕ} [NeZero d]
         HCPolySupport.geometricWeight_nonneg n (mul_nonneg hs.le hqpos.le)
     · refine Real.rpow_nonneg ?_ _
       exact maxDescendantSigmaStarInvMatrixNormAtScale_nonneg Q
-        (sub_le_self _ (by exact_mod_cast Nat.zero_le n)) a
+        (sub_le_self _ (Nat.cast_nonneg n)) a
   have hfactorNonneg : 0 ≤ factor := by
     dsimp [factor]
     exact Real.rpow_nonneg (by norm_num : 0 ≤ (3 : ℝ)) _
@@ -466,7 +466,7 @@ theorem descendant_lambdaSq_finite_inv_le {d : ℕ} [NeZero d]
           maxDescendantSigmaStarInvMatrixNormAtScale Q
             (Q.scale - ((n + h : ℕ) : ℤ)) a := by
       have hl : R.scale - (n : ℤ) ≤ R.scale :=
-        sub_le_self _ (by exact_mod_cast Nat.zero_le n)
+        sub_le_self _ (Nat.cast_nonneg n)
       simpa [hscale] using
         (maxDescendantSigmaStarInvMatrixNormAtScale_le_of_mem_descendantsAtScale
           (Q := Q) (R := R) (k := k) (l := R.scale - (n : ℤ)) a hR hl)
@@ -479,7 +479,7 @@ theorem descendant_lambdaSq_finite_inv_le {d : ℕ} [NeZero d]
               (Q.scale - ((n + h : ℕ) : ℤ)) a) (q / 2) := by
       refine Real.rpow_le_rpow
         (maxDescendantSigmaStarInvMatrixNormAtScale_nonneg R
-          (sub_le_self _ (by exact_mod_cast Nat.zero_le n)) a)
+          (sub_le_self _ (Nat.cast_nonneg n)) a)
         hmax ?_
       positivity
     have hweight :
@@ -516,7 +516,7 @@ theorem descendant_lambdaSq_finite_inv_le {d : ℕ} [NeZero d]
         HCPolySupport.geometricWeight_nonneg n (mul_nonneg hs.le hqpos.le)
     · refine Real.rpow_nonneg ?_ _
       exact maxDescendantSigmaStarInvMatrixNormAtScale_nonneg R
-        (sub_le_self _ (by exact_mod_cast Nat.zero_le n)) a
+        (sub_le_self _ (Nat.cast_nonneg n)) a
   have hbase :
       Real.rpow (lambdaSq R s (.finite q) a) (-q / 2) ≤
         factor * Real.rpow (lambdaSq Q s (.finite q) a) (-q / 2) := by

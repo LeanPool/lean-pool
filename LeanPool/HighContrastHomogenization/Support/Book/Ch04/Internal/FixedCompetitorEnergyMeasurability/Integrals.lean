@@ -52,7 +52,7 @@ If the single-claim summary above grows into three or more distinct
 claims, split or refactor per the rebuild contract.
 -/
 
-theorem QuantitativeEllipticSlice.ae_toHilbertMatrixL2_mem_quantitativeEllipticHilbertMatSet
+theorem QuantitativeEllipticSlice.ae_hilbertMatrixL2_mem_ellipticMatrixSet
     {d : ℕ} {U : Set (Vec d)} {k : ℕ}
     [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     (a : {a : CoeffField d // QuantitativeEllipticSlice U k a}) :
@@ -229,7 +229,7 @@ theorem QuantitativeEllipticSlice.ae_abs_fullBlockCoeffEntry_toHilbertMatrixL2_l
           (blockMatrixOfCoeff (QuantitativeEllipticSlice.toHilbertMatrixL2 a x).toMat) α β| ≤
         Real.sqrt (blockMatrixOfCoeffNormSqBound ((k + 1 : ℝ)⁻¹) (k + 1 : ℝ)) := by
   filter_upwards
-      [QuantitativeEllipticSlice.ae_toHilbertMatrixL2_mem_quantitativeEllipticHilbertMatSet a]
+      [QuantitativeEllipticSlice.ae_hilbertMatrixL2_mem_ellipticMatrixSet a]
     with x hx
   exact abs_fullBlockCoeffEntry_hilbertMat_le_of_mem_quantitativeEllipticHilbertMatSet hx α β
 
@@ -339,7 +339,8 @@ theorem measurable_l2WeightedHilbertMatrixLipschitzIntegral
 /-- Slice-level version of the Lipschitz-extension bridge for a full-block
 coefficient entry.  The agreement hypothesis keeps the theorem independent of
 the later finite-dimensional extension construction. -/
-theorem QuantitativeEllipticSlice.measurable_l2WeightedFullBlockCoeffEntryIntegral_of_lipschitzExtension
+theorem
+  QuantitativeEllipticSlice.measurable_l2WeightedBlockEntryIntegral_of_lipschitz
     {d : ℕ} {U : Set (Vec d)} {k : ℕ}
     [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     (hToL2 :
@@ -383,7 +384,7 @@ theorem QuantitativeEllipticSlice.measurable_l2WeightedFullBlockCoeffEntryIntegr
                 ∂volumeMeasureOn U := by
             refine MeasureTheory.integral_congr_ae ?_
             filter_upwards
-                [QuantitativeEllipticSlice.ae_toHilbertMatrixL2_mem_quantitativeEllipticHilbertMatSet
+                [QuantitativeEllipticSlice.ae_hilbertMatrixL2_mem_ellipticMatrixSet
                   a]
               with x hx
             rw [hQ_eq _ hx]]
@@ -392,7 +393,8 @@ theorem QuantitativeEllipticSlice.measurable_l2WeightedFullBlockCoeffEntryIntegr
 /-- Open finite-measure wrapper for the `L²`-weighted full-block entry bridge.
 The only remaining external input is the finite-dimensional Lipschitz extension
 of the entry observable. -/
-theorem QuantitativeEllipticSlice.measurable_l2WeightedFullBlockCoeffEntryIntegral_of_isOpen_volume_ne_top_of_lipschitzExtension
+theorem
+  QuantitativeEllipticSlice.measurable_weightedBlockEntryIntegral_of_openFiniteLipschitz
     {d : ℕ} {U : Set (Vec d)} {k : ℕ}
     [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     (hUopen : IsOpen U) (hUfinite : MeasureTheory.volume U ≠ ⊤)
@@ -407,7 +409,7 @@ theorem QuantitativeEllipticSlice.measurable_l2WeightedFullBlockCoeffEntryIntegr
         ∫ x in U,
           w x * toFullBlockMat (blockCoeffField a.1 x) α β ∂MeasureTheory.volume) := by
   exact
-    QuantitativeEllipticSlice.measurable_l2WeightedFullBlockCoeffEntryIntegral_of_lipschitzExtension
+    QuantitativeEllipticSlice.measurable_l2WeightedBlockEntryIntegral_of_lipschitz
       (measurable_toHilbertMatrixL2_of_isOpen_volume_ne_top hUopen hUfinite)
       hw α β hQ hQ_eq
 
@@ -436,13 +438,14 @@ theorem QuantitativeEllipticSlice.measurable_l2WeightedFullBlockCoeffEntryIntegr
           w x * toFullBlockMat (blockCoeffField a.1 x) α β ∂MeasureTheory.volume) := by
   obtain ⟨Q, hQ_lip, hQ_eq_on⟩ := hLip.extend_real
   refine
-    QuantitativeEllipticSlice.measurable_l2WeightedFullBlockCoeffEntryIntegral_of_lipschitzExtension
+    QuantitativeEllipticSlice.measurable_l2WeightedBlockEntryIntegral_of_lipschitz
       hToL2 hw α β hQ_lip ?_
   intro A hA
   exact (hQ_eq_on hA).symm
 
 /-- Open finite-measure wrapper for the Lipschitz-on-value-set version. -/
-theorem QuantitativeEllipticSlice.measurable_l2WeightedFullBlockCoeffEntryIntegral_of_isOpen_volume_ne_top_of_lipschitzOn
+theorem
+  QuantitativeEllipticSlice.measurable_weightedBlockEntryIntegral_of_openFiniteLipschitzOn
     {d : ℕ} {U : Set (Vec d)} {k : ℕ}
     [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     (hUopen : IsOpen U) (hUfinite : MeasureTheory.volume U ≠ ⊤)
@@ -485,7 +488,8 @@ theorem QuantitativeEllipticSlice.measurable_l2WeightedFullBlockCoeffEntryIntegr
 
 /-- Open finite-measure wrapper for the fully internal `L²`-weighted
 full-block entry measurability theorem. -/
-theorem QuantitativeEllipticSlice.measurable_l2WeightedFullBlockCoeffEntryIntegral_of_isOpen_volume_ne_top
+theorem
+  QuantitativeEllipticSlice.measurable_l2WeightedFullBlockCoeffEntryIntegral_of_isOpen_volume_ne_top
     {d : ℕ} {U : Set (Vec d)} {k : ℕ}
     [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     (hUopen : IsOpen U) (hUfinite : MeasureTheory.volume U ≠ ⊤)
@@ -550,7 +554,8 @@ measurability, provided the weight is represented by an honest measurable
 function.  The proof approximates the weight by simple functions, uses the
 already-proved `L²` theorem for each approximant, and passes to the limit by
 the uniform quantitative ellipticity bound on the slice. -/
-theorem QuantitativeEllipticSlice.measurable_integrableWeightedFullBlockCoeffEntryIntegral_of_measurable
+theorem
+  QuantitativeEllipticSlice.measurable_integrableWeightedBlockEntryIntegral
     {d : ℕ} {U : Set (Vec d)} {k : ℕ}
     [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     (hToL2 :
@@ -717,7 +722,7 @@ theorem QuantitativeEllipticSlice.measurable_integrableWeightedFullBlockCoeffEnt
           ∫ x in U,
             w' x * toFullBlockMat (blockCoeffField a.1 x) α β
               ∂MeasureTheory.volume) :=
-    QuantitativeEllipticSlice.measurable_integrableWeightedFullBlockCoeffEntryIntegral_of_measurable
+    QuantitativeEllipticSlice.measurable_integrableWeightedBlockEntryIntegral
         hToL2 hw'_meas hw'_int α β
   rw [show
       (fun a : {a : CoeffField d // QuantitativeEllipticSlice U k a} =>
@@ -735,7 +740,8 @@ theorem QuantitativeEllipticSlice.measurable_integrableWeightedFullBlockCoeffEnt
 
 /-- Open finite-measure wrapper for the `L¹`-weighted full-block entry
 measurability theorem. -/
-theorem QuantitativeEllipticSlice.measurable_integrableWeightedFullBlockCoeffEntryIntegral_of_isOpen_volume_ne_top
+theorem
+  QuantitativeEllipticSlice.measurable_integrableWeightedBlockEntryIntegral_of_openFinite
     {d : ℕ} {U : Set (Vec d)} {k : ℕ}
     [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     (hUopen : IsOpen U) (hUfinite : MeasureTheory.volume U ≠ ⊤)
@@ -760,11 +766,15 @@ theorem QuantitativeEllipticSlice.blockEnergyDensity_integrableOn_of_memBlockL2
   blockEnergyDensity_integrableOn_of_memBlockL2_of_isEllipticFieldOn
     (U := U) (a := a) (lam := ((k + 1 : ℝ)⁻¹)) (Lam := (k + 1 : ℝ)) hX hSlice
 
+/-- Half the product of the `α` and `β` coordinates of the block state, the weight of a
+coefficient entry in its energy density. -/
 @[expose]
 noncomputable def blockEnergyEntryWeight {d : ℕ} (X : BlockState d)
     (α β : BlockCoord d) (x : Vec d) : ℝ :=
   (1 / 2 : ℝ) * (toFullBlockVec (X.eval x) α * toFullBlockVec (X.eval x) β)
 
+/-- The product of coordinate `α` of `X` and coordinate `β` of `Y`, the weight of a coefficient
+entry in their block pairing. -/
 @[expose]
 noncomputable def blockPairingEntryWeight {d : ℕ} (X Y : BlockState d)
     (α β : BlockCoord d) (x : Vec d) : ℝ :=
@@ -1051,7 +1061,8 @@ theorem measurable_blockPairingAverage_comp_of_measurable_weightedFullBlockCoeff
     (Finset.measurable_sum Finset.univ fun α _ =>
       Finset.measurable_sum Finset.univ fun β _ => hMeas α β)
 
-theorem measurable_blockEnergyAverage_quantitativeSlice_of_measurable_weightedFullBlockCoeffEntryIntegrals
+theorem
+  measurable_blockEnergyAverage_quantitativeSlice_of_measurable_weightedFullBlockCoeffEntryIntegrals
     {d : ℕ} {U : Set (Vec d)} {k : ℕ} (X : BlockState d)
     (hX : MemBlockL2 U X.eval)
     (hMeas :

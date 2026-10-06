@@ -110,7 +110,7 @@ theorem abs_cubeBesovPairing_le_note_constant_mul_of_uniform_bound_two_two_of_no
     _ = A * B + A * δ := by ring
     _ ≤ A * B + ε := by linarith
 
-theorem abs_cubeAverage_vecDot_le_sum_note_constant_mul_of_uniform_component_bounds_two_two_of_nonneg
+theorem absCubeAverage_dot_le_componentBounds_twoTwo_noMeanTerm
     {d : ℕ} (Q : TriadicCube d) (s : ℝ) (u g : Vec d → Vec d) (B : Fin d → ℝ)
     (hs : 0 < s)
     (hu : ∀ i, MeasureTheory.MemLp (fun x => u x i) (2 : ℝ≥0∞) (normalizedCubeMeasure Q))
@@ -216,7 +216,8 @@ theorem sqrt_sum_sq_const_mul_eq_componentwise {ι : Type*} (s : Finset ι) (c :
         = Real.sqrt (c ^ 2 * Finset.sum s (fun i => (F i) ^ 2)) := by
             congr 1
             calc
-              Finset.sum s (fun i => (c * F i) ^ 2) = Finset.sum s (fun i => c ^ 2 * (F i) ^ 2) := by
+              Finset.sum s (fun i => (c * F i) ^ 2) = Finset.sum s (fun i => c ^ 2 * (F i) ^ 2)
+                := by
                 refine Finset.sum_congr rfl ?_
                 intro i hi
                 ring
@@ -265,7 +266,7 @@ theorem cubeBesovCircDepthAverage_two_component_le_negativeVectorDepthAverage {d
   simpa [cubeBesovNegativeVectorDepthAverage, cubeBesovCircDepthAverage,
     Real.rpow_natCast, pow_two, Real.norm_eq_abs] using hcoord
 
-theorem cubeBesovCircDepthSeminorm_two_component_le_scaleWeight_neg_mul_negativeVectorDepthSeminorm
+theorem besovCircDepth_component_le_negativeVectorDepth
     {d : ℕ} (Q : TriadicCube d) (s : ℝ) (u : Vec d → Vec d) (i : Fin d) (j : ℕ) :
     cubeBesovCircDepthSeminorm Q s (2 : ℝ≥0∞) (fun x => u x i) j ≤
       cubeBesovScaleWeight (-s) Q * cubeBesovNegativeVectorDepthSeminorm Q s u j := by
@@ -308,7 +309,7 @@ theorem cubeBesovCircDepthSeminorm_two_component_le_scaleWeight_neg_mul_negative
           rw [hweight]
           simp [cubeBesovNegativeVectorDepthSeminorm, mul_assoc]
 
-theorem cubeBesovCircPartialNorm_two_one_component_le_scaleWeight_neg_mul_negativeVectorPartialSeminorm
+theorem besovCircPartial_twoOne_component_le_negativeVectorPartial
     {d : ℕ} (Q : TriadicCube d) (s : ℝ) (u : Vec d → Vec d) (i : Fin d) (N : ℕ) :
     cubeBesovCircPartialNorm Q s (2 : ℝ≥0∞) (1 : ℝ≥0∞) N (fun x => u x i) ≤
       cubeBesovScaleWeight (-s) Q * cubeBesovNegativeVectorPartialSeminorm Q s N u := by
@@ -324,12 +325,12 @@ theorem cubeBesovCircPartialNorm_two_one_component_le_scaleWeight_neg_mul_negati
           refine Finset.sum_le_sum ?_
           intro j hj
           exact
-              cubeBesovCircDepthSeminorm_two_component_le_scaleWeight_neg_mul_negativeVectorDepthSeminorm
+              besovCircDepth_component_le_negativeVectorDepth
                 Q s u i j
     _ = cubeBesovScaleWeight (-s) Q * cubeBesovNegativeVectorPartialSeminorm Q s N u := by
           simp [cubeBesovNegativeVectorPartialSeminorm, Finset.mul_sum]
 
-theorem cubeBesovCircPartialNorm_two_two_component_le_scaleWeight_neg_mul_negativeVectorPartialSeminormTwo
+theorem besovCircPartial_twoTwo_component_le_negativeVectorPartial
     {d : ℕ} (Q : TriadicCube d) (s : ℝ) (u : Vec d → Vec d) (i : Fin d) (N : ℕ) :
     cubeBesovCircPartialNorm Q s (2 : ℝ≥0∞) (2 : ℝ≥0∞) N (fun x => u x i) ≤
       cubeBesovScaleWeight (-s) Q * cubeBesovNegativeVectorPartialSeminormTwo Q s N u := by
@@ -343,7 +344,7 @@ theorem cubeBesovCircPartialNorm_two_two_component_le_scaleWeight_neg_mul_negati
     refine Finset.sum_le_sum ?_
     intro j hj
     have hdepth :=
-      cubeBesovCircDepthSeminorm_two_component_le_scaleWeight_neg_mul_negativeVectorDepthSeminorm
+      besovCircDepth_component_le_negativeVectorDepth
         Q s u i j
     have hleft_nonneg :
         0 ≤ cubeBesovCircDepthSeminorm Q s (2 : ℝ≥0∞) (fun x => u x i) j :=
@@ -372,7 +373,8 @@ theorem cubeBesovCircPartialNorm_two_two_component_le_scaleWeight_neg_mul_negati
         Real.sqrt
           (Finset.sum (Finset.range (N + 1))
             (fun j =>
-              (cubeBesovScaleWeight (-s) Q * cubeBesovNegativeVectorDepthSeminorm Q s u j) ^ 2)) := by
+              (cubeBesovScaleWeight (-s) Q * cubeBesovNegativeVectorDepthSeminorm Q s u j) ^ 2))
+                := by
                 exact Real.sqrt_le_sqrt hsum_le
     _ =
         cubeBesovScaleWeight (-s) Q *
@@ -388,7 +390,7 @@ theorem cubeBesovCircPartialNorm_two_two_component_le_scaleWeight_neg_mul_negati
           unfold cubeBesovNegativeVectorPartialSeminormTwo
           rfl
 
-theorem cubeBesovCircNorm_two_one_component_le_scaleWeight_neg_mul_of_negativeVectorPartialBound
+theorem circNorm_component_le_negativeVectorPartialBound
     {d : ℕ} (Q : TriadicCube d) (s : ℝ) (u : Vec d → Vec d) (i : Fin d) {B : ℝ}
     (hB : ∀ N : ℕ, cubeBesovNegativeVectorPartialSeminorm Q s N u ≤ B) :
     cubeBesovCircNorm Q s (2 : ℝ≥0∞) (1 : ℝ≥0∞) (fun x => u x i) ≤
@@ -404,7 +406,7 @@ theorem cubeBesovCircNorm_two_one_component_le_scaleWeight_neg_mul_of_negativeVe
       _ ≤ cubeBesovScaleWeight (-s) Q *
             cubeBesovNegativeVectorPartialSeminorm Q s (N + 1) u := by
             exact
-              cubeBesovCircPartialNorm_two_one_component_le_scaleWeight_neg_mul_negativeVectorPartialSeminorm
+              besovCircPartial_twoOne_component_le_negativeVectorPartial
                 Q s u i (N + 1)
       _ ≤ cubeBesovScaleWeight (-s) Q * B := by
             exact mul_le_mul_of_nonneg_left (hB (N + 1))
@@ -437,7 +439,7 @@ theorem norm_cubeAverage_smul_component_le_cutoffDualCoeff_mul_negativeVectorPar
   have hcirc :
       cubeBesovCircNorm Q s (2 : ℝ≥0∞) (1 : ℝ≥0∞) (fun x => u x i) ≤
         cubeBesovScaleWeight (-s) Q * B :=
-    cubeBesovCircNorm_two_one_component_le_scaleWeight_neg_mul_of_negativeVectorPartialBound
+    circNorm_component_le_negativeVectorPartialBound
       Q s u i hPartial
   have hcoeff_nonneg : 0 ≤ (3 : ℝ) ^ ((d : ℝ) + s) :=
     Real.rpow_nonneg (by norm_num : 0 ≤ (3 : ℝ)) _
@@ -482,7 +484,7 @@ theorem sum_abs_mul_const_mul_le_card_mul_norm_mul_const_mul_of_nonneg
           exact mul_le_mul_of_nonneg_left (sum_abs_apply_le_card_mul_norm v) hKW
     _ = ((Fintype.card (Fin d) : ℝ) * K) * ‖v‖ * W := by ring
 
-theorem cubeBesovCircNorm_two_two_component_le_scaleWeight_neg_mul_of_negativeVectorPartialBoundTwo
+theorem circNorm_component_le_negativeVectorPartialBoundTwo
     {d : ℕ} (Q : TriadicCube d) (s : ℝ) (u : Vec d → Vec d) (i : Fin d) {B : ℝ}
     (hB : ∀ N : ℕ, cubeBesovNegativeVectorPartialSeminormTwo Q s N u ≤ B) :
     cubeBesovCircNorm Q s (2 : ℝ≥0∞) (2 : ℝ≥0∞) (fun x => u x i) ≤
@@ -498,7 +500,7 @@ theorem cubeBesovCircNorm_two_two_component_le_scaleWeight_neg_mul_of_negativeVe
       _ ≤ cubeBesovScaleWeight (-s) Q *
             cubeBesovNegativeVectorPartialSeminormTwo Q s (N + 1) u := by
             exact
-              cubeBesovCircPartialNorm_two_two_component_le_scaleWeight_neg_mul_negativeVectorPartialSeminormTwo
+              besovCircPartial_twoTwo_component_le_negativeVectorPartial
                 Q s u i (N + 1)
       _ ≤ cubeBesovScaleWeight (-s) Q * B := by
             exact mul_le_mul_of_nonneg_left (hB (N + 1))
@@ -518,7 +520,7 @@ theorem cubeBesovCircNorm_two_one_component_le_scaleWeight_neg_mul_gap_geometric
         (Real.sqrt ((1 - Real.rpow (3 : ℝ) (-2 * (a - b)))⁻¹) *
           cubeBesovNegativeVectorSeminormTwo Q b u) := by
   refine
-    cubeBesovCircNorm_two_one_component_le_scaleWeight_neg_mul_of_negativeVectorPartialBound
+    circNorm_component_le_negativeVectorPartialBound
       Q a u i ?_
   intro N
   have hpartial :
@@ -537,7 +539,7 @@ theorem cubeBesovCircNorm_two_one_component_le_scaleWeight_neg_mul_gap_geometric
 
 /-- Componentwise `q = 1` circ control at a larger exponent from a scaled
 negative-vector partial bound at a smaller exponent. -/
-theorem cubeBesovCircNorm_two_one_component_le_scaleWeight_gap_mul_of_scaled_negativeVectorPartialBound
+theorem circNorm_two_one_component_le_scaleGap_of_negativePartialBound
     {d : ℕ} (Q : TriadicCube d) {r t : ℝ} (ht : t ≤ r)
     (u : Vec d → Vec d) (i : Fin d) {B : ℝ}
     (hB : ∀ N : ℕ,
@@ -558,7 +560,7 @@ theorem cubeBesovCircNorm_two_one_component_le_scaleWeight_gap_mul_of_scaled_neg
       _ ≤ cubeBesovScaleWeight (-r) Q *
             cubeBesovNegativeVectorPartialSeminorm Q r (N + 1) u := by
             exact
-              cubeBesovCircPartialNorm_two_one_component_le_scaleWeight_neg_mul_negativeVectorPartialSeminorm
+              besovCircPartial_twoOne_component_le_negativeVectorPartial
                 Q r u i (N + 1)
       _ ≤ cubeBesovScaleWeight (-(r - t)) Q *
             (cubeBesovScaleWeight (-t) Q *
@@ -608,7 +610,8 @@ theorem cubeBesovOscillation_two_component_le_cubeLpNorm_fluctuationVec {d : ℕ
   have hfluct : MeasureTheory.MemLp (cubeFluctuationVec Q u)
       (2 : ℝ≥0∞) (normalizedCubeMeasure Q) :=
     memLp_cubeFluctuationVec Q u hu
-  simpa [cubeBesovOscillation, cubeFluctuation_component_eq_cubeFluctuationVec_component Q u i] using
+  simpa [cubeBesovOscillation, cubeFluctuation_component_eq_cubeFluctuationVec_component Q u i]
+    using
     cubeLpNorm_two_component_le_cubeLpNorm_two Q (cubeFluctuationVec Q u) i hfluct
 
 theorem cubeBesovDepthAverage_two_component_le_positiveVectorDepthAverage {d : ℕ}
@@ -691,7 +694,7 @@ theorem cubeBesovDepthSeminorm_two_component_le_scaleWeight_mul_positiveVectorDe
           rw [cubeBesovDepthWeight_eq_scaleWeight_mul_rpow]
           simp [cubeBesovPositiveVectorDepthSeminorm, mul_assoc]
 
-theorem cubeBesovPartialSeminorm_two_component_le_scaleWeight_mul_positiveVectorPartialSeminormTwo
+theorem besovPartial_component_le_positiveVectorPartial
     {d : ℕ} (Q : TriadicCube d) (s : ℝ) (u : Vec d → Vec d) (i : Fin d) (N : ℕ)
     (hu : MeasureTheory.MemLp u (2 : ℝ≥0∞) (normalizedCubeMeasure Q)) :
     cubeBesovPartialSeminorm Q s (2 : ℝ≥0∞) (2 : ℝ≥0∞) N (fun x => u x i) ≤
@@ -751,7 +754,7 @@ theorem cubeBesovPartialSeminorm_two_component_le_scaleWeight_mul_positiveVector
           unfold cubeBesovPositiveVectorPartialSeminormTwo
           rfl
 
-theorem cubeBesovPartialSeminormTop_two_component_le_scaleWeight_mul_positiveVectorPartialSeminormTwo
+theorem topBesovPartial_component_le_positiveVectorPartial
     {d : ℕ} (Q : TriadicCube d) (s : ℝ) (u : Vec d → Vec d) (i : Fin d) (N : ℕ)
     (hu : MeasureTheory.MemLp u (2 : ℝ≥0∞) (normalizedCubeMeasure Q)) :
     cubeBesovPartialSeminormTop Q s (2 : ℝ≥0∞) N (fun x => u x i) ≤
@@ -766,7 +769,8 @@ theorem cubeBesovPartialSeminormTop_two_component_le_scaleWeight_mul_positiveVec
   calc
     cubeBesovDepthSeminorm Q s (2 : ℝ≥0∞) (fun x => u x i) j
         ≤ cubeBesovScaleWeight s Q * cubeBesovPositiveVectorDepthSeminorm Q s u j := by
-            exact cubeBesovDepthSeminorm_two_component_le_scaleWeight_mul_positiveVectorDepthSeminorm
+            exact
+              cubeBesovDepthSeminorm_two_component_le_scaleWeight_mul_positiveVectorDepthSeminorm
               Q s u i j hu
     _ ≤ cubeBesovScaleWeight s Q * cubeBesovPositiveVectorPartialSeminormTwo Q s N u := by
           exact mul_le_mul_of_nonneg_left
@@ -810,7 +814,7 @@ theorem cubeBesovDualLocalMemLpGlobal_of_memLp_two {d : ℕ}
     MeasureTheory.memLp_const (cubeAverage R g)
   simpa [hpConj, cubeFluctuation] using! hgR.sub hconst
 
-theorem cubeBesovDualTestNorm_two_one_component_cubeFluctuationVec_le_scaleWeight_mul_positiveVectorPartialSeminormTwo
+theorem dualTestNorm_componentOneFluctuationVector_le_weightedBy_vectorPartialSeminorm
     {d : ℕ} (Q : TriadicCube d) (s : ℝ) (u : Vec d → Vec d) (i : Fin d) (N : ℕ)
     (hu : MeasureTheory.MemLp u (2 : ℝ≥0∞) (normalizedCubeMeasure Q)) :
     cubeBesovDualTestNorm Q s (2 : ℝ≥0∞) (1 : ℝ≥0∞) N
@@ -849,12 +853,12 @@ theorem cubeBesovDualTestNorm_two_one_component_cubeFluctuationVec_le_scaleWeigh
         ≤ cubeBesovScaleWeight s Q *
             cubeBesovPositiveVectorPartialSeminormTwo Q s N (cubeFluctuationVec Q u) := by
             simpa [hpConj] using
-              cubeBesovPartialSeminormTop_two_component_le_scaleWeight_mul_positiveVectorPartialSeminormTwo
+              topBesovPartial_component_le_positiveVectorPartial
                 Q s (cubeFluctuationVec Q u) i N (memLp_cubeFluctuationVec Q u hu)
     _ = cubeBesovScaleWeight s Q * cubeBesovPositiveVectorPartialSeminormTwo Q s N u := by
           rw [hpartial_eq]
 
-theorem cubeBesovDualTestNorm_two_two_component_cubeFluctuationVec_le_scaleWeight_mul_positiveVectorPartialSeminormTwo
+theorem dualTestNorm_componentTwoFluctuationVector_le_weightedBy_vectorPartialSeminorm
     {d : ℕ} (Q : TriadicCube d) (s : ℝ) (u : Vec d → Vec d) (i : Fin d) (N : ℕ)
     (hu : MeasureTheory.MemLp u (2 : ℝ≥0∞) (normalizedCubeMeasure Q)) :
     cubeBesovDualTestNorm Q s (2 : ℝ≥0∞) (2 : ℝ≥0∞) N
@@ -891,7 +895,7 @@ theorem cubeBesovDualTestNorm_two_two_component_cubeFluctuationVec_le_scaleWeigh
         ≤ cubeBesovScaleWeight s Q *
             cubeBesovPositiveVectorPartialSeminormTwo Q s N (cubeFluctuationVec Q u) := by
             simpa [hpConj] using
-              cubeBesovPartialSeminorm_two_component_le_scaleWeight_mul_positiveVectorPartialSeminormTwo
+              besovPartial_component_le_positiveVectorPartial
                 Q s (cubeFluctuationVec Q u) i N (memLp_cubeFluctuationVec Q u hu)
     _ = cubeBesovScaleWeight s Q * cubeBesovPositiveVectorPartialSeminormTwo Q s N u := by
           rw [hpartial_eq]
@@ -929,7 +933,7 @@ theorem abs_cubeAverage_vecDot_fluctuationVec_le_sum_note_terms_of_partialBounds
           (fun x => cubeFluctuationVec Q g x i)
           ≤ cubeBesovScaleWeight s Q * cubeBesovPositiveVectorPartialSeminormTwo Q s N g := by
               exact
-                cubeBesovDualTestNorm_two_one_component_cubeFluctuationVec_le_scaleWeight_mul_positiveVectorPartialSeminormTwo
+                dualTestNorm_componentOneFluctuationVector_le_weightedBy_vectorPartialSeminorm
                   Q s g i N hg
       _ ≤ cubeBesovScaleWeight s Q * Bg := by
             exact mul_le_mul_of_nonneg_left (hpos N) (cubeBesovScaleWeight_nonneg s Q)
@@ -945,7 +949,7 @@ theorem abs_cubeAverage_vecDot_fluctuationVec_le_sum_note_terms_of_partialBounds
           cubeBesovScaleWeight s Q * ‖cubeAverage Q (fun x => u x i)‖) *
           (cubeBesovScaleWeight s Q * Bg)) := by
             exact
-              abs_cubeAverage_vecDot_le_sum_note_rhs_mul_of_uniform_component_bounds_two_one_of_nonneg
+              absCubeAverage_dot_le_componentBounds_twoOne
                 Q s u (cubeFluctuationVec Q g) (fun _ => cubeBesovScaleWeight s Q * Bg)
                 hs hu_comp (fun _ => hBscale_nonneg) hnorm hmem
     _ ≤ ∑ i, (((3 : ℝ) ^ ((d : ℝ) + s) *
@@ -958,7 +962,7 @@ theorem abs_cubeAverage_vecDot_fluctuationVec_le_sum_note_terms_of_partialBounds
               cubeBesovCircNorm Q s (2 : ℝ≥0∞) (1 : ℝ≥0∞) (fun x => u x i) ≤
                 cubeBesovScaleWeight (-s) Q * Bu := by
             exact
-              cubeBesovCircNorm_two_one_component_le_scaleWeight_neg_mul_of_negativeVectorPartialBound
+              circNorm_component_le_negativeVectorPartialBound
                 Q s u i hneg
           exact mul_le_mul_of_nonneg_right
             (add_le_add
@@ -1002,7 +1006,7 @@ theorem abs_cubeAverage_vecDot_fluctuationVec_le_sum_sharp_note_terms_of_partial
           (fun x => cubeFluctuationVec Q g x i)
           ≤ cubeBesovScaleWeight s Q * cubeBesovPositiveVectorPartialSeminormTwo Q s N g := by
               exact
-                cubeBesovDualTestNorm_two_one_component_cubeFluctuationVec_le_scaleWeight_mul_positiveVectorPartialSeminormTwo
+                dualTestNorm_componentOneFluctuationVector_le_weightedBy_vectorPartialSeminorm
                   Q s g i N hg
       _ ≤ cubeBesovScaleWeight s Q * Bg := by
             exact mul_le_mul_of_nonneg_left (hpos N) (cubeBesovScaleWeight_nonneg s Q)
@@ -1017,7 +1021,7 @@ theorem abs_cubeAverage_vecDot_fluctuationVec_le_sum_sharp_note_terms_of_partial
             cubeBesovCircNorm Q s (2 : ℝ≥0∞) (1 : ℝ≥0∞) (fun x => u x i)) *
           (cubeBesovScaleWeight s Q * Bg)) := by
             exact
-              abs_cubeAverage_vecDot_le_sum_note_constant_mul_of_uniform_component_bounds_two_one_of_nonneg
+              absCubeAverage_dot_le_componentBounds_twoOne_noMeanTerm
                 Q s u (cubeFluctuationVec Q g) (fun _ => cubeBesovScaleWeight s Q * Bg)
                 hs hu_comp (fun _ => hBscale_nonneg) hnorm hmem
     _ ≤ ∑ i : Fin d, (((3 : ℝ) ^ ((d : ℝ) + s) *
@@ -1029,7 +1033,7 @@ theorem abs_cubeAverage_vecDot_fluctuationVec_le_sum_sharp_note_terms_of_partial
               cubeBesovCircNorm Q s (2 : ℝ≥0∞) (1 : ℝ≥0∞) (fun x => u x i) ≤
                 cubeBesovScaleWeight (-s) Q * Bu := by
             exact
-              cubeBesovCircNorm_two_one_component_le_scaleWeight_neg_mul_of_negativeVectorPartialBound
+              circNorm_component_le_negativeVectorPartialBound
                 Q s u i hneg
           exact mul_le_mul_of_nonneg_right
             (mul_le_mul_of_nonneg_left hcomponent
@@ -1082,7 +1086,7 @@ theorem abs_cubeAverage_vecDot_fluctuationVec_le_sum_sharp_note_terms_of_dualTes
             cubeBesovCircNorm Q s (2 : ℝ≥0∞) (1 : ℝ≥0∞) (fun x => u x i)) *
           (cubeBesovScaleWeight s Q * Bg)) := by
             exact
-              abs_cubeAverage_vecDot_le_sum_note_constant_mul_of_uniform_component_bounds_two_one_of_nonneg
+              absCubeAverage_dot_le_componentBounds_twoOne_noMeanTerm
                 Q s u (cubeFluctuationVec Q g)
                 (fun _ => cubeBesovScaleWeight s Q * Bg)
                 hs hu_comp (fun _ => hBscale_nonneg) hdual hmem
@@ -1095,7 +1099,7 @@ theorem abs_cubeAverage_vecDot_fluctuationVec_le_sum_sharp_note_terms_of_dualTes
               cubeBesovCircNorm Q s (2 : ℝ≥0∞) (1 : ℝ≥0∞) (fun x => u x i) ≤
                 cubeBesovScaleWeight (-s) Q * Bu := by
             exact
-              cubeBesovCircNorm_two_one_component_le_scaleWeight_neg_mul_of_negativeVectorPartialBound
+              circNorm_component_le_negativeVectorPartialBound
                 Q s u i hneg
           exact mul_le_mul_of_nonneg_right
             (mul_le_mul_of_nonneg_left hcomponent
@@ -1139,7 +1143,7 @@ theorem abs_cubeAverage_vecDot_fluctuationVec_le_sum_note_terms_of_partialBounds
           (fun x => cubeFluctuationVec Q g x i)
           ≤ cubeBesovScaleWeight s Q * cubeBesovPositiveVectorPartialSeminormTwo Q s N g := by
               exact
-                cubeBesovDualTestNorm_two_two_component_cubeFluctuationVec_le_scaleWeight_mul_positiveVectorPartialSeminormTwo
+                dualTestNorm_componentTwoFluctuationVector_le_weightedBy_vectorPartialSeminorm
                   Q s g i N hg
       _ ≤ cubeBesovScaleWeight s Q * Bg := by
             exact mul_le_mul_of_nonneg_left (hpos N) (cubeBesovScaleWeight_nonneg s Q)
@@ -1155,7 +1159,7 @@ theorem abs_cubeAverage_vecDot_fluctuationVec_le_sum_note_terms_of_partialBounds
           cubeBesovScaleWeight s Q * ‖cubeAverage Q (fun x => u x i)‖) *
           (cubeBesovScaleWeight s Q * Bg)) := by
             exact
-              abs_cubeAverage_vecDot_le_sum_note_rhs_mul_of_uniform_component_bounds_two_two_of_nonneg
+              absCubeAverage_dot_le_componentBounds_twoTwo
                 Q s u (cubeFluctuationVec Q g) (fun _ => cubeBesovScaleWeight s Q * Bg)
                 hs hu_comp (fun _ => hBscale_nonneg) hnorm hmem
     _ ≤ ∑ i, (((3 : ℝ) ^ ((d : ℝ) + s) *
@@ -1168,7 +1172,7 @@ theorem abs_cubeAverage_vecDot_fluctuationVec_le_sum_note_terms_of_partialBounds
               cubeBesovCircNorm Q s (2 : ℝ≥0∞) (2 : ℝ≥0∞) (fun x => u x i) ≤
                 cubeBesovScaleWeight (-s) Q * Bu := by
             exact
-              cubeBesovCircNorm_two_two_component_le_scaleWeight_neg_mul_of_negativeVectorPartialBoundTwo
+              circNorm_component_le_negativeVectorPartialBoundTwo
                 Q s u i hneg
           exact mul_le_mul_of_nonneg_right
             (add_le_add
@@ -1211,7 +1215,7 @@ theorem abs_cubeAverage_vecDot_fluctuationVec_le_sum_sharp_note_terms_of_partial
           (fun x => cubeFluctuationVec Q g x i)
           ≤ cubeBesovScaleWeight s Q * cubeBesovPositiveVectorPartialSeminormTwo Q s N g := by
               exact
-                cubeBesovDualTestNorm_two_two_component_cubeFluctuationVec_le_scaleWeight_mul_positiveVectorPartialSeminormTwo
+                dualTestNorm_componentTwoFluctuationVector_le_weightedBy_vectorPartialSeminorm
                   Q s g i N hg
       _ ≤ cubeBesovScaleWeight s Q * Bg := by
             exact mul_le_mul_of_nonneg_left (hpos N) (cubeBesovScaleWeight_nonneg s Q)
@@ -1226,7 +1230,7 @@ theorem abs_cubeAverage_vecDot_fluctuationVec_le_sum_sharp_note_terms_of_partial
             cubeBesovCircNorm Q s (2 : ℝ≥0∞) (2 : ℝ≥0∞) (fun x => u x i)) *
           (cubeBesovScaleWeight s Q * Bg)) := by
             exact
-              abs_cubeAverage_vecDot_le_sum_note_constant_mul_of_uniform_component_bounds_two_two_of_nonneg
+              absCubeAverage_dot_le_componentBounds_twoTwo_noMeanTerm
                 Q s u (cubeFluctuationVec Q g) (fun _ => cubeBesovScaleWeight s Q * Bg)
                 hs hu_comp (fun _ => hBscale_nonneg) hnorm hmem
     _ ≤ ∑ i : Fin d, (((3 : ℝ) ^ ((d : ℝ) + s) *
@@ -1238,7 +1242,7 @@ theorem abs_cubeAverage_vecDot_fluctuationVec_le_sum_sharp_note_terms_of_partial
               cubeBesovCircNorm Q s (2 : ℝ≥0∞) (2 : ℝ≥0∞) (fun x => u x i) ≤
                 cubeBesovScaleWeight (-s) Q * Bu := by
             exact
-              cubeBesovCircNorm_two_two_component_le_scaleWeight_neg_mul_of_negativeVectorPartialBoundTwo
+              circNorm_component_le_negativeVectorPartialBoundTwo
                 Q s u i hneg
           exact mul_le_mul_of_nonneg_right
             (mul_le_mul_of_nonneg_left hcomponent

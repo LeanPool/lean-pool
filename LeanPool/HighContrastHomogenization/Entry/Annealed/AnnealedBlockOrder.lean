@@ -91,7 +91,8 @@ theorem coarseBlock_adapted_finite_partition {d : ℕ} [NeZero d]
     exists_elliptic_representative_adapted q hq j y a
   apply Source.block_tsum_of_response_partition hs.countable (isOpen_adaptedCellTranslate hq j y)
     hWvol (fun i hi => isOpen_adaptedCellTranslate (hqi i hi) (ji i) (yi i))
-    hsub hdisj hnull hEll (coarseBlock W a) (fun i => coarseBlock (U i) a) _ _ (hasSum_fintype _).summable
+    hsub hdisj hnull hEll (coarseBlock W a) (fun i => coarseBlock (U i) a) _ _ (hasSum_fintype
+      _).summable
   · intro p r
     rw [← responseJ_congr_of_ae_eq (ae_restrict_of_ae hae)]
     exact responseJ_eq_coarseBlock_adapted q hq j y a p r
@@ -133,7 +134,8 @@ theorem annealedBlock_adaptedCellAtCenter {d : ℕ} [NeZero d]
   obtain ⟨z, hz⟩ := adaptedCellCenter_eq_intTranslation jStar m hj w
   have he := Source.annealedBlock_adapted_add_intTranslation P hstat
     (explicitRoundedGrid jStar m) (isUnit_roundedGrid hjStar hm) j 0 z
-  simpa [adaptedCellAtCenter, hz, adaptedCellTranslate, adaptedMean, HighContrast.adaptedCell, HighContrast.centeredCube] using he
+  simpa [adaptedCellAtCenter, hz, adaptedCellTranslate, adaptedMean, HighContrast.adaptedCell,
+    HighContrast.centeredCube] using he
 
 /-- Actual adapted annealed blocks decrease across every admissible pair, including j=k. -/
 theorem adaptedMean_antitone (d : ℕ) (hd : 2 ≤ d)

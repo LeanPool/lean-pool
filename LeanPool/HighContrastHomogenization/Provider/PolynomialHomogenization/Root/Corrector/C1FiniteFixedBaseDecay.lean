@@ -155,6 +155,277 @@ private theorem rpow_eta_le_three {eta : ℝ}
       Real.rpow_le_rpow_of_exponent_le (by norm_num) heta1.le
     _ = 3 := by norm_num
 
+private theorem finite_trial_minimizer_residual_real_decay
+    {d : ℕ} [NeZero d] (s eta cdec Cdec Cfamily : ℝ) (hCdec : 0 < Cdec)
+    (hdecay : ∀ (a : Book.Ch02.TriadicCoeffFamily d) (delta : ℝ) (n m : ℤ),
+      n < m → delta ∈ Set.Ioc (0 : ℝ) cdec →
+        ScalarIdentityGoodMaxOnInterval a s delta n m →
+        ∃ Q : ℤ → Mat d,
+          IsFiniteAffineSlopeFamily a delta Cfamily n m Q ∧
+          ∀ u : Book.Ch03.CubeSolution (originCube d m) a,
+            finiteAffineGradientExcess a n m u ≤
+              ENNReal.ofReal (Cdec * Real.rpow 3 (-eta * ((m - n : ℤ) : ℝ))) *
+                finiteAffineGradientExcess a m m u)
+    (a : Book.Ch02.TriadicCoeffFamily d) {delta : ℝ} {n m q : ℕ}
+    (hnq : n ≤ q) (hqm : q ≤ m)
+    (hgood : ScalarIdentityGoodTail a s delta (n : ℤ))
+    (hdeltaDec : delta ∈ Set.Ioc (0 : ℝ) cdec)
+    (u : Book.Ch03.CubeSolution (originCube d (m : ℤ)) a)
+    (b : ℤ → Vec d)
+    (hb_at : ∀ {j : ℤ} (hjm : j ≤ (m : ℤ)),
+      b j = finiteAffineExactMinimizer a hjm u)
+    : Real.sqrt (normalizedLocalSymmetricEnergy
+        (Book.Ch03.publicCoeffField_isEllipticFieldOn_openCubeSet
+          (originCube d (q : ℤ)) a)
+        ((finiteCubeSolutionRestriction a
+          (show (q : ℤ) ≤ (m : ℤ) by exact_mod_cast hqm) u).toH1.gradToHilbertVectorL2 -
+          finiteTrialGradientLinearMap_field a hqm (b (q : ℤ)))) ≤
+      max 1 Cdec * Real.rpow 3 (-eta * (((m : ℤ) : ℝ) - ((q : ℤ) : ℝ))) *
+        (finiteAffineGradientExcess a (m : ℤ) (m : ℤ) u).toReal := by
+  let A : ℝ := max 1 Cdec
+  let Em : ℝ := (finiteAffineGradientExcess a (m : ℤ) (m : ℤ) u).toReal
+  let T := finiteTrialGradientLinearMap_field a hqm
+  let hEll := Book.Ch03.publicCoeffField_isEllipticFieldOn_openCubeSet
+    (originCube d (q : ℤ)) a
+  have hEm : 0 ≤ Em := ENNReal.toReal_nonneg
+  have hCdecA : Cdec ≤ A := le_max_right _ _
+  let uQ := finiteCubeSolutionRestriction a
+    (show (q : ℤ) ≤ (m : ℤ) by exact_mod_cast hqm) u
+  let J : LocalGradientL2 d q := uQ.toH1.gradToHilbertVectorL2
+  have hbq := finiteAffineExactMinimizer_spec a
+    (show (q : ℤ) ≤ (m : ℤ) by exact_mod_cast hqm) u
+  have hres : J - T (b (q : ℤ)) =
+      (finiteAffineGradientResidual a
+        (show (q : ℤ) ≤ (m : ℤ) by exact_mod_cast hqm) u
+        (b (q : ℤ))).toH1.gradToHilbertVectorL2 := by
+    simpa only [J, uQ, T] using
+      finiteTrialGradientResidual_eq a hqm u (b (q : ℤ))
+  erw [hres, sqrt_normalizedEnergy_grad_eq_weightedGradNorm_toReal]
+  have hbq' : weightedGradNorm
+        (a.coeffOn (originCube d (q : ℤ))).toCoeffField
+        (openCubeSet (originCube d (q : ℤ)))
+        (fun x ↦ u.toH1.grad x -
+          (finiteAffineSolution a (m : ℤ) (b (q : ℤ))).toH1.grad x) =
+      finiteAffineGradientExcess a (q : ℤ) (m : ℤ) u := by
+    simpa only [hb_at (show (q : ℤ) ≤ (m : ℤ) by exact_mod_cast hqm)] using hbq
+  rw [weightedGradNorm_congr_coeff_ae_on _
+    (Book.Ch03.publicCoeffField_ae_eq_openCubeSet
+      (originCube d (q : ℤ)) a)]
+  rw [finiteAffineGradientResidual_grad, hbq']
+  by_cases hqmEq : q = m
+  · subst q
+    have hrateOne : Real.rpow 3
+        (-eta * (((m : ℤ) : ℝ) - ((m : ℤ) : ℝ))) = 1 := by
+      norm_num
+    rw [hrateOne, mul_one]
+    exact le_mul_of_one_le_left hEm (le_max_left _ _)
+  · have hqmt : (q : ℤ) < (m : ℤ) := by exact_mod_cast lt_of_le_of_ne hqm hqmEq
+    have hgoodQ := (hgood.mono_start (by exact_mod_cast hnq)).goodMaxOnInterval
+      hqmt.le
+    obtain ⟨_Q, _hQ, hrate⟩ := hdecay a delta (q : ℤ) (m : ℤ)
+      hqmt hdeltaDec hgoodQ
+    have hrateExpanded : finiteAffineGradientExcess a (q : ℤ) (m : ℤ) u ≤
+        ENNReal.ofReal (Cdec * Real.rpow 3
+          (-eta * (((m : ℤ) : ℝ) - ((q : ℤ) : ℝ)))) *
+          finiteAffineGradientExcess a (m : ℤ) (m : ℤ) u := by
+      simpa only [Int.cast_sub] using hrate u
+    have hreal := excess_toReal_le_of_rate_fixed a u
+      (Cdec * Real.rpow 3 (-eta * (((m : ℤ) : ℝ) - ((q : ℤ) : ℝ))))
+      (mul_nonneg hCdec.le (Real.rpow_nonneg (by norm_num) _)) hrateExpanded
+    exact hreal.trans (mul_le_mul_of_nonneg_right
+      (mul_le_mul_of_nonneg_right hCdecA
+        (Real.rpow_nonneg (by norm_num) _)) hEm)
+
+private theorem finite_trial_minimizer_increment_real_decay
+    {d : ℕ} [NeZero d] (s eta cgrow Cgrow cdec Cdec Cfamily : ℝ)
+    (heta1 : eta < 1) (hCdec : 0 < Cdec)
+    (hgrowth : ∀ (a : Book.Ch02.TriadicCoeffFamily d) (delta : ℝ)
+      (n m : ℤ), n < m →
+      delta ∈ Set.Ioc (0 : ℝ) cgrow →
+      ScalarIdentityGoodMaxOnInterval a s delta n m →
+      ∀ (j : ℤ) (_hj : j ∈ Finset.Icc n m)
+        (k : ℤ) (_hk : k ∈ Finset.Icc n m), j ≤ k → ∀ b : Vec d,
+        finiteCenteredCubeSolutionEnergy a m
+            (finiteAffineCubeSolution a m b) k ≤
+          Cgrow ^ 2 * Real.rpow 3
+              (((Int.toNat (k - j) : ℕ) : ℝ) / 4) *
+            finiteCenteredCubeSolutionEnergy a m
+              (finiteAffineCubeSolution a m b) j)
+    (hdecay : ∀ (a : Book.Ch02.TriadicCoeffFamily d) (delta : ℝ) (n m : ℤ),
+      n < m → delta ∈ Set.Ioc (0 : ℝ) cdec →
+        ScalarIdentityGoodMaxOnInterval a s delta n m →
+        ∃ Q : ℤ → Mat d,
+          IsFiniteAffineSlopeFamily a delta Cfamily n m Q ∧
+          ∀ u : Book.Ch03.CubeSolution (originCube d m) a,
+            finiteAffineGradientExcess a n m u ≤
+              ENNReal.ofReal (Cdec * Real.rpow 3 (-eta * ((m - n : ℤ) : ℝ))) *
+                finiteAffineGradientExcess a m m u)
+    (a : Book.Ch02.TriadicCoeffFamily d) {delta : ℝ} {n m q : ℕ}
+    (hnm2 : n + 2 ≤ m) (hqm : q ≤ m)
+    (hgood : ScalarIdentityGoodTail a s delta (n : ℤ))
+    (hdeltaDec : delta ∈ Set.Ioc (0 : ℝ) cdec)
+    (u : Book.Ch03.CubeSolution (originCube d (m : ℤ)) a)
+    (b : ℤ → Vec d)
+    (hb_at : ∀ {j : ℤ} (hjm : j ≤ (m : ℤ)),
+      b j = finiteAffineExactMinimizer a hjm u)
+    (hdeltaGrow : delta ∈ Set.Ioc (0 : ℝ) cgrow) :
+    ∀ j ∈ Finset.Ico (n : ℤ) (q : ℤ),
+      Real.sqrt (normalizedLocalSymmetricEnergy
+          (Book.Ch03.publicCoeffField_isEllipticFieldOn_openCubeSet
+            (originCube d (q : ℤ)) a)
+          (finiteTrialGradientLinearMap_field a hqm (b (j + 1) - b j))) ≤
+        (Cgrow ^ 2 * max 1 Cdec * (1 + 3 * ((3 ^ d : ℕ) : ℝ))) *
+          Real.rpow 3 ((((q : ℤ) : ℝ) - (j : ℝ)) / 4) *
+          Real.rpow 3 (-eta * (((m : ℤ) : ℝ) - (j : ℝ))) *
+          (finiteAffineGradientExcess a (m : ℤ) (m : ℤ) u).toReal := by
+  let A : ℝ := max 1 Cdec
+  let Em : ℝ := (finiteAffineGradientExcess a (m : ℤ) (m : ℤ) u).toReal
+  let T := finiteTrialGradientLinearMap_field a hqm
+  let hEll := Book.Ch03.publicCoeffField_isEllipticFieldOn_openCubeSet
+    (originCube d (q : ℤ)) a
+  have hEm : 0 ≤ Em := ENNReal.toReal_nonneg
+  have hA0 : 0 ≤ A := (le_max_left (1 : ℝ) Cdec).trans' zero_le_one
+  have hCdecA : Cdec ≤ A := le_max_right _ _
+  let D : ℝ := ((3 ^ d : ℕ) : ℝ)
+  let B : ℝ := Cgrow ^ 2 * A * (1 + 3 * D)
+  have hgoodNM : ScalarIdentityGoodMaxOnInterval a s delta
+      (n : ℤ) (m : ℤ) := hgood.goodMaxOnInterval (by omega)
+  intro j hj
+  have hjm : j + 1 ≤ (m : ℤ) := by
+    have := Finset.mem_Ico.mp hj
+    omega
+  have henergy := finiteAffineExactMinimizerIncrementEnergy_le
+    s cgrow Cgrow hgrowth a delta (by omega : (n : ℤ) < (m : ℤ))
+    hdeltaGrow hgoodNM hj (by exact_mod_cast hqm) u
+  rw [← hb_at (by omega : j ≤ (m : ℤ)),
+    ← hb_at hjm] at henergy
+  have hEj : (finiteAffineGradientExcess a j (m : ℤ) u).toReal ≤
+      A * Real.rpow 3 (-eta * (((m : ℤ) : ℝ) - (j : ℝ))) * Em := by
+    have hnj : (n : ℤ) ≤ j := (Finset.mem_Ico.mp hj).1
+    have hjmLt : j < (m : ℤ) := by omega
+    have hgoodJ := (hgood.mono_start hnj).goodMaxOnInterval hjmLt.le
+    obtain ⟨_Q, _hQ, hrate⟩ := hdecay a delta j (m : ℤ)
+      hjmLt hdeltaDec hgoodJ
+    have hrateExpanded : finiteAffineGradientExcess a j (m : ℤ) u ≤
+        ENNReal.ofReal (Cdec * Real.rpow 3
+          (-eta * (((m : ℤ) : ℝ) - (j : ℝ)))) *
+          finiteAffineGradientExcess a (m : ℤ) (m : ℤ) u := by
+      simpa only [Int.cast_sub] using hrate u
+    have hreal := excess_toReal_le_of_rate_fixed a u _
+      (mul_nonneg hCdec.le (Real.rpow_nonneg (by norm_num) _)) hrateExpanded
+    exact hreal.trans (mul_le_mul_of_nonneg_right
+      (mul_le_mul_of_nonneg_right hCdecA
+        (Real.rpow_nonneg (by norm_num) _)) hEm)
+  have hEj1 : (finiteAffineGradientExcess a (j + 1) (m : ℤ) u).toReal ≤
+      3 * A * Real.rpow 3
+        (-eta * (((m : ℤ) : ℝ) - (j : ℝ))) * Em := by
+    have hnj : (n : ℤ) ≤ j := (Finset.mem_Ico.mp hj).1
+    have hnj1 : (n : ℤ) ≤ j + 1 := by omega
+    by_cases hj1mEq : j + 1 = (m : ℤ)
+    · rw [hj1mEq]
+      have hgap : (((m : ℤ) : ℝ) - (j : ℝ)) = 1 := by
+        have hjcast : (j : ℝ) + 1 = ((m : ℤ) : ℝ) := by
+          exact_mod_cast hj1mEq
+        linarith only [hjcast]
+      rw [hgap, mul_one]
+      have hthreeRate : 1 ≤ 3 * Real.rpow 3 (-eta) := by
+        calc
+          1 = Real.rpow 3 0 := by norm_num
+          _ ≤ Real.rpow 3 (1 - eta) :=
+            Real.rpow_le_rpow_of_exponent_le (by norm_num) (by
+              linarith only [heta1])
+          _ = Real.rpow 3 1 * Real.rpow 3 (-eta) := by
+            rw [show 1 - eta = 1 + (-eta) by ring]
+            exact Real.rpow_add (by norm_num : (0 : ℝ) < 3) _ _
+          _ = 3 * Real.rpow 3 (-eta) := by norm_num
+      calc
+        Em ≤ A * Em := le_mul_of_one_le_left hEm (le_max_left _ _)
+        _ ≤ 3 * A * Real.rpow 3 (-eta) * Em := by
+          calc
+            A * Em = 1 * (A * Em) := by ring
+            _ ≤ (3 * Real.rpow 3 (-eta)) * (A * Em) :=
+              mul_le_mul_of_nonneg_right hthreeRate (mul_nonneg hA0 hEm)
+            _ = _ := by ring
+    · have hj1mLt : j + 1 < (m : ℤ) := lt_of_le_of_ne hjm hj1mEq
+      have hgoodJ1 := (hgood.mono_start hnj1).goodMaxOnInterval hj1mLt.le
+      obtain ⟨_Q, _hQ, hrate⟩ := hdecay a delta (j + 1) (m : ℤ)
+        hj1mLt hdeltaDec hgoodJ1
+      have hrateExpanded :
+          finiteAffineGradientExcess a (j + 1) (m : ℤ) u ≤
+            ENNReal.ofReal (Cdec * Real.rpow 3
+              (-eta * (((m : ℤ) : ℝ) - (((j + 1 : ℤ) : ℝ))))) *
+              finiteAffineGradientExcess a (m : ℤ) (m : ℤ) u := by
+        simpa only [Int.cast_sub] using hrate u
+      have hreal := excess_toReal_le_of_rate_fixed a u _
+        (mul_nonneg hCdec.le (Real.rpow_nonneg (by norm_num) _)) hrateExpanded
+      change (finiteAffineGradientExcess a (j + 1) (m : ℤ) u).toReal ≤
+        Cdec * Real.rpow 3
+          (-eta * (((m : ℤ) : ℝ) - (((j + 1 : ℤ) : ℝ)))) * Em at hreal
+      have hfactor : Real.rpow 3
+          (-eta * (((m : ℤ) : ℝ) - (((j + 1 : ℤ) : ℝ)))) =
+          Real.rpow 3 eta * Real.rpow 3
+            (-eta * (((m : ℤ) : ℝ) - (j : ℝ))) := by
+        calc
+          _ = Real.rpow 3
+              (eta + (-eta * (((m : ℤ) : ℝ) - (j : ℝ)))) := by
+            congr 1
+            push_cast
+            ring
+          _ = _ := Real.rpow_add (by norm_num : (0 : ℝ) < 3) _ _
+      rw [hfactor] at hreal
+      have heta3 := rpow_eta_le_three heta1
+      calc
+        _ ≤ Cdec * (Real.rpow 3 eta *
+              Real.rpow 3 (-eta * (((m : ℤ) : ℝ) - (j : ℝ)))) * Em := hreal
+        _ = (Cdec * Real.rpow 3 eta) *
+              Real.rpow 3 (-eta * (((m : ℤ) : ℝ) - (j : ℝ))) * Em := by ring
+        _ ≤ (A * 3) *
+              Real.rpow 3 (-eta * (((m : ℤ) : ℝ) - (j : ℝ))) * Em := by
+          exact mul_le_mul_of_nonneg_right
+            (mul_le_mul_of_nonneg_right
+              (mul_le_mul hCdecA heta3
+                (Real.rpow_nonneg (by norm_num) _) hA0)
+              (Real.rpow_nonneg (by norm_num) _)) hEm
+        _ = A * (3 *
+              Real.rpow 3 (-eta * (((m : ℤ) : ℝ) - (j : ℝ)))) * Em := by ring
+        _ = _ := by ring
+  have hsum : (finiteAffineGradientExcess a j (m : ℤ) u).toReal +
+        D * (finiteAffineGradientExcess a (j + 1) (m : ℤ) u).toReal ≤
+      A * (1 + 3 * D) *
+        Real.rpow 3 (-eta * (((m : ℤ) : ℝ) - (j : ℝ))) * Em := by
+    have hD : 0 ≤ D := by dsimp only [D]; positivity
+    calc
+      _ ≤ A * Real.rpow 3
+            (-eta * (((m : ℤ) : ℝ) - (j : ℝ))) * Em +
+          D * (3 * A * Real.rpow 3
+            (-eta * (((m : ℤ) : ℝ) - (j : ℝ))) * Em) :=
+        add_le_add hEj (mul_le_mul_of_nonneg_left hEj1 hD)
+      _ = _ := by ring
+  have hnegSlope : b (j + 1) - b j = -(b j - b (j + 1)) := by abel
+  calc
+    _ = Real.sqrt (normalizedLocalSymmetricEnergy hEll
+        (T (b j - b (j + 1)))) := by
+          rw [hnegSlope, map_neg]
+          erw [sqrt_normalizedLocalSymmetricEnergy_neg_increment]
+    _ = finiteCenteredCubeSolutionEnergy a (m : ℤ)
+        (finiteAffineCubeSolution a (m : ℤ) (b j - b (j + 1)))
+          (q : ℤ) := finiteTrialGradientLinearMap_energy a hqm _
+    _ ≤ Cgrow ^ 2 * Real.rpow 3
+        ((((q : ℤ) : ℝ) - (j : ℝ)) / 4) *
+        ((finiteAffineGradientExcess a j (m : ℤ) u).toReal +
+          D * (finiteAffineGradientExcess a (j + 1) (m : ℤ) u).toReal) := by
+      simpa only [D] using henergy
+    _ ≤ Cgrow ^ 2 * Real.rpow 3
+        ((((q : ℤ) : ℝ) - (j : ℝ)) / 4) *
+        (A * (1 + 3 * D) *
+          Real.rpow 3 (-eta * (((m : ℤ) : ℝ) - (j : ℝ))) * Em) :=
+      mul_le_mul_of_nonneg_left hsum
+        (mul_nonneg (sq_nonneg Cgrow) (Real.rpow_nonneg (by norm_num) _))
+    _ = B * Real.rpow 3 ((((q : ℤ) : ℝ) - (j : ℝ)) / 4) *
+        Real.rpow 3 (-eta * (((m : ℤ) : ℝ) - (j : ℝ))) * Em := by
+      dsimp only [B]
+      ring
+
 /-- The fixed base minimizer has the same real-rate decay on every
 intermediate centered cube. -/
 theorem exists_scalarIdentityFiniteAffineFixedBaseDecayConstants
@@ -248,190 +519,16 @@ theorem exists_scalarIdentityFiniteAffineFixedBaseDecayConstants
   have hCdecA : Cdec ≤ A := le_max_right _ _
   have hmin : Real.sqrt (normalizedLocalSymmetricEnergy hEll
       (J - T (b (q : ℤ)))) ≤
-      A * Real.rpow 3 (-eta * (((m : ℤ) : ℝ) - ((q : ℤ) : ℝ))) * Em := by
-    have hbq := finiteAffineExactMinimizer_spec a
-      (show (q : ℤ) ≤ (m : ℤ) by exact_mod_cast hqm) u
-    have hres : J - T (b (q : ℤ)) =
-        (finiteAffineGradientResidual a
-          (show (q : ℤ) ≤ (m : ℤ) by exact_mod_cast hqm) u
-          (b (q : ℤ))).toH1.gradToHilbertVectorL2 := by
-      simpa only [J, uQ, T] using
-        finiteTrialGradientResidual_eq a hqm u (b (q : ℤ))
-    erw [hres, sqrt_normalizedEnergy_grad_eq_weightedGradNorm_toReal]
-    have hbq' : weightedGradNorm
-          (a.coeffOn (originCube d (q : ℤ))).toCoeffField
-          (openCubeSet (originCube d (q : ℤ)))
-          (fun x ↦ u.toH1.grad x -
-            (finiteAffineSolution a (m : ℤ) (b (q : ℤ))).toH1.grad x) =
-        finiteAffineGradientExcess a (q : ℤ) (m : ℤ) u := by
-      simpa only [hb_at (show (q : ℤ) ≤ (m : ℤ) by exact_mod_cast hqm)] using hbq
-    rw [weightedGradNorm_congr_coeff_ae_on _
-      (Book.Ch03.publicCoeffField_ae_eq_openCubeSet
-        (originCube d (q : ℤ)) a)]
-    rw [finiteAffineGradientResidual_grad, hbq']
-    by_cases hqmEq : q = m
-    · subst q
-      have hrateOne : Real.rpow 3
-          (-eta * (((m : ℤ) : ℝ) - ((m : ℤ) : ℝ))) = 1 := by
-        norm_num
-      rw [hrateOne, mul_one]
-      exact le_mul_of_one_le_left hEm (le_max_left _ _)
-    · have hqmt : (q : ℤ) < (m : ℤ) := by exact_mod_cast lt_of_le_of_ne hqm hqmEq
-      have hgoodQ := (hgood.mono_start (by exact_mod_cast hnq)).goodMaxOnInterval
-        hqmt.le
-      obtain ⟨_Q, _hQ, hrate⟩ := hdecay a delta (q : ℤ) (m : ℤ)
-        hqmt hdeltaDec hgoodQ
-      have hrateExpanded : finiteAffineGradientExcess a (q : ℤ) (m : ℤ) u ≤
-          ENNReal.ofReal (Cdec * Real.rpow 3
-            (-eta * (((m : ℤ) : ℝ) - ((q : ℤ) : ℝ)))) *
-            finiteAffineGradientExcess a (m : ℤ) (m : ℤ) u := by
-        simpa only [Int.cast_sub] using hrate u
-      have hreal := excess_toReal_le_of_rate_fixed a u
-        (Cdec * Real.rpow 3 (-eta * (((m : ℤ) : ℝ) - ((q : ℤ) : ℝ))))
-        (mul_nonneg hCdec.le (Real.rpow_nonneg (by norm_num) _)) hrateExpanded
-      exact hreal.trans (mul_le_mul_of_nonneg_right
-        (mul_le_mul_of_nonneg_right hCdecA
-          (Real.rpow_nonneg (by norm_num) _)) hEm)
+      A * Real.rpow 3 (-eta * (((m : ℤ) : ℝ) - ((q : ℤ) : ℝ))) * Em :=
+    finite_trial_minimizer_residual_real_decay s eta cdec Cdec _Cfamily hCdec
+      hdecay a hnq hqm hgood hdeltaDec u b hb_at
   have hincrement : ∀ j ∈ Finset.Ico (n : ℤ) (q : ℤ),
       Real.sqrt (normalizedLocalSymmetricEnergy hEll
           (T (b (j + 1) - b j))) ≤
         B * Real.rpow 3 ((((q : ℤ) : ℝ) - (j : ℝ)) / 4) *
-          Real.rpow 3 (-eta * (((m : ℤ) : ℝ) - (j : ℝ))) * Em := by
-    intro j hj
-    have hjm : j + 1 ≤ (m : ℤ) := by
-      have := Finset.mem_Ico.mp hj
-      omega
-    have henergy := finiteAffineExactMinimizerIncrementEnergy_le
-      s cgrow Cgrow hgrowth a delta (by omega : (n : ℤ) < (m : ℤ))
-      hdeltaGrow hgoodNM hj (by exact_mod_cast hqm) u
-    rw [← hb_at (by omega : j ≤ (m : ℤ)),
-      ← hb_at hjm] at henergy
-    have hEj : (finiteAffineGradientExcess a j (m : ℤ) u).toReal ≤
-        A * Real.rpow 3 (-eta * (((m : ℤ) : ℝ) - (j : ℝ))) * Em := by
-      have hnj : (n : ℤ) ≤ j := (Finset.mem_Ico.mp hj).1
-      have hjmLt : j < (m : ℤ) := by omega
-      have hgoodJ := (hgood.mono_start hnj).goodMaxOnInterval hjmLt.le
-      obtain ⟨_Q, _hQ, hrate⟩ := hdecay a delta j (m : ℤ)
-        hjmLt hdeltaDec hgoodJ
-      have hrateExpanded : finiteAffineGradientExcess a j (m : ℤ) u ≤
-          ENNReal.ofReal (Cdec * Real.rpow 3
-            (-eta * (((m : ℤ) : ℝ) - (j : ℝ)))) *
-            finiteAffineGradientExcess a (m : ℤ) (m : ℤ) u := by
-        simpa only [Int.cast_sub] using hrate u
-      have hreal := excess_toReal_le_of_rate_fixed a u _
-        (mul_nonneg hCdec.le (Real.rpow_nonneg (by norm_num) _)) hrateExpanded
-      exact hreal.trans (mul_le_mul_of_nonneg_right
-        (mul_le_mul_of_nonneg_right hCdecA
-          (Real.rpow_nonneg (by norm_num) _)) hEm)
-    have hEj1 : (finiteAffineGradientExcess a (j + 1) (m : ℤ) u).toReal ≤
-        3 * A * Real.rpow 3
-          (-eta * (((m : ℤ) : ℝ) - (j : ℝ))) * Em := by
-      have hnj : (n : ℤ) ≤ j := (Finset.mem_Ico.mp hj).1
-      have hnj1 : (n : ℤ) ≤ j + 1 := by omega
-      by_cases hj1mEq : j + 1 = (m : ℤ)
-      · rw [hj1mEq]
-        have hgap : (((m : ℤ) : ℝ) - (j : ℝ)) = 1 := by
-          have hjcast : (j : ℝ) + 1 = ((m : ℤ) : ℝ) := by
-            exact_mod_cast hj1mEq
-          linarith only [hjcast]
-        rw [hgap, mul_one]
-        have hthreeRate : 1 ≤ 3 * Real.rpow 3 (-eta) := by
-          calc
-            1 = Real.rpow 3 0 := by norm_num
-            _ ≤ Real.rpow 3 (1 - eta) :=
-              Real.rpow_le_rpow_of_exponent_le (by norm_num) (by
-                linarith only [heta1])
-            _ = Real.rpow 3 1 * Real.rpow 3 (-eta) := by
-              rw [show 1 - eta = 1 + (-eta) by ring]
-              exact Real.rpow_add (by norm_num : (0 : ℝ) < 3) _ _
-            _ = 3 * Real.rpow 3 (-eta) := by norm_num
-        calc
-          Em ≤ A * Em := le_mul_of_one_le_left hEm (le_max_left _ _)
-          _ ≤ 3 * A * Real.rpow 3 (-eta) * Em := by
-            calc
-              A * Em = 1 * (A * Em) := by ring
-              _ ≤ (3 * Real.rpow 3 (-eta)) * (A * Em) :=
-                mul_le_mul_of_nonneg_right hthreeRate (mul_nonneg hA0 hEm)
-              _ = _ := by ring
-      · have hj1mLt : j + 1 < (m : ℤ) := lt_of_le_of_ne hjm hj1mEq
-        have hgoodJ1 := (hgood.mono_start hnj1).goodMaxOnInterval hj1mLt.le
-        obtain ⟨_Q, _hQ, hrate⟩ := hdecay a delta (j + 1) (m : ℤ)
-          hj1mLt hdeltaDec hgoodJ1
-        have hrateExpanded :
-            finiteAffineGradientExcess a (j + 1) (m : ℤ) u ≤
-              ENNReal.ofReal (Cdec * Real.rpow 3
-                (-eta * (((m : ℤ) : ℝ) - (((j + 1 : ℤ) : ℝ))))) *
-                finiteAffineGradientExcess a (m : ℤ) (m : ℤ) u := by
-          simpa only [Int.cast_sub] using hrate u
-        have hreal := excess_toReal_le_of_rate_fixed a u _
-          (mul_nonneg hCdec.le (Real.rpow_nonneg (by norm_num) _)) hrateExpanded
-        change (finiteAffineGradientExcess a (j + 1) (m : ℤ) u).toReal ≤
-          Cdec * Real.rpow 3
-            (-eta * (((m : ℤ) : ℝ) - (((j + 1 : ℤ) : ℝ)))) * Em at hreal
-        have hfactor : Real.rpow 3
-            (-eta * (((m : ℤ) : ℝ) - (((j + 1 : ℤ) : ℝ)))) =
-            Real.rpow 3 eta * Real.rpow 3
-              (-eta * (((m : ℤ) : ℝ) - (j : ℝ))) := by
-          calc
-            _ = Real.rpow 3
-                (eta + (-eta * (((m : ℤ) : ℝ) - (j : ℝ)))) := by
-              congr 1
-              push_cast
-              ring
-            _ = _ := Real.rpow_add (by norm_num : (0 : ℝ) < 3) _ _
-        rw [hfactor] at hreal
-        have heta3 := rpow_eta_le_three heta1
-        calc
-          _ ≤ Cdec * (Real.rpow 3 eta *
-                Real.rpow 3 (-eta * (((m : ℤ) : ℝ) - (j : ℝ)))) * Em := hreal
-          _ = (Cdec * Real.rpow 3 eta) *
-                Real.rpow 3 (-eta * (((m : ℤ) : ℝ) - (j : ℝ))) * Em := by ring
-          _ ≤ (A * 3) *
-                Real.rpow 3 (-eta * (((m : ℤ) : ℝ) - (j : ℝ))) * Em := by
-            exact mul_le_mul_of_nonneg_right
-              (mul_le_mul_of_nonneg_right
-                (mul_le_mul hCdecA heta3
-                  (Real.rpow_nonneg (by norm_num) _) hA0)
-                (Real.rpow_nonneg (by norm_num) _)) hEm
-          _ = A * (3 *
-                Real.rpow 3 (-eta * (((m : ℤ) : ℝ) - (j : ℝ)))) * Em := by ring
-          _ = _ := by ring
-    have hsum : (finiteAffineGradientExcess a j (m : ℤ) u).toReal +
-          D * (finiteAffineGradientExcess a (j + 1) (m : ℤ) u).toReal ≤
-        A * (1 + 3 * D) *
-          Real.rpow 3 (-eta * (((m : ℤ) : ℝ) - (j : ℝ))) * Em := by
-      have hD : 0 ≤ D := by dsimp only [D]; positivity
-      calc
-        _ ≤ A * Real.rpow 3
-              (-eta * (((m : ℤ) : ℝ) - (j : ℝ))) * Em +
-            D * (3 * A * Real.rpow 3
-              (-eta * (((m : ℤ) : ℝ) - (j : ℝ))) * Em) :=
-          add_le_add hEj (mul_le_mul_of_nonneg_left hEj1 hD)
-        _ = _ := by ring
-    have hnegSlope : b (j + 1) - b j = -(b j - b (j + 1)) := by abel
-    calc
-      _ = Real.sqrt (normalizedLocalSymmetricEnergy hEll
-          (T (b j - b (j + 1)))) := by
-            rw [hnegSlope, map_neg]
-            erw [sqrt_normalizedLocalSymmetricEnergy_neg_increment]
-      _ = finiteCenteredCubeSolutionEnergy a (m : ℤ)
-          (finiteAffineCubeSolution a (m : ℤ) (b j - b (j + 1)))
-            (q : ℤ) := finiteTrialGradientLinearMap_energy a hqm _
-      _ ≤ Cgrow ^ 2 * Real.rpow 3
-          ((((q : ℤ) : ℝ) - (j : ℝ)) / 4) *
-          ((finiteAffineGradientExcess a j (m : ℤ) u).toReal +
-            D * (finiteAffineGradientExcess a (j + 1) (m : ℤ) u).toReal) := by
-        simpa only [D] using henergy
-      _ ≤ Cgrow ^ 2 * Real.rpow 3
-          ((((q : ℤ) : ℝ) - (j : ℝ)) / 4) *
-          (A * (1 + 3 * D) *
-            Real.rpow 3 (-eta * (((m : ℤ) : ℝ) - (j : ℝ))) * Em) :=
-        mul_le_mul_of_nonneg_left hsum
-          (mul_nonneg (sq_nonneg Cgrow) (Real.rpow_nonneg (by norm_num) _))
-      _ = B * Real.rpow 3 ((((q : ℤ) : ℝ) - (j : ℝ)) / 4) *
-          Real.rpow 3 (-eta * (((m : ℤ) : ℝ) - (j : ℝ))) * Em := by
-        dsimp only [B]
-        ring
+          Real.rpow 3 (-eta * (((m : ℤ) : ℝ) - (j : ℝ))) * Em :=
+    finite_trial_minimizer_increment_real_decay s eta cgrow Cgrow cdec Cdec _Cfamily
+      heta1 hCdec hgrowth hdecay a hnm2 hqm hgood hdeltaDec u b hb_at hdeltaGrow
   have hfixed := sqrt_normalizedEnergy_fixed_realRateDecay_of_incrementRows
     hEll hvol hvoltop T J b
     (show (n : ℤ) ≤ (q : ℤ) by exact_mod_cast hnq)

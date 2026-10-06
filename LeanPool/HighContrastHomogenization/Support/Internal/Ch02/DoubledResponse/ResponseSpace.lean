@@ -339,7 +339,7 @@ theorem blockResponseSpace_of_isDoubledResponseField_of_isEllipticFieldOn {d : �
         blockMatrixOfCoeff, blockVecDot, vecDot_zero_left]
     simpa [hrewrite] using hzero
   have hLowerPot : IsPotentialOn (U : Set (Vec d)) lower :=
-    IsPotentialOn.of_orthogonal_to_solenoidalZeroNormalTrace_of_memVectorL2_of_hodgeConverseCriterion
+    IsPotentialOn.potential_of_orthogonalL2
       (hodgeConverseCriterion_of_isOpenBoundedConvexDomain
         (U := (U : Set (Vec d))) U.isDomain)
       hLowerL2 hLowerOrth
@@ -468,7 +468,7 @@ theorem response_space_by_solutions_of_isEllipticFieldOn {d : ℕ}
           (a := a.toCoeffField) (X := blockStateOfDoubled X)
           hX.1.1.1 hX.1.2.1 hEll
     rcases
-      exists_blockResponsePairHalfState_ae_eq_of_mem_responseSpace_of_lowerImage_memVectorL2_of_isEllipticFieldOn_of_isOpenBoundedConvexDomain
+      exists_blockResponseHalfState_ae_eq_of_lowerImage_memVectorL2
         (a := a.toCoeffField) U.isDomain hOld hLowerL2 hEll
         with ⟨u, vStarOld, hhalf⟩
     let vStar : Solution U a.transpose := by

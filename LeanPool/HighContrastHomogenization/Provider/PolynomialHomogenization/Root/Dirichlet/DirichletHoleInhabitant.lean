@@ -80,6 +80,20 @@ open scoped ENNReal Matrix Matrix.Norms.L2Operator
 
 noncomputable section
 
+private theorem frozenWitnessHeadConstant_nonnegative
+    {d : ℕ} [NeZero d] {g kappa s₀ rho Rad cnorm Cdual hardy energy : ℝ}
+    (abar : Mat d) (hs0 : 0 < s₀) (hCdual0 : 0 ≤ Cdual) (hhardy : 0 ≤ hardy) :
+    0 ≤ frozenWitnessHeadConstant d g kappa s₀ rho Rad cnorm Cdual hardy
+      energy abar := by
+  rw [frozenWitnessHeadConstant]
+  exact mul_nonneg
+    (mul_nonneg (mul_nonneg (gaugeOutputLawFree_nonneg d s₀ rho)
+      (eccentricityFoldFactor_pos abar _).le) hCdual0)
+    (mul_nonneg (by norm_num) (mul_nonneg hhardy
+      (mul_nonneg (mul_nonneg (mul_nonneg
+        (fluxC0Factor_nonneg d hs0 Rad _) (fluxLgFactor_nonneg d g kappa))
+        (Real.sqrt_nonneg _)) (Real.sqrt_nonneg _))))
+
 /-- **The restated internal Dirichlet clause is inhabited.** -/
 theorem dirichletHole_inhabited (d : ℕ) [NeZero d] :
     DirichletHole d (RootInterface.RootGoodScale d) := by
@@ -240,15 +254,8 @@ theorem dirichletHole_inhabited (d : ℕ) [NeZero d] :
             witnessAmplitudeLgFactor d g kappa) *
         (max 1 (witnessEccentricity (symmPart abar))) ^
           ((d : ℝ) + 2 * s₀ +
-            2 * witnessErrorEccentricityExponent g kappa)) abar := by
-    rw [frozenWitnessHeadConstant]
-    exact mul_nonneg
-      (mul_nonneg (mul_nonneg (gaugeOutputLawFree_nonneg d s₀ rho)
-        (eccentricityFoldFactor_pos abar _).le) hCdual0)
-      (mul_nonneg (by norm_num) (mul_nonneg ENNReal.toReal_nonneg
-        (mul_nonneg (mul_nonneg (mul_nonneg
-          (fluxC0Factor_nonneg d hs0 Rad _) (fluxLgFactor_nonneg d g kappa))
-          (Real.sqrt_nonneg _)) (Real.sqrt_nonneg _))))
+            2 * witnessErrorEccentricityExponent g kappa)) abar :=
+    frozenWitnessHeadConstant_nonnegative abar hs0 hCdual0 ENNReal.toReal_nonneg
   -- the frozen conclusion at the capstone's shape
   have hterm := hgood.explicit_foldedFrozenFrameDirichletBound_of_energy hS hg
     hkappa hx hepsilon hscale' hd1 rfl hUconv.isOpen.measurableSet

@@ -224,7 +224,8 @@ private theorem bridge_source_series {d : ℕ} {ι : Type*} [Countable ι]
     rw [norm_smul, Real.norm_eq_abs, abs_of_nonneg (hw0 i)]
     calc
       _ ≤ w i * (c * X a * b i * blockTrace E) :=
-        mul_le_mul_of_nonneg_left (Source.blockOpNorm_le_scale_trace (hAs i a) (hAp i a) (ha i)) (hw0 i)
+        mul_le_mul_of_nonneg_left (Source.blockOpNorm_le_scale_trace (hAs i a) (hAp i a) (ha i))
+          (hw0 i)
       _ = D i * X a := by dsimp only [D]; ring
   have hmem := (Source.lqSchatten_tsum_convergence P N hN F hFm hFs
     D hD0 hD X hX0 hX hFn).1

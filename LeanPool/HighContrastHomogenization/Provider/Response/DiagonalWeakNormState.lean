@@ -178,7 +178,7 @@ theorem diagonalWeakState_eq (hq : q.PosDef) (t : ℤ) (a : CoeffSpace d)
           ((diagonalWeakOptimizer hq t a p r).toH1.grad x)) := rfl
 
 /-- The normalized optimizer energy
-`ℰ_t = ‖symm(a)¹⁄² ∇v_t‖_{L̲²(U_t)}`. -/
+`ℰ_t = ‖symm(a)¹⁄² ∇v_t‖_{L_underlined²(U_t)}`. -/
 @[expose]
 def diagonalWeakEnergy (hq : q.PosDef) (t : ℤ) (a : CoeffSpace d)
     (p r : Vec d) : ℝ :=

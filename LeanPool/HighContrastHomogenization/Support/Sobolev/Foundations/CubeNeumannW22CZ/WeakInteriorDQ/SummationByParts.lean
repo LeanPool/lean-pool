@@ -36,10 +36,10 @@ an `H¹` representative rather than a smooth compactly supported function.
 integrability hypotheses.
 
 This is the weak-solution version of
-`integral_euclideanForwardDifferenceQuotient_mul_eq_neg_integral_mul_euclideanBackwardDifferenceQuotient`:
+`integral_forwardDifference_mul_eq_neg_integral_mul_backwardDifference`:
 the left factor need not be smooth or compactly supported. -/
 theorem
-  integral_euclideanForwardDifferenceQuotient_mul_eq_neg_integral_mul_euclideanBackwardDifferenceQuotient_of_integrable
+  integral_forwardDifference_mul_eq_neg_integral_mul_of_integrable
     {d : ℕ} {u v : Vec d → ℝ} (h : ℝ) (i : Fin d)
     (hshiftInt :
       MeasureTheory.Integrable

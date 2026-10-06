@@ -504,7 +504,7 @@ using the standard beta-dependent radius iteration.
 This is the repaired arbitrary-center boundary endpoint: the deterministic
 bridge is all-radii, and the note constant is the standard split one. -/
 theorem
-    coarseCaccioppoli_boundary_qone_standard_note_of_closedCubeEllipticity_of_localPatchBuffered_constantFamily_of_localizedZeroTraceOnLocalOpenCube_explicitBudgetSplit
+    coarseCaccioppoli_boundary_qone_standard_note_of_of_closedCubeEllipticity
     {d : ℕ} [NeZero d] (Q : TriadicCube d) (center : Vec d) (a : CoeffField d)
     (s t : ℝ) {lam Lam : ℝ}
     (u : AHarmonicFunction a (openCubeSet Q))
@@ -534,9 +534,11 @@ theorem
     ⟨hCsol_le, hClocal, hCalpha, hCcross, hwork_constant_cross,
       hwork_centered_fronts_alpha, hlarge⟩
   let hrawcoeff :
-      CoarseCaccioppoliBoundaryCanonicalHarmonicVectorFaithfulWorkSmallCubeLocalPatchBufferedExactRawCoefficientBoundsSplitAllRadii
+      BoundaryCaccioppoliHarmonicVectorSmallCubeCoefficientSplit_localPatch_allRadii
         Q center a s t Clocal Calpha Ccross :=
-    CoarseCaccioppoliBoundaryCanonicalHarmonicVectorFaithfulWorkSmallCubeLocalPatchBufferedExactRawCoefficientBoundsSplitAllRadii.of_closedCubeEllipticity_of_localPatchBufferedCutoffRadiusConst_of_centeredFronts
+    (open BoundaryCaccioppoliHarmonicVectorSmallCubeCoefficientSplit_localPatch_allRadii
+      (of_closedCubeEllipticity_of_localPatchBufferedCutoffRadiusConst_of_centeredFronts) in
+      of_closedCubeEllipticity_of_localPatchBufferedCutoffRadiusConst_of_centeredFronts)
       (Q := Q) (center := center) (a := a) (s := s) (t := t)
       (Clocal := Clocal) (Calpha := Calpha) (Ccross := Ccross)
       hClocal hCalpha.le hwork_constant_cross hwork_centered_fronts_alpha
@@ -562,7 +564,7 @@ theorem
           hs ht hEllCube)
   · dsimp [Cnote]
     exact
-      coarseCaccioppoli_boundary_localPatch_qone_standard_le_noteRhs_explicitSplit_of_constantFamily_localPatchBufferedFaithfulWorkSmallCubeExactRawCoefficientBoundsSplitAllRadii_of_localizedZeroTraceOnLocalOpenCube
+      coarseCaccioppoli_boundary_local_qone_standard_le_noteRhs_explicitSplit
         (Q := Q) (center := center) (a := a) (s := s) (t := t)
         (Clocal := Clocal) (Calpha := Calpha) (Ccross := Ccross) (u0 := u)
         hzero hClocal hCalpha hCcross hCsol_le hs ht hst hEllCube hrawcoeff
@@ -573,7 +575,7 @@ beta-dependent radius iteration.
 This is the `m = 0` centered note-RHS endpoint with all all-radii coefficient
 and raw-bridge inputs constructed internally. -/
 theorem
-    coarseCaccioppoli_boundary_qone_standard_note_of_closedCubeEllipticity_of_buffered_constantFamily_explicitBudgetSplit
+    coarseCaccioppoli_boundary_qone_standard_note_of_closedCubeEllipticity
     {d : ℕ} [NeZero d] (Q : TriadicCube d) (a : CoeffField d)
     (s t : ℝ) {lam Lam : ℝ}
     (u : AHarmonicFunction a (openCubeSet Q))
@@ -600,9 +602,9 @@ theorem
     ⟨hCsol_le, hClocal, hCalpha, hCcross, hwork_constant_cross,
       hwork_centered_fronts_alpha, hlarge⟩
   let hrawcoeff :
-      CoarseCaccioppoliBoundaryCanonicalHarmonicVectorFaithfulWorkSmallCubeBufferedExactRawCoefficientBoundsSplitAllRadii
+      BoundaryCaccioppoliHarmonicVectorSmallCubeCoefficientSplit_allRadii
         Q a s t Clocal Calpha Ccross :=
-    CoarseCaccioppoliBoundaryCanonicalHarmonicVectorFaithfulWorkSmallCubeBufferedExactRawCoefficientBoundsSplitAllRadii.of_closedCubeEllipticity_of_bufferedCutoffRadiusConst_of_centeredFronts
+    BoundaryCaccioppoliHarmonicVectorSmallCubeCoefficientSplit_allRadii.of_centeredFronts
       (Q := Q) (a := a) (s := s) (t := t) (Clocal := Clocal)
       (Calpha := Calpha) (Ccross := Ccross)
       hClocal hCalpha.le hCcross hwork_constant_cross hwork_centered_fronts_alpha
@@ -611,7 +613,9 @@ theorem
       CoarseCaccioppoliBoundaryCanonicalHarmonicVectorNoteRawBridgeSplitAllRadii
         Q a s t Calpha Ccross (coarseCaccioppoliHarmonicL2Sq Q a u)
         (fun x => scalarVariationEnergyIntegrand a u x) :=
-    CoarseCaccioppoliBoundaryCanonicalHarmonicVectorNoteRawBridgeSplitAllRadii.of_constantFamily_bufferedFaithfulWorkSmallCubeExactRawCoefficientBoundsSplitAllRadii_of_closedCubeEllipticity
+    (open CoarseCaccioppoliBoundaryCanonicalHarmonicVectorNoteRawBridgeSplitAllRadii
+      (of_constantFamily_bufferedSmallCubeCoefficientBoundsSplitAllRadii) in
+      of_constantFamily_bufferedSmallCubeCoefficientBoundsSplitAllRadii)
       (Q := Q) (a := a) (s := s) (t := t) (Clocal := Clocal)
       (Calpha := Calpha) (Ccross := Ccross) (u0 := u)
       hClocal hCalpha.le hCcross hCsol_le hs ht hst hEllCube hrawcoeff
@@ -636,7 +640,7 @@ theorem
           hs ht hEllCube)
   · dsimp [Cnote]
     exact
-      coarseCaccioppoli_boundary_qone_standard_le_noteRhs_explicitSplit_of_profileInputs_of_noteRawBridgeSplitAllRadii
+      coarseCaccioppoli_boundary_qone_standard_le_noteRhs_explicitSplit
         (Q := Q) (a := a) (s := s) (t := t) (Calpha := Calpha)
         (Ccross := Ccross) (uL2Sq := coarseCaccioppoliHarmonicL2Sq Q a u)
         (baseEnergy := fun x => scalarVariationEnergyIntegrand a u x)
@@ -650,7 +654,7 @@ theorem
 /-- Interior centered Caccioppoli with explicit split budgets and the standard
 beta-dependent radius iteration. -/
 theorem
-    coarseCaccioppoli_interior_qone_standard_note_of_closedCubeEllipticity_of_buffered_constantFamily_explicitBudgetSplit
+    coarseCaccioppoli_interior_qone_standard_note_of_closedCubeEllipticity
     {d : ℕ} [NeZero d] (Q : TriadicCube d) (a : CoeffField d)
     (s t : ℝ) {lam Lam : ℝ}
     (u : AHarmonicFunction a (openCubeSet Q))
@@ -677,9 +681,9 @@ theorem
     ⟨hCsol_le, hClocal, hCalpha, hCcross, hwork_constant_cross,
       hwork_centered_fronts_alpha, hlarge⟩
   let hrawcoeff :
-      CoarseCaccioppoliBoundaryCanonicalHarmonicVectorFaithfulWorkSmallCubeBufferedExactRawCoefficientBoundsSplitAllRadii
+      BoundaryCaccioppoliHarmonicVectorSmallCubeCoefficientSplit_allRadii
         Q a s t Clocal Calpha Ccross :=
-    CoarseCaccioppoliBoundaryCanonicalHarmonicVectorFaithfulWorkSmallCubeBufferedExactRawCoefficientBoundsSplitAllRadii.of_closedCubeEllipticity_of_bufferedCutoffRadiusConst_of_centeredFronts
+    BoundaryCaccioppoliHarmonicVectorSmallCubeCoefficientSplit_allRadii.of_centeredFronts
       (Q := Q) (a := a) (s := s) (t := t) (Clocal := Clocal)
       (Calpha := Calpha) (Ccross := Ccross)
       hClocal hCalpha.le hCcross hwork_constant_cross hwork_centered_fronts_alpha
@@ -688,7 +692,9 @@ theorem
       CoarseCaccioppoliBoundaryCanonicalHarmonicVectorNoteRawBridgeSplitAllRadii
         Q a s t Calpha Ccross (coarseCaccioppoliHarmonicL2Sq Q a u)
         (fun x => scalarVariationEnergyIntegrand a u x) :=
-    CoarseCaccioppoliBoundaryCanonicalHarmonicVectorNoteRawBridgeSplitAllRadii.of_constantFamily_bufferedFaithfulWorkSmallCubeExactRawCoefficientBoundsSplitAllRadii_of_closedCubeEllipticity
+    (open CoarseCaccioppoliBoundaryCanonicalHarmonicVectorNoteRawBridgeSplitAllRadii
+      (of_constantFamily_bufferedSmallCubeCoefficientBoundsSplitAllRadii) in
+      of_constantFamily_bufferedSmallCubeCoefficientBoundsSplitAllRadii)
       (Q := Q) (a := a) (s := s) (t := t) (Clocal := Clocal)
       (Calpha := Calpha) (Ccross := Ccross) (u0 := u)
       hClocal hCalpha.le hCcross hCsol_le hs ht hst hEllCube hrawcoeff
@@ -719,7 +725,7 @@ theorem
           hs ht hEllCube)
   · dsimp [Cnote]
     exact
-      coarseCaccioppoli_interior_qone_standard_le_noteRhs_explicitSplit_of_profileInputs_of_noteRawBridgeSplitAllRadii
+      coarseCaccioppoli_interior_qone_standard_le_noteRhs_explicitSplit
         (Q := Q) (a := a) (s := s) (t := t) (Calpha := Calpha)
         (Ccross := Ccross) (uL2Sq := coarseCaccioppoliHarmonicL2Sq Q a u)
         (baseEnergy := fun x => scalarVariationEnergyIntegrand a u x)

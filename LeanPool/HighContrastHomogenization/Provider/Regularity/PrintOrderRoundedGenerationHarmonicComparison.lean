@@ -772,7 +772,7 @@ private theorem cubeBesovNegativeVectorSeminormTwo_le_responseError
         geometricWeight_nonneg n (by nlinarith only [hs.le])
     · exact Real.rpow_nonneg
         (Book.Ch02.scaleResponseAtScale_infinity_nonneg Q
-          (sub_le_self _ (by exact_mod_cast Nat.zero_le n)) a a0) _
+          (sub_le_self _ (Nat.cast_nonneg n)) a a0) _
   have hsum : Summable coeff := by
     simpa only [coeff] using
       Book.Ch02.summable_geometricWeight_two_mul_maxDescendantNormalizedBlockResponseAtScale
@@ -784,7 +784,7 @@ private theorem cubeBesovNegativeVectorSeminormTwo_le_responseError
       (by simpa only [Book.Ch02.geometricWeight_eq_old] using
         geometricWeight_nonneg n (by nlinarith only [hs.le]))
       (Book.Ch02.maxDescendantNormalizedBlockResponseAtScale_nonneg Q
-        (sub_le_self _ (by exact_mod_cast Nat.zero_le n)) a a0)
+        (sub_le_self _ (Nat.cast_nonneg n)) a a0)
   let B : ℝ :=
     Real.rpow (Book.Ch02.geometricDiscount s 2) (-1 / 2 : ℝ) *
       Real.sqrt ((4 : ℝ) * matNorm a0) *
@@ -919,7 +919,8 @@ private theorem
     Book.Ch02.HomogenizationErrorOnCube (originCube d m) s .infinity
         (.finite 2) aRounded (geom.referenceMatrix abar hS) =
       geom.spatialWeakError a abar hS s m := by
-  unfold Book.Ch02.HomogenizationErrorOnCube Book.Ch02.HomogenizationError Book.Ch02.HomogenizationErrorFinite
+  unfold Book.Ch02.HomogenizationErrorOnCube Book.Ch02.HomogenizationError
+    Book.Ch02.HomogenizationErrorFinite
     RoundedGenerationAnalyticGeometry.spatialWeakError
     roundedGenerationSpatialWeakError
   rw [Real.sqrt_eq_rpow]
@@ -1070,7 +1071,7 @@ private theorem
     cubeScaleNormalizedDualNegativeBesovVectorNormTwo Q s w ≤
         cubeBesovScaleWeight s Q *
           ((Fintype.card (Fin d) : ℝ) * ((100 / 99 : ℝ) * D)) :=
-      cubeScaleNormalizedDualNegativeBesovVectorNormTwo_le_card_mul_of_forall_component_fullTest_pairing_le
+      cubeScaleNormalizedDualNegativeBesovVectorNormTwo_le_card_mul
         Q s w hcomponent
     _ = (d : ℝ) * (100 / 99 : ℝ) *
         cubeScaleNormalizedDualNegativeBesovVectorNormTwo Q s G := by
@@ -1152,6 +1153,149 @@ private theorem
   intro i _hi
   exact Book.Ch03.cubeBesovDualFullNorm_eq_of_ae_eq_on_cubeSet
     s (2 : ℝ≥0∞) (2 : ℝ≥0∞) (hFG.fun_comp fun z ↦ z i)
+private theorem zeroTraceDifference_childDistance_le_dualGradient
+    {d : ℕ} [NeZero d] (m : ℤ) (s : ℝ) (hs : 0 < s) (hs_lt : s < 1 / 2)
+    (u v : H1Function (Book.Ch02.cubeDomain (originCube d m) : Set (Vec d)))
+    (w : H10Function (Book.Ch02.cubeDomain (originCube d m) : Set (Vec d)))
+    (hw : w.toH1Function.toFun =ᵐ[volumeMeasureOn
+      (Book.Ch02.cubeDomain (originCube d m) : Set (Vec d))]
+      fun x ↦ u.toFun x - v.toFun x) :
+    cubeBesovScaleWeight 1 (originCube d m) *
+      cubeLpNorm (originCube d (m - 1)) 2 (fun x ↦ u.toFun x - v.toFun x) ≤
+      (((3 ^ d : ℕ) : ℝ) *
+        ((((d : ℝ) * Legacy.cubeNeumannW22CalderonZygmundConstant d *
+            (3 : ℝ) ^ ((d : ℝ) + 1) * (d : ℝ)) +
+          2 * (3 : ℝ) ^ ((d : ℝ) + 1)) *
+          Real.sqrt ((1 - Real.rpow 3 (-2 * ((1 / 2 : ℝ) - s)))⁻¹)) *
+        besovExponentLossGap (2 * s) s) *
+      cubeScaleNormalizedDualNegativeBesovVectorNormTwo (originCube d m) s
+        (fun x ↦ u.grad x - v.grad x) := by
+  let Q := originCube d m
+  let wdiff : Vec d → Vec d := fun x ↦ u.grad x - v.grad x
+  let Kg : ℝ := besovExponentLossGap (2 * s) s
+  let Kp : ℝ :=
+    ((((d : ℝ) * Legacy.cubeNeumannW22CalderonZygmundConstant d *
+          (3 : ℝ) ^ ((d : ℝ) + 1) * (d : ℝ)) +
+        2 * (3 : ℝ) ^ ((d : ℝ) + 1)) *
+      Real.sqrt ((1 - Real.rpow 3 (-2 * ((1 / 2 : ℝ) - s)))⁻¹))
+  let Kc : ℝ := ((3 ^ d : ℕ) : ℝ)
+  let wCube := Book.Ch03.publicH10ToCubeSet w
+  have hwCube : w.toH1Function.toFun =ᵐ[volumeMeasureOn (cubeSet Q)]
+      fun x ↦ u.toFun x - v.toFun x := by
+    simpa [Q, volumeMeasureOn, Book.Ch02.cubeDomain_coe,
+      volume_restrict_cubeSet_eq_volume_restrict_openCubeSet] using hw
+  have hgradCube : wCube.toH1Function.grad =ᵐ[volumeMeasureOn (cubeSet Q)] wdiff := by
+    have hgrad := Book.Ch03.H1Function.grad_ae_eq_of_toFun_ae_eq
+      (Book.Ch02.cubeDomain Q).isOpen
+      (u := w.toH1Function) (v := u - v) (by
+        simpa only [H1Function.sub_toFun] using hw)
+    rw [H1Function.sub_grad] at hgrad
+    simp only [wCube, wdiff, volumeMeasureOn,
+      volume_restrict_cubeSet_eq_volume_restrict_openCubeSet,
+      Book.Ch03.publicH10ToCubeSet_toH1Function_grad]
+    exact hgrad
+  have hdualGrad : cubeScaleNormalizedDualNegativeBesovVectorNormTwo Q s
+      wCube.toH1Function.grad =
+      cubeScaleNormalizedDualNegativeBesovVectorNormTwo Q s wdiff :=
+    cubeScaleNormalizedDualNegativeBesovVectorNormTwo_eq_of_ae_eq_on_cubeSet
+      s hgradCube
+  have hgap : 0 ≤ Kg := by
+    exact besovExponentLossGap_nonneg hs (by nlinarith only [hs])
+  have hneg := (concreteNegativeFromDualExponentLoss_geometric d).2 Q
+    wCube.toH1Function.grad (s := 2 * s) (t := s) hs
+    (by nlinarith only [hs]) (by nlinarith only [hs_lt])
+    wCube.toH1Function.grad_memVectorL2
+  have hKp : 0 ≤ Kp := by
+    exact mul_nonneg
+      (add_nonneg
+        (mul_nonneg (mul_nonneg (mul_nonneg (Nat.cast_nonneg d)
+          (Legacy.cubeNeumannW22CalderonZygmundConstant_nonneg d))
+          (Real.rpow_nonneg (by norm_num) _)) (Nat.cast_nonneg d))
+        (mul_nonneg (by norm_num) (Real.rpow_nonneg (by norm_num) _)))
+      (Real.sqrt_nonneg _)
+  have hpoincare :=
+    Book.Ch03.cubeBesovScaleWeight_one_mul_cubeLpNorm_h10_le_grad_negativeBesovTwo
+      Q wCube hs hs_lt
+  have hparent : cubeBesovScaleWeight (1 : ℝ) Q *
+      cubeLpNorm Q (2 : ℝ≥0∞) (fun x ↦ w.toH1Function.toFun x) ≤
+      Kp * Kg * cubeScaleNormalizedDualNegativeBesovVectorNormTwo Q s wdiff := by
+    calc
+      _ ≤ Kp * cubeBesovNegativeVectorSeminormTwo Q (2 * s)
+          wCube.toH1Function.grad := by
+            simpa only [Kp, wCube,
+              Book.Ch03.publicH10ToCubeSet_toH1Function_toFun] using hpoincare
+      _ ≤ Kp * (1 * Kg * cubeScaleNormalizedDualNegativeBesovVectorNormTwo Q s
+          wCube.toH1Function.grad) := mul_le_mul_of_nonneg_left hneg hKp
+      _ = Kp * Kg * cubeScaleNormalizedDualNegativeBesovVectorNormTwo Q s wdiff := by
+        rw [hdualGrad]
+        ring
+  have hchild : cubeLpNorm (originCube d (m - 1)) (2 : ℝ≥0∞)
+      (fun x ↦ u.toFun x - v.toFun x) ≤
+      Kc * cubeLpNorm Q (2 : ℝ≥0∞) (fun x ↦ w.toH1Function.toFun x) := by
+    have hdesc : originCube d (m - 1) ∈ descendantsAtDepth Q 1 := by
+      simpa only [Q, centralDescendant_originCube_eq_originCube_sub] using!
+        CubeCalderonZygmund.centralDescendant_mem_descendantsAtDepth Q 1
+    rw [← cubeLpNorm_eq_of_ae_eq_on_parent_cube hdesc hwCube]
+    simpa only [Kc, Q] using cubeLpNorm_originCube_pred_le_card_mul_printOrder m
+      (fun x ↦ w.toH1Function.toFun x)
+      (by simpa only [wCube,
+          Book.Ch03.publicH10ToCubeSet_toH1Function_toFun,
+          H10Function.toOpenCubeSet_toH1Function_toFun] using
+        wCube.toOpenCubeSet.toH1Function.memL2_normalizedCubeMeasure)
+  have hl20 : cubeBesovScaleWeight (1 : ℝ) Q *
+      cubeLpNorm (originCube d (m - 1)) (2 : ℝ≥0∞)
+        (fun x ↦ u.toFun x - v.toFun x) ≤ Kc * Kp * Kg *
+        cubeScaleNormalizedDualNegativeBesovVectorNormTwo Q s wdiff := by
+    calc
+      _ ≤ cubeBesovScaleWeight (1 : ℝ) Q *
+          (Kc * cubeLpNorm Q (2 : ℝ≥0∞)
+            (fun x ↦ w.toH1Function.toFun x)) :=
+        mul_le_mul_of_nonneg_left hchild (cubeBesovScaleWeight_nonneg 1 Q)
+      _ = Kc * (cubeBesovScaleWeight (1 : ℝ) Q *
+          cubeLpNorm Q (2 : ℝ≥0∞) (fun x ↦ w.toH1Function.toFun x)) := by ring
+      _ ≤ Kc * (Kp * Kg * cubeScaleNormalizedDualNegativeBesovVectorNormTwo
+          Q s wdiff) := mul_le_mul_of_nonneg_left hparent (by positivity)
+      _ = Kc * Kp * Kg * cubeScaleNormalizedDualNegativeBesovVectorNormTwo
+          Q s wdiff := by ring
+  exact hl20
+
+private theorem responseSeminorm_le_matrixBudget
+    {d : ℕ} (Q : TriadicCube d) (s : ℝ) (hs : 0 < s) (F : Vec d → Vec d)
+    (matrix : Mat d) (budget error energy : ℝ)
+    (hmatrix : matNorm matrix ≤ budget) (herror : 0 ≤ error) (henergy : 0 ≤ energy)
+    (hresponse : cubeBesovNegativeVectorSeminormTwo Q s F ≤
+      Real.rpow (Book.Ch02.geometricDiscount s 2) (-1 / 2 : ℝ) *
+        Real.sqrt (4 * matNorm matrix) * error * energy) :
+    cubeBesovNegativeVectorSeminormTwo Q s F ≤
+      (Real.rpow (Book.Ch02.geometricDiscount s 2) (-1 / 2 : ℝ) *
+        Real.sqrt (4 * budget)) * error * energy := by
+  have hsqrt : Real.sqrt (4 * matNorm matrix) ≤ Real.sqrt (4 * budget) :=
+    Real.sqrt_le_sqrt (mul_le_mul_of_nonneg_left hmatrix (by norm_num))
+  have hdiscount : 0 ≤ Real.rpow (Book.Ch02.geometricDiscount s 2) (-1 / 2 : ℝ) :=
+    Real.rpow_nonneg
+      (Book.Ch02.book_geometricDiscount_pos (by positivity : 0 < s * 2)).le _
+  exact hresponse.trans (mul_le_mul_of_nonneg_right
+    (mul_le_mul_of_nonneg_right
+      (mul_le_mul_of_nonneg_left hsqrt hdiscount) herror) henergy)
+
+private theorem comparisonFlux_ae_eq_referenceGradient_add_defect
+    {d : ℕ} [NeZero d] (Q : TriadicCube d) (aRounded : Book.Ch03.CoeffFamily d)
+    (a0 : Book.Ch03.ConstantCoeffMatrix d)
+    (u v : H1Function (Book.Ch02.cubeDomain Q : Set (Vec d))) :
+    Book.Ch03.homogenizationComparisonFluxField Q aRounded a0 u v
+      =ᵐ[volumeMeasureOn (cubeSet Q)]
+      fun x ↦ matVecMul a0.matrix (u.grad x - v.grad x) +
+        fluxDefect (Book.Ch03.publicCoeffField Q aRounded) a0.matrix u.grad x := by
+  have hbase :=
+    Book.Ch03.homogenizationComparisonFluxField_ae_eq_fluxComparison_publicCoeffField_cubeSet
+      (Q := Q) (a := aRounded) (a0 := a0) u v
+  filter_upwards [hbase] with x hx
+  rw [hx]
+  ext i
+  simp [fluxComparison, fluxDefect, matVecMul, sub_eq_add_neg, mul_add,
+    Finset.sum_add_distrib]
+  ring
+
 /-- The printed finite response recurrence, specialized to the rounded
 harmonic replacement and closed by the genuine-dual comparison. -/
 theorem exists_roundedGenerationHarmonicComparisonSpecializationConstant
@@ -1272,35 +1416,12 @@ theorem exists_roundedGenerationHarmonicComparisonSpecializationConstant
     rw [henergyFun]
   rw [homogenizationErrorOnCube_roundedCenteredCoeffFamily_eq_baseRoundedSpatialWeakError
     a abar hS aRounded hRounded s m, henergyEq] at hrec
-  have hconcrete : cubeBesovNegativeVectorSeminormTwo Q s F ≤ Kr * E * A := by
-    calc
-      cubeBesovNegativeVectorSeminormTwo Q s F ≤
-          Real.rpow (Book.Ch02.geometricDiscount s 2) (-1 / 2 : ℝ) *
-            Real.sqrt ((4 : ℝ) * matNorm A0) * E * A := by
-              simpa only [A0, E] using hrec
-      _ ≤ Kr * E * A := by
-        dsimp only [Kr]
-        have hsqrt : Real.sqrt ((4 : ℝ) * matNorm A0) ≤
-            Real.sqrt ((4 : ℝ) * M) := Real.sqrt_le_sqrt
-          (mul_le_mul_of_nonneg_left
-            (by simpa only [A0, M] using
-              matNorm_referenceMatrix_le_entry_budget abar hS)
-            (by norm_num))
-        rw [show
-          Real.rpow (Book.Ch02.geometricDiscount s 2) (-1 / 2 : ℝ) *
-              Real.sqrt (4 * matNorm A0) * E * A =
-            (Real.rpow (Book.Ch02.geometricDiscount s 2) (-1 / 2 : ℝ) *
-              Real.sqrt (4 * matNorm A0)) * (E * A) by ring,
-          show
-          Real.rpow (Book.Ch02.geometricDiscount s 2) (-1 / 2 : ℝ) *
-              Real.sqrt (4 * M) * E * A =
-            (Real.rpow (Book.Ch02.geometricDiscount s 2) (-1 / 2 : ℝ) *
-              Real.sqrt (4 * M)) * (E * A) by ring]
-        exact mul_le_mul_of_nonneg_right
-          (mul_le_mul_of_nonneg_left hsqrt (Real.rpow_nonneg
-            (Book.Ch02.book_geometricDiscount_pos (by positivity : 0 < s * 2)).le _))
-          (mul_nonneg (geom.spatialWeakError_nonneg a abar hS s m)
-            (by dsimp [A, Book.Ch03.h1EnergyNormOnCube]; exact Real.sqrt_nonneg _))
+  have hconcrete : cubeBesovNegativeVectorSeminormTwo Q s F ≤ Kr * E * A :=
+    responseSeminorm_le_matrixBudget Q s hs F A0 M E A
+      (by simpa only [A0, M] using matNorm_referenceMatrix_le_entry_budget abar hS)
+      (geom.spatialWeakError_nonneg a abar hS s m)
+      (by dsimp [A, Book.Ch03.h1EnergyNormOnCube]; exact Real.sqrt_nonneg _)
+      (by simpa only [A0, E] using hrec)
   have hFmem : MemVectorL2 (cubeSet Q) F := by
     simpa only [Q, F, A0, a0, geom.referenceConstantCoeffMatrix_matrix] using
       Book.Ch03.publicH1_fluxDefect_memVectorL2_descendant_cubeSet
@@ -1310,7 +1431,7 @@ theorem exists_roundedGenerationHarmonicComparisonSpecializationConstant
   have hFdual : cubeScaleNormalizedDualNegativeBesovVectorNormTwo Q s F ≤
       B * E * A := by
     have hraw :=
-      Book.Ch03.scaleNormalizedDualNegativeBesovVectorNormTwo_le_note_constant_mul_cubeBesovNegativeVectorSeminormTwo
+      Book.Ch03.normalizedDualNegativeBesovNormTwo_le_constant_mul_negativeBesovSeminormTwo
         Q s F hs hFmem
     rw [Book.Ch03.scaleNormalizedDualNegativeBesovVectorNormTwo,
       Book.Ch03.publicDualBesovScaleWeight_eq_cubeBesovScaleWeight] at hraw
@@ -1354,18 +1475,8 @@ theorem exists_roundedGenerationHarmonicComparisonSpecializationConstant
       _ = Cg * E * A := by dsimp only [Cg]; ring
   have hfluxAE : Book.Ch03.homogenizationComparisonFluxField Q aRounded a0 u W.v
       =ᵐ[volumeMeasureOn (cubeSet Q)]
-        fun x ↦ matVecMul A0 (wdiff x) + F x := by
-    have hbase :=
-      Book.Ch03.homogenizationComparisonFluxField_ae_eq_fluxComparison_publicCoeffField_cubeSet
-        (Q := Q) (a := aRounded) (a0 := a0) u W.v
-    filter_upwards [hbase] with x hx
-    rw [hx]
-    rw [show a0.matrix = A0 by rfl]
-    dsimp only [A0, wdiff, F]
-    ext i
-    simp [fluxComparison, fluxDefect, matVecMul, sub_eq_add_neg, mul_add,
-      Finset.sum_add_distrib]
-    ring
+        fun x ↦ matVecMul A0 (wdiff x) + F x :=
+    comparisonFlux_ae_eq_referenceGradient_add_defect Q aRounded a0 u W.v
   have hflux0 : cubeScaleNormalizedDualNegativeBesovVectorNormTwo Q s
       (Book.Ch03.homogenizationComparisonFluxField Q aRounded a0 u W.v) ≤
       Cf * E * A := by
@@ -1377,32 +1488,9 @@ theorem exists_roundedGenerationHarmonicComparisonSpecializationConstant
       _ = Cf * E * A := by dsimp only [Cf]; ring
   obtain ⟨w, hw⟩ := W.zeroTraceDifference
   rw [hWu] at hw
-  let wCube := Book.Ch03.publicH10ToCubeSet w
-  have hwCube : w.toH1Function.toFun =ᵐ[volumeMeasureOn (cubeSet Q)]
-      fun x ↦ u.toFun x - W.v.toFun x := by
-    simpa [Q, volumeMeasureOn, Book.Ch02.cubeDomain_coe,
-      volume_restrict_cubeSet_eq_volume_restrict_openCubeSet] using hw
-  have hgradCube : wCube.toH1Function.grad =ᵐ[volumeMeasureOn (cubeSet Q)] wdiff := by
-    have hgrad := Book.Ch03.H1Function.grad_ae_eq_of_toFun_ae_eq
-      (Book.Ch02.cubeDomain Q).isOpen
-      (u := w.toH1Function) (v := u - W.v) (by
-        simpa only [H1Function.sub_toFun] using hw)
-    rw [H1Function.sub_grad] at hgrad
-    simp only [wCube, wdiff, volumeMeasureOn,
-      volume_restrict_cubeSet_eq_volume_restrict_openCubeSet,
-      Book.Ch03.publicH10ToCubeSet_toH1Function_grad]
-    exact hgrad
-  have hdualGrad : cubeScaleNormalizedDualNegativeBesovVectorNormTwo Q s
-      wCube.toH1Function.grad =
-      cubeScaleNormalizedDualNegativeBesovVectorNormTwo Q s wdiff :=
-    cubeScaleNormalizedDualNegativeBesovVectorNormTwo_eq_of_ae_eq_on_cubeSet
-      s hgradCube
-  have hgap : 0 ≤ Kg := by
-    exact besovExponentLossGap_nonneg hs (by nlinarith only [hs])
-  have hneg := (concreteNegativeFromDualExponentLoss_geometric d).2 Q
-    wCube.toH1Function.grad (s := 2 * s) (t := s) hs
-    (by nlinarith only [hs]) (by nlinarith only [hs_lt])
-    wCube.toH1Function.grad_memVectorL2
+  have hzeroTrace := zeroTraceDifference_childDistance_le_dualGradient
+    m s hs hs_lt u W.v w hw
+  have hgap : 0 ≤ Kg := besovExponentLossGap_nonneg hs (by nlinarith only [hs])
   have hKp : 0 ≤ Kp := by
     exact mul_nonneg
       (add_nonneg
@@ -1411,48 +1499,13 @@ theorem exists_roundedGenerationHarmonicComparisonSpecializationConstant
           (Real.rpow_nonneg (by norm_num) _)) (Nat.cast_nonneg d))
         (mul_nonneg (by norm_num) (Real.rpow_nonneg (by norm_num) _)))
       (Real.sqrt_nonneg _)
-  have hpoincare :=
-    Book.Ch03.cubeBesovScaleWeight_one_mul_cubeLpNorm_h10_le_grad_negativeBesovTwo
-      Q wCube hs hs_lt
-  have hparent : cubeBesovScaleWeight (1 : ℝ) Q *
-      cubeLpNorm Q (2 : ℝ≥0∞) (fun x ↦ w.toH1Function.toFun x) ≤
-      Kp * Kg * cubeScaleNormalizedDualNegativeBesovVectorNormTwo Q s wdiff := by
-    calc
-      _ ≤ Kp * cubeBesovNegativeVectorSeminormTwo Q (2 * s)
-          wCube.toH1Function.grad := by
-            simpa only [Kp, wCube,
-              Book.Ch03.publicH10ToCubeSet_toH1Function_toFun] using hpoincare
-      _ ≤ Kp * (1 * Kg * cubeScaleNormalizedDualNegativeBesovVectorNormTwo Q s
-          wCube.toH1Function.grad) := mul_le_mul_of_nonneg_left hneg hKp
-      _ = Kp * Kg * cubeScaleNormalizedDualNegativeBesovVectorNormTwo Q s wdiff := by
-        rw [hdualGrad]
-        ring
-  have hchild : cubeLpNorm (originCube d (m - 1)) (2 : ℝ≥0∞)
-      (fun x ↦ u.toFun x - W.v.toFun x) ≤
-      Kc * cubeLpNorm Q (2 : ℝ≥0∞) (fun x ↦ w.toH1Function.toFun x) := by
-    have hdesc : originCube d (m - 1) ∈ descendantsAtDepth Q 1 := by
-      simpa only [Q, centralDescendant_originCube_eq_originCube_sub] using!
-        CubeCalderonZygmund.centralDescendant_mem_descendantsAtDepth Q 1
-    rw [← cubeLpNorm_eq_of_ae_eq_on_parent_cube hdesc hwCube]
-    simpa only [Kc, Q] using cubeLpNorm_originCube_pred_le_card_mul_printOrder m
-      (fun x ↦ w.toH1Function.toFun x)
-      (by simpa only [wCube,
-          Book.Ch03.publicH10ToCubeSet_toH1Function_toFun,
-          H10Function.toOpenCubeSet_toH1Function_toFun] using
-        wCube.toOpenCubeSet.toH1Function.memL2_normalizedCubeMeasure)
   have hl20 : cubeBesovScaleWeight (1 : ℝ) Q *
       cubeLpNorm (originCube d (m - 1)) (2 : ℝ≥0∞)
         (fun x ↦ u.toFun x - W.v.toFun x) ≤ Cl * E * A := by
     calc
-      _ ≤ cubeBesovScaleWeight (1 : ℝ) Q *
-          (Kc * cubeLpNorm Q (2 : ℝ≥0∞)
-            (fun x ↦ w.toH1Function.toFun x)) :=
-        mul_le_mul_of_nonneg_left hchild (cubeBesovScaleWeight_nonneg 1 Q)
-      _ = Kc * (cubeBesovScaleWeight (1 : ℝ) Q *
-          cubeLpNorm Q (2 : ℝ≥0∞) (fun x ↦ w.toH1Function.toFun x)) := by ring
-      _ ≤ Kc * (Kp * Kg * cubeScaleNormalizedDualNegativeBesovVectorNormTwo
-          Q s wdiff) := mul_le_mul_of_nonneg_left hparent (by positivity)
-      _ ≤ Kc * (Kp * Kg * (Cg * E * A)) := by gcongr
+      _ ≤ Kc * Kp * Kg *
+          cubeScaleNormalizedDualNegativeBesovVectorNormTwo Q s wdiff := hzeroTrace
+      _ ≤ Kc * Kp * Kg * (Cg * E * A) := by gcongr
       _ = Cl * E * A := by dsimp only [Cl]; ring
   have hEA : 0 ≤ E * A := mul_nonneg
     (geom.spatialWeakError_nonneg a abar hS s m)

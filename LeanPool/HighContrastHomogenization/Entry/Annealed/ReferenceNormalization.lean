@@ -56,7 +56,8 @@ variable {d : ℕ}
 
 /-- Reference order from the dagger alone (`p.global.selection`).
 The probability measure supplies a sample in the coarse-bound event. -/
-theorem refBlock_reference_order {d : ℕ} [NeZero d] {P : Measure (CoeffSpace d)} [IsProbabilityMeasure P]
+theorem refBlock_reference_order {d : ℕ} [NeZero d] {P : Measure (CoeffSpace d)}
+  [IsProbabilityMeasure P]
     {γ : ℝ} {E : BlockMat d} {Ψ : ℝ → ℝ} {K : ℝ} {S : CoeffSpace d → ℝ}
     (hdag : CoarseEllipticityDagger P γ E Ψ K S) :
     BlockMatLoewnerLE
@@ -225,7 +226,8 @@ private theorem lower_of_upper {A E : BlockMat d}
     (Analysis.isSymmetricBlockMat_blockSwap d)
   have hsi : (c • toFullBlockMat E)⁻¹ = c⁻¹ • (toFullBlockMat E)⁻¹ := by
     let : Invertible c := invertibleOfNonzero hc.ne'
-    simpa only [invOf_eq_inv] using Matrix.inv_smul (A := toFullBlockMat E) c ((Matrix.isUnit_iff_isUnit_det _).mp hE.isUnit)
+    simpa only [invOf_eq_inv] using Matrix.inv_smul (A := toFullBlockMat E) c
+      ((Matrix.isUnit_iff_isUnit_det _).mp hE.isUnit)
   have hh := matrix_congruence_mono hi (toFullBlockMat (blockSwap d))
   have hleft : (toFullBlockMat (blockScale c⁻¹ (ofFullBlockMat
       (toFullBlockMat (blockSwap d) * (toFullBlockMat E)⁻¹ *

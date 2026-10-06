@@ -164,51 +164,24 @@ theorem eLpNorm_schattenTwo_adaptedCellAt_eq
   exact eLpNorm_comp_measurePreserving hmeas
     (Recurrence.measurePreserving_translateCoeff hstat z)
 
-/-- **The per-scale cell defect in `L²`.**  The recent-cell defect at scale
-`k` is bounded by the two single-cell fluctuation carriers plus the
-deterministic mean drop. -/
-theorem eLpNorm_diagonalWeakCellDefect_le [NeZero d]
-    {P : Measure (CoeffSpace d)} [IsProbabilityMeasure P]
-    (hstat : HCPoly.Frozen.IsStationaryLaw P)
-    {l : ℤ} {q : Mat d} (hgrid : IsRoundedGrid l q) {k t : ℤ}
-    (hlk : l ≤ k)
+private theorem diagonal_cell_defect_pointwise_split
+    {P : Measure (CoeffSpace d)} {q : Mat d} {k t : ℤ}
     {F : BlockMat d} (hFsym : IsSymmetricBlockMat F)
-    (hFpd : Book.Ch02.BlockPosDef F) :
-    eLpNorm (fun a => Response.diagonalWeakCellDefect q k t F a) 2 P ≤
-      scaleVariance P q F k + scaleVariance P q F t +
-        ENNReal.ofReal
-          (blockSize (blockSub (adaptedMean P q k) (adaptedMean P q t))
-            F) := by
+    (hFpd : Book.Ch02.BlockPosDef F)
+    {B : ℝ} (hB : B =
+      blockSize (blockSub (adaptedMean P q k) (adaptedMean P q t)) F)
+    (hB0 : 0 ≤ B)
+    {A : (Fin d → ℤ) → CoeffSpace d → ℝ}
+    (hA : A = fun w a => schattenSize 2
+      (blockSub (coarseBlock (adaptedCellAt q k w) a) (adaptedMean P q k)) F)
+    {C : CoeffSpace d → ℝ}
+    (hC : C = fun a => schattenSize 2
+      (blockSub (coarseBlock (adaptedCell q t) a) (adaptedMean P q t)) F)
+    (hC0 : ∀ a, 0 ≤ C a) :
+    ∀ a, Response.diagonalWeakCellDefect q k t F a ≤
+      Real.sqrt (Response.avsum (Response.alignedIndex q k t) fun w => A w a ^ 2) +
+        (B + C a) := by
   classical
-  have hq : q.PosDef := Recurrence.posDef_of_isRoundedGrid hgrid
-  set B : ℝ :=
-    blockSize (blockSub (adaptedMean P q k) (adaptedMean P q t)) F with hB
-  have hB0 : 0 ≤ B :=
-    PortableHistory.blockSize_nonneg
-      (isSymmetricBlockMat_blockSub
-        (Recurrence.isSymmetricBlockMat_adaptedMean P q k)
-        (Recurrence.isSymmetricBlockMat_adaptedMean P q t)) hFsym hFpd
-  -- the pathwise scale decomposition
-  set A : (Fin d → ℤ) → CoeffSpace d → ℝ := fun w a =>
-    schattenSize 2
-      (blockSub (coarseBlock (adaptedCellAt q k w) a) (adaptedMean P q k))
-      F with hA
-  set C : CoeffSpace d → ℝ := fun a =>
-    schattenSize 2
-      (blockSub (coarseBlock (adaptedCell q t) a) (adaptedMean P q t))
-      F with hC
-  have hA0 : ∀ w a, 0 ≤ A w a := fun w a =>
-    Recurrence.zero_le_schattenNorm
-      (isSymmetricBlockMat_normalizedBlock (F := F)
-        (isSymmetricBlockMat_blockSub
-          (isSymmetricBlockMat_coarseBlock _ _)
-          (Recurrence.isSymmetricBlockMat_adaptedMean P q k))) _
-  have hC0 : ∀ a, 0 ≤ C a := fun a =>
-    Recurrence.zero_le_schattenNorm
-      (isSymmetricBlockMat_normalizedBlock (F := F)
-        (isSymmetricBlockMat_blockSub
-          (isSymmetricBlockMat_coarseBlock _ _)
-          (Recurrence.isSymmetricBlockMat_adaptedMean P q t))) _
   have hpoint : ∀ a, Response.diagonalWeakCellDefect q k t F a ≤
       Real.sqrt (Response.avsum (Response.alignedIndex q k t) fun w => A w a ^ 2) +
         (B + C a) := by
@@ -313,6 +286,54 @@ theorem eLpNorm_diagonalWeakCellDefect_le [NeZero d]
               fun _ => (B + C a) ^ 2) ≤
               Real.sqrt ((B + C a) ^ 2) := Real.sqrt_le_sqrt hconst
           _ = B + C a := Real.sqrt_sq (add_nonneg hB0 (hC0 a))
+  exact hpoint
+
+/-- **The per-scale cell defect in `L²`.**  The recent-cell defect at scale
+`k` is bounded by the two single-cell fluctuation carriers plus the
+deterministic mean drop. -/
+theorem eLpNorm_diagonalWeakCellDefect_le [NeZero d]
+    {P : Measure (CoeffSpace d)} [IsProbabilityMeasure P]
+    (hstat : HCPoly.Frozen.IsStationaryLaw P)
+    {l : ℤ} {q : Mat d} (hgrid : IsRoundedGrid l q) {k t : ℤ}
+    (hlk : l ≤ k)
+    {F : BlockMat d} (hFsym : IsSymmetricBlockMat F)
+    (hFpd : Book.Ch02.BlockPosDef F) :
+    eLpNorm (fun a => Response.diagonalWeakCellDefect q k t F a) 2 P ≤
+      scaleVariance P q F k + scaleVariance P q F t +
+        ENNReal.ofReal
+          (blockSize (blockSub (adaptedMean P q k) (adaptedMean P q t))
+            F) := by
+  classical
+  have hq : q.PosDef := Recurrence.posDef_of_isRoundedGrid hgrid
+  set B : ℝ :=
+    blockSize (blockSub (adaptedMean P q k) (adaptedMean P q t)) F with hB
+  have hB0 : 0 ≤ B :=
+    PortableHistory.blockSize_nonneg
+      (isSymmetricBlockMat_blockSub
+        (Recurrence.isSymmetricBlockMat_adaptedMean P q k)
+        (Recurrence.isSymmetricBlockMat_adaptedMean P q t)) hFsym hFpd
+  -- the pathwise scale decomposition
+  set A : (Fin d → ℤ) → CoeffSpace d → ℝ := fun w a =>
+    schattenSize 2
+      (blockSub (coarseBlock (adaptedCellAt q k w) a) (adaptedMean P q k))
+      F with hA
+  set C : CoeffSpace d → ℝ := fun a =>
+    schattenSize 2
+      (blockSub (coarseBlock (adaptedCell q t) a) (adaptedMean P q t))
+      F with hC
+  have hA0 : ∀ w a, 0 ≤ A w a := fun w a =>
+    Recurrence.zero_le_schattenNorm
+      (isSymmetricBlockMat_normalizedBlock (F := F)
+        (isSymmetricBlockMat_blockSub
+          (isSymmetricBlockMat_coarseBlock _ _)
+          (Recurrence.isSymmetricBlockMat_adaptedMean P q k))) _
+  have hC0 : ∀ a, 0 ≤ C a := fun a =>
+    Recurrence.zero_le_schattenNorm
+      (isSymmetricBlockMat_normalizedBlock (F := F)
+        (isSymmetricBlockMat_blockSub
+          (isSymmetricBlockMat_coarseBlock _ _)
+          (Recurrence.isSymmetricBlockMat_adaptedMean P q t))) _
+  have hpoint := diagonal_cell_defect_pointwise_split hFsym hFpd hB hB0 hA hC hC0
   -- measurability of the three parts
   have hmeasA : ∀ w : Fin d → ℤ, AEStronglyMeasurable (A w) P := by
     intro w

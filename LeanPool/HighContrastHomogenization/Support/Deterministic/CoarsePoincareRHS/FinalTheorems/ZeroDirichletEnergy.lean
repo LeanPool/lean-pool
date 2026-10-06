@@ -97,7 +97,7 @@ positive-Besov forcing seminorm times the square-root coarse-Poincare RHS
 bound for the same corrector gradient.  This is the faithful formal socket
 immediately before the manuscript's Young absorption step.
 -/
-theorem coefficientEnergy_average_le_centered_force_mul_sqrt_intrinsicGlobalEnergyForce_noteConstants_expanded
+theorem coefficientEnergy_average_le_centered_force_mul_sqrt_intrinsicGlobalEnergyForce
     {d : ℕ} [NeZero d] {Q : TriadicCube d} {a : CoeffField d}
     {g : Vec d → Vec d} (ρ : ZeroTraceDirichletCorrectorData Q a g)
     {s lam Lam : ℝ}
@@ -158,7 +158,7 @@ theorem coefficientEnergy_average_le_centered_force_mul_sqrt_intrinsicGlobalEner
                 ((3 : ℝ) ^ ((d : ℝ) + s) * Real.sqrt 2)) ^ 2 *
               (cubeBesovPositiveVectorSeminormTwo Q s g) ^ 2) := by
     exact
-      cubeBesovNegativeVectorSeminormTwo_le_sqrt_intrinsicGlobalEnergyForce_noteConstants_expanded_of_parent_potential_solenoidal
+      negativeBesovSeminormTwo_le_sqrt_intrinsicGlobalEnergyForce_of_parent_potential
         (Q := Q) (a := a) (g := g)
         (u := fun x => ρ.toH10.toH1Function.grad x)
         (s := s) (lam := lam) (Lam := Lam)
@@ -279,7 +279,7 @@ theorem coefficientEnergy_average_le_forcing_square_envelope_noteConstants_expan
     exact cubeBesovPositiveVectorSeminormTwo_sub_const
       Q s g (cubeAverageVec Q g) hmem_desc
   have hpre_raw :=
-    ρ.coefficientEnergy_average_le_centered_force_mul_sqrt_intrinsicGlobalEnergyForce_noteConstants_expanded
+    ρ.coefficientEnergy_average_le_centered_force_mul_sqrt_intrinsicGlobalEnergyForce
       (s := s) (lam := lam) (Lam := Lam)
       hs hs_le hEll hg hGlobalBdd hCenteredBdd
   have hpre : E ≤ B * Real.sqrt (A * E + F) := by
@@ -393,7 +393,7 @@ theorem coefficientEnergy_average_le_zeroTraceDirichletEnergyEnvelope_noteConsta
 Zero-Dirichlet energy estimate with the manuscript `g ∈ H^s` regularity
 package, rather than separate `L²` and positive-Besov boundedness hypotheses.
 -/
-theorem coefficientEnergy_average_le_zeroTraceDirichletEnergyEnvelope_noteConstants_expanded_of_cubeVectorBesovHRegularity
+theorem coefficientEnergy_average_le_zeroTraceDirichletEnergyEnvelope
     {d : ℕ} [NeZero d] {Q : TriadicCube d} {a : CoeffField d}
     {g : Vec d → Vec d} (ρ : ZeroTraceDirichletCorrectorData Q a g)
     {s lam Lam : ℝ}
@@ -414,7 +414,7 @@ end ZeroTraceDirichletCorrectorData
 PDE-facing zero-Dirichlet energy estimate for an explicit zero-trace weak
 solution, with RHS regularity supplied by the single manuscript `H^s` package.
 -/
-theorem coefficientEnergy_average_le_zeroTraceDirichletEnergyEnvelope_noteConstants_expanded_of_isZeroTraceDirichletRhsWeakSolution_of_cubeVectorBesovHRegularity
+theorem coefficientEnergy_average_le_of_isZeroTraceDirichletRhsWeakSolution
     {d : ℕ} [NeZero d] {Q : TriadicCube d} {a : CoeffField d}
     {g : Vec d → Vec d} (v : H10Function (cubeSet Q)) {s lam Lam : ℝ}
     (hs : 0 < s) (hs_le : s ≤ 1)
@@ -427,7 +427,7 @@ theorem coefficientEnergy_average_le_zeroTraceDirichletEnergyEnvelope_noteConsta
       zeroTraceDirichletEnergyEnvelope Q a s g := by
   let ρ : ZeroTraceDirichletCorrectorData Q a g := ⟨v, hweak⟩
   simpa [ρ] using
-    ρ.coefficientEnergy_average_le_zeroTraceDirichletEnergyEnvelope_noteConstants_expanded_of_cubeVectorBesovHRegularity
+    ρ.coefficientEnergy_average_le_zeroTraceDirichletEnergyEnvelope
       (s := s) (lam := lam) (Lam := Lam) hs hs_le hEll hg
 
 end

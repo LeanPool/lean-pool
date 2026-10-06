@@ -24,7 +24,7 @@ public section
 # Non-degeneracy of the ellipsoids `E_r`
 
 The ellipsoids
-`E_r = {x : x · s̄⁻¹ x ≤ λ̄⁻¹ r²}`
+`E_r = {x : x · s_bar⁻¹ x ≤ λ_bar⁻¹ r²}`
 of `e.homogenized.ellipsoids` are the domains on
 which the corrector estimate
 `e.random.corrector`, the Lipschitz
@@ -41,10 +41,10 @@ The two halves are separately elementary.
   `x · M x ≤ |M| ‖x‖²` holds for every matrix, so `E_r` contains the concentric
   Euclidean ball of radius `r`, which is open and nonempty for `r > 0`.  No
   positivity, symmetry or invertibility hypothesis on `ā` is used.
-* Finite volume needs the positive definiteness of the symmetric part `s̄`, and
-  follows from the reverse bound `‖x‖² ≤ (x · s̄⁻¹ x) |s̄|`.  That bound is
-  Cauchy–Schwarz for the positive semidefinite form of `s̄⁻¹` applied to the
-  pair `(x, s̄ x)`; no eigenvalue theory enters.
+* Finite volume needs the positive definiteness of the symmetric part `s_bar`, and
+  follows from the reverse bound `‖x‖² ≤ (x · s_bar⁻¹ x) |s_bar|`.  That bound is
+  Cauchy–Schwarz for the positive semidefinite form of `s_bar⁻¹` applied to the
+  pair `(x, s_bar x)`; no eigenvalue theory enters.
 -/
 
 namespace HCPolySupport
@@ -85,7 +85,7 @@ theorem vecDot_matVecMul_le_specBound_mul_vecNormSq (M : Mat d) (x : Vec d) :
 
 This holds for **every** `abar`, with no positivity, symmetry or invertibility
 hypothesis: on `euclideanBallAt 0 r` one has `‖x‖² < r²`, the Loewner bound gives
-`x · s̄⁻¹ x ≤ |s̄⁻¹| ‖x‖²`, and `|s̄⁻¹| ≥ 0` (`specBound_nonneg`, also
+`x · s_bar⁻¹ x ≤ |s_bar⁻¹| ‖x‖²`, and `|s_bar⁻¹| ≥ 0` (`specBound_nonneg`, also
 unconditional) lets the two be multiplied. -/
 
 /-- **The ellipsoid contains the concentric Euclidean ball of the same radius**,

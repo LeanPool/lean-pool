@@ -64,7 +64,7 @@ private theorem unitCoordinateVector_vecNorm {d : ℕ} [NeZero d] :
 @[expose]
 noncomputable def oneStepScaleSeparationConstParams {d : ℕ}
     (params : QuantitativeCoarseGrainedEllipticityParams d) : ℝ :=
-  2 * (section53CoarseFluctuationBetaParams params * Real.log 3)⁻¹
+  2 * (coarseFluctuationBeta params * Real.log 3)⁻¹
 
 /-- Parameter-only linear budget constant for Section 5.3-beta full-block
 sums. -/
@@ -75,18 +75,18 @@ noncomputable def oneStepCoarsePairLinearBudgetConstParams {d : ℕ}
     (Ch04.rosenthalDescendantsAtScaleLpConst d 0 params.xi *
         (geometricDiscount
           (VarianceBoundGoodScale.lpVarianceDecayParams d params -
-            section53CoarseFluctuationBetaParams params) 1)⁻¹ +
+            coarseFluctuationBeta params) 1)⁻¹ +
       Ch04.rosenthalDescendantsAtScaleSqrtConst d 0 params.xi *
         (geometricDiscount
           (VarianceBoundGoodScale.sqrtVarianceDecay d -
-            section53CoarseFluctuationBetaParams params) 1)⁻¹)
+            coarseFluctuationBeta params) 1)⁻¹)
 
 /-- Parameter-only refined budget constant for Section 5.3-beta full-block
 sums. -/
 @[expose]
 noncomputable def oneStepWeightedRefinedBudgetConstParams {d : ℕ}
     (params : QuantitativeCoarseGrainedEllipticityParams d) : ℝ :=
-  (geometricDiscount (section53CoarseFluctuationBetaParams params) 1)⁻¹ +
+  (geometricDiscount (coarseFluctuationBeta params) 1)⁻¹ +
     2 * oneStepCoarsePairLinearBudgetConstParams params +
       2 * VarianceBoundGoodScale.pairPointwiseBudgetConstParams params *
         oneStepCoarsePairLinearBudgetConstParams params
@@ -103,7 +103,7 @@ noncomputable def oneStepCoarseFullBlockConstParams {d : ℕ}
 @[expose]
 noncomputable def oneStepCoarseTauSumConstParams {d : ℕ}
     (params : QuantitativeCoarseGrainedEllipticityParams d) : ℝ :=
-  3 * (geometricDiscount (section53CoarseFluctuationBetaParams params) 1)⁻¹
+  3 * (geometricDiscount (coarseFluctuationBeta params) 1)⁻¹
 
 /-- Parameter-only multiplier compressing the Section 5.3 manuscript RHS.  The
 outer `max` gives a nonnegative witness without exposing any proof package. -/
@@ -112,13 +112,13 @@ noncomputable def oneStepCompressionMultiplierParams {d : ℕ}
     (params : QuantitativeCoarseGrainedEllipticityParams d) : ℝ :=
   max 0
     (3 +
-      (section53CoarseFluctuationBetaParams params)⁻¹ *
+      (coarseFluctuationBeta params)⁻¹ *
           oneStepCoarseFullBlockConstParams params +
-        (section53CoarseFluctuationBetaParams params ^ 2)⁻¹ *
+        (coarseFluctuationBeta params ^ 2)⁻¹ *
             oneStepCoarseTauSumConstParams params +
           (params.xi : ℝ) *
-              (section53CoarseFluctuationBetaParams params ^ 3)⁻¹ * 4 +
-            (section53CoarseFluctuationBetaParams params ^ 2)⁻¹ * 3)
+              (coarseFluctuationBeta params ^ 3)⁻¹ * 4 +
+            (coarseFluctuationBeta params ^ 2)⁻¹ * 3)
 
 @[simp]
 theorem oneStepScaleSeparationConstParams_eq_of_P4

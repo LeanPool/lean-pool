@@ -293,7 +293,8 @@ theorem absSchattenNorm_gap_le_opNorm_rpow_mul_trace_rpow {D G : BlockMat d}
         hsum (inv_nonneg.mpr hNpos.le)
     _ = _ := by
       unfold blockOpNorm
-      rw [Real.mul_rpow (Real.rpow_nonneg (norm_nonneg (toFullBlockMat G)) _) (blockTrace_nonneg hD),
+      rw [Real.mul_rpow (Real.rpow_nonneg (norm_nonneg (toFullBlockMat G)) _) (blockTrace_nonneg
+        hD),
         ← Real.rpow_mul (norm_nonneg (toFullBlockMat G))]
       congr 2
       field_simp [hNpos.ne']

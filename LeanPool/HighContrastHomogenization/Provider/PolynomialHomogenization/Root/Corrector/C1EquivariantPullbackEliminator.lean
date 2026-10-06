@@ -74,13 +74,15 @@ structure CanonicalPullbackCorrectorFamily
               (matVecMul (Selection.normalizedRoot (symmPart abar)) y)) =ᵐ[volume]
               fun y ↦
                 (finiteAffineCorrectionJointLocalLimit aRef hCauchy
-                  (matVecMul (Selection.normalizedRoot (symmPart abar)) e)).globalValueRepresentative y + c₀) ∧
+                  (matVecMul (Selection.normalizedRoot (symmPart abar))
+                    e)).globalValueRepresentative y + c₀) ∧
           (fun y ↦ matVecMul (Selection.normalizedRoot (symmPart abar))
             (e + gradPhi e a
               (matVecMul (Selection.normalizedRoot (symmPart abar)) y))) =ᵐ[volume]
             fun y ↦ matVecMul (Selection.normalizedRoot (symmPart abar)) e +
               (finiteAffineCorrectionJointLocalLimit aRef hCauchy
-                (matVecMul (Selection.normalizedRoot (symmPart abar)) e)).globalGradientRepresentative y
+                (matVecMul (Selection.normalizedRoot (symmPart abar))
+                  e)).globalGradientRepresentative y
 
 end
 

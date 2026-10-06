@@ -603,6 +603,7 @@ end W10pFunction
 
 namespace H10Function
 
+/-- The same zero-trace H¹ function and supported smooth approximation viewed in `W^{1,2}_0`. -/
 @[expose]
 noncomputable def toW10pFunction {d : ℕ} {U : Set (Vec d)}
     (u : H10Function U) : W10pFunction U (2 : ENNReal) :=

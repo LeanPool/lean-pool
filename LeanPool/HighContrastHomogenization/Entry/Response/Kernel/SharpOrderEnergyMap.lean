@@ -227,7 +227,8 @@ theorem le_smul_of_normalizedBlock {P Q : BlockMat d}
     have h := hP.conjTranspose_mul_mul_same (B := matSqrt (toFullBlockMat Q)⁻¹)
     rw [Matrix.conjTranspose_eq_transpose_of_trivial, hSIsymm] at h
     rwa [hN]
-  have hone := GeometricMean.le_smul_one_of_norm_le hNpsd (le_refl ‖toFullBlockMat (normalizedBlock P Q)‖)
+  have hone := GeometricMean.le_smul_one_of_norm_le hNpsd (le_refl ‖toFullBlockMat
+    (normalizedBlock P Q)‖)
   have hcongr := Analysis.matrix_congr_le hone (matSqrt (toFullBlockMat Q))
   rw [hSsymm] at hcongr
   have hleft : matSqrt (toFullBlockMat Q) * toFullBlockMat (normalizedBlock P Q) *

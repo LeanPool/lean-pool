@@ -166,7 +166,8 @@ private theorem mean_trace_le_determinantDrift (d : ℕ) (hd : 2 ≤ d) (γ : �
   calc
     (3 : ℝ) ^ (-(Quenched.contrastRho γ * ((t : ℝ) - (k : ℝ)))) *
         blockTrace (blockSub (relMean P q k t) (Book.Ch02.blockIdentity d))
-        = (3 : ℝ) ^ (-(Quenched.contrastRho γ * ((t : ℝ) - (k : ℝ)))) * ∑ j ∈ Finset.Icc (k + 1) t, T j := by
+        = (3 : ℝ) ^ (-(Quenched.contrastRho γ * ((t : ℝ) - (k : ℝ)))) * ∑ j ∈ Finset.Icc (k + 1)
+          t, T j := by
       rw [hstep1]
     _ = ∑ j ∈ Finset.Icc (k + 1) t,
           (3 : ℝ) ^ (-(Quenched.contrastRho γ * ((t : ℝ) - (k : ℝ)))) * T j := Finset.mul_sum _ _ _
@@ -331,7 +332,8 @@ theorem adaptedMean_le_of_drift (d : ℕ) (hd : 2 ≤ d) (γ : ℝ)
     calc Tr = (3 : ℝ) ^ (Quenched.contrastRho γ * ((t : ℝ) - (k : ℝ))) *
           (((3 : ℝ) ^ (Quenched.contrastRho γ * ((t : ℝ) - (k : ℝ))))⁻¹ * Tr) := by
           field_simp
-      _ ≤ (3 : ℝ) ^ (Quenched.contrastRho γ * ((t : ℝ) - (k : ℝ))) * determinantDrift P γ q jStar t :=
+      _ ≤ (3 : ℝ) ^ (Quenched.contrastRho γ * ((t : ℝ) - (k : ℝ))) * determinantDrift P γ q
+        jStar t :=
           mul_le_mul_of_nonneg_left h hpow.le
   exact fun X => (hstep X).trans
     (Source.blockScale_le_blockScale_of_pos (blockPosDef_of_full (hpd t))
@@ -515,7 +517,8 @@ theorem annealedBlock_le_adaptedMean (d : ℕ) (hd : 2 ≤ d) (γ : ℝ)
           mul_le_mul_of_nonneg_left hecc (Real.sqrt_nonneg _)
       _ = Real.sqrt (‖m‖ * ‖m⁻¹‖) ^ 2 := (pow_two _).symm
       _ = ‖m‖ * ‖m⁻¹‖ := Real.sq_sqrt (by positivity : (0:ℝ) ≤ ‖m‖ * ‖m⁻¹‖)
-  have hAsp : (1 : ℝ) ≤ aspectRatio E := HCPolySupport.HighContrast.one_le_aspectRatio_of_coarseEllipticityDagger hdag
+  have hAsp : (1 : ℝ) ≤ aspectRatio E :=
+    HCPolySupport.HighContrast.one_le_aspectRatio_of_coarseEllipticityDagger hdag
   have hAsp0 : (0 : ℝ) ≤ aspectRatio E := le_trans zero_le_one hAsp
   have hcoef : (0 : ℝ) ≤ C₁ * C₂ * aspectRatio E *
       (3 : ℝ) ^ (γ * max ((jStar : ℝ) - (k : ℝ)) 0) :=
@@ -543,7 +546,8 @@ theorem respSourceLoad_le_of_loewner_scalewise (P : Measure (CoeffSpace d)) (jSt
     (hY : blockVecDot Y (blockMatVecMul (respM0 F) Y) ≤ M)
     (hsum : Summable fun n : ℕ => (3 : ℝ) ^ (-((3 : ℝ) / 2) * (n : ℝ)) * (4 * (c n * M)))
     (hres : ∀ n : ℕ, ∀ z ∈ triadicIndexBox d n,
-      BlockMatLoewnerLE (annealedBlockOf P (adaptedCellAtCenter (respGrid jStar F) (s - (n : ℤ)) z) b)
+      BlockMatLoewnerLE (annealedBlockOf P (adaptedCellAtCenter (respGrid jStar F) (s - (n : ℤ))
+        z) b)
         (blockScale (c n) (respM0 F))) :
     Summable (respSourceLoadSummand P jStar F s b Y) ∧
       respSourceLoad P jStar F s b Y ≤
@@ -559,7 +563,8 @@ theorem respSourceLoad_le_of_loewner_scalewise (P : Measure (CoeffSpace d)) (jSt
       vecDot Y.1 (matVecMul (annealedBlockOf P
           (adaptedCellAtCenter (respGrid jStar F) (s - (n : ℤ)) z) b).upperLeft Y.1) ≤ c n * M ∧
       vecDot Y.2 (matVecMul (annealedBlockOf P
-          (adaptedCellAtCenter (respGrid jStar F) (s - (n : ℤ)) z) b).lowerRight Y.2) ≤ c n * M := by
+          (adaptedCellAtCenter (respGrid jStar F) (s - (n : ℤ)) z) b).lowerRight Y.2) ≤ c n * M
+            := by
     intro n z hz
     have h1 := qform_fst (hres n z hz) Y.1
     have h2 := qform_snd (hres n z hz) Y.2
@@ -604,7 +609,8 @@ theorem profile_nonneg (d : ℕ) (hd : 2 ≤ d) (γ : ℝ) (hγ : γ ∈ Set.Ico
     apply Real.iSup_nonneg
     intro _hz
     exact (bigQ_even d γ).pow_nonneg _
-  have hH0 : 0 ≤ history P γ (Geometry.explicitRoundedGrid jStar mt) jStar n := add_nonneg hfluc hmean0
+  have hH0 : 0 ≤ history P γ (Geometry.explicitRoundedGrid jStar mt) jStar n := add_nonneg hfluc
+    hmean0
   have hpen := (Annealed.adaptedMean_order_consequences d hd P γ E Ψ K Src hstat hdag
     jStar hjStar mt hmt n m hn hnm).2.2.2.2.2
   have hw (x : ℝ) : 0 ≤ (3 : ℝ) ^ (-((1 - γ) / 4) * x) := Real.rpow_nonneg (by norm_num) _
@@ -629,7 +635,8 @@ theorem blockCongr_blockScale (G : BlockMat d) (c : ℝ) (A : BlockMat d) :
   congr 1
   rw [Matrix.mul_smul, Matrix.smul_mul]
 
-theorem respM0_isSymm_of_canonicalMetric_posDef {F : BlockMat d} (hm : (explicitCanonicalMetric F).PosDef) :
+theorem respM0_isSymm_of_canonicalMetric_posDef {F : BlockMat d} (hm : (explicitCanonicalMetric
+  F).PosDef) :
     IsSymmetricBlockMat (respM0 F) := by
   intro α β
   have h1 := hm.isHermitian
@@ -648,7 +655,8 @@ theorem respM0_isSymm_of_canonicalMetric_posDef {F : BlockMat d} (hm : (explicit
         simpa [Matrix.IsHermitian, Matrix.conjTranspose_apply] using
           (congrFun (congrFun h2 i) j).symm
 
-theorem respM0_blockPosDef_of_canonicalMetric_posDef {F : BlockMat d} (hm : (explicitCanonicalMetric F).PosDef) :
+theorem respM0_blockPosDef_of_canonicalMetric_posDef {F : BlockMat d} (hm :
+  (explicitCanonicalMetric F).PosDef) :
     Book.Ch02.BlockPosDef (respM0 F) := by
   intro X hX
   rw [respM0_qform_split_canonicalMetric]

@@ -193,7 +193,7 @@ theorem descendantsAverage_additivitySumHalfEnergy_le [NeZero d]
             (a.coeffOn R) p r := by
     intro R hR
     exact
-      cubeAverage_additivitySumHalfEnergyDensityOnFamilyOnCube_le_two_topHalfEnergy_add_two_childResponse
+      cubeAverage_halfEnergy_le_parentAndChildResponse
         a Q hR p r (hCoeff R hR)
   have hmono := descendantsAverage_mono Q j hcell
   have hsplit :
@@ -205,7 +205,7 @@ theorem descendantsAverage_additivitySumHalfEnergy_le [NeZero d]
           2 * childResponseJAverageOnFamilyAtDepth a Q j p r := by
     rw [← descendantsAverage_add, descendantsAverage_const_mul,
       descendantsAverage_const_mul,
-      descendantsAverage_cubeAverage_topHalfEnergyOnCube_eq_responseJOnCube
+      descendantsAverage_topHalfEnergy_eq_responseJ
         Q (a.coeffOn Q) j p r]
     rfl
   rw [hsplit] at hmono
@@ -233,7 +233,7 @@ theorem abs_concreteAdditivityCrossTermOnFamilyAtDepth_le_sqrt_mul_sqrt
           (4 * Book.Ch02.responseJ (Book.Ch02.cubeDomain Q) (a.coeffOn Q) p r +
             2 * responseJPartitionDefectOnFamilyAtDepth a Q j p r) := by
   have hbase :=
-    abs_concreteAdditivityCrossTermOnFamilyAtDepth_le_const_mul_sqrt_descAvg_diffEnergy_mul_sqrt_descAvg_sumEnergy
+    abs_additivityCross_le_constant_mul_sqrtDiffEnergy_mul_sqrtSumEnergy
       a Q j φ p r (C := 1) zero_le_one hweight
   refine hbase.trans ?_
   rw [one_mul]

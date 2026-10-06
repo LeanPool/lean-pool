@@ -179,7 +179,8 @@ theorem blockAvsumL2_metricRoot_diagonalWeakState_le [NeZero d]
       blockSize (adaptedResponse q k w a) E ≤ B ^ 2 := by
     intro w hw
     have hA0 : 0 ≤ blockSize (adaptedResponse q k w a) E :=
-      PortableHistory.blockSize_nonneg (Recurrence.isSymmetricBlockMat_adaptedResponse q k w a) hE hEpd
+      PortableHistory.blockSize_nonneg (Recurrence.isSymmetricBlockMat_adaptedResponse q k w a)
+        hE hEpd
     calc
       blockSize (adaptedResponse q k w a) E =
           (Real.sqrt (blockSize (adaptedResponse q k w a) E)) ^ 2 :=

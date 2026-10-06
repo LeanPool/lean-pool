@@ -42,7 +42,7 @@ noncomputable section
 /-- For the Ch4 dependent coefficient family, the descendant average of Ch4
 response observables minus the parent response is the raw deterministic
 partition defect. -/
-theorem descendantsAverage_restrictionResponseJObservableCubeSet_sub_eq_responseJPartitionDefectOnDependentFamily
+theorem descendantMean_responseJObservableSet_sub_eq_responseJPartitionDefect
     {d : ℕ} [NeZero d] (a : RegCoeffField d)
     (ha : Ch04.AELocallyUniformlyEllipticField a)
     (Q : TriadicCube d) (j : ℕ) (p q : Vec d) :
@@ -75,7 +75,7 @@ theorem responseDefectAverageAtScale_eq_responseJPartitionDefectOnDependentFamil
         (Ch04.triadicCoeffFamilyOfAELocallyUniformlyEllipticField a ha)
         (originCube d m) (Int.toNat (m - n)) p q := by
   simpa [responseDefectAverageAtScale] using
-    descendantsAverage_restrictionResponseJObservableCubeSet_sub_eq_responseJPartitionDefectOnDependentFamily
+    descendantMean_responseJObservableSet_sub_eq_responseJPartitionDefect
       a ha (originCube d m) (Int.toNat (m - n)) p q
 
 /-- Deterministic nonnegativity of the raw response partition defect. -/
@@ -523,7 +523,7 @@ theorem descendantsAverage_ch04GradientMismatch_le_maxSigmaStarInv_mul_responseD
     have hcoarse :
         Ch02.coarseSigmaStarInvMatrixNorm R F ≤ M := by
       simpa [M] using
-        Ch02.coarseSigmaStarInvMatrixNorm_le_maxDescendantSigmaStarInvMatrixNormAtScale_of_mem_descendantsAtScale
+        Ch02.coarseSigmaStarInvMatrixNorm_le_maxDescendantNorm_atScale
           F hRscale
     have hE_nonneg : 0 ≤ E R := by
       simpa [F, E] using
@@ -549,7 +549,7 @@ theorem descendantsAverage_ch04GradientMismatch_le_maxSigmaStarInv_mul_responseD
     _ =
         2 * M *
           JUpperBoundWeakNorms.responseJPartitionDefectOnFamilyAtDepth F Q j p q := by
-          rw [JUpperBoundWeakNorms.descendantsAverage_additivityDiffHalfEnergyOnDependentFamily_eq_responseJPartitionDefectOnFamilyAtDepth
+          rw [JUpperBoundWeakNorms.descendantMean_additivityHalfEnergy_eq_responseJDefect
             a ha Q j p q]
 
 /-- At one depth, the Ch4 flux parent-child mismatch average is controlled by
@@ -627,11 +627,11 @@ theorem descendantsAverage_ch04FluxMismatch_le_maxB_mul_responseDefect
     _ =
         2 * M *
           JUpperBoundWeakNorms.responseJPartitionDefectOnFamilyAtDepth F Q j p q := by
-          rw [JUpperBoundWeakNorms.descendantsAverage_additivityDiffHalfEnergyOnDependentFamily_eq_responseJPartitionDefectOnFamilyAtDepth
+          rw [JUpperBoundWeakNorms.descendantMean_additivityHalfEnergy_eq_responseJDefect
             a ha Q j p q]
 
 /-- Square-root form of the depth-`j` gradient mismatch estimate. -/
-theorem sqrt_descendantsAverage_ch04GradientMismatch_le_two_mul_sqrt_maxSigmaStarInv_mul_sqrt_responseDefect
+theorem sqrt_gradientMismatchAverage_le_two_sqrt_maxInv_mul_sqrt_defect
     {d : ℕ} [NeZero d] (a : RegCoeffField d)
     (ha : Ch04.AELocallyUniformlyEllipticField a)
     (Q : TriadicCube d) (j : ℕ) (p q : Vec d) :
@@ -931,7 +931,7 @@ theorem gradientHighMismatchSum_le_lambdaSqCoeffField_responseDefectSum
                 (Ch04.triadicCoeffFamilyOfAELocallyUniformlyEllipticField a ha)
                 Q j p q) := by
   refine
-    sum_filter_triadicDepthWeight_mul_sqrt_descendantsAverage_vecNormSq_le_const_mul_shifted_weighted_sqrt
+    filteredTriadicWeight_sqrtDescendantNorm_le_constantWeightedSqrt
       Q s s' (2 * Real.sqrt ((Ch04.lambdaSqCoeffField Q s' (.finite 1) a)⁻¹))
       N high
       (fun _j R =>
@@ -969,7 +969,7 @@ theorem fluxHighMismatchSum_le_LambdaSqCoeffField_responseDefectSum
                 (Ch04.triadicCoeffFamilyOfAELocallyUniformlyEllipticField a ha)
                 Q j p q) := by
   refine
-    sum_filter_triadicDepthWeight_mul_sqrt_descendantsAverage_vecNormSq_le_const_mul_shifted_weighted_sqrt
+    filteredTriadicWeight_sqrtDescendantNorm_le_constantWeightedSqrt
       Q t t' (2 * Real.sqrt (Ch04.LambdaSqCoeffField Q t' (.finite 1) a))
       N high
       (fun _j R =>

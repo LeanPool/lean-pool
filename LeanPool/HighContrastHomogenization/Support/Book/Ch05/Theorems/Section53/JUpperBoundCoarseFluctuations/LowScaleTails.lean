@@ -58,6 +58,180 @@ private theorem positivePart_split_le (x base : ℝ) :
     have hmax : max (x - base) 0 = x - base := max_eq_left (sub_nonneg.mpr hx)
     linarith
 
+private theorem gradientLowScaleTailSquare_eq_weightedResponse
+    {d : ℕ}
+    [NeZero d]
+    {P : Ch04.RestrictionCoeffLaw d}
+    (hP : Ch04.RestrictionLawCarrier P)
+    (hStruct : Ch04.RestrictionStructuralLaw P)
+    (hP4 : QuantitativeCoarseGrainedEllipticity P)
+    (k : ℕ)
+    (m : ℕ)
+    (e : Vec d)
+    (a : RegCoeffField d)
+    :
+    let β := section53CoarseFluctuationBeta hP4
+    let s := hP4.sLower + 2 * β
+    let s' := hP4.sLower + β
+    let Q : TriadicCube d := originCube d (m : ℤ)
+    let p_e := specialPAtScale hP hStruct (m : ℤ) e
+    let q_e := specialQAtScale hP hStruct (m : ℤ) e
+    let Jm := Ch04.restrictionResponseJObservableCubeSet Q p_e q_e a
+    let lowerCoeff := (Ch04.lambdaSqCoeffField Q s' (.finite 1) a)⁻¹
+    let tailFactor :=
+      (β ^ 2)⁻¹ *
+        Real.rpow (3 : ℝ) (-2 * β * (((m - k : ℕ) : ℝ)))
+    ∀ (hβ_ne : β ≠ 0),
+    ∀ (hlower_nonneg : 0 ≤ lowerCoeff),
+    ∀ (hJ_nonneg : 0 ≤ Jm),
+    (WeakNormsMaximizer.gradientLowScaleTailAtScale
+          (m : ℤ) (k : ℤ) s s' p_e q_e a) ^ 2 =
+        tailFactor * (lowerCoeff * Jm) := by
+  classical
+  let : IsProbabilityMeasure P := hP.isProbability
+  dsimp only
+  let β := section53CoarseFluctuationBeta hP4
+  let s := hP4.sLower + 2 * β
+  let s' := hP4.sLower + β
+  let Q : TriadicCube d := originCube d (m : ℤ)
+  let p_e := specialPAtScale hP hStruct (m : ℤ) e
+  let q_e := specialQAtScale hP hStruct (m : ℤ) e
+  let Jm := Ch04.restrictionResponseJObservableCubeSet Q p_e q_e a
+  let lowerCoeff := (Ch04.lambdaSqCoeffField Q s' (.finite 1) a)⁻¹
+  let tailFactor :=
+    (β ^ 2)⁻¹ *
+      Real.rpow (3 : ℝ) (-2 * β * (((m - k : ℕ) : ℝ)))
+  intro hβ_ne hlower_nonneg hJ_nonneg
+  dsimp [WeakNormsMaximizer.gradientLowScaleTailAtScale, tailFactor,
+    Q, s, s', β]
+  have hgap : hP4.sLower + 2 * β - (hP4.sLower + β) = β := by ring
+  rw [hgap]
+  have hpow :
+      Real.rpow (3 : ℝ)
+          (-β * (Int.toNat ((m : ℤ) - (k : ℤ)) : ℝ)) ^ 2 =
+        Real.rpow (3 : ℝ) (-2 * β * (((m - k : ℕ) : ℝ))) := by
+    have hmk :
+        (Int.toNat ((m : ℤ) - (k : ℤ)) : ℝ) = ((m - k : ℕ) : ℝ) := by
+      have hmk_nat : Int.toNat ((m : ℤ) - (k : ℤ)) = m - k := by
+        omega
+      exact_mod_cast hmk_nat
+    rw [hmk]
+    calc
+      Real.rpow (3 : ℝ) (-β * ((m - k : ℕ) : ℝ)) ^ 2 =
+          Real.rpow (3 : ℝ) (2 * (-β * ((m - k : ℕ) : ℝ))) :=
+            rpow_three_sq _
+      _ = Real.rpow (3 : ℝ) (-2 * β * ((m - k : ℕ) : ℝ)) := by ring_nf
+  change
+    (β⁻¹ * Real.rpow (3 : ℝ) (-β * (Int.toNat ((m : ℤ) - (k : ℤ)) : ℝ)) *
+        Real.sqrt lowerCoeff * Real.sqrt Jm) ^ 2 =
+      (β ^ 2)⁻¹ *
+        Real.rpow (3 : ℝ) (-2 * β * (((m - k : ℕ) : ℝ))) *
+          (lowerCoeff * Jm)
+  have hsqrt :
+      (Real.sqrt lowerCoeff * Real.sqrt Jm) ^ 2 = lowerCoeff * Jm := by
+    rw [mul_pow, Real.sq_sqrt hlower_nonneg, Real.sq_sqrt hJ_nonneg]
+  calc
+    (β⁻¹ * Real.rpow (3 : ℝ)
+        (-β * (Int.toNat ((m : ℤ) - (k : ℤ)) : ℝ)) *
+          Real.sqrt lowerCoeff * Real.sqrt Jm) ^ 2
+        =
+      (β⁻¹) ^ 2 *
+        Real.rpow (3 : ℝ)
+          (-β * (Int.toNat ((m : ℤ) - (k : ℤ)) : ℝ)) ^ 2 *
+        (Real.sqrt lowerCoeff * Real.sqrt Jm) ^ 2 := by ring
+    _ =
+      (β ^ 2)⁻¹ *
+        Real.rpow (3 : ℝ) (-2 * β * (((m - k : ℕ) : ℝ))) *
+          (lowerCoeff * Jm) := by
+        rw [inv_sq_eq_inv_sq hβ_ne, hpow, hsqrt]
+
+private theorem fluxLowScaleTailSquare_eq_weightedResponse
+    {d : ℕ}
+    [NeZero d]
+    {P : Ch04.RestrictionCoeffLaw d}
+    (hP : Ch04.RestrictionLawCarrier P)
+    (hStruct : Ch04.RestrictionStructuralLaw P)
+    (hP4 : QuantitativeCoarseGrainedEllipticity P)
+    (k : ℕ)
+    (m : ℕ)
+    (e : Vec d)
+    (a : RegCoeffField d)
+    :
+    let β := section53CoarseFluctuationBeta hP4
+    let t := hP4.sUpper + 2 * β
+    let t' := hP4.sUpper + β
+    let Q : TriadicCube d := originCube d (m : ℤ)
+    let p_e := specialPAtScale hP hStruct (m : ℤ) e
+    let q_e := specialQAtScale hP hStruct (m : ℤ) e
+    let Jm := Ch04.restrictionResponseJObservableCubeSet Q p_e q_e a
+    let upperCoeff := Ch04.LambdaSqCoeffField Q t' (.finite 1) a
+    let tailFactor :=
+      (β ^ 2)⁻¹ *
+        Real.rpow (3 : ℝ) (-2 * β * (((m - k : ℕ) : ℝ)))
+    ∀ (hβ_ne : β ≠ 0),
+    ∀ (hupper_nonneg : 0 ≤ upperCoeff),
+    ∀ (hJ_nonneg : 0 ≤ Jm),
+    (WeakNormsMaximizer.fluxLowScaleTailAtScale
+          (m : ℤ) (k : ℤ) t t' p_e q_e a) ^ 2 =
+        tailFactor * (upperCoeff * Jm) := by
+  classical
+  let : IsProbabilityMeasure P := hP.isProbability
+  dsimp only
+  let β := section53CoarseFluctuationBeta hP4
+  let t := hP4.sUpper + 2 * β
+  let t' := hP4.sUpper + β
+  let Q : TriadicCube d := originCube d (m : ℤ)
+  let p_e := specialPAtScale hP hStruct (m : ℤ) e
+  let q_e := specialQAtScale hP hStruct (m : ℤ) e
+  let Jm := Ch04.restrictionResponseJObservableCubeSet Q p_e q_e a
+  let upperCoeff := Ch04.LambdaSqCoeffField Q t' (.finite 1) a
+  let tailFactor :=
+    (β ^ 2)⁻¹ *
+      Real.rpow (3 : ℝ) (-2 * β * (((m - k : ℕ) : ℝ)))
+  intro hβ_ne hupper_nonneg hJ_nonneg
+  dsimp [WeakNormsMaximizer.fluxLowScaleTailAtScale, tailFactor,
+    Q, t, t', β]
+  have hgap : hP4.sUpper + 2 * β - (hP4.sUpper + β) = β := by ring
+  rw [hgap]
+  have hpow :
+      Real.rpow (3 : ℝ)
+          (-β * (Int.toNat ((m : ℤ) - (k : ℤ)) : ℝ)) ^ 2 =
+        Real.rpow (3 : ℝ) (-2 * β * (((m - k : ℕ) : ℝ))) := by
+    have hmk :
+        (Int.toNat ((m : ℤ) - (k : ℤ)) : ℝ) = ((m - k : ℕ) : ℝ) := by
+      have hmk_nat : Int.toNat ((m : ℤ) - (k : ℤ)) = m - k := by
+        omega
+      exact_mod_cast hmk_nat
+    rw [hmk]
+    calc
+      Real.rpow (3 : ℝ) (-β * ((m - k : ℕ) : ℝ)) ^ 2 =
+          Real.rpow (3 : ℝ) (2 * (-β * ((m - k : ℕ) : ℝ))) :=
+            rpow_three_sq _
+      _ = Real.rpow (3 : ℝ) (-2 * β * ((m - k : ℕ) : ℝ)) := by ring_nf
+  change
+    (β⁻¹ * Real.rpow (3 : ℝ) (-β * (Int.toNat ((m : ℤ) - (k : ℤ)) : ℝ)) *
+        Real.sqrt upperCoeff * Real.sqrt Jm) ^ 2 =
+      (β ^ 2)⁻¹ *
+        Real.rpow (3 : ℝ) (-2 * β * (((m - k : ℕ) : ℝ))) *
+          (upperCoeff * Jm)
+  have hsqrt :
+      (Real.sqrt upperCoeff * Real.sqrt Jm) ^ 2 = upperCoeff * Jm := by
+    rw [mul_pow, Real.sq_sqrt hupper_nonneg, Real.sq_sqrt hJ_nonneg]
+  calc
+    (β⁻¹ * Real.rpow (3 : ℝ)
+        (-β * (Int.toNat ((m : ℤ) - (k : ℤ)) : ℝ)) *
+          Real.sqrt upperCoeff * Real.sqrt Jm) ^ 2
+        =
+      (β⁻¹) ^ 2 *
+        Real.rpow (3 : ℝ)
+          (-β * (Int.toNat ((m : ℤ) - (k : ℤ)) : ℝ)) ^ 2 *
+        (Real.sqrt upperCoeff * Real.sqrt Jm) ^ 2 := by ring
+    _ =
+      (β ^ 2)⁻¹ *
+        Real.rpow (3 : ℝ) (-2 * β * (((m - k : ℕ) : ℝ))) *
+          (upperCoeff * Jm) := by
+        rw [inv_sq_eq_inv_sq hβ_ne, hpow, hsqrt]
+
 /-- Pointwise algebraic reduction of the paired low-scale tails.  The
 ellipticity coefficients are the shifted coefficients
 `sLower + beta` and `sUpper + beta`, as required for the Section 5.2 moment
@@ -147,98 +321,12 @@ theorem paired_lowScaleTailSquares_special_le_baseline_add_positiveExcess
     simpa [lowerExcess] using positivePart_split_le lowerCoeff lowerBase
   have hupper_split : upperCoeff ≤ upperBase + upperExcess := by
     simpa [upperExcess] using positivePart_split_le upperCoeff upperBase
-  have hgrad_sq :
-      (WeakNormsMaximizer.gradientLowScaleTailAtScale
-          (m : ℤ) (k : ℤ) s s' p_e q_e a) ^ 2 =
-        tailFactor * (lowerCoeff * Jm) := by
-    dsimp [WeakNormsMaximizer.gradientLowScaleTailAtScale, tailFactor,
-      Q, s, s', β]
-    have hgap : hP4.sLower + 2 * β - (hP4.sLower + β) = β := by ring
-    rw [hgap]
-    have hpow :
-        Real.rpow (3 : ℝ)
-            (-β * (Int.toNat ((m : ℤ) - (k : ℤ)) : ℝ)) ^ 2 =
-          Real.rpow (3 : ℝ) (-2 * β * (((m - k : ℕ) : ℝ))) := by
-      have hmk :
-          (Int.toNat ((m : ℤ) - (k : ℤ)) : ℝ) = ((m - k : ℕ) : ℝ) := by
-        have hmk_nat : Int.toNat ((m : ℤ) - (k : ℤ)) = m - k := by
-          omega
-        exact_mod_cast hmk_nat
-      rw [hmk]
-      calc
-        Real.rpow (3 : ℝ) (-β * ((m - k : ℕ) : ℝ)) ^ 2 =
-            Real.rpow (3 : ℝ) (2 * (-β * ((m - k : ℕ) : ℝ))) :=
-              rpow_three_sq _
-        _ = Real.rpow (3 : ℝ) (-2 * β * ((m - k : ℕ) : ℝ)) := by ring_nf
-    change
-      (β⁻¹ * Real.rpow (3 : ℝ) (-β * (Int.toNat ((m : ℤ) - (k : ℤ)) : ℝ)) *
-          Real.sqrt lowerCoeff * Real.sqrt Jm) ^ 2 =
-        (β ^ 2)⁻¹ *
-          Real.rpow (3 : ℝ) (-2 * β * (((m - k : ℕ) : ℝ))) *
-            (lowerCoeff * Jm)
-    have hsqrt :
-        (Real.sqrt lowerCoeff * Real.sqrt Jm) ^ 2 = lowerCoeff * Jm := by
-      rw [mul_pow, Real.sq_sqrt hlower_nonneg, Real.sq_sqrt hJ_nonneg]
-    calc
-      (β⁻¹ * Real.rpow (3 : ℝ)
-          (-β * (Int.toNat ((m : ℤ) - (k : ℤ)) : ℝ)) *
-            Real.sqrt lowerCoeff * Real.sqrt Jm) ^ 2
-          =
-        (β⁻¹) ^ 2 *
-          Real.rpow (3 : ℝ)
-            (-β * (Int.toNat ((m : ℤ) - (k : ℤ)) : ℝ)) ^ 2 *
-          (Real.sqrt lowerCoeff * Real.sqrt Jm) ^ 2 := by ring
-      _ =
-        (β ^ 2)⁻¹ *
-          Real.rpow (3 : ℝ) (-2 * β * (((m - k : ℕ) : ℝ))) *
-            (lowerCoeff * Jm) := by
-          rw [inv_sq_eq_inv_sq hβ_ne, hpow, hsqrt]
-  have hflux_sq :
-      (WeakNormsMaximizer.fluxLowScaleTailAtScale
-          (m : ℤ) (k : ℤ) t t' p_e q_e a) ^ 2 =
-        tailFactor * (upperCoeff * Jm) := by
-    dsimp [WeakNormsMaximizer.fluxLowScaleTailAtScale, tailFactor,
-      Q, t, t', β]
-    have hgap : hP4.sUpper + 2 * β - (hP4.sUpper + β) = β := by ring
-    rw [hgap]
-    have hpow :
-        Real.rpow (3 : ℝ)
-            (-β * (Int.toNat ((m : ℤ) - (k : ℤ)) : ℝ)) ^ 2 =
-          Real.rpow (3 : ℝ) (-2 * β * (((m - k : ℕ) : ℝ))) := by
-      have hmk :
-          (Int.toNat ((m : ℤ) - (k : ℤ)) : ℝ) = ((m - k : ℕ) : ℝ) := by
-        have hmk_nat : Int.toNat ((m : ℤ) - (k : ℤ)) = m - k := by
-          omega
-        exact_mod_cast hmk_nat
-      rw [hmk]
-      calc
-        Real.rpow (3 : ℝ) (-β * ((m - k : ℕ) : ℝ)) ^ 2 =
-            Real.rpow (3 : ℝ) (2 * (-β * ((m - k : ℕ) : ℝ))) :=
-              rpow_three_sq _
-        _ = Real.rpow (3 : ℝ) (-2 * β * ((m - k : ℕ) : ℝ)) := by ring_nf
-    change
-      (β⁻¹ * Real.rpow (3 : ℝ) (-β * (Int.toNat ((m : ℤ) - (k : ℤ)) : ℝ)) *
-          Real.sqrt upperCoeff * Real.sqrt Jm) ^ 2 =
-        (β ^ 2)⁻¹ *
-          Real.rpow (3 : ℝ) (-2 * β * (((m - k : ℕ) : ℝ))) *
-            (upperCoeff * Jm)
-    have hsqrt :
-        (Real.sqrt upperCoeff * Real.sqrt Jm) ^ 2 = upperCoeff * Jm := by
-      rw [mul_pow, Real.sq_sqrt hupper_nonneg, Real.sq_sqrt hJ_nonneg]
-    calc
-      (β⁻¹ * Real.rpow (3 : ℝ)
-          (-β * (Int.toNat ((m : ℤ) - (k : ℤ)) : ℝ)) *
-            Real.sqrt upperCoeff * Real.sqrt Jm) ^ 2
-          =
-        (β⁻¹) ^ 2 *
-          Real.rpow (3 : ℝ)
-            (-β * (Int.toNat ((m : ℤ) - (k : ℤ)) : ℝ)) ^ 2 *
-          (Real.sqrt upperCoeff * Real.sqrt Jm) ^ 2 := by ring
-      _ =
-        (β ^ 2)⁻¹ *
-          Real.rpow (3 : ℝ) (-2 * β * (((m - k : ℕ) : ℝ))) *
-            (upperCoeff * Jm) := by
-          rw [inv_sq_eq_inv_sq hβ_ne, hpow, hsqrt]
+  have hgrad_sq := gradientLowScaleTailSquare_eq_weightedResponse (d := d) (P := P) (hP := hP)
+    (hStruct := hStruct) (hP4 := hP4) (k := k) (m := m) (e := e) (a := a) hβ_ne hlower_nonneg
+    hJ_nonneg
+  have hflux_sq := fluxLowScaleTailSquare_eq_weightedResponse (d := d) (P := P) (hP := hP)
+    (hStruct := hStruct) (hP4 := hP4) (k := k) (m := m) (e := e) (a := a) hβ_ne hupper_nonneg
+    hJ_nonneg
   have hpoint :
       σ * (tailFactor * (lowerCoeff * Jm)) +
           σ⁻¹ * (tailFactor * (upperCoeff * Jm)) ≤

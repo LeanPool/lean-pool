@@ -37,7 +37,7 @@ full-dual/local-multiscale exact-RHS theorem.
 /-- Variable-`Acirc` descendant raw estimate using full-dual vector Poincare
 and the finite local-multiscale estimate on every descendant. -/
 theorem
-    abs_cubeAverage_vecDot_scalar_smul_le_raw_of_parentQuantitativeCutoff_on_descendants_variableAcirc_vectorFullDualLocalMultiscale
+    abs_cubeAverage_vectorDot_scalarMultiply_le_raw_of_vectorFullDualLocalMultiscale
     {d : ℕ} {Q : TriadicCube d} (j : ℕ)
     (a : CoeffField d) (s : ℝ) {ρ₁ ρ₂ : ℝ}
     (flux : Vec d → Vec d) (u : Vec d → ℝ) (G : Vec d → Vec d)
@@ -112,7 +112,7 @@ theorem
       hpair_int ?_) ?_
   · intro R hR
     exact
-      abs_cubeAverage_vecDot_scalar_smul_le_fluxEnergyExactRhs_of_parentQuantitativeCutoff_on_descendant_vectorFullDualLocalMultiscale
+      abs_cubeAverage_vectorDot_scalarMultiply_le_fluxEnergy_of_descendantCutoff
         (Q := Q) (R := R) (j := j) hR (a := a) (s := s) (flux := flux) (u := u)
         (G := G) (energy := energy) (η := η) (Acirc1 := Acirc1 R) (AcircS := AcircS R)
         (C := C) hs0 hs1 (hfluxMem R hR) (hu R hR) (hG R hR)
@@ -129,7 +129,7 @@ theorem
 /-- Buffered localized-energy descendant summation using full-dual Poincare and
 the infinite-depth full-circ route on every descendant. -/
 theorem
-    abs_cubeAverage_vecDot_scalar_smul_le_localized_raw_of_parentQuantitativeCutoff_on_descendants_variableAcirc_of_support_buffer_vectorFullDualFullCirc
+    abs_cubeAverage_vectorDot_scalarMultiply_le_raw_of_support_buffer
     {d : ℕ} {Q : TriadicCube d} (j : ℕ)
     (a : CoeffField d) (s : ℝ) {ρ₁ ρ₂ ρ : ℝ}
     (flux : Vec d → Vec d) (u : Vec d → ℝ) (G : Vec d → Vec d)
@@ -203,7 +203,7 @@ theorem
       hpair_int huQ henergy_nonneg henergy_int hK_nonneg hKparent
       hconst hcent
       (fun R hR =>
-        abs_cubeAverage_vecDot_scalar_smul_le_fluxEnergyExactRhs_indicator_of_parentQuantitativeCutoff_on_descendant_of_support_buffer_vectorFullDualFullCirc
+        abs_cubeAverage_vectorDot_scalarMultiply_le_fluxEnergyExactRhs_of_fullDualBuffer
           (Q := Q) (R := R) (j := j) hR (a := a) (s := s)
           (ρ := ρ) (flux := flux) (u := u) (G := G) (energy := energy)
           (η := η) (Acirc1 := Acirc1 R) (AcircS := AcircS R) (C := C)
@@ -215,7 +215,7 @@ theorem
 /-- Buffered arbitrary-center local-patch descendant summation for the
 translated canonical cutoff using the full-dual/full-circ route. -/
 theorem
-    abs_cubeAverage_vecDot_scalar_smul_le_localPatch_raw_of_localCanonicalCutoff_on_descendants_variableAcirc_of_support_buffer_vectorFullDualFullCirc
+    abs_cubeAverage_vectorDot_scalarMultiply_le_local_raw
     {d : ℕ} {Q : TriadicCube d} (center : Vec d) (j : ℕ)
     (a : CoeffField d) (s : ℝ) {rhoInner rhoOuter rho : ℝ}
     (flux : Vec d → Vec d) (u : Vec d → ℝ) (G : Vec d → Vec d)
@@ -315,7 +315,7 @@ theorem
       (K := K) (Alpha := Alpha) (Bcross := Bcross)
       hpair_int huQ henergy_nonneg henergy_int hK_nonneg hKparent hconst hcent
       (fun R hR =>
-        abs_cubeAverage_vecDot_scalar_smul_le_fluxEnergyExactRhs_indicator_of_localCanonicalCutoff_on_descendant_of_support_buffer_vectorFullDualFullCirc
+        abs_cubeAverage_vectorDot_scalarMultiply_le_fluxEnergyExactRhs_of_localBuffer
           (Q := Q) (R := R) (j := j) hR
           (center := center) (a := a) (s := s)
           (rhoInner := rhoInner) (rhoOuter := rhoOuter) (rho := rho)

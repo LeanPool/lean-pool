@@ -40,11 +40,13 @@ theorem partial_change_decrease {d : ℕ} (P : Measure (CoeffSpace d)) (γ : ℝ
     (η a c C Q ε δ : ℝ) (m mP : Mat d) (k n : ℤ) (L h : ℕ) (hd : 0 < d)
     (hη : η ∈ Set.Ioc (0 : ℝ) 1) (hC : 1 ≤ C) (hCd : (d : ℝ) ≤ C) (hQ : 0 ≤ Q) (hh : 1 ≤ h)
     (ha1 : 1 ≤ a) (ha : 4 * Q * max 1 C ≤ a * C / d) (_hδ : 0 ≤ δ) (_hε : 0 < ε)
-    (hcomp : 1 / 2 * Real.log ((1 + δ) / (1 - δ)) + 2 * C * ((h : ℝ) + 2) * Real.log (1 + δ) ≤ ε / 2)
+    (hcomp : 1 / 2 * Real.log ((1 + δ) / (1 - δ)) + 2 * C * ((h : ℝ) + 2) * Real.log (1 + δ) ≤ ε
+      / 2)
     (hw : Real.log (1 + C * h) + c ≤ a * ε / 2)
     (hmet : projectiveDistance mP
         (explicitCanonicalMetric (adaptedMean P (Geometry.explicitRoundedGrid jStar mP) (n + L))) -
-      projectiveDistance m (explicitCanonicalMetric (adaptedMean P (Geometry.explicitRoundedGrid jStar m) k)) ≤
+      projectiveDistance m (explicitCanonicalMetric (adaptedMean P (Geometry.explicitRoundedGrid
+        jStar m) k)) ≤
       -ε + 1 / 2 * detIncrement P (Geometry.explicitRoundedGrid jStar m) k (n + 2 * (L : ℤ)) +
         1 / 2 * Real.log ((1 + δ) / (1 - δ)))
     (hx0 : 0 ≤ profile P γ (Geometry.explicitRoundedGrid jStar m) jStar k n +
@@ -62,7 +64,8 @@ theorem partial_change_decrease {d : ℕ} (P : Measure (CoeffSpace d)) (γ : ℝ
       C * h *
         (profile P γ (Geometry.explicitRoundedGrid jStar mP) jStar (n + L) (n + L) +
             determinantDrift P γ (Geometry.explicitRoundedGrid jStar mP) jStar (n + L) +
-          (Real.exp (Q * detIncrement P (Geometry.explicitRoundedGrid jStar mP) (n + L) (n + L + h)) - 1))) :
+          (Real.exp (Q * detIncrement P (Geometry.explicitRoundedGrid jStar mP) (n + L) (n + L +
+            h)) - 1))) :
     potential P γ jStar η a mP (n + L) (n + L + h) - potential P γ jStar η a m k n ≤
       -c - 2 * a * C * ((h : ℝ) + 2) * Real.log (1 + δ) +
         a * C / d * (detIncrement P (Geometry.explicitRoundedGrid jStar m) k (n + 2 * (L : ℤ)) +
@@ -80,9 +83,11 @@ theorem partial_change_decrease {d : ℕ} (P : Measure (CoeffSpace d)) (γ : ℝ
   set Δ := detIncrement P (Geometry.explicitRoundedGrid jStar m) k (n + 2 * (L : ℤ)) with hΔdef
   set Δ' := detIncrement P (Geometry.explicitRoundedGrid jStar mP) (n + L) (n + L + h) with hΔ'def
   set oldDist := projectiveDistance m
-      (explicitCanonicalMetric (adaptedMean P (Geometry.explicitRoundedGrid jStar m) k)) with holdDistdef
+      (explicitCanonicalMetric (adaptedMean P (Geometry.explicitRoundedGrid jStar m) k)) with
+        holdDistdef
   set newDist := projectiveDistance mP
-      (explicitCanonicalMetric (adaptedMean P (Geometry.explicitRoundedGrid jStar mP) (n + L))) with hnewDistdef
+      (explicitCanonicalMetric (adaptedMean P (Geometry.explicitRoundedGrid jStar mP) (n + L)))
+        with hnewDistdef
   set compLog := Real.log ((1 + δ) / (1 - δ)) with hcompLogdef
   set deltaLog := Real.log (1 + δ) with hdeltaLogdef
   have hx0x : 0 ≤ x := by simpa [hxdef] using hx0
@@ -244,7 +249,8 @@ theorem failed_test_decrease {d : ℕ} (P : Measure (CoeffSpace d)) (γ : ℝ) (
     (hmet : projectiveDistance mP
         (explicitCanonicalMetric (adaptedMean P (Geometry.explicitRoundedGrid jStar mP) (n + L))) ≤
       1 / 2 * Real.log ((1 + δ) / (1 - δ)))
-    (hold : 0 ≤ projectiveDistance m (explicitCanonicalMetric (adaptedMean P (Geometry.explicitRoundedGrid jStar m) k)))
+    (hold : 0 ≤ projectiveDistance m (explicitCanonicalMetric (adaptedMean P
+      (Geometry.explicitRoundedGrid jStar m) k)))
     (hx0 : 0 ≤ profile P γ (Geometry.explicitRoundedGrid jStar m) jStar k n +
       determinantDrift P γ (Geometry.explicitRoundedGrid jStar m) jStar n)
     (hxP0 : 0 ≤ profile P γ (Geometry.explicitRoundedGrid jStar mP) jStar (n + L) (n + L) +
@@ -259,7 +265,8 @@ theorem failed_test_decrease {d : ℕ} (P : Measure (CoeffSpace d)) (γ : ℝ) (
       C * H *
         (profile P γ (Geometry.explicitRoundedGrid jStar mP) jStar (n + L) (n + L) +
             determinantDrift P γ (Geometry.explicitRoundedGrid jStar mP) jStar (n + L) +
-          (Real.exp (Q * detIncrement P (Geometry.explicitRoundedGrid jStar mP) (n + L) (n + L + H)) - 1))) :
+          (Real.exp (Q * detIncrement P (Geometry.explicitRoundedGrid jStar mP) (n + L) (n + L +
+            H)) - 1))) :
     potential P γ jStar η a mP (n + L) (n + L + H) - potential P γ jStar η a m k n ≤
       -c - 2 * a * C * ((h : ℝ) + 2) * Real.log (1 + δ) +
         a * C / d * detIncrement P (Geometry.explicitRoundedGrid jStar mP) (n + L) (n + L + H) := by
@@ -277,9 +284,11 @@ theorem failed_test_decrease {d : ℕ} (P : Measure (CoeffSpace d)) (γ : ℝ) (
       determinantDrift P γ (Geometry.explicitRoundedGrid jStar mP) jStar (n + L + H) with hx'def
   set Δ := detIncrement P (Geometry.explicitRoundedGrid jStar mP) (n + L) (n + L + H) with hΔdef
   set oldDist := projectiveDistance m
-      (explicitCanonicalMetric (adaptedMean P (Geometry.explicitRoundedGrid jStar m) k)) with holdDistdef
+      (explicitCanonicalMetric (adaptedMean P (Geometry.explicitRoundedGrid jStar m) k)) with
+        holdDistdef
   set newDist := projectiveDistance mP
-      (explicitCanonicalMetric (adaptedMean P (Geometry.explicitRoundedGrid jStar mP) (n + L))) with hnewDistdef
+      (explicitCanonicalMetric (adaptedMean P (Geometry.explicitRoundedGrid jStar mP) (n + L)))
+        with hnewDistdef
   set compLog := Real.log ((1 + δ) / (1 - δ)) with hcompLogdef
   set deltaLog := Real.log (1 + δ) with hdeltaLogdef
   set B := a * C / (d : ℝ) * Δ with hBdef

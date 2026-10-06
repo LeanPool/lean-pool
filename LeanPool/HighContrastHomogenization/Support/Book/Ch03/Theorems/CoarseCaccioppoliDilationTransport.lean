@@ -197,8 +197,7 @@ theorem boundaryPatchWindow_dilateCube {d : ℕ} (k : ℤ)
   rw [hscale, openCubeAtScale_dilateVec]
 
 /-- Cast an `H¹₀` function across definitional set equality. -/
-@[expose]
-public noncomputable def H10Function.castDomain {d : ℕ}
+private noncomputable def H10Function.castDomain {d : ℕ}
     {U V : Set (Vec d)} (hUV : U = V) (u : H10Function U) : H10Function V :=
   hUV ▸ u
 
@@ -666,9 +665,25 @@ private structure InteriorCaccioppoliDilationWitness {d : ℕ} [NeZero d]
           normalizedCoeff s t normalizedSolution ≤
         interiorCaccioppoliRHS C Q a s t u
 
+private theorem boundaryCaccioppoliRHS_eq_of_normalizedParent
+    {d : ℕ} [NeZero d] {Q : TriadicCube d} {a b : CoeffFamily d} {x : Vec d}
+    (u : BoundaryCaccioppoliDatum Q a x)
+    (v : BoundaryCaccioppoliDatum (Ch02.dilateCube (-Q.scale) Q) b
+      (Ch02.dilateVec (-Q.scale) x))
+    (hFam : Ch02.TriadicCoeffFamily.IsDilation (-Q.scale) a b)
+    (hparent : boundaryCaccioppoliParentL2Sq v =
+      (Ch02.triadicDilationFactor (-Q.scale)) ^ (2 : ℕ) *
+        boundaryCaccioppoliParentL2Sq u) (C s t : ℝ) :
+    boundaryCaccioppoliRHS C s t v = boundaryCaccioppoliRHS C s t u := by
+  have hpref :=
+    caccioppoliPrefactor_dilate_neg_scale (Ch02.multiscaleDilationTheory d)
+      (Q := Q) (a := a) (b := b) (C := C) (s := s) (t := t) hFam
+  unfold boundaryCaccioppoliRHS
+  rw [hparent, triadicDilationFactor_neg_scale_sq Q, hpref]
+  ring
+
 /-- Boundary Caccioppoli data have a concrete normalized dilation witness. -/
-@[expose]
-public noncomputable def boundaryCaccioppoliDilationWitness {d : ℕ} [NeZero d]
+private noncomputable def boundaryCaccioppoliDilationWitness {d : ℕ} [NeZero d]
     {Q : TriadicCube d} {a : CoeffFamily d} {x : Vec d}
     (u : BoundaryCaccioppoliDatum Q a x) :
     BoundaryCaccioppoliDilationWitness u := by
@@ -753,26 +768,15 @@ public noncomputable def boundaryCaccioppoliDilationWitness {d : ℕ} [NeZero d]
           r ^ (2 : ℕ) * boundaryCaccioppoliParentL2Sq u := by
       simpa [boundaryCaccioppoliParentL2Sq, normalizedL2SqOnSet,
         normalizedSetAverage, vDatum, uSol, vSol, r, hopen] using hparent
-    have hpref :=
-      caccioppoliPrefactor_dilate_neg_scale (Ch02.multiscaleDilationTheory d)
-        (Q := Q) (a := a) (b := b) (C := C) (s := s) (t := t)
-        (by simpa [k, b] using hFam)
-    have hsq :
-        r ^ (2 : ℕ) =
-          Real.rpow (3 : ℝ) (-2 * (((Q.scale : ℤ) : ℝ))) := by
-      simpa [r, k] using triadicDilationFactor_neg_scale_sq Q
     have heq :
         boundaryCaccioppoliRHS C s t vDatum =
-          boundaryCaccioppoliRHS C s t u := by
-      unfold boundaryCaccioppoliRHS
-      rw [hparent_eq, hsq]
-      rw [hpref]
-      ring
+          boundaryCaccioppoliRHS C s t u :=
+      boundaryCaccioppoliRHS_eq_of_normalizedParent u vDatum
+        (by simpa [k] using hFam) (by simpa [r, k] using hparent_eq) C s t
     simpa [vDatum, k, b] using le_of_eq heq
 
 /-- Interior cube solutions have a concrete normalized dilation witness. -/
-@[expose]
-public noncomputable def interiorCaccioppoliDilationWitness {d : ℕ} [NeZero d]
+private noncomputable def interiorCaccioppoliDilationWitness {d : ℕ} [NeZero d]
     {Q : TriadicCube d} {a : CoeffFamily d} (u : CubeSolution Q a) :
     InteriorCaccioppoliDilationWitness u := by
   let k : ℤ := -Q.scale

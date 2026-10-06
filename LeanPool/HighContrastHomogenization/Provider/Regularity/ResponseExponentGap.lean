@@ -148,7 +148,7 @@ theorem homogenizationErrorOnCube_infinity_one_le_gap_mul_infinity_two
     intro n
     dsimp [M]
     exact Book.Ch02.maxDescendantNormalizedBlockResponseAtScale_nonneg Q
-      (sub_le_self _ (by exact_mod_cast Nat.zero_le n)) a a0
+      (sub_le_self _ (Nat.cast_nonneg n)) a a0
   have hf_nonneg : ∀ n, 0 ≤ f n := by
     intro n
     exact mul_nonneg hK_pos.le (Real.sqrt_nonneg _)
@@ -219,7 +219,7 @@ theorem homogenizationErrorOnCube_infinity_one_le_gap_mul_infinity_two
     intro n
     rw [hg_sq]
     have hk : Q.scale - (n : ℤ) ≤ Q.scale :=
-      sub_le_self _ (by exact_mod_cast Nat.zero_le n)
+      sub_le_self _ (Nat.cast_nonneg n)
     have hresponse : M n =
         (Book.Ch02.scaleResponseAtScale Q (Q.scale - (n : ℤ))
           .infinity a a0) ^ (2 : ℝ) := by

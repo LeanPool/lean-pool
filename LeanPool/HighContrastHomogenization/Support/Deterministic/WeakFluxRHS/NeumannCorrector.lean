@@ -76,7 +76,7 @@ private theorem isSobolevRegularDomain_cubeSet_weakFluxRHS {d : ℕ}
 from the corresponding open cube, since the two realizations differ only by a
 Lebesgue-null boundary. -/
 @[expose]
-noncomputable def h1CoerciveEstimate_cubeSet {d : ℕ} [NeZero d]
+noncomputable def h1CoerciveEstimate_cubeSet {d : ℕ}
     (Q : TriadicCube d) :
     H1CoerciveEstimate (cubeSet Q) := by
   letI : MeasureTheory.IsFiniteMeasure (volumeMeasureOn (cubeSet Q)) :=
@@ -190,6 +190,7 @@ theorem cubeAverageVec_centered_eq_zero {d : ℕ} (Q : TriadicCube d)
 `- div(a grad omega) = div g`. -/
 structure MeanZeroNeumannCorrectorData {d : ℕ}
     (Q : TriadicCube d) (a : CoeffField d) (g : Vec d → Vec d) where
+  /-- The mean-zero H¹ function solving the local Neumann corrector equation. -/
   toH1MeanZero : H1MeanZeroFunction (cubeSet Q)
   weakSolution :
     IsMeanZeroNeumannRhsWeakSolution a (cubeSet Q) toH1MeanZero g
@@ -610,7 +611,7 @@ theorem exists_aHarmonicRemainder_of_parent_potential_solenoidal_centered
 /-- Fully constructed descendant-cube centered Neumann corrector and harmonic
 remainder from parent potential/solenoidal PDE data, assuming the local
 mean-zero coercive estimate on the descendant half-open cube. -/
-theorem exists_centeredCorrector_aHarmonicRemainder_of_parent_potential_solenoidal_h1CoerciveEstimate
+theorem exists_centeredCorrector_harmonicRemainder_of_parentCoercivity
     [NeZero d] {P R : TriadicCube d} {n : ℕ} {lam Lam : ℝ}
     {u : Vec d → Vec d}
     (hu_potential : IsPotentialOn (cubeSet P) u)

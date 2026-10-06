@@ -41,7 +41,7 @@ variable {d : ℕ} {Q : TriadicCube d} {u : H1Function (openCubeSet Q)}
 restricted Hessian row. This is the exact form meant to receive the future
 disjoint-restriction estimate
 `∑_R ‖row‖²_{L²(R)} ≤ ‖row‖²_{L²(Q)}`. -/
-theorem cubeBesovDepthSeminorm_gradCoord_le_depthWeight_mul_const_mul_cardInvSum_volumeInvRpowHalf_hessianRow
+theorem cubeBesovDepthSeminorm_gradient_le_depthWeightedHessianRow
     (H : HasWeakHessianOn (openCubeSet Q) u) (i : Fin d) (j : ℕ)
     (hC :
       ∀ R ∈ descendantsAtDepth Q j, H1CoerciveEstimate (openCubeSet R))
@@ -76,7 +76,8 @@ theorem cubeBesovDepthSeminorm_gradCoord_le_depthWeight_mul_const_mul_cardInvSum
         (fun R =>
           (if hR : R ∈ descendantsAtDepth Q j then
             ‖((H.restrict (isOpen_openCubeSet R)
-                (openCubeSet_subset_of_mem_descendantsAtDepth hR)).gradCoordH1Function i).gradToVectorL2‖
+                (openCubeSet_subset_of_mem_descendantsAtDepth hR)).gradCoordH1Function
+                  i).gradToVectorL2‖
           else
             0) ^ 2) ≤ Bavg ^ 2 := by
     have hsum_if :
@@ -84,7 +85,8 @@ theorem cubeBesovDepthSeminorm_gradCoord_le_depthWeight_mul_const_mul_cardInvSum
           (fun R =>
             (if hR : R ∈ descendantsAtDepth Q j then
               ‖((H.restrict (isOpen_openCubeSet R)
-                  (openCubeSet_subset_of_mem_descendantsAtDepth hR)).gradCoordH1Function i).gradToVectorL2‖
+                  (openCubeSet_subset_of_mem_descendantsAtDepth hR)).gradCoordH1Function
+                    i).gradToVectorL2‖
             else
               0) ^ 2) ≤ B ^ 2 := by
       change
@@ -92,7 +94,8 @@ theorem cubeBesovDepthSeminorm_gradCoord_le_depthWeight_mul_const_mul_cardInvSum
           (fun R =>
             (if hR : R ∈ descendantsAtDepth Q j then
               ‖((H.restrict (isOpen_openCubeSet R)
-                  (openCubeSet_subset_of_mem_descendantsAtDepth hR)).gradCoordH1Function i).gradToVectorL2‖
+                  (openCubeSet_subset_of_mem_descendantsAtDepth hR)).gradCoordH1Function
+                    i).gradToVectorL2‖
             else
               0) ^ 2) ≤ B ^ 2 at hsum
       exact hsum
@@ -101,7 +104,8 @@ theorem cubeBesovDepthSeminorm_gradCoord_le_depthWeight_mul_const_mul_cardInvSum
           (fun R =>
             (if hR : R ∈ descendantsAtDepth Q j then
               ‖((H.restrict (isOpen_openCubeSet R)
-                  (openCubeSet_subset_of_mem_descendantsAtDepth hR)).gradCoordH1Function i).gradToVectorL2‖
+                  (openCubeSet_subset_of_mem_descendantsAtDepth hR)).gradCoordH1Function
+                    i).gradToVectorL2‖
             else
               0) ^ 2) ≤ (D.card : ℝ)⁻¹ * B ^ 2 := by
       dsimp [descendantsAverage, D]
@@ -113,7 +117,7 @@ theorem cubeBesovDepthSeminorm_gradCoord_le_depthWeight_mul_const_mul_cardInvSum
     cubeBesovDepthSeminorm Q 1 (2 : ℝ≥0∞) (fun x => u.grad x i) j ≤
       cubeBesovDepthWeight Q 1 j * (K * Bavg)
   exact
-    H.cubeBesovDepthSeminorm_gradCoord_le_depthWeight_mul_const_mul_of_descendantsAverage_volumeInvRpowHalf_hessianRow
+    H.cubeBesovDepthSeminorm_gradCoord_le_depthWeightedBy_const_mul
       i j hC hK hBavg hfactor havg
 
 end HasWeakHessianOn

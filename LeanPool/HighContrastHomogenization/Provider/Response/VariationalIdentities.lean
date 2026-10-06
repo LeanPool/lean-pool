@@ -35,10 +35,10 @@ doubled block state `X(V) = (∇v, a∇v)` of the maximizer and on the coarse bl
 * the exact identity behind the comparison of the optimizer averages of two
   cells.
 * the energy identity for the optimizer,
-  `J(V,p,q;a) = ½‖σ^{1/2}∇v‖²_{L̲²(V)}` of [Armstrong–Kuusi, (2.30)], and
+  `J(V,p,q;a) = ½‖σ^{1/2}∇v‖²_{L_underlined²(V)}` of [Armstrong–Kuusi, (2.30)], and
 * the pointwise energy of the optimizer state, the substitution
   `X_t·𝐀X_t = 2∇v_t·σ∇v_t` into the block of [Armstrong–Kuusi, (2.8)], with
-  its averaged form `‖𝐀^{1/2}X_t‖²_{L̲²} = 2ℰ_t²`, and
+  its averaged form `‖𝐀^{1/2}X_t‖²_{L_underlined²} = 2ℰ_t²`, and
 * the expansion of the response functional around its maximizer, the per-cell
   half of the exact factor-two response identity.
 
@@ -223,7 +223,7 @@ theorem metricNormSq_blockAverage_sub {U W : Domain d} (a : CoeffOn U) (b : Coef
 /-! ## The two energy identities -/
 
 /-- **The maximizer energy identity** ([Armstrong–Kuusi, (2.30)]):
-`J(V,p,q;a) = ½‖σ^{1/2}∇v(·,V,p,q;a)‖²_{L̲²(V)}`, the norm being the normalized
+`J(V,p,q;a) = ½‖σ^{1/2}∇v(·,V,p,q;a)‖²_{L_underlined²(V)}`, the norm being the normalized
 one and `variationEnergyValue` being its square. -/
 theorem responseJ_eq_energy {U : Domain d} (a : CoeffOn U) {p q : Vec d}
     {v : Solution U a} (hv : Book.Ch02.IsResponseMaximizer U a p q v) :
@@ -261,7 +261,7 @@ theorem pointwise_block_energy {U : Domain d} (a : CoeffOn U) (g : Vec d → Vec
 
 /-- **The averaged energy identity**, the second of the two pointwise energy
 identities:
-`‖𝐀^{1/2}X_t‖²_{L̲²(U_t)} = 2ℰ_t²`, with `ℰ_t² = ‖σ^{1/2}∇v_t‖²_{L̲²(U_t)}` the
+`‖𝐀^{1/2}X_t‖²_{L_underlined²(U_t)} = 2ℰ_t²`, with `ℰ_t² = ‖σ^{1/2}∇v_t‖²_{L_underlined²(U_t)}` the
 `variationEnergyValue` of the maximizer. -/
 theorem average_block_energy_eq {U : Domain d} (a : CoeffOn U) (v : Solution U a) :
     Book.Ch02.average U (fun x =>

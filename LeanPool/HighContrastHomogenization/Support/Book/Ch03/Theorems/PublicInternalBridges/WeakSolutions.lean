@@ -336,7 +336,7 @@ theorem homogenizationComparisonFluxDefectFromGradient_ae_eq_fluxDefect_publicCo
   simp [homogenizationComparisonFluxDefectFromGradient, fluxDefect, hx,
     sub_eq_add_neg, add_matVecMul, neg_matVecMul]
 
-theorem homogenizationComparisonFluxDefectFromGradient_ae_eq_fluxDefect_parent_publicCoeffField_descendant_cubeSet
+theorem homogenizationFluxDefectFromGradient_ae_eq_fluxDefect_parent_descendant_cube
     {d : ℕ} {Q R : TriadicCube d} {a : CoeffFamily d}
     {a0 : ConstantCoeffMatrix d} {j : ℕ}
     (hR : R ∈ descendantsAtDepth Q j) (G : Vec d → Vec d) :
@@ -695,7 +695,7 @@ theorem isH1DirichletRhsWeakSolutionOn_publicCoeffField_cubeSet_of_isForcedEquat
       (Q := Q) (a := publicCoeffField Q a)
       (u := castH1Domain (Ch02.cubeDomain_coe Q) u) (g := g) hopen
 
-theorem CoarseGrainingComparisonDatum.cubeBesovNegativeVectorSeminormTwo_fluxDefect_le_const_mul_coarseFluxResponseRHSBound_descendant
+theorem CoarseGrainingComparisonDatum.fluxDefect_negativeBesov_le_coarseFluxResponseBound
     {d : ℕ} [NeZero d] {Q R : TriadicCube d} {a : CoeffFamily d}
     {a0 : ConstantCoeffMatrix d} {g : Vec d → Vec d} {j : ℕ} {s : ℝ}
     (w : CoarseGrainingComparisonDatum Q a a0 g)
@@ -703,7 +703,7 @@ theorem CoarseGrainingComparisonDatum.cubeBesovNegativeVectorSeminormTwo_fluxDef
     (hR : R ∈ descendantsAtDepth Q j) :
     cubeBesovNegativeVectorSeminormTwo R s
         (fluxDefect (publicCoeffField Q a) a0.matrix w.u.grad) ≤
-      (2 * zeroTraceDirichletCorrectedWeakFluxApexConstant d 1) *
+      (2 * zeroTraceFluxApexConstant d 1) *
         coarseFluxResponseRHSBound R
           (publicCoeffField Q a) a0.matrix s w.u.grad g := by
   let uR : H1Function (cubeSet R) :=
@@ -733,10 +733,10 @@ theorem CoarseGrainingComparisonDatum.cubeBesovNegativeVectorSeminormTwo_fluxDef
   have hdet :
       cubeBesovNegativeVectorSeminormTwo R s
           (fluxDefect (publicCoeffField Q a) a0.matrix uR.grad) ≤
-        2 * zeroTraceDirichletCorrectedWeakFluxApexConstant d s *
+        2 * zeroTraceFluxApexConstant d s *
           coarseFluxResponseRHSBound R
             (publicCoeffField Q a) a0.matrix s uR.grad g :=
-    ZeroTraceDirichletCorrectorData.cubeBesovNegativeVectorSeminormTwo_fluxDefect_le_two_mul_const_mul_coarseFluxResponseRHSBound_of_h1DirichletRhsWeakSolutionOn_correctedWeakFlux_averagedCorrectorEnergy
+    ZeroTraceDirichletCorrectorData.besovFluxDefect_le_constant_mul_bound
       (Q := R) (a := publicCoeffField Q a) (a0 := a0.matrix) (s := s)
       (g := g) (v := uR)
       (lam := (a.coeffOn Q).lam) (Lam := (a.coeffOn Q).Lam)
@@ -753,12 +753,12 @@ theorem CoarseGrainingComparisonDatum.cubeBesovNegativeVectorSeminormTwo_fluxDef
       R (publicCoeffField Q a) a0.matrix w.u.grad g hs
       (forceBesovRegularity_descendant_partialSeminorms_bddAbove hg hR)
   have hM_le :
-      zeroTraceDirichletCorrectedWeakFluxApexConstant d s ≤
-        zeroTraceDirichletCorrectedWeakFluxApexConstant d 1 := by
+      zeroTraceFluxApexConstant d s ≤
+        zeroTraceFluxApexConstant d 1 := by
     have hdisplay :
-        zeroTraceDirichletCorrectedWeakFluxApexDisplayScale d s ≤
-          zeroTraceDirichletCorrectedWeakFluxApexDisplayScale d 1 := by
-      unfold zeroTraceDirichletCorrectedWeakFluxApexDisplayScale
+        zeroTraceFluxApexDisplayScale d s ≤
+          zeroTraceFluxApexDisplayScale d 1 := by
+      unfold zeroTraceFluxApexDisplayScale
       have hpow :
           (3 : ℝ) ^ ((d : ℝ) + s) ≤
             (3 : ℝ) ^ ((d : ℝ) + 1) :=
@@ -769,18 +769,18 @@ theorem CoarseGrainingComparisonDatum.cubeBesovNegativeVectorSeminormTwo_fluxDef
             (3 : ℝ) ^ ((d : ℝ) + 1) * Real.sqrt 2 :=
         mul_le_mul_of_nonneg_right hpow (Real.sqrt_nonneg 2)
       exact mul_le_mul_of_nonneg_left hinner (by exact_mod_cast Nat.zero_le d)
-    unfold zeroTraceDirichletCorrectedWeakFluxApexConstant
+    unfold zeroTraceFluxApexConstant
     nlinarith
   have hfactor :
-      2 * zeroTraceDirichletCorrectedWeakFluxApexConstant d s ≤
-        2 * zeroTraceDirichletCorrectedWeakFluxApexConstant d 1 := by
+      2 * zeroTraceFluxApexConstant d s ≤
+        2 * zeroTraceFluxApexConstant d 1 := by
     nlinarith
   calc
     cubeBesovNegativeVectorSeminormTwo R s
         (fluxDefect (publicCoeffField Q a) a0.matrix w.u.grad)
-        ≤ 2 * zeroTraceDirichletCorrectedWeakFluxApexConstant d s * B := by
+        ≤ 2 * zeroTraceFluxApexConstant d s * B := by
           simpa [uR, B, publicH1ToCubeSet_grad] using hdet
-    _ ≤ (2 * zeroTraceDirichletCorrectedWeakFluxApexConstant d 1) * B :=
+    _ ≤ (2 * zeroTraceFluxApexConstant d 1) * B :=
           mul_le_mul_of_nonneg_right hfactor hB_nonneg
 
 theorem isMeanZeroNeumannRhsWeakSolution_publicCoeffField_cubeSet_of_isMeanZeroNeumannForcedEquation

@@ -230,10 +230,14 @@ private theorem abs_symmPartInv_toMat_sub_le_norm_of_mem_quantitative
     _ = ((d : ℝ) ^ 2 * (((k + 1 : ℝ)⁻¹)⁻¹) ^ 2) * ‖A - B‖ := by
       simp [lam]
 
+/-- The nonnegative constant `d²(k + 1)²` controlling entries of the inverse symmetric part on the
+quantitative ellipticity slice. -/
 @[expose]
 noncomputable def quantitativeSymmPartInvEntryLipschitzConstant (d k : ℕ) : NNReal :=
   Real.toNNReal ((d : ℝ) ^ 2 * (((k + 1 : ℝ)⁻¹)⁻¹) ^ 2)
 
+/-- The nonnegative constant `d(d²(k + 1)³ + k + 1)` controlling entries of the
+inverse-symmetric-part times skew-part product. -/
 @[expose]
 noncomputable def quantitativeInvSkewProductEntryLipschitzConstant (d k : ℕ) : NNReal :=
   Real.toNNReal
@@ -241,6 +245,8 @@ noncomputable def quantitativeInvSkewProductEntryLipschitzConstant (d k : ℕ) :
       (((d : ℝ) ^ 2 * (((k + 1 : ℝ)⁻¹)⁻¹) ^ 2) * (k + 1 : ℝ) +
         (((k + 1 : ℝ)⁻¹)⁻¹)))
 
+/-- The explicit nonnegative Lipschitz constant for upper-left block coefficient entries on the
+quantitative ellipticity slice. -/
 @[expose]
 noncomputable def quantitativeUpperLeftEntryLipschitzConstant (d k : ℕ) : NNReal :=
   Real.toNNReal
@@ -599,6 +605,8 @@ theorem lipschitzOnWith_fullBlockCoeffEntry_hilbertMat_upperLeft_quantitative
   rw [Real.dist_eq, dist_eq_norm, hC_coe]
   simpa [toFullBlockMat] using h
 
+/-- The Lipschitz constant for a full block coefficient entry, selected according to its
+upper-left, off-diagonal, or lower-right block. -/
 @[expose]
 noncomputable def quantitativeFullBlockCoeffEntryLipschitzConstant
     (d k : ℕ) (α β : BlockCoord d) : NNReal :=

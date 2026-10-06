@@ -180,7 +180,7 @@ theorem exists_cubeGradientProjectionHsStability_originCube (d : ℕ) [NeZero d]
     (htest.contDiff.continuous.memLp_of_hasCompactSupport
       htest.hasCompactSupport).restrict _
   have hRealize :=
-    PotentialSolenoidalL2Data.hasPotentialZeroTraceClosureRealization_of_isOpenBoundedConvexDomain
+    PotentialSolenoidalL2Data.hasPotentialZeroTraceClosureRealization_of_convexDomain
       hUopen
   have hEll : IsEllipticFieldOn 1 1 (openCubeSet (originCube d m))
       (identityCoeffField d) :=

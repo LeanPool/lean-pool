@@ -34,6 +34,114 @@ open scoped Matrix.Norms.L2Operator
 
 noncomputable section
 
+/-- Scalar order bounds for a positive definite matrix and one of its fractional powers.
+The extremal eigenvalues control all spectral inequalities for the power. -/
+private theorem normalizedMat_power_order_characterization {d : ℕ} [NeZero d]
+    (N : Mat d) (hNPD : N.PosDef) (θ : ℝ) (hθ1_nonneg : 0 ≤ 1 - θ) :
+    (∀ t : ℝ, MatLoewnerLE (t • matPow θ N) N ↔ t ≤ specMin N ^ (1 - θ)) ∧
+      (∀ t : ℝ, MatLoewnerLE N (t • matPow θ N) ↔ specBound N ^ (1 - θ) ≤ t) := by
+  open scoped MatrixOrder in
+  classical
+  have hcont_rpow : ∀ θ' : ℝ, ContinuousOn (fun x : ℝ => x ^ θ') (spectrum ℝ N) := by
+    intro θ'
+    exact continuousOn_id.rpow_const fun x hx => by
+      left
+      obtain ⟨i, rfl⟩ := hNPD.isHermitian.spectrum_real_eq_range_eigenvalues ▸ hx
+      exact ne_of_gt (hNPD.eigenvalues_pos i)
+  have hcfc_id : cfc (fun x : ℝ => x) N = N := by
+    simpa using! cfc_id ℝ N hNPD.isHermitian
+  have hHermPow : (matPow θ N).IsHermitian := (Geometry.matPow_posDef hNPD θ).isHermitian
+  have hHermSmul : ∀ t : ℝ, (t • matPow θ N).IsHermitian := by
+    intro t
+    show Matrix.conjTranspose (t • matPow θ N) = t • matPow θ N
+    rw [Matrix.conjTranspose_smul, hHermPow]
+    simp
+  constructor
+  · intro t
+    have hcmul : t • matPow θ N = cfc (fun x : ℝ => t * x ^ θ) N := by
+      rw [show matPow θ N = cfc (fun x : ℝ => x ^ θ) N from rfl,
+        ← cfc_const_mul t (fun x : ℝ => x ^ θ) N (hcont_rpow θ)]
+    have hmatrixOrder : (t • matPow θ N ≤ N) ↔ ∀ x ∈ spectrum ℝ N, t * x ^ θ ≤ x := by
+      have hraw := cfc_le_iff (fun x : ℝ => t * x ^ θ) (fun x : ℝ => x) N
+        (continuousOn_const.mul (hcont_rpow θ)) continuousOn_id (ha := hNPD.isHermitian)
+      rw [hcfc_id, ← hcmul] at hraw
+      exact hraw
+    rw [← BlockGeometricMean.matLE_iff (hHermSmul t) hNPD.isHermitian, hmatrixOrder]
+    constructor
+    · intro hall
+      obtain ⟨i0, hi0⟩ := Finset.exists_mem_eq_inf' Finset.univ_nonempty
+        hNPD.isHermitian.eigenvalues
+      have hxi0 : hNPD.isHermitian.eigenvalues i0 ∈ spectrum ℝ N := by
+        rw [hNPD.isHermitian.spectrum_real_eq_range_eigenvalues]
+        exact Set.mem_range_self i0
+      have hb := hall _ hxi0
+      have hxpos : 0 < hNPD.isHermitian.eigenvalues i0 := hNPD.eigenvalues_pos i0
+      have h1 : hNPD.isHermitian.eigenvalues i0 ^ (1 - θ) =
+          hNPD.isHermitian.eigenvalues i0 / hNPD.isHermitian.eigenvalues i0 ^ θ := by
+        rw [Real.rpow_sub hxpos, Real.rpow_one]
+      have hstep : t ≤ hNPD.isHermitian.eigenvalues i0 ^ (1 - θ) := by
+        rw [h1, le_div_iff₀ (Real.rpow_pos_of_pos hxpos θ)]
+        linarith only [hb]
+      rw [Geometry.specMin_eq_finset_inf_eigenvalues hNPD, hi0.2]
+      exact hstep
+    · intro ht x hx
+      rw [hNPD.isHermitian.spectrum_real_eq_range_eigenvalues] at hx
+      obtain ⟨i, rfl⟩ := hx
+      have hxpos : 0 < hNPD.isHermitian.eigenvalues i := hNPD.eigenvalues_pos i
+      have hSm : specMin N ≤ hNPD.isHermitian.eigenvalues i := by
+        rw [Geometry.specMin_eq_finset_inf_eigenvalues hNPD]
+        exact Finset.inf'_le _ (Finset.mem_univ i)
+      have hpow : specMin N ^ (1 - θ) ≤ hNPD.isHermitian.eigenvalues i ^ (1 - θ) :=
+        Real.rpow_le_rpow (Geometry.specMin_pos hNPD).le hSm hθ1_nonneg
+      have ht' : t ≤ hNPD.isHermitian.eigenvalues i ^ (1 - θ) := le_trans ht hpow
+      have h1 : hNPD.isHermitian.eigenvalues i ^ (1 - θ) =
+          hNPD.isHermitian.eigenvalues i / hNPD.isHermitian.eigenvalues i ^ θ := by
+        rw [Real.rpow_sub hxpos, Real.rpow_one]
+      rw [h1, le_div_iff₀ (Real.rpow_pos_of_pos hxpos θ)] at ht'
+      linarith only [ht']
+  · intro t
+    have hcmul : t • matPow θ N = cfc (fun x : ℝ => t * x ^ θ) N := by
+      rw [show matPow θ N = cfc (fun x : ℝ => x ^ θ) N from rfl,
+        ← cfc_const_mul t (fun x : ℝ => x ^ θ) N (hcont_rpow θ)]
+    have hmatrixOrder : (N ≤ t • matPow θ N) ↔ ∀ x ∈ spectrum ℝ N, x ≤ t * x ^ θ := by
+      have hraw := cfc_le_iff (fun x : ℝ => x) (fun x : ℝ => t * x ^ θ) N
+        continuousOn_id (continuousOn_const.mul (hcont_rpow θ)) (ha := hNPD.isHermitian)
+      rw [hcfc_id, ← hcmul] at hraw
+      exact hraw
+    rw [← BlockGeometricMean.matLE_iff hNPD.isHermitian (hHermSmul t), hmatrixOrder]
+    constructor
+    · intro hall
+      obtain ⟨j0, hj0⟩ := Finset.exists_mem_eq_sup' Finset.univ_nonempty
+        hNPD.isHermitian.eigenvalues
+      have hxj0 : hNPD.isHermitian.eigenvalues j0 ∈ spectrum ℝ N := by
+        rw [hNPD.isHermitian.spectrum_real_eq_range_eigenvalues]
+        exact Set.mem_range_self j0
+      have hb := hall _ hxj0
+      have hxpos : 0 < hNPD.isHermitian.eigenvalues j0 := hNPD.eigenvalues_pos j0
+      have h1 : hNPD.isHermitian.eigenvalues j0 ^ (1 - θ) =
+          hNPD.isHermitian.eigenvalues j0 / hNPD.isHermitian.eigenvalues j0 ^ θ := by
+        rw [Real.rpow_sub hxpos, Real.rpow_one]
+      have hstep : hNPD.isHermitian.eigenvalues j0 ^ (1 - θ) ≤ t := by
+        rw [h1, div_le_iff₀ (Real.rpow_pos_of_pos hxpos θ)]
+        linarith only [hb]
+      rw [Geometry.specBound_eq_finset_sup_eigenvalues hNPD, hj0.2]
+      exact hstep
+    · intro ht x hx
+      rw [hNPD.isHermitian.spectrum_real_eq_range_eigenvalues] at hx
+      obtain ⟨i, rfl⟩ := hx
+      have hxpos : 0 < hNPD.isHermitian.eigenvalues i := hNPD.eigenvalues_pos i
+      have hSm : hNPD.isHermitian.eigenvalues i ≤ specBound N := by
+        rw [Geometry.specBound_eq_finset_sup_eigenvalues hNPD]
+        exact Finset.le_sup' _ (Finset.mem_univ i)
+      have hpow : hNPD.isHermitian.eigenvalues i ^ (1 - θ) ≤ specBound N ^ (1 - θ) :=
+        Real.rpow_le_rpow hxpos.le hSm hθ1_nonneg
+      have ht' : hNPD.isHermitian.eigenvalues i ^ (1 - θ) ≤ t := le_trans hpow ht
+      have h1 : hNPD.isHermitian.eigenvalues i ^ (1 - θ) =
+          hNPD.isHermitian.eigenvalues i / hNPD.isHermitian.eigenvalues i ^ θ := by
+        rw [Real.rpow_sub hxpos, Real.rpow_one]
+      rw [h1, div_le_iff₀ (Real.rpow_pos_of_pos hxpos θ)] at ht'
+      linarith only [ht']
+
 /-- `p.global.selection`: the metric part of a partial geometry change. `m₊ = geometryUpdate ε m
 m⋆` with
 `m⋆ = m(𝐀_{n+2L,q})` not reached (`d_pr([m],[m⋆]) > ε`, so `d_pr([m₊],[m⋆]) = d_pr([m],[m⋆]) - ε`
@@ -49,38 +157,48 @@ theorem partial_change_metric {d : ℕ} (P : Measure (CoeffSpace d)) (jStar : �
     (hsymP : IsSymmetricBlockMat
       (adaptedMean P (Geometry.explicitRoundedGrid jStar
         (geometryUpdate ε m
-          (explicitCanonicalMetric (adaptedMean P (Geometry.explicitRoundedGrid jStar m) (n + 2 * (L : ℤ))))))
+          (explicitCanonicalMetric (adaptedMean P (Geometry.explicitRoundedGrid jStar m) (n + 2
+            * (L : ℤ))))))
         (n + L)))
     (hposP : Book.Ch02.BlockPosDef
       (adaptedMean P (Geometry.explicitRoundedGrid jStar
         (geometryUpdate ε m
-          (explicitCanonicalMetric (adaptedMean P (Geometry.explicitRoundedGrid jStar m) (n + 2 * (L : ℤ))))))
+          (explicitCanonicalMetric (adaptedMean P (Geometry.explicitRoundedGrid jStar m) (n + 2
+            * (L : ℤ))))))
         (n + L)))
-    (hmono : BlockMatLoewnerLE (adaptedMean P (Geometry.explicitRoundedGrid jStar m) (n + 2 * (L : ℤ)))
+    (hmono : BlockMatLoewnerLE (adaptedMean P (Geometry.explicitRoundedGrid jStar m) (n + 2 * (L
+      : ℤ)))
       (adaptedMean P (Geometry.explicitRoundedGrid jStar m) k))
     (hfar : ε < projectiveDistance m
-      (explicitCanonicalMetric (adaptedMean P (Geometry.explicitRoundedGrid jStar m) (n + 2 * (L : ℤ)))))
+      (explicitCanonicalMetric (adaptedMean P (Geometry.explicitRoundedGrid jStar m) (n + 2 * (L
+        : ℤ)))))
     (hbr₁ : BlockMatLoewnerLE
       (blockScale (1 - δ) (adaptedMean P (Geometry.explicitRoundedGrid jStar m) (n + 2 * (L : ℤ))))
       (adaptedMean P (Geometry.explicitRoundedGrid jStar
         (geometryUpdate ε m
-          (explicitCanonicalMetric (adaptedMean P (Geometry.explicitRoundedGrid jStar m) (n + 2 * (L : ℤ))))))
+          (explicitCanonicalMetric (adaptedMean P (Geometry.explicitRoundedGrid jStar m) (n + 2
+            * (L : ℤ))))))
         (n + L)))
     (hbr₂ : BlockMatLoewnerLE
       (adaptedMean P (Geometry.explicitRoundedGrid jStar
         (geometryUpdate ε m
-          (explicitCanonicalMetric (adaptedMean P (Geometry.explicitRoundedGrid jStar m) (n + 2 * (L : ℤ))))))
+          (explicitCanonicalMetric (adaptedMean P (Geometry.explicitRoundedGrid jStar m) (n + 2
+            * (L : ℤ))))))
         (n + L))
-      (blockScale (1 + δ) (adaptedMean P (Geometry.explicitRoundedGrid jStar m) (n + 2 * (L : ℤ))))) :
+      (blockScale (1 + δ) (adaptedMean P (Geometry.explicitRoundedGrid jStar m) (n + 2 * (L :
+        ℤ))))) :
     projectiveDistance
         (geometryUpdate ε m
-          (explicitCanonicalMetric (adaptedMean P (Geometry.explicitRoundedGrid jStar m) (n + 2 * (L : ℤ)))))
+          (explicitCanonicalMetric (adaptedMean P (Geometry.explicitRoundedGrid jStar m) (n + 2
+            * (L : ℤ)))))
         (explicitCanonicalMetric
           (adaptedMean P (Geometry.explicitRoundedGrid jStar
             (geometryUpdate ε m
-              (explicitCanonicalMetric (adaptedMean P (Geometry.explicitRoundedGrid jStar m) (n + 2 * (L : ℤ))))))
+              (explicitCanonicalMetric (adaptedMean P (Geometry.explicitRoundedGrid jStar m) (n
+                + 2 * (L : ℤ))))))
             (n + L))) -
-      projectiveDistance m (explicitCanonicalMetric (adaptedMean P (Geometry.explicitRoundedGrid jStar m) k)) ≤
+      projectiveDistance m (explicitCanonicalMetric (adaptedMean P (Geometry.explicitRoundedGrid
+        jStar m) k)) ≤
       -ε + 1 / 2 * detIncrement P (Geometry.explicitRoundedGrid jStar m) k (n + 2 * (L : ℤ)) +
         1 / 2 * Real.log ((1 + δ) / (1 - δ))  := by
   classical
@@ -108,14 +226,16 @@ theorem partial_change_metric {d : ℕ} (P : Measure (CoeffSpace d)) (jStar : �
       exfalso
       rw [hMS0] at hfar
       linarith only [hfar, hε]
-    · have : NeZero d := ⟨hdpos.ne'⟩
+    · letI : NeZero d := ⟨hdpos.ne'⟩
       have hF2Lsym : IsSymmetricBlockMat F2L := hsym (n + 2 * (L : ℤ))
       have hF2Lpos : Book.Ch02.BlockPosDef F2L := hpos (n + 2 * (L : ℤ))
       have hFksym : IsSymmetricBlockMat Fk := hsym k
       have hFkpos : Book.Ch02.BlockPosDef Fk := hpos k
       have hStarPD : mStar.PosDef := explicitCanonicalMetric_posDef F2L hF2Lsym hF2Lpos
-      have hFkPD : (explicitCanonicalMetric Fk).PosDef := explicitCanonicalMetric_posDef Fk hFksym hFkpos
-      have hFhostPD : (explicitCanonicalMetric Fhost).PosDef := explicitCanonicalMetric_posDef Fhost hsymP hposP
+      have hFkPD : (explicitCanonicalMetric Fk).PosDef := explicitCanonicalMetric_posDef Fk
+        hFksym hFkpos
+      have hFhostPD : (explicitCanonicalMetric Fhost).PosDef := explicitCanonicalMetric_posDef
+        Fhost hsymP hposP
       have hne : ¬ ProjectiveEq m mStar := by
         intro hEq
         have hz := (Geometry.projectiveDistance_eq_zero_iff hm hStarPD).2 hEq
@@ -180,106 +300,8 @@ theorem partial_change_metric {d : ℕ} (P : Measure (CoeffSpace d)) (jStar : �
           (A := mStar) (B := t • mPlus) (P := matSqrt m⁻¹) hTdet
         rw [hcross t, hTmStarT] at hiff
         exact hiff
-      have hcont_rpow : ∀ θ' : ℝ, ContinuousOn (fun x : ℝ => x ^ θ') (spectrum ℝ N) := by
-        intro θ'
-        exact continuousOn_id.rpow_const fun x hx => by
-          left
-          obtain ⟨i, rfl⟩ := hNPD.isHermitian.spectrum_real_eq_range_eigenvalues ▸ hx
-          exact ne_of_gt (hNPD.eigenvalues_pos i)
-      have hcfc_id : cfc (fun x : ℝ => x) N = N := by
-        simpa using! cfc_id ℝ N hNPD.isHermitian
-      have hHermPow : (matPow θ N).IsHermitian := (Geometry.matPow_posDef hNPD θ).isHermitian
-      have hHermSmul : ∀ t : ℝ, (t • matPow θ N).IsHermitian := by
-        intro t
-        show Matrix.conjTranspose (t • matPow θ N) = t • matPow θ N
-        rw [Matrix.conjTranspose_smul, hHermPow]
-        simp
-      have hkeyLow : ∀ t : ℝ, MatLoewnerLE (t • matPow θ N) N ↔ t ≤ specMin N ^ (1 - θ) := by
-        intro t
-        have hcmul : t • matPow θ N = cfc (fun x : ℝ => t * x ^ θ) N := by
-          rw [show matPow θ N = cfc (fun x : ℝ => x ^ θ) N from rfl,
-            ← cfc_const_mul t (fun x : ℝ => x ^ θ) N (hcont_rpow θ)]
-        have hmatrixOrder : (t • matPow θ N ≤ N) ↔ ∀ x ∈ spectrum ℝ N, t * x ^ θ ≤ x := by
-          have hraw := cfc_le_iff (fun x : ℝ => t * x ^ θ) (fun x : ℝ => x) N
-            (continuousOn_const.mul (hcont_rpow θ)) continuousOn_id (ha := hNPD.isHermitian)
-          rw [hcfc_id, ← hcmul] at hraw
-          exact hraw
-        rw [← BlockGeometricMean.matLE_iff (hHermSmul t) hNPD.isHermitian, hmatrixOrder]
-        constructor
-        · intro hall
-          obtain ⟨i0, hi0⟩ := Finset.exists_mem_eq_inf' Finset.univ_nonempty
-            hNPD.isHermitian.eigenvalues
-          have hxi0 : hNPD.isHermitian.eigenvalues i0 ∈ spectrum ℝ N := by
-            rw [hNPD.isHermitian.spectrum_real_eq_range_eigenvalues]
-            exact Set.mem_range_self i0
-          have hb := hall _ hxi0
-          have hxpos : 0 < hNPD.isHermitian.eigenvalues i0 := hNPD.eigenvalues_pos i0
-          have h1 : hNPD.isHermitian.eigenvalues i0 ^ (1 - θ) =
-              hNPD.isHermitian.eigenvalues i0 / hNPD.isHermitian.eigenvalues i0 ^ θ := by
-            rw [Real.rpow_sub hxpos, Real.rpow_one]
-          have hstep : t ≤ hNPD.isHermitian.eigenvalues i0 ^ (1 - θ) := by
-            rw [h1, le_div_iff₀ (Real.rpow_pos_of_pos hxpos θ)]
-            linarith only [hb]
-          rw [Geometry.specMin_eq_finset_inf_eigenvalues hNPD, hi0.2]
-          exact hstep
-        · intro ht x hx
-          rw [hNPD.isHermitian.spectrum_real_eq_range_eigenvalues] at hx
-          obtain ⟨i, rfl⟩ := hx
-          have hxpos : 0 < hNPD.isHermitian.eigenvalues i := hNPD.eigenvalues_pos i
-          have hSm : specMin N ≤ hNPD.isHermitian.eigenvalues i := by
-            rw [Geometry.specMin_eq_finset_inf_eigenvalues hNPD]
-            exact Finset.inf'_le _ (Finset.mem_univ i)
-          have hpow : specMin N ^ (1 - θ) ≤ hNPD.isHermitian.eigenvalues i ^ (1 - θ) :=
-            Real.rpow_le_rpow (Geometry.specMin_pos hNPD).le hSm hθ1_nonneg
-          have ht' : t ≤ hNPD.isHermitian.eigenvalues i ^ (1 - θ) := le_trans ht hpow
-          have h1 : hNPD.isHermitian.eigenvalues i ^ (1 - θ) =
-              hNPD.isHermitian.eigenvalues i / hNPD.isHermitian.eigenvalues i ^ θ := by
-            rw [Real.rpow_sub hxpos, Real.rpow_one]
-          rw [h1, le_div_iff₀ (Real.rpow_pos_of_pos hxpos θ)] at ht'
-          linarith only [ht']
-      have hkeyUp : ∀ t : ℝ, MatLoewnerLE N (t • matPow θ N) ↔ specBound N ^ (1 - θ) ≤ t := by
-        intro t
-        have hcmul : t • matPow θ N = cfc (fun x : ℝ => t * x ^ θ) N := by
-          rw [show matPow θ N = cfc (fun x : ℝ => x ^ θ) N from rfl,
-            ← cfc_const_mul t (fun x : ℝ => x ^ θ) N (hcont_rpow θ)]
-        have hmatrixOrder : (N ≤ t • matPow θ N) ↔ ∀ x ∈ spectrum ℝ N, x ≤ t * x ^ θ := by
-          have hraw := cfc_le_iff (fun x : ℝ => x) (fun x : ℝ => t * x ^ θ) N
-            continuousOn_id (continuousOn_const.mul (hcont_rpow θ)) (ha := hNPD.isHermitian)
-          rw [hcfc_id, ← hcmul] at hraw
-          exact hraw
-        rw [← BlockGeometricMean.matLE_iff hNPD.isHermitian (hHermSmul t), hmatrixOrder]
-        constructor
-        · intro hall
-          obtain ⟨j0, hj0⟩ := Finset.exists_mem_eq_sup' Finset.univ_nonempty
-            hNPD.isHermitian.eigenvalues
-          have hxj0 : hNPD.isHermitian.eigenvalues j0 ∈ spectrum ℝ N := by
-            rw [hNPD.isHermitian.spectrum_real_eq_range_eigenvalues]
-            exact Set.mem_range_self j0
-          have hb := hall _ hxj0
-          have hxpos : 0 < hNPD.isHermitian.eigenvalues j0 := hNPD.eigenvalues_pos j0
-          have h1 : hNPD.isHermitian.eigenvalues j0 ^ (1 - θ) =
-              hNPD.isHermitian.eigenvalues j0 / hNPD.isHermitian.eigenvalues j0 ^ θ := by
-            rw [Real.rpow_sub hxpos, Real.rpow_one]
-          have hstep : hNPD.isHermitian.eigenvalues j0 ^ (1 - θ) ≤ t := by
-            rw [h1, div_le_iff₀ (Real.rpow_pos_of_pos hxpos θ)]
-            linarith only [hb]
-          rw [Geometry.specBound_eq_finset_sup_eigenvalues hNPD, hj0.2]
-          exact hstep
-        · intro ht x hx
-          rw [hNPD.isHermitian.spectrum_real_eq_range_eigenvalues] at hx
-          obtain ⟨i, rfl⟩ := hx
-          have hxpos : 0 < hNPD.isHermitian.eigenvalues i := hNPD.eigenvalues_pos i
-          have hSm : hNPD.isHermitian.eigenvalues i ≤ specBound N := by
-            rw [Geometry.specBound_eq_finset_sup_eigenvalues hNPD]
-            exact Finset.le_sup' _ (Finset.mem_univ i)
-          have hpow : hNPD.isHermitian.eigenvalues i ^ (1 - θ) ≤ specBound N ^ (1 - θ) :=
-            Real.rpow_le_rpow hxpos.le hSm hθ1_nonneg
-          have ht' : hNPD.isHermitian.eigenvalues i ^ (1 - θ) ≤ t := le_trans hpow ht
-          have h1 : hNPD.isHermitian.eigenvalues i ^ (1 - θ) =
-              hNPD.isHermitian.eigenvalues i / hNPD.isHermitian.eigenvalues i ^ θ := by
-            rw [Real.rpow_sub hxpos, Real.rpow_one]
-          rw [h1, div_le_iff₀ (Real.rpow_pos_of_pos hxpos θ)] at ht'
-          linarith only [ht']
+      have ⟨hkeyLow, hkeyUp⟩ :=
+        normalizedMat_power_order_characterization N hNPD θ hθ1_nonneg
       have hfullLow : ∀ t : ℝ, MatLoewnerLE (t • mPlus) mStar ↔ t ≤ specMin N ^ (1 - θ) :=
         fun t => (hcongrLow t).trans (hkeyLow t)
       have hfullUp : ∀ t : ℝ, MatLoewnerLE mStar (t • mPlus) ↔ specBound N ^ (1 - θ) ≤ t :=
@@ -318,14 +340,17 @@ theorem partial_change_metric {d : ℕ} (P : Measure (CoeffSpace d)) (jStar : �
           _ = (1 - θ) * projectiveDistance m mStar := by rw [hbase]
           _ = projectiveDistance m mStar - ε := hfinal
       have htri1 : projectiveDistance mPlus (explicitCanonicalMetric Fhost) ≤
-          projectiveDistance mPlus mStar + projectiveDistance mStar (explicitCanonicalMetric Fhost) :=
+          projectiveDistance mPlus mStar + projectiveDistance mStar (explicitCanonicalMetric
+            Fhost) :=
         Geometry.projectiveDistance_triangle hmPlusPD hStarPD hFhostPD
       have hsand : projectiveDistance mStar (explicitCanonicalMetric Fhost) ≤
           1 / 2 * Real.log ((1 + δ) / (1 - δ)) :=
-        explicitCanonicalMetric_projectiveDistance_le_of_deltaSandwich F2L Fhost δ hδ hF2Lsym hF2Lpos
+        explicitCanonicalMetric_projectiveDistance_le_of_deltaSandwich F2L Fhost δ hδ hF2Lsym
+          hF2Lpos
           hsymP hposP hbr₁ hbr₂
       have htri2 : projectiveDistance m mStar ≤
-          projectiveDistance m (explicitCanonicalMetric Fk) + projectiveDistance (explicitCanonicalMetric Fk) mStar :=
+          projectiveDistance m (explicitCanonicalMetric Fk) + projectiveDistance
+            (explicitCanonicalMetric Fk) mStar :=
         Geometry.projectiveDistance_triangle hm hFkPD hStarPD
       have hlog : projectiveDistance (explicitCanonicalMetric Fk) mStar ≤
           1 / 2 * detIncrement P (Geometry.explicitRoundedGrid jStar m) k (n + 2 * (L : ℤ)) := by

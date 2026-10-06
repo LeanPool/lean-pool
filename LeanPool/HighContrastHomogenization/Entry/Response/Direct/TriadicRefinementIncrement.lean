@@ -130,7 +130,8 @@ theorem avsum_fiber_volumeAverage_eq {d : ℕ} [NeZero d] {q : Mat d} (hq : IsUn
       intro x hx
       rw [hgdef]
       exact Set.indicator_of_notMem
-        (Set.disjoint_left.mp (Geometry.adaptedCellAtCenter_disjoint_of_ne hq (t - (m : ℤ)) hv) hx) f
+        (Set.disjoint_left.mp (Geometry.adaptedCellAtCenter_disjoint_of_ne hq (t - (m : ℤ)) hv)
+          hx) f
     rw [hzero, mul_zero]
   have hcollapse_m : (∑ v ∈ triadicIndexBox d m,
         volumeAverage (adaptedCellAtCenter q (t - (m : ℤ)) v) g)

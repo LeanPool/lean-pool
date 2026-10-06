@@ -625,10 +625,13 @@ theorem exists_summable_respSourceLoadSummand_all (d : ℕ) (hd : 2 ≤ d) (γ :
       HasIntegrableCoarseBlock P (HighContrast.adaptedCellTranslate (respGrid jStar F) k y) :=
     fun k y => Annealed.hasIntegrableCoarseBlock_adapted d hd P γ E Ψ Kg Src hstat hdag
       jStar hj (explicitCanonicalMetric F) hmF k y
-  have hAsp : (1 : ℝ) ≤ aspectRatio E := HCPolySupport.HighContrast.one_le_aspectRatio_of_coarseEllipticityDagger hdag
-  have hecc0 : (0 : ℝ) ≤ ‖explicitCanonicalMetric F‖ * ‖(explicitCanonicalMetric F)⁻¹‖ := by positivity
+  have hAsp : (1 : ℝ) ≤ aspectRatio E :=
+    HCPolySupport.HighContrast.one_le_aspectRatio_of_coarseEllipticityDagger hdag
+  have hecc0 : (0 : ℝ) ≤ ‖explicitCanonicalMetric F‖ * ‖(explicitCanonicalMetric F)⁻¹‖ := by
+    positivity
   -- the generation-wise scale factor of the Loewner envelope
-  have hA0 : (0 : ℝ) ≤ Cb * aspectRatio E * (‖explicitCanonicalMetric F‖ * ‖(explicitCanonicalMetric F)⁻¹‖) :=
+  have hA0 : (0 : ℝ) ≤ Cb * aspectRatio E * (‖explicitCanonicalMetric F‖ *
+    ‖(explicitCanonicalMetric F)⁻¹‖) :=
     mul_nonneg (mul_nonneg hCb.le (by linarith only [hAsp])) hecc0
   set cfun : ℕ → ℝ := fun n =>
     Cb * aspectRatio E * (‖explicitCanonicalMetric F‖ * ‖(explicitCanonicalMetric F)⁻¹‖) *
@@ -648,7 +651,8 @@ theorem exists_summable_respSourceLoadSummand_all (d : ℕ) (hd : 2 ≤ d) (γ :
           (blockScale (cfun n) (respM0 F)) := by
     intro G' b hb hEs n z _
     rw [hb]
-    have h1 := hcell P E Ψ Kg Src hstat hdag jStar hj hthr (explicitCanonicalMetric F) hmF s hjs hwin
+    have h1 := hcell P E Ψ Kg Src hstat hdag jStar hj hthr (explicitCanonicalMetric F) hmF s hjs
+      hwin
       (s - (n : ℤ)) z
     have step1 := blockCongr_mono G' h1
     rw [blockCongr_blockScale] at step1
@@ -670,7 +674,8 @@ theorem exists_summable_respSourceLoadSummand_all (d : ℕ) (hd : 2 ≤ d) (γ :
   have hsum : Summable fun n : ℕ =>
       (3 : ℝ) ^ (-((3 : ℝ) / 2) * (n : ℝ)) * (4 * (cfun n * M)) := by
     have hgeo : Summable fun n : ℕ =>
-        (4 * (Cb * aspectRatio E * (‖explicitCanonicalMetric F‖ * ‖(explicitCanonicalMetric F)⁻¹‖) * cM * M)) *
+        (4 * (Cb * aspectRatio E * (‖explicitCanonicalMetric F‖ * ‖(explicitCanonicalMetric
+          F)⁻¹‖) * cM * M)) *
           ((3 : ℝ) ^ (γ - 3 / 2)) ^ n :=
       (summable_geometric_of_lt_one hr2pos.le hr2lt).mul_left _
     refine hgeo.of_nonneg_of_le (fun n => ?_) (fun n => ?_)
@@ -686,7 +691,8 @@ theorem exists_summable_respSourceLoadSummand_all (d : ℕ) (hd : 2 ≤ d) (γ :
         refine Real.rpow_le_rpow_of_exponent_le (by norm_num) ?_
         exact mul_le_mul_of_nonneg_left hmaxle hγ.1
       have hstep : cfun n ≤ Cb * aspectRatio E *
-          (‖explicitCanonicalMetric F‖ * ‖(explicitCanonicalMetric F)⁻¹‖) * (3 : ℝ) ^ (γ * (n : ℝ)) * cM := by
+          (‖explicitCanonicalMetric F‖ * ‖(explicitCanonicalMetric F)⁻¹‖) * (3 : ℝ) ^ (γ * (n :
+            ℝ)) * cM := by
         rw [hcfun]
         exact mul_le_mul_of_nonneg_right
           (mul_le_mul_of_nonneg_left hpowle hA0) hcM
@@ -694,7 +700,8 @@ theorem exists_summable_respSourceLoadSummand_all (d : ℕ) (hd : 2 ≤ d) (γ :
         Real.rpow_nonneg (by norm_num) _
       have hfinal : (3 : ℝ) ^ (-((3 : ℝ) / 2) * (n : ℝ)) * (4 * (cfun n * M))
           ≤ (3 : ℝ) ^ (-((3 : ℝ) / 2) * (n : ℝ))
-              * (4 * ((Cb * aspectRatio E * (‖explicitCanonicalMetric F‖ * ‖(explicitCanonicalMetric F)⁻¹‖) *
+              * (4 * ((Cb * aspectRatio E * (‖explicitCanonicalMetric F‖ *
+                ‖(explicitCanonicalMetric F)⁻¹‖) *
                   (3 : ℝ) ^ (γ * (n : ℝ)) * cM) * M)) := by
         refine mul_le_mul_of_nonneg_left ?_ hw0
         refine mul_le_mul_of_nonneg_left ?_ (by norm_num)
@@ -706,12 +713,15 @@ theorem exists_summable_respSourceLoadSummand_all (d : ℕ) (hd : 2 ≤ d) (γ :
           show -((3 : ℝ) / 2) * (n : ℝ) + γ * (n : ℝ) = (γ - 3 / 2) * (n : ℝ) by ring,
           pow_eq]
       calc (3 : ℝ) ^ (-((3 : ℝ) / 2) * (n : ℝ))
-              * (4 * ((Cb * aspectRatio E * (‖explicitCanonicalMetric F‖ * ‖(explicitCanonicalMetric F)⁻¹‖) *
+              * (4 * ((Cb * aspectRatio E * (‖explicitCanonicalMetric F‖ *
+                ‖(explicitCanonicalMetric F)⁻¹‖) *
                   (3 : ℝ) ^ (γ * (n : ℝ)) * cM) * M))
-          = (4 * (Cb * aspectRatio E * (‖explicitCanonicalMetric F‖ * ‖(explicitCanonicalMetric F)⁻¹‖) *
+          = (4 * (Cb * aspectRatio E * (‖explicitCanonicalMetric F‖ * ‖(explicitCanonicalMetric
+            F)⁻¹‖) *
                 cM * M)) *
               ((3 : ℝ) ^ (-((3 : ℝ) / 2) * (n : ℝ)) * (3 : ℝ) ^ (γ * (n : ℝ))) := by ring
-        _ = (4 * (Cb * aspectRatio E * (‖explicitCanonicalMetric F‖ * ‖(explicitCanonicalMetric F)⁻¹‖) *
+        _ = (4 * (Cb * aspectRatio E * (‖explicitCanonicalMetric F‖ * ‖(explicitCanonicalMetric
+          F)⁻¹‖) *
                 cM * M)) * ((3 : ℝ) ^ (γ - 3 / 2)) ^ n := by rw [hmul]
   -- the two signed congruences
   have hbMinus : ∀ (k : ℤ) (z : Fin d → ℤ),

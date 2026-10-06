@@ -458,7 +458,8 @@ theorem measureReal_shiftedHigh_badPairEvent_quenchedProbeEnvelope_le_exp_of_nat
 
 /-- High-pair estimate fed by any deterministic lower bound on the selected
 tail parameter. -/
-theorem measureReal_shiftedHigh_badPairEvent_quenchedProbeEnvelope_le_exp_of_natCeil_natScale_of_le_ratio
+theorem
+  measureReal_shiftedHigh_badPairEvent_quenchedProbeEnvelope_le_exp_of_natCeil_natScale_of_le_ratio
     {d : ℕ} [NeZero d] {σ : ℝ}
     (hσ_pos : 0 < σ)
     (params : QuantitativeCoarseGrainedEllipticityParams d) :

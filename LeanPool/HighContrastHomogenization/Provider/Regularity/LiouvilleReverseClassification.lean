@@ -92,7 +92,8 @@ theorem exists_scalarIdentityGoodTailLiouvilleReverseConstant
             ∃ (hCauchy : FiniteAffineCorrectionLocalCauchy a)
               (e : Vec d) (c₀ : ℝ),
               v =ᵐ[volume] fun x => vecDot e x +
-                (finiteAffineCorrectionJointLocalLimit a hCauchy e).globalValueRepresentative x + c₀ := by
+                (finiteAffineCorrectionJointLocalLimit a hCauchy e).globalValueRepresentative x
+                  + c₀ := by
   obtain ⟨cFinite, hcFinite, hFinite⟩ :=
     exists_scalarIdentityGoodTailFiniteAffineSlopeAverageCoercivityThreshold
       d s hs hs_lt

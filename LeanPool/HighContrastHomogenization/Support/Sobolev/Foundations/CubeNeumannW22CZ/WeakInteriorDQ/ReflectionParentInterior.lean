@@ -215,7 +215,7 @@ theorem exists_cubeFaceReflectionParent_hasWeakHessianOn_originCube_hessianCoord
 /-- The one-third reflected-parent Hessian estimate with fixed numerical
 cutoffs.  The remaining right-hand side is the smooth-test constant generated
 by those canonical cutoffs. -/
-theorem exists_cubeFaceReflectionParent_hasWeakHessianOn_originCube_canonicalRadii_hessianCoordL2NormSum_le
+theorem exists_foldedParent_weakHessian_canonicalEnergyBound
     (W : MeanZeroNeumannPoissonSolution (originCube d m) F)
     (hmean : cubeAverage (originCube d m) F = 0)
     (hF :
@@ -293,7 +293,7 @@ theorem exists_hasWeakHessianOn_originCube_canonicalRadii_hessianCoordL2NormSum_
                   i (1 / 3 : ℝ) (1 / 2 : ℝ) (3 / 4 : ℝ) (7 / 8 : ℝ)
                   (originCubeParentThreeQuarterSevenEighthCutoff d m) := by
   rcases
-    W.exists_cubeFaceReflectionParent_hasWeakHessianOn_originCube_canonicalRadii_hessianCoordL2NormSum_le
+    W.exists_foldedParent_weakHessian_canonicalEnergyBound
       hmean hF with
     ⟨uP, huP_toFun, huP_grad, uS, _huS_toFun, huS_grad, H, hH⟩
   let HW : HasWeakHessianOn (openCubeSet (originCube d m)) W.w.toH1Function :=

@@ -89,7 +89,8 @@ theorem magic_identity_block_quadratic_of_isSigmaCoarse {d : ℕ}
               (blockMatVecMul (blockMatrixOfDeterministicData sigma sigmaStar kappa) (p, q)) =
             (1 / 2 : ℝ) * vecDot q
                 (matVecMul (blockMatrixOfDeterministicData sigma sigmaStar kappa).lowerRight q) +
-              vecDot q (matVecMul (blockMatrixOfDeterministicData sigma sigmaStar kappa).lowerLeft p) +
+              vecDot q (matVecMul (blockMatrixOfDeterministicData sigma sigmaStar
+                kappa).lowerLeft p) +
               (1 / 2 : ℝ) * vecDot p
                 (matVecMul (blockMatrixOfDeterministicData sigma sigmaStar kappa).upperLeft p) :=
         hBlock0
@@ -367,7 +368,8 @@ theorem sigmaStarCoarse_le_sigmaCoarse_openCubeSet_originCube_of_isSigmaCoarse
     (mu_eq_muCandidate :
       ∀ P : BlockVec d,
         Mu (openCubeSet (originCube d n)) P a =
-          (system.toMuOperatorRealization.toMuHilbertRealization R.toMuCorrectionSpaceData).muCandidate
+          (system.toMuOperatorRealization.toMuHilbertRealization
+            R.toMuCorrectionSpaceData).muCandidate
             P)
     {sigma sigmaStar kappa : Mat d}
     (hA : IsCoarseBlockMatrix (openCubeSet (originCube d n)) a
@@ -430,7 +432,8 @@ theorem sigmaStarCoarse_le_sigmaCoarse_cubeSet_originCube_of_isSigmaCoarse
     (mu_eq_muCandidate :
       ∀ P : BlockVec d,
         Mu (cubeSet (originCube d n)) P a =
-          (system.toMuOperatorRealization.toMuHilbertRealization R.toMuCorrectionSpaceData).muCandidate
+          (system.toMuOperatorRealization.toMuHilbertRealization
+            R.toMuCorrectionSpaceData).muCandidate
             P)
     {sigma sigmaStar kappa : Mat d}
     (hA : IsCoarseBlockMatrix (cubeSet (originCube d n)) a
@@ -554,7 +557,8 @@ theorem kappa_add_transpose_le_sigma_sub_sigmaStar_of_isEllipticFieldOn
   exact kappa_add_transpose_le_sigma_sub_sigmaStar_of_isSigmaCoarse_of_mu_ge_vecDot
     (U := U) (a := a) hA hS hK hSigma hdet hMuGe p
 
-theorem kappaCoarse_add_transpose_le_sigmaCoarse_sub_sigmaStarCoarse_of_isSigmaCoarse_of_mu_ge_vecDot
+theorem
+  kappaCoarse_add_transpose_le_sigmaCoarse_sub_sigmaStarCoarse_of_isSigmaCoarse_of_mu_ge_vecDot
     {d : ℕ} (U : Set (Vec d)) (a : CoeffField d) {sigma sigmaStar kappa : Mat d}
     (hA : IsCoarseBlockMatrix U a (deterministicCoarseBlockMatrix U a))
     (hS : IsSigmaStarCoarse U a sigmaStar) (hK : IsKappaCoarse U a sigmaStar kappa)
@@ -590,7 +594,8 @@ theorem kappaCoarse_add_transpose_le_sigmaCoarse_sub_sigmaStarCoarse_of_isEllipt
   have hMuGe : ∀ P : BlockVec d, vecDot P.1 P.2 ≤ Mu U P a := by
     intro P
     exact R.mu_ge_vecDot_of_isEllipticFieldOn hU hEll hvol compat P
-  exact kappaCoarse_add_transpose_le_sigmaCoarse_sub_sigmaStarCoarse_of_isSigmaCoarse_of_mu_ge_vecDot
+  exact
+    kappaCoarse_add_transpose_le_sigmaCoarse_sub_sigmaStarCoarse_of_isSigmaCoarse_of_mu_ge_vecDot
     (U := U) (a := a) hA hS hK hSigma hdet hMuGe p
 
 theorem sigmaStar_le_sigma_of_isSigmaCoarse_of_mu_ge_vecDot {d : ℕ}

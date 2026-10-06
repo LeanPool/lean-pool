@@ -403,6 +403,8 @@ theorem measurable_blockEnergyAverage_restrictionSigma_of_measurable
   measurable_of_isLocalObservable_restrictionSigma hX
     (isLocalObservable_blockEnergyAverage hU X)
 
+/-- The block energy average for a fixed state, bundled as a measurable observable local to `U`.
+-/
 @[expose]
 noncomputable def measurableLocalObservable_blockEnergyAverage_of_measurable
     {d : ℕ} {U : Set (Vec d)} (hU : MeasurableSet U) (X : BlockState d)

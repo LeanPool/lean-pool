@@ -132,7 +132,7 @@ theorem originCubeParentReducedOriginalEnergyBound_eq_normEnergyBound
 
 /-- A fixed-radii reduced smooth-test constant on the odd-reflected parent is
 bounded by the corresponding original-cube energy expression. -/
-theorem openCubeInnerQuotientHessianSmoothTestReducedBound_le_originCubeParentReducedOriginalEnergyBound
+theorem reflectedParent_smoothTestEnergy_le_parentEnergy
     (hF :
       MeasureTheory.MemLp F (2 : ℝ≥0∞)
         (normalizedCubeMeasure (originCube d m)))
@@ -197,7 +197,7 @@ theorem openCubeInnerQuotientHessianSmoothTestReducedBound_le_originCubeParentRe
         (3 : ℝ) ^ d *
           ∫ y in openCubeSet Q, F y ^ 2 ∂MeasureTheory.volume := by
     simpa [Q, Qp, fP, pow_two] using
-      setIntegral_openCubeSet_succ_originCube_cubeDirichletOddReflectionScalar_sq_of_memScalarL2_three_pow
+      oddReflectionScalar_sqIntegral_scale_of_L2
         (m := m) hFopen
   have hvalue_eq :
       ∫ x in openCubeSet Qp, uP.toFun x ^ 2 ∂MeasureTheory.volume =
@@ -215,7 +215,7 @@ theorem openCubeInnerQuotientHessianSmoothTestReducedBound_le_originCubeParentRe
             ∫ y in openCubeSet Q, u.toH1Function.toFun y ^ 2
               ∂MeasureTheory.volume := by
             simpa [Q, Qp, uPfun, pow_two] using
-              setIntegral_openCubeSet_succ_originCube_cubeDirichletOddReflectionScalar_sq_of_memScalarL2_three_pow
+              oddReflectionScalar_sqIntegral_scale_of_L2
                 (m := m) hu
   have hgrad_coord_le :
       ∫ x in openCubeSet Qp, (uP.grad x i) ^ 2 ∂MeasureTheory.volume ≤
@@ -245,7 +245,7 @@ theorem openCubeInnerQuotientHessianSmoothTestReducedBound_le_originCubeParentRe
               ∫ y in openCubeSet Q, vecDot (G y) (G y)
                 ∂MeasureTheory.volume := by
               simpa [Q, Qp, G, GP] using
-                setIntegral_openCubeSet_succ_originCube_cubeDirichletOddReflectionVectorField_self_pairing_of_memVectorL2_three_pow
+                setIntegral_successorCube_dirichletOddReflectedVectorField_self_pairing
                   (m := m) hG
     exact hcoord.trans_eq hvec_eq
   have hlower :
@@ -321,7 +321,8 @@ theorem exists_hasWeakHessianOn_originCube_canonicalRadii_hessianCoordL2NormSum_
 
 /-- The fixed-radii reflected-parent Hessian estimate, with the right-hand
 side expressed entirely in original-cube energy terms. -/
-theorem exists_hasWeakHessianOn_originCube_canonicalRadii_hessianCoordL2NormSum_le_originalEnergyBound
+theorem
+  exists_reflectedHessian_originalEnergyBound
     (hweak : CubeDirichletWeakPoissonProblem (originCube d m) u F)
     (hF :
       MeasureTheory.MemLp F (2 : ℝ≥0∞)
@@ -344,12 +345,12 @@ theorem exists_hasWeakHessianOn_originCube_canonicalRadii_hessianCoordL2NormSum_
   refine ⟨uP, huP_toFun, huP_grad, H, hH.trans ?_⟩
   exact Finset.sum_le_sum fun i _hi =>
     Finset.sum_le_sum fun _j _hj =>
-      openCubeInnerQuotientHessianSmoothTestReducedBound_le_originCubeParentReducedOriginalEnergyBound
+      reflectedParent_smoothTestEnergy_le_parentEnergy
         hF huP_toFun huP_grad i
 
 /-- The fixed-radii reflected-parent Hessian estimate with the right-hand side
 expressed through `L²` norm realizations of the solution and forcing. -/
-theorem exists_hasWeakHessianOn_originCube_canonicalRadii_hessianCoordL2NormSum_le_normEnergyBound
+theorem exists_reflectedHessian_energyBound
     (hweak : CubeDirichletWeakPoissonProblem (originCube d m) u F)
     (hF :
       MeasureTheory.MemLp F (2 : ℝ≥0∞)
@@ -366,7 +367,7 @@ theorem exists_hasWeakHessianOn_originCube_canonicalRadii_hessianCoordL2NormSum_
               ∑ i : Fin d, ∑ _j : Fin d,
                 originCubeParentReducedNormEnergyBound u F i := by
   rcases
-    hweak.exists_hasWeakHessianOn_originCube_canonicalRadii_hessianCoordL2NormSum_le_originalEnergyBound
+    hweak.exists_reflectedHessian_originalEnergyBound
       hF with
     ⟨uP, huP_toFun, huP_grad, H, hH⟩
   refine ⟨uP, huP_toFun, huP_grad, H, hH.trans ?_⟩

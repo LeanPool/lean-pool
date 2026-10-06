@@ -107,7 +107,7 @@ theorem sq_coarsePoincare_gradient_qtwo_partial_of_cubeAverageEnergyControl {d :
     dsimp [coeff]
     refine mul_nonneg (geometricWeight_nonneg n (by nlinarith [hs.le])) ?_
     exact maxDescendantSigmaStarInvNormAtScale_nonneg Q
-      (sub_le_self _ (by exact_mod_cast Nat.zero_le n)) a
+      (sub_le_self _ (Nat.cast_nonneg n)) a
   have hpartial_sq :
       (cubeBesovNegativeVectorPartialSeminormTwo Q s N g) ^ 2 ≤
         (geometricDiscount s 2)⁻¹ *
@@ -324,7 +324,7 @@ theorem sq_coarsePoincare_flux_qtwo_partial_of_cubeAverageEnergyControl {d : ℕ
     dsimp [coeff]
     refine mul_nonneg (geometricWeight_nonneg n (by nlinarith [hs.le])) ?_
     exact maxDescendantBBlockNormAtScale_nonneg Q
-      (sub_le_self _ (by exact_mod_cast Nat.zero_le n)) a
+      (sub_le_self _ (Nat.cast_nonneg n)) a
   have hpartial_sq :
       (cubeBesovNegativeVectorPartialSeminormTwo Q s N flux) ^ 2 ≤
         (geometricDiscount s 2)⁻¹ *
@@ -561,7 +561,7 @@ theorem coarsePoincare_flux_qtwo_of_cubeAverageEnergyControl {d : ℕ}
       dsimp [coeff]
       refine mul_nonneg (geometricWeight_nonneg n (by nlinarith [hs.le])) ?_
       exact maxDescendantBBlockNormAtScale_nonneg Q
-        (sub_le_self _ (by exact_mod_cast Nat.zero_le n)) a
+        (sub_le_self _ (Nat.cast_nonneg n)) a
     have hpartial_sq :
         (cubeBesovNegativeVectorPartialSeminormTwo Q s N flux) ^ 2 ≤
           (geometricDiscount s 2)⁻¹ *
@@ -689,10 +689,10 @@ theorem coarsePoincare_qtwo_note_bounds_of_aHarmonicFunction
   let hOrigin : OpenCubeOriginEllipticRecoveryExistence (d := d) lam Lam :=
     openCubeOriginEllipticRecoveryExistence (d := d) (lam := lam) (Lam := Lam)
   have hsum_grad :=
-    summable_qtwo_maxDescendantSigmaStarInvNormAtScale_of_isEllipticFieldOn_of_openCubeOriginEllipticRecoveryExistence
+    summable_exponentTwo_maxDescendantSigmaStarInverseNorm_of_cubeEllipticity
       (Q := Q) (a := a) s hs hEll hOrigin
   have hsum_flux :=
-    summable_qtwo_maxDescendantBBlockNormAtScale_of_isEllipticFieldOn_of_openCubeOriginEllipticRecoveryExistence
+    summable_exponentTwo_maxDescendantBBlockNorm_of_cubeEllipticity
       (Q := Q) (a := a) s hs hEll hOrigin
   exact
     coarsePoincare_qtwo_note_bounds_of_cubeAverageEnergyControl
@@ -703,7 +703,7 @@ theorem coarsePoincare_qtwo_note_bounds_of_aHarmonicFunction
       (scalarVariationEnergyIntegrand_nonneg_of_isEllipticFieldOn (cubeSet Q) a hEll u)
       (ResponseLinearIntegrabilityData.energy
         (ResponseLinearIntegrabilityData.of_isEllipticFieldOn hEll) u)
-      (cubeAverageGradientEnergyControl_of_aHarmonicFunction_of_openCubeOriginEllipticRecoveryExistence
+      (harmonicGradientEnergy_le_scalarVariation_of_recovery
         (Q := Q) (a := a) hEll u hOrigin)
       (cubeAverageFluxEnergyControl_of_aHarmonicFunction_of_openCubeOriginEllipticRecoveryExistence
         (Q := Q) (a := a) hEll u hOrigin)

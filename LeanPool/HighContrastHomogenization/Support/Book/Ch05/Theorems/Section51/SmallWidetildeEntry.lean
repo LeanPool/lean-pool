@@ -142,7 +142,7 @@ theorem shiftedSmallContrastEntry_homogenizationScale
   classical
   obtain ⟨Centry, hCentry_pos, hentry⟩ :=
     Section55.annealedPerturbativeEntry_homogenizationScale params
-  let β : ℝ := section53CoarseFluctuationBetaParams params
+  let β : ℝ := coarseFluctuationBeta params
   have hβ_pos : 0 < β := by
     simpa [β] using section53CoarseFluctuationBetaParams_pos params
   obtain ⟨Cshift, hCshift_nonneg, hshift⟩ :=

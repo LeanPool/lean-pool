@@ -141,7 +141,8 @@ theorem response_tolerances (d : ℕ) (_hd : 2 ≤ d) (δ : ℝ) (hδ : δ ∈ S
     have hadbound : δ / (120 * (d : ℝ)) ≤ δ / 240 := by
       rw [div_le_iff₀ hdenpos]
       nlinarith only [hδ0, hdle, mul_nonneg hδ0.le (sub_nonneg.mpr hdle)]
-    have hstep : (1 + δ / 60) ^ 3 / (1 - δ / 60) * (1 + δ / (120 * (d : ℝ))) ≤ (1 + 7 * (δ / 60)) * (1 + δ / (120 * (d : ℝ))) :=
+    have hstep : (1 + δ / 60) ^ 3 / (1 - δ / 60) * (1 + δ / (120 * (d : ℝ))) ≤ (1 + 7 * (δ /
+      60)) * (1 + δ / (120 * (d : ℝ))) :=
       mul_le_mul_of_nonneg_right hAdiv (by positivity)
     have hcross : (δ / 60) * (δ / (120 * (d : ℝ))) ≤ (δ / 60) * (δ / 240) :=
       mul_le_mul_of_nonneg_left hadbound hetapos.le
@@ -241,7 +242,8 @@ theorem adapted_response_core (d : ℕ) (_hd : 2 ≤ d) (γ : ℝ) (_hγ : γ �
                       (Src : CoeffSpace d → ℝ) (B : ℝ) (jStar : ℕ) (F : BlockMat d) (s t : ℤ),
                       RawOutput d γ S ε σ Cglob Cprof Csrc H Bresp P E Ψ K Src B jStar F s t →
                       canonicalImbalance
-                          (adaptedMean P (Geometry.explicitRoundedGrid jStar (explicitCanonicalMetric F)) t) ≤
+                          (adaptedMean P (Geometry.explicitRoundedGrid jStar
+                            (explicitCanonicalMetric F)) t) ≤
                           1 + δad := by
   exact adapted_response_core_of_holes d _hd γ _hγ S _hS
 
@@ -273,11 +275,14 @@ theorem adapted_response_kernel (d : ℕ) (_hd : 2 ≤ d) (γ : ℝ) (_hγ : γ 
                       (Src : CoeffSpace d → ℝ) (B : ℝ) (jStar : ℕ) (F : BlockMat d) (s t : ℤ),
                       RawOutput d γ S ε σ Cglob Cprof Csrc H Bresp P E Ψ K Src B jStar F s t →
                       IsSymmetricBlockMat
-                          (adaptedMean P (Geometry.explicitRoundedGrid jStar (explicitCanonicalMetric F)) t) ∧
+                          (adaptedMean P (Geometry.explicitRoundedGrid jStar
+                            (explicitCanonicalMetric F)) t) ∧
                         Book.Ch02.BlockPosDef
-                          (adaptedMean P (Geometry.explicitRoundedGrid jStar (explicitCanonicalMetric F)) t) ∧
+                          (adaptedMean P (Geometry.explicitRoundedGrid jStar
+                            (explicitCanonicalMetric F)) t) ∧
                         canonicalImbalance
-                          (adaptedMean P (Geometry.explicitRoundedGrid jStar (explicitCanonicalMetric F)) t) ≤
+                          (adaptedMean P (Geometry.explicitRoundedGrid jStar
+                            (explicitCanonicalMetric F)) t) ≤
                           1 + δad := by
   obtain ⟨Csrc, hC, h⟩ := adapted_response_core d _hd γ _hγ S _hS
   refine ⟨Csrc, hC, ?_⟩
@@ -293,7 +298,8 @@ theorem adapted_response_kernel (d : ℕ) (_hd : 2 ≤ d) (γ : ℝ) (_hγ : γ 
   intro P E Ψ K Src B jStar F s t raw
   have := raw.prob
   let : NeZero d := ⟨by omega⟩
-  have hcm : (explicitCanonicalMetric F).PosDef := Geometry.explicitCanonicalMetric_posDef raw.symm raw.pos
+  have hcm : (explicitCanonicalMetric F).PosDef := Geometry.explicitCanonicalMetric_posDef
+    raw.symm raw.pos
   have hfull := HCPolySupport.HighContrast.Annealed.adaptedMean_posDef d _hd P γ E Ψ K Src raw.stat
     raw.ell jStar raw.hj (explicitCanonicalMetric F) hcm t
   exact ⟨isSymmetricBlockMat_annealedBlock _ _,
@@ -323,17 +329,20 @@ theorem persistence_transfer_kernel (d : ℕ) (_hd : 2 ≤ d) (γ : ℝ) (_hγ :
               (Src : CoeffSpace d → ℝ) (B : ℝ) (jStar : ℕ) (F : BlockMat d) (s t : ℤ),
               RawOutput d γ S ε σ Cglob Cprof Csrc H Bresp P E Ψ K Src B jStar F s t →
               canonicalImbalance
-                  (adaptedMean P (Geometry.explicitRoundedGrid jStar (explicitCanonicalMetric F)) t) ≤ 1 + δad →
+                  (adaptedMean P (Geometry.explicitRoundedGrid jStar (explicitCanonicalMetric
+                    F)) t) ≤ 1 + δad →
               ∃ ℓ : ℕ, 1 ≤ ℓ ∧
                 (ℓ : ℝ) ≤ Cresp * Real.logb 3 (2 + aspectRatio E) ∧
                 IsSymmetricBlockMat (adaptedMean P (1 : Mat d) (t + ℓ)) ∧
                 BlockMatLoewnerLE
                   (blockScale ((1 + δad) ^ (-(d : ℝ)) - ηm)
-                    (adaptedMean P (Geometry.explicitRoundedGrid jStar (explicitCanonicalMetric F)) t))
+                    (adaptedMean P (Geometry.explicitRoundedGrid jStar (explicitCanonicalMetric
+                      F)) t))
                   (adaptedMean P (1 : Mat d) (t + ℓ)) ∧
                 BlockMatLoewnerLE (adaptedMean P (1 : Mat d) (t + ℓ))
                   (blockScale (1 + ηp)
-                    (adaptedMean P (Geometry.explicitRoundedGrid jStar (explicitCanonicalMetric F)) t)) := by
+                    (adaptedMean P (Geometry.explicitRoundedGrid jStar (explicitCanonicalMetric
+                      F)) t)) := by
   obtain ⟨C1s, C1, hC1s, hC1, hE1⟩ := euclidean_le_adapted_comparison d _hd γ _hγ
   obtain ⟨C2s, C2, hC2s, hC2, hE2⟩ := adapted_le_euclidean_comparison d _hd γ _hγ
   refine ⟨max C1s C2s, lt_of_lt_of_le hC1s (le_max_left _ _), ?_⟩
@@ -345,9 +354,11 @@ theorem persistence_transfer_kernel (d : ℕ) (_hd : 2 ≤ d) (γ : ℝ) (_hγ :
   intro P E Ψ K Src B jStar F s t raw himb
   have := raw.prob
   let : NeZero d := ⟨by omega⟩
-  have hm : (explicitCanonicalMetric F).PosDef := Geometry.explicitCanonicalMetric_posDef raw.symm raw.pos
+  have hm : (explicitCanonicalMetric F).PosDef := Geometry.explicitCanonicalMetric_posDef
+    raw.symm raw.pos
   have hB1 : (1 : ℝ) ≤ B := le_trans (le_max_right _ _) raw.hB
-  have hPi : (1 : ℝ) ≤ aspectRatio E := HCPolySupport.HighContrast.one_le_aspectRatio_of_coarseEllipticityDagger raw.ell
+  have hPi : (1 : ℝ) ≤ aspectRatio E :=
+    HCPolySupport.HighContrast.one_le_aspectRatio_of_coarseEllipticityDagger raw.ell
   have hlogPi : (0 : ℝ) ≤ Real.logb 3 (2 + aspectRatio E) :=
     Real.logb_nonneg (by norm_num) (by linarith only [hPi])
   have hlogK : (0 : ℝ) ≤ Real.logb 3 (2 * K) :=
@@ -370,25 +381,32 @@ theorem persistence_transfer_kernel (d : ℕ) (_hd : 2 ≤ d) (γ : ℝ) (_hγ :
     have h1 := raw.hs_lo
     have h2 := raw.hst
     omega
-  have hnn : (0 : ℝ) ≤ ‖explicitCanonicalMetric F‖ * ‖(explicitCanonicalMetric F)⁻¹‖ := by positivity
+  have hnn : (0 : ℝ) ≤ ‖explicitCanonicalMetric F‖ * ‖(explicitCanonicalMetric F)⁻¹‖ := by
+    positivity
   have hecc : (1 : ℝ) ≤ ‖explicitCanonicalMetric F‖ * ‖(explicitCanonicalMetric F)⁻¹‖ := by
     have hs := HCPolySupport.HighContrast.Source.one_le_source_eccentricity hm
-    nlinarith only [hs, hnn, Real.sq_sqrt hnn, Real.sqrt_nonneg (‖explicitCanonicalMetric F‖ * ‖(explicitCanonicalMetric F)⁻¹‖)]
+    nlinarith only [hs, hnn, Real.sq_sqrt hnn, Real.sqrt_nonneg (‖explicitCanonicalMetric F‖ *
+      ‖(explicitCanonicalMetric F)⁻¹‖)]
   have hmono : ∀ c : ℝ, c ≤ max C1 C2 → ∀ x : ℝ, 0 ≤ x →
       c * aspectRatio E * (‖explicitCanonicalMetric F‖ * ‖(explicitCanonicalMetric F)⁻¹‖) * x ≤
-        max C1 C2 * aspectRatio E * (‖explicitCanonicalMetric F‖ * ‖(explicitCanonicalMetric F)⁻¹‖) * x := by
+        max C1 C2 * aspectRatio E * (‖explicitCanonicalMetric F‖ * ‖(explicitCanonicalMetric
+          F)⁻¹‖) * x := by
     intro c hc x hx
-    have hprod : (0 : ℝ) ≤ aspectRatio E * (‖explicitCanonicalMetric F‖ * ‖(explicitCanonicalMetric F)⁻¹‖) * x :=
+    have hprod : (0 : ℝ) ≤ aspectRatio E * (‖explicitCanonicalMetric F‖ *
+      ‖(explicitCanonicalMetric F)⁻¹‖) * x :=
       mul_nonneg (mul_nonneg (by linarith only [hPi]) hnn) hx
     nlinarith only [mul_nonneg (sub_nonneg.mpr hc) hprod]
   obtain ⟨ℓ, hl1, hlEta, hlLe⟩ :=
-    hgap1 (aspectRatio E) (‖explicitCanonicalMetric F‖ * ‖(explicitCanonicalMetric F)⁻¹‖) hPi hecc raw.ecc
+    hgap1 (aspectRatio E) (‖explicitCanonicalMetric F‖ * ‖(explicitCanonicalMetric F)⁻¹‖) hPi
+      hecc raw.ecc
   obtain ⟨r, hr1, hrEta, -⟩ :=
-    hgap2 (aspectRatio E) (‖explicitCanonicalMetric F‖ * ‖(explicitCanonicalMetric F)⁻¹‖) hPi hecc raw.ecc
+    hgap2 (aspectRatio E) (‖explicitCanonicalMetric F‖ * ‖(explicitCanonicalMetric F)⁻¹‖) hPi
+      hecc raw.ecc
   have hApos : Book.Ch02.BlockPosDef
       (adaptedMean P (Geometry.explicitRoundedGrid jStar (explicitCanonicalMetric F)) t) :=
     blockPosDef_of_toFullBlockMat_posDef _
-      (HCPolySupport.HighContrast.Annealed.adaptedMean_posDef d _hd P γ E Ψ K Src raw.stat raw.ell jStar
+      (HCPolySupport.HighContrast.Annealed.adaptedMean_posDef d _hd P γ E Ψ K Src raw.stat
+        raw.ell jStar
         raw.hj (explicitCanonicalMetric F) hm t)
   refine ⟨ℓ, hl1, hlLe, isSymmetricBlockMat_annealedBlock _ _, ?_, ?_⟩
   · have hE2' := hE2 P E Ψ K Src raw.stat raw.unit raw.ell jStar raw.hj hsrc2
@@ -464,7 +482,8 @@ theorem canonical_comparison_kernel {d : ℕ} (_hd : 2 ≤ d) (A M : BlockMat d)
       (by linarith only [hδ0] : (0 : ℝ) ≤ 1 + δad)) (by linarith only [hη0] : (0 : ℝ) ≤ 2 * ηiso)]
   have hd := smul_le_smul_psd (swapConj_posSemidef hMpos) harith
   have hcnn : (0 : ℝ) ≤ (1 + ηiso) ^ 3 / (1 - ηiso) * (1 + δad) :=
-    mul_nonneg (div_nonneg (pow_nonneg (by linarith only [hη0]) 3) (by linarith only [hη1])) (by linarith only [hδ0])
+    mul_nonneg (div_nonneg (pow_nonneg (by linarith only [hη0]) 3) (by linarith only [hη1])) (by
+      linarith only [hδ0])
   exact imbalance_le_of_le hMpos hcnn (hhiF.trans (hb.trans (hcc.trans hd)))
 
 /-- **K4** the Euclidean contrast bridge (near `e.response.canonical.imbalance`): contrast minus

@@ -176,6 +176,75 @@ private theorem roundedNormalizedDoubledResponseMaxAtGeneration_nonneg
     Transport.coeffSpaceDoubledResponse_eq_doubledResponseJ U a P Q]
   exact hresponse
 
+private theorem summable_truncatedBoundaryMajorant
+    (j : ℤ) (u G : ℕ) {rawBoundary : ℝ} (hrawBoundary0 : 0 ≤ rawBoundary)
+    (A : ℕ → ℝ) (B : ℤ → ℝ) (hA0 : ∀ n, 0 ≤ A n) (hB0 : ∀ r, 0 ≤ B r)
+    (hBA : ∀ v : ℕ, B (j - (v : ℤ)) = A (G + (u + v)))
+    (hmajor : Summable (fun v : ℕ ↦
+      (max 1 rawBoundary * (3 : ℝ) ^ (-(v : ℤ))) * A (G + (u + v)))) :
+    let raw := fun v : ℕ ↦
+      (if v = 0 then 1 else rawBoundary * (3 : ℝ) ^ ((j - (v : ℤ)) - j)) *
+        B (j - (v : ℤ))
+    Summable raw ∧ (∑' v : ℕ, raw v) ≤
+      ∑' v : ℕ, (max 1 rawBoundary * (3 : ℝ) ^ (-(v : ℤ))) * A (G + (u + v)) := by
+  let C : ℝ := max 1 rawBoundary
+  let raw : ℕ → ℝ := fun v ↦
+    (if v = 0 then 1 else rawBoundary * (3 : ℝ) ^ ((j - (v : ℤ)) - j)) *
+      B (j - (v : ℤ))
+  let major : ℕ → ℝ := fun v ↦
+    (C * (3 : ℝ) ^ (-(v : ℤ))) * A (G + (u + v))
+  have hrawBoundaryC : rawBoundary ≤ C := le_max_right _ _
+  have hraw0 : ∀ v, 0 ≤ raw v := by
+    intro v
+    dsimp only [raw]
+    apply mul_nonneg
+    · split
+      · exact zero_le_one
+      · exact mul_nonneg hrawBoundary0 (zpow_nonneg (by norm_num) _)
+    · exact hB0 (j - (v : ℤ))
+  have hrawMajor : ∀ v, raw v ≤ major v := by
+    intro v
+    have hcoefficient :
+        (if v = 0 then 1 else
+          rawBoundary * (3 : ℝ) ^ ((j - (v : ℤ)) - j)) ≤
+          C * (3 : ℝ) ^ (-(v : ℤ)) := by
+      by_cases hv : v = 0
+      · subst v
+        simpa only [ite_eq_left, Nat.cast_zero, Int.ofNat_zero, neg_zero,
+          zpow_zero, mul_one] using le_max_left (1 : ℝ) rawBoundary
+      · rw [ite_eq_right hv]
+        have hexponent : (j - (v : ℤ)) - j = -(v : ℤ) := by ring
+        rw [hexponent]
+        exact mul_le_mul_of_nonneg_right hrawBoundaryC
+          (zpow_nonneg (by norm_num) _)
+    dsimp only [raw, major]
+    rw [hBA v]
+    exact mul_le_mul_of_nonneg_right hcoefficient (hA0 (G + (u + v)))
+  have hrawSummable : Summable raw :=
+    Summable.of_nonneg_of_le hraw0 hrawMajor hmajor
+  exact ⟨hrawSummable, hrawSummable.tsum_le_tsum hrawMajor hmajor⟩
+
+private theorem summable_weightedFiniteSupremum_of_majorant
+    {ι : Type*} (Z : ℕ → Finset ι) (values : ℕ → ι → ℝ)
+    (weight majorant : ℕ → ℝ)
+    (hZ : ∀ u, (Z u).Nonempty) (hvalues : ∀ u i, 0 ≤ values u i)
+    (hweight : ∀ u, 0 ≤ weight u)
+    (hbound : ∀ u i, i ∈ Z u → values u i ≤ majorant u)
+    (hmajorant : Summable (fun u ↦ weight u * majorant u)) :
+    Summable (fun u ↦ weight u * Book.Ch02.finsetSupReal (Z u) (values u)) ∧
+      (∑' u, weight u * Book.Ch02.finsetSupReal (Z u) (values u)) ≤
+        ∑' u, weight u * majorant u := by
+  have hsup : ∀ u, Book.Ch02.finsetSupReal (Z u) (values u) ≤ majorant u :=
+    fun u ↦ Book.Ch02.finsetSupReal_le (Z u) (hZ u) (hbound u)
+  have hnonnegative : ∀ u, 0 ≤ weight u * Book.Ch02.finsetSupReal (Z u) (values u) :=
+    fun u ↦ mul_nonneg (hweight u)
+      (Book.Ch02.finsetSupReal_nonneg (Z u) _ fun i _ ↦ hvalues u i)
+  have hmajor : ∀ u,
+      weight u * Book.Ch02.finsetSupReal (Z u) (values u) ≤ weight u * majorant u :=
+    fun u ↦ mul_le_mul_of_nonneg_left (hsup u) (hweight u)
+  have hsummable := Summable.of_nonneg_of_le hnonnegative hmajor hmajorant
+  exact ⟨hsummable, hsummable.tsum_le_tsum hmajor hmajorant⟩
+
 /-- A selected rounded spatial row is controlled by one enclosing
 normalized-root weak error. -/
 theorem exists_summable_roundedGenerationResponseMaxRow_le_scalarIdentityWeakError_sq
@@ -333,35 +402,9 @@ theorem exists_summable_roundedGenerationResponseMaxRow_le_scalarIdentityWeakErr
         omega
       dsimp only [B, A, parent]
       rw [ite_eq_left hrParent, hscale]
-    have hraw0 : ∀ v, 0 ≤ raw v := by
-      intro v
-      dsimp only [raw]
-      apply mul_nonneg
-      · split
-        · exact zero_le_one
-        · exact mul_nonneg hrawBoundary0 (zpow_nonneg (by norm_num) _)
-      · exact hB0 (j - (v : ℤ))
-    have hrawMajor : ∀ v, raw v ≤ major v := by
-      intro v
-      have hcoefficient :
-          (if v = 0 then 1 else
-            rawBoundary * (3 : ℝ) ^ ((j - (v : ℤ)) - j)) ≤
-            C * (3 : ℝ) ^ (-(v : ℤ)) := by
-        by_cases hv : v = 0
-        · subst v
-          simpa only [ite_eq_left, Nat.cast_zero, Int.ofNat_zero, neg_zero,
-            zpow_zero, mul_one] using le_max_left (1 : ℝ) rawBoundary
-        · rw [ite_eq_right hv]
-          have hexponent : (j - (v : ℤ)) - j = -(v : ℤ) := by ring
-          rw [hexponent]
-          exact mul_le_mul_of_nonneg_right hrawBoundaryC
-            (zpow_nonneg (by norm_num) _)
-      dsimp only [raw, major]
-      rw [hBA v]
-      exact mul_le_mul_of_nonneg_right hcoefficient (hA0 (G + (u + v)))
-    have hrawSummable : Summable raw :=
-      Summable.of_nonneg_of_le hraw0 hrawMajor (by
-        simpa only [major] using hinner u)
+    obtain ⟨hrawSummable, hrawTsum⟩ :=
+      summable_truncatedBoundaryMajorant j u G hrawBoundary0 A B hA0 hB0 hBA
+        (by simpa only [C, major] using hinner u)
     have haggregate' := haggregate B hB0 hcellB (by
       simpa only [raw] using hrawSummable)
     calc
@@ -370,9 +413,7 @@ theorem exists_summable_roundedGenerationResponseMaxRow_le_scalarIdentityWeakErr
             (M - (u : ℤ)) w) a P Q ≤ ∑' v : ℕ, raw v := by
         simpa only [j, y, raw, adaptedCellAt_eq_adaptedCellTranslate] using
           haggregate'
-      _ ≤ ∑' v : ℕ, major v :=
-        hrawSummable.tsum_le_tsum hrawMajor (by
-          simpa only [major] using hinner u)
+      _ ≤ ∑' v : ℕ, major v := hrawTsum
       _ = _ := by rfl
   have hmax : ∀ (u : ℕ) (w : Fin d → ℤ), w ∈ Z u →
       roundedNormalizedDoubledResponseMaxAtGeneration
@@ -391,48 +432,19 @@ theorem exists_summable_roundedGenerationResponseMaxRow_le_scalarIdentityWeakErr
     apply Finset.card_pos.mp
     rw [hcard u]
     positivity
-  have hspatial : ∀ u : ℕ,
-      Book.Ch02.finsetSupReal (Z u) (fun w ↦
-          roundedNormalizedDoubledResponseMaxAtGeneration
-            l a abar hS (M - (u : ℤ)) w) ≤
-        ∑' v : ℕ,
-          (C * (3 : ℝ) ^ (-(v : ℤ))) * A (G + (u + v)) := by
-    intro u
-    exact Book.Ch02.finsetSupReal_le (Z u) (hZne u) (hmax u)
-  have hspatial0 : ∀ u : ℕ, 0 ≤
-      Book.Ch02.finsetSupReal (Z u) (fun w ↦
-        roundedNormalizedDoubledResponseMaxAtGeneration
-          l a abar hS (M - (u : ℤ)) w) := by
-    intro u
-    exact Book.Ch02.finsetSupReal_nonneg (Z u) _ fun w _ ↦
-      roundedNormalizedDoubledResponseMaxAtGeneration_nonneg
-        hl a abar hS (M - (u : ℤ)) w
   have hweight0 : ∀ u, 0 ≤ Book.Ch02.geometricWeight s 2 u := by
     intro u
     simpa only [Book.Ch02.geometricWeight_eq_old] using
       (HCPolySupport.geometricWeight_nonneg u
         (mul_nonneg hs.le (by norm_num : (0 : ℝ) ≤ 2)))
-  have hphysical0 : ∀ u : ℕ, 0 ≤
-      Book.Ch02.geometricWeight s 2 u *
-        Book.Ch02.finsetSupReal (Z u) (fun w ↦
-          roundedNormalizedDoubledResponseMaxAtGeneration
-            l a abar hS (M - (u : ℤ)) w) := fun u ↦
-    mul_nonneg (hweight0 u) (hspatial0 u)
-  have hphysicalMajor : ∀ u : ℕ,
-      Book.Ch02.geometricWeight s 2 u *
-          Book.Ch02.finsetSupReal (Z u) (fun w ↦
-            roundedNormalizedDoubledResponseMaxAtGeneration
-              l a abar hS (M - (u : ℤ)) w) ≤
-        Book.Ch02.geometricWeight s 2 u *
-          ∑' v : ℕ, (C * (3 : ℝ) ^ (-(v : ℤ))) * A (G + (u + v)) :=
-    fun u ↦ mul_le_mul_of_nonneg_left (hspatial u) (hweight0 u)
-  have hphysical : Summable (fun u : ℕ ↦
-      Book.Ch02.geometricWeight s 2 u *
-        Book.Ch02.finsetSupReal (Z u) (fun w ↦
-          roundedNormalizedDoubledResponseMaxAtGeneration
-            l a abar hS (M - (u : ℤ)) w)) :=
-    Summable.of_nonneg_of_le hphysical0 hphysicalMajor (by
-      simpa only [C, A, add_assoc] using houter)
+  obtain ⟨hphysical, hphysicalTsum⟩ := summable_weightedFiniteSupremum_of_majorant Z
+    (fun u w ↦ roundedNormalizedDoubledResponseMaxAtGeneration
+      l a abar hS (M - (u : ℤ)) w)
+    (Book.Ch02.geometricWeight s 2)
+    (fun u ↦ ∑' v : ℕ, (C * (3 : ℝ) ^ (-(v : ℤ))) * A (G + (u + v)))
+    hZne (fun u w ↦ roundedNormalizedDoubledResponseMaxAtGeneration_nonneg
+      hl a abar hS (M - (u : ℤ)) w) hweight0 hmax
+    (by simpa only [C, A, add_assoc] using houter)
   refine ⟨hphysical, ?_⟩
   have hparent :
       (∑' n : ℕ, Book.Ch02.geometricWeight s 2 n * A n) =
@@ -448,8 +460,7 @@ theorem exists_summable_roundedGenerationResponseMaxRow_le_scalarIdentityWeakErr
               l a abar hS (M - (u : ℤ)) w)) ≤
         ∑' u : ℕ, Book.Ch02.geometricWeight s 2 u *
           ∑' v : ℕ, (C * (3 : ℝ) ^ (-(v : ℤ))) * A (G + (u + v)) :=
-      hphysical.tsum_le_tsum hphysicalMajor (by
-        simpa only [C, A, add_assoc] using houter)
+      hphysicalTsum
     _ ≤ (C * (Book.Ch02.geometricDiscount (1 - 2 * s) 1)⁻¹) *
           Real.rpow 3 (2 * s * (G : ℝ)) *
             ∑' n : ℕ, Book.Ch02.geometricWeight s 2 n * A n := hconvolution

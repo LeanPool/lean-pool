@@ -287,7 +287,8 @@ theorem diagonalWeakNorm_primal_le (P : Measure (CoeffSpace d)) [IsProbabilityMe
           Real.sqrt (respLsqMinus P jStar F t e) *
           (weakCellSum (respGrid jStar F) t H (respEhatMinus P jStar F t)
               (respCoeffMinus F a) +
-            weakAverageSum (respGrid jStar F) t H (Quenched.contrastRho γ) (respEhatMinus P jStar F t)
+            weakAverageSum (respGrid jStar F) t H (Quenched.contrastRho γ) (respEhatMinus P
+              jStar F t)
               (respCoeffMinus F a)) +
         (16 / (1 - Quenched.contrastRho γ) *
             Real.sqrt

@@ -476,7 +476,8 @@ the cell mean of the doubled optimizer field of the terminal maximizer family `u
 `a_- = a - g` is `P`-integrable on every depth-`H` aligned subcell of the terminal cell. -/
 theorem integrable_cellAverage_terminalOptimizer_respCoeffMinus {d : ℕ} [NeZero d]
     (P : Measure (CoeffSpace d)) [IsProbabilityMeasure P] (jStar : ℕ) (hjStar : 2 * d ≤ 3 ^ jStar)
-    (F : BlockMat d) (hm : (explicitCanonicalMetric F).PosDef) (H : ℕ) (s t : ℤ) (ht : t = s + (H : ℤ))
+    (F : BlockMat d) (hm : (explicitCanonicalMetric F).PosDef) (H : ℕ) (s t : ℤ) (ht : t = s +
+      (H : ℤ))
     (e : Vec d)
     (uM : (a : CoeffSpace d) → AHarmonicFunction (respCoeffMinus F a) (respCell jStar F t))
     (hmax : ∀ a, IsResponseMaximizer (respCell jStar F t) (respP (respMean P jStar F t) e)
@@ -601,7 +602,8 @@ recentred coefficient `a_+ = aᵀ + g`, the dual load `q^+` and the terminal max
 `uP`. -/
 theorem integrable_cellAverage_terminalOptimizer_respCoeffPlus {d : ℕ} [NeZero d]
     (P : Measure (CoeffSpace d)) [IsProbabilityMeasure P] (jStar : ℕ) (hjStar : 2 * d ≤ 3 ^ jStar)
-    (F : BlockMat d) (hm : (explicitCanonicalMetric F).PosDef) (H : ℕ) (s t : ℤ) (ht : t = s + (H : ℤ))
+    (F : BlockMat d) (hm : (explicitCanonicalMetric F).PosDef) (H : ℕ) (s t : ℤ) (ht : t = s +
+      (H : ℤ))
     (e : Vec d)
     (uP : (a : CoeffSpace d) → AHarmonicFunction (respCoeffPlus F a) (respCell jStar F t))
     (hmax : ∀ a, IsResponseMaximizer (respCell jStar F t) (respP (respMean P jStar F t) e)

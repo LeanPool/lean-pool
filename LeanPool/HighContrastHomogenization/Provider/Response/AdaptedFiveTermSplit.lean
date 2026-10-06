@@ -132,7 +132,8 @@ private theorem annealed_cutoff_readout_split [NeZero d]
         (fun x ↦ adaptedPreYoungCutoff q hq t x * toFullBlockVec (X a x) alpha) -
           (volumeAverage (adaptedCellAt q s w) (adaptedPreYoungCutoff q hq t)) •
             (fun x ↦ toFullBlockVec (X a x) alpha) := by funext x; simp; ring
-    have hsmul : IntegrableOn ((volumeAverage (adaptedCellAt q s w) (adaptedPreYoungCutoff q hq t)) •
+    have hsmul : IntegrableOn ((volumeAverage (adaptedCellAt q s w) (adaptedPreYoungCutoff q hq
+      t)) •
         fun x ↦ toFullBlockVec (X a x) alpha) (adaptedCellAt q s w) volume := by
       simpa only [Pi.smul_apply, smul_eq_mul] using! hF.const_mul _
     rw [hoscEq, volumeAverage_sub hcutF hsmul, volumeAverage_smul]
@@ -218,12 +219,15 @@ private theorem vecDot_annealed_cutoff_split [NeZero d]
     rw [Finset.mul_sum]
     exact Finset.sum_congr rfl fun i _ ↦ by ring
   · rfl
-/-- The primal gradient cutoff mean splits into its defect and oscillation halves. -/ theorem vecDot_profilePrimalCutoffMean_fst_eq_defect_add_oscillation [NeZero d]
+/-- The primal gradient cutoff mean splits into its defect and oscillation halves. -/ theorem
+  vecDot_profilePrimalCutoffMean_fst_eq_defect_add_oscillation [NeZero d]
     {P : Measure (CoeffSpace d)} [IsProbabilityMeasure P]
     (hstat : HCPoly.Frozen.IsStationaryLaw P) {l s t : ℤ} {q : Mat d}
     (hgrid : IsRoundedGrid l q) (hls : l ≤ s) (hst : s ≤ t)
     (hint : HasFiniteAdaptedMean P q s) (g : Mat d) (hg : IsSkewMat g)
-    (p r Qcen : Vec d) : let hq := Recurrence.posDef_of_isRoundedGrid hgrid; let X := fun a ↦ diagonalWeakState hq t (a.subSkew g hg) p r; let Y := fun w a ↦ diagonalWeakChildState hq s w (a.subSkew g hg) p r;
+    (p r Qcen : Vec d) : let hq := Recurrence.posDef_of_isRoundedGrid hgrid; let X := fun a ↦
+      diagonalWeakState hq t (a.subSkew g hg) p r; let Y := fun w a ↦ diagonalWeakChildState hq
+      s w (a.subSkew g hg) p r;
     ((∀ w ∈ alignedIndex q s t, ∀ alpha, Integrable (fun a ↦ toFullBlockVec
         (blockCellAverage (adaptedCellAt q s w) (X a)) alpha) P) ∧
       (∀ w ∈ alignedIndex q s t, ∀ alpha, Integrable (fun a ↦ volumeAverage
@@ -255,12 +259,15 @@ private theorem vecDot_annealed_cutoff_split [NeZero d]
       (fun w hw i ↦ hInt.1 w hw (Sum.inl i)) (fun w hw i ↦ hInt.2 w hw (Sum.inl i))
       (fun i ↦ avsum_one_sub_cutoffAverage_mul_integral_childState_subSkew_eq_zero
         hstat hgrid hls hst hint g hg p r (Sum.inl i))
-/-- The primal flux cutoff mean splits into its defect and oscillation halves. -/ theorem vecDot_profilePrimalCutoffMean_snd_eq_defect_add_oscillation [NeZero d]
+/-- The primal flux cutoff mean splits into its defect and oscillation halves. -/ theorem
+  vecDot_profilePrimalCutoffMean_snd_eq_defect_add_oscillation [NeZero d]
     {P : Measure (CoeffSpace d)} [IsProbabilityMeasure P]
     (hstat : HCPoly.Frozen.IsStationaryLaw P) {l s t : ℤ} {q : Mat d}
     (hgrid : IsRoundedGrid l q) (hls : l ≤ s) (hst : s ≤ t)
     (hint : HasFiniteAdaptedMean P q s) (g : Mat d) (hg : IsSkewMat g)
-    (p r Pcen : Vec d) : let hq := Recurrence.posDef_of_isRoundedGrid hgrid; let X := fun a ↦ diagonalWeakState hq t (a.subSkew g hg) p r; let Y := fun w a ↦ diagonalWeakChildState hq s w (a.subSkew g hg) p r;
+    (p r Pcen : Vec d) : let hq := Recurrence.posDef_of_isRoundedGrid hgrid; let X := fun a ↦
+      diagonalWeakState hq t (a.subSkew g hg) p r; let Y := fun w a ↦ diagonalWeakChildState hq
+      s w (a.subSkew g hg) p r;
     ((∀ w ∈ alignedIndex q s t, ∀ alpha, Integrable (fun a ↦ toFullBlockVec
         (blockCellAverage (adaptedCellAt q s w) (X a)) alpha) P) ∧
       (∀ w ∈ alignedIndex q s t, ∀ alpha, Integrable (fun a ↦ volumeAverage
@@ -292,12 +299,15 @@ private theorem vecDot_annealed_cutoff_split [NeZero d]
       (fun w hw i ↦ hInt.1 w hw (Sum.inr i)) (fun w hw i ↦ hInt.2 w hw (Sum.inr i))
       (fun i ↦ avsum_one_sub_cutoffAverage_mul_integral_childState_subSkew_eq_zero
         hstat hgrid hls hst hint g hg p r (Sum.inr i))
-/-- The adjoint gradient cutoff mean has the independently canceled split. -/ theorem vecDot_profileAdjointCutoffMean_fst_eq_defect_add_oscillation [NeZero d]
+/-- The adjoint gradient cutoff mean has the independently canceled split. -/ theorem
+  vecDot_profileAdjointCutoffMean_fst_eq_defect_add_oscillation [NeZero d]
     {P : Measure (CoeffSpace d)} [IsProbabilityMeasure P]
     (hstat : HCPoly.Frozen.IsStationaryLaw P) {l s t : ℤ} {q : Mat d}
     (hgrid : IsRoundedGrid l q) (hls : l ≤ s) (hst : s ≤ t)
     (hint : HasFiniteAdaptedMean P q s) (g : Mat d) (hg : IsSkewMat g)
-    (p r Qcen : Vec d) : let hq := Recurrence.posDef_of_isRoundedGrid hgrid; let X := fun a ↦ diagonalWeakState hq t (a.subSkew g hg).transpose p r; let Y := fun w a ↦ diagonalWeakChildState hq s w (a.subSkew g hg).transpose p r;
+    (p r Qcen : Vec d) : let hq := Recurrence.posDef_of_isRoundedGrid hgrid; let X := fun a ↦
+      diagonalWeakState hq t (a.subSkew g hg).transpose p r; let Y := fun w a ↦
+      diagonalWeakChildState hq s w (a.subSkew g hg).transpose p r;
     ((∀ w ∈ alignedIndex q s t, ∀ alpha, Integrable (fun a ↦ toFullBlockVec
         (blockCellAverage (adaptedCellAt q s w) (X a)) alpha) P) ∧
       (∀ w ∈ alignedIndex q s t, ∀ alpha, Integrable (fun a ↦ volumeAverage
@@ -329,12 +339,15 @@ private theorem vecDot_annealed_cutoff_split [NeZero d]
       (fun w hw i ↦ hInt.1 w hw (Sum.inl i)) (fun w hw i ↦ hInt.2 w hw (Sum.inl i))
       (fun i ↦ avsum_one_sub_cutoffAverage_mul_integral_childState_adjointSubSkew_eq_zero
         hstat hgrid hls hst hint g hg p r (Sum.inl i))
-/-- The adjoint flux cutoff mean has the independently canceled split. -/ theorem vecDot_profileAdjointCutoffMean_snd_eq_defect_add_oscillation [NeZero d]
+/-- The adjoint flux cutoff mean has the independently canceled split. -/ theorem
+  vecDot_profileAdjointCutoffMean_snd_eq_defect_add_oscillation [NeZero d]
     {P : Measure (CoeffSpace d)} [IsProbabilityMeasure P]
     (hstat : HCPoly.Frozen.IsStationaryLaw P) {l s t : ℤ} {q : Mat d}
     (hgrid : IsRoundedGrid l q) (hls : l ≤ s) (hst : s ≤ t)
     (hint : HasFiniteAdaptedMean P q s) (g : Mat d) (hg : IsSkewMat g)
-    (p r Pcen : Vec d) : let hq := Recurrence.posDef_of_isRoundedGrid hgrid; let X := fun a ↦ diagonalWeakState hq t (a.subSkew g hg).transpose p r; let Y := fun w a ↦ diagonalWeakChildState hq s w (a.subSkew g hg).transpose p r;
+    (p r Pcen : Vec d) : let hq := Recurrence.posDef_of_isRoundedGrid hgrid; let X := fun a ↦
+      diagonalWeakState hq t (a.subSkew g hg).transpose p r; let Y := fun w a ↦
+      diagonalWeakChildState hq s w (a.subSkew g hg).transpose p r;
     ((∀ w ∈ alignedIndex q s t, ∀ alpha, Integrable (fun a ↦ toFullBlockVec
         (blockCellAverage (adaptedCellAt q s w) (X a)) alpha) P) ∧
       (∀ w ∈ alignedIndex q s t, ∀ alpha, Integrable (fun a ↦ volumeAverage

@@ -84,7 +84,8 @@ theorem finiteAffineCorrection_toScalarL2_eq_of_aeeq [NeZero d]
       (finiteAffineCorrection b m e).toH1Function.grad x = 0
     rw [haeq, sub_self]
   have hzero :=
-    H10Function.toScalarL2_eq_zero_of_gradToVectorL2_eq_zero_of_exists_poincare_constant hP w hgradzero
+    H10Function.toScalarL2_eq_zero_of_gradToVectorL2_eq_zero_of_exists_poincare_constant hP w
+      hgradzero
   have hcw := H1Function.coeFn_toScalarL2 w.toH1Function
   rw [hzero] at hcw
   have hz0 : (0 : ScalarL2 (Book.Ch02.cubeDomain (originCube d m) : Set (Vec d)))

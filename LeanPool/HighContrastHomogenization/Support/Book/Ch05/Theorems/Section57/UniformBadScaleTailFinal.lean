@@ -36,7 +36,8 @@ an additional explicit threshold but no stochastic branch.
 
 noncomputable section
 
-theorem exists_quantitative_threshold_shiftedBadScaleEvent_quenchedProbeEnvelope_le_uniformEndpoint_tail
+theorem
+  exists_quantitative_threshold_shiftedBadScaleEvent_quenchedProbeEnvelope_le_uniformEndpoint_tail
     {d : ℕ} [NeZero d]
     (params : QuantitativeCoarseGrainedEllipticityParams d) :
     ∃ Cfluct Ccrude Centry a : ℝ,
@@ -107,7 +108,7 @@ theorem exists_quantitative_threshold_shiftedBadScaleEvent_quenchedProbeEnvelope
                 Real.exp (-(((3 : ℝ) ^ (q : ℝ) / Btail) ^ η)) := by
   obtain ⟨Cfluct, Ccrude, Centry, a,
       hCfluct, hCcrude, hCentry, ha, htail⟩ :=
-    measureReal_shiftedBadScaleEvent_quenchedProbeEnvelope_le_uniformEndpoint_tail_of_thresholds_and_prefactor_gap
+    shiftedBadScaleProbability_le_uniformEndpoint_tail
       (d := d) params
   refine ⟨Cfluct, Ccrude, Centry, a,
     hCfluct, hCcrude, hCentry, ha, ?_⟩

@@ -49,10 +49,10 @@ theorem summable_homogenizationErrorOnCube_infinity_one_terms
       (by simpa using hs) ?_ ?_
     · intro n
       exact scaleResponseAtScale_infinity_nonneg Q
-        (sub_le_self _ (by exact_mod_cast Nat.zero_le n)) a a0
+        (sub_le_self _ (Nat.cast_nonneg n)) a a0
     · intro n
       exact scaleResponseAtScale_infinity_le_uniform Q
-        (sub_le_self _ (by exact_mod_cast Nat.zero_le n)) a a0
+        (sub_le_self _ (Nat.cast_nonneg n)) a a0
   simpa [geometricWeight_eq_old] using hOld
 
 theorem HomogenizationErrorOnCube_infinity_one_nonneg
@@ -67,7 +67,7 @@ theorem HomogenizationErrorOnCube_infinity_one_nonneg
       (HCPolySupport.geometricWeight_nonneg (s := s) (q := 1) n
         (by simpa using hs.le))
   · exact scaleResponseAtScale_infinity_nonneg Q
-      (sub_le_self _ (by exact_mod_cast Nat.zero_le n)) a a0
+      (sub_le_self _ (Nat.cast_nonneg n)) a a0
 
 theorem scaleResponseAtScale_infinity_self_le_homogenizationErrorOnCube_infinity_one
     {d : ℕ} [NeZero d] (Q : TriadicCube d)
@@ -90,7 +90,7 @@ theorem scaleResponseAtScale_infinity_self_le_homogenizationErrorOnCube_infinity
   have hterm : ∀ n : ℕ, g n ≤ f n := by
     intro n
     have hk : Q.scale - (n : ℤ) ≤ Q.scale := by
-      exact sub_le_self _ (by exact_mod_cast Nat.zero_le n)
+      exact sub_le_self _ (Nat.cast_nonneg n)
     have hresp :
         scaleResponseAtScale Q Q.scale .infinity a a0 ≤
           scaleResponseAtScale Q (Q.scale - (n : ℤ)) .infinity a a0 :=
@@ -135,7 +135,7 @@ theorem homogenizationErrorOnCube_infinity_one_le_of_lt
   have hnonneg : ∀ n : ℕ, 0 ≤ H n := by
     intro n
     exact scaleResponseAtScale_infinity_nonneg Q
-      (sub_le_self _ (by exact_mod_cast Nat.zero_le n)) a a0
+      (sub_le_self _ (Nat.cast_nonneg n)) a a0
   have hsum_t_old :
       Summable (fun n : ℕ => HCPolySupport.geometricWeight t 1 n * H n) := by
     have hsum_t :=
@@ -179,7 +179,7 @@ theorem homogenizationErrorOnCube_infinity_one_le_of_mem_descendantsAtScale
         (HCPolySupport.geometricWeight_nonneg (s := s) (q := 1) n
           (by simpa using hs.le))
     · exact scaleResponseAtScale_infinity_nonneg Q
-        (sub_le_self _ (by exact_mod_cast Nat.zero_le n)) a a0
+        (sub_le_self _ (Nat.cast_nonneg n)) a a0
   have htailSummable : Summable (fun n : ℕ => fQ (n + h)) :=
     (summable_nat_add_iff h).2 hsum
   have hfactorNonneg : 0 ≤ factor := by
@@ -196,7 +196,7 @@ theorem homogenizationErrorOnCube_infinity_one_le_of_mem_descendantsAtScale
         scaleResponseAtScale R (R.scale - (n : ℤ)) .infinity a a0 ≤
           scaleResponseAtScale Q (Q.scale - ((n + h : ℕ) : ℤ)) .infinity a a0 := by
       have hl : R.scale - (n : ℤ) ≤ R.scale :=
-        sub_le_self _ (by exact_mod_cast Nat.zero_le n)
+        sub_le_self _ (Nat.cast_nonneg n)
       simpa [hscale] using
         (scaleResponseAtScale_infinity_le_of_mem_descendantsAtScale
           (Q := Q) (R := R) (k := k) (l := R.scale - (n : ℤ)) a a0 hR hl)
@@ -231,7 +231,7 @@ theorem homogenizationErrorOnCube_infinity_one_le_of_mem_descendantsAtScale
         (HCPolySupport.geometricWeight_nonneg (s := s) (q := 1) n
           (by simpa using hs.le))
     · exact scaleResponseAtScale_infinity_nonneg R
-        (sub_le_self _ (by exact_mod_cast Nat.zero_le n)) a a0
+        (sub_le_self _ (Nat.cast_nonneg n)) a a0
   have hscaledSummable : Summable (fun n : ℕ => factor * fQ (n + h)) :=
     htailSummable.mul_left factor
   have hRsummable : Summable fR :=

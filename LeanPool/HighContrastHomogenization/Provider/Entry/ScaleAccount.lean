@@ -29,17 +29,17 @@ that step.
 *The coupled burn.*  `e.global.selection.lower.scale` is the
 larger of the source burn `j_S` of `e.source.lower.scale` and the ceiling
 that makes the pair a coupled window; with `d/(4d+3) ≤ 1` and
-`16(d+1)^2/(4d+3) ≤ 8(d+1)` the second is below `C_exec Λ_Π + 2 + 8(d+1) log_3 K̄_S`.
+`16(d+1)^2/(4d+3) ≤ 8(d+1)` the second is below `C_exec Λ_Π + 2 + 8(d+1) log_3 K_bar_S`.
 
 *The source burn.*  Its three entries are the dimensional floor `k_0(d)`, the
-ceiling of `2 log_3 K̄_S`, and the ceiling of
-`2 + 4(d+1) log_3 K̄_S + log_3 𝔐_Q(K̄_S)`.  The moment multiplier of the source
-gauge satisfies `log_3 𝔐_Q(K̄) ≤ C_mom(d,g)(1 + log_3 K̄)`, because `1 + T ≤ 2T`
-on `T ≥ 1` and `log(1 + log K̄) ≤ log K̄`; hence `j_S ≤ C_burn log_3 K̄_S`.
+ceiling of `2 log_3 K_bar_S`, and the ceiling of
+`2 + 4(d+1) log_3 K_bar_S + log_3 𝔐_Q(K_bar_S)`.  The moment multiplier of the source
+gauge satisfies `log_3 𝔐_Q(K_bar) ≤ C_mom(d,g)(1 + log_3 K_bar)`, because `1 + T ≤ 2T`
+on `T ≥ 1` and `log(1 + log K_bar) ≤ log K_bar`; hence `j_S ≤ C_burn log_3 K_bar_S`.
 
-*The gauge comparison.*  Since `K_{Ψ_S} > 1` one has `K̄_S ≤ 2K_{Ψ_S}` and
+*The gauge comparison.*  Since `K_{Ψ_S} > 1` one has `K_bar_S ≤ 2K_{Ψ_S}` and
 `Λ_Π ≤ Λ_S := log_3(2 + Π K_{Ψ_S})`, while `Λ_S ≥ 1`; therefore
-`log_3 K̄_S ≤ log_3 2 + Λ_S ≤ (1 + log_3 2)Λ_S`, and every additive constant of
+`log_3 K_bar_S ≤ log_3 2 + Λ_S ≤ (1 + log_3 2)Λ_S`, and every additive constant of
 the account is itself below its own multiple of `Λ_S`.  The exponential form is
 then immediate from `3^{Λ_S} = 2 + Π K_{Ψ_S}`.
 -/
@@ -53,7 +53,7 @@ noncomputable section
 /-! ## The moment multiplier and the source burn -/
 
 /-- **The moment multiplier is logarithmically tame.**  Its base-three
-logarithm grows at most affinely in `log_3 K̄`, with a slope and an intercept
+logarithm grows at most affinely in `log_3 K_bar`, with a slope and an intercept
 that depend only on the exponent. -/
 private theorem logb_momentMultiplier_le {Q Kbar : ℝ} (hQ : 1 ≤ Q) (hK : 2 ≤ Kbar) :
     Real.logb 3 (momentMultiplier Q Kbar) ≤
@@ -127,7 +127,7 @@ private theorem logb_momentMultiplier_le {Q Kbar : ℝ} (hQ : 1 ≤ Q) (hK : 2 �
     _ = (Real.log 2 + Real.log (2 * Q)) / Real.log 3 +
           (((⌈Q * (Q + 1) / 2⌉ : ℤ) : ℝ) + 1) * Real.logb 3 Kbar := by rw [Real.logb]
 
-/-- **The source burn is affine in `log_3 K̄`.**  Each of the three entries of
+/-- **The source burn is affine in `log_3 K_bar`.**  Each of the three entries of
 `e.source.lower.scale` is, and the intercept and the slope depend only on
 the dimension and the moment exponent. -/
 private theorem exists_sourceBurn_bound (d : ℕ) {Q : ℝ} (hQ : 1 ≤ Q) :
@@ -220,7 +220,7 @@ private theorem coupledExecBurn_le (d : ℕ) {Q K Cexec Lam A Bc : ℝ}
 
 /-- The additive account of the entry generation, with the three logarithmic
 quantities abstracted: the whole chain is a single linear combination once the
-comparison `Λ_Π ≤ Λ_S`, the growth comparison `log_3 K̄ ≤ θ Λ_S` and `Λ_S ≥ 1`
+comparison `Λ_Π ≤ Λ_S`, the growth comparison `log_3 K_bar ≤ θ Λ_S` and `Λ_S ≥ 1`
 are available. -/
 private theorem ment_le_mul_of_bounds {d : ℕ} {A Bc th Cexec Csel Cgap LK LP LS jd mt : ℝ}
     (hA0 : 0 ≤ A) (hBc0 : 0 ≤ Bc) (hLS1 : 1 ≤ LS) (hLPS : LP ≤ LS)

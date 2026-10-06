@@ -51,7 +51,7 @@ private theorem barSigmaStarAtScale_pos_of_P4
     Section52.originBlockIntegrableAtScale_from_P4 hP hStruct hP4 m
   have hInv : 0 < hP.barSigmaStarInvAtScale hStruct (m : ℤ) := by
     simpa [Ch04.RestrictionLawCarrier.barSigmaStarInvAtScale] using
-      Ch04.RestrictionLawCarrier.Internal.barSigmaStarInv_pos_of_integrable_coarseFullBlockMatrixAtCube
+      Ch04.RestrictionLawCarrier.Internal.barSigmaStarInverse_pos_of_integrableBlockMatrix
         hP
         (Ch04.Internal.annealedPrimitiveScalarizationData_of_structuralLaw
           hP hStruct (m : ℤ))
@@ -84,7 +84,7 @@ private theorem sigmaHatAtScale_nonneg
     0 ≤ sigmaHatAtScale hP hStruct m := by
   exact Real.sqrt_nonneg _
 
-private theorem fullBlockNormalizedFluctuationOperatorNormSqAtScale_nonneg
+private theorem fluctuationNormSquare_nonneg
     {d : ℕ} [NeZero d] {P : Ch04.RestrictionCoeffLaw d}
     (hP : Ch04.RestrictionLawCarrier P) (hStruct : Ch04.RestrictionStructuralLaw P)
     (m : ℤ) (R : TriadicCube d) (a : RegCoeffField d) :
@@ -193,7 +193,7 @@ theorem coarseFluctuationFullBlockSumAtScale_nonneg
   exact mul_nonneg
     (Real.rpow_nonneg (by norm_num : 0 ≤ (3 : ℝ)) _)
     (integral_nonneg fun a =>
-      fullBlockNormalizedFluctuationOperatorNormSqAtScale_nonneg
+      fluctuationNormSquare_nonneg
         hP hStruct (m : ℤ) (originCube d n) a)
 
 /-- Nonnegativity of the tau sum in the final RHS. -/
@@ -364,6 +364,212 @@ private theorem sum_Icc_betaWeight_le_five_beta_inv
     _ ≤ (1 - Real.rpow (3 : ℝ) (-β))⁻¹ := hgeom
     _ ≤ 5 * β⁻¹ := hgeom_five
 
+private theorem integrable_weightedHighScaleFluctuationTerm
+    {d : ℕ}
+    [NeZero d]
+    {P : Ch04.RestrictionCoeffLaw d}
+    (hP : Ch04.RestrictionLawCarrier P)
+    (hstat : Ch04.RestrictionStationaryLaw P)
+    (hStruct : Ch04.RestrictionStructuralLaw P)
+    (hP4 : QuantitativeCoarseGrainedEllipticity P)
+    {k : ℕ}
+    {m : ℕ}
+    :
+    let β := section53CoarseFluctuationBeta hP4
+    let θ := thetaAtScale hP hStruct (m : ℤ)
+    let S := Finset.Icc ((k : ℤ) + 1) (m : ℤ)
+    let w : ℤ → ℝ :=
+      fun n => Real.rpow (3 : ℝ)
+        (-β * (Int.toNat ((m : ℤ) - n) : ℝ))
+    ∀ n ∈ S,
+        Integrable
+          (fun a : RegCoeffField d =>
+            w n *
+              descendantsAverage (originCube d (m : ℤ))
+                (Int.toNat ((m : ℤ) - n))
+                (fun R =>
+                  2 * θ *
+                    fullBlockNormalizedFluctuationOperatorNormSqAtScale
+                      hP hStruct (m : ℤ) R a)) P := by
+  classical
+  let : IsProbabilityMeasure P := hP.isProbability
+  dsimp only
+  let β := section53CoarseFluctuationBeta hP4
+  let θ := thetaAtScale hP hStruct (m : ℤ)
+  let S := Finset.Icc ((k : ℤ) + 1) (m : ℤ)
+  let w : ℤ → ℝ :=
+    fun n => Real.rpow (3 : ℝ)
+      (-β * (Int.toNat ((m : ℤ) - n) : ℝ))
+  intro n hn
+  have hn_bounds := Finset.mem_Icc.mp hn
+  have hn_nonneg : 0 ≤ n := by
+    have hk_nonneg : (0 : ℤ) ≤ (k : ℤ) := by exact_mod_cast Nat.zero_le k
+    linarith
+  have hnm : n ≤ (m : ℤ) := hn_bounds.2
+  have hOrigin :
+      Integrable
+        (fullBlockNormalizedFluctuationOperatorNormSqAtScale
+          hP hStruct (m : ℤ) (originCube d n)) P := by
+    have hnat :=
+      Section52.integrable_fullBlockFluctuationNormSquare_of_P4_atOrigin
+        hP hStruct hP4 (m : ℤ) (Int.toNat n)
+    simpa [Int.toNat_of_nonneg hn_nonneg] using! hnat
+  have hdesc :
+      Integrable
+        (fun a : RegCoeffField d =>
+          descendantsAverage (originCube d (m : ℤ))
+            (Int.toNat ((m : ℤ) - n))
+            (fun R =>
+              2 * θ *
+                fullBlockNormalizedFluctuationOperatorNormSqAtScale
+                  hP hStruct (m : ℤ) R a)) P := by
+    refine Ch04.integrable_descendantsAverage ?_
+    intro R hR
+    have hRscale : R ∈ descendantsAtScale (originCube d (m : ℤ)) n := by
+      simpa [descendantsAtScale_eq_descendantsAtDepth
+        (originCube d (m : ℤ)) hnm] using! hR
+    exact
+      (hP.fluctuationOperatorNormSq_integrable_on_originDescendants
+        hstat hStruct (m : ℤ) hn_nonneg hnm hRscale hOrigin).const_mul (2 * θ)
+  exact hdesc.const_mul (w n)
+
+private theorem integral_highScaleMajorant_eq_weightedFluctuationSum
+    {d : ℕ}
+    [NeZero d]
+    {P : Ch04.RestrictionCoeffLaw d}
+    (hP : Ch04.RestrictionLawCarrier P)
+    (hstat : Ch04.RestrictionStationaryLaw P)
+    (hStruct : Ch04.RestrictionStructuralLaw P)
+    (hP4 : QuantitativeCoarseGrainedEllipticity P)
+    {k : ℕ}
+    {m : ℕ}
+    :
+    let β := section53CoarseFluctuationBeta hP4
+    let θ := thetaAtScale hP hStruct (m : ℤ)
+    let S := Finset.Icc ((k : ℤ) + 1) (m : ℤ)
+    let w : ℤ → ℝ :=
+      fun n => Real.rpow (3 : ℝ)
+        (-β * (Int.toNat ((m : ℤ) - n) : ℝ))
+    let Y : RegCoeffField d → ℝ :=
+      fun a =>
+        (∑ n ∈ S, w n) *
+          ∑ n ∈ S, w n *
+            descendantsAverage (originCube d (m : ℤ))
+              (Int.toNat ((m : ℤ) - n))
+              (fun R =>
+                2 * θ *
+                  fullBlockNormalizedFluctuationOperatorNormSqAtScale
+                    hP hStruct (m : ℤ) R a)
+    ∫ a, Y a ∂P =
+        (∑ n ∈ S, w n) *
+          (2 * θ * coarseFluctuationFullBlockSumAtScale hP hStruct hP4 k m) := by
+  classical
+  let : IsProbabilityMeasure P := hP.isProbability
+  dsimp only
+  let β := section53CoarseFluctuationBeta hP4
+  let θ := thetaAtScale hP hStruct (m : ℤ)
+  let S := Finset.Icc ((k : ℤ) + 1) (m : ℤ)
+  let w : ℤ → ℝ :=
+    fun n => Real.rpow (3 : ℝ)
+      (-β * (Int.toNat ((m : ℤ) - n) : ℝ))
+  let Y : RegCoeffField d → ℝ :=
+    fun a =>
+      (∑ n ∈ S, w n) *
+        ∑ n ∈ S, w n *
+          descendantsAverage (originCube d (m : ℤ))
+            (Int.toNat ((m : ℤ) - n))
+            (fun R =>
+              2 * θ *
+                fullBlockNormalizedFluctuationOperatorNormSqAtScale
+                  hP hStruct (m : ℤ) R a)
+  have hstationary :=
+    integral_weighted_descendantsAverage_fullBlockNormalizedFluctuationOperatorNormSqAtScale_eq
+      hP hstat hStruct hP4 k m
+  calc
+    ∫ a, Y a ∂P =
+        (∑ n ∈ S, w n) *
+          ∫ a,
+            ∑ n ∈ S, w n *
+              descendantsAverage (originCube d (m : ℤ))
+                (Int.toNat ((m : ℤ) - n))
+                (fun R =>
+                  2 * θ *
+                    fullBlockNormalizedFluctuationOperatorNormSqAtScale
+                      hP hStruct (m : ℤ) R a) ∂P := by
+          rw [integral_const_mul]
+    _ =
+        (∑ n ∈ S, w n) *
+          (∑ n ∈ S, w n *
+            (2 * θ *
+              ∫ a,
+                fullBlockNormalizedFluctuationOperatorNormSqAtScale
+                  hP hStruct (m : ℤ) (originCube d n) a ∂P)) := by
+          rw [hstationary]
+    _ =
+        (∑ n ∈ S, w n) *
+          (2 * θ * coarseFluctuationFullBlockSumAtScale hP hStruct hP4 k m) := by
+          congr 1
+          simp [coarseFluctuationFullBlockSumAtScale, S, w, β, θ,
+            Finset.mul_sum, mul_assoc, mul_comm]
+
+private theorem aemeasurable_gradientHighScaleAverage
+    {d : ℕ}
+    [NeZero d]
+    {P : Ch04.RestrictionCoeffLaw d}
+    (hP : Ch04.RestrictionLawCarrier P)
+    (hStruct : Ch04.RestrictionStructuralLaw P)
+    (hP4 : QuantitativeCoarseGrainedEllipticity P)
+    {k : ℕ}
+    {m : ℕ}
+    (e : Vec d)
+    :
+    let β := section53CoarseFluctuationBeta hP4
+    let s := hP4.sLower + 2 * β
+    let p_e := specialPAtScale hP hStruct (m : ℤ) e
+    let q_e := specialQAtScale hP hStruct (m : ℤ) e
+    let p0_e := (hP.barSigmaStarAtScale hStruct (m : ℤ))⁻¹ • q_e - p_e
+    let S := Finset.Icc ((k : ℤ) + 1) (m : ℤ)
+    AEMeasurable
+        (fun a : RegCoeffField d =>
+          WeakNormsMaximizer.gradientAverageTermAtScale
+            (m : ℤ) (k : ℤ) s p_e q_e p0_e a) P := by
+  classical
+  let : IsProbabilityMeasure P := hP.isProbability
+  dsimp only
+  let β := section53CoarseFluctuationBeta hP4
+  let s := hP4.sLower + 2 * β
+  let p_e := specialPAtScale hP hStruct (m : ℤ) e
+  let q_e := specialQAtScale hP hStruct (m : ℤ) e
+  let p0_e := (hP.barSigmaStarAtScale hStruct (m : ℤ))⁻¹ • q_e - p_e
+  let S := Finset.Icc ((k : ℤ) + 1) (m : ℤ)
+  dsimp [WeakNormsMaximizer.gradientAverageTermAtScale]
+  change AEMeasurable
+    (fun a : RegCoeffField d =>
+      ∑ n ∈ S,
+        Real.rpow (3 : ℝ) (-s * (Int.toNat ((m : ℤ) - n) : ℝ)) *
+          Real.sqrt
+            (descendantsAverage (originCube d (m : ℤ))
+              (Int.toNat ((m : ℤ) - n))
+              (fun R =>
+                vecNormSq
+                  (Ch04.canonicalScalarResponseGradientAverageCubeSet
+                    R R p_e q_e a.toFun - p0_e)))) P
+  refine S.aemeasurable_fun_sum (μ := P) ?_
+  intro n _hn
+  exact
+    aemeasurable_const.mul
+      ((Ch04.aemeasurable_descendantsAverage
+        (P := P) (Q := originCube d (m : ℤ))
+        (j := Int.toNat ((m : ℤ) - n))
+        (F := fun R a =>
+          vecNormSq
+            (Ch04.canonicalScalarResponseGradientAverageCubeSet
+              R R p_e q_e a.toFun - p0_e))
+        (fun R _hR =>
+          aemeasurable_vecNormSq_sub_const
+            (hP.aemeasurable_canonicalScalarResponseGradientAverage_cubeSet
+              R R p_e q_e) p0_e)).sqrt)
+
 /-- Expectation-level conversion for the paired high-scale average terms in the
 weak-norm maximizer RHS.  This is the full-block fluctuation part of the
 paired square estimate; the fluctuation observable is the squared Euclidean
@@ -461,49 +667,8 @@ theorem integral_paired_highScaleAverageTerms_special_le_fullBlockSumAtScale
       paired_highScaleAverageTerms_special_le_weighted_fullBlockNormalized_fluctuation
         hP hStruct a ha (k := k) (m := m) β s t hβs hβt e hb hc he
     simpa [X, Y, S, w, σ, θ, p_e, q_e, p0_e, q0_e, s, t, β] using h
-  have hTermInt :
-      ∀ n ∈ S,
-        Integrable
-          (fun a : RegCoeffField d =>
-            w n *
-              descendantsAverage (originCube d (m : ℤ))
-                (Int.toNat ((m : ℤ) - n))
-                (fun R =>
-                  2 * θ *
-                    fullBlockNormalizedFluctuationOperatorNormSqAtScale
-                      hP hStruct (m : ℤ) R a)) P := by
-    intro n hn
-    have hn_bounds := Finset.mem_Icc.mp hn
-    have hn_nonneg : 0 ≤ n := by
-      have hk_nonneg : (0 : ℤ) ≤ (k : ℤ) := by exact_mod_cast Nat.zero_le k
-      linarith
-    have hnm : n ≤ (m : ℤ) := hn_bounds.2
-    have hOrigin :
-        Integrable
-          (fullBlockNormalizedFluctuationOperatorNormSqAtScale
-            hP hStruct (m : ℤ) (originCube d n)) P := by
-      have hnat :=
-        Section52.integrable_fullBlockNormalizedFluctuationOperatorNormSqAtScale_originCube_from_P4
-          hP hStruct hP4 (m : ℤ) (Int.toNat n)
-      simpa [Int.toNat_of_nonneg hn_nonneg] using! hnat
-    have hdesc :
-        Integrable
-          (fun a : RegCoeffField d =>
-            descendantsAverage (originCube d (m : ℤ))
-              (Int.toNat ((m : ℤ) - n))
-              (fun R =>
-                2 * θ *
-                  fullBlockNormalizedFluctuationOperatorNormSqAtScale
-                    hP hStruct (m : ℤ) R a)) P := by
-      refine Ch04.integrable_descendantsAverage ?_
-      intro R hR
-      have hRscale : R ∈ descendantsAtScale (originCube d (m : ℤ)) n := by
-        simpa [descendantsAtScale_eq_descendantsAtDepth
-          (originCube d (m : ℤ)) hnm] using! hR
-      exact
-        (hP.integrable_fullBlockNormalizedFluctuationOperatorNormSqAtScale_of_mem_descendantsAtScale_originCube
-          hstat hStruct (m : ℤ) hn_nonneg hnm hRscale hOrigin).const_mul (2 * θ)
-    exact hdesc.const_mul (w n)
+  have hTermInt := integrable_weightedHighScaleFluctuationTerm (d := d) (P := P) (hP := hP)
+    (hstat := hstat) (hStruct := hStruct) (hP4 := hP4) (k := k) (m := m)
   have hY_int : Integrable Y P := by
     have hsum :
         Integrable
@@ -517,38 +682,9 @@ theorem integral_paired_highScaleAverageTerms_special_le_fullBlockSumAtScale
                       hP hStruct (m : ℤ) R a)) P :=
       MeasureTheory.integrable_finsetSum S hTermInt
     simpa [Y] using hsum.const_mul (∑ n ∈ S, w n)
-  have hGradAvgAE :
-      AEMeasurable
-        (fun a : RegCoeffField d =>
-          WeakNormsMaximizer.gradientAverageTermAtScale
-            (m : ℤ) (k : ℤ) s p_e q_e p0_e a) P := by
-    dsimp [WeakNormsMaximizer.gradientAverageTermAtScale]
-    change AEMeasurable
-      (fun a : RegCoeffField d =>
-        ∑ n ∈ S,
-          Real.rpow (3 : ℝ) (-s * (Int.toNat ((m : ℤ) - n) : ℝ)) *
-            Real.sqrt
-              (descendantsAverage (originCube d (m : ℤ))
-                (Int.toNat ((m : ℤ) - n))
-                (fun R =>
-                  vecNormSq
-                    (Ch04.canonicalScalarResponseGradientAverageCubeSet
-                      R R p_e q_e a.toFun - p0_e)))) P
-    refine S.aemeasurable_fun_sum (μ := P) ?_
-    intro n _hn
-    exact
-      aemeasurable_const.mul
-        ((Ch04.aemeasurable_descendantsAverage
-          (P := P) (Q := originCube d (m : ℤ))
-          (j := Int.toNat ((m : ℤ) - n))
-          (F := fun R a =>
-            vecNormSq
-              (Ch04.canonicalScalarResponseGradientAverageCubeSet
-                R R p_e q_e a.toFun - p0_e))
-          (fun R _hR =>
-            aemeasurable_vecNormSq_sub_const
-              (hP.aemeasurable_canonicalScalarResponseGradientAverage_cubeSet
-                R R p_e q_e) p0_e)).sqrt)
+  have hGradAvgAE := aemeasurable_gradientHighScaleAverage (d := d) (P := P) (hP := hP) (hStruct
+    := hStruct)
+    (hP4 := hP4) (k := k) (m := m) (e := e)
   have hFluxAvgAE :
       AEMeasurable
         (fun a : RegCoeffField d =>
@@ -594,36 +730,8 @@ theorem integral_paired_highScaleAverageTerms_special_le_fullBlockSumAtScale
   have hstationary :=
     integral_weighted_descendantsAverage_fullBlockNormalizedFluctuationOperatorNormSqAtScale_eq
       hP hstat hStruct hP4 k m
-  have hY_eq :
-      ∫ a, Y a ∂P =
-        (∑ n ∈ S, w n) *
-          (2 * θ * coarseFluctuationFullBlockSumAtScale hP hStruct hP4 k m) := by
-    calc
-      ∫ a, Y a ∂P =
-          (∑ n ∈ S, w n) *
-            ∫ a,
-              ∑ n ∈ S, w n *
-                descendantsAverage (originCube d (m : ℤ))
-                  (Int.toNat ((m : ℤ) - n))
-                  (fun R =>
-                    2 * θ *
-                      fullBlockNormalizedFluctuationOperatorNormSqAtScale
-                        hP hStruct (m : ℤ) R a) ∂P := by
-            rw [integral_const_mul]
-      _ =
-          (∑ n ∈ S, w n) *
-            (∑ n ∈ S, w n *
-              (2 * θ *
-                ∫ a,
-                  fullBlockNormalizedFluctuationOperatorNormSqAtScale
-                    hP hStruct (m : ℤ) (originCube d n) a ∂P)) := by
-            rw [hstationary]
-      _ =
-          (∑ n ∈ S, w n) *
-            (2 * θ * coarseFluctuationFullBlockSumAtScale hP hStruct hP4 k m) := by
-            congr 1
-            simp [coarseFluctuationFullBlockSumAtScale, S, w, β, θ,
-              Finset.mul_sum, mul_assoc, mul_comm]
+  have hY_eq := integral_highScaleMajorant_eq_weightedFluctuationSum (d := d) (P := P) (hP := hP)
+    (hstat := hstat) (hStruct := hStruct) (hP4 := hP4) (k := k) (m := m)
   have hmain :
       ∫ a, X a ∂P ≤
         (∑ n ∈ S, w n) *

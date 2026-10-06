@@ -115,7 +115,7 @@ theorem pointwiseCoeffField_openCube_descendant_data {d : ℕ} [NeZero d]
   have hRec :
       OpenCubeDescendantEllipticRecoveryFamily Q
         (Internal.Ch02.BookCh02.pointwiseCoeffField (cubeDomain Q) aQ) :=
-    openCubeDescendantEllipticRecoveryFamily_of_isEllipticFieldOn_openCubeSet_of_originCubeRecoveryExistence
+    openCubeDescendantEllipticRecoveryFamily_of_ellipticField_openCubeSet
       Q (Internal.Ch02.BookCh02.pointwiseCoeffField (cubeDomain Q) aQ)
       hEll hOrigin
   exact openCubeDescendantDeterministicCoarseData_of_recoveryFamily hRec
@@ -284,7 +284,7 @@ theorem coarseBMatrixNorm_eq_matrixNorm_bCoarse_pointwiseCoeffField_of_mem_desce
           (HCPolySupport.sigmaStarCoarse (cubeSet R) A)
           (HCPolySupport.kappaCoarse (cubeSet R) A) := by
     symm
-    rw [HCPolySupport.bCoarse_sigmaCoarse_sigmaStarCoarse_kappaCoarse_cubeSet_eq_openCubeSet_of_triadicCube_of_isSigmaCoarse
+    rw [HCPolySupport.bCoarse_sigmaCoarse_sigmaStarCoarse_kappaCoarse_cube_eq_cube
       (Q := R) (a := A) hS hK hSigma hdet]
   calc
     coarseBMatrixNorm R a =
@@ -310,7 +310,7 @@ theorem coarseBMatrixNorm_eq_matrixNorm_bCoarse_pointwiseCoeffField_of_mem_desce
             (HCPolySupport.kappaCoarse (cubeSet R) A)) := by
           rw [hOpenCube]
 
-theorem coarseSigmaStarInvMatrixNorm_eq_matrixNorm_sigmaStarInv_pointwiseCoeffField_of_mem_descendantsAtScale
+theorem coarseSigmaStarInvMatrixNorm_eq_matrixNorm_sigmaStarInv_pointwiseCoeffField
     {d : ℕ} [NeZero d] (a : TriadicCoeffFamily d)
     {Q R : TriadicCube d} {k : ℤ}
     (hk : k ≤ Q.scale) (hR : R ∈ descendantsAtScale Q k) :
@@ -336,7 +336,7 @@ theorem coarseSigmaStarInvMatrixNorm_eq_matrixNorm_sigmaStarInv_pointwiseCoeffFi
       HCPolySupport.sigmaStarInvCoarse (openCubeSet R) A =
         HCPolySupport.sigmaStarInvCoarse (cubeSet R) A := by
     symm
-    rw [HCPolySupport.sigmaStarInvCoarse_cubeSet_eq_openCubeSet_of_triadicCube_of_isSigmaStarCoarse
+    rw [HCPolySupport.sigmaStarInvCoarse_cubeSet_eq_openCubeSet
       (Q := R) (a := A) hS]
   calc
     coarseSigmaStarInvMatrixNorm R a =
@@ -396,7 +396,7 @@ theorem coarseBBlockNorm_le_dim_mul_coarseBMatrixNorm_of_mem_descendantsAtScale
           (HCPolySupport.sigmaStarCoarse (cubeSet R) A)
           (HCPolySupport.kappaCoarse (cubeSet R) A) := by
     symm
-    rw [HCPolySupport.bCoarse_sigmaCoarse_sigmaStarCoarse_kappaCoarse_cubeSet_eq_openCubeSet_of_triadicCube_of_isSigmaCoarse
+    rw [HCPolySupport.bCoarse_sigmaCoarse_sigmaStarCoarse_kappaCoarse_cube_eq_cube
       (Q := R) (a := A) hS hK hSigma hdet]
   calc
     HCPolySupport.coarseBBlockNorm R A =
@@ -432,7 +432,7 @@ theorem coarseBBlockNorm_le_dim_mul_coarseBMatrixNorm_of_mem_descendantsAtScale
           rw [coarseBMatrixNorm_eq_matrixNorm_bCoarse_pointwiseCoeffField_of_mem_descendantsAtScale
             (a := a) hk hR]
 
-theorem coarseSigmaStarInvBlockNorm_le_dim_mul_coarseSigmaStarInvMatrixNorm_of_mem_descendantsAtScale
+theorem coarseSigmaStarInvBlockNorm_le_dim_mul_matrixNorm_on_descendant
     {d : ℕ} [NeZero d] (a : TriadicCoeffFamily d)
     {Q R : TriadicCube d} {k : ℤ}
     (hk : k ≤ Q.scale) (hR : R ∈ descendantsAtScale Q k) :
@@ -455,7 +455,7 @@ theorem coarseSigmaStarInvBlockNorm_le_dim_mul_coarseSigmaStarInvMatrixNorm_of_m
       HCPolySupport.sigmaStarInvCoarse (openCubeSet R) A =
         HCPolySupport.sigmaStarInvCoarse (cubeSet R) A := by
     symm
-    rw [HCPolySupport.sigmaStarInvCoarse_cubeSet_eq_openCubeSet_of_triadicCube_of_isSigmaStarCoarse
+    rw [HCPolySupport.sigmaStarInvCoarse_cubeSet_eq_openCubeSet
       (Q := R) (a := A) hS]
   calc
     HCPolySupport.coarseSigmaStarInvBlockNorm R A =
@@ -476,7 +476,7 @@ theorem coarseSigmaStarInvBlockNorm_le_dim_mul_coarseSigmaStarInvMatrixNorm_of_m
           matrixNorm (HCPolySupport.sigmaStarInvCoarse (cubeSet R) A) :=
           matNorm_le_dim_mul_matrixNorm _
     _ = (d : ℝ) * coarseSigmaStarInvMatrixNorm R a := by
-          rw [coarseSigmaStarInvMatrixNorm_eq_matrixNorm_sigmaStarInv_pointwiseCoeffField_of_mem_descendantsAtScale
+          rw [coarseSigmaStarInvMatrixNorm_eq_matrixNorm_sigmaStarInv_pointwiseCoeffField
             (a := a) hk hR]
 
 theorem coarseBMatrixNorm_le_maxDescendantBMatrixNormAtScale
@@ -543,7 +543,7 @@ theorem coarseBMatrixNorm_le_maxDescendantBMatrixNormAtScale
             (HCPolySupport.sigmaStarCoarse (cubeSet R) A)
             (HCPolySupport.kappaCoarse (cubeSet R) A) := by
       symm
-      rw [HCPolySupport.bCoarse_sigmaCoarse_sigmaStarCoarse_kappaCoarse_cubeSet_eq_openCubeSet_of_triadicCube_of_isSigmaCoarse
+      rw [HCPolySupport.bCoarse_sigmaCoarse_sigmaStarCoarse_kappaCoarse_cube_eq_cube
         (Q := R) (a := A) hSR hKR hSigmaR hdetR]
     simpa using congrArg (fun M : Mat d => M i l) hcanonR
   have hLoewner :
@@ -572,7 +572,7 @@ theorem coarseBMatrixNorm_le_maxDescendantBMatrixNormAtScale
               (HCPolySupport.sigmaCoarse (openCubeSet Q) A)
               (HCPolySupport.sigmaStarCoarse (openCubeSet Q) A)
               (HCPolySupport.kappaCoarse (openCubeSet Q) A)) p) := by
-            rw [HCPolySupport.bCoarse_sigmaCoarse_sigmaStarCoarse_kappaCoarse_cubeSet_eq_openCubeSet_of_triadicCube_of_isSigmaCoarse
+            rw [HCPolySupport.bCoarse_sigmaCoarse_sigmaStarCoarse_kappaCoarse_cube_eq_cube
               (Q := Q) (a := A) hSQ hKQ hSigmaQ hdetQ]
       _ ≤ (1 / 2 : ℝ) * vecDot p
             (matVecMul
@@ -583,7 +583,7 @@ theorem coarseBMatrixNorm_le_maxDescendantBMatrixNormAtScale
                     (HCPolySupport.sigmaStarCoarse (openCubeSet R) A)
                     (HCPolySupport.kappaCoarse (openCubeSet R) A))) p) := by
               exact
-                HCPolySupport.bCoarse_subadditive_openCubeSet_descendantsAtDepth_in_loewner_order_of_isSigmaCoarse
+                HCPolySupport.bCoarse_le_descendantAverage_in_loewnerOrder
                   j Q A hEll hSQ hKQ hSigmaQ hdetQ hDesc p
       _ = (1 / 2 : ℝ) * vecDot p
             (matVecMul
@@ -599,7 +599,7 @@ theorem coarseBMatrixNorm_le_maxDescendantBMatrixNormAtScale
         (HCPolySupport.sigmaCoarse (cubeSet Q) A)
         (HCPolySupport.sigmaStarCoarse (cubeSet Q) A)
         (HCPolySupport.kappaCoarse (cubeSet Q) A)).PosSemidef := by
-    rw [HCPolySupport.bCoarse_sigmaCoarse_sigmaStarCoarse_kappaCoarse_cubeSet_eq_openCubeSet_of_triadicCube_of_isSigmaCoarse
+    rw [HCPolySupport.bCoarse_sigmaCoarse_sigmaStarCoarse_kappaCoarse_cube_eq_cube
       (Q := Q) (a := A) hSQ hKQ hSigmaQ hdetQ]
     exact HCPolySupport.bCoarse_canonical_posSemidef_of_isSigmaCoarse
       hSQ hKQ hSigmaQ hdetQ
@@ -614,7 +614,7 @@ theorem coarseBMatrixNorm_le_maxDescendantBMatrixNormAtScale
     intro R hR
     rcases hDesc R hR with
       ⟨sigmaR, sigmaStarR, kappaR, hAR, hSR, hKR, hSigmaR, hdetR⟩
-    rw [HCPolySupport.bCoarse_sigmaCoarse_sigmaStarCoarse_kappaCoarse_cubeSet_eq_openCubeSet_of_triadicCube_of_isSigmaCoarse
+    rw [HCPolySupport.bCoarse_sigmaCoarse_sigmaStarCoarse_kappaCoarse_cube_eq_cube
       (Q := R) (a := A) hSR hKR hSigmaR hdetR]
     exact HCPolySupport.bCoarse_canonical_posSemidef_of_isSigmaCoarse
       hSR hKR hSigmaR hdetR
@@ -731,7 +731,7 @@ theorem coarseSigmaStarInvMatrixNorm_le_maxDescendantSigmaStarInvMatrixNormAtSca
         HCPolySupport.sigmaStarInvCoarse (openCubeSet R) A =
           HCPolySupport.sigmaStarInvCoarse (cubeSet R) A := by
       symm
-      rw [HCPolySupport.sigmaStarInvCoarse_cubeSet_eq_openCubeSet_of_triadicCube_of_isSigmaStarCoarse
+      rw [HCPolySupport.sigmaStarInvCoarse_cubeSet_eq_openCubeSet
         (Q := R) (a := A) hSR]
     simpa using congrArg (fun M : Mat d => M i l) hcanonR
   have hLoewner :
@@ -744,14 +744,14 @@ theorem coarseSigmaStarInvMatrixNorm_le_maxDescendantSigmaStarInvMatrixNormAtSca
           (matVecMul (HCPolySupport.sigmaStarInvCoarse (cubeSet Q) A) q) =
         (1 / 2 : ℝ) * vecDot q
           (matVecMul (HCPolySupport.sigmaStarInvCoarse (openCubeSet Q) A) q) := by
-            rw [HCPolySupport.sigmaStarInvCoarse_cubeSet_eq_openCubeSet_of_triadicCube_of_isSigmaStarCoarse
+            rw [HCPolySupport.sigmaStarInvCoarse_cubeSet_eq_openCubeSet
               (Q := Q) (a := A) hSQ]
       _ ≤ (1 / 2 : ℝ) * vecDot q
             (matVecMul
               (descendantsAverageMat Q j
                 (fun R => HCPolySupport.sigmaStarInvCoarse (openCubeSet R) A)) q) := by
               exact
-                HCPolySupport.sigmaStarInvCoarse_subadditive_openCubeSet_descendantsAtDepth_in_loewner_order_of_isSigmaCoarse
+                HCPolySupport.sigmaStarInvCoarse_subadditive_descendants_in_loewnerOrder
                   j Q A hEll hSQ hKQ hSigmaQ hdetQ hDesc q
       _ = (1 / 2 : ℝ) * vecDot q
             (matVecMul
@@ -760,7 +760,7 @@ theorem coarseSigmaStarInvMatrixNorm_le_maxDescendantSigmaStarInvMatrixNormAtSca
               rw [hAvgEq]
   have hParentPSD :
       (HCPolySupport.sigmaStarInvCoarse (cubeSet Q) A).PosSemidef := by
-    rw [HCPolySupport.sigmaStarInvCoarse_cubeSet_eq_openCubeSet_of_triadicCube_of_isSigmaStarCoarse
+    rw [HCPolySupport.sigmaStarInvCoarse_cubeSet_eq_openCubeSet
       (Q := Q) (a := A) hSQ]
     exact HCPolySupport.sigmaStarInvCoarse_posSemidef_of_isSigmaStarCoarse
       (U := openCubeSet Q) (a := A) hSQ
@@ -771,7 +771,7 @@ theorem coarseSigmaStarInvMatrixNorm_le_maxDescendantSigmaStarInvMatrixNormAtSca
     intro R hR
     rcases hDesc R hR with
       ⟨sigmaR, sigmaStarR, kappaR, hAR, hSR, hKR, hSigmaR, hdetR⟩
-    rw [HCPolySupport.sigmaStarInvCoarse_cubeSet_eq_openCubeSet_of_triadicCube_of_isSigmaStarCoarse
+    rw [HCPolySupport.sigmaStarInvCoarse_cubeSet_eq_openCubeSet
       (Q := R) (a := A) hSR]
     exact HCPolySupport.sigmaStarInvCoarse_posSemidef_of_isSigmaStarCoarse
       (U := openCubeSet R) (a := A) hSR
@@ -779,7 +779,7 @@ theorem coarseSigmaStarInvMatrixNorm_le_maxDescendantSigmaStarInvMatrixNormAtSca
       coarseSigmaStarInvMatrixNorm Q a =
         matrixNorm (HCPolySupport.sigmaStarInvCoarse (cubeSet Q) A) := by
     simpa [A] using
-      coarseSigmaStarInvMatrixNorm_eq_matrixNorm_sigmaStarInv_pointwiseCoeffField_of_mem_descendantsAtScale
+      coarseSigmaStarInvMatrixNorm_eq_matrixNorm_sigmaStarInv_pointwiseCoeffField
         (a := a) (Q := Q) (R := Q) (k := Q.scale) le_rfl hQQ
   have hterm_eq :
       ∀ R ∈ descendantsAtDepth Q j,
@@ -790,7 +790,7 @@ theorem coarseSigmaStarInvMatrixNorm_le_maxDescendantSigmaStarInvMatrixNormAtSca
       rw [descendantsAtScale_eq_descendantsAtDepth Q hk]
       simpa [j] using hR
     simpa [A] using
-      (coarseSigmaStarInvMatrixNorm_eq_matrixNorm_sigmaStarInv_pointwiseCoeffField_of_mem_descendantsAtScale
+      (coarseSigmaStarInvMatrixNorm_eq_matrixNorm_sigmaStarInv_pointwiseCoeffField
         (a := a) (Q := Q) (R := R) (k := k) hk hRk).symm
   calc
     coarseSigmaStarInvMatrixNorm Q a =
@@ -871,7 +871,7 @@ theorem maxDescendantSigmaStarInvNormAtScale_le_dim_mul_maxDescendantSigmaStarIn
           (fun R => (d : ℝ) * coarseSigmaStarInvMatrixNorm R a) := by
           refine finsetSupReal_mono (descendantsAtScale Q k) hs ?_
           intro R hR
-          exact coarseSigmaStarInvBlockNorm_le_dim_mul_coarseSigmaStarInvMatrixNorm_of_mem_descendantsAtScale
+          exact coarseSigmaStarInvBlockNorm_le_dim_mul_matrixNorm_on_descendant
             (a := a) hk hR
     _ ≤ (d : ℝ) * maxDescendantSigmaStarInvMatrixNormAtScale Q k a := by
           exact finsetSupReal_const_mul_le (descendantsAtScale Q k) hs
@@ -913,20 +913,20 @@ theorem maxDescendantSigmaStarInvMatrixNormAtScale_le_old_of_mem_descendantsAtSc
     (a := a) (Q := Q) (R := S) (k := l) hlQ
     (HCPolySupport.mem_descendantsAtScale_trans hR hS)
 
-theorem maxDescendantBMatrixNormAtScale_self {d : ℕ} [NeZero d]
+theorem maxDescendantBMatrixNormAtScale_self {d : ℕ}
     (Q : TriadicCube d) (a : TriadicCoeffFamily d) :
     maxDescendantBMatrixNormAtScale Q Q.scale a = coarseBMatrixNorm Q a := by
   unfold maxDescendantBMatrixNormAtScale finsetSupReal
   simp [descendantsAtScale_self]
 
-theorem maxDescendantSigmaStarInvMatrixNormAtScale_self {d : ℕ} [NeZero d]
+theorem maxDescendantSigmaStarInvMatrixNormAtScale_self {d : ℕ}
     (Q : TriadicCube d) (a : TriadicCoeffFamily d) :
     maxDescendantSigmaStarInvMatrixNormAtScale Q Q.scale a =
       coarseSigmaStarInvMatrixNorm Q a := by
   unfold maxDescendantSigmaStarInvMatrixNormAtScale finsetSupReal
   simp [descendantsAtScale_self]
 
-theorem maxDescendantBMatrixNormAtScale_nonneg {d : ℕ} [NeZero d]
+theorem maxDescendantBMatrixNormAtScale_nonneg {d : ℕ}
     (Q : TriadicCube d) {k : ℤ} (_hk : k ≤ Q.scale)
     (a : TriadicCoeffFamily d) :
     0 ≤ maxDescendantBMatrixNormAtScale Q k a := by
@@ -934,7 +934,7 @@ theorem maxDescendantBMatrixNormAtScale_nonneg {d : ℕ} [NeZero d]
     (fun R => coarseBMatrixNorm R a)
     (fun R _hR => coarseBMatrixNorm_nonneg R a)
 
-theorem maxDescendantSigmaStarInvMatrixNormAtScale_nonneg {d : ℕ} [NeZero d]
+theorem maxDescendantSigmaStarInvMatrixNormAtScale_nonneg {d : ℕ}
     (Q : TriadicCube d) {k : ℤ} (_hk : k ≤ Q.scale)
     (a : TriadicCoeffFamily d) :
     0 ≤ maxDescendantSigmaStarInvMatrixNormAtScale Q k a := by
@@ -943,7 +943,7 @@ theorem maxDescendantSigmaStarInvMatrixNormAtScale_nonneg {d : ℕ} [NeZero d]
     (fun R _hR => coarseSigmaStarInvMatrixNorm_nonneg R a)
 
 theorem maxDescendantBMatrixNormAtScale_le_of_mem_descendantsAtScale
-    {d : ℕ} [NeZero d] (a : TriadicCoeffFamily d)
+    {d : ℕ} (a : TriadicCoeffFamily d)
     {Q R : TriadicCube d} {k l : ℤ}
     (hR : R ∈ descendantsAtScale Q k) (hl : l ≤ R.scale) :
     maxDescendantBMatrixNormAtScale R l a ≤
@@ -955,7 +955,7 @@ theorem maxDescendantBMatrixNormAtScale_le_of_mem_descendantsAtScale
   exact HCPolySupport.mem_descendantsAtScale_trans hR hS
 
 theorem maxDescendantSigmaStarInvMatrixNormAtScale_le_of_mem_descendantsAtScale
-    {d : ℕ} [NeZero d] (a : TriadicCoeffFamily d)
+    {d : ℕ} (a : TriadicCoeffFamily d)
     {Q R : TriadicCube d} {k l : ℤ}
     (hR : R ∈ descendantsAtScale Q k) (hl : l ≤ R.scale) :
     maxDescendantSigmaStarInvMatrixNormAtScale R l a ≤
@@ -1024,16 +1024,16 @@ theorem summable_old_B_series_pointwiseCoeffField {d : ℕ} [NeZero d]
   · intro n
     exact Real.rpow_nonneg
       (HCPolySupport.maxDescendantBBlockNormAtScale_nonneg Q
-        (sub_le_self _ (by exact_mod_cast Nat.zero_le n)) A) _
+        (sub_le_self _ (Nat.cast_nonneg n)) A) _
   · intro n
     have hbound :
         HCPolySupport.maxDescendantBBlockNormAtScale Q (Q.scale - (n : ℤ)) A ≤ C := by
       simpa [A, C] using
-        HCPolySupport.maxDescendantBBlockNormAtScale_le_uniform_of_isEllipticFieldOn_openCubeSet_of_openCubeDescendantDeterministicCoarseData
+        HCPolySupport.maxDescendantBBlockNorm_le_uniform_of_ellipticField_openCubeSet
           (Q := Q) (a := A) hEll hData n
     exact Real.rpow_le_rpow
       (HCPolySupport.maxDescendantBBlockNormAtScale_nonneg Q
-        (sub_le_self _ (by exact_mod_cast Nat.zero_le n)) A)
+        (sub_le_self _ (Nat.cast_nonneg n)) A)
       hbound (by positivity)
 
 theorem summable_old_sigmaStarInv_series_pointwiseCoeffField {d : ℕ} [NeZero d]
@@ -1061,16 +1061,16 @@ theorem summable_old_sigmaStarInv_series_pointwiseCoeffField {d : ℕ} [NeZero d
   · intro n
     exact Real.rpow_nonneg
       (HCPolySupport.maxDescendantSigmaStarInvNormAtScale_nonneg Q
-        (sub_le_self _ (by exact_mod_cast Nat.zero_le n)) A) _
+        (sub_le_self _ (Nat.cast_nonneg n)) A) _
   · intro n
     have hbound :
         HCPolySupport.maxDescendantSigmaStarInvNormAtScale Q (Q.scale - (n : ℤ)) A ≤ C := by
       simpa [A, C] using
-        HCPolySupport.maxDescendantSigmaStarInvNormAtScale_le_uniform_of_isEllipticFieldOn_openCubeSet_of_openCubeDescendantDeterministicCoarseData
+        HCPolySupport.maxDescendantSigmaStarInvNorm_le_uniform_of_ellipticField_openCubeSet
           (Q := Q) (a := A) hEll hData n
     exact Real.rpow_le_rpow
       (HCPolySupport.maxDescendantSigmaStarInvNormAtScale_nonneg Q
-        (sub_le_self _ (by exact_mod_cast Nat.zero_le n)) A)
+        (sub_le_self _ (Nat.cast_nonneg n)) A)
       hbound (by positivity)
 
 theorem summable_B_series_pointwiseCoeffField {d : ℕ} [NeZero d]

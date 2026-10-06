@@ -37,7 +37,8 @@ noncomputable section
 
 /-- Adding an affine function and a constant preserves scale-linear
 centered-cube growth. -/
-theorem NormalizedLocalH1Carrier.exists_cubeLpNorm_affineAdd_globalValueRepresentative_le_three_pow_of_cubeGrowth
+theorem
+  NormalizedLocalH1Carrier.exists_affineAdd_cubeLpNorm_le_three_pow
     {d : ℕ} [NeZero d] (z : NormalizedLocalH1Carrier d)
     (q₀ : ℕ) (C : ℝ) (hC : 0 ≤ C)
     (hcube : ∀ q : ℕ, q₀ ≤ q →

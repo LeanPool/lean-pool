@@ -143,7 +143,7 @@ theorem restrictionCenteredDescendantAverageOnCube_ae_eq_of_ae_eq {d : ℕ} {P :
 
 /-- The centered descendant average on an arbitrary parent cube is the
 uncentered descendant average minus the origin-cube centering constant. -/
-theorem restrictionCenteredDescendantAverageOnCube_eq_restrictionDescendantAverageOnCube_sub
+theorem centeredDescendantAverage_eq_descendantAverage_sub_originMean
     {d : ℕ} {P : RestrictionCoeffLaw d} {Q : TriadicCube d} {n : ℤ}
     (hnQ : n ≤ Q.scale) (X : Set (Vec d) → RegCoeffField d → ℝ) :
     restrictionCenteredDescendantAverageOnCube P Q n X =

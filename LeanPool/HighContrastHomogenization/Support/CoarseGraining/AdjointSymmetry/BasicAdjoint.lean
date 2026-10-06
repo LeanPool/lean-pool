@@ -96,11 +96,13 @@ private theorem isSymmetricBlockMat_blockMatFlipFlux {d : ℕ} {Abar : BlockMat 
       | inl j =>
           simpa [blockMatFlipFlux, blockMatEntry] using hA (Sum.inl i) (Sum.inl j)
       | inr j =>
-          simpa [blockMatFlipFlux, blockMatEntry] using congrArg Neg.neg (hA (Sum.inl i) (Sum.inr j))
+          simpa [blockMatFlipFlux, blockMatEntry] using congrArg Neg.neg (hA (Sum.inl i)
+            (Sum.inr j))
   | inr i =>
       cases β with
       | inl j =>
-          simpa [blockMatFlipFlux, blockMatEntry] using congrArg Neg.neg (hA (Sum.inr i) (Sum.inl j))
+          simpa [blockMatFlipFlux, blockMatEntry] using congrArg Neg.neg (hA (Sum.inr i)
+            (Sum.inl j))
       | inr j =>
           simpa [blockMatFlipFlux, blockMatEntry] using hA (Sum.inr i) (Sum.inr j)
 
@@ -563,7 +565,8 @@ theorem coarseBlockMatrix_upperRight_eq_zero_of_adjointCoeffField_eq_of_isEllipt
       coarseBlockMatrix_upperRight_adjointCoeffField_of_exists_of_isEllipticFieldOn
         (U := U) (a := a) R hEll hvol compat
   ext i j
-  have hij : (coarseBlockMatrix U a).upperRight i j = -((coarseBlockMatrix U a).upperRight i j) := by
+  have hij : (coarseBlockMatrix U a).upperRight i j = -((coarseBlockMatrix U a).upperRight i j)
+    := by
     exact congrFun (congrFun hUpper i) j
   simpa using (CharZero.eq_neg_self_iff.mp hij)
 

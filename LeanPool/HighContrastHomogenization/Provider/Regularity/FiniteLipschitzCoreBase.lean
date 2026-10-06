@@ -1066,7 +1066,7 @@ theorem exists_finiteLipschitzPoincareConstant
       show 2 * (s / 2) = s by ring] using! hfluctRaw
   have hnegative : N ≤ Book.Ch03.coarsePoincareGradientRHS Q a s (.finite 2) u := by
     simpa only [N, solutionGradientField,
-      scaleNormalizedNegativeBesovVectorNorm_finite_two_eq_cubeBesovNegativeVectorSeminormTwo] using
+      scaleNegativeBesovVectorNorm_finiteTwo_eq_cubeNegativeSeminorm] using
       Book.Ch03.coarsePoincareGradient_negativeBesov_le Q a u hs (q := .finite 2) (by norm_num)
   have hlower :
       Book.Ch03.poincareLowerEllipticityFactor Q a s (.finite 2) ≤ L := by

@@ -32,7 +32,7 @@ noncomputable section
 Centered primal and adjoint response identities.
 -/
 
-theorem expectedJScalarFormula_sub_scalarizedResponseCenteringTerm_eq_centeredResponseExpectationFormula
+theorem expectedJFormula_sub_centering_eq_centeredResponseExpectation
     {d : ℕ} [NeZero d] {P : Ch04.RestrictionCoeffLaw d}
     (hP : Ch04.RestrictionLawCarrier P) (hStruct : Ch04.RestrictionStructuralLaw P) (m : ℤ)
     (p q : Vec d) :
@@ -143,7 +143,8 @@ theorem integral_restrictionCenteredResponseJStarObservableCubeSet_eq_expectedRe
     _ =
       ∫ a, Ch04.restrictionResponseJObservableCubeSet Q p q a ∂P -
         scalarizedResponseCenteringTerm hP hStruct m p q := by
-          rw [hAdj.integral_comp_adjointReg (Ch04.restrictionResponseJObservableCubeSet Q p q) hJ.aestronglyMeasurable]
+          rw [hAdj.integral_comp_adjointReg (Ch04.restrictionResponseJObservableCubeSet Q p q)
+            hJ.aestronglyMeasurable]
           rw [integral_const]
           simp [Measure.real, IsProbabilityMeasure.measure_univ]
     _ =
@@ -203,7 +204,7 @@ theorem expectedCenteredResponseJAtScale_eq_centeredResponseExpectationFormula
         rw [annealedResponseJAtScale_eq_expectedJScalarFormula
           hP hStruct m p q hBlock]
     _ = centeredResponseExpectationFormula hP hStruct m p q :=
-      expectedJScalarFormula_sub_scalarizedResponseCenteringTerm_eq_centeredResponseExpectationFormula
+      expectedJFormula_sub_centering_eq_centeredResponseExpectation
         hP hStruct m p q
 
 /-- Note-facing adjoint centered-response expectation formula. -/
@@ -231,7 +232,7 @@ theorem expectedCenteredResponseJStarAtScale_eq_centeredResponseExpectationFormu
         rw [annealedResponseJAtScale_eq_expectedJScalarFormula
           hP hStruct m p q hBlock]
     _ = centeredResponseExpectationFormula hP hStruct m p q :=
-      expectedJScalarFormula_sub_scalarizedResponseCenteringTerm_eq_centeredResponseExpectationFormula
+      expectedJFormula_sub_centering_eq_centeredResponseExpectation
         hP hStruct m p q
 
 /-- Manuscript Lemma `l.centered.responses.homogenization.scale`, expectation

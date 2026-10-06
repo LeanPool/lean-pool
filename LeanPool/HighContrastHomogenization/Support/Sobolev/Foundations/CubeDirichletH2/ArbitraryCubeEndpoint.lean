@@ -139,7 +139,7 @@ theorem exists_hasWeakHessianOn_cube_canonicalRadii_hessianCoordL2NormSum_le_nor
   have hF₀ : MeasureTheory.MemLp F₀ (2 : ℝ≥0∞) (normalizedCubeMeasure Q₀) := by
     simpa [Q₀, F₀, z] using memLp_originCube_comp_addRight_of_memLp Q hF
   rcases
-    hweak₀.exists_hasWeakHessianOn_originCube_canonicalRadii_hessianCoordL2NormSum_le_normEnergyBound
+    hweak₀.exists_reflectedHessian_energyBound
       hF₀ with
     ⟨uP, huP_toFun, huP_grad, H₀, hH₀⟩
   have hU : openCubeSet Q = translateSet z (openCubeSet Q₀) := by
@@ -186,7 +186,7 @@ theorem exists_hasWeakHessianOn_cube_canonicalRadii_hessianCoordL2NormSum_le_nor
 
 /-- Transport the forcing-facing centered-cube Dirichlet solver-energy Hessian
 estimate back to an arbitrary cube of the same scale. -/
-theorem exists_hasWeakHessianOn_cube_canonicalRadii_hessianCoordL2NormSum_le_solverEnergyBoundExact
+theorem exists_reflectedHessian_solverEnergyBound
     [NeZero d]
     (hweak : CubeDirichletWeakPoissonProblem Q u F)
     (hF : MeasureTheory.MemLp F (2 : ℝ≥0∞) (normalizedCubeMeasure Q)) :
@@ -211,7 +211,7 @@ theorem exists_hasWeakHessianOn_cube_canonicalRadii_hessianCoordL2NormSum_le_sol
   have hF₀ : MeasureTheory.MemLp F₀ (2 : ℝ≥0∞) (normalizedCubeMeasure Q₀) := by
     simpa [Q₀, F₀, z] using memLp_originCube_comp_addRight_of_memLp Q hF
   rcases
-    hweak₀.exists_hasWeakHessianOn_originCube_canonicalRadii_hessianCoordL2NormSum_le_solverEnergyBoundExact
+    hweak₀.exists_reflected_parent_weakHessian_energyBound
       hF₀ with
     ⟨uP, huP_toFun, huP_grad, H₀, hH₀⟩
   have hU : openCubeSet Q = translateSet z (openCubeSet Q₀) := by

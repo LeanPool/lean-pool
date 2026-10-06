@@ -141,7 +141,8 @@ theorem blockPosDef_coarseBlock [NeZero d] (m : ℤ) (a : CoeffSpace d) :
       (isBoundedDomain_openCubeSet (originCube d m)).isBounded
   have hposCube : Book.Ch02.BlockPosDef
       (coarseBlockMatrix (cubeSet (originCube d m)) f) := by
-    have h := HighContrast.EntryScale.coarseBlockMatrix_cubeSet_blockPosDef_of_aelocallyUniformlyEllipticField
+    have h :=
+      HighContrast.EntryScale.coarseBlockMatrix_cubeSet_blockPosDef_of_uniformEllipticity
       (a := regCoeffFieldOfPointwiseElliptic f hfm hfp) (originCube d m)
       (aeLocallyUniformlyEllipticField_of_pointwise hfm hlam hle hfp)
     exact h

@@ -184,6 +184,46 @@ theorem stoppingComparison_harmonic_raw_bound
   rw [stoppingComparison_descendant_side_eq] at h
   simpa only [stoppingComparison_descendant_side_eq] using h
 
+private theorem correction_tail_coefficient_eq (d depth : ℕ) :
+    2 * (6 * (5 * (3 : ℝ≥0∞) ^ depth) ^ d) =
+      12 * ENNReal.ofReal ((5 * (3 : ℝ) ^ depth) ^ d) := by
+  have hP : (5 * (3 : ℝ≥0∞) ^ depth) ^ d =
+      ENNReal.ofReal ((5 * (3 : ℝ) ^ depth) ^ d) := by
+    calc
+      (5 * (3 : ℝ≥0∞) ^ depth) ^ d =
+          (ENNReal.ofReal (5 * (3 : ℝ) ^ depth)) ^ d := by
+            congr 2
+            rw [ENNReal.ofReal_mul (by norm_num : (0 : ℝ) ≤ 5),
+              ENNReal.ofReal_pow (by norm_num : (0 : ℝ) ≤ 3)]
+            norm_num
+      _ = ENNReal.ofReal ((5 * (3 : ℝ) ^ depth) ^ d) := by
+            exact (ENNReal.ofReal_pow
+              (by positivity : 0 ≤ 5 * (3 : ℝ) ^ depth) d).symm
+  rw [hP]
+  ring
+
+private theorem harmonic_tail_scaled_moment_le
+    {d : ℕ} [NeZero d] {q : FiniteLpExponent} (x : Vec d)
+    {r M level : ℝ} (hr : 0 ≤ r) (hM : 0 < M) (hlevel : 0 < level)
+    {A : ℝ≥0∞} (hA : A ≠ ∞) (B : Set (Vec d)) (v : Vec d → HilbertVec d)
+    (hharmonic_raw :
+      (∫⁻ y in B, ENNReal.ofReal (‖v y‖ ^ q.exponent.toReal) ∂volume) ≤
+        ENNReal.ofReal ((10 * r) ^ d) * (A * ENNReal.ofReal level) ^ q.exponent.toReal) :
+    2 * ENNReal.ofReal ((M * level / 2) ^ (2 - q.exponent.toReal)) *
+        (∫⁻ y in B, ENNReal.ofReal (‖v y‖ ^ q.exponent.toReal) ∂volume) ≤
+      2 * (5 : ℝ≥0∞) ^ d * A ^ q.exponent.toReal *
+        ENNReal.ofReal ((M / 2) ^ (2 - q.exponent.toReal)) *
+        ENNReal.ofReal (level ^ (2 : ℝ)) * volume (Metric.closedBall x r) := by
+  calc
+    2 * ENNReal.ofReal ((M * level / 2) ^ (2 - q.exponent.toReal)) *
+        (∫⁻ y in B, ENNReal.ofReal (‖v y‖ ^ q.exponent.toReal) ∂volume) ≤
+        2 * ENNReal.ofReal ((M * level / 2) ^ (2 - q.exponent.toReal)) *
+          (ENNReal.ofReal ((10 * r) ^ d) *
+            (A * ENNReal.ofReal level) ^
+              q.exponent.toReal) := by
+            gcongr
+    _ = _ := oneBall_harmonic_tail_scale_factor x hr hM hlevel hA
+
 /-- The complete one-stopping-ball weighted comparison estimate.  The
 harmonic comparison is constructed from the weak equation, rather than
 supplied as a hypothesis. -/
@@ -326,15 +366,7 @@ theorem sqWeightedMeasure_oneStoppingBall_le
         2 * (5 : ℝ≥0∞) ^ d * (2 * (G.constantValue * (d : ℝ≥0∞))) ^ q.exponent.toReal *
           ENNReal.ofReal ((M / 2) ^ (2 - q.exponent.toReal)) *
           ENNReal.ofReal (level ^ (2 : ℝ)) * volume (Metric.closedBall x r) := by
-    calc
-      2 * ENNReal.ofReal ((M * level / 2) ^ (2 - q.exponent.toReal)) *
-          (∫⁻ y in child, ENNReal.ofReal (‖v y‖ ^ q.exponent.toReal) ∂volume) ≤
-          2 * ENNReal.ofReal ((M * level / 2) ^ (2 - q.exponent.toReal)) *
-            (ENNReal.ofReal ((10 * r) ^ d) *
-              ((2 * (G.constantValue * (d : ℝ≥0∞))) * ENNReal.ofReal level) ^
-                q.exponent.toReal) := by
-              gcongr
-      _ = _ := oneBall_harmonic_tail_scale_factor x hr.le hM hlevel hA
+    exact harmonic_tail_scaled_moment_le x hr.le hM hlevel hA child v hharmonic_raw
   let Kh : ℝ≥0∞ :=
     2 * (5 : ℝ≥0∞) ^ d * (2 * (G.constantValue * (d : ℝ≥0∞))) ^ q.exponent.toReal
   let Kc : ℝ≥0∞ := 6 * (5 * (3 : ℝ≥0∞) ^ depth) ^ d
@@ -403,21 +435,7 @@ theorem sqWeightedMeasure_oneStoppingBall_le
         (2 * Kh + 2 * Kc) * (m + e) * (Tf + Tg) :=
     oneBall_tail_coefficient_factor Kh Kc m e Tf Tg
   have hKc : 2 * Kc = 12 * ENNReal.ofReal ((5 * (3 : ℝ) ^ depth) ^ d) := by
-    dsimp only [Kc]
-    have hP : (5 * (3 : ℝ≥0∞) ^ depth) ^ d =
-        ENNReal.ofReal ((5 * (3 : ℝ) ^ depth) ^ d) := by
-      calc
-        (5 * (3 : ℝ≥0∞) ^ depth) ^ d =
-            (ENNReal.ofReal (5 * (3 : ℝ) ^ depth)) ^ d := by
-              congr 2
-              rw [ENNReal.ofReal_mul (by norm_num : (0 : ℝ) ≤ 5),
-                ENNReal.ofReal_pow (by norm_num : (0 : ℝ) ≤ 3)]
-              norm_num
-        _ = ENNReal.ofReal ((5 * (3 : ℝ) ^ depth) ^ d) := by
-              exact (ENNReal.ofReal_pow
-                (by positivity : 0 ≤ 5 * (3 : ℝ) ^ depth) d).symm
-    rw [hP]
-    ring
+    simpa only [Kc] using correction_tail_coefficient_eq d depth
   calc
     sqWeightedMeasure f volume ({y | M * level < ‖f y‖} ∩ Metric.closedBall x (5 * r)) ≤
         (Kh * m + Kc * e) *

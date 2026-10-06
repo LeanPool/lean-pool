@@ -44,11 +44,15 @@ noncomputable section
 /-- The boundary generations at or below k use one common parent-history
 field under the complete target maximum. -/
 theorem transport_old_boundary_profile (d : ℕ) (hd : 2 ≤ d)
-    (P : Measure (CoeffSpace d)) [IsProbabilityMeasure P] (γ : ℝ) (hγ : γ ∈ Set.Ico (0 : ℝ) 1) (E : BlockMat d) (Ψ : ℝ → ℝ) (K : ℝ)
-    (S : CoeffSpace d → ℝ) (hstat : IsStationaryLaw P) (hdag : CoarseEllipticityDagger P γ E Ψ K S) (jStar : ℕ) (hj : 2 * d ≤ 3 ^ jStar) (m : Mat d) (hm : m.PosDef)
-    (qPlus : Mat d) (k n : ℤ) (hk : (jStar : ℤ) ≤ k) (hkn : k ≤ n) (L h : ℕ) (hcover : adaptedCell qPlus (n + L) ⊆ adaptedCell (explicitRoundedGrid jStar m) (n + L + h))
+    (P : Measure (CoeffSpace d)) [IsProbabilityMeasure P] (γ : ℝ) (hγ : γ ∈ Set.Ico (0 : ℝ) 1)
+      (E : BlockMat d) (Ψ : ℝ → ℝ) (K : ℝ)
+    (S : CoeffSpace d → ℝ) (hstat : IsStationaryLaw P) (hdag : CoarseEllipticityDagger P γ E Ψ K
+      S) (jStar : ℕ) (hj : 2 * d ≤ 3 ^ jStar) (m : Mat d) (hm : m.PosDef)
+    (qPlus : Mat d) (k n : ℤ) (hk : (jStar : ℤ) ≤ k) (hkn : k ≤ n) (L h : ℕ) (hcover :
+      adaptedCell qPlus (n + L) ⊆ adaptedCell (explicitRoundedGrid jStar m) (n + L + h))
     {ι : Type*} (I : Finset ι) (hI : I.Nonempty) (j cap : ι → ℤ) (D : ℝ) (hD : 0 ≤ D)
-    (Z : ι → ℤ → Finset (Vec d)) (v : ι → ℤ → ℝ) (hcapk : ∀ i ∈ I, cap i ≤ k) (hcapj : ∀ i ∈ I, cap i ≤ j i)
+    (Z : ι → ℤ → Finset (Vec d)) (v : ι → ℤ → ℝ) (hcapk : ∀ i ∈ I, cap i ≤ k) (hcapj : ∀ i ∈ I,
+      cap i ≤ j i)
     (hZ : ∀ i ∈ I, ∀ r ∈ Finset.Icc (jStar : ℤ) (cap i), (Z i r : Set (Vec d)) ⊆
       adaptedLatticeAtScale (explicitRoundedGrid jStar m) r ∩ adaptedCell qPlus (n + L))
     (hv : ∀ i ∈ I, ∀ r ∈ Finset.Icc (jStar : ℤ) (cap i), 0 ≤ v i r)
@@ -59,7 +63,8 @@ theorem transport_old_boundary_profile (d : ℕ) (hd : 2 ≤ d)
     let Cb := D * (1 / (1 - (3 : ℝ) ^ (-(1 - rhoMax d γ))))
     (∫ a, (⨆ i ∈ (I : Set ι), (3 : ℝ) ^ (-rhoMax d γ * ((n : ℝ) + L - j i)) *
       ∑ r ∈ Finset.Icc (jStar : ℤ) (cap i), absSchattenNorm (Q : ℝ) (ofFullBlockMat
-        (∑ z ∈ Z i r, v i r • toFullBlockMat (normalizedFluctuation P q r (n + 2 * (L : ℤ)) z a)))) ^ (Q : ℝ) ∂P) ≤
+        (∑ z ∈ Z i r, v i r • toFullBlockMat (normalizedFluctuation P q r (n + 2 * (L : ℤ)) z
+          a)))) ^ (Q : ℝ) ∂P) ≤
       Cb ^ Q * ((2 * (d : ℝ)) * (3 : ℝ) ^ ((Q : ℝ) * rhoMax d γ + (d : ℝ) * h)) *
         (3 : ℝ) ^ ((1 - γ) / 4 * (L : ℝ)) * profile P γ q jStar k (n + 2 * (L : ℤ)) := by
   intro q Q Cb
@@ -83,10 +88,12 @@ theorem transport_old_boundary_profile (d : ℕ) (hd : 2 ≤ d)
   have hB : 0 ≤ B := by dsimp only [B]; positivity
   obtain ⟨X, hX0, hXmem, hXmoment, hXbound⟩ := transport_old_history_envelope d hd P γ E Ψ K S
     hstat hdag jStar hj m hm qPlus k (n + (L : ℤ)) hk (by omega) h hcover
-  have hR (i r) : SchattenMemLp P (Q : ℝ) (R i r) := memLqSchatten_normalizedCentered_sum d hd P γ E Ψ K S hstat hdag jStar hj m hm r
+  have hR (i r) : SchattenMemLp P (Q : ℝ) (R i r) := memLqSchatten_normalizedCentered_sum d hd P
+    γ E Ψ K S hstat hdag jStar hj m hm r
       (adaptedMean P q (n + 2 * (L : ℤ))) Q hQ1 (Z i r) (fun _ => v i r) id
   have hf0 (i) (_hi : i ∈ I) : ∀ᵐ a ∂P, 0 ≤ f i a := by
-    filter_upwards [(Filter.eventually_all_finset (T i)).mpr (fun r _ => (hR i r).symmetric)] with a ha
+    filter_upwards [(Filter.eventually_all_finset (T i)).mpr (fun r _ => (hR i r).symmetric)]
+      with a ha
     exact mul_nonneg (by dsimp only [w]; positivity) (Finset.sum_nonneg fun r hr =>
       absSchattenNorm_nonneg ((toFullBlockMat_isHermitian_iff _).2 (ha r hr)) hQ1)
   have hf (i) (_hi : i ∈ I) : MemLp (f i) (ENNReal.ofReal (Q : ℝ)) P :=
@@ -101,7 +108,8 @@ theorem transport_old_boundary_profile (d : ℕ) (hd : 2 ≤ d)
     have hxa : 0 ≤ X a := hX0 a
     have hrbound (r) (hr : r ∈ T i) : absSchattenNorm (Q : ℝ) (R i r a) ≤
         (2 * (d : ℝ)) ^ (Q : ℝ)⁻¹ *
-          ((D * (3 : ℝ) ^ ((r : ℝ) - j i)) * (blockOpNorm M * ((3 : ℝ) ^ (ρ * ((k : ℝ) - r)) * X a))) := by
+          ((D * (3 : ℝ) ^ ((r : ℝ) - j i)) * (blockOpNorm M * ((3 : ℝ) ^ (ρ * ((k : ℝ) - r)) * X
+            a))) := by
       have hrng := Finset.mem_Icc.mp hr
       have hbound (z) (hz : z ∈ Z i r) :
           blockOpNorm (normalizedFluctuation P q r (n + 2 * (L : ℤ)) z a) ≤
@@ -116,8 +124,10 @@ theorem transport_old_boundary_profile (d : ℕ) (hd : 2 ≤ d)
       have hb := transport_finite_row_bound (Z i r) hQ1 (fun _ => v i r) (fun _ _ => hv i hi r hr)
         (fun z => normalizedFluctuation P q r (n + 2 * (L : ℤ)) z a)
         (fun z hz => (toFullBlockMat_isHermitian_iff _).2 (ha r hr z hz)) hbound
-      have hn0 : 0 ≤ blockOpNorm M * ((3 : ℝ) ^ (ρ * ((k : ℝ) - r)) * X a) := mul_nonneg hMn (mul_nonneg (by positivity) (hX0 a))
-      have hp := mul_le_mul_of_nonneg_left (mul_le_mul_of_nonneg_right (hmass i hi r hr) hn0) (show 0 ≤ (2 * (d : ℝ)) ^ (Q : ℝ)⁻¹ by positivity)
+      have hn0 : 0 ≤ blockOpNorm M * ((3 : ℝ) ^ (ρ * ((k : ℝ) - r)) * X a) := mul_nonneg hMn
+        (mul_nonneg (by positivity) (hX0 a))
+      have hp := mul_le_mul_of_nonneg_left (mul_le_mul_of_nonneg_right (hmass i hi r hr) hn0)
+        (show 0 ≤ (2 * (d : ℝ)) ^ (Q : ℝ)⁻¹ by positivity)
       exact hb.trans (by simpa only [mul_assoc] using hp)
     have hgeom := transport_boundary_history_below hρ (jStar : ℤ) (cap i) k (j i) (hcapj i hi)
     have he : w i * (3 : ℝ) ^ (ρ * ((k : ℝ) - j i)) =
@@ -135,7 +145,8 @@ theorem transport_old_boundary_profile (d : ℕ) (hd : 2 ≤ d)
         _ = B := by dsimp only [B]; ring
     calc
       _ ≤ w i * ∑ r ∈ T i, (2 * (d : ℝ)) ^ (Q : ℝ)⁻¹ *
-          ((D * (3 : ℝ) ^ ((r : ℝ) - j i)) * (blockOpNorm M * ((3 : ℝ) ^ (ρ * ((k : ℝ) - r)) * X a))) :=
+          ((D * (3 : ℝ) ^ ((r : ℝ) - j i)) * (blockOpNorm M * ((3 : ℝ) ^ (ρ * ((k : ℝ) - r)) * X
+            a))) :=
         mul_le_mul_of_nonneg_left (Finset.sum_le_sum hrbound) (by dsimp only [w]; positivity)
       _ = ((2 * (d : ℝ)) ^ (Q : ℝ)⁻¹ * D * blockOpNorm M * w i * X a) *
           ∑ r ∈ T i, (3 : ℝ) ^ ((r : ℝ) - j i) * (3 : ℝ) ^ (ρ * ((k : ℝ) - r)) := by
@@ -151,7 +162,8 @@ theorem transport_old_boundary_profile (d : ℕ) (hd : 2 ≤ d)
   have hb := (transport_joint_envelope_moment hQr (mul_nonneg hC hB) I hI f hf0 hf
     X (ae_of_all P hX0) hXmem hfield).2
   simp only [Real.rpow_natCast, mul_pow] at hb
-  have hpay := transport_old_history_profile_payment d hd P γ E Ψ K S hstat hdag jStar hj m hm k n hk hkn L h
+  have hpay := transport_old_history_profile_payment d hd P γ E Ψ K S hstat hdag jStar hj m hm k
+    n hk hkn L h
   calc
     _ ≤ (Cb ^ Q * B ^ Q) * ∫ a, X a ^ Q ∂P := by simpa only [Real.rpow_natCast] using hb
     _ ≤ (Cb ^ Q * B ^ Q) * ((3 : ℝ) ^ (d * ((n + (L : ℤ) - k).toNat + h)) *
@@ -216,7 +228,8 @@ theorem exists_transport_whitney_rows (d : ℕ) (hd : 2 ≤ d)
     rw [tsum_eq_zero_of_not_summable hn] at htotal; norm_num at htotal
   refine ⟨?_, ?_, ?_, ?_⟩
   · intro r hr z hz
-    have hz' : z ∈ maximalAdaptedCellCenters (W p) q (cap p.1) r := (hfin p r hr).mem_toFinset.mp (by simpa only [Z, dite_eq_left hr] using! hz)
+    have hz' : z ∈ maximalAdaptedCellCenters (W p) q (cap p.1) r := (hfin p r
+      hr).mem_toFinset.mp (by simpa only [Z, dite_eq_left hr] using! hz)
     have hh := transport_maximal_centers_subset (W p) q (cap p.1) r hz'
     exact ⟨hh.1, hW hh.2⟩
   · have hh := hs.sum_le_tsum ({⟨cap p.1, le_rfl⟩} : Finset {r : ℤ // r ≤ cap p.1})
@@ -265,7 +278,8 @@ theorem exists_transport_boundary_fluctuations (d : ℕ) (hd : 2 ≤ d)
   let β := ((d : ℝ) + 1) / 2 - (1 - γ) / (4 * (bigQ d γ : ℝ))
   let G := 1 / (1 - (3 : ℝ) ^ (-(1 - rhoMax d γ)))
   let M := 1 + 1 / (1 - (3 : ℝ) ^ (-β))
-  let B := (D * G) ^ bigQ d γ * ((2 * (d : ℝ)) * (3 : ℝ) ^ ((bigQ d γ : ℝ) * rhoMax d γ + (d : ℝ) * h))
+  let B := (D * G) ^ bigQ d γ * ((2 * (d : ℝ)) * (3 : ℝ) ^ ((bigQ d γ : ℝ) * rhoMax d γ + (d :
+    ℝ) * h))
   let H := M ^ (bigQ d γ + 1) * ((bigQ d γ : ℝ) * (3 : ℝ) ^ ((d : ℝ) / 2) * D) ^ bigQ d γ
   have hβ : 0 < β := transport_boundary_decay_pos d hd γ hγ
   have hG : 0 < G := one_div_pos.mpr
@@ -275,12 +289,14 @@ theorem exists_transport_boundary_fluctuations (d : ℕ) (hd : 2 ≤ d)
     dsimp only [M]; linarith only [hp]
   have hB : 0 ≤ B := by dsimp only [B]; positivity
   have hH : 0 ≤ H := by dsimp only [H]; positivity
-  refine ⟨max Cr Cb, hCr.trans_le (le_max_left _ _), (2 : ℝ) ^ bigQ d γ * (B + H) + 1, by positivity, ?_⟩
+  refine ⟨max Cr Cb, hCr.trans_le (le_max_left _ _), (2 : ℝ) ^ bigQ d γ * (B + H) + 1, by
+    positivity, ?_⟩
   intro P E Ψ K S hP hstat hunit hdag jStar hj hsrc m mPlus hm hmPlus hratio k n hk hkn L hL
     q qPlus Q ell cap W I hgen hcenter
   let := hP
   have hK := hdag.one_lt_growthWitness
-  have hlog : 0 ≤ Real.logb 3 (2 * K) := (Real.logb_pos (by norm_num) (by linarith only [hK] : (1 : ℝ) < 2 * K)).le
+  have hlog : 0 ≤ Real.logb 3 (2 * K) := (Real.logb_pos (by norm_num) (by linarith only [hK] :
+    (1 : ℝ) < 2 * K)).le
   have hsR := (Int.ceil_mono (mul_le_mul_of_nonneg_right (le_max_left Cr Cb) hlog)).trans hsrc
   have hsB := (Int.ceil_mono (mul_le_mul_of_nonneg_right (le_max_right Cr Cb) hlog)).trans hsrc
   obtain ⟨hfin, hdata⟩ := hrows K hK jStar hj hsR m mPlus hm hmPlus hratio k (n + (L : ℤ)) L hL
@@ -289,13 +305,16 @@ theorem exists_transport_boundary_fluctuations (d : ℕ) (hd : 2 ≤ d)
   intro Z v
   let c := (3 : ℝ) ^ ((1 - γ) / 4 * (L : ℝ))
   have hc : 0 ≤ c := by dsimp only [c]; positivity
-  have hP0 := bridge_profile_nonneg d hd P γ E Ψ K S hstat hdag jStar hj m hm k (n + 2 * (L : ℤ)) hk (by omega)
+  have hP0 := bridge_profile_nonneg d hd P γ E Ψ K S hstat hdag jStar hj m hm k (n + 2 * (L :
+    ℤ)) hk (by omega)
   have hQ : 0 < Q := bigQ_pos d γ hγ
   have hQ1 : 1 ≤ (Q : ℝ) := by exact_mod_cast hQ
   by_cases hI : I.Nonempty
   swap
-  · have hp : 0 ≤ ((2 : ℝ) ^ Q * (B + H) + 1) * c * profile P γ q jStar k (n + 2 * (L : ℤ)) := mul_nonneg (mul_nonneg (by positivity) hc) hP0
-    simpa [Finset.not_nonempty_iff_eq_empty.mp hI, Real.rpow_natCast, zero_pow (Nat.ne_of_gt hQ)] using hp
+  · have hp : 0 ≤ ((2 : ℝ) ^ Q * (B + H) + 1) * c * profile P γ q jStar k (n + 2 * (L : ℤ)) :=
+    mul_nonneg (mul_nonneg (by positivity) hc) hP0
+    simpa [Finset.not_nonempty_iff_eq_empty.mp hI, Real.rpow_natCast, zero_pow (Nat.ne_of_gt
+      hQ)] using hp
   let lo := fun p : ℤ × (Fin d → ℤ) => min k (cap p.1 - 1)
   let T := fun j => Finset.Icc (k + 1) (cap j - 1)
   let R := fun p r a => ofFullBlockMat (∑ z ∈ Z p r, v p r • toFullBlockMat
@@ -309,7 +328,8 @@ theorem exists_transport_boundary_fluctuations (d : ℕ) (hd : 2 ≤ d)
     dsimp only [lo] at hh; omega
   have hl : (∫ a, (⨆ p ∈ (I : Set (ℤ × (Fin d → ℤ))), Fl p a) ^ (Q : ℝ) ∂P) ≤
       B * c * profile P γ q jStar k (n + 2 * (L : ℤ)) := by
-    apply transport_old_boundary_profile d hd P γ hγ E Ψ K S hstat hdag jStar hj m hm qPlus k n hk hkn L h
+    apply transport_old_boundary_profile d hd P γ hγ E Ψ K S hstat hdag jStar hj m hm qPlus k n
+      hk hkn L h
       (hcover q qPlus (isUnit_roundedGrid hj hm) hratio (n + (L : ℤ))) I hI Prod.fst lo D hD.le Z v
     · exact fun p _ => min_le_left _ _
     · intro p _
@@ -334,7 +354,8 @@ theorem exists_transport_boundary_fluctuations (d : ℕ) (hd : 2 ≤ d)
     · intro p hp r hr
       have hr' : r < cap p.1 := by have hh := (Finset.mem_Icc.mp hr).2; omega
       exact ((hdata p hp).2.2.2 r hr').1
-  have hR (p r) : SchattenMemLp P (Q : ℝ) (R p r) := memLqSchatten_normalizedCentered_sum d hd P γ E Ψ K S hstat hdag jStar hj m hm
+  have hR (p r) : SchattenMemLp P (Q : ℝ) (R p r) := memLqSchatten_normalizedCentered_sum d hd P
+    γ E Ψ K S hstat hdag jStar hj m hm
       r (adaptedMean P q (n + 2 * (L : ℤ))) Q hQ1 (Z p r) (fun _ => v p r) id
   have hf0 (p) (A : Finset ℤ) : ∀ᵐ a ∂P, 0 ≤ w p * ∑ r ∈ A, absSchattenNorm (Q : ℝ) (R p r a) := by
     filter_upwards [(Filter.eventually_all_finset A).mpr (fun r _ => (hR p r).symmetric)] with a ha
@@ -346,7 +367,8 @@ theorem exists_transport_boundary_fluctuations (d : ℕ) (hd : 2 ≤ d)
   have ht := transport_joint_sum_moment Q hQ I hI Fl Fh
     (fun p _ => hf0 p _) (fun p _ => hf0 p _) (fun p _ => hfmem p _) (fun p _ => hfmem p _)
   have hsplit (p : ℤ × (Fin d → ℤ)) (a : CoeffSpace d) :
-      w p * ∑ r ∈ Finset.Icc (jStar : ℤ) (cap p.1 - 1), absSchattenNorm (Q : ℝ) (R p r a) = Fl p a + Fh p a := by
+      w p * ∑ r ∈ Finset.Icc (jStar : ℤ) (cap p.1 - 1), absSchattenNorm (Q : ℝ) (R p r a) = Fl p
+        a + Fh p a := by
     have he : Finset.Icc (jStar : ℤ) (cap p.1 - 1) = Finset.Icc (jStar : ℤ) (lo p) ∪ T p.1 := by
       ext r; simp only [lo, T, Finset.mem_Icc, Finset.mem_union]; omega
     have hdis : Disjoint (Finset.Icc (jStar : ℤ) (lo p)) (T p.1) := by
@@ -365,7 +387,8 @@ theorem exists_transport_boundary_fluctuations (d : ℕ) (hd : 2 ≤ d)
   calc
     _ = ∫ a, (⨆ p ∈ (I : Set (ℤ × (Fin d → ℤ))), Fl p a + Fh p a) ^ (Q : ℝ) ∂P := hie
     _ ≤ _ := ht
-    _ ≤ (2 : ℝ) ^ Q * ((B + H) * c * profile P γ q jStar k (n + 2 * (L : ℤ))) := (mul_le_mul_of_nonneg_left (add_le_add hl hh) (by positivity)).trans_eq (by ring)
+    _ ≤ (2 : ℝ) ^ Q * ((B + H) * c * profile P γ q jStar k (n + 2 * (L : ℤ))) :=
+      (mul_le_mul_of_nonneg_left (add_le_add hl hh) (by positivity)).trans_eq (by ring)
     _ ≤ _ := by
       have hp := mul_nonneg hc hP0
       nlinarith only [hp]
@@ -398,7 +421,8 @@ theorem exists_transport_high_bulk_profile (d : ℕ) (hd : 2 ≤ d)
       (∫ a, (⨆ i ∈ (I : Set (ℤ × (Fin d → ℤ))),
         (3 : ℝ) ^ (-rhoMax d γ * ((n : ℝ) + L - i.1)) *
           absSchattenNorm (Q : ℝ) (ofFullBlockMat (∑ z ∈ Z i, v i •
-            toFullBlockMat (normalizedFluctuation P q (r i.1) (n + 2 * (L : ℤ)) z a)))) ^ (Q : ℝ) ∂P) ≤
+            toFullBlockMat (normalizedFluctuation P q (r i.1) (n + 2 * (L : ℤ)) z a)))) ^ (Q :
+              ℝ) ∂P) ≤
         2 * ((Q : ℝ) * (3 : ℝ) ^ ((d : ℝ) / 2) * D) ^ Q *
           (3 : ℝ) ^ ((1 - γ) / 4 * (L : ℝ)) * profile P γ q jStar k (n + 2 * (L : ℤ)) := by
   classical
@@ -423,9 +447,11 @@ theorem exists_transport_high_bulk_profile (d : ℕ) (hd : 2 ≤ d)
   have hQ := bigQ_pos d γ hγ
   have hQr := bigQ_real_pos d γ hγ
   have hQ1 : 1 ≤ (Q : ℝ) := by exact_mod_cast hQ
-  have hR (i) : SchattenMemLp P (Q : ℝ) (R i) := memLqSchatten_normalizedCentered_sum d hd P γ E Ψ K S hstat hdag jStar hj m hm
+  have hR (i) : SchattenMemLp P (Q : ℝ) (R i) := memLqSchatten_normalizedCentered_sum d hd P γ E
+    Ψ K S hstat hdag jStar hj m hm
       (r i.1) (adaptedMean P q t) Q hQ1 (Z i) (fun _ => v i) id
-  have hself (u) : SchattenMemLp P (Q : ℝ) (normalizedFluctuationSelf P q u) := bridge_fluctuation_memLqSchatten d hd P γ E Ψ K S hstat hdag jStar hj m hm u u 0
+  have hself (u) : SchattenMemLp P (Q : ℝ) (normalizedFluctuationSelf P q u) :=
+    bridge_fluctuation_memLqSchatten d hd P γ E Ψ K S hstat hdag jStar hj m hm u u 0
   have hm0 (u) : 0 ≤ ∫ a, absSchattenNorm (Q : ℝ) (normalizedFluctuationSelf P q u a) ^ Q ∂P := by
     apply integral_nonneg_of_ae
     filter_upwards [(hself u).symmetric] with a ha
@@ -437,10 +463,12 @@ theorem exists_transport_high_bulk_profile (d : ℕ) (hd : 2 ≤ d)
   have hf0 (i) (_hi : i ∈ I) : ∀ᵐ a ∂P, 0 ≤ f i a :=
     (hR i).symmetric.mono fun _ ha => mul_nonneg (by dsimp only [w]; positivity)
       (absSchattenNorm_nonneg ((toFullBlockMat_isHermitian_iff _).2 ha) hQ1)
-  have hf (i) (_hi : i ∈ I) : MemLp (f i) (ENNReal.ofReal (Q : ℝ)) P := ((hR i).memLp_absSchattenNorm hQ1).const_mul (w i.1)
+  have hf (i) (_hi : i ∈ I) : MemLp (f i) (ENNReal.ofReal (Q : ℝ)) P := ((hR
+    i).memLp_absSchattenNorm hQ1).const_mul (w i.1)
   have hmom (i) (hi : i ∈ I) : (∫ a, f i a ^ (Q : ℝ) ∂P) ≤ w i.1 ^ Q * (A * B i.1) := by
     have hrng := Finset.mem_Icc.mp (hgen i hi)
-    have hb := hrow P E Ψ K S hP hstat hunit hdag jStar hj hsrc m hm (r i.1) t (by omega) hrng.2 (Z i) (hZ i hi) (v i) (hv i hi) (D * (3 : ℝ) ^ (-(d : ℝ) / 2 * (ell i.1 : ℝ))) (hcoef i hi)
+    have hb := hrow P E Ψ K S hP hstat hunit hdag jStar hj hsrc m hm (r i.1) t (by omega) hrng.2
+      (Z i) (hZ i hi) (v i) (hv i hi) (D * (3 : ℝ) ^ (-(d : ℝ) / 2 * (ell i.1 : ℝ))) (hcoef i hi)
     have he : (∫ a, f i a ^ (Q : ℝ) ∂P) =
         w i.1 ^ Q * ∫ a, absSchattenNorm (Q : ℝ) (R i a) ^ Q ∂P := by
       simp only [f, Real.rpow_natCast, mul_pow, integral_const_mul]
@@ -461,7 +489,8 @@ theorem exists_transport_high_bulk_profile (d : ℕ) (hd : 2 ≤ d)
       rw [← Real.rpow_mul_natCast (by norm_num : (0 : ℝ) ≤ 3)]
       congr 1; ring
     dsimp only [B, F, c]; rw [hw]
-    have hpay := mul_le_mul_of_nonneg_right (mul_le_mul_of_nonneg_right hb (Real.exp_pos ((Q : ℝ) * detIncrement P q (r i.1) t)).le) (hm0 (r i.1))
+    have hpay := mul_le_mul_of_nonneg_right (mul_le_mul_of_nonneg_right hb (Real.exp_pos ((Q :
+      ℝ) * detIncrement P q (r i.1) t)).le) (hm0 (r i.1))
     simpa only [t, r, Int.cast_sub, Int.cast_add, Int.cast_mul, Int.cast_ofNat,
       Int.cast_natCast, mul_assoc] using hpay
   have hmap : ∀ j ∈ I.image Prod.fst, j - (if j ≤ k + (L : ℤ) then 1 else (L : ℤ)) ∈
@@ -476,7 +505,8 @@ theorem exists_transport_high_bulk_profile (d : ℕ) (hd : 2 ≤ d)
   have he (j : ℤ) : j - (if j ≤ k + (L : ℤ) then 1 else (L : ℤ)) = r j := by
     dsimp only [r, ell]; split_ifs <;> rfl
   simp only [he] at hsum
-  have hpay : (∑ u ∈ Finset.Icc (k + 1) t, F u) ≤ profile P γ q jStar k t := (transport_profile_components d hd P γ E Ψ K S hstat hdag jStar hj m hm k t hk (by omega)).2.2.2
+  have hpay : (∑ u ∈ Finset.Icc (k + 1) t, F u) ≤ profile P γ q jStar k t :=
+    (transport_profile_components d hd P γ E Ψ K S hstat hdag jStar hj m hm k t hk (by omega)).2.2.2
   calc
     _ ≤ ∑ i ∈ I, ∫ a, f i a ^ (Q : ℝ) ∂P := (transport_target_max_moment hQr I hI f hf0 hf).2
     _ ≤ ∑ i ∈ I, w i.1 ^ Q * (A * B i.1) := Finset.sum_le_sum hmom
@@ -500,11 +530,14 @@ theorem exists_transport_high_bulk_profile (d : ℕ) (hd : 2 ≤ d)
         _ = A * (w j ^ Q * (3 : ℝ) ^ ((d : ℝ) * ((n : ℝ) + L - j)) * B j) := by ring
         _ ≤ _ := mul_le_mul_of_nonneg_left (hscale j hjmem) hA
     _ = A * c * ∑ j ∈ I.image Prod.fst, F (r j) := by simp only [mul_assoc, ← Finset.mul_sum]
-    _ ≤ A * c * (2 * ∑ u ∈ Finset.Icc (k + 1) t, F u) := mul_le_mul_of_nonneg_left hsum (mul_nonneg hA hc)
-    _ ≤ A * c * (2 * profile P γ q jStar k t) := mul_le_mul_of_nonneg_left (mul_le_mul_of_nonneg_left hpay (by norm_num)) (mul_nonneg hA hc)
+    _ ≤ A * c * (2 * ∑ u ∈ Finset.Icc (k + 1) t, F u) := mul_le_mul_of_nonneg_left hsum
+      (mul_nonneg hA hc)
+    _ ≤ A * c * (2 * profile P γ q jStar k t) := mul_le_mul_of_nonneg_left
+      (mul_le_mul_of_nonneg_left hpay (by norm_num)) (mul_nonneg hA hc)
     _ = _ := by ring
 /-- Trace transport for a positive matrix, with no dimensional loss. -/
-theorem transport_normalized_trace_le {d : ℕ} {X R S : BlockMat d} (hX : (toFullBlockMat X).PosSemidef)
+theorem transport_normalized_trace_le {d : ℕ} {X R S : BlockMat d} (hX : (toFullBlockMat
+  X).PosSemidef)
     (hR : (toFullBlockMat R).PosDef) (hS : (toFullBlockMat S).PosDef) :
     blockTrace (normalizedBlock X S) ≤
       blockOpNorm (normalizedBlock R S) * blockTrace (normalizedBlock X R) := by
@@ -520,7 +553,8 @@ theorem transport_normalized_trace_le {d : ℕ} {X R S : BlockMat d} (hX : (toFu
     transportMatrix_sq_opNorm_eq_general hR hS] at hh
   exact hh
 /-- The printed mean-penalty split for three ordered positive normalizers. -/
-theorem transport_meanPenalty_split {d : ℕ} (Q : ℕ) (A B C : BlockMat d) (hA : (toFullBlockMat A).PosDef) (hB : (toFullBlockMat B).PosDef) (hC : (toFullBlockMat C).PosDef)
+theorem transport_meanPenalty_split {d : ℕ} (Q : ℕ) (A B C : BlockMat d) (hA : (toFullBlockMat
+  A).PosDef) (hB : (toFullBlockMat B).PosDef) (hC : (toFullBlockMat C).PosDef)
     (hBA : BlockMatLoewnerLE B A) (hCB : BlockMatLoewnerLE C B) :
     meanPenalty Q (normalizedBlock A C) ≤
       (1 + meanPenalty Q (normalizedBlock B C)) * meanPenalty Q (normalizedBlock A B) +
@@ -530,17 +564,22 @@ theorem transport_meanPenalty_split {d : ℕ} (Q : ℕ) (A B C : BlockMat d) (hA
   let a := blockTrace (blockSub (normalizedBlock A B) I)
   let b := blockTrace (blockSub (normalizedBlock B C) I)
   have hCA : BlockMatLoewnerLE C A := fun X => (hCB X).trans (hBA X)
-  have hx : 0 ≤ x := blockTrace_identity_sub_nonneg _ ((toFullBlockMat_isHermitian_iff _).1 (normalizedBlock_posDef A C hA hC).isHermitian)
+  have hx : 0 ≤ x := blockTrace_identity_sub_nonneg _ ((toFullBlockMat_isHermitian_iff _).1
+    (normalizedBlock_posDef A C hA hC).isHermitian)
     (normalizedBlock_order_consequences Q A C hA hC hCA).1
-  have ha : 0 ≤ a := blockTrace_identity_sub_nonneg _ ((toFullBlockMat_isHermitian_iff _).1 (normalizedBlock_posDef A B hA hB).isHermitian)
+  have ha : 0 ≤ a := blockTrace_identity_sub_nonneg _ ((toFullBlockMat_isHermitian_iff _).1
+    (normalizedBlock_posDef A B hA hB).isHermitian)
     (normalizedBlock_order_consequences Q A B hA hB hBA).1
-  have hb : 0 ≤ b := blockTrace_identity_sub_nonneg _ ((toFullBlockMat_isHermitian_iff _).1 (normalizedBlock_posDef B C hB hC).isHermitian)
+  have hb : 0 ≤ b := blockTrace_identity_sub_nonneg _ ((toFullBlockMat_isHermitian_iff _).1
+    (normalizedBlock_posDef B C hB hC).isHermitian)
     (normalizedBlock_order_consequences Q B C hB hC hCB).1
   have hgap : (toFullBlockMat (blockSub A B)).PosSemidef := by
-    rw [toFullBlockMat_blockSub_annealed]; exact Matrix.le_iff.mp ((fullBlock_le_iff hB.isHermitian hA.isHermitian).2 hBA)
+    rw [toFullBlockMat_blockSub_annealed]; exact Matrix.le_iff.mp ((fullBlock_le_iff
+      hB.isHermitian hA.isHermitian).2 hBA)
   have ht := transport_normalized_trace_le hgap hB hC
   rw [normalizedBlock_blockSub, normalizedBlock_blockSub, normalizedBlock_self_of_posDef B hB] at ht
-  have hn := blockOpNorm_le_one_add_trace (normalizedBlock B C) (normalizedBlock_posDef B C hB hC).isHermitian
+  have hn := blockOpNorm_le_one_add_trace (normalizedBlock B C) (normalizedBlock_posDef B C hB
+    hC).isHermitian
     (normalizedBlock_order_consequences Q B C hB hC hCB).1
   have he : x = blockTrace (blockSub (normalizedBlock A C) (normalizedBlock B C)) + b := by
     simp only [x, b, blockTrace, toFullBlockMat_blockSub_annealed, Matrix.trace_sub]
@@ -556,12 +595,15 @@ theorem transport_meanPenalty_split {d : ℕ} (Q : ℕ) (A B C : BlockMat d) (hA
       _ = _ := by ring
   change (1 + x) ^ Q - 1 ≤ (1 + ((1 + b) ^ Q - 1)) * ((1 + a) ^ Q - 1) + ((1 + b) ^ Q - 1)
   calc
-    _ ≤ ((1 + a) * (1 + b)) ^ Q - 1 := sub_le_sub_right (pow_le_pow_left₀ (by linarith only [hx]) (by nlinarith only [hbound]) Q) 1
+    _ ≤ ((1 + a) * (1 + b)) ^ Q - 1 := sub_le_sub_right (pow_le_pow_left₀ (by linarith only
+      [hx]) (by nlinarith only [hbound]) Q) 1
     _ = _ := by rw [mul_pow]; ring
 /-- The same split at the actual old-grid means; all order and positivity
 hypotheses come from the standing law and the generation order. -/
 theorem transport_meanPenalty_split_scales (d : ℕ) (hd : 2 ≤ d)
-    (P : Measure (CoeffSpace d)) [IsProbabilityMeasure P] (γ : ℝ) (E : BlockMat d) (Ψ : ℝ → ℝ) (K : ℝ) (S : CoeffSpace d → ℝ) (hstat : IsStationaryLaw P) (hdag : CoarseEllipticityDagger P γ E Ψ K S)
+    (P : Measure (CoeffSpace d)) [IsProbabilityMeasure P] (γ : ℝ) (E : BlockMat d) (Ψ : ℝ → ℝ)
+      (K : ℝ) (S : CoeffSpace d → ℝ) (hstat : IsStationaryLaw P) (hdag : CoarseEllipticityDagger
+      P γ E Ψ K S)
     (jStar : ℕ) (hj : 2 * d ≤ 3 ^ jStar) (m : Mat d) (hm : m.PosDef)
     (r k t : ℤ) (hr : (jStar : ℤ) ≤ r) (hrk : r ≤ k) (hkt : k ≤ t) :
     let q := explicitRoundedGrid jStar m
@@ -569,9 +611,12 @@ theorem transport_meanPenalty_split_scales (d : ℕ) (hd : 2 ≤ d)
       (1 + meanPenalty (bigQ d γ) (relMean P q k t)) *
         meanPenalty (bigQ d γ) (relMean P q r k) +
           meanPenalty (bigQ d γ) (relMean P q k t) := by
-  intro q; exact transport_meanPenalty_split (bigQ d γ) (adaptedMean P q r) (adaptedMean P q k) (adaptedMean P q t) (adaptedMean_posDef d hd P γ E Ψ K S hstat hdag jStar hj m hm r)
-    (adaptedMean_posDef d hd P γ E Ψ K S hstat hdag jStar hj m hm k) (adaptedMean_posDef d hd P γ E Ψ K S hstat hdag jStar hj m hm t)
-    (adaptedMean_antitone d hd P γ E Ψ K S hstat hdag jStar hj m hm r k hr hrk) (adaptedMean_antitone d hd P γ E Ψ K S hstat hdag jStar hj m hm k t (hr.trans hrk) hkt)
+  intro q; exact transport_meanPenalty_split (bigQ d γ) (adaptedMean P q r) (adaptedMean P q k)
+    (adaptedMean P q t) (adaptedMean_posDef d hd P γ E Ψ K S hstat hdag jStar hj m hm r)
+    (adaptedMean_posDef d hd P γ E Ψ K S hstat hdag jStar hj m hm k) (adaptedMean_posDef d hd P
+      γ E Ψ K S hstat hdag jStar hj m hm t)
+    (adaptedMean_antitone d hd P γ E Ψ K S hstat hdag jStar hj m hm r k hr hrk)
+      (adaptedMean_antitone d hd P γ E Ψ K S hstat hdag jStar hj m hm k t (hr.trans hrk) hkt)
 /-- The exact mean-weight ratio gives the printed half-(1-gamma) loss in L. -/
 theorem transport_mean_weight_ratio (γ : ℝ) (hγ : γ < 1) (n j : ℤ) (L ell : ℕ) (hell : ell ≤ L) :
     (3 : ℝ) ^ (-((1 - γ) / 4) * ((n : ℝ) + L - 1 - j)) =
@@ -592,15 +637,18 @@ theorem transport_mean_weight_ratio (γ : ℝ) (hγ : γ < 1) (n j : ℤ) (L ell
   nlinarith only [hh, hγ]
 /-- The initial mean history is part of the first profile summand. -/
 theorem transport_initial_mean_history (d : ℕ) (hd : 2 ≤ d)
-    (P : Measure (CoeffSpace d)) [IsProbabilityMeasure P] (γ : ℝ) (_hγ : γ ∈ Set.Ico (0 : ℝ) 1) (E : BlockMat d) (Ψ : ℝ → ℝ) (K : ℝ)
-    (S : CoeffSpace d → ℝ) (hstat : IsStationaryLaw P) (hdag : CoarseEllipticityDagger P γ E Ψ K S) (jStar : ℕ) (hj : 2 * d ≤ 3 ^ jStar) (m : Mat d) (hm : m.PosDef)
+    (P : Measure (CoeffSpace d)) [IsProbabilityMeasure P] (γ : ℝ) (_hγ : γ ∈ Set.Ico (0 : ℝ) 1)
+      (E : BlockMat d) (Ψ : ℝ → ℝ) (K : ℝ)
+    (S : CoeffSpace d → ℝ) (hstat : IsStationaryLaw P) (hdag : CoarseEllipticityDagger P γ E Ψ K
+      S) (jStar : ℕ) (hj : 2 * d ≤ 3 ^ jStar) (m : Mat d) (hm : m.PosDef)
     (k t : ℤ) (hk : (jStar : ℤ) ≤ k) (hkt : k ≤ t) :
     let q := explicitRoundedGrid jStar m
     (3 : ℝ) ^ (-((1 - γ) / 4) * ((t : ℝ) - k)) *
       (1 + meanPenalty (bigQ d γ) (relMean P q k t)) * meanHistory P γ q jStar k ≤
         profile P γ q jStar k t := by
   intro q
-  have hp := (adaptedMean_order_consequences d hd P γ E Ψ K S hstat hdag jStar hj m hm k t hk hkt).2.2.2.2.2
+  have hp := (adaptedMean_order_consequences d hd P γ E Ψ K S hstat hdag jStar hj m hm k t hk
+    hkt).2.2.2.2.2
   have hh := (bridge_fluctuationHistory_integrable d hd P γ E Ψ K S hstat hdag jStar hj m hm k hk).2
   apply le_trans (b := (3 : ℝ) ^ (-((1 - γ) / 4) * ((t : ℝ) - k)) *
     (1 + meanPenalty (bigQ d γ) (relMean P q k t)) * history P γ q jStar k) ?_
@@ -610,7 +658,9 @@ theorem transport_initial_mean_history (d : ℕ) (hd : 2 ≤ d)
   linarith only [hh]
 /-- A later mean row belongs to the Ico range, which excludes the terminal scale. -/
 theorem transport_later_mean_row (d : ℕ) (hd : 2 ≤ d)
-    (P : Measure (CoeffSpace d)) [IsProbabilityMeasure P] (γ : ℝ) (E : BlockMat d) (Ψ : ℝ → ℝ) (K : ℝ) (S : CoeffSpace d → ℝ) (hstat : IsStationaryLaw P) (hdag : CoarseEllipticityDagger P γ E Ψ K S)
+    (P : Measure (CoeffSpace d)) [IsProbabilityMeasure P] (γ : ℝ) (E : BlockMat d) (Ψ : ℝ → ℝ)
+      (K : ℝ) (S : CoeffSpace d → ℝ) (hstat : IsStationaryLaw P) (hdag : CoarseEllipticityDagger
+      P γ E Ψ K S)
     (jStar : ℕ) (hj : 2 * d ≤ 3 ^ jStar) (m : Mat d) (hm : m.PosDef)
     (k t : ℤ) (hk : (jStar : ℤ) ≤ k) (r : ℤ) (hr : r ∈ Finset.Ico k t) :
     let q := explicitRoundedGrid jStar m
@@ -622,12 +672,15 @@ theorem transport_later_mean_row (d : ℕ) (hd : 2 ≤ d)
   intro u hu
   obtain ⟨hku, hut⟩ := Finset.mem_Ico.mp hu
   exact mul_nonneg (by positivity)
-    (adaptedMean_order_consequences d hd P γ E Ψ K S hstat hdag jStar hj m hm u t (hk.trans hku) hut.le).2.2.2.2.2
+    (adaptedMean_order_consequences d hd P γ E Ψ K S hstat hdag jStar hj m hm u t (hk.trans hku)
+      hut.le).2.2.2.2.2
 /-- Changing the starting scale of the full mean history is paid by the
 initial and later profile components, with an explicit geometric constant. -/
 theorem transport_meanHistory_to_profile (d : ℕ) (hd : 2 ≤ d)
-    (P : Measure (CoeffSpace d)) [IsProbabilityMeasure P] (γ : ℝ) (E : BlockMat d) (Ψ : ℝ → ℝ) (K : ℝ)
-    (S : CoeffSpace d → ℝ) (hstat : IsStationaryLaw P) (hdag : CoarseEllipticityDagger P γ E Ψ K S) (jStar : ℕ) (hj : 2 * d ≤ 3 ^ jStar) (m : Mat d) (hm : m.PosDef)
+    (P : Measure (CoeffSpace d)) [IsProbabilityMeasure P] (γ : ℝ) (E : BlockMat d) (Ψ : ℝ → ℝ)
+      (K : ℝ)
+    (S : CoeffSpace d → ℝ) (hstat : IsStationaryLaw P) (hdag : CoarseEllipticityDagger P γ E Ψ K
+      S) (jStar : ℕ) (hj : 2 * d ≤ 3 ^ jStar) (m : Mat d) (hm : m.PosDef)
     (k t : ℤ) (hk : (jStar : ℤ) ≤ k) (hkt : k < t) :
     let q := explicitRoundedGrid jStar m
     meanHistory P γ q jStar t ≤
@@ -642,7 +695,8 @@ theorem transport_meanHistory_to_profile (d : ℕ) (hd : 2 ≤ d)
   let A := (3 : ℝ) ^ (-a * ((t : ℝ) - k)) * (1 + p k t)
   have ha : 0 < a := by dsimp only [a]; linarith only [hγ.2]
   have hG : 0 < G := one_div_pos.mpr (transport_geometric_Icc a ha jStar k).1
-  have hp : 0 ≤ p k t := (adaptedMean_order_consequences d hd P γ E Ψ K S hstat hdag jStar hj m hm k t hk hkt.le).2.2.2.2.2
+  have hp : 0 ≤ p k t := (adaptedMean_order_consequences d hd P γ E Ψ K S hstat hdag jStar hj m
+    hm k t hk hkt.le).2.2.2.2.2
   have hw (r) : w t r = (3 : ℝ) ^ (-a * ((t : ℝ) - k)) * w k r := by
     dsimp only [w]; rw [← Real.rpow_add (by norm_num : (0 : ℝ) < 3)]
     congr 1; ring
@@ -663,7 +717,8 @@ theorem transport_meanHistory_to_profile (d : ℕ) (hd : 2 ≤ d)
         apply Finset.sum_le_sum
         intro r hr
         obtain ⟨hJr, hrk⟩ := Finset.mem_Ico.mp hr
-        exact mul_le_mul_of_nonneg_left (transport_meanPenalty_split_scales d hd P γ E Ψ K S hstat hdag jStar hj m hm r k t hJr hrk.le hkt.le) (by dsimp only [w]; positivity)
+        exact mul_le_mul_of_nonneg_left (transport_meanPenalty_split_scales d hd P γ E Ψ K S
+          hstat hdag jStar hj m hm r k t hJr hrk.le hkt.le) (by dsimp only [w]; positivity)
       _ = (∑ r ∈ Finset.Ico (jStar : ℤ) k, w t r * ((1 + p k t) * p r k)) +
           (∑ r ∈ Finset.Ico (jStar : ℤ) k, w t r) * p k t := by
         simp only [mul_add, Finset.sum_add_distrib, Finset.sum_mul]
@@ -678,9 +733,12 @@ theorem transport_meanHistory_to_profile (d : ℕ) (hd : 2 ≤ d)
         calc
           _ ≤ (G * w t k) * p k t := mul_le_mul_of_nonneg_right hgeo hp
           _ = G * (w t k * p k t) := mul_assoc _ _ _)
-  have hinit : A * meanHistory P γ q jStar k ≤ profile P γ q jStar k t := transport_initial_mean_history d hd P γ hγ E Ψ K S hstat hdag jStar hj m hm k t hk hkt.le
-  have hrow : w t k * p k t ≤ meanHistory P γ q k t := transport_later_mean_row d hd P γ E Ψ K S hstat hdag jStar hj m hm k t hk k (Finset.mem_Ico.mpr ⟨le_rfl, hkt⟩)
-  have hpay := (transport_profile_components d hd P γ E Ψ K S hstat hdag jStar hj m hm k t hk hkt.le).2.2.1
+  have hinit : A * meanHistory P γ q jStar k ≤ profile P γ q jStar k t :=
+    transport_initial_mean_history d hd P γ hγ E Ψ K S hstat hdag jStar hj m hm k t hk hkt.le
+  have hrow : w t k * p k t ≤ meanHistory P γ q k t := transport_later_mean_row d hd P γ E Ψ K S
+    hstat hdag jStar hj m hm k t hk k (Finset.mem_Ico.mpr ⟨le_rfl, hkt⟩)
+  have hpay := (transport_profile_components d hd P γ E Ψ K S hstat hdag jStar hj m hm k t hk
+    hkt.le).2.2.1
   have he : Finset.Ico (jStar : ℤ) t = Finset.Ico (jStar : ℤ) k ∪ Finset.Ico k t := by
     ext r; simp only [Finset.mem_Ico, Finset.mem_union]; omega
   have hdis : Disjoint (Finset.Ico (jStar : ℤ) k) (Finset.Ico k t) := by
@@ -692,13 +750,17 @@ theorem transport_meanHistory_to_profile (d : ℕ) (hd : 2 ≤ d)
   change (∑ r ∈ Finset.Ico (jStar : ℤ) t, w t r * p r t) ≤ _
   rw [he, Finset.sum_union hdis]
   calc
-    _ ≤ (A * meanHistory P γ q jStar k + G * (w t k * p k t)) + meanHistory P γ q k t := add_le_add hlo le_rfl
-    _ ≤ (profile P γ q jStar k t + G * profile P γ q jStar k t) + profile P γ q jStar k t := add_le_add (add_le_add hinit (mul_le_mul_of_nonneg_left (hrow.trans hpay) hG.le)) hpay
+    _ ≤ (A * meanHistory P γ q jStar k + G * (w t k * p k t)) + meanHistory P γ q k t :=
+      add_le_add hlo le_rfl
+    _ ≤ (profile P γ q jStar k t + G * profile P γ q jStar k t) + profile P γ q jStar k t :=
+      add_le_add (add_le_add hinit (mul_le_mul_of_nonneg_left (hrow.trans hpay) hG.le)) hpay
     _ = _ := by ring
 /-- The actual bulk mean sum has the printed half-(1-gamma) loss in L. -/
 theorem transport_bulk_mean_bound (d : ℕ) (hd : 2 ≤ d)
-    (P : Measure (CoeffSpace d)) [IsProbabilityMeasure P] (γ : ℝ) (hγ : γ ∈ Set.Ico (0 : ℝ) 1) (E : BlockMat d) (Ψ : ℝ → ℝ) (K : ℝ)
-    (S : CoeffSpace d → ℝ) (hstat : IsStationaryLaw P) (hdag : CoarseEllipticityDagger P γ E Ψ K S) (jStar : ℕ) (hj : 2 * d ≤ 3 ^ jStar) (m : Mat d) (hm : m.PosDef)
+    (P : Measure (CoeffSpace d)) [IsProbabilityMeasure P] (γ : ℝ) (hγ : γ ∈ Set.Ico (0 : ℝ) 1)
+      (E : BlockMat d) (Ψ : ℝ → ℝ) (K : ℝ)
+    (S : CoeffSpace d → ℝ) (hstat : IsStationaryLaw P) (hdag : CoarseEllipticityDagger P γ E Ψ K
+      S) (jStar : ℕ) (hj : 2 * d ≤ 3 ^ jStar) (m : Mat d) (hm : m.PosDef)
     (k n : ℤ) (hk : (jStar : ℤ) ≤ k) (hkn : k ≤ n) (L : ℕ) (hL : 1 ≤ L) :
     let q := explicitRoundedGrid jStar m
     let ell := fun j : ℤ => if j ≤ k + (L : ℤ) then 1 else L
@@ -730,21 +792,25 @@ theorem transport_bulk_mean_bound (d : ℕ) (hd : 2 ≤ d)
   have he (j : ℤ) : j - (if j ≤ k + (L : ℤ) then 1 else (L : ℤ)) = cap j := by
     dsimp only [cap, ell]; split_ifs <;> rfl
   have hsum : (∑ j ∈ J, F (cap j)) ≤ 2 * ∑ r ∈ U, F r := by
-    have hh := transport_bulk_generation_sum k L J U F hF (by intro j hjmem; rw [he]; exact hgen j hjmem)
+    have hh := transport_bulk_generation_sum k L J U F hF (by intro j hjmem; rw [he]; exact hgen
+      j hjmem)
     simpa only [he] using hh
   have hpay : (∑ r ∈ U, F r) ≤
       (2 + 1 / (1 - (3 : ℝ) ^ (-((1 - γ) / 4)))) * profile P γ q jStar k t :=
-    transport_meanHistory_to_profile d hd P γ E Ψ K S hstat hdag jStar hj m hm k t hk (by dsimp only [t]; omega)
+    transport_meanHistory_to_profile d hd P γ E Ψ K S hstat hdag jStar hj m hm k t hk (by dsimp
+      only [t]; omega)
   calc
     _ ≤ ∑ j ∈ J, D * F (cap j) := by
       apply Finset.sum_le_sum
       intro j hjmem
-      have hh := mul_le_mul_of_nonneg_right (transport_mean_weight_ratio γ hγ.2 n j L (ell j) (hell j).2).2 (hp (cap j) (hgen j hjmem))
+      have hh := mul_le_mul_of_nonneg_right (transport_mean_weight_ratio γ hγ.2 n j L (ell j)
+        (hell j).2).2 (hp (cap j) (hgen j hjmem))
       simpa only [D, F, w, cap, t, Int.cast_add, Int.cast_mul, Int.cast_ofNat, Int.cast_natCast,
         Int.cast_sub, mul_assoc] using hh
     _ = D * ∑ j ∈ J, F (cap j) := (Finset.mul_sum _ _ _).symm
     _ ≤ D * (2 * ∑ r ∈ U, F r) := mul_le_mul_of_nonneg_left hsum hD
-    _ ≤ D * (2 * ((2 + 1 / (1 - (3 : ℝ) ^ (-((1 - γ) / 4)))) * profile P γ q jStar k t)) := mul_le_mul_of_nonneg_left (mul_le_mul_of_nonneg_left hpay (by norm_num)) hD
+    _ ≤ D * (2 * ((2 + 1 / (1 - (3 : ℝ) ^ (-((1 - γ) / 4)))) * profile P γ q jStar k t)) :=
+      mul_le_mul_of_nonneg_left (mul_le_mul_of_nonneg_left hpay (by norm_num)) hD
     _ = _ := by ring
 
 end

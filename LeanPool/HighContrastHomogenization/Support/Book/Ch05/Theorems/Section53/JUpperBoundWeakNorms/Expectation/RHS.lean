@@ -108,8 +108,10 @@ noncomputable def jUpperWeakNormExpectedRHSAtScale {d : ℕ}
       centeredCutoffConstant : ℝ)
     (p q p0 q0 : Vec d) : ℝ :=
   let Q : TriadicCube d := originCube d m
-  let gradWeak : RegCoeffField d → ℝ := fun a => Ch04.canonicalScalarResponseGradientWeakNormCubeSet Q s p q p0 a.toFun
-  let fluxWeak : RegCoeffField d → ℝ := fun a => Ch04.canonicalScalarResponseFluxWeakNormCubeSet Q t p q q0 a.toFun
+  let gradWeak : RegCoeffField d → ℝ := fun a =>
+    Ch04.canonicalScalarResponseGradientWeakNormCubeSet Q s p q p0 a.toFun
+  let fluxWeak : RegCoeffField d → ℝ := fun a => Ch04.canonicalScalarResponseFluxWeakNormCubeSet
+    Q t p q q0 a.toFun
   let gradCoeff := (3 : ℝ) ^ ((d : ℝ) + s) * cubeBesovScaleWeight (-s) Q * BφS
   let fluxCoeff := (3 : ℝ) ^ ((d : ℝ) + t) * cubeBesovScaleWeight (-t) Q * BφT
   (2 * C) *
@@ -140,8 +142,10 @@ noncomputable def jUpperWeakNormManuscriptExpectedRHSAtScale {d : ℕ}
     (C Cosc scaleSep BφS BφT Cprod : ℝ)
     (p q p0 q0 : Vec d) : ℝ :=
   let Q : TriadicCube d := originCube d m
-  let gradWeak : RegCoeffField d → ℝ := fun a => Ch04.canonicalScalarResponseGradientWeakNormCubeSet Q s p q p0 a.toFun
-  let fluxWeak : RegCoeffField d → ℝ := fun a => Ch04.canonicalScalarResponseFluxWeakNormCubeSet Q t p q q0 a.toFun
+  let gradWeak : RegCoeffField d → ℝ := fun a =>
+    Ch04.canonicalScalarResponseGradientWeakNormCubeSet Q s p q p0 a.toFun
+  let fluxWeak : RegCoeffField d → ℝ := fun a => Ch04.canonicalScalarResponseFluxWeakNormCubeSet
+    Q t p q q0 a.toFun
   let gradCoeff := (3 : ℝ) ^ ((d : ℝ) + s) * cubeBesovScaleWeight (-s) Q * BφS
   let fluxCoeff := (3 : ℝ) ^ ((d : ℝ) + t) * cubeBesovScaleWeight (-t) Q * BφT
   let scaledGrad : RegCoeffField d → ℝ := gradWeak
@@ -224,7 +228,7 @@ theorem responseJAdditivityDefectAtScale_nonneg_ae
       Ch04.restrictionResponseJObservableCubeSet (originCube d m) p q a ≤
         descendantsAverage (originCube d m) (Int.toNat (m - k))
           (fun R => Ch04.restrictionResponseJObservableCubeSet R p q a) :=
-    Ch04.restrictionResponseJObservableCubeSet_le_descendantsAverage_of_aelocallyUniformlyEllipticField
+    Ch04.restrictionResponseJ_le_descendantAverage
       (a := a) ha hkm p q
   simpa [responseJAdditivityDefectAtScale] using sub_nonneg.mpr hle
 
@@ -290,7 +294,7 @@ theorem integral_sqrt_responseJAdditivityDefectAtScale_mul_sqrt_childResponseAve
           descendantsAverage (originCube d m) (Int.toNat (m - k))
             (fun R => Ch04.restrictionResponseJObservableCubeSet R p q a) ∂P =
         Ch04.expectedResponseJCubeSet P (originCube d k) p q :=
-    hP.integral_descendantsAverage_restrictionResponseJObservableCubeSet_eq_originCube_of_stationary
+    hP.integral_responseJDescendantAverage_eq_origin_of_stationarity
       hstat hk_nonneg hkm p q hDesc
   have hChildIntegral' :
       ∫ a,
@@ -305,7 +309,8 @@ theorem canonicalScalarResponseGradientWeakNormCubeSet_nonneg_ae
     {d : ℕ} [NeZero d] {P : Ch04.RestrictionCoeffLaw d}
     (hP : Ch04.RestrictionLawCarrier P) (Q : TriadicCube d) {s : ℝ} (hs : 0 < s)
     (p q p0 : Vec d) :
-    0 ≤ᵐ[P] (fun a : RegCoeffField d => Ch04.canonicalScalarResponseGradientWeakNormCubeSet Q s p q p0 a.toFun) := by
+    0 ≤ᵐ[P] (fun a : RegCoeffField d => Ch04.canonicalScalarResponseGradientWeakNormCubeSet Q s
+      p q p0 a.toFun) := by
   filter_upwards [hP.ae_locallyUniformlyEllipticField] with a ha
   let F := Ch04.triadicCoeffFamilyOfAELocallyUniformlyEllipticField a ha
   let aQ : Ch02.CoeffOn (Ch02.cubeDomain Q) := F.coeffOn Q
@@ -319,7 +324,7 @@ theorem canonicalScalarResponseGradientWeakNormCubeSet_nonneg_ae
           (canonicalMaximizerGradientDefectOnCube Q aQ p q p0) ≤
         Ch04.canonicalScalarResponseGradientWeakNormCubeSet Q s p q p0 a.toFun := by
     simpa [F, aQ] using
-      cubeBesovNegativeVectorPartialSeminorm_canonicalMaximizerGradientDefectOnDependentFamily_le_ch04WeakNorm
+      negativePartialSeminorm_maximizerGradientDefect_le_ch04WeakNorm
         a ha Q hs 0 p q p0
   exact hpartial_nonneg.trans hpartial_le
 
@@ -328,7 +333,8 @@ theorem canonicalScalarResponseFluxWeakNormCubeSet_nonneg_ae
     {d : ℕ} [NeZero d] {P : Ch04.RestrictionCoeffLaw d}
     (hP : Ch04.RestrictionLawCarrier P) (Q : TriadicCube d) {t : ℝ} (ht : 0 < t)
     (p q q0 : Vec d) :
-    0 ≤ᵐ[P] (fun a : RegCoeffField d => Ch04.canonicalScalarResponseFluxWeakNormCubeSet Q t p q q0 a.toFun) := by
+    0 ≤ᵐ[P] (fun a : RegCoeffField d => Ch04.canonicalScalarResponseFluxWeakNormCubeSet Q t p q
+      q0 a.toFun) := by
   filter_upwards [hP.ae_locallyUniformlyEllipticField] with a ha
   let F := Ch04.triadicCoeffFamilyOfAELocallyUniformlyEllipticField a ha
   let aQ : Ch02.CoeffOn (Ch02.cubeDomain Q) := F.coeffOn Q
@@ -342,7 +348,7 @@ theorem canonicalScalarResponseFluxWeakNormCubeSet_nonneg_ae
           (canonicalMaximizerFluxDefectOnCube Q aQ p q q0) ≤
         Ch04.canonicalScalarResponseFluxWeakNormCubeSet Q t p q q0 a.toFun := by
     simpa [F, aQ] using
-      cubeBesovNegativeVectorPartialSeminorm_canonicalMaximizerFluxDefectOnDependentFamily_le_ch04WeakNorm
+      negativeVectorPartial_canonicalFluxDefect_le_chapter04WeakNorm
         a ha Q ht 0 p q q0
   exact hpartial_nonneg.trans hpartial_le
 

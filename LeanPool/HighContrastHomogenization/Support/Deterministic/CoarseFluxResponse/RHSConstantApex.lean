@@ -42,7 +42,7 @@ formal route from the H¹ weak-solution estimates to the manuscript-shaped
 `C(d)` one-cube bound, while leaving the analytic energy/tail/forcing budget
 estimates as explicit hypotheses.
 -/
-theorem cubeBesovNegativeVectorSeminormTwo_fluxDefect_le_two_mul_const_mul_coarseFluxResponseRHSBound_of_aHarmonicFunction_h1DirichletRhsWeakSolutionOn_component_budgets
+theorem negativeBesovSeminormTwo_fluxDefect_le_two_mul_const_mul_fluxRHSBound
     {d : ℕ} [NeZero d] (Q : TriadicCube d) (a : CoeffField d) (a0 : Mat d)
     (s : ℝ) (gradU g : Vec d → Vec d)
     (v : H1Function (cubeSet Q))
@@ -218,14 +218,14 @@ theorem cubeBesovNegativeVectorSeminormTwo_fluxDefect_le_two_mul_const_mul_coars
   have hdefectW :
       cubeBesovNegativeVectorSeminormTwo Q s (fluxDefect a a0 w.toH1.grad) ≤
         C * coarseFluxResponseRHSHomogeneousSplitBound Q a a0 s gradU g :=
-    (cubeBesovNegativeVectorSeminormTwo_fluxDefect_le_coarseFluxResponseQOneBound_of_aHarmonicFunction
+    (negativeVectorSeminorm_fluxDefect_le_coarseFluxResponseQOne
       Q a a0 s hs hEll ha0 ha0symm w hresponseSum).trans
       hhomogeneous
   have hfluxV :
       cubeBesovNegativeVectorSeminormTwo Q s
           (fun x => matVecMul (a x) (v.grad x)) ≤
         C * coarseFluxResponseRHSWeakFluxCorrectionBound Q a s g :=
-    cubeBesovNegativeVectorSeminormTwo_matVecMul_grad_le_const_mul_coarseFluxResponseRHSWeakFluxCorrectionBound_of_h1DirichletRhsWeakSolutionOn_of_component_bounds
+    negativeBesovSeminormTwo_matVecMul_grad_le_const_mul_of_weakFluxCorrectionBound
       Q a s g v C hC_nonneg hs hs_le hweak hEll_desc hu_mem_desc
       hg_mem_desc hC_desc hData_desc hsum_desc hchildBdd huBdd_desc
       hgBdd_centered_desc hweakBdd hEll_open hData hsum_half
@@ -241,11 +241,11 @@ theorem cubeBesovNegativeVectorSeminormTwo_fluxDefect_le_two_mul_const_mul_coars
           MemVectorL2 (cubeSet R) v.grad := by
       intro j R hR
       exact hu_mem_desc R ⟨j, hR⟩
-    cubeBesovNegativeVectorSeminormTwo_constMatMul_grad_le_const_mul_coarseFluxResponseRHSPoincareCorrectionBound_of_h1DirichletRhsWeakSolutionOn_of_component_bounds
+    negativeBesovSeminormTwo_constMatMul_le_const_mul_fluxPoincareCorrectionBound
       Q a a0 s g v C hC_nonneg hs hs_le hEll hweak hg hGlobalBdd
       hgrad_mem_desc hgrad_bdd hPoincareEnergy hPoincareForce hPoincareBudget
   exact
-    cubeBesovNegativeVectorSeminormTwo_fluxDefect_le_two_mul_const_mul_coarseFluxResponseRHSBound_of_const_mul_split_component_bounds
+    negativeBesovSeminormTwo_fluxDefect_le_two_mul_const_mul_fluxRHSBound_of_split
       Q a a0 gradU w.toH1.grad v.grad g hC_nonneg hs hGlobalBdd
       hgrad hdefectW_mem hfluxV_mem ha0V_mem
       hdefectW_bdd hfluxV_bdd ha0V_bdd hdefectW hfluxV ha0V
@@ -257,7 +257,7 @@ variables.  This is the cleanest current note-facing surface: the remaining
 analytic work is precisely the two displayed scalar budget bounds plus the
 homogeneous energy-correction estimate.
 -/
-theorem cubeBesovNegativeVectorSeminormTwo_fluxDefect_le_two_mul_const_mul_coarseFluxResponseRHSBound_of_aHarmonicFunction_h1DirichletRhsWeakSolutionOn_exact_budgets
+theorem negativeBesovSeminormTwo_fluxDefect_le_two_mul_const_mul_fluxRHSBound_of_budgets
     {d : ℕ} [NeZero d] (Q : TriadicCube d) (a : CoeffField d) (a0 : Mat d)
     (s : ℝ) (gradU g : Vec d → Vec d)
     (v : H1Function (cubeSet Q))
@@ -393,7 +393,7 @@ theorem cubeBesovNegativeVectorSeminormTwo_fluxDefect_le_two_mul_const_mul_coars
     cubeBesovNegativeVectorSeminormTwo Q s (fluxDefect a a0 gradU) ≤
       2 * C * coarseFluxResponseRHSBound Q a a0 s gradU g := by
   exact
-    cubeBesovNegativeVectorSeminormTwo_fluxDefect_le_two_mul_const_mul_coarseFluxResponseRHSBound_of_aHarmonicFunction_h1DirichletRhsWeakSolutionOn_component_budgets
+    negativeBesovSeminormTwo_fluxDefect_le_two_mul_const_mul_fluxRHSBound
       (Q := Q) (a := a) (a0 := a0) (s := s) (gradU := gradU)
       (g := g) (v := v) (w := w) (C := C)
       (lam := lam) (Lam := Lam) (lam0 := lam0) (Lam0 := Lam0)
@@ -433,7 +433,7 @@ derived from the ellipticity hypotheses.
 This is the cleaner note-facing surface after the average-nonnegativity
 bookkeeping has been moved into the RHS layer.
 -/
-theorem cubeBesovNegativeVectorSeminormTwo_fluxDefect_le_two_mul_const_mul_coarseFluxResponseRHSBound_of_aHarmonicFunction_h1DirichletRhsWeakSolutionOn_exact_budgets_of_descendant_isEllipticFieldOn
+theorem negativeBesovSeminormTwo_fluxDefect_le_two_mul_const_mul_fluxRHSBound_of_exact
     {d : ℕ} [NeZero d] (Q : TriadicCube d) (a : CoeffField d) (a0 : Mat d)
     (s : ℝ) (gradU g : Vec d → Vec d)
     (v : H1Function (cubeSet Q))
@@ -573,7 +573,7 @@ theorem cubeBesovNegativeVectorSeminormTwo_fluxDefect_le_two_mul_const_mul_coars
     cubeAverage_coefficientEnergyDensity_nonneg_of_descendant_isEllipticFieldOn
       Q a v.grad hEll_desc
   exact
-    cubeBesovNegativeVectorSeminormTwo_fluxDefect_le_two_mul_const_mul_coarseFluxResponseRHSBound_of_aHarmonicFunction_h1DirichletRhsWeakSolutionOn_exact_budgets
+    negativeBesovSeminormTwo_fluxDefect_le_two_mul_const_mul_fluxRHSBound_of_budgets
       Q a a0 s gradU g v w C hC_nonneg hs hs_le hEll hEll_open
       ha0 ha0symm hweak hgrad hEll_desc hu_mem_desc hg_mem_desc
       hC_desc hData_desc hsum_desc hchildBdd huBdd_desc
@@ -590,7 +590,7 @@ from descendant ellipticity at depth zero.
 This removes the redundant standalone `IsEllipticFieldOn ... (cubeSet Q) a`
 input when the caller already supplies ellipticity on all descendants of `Q`.
 -/
-theorem cubeBesovNegativeVectorSeminormTwo_fluxDefect_le_two_mul_const_mul_coarseFluxResponseRHSBound_of_aHarmonicFunction_h1DirichletRhsWeakSolutionOn_exact_budgets_of_descendant_isEllipticFieldOn_self
+theorem negativeBesovFluxDefect_le_two_mul_fluxResponseRHSBound_of_descendantCoarseData
     {d : ℕ} [NeZero d] (Q : TriadicCube d) (a : CoeffField d) (a0 : Mat d)
     (s : ℝ) (gradU g : Vec d → Vec d)
     (v : H1Function (cubeSet Q))
@@ -722,7 +722,7 @@ theorem cubeBesovNegativeVectorSeminormTwo_fluxDefect_le_two_mul_const_mul_coars
   have hEll : IsEllipticFieldOn lam Lam (cubeSet Q) a :=
     isEllipticFieldOn_self_of_descendant_isEllipticFieldOn Q a hEll_desc
   exact
-    cubeBesovNegativeVectorSeminormTwo_fluxDefect_le_two_mul_const_mul_coarseFluxResponseRHSBound_of_aHarmonicFunction_h1DirichletRhsWeakSolutionOn_exact_budgets_of_descendant_isEllipticFieldOn
+    negativeBesovSeminormTwo_fluxDefect_le_two_mul_const_mul_fluxRHSBound_of_exact
       Q a a0 s gradU g v w C hC_nonneg hs hs_le hEll hEll_open
       ha0 ha0symm hweak hgrad hEll_desc hu_mem_desc hg_mem_desc
       hC_desc hData_desc hsum_desc hchildBdd huBdd_desc
@@ -744,7 +744,7 @@ descendant `v.grad` boundedness family, the parent `MemLp g`, the descendant
 `MemVectorL2 g` family, and the parent positive-Besov boundedness hypothesis
 from their descendant/global versions.
 -/
-theorem cubeBesovNegativeVectorSeminormTwo_fluxDefect_le_two_mul_const_mul_coarseFluxResponseRHSBound_of_aHarmonicFunction_h1DirichletRhsWeakSolutionOn_exact_budgets_of_descendant_depth_zero_inputs
+theorem negativeBesovFluxDefect_le_two_mul_fluxResponseRHSBound_of_exactComponentBudgets
     {d : ℕ} [NeZero d] (Q : TriadicCube d) (a : CoeffField d) (a0 : Mat d)
     (s : ℝ) (gradU g : Vec d → Vec d)
     (v : H1Function (cubeSet Q))
@@ -857,7 +857,7 @@ theorem cubeBesovNegativeVectorSeminormTwo_fluxDefect_le_two_mul_const_mul_coars
     have hRn_scale : R ∈ descendantsAtScale Q (Q.scale - (n : ℤ)) :=
       mem_descendantsAtScale_of_mem_descendantsAtDepth hRn
     have hn_scale : Q.scale - (n : ℤ) ≤ Q.scale := by
-      exact sub_le_self _ (by exact_mod_cast Nat.zero_le n)
+      exact sub_le_self _ (Nat.cast_nonneg n)
     exact OpenCubeDescendantDeterministicCoarseData.of_mem_descendantsAtScale
       hData hn_scale hRn_scale
   have hu_mem_desc :
@@ -916,7 +916,7 @@ theorem cubeBesovNegativeVectorSeminormTwo_fluxDefect_le_two_mul_const_mul_coars
       _ ≤ matNorm a0 * M := by
             exact mul_le_mul_of_nonneg_left (hM ⟨N, rfl⟩) (matNorm_nonneg a0)
   exact
-    cubeBesovNegativeVectorSeminormTwo_fluxDefect_le_two_mul_const_mul_coarseFluxResponseRHSBound_of_aHarmonicFunction_h1DirichletRhsWeakSolutionOn_exact_budgets_of_descendant_isEllipticFieldOn_self
+    negativeBesovFluxDefect_le_two_mul_fluxResponseRHSBound_of_descendantCoarseData
       Q a a0 s gradU g v w C hC_nonneg hs hs_le hEll_open ha0 ha0symm
       hweak hgrad hEll_desc hu_mem_desc hg_mem_desc hC_desc hData_desc
       hsum_desc hchildBdd huBdd_desc hgBdd_centered_desc hweakBdd hData

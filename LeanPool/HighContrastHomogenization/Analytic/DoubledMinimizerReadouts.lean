@@ -158,7 +158,8 @@ theorem energyBilin_cellMuCandidate_eq_blockPairingAverage
         (cellMuCandidate (U := U) P0 Z) =
       blockPairingAverage U a.1 (canonicalMuGeneratorAffineField (U := U) P0 Z) Y := by
   rw [energyBilin_cellMuHilbert, ← toHilbertBlockL2_generatorAffineField (U := U) P0 Z]
-  exact (cellMuSystem hvol a).toMuOperatorRealization.energyBilin_eq_blockPairingAverage_of_blockState
+  exact (cellMuSystem hvol
+    a).toMuOperatorRealization.energyBilin_eq_blockPairingAverage_of_blockState
     (canonicalMuGeneratorAffineField_memBlockL2 (U := U) P0 Z) hY
 
 /-- **The doubled energy pairing of a fixed test state against the minimizer is

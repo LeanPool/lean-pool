@@ -94,7 +94,8 @@ private theorem respCoeffPlusCarrierIntegrabilityFacts {d : ℕ} [NeZero d]
       (Real.sqrt (vecDot Y.1 (matVecMul (coarseBlockMatrix
         (adaptedCellAtCenter (respGrid jStar F) k W) (respCoeffPlus F a)).upperLeft Y.1)) +
        Real.sqrt (vecDot Y.2 (matVecMul (coarseBlockMatrix
-        (adaptedCellAtCenter (respGrid jStar F) k W) (respCoeffPlus F a)).lowerRight Y.2)) ^ 2) P) := by
+        (adaptedCellAtCenter (respGrid jStar F) k W) (respCoeffPlus F a)).lowerRight Y.2)) ^ 2)
+          P) := by
   have hq0 : IsUnit (respGrid jStar F) := hq
   have hUmeas : MeasurableSet (respCell jStar F t) :=
     (isOpen_adaptedCell_of_isUnit hq0 t).measurableSet
@@ -152,7 +153,8 @@ private theorem respCoeffPlusCarrierIntegrabilityFacts {d : ℕ} [NeZero d]
       P := by
     intro k W
     have hblk : HasIntegrableCoarseBlock P (adaptedCellAtCenter (respGrid jStar F) k W) :=
-      hasIntegrableCoarseBlock_adaptedCellAtCenter_respGrid hd P γ E Ψ Kg Src hstat hdag jStar hjStar
+      hasIntegrableCoarseBlock_adaptedCellAtCenter_respGrid hd P γ E Ψ Kg Src hstat hdag jStar
+        hjStar
         F hm k W
     exact integrable_sq_sqrt_add_sqrt_coarseBlockMatrix Y
       (integrable_vecDot_coarseBlockMatrix_upperLeft Y
@@ -276,7 +278,8 @@ theorem integrable_and_abs_integral_cross_sub_cellPart_le_respCoeffPlus_car {d :
           (fun x => φ x - 1)
         - volumeAverage (adaptedCellAtCenter (respGrid jStar F) (t - ((H + n : ℕ) : ℤ))
             (Transport.gridParent W)) (fun x => φ x - 1))
-    (fun n W a => volumeAverage (adaptedCellAtCenter (respGrid jStar F) (t - ((H + n + 1 : ℕ) : ℤ)) W)
+    (fun n W a => volumeAverage (adaptedCellAtCenter (respGrid jStar F) (t - ((H + n + 1 : ℕ) :
+      ℤ)) W)
       (fun x => vecDot Y.2 (optimizerField (respCoeffPlus F a) (uP a) x).1
         + vecDot Y.1 (optimizerField (respCoeffPlus F a) (uP a) x).2))
     (fun n W a => Real.sqrt (vecDot Y.1 (matVecMul (coarseBlockMatrix
@@ -330,7 +333,8 @@ theorem integrable_and_abs_integral_cross_sub_cellPart_le_respCoeffPlus_car {d :
       hmax hEint hJ).le
   · intro n
     exact integrable_avsum_weighted_pairing (fun m => triadicIndexBox d (H + m + 1))
-      (fun m W => volumeAverage (adaptedCellAtCenter (respGrid jStar F) (t - ((H + m + 1 : ℕ) : ℤ)) W)
+      (fun m W => volumeAverage (adaptedCellAtCenter (respGrid jStar F) (t - ((H + m + 1 : ℕ) :
+        ℤ)) W)
             (fun x => φ x - 1)
           - volumeAverage (adaptedCellAtCenter (respGrid jStar F) (t - ((H + m : ℕ) : ℤ))
               (Transport.gridParent W)) (fun x => φ x - 1))
@@ -369,7 +373,8 @@ theorem integrable_and_abs_integral_cross_sub_cellPart_le_respCoeffPlus_car {d :
       (fun m W hW => (hcellE m W hW).const_mul 2) n
   · intro n
     exact integrable_avsum_weighted_sqrt_mul_sqrt (fun m => triadicIndexBox d (H + m + 1))
-      (fun m W => volumeAverage (adaptedCellAtCenter (respGrid jStar F) (t - ((H + m + 1 : ℕ) : ℤ)) W)
+      (fun m W => volumeAverage (adaptedCellAtCenter (respGrid jStar F) (t - ((H + m + 1 : ℕ) :
+        ℤ)) W)
             (fun x => φ x - 1)
           - volumeAverage (adaptedCellAtCenter (respGrid jStar F) (t - ((H + m : ℕ) : ℤ))
               (Transport.gridParent W)) (fun x => φ x - 1))

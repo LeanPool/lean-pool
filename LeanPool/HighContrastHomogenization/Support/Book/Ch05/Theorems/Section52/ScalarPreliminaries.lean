@@ -67,14 +67,14 @@ theorem thetaAtScale_mono_of_integrable_diagonalBlockNorms
   let hPrim_m := Ch04.Internal.annealedPrimitiveScalarizationData_of_structuralLaw hP hStruct m
   let hPrim_n := Ch04.Internal.annealedPrimitiveScalarizationData_of_structuralLaw hP hStruct n
   have hStar_m_nonneg : 0 ≤ hPrim_m.barSigmaStarInv :=
-    (Ch04.RestrictionLawCarrier.Internal.barSigmaStarInv_pos_of_integrable_coarseFullBlockMatrixAtCube hP
+    (Ch04.RestrictionLawCarrier.Internal.barSigmaStarInverse_pos_of_integrableBlockMatrix hP
       hPrim_m hParentInt).le
   have hB_n_nonneg : 0 ≤ hPrim_n.barB :=
     Ch04.RestrictionLawCarrier.Internal.barB_nonneg_of_integrable_coarseFullBlockMatrixAtCube hP
       hPrim_n hChildBlockInt
   simpa [thetaAtScale, scalarization, hPrim_m, hPrim_n,
     Ch04.Internal.thetaAtScale_eq_scalarization_contrast] using
-    Ch04.RestrictionLawCarrier.Internal.scalar_contrast_le_of_primitive_of_integrable_coarseFullBlockMatrixAtCube hP
+    Ch04.RestrictionLawCarrier.Internal.scalarContrast_le_of_integrableCoarseBlocks hP
       hStruct.stationary hn_nonneg hnm scalarization hPrim_m hPrim_n
       hParentInt hDescInt hStar_m_nonneg hB_n_nonneg
 
@@ -97,14 +97,14 @@ theorem thetaAtScale_mono_of_integrable_coarseFullBlockMatrixAtCube
   let hPrim_m := Ch04.Internal.annealedPrimitiveScalarizationData_of_structuralLaw hP hStruct m
   let hPrim_n := Ch04.Internal.annealedPrimitiveScalarizationData_of_structuralLaw hP hStruct n
   have hStar_m_nonneg : 0 ≤ hPrim_m.barSigmaStarInv :=
-    (Ch04.RestrictionLawCarrier.Internal.barSigmaStarInv_pos_of_integrable_coarseFullBlockMatrixAtCube hP
+    (Ch04.RestrictionLawCarrier.Internal.barSigmaStarInverse_pos_of_integrableBlockMatrix hP
       hPrim_m hParentBlockInt).le
   have hB_n_nonneg : 0 ≤ hPrim_n.barB :=
     Ch04.RestrictionLawCarrier.Internal.barB_nonneg_of_integrable_coarseFullBlockMatrixAtCube hP
       hPrim_n hChildBlockInt
   simpa [thetaAtScale, scalarization, hPrim_m, hPrim_n,
     Ch04.Internal.thetaAtScale_eq_scalarization_contrast] using
-    Ch04.RestrictionLawCarrier.Internal.scalar_contrast_le_of_primitive_of_integrable_coarseFullBlockMatrixAtCube hP
+    Ch04.RestrictionLawCarrier.Internal.scalarContrast_le_of_integrableCoarseBlocks hP
       hStruct.stationary hn_nonneg hnm scalarization hPrim_m hPrim_n
       hParentBlockInt hDescBlockInt hStar_m_nonneg hB_n_nonneg
 
@@ -195,7 +195,8 @@ private theorem annealedResponseJAtScale_eq_expectedJScalarFormula_of_primitive
     _ = expectedJScalarFormula hP hStruct n p q := by
         rw [hLowerLeftZero, hStar, hB]
         simp [expectedJScalarFormula,
-          Ch04.RestrictionLawCarrier.barSigmaAtScale, Ch04.RestrictionLawCarrier.barSigmaStarAtScale,
+          Ch04.RestrictionLawCarrier.barSigmaAtScale,
+            Ch04.RestrictionLawCarrier.barSigmaStarAtScale,
           Ch04.Internal.AnnealedPrimitiveScalarizationData.barSigma_eq_barB scalarization primitive,
           Ch04.Internal.AnnealedPrimitiveScalarizationData.barSigmaStar_eq_inv_barSigmaStarInv
             scalarization primitive,

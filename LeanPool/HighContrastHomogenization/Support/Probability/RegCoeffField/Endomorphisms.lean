@@ -409,6 +409,8 @@ available for merely locally-integrable `a` (Riemann sums need not converge), so
 the entry-test lane cannot be discharged from the P1 generators.  We therefore
 land `ellipticTruncateReg` with pointwise-lane measurability only and flag the
 join measurability as a design signal for the consumer packets (P5/P7). -/
+/-- The regular coefficient field retaining `a x` where it has ellipticity parameters `1` and `Θ`,
+and replacing it by the identity elsewhere. -/
 @[expose]
 def ellipticTruncateReg (Θ : ℝ) (a : RegCoeffField d) : RegCoeffField d where
   toFun := open scoped Classical in

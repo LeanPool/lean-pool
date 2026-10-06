@@ -148,7 +148,7 @@ theorem integral_sqNorm_reflectedParentGradientExtension_eq_three_pow
     simpa only [MemVectorL2, volumeMeasureOn] using u.toH1Function.grad_memVectorL2
   rw [integral_sqNorm_reflectedParentGradientExtension, huP]
   simpa only [hilbertifyVecField, HilbertVec.norm_sq_ofVec] using
-    setIntegral_openCubeSet_succ_originCube_cubeDirichletOddReflectionVectorField_self_pairing_of_memVectorL2_three_pow
+    setIntegral_successorCube_dirichletOddReflectedVectorField_self_pairing
       hu
 
 theorem integral_sqNorm_hilbertify_reflectedParentDatumExtension_eq_three_pow
@@ -162,7 +162,7 @@ theorem integral_sqNorm_hilbertify_reflectedParentDatumExtension_eq_three_pow
           ‖hilbertifyVecField H x‖ ^ (2 : ℕ) ∂volume := by
   rw [integral_sqNorm_hilbertify_reflectedParentDatumExtension, hHP]
   simpa only [hilbertifyVecField, HilbertVec.norm_sq_ofVec] using
-    setIntegral_openCubeSet_succ_originCube_cubeDirichletOddReflectionVectorField_self_pairing_of_memVectorL2_three_pow
+    setIntegral_successorCube_dirichletOddReflectedVectorField_self_pairing
       hH
 
 /-- The zero extensions are globally square-integrable whenever their parent

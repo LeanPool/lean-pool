@@ -183,7 +183,8 @@ private theorem r2a_qform_flat (A : BlockMat d) (X : BlockVec d) :
 private theorem r2a_qform_blockScale (c : ℝ) (A : BlockMat d) (X : BlockVec d) :
     blockVecDot X (blockMatVecMul (blockScale c A) X) =
       c * blockVecDot X (blockMatVecMul A X) := by
-  rw [r2a_qform_flat, r2a_qform_flat, toFullBlockMat_blockScale, Matrix.smul_mulVec, dotProduct_smul,
+  rw [r2a_qform_flat, r2a_qform_flat, toFullBlockMat_blockScale, Matrix.smul_mulVec,
+    dotProduct_smul,
     smul_eq_mul]
 
 private theorem r2a_qform_identity (X : BlockVec d) :
@@ -238,7 +239,8 @@ theorem normalizedBlock_le_one_add_specBound {N : BlockMat d}
   set b : ℝ := blockSpecBound (blockSub N (Book.Ch02.blockIdentity d)) with hb
   have hloew : BlockMatLoewnerLE N (blockScale (1 + b) (Book.Ch02.blockIdentity d)) := by
     intro X
-    have h := blockMatLoewnerLE_blockScale_blockSpecBound_self (blockSub N (Book.Ch02.blockIdentity d)) X
+    have h := blockMatLoewnerLE_blockScale_blockSpecBound_self (blockSub N
+      (Book.Ch02.blockIdentity d)) X
     rw [r2a_qform_blockScale, r2a_qform_identity, ← hb] at h
     have hs : blockVecDot X (blockMatVecMul (blockSub N (Book.Ch02.blockIdentity d)) X)
         = blockVecDot X (blockMatVecMul N X) - toFullBlockVec X ⬝ᵥ toFullBlockVec X := by
@@ -378,7 +380,8 @@ theorem coarseBlock_le_sq_smul_respMean [NeZero d] (P : Measure (CoeffSpace d))
   set b : ℝ := blockSpecBound (blockSub (normalizedBlock Z (respMean P jStar F t))
     (Book.Ch02.blockIdentity d)) with hbdef
   have hb0 : 0 ≤ b := blockSpecBound_nonneg _
-  have hwt : (3 : ℝ) ^ (-(Quenched.contrastRho γ * (n : ℝ))) * b ≤ respAllScaleMax P γ jStar F t a :=
+  have hwt : (3 : ℝ) ^ (-(Quenched.contrastRho γ * (n : ℝ))) * b ≤ respAllScaleMax P γ jStar F t
+    a :=
     weighted_specBound_le_respAllScaleMax P γ jStar F t a n hw hbdd
   have hfac0 : (0 : ℝ) ≤ (3 : ℝ) ^ (-(Quenched.contrastRho γ * (n : ℝ))) :=
     Real.rpow_nonneg (by norm_num) _
@@ -430,7 +433,8 @@ restricted to the child cell. -/
 /-- An aligned adapted cell is nonempty.  This is proved from the PUBLIC
 `volume_adaptedCellAtCenter_toReal_pos` (`DiagonalDefectCarriers.lean`), mirroring the
 `private` `adaptedCellAtCenter_nonempty` (`…:366`). -/
-theorem adaptedCellAtCenter_nonempty_of_isUnit_of_neZero [NeZero d] (q : Mat d) (hq : IsUnit q) (k : ℤ)
+theorem adaptedCellAtCenter_nonempty_of_isUnit_of_neZero [NeZero d] (q : Mat d) (hq : IsUnit q)
+  (k : ℤ)
     (w : Fin d → ℤ) : (adaptedCellAtCenter q k w).Nonempty := by
   by_contra h
   rw [Set.not_nonempty_iff_eq_empty] at h
@@ -456,7 +460,8 @@ def adaptedDomainAt [NeZero d] (q : Mat d) (hq : IsUnit q) (k : ℤ) (w : Fin d 
 
 @[simp] theorem adaptedDomainAt_carrier [NeZero d] (q : Mat d) (hq : IsUnit q) (k : ℤ)
     (w : Fin d → ℤ) :
-    ((adaptedDomainAt q hq k w : Book.Ch02.Domain d) : Set (Vec d)) = adaptedCellAtCenter q k w := rfl
+    ((adaptedDomainAt q hq k w : Book.Ch02.Domain d) : Set (Vec d)) = adaptedCellAtCenter q k w
+      := rfl
 
 /-- The parent optimizer restricts to an admissible solution on every aligned child
 cell of the triadic subdivision.  This is `exists_restrict_solution_adaptedCellAtCenter`, whose
@@ -622,7 +627,8 @@ def selectionRegCoeffField (a : CoeffSpace d) : RegCoeffField d where
     intro K hK
     obtain ⟨M, -, hM⟩ := ae_abs_entry_le_of_aeUniformlyEllipticField a.2 hK.isBounded
     refine Measure.integrableOn_of_bounded hK.measure_lt_top.ne
-      ((continuous_id.matrix_elem i j).comp_aestronglyMeasurable a.1.aestronglyMeasurable) (M := M) ?_
+      ((continuous_id.matrix_elem i j).comp_aestronglyMeasurable a.1.aestronglyMeasurable) (M :=
+        M) ?_
     filter_upwards [ae_restrict_of_ae hM, ae_restrict_mem hK.measurableSet] with x hx hxK
     simpa [Real.norm_eq_abs] using hx hxK i j
 

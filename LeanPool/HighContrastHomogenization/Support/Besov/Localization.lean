@@ -95,7 +95,7 @@ theorem cubeProjection_memLp_of_mem_descendantsAtDepth {d : ℕ}
       with x hx
   simpa [c] using (congrArg abs hx).symm
 
-theorem cubeProjectionResidual_ae_eq_cubeProjectionResidual_depth_zero_of_mem_descendantsAtDepth
+theorem cubeProjectionResidual_ae_eq_childDepthZero
     {d : ℕ} {Q R : TriadicCube d} {j : ℕ} (u : Vec d → ℝ)
     (hR : R ∈ descendantsAtDepth Q j) :
     cubeProjectionResidual Q j u =ᵐ[normalizedCubeMeasure R] cubeProjectionResidual R 0 u := by
@@ -112,7 +112,7 @@ theorem
       cubeLpNorm R p (cubeProjectionResidual R 0 u) := by
   unfold cubeLpNorm
   rw [MeasureTheory.eLpNorm_congr_ae
-    (cubeProjectionResidual_ae_eq_cubeProjectionResidual_depth_zero_of_mem_descendantsAtDepth
+    (cubeProjectionResidual_ae_eq_childDepthZero
       (Q := Q) (R := R) (j := j) u hR)]
 
 theorem cubeProjectionResidual_memLp_of_mem_descendantsAtDepth
@@ -133,7 +133,7 @@ theorem cubeProjectionResidual_memLp_of_mem_descendantsAtDepth
   simpa using congrArg abs hx
 
 theorem
-  abs_cubeAverage_mul_cubeProjectionResidual_le_mul_cubeLpNorm_cubeBesovOscillation_of_mem_descendantsAtDepth
+  abs_cubeAverage_mul_cubeProjectionResidual_le_cubeLpNormBesovOscillation
     {d : ℕ} {Q R : TriadicCube d} {j : ℕ} (p : ℝ≥0∞) (f u : Vec d → ℝ)
     (hR : R ∈ descendantsAtDepth Q j)
     (hf : MeasureTheory.MemLp f p (normalizedCubeMeasure R))
@@ -167,7 +167,7 @@ theorem
             (Q := Q) (R := R) (j := j) (p := ENNReal.conjExponent p) u hR]
 
 theorem
-  abs_cubeAverage_mul_cubeProjection_cubeProjectionResidual_le_abs_cubeAverage_mul_cubeBesovOscillation_of_mem_descendantsAtDepth
+  abs_cubeAverage_mul_cubeProjectionResidual_le_cubeBesovOscillation
     {d : ℕ} {Q R : TriadicCube d} {j : ℕ} (p : ℝ≥0∞) (f u : Vec d → ℝ)
     (hR : R ∈ descendantsAtDepth Q j)
     (hu : MeasureTheory.MemLp (cubeFluctuation R u) (ENNReal.conjExponent p)
@@ -183,7 +183,7 @@ theorem
         cubeLpNorm R p (cubeProjection Q j f) * cubeBesovOscillation R (ENNReal.conjExponent p)
           u := by
           exact
-            abs_cubeAverage_mul_cubeProjectionResidual_le_mul_cubeLpNorm_cubeBesovOscillation_of_mem_descendantsAtDepth
+            abs_cubeAverage_mul_cubeProjectionResidual_le_cubeLpNormBesovOscillation
               (Q := Q) (R := R) (j := j) (p := p) (f := cubeProjection Q j f) (u := u)
               hR hproj hu hp
     _ = ‖cubeAverage R f‖ * cubeBesovOscillation R (ENNReal.conjExponent p) u := by

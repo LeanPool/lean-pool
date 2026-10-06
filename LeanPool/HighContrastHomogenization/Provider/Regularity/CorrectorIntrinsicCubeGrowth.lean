@@ -54,7 +54,8 @@ theorem exists_scalarIdentityGoodTailCorrectorCubeGrowthConstant
     exists_scalarIdentityGoodTailCorrectorOscillationConstant d s hs hs_lt
   refine ⟨K, c, hK, hc, ?_⟩
   intro a delta n hdelta hgood hCauchy e
-  apply NormalizedLocalH1Carrier.exists_cubeLpNorm_globalValueRepresentative_le_three_pow_of_oscillation_bound
+  apply
+    NormalizedLocalH1Carrier.exists_globalRepresentativeLpBound_of_oscillation
     (finiteAffineCorrectionJointLocalLimit a hCauchy e)
     n.toNat (K * euclideanNorm e)
     (mul_nonneg hK.le (euclideanNorm_nonneg e))

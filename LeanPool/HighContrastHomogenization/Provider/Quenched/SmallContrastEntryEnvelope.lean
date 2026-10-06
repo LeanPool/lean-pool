@@ -97,11 +97,8 @@ theorem integrable_sq_normalizedSourceScale
     ENNReal.ofReal_lt_top
   rw [Real.enorm_eq_ofReal (sq_nonneg _)]
 
-/-- **The entry-collapsed annealed envelope**: past the burn-in by the
-logarithm of the second source moment, the annealed aligned cell is
-dominated by the reference with the deterministic scale-adapted factor and
-the absolute constant `2`. -/
-theorem annealedBlock_adaptedCell_le_scaled_entry [NeZero d]
+
+private theorem adapted_cell_pathwise_source_envelope [NeZero d]
     (hd : 2 ≤ d) {g : ℝ} (hg : g ∈ Set.Ico (0 : ℝ) 1)
     {P : Measure (CoeffSpace d)} [IsProbabilityMeasure P]
     {E : BlockMat d} {Ψ : ℝ → ℝ} {K : ℝ} {S : CoeffSpace d → ℝ}
@@ -109,60 +106,29 @@ theorem annealedBlock_adaptedCell_le_scaled_entry [NeZero d]
     {l : ℤ} (hl : (kZero d : ℤ) ≤ l)
     {Cd : ℝ} (hCd : max 1 (12 * (d : ℝ) * Real.sqrt d) ≤ Cd)
     {n : Mat d} (hn : n.PosDef)
-    {sK : ℤ} (hsK : growthBar K ≤ (3 : ℝ) ^ sK)
+    {sK : ℤ}
     {k : ℤ} {w : Fin d → ℤ} (t : ℤ) {G : ℕ}
     (hDelta : 0 ≤ t + (G : ℤ) - 1 - sK)
-    (hentry : sourceMomentTwo K ≤ (3 : ℝ) ^ (t + (G : ℤ) - sK))
     (hsub : adaptedCellAt (roundedGrid l n) k w ⊆
       centeredCube d (t + (G : ℤ)))
-    (hint : HasIntegrableCoarseBlock P
-      (adaptedCellAt (roundedGrid l n) k w)) :
-    BlockMatLoewnerLE
-      (annealedBlock P (adaptedCellAt (roundedGrid l n) k w))
-      (blockScale
-        (2 * boundaryConst Cd g n *
-          (3 : ℝ) ^ (g * (((t + (G : ℤ) : ℤ) : ℝ) - (k : ℝ)))) E) := by
+    (hbC0 : 0 < boundaryConst Cd g n)
+    (hc00 : 0 ≤ (boundaryConst Cd g n *
+    (3 : ℝ) ^ (g * (((t + (G : ℤ) : ℤ) : ℝ) - (k : ℝ)))))
+    (hnss1 : ∀ a, 1 ≤ (normalizedSourceScale S sK) a)
+    : (∀ᵐ a ∂P,
+      ∀ X : BlockVec d,
+        blockVecDot X (blockMatVecMul
+          (coarseBlock (adaptedCellAt (roundedGrid l n) k w) a) X) ≤
+        (boundaryConst Cd g n *
+    (3 : ℝ) ^ (g * (((t + (G : ℤ) : ℤ) : ℝ) - (k : ℝ)))) * (1 + ({a | (3 : ℝ) ^ (t + (G : ℤ)) < S
+      a}).indicator (normalizedSourceScale S sK) a) *
+          blockVecDot X (blockMatVecMul E X)) := by
   classical
-  have hCd1 : (1 : ℝ) ≤ Cd := (le_max_left _ _).trans hCd
-  have hbC0 : 0 < boundaryConst Cd g n :=
-    Transport.zero_lt_boundaryConst (by linarith only [hCd1]) hg.2 hn
   set c0 : ℝ := boundaryConst Cd g n *
     (3 : ℝ) ^ (g * (((t + (G : ℤ) : ℤ) : ℝ) - (k : ℝ))) with hc0
-  have hc00 : 0 ≤ c0 :=
-    mul_nonneg hbC0.le (Real.rpow_nonneg (by norm_num) _)
-  set tau : ℝ := (3 : ℝ) ^ (t + (G : ℤ) - sK) with htaudef
-  have htau0 : 0 < tau := zpow_pos (by norm_num) _
   set bad : Set (CoeffSpace d) :=
     {a | (3 : ℝ) ^ (t + (G : ℤ)) < S a} with hbaddef
-  have hbadmeas : MeasurableSet bad :=
-    measurableSet_lt measurable_const hdag.source_measurable
   set nss : CoeffSpace d → ℝ := normalizedSourceScale S sK with hnssdef
-  have hnss1 : ∀ a, 1 ≤ nss a := fun a =>
-    one_le_normalizedSourceScale S sK a
-  have hnssmeas : Measurable nss :=
-    Measurable.max measurable_const (hdag.source_measurable.mul_const _)
-  -- on the bad event the normalized scale exceeds the threshold
-  have hnss_tau : ∀ a ∈ bad, tau ≤ nss a := by
-    intro a ha
-    rw [hbaddef, Set.mem_ofPred_eq] at ha
-    have h3sK : (0 : ℝ) < (3 : ℝ) ^ sK :=
-      lt_of_lt_of_le (by norm_num) ((le_max_left 2 K).trans hsK)
-    have h1 : tau * (3 : ℝ) ^ sK ≤ S a := by
-      rw [htaudef, ← zpow_add₀ (by norm_num : (3 : ℝ) ≠ 0)]
-      have heq : t + (G : ℤ) - sK + sK = t + (G : ℤ) := by ring
-      rw [heq]
-      exact ha.le
-    have h2 : tau ≤ S a * (3 : ℝ) ^ (-sK) := by
-      calc tau = tau * (3 : ℝ) ^ sK * (3 : ℝ) ^ (-sK) := by
-            rw [mul_assoc, ← zpow_add₀ (by norm_num : (3 : ℝ) ≠ 0)]
-            simp
-        _ ≤ S a * (3 : ℝ) ^ (-sK) := by
-          refine mul_le_mul_of_nonneg_right h1 ?_
-          positivity
-    refine le_trans h2 ?_
-    rw [hnssdef, normalizedSourceScale]
-    exact le_max_right _ _
-  -- the pathwise majorant
   have hscalar : ∀ᵐ a ∂P,
       ∀ X : BlockVec d,
         blockVecDot X (blockMatVecMul
@@ -290,6 +256,76 @@ theorem annealedBlock_adaptedCell_le_scaled_entry [NeZero d]
             Real.rpow_nonneg (by norm_num : (0:ℝ) ≤ 3)
               (g * (((t + (G : ℤ) : ℤ) : ℝ) - (k : ℝ)))]
   -- the indicator's first moment
+  exact hscalar
+/-- **The entry-collapsed annealed envelope**: past the burn-in by the
+logarithm of the second source moment, the annealed aligned cell is
+dominated by the reference with the deterministic scale-adapted factor and
+the absolute constant `2`. -/
+theorem annealedBlock_adaptedCell_le_scaled_entry [NeZero d]
+    (hd : 2 ≤ d) {g : ℝ} (hg : g ∈ Set.Ico (0 : ℝ) 1)
+    {P : Measure (CoeffSpace d)} [IsProbabilityMeasure P]
+    {E : BlockMat d} {Ψ : ℝ → ℝ} {K : ℝ} {S : CoeffSpace d → ℝ}
+    (hdag : HCPoly.Frozen.CoarseEllipticityDagger P g E Ψ K S)
+    {l : ℤ} (hl : (kZero d : ℤ) ≤ l)
+    {Cd : ℝ} (hCd : max 1 (12 * (d : ℝ) * Real.sqrt d) ≤ Cd)
+    {n : Mat d} (hn : n.PosDef)
+    {sK : ℤ} (hsK : growthBar K ≤ (3 : ℝ) ^ sK)
+    {k : ℤ} {w : Fin d → ℤ} (t : ℤ) {G : ℕ}
+    (hDelta : 0 ≤ t + (G : ℤ) - 1 - sK)
+    (hentry : sourceMomentTwo K ≤ (3 : ℝ) ^ (t + (G : ℤ) - sK))
+    (hsub : adaptedCellAt (roundedGrid l n) k w ⊆
+      centeredCube d (t + (G : ℤ)))
+    (hint : HasIntegrableCoarseBlock P
+      (adaptedCellAt (roundedGrid l n) k w)) :
+    BlockMatLoewnerLE
+      (annealedBlock P (adaptedCellAt (roundedGrid l n) k w))
+      (blockScale
+        (2 * boundaryConst Cd g n *
+          (3 : ℝ) ^ (g * (((t + (G : ℤ) : ℤ) : ℝ) - (k : ℝ)))) E) := by
+  classical
+  have hCd1 : (1 : ℝ) ≤ Cd := (le_max_left _ _).trans hCd
+  have hbC0 : 0 < boundaryConst Cd g n :=
+    Transport.zero_lt_boundaryConst (by linarith only [hCd1]) hg.2 hn
+  set c0 : ℝ := boundaryConst Cd g n *
+    (3 : ℝ) ^ (g * (((t + (G : ℤ) : ℤ) : ℝ) - (k : ℝ))) with hc0
+  have hc00 : 0 ≤ c0 :=
+    mul_nonneg hbC0.le (Real.rpow_nonneg (by norm_num) _)
+  set tau : ℝ := (3 : ℝ) ^ (t + (G : ℤ) - sK) with htaudef
+  have htau0 : 0 < tau := zpow_pos (by norm_num) _
+  set bad : Set (CoeffSpace d) :=
+    {a | (3 : ℝ) ^ (t + (G : ℤ)) < S a} with hbaddef
+  have hbadmeas : MeasurableSet bad :=
+    measurableSet_lt measurable_const hdag.source_measurable
+  set nss : CoeffSpace d → ℝ := normalizedSourceScale S sK with hnssdef
+  have hnss1 : ∀ a, 1 ≤ nss a := fun a =>
+    one_le_normalizedSourceScale S sK a
+  have hnssmeas : Measurable nss :=
+    Measurable.max measurable_const (hdag.source_measurable.mul_const _)
+  -- on the bad event the normalized scale exceeds the threshold
+  have hnss_tau : ∀ a ∈ bad, tau ≤ nss a := by
+    intro a ha
+    rw [hbaddef, Set.mem_ofPred_eq] at ha
+    have h3sK : (0 : ℝ) < (3 : ℝ) ^ sK :=
+      lt_of_lt_of_le (by norm_num) ((le_max_left 2 K).trans hsK)
+    have h1 : tau * (3 : ℝ) ^ sK ≤ S a := by
+      rw [htaudef, ← zpow_add₀ (by norm_num : (3 : ℝ) ≠ 0)]
+      have heq : t + (G : ℤ) - sK + sK = t + (G : ℤ) := by ring
+      rw [heq]
+      exact ha.le
+    have h2 : tau ≤ S a * (3 : ℝ) ^ (-sK) := by
+      calc tau = tau * (3 : ℝ) ^ sK * (3 : ℝ) ^ (-sK) := by
+            rw [mul_assoc, ← zpow_add₀ (by norm_num : (3 : ℝ) ≠ 0)]
+            simp
+        _ ≤ S a * (3 : ℝ) ^ (-sK) := by
+          refine mul_le_mul_of_nonneg_right h1 ?_
+          positivity
+    refine le_trans h2 ?_
+    rw [hnssdef, normalizedSourceScale]
+    exact le_max_right _ _
+  -- the pathwise majorant
+  have hscalar :=
+    adapted_cell_pathwise_source_envelope hd hg hdag hl hCd hn t
+      hDelta hsub hbC0 hc00 hnss1
   have hindsq : ∀ a, bad.indicator nss a ≤ tau⁻¹ * nss a ^ 2 := by
     intro a
     by_cases ha : a ∈ bad

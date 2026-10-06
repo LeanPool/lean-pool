@@ -238,7 +238,8 @@ theorem translate_standardCell_by_coarser_center {d : ℕ}
     translateSet (standardCellCenter (k + n) v) (standardCell d k w) =
       standardCell d k (fun i => w i + (3 : ℤ) ^ n * v i) := by
   ext x
-  rw [mem_translateSet_iff_sub_mem, Recurrence.mem_standardCell_iff, Recurrence.mem_standardCell_iff]
+  rw [mem_translateSet_iff_sub_mem, Recurrence.mem_standardCell_iff,
+    Recurrence.mem_standardCell_iff]
   have hp : (3 : ℝ) ^ (k + n) = (3 : ℝ) ^ k * (3 : ℝ) ^ n := by
     rw [zpow_add₀ (by norm_num), zpow_natCast]
   simp only [standardCellCenter, Pi.sub_apply, Int.cast_add, Int.cast_mul, Int.cast_pow,

@@ -56,7 +56,7 @@ theorem homogenizationErrorOnCube_infinity_one_le_of_mem_descendantsAtScale {d :
     dsimp [fQ]
     exact mul_nonneg (geometricWeight_nonneg n (by simpa using hs))
       (scaleResponseAtScale_infinity_nonneg Q
-        (sub_le_self _ (by exact_mod_cast Nat.zero_le n)) a a0)
+        (sub_le_self _ (Nat.cast_nonneg n)) a a0)
   have htailSummable : Summable (fun n : ℕ => fQ (n + h)) := (summable_nat_add_iff h).2 hsum
   have hfactorNonneg : 0 ≤ factor := by
     dsimp [factor]
@@ -71,7 +71,7 @@ theorem homogenizationErrorOnCube_infinity_one_le_of_mem_descendantsAtScale {d :
     have hresp :
         scaleResponseAtScale R (R.scale - (n : ℤ)) .infinity a a0 ≤
           scaleResponseAtScale Q (Q.scale - ((n + h : ℕ) : ℤ)) .infinity a a0 := by
-      have hl : R.scale - (n : ℤ) ≤ R.scale := sub_le_self _ (by exact_mod_cast Nat.zero_le n)
+      have hl : R.scale - (n : ℤ) ≤ R.scale := sub_le_self _ (Nat.cast_nonneg n)
       simpa [hscale] using
         (scaleResponseAtScale_infinity_le_of_mem_descendantsAtScale
           (Q := Q) (R := R) (k := k) (l := R.scale - (n : ℤ)) a a0 hR hl)
@@ -96,7 +96,7 @@ theorem homogenizationErrorOnCube_infinity_one_le_of_mem_descendantsAtScale {d :
     dsimp [fR]
     exact mul_nonneg (geometricWeight_nonneg n (by simpa using hs))
       (scaleResponseAtScale_infinity_nonneg R
-        (sub_le_self _ (by exact_mod_cast Nat.zero_le n)) a a0)
+        (sub_le_self _ (Nat.cast_nonneg n)) a a0)
   have hscaledNonneg : ∀ n : ℕ, 0 ≤ factor * fQ (n + h) := by
     intro n
     exact mul_nonneg hfactorNonneg (hQnonneg (n + h))
@@ -169,7 +169,7 @@ theorem homogenizationErrorOnCube_infinity_one_basic_properties_of_isEllipticFie
             HomogenizationErrorOnCube Q s .infinity (.finite 1) a a0 := by
   refine ⟨?_, ?_, ?_⟩
   · exact
-      scaleResponseAtScale_infinity_self_le_homogenizationErrorOnCube_infinity_one_of_isEllipticFieldOn
+      scaleResponse_infinity_self_le_homogenizationError
         Q a a0 s hs hEll hsum_s
   · exact
       homogenizationErrorOnCube_infinity_one_le_of_lt_of_isEllipticFieldOn
@@ -199,9 +199,9 @@ theorem oneCubeDefect_rpow_half_sSup_le_homogenizationErrorOnCube_infinity_one_o
                     ResponseJ (cubeSet Q) (Q'.2 + P.1) (Q'.1 + P.2)
                       (HCPolySupport.adjointCoeffField a) }) (1 / 2 : ℝ) ≤
       HomogenizationErrorOnCube Q s .infinity (.finite 1) a a0 := by
-  simpa [scaleResponseAtScale_infinity_self_eq_rpow_half_sSup_half_responseJ_adjoint_sum_of_isEllipticFieldOn
+  simpa [scaleResponse_self_eq_sqrt_responseJ_adjoint_sum
     Q a a0 hEll] using
-    (scaleResponseAtScale_infinity_self_le_homogenizationErrorOnCube_infinity_one_of_isEllipticFieldOn
+    (scaleResponse_infinity_self_le_homogenizationError
       Q a a0 s hs hEll hsum_s)
 
 theorem homogenizationErrorOnCube_infinity_one_note_basic_properties_of_isEllipticFieldOn

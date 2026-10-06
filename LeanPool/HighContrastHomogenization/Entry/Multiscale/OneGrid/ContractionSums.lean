@@ -195,7 +195,8 @@ theorem new_fluctuation_sum_le (d : ℕ) (hd : 2 ≤ d) (γ : ℝ)
     simp only [Finset.mem_Icc] at hj
     obtain ⟨hj1, hj2⟩ := hj
     have hjhge : (jStar : ℤ) ≤ j - (h : ℤ) := by omega
-    have hp : ∫ a, absSchattenNorm (bigQ d γ : ℝ) (normalizedFluctuationSelf P q j a) ^ bigQ d γ ∂P ≤
+    have hp : ∫ a, absSchattenNorm (bigQ d γ : ℝ) (normalizedFluctuationSelf P q j a) ^ bigQ d γ
+      ∂P ≤
         Ah * Real.exp ((bigQ d γ : ℝ) * detIncrement P q (j - (h : ℤ)) j) *
             (∫ a, absSchattenNorm (bigQ d γ : ℝ)
               (normalizedFluctuationSelf P q (j - (h : ℤ)) a) ^ bigQ d γ ∂P) +
@@ -370,7 +371,8 @@ theorem meanHistory_transport_le (d : ℕ) (hd : 2 ≤ d) (γ : ℝ)
                           j (m + (h : ℤ))) ≤
                   (3 : ℝ) ^ (-((1 - γ) / 4) * (h : ℝ)) *
                         Real.exp ((bigQ d γ : ℝ) *
-                          detIncrement P (Geometry.explicitRoundedGrid jStar metric) m (m + (h : ℤ))) *
+                          detIncrement P (Geometry.explicitRoundedGrid jStar metric) m (m + (h :
+                            ℤ))) *
                         meanHistory P γ (Geometry.explicitRoundedGrid jStar metric) n m +
                       C * (Real.exp ((bigQ d γ : ℝ) *
                         detIncrement P (Geometry.explicitRoundedGrid jStar metric)
@@ -397,7 +399,8 @@ theorem meanHistory_transport_le (d : ℕ) (hd : 2 ≤ d) (γ : ℝ)
   have hw (x : ℝ) : 0 ≤ w x := Real.rpow_nonneg (by norm_num) _
   have hwL : w (L : ℝ) ≤ 1 := by
     apply Real.rpow_le_one_of_one_le_of_nonpos (by norm_num)
-    exact mul_nonpos_of_nonpos_of_nonneg (by linarith only [hγ.2]) (by exact_mod_cast (by omega : (0 : ℤ) ≤ L))
+    exact mul_nonpos_of_nonpos_of_nonneg (by linarith only [hγ.2]) (by exact_mod_cast (by omega
+      : (0 : ℤ) ≤ L))
   have hsplit (x : ℝ) : w ((L : ℝ) + x) = w (L : ℝ) * w x := by
     dsimp only [w]
     rw [← Real.rpow_add (by norm_num : (0 : ℝ) < 3)]

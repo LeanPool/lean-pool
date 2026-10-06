@@ -368,7 +368,7 @@ function on bounded open convex domains. The witness is obtained by
 diagonalising closure approximations against each graph approximant's internal
 smooth compactly supported approximation data. -/
 theorem exists_h10Function_of_mem_h10GraphClosedSubmodule
-    [NeZero d] (hU : IsOpenBoundedConvexDomain U)
+    (hU : IsOpenBoundedConvexDomain U)
     {z : ScalarL2 U × HilbertVectorL2 U}
     (hz : z ∈ (h10GraphClosedSubmodule U).toSubmodule) :
     ∃ u : H10Function U,

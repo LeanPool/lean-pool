@@ -172,7 +172,7 @@ theorem trace_cfc_rpow_mul_self {A : Matrix n n ℝ} (hA : A.PosSemidef) {Q : �
   rw [← hcomp, hcongr]
 
 /-- **The trace-power estimate in the Schatten dialect of the fixed-grid
-section.**  This is `tr(D^Q) ≤ |Ĝ|^{Q-1} tr D` with the left side written as the
+section.**  This is `tr(D^Q) ≤ |G_hat|^{Q-1} tr D` with the left side written as the
 Schatten trace of the squared matrix, the form in which the mixed norm reads
 it. -/
 theorem trace_cfc_rpow_mul_self_le {A : Matrix n n ℝ} (hA : A.PosSemidef) {t Q : ℝ}

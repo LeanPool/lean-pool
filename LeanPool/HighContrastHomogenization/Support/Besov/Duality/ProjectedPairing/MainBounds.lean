@@ -225,7 +225,7 @@ theorem abs_cubeBesovPairing_projection_le_max_mul_cubeBesovPartialNorm_cubeBeso
             rfl
 
 theorem
-  abs_cubeBesovPairing_projection_le_max_mul_cubeBesovPartialNormTop_cubeBesovCircPartialNormOne
+  abs_cubeBesovPairing_projection_le_max_partialTop_circOne
     {d : ℕ} (Q : TriadicCube d) (s : ℝ) (p : ℝ≥0∞) (f g : Vec d → ℝ) (N : ℕ)
     (hgInt : MeasureTheory.IntegrableOn g (cubeSet Q) MeasureTheory.volume)
     (hp : 1 ≤ p) (hpTop : p ≠ ∞) (hpConjTop : cubeBesovConjExponent p ≠ ∞)
@@ -408,7 +408,7 @@ theorem
             rfl
 
 theorem
-  abs_cubeBesovPairing_projection_le_max_mul_cubeBesovPartialNormOne_cubeBesovCircPartialNormTop
+  abs_cubeBesovPairing_projection_le_max_partialOne_circTop
     {d : ℕ} (Q : TriadicCube d) (s : ℝ) (p : ℝ≥0∞) (f g : Vec d → ℝ) (N : ℕ)
     (hgInt : MeasureTheory.IntegrableOn g (cubeSet Q) MeasureTheory.volume)
     (hp : 1 ≤ p) (hpTop : p ≠ ∞) (hpConjTop : cubeBesovConjExponent p ≠ ∞)

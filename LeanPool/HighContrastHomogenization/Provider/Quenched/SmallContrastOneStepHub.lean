@@ -47,6 +47,155 @@ open scoped ENNReal Matrix
 
 noncomputable section
 
+
+private theorem calibrated_response_energy_bounds (d : ℕ) [NeZero d]
+    {P : Measure (CoeffSpace d)} [IsProbabilityMeasure P]
+    {t : ℤ} {q S SStar K : Mat d}
+    (hintt : HasFiniteAdaptedMean P q t) (hq : q.PosDef)
+    (hh0 : IsSkewMat (Response.responseSkew K))
+    : (∀ e : Vec d, e ⬝ᵥ e = 1 →
+      (fun e ↦
+    ∫ a, responseJ (Response.adaptedDomain hq t) (((fun a ↦ a.subSkew (Response.responseSkew K)
+      hh0) a).coeffOn (Response.adaptedDomain hq t)) ((Response.centeredResponseLoadP S SStar K) e)
+      ((Response.centeredResponseLoadQ S SStar K) e) ∂P) e ≤
+        |Response.centeredResponse P (Response.adaptedDomain hq t) ((Response.centeredResponseLoadP
+          S SStar K) e)
+          ((Response.centeredResponseLoadQ S SStar K) e - (Response.responseSkew K) *ᵥ
+            (Response.centeredResponseLoadP S SStar K) e)| + (fun e ↦
+    (1 / 2 : ℝ) *
+      |vecDot
+        (fun i ↦ ∫ a, averageGradient (Response.adaptedDomain hq t) (((fun a ↦ a.subSkew
+          (Response.responseSkew K) hh0) a).coeffOn (Response.adaptedDomain hq t))
+          (Response.centeredResponseOptimizer (Response.adaptedDomain hq t) ((fun a ↦ a.subSkew
+            (Response.responseSkew K) hh0) a) ((Response.centeredResponseLoadP S SStar K) e)
+            ((Response.centeredResponseLoadQ S SStar K) e))
+            i ∂P)
+        (fun i ↦ ∫ a, averageFlux (Response.adaptedDomain hq t) (((fun a ↦ a.subSkew
+          (Response.responseSkew K) hh0) a).coeffOn (Response.adaptedDomain hq t))
+          (Response.centeredResponseOptimizer (Response.adaptedDomain hq t) ((fun a ↦ a.subSkew
+            (Response.responseSkew K) hh0) a) ((Response.centeredResponseLoadP S SStar K) e)
+            ((Response.centeredResponseLoadQ S SStar K) e))
+            i ∂P)|) e) ∧
+    (∀ e : Vec d, e ⬝ᵥ e = 1 →
+      (fun e ↦
+    ∫ a, responseJ (Response.adaptedDomain hq t) (((fun a ↦ a.subSkew (Response.responseSkew K)
+      hh0) a).transpose.coeffOn (Response.adaptedDomain hq t))
+      ((Response.centeredResponseLoadP S SStar K) e) ((Response.centeredResponseLoadQ S SStar K) e)
+        ∂P) e ≤
+        |Response.centeredAdjointResponse P (Response.adaptedDomain hq t)
+          ((Response.centeredResponseLoadP S SStar K) e)
+          ((Response.centeredResponseLoadQ S SStar K) e + (Response.responseSkew K) *ᵥ
+            (Response.centeredResponseLoadP S SStar K) e)| + (fun e ↦
+    (1 / 2 : ℝ) *
+      |vecDot
+        (fun i ↦ ∫ a, averageGradient (Response.adaptedDomain hq t) (((fun a ↦ a.subSkew
+          (Response.responseSkew K) hh0) a).transpose.coeffOn (Response.adaptedDomain hq t))
+          (Response.centeredAdjointOptimizer (Response.adaptedDomain hq t) ((fun a ↦ a.subSkew
+            (Response.responseSkew K) hh0) a) ((Response.centeredResponseLoadP S SStar K) e)
+            ((Response.centeredResponseLoadQ S SStar K) e))
+            i ∂P)
+        (fun i ↦ ∫ a, averageFlux (Response.adaptedDomain hq t) (((fun a ↦ a.subSkew
+          (Response.responseSkew K) hh0) a).transpose.coeffOn (Response.adaptedDomain hq t))
+          (Response.centeredAdjointOptimizer (Response.adaptedDomain hq t) ((fun a ↦ a.subSkew
+            (Response.responseSkew K) hh0) a) ((Response.centeredResponseLoadP S SStar K) e)
+            ((Response.centeredResponseLoadQ S SStar K) e))
+            i ∂P)|) e) := by
+  classical
+  let U : Domain d := Response.adaptedDomain hq t
+  let h0 : Mat d := Response.responseSkew K
+  let loadP : Vec d → Vec d := Response.centeredResponseLoadP S SStar K
+  let loadQ : Vec d → Vec d := Response.centeredResponseLoadQ S SStar K
+  let sample : CoeffSpace d → CoeffSpace d := fun a ↦ a.subSkew h0 hh0
+  let EJMinus : Vec d → ℝ := fun e ↦
+    ∫ a, responseJ U ((sample a).coeffOn U) (loadP e) (loadQ e) ∂P
+  let EJPlus : Vec d → ℝ := fun e ↦
+    ∫ a, responseJ U ((sample a).transpose.coeffOn U)
+      (loadP e) (loadQ e) ∂P
+  let centerMinus : Vec d → ℝ := fun e ↦
+    (1 / 2 : ℝ) *
+      |vecDot
+        (fun i ↦ ∫ a, averageGradient U ((sample a).coeffOn U)
+          (Response.centeredResponseOptimizer U (sample a) (loadP e) (loadQ e))
+            i ∂P)
+        (fun i ↦ ∫ a, averageFlux U ((sample a).coeffOn U)
+          (Response.centeredResponseOptimizer U (sample a) (loadP e) (loadQ e))
+            i ∂P)|
+  let centerPlus : Vec d → ℝ := fun e ↦
+    (1 / 2 : ℝ) *
+      |vecDot
+        (fun i ↦ ∫ a, averageGradient U ((sample a).transpose.coeffOn U)
+          (Response.centeredAdjointOptimizer U (sample a) (loadP e) (loadQ e))
+            i ∂P)
+        (fun i ↦ ∫ a, averageFlux U ((sample a).transpose.coeffOn U)
+          (Response.centeredAdjointOptimizer U (sample a) (loadP e) (loadQ e))
+            i ∂P)|
+  have henergyMinus : ∀ e : Vec d, e ⬝ᵥ e = 1 →
+      EJMinus e ≤
+        |Response.centeredResponse P U (loadP e)
+          (loadQ e - h0 *ᵥ loadP e)| + centerMinus e := by
+    intro e _he
+    have hid := Response.true_load_centered_response_eq hq t hintt
+      (S := S) (SStar := SStar) (K := K) e
+    dsimp only at hid
+    have hEJ : EJMinus e =
+        Response.centeredResponse P U (loadP e) (loadQ e - h0 *ᵥ loadP e) +
+          (1 / 2 : ℝ) *
+            vecDot
+              (fun i ↦ ∫ a, averageGradient U ((sample a).coeffOn U)
+                (Response.centeredResponseOptimizer U (sample a)
+                  (loadP e) (loadQ e)) i ∂P)
+              (fun i ↦ ∫ a, averageFlux U ((sample a).coeffOn U)
+                (Response.centeredResponseOptimizer U (sample a)
+                  (loadP e) (loadQ e)) i ∂P) :=
+      sub_eq_iff_eq_add.mp hid
+    have habs : |(1 / 2 : ℝ) *
+        vecDot
+          (fun i ↦ ∫ a, averageGradient U ((sample a).coeffOn U)
+            (Response.centeredResponseOptimizer U (sample a) (loadP e) (loadQ e))
+              i ∂P)
+          (fun i ↦ ∫ a, averageFlux U ((sample a).coeffOn U)
+            (Response.centeredResponseOptimizer U (sample a) (loadP e) (loadQ e))
+              i ∂P)| = centerMinus e := by
+      dsimp only [centerMinus]
+      rw [abs_mul, abs_of_nonneg (by norm_num : (0 : ℝ) ≤ 1 / 2)]
+    rw [hEJ, ← habs]
+    exact add_le_add (le_abs_self _) (le_abs_self _)
+  have henergyPlus : ∀ e : Vec d, e ⬝ᵥ e = 1 →
+      EJPlus e ≤
+        |Response.centeredAdjointResponse P U (loadP e)
+          (loadQ e + h0 *ᵥ loadP e)| + centerPlus e := by
+    intro e _he
+    have hid := Response.true_load_centered_adjoint_response_eq hq t hintt
+      (S := S) (SStar := SStar) (K := K) e
+    dsimp only at hid
+    have hEJ : EJPlus e =
+        Response.centeredAdjointResponse P U (loadP e)
+            (loadQ e + h0 *ᵥ loadP e) +
+          (1 / 2 : ℝ) *
+            vecDot
+              (fun i ↦ ∫ a, averageGradient U
+                ((sample a).transpose.coeffOn U)
+                (Response.centeredAdjointOptimizer U (sample a)
+                  (loadP e) (loadQ e)) i ∂P)
+              (fun i ↦ ∫ a, averageFlux U
+                ((sample a).transpose.coeffOn U)
+                (Response.centeredAdjointOptimizer U (sample a)
+                  (loadP e) (loadQ e)) i ∂P) :=
+      sub_eq_iff_eq_add.mp hid
+    have habs : |(1 / 2 : ℝ) *
+        vecDot
+          (fun i ↦ ∫ a, averageGradient U ((sample a).transpose.coeffOn U)
+            (Response.centeredAdjointOptimizer U (sample a) (loadP e) (loadQ e))
+              i ∂P)
+          (fun i ↦ ∫ a, averageFlux U ((sample a).transpose.coeffOn U)
+            (Response.centeredAdjointOptimizer U (sample a) (loadP e) (loadQ e))
+              i ∂P)| = centerPlus e := by
+      dsimp only [centerPlus]
+      rw [abs_mul, abs_of_nonneg (by norm_num : (0 : ℝ) ≤ 1 / 2)]
+    rw [hEJ, ← habs]
+    exact add_le_add (le_abs_self _) (le_abs_self _)
+  -- the reabsorbed compact response upper bound
+  exact ⟨henergyMinus, henergyPlus⟩
 /-- **The conditional one-step hatted contraction.**  The constant `Cpre` is
 selected before the law.  All hypotheses except the three caps (`hcaps`) are
 either hcore data, grid/window geometry, or the two smallness clauses; the
@@ -228,72 +377,9 @@ theorem exists_hatted_one_step_of_profile_caps (d : ℕ) [NeZero d] :
     exact calibratedProfileDefects_le_of_smallDrop hstat hgrid hls hst
       hints hintt hS hStar hform hsmall hdrop e he
   -- the energy identities at the calibrated loads
-  have henergyMinus : ∀ e : Vec d, e ⬝ᵥ e = 1 →
-      EJMinus e ≤
-        |Response.centeredResponse P U (loadP e)
-          (loadQ e - h0 *ᵥ loadP e)| + centerMinus e := by
-    intro e _he
-    have hid := Response.true_load_centered_response_eq hq t hintt
-      (S := S) (SStar := SStar) (K := K) e
-    dsimp only at hid
-    have hEJ : EJMinus e =
-        Response.centeredResponse P U (loadP e) (loadQ e - h0 *ᵥ loadP e) +
-          (1 / 2 : ℝ) *
-            vecDot
-              (fun i ↦ ∫ a, averageGradient U ((sample a).coeffOn U)
-                (Response.centeredResponseOptimizer U (sample a)
-                  (loadP e) (loadQ e)) i ∂P)
-              (fun i ↦ ∫ a, averageFlux U ((sample a).coeffOn U)
-                (Response.centeredResponseOptimizer U (sample a)
-                  (loadP e) (loadQ e)) i ∂P) :=
-      sub_eq_iff_eq_add.mp hid
-    have habs : |(1 / 2 : ℝ) *
-        vecDot
-          (fun i ↦ ∫ a, averageGradient U ((sample a).coeffOn U)
-            (Response.centeredResponseOptimizer U (sample a) (loadP e) (loadQ e))
-              i ∂P)
-          (fun i ↦ ∫ a, averageFlux U ((sample a).coeffOn U)
-            (Response.centeredResponseOptimizer U (sample a) (loadP e) (loadQ e))
-              i ∂P)| = centerMinus e := by
-      dsimp only [centerMinus]
-      rw [abs_mul, abs_of_nonneg (by norm_num : (0 : ℝ) ≤ 1 / 2)]
-    rw [hEJ, ← habs]
-    exact add_le_add (le_abs_self _) (le_abs_self _)
-  have henergyPlus : ∀ e : Vec d, e ⬝ᵥ e = 1 →
-      EJPlus e ≤
-        |Response.centeredAdjointResponse P U (loadP e)
-          (loadQ e + h0 *ᵥ loadP e)| + centerPlus e := by
-    intro e _he
-    have hid := Response.true_load_centered_adjoint_response_eq hq t hintt
-      (S := S) (SStar := SStar) (K := K) e
-    dsimp only at hid
-    have hEJ : EJPlus e =
-        Response.centeredAdjointResponse P U (loadP e)
-            (loadQ e + h0 *ᵥ loadP e) +
-          (1 / 2 : ℝ) *
-            vecDot
-              (fun i ↦ ∫ a, averageGradient U
-                ((sample a).transpose.coeffOn U)
-                (Response.centeredAdjointOptimizer U (sample a)
-                  (loadP e) (loadQ e)) i ∂P)
-              (fun i ↦ ∫ a, averageFlux U
-                ((sample a).transpose.coeffOn U)
-                (Response.centeredAdjointOptimizer U (sample a)
-                  (loadP e) (loadQ e)) i ∂P) :=
-      sub_eq_iff_eq_add.mp hid
-    have habs : |(1 / 2 : ℝ) *
-        vecDot
-          (fun i ↦ ∫ a, averageGradient U ((sample a).transpose.coeffOn U)
-            (Response.centeredAdjointOptimizer U (sample a) (loadP e) (loadQ e))
-              i ∂P)
-          (fun i ↦ ∫ a, averageFlux U ((sample a).transpose.coeffOn U)
-            (Response.centeredAdjointOptimizer U (sample a) (loadP e) (loadQ e))
-              i ∂P)| = centerPlus e := by
-      dsimp only [centerPlus]
-      rw [abs_mul, abs_of_nonneg (by norm_num : (0 : ℝ) ≤ 1 / 2)]
-    rw [hEJ, ← habs]
-    exact add_le_add (le_abs_self _) (le_abs_self _)
-  -- the reabsorbed compact response upper bound
+  obtain ⟨henergyMinus, henergyPlus⟩ :=
+    calibrated_response_energy_bounds
+      d hintt hq hh0
   have hupper := centered_response_sup_le_of_reabsorbed_compact_preYoung
     (P := P) U (S := S) (SStar := SStar) (K := K)
     (C := Cpre) (expo := expo) (eta := eta) (D := D) (L := L) (W := W)

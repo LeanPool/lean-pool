@@ -37,41 +37,16 @@ open scoped BigOperators ENNReal
 
 namespace ZeroTraceDirichletCorrectorData
 
-/--
-The corrected weak-flux component with the averaged corrector-energy force
-budget inserted directly.
-
-This is the scalar repair that avoids the false comparison
-`lambda^{-1} <= Lambda`: the coefficient-energy component is bounded by the
-proved weak-flux energy compact scale, and the corrector-energy component is
-bounded by its own proved `Lambda * lambda^{-1}` force scale.
--/
-theorem cubeBesovNegativeVectorSeminormTwo_matVecMul_grad_le_const_mul_coarseFluxResponseRHSWeakFluxCorrectionBound_of_averagedCorrectorEnergy
+private theorem weakFluxCorrection_componentBudget_le_compactSquare
     {d : ℕ} [NeZero d] {Q : TriadicCube d} {a : CoeffField d}
     {g : Vec d → Vec d} (ρ : ZeroTraceDirichletCorrectorData Q a g)
     (C s : ℝ) {Bcorr lam Lam : ℝ}
-    (hC_nonneg : 0 ≤ C)
     (hs : 0 < s) (hs_le : s ≤ 1)
     (hEll : IsEllipticFieldOn lam Lam (cubeSet Q) a)
     (hg : MeasureTheory.MemLp g (2 : ENNReal) (normalizedCubeMeasure Q))
     (hGlobalBdd :
       BddAbove (Set.range fun N : ℕ =>
         cubeBesovPositiveVectorPartialSeminormTwo Q s N g))
-    (z : TriadicCube d → Vec d → Vec d)
-    (hzdecomp :
-      ∀ j : ℕ, ∀ R ∈ descendantsAtDepth Q j,
-        ∃ ω : MeanZeroNeumannCorrectorData R a
-            (fun x => g x - cubeAverageVec R g),
-          ∃ w0 : AHarmonicFunction a (cubeSet R),
-            z R = (fun x => ω.toH1MeanZero.toH1Function.grad x) ∧
-            ∀ x ∈ cubeSet R,
-              ρ.toH10.toH1Function.grad x =
-                w0.toH1.grad x + z R x)
-    (hcorr :
-      ∀ k : ℕ,
-        coarsePoincareRHSDepthWeight s k *
-          weakFluxRHSLocalCorrectorEnergyErrorAverage Q a z s k ≤
-          Bcorr)
     (hcorrectorForceBudget :
       Bcorr * (1 - Real.rpow (3 : ℝ) (-s))⁻¹ ≤
         2500 * (s⁻¹) ^ 4 *
@@ -85,9 +60,10 @@ theorem cubeBesovNegativeVectorSeminormTwo_matVecMul_grad_le_const_mul_coarseFlu
         2500 *
           ((d : ℝ) * ((3 : ℝ) ^ ((d : ℝ) + s) * Real.sqrt 2)) ^ 2 ≤
         C ^ 2) :
-    cubeBesovNegativeVectorSeminormTwo Q s
-        (fun x => matVecMul (a x) (ρ.toH10.toH1Function.grad x)) ≤
-      C * coarseFluxResponseRHSWeakFluxCorrectionBound Q a s g := by
+    (weakFluxRHSWeightedCoefficientEnergyBase Q a
+      (fun x => ρ.toH10.toH1Function.grad x) s + Bcorr) *
+      (1 - Real.rpow (3 : ℝ) (-s))⁻¹ ≤
+      (C * coarseFluxResponseRHSWeakFluxCorrectionBound Q a s g) ^ 2 := by
   let Bcoeff : ℝ :=
     weakFluxRHSWeightedCoefficientEnergyBase Q a
       (fun x => ρ.toH10.toH1Function.grad x) s
@@ -107,72 +83,6 @@ theorem cubeBesovNegativeVectorSeminormTwo_matVecMul_grad_le_const_mul_coarseFlu
           (fun x => ρ.toH10.toH1Function.grad x)) :=
     cubeAverage_coefficientEnergyDensity_nonneg_of_isEllipticFieldOn
       Q a (fun x => ρ.toH10.toH1Function.grad x) hEll
-  have hBcoeff_nonneg : 0 ≤ Bcoeff := by
-    dsimp [Bcoeff]
-    exact
-      weakFluxRHSWeightedCoefficientEnergyBase_nonneg Q a
-        (fun x => ρ.toH10.toH1Function.grad x) hs havg_nonneg
-  have hBcorr_nonneg : 0 ≤ Bcorr := by
-    have havg_corr_nonneg :
-        0 ≤ weakFluxRHSLocalCorrectorEnergyErrorAverage Q a z s 0 := by
-      unfold weakFluxRHSLocalCorrectorEnergyErrorAverage
-      exact descendantsAverage_nonneg Q 0 _ fun R hR => by
-        unfold weakFluxRHSLocalCorrectorEnergyError
-        have hEllR : IsEllipticFieldOn lam Lam (cubeSet R) a :=
-          hEll.mono (measurableSet_cubeSet R)
-            (cubeSet_subset_of_mem_descendantsAtDepth hR)
-        exact mul_nonneg
-          (mul_nonneg (by norm_num : 0 ≤ (2 : ℝ))
-            (weakFluxRHSLocalCoeff_nonneg R a hs))
-          (cubeAverage_nonneg_of_nonneg_on
-            (coefficientEnergyDensity_nonneg_of_isEllipticFieldOn hEllR
-              (z R)))
-    have hweight_nonneg : 0 ≤ coarsePoincareRHSDepthWeight s 0 := by
-      unfold coarsePoincareRHSDepthWeight
-      exact Real.rpow_nonneg (by norm_num : 0 ≤ (3 : ℝ)) _
-    exact (mul_nonneg hweight_nonneg havg_corr_nonneg).trans (hcorr 0)
-  have hlocalized :
-      localizedFluxDefectNegativeBesovAverageTwo Q s
-          (fun x => matVecMul (a x) (ρ.toH10.toH1Function.grad x)) 0 ≤
-        Real.sqrt
-          ((coarsePoincareRHSDepthWeight s 0)⁻¹ *
-            ((Bcoeff + Bcorr) * H)) := by
-    simpa [Bcoeff, H] using
-      localizedFluxDefectNegativeBesovAverageTwo_matVecMul_grad_le_sqrt_correctorEnergyComponents_of_selectors
-        (Q := Q) (a := a) (g := g) ρ (s := s)
-        (Bcorr := Bcorr) (lam := lam) (Lam := Lam)
-        hs hEll 0 hg z hzdecomp
-        (by intro k; simpa using hcorr k)
-  have hfluxV_mem :
-      MemVectorL2 (cubeSet Q)
-        (fun x => matVecMul (a x) (ρ.toH10.toH1Function.grad x)) :=
-    memVectorL2_matVecMul_of_isEllipticFieldOn hEll
-      ρ.toH10.toH1Function.grad_memVectorL2
-  have hfluxV_bdd :
-      BddAbove (Set.range fun N : ℕ =>
-        cubeBesovNegativeVectorPartialSeminormTwo Q s N
-          (fun x => matVecMul (a x) (ρ.toH10.toH1Function.grad x))) :=
-    cubeBesovNegativeVectorPartialSeminormTwo_bddAbove_of_memLp Q hs
-      (fun x => matVecMul (a x) (ρ.toH10.toH1Function.grad x))
-      (memLp_normalizedCubeMeasure_of_memVectorL2_cubeSet Q hfluxV_mem)
-  have hseminorm_nonneg :
-      0 ≤ cubeBesovNegativeVectorSeminormTwo Q s
-        (fun x => matVecMul (a x) (ρ.toH10.toH1Function.grad x)) :=
-    cubeBesovNegativeVectorSeminormTwo_nonneg_of_bddAbove Q s
-      (fun x => matVecMul (a x) (ρ.toH10.toH1Function.grad x)) hfluxV_bdd
-  have hH_nonneg : 0 ≤ H := by
-    dsimp [H]
-    have hr_lt_one : Real.rpow (3 : ℝ) (-s) < 1 :=
-      Real.rpow_lt_one_of_one_lt_of_neg
-        (by norm_num : (1 : ℝ) < 3) (by linarith)
-    exact inv_nonneg.mpr (sub_nonneg.mpr hr_lt_one.le)
-  have hrad_nonneg : 0 ≤ (Bcoeff + Bcorr) * H :=
-    mul_nonneg (add_nonneg hBcoeff_nonneg hBcorr_nonneg) hH_nonneg
-  have htarget_nonneg :
-      0 ≤ C * coarseFluxResponseRHSWeakFluxCorrectionBound Q a s g :=
-    mul_nonneg hC_nonneg
-      (coarseFluxResponseRHSWeakFluxCorrectionBound_nonneg_of_bddAbove
-        Q a g hs hGlobalBdd)
   have henergyEnvelope :
       cubeAverage Q
           (coefficientEnergyDensity a
@@ -289,6 +199,149 @@ theorem cubeBesovNegativeVectorSeminormTwo_matVecMul_grad_le_const_mul_coarseFlu
             Q a C g hs]
           dsimp [K, LamQ, L, G]
           ring
+  exact hcomponentBudget
+
+/--
+The corrected weak-flux component with the averaged corrector-energy force
+budget inserted directly.
+
+This is the scalar repair that avoids the false comparison
+`lambda^{-1} <= Lambda`: the coefficient-energy component is bounded by the
+proved weak-flux energy compact scale, and the corrector-energy component is
+bounded by its own proved `Lambda * lambda^{-1}` force scale.
+-/
+theorem negativeBesovSeminormTwo_matVecMul_grad_le_const_mul_weakFluxCorrectionBound
+    {d : ℕ} [NeZero d] {Q : TriadicCube d} {a : CoeffField d}
+    {g : Vec d → Vec d} (ρ : ZeroTraceDirichletCorrectorData Q a g)
+    (C s : ℝ) {Bcorr lam Lam : ℝ}
+    (hC_nonneg : 0 ≤ C)
+    (hs : 0 < s) (hs_le : s ≤ 1)
+    (hEll : IsEllipticFieldOn lam Lam (cubeSet Q) a)
+    (hg : MeasureTheory.MemLp g (2 : ENNReal) (normalizedCubeMeasure Q))
+    (hGlobalBdd :
+      BddAbove (Set.range fun N : ℕ =>
+        cubeBesovPositiveVectorPartialSeminormTwo Q s N g))
+    (z : TriadicCube d → Vec d → Vec d)
+    (hzdecomp :
+      ∀ j : ℕ, ∀ R ∈ descendantsAtDepth Q j,
+        ∃ ω : MeanZeroNeumannCorrectorData R a
+            (fun x => g x - cubeAverageVec R g),
+          ∃ w0 : AHarmonicFunction a (cubeSet R),
+            z R = (fun x => ω.toH1MeanZero.toH1Function.grad x) ∧
+            ∀ x ∈ cubeSet R,
+              ρ.toH10.toH1Function.grad x =
+                w0.toH1.grad x + z R x)
+    (hcorr :
+      ∀ k : ℕ,
+        coarsePoincareRHSDepthWeight s k *
+          weakFluxRHSLocalCorrectorEnergyErrorAverage Q a z s k ≤
+          Bcorr)
+    (hcorrectorForceBudget :
+      Bcorr * (1 - Real.rpow (3 : ℝ) (-s))⁻¹ ≤
+        2500 * (s⁻¹) ^ 4 *
+          LambdaSq Q (s / 2) (.finite 2) a *
+          (lambdaSq Q (s / 2) (.finite 2) a)⁻¹ *
+          ((d : ℝ) * ((3 : ℝ) ^ ((d : ℝ) + s) * Real.sqrt 2)) ^ 2 *
+          (cubeBesovPositiveVectorSeminormTwo Q s g) ^ 2)
+    (hC_sq :
+      32500 *
+          ((d : ℝ) * ((3 : ℝ) ^ ((d : ℝ) + s) * Real.sqrt 2)) ^ 2 +
+        2500 *
+          ((d : ℝ) * ((3 : ℝ) ^ ((d : ℝ) + s) * Real.sqrt 2)) ^ 2 ≤
+        C ^ 2) :
+    cubeBesovNegativeVectorSeminormTwo Q s
+        (fun x => matVecMul (a x) (ρ.toH10.toH1Function.grad x)) ≤
+      C * coarseFluxResponseRHSWeakFluxCorrectionBound Q a s g := by
+  let Bcoeff : ℝ :=
+    weakFluxRHSWeightedCoefficientEnergyBase Q a
+      (fun x => ρ.toH10.toH1Function.grad x) s
+  let H : ℝ := (1 - Real.rpow (3 : ℝ) (-s))⁻¹
+  let G : ℝ := cubeBesovPositiveVectorSeminormTwo Q s g
+  let LamQ : ℝ := LambdaSq Q (s / 2) (.finite 2) a
+  let L : ℝ := (lambdaSq Q (s / 2) (.finite 2) a)⁻¹
+  let N : ℝ := (d : ℝ) * ((3 : ℝ) ^ ((d : ℝ) + s) * Real.sqrt 2)
+  let K : ℝ :=
+    (Real.rpow s (-(5 / 2 : ℝ))) ^ 2 * LamQ * L * G ^ 2
+  have hG_nonneg : 0 ≤ G := by
+    dsimp [G]
+    exact cubeBesovPositiveVectorSeminormTwo_nonneg_of_bddAbove Q s g hGlobalBdd
+  have havg_nonneg :
+      0 ≤ cubeAverage Q
+        (coefficientEnergyDensity a
+          (fun x => ρ.toH10.toH1Function.grad x)) :=
+    cubeAverage_coefficientEnergyDensity_nonneg_of_isEllipticFieldOn
+      Q a (fun x => ρ.toH10.toH1Function.grad x) hEll
+  have hBcoeff_nonneg : 0 ≤ Bcoeff := by
+    dsimp [Bcoeff]
+    exact
+      weakFluxRHSWeightedCoefficientEnergyBase_nonneg Q a
+        (fun x => ρ.toH10.toH1Function.grad x) hs havg_nonneg
+  have hBcorr_nonneg : 0 ≤ Bcorr := by
+    have havg_corr_nonneg :
+        0 ≤ weakFluxRHSLocalCorrectorEnergyErrorAverage Q a z s 0 := by
+      unfold weakFluxRHSLocalCorrectorEnergyErrorAverage
+      exact descendantsAverage_nonneg Q 0 _ fun R hR => by
+        unfold weakFluxRHSLocalCorrectorEnergyError
+        have hEllR : IsEllipticFieldOn lam Lam (cubeSet R) a :=
+          hEll.mono (measurableSet_cubeSet R)
+            (cubeSet_subset_of_mem_descendantsAtDepth hR)
+        exact mul_nonneg
+          (mul_nonneg (by norm_num : 0 ≤ (2 : ℝ))
+            (weakFluxRHSLocalCoeff_nonneg R a hs))
+          (cubeAverage_nonneg_of_nonneg_on
+            (coefficientEnergyDensity_nonneg_of_isEllipticFieldOn hEllR
+              (z R)))
+    have hweight_nonneg : 0 ≤ coarsePoincareRHSDepthWeight s 0 := by
+      unfold coarsePoincareRHSDepthWeight
+      exact Real.rpow_nonneg (by norm_num : 0 ≤ (3 : ℝ)) _
+    exact (mul_nonneg hweight_nonneg havg_corr_nonneg).trans (hcorr 0)
+  have hlocalized :
+      localizedFluxDefectNegativeBesovAverageTwo Q s
+          (fun x => matVecMul (a x) (ρ.toH10.toH1Function.grad x)) 0 ≤
+        Real.sqrt
+          ((coarsePoincareRHSDepthWeight s 0)⁻¹ *
+            ((Bcoeff + Bcorr) * H)) := by
+    simpa [Bcoeff, H] using
+      negativeBesovFluxAverage_matVecMul_grad_le_sqrt_correctorEnergyComponents
+        (Q := Q) (a := a) (g := g) ρ (s := s)
+        (Bcorr := Bcorr) (lam := lam) (Lam := Lam)
+        hs hEll 0 hg z hzdecomp
+        (by intro k; simpa using hcorr k)
+  have hfluxV_mem :
+      MemVectorL2 (cubeSet Q)
+        (fun x => matVecMul (a x) (ρ.toH10.toH1Function.grad x)) :=
+    memVectorL2_matVecMul_of_isEllipticFieldOn hEll
+      ρ.toH10.toH1Function.grad_memVectorL2
+  have hfluxV_bdd :
+      BddAbove (Set.range fun N : ℕ =>
+        cubeBesovNegativeVectorPartialSeminormTwo Q s N
+          (fun x => matVecMul (a x) (ρ.toH10.toH1Function.grad x))) :=
+    cubeBesovNegativeVectorPartialSeminormTwo_bddAbove_of_memLp Q hs
+      (fun x => matVecMul (a x) (ρ.toH10.toH1Function.grad x))
+      (memLp_normalizedCubeMeasure_of_memVectorL2_cubeSet Q hfluxV_mem)
+  have hseminorm_nonneg :
+      0 ≤ cubeBesovNegativeVectorSeminormTwo Q s
+        (fun x => matVecMul (a x) (ρ.toH10.toH1Function.grad x)) :=
+    cubeBesovNegativeVectorSeminormTwo_nonneg_of_bddAbove Q s
+      (fun x => matVecMul (a x) (ρ.toH10.toH1Function.grad x)) hfluxV_bdd
+  have hH_nonneg : 0 ≤ H := by
+    dsimp [H]
+    have hr_lt_one : Real.rpow (3 : ℝ) (-s) < 1 :=
+      Real.rpow_lt_one_of_one_lt_of_neg
+        (by norm_num : (1 : ℝ) < 3) (by linarith)
+    exact inv_nonneg.mpr (sub_nonneg.mpr hr_lt_one.le)
+  have hrad_nonneg : 0 ≤ (Bcoeff + Bcorr) * H :=
+    mul_nonneg (add_nonneg hBcoeff_nonneg hBcorr_nonneg) hH_nonneg
+  have htarget_nonneg :
+      0 ≤ C * coarseFluxResponseRHSWeakFluxCorrectionBound Q a s g :=
+    mul_nonneg hC_nonneg
+      (coarseFluxResponseRHSWeakFluxCorrectionBound_nonneg_of_bddAbove
+        Q a g hs hGlobalBdd)
+  have hcomponentBudget :
+      (Bcoeff + Bcorr) * H ≤
+        (C * coarseFluxResponseRHSWeakFluxCorrectionBound Q a s g) ^ 2 :=
+    weakFluxCorrection_componentBudget_le_compactSquare ρ C s
+      hs hs_le hEll hg hGlobalBdd hcorrectorForceBudget hC_sq
   have hsqrt :
       Real.sqrt ((Bcoeff + Bcorr) * H) ≤
         C * coarseFluxResponseRHSWeakFluxCorrectionBound Q a s g :=
@@ -311,46 +364,19 @@ theorem cubeBesovNegativeVectorSeminormTwo_matVecMul_grad_le_const_mul_coarseFlu
           simp [coarsePoincareRHSDepthWeight]
     _ ≤ C * coarseFluxResponseRHSWeakFluxCorrectionBound Q a s g := hsqrt
 
-/--
-Zero-Dirichlet one-cube RHS apex with the weak-flux component routed directly
-through the proved averaged corrector-energy budget.  The theorem no longer
-exposes `Bcorr`, `hcorr`, `hcorrectorBudget`, or the invalid
-`lambda^{-1} <= Lambda` comparison, and it constructs the descendant
-`omega`/`w0` harmonic-remainder decomposition internally.
--/
-theorem cubeBesovNegativeVectorSeminormTwo_fluxDefect_le_two_mul_const_mul_coarseFluxResponseRHSBound_of_correctedWeakFlux_averagedCorrectorEnergy
+private theorem exists_descendantCorrectorGradient_harmonicDecomposition
     {d : ℕ} [NeZero d] {Q : TriadicCube d} {a : CoeffField d}
     {g : Vec d → Vec d} (ρ : ZeroTraceDirichletCorrectorData Q a g)
-    (a0 : Mat d) (s : ℝ) (gradU : Vec d → Vec d)
-    (w : AHarmonicFunction a (cubeSet Q))
-    {lam Lam lam0 Lam0 : ℝ}
-    (hs : 0 < s) (hs_le : s ≤ 1)
-    (hEll : IsEllipticFieldOn lam Lam (cubeSet Q) a)
-    (ha0 : IsEllipticMatrix lam0 Lam0 a0) (ha0symm : a0.IsSymm)
-    (hgrad : ∀ x ∈ cubeSet Q,
-      gradU x = w.toH1.grad x + ρ.toH10.toH1Function.grad x)
-    (hg : MeasureTheory.MemLp g (2 : ENNReal) (normalizedCubeMeasure Q))
-    (hGlobalBdd :
-      BddAbove (Set.range fun N : ℕ =>
-        cubeBesovPositiveVectorPartialSeminormTwo Q s N g))
-    (hresponseSum :
-      Summable (fun n : ℕ =>
-        geometricWeight s 1 n *
-          scaleResponseAtScale Q (Q.scale - (n : ℤ)) .infinity a a0)) :
-    cubeBesovNegativeVectorSeminormTwo Q s (fluxDefect a a0 gradU) ≤
-      2 * zeroTraceDirichletCorrectedWeakFluxApexConstant d s *
-        coarseFluxResponseRHSBound Q a a0 s gradU g := by
+    {lam Lam : ℝ} (hEll : IsEllipticFieldOn lam Lam (cubeSet Q) a)
+    (hg : MeasureTheory.MemLp g (2 : ENNReal) (normalizedCubeMeasure Q)) :
+    ∃ z : TriadicCube d → Vec d → Vec d,
+      ∀ j : ℕ, ∀ R ∈ descendantsAtDepth Q j,
+        ∃ ω : MeanZeroNeumannCorrectorData R a (fun x => g x - cubeAverageVec R g),
+          ∃ w0 : AHarmonicFunction a (cubeSet R),
+            z R = (fun x => ω.toH1MeanZero.toH1Function.grad x) ∧
+            ∀ x ∈ cubeSet R,
+              ρ.toH10.toH1Function.grad x = w0.toH1.grad x + z R x := by
   classical
-  let N : ℝ := (d : ℝ) * ((3 : ℝ) ^ ((d : ℝ) + s) * Real.sqrt 2)
-  let G : ℝ := cubeBesovPositiveVectorSeminormTwo Q s g
-  let Bcorr : ℝ :=
-    1000 * (geometricDiscount s 2)⁻¹ * (s⁻¹) ^ 2 *
-      LambdaSq Q (s / 2) (.finite 2) a *
-      (lambdaSq Q (s / 2) (.finite 2) a)⁻¹ *
-      N ^ 2 * G ^ 2
-  have hG_nonneg : 0 ≤ G := by
-    dsimp [G]
-    exact cubeBesovPositiveVectorSeminormTwo_nonneg_of_bddAbove Q s g hGlobalBdd
   let IsDescendantOfQ : TriadicCube d → Prop :=
     fun R => ∃ n : ℕ, R ∈ descendantsAtDepth Q n
   have hρMemQ :
@@ -386,7 +412,7 @@ theorem cubeBesovNegativeVectorSeminormTwo_fluxDefect_le_two_mul_const_mul_coars
       memVectorL2_cubeSet_of_memLp_normalizedCubeMeasure R
         (memLp_on_descendant_of_memLp_generic (E := Vec d) hR hg)
     exact
-      MeanZeroNeumannCorrectorData.exists_centeredCorrector_aHarmonicRemainder_of_parent_potential_solenoidal_h1CoerciveEstimate
+      MeanZeroNeumannCorrectorData.exists_centeredCorrector_harmonicRemainder_of_parentCoercivity
         (P := Q) (R := R) (a := a) (g := g)
         (n := j) (lam := lam) (Lam := Lam)
         (u := fun x => ρ.toH10.toH1Function.grad x)
@@ -429,72 +455,34 @@ theorem cubeBesovNegativeVectorSeminormTwo_fluxDefect_le_two_mul_const_mul_coars
     intro x hx
     rw [hzR]
     exact hdecompR x hx
-  have hcorr :
-      ∀ k : ℕ,
-        coarsePoincareRHSDepthWeight s k *
-          weakFluxRHSLocalCorrectorEnergyErrorAverage Q a z s k ≤
-          Bcorr := by
-    intro k
-    simpa [Bcorr, N, G] using
-      weakFluxRHSDepthWeight_mul_correctorEnergyErrorAverage_le_forceScale
-        (Q := Q) (a := a) (g := g) (s := s) (n := k)
-        hs hs_le hEll hg hGlobalBdd
-        z
-        (by
-          intro R hR
-          rcases hzdecomp k R hR with ⟨ωR, _wR, hzR, _hdecompR⟩
-          exact ⟨ωR, hzR⟩)
-  have hcorrectorForceBudget :
-      Bcorr * (1 - Real.rpow (3 : ℝ) (-s))⁻¹ ≤
-        2500 * (s⁻¹) ^ 4 *
-          LambdaSq Q (s / 2) (.finite 2) a *
-          (lambdaSq Q (s / 2) (.finite 2) a)⁻¹ *
-          N ^ 2 * G ^ 2 := by
-    simpa [Bcorr, N, G] using
-      weakFluxRHSCorrectorEnergyForceScale_mul_inv_one_sub_step_le_noteForceScale
-        (Q := Q) (a := a) (g := g) (s := s) hs hs_le
-  have hC_nonneg :
-      0 ≤ zeroTraceDirichletCorrectedWeakFluxApexConstant d s :=
-    zeroTraceDirichletCorrectedWeakFluxApexConstant_nonneg d s
-  have hweakFluxC_sq :
-      32500 *
-          ((d : ℝ) * ((3 : ℝ) ^ ((d : ℝ) + s) * Real.sqrt 2)) ^ 2 +
-        2500 *
-          ((d : ℝ) * ((3 : ℝ) ^ ((d : ℝ) + s) * Real.sqrt 2)) ^ 2 ≤
-        (zeroTraceDirichletCorrectedWeakFluxApexConstant d s) ^ 2 := by
-    let Dscale : ℝ := zeroTraceDirichletCorrectedWeakFluxApexDisplayScale d s
-    have hD_nonneg : 0 ≤ Dscale ^ 2 := sq_nonneg Dscale
-    have hsmall :
-        32500 * Dscale ^ 2 + 2500 * Dscale ^ 2 ≤ (2000 * Dscale) ^ 2 := by
-      nlinarith [hD_nonneg]
-    simpa [Dscale, zeroTraceDirichletCorrectedWeakFluxApexConstant,
-      zeroTraceDirichletCorrectedWeakFluxApexDisplayScale,
-      add_assoc, add_comm, add_left_comm] using hsmall
-  have hweakρ :
-      IsH1DirichletRhsWeakSolutionOn a (cubeSet Q)
-        ρ.toH10.toH1Function g := by
-    intro φ
-    exact ρ.weakSolution φ
-  have hgrad_mem_desc :
-      ∀ j : ℕ, ∀ R ∈ descendantsAtDepth Q j,
-        MemVectorL2 (cubeSet R) ρ.toH10.toH1Function.grad := by
-    intro j R hR
-    exact
-      memVectorL2_cubeSet_of_memLp_normalizedCubeMeasure R
-        (memLp_on_descendant_of_memLp_generic (E := Vec d) hR hρMemQ)
-  have hPoincareC_sq :
-      177500 *
-          ((d : ℝ) * ((3 : ℝ) ^ ((d : ℝ) + s) * Real.sqrt 2)) ^ 2 ≤
-        (zeroTraceDirichletCorrectedWeakFluxApexConstant d s) ^ 2 := by
-    simpa [zeroTraceDirichletCorrectedWeakFluxApexDisplayScale] using
-      zeroTraceDirichletCorrectedWeakFluxApexPoincareConstant_sq d s
-  rcases
-      zeroTraceDirichletPoincareDisplayedComponentBoundsClose_of_const_ge
-        (Q := Q) (a := a) (a0 := a0)
-        (C := zeroTraceDirichletCorrectedWeakFluxApexConstant d s) (g := g)
-        hs hs_le hG_nonneg hPoincareC_sq with
-    ⟨BPoincareEnergy, BPoincareForce, hPoincareEnergyBudget,
-      hPoincareForce, hPoincareBudget⟩
+  exact ⟨z, hzdecomp⟩
+
+private theorem fluxSplit_memVectorL2_and_negativePartialSeminorm_bounded
+    {d : ℕ} [NeZero d] {Q : TriadicCube d} {a : CoeffField d}
+    {g : Vec d → Vec d} (ρ : ZeroTraceDirichletCorrectorData Q a g)
+    (a0 : Mat d) {s lam Lam lam0 Lam0 : ℝ}
+    (hs : 0 < s) (hEll : IsEllipticFieldOn lam Lam (cubeSet Q) a)
+    (ha0 : IsEllipticMatrix lam0 Lam0 a0) (ha0symm : a0.IsSymm)
+    (w : AHarmonicFunction a (cubeSet Q))
+    (hresponseSum : Summable (fun n : ℕ => geometricWeight s 1 n *
+      scaleResponseAtScale Q (Q.scale - (n : ℤ)) .infinity a a0))
+    (hgrad_mem_desc : ∀ j : ℕ, ∀ R ∈ descendantsAtDepth Q j,
+      MemVectorL2 (cubeSet R) ρ.toH10.toH1Function.grad) :
+    BddAbove (Set.range fun N : ℕ => cubeBesovNegativeVectorPartialSeminormTwo Q s N
+      ρ.toH10.toH1Function.grad) ∧
+    MemVectorL2 (cubeSet Q) (fun x => matVecMul (a x) (ρ.toH10.toH1Function.grad x)) ∧
+    BddAbove (Set.range fun N : ℕ => cubeBesovNegativeVectorPartialSeminormTwo Q s N
+      (fun x => matVecMul (a x) (ρ.toH10.toH1Function.grad x))) ∧
+    MemVectorL2 (cubeSet Q) (fluxDefect a a0 w.toH1.grad) ∧
+    MemVectorL2 (cubeSet Q) (fun x => matVecMul a0 (ρ.toH10.toH1Function.grad x)) ∧
+    BddAbove (Set.range fun N : ℕ => cubeBesovNegativeVectorPartialSeminormTwo Q s N
+      (fluxDefect a a0 w.toH1.grad)) ∧
+    BddAbove (Set.range fun N : ℕ => cubeBesovNegativeVectorPartialSeminormTwo Q s N
+      (fun x => matVecMul a0 (ρ.toH10.toH1Function.grad x))) := by
+  have hρMemQ : MeasureTheory.MemLp (fun x => ρ.toH10.toH1Function.grad x)
+      (2 : ENNReal) (normalizedCubeMeasure Q) :=
+    memLp_normalizedCubeMeasure_of_memVectorL2_cubeSet Q
+      ρ.toH10.toH1Function.grad_memVectorL2
   have hgrad_bdd :
       BddAbove (Set.range fun N : ℕ =>
         cubeBesovNegativeVectorPartialSeminormTwo Q s N
@@ -565,6 +553,125 @@ theorem cubeBesovNegativeVectorSeminormTwo_fluxDefect_le_two_mul_const_mul_coars
       _ ≤ matNorm a0 * M := by
             exact mul_le_mul_of_nonneg_left (hM ⟨N0, rfl⟩)
               (matNorm_nonneg a0)
+  exact ⟨hgrad_bdd, hfluxV_mem, hfluxV_bdd, hdefectW_mem, ha0V_mem, hdefectW_bdd, ha0V_bdd⟩
+
+/--
+Zero-Dirichlet one-cube RHS apex with the weak-flux component routed directly
+through the proved averaged corrector-energy budget.  The theorem no longer
+exposes `Bcorr`, `hcorr`, `hcorrectorBudget`, or the invalid
+`lambda^{-1} <= Lambda` comparison, and it constructs the descendant
+`omega`/`w0` harmonic-remainder decomposition internally.
+-/
+theorem negativeBesovSeminormTwo_fluxDefect_le_two_mul_const_mul_of_fluxRHSBound
+    {d : ℕ} [NeZero d] {Q : TriadicCube d} {a : CoeffField d}
+    {g : Vec d → Vec d} (ρ : ZeroTraceDirichletCorrectorData Q a g)
+    (a0 : Mat d) (s : ℝ) (gradU : Vec d → Vec d)
+    (w : AHarmonicFunction a (cubeSet Q))
+    {lam Lam lam0 Lam0 : ℝ}
+    (hs : 0 < s) (hs_le : s ≤ 1)
+    (hEll : IsEllipticFieldOn lam Lam (cubeSet Q) a)
+    (ha0 : IsEllipticMatrix lam0 Lam0 a0) (ha0symm : a0.IsSymm)
+    (hgrad : ∀ x ∈ cubeSet Q,
+      gradU x = w.toH1.grad x + ρ.toH10.toH1Function.grad x)
+    (hg : MeasureTheory.MemLp g (2 : ENNReal) (normalizedCubeMeasure Q))
+    (hGlobalBdd :
+      BddAbove (Set.range fun N : ℕ =>
+        cubeBesovPositiveVectorPartialSeminormTwo Q s N g))
+    (hresponseSum :
+      Summable (fun n : ℕ =>
+        geometricWeight s 1 n *
+          scaleResponseAtScale Q (Q.scale - (n : ℤ)) .infinity a a0)) :
+    cubeBesovNegativeVectorSeminormTwo Q s (fluxDefect a a0 gradU) ≤
+      2 * zeroTraceFluxApexConstant d s *
+        coarseFluxResponseRHSBound Q a a0 s gradU g := by
+  classical
+  let N : ℝ := (d : ℝ) * ((3 : ℝ) ^ ((d : ℝ) + s) * Real.sqrt 2)
+  let G : ℝ := cubeBesovPositiveVectorSeminormTwo Q s g
+  let Bcorr : ℝ :=
+    1000 * (geometricDiscount s 2)⁻¹ * (s⁻¹) ^ 2 *
+      LambdaSq Q (s / 2) (.finite 2) a *
+      (lambdaSq Q (s / 2) (.finite 2) a)⁻¹ *
+      N ^ 2 * G ^ 2
+  have hG_nonneg : 0 ≤ G := by
+    dsimp [G]
+    exact cubeBesovPositiveVectorSeminormTwo_nonneg_of_bddAbove Q s g hGlobalBdd
+  obtain ⟨z, hzdecomp⟩ :=
+    exists_descendantCorrectorGradient_harmonicDecomposition ρ hEll hg
+  have hρMemQ :
+      MeasureTheory.MemLp (fun x => ρ.toH10.toH1Function.grad x)
+        (2 : ENNReal) (normalizedCubeMeasure Q) :=
+    memLp_normalizedCubeMeasure_of_memVectorL2_cubeSet Q
+      ρ.toH10.toH1Function.grad_memVectorL2
+  have hcorr :
+      ∀ k : ℕ,
+        coarsePoincareRHSDepthWeight s k *
+          weakFluxRHSLocalCorrectorEnergyErrorAverage Q a z s k ≤
+          Bcorr := by
+    intro k
+    simpa [Bcorr, N, G] using
+      weakFluxRHSDepthWeight_mul_correctorEnergyErrorAverage_le_forceScale
+        (Q := Q) (a := a) (g := g) (s := s) (n := k)
+        hs hs_le hEll hg hGlobalBdd
+        z
+        (by
+          intro R hR
+          rcases hzdecomp k R hR with ⟨ωR, _wR, hzR, _hdecompR⟩
+          exact ⟨ωR, hzR⟩)
+  have hcorrectorForceBudget :
+      Bcorr * (1 - Real.rpow (3 : ℝ) (-s))⁻¹ ≤
+        2500 * (s⁻¹) ^ 4 *
+          LambdaSq Q (s / 2) (.finite 2) a *
+          (lambdaSq Q (s / 2) (.finite 2) a)⁻¹ *
+          N ^ 2 * G ^ 2 := by
+    simpa [Bcorr, N, G] using
+      weakFluxRHSCorrectorEnergyForceScale_mul_inv_one_sub_step_le_noteForceScale
+        (Q := Q) (a := a) (g := g) (s := s) hs hs_le
+  have hC_nonneg :
+      0 ≤ zeroTraceFluxApexConstant d s :=
+    zeroTraceFluxApexConstant_nonneg d s
+  have hweakFluxC_sq :
+      32500 *
+          ((d : ℝ) * ((3 : ℝ) ^ ((d : ℝ) + s) * Real.sqrt 2)) ^ 2 +
+        2500 *
+          ((d : ℝ) * ((3 : ℝ) ^ ((d : ℝ) + s) * Real.sqrt 2)) ^ 2 ≤
+        (zeroTraceFluxApexConstant d s) ^ 2 := by
+    let Dscale : ℝ := zeroTraceFluxApexDisplayScale d s
+    have hD_nonneg : 0 ≤ Dscale ^ 2 := sq_nonneg Dscale
+    have hsmall :
+        32500 * Dscale ^ 2 + 2500 * Dscale ^ 2 ≤ (2000 * Dscale) ^ 2 := by
+      nlinarith [hD_nonneg]
+    simpa [Dscale, zeroTraceFluxApexConstant,
+      zeroTraceFluxApexDisplayScale,
+      add_assoc, add_comm, add_left_comm] using hsmall
+  have hweakρ :
+      IsH1DirichletRhsWeakSolutionOn a (cubeSet Q)
+        ρ.toH10.toH1Function g := by
+    intro φ
+    exact ρ.weakSolution φ
+  have hgrad_mem_desc :
+      ∀ j : ℕ, ∀ R ∈ descendantsAtDepth Q j,
+        MemVectorL2 (cubeSet R) ρ.toH10.toH1Function.grad := by
+    intro j R hR
+    exact
+      memVectorL2_cubeSet_of_memLp_normalizedCubeMeasure R
+        (memLp_on_descendant_of_memLp_generic (E := Vec d) hR hρMemQ)
+  have hPoincareC_sq :
+      177500 *
+          ((d : ℝ) * ((3 : ℝ) ^ ((d : ℝ) + s) * Real.sqrt 2)) ^ 2 ≤
+        (zeroTraceFluxApexConstant d s) ^ 2 := by
+    simpa [zeroTraceFluxApexDisplayScale] using
+      zeroTraceDirichletCorrectedWeakFluxApexPoincareConstant_sq d s
+  rcases
+      zeroTraceDirichletPoincareDisplayedComponentBoundsClose_of_const_ge
+        (Q := Q) (a := a) (a0 := a0)
+        (C := zeroTraceFluxApexConstant d s) (g := g)
+        hs hs_le hG_nonneg hPoincareC_sq with
+    ⟨BPoincareEnergy, BPoincareForce, hPoincareEnergyBudget,
+      hPoincareForce, hPoincareBudget⟩
+  obtain ⟨hgrad_bdd, hfluxV_mem, hfluxV_bdd, hdefectW_mem, ha0V_mem,
+      hdefectW_bdd, ha0V_bdd⟩ :=
+    fluxSplit_memVectorL2_and_negativePartialSeminorm_bounded ρ a0 hs hEll ha0
+      ha0symm w hresponseSum hgrad_mem_desc
   have henergyEnvelope :
       cubeAverage Q
           (coefficientEnergyDensity a ρ.toH10.toH1Function.grad) ≤
@@ -577,33 +684,33 @@ theorem cubeBesovNegativeVectorSeminormTwo_fluxDefect_le_two_mul_const_mul_coars
     one_le_zeroTraceDirichletDisplayScale_expr (d := d) (s := s) hs
   have hdisplay_nonneg :
       0 ≤ (d : ℝ) * ((3 : ℝ) ^ ((d : ℝ) + s) * Real.sqrt 2) := by
-    simpa [zeroTraceDirichletCorrectedWeakFluxApexDisplayScale] using
+    simpa [zeroTraceFluxApexDisplayScale] using
       zeroTraceDirichletCorrectedWeakFluxApexDisplayScale_nonneg d s
   have hhomogeneous :
       coarseFluxResponseQOneBound Q a a0 s w ≤
-        zeroTraceDirichletCorrectedWeakFluxApexConstant d s *
+        zeroTraceFluxApexConstant d s *
           coarseFluxResponseRHSHomogeneousSplitBound Q a a0 s gradU g :=
     coarseFluxResponseQOneBound_le_const_mul_RHSHomogeneousSplitBound_of_zeroTraceDirichlet
       (Q := Q) (a := a) (g := g) ρ a0 s gradU w
       (lam := lam) (Lam := Lam)
-      (C := zeroTraceDirichletCorrectedWeakFluxApexConstant d s)
+      (C := zeroTraceFluxApexConstant d s)
       hs hs_le hEll hgrad hg hGlobalBdd
       (by
-        unfold zeroTraceDirichletCorrectedWeakFluxApexConstant
-          zeroTraceDirichletCorrectedWeakFluxApexDisplayScale
+        unfold zeroTraceFluxApexConstant
+          zeroTraceFluxApexDisplayScale
         nlinarith [hdisplay_ge_one])
       (by
-        unfold zeroTraceDirichletCorrectedWeakFluxApexConstant
-          zeroTraceDirichletCorrectedWeakFluxApexDisplayScale
+        unfold zeroTraceFluxApexConstant
+          zeroTraceFluxApexDisplayScale
         nlinarith [hdisplay_nonneg])
   have hfluxV :
       cubeBesovNegativeVectorSeminormTwo Q s
           (fun x => matVecMul (a x) (ρ.toH10.toH1Function.grad x)) ≤
-        zeroTraceDirichletCorrectedWeakFluxApexConstant d s *
+        zeroTraceFluxApexConstant d s *
           coarseFluxResponseRHSWeakFluxCorrectionBound Q a s g :=
-    cubeBesovNegativeVectorSeminormTwo_matVecMul_grad_le_const_mul_coarseFluxResponseRHSWeakFluxCorrectionBound_of_averagedCorrectorEnergy
+    negativeBesovSeminormTwo_matVecMul_grad_le_const_mul_weakFluxCorrectionBound
       (Q := Q) (a := a) (g := g) ρ
-      (C := zeroTraceDirichletCorrectedWeakFluxApexConstant d s) (s := s)
+      (C := zeroTraceFluxApexConstant d s) (s := s)
       (Bcorr := Bcorr) (lam := lam) (Lam := Lam) hC_nonneg
       hs hs_le hEll hg hGlobalBdd z hzdecomp hcorr
       (by simpa [N, G] using hcorrectorForceBudget)
@@ -655,23 +762,23 @@ theorem cubeBesovNegativeVectorSeminormTwo_fluxDefect_le_two_mul_const_mul_coars
   have ha0V :
       cubeBesovNegativeVectorSeminormTwo Q s
           (fun x => matVecMul a0 (ρ.toH10.toH1Function.grad x)) ≤
-        zeroTraceDirichletCorrectedWeakFluxApexConstant d s *
+        zeroTraceFluxApexConstant d s *
           coarseFluxResponseRHSPoincareCorrectionBound Q a a0 s g :=
-    cubeBesovNegativeVectorSeminormTwo_constMatMul_grad_le_const_mul_coarseFluxResponseRHSPoincareCorrectionBound_of_h1DirichletRhsWeakSolutionOn_of_component_bounds
+    negativeBesovSeminormTwo_constMatMul_le_const_mul_fluxPoincareCorrectionBound
       Q a a0 s g ρ.toH10.toH1Function
-      (zeroTraceDirichletCorrectedWeakFluxApexConstant d s)
+      (zeroTraceFluxApexConstant d s)
       hC_nonneg hs hs_le hEll
       hweakρ hg hGlobalBdd hgrad_mem_desc hgrad_bdd
       hPoincareEnergy hPoincareForce hPoincareBudget
   have hdefectW :
       cubeBesovNegativeVectorSeminormTwo Q s (fluxDefect a a0 w.toH1.grad) ≤
-        zeroTraceDirichletCorrectedWeakFluxApexConstant d s *
+        zeroTraceFluxApexConstant d s *
           coarseFluxResponseRHSHomogeneousSplitBound Q a a0 s gradU g :=
-    (cubeBesovNegativeVectorSeminormTwo_fluxDefect_le_coarseFluxResponseQOneBound_of_aHarmonicFunction
+    (negativeVectorSeminorm_fluxDefect_le_coarseFluxResponseQOne
       Q a a0 s hs hEll ha0 ha0symm w hresponseSum).trans
       hhomogeneous
   exact
-    cubeBesovNegativeVectorSeminormTwo_fluxDefect_le_two_mul_const_mul_coarseFluxResponseRHSBound_of_const_mul_split_component_bounds
+    negativeBesovSeminormTwo_fluxDefect_le_two_mul_const_mul_fluxRHSBound_of_split
       Q a a0 gradU w.toH1.grad ρ.toH10.toH1Function.grad g
       hC_nonneg hs hGlobalBdd hgrad hdefectW_mem hfluxV_mem ha0V_mem
       hdefectW_bdd hfluxV_bdd ha0V_bdd hdefectW hfluxV ha0V
@@ -683,7 +790,7 @@ harmonic split constructed internally from the weak solution.
 This removes the non-proposition `ρ`, `w`, and decomposition arguments from
 the corrected averaged route.
 -/
-private theorem cubeBesovNegativeVectorSeminormTwo_fluxDefect_le_two_mul_const_mul_coarseFluxResponseRHSBound_of_h1DirichletRhsWeakSolutionOn_correctedWeakFlux_averagedCorrectorEnergy_of_memLp_of_bddAbove
+private theorem negativeBesovSeminormTwo_fluxDefect_le_two_mul_const_mul_fluxRHSBound_of_memLp
     {d : ℕ} [NeZero d] {Q : TriadicCube d} {a : CoeffField d}
     (a0 : Mat d) (s : ℝ) (g : Vec d → Vec d)
     (v : H1Function (cubeSet Q)) {lam Lam lam0 Lam0 : ℝ}
@@ -700,7 +807,7 @@ private theorem cubeBesovNegativeVectorSeminormTwo_fluxDefect_le_two_mul_const_m
         geometricWeight s 1 n *
           scaleResponseAtScale Q (Q.scale - (n : ℤ)) .infinity a a0)) :
     cubeBesovNegativeVectorSeminormTwo Q s (fluxDefect a a0 v.grad) ≤
-      2 * zeroTraceDirichletCorrectedWeakFluxApexConstant d s *
+      2 * zeroTraceFluxApexConstant d s *
         coarseFluxResponseRHSBound Q a a0 s v.grad g := by
   have hgMemQ : MemVectorL2 (cubeSet Q) g :=
     memVectorL2_cubeSet_of_memLp_normalizedCubeMeasure Q hg
@@ -709,13 +816,13 @@ private theorem cubeBesovNegativeVectorSeminormTwo_fluxDefect_le_two_mul_const_m
         (fun x => matVecMul (a x) (v.grad x) - g x) :=
     hweak.residual_solenoidal hEll hgMemQ
   rcases
-      ZeroTraceDirichletCorrectorData.exists_corrector_aHarmonicRemainder_of_parent_potential_solenoidal
+      ZeroTraceDirichletCorrectorData.exists_harmonicCorrectorDecomposition
         (Q := Q) (R := Q) (a := a) (g := g) (n := 0)
         (lam := lam) (Lam := Lam) (u := v.grad)
         v.isPotentialOn hresidual (by simp) hEll v.grad_memVectorL2 hgMemQ with
     ⟨ρ, w, hgrad⟩
   exact
-    ρ.cubeBesovNegativeVectorSeminormTwo_fluxDefect_le_two_mul_const_mul_coarseFluxResponseRHSBound_of_correctedWeakFlux_averagedCorrectorEnergy
+    ρ.negativeBesovSeminormTwo_fluxDefect_le_two_mul_const_mul_of_fluxRHSBound
       (a0 := a0) (s := s) (gradU := v.grad) w
       hs hs_le hEll ha0 ha0symm hgrad hg hGlobalBdd hresponseSum
 
@@ -724,7 +831,7 @@ PDE-facing corrected one-cube RHS apex with the zero-trace corrector and
 harmonic split constructed internally, consuming the note-facing `H^s`
 regularity package for the right-hand side.
 -/
-theorem cubeBesovNegativeVectorSeminormTwo_fluxDefect_le_two_mul_const_mul_coarseFluxResponseRHSBound_of_h1DirichletRhsWeakSolutionOn_correctedWeakFlux_averagedCorrectorEnergy
+theorem besovFluxDefect_le_constant_mul_bound
     {d : ℕ} [NeZero d] {Q : TriadicCube d} {a : CoeffField d}
     (a0 : Mat d) (s : ℝ) (g : Vec d → Vec d)
     (v : H1Function (cubeSet Q)) {lam Lam lam0 Lam0 : ℝ}
@@ -738,9 +845,9 @@ theorem cubeBesovNegativeVectorSeminormTwo_fluxDefect_le_two_mul_const_mul_coars
         geometricWeight s 1 n *
           scaleResponseAtScale Q (Q.scale - (n : ℤ)) .infinity a a0)) :
     cubeBesovNegativeVectorSeminormTwo Q s (fluxDefect a a0 v.grad) ≤
-      2 * zeroTraceDirichletCorrectedWeakFluxApexConstant d s *
+      2 * zeroTraceFluxApexConstant d s *
         coarseFluxResponseRHSBound Q a a0 s v.grad g :=
-  cubeBesovNegativeVectorSeminormTwo_fluxDefect_le_two_mul_const_mul_coarseFluxResponseRHSBound_of_h1DirichletRhsWeakSolutionOn_correctedWeakFlux_averagedCorrectorEnergy_of_memLp_of_bddAbove
+  negativeBesovSeminormTwo_fluxDefect_le_two_mul_const_mul_fluxRHSBound_of_memLp
     a0 s g v hs hs_le hEll ha0 ha0symm hweak hg.memLp
     hg.partialSeminorms_bddAbove hresponseSum
 

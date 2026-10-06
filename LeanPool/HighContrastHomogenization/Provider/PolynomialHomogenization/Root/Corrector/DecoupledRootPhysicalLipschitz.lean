@@ -103,7 +103,9 @@ theorem exists_decoupledRootPhysicalLipschitz
       inv_injective hinv
     linarith only [hmul]
   have hrow :=
-    HCPolySupport.HighContrast.Root.PrintOrderDecoupledFiniteTerminalSurface.physicalLipschitz_from_rootScale
+    (open HCPolySupport.HighContrast.Root.PrintOrderDecoupledFiniteTerminalSurface
+      (physicalLipschitz_from_rootScale) in
+      physicalLipschitz_from_rootScale)
       surface hg R hxR u Du hu hweak r hrange
   have hrowK : weightedGradNorm (fun y ↦ a.1 y)
         (ellipsoid abar r) Du ≤

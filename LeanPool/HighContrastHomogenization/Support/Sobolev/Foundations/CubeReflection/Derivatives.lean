@@ -89,11 +89,13 @@ def foldedCoordFaceTest {d : ℕ}
     (a : ℝ) (i : Fin d) (φ : Vec d → ℝ) : Vec d → ℝ :=
   fun x => φ x + φ (coordFaceReflection a i x)
 
+/-- The sum of a test function and its reflection through the upper `i`th face of the cube. -/
 @[expose]
 def foldedCubeUpperFaceTest {d : ℕ}
     (Q : TriadicCube d) (i : Fin d) (φ : Vec d → ℝ) : Vec d → ℝ :=
   foldedCoordFaceTest (cubeUpperFaceCoord Q i) i φ
 
+/-- The sum of a test function and its reflection through the lower `i`th face of the cube. -/
 @[expose]
 def foldedCubeLowerFaceTest {d : ℕ}
     (Q : TriadicCube d) (i : Fin d) (φ : Vec d → ℝ) : Vec d → ℝ :=

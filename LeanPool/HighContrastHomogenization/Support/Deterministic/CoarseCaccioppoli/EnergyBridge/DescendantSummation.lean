@@ -109,7 +109,7 @@ theorem
       hpair_int ?_) ?_
   · intro R hR
     exact
-      abs_cubeAverage_vecDot_scalar_smul_le_fluxEnergyExactRhs_of_parentQuantitativeCutoff_on_descendant
+      abs_cubeAverage_fluxCutoff_le_exactRhs_of_parentCutoff
         (Q := Q) (R := R) (j := j) hR (a := a) (s := s) (flux := flux) (u := u)
         (G := G) (energy := energy) (η := η) (Acirc1 := Acirc1) (AcircS := AcircS)
         (C := C) hs0 hs1 (hfluxMem R hR) (hu R hR) (hG R hR)
@@ -128,7 +128,7 @@ theorem
 The local descendant pairing and the averaged exact RHS both use
 `Acirc1 R` and `AcircS R`. -/
 theorem
-    abs_cubeAverage_vecDot_scalar_smul_le_raw_of_parentQuantitativeCutoff_on_descendants_variableAcirc
+    abs_cubeAverage_fluxCutoff_le_raw_of_parentCutoff_variableCirc
     {d : ℕ} {Q : TriadicCube d} (j : ℕ)
     (a : CoeffField d) (s : ℝ) {ρ₁ ρ₂ : ℝ}
     (flux : Vec d → Vec d) (u : Vec d → ℝ) (G : Vec d → Vec d)
@@ -198,7 +198,7 @@ theorem
       hpair_int ?_) ?_
   · intro R hR
     exact
-      abs_cubeAverage_vecDot_scalar_smul_le_fluxEnergyExactRhs_of_parentQuantitativeCutoff_on_descendant
+      abs_cubeAverage_fluxCutoff_le_exactRhs_of_parentCutoff
         (Q := Q) (R := R) (j := j) hR (a := a) (s := s) (flux := flux) (u := u)
         (G := G) (energy := energy) (η := η) (Acirc1 := Acirc1 R) (AcircS := AcircS R)
         (C := C) hs0 hs1 (hfluxMem R hR) (hu R hR) (hG R hR)
@@ -315,7 +315,7 @@ theorem
 The only analytic input not supplied here is the genuinely local, support-aware
 exact-RHS estimate with the outer localized energy density. -/
 theorem
-    abs_cubeAverage_vecDot_scalar_smul_le_localized_raw_of_parentQuantitativeCutoff_on_descendants_variableAcirc
+    abs_cubeAverage_vectorDot_scalarMultiply_le_raw
     {d : ℕ} {Q : TriadicCube d} (j : ℕ)
     (a : CoeffField d) (s : ℝ) {ρ₁ ρ₂ : ℝ}
     (flux : Vec d → Vec d) (u : Vec d → ℝ)
@@ -366,7 +366,7 @@ depth-`j` descendant is small enough that a cube touching the cutoff support is
 contained in the larger localization cube; descendants missing the support have
 zero local pairing. -/
 theorem
-    abs_cubeAverage_vecDot_scalar_smul_le_localized_raw_of_parentQuantitativeCutoff_on_descendants_variableAcirc_of_support_buffer
+    abs_cubeAverage_vectorDot_scalarMultiply_le_raw_of_support_buffer_of_buffer
     {d : ℕ} {Q : TriadicCube d} (j : ℕ)
     (a : CoeffField d) (s : ℝ) {ρ₁ ρ₂ ρ : ℝ}
     (flux : Vec d → Vec d) (u : Vec d → ℝ) (G : Vec d → Vec d)
@@ -440,7 +440,7 @@ theorem
       hpair_int huQ henergy_nonneg henergy_int hK_nonneg hKparent
       hconst hcent
       (fun R hR =>
-        abs_cubeAverage_vecDot_scalar_smul_le_fluxEnergyExactRhs_indicator_of_parentQuantitativeCutoff_on_descendant_of_support_buffer
+        abs_cubeAverage_vectorDot_scalarMultiply_le_fluxEnergyExactRhs_of_parentBuffer
           (Q := Q) (R := R) (j := j) hR (a := a) (s := s)
           (ρ := ρ) (flux := flux) (u := u) (G := G) (energy := energy)
           (η := η) (Acirc1 := Acirc1 R) (AcircS := AcircS R) (C := C)
@@ -453,7 +453,7 @@ theorem
 translated canonical cutoff.  This is the summation-level form of the boundary
 Caccioppoli radius step from the notes. -/
 theorem
-    abs_cubeAverage_vecDot_scalar_smul_le_localPatch_raw_of_localCanonicalCutoff_on_descendants_variableAcirc_of_support_buffer
+    abs_cubeAverage_vectorDot_scalarMultiply_le_local_raw_of_support_buffer
     {d : ℕ} {Q : TriadicCube d} (center : Vec d) (j : ℕ)
     (a : CoeffField d) (s : ℝ) {rhoInner rhoOuter rho : ℝ}
     (flux : Vec d → Vec d) (u : Vec d → ℝ) (G : Vec d → Vec d)
@@ -553,7 +553,7 @@ theorem
       (K := K) (Alpha := Alpha) (Bcross := Bcross)
       hpair_int huQ henergy_nonneg henergy_int hK_nonneg hKparent hconst hcent
       (fun R hR =>
-        abs_cubeAverage_vecDot_scalar_smul_le_fluxEnergyExactRhs_indicator_of_localCanonicalCutoff_on_descendant_of_support_buffer
+        abs_cubeAverage_vectorDot_scalarMultiply_le_fluxEnergyExactRhs_of_support_buffer
           (Q := Q) (R := R) (j := j) hR
           (center := center) (a := a) (s := s)
           (rhoInner := rhoInner) (rhoOuter := rhoOuter) (rho := rho)

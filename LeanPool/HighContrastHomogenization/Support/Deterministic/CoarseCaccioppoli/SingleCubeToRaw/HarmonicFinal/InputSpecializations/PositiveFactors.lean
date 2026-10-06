@@ -12,7 +12,8 @@ public import LeanPool.HighContrastHomogenization.Support.Deterministic.Multisca
 
 /-!
 # Coarse-graining support:
-Support.Deterministic.CoarseCaccioppoli.SingleCubeToRaw.HarmonicFinal.InputSpecializations.PositiveFactors
+Support.Deterministic.CoarseCaccioppoli.SingleCubeToRaw.HarmonicFinal.InputSpecializations
+.PositiveFactors
 
 Imported from the Apache-2.0 CoarseGraining development at commit
 `c7ddd76c08ade64fed1b8d2ca51be14dfee8deb4`.

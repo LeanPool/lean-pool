@@ -248,7 +248,8 @@ theorem CoarseCaccioppoliBoundaryCanonicalProjectedPoincareCircBounds.circPartia
 field is one component of a vector field whose negative Besov partial seminorms
 already dominate the desired `circ` factors.  This is the local scalarization
 bridge used before the final concrete choice of `g` is fixed. -/
-theorem CoarseCaccioppoliBoundaryCanonicalProjectedPoincareCircBounds.of_component_negativeVectorBounds
+theorem
+  CoarseCaccioppoliBoundaryCanonicalProjectedPoincareCircBounds.of_component_negativeVectorBounds
     {d : ℕ} (Q : TriadicCube d) (a : CoeffField d) (s C : ℝ)
     (w : ℝ → ℝ → AHarmonicFunction a (openCubeSet Q))
     (G : ℝ → ℝ → Vec d → Vec d) (i : Fin d)
@@ -285,7 +286,7 @@ theorem CoarseCaccioppoliBoundaryCanonicalProjectedPoincareCircBounds.of_compone
           ≤ cubeBesovScaleWeight (-1) Q *
               cubeBesovNegativeVectorPartialSeminorm Q 1 N (G ρ₁ ρ₂) := by
             exact
-              cubeBesovCircPartialNorm_two_one_component_le_scaleWeight_neg_mul_negativeVectorPartialSeminorm
+              besovCircPartial_twoOne_component_le_negativeVectorPartial
                 Q 1 (G ρ₁ ρ₂) i N
       _ ≤
           Acirc1 ρ₁ ρ₂ *
@@ -299,7 +300,7 @@ theorem CoarseCaccioppoliBoundaryCanonicalProjectedPoincareCircBounds.of_compone
           ≤ cubeBesovScaleWeight (-(1 - s)) Q *
               cubeBesovNegativeVectorPartialSeminorm Q (1 - s) N (G ρ₁ ρ₂) := by
             exact
-              cubeBesovCircPartialNorm_two_one_component_le_scaleWeight_neg_mul_negativeVectorPartialSeminorm
+              besovCircPartial_twoOne_component_le_negativeVectorPartial
                 Q (1 - s) (G ρ₁ ρ₂) i N
       _ ≤
           AcircS ρ₁ ρ₂ *
@@ -311,7 +312,8 @@ theorem CoarseCaccioppoliBoundaryCanonicalProjectedPoincareCircBounds.of_compone
 field whose descendant gradient-energy controls supply the note's `lambdaSq`
 factors.  This is the concrete gradient-side scalarization bridge; the
 projected mean-zero Poincare family remains as the analytic input. -/
-theorem CoarseCaccioppoliBoundaryCanonicalProjectedPoincareCircBounds.of_component_gradientEnergyControl
+theorem
+  CoarseCaccioppoliBoundaryCanonicalProjectedPoincareCircBounds.of_component_gradientEnergyControl
     {d : ℕ} (Q : TriadicCube d) (a : CoeffField d) (s C : ℝ)
     (w : ℝ → ℝ → AHarmonicFunction a (openCubeSet Q))
     (G : ℝ → ℝ → Vec d → Vec d) (i : Fin d)
@@ -485,7 +487,10 @@ theorem CoarseCaccioppoliBoundaryCanonicalProjectedPoincareCircBounds.of_harmoni
       Q a s C w (fun ρ₁ ρ₂ x => (w ρ₁ ρ₂).toH1.grad x) i Acirc1 AcircS
       hs1 henergy_nonneg henergy_int hgrad hsum1 hsumS hproj hAcirc1 hAcircS
 
-theorem CoarseCaccioppoliBoundaryCanonicalScalarControlFactors.of_positiveFactors_of_projectedPoincareCircBounds
+namespace CoarseCaccioppoliBoundaryCanonicalScalarControlFactors
+
+theorem
+  of_positiveFactors_of_projectedPoincareCircBounds
     {d : ℕ} (Q : TriadicCube d) (a : CoeffField d) (s C : ℝ)
     (w : ℝ → ℝ → AHarmonicFunction a (openCubeSet Q))
     (g : ℝ → ℝ → Vec d → ℝ) (Acirc1 AcircS : ℝ → ℝ → ℝ)
@@ -498,11 +503,14 @@ theorem CoarseCaccioppoliBoundaryCanonicalScalarControlFactors.of_positiveFactor
   rcases hctrl hρ₁ hlt hρ₂ with ⟨hproj, hgCirc1, hgCircS⟩
   exact ⟨hu_pos, hAcirc1_pos, hAcircS_nonneg, hE_pos, hproj, hgCirc1, hgCircS⟩
 
+end CoarseCaccioppoliBoundaryCanonicalScalarControlFactors
+
 /-- Full scalar-control factors for the concrete scalar field `partial_i w`.
 
 This is the Phase 2 bridge used by the final Caccioppoli wrappers once the
 projected mean-zero Poincare estimate for `partial_i w` has been supplied. -/
-theorem CoarseCaccioppoliBoundaryCanonicalScalarControlFactors.of_positiveFactors_of_harmonicGradientComponent
+theorem
+  CoarseCaccioppoliBoundaryCanonicalScalarControlFactors.of_positiveFactors_gradientComponent
     {d : ℕ} (Q : TriadicCube d) (a : CoeffField d) (s C : ℝ)
     (w : ℝ → ℝ → AHarmonicFunction a (openCubeSet Q)) (i : Fin d)
     (Acirc1 AcircS : ℝ → ℝ → ℝ)
@@ -550,7 +558,9 @@ theorem CoarseCaccioppoliBoundaryCanonicalScalarControlFactors.of_positiveFactor
     CoarseCaccioppoliBoundaryCanonicalScalarControlFactors
       Q a s C w (fun ρ₁ ρ₂ x => (w ρ₁ ρ₂).toH1.grad x i) Acirc1 AcircS := by
   exact
-    CoarseCaccioppoliBoundaryCanonicalScalarControlFactors.of_positiveFactors_of_projectedPoincareCircBounds
+    (open CoarseCaccioppoliBoundaryCanonicalScalarControlFactors
+      (of_positiveFactors_of_projectedPoincareCircBounds) in
+      of_positiveFactors_of_projectedPoincareCircBounds)
       Q a s C w (fun ρ₁ ρ₂ x => (w ρ₁ ρ₂).toH1.grad x i) Acirc1 AcircS hpos
       (CoarseCaccioppoliBoundaryCanonicalProjectedPoincareCircBounds.of_harmonicGradientComponent
         Q a s C w i Acirc1 AcircS hs1 henergy_nonneg henergy_int hgrad hsum1 hsumS
@@ -604,7 +614,7 @@ theorem CoarseCaccioppoliBoundaryCanonicalScalarControlFactors.acircS_nonneg
 factors, without exposing the raw scalar-control bundle or exact cutoff-size
 positivity hypotheses. -/
 theorem
-    coarseCaccioppoli_boundary_qone_of_canonicalQuantitativeCutoff_of_aHarmonicFamily_of_scalarControlFactors_of_coefficientBounds_of_localizationData_of_localizedExplicitHeightOfScaleChoice
+    coarseCaccioppoli_boundary_qone_of_quantitativeCutoff_of_of_scalarControlFactors
     {d : ℕ} [NeZero d] (Q : TriadicCube d) (a : CoeffField d)
     (s t C uL2Sq : ℝ) {lam Lam : ℝ}
     (k : ℝ → ℝ → ℕ) {F : ℝ → ℝ}
@@ -701,7 +711,7 @@ theorem
       CoarseCaccioppoliBoundaryCanonicalScalarControlFactors.acircS_nonneg
         Q a w g Acirc1 AcircS hscalarFactors hρ₁ hlt hρ₂
   exact
-    coarseCaccioppoli_boundary_qone_of_canonicalQuantitativeCutoff_of_aHarmonicFamily_of_scalarCutoffControls_of_coefficientBounds_of_localizationData_of_localizedExplicitHeightOfScaleChoice
+    coarseCaccioppoli_boundary_qone_of_quantitativeCutoff_of_of_scalarCutoffControls
       (Q := Q) (a := a) (s := s) (t := t) (C := C) (uL2Sq := uL2Sq)
       (k := k) (F := F) (w := w) (g := g)
       (Acirc1 := Acirc1) (AcircS := AcircS) (U := U) (A1 := A1) (AS := AS)
@@ -721,7 +731,7 @@ theorem
 factors, without exposing the raw scalar-control bundle or exact cutoff-size
 positivity hypotheses. -/
 theorem
-    coarseCaccioppoli_interior_qone_of_canonicalQuantitativeCutoff_of_aHarmonicFamily_of_scalarControlFactors_of_coefficientBounds_of_localizationData_of_radiusAgreement_of_localizedExplicitHeightOfScaleChoice
+    coarseCaccioppoli_interior_qone_of_quantitativeCutoff_of_of_scalarControlFactors
     {d : ℕ} [NeZero d] (Q : TriadicCube d) (a : CoeffField d)
     (s t C uL2Sq : ℝ) {lam Lam : ℝ}
     (k : ℝ → ℝ → ℕ) {F G₀ : ℝ → ℝ}
@@ -820,7 +830,7 @@ theorem
       CoarseCaccioppoliBoundaryCanonicalScalarControlFactors.acircS_nonneg
         Q a w g Acirc1 AcircS hscalarFactors hρ₁ hlt hρ₂
   exact
-    coarseCaccioppoli_interior_qone_of_canonicalQuantitativeCutoff_of_aHarmonicFamily_of_scalarCutoffControls_of_coefficientBounds_of_localizationData_of_radiusAgreement_of_localizedExplicitHeightOfScaleChoice
+    coarseCaccioppoli_interior_qone_of_quantitativeCutoff_of_of_scalarCutoffControls
       (Q := Q) (a := a) (s := s) (t := t) (C := C) (uL2Sq := uL2Sq)
       (k := k) (F := F) (G₀ := G₀) (w := w) (g := g)
       (Acirc1 := Acirc1) (AcircS := AcircS) (U := U) (A1 := A1) (AS := AS)
@@ -840,7 +850,7 @@ theorem
 inputs: nondegenerate positive factors plus the genuine projected-Poincare
 and `circ` bounds. -/
 theorem
-    coarseCaccioppoli_boundary_qone_of_canonicalQuantitativeCutoff_of_aHarmonicFamily_of_positiveFactors_of_projectedPoincareCircBounds_of_coefficientBounds_of_localizationData_of_localizedExplicitHeightOfScaleChoice
+    coarseCaccioppoli_boundary_qone_of_quantitativeCutoff_of_projectedPoincareBounds
     {d : ℕ} [NeZero d] (Q : TriadicCube d) (a : CoeffField d)
     (s t C uL2Sq : ℝ) {lam Lam : ℝ}
     (k : ℝ → ℝ → ℕ) {F : ℝ → ℝ}
@@ -913,12 +923,14 @@ theorem
     F (1 / 3 : ℝ) ≤
       coarseCaccioppoliBoundaryExplicitHeightBound Q a s t C uL2Sq := by
   exact
-    coarseCaccioppoli_boundary_qone_of_canonicalQuantitativeCutoff_of_aHarmonicFamily_of_scalarControlFactors_of_coefficientBounds_of_localizationData_of_localizedExplicitHeightOfScaleChoice
+    coarseCaccioppoli_boundary_qone_of_quantitativeCutoff_of_of_scalarControlFactors
       (Q := Q) (a := a) (s := s) (t := t) (C := C) (uL2Sq := uL2Sq)
       (k := k) (F := F) (w := w) (g := g)
       (Acirc1 := Acirc1) (AcircS := AcircS) (U := U) (A1 := A1) (AS := AS)
       hC hs ht hst hu hnonneg hbounded hscale hlower henergyAvg hgMem hfluxEnergy
-      (CoarseCaccioppoliBoundaryCanonicalScalarControlFactors.of_positiveFactors_of_projectedPoincareCircBounds
+      ((open CoarseCaccioppoliBoundaryCanonicalScalarControlFactors
+        (of_positiveFactors_of_projectedPoincareCircBounds) in
+        of_positiveFactors_of_projectedPoincareCircBounds)
         Q a s C w g Acirc1 AcircS hpositiveFactors hprojectedCirc)
       hU hA1 hAS hcoeff hEll hData hSigmaSum_t
 
@@ -926,7 +938,7 @@ theorem
 inputs: nondegenerate positive factors plus the genuine projected-Poincare
 and `circ` bounds. -/
 theorem
-    coarseCaccioppoli_interior_qone_of_canonicalQuantitativeCutoff_of_aHarmonicFamily_of_positiveFactors_of_projectedPoincareCircBounds_of_coefficientBounds_of_localizationData_of_radiusAgreement_of_localizedExplicitHeightOfScaleChoice
+    coarseCaccioppoli_interior_qone_of_quantitativeCutoff_of_projectedPoincareBounds
     {d : ℕ} [NeZero d] (Q : TriadicCube d) (a : CoeffField d)
     (s t C uL2Sq : ℝ) {lam Lam : ℝ}
     (k : ℝ → ℝ → ℕ) {F G₀ : ℝ → ℝ}
@@ -1001,13 +1013,15 @@ theorem
     F (1 / 3 : ℝ) ≤
       coarseCaccioppoliInteriorExplicitHeightBound Q a s t C uL2Sq := by
   exact
-    coarseCaccioppoli_interior_qone_of_canonicalQuantitativeCutoff_of_aHarmonicFamily_of_scalarControlFactors_of_coefficientBounds_of_localizationData_of_radiusAgreement_of_localizedExplicitHeightOfScaleChoice
+    coarseCaccioppoli_interior_qone_of_quantitativeCutoff_of_of_scalarControlFactors
       (Q := Q) (a := a) (s := s) (t := t) (C := C) (uL2Sq := uL2Sq)
       (k := k) (F := F) (G₀ := G₀) (w := w) (g := g)
       (Acirc1 := Acirc1) (AcircS := AcircS) (U := U) (A1 := A1) (AS := AS)
       hC hs ht hst hu hagree hG_nonneg hG_bounded hscale hlower henergyAvg
       hgMem hfluxEnergy
-      (CoarseCaccioppoliBoundaryCanonicalScalarControlFactors.of_positiveFactors_of_projectedPoincareCircBounds
+      ((open CoarseCaccioppoliBoundaryCanonicalScalarControlFactors
+        (of_positiveFactors_of_projectedPoincareCircBounds) in
+        of_positiveFactors_of_projectedPoincareCircBounds)
         Q a s C w g Acirc1 AcircS hpositiveFactors hprojectedCirc)
       hU hA1 hAS hcoeff hEll hData hSigmaSum_t
 

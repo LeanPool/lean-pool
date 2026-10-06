@@ -183,7 +183,7 @@ private theorem abs_cubeAverage_vecDot_le_of_overlappingBudget
         refine Finset.sum_le_sum ?_
         intro j _hj
         exact
-          Book.Ch01.Legacy.abs_cubeBesovPairing_le_mul_cubeBesovDualFullNorm_of_uniform_bound_two_two_of_nonneg
+          Book.Ch01.Legacy.abs_cubeBesovPairing_le_dualFullNorm_mul_bound
             Q s (fun x ↦ F x j) (fun x ↦ H x j) hs (hFcomp j) hbudget
             (fun N ↦
               componentDualTestNorm_le_of_overlappingBudget Q s H j hreg hB N)
@@ -204,7 +204,7 @@ private theorem abs_cubeBesovPairing_le_dualFullNorm_of_fullTest
     |cubeBesovPairing Q u g| ≤
       cubeBesovDualFullNorm Q s (2 : ℝ≥0∞) (2 : ℝ≥0∞) u := by
   have h :=
-    Book.Ch01.Legacy.abs_cubeBesovPairing_le_mul_cubeBesovDualFullNorm_of_uniform_bound_two_two_of_nonneg
+    Book.Ch01.Legacy.abs_cubeBesovPairing_le_dualFullNorm_mul_bound
       Q s u g hs hu zero_le_one hg.1 hg.2
   simpa using h
 
@@ -290,7 +290,7 @@ theorem exists_printOrderIdentityCubeDualRegularityWithConstant
     exact hbound
   constructor
   · refine le_trans
-      (cubeScaleNormalizedDualNegativeBesovVectorNormTwo_le_card_mul_of_forall_component_fullTest_pairing_le
+      (cubeScaleNormalizedDualNegativeBesovVectorNormTwo_le_card_mul
         Q s w (B := beta * S) ?_) ?_
     · intro i t ht
       obtain ⟨v, hv, hvbound⟩ := hcore i t ht
@@ -324,12 +324,12 @@ theorem exists_printOrderIdentityCubeDualRegularityWithConstant
         linarith only [hgap, hrest]
       exact hexpand
   · refine le_trans
-      (cubeScaleNormalizedDualNegativeBesovVectorNormTwo_le_card_mul_of_forall_component_fullTest_pairing_le
+      (cubeScaleNormalizedDualNegativeBesovVectorNormTwo_le_card_mul
         Q s (fun x ↦ w x + F x) (B := (beta + 1) * S) ?_) ?_
     · intro i t ht
       obtain ⟨v, hv, hvbound⟩ := hcore i t ht
       have hpair :=
-        cubeBesovPairing_fluxComparison_component_eq_cubeAverage_fluxDefect_dualGradient_add_coordinate
+        BesovPairing_fluxComparison_component_eq_fluxDefect_dualGradient
           (Q := Q) (sigma0 := (1 : ℝ)) (s := s) (w := w) (F := F) (v := v)
           i ht hF hv hw hsolScalar
       have hwcomp :

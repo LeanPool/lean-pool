@@ -498,7 +498,7 @@ theorem momentRoot_excess_le_card_mul_entryRootBound
 excess.  This is the integrability half of
 `upperLeft_matrixNorm_positiveExcess_finsetSup_momentRoot_le_of_restrictionUnitRangeDependentLaw`.
 -/
-theorem upperLeft_matrixNorm_positiveExcess_finsetSup_integrable_abs_pow_of_stationary
+theorem upperLeftPositiveMatrixNormExcess_integrable
     {d : ℕ} [NeZero d] {P : RestrictionCoeffLaw d} (hP : RestrictionLawCarrier P)
     {parents : Finset (TriadicCube d)} (hparents : parents.Nonempty)
     {n : ℤ} {ξ : ℕ}
@@ -596,7 +596,7 @@ theorem upperLeft_matrixNorm_positiveExcess_finsetSup_integrable_abs_pow_of_stat
   have hpoint :
       excess ≤ᵐ[P] fun a => ∑ i : Fin d, ∑ j : Fin d, entry i j a := by
     simpa [excess, entry] using
-      hP.coarseBlockMatrix_upperLeft_matrixNorm_positiveExcess_finsetSup_le_sum_finsetSup_abs_restrictionCenteredDescendantAverageOnCube_ae
+      hP.coarseMatrix_upperLeft_normExcess_finiteSup_le_sum_finiteSup_centeredMean_ae
         hparents hparent_scale center hcenter
   simpa [excess, Real.norm_eq_abs] using
     integrable_abs_pow_excess_of_ae_nonneg_le_entry_sum
@@ -606,7 +606,7 @@ theorem upperLeft_matrixNorm_positiveExcess_finsetSup_integrable_abs_pow_of_stat
 /-- Upper-left finite-parent coarse-block fluctuation bound, stated directly
 against the law-facing Ch4 surface.  The proof owns all locality,
 measurability, covariance, and deterministic positive-excess domination. -/
-theorem upperLeft_matrixNorm_positiveExcess_finsetSup_momentRoot_le_of_restrictionUnitRangeDependentLaw
+theorem upperLeftNorm_positiveExcess_momentRoot_le_of_unitRangeLaw
     {d : ℕ} [NeZero d] {P : RestrictionCoeffLaw d} (hP : RestrictionLawCarrier P)
     {parents : Finset (TriadicCube d)} (hparents : parents.Nonempty)
     {n : ℤ} {ξ : ℕ} {K B : ℝ}
@@ -722,13 +722,13 @@ theorem upperLeft_matrixNorm_positiveExcess_finsetSup_momentRoot_le_of_restricti
         (∫ a, |entry i j a| ^ ξ ∂P) ^ (1 / (ξ : ℝ)) ≤ C := by
     intro i j
     have hroot :=
-      integral_finsetSup_abs_restrictionCenteredDescendantAverageOnCube_pow_rpow_inv_le_of_restrictionUnitRangeDependentLaw_of_ae_eq_local
+      integral_finiteSupAbs_centeredDescendantMean_pow_rpow_inv_le_of_unitRangeLaw
         (d := d) (n := n) (P := P) (parents := parents) hparents
         (p := ξ) (K := K) (B := B)
         hP hn hparent_scale hPstat hPdep
         (fun U a => (coarseBlockMatrix U a).upperLeft i j)
         (fun Q hQ R hR =>
-          hP.exists_isRestrictionLocalRandomVariable_ae_eq_coarseBlockMatrix_upperLeft_apply_cubeSet R i j)
+          hP.exists_restrictionLocalRandomVariable_ae_eq_coarseUpperLeftEntry R i j)
         (by
           simpa [blockMatEntry] using
             isRestrictionTranslationCovariant_comp_toFun
@@ -748,7 +748,7 @@ theorem upperLeft_matrixNorm_positiveExcess_finsetSup_momentRoot_le_of_restricti
   have hpoint :
       excess ≤ᵐ[P] fun a => ∑ i : Fin d, ∑ j : Fin d, entry i j a := by
     simpa [excess, entry] using
-      hP.coarseBlockMatrix_upperLeft_matrixNorm_positiveExcess_finsetSup_le_sum_finsetSup_abs_restrictionCenteredDescendantAverageOnCube_ae
+      hP.coarseMatrix_upperLeft_normExcess_finiteSup_le_sum_finiteSup_centeredMean_ae
         hparents hparent_scale center hcenter
   simpa [excess, entry, C] using
     momentRoot_excess_le_card_mul_entryRootBound
@@ -760,7 +760,7 @@ theorem upperLeft_matrixNorm_positiveExcess_finsetSup_momentRoot_le_of_restricti
 excess.  This is the integrability half of
 `lowerRight_matrixNorm_positiveExcess_finsetSup_momentRoot_le_of_restrictionUnitRangeDependentLaw`.
 -/
-theorem lowerRight_matrixNorm_positiveExcess_finsetSup_integrable_abs_pow_of_stationary
+theorem lowerRightPositiveMatrixNormExcess_integrable
     {d : ℕ} [NeZero d] {P : RestrictionCoeffLaw d} (hP : RestrictionLawCarrier P)
     {parents : Finset (TriadicCube d)} (hparents : parents.Nonempty)
     {n : ℤ} {ξ : ℕ}
@@ -858,7 +858,7 @@ theorem lowerRight_matrixNorm_positiveExcess_finsetSup_integrable_abs_pow_of_sta
   have hpoint :
       excess ≤ᵐ[P] fun a => ∑ i : Fin d, ∑ j : Fin d, entry i j a := by
     simpa [excess, entry] using
-      hP.coarseBlockMatrix_lowerRight_matrixNorm_positiveExcess_finsetSup_le_sum_finsetSup_abs_restrictionCenteredDescendantAverageOnCube_ae
+      hP.coarseMatrix_lowerRight_normExcess_finiteSup_le_sum_finiteSup_centeredMean_ae
         hparents hparent_scale center hcenter
   simpa [excess, Real.norm_eq_abs] using
     integrable_abs_pow_excess_of_ae_nonneg_le_entry_sum

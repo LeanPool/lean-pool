@@ -112,12 +112,12 @@ theorem avsum_weighted_le_sqrt_two_mul_defect {ι : Type*} {Z : Finset ι}
 
 /-! ## The two halves of the Schur load -/
 
-/-- The flux half `|σ̄_*^{-1/2}Q|` of the Schur load. -/
+/-- The flux half `|σ_bar_*^{-1/2}Q|` of the Schur load. -/
 @[expose]
 def profileSchurLoadFlux (H : BlockMat d) (Qcen : Vec d) : ℝ :=
   Book.Ch02.vecNorm (matVecMul (matSqrt ((schurSigmaStar H)⁻¹)) Qcen)
 
-/-- The gradient half `|b̄^{1/2}P|` of the Schur load. -/
+/-- The gradient half `|b_bar^{1/2}P|` of the Schur load. -/
 @[expose]
 def profileSchurLoadGradient (H : BlockMat d) (Pcen : Vec d) : ℝ :=
   Book.Ch02.vecNorm (matVecMul (matSqrt H.upperLeft) Pcen)

@@ -321,7 +321,7 @@ theorem cubeBesovPositiveVectorDepthSeminorm_scalar_smul_le_cutoff_terms_of_cont
           cubeLpNorm Q ∞ ξ * cubeBesovPositiveScalarDepthSeminorm Q s v j) := by
             rw [hAterm, hCterm]
 
-theorem cubeBesovPositiveVectorPartialSeminormTwo_scalar_smul_le_cutoff_terms_of_contDiff_component_bound
+theorem cubeBesovPositiveVectorPartial_smul_le_cutoff_of_componentBound
     {d : ℕ} (Q : TriadicCube d) (s : ℝ) (N : ℕ) (v : Vec d → ℝ) (ξ : Vec d → Vec d)
     {B : ℝ} (hB : 0 ≤ B)
     (hv : MeasureTheory.MemLp v (2 : ℝ≥0∞) (normalizedCubeMeasure Q))
@@ -404,7 +404,7 @@ theorem cubeBesovPositiveVectorPartialSeminormTwo_scalar_smul_le_cutoff_terms_of
                   (cubeLpNorm Q ∞ ξ) (fun j => cubeBesovPositiveScalarDepthSeminorm Q s v j)
                   (cubeLpNorm_nonneg Q ∞ ξ)]
 
-theorem cubeBesovPositiveVectorPartialSeminormTwo_centered_scalar_smul_le_cutoff_terms_of_contDiff_component_bound
+theorem cubeBesovPositiveVectorPartialSeminormTwo_centered_scalar_smul_le_cutoff_terms
     {d : ℕ} (Q : TriadicCube d) (s : ℝ) (N : ℕ) (u : Vec d → ℝ) (ξ : Vec d → Vec d)
     {B : ℝ} (hB : 0 ≤ B)
     (hu : MeasureTheory.MemLp u (2 : ℝ≥0∞) (normalizedCubeMeasure Q))
@@ -422,7 +422,7 @@ theorem cubeBesovPositiveVectorPartialSeminormTwo_centered_scalar_smul_le_cutoff
         (2 : ℝ≥0∞) (normalizedCubeMeasure Q) :=
     hu.sub (MeasureTheory.memLp_const (cubeAverage Q u))
   simpa using
-    cubeBesovPositiveVectorPartialSeminormTwo_scalar_smul_le_cutoff_terms_of_contDiff_component_bound
+    cubeBesovPositiveVectorPartial_smul_le_cutoff_of_componentBound
       Q s N (fun x => u x - cubeAverage Q u) ξ hB hu_centered hξLp hξ hderiv
 
 theorem cubeLpNorm_two_le_cubeBesovPartialNormTop_zero {d : ℕ}
@@ -595,7 +595,8 @@ theorem cubeL2ScalarPartialSeminormTwo_le_geometric_mul_cubeLpNorm_two_of_neg {d
   calc
     cubeL2ScalarPartialSeminormTwo Q s N v
         = cubeLpNorm Q (2 : ℝ≥0∞) v *
-            Real.sqrt (∑ j ∈ Finset.range (N + 1), (Real.rpow (3 : ℝ) (s * (j : ℝ))) ^ 2) := hpartial_eq
+            Real.sqrt (∑ j ∈ Finset.range (N + 1), (Real.rpow (3 : ℝ) (s * (j : ℝ))) ^ 2) :=
+              hpartial_eq
     _ ≤ cubeLpNorm Q (2 : ℝ≥0∞) v * Real.sqrt ((1 - r)⁻¹) := by
           exact mul_le_mul_of_nonneg_left hsqrt_bound hnorm_nonneg
     _ = Real.sqrt ((1 - r)⁻¹) * cubeLpNorm Q (2 : ℝ≥0∞) v := by
@@ -621,7 +622,7 @@ theorem cubeBesovPositiveVectorPartialSeminormTwo_scalar_smul_le_note_poincare_c
               (1 - (3 : ℝ) ^ (-s))⁻¹) *
               cubeBesovCircPartialNorm Q (1 - s) (2 : ℝ≥0∞) (1 : ℝ≥0∞) N g))) := by
   have hraw :=
-    cubeBesovPositiveVectorPartialSeminormTwo_scalar_smul_le_cutoff_terms_of_contDiff_component_bound
+    cubeBesovPositiveVectorPartial_smul_le_cutoff_of_componentBound
       Q s N u ξ hB hu hξLp hξ hderiv
   have hs_neg : s - 1 < 0 := by linarith
   have hL2 :
@@ -649,7 +650,7 @@ theorem cubeBesovPositiveVectorPartialSeminormTwo_scalar_smul_le_note_poincare_c
             cubeBesovCircPartialNorm Q (1 - s) (2 : ℝ≥0∞) (1 : ℝ≥0∞) N g) := by
     rw [hpos_eq]
     exact
-      hproj.fluctuation_positiveScalarPartialSeminormTwo_le_note_rhs
+      hproj.projectedFluctuation_scalarBesov_le_bound
         (u := u) (hg := hg) hs0 hC
   have hcoeff_nonneg : 0 ≤ cubeScaleFactor Q * B := by
     exact mul_nonneg (cubeScaleFactor_nonneg Q) hB

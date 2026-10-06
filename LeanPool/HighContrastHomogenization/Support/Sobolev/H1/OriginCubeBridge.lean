@@ -26,6 +26,7 @@ namespace HCPolySupport
 
 open scoped Topology
 
+/-- The vector whose every coordinate equals `ε`. -/
 @[expose]
 public def diagonalShift {d : ℕ} (ε : ℝ) : Vec d :=
   fun _ => ε
@@ -280,7 +281,8 @@ with constant gradient `basisVec i`.
 noncomputable def coordOnOpenCubeSetOriginCube {d : ℕ} {n : ℤ} (i : Fin d) :
     H1Function (openCubeSet (originCube d n)) := by
   let U : Set (Vec d) := openCubeSet (originCube d n)
-  haveI : Fact (MeasureTheory.volume U < ⊤) := ⟨volume_openCubeSet_originCube_lt_top_originCubeBridge (d := d) n⟩
+  haveI : Fact (MeasureTheory.volume U < ⊤) :=
+    ⟨volume_openCubeSet_originCube_lt_top_originCubeBridge (d := d) n⟩
   haveI : MeasureTheory.IsFiniteMeasure (MeasureTheory.volume.restrict U) := inferInstance
   refine
     { toFun := fun x => x i
@@ -368,7 +370,8 @@ theorem exists_originCubeInwardShiftData {d : ℕ} [NeZero d] {n : ℤ}
     (u : H10Function (cubeSet (originCube d n))) :
           ∀ m : ℕ,
         ∃ ε : ℝ, 0 < ε ∧
-          tsupport (fun x : Vec d => u.approx m (x - diagonalShift (d := d) ε)) ⊆ openCubeSet (originCube d n) ∧
+          tsupport (fun x : Vec d => u.approx m (x - diagonalShift (d := d) ε)) ⊆ openCubeSet
+            (originCube d n) ∧
           (∀ x : Vec d,
             dist (u.approx m (x - diagonalShift (d := d) ε)) (u.approx m x) ≤
               1 / ((m : ℝ) + 1)) ∧
@@ -398,7 +401,8 @@ theorem exists_originCubeInwardShiftData {d : ℕ} [NeZero d] {n : ℤ}
       exact hcompact.uniformContinuous_of_continuous hcont
     obtain ⟨εpush, hεpush_pos, hpush⟩ :=
       HasCompactSupport.exists_pos_forall_precomp_subRight_tsupport_subset_openCubeSet_originCube
-        (d := d) (n := n) (φ := u.approx m) (u.approx_hasCompactSupport m) (u.approx_support_subset m)
+        (d := d) (n := n) (φ := u.approx m) (u.approx_hasCompactSupport m)
+          (u.approx_support_subset m)
     obtain ⟨δfun, hδfun_pos, hδfun⟩ :=
       (Metric.uniformContinuous_iff_le.mp happrox_uc) η hη
     let δgrad : Fin d → ℝ := fun i =>
@@ -463,7 +467,7 @@ theorem exists_originCubeInwardShiftData {d : ℕ} [NeZero d] {n : ℤ}
           _ ≤ δgrad i := hδgradMin_le i
       exact hδgrad i hdist
 
-theorem tendsto_shifted_originCube_approx {d : ℕ} [NeZero d] {n : ℤ}
+theorem tendsto_shifted_originCube_approx {d : ℕ} {n : ℤ}
     (u : H10Function (cubeSet (originCube d n)))
     (εShift : ℕ → ℝ) (approx' : ℕ → Vec d → ℝ)
     (hvalueShiftBound : ∀ (m : ℕ) (x : Vec d),
@@ -527,7 +531,8 @@ theorem tendsto_shifted_originCube_approx {d : ℕ} [NeZero d] {n : ℤ}
               rw [hpow_eq, ← ENNReal.ofReal_mul]
               positivity
     have hbase : Filter.Tendsto (fun m : ℕ => (1 : ℝ) / ((m : ℝ) + 1)) Filter.atTop (𝓝 0) := by
-      have hdenCast : Filter.Tendsto (fun m : ℕ => (((m + 1 : ℕ) : ℝ))) Filter.atTop Filter.atTop := by
+      have hdenCast : Filter.Tendsto (fun m : ℕ => (((m + 1 : ℕ) : ℝ))) Filter.atTop
+        Filter.atTop := by
         exact (tendsto_natCast_atTop_atTop (R := ℝ)).comp (Filter.tendsto_add_atTop_nat 1)
       have hden : Filter.Tendsto (fun m : ℕ => (m : ℝ) + 1) Filter.atTop Filter.atTop := by
         convert hdenCast using 1
@@ -598,7 +603,8 @@ theorem tendsto_shifted_originCube_approx {d : ℕ} [NeZero d] {n : ℤ}
               rw [hpow_eq, ← ENNReal.ofReal_mul]
               positivity
     have hbase : Filter.Tendsto (fun m : ℕ => (1 : ℝ) / ((m : ℝ) + 1)) Filter.atTop (𝓝 0) := by
-      have hdenCast : Filter.Tendsto (fun m : ℕ => (((m + 1 : ℕ) : ℝ))) Filter.atTop Filter.atTop := by
+      have hdenCast : Filter.Tendsto (fun m : ℕ => (((m + 1 : ℕ) : ℝ))) Filter.atTop
+        Filter.atTop := by
         exact (tendsto_natCast_atTop_atTop (R := ℝ)).comp (Filter.tendsto_add_atTop_nat 1)
       have hden : Filter.Tendsto (fun m : ℕ => (m : ℝ) + 1) Filter.atTop Filter.atTop := by
         convert hdenCast using 1
@@ -614,7 +620,7 @@ theorem tendsto_shifted_originCube_approx {d : ℕ} [NeZero d] {n : ℤ}
       (fun _ => bot_le) hbound
   exact ⟨hshiftApprox, hshiftGrad⟩
 
-theorem tendsto_approx_restrict_originCube {d : ℕ} [NeZero d] {n : ℤ}
+theorem tendsto_approx_restrict_originCube {d : ℕ} {n : ℤ}
     (u : H10Function (cubeSet (originCube d n))) :
   Filter.Tendsto
         (fun m : ℕ =>
@@ -655,7 +661,8 @@ theorem tendsto_approx_restrict_originCube {d : ℕ} [NeZero d] {n : ℤ}
     simpa [v, H1Function.restrict, μo, Uo, Uc] using
       (MeasureTheory.eLpNorm_mono_measure
         (fun x => u.approx m x - u.toH1Function.toFun x)
-        (MeasureTheory.Measure.restrict_mono_set MeasureTheory.volume (openCubeSet_subset_cubeSet _)))
+        (MeasureTheory.Measure.restrict_mono_set MeasureTheory.volume
+          (openCubeSet_subset_cubeSet _)))
   have horigGradRestrict :
       ∀ i : Fin d,
         Filter.Tendsto
@@ -677,7 +684,8 @@ theorem tendsto_approx_restrict_originCube {d : ℕ} [NeZero d] {n : ℤ}
     simpa [v, H1Function.restrict, μo, Uo, Uc] using
       (MeasureTheory.eLpNorm_mono_measure
         (fun x => (fderiv ℝ (u.approx m) x) (basisVec i) - u.toH1Function.grad x i)
-        (MeasureTheory.Measure.restrict_mono_set MeasureTheory.volume (openCubeSet_subset_cubeSet _)))
+        (MeasureTheory.Measure.restrict_mono_set MeasureTheory.volume
+          (openCubeSet_subset_cubeSet _)))
   exact ⟨horigRestrict, horigGradRestrict⟩
 
 /--
@@ -694,7 +702,8 @@ noncomputable def toOpenCubeSetOriginCube {d : ℕ} [NeZero d] {n : ℤ}
   have hUo_open : IsOpen Uo := isOpen_openCubeSet (originCube d n)
   let v : H1Function Uo := u.toH1Function.restrict hUo_open (openCubeSet_subset_cubeSet _)
   let μo := MeasureTheory.volume.restrict Uo
-  haveI : Fact (MeasureTheory.volume Uo < ⊤) := ⟨volume_openCubeSet_originCube_lt_top_originCubeBridge (d := d) n⟩
+  haveI : Fact (MeasureTheory.volume Uo < ⊤) :=
+    ⟨volume_openCubeSet_originCube_lt_top_originCubeBridge (d := d) n⟩
   haveI : MeasureTheory.IsFiniteMeasure μo := inferInstance
   have hshiftData := exists_originCubeInwardShiftData (d := d) (n := n) u
   let εShift : ℕ → ℝ := fun m => Classical.choose (hshiftData m)

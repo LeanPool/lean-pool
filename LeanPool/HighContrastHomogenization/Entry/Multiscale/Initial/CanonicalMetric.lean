@@ -222,7 +222,8 @@ theorem explicitCanonicalMetric_projectiveDistance_le_of_sandwich (d : ℕ) (hd 
     (c κ : ℝ) (hc : 0 < c) (hκ : 1 ≤ κ)
     (hlo : BlockMatLoewnerLE (blockScale c G) F)
     (hhi : BlockMatLoewnerLE F (blockScale (κ * c) G)) :
-    projectiveDistance (explicitCanonicalMetric F) (explicitCanonicalMetric G) ≤ 1 / 2 * Real.log κ := by
+    projectiveDistance (explicitCanonicalMetric F) (explicitCanonicalMetric G) ≤ 1 / 2 *
+      Real.log κ := by
   have : NeZero d := ⟨by omega⟩
   have hκ0 : (0:ℝ) < κ := lt_of_lt_of_le zero_lt_one hκ
   have hκc : (0:ℝ) < κ * c := mul_pos hκ0 hc
@@ -403,7 +404,8 @@ theorem entry_radius (d : ℕ) (hd : 2 ≤ d) :
         projectiveDistance (1 : Mat d) (explicitCanonicalMetric A) ≤
           Cgeom * Real.log (2 + 4 * aspectRatio E) := by
   let : NeZero d := ⟨by omega⟩
-  obtain ⟨Cgeom_ref, hCgeom_ref_pos, href⟩ := explicitCanonicalMetric_refBlock_projectiveDistance_le d hd
+  obtain ⟨Cgeom_ref, hCgeom_ref_pos, href⟩ :=
+    explicitCanonicalMetric_refBlock_projectiveDistance_le d hd
   refine ⟨Cgeom_ref + 1, by linarith only [hCgeom_ref_pos], ?_⟩
   intro E A hsymm hpos horder hAfull hlow hhigh
   have hAsymm : IsSymmetricBlockMat A :=
@@ -443,7 +445,8 @@ theorem entry_radius (d : ℕ) (hd : 2 ≤ d) :
     have hden : 12 * aspectRatio E ≠ 0 := mul_ne_zero (by norm_num) hPi_pos.ne'
     field_simp [hden]
     norm_num
-  have hsand := explicitCanonicalMetric_projectiveDistance_le_of_sandwich d hd A E hAsymm hApos hsymm hpos
+  have hsand := explicitCanonicalMetric_projectiveDistance_le_of_sandwich d hd A E hAsymm hApos
+    hsymm hpos
     ((12 * aspectRatio E)⁻¹) (24 * aspectRatio E) hc_pos hκ hlow' hhi'
   have hAE : projectiveDistance (explicitCanonicalMetric E) (explicitCanonicalMetric A) ≤
       Real.log (2 + 4 * aspectRatio E) := by
@@ -451,7 +454,8 @@ theorem entry_radius (d : ℕ) (hd : 2 ≤ d) :
       (Geometry.explicitCanonicalMetric_posDef hAsymm hApos)]
     exact hsand.trans (half_log_aspect_le (aspectRatio E) hPi)
   have htri := Geometry.projectiveDistance_triangle (Geometry.one_posDef d)
-    (Geometry.explicitCanonicalMetric_posDef hsymm hpos) (Geometry.explicitCanonicalMetric_posDef hAsymm hApos)
+    (Geometry.explicitCanonicalMetric_posDef hsymm hpos)
+      (Geometry.explicitCanonicalMetric_posDef hAsymm hApos)
   have hrefE := href E hsymm hpos horder
   calc
     projectiveDistance (1 : Mat d) (explicitCanonicalMetric A)

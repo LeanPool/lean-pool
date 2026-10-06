@@ -80,11 +80,13 @@ theorem bridge_application (d : ℕ) (hd : 2 ≤ d) (γ : ℝ) (hγ : γ ∈ Set
     (hη : profile P γ (Geometry.explicitRoundedGrid jStar m) jStar k n +
         determinantDrift P γ (Geometry.explicitRoundedGrid jStar m) jStar n ≤ c₀ * ε * σ)
     (hlong : (d : ℝ)⁻¹ *
-        detIncrement P (Geometry.explicitRoundedGrid jStar m) n (n + 2 * (selectionLength L₀ σ : ℤ)) ≤
+        detIncrement P (Geometry.explicitRoundedGrid jStar m) n (n + 2 * (selectionLength L₀ σ :
+          ℤ)) ≤
       ε * σ) :
     BlockMatLoewnerLE
         (blockScale (1 - Real.sqrt ε * σ)
-          (adaptedMean P (Geometry.explicitRoundedGrid jStar m) (n + 2 * (selectionLength L₀ σ : ℤ))))
+          (adaptedMean P (Geometry.explicitRoundedGrid jStar m) (n + 2 * (selectionLength L₀ σ :
+            ℤ))))
         (adaptedMean P
           (Geometry.explicitRoundedGrid jStar
             (geometryUpdate ε m
@@ -180,9 +182,11 @@ theorem old_grid_smallness (d : ℕ) (hd : 2 ≤ d) (γ : ℝ) (hγ : γ ∈ Set
     (hη : profile P γ (Geometry.explicitRoundedGrid jStar m) jStar k n +
         determinantDrift P γ (Geometry.explicitRoundedGrid jStar m) jStar n ≤ c₀ * ε * σ)
     (hlong : (d : ℝ)⁻¹ *
-        detIncrement P (Geometry.explicitRoundedGrid jStar m) n (n + 2 * (selectionLength L₀ σ : ℤ)) ≤
+        detIncrement P (Geometry.explicitRoundedGrid jStar m) n (n + 2 * (selectionLength L₀ σ :
+          ℤ)) ≤
       ε * σ) :
-    profile P γ (Geometry.explicitRoundedGrid jStar m) jStar k (n + 2 * (selectionLength L₀ σ : ℤ)) +
+    profile P γ (Geometry.explicitRoundedGrid jStar m) jStar k (n + 2 * (selectionLength L₀ σ :
+      ℤ)) +
         determinantDrift P γ (Geometry.explicitRoundedGrid jStar m) jStar
           (n + 2 * (selectionLength L₀ σ : ℤ)) ≤
       (3 : ℝ) ^ (-(1 / 2) * (1 - γ) * (selectionLength L₀ σ : ℝ)) * σ ^ ((1 - γ) / 8) := by

@@ -204,7 +204,8 @@ theorem doubledResponseJ_positiveScale
     (Book.Ch02.responseSubadditivityAndScalingTheory U (a.coeffOn U)).responseJ_homogeneous
       hc hscale
   have hadjoint :=
-    (Book.Ch02.responseSubadditivityAndScalingTheory U (a.coeffOn U).transpose).responseJ_homogeneous
+    (Book.Ch02.responseSubadditivityAndScalingTheory U (a.coeffOn
+      U).transpose).responseJ_homogeneous
       hc hscaleT
   rw [Book.Ch02.doubledResponseJ_eq_half_responseJ_adjoint_sum,
     Book.Ch02.doubledResponseJ_eq_half_responseJ_adjoint_sum]

@@ -27,6 +27,89 @@ open scoped ENNReal
 noncomputable section
 
 
+private theorem integral_pairing_tendsto_of_square_integrable_convergence
+    {d : ℕ} {U : Set (Vec d)} {f v : Vec d → ℝ} {ψ : ℕ → Vec d → ℝ}
+    (hf : MemScalarL2 U f) (hψ_mem : ∀ n, MemScalarL2 U (ψ n))
+    (hv : MemScalarL2 U v)
+    (ht : Filter.Tendsto
+      (fun n => MeasureTheory.eLpNorm (fun x => ψ n x - v x) 2 (volumeMeasureOn U))
+      Filter.atTop (nhds 0)) :
+    Filter.Tendsto
+      (fun n => ∫ x in U, f x * ψ n x ∂MeasureTheory.volume)
+      Filter.atTop (nhds (∫ x in U, f x * v x ∂MeasureTheory.volume)) := by
+  let μ := volumeMeasureOn U
+  let diff : ℕ → Vec d → ℝ := fun n x => ψ n x - v x
+  let Fn : ℕ → Vec d → ℝ := fun n x => f x * ψ n x
+  let fLim : Vec d → ℝ := fun x => f x * v x
+  have hdiff_mem : ∀ n, MemScalarL2 U (diff n) := by
+    intro n
+    exact (hψ_mem n).sub hv
+  have hFn_int :
+      ∀ᶠ n in Filter.atTop, MeasureTheory.Integrable (Fn n) μ := by
+    refine Filter.Eventually.of_forall ?_
+    intro n
+    simpa [Fn, μ, MeasureTheory.IntegrableOn] using!
+      (hf.integrable_mul (hψ_mem n))
+  have hfLim_int : MeasureTheory.Integrable fLim μ := by
+    simpa [fLim, μ, MeasureTheory.IntegrableOn] using!
+      (hf.integrable_mul hv)
+  have hL1_bound :
+      ∀ n,
+        MeasureTheory.eLpNorm (fun x => f x * diff n x) 1 μ ≤
+          MeasureTheory.eLpNorm f 2 μ *
+            MeasureTheory.eLpNorm (diff n) 2 μ := by
+    intro n
+    have hf_meas :
+        MeasureTheory.AEStronglyMeasurable f μ := hf.aestronglyMeasurable
+    have hdiff_meas :
+        MeasureTheory.AEStronglyMeasurable (diff n) μ :=
+      (hdiff_mem n).aestronglyMeasurable
+    simpa [diff] using
+      (MeasureTheory.eLpNorm_le_eLpNorm_mul_eLpNorm_of_nnnorm
+        (μ := μ) (p := (2 : ENNReal)) (q := (2 : ENNReal))
+        (r := (1 : ENNReal)) (fun a b : ℝ => a * b) 1 continuous_mul
+        hf_meas hdiff_meas
+        (Filter.Eventually.of_forall fun x => by simp))
+  have hconst_ne_top : MeasureTheory.eLpNorm f 2 μ ≠ ⊤ :=
+    hf.eLpNorm_lt_top.ne
+  have hL1 :
+      Filter.Tendsto
+        (fun n => MeasureTheory.eLpNorm (fun x => f x * diff n x) 1 μ)
+        Filter.atTop (nhds 0) := by
+    have hscaled :
+        Filter.Tendsto
+          (fun n =>
+            MeasureTheory.eLpNorm f 2 μ *
+              MeasureTheory.eLpNorm (diff n) 2 μ)
+          Filter.atTop (nhds (MeasureTheory.eLpNorm f 2 μ * 0)) := by
+      exact ENNReal.Tendsto.const_mul ht
+        (Or.inr hconst_ne_top)
+    have hscaled0 :
+        Filter.Tendsto
+          (fun n =>
+            MeasureTheory.eLpNorm f 2 μ *
+              MeasureTheory.eLpNorm (diff n) 2 μ)
+          Filter.atTop (nhds 0) := by
+      simpa [mul_zero] using hscaled
+    exact tendsto_of_tendsto_of_tendsto_of_le_of_le
+      tendsto_const_nhds hscaled0 (fun _ => zero_le) hL1_bound
+  have hL1_diff :
+      Filter.Tendsto
+        (fun n => MeasureTheory.eLpNorm (fun x => Fn n x - fLim x) 1 μ)
+        Filter.atTop (nhds 0) := by
+    have hEq :
+        (fun n => MeasureTheory.eLpNorm (fun x => Fn n x - fLim x) 1 μ) =
+          fun n => MeasureTheory.eLpNorm (fun x => f x * diff n x) 1 μ := by
+      funext n
+      congr 1
+      funext x
+      simp [Fn, fLim, diff]
+      ring
+    rw [hEq]
+    exact hL1
+  exact MeasureTheory.tendsto_integral_of_L1'
+    (μ := μ) (f := fLim) hFn_int hL1_diff
+
 /-- Extend an inhomogeneous weak equation from smooth compactly supported tests
 to arbitrary `H¹₀` tests on an open domain. The proof uses exactly the
 approximation data bundled in `H10Function`: the gradient side is continuous by
@@ -78,81 +161,9 @@ theorem h10WeakEquationOn_of_contDiff_tests
           (nhds (∫ x in U, G x i * φ.toH1Function.grad x i
             ∂MeasureTheory.volume)) := by
     intro i
-    let gi : Vec d → ℝ := fun x => G x i
-    let diff : ℕ → Vec d → ℝ :=
-      fun n x => D n x i - φ.toH1Function.grad x i
-    let Fn : ℕ → Vec d → ℝ := fun n x => gi x * D n x i
-    let fLim : Vec d → ℝ := fun x => gi x * φ.toH1Function.grad x i
-    have hgi_mem : MemScalarL2 U gi :=
-      memScalarL2_coord_of_memVectorL2 hG i
-    have hdiff_mem : ∀ n, MemScalarL2 U (diff n) := by
-      intro n
-      exact (hD_coord n i).sub (φ.toH1Function.gradMemL2 i)
-    have hFn_int :
-        ∀ᶠ n in Filter.atTop, MeasureTheory.Integrable (Fn n) μ := by
-      refine Filter.Eventually.of_forall ?_
-      intro n
-      simpa [Fn, gi, D, μ, MeasureTheory.IntegrableOn] using!
-        (hgi_mem.integrable_mul (hD_coord n i))
-    have hfLim_int : MeasureTheory.Integrable fLim μ := by
-      simpa [fLim, gi, μ, MeasureTheory.IntegrableOn] using!
-        (hgi_mem.integrable_mul (φ.toH1Function.gradMemL2 i))
-    have hL1_bound :
-        ∀ n,
-          MeasureTheory.eLpNorm (fun x => gi x * diff n x) 1 μ ≤
-            MeasureTheory.eLpNorm gi 2 μ *
-              MeasureTheory.eLpNorm (diff n) 2 μ := by
-      intro n
-      have hgi_meas :
-          MeasureTheory.AEStronglyMeasurable gi μ := hgi_mem.aestronglyMeasurable
-      have hdiff_meas :
-          MeasureTheory.AEStronglyMeasurable (diff n) μ :=
-        (hdiff_mem n).aestronglyMeasurable
-      simpa [gi, diff] using
-        (MeasureTheory.eLpNorm_le_eLpNorm_mul_eLpNorm_of_nnnorm
-          (μ := μ) (p := (2 : ENNReal)) (q := (2 : ENNReal))
-          (r := (1 : ENNReal)) (fun a b : ℝ => a * b) 1 continuous_mul
-          hgi_meas hdiff_meas
-          (Filter.Eventually.of_forall fun x => by simp))
-    have hconst_ne_top : MeasureTheory.eLpNorm gi 2 μ ≠ ⊤ :=
-      hgi_mem.eLpNorm_lt_top.ne
-    have hL1 :
-        Filter.Tendsto
-          (fun n => MeasureTheory.eLpNorm (fun x => gi x * diff n x) 1 μ)
-          Filter.atTop (nhds 0) := by
-      have hscaled :
-          Filter.Tendsto
-            (fun n =>
-              MeasureTheory.eLpNorm gi 2 μ *
-                MeasureTheory.eLpNorm (diff n) 2 μ)
-            Filter.atTop (nhds (MeasureTheory.eLpNorm gi 2 μ * 0)) := by
-        exact ENNReal.Tendsto.const_mul (φ.tendsto_approx_grad i)
-          (Or.inr hconst_ne_top)
-      have hscaled0 :
-          Filter.Tendsto
-            (fun n =>
-              MeasureTheory.eLpNorm gi 2 μ *
-                MeasureTheory.eLpNorm (diff n) 2 μ)
-            Filter.atTop (nhds 0) := by
-        simpa [mul_zero] using hscaled
-      exact tendsto_of_tendsto_of_tendsto_of_le_of_le
-        tendsto_const_nhds hscaled0 (fun _ => zero_le) hL1_bound
-    have hL1_diff :
-        Filter.Tendsto
-          (fun n => MeasureTheory.eLpNorm (fun x => Fn n x - fLim x) 1 μ)
-          Filter.atTop (nhds 0) := by
-      have hEq :
-          (fun n => MeasureTheory.eLpNorm (fun x => Fn n x - fLim x) 1 μ) =
-            fun n => MeasureTheory.eLpNorm (fun x => gi x * diff n x) 1 μ := by
-        funext n
-        congr 1
-        funext x
-        simp [Fn, fLim, gi, diff]
-        ring
-      rw [hEq]
-      exact hL1
-    exact MeasureTheory.tendsto_integral_of_L1'
-      (μ := μ) (f := fLim) hFn_int hL1_diff
+    exact integral_pairing_tendsto_of_square_integrable_convergence
+      (memScalarL2_coord_of_memVectorL2 hG i) (fun n => hD_coord n i)
+      (φ.toH1Function.gradMemL2 i) (φ.tendsto_approx_grad i)
   have hleft_tendsto :
       Filter.Tendsto
         (fun n => ∫ x in U, vecDot (G x) (D n x) ∂MeasureTheory.volume)
@@ -197,83 +208,8 @@ theorem h10WeakEquationOn_of_contDiff_tests
         tendsto_finsetSum Finset.univ (fun i _ => hcoord_tendsto i)
     rw [hEq_limit]
     exact hsum
-  have hright_tendsto :
-      Filter.Tendsto
-        (fun n => ∫ x in U, f x * φ.approx n x ∂MeasureTheory.volume)
-        Filter.atTop
-        (nhds (∫ x in U, f x * φ.toH1Function x
-          ∂MeasureTheory.volume)) := by
-    let diff : ℕ → Vec d → ℝ := fun n x => φ.approx n x - φ.toH1Function x
-    let Fn : ℕ → Vec d → ℝ := fun n x => f x * φ.approx n x
-    let fLim : Vec d → ℝ := fun x => f x * φ.toH1Function x
-    have hdiff_mem : ∀ n, MemScalarL2 U (diff n) := by
-      intro n
-      exact (hψ_mem n).sub φ.toH1Function.memL2
-    have hFn_int :
-        ∀ᶠ n in Filter.atTop, MeasureTheory.Integrable (Fn n) μ := by
-      refine Filter.Eventually.of_forall ?_
-      intro n
-      simpa [Fn, μ, MeasureTheory.IntegrableOn] using!
-        (hf.integrable_mul (hψ_mem n))
-    have hfLim_int : MeasureTheory.Integrable fLim μ := by
-      simpa [fLim, μ, MeasureTheory.IntegrableOn] using!
-        (hf.integrable_mul φ.toH1Function.memL2)
-    have hL1_bound :
-        ∀ n,
-          MeasureTheory.eLpNorm (fun x => f x * diff n x) 1 μ ≤
-            MeasureTheory.eLpNorm f 2 μ *
-              MeasureTheory.eLpNorm (diff n) 2 μ := by
-      intro n
-      have hf_meas :
-          MeasureTheory.AEStronglyMeasurable f μ := hf.aestronglyMeasurable
-      have hdiff_meas :
-          MeasureTheory.AEStronglyMeasurable (diff n) μ :=
-        (hdiff_mem n).aestronglyMeasurable
-      simpa [diff] using
-        (MeasureTheory.eLpNorm_le_eLpNorm_mul_eLpNorm_of_nnnorm
-          (μ := μ) (p := (2 : ENNReal)) (q := (2 : ENNReal))
-          (r := (1 : ENNReal)) (fun a b : ℝ => a * b) 1 continuous_mul
-          hf_meas hdiff_meas
-          (Filter.Eventually.of_forall fun x => by simp))
-    have hconst_ne_top : MeasureTheory.eLpNorm f 2 μ ≠ ⊤ :=
-      hf.eLpNorm_lt_top.ne
-    have hL1 :
-        Filter.Tendsto
-          (fun n => MeasureTheory.eLpNorm (fun x => f x * diff n x) 1 μ)
-          Filter.atTop (nhds 0) := by
-      have hscaled :
-          Filter.Tendsto
-            (fun n =>
-              MeasureTheory.eLpNorm f 2 μ *
-                MeasureTheory.eLpNorm (diff n) 2 μ)
-            Filter.atTop (nhds (MeasureTheory.eLpNorm f 2 μ * 0)) := by
-        exact ENNReal.Tendsto.const_mul φ.tendsto_approx
-          (Or.inr hconst_ne_top)
-      have hscaled0 :
-          Filter.Tendsto
-            (fun n =>
-              MeasureTheory.eLpNorm f 2 μ *
-                MeasureTheory.eLpNorm (diff n) 2 μ)
-            Filter.atTop (nhds 0) := by
-        simpa [mul_zero] using hscaled
-      exact tendsto_of_tendsto_of_tendsto_of_le_of_le
-        tendsto_const_nhds hscaled0 (fun _ => zero_le) hL1_bound
-    have hL1_diff :
-        Filter.Tendsto
-          (fun n => MeasureTheory.eLpNorm (fun x => Fn n x - fLim x) 1 μ)
-          Filter.atTop (nhds 0) := by
-      have hEq :
-          (fun n => MeasureTheory.eLpNorm (fun x => Fn n x - fLim x) 1 μ) =
-            fun n => MeasureTheory.eLpNorm (fun x => f x * diff n x) 1 μ := by
-        funext n
-        congr 1
-        funext x
-        simp [Fn, fLim, diff]
-        ring
-      rw [hEq]
-      exact hL1
-    exact MeasureTheory.tendsto_integral_of_L1'
-      (μ := μ) (f := fLim) hFn_int hL1_diff
+  have hright_tendsto := integral_pairing_tendsto_of_square_integrable_convergence
+    hf hψ_mem φ.toH1Function.memL2 φ.tendsto_approx
   have hright_to_left :
       Filter.Tendsto
         (fun n => ∫ x in U, f x * φ.approx n x ∂MeasureTheory.volume)

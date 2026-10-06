@@ -458,7 +458,8 @@ theorem cubeBesovDepthSeminorm_one_two_le_of_contDiff_bound {d : ℕ}
               have hosc :
                   cubeBesovOscillation R (2 : ℝ≥0∞) u ≤ cubeScaleFactor R * B := by
                 exact cubeBesovOscillation_two_le_cubeScaleFactor_mul_of_contDiff_bound
-                  R hB huR hu (fun z hz => hderiv z (cubeSet_subset_of_mem_descendantsAtDepth hR hz))
+                  R hB huR hu (fun z hz => hderiv z (cubeSet_subset_of_mem_descendantsAtDepth hR
+                    hz))
               have hRB_eq : cubeScaleFactor R * B = A * B := by
                 rw [cubeScaleFactor_eq_div_pow_of_mem_descendantsAtDepth hR]
               have hosc_nonneg : 0 ≤ cubeBesovOscillation R (2 : ℝ≥0∞) u :=
@@ -655,7 +656,7 @@ theorem cubeBesovDepthSeminorm_two_le_scaleWeight_mul_scaleFactor_mul_of_contDif
           exact mul_le_mul_of_nonneg_right hpow_le hB
     _ = cubeBesovScaleWeight s Q * cubeScaleFactor Q * B := by rw [← hscale_eq]
 
-theorem cubeBesovPartialSeminormTop_two_le_scaleWeight_mul_scaleFactor_mul_of_contDiff_bound_of_le_one
+theorem cubeBesovPartialSeminormTop_two_le_scaleBound_of_contDiff
     {d : ℕ} (Q : TriadicCube d) (u : Vec d → ℝ) (N : ℕ) {s B : ℝ}
     (hs1 : s ≤ 1) (hB : 0 ≤ B)
     (huLp : MeasureTheory.MemLp u ∞ (normalizedCubeMeasure Q))
@@ -689,7 +690,7 @@ theorem cubeBesovPartialNormTop_two_le_scaleWeight_mul_of_contDiff_bound_of_le_o
         ≤ cubeBesovScaleWeight s Q * cubeScaleFactor Q * B +
             cubeBesovScaleWeight s Q * cubeLpNorm Q ∞ u := by
           exact add_le_add
-            (cubeBesovPartialSeminormTop_two_le_scaleWeight_mul_scaleFactor_mul_of_contDiff_bound_of_le_one
+            (cubeBesovPartialSeminormTop_two_le_scaleBound_of_contDiff
               Q u N hs1 hB huLp hu hderiv)
             (mul_le_mul_of_nonneg_left
               (norm_cubeAverage_le_cubeLpNorm_infty Q u huLp)

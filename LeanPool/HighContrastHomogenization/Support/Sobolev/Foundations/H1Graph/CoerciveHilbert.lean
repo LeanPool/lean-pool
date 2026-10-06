@@ -31,19 +31,26 @@ layer: the closed mean-zero weak-gradient graph inside
 noncomputable abbrev H1CoerciveHilbertAmbient :=
   WithLp 2 (ScalarL2 U × HilbertVectorL2 U)
 
+/-- The continuous linear equivalence between the ℓ² product ambient space and the ordinary
+product of value and gradient L² spaces. -/
 noncomputable abbrev h1CoerciveHilbertAmbientEquiv :
     H1CoerciveHilbertAmbient (U := U) ≃L[ℝ] ScalarL2 U × HilbertVectorL2 U :=
   WithLp.prodContinuousLinearEquiv 2 ℝ (ScalarL2 U) (HilbertVectorL2 U)
 
+/-- The closed mean-zero weak H¹ graph transported into the ℓ² product of value and gradient L²
+spaces. -/
 noncomputable abbrev h1CoerciveHilbertClosedSubmodule :
     ClosedSubmodule ℝ (H1CoerciveHilbertAmbient (U := U)) :=
   (h1MeanZeroGraphClosedSubmodule (U := U)).comap
     (h1CoerciveHilbertAmbientEquiv (U := U)).toContinuousLinearMap
 
+/-- The real submodule underlying the closed mean-zero weak H¹ graph in the ℓ² product ambient
+space. -/
 noncomputable abbrev h1CoerciveHilbertSubmodule :
     Submodule ℝ (H1CoerciveHilbertAmbient (U := U)) :=
   (h1CoerciveHilbertClosedSubmodule (U := U)).toSubmodule
 
+/-- The Hilbert-space carrier of the closed mean-zero weak H¹ graph. -/
 noncomputable abbrev H1CoerciveHilbertSpace :=
   ↥(h1CoerciveHilbertSubmodule (U := U))
 
@@ -146,7 +153,7 @@ noncomputable def forcingRieszMap :
     (H1CoerciveHilbertSpace (U := U) →L[ℝ] ℝ) → H1CoerciveHilbertSpace (U := U) :=
   fun ℓ => (InnerProductSpace.toDual ℝ (H1CoerciveHilbertSpace (U := U))).symm ℓ
 
-@[simp] theorem inner_forcingRieszMap_apply
+theorem inner_forcingRieszMap_apply
     (ℓ : H1CoerciveHilbertSpace (U := U) →L[ℝ] ℝ)
     (z : H1CoerciveHilbertSpace (U := U)) :
     inner ℝ (forcingRieszMap (U := U) ℓ) z = ℓ z := by
@@ -167,7 +174,7 @@ noncomputable def forcingRieszRep {f : Vec d → Vec d}
     H1CoerciveHilbertSpace (U := U) :=
   forcingRieszMap (U := U) (forcingFunctionalCLM (U := U) hf)
 
-@[simp] theorem inner_forcingRieszRep_apply {f : Vec d → Vec d}
+theorem inner_forcingRieszRep_apply {f : Vec d → Vec d}
     (hf : MemVectorL2 U f) (z : H1CoerciveHilbertSpace (U := U)) :
     inner ℝ (forcingRieszRep (U := U) hf) z =
       forcingFunctionalCLM (U := U) hf z := by
@@ -371,6 +378,7 @@ end H1CoerciveHilbert
 
 namespace H1MeanZeroFunction
 
+/-- The element of the mean-zero H¹ Hilbert graph given by the L² value and gradient of `u`. -/
 @[expose]
 noncomputable def toH1CoerciveHilbertSpace
     (u : H1MeanZeroFunction U) : H1CoerciveHilbertSpace (U := U) := by
@@ -393,7 +401,7 @@ noncomputable def toH1CoerciveHilbertSpace
       u.gradToHilbertVectorL2 := by
   simp [toH1CoerciveHilbertSpace, H1CoerciveHilbert.gradient]
 
-@[simp] theorem H1CoerciveHilbert_forcingFunctionalCLM_apply_toH1CoerciveHilbertSpace
+theorem forcingFunctional_apply_toCoerciveHilbert
     {f : Vec d → Vec d} (hf : MemVectorL2 U f) (u : H1MeanZeroFunction U) :
     H1CoerciveHilbert.forcingFunctionalCLM (U := U) hf
         (toH1CoerciveHilbertSpace (U := U) u) =
@@ -402,7 +410,7 @@ noncomputable def toH1CoerciveHilbertSpace
     H1CoerciveHilbert_gradient_toH1CoerciveHilbertSpace]
   rfl
 
-@[simp] theorem H1CoerciveHilbert_scalarForcingFunctionalCLM_apply_toH1CoerciveHilbertSpace
+theorem H1CoerciveHilbert_scalarForcingFunctionalCLM_apply_toH1CoerciveHilbertSpace
     {F : Vec d → ℝ} (hF : MemScalarL2 U F) (u : H1MeanZeroFunction U) :
     H1CoerciveHilbert.scalarForcingFunctionalCLM (U := U) hF
         (toH1CoerciveHilbertSpace (U := U) u) =

@@ -37,7 +37,7 @@ with `L = matSqrt (symmPart abar)`, while the terminal Seam-2 bound is produced
 in the **gauge** frame, on `Uhat = matImage L⁻¹ U`, at the pair
 
 ```
-negSobolevNorm Uhat s (∇û − ∇ĥ) + negSobolevNorm Uhat s (â ∇û − ∇ĥ).
+negSobolevNorm Uhat s (∇û − ∇h_hat) + negSobolevNorm Uhat s (â ∇û − ∇h_hat).
 ```
 
 The step between them is the affine dual comparison

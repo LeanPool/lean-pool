@@ -27,10 +27,14 @@ namespace HCPolySupport.HighContrast.EntryScale
 
 /-- A stable label referencing a statement in the source document. -/
 structure SourceLabel where
+  /-- The identifier of the source document containing the referenced statement. -/
   file : String
+  /-- The statement label within the source document. -/
   label : String
+  /-- The line number of the referenced statement in the source document. -/
   line : Nat
 deriving DecidableEq, Repr
+
 
 namespace SourceLabel
 

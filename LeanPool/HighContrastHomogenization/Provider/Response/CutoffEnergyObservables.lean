@@ -57,7 +57,8 @@ coefficient space.** -/
 theorem measurable_cutoffOptimizerEnergyDefect [NeZero d] {q : Mat d} (hq : q.PosDef)
     (t : ℤ) (p r : Vec d) :
     Measurable fun b : CoeffSpace d =>
-      weightedOptimizerEnergy (Response.adaptedDomain hq t) (b.coeffOn (Response.adaptedDomain hq t))
+      weightedOptimizerEnergy (Response.adaptedDomain hq t) (b.coeffOn (Response.adaptedDomain
+        hq t))
           p r (Response.adaptedPreYoungCutoff q hq t) -
         Book.Ch02.responseJ (Response.adaptedDomain hq t)
           (b.coeffOn (Response.adaptedDomain hq t)) p r :=

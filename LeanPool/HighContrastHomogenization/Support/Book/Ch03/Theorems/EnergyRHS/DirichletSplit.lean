@@ -43,7 +43,7 @@ theorem dirichletForcedSolutionEnergyNorm_le_sqrt_two_mul_zeroTraceDifference_ad
         2 * cubeAverage Q
           (coefficientEnergyDensity (publicCoeffField Q a)
             (dirichletBoundaryGradientField v))) := by
-  rw [dirichletForcedSolutionEnergyNorm_eq_sqrt_cubeAverage_coefficientEnergyDensity_publicCoeffField
+  rw [dirichletForced_energyNorm_eq_sqrt_coefficientEnergy
     (Q := Q) (a := a) v]
   exact Real.sqrt_le_sqrt
     (v.cubeAverage_energy_le_two_mul_zeroTraceDifference_add_boundary)
@@ -211,7 +211,7 @@ theorem dirichletForcedSolutionEnergyNorm_le_sqrt_two_mul_zeroTraceCorrector_add
       Real.sqrt
         (cubeAverage Q
           (coefficientEnergyDensity (publicCoeffField Q a) v.toH1.grad)) := by
-        rw [dirichletForcedSolutionEnergyNorm_eq_sqrt_cubeAverage_coefficientEnergyDensity_publicCoeffField
+        rw [dirichletForced_energyNorm_eq_sqrt_coefficientEnergy
           (Q := Q) (a := a) v]
     _ ≤ Real.sqrt (2 * E₀ + 2 * Eh) := Real.sqrt_le_sqrt hsplit
     _ ≤ Real.sqrt (2 * E₀) + Real.sqrt (2 * Eh) := by
@@ -232,7 +232,7 @@ theorem dirichletForcedSolutionEnergyNorm_le_sqrt_two_mul_zeroTraceCorrector_add
 /-- Manuscript-route assembly for the public Dirichlet estimate: after
 choosing the zero-Dirichlet forced corrector and the homogeneous boundary
 remainder, the two square-root bounds imply the displayed RHS. -/
-theorem dirichletForcedSolutionEnergyNorm_le_dirichletEnergyWithRHSRHS_of_zeroTraceCorrector_and_harmonicRemainder_bounds
+theorem dirichletForcedSolutionEnergyNorm_le_of_zeroTraceCorrector
     {d : ℕ} [NeZero d] {C : ℝ}
     {Q : TriadicCube d} {a : CoeffFamily d} {s : ℝ}
     {g : Vec d → Vec d} (v : DirichletForcedCubeSolution Q a g)

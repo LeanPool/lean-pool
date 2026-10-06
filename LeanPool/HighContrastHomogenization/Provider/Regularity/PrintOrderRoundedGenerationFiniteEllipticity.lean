@@ -590,7 +590,8 @@ theorem LambdaSq_finite_two_le_printOrderRoundedReferenceError
     _ = C * (∑' n : ℕ, w n * (M n + 1)) := hsumR.tsum_mul_left C
     _ = C * ((Book.Ch02.HomogenizationErrorOnCube Q s .infinity (.finite 2) a
           (geom.referenceMatrix abar hS)) ^ 2 + 1) := by
-      rw [Book.Ch02.tsum_geometricWeight_two_mul_maxResponse_add_one_eq_homogenizationError_sq_add_one
+      rw [
+      Book.Ch02.tsum_geometricWeight_two_mul_maxResponse_add_one_eq_homogenizationError_sq_add_one
         Q a (geom.referenceMatrix abar hS) hs]
 
 /-- The inverse finite `q = 2` lower ellipticity row is controlled directly by
@@ -666,7 +667,8 @@ theorem lambdaSq_finite_two_inv_le_printOrderRoundedReferenceError
     _ = C * (∑' n : ℕ, w n * (M n + 1)) := hsumR.tsum_mul_left C
     _ = C * ((Book.Ch02.HomogenizationErrorOnCube Q s .infinity (.finite 2) a
           (geom.referenceMatrix abar hS)) ^ 2 + 1) := by
-      rw [Book.Ch02.tsum_geometricWeight_two_mul_maxResponse_add_one_eq_homogenizationError_sq_add_one
+      rw [
+      Book.Ch02.tsum_geometricWeight_two_mul_maxResponse_add_one_eq_homogenizationError_sq_add_one
         Q a (geom.referenceMatrix abar hS) hs]
 
 /-- A rounded weak-error bound by one gives a dimension-only finite `q = 2`

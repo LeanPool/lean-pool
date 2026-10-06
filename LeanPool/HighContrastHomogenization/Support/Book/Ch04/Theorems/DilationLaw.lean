@@ -80,12 +80,14 @@ theorem rescaleReg_eq_dilateReg_neg_nat {d : ℕ} (k : ℕ) :
   simp only [rescaleReg_apply, dilateReg_apply, hs]
 
 /-- `restrictionScaleNormalizedLaw` is the pushforward under the carrier triadic rescaling. -/
-theorem restrictionScaleNormalizedLaw_eq_map_rescaleReg {d : ℕ} (k : ℕ) (P : RestrictionCoeffLaw d) :
+theorem restrictionScaleNormalizedLaw_eq_map_rescaleReg {d : ℕ} (k : ℕ) (P : RestrictionCoeffLaw
+  d) :
     restrictionScaleNormalizedLaw k P = Measure.map (rescaleReg k) P := by
   rw [restrictionScaleNormalizedLaw, rescaleReg_eq_dilateReg_neg_nat]
 
 /-- A scale-normalized probability law is again a probability law. -/
-theorem isProbabilityMeasure_restrictionScaleNormalizedLaw {d : ℕ} (k : ℕ) (P : RestrictionCoeffLaw d)
+theorem isProbabilityMeasure_restrictionScaleNormalizedLaw {d : ℕ} (k : ℕ) (P :
+  RestrictionCoeffLaw d)
     [IsProbabilityMeasure P] :
     IsProbabilityMeasure (restrictionScaleNormalizedLaw k P) := by
   rw [restrictionScaleNormalizedLaw]
@@ -658,17 +660,18 @@ theorem coarseBlockMatrix_originCube_rescaleCoeffField_of_aelocallyUniformlyElli
     coarseBlockMatrix (cubeSet (originCube d (m : ℤ))) (rescaleReg k a).toFun
         = Ch02.coarseBlockMatrix (Ch02.cubeDomain Q) (G.coeffOn Q) := by
           simpa [Q, G] using
-            RestrictionLawCarrier.coarseBlockMatrix_cubeSet_eq_ch02_coarseBlockMatrix_of_aelocallyUniformlyEllipticField
+            RestrictionLawCarrier.coarseBlockMatrix_cubeSet_eq_chapterCoarse
               (ha.of_rescaleCoeffField k) Q
     _ = Ch02.coarseBlockMatrix (Ch02.cubeDomain Q) (B.coeffOn Q) := hAEEq
     _ = Ch02.coarseBlockMatrix (Ch02.cubeDomain Qsrc) (F.coeffOn Qsrc) := hdilate'
     _ = coarseBlockMatrix (cubeSet Qsrc) a.toFun :=
-          (RestrictionLawCarrier.coarseBlockMatrix_cubeSet_eq_ch02_coarseBlockMatrix_of_aelocallyUniformlyEllipticField
+          (RestrictionLawCarrier.coarseBlockMatrix_cubeSet_eq_chapterCoarse
             ha Qsrc).symm
     _ = coarseBlockMatrix (cubeSet (originCube d ((k + m : ℕ) : ℤ))) a.toFun := by
           simp [Qsrc, Q]
 /-- Scalar response observables rescale by shifting the origin-cube scale. -/
-theorem restrictionResponseJObservableCubeSet_originCube_rescaleCoeffField_of_aelocallyUniformlyElliptic
+theorem
+  restrictionResponseJObservableCubeSet_originCube_rescaleCoeffField_of_aelocallyUniformlyElliptic
     {d : ℕ} [NeZero d] {a : RegCoeffField d}
     (ha : AELocallyUniformlyEllipticField a) (k m : ℕ) (p q : Vec d) :
     restrictionResponseJObservableCubeSet (originCube d (m : ℤ)) p q (rescaleReg k a) =
@@ -729,14 +732,15 @@ theorem restrictionResponseJObservableCubeSet_originCube_rescaleCoeffField_of_ae
           simp [Qsrc, Q]
 
 /-- Scalar response observables under the dilation defining `restrictionScaleNormalizedLaw`. -/
-theorem restrictionResponseJObservableCubeSet_originCube_dilateCoeffField_neg_nat_of_aelocallyUniformlyElliptic
+theorem responseJObservableSet_cube_dilateCoeffField_neg_nat
     {d : ℕ} [NeZero d] {a : RegCoeffField d}
     (ha : AELocallyUniformlyEllipticField a) (k m : ℕ) (p q : Vec d) :
     restrictionResponseJObservableCubeSet (originCube d (m : ℤ)) p q
         (dilateReg (-(k : ℤ)) a) =
       restrictionResponseJObservableCubeSet (originCube d ((k + m : ℕ) : ℤ)) p q a := by
   rw [← rescaleReg_eq_dilateReg_neg_nat]
-  exact restrictionResponseJObservableCubeSet_originCube_rescaleCoeffField_of_aelocallyUniformlyElliptic
+  exact
+    restrictionResponseJObservableCubeSet_originCube_rescaleCoeffField_of_aelocallyUniformlyElliptic
     ha k m p q
 /-- Upper multiscale ellipticity moments shift under scale-normalization of the
 law. -/
@@ -929,7 +933,8 @@ private theorem adjointReg_comp_rescaleReg {d : ℕ} (k : ℕ) :
 theorem scaleNormalized {d : ℕ} {P : RestrictionCoeffLaw d}
     (hP : RestrictionAdjointInvariantLaw P) (k : ℕ) :
     RestrictionAdjointInvariantLaw (restrictionScaleNormalizedLaw k P) := by
-  show Measure.map adjointReg (restrictionScaleNormalizedLaw k P) = restrictionScaleNormalizedLaw k P
+  show Measure.map adjointReg (restrictionScaleNormalizedLaw k P) =
+    restrictionScaleNormalizedLaw k P
   rw [restrictionScaleNormalizedLaw_eq_map_rescaleReg,
     Measure.map_map measurable_adjointReg (measurable_rescaleReg k),
     adjointReg_comp_rescaleReg k,

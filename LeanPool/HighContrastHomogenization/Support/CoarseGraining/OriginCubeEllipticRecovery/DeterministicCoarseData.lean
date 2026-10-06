@@ -39,7 +39,7 @@ open cube, packaged directly from deterministic recovery-plus-ellipticity
 data.
 -/
 theorem sigmaStarCoarse_le_sigmaCoarse_openCubeSet_originCube_of_hasOpenCubeEllipticRecoveryData
-    {d : ℕ} [NeZero d] {n : ℤ}
+    {d : ℕ} {n : ℤ}
     (R : PotentialSolenoidalL2RecoveryData (openCubeSet (originCube d n)))
     {lam Lam : ℝ} {a : CoeffField d}
     (hData : HasOpenCubeEllipticRecoveryData (d := d) n R (lam := lam) (Lam := Lam) a)
@@ -65,7 +65,7 @@ Deterministic ordering `σ(U; a) ≤ b(U; a)` on the centered open cube,
 packaged directly from deterministic recovery-plus-ellipticity data.
 -/
 theorem sigmaCoarse_le_bCoarse_openCubeSet_originCube_of_hasOpenCubeEllipticRecoveryData
-    {d : ℕ} [NeZero d] {n : ℤ}
+    {d : ℕ} {n : ℤ}
     (R : PotentialSolenoidalL2RecoveryData (openCubeSet (originCube d n)))
     {lam Lam : ℝ} {a : CoeffField d}
     (hData : HasOpenCubeEllipticRecoveryData (d := d) n R (lam := lam) (Lam := Lam) a)
@@ -93,8 +93,8 @@ Deterministic upper bound
 on the centered open cube, packaged directly from deterministic
 recovery-plus-ellipticity data.
 -/
-theorem bCoarse_le_averaged_symmPart_plus_correction_openCubeSet_originCube_of_hasOpenCubeEllipticRecoveryData
-    {d : ℕ} [NeZero d] {n : ℤ}
+theorem bCoarse_le_averaged_symmPart_plus_correction_cube
+    {d : ℕ} {n : ℤ}
     (R : PotentialSolenoidalL2RecoveryData (openCubeSet (originCube d n)))
     {lam Lam : ℝ} {a : CoeffField d}
     (hData : HasOpenCubeEllipticRecoveryData (d := d) n R (lam := lam) (Lam := Lam) a)
@@ -131,8 +131,8 @@ Deterministic upper-left matrix-order bound
 on the centered open cube, packaged directly from deterministic
 recovery-plus-ellipticity data.
 -/
-theorem bCoarse_le_averagedSymmPartPlusCorrection_openCubeSet_originCube_of_hasOpenCubeEllipticRecoveryData
-    {d : ℕ} [NeZero d] {n : ℤ}
+theorem bCoarse_le_symmetricAverage_plusCorrection_of_recovery
+    {d : ℕ} {n : ℤ}
     (R : PotentialSolenoidalL2RecoveryData (openCubeSet (originCube d n)))
     {lam Lam : ℝ} {a : CoeffField d}
     (hData : HasOpenCubeEllipticRecoveryData (d := d) n R (lam := lam) (Lam := Lam) a)
@@ -162,8 +162,8 @@ Deterministic inverse-side harmonic-mean upper bound
 on the centered open cube, packaged directly from deterministic
 recovery-plus-ellipticity data.
 -/
-theorem sigmaStarInvCoarse_le_averaged_symmPart_inv_openCubeSet_originCube_of_hasOpenCubeEllipticRecoveryData
-    {d : ℕ} [NeZero d] {n : ℤ}
+theorem sigmaStarInvCoarse_le_averaged_symmPart_inv_cube
+    {d : ℕ} {n : ℤ}
     (R : PotentialSolenoidalL2RecoveryData (openCubeSet (originCube d n)))
     {lam Lam : ℝ} {a : CoeffField d}
     (hData : HasOpenCubeEllipticRecoveryData (d := d) n R (lam := lam) (Lam := Lam) a)
@@ -185,8 +185,8 @@ Deterministic inverse-side harmonic-mean matrix bound
 on the centered open cube, packaged directly from deterministic
 recovery-plus-ellipticity data.
 -/
-theorem sigmaStarInvCoarse_le_averagedSymmPartInv_openCubeSet_originCube_of_hasOpenCubeEllipticRecoveryData
-    {d : ℕ} [NeZero d] {n : ℤ}
+theorem sigmaStarInvCoarse_le_symmetricAverageInverse_of_recovery
+    {d : ℕ} {n : ℤ}
     (R : PotentialSolenoidalL2RecoveryData (openCubeSet (originCube d n)))
     {lam Lam : ℝ} {a : CoeffField d}
     (hData : HasOpenCubeEllipticRecoveryData (d := d) n R (lam := lam) (Lam := Lam) a) :
@@ -205,8 +205,9 @@ Deterministic harmonic-mean lower bound
 `(average(symmPart(a)^{-1}))^{-1} ≤ σ_*(U; a)` on the centered open cube,
 packaged directly from deterministic recovery-plus-ellipticity data.
 -/
-theorem harmonicMeanSymmPart_le_sigmaStarCoarse_openCubeSet_originCube_of_hasOpenCubeEllipticRecoveryData
-    {d : ℕ} [NeZero d] {n : ℤ}
+theorem
+  harmonicMeanSymmPart_le_sigmaStarCoarse_openCubeSet_originCube_of_hasOpenCubeEllipticRecoveryData
+    {d : ℕ} {n : ℤ}
     (R : PotentialSolenoidalL2RecoveryData (openCubeSet (originCube d n)))
     {lam Lam : ℝ} {a : CoeffField d}
     (hData : HasOpenCubeEllipticRecoveryData (d := d) n R (lam := lam) (Lam := Lam) a) :
@@ -219,6 +220,244 @@ theorem harmonicMeanSymmPart_le_sigmaStarCoarse_openCubeSet_originCube_of_hasOpe
       (U := openCubeSet (originCube d n)) (a := a) R
       (isOpenBoundedConvexDomain_openCubeSet (originCube d n))
       hEll (volume_openCubeSet_originCube_toReal_pos (d := d) n) hCompat
+
+private theorem blockEnergyDensity_lowerBound_fluxNormSquare
+    {d : ℕ} {U0 : Set (Vec d)} {a0 : CoeffField d} {lam Lam : ℝ}
+    (hEll : IsEllipticFieldOn lam Lam U0 a0) (hlam_pos : 0 < lam)
+    (hden_pos : 0 < 1 + 2 * Lam ^ 2) (Xq : BlockState d) :
+    ∀ x ∈ U0, (lam / (2 * (1 + 2 * Lam ^ 2))) * vecNormSq (Xq.flux x) ≤
+      blockEnergyDensity a0 Xq x := by
+  intro x hx
+  have hcoer :=
+    blockMatrixOfCoeff_coercive_of_isEllipticMatrix (hEll.2 x hx) (Xq.eval x)
+  have hcoeff_nonneg : 0 ≤ lam / (1 + 2 * Lam ^ 2) := by
+    positivity
+  have hflux_le_block :
+      vecNormSq (Xq.flux x) ≤ blockVecDot (Xq.eval x) (Xq.eval x) := by
+    change vecNormSq (Xq.flux x) ≤
+      vecNormSq (Xq.potential x) + vecNormSq (Xq.flux x)
+    exact le_add_of_nonneg_left (vecNormSq_nonneg (Xq.potential x))
+  have hflux_scaled :
+      (lam / (1 + 2 * Lam ^ 2)) * vecNormSq (Xq.flux x) ≤
+        (lam / (1 + 2 * Lam ^ 2)) * blockVecDot (Xq.eval x) (Xq.eval x) := by
+    exact mul_le_mul_of_nonneg_left hflux_le_block hcoeff_nonneg
+  have hcoer' :
+      (lam / (1 + 2 * Lam ^ 2)) * blockVecDot (Xq.eval x) (Xq.eval x) ≤
+        2 * blockEnergyDensity a0 Xq x := by
+    simpa [blockEnergyDensity] using! hcoer
+  have hchain :
+      (lam / (1 + 2 * Lam ^ 2)) * vecNormSq (Xq.flux x) ≤
+        2 * blockEnergyDensity a0 Xq x := le_trans hflux_scaled hcoer'
+  have hhalf :=
+    mul_le_mul_of_nonneg_left hchain (show (0 : ℝ) ≤ 1 / 2 by norm_num)
+  have hleft :
+      (1 / 2 : ℝ) * ((lam / (1 + 2 * Lam ^ 2)) * vecNormSq (Xq.flux x)) =
+        (lam / (2 * (1 + 2 * Lam ^ 2))) * vecNormSq (Xq.flux x) := by
+    field_simp [hden_pos.ne']
+  have hright :
+      (1 / 2 : ℝ) * (2 * blockEnergyDensity a0 Xq x) = blockEnergyDensity a0 Xq x := by
+    ring
+  rw [hleft, hright] at hhalf
+  exact hhalf
+
+private theorem sigmaStarInvCoarse_determinant_isUnit_of_recoveredEnergy
+    {d : ℕ} [NeZero d] (n : ℤ)
+    [MeasureTheory.IsFiniteMeasure (volumeMeasureOn (openCubeSet (originCube d n)))]
+    (R : PotentialSolenoidalL2RecoveryData (openCubeSet (originCube d n)))
+    {lam Lam : ℝ} {a0 : CoeffField d}
+    (hEll : IsEllipticFieldOn lam Lam (openCubeSet (originCube d n)) a0)
+    (system : MuOperatorSystemData (openCubeSet (originCube d n)) a0)
+    (hCompat : PotentialSolenoidalL2RecoveryData.MuRecoveryCompatibilityData
+      (a := a0) R system)
+    (hMuRespQ0 : ∀ q : Vec d,
+      Mu (openCubeSet (originCube d n)) (0, q) a0 =
+        ResponseJ (openCubeSet (originCube d n)) 0 q a0)
+    (hSInv0 : IsSigmaStarInvCoarse (openCubeSet (originCube d n)) a0
+      (sigmaStarInvCoarse (openCubeSet (originCube d n)) a0)) :
+    IsUnit (sigmaStarInvCoarse (openCubeSet (originCube d n)) a0).det := by
+  let U0 : Set (Vec d) := openCubeSet (originCube d n)
+  let : Fact (MeasureTheory.volume U0 < ⊤) :=
+    ⟨volume_openCubeSet_originCube_lt_top (d := d) n⟩
+  let : MeasureTheory.IsFiniteMeasure (volumeMeasureOn U0) := by
+    simpa [volumeMeasureOn, U0] using
+      (isOpenBoundedConvexDomain_openCubeSet (originCube d n)).isFiniteMeasure_restrict_volume
+  have hzeroMem : (0 : Vec d) ∈ U0 := by
+    have hpow : 0 < (3 : ℝ) ^ n := by
+      positivity
+    change (0 : Vec d) ∈ openCubeSet (originCube d n)
+    rw [mem_openCubeSet_originCube_iff]
+    intro i
+    have hhalfpow : 0 < (1 / 2 : ℝ) * (3 : ℝ) ^ n := by
+      positivity
+    constructor
+    · have hneg : -((1 / 2 : ℝ) * (3 : ℝ) ^ n) < 0 := by
+        linarith
+      simpa [neg_mul] using hneg
+    · simpa using hhalfpow
+  have hlam_pos : 0 < lam := (hEll.2 0 hzeroMem).1
+  have hden_pos : 0 < 1 + 2 * Lam ^ 2 := by
+    nlinarith [sq_nonneg Lam]
+  have hcoeff_pos : 0 < lam / (1 + 2 * Lam ^ 2) := by
+    exact div_pos hlam_pos hden_pos
+  have hcoeff_half_pos : 0 < lam / (2 * (1 + 2 * Lam ^ 2)) := by
+    have hden2_pos : 0 < 2 * (1 + 2 * Lam ^ 2) := by
+      positivity
+    exact div_pos hlam_pos hden2_pos
+  have hcoeff_half_nonneg : 0 ≤ lam / (2 * (1 + 2 * Lam ^ 2)) := by
+    positivity
+  have hquad_pos :
+      ∀ q : Vec d, q ≠ 0 → 0 < vecDot q (matVecMul (sigmaStarInvCoarse U0 a0) q) := by
+    intro q hq
+    let Xq : BlockState d := (R.toMuCorrectionSpaceRecoveryData).recoveredField system (0, q)
+    have hAdm : IsBlockMuAdmissible U0 (0, q) Xq := by
+      simpa [U0, Xq] using
+        (R.toMuCorrectionSpaceRecoveryData).recoveredField_admissible system (0, q)
+    have hFluxDiff : MemVectorL2 U0 (fun x => Xq.flux x - q) :=
+      hAdm.fluxCorrection_memL2
+    have hFlux : MemVectorL2 U0 Xq.flux := by
+      have hconst : MemVectorL2 U0 (fun _ : Vec d => q) :=
+        MeasureTheory.memLp_const (μ := volumeMeasureOn U0) (p := (2 : ENNReal)) (c := q)
+      have hsum :
+          MemVectorL2 U0 ((fun x => Xq.flux x - q) + fun _ : Vec d => q) :=
+        hFluxDiff.add hconst
+      have hEq :
+          ((fun x => Xq.flux x - q) + fun _ : Vec d => q) = Xq.flux := by
+        funext x
+        simp [Xq, sub_eq_add_neg, add_comm]
+      rw [hEq] at hsum
+      exact hsum
+    have hFluxSqInt : MeasureTheory.IntegrableOn (fun x => vecNormSq (Xq.flux x)) U0 := by
+      simpa [vecNormSq] using integrableOn_vecDot_of_memVectorL2 hFlux hFlux
+    have hEnergyInt :
+        MeasureTheory.IntegrableOn (blockEnergyDensity a0 Xq) U0 := by
+      exact blockEnergyDensity_integrableOn_of_memBlockL2_of_isEllipticFieldOn
+        ((R.toMuCorrectionSpaceRecoveryData).recoveredField_memBlockL2 system (0, q)) hEll
+    have hFluxAvg :
+        (fun i => volumeAverage U0 (fun x => Xq.flux x i)) = q := by
+      simpa [U0, Xq] using
+        congrArg Prod.snd
+          ((R.toMuCorrectionSpaceRecoveryData).recoveredField_average_state_openCubeSet_originCube
+            system (0, q))
+    have hJensen :
+        vecNormSq q ≤ volumeAverage U0 (fun x => vecNormSq (Xq.flux x)) := by
+      have hraw :=
+        vecNormSq_volumeAverage_le_volumeAverage_vecNormSq
+          (U := U0)
+          (hU := measurableSet_openCubeSet (originCube d n))
+          (hvol := (volume_openCubeSet_originCube_toReal_pos (d := d) n).ne')
+          hFlux
+      rw [hFluxAvg] at hraw
+      exact hraw
+    have hpoint :
+        ∀ x ∈ U0,
+          (lam / (2 * (1 + 2 * Lam ^ 2))) * vecNormSq (Xq.flux x) ≤
+            blockEnergyDensity a0 Xq x :=
+      blockEnergyDensity_lowerBound_fluxNormSquare hEll hlam_pos hden_pos Xq
+    have hEnergyLower :
+        (lam / (2 * (1 + 2 * Lam ^ 2))) *
+            volumeAverage U0 (fun x => vecNormSq (Xq.flux x)) ≤
+          blockEnergyAverage U0 a0 Xq := by
+      calc
+        (lam / (2 * (1 + 2 * Lam ^ 2))) *
+            volumeAverage U0 (fun x => vecNormSq (Xq.flux x))
+            =
+          volumeAverage U0 (fun x =>
+            (lam / (2 * (1 + 2 * Lam ^ 2))) * vecNormSq (Xq.flux x)) := by
+              symm
+              simpa [smul_eq_mul] using!
+                (volumeAverage_smul U0 (lam / (2 * (1 + 2 * Lam ^ 2)))
+                  (fun x => vecNormSq (Xq.flux x)))
+        _ ≤ volumeAverage U0 (blockEnergyDensity a0 Xq) := by
+          exact volumeAverage_le_volumeAverage_of_le_on
+            (U := U0)
+            (hU := measurableSet_openCubeSet (originCube d n))
+            (hf := by
+              simpa [smul_eq_mul] using!
+                hFluxSqInt.smul (lam / (2 * (1 + 2 * Lam ^ 2))))
+            (hg := hEnergyInt)
+            hpoint
+        _ = blockEnergyAverage U0 a0 Xq := rfl
+    have hEnergyRec :
+        blockEnergyAverage U0 a0 Xq = Mu U0 (0, q) a0 := by
+      simpa [U0, Xq] using
+        (R.toMuCorrectionSpaceRecoveryData).recoveredField_blockEnergyAverage_eq_mu
+          system hCompat.mu_eq_muCandidate (0, q)
+    have hMain :
+        (lam / (2 * (1 + 2 * Lam ^ 2))) * vecNormSq q ≤
+          (1 / 2 : ℝ) * vecDot q (matVecMul (sigmaStarInvCoarse U0 a0) q) := by
+      have hscaledJensen :
+          (lam / (2 * (1 + 2 * Lam ^ 2))) * vecNormSq q ≤
+            (lam / (2 * (1 + 2 * Lam ^ 2))) *
+              volumeAverage U0 (fun x => vecNormSq (Xq.flux x)) := by
+        exact mul_le_mul_of_nonneg_left hJensen hcoeff_half_nonneg
+      calc
+        (lam / (2 * (1 + 2 * Lam ^ 2))) * vecNormSq q
+            ≤
+          (lam / (2 * (1 + 2 * Lam ^ 2))) *
+            volumeAverage U0 (fun x => vecNormSq (Xq.flux x)) := hscaledJensen
+        _ ≤ blockEnergyAverage U0 a0 Xq := hEnergyLower
+        _ = Mu U0 (0, q) a0 := hEnergyRec
+        _ = ResponseJ U0 0 q a0 := hMuRespQ0 q
+        _ = (1 / 2 : ℝ) * vecDot q (matVecMul (sigmaStarInvCoarse U0 a0) q) := hSInv0.2 q
+    have hqnorm_ne : vecNormSq q ≠ 0 := by
+      intro hqnorm
+      exact hq (vecNormSq_eq_zero hqnorm)
+    have hqnorm_pos : 0 < vecNormSq q := by
+      exact lt_of_le_of_ne (vecNormSq_nonneg q) (by simpa [eq_comm] using hqnorm_ne)
+    have hhalf_pos :
+        0 < (1 / 2 : ℝ) * vecDot q (matVecMul (sigmaStarInvCoarse U0 a0) q) :=
+      lt_of_lt_of_le (mul_pos hcoeff_half_pos hqnorm_pos) hMain
+    nlinarith
+  have hPosDef : (sigmaStarInvCoarse U0 a0).PosDef := by
+    refine Matrix.PosDef.of_dotProduct_mulVec_pos ?_ ?_
+    · simpa [Matrix.IsHermitian, Matrix.IsSymm] using hSInv0.1
+    · intro q hq
+      simpa [dotProduct, Matrix.mulVec, vecDot, matVecMul] using hquad_pos q hq
+  exact (Matrix.isUnit_iff_isUnit_det (A := sigmaStarInvCoarse U0 a0)).mp hPosDef.isUnit
+
+private theorem isSigmaCoarse_schurComplement_of_exact_slice
+    {d : ℕ} {U0 : Set (Vec d)} {a0 : CoeffField d}
+    (hA0coarse : IsCoarseBlockMatrix U0 a0 (coarseBlockMatrix U0 a0))
+    (hSInv0 : IsSigmaStarInvCoarse U0 a0 (sigmaStarInvCoarse U0 a0))
+    (hS0 : IsSigmaStarCoarse U0 a0 (sigmaStarCoarse U0 a0))
+    (hMuRespP0 : ∀ p : Vec d, Mu U0 (p, 0) a0 = ResponseJ U0 p 0 a0) :
+    IsSigmaCoarse U0 a0
+      ((coarseBlockMatrix U0 a0).upperLeft -
+        matTranspose (kappaCoarse U0 a0) * sigmaStarInvCoarse U0 a0 * kappaCoarse U0 a0)
+      (sigmaStarCoarse U0 a0) (kappaCoarse U0 a0) := by
+  let sigma0 : Mat d := (coarseBlockMatrix U0 a0).upperLeft -
+    matTranspose (kappaCoarse U0 a0) * sigmaStarInvCoarse U0 a0 * kappaCoarse U0 a0
+  refine ⟨?_, ?_⟩
+  · have hUpperSymm : ((coarseBlockMatrix U0 a0).upperLeft).IsSymm := by
+      rw [Matrix.IsSymm.ext_iff]
+      intro i j
+      simpa [blockMatEntry] using (hA0coarse.1 (Sum.inl i) (Sum.inl j)).symm
+    have hCorrSymm :
+        (((matTranspose (kappaCoarse U0 a0)) * sigmaStarInvCoarse U0 a0 *
+            kappaCoarse U0 a0)).IsSymm :=
+      transpose_mul_symm_mul_isSymm (kappaCoarse U0 a0) (sigmaStarInvCoarse U0 a0) hSInv0.1
+    rw [Matrix.IsSymm.ext_iff]
+    intro i j
+    simp [sigma0, hUpperSymm.apply i j, hCorrSymm.apply i j]
+  · intro p
+    have hRespP :
+        ResponseJ U0 p 0 a0 =
+          (1 / 2 : ℝ) * vecDot p (matVecMul (coarseBlockMatrix U0 a0).upperLeft p) := by
+      calc
+        ResponseJ U0 p 0 a0 = Mu U0 (p, 0) a0 := (hMuRespP0 p).symm
+        _ =
+          (1 / 2 : ℝ) * blockVecDot (p, 0)
+            (blockMatVecMul (coarseBlockMatrix U0 a0) (p, 0)) := by
+              simpa using hA0coarse.2 (p, 0)
+        _ =
+          (1 / 2 : ℝ) * vecDot p (matVecMul (coarseBlockMatrix U0 a0).upperLeft p) := by
+              simp [blockMatVecMul, blockVecDot, matVecMul_zero, vecDot_zero_left]
+    have hInvEq : (sigmaStarCoarse U0 a0)⁻¹ = sigmaStarInvCoarse U0 a0 := by
+      rw [sigmaStarInvCoarse_eq_inv_of_isSigmaStarCoarse hS0]
+    rw [hRespP, hInvEq]
+    simp [sigma0, sub_eq_add_neg, add_matVecMul, neg_matVecMul, vecDot_add_right,
+      vecDot_neg_right, matVecMul_mul, Matrix.mul_assoc]
+    ring_nf
 
 /--
 Minimal one-cube deterministic coarse-data constructor from translated
@@ -295,171 +534,9 @@ theorem openCubeDeterministicCoarseData_of_triadicCube_of_hasOpenCubeEllipticRec
   have hM0 : IsSigmaStarInvKappaCoarse U0 a0 (sigmaStarInvKappaCoarse U0 a0) := by
     exact isSigmaStarInvKappaCoarse_sigmaStarInvKappaCoarse
       ⟨-(coarseBlockMatrix U0 a0).lowerLeft, hMlower⟩
-  have hdetInv0 : IsUnit (sigmaStarInvCoarse U0 a0).det := by
-    have hzeroMem : (0 : Vec d) ∈ U0 := by
-      have hpow : 0 < (3 : ℝ) ^ Q.scale := by
-        positivity
-      change (0 : Vec d) ∈ openCubeSet (originCube d Q.scale)
-      rw [mem_openCubeSet_originCube_iff]
-      intro i
-      have hhalfpow : 0 < (1 / 2 : ℝ) * (3 : ℝ) ^ Q.scale := by
-        positivity
-      constructor
-      · have hneg : -((1 / 2 : ℝ) * (3 : ℝ) ^ Q.scale) < 0 := by
-          linarith
-        simpa [neg_mul] using hneg
-      · simpa using hhalfpow
-    have hlam_pos : 0 < lam := (hEll.2 0 hzeroMem).1
-    have hden_pos : 0 < 1 + 2 * Lam ^ 2 := by
-      nlinarith [sq_nonneg Lam]
-    have hcoeff_pos : 0 < lam / (1 + 2 * Lam ^ 2) := by
-      exact div_pos hlam_pos hden_pos
-    have hcoeff_half_pos : 0 < lam / (2 * (1 + 2 * Lam ^ 2)) := by
-      have hden2_pos : 0 < 2 * (1 + 2 * Lam ^ 2) := by
-        positivity
-      exact div_pos hlam_pos hden2_pos
-    have hcoeff_half_nonneg : 0 ≤ lam / (2 * (1 + 2 * Lam ^ 2)) := by
-      positivity
-    have hquad_pos :
-        ∀ q : Vec d, q ≠ 0 → 0 < vecDot q (matVecMul (sigmaStarInvCoarse U0 a0) q) := by
-      intro q hq
-      let Xq : BlockState d := (R.toMuCorrectionSpaceRecoveryData).recoveredField system (0, q)
-      have hAdm : IsBlockMuAdmissible U0 (0, q) Xq := by
-        simpa [U0, system, Xq] using
-          (R.toMuCorrectionSpaceRecoveryData).recoveredField_admissible system (0, q)
-      have hFluxDiff : MemVectorL2 U0 (fun x => Xq.flux x - q) :=
-        hAdm.fluxCorrection_memL2
-      have hFlux : MemVectorL2 U0 Xq.flux := by
-        have hconst : MemVectorL2 U0 (fun _ : Vec d => q) :=
-          MeasureTheory.memLp_const (μ := volumeMeasureOn U0) (p := (2 : ENNReal)) (c := q)
-        have hsum :
-            MemVectorL2 U0 ((fun x => Xq.flux x - q) + fun _ : Vec d => q) :=
-          hFluxDiff.add hconst
-        have hEq :
-            ((fun x => Xq.flux x - q) + fun _ : Vec d => q) = Xq.flux := by
-          funext x
-          simp [Xq, sub_eq_add_neg, add_comm]
-        rw [hEq] at hsum
-        exact hsum
-      have hFluxSqInt : MeasureTheory.IntegrableOn (fun x => vecNormSq (Xq.flux x)) U0 := by
-        simpa [vecNormSq] using integrableOn_vecDot_of_memVectorL2 hFlux hFlux
-      have hEnergyInt :
-          MeasureTheory.IntegrableOn (blockEnergyDensity a0 Xq) U0 := by
-        exact blockEnergyDensity_integrableOn_of_memBlockL2_of_isEllipticFieldOn
-          ((R.toMuCorrectionSpaceRecoveryData).recoveredField_memBlockL2 system (0, q)) hEll
-      have hFluxAvg :
-          (fun i => volumeAverage U0 (fun x => Xq.flux x i)) = q := by
-        simpa [U0, Xq] using
-          congrArg Prod.snd
-            ((R.toMuCorrectionSpaceRecoveryData).recoveredField_average_state_openCubeSet_originCube
-              system (0, q))
-      have hJensen :
-          vecNormSq q ≤ volumeAverage U0 (fun x => vecNormSq (Xq.flux x)) := by
-        have hraw :=
-          vecNormSq_volumeAverage_le_volumeAverage_vecNormSq
-            (U := U0)
-            (hU := measurableSet_openCubeSet (originCube d Q.scale))
-            (hvol := (volume_openCubeSet_originCube_toReal_pos (d := d) Q.scale).ne')
-            hFlux
-        rw [hFluxAvg] at hraw
-        exact hraw
-      have hpoint :
-          ∀ x ∈ U0,
-            (lam / (2 * (1 + 2 * Lam ^ 2))) * vecNormSq (Xq.flux x) ≤
-              blockEnergyDensity a0 Xq x := by
-        intro x hx
-        have hcoer :=
-          blockMatrixOfCoeff_coercive_of_isEllipticMatrix (hEll.2 x hx) (Xq.eval x)
-        have hcoeff_nonneg : 0 ≤ lam / (1 + 2 * Lam ^ 2) := by
-          positivity
-        have hflux_le_block :
-            vecNormSq (Xq.flux x) ≤ blockVecDot (Xq.eval x) (Xq.eval x) := by
-          change vecNormSq (Xq.flux x) ≤
-            vecNormSq (Xq.potential x) + vecNormSq (Xq.flux x)
-          exact le_add_of_nonneg_left (vecNormSq_nonneg (Xq.potential x))
-        have hflux_scaled :
-            (lam / (1 + 2 * Lam ^ 2)) * vecNormSq (Xq.flux x) ≤
-              (lam / (1 + 2 * Lam ^ 2)) * blockVecDot (Xq.eval x) (Xq.eval x) := by
-          exact mul_le_mul_of_nonneg_left hflux_le_block hcoeff_nonneg
-        have hcoer' :
-            (lam / (1 + 2 * Lam ^ 2)) * blockVecDot (Xq.eval x) (Xq.eval x) ≤
-              2 * blockEnergyDensity a0 Xq x := by
-          simpa [blockEnergyDensity, Xq] using! hcoer
-        have hchain :
-            (lam / (1 + 2 * Lam ^ 2)) * vecNormSq (Xq.flux x) ≤
-              2 * blockEnergyDensity a0 Xq x := le_trans hflux_scaled hcoer'
-        have hhalf :=
-          mul_le_mul_of_nonneg_left hchain (show (0 : ℝ) ≤ 1 / 2 by norm_num)
-        have hleft :
-            (1 / 2 : ℝ) * ((lam / (1 + 2 * Lam ^ 2)) * vecNormSq (Xq.flux x)) =
-              (lam / (2 * (1 + 2 * Lam ^ 2))) * vecNormSq (Xq.flux x) := by
-          field_simp [hden_pos.ne']
-        have hright :
-            (1 / 2 : ℝ) * (2 * blockEnergyDensity a0 Xq x) = blockEnergyDensity a0 Xq x := by
-          ring
-        rw [hleft, hright] at hhalf
-        exact hhalf
-      have hEnergyLower :
-          (lam / (2 * (1 + 2 * Lam ^ 2))) *
-              volumeAverage U0 (fun x => vecNormSq (Xq.flux x)) ≤
-            blockEnergyAverage U0 a0 Xq := by
-        calc
-          (lam / (2 * (1 + 2 * Lam ^ 2))) *
-              volumeAverage U0 (fun x => vecNormSq (Xq.flux x))
-              =
-            volumeAverage U0 (fun x =>
-              (lam / (2 * (1 + 2 * Lam ^ 2))) * vecNormSq (Xq.flux x)) := by
-                symm
-                simpa [smul_eq_mul] using!
-                  (volumeAverage_smul U0 (lam / (2 * (1 + 2 * Lam ^ 2)))
-                    (fun x => vecNormSq (Xq.flux x)))
-          _ ≤ volumeAverage U0 (blockEnergyDensity a0 Xq) := by
-            exact volumeAverage_le_volumeAverage_of_le_on
-              (U := U0)
-              (hU := measurableSet_openCubeSet (originCube d Q.scale))
-              (hf := by
-                simpa [smul_eq_mul] using!
-                  hFluxSqInt.smul (lam / (2 * (1 + 2 * Lam ^ 2))))
-              (hg := hEnergyInt)
-              hpoint
-          _ = blockEnergyAverage U0 a0 Xq := rfl
-      have hEnergyRec :
-          blockEnergyAverage U0 a0 Xq = Mu U0 (0, q) a0 := by
-        simpa [U0, system, Xq] using
-          (R.toMuCorrectionSpaceRecoveryData).recoveredField_blockEnergyAverage_eq_mu
-            system hCompat.mu_eq_muCandidate (0, q)
-      have hMain :
-          (lam / (2 * (1 + 2 * Lam ^ 2))) * vecNormSq q ≤
-            (1 / 2 : ℝ) * vecDot q (matVecMul (sigmaStarInvCoarse U0 a0) q) := by
-        have hscaledJensen :
-            (lam / (2 * (1 + 2 * Lam ^ 2))) * vecNormSq q ≤
-              (lam / (2 * (1 + 2 * Lam ^ 2))) *
-                volumeAverage U0 (fun x => vecNormSq (Xq.flux x)) := by
-          exact mul_le_mul_of_nonneg_left hJensen hcoeff_half_nonneg
-        calc
-          (lam / (2 * (1 + 2 * Lam ^ 2))) * vecNormSq q
-              ≤
-            (lam / (2 * (1 + 2 * Lam ^ 2))) *
-              volumeAverage U0 (fun x => vecNormSq (Xq.flux x)) := hscaledJensen
-          _ ≤ blockEnergyAverage U0 a0 Xq := hEnergyLower
-          _ = Mu U0 (0, q) a0 := hEnergyRec
-          _ = ResponseJ U0 0 q a0 := hMuRespQ0 q
-          _ = (1 / 2 : ℝ) * vecDot q (matVecMul (sigmaStarInvCoarse U0 a0) q) := hSInv0.2 q
-      have hqnorm_ne : vecNormSq q ≠ 0 := by
-        intro hqnorm
-        exact hq (vecNormSq_eq_zero hqnorm)
-      have hqnorm_pos : 0 < vecNormSq q := by
-        exact lt_of_le_of_ne (vecNormSq_nonneg q) (by simpa [eq_comm] using hqnorm_ne)
-      have hhalf_pos :
-          0 < (1 / 2 : ℝ) * vecDot q (matVecMul (sigmaStarInvCoarse U0 a0) q) :=
-        lt_of_lt_of_le (mul_pos hcoeff_half_pos hqnorm_pos) hMain
-      nlinarith
-    have hPosDef : (sigmaStarInvCoarse U0 a0).PosDef := by
-      refine Matrix.PosDef.of_dotProduct_mulVec_pos ?_ ?_
-      · simpa [Matrix.IsHermitian, Matrix.IsSymm] using hSInv0.1
-      · intro q hq
-        simpa [dotProduct, Matrix.mulVec, vecDot, matVecMul] using hquad_pos q hq
-    exact (Matrix.isUnit_iff_isUnit_det (A := sigmaStarInvCoarse U0 a0)).mp hPosDef.isUnit
+  have hdetInv0 : IsUnit (sigmaStarInvCoarse U0 a0).det :=
+    sigmaStarInvCoarse_determinant_isUnit_of_recoveredEnergy Q.scale R
+      hEll system hCompat hMuRespQ0 hSInv0
   have hS0 : IsSigmaStarCoarse U0 a0 (sigmaStarCoarse U0 a0) := by
     exact isSigmaStarCoarse_sigmaStarCoarse_of_isSigmaStarInvCoarse hSInv0 hdetInv0
   have hK0 :
@@ -471,38 +548,8 @@ theorem openCubeDeterministicCoarseData_of_triadicCube_of_hasOpenCubeEllipticRec
     (coarseBlockMatrix U0 a0).upperLeft -
       (matTranspose (kappaCoarse U0 a0)) * sigmaStarInvCoarse U0 a0 * kappaCoarse U0 a0
   have hSigma0 :
-      IsSigmaCoarse U0 a0 sigma0 (sigmaStarCoarse U0 a0) (kappaCoarse U0 a0) := by
-    refine ⟨?_, ?_⟩
-    · have hUpperSymm : ((coarseBlockMatrix U0 a0).upperLeft).IsSymm := by
-        rw [Matrix.IsSymm.ext_iff]
-        intro i j
-        simpa [blockMatEntry] using (hA0coarse.1 (Sum.inl i) (Sum.inl j)).symm
-      have hCorrSymm :
-          (((matTranspose (kappaCoarse U0 a0)) * sigmaStarInvCoarse U0 a0 *
-              kappaCoarse U0 a0)).IsSymm :=
-        transpose_mul_symm_mul_isSymm (kappaCoarse U0 a0) (sigmaStarInvCoarse U0 a0) hSInv0.1
-      rw [Matrix.IsSymm.ext_iff]
-      intro i j
-      simp [sigma0, hUpperSymm.apply i j, hCorrSymm.apply i j]
-    · intro p
-      have hRespP :
-          ResponseJ U0 p 0 a0 =
-            (1 / 2 : ℝ) * vecDot p (matVecMul (coarseBlockMatrix U0 a0).upperLeft p) := by
-        calc
-          ResponseJ U0 p 0 a0 = Mu U0 (p, 0) a0 := (hMuRespP0 p).symm
-          _ =
-            (1 / 2 : ℝ) * blockVecDot (p, 0)
-              (blockMatVecMul (coarseBlockMatrix U0 a0) (p, 0)) := by
-                simpa using hA0coarse.2 (p, 0)
-          _ =
-            (1 / 2 : ℝ) * vecDot p (matVecMul (coarseBlockMatrix U0 a0).upperLeft p) := by
-                simp [blockMatVecMul, blockVecDot, matVecMul_zero, vecDot_zero_left]
-      have hInvEq : (sigmaStarCoarse U0 a0)⁻¹ = sigmaStarInvCoarse U0 a0 := by
-        rw [sigmaStarInvCoarse_eq_inv_of_isSigmaStarCoarse hS0]
-      rw [hRespP, hInvEq]
-      simp [sigma0, sub_eq_add_neg, add_matVecMul, neg_matVecMul, vecDot_add_right,
-        vecDot_neg_right, matVecMul_mul, Matrix.mul_assoc]
-      ring_nf
+      IsSigmaCoarse U0 a0 sigma0 (sigmaStarCoarse U0 a0) (kappaCoarse U0 a0) :=
+    isSigmaCoarse_schurComplement_of_exact_slice hA0coarse hSInv0 hS0 hMuRespP0
   have hdet0 : IsUnit (sigmaStarCoarse U0 a0).det := by
     unfold sigmaStarCoarse
     exact Matrix.isUnit_nonsing_inv_det (A := sigmaStarInvCoarse U0 a0) hdetInv0
@@ -598,7 +645,7 @@ If the coefficient field is self-adjoint, then the canonical coarse
 `\kappa(openCubeSet Q; a)` vanishes on any triadic open cube once translated
 origin-cube elliptic recovery data is available.
 -/
-theorem kappaCoarse_eq_zero_openCubeSet_of_triadicCube_of_hasOpenCubeEllipticRecoveryData_of_adjointCoeffField_eq
+theorem kappaCoarse_eq_zero_cube_of_triadicCube_of_hasOpenCubeEllipticRecoveryData
     {d : ℕ} [NeZero d] (Q : TriadicCube d)
     (R : PotentialSolenoidalL2RecoveryData (openCubeSet (originCube d Q.scale)))
     {lam Lam : ℝ} {a : CoeffField d}

@@ -174,6 +174,20 @@ theorem coarseGrainingHomogenizationErrorAtDepth_le_depthWeight_mul_parent
               Ch02.MultiscaleExponent.infinity (.finite 1) a a0.matrix := by
           rw [hfactor]
 
+private theorem depth_error_le_weight_mul_parent_bound
+    {d : ℕ} [NeZero d] {Q : TriadicCube d} {F : Ch02.TriadicCoeffFamily d}
+    {a0 : Ch03.ConstantCoeffMatrix d} {r B : ℝ} (hr : 0 < r) (j : ℕ)
+    (hparent : Ch02.HomogenizationErrorOnCube Q r
+      Ch02.MultiscaleExponent.infinity (.finite 1) F a0.matrix ≤ B) :
+    Ch03.coarseGrainingHomogenizationErrorAtDepth Q F a0 r j ≤
+      Ch03.coarseGrainingDepthWeight r j * B := by
+  have hdepth := coarseGrainingHomogenizationErrorAtDepth_le_depthWeight_mul_parent
+    (Q := Q) (a := F) (a0 := a0) hr j
+  have hweight_nonneg : 0 ≤ Ch03.coarseGrainingDepthWeight r j := by
+    dsimp [Ch03.coarseGrainingDepthWeight]
+    positivity
+  exact hdepth.trans (mul_le_mul_of_nonneg_left hparent hweight_nonneg)
+
 /-- Finite-`sigma` control of the Ch3 depth-localized homogenization-error
 quantity above the same collapsed minimal-scale envelope. -/
 theorem exists_coarseGrainingHomogenizationErrorAtDepth_interpolated_expLogSq
@@ -278,20 +292,20 @@ theorem exists_coarseGrainingHomogenizationErrorAtDepth_interpolated_expLogSq
     simpa [Q, F, σ0, hσ0, a0, Cresp, Cneg, A, G, R,
       scalarConstantCoeffMatrix_matrix] using
       hEpoint ha (m := m) hXm
-  have hdepth :=
-    coarseGrainingHomogenizationErrorAtDepth_le_depthWeight_mul_parent
-      (Q := Q) (a := F) (a0 := a0) (s := r) hr_pos j
-  have hweight_nonneg : 0 ≤ Ch03.coarseGrainingDepthWeight r j := by
-    dsimp [Ch03.coarseGrainingDepthWeight]
-    positivity
-  calc
-    Ch03.coarseGrainingHomogenizationErrorAtDepth Q F a0 r j
-        ≤ Ch03.coarseGrainingDepthWeight r j *
-            Ch02.HomogenizationErrorOnCube Q r
-              Ch02.MultiscaleExponent.infinity (.finite 1) F a0.matrix :=
-          hdepth
-    _ ≤ Ch03.coarseGrainingDepthWeight r j * (G * A * R) :=
-          mul_le_mul_of_nonneg_left hparent hweight_nonneg
+  exact depth_error_le_weight_mul_parent_bound hr_pos j hparent
+
+private theorem geometric_discount_ratio_nonnegative
+    {r τ q : ℝ} (hrq : 0 ≤ r * q) (hδq : 0 < (r - τ / 2) * q) :
+    0 ≤ Real.rpow (Ch02.geometricDiscount r q *
+      (Ch02.geometricDiscount (r - τ / 2) q)⁻¹) (1 / q) := by
+  have hdisc_nonneg : 0 ≤ Ch02.geometricDiscount r q := by
+    simpa [Ch02.geometricDiscount_eq_old] using
+      HCPolySupport.geometricDiscount_nonneg hrq
+  have hdisc_delta_pos : 0 < Ch02.geometricDiscount (r - τ / 2) q := by
+    simpa [Ch02.geometricDiscount_eq_old] using
+      HCPolySupport.geometricDiscount_pos hδq
+  exact Real.rpow_nonneg
+    (mul_nonneg hdisc_nonneg (inv_nonneg.mpr hdisc_delta_pos.le)) _
 
 /-- The random coefficient family attached to an a.e. uniformly elliptic
 coefficient field. -/
@@ -307,6 +321,7 @@ abbrev assemblyOriginCube (d : ℕ) (m : ℕ) : TriadicCube d :=
 background scalar passed explicitly.  This is the sigma-agnostic Ch3 assembly
 surface; finite-`sigma` and endpoint hypotheses only have to supply the scalar
 and its positivity. -/
+/-- Finite-`sigma` wrapper for the scalar homogenized matrix. -/
 @[expose]
 def assemblyConstantCoeffMatrixOfScalar {d : ℕ} [NeZero d]
     (σ0 : ℝ) (hσ0 : 0 < σ0) :
@@ -321,7 +336,6 @@ abbrev assemblyComparisonDatumOfScalar {d : ℕ} [NeZero d]
     (assemblyOriginCube d m) (assemblyCoeffFamily aω ha)
     (assemblyConstantCoeffMatrixOfScalar σ0 hσ0) g
 
-/-- Finite-`sigma` wrapper for the scalar homogenized matrix. -/
 @[expose]
 def assemblyConstantCoeffMatrix {d : ℕ} [NeZero d]
     {P : Ch04.RestrictionCoeffLaw d} (hP : Ch04.RestrictionLawCarrier P)
@@ -398,6 +412,7 @@ noncomputable def assemblyEllipticityEnvelope {d : ℕ}
 
 /-- The controlled-factor conclusion used by the Phase 4 assembly theorem,
 with the scalar background passed explicitly. -/
+/-- Finite-`sigma` wrapper for the controlled-factor conclusion. -/
 @[expose]
 def assemblyControlledFactorsConclusionOfScalar {d : ℕ} [NeZero d]
     (σ0 : ℝ) (hσ0 : 0 < σ0)
@@ -421,7 +436,6 @@ def assemblyControlledFactorsConclusionOfScalar {d : ℕ} [NeZero d]
     Real.sqrt (Ch02.LambdaSq Q (r / 2) (.finite 2) F) *
         Real.sqrt ((Ch02.lambdaSq Q (r / 2) (.finite 2) F)⁻¹) ≤ M
 
-/-- Finite-`sigma` wrapper for the controlled-factor conclusion. -/
 @[expose]
 def assemblyControlledFactorsConclusion {d : ℕ} [NeZero d]
     {P : Ch04.RestrictionCoeffLaw d} (hP : Ch04.RestrictionLawCarrier P)
@@ -438,6 +452,8 @@ def assemblyControlledFactorsConclusion {d : ℕ} [NeZero d]
 /-- Two-exponent controlled-factor conclusion for the repaired Ch3
 coarse-graining estimate.  The response quantities are still localized at
 exponent `r`, while the forcing is measured at the stronger exponent `r₂`. -/
+/-- Finite-`sigma` wrapper for the repaired two-exponent controlled-factor
+conclusion. -/
 @[expose]
 def assemblyControlledFactorsTwoExponentConclusionOfScalar {d : ℕ} [NeZero d]
     (σ0 : ℝ) (hσ0 : 0 < σ0)
@@ -461,8 +477,6 @@ def assemblyControlledFactorsTwoExponentConclusionOfScalar {d : ℕ} [NeZero d]
     Real.sqrt (Ch02.LambdaSq Q (r / 2) (.finite 2) F) *
         Real.sqrt ((Ch02.lambdaSq Q (r / 2) (.finite 2) F)⁻¹) ≤ M
 
-/-- Finite-`sigma` wrapper for the repaired two-exponent controlled-factor
-conclusion. -/
 @[expose]
 def assemblyControlledFactorsTwoExponentConclusion {d : ℕ} [NeZero d]
     {P : Ch04.RestrictionCoeffLaw d} (hP : Ch04.RestrictionLawCarrier P)
@@ -475,6 +489,71 @@ def assemblyControlledFactorsTwoExponentConclusion {d : ℕ} [NeZero d]
   assemblyControlledFactorsTwoExponentConclusionOfScalar
     (barSigmaLimit hP hStruct) hΓ.barSigmaLimit_pos
     Ccg α τ s r r₂ X aω ha m j g w
+
+private theorem assembly_amplitude_nonnegative
+    {d : ℕ} [NeZero d] {τ : ℝ} (hτ_pos : 0 < τ) :
+    0 ≤ assemblyAmplitude d τ := by
+  let Cresp : ℝ := Real.sqrt
+    (4 * (Fintype.card (BlockCoord d) : ℝ) *
+      (Fintype.card (NormalizedProbeIndex d) : ℝ))
+  let Cneg : ℝ := (Ch02.geometricDiscount (τ / 2) 1)⁻¹ *
+    (2 * Real.sqrt ((Fintype.card (BlockCoord d) : ℝ) ^ (2 : ℕ)))
+  let A : ℝ := max Cresp Cneg * Real.rpow (3 : ℝ) (τ / 2)
+  have hdisc_tau_pos : 0 < Ch02.geometricDiscount (τ / 2) 1 := by
+    simpa [Ch02.geometricDiscount_eq_old] using
+      HCPolySupport.geometricDiscount_pos
+        (by nlinarith : 0 < (τ / 2) * (1 : ℝ))
+  have hCresp_nonneg : 0 ≤ Cresp := by
+    dsimp [Cresp]
+    positivity
+  have hCneg_nonneg : 0 ≤ Cneg := by
+    dsimp [Cneg]
+    exact mul_nonneg (inv_nonneg.mpr hdisc_tau_pos.le) (by positivity)
+  have hA_nonneg : 0 ≤ A := by
+    dsimp [A]
+    exact mul_nonneg (hCresp_nonneg.trans (le_max_left Cresp Cneg))
+      (by positivity)
+  exact hA_nonneg
+
+private theorem maximal_scale_decay_bounds
+    {x₁ x₂ α : ℝ} {m : ℕ} (hx₁ : 1 ≤ x₁) (hx₂ : 1 ≤ x₂) (hα : 0 < α)
+    (hm : max x₁ x₂ ≤ (3 : ℝ) ^ m) :
+    x₁ ≤ (3 : ℝ) ^ m ∧ x₂ ≤ (3 : ℝ) ^ m ∧
+      Real.sqrt (((3 : ℝ) ^ m / x₁) ^ (-α)) ≤
+        Real.sqrt (((3 : ℝ) ^ m / max x₁ x₂) ^ (-α)) ∧
+      Real.sqrt (((3 : ℝ) ^ m / x₂) ^ (-α)) ≤
+        Real.sqrt (((3 : ℝ) ^ m / max x₁ x₂) ^ (-α)) := by
+  have hx₁_pos : 0 < x₁ := zero_lt_one.trans_le hx₁
+  have hx₂_pos : 0 < x₂ := zero_lt_one.trans_le hx₂
+  have hx_pos : 0 < max x₁ x₂ := hx₁_pos.trans_le (le_max_left _ _)
+  have hpow_pos : 0 < (3 : ℝ) ^ m := by positivity
+  exact ⟨(le_max_left _ _).trans hm, (le_max_right _ _).trans hm,
+    sqrt_rpow_neg_div_mono_of_le hpow_pos hx₁_pos hx_pos (le_max_left _ _) hα,
+    sqrt_rpow_neg_div_mono_of_le hpow_pos hx₂_pos hx_pos (le_max_right _ _) hα⟩
+
+private theorem ellipticity_controls_of_parent_error_bound
+    {d : ℕ} [NeZero d] {Q : TriadicCube d} {F : Ch02.TriadicCoeffFamily d}
+    {r σ0 B₂ : ℝ} (hr : 0 < r) (hσ0 : 0 < σ0)
+    (hparent₂ : Ch02.HomogenizationErrorOnCube Q (r / 2)
+      Ch02.MultiscaleExponent.infinity (.finite 2) F (scalarMatrix (d := d) σ0) ≤ B₂) :
+    let M : ℝ := 2 * (Fintype.card (Fin d) : ℝ) * (B₂ ^ (2 : ℕ) + 1)
+    max (σ0⁻¹ * Ch02.LambdaSq Q (r / 2) (.finite 2) F)
+        (σ0 * (Ch02.lambdaSq Q (r / 2) (.finite 2) F)⁻¹) ≤ M ∧
+      (Ch02.lambdaSq Q (r / 2) (.finite 2) F)⁻¹ ≤ σ0⁻¹ * M ∧
+      Real.sqrt (Ch02.LambdaSq Q (r / 2) (.finite 2) F) *
+        Real.sqrt ((Ch02.lambdaSq Q (r / 2) (.finite 2) F)⁻¹) ≤ M := by
+  intro M
+  have hr_half_pos : 0 < r / 2 := half_pos hr
+  have hweighted :
+      max (σ0⁻¹ * Ch02.LambdaSq Q (r / 2) (.finite 2) F)
+        (σ0 * (Ch02.lambdaSq Q (r / 2) (.finite 2) F)⁻¹) ≤ M :=
+    weightedEllipticity_finite_two_le_of_homogenizationError_bound
+      hr_half_pos hσ0 hparent₂
+  have hM_nonneg : 0 ≤ M := by dsimp [M]; positivity
+  exact ⟨hweighted,
+    lambdaSq_inv_le_inv_sigma_mul_of_weightedEllipticity_le hσ0 hweighted,
+    sqrt_LambdaSq_mul_sqrt_lambdaSq_inv_le_of_weightedEllipticity_le
+      hr_half_pos hσ0 hM_nonneg hweighted⟩
 
 /-- Finite-`sigma` assembly of the Ch3 comparison theorem with the collapsed
 minimal-scale controls needed to bound every random coefficient in its RHS.
@@ -628,68 +707,11 @@ theorem exists_homogenizationComparison_controlledFactors_interpolated_expLogSq
   let B₁ : ℝ := G₁ * A * R
   let B₂ : ℝ := G₂ * A * R
   let M : ℝ := 2 * (Fintype.card (Fin d) : ℝ) * (B₂ ^ (2 : ℕ) + 1)
-  have hX₁_le_X : X₁ aω ≤ X aω := by
-    dsimp [X]
-    exact le_max_left _ _
-  have hX₂_le_X : X₂ aω ≤ X aω := by
-    dsimp [X]
-    exact le_max_right _ _
-  have hX₁m : X₁ aω ≤ (3 : ℝ) ^ m := hX₁_le_X.trans hXm
-  have hX₂m : X₂ aω ≤ (3 : ℝ) ^ m := hX₂_le_X.trans hXm
-  have hX₁_pos : 0 < X₁ aω :=
-    lt_of_lt_of_le zero_lt_one (hX₁_one aω)
-  have hX₂_pos : 0 < X₂ aω :=
-    lt_of_lt_of_le zero_lt_one (hX₂_one aω)
-  have hX_pos : 0 < X aω :=
-    lt_of_lt_of_le hX₁_pos hX₁_le_X
-  have hpowm_pos : 0 < (3 : ℝ) ^ m := by positivity
-  have hR₁_le_R :
-      Real.sqrt (((3 : ℝ) ^ m / X₁ aω) ^ (-α)) ≤ R := by
-    dsimp [R]
-    exact sqrt_rpow_neg_div_mono_of_le
-      hpowm_pos hX₁_pos hX_pos hX₁_le_X hα_pos
-  have hR₂_le_R :
-      Real.sqrt (((3 : ℝ) ^ m / X₂ aω) ^ (-α)) ≤ R := by
-    dsimp [R]
-    exact sqrt_rpow_neg_div_mono_of_le
-      hpowm_pos hX₂_pos hX_pos hX₂_le_X hα_pos
-  have hdisc_r_nonneg : 0 ≤ Ch02.geometricDiscount r 1 := by
-    simpa [Ch02.geometricDiscount_eq_old] using
-      HCPolySupport.geometricDiscount_nonneg hrq₁
-  have hdisc_delta₁_pos : 0 < Ch02.geometricDiscount (r - τ / 2) 1 := by
-    simpa [Ch02.geometricDiscount_eq_old] using
-      HCPolySupport.geometricDiscount_pos hδq₁
-  have hG₁_nonneg : 0 ≤ G₁ := by
-    dsimp [G₁]
-    exact Real.rpow_nonneg
-      (mul_nonneg hdisc_r_nonneg
-        (inv_nonneg.mpr hdisc_delta₁_pos.le)) _
-  have hdisc_r₂_nonneg : 0 ≤ Ch02.geometricDiscount (r / 2) 2 := by
-    simpa [Ch02.geometricDiscount_eq_old] using
-      HCPolySupport.geometricDiscount_nonneg hrq₂
-  have hdisc_delta₂_pos :
-      0 < Ch02.geometricDiscount (r / 2 - τ / 2) 2 := by
-    simpa [Ch02.geometricDiscount_eq_old] using
-      HCPolySupport.geometricDiscount_pos hδq₂
-  have hG₂_nonneg : 0 ≤ G₂ := by
-    dsimp [G₂]
-    exact Real.rpow_nonneg
-      (mul_nonneg hdisc_r₂_nonneg
-        (inv_nonneg.mpr hdisc_delta₂_pos.le)) _
-  have hdisc_tau_pos : 0 < Ch02.geometricDiscount (τ / 2) 1 := by
-    simpa [Ch02.geometricDiscount_eq_old] using
-      HCPolySupport.geometricDiscount_pos
-        (by nlinarith : 0 < (τ / 2) * (1 : ℝ))
-  have hCresp_nonneg : 0 ≤ Cresp := by
-    dsimp [Cresp]
-    positivity
-  have hCneg_nonneg : 0 ≤ Cneg := by
-    dsimp [Cneg]
-    exact mul_nonneg (inv_nonneg.mpr hdisc_tau_pos.le) (by positivity)
-  have hA_nonneg : 0 ≤ A := by
-    dsimp [A]
-    exact mul_nonneg (hCresp_nonneg.trans (le_max_left Cresp Cneg))
-      (by positivity)
+  obtain ⟨hX₁m, hX₂m, hR₁_le_R, hR₂_le_R⟩ :=
+    maximal_scale_decay_bounds (hX₁_one aω) (hX₂_one aω) hα_pos hXm
+  have hG₁_nonneg : 0 ≤ G₁ := geometric_discount_ratio_nonnegative hrq₁ hδq₁
+  have hG₂_nonneg : 0 ≤ G₂ := geometric_discount_ratio_nonnegative hrq₂ hδq₂
+  have hA_nonneg : 0 ≤ A := assembly_amplitude_nonnegative (d := d) hτ_pos
   have hB₁_nonneg : 0 ≤ B₁ := by
     dsimp [B₁]
     exact mul_nonneg (mul_nonneg hG₁_nonneg hA_nonneg) (Real.sqrt_nonneg _)
@@ -726,23 +748,7 @@ theorem exists_homogenizationComparison_controlledFactors_interpolated_expLogSq
           exact mul_le_mul_of_nonneg_left hR₁_le_R
             (mul_nonneg hG₁_nonneg hA_nonneg)
       _ = B₁ := rfl
-  have hdepth_base :=
-    coarseGrainingHomogenizationErrorAtDepth_le_depthWeight_mul_parent
-      (Q := Q) (a := F) (a0 := a0) (s := r) hr_pos j
-  have hdepth_weight_nonneg : 0 ≤ Ch03.coarseGrainingDepthWeight r j := by
-    dsimp [Ch03.coarseGrainingDepthWeight]
-    positivity
-  have hdepth :
-      Ch03.coarseGrainingHomogenizationErrorAtDepth Q F a0 r j ≤
-        Ch03.coarseGrainingDepthWeight r j * B₁ := by
-    calc
-      Ch03.coarseGrainingHomogenizationErrorAtDepth Q F a0 r j
-          ≤ Ch03.coarseGrainingDepthWeight r j *
-              Ch02.HomogenizationErrorOnCube Q r
-                Ch02.MultiscaleExponent.infinity (.finite 1) F a0.matrix :=
-            hdepth_base
-      _ ≤ Ch03.coarseGrainingDepthWeight r j * B₁ :=
-            mul_le_mul_of_nonneg_left hparent₁ hdepth_weight_nonneg
+  have hdepth := depth_error_le_weight_mul_parent_bound hr_pos j hparent₁
   have hparent₂ :
       Ch02.HomogenizationErrorOnCube Q (r / 2)
           Ch02.MultiscaleExponent.infinity (.finite 2) F
@@ -766,30 +772,8 @@ theorem exists_homogenizationComparison_controlledFactors_interpolated_expLogSq
           exact mul_le_mul_of_nonneg_left hR₂_le_R
             (mul_nonneg hG₂_nonneg hA_nonneg)
       _ = B₂ := rfl
-  have hr_half_pos : 0 < r / 2 := half_pos hr_pos
-  have hweighted :
-      max (σ0⁻¹ * Ch02.LambdaSq Q (r / 2) (.finite 2) F)
-          (σ0 * (Ch02.lambdaSq Q (r / 2) (.finite 2) F)⁻¹) ≤ M := by
-    simpa [M, B₂] using
-      weightedEllipticity_finite_two_le_of_homogenizationError_bound
-        (Q := Q) (a := F) (s := r / 2) (σ := σ0) (B := B₂)
-        hr_half_pos hσ0 hparent₂
-  have hM_nonneg : 0 ≤ M := by
-    dsimp [M]
-    positivity
-  have hlambda_inv :
-      (Ch02.lambdaSq Q (r / 2) (.finite 2) F)⁻¹ ≤ σ0⁻¹ * M := by
-    exact
-      lambdaSq_inv_le_inv_sigma_mul_of_weightedEllipticity_le
-        (Q := Q) (a := F) (s := r / 2) (σ := σ0) (M := M)
-        hσ0 hweighted
-  have hsqrt_product :
-      Real.sqrt (Ch02.LambdaSq Q (r / 2) (.finite 2) F) *
-          Real.sqrt ((Ch02.lambdaSq Q (r / 2) (.finite 2) F)⁻¹) ≤ M := by
-    exact
-      sqrt_LambdaSq_mul_sqrt_lambdaSq_inv_le_of_weightedEllipticity_le
-        (Q := Q) (a := F) (s := r / 2) (σ := σ0) (M := M)
-        hr_half_pos hσ0 hM_nonneg hweighted
+  obtain ⟨hweighted, hlambda_inv, hsqrt_product⟩ :=
+    ellipticity_controls_of_parent_error_bound hr_pos hσ0 hparent₂
   exact ⟨hcomparison, hdepth, hweighted, hlambda_inv, hsqrt_product⟩
 
 /-- Finite-`sigma` two-exponent assembly of the repaired Ch3 comparison

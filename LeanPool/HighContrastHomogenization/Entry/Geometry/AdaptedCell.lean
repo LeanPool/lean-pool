@@ -107,7 +107,8 @@ theorem adaptedCellTranslate_eq_preimage {q : Mat d} (hq : IsUnit q) (j : ℤ) (
   rw [mem_adaptedCellTranslate_iff, Set.mem_preimage]
   constructor
   · rintro ⟨v, hv, rfl⟩
-    rw [matVecMul_eq_mulVec, add_sub_cancel_left, Matrix.mulVec_mulVec, Matrix.nonsing_inv_mul q hdet,
+    rw [matVecMul_eq_mulVec, add_sub_cancel_left, Matrix.mulVec_mulVec, Matrix.nonsing_inv_mul q
+      hdet,
       Matrix.one_mulVec]
     exact hv
   · intro hx
@@ -157,7 +158,8 @@ private theorem boundaryStrips_subset_iUnion (j : ℤ) (t : ℝ) :
     exact Set.mem_Ioo.mpr (hv i')
 
 private theorem volume_coordStrip_le [NeZero d] (j : ℤ) {t : ℝ} (ht : 0 ≤ t) (i : Fin d) :
-    volume (coordStrip d j t i) ≤ ENNReal.ofReal (2 * t) * ENNReal.ofReal ((3 : ℝ) ^ j) ^ (d - 1) := by
+    volume (coordStrip d j t i) ≤ ENNReal.ofReal (2 * t) * ENNReal.ofReal ((3 : ℝ) ^ j) ^ (d -
+      1) := by
   classical
   unfold coordStrip
   rw [volume_pi_pi, ← Finset.mul_prod_erase Finset.univ _ (Finset.mem_univ i),
@@ -177,7 +179,8 @@ private theorem volume_coordStrip_le [NeZero d] (j : ℤ) {t : ℝ} (ht : 0 ≤ 
   rw [hrest]
   refine mul_le_mul_left ?_ _
   refine (measure_union_le _ _).trans ?_
-  rw [Real.volume_Icc, Real.volume_Icc, ← ENNReal.ofReal_add (by linarith only [ht]) (by linarith only [ht])]
+  rw [Real.volume_Icc, Real.volume_Icc, ← ENNReal.ofReal_add (by linarith only [ht]) (by
+    linarith only [ht])]
   exact ENNReal.ofReal_le_ofReal (by linarith only [ht])
 
 theorem volume_boundaryStrips_le [NeZero d] (j : ℤ) {t : ℝ} (ht : 0 ≤ t) :

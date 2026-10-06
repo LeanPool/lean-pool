@@ -675,12 +675,16 @@ private theorem coordinate_gagliardoPowerEnergy_le_lower_mul_exactOverlap
               p.exponent.toReal := by
       rw [← Finset.mul_sum]
 
+/-- The finite comparison constant bounding the pth power of the Euclidean overlap seminorm by the
+pth power of the fractional Sobolev seminorm. -/
 @[expose]
 noncomputable def cubeEuclideanOverlapToWspPowerConstant
     (d : ℕ) (p : FiniteLpExponent) : ℝ≥0∞ :=
   cubeCoordinateGagliardoComparisonConstant d p * (2 * 3 ^ d) *
     (d : ℝ≥0∞) * cubeEuclideanWspMetricComparisonConstant d p
 
+/-- The finite comparison constant bounding the pth power of the Euclidean fractional Sobolev
+seminorm by the pth power of the overlap seminorm. -/
 @[expose]
 noncomputable def cubeEuclideanWspToOverlapPowerConstant
     (d : ℕ) (p : FiniteLpExponent) : ℝ≥0∞ :=

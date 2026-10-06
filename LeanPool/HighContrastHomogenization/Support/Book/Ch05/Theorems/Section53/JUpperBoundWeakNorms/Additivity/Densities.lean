@@ -414,7 +414,7 @@ cube solution has the parent gradient, then the local difference half-energy is
 the gap between the child canonical response and that solution's response
 value.
 -/
-theorem cubeAverage_additivityDiffHalfEnergyDensityOnFamilyOnCube_eq_responseJOnCube_sub_responseValue_of_grad_eq
+theorem cubeAverage_additivityEnergyDensity_eq_responseJ_sub_responseValue
     {d : ℕ} (a : Ch02.TriadicCoeffFamily d) (Q R : TriadicCube d)
     (p q : Vec d)
     (w : Ch02.Solution (Ch02.cubeDomain R) (a.coeffOn R))

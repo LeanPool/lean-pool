@@ -76,6 +76,60 @@ private theorem summable_scaled_and_tsum_le {g : ℝ}
   · rw [tsum_congr hterm, tsum_geometric_of_lt_one hr0 hr1]
     exact le_of_eq (by rw [zetaG])
 
+private theorem descendingCellUnion_eq_integerRowUnion
+    (Z : ℤ → Finset (Fin d → ℤ)) (r : ℤ) :
+    (⋃ i : (Σ u : ℕ, {w // w ∈ Z (r - (u : ℤ))}),
+      adaptedCellAt (1 : Mat d) (r - (i.1 : ℤ)) i.2.1) =
+      ⋃ b ∈ Set.Iic r, ⋃ w ∈ (Z b : Set (Fin d → ℤ)),
+        adaptedCellAt (1 : Mat d) b w := by
+  classical
+  let I := Σ u : ℕ, {w // w ∈ Z (r - (u : ℤ))}
+  ext x
+  constructor
+  · intro hx
+    obtain ⟨⟨u, w⟩, hx⟩ := Set.mem_iUnion.mp hx
+    refine Set.mem_iUnion.mpr ⟨r - (u : ℤ), Set.mem_iUnion.mpr ⟨?_, ?_⟩⟩
+    · exact Set.mem_Iic.mpr (by omega)
+    · exact Set.mem_iUnion.mpr ⟨w.1, Set.mem_iUnion.mpr ⟨w.2, hx⟩⟩
+  · intro hx
+    obtain ⟨b, hb⟩ := Set.mem_iUnion.mp hx
+    obtain ⟨hbr, hb⟩ := Set.mem_iUnion.mp hb
+    obtain ⟨w, hw⟩ := Set.mem_iUnion.mp hb
+    obtain ⟨hwZ, hx⟩ := Set.mem_iUnion.mp hw
+    have hscale : r - (((r - b).toNat : ℕ) : ℤ) = b := by
+      rw [Int.toNat_of_nonneg (sub_nonneg.mpr (Set.mem_Iic.mp hbr))]
+      omega
+    have hwZ' : w ∈ Z (r - (((r - b).toNat : ℕ) : ℤ)) := by
+      rw [hscale]
+      exact hwZ
+    let i : I := ⟨(r - b).toNat, ⟨w, hwZ'⟩⟩
+    refine Set.mem_iUnion.mpr ⟨i, ?_⟩
+    change x ∈ adaptedCellAt (1 : Mat d)
+      (r - (((r - b).toNat : ℕ) : ℤ)) w
+    rwa [hscale]
+
+private theorem roundedGrid_boundaryFactor_le [Nonempty (Fin d)]
+    {jStar : ℤ} (hj : (kZero d : ℤ) ≤ jStar)
+    {Cd : ℝ} (hCd : max 1 (12 * (d : ℝ) * Real.sqrt d) ≤ Cd)
+    {n : Mat d} (hn : n.PosDef) :
+    6 * (d : ℝ) * Real.sqrt d * ‖(roundedGrid jStar n)⁻¹ * (1 : Mat d)‖ ≤
+      Cd * witnessEccentricity n := by
+  have hecc : 1 ≤ witnessEccentricity n := Initialization.one_le_witnessEccentricity hn
+  have hCd1 : 1 ≤ Cd := (le_max_left _ _).trans hCd
+  have hnorm : ‖(roundedGrid jStar n)⁻¹ * (1 : Mat d)‖ ≤ 2 := by
+    rw [Matrix.mul_one]
+    exact (norm_inv_roundedGrid_le hj hn).trans (by norm_num)
+  have hCdDim : 12 * (d : ℝ) * Real.sqrt d ≤ Cd :=
+    (le_max_right _ _).trans hCd
+  have hbase : 6 * (d : ℝ) * Real.sqrt d *
+      ‖(roundedGrid jStar n)⁻¹ * (1 : Mat d)‖ ≤
+      12 * (d : ℝ) * Real.sqrt d := by
+    have hnonneg : 0 ≤ 6 * (d : ℝ) * Real.sqrt d := by positivity
+    have := mul_le_mul_of_nonneg_left hnorm hnonneg
+    linarith only [this]
+  exact hbase.trans <| hCdDim.trans <|
+    (le_mul_of_one_le_right (by linarith only [hCd1]) hecc)
+
 /-- **The scale-adapted Whitney bridge.**  Simultaneous standard-cell bounds
 with the scale-adapted envelope `Y·3^{g(r−k)}` imply the adapted-cell bound
 `boundaryConst·Y`, with no burn factor. -/
@@ -136,30 +190,8 @@ theorem adapted_scaled_of_standard
     (Recurrence.volume_adaptedCellAt_pos Matrix.PosDef.one _ _).ne'
   have hcover : (⋃ i : I, c i) =
       ⋃ b ∈ Set.Iic r, ⋃ w ∈ (Z b : Set (Fin d → ℤ)),
-        adaptedCellAt (1 : Mat d) b w := by
-    ext x
-    constructor
-    · intro hx
-      obtain ⟨⟨u, w⟩, hx⟩ := Set.mem_iUnion.mp hx
-      refine Set.mem_iUnion.mpr ⟨r - (u : ℤ), Set.mem_iUnion.mpr ⟨?_, ?_⟩⟩
-      · exact Set.mem_Iic.mpr (by omega)
-      · exact Set.mem_iUnion.mpr ⟨w.1, Set.mem_iUnion.mpr ⟨w.2, hx⟩⟩
-    · intro hx
-      obtain ⟨b, hb⟩ := Set.mem_iUnion.mp hx
-      obtain ⟨hbr, hb⟩ := Set.mem_iUnion.mp hb
-      obtain ⟨w, hw⟩ := Set.mem_iUnion.mp hb
-      obtain ⟨hwZ, hx⟩ := Set.mem_iUnion.mp hw
-      have hscale : r - (((r - b).toNat : ℕ) : ℤ) = b := by
-        rw [Int.toNat_of_nonneg (sub_nonneg.mpr (Set.mem_Iic.mp hbr))]
-        omega
-      have hwZ' : w ∈ Z (r - (((r - b).toNat : ℕ) : ℤ)) := by
-        rw [hscale]
-        exact hwZ
-      let i : I := ⟨(r - b).toNat, ⟨w, hwZ'⟩⟩
-      refine Set.mem_iUnion.mpr ⟨i, ?_⟩
-      change x ∈ adaptedCellAt (1 : Mat d)
-        (r - (((r - b).toNat : ℕ) : ℤ)) w
-      rwa [hscale]
+        adaptedCellAt (1 : Mat d) b w :=
+    descendingCellUnion_eq_integerRowUnion Z r
   have hcnull : volume (adaptedCellTranslate p r y \ ⋃ i : I, c i) = 0 := by
     rw [hcover]
     exact hnull
@@ -190,20 +222,8 @@ theorem adapted_scaled_of_standard
       (div_nonneg ENNReal.toReal_nonneg ENNReal.toReal_nonneg) hquad0
   have hecc : 1 ≤ witnessEccentricity n := Initialization.one_le_witnessEccentricity hn
   have hCd1 : 1 ≤ Cd := (le_max_left _ _).trans hCd
-  have hCdDim : 12 * (d : ℝ) * Real.sqrt d ≤ Cd :=
-    (le_max_right _ _).trans hCd
-  have hnorm : ‖p⁻¹ * (1 : Mat d)‖ ≤ 2 := by
-    rw [Matrix.mul_one]
-    exact (norm_inv_roundedGrid_le hj hn).trans (by norm_num)
   have hdim : 6 * (d : ℝ) * Real.sqrt d * ‖p⁻¹ * (1 : Mat d)‖ ≤
-      Cd * witnessEccentricity n := by
-    have hbase : 6 * (d : ℝ) * Real.sqrt d * ‖p⁻¹ * (1 : Mat d)‖ ≤
-        12 * (d : ℝ) * Real.sqrt d := by
-      have hnonneg : 0 ≤ 6 * (d : ℝ) * Real.sqrt d := by positivity
-      have := mul_le_mul_of_nonneg_left hnorm hnonneg
-      linarith only [this]
-    exact hbase.trans <| hCdDim.trans <|
-      (le_mul_of_one_le_right (by linarith only [hCd1]) hecc)
+      Cd * witnessEccentricity n := roundedGrid_boundaryFactor_le hj hCd hn
   have hrowWeight : ∀ u : ℕ,
       ∑ w ∈ Z (r - (u : ℤ)),
           (volume (adaptedCellAt (1 : Mat d) (r - (u : ℤ)) w)).toReal /

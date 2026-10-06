@@ -266,7 +266,8 @@ theorem nonempty_childMaximizerFamily
       ScalarCanonicalMaximizer (adaptedCellAtCenter q (t - (n : ℤ)) w) p r
         (respCoeffMinus F a)) := by
   exact ⟨fun n w => Classical.choice
-    (nonempty_scalarCanonicalMaximizer_respCoeffMinus_adaptedCellAtCenter q hq (t - (n : ℤ)) w F a p r)⟩
+    (nonempty_scalarCanonicalMaximizer_respCoeffMinus_adaptedCellAtCenter q hq (t - (n : ℤ)) w F
+      a p r)⟩
 
 omit [NeZero d] in
 private theorem sum_blockVecDot_eq_sum_prod {iota : Type*}

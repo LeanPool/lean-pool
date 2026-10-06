@@ -95,7 +95,7 @@ private theorem energyConsequencesRHSTheory_of_dirichlet_harmonicRemainder_bound
   refine ⟨⟨C, hC_pos, ?_, ?_⟩⟩
   · intro Q a s g v hs hs_lt hg hboundary
     rcases
-        exists_zeroTraceCorrector_harmonicRemainder_dirichletForcedSolutionEnergyNorm_le_dirichletEnergyWithRHSRHS_of_harmonicRemainder_bound
+        exists_zeroTraceCorrector_harmonicRemainder_forcedEnergy_le_dirichletEnergy
           (C₀ := C₀) (C := C) hC₀_nonneg hC₀_zero hC_absorb
           (Q := Q) (a := a) (s := s) (g := g) v hs hs_lt hg with
       ⟨ρ, w, hgrad, henergy⟩

@@ -51,7 +51,7 @@ private theorem homogenizationErrorOnCube_infinity_one_nonneg_local
   intro n
   exact mul_nonneg (geometricWeight_nonneg n (by simpa using hs))
     (scaleResponseAtScale_infinity_nonneg Q
-      (sub_le_self _ (by exact_mod_cast Nat.zero_le n)) a a0)
+      (sub_le_self _ (Nat.cast_nonneg n)) a a0)
 
 private theorem inv_sq_le_rpow_neg_five_halves {s : ℝ}
     (hs : 0 < s) (hs_le : s ≤ 1) :

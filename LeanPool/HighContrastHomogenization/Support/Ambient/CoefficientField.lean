@@ -23,8 +23,11 @@ public section
 
 namespace HCPolySupport
 
+/-- Real matrix-valued fields on the `d`-dimensional coordinate space. -/
 abbrev CoeffField (d : ℕ) := Vec d → Mat d
 
+/-- Positive ordered bounds `lam ≤ Lam`, with quadratic lower bounds `lam` for `A` and `Lam⁻¹`
+for its matrix inverse. -/
 @[expose]
 def IsEllipticMatrix {d : ℕ} (lam Lam : ℝ) (A : Mat d) : Prop :=
   0 < lam ∧
@@ -488,6 +491,8 @@ theorem abs_apply_symmPartInv_le_of_isEllipticMatrix {d : ℕ} {lam Lam : ℝ} {
     simpa [sq_abs] using hsq
   nlinarith [sq_nonneg (lam⁻¹ - |((symmPart A)⁻¹ : Mat d) i j|), habs_sq]
 
+/-- Measurability of the zero extension from `U`, together with pointwise matrix ellipticity on
+`U`. -/
 @[expose]
 def IsEllipticFieldOn {d : ℕ} (lam Lam : ℝ) (U : Set (Vec d)) (a : CoeffField d) : Prop :=
   by
@@ -847,6 +852,7 @@ theorem memVectorL2_matVecMul_skewPart_of_isEllipticFieldOn {d : ℕ} {lam Lam :
       _ ≤ Lam * ‖f x j‖ := mul_le_mul_of_nonneg_right hskew (norm_nonneg _)
   simpa using MeasureTheory.MemLp.of_le_mul hfj hterm_meas hbound
 
+/-- The coefficient field equal to `a` on `U` and zero outside `U`. -/
 @[expose]
 noncomputable def restrictCoeffField {d : ℕ} (U : Set (Vec d)) (a : CoeffField d) : CoeffField d
   := by
@@ -907,14 +913,17 @@ noncomputable def extendByIdCoeffField {d : ℕ} (U : Set (Vec d)) (a : CoeffFie
   funext x
   by_cases hx : x ∈ U <;> simp [restrictCoeffField, extendByIdCoeffField, hx]
 
+/-- The translated coefficient field whose value at `x` is `a (x + z)`. -/
 @[expose]
 def translateCoeffField {d : ℕ} (z : Vec d) (a : CoeffField d) : CoeffField d :=
   fun x => a (fun i => x i + z i)
 
+/-- The field formed by taking the symmetric part of each coefficient matrix. -/
 @[expose]
 noncomputable def symmCoeffField {d : ℕ} (a : CoeffField d) : CoeffField d :=
   fun x => symmPart (a x)
 
+/-- The field formed by taking the skew-symmetric part of each coefficient matrix. -/
 @[expose]
 noncomputable def skewCoeffField {d : ℕ} (a : CoeffField d) : CoeffField d :=
   fun x => skewPart (a x)

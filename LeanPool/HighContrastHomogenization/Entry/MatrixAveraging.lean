@@ -62,18 +62,21 @@ theorem fixed_geometry_matrix_averaging
                       (normalizedBlock
                         (blockSub
                           (coarseBlock
-                            (HighContrast.adaptedCellTranslate (Geometry.explicitRoundedGrid jStar m) j z) a)
+                            (HighContrast.adaptedCellTranslate (Geometry.explicitRoundedGrid
+                              jStar m) j z) a)
                           (adaptedMean P (Geometry.explicitRoundedGrid jStar m) j))
                         R))) ≤
           (N : ℝ) * (3 : ℝ) ^ ((d : ℝ) / 2) / (Z.card : ℝ) ^ ((1 : ℝ) / 2) *
             lqSchattenNorm P (N : ℝ)
               (fun a =>
                 normalizedBlock
-                  (blockSub (coarseBlock (HighContrast.adaptedCell (Geometry.explicitRoundedGrid jStar m) j) a)
+                  (blockSub (coarseBlock (HighContrast.adaptedCell (Geometry.explicitRoundedGrid
+                    jStar m) j) a)
                     (adaptedMean P (Geometry.explicitRoundedGrid jStar m) j))
                   R) := by
   refine ⟨1, zero_lt_one, ?_⟩
-  intro P E Ψ K S hP hstat hunit hell N hN hNeven jStar hj _hsrc m hm j hjgen Z hZne hZ R hRsymm hRpos
+  intro P E Ψ K S hP hstat hunit hell N hN hNeven jStar hj _hsrc m hm j hjgen Z hZne hZ R hRsymm
+    hRpos
   exact Annealed.matrix_averaging_roundedGrid d hd P hP γ E Ψ K S hstat hunit hell
     N hN hNeven jStar hj m hm j hjgen Z hZne hZ R hRsymm hRpos
 

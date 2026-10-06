@@ -70,7 +70,7 @@ private theorem annealedResponseJAtScale_le_of_ae_descendantsAverage
             (fun R => restrictionResponseJObservableCubeSet R p q a) ∂P :=
         integral_mono_ae hParentInt hAvgInt hSub
     _ = expectedResponseJCubeSet P (originCube d n) p q :=
-        hP.integral_descendantsAverage_restrictionResponseJObservableCubeSet_eq_originCube_of_stationary
+        hP.integral_responseJDescendantAverage_eq_origin_of_stationarity
           hstat hn hnm p q hDescInt
     _ = annealedResponseJAtScale P n p q := rfl
 
@@ -111,7 +111,8 @@ private theorem integral_descendantsAverageBlockMat_entry_eq_annealedBlockMatrix
   have hDescIntDepth :
       ∀ R, R ∈ descendantsAtDepth Q j →
         Integrable
-          (fun a : RegCoeffField d => blockMatEntry (coarseBlockMatrix (cubeSet R) a.toFun) α β) P := by
+          (fun a : RegCoeffField d => blockMatEntry (coarseBlockMatrix (cubeSet R) a.toFun) α β)
+            P := by
     intro R hR
     exact hDescInt R (by
       simpa [Q, j, descendantsAtScale_eq_descendantsAtDepth Q hnm] using! hR) α β
@@ -164,7 +165,7 @@ private theorem integral_descendantsAverageBlockMat_entry_eq_annealedBlockMatrix
         refine Finset.sum_congr rfl ?_
         intro R hR
         exact
-          hP.integral_coarseBlockMatrix_entry_cubeSet_eq_originCube_of_mem_descendantsAtScale_originCube
+          hP.integral_coarseBlockEntry_eq_origin_on_originDescendant
             hstat hn hnm (by simpa [Q, hDscale] using hR) α β
     _ =
       ∫ a, blockMatEntry (coarseBlockMatrix (cubeSet (originCube d n)) a.toFun) α β ∂P := by
@@ -185,7 +186,8 @@ theorem blockMatLoewnerLE_annealedBlockMatrixAtScale
     (hDescInt :
       ∀ R, R ∈ descendantsAtScale (originCube d m) n →
         ∀ α β, Integrable
-          (fun a : RegCoeffField d => blockMatEntry (coarseBlockMatrix (cubeSet R) a.toFun) α β) P) :
+          (fun a : RegCoeffField d => blockMatEntry (coarseBlockMatrix (cubeSet R) a.toFun) α β)
+            P) :
     BlockMatLoewnerLE (annealedBlockMatrixAtScale P m)
       (annealedBlockMatrixAtScale P n) := by
   let Q : TriadicCube d := originCube d m
@@ -197,7 +199,8 @@ theorem blockMatLoewnerLE_annealedBlockMatrixAtScale
   have hDescIntDepth :
       ∀ R, R ∈ descendantsAtDepth Q j →
         ∀ α β, Integrable
-          (fun a : RegCoeffField d => blockMatEntry (coarseBlockMatrix (cubeSet R) a.toFun) α β) P := by
+          (fun a : RegCoeffField d => blockMatEntry (coarseBlockMatrix (cubeSet R) a.toFun) α β)
+            P := by
     intro R hR α β
     exact hDescInt R (by
       simpa [Q, j, descendantsAtScale_eq_descendantsAtDepth Q hnm] using! hR) α β

@@ -168,7 +168,8 @@ theorem coarsePoincareRHSSn_iterate_le_intrinsicLocalizedEnergyForce_of_forceAve
       coarsePoincareRHSDepthWeight s m * coarsePoincareRHSRn Q s u m ≤
         coarsePoincareRHSDepthWeight s m *
           (θ ^ N * coarsePoincareRHSRn Q s u (m + N) +
-            coarsePoincareRHSIntrinsicWeightedLocalizedEnergyForceErrorSum Q a u s θ CE CF B m N) := by
+            coarsePoincareRHSIntrinsicWeightedLocalizedEnergyForceErrorSum Q a u s θ CE CF B m
+              N) := by
     exact mul_le_mul_of_nonneg_left hR hweight_nonneg
   calc
     coarsePoincareRHSSn Q s u m
@@ -177,11 +178,13 @@ theorem coarsePoincareRHSSn_iterate_le_intrinsicLocalizedEnergyForce_of_forceAve
     _ ≤
         coarsePoincareRHSDepthWeight s m *
           (θ ^ N * coarsePoincareRHSRn Q s u (m + N) +
-            coarsePoincareRHSIntrinsicWeightedLocalizedEnergyForceErrorSum Q a u s θ CE CF B m N) := hmul
+            coarsePoincareRHSIntrinsicWeightedLocalizedEnergyForceErrorSum Q a u s θ CE CF B m
+              N) := hmul
     _ =
         (coarsePoincareRHSScaledStepCoeff s θ) ^ N *
             coarsePoincareRHSSn Q s u (m + N) +
-          coarsePoincareRHSSIntrinsicWeightedLocalizedEnergyForceErrorSum Q a u s θ CE CF B m N := by
+          coarsePoincareRHSSIntrinsicWeightedLocalizedEnergyForceErrorSum Q a u s θ CE CF B m N
+            := by
           have hterm :
               coarsePoincareRHSDepthWeight s m *
                   (θ ^ N * coarsePoincareRHSRn Q s u (m + N)) =
@@ -345,7 +348,8 @@ theorem coarsePoincareRHSSn_iterate_le_intrinsicGlobalEnergy_add_globalForce
             coarsePoincareRHSSn Q s u (m + N) +
           coarsePoincareRHSSIntrinsicWeightedGlobalEnergyErrorSum Q a u s θ CE m N +
           coarsePoincareRHSSIntrinsicWeightedGlobalForceErrorSum Q a g s θ CF m N := by
-      rw [coarsePoincareRHSSIntrinsicWeightedLocalizedEnergyForceErrorSum_global_eq_energy_add_force]
+      rw [
+      coarsePoincareRHSSIntrinsicWeightedLocalizedEnergyForceErrorSum_global_eq_energy_add_force]
       ring
 
 

@@ -333,7 +333,7 @@ Source labels `a.HM` and `l.union.bound`: substitute both the one-block
 high-moment estimate and the deterministic terminal/weak-norm multiplier
 `terminalCost * 3^{-rho_M(m-j)}` into the scale-summed descendant union bridge.
 -/
-theorem lintegral_sup_Icc_descendantsAtDepth_weighted_highCenteredMoment_le_sum_of_estimate_of_terminalWeak_le
+theorem lintegral_sup_Icc_descendants_weighted_highCenteredMoment_le_sum
     {Ω : Type*} [MeasurableSpace Ω] {d : ℕ} {hc : HighContrastExponents d}
     (hm : HighCenteredMomentParameters d hc)
     (μ : MeasureTheory.Measure Ω) (Q : HCPolySupport.TriadicCube d) {N m : ℕ}
@@ -368,7 +368,7 @@ Source labels `a.HM` and `l.union.bound`: full stochastic maximal lintegral
 bridge through the manuscript's finite convolution envelope, still with the
 terminal-normalization polynomial cost left as the explicit `terminalCost`.
 -/
-theorem lintegral_sup_Icc_descendantsAtDepth_weighted_highCenteredMoment_le_convolution_of_estimate_of_terminalWeak_le
+theorem lintegral_sup_Icc_descendants_weighted_highCenteredMoment_le_convolution
     {Ω : Type*} [MeasurableSpace Ω] {d : ℕ} {hc : HighContrastExponents d}
     (hm : HighCenteredMomentParameters d hc)
     (μ : MeasureTheory.Measure Ω) (Q : HCPolySupport.TriadicCube d) {N m : ℕ}
@@ -391,7 +391,7 @@ theorem lintegral_sup_Icc_descendantsAtDepth_weighted_highCenteredMoment_le_conv
               (-(min (hm.Q * hc.rhoM - (d : ℝ)) (hm.Q * hm.gamma)) *
                 ((m - N : ℕ) : ℝ)))) := by
   exact
-    (lintegral_sup_Icc_descendantsAtDepth_weighted_highCenteredMoment_le_sum_of_estimate_of_terminalWeak_le
+    (lintegral_sup_Icc_descendants_weighted_highCenteredMoment_le_sum
       hm μ Q hQ w X hHM terminalCost hw).trans
       (sum_Icc_terminalWeak_highCenteredMomentEnvelope_le_convolution
         hm terminalCost hNm)
@@ -404,7 +404,7 @@ deviation, while the displayed maximum uses the terminal-normalized deviation;
 the deterministic comparison from `DeterministicAlgebra.lean` supplies the
 factor `T = widetildeTheta_0`.
 -/
-theorem lintegral_sup_Icc_descendantsAtDepth_weak_terminalCenteredFullBlockDeviation_le_convolution_of_highMoment
+theorem lintegral_sup_Icc_descendants_terminalBlockDeviation_le_convolution
     {Ω : Type*} [MeasurableSpace Ω] {d : ℕ} [NeZero d]
     {P : HCPolySupport.Book.Ch04.RestrictionCoeffLaw d}
     (hP : HCPolySupport.Book.Ch04.RestrictionLawCarrier P)
@@ -504,7 +504,7 @@ theorem lintegral_sup_Icc_descendantsAtDepth_weak_terminalCenteredFullBlockDevia
     simpa [wTerminal] using
       mul_le_mul_right (hweak j hj R hR) T
   have hconv :=
-    lintegral_sup_Icc_descendantsAtDepth_weighted_highCenteredMoment_le_convolution_of_estimate_of_terminalWeak_le
+    lintegral_sup_Icc_descendants_weighted_highCenteredMoment_le_convolution
       hm μ Q hNm hQ wTerminal X hHM T hwTerminal
   calc
     ∫⁻ ω, (Finset.Icc N m).sup
@@ -538,7 +538,7 @@ the terminal-normalized stochastic maximal union bound.  The high-moment
 hypothesis is imposed on the concrete intermediate-normalized coarse-block
 deviation from `a.HM`.
 -/
-theorem lintegral_sup_Icc_descendantsAtDepth_weak_terminalCoarseBlockDeviation_le_convolution_of_highMoment
+theorem integral_sup_terminalDeviation_le_highMomentConvolution
     {Ω : Type*} [MeasurableSpace Ω] {d : ℕ} [NeZero d]
     {P : HCPolySupport.Book.Ch04.RestrictionCoeffLaw d}
     (hP : HCPolySupport.Book.Ch04.RestrictionLawCarrier P)
@@ -570,7 +570,7 @@ theorem lintegral_sup_Icc_descendantsAtDepth_weak_terminalCoarseBlockDeviation_l
               (-(min (hm.Q * hc.rhoM - (d : ℝ)) (hm.Q * hm.gamma)) *
                 ((m - N : ℕ) : ℝ)))) := by
   simpa [terminalCoarseBlockDeviation, intermediateCoarseBlockDeviation] using
-    lintegral_sup_Icc_descendantsAtDepth_weak_terminalCenteredFullBlockDeviation_le_convolution_of_highMoment
+    lintegral_sup_Icc_descendants_terminalBlockDeviation_le_convolution
       hP hStruct hP4 hm μ Q hNm hQ weak
       (coarseFullBlockMatrixAtCubeProcess a) hHM hweak
 
@@ -579,7 +579,7 @@ Source labels `a.HM` and `l.union.bound`: polynomial form of the concrete
 terminal coarse-block union bound.  The terminal normalization comparison gives
 the manuscript polynomial exponent `A = 1`.
 -/
-theorem lintegral_sup_Icc_descendantsAtDepth_weak_terminalCoarseBlockDeviation_le_polynomial_convolution_of_highMoment
+theorem lintegral_sup_Icc_descendants_terminalBlockDeviation_le_polynomial_convolution
     {Ω : Type*} [MeasurableSpace Ω] {d : ℕ} [NeZero d]
     {P : HCPolySupport.Book.Ch04.RestrictionCoeffLaw d}
     (hP : HCPolySupport.Book.Ch04.RestrictionLawCarrier P)
@@ -633,7 +633,7 @@ theorem lintegral_sup_Icc_descendantsAtDepth_weak_terminalCoarseBlockDeviation_l
     have hbase_nonneg : 0 ≤ (2 + Treal : ℝ) := by linarith
     exact Real.rpow_nonneg hbase_nonneg hm.Q
   have hconv :=
-    lintegral_sup_Icc_descendantsAtDepth_weak_terminalCoarseBlockDeviation_le_convolution_of_highMoment
+    integral_sup_terminalDeviation_le_highMomentConvolution
       hP hStruct hP4 hm μ Q hNm hQ weak a hHM hweak
   calc
     ∫⁻ ω, (Finset.Icc N m).sup

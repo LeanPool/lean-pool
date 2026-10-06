@@ -49,7 +49,8 @@ the coarse subcells of the terminal cell, of the ANNEALED cell means of each sub
 optimizer state vanishes.  Above the scale `j_*` the subcells are integer translates of one
 another and the law is stationary, so the annealed block of every subcell agrees; the pathwise cell
 mean of the optimizer state is `x + R 𝐀 x` (`AK.HC (2.32)`), and its expectation is
-`x + R 𝐀̄ x` with the common annealed block `𝐀̄`.  The weights — the subcell means of the cutoff
+`x + R 𝐀_bar x` with the common annealed block `𝐀_bar`.  The weights — the subcell means of the
+  cutoff
 fluctuation `φ - 1` — have normalized sum zero because the cutoff has mean one on the terminal cell.
 -/
 
@@ -134,7 +135,8 @@ theorem avsum_weighted_integral_cellAverage_subcellOptimizer_eq_zero {d : ℕ} [
   have hc : (((triadicIndexBox d H).card : ℝ))⁻¹ *
       ∑ w ∈ triadicIndexBox d H,
         volumeAverage (adaptedCellAtCenter (respGrid jStar F) s w) (fun x => φ x - 1) = 0 := by
-    have h := avsum_volumeAverage_sub_one_eq_zero (qq := respGrid jStar F) hq t H hφ hintφ hvol hφint
+    have h := avsum_volumeAverage_sub_one_eq_zero (qq := respGrid jStar F) hq t H hφ hintφ hvol
+      hφint
     simpa only [hts] using h
   have hA : ∀ w ∈ triadicIndexBox d H, ∀ α β : BlockCoord d,
       Integrable (fun a => blockMatEntry (coarseBlockMatrix
@@ -253,7 +255,8 @@ theorem avsum_weighted_integral_cellAverage_subcellOptimizerPlus_eq_zero {d : �
   have hc : (((triadicIndexBox d H).card : ℝ))⁻¹ *
       ∑ w ∈ triadicIndexBox d H,
         volumeAverage (adaptedCellAtCenter (respGrid jStar F) s w) (fun x => φ x - 1) = 0 := by
-    have h := avsum_volumeAverage_sub_one_eq_zero (qq := respGrid jStar F) hq t H hφ hintφ hvol hφint
+    have h := avsum_volumeAverage_sub_one_eq_zero (qq := respGrid jStar F) hq t H hφ hintφ hvol
+      hφint
     simpa only [hts] using h
   have hgnskew : matTranspose (-(respg F)) = -(-(respg F)) := by
     ext i j
@@ -510,7 +513,8 @@ private theorem coarseBlockMatrix_adaptedCellTranslate_respCoeffMinus {d : ℕ}
     (q : Mat d) (j : ℤ) (z : Fin d → ℤ) (F : BlockMat d) (a : CoeffSpace d) :
     coarseBlockMatrix (HighContrast.adaptedCellTranslate q j (Source.AKL.intTranslation z))
         (respCoeffMinus F a)
-      = coarseBlockMatrix (HighContrast.adaptedCell q j) (respCoeffMinus F (translateCoeff z a)) := by
+      = coarseBlockMatrix (HighContrast.adaptedCell q j) (respCoeffMinus F (translateCoeff z a))
+        := by
   rw [adaptedCellTranslate_eq_translateSet,
     coarseBlockMatrix_translateSet_eq_translateCoeffField]
   apply coarseBlockMatrix_congr_of_ae_eq
@@ -526,7 +530,8 @@ private theorem coarseBlockMatrix_adaptedCellTranslate_respCoeffPlus {d : ℕ}
     (q : Mat d) (j : ℤ) (z : Fin d → ℤ) (F : BlockMat d) (a : CoeffSpace d) :
     coarseBlockMatrix (HighContrast.adaptedCellTranslate q j (Source.AKL.intTranslation z))
         (respCoeffPlus F a)
-      = coarseBlockMatrix (HighContrast.adaptedCell q j) (respCoeffPlus F (translateCoeff z a)) := by
+      = coarseBlockMatrix (HighContrast.adaptedCell q j) (respCoeffPlus F (translateCoeff z a))
+        := by
   rw [adaptedCellTranslate_eq_translateSet,
     coarseBlockMatrix_translateSet_eq_translateCoeffField]
   apply coarseBlockMatrix_congr_of_ae_eq
@@ -553,15 +558,18 @@ private theorem integral_cellFunctional_adaptedCellAtCenter_eq_aux {d : ℕ} [Ne
     (j : ℤ) (hj : (jStar : ℤ) ≤ j) (w : Fin d → ℤ)
     (G : Set (Vec d) → CoeffSpace d → ℝ)
     (hG : ∀ (z : Fin d → ℤ) (a : CoeffSpace d),
-      G (HighContrast.adaptedCellTranslate (explicitRoundedGrid jStar m) j (Source.AKL.intTranslation z))
+      G (HighContrast.adaptedCellTranslate (explicitRoundedGrid jStar m) j
+        (Source.AKL.intTranslation z))
           a
         = G (HighContrast.adaptedCell (explicitRoundedGrid jStar m) j) (translateCoeff z a))
-    (hmeas : AEStronglyMeasurable (G (HighContrast.adaptedCell (explicitRoundedGrid jStar m) j)) P) :
+    (hmeas : AEStronglyMeasurable (G (HighContrast.adaptedCell (explicitRoundedGrid jStar m) j))
+      P) :
     (∫ a, G (adaptedCellAtCenter (explicitRoundedGrid jStar m) j w) a ∂P)
       = ∫ a, G (HighContrast.adaptedCell (explicitRoundedGrid jStar m) j) a ∂P := by
   obtain ⟨z, hz⟩ := Annealed.adaptedCellCenter_eq_intTranslation jStar m hj w
   have hcongr : (∫ a, G (adaptedCellAtCenter (explicitRoundedGrid jStar m) j w) a ∂P) =
-      ∫ a, G (HighContrast.adaptedCell (explicitRoundedGrid jStar m) j) (translateCoeff z a) ∂P := by
+      ∫ a, G (HighContrast.adaptedCell (explicitRoundedGrid jStar m) j) (translateCoeff z a) ∂P
+        := by
     apply integral_congr_ae
     filter_upwards with a
     change G (HighContrast.adaptedCellTranslate (explicitRoundedGrid jStar m) j
@@ -580,13 +588,16 @@ private theorem integral_cellEntry_adaptedCellAtCenter_eq {d : ℕ} [NeZero d]
     (j : ℤ) (hj : (jStar : ℤ) ≤ j) (w : Fin d → ℤ)
     (B : Set (Vec d) → CoeffSpace d → BlockMat d)
     (hB : ∀ (z : Fin d → ℤ) (a : CoeffSpace d),
-      B (HighContrast.adaptedCellTranslate (explicitRoundedGrid jStar m) j (Source.AKL.intTranslation z)) a
+      B (HighContrast.adaptedCellTranslate (explicitRoundedGrid jStar m) j
+        (Source.AKL.intTranslation z)) a
         = B (HighContrast.adaptedCell (explicitRoundedGrid jStar m) j) (translateCoeff z a))
     (α β : BlockCoord d)
     (hmeas : AEStronglyMeasurable
-      (fun a => blockMatEntry (B (HighContrast.adaptedCell (explicitRoundedGrid jStar m) j) a) α β) P) :
+      (fun a => blockMatEntry (B (HighContrast.adaptedCell (explicitRoundedGrid jStar m) j) a) α
+        β) P) :
     (∫ a, blockMatEntry (B (adaptedCellAtCenter (explicitRoundedGrid jStar m) j w) a) α β ∂P)
-      = ∫ a, blockMatEntry (B (HighContrast.adaptedCell (explicitRoundedGrid jStar m) j) a) α β ∂P :=
+      = ∫ a, blockMatEntry (B (HighContrast.adaptedCell (explicitRoundedGrid jStar m) j) a) α β
+        ∂P :=
   integral_cellFunctional_adaptedCellAtCenter_eq_aux P hstat jStar m j hj w
     (fun V a => blockMatEntry (B V a) α β)
     (fun z a => congrArg (fun M : BlockMat d => blockMatEntry M α β) (hB z a))
@@ -605,7 +616,8 @@ theorem annealedBlockOf_adaptedCellAtCenter_respCoeffMinus_eq_full {d : ℕ} [Ne
         (coarseBlockMatrix (HighContrast.adaptedCell (explicitRoundedGrid jStar m) j)
           (respCoeffMinus F a)) α β) P) :
     annealedBlockOf P (adaptedCellAtCenter (explicitRoundedGrid jStar m) j w) (respCoeffMinus F)
-      = annealedBlockOf P (HighContrast.adaptedCell (explicitRoundedGrid jStar m) j) (respCoeffMinus F) := by
+      = annealedBlockOf P (HighContrast.adaptedCell (explicitRoundedGrid jStar m) j)
+        (respCoeffMinus F) := by
   apply blockMat_ext
   · ext i k
     have h := integral_cellEntry_adaptedCellAtCenter_eq P hstat jStar m j hj w
@@ -615,11 +627,13 @@ theorem annealedBlockOf_adaptedCellAtCenter_respCoeffMinus_eq_full {d : ℕ} [Ne
       (Sum.inl i) (Sum.inl k) (hmeas (Sum.inl i) (Sum.inl k))
     have hred : (annealedBlockOf P (adaptedCellAtCenter (explicitRoundedGrid jStar m) j w)
         (respCoeffMinus F)).upperLeft i k
-          = ∫ a, blockMatEntry (coarseBlockMatrix (adaptedCellAtCenter (explicitRoundedGrid jStar m) j w)
+          = ∫ a, blockMatEntry (coarseBlockMatrix (adaptedCellAtCenter (explicitRoundedGrid
+            jStar m) j w)
               (respCoeffMinus F a)) (Sum.inl i) (Sum.inl k) ∂P := rfl
     have hred' : (annealedBlockOf P (HighContrast.adaptedCell (explicitRoundedGrid jStar m) j)
         (respCoeffMinus F)).upperLeft i k
-          = ∫ a, blockMatEntry (coarseBlockMatrix (HighContrast.adaptedCell (explicitRoundedGrid jStar m) j)
+          = ∫ a, blockMatEntry (coarseBlockMatrix (HighContrast.adaptedCell (explicitRoundedGrid
+            jStar m) j)
               (respCoeffMinus F a)) (Sum.inl i) (Sum.inl k) ∂P := rfl
     rw [hred, hred']
     exact h
@@ -631,11 +645,13 @@ theorem annealedBlockOf_adaptedCellAtCenter_respCoeffMinus_eq_full {d : ℕ} [Ne
       (Sum.inl i) (Sum.inr k) (hmeas (Sum.inl i) (Sum.inr k))
     have hred : (annealedBlockOf P (adaptedCellAtCenter (explicitRoundedGrid jStar m) j w)
         (respCoeffMinus F)).upperRight i k
-          = ∫ a, blockMatEntry (coarseBlockMatrix (adaptedCellAtCenter (explicitRoundedGrid jStar m) j w)
+          = ∫ a, blockMatEntry (coarseBlockMatrix (adaptedCellAtCenter (explicitRoundedGrid
+            jStar m) j w)
               (respCoeffMinus F a)) (Sum.inl i) (Sum.inr k) ∂P := rfl
     have hred' : (annealedBlockOf P (HighContrast.adaptedCell (explicitRoundedGrid jStar m) j)
         (respCoeffMinus F)).upperRight i k
-          = ∫ a, blockMatEntry (coarseBlockMatrix (HighContrast.adaptedCell (explicitRoundedGrid jStar m) j)
+          = ∫ a, blockMatEntry (coarseBlockMatrix (HighContrast.adaptedCell (explicitRoundedGrid
+            jStar m) j)
               (respCoeffMinus F a)) (Sum.inl i) (Sum.inr k) ∂P := rfl
     rw [hred, hred']
     exact h
@@ -647,11 +663,13 @@ theorem annealedBlockOf_adaptedCellAtCenter_respCoeffMinus_eq_full {d : ℕ} [Ne
       (Sum.inr i) (Sum.inl k) (hmeas (Sum.inr i) (Sum.inl k))
     have hred : (annealedBlockOf P (adaptedCellAtCenter (explicitRoundedGrid jStar m) j w)
         (respCoeffMinus F)).lowerLeft i k
-          = ∫ a, blockMatEntry (coarseBlockMatrix (adaptedCellAtCenter (explicitRoundedGrid jStar m) j w)
+          = ∫ a, blockMatEntry (coarseBlockMatrix (adaptedCellAtCenter (explicitRoundedGrid
+            jStar m) j w)
               (respCoeffMinus F a)) (Sum.inr i) (Sum.inl k) ∂P := rfl
     have hred' : (annealedBlockOf P (HighContrast.adaptedCell (explicitRoundedGrid jStar m) j)
         (respCoeffMinus F)).lowerLeft i k
-          = ∫ a, blockMatEntry (coarseBlockMatrix (HighContrast.adaptedCell (explicitRoundedGrid jStar m) j)
+          = ∫ a, blockMatEntry (coarseBlockMatrix (HighContrast.adaptedCell (explicitRoundedGrid
+            jStar m) j)
               (respCoeffMinus F a)) (Sum.inr i) (Sum.inl k) ∂P := rfl
     rw [hred, hred']
     exact h
@@ -663,11 +681,13 @@ theorem annealedBlockOf_adaptedCellAtCenter_respCoeffMinus_eq_full {d : ℕ} [Ne
       (Sum.inr i) (Sum.inr k) (hmeas (Sum.inr i) (Sum.inr k))
     have hred : (annealedBlockOf P (adaptedCellAtCenter (explicitRoundedGrid jStar m) j w)
         (respCoeffMinus F)).lowerRight i k
-          = ∫ a, blockMatEntry (coarseBlockMatrix (adaptedCellAtCenter (explicitRoundedGrid jStar m) j w)
+          = ∫ a, blockMatEntry (coarseBlockMatrix (adaptedCellAtCenter (explicitRoundedGrid
+            jStar m) j w)
               (respCoeffMinus F a)) (Sum.inr i) (Sum.inr k) ∂P := rfl
     have hred' : (annealedBlockOf P (HighContrast.adaptedCell (explicitRoundedGrid jStar m) j)
         (respCoeffMinus F)).lowerRight i k
-          = ∫ a, blockMatEntry (coarseBlockMatrix (HighContrast.adaptedCell (explicitRoundedGrid jStar m) j)
+          = ∫ a, blockMatEntry (coarseBlockMatrix (HighContrast.adaptedCell (explicitRoundedGrid
+            jStar m) j)
               (respCoeffMinus F a)) (Sum.inr i) (Sum.inr k) ∂P := rfl
     rw [hred, hred']
     exact h
@@ -685,7 +705,8 @@ theorem annealedBlockOf_adaptedCellAtCenter_respCoeffPlus_eq_full {d : ℕ} [NeZ
         (coarseBlockMatrix (HighContrast.adaptedCell (explicitRoundedGrid jStar m) j)
           (respCoeffPlus F a)) α β) P) :
     annealedBlockOf P (adaptedCellAtCenter (explicitRoundedGrid jStar m) j w) (respCoeffPlus F)
-      = annealedBlockOf P (HighContrast.adaptedCell (explicitRoundedGrid jStar m) j) (respCoeffPlus F) := by
+      = annealedBlockOf P (HighContrast.adaptedCell (explicitRoundedGrid jStar m) j)
+        (respCoeffPlus F) := by
   apply blockMat_ext
   · ext i k
     have h := integral_cellEntry_adaptedCellAtCenter_eq P hstat jStar m j hj w
@@ -695,11 +716,13 @@ theorem annealedBlockOf_adaptedCellAtCenter_respCoeffPlus_eq_full {d : ℕ} [NeZ
       (Sum.inl i) (Sum.inl k) (hmeas (Sum.inl i) (Sum.inl k))
     have hred : (annealedBlockOf P (adaptedCellAtCenter (explicitRoundedGrid jStar m) j w)
         (respCoeffPlus F)).upperLeft i k
-          = ∫ a, blockMatEntry (coarseBlockMatrix (adaptedCellAtCenter (explicitRoundedGrid jStar m) j w)
+          = ∫ a, blockMatEntry (coarseBlockMatrix (adaptedCellAtCenter (explicitRoundedGrid
+            jStar m) j w)
               (respCoeffPlus F a)) (Sum.inl i) (Sum.inl k) ∂P := rfl
     have hred' : (annealedBlockOf P (HighContrast.adaptedCell (explicitRoundedGrid jStar m) j)
         (respCoeffPlus F)).upperLeft i k
-          = ∫ a, blockMatEntry (coarseBlockMatrix (HighContrast.adaptedCell (explicitRoundedGrid jStar m) j)
+          = ∫ a, blockMatEntry (coarseBlockMatrix (HighContrast.adaptedCell (explicitRoundedGrid
+            jStar m) j)
               (respCoeffPlus F a)) (Sum.inl i) (Sum.inl k) ∂P := rfl
     rw [hred, hred']
     exact h
@@ -711,11 +734,13 @@ theorem annealedBlockOf_adaptedCellAtCenter_respCoeffPlus_eq_full {d : ℕ} [NeZ
       (Sum.inl i) (Sum.inr k) (hmeas (Sum.inl i) (Sum.inr k))
     have hred : (annealedBlockOf P (adaptedCellAtCenter (explicitRoundedGrid jStar m) j w)
         (respCoeffPlus F)).upperRight i k
-          = ∫ a, blockMatEntry (coarseBlockMatrix (adaptedCellAtCenter (explicitRoundedGrid jStar m) j w)
+          = ∫ a, blockMatEntry (coarseBlockMatrix (adaptedCellAtCenter (explicitRoundedGrid
+            jStar m) j w)
               (respCoeffPlus F a)) (Sum.inl i) (Sum.inr k) ∂P := rfl
     have hred' : (annealedBlockOf P (HighContrast.adaptedCell (explicitRoundedGrid jStar m) j)
         (respCoeffPlus F)).upperRight i k
-          = ∫ a, blockMatEntry (coarseBlockMatrix (HighContrast.adaptedCell (explicitRoundedGrid jStar m) j)
+          = ∫ a, blockMatEntry (coarseBlockMatrix (HighContrast.adaptedCell (explicitRoundedGrid
+            jStar m) j)
               (respCoeffPlus F a)) (Sum.inl i) (Sum.inr k) ∂P := rfl
     rw [hred, hred']
     exact h
@@ -727,11 +752,13 @@ theorem annealedBlockOf_adaptedCellAtCenter_respCoeffPlus_eq_full {d : ℕ} [NeZ
       (Sum.inr i) (Sum.inl k) (hmeas (Sum.inr i) (Sum.inl k))
     have hred : (annealedBlockOf P (adaptedCellAtCenter (explicitRoundedGrid jStar m) j w)
         (respCoeffPlus F)).lowerLeft i k
-          = ∫ a, blockMatEntry (coarseBlockMatrix (adaptedCellAtCenter (explicitRoundedGrid jStar m) j w)
+          = ∫ a, blockMatEntry (coarseBlockMatrix (adaptedCellAtCenter (explicitRoundedGrid
+            jStar m) j w)
               (respCoeffPlus F a)) (Sum.inr i) (Sum.inl k) ∂P := rfl
     have hred' : (annealedBlockOf P (HighContrast.adaptedCell (explicitRoundedGrid jStar m) j)
         (respCoeffPlus F)).lowerLeft i k
-          = ∫ a, blockMatEntry (coarseBlockMatrix (HighContrast.adaptedCell (explicitRoundedGrid jStar m) j)
+          = ∫ a, blockMatEntry (coarseBlockMatrix (HighContrast.adaptedCell (explicitRoundedGrid
+            jStar m) j)
               (respCoeffPlus F a)) (Sum.inr i) (Sum.inl k) ∂P := rfl
     rw [hred, hred']
     exact h
@@ -743,11 +770,13 @@ theorem annealedBlockOf_adaptedCellAtCenter_respCoeffPlus_eq_full {d : ℕ} [NeZ
       (Sum.inr i) (Sum.inr k) (hmeas (Sum.inr i) (Sum.inr k))
     have hred : (annealedBlockOf P (adaptedCellAtCenter (explicitRoundedGrid jStar m) j w)
         (respCoeffPlus F)).lowerRight i k
-          = ∫ a, blockMatEntry (coarseBlockMatrix (adaptedCellAtCenter (explicitRoundedGrid jStar m) j w)
+          = ∫ a, blockMatEntry (coarseBlockMatrix (adaptedCellAtCenter (explicitRoundedGrid
+            jStar m) j w)
               (respCoeffPlus F a)) (Sum.inr i) (Sum.inr k) ∂P := rfl
     have hred' : (annealedBlockOf P (HighContrast.adaptedCell (explicitRoundedGrid jStar m) j)
         (respCoeffPlus F)).lowerRight i k
-          = ∫ a, blockMatEntry (coarseBlockMatrix (HighContrast.adaptedCell (explicitRoundedGrid jStar m) j)
+          = ∫ a, blockMatEntry (coarseBlockMatrix (HighContrast.adaptedCell (explicitRoundedGrid
+            jStar m) j)
               (respCoeffPlus F a)) (Sum.inr i) (Sum.inr k) ∂P := rfl
     rw [hred, hred']
     exact h

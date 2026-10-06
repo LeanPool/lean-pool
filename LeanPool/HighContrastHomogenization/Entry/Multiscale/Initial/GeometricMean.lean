@@ -239,7 +239,8 @@ theorem geoMean_riccati {A B : Matrix ι ι ℝ} (hA : A.PosDef) (hB : B.PosDef)
 theorem eq_geoMean_of_riccati {A B X : Matrix ι ι ℝ} (hA : A.PosDef)
     (hX : X.PosDef) (h : X * A⁻¹ * X = B) : X = geoMean A B := by
   have hRR : matSqrt A⁻¹ * matSqrt A⁻¹ = A⁻¹ := (matSqrt_spec hA.inv.posSemidef).2
-  have hY : (matSqrt A⁻¹ * X * matSqrt A⁻¹).PosDef := posDef_conj_of_posDef hX (posDef_matSqrt hA.inv)
+  have hY : (matSqrt A⁻¹ * X * matSqrt A⁻¹).PosDef := posDef_conj_of_posDef hX (posDef_matSqrt
+    hA.inv)
   have hYY : (matSqrt A⁻¹ * X * matSqrt A⁻¹) * (matSqrt A⁻¹ * X * matSqrt A⁻¹)
       = matSqrt A⁻¹ * B * matSqrt A⁻¹ := by
     calc (matSqrt A⁻¹ * X * matSqrt A⁻¹) * (matSqrt A⁻¹ * X * matSqrt A⁻¹)
@@ -272,7 +273,8 @@ theorem eq_geoMean_comm_of_riccati {A B X : Matrix ι ι ℝ} (hA : A.PosDef)
   have hstep : X * (X⁻¹ * A * X⁻¹) * X = A := by
     calc X * (X⁻¹ * A * X⁻¹) * X = (X * X⁻¹) * A * (X⁻¹ * X) := by noncomm_ring
       _ = A := by
-          rw [Matrix.mul_nonsing_inv _ (isUnit_det_of_posDef hX), Matrix.nonsing_inv_mul _ (isUnit_det_of_posDef hX),
+          rw [Matrix.mul_nonsing_inv _ (isUnit_det_of_posDef hX), Matrix.nonsing_inv_mul _
+            (isUnit_det_of_posDef hX),
             Matrix.one_mul, Matrix.mul_one]
   rw [← hstep, hinv]
 

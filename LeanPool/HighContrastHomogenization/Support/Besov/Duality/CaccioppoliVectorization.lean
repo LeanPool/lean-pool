@@ -102,7 +102,7 @@ theorem abs_cubeAverage_vecDot_le_sum_note_rhs_mul_of_uniform_component_bounds_t
           exact abs_cubeBesovPairing_le_note_rhs_mul_of_uniform_bound_two_one
             Q s (fun x => u x i) (fun x => g x i) hs (hu i) (hB i) (hnorm i) (hmem i)
 
-theorem abs_cubeAverage_vecDot_le_sum_note_rhs_mul_of_uniform_component_bounds_two_one_of_nonneg
+theorem absCubeAverage_dot_le_componentBounds_twoOne
     {d : ℕ} (Q : TriadicCube d) (s : ℝ) (u g : Vec d → Vec d) (B : Fin d → ℝ)
     (hs : 0 < s)
     (hu : ∀ i, MeasureTheory.MemLp (fun x => u x i) (2 : ℝ≥0∞) (normalizedCubeMeasure Q))
@@ -165,7 +165,7 @@ theorem abs_cubeAverage_vecDot_le_sum_note_rhs_mul_of_uniform_component_bounds_t
 /-- Sharp vectorized two-one pairing bound without the redundant average tail
 in the flux dual norm. -/
 theorem
-  abs_cubeAverage_vecDot_le_sum_note_constant_mul_of_uniform_component_bounds_two_one_of_nonneg
+  absCubeAverage_dot_le_componentBounds_twoOne_noMeanTerm
     {d : ℕ} (Q : TriadicCube d) (s : ℝ) (u g : Vec d → Vec d) (B : Fin d → ℝ)
     (hs : 0 < s)
     (hu : ∀ i, MeasureTheory.MemLp (fun x => u x i) (2 : ℝ≥0∞) (normalizedCubeMeasure Q))
@@ -414,7 +414,7 @@ theorem abs_cubeAverage_vecDot_le_sum_note_rhs_mul_of_uniform_component_bounds_t
           exact abs_cubeBesovPairing_le_note_rhs_mul_of_uniform_bound_two_two
             Q s (fun x => u x i) (fun x => g x i) hs (hu i) (hB i) (hnorm i) (hmem i)
 
-theorem abs_cubeAverage_vecDot_le_sum_note_rhs_mul_of_uniform_component_bounds_two_two_of_nonneg
+theorem absCubeAverage_dot_le_componentBounds_twoTwo
     {d : ℕ} (Q : TriadicCube d) (s : ℝ) (u g : Vec d → Vec d) (B : Fin d → ℝ)
     (hs : 0 < s)
     (hu : ∀ i, MeasureTheory.MemLp (fun x => u x i) (2 : ℝ≥0∞) (normalizedCubeMeasure Q))

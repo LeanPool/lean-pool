@@ -212,7 +212,8 @@ theorem CoarseCaccioppoliBoundaryRadiusEnergyBridgeCanonicalAnalyticInputs.of_qu
 `CoarseCaccioppoliBoundaryRadiusEnergyBridgeCanonicalAnalyticInputs.of_quantitativeCubeCutoff`.
 The cutoff again supplies `ξ = ∇η`; the analytic package keeps the vector
 cutoff controls rather than scalarizing to one gradient component. -/
-theorem CoarseCaccioppoliBoundaryRadiusEnergyBridgeCanonicalVectorAnalyticInputs.of_quantitativeCubeCutoff
+theorem
+  CoarseCaccioppoliBoundaryRadiusEnergyBridgeCanonicalVectorAnalyticInputs.of_quantitativeCubeCutoff
     {d : ℕ} (Q : TriadicCube d) (a : CoeffField d) (s C : ℝ)
     (k h : ℝ → ℝ → ℝ) (F : ℝ → ℝ)
     (flux : ℝ → ℝ → Vec d → Vec d) (u : ℝ → ℝ → Vec d → ℝ)
@@ -288,11 +289,13 @@ theorem CoarseCaccioppoliBoundaryRadiusEnergyBridgeCanonicalVectorAnalyticInputs
       quantitativeCubeCutoff_cubeLpNorm_infty_gradientField_le Q ηρ,
       le_rfl, hA1 hρ₁ hlt hρ₂, hAS hρ₁ hlt hρ₂⟩
 
+namespace CoarseCaccioppoliBoundaryRadiusEnergyBridgeCanonicalVectorAnalyticInputs
+
 /-- Harmonic-family builder for the vector canonical analytic inputs.  The
 weak-testing bridge supplies the testing inequality from the weighted energy
 lower bound, while the caller supplies the vector cutoff controls. -/
 theorem
-    CoarseCaccioppoliBoundaryRadiusEnergyBridgeCanonicalVectorAnalyticInputs.of_quantitativeCubeCutoff_of_aHarmonicFamily
+    of_quantitativeCubeCutoff_of_aHarmonicFamily
     {d : ℕ} (Q : TriadicCube d) (a : CoeffField d) (s C : ℝ) {lam Lam : ℝ}
     (k h : ℝ → ℝ → ℝ) (F : ℝ → ℝ)
     (w : ℝ → ℝ → AHarmonicFunction a (openCubeSet Q))
@@ -365,7 +368,9 @@ theorem
       (coarseCaccioppoliQuantitativeCutoffHessianBound Q)
       A1 AS := by
   refine
-    CoarseCaccioppoliBoundaryRadiusEnergyBridgeCanonicalVectorAnalyticInputs.of_quantitativeCubeCutoff
+    (open CoarseCaccioppoliBoundaryRadiusEnergyBridgeCanonicalVectorAnalyticInputs
+      (of_quantitativeCubeCutoff) in
+      of_quantitativeCubeCutoff)
       Q a s C k h F
       (fun ρ₁ ρ₂ x => matVecMul (a x) ((w ρ₁ ρ₂).toH1.grad x))
       (fun ρ₁ ρ₂ x => (w ρ₁ ρ₂).toH1 x)
@@ -375,9 +380,11 @@ theorem
       hfluxEnergy hvector hAcirc1_nonneg hAcircS_nonneg hU hA1 hAS
   intro ρ₁ ρ₂ hρ₁ hlt hρ₂
   exact
-    le_abs_cubeAverage_vecDot_flux_scalarCutoffGradientField_of_aHarmonicFunction_of_le_cubeAverage_mul_scalarVariationEnergyIntegrand
+    le_abs_cubeAverage_vectorDot_flux_scalarCutoffGradientField
       Q a (w ρ₁ ρ₂) hEll (η ρ₁ ρ₂).smooth (η ρ₁ ρ₂).hasCompactSupport
       (hη_tsupport hρ₁ hlt hρ₂) (hlower hρ₁ hlt hρ₂)
+
+end CoarseCaccioppoliBoundaryRadiusEnergyBridgeCanonicalVectorAnalyticInputs
 
 end
 

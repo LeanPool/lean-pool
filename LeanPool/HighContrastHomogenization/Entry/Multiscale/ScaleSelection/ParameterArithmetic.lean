@@ -56,7 +56,8 @@ theorem exp_sub_one_le_two_mul (x : ℝ) (h0 : 0 ≤ x) (hx : x ≤ Real.log 2) 
   have h_log_lt_one : Real.log 2 < 1 := by
     calc Real.log 2 < 0.6931471808 := Real.log_two_lt_d9
     _ < 1 := by norm_num
-  have h_abs_x_le_one : |x| ≤ 1 := abs_le.mpr ⟨by linarith only [h0], by linarith only [hx, h_log_lt_one]⟩
+  have h_abs_x_le_one : |x| ≤ 1 := abs_le.mpr ⟨by linarith only [h0], by linarith only [hx,
+    h_log_lt_one]⟩
   have h_abs_exp := Real.abs_exp_sub_one_le h_abs_x_le_one
   have h_exp_nonneg : 0 ≤ Real.exp x - 1 := by linarith only [h0, Real.add_one_le_exp x]
   rw [abs_of_nonneg h0, abs_of_nonneg h_exp_nonneg] at h_abs_exp
@@ -90,7 +91,8 @@ theorem ceil_mul_le_ceil_mul (B₀ B x : ℝ) (hB : B₀ ≤ B) (hx : 0 ≤ x) :
     ⌈B₀ * x⌉ ≤ ⌈B * x⌉ := by exact Int.ceil_le_ceil (mul_le_mul_of_nonneg_right hB hx)
 
 theorem logb_two_add_aspectRatio_nonneg {d : ℕ} (E : BlockMat d) :
-    0 ≤ Real.logb 3 (2 + aspectRatio E) := by exact Real.logb_nonneg (by norm_num : (1:ℝ) < 3) (by linarith only [aspectRatio_nonneg E])
+    0 ≤ Real.logb 3 (2 + aspectRatio E) := by exact Real.logb_nonneg (by norm_num : (1:ℝ) < 3)
+      (by linarith only [aspectRatio_nonneg E])
 
 theorem half_le_logb_two_add (Pi : ℝ) (hPi : 0 ≤ Pi) : 1 / 2 ≤ Real.logb 3 (2 + Pi) := by
   have h1 : 1 < (3 : ℝ) := by norm_num
@@ -111,7 +113,8 @@ theorem bridge_tolerance_mem (ε σ : ℝ) (hε : ε ∈ Set.Ioc (0 : ℝ) 1) (h
     Real.sqrt ε * σ ∈ Set.Ioc (0 : ℝ) 1 := by
   constructor
   · exact mul_pos (Real.sqrt_pos.2 hε.1) hσ.1
-  · exact (mul_le_of_le_one_left (le_of_lt hσ.1) (Real.sqrt_le_one.mpr hε.2)).trans (hσ.2.trans hε.2)
+  · exact (mul_le_of_le_one_left (le_of_lt hσ.1) (Real.sqrt_le_one.mpr hε.2)).trans (hσ.2.trans
+    hε.2)
 
 theorem bridge_tolerance_le_quarter (ε σ : ℝ) (hε : ε ∈ Set.Ioc (0 : ℝ) (1 / 4))
     (hσ : σ ∈ Set.Ioc (0 : ℝ) ε) : Real.sqrt ε * σ ∈ Set.Icc (0 : ℝ) (1 / 4) := by
@@ -147,7 +150,8 @@ theorem bridge_tolerance_le_rho (ε σ γ : ℝ) (hε : ε ∈ Set.Ioc (0 : ℝ)
   rw [Real.rpow_one] at h4
   exact le_trans h2 h4
 
-theorem one_le_selectionLength (L₀ : ℕ) (hL₀ : 1 ≤ L₀) (σ : ℝ) : 1 ≤ selectionLength L₀ σ := by unfold selectionLength; omega
+theorem one_le_selectionLength (L₀ : ℕ) (hL₀ : 1 ≤ L₀) (σ : ℝ) : 1 ≤ selectionLength L₀ σ := by
+  unfold selectionLength; omega
 
 /-- `p.scale.selection`: the chosen length satisfies the short-bridge length condition at the
 smaller tolerance `ε^{1/2}σ`. -/
@@ -192,7 +196,8 @@ theorem selectionLength_transport_condition (C : ℝ) (L₀ : ℕ) (hC : C ≤ L
   obtain ⟨hγ0, _hγ1⟩ := hγ
   have hinv : 1 ≤ σ⁻¹ := by
     have h1 : σ * σ⁻¹ = 1 := mul_inv_cancel₀ (ne_of_gt hσ0)
-    have h2 : (0:ℝ) ≤ (1 - σ) * σ⁻¹ := mul_nonneg (by linarith only [hσ1]) (le_of_lt (inv_pos.mpr hσ0))
+    have h2 : (0:ℝ) ≤ (1 - σ) * σ⁻¹ := mul_nonneg (by linarith only [hσ1]) (le_of_lt
+      (inv_pos.mpr hσ0))
     nlinarith only [h1, h2]
   have hlog0 : 0 ≤ Real.logb 3 σ⁻¹ := Real.logb_nonneg (by norm_num) hinv
   have hα : (1 - γ) / 8 ≤ 3 / 2 := by linarith only [hγ0]
@@ -211,7 +216,8 @@ theorem selectionLength_le (L₀ : ℕ) (σ : ℝ) (hσ : σ ∈ Set.Ioc (0 : �
     (selectionLength L₀ σ : ℝ) ≤ (L₀ : ℝ) + 1 + 3 / 2 * Real.logb 3 σ⁻¹ := by
   obtain ⟨hσ_pos, hσ_le⟩ := hσ
   have h_one_le_inv : 1 ≤ σ⁻¹ := one_le_inv_iff₀.mpr ⟨hσ_pos, hσ_le⟩
-  have h_logb_nonneg : 0 ≤ Real.logb 3 σ⁻¹ := Real.logb_nonneg (by norm_num : (1 : ℝ) < 3) h_one_le_inv
+  have h_logb_nonneg : 0 ≤ Real.logb 3 σ⁻¹ := Real.logb_nonneg (by norm_num : (1 : ℝ) < 3)
+    h_one_le_inv
   have h_x_nonneg : 0 ≤ (3 : ℝ) / 2 * Real.logb 3 σ⁻¹ := mul_nonneg (by norm_num) h_logb_nonneg
   have h_ceil : (⌈(3 : ℝ) / 2 * Real.logb 3 σ⁻¹⌉₊ : ℝ) < (3 : ℝ) / 2 * Real.logb 3 σ⁻¹ + 1 :=
     Nat.ceil_lt_add_one h_x_nonneg
@@ -268,7 +274,8 @@ theorem three_rpow_selectionLength_le (L₀ : ℕ) (σ γ : ℝ) (hσ : σ ∈ S
         Real.rpow_neg hσ0.le]
   calc (3:ℝ) ^ (1 / 2 * (1 - γ) * (selectionLength L₀ σ : ℝ))
       ≤ (3:ℝ) ^ (1 / 2 * (1 - γ) * ((L₀ : ℝ) + 1) + 3 / 4 * (1 - γ) * Real.logb 3 σ⁻¹) := hstep
-    _ = (3:ℝ) ^ (1 / 2 * (1 - γ) * ((L₀ : ℝ) + 1)) * (3:ℝ) ^ (3 / 4 * (1 - γ) * Real.logb 3 σ⁻¹) := hsplit
+    _ = (3:ℝ) ^ (1 / 2 * (1 - γ) * ((L₀ : ℝ) + 1)) * (3:ℝ) ^ (3 / 4 * (1 - γ) * Real.logb 3 σ⁻¹)
+      := hsplit
     _ = (3:ℝ) ^ (1 / 2 * (1 - γ) * ((L₀ : ℝ) + 1)) * σ ^ (-(3 / 4) * (1 - γ)) := by rw [hkey]
 
 /-- `p.scale.selection`: the old-grid smallness is a smallness of `ε₀` alone. -/
@@ -460,7 +467,8 @@ theorem exists_eps0 (d : ℕ) (_hd : 2 ≤ d) (γ : ℝ) (hγ : γ ∈ Set.Ico (
   have hleF : e0 ≤ (L₀ : ℝ) * Real.log 3 / (2 * Ctr) :=
     le_trans (min_le_right _ _) (min_le_right _ _)
   have he0lt1 : e0 < 1 := lt_of_le_of_lt hleA (by norm_num)
-  have hCcEq : (bigQ d γ : ℝ) * (d : ℝ) * (Real.log 2 / ((bigQ d γ : ℝ) * (d : ℝ))) = Real.log 2 := by
+  have hCcEq : (bigQ d γ : ℝ) * (d : ℝ) * (Real.log 2 / ((bigQ d γ : ℝ) * (d : ℝ))) = Real.log 2
+    := by
     field_simp [hQd.ne']
   have h4 : (bigQ d γ : ℝ) * (d : ℝ) * e0 ≤ Real.log 2 := by
     have hstep := mul_le_mul_of_nonneg_left hleCc hQd.le

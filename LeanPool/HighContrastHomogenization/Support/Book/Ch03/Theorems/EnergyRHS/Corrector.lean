@@ -55,7 +55,7 @@ private theorem sqrt_two_mul_rpow_half_neg_three_halves {s : ℝ} (hs : 0 < s) :
 /-- Zero-boundary auxiliary Dirichlet correctors satisfy the public
 zero-Dirichlet energy bound at `t = s / 2`.  This is the `v₀` half of the
 Dirichlet energy consequence, separated from the boundary harmonic remainder. -/
-theorem zeroTraceDirichletCorrectorData_energyNorm_le_zeroDirichletEnergyWithRHSRHS_half_publicCoeffField
+theorem corrector_energyNorm_le_zeroDirichletRHS_half
     {d : ℕ} [NeZero d] {C : ℝ}
     (hC_nonneg : 0 ≤ C)
     (hC_zero :
@@ -77,7 +77,7 @@ theorem zeroTraceDirichletCorrectorData_energyNorm_le_zeroDirichletEnergyWithRHS
             (fun x => ρ.toH10.toH1Function.grad x)) ≤
         _root_.HCPolySupport.zeroTraceDirichletEnergyEnvelope
           Q (publicCoeffField Q a) s g :=
-    ρ.coefficientEnergy_average_le_zeroTraceDirichletEnergyEnvelope_noteConstants_expanded_of_cubeVectorBesovHRegularity
+    ρ.coefficientEnergy_average_le_zeroTraceDirichletEnergyEnvelope
       (s := s) (lam := (a.coeffOn Q).lam) (Lam := (a.coeffOn Q).Lam)
       hs hs_le (publicCoeffField_isEllipticFieldOn_cubeSet Q a) hg
   have hs_half_pos : 0 < s / 2 := by nlinarith
@@ -115,7 +115,7 @@ theorem publicZeroTraceDirichletCorrectorData_energyNorm_le_zeroDirichletEnergyW
               (zeroTraceDirichletCorrectorData_publicCoeffField Q a
                 (memVectorL2_cubeSet_of_forceBesovRegularity hg)).toH10.toH1Function.grad x))) ≤
       zeroDirichletEnergyWithRHSRHS ((d : ℝ) * C) Q a (s / 2) g :=
-  zeroTraceDirichletCorrectorData_energyNorm_le_zeroDirichletEnergyWithRHSRHS_half_publicCoeffField
+  corrector_energyNorm_le_zeroDirichletRHS_half
     (C := C) hC_nonneg hC_zero
     (ρ := zeroTraceDirichletCorrectorData_publicCoeffField Q a
       (memVectorL2_cubeSet_of_forceBesovRegularity hg))
@@ -124,7 +124,7 @@ theorem publicZeroTraceDirichletCorrectorData_energyNorm_le_zeroDirichletEnergyW
 /-- Zero-boundary auxiliary Dirichlet correctors satisfy the zero-trace part of
 the public Dirichlet energy RHS after absorbing the half-scale normalization
 and the factor `sqrt 2` from the energy split. -/
-theorem zeroTraceDirichletCorrectorData_sqrt_two_energyNorm_le_dirichletEnergyFirstTerm_publicCoeffField
+theorem sqrtTwo_correctorEnergy_le_dirichletFirstTerm
     {d : ℕ} [NeZero d] {C₀ C : ℝ}
     (hC₀_nonneg : 0 ≤ C₀)
     (hC₀_zero :
@@ -156,7 +156,7 @@ theorem zeroTraceDirichletCorrectorData_sqrt_two_energyNorm_le_dirichletEnergyFi
       Real.sqrt E ≤
         zeroDirichletEnergyWithRHSRHS ((d : ℝ) * C₀) Q a (s / 2) g := by
     simpa [E] using
-      zeroTraceDirichletCorrectorData_energyNorm_le_zeroDirichletEnergyWithRHSRHS_half_publicCoeffField
+      corrector_energyNorm_le_zeroDirichletRHS_half
         (C := C₀) hC₀_nonneg hC₀_zero (ρ := ρ) hs hs_lt hg
   have hlower_nonneg :
       0 ≤ poincareLowerEllipticityFactor Q a (s / 2) (.finite 2) := by
@@ -256,7 +256,7 @@ theorem publicZeroTraceDirichletCorrectorData_sqrt_two_energyNorm_le_dirichletEn
       C * Real.rpow s (-(3 / 2 : ℝ)) *
         poincareLowerEllipticityFactor Q a (s / 2) (.finite 2) *
         scaleNormalizedPositiveBesovVectorSeminormTwo Q s g :=
-  zeroTraceDirichletCorrectorData_sqrt_two_energyNorm_le_dirichletEnergyFirstTerm_publicCoeffField
+  sqrtTwo_correctorEnergy_le_dirichletFirstTerm
     (C₀ := C₀) (C := C) hC₀_nonneg hC₀_zero hC_absorb
     (ρ := zeroTraceDirichletCorrectorData_publicCoeffField Q a
       (memVectorL2_cubeSet_of_forceBesovRegularity hg))
@@ -266,7 +266,7 @@ theorem publicZeroTraceDirichletCorrectorData_sqrt_two_energyNorm_le_dirichletEn
 zero-trace corrector half has been discharged by the public zero-Dirichlet
 estimate.  The remaining explicit input is the homogeneous boundary-remainder
 energy bound. -/
-theorem dirichletForcedSolutionEnergyNorm_le_dirichletEnergyWithRHSRHS_of_zeroTraceCorrector_public_bound_and_harmonicRemainder_bound
+theorem dirichletForcedSolutionEnergyNorm_le_of_harmonicRemainder
     {d : ℕ} [NeZero d] {C₀ C : ℝ}
     (hC₀_nonneg : 0 ≤ C₀)
     (hC₀_zero :
@@ -292,16 +292,16 @@ theorem dirichletForcedSolutionEnergyNorm_le_dirichletEnergyWithRHSRHS_of_zeroTr
             (dirichletBoundaryGradientField v)) :
     dirichletForcedSolutionEnergyNorm Q a v ≤
       dirichletEnergyWithRHSRHS C Q a s g v :=
-  dirichletForcedSolutionEnergyNorm_le_dirichletEnergyWithRHSRHS_of_zeroTraceCorrector_and_harmonicRemainder_bounds
+  dirichletForcedSolutionEnergyNorm_le_of_zeroTraceCorrector
     (Q := Q) (a := a) (s := s) (g := g) v ρ w hgrad
-    (zeroTraceDirichletCorrectorData_sqrt_two_energyNorm_le_dirichletEnergyFirstTerm_publicCoeffField
+    (sqrtTwo_correctorEnergy_le_dirichletFirstTerm
       (C₀ := C₀) (C := C) hC₀_nonneg hC₀_zero hC_absorb
       (ρ := ρ) hs hs_lt hg)
     hharmonic
 
 /-- Canonical public zero-trace-corrector variant of the manuscript Dirichlet
 energy assembly. -/
-theorem dirichletForcedSolutionEnergyNorm_le_dirichletEnergyWithRHSRHS_of_publicZeroTraceCorrector_and_harmonicRemainder_bound
+theorem dirichletForcedSolutionEnergyNorm_le_dirichletEnergyWithRHSRHS
     {d : ℕ} [NeZero d] {C₀ C : ℝ}
     (hC₀_nonneg : 0 ≤ C₀)
     (hC₀_zero :
@@ -329,7 +329,7 @@ theorem dirichletForcedSolutionEnergyNorm_le_dirichletEnergyWithRHSRHS_of_public
             (dirichletBoundaryGradientField v)) :
     dirichletForcedSolutionEnergyNorm Q a v ≤
       dirichletEnergyWithRHSRHS C Q a s g v :=
-  dirichletForcedSolutionEnergyNorm_le_dirichletEnergyWithRHSRHS_of_zeroTraceCorrector_public_bound_and_harmonicRemainder_bound
+  dirichletForcedSolutionEnergyNorm_le_of_harmonicRemainder
     (C₀ := C₀) (C := C) hC₀_nonneg hC₀_zero hC_absorb
     (Q := Q) (a := a) (s := s) (g := g) v
     (zeroTraceDirichletCorrectorData_publicCoeffField Q a
@@ -340,7 +340,7 @@ theorem dirichletForcedSolutionEnergyNorm_le_dirichletEnergyWithRHSRHS_of_public
 manuscript Dirichlet decomposition can be constructed from the public forced
 Dirichlet solution.  The resulting energy estimate still isolates the genuine
 boundary-remainder energy input. -/
-theorem exists_zeroTraceCorrector_harmonicRemainder_dirichletForcedSolutionEnergyNorm_le_dirichletEnergyWithRHSRHS_of_harmonicRemainder_bound
+theorem exists_zeroTraceCorrector_harmonicRemainder_forcedEnergy_le_dirichletEnergy
     {d : ℕ} [NeZero d] {C₀ C : ℝ}
     (hC₀_nonneg : 0 ≤ C₀)
     (hC₀_zero :
@@ -378,7 +378,7 @@ theorem exists_zeroTraceCorrector_harmonicRemainder_dirichletForcedSolutionEnerg
     hweak.residual_solenoidal
       (publicCoeffField_isEllipticFieldOn_cubeSet Q a) hg_mem
   rcases
-      _root_.HCPolySupport.ZeroTraceDirichletCorrectorData.exists_corrector_aHarmonicRemainder_of_parent_potential_solenoidal
+      _root_.HCPolySupport.ZeroTraceDirichletCorrectorData.exists_harmonicCorrectorDecomposition
         (Q := Q) (R := Q) (a := publicCoeffField Q a) (g := g) (n := 0)
         (lam := (a.coeffOn Q).lam) (Lam := (a.coeffOn Q).Lam)
         (u := U.grad)
@@ -399,7 +399,7 @@ theorem exists_zeroTraceCorrector_harmonicRemainder_dirichletForcedSolutionEnerg
   refine ⟨ρ, w, hgrad, ?_⟩
   intro hharmonic
   exact
-    dirichletForcedSolutionEnergyNorm_le_dirichletEnergyWithRHSRHS_of_zeroTraceCorrector_public_bound_and_harmonicRemainder_bound
+    dirichletForcedSolutionEnergyNorm_le_of_harmonicRemainder
       (C₀ := C₀) (C := C) hC₀_nonneg hC₀_zero hC_absorb
       (Q := Q) (a := a) (s := s) (g := g) v ρ w hgrad
       hs hs_lt hg hharmonic

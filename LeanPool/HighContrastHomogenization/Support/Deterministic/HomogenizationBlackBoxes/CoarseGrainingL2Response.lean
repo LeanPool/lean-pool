@@ -143,7 +143,7 @@ theorem solution_diff_l2_le_coarseGrainingL2Rhs_of_descendant_coarseFluxResponse
   have hcoarseFluxDefect :
       localizedFluxDefectNegativeBesovAverageTwo Q s (fluxDefect a a0 gradU) j ≤
         coarseGrainingL2FluxDefectBound Q a a0 s j gradU g :=
-    (localizedFluxDefectNegativeBesovAverageTwo_le_localizedCoarseFluxResponseAverageBound_of_descendant_coarseFluxResponse
+    (negativeBesovFluxAverage_le_coarseFluxAverageBound_of_coarseFluxResponse
       Q a a0 s (fluxDefect a a0 gradU) energy j hs_pos henergy_nonneg
       henergy_int hresp hpartialBdd hsum).trans hresponseBound
   exact
@@ -242,7 +242,7 @@ theorem solution_diff_l2_le_coarseGrainingL2Rhs_of_descendant_coarseFluxResponse
   have hlocalized :
       localizedFluxDefectNegativeBesovAverageTwo Q s (fluxDefect a a0 gradU) j ≤
         localizedCoarseFluxResponseRHSBound Q a a0 s j gradU g :=
-    localizedFluxDefectNegativeBesovAverageTwo_fluxDefect_le_localizedCoarseFluxResponseRHSBound_of_descendant_bounds
+    negativeBesovFluxAverage_le_coarseFluxRHSBound
       Q a a0 s gradU g j hdefect_bdd hRhs
   have hcoarseFluxDefect :
       localizedFluxDefectNegativeBesovAverageTwo Q s (fluxDefect a a0 gradU) j ≤
@@ -347,7 +347,7 @@ theorem localizedCoarseFluxResponseRHSBound_le_coarseGrainingL2FluxDefectBound_o
 Bounded-positive-Besov version of the pointwise descendant scalar-envelope
 comparison.
 -/
-theorem localizedCoarseFluxResponseRHSBound_le_coarseGrainingL2FluxDefectBound_of_descendant_bound_of_bddAbove
+theorem CoarseFluxRHSBound_le_coarseGrainingFluxBound_of_boundedAbove_of_boundedAbove
     {d : ℕ} (Q : TriadicCube d) (a : CoeffField d) (a0 : Mat d)
     {s : ℝ} (j : ℕ) (gradU g : Vec d → Vec d)
     (hs : 0 < s)
@@ -369,7 +369,7 @@ theorem localizedCoarseFluxResponseRHSBound_le_coarseGrainingL2FluxDefectBound_o
 /--
 Localized scalar §3.3 RHS comparison from descendant component envelopes.
 -/
-theorem localizedCoarseFluxResponseRHSBound_le_coarseGrainingL2FluxDefectBound_of_descendant_component_bounds
+theorem CoarseFluxRHSBound_le_coarseGrainingFluxBound
     {d : ℕ} (Q : TriadicCube d) (a : CoeffField d) (a0 : Mat d)
     (s : ℝ) (j : ℕ) (gradU g : Vec d → Vec d)
     (hcoarse_nonneg :
@@ -399,7 +399,7 @@ theorem localizedCoarseFluxResponseRHSBound_le_coarseGrainingL2FluxDefectBound_o
 Bounded-positive-Besov version of the descendant component-envelope scalar
 comparison.
 -/
-theorem localizedCoarseFluxResponseRHSBound_le_coarseGrainingL2FluxDefectBound_of_descendant_component_bounds_of_bddAbove
+theorem CoarseFluxRHSBound_le_coarseGrainingFluxBound_of_componentBounds
     {d : ℕ} (Q : TriadicCube d) (a : CoeffField d) (a0 : Mat d)
     {s : ℝ} (j : ℕ) (gradU g : Vec d → Vec d)
     (hs : 0 < s)
@@ -422,7 +422,7 @@ theorem localizedCoarseFluxResponseRHSBound_le_coarseGrainingL2FluxDefectBound_o
           coarseGrainingL2FluxDefectForcingTerm Q a a0 s j g) :
     localizedCoarseFluxResponseRHSBound Q a a0 s j gradU g ≤
       coarseGrainingL2FluxDefectBound Q a a0 s j gradU g :=
-  localizedCoarseFluxResponseRHSBound_le_coarseGrainingL2FluxDefectBound_of_descendant_component_bounds
+  CoarseFluxRHSBound_le_coarseGrainingFluxBound
     Q a a0 s j gradU g
     (coarseGrainingL2FluxDefectBound_nonneg_of_bddAbove Q a a0 j gradU g hs hgBdd)
     (fun R hR =>
@@ -434,7 +434,7 @@ theorem localizedCoarseFluxResponseRHSBound_le_coarseGrainingL2FluxDefectBound_o
 §3.3 wrapper where the scalar RHS-average comparison is supplied in pointwise
 descendant-envelope form.
 -/
-theorem solution_diff_l2_le_coarseGrainingL2Rhs_of_descendant_coarseFluxResponseRHSBound_of_descendant_bound
+theorem solutionDifference_l2_le_coarseGrainingRhs_of_descendantFluxBounds
     {d : ℕ} [NeZero d] {Cdual : ℝ}
     (hdual : ScalarSolutionComparisonDualityEstimate d Cdual)
     (Q : TriadicCube d) (a : CoeffField d) (a0 : Mat d) (sigma0 : ℝ)
@@ -478,7 +478,7 @@ theorem solution_diff_l2_le_coarseGrainingL2Rhs_of_descendant_coarseFluxResponse
 §3.3 wrapper where the scalar RHS-average comparison is supplied by
 descendant component envelopes.
 -/
-theorem solution_diff_l2_le_coarseGrainingL2Rhs_of_descendant_coarseFluxResponseRHSBound_of_descendant_component_bounds
+theorem solution_diff_l2_le_coarseGrainingL2Rhs_of_descendant_fluxRHSBound_of_component
     {d : ℕ} [NeZero d] {Cdual : ℝ}
     (hdual : ScalarSolutionComparisonDualityEstimate d Cdual)
     (Q : TriadicCube d) (a : CoeffField d) (a0 : Mat d) (sigma0 : ℝ)
@@ -517,7 +517,7 @@ theorem solution_diff_l2_le_coarseGrainingL2Rhs_of_descendant_coarseFluxResponse
           coarseGrainingL2FluxDefectForcingTerm Q a a0 s j g) :
     solutionComparisonNegativeBesovLhs Q s a a0 gradU gradV ≤
       coarseGrainingL2Rhs Cdual Q a a0 s j gradU g :=
-  solution_diff_l2_le_coarseGrainingL2Rhs_of_descendant_coarseFluxResponseRHSBound_of_descendant_bound
+  solutionDifference_l2_le_coarseGrainingRhs_of_descendantFluxBounds
     hdual Q a a0 sigma0 gradU gradV g j hs_pos hs_lt_one hsigma0 ha0eq hEll
     ha0 ha0symm hcomparison
     hdefect_bdd hRhs hcoarse_nonneg hbound_nonneg
@@ -529,7 +529,7 @@ theorem solution_diff_l2_le_coarseGrainingL2Rhs_of_descendant_coarseFluxResponse
 Bounded-positive-Besov version of the descendant component-envelope §3.3
 wrapper.
 -/
-theorem solution_diff_l2_le_coarseGrainingL2Rhs_of_descendant_coarseFluxResponseRHSBound_of_descendant_component_bounds_of_bddAbove
+theorem solution_diff_l2_le_coarseGrainingL2Rhs_of_descendant_fluxRHSBound_of_descendant
     {d : ℕ} [NeZero d] {Cdual : ℝ}
     (hdual : ScalarSolutionComparisonDualityEstimate d Cdual)
     (Q : TriadicCube d) (a : CoeffField d) (a0 : Mat d) (sigma0 : ℝ)
@@ -570,7 +570,7 @@ theorem solution_diff_l2_le_coarseGrainingL2Rhs_of_descendant_coarseFluxResponse
           coarseGrainingL2FluxDefectForcingTerm Q a a0 s j g) :
     solutionComparisonNegativeBesovLhs Q s a a0 gradU gradV ≤
       coarseGrainingL2Rhs Cdual Q a a0 s j gradU g :=
-  solution_diff_l2_le_coarseGrainingL2Rhs_of_descendant_coarseFluxResponseRHSBound_of_descendant_component_bounds
+  solution_diff_l2_le_coarseGrainingL2Rhs_of_descendant_fluxRHSBound_of_component
     hdual Q a a0 sigma0 gradU gradV g j hs_pos hs_lt_one hsigma0 ha0eq hEll
     ha0 ha0symm hcomparison
     hdefect_bdd hRhs
@@ -750,7 +750,7 @@ theorem solution_diff_l2_le_ten_mul_coarseGrainingL2Rhs_of_descendant_coarseFlux
         localizedCoarseFluxResponseAverageBound Q a
           (scalarMatrix (d := d) sigma0) s j
           (coefficientEnergyDensity a gradU) :=
-    localizedFluxDefectNegativeBesovAverageTwo_le_localizedCoarseFluxResponseAverageBound_of_descendant_coarseFluxResponse
+    negativeBesovFluxAverage_le_coarseFluxAverageBound_of_coarseFluxResponse
       Q a (scalarMatrix (d := d) sigma0) s
       (fluxDefect a (scalarMatrix (d := d) sigma0) gradU)
       (coefficientEnergyDensity a gradU) j
@@ -761,7 +761,7 @@ theorem solution_diff_l2_le_ten_mul_coarseGrainingL2Rhs_of_descendant_coarseFlux
           (coefficientEnergyDensity a gradU) ≤
         10 * coarseGrainingL2FluxDefectBound Q a
           (scalarMatrix (d := d) sigma0) s j gradU g :=
-    localizedCoarseFluxResponseAverageBound_coefficientEnergy_le_ten_mul_coarseGrainingL2FluxDefectBound_of_invGeom_le
+    CoarseFluxAverageBound_coefficientEnergy_le_ten_mul_coarseGrainingFluxBound
       Q a (scalarMatrix (d := d) sigma0) j gradU g hs_pos hgeom_le henergy_int
       henergy_avg_nonneg
       herror_nonneg hforcing_nonneg
@@ -792,7 +792,7 @@ theorem solution_diff_l2_le_ten_mul_coarseGrainingL2Rhs_of_descendant_coarseFlux
 Import-light side conditions in the response-data apex discharged from the
 standard manuscript range and the global positive-Besov boundedness of `g`.
 -/
-theorem solution_diff_l2_le_ten_mul_coarseGrainingL2Rhs_of_descendant_coarseFluxResponse_energy_of_bddAbove
+theorem solutionDifference_l2_le_ten_coarseGrainingRhs_of_energyBounds
     {d : ℕ} [NeZero d] {Cdual : ℝ}
     (hdual : ScalarSolutionComparisonDualityEstimate d Cdual)
     (Q : TriadicCube d) (a : CoeffField d) (a0 : Mat d) (sigma0 : ℝ)

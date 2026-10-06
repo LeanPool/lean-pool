@@ -32,7 +32,8 @@ matrix is dominated by the volume-average of `(blockMatrixOfCoeff (a x)).upperLe
 i.e., the symmetric part plus the (skew⊤ · symm⁻¹ · skew) Schur correction.
 -/
 
-theorem bCoarse_le_average_blockMatrixOfCoeff_upperLeft_of_isEllipticFieldOn_of_isSobolevRegularDomain
+theorem
+  bCoarse_le_average_blockMatrixOfCoeff_upperLeft_of_isEllipticFieldOn_of_isSobolevRegularDomain
     {d : ℕ} {U : Set (Vec d)} [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     (hU : IsSobolevRegularDomain U)
     {a : CoeffField d} {lam Lam : ℝ} (hEll : IsEllipticFieldOn lam Lam U a)
@@ -117,7 +118,8 @@ theorem bCoarse_le_average_blockMatrixOfCoeff_upperLeft_of_isEllipticFieldOn_of_
       _ =
           (1 / 2 : ℝ) *
             vecDot p
-              (matVecMul (bCoarse (sigmaCoarse U a) (sigmaStarCoarse U a) (kappaCoarse U a)) p) := by
+              (matVecMul (bCoarse (sigmaCoarse U a) (sigmaStarCoarse U a) (kappaCoarse U a)) p)
+                := by
             rw [coarseBlockMatrix_upperLeft_eq_bCoarse_of_isCoarseBlockMatrix
               hA hS hK hSigma hdet]
             simp [eq_sigmaStarCoarse_of_isSigmaStarCoarse hS hdet,
@@ -132,9 +134,11 @@ theorem bCoarse_le_average_blockMatrixOfCoeff_upperLeft_of_isEllipticFieldOn_of_
       matVecMul_zero, vecDot_zero_left]
   rw [hMuEq, hEnergy] at hMuLe
   have hAvgHalf :
-      volumeAverage U (fun x => (1 / 2 : ℝ) * vecDot p (matVecMul ((blockMatrixOfCoeff (a x)).upperLeft) p)) =
+      volumeAverage U (fun x => (1 / 2 : ℝ) * vecDot p (matVecMul ((blockMatrixOfCoeff (a
+        x)).upperLeft) p)) =
         (1 / 2 : ℝ) *
-          volumeAverage U (fun x => vecDot p (matVecMul ((blockMatrixOfCoeff (a x)).upperLeft) p)) := by
+          volumeAverage U (fun x => vecDot p (matVecMul ((blockMatrixOfCoeff (a x)).upperLeft)
+            p)) := by
     simpa [smul_eq_mul] using!
       (volumeAverage_smul U (1 / 2 : ℝ)
         (fun x => vecDot p (matVecMul ((blockMatrixOfCoeff (a x)).upperLeft) p)))
@@ -197,7 +201,8 @@ theorem bCoarse_le_averaged_symmPart_plus_correction_of_isEllipticFieldOn_of_hod
     bCoarse_le_averaged_symmPart_plus_correction_of_isEllipticFieldOn_of_isSobolevRegularDomain
       (U := U) (a := a) hU hEll hvol.ne' hA hS hK hSigma hdet p
 
-theorem bCoarse_le_averaged_symmPart_plus_correction_of_isEllipticFieldOn_of_isOpenBoundedConvexDomain
+theorem
+  bCoarse_le_averaged_symmPart_plus_correction_of_isEllipticFieldOn_of_isOpenBoundedConvexDomain
     {d : ℕ} {U : Set (Vec d)} [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     (R : PotentialSolenoidalL2RecoveryData U)
     (hConv : IsOpenBoundedConvexDomain U)

@@ -37,11 +37,13 @@ noncomputable section
 
 namespace AHarmonicFunction
 
+/-- Transport a harmonic function along an equality of domains. -/
 @[expose]
 public noncomputable def castDomain {d : ℕ} {a : CoeffField d} {U V : Set (Vec d)}
     (hUV : U = V) (u : AHarmonicFunction a U) : AHarmonicFunction a V :=
   hUV ▸ u
 
+/-- Transport a harmonic function along an equality of coefficient fields. -/
 @[expose]
 public noncomputable def castCoeff {d : ℕ} {a b : CoeffField d} {U : Set (Vec d)}
     (hab : a = b) (u : AHarmonicFunction a U) : AHarmonicFunction b U :=
@@ -71,6 +73,7 @@ theorem isAHarmonicGradient_cubeSet_originCube_iff_openCubeSet
     refine ⟨isPotentialOn_cubeSet_originCube_of_openCubeSet hpot, ?_⟩
     exact isSolenoidalOn_cubeSet_originCube_of_openCubeSet hsol
 
+/-- Regard a harmonic function on an open origin cube as one on its half-open cube. -/
 @[expose]
 noncomputable def toCubeSetOriginCube {d : ℕ} [NeZero d] {n : ℤ} {a : CoeffField d}
     (u : AHarmonicFunction a (openCubeSet (originCube d n))) :
@@ -85,6 +88,7 @@ noncomputable def toCubeSetOriginCube {d : ℕ} [NeZero d] {n : ℤ} {a : CoeffF
     (u.toCubeSetOriginCube (n := n)).toH1.grad = u.toH1.grad :=
   rfl
 
+/-- Restrict a harmonic function on a half-open origin cube to its open cube. -/
 @[expose]
 noncomputable def toOpenCubeSetOriginCube {d : ℕ} [NeZero d] {n : ℤ} {a : CoeffField d}
     (u : AHarmonicFunction a (cubeSet (originCube d n))) :
@@ -99,8 +103,10 @@ noncomputable def toOpenCubeSetOriginCube {d : ℕ} [NeZero d] {n : ℤ} {a : Co
     (u.toOpenCubeSetOriginCube (n := n)).toH1.grad = u.toH1.grad :=
   rfl
 
+/-- Translate a harmonic function on a half-open cube to the origin cube of the same scale, with
+the correspondingly translated coefficient field. -/
 @[expose]
-public noncomputable def toCubeSetOrigin {d : ℕ} [NeZero d] {a : CoeffField d}
+public noncomputable def toCubeSetOrigin {d : ℕ} {a : CoeffField d}
     (Q : TriadicCube d) (u : AHarmonicFunction a (cubeSet Q)) :
     AHarmonicFunction (translateCoeffField (triadicCubeShift Q) a)
       (cubeSet (originCube d Q.scale)) := by
@@ -118,8 +124,10 @@ public noncomputable def toCubeSetOrigin {d : ℕ} [NeZero d] {a : CoeffField d}
     simpa [sub_eq_add_neg] using (translateSet_translateSet (d := d) z (-z) U)
   exact castDomain hdomain uOrigin
 
+/-- Translate a harmonic function on an open cube to the open origin cube of the same scale,
+with the correspondingly translated coefficient field. -/
 @[expose]
-public noncomputable def toOpenCubeSetOrigin {d : ℕ} [NeZero d] {a : CoeffField d}
+public noncomputable def toOpenCubeSetOrigin {d : ℕ} {a : CoeffField d}
     (Q : TriadicCube d) (u : AHarmonicFunction a (openCubeSet Q)) :
     AHarmonicFunction (translateCoeffField (triadicCubeShift Q) a)
       (openCubeSet (originCube d Q.scale)) := by
@@ -137,6 +145,7 @@ public noncomputable def toOpenCubeSetOrigin {d : ℕ} [NeZero d] {a : CoeffFiel
     simpa [sub_eq_add_neg] using (translateSet_translateSet (d := d) z (-z) U)
   exact castDomain hdomain uOrigin
 
+/-- Restrict a harmonic function on a half-open cube to the corresponding open cube. -/
 @[expose]
 noncomputable def toOpenCubeSet {d : ℕ} [NeZero d] {Q : TriadicCube d} {a : CoeffField d}
     (u : AHarmonicFunction a (cubeSet Q)) :
@@ -153,6 +162,7 @@ noncomputable def toOpenCubeSet {d : ℕ} [NeZero d] {Q : TriadicCube d} {a : Co
     AHarmonicFunction.translate z uOpenOrigin
   exact castDomain hopen.symm uOpen
 
+/-- Regard a harmonic function on an open cube as one on the corresponding half-open cube. -/
 @[expose]
 noncomputable def toCubeSet {d : ℕ} [NeZero d] {Q : TriadicCube d} {a : CoeffField d}
     (u : AHarmonicFunction a (openCubeSet Q)) :
@@ -198,7 +208,7 @@ noncomputable def restrictToOpenSubcube {d : ℕ} {a : CoeffField d} {lam Lam : 
         (openCubeSet_subset_of_mem_descendantsAtDepth hR) :=
   rfl
 
-@[simp] theorem grad_restrictToOpenSubcube {d : ℕ} {a : CoeffField d} {lam Lam : ℝ}
+theorem grad_restrictToOpenSubcube {d : ℕ} {a : CoeffField d} {lam Lam : ℝ}
     {Q R : TriadicCube d} {j : ℕ}
     (u : AHarmonicFunction a (openCubeSet Q))
     (hEllQ : IsEllipticFieldOn lam Lam (openCubeSet Q) a)
@@ -206,6 +216,7 @@ noncomputable def restrictToOpenSubcube {d : ℕ} {a : CoeffField d} {lam Lam : 
     (u.restrictToOpenSubcube hEllQ hR).toH1.grad = u.toH1.grad :=
   rfl
 
+/-- Restrict a harmonic function to a descendant half-open cube under parent-cube ellipticity. -/
 @[expose]
 noncomputable def restrictToSubcube {d : ℕ} [NeZero d] {a : CoeffField d} {lam Lam : ℝ}
     {Q R : TriadicCube d} {j : ℕ}

@@ -374,7 +374,8 @@ theorem abs_half_energy_adaptedCellAtCenter_sub_responseJ_le_respCoeffMinus {d :
               * (ResponseJ (adaptedCellAtCenter (respGrid jStar F) (t - (n : ℤ)) w) p r
                     (respCoeffMinus F a)
                 - volumeAverage (adaptedCellAtCenter (respGrid jStar F) (t - (n : ℤ)) w)
-                    (scalarResponseIntegrand (respCell jStar F t) (respCoeffMinus F a) p r u))) := by
+                    (scalarResponseIntegrand (respCell jStar F t) (respCoeffMinus F a) p r u)))
+                      := by
   obtain ⟨lam, Lam, f, _hlam, _hle, hEll, hae⟩ :=
     exists_elliptic_representative_respCell_respCoeffMinus hjStar hm t a
   exact abs_half_energy_adaptedCellAtCenter_sub_responseJ_le_of_aeRep

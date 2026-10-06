@@ -91,7 +91,7 @@ theorem coarseCaccioppoli_interior_preRecurrence_of_boundary_noteEstimate_of_rad
 /-- Interior coarse Caccioppoli from the same note-shaped local estimate as the
 boundary proof, together with an abstract radius agreement encoding the
 centering step `v := u - (u)_Q`. -/
-theorem coarseCaccioppoli_interior_qone_of_boundary_noteEstimate_of_radiusAgreement_of_heightChoice_of_triadicGapScaleChoice
+theorem coarseCaccioppoli_interior_qone_of_boundary_noteEstimate_of_of_radiusAgreement
     {d : ℕ} (Q : TriadicCube d) (a : CoeffField d) (s t C uL2Sq : ℝ)
     (h : ℝ → ℝ → ℝ) {F G : ℝ → ℝ}
     (hC : 0 ≤ C) (hs : 0 < s) (ht : 0 < t) (hst : s + t < 1)
@@ -124,7 +124,7 @@ theorem coarseCaccioppoli_interior_qone_of_boundary_noteEstimate_of_radiusAgreem
 boundary-style local estimate as above, transported across the centering
 agreement `F = G`, now combines with the note's actual explicit height choice
 without any extra cross-scale hypothesis. -/
-theorem coarseCaccioppoli_interior_qone_of_boundary_noteEstimate_of_radiusAgreement_of_explicitHeightOfScaleChoice
+theorem coarseCaccioppoli_interior_qone_boundary_noteEstimate_of_explicitHeight
     {d : ℕ} (Q : TriadicCube d) (a : CoeffField d) (s t C uL2Sq : ℝ)
     (k : ℝ → ℝ → ℕ) {F G : ℝ → ℝ}
     (hC : 0 ≤ C) (hs : 0 < s) (ht : 0 < t) (hst : s + t < 1)
@@ -152,7 +152,7 @@ theorem coarseCaccioppoli_interior_qone_of_boundary_noteEstimate_of_radiusAgreem
 
 /-- Interior coarse Caccioppoli with the localized explicit height, transported
 from a boundary-style note estimate across the radius agreement. -/
-theorem coarseCaccioppoli_interior_qone_of_boundary_noteEstimate_of_radiusAgreement_of_localizedExplicitHeightOfScaleChoice
+theorem coarseCaccioppoli_interior_qone_boundary_noteEstimate_of_localizedHeight
     {d : ℕ} (Q : TriadicCube d) (a : CoeffField d) (s t C uL2Sq : ℝ)
     (k : ℝ → ℝ → ℕ) {F G : ℝ → ℝ}
     (hC : 0 ≤ C) (hs : 0 < s) (ht : 0 < t) (hst : s + t < 1)
@@ -182,7 +182,7 @@ theorem coarseCaccioppoli_interior_qone_of_boundary_noteEstimate_of_radiusAgreem
 /-- Interior coarse Caccioppoli with the localized explicit height, transported
 from a boundary-style note estimate available only on the deterministic
 Chapter-3 radius sequence. -/
-theorem coarseCaccioppoli_interior_qone_of_boundary_noteEstimate_on_radiusSequence_of_radiusAgreement_of_localizedExplicitHeightOfScaleChoice
+theorem coarseCaccioppoli_interior_qone_of_radiusAgreement_of_heightChoice
     {d : ℕ} (Q : TriadicCube d) (a : CoeffField d) (s t C uL2Sq : ℝ)
     (k : ℝ → ℝ → ℕ) {F G : ℝ → ℝ}
     (hC : 0 ≤ C) (hs : 0 < s) (ht : 0 < t) (hst : s + t < 1)
@@ -211,7 +211,7 @@ theorem coarseCaccioppoli_interior_qone_of_boundary_noteEstimate_on_radiusSequen
       G (1 / 3 : ℝ) ≤ coarseCaccioppoliInteriorExplicitHeightBound Q a s t C uL2Sq := by
     unfold coarseCaccioppoliInteriorExplicitHeightBound
     exact
-      coarseCaccioppoli_boundary_qone_of_noteEstimate_on_radiusSequence_of_localizedExplicitHeightOfScaleChoice
+      coarseCaccioppoli_boundary_qone_of_heightChoice
         Q a s t C uL2Sq k hC hs ht hst hu hG_nonneg hG_bounded hscale hraw
   have hEq : F (1 / 3 : ℝ) = G (1 / 3 : ℝ) := by
     exact hagree (by norm_num) (by norm_num)
@@ -331,7 +331,7 @@ theorem coarseCaccioppoli_interior_preRecurrence_of_noteEstimate {d : ℕ}
 
 /-- Interior pre-recurrence from the note-shaped raw estimate plus the two
 remaining note-specific bookkeeping obligations. -/
-theorem coarseCaccioppoli_interior_preRecurrence_of_noteEstimate_of_absorptionCondition_of_crossTermBound
+theorem coarseCaccioppoli_interior_preRecurrence_of_absorbedCrossTerm
     {d : ℕ} (Q : TriadicCube d) (a : CoeffField d) (s t C uL2Sq : ℝ)
     (h : ℝ → ℝ → ℝ) {F : ℝ → ℝ}
     (hC : 0 ≤ C) (hs : 0 < s) (ht : 0 < t) (hst : s + t < 1)
@@ -341,7 +341,7 @@ theorem coarseCaccioppoli_interior_preRecurrence_of_noteEstimate_of_absorptionCo
     CoarseCaccioppoliInteriorPreRecurrence Q a s t C uL2Sq F := by
   unfold CoarseCaccioppoliInteriorNoteRawEstimate at hraw
   unfold CoarseCaccioppoliInteriorPreRecurrence
-  exact coarseCaccioppoli_boundary_preRecurrence_of_noteEstimate_of_absorptionCondition_of_crossTermBound
+  exact coarseCaccioppoli_boundary_preRecurrence_of_absorbedCrossTerm
     Q a s t C uL2Sq h hC hs ht hst hraw habs hcross
 
 /-- Interior coarse Caccioppoli from the same raw local-estimate plus

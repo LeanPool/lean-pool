@@ -95,7 +95,8 @@ theorem nonempty_scalarCanonicalMaximizer_of_aeEq {U : Set (Vec d)} {a b : Coeff
 (`p.response.transfer`, `e.response.energy.and.defect`). -/
 theorem nonempty_scalarCanonicalMaximizer_respCoeffMinus (q : Mat d) (hq : IsUnit q) (t : ℤ)
     (F : BlockMat d) (a : CoeffSpace d) (p r : Vec d) :
-    Nonempty (ScalarCanonicalMaximizer (HighContrast.adaptedCell q t) p r (respCoeffMinus F a)) := by
+    Nonempty (ScalarCanonicalMaximizer (HighContrast.adaptedCell q t) p r (respCoeffMinus F a))
+      := by
   obtain ⟨lam, Lam, f, hlam, hle, hEll, hae⟩ :=
     Annealed.exists_elliptic_representative_adapted q hq t 0 a
   rw [adaptedCellTranslate_zero] at hEll
@@ -229,7 +230,8 @@ def coeffOnOfIsEllipticFieldOn {U : Book.Ch02.Domain d} {lam Lam : ℝ} {f : Coe
       funext x
       by_cases hx : x ∈ (U : Set (Vec d)) <;> simp [restrictCoeffField, hx]
     rw [heq]
-    exact (((measurable_pi_apply j).comp ((measurable_pi_apply i).comp hEll.1)).aestronglyMeasurable)
+    exact (((measurable_pi_apply j).comp ((measurable_pi_apply i).comp
+      hEll.1)).aestronglyMeasurable)
   aeElliptic := by
     filter_upwards [MeasureTheory.ae_restrict_mem U.measurableSet] with x hx
     exact hEll.2 x hx
@@ -329,9 +331,11 @@ theorem bddAbove_respWeakEnergySet (P : Measure (CoeffSpace d)) (qq : Mat d) (hq
       filter_upwards [hgrad a (u1 a) (u2 a) (hu1 a) (hu2 a)] with x hx
       simp [optimizerField, hx]
     have : besovSeminorm t (fun n z => blockMatVecMul (blockSqrt M0)
-            (cellAverage (adaptedCellAtCenter qq (t - (n : ℤ)) z) (optimizerField (b a) (u1 a)) - Y)) =
+            (cellAverage (adaptedCellAtCenter qq (t - (n : ℤ)) z) (optimizerField (b a) (u1 a))
+              - Y)) =
         besovSeminorm t (fun n z => blockMatVecMul (blockSqrt M0)
-            (cellAverage (adaptedCellAtCenter qq (t - (n : ℤ)) z) (optimizerField (b a) (u2 a)) - Y)) := by
+            (cellAverage (adaptedCellAtCenter qq (t - (n : ℤ)) z) (optimizerField (b a) (u2 a))
+              - Y)) := by
       refine besovSeminorm_congr fun n w hw => ?_
       rw [cellAverage_congr_ae (adaptedCellAtCenter_subset_adaptedCell qq t n hw) hof]
     exact congrArg (fun r : ℝ => r ^ 2) this

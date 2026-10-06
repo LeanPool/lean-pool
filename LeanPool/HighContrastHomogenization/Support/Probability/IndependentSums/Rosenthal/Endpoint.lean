@@ -29,6 +29,20 @@ noncomputable section
 variable {Ω ι : Type*} [MeasurableSpace Ω]
 variable {μ : Measure Ω}
 
+private theorem rosenthal_variance_power_bound (p : ℕ) (V W : ℝ)
+    (hvariance : Real.sqrt V ≤ 2 * Real.sqrt W) :
+    (rosenthalBennettIntegralConst * (Real.sqrt p * Real.sqrt V)) ^ p ≤
+      (2 * rosenthalBennettIntegralConst * (Real.sqrt p * Real.sqrt W)) ^ p := by
+  have hconstant : 0 ≤ rosenthalBennettIntegralConst := by
+    dsimp [rosenthalBennettIntegralConst]
+    positivity
+  apply pow_le_pow_left₀ (by positivity)
+  calc
+    _ ≤ rosenthalBennettIntegralConst * (Real.sqrt p * (2 * Real.sqrt W)) :=
+      mul_le_mul_of_nonneg_left
+        (mul_le_mul_of_nonneg_left hvariance (Real.sqrt_nonneg _)) hconstant
+    _ = _ := by ring
+
 /-- Rosenthal bound for the symmetrized difference sum on the product
 probability space. -/
 theorem integral_abs_symmetrizedFinsetSum_pow_le_rosenthal
@@ -133,7 +147,7 @@ theorem integral_abs_symmetrizedFinsetSum_pow_le_rosenthal
   have hSigma_nonneg : 0 ≤ ∑ i ∈ s, ProbabilityTheory.moment (X i) 2 μ := by
     refine Finset.sum_nonneg ?_
     intro i hi
-    simp [ProbabilityTheory.moment]
+    simp only [moment, Pi.pow_apply]
     positivity
   have hsqrt_le :
       Real.sqrt (∑ i ∈ (Finset.univ : Finset ↥s), ProbabilityTheory.moment (Y i) 2 (μ.prod μ)) ≤
@@ -156,9 +170,6 @@ theorem integral_abs_symmetrizedFinsetSum_pow_le_rosenthal
           ≤ Real.sqrt (4 * ∑ i ∈ s, ProbabilityTheory.moment (X i) 2 μ) := by
               exact Real.sqrt_le_sqrt hSigma_le
       _ = 2 * Real.sqrt (∑ i ∈ s, ProbabilityTheory.moment (X i) 2 μ) := hsqrt_eq
-  have hRB_nonneg : 0 ≤ rosenthalBennettIntegralConst := by
-    dsimp [rosenthalBennettIntegralConst]
-    positivity
   have hpow_le :
       (rosenthalBennettIntegralConst *
           (Real.sqrt p *
@@ -166,36 +177,8 @@ theorem integral_abs_symmetrizedFinsetSum_pow_le_rosenthal
               μ)))) ^ p
         ≤
       (2 * rosenthalBennettIntegralConst *
-          (Real.sqrt p * Real.sqrt (∑ i ∈ s, ProbabilityTheory.moment (X i) 2 μ))) ^ p := by
-    have hbase_le :
-        rosenthalBennettIntegralConst *
-            (Real.sqrt p *
-              Real.sqrt
-                (∑ i ∈ (Finset.univ : Finset ↥s), ProbabilityTheory.moment (Y i) 2 (μ.prod μ)))
-          ≤
-        2 * rosenthalBennettIntegralConst *
-          (Real.sqrt p * Real.sqrt (∑ i ∈ s, ProbabilityTheory.moment (X i) 2 μ)) := by
-      calc
-        rosenthalBennettIntegralConst *
-            (Real.sqrt p *
-              Real.sqrt
-                (∑ i ∈ (Finset.univ : Finset ↥s), ProbabilityTheory.moment (Y i) 2 (μ.prod μ)))
-            ≤
-          rosenthalBennettIntegralConst *
-            (Real.sqrt p * (2 * Real.sqrt (∑ i ∈ s, ProbabilityTheory.moment (X i) 2 μ))) := by
-              refine mul_le_mul_of_nonneg_left ?_ hRB_nonneg
-              refine mul_le_mul_of_nonneg_left hsqrt_le (Real.sqrt_nonneg _)
-        _ = 2 * rosenthalBennettIntegralConst *
-              (Real.sqrt p * Real.sqrt (∑ i ∈ s, ProbabilityTheory.moment (X i) 2 μ)) := by
-              ring
-    have hbase_nonneg :
-        0 ≤ rosenthalBennettIntegralConst *
-          (Real.sqrt p *
-            Real.sqrt (∑ i ∈ (Finset.univ : Finset ↥s), ProbabilityTheory.moment (Y i) 2 (μ.prod
-              μ))) := by
-      refine mul_nonneg hRB_nonneg ?_
-      exact mul_nonneg (Real.sqrt_nonneg _) (Real.sqrt_nonneg _)
-    exact pow_le_pow_left₀ hbase_nonneg hbase_le p
+          (Real.sqrt p * Real.sqrt (∑ i ∈ s, ProbabilityTheory.moment (X i) 2 μ))) ^ p :=
+    rosenthal_variance_power_bound p _ _ hsqrt_le
   have hmax_term_le :
       (p : ℝ) ^ p * ∫ ω : Ω × Ω, ((Finset.univ.sup' hs_univ fun i : ↥s => |Y i ω|) ^ p) ∂(μ.prod
         μ) ≤
@@ -387,7 +370,7 @@ theorem integral_abs_centeredFinsetSum_pow_rpow_inv_le_rosenthal
     dsimp [σ]
     refine Finset.sum_nonneg ?_
     intro i hi
-    simp [ProbabilityTheory.moment]
+    simp only [moment, Pi.pow_apply]
     positivity
   have hV_nonneg : 0 ≤ V := by
     dsimp [V]
@@ -553,7 +536,7 @@ theorem integral_abs_symmetrizedFinsetSum_rpow_le_rosenthal
   have hSigma_nonneg : 0 ≤ ∑ i ∈ s, ProbabilityTheory.moment (X i) 2 μ := by
     refine Finset.sum_nonneg ?_
     intro i hi
-    simp [ProbabilityTheory.moment]
+    simp only [moment, Pi.pow_apply]
     positivity
   have hsqrt_le :
       Real.sqrt (∑ i ∈ (Finset.univ : Finset ↥s), ProbabilityTheory.moment (Y i) 2 (μ.prod μ)) ≤
@@ -776,7 +759,7 @@ theorem integral_abs_centeredFinsetSum_rpow_rpow_inv_le_rosenthal
   have hσ_nonneg : 0 ≤ σ := by
     dsimp [σ]
     refine Finset.sum_nonneg fun i hi => ?_
-    simp [ProbabilityTheory.moment]
+    simp only [moment, Pi.pow_apply]
     positivity
   have hV_nonneg : 0 ≤ V := by
     dsimp [V]

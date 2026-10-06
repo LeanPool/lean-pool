@@ -125,7 +125,7 @@ private theorem memLp_fderiv_of_contDiffOnIsOpenBoundedConvexDomain
 
 private theorem toReal_eLpNorm_two_sq_eq_integral_rpow_norm
     {α E : Type*} [MeasurableSpace α] [NormedAddCommGroup E] [MeasurableSpace E]
-    [BorelSpace E] {μ : MeasureTheory.Measure α} {f : α → E}
+    {μ : MeasureTheory.Measure α} {f : α → E}
     (hf : MeasureTheory.MemLp f 2 μ) :
     (ENNReal.toReal (MeasureTheory.eLpNorm f 2 μ)) ^ 2 =
       ∫ x, ‖f x‖ ^ (2 : ℝ) ∂μ := by
@@ -241,6 +241,8 @@ theorem fderivL2Norm_le_gradientCoordL2NormSum_ofContDiffOnIsOpenBoundedConvexDo
     _ ≤ ‖dCoordLp‖ := hderiv_le_sum
     _ ≤ u.gradientCoordL2NormSum := hsum_le
 
+/-- The explicit squared smooth Poincare constant formed from the domain volume, a chosen
+coordinate bound, the dimension, and the unit-ball volume. -/
 @[expose]
 public noncomputable def smoothPoincareSqConst
     (hU : IsOpenBoundedConvexDomain U) : ℝ :=
@@ -270,6 +272,7 @@ private theorem smoothPoincareSqConst_nonneg
     (Real.rpow_nonneg hbase₁ _)
     (Real.rpow_nonneg hbase₂ _)
 
+/-- The nonnegative square root of the explicit squared smooth Poincare constant. -/
 @[expose]
 public noncomputable def smoothPoincareConst
     (hU : IsOpenBoundedConvexDomain U) : ℝ :=
@@ -428,6 +431,8 @@ theorem unitConvexApproxScale_pos (n : ℕ) :
   dsimp [unitConvexApproxScale]
   positivity
 
+/-- The H¹ smoothing of `u` obtained by convolving its zero extension at scale `r / (n + 1)` and
+evaluating at the affine contraction toward `x0`. -/
 @[expose]
 noncomputable def convexApproxSmoothH1
     (hU : IsOpenBoundedConvexDomain U) (u : H1Function U)
@@ -817,7 +822,7 @@ theorem h1MeanZero_valueL2Norm_eq_zero_of_volume_toReal_eq_zero
   rfl
 
 theorem h1MeanZero_valueL2Norm_eq_zero_of_dim_zero
-    {U : Set (Vec 0)} [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
+    {U : Set (Vec 0)}
     (hvol : 0 < (MeasureTheory.volume U).toReal) (u : H1MeanZeroFunction U) :
     u.valueL2Norm = 0 := by
   let c : ℝ := u.toH1Function.toFun 0

@@ -265,16 +265,19 @@ theorem memLqSchatten_congruence {d : ℕ} {P : Measure (CoeffSpace d)} {N : ℝ
       (hA.measurable α β).aemeasurable))
   have hc : AEMeasurable (fun a => B.conjTranspose * toFullBlockMat (A a) * B) P :=
     (aemeasurable_const.mul hm).mul aemeasurable_const
-  have hcm : HasMeasurableBlock P (fun a => ofFullBlockMat (B.conjTranspose * toFullBlockMat (A a) * B)) := by
+  have hcm : HasMeasurableBlock P (fun a => ofFullBlockMat (B.conjTranspose * toFullBlockMat (A
+    a) * B)) := by
     intro α β
     simpa only [blockMatEntry_ofFullBlockMat] using!
       ((measurable_pi_apply β).comp_aemeasurable
         ((measurable_pi_apply α).comp_aemeasurable hc)).aestronglyMeasurable
-  have hcs : ∀ᵐ a ∂P, IsSymmetricBlockMat (ofFullBlockMat (B.conjTranspose * toFullBlockMat (A a) * B)) := by
+  have hcs : ∀ᵐ a ∂P, IsSymmetricBlockMat (ofFullBlockMat (B.conjTranspose * toFullBlockMat (A
+    a) * B)) := by
     filter_upwards [hA.symmetric] with a ha
     apply (Analysis.toFullBlockMat_isHermitian_iff _).1
     rw [toFullBlockMat_ofFullBlockMat]
-    exact Matrix.isHermitian_conjTranspose_mul_mul B ((Analysis.toFullBlockMat_isHermitian_iff _).2 ha)
+    exact Matrix.isHermitian_conjTranspose_mul_mul B ((Analysis.toFullBlockMat_isHermitian_iff
+      _).2 ha)
   apply memLqSchatten_of_norm_envelope hN hcm hcs (hA.memLp_absSchattenNorm hN) (‖B‖ ^ 2)
   filter_upwards [hA.symmetric] with a ha
   have hh := (Analysis.toFullBlockMat_isHermitian_iff _).2 ha
@@ -282,7 +285,8 @@ theorem memLqSchatten_congruence {d : ℕ} {P : Measure (CoeffSpace d)} {N : ℝ
   calc
     _ ≤ (‖B.conjTranspose‖ * ‖toFullBlockMat (A a)‖) * ‖B‖ :=
       (norm_mul_le _ _).trans (mul_le_mul_of_nonneg_right (norm_mul_le _ _) (norm_nonneg _))
-    _ = (‖B‖ * blockOpNorm (A a)) * ‖B‖ := by rw [show B.conjTranspose = star B from rfl, norm_star]; rfl
+    _ = (‖B‖ * blockOpNorm (A a)) * ‖B‖ := by rw [show B.conjTranspose = star B from rfl,
+      norm_star]; rfl
     _ ≤ (‖B‖ * absSchattenNorm N (A a)) * ‖B‖ := by
       gcongr
       exact Analysis.blockOpNorm_le_absSchattenNorm hh hN
@@ -312,7 +316,8 @@ theorem memLqSchatten_finset_sum {d : ℕ} {ι : Type*} {P : Measure (CoeffSpace
   let X := fun a => ∑ i ∈ s, |w i| * absSchattenNorm N (A i a)
   have hX : MemLp X (ENNReal.ofReal N) P := memLp_finsetSum s (fun i hi =>
     ((hA i hi).memLp_absSchattenNorm hN).const_mul |w i|)
-  have hm : HasMeasurableBlock P (fun a => ofFullBlockMat (∑ i ∈ s, w i • toFullBlockMat (A i a))) := by
+  have hm : HasMeasurableBlock P (fun a => ofFullBlockMat (∑ i ∈ s, w i • toFullBlockMat (A i
+    a))) := by
     intro α β
     simp only [blockMatEntry_ofFullBlockMat, Matrix.sum_apply, Matrix.smul_apply,
       smul_eq_mul, toFullBlockMat_eq_blockMatEntry]
@@ -324,7 +329,8 @@ theorem memLqSchatten_finset_sum {d : ℕ} {ι : Type*} {P : Measure (CoeffSpace
     have hs' : ∀ᵐ a ∂P, ∀ i : s, IsSymmetricBlockMat (A i a) :=
       eventually_countable_forall.mpr (fun i => (hA i i.2).symmetric)
     exact hs'.mono (fun a ha i hi => ha ⟨i, hi⟩)
-  have hsym : ∀ᵐ a ∂P, IsSymmetricBlockMat (ofFullBlockMat (∑ i ∈ s, w i • toFullBlockMat (A i a))) := by
+  have hsym : ∀ᵐ a ∂P, IsSymmetricBlockMat (ofFullBlockMat (∑ i ∈ s, w i • toFullBlockMat (A i
+    a))) := by
     filter_upwards [hs] with a ha
     intro α β
     simp only [blockMatEntry_ofFullBlockMat, Matrix.sum_apply, Matrix.smul_apply,
@@ -335,9 +341,11 @@ theorem memLqSchatten_finset_sum {d : ℕ} {ι : Type*} {P : Measure (CoeffSpace
   simp only [blockOpNorm, toFullBlockMat_ofFullBlockMat, one_mul]
   calc
     _ ≤ ∑ i ∈ s, ‖w i • toFullBlockMat (A i a)‖ := norm_sum_le _ _
-    _ = ∑ i ∈ s, |w i| * blockOpNorm (A i a) := by simp only [norm_smul, Real.norm_eq_abs, blockOpNorm]
+    _ = ∑ i ∈ s, |w i| * blockOpNorm (A i a) := by simp only [norm_smul, Real.norm_eq_abs,
+      blockOpNorm]
     _ ≤ X a := Finset.sum_le_sum (fun i hi => mul_le_mul_of_nonneg_left
-      (Analysis.blockOpNorm_le_absSchattenNorm ((Analysis.toFullBlockMat_isHermitian_iff _).2 (ha i hi)) hN)
+      (Analysis.blockOpNorm_le_absSchattenNorm ((Analysis.toFullBlockMat_isHermitian_iff _).2
+        (ha i hi)) hN)
       (abs_nonneg _))
 
 /-- S2 integer stationarity identifies the actual entrywise annealed means.
@@ -348,14 +356,17 @@ theorem annealedBlock_adapted_add_intTranslation {d : ℕ} [NeZero d]
     annealedBlock P (adaptedCellTranslate q j (y + HCPolySupport.Source.AKL.intTranslation z)) =
       annealedBlock P (adaptedCellTranslate q j y) := by
   have he (α β : BlockCoord d) :
-      (∫ a, blockMatEntry (coarseBlock (adaptedCellTranslate q j (y + HCPolySupport.Source.AKL.intTranslation z)) a) α β ∂P) =
+      (∫ a, blockMatEntry (coarseBlock (adaptedCellTranslate q j (y +
+        HCPolySupport.Source.AKL.intTranslation z)) a) α β ∂P) =
         ∫ a, blockMatEntry (coarseBlock (adaptedCellTranslate q j y) a) α β ∂P := by
     have hm := (Annealed.measurable_coarseBlock_entry_adapted q hq j y α β).mono
       (Annealed.coeffSigma_le_global _) le_rfl
-    have hi := integral_map (μ := P) (measurable_translateCoeff z).aemeasurable hm.aestronglyMeasurable
+    have hi := integral_map (μ := P) (measurable_translateCoeff z).aemeasurable
+      hm.aestronglyMeasurable
     rw [hstat z] at hi
     calc
-      _ = ∫ a, blockMatEntry (coarseBlock (adaptedCellTranslate q j y) (translateCoeff z a)) α β ∂P := by
+      _ = ∫ a, blockMatEntry (coarseBlock (adaptedCellTranslate q j y) (translateCoeff z a)) α β
+        ∂P := by
         apply integral_congr_ae
         exact ae_of_all _ (fun a => congrArg (fun A => blockMatEntry A α β)
           (Annealed.coarseBlock_adapted_translateCoeff q j y z a).symm)

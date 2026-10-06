@@ -78,7 +78,7 @@ theorem neg_integral_forwardDifferenceQuotient_mul_fderiv_h1WeakTest_add
           euclideanForwardDifferenceQuotient step i u.toFun x *
             (fderiv ℝ (τ : Vec d → ℝ) x) (basisVec j) ∂MeasureTheory.volume
     exact
-      integral_forwardDifferenceQuotientOn_grad_coord_mul_eq_neg_integral_forwardDifferenceQuotient_mul_fderiv
+      integral_forwardDifferenceGradient_eq_neg_integral_forwardDifferenceDerivative
         (U := U) (V := V) u hV hVU
         (step := step) i j hVshift
         τ.smooth τ.compactSupport (τ.support_subset.trans hSV)
@@ -163,7 +163,7 @@ theorem neg_integral_forwardDifferenceQuotient_mul_fderiv_h1WeakTest_smul
           euclideanForwardDifferenceQuotient step i u.toFun x *
             (fderiv ℝ (τ : Vec d → ℝ) x) (basisVec j) ∂MeasureTheory.volume
     exact
-      integral_forwardDifferenceQuotientOn_grad_coord_mul_eq_neg_integral_forwardDifferenceQuotient_mul_fderiv
+      integral_forwardDifferenceGradient_eq_neg_integral_forwardDifferenceDerivative
         (U := U) (V := V) u hV hVU
         (step := step) i j hVshift
         τ.smooth τ.compactSupport (τ.support_subset.trans hSV)
@@ -224,7 +224,7 @@ theorem abs_neg_integral_forwardDifferenceQuotient_mul_fderiv_le_of_inner_energy
   let G : Vec d → Vec d :=
     fun x => (u.forwardDifferenceQuotientOn step i hV.isOpen hVU hVshift).grad x
   have hpair :=
-    integral_forwardDifferenceQuotientOn_grad_coord_mul_eq_neg_integral_forwardDifferenceQuotient_mul_fderiv
+    integral_forwardDifferenceGradient_eq_neg_integral_forwardDifferenceDerivative
       (U := U) (V := V) u hV hVU i j hVshift
       hφ hφ_compact (hφ_subS.trans hSV)
   have hφS : MemScalarL2 S φ := by
@@ -234,7 +234,7 @@ theorem abs_neg_integral_forwardDifferenceQuotient_mul_fderiv_le_of_inner_energy
       |∫ x in V, G x j * φ x ∂MeasureTheory.volume| ≤
         (1 / 2 : ℝ) * ∫ x in S, vecNormSq (G x) ∂MeasureTheory.volume +
           (1 / 2 : ℝ) * ∫ x in S, φ x ^ 2 ∂MeasureTheory.volume :=
-    abs_integral_coord_mul_le_half_integral_subset_vecNormSq_add_half_integral_subset_sq_of_support_subset
+    abs_integral_coord_mul_le_half_integral_vectorNormSq_add_half_integral_sq
       (S := S) (V := V) (G := G) (φ := φ)
       hSV ((subset_tsupport φ).trans hφ_subS)
       (u.forwardDifferenceQuotientOn step i hV.isOpen hVU hVshift).grad_memVectorL2
@@ -276,7 +276,7 @@ theorem abs_neg_integral_forwardDifferenceQuotient_mul_fderiv_le_of_inner_energy
 
 /-- Specialization of the direct-test summation-by-parts identity to
 `G = ∇u`. -/
-theorem integral_vecDot_grad_backwardDifferenceQuotientSqCutoffForwardDifferenceQuotientToAmbient_grad_eq_neg_integral_forwardDifferenceQuotientOn_grad_on
+theorem integral_backwardDifference_cutoffGradient_eq_neg_forwardDifferenceGradient
     (u : H1Function U) (hV : IsOpenBoundedConvexDomain V) (hVU : V ⊆ U)
     (step : ℝ) (i : Fin d)
     (hVshift : V ⊆ translateSet ((-step) • basisVec i) U)
@@ -300,7 +300,7 @@ theorem integral_vecDot_grad_backwardDifferenceQuotientSqCutoffForwardDifference
     memVectorL2_grad_comp_euclideanCoordShift_of_shift_subset
       (U := U) (V := V) u hV step i hVshift
   have hbase :=
-    integral_vecDot_backwardDifferenceQuotientSqCutoffForwardDifferenceQuotientToAmbient_grad_eq_neg_integral_forwardDifferenceQuotient_on
+    integral_dot_backwardDifference_cutoffGradient_eq_neg_integral_forwardDifference
       (U := U) (V := V) (G := u.grad) u.grad_memVectorL2 u hV hVU step i hshift
       hVshift hη hη_compact hη_sub
   have hright :
@@ -359,7 +359,7 @@ theorem directDifferenceQuotient_sqCutoff_energy_identity
     h.test_backwardDifferenceQuotient_sqCutoffForwardDifferenceQuotient_explicitGradient
       hU hf hV hVU step i hVshift hη hη_compact hη_sub
   have hsummation :=
-    integral_vecDot_grad_backwardDifferenceQuotientSqCutoffForwardDifferenceQuotientToAmbient_grad_eq_neg_integral_forwardDifferenceQuotientOn_grad_on
+    integral_backwardDifference_cutoffGradient_eq_neg_forwardDifferenceGradient
       (U := U) (V := V) u hV hVU step i hVshift hη hη_compact hη_sub
   exact hsummation.symm.trans hweak
 
@@ -715,7 +715,7 @@ theorem directDifferenceQuotient_sqCutoff_energy_half_le_two_forcing_sq_add_eigh
 
 /-- Direct squared-cutoff Caccioppoli with the test-square term replaced by
 the product-rule gradient of `η²D_i^+u`. -/
-theorem directDifferenceQuotient_sqCutoff_energy_half_le_forcing_sq_add_localizedSqCutoffForwardGradient_sq_add_error
+theorem differenceQuotient_energyHalf_le_forcing_sq_add_cutoffGradient_sq_add_error
     (h : WeakPoissonEquationOn U u f) (hU : IsOpen U) (hf : MemScalarL2 U f)
     (hV : IsOpenBoundedConvexDomain V) (hVU : V ⊆ U)
     {step : ℝ} (hstep : step ≠ 0) (i : Fin d)
@@ -750,7 +750,7 @@ theorem directDifferenceQuotient_sqCutoff_energy_half_le_forcing_sq_add_localize
     h.directDifferenceQuotient_sqCutoff_energy_half_le_forcing_sq_add_test_sq_add_error
       hU hf hV hVU step i hVshift hη hη_compact hη_sub
   have htest :=
-    integral_sq_backwardDifferenceQuotient_sqCutoffForwardDifferenceQuotient_le_integral_sq_localizedSqCutoffForwardDifferenceQuotientToAmbient_grad
+    integral_backwardDifference_cutoffForwardDifference_le_integral_cutoffGradient
       (U := U) (V := V) hU u hV hVU hstep i hVshift hη hη_compact hη_sub
   have hhalf :
       (1 / 2 : ℝ) * ∫ x in U, T x ^ 2 ∂MeasureTheory.volume ≤
@@ -802,7 +802,7 @@ theorem directDifferenceQuotient_sqCutoff_energy_half_le_forcing_sq_add_localize
 
 /-- Direct squared-cutoff Caccioppoli with both the small test-square
 coefficient and the product-rule gradient replacement. -/
-theorem directDifferenceQuotient_sqCutoff_energy_half_le_two_forcing_sq_add_eighth_localizedSqCutoffForwardGradient_sq_add_error
+theorem differenceQuotientEnergy_le_twoForcingAndCutoffGradientSquares
     (h : WeakPoissonEquationOn U u f) (hU : IsOpen U) (hf : MemScalarL2 U f)
     (hV : IsOpenBoundedConvexDomain V) (hVU : V ⊆ U)
     {step : ℝ} (hstep : step ≠ 0) (i : Fin d)
@@ -837,7 +837,7 @@ theorem directDifferenceQuotient_sqCutoff_energy_half_le_two_forcing_sq_add_eigh
     h.directDifferenceQuotient_sqCutoff_energy_half_le_two_forcing_sq_add_eighth_test_sq_add_error
       hU hf hV hVU step i hVshift hη hη_compact hη_sub
   have htest :=
-    integral_sq_backwardDifferenceQuotient_sqCutoffForwardDifferenceQuotient_le_integral_sq_localizedSqCutoffForwardDifferenceQuotientToAmbient_grad
+    integral_backwardDifference_cutoffForwardDifference_le_integral_cutoffGradient
       (U := U) (V := V) hU u hV hVU hstep i hVshift hη hη_compact hη_sub
   have heighth :
       (1 / 8 : ℝ) * ∫ x in U, T x ^ 2 ∂MeasureTheory.volume ≤
@@ -971,7 +971,7 @@ theorem sq_localizedSqCutoffForwardDifferenceQuotientToAmbient_grad_coord_le
 
 /-- Integral absorption form of
 `sq_localizedSqCutoffForwardDifferenceQuotientToAmbient_grad_coord_le`. -/
-theorem eighth_integral_sq_localizedSqCutoffForwardDifferenceQuotientToAmbient_grad_coord_le_quarter_energy_add_error
+theorem eighth_integral_sq_cutoffGradient_coord_le_quarter_energy_add_error
     (u : H1Function U) (hV : IsOpenBoundedConvexDomain V) (hVU : V ⊆ U)
     (step : ℝ) (i : Fin d)
     (hVshift : V ⊆ translateSet ((-step) • basisVec i) U)

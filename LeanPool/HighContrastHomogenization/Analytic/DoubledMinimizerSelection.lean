@@ -140,7 +140,8 @@ theorem quadraticEnergy_cellMuCandidate (hvol : 0 < (volume U).toReal)
     quadraticEnergy (cellMuHilbert hvol a).energyBilin (cellMuCandidate (U := U) P0 Y) =
       blockEnergyAverage U a.1 (canonicalMuGeneratorAffineField (U := U) P0 Y) := by
   rw [← toHilbertBlockL2_generatorAffineField (U := U) P0 Y, energyBilin_cellMuHilbert]
-  exact (cellMuSystem hvol a).toMuOperatorRealization.quadraticEnergy_eq_blockEnergyAverage_of_blockState
+  exact (cellMuSystem hvol
+    a).toMuOperatorRealization.quadraticEnergy_eq_blockEnergyAverage_of_blockState
     (canonicalMuGeneratorAffineField_memBlockL2 (U := U) P0 Y)
 
 /-- The variational quantity of the cell is the minimized quadratic energy of

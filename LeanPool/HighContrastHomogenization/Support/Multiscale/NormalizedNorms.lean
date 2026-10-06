@@ -32,10 +32,12 @@ the underlined norms match the note conventions without repeatedly rederiving
 factors of `cubeVolume Q`.
 -/
 
+/-- Lebesgue measure restricted to the cube. -/
 @[expose]
 noncomputable def cubeMeasure {d : ℕ} (Q : TriadicCube d) : MeasureTheory.Measure (Vec d) :=
   MeasureTheory.volume.restrict (cubeSet Q)
 
+/-- Cube Lebesgue measure divided by the cube's volume. -/
 @[expose]
 noncomputable def normalizedCubeMeasure {d : ℕ} (Q : TriadicCube d) :
     MeasureTheory.Measure (Vec d) :=
@@ -45,7 +47,7 @@ noncomputable def normalizedCubeMeasure {d : ℕ} (Q : TriadicCube d) :
     cubeMeasure Q Set.univ = MeasureTheory.volume (cubeSet Q) := by
   rw [cubeMeasure, MeasureTheory.Measure.restrict_apply_univ]
 
-@[simp] theorem cubeMeasure_apply_univ_toReal {d : ℕ} (Q : TriadicCube d) :
+theorem cubeMeasure_apply_univ_toReal {d : ℕ} (Q : TriadicCube d) :
     (cubeMeasure Q Set.univ).toReal = cubeVolume Q := by
   simp [cubeMeasure]
 
@@ -60,7 +62,7 @@ theorem cubeMeasure_apply_univ_ne_top {d : ℕ} (Q : TriadicCube d) :
     simpa [hvol] using hzero
   exact (cubeVolume_pos Q).ne' this
 
-@[simp] theorem cubeMeasure_apply_univ_eq {d : ℕ} (Q : TriadicCube d) :
+theorem cubeMeasure_apply_univ_eq {d : ℕ} (Q : TriadicCube d) :
     cubeMeasure Q Set.univ = ENNReal.ofReal (cubeVolume Q) := by
   exact (ENNReal.toReal_eq_toReal_iff' (cubeMeasure_apply_univ_ne_top Q)
     ENNReal.ofReal_ne_top).1 (by
@@ -92,11 +94,14 @@ theorem cubeAverage_eq_integral_normalizedCubeMeasure {d : ℕ} (Q : TriadicCube
   rw [cubeAverage, normalizedCubeMeasure, cubeMeasure, MeasureTheory.integral_smul_measure]
   simp [smul_eq_mul, ENNReal.toReal_ofReal, inv_nonneg, cubeVolume_nonneg]
 
+/-- The real value of the `Lᵖ` seminorm for normalized cube measure, with infinity mapped to
+zero. -/
 @[expose]
 noncomputable def cubeLpNorm {d : ℕ} {E : Type*} [NormedAddCommGroup E]
     (Q : TriadicCube d) (p : ℝ≥0∞) (f : Vec d → E) : ℝ :=
   (MeasureTheory.eLpNorm f p (normalizedCubeMeasure Q)).toReal
 
+/-- The function obtained by subtracting its average over the cube. -/
 @[expose]
 noncomputable def cubeFluctuation {d : ℕ} (Q : TriadicCube d) (f : Vec d → ℝ) :
     Vec d → ℝ :=
@@ -137,16 +142,20 @@ theorem cubeFluctuation_cubeFluctuation_of_memLp_two {d : ℕ} (R Q : TriadicCub
   simpa [cubeFluctuation] using!
     cubeFluctuation_sub_const_of_memLp_two R hf (cubeAverage Q f)
 
+/-- The normalized cube `Lᵖ` norm of the supplied gradient field. -/
 @[expose]
 noncomputable def cubeW1pSeminorm {d : ℕ} (Q : TriadicCube d) (p : ℝ≥0∞)
     (Du : Vec d → Vec d) : ℝ :=
   cubeLpNorm Q p Du
 
+/-- The maximum of the gradient's `L∞` norm and the value's `L∞` norm divided by side length. -/
 @[expose]
 noncomputable def cubeW1InfinityNorm {d : ℕ} (Q : TriadicCube d)
     (u : Vec d → ℝ) (Du : Vec d → Vec d) : ℝ :=
   max (cubeLpNorm Q ∞ Du) ((cubeScaleFactor Q)⁻¹ * cubeLpNorm Q ∞ u)
 
+/-- The scale-normalized Sobolev norm combining gradient and value `Lᵖ` norms; it is zero for `p
+= 0` and uses the maximum formula for `p = ∞`. -/
 @[expose]
 noncomputable def cubeW1pNorm {d : ℕ} (Q : TriadicCube d) (p : ℝ≥0∞)
     (u : Vec d → ℝ) (Du : Vec d → Vec d) : ℝ :=
@@ -305,7 +314,7 @@ theorem abs_cubeAverage_mul_le_mul_cubeLpNorm_conjExponent {d : ℕ}
   funext x
   simp [cubeFluctuation, cubeAverage_const]
 
-@[simp] theorem cubeFluctuation_zero {d : ℕ} (Q : TriadicCube d) :
+theorem cubeFluctuation_zero {d : ℕ} (Q : TriadicCube d) :
     cubeFluctuation Q (fun _ => (0 : ℝ)) = 0 := by
   simp
 

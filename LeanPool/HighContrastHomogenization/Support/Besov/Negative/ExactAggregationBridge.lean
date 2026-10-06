@@ -59,6 +59,8 @@ theorem exactAggregation_finiteLq_le_tsum (a : ℕ → ℝ≥0∞) (N : ℕ) (q 
       (f := fun i : ℕ => (a i) ^ q) (s := Finset.range (N + 1))
   · exact inv_nonneg.mpr hq
 
+/-- The maximum-preserving map from real numbers to extended nonnegative reals given by
+`ENNReal.ofReal`. -/
 @[expose]
 public def exactAggregationOfRealSupHom : SupHom ℝ ℝ≥0∞ :=
   ⟨ENNReal.ofReal, ENNReal.ofReal_max⟩

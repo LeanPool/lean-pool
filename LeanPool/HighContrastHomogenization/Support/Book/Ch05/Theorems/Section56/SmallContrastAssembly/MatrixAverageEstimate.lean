@@ -82,7 +82,7 @@ theorem integral_origin_fullBlockNormalizedQuadraticObservable_self_eq_dotProduc
     (hP4 : QuantitativeCoarseGrainedEllipticity P)
     (m : ℕ) (q : FullBlockVec d) :
     (∫ a,
-      fullBlockNormalizedQuadraticObservable hP hStruct (m : ℤ) q
+      normalizedQuadraticObservable hP hStruct (m : ℤ) q
         (cubeSet (originCube d (m : ℤ))) a.toFun ∂P) =
       dotProduct q q := by
   let b := hP.barSigmaAtScale hStruct (m : ℤ)
@@ -98,7 +98,7 @@ theorem integral_origin_fullBlockNormalizedQuadraticObservable_self_eq_dotProduc
       normalizedAnnealedBlockMatrix_self_eq_one hP hStruct hP4 m
   calc
     (∫ a,
-      fullBlockNormalizedQuadraticObservable hP hStruct (m : ℤ) q
+      normalizedQuadraticObservable hP hStruct (m : ℤ) q
         (cubeSet (originCube d (m : ℤ))) a.toFun ∂P)
         = fullBlockQuadratic
             (D * toFullBlockMat (Ch04.annealedBlockMatrixAtScale P (m : ℤ)) * D) q := by
@@ -106,7 +106,7 @@ theorem integral_origin_fullBlockNormalizedQuadraticObservable_self_eq_dotProduc
     _ = fullBlockQuadratic (1 : FullBlockMat d) q := by rw [hAnnealed]
     _ = dotProduct q q := fullBlockQuadratic_one q
 
-theorem fullBlockQuadratic_descendantsAverageNormalizedFluctuationMatrix_eq_restrictionCenteredDescendantAverage
+theorem descendantMean_fullBlockQuadratic_eq_centeredMean
     {d : ℕ} [NeZero d] {P : Ch04.RestrictionCoeffLaw d}
     (hP : Ch04.RestrictionLawCarrier P) (hStruct : Ch04.RestrictionStructuralLaw P)
     (hP4 : QuantitativeCoarseGrainedEllipticity P)
@@ -129,7 +129,7 @@ theorem fullBlockQuadratic_descendantsAverageNormalizedFluctuationMatrix_eq_rest
         (originCube d (parent : ℤ)) hscale_le).symm
   have hmean :
       (∫ b,
-        fullBlockNormalizedQuadraticObservable hP hStruct (child : ℤ) q
+        normalizedQuadraticObservable hP hStruct (child : ℤ) q
           (cubeSet (originCube d (child : ℤ))) b.toFun ∂P) =
         dotProduct q q :=
     integral_origin_fullBlockNormalizedQuadraticObservable_self_eq_dotProduct
@@ -143,13 +143,13 @@ theorem fullBlockQuadratic_descendantsAverageNormalizedFluctuationMatrix_eq_rest
       descendantsAverage Q depth
         (fun R =>
           fullBlockQuadratic
-            (fullBlockNormalizedFluctuationMatrix hP hStruct (child : ℤ)
+            (normalizedFluctuationMatrix hP hStruct (child : ℤ)
               (cubeSet R) a) q) := by
           simpa [Q, depth, descendantsAverageNormalizedFluctuationMatrix] using
             fullBlockQuadratic_descendantsAverageFullBlockMat
               (Q := Q) (j := depth)
               (F := fun R =>
-                fullBlockNormalizedFluctuationMatrix hP hStruct (child : ℤ)
+                normalizedFluctuationMatrix hP hStruct (child : ℤ)
                   (cubeSet R) a) q
     _ =
       Ch04.restrictionCenteredDescendantAverage P (child : ℤ) (parent : ℤ)
@@ -162,7 +162,7 @@ theorem fullBlockQuadratic_descendantsAverageNormalizedFluctuationMatrix_eq_rest
           refine Finset.sum_congr rfl ?_
           intro R hR
           have hquad :=
-            fullBlockNormalizedQuadraticObservable_sub_dotProduct_eq_fluctuationQuadratic
+            normalizedQuadraticIdentity
               hP hStruct hP4 child q (cubeSet R) a
           simp only [fullBlockNormalizedQuadraticObservableR]
           rw [← hquad, hmean]
@@ -173,7 +173,7 @@ theorem aemeasurable_fullBlockNormalizedQuadraticObservable_cubeSet_of_P4
     (center : ℤ) (q : FullBlockVec d) (Q : TriadicCube d) :
     AEMeasurable
       (fun a : RegCoeffField d =>
-        fullBlockNormalizedQuadraticObservable hP hStruct center q (cubeSet Q) a) P := by
+        normalizedQuadraticObservable hP hStruct center q (cubeSet Q) a) P := by
   rcases
       exists_isRestrictionLocalRandomVariable_ae_eq_fullBlockNormalizedQuadraticObservable_cubeSet
         hP hStruct center q Q with
@@ -187,7 +187,7 @@ theorem aemeasurable_fullBlockNormalizedQuadraticObservable_descendants_of_P4
     ∀ R ∈ descendantsAtScale Q n,
       AEMeasurable
         (fun a : RegCoeffField d =>
-          fullBlockNormalizedQuadraticObservable hP hStruct center q (cubeSet R) a) P := by
+          normalizedQuadraticObservable hP hStruct center q (cubeSet R) a) P := by
   intro R _hR
   exact aemeasurable_fullBlockNormalizedQuadraticObservable_cubeSet_of_P4
     hP hStruct center q R
@@ -271,7 +271,7 @@ theorem fullBlockQuadratic_descendantsAverageNormalizedFluctuationMatrix_sq_inte
   refine hZ_int.congr ?_
   filter_upwards with a
   have hEq :=
-    fullBlockQuadratic_descendantsAverageNormalizedFluctuationMatrix_eq_restrictionCenteredDescendantAverage
+    descendantMean_fullBlockQuadratic_eq_centeredMean
       hP hStruct hP4 hchild_parent q a
   rw [hEq]
   exact
@@ -305,7 +305,7 @@ theorem fullBlockQuadratic_descendantsAverageNormalizedFluctuationMatrix_integra
           (2 : ℕ) ∂P) ^
         (1 / (2 : ℝ)) ≤ B := by
     have hraw :=
-      integral_abs_restrictionCenteredDescendantAverage_pow_rpow_inv_le_of_restrictionUnitRangeDependentLaw_of_ae_eq_local
+      centeredDescendantAverageMomentRoot_le_of_unitRangeLaw_of_localRepresentatives
         (d := d) (n := (child : ℤ)) (m := (parent : ℤ)) (P := P)
         (p := 2) (K := K) hP
         (by exact_mod_cast Nat.zero_le child)
@@ -367,7 +367,7 @@ theorem fullBlockQuadratic_descendantsAverageNormalizedFluctuationMatrix_integra
     apply integral_congr_ae
     filter_upwards with a
     have hEq :=
-      fullBlockQuadratic_descendantsAverageNormalizedFluctuationMatrix_eq_restrictionCenteredDescendantAverage
+      descendantMean_fullBlockQuadratic_eq_centeredMean
         hP hStruct hP4 hchild_parent q a
     rw [hEq]
     exact (sq_abs _).symm
@@ -383,20 +383,20 @@ theorem descendantsAverageNormalizedFluctuationMatrix_isSymm_ae
   have hchild :
       ∀ R ∈ descendantsAtDepth Q j,
         ∀ᵐ a ∂P,
-          (fullBlockNormalizedFluctuationMatrix
+          (normalizedFluctuationMatrix
             hP hStruct center (cubeSet R) a.toFun).IsSymm := by
     intro R _hR
     exact fullBlockNormalizedFluctuationMatrix_isSymm_ae hP hStruct center R
   have hall :
       ∀ᵐ a ∂P, ∀ R, R ∈ descendantsAtDepth Q j →
-        (fullBlockNormalizedFluctuationMatrix
+        (normalizedFluctuationMatrix
           hP hStruct center (cubeSet R) a.toFun).IsSymm :=
     Ch04.ae_forall_mem_finset (P := P) (descendantsAtDepth Q j) hchild
   filter_upwards [hall] with a ha
   simpa [descendantsAverageNormalizedFluctuationMatrix] using
     descendantsAverageFullBlockMat_isSymm (Q := Q) (j := j)
       (F := fun R =>
-        fullBlockNormalizedFluctuationMatrix hP hStruct center (cubeSet R) a) ha
+        normalizedFluctuationMatrix hP hStruct center (cubeSet R) a) ha
 
 theorem descendantsAverageNormalizedFluctuationOperatorNormSq_le_probeSqBudget_ae
     {d : ℕ} [NeZero d] {P : Ch04.RestrictionCoeffLaw d}
@@ -434,6 +434,83 @@ noncomputable def normalizedMatrixAverageProbeRootBudget
                     (fullBlockPlusProbe α β)) ^ (2 : ℕ) +
                 (normalizedQuadraticProbeAverageRootBound hP hStruct child parent
                     (fullBlockMinusProbe α β)) ^ (2 : ℕ)))
+
+private theorem normalizedProbeSquareBudgetIntegralFormula
+    {d : ℕ} {P : Ch04.RestrictionCoeffLaw d}
+    (M : RegCoeffField d → FullBlockMat d)
+    (hcoord_int : ∀ α : BlockCoord d,
+      Integrable (fun a : RegCoeffField d =>
+        (fullBlockQuadratic (M a) (fullBlockCoordinateProbe α)) ^ (2 : ℕ)) P)
+    (hplus_int : ∀ α β : BlockCoord d,
+      Integrable (fun a : RegCoeffField d =>
+        (fullBlockQuadratic (M a) (fullBlockPlusProbe α β)) ^ (2 : ℕ)) P)
+    (hminus_int : ∀ α β : BlockCoord d,
+      Integrable (fun a : RegCoeffField d =>
+        (fullBlockQuadratic (M a) (fullBlockMinusProbe α β)) ^ (2 : ℕ)) P)
+    (hterm_int : ∀ α β : BlockCoord d,
+      Integrable
+        (fun a : RegCoeffField d =>
+          3 *
+            ((fullBlockQuadratic (M a) (fullBlockCoordinateProbe α)) ^ (2 : ℕ) +
+              (fullBlockQuadratic (M a) (fullBlockPlusProbe α β)) ^ (2 : ℕ) +
+              (fullBlockQuadratic (M a) (fullBlockMinusProbe α β)) ^ (2 : ℕ))) P) :
+    ∫ a, fullBlockProbeSqBudget (M a) ∂P =
+        (Fintype.card (BlockCoord d) : ℝ) *
+          ∑ α : BlockCoord d,
+            (Fintype.card (BlockCoord d) : ℝ) *
+              ∑ β : BlockCoord d,
+                3 *
+                  (∫ a,
+                      (fullBlockQuadratic (M a) (fullBlockCoordinateProbe α)) ^
+                        (2 : ℕ) ∂P +
+                    ∫ a,
+                      (fullBlockQuadratic (M a) (fullBlockPlusProbe α β)) ^
+                        (2 : ℕ) ∂P +
+                    ∫ a,
+                      (fullBlockQuadratic (M a) (fullBlockMinusProbe α β)) ^
+                        (2 : ℕ) ∂P) := by
+  classical
+  unfold fullBlockProbeSqBudget
+  rw [integral_const_mul]
+  congr 1
+  rw [integral_finsetSum]
+  · congr
+    ext α
+    rw [integral_const_mul]
+    congr 1
+    rw [integral_finsetSum]
+    · congr
+      ext β
+      let f : RegCoeffField d → ℝ :=
+        fun a => (fullBlockQuadratic (M a) (fullBlockCoordinateProbe α)) ^ (2 : ℕ)
+      let g : RegCoeffField d → ℝ :=
+        fun a => (fullBlockQuadratic (M a) (fullBlockPlusProbe α β)) ^ (2 : ℕ)
+      let h : RegCoeffField d → ℝ :=
+        fun a => (fullBlockQuadratic (M a) (fullBlockMinusProbe α β)) ^ (2 : ℕ)
+      have hf_int : Integrable f P := by simpa [f] using hcoord_int α
+      have hg_int : Integrable g P := by simpa [g] using hplus_int α β
+      have hh_int : Integrable h P := by simpa [h] using hminus_int α β
+      change
+        ∫ a, 3 * (f a + g a + h a) ∂P =
+          3 * (∫ a, f a ∂P + ∫ a, g a ∂P + ∫ a, h a ∂P)
+      rw [integral_const_mul]
+      change
+        3 * ∫ a, (fun a => f a + g a) a + h a ∂P =
+          3 * (∫ a, f a ∂P + ∫ a, g a ∂P + ∫ a, h a ∂P)
+      have hfg_fun : (fun a : RegCoeffField d => f a + g a) = f + g := by
+        ext a
+        rfl
+      rw [hfg_fun]
+      rw [integral_add (hf_int.add hg_int) hh_int]
+      change
+        3 * (∫ a, f a + g a ∂P + ∫ a, h a ∂P) =
+          3 * (∫ a, f a ∂P + ∫ a, g a ∂P + ∫ a, h a ∂P)
+      rw [integral_add hf_int hg_int]
+    · intro β _hβ
+      exact hterm_int α β
+  · intro α _hα
+    exact (MeasureTheory.integrable_finsetSum _ fun β _hβ =>
+      hterm_int α β).const_mul _
 
 theorem descendantsAverageNormalizedFluctuationOperatorNormSq_integral_le_probeRootBudget
     {d : ℕ} [NeZero d] {P : Ch04.RestrictionCoeffLaw d}
@@ -573,47 +650,7 @@ theorem descendantsAverageNormalizedFluctuationOperatorNormSq_integral_le_probeR
                     ∫ a,
                       (fullBlockQuadratic (M a) (fullBlockMinusProbe α β)) ^
                         (2 : ℕ) ∂P) := by
-    unfold fullBlockProbeSqBudget
-    rw [integral_const_mul]
-    congr 1
-    rw [integral_finsetSum]
-    · congr
-      ext α
-      rw [integral_const_mul]
-      congr 1
-      rw [integral_finsetSum]
-      · congr
-        ext β
-        let f : RegCoeffField d → ℝ :=
-          fun a => (fullBlockQuadratic (M a) (fullBlockCoordinateProbe α)) ^ (2 : ℕ)
-        let g : RegCoeffField d → ℝ :=
-          fun a => (fullBlockQuadratic (M a) (fullBlockPlusProbe α β)) ^ (2 : ℕ)
-        let h : RegCoeffField d → ℝ :=
-          fun a => (fullBlockQuadratic (M a) (fullBlockMinusProbe α β)) ^ (2 : ℕ)
-        have hf_int : Integrable f P := by simpa [f] using hcoord_int α
-        have hg_int : Integrable g P := by simpa [g] using hplus_int α β
-        have hh_int : Integrable h P := by simpa [h] using hminus_int α β
-        change
-          ∫ a, 3 * (f a + g a + h a) ∂P =
-            3 * (∫ a, f a ∂P + ∫ a, g a ∂P + ∫ a, h a ∂P)
-        rw [integral_const_mul]
-        change
-          3 * ∫ a, (fun a => f a + g a) a + h a ∂P =
-            3 * (∫ a, f a ∂P + ∫ a, g a ∂P + ∫ a, h a ∂P)
-        have hfg_fun : (fun a : RegCoeffField d => f a + g a) = f + g := by
-          ext a
-          rfl
-        rw [hfg_fun]
-        rw [integral_add (hf_int.add hg_int) hh_int]
-        change
-          3 * (∫ a, f a + g a ∂P + ∫ a, h a ∂P) =
-            3 * (∫ a, f a ∂P + ∫ a, g a ∂P + ∫ a, h a ∂P)
-        rw [integral_add hf_int hg_int]
-      · intro β _hβ
-        exact hterm_int α β
-    · intro α _hα
-      exact (MeasureTheory.integrable_finsetSum _ fun β _hβ =>
-        hterm_int α β).const_mul _
+    exact normalizedProbeSquareBudgetIntegralFormula M hcoord_int hplus_int hminus_int hterm_int
   have hbudget_bound :
       ∫ a, fullBlockProbeSqBudget (M a) ∂P ≤
         (Fintype.card (BlockCoord d) : ℝ) *

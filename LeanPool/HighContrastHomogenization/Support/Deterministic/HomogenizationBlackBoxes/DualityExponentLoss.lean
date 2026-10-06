@@ -254,7 +254,7 @@ private theorem cubeBesovScaleWeight_mul_component_localizedDualAverage_le
 
 /-- Componentwise Ch1 negative localization, repackaged for the deterministic
 note-normalized vector full-dual norm. -/
-theorem cubeScaleNormalizedDualNegativeBesovVectorNormTwo_le_card_mul_negativeBesovLocalizeConstant_mul_localizedAverage
+theorem dualNegativeBesovNorm_le_card_mul_localizationConstant_mul_average
     {d : ℕ} (Q : TriadicCube d) (s : ℝ) (F : Vec d → Vec d) (j : ℕ)
     (hs : 0 < s)
     (hF : MemVectorL2 (cubeSet Q) F) :
@@ -357,7 +357,7 @@ theorem concreteNegativeFromDualExponentLoss_geometric
     Book.Ch01.Legacy.component_memLp_normalizedCubeMeasure_of_memVectorL2_cubeSet_ch1
       Q hF
   have h :=
-    Book.Ch01.Legacy.cubeBesovNegativeVectorSeminormTwo_le_dualToCircGeometricLossCoefficient_mul_normalizedDual
+    Book.Ch01.Legacy.negativeBesovVectorSeminorm_le_geometricLoss_mul_normalizedDual
       Q F hs ht hts hcomp
   simpa [besovExponentLossGap, cubeScaleNormalizedDualNegativeBesovVectorNormTwo,
     Book.Ch01.Legacy.dualToCircGeometricLossCoefficient,
@@ -382,7 +382,7 @@ theorem cubeBesovNegativeVectorSeminormTwo_le_localizedDualAverage_exponentLoss
   have hdual :=
     (concreteNegativeFromDualExponentLoss_geometric d).2 Q F ht hts hs_lt_one hF
   have hlocalized :=
-    cubeScaleNormalizedDualNegativeBesovVectorNormTwo_le_card_mul_negativeBesovLocalizeConstant_mul_localizedAverage
+    dualNegativeBesovNorm_le_card_mul_localizationConstant_mul_average
       Q t F j ht hF
   have hgap_nonneg : 0 ≤ besovExponentLossGap s t :=
     besovExponentLossGap_nonneg ht hts

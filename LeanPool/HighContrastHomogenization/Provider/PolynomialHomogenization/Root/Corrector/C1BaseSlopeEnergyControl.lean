@@ -51,6 +51,128 @@ private theorem sqrt_normalizedEnergy_grad_eq_h1EnergyNormOnCube_base
   unfold Book.Ch03.h1EnergyNormOnCube
   exact Real.sqrt_nonneg _
 
+private theorem finite_affine_minimizer_energy_le_twice_solution
+    {d : ℕ} [NeZero d] (a : Book.Ch02.TriadicCoeffFamily d)
+    {n m : ℕ} (hnm : (n : ℤ) ≤ (m : ℤ))
+    (u : Book.Ch03.CubeSolution (originCube d (m : ℤ)) a) :
+    Book.Ch03.h1EnergyNormOnCube (originCube d (n : ℤ)) a
+        (finiteCubeSolutionRestriction a hnm
+          (finiteAffineCubeSolution a (m : ℤ)
+            (finiteAffineExactMinimizer a hnm u))).toH1 ≤
+      2 * Book.Ch03.h1EnergyNormOnCube (originCube d (n : ℤ)) a
+        (finiteCubeSolutionRestriction a hnm u).toH1 := by
+  let b := finiteAffineExactMinimizer a hnm u
+  let uN := finiteCubeSolutionRestriction a hnm u
+  let w := finiteCubeSolutionRestriction a hnm
+    (finiteAffineCubeSolution a (m : ℤ) b)
+  let r := finiteAffineGradientResidual a hnm u b
+  let hEll := Book.Ch03.publicCoeffField_isEllipticFieldOn_openCubeSet
+    (originCube d (n : ℤ)) a
+  have hvol : 0 < volume (openCubeSet (originCube d (n : ℤ))) :=
+    (ENNReal.toReal_pos_iff.mp
+      (volume_openCubeSet_originCube_toReal_pos (d := d) (n : ℤ))).1
+  have hvoltop : volume (openCubeSet (originCube d (n : ℤ))) ≠ ⊤ :=
+    (volume_openCubeSet_lt_top (originCube d (n : ℤ))).ne
+  have hclass : w.toH1.gradToHilbertVectorL2 =
+      uN.toH1.gradToHilbertVectorL2 - r.toH1.gradToHilbertVectorL2 := by
+    apply MeasureTheory.Lp.ext
+    filter_upwards [w.toH1.coeFn_gradToHilbertVectorL2,
+        uN.toH1.coeFn_gradToHilbertVectorL2,
+        r.toH1.coeFn_gradToHilbertVectorL2,
+        MeasureTheory.Lp.coeFn_sub uN.toH1.gradToHilbertVectorL2
+          r.toH1.gradToHilbertVectorL2] with x hwx hux hrx hsub
+    rw [hwx, hsub, Pi.sub_apply, hux, hrx]
+    simp only [w, uN, finiteCubeSolutionRestriction_grad,
+      finiteAffineCubeSolution, r, finiteAffineGradientResidual_grad]
+    change WithLp.toLp 2 ((finiteAffineSolution a (m : ℤ) b).toH1.grad x) =
+      WithLp.toLp 2 (u.toH1.grad x) - WithLp.toLp 2
+        (u.toH1.grad x - (finiteAffineSolution a (m : ℤ) b).toH1.grad x)
+    rw [← WithLp.toLp_sub]
+    congr 1
+    abel
+  have htri := sqrt_normalizedLocalSymmetricEnergy_add_le hEll hvol hvoltop
+    uN.toH1.gradToHilbertVectorL2 (-r.toH1.gradToHilbertVectorL2)
+  have hneg_eq : normalizedLocalSymmetricEnergy hEll (-r.toH1.gradToHilbertVectorL2) =
+      normalizedLocalSymmetricEnergy hEll r.toH1.gradToHilbertVectorL2 :=
+    normalizedLocalSymmetricEnergy_neg_increment _ _
+  have henergyTri : Book.Ch03.h1EnergyNormOnCube
+        (originCube d (n : ℤ)) a w.toH1 ≤
+      Book.Ch03.h1EnergyNormOnCube (originCube d (n : ℤ)) a uN.toH1 +
+        Book.Ch03.h1EnergyNormOnCube (originCube d (n : ℤ)) a r.toH1 := by
+    have htri' : √(normalizedLocalSymmetricEnergy hEll w.toH1.gradToHilbertVectorL2) ≤
+        √(normalizedLocalSymmetricEnergy hEll uN.toH1.gradToHilbertVectorL2) +
+          √(normalizedLocalSymmetricEnergy hEll r.toH1.gradToHilbertVectorL2) := by
+      rw [hclass, sub_eq_add_neg, ← hneg_eq]
+      exact htri
+    have hw : √(normalizedLocalSymmetricEnergy hEll w.toH1.gradToHilbertVectorL2) =
+        Book.Ch03.h1EnergyNormOnCube (originCube d (n : ℤ)) a w.toH1 :=
+      sqrt_normalizedEnergy_grad_eq_h1EnergyNormOnCube_base a (n : ℤ) w.toH1
+    have hu : √(normalizedLocalSymmetricEnergy hEll uN.toH1.gradToHilbertVectorL2) =
+        Book.Ch03.h1EnergyNormOnCube (originCube d (n : ℤ)) a uN.toH1 :=
+      sqrt_normalizedEnergy_grad_eq_h1EnergyNormOnCube_base a (n : ℤ) uN.toH1
+    have hr : √(normalizedLocalSymmetricEnergy hEll r.toH1.gradToHilbertVectorL2) =
+        Book.Ch03.h1EnergyNormOnCube (originCube d (n : ℤ)) a r.toH1 :=
+      sqrt_normalizedEnergy_grad_eq_h1EnergyNormOnCube_base a (n : ℤ) r.toH1
+    rw [hw, hu, hr] at htri'
+    exact htri'
+  refine henergyTri.trans ?_
+  have hspec := finiteAffineExactMinimizer_spec a hnm u
+  have hbridge := weightedGradNorm_finiteAffineGradientResidual a hnm u b
+  have hspec' : weightedGradNorm
+        (a.coeffOn (originCube d (n : ℤ))).toCoeffField
+        (openCubeSet (originCube d (n : ℤ)))
+        (fun x ↦ u.toH1.grad x -
+          (finiteAffineSolution a (m : ℤ) b).toH1.grad x) =
+      finiteAffineGradientExcess a (n : ℤ) (m : ℤ) u := by
+    simpa only [b] using hspec
+  rw [hspec'] at hbridge
+  have hr0 : 0 ≤ Book.Ch03.h1EnergyNormOnCube
+      (originCube d (n : ℤ)) a r.toH1 := by
+    unfold Book.Ch03.h1EnergyNormOnCube
+    positivity
+  have hrEq : Book.Ch03.h1EnergyNormOnCube
+        (originCube d (n : ℤ)) a r.toH1 =
+      (finiteAffineGradientExcess a (n : ℤ) (m : ℤ) u).toReal := by
+    have hreal := congrArg ENNReal.toReal hbridge
+    symm
+    simpa only [r, ENNReal.toReal_ofReal hr0] using hreal
+  have hexcess := finiteAffineGradientExcess_le
+    a (n : ℤ) (m : ℤ) u (0 : Vec d)
+  have hzero := finiteAffineSolution_grad_smul
+    a (m : ℤ) (0 : ℝ) (0 : Vec d)
+  have hzeroN : (finiteAffineSolution a (m : ℤ) (0 : Vec d)).toH1.grad
+      =ᵐ[volumeMeasureOn (openCubeSet (originCube d (n : ℤ)))] fun _ ↦ 0 :=
+    ae_mono (Measure.restrict_mono_set volume
+      (openCubeSet_originCube_subset_of_le hnm)) (by
+        have hmeas : volumeMeasureOn
+            (Book.Ch02.cubeDomain (originCube d (m : ℤ))).carrier =
+            volume.restrict (openCubeSet (originCube d (m : ℤ))) := rfl
+        rw [hmeas] at hzero
+        filter_upwards [hzero] with x hx
+        simpa only [zero_smul] using hx)
+  have hcandEq : weightedGradNorm
+        (a.coeffOn (originCube d (n : ℤ))).toCoeffField
+        (openCubeSet (originCube d (n : ℤ)))
+        (fun x ↦ u.toH1.grad x -
+          (finiteAffineSolution a (m : ℤ) (0 : Vec d)).toH1.grad x) =
+      weightedGradNorm
+        (a.coeffOn (originCube d (n : ℤ))).toCoeffField
+        (openCubeSet (originCube d (n : ℤ))) uN.toH1.grad := by
+    apply weightedGradNorm_congr_ae
+    filter_upwards [hzeroN] with x hx
+    simp only [uN, finiteCubeSolutionRestriction_grad]
+    rw [hx]
+    simp
+  rw [hcandEq, weightedGradNorm_eq_ofReal_h1EnergyNormOnCube] at hexcess
+  have hexcessReal := ENNReal.toReal_mono ENNReal.ofReal_ne_top hexcess
+  have hu0 : 0 ≤ Book.Ch03.h1EnergyNormOnCube
+      (originCube d (n : ℤ)) a uN.toH1 := by
+    unfold Book.Ch03.h1EnergyNormOnCube
+    positivity
+  rw [ENNReal.toReal_ofReal hu0] at hexcessReal
+  rw [hrEq]
+  linarith only [hexcessReal]
+
 /-- The exact base-cube minimizing slope is bounded by the original outer
 solution energy with a dimension-only constant. -/
 theorem exists_baseExactMinimizerSlopeEnergyConstants
@@ -143,114 +265,8 @@ theorem exists_baseExactMinimizerSlopeEnergyConstants
   have hwenergy : Book.Ch03.h1EnergyNormOnCube
         (originCube d (n : ℤ)) a w.toH1 ≤
       2 * Book.Ch03.h1EnergyNormOnCube
-        (originCube d (n : ℤ)) a uN.toH1 := by
-    let r := finiteAffineGradientResidual a hnm u b
-    let hEll := Book.Ch03.publicCoeffField_isEllipticFieldOn_openCubeSet
-      (originCube d (n : ℤ)) a
-    have hvol : 0 < volume (openCubeSet (originCube d (n : ℤ))) :=
-      (ENNReal.toReal_pos_iff.mp
-        (volume_openCubeSet_originCube_toReal_pos (d := d) (n : ℤ))).1
-    have hvoltop : volume (openCubeSet (originCube d (n : ℤ))) ≠ ⊤ :=
-      (volume_openCubeSet_lt_top (originCube d (n : ℤ))).ne
-    have hclass : w.toH1.gradToHilbertVectorL2 =
-        uN.toH1.gradToHilbertVectorL2 - r.toH1.gradToHilbertVectorL2 := by
-      apply MeasureTheory.Lp.ext
-      filter_upwards [w.toH1.coeFn_gradToHilbertVectorL2,
-          uN.toH1.coeFn_gradToHilbertVectorL2,
-          r.toH1.coeFn_gradToHilbertVectorL2,
-          MeasureTheory.Lp.coeFn_sub uN.toH1.gradToHilbertVectorL2
-            r.toH1.gradToHilbertVectorL2] with x hwx hux hrx hsub
-      rw [hwx, hsub, Pi.sub_apply, hux, hrx]
-      simp only [w, uN, finiteCubeSolutionRestriction_grad,
-        finiteAffineCubeSolution, r, finiteAffineGradientResidual_grad]
-      change WithLp.toLp 2 ((finiteAffineSolution a (m : ℤ) b).toH1.grad x) =
-        WithLp.toLp 2 (u.toH1.grad x) - WithLp.toLp 2
-          (u.toH1.grad x - (finiteAffineSolution a (m : ℤ) b).toH1.grad x)
-      rw [← WithLp.toLp_sub]
-      congr 1
-      abel
-    have htri := sqrt_normalizedLocalSymmetricEnergy_add_le hEll hvol hvoltop
-      uN.toH1.gradToHilbertVectorL2 (-r.toH1.gradToHilbertVectorL2)
-    have hneg_eq : normalizedLocalSymmetricEnergy hEll (-r.toH1.gradToHilbertVectorL2) =
-        normalizedLocalSymmetricEnergy hEll r.toH1.gradToHilbertVectorL2 :=
-      normalizedLocalSymmetricEnergy_neg_increment _ _
-    have henergyTri : Book.Ch03.h1EnergyNormOnCube
-          (originCube d (n : ℤ)) a w.toH1 ≤
-        Book.Ch03.h1EnergyNormOnCube (originCube d (n : ℤ)) a uN.toH1 +
-          Book.Ch03.h1EnergyNormOnCube (originCube d (n : ℤ)) a r.toH1 := by
-      have htri' : √(normalizedLocalSymmetricEnergy hEll w.toH1.gradToHilbertVectorL2) ≤
-          √(normalizedLocalSymmetricEnergy hEll uN.toH1.gradToHilbertVectorL2) +
-            √(normalizedLocalSymmetricEnergy hEll r.toH1.gradToHilbertVectorL2) := by
-        rw [hclass, sub_eq_add_neg, ← hneg_eq]
-        exact htri
-      have hw : √(normalizedLocalSymmetricEnergy hEll w.toH1.gradToHilbertVectorL2) =
-          Book.Ch03.h1EnergyNormOnCube (originCube d (n : ℤ)) a w.toH1 :=
-        sqrt_normalizedEnergy_grad_eq_h1EnergyNormOnCube_base a (n : ℤ) w.toH1
-      have hu : √(normalizedLocalSymmetricEnergy hEll uN.toH1.gradToHilbertVectorL2) =
-          Book.Ch03.h1EnergyNormOnCube (originCube d (n : ℤ)) a uN.toH1 :=
-        sqrt_normalizedEnergy_grad_eq_h1EnergyNormOnCube_base a (n : ℤ) uN.toH1
-      have hr : √(normalizedLocalSymmetricEnergy hEll r.toH1.gradToHilbertVectorL2) =
-          Book.Ch03.h1EnergyNormOnCube (originCube d (n : ℤ)) a r.toH1 :=
-        sqrt_normalizedEnergy_grad_eq_h1EnergyNormOnCube_base a (n : ℤ) r.toH1
-      rw [hw, hu, hr] at htri'
-      exact htri'
-    refine henergyTri.trans ?_
-    have hspec := finiteAffineExactMinimizer_spec a hnm u
-    have hbridge := weightedGradNorm_finiteAffineGradientResidual a hnm u b
-    have hspec' : weightedGradNorm
-          (a.coeffOn (originCube d (n : ℤ))).toCoeffField
-          (openCubeSet (originCube d (n : ℤ)))
-          (fun x ↦ u.toH1.grad x -
-            (finiteAffineSolution a (m : ℤ) b).toH1.grad x) =
-        finiteAffineGradientExcess a (n : ℤ) (m : ℤ) u := by
-      simpa only [b] using hspec
-    rw [hspec'] at hbridge
-    have hr0 : 0 ≤ Book.Ch03.h1EnergyNormOnCube
-        (originCube d (n : ℤ)) a r.toH1 := by
-      unfold Book.Ch03.h1EnergyNormOnCube
-      positivity
-    have hrEq : Book.Ch03.h1EnergyNormOnCube
-          (originCube d (n : ℤ)) a r.toH1 =
-        (finiteAffineGradientExcess a (n : ℤ) (m : ℤ) u).toReal := by
-      have hreal := congrArg ENNReal.toReal hbridge
-      symm
-      simpa only [r, ENNReal.toReal_ofReal hr0] using hreal
-    have hexcess := finiteAffineGradientExcess_le
-      a (n : ℤ) (m : ℤ) u (0 : Vec d)
-    have hzero := finiteAffineSolution_grad_smul
-      a (m : ℤ) (0 : ℝ) (0 : Vec d)
-    have hzeroN : (finiteAffineSolution a (m : ℤ) (0 : Vec d)).toH1.grad
-        =ᵐ[volumeMeasureOn (openCubeSet (originCube d (n : ℤ)))] fun _ ↦ 0 :=
-      ae_mono (Measure.restrict_mono_set volume
-        (openCubeSet_originCube_subset_of_le hnm)) (by
-          have hmeas : volumeMeasureOn
-              (Book.Ch02.cubeDomain (originCube d (m : ℤ))).carrier =
-              volume.restrict (openCubeSet (originCube d (m : ℤ))) := rfl
-          rw [hmeas] at hzero
-          filter_upwards [hzero] with x hx
-          simpa only [zero_smul] using hx)
-    have hcandEq : weightedGradNorm
-          (a.coeffOn (originCube d (n : ℤ))).toCoeffField
-          (openCubeSet (originCube d (n : ℤ)))
-          (fun x ↦ u.toH1.grad x -
-            (finiteAffineSolution a (m : ℤ) (0 : Vec d)).toH1.grad x) =
-        weightedGradNorm
-          (a.coeffOn (originCube d (n : ℤ))).toCoeffField
-          (openCubeSet (originCube d (n : ℤ))) uN.toH1.grad := by
-      apply weightedGradNorm_congr_ae
-      filter_upwards [hzeroN] with x hx
-      simp only [uN, finiteCubeSolutionRestriction_grad]
-      rw [hx]
-      simp
-    rw [hcandEq, weightedGradNorm_eq_ofReal_h1EnergyNormOnCube] at hexcess
-    have hexcessReal := ENNReal.toReal_mono ENNReal.ofReal_ne_top hexcess
-    have hu0 : 0 ≤ Book.Ch03.h1EnergyNormOnCube
-        (originCube d (n : ℤ)) a uN.toH1 := by
-      unfold Book.Ch03.h1EnergyNormOnCube
-      positivity
-    rw [ENNReal.toReal_ofReal hu0] at hexcessReal
-    rw [hrEq]
-    linarith only [hexcessReal]
+        (originCube d (n : ℤ)) a uN.toH1 :=
+    finite_affine_minimizer_energy_le_twice_solution a hnm u
   calc
     euclideanNorm b ≤ 2 * euclideanNorm
         (cubeAverageVec (originCube d (n : ℤ)) w.toH1.grad) := hbavg

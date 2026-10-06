@@ -33,7 +33,8 @@ noncomputable section
 /-- Integrability of the centered descendant average follows from the
 corresponding centered origin-cube moment by stationarity and translation
 covariance. -/
-theorem integrable_abs_pow_restrictionCenteredDescendantAverage_of_stationary_of_isTranslationCovariant
+theorem
+  integrable_abs_pow_restrictionCenteredDescendantAverage_of_stationary_of_isTranslationCovariant
     {d : ℕ} {n m : ℤ} {P : RestrictionCoeffLaw d} [IsProbabilityMeasure P]
     {p : ℕ}
     (hn : 0 ≤ n) (hnm : n ≤ m)
@@ -154,7 +155,7 @@ theorem integrable_abs_pow_restrictionCenteredDescendantAverage_of_stationary
 /-- Integrability of the centered descendant average over an arbitrary parent
 cube follows from the corresponding centered origin-cube moment by
 stationarity and translation covariance. -/
-theorem integrable_abs_pow_restrictionCenteredDescendantAverageOnCube_of_stationary_of_isTranslationCovariant
+theorem integrable_abs_pow_centeredDescendantMean_of_stationary
     {d : ℕ} {Q : TriadicCube d} {n : ℤ} {P : RestrictionCoeffLaw d} [IsProbabilityMeasure P]
     {p : ℕ}
     (hn : 0 ≤ n) (hnQ : n ≤ Q.scale)
@@ -267,7 +268,7 @@ theorem integrable_abs_pow_restrictionCenteredDescendantAverageOnCube_of_station
     (hX0Lp_int :
       Integrable (fun a => |restrictionCenteredOriginObservable P n X a| ^ p) P) :
     Integrable (fun a => |restrictionCenteredDescendantAverageOnCube P Q n X a| ^ p) P :=
-  integrable_abs_pow_restrictionCenteredDescendantAverageOnCube_of_stationary_of_isTranslationCovariant
+  integrable_abs_pow_centeredDescendantMean_of_stationary
     (d := d) (Q := Q) (n := n) (P := P) (p := p)
     hn hnQ hPstat X hX_cov hX0_aemeas hX_desc_aemeas hp hX0Lp_int
 

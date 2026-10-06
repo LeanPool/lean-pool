@@ -32,6 +32,8 @@ open scoped ENNReal
 
 noncomputable section
 
+/-- The Hilbert-vector difference kernel `(F(x) - F(y)) / |x - y|^(s + d/p)` using Euclidean
+distance. -/
 @[expose]
 noncomputable def cubeEuclideanWspKernel {d : ℕ} (s : FractionalOrder)
     (p : FiniteLpExponent) (F : Vec d → Vec d) :
@@ -60,6 +62,8 @@ theorem norm_cubeEuclideanWspKernel {d : ℕ}
     abs_of_nonneg (Real.rpow_nonneg (euclideanDist_nonneg _ _) _),
     ← euclideanNorm_eq_norm_ofVec]
 
+/-- The Euclidean fractional difference kernel of `F` belongs to Lᵖ for the cube Gagliardo pair
+measure. -/
 @[expose]
 def MemCubeEuclideanWsp {d : ℕ} (Q : TriadicCube d)
     (s : FractionalOrder) (p : FiniteLpExponent)
@@ -67,6 +71,8 @@ def MemCubeEuclideanWsp {d : ℕ} (Q : TriadicCube d)
   MemLp (cubeEuclideanWspKernel s p F) p.exponent
     (Gagliardo.gagliardoCubeMeasure Q)
 
+/-- The extended Lᵖ norm of the Euclidean fractional difference kernel for the cube Gagliardo pair
+measure. -/
 @[expose]
 noncomputable def cubeEuclideanWspESeminorm {d : ℕ}
     (Q : TriadicCube d) (s : FractionalOrder) (p : FiniteLpExponent)
@@ -108,12 +114,15 @@ theorem MemCubeEuclideanWsp.eSeminorm_lt_top {d : ℕ}
     cubeEuclideanWspESeminorm Q s p F < ∞ :=
   hF.eLpNorm_lt_top
 
+/-- A vector field with cube Euclidean Lᵖ integrability and an Lᵖ fractional difference kernel of
+order `s`. -/
 structure CubeEuclideanWspField {d : ℕ} (Q : TriadicCube d)
     (s : FractionalOrder) (p : FiniteLpExponent)
     extends CubeEuclideanLpField Q p where
   euclideanMemWsp : MemCubeEuclideanWsp Q s p toField
 
 namespace CubeEuclideanWspField
+
 
 instance {d : ℕ} {Q : TriadicCube d} {s : FractionalOrder}
     {p : FiniteLpExponent} :
@@ -136,6 +145,8 @@ theorem eSeminorm_lt_top {d : ℕ} {Q : TriadicCube d}
 
 end CubeEuclideanWspField
 
+
+/-- The extended nonnegative scale weight given by the cube scale factor to the power `-s p`. -/
 @[expose]
 noncomputable def cubeEuclideanWspScalePowerWeight {d : ℕ}
     (Q : TriadicCube d) (s : FractionalOrder)
@@ -156,6 +167,9 @@ theorem cubeEuclideanWspScalePowerWeight_lt_top {d : ℕ}
       (ENNReal.ofReal_ne_zero_iff.mpr hscale)
       ENNReal.ofReal_ne_top)
 
+
+/-- The extended full fractional norm: the pth root of the sum of the scale-weighted normalized Lᵖ
+norm to power `p` and the fractional seminorm to power `p`. -/
 @[expose]
 noncomputable def cubeEuclideanWspFullENorm {d : ℕ}
     (Q : TriadicCube d) (s : FractionalOrder) (p : FiniteLpExponent)

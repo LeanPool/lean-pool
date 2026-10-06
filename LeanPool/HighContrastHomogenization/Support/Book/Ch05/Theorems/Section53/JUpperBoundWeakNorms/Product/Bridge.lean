@@ -35,6 +35,136 @@ open scoped ENNReal BigOperators
 
 noncomputable section
 
+private theorem centeredCutoffProduct_dualNorm_le_gradientBound
+    {d : ℕ}
+    [NeZero d]
+    (Q : TriadicCube d)
+    {s : ℝ}
+    (u : H1Function (openCubeSet Q))
+    (ξ : Vec d → Vec d)
+    {B : ℝ}
+    {gradWeak : ℝ}
+    (hB : 0 ≤ B)
+    (hξLp : MemLp ξ ∞ (normalizedCubeMeasure Q))
+    (hξ : ∀ i : Fin d, ContDiff ℝ (⊤ : ℕ∞) (fun x => ξ x i))
+    (hderiv : ∀ i : Fin d, ∀ z ∈ cubeSet Q,
+        ‖fderiv ℝ (fun x => ξ x i) z‖ ≤ B)
+    (hgradWeak : ∀ N : ℕ, cubeBesovNegativeVectorPartialSeminorm Q s N u.grad ≤ gradWeak)
+    :
+    let scaledGrad := cubeBesovScaleWeight (-s) Q * gradWeak
+    let gradCoeff :=
+      (2 * cubeScaleFactor Q * B + 3 * cubeLpNorm Q ∞ ξ) *
+        ((Ch01.Legacy.fullVectorPoincareConstant Q * (3 : ℝ) ^ ((d : ℝ) + 1)) *
+          (Fintype.card (Fin d) : ℝ))
+    let r : ℝ := 1 - s
+    let productField : Vec d → Vec d :=
+      fun x => ((u x - cubeAverage Q (fun y => u y)) • ξ x : Vec d)
+    let productBound : ℝ := gradCoeff * scaledGrad
+    ∀ (hr_pos : 0 < r),
+    ∀ (hr_lt_one : r < 1),
+    ∀ (hfront_nonneg : 0 ≤ 2 * cubeScaleFactor Q * B + 3 * cubeLpNorm Q ∞ ξ),
+    ∀ (hpoincare_nonneg : 0 ≤ Ch01.Legacy.fullVectorPoincareConstant Q * (3 : ℝ) ^ ((d : ℝ) + 1)),
+    ∀ i : Fin d, ∀ N : ℕ,
+        cubeBesovDualTestNorm Q r (2 : ℝ≥0∞) (1 : ℝ≥0∞) N
+            (fun x => productField x i) ≤
+          productBound := by
+  classical
+  dsimp only
+  let scaledGrad := cubeBesovScaleWeight (-s) Q * gradWeak
+  let gradCoeff :=
+    (2 * cubeScaleFactor Q * B + 3 * cubeLpNorm Q ∞ ξ) *
+      ((Ch01.Legacy.fullVectorPoincareConstant Q * (3 : ℝ) ^ ((d : ℝ) + 1)) *
+        (Fintype.card (Fin d) : ℝ))
+  let r : ℝ := 1 - s
+  let productField : Vec d → Vec d :=
+    fun x => ((u x - cubeAverage Q (fun y => u y)) • ξ x : Vec d)
+  let productBound : ℝ := gradCoeff * scaledGrad
+  intro hr_pos hr_lt_one hfront_nonneg hpoincare_nonneg
+  have hgradComp :
+      ∀ i : Fin d,
+        cubeBesovCircNorm Q s (2 : ℝ≥0∞) (1 : ℝ≥0∞) (fun x => u.grad x i) ≤
+          scaledGrad := by
+    intro i
+    simpa [scaledGrad] using
+      circNorm_component_le_negativeVectorPartialBound
+        Q s u.grad i hgradWeak
+  have hgradCircSum :
+      (∑ i : Fin d,
+        Ch01.Legacy.circNegativeBesovNorm Q s (2 : ℝ≥0∞) (1 : ℝ≥0∞)
+          (fun x => u.grad x i)) ≤
+        (Fintype.card (Fin d) : ℝ) * scaledGrad := by
+    calc
+      (∑ i : Fin d,
+        Ch01.Legacy.circNegativeBesovNorm Q s (2 : ℝ≥0∞) (1 : ℝ≥0∞)
+          (fun x => u.grad x i))
+          ≤ ∑ _i : Fin d, scaledGrad := by
+            refine Finset.sum_le_sum ?_
+            intro i _hi
+            simpa [Ch01.Legacy.circNegativeBesovNorm] using hgradComp i
+      _ = (Fintype.card (Fin d) : ℝ) * scaledGrad := by
+            simp [Finset.sum_const, nsmul_eq_mul]
+  have hpConj :
+      cubeBesovConjExponent (2 : ℝ≥0∞) = (2 : ℝ≥0∞) := by
+    simpa [cubeBesovConjExponent] using
+      (ENNReal.HolderConjugate.conjExponent_eq
+        (p := (2 : ℝ≥0∞)) (q := (2 : ℝ≥0∞)))
+  have hqConj :
+      cubeBesovConjExponent (1 : ℝ≥0∞) = ∞ := by
+    simpa [cubeBesovConjExponent] using
+      (ENNReal.HolderConjugate.conjExponent_eq
+        (p := (1 : ℝ≥0∞)) (q := (∞ : ℝ≥0∞)))
+  intro i N
+  have hch01 :
+      cubeBesovPartialNormTop Q r (2 : ℝ≥0∞) N (fun x => productField x i) ≤
+        (2 * cubeScaleFactor Q * B + 3 * cubeLpNorm Q ∞ ξ) *
+          ((Ch01.Legacy.fullVectorPoincareConstant Q * (3 : ℝ) ^ ((d : ℝ) + 1)) *
+            ∑ i : Fin d,
+              Ch01.Legacy.circNegativeBesovNorm Q (1 - r) (2 : ℝ≥0∞)
+                (1 : ℝ≥0∞)
+                (fun x => u.grad x i)) := by
+    simpa [productField, r, sub_eq_add_neg, add_comm, add_left_comm, add_assoc] using
+      Ch01.Legacy.cutoffProduct_component_partialNormTop_le_gradient_rhs
+        Q r N u ξ hB hξLp hξ hderiv hr_pos hr_lt_one i
+  have hsum :
+      (∑ i : Fin d,
+        Ch01.Legacy.circNegativeBesovNorm Q (1 - r) (2 : ℝ≥0∞) (1 : ℝ≥0∞)
+          (fun x => u.grad x i)) ≤
+        (Fintype.card (Fin d) : ℝ) * scaledGrad := by
+    simpa [r] using hgradCircSum
+  have hmain :
+      (2 * cubeScaleFactor Q * B + 3 * cubeLpNorm Q ∞ ξ) *
+          ((Ch01.Legacy.fullVectorPoincareConstant Q * (3 : ℝ) ^ ((d : ℝ) + 1)) *
+            ∑ i : Fin d,
+              Ch01.Legacy.circNegativeBesovNorm Q (1 - r) (2 : ℝ≥0∞)
+                (1 : ℝ≥0∞)
+                (fun x => u.grad x i)) ≤
+        productBound := by
+    calc
+      (2 * cubeScaleFactor Q * B + 3 * cubeLpNorm Q ∞ ξ) *
+          ((Ch01.Legacy.fullVectorPoincareConstant Q * (3 : ℝ) ^ ((d : ℝ) + 1)) *
+            ∑ i : Fin d,
+              Ch01.Legacy.circNegativeBesovNorm Q (1 - r) (2 : ℝ≥0∞)
+                (1 : ℝ≥0∞)
+                (fun x => u.grad x i))
+          ≤
+        (2 * cubeScaleFactor Q * B + 3 * cubeLpNorm Q ∞ ξ) *
+          ((Ch01.Legacy.fullVectorPoincareConstant Q * (3 : ℝ) ^ ((d : ℝ) + 1)) *
+            ((Fintype.card (Fin d) : ℝ) * scaledGrad)) := by
+          exact mul_le_mul_of_nonneg_left
+            (mul_le_mul_of_nonneg_left hsum hpoincare_nonneg) hfront_nonneg
+      _ = productBound := by
+          simp [productBound, gradCoeff]
+          ring
+  have hdual :
+      cubeBesovDualTestNorm Q r (2 : ℝ≥0∞) (1 : ℝ≥0∞) N
+          (fun x => productField x i) =
+        cubeBesovPartialNormTop Q r (2 : ℝ≥0∞) N (fun x => productField x i) := by
+    rw [cubeBesovDualTestNorm_of_conjExponent_eq_top
+      Q r (2 : ℝ≥0∞) (1 : ℝ≥0∞) N (fun x => productField x i) hqConj]
+    rw [hpConj]
+  rw [hdual]
+  exact hch01.trans hmain
+
 /-- Direct cutoff-product duality bound in the manuscript `s,t` form, through
 Ch01's legacy disjoint-Besov compatibility lane.
 
@@ -72,7 +202,17 @@ theorem abs_cubeAverage_vecDot_centered_scalar_cutoff_le_scaledWeakNormProduct
         (fun x => vecDot (flux x)
           (((u x - cubeAverage Q (fun y => u y)) • ξ x : Vec d)))| ≤
       (gradCoeff * fluxCoeff) * (scaledGrad * scaledFlux) := by
-  intro scaledGrad scaledFlux gradCoeff fluxCoeff
+  dsimp only
+  let scaledGrad := cubeBesovScaleWeight (-s) Q * gradWeak
+  let scaledFlux := cubeBesovScaleWeight (-t) Q * fluxWeak
+  let gradCoeff :=
+    (2 * cubeScaleFactor Q * B + 3 * cubeLpNorm Q ∞ ξ) *
+      ((Ch01.Legacy.fullVectorPoincareConstant Q * (3 : ℝ) ^ ((d : ℝ) + 1)) *
+        (Fintype.card (Fin d) : ℝ))
+  let fluxCoeff :=
+    (Fintype.card (Fin d) : ℝ) *
+      ((3 : ℝ) ^ ((d : ℝ) + (1 - s)) *
+        cubeBesovScaleWeight (-(1 - s - t)) Q)
   let r : ℝ := 1 - s
   let productField : Vec d → Vec d :=
     fun x => ((u x - cubeAverage Q (fun y => u y)) • ξ x : Vec d)
@@ -105,95 +245,10 @@ theorem abs_cubeAverage_vecDot_centered_scalar_cutoff_le_scaledWeakNormProduct
   have hproductBound_nonneg : 0 ≤ productBound := by
     dsimp [productBound]
     exact mul_nonneg hgradCoeff_nonneg hscaledGrad_nonneg
-  have hgradComp :
-      ∀ i : Fin d,
-        cubeBesovCircNorm Q s (2 : ℝ≥0∞) (1 : ℝ≥0∞) (fun x => u.grad x i) ≤
-          scaledGrad := by
-    intro i
-    simpa [scaledGrad] using
-      cubeBesovCircNorm_two_one_component_le_scaleWeight_neg_mul_of_negativeVectorPartialBound
-        Q s u.grad i hgradWeak
-  have hgradCircSum :
-      (∑ i : Fin d,
-        Ch01.Legacy.circNegativeBesovNorm Q s (2 : ℝ≥0∞) (1 : ℝ≥0∞)
-          (fun x => u.grad x i)) ≤
-        (Fintype.card (Fin d) : ℝ) * scaledGrad := by
-    calc
-      (∑ i : Fin d,
-        Ch01.Legacy.circNegativeBesovNorm Q s (2 : ℝ≥0∞) (1 : ℝ≥0∞)
-          (fun x => u.grad x i))
-          ≤ ∑ _i : Fin d, scaledGrad := by
-            refine Finset.sum_le_sum ?_
-            intro i _hi
-            simpa [Ch01.Legacy.circNegativeBesovNorm] using hgradComp i
-      _ = (Fintype.card (Fin d) : ℝ) * scaledGrad := by
-            simp [Finset.sum_const, nsmul_eq_mul]
-  have hproductDual :
-      ∀ i : Fin d, ∀ N : ℕ,
-        cubeBesovDualTestNorm Q r (2 : ℝ≥0∞) (1 : ℝ≥0∞) N
-            (fun x => productField x i) ≤
-          productBound := by
-    have hpConj :
-        cubeBesovConjExponent (2 : ℝ≥0∞) = (2 : ℝ≥0∞) := by
-      simpa [cubeBesovConjExponent] using
-        (ENNReal.HolderConjugate.conjExponent_eq
-          (p := (2 : ℝ≥0∞)) (q := (2 : ℝ≥0∞)))
-    have hqConj :
-        cubeBesovConjExponent (1 : ℝ≥0∞) = ∞ := by
-      simpa [cubeBesovConjExponent] using
-        (ENNReal.HolderConjugate.conjExponent_eq
-          (p := (1 : ℝ≥0∞)) (q := (∞ : ℝ≥0∞)))
-    intro i N
-    have hch01 :
-        cubeBesovPartialNormTop Q r (2 : ℝ≥0∞) N (fun x => productField x i) ≤
-          (2 * cubeScaleFactor Q * B + 3 * cubeLpNorm Q ∞ ξ) *
-            ((Ch01.Legacy.fullVectorPoincareConstant Q * (3 : ℝ) ^ ((d : ℝ) + 1)) *
-              ∑ i : Fin d,
-                Ch01.Legacy.circNegativeBesovNorm Q (1 - r) (2 : ℝ≥0∞)
-                  (1 : ℝ≥0∞)
-                  (fun x => u.grad x i)) := by
-      simpa [productField, r, sub_eq_add_neg, add_comm, add_left_comm, add_assoc] using
-        Ch01.Legacy.cutoffProduct_component_partialNormTop_le_gradient_rhs
-          Q r N u ξ hB hξLp hξ hderiv hr_pos hr_lt_one i
-    have hsum :
-        (∑ i : Fin d,
-          Ch01.Legacy.circNegativeBesovNorm Q (1 - r) (2 : ℝ≥0∞) (1 : ℝ≥0∞)
-            (fun x => u.grad x i)) ≤
-          (Fintype.card (Fin d) : ℝ) * scaledGrad := by
-      simpa [r] using hgradCircSum
-    have hmain :
-        (2 * cubeScaleFactor Q * B + 3 * cubeLpNorm Q ∞ ξ) *
-            ((Ch01.Legacy.fullVectorPoincareConstant Q * (3 : ℝ) ^ ((d : ℝ) + 1)) *
-              ∑ i : Fin d,
-                Ch01.Legacy.circNegativeBesovNorm Q (1 - r) (2 : ℝ≥0∞)
-                  (1 : ℝ≥0∞)
-                  (fun x => u.grad x i)) ≤
-          productBound := by
-      calc
-        (2 * cubeScaleFactor Q * B + 3 * cubeLpNorm Q ∞ ξ) *
-            ((Ch01.Legacy.fullVectorPoincareConstant Q * (3 : ℝ) ^ ((d : ℝ) + 1)) *
-              ∑ i : Fin d,
-                Ch01.Legacy.circNegativeBesovNorm Q (1 - r) (2 : ℝ≥0∞)
-                  (1 : ℝ≥0∞)
-                  (fun x => u.grad x i))
-            ≤
-          (2 * cubeScaleFactor Q * B + 3 * cubeLpNorm Q ∞ ξ) *
-            ((Ch01.Legacy.fullVectorPoincareConstant Q * (3 : ℝ) ^ ((d : ℝ) + 1)) *
-              ((Fintype.card (Fin d) : ℝ) * scaledGrad)) := by
-            exact mul_le_mul_of_nonneg_left
-              (mul_le_mul_of_nonneg_left hsum hpoincare_nonneg) hfront_nonneg
-        _ = productBound := by
-            simp [productBound, gradCoeff]
-            ring
-    have hdual :
-        cubeBesovDualTestNorm Q r (2 : ℝ≥0∞) (1 : ℝ≥0∞) N
-            (fun x => productField x i) =
-          cubeBesovPartialNormTop Q r (2 : ℝ≥0∞) N (fun x => productField x i) := by
-      rw [cubeBesovDualTestNorm_of_conjExponent_eq_top
-        Q r (2 : ℝ≥0∞) (1 : ℝ≥0∞) N (fun x => productField x i) hqConj]
-      rw [hpConj]
-    rw [hdual]
-    exact hch01.trans hmain
+  have hproductDual := centeredCutoffProduct_dualNorm_le_gradientBound (d := d) (Q := Q)
+    (s := s) (u := u) (ξ := ξ) (B := B) (gradWeak := gradWeak) (hB := hB) (hξLp := hξLp)
+    (hξ := hξ) (hderiv := hderiv) (hgradWeak := hgradWeak) hr_pos hr_lt_one hfront_nonneg
+    hpoincare_nonneg
   have hu : MemLp (fun x => u x) (2 : ℝ≥0∞) (normalizedCubeMeasure Q) :=
     u.memL2_normalizedCubeMeasure
   have hfluct :
@@ -222,7 +277,7 @@ theorem abs_cubeAverage_vecDot_centered_scalar_cutoff_le_scaledWeakNormProduct
                 (fun x => flux x i)) *
             productBound) := by
     simpa [productField] using
-      abs_cubeAverage_vecDot_le_sum_note_constant_mul_of_uniform_component_bounds_two_one_of_nonneg
+      absCubeAverage_dot_le_componentBounds_twoOne_noMeanTerm
         Q r flux productField (fun _ : Fin d => productBound) hr_pos hfluxComp
         (fun _ => hproductBound_nonneg) hproductDual hproductMem
   have hfluxScaledPartial :
@@ -239,7 +294,7 @@ theorem abs_cubeAverage_vecDot_centered_scalar_cutoff_le_scaledWeakNormProduct
           cubeBesovScaleWeight (-(r - t)) Q * scaledFlux := by
     intro i
     exact
-      cubeBesovCircNorm_two_one_component_le_scaleWeight_gap_mul_of_scaled_negativeVectorPartialBound
+      circNorm_two_one_component_le_scaleGap_of_negativePartialBound
         Q ht_le_r flux i hfluxScaledPartial
   have hsum :
       (∑ i : Fin d,
@@ -350,7 +405,7 @@ theorem productTerm_le_cutoffProductBridge
       cutoffProductBridgeRHS Q s cutoffGradient fluxWeakOne fluxWeakS fluxAverage
         cutoffCircOne poincareConst cutoffConstant centeredCutoffConstant := by
   simpa [cutoffProductBridgeRHS] using
-    abs_cubeAverage_vecDot_scalar_smul_le_split_collapsed_sharp_note_terms_of_dualFull_fullCirc_effective_constant
+    abs_cubeAverage_vectorDot_scalarMultiply_le_split_collapsed_sharp_of_constant
       (Q := Q) (s := s) (flux := flux) (u := potential)
       (G := dualField) (ξ := cutoffGradient)
       (Bu1 := fluxWeakOne) (BuS := fluxWeakS) (Bavg := fluxAverage)
@@ -531,7 +586,7 @@ theorem productTerm_le_cutoffProductBridge_of_dependentCanonicalMaximizer
   let F := Ch04.triadicCoeffFamilyOfAELocallyUniformlyEllipticField a ha
   let aQ : Ch02.CoeffOn (Ch02.cubeDomain Q) := F.coeffOn Q
   exact productTerm_le_cutoffProductBridge_of_canonicalMaximizer
-    (Q := Q) (s := s) (a := aQ) (p := p) (q := q) (p0 := p0) (q0 := q0)
+    (Q := Q) (s := s) (a := aQ) (p0 := p0) (q0 := q0)
     (dualField := dualField) (cutoffGradient := cutoffGradient)
     (fluxWeakOne := Ch04.canonicalScalarResponseFluxWeakNormCubeSet Q 1 p q q0 a.toFun)
     (fluxWeakS := Ch04.canonicalScalarResponseFluxWeakNormCubeSet Q s p q q0 a.toFun)
@@ -550,12 +605,12 @@ theorem productTerm_le_cutoffProductBridge_of_dependentCanonicalMaximizer
     (by
       intro N
       simpa [F, aQ] using
-        cubeBesovNegativeVectorPartialSeminorm_canonicalMaximizerFluxDefectOnDependentFamily_le_ch04WeakNorm
+        negativeVectorPartial_canonicalFluxDefect_le_chapter04WeakNorm
           a ha Q (by norm_num : (0 : ℝ) < 1) N p q q0)
     (by
       intro N
       simpa [F, aQ] using
-        cubeBesovNegativeVectorPartialSeminorm_canonicalMaximizerFluxDefectOnDependentFamily_le_ch04WeakNorm
+        negativeVectorPartial_canonicalFluxDefect_le_chapter04WeakNorm
           a ha Q hs_pos N p q q0)
     (by simpa [F, aQ] using hfull)
     hcutoffSmooth hcutoffDeriv hdualCircOne hdualCircS

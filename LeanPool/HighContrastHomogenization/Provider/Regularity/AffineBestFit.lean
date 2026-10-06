@@ -42,9 +42,10 @@ noncomputable section
 /-- Intercept and Euclidean slope of a scalar affine function. -/
 abbrev AffineCoefficients (d : ℕ) := ℝ × Vec d
 
+/-- The H¹ affine function `x ↦ p.1 + p.2 · x` on the origin cube at scale `k`. -/
 @[expose]
 public noncomputable def originCubeAffineH1OfCoefficients
-    (d : ℕ) [NeZero d] (k : ℤ) (p : AffineCoefficients d) :
+    (d : ℕ) (k : ℤ) (p : AffineCoefficients d) :
     H1Function
       (Book.Ch02.cubeDomain (originCube d k) : Set (Vec d)) :=
   H1Function.const p.1 +
@@ -106,14 +107,14 @@ noncomputable def originCubeAffineH1LinearMap
   map_smul' := originCubeAffineH1OfCoefficients_smul d k
 
 /-- The affine embedding has the literal representative `c + e · x`. -/
-@[simp] theorem originCubeAffineH1LinearMap_toFun
+theorem originCubeAffineH1LinearMap_toFun
     (d : ℕ) [NeZero d] (k : ℤ) (p : AffineCoefficients d) :
     (originCubeAffineH1LinearMap d k p).toFun =
       fun x => p.1 + vecDot p.2 x :=
   originCubeAffineH1OfCoefficients_toFun d k p
 
 /-- The weak gradient of the affine embedding is its slope. -/
-@[simp] theorem originCubeAffineH1LinearMap_grad
+theorem originCubeAffineH1LinearMap_grad
     (d : ℕ) [NeZero d] (k : ℤ) (p : AffineCoefficients d) :
     (originCubeAffineH1LinearMap d k p).grad = fun _ => p.2 :=
   originCubeAffineH1OfCoefficients_grad d k p
@@ -133,7 +134,7 @@ noncomputable def originCubeAffineL2LinearMap
 
 /-- The `L²` affine embedding is the realization of the corresponding `H¹`
 function. -/
-@[simp] theorem originCubeAffineL2LinearMap_apply
+theorem originCubeAffineL2LinearMap_apply
     (d : ℕ) [NeZero d] (k : ℤ) (p : AffineCoefficients d) :
     originCubeAffineL2LinearMap d k p =
       (originCubeAffineH1LinearMap d k p).toScalarL2 :=
@@ -309,7 +310,7 @@ noncomputable def originCubeAffineBestFitSlope
     (originCubeAffineBestFitCoefficients d k)
 
 /-- The best coefficient pair consists of the exported intercept and slope. -/
-@[simp] theorem originCubeAffineBestFitCoefficients_eq
+theorem originCubeAffineBestFitCoefficients_eq
     (d : ℕ) [NeZero d] (k : ℤ)
     (F : ScalarL2
       (Book.Ch02.cubeDomain (originCube d k) : Set (Vec d))) :
@@ -320,7 +321,7 @@ noncomputable def originCubeAffineBestFitSlope
 
 /-- Re-embedding the best coefficients gives the orthogonal projection onto
 the affine range. -/
-@[simp] theorem originCubeAffineL2LinearMap_bestFitCoefficients
+theorem originCubeAffineL2LinearMap_bestFitCoefficients
     (d : ℕ) [NeZero d] (k : ℤ)
     (F : ScalarL2
       (Book.Ch02.cubeDomain (originCube d k) : Set (Vec d))) :

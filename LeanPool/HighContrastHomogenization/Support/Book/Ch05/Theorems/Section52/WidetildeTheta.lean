@@ -97,7 +97,7 @@ theorem widetildeThetaAtScale_le_thetaAtScale_zero_add_positiveExcess_products_o
     have hstar := hP.barSigmaStarAtScale_eq_inv_barSigmaStarInvAtScale hStruct (0 : ℤ)
     rw [hstar, inv_inv]
     simpa [Ch04.RestrictionLawCarrier.barSigmaStarInvAtScale] using
-      (Ch04.RestrictionLawCarrier.Internal.barSigmaStarInv_pos_of_integrable_coarseFullBlockMatrixAtCube hP
+      (Ch04.RestrictionLawCarrier.Internal.barSigmaStarInverse_pos_of_integrableBlockMatrix hP
         (Ch04.Internal.annealedPrimitiveScalarizationData_of_structuralLaw hP hStruct (0 : ℤ))
         (hBlock 0)).le
   have hUpper0 :
@@ -226,7 +226,8 @@ theorem widetildeThetaAtScale_le_thetaAtScale_zero_add_error_of_integrable_posit
 /-- The displayed Section 5.2 `widetildeTheta` estimate from the two
 positive-excess estimates with their manuscript coefficients. The probabilistic
 content is exactly the two positive-excess bounds supplied as hypotheses. -/
-theorem widetildeThetaAtScale_le_thetaAtScale_zero_add_section52_error_of_integrable_positiveExcess_bounds
+theorem
+  widetildeThetaAtScale_le_thetaAtScale_zero_add_section52_error_of_integrable_positiveExcess_bounds
     {d : ℕ} [NeZero d] {P : Ch04.RestrictionCoeffLaw d}
     (hP : Ch04.RestrictionLawCarrier P) (hStruct : Ch04.RestrictionStructuralLaw P)
     (hP4 : QuantitativeCoarseGrainedEllipticity P)

@@ -158,7 +158,7 @@ The matrix-weighted depth-zero Poincare expanded radicand is controlled by the
 named zero-trace Poincare scalar budget once the correction energy is bounded
 by the zero-trace energy envelope.
 -/
-theorem matNorm_sq_mul_coarseFluxResponseRHSPoincareExpandedRadicand_le_zeroTraceDirichletPoincareScalarBudget_of_energy_le_envelope
+theorem matNorm_sq_mul_fluxPoincareRadicand_le_zeroTraceDirichletPoincareScalarBudget
     {d : ℕ} [NeZero d] (Q : TriadicCube d) (a : CoeffField d) (a0 : Mat d)
     {s : ℝ} (g gradV : Vec d → Vec d)
     (hs : 0 < s)
@@ -205,7 +205,7 @@ theorem matNorm_sq_mul_coarseFluxResponseRHSPoincareExpandedRadicand_le_zeroTrac
 /--
 Poincare square-radicand closure from the named zero-trace scalar budget.
 -/
-theorem matNorm_sq_mul_coarseFluxResponseRHSPoincareExpandedRadicand_le_const_mul_correctionBound_sq_of_energy_le_envelope_of_zeroTraceDirichletPoincareScalarBudget
+theorem matNorm_sq_mul_fluxPoincareRadicand_le_const_mul_correctionBound_sq_of_envelope
     {d : ℕ} [NeZero d] (Q : TriadicCube d) (a : CoeffField d) (a0 : Mat d)
     (C : ℝ) {s : ℝ} (g gradV : Vec d → Vec d)
     (hs : 0 < s)
@@ -218,14 +218,14 @@ theorem matNorm_sq_mul_coarseFluxResponseRHSPoincareExpandedRadicand_le_const_mu
     (matNorm a0) ^ 2 *
         coarseFluxResponseRHSPoincareExpandedRadicand Q a s g gradV ≤
       (C * coarseFluxResponseRHSPoincareCorrectionBound Q a a0 s g) ^ 2 :=
-  (matNorm_sq_mul_coarseFluxResponseRHSPoincareExpandedRadicand_le_zeroTraceDirichletPoincareScalarBudget_of_energy_le_envelope
+  (matNorm_sq_mul_fluxPoincareRadicand_le_zeroTraceDirichletPoincareScalarBudget
     Q a a0 g gradV hs henergy).trans hbudget
 
 /--
 Poincare square-root absorption from the zero-trace energy envelope and the
 named Poincare scalar budget.
 -/
-theorem matNorm_mul_coarseFluxResponseRHSPoincareExpandedBound_le_const_mul_correctionBound_of_energy_le_envelope_of_zeroTraceDirichletPoincareScalarBudget
+theorem matNorm_mul_fluxPoincareBound_le_const_mul_correctionBound_of_correctionBound
     {d : ℕ} [NeZero d] (Q : TriadicCube d) (a : CoeffField d) (a0 : Mat d)
     {C s : ℝ} (g gradV : Vec d → Vec d)
     (hC_nonneg : 0 ≤ C) (hs : 0 < s)
@@ -242,9 +242,9 @@ theorem matNorm_mul_coarseFluxResponseRHSPoincareExpandedBound_le_const_mul_corr
     matNorm a0 * coarseFluxResponseRHSPoincareExpandedBound Q a s g gradV ≤
       C * coarseFluxResponseRHSPoincareCorrectionBound Q a a0 s g := by
   exact
-    matNorm_mul_coarseFluxResponseRHSPoincareExpandedBound_le_const_mul_correctionBound_of_radicand_le_sq
+    matrixNorm_mul_fluxPoincareBound_le_constant_mul_correctionBound_of_radicand
       Q a a0 g gradV hC_nonneg hs havg_nonneg hgBdd
-      (matNorm_sq_mul_coarseFluxResponseRHSPoincareExpandedRadicand_le_const_mul_correctionBound_sq_of_energy_le_envelope_of_zeroTraceDirichletPoincareScalarBudget
+      (matNorm_sq_mul_fluxPoincareRadicand_le_const_mul_correctionBound_sq_of_envelope
         Q a a0 C g gradV hs henergy hbudget)
 
 end

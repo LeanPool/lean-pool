@@ -206,7 +206,7 @@ private theorem barSigmaLimit_le_one_add_mul_barSigmaStarLimit
         1 + Real.rpow (3 : ℝ) (-α * (n : ℝ)) := by
     have hparams : hP4.params = hΓ.params := by
       simp [hP4, GammaSigmaCoarseGrainedEllipticity.toQuantitativeCoarseGrainedEllipticity,
-        GammaSigmaCoarseGrainedEllipticity.toQuantitativeCoarseGrainedEllipticity_of_barSigmaAtScale_zero_pos,
+        GammaSigmaCoarseGrainedEllipticity.quantitativeEllipticity_of_positiveBarSigma,
         QuantitativeCoarseGrainedEllipticity.params]
     have h := hconv hP hStruct hP4 hparams n
     simpa [N, m] using h

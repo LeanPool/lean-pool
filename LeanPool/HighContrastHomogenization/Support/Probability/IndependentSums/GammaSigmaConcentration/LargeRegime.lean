@@ -27,10 +27,265 @@ noncomputable section
 variable {Ω ι : Type*} [MeasurableSpace Ω]
 variable {μ : Measure Ω}
 
+private theorem largeRegime_momentGeneratingFunctionExponent_le
+    {σ R D t S : ℝ}
+    (hσ₀ : 0 < σ) (hσ₁ : σ < 1)
+    (hR_pos : 0 < R) (ht_pos : 0 < t) (hD_pos : 0 < D)
+    (hD_eq : D = gammaSigmaHeavyTailRoundedConst σ)
+    (hS_eq : S = R ^ (σ / 2) * t ^ σ)
+    (hS_nonneg : 0 ≤ S) (hS_tpow : t ^ σ ≤ S)
+    (hlarge : R ^ (σ / (2 * (2 - σ))) ≤ t) :
+    -(R ^ ((σ - 1) / 2) * t ^ (σ - 1) / (4 * Real.sqrt D)) *
+        (gammaSigmaHeavyTailConst σ * Real.sqrt R * t) +
+      R * ((R ^ ((σ - 1) / 2) * t ^ (σ - 1) / (4 * Real.sqrt D)) ^ (2 : ℕ) * D)
+        ≤ -2 * t ^ σ := by
+  let l : ℝ := R ^ ((σ - 1) / 2) * t ^ (σ - 1) / (4 * Real.sqrt D)
+  have hR_nonneg : 0 ≤ R := hR_pos.le
+  have ht_nonneg : 0 ≤ t := ht_pos.le
+  have hsqrtD_pos : 0 < Real.sqrt D := Real.sqrt_pos.2 hD_pos
+  have hRpow : R ^ ((σ - 1) / 2) * Real.sqrt R = R ^ (σ / 2) := by
+    rw [Real.sqrt_eq_rpow, ← Real.rpow_add hR_pos]
+    congr 1
+    ring
+  have hB_eq : gammaSigmaHeavyTailConst σ = 16 * Real.sqrt D := by
+    dsimp [gammaSigmaHeavyTailConst]
+    rw [hD_eq]
+  have htpow : t ^ (σ - 1) * t = t ^ σ := by
+    calc
+      t ^ (σ - 1) * t = t ^ (σ - 1) * t ^ (1 : ℝ) := by rw [Real.rpow_one]
+      _ = t ^ σ := by
+            rw [← Real.rpow_add ht_pos]
+            congr 1
+            ring
+  have hla : l * (gammaSigmaHeavyTailConst σ * Real.sqrt R * t) = 4 * S := by
+    calc
+      l * (gammaSigmaHeavyTailConst σ * Real.sqrt R * t)
+        = (R ^ ((σ - 1) / 2) * t ^ (σ - 1) / (4 * Real.sqrt D)) *
+            (16 * Real.sqrt D * Real.sqrt R * t) := by
+              rw [hB_eq]
+      _ = 4 * (R ^ ((σ - 1) / 2) * Real.sqrt R) * (t ^ (σ - 1) * t) := by
+            field_simp [hsqrtD_pos.ne']
+            ring
+      _ = 4 * S := by
+            rw [hRpow, htpow, hS_eq]
+            ring
+  have hquad : R * (l ^ (2 : ℕ) * D) =
+      (1 / 16 : ℝ) * (R ^ σ * t ^ (2 * σ - 2)) := by
+    have hRpow_sq :
+        (R ^ ((σ - 1) / 2)) ^ (2 : ℕ) = R ^ (σ - 1) := by
+      rw [show (2 : ℝ) = (2 : ℕ) by norm_num, ← Real.rpow_natCast,
+        ← Real.rpow_mul hR_nonneg]
+      congr 1
+      ring
+    have htpow_sq :
+        (t ^ (σ - 1)) ^ (2 : ℕ) = t ^ (2 * σ - 2) := by
+      rw [show (2 : ℝ) = (2 : ℕ) by norm_num, ← Real.rpow_natCast,
+        ← Real.rpow_mul ht_nonneg]
+      congr 1
+      ring
+    have hR_sigma : R * R ^ (σ - 1) = R ^ σ := by
+      calc
+        R * R ^ (σ - 1) = R ^ (1 : ℝ) * R ^ (σ - 1) := by rw [Real.rpow_one]
+        _ = R ^ σ := by
+              rw [← Real.rpow_add hR_pos]
+              congr 1
+              ring
+    dsimp [l]
+    field_simp [hsqrtD_pos.ne', pow_two]
+    rw [Real.sq_sqrt hD_pos.le, hRpow_sq, htpow_sq, hR_sigma]
+    ring_nf
+  have hscale :
+      -l * (gammaSigmaHeavyTailConst σ * Real.sqrt R * t) + R * (l ^ (2 : ℕ) * D)
+        ≤ -4 * S + (1 / 16 : ℝ) * S := by
+    calc
+      -l * (gammaSigmaHeavyTailConst σ * Real.sqrt R * t) + R * (l ^ (2 : ℕ) * D)
+        = -(l * (gammaSigmaHeavyTailConst σ * Real.sqrt R * t)) +
+            R * (l ^ (2 : ℕ) * D) := by ring
+      _ = -(4 : ℝ) * S + (1 / 16 : ℝ) * (R ^ σ * t ^ (2 * σ - 2)) := by
+            rw [hla, hquad]
+            ring
+      _ ≤ -(4 : ℝ) * S + (1 / 16 : ℝ) * S := by
+            have hcorr : R ^ σ * t ^ (2 * σ - 2) ≤ S := by
+              rw [hS_eq]
+              exact largeRegime_correction_le_gammaSigmaScale
+                (σ := σ) (R := R) (t := t) hσ₀ hσ₁ hR_pos ht_pos hlarge
+            have hscaled :
+                (1 / 16 : ℝ) * (R ^ σ * t ^ (2 * σ - 2)) ≤ (1 / 16 : ℝ) * S :=
+              mul_le_mul_of_nonneg_left hcorr (by norm_num)
+            linarith
+  calc
+    -l * (gammaSigmaHeavyTailConst σ * Real.sqrt R * t) + R * (l ^ (2 : ℕ) * D)
+      ≤ -4 * S + (1 / 16 : ℝ) * S := hscale
+    _ = (-(63 / 16 : ℝ)) * S := by ring
+    _ ≤ -(2 : ℝ) * S :=
+          mul_le_mul_of_nonneg_right
+            (by norm_num : (-(63 / 16 : ℝ)) ≤ -2) hS_nonneg
+    _ ≤ -(2 : ℝ) * t ^ σ := by
+          have hscaled : (2 : ℝ) * t ^ σ ≤ (2 : ℝ) * S :=
+            mul_le_mul_of_nonneg_left hS_tpow (by positivity)
+          have hneg := neg_le_neg hscaled
+          simpa [two_mul] using hneg
+
+private theorem largeRegime_unionTailExponent_le_gammaSigmaScale
+    {σ R D t S : ℝ}
+    (hσ₀ : 0 < σ) (hσ₁ : σ < 1) (hR_one : 1 ≤ R) (ht_nonneg : 0 ≤ t)
+    (hD_eq : D = gammaSigmaHeavyTailRoundedConst σ)
+    (hS_eq : S = R ^ (σ / 2) * t ^ σ)
+    (hS_nonneg : 0 ≤ S) (hS_tpow : t ^ σ ≤ S)
+    (hcard : R ^ (σ / (2 - σ)) ≤ S) :
+    R * Real.exp (-(((2 * Real.sqrt D) ^ (1 / (1 - σ)) * Real.sqrt R * t) ^ σ))
+      ≤ Real.exp (-2 * t ^ σ) := by
+  have hR_pos : 0 < R := lt_of_lt_of_le (by norm_num) hR_one
+  have hR_nonneg : 0 ≤ R := hR_pos.le
+  have hLpow :
+      ((2 * Real.sqrt D) ^ (1 / (1 - σ)) * Real.sqrt R * t) ^ σ =
+        gammaSigmaHeavyTailUnionConst σ * S := by
+    let q : ℝ := σ / (1 - σ)
+    have hq_eq : (1 / (1 - σ)) * σ = q := by
+      dsimp [q]
+      field_simp [sub_ne_zero.mpr hσ₁.ne.symm]
+    have hsqrtR_sigma : (Real.sqrt R) ^ σ = R ^ (σ / 2) := by
+      rw [Real.sqrt_eq_rpow, ← Real.rpow_mul hR_nonneg]
+      congr 1
+      ring
+    calc
+      ((2 * Real.sqrt D) ^ (1 / (1 - σ)) * Real.sqrt R * t) ^ σ
+        = (((2 * Real.sqrt D) ^ (1 / (1 - σ)) * Real.sqrt R) ^ σ) * t ^ σ := by
+            rw [Real.mul_rpow (by positivity) (by positivity)]
+      _ = ((2 * Real.sqrt D) ^ (1 / (1 - σ))) ^ σ * (Real.sqrt R) ^ σ * t ^ σ := by
+            rw [Real.mul_rpow (by positivity) (by positivity)]
+      _ = (2 * Real.sqrt D) ^ q * (R ^ (σ / 2) * t ^ σ) := by
+            rw [← Real.rpow_mul (show 0 ≤ 2 * Real.sqrt D by positivity)]
+            rw [hsqrtR_sigma, hq_eq]
+            simp [mul_assoc, mul_comm]
+      _ = gammaSigmaHeavyTailUnionConst σ * S := by
+            rw [hD_eq, hS_eq]
+            rfl
+  rw [hLpow]
+  calc
+    R * Real.exp (-(gammaSigmaHeavyTailUnionConst σ * S))
+      ≤ Real.exp (-2 * S) := by
+          exact card_mul_exp_neg_gammaSigmaHeavyTailUnionConst_mul_le_exp_neg_two_mul
+            (σ := σ) (R := R) (x := S) hσ₀ hσ₁ hR_one hS_nonneg hcard
+    _ ≤ Real.exp (-2 * t ^ σ) := by
+          have hscaled : (2 : ℝ) * t ^ σ ≤ (2 : ℝ) * S :=
+            mul_le_mul_of_nonneg_left hS_tpow (by norm_num)
+          have hneg := neg_le_neg hscaled
+          exact (Real.exp_le_exp).2 (by
+            simpa [mul_comm, mul_left_comm, mul_assoc] using hneg)
+
+private theorem largeRegime_chernoffParameters_admissible
+    {σ R D t : ℝ}
+    (hσ₁ : σ < 1) (hR_one : 1 ≤ R) (ht : 1 ≤ t)
+    (hD_pos : 0 < D) (hsqrtD_two : 2 ≤ Real.sqrt D) :
+    let l : ℝ := R ^ ((σ - 1) / 2) * t ^ (σ - 1) / (4 * Real.sqrt D)
+    let L : ℝ := (2 * Real.sqrt D) ^ (1 / (1 - σ)) * Real.sqrt R * t
+    0 ≤ l ∧ l ≤ 1 ∧ 1 ≤ L ∧ l ≤ (1 / 2) * L ^ (σ - 1) := by
+  let l : ℝ := R ^ ((σ - 1) / 2) * t ^ (σ - 1) / (4 * Real.sqrt D)
+  let L : ℝ := (2 * Real.sqrt D) ^ (1 / (1 - σ)) * Real.sqrt R * t
+  have hR_pos : 0 < R := lt_of_lt_of_le (by norm_num) hR_one
+  have hR_nonneg : 0 ≤ R := hR_pos.le
+  have ht_pos : 0 < t := lt_of_lt_of_le zero_lt_one ht
+  have ht_nonneg : 0 ≤ t := ht_pos.le
+  have hsqrtD_pos : 0 < Real.sqrt D := Real.sqrt_pos.2 hD_pos
+  have hsqrtR_pos : 0 < Real.sqrt R := Real.sqrt_pos.2 hR_pos
+  have hsqrtR_nonneg : 0 ≤ Real.sqrt R := hsqrtR_pos.le
+  have hl_nonneg : 0 ≤ l := by
+    dsimp [l]
+    positivity
+  have hRpow_le_one : R ^ ((σ - 1) / 2) ≤ 1 := by
+    have hExp_nonpos : (σ - 1) / 2 ≤ 0 := by linarith
+    exact Real.rpow_le_one_of_one_le_of_nonpos hR_one hExp_nonpos
+  have htpow_le_one : t ^ (σ - 1) ≤ 1 := by
+    exact Real.rpow_le_one_of_one_le_of_nonpos ht (by linarith)
+  have hl_half : l ≤ 1 / 2 := by
+    dsimp [l]
+    have hle :
+        R ^ ((σ - 1) / 2) * t ^ (σ - 1) / (4 * Real.sqrt D) ≤
+          1 / (4 * Real.sqrt D) := by
+      have hprod : R ^ ((σ - 1) / 2) * t ^ (σ - 1) ≤ 1 := by
+        have hnonneg : 0 ≤ t ^ (σ - 1) := Real.rpow_nonneg ht_nonneg _
+        calc
+          R ^ ((σ - 1) / 2) * t ^ (σ - 1) ≤ 1 * t ^ (σ - 1) := by gcongr
+          _ ≤ 1 := by simpa using htpow_le_one
+      have hden_pos : 0 < 4 * Real.sqrt D := by positivity
+      exact div_le_div_of_nonneg_right hprod hden_pos.le
+    calc
+      l = R ^ ((σ - 1) / 2) * t ^ (σ - 1) / (4 * Real.sqrt D) := rfl
+      _ ≤ 1 / (4 * Real.sqrt D) := hle
+      _ ≤ 1 / 2 := by
+            have hden : (8 : ℝ) ≤ 4 * Real.sqrt D := by
+              have hden' := mul_le_mul_of_nonneg_left hsqrtD_two (by norm_num : (0 : ℝ) ≤ 4)
+              norm_num at hden'
+              exact hden'
+            have hinv : 1 / (4 * Real.sqrt D) ≤ 1 / (8 : ℝ) :=
+              one_div_le_one_div_of_le (by positivity) hden
+            exact hinv.trans (by norm_num)
+  have hL_one : 1 ≤ L := by
+    have hconst_one : 1 ≤ (2 * Real.sqrt D) ^ (1 / (1 - σ)) := by
+      have hbase_one : 1 ≤ 2 * Real.sqrt D := by
+        calc
+          (1 : ℝ) ≤ Real.sqrt D := le_trans (by norm_num) hsqrtD_two
+          _ ≤ 2 * Real.sqrt D :=
+            le_mul_of_one_le_left hsqrtD_pos.le (by norm_num : (1 : ℝ) ≤ 2)
+      have hexp_nonneg : 0 ≤ 1 / (1 - σ) := by
+        have hone_sub_pos : 0 < 1 - σ := sub_pos.mpr hσ₁
+        positivity
+      exact Real.one_le_rpow hbase_one hexp_nonneg
+    have hsqrtR_one : 1 ≤ Real.sqrt R := (Real.one_le_sqrt).2 hR_one
+    dsimp [L]
+    calc
+      1 ≤ (2 * Real.sqrt D) ^ (1 / (1 - σ)) := hconst_one
+      _ ≤ (2 * Real.sqrt D) ^ (1 / (1 - σ)) * Real.sqrt R := by
+            calc
+              (2 * Real.sqrt D) ^ (1 / (1 - σ)) =
+                  (2 * Real.sqrt D) ^ (1 / (1 - σ)) * 1 := by ring
+              _ ≤ (2 * Real.sqrt D) ^ (1 / (1 - σ)) * Real.sqrt R :=
+                mul_le_mul_of_nonneg_left hsqrtR_one
+                  (Real.rpow_nonneg (by positivity : 0 ≤ 2 * Real.sqrt D) _)
+      _ ≤ (2 * Real.sqrt D) ^ (1 / (1 - σ)) * Real.sqrt R * t := by
+            calc
+              (2 * Real.sqrt D) ^ (1 / (1 - σ)) * Real.sqrt R =
+                  ((2 * Real.sqrt D) ^ (1 / (1 - σ)) * Real.sqrt R) * 1 := by ring
+              _ ≤ ((2 * Real.sqrt D) ^ (1 / (1 - σ)) * Real.sqrt R) * t := by gcongr
+              _ = (2 * Real.sqrt D) ^ (1 / (1 - σ)) * Real.sqrt R * t := by ring
+  have hlL_eq : (1 / 2) * L ^ (σ - 1) = l := by
+    have hconst_pow :
+        ((2 * Real.sqrt D) ^ (1 / (1 - σ))) ^ (σ - 1) =
+          (2 * Real.sqrt D) ^ (-1 : ℝ) := by
+      rw [← Real.rpow_mul (show 0 ≤ 2 * Real.sqrt D by positivity)]
+      congr 2
+      field_simp [sub_ne_zero.mpr hσ₁.ne.symm]
+      ring
+    have hsqrtR_pow : (Real.sqrt R) ^ (σ - 1) = R ^ ((σ - 1) / 2) := by
+      rw [Real.sqrt_eq_rpow, ← Real.rpow_mul hR_nonneg]
+      congr 1
+      ring
+    calc
+      (1 / 2) * L ^ (σ - 1)
+        = (1 / 2) *
+            (((2 * Real.sqrt D) ^ (1 / (1 - σ)) * (Real.sqrt R * t)) ^ (σ - 1)) := by
+              simp [L, mul_assoc]
+      _ = (1 / 2) * ((2 * Real.sqrt D) ^ (1 / (1 - σ))) ^ (σ - 1) *
+            (Real.sqrt R * t) ^ (σ - 1) := by
+              rw [Real.mul_rpow (by positivity) (by positivity)]
+              ring
+      _ = (1 / 2) * (2 * Real.sqrt D) ^ (-1 : ℝ) * (Real.sqrt R * t) ^ (σ - 1) := by
+              rw [hconst_pow]
+      _ = (1 / 2) * (1 / (2 * Real.sqrt D)) *
+            ((Real.sqrt R) ^ (σ - 1) * t ^ (σ - 1)) := by
+              rw [Real.rpow_neg_one, inv_eq_one_div,
+                Real.mul_rpow hsqrtR_nonneg ht_nonneg]
+      _ = l := by
+              rw [hsqrtR_pow]
+              dsimp [l]
+              ring_nf
+  exact ⟨hl_nonneg, le_trans hl_half (by norm_num), hL_one, hlL_eq.symm.le⟩
+
 /-- Large-regime one-sided heavy-tail concentration for centered independent
 unit-scale `O_{Γ_σ}` summands. -/
 theorem
-  measureReal_upperTailEvent_finset_sum_le_exp_neg_of_iIndepFun_of_isBigO_of_integral_eq_zero_of_lt_one_unit_largeRegime
+  upperTailProbability_finiteSum_le_exp_neg_of_iIndepFun_of_isBigO
     [IsProbabilityMeasure μ]
     {X : ι → Ω → ℝ} {s : Finset ι} {σ t : ℝ}
     (h_indep : iIndepFun X μ)
@@ -98,239 +353,38 @@ theorem
       _ = S := by rfl
   let l : ℝ := R ^ ((σ - 1) / 2) * t ^ (σ - 1) / (4 * Real.sqrt D)
   let L : ℝ := (2 * Real.sqrt D) ^ (1 / (1 - σ)) * Real.sqrt R * t
-  have hl_nonneg : 0 ≤ l := by
-    dsimp [l]
-    positivity
-  have hRpow_le_one : R ^ ((σ - 1) / 2) ≤ 1 := by
-    have hExp_nonpos : (σ - 1) / 2 ≤ 0 := by linarith
-    exact Real.rpow_le_one_of_one_le_of_nonpos hR_one hExp_nonpos
-  have htpow_le_one : t ^ (σ - 1) ≤ 1 := by
-    exact Real.rpow_le_one_of_one_le_of_nonpos ht (by linarith)
-  have hl_half : l ≤ 1 / 2 := by
-    dsimp [l]
-    have hle :
-        R ^ ((σ - 1) / 2) * t ^ (σ - 1) / (4 * Real.sqrt D) ≤
-          1 / (4 * Real.sqrt D) := by
-      have hprod :
-          R ^ ((σ - 1) / 2) * t ^ (σ - 1) ≤ 1 := by
-        have hnonneg : 0 ≤ t ^ (σ - 1) := Real.rpow_nonneg ht_nonneg _
-        calc
-          R ^ ((σ - 1) / 2) * t ^ (σ - 1) ≤ 1 * t ^ (σ - 1) := by
-                gcongr
-          _ ≤ 1 := by simpa using htpow_le_one
-      have hden_pos : 0 < 4 * Real.sqrt D := by positivity
-      exact div_le_div_of_nonneg_right hprod hden_pos.le
-    calc
-      l = R ^ ((σ - 1) / 2) * t ^ (σ - 1) / (4 * Real.sqrt D) := rfl
-      _ ≤ 1 / (4 * Real.sqrt D) := hle
-      _ ≤ 1 / 2 := by
-            have hden : (8 : ℝ) ≤ 4 * Real.sqrt D := by
-              have hden' :=
-                mul_le_mul_of_nonneg_left hsqrtD_two
-                  (by norm_num : 0 ≤ (4 : ℝ))
-              norm_num at hden'
-              exact hden'
-            have hinv : 1 / (4 * Real.sqrt D) ≤ 1 / (8 : ℝ) := by
-              exact one_div_le_one_div_of_le (by positivity : 0 < (8 : ℝ)) hden
-            exact hinv.trans (by norm_num : (1 / (8 : ℝ)) ≤ 1 / 2)
-  have hl_one : l ≤ 1 := by linarith
-  have hL_one : 1 ≤ L := by
-    have hconst_one : 1 ≤ (2 * Real.sqrt D) ^ (1 / (1 - σ)) := by
-      have hbase_one : 1 ≤ 2 * Real.sqrt D := by
-        calc
-          (1 : ℝ) ≤ Real.sqrt D := le_trans (by norm_num) hsqrtD_two
-          _ ≤ 2 * Real.sqrt D := by
-            exact le_mul_of_one_le_left hsqrtD_pos.le (by norm_num : (1 : ℝ) ≤ 2)
-      have hexp_nonneg : 0 ≤ 1 / (1 - σ) := by
-        have hone_sub_pos : 0 < 1 - σ := sub_pos.mpr hσ₁
-        positivity
-      exact Real.one_le_rpow hbase_one hexp_nonneg
-    have hsqrtR_one : 1 ≤ Real.sqrt R := by
-      refine (Real.one_le_sqrt).2 ?_
-      exact hR_one
-    dsimp [L]
-    calc
-      1 ≤ (2 * Real.sqrt D) ^ (1 / (1 - σ)) := hconst_one
-      _ ≤ (2 * Real.sqrt D) ^ (1 / (1 - σ)) * Real.sqrt R := by
-            calc
-              (2 * Real.sqrt D) ^ (1 / (1 - σ))
-                  =
-                (2 * Real.sqrt D) ^ (1 / (1 - σ)) * 1 := by ring
-              _ ≤ (2 * Real.sqrt D) ^ (1 / (1 - σ)) * Real.sqrt R :=
-                mul_le_mul_of_nonneg_left hsqrtR_one
-                  (Real.rpow_nonneg (by positivity : 0 ≤ 2 * Real.sqrt D) _)
-      _ ≤ (2 * Real.sqrt D) ^ (1 / (1 - σ)) * Real.sqrt R * t := by
-            calc
-              (2 * Real.sqrt D) ^ (1 / (1 - σ)) * Real.sqrt R
-                  = ((2 * Real.sqrt D) ^ (1 / (1 - σ)) * Real.sqrt R) * 1 := by ring
-              _ ≤ ((2 * Real.sqrt D) ^ (1 / (1 - σ)) * Real.sqrt R) * t := by
-                    gcongr
-              _ = (2 * Real.sqrt D) ^ (1 / (1 - σ)) * Real.sqrt R * t := by ring
-  have hlL_eq : (1 / 2) * L ^ (σ - 1) = l := by
-    have hconst_pow :
-        ((2 * Real.sqrt D) ^ (1 / (1 - σ))) ^ (σ - 1) = (2 * Real.sqrt D) ^ (-1 : ℝ) := by
-      rw [← Real.rpow_mul (show 0 ≤ 2 * Real.sqrt D by positivity)]
-      congr 2
-      field_simp [sub_ne_zero.mpr hσ₁.ne.symm]
-      ring
-    have hsqrtR_pow :
-        (Real.sqrt R) ^ (σ - 1) = R ^ ((σ - 1) / 2) := by
-      rw [Real.sqrt_eq_rpow, ← Real.rpow_mul hR_nonneg]
-      congr 1
-      ring
-    calc
-      (1 / 2) * L ^ (σ - 1)
-        = (1 / 2) *
-            (((2 * Real.sqrt D) ^ (1 / (1 - σ)) * (Real.sqrt R * t))) ^ (σ - 1) := by
-              simp [L, mul_assoc]
-      _ = (1 / 2) *
-            ((2 * Real.sqrt D) ^ (1 / (1 - σ))) ^ (σ - 1) *
-              (Real.sqrt R * t) ^ (σ - 1) := by
-              rw [Real.mul_rpow (by positivity) (by positivity)]
-              ring
-      _ = (1 / 2) * (2 * Real.sqrt D) ^ (-1 : ℝ) * (Real.sqrt R * t) ^ (σ - 1) := by
-              rw [hconst_pow]
-      _ = (1 / 2) * (1 / (2 * Real.sqrt D)) *
-            ((Real.sqrt R) ^ (σ - 1) * t ^ (σ - 1)) := by
-              rw [Real.rpow_neg_one, inv_eq_one_div, Real.mul_rpow hsqrtR_nonneg ht_nonneg]
-      _ = l := by
-              rw [hsqrtR_pow]
-              dsimp [l]
-              ring_nf
-  have hlL : l ≤ (1 / 2) * L ^ (σ - 1) := by
-    rw [hlL_eq]
+  have hparameters :=
+    largeRegime_chernoffParameters_admissible
+      (σ := σ) (R := R) (D := D) (t := t)
+      hσ₁ hR_one ht hD_pos hsqrtD_two
+  rcases hparameters with ⟨hl_nonneg, hl_one, hL_one, hlL⟩
   have htail :=
-    measureReal_upperTailEvent_finset_sum_le_exp_card_mul_add_card_mul_exp_neg_of_iIndepFun_of_isBigO_of_integral_eq_zero_of_lt_one
+    upperTailProbability_finiteSum_le_exp_card_mul_add_card_mul_exp_neg
       (μ := μ) (X := X) (s := s) (σ := σ)
       (a := B * Real.sqrt R * t) (l := l) (L := L)
       h_indep h_meas h_int h_mean hσ₀ hσ₁ hX hl_nonneg hl_one hL_one hlL
+  have hD_eq : D = gammaSigmaHeavyTailRoundedConst σ := by rfl
+  have hS_eq : S = R ^ (σ / 2) * t ^ σ := by rfl
   have hmgf :
       Real.exp (-l * (B * Real.sqrt R * t) + R * (l ^ (2 : ℕ) * D))
         ≤ Real.exp (-2 * t ^ σ) := by
     apply (Real.exp_le_exp).2
-    have hRpow : R ^ ((σ - 1) / 2) * Real.sqrt R = R ^ (σ / 2) := by
-      rw [Real.sqrt_eq_rpow, ← Real.rpow_add hR_pos]
-      congr 1
-      ring
-    have htpow : t ^ (σ - 1) * t = t ^ σ := by
-      calc
-        t ^ (σ - 1) * t = t ^ (σ - 1) * t ^ (1 : ℝ) := by rw [Real.rpow_one]
-        _ = t ^ σ := by
-              rw [← Real.rpow_add ht_pos]
-              congr 1
-              ring
-    have hla : l * (B * Real.sqrt R * t) = 4 * S := by
-      calc
-        l * (B * Real.sqrt R * t)
-          = (R ^ ((σ - 1) / 2) * t ^ (σ - 1) / (4 * Real.sqrt D)) *
-              (16 * Real.sqrt D * Real.sqrt R * t) := by
-                dsimp [l, B, gammaSigmaHeavyTailConst]
-        _ = 4 * (R ^ ((σ - 1) / 2) * Real.sqrt R) * (t ^ (σ - 1) * t) := by
-              field_simp [hsqrtD_pos.ne']
-              ring
-        _ = 4 * S := by
-              rw [hRpow, htpow]
-              ring
-    have hquad : R * (l ^ (2 : ℕ) * D) = (1 / 16 : ℝ) * (R ^ σ * t ^ (2 * σ - 2)) := by
-      have hRpow_sq :
-          (R ^ ((σ - 1) / 2)) ^ (2 : ℕ) = R ^ (σ - 1) := by
-        rw [show (2 : ℝ) = (2 : ℕ) by norm_num, ← Real.rpow_natCast, ← Real.rpow_mul hR_nonneg]
-        congr 1
-        ring
-      have htpow_sq :
-          (t ^ (σ - 1)) ^ (2 : ℕ) = t ^ (2 * σ - 2) := by
-        rw [show (2 : ℝ) = (2 : ℕ) by norm_num, ← Real.rpow_natCast, ← Real.rpow_mul ht_nonneg]
-        congr 1
-        ring
-      have hR_sigma : R * R ^ (σ - 1) = R ^ σ := by
-        calc
-          R * R ^ (σ - 1) = R ^ (1 : ℝ) * R ^ (σ - 1) := by rw [Real.rpow_one]
-          _ = R ^ σ := by
-                rw [← Real.rpow_add hR_pos]
-                congr 1
-                ring
-      dsimp [l]
-      field_simp [hsqrtD_pos.ne', pow_two]
-      rw [Real.sq_sqrt hD_pos.le, hRpow_sq, htpow_sq]
-      rw [hR_sigma]
-      ring_nf
-    have hscale :
-        -l * (B * Real.sqrt R * t) + R * (l ^ (2 : ℕ) * D)
-          ≤ -4 * S + (1 / 16 : ℝ) * S := by
-      calc
-        -l * (B * Real.sqrt R * t) + R * (l ^ (2 : ℕ) * D)
-          = -(l * (B * Real.sqrt R * t)) + R * (l ^ (2 : ℕ) * D) := by ring
-        _ = -(4 : ℝ) * S + (1 / 16 : ℝ) * (R ^ σ * t ^ (2 * σ - 2)) := by
-              rw [hla, hquad]
-              ring
-        _ ≤ -(4 : ℝ) * S + (1 / 16 : ℝ) * S := by
-              have hcorr :
-                  R ^ σ * t ^ (2 * σ - 2) ≤ S := by
-                simpa [S] using
-                  largeRegime_correction_le_gammaSigmaScale (σ := σ) (R := R) (t := t)
-                    hσ₀ hσ₁ hR_pos ht_pos (by simpa [R] using hlarge)
-              have hscaled :
-                  (1 / 16 : ℝ) * (R ^ σ * t ^ (2 * σ - 2)) ≤
-                    (1 / 16 : ℝ) * S := by
-                exact mul_le_mul_of_nonneg_left hcorr (by norm_num)
-              linarith
-    calc
-      -l * (B * Real.sqrt R * t) + R * (l ^ (2 : ℕ) * D)
-        ≤ -4 * S + (1 / 16 : ℝ) * S := hscale
-      _ = (-(63 / 16 : ℝ)) * S := by ring
-      _ ≤ -(2 : ℝ) * S :=
-            mul_le_mul_of_nonneg_right
-              (by norm_num : (-(63 / 16 : ℝ)) ≤ -2) hS_nonneg
-      _ ≤ -(2 : ℝ) * t ^ σ := by
-            have hscaled :
-                (2 : ℝ) * t ^ σ ≤ (2 : ℝ) * S := by
-              exact mul_le_mul_of_nonneg_left hS_tpow (by positivity)
-            have hneg := neg_le_neg hscaled
-            simpa [two_mul] using hneg
+    simpa [l, B, R, D] using
+      largeRegime_momentGeneratingFunctionExponent_le
+        (σ := σ) (R := R) (D := D) (t := t) (S := S)
+        hσ₀ hσ₁ hR_pos ht_pos hD_pos hD_eq hS_eq hS_nonneg hS_tpow
+        (by simpa [R] using hlarge)
   have hx_card :
       R ^ (σ / (2 - σ)) ≤ S := by
     simpa [S] using
       largeRegime_cardPow_le_gammaSigmaScale (σ := σ) (R := R) (t := t)
         hσ₀ hσ₁ hR_pos ht_pos (by simpa [R] using hlarge)
-  have hLpow :
-      L ^ σ = gammaSigmaHeavyTailUnionConst σ * S := by
-    have hq_eq : (1 / (1 - σ)) * σ = q := by
-      dsimp [q]
-      field_simp [sub_ne_zero.mpr hσ₁.ne.symm]
-    have hsqrtR_sigma : (Real.sqrt R) ^ σ = R ^ (σ / 2) := by
-      rw [Real.sqrt_eq_rpow, ← Real.rpow_mul hR_nonneg]
-      congr 1
-      ring
-    calc
-      L ^ σ
-        = (((2 * Real.sqrt D) ^ (1 / (1 - σ)) * Real.sqrt R * t) ^ σ) := by
-            simp [L]
-      _ = (((2 * Real.sqrt D) ^ (1 / (1 - σ)) * Real.sqrt R) ^ σ) * t ^ σ := by
-            rw [Real.mul_rpow (by positivity) ht_nonneg]
-      _ = ((2 * Real.sqrt D) ^ (1 / (1 - σ))) ^ σ * (Real.sqrt R) ^ σ * t ^ σ := by
-            rw [Real.mul_rpow (by positivity) hsqrtR_nonneg]
-      _ = (2 * Real.sqrt D) ^ q * (R ^ (σ / 2) * t ^ σ) := by
-            rw [← Real.rpow_mul (show 0 ≤ 2 * Real.sqrt D by positivity)]
-            rw [hsqrtR_sigma]
-            rw [hq_eq]
-            simp [mul_assoc, mul_comm]
-      _ = gammaSigmaHeavyTailUnionConst σ * S := by
-            rfl
   have hunion :
       R * Real.exp (-(L ^ σ)) ≤ Real.exp (-2 * t ^ σ) := by
-    rw [hLpow]
-    calc
-      R * Real.exp (-(gammaSigmaHeavyTailUnionConst σ * S))
-        ≤ Real.exp (-2 * S) := by
-            exact card_mul_exp_neg_gammaSigmaHeavyTailUnionConst_mul_le_exp_neg_two_mul
-              (σ := σ) (R := R) (x := S) hσ₀ hσ₁ hR_one hS_nonneg hx_card
-      _ ≤ Real.exp (-2 * t ^ σ) := by
-            have hscaled :
-                (2 : ℝ) * t ^ σ ≤ (2 : ℝ) * S :=
-              mul_le_mul_of_nonneg_left hS_tpow (by norm_num)
-            have hneg := neg_le_neg hscaled
-            exact (Real.exp_le_exp).2 (by
-              simpa [mul_comm, mul_left_comm, mul_assoc] using hneg)
+    simpa [L, D] using
+      largeRegime_unionTailExponent_le_gammaSigmaScale
+        (σ := σ) (R := R) (D := D) (t := t) (S := S)
+        hσ₀ hσ₁ hR_one ht_nonneg hD_eq hS_eq hS_nonneg hS_tpow hx_card
   have htail' :
       μ.real (upperTailEvent (fun ω => ∑ i ∈ s, X i ω)
         (gammaSigmaHeavyTailConst σ * Real.sqrt (s.card : ℝ) * t)) ≤
@@ -366,12 +420,12 @@ theorem isBigOWith_gammaSigma_finset_sum_unit_of_iIndepFun_of_isBigO_of_integral
   intro t ht
   by_cases hsmall : t ≤ (s.card : ℝ) ^ (σ / (2 * (2 - σ)))
   · simpa [mul_assoc, mul_left_comm, mul_comm] using
-      measureReal_upperTailEvent_finset_sum_le_exp_neg_of_iIndepFun_of_isBigO_of_integral_eq_zero_of_lt_one_unit_smallRegime
+      upperTailProbability_finiteSum_le_exp_neg_of_iIndepFun_of_isBigO_of_iIndepFun
         (μ := μ) (X := X) (s := s) (σ := σ) (t := t)
         h_indep h_meas hs hσ₀ hσ₁ hX h_mean ht hsmall
   · have hlarge : (s.card : ℝ) ^ (σ / (2 * (2 - σ))) ≤ t := le_of_not_ge hsmall
     simpa [mul_assoc, mul_left_comm, mul_comm] using
-      measureReal_upperTailEvent_finset_sum_le_exp_neg_of_iIndepFun_of_isBigO_of_integral_eq_zero_of_lt_one_unit_largeRegime
+      upperTailProbability_finiteSum_le_exp_neg_of_iIndepFun_of_isBigO
         (μ := μ) (X := X) (s := s) (σ := σ) (t := t)
         h_indep h_meas hs hσ₀ hσ₁ hX h_mean ht hlarge
 
@@ -434,7 +488,7 @@ theorem isBigOWith_gammaSigma_finset_sum_of_iIndepFun_of_isBigO_of_integral_eq_z
 
 /-- Symmetric heavy-tail concentration for centered independent `O_{Γ_σ}`
 summands on the range `0 < σ < 1`. -/
-theorem isBigO_gammaSigma_finset_sum_of_iIndepFun_of_isBigO_of_integral_eq_zero_of_lt_one
+theorem isBigO_gammaSigma_sum_iIndep_bigO_meanZero_ltOne
     [IsProbabilityMeasure μ]
     {X : ι → Ω → ℝ} {s : Finset ι} {σ K : ℝ}
     (h_indep : iIndepFun X μ)
@@ -541,7 +595,7 @@ theorem isBigO_gammaSigma_finset_sum_of_iIndepFun_of_isBigO_of_integral_eq_zero_
 
 /-- Averaging preserves the heavy-tail `Γ_σ` concentration scale in the range
 `0 < σ < 1`. -/
-theorem isBigO_gammaSigma_finsetAverage_of_iIndepFun_of_isBigO_of_integral_eq_zero_of_lt_one
+theorem isBigO_gammaSigma_average_iIndep_bigO_meanZero_ltOne
     [IsProbabilityMeasure μ]
     {X : ι → Ω → ℝ} {s : Finset ι} {σ K : ℝ}
     (h_indep : iIndepFun X μ)
@@ -555,7 +609,7 @@ theorem isBigO_gammaSigma_finsetAverage_of_iIndepFun_of_isBigO_of_integral_eq_ze
       (fun ω => ((s.card : ℝ)⁻¹) * ∑ i ∈ s, X i ω)
       (gammaSigmaHeavyTailEndpointConst σ * (Real.sqrt (s.card : ℝ) / (s.card : ℝ)) * K) := by
   have hsum :=
-    isBigO_gammaSigma_finset_sum_of_iIndepFun_of_isBigO_of_integral_eq_zero_of_lt_one
+    isBigO_gammaSigma_sum_iIndep_bigO_meanZero_ltOne
       (μ := μ) (X := X) (s := s) (σ := σ) (K := K)
       h_indep h_meas hs hσ₀ hσ₁ hK hX h_mean
   have hcard_inv_nonneg : 0 ≤ ((s.card : ℝ)⁻¹) := by positivity

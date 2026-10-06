@@ -24,7 +24,7 @@ noncomputable section
 
 /-- Square-root bridge from the note-base weak-flux apex to the expanded
 note-constant energy/seminorm forcing RHS. -/
-theorem localizedFluxDefectNegativeBesovAverageTwo_matVecMul_le_sqrt_of_scaled_noteEnergySeminormsForce_of_noteBase
+theorem negativeBesovFluxAverage_matrixVectorMultiply_le_sqrt_of_noteBase
     {d : ℕ} (Q : TriadicCube d) (a : CoeffField d) (u g : Vec d → Vec d)
     {s : ℝ} (hs : 0 < s) (hs_le : s ≤ 1) (m : ℕ) {BU BV : ℝ}
     (havg_nonneg : 0 ≤ cubeAverage Q (coefficientEnergyDensity a u))
@@ -69,7 +69,7 @@ theorem localizedFluxDefectNegativeBesovAverageTwo_matVecMul_le_sqrt_of_scaled_n
 Parent potential/solenoidal note-facing weak-flux RHS apex with the absorbed
 base expanded into the manuscript energy/seminorm forcing RHS.
 -/
-theorem localizedFluxDefectNegativeBesovAverageTwo_matVecMul_le_sqrt_of_scaled_noteEnergySeminormsForce_of_parent_potential_solenoidal_of_constructed_harmonicRemainder_bounds
+theorem negativeBesovFluxAverage_matVecMul_le_sqrt_of_constructedRemainder
     {d : ℕ} [NeZero d] (Q : TriadicCube d) (a : CoeffField d)
     (s : ℝ) (u g : Vec d → Vec d) {lam Lam : ℝ}
     (hs : 0 < s) (hs_le : s ≤ 1)
@@ -173,7 +173,7 @@ theorem localizedFluxDefectNegativeBesovAverageTwo_matVecMul_le_sqrt_of_scaled_n
           ((coarsePoincareRHSDepthWeight s m)⁻¹ *
             (weakFluxRHSAbsorbedLocalizedNoteBase Q a u g s m BU BV *
               (1 - Real.rpow (3 : ℝ) (-s))⁻¹)) :=
-    localizedFluxDefectNegativeBesovAverageTwo_matVecMul_le_sqrt_of_scaled_absorbedLocalizedNoteBase_of_parent_potential_solenoidal_of_constructed_harmonicRemainder_bounds
+    negativeBesovFluxAverage_matVecMul_le_sqrt_of_parent_potential_of_constructed
       (Q := Q) (a := a) (s := s) (u := u) (g := g) (lam := lam)
       (Lam := Lam) hs hu_potential hu_residual hEll_desc hu_mem_desc
       hg_mem_desc hC_desc hData_desc hsum_desc hchildBdd huBdd_desc
@@ -181,14 +181,14 @@ theorem localizedFluxDefectNegativeBesovAverageTwo_matVecMul_le_sqrt_of_scaled_n
       havg_parent_nonneg havg_nonneg hint hmem hGlobalBdd hLocalBdd
       hBU_nonneg hBV_nonneg hu hvConstructed
   exact
-    localizedFluxDefectNegativeBesovAverageTwo_matVecMul_le_sqrt_of_scaled_noteEnergySeminormsForce_of_noteBase
+    negativeBesovFluxAverage_matrixVectorMultiply_le_sqrt_of_noteBase
       Q a u g hs hs_le m havg_parent_nonneg hBU_nonneg hBV_nonneg hmain
 
 /--
 H¹ weak-solution note-facing weak-flux RHS apex with the absorbed base expanded
 into the manuscript energy/seminorm forcing RHS.
 -/
-theorem localizedFluxDefectNegativeBesovAverageTwo_matVecMul_le_sqrt_of_scaled_noteEnergySeminormsForce_of_h1DirichletRhsWeakSolutionOn_of_constructed_harmonicRemainder_bounds
+theorem negativeBesovFluxAverage_matVecMul_le_sqrt_of_weakSolution
     {d : ℕ} [NeZero d] (Q : TriadicCube d) (a : CoeffField d)
     (s : ℝ) (g : Vec d → Vec d) (u : H1Function (cubeSet Q))
     {lam Lam : ℝ}
@@ -291,21 +291,21 @@ theorem localizedFluxDefectNegativeBesovAverageTwo_matVecMul_le_sqrt_of_scaled_n
           ((coarsePoincareRHSDepthWeight s m)⁻¹ *
             (weakFluxRHSAbsorbedLocalizedNoteBase Q a u.grad g s m BU BV *
               (1 - Real.rpow (3 : ℝ) (-s))⁻¹)) :=
-    localizedFluxDefectNegativeBesovAverageTwo_matVecMul_le_sqrt_of_scaled_absorbedLocalizedNoteBase_of_h1DirichletRhsWeakSolutionOn_of_constructed_harmonicRemainder_bounds
+    negativeBesovFluxAverage_matVecMul_le_sqrt_of_of_h1DirichletRhsWeakSolutionOn
       (Q := Q) (a := a) (s := s) (g := g) (u := u) (lam := lam)
       (Lam := Lam) hs hweak hEll_desc hu_mem_desc hg_mem_desc hC_desc
       hData_desc hsum_desc hchildBdd huBdd_desc hgBdd_centered_desc (m := m)
       hBdd hEll_open hData hsum_half havg_parent_nonneg havg_nonneg hint
       hmem hGlobalBdd hLocalBdd hBU_nonneg hBV_nonneg hu_tail hvConstructed
   exact
-    localizedFluxDefectNegativeBesovAverageTwo_matVecMul_le_sqrt_of_scaled_noteEnergySeminormsForce_of_noteBase
+    negativeBesovFluxAverage_matrixVectorMultiply_le_sqrt_of_noteBase
       Q a u.grad g hs hs_le m havg_parent_nonneg hBU_nonneg hBV_nonneg hmain
 
 /--
 H¹ weak-solution note-facing weak-flux RHS apex with the RHS `H^s` regularity
 data compressed to the manuscript-facing package.
 -/
-theorem localizedFluxDefectNegativeBesovAverageTwo_matVecMul_le_sqrt_of_scaled_noteEnergySeminormsForce_of_h1DirichletRhsWeakSolutionOn_of_constructed_harmonicRemainder_bounds_of_cubeVectorBesovHRegularity
+theorem negativeBesovFluxAverage_matVecMul_le_sqrt_of_weakSolution_of_BesovRegularity
     {d : ℕ} [NeZero d] (Q : TriadicCube d) (a : CoeffField d)
     (s : ℝ) (g : Vec d → Vec d) (u : H1Function (cubeSet Q))
     {lam Lam : ℝ}
@@ -405,7 +405,7 @@ theorem localizedFluxDefectNegativeBesovAverageTwo_matVecMul_le_sqrt_of_scaled_n
     exact cubeBesovPositiveVectorPartialSeminormTwo_bddAbove_of_parent_bddAbove
       s g hR hg.partialSeminorms_bddAbove
   exact
-    localizedFluxDefectNegativeBesovAverageTwo_matVecMul_le_sqrt_of_scaled_noteEnergySeminormsForce_of_h1DirichletRhsWeakSolutionOn_of_constructed_harmonicRemainder_bounds
+    negativeBesovFluxAverage_matVecMul_le_sqrt_of_weakSolution
       Q a s g u hs hs_le hweak hEll_desc hu_mem_desc hg_mem_desc hC_desc
       hData_desc hsum_desc hchildBdd huBdd_desc hgBdd_centered_desc m hBdd
       hEll_open hData hsum_half havg_parent_nonneg havg_nonneg hint hmem

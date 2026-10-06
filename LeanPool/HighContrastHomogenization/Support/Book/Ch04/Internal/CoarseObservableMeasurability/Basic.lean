@@ -344,7 +344,8 @@ theorem integrable_coarseBObservable_of_integrable_coarseFullBlockMatrixObservab
     using MeasureTheory.Integrable.eval
       (MeasureTheory.Integrable.eval hInt (Sum.inl i)) (Sum.inl j)
 
-theorem integrable_coarseSigmaStarInvKappaMeanObservable_of_integrable_coarseFullBlockMatrixObservable
+theorem
+  integrable_coarseSigmaStarInvKappaMeanObservable_of_integrable_coarseFullBlockMatrixObservable
     {d : ℕ} {P : MeasureTheory.Measure (CoeffField d)} {U : Set (Vec d)}
     (hInt : MeasureTheory.Integrable (coarseFullBlockMatrixObservable U) P) :
     MeasureTheory.Integrable (coarseSigmaStarInvKappaMeanObservable U) P := by
@@ -564,6 +565,7 @@ theorem measurable_coarseSigmaStarInvKappaMeanObservable_of_hasMeasurableMuFamil
     measurable_fullBlockMatNegLowerLeft.comp
       (measurable_coarseFullBlockMatrixObservable_of_hasMeasurableMuFamily (U := U) hMu)
 
+/-- The minimum block energy for `P`, bundled as a measurable observable depending only on `U`. -/
 @[expose]
 noncomputable def measurableLocalObservable_Mu {d : ℕ} {U : Set (Vec d)}
     (hU : MeasurableSet U) (hMu : HasMeasurableMuFamily U) (P : BlockVec d) :
@@ -572,6 +574,8 @@ noncomputable def measurableLocalObservable_Mu {d : ℕ} {U : Set (Vec d)}
   measurable_toFun := hMu P
   isLocal_toFun := isLocalObservable_Mu hU P
 
+/-- An entry of the lower-right coarse block matrix, bundled as a measurable observable local to
+`U`. -/
 @[expose]
 noncomputable def measurableLocalObservable_coarseSigmaStarInvEntryObservable
     {d : ℕ} {U : Set (Vec d)} (hU : MeasurableSet U) (hMu : HasMeasurableMuFamily U)
@@ -586,6 +590,8 @@ noncomputable def measurableLocalObservable_coarseSigmaStarInvEntryObservable
       congrArg (fun B : BlockMat d => B.lowerRight r c)
         (isLocalObservable_coarseBlockMatrix (U := U) hU hagree)
 
+/-- An entry of the upper-left coarse block matrix, bundled as a measurable observable local to
+`U`. -/
 @[expose]
 noncomputable def measurableLocalObservable_coarseBEntryObservable
     {d : ℕ} {U : Set (Vec d)} (hU : MeasurableSet U) (hMu : HasMeasurableMuFamily U)
@@ -600,6 +606,7 @@ noncomputable def measurableLocalObservable_coarseBEntryObservable
       congrArg (fun B : BlockMat d => B.upperLeft r c)
         (isLocalObservable_coarseBlockMatrix (U := U) hU hagree)
 
+/-- A negated lower-left coarse block entry, bundled as a measurable observable local to `U`. -/
 @[expose]
 noncomputable def measurableLocalObservable_coarseSigmaStarInvKappaMeanEntryObservable
     {d : ℕ} {U : Set (Vec d)} (hU : MeasurableSet U) (hMu : HasMeasurableMuFamily U)
@@ -615,6 +622,7 @@ noncomputable def measurableLocalObservable_coarseSigmaStarInvKappaMeanEntryObse
       congrArg (fun B : BlockMat d => -(B.lowerLeft r c))
         (isLocalObservable_coarseBlockMatrix (U := U) hU hagree)
 
+/-- The full coarse block matrix, bundled as a measurable observable depending only on `U`. -/
 @[expose]
 noncomputable def measurableLocalObservable_coarseFullBlockMatrixObservable
     {d : ℕ} {U : Set (Vec d)} (hU : MeasurableSet U) (hMu : HasMeasurableMuFamily U) :
@@ -624,6 +632,7 @@ noncomputable def measurableLocalObservable_coarseFullBlockMatrixObservable
     measurable_coarseFullBlockMatrixObservable_of_hasMeasurableMuFamily (U := U) hMu
   isLocal_toFun := isLocalObservable_coarseFullBlockMatrixObservable (U := U) hU
 
+/-- The lower-right coarse matrix block, bundled as a measurable observable local to `U`. -/
 @[expose]
 noncomputable def measurableLocalObservable_coarseSigmaStarInvObservable
     {d : ℕ} {U : Set (Vec d)} (hU : MeasurableSet U) (hMu : HasMeasurableMuFamily U) :
@@ -632,6 +641,7 @@ noncomputable def measurableLocalObservable_coarseSigmaStarInvObservable
     (measurableLocalObservable_coarseFullBlockMatrixObservable (U := U) hU hMu)
     fullBlockMatLowerRight measurable_fullBlockMatLowerRight
 
+/-- The upper-left coarse matrix block, bundled as a measurable observable local to `U`. -/
 @[expose]
 noncomputable def measurableLocalObservable_coarseBObservable
     {d : ℕ} {U : Set (Vec d)} (hU : MeasurableSet U) (hMu : HasMeasurableMuFamily U) :
@@ -640,6 +650,7 @@ noncomputable def measurableLocalObservable_coarseBObservable
     (measurableLocalObservable_coarseFullBlockMatrixObservable (U := U) hU hMu)
     fullBlockMatUpperLeft measurable_fullBlockMatUpperLeft
 
+/-- The negated lower-left coarse matrix block, bundled as a measurable observable local to `U`. -/
 @[expose]
 noncomputable def measurableLocalObservable_coarseSigmaStarInvKappaMeanObservable
     {d : ℕ} {U : Set (Vec d)} (hU : MeasurableSet U) (hMu : HasMeasurableMuFamily U) :

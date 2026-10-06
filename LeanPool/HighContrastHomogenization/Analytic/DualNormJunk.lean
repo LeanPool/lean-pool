@@ -107,7 +107,7 @@ theorem negSobolevNorm_eq_top_of_not_integrableOn (V : Set (Vec d)) (s : ℝ)
           IsLocalVecTest V ψ' ∧ hsNormSq V s ψ' ≤ 1} => dualPairing V F ψ'.1)
         ⟨ψ, hψ, hnorm⟩)
 
-/-- The same for the `H̲^{-1}` dual norm. -/
+/-- The same for the `H_underlined^{-1}` dual norm. -/
 theorem negOneNorm_eq_top_of_not_integrableOn (V : Set (Vec d))
     (F ψ : Vec d → Vec d) (hψ : IsLocalVecTest V ψ) (hnorm : h1NormSq V ψ ≤ 1)
     (h : ¬ IntegrableOn (fun x => vecDot (F x) (ψ x)) V volume) :

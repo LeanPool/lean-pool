@@ -75,7 +75,7 @@ theorem cubeBesovPositiveScalarDepthSeminorm_eq_scaleWeight_neg_mul_cubeBesovDep
           congr 1
           simp [cubeBesovDepthSeminorm, Real.sqrt_eq_rpow]
 
-theorem cubeBesovPositiveScalarPartialSeminormTwo_eq_scaleWeight_neg_mul_cubeBesovPartialSeminorm_two_two
+theorem cubeBesovPositiveScalarPartialTwo_eq_weightedPartialTwo
     {d : ℕ} (Q : TriadicCube d) (s : ℝ) (N : ℕ) (v : Vec d → ℝ) :
     cubeBesovPositiveScalarPartialSeminormTwo Q s N v =
       cubeBesovScaleWeight (-s) Q * cubeBesovPartialSeminorm Q s (2 : ℝ≥0∞) (2 : ℝ≥0∞) N v := by
@@ -91,7 +91,8 @@ theorem cubeBesovPositiveScalarPartialSeminormTwo_eq_scaleWeight_neg_mul_cubeBes
           refine congrArg Real.sqrt ?_
           refine Finset.sum_congr rfl ?_
           intro j hj
-          rw [cubeBesovPositiveScalarDepthSeminorm_eq_scaleWeight_neg_mul_cubeBesovDepthSeminorm_two]
+          rw [
+          cubeBesovPositiveScalarDepthSeminorm_eq_scaleWeight_neg_mul_cubeBesovDepthSeminorm_two]
     _ = cubeBesovScaleWeight (-s) Q *
           Real.sqrt (∑ j ∈ Finset.range (N + 1),
             (cubeBesovDepthSeminorm Q s (2 : ℝ≥0∞) v j) ^ 2) := by
@@ -103,7 +104,8 @@ theorem cubeBesovPositiveScalarPartialSeminormTwo_eq_scaleWeight_neg_mul_cubeBes
           cubeBesovPartialSeminorm Q s (2 : ℝ≥0∞) (2 : ℝ≥0∞) N v := by
           rw [cubeBesovPartialSeminorm_two_two_eq_sqrt_sum_sq]
 
-theorem CubeMultiscalePoincareInput.partialSeminorm_two_two_le_geometric_mul_cubeBesovCircPartialNorm
+theorem
+  CubeMultiscalePoincareInput.partialSeminorm_two_two_le_geometric_mul_cubeBesovCircPartialNorm
     {d : ℕ} {Q : TriadicCube d} {s C : ℝ} {u g : Vec d → ℝ} {M : ℕ}
     (hinput : CubeMultiscalePoincareInput Q C u g M)
     (hs : 0 < s) (hC : 0 ≤ C) :
@@ -126,7 +128,9 @@ theorem CubeMultiscalePoincareInput.partialSeminorm_two_two_le_geometric_mul_cub
       ∀ j ∈ Finset.range (M + 1), ∀ n ∈ Finset.range (M + 1), 0 ≤ A j n := by
     intro j hj n hn
     by_cases hjn : j + n ≤ M
-    · simp [A, hjn]
+    · suffices h : 0 ≤ r ^ n *
+          cubeBesovCircDepthSeminorm Q (1 - s) (2 : ℝ≥0∞) g (j + n) by
+        simpa [A, a, hjn] using h
       exact mul_nonneg (pow_nonneg hr_nonneg n)
         (cubeBesovCircDepthSeminorm_nonneg Q (1 - s) (2 : ℝ≥0∞) g (j + n))
     · simp [A, hjn]
@@ -272,7 +276,7 @@ theorem CubeMultiscalePoincareInput.partialSeminorm_two_two_le_geometric_mul_cub
           cubeBesovCircPartialNorm Q (1 - s) (2 : ℝ≥0∞) (1 : ℝ≥0∞) M g := by
             ring
 
-theorem cubeBesovDepthSeminorm_two_le_weighted_shifted_sum_components_of_vector_local_circ_bound
+theorem depthBesovSeminorm_two_le_weighted_circComponents_of_localBound
     {d : ℕ} (Q : TriadicCube d) (s C : ℝ) (u : Vec d → ℝ) (G : Vec d → Vec d)
     (j N : ℕ) (hC : 0 ≤ C)
     (hlocal : ∀ R ∈ descendantsAtDepth Q j,
@@ -432,7 +436,8 @@ theorem cubeBesovDepthSeminorm_two_le_weighted_shifted_sum_components_of_vector_
             (fun x => G x i) (j + n) := by
             rw [hweighted]
 
-theorem CubeLocalMultiscalePoincareVectorEstimate.partialSeminorm_two_two_le_geometric_mul_card_mul_of_component_bound
+theorem
+  CubeLocalMultiscalePoincareVectorEstimate.partialBesov_two_two_le_bound
     {d : ℕ} {Q : TriadicCube d} {s C Bcirc : ℝ} {u : Vec d → ℝ}
     {G : Vec d → Vec d} {M : ℕ}
     (hlocal : CubeLocalMultiscalePoincareVectorEstimate Q C u G M)
@@ -463,7 +468,9 @@ theorem CubeLocalMultiscalePoincareVectorEstimate.partialSeminorm_two_two_le_geo
       ∀ j ∈ Finset.range (M + 1), ∀ p ∈ I, 0 ≤ A j p := by
     intro j hj p hp
     by_cases hjp : j + p.2 ≤ M
-    · simp [A, hjp]
+    · suffices h : 0 ≤ r ^ p.2 *
+          cubeBesovCircDepthSeminorm Q (1 - s) (2 : ℝ≥0∞) (fun x => G x p.1) (j + p.2) by
+        simpa [A, a, hjp] using h
       exact mul_nonneg (pow_nonneg hr_nonneg p.2)
         (cubeBesovCircDepthSeminorm_nonneg Q (1 - s) (2 : ℝ≥0∞)
           (fun x => G x p.1) (j + p.2))
@@ -513,7 +520,7 @@ theorem CubeLocalMultiscalePoincareVectorEstimate.partialSeminorm_two_two_le_geo
           ≤ C * ∑ i : Fin d, ∑ n ∈ Finset.range (M - j + 1),
               r ^ n * a i (j + n) := by
               simpa [r, a] using
-                cubeBesovDepthSeminorm_two_le_weighted_shifted_sum_components_of_vector_local_circ_bound
+                depthBesovSeminorm_two_le_weighted_circComponents_of_localBound
                   Q s C u G j (M - j) hC (by
                     intro R hR
                     exact hlocal j hj R hR)
@@ -626,7 +633,8 @@ theorem CubeLocalMultiscalePoincareVectorEstimate.partialSeminorm_two_two_le_geo
     _ = C * (1 - r)⁻¹ * ((Fintype.card (Fin d) : ℝ) * Bcirc) := by
             ring
 
-theorem CubeLocalMultiscalePoincareVectorEstimate.fluctuation_positiveScalarPartialSeminormTwo_le_note_rhs_of_component_bound
+theorem
+  CubeLocalMultiscalePoincareVectorEstimate.fluctuationScalarBesov_le_bound
     {d : ℕ} {Q : TriadicCube d} {s C Bcirc : ℝ} {u : Vec d → ℝ}
     {G : Vec d → Vec d} {M : ℕ}
     (hlocal : CubeLocalMultiscalePoincareVectorEstimate Q C (cubeFluctuation Q u) G M)
@@ -642,7 +650,7 @@ theorem CubeLocalMultiscalePoincareVectorEstimate.fluctuation_positiveScalarPart
       cubeBesovPartialSeminorm Q s (2 : ℝ≥0∞) (2 : ℝ≥0∞) M
           (cubeFluctuation Q u) ≤
         C * (1 - (3 : ℝ) ^ (-s))⁻¹ * ((Fintype.card (Fin d) : ℝ) * Bcirc) :=
-    hlocal.partialSeminorm_two_two_le_geometric_mul_card_mul_of_component_bound
+    hlocal.partialBesov_two_two_le_bound
       hs hC hBcirc hcirc
   have hscale_nonneg : 0 ≤ cubeBesovScaleWeight (-s) Q :=
     cubeBesovScaleWeight_nonneg (-s) Q
@@ -651,13 +659,14 @@ theorem CubeLocalMultiscalePoincareVectorEstimate.fluctuation_positiveScalarPart
         = cubeBesovScaleWeight (-s) Q *
             cubeBesovPartialSeminorm Q s (2 : ℝ≥0∞) (2 : ℝ≥0∞) M
               (cubeFluctuation Q u) := by
-              rw [cubeBesovPositiveScalarPartialSeminormTwo_eq_scaleWeight_neg_mul_cubeBesovPartialSeminorm_two_two]
+              rw [cubeBesovPositiveScalarPartialTwo_eq_weightedPartialTwo]
     _ ≤ cubeBesovScaleWeight (-s) Q *
           ((C * (1 - (3 : ℝ) ^ (-s))⁻¹) *
             ((Fintype.card (Fin d) : ℝ) * Bcirc)) := by
           simpa [mul_assoc] using mul_le_mul_of_nonneg_left hgeneric hscale_nonneg
 
-theorem CubeDescendantProjectedDualMeanZeroVectorPoincareEstimate.fluctuation_positiveScalarPartialSeminormTwo_le_note_rhs_of_component_bound
+theorem
+  CubeDescendantProjectedDualMeanZeroVectorPoincareEstimate.fluctuationScalarBesov_le_bound
     {d : ℕ} {Q : TriadicCube d} {s C Bcirc : ℝ} {u : Vec d → ℝ}
     {G : Vec d → Vec d} {M : ℕ}
     (hproj :
@@ -683,7 +692,7 @@ theorem CubeDescendantProjectedDualMeanZeroVectorPoincareEstimate.fluctuation_po
         ((3 / 2 : ℝ) * C * (3 : ℝ) ^ ((d : ℝ) + 1)) *
           (1 - (3 : ℝ) ^ (-s))⁻¹ * ((Fintype.card (Fin d) : ℝ) * Bcirc) := by
     exact
-      hlocal.partialSeminorm_two_two_le_geometric_mul_card_mul_of_component_bound
+      hlocal.partialBesov_two_two_le_bound
         hs hK_nonneg hBcirc hcirc
   have hscale_nonneg : 0 ≤ cubeBesovScaleWeight (-s) Q :=
     cubeBesovScaleWeight_nonneg (-s) Q
@@ -691,13 +700,14 @@ theorem CubeDescendantProjectedDualMeanZeroVectorPoincareEstimate.fluctuation_po
     cubeBesovPositiveScalarPartialSeminormTwo Q s M (cubeFluctuation Q u)
         = cubeBesovScaleWeight (-s) Q *
             cubeBesovPartialSeminorm Q s (2 : ℝ≥0∞) (2 : ℝ≥0∞) M (cubeFluctuation Q u) := by
-              rw [cubeBesovPositiveScalarPartialSeminormTwo_eq_scaleWeight_neg_mul_cubeBesovPartialSeminorm_two_two]
+              rw [cubeBesovPositiveScalarPartialTwo_eq_weightedPartialTwo]
     _ ≤ cubeBesovScaleWeight (-s) Q *
           ((((3 / 2 : ℝ) * C * (3 : ℝ) ^ ((d : ℝ) + 1)) *
             (1 - (3 : ℝ) ^ (-s))⁻¹) * ((Fintype.card (Fin d) : ℝ) * Bcirc)) := by
           exact mul_le_mul_of_nonneg_left hgeneric hscale_nonneg
 
-theorem CubeDescendantProjectedDualMeanZeroPoincareEstimate.fluctuation_positiveScalarPartialSeminormTwo_le_note_rhs
+theorem
+  CubeDescendantProjectedDualMeanZeroPoincareEstimate.projectedFluctuation_scalarBesov_le_bound
     {d : ℕ} {Q : TriadicCube d} {s C : ℝ} {u g : Vec d → ℝ} {M : ℕ}
     (hproj : CubeDescendantProjectedDualMeanZeroPoincareEstimate Q C (cubeFluctuation Q u) g M)
     (hg : MeasureTheory.MemLp g (2 : ℝ≥0∞) (normalizedCubeMeasure Q))
@@ -720,7 +730,7 @@ theorem CubeDescendantProjectedDualMeanZeroPoincareEstimate.fluctuation_positive
     cubeBesovPositiveScalarPartialSeminormTwo Q s M (cubeFluctuation Q u)
         = cubeBesovScaleWeight (-s) Q *
             cubeBesovPartialSeminorm Q s (2 : ℝ≥0∞) (2 : ℝ≥0∞) M (cubeFluctuation Q u) := by
-              rw [cubeBesovPositiveScalarPartialSeminormTwo_eq_scaleWeight_neg_mul_cubeBesovPartialSeminorm_two_two]
+              rw [cubeBesovPositiveScalarPartialTwo_eq_weightedPartialTwo]
     _ ≤ cubeBesovScaleWeight (-s) Q *
           ((((3 / 2 : ℝ) * C * (3 : ℝ) ^ ((d : ℝ) + 1)) * (1 - (3 : ℝ) ^ (-s))⁻¹) *
             cubeBesovCircPartialNorm Q (1 - s) (2 : ℝ≥0∞) (1 : ℝ≥0∞) M g) := by

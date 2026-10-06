@@ -154,6 +154,8 @@ theorem measurable_localGradientShellLift {d : ℕ} {E : Type*}
     (measurableSet_localGradientShell d) f hf
       (localGradientShell_compat f) (iUnion_localGradientShell d)
 
+/-- A strongly measurable representative of the local H¹ value component on exhaustion cube `n`.
+-/
 @[expose]
 public noncomputable def localValueStrongRepresentative {d : ℕ}
     (z : NormalizedLocalH1Carrier d) (n : ℕ) : Vec d → ℝ :=
@@ -193,12 +195,15 @@ private theorem localValueStrongRepresentative_ae_eq_of_le {d m n : ℕ}
           (ae_mono (Measure.restrict_mono_set volume
             (localGradientCube_mono hmn)))))
 
+/-- The local gradient component on exhaustion cube `n`, expressed in the algebraic vector L²
+space. -/
 @[expose]
 public noncomputable def localGradientVectorComponent {d : ℕ}
     (z : NormalizedLocalH1Carrier d) (n : ℕ) :
     VectorL2 (localGradientCube d n) :=
   hilbertVectorL2ToVectorL2 (z.gradientComponent n)
 
+/-- A strongly measurable representative of the vector L² gradient on exhaustion cube `n`. -/
 @[expose]
 public noncomputable def localGradientStrongRepresentative {d : ℕ}
     (z : NormalizedLocalH1Carrier d) (n : ℕ) : Vec d → Vec d :=

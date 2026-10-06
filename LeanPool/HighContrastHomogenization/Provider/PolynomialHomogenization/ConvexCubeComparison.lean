@@ -76,7 +76,7 @@ theorem exists_identityCoarseGrainingComparisonDatum_of_hcWeakSolution
       simp [matVecMul, Matrix.one_apply]
     have hRealize :
         PotentialSolenoidalL2Data.HasPotentialZeroTraceClosureRealization U :=
-      PotentialSolenoidalL2Data.hasPotentialZeroTraceClosureRealization_of_isOpenBoundedConvexDomain
+      PotentialSolenoidalL2Data.hasPotentialZeroTraceClosureRealization_of_convexDomain
         (by simpa [U] using (Book.Ch02.cubeDomain Q).isDomain)
     have hEll0 : IsEllipticFieldOn a0.lam a0.Lam U b0 := by
       simpa [U, b0] using

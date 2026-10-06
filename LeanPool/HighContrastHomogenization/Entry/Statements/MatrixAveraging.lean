@@ -123,15 +123,19 @@ theorem fixed_geometry_matrix_averaging
                       (normalizedBlock
                         (blockSub
                           (coarseBlock
-                            (HighContrast.adaptedCellTranslate (Geometry.explicitRoundedGrid jStar m) j z) a)
+                            (HighContrast.adaptedCellTranslate (Geometry.explicitRoundedGrid
+                              jStar m) j z) a)
                           (adaptedMean P (Geometry.explicitRoundedGrid jStar m) j))
                         R))) ≤
           (N : ℝ) * (3 : ℝ) ^ ((d : ℝ) / 2) / (Z.card : ℝ) ^ ((1 : ℝ) / 2) *
             lqSchattenNorm P (N : ℝ)
               (fun a =>
                 normalizedBlock
-                  (blockSub (coarseBlock (HighContrast.adaptedCell (Geometry.explicitRoundedGrid jStar m) j) a)
+                  (blockSub (coarseBlock (HighContrast.adaptedCell (Geometry.explicitRoundedGrid
+                    jStar m) j) a)
                     (adaptedMean P (Geometry.explicitRoundedGrid jStar m) j))
-                  R) := by exact HCPolySupport.HighContrast.Entry.fixed_geometry_matrix_averaging d hd γ hγ
+                  R) := by
+  exact HCPolySupport.HighContrast.Entry.fixed_geometry_matrix_averaging d hd γ hγ
+
 
 end HCPolySupport.HighContrast

@@ -145,7 +145,8 @@ theorem aestronglyMeasurable_abs_cutoff_pairing_of_maximizer {d : ℕ} [NeZero d
         ScalarCanonicalMaximizer.ofIsResponseMaximizer (u a) (hu a)
       obtain ⟨lam, Lam, f, hlam, hle, hEll, hbf⟩ :=
         exists_elliptic_representative_respCell_respCoeffMinus hjStar hm t a
-      have hAB : Book.Ch02.CoeffOn.AEEq (coeffOnOfIsEllipticFieldOn (U := adaptedDomain (respGrid jStar F) hq t) hlam hle hEll)
+      have hAB : Book.Ch02.CoeffOn.AEEq (coeffOnOfIsEllipticFieldOn (U := adaptedDomain
+        (respGrid jStar F) hq t) hlam hle hEll)
           (canonicalRespCoeffMinusOn (respGrid jStar F) hq t F a) := by
         filter_upwards [hbf.symm] with x hx
         simpa only [canonicalRespCoeffMinusOn_toFun] using! hx
@@ -157,12 +158,15 @@ theorem aestronglyMeasurable_abs_cutoff_pairing_of_maximizer {d : ℕ} [NeZero d
           canonicalOptimizerBlockState (adaptedDomain (respGrid jStar F) hq t)
             (canonicalRespCoeffMinusOn (respGrid jStar F) hq t F a) p q' := by
         have hbridge : optimizerField f
-              (canonicalAHarmonicFunctionOfCoeffOn (coeffOnOfIsEllipticFieldOn (U := adaptedDomain (respGrid jStar F) hq t) hlam hle hEll)
+              (canonicalAHarmonicFunctionOfCoeffOn (coeffOnOfIsEllipticFieldOn (U :=
+                adaptedDomain (respGrid jStar F) hq t) hlam hle hEll)
                 p q')
             = canonicalOptimizerBlockState (adaptedDomain (respGrid jStar F) hq t)
-                (coeffOnOfIsEllipticFieldOn (U := adaptedDomain (respGrid jStar F) hq t) hlam hle hEll) p q' := rfl
+                (coeffOnOfIsEllipticFieldOn (U := adaptedDomain (respGrid jStar F) hq t) hlam
+                  hle hEll) p q' := rfl
         have hmid : optimizerField f
-              (canonicalAHarmonicFunctionOfCoeffOn (coeffOnOfIsEllipticFieldOn (U := adaptedDomain (respGrid jStar F) hq t) hlam hle hEll)
+              (canonicalAHarmonicFunctionOfCoeffOn (coeffOnOfIsEllipticFieldOn (U :=
+                adaptedDomain (respGrid jStar F) hq t) hlam hle hEll)
                 p q')
             =ᵐ[volumeMeasureOn (respCell jStar F t)]
             canonicalOptimizerBlockState (adaptedDomain (respGrid jStar F) hq t)
@@ -203,7 +207,8 @@ theorem aestronglyMeasurable_abs_cutoff_pairing_of_maximizer {d : ℕ} [NeZero d
         ScalarCanonicalMaximizer.ofIsResponseMaximizer (u a) (hu a)
       obtain ⟨lam, Lam, f, hlam, hle, hEll, hbf⟩ :=
         exists_elliptic_representative_respCell_respCoeffPlus hjStar hm t a
-      have hAB : Book.Ch02.CoeffOn.AEEq (coeffOnOfIsEllipticFieldOn (U := adaptedDomain (respGrid jStar F) hq t) hlam hle hEll)
+      have hAB : Book.Ch02.CoeffOn.AEEq (coeffOnOfIsEllipticFieldOn (U := adaptedDomain
+        (respGrid jStar F) hq t) hlam hle hEll)
           (canonicalRespCoeffPlusOn (respGrid jStar F) hq t F a) := by
         filter_upwards [hbf.symm] with x hx
         simpa only [canonicalRespCoeffPlusOn_toFun] using! hx
@@ -215,12 +220,15 @@ theorem aestronglyMeasurable_abs_cutoff_pairing_of_maximizer {d : ℕ} [NeZero d
           canonicalOptimizerBlockState (adaptedDomain (respGrid jStar F) hq t)
             (canonicalRespCoeffPlusOn (respGrid jStar F) hq t F a) p q' := by
         have hbridge : optimizerField f
-              (canonicalAHarmonicFunctionOfCoeffOn (coeffOnOfIsEllipticFieldOn (U := adaptedDomain (respGrid jStar F) hq t) hlam hle hEll)
+              (canonicalAHarmonicFunctionOfCoeffOn (coeffOnOfIsEllipticFieldOn (U :=
+                adaptedDomain (respGrid jStar F) hq t) hlam hle hEll)
                 p q')
             = canonicalOptimizerBlockState (adaptedDomain (respGrid jStar F) hq t)
-                (coeffOnOfIsEllipticFieldOn (U := adaptedDomain (respGrid jStar F) hq t) hlam hle hEll) p q' := rfl
+                (coeffOnOfIsEllipticFieldOn (U := adaptedDomain (respGrid jStar F) hq t) hlam
+                  hle hEll) p q' := rfl
         have hmid : optimizerField f
-              (canonicalAHarmonicFunctionOfCoeffOn (coeffOnOfIsEllipticFieldOn (U := adaptedDomain (respGrid jStar F) hq t) hlam hle hEll)
+              (canonicalAHarmonicFunctionOfCoeffOn (coeffOnOfIsEllipticFieldOn (U :=
+                adaptedDomain (respGrid jStar F) hq t) hlam hle hEll)
                 p q')
             =ᵐ[volumeMeasureOn (respCell jStar F t)]
             canonicalOptimizerBlockState (adaptedDomain (respGrid jStar F) hq t)

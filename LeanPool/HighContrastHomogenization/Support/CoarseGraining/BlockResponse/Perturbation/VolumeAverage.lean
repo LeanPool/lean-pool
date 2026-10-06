@@ -29,7 +29,7 @@ without the finite-measure assumption), the first-variation pair-half
 identity, and the statePairing = quarter scalarVariationEnergy equality.
 -/
 
-theorem volumeAverage_blockResponseIntegrand_pair_half_eq_scalarResponse_sum_of_isEllipticFieldOn_of_finiteMeasure
+theorem volumeAverage_blockResponseIntegrand_pair_half_eq_scalarResponse_sum
     {d : ℕ} {U : Set (Vec d)} (a : CoeffField d) {lam Lam : ℝ}
     [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     (hU : MeasurableSet U)
@@ -44,7 +44,7 @@ theorem volumeAverage_blockResponseIntegrand_pair_half_eq_scalarResponse_sum_of_
             (scalarResponseIntegrand U (HCPolySupport.adjointCoeffField a)
               (pStar + p) (qStar + q) v) := by
   simpa [blockResponsePairHalfState] using!
-    volumeAverage_blockResponseIntegrand_pair_half_eq_scalarResponse_sum_of_isEllipticFieldOn
+    volumeAverage_halfBlockPair_eq_scalarResponseSum_of_ellipticity
       (a := a) hU hEll p pStar q qStar u v
 
 /-- The block first variation around a primal/adjoint half-pair splits into the
@@ -177,7 +177,7 @@ theorem blockFirstVariationIntegrand_pair_half_eq_scalarFirstVariation_sum_on_of
 
 /-- Averaged form of
 `blockFirstVariationIntegrand_pair_half_eq_scalarFirstVariation_sum_on_of_isEllipticFieldOn`. -/
-theorem volumeAverage_blockFirstVariationIntegrand_pair_half_eq_scalarFirstVariation_sum_of_isEllipticFieldOn
+theorem volumeAverage_blockFirstVariationIntegrand_pair_half_eq_scalarFirstVariation_sum
     {d : ℕ} {U : Set (Vec d)} (a : CoeffField d) {lam Lam : ℝ}
     [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     (hU : MeasurableSet U)

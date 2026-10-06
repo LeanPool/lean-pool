@@ -537,7 +537,8 @@ theorem integrable_volumeAverage_energy_descendant_respCoeffMinus {d : ℕ} [NeZ
   rw [hshift]
   exact integrable_volumeAverage_energy_adaptedCellAtCenter_respCoeffMinus P jStar hjStar F hm
     (H + n + 1) (s - ((n + 1 : ℕ) : ℤ)) t ht' e uM hmax hJt
-    (fun w hw => (measurable_volumeAverage_energy_adaptedCellAtCenter_respCoeffMinus P jStar hjStar F
+    (fun w hw => (measurable_volumeAverage_energy_adaptedCellAtCenter_respCoeffMinus P jStar
+      hjStar F
       hm (H + n + 1) (s - ((n + 1 : ℕ) : ℤ)) t ht' e uM hmax w hw).aestronglyMeasurable)
     W hW
 

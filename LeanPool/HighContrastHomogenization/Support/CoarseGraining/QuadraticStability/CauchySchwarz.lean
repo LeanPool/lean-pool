@@ -90,8 +90,8 @@ theorem abs_blockVecDot_blockMatVecMul_le_of_isSymmetricBlockMat
 
 /-! ## B′2 — the mixed-metric inequality -/
 
-/-- Unfold `BlockMatLoewnerLE B̃ (K • B)` to the plain quadratic-form comparison
-`X·B̃X ≤ K·(X·BX)`. -/
+/-- Unfold `BlockMatLoewnerLE B_tilde (K • B)` to the plain quadratic-form comparison
+`X·B_tildeX ≤ K·(X·BX)`. -/
 theorem blockVecDot_le_smul_of_blockMatLoewnerLE {B C : BlockMat d} {K : ℝ}
     (h : BlockMatLoewnerLE B (K • C)) (X : BlockVec d) :
     blockVecDot X (blockMatVecMul B X) ≤ K * blockVecDot X (blockMatVecMul C X) := by
@@ -100,8 +100,8 @@ theorem blockVecDot_le_smul_of_blockMatLoewnerLE {B C : BlockMat d} {K : ℝ}
   linarith
 
 /-- **B′2.**  The mixed-metric inequality.  For symmetric positive semidefinite
-`B`, `B̃` with `1 ≤ K`, `B̃ ≤ K•B` and `B ≤ K•B̃` in the block Loewner order,
-`|X·B̃Y − X·BY| ≤ 2·√K·√(X·BX)·√(Y·B̃Y)`. -/
+`B`, `B_tilde` with `1 ≤ K`, `B_tilde ≤ K•B` and `B ≤ K•B_tilde` in the block Loewner order,
+`|X·B_tildeY − X·BY| ≤ 2·√K·√(X·BX)·√(Y·B_tildeY)`. -/
 theorem abs_blockVecDot_sub_le_of_blockMatLoewnerLE
     {B Bt : BlockMat d} {K : ℝ}
     (hBsymm : IsSymmetricBlockMat B) (hBtsymm : IsSymmetricBlockMat Bt)

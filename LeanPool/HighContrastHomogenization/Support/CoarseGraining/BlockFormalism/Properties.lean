@@ -28,26 +28,34 @@ IsBlockMuAdmissible definitions plus the IsBlockMuAdmissible namespace with
 its potentialCorrection / isPotentialZeroTrace bridges.
 -/
 
+/-- The potential component is the weak gradient of an `H¹` function on `U`. -/
 @[expose]
 def IsBlockPotentialOn {d : ℕ} (U : Set (Vec d)) (X : BlockState d) : Prop :=
   IsPotentialOn U X.potential
 
+/-- The potential component is the weak gradient of an `H¹₀` function on `U`. -/
 @[expose]
 def IsBlockPotentialZeroTraceOn {d : ℕ} (U : Set (Vec d)) (X : BlockState d) : Prop :=
   IsPotentialZeroTraceOn U X.potential
 
+/-- The flux pairs to zero with every weak gradient of an `H¹₀(U)` function. -/
 @[expose]
 def IsBlockSolenoidalOn {d : ℕ} (U : Set (Vec d)) (X : BlockState d) : Prop :=
   IsSolenoidalOn U X.flux
 
+/-- The flux pairs to zero with every weak gradient of an `H¹(U)` function. -/
 @[expose]
 def IsBlockSolenoidalZeroNormalTraceOn {d : ℕ} (U : Set (Vec d)) (X : BlockState d) : Prop :=
   IsSolenoidalZeroNormalTraceOn U X.flux
 
+/-- A block test state with an `H¹₀` potential gradient and flux orthogonal to all `H¹`
+gradients. -/
 @[expose]
 def IsBlockTestOn {d : ℕ} (U : Set (Vec d)) (Y : BlockState d) : Prop :=
   IsBlockPotentialZeroTraceOn U Y ∧ IsBlockSolenoidalZeroNormalTraceOn U Y
 
+/-- Potential and solenoidal components whose block coefficient pairing vanishes against every
+block test. -/
 @[expose]
 def BlockResponseSpace {d : ℕ} (a : CoeffField d) (U : Set (Vec d)) (X : BlockState d) : Prop :=
   IsBlockPotentialOn U X ∧
@@ -57,6 +65,8 @@ def BlockResponseSpace {d : ℕ} (a : CoeffField d) (U : Set (Vec d)) (X : Block
         blockVecDot (Y.eval x) (blockMatVecMul (blockCoeffField a x) (X.eval x))
           ∂MeasureTheory.volume = 0
 
+/-- Square-integrable deviations from `P`, with zero-trace potential and zero-normal-trace
+solenoidal flux. -/
 @[expose]
 def IsBlockMuAdmissible {d : ℕ} (U : Set (Vec d)) (P : BlockVec d) (X : BlockState d) : Prop :=
   MemVectorL2 U (fun x => X.potential x - P.1) ∧
@@ -88,6 +98,7 @@ theorem isSolenoidalZeroNormalTrace {d : ℕ} {U : Set (Vec d)} {P : BlockVec d}
 
 end IsBlockMuAdmissible
 
+/-- One half of the quadratic block coefficient energy of the state at `x`. -/
 @[expose]
 noncomputable def blockEnergyDensity {d : ℕ} (a : CoeffField d) (X : BlockState d) (x : Vec d) :
   ℝ :=

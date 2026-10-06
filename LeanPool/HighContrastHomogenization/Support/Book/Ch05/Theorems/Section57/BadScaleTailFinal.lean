@@ -79,7 +79,7 @@ theorem exists_threshold_shiftedBadScaleEvent_quenchedProbeEnvelope_le_interpola
             Real.exp (-(((3 : ℝ) ^ (q : ℝ) / Btail) ^ η)) := by
   obtain ⟨Cfluct, Ccrude, Centry, a,
       hCfluct, hCcrude, hCentry, ha, htail⟩ :=
-    measureReal_shiftedBadScaleEvent_quenchedProbeEnvelope_le_interpolated_tail_of_thresholds_and_prefactor_gap
+    shiftedBadScaleProbability_le_interpolated_tail_of_thresholds
       (d := d) (σ := σ) hσ_pos params
   refine ⟨Cfluct, Ccrude, Centry, a,
     hCfluct, hCcrude, hCentry, ha, ?_⟩

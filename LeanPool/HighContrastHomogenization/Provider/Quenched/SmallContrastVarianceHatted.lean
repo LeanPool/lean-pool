@@ -80,6 +80,391 @@ private theorem conj_mono'' {X Y : FullBlockMat d}
     noncomm_ring
   rwa [hrw] at hconj
 
+private theorem shifted_skew_quadratic_le_terminal_primal [NeZero d]
+    {P : Measure (CoeffSpace d)} [IsProbabilityMeasure P]
+    (hstat : HCPoly.Frozen.IsStationaryLaw P)
+    {l : ℤ} {q : Mat d} (hq : IsRoundedGrid l q) {j p : ℤ}
+    (hlj : l ≤ j) (hjp : j ≤ p)
+    (hintj : HasFiniteAdaptedMean P q j) (hintp : HasFiniteAdaptedMean P q p)
+    {Sj SStarj Kj Sp SStarp Kp h0 : Mat d}
+    (hStarj : SStarj.PosDef) (hSp : Sp.PosDef) (hStarp : SStarp.PosDef)
+    (hformj : toFullBlockMat (adaptedMean P q j) = schurBlock Sj SStarj Kj)
+    (hformp : toFullBlockMat (adaptedMean P q p) = schurBlock Sp SStarp Kp)
+    {epsj : ℝ} (hposj : 0 ≤ epsj) (hepsj1 : epsj ≤ 1)
+    (hdropSmall : 4 * (d : ℝ) *
+      (adaptedHattedContrast P q j - adaptedHattedContrast P q p) ≤ 1)
+    (hh0def : h0 = Response.responseSkew Kj)
+    (hstarpinvle : SStarp⁻¹ ≤ SStarj⁻¹) (hstarcross : SStarj ≤ SStarp)
+    (horderp : SStarp ≤ Sp)
+    (hskewMj : Response.responseSymmetric Kj * SStarj⁻¹ *
+      Response.responseSymmetric Kj ≤ (epsj ^ 2 / 4) • SStarj) :
+    ∀ x : Vec d,
+      ((Kp - h0) *ᵥ x) ⬝ᵥ SStarp⁻¹ *ᵥ ((Kp - h0) *ᵥ x) ≤
+        x ⬝ᵥ Sp *ᵥ x := by
+  classical
+  have hKhat : ∀ x : Vec d,
+      ((Kp - h0) *ᵥ x) ⬝ᵥ SStarp⁻¹ *ᵥ ((Kp - h0) *ᵥ x) ≤
+        x ⬝ᵥ Sp *ᵥ x := by
+    intro x
+    -- the good-quadratics skew difference
+    have hgq := adaptedMean_normalized_schur_good_quads_le_hattedContrast_drop
+      hstat hq hlj hjp hintj hintp
+    have hgq2 := le_trans (le_max_right _ _) hgq
+    obtain ⟨hLRp, _hstp, hskp, hsgp⟩ := schurData_of_form hStarp hformp
+    obtain ⟨_hLRj, _hstj, hskj, _hsgj⟩ := schurData_of_form hStarj hformj
+    rw [hLRp, hskj, hskp, hsgp] at hgq2
+    have hΔq := quad_le_of_norm_normalized_le hSp hStarp hgq2 x
+    -- decompose the shifted skew
+    have hsplitK : (Kp - h0) *ᵥ x =
+        -((Kj - Kp) *ᵥ x) + Response.responseSymmetric Kj *ᵥ x := by
+      have hKp : Kp - h0 = -(Kj - Kp) + (Kj - h0) := by abel
+      have hKj0 : Kj - h0 = Response.responseSymmetric Kj := by
+        rw [hh0def]
+        exact Response.sub_responseSkew Kj
+      rw [hKp, hKj0, Matrix.add_mulVec, Matrix.neg_mulVec]
+    -- the two pieces
+    have hquadsplit : ((Kp - h0) *ᵥ x) ⬝ᵥ SStarp⁻¹ *ᵥ
+        ((Kp - h0) *ᵥ x) ≤
+        2 * (((Kj - Kp) *ᵥ x) ⬝ᵥ SStarp⁻¹ *ᵥ ((Kj - Kp) *ᵥ x)) +
+          2 * ((Response.responseSymmetric Kj *ᵥ x) ⬝ᵥ SStarp⁻¹ *ᵥ
+            (Response.responseSymmetric Kj *ᵥ x)) := by
+      rw [hsplitK]
+      have h := quad_split_two' hStarp.inv.posSemidef
+        (-((Kj - Kp) *ᵥ x)) (Response.responseSymmetric Kj *ᵥ x)
+      have hneg : (-((Kj - Kp) *ᵥ x)) ⬝ᵥ SStarp⁻¹ *ᵥ
+          (-((Kj - Kp) *ᵥ x)) =
+          ((Kj - Kp) *ᵥ x) ⬝ᵥ SStarp⁻¹ *ᵥ ((Kj - Kp) *ᵥ x) := by
+        rw [Matrix.mulVec_neg, dotProduct_neg, neg_dotProduct, neg_neg]
+      rwa [hneg] at h
+    -- the drop piece
+    have hdropnn : 0 ≤
+        adaptedHattedContrast P q j - adaptedHattedContrast P q p :=
+      sub_nonneg.mpr (adaptedHattedContrast_le hstat hq hlj hjp hintj
+        hintp)
+    have hd0 : (0 : ℝ) ≤ (d : ℝ) := Nat.cast_nonneg d
+    have hxSp0 : 0 ≤ x ⬝ᵥ Sp *ᵥ x := by
+      have := hSp.posSemidef.dotProduct_mulVec_nonneg x
+      simpa using this
+    have hΔsmall : ((Kj - Kp) *ᵥ x) ⬝ᵥ SStarp⁻¹ *ᵥ
+        ((Kj - Kp) *ᵥ x) ≤ (1 / 16) * (x ⬝ᵥ Sp *ᵥ x) := by
+      refine hΔq.trans ?_
+      have hdd : ((d : ℝ) *
+          (adaptedHattedContrast P q j - adaptedHattedContrast P q p)) ^
+            2 ≤ 1 / 16 := by
+        nlinarith only [hdropSmall, hdropnn, hd0,
+          mul_nonneg hd0 hdropnn]
+      exact mul_le_mul_of_nonneg_right hdd hxSp0
+    -- the symmetric piece
+    have hκpiece : (Response.responseSymmetric Kj *ᵥ x) ⬝ᵥ SStarp⁻¹ *ᵥ
+        (Response.responseSymmetric Kj *ᵥ x) ≤
+        (1 / 4) * (x ⬝ᵥ Sp *ᵥ x) := by
+      have h1 := Initialization.dotProduct_mulVec_le_of_le hstarpinvle
+        (Response.responseSymmetric Kj *ᵥ x)
+      have hks : (Response.responseSymmetric Kj)ᴴ = Response.responseSymmetric Kj :=
+        Response.responseSymmetric_isHermitian Kj
+      have hkq : x ⬝ᵥ (Response.responseSymmetric Kj * SStarj⁻¹ *
+          Response.responseSymmetric Kj) *ᵥ x =
+          (Response.responseSymmetric Kj *ᵥ x) ⬝ᵥ SStarj⁻¹ *ᵥ
+            (Response.responseSymmetric Kj *ᵥ x) := by
+        rw [← Matrix.mulVec_mulVec, ← Matrix.mulVec_mulVec,
+          ← mulVec_dotProduct_symm hks]
+      have h2 := Initialization.dotProduct_mulVec_le_of_le hskewMj x
+      rw [Matrix.smul_mulVec, dotProduct_smul, smul_eq_mul, hkq] at h2
+      have h3 := Initialization.dotProduct_mulVec_le_of_le hstarcross x
+      have h4 := Initialization.dotProduct_mulVec_le_of_le horderp x
+      have hX0 : 0 ≤ x ⬝ᵥ SStarj *ᵥ x := by
+        have := hStarj.posSemidef.dotProduct_mulVec_nonneg x
+        simpa using this
+      have heps2 : epsj ^ 2 / 4 ≤ 1 / 4 := by
+        nlinarith only [hposj, hepsj1]
+      have h5 : epsj ^ 2 / 4 * (x ⬝ᵥ SStarj *ᵥ x) ≤
+          1 / 4 * (x ⬝ᵥ SStarj *ᵥ x) :=
+        mul_le_mul_of_nonneg_right heps2 hX0
+      linarith only [h1, h2, h3, h4, h5, hX0]
+    linarith only [hquadsplit, hΔsmall, hκpiece, hxSp0]
+  exact hKhat
+
+private theorem recentered_coarse_block_dominates_sharp [NeZero d]
+    {q : Mat d} (hqpd : q.PosDef) (p : ℤ) (a : CoeffSpace d)
+    (h0 : Mat d) (hh0 : IsSkewMat h0) :
+    fullBlockSharp (toFullBlockMat
+      (Response.skewBlockCongr h0 (coarseBlock (adaptedCell q p) a))) ≤
+      toFullBlockMat
+        (Response.skewBlockCongr h0 (coarseBlock (adaptedCell q p) a)) := by
+  classical
+  have hparentSharp : fullBlockSharp (toFullBlockMat
+      (Response.skewBlockCongr h0 (coarseBlock (adaptedCell q p) a))) ≤
+      toFullBlockMat
+        (Response.skewBlockCongr h0 (coarseBlock (adaptedCell q p) a)) := by
+    have hdom : IsOpenBoundedConvexDomain
+        ((Response.adaptedDomain hqpd p : Domain d) : Set (Vec d)) :=
+      (Response.adaptedDomain hqpd p).isDomain
+    have hcell : coarseBlock
+        ((Response.adaptedDomain hqpd p : Domain d) : Set (Vec d))
+        (a.subSkew h0 hh0) =
+        Response.skewBlockCongr h0
+          (coarseBlock
+            ((Response.adaptedDomain hqpd p : Domain d) : Set (Vec d)) a) :=
+      Response.coarseBlock_subSkew (Response.adaptedDomain hqpd p) a h0 hh0
+    have hsharp := Sharp.blockMatLoewnerLE_blockSharp_coarseBlock_of_nonempty
+      hdom (Response.adaptedDomain hqpd p).nonempty (a.subSkew h0 hh0)
+    rw [hcell] at hsharp
+    have hsymm : IsSymmetricBlockMat
+        (Response.skewBlockCongr h0
+          (coarseBlock
+            ((Response.adaptedDomain hqpd p : Domain d) : Set (Vec d)) a)) :=
+      Response.isSymmetricBlockMat_skewBlockCongr (g := h0)
+        (isSymmetricBlockMat_coarseBlock _ a)
+    have hsymmSharp : IsSymmetricBlockMat
+        (blockSharp (Response.skewBlockCongr h0
+          (coarseBlock
+            ((Response.adaptedDomain hqpd p : Domain d) : Set (Vec d)) a))) := by
+      refine isSymmetricBlockMat_of_posSemidef ?_
+      rw [toFullBlockMat_blockSharp]
+      refine (posDef_fullBlockSharp ?_).posSemidef
+      exact posDef_toFullBlockMat hsymm
+        (Response.blockPosDef_skewBlockCongr (g := h0)
+          (Sharp.blockPosDef_coarseBlock_of_volume_pos hdom
+            (ENNReal.toReal_pos
+              (hdom.isOpen.measure_pos volume
+                (Response.adaptedDomain hqpd p).nonempty).ne'
+              hdom.volume_lt_top.ne) a))
+    have h := le_of_blockMatLoewnerLE hsymmSharp hsymm hsharp
+    rw [toFullBlockMat_blockSharp] at h
+    simpa only [Response.adaptedDomain_carrier] using h
+  exact hparentSharp
+
+private theorem recentered_adapted_mean_dominates_sharp [NeZero d]
+    {P : Measure (CoeffSpace d)} [IsProbabilityMeasure P]
+    {q : Mat d} (hqpd : q.PosDef) (j : ℤ)
+    (hintj : HasFiniteAdaptedMean P q j)
+    (hintj' : HasIntegrableCoarseBlock P
+      ((Response.adaptedDomain hqpd j : Domain d) : Set (Vec d)))
+    (h0 : Mat d) (hh0 : IsSkewMat h0) :
+    fullBlockSharp (toFullBlockMat
+      (Response.skewBlockCongr h0 (adaptedMean P q j))) ≤
+      toFullBlockMat (Response.skewBlockCongr h0 (adaptedMean P q j)) := by
+  classical
+  have hsharpJle : fullBlockSharp (toFullBlockMat
+      (Response.skewBlockCongr h0 (adaptedMean P q j))) ≤
+      toFullBlockMat (Response.skewBlockCongr h0 (adaptedMean P q j)) := by
+    have hb := blockSharp_skewBlockCongr_annealedBlock_le
+      (Response.adaptedDomain hqpd j) hintj' h0 hh0
+    have hsymm : IsSymmetricBlockMat
+        (Response.skewBlockCongr h0
+          (annealedBlock P
+            ((Response.adaptedDomain hqpd j : Domain d) : Set (Vec d)))) :=
+      Response.isSymmetricBlockMat_skewBlockCongr (g := h0)
+        (Recurrence.isSymmetricBlockMat_annealedBlock P _)
+    have hsymmSharp : IsSymmetricBlockMat
+        (blockSharp (Response.skewBlockCongr h0
+          (annealedBlock P
+            ((Response.adaptedDomain hqpd j : Domain d) : Set (Vec d))))) := by
+      refine isSymmetricBlockMat_of_posSemidef ?_
+      rw [toFullBlockMat_blockSharp]
+      refine (posDef_fullBlockSharp ?_).posSemidef
+      refine posDef_toFullBlockMat hsymm ?_
+      refine Response.blockPosDef_skewBlockCongr (g := h0) ?_
+      have h := Recurrence.blockPosDef_adaptedMean hqpd j hintj
+      simpa only [adaptedMean, Response.adaptedDomain_carrier] using h
+    have h := le_of_blockMatLoewnerLE hsymmSharp hsymm hb
+    rw [toFullBlockMat_blockSharp] at h
+    simpa only [adaptedMean, Response.adaptedDomain_carrier] using h
+  exact hsharpJle
+
+private theorem recentered_coarse_parent_le_average [NeZero d]
+    {q : Mat d} (hqpd : q.PosDef) {j p : ℤ} (hjp : j ≤ p)
+    {Z : Finset (Fin d → ℤ)}
+    (hZ : (↑Z : Set (Fin d → ℤ)) =
+      {w : Fin d → ℤ | adaptedCellCenter q j w ∈ adaptedCell q p})
+    (a : CoeffSpace d) (h0 : Mat d) {Sh : FullBlockMat d}
+    (hShdef : Sh = fullBlockShear h0) {A : (Fin d → ℤ) → FullBlockMat d}
+    (hAfull : ∀ w, A w = Shᴴ *
+      toFullBlockMat (coarseBlock (adaptedCellAt q j w) a) * Sh) :
+    toFullBlockMat
+      (Response.skewBlockCongr h0 (coarseBlock (adaptedCell q p) a)) ≤
+      (Z.card : ℝ)⁻¹ • ∑ w ∈ Z, A w := by
+  classical
+  have hparentLe : toFullBlockMat
+      (Response.skewBlockCongr h0 (coarseBlock (adaptedCell q p) a)) ≤
+      (Z.card : ℝ)⁻¹ • ∑ w ∈ Z, A w := by
+    have hplain := Recurrence.toFullBlockMat_coarseBlock_adaptedCell_le_average
+      hqpd hjp hZ a
+    have hconj := conj_mono'' hplain Sh
+    have hlhs : Shᴴ *
+        toFullBlockMat (coarseBlock (adaptedCell q p) a) * Sh =
+        toFullBlockMat
+          (Response.skewBlockCongr h0 (coarseBlock (adaptedCell q p) a)) := by
+      rw [Response.toFullBlockMat_skewBlockCongr, hShdef]
+    have hrhs : Shᴴ * ((Z.card : ℝ)⁻¹ •
+        ∑ w ∈ Z,
+          toFullBlockMat (coarseBlock (adaptedCellAt q j w) a)) * Sh =
+        (Z.card : ℝ)⁻¹ • ∑ w ∈ Z, A w := by
+      rw [Matrix.mul_smul, Matrix.smul_mul]
+      congr 1
+      rw [Finset.mul_sum, Finset.sum_mul]
+      exact Finset.sum_congr rfl fun w _hw => (hAfull w).symm
+    rw [hlhs, hrhs] at hconj
+    exact hconj
+  exact hparentLe
+
+private theorem recentered_parent_fluctuation_norm_eq_block_size
+    {P : Measure (CoeffSpace d)} {q : Mat d} (p : ℤ)
+    (a : CoeffSpace d) (h0 : Mat d)
+    (hGpsym : IsSymmetricBlockMat (Response.skewBlockCongr h0 (adaptedMean P q p)))
+    (hGpblock : Book.Ch02.BlockPosDef (Response.skewBlockCongr h0 (adaptedMean P q p))) :
+    ‖matSqrt (toFullBlockMat
+        (Response.skewBlockCongr h0 (adaptedMean P q p)))⁻¹ *
+      (toFullBlockMat
+        (Response.skewBlockCongr h0 (coarseBlock (adaptedCell q p) a)) -
+        toFullBlockMat (Response.skewBlockCongr h0 (adaptedMean P q p))) *
+      matSqrt (toFullBlockMat
+        (Response.skewBlockCongr h0 (adaptedMean P q p)))⁻¹‖ =
+      blockSize
+        (blockSub (coarseBlock (adaptedCell q p) a) (adaptedMean P q p))
+        (adaptedMean P q p) := by
+  classical
+  have hLHSeq : ‖matSqrt (toFullBlockMat
+        (Response.skewBlockCongr h0 (adaptedMean P q p)))⁻¹ *
+      (toFullBlockMat
+        (Response.skewBlockCongr h0 (coarseBlock (adaptedCell q p) a)) -
+        toFullBlockMat (Response.skewBlockCongr h0 (adaptedMean P q p))) *
+      matSqrt (toFullBlockMat
+        (Response.skewBlockCongr h0 (adaptedMean P q p)))⁻¹‖ =
+      blockSize
+        (blockSub (coarseBlock (adaptedCell q p) a) (adaptedMean P q p))
+        (adaptedMean P q p) := by
+    rw [← Response.blockSize_skewBlockCongr h0
+      (blockSub (coarseBlock (adaptedCell q p) a) (adaptedMean P q p))
+      (adaptedMean P q p)]
+    rw [PortableHistory.blockSize_eq_norm
+      (Response.isSymmetricBlockMat_skewBlockCongr (g := h0)
+        (isSymmetricBlockMat_blockSub
+          (isSymmetricBlockMat_coarseBlock _ a)
+          (Recurrence.isSymmetricBlockMat_adaptedMean P q p)))
+      hGpsym hGpblock]
+    congr 1
+    rw [normalizedBlock, toFullBlockMat_ofFullBlockMat,
+      Response.blockSub_skewBlockCongr, Transport.toFullBlockMat_blockSub]
+  exact hLHSeq
+
+private theorem recentered_average_fluctuation_norm_eq_block_size [NeZero d]
+    {P : Measure (CoeffSpace d)} {q : Mat d} (hqpd : q.PosDef) (j p : ℤ)
+    (a : CoeffSpace d) (h0 : Mat d) (Z : Finset (Fin d → ℤ))
+    {A : (Fin d → ℤ) → FullBlockMat d}
+    (hGpsym : IsSymmetricBlockMat (Response.skewBlockCongr h0 (adaptedMean P q p)))
+    (hGpblock : Book.Ch02.BlockPosDef (Response.skewBlockCongr h0 (adaptedMean P q p)))
+    (havgfull : (Z.card : ℝ)⁻¹ • ∑ w ∈ Z, A w =
+      toFullBlockMat (Response.skewBlockCongr h0
+        (ofFullBlockMat ((Z.card : ℝ)⁻¹ •
+          ∑ w ∈ Z, toFullBlockMat (coarseBlock (adaptedCellAt q j w) a))))) :
+    ‖matSqrt (toFullBlockMat
+        (Response.skewBlockCongr h0 (adaptedMean P q p)))⁻¹ *
+      ((Z.card : ℝ)⁻¹ • ∑ w ∈ Z, A w -
+        toFullBlockMat (Response.skewBlockCongr h0 (adaptedMean P q j))) *
+      matSqrt (toFullBlockMat
+        (Response.skewBlockCongr h0 (adaptedMean P q p)))⁻¹‖ =
+      blockSize
+        (blockSub (ofFullBlockMat ((Z.card : ℝ)⁻¹ •
+          ∑ w ∈ Z,
+            toFullBlockMat (coarseBlock (adaptedCellAt q j w) a)))
+          (adaptedMean P q j))
+        (adaptedMean P q p) := by
+  classical
+  have hAvgeq : ‖matSqrt (toFullBlockMat
+        (Response.skewBlockCongr h0 (adaptedMean P q p)))⁻¹ *
+      ((Z.card : ℝ)⁻¹ • ∑ w ∈ Z, A w -
+        toFullBlockMat (Response.skewBlockCongr h0 (adaptedMean P q j))) *
+      matSqrt (toFullBlockMat
+        (Response.skewBlockCongr h0 (adaptedMean P q p)))⁻¹‖ =
+      blockSize
+        (blockSub (ofFullBlockMat ((Z.card : ℝ)⁻¹ •
+          ∑ w ∈ Z,
+            toFullBlockMat (coarseBlock (adaptedCellAt q j w) a)))
+          (adaptedMean P q j))
+        (adaptedMean P q p) := by
+    rw [← Response.blockSize_skewBlockCongr h0
+      (blockSub (ofFullBlockMat ((Z.card : ℝ)⁻¹ •
+        ∑ w ∈ Z,
+          toFullBlockMat (coarseBlock (adaptedCellAt q j w) a)))
+        (adaptedMean P q j))
+      (adaptedMean P q p)]
+    have havgSym : IsSymmetricBlockMat
+        (ofFullBlockMat ((Z.card : ℝ)⁻¹ •
+          ∑ w ∈ Z,
+            toFullBlockMat (coarseBlock (adaptedCellAt q j w) a))) := by
+      refine isSymmetricBlockMat_of_posSemidef ?_
+      rw [toFullBlockMat_ofFullBlockMat]
+      refine Matrix.PosSemidef.smul ?_ (by positivity : (0 : ℝ) ≤ _)
+      refine Matrix.posSemidef_sum Z fun w hw => ?_
+      exact (posDef_toFullBlockMat
+        (Recurrence.isSymmetricBlockMat_coarseBlock_adaptedCellAt q j w a)
+        (Recurrence.blockPosDef_coarseBlock_adaptedCellAt hqpd j w a)).posSemidef
+    rw [PortableHistory.blockSize_eq_norm
+      (Response.isSymmetricBlockMat_skewBlockCongr (g := h0)
+        (isSymmetricBlockMat_blockSub havgSym
+          (Recurrence.isSymmetricBlockMat_adaptedMean P q j)))
+      hGpsym hGpblock]
+    congr 1
+    rw [normalizedBlock, toFullBlockMat_ofFullBlockMat,
+      Response.blockSub_skewBlockCongr, Transport.toFullBlockMat_blockSub, havgfull]
+  exact hAvgeq
+
+private theorem terminal_star_inverse_quadratic_comparison
+    {P : Measure (CoeffSpace d)} {q : Mat d} {j p : ℤ}
+    {Sj SStarj Kj Sp SStarp Kp : Mat d} (hStarp : SStarp.PosDef)
+    (hformj : toFullBlockMat (adaptedMean P q j) = schurBlock Sj SStarj Kj)
+    (hformp : toFullBlockMat (adaptedMean P q p) = schurBlock Sp SStarp Kp)
+    (hdropSmall : 4 * (d : ℝ) *
+      (adaptedHattedContrast P q j - adaptedHattedContrast P q p) ≤ 1)
+    (hdilplain : toFullBlockMat (adaptedMean P q j) ≤
+      (1 + 4 * (d : ℝ) *
+        (adaptedHattedContrast P q j - adaptedHattedContrast P q p)) •
+          toFullBlockMat (adaptedMean P q p)) :
+    ∀ y : Vec d,
+      y ⬝ᵥ SStarj⁻¹ *ᵥ y ≤ 2 * (y ⬝ᵥ SStarp⁻¹ *ᵥ y) := by
+  classical
+  have hdilquad : ∀ y : Vec d,
+      y ⬝ᵥ SStarj⁻¹ *ᵥ y ≤ 2 * (y ⬝ᵥ SStarp⁻¹ *ᵥ y) := by
+    intro y
+    have h := Initialization.dotProduct_mulVec_le_of_le hdilplain (Sum.elim 0 y)
+    rw [hformj] at h
+    have hsmul : Sum.elim (0 : Vec d) y ⬝ᵥ
+        ((1 + 4 * (d : ℝ) *
+          (adaptedHattedContrast P q j - adaptedHattedContrast P q p)) •
+          toFullBlockMat (adaptedMean P q p)) *ᵥ Sum.elim (0 : Vec d) y =
+        (1 + 4 * (d : ℝ) *
+          (adaptedHattedContrast P q j - adaptedHattedContrast P q p)) *
+          (Sum.elim (0 : Vec d) y ⬝ᵥ
+            toFullBlockMat (adaptedMean P q p) *ᵥ
+              Sum.elim (0 : Vec d) y) := by
+      rw [Matrix.smul_mulVec, dotProduct_smul, smul_eq_mul]
+    rw [hsmul, hformp, Response.quadratic_schurBlock,
+      Response.quadratic_schurBlock] at h
+    simp only [Matrix.mulVec_zero, dotProduct_zero, sub_zero,
+      zero_add] at h
+    have hq2 : 0 ≤ y ⬝ᵥ SStarp⁻¹ *ᵥ y := by
+      have := hStarp.inv.posSemidef.dotProduct_mulVec_nonneg y
+      simpa using this
+    have hcoef : 1 + 4 * (d : ℝ) *
+        (adaptedHattedContrast P q j - adaptedHattedContrast P q p) ≤
+        2 := by
+      linarith only [hdropSmall]
+    nlinarith only [h, hq2, hcoef]
+  exact hdilquad
+
+private theorem sharp_inverse_le_four_inverse {A : FullBlockMat d} (hA : A.PosDef)
+    (horder : A ≤ (4 : ℝ) • fullBlockSharp A) :
+    (fullBlockSharp A)⁻¹ ≤ (4 : ℝ) • A⁻¹ := by
+  have hsharppd : (fullBlockSharp A).PosDef := posDef_fullBlockSharp hA
+  have hsmulpd : ((4 : ℝ) • fullBlockSharp A).PosDef :=
+    hsharppd.smul (by norm_num)
+  have hinv := inv_le_inv_of_le hA hsmulpd horder
+  rw [inv_smul_posDef' hsharppd (by norm_num : (0 : ℝ) < 4)] at hinv
+  have h := smul_le_smul_of_nonneg_left hinv (by norm_num : (0 : ℝ) ≤ 4)
+  rwa [smul_smul, mul_inv_cancel₀ (by norm_num : (4 : ℝ) ≠ 0),
+    one_smul] at h
+
 /-- **The pathwise variance replacement**, plain-frame conclusion. -/
 theorem blockSize_variance_replacement_pathwise [NeZero d]
     {P : Measure (CoeffSpace d)} [IsProbabilityMeasure P]
@@ -211,94 +596,12 @@ theorem blockSize_variance_replacement_pathwise [NeZero d]
     show toFullBlockMat (Response.skewBlockCongr h0
       (coarseBlock (adaptedCellAt q j w) a)) = _
     rw [Response.toFullBlockMat_skewBlockCongr, hShdef]
-  have hparentLe : toFullBlockMat
-      (Response.skewBlockCongr h0 (coarseBlock (adaptedCell q p) a)) ≤
-      (Z.card : ℝ)⁻¹ • ∑ w ∈ Z, A w := by
-    have hplain := Recurrence.toFullBlockMat_coarseBlock_adaptedCell_le_average
-      hqpd hjp hZ a
-    have hconj := conj_mono'' hplain Sh
-    have hlhs : Shᴴ *
-        toFullBlockMat (coarseBlock (adaptedCell q p) a) * Sh =
-        toFullBlockMat
-          (Response.skewBlockCongr h0 (coarseBlock (adaptedCell q p) a)) := by
-      rw [Response.toFullBlockMat_skewBlockCongr, hShdef]
-    have hrhs : Shᴴ * ((Z.card : ℝ)⁻¹ •
-        ∑ w ∈ Z,
-          toFullBlockMat (coarseBlock (adaptedCellAt q j w) a)) * Sh =
-        (Z.card : ℝ)⁻¹ • ∑ w ∈ Z, A w := by
-      rw [Matrix.mul_smul, Matrix.smul_mul]
-      congr 1
-      rw [Finset.mul_sum, Finset.sum_mul]
-      exact Finset.sum_congr rfl fun w _hw => (hAfull w).symm
-    rw [hlhs, hrhs] at hconj
-    exact hconj
+  have hparentLe := recentered_coarse_parent_le_average hqpd hjp hZ a h0 hShdef
+    hAfull
   -- the hatted parent dominates its sharp
-  have hparentSharp : fullBlockSharp (toFullBlockMat
-      (Response.skewBlockCongr h0 (coarseBlock (adaptedCell q p) a))) ≤
-      toFullBlockMat
-        (Response.skewBlockCongr h0 (coarseBlock (adaptedCell q p) a)) := by
-    have hdom : IsOpenBoundedConvexDomain
-        ((Response.adaptedDomain hqpd p : Domain d) : Set (Vec d)) :=
-      (Response.adaptedDomain hqpd p).isDomain
-    have hcell : coarseBlock
-        ((Response.adaptedDomain hqpd p : Domain d) : Set (Vec d))
-        (a.subSkew h0 hh0) =
-        Response.skewBlockCongr h0
-          (coarseBlock
-            ((Response.adaptedDomain hqpd p : Domain d) : Set (Vec d)) a) :=
-      Response.coarseBlock_subSkew (Response.adaptedDomain hqpd p) a h0 hh0
-    have hsharp := Sharp.blockMatLoewnerLE_blockSharp_coarseBlock_of_nonempty
-      hdom (Response.adaptedDomain hqpd p).nonempty (a.subSkew h0 hh0)
-    rw [hcell] at hsharp
-    have hsymm : IsSymmetricBlockMat
-        (Response.skewBlockCongr h0
-          (coarseBlock
-            ((Response.adaptedDomain hqpd p : Domain d) : Set (Vec d)) a)) :=
-      Response.isSymmetricBlockMat_skewBlockCongr (g := h0)
-        (isSymmetricBlockMat_coarseBlock _ a)
-    have hsymmSharp : IsSymmetricBlockMat
-        (blockSharp (Response.skewBlockCongr h0
-          (coarseBlock
-            ((Response.adaptedDomain hqpd p : Domain d) : Set (Vec d)) a))) := by
-      refine isSymmetricBlockMat_of_posSemidef ?_
-      rw [toFullBlockMat_blockSharp]
-      refine (posDef_fullBlockSharp ?_).posSemidef
-      exact posDef_toFullBlockMat hsymm
-        (Response.blockPosDef_skewBlockCongr (g := h0)
-          (Sharp.blockPosDef_coarseBlock_of_volume_pos hdom
-            (ENNReal.toReal_pos
-              (hdom.isOpen.measure_pos volume
-                (Response.adaptedDomain hqpd p).nonempty).ne'
-              hdom.volume_lt_top.ne) a))
-    have h := le_of_blockMatLoewnerLE hsymmSharp hsymm hsharp
-    rw [toFullBlockMat_blockSharp] at h
-    simpa only [Response.adaptedDomain_carrier] using h
+  have hparentSharp := recentered_coarse_block_dominates_sharp hqpd p a h0 hh0
   -- the hatted lower-scale mean dominates its sharp
-  have hsharpJle : fullBlockSharp (toFullBlockMat
-      (Response.skewBlockCongr h0 (adaptedMean P q j))) ≤
-      toFullBlockMat (Response.skewBlockCongr h0 (adaptedMean P q j)) := by
-    have hb := blockSharp_skewBlockCongr_annealedBlock_le
-      (Response.adaptedDomain hqpd j) hintj' h0 hh0
-    have hsymm : IsSymmetricBlockMat
-        (Response.skewBlockCongr h0
-          (annealedBlock P
-            ((Response.adaptedDomain hqpd j : Domain d) : Set (Vec d)))) :=
-      Response.isSymmetricBlockMat_skewBlockCongr (g := h0)
-        (Recurrence.isSymmetricBlockMat_annealedBlock P _)
-    have hsymmSharp : IsSymmetricBlockMat
-        (blockSharp (Response.skewBlockCongr h0
-          (annealedBlock P
-            ((Response.adaptedDomain hqpd j : Domain d) : Set (Vec d))))) := by
-      refine isSymmetricBlockMat_of_posSemidef ?_
-      rw [toFullBlockMat_blockSharp]
-      refine (posDef_fullBlockSharp ?_).posSemidef
-      refine posDef_toFullBlockMat hsymm ?_
-      refine Response.blockPosDef_skewBlockCongr (g := h0) ?_
-      have h := Recurrence.blockPosDef_adaptedMean hqpd j hintj
-      simpa only [adaptedMean, Response.adaptedDomain_carrier] using h
-    have h := le_of_blockMatLoewnerLE hsymmSharp hsymm hb
-    rw [toFullBlockMat_blockSharp] at h
-    simpa only [adaptedMean, Response.adaptedDomain_carrier] using h
+  have hsharpJle := recentered_adapted_mean_dominates_sharp hqpd j hintj hintj' h0 hh0
   -- transported order and dilation
   have hordermean := Recurrence.toFullBlockMat_adaptedMean_le hstat hq hlj hjp
     hintj hintp
@@ -332,28 +635,9 @@ theorem blockSize_variance_replacement_pathwise [NeZero d]
   -- the two frame inputs
   have hO1 := hatted_sharp_inverse_bound hSp hStarp hposp.le hepsp1
     hgapMp hskewMp h0 hh0
-  have hsharpPinv : (fullBlockSharp (toFullBlockMat
-      (Response.skewBlockCongr h0 (adaptedMean P q p))))⁻¹ ≤
-      (4 : ℝ) • (toFullBlockMat
-        (Response.skewBlockCongr h0 (adaptedMean P q p)))⁻¹ := by
+  have hsharpPinv := sharp_inverse_le_four_inverse hGp (by
     rw [hE2p]
-    have hO1' : schurBlock Sp SStarp (Kp - h0) ≤
-        (4 : ℝ) • fullBlockSharp (schurBlock Sp SStarp (Kp - h0)) := hO1
-    have hschurpd : (schurBlock Sp SStarp (Kp - h0)).PosDef := by
-      rw [← hE2p]
-      exact hGp
-    have hsharppd : (fullBlockSharp
-        (schurBlock Sp SStarp (Kp - h0))).PosDef :=
-      posDef_fullBlockSharp hschurpd
-    have hsmulpd : ((4 : ℝ) • fullBlockSharp
-        (schurBlock Sp SStarp (Kp - h0))).PosDef :=
-      hsharppd.smul (by norm_num)
-    have hinv := inv_le_inv_of_le hschurpd hsmulpd hO1'
-    rw [inv_smul_posDef' hsharppd (by norm_num : (0 : ℝ) < 4)] at hinv
-    have h := smul_le_smul_of_nonneg_left hinv
-      (by norm_num : (0 : ℝ) ≤ 4)
-    rwa [smul_smul, mul_inv_cancel₀ (by norm_num : (4 : ℝ) ≠ 0),
-      one_smul] at h
+    exact hO1)
   -- the cross-scale facts for the gap input
   have hstarpinvle : SStarp⁻¹ ≤ SStarj⁻¹ := by
     refine Initialization.le_of_dotProduct_mulVec_le hStarp.inv.isHermitian
@@ -367,113 +651,11 @@ theorem blockSize_variance_replacement_pathwise [NeZero d]
     rwa [Matrix.nonsing_inv_nonsing_inv _ (isUnit_det_of_posDef hStarp),
       Matrix.nonsing_inv_nonsing_inv _ (isUnit_det_of_posDef hStarj)]
       at h
-  have hdilquad : ∀ y : Vec d,
-      y ⬝ᵥ SStarj⁻¹ *ᵥ y ≤ 2 * (y ⬝ᵥ SStarp⁻¹ *ᵥ y) := by
-    intro y
-    have h := Initialization.dotProduct_mulVec_le_of_le hdilplain (Sum.elim 0 y)
-    rw [hformj] at h
-    have hsmul : Sum.elim (0 : Vec d) y ⬝ᵥ
-        ((1 + 4 * (d : ℝ) *
-          (adaptedHattedContrast P q j - adaptedHattedContrast P q p)) •
-          toFullBlockMat (adaptedMean P q p)) *ᵥ Sum.elim (0 : Vec d) y =
-        (1 + 4 * (d : ℝ) *
-          (adaptedHattedContrast P q j - adaptedHattedContrast P q p)) *
-          (Sum.elim (0 : Vec d) y ⬝ᵥ
-            toFullBlockMat (adaptedMean P q p) *ᵥ
-              Sum.elim (0 : Vec d) y) := by
-      rw [Matrix.smul_mulVec, dotProduct_smul, smul_eq_mul]
-    rw [hsmul, hformp, Response.quadratic_schurBlock,
-      Response.quadratic_schurBlock] at h
-    simp only [Matrix.mulVec_zero, dotProduct_zero, sub_zero,
-      zero_add] at h
-    have hq2 : 0 ≤ y ⬝ᵥ SStarp⁻¹ *ᵥ y := by
-      have := hStarp.inv.posSemidef.dotProduct_mulVec_nonneg y
-      simpa using this
-    have hcoef : 1 + 4 * (d : ℝ) *
-        (adaptedHattedContrast P q j - adaptedHattedContrast P q p) ≤
-        2 := by
-      linarith only [hdropSmall]
-    nlinarith only [h, hq2, hcoef]
-  have hKhat : ∀ x : Vec d,
-      ((Kp - h0) *ᵥ x) ⬝ᵥ SStarp⁻¹ *ᵥ ((Kp - h0) *ᵥ x) ≤
-        x ⬝ᵥ Sp *ᵥ x := by
-    intro x
-    -- the good-quadratics skew difference
-    have hgq := adaptedMean_normalized_schur_good_quads_le_hattedContrast_drop
-      hstat hq hlj hjp hintj hintp
-    have hgq2 := le_trans (le_max_right _ _) hgq
-    obtain ⟨hLRp, _hstp, hskp, hsgp⟩ := schurData_of_form hStarp hformp
-    obtain ⟨_hLRj, _hstj, hskj, _hsgj⟩ := schurData_of_form hStarj hformj
-    rw [hLRp, hskj, hskp, hsgp] at hgq2
-    have hΔq := quad_le_of_norm_normalized_le hSp hStarp hgq2 x
-    -- decompose the shifted skew
-    have hsplitK : (Kp - h0) *ᵥ x =
-        -((Kj - Kp) *ᵥ x) + Response.responseSymmetric Kj *ᵥ x := by
-      have hKp : Kp - h0 = -(Kj - Kp) + (Kj - h0) := by abel
-      have hKj0 : Kj - h0 = Response.responseSymmetric Kj := by
-        rw [hh0def]
-        exact Response.sub_responseSkew Kj
-      rw [hKp, hKj0, Matrix.add_mulVec, Matrix.neg_mulVec]
-    -- the two pieces
-    have hquadsplit : ((Kp - h0) *ᵥ x) ⬝ᵥ SStarp⁻¹ *ᵥ
-        ((Kp - h0) *ᵥ x) ≤
-        2 * (((Kj - Kp) *ᵥ x) ⬝ᵥ SStarp⁻¹ *ᵥ ((Kj - Kp) *ᵥ x)) +
-          2 * ((Response.responseSymmetric Kj *ᵥ x) ⬝ᵥ SStarp⁻¹ *ᵥ
-            (Response.responseSymmetric Kj *ᵥ x)) := by
-      rw [hsplitK]
-      have h := quad_split_two' hStarp.inv.posSemidef
-        (-((Kj - Kp) *ᵥ x)) (Response.responseSymmetric Kj *ᵥ x)
-      have hneg : (-((Kj - Kp) *ᵥ x)) ⬝ᵥ SStarp⁻¹ *ᵥ
-          (-((Kj - Kp) *ᵥ x)) =
-          ((Kj - Kp) *ᵥ x) ⬝ᵥ SStarp⁻¹ *ᵥ ((Kj - Kp) *ᵥ x) := by
-        rw [Matrix.mulVec_neg, dotProduct_neg, neg_dotProduct, neg_neg]
-      rwa [hneg] at h
-    -- the drop piece
-    have hdropnn : 0 ≤
-        adaptedHattedContrast P q j - adaptedHattedContrast P q p :=
-      sub_nonneg.mpr (adaptedHattedContrast_le hstat hq hlj hjp hintj
-        hintp)
-    have hd0 : (0 : ℝ) ≤ (d : ℝ) := Nat.cast_nonneg d
-    have hxSp0 : 0 ≤ x ⬝ᵥ Sp *ᵥ x := by
-      have := hSp.posSemidef.dotProduct_mulVec_nonneg x
-      simpa using this
-    have hΔsmall : ((Kj - Kp) *ᵥ x) ⬝ᵥ SStarp⁻¹ *ᵥ
-        ((Kj - Kp) *ᵥ x) ≤ (1 / 16) * (x ⬝ᵥ Sp *ᵥ x) := by
-      refine hΔq.trans ?_
-      have hdd : ((d : ℝ) *
-          (adaptedHattedContrast P q j - adaptedHattedContrast P q p)) ^
-            2 ≤ 1 / 16 := by
-        nlinarith only [hdropSmall, hdropnn, hd0,
-          mul_nonneg hd0 hdropnn]
-      exact mul_le_mul_of_nonneg_right hdd hxSp0
-    -- the symmetric piece
-    have hκpiece : (Response.responseSymmetric Kj *ᵥ x) ⬝ᵥ SStarp⁻¹ *ᵥ
-        (Response.responseSymmetric Kj *ᵥ x) ≤
-        (1 / 4) * (x ⬝ᵥ Sp *ᵥ x) := by
-      have h1 := Initialization.dotProduct_mulVec_le_of_le hstarpinvle
-        (Response.responseSymmetric Kj *ᵥ x)
-      have hks : (Response.responseSymmetric Kj)ᴴ = Response.responseSymmetric Kj :=
-        Response.responseSymmetric_isHermitian Kj
-      have hkq : x ⬝ᵥ (Response.responseSymmetric Kj * SStarj⁻¹ *
-          Response.responseSymmetric Kj) *ᵥ x =
-          (Response.responseSymmetric Kj *ᵥ x) ⬝ᵥ SStarj⁻¹ *ᵥ
-            (Response.responseSymmetric Kj *ᵥ x) := by
-        rw [← Matrix.mulVec_mulVec, ← Matrix.mulVec_mulVec,
-          ← mulVec_dotProduct_symm hks]
-      have h2 := Initialization.dotProduct_mulVec_le_of_le hskewMj x
-      rw [Matrix.smul_mulVec, dotProduct_smul, smul_eq_mul, hkq] at h2
-      have h3 := Initialization.dotProduct_mulVec_le_of_le hstarcross x
-      have h4 := Initialization.dotProduct_mulVec_le_of_le horderp x
-      have hX0 : 0 ≤ x ⬝ᵥ SStarj *ᵥ x := by
-        have := hStarj.posSemidef.dotProduct_mulVec_nonneg x
-        simpa using this
-      have heps2 : epsj ^ 2 / 4 ≤ 1 / 4 := by
-        nlinarith only [hposj, hepsj1]
-      have h5 : epsj ^ 2 / 4 * (x ⬝ᵥ SStarj *ᵥ x) ≤
-          1 / 4 * (x ⬝ᵥ SStarj *ᵥ x) :=
-        mul_le_mul_of_nonneg_right heps2 hX0
-      linarith only [h1, h2, h3, h4, h5, hX0]
-    linarith only [hquadsplit, hΔsmall, hκpiece, hxSp0]
+  have hdilquad := terminal_star_inverse_quadratic_comparison hStarp hformj hformp
+    hdropSmall hdilplain
+  have hKhat := shifted_skew_quadratic_le_terminal_primal hstat hq hlj hjp hintj hintp
+    hStarj hSp hStarp hformj hformp
+    hposj hepsj1 hdropSmall hh0def hstarpinvle hstarcross horderp hskewMj
   -- the gap input
   have hO2 := hatted_sharp_gap_bound hSj hStarj hposj hepsj1 horderj
     hgapMj (Response.responseSymmetric_isHermitian Kj) hskewMj hSp hStarp
@@ -512,65 +694,9 @@ theorem blockSize_variance_replacement_pathwise [NeZero d]
     rw [Finset.mul_sum, Finset.sum_mul]
     refine Finset.sum_congr rfl fun w _hw => ?_
     rw [hAfull w, hShdef]
-  have hLHSeq : ‖matSqrt (toFullBlockMat
-        (Response.skewBlockCongr h0 (adaptedMean P q p)))⁻¹ *
-      (toFullBlockMat
-        (Response.skewBlockCongr h0 (coarseBlock (adaptedCell q p) a)) -
-        toFullBlockMat (Response.skewBlockCongr h0 (adaptedMean P q p))) *
-      matSqrt (toFullBlockMat
-        (Response.skewBlockCongr h0 (adaptedMean P q p)))⁻¹‖ =
-      blockSize
-        (blockSub (coarseBlock (adaptedCell q p) a) (adaptedMean P q p))
-        (adaptedMean P q p) := by
-    rw [← Response.blockSize_skewBlockCongr h0
-      (blockSub (coarseBlock (adaptedCell q p) a) (adaptedMean P q p))
-      (adaptedMean P q p)]
-    rw [PortableHistory.blockSize_eq_norm
-      (Response.isSymmetricBlockMat_skewBlockCongr (g := h0)
-        (isSymmetricBlockMat_blockSub
-          (isSymmetricBlockMat_coarseBlock _ a)
-          (Recurrence.isSymmetricBlockMat_adaptedMean P q p)))
-      hGpsym hGpblock]
-    congr 1
-    rw [normalizedBlock, toFullBlockMat_ofFullBlockMat,
-      Response.blockSub_skewBlockCongr, Transport.toFullBlockMat_blockSub]
-  have hAvgeq : ‖matSqrt (toFullBlockMat
-        (Response.skewBlockCongr h0 (adaptedMean P q p)))⁻¹ *
-      ((Z.card : ℝ)⁻¹ • ∑ w ∈ Z, A w -
-        toFullBlockMat (Response.skewBlockCongr h0 (adaptedMean P q j))) *
-      matSqrt (toFullBlockMat
-        (Response.skewBlockCongr h0 (adaptedMean P q p)))⁻¹‖ =
-      blockSize
-        (blockSub (ofFullBlockMat ((Z.card : ℝ)⁻¹ •
-          ∑ w ∈ Z,
-            toFullBlockMat (coarseBlock (adaptedCellAt q j w) a)))
-          (adaptedMean P q j))
-        (adaptedMean P q p) := by
-    rw [← Response.blockSize_skewBlockCongr h0
-      (blockSub (ofFullBlockMat ((Z.card : ℝ)⁻¹ •
-        ∑ w ∈ Z,
-          toFullBlockMat (coarseBlock (adaptedCellAt q j w) a)))
-        (adaptedMean P q j))
-      (adaptedMean P q p)]
-    have havgSym : IsSymmetricBlockMat
-        (ofFullBlockMat ((Z.card : ℝ)⁻¹ •
-          ∑ w ∈ Z,
-            toFullBlockMat (coarseBlock (adaptedCellAt q j w) a))) := by
-      refine isSymmetricBlockMat_of_posSemidef ?_
-      rw [toFullBlockMat_ofFullBlockMat]
-      refine Matrix.PosSemidef.smul ?_ (by positivity : (0 : ℝ) ≤ _)
-      refine Matrix.posSemidef_sum Z fun w hw => ?_
-      exact (posDef_toFullBlockMat
-        (Recurrence.isSymmetricBlockMat_coarseBlock_adaptedCellAt q j w a)
-        (Recurrence.blockPosDef_coarseBlock_adaptedCellAt hqpd j w a)).posSemidef
-    rw [PortableHistory.blockSize_eq_norm
-      (Response.isSymmetricBlockMat_skewBlockCongr (g := h0)
-        (isSymmetricBlockMat_blockSub havgSym
-          (Recurrence.isSymmetricBlockMat_adaptedMean P q j)))
-      hGpsym hGpblock]
-    congr 1
-    rw [normalizedBlock, toFullBlockMat_ofFullBlockMat,
-      Response.blockSub_skewBlockCongr, Transport.toFullBlockMat_blockSub, havgfull]
+  have hLHSeq := recentered_parent_fluctuation_norm_eq_block_size p a h0 hGpsym hGpblock
+  have hAvgeq := recentered_average_fluctuation_norm_eq_block_size hqpd j p a h0 Z
+    hGpsym hGpblock havgfull
   rw [← hLHSeq, ← hAvgeq]
   exact hcore
 

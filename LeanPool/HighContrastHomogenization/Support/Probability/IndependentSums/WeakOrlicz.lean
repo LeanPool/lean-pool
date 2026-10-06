@@ -179,11 +179,11 @@ noncomputable def psiSigma (σ : ℝ) : ℝ → ℝ :=
     psiSigma σ t = Real.exp ((σ ^ (2 : ℕ))⁻¹ * (Real.log (1 + σ * t)) ^ (2 : ℕ)) :=
   rfl
 
-@[simp] theorem gammaSigma_inv (σ t : ℝ) :
+theorem gammaSigma_inv (σ t : ℝ) :
     (gammaSigma σ t)⁻¹ = Real.exp (-(t ^ σ)) := by
   simp [gammaSigma, Real.exp_neg]
 
-@[simp] theorem psiSigma_inv (σ t : ℝ) :
+theorem psiSigma_inv (σ t : ℝ) :
     (psiSigma σ t)⁻¹ =
       Real.exp (-((σ ^ (2 : ℕ))⁻¹ * (Real.log (1 + σ * t)) ^ (2 : ℕ))) := by
   simp [psiSigma, Real.exp_neg]

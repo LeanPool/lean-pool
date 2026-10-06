@@ -104,7 +104,7 @@ theorem canonicalScalarResponseGradientWeakNormPartialCubeSet_le_highLowSplit
                   (1 - Real.rpow (3 : ℝ) (-s))⁻¹) *
                 Real.sqrt (vecNormSq (-p0))) := by
     refine
-      cubeBesovNegativeVectorPartialSeminorm_le_cubeTerms_below_cutoff_add_low_self_add_geometric_const
+      negativeVectorPartial_le_cutoffTerms_and_geometricTail
         Q s N L gradDefect grad (-p0)
         (fun _j R =>
           Ch04.canonicalScalarResponseGradientAverageCubeSet R R p q a.toFun - p0)
@@ -118,7 +118,7 @@ theorem canonicalScalarResponseGradientWeakNormPartialCubeSet_le_highLowSplit
           cubeAverageVec R gradDefect =
             Ch04.canonicalScalarResponseGradientAverageCubeSet Q R p q a.toFun - p0 := by
         simpa [F, aQ, gradDefect] using
-          JUpperBoundWeakNorms.cubeAverageVec_canonicalMaximizerGradientDefectOnDependentFamily_eq_ch04
+          JUpperBoundWeakNorms.cubeAverageCanonicalGradientDefect_eq_responseGradientAverage
             a ha hR p q p0
       rw [hparent]
       ext i
@@ -132,7 +132,7 @@ theorem canonicalScalarResponseGradientWeakNormPartialCubeSet_le_highLowSplit
             Q R aQ hR p q
       simpa [gradDefect, grad, add_comm, sub_eq_add_neg] using!
         cubeAverageVec_sub_const R grad p0 hgrad
-  rw [← JUpperBoundWeakNorms.cubeBesovNegativeVectorPartialSeminorm_canonicalMaximizerGradientDefectOnDependentFamily_eq_ch04
+  rw [← JUpperBoundWeakNorms.negativeVectorPartial_canonicalGradientDefect_eq_chapter04
     a ha Q s N p q p0]
   exact hraw
 
@@ -202,7 +202,7 @@ theorem canonicalScalarResponseFluxWeakNormPartialCubeSet_le_highLowSplit
                   (1 - Real.rpow (3 : ℝ) (-t))⁻¹) *
                 Real.sqrt (vecNormSq (-q0))) := by
     refine
-      cubeBesovNegativeVectorPartialSeminorm_le_cubeTerms_below_cutoff_add_low_self_add_geometric_const
+      negativeVectorPartial_le_cutoffTerms_and_geometricTail
         Q t N L fluxDefect flux (-q0)
         (fun _j R =>
           Ch04.canonicalScalarResponseFluxAverageCubeSet R R p q a.toFun - q0)
@@ -230,7 +230,8 @@ theorem canonicalScalarResponseFluxWeakNormPartialCubeSet_le_highLowSplit
             Q R aQ hR p q
       simpa [fluxDefect, flux, add_comm, sub_eq_add_neg] using!
         cubeAverageVec_sub_const R flux q0 hflux
-  rw [← JUpperBoundWeakNorms.cubeBesovNegativeVectorPartialSeminorm_canonicalMaximizerFluxDefectOnDependentFamily_eq_ch04
+  rw [←
+    JUpperBoundWeakNorms.cubeNegativeVectorBesov_eq_canonicalFluxWeakNorm
     a ha Q t N p q q0]
   exact hraw
 

@@ -67,7 +67,7 @@ theorem memLp_indicator_iff_restrict {α E : Type*} [MeasurableSpace α]
 /-- Integrating a zero extension over the ambient space is integration of the
 original function over its measurable support. -/
 theorem integral_indicator_eq_integral_restrict {α E : Type*} [MeasurableSpace α]
-    [NormedAddCommGroup E] [NormedSpace ℝ E] [CompleteSpace E]
+    [NormedAddCommGroup E] [NormedSpace ℝ E]
     {μ : Measure α} {U : Set α} {f : α → E} (hU : MeasurableSet U) :
     ∫ x, U.indicator f x ∂μ = ∫ x in U, f x ∂μ :=
   MeasureTheory.integral_indicator hU

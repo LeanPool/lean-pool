@@ -181,7 +181,7 @@ private theorem summable_volumeRatio_mul_responseJ_of_isEllipticFieldOn_aux {d :
             mul_le_mul_of_nonneg_right hweights hCmax_nonneg
       _ = max C 0 := one_mul _
 
-theorem summable_volumeRatio_mul_responseJ_of_isEllipticFieldOn_provider {d : ℕ}
+theorem summable_volumeWeightedResponseJ {d : ℕ}
     {ι : Type*} {s : Set ι} (_hs : s.Countable) {W : Set (Vec d)} {U : ι → Set (Vec d)}
     [IsFiniteMeasure (volumeMeasureOn W)]
     (hopen : ∀ i ∈ s, IsOpen (U i)) (hsub : ∀ i ∈ s, U i ⊆ W)

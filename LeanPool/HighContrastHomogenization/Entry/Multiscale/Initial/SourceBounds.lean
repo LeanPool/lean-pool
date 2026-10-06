@@ -60,7 +60,8 @@ theorem initial_source_bounds_all (d : ℕ) (hd : 2 ≤ d) (γ : ℝ)
                     toFullBlockMat (blockSwap d))))
                 (adaptedMean P (1 : Mat d) j) ∧
               BlockMatLoewnerLE (adaptedMean P (1 : Mat d) j) (blockScale 2 E) := by
-  obtain ⟨Csrc, hCsrc_pos, hbound⟩ := HCPolySupport.HighContrast.Annealed.initial_source_bounds d hd γ hγ
+  obtain ⟨Csrc, hCsrc_pos, hbound⟩ := HCPolySupport.HighContrast.Annealed.initial_source_bounds
+    d hd γ hγ
   refine ⟨Csrc, hCsrc_pos, ?_⟩
   intro P E Ψ K Src hP hstat _hunit hdag jStar hjStar hceil j hj
   have := hP
@@ -145,10 +146,13 @@ theorem initial_normalization_bounds_all (d : ℕ) (hd : 2 ≤ d) (γ : ℝ)
       (HCPolySupport.HighContrast.adaptedMean P (1 : HCPolySupport.Mat d) m)
       (HCPolySupport.HighContrast.adaptedMean P (1 : HCPolySupport.Mat d) j) := by
     have h := HCPolySupport.HighContrast.Annealed.adaptedMean_antitone d hd P γ E Ψ K Src hstat hdag
-      jStar hjStar (1 : HCPolySupport.Mat d) (HCPolySupport.HighContrast.Geometry.one_posDef d) j m hj hjm
+      jStar hjStar (1 : HCPolySupport.Mat d) (HCPolySupport.HighContrast.Geometry.one_posDef d)
+        j m hj hjm
     rwa [HCPolySupport.HighContrast.Geometry.explicitRoundedGrid_one] at h
-  have horder := HCPolySupport.HighContrast.Annealed.adaptedMean_order_consequences d hd P γ E Ψ K Src
-    hstat hdag jStar hjStar (1 : HCPolySupport.Mat d) (HCPolySupport.HighContrast.Geometry.one_posDef d)
+  have horder := HCPolySupport.HighContrast.Annealed.adaptedMean_order_consequences d hd P γ E Ψ
+    K Src
+    hstat hdag jStar hjStar (1 : HCPolySupport.Mat d)
+      (HCPolySupport.HighContrast.Geometry.one_posDef d)
     j m hj hjm
   simp only [HCPolySupport.HighContrast.Geometry.explicitRoundedGrid_one] at horder
   obtain ⟨hIle, hlogpos, -, -, -, -⟩ := horder
@@ -263,7 +267,8 @@ theorem normalizedFluctuationSelf_one_sandwich (d : ℕ) (hd : 2 ≤ d) (γ : �
     rwa [Geometry.explicitRoundedGrid_one] at h
   have hEPosDef : (toFullBlockMat E).PosDef :=
     posDef_toFullBlockMat hdag.refBlock_isSymm hdag.refBlock_posDef
-  have hPi1 : (1 : ℝ) ≤ aspectRatio E := HCPolySupport.HighContrast.one_le_aspectRatio_of_coarseEllipticityDagger hdag
+  have hPi1 : (1 : ℝ) ≤ aspectRatio E :=
+    HCPolySupport.HighContrast.one_le_aspectRatio_of_coarseEllipticityDagger hdag
   have hREPosDef : (toFullBlockMat RE).PosDef := Analysis.swapConj_posDef hEPosDef
   have hE6RE_block : BlockMatLoewnerLE E (blockScale (6 * aspectRatio E) RE) :=
     Annealed.refBlock_le_six_aspectRatio_smul_swapConj hdag
@@ -271,7 +276,8 @@ theorem normalizedFluctuationSelf_one_sandwich (d : ℕ) (hd : 2 ≤ d) (γ : �
       HighContrast.adaptedCell (1 : Mat d) j := by
     rw [Geometry.adaptedCellTranslate_one_zero, Geometry.adaptedCell_one]
   have hSelfEq : normalizedFluctuationSelf P (1 : Mat d) j a =
-      normalizedBlock (blockSub (coarseBlock (HighContrast.adaptedCell (1 : Mat d) j) a) Aj) Aj := by
+      normalizedBlock (blockSub (coarseBlock (HighContrast.adaptedCell (1 : Mat d) j) a) Aj) Aj
+        := by
     show normalizedFluctuation P (1 : Mat d) j j 0 a = _
     rw [normalizedFluctuation, hcell]
   rw [hSelfEq]
@@ -423,7 +429,8 @@ theorem normalizedFluctuationSelf_one_moment_le (d : ℕ) (hd : 2 ≤ d) (γ : �
   have hQ2 : 2 ≤ Q := bigQ_two_le d γ hγ
   have hQ1 : 1 ≤ Q := by omega
   have hQreal1 : (1 : ℝ) ≤ (Q : ℝ) := by exact_mod_cast hQ1
-  have hPi1 : (1 : ℝ) ≤ aspectRatio E := HCPolySupport.HighContrast.one_le_aspectRatio_of_coarseEllipticityDagger hdag
+  have hPi1 : (1 : ℝ) ≤ aspectRatio E :=
+    HCPolySupport.HighContrast.one_le_aspectRatio_of_coarseEllipticityDagger hdag
   have hPi0 : (0 : ℝ) ≤ aspectRatio E := zero_le_one.trans hPi1
   have hIdentity : toFullBlockMat (Book.Ch02.blockIdentity d) = (1 : FullBlockMat d) := by
     ext (i|i) (k|k) <;>
@@ -455,7 +462,8 @@ theorem normalizedFluctuationSelf_one_moment_le (d : ℕ) (hd : 2 ≤ d) (γ : �
       jStar hjStar (1 : Mat d) (Geometry.one_posDef d) j j 0 (Q : ℝ) hQreal1
     rw [Geometry.explicitRoundedGrid_one] at hmem
     exact hmem.symmetric
-  have hBoundAE : ∀ᵐ a ∂P, absSchattenNorm (Q : ℝ) (normalizedFluctuationSelf P (1 : Mat d) j a) ^ Q ≤
+  have hBoundAE : ∀ᵐ a ∂P, absSchattenNorm (Q : ℝ) (normalizedFluctuationSelf P (1 : Mat d) j a)
+    ^ Q ≤
       2 * (d : ℝ) * (1 + (12 * aspectRatio E * X a) ^ Q) := by
     filter_upwards [hXenv, hSymAE] with a ha hsym
     obtain ⟨hlo, hhi⟩ := hSand P E Ψ K Src hP hstat hunit hdag jStar hjStar hCthresh1 j hj
@@ -547,7 +555,8 @@ theorem fluctuationHistory_one_jStar_le_moment (d : ℕ) (hd : 2 ≤ d) (γ : �
     rw [Geometry.adaptedCell_one, ← Geometry.centeredCube_eq_standardCell]
   -- Every point of the intersecting lattice/cell set is the origin.
   have hSet_sub : ∀ z : Vec d,
-      z ∈ adaptedLatticeAtScale (1 : Mat d) (jStar : ℤ) ∩ HighContrast.adaptedCell (1 : Mat d) (jStar : ℤ) →
+      z ∈ adaptedLatticeAtScale (1 : Mat d) (jStar : ℤ) ∩ HighContrast.adaptedCell (1 : Mat d)
+        (jStar : ℤ) →
       z = 0 := by
     rintro z ⟨⟨w, hw⟩, hzmem⟩
     rw [hcellEq, Recurrence.mem_centeredCube_iff] at hzmem
@@ -586,13 +595,15 @@ theorem fluctuationHistory_one_jStar_le_moment (d : ℕ) (hd : 2 ≤ d) (γ : �
     · have : IsEmpty p := ⟨hp⟩
       rw [Real.iSup_of_isEmpty]
       exact hneg hp
-  have hSymAE : ∀ᵐ a ∂P, IsSymmetricBlockMat (normalizedFluctuationSelf P (1 : Mat d) (jStar : ℤ) a) := by
+  have hSymAE : ∀ᵐ a ∂P, IsSymmetricBlockMat (normalizedFluctuationSelf P (1 : Mat d) (jStar :
+    ℤ) a) := by
     have hmem := Annealed.memLqSchatten_normalizedFluctuation d hd P γ E Ψ K Src hstat hdag
       jStar hjStar (1 : Mat d) (Geometry.one_posDef d) (jStar : ℤ) (jStar : ℤ) 0 (Q : ℝ) hQreal1
     rw [Geometry.explicitRoundedGrid_one] at hmem
     exact hmem.symmetric
   have hRHSint : Integrable
-      (fun a => absSchattenNorm (Q : ℝ) (normalizedFluctuationSelf P (1 : Mat d) (jStar : ℤ) a) ^ Q) P := by
+      (fun a => absSchattenNorm (Q : ℝ) (normalizedFluctuationSelf P (1 : Mat d) (jStar : ℤ) a)
+        ^ Q) P := by
     have hmem := Annealed.memLqSchatten_normalizedFluctuation d hd P γ E Ψ K Src hstat hdag
       jStar hjStar (1 : Mat d) (Geometry.one_posDef d) (jStar : ℤ) (jStar : ℤ) 0 (Q : ℝ) hQreal1
     rw [Geometry.explicitRoundedGrid_one] at hmem
@@ -601,7 +612,8 @@ theorem fluctuationHistory_one_jStar_le_moment (d : ℕ) (hd : 2 ≤ d) (γ : �
   have hLHSnonneg : ∀ᵐ a ∂P, (0 : ℝ) ≤
       ⨆ jj ∈ Set.Icc (jStar : ℤ) (jStar : ℤ),
         (3 : ℝ) ^ (-(Q : ℝ) * rhoMax d γ * ((jStar : ℝ) - (jj : ℝ))) *
-          ⨆ z ∈ adaptedLatticeAtScale (1 : Mat d) jj ∩ HighContrast.adaptedCell (1 : Mat d) (jStar : ℤ),
+          ⨆ z ∈ adaptedLatticeAtScale (1 : Mat d) jj ∩ HighContrast.adaptedCell (1 : Mat d)
+            (jStar : ℤ),
             blockOpNorm (normalizedFluctuation P (1 : Mat d) jj (jStar : ℤ) z a) ^ Q := by
     apply ae_of_all
     intro a
@@ -618,11 +630,13 @@ theorem fluctuationHistory_one_jStar_le_moment (d : ℕ) (hd : 2 ≤ d) (γ : �
   have hBoundAE : ∀ᵐ a ∂P,
       (⨆ jj ∈ Set.Icc (jStar : ℤ) (jStar : ℤ),
         (3 : ℝ) ^ (-(Q : ℝ) * rhoMax d γ * ((jStar : ℝ) - (jj : ℝ))) *
-          ⨆ z ∈ adaptedLatticeAtScale (1 : Mat d) jj ∩ HighContrast.adaptedCell (1 : Mat d) (jStar : ℤ),
+          ⨆ z ∈ adaptedLatticeAtScale (1 : Mat d) jj ∩ HighContrast.adaptedCell (1 : Mat d)
+            (jStar : ℤ),
             blockOpNorm (normalizedFluctuation P (1 : Mat d) jj (jStar : ℤ) z a) ^ Q) ≤
         absSchattenNorm (Q : ℝ) (normalizedFluctuationSelf P (1 : Mat d) (jStar : ℤ) a) ^ Q := by
     filter_upwards [hSymAE] with a hsym
-    have hHerm : (toFullBlockMat (normalizedFluctuationSelf P (1 : Mat d) (jStar : ℤ) a)).IsHermitian :=
+    have hHerm : (toFullBlockMat (normalizedFluctuationSelf P (1 : Mat d) (jStar : ℤ)
+      a)).IsHermitian :=
       (Analysis.toFullBlockMat_isHermitian_iff _).2 hsym
     have htarget_nonneg : (0 : ℝ) ≤
         absSchattenNorm (Q : ℝ) (normalizedFluctuationSelf P (1 : Mat d) (jStar : ℤ) a) ^ Q :=

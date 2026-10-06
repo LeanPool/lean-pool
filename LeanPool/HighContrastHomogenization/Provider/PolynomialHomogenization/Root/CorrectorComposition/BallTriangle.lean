@@ -36,7 +36,7 @@ discharges it.
 
 `HCPoly.Provider.PolynomialHomogenization.Root.CorrectorComposition.BallTriangleCore`
 supplies Minkowski for
-`‖s^{1/2} ·‖_{L̲²(U)}` on an arbitrary measurable set of finite volume, for two
+`‖s^{1/2} ·‖_{L_underlined²(U)}` on an arbitrary measurable set of finite volume, for two
 **square-integrable** fields and an **almost everywhere** elliptic coefficient.
 Three obligations remain, and this module proves them for the exact instance.
 

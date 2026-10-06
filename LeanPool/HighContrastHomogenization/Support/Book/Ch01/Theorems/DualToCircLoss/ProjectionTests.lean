@@ -397,6 +397,8 @@ noncomputable def cubeProjectionPositiveTestCoefficientTwo {d : ℕ}
     2 * cubeBesovScaleWeight t Q * Real.rpow (3 : ℝ) (t * (k : ℝ))) +
     cubeBesovScaleWeight t Q
 
+/-- The L² norm of the depth-`j` projection multiplied by the finite positive Besov scale
+coefficient. -/
 @[expose]
 noncomputable def cubeProjectionPositiveTestBoundTwo {d : ℕ}
     (Q : Cube d) (t : ℝ) (j : ℕ) (f : Vec d → ℝ) : ℝ :=

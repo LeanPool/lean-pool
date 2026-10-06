@@ -33,7 +33,7 @@ vector projected-Poincare local estimate in `LocalEstimate.lean`.
 -/
 
 theorem
-    abs_cubeAverage_vecDot_scalar_smul_le_split_of_fluxEnergyControl_of_contDiff_component_vector_bound_dualFull_localMultiscale
+    abs_cubeAverage_vectorDot_scalarMultiply_le_split_of_fluxEnergyControl_of_vector
     {d : ℕ} (Q : TriadicCube d) (a : CoeffField d) (s : ℝ)
     (flux : Vec d → Vec d) (u : Vec d → ℝ) (G ξ : Vec d → Vec d)
     (energy : Vec d → ℝ)
@@ -117,7 +117,7 @@ theorem
       0 ≤ AcircS * Real.sqrt (cubeAverage Q energy) :=
     mul_nonneg hAcircS (Real.sqrt_nonneg _)
   exact
-    abs_cubeAverage_vecDot_scalar_smul_le_split_collapsed_sharp_note_terms_of_dualFull_localMultiscale_effective_constant
+    abs_cubeAverage_vectorDot_scalarMultiply_le_sharpSplit_of_effectiveConstant
       (Q := Q) (s := s) (flux := flux) (u := u) (G := G) (ξ := ξ)
       (Bu1 :=
         (geometricDiscount (1 : ℝ) 1)⁻¹ *
@@ -184,7 +184,7 @@ theorem
         ((Fintype.card (Fin d) : ℝ) * C) := by
   rcases hfluxEnergy with ⟨henergy_nonneg, henergy_int, hfluxCtrl, hsum1, hsumS⟩
   simpa [coarseCaccioppoliFluxEnergyExactRhs] using
-    abs_cubeAverage_vecDot_scalar_smul_le_split_of_fluxEnergyControl_of_contDiff_component_vector_bound_dualFull_localMultiscale
+    abs_cubeAverage_vectorDot_scalarMultiply_le_split_of_fluxEnergyControl_of_vector
       (Q := Q) (a := a) (s := s) (flux := flux) (u := u) (G := G) (ξ := ξ)
       (energy := energy) (Acirc1 := Acirc1) (AcircS := AcircS) (B := B) (C := C)
       (BgConst := coarseCaccioppoliConstantCutoffSize Q u ξ B)
@@ -201,7 +201,7 @@ theorem
 constructed on the parent cube, with the corrected full-dual/local-multiscale
 Poincare inputs. -/
 theorem
-    abs_cubeAverage_vecDot_scalar_smul_le_fluxEnergyExactRhs_of_parentQuantitativeCutoff_on_descendant_vectorFullDualLocalMultiscale
+    abs_cubeAverage_vectorDot_scalarMultiply_le_fluxEnergy_of_descendantCutoff
     {d : ℕ} {Q R : TriadicCube d} {j : ℕ} (hR : R ∈ descendantsAtDepth Q j)
     (a : CoeffField d) (s : ℝ) {ρ₁ ρ₂ : ℝ}
     (flux : Vec d → Vec d) (u : Vec d → ℝ) (G : Vec d → Vec d)
@@ -263,7 +263,7 @@ theorem
 /-- Local Caccioppoli estimate using full-dual Poincare and infinite-depth
 full-circ bounds, with no finite local-multiscale Poincare input. -/
 theorem
-    abs_cubeAverage_vecDot_scalar_smul_le_split_of_fluxEnergyControl_of_contDiff_component_vector_bound_dualFull_fullCirc
+    abs_cubeAverage_vectorDot_scalarMultiply_le_split_of_fluxEnergyControl
     {d : ℕ} (Q : TriadicCube d) (a : CoeffField d) (s : ℝ)
     (flux : Vec d → Vec d) (u : Vec d → ℝ) (G ξ : Vec d → Vec d)
     (energy : Vec d → ℝ)
@@ -340,7 +340,7 @@ theorem
     norm_cubeAverageVec_le_sqrt_coarseBBlockNorm_mul_sqrt_cubeAverage_of_fluxEnergyControl
       Q a flux energy hfluxCtrl
   exact
-    abs_cubeAverage_vecDot_scalar_smul_le_split_collapsed_sharp_note_terms_of_dualFull_fullCirc_effective_constant
+    abs_cubeAverage_vectorDot_scalarMultiply_le_split_collapsed_sharp_of_constant
       (Q := Q) (s := s) (flux := flux) (u := u) (G := G) (ξ := ξ)
       (Bu1 :=
         (geometricDiscount (1 : ℝ) 1)⁻¹ *
@@ -403,7 +403,7 @@ theorem
         ((Fintype.card (Fin d) : ℝ) * C) := by
   rcases hfluxEnergy with ⟨henergy_nonneg, henergy_int, hfluxCtrl, hsum1, hsumS⟩
   simpa [coarseCaccioppoliFluxEnergyExactRhs] using
-    abs_cubeAverage_vecDot_scalar_smul_le_split_of_fluxEnergyControl_of_contDiff_component_vector_bound_dualFull_fullCirc
+    abs_cubeAverage_vectorDot_scalarMultiply_le_split_of_fluxEnergyControl
       (Q := Q) (a := a) (s := s) (flux := flux) (u := u) (G := G) (ξ := ξ)
       (energy := energy) (Acirc1 := Acirc1) (AcircS := AcircS) (B := B) (C := C)
       (BgConst := coarseCaccioppoliConstantCutoffSize Q u ξ B)
@@ -419,7 +419,7 @@ theorem
 /-- Exact local Caccioppoli estimate on a descendant cube using a parent
 quantitative cutoff and the full-dual/full-circ Poincare route. -/
 theorem
-    abs_cubeAverage_vecDot_scalar_smul_le_fluxEnergyExactRhs_of_parentQuantitativeCutoff_on_descendant_vectorFullDualFullCirc
+    abs_cubeAverage_vectorDot_scalarMultiply_le_fluxEnergyExactRhs_of_descendant
     {d : ℕ} {Q R : TriadicCube d} {j : ℕ} (hR : R ∈ descendantsAtDepth Q j)
     (a : CoeffField d) (s : ℝ) {ρ₁ ρ₂ : ℝ}
     (flux : Vec d → Vec d) (u : Vec d → ℝ) (G : Vec d → Vec d)
@@ -477,7 +477,7 @@ theorem
 /-- Support-localized exact-RHS estimate on the contained-descendant branch,
 using the full-dual/full-circ route. -/
 theorem
-    abs_cubeAverage_vecDot_scalar_smul_le_fluxEnergyExactRhs_indicator_of_parentQuantitativeCutoff_on_descendant_of_cubeSet_subset_vectorFullDualFullCirc
+    abs_cubeAverage_vectorDot_scalarMultiply_le_fluxEnergyExactRhs_of_cube_subset
     {d : ℕ} {Q R : TriadicCube d} {j : ℕ} (hR : R ∈ descendantsAtDepth Q j)
     (a : CoeffField d) (s : ℝ) {ρ₁ ρ₂ ρ : ℝ}
     (flux : Vec d → Vec d) (u : Vec d → ℝ) (G : Vec d → Vec d)
@@ -549,7 +549,7 @@ theorem
     intro i N
     simpa [havg] using hGcircS i N
   exact
-    abs_cubeAverage_vecDot_scalar_smul_le_fluxEnergyExactRhs_of_parentQuantitativeCutoff_on_descendant_vectorFullDualFullCirc
+    abs_cubeAverage_vectorDot_scalarMultiply_le_fluxEnergyExactRhs_of_descendant
       (Q := Q) (R := R) (j := j) hR (a := a) (s := s) (flux := flux) (u := u)
       (G := G) (energy := (scaledClosedCubeSet Q ρ).indicator energy) (η := η)
       (Acirc1 := Acirc1) (AcircS := AcircS) (C := C)
@@ -559,7 +559,7 @@ theorem
 /-- Buffered support-localized local exact-RHS estimate using the
 full-dual/full-circ route. -/
 theorem
-    abs_cubeAverage_vecDot_scalar_smul_le_fluxEnergyExactRhs_indicator_of_parentQuantitativeCutoff_on_descendant_of_support_buffer_vectorFullDualFullCirc
+    abs_cubeAverage_vectorDot_scalarMultiply_le_fluxEnergyExactRhs_of_fullDualBuffer
     {d : ℕ} {Q R : TriadicCube d} {j : ℕ} (hR : R ∈ descendantsAtDepth Q j)
     (a : CoeffField d) (s : ℝ) {ρ₁ ρ₂ ρ : ℝ}
     (flux : Vec d → Vec d) (u : Vec d → ℝ) (G : Vec d → Vec d)
@@ -606,7 +606,7 @@ theorem
       cubeSet_subset_scaledClosedCubeSet_of_intersects_scaledClosedCubeSet_of_scaleFactor_le_gap
         (Q := Q) (R := R) (ρinner := ρ₂) (ρouter := ρ) hgap hinter
     exact
-      abs_cubeAverage_vecDot_scalar_smul_le_fluxEnergyExactRhs_indicator_of_parentQuantitativeCutoff_on_descendant_of_cubeSet_subset_vectorFullDualFullCirc
+      abs_cubeAverage_vectorDot_scalarMultiply_le_fluxEnergyExactRhs_of_cube_subset
         (Q := Q) (R := R) (j := j) hR (a := a) (s := s) (ρ := ρ)
         (flux := flux) (u := u) (G := G) (energy := energy) (η := η)
         (Acirc1 := Acirc1) (AcircS := AcircS) (C := C)
@@ -616,7 +616,7 @@ theorem
       intro x hxR hxρ₂
       exact hinter ⟨x, hxR, hxρ₂⟩
     exact
-      abs_cubeAverage_vecDot_scalar_smul_le_fluxEnergyExactRhs_indicator_of_parentQuantitativeCutoff_on_descendant_of_forall_notMem_scaledClosedCubeSet
+      abs_cubeAverage_vectorDot_scalarMultiply_le_fluxEnergyExactRhs_of_notMem
         (Q := Q) (R := R) (a := a) (s := s) (ρ := ρ)
         (flux := flux) (u := u) (energy := energy) (η := η)
         (Acirc1 := Acirc1) (AcircS := AcircS)
@@ -628,7 +628,7 @@ theorem
 /-- Exact local Caccioppoli estimate on a cube using the arbitrary-center local
 canonical cutoff and the full-dual/full-circ route. -/
 theorem
-    abs_cubeAverage_vecDot_scalar_smul_le_fluxEnergyExactRhs_of_localCanonicalCutoff_on_cube_vectorFullDualFullCirc
+    abs_cubeAverage_vectorDot_scalarMultiply_le_fluxEnergyExactRhs
     {d : ℕ} (Q R : TriadicCube d) (center : Vec d)
     (a : CoeffField d) (s : ℝ) {rhoInner rhoOuter : ℝ}
     (flux : Vec d → Vec d) (u : Vec d → ℝ) (G : Vec d → Vec d)
@@ -713,7 +713,7 @@ theorem
 the RHS energy localized to a larger local cube, on the contained branch of
 the full-dual/full-circ route. -/
 theorem
-    abs_cubeAverage_vecDot_scalar_smul_le_fluxEnergyExactRhs_indicator_of_localCanonicalCutoff_on_cube_of_cubeSet_subset_vectorFullDualFullCirc
+    cubeAveragePairingAbs_le_fluxEnergyIndicator_of_fullDualPoincare
     {d : ℕ} {Q R : TriadicCube d} (center : Vec d)
     (a : CoeffField d) (s : ℝ) {rhoInner rhoOuter rho : ℝ}
     (flux : Vec d → Vec d) (u : Vec d → ℝ) (G : Vec d → Vec d)
@@ -813,7 +813,7 @@ theorem
     intro i N
     simpa [havg] using hGcircS i N
   exact
-    abs_cubeAverage_vecDot_scalar_smul_le_fluxEnergyExactRhs_of_localCanonicalCutoff_on_cube_vectorFullDualFullCirc
+    abs_cubeAverage_vectorDot_scalarMultiply_le_fluxEnergyExactRhs
       (Q := Q) (R := R) (center := center) (a := a) (s := s)
       (rhoInner := rhoInner) (rhoOuter := rhoOuter)
       (flux := flux) (u := u) (G := G)
@@ -826,7 +826,7 @@ theorem
 /-- Buffered local exact-RHS estimate for the arbitrary-center canonical
 cutoff using the full-dual/full-circ route. -/
 theorem
-    abs_cubeAverage_vecDot_scalar_smul_le_fluxEnergyExactRhs_indicator_of_localCanonicalCutoff_on_descendant_of_support_buffer_vectorFullDualFullCirc
+    abs_cubeAverage_vectorDot_scalarMultiply_le_fluxEnergyExactRhs_of_localBuffer
     {d : ℕ} {Q R : TriadicCube d} {j : ℕ} (_hR : R ∈ descendantsAtDepth Q j)
     (center : Vec d) (a : CoeffField d) (s : ℝ) {rhoInner rhoOuter rho : ℝ}
     (flux : Vec d → Vec d) (u : Vec d → ℝ) (G : Vec d → Vec d)
@@ -893,7 +893,7 @@ theorem
         (Q := Q) (R := R) (center := center)
         (rhoInner := rhoOuter) (rhoOuter := rho) hgap hinter
     exact
-      abs_cubeAverage_vecDot_scalar_smul_le_fluxEnergyExactRhs_indicator_of_localCanonicalCutoff_on_cube_of_cubeSet_subset_vectorFullDualFullCirc
+      cubeAveragePairingAbs_le_fluxEnergyIndicator_of_fullDualPoincare
         (Q := Q) (R := R) (center := center) (a := a) (s := s)
         (rhoInner := rhoInner) (rhoOuter := rhoOuter) (rho := rho)
         (flux := flux) (u := u) (G := G) (energy := energy)
@@ -905,7 +905,7 @@ theorem
       intro x hxR hxrhoOuter
       exact hinter ⟨x, hxR, hxrhoOuter⟩
     exact
-      abs_cubeAverage_vecDot_scalar_smul_le_fluxEnergyExactRhs_indicator_of_localCanonicalCutoff_on_cube_of_forall_notMem_localClosedCube
+      abs_cubeAverage_vectorDot_scalarMultiply_le_fluxEnergyExactRhs_of_forall_notMem
         (Q := Q) (R := R) (center := center) (a := a) (s := s)
         (rhoInner := rhoInner) (rhoOuter := rhoOuter) (rho := rho)
         (flux := flux) (u := u) (energy := energy)

@@ -81,7 +81,7 @@ theorem exists_coarseBlockMatrix_openCubeSet_of_aelocallyUniformlyEllipticField
 /-- The public cube-set coarse block matrix agrees with the Chapter 2
 coarse block matrix built from the canonical a.e.-elliptic coefficient
 representative on the cube. -/
-theorem coarseBlockMatrix_cubeSet_eq_ch02_coarseBlockMatrix_of_aelocallyUniformlyEllipticField
+theorem coarseBlockMatrix_cubeSet_eq_chapterCoarse
     {d : ℕ} [NeZero d] {a : RegCoeffField d}
     (ha : AELocallyUniformlyEllipticField a) (Q : TriadicCube d) :
     coarseBlockMatrix (cubeSet Q) a.toFun =
@@ -208,7 +208,7 @@ theorem aemeasurable_coarseBlockMatrix_upperLeft_apply_cubeSet
 /-- Law-relative local-test representative for an upper-left coarse block
 entry on a fixed triadic cube.  The representative is constructed from the
 canonical `Mu` representatives and agrees a.e. with the raw coarse entry. -/
-theorem exists_isRestrictionLocalRandomVariable_ae_eq_coarseBlockMatrix_upperLeft_apply_cubeSet
+theorem exists_restrictionLocalRandomVariable_ae_eq_coarseUpperLeftEntry
     {d : ℕ} {P : RestrictionCoeffLaw d} (hP : RestrictionLawCarrier P)
     (Q : TriadicCube d) (i j : Fin d) :
     ∃ Y : RegCoeffField d → ℝ,
@@ -247,7 +247,7 @@ theorem exists_isRestrictionLocalRandomVariable_ae_eq_coarseBlockMatrix_upperLef
 /-- Law-relative local-test representative for a lower-right coarse block
 entry on a fixed triadic cube.  The representative is constructed from the
 canonical `Mu` representatives and agrees a.e. with the raw coarse entry. -/
-theorem exists_isRestrictionLocalRandomVariable_ae_eq_coarseBlockMatrix_lowerRight_apply_cubeSet
+theorem exists_restrictionLocalRandomVariable_ae_eq_coarseLowerRightEntry
     {d : ℕ} {P : RestrictionCoeffLaw d} (hP : RestrictionLawCarrier P)
     (Q : TriadicCube d) (i j : Fin d) :
     ∃ Y : RegCoeffField d → ℝ,
@@ -425,7 +425,8 @@ theorem aemeasurable_coarseStarredFullBlockMatrixInv_cubeSet
     {d : ℕ} {P : RestrictionCoeffLaw d} (hP : RestrictionLawCarrier P)
     (Q : TriadicCube d) :
     AEMeasurable
-      (fun a : RegCoeffField d => toFullBlockMat (coarseStarredBlockMatrixInv (cubeSet Q) a.toFun)) P := by
+      (fun a : RegCoeffField d => toFullBlockMat (coarseStarredBlockMatrixInv (cubeSet Q)
+        a.toFun)) P := by
   refine aemeasurable_pi_iff.2 fun α => ?_
   refine aemeasurable_pi_iff.2 fun β => ?_
   cases α with

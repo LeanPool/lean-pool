@@ -136,7 +136,7 @@ theorem blockResponse_integrand_pair_half_eq_scalarResponse_sum_on_of_isElliptic
     sub_eq_add_neg]
   ring_nf
 
-theorem volumeAverage_blockResponseIntegrand_pair_half_eq_scalarResponse_sum_of_isEllipticFieldOn
+theorem volumeAverage_halfBlockPair_eq_scalarResponseSum_of_ellipticity
     {d : ℕ} {U : Set (Vec d)} (a : CoeffField d) {lam Lam : ℝ}
     [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     (hU : MeasurableSet U)
@@ -232,7 +232,8 @@ theorem volumeAverage_blockResponseIntegrand_pair_half_eq_scalarResponse_sum_of_
           (pStar + p) (qStar + q) v))
   rw [hu_avg, hv_avg]
 
-theorem blockResponse_half_scalarResponse_sum_mem_blockJValueSet_of_responseSpace_of_isEllipticFieldOn
+theorem
+  blockResponse_half_scalarResponse_sum_mem_blockJValueSet_of_responseSpace_of_isEllipticFieldOn
     {d : ℕ} {U : Set (Vec d)} (a : CoeffField d) {lam Lam : ℝ}
     [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     (hU : MeasurableSet U)
@@ -259,7 +260,7 @@ theorem blockResponse_half_scalarResponse_sum_mem_blockJValueSet_of_responseSpac
             matVecMul (matTranspose (a x)) (v.toH1.grad x) }), hX,
     blockResponseIntegrabilityData_pair_half_of_isEllipticFieldOn hEll u v, ?_⟩
   symm
-  exact volumeAverage_blockResponseIntegrand_pair_half_eq_scalarResponse_sum_of_isEllipticFieldOn
+  exact volumeAverage_halfBlockPair_eq_scalarResponseSum_of_ellipticity
     (a := a) hU hEll p pStar q qStar u v
 
 theorem blockResponse_half_scalarResponse_sum_mem_blockJValueSet_of_isEllipticFieldOn
@@ -275,7 +276,8 @@ theorem blockResponse_half_scalarResponse_sum_mem_blockJValueSet_of_isEllipticFi
             (scalarResponseIntegrand U (HCPolySupport.adjointCoeffField a)
               (pStar + p) (qStar + q) v) ∈
       blockJValueSet U (p, q) (qStar, pStar) a := by
-  exact blockResponse_half_scalarResponse_sum_mem_blockJValueSet_of_responseSpace_of_isEllipticFieldOn
+  exact
+    blockResponse_half_scalarResponse_sum_mem_blockJValueSet_of_responseSpace_of_isEllipticFieldOn
     (a := a) hU hEll p pStar q qStar u v
     (blockResponse_pair_half_mem_responseSpace_of_isEllipticFieldOn (a := a) hEll u v)
 

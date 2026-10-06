@@ -32,6 +32,8 @@ Ellipticity then upgrades admissible states to the energy-integrability package
 needed for the quantitative averaged identities below.
 -/
 
+/-- L² integrability of both affine corrections and integrability of the block energy density on
+`U`. -/
 structure BlockMuIntegrabilityData {d : ℕ} (U : Set (Vec d)) (P : BlockVec d)
     (a : CoeffField d) (X : BlockState d) : Prop where
   potentialCorrection_memL2 :
@@ -81,6 +83,8 @@ noncomputable def toCorrectionFieldDataOfAdmissible
   isPotentialZeroTrace := hX.isPotentialZeroTrace
   isSolenoidalZeroNormalTrace := hX.isSolenoidalZeroNormalTrace
 
+/-- The admissible corrections `X.potential - P.1` and `X.flux - P.2`, bundled with L² membership
+and zero-trace conditions. -/
 @[expose]
 noncomputable def toCorrectionFieldData
     (hX : IsBlockMuAdmissible U P X)
@@ -127,7 +131,8 @@ correction space `\Lpoto(U) × \Lsolo(U)`. -/
 theorem toCorrectionFieldData_mem_correctionSpace
     (hX : IsBlockMuAdmissible U P X) :
     (hX.toCorrectionFieldDataOfAdmissible).toHilbertBlockL2 ∈
-      (PotentialSolenoidalL2Data.ofSubmoduleClosures U).toMuCorrectionSpaceData.correctionSpace := by
+      (PotentialSolenoidalL2Data.ofSubmoduleClosures U).toMuCorrectionSpaceData.correctionSpace
+        := by
   exact
     (PotentialSolenoidalL2Data.ofSubmoduleClosures U).toMuCorrectionSpaceData.mem_correctionSpace
       hX.potentialCorrection_memL2
@@ -184,7 +189,8 @@ theorem toHilbertBlockL2OfBlockField_eq_blockVecToHilbertBlockL2Const_add
           rw [← hcorr]
           rfl
     _ = ((⇑(blockVecToHilbertBlockL2Const (U := U) P) : Vec d → HilbertBlockVec d) +
-          (⇑(hX.toCorrectionFieldDataOfAdmissible).toHilbertBlockL2 : Vec d → HilbertBlockVec d)) x := by
+          (⇑(hX.toCorrectionFieldDataOfAdmissible).toHilbertBlockL2 : Vec d → HilbertBlockVec
+            d)) x := by
           rfl
     _ =
         (blockVecToHilbertBlockL2Const (U := U) P +
@@ -196,7 +202,8 @@ the canonical closed correction space. -/
 @[expose]
 noncomputable def toCorrectionSpaceElement
     (hX : IsBlockMuAdmissible U P X) :
-    (PotentialSolenoidalL2Data.ofSubmoduleClosures U).toMuCorrectionSpaceData.correctionSpace.toSubmodule :=
+    (PotentialSolenoidalL2Data.ofSubmoduleClosures
+      U).toMuCorrectionSpaceData.correctionSpace.toSubmodule :=
   ⟨(hX.toCorrectionFieldDataOfAdmissible).toHilbertBlockL2,
     hX.toCorrectionFieldData_mem_correctionSpace⟩
 
@@ -363,7 +370,8 @@ theorem average_pairing_openCubeSet_originCube
       (fun x => vecDot (X.potential x) (X.flux x)) = vecDot P.1 P.2 := by
   have hpotZero :
       (fun i =>
-        ∫ x in openCubeSet (originCube d n), (X.potential x - P.1) i ∂MeasureTheory.volume) = 0 := by
+        ∫ x in openCubeSet (originCube d n), (X.potential x - P.1) i ∂MeasureTheory.volume) = 0
+          := by
     simpa [sub_eq_add_neg] using
       (IsPotentialZeroTraceOn.integral_eq_zero_openCubeSet_originCube
         (d := d) (n := n) (f := fun x => X.potential x - P.1) hX.isPotentialZeroTrace)
@@ -407,7 +415,8 @@ theorem blockEnergyAverage_ge_vecDot_openCubeSet_originCube_of_isEllipticFieldOn
     vecDot P.1 P.2 ≤ blockEnergyAverage (openCubeSet (originCube d n)) a X := by
   have hpotZero :
       (fun i =>
-        ∫ x in openCubeSet (originCube d n), (X.potential x - P.1) i ∂MeasureTheory.volume) = 0 := by
+        ∫ x in openCubeSet (originCube d n), (X.potential x - P.1) i ∂MeasureTheory.volume) = 0
+          := by
     simpa [sub_eq_add_neg] using
       (IsPotentialZeroTraceOn.integral_eq_zero_openCubeSet_originCube
         (d := d) (n := n) (f := fun x => X.potential x - P.1) hX.isPotentialZeroTrace)

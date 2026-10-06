@@ -297,7 +297,8 @@ theorem polynomial_homogenization_root_of_ballTriangle (d : ℕ) (hd : 2 ≤ d)
   · -- the negative-Sobolev Dirichlet error clause, the Dirichlet module's inhabitant, bridged
     exact CorrectorComposition.dirichletHole_reconciledRootGoodScaleOn d cStar
   · -- the stationary corrector family clause
-    exact fun g hg κ _hκ => CorrectorComposition.correctorFamilyHole_of_reconciledRootGoodScaleOn d cStar hg κ
+    exact fun g hg κ _hκ =>
+      CorrectorComposition.correctorFamilyHole_of_reconciledRootGoodScaleOn d cStar hg κ
   · -- the corrector-and-flux decay clause
     exact CorrectorComposition.exists_correctorDecay_of_reconciledRootGoodScaleOn d cStar hceil
   · -- the Liouville characterization clause
@@ -310,8 +311,11 @@ theorem polynomial_homogenization_root_of_ballTriangle (d : ℕ) (hd : 2 ≤ d)
     intro g hg κc hκc
     obtain ⟨C, hC, hbody⟩ := (hcStar g hg).2.2.1 κc hκc
     exact ⟨C, hC, fun abar a x hx hgood =>
-      hbody abar a x hx (CorrectorComposition.reconciledRootGoodScale_of_reconciledRootGoodScaleOn cStar hgood)⟩
-  · -- the large-scale C¹ slope approximation clause, now conditional on the ball triangle inequality alone
+      hbody abar a x hx
+        (CorrectorComposition.reconciledRootGoodScale_of_reconciledRootGoodScaleOn cStar hgood)⟩
+  ·
+    -- the large-scale C¹ slope approximation clause, now conditional on the ball triangle
+    inequality alone
     intro g hg κc hκc
     exact CorrectorComposition.largeScaleC1_of_terminal_atCertificate d
       (CorrectorComposition.reconciledRootGoodScaleOn d cStar g κc)

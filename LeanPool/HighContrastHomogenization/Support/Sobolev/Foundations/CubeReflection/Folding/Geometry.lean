@@ -753,7 +753,7 @@ theorem setIntegral_cubeFaceReflectionCellCube_comp_cellFoldMap {d : ℕ}
 /-- Integrability transports from the original open cube to a reflection-block
 cell by precomposition with the cell fold map. -/
 theorem integrable_cubeFaceReflectionCellCube_comp_cellFoldMap {d : ℕ}
-    {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+    {E : Type*} [NormedAddCommGroup E]
     {Q : TriadicCube d} {choice : Fin d → Fin 3} {g : Vec d → E}
     (hg :
       MeasureTheory.Integrable g (volume.restrict (openCubeSet Q))) :

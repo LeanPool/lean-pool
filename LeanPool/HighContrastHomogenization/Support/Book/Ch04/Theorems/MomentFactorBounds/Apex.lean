@@ -272,7 +272,7 @@ private theorem annealedPrimitiveMomentFactorBounds_of_integrable_factor_observa
       fun a => LambdaSqCoeffField Q sUpper (.finite 1) a
     have hEntryInt : Integrable X P := by
       simpa [X, Q, blockMatEntry] using
-        integrable_blockMatEntry_coarseBlockMatrix_cubeSet_of_integrable_coarseFullBlockMatrixAtCube
+        integrable_coarseBlockMatrixEntry_of_integrableFullBlock
           (hBlock n) (Sum.inl (0 : Fin d)) (Sum.inl (0 : Fin d))
     have hY_nonneg : ∀ᵐ a ∂P, 0 ≤ Y a :=
       Filter.Eventually.of_forall fun a => by
@@ -311,7 +311,7 @@ private theorem annealedPrimitiveMomentFactorBounds_of_integrable_factor_observa
       fun a => (lambdaSqCoeffField Q sLower (.finite 1) a)⁻¹
     have hEntryInt : Integrable X P := by
       simpa [X, Q, blockMatEntry] using
-        integrable_blockMatEntry_coarseBlockMatrix_cubeSet_of_integrable_coarseFullBlockMatrixAtCube
+        integrable_coarseBlockMatrixEntry_of_integrableFullBlock
           (hBlock n) (Sum.inr (0 : Fin d)) (Sum.inr (0 : Fin d))
     have hY_nonneg : ∀ᵐ a ∂P, 0 ≤ Y a :=
       Filter.Eventually.of_forall fun a => by
@@ -476,7 +476,7 @@ theorem thetaAtScale_le_widetildeThetaAtScale_of_integrable_factor_observables
     have hstar := hP.barSigmaStarAtScale_eq_inv_barSigmaStarInvAtScale hStruct (n : ℤ)
     rw [hstar, inv_inv]
     simpa [barSigmaStarInvAtScale] using
-      (Internal.barSigmaStarInv_pos_of_integrable_coarseFullBlockMatrixAtCube hP
+      (Internal.barSigmaStarInverse_pos_of_integrableBlockMatrix hP
         (Internal.annealedPrimitiveScalarizationData_of_structuralLaw hP hStruct (n : ℤ))
         (hBlock n)).le
   have hUpperMoment_nonneg :

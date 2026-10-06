@@ -167,6 +167,8 @@ theorem unitConvexApproxScale_pos' (n : ℕ) :
     0 < unitConvexApproxScale n :=
   W1pFunction.unitConvexApproxScale_pos n
 
+/-- The convex smoothing of an H¹ function at scale `r / (n + 1)`, viewed as a `W^{1,p}` function
+on the bounded open convex domain. -/
 @[expose]
 public noncomputable def convexApproxSmoothH1W1p
     {d : ℕ} {U : Set (Vec d)} (hU : IsOpenBoundedConvexDomain U)

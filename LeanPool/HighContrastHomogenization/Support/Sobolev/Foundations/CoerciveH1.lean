@@ -40,6 +40,7 @@ coercive layer rather than the raw witness structures directly.
 /-- Mean-zero `H¹(U)` functions, represented by a chosen `H¹` witness together
 with the zero-average condition. -/
 structure H1MeanZeroFunction {d : ℕ} (U : Set (Vec d)) where
+  /-- The H¹ function underlying the mean-zero Sobolev function. -/
   toH1Function : H1Function U
   meanZero : MeanZeroOn U toH1Function.toFun
 
@@ -154,6 +155,7 @@ instance : AddCommGroup (H1MeanZeroFunction U) :=
       change ((n : ℝ) • (u : H1Function U)) = n • (u : H1Function U)
       rfl)
 
+/-- The additive homomorphism forgetting the zero-mean condition on an H¹ function. -/
 @[expose]
 noncomputable def toH1FunctionAddMonoidHom :
     H1MeanZeroFunction U →+ H1Function U where
@@ -309,13 +311,13 @@ noncomputable def normalizeMeanZero
     u.normalizeMeanZero.toH1Function = u.subAverage :=
   rfl
 
-@[simp] theorem toMeanZero_apply
+theorem toMeanZero_apply
     [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     (u : H1Function U) (x : Vec d) :
     u.toMeanZero x = u x - integralAverage U u := by
   simp [H1Function.toMeanZero]
 
-@[simp] theorem toMeanZero_grad
+theorem toMeanZero_grad
     [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     (u : H1Function U) (x : Vec d) :
     u.toMeanZero.toH1Function.grad x = u.grad x := by
@@ -398,7 +400,7 @@ theorem toScalarL2_add [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
   simpa [H1MeanZeroFunction.toScalarL2] using
     H1Function.toScalarL2_add u.toH1Function v.toH1Function
 
-theorem toScalarL2_smul [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
+theorem toScalarL2_smul
     (c : ℝ) (u : H1MeanZeroFunction U) :
     (c • u).toScalarL2 = c • u.toScalarL2 := by
   simpa [H1MeanZeroFunction.toScalarL2] using
@@ -410,7 +412,7 @@ theorem gradToVectorL2_add [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
   simpa [H1MeanZeroFunction.gradToVectorL2] using
     H1Function.gradToVectorL2_add u.toH1Function v.toH1Function
 
-theorem gradToVectorL2_smul [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
+theorem gradToVectorL2_smul
     (c : ℝ) (u : H1MeanZeroFunction U) :
     (c • u).gradToVectorL2 = c • u.gradToVectorL2 := by
   simpa [H1MeanZeroFunction.gradToVectorL2] using
@@ -422,7 +424,7 @@ theorem gradToHilbertVectorL2_add [MeasureTheory.IsFiniteMeasure (volumeMeasureO
   simpa [H1MeanZeroFunction.gradToHilbertVectorL2] using
     H1Function.gradToHilbertVectorL2_add u.toH1Function v.toH1Function
 
-theorem gradToHilbertVectorL2_smul [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
+theorem gradToHilbertVectorL2_smul
     (c : ℝ) (u : H1MeanZeroFunction U) :
     (c • u).gradToHilbertVectorL2 = c • u.gradToHilbertVectorL2 := by
   simpa [H1MeanZeroFunction.gradToHilbertVectorL2] using
@@ -445,7 +447,7 @@ mean-zero layer. -/
 noncomputable def gradientL2Norm (u : H1MeanZeroFunction U) : ℝ :=
   ‖u.gradToVectorL2‖
 
-noncomputable instance [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)] :
+noncomputable instance instNormOfIsFiniteMeasureVecVolumeMeasureOn :
     Norm (H1MeanZeroFunction U) where
   norm u := u.gradientL2Norm
 
@@ -511,7 +513,6 @@ noncomputable def gradToHilbertVectorL2CLM [MeasureTheory.IsFiniteMeasure (volum
 field, realized through the Hilbert `L²` ambient space. -/
 @[expose]
 noncomputable def gradientPairing {f : Vec d → Vec d}
-    [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     (hf : MemVectorL2 U f) (u : H1MeanZeroFunction U) : ℝ :=
   inner ℝ (HCPolySupport.toHilbertVectorL2OfVecField hf) u.gradToHilbertVectorL2
 
@@ -629,6 +630,8 @@ end H1MeanZeroFunction
 
 /-- Bundled coercive estimate on the mean-zero `H¹` layer. -/
 structure H1CoerciveEstimate {d : ℕ} (U : Set (Vec d)) where
+  /-- The nonnegative constant bounding the L² norm of a mean-zero H¹ function by its gradient L²
+  norm. -/
   constantValue : ℝ
   constant_nonneg : 0 ≤ constantValue
   bound :

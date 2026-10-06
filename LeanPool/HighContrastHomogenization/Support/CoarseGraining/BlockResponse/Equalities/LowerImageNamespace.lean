@@ -70,7 +70,7 @@ theorem blockJ_le_half_responseJ_adjoint_sum_of_isEllipticFieldOn_of_hodgeConver
 
 /-- Preferred note-facing lower-image-packaged upper bound for the doubled
 response functional on bounded open convex domains. -/
-theorem blockJ_le_half_responseJ_adjoint_sum_of_isEllipticFieldOn_of_isOpenBoundedConvexDomain
+theorem blockJ_le_half_adjointResponseSum
     {d : ℕ} {U : Set (Vec d)} {a : CoeffField d} {lam Lam : ℝ}
     [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     (hConv : IsOpenBoundedConvexDomain U)
@@ -81,7 +81,7 @@ theorem blockJ_le_half_responseJ_adjoint_sum_of_isEllipticFieldOn_of_isOpenBound
       (1 / 2 : ℝ) * ResponseJ U (p - pStar) (qStar - q) a +
         (1 / 2 : ℝ) *
           ResponseJ U (pStar + p) (qStar + q) (HCPolySupport.adjointCoeffField a) :=
-  HCPolySupport.blockJ_le_half_responseJ_adjoint_sum_of_isEllipticFieldOn_of_isOpenBoundedConvexDomain
+  HCPolySupport.blockJ_le_half_adjointResponseSum
     (a := a) hConv hEll hvol p pStar q qStar
 
 theorem blockJ_note_form_le_half_responseJ_adjoint_sum_of_isEllipticFieldOn
@@ -96,10 +96,11 @@ theorem blockJ_note_form_le_half_responseJ_adjoint_sum_of_isEllipticFieldOn
       (1 / 2 : ℝ) * ResponseJ U p (q - h) a +
         (1 / 2 : ℝ) *
           ResponseJ U p (q + h) (HCPolySupport.adjointCoeffField a) :=
-  HCPolySupport.blockJ_note_form_le_half_responseJ_adjoint_sum_of_isEllipticFieldOn_of_hodgeConverseCriterion
+  HCPolySupport.blockJ_note_le_half_adjointResponseSum_of_HodgeConverse
     (a := a) hU hEll hvol (HasHodgeConverse.hodgeConverseCriterion (U := U)) p q h
 
-theorem blockJ_note_form_le_half_responseJ_adjoint_sum_of_isEllipticFieldOn_of_hodgeConverseCriterion
+theorem
+  blockJ_note_le_half_adjointResponseSum_of_HodgeConverse
     {d : ℕ} {U : Set (Vec d)} {a : CoeffField d} {lam Lam : ℝ}
     [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     (hU : MeasurableSet U)
@@ -111,10 +112,11 @@ theorem blockJ_note_form_le_half_responseJ_adjoint_sum_of_isEllipticFieldOn_of_h
       (1 / 2 : ℝ) * ResponseJ U p (q - h) a +
         (1 / 2 : ℝ) *
           ResponseJ U p (q + h) (HCPolySupport.adjointCoeffField a) :=
-  HCPolySupport.blockJ_note_form_le_half_responseJ_adjoint_sum_of_isEllipticFieldOn_of_hodgeConverseCriterion
+  HCPolySupport.blockJ_note_le_half_adjointResponseSum_of_HodgeConverse
     (a := a) hU hEll hvol hHodge p q h
 
-theorem blockJ_note_form_le_half_responseJ_adjoint_sum_of_isEllipticFieldOn_of_isOpenBoundedConvexDomain
+theorem
+  blockJ_note_le_half_adjointResponseSum_of_ConvexDomain
     {d : ℕ} {U : Set (Vec d)} {a : CoeffField d} {lam Lam : ℝ}
     [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     (hConv : IsOpenBoundedConvexDomain U)
@@ -125,7 +127,7 @@ theorem blockJ_note_form_le_half_responseJ_adjoint_sum_of_isEllipticFieldOn_of_i
       (1 / 2 : ℝ) * ResponseJ U p (q - h) a +
         (1 / 2 : ℝ) *
           ResponseJ U p (q + h) (HCPolySupport.adjointCoeffField a) :=
-  HCPolySupport.blockJ_note_form_le_half_responseJ_adjoint_sum_of_isEllipticFieldOn_of_isOpenBoundedConvexDomain
+  HCPolySupport.blockJ_note_le_half_adjointResponseSum_of_ConvexDomain
     (a := a) hConv hEll hvol p q h
 
 theorem half_responseJ_adjoint_sum_le_blockJ_of_isEllipticFieldOn
@@ -193,7 +195,7 @@ theorem blockJ_eq_half_responseJ_adjoint_sum_of_isEllipticFieldOn_of_hodgeConver
 
 /-- Preferred note-facing lower-image-packaged equality
 `BlockJ = (1/2)(ResponseJ + ResponseJ^*)` on bounded open convex domains. -/
-theorem blockJ_eq_half_responseJ_adjoint_sum_of_isEllipticFieldOn_of_isOpenBoundedConvexDomain
+theorem blockJ_eq_half_adjointResponseSum_of_ConvexDomain
     {d : ℕ} {U : Set (Vec d)} {a : CoeffField d} {lam Lam : ℝ}
     [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     (hConv : IsOpenBoundedConvexDomain U)
@@ -204,7 +206,7 @@ theorem blockJ_eq_half_responseJ_adjoint_sum_of_isEllipticFieldOn_of_isOpenBound
       (1 / 2 : ℝ) * ResponseJ U (p - pStar) (qStar - q) a +
         (1 / 2 : ℝ) *
           ResponseJ U (pStar + p) (qStar + q) (HCPolySupport.adjointCoeffField a) :=
-  HCPolySupport.blockJ_eq_half_responseJ_adjoint_sum_of_isEllipticFieldOn_of_isOpenBoundedConvexDomain
+  HCPolySupport.blockJ_eq_half_adjointResponseSum_of_ConvexDomain
     (a := a) hConv hEll hvol p pStar q qStar
 
 theorem blockJ_note_form_eq_half_responseJ_adjoint_sum_of_isEllipticFieldOn
@@ -222,7 +224,8 @@ theorem blockJ_note_form_eq_half_responseJ_adjoint_sum_of_isEllipticFieldOn
   HCPolySupport.blockJ_note_form_eq_half_responseJ_adjoint_sum_of_isEllipticFieldOn
     (a := a) hU hEll hvol p q h
 
-theorem blockJ_note_form_eq_half_responseJ_adjoint_sum_of_isEllipticFieldOn_of_hodgeConverseCriterion
+theorem
+  blockJ_note_eq_half_adjointResponseSum_of_HodgeConverse
     {d : ℕ} {U : Set (Vec d)} {a : CoeffField d} {lam Lam : ℝ}
     [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     (hU : MeasurableSet U)
@@ -234,10 +237,11 @@ theorem blockJ_note_form_eq_half_responseJ_adjoint_sum_of_isEllipticFieldOn_of_h
       (1 / 2 : ℝ) * ResponseJ U p (q - h) a +
         (1 / 2 : ℝ) *
           ResponseJ U p (q + h) (HCPolySupport.adjointCoeffField a) :=
-  HCPolySupport.blockJ_note_form_eq_half_responseJ_adjoint_sum_of_isEllipticFieldOn_of_hodgeConverseCriterion
+  HCPolySupport.blockJ_note_eq_half_adjointResponseSum_of_HodgeConverse
     (a := a) hU hEll hvol hHodge p q h
 
-theorem blockJ_note_form_eq_half_responseJ_adjoint_sum_of_isEllipticFieldOn_of_isOpenBoundedConvexDomain
+theorem
+  blockJ_note_eq_half_adjointResponseSum_of_ConvexDomain
     {d : ℕ} {U : Set (Vec d)} {a : CoeffField d} {lam Lam : ℝ}
     [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     (hConv : IsOpenBoundedConvexDomain U)
@@ -248,7 +252,7 @@ theorem blockJ_note_form_eq_half_responseJ_adjoint_sum_of_isEllipticFieldOn_of_i
       (1 / 2 : ℝ) * ResponseJ U p (q - h) a +
         (1 / 2 : ℝ) *
           ResponseJ U p (q + h) (HCPolySupport.adjointCoeffField a) :=
-  HCPolySupport.blockJ_note_form_eq_half_responseJ_adjoint_sum_of_isEllipticFieldOn_of_isOpenBoundedConvexDomain
+  HCPolySupport.blockJ_note_eq_half_adjointResponseSum_of_ConvexDomain
     (a := a) hConv hEll hvol p q h
 
 theorem blockJ_eq_half_scalarResponse_sum_of_scalarCanonicalMaximizers_of_isEllipticFieldOn
@@ -274,7 +278,7 @@ theorem blockJ_eq_half_scalarResponse_sum_of_scalarCanonicalMaximizers_of_isElli
     hU hEll hvol p pStar q qStar]
   rw [ScalarCanonicalMaximizer.responseJ_eq u, ScalarCanonicalMaximizer.responseJ_eq v]
 
-theorem blockJ_eq_half_scalarResponse_sum_of_scalarCanonicalMaximizers_of_isEllipticFieldOn_of_hodgeConverseCriterion
+theorem blockJ_eq_half_scalarResponse_sum_of_scalarCanonicalMaximizers
     {d : ℕ} {U : Set (Vec d)} {a : CoeffField d} {lam Lam : ℝ}
     [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     (hU : MeasurableSet U)
@@ -300,7 +304,7 @@ by
 
 /-- Preferred note-facing scalar-canonical lower-image-packaged equality on
 bounded open convex domains. -/
-theorem blockJ_eq_half_scalarResponse_sum_of_scalarCanonicalMaximizers_of_isEllipticFieldOn_of_isOpenBoundedConvexDomain
+theorem blockJ_eq_half_scalarResponse_sum_of_scalarCanonicalMaximizers_of_ellipticField
     {d : ℕ} {U : Set (Vec d)} {a : CoeffField d} {lam Lam : ℝ}
     [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     (hConv : IsOpenBoundedConvexDomain U)
@@ -318,7 +322,7 @@ theorem blockJ_eq_half_scalarResponse_sum_of_scalarCanonicalMaximizers_of_isElli
             (scalarResponseIntegrand U (HCPolySupport.adjointCoeffField a)
               (pStar + p) (qStar + q)
               (v : AHarmonicFunction (HCPolySupport.adjointCoeffField a) U)) := by
-  rw [blockJ_eq_half_responseJ_adjoint_sum_of_isEllipticFieldOn_of_isOpenBoundedConvexDomain
+  rw [blockJ_eq_half_adjointResponseSum_of_ConvexDomain
     hConv hEll hvol p pStar q qStar]
   rw [ScalarCanonicalMaximizer.responseJ_eq u, ScalarCanonicalMaximizer.responseJ_eq v]
 
@@ -365,11 +369,11 @@ theorem blockJ_eq_half_scalarResponse_sum_of_isEllipticFieldOn_of_isOpenBoundedC
     ⟨v⟩
   refine ⟨u, v, ?_⟩
   exact
-    blockJ_eq_half_scalarResponse_sum_of_scalarCanonicalMaximizers_of_isEllipticFieldOn_of_isOpenBoundedConvexDomain
+    blockJ_eq_half_scalarResponse_sum_of_scalarCanonicalMaximizers_of_ellipticField
       hConv hEll hvol p pStar q qStar u v
 
 /-- Explicitly named existential version of the previous theorem. -/
-theorem exists_scalarCanonicalMaximizers_blockJ_eq_half_scalarResponse_sum_of_isEllipticFieldOn_of_isOpenBoundedConvexDomain
+theorem exists_scalarCanonicalMaximizers_blockJ_eq_half_scalarResponse_sum
     {d : ℕ} {U : Set (Vec d)} {a : CoeffField d} {lam Lam : ℝ}
     [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     (hConv : IsOpenBoundedConvexDomain U)
@@ -407,10 +411,11 @@ theorem exists_scalarCanonicalMaximizers_blockJ_eq_half_scalarResponse_sum_of_is
     ⟨v⟩
   refine ⟨u, v, ?_⟩
   exact
-    blockJ_eq_half_scalarResponse_sum_of_scalarCanonicalMaximizers_of_isEllipticFieldOn_of_isOpenBoundedConvexDomain
+    blockJ_eq_half_scalarResponse_sum_of_scalarCanonicalMaximizers_of_ellipticField
       hConv hEll hvol p pStar q qStar u v
 
-theorem blockJ_note_form_eq_half_scalarResponse_sum_of_scalarCanonicalMaximizers_of_isEllipticFieldOn
+theorem
+  blockJ_note_form_eq_half_scalarResponse_sum_of_scalarCanonicalMaximizers_of_isEllipticFieldOn
     {d : ℕ} {U : Set (Vec d)} {a : CoeffField d} {lam Lam : ℝ}
     [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     [HasHodgeConverse U]
@@ -431,7 +436,7 @@ theorem blockJ_note_form_eq_half_scalarResponse_sum_of_scalarCanonicalMaximizers
     hU hEll hvol p q h]
   rw [ScalarCanonicalMaximizer.responseJ_eq u, ScalarCanonicalMaximizer.responseJ_eq v]
 
-theorem blockJ_note_form_eq_half_scalarResponse_sum_of_scalarCanonicalMaximizers_of_isEllipticFieldOn_of_hodgeConverseCriterion
+theorem blockJ_note_form_eq_half_scalarResponse_sum_of_scalarCanonicalMaximizers
     {d : ℕ} {U : Set (Vec d)} {a : CoeffField d} {lam Lam : ℝ}
     [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     (hU : MeasurableSet U)
@@ -449,13 +454,13 @@ theorem blockJ_note_form_eq_half_scalarResponse_sum_of_scalarCanonicalMaximizers
             (scalarResponseIntegrand U (HCPolySupport.adjointCoeffField a)
               p (q + h) (v : AHarmonicFunction (HCPolySupport.adjointCoeffField a) U)) :=
 by
-  rw [blockJ_note_form_eq_half_responseJ_adjoint_sum_of_isEllipticFieldOn_of_hodgeConverseCriterion
+  rw [blockJ_note_eq_half_adjointResponseSum_of_HodgeConverse
     hU hEll hvol hHodge p q h]
   rw [ScalarCanonicalMaximizer.responseJ_eq u, ScalarCanonicalMaximizer.responseJ_eq v]
 
 /-- Preferred note-facing scalar-canonical lower-image-packaged equality in
 the note form on bounded open convex domains. -/
-theorem blockJ_note_form_eq_half_scalarResponse_sum_of_scalarCanonicalMaximizers_of_isEllipticFieldOn_of_isOpenBoundedConvexDomain
+theorem blockJ_note_form_eq_half_scalarResponse_sum_of_of_scalarCanonicalMaximizers
     {d : ℕ} {U : Set (Vec d)} {a : CoeffField d} {lam Lam : ℝ}
     [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     (hConv : IsOpenBoundedConvexDomain U)
@@ -471,14 +476,15 @@ theorem blockJ_note_form_eq_half_scalarResponse_sum_of_scalarCanonicalMaximizers
           volumeAverage U
             (scalarResponseIntegrand U (HCPolySupport.adjointCoeffField a)
               p (q + h) (v : AHarmonicFunction (HCPolySupport.adjointCoeffField a) U)) := by
-  rw [blockJ_note_form_eq_half_responseJ_adjoint_sum_of_isEllipticFieldOn_of_isOpenBoundedConvexDomain
+  rw [blockJ_note_eq_half_adjointResponseSum_of_ConvexDomain
     hConv hEll hvol p q h]
   rw [ScalarCanonicalMaximizer.responseJ_eq u, ScalarCanonicalMaximizer.responseJ_eq v]
 
 /-- Witness-free convex-domain note-form scalar-response equality. The scalar
 canonical maximizers are obtained internally, so downstream arguments can
 consume the decomposition without packaging explicit maximizer witnesses. -/
-theorem blockJ_note_form_eq_half_scalarResponse_sum_of_isEllipticFieldOn_of_isOpenBoundedConvexDomain
+theorem
+  blockJ_note_form_eq_half_scalarResponse_sum_of_isEllipticFieldOn_of_isOpenBoundedConvexDomain
     {d : ℕ} {U : Set (Vec d)} {a : CoeffField d} {lam Lam : ℝ}
     [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     (hConv : IsOpenBoundedConvexDomain U)
@@ -512,11 +518,11 @@ theorem blockJ_note_form_eq_half_scalarResponse_sum_of_isEllipticFieldOn_of_isOp
     ⟨v⟩
   refine ⟨u, v, ?_⟩
   exact
-    blockJ_note_form_eq_half_scalarResponse_sum_of_scalarCanonicalMaximizers_of_isEllipticFieldOn_of_isOpenBoundedConvexDomain
+    blockJ_note_form_eq_half_scalarResponse_sum_of_of_scalarCanonicalMaximizers
       hConv hEll hvol p q h u v
 
 /-- Explicitly named existential version of the previous theorem. -/
-theorem exists_scalarCanonicalMaximizers_blockJ_note_form_eq_half_scalarResponse_sum_of_isEllipticFieldOn_of_isOpenBoundedConvexDomain
+theorem exists_scalarCanonicalMaximizers_blockJ_note_form_eq_half_scalarResponse_sum
     {d : ℕ} {U : Set (Vec d)} {a : CoeffField d} {lam Lam : ℝ}
     [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     (hConv : IsOpenBoundedConvexDomain U)
@@ -550,7 +556,7 @@ theorem exists_scalarCanonicalMaximizers_blockJ_note_form_eq_half_scalarResponse
     ⟨v⟩
   refine ⟨u, v, ?_⟩
   exact
-    blockJ_note_form_eq_half_scalarResponse_sum_of_scalarCanonicalMaximizers_of_isEllipticFieldOn_of_isOpenBoundedConvexDomain
+    blockJ_note_form_eq_half_scalarResponse_sum_of_of_scalarCanonicalMaximizers
       hConv hEll hvol p q h u v
 
 end BlockResponseLowerImageMemVectorL2Data
@@ -569,8 +575,26 @@ theorem blockResponse_integrand_add {d : ℕ} (a : CoeffField d) (P Q : BlockVec
     simpa [blockCoeffField] using
       (blockVecDot_blockMatVecMul_blockMatrixOfCoeff_comm
         (A := a x) (X := X.eval x) (Y := Y.eval x))
-  simp [blockResponseIntegrand, blockEnergyDensity, blockMatVecMul_add, blockVecDot_add_left,
-    blockVecDot_add_right]
+  suffices h :
+      -((1 / 2 : ℝ) *
+          ((blockVecDot (X.eval x) (blockMatVecMul (blockCoeffField a x) (X.eval x)) +
+              blockVecDot (X.eval x) (blockMatVecMul (blockCoeffField a x) (Y.eval x))) +
+            (blockVecDot (Y.eval x) (blockMatVecMul (blockCoeffField a x) (X.eval x)) +
+              blockVecDot (Y.eval x) (blockMatVecMul (blockCoeffField a x) (Y.eval x))))) -
+        (blockVecDot P (blockMatVecMul (blockCoeffField a x) (X.eval x)) +
+          blockVecDot P (blockMatVecMul (blockCoeffField a x) (Y.eval x))) +
+        (blockVecDot Q (X.eval x) + blockVecDot Q (Y.eval x)) =
+      (-((1 / 2 : ℝ) *
+          blockVecDot (X.eval x) (blockMatVecMul (blockCoeffField a x) (X.eval x))) -
+        blockVecDot P (blockMatVecMul (blockCoeffField a x) (X.eval x)) +
+        blockVecDot Q (X.eval x)) +
+      (-((1 / 2 : ℝ) *
+          blockVecDot (Y.eval x) (blockMatVecMul (blockCoeffField a x) (Y.eval x))) -
+        blockVecDot P (blockMatVecMul (blockCoeffField a x) (Y.eval x)) +
+        blockVecDot Q (Y.eval x)) -
+      blockVecDot (Y.eval x) (blockMatVecMul (blockCoeffField a x) (X.eval x)) by
+    simpa [blockResponseIntegrand, blockEnergyDensity, blockMatVecMul_add, blockVecDot_add_left,
+      blockVecDot_add_right] using h
   rw [hcomm]
   ring
 

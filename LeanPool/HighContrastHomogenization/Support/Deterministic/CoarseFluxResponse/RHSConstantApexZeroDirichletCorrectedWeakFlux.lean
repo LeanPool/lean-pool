@@ -74,7 +74,7 @@ private theorem openCubeDescendantDeterministicCoarseData_of_descendant_depth
   have hRn_scale : R ∈ descendantsAtScale Q (Q.scale - (n : ℤ)) :=
     mem_descendantsAtScale_of_mem_descendantsAtDepth hRn
   have hn_scale : Q.scale - (n : ℤ) ≤ Q.scale :=
-    sub_le_self _ (by exact_mod_cast Nat.zero_le n)
+    sub_le_self _ (Nat.cast_nonneg n)
   exact OpenCubeDescendantDeterministicCoarseData.of_mem_descendantsAtScale
     hData hn_scale hRn_scale
 
@@ -144,7 +144,7 @@ private theorem zeroTraceDirichletWeakFluxCoefficientComponent_bound
         Summable (fun m : ℕ =>
           geometricWeight (s / 2) 2 m *
             maxDescendantBBlockNormAtScale Q (Q.scale - (m : ℤ)) a) :=
-      summable_qtwo_maxDescendantBBlockNormAtScale_of_isEllipticFieldOn_of_openCubeDescendantDeterministicCoarseData
+      summable_qtwo_maxDescendantBBlockNorm_of_ellipticField
         (Q := Q) (a := a) (s := s / 2) hs_half hEll hData
     simpa [Real.rpow_one] using hsum
   have hEllOpen : IsEllipticFieldOn lam Lam (openCubeSet Q) a :=
@@ -173,41 +173,41 @@ private theorem zeroTraceDirichletWeakFluxCoefficientComponent_bound
 
 /-- Displayed dimensional scale in the corrected zero-Dirichlet scalar budgets. -/
 @[expose]
-noncomputable def zeroTraceDirichletCorrectedWeakFluxApexDisplayScale
+noncomputable def zeroTraceFluxApexDisplayScale
     (d : ℕ) (s : ℝ) : ℝ :=
   (d : ℝ) * ((3 : ℝ) ^ ((d : ℝ) + s) * Real.sqrt 2)
 
 /-- Fixed internal scalar constant for the corrected zero-Dirichlet apex route. -/
 @[expose]
-noncomputable def zeroTraceDirichletCorrectedWeakFluxApexConstant
+noncomputable def zeroTraceFluxApexConstant
     (d : ℕ) (s : ℝ) : ℝ :=
-  2000 * zeroTraceDirichletCorrectedWeakFluxApexDisplayScale d s
+  2000 * zeroTraceFluxApexDisplayScale d s
 
 theorem zeroTraceDirichletCorrectedWeakFluxApexDisplayScale_nonneg
     (d : ℕ) (s : ℝ) :
-    0 ≤ zeroTraceDirichletCorrectedWeakFluxApexDisplayScale d s := by
-  unfold zeroTraceDirichletCorrectedWeakFluxApexDisplayScale
+    0 ≤ zeroTraceFluxApexDisplayScale d s := by
+  unfold zeroTraceFluxApexDisplayScale
   exact mul_nonneg
     (by exact_mod_cast Nat.zero_le d)
     (mul_nonneg
       (Real.rpow_nonneg (by norm_num : 0 ≤ (3 : ℝ)) _)
       (Real.sqrt_nonneg 2))
 
-theorem zeroTraceDirichletCorrectedWeakFluxApexConstant_nonneg
+theorem zeroTraceFluxApexConstant_nonneg
     (d : ℕ) (s : ℝ) :
-    0 ≤ zeroTraceDirichletCorrectedWeakFluxApexConstant d s := by
-  unfold zeroTraceDirichletCorrectedWeakFluxApexConstant
+    0 ≤ zeroTraceFluxApexConstant d s := by
+  unfold zeroTraceFluxApexConstant
   exact mul_nonneg (by norm_num : 0 ≤ (2000 : ℝ))
     (zeroTraceDirichletCorrectedWeakFluxApexDisplayScale_nonneg d s)
 
 theorem zeroTraceDirichletCorrectedWeakFluxApexPoincareConstant_sq
     (d : ℕ) (s : ℝ) :
     177500 *
-        (zeroTraceDirichletCorrectedWeakFluxApexDisplayScale d s) ^ 2 ≤
-      (zeroTraceDirichletCorrectedWeakFluxApexConstant d s) ^ 2 := by
-  unfold zeroTraceDirichletCorrectedWeakFluxApexConstant
+        (zeroTraceFluxApexDisplayScale d s) ^ 2 ≤
+      (zeroTraceFluxApexConstant d s) ^ 2 := by
+  unfold zeroTraceFluxApexConstant
   nlinarith [sq_nonneg
-    (zeroTraceDirichletCorrectedWeakFluxApexDisplayScale d s)]
+    (zeroTraceFluxApexDisplayScale d s)]
 
 /--
 Localized zero-Dirichlet weak-flux estimate through the corrector-energy
@@ -217,7 +217,7 @@ The `u` coefficient-energy component is discharged internally from the
 coefficient-localization bound; `hcorr` is the remaining Neumann-corrector
 component input.  No `Lambda^2` absorbed-force estimate is used here.
 -/
-theorem localizedFluxDefectNegativeBesovAverageTwo_matVecMul_grad_le_sqrt_correctorEnergyComponents_of_selectors
+theorem negativeBesovFluxAverage_matVecMul_grad_le_sqrt_correctorEnergyComponents
     {d : ℕ} [NeZero d] {Q : TriadicCube d} {a : CoeffField d}
     {g : Vec d → Vec d} (ρ : ZeroTraceDirichletCorrectorData Q a g)
     (s : ℝ) {Bcorr lam Lam : ℝ}
@@ -270,7 +270,7 @@ theorem localizedFluxDefectNegativeBesovAverageTwo_matVecMul_grad_le_sqrt_correc
       Summable (fun m : ℕ =>
         geometricWeight s 2 m *
           maxDescendantBBlockNormAtScale Q (Q.scale - (m : ℤ)) a) :=
-    summable_qtwo_maxDescendantBBlockNormAtScale_of_isEllipticFieldOn_of_openCubeDescendantDeterministicCoarseData
+    summable_qtwo_maxDescendantBBlockNorm_of_ellipticField
       (Q := Q) (a := a) s hs hEll hData
   have hcoeff :
       ∀ k : ℕ,
@@ -379,7 +379,7 @@ theorem localizedFluxDefectNegativeBesovAverageTwo_matVecMul_grad_le_sqrt_correc
             wR.toH1.grad x + ωR.toH1MeanZero.toH1Function.grad x := by
       simpa [hzR] using hdecompR
     have hstep :=
-      ωR.sq_cubeBesovNegativeVectorSeminormTwo_flux_le_descendantsAverage_add_correctorEnergyLocalError_of_childBddAbove
+      ωR.sq_negativeBesovSeminormTwo_flux_le_descendantMean_add_correctorError
         (u := fun x => ρ.toH10.toH1Function.grad x) wR s hs
         hEllR hρMemR hgMemR hflux
         (summable_qtwo_maxDescendantBBlockNormAtScale_of_descendant_depth
@@ -387,7 +387,7 @@ theorem localizedFluxDefectNegativeBesovAverageTwo_matVecMul_grad_le_sqrt_correc
         hdecompω (hchildBdd R hRdesc)
     simpa [hzR] using hstep
   exact
-    localizedFluxDefectNegativeBesovAverageTwo_matVecMul_le_sqrt_of_scaled_correctorEnergyComponents_bddAbove
+    negativeBesovFluxAverage_matrixVectorMultiply_le_sqrt_of_boundedAbove
       (Q := Q) (a := a) (s := s)
       (u := fun x => ρ.toH10.toH1Function.grad x)
       (z := z)

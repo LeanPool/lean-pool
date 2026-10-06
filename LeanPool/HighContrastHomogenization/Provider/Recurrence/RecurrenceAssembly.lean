@@ -24,13 +24,13 @@ public section
 The fixed-grid recurrence is assembled here from the estimates of the section.
 On one deterministic rounded adapted grid `q` of alignment `ℓ`, at a child scale
 `j ≥ ℓ` and a parent scale `p = j + h` above it, the parent cell is partitioned
-by `3^{dh}` aligned children; write `Ĝ` for the average of the responses over
+by `3^{dh}` aligned children; write `G_hat` for the average of the responses over
 those children, `E_j` and `E_p` for the two adapted means and
 `Δ = Δ_{j,p}^q` for the determinant increment.
 
 Four displays are composed.
 
-*The averaging step.*  The centred average `Ĝ - E_j`, normalized by the child
+*The averaging step.*  The centred average `G_hat - E_j`, normalized by the child
 mean, has mixed norm at most `C(d,Q) 3^{-hd/2}` times the child moment `v_j^q`;
 this is `l.fixed.geometry.matrix.averaging` read at the aligned subdivision,
 whose cardinality `3^{dh}` supplies the printed gain.
@@ -39,8 +39,8 @@ whose cardinality `3^{dh}` supplies the printed gain.
 property of the Schatten norm carry that estimate from the child normalization
 to the parent one, at the cost of `(2d)^{1/Q}e^{Δ}`.
 
-*The positive gap.*  Pathwise `0 ≤ 𝐀_p ≤ Ĝ`, so the normalized excess
-`D = (Ĝ - 𝐀_p)^~` is positive with mean `B = P_{j,p}^q - I`; the determinant
+*The positive gap.*  Pathwise `0 ≤ 𝐀_p ≤ G_hat`, so the normalized excess
+`D = (G_hat - 𝐀_p)^~` is positive with mean `B = P_{j,p}^q - I`; the determinant
 transport bounds the spectral size of `P_{j,p}^q` by `e^{Δ}` and its trace gap by
 `e^{Δ} - 1`.  The positive-gap estimate then bounds the parent moment by
 `C(y + Φ_Q(Δ))`, where `y` is the transported mixed norm of the centred average.

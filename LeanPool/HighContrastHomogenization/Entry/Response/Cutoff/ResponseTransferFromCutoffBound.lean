@@ -137,7 +137,8 @@ theorem integrable_besovSeminorm_sq_respCell (d : ℕ) [NeZero d] (hd : 2 ≤ d)
             (optimizerField (c a) (u a)) - Y)) ^ 2) P := by
   have := _raw.prob
   -- The selected grid is invertible (`RawOutput.hj/symm/pos`).
-  have hm : (explicitCanonicalMetric F).PosDef := Geometry.explicitCanonicalMetric_posDef _raw.symm _raw.pos
+  have hm : (explicitCanonicalMetric F).PosDef := Geometry.explicitCanonicalMetric_posDef
+    _raw.symm _raw.pos
   rcases _hc with rfl | rfl
   · exact integrable_besovSeminorm_sq_of_raw_minus hd γ _raw.ell.g_mem P E Ψ Kg Src _raw.stat
       _raw.ell jStar _raw.hj F hm t p q' Y hMint hMmeas
@@ -370,7 +371,8 @@ theorem integrable_respJ_respCell (d : ℕ) [NeZero d] (γ : ℝ) (S : Selection
     (_hlo : (jStar : ℤ) ≤ u) (_hhi : u ≤ t) (p q' : Vec d) :
     Integrable (fun a => respJ (respGrid jStar F) u p q' (c a)) P := by
   have := _raw.prob
-  have hm : (explicitCanonicalMetric F).PosDef := Geometry.explicitCanonicalMetric_posDef _raw.symm _raw.pos
+  have hm : (explicitCanonicalMetric F).PosDef := Geometry.explicitCanonicalMetric_posDef
+    _raw.symm _raw.pos
   have hq : IsUnit (respGrid jStar F) := Geometry.isUnit_roundedGrid _raw.hj hm
   have hint : HasIntegrableCoarseBlock P (respCell jStar F u) :=
     hasIntegrableCoarseBlock_respCell P γ E Ψ Kg Src _raw.stat _raw.ell jStar _raw.hj F hm u
@@ -406,16 +408,19 @@ theorem integrable_abs_cutoffPairingOnCell (d : ℕ) [NeZero d] (hd : 2 ≤ d) (
     (_hu : ∀ a, IsResponseMaximizer (respCell jStar F t) p q' (c a) (u a)) :
     Integrable (fun a =>
       |cutoffPairingOnCellAux (respCell jStar F t) φ Y (c a) (u a)|) P := by
-  have hm : (explicitCanonicalMetric F).PosDef := Geometry.explicitCanonicalMetric_posDef _raw.symm _raw.pos
+  have hm : (explicitCanonicalMetric F).PosDef := Geometry.explicitCanonicalMetric_posDef
+    _raw.symm _raw.pos
   have hq : IsUnit (respGrid jStar F) := Geometry.isUnit_roundedGrid _raw.hj hm
   have hbesov := integrable_besovSeminorm_sq_respCell d hd γ S ε σ Cglob Cprof Csrc Bresp H P E Ψ
     Kg Src B jStar F s t _raw hMmeas hMint c _hc p q' Y u _hu
   have hmeas := aestronglyMeasurable_abs_pairing_of_maximizer P jStar F t _raw.hj hm c _hc
     p q' Y _hφ u _hu
     ((measurable_volumeAverage_cutoff_quadratic_canonicalRespCoeffMinus_full
-      (respGrid jStar F) (Geometry.isUnit_roundedGrid _raw.hj hm) t F p q' _hφ).aestronglyMeasurable)
+      (respGrid jStar F) (Geometry.isUnit_roundedGrid _raw.hj hm) t F p q'
+        _hφ).aestronglyMeasurable)
     ((measurable_volumeAverage_cutoff_quadratic_canonicalRespCoeffPlus_full
-      (respGrid jStar F) (Geometry.isUnit_roundedGrid _raw.hj hm) t F p q' _hφ).aestronglyMeasurable)
+      (respGrid jStar F) (Geometry.isUnit_roundedGrid _raw.hj hm) t F p q'
+        _hφ).aestronglyMeasurable)
   have hrep : ∀ a : CoeffSpace d, ∃ (lam Lam : ℝ) (f : CoeffField d), 0 < lam ∧ lam ≤ Lam ∧
       IsEllipticFieldOn lam Lam (respCell jStar F t) f ∧
         c a =ᵐ[volumeMeasureOn (respCell jStar F t)] f := by
@@ -687,7 +692,8 @@ theorem abs_volumeAverage_sub_one_isResponseCutoff_le_one {d : ℕ} [NeZero d] {
   rw [abs_mul, abs_of_pos (inv_pos.mpr hVpos)]
   calc (volume (adaptedCellAtCenter qq j w)).toReal⁻¹
         * |∫ x in adaptedCellAtCenter qq j w, (φ x - 1) ∂volume|
-      ≤ (volume (adaptedCellAtCenter qq j w)).toReal⁻¹ * (volume (adaptedCellAtCenter qq j w)).toReal :=
+      ≤ (volume (adaptedCellAtCenter qq j w)).toReal⁻¹ * (volume (adaptedCellAtCenter qq j
+        w)).toReal :=
         mul_le_mul_of_nonneg_left hbound (inv_nonneg.mpr ENNReal.toReal_nonneg)
     _ = 1 := inv_mul_cancel₀ (ne_of_gt hVpos)
 

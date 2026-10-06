@@ -338,6 +338,67 @@ private theorem coarseCaccioppoli_radius_iteration_raw_of_sequence
               rw [Finset.sum_range_succ, pow_succ]
               ring
 
+private theorem geometricRadiusGap_weightedPower_eq
+    {θ D : ℝ} (hθ_pos : 0 < θ) (hθ_lt_one : θ < 1) (hD_nonneg : 0 ≤ D) (β : ℝ) :
+    ∀ n : ℕ, (1 / 2 : ℝ) ^ n * Real.rpow ((1 - θ) * θ ^ n * D) (-β) =
+      (Real.rpow (1 - θ) (-β) * Real.rpow D (-β)) *
+        ((1 / 2 : ℝ) * Real.rpow θ (-β)) ^ n := by
+  let pref : ℝ := Real.rpow (1 - θ) (-β) * Real.rpow D (-β)
+  let ratio : ℝ := (1 / 2 : ℝ) * Real.rpow θ (-β)
+  have hθ_nonneg : 0 ≤ θ := hθ_pos.le
+  have hone_sub_θ_pos : 0 < 1 - θ := by linarith
+  intro n
+  have hθpow_nonneg : 0 ≤ θ ^ n := pow_nonneg hθ_nonneg n
+  have hθpow_rpow :
+      Real.rpow (θ ^ n) (-β) = (Real.rpow θ (-β)) ^ n := by
+    calc
+      Real.rpow (θ ^ n) (-β)
+          = Real.rpow (Real.rpow θ (n : ℝ)) (-β) := by
+              simp [Real.rpow_natCast]
+      _ = Real.rpow θ ((n : ℝ) * (-β)) := by
+              exact (Real.rpow_mul hθ_nonneg (n : ℝ) (-β)).symm
+      _ = Real.rpow θ ((-β) * (n : ℝ)) := by ring_nf
+      _ = Real.rpow (Real.rpow θ (-β)) (n : ℝ) := by
+              exact Real.rpow_mul hθ_nonneg (-β) (n : ℝ)
+      _ = (Real.rpow θ (-β)) ^ n := by
+              simp [Real.rpow_natCast]
+  have hgap_rpow :
+      Real.rpow ((1 - θ) * θ ^ n * D) (-β) =
+        (Real.rpow (1 - θ) (-β) *
+            Real.rpow (θ ^ n) (-β)) *
+          Real.rpow D (-β) := by
+    have hleft :
+        Real.rpow ((1 - θ) * θ ^ n * D) (-β) =
+          Real.rpow ((1 - θ) * θ ^ n) (-β) *
+            Real.rpow D (-β) := by
+      exact Real.mul_rpow
+        (mul_nonneg hone_sub_θ_pos.le hθpow_nonneg) hD_nonneg
+    have hsplit :
+        Real.rpow ((1 - θ) * θ ^ n) (-β) =
+          Real.rpow (1 - θ) (-β) *
+            Real.rpow (θ ^ n) (-β) := by
+      exact Real.mul_rpow hone_sub_θ_pos.le hθpow_nonneg
+    rw [hleft, hsplit]
+  calc
+    (1 / 2 : ℝ) ^ n * Real.rpow ((1 - θ) * θ ^ n * D) (-β) =
+        (1 / 2 : ℝ) ^ n *
+          ((Real.rpow (1 - θ) (-β) *
+              Real.rpow (θ ^ n) (-β)) *
+            Real.rpow D (-β)) := by
+              rw [hgap_rpow]
+    _ =
+        pref * ratio ^ n := by
+              dsimp [pref, ratio]
+              change
+                (1 / 2 : ℝ) ^ n *
+                  ((Real.rpow (1 - θ) (-β) *
+                      Real.rpow (θ ^ n) (-β)) *
+                    Real.rpow D (-β)) =
+                  (Real.rpow (1 - θ) (-β) * Real.rpow D (-β)) *
+                    ((1 / 2 : ℝ) * Real.rpow θ (-β)) ^ n
+              rw [hθpow_rpow, mul_pow]
+              ring
+
 /-- Standard beta-dependent radius iteration on `[1/3,1]`.  Unlike the fixed
 deterministic radius sequence, this is the note-facing hole-filling estimate:
 the iteration constant grows like `(C * max 1 beta)^beta`. -/
@@ -422,64 +483,8 @@ theorem coarseCaccioppoli_standard_radius_iteration
       (1 / 2 : ℝ) ^ n * Real.rpow (ρ (n + 1) - ρ n) (-β) ≤
         pref * ratio ^ n := by
     intro n
-    have hgap_nonneg : 0 ≤ ρ (n + 1) - ρ n := (sub_pos.mpr (hρ_lt n)).le
-    have hθpow_nonneg : 0 ≤ θ ^ n := pow_nonneg hθ_nonneg n
-    have hθrpow_nonneg : 0 ≤ Real.rpow θ (-β) :=
-      Real.rpow_nonneg hθ_nonneg _
-    have hθpow_rpow :
-        Real.rpow (θ ^ n) (-β) = (Real.rpow θ (-β)) ^ n := by
-      calc
-        Real.rpow (θ ^ n) (-β)
-            = Real.rpow (Real.rpow θ (n : ℝ)) (-β) := by
-                simp [Real.rpow_natCast]
-        _ = Real.rpow θ ((n : ℝ) * (-β)) := by
-                exact (Real.rpow_mul hθ_nonneg (n : ℝ) (-β)).symm
-        _ = Real.rpow θ ((-β) * (n : ℝ)) := by ring_nf
-        _ = Real.rpow (Real.rpow θ (-β)) (n : ℝ) := by
-                exact Real.rpow_mul hθ_nonneg (-β) (n : ℝ)
-        _ = (Real.rpow θ (-β)) ^ n := by
-                simp [Real.rpow_natCast]
-    have hgap_rpow :
-        Real.rpow ((1 - θ) * θ ^ n * D) (-β) =
-          (Real.rpow (1 - θ) (-β) *
-              Real.rpow (θ ^ n) (-β)) *
-            Real.rpow D (-β) := by
-      have hleft :
-          Real.rpow ((1 - θ) * θ ^ n * D) (-β) =
-            Real.rpow ((1 - θ) * θ ^ n) (-β) *
-              Real.rpow D (-β) := by
-        exact Real.mul_rpow
-          (mul_nonneg hone_sub_θ_pos.le hθpow_nonneg) hD_nonneg
-      have hsplit :
-          Real.rpow ((1 - θ) * θ ^ n) (-β) =
-            Real.rpow (1 - θ) (-β) *
-              Real.rpow (θ ^ n) (-β) := by
-        exact Real.mul_rpow hone_sub_θ_pos.le hθpow_nonneg
-      rw [hleft, hsplit]
-    calc
-      (1 / 2 : ℝ) ^ n * Real.rpow (ρ (n + 1) - ρ n) (-β)
-          = (1 / 2 : ℝ) ^ n *
-              Real.rpow ((1 - θ) * θ ^ n * D) (-β) := by
-                rw [hgap_eq n]
-      _ =
-          (1 / 2 : ℝ) ^ n *
-            ((Real.rpow (1 - θ) (-β) *
-                Real.rpow (θ ^ n) (-β)) *
-              Real.rpow D (-β)) := by
-                rw [hgap_rpow]
-      _ =
-          pref * ratio ^ n := by
-                dsimp [pref, ratio]
-                change
-                  (1 / 2 : ℝ) ^ n *
-                    ((Real.rpow (1 - θ) (-β) *
-                        Real.rpow (θ ^ n) (-β)) *
-                      Real.rpow D (-β)) =
-                    (Real.rpow (1 - θ) (-β) * Real.rpow D (-β)) *
-                      ((1 / 2 : ℝ) * Real.rpow θ (-β)) ^ n
-                rw [hθpow_rpow, mul_pow]
-                ring
-      _ ≤ pref * ratio ^ n := le_rfl
+    rw [hgap_eq n]
+    exact (geometricRadiusGap_weightedPower_eq hθ_pos hθ_lt_one hD_nonneg β n).le
   have hsum_le : ∀ N : ℕ,
       Finset.sum (Finset.range N)
           (fun n : ℕ =>

@@ -69,7 +69,7 @@ theorem abs_cubeAverage_vecDot_scalar_smul_le_split_collapsed_note_terms_of_cont
               cubeBesovScaleWeight s Q * Bavg) *
               (cubeBesovScaleWeight s Q * BgCent)))) := by
   have hconst :=
-    abs_cubeAverage_vecDot_cubeAverage_scalar_smul_le_collapsed_note_terms_of_contDiff_component_bound
+    abs_cubeAverage_fluxMeanCutoff_le_collapsedNote_of_smoothBound
       Q flux u ξ hB hflux hu hξLp hBgConst hBavg havg hfluxNeg1 hξ hderiv hBgConst_bound
   have hcent :=
     abs_cubeAverage_vecDot_centered_scalar_smul_le_collapsed_note_terms_of_contDiff_component_bound
@@ -190,7 +190,7 @@ theorem abs_cubeAverage_vecDot_scalar_smul_le_split_collapsed_note_terms_of_cont
 /-- Sharp split pairing estimate.  The constant branch uses only the
 negative Besov circ norm of the flux, matching the LaTeX small-cube line. -/
 theorem
-    abs_cubeAverage_vecDot_scalar_smul_le_split_collapsed_sharp_note_terms_of_contDiff_component_bound
+    abs_cubeAverage_fluxCutoff_le_sharpNote_of_smoothBound
     {d : ℕ} (Q : TriadicCube d) (s : ℝ) (flux : Vec d → Vec d)
     (u g : Vec d → ℝ) (ξ : Vec d → Vec d)
     {Bu1 BuS Bavg Bcirc1 BcircS B C BgConst BgCent : ℝ}
@@ -233,10 +233,10 @@ theorem
             ((((3 : ℝ) ^ ((d : ℝ) + s) * (cubeBesovScaleWeight (-s) Q * BuS)) *
               (cubeBesovScaleWeight s Q * BgCent)))) := by
   have hconst :=
-    abs_cubeAverage_vecDot_cubeAverage_scalar_smul_le_collapsed_sharp_note_terms_of_contDiff_component_bound
+    abs_cubeAverage_vectorDot_cubeAverage_scalar_smul_le_collapsed_sharp_note_terms
       Q flux u ξ hB hflux hu hξLp hBgConst hfluxNeg1 hξ hderiv hBgConst_bound
   have hcent :=
-    abs_cubeAverage_vecDot_centered_scalar_smul_le_collapsed_sharp_note_terms_of_contDiff_component_bound
+    abs_cubeAverage_vectorDot_centered_scalar_smul_le_collapsed_sharp_note_terms
       Q s flux u g ξ hB hs0 hs1 hflux hu hg hξLp hBgCent hBavg hC havg hfluxNegS
       hproj hξ hderiv hgCirc1 hgCircS hBgCent_bound
   have hconstVecInfty :

@@ -122,10 +122,12 @@ theorem integrable_and_abs_integral_sub_cellPart_le_descendant_load {d : ℕ} [N
       ((((triadicIndexBox d n).card : ℝ))⁻¹ *
         ∑ z ∈ triadicIndexBox d n,
           (Real.sqrt (vecDot Y.1 (matVecMul
-                (annealedBlockOf P (adaptedCellAtCenter (respGrid jStar F) (s - (n : ℤ)) z) b).upperLeft
+                (annealedBlockOf P (adaptedCellAtCenter (respGrid jStar F) (s - (n : ℤ)) z)
+                  b).upperLeft
                 Y.1)) +
             Real.sqrt (vecDot Y.2 (matVecMul
-                (annealedBlockOf P (adaptedCellAtCenter (respGrid jStar F) (s - (n : ℤ)) z) b).lowerRight
+                (annealedBlockOf P (adaptedCellAtCenter (respGrid jStar F) (s - (n : ℤ)) z)
+                  b).lowerRight
                 Y.2))) ^ 2))) :
     Integrable Phi P
       ∧ |(∫ a, Phi a ∂P) - ∫ a, Tcell a ∂P|
@@ -148,10 +150,12 @@ theorem integrable_and_abs_integral_sub_cellPart_le_descendant_load {d : ℕ} [N
       ((((triadicIndexBox d n).card : ℝ))⁻¹ *
         ∑ z ∈ triadicIndexBox d n,
           (Real.sqrt (vecDot Y.1 (matVecMul
-                (annealedBlockOf P (adaptedCellAtCenter (respGrid jStar F) (s - (n : ℤ)) z) b).upperLeft
+                (annealedBlockOf P (adaptedCellAtCenter (respGrid jStar F) (s - (n : ℤ)) z)
+                  b).upperLeft
                 Y.1)) +
             Real.sqrt (vecDot Y.2 (matVecMul
-                (annealedBlockOf P (adaptedCellAtCenter (respGrid jStar F) (s - (n : ℤ)) z) b).lowerRight
+                (annealedBlockOf P (adaptedCellAtCenter (respGrid jStar F) (s - (n : ℤ)) z)
+                  b).lowerRight
                 Y.2))) ^ 2)
   have hL : ∀ n, 0 ≤ L n := by
     intro n
@@ -292,10 +296,12 @@ theorem integrable_and_abs_integral_sub_cellPart_le_descendant_load_of_carriers 
       ((((triadicIndexBox d n).card : ℝ))⁻¹ *
         ∑ z ∈ triadicIndexBox d n,
           (Real.sqrt (vecDot Y.1 (matVecMul
-                (annealedBlockOf P (adaptedCellAtCenter (respGrid jStar F) (s - (n : ℤ)) z) b).upperLeft
+                (annealedBlockOf P (adaptedCellAtCenter (respGrid jStar F) (s - (n : ℤ)) z)
+                  b).upperLeft
                 Y.1)) +
             Real.sqrt (vecDot Y.2 (matVecMul
-                (annealedBlockOf P (adaptedCellAtCenter (respGrid jStar F) (s - (n : ℤ)) z) b).lowerRight
+                (annealedBlockOf P (adaptedCellAtCenter (respGrid jStar F) (s - (n : ℤ)) z)
+                  b).lowerRight
                 Y.2))) ^ 2))) :
     Integrable Phi P
       ∧ |(∫ a, Phi a ∂P) - ∫ a, Tcell a ∂P|
@@ -319,10 +325,12 @@ theorem integrable_and_abs_integral_sub_cellPart_le_descendant_load_of_carriers 
       ((((triadicIndexBox d n).card : ℝ))⁻¹ *
         ∑ z ∈ triadicIndexBox d n,
           (Real.sqrt (vecDot Y.1 (matVecMul
-                (annealedBlockOf P (adaptedCellAtCenter (respGrid jStar F) (s - (n : ℤ)) z) b).upperLeft
+                (annealedBlockOf P (adaptedCellAtCenter (respGrid jStar F) (s - (n : ℤ)) z)
+                  b).upperLeft
                 Y.1)) +
             Real.sqrt (vecDot Y.2 (matVecMul
-                (annealedBlockOf P (adaptedCellAtCenter (respGrid jStar F) (s - (n : ℤ)) z) b).lowerRight
+                (annealedBlockOf P (adaptedCellAtCenter (respGrid jStar F) (s - (n : ℤ)) z)
+                  b).lowerRight
                 Y.2))) ^ 2) with hgdef
   -- The layer weights shift by one generation, so the layer series is summable.
   have hweight : ∀ n : ℕ,
@@ -417,7 +425,8 @@ private theorem respCoeffMinusCarrierIntegrabilityFacts {d : ℕ} [NeZero d]
       (Real.sqrt (vecDot Y.1 (matVecMul (coarseBlockMatrix
         (adaptedCellAtCenter (respGrid jStar F) k W) (respCoeffMinus F a)).upperLeft Y.1)) +
        Real.sqrt (vecDot Y.2 (matVecMul (coarseBlockMatrix
-        (adaptedCellAtCenter (respGrid jStar F) k W) (respCoeffMinus F a)).lowerRight Y.2)) ^ 2) P) := by
+        (adaptedCellAtCenter (respGrid jStar F) k W) (respCoeffMinus F a)).lowerRight Y.2)) ^ 2)
+          P) := by
   have hq0 : IsUnit (respGrid jStar F) := hq
   have hUmeas : MeasurableSet (respCell jStar F t) :=
     (isOpen_adaptedCell_of_isUnit hq0 t).measurableSet
@@ -462,11 +471,13 @@ private theorem respCoeffMinusCarrierIntegrabilityFacts {d : ℕ} [NeZero d]
   have hUL0 : ∀ (k : ℤ) (W : Fin d → ℤ) (a : CoeffSpace d), 0 ≤ vecDot Y.1 (matVecMul
       (coarseBlockMatrix (adaptedCellAtCenter (respGrid jStar F) k W)
         (respCoeffMinus F a)).upperLeft Y.1) := fun k W a =>
-    (zero_le_vecDot_coarseBlockMatrix_respCoeffMinus_adaptedCellAtCenter jStar hjStar F hm k a Y W).1
+    (zero_le_vecDot_coarseBlockMatrix_respCoeffMinus_adaptedCellAtCenter jStar hjStar F hm k a Y
+      W).1
   have hLR0 : ∀ (k : ℤ) (W : Fin d → ℤ) (a : CoeffSpace d), 0 ≤ vecDot Y.2 (matVecMul
       (coarseBlockMatrix (adaptedCellAtCenter (respGrid jStar F) k W)
         (respCoeffMinus F a)).lowerRight Y.2) := fun k W a =>
-    (zero_le_vecDot_coarseBlockMatrix_respCoeffMinus_adaptedCellAtCenter jStar hjStar F hm k a Y W).2
+    (zero_le_vecDot_coarseBlockMatrix_respCoeffMinus_adaptedCellAtCenter jStar hjStar F hm k a Y
+      W).2
   have hheadsq : ∀ (k : ℤ) (W : Fin d → ℤ), Integrable (fun a =>
       (Real.sqrt (vecDot Y.1 (matVecMul (coarseBlockMatrix
             (adaptedCellAtCenter (respGrid jStar F) k W) (respCoeffMinus F a)).upperLeft Y.1)) +
@@ -475,7 +486,8 @@ private theorem respCoeffMinusCarrierIntegrabilityFacts {d : ℕ} [NeZero d]
       P := by
     intro k W
     have hblk : HasIntegrableCoarseBlock P (adaptedCellAtCenter (respGrid jStar F) k W) :=
-      hasIntegrableCoarseBlock_adaptedCellAtCenter_respGrid hd P γ E Ψ Kg Src hstat hdag jStar hjStar
+      hasIntegrableCoarseBlock_adaptedCellAtCenter_respGrid hd P γ E Ψ Kg Src hstat hdag jStar
+        hjStar
         F hm k W
     exact integrable_sq_sqrt_add_sqrt_coarseBlockMatrix Y
       (integrable_vecDot_coarseBlockMatrix_upperLeft Y
@@ -600,7 +612,8 @@ theorem integrable_and_abs_integral_cross_sub_cellPart_le_respCoeffMinus_car {d 
           (fun x => φ x - 1)
         - volumeAverage (adaptedCellAtCenter (respGrid jStar F) (t - ((H + n : ℕ) : ℤ))
             (Transport.gridParent W)) (fun x => φ x - 1))
-    (fun n W a => volumeAverage (adaptedCellAtCenter (respGrid jStar F) (t - ((H + n + 1 : ℕ) : ℤ)) W)
+    (fun n W a => volumeAverage (adaptedCellAtCenter (respGrid jStar F) (t - ((H + n + 1 : ℕ) :
+      ℤ)) W)
       (fun x => vecDot Y.2 (optimizerField (respCoeffMinus F a) (uM a) x).1
         + vecDot Y.1 (optimizerField (respCoeffMinus F a) (uM a) x).2))
     (fun n W a => Real.sqrt (vecDot Y.1 (matVecMul (coarseBlockMatrix
@@ -633,7 +646,8 @@ theorem integrable_and_abs_integral_cross_sub_cellPart_le_respCoeffMinus_car {d 
       jStar hjStar F hm t (H + n + 1) a (uM a) hW
     linarith only [this]
   · intro n W hW a
-    exact abs_volumeAverage_cross_optimizerField_respCoeffMinus_adaptedCellAtCenter_le jStar hjStar F
+    exact abs_volumeAverage_cross_optimizerField_respCoeffMinus_adaptedCellAtCenter_le jStar
+      hjStar F
       hm t (H + n + 1) a (uM a) Y hW
       (fun i => (integrableOn_optimizerField_respCoeffMinus_box (respGrid jStar F) hq t F a
         (uM a) (H + n + 1) W hW i).1)
@@ -654,7 +668,8 @@ theorem integrable_and_abs_integral_cross_sub_cellPart_le_respCoeffMinus_car {d 
       hmax hEint hJ).le
   · intro n
     exact integrable_avsum_weighted_pairing (fun m => triadicIndexBox d (H + m + 1))
-      (fun m W => volumeAverage (adaptedCellAtCenter (respGrid jStar F) (t - ((H + m + 1 : ℕ) : ℤ)) W)
+      (fun m W => volumeAverage (adaptedCellAtCenter (respGrid jStar F) (t - ((H + m + 1 : ℕ) :
+        ℤ)) W)
             (fun x => φ x - 1)
           - volumeAverage (adaptedCellAtCenter (respGrid jStar F) (t - ((H + m : ℕ) : ℤ))
               (Transport.gridParent W)) (fun x => φ x - 1))
@@ -693,7 +708,8 @@ theorem integrable_and_abs_integral_cross_sub_cellPart_le_respCoeffMinus_car {d 
       (fun m W hW => (hcellE m W hW).const_mul 2) n
   · intro n
     exact integrable_avsum_weighted_sqrt_mul_sqrt (fun m => triadicIndexBox d (H + m + 1))
-      (fun m W => volumeAverage (adaptedCellAtCenter (respGrid jStar F) (t - ((H + m + 1 : ℕ) : ℤ)) W)
+      (fun m W => volumeAverage (adaptedCellAtCenter (respGrid jStar F) (t - ((H + m + 1 : ℕ) :
+        ℤ)) W)
             (fun x => φ x - 1)
           - volumeAverage (adaptedCellAtCenter (respGrid jStar F) (t - ((H + m : ℕ) : ℤ))
               (Transport.gridParent W)) (fun x => φ x - 1))

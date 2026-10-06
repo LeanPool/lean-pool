@@ -617,7 +617,7 @@ theorem fullBlockNormalizedFluctuationOperatorNormSqAtScale_integral_le_geometri
   have hellm : ell ≤ m := hellj.trans hjm
   have hFellInt : Integrable Fell P := by
     simpa [Fell, Q] using
-      Section54.VarianceBoundGoodScale.integrable_origin_fullBlockNormalizedFluctuationOperatorNormSqAtScale_from_P4
+      Section54.VarianceBoundGoodScale.integrable_fullBlockFluctuationNormSquare_of_P4_atScale
         hP hStruct hP4 (ell : ℤ) j
   have hRhsInt :
       Integrable (fun a : RegCoeffField d => 32 * Fell a + 2 * thetaSq) P :=
@@ -633,7 +633,7 @@ theorem fullBlockNormalizedFluctuationOperatorNormSqAtScale_integral_le_geometri
     refine integral_mono_of_nonneg ?_ hRhsInt hpoint
     filter_upwards with a
     exact
-      Section54.VarianceBoundGoodScale.fullBlockNormalizedFluctuationOperatorNormSqAtScale_nonneg
+      Section54.VarianceBoundGoodScale.fluctuationNormSquare_nonneg
         hP hStruct (m : ℤ) Q a
   have hcenter_eval :
       ∫ a, 32 * Fell a + 2 * thetaSq ∂P =
@@ -654,7 +654,7 @@ theorem fullBlockNormalizedFluctuationOperatorNormSqAtScale_integral_le_geometri
             normalizedBlockJTraceAverageSq hP hStruct (ell : ℤ)
               (originCube d (j : ℤ)) (j - ell) a ∂P := by
     simpa [Fell, Q] using
-      fullBlockNormalizedFluctuationOperatorNormSqAtScale_integral_le_two_descendantsAverageNormalized_add_eight_JTraceAverageSq
+      fullBlockFluctuationNormSq_integral_le_two_childMean_add_eight_of_eight
         hP hStruct hP4 ell j ell hellj
   have hdesc :
       ∫ a,
@@ -848,7 +848,7 @@ theorem coarseFluctuationFullBlockSumAtScale_le_assembly_fluctuation_bound
   have hβ_pos : 0 < β := by
     simpa [β] using section53CoarseFluctuationBeta_pos hP4
   have hβeq :
-      β = section53CoarseFluctuationBetaParams params := by
+      β = coarseFluctuationBeta params := by
     dsimp [β]
     rw [← section53CoarseFluctuationBetaParams_eq_of_P4 hP4, hparams]
   have hAeq : A = fluctuationOneScaleGeometricConstParams params := by

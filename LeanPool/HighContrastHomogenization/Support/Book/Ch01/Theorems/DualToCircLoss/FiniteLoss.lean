@@ -392,7 +392,8 @@ theorem component_memLp_normalizedCubeMeasure_of_memVectorL2_cubeSet_ch1 {d : �
   simpa [π, Function.comp_def, ContinuousLinearMap.proj_apply] using!
     π.comp_memLp' (memLp_normalizedCubeMeasure_of_memVectorL2_cubeSet_ch1 Q hF)
 
-theorem cubeBesovNegativeVectorPartialSeminormTwo_le_dualToCircFiniteLossCoefficient_mul_normalizedDual
+theorem
+  cubeBesovNegativeVectorPartialSeminormTwo_le_dualToCircFiniteLossCoefficient_mul_normalizedDual
     {d : ℕ} (Q : Cube d) (F : Vec d → Vec d) {s t : ℝ} (N : ℕ)
     (ht : 0 < t)
     (hF : ∀ i : Fin d,
@@ -546,7 +547,7 @@ theorem cubeBesovNegativeVectorSeminormTwo_le_dualToCircCoefficientBound_mul_nor
 
 /-- Full finite-energy reverse comparison with the explicit geometric loss
 coefficient. -/
-theorem cubeBesovNegativeVectorSeminormTwo_le_dualToCircGeometricLossCoefficient_mul_normalizedDual
+theorem negativeBesovVectorSeminorm_le_geometricLoss_mul_normalizedDual
     {d : ℕ} (Q : Cube d) (F : Vec d → Vec d) {s t : ℝ}
     (hs : 0 < s) (ht : 0 < t) (hst : t < s)
     (hF : ∀ i : Fin d,

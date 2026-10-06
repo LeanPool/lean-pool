@@ -20,8 +20,11 @@ public section
 
 namespace HCPolySupport
 
+/-- A triadic cube specified by an integer scale and an integer lattice index. -/
 structure TriadicCube (d : ℕ) where
+  /-- The integer exponent determining the cube's side length `3 ^ scale`. -/
   scale : ℤ
+  /-- The integer lattice coordinates locating the cube at its scale. -/
   index : Fin d → ℤ
 deriving DecidableEq, Repr
 
@@ -35,6 +38,7 @@ instance instCountableTriadicCube (d : ℕ) : Countable (TriadicCube d) := by
     simpa only [TriadicCube.mk.injEq, Prod.mk.injEq] using hQR
   exact h.countable
 
+/-- The cube's side length `3 ^ Q.scale`. -/
 @[expose]
 noncomputable def cubeScaleFactor {d : ℕ} (Q : TriadicCube d) : ℝ :=
   (3 : ℝ) ^ Q.scale
@@ -109,6 +113,7 @@ def originCube (d : ℕ) (m : ℤ) : TriadicCube d :=
   { scale := m
     index := 0 }
 
+/-- Shift the lattice index of a cube while preserving its scale. -/
 @[expose]
 def translateCube {d : ℕ} (shift : Fin d → ℤ) (Q : TriadicCube d) : TriadicCube d :=
   { scale := Q.scale
@@ -200,22 +205,26 @@ def translateCube {d : ℕ} (shift : Fin d → ℤ) (Q : TriadicCube d) : Triadi
         sub_lt_iff_lt_add.mp hhi
       simpa [sub_eq_add_neg, add_assoc, add_left_comm, add_comm, add_mul] using hhi
 
+/-- The cube one scale larger, with index `(Q.index + 1) / 3` rounded down coordinatewise. -/
 @[expose]
 def parentCube {d : ℕ} (Q : TriadicCube d) : TriadicCube d :=
   { scale := Q.scale + 1
     index := fun i => Int.ediv (Q.index i + 1) 3 }
 
+/-- The `3 ^ d` children one scale smaller, indexed by the three digits in each coordinate. -/
 @[expose]
 def childCubes {d : ℕ} (Q : TriadicCube d) : Finset (TriadicCube d) :=
   Finset.univ.image fun digits : Fin d → Fin 3 =>
     { scale := Q.scale - 1
       index := fun i => 3 * Q.index i + (digits i : ℤ) - 1 }
 
+/-- The finite set obtained by taking children recursively `n` times, starting with `Q`. -/
 @[expose]
 def descendantsAtDepth {d : ℕ} (Q : TriadicCube d) : ℕ → Finset (TriadicCube d)
   | 0 => {Q}
   | n + 1 => (descendantsAtDepth Q n).biUnion childCubes
 
+/-- The descendants of `Q` at scale `k`, or the empty set when `k > Q.scale`. -/
 @[expose]
 def descendantsAtScale {d : ℕ} (Q : TriadicCube d) (k : ℤ) : Finset (TriadicCube d) :=
   if _h : k ≤ Q.scale then
@@ -223,6 +232,7 @@ def descendantsAtScale {d : ℕ} (Q : TriadicCube d) (k : ℤ) : Finset (Triadic
   else
     ∅
 
+/-- The side length of the cube raised to the dimension. -/
 @[expose]
 noncomputable def cubeVolume {d : ℕ} (Q : TriadicCube d) : ℝ :=
   (cubeScaleFactor Q) ^ d

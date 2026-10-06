@@ -411,7 +411,7 @@ The extra input is exactly the positivity of the normalizing scalar
 Lean's inverse is total, so the positivity must be supplied or proved before
 the two normalized summands can be split. -/
 @[expose]
-def toQuantitativeCoarseGrainedEllipticity_of_barSigmaAtScale_zero_pos
+def quantitativeEllipticity_of_positiveBarSigma
     (hΓ : GammaSigmaCoarseGrainedEllipticity P hP hStruct)
     (hbar : 0 < hP.barSigmaAtScale hStruct (0 : ℤ)) :
     QuantitativeCoarseGrainedEllipticity P := by
@@ -546,7 +546,7 @@ def toQuantitativeCoarseGrainedEllipticity_of_barSigmaAtScale_zero_pos
 def toQuantitativeCoarseGrainedEllipticity
     (hΓ : GammaSigmaCoarseGrainedEllipticity P hP hStruct) :
     QuantitativeCoarseGrainedEllipticity P :=
-  hΓ.toQuantitativeCoarseGrainedEllipticity_of_barSigmaAtScale_zero_pos
+  hΓ.quantitativeEllipticity_of_positiveBarSigma
     hΓ.barSigmaAtScale_zero_pos
 
 theorem unitEllipticityObservable_nonneg
@@ -798,7 +798,7 @@ theorem thetaAtScale_zero_le_unitEllipticityMomentRoot
       Ch04.lambdaInvMomentAtScale P (0 : ℤ) hP4.sLower hP4.xi ≤ b⁻¹ * R := by
     simpa [hP4, b, R,
       GammaSigmaCoarseGrainedEllipticity.toQuantitativeCoarseGrainedEllipticity,
-      GammaSigmaCoarseGrainedEllipticity.toQuantitativeCoarseGrainedEllipticity_of_barSigmaAtScale_zero_pos]
+      GammaSigmaCoarseGrainedEllipticity.quantitativeEllipticity_of_positiveBarSigma]
       using
       hΓ.lambdaInvMomentAtScale_zero_le_inv_barSigma_mul_unitEllipticityMomentRoot
   have hStarInv_le : (hP.barSigmaStarAtScale hStruct (0 : ℤ))⁻¹ ≤ b⁻¹ * R :=
@@ -835,21 +835,21 @@ theorem widetildeThetaAtScale_zero_le_unitEllipticityMomentRoot_sq
       Ch04.LambdaMomentAtScale P (0 : ℤ) hP4.sUpper hP4.xi ≤ b * R := by
     simpa [hP4, b, R,
       GammaSigmaCoarseGrainedEllipticity.toQuantitativeCoarseGrainedEllipticity,
-      GammaSigmaCoarseGrainedEllipticity.toQuantitativeCoarseGrainedEllipticity_of_barSigmaAtScale_zero_pos]
+      GammaSigmaCoarseGrainedEllipticity.quantitativeEllipticity_of_positiveBarSigma]
       using
       hΓ.LambdaMomentAtScale_zero_le_barSigma_mul_unitEllipticityMomentRoot
   have hI :
       Ch04.lambdaInvMomentAtScale P (0 : ℤ) hP4.sLower hP4.xi ≤ b⁻¹ * R := by
     simpa [hP4, b, R,
       GammaSigmaCoarseGrainedEllipticity.toQuantitativeCoarseGrainedEllipticity,
-      GammaSigmaCoarseGrainedEllipticity.toQuantitativeCoarseGrainedEllipticity_of_barSigmaAtScale_zero_pos]
+      GammaSigmaCoarseGrainedEllipticity.quantitativeEllipticity_of_positiveBarSigma]
       using
       hΓ.lambdaInvMomentAtScale_zero_le_inv_barSigma_mul_unitEllipticityMomentRoot
   have hI_nonneg :
       0 ≤ Ch04.lambdaInvMomentAtScale P (0 : ℤ) hP4.sLower hP4.xi := by
     simpa [hP4,
       GammaSigmaCoarseGrainedEllipticity.toQuantitativeCoarseGrainedEllipticity,
-      GammaSigmaCoarseGrainedEllipticity.toQuantitativeCoarseGrainedEllipticity_of_barSigmaAtScale_zero_pos]
+      GammaSigmaCoarseGrainedEllipticity.quantitativeEllipticity_of_positiveBarSigma]
       using
       Ch04.lambdaInvMomentAtScale_nonneg P (0 : ℤ)
         (ξ := hΓ.params.xi) hΓ.sLower_pos

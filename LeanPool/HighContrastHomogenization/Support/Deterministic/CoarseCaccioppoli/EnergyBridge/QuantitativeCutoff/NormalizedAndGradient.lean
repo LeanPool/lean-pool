@@ -408,7 +408,8 @@ theorem normalized_quantitativeCubeCutoff_canonicalFun_gradient_controls
     rw [hφ_eq]
     rw [fderiv_const_smul_field (𝕜 := ℝ) (f := η) A⁻¹]
     simp [scalarCutoffGradientField]
-  have hraw_mem : MeasureTheory.MemLp (scalarCutoffGradientField η) ∞ (normalizedCubeMeasure Q) := by
+  have hraw_mem : MeasureTheory.MemLp (scalarCutoffGradientField η) ∞ (normalizedCubeMeasure Q)
+    := by
     simpa [η, ηq, QuantitativeCubeCutoff.canonical] using
       quantitativeCubeCutoff_memLp_top_gradientField Q ηq
   have hmem : MeasureTheory.MemLp (scalarCutoffGradientField φ) ∞ (normalizedCubeMeasure Q) := by

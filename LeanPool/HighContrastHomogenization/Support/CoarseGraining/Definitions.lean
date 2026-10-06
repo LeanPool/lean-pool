@@ -22,14 +22,17 @@ public section
 
 namespace HCPolySupport
 
+/-- The Lebesgue integral over `U` multiplied by the inverse real value of its volume. -/
 @[expose]
 noncomputable def volumeAverage {d : ℕ} (U : Set (Vec d)) (f : Vec d → ℝ) : ℝ :=
   (MeasureTheory.volume U).toReal⁻¹ * ∫ x in U, f x ∂MeasureTheory.volume
 
+/-- The coordinatewise volume average of a vector field on `U`. -/
 @[expose]
 noncomputable def volumeAverageVec {d : ℕ} (U : Set (Vec d)) (f : Vec d → Vec d) : Vec d :=
   fun i => volumeAverage U (fun x => f x i)
 
+/-- The entrywise volume average of a matrix field on `U`. -/
 @[expose]
 noncomputable def volumeAverageMat {d : ℕ} (U : Set (Vec d)) (f : Vec d → Mat d) : Mat d :=
   fun i j => volumeAverage U (fun x => f x i j)
@@ -42,12 +45,14 @@ theorem volumeAverage_eq_zero_of_integral_eq_zero {d : ℕ} {U : Set (Vec d)}
   rw [h]
   simp
 
+/-- The averaged block energies of states admissible for the prescribed constant pair `P`. -/
 @[expose]
 noncomputable def muValueSet {d : ℕ} (U : Set (Vec d)) (P : BlockVec d)
     (a : CoeffField d) : Set ℝ :=
   { m | ∃ X : BlockState d, IsBlockMuAdmissible U P X ∧ m = volumeAverage U (blockEnergyDensity
     a X) }
 
+/-- The real infimum of averaged block energies of states admissible for `P`. -/
 @[expose]
 noncomputable def Mu {d : ℕ} (U : Set (Vec d)) (P : BlockVec d) (a : CoeffField d) : ℝ :=
   sInf (muValueSet U P a)
@@ -105,6 +110,7 @@ theorem le_Mu_of_forall_isBlockMuAdmissible {d : ℕ} {U : Set (Vec d)} {P : Blo
   rcases hm with ⟨X, hX, rfl⟩
   exact hc X hX
 
+/-- The block response density `-X·A X / 2 - P·A X + Q·X`, with `A` the block coefficient. -/
 @[expose]
 noncomputable def blockResponseIntegrand {d : ℕ} (a : CoeffField d) (P Q : BlockVec d)
     (X : BlockState d) : Vec d → ℝ :=
@@ -113,11 +119,14 @@ noncomputable def blockResponseIntegrand {d : ℕ} (a : CoeffField d) (P Q : Blo
       - blockVecDot P (blockMatVecMul (blockCoeffField a x) (X.eval x))
       + blockVecDot Q (X.eval x)
 
+/-- Square-integrability of the flux and integrability of the block energy on `U`. -/
 structure BlockResponseIntegrabilityData {d : ℕ} (U : Set (Vec d)) (a : CoeffField d)
     (X : BlockState d) : Prop where
   flux_memL2 : MemVectorL2 U X.flux
   energyIntegrable : MeasureTheory.IntegrableOn (blockEnergyDensity a X) U
 
+/-- Averaged block response densities of response-space states with integrable energy and `L²`
+flux. -/
 @[expose]
 noncomputable def blockJValueSet {d : ℕ} (U : Set (Vec d)) (P Q : BlockVec d)
     (a : CoeffField d) : Set ℝ :=
@@ -126,10 +135,12 @@ noncomputable def blockJValueSet {d : ℕ} (U : Set (Vec d)) (P Q : BlockVec d)
         BlockResponseIntegrabilityData U a X ∧
         m = volumeAverage U (blockResponseIntegrand a P Q X) }
 
+/-- The real supremum of the admissible averaged block response values. -/
 @[expose]
 noncomputable def BlockJ {d : ℕ} (U : Set (Vec d)) (P Q : BlockVec d) (a : CoeffField d) : ℝ :=
   sSup (blockJValueSet U P Q a)
 
+/-- The scalar response density `-∇u·symm(a)∇u / 2 - p·a∇u + q·∇u`. -/
 @[expose]
 noncomputable def scalarResponseIntegrand {d : ℕ} (U : Set (Vec d)) (a : CoeffField d)
     (p q : Vec d) (u : AHarmonicFunction a U) : Vec d → ℝ :=
@@ -138,6 +149,7 @@ noncomputable def scalarResponseIntegrand {d : ℕ} (U : Set (Vec d)) (a : Coeff
       - vecDot p (matVecMul (a x) (u.toH1.grad x))
       + vecDot q (u.toH1.grad x)
 
+/-- The averaged scalar response densities of all `a`-harmonic `H¹` functions on `U`. -/
 @[expose]
 noncomputable def responseJValueSet {d : ℕ} (U : Set (Vec d)) (p q : Vec d)
     (a : CoeffField d) : Set ℝ :=
@@ -145,10 +157,12 @@ noncomputable def responseJValueSet {d : ℕ} (U : Set (Vec d)) (p q : Vec d)
       ∃ u : AHarmonicFunction a U,
         m = volumeAverage U (scalarResponseIntegrand U a p q u) }
 
+/-- The real supremum of averaged scalar responses over `a`-harmonic `H¹` functions. -/
 @[expose]
 noncomputable def ResponseJ {d : ℕ} (U : Set (Vec d)) (p q : Vec d) (a : CoeffField d) : ℝ :=
   sSup (responseJValueSet U p q a)
 
+/-- A symmetric block matrix representing `Mu U P a` as one half of its quadratic form. -/
 @[expose]
 def IsCoarseBlockMatrix {d : ℕ} (U : Set (Vec d)) (a : CoeffField d) (Abar : BlockMat d) : Prop :=
   IsSymmetricBlockMat Abar ∧
@@ -163,6 +177,8 @@ def HasQuadraticMu {d : ℕ} (U : Set (Vec d)) (a : CoeffField d) : Prop :=
   ∃ Q : QuadraticForm ℝ (FullBlockVec d),
     ∀ P : BlockVec d, Mu U P a = (1 / 2 : ℝ) * Q (toFullBlockVec P)
 
+/-- A polarized entry of `Mu`: twice the basis energy on the diagonal, and the energy of the
+basis sum minus the two basis energies off the diagonal. -/
 @[expose]
 public noncomputable def coarseBlockEntry {d : ℕ} (U : Set (Vec d)) (a : CoeffField d)
     (α β : BlockCoord d) : ℝ :=
@@ -171,6 +187,7 @@ public noncomputable def coarseBlockEntry {d : ℕ} (U : Set (Vec d)) (a : Coeff
   else
     Mu U (blockBasis α + blockBasis β) a - Mu U (blockBasis α) a - Mu U (blockBasis β) a
 
+/-- The block matrix assembled from polarized basis values of `Mu`. -/
 @[expose]
 noncomputable def coarseBlockMatrix {d : ℕ} (U : Set (Vec d)) (a : CoeffField d) : BlockMat d :=
   { upperLeft := fun i j => coarseBlockEntry U a (Sum.inl i) (Sum.inl j)
@@ -361,11 +378,13 @@ noncomputable def coarseStarredBlockMatrixInv {d : ℕ} (U : Set (Vec d)) (a : C
     BlockMat d :=
   blockReflect (coarseBlockMatrix U a)
 
+/-- A symmetric matrix whose inverse quadratic form represents twice `ResponseJ U 0 q a`. -/
 @[expose]
 def IsSigmaStarCoarse {d : ℕ} (U : Set (Vec d)) (a : CoeffField d) (sigmaStar : Mat d) : Prop :=
   sigmaStar.IsSymm ∧
     ∀ q : Vec d, ResponseJ U 0 q a = (1 / 2 : ℝ) * vecDot q (matVecMul sigmaStar⁻¹ q)
 
+/-- Representation of the corrected mixed response by the bilinear form `q·sigmaStar⁻¹ kappa p`. -/
 @[expose]
 def IsKappaCoarse {d : ℕ} (U : Set (Vec d)) (a : CoeffField d)
     (sigmaStar kappa : Mat d) : Prop :=
@@ -373,6 +392,8 @@ def IsKappaCoarse {d : ℕ} (U : Set (Vec d)) (a : CoeffField d)
     ResponseJ U p q a - ResponseJ U p 0 a - ResponseJ U 0 q a + vecDot p q =
       vecDot q (matVecMul sigmaStar⁻¹ (matVecMul kappa p))
 
+/-- A symmetric matrix representing the `p`-response after subtracting the `kappa` quadratic
+correction. -/
 @[expose]
 def IsSigmaCoarse {d : ℕ} (U : Set (Vec d)) (a : CoeffField d)
     (sigma sigmaStar kappa : Mat d) : Prop :=
@@ -384,12 +405,14 @@ def IsSigmaCoarse {d : ℕ} (U : Set (Vec d)) (a : CoeffField d)
           =
         (1 / 2 : ℝ) * vecDot p (matVecMul sigma p)
 
+/-- A symmetric matrix representing twice the pure `q`-response as a quadratic form. -/
 @[expose]
 def IsSigmaStarInvCoarse {d : ℕ} (U : Set (Vec d)) (a : CoeffField d) (sigmaStarInv : Mat d) :
   Prop :=
   sigmaStarInv.IsSymm ∧
     ∀ q : Vec d, ResponseJ U 0 q a = (1 / 2 : ℝ) * vecDot q (matVecMul sigmaStarInv q)
 
+/-- A polarized entry of the pure `q`-response, with twice the basis response on the diagonal. -/
 @[expose]
 public noncomputable def sigmaStarInvEntry {d : ℕ} (U : Set (Vec d)) (a : CoeffField d)
     (i j : Fin d) : ℝ :=
@@ -400,6 +423,7 @@ public noncomputable def sigmaStarInvEntry {d : ℕ} (U : Set (Vec d)) (a : Coef
       - ResponseJ U 0 (Pi.single i 1) a
       - ResponseJ U 0 (Pi.single j 1) a
 
+/-- The matrix assembled from polarized values of the pure `q`-response. -/
 @[expose]
 noncomputable def sigmaStarInvCoarse {d : ℕ} (U : Set (Vec d)) (a : CoeffField d) : Mat d :=
   fun i j => sigmaStarInvEntry U a i j
@@ -477,6 +501,7 @@ theorem sigmaStarInvCoarse_eq_inv_of_isSigmaStarCoarse {d : ℕ} {U : Set (Vec d
   exact eq_sigmaStarInvCoarse_of_isSigmaStarInvCoarse
     (isSigmaStarInvCoarse_of_isSigmaStarCoarse hS)
 
+/-- The matrix inverse of the polarized pure `q`-response matrix. -/
 @[expose]
 noncomputable def sigmaStarCoarse {d : ℕ} (U : Set (Vec d)) (a : CoeffField d) : Mat d :=
   (sigmaStarInvCoarse U a)⁻¹
@@ -494,12 +519,15 @@ theorem sigmaStarCoarse_isSymm_of_isSigmaStarCoarse {d : ℕ} {U : Set (Vec d)}
   rw [eq_sigmaStarCoarse_of_isSigmaStarCoarse hS hdet]
   exact hS.1
 
+/-- Representation of the corrected mixed response by the bilinear form `q·M p`. -/
 @[expose]
 def IsSigmaStarInvKappaCoarse {d : ℕ} (U : Set (Vec d)) (a : CoeffField d) (M : Mat d) : Prop :=
   ∀ p q : Vec d,
     ResponseJ U p q a - ResponseJ U p 0 a - ResponseJ U 0 q a + vecDot p q =
       vecDot q (matVecMul M p)
 
+/-- The matrix of mixed basis responses corrected by subtracting pure responses and adding
+`p·q`. -/
 @[expose]
 noncomputable def sigmaStarInvKappaCoarse {d : ℕ} (U : Set (Vec d)) (a : CoeffField d) : Mat d :=
   fun i j =>
@@ -555,6 +583,7 @@ theorem sigmaStarInvKappaCoarse_eq_mul_of_isKappaCoarse {d : ℕ} {U : Set (Vec 
   exact eq_sigmaStarInvKappaCoarse_of_isSigmaStarInvKappaCoarse
     (isSigmaStarInvKappaCoarse_of_isKappaCoarse hK)
 
+/-- The product of the coarse `sigmaStar` matrix and the corrected mixed-response matrix. -/
 @[expose]
 noncomputable def kappaCoarse {d : ℕ} (U : Set (Vec d)) (a : CoeffField d) : Mat d :=
   sigmaStarCoarse U a * sigmaStarInvKappaCoarse U a
@@ -568,6 +597,8 @@ theorem eq_kappaCoarse_of_isKappaCoarse {d : ℕ} {U : Set (Vec d)} {a : CoeffFi
     sigmaStarInvKappaCoarse_eq_mul_of_isKappaCoarse hK]
   simpa [Matrix.mul_assoc] using Matrix.mul_nonsing_inv_cancel_left (A := sigmaStar) kappa hdet
 
+/-- The pure `p`-response minus one half of the canonical `kappaᵀ sigmaStarInv kappa` quadratic
+form. -/
 @[expose]
 noncomputable def sigmaCorrectedResponse {d : ℕ} (U : Set (Vec d)) (a : CoeffField d)
     (p : Vec d) : ℝ :=
@@ -576,12 +607,14 @@ noncomputable def sigmaCorrectedResponse {d : ℕ} (U : Set (Vec d)) (a : CoeffF
         (matVecMul (matTranspose (kappaCoarse U a))
           (matVecMul (sigmaStarInvCoarse U a) (matVecMul (kappaCoarse U a) p)))
 
+/-- A symmetric matrix representing twice the canonically corrected `p`-response. -/
 @[expose]
 def IsSigmaCanonicalCoarse {d : ℕ} (U : Set (Vec d)) (a : CoeffField d) (sigma : Mat d) : Prop :=
   sigma.IsSymm ∧
     ∀ p : Vec d,
       sigmaCorrectedResponse U a p = (1 / 2 : ℝ) * vecDot p (matVecMul sigma p)
 
+/-- A polarized entry of the canonically corrected `p`-response. -/
 @[expose]
 public noncomputable def sigmaEntry {d : ℕ} (U : Set (Vec d)) (a : CoeffField d)
     (i j : Fin d) : ℝ :=
@@ -592,6 +625,7 @@ public noncomputable def sigmaEntry {d : ℕ} (U : Set (Vec d)) (a : CoeffField 
       - sigmaCorrectedResponse U a (Pi.single i 1)
       - sigmaCorrectedResponse U a (Pi.single j 1)
 
+/-- The matrix assembled from polarized values of the canonically corrected `p`-response. -/
 @[expose]
 noncomputable def sigmaCoarse {d : ℕ} (U : Set (Vec d)) (a : CoeffField d) : Mat d :=
   fun i j => sigmaEntry U a i j
@@ -680,6 +714,7 @@ theorem sigmaCoarse_isSymm_of_isSigmaCoarse {d : ℕ} {U : Set (Vec d)} {a : Coe
   rw [sigmaCoarse_eq_of_isSigmaCoarse hS hK hSigma hdet]
   exact hSigma.1
 
+/-- The matrix `sigma + kappaᵀ sigmaStar⁻¹ kappa`. -/
 @[expose]
 noncomputable def bCoarse {d : ℕ} (sigma sigmaStar kappa : Mat d) : Mat d :=
   sigma + (matTranspose kappa) * sigmaStar⁻¹ * kappa
@@ -718,10 +753,12 @@ theorem bCoarse_isSymm_of_isSigmaCoarse {d : ℕ} {U : Set (Vec d)}
   intro i j
   simp [bCoarse, hSigmaSymm.apply i j, hCorrSymm.apply i j]
 
+/-- The matrix `sigma - kappaᵀ`. -/
 @[expose]
 noncomputable def aCoarse {d : ℕ} (sigma kappa : Mat d) : Mat d :=
   sigma - matTranspose kappa
 
+/-- The matrix `sigmaStar - kappaᵀ`. -/
 @[expose]
 noncomputable def aStarCoarse {d : ℕ} (sigmaStar kappa : Mat d) : Mat d :=
   sigmaStar - matTranspose kappa

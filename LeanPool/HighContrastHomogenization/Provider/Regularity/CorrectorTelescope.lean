@@ -48,6 +48,7 @@ theorem scalarIdentityCorrectedWeakError_nonneg {d : ℕ} [NeZero d]
   exact mul_nonneg (scalarIdentityWeakError_nonneg a s k)
     (by linarith only [scalarIdentityWeakError_nonneg a s k])
 
+/-- The injective indexing map from natural offsets to integer scales, `j ↦ n + j`. -/
 @[expose]
 public def intNatShiftEmbedding (n : ℤ) : ℕ ↪ ℤ where
   toFun j := n + (j : ℤ)

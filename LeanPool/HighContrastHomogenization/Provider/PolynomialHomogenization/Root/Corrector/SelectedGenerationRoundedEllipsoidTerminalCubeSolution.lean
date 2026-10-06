@@ -17,7 +17,8 @@ public import LeanPool.HighContrastHomogenization.Analytic.CoefficientLocality
 
 /-!
 # High-contrast homogenization:
-Provider.PolynomialHomogenization.Root.Corrector.SelectedGenerationRoundedEllipsoidTerminalCubeSolution
+Provider.PolynomialHomogenization.Root.Corrector
+.SelectedGenerationRoundedEllipsoidTerminalCubeSolution
 
 Imported from the Apache-2.0 HighContrastHomogenization development at commit
 `7a13dbcd8d6609264a713373f5c69ceeac870472`.

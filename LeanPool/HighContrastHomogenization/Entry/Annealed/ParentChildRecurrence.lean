@@ -118,7 +118,8 @@ theorem coarseBlock_aligned_children_le [NeZero d] (q : Mat d) (hq : IsUnit q) (
   have hsum : ∑ z ∈ alignedChildren q j hn,
       ((3 : ℝ) ^ (d * hn))⁻¹ • toFullBlockMat (coarseBlock (adaptedCellTranslate q j z) a) =
         ∑ w : ↥{w : Fin d → ℤ | standardCellCenter j w ∈ centeredCube d (j + (hn : ℤ))},
-          ((3 : ℝ) ^ (d * hn))⁻¹ • toFullBlockMat (coarseBlock (adaptedCellAtCenter q j w.1) a) := by
+          ((3 : ℝ) ^ (d * hn))⁻¹ • toFullBlockMat (coarseBlock (adaptedCellAtCenter q j w.1) a)
+            := by
     unfold alignedChildren
     rw [Finset.sum_image (fun w1 _ w2 _ h => adaptedCellCenter_injective q j hq h)]
     exact Finset.sum_subtype (alignedCenterSet_finite_card d j hn).1.toFinset
@@ -275,7 +276,8 @@ theorem normalizedBlock_transport_congr {Aj Ajh : BlockMat d}
       ← Matrix.conjTranspose_eq_transpose_of_trivial (matSqrt (toFullBlockMat Ajh)⁻¹),
       ← Matrix.conjTranspose_eq_transpose_of_trivial (matSqrt (toFullBlockMat Aj)),
       (Multiscale.matSqrt_inv_posDef_full hAjh).isHermitian.eq,
-      (matSqrt_eq_cfc_sqrt hAj.posSemidef ▸ posDef_sqrt_full hAj : (matSqrt (toFullBlockMat Aj)).PosDef).isHermitian.eq]
+      (matSqrt_eq_cfc_sqrt hAj.posSemidef ▸ posDef_sqrt_full hAj : (matSqrt (toFullBlockMat
+        Aj)).PosDef).isHermitian.eq]
   rw [show toFullBlockMat (normalizedBlock X Ajh) =
       matSqrt (toFullBlockMat Ajh)⁻¹ * toFullBlockMat X * matSqrt (toFullBlockMat Ajh)⁻¹ from
     by rw [normalizedBlock, toFullBlockMat_ofFullBlockMat],
@@ -316,7 +318,8 @@ theorem transportMatrix_sq_opNorm_eq (P : Measure (CoeffSpace d)) (q : Mat d) (j
         ← Matrix.conjTranspose_eq_transpose_of_trivial (matSqrt (toFullBlockMat Ajh)⁻¹),
         ← Matrix.conjTranspose_eq_transpose_of_trivial (matSqrt (toFullBlockMat Aj)),
         (Multiscale.matSqrt_inv_posDef_full hAjh).isHermitian.eq,
-      (matSqrt_eq_cfc_sqrt hAj.posSemidef ▸ posDef_sqrt_full hAj : (matSqrt (toFullBlockMat Aj)).PosDef).isHermitian.eq]
+      (matSqrt_eq_cfc_sqrt hAj.posSemidef ▸ posDef_sqrt_full hAj : (matSqrt (toFullBlockMat
+        Aj)).PosDef).isHermitian.eq]
     rw [hT, hB]
     unfold bridgeMap relMean normalizedBlock
     rw [toFullBlockMat_ofFullBlockMat]

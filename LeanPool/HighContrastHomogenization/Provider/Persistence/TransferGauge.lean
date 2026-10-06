@@ -31,14 +31,14 @@ entry mean.
 
 Three facts about the gauge come first.  Above the alignment scale the burn
 `e.source.lower.scale` has already paid for the growth witness:
-its second term puts `3^{j_*}` above `K̄_S^2 ≥ K_{Ψ_S}^2`, so `K_{Ψ_S}^23^{-j}`
+its second term puts `3^{j_*}` above `K_bar_S^2 ≥ K_{Ψ_S}^2`, so `K_{Ψ_S}^23^{-j}`
 never exceeds one there.  The gauge is therefore below `2^g/(1-g)` from the
 alignment on, and it is antitone in the scale on every branch.
 
 The two transfer sizes come next.  The actual size
 `𝒯_{q,S}(j) = C_AE 𝔢_q Γ_{g,S}(j) Λ_t` carries the random normalization
 `Λ_t = |(E_t^q)^{-1/2}𝐄(E_t^q)^{-1/2}|`; the deterministic size
-`𝒯̄_{q,S}(j)` replaces it by `U κ_𝐄 B_q`.  The terminal normalization
+`𝒯_bar_{q,S}(j)` replaces it by `U κ_𝐄 B_q`.  The terminal normalization
 `e.two.grid.source.normalization` bounds the first by the second, which is the
 envelope for the transfer size: only the constant `U`, never the multiplier,
 survives.
@@ -71,7 +71,7 @@ theorem zero_lt_transferGauge {g : ℝ} (hg : g < 1) (K : ℝ) (j : ℤ) :
 /-- **The growth witness is burned above the alignment scale**.  The second term
 of the maximum defining the source burn `e.source.lower.scale` puts `3^{j_*}`
 above
-`K̄_S^2`, the enlarged witness dominates the witness, and `3^{-j}` decreases. -/
+`K_bar_S^2`, the enlarged witness dominates the witness, and `3^{-j}` decreases. -/
 theorem sq_mul_zpow_le_one {d : ℕ} {Q K : ℝ} {jStar M j : ℤ} (hK : 1 < K)
     (hw : IsCoupledWindow d Q K jStar M) (hj : jStar ≤ j) :
     K ^ 2 * (3 : ℝ) ^ (-j) ≤ 1 := by

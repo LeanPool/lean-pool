@@ -226,7 +226,7 @@ theorem cubeBesovDepthSeminorm_gradCoord_le_depthWeight_mul_scaledCoercivePrefac
           ((((descendantsAtDepth Q j).card : ℝ)⁻¹ *
             H.hessianCoordL2NormSum ^ 2) ^ (1 / 2 : ℝ))) := by
   exact
-    H.cubeBesovDepthSeminorm_gradCoord_le_depthWeight_mul_const_mul_cardInvGlobal_hessianCoordL2NormSum
+    H.besovGradientCoord_le_hessianCoordL2Norm
       i j (scaledDescendantMeanZeroH1CoerciveEstimate Q j)
       (scaledDescendantCoercivePrefactor_nonneg Q j)
       (fun R hR => scaledDescendantCoercivePrefactor_bound hR)

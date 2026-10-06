@@ -58,7 +58,7 @@ private theorem generalCoarseGrainingL2TwoExponentFluxDefectRHS_eq_const_mul_one
   unfold generalCoarseGrainingL2TwoExponentFluxDefectRHS
   ring
 
-private theorem generalCoarseGrainingL2TwoExponentTheory_of_scalarSolutionComparisonDualityEstimateExponentLoss_of_localizedFluxDefectBridge
+private theorem generalCoarseGrainingL2TwoExponentTheory_of_fluxDefectBridge
     {d : ℕ} [NeZero d] {Cproj C : ℝ}
     (hC_pos : 0 < C)
     (hproj : ScalarSolutionComparisonDualityEstimateExponentLoss d Cproj)
@@ -88,7 +88,7 @@ private theorem generalCoarseGrainingL2TwoExponentTheory_of_scalarSolutionCompar
           solutionComparisonNegativeBesovLhs Q s (publicCoeffField Q a)
             a0.matrix w.u.grad w.v.grad := by
     simpa [K] using
-      homogenizationComparisonNegativeBesovLHS_le_note_constant_mul_solutionComparisonNegativeBesovLhs_publicCoeffField
+      homogenizationNegativeBesovLHS_le_constant_mul_solutionNegativeBesovLhs
         Q a a0 s w.u w.v hs
   have hcomparison :
       IsHomogenizationComparisonPairOn (cubeSet Q)
@@ -143,7 +143,51 @@ private theorem generalCoarseGrainingL2TwoExponentTheory_of_scalarSolutionCompar
     _ ≤ generalCoarseGrainingL2TwoExponentRHS C Q a a0 s r r₂ j g w.u :=
         hlocalized ha0_saved w hs hr hrs hs_lt hr₂ hg
 
-private theorem generalCoarseGrainingL2TwoExponentTheory_of_scalarSolutionComparisonDualityEstimateExponentLoss_of_const_mul_descendantCoarseFluxResponseRHSBound_of_openCubeDescendantDeterministicCoarseData
+private theorem summableWeightedDescendantBlockAndInverseNormPowers
+    {d : ℕ} [NeZero d] (Q : TriadicCube d) (A : CoeffField d) {r : ℝ}
+    {lower upper : ℝ}
+    (hr_half_pos : 0 < r / 2)
+    (hEll : IsEllipticFieldOn lower upper (cubeSet Q) A)
+    (hData : _root_.HCPolySupport.OpenCubeDescendantDeterministicCoarseData Q A) :
+    (Summable (fun n : ℕ =>
+        geometricWeight (r / 2) 2 n *
+          Real.rpow
+            (maxDescendantBBlockNormAtScale Q (Q.scale - (n : ℤ)) A)
+            (2 / 2))) ∧
+    (Summable (fun n : ℕ =>
+        geometricWeight (r / 2) 2 n *
+          Real.rpow
+            (maxDescendantSigmaStarInvNormAtScale Q (Q.scale - (n : ℤ)) A)
+            (2 / 2))) := by
+  have hsumB :
+      Summable (fun n : ℕ =>
+        geometricWeight (r / 2) 2 n *
+          Real.rpow
+            (maxDescendantBBlockNormAtScale Q (Q.scale - (n : ℤ)) A)
+            (2 / 2)) := by
+    have hsum :
+        Summable (fun n : ℕ =>
+          geometricWeight (r / 2) 2 n *
+            maxDescendantBBlockNormAtScale Q (Q.scale - (n : ℤ)) A) :=
+      summable_qtwo_maxDescendantBBlockNorm_of_ellipticField
+        (Q := Q) (a := A) (s := r / 2) hr_half_pos hEll hData
+    simpa [Real.rpow_one] using hsum
+  have hsumSigma :
+      Summable (fun n : ℕ =>
+        geometricWeight (r / 2) 2 n *
+          Real.rpow
+            (maxDescendantSigmaStarInvNormAtScale Q (Q.scale - (n : ℤ)) A)
+            (2 / 2)) := by
+    have hsum :
+        Summable (fun n : ℕ =>
+          geometricWeight (r / 2) 2 n *
+            maxDescendantSigmaStarInvNormAtScale Q (Q.scale - (n : ℤ)) A) :=
+      summable_qtwo_maxDescendantSigmaStarInvNorm_of_ellipticField
+        (Q := Q) (a := A) (s := r / 2) hr_half_pos hEll hData
+    simpa [Real.rpow_one] using hsum
+  exact ⟨hsumB, hsumSigma⟩
+
+private theorem generalCoarseGrainingL2TwoExponentTheory_of_descendantFluxBound
     {d : ℕ} [NeZero d] {Cdual K : ℝ}
     (hdual : ScalarSolutionComparisonDualityEstimateExponentLoss d Cdual)
     (hK_nonneg : 0 ≤ K)
@@ -175,7 +219,7 @@ private theorem generalCoarseGrainingL2TwoExponentTheory_of_scalarSolutionCompar
       exact_mod_cast Nat.pos_of_ne_zero (NeZero.ne d)
     exact mul_pos (sq_pos_of_pos hd_pos) hCbase_pos
   refine
-    generalCoarseGrainingL2TwoExponentTheory_of_scalarSolutionComparisonDualityEstimateExponentLoss_of_localizedFluxDefectBridge
+    generalCoarseGrainingL2TwoExponentTheory_of_fluxDefectBridge
       (Cproj := Cdual) (C := C) hC_pos hdual ?_
   intro Q a a0 s r r₂ j g ha0 w hs hr hrs hs_lt hr₂ hg₂
   let A : CoeffField d := publicCoeffField Q a
@@ -204,7 +248,7 @@ private theorem generalCoarseGrainingL2TwoExponentTheory_of_scalarSolutionCompar
   have hZ_le_L : Z ≤ K * L := by
     dsimp [Z, L, A]
     exact
-      localizedFluxDefectNegativeBesovAverageTwo_fluxDefect_le_const_mul_localizedCoarseFluxResponseRHSBound_of_descendant_bounds
+      negativeBesovFluxAverage_le_const_mul_CoarseFluxRHSBound
         Q (publicCoeffField Q a) a0.matrix w.u.grad g j hK_nonneg
         hdefect_bdd (hdescendantRHS ha0 w hr hr_lt hg₁)
   have hEll : IsEllipticFieldOn (a.coeffOn Q).lam (a.coeffOn Q).Lam
@@ -220,36 +264,12 @@ private theorem generalCoarseGrainingL2TwoExponentTheory_of_scalarSolutionCompar
     exact integrableOn_coefficientEnergyDensity_of_isEllipticFieldOn hEll hgrad
   have hr_half_pos : 0 < r / 2 := by
     nlinarith
-  have hsumB :
-      Summable (fun n : ℕ =>
-        geometricWeight (r / 2) 2 n *
-          Real.rpow
-            (maxDescendantBBlockNormAtScale Q (Q.scale - (n : ℤ)) A)
-            (2 / 2)) := by
-    have hsum :
-        Summable (fun n : ℕ =>
-          geometricWeight (r / 2) 2 n *
-            maxDescendantBBlockNormAtScale Q (Q.scale - (n : ℤ)) A) :=
-      summable_qtwo_maxDescendantBBlockNormAtScale_of_isEllipticFieldOn_of_openCubeDescendantDeterministicCoarseData
-        (Q := Q) (a := A) (s := r / 2) hr_half_pos hEll (hData Q a)
-    simpa [Real.rpow_one] using hsum
-  have hsumSigma :
-      Summable (fun n : ℕ =>
-        geometricWeight (r / 2) 2 n *
-          Real.rpow
-            (maxDescendantSigmaStarInvNormAtScale Q (Q.scale - (n : ℤ)) A)
-            (2 / 2)) := by
-    have hsum :
-        Summable (fun n : ℕ =>
-          geometricWeight (r / 2) 2 n *
-            maxDescendantSigmaStarInvNormAtScale Q (Q.scale - (n : ℤ)) A) :=
-      summable_qtwo_maxDescendantSigmaStarInvNormAtScale_of_isEllipticFieldOn_of_openCubeDescendantDeterministicCoarseData
-        (Q := Q) (a := A) (s := r / 2) hr_half_pos hEll (hData Q a)
-    simpa [Real.rpow_one] using hsum
+  obtain ⟨hsumB, hsumSigma⟩ :=
+    summableWeightedDescendantBlockAndInverseNormPowers Q A hr_half_pos hEll (hData Q a)
   have hL_le_B : L ≤ B := by
     dsimp [L, B]
     exact
-      _root_.HCPolySupport.localizedCoarseFluxResponseRHSBound_le_coarseGrainingL2FluxDefectBoundTwoExponent_of_bddAbove_of_isEllipticFieldOn_of_summable
+      _root_.HCPolySupport.CoarseFluxRHSBound_le_coarseGrainingFluxBoundTwoExponent
         Q A a0.matrix j w.u.grad g hr hr₂ hEll henergy_int
         hg₂.partialSeminorms_bddAbove
         (fun R hR => forceBesovRegularity_descendant_partialSeminorms_bddAbove hg₂ hR)
@@ -321,7 +341,7 @@ private theorem generalCoarseGrainingL2TwoExponentTheory_of_scalarSolutionCompar
       _ ≤ generalCoarseGrainingL2TwoExponentFluxDefectRHS C Q a a0 r r₂ j g w.u := by
         dsimp [C, A]
         exact
-          coarseGrainingL2FluxDefectBoundTwoExponent_publicCoeffField_le_dim_sq_mul_public_of_homogenizationErrorAtDepth_eq
+          coarseGrainingFluxBoundTwoExponent_le_dim_sq_mul
             Cbase Q a a0 j w.u hCbase_nonneg hr hBsemi_nonneg hH_nonneg herror
       _ = C * generalCoarseGrainingL2TwoExponentFluxDefectRHS 1 Q a a0 r r₂ j g w.u :=
         generalCoarseGrainingL2TwoExponentFluxDefectRHS_eq_const_mul_one
@@ -369,7 +389,7 @@ private theorem generalCoarseGrainingL2TwoExponentTheory_of_scalarSolutionCompar
       rw [generalCoarseGrainingL2TwoExponentFluxDefectRHS_eq_const_mul_one
         C Q a a0 r r₂ j g w.u]
 
-private theorem generalCoarseGrainingL2TwoExponentTheory_of_scalarSolutionComparisonDualityEstimateExponentLoss_of_const_mul_descendantCoarseFluxResponseRHSBound
+private theorem generalCoarseGrainingL2TwoExponentTheory_of_descendantCoarseFluxRHSBound
     {d : ℕ} [NeZero d] {Cdual K : ℝ}
     (hdual : ScalarSolutionComparisonDualityEstimateExponentLoss d Cdual)
     (hK_nonneg : 0 ≤ K)
@@ -385,29 +405,30 @@ private theorem generalCoarseGrainingL2TwoExponentTheory_of_scalarSolutionCompar
               K * _root_.HCPolySupport.coarseFluxResponseRHSBound R
                 (publicCoeffField Q a) a0.matrix s w.u.grad g) :
     GeneralCoarseGrainingL2TwoExponentTheory d :=
-  generalCoarseGrainingL2TwoExponentTheory_of_scalarSolutionComparisonDualityEstimateExponentLoss_of_const_mul_descendantCoarseFluxResponseRHSBound_of_openCubeDescendantDeterministicCoarseData
+  generalCoarseGrainingL2TwoExponentTheory_of_descendantFluxBound
     hdual hK_nonneg
     (fun Q a => publicCoeffField_openCubeDescendantDeterministicCoarseData Q a)
     hdescendantRHS
 
-private theorem generalCoarseGrainingL2TwoExponentTheory_of_scalarSolutionComparisonDualityEstimateExponentLoss
+private theorem
+  generalCoarseGrainingL2TwoExponentTheory_of_scalarSolutionComparisonDualityEstimateExponentLoss
     {d : ℕ} [NeZero d] {Cdual : ℝ}
     (hdual : ScalarSolutionComparisonDualityEstimateExponentLoss d Cdual) :
     GeneralCoarseGrainingL2TwoExponentTheory d := by
   let K : ℝ :=
     2 *
-      ZeroTraceDirichletCorrectorData.zeroTraceDirichletCorrectedWeakFluxApexConstant d 1
+      ZeroTraceDirichletCorrectorData.zeroTraceFluxApexConstant d 1
   have hK_nonneg : 0 ≤ K := by
     dsimp [K]
     exact mul_nonneg (by norm_num : 0 ≤ (2 : ℝ))
-      (ZeroTraceDirichletCorrectorData.zeroTraceDirichletCorrectedWeakFluxApexConstant_nonneg
+      (ZeroTraceDirichletCorrectorData.zeroTraceFluxApexConstant_nonneg
         d 1)
   refine
-    generalCoarseGrainingL2TwoExponentTheory_of_scalarSolutionComparisonDualityEstimateExponentLoss_of_const_mul_descendantCoarseFluxResponseRHSBound
+    generalCoarseGrainingL2TwoExponentTheory_of_descendantCoarseFluxRHSBound
       (Cdual := Cdual) (K := K) hdual hK_nonneg ?_
   intro Q a a0 s j g _ha0 w hs hs_lt hg R hR
   simpa [K] using
-    w.cubeBesovNegativeVectorSeminormTwo_fluxDefect_le_const_mul_coarseFluxResponseRHSBound_descendant
+    w.fluxDefect_negativeBesov_le_coarseFluxResponseBound
       (Q := Q) (R := R) (a := a) (a0 := a0) (g := g) (j := j)
       hs hs_lt hg hR
 
@@ -427,7 +448,7 @@ private theorem generalCoarseGrainingL2TwoExponentTheory_of_coordinateBridge
   have hdual : ScalarSolutionComparisonDualityEstimateExponentLoss d Cdual := by
     dsimp [Cdual, CdualGenuine, Cpair]
     exact
-      (HCPolySupport.scalarSolutionComparisonGenuineDualityEstimateSharpLoss_of_dirichletBesov_of_coordinateBridgeSharpLoss_of_localizedPairing
+      (HCPolySupport.scalarSolutionComparisonGenuineDualityEstimateSharpLoss
         (d := d) (Cdir := Cdir) (Cbridge := Cbridge)
         hdir hbridge
         (localizedFluxDefectPositivePairingEstimate_standardOverlap d)).to_exponentLoss

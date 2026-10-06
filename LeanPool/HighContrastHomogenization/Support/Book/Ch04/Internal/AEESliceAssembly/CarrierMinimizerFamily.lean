@@ -94,7 +94,8 @@ theorem measurable_energyBilin_fixed_generator_carrier
     (Z : canonicalMuBlockCorrectionGeneratorSubmodule (cubeSet Q)) :
     @Measurable Ω ℝ mΩ _
       (fun ω =>
-        ((canonicalAEEMuOperatorSystemData Q k (slicePt Q A hSlice ω)).toMuHilbertRealization).energyBilin
+        ((canonicalAEEMuOperatorSystemData Q k (slicePt Q A hSlice
+          ω)).toMuHilbertRealization).energyBilin
           (toHilbertBlockL2OfBlockField (U := cubeSet Q) hY)
           (blockVecToHilbertBlockL2Const (U := cubeSet Q) P +
             canonicalMuCorrectionGeneratorEmbedding (cubeSet Q) Z)) := by
@@ -104,7 +105,8 @@ theorem measurable_energyBilin_fixed_generator_carrier
     simpa [Xstate] using canonicalMuGeneratorAffineField_memBlockL2 (U := U) P Z
   have hRewrite :
       (fun ω =>
-        ((canonicalAEEMuOperatorSystemData Q k (slicePt Q A hSlice ω)).toMuHilbertRealization).energyBilin
+        ((canonicalAEEMuOperatorSystemData Q k (slicePt Q A hSlice
+          ω)).toMuHilbertRealization).energyBilin
           (toHilbertBlockL2OfBlockField (U := cubeSet Q) hY)
           (blockVecToHilbertBlockL2Const (U := cubeSet Q) P +
             canonicalMuCorrectionGeneratorEmbedding (cubeSet Q) Z)) =
@@ -148,7 +150,8 @@ theorem stronglyMeasurable_canonicalMinimizer_carrier
     (P : BlockVec d) :
     @MeasureTheory.StronglyMeasurable Ω (HilbertBlockL2 (cubeSet Q)) _ mΩ
       (fun ω =>
-        ((canonicalAEEMuOperatorSystemData Q k (slicePt Q A hSlice ω)).toMuHilbertRealization).minimizerMap P) := by
+        ((canonicalAEEMuOperatorSystemData Q k (slicePt Q A hSlice
+          ω)).toMuHilbertRealization).minimizerMap P) := by
   classical
   let U : Set (Vec d) := cubeSet Q
   have hF := measurable_toHilbertMatrixL2_carrier_cubeSet Q hSlice hEntry
@@ -203,7 +206,8 @@ theorem stronglyMeasurable_canonicalMinimizer_carrier
         (fun m : ℕ => fun ω : Ω => candidate (index m ω))
         atTop
         (𝓝 fun ω : Ω =>
-          let H := ((canonicalAEEMuOperatorSystemData Q k (slicePt Q A hSlice ω)).toMuHilbertRealization)
+          let H := ((canonicalAEEMuOperatorSystemData Q k (slicePt Q A hSlice
+            ω)).toMuHilbertRealization)
           affineMinimizerMap K H.energyBilin H.energyCoercive (H.constantField P)) := by
     rw [tendsto_pi_nhds]
     intro ω
@@ -254,7 +258,8 @@ theorem stronglyMeasurable_canonicalMinimizer_carrier
   have hAffine :
       MeasureTheory.StronglyMeasurable
         (fun ω : Ω =>
-          let H := ((canonicalAEEMuOperatorSystemData Q k (slicePt Q A hSlice ω)).toMuHilbertRealization)
+          let H := ((canonicalAEEMuOperatorSystemData Q k (slicePt Q A hSlice
+            ω)).toMuHilbertRealization)
           affineMinimizerMap K H.energyBilin H.energyCoercive (H.constantField P)) :=
     stronglyMeasurable_of_tendsto atTop hApprox_strong hlim
   simpa [U, K, MuHilbertRealization.minimizerMap, MuHilbertProblem.minimizerMap,
@@ -270,9 +275,11 @@ theorem measurable_energyBilin_fixed_canonicalMinimizer_carrier
     (P : BlockVec d) (Y : BlockState d) (hY : MemBlockL2 (cubeSet Q) Y.eval) :
     @Measurable Ω ℝ mΩ _
       (fun ω =>
-        ((canonicalAEEMuOperatorSystemData Q k (slicePt Q A hSlice ω)).toMuHilbertRealization).energyBilin
+        ((canonicalAEEMuOperatorSystemData Q k (slicePt Q A hSlice
+          ω)).toMuHilbertRealization).energyBilin
           (toHilbertBlockL2OfBlockField (U := cubeSet Q) hY)
-          (((canonicalAEEMuOperatorSystemData Q k (slicePt Q A hSlice ω)).toMuHilbertRealization).minimizerMap P)) := by
+          (((canonicalAEEMuOperatorSystemData Q k (slicePt Q A hSlice
+            ω)).toMuHilbertRealization).minimizerMap P)) := by
   classical
   let U : Set (Vec d) := cubeSet Q
   have hF := measurable_toHilbertMatrixL2_carrier_cubeSet Q hSlice hEntry
@@ -313,7 +320,8 @@ theorem measurable_energyBilin_fixed_canonicalMinimizer_carrier
   have hApprox_meas :
       ∀ n : ℕ,
         Measurable fun ω : Ω =>
-          ((canonicalAEEMuOperatorSystemData Q k (slicePt Q A hSlice ω)).toMuHilbertRealization).energyBilin
+          ((canonicalAEEMuOperatorSystemData Q k (slicePt Q A hSlice
+            ω)).toMuHilbertRealization).energyBilin
             y (candidate n) := by
     intro n
     simpa [U, y, candidate, ξ] using
@@ -321,7 +329,8 @@ theorem measurable_energyBilin_fixed_canonicalMinimizer_carrier
   have hSelected_meas :
       ∀ m : ℕ,
         Measurable fun ω : Ω =>
-          ((canonicalAEEMuOperatorSystemData Q k (slicePt Q A hSlice ω)).toMuHilbertRealization).energyBilin
+          ((canonicalAEEMuOperatorSystemData Q k (slicePt Q A hSlice
+            ω)).toMuHilbertRealization).energyBilin
             y (candidate (index m ω)) := by
     intro m
     let p : ℕ → Ω → Prop := fun n ω => energy ω n ≤ Mu U P (A ω).toFun + ε m
@@ -332,13 +341,15 @@ theorem measurable_energyBilin_fixed_canonicalMinimizer_carrier
     simpa [p, index] using
       (Measurable.find
         (f := fun n ω =>
-          ((canonicalAEEMuOperatorSystemData Q k (slicePt Q A hSlice ω)).toMuHilbertRealization).energyBilin
+          ((canonicalAEEMuOperatorSystemData Q k (slicePt Q A hSlice
+            ω)).toMuHilbertRealization).energyBilin
             y (candidate n))
         (p := p) hApprox_meas hp hexists)
   have hSelected_strong :
       ∀ m : ℕ,
         MeasureTheory.StronglyMeasurable fun ω : Ω =>
-          ((canonicalAEEMuOperatorSystemData Q k (slicePt Q A hSlice ω)).toMuHilbertRealization).energyBilin
+          ((canonicalAEEMuOperatorSystemData Q k (slicePt Q A hSlice
+            ω)).toMuHilbertRealization).energyBilin
             y (candidate (index m ω)) :=
     fun m => (hSelected_meas m).stronglyMeasurable
   have hε_tendsto : Tendsto ε atTop (𝓝 0) := by
@@ -348,11 +359,13 @@ theorem measurable_energyBilin_fixed_canonicalMinimizer_carrier
   have hlim_scalar :
       Tendsto
         (fun m : ℕ => fun ω : Ω =>
-          ((canonicalAEEMuOperatorSystemData Q k (slicePt Q A hSlice ω)).toMuHilbertRealization).energyBilin
+          ((canonicalAEEMuOperatorSystemData Q k (slicePt Q A hSlice
+            ω)).toMuHilbertRealization).energyBilin
             y (candidate (index m ω)))
         atTop
         (𝓝 fun ω : Ω =>
-          let H := ((canonicalAEEMuOperatorSystemData Q k (slicePt Q A hSlice ω)).toMuHilbertRealization)
+          let H := ((canonicalAEEMuOperatorSystemData Q k (slicePt Q A hSlice
+            ω)).toMuHilbertRealization)
           H.energyBilin y (H.minimizerMap P)) := by
     rw [tendsto_pi_nhds]
     intro ω
@@ -412,7 +425,8 @@ theorem measurable_energyBilin_fixed_canonicalMinimizer_carrier
   have hStrong :
       MeasureTheory.StronglyMeasurable
         (fun ω : Ω =>
-          let H := ((canonicalAEEMuOperatorSystemData Q k (slicePt Q A hSlice ω)).toMuHilbertRealization)
+          let H := ((canonicalAEEMuOperatorSystemData Q k (slicePt Q A hSlice
+            ω)).toMuHilbertRealization)
           H.energyBilin y (H.minimizerMap P)) :=
     stronglyMeasurable_of_tendsto atTop hSelected_strong hlim_scalar
   simpa [U, y] using hStrong.measurable

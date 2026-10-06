@@ -503,7 +503,7 @@ theorem exists_cubeSolutionGradientAverageEnergyConstant
     (ENNReal.ofReal_le_ofReal_iff hN_nonneg).1 havgENN
   have hnegative : N ≤ Book.Ch03.coarsePoincareGradientRHS Q a s (.finite 2) u := by
     simpa only [N,
-      Book.Ch03.scaleNormalizedNegativeBesovVectorNorm_finite_two_eq_cubeBesovNegativeVectorSeminormTwo]
+      Book.Ch03.scaleNegativeBesovVectorNorm_finiteTwo_eq_cubeNegativeSeminorm]
       using! Book.Ch03.coarsePoincareGradient_negativeBesov_le
         Q a u hs (q := .finite 2) (by norm_num)
   have hlower :

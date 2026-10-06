@@ -638,7 +638,8 @@ theorem diagonalWeakNorm_primal_plus (P : Measure (CoeffSpace d))
       16 * Real.sqrt (blockSpecBound (normalizedBlock (respEhatPlus P jStar F t) (respM0 F))) *
           Real.sqrt (respLsqPlus P jStar F t e) *
           (weakCellSum (respGrid jStar F) t H (respEhatPlus P jStar F t) (respCoeffPlus F a) +
-            weakAverageSum (respGrid jStar F) t H (Quenched.contrastRho γ) (respEhatPlus P jStar F t)
+            weakAverageSum (respGrid jStar F) t H (Quenched.contrastRho γ) (respEhatPlus P jStar
+              F t)
               (respCoeffPlus F a)) +
         (16 / (1 - Quenched.contrastRho γ) *
             Real.sqrt (blockSpecBound (normalizedBlock (respEhatPlus P jStar F t) (respM0 F)))) *

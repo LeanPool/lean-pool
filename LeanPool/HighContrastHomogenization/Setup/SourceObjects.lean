@@ -23,7 +23,7 @@ public section
 The objects of the source-control subsection and of the random-source window:
 the geometric series `ζ_g`, `χ_g`, the witness eccentricity `𝔢_q` and the
 boundary constant `B_q`, the cross-grid factor `K(q,q')`, the dual reference
-block `𝐄_*` and the reference ratio `κ_𝐄`, the source growth witness `K̄_S`,
+block `𝐄_*` and the reference ratio `κ_𝐄`, the source growth witness `K_bar_S`,
 the weak-Orlicz moment multiplier `𝔐_p`, the source burn `j_S`, the coupled
 window pair, the source-remainder scale `a_{j_*}^S`, the fixed-history
 exponents, and the window multiplier `Y_P` presented as data together with the
@@ -95,13 +95,13 @@ def kappaRef (E : BlockMat d) : ℝ :=
 
 /-! ## The source gauge, the burn, and the window -/
 
-/-- `K̄_S = max{2, K_{Ψ_S}}`. -/
+/-- `K_bar_S = max{2, K_{Ψ_S}}`. -/
 @[expose]
 def growthBar (K : ℝ) : ℝ :=
   max 2 K
 
 /-- The weak-Orlicz moment multiplier
-`𝔐_p(K̄) = (1 + 2p K̄^{⌈p(p+1)/2⌉}(1 + log K̄))^{1/p}`
+`𝔐_p(K_bar) = (1 + 2p K_bar^{⌈p(p+1)/2⌉}(1 + log K_bar))^{1/p}`
 (the moment bound for the source scale furnished by its tail gauge). -/
 @[expose]
 def momentMultiplier (p Kbar : ℝ) : ℝ :=
@@ -124,7 +124,7 @@ def IsCoupledWindow (d : ℕ) (Q K : ℝ) (jStar M : ℤ) : Prop :=
         16 * ((d : ℝ) + 1) ^ 2 * Real.logb 3 (growthBar K) ≤
       (4 * (d : ℝ) + 3) * (jStar : ℝ)
 
-/-- The source-remainder scale `a_{j_*}^S = K̄_S^{4(d+1)}3^{2-j_*}`
+/-- The source-remainder scale `a_{j_*}^S = K_bar_S^{4(d+1)}3^{2-j_*}`
 (the residual source parameter at the lower generation). -/
 @[expose]
 def sourceRemainderScale (d : ℕ) (jStar : ℤ) (K : ℝ) : ℝ :=
@@ -350,7 +350,7 @@ variable {d : ℕ}
 
 /-! ## The bad scales of a window and their strict successor -/
 
-/-- The bad-scale event `𝖡_{P,h}(m)` of a window of height `h`: at generation
+/-- The bad-scale event `B_sans_{P,h}(m)` of a window of height `h`: at generation
 `m` some standard aligned cube centered in `□_m` exceeds the reference block,
 after the discount `3^{-g(m-h-k)_+}` at its own scale `k`. -/
 @[expose]
@@ -362,7 +362,7 @@ def badScaleEvent (g : ℝ) (E : BlockMat d) (h m : ℤ) (a : CoeffSpace d) : Pr
           blockSize (coarseBlock (standardCell d k w) a) E)
 
 /-- The strict successor of the last bad triadic scale,
-`Ŝ_{P,h} = 3 sup({3^m : 𝖡_{P,h}(m) occurs} ∪ {0})`.
+`S_hat_{P,h} = 3 sup({3^m : B_sans_{P,h}(m) occurs} ∪ {0})`.
 The empty supremum is zero, and the value is infinite exactly when the bad
 scales are unbounded above. -/
 @[expose]
@@ -375,7 +375,7 @@ def poweredGauge (Ψ : ℝ → ℝ) (g : ℝ) : ℝ → ℝ :=
   fun t => Ψ (t ^ g⁻¹)
 
 /-- The powered source-remainder scale
-`ã_{j_*,g}^S = K̄_S^{4g(d+1)}3^{g(2-j_*)}`. -/
+`ã_{j_*,g}^S = K_bar_S^{4g(d+1)}3^{g(2-j_*)}`. -/
 @[expose]
 def poweredRemainderScale (d : ℕ) (jStar : ℤ) (g K : ℝ) : ℝ :=
   growthBar K ^ (4 * g * ((d : ℝ) + 1)) * (3 : ℝ) ^ (g * (2 - (jStar : ℝ)))

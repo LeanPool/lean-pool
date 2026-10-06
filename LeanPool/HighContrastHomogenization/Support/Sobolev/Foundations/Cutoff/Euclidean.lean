@@ -69,7 +69,7 @@ def euclideanSphere {d : ℕ} (x₀ : Vec d) (R : ℝ) : Set (Vec d) :=
     euclideanSqDist x x = 0 := by
   simp [euclideanSqDist, vecNormSq, vecDot]
 
-@[simp] theorem euclideanSqDist_zero_zero {d : ℕ} :
+theorem euclideanSqDist_zero_zero {d : ℕ} :
     euclideanSqDist (0 : Vec d) 0 = 0 := by
   simp
 

@@ -87,8 +87,10 @@ theorem parentEnergyMap_port
           (normalizedBlock (coarseBlock (adaptedCellAtCenter (respGrid jStar F) (t - (m : ℤ)) z) a)
             (respMean P jStar F t)) (Book.Ch02.blockIdentity d))})
     (hcoarse : ∀ w ∈ triadicIndexBox d n,
-      Book.Ch02.coarseBlockMatrix (adaptedDomainAt (respGrid jStar F) hgrid (t - (n : ℤ)) w) (aU w) =
-        blockCongr (respG F) (coarseBlock (adaptedCellAtCenter (respGrid jStar F) (t - (n : ℤ)) w) a)) :
+      Book.Ch02.coarseBlockMatrix (adaptedDomainAt (respGrid jStar F) hgrid (t - (n : ℤ)) w) (aU
+        w) =
+        blockCongr (respG F) (coarseBlock (adaptedCellAtCenter (respGrid jStar F) (t - (n : ℤ))
+          w) a)) :
     ∀ w ∈ triadicIndexBox d n,
       blockVecDot
         (blockMatVecMul (blockSqrt (respM0 F))
@@ -260,9 +262,11 @@ theorem parentEnergyMap_port_plus
           (normalizedBlock (coarseBlock (adaptedCellAtCenter (respGrid jStar F) (t - (m : ℤ)) z) a)
             (respMean P jStar F t)) (Book.Ch02.blockIdentity d))})
     (hcoarse : ∀ w ∈ triadicIndexBox d n,
-      Book.Ch02.coarseBlockMatrix (adaptedDomainAt (respGrid jStar F) hgrid (t - (n : ℤ)) w) (aU w) =
+      Book.Ch02.coarseBlockMatrix (adaptedDomainAt (respGrid jStar F) hgrid (t - (n : ℤ)) w) (aU
+        w) =
         blockCongr (blockD d)
-          (blockCongr (respG F) (coarseBlock (adaptedCellAtCenter (respGrid jStar F) (t - (n : ℤ)) w) a))) :
+          (blockCongr (respG F) (coarseBlock (adaptedCellAtCenter (respGrid jStar F) (t - (n :
+            ℤ)) w) a))) :
     ∀ w ∈ triadicIndexBox d n,
       blockVecDot
         (blockMatVecMul (blockSqrt (respM0 F))
@@ -522,7 +526,8 @@ theorem tailCell_of_bridge_plus (P : Measure (CoeffSpace d)) (γ : ℝ) (jStar :
         (optimizerField (aU w).toCoeffField (uFam w))
       = cellAverage (adaptedCellAtCenter (respGrid jStar F) (t - (n : ℤ)) w)
         (optimizerField (respCoeffPlus F a) u) := by
-    refine cellAverage_congr_ae (adaptedCellAtCenter_subset_adaptedCell (respGrid jStar F) t n hw) ?_
+    refine cellAverage_congr_ae (adaptedCellAtCenter_subset_adaptedCell (respGrid jStar F) t n
+      hw) ?_
     filter_upwards [hae.symm] with x hx
     rw [huFam_w]
     simp only [optimizerField, huRep_grad, haU_w, hx]

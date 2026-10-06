@@ -339,7 +339,7 @@ theorem zeroTraceDirichletPoincareDisplayedForceScale_le_compact_sq
         dsimp [N]
 
 /-- Poincare scalar adequacy from the energy-envelope and force-scale estimates. -/
-theorem zeroTraceDirichletPoincareDisplayedScalarBudget_le_const_mul_correctionBound_sq_of_energyEnvelope_and_force_scale_bounds
+theorem zeroTraceDirichletPoincareDisplayedScalarBudget_le_const_mul_correctionBound_sq
     {d : ℕ} (Q : TriadicCube d) (a : CoeffField d) (a0 : Mat d)
     (C s : ℝ) (g : Vec d → Vec d)
     {APoincareEnergy APoincareForce : ℝ}
@@ -461,7 +461,8 @@ theorem zeroTraceDirichletPoincareDisplayedScalarBudget_le_const_mul_correctionB
       htarget
 
 /-- Poincare component target from the energy-envelope and force-scale estimates. -/
-theorem zeroTraceDirichletPoincareDisplayedComponentBoundsClose_of_energyEnvelope_and_force_scale_bounds
+theorem
+  zeroTraceDirichletPoincareDisplayedComponentBoundsClose_of_energyEnvelope_and_force_scale_bounds
     {d : ℕ} (Q : TriadicCube d) (a : CoeffField d) (a0 : Mat d)
     (C s : ℝ) (g : Vec d → Vec d)
     {APoincareEnergy APoincareForce : ℝ}
@@ -480,7 +481,7 @@ theorem zeroTraceDirichletPoincareDisplayedComponentBoundsClose_of_energyEnvelop
     zeroTraceDirichletPoincareDisplayedComponentBoundsClose Q a a0 C s g :=
   zeroTraceDirichletPoincareDisplayedComponentBoundsClose_of_displayed_bound
     Q a a0 C s g
-    (zeroTraceDirichletPoincareDisplayedScalarBudget_le_const_mul_correctionBound_sq_of_energyEnvelope_and_force_scale_bounds
+    (zeroTraceDirichletPoincareDisplayedScalarBudget_le_const_mul_correctionBound_sq
       Q a a0 C s g hPoincareEnergy hPoincareForceScale halloc)
 
 /-- Poincare scalar adequacy with the analytic estimates discharged into one constant bound. -/
@@ -496,7 +497,7 @@ theorem zeroTraceDirichletPoincareDisplayedScalarBudget_le_const_mul_correctionB
     zeroTraceDirichletPoincareDisplayedScalarBudget Q a a0 s g ≤
       (C * coarseFluxResponseRHSPoincareCorrectionBound Q a a0 s g) ^ 2 := by
   refine
-    zeroTraceDirichletPoincareDisplayedScalarBudget_le_const_mul_correctionBound_sq_of_energyEnvelope_and_force_scale_bounds
+    zeroTraceDirichletPoincareDisplayedScalarBudget_le_const_mul_correctionBound_sq
       (Q := Q) (a := a) (a0 := a0) (C := C) (s := s) (g := g)
       (APoincareEnergy :=
         162500 *

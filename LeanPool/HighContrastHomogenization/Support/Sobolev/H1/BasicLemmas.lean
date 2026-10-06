@@ -160,6 +160,8 @@ theorem grad_memL2_normalizedCubeMeasure {d : ℕ} {Q : TriadicCube d}
 theorem memH1 {d : ℕ} {U : Set (Vec d)} (u : H1Function U) : MemH1 U u.toFun :=
   ⟨u, rfl⟩
 
+/-- A compactly supported C¹ function viewed as an H¹ function on `U`, with its classical
+coordinate derivatives as weak gradient. -/
 @[expose]
 noncomputable def ofContDiff {d : ℕ} {U : Set (Vec d)} (_hU : IsOpen U)
     {f : Vec d → ℝ} (hf : ContDiff ℝ 1 f) (hf_supp : HasCompactSupport f) : H1Function U :=
@@ -227,6 +229,8 @@ noncomputable def ofContDiffOnIsOpenBoundedConvexDomain
     {f : Vec d → ℝ} (hf : ContDiff ℝ 1 f) : H1Function U :=
   ofContDiffOnIsSobolevRegularDomain hU.isSobolevRegularDomain hf
 
+/-- Restriction of an H¹ witness to an open subset, retaining its value and weak-gradient
+representatives. -/
 @[expose]
 def restrict {d : ℕ} {U V : Set (Vec d)} (u : H1Function U)
     (hVopen : IsOpen V) (hVU : V ⊆ U) : H1Function V :=
@@ -236,6 +240,7 @@ def restrict {d : ℕ} {U V : Set (Vec d)} (u : H1Function U)
     gradMemL2 := gradMemL2On_mono hVU u.gradMemL2
     hasWeakGradient := u.hasWeakGradient.restrict hVopen hVU }
 
+/-- Restriction of an H¹ witness on the open parent cube to the open cube of a descendant. -/
 @[expose]
 noncomputable def restrictToOpenSubcube {d : ℕ} {Q R : TriadicCube d} {j : ℕ}
     (u : H1Function (openCubeSet Q)) (hR : R ∈ descendantsAtDepth Q j) :
@@ -266,6 +271,8 @@ namespace H10Function
 theorem memH1 {d : ℕ} {U : Set (Vec d)} (u : H10Function U) : MemH1 U u.toH1Function.toFun :=
   u.toH1Function.memH1
 
+/-- A smooth function with compact topological support in `U`, viewed in H¹₀ using its constant
+approximation sequence. -/
 @[expose]
 noncomputable def ofContDiff {d : ℕ} {U : Set (Vec d)} (hU : IsOpen U)
     {f : Vec d → ℝ} (hf : ContDiff ℝ (⊤ : ℕ∞) f)

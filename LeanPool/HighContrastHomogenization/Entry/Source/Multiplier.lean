@@ -129,15 +129,18 @@ theorem ae_exists_source_success {d : ℕ} (P : Measure (CoeffSpace d))
     ((3 : ℝ) ^ jStar) ^ p
   have hbound (r : ℕ) : P.real {a | ¬ ∃ n, Good n a} ≤ A * ((3 : ℝ) ^ (-p)) ^ r := by
     calc
-      _ ≤ P.real {a | ¬ Good r a} := measureReal_mono (show {a | ¬ ∃ n, Good n a} ⊆ {a | ¬ Good r a} from fun a ha hr => ha ⟨r, hr⟩)
+      _ ≤ P.real {a | ¬ Good r a} := measureReal_mono (show {a | ¬ ∃ n, Good n a} ⊆ {a | ¬ Good
+        r a} from fun a ha hr => ha ⟨r, hr⟩)
       _ ≤ _ := source_failure_probability_le P S hS hS0 hstat p hp hi jStar r
       _ = _ := by
         simp only [A, pow_add, Real.mul_rpow (by positivity : 0 ≤ (3 : ℝ) ^ jStar)
           (by positivity : 0 ≤ (3 : ℝ) ^ r),
-          ← Real.rpow_pow_comm (by norm_num : (0 : ℝ) ≤ 3), Real.rpow_neg (by norm_num : (0 : ℝ) ≤ 3),
+          ← Real.rpow_pow_comm (by norm_num : (0 : ℝ) ≤ 3), Real.rpow_neg (by norm_num : (0 : ℝ)
+            ≤ 3),
           div_eq_mul_inv, mul_inv_rev, inv_pow]
         ring
-  have hq : (3 : ℝ) ^ (-p) < 1 := Real.rpow_lt_one_of_one_lt_of_neg (by norm_num) (by linarith only [hp])
+  have hq : (3 : ℝ) ^ (-p) < 1 := Real.rpow_lt_one_of_one_lt_of_neg (by norm_num) (by linarith
+    only [hp])
   have ht := (tendsto_pow_atTop_nhds_zero_of_lt_one
     (Real.rpow_nonneg (by norm_num : (0 : ℝ) ≤ 3) (-p)) hq).const_mul A
   have hz : P.real {a | ¬ ∃ n, Good n a} = 0 := by
@@ -352,7 +355,8 @@ theorem memLp_and_norm_le_two_of_lintegral {Ω : Type*} [MeasurableSpace Ω]
       (ENNReal.toReal_ofReal (by positivity))
   refine ⟨hlp, hi, hib, ?_⟩
   rw [hlp.eLpNorm_eq_integral_rpow_norm (ENNReal.ofReal_ne_zero_iff.mpr hQR) ENNReal.ofReal_ne_top]
-  simp only [ENNReal.toReal_ofReal hQR.le, Real.norm_eq_abs, abs_of_nonneg (hX0 _), Real.rpow_natCast]
+  simp only [ENNReal.toReal_ofReal hQR.le, Real.norm_eq_abs, abs_of_nonneg (hX0 _),
+    Real.rpow_natCast]
   apply ENNReal.ofReal_le_ofReal
   calc
     _ ≤ ((2 : ℝ) ^ Q) ^ ((Q : ℝ)⁻¹) := Real.rpow_le_rpow
@@ -445,7 +449,8 @@ theorem source_multiplier (d : ℕ) (hd : 2 ≤ d) (γ : ℝ)
     simpa using pow_le_pow_right₀ (by norm_num : (1 : ℝ) ≤ 2) (show 1 ≤ Q by omega)
   have hmoment : (∫⁻ a, ENNReal.ofReal (X a ^ Q) ∂P) ≤ ENNReal.ofReal ((2 : ℝ) ^ Q) := by
     simp_rw [hpow]
-    exact hsum.trans ((ENNReal.ofReal_le_ofReal (by linarith only [hsmall] : 1 + b * A / (1 - b * q) ≤ 2)).trans
+    exact hsum.trans ((ENNReal.ofReal_le_ofReal (by linarith only [hsmall] : 1 + b * A / (1 - b
+      * q) ≤ 2)).trans
       (ENNReal.ofReal_le_ofReal htwoQ))
   obtain ⟨hlp, hi, hbound, hnorm⟩ := memLp_and_norm_le_two_of_lintegral P X hX hX0 Q hQ hmoment
   exact ⟨ell, X, hell, hX, hform, hmin, hlp, hi, hbound, hnorm⟩

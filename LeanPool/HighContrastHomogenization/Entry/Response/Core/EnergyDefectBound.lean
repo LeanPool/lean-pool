@@ -60,7 +60,8 @@ private theorem respTau_le [NeZero d] (hd : 2 ≤ d) (P : Measure (CoeffSpace d)
         ≤ 3 * (respRatio P jStar F s t - 1) * Real.sqrt (respKappa P jStar F s) ∧
       respTauPlus P jStar F s t e
         ≤ 3 * (respRatio P jStar F s t - 1) * Real.sqrt (respKappa P jStar F s) := by
-  have hM : (respM (respMean P jStar F t)).PosDef := response_by_centered_energies_respM_posDef hsymm hposd
+  have hM : (respM (respMean P jStar F t)).PosDef := response_by_centered_energies_respM_posDef
+    hsymm hposd
   have hsqk : 1 ≤ Real.sqrt (respKappa P jStar F s) := by
     have h := Real.sqrt_le_sqrt hk1
     rwa [Real.sqrt_one] at h
@@ -142,12 +143,15 @@ theorem response_energy_and_defect (d : ℕ) (_hd : 2 ≤ d) (γ : ℝ) (_hγ : 
   let : NeZero d := ⟨by omega⟩
   have hFpd : (toFullBlockMat F).PosDef := posDef_toFullBlockMat raw.symm raw.pos
   have hg : matTranspose (respg F) = -(respg F) := respCalib_respg_isSkew hFpd
-  have hm : (explicitCanonicalMetric F).PosDef := Geometry.explicitCanonicalMetric_posDef raw.symm raw.pos
+  have hm : (explicitCanonicalMetric F).PosDef := Geometry.explicitCanonicalMetric_posDef
+    raw.symm raw.pos
   have hq : IsUnit (respGrid jStar F) := Geometry.isUnit_roundedGrid raw.hj hm
   have hintT : HasIntegrableCoarseBlock P (respCell jStar F t) :=
-    hasIntegrableCoarseBlock_respCell_of_raw d _hd γ P E Ψ Kg Src raw.stat raw.ell jStar raw.hj F hm t
+    hasIntegrableCoarseBlock_respCell_of_raw d _hd γ P E Ψ Kg Src raw.stat raw.ell jStar raw.hj
+      F hm t
   have hintS : HasIntegrableCoarseBlock P (respCell jStar F s) :=
-    hasIntegrableCoarseBlock_respCell_of_raw d _hd γ P E Ψ Kg Src raw.stat raw.ell jStar raw.hj F hm s
+    hasIntegrableCoarseBlock_respCell_of_raw d _hd γ P E Ψ Kg Src raw.stat raw.ell jStar raw.hj
+      F hm s
   have hEtpd : (toFullBlockMat (respMean P jStar F t)).PosDef :=
     Annealed.adaptedMean_posDef d _hd P γ E Ψ Kg Src raw.stat raw.ell jStar raw.hj
       (explicitCanonicalMetric F) hm t
@@ -157,7 +161,8 @@ theorem response_energy_and_defect (d : ℕ) (_hd : 2 ≤ d) (γ : ℝ) (_hγ : 
   have hsymm : IsSymmetricBlockMat (respMean P jStar F t) :=
     isSymmetricBlockMat_annealedBlock P _
   have hposd : Book.Ch02.BlockPosDef (respMean P jStar F t) := blockPosDef_of_full hEtpd
-  have hM : (respM (respMean P jStar F t)).PosDef := response_by_centered_energies_respM_posDef hsymm hposd
+  have hM : (respM (respMean P jStar F t)).PosDef := response_by_centered_energies_respM_posDef
+    hsymm hposd
   have hord : BlockMatLoewnerLE (respMean P jStar F t) (respMean P jStar F s) :=
     respMean_order_of_raw d _hd γ _hγ S ε σ Cglob Cprof Csrc Bresp hε hσ H P E Ψ Kg Src B
       jStar F s t raw
@@ -300,7 +305,8 @@ theorem respAllScale_window (d : ℕ) (hd : 2 ≤ d) (γ : ℝ) (S : SelectionDa
   have := raw.prob
   have hB0 : (1 : ℝ) ≤ S.B0 ε σ := S.one_le_B0 ε σ hε hσ
   have hB : (1 : ℝ) ≤ B := hB0.trans ((le_max_left _ _).trans raw.hB)
-  have hA : (1 : ℝ) ≤ aspectRatio E := HCPolySupport.HighContrast.one_le_aspectRatio_of_coarseEllipticityDagger raw.ell
+  have hA : (1 : ℝ) ≤ aspectRatio E :=
+    HCPolySupport.HighContrast.one_le_aspectRatio_of_coarseEllipticityDagger raw.ell
   have h3 : (3 : ℝ) ≤ 2 + aspectRatio E := by linarith only [hA]
   have hlog : (1 : ℝ) ≤ Real.logb 3 (2 + aspectRatio E) := by
     have hl3 : (0 : ℝ) < Real.log 3 := Real.log_pos (by norm_num)
@@ -486,7 +492,8 @@ theorem mean_part_le_determinantDrift (d : ℕ) (hd : 2 ≤ d) (γ : ℝ)
   calc
     (3 : ℝ) ^ (-(Quenched.contrastRho γ * ((t : ℝ) - (k : ℝ)))) *
         blockSpecBound (blockSub (relMean P q k t) (Book.Ch02.blockIdentity d))
-        ≤ (3 : ℝ) ^ (-(Quenched.contrastRho γ * ((t : ℝ) - (k : ℝ)))) * ∑ j ∈ Finset.Icc (k + 1) t, T j :=
+        ≤ (3 : ℝ) ^ (-(Quenched.contrastRho γ * ((t : ℝ) - (k : ℝ)))) * ∑ j ∈ Finset.Icc (k + 1)
+          t, T j :=
       mul_le_mul_of_nonneg_left hstep1 hc0
     _ = ∑ j ∈ Finset.Icc (k + 1) t,
           (3 : ℝ) ^ (-(Quenched.contrastRho γ * ((t : ℝ) - (k : ℝ)))) * T j := Finset.mul_sum _ _ _
@@ -637,7 +644,8 @@ theorem scale_index_le (d : ℕ) (hd : 2 ≤ d) (γ : ℝ)
     (3 : ℝ) ^ (-(bigQ d γ : ℝ) * Quenched.contrastRho γ * (n' : ℝ)) *
         blockOpNorm (normalizedFluctuation P (Geometry.explicitRoundedGrid jStar mt)
           (t - (n' : ℤ)) t
-          (adaptedCellCenter (Geometry.explicitRoundedGrid jStar mt) (t - (n' : ℤ)) z) a) ^ bigQ d γ ≤
+          (adaptedCellCenter (Geometry.explicitRoundedGrid jStar mt) (t - (n' : ℤ)) z) a) ^ bigQ
+            d γ ≤
       ⨆ j ∈ Set.Icc (jStar : ℤ) t,
         (3 : ℝ) ^ (-(bigQ d γ : ℝ) * rhoMax d γ * ((t : ℝ) - (j : ℝ))) *
           ⨆ y ∈ adaptedLatticeAtScale (Geometry.explicitRoundedGrid jStar mt) j ∩

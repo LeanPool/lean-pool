@@ -170,7 +170,7 @@ private theorem coarseFluxResponse_homogenizationErrorOnCube_infinity_one_nonneg
   intro n
   exact mul_nonneg (geometricWeight_nonneg n (by simpa using hs))
     (scaleResponseAtScale_infinity_nonneg Q
-      (sub_le_self _ (by exact_mod_cast Nat.zero_le n)) a a0)
+      (sub_le_self _ (Nat.cast_nonneg n)) a a0)
 
 /--
 The descendant ellipticity hypothesis includes the parent cube itself at
@@ -319,7 +319,7 @@ Homogeneous §3.2.4 component: the q=1 coarse-flux response theorem for an
 `a`-harmonic field supplies the q=2 flux-defect control required by the
 inhomogeneous split.
 -/
-theorem cubeBesovNegativeVectorSeminormTwo_fluxDefect_le_coarseFluxResponseQOneBound_of_aHarmonicFunction
+theorem negativeVectorSeminorm_fluxDefect_le_coarseFluxResponseQOne
     {d : ℕ} [NeZero d] (Q : TriadicCube d) (a : CoeffField d) (a0 : Mat d)
     (s : ℝ) {lam Lam lam0 Lam0 : ℝ}
     (hs : 0 < s)
@@ -435,7 +435,7 @@ estimates produced by the manuscript proof after splitting `u = w + v`:
 * weak-flux RHS control of `a∇v`;
 * RHS Poincare control of `a₀∇v`.
 -/
-theorem cubeBesovNegativeVectorSeminormTwo_fluxDefect_le_coarseFluxResponseRHSSplitEnvelope_of_split_component_bounds
+theorem negativeBesovSeminormTwo_fluxDefect_le_coarseFluxRHSSplitEnvelope_of_component
     {d : ℕ} (Q : TriadicCube d) (a : CoeffField d) (a0 : Mat d)
     (s : ℝ) (gradU gradW gradV g : Vec d → Vec d)
     (hgrad : ∀ x ∈ cubeSet Q, gradU x = gradW x + gradV x)
@@ -501,7 +501,7 @@ The remaining hypotheses are the two correction estimates (`a∇v` and `a₀∇v
 and the scalar comparison which replaces the harmonic-response energy of `w`
 by the §3.2.4 homogeneous split bound.
 -/
-theorem cubeBesovNegativeVectorSeminormTwo_fluxDefect_le_coarseFluxResponseRHSSplitEnvelope_of_aHarmonicFunction_component_bounds
+theorem negativeBesovSeminormTwo_fluxDefect_le_coarseFluxRHSSplitEnvelope
     {d : ℕ} [NeZero d] (Q : TriadicCube d) (a : CoeffField d) (a0 : Mat d)
     (s : ℝ) {lam Lam lam0 Lam0 : ℝ}
     (hs : 0 < s)
@@ -570,11 +570,11 @@ theorem cubeBesovNegativeVectorSeminormTwo_fluxDefect_le_coarseFluxResponseRHSSp
       cubeBesovNegativeVectorSeminormTwo Q s (fluxDefect a a0 w.toH1.grad) ≤
         coarseFluxResponseRHSHomogeneousSplitBound Q a a0 s gradU g := by
     exact
-      (cubeBesovNegativeVectorSeminormTwo_fluxDefect_le_coarseFluxResponseQOneBound_of_aHarmonicFunction
+      (negativeVectorSeminorm_fluxDefect_le_coarseFluxResponseQOne
         Q a a0 s hs hEll ha0 ha0symm w hsum).trans
         hhomogeneousEnergy
   exact
-    cubeBesovNegativeVectorSeminormTwo_fluxDefect_le_coarseFluxResponseRHSSplitEnvelope_of_split_component_bounds
+    negativeBesovSeminormTwo_fluxDefect_le_coarseFluxRHSSplitEnvelope_of_component
       Q a a0 s gradU w.toH1.grad gradV g hgrad
       hdefectW_mem hfluxV_mem ha0V_mem
       hdefectW_bdd hfluxV_bdd ha0V_bdd
@@ -586,7 +586,7 @@ corrector flux, and constant-coefficient corrector-gradient components have
 been bounded by the manuscript RHS, the split theorem yields the desired
 coarse-flux-response bound for `(a - a₀)∇u`.
 -/
-theorem cubeBesovNegativeVectorSeminormTwo_fluxDefect_le_coarseFluxResponseRHSBound_of_split_component_bounds
+theorem negativeBesovSeminormTwo_fluxDefect_le_fluxRHSBound
     {d : ℕ} (Q : TriadicCube d) (a : CoeffField d) (a0 : Mat d)
     (s : ℝ) (gradU gradW gradV g : Vec d → Vec d)
     {BdefectW BfluxV Ba0V : ℝ}
@@ -744,7 +744,7 @@ This is the averaging wrapper needed by the downstream §3.3.B duality surface:
 if every depth-`j` descendant has the one-cube RHS bound, then the localized
 `q = 2` average is bounded by the descendant `ℓ²` average of those RHS values.
 -/
-theorem localizedFluxDefectNegativeBesovAverageTwo_fluxDefect_le_sqrt_descendantsAverage_coarseFluxResponseRHSBound_sq_of_descendant_bounds
+theorem negativeBesovFluxAverage_le_sqrt_descendantMean_fluxRHSBound_sq
     {d : ℕ} (Q : TriadicCube d) (a : CoeffField d) (a0 : Mat d)
     (s : ℝ) (gradU g : Vec d → Vec d) (j : ℕ)
     (hdefect_bdd :
@@ -772,7 +772,7 @@ theorem localizedFluxDefectNegativeBesovAverageTwo_fluxDefect_le_sqrt_descendant
 /--
 Named localized §3.2.4 RHS handoff from pointwise one-cube bounds.
 -/
-theorem localizedFluxDefectNegativeBesovAverageTwo_fluxDefect_le_localizedCoarseFluxResponseRHSBound_of_descendant_bounds
+theorem negativeBesovFluxAverage_le_coarseFluxRHSBound
     {d : ℕ} (Q : TriadicCube d) (a : CoeffField d) (a0 : Mat d)
     (s : ℝ) (gradU g : Vec d → Vec d) (j : ℕ)
     (hdefect_bdd :
@@ -788,14 +788,14 @@ theorem localizedFluxDefectNegativeBesovAverageTwo_fluxDefect_le_localizedCoarse
         (fluxDefect a a0 gradU) j ≤
       localizedCoarseFluxResponseRHSBound Q a a0 s j gradU g := by
   simpa [localizedCoarseFluxResponseRHSBound] using
-    localizedFluxDefectNegativeBesovAverageTwo_fluxDefect_le_sqrt_descendantsAverage_coarseFluxResponseRHSBound_sq_of_descendant_bounds
+    negativeBesovFluxAverage_le_sqrt_descendantMean_fluxRHSBound_sq
       Q a a0 s gradU g j hdefect_bdd hbound
 
 /--
 Descendant-localized §3.2.4 RHS handoff with the split components exposed on
 each descendant cube.
 -/
-theorem localizedFluxDefectNegativeBesovAverageTwo_fluxDefect_le_sqrt_descendantsAverage_coarseFluxResponseRHSBound_sq_of_descendant_split_component_bounds
+theorem negativeBesovFluxAverage_le_sqrt_descendantMean_fluxRHSBound_sq_of_component
     {d : ℕ} (Q : TriadicCube d) (a : CoeffField d) (a0 : Mat d)
     (s : ℝ) (gradU gradW gradV g : Vec d → Vec d) (j : ℕ)
     {BdefectW BfluxV Ba0V : TriadicCube d → ℝ}
@@ -853,11 +853,11 @@ theorem localizedFluxDefectNegativeBesovAverageTwo_fluxDefect_le_sqrt_descendant
         (descendantsAverage Q j fun R =>
           (coarseFluxResponseRHSBound R a a0 s gradU g) ^ 2) := by
   refine
-    localizedFluxDefectNegativeBesovAverageTwo_fluxDefect_le_sqrt_descendantsAverage_coarseFluxResponseRHSBound_sq_of_descendant_bounds
+    negativeBesovFluxAverage_le_sqrt_descendantMean_fluxRHSBound_sq
       Q a a0 s gradU g j hdefectU_bdd ?_
   intro R hR
   exact
-    cubeBesovNegativeVectorSeminormTwo_fluxDefect_le_coarseFluxResponseRHSBound_of_split_component_bounds
+    negativeBesovSeminormTwo_fluxDefect_le_fluxRHSBound
       R a a0 s gradU gradW gradV g
       (hgrad R hR)
       (hdefectW_mem R hR) (hfluxV_mem R hR) (ha0V_mem R hR)
@@ -869,7 +869,7 @@ theorem localizedFluxDefectNegativeBesovAverageTwo_fluxDefect_le_sqrt_descendant
 Named localized §3.2.4 RHS handoff with the split components exposed on each
 descendant cube.
 -/
-theorem localizedFluxDefectNegativeBesovAverageTwo_fluxDefect_le_localizedCoarseFluxResponseRHSBound_of_descendant_split_component_bounds
+theorem negativeBesovFluxAverage_le_coarseFluxRHSBound_of_descendant_split_component
     {d : ℕ} (Q : TriadicCube d) (a : CoeffField d) (a0 : Mat d)
     (s : ℝ) (gradU gradW gradV g : Vec d → Vec d) (j : ℕ)
     {BdefectW BfluxV Ba0V : TriadicCube d → ℝ}
@@ -925,7 +925,7 @@ theorem localizedFluxDefectNegativeBesovAverageTwo_fluxDefect_le_localizedCoarse
         (fluxDefect a a0 gradU) j ≤
       localizedCoarseFluxResponseRHSBound Q a a0 s j gradU g := by
   simpa [localizedCoarseFluxResponseRHSBound] using
-    localizedFluxDefectNegativeBesovAverageTwo_fluxDefect_le_sqrt_descendantsAverage_coarseFluxResponseRHSBound_sq_of_descendant_split_component_bounds
+    negativeBesovFluxAverage_le_sqrt_descendantMean_fluxRHSBound_sq_of_component
       Q a a0 s gradU gradW gradV g j hgrad hdefectW_mem hfluxV_mem
       ha0V_mem hdefectU_bdd hdefectW_bdd hfluxV_bdd ha0V_bdd
       hdefectW hfluxV ha0V hcomponents

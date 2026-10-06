@@ -82,6 +82,7 @@ abbrev LocalGradientL2 (d n : ℕ) :=
 
 private instance (d n : ℕ) : Module ℝ (LocalGradientL2 d n) := inferInstance
 
+/-- The real linear restriction of an L² gradient from exhaustion cube `n` to cube `m ≤ n`. -/
 @[expose]
 public noncomputable def localGradientRestrictLinear {d m n : ℕ} (hmn : m ≤ n) :
     LocalGradientL2 d n →ₗ[ℝ] LocalGradientL2 d m where

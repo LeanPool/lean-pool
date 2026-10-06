@@ -99,14 +99,16 @@ structure RawOutput (d : ℕ) (γ : ℝ) (S : SelectionData) (ε σ Cglob Cprof 
   ht : t = s + (H : ℤ)
   hs_lo : (jStar : ℤ) + ⌈B * Real.logb 3 (2 + aspectRatio E)⌉ ≤ s
   ht_hi : t ≤ (jStar : ℤ) + ⌈(B + Cglob) * Real.logb 3 (2 + aspectRatio E)⌉
-  cube : HighContrast.adaptedCell (Geometry.explicitRoundedGrid jStar (explicitCanonicalMetric F)) t ⊆
+  cube : HighContrast.adaptedCell (Geometry.explicitRoundedGrid jStar (explicitCanonicalMetric
+    F)) t ⊆
     HighContrast.centeredCube d (2 * (jStar : ℤ))
   calib_lo : BlockMatLoewnerLE (blockScale (1 - Real.sqrt ε * σ) F)
     (adaptedMean P (Geometry.explicitRoundedGrid jStar (explicitCanonicalMetric F)) s)
   calib_hi : BlockMatLoewnerLE
     (adaptedMean P (Geometry.explicitRoundedGrid jStar (explicitCanonicalMetric F)) s)
     (blockScale (1 + Real.sqrt ε * σ) F)
-  det : (d : ℝ)⁻¹ * detIncrement P (Geometry.explicitRoundedGrid jStar (explicitCanonicalMetric F)) s t < σ
+  det : (d : ℝ)⁻¹ * detIncrement P (Geometry.explicitRoundedGrid jStar (explicitCanonicalMetric
+    F)) s t < σ
   prof : max
       (max (profile P γ (Geometry.explicitRoundedGrid jStar (explicitCanonicalMetric F)) jStar s s)
         (profile P γ (Geometry.explicitRoundedGrid jStar (explicitCanonicalMetric F)) jStar s t))
@@ -533,10 +535,12 @@ def respSourceLoad (P : Measure (CoeffSpace d)) (jStar : ℕ) (F : BlockMat d) (
     ((((triadicIndexBox d n).card : ℝ))⁻¹ *
       ∑ z ∈ triadicIndexBox d n,
         (Real.sqrt (vecDot Y.1 (matVecMul
-              (annealedBlockOf P (adaptedCellAtCenter (respGrid jStar F) (s - (n : ℤ)) z) b).upperLeft
+              (annealedBlockOf P (adaptedCellAtCenter (respGrid jStar F) (s - (n : ℤ)) z)
+                b).upperLeft
               Y.1)) +
           Real.sqrt (vecDot Y.2 (matVecMul
-              (annealedBlockOf P (adaptedCellAtCenter (respGrid jStar F) (s - (n : ℤ)) z) b).lowerRight
+              (annealedBlockOf P (adaptedCellAtCenter (respGrid jStar F) (s - (n : ℤ)) z)
+                b).lowerRight
               Y.2))) ^ 2)
 
 /-- `L_s^-` (`p.response.transfer`). -/

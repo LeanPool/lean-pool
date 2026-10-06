@@ -295,7 +295,8 @@ theorem blockJ_le_normalizedBlockResponseMax_mul_blockQuadratic_of_isEllipticMat
     have hQzero : blockMatVecMul (blockMatrixOfCoeff a0) (0 : BlockVec d) = 0 := by
       ext <;> simp [blockMatVecMul, matVecMul]
     rw [hP0, hQzero, hblock0]
-    have hmax_nonneg : 0 ≤ normalizedBlockResponseMax R a a0 := normalizedBlockResponseMax_nonneg R a a0
+    have hmax_nonneg : 0 ≤ normalizedBlockResponseMax R a a0 :=
+      normalizedBlockResponseMax_nonneg R a a0
     have hrhs_nonneg : 0 ≤ normalizedBlockResponseMax R a a0 * blockVecDot (0 : BlockVec d) 0 := by
       exact mul_nonneg hmax_nonneg (blockVecDot_nonneg 0)
     nlinarith
@@ -311,7 +312,8 @@ theorem blockJ_le_normalizedBlockResponseMax_mul_blockQuadratic_of_isEllipticMat
       have hsq : Real.sqrt t ^ 2 = t := by
         exact Real.sq_sqrt ht_nonneg
       calc
-        (Real.sqrt t)⁻¹ * ((Real.sqrt t)⁻¹ * blockVecDot P (blockMatVecMul (blockMatrixOfCoeff a0) P))
+        (Real.sqrt t)⁻¹ * ((Real.sqrt t)⁻¹ * blockVecDot P (blockMatVecMul (blockMatrixOfCoeff
+          a0) P))
             = ((Real.sqrt t)⁻¹ * (Real.sqrt t)⁻¹) * t := by ring
         _ = 1 := by
             have hmul_ne : Real.sqrt t * Real.sqrt t ≠ 0 := mul_ne_zero hc_ne hc_ne

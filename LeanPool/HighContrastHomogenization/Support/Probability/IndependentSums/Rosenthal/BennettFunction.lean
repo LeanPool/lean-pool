@@ -128,13 +128,13 @@ theorem monotoneOn_bennettBeta : MonotoneOn bennettBeta (Set.Ioi 0) := by
   have hs' : 0 < s := hs
   have hmem_r : 1 + r ∈ {y ∈ Set.Ici (0 : ℝ) | 1 < y} := by
     constructor
-    · show 0 ≤ 1 + r
+    · change 0 ≤ 1 + r
       linarith
     · show 1 < 1 + r
       linarith
   have hmem_s : 1 + s ∈ {y ∈ Set.Ici (0 : ℝ) | 1 < y} := by
     constructor
-    · show 0 ≤ 1 + s
+    · change 0 ≤ 1 + s
       linarith
     · show 1 < 1 + s
       linarith
@@ -161,7 +161,6 @@ theorem bennettBeta_nonneg {r : ℝ} (hr : 0 < r) :
           change 0 ≤ 1 + r
           linarith)
         (hxy := by
-          show 1 < 1 + r
           linarith)
         hderiv)
   rw [bennettBeta_eq_slope_mul_log_sub_one hr.ne']

@@ -22,7 +22,7 @@ namespace HCPolySupport
 
 noncomputable section
 
-theorem sq_cubeBesovNegativeVectorSeminormTwo_le_intrinsicGlobalEnergyForce_noteConstants_expanded_of_isEllipticFieldOn
+theorem sq_negativeBesovSeminormTwo_le_intrinsicGlobalEnergyForce
     {d : ℕ} [NeZero d] (Q : TriadicCube d) (a : CoeffField d)
     (g u : Vec d → Vec d) {s lam Lam : ℝ}
     (hs : 0 < s) (hs_le : s ≤ 1)
@@ -56,7 +56,7 @@ theorem sq_cubeBesovNegativeVectorSeminormTwo_le_intrinsicGlobalEnergyForce_note
           Real.rpow (maxDescendantSigmaStarInvNormAtScale Q (Q.scale - (m : ℤ)) a) 1) := by
     have hs_half : 0 < s / 2 := by nlinarith
     simpa using
-      summable_qtwo_maxDescendantSigmaStarInvNormAtScale_of_isEllipticFieldOn_of_openCubeOriginEllipticRecoveryExistence
+      summable_exponentTwo_maxDescendantSigmaStarInverseNorm_of_cubeEllipticity
         (Q := Q) (a := a) (s / 2) hs_half hEll hOrigin
   have hEllOpen : IsEllipticFieldOn lam Lam (openCubeSet Q) a :=
     hEll.mono (measurableSet_openCubeSet Q) (openCubeSet_subset_cubeSet Q)
@@ -93,7 +93,8 @@ theorem sq_cubeBesovNegativeVectorSeminormTwo_le_intrinsicGlobalEnergyForce_note
       hs hs_le hEllOpen hData hsum_half hu havg_nonneg hint hmem hGlobalBdd
       hLocalBdd hlocal
 
-theorem coarsePoincareRHSSn_le_intrinsicGlobalEnergyForce_noteConstants_expanded_of_isEllipticFieldOn
+theorem
+  coarsePoincareRHSSn_le_intrinsicGlobalEnergyForce_noteConstants_expanded_of_isEllipticFieldOn
     {d : ℕ} [NeZero d] (Q : TriadicCube d) (a : CoeffField d)
     (g u : Vec d → Vec d) {s lam Lam : ℝ}
     (hs : 0 < s) (hs_le : s ≤ 1)
@@ -128,7 +129,7 @@ theorem coarsePoincareRHSSn_le_intrinsicGlobalEnergyForce_noteConstants_expanded
           Real.rpow (maxDescendantSigmaStarInvNormAtScale Q (Q.scale - (m : ℤ)) a) 1) := by
     have hs_half : 0 < s / 2 := by nlinarith
     simpa using
-      summable_qtwo_maxDescendantSigmaStarInvNormAtScale_of_isEllipticFieldOn_of_openCubeOriginEllipticRecoveryExistence
+      summable_exponentTwo_maxDescendantSigmaStarInverseNorm_of_cubeEllipticity
         (Q := Q) (a := a) (s / 2) hs_half hEll hOrigin
   have hEllOpen : IsEllipticFieldOn lam Lam (openCubeSet Q) a :=
     hEll.mono (measurableSet_openCubeSet Q) (openCubeSet_subset_cubeSet Q)
@@ -165,7 +166,7 @@ theorem coarsePoincareRHSSn_le_intrinsicGlobalEnergyForce_noteConstants_expanded
       hs hs_le hEllOpen hData hsum_half hu havg_nonneg hint hmem hGlobalBdd
       hLocalBdd hlocal m
 
-theorem cubeBesovNegativeVectorSeminormTwo_le_sqrt_intrinsicGlobalEnergyForce_noteConstants_expanded_of_isEllipticFieldOn
+theorem negativeBesovSeminormTwo_le_sqrt_intrinsicGlobalEnergyForce
     {d : ℕ} [NeZero d] (Q : TriadicCube d) (a : CoeffField d)
     (g u : Vec d → Vec d) {s lam Lam : ℝ}
     (hs : 0 < s) (hs_le : s ≤ 1)
@@ -189,7 +190,7 @@ theorem cubeBesovNegativeVectorSeminormTwo_le_sqrt_intrinsicGlobalEnergyForce_no
             ((d : ℝ) * ((3 : ℝ) ^ ((d : ℝ) + s) * Real.sqrt 2)) ^ 2 *
             (cubeBesovPositiveVectorSeminormTwo Q s g) ^ 2) := by
   have hsq :=
-    sq_cubeBesovNegativeVectorSeminormTwo_le_intrinsicGlobalEnergyForce_noteConstants_expanded_of_isEllipticFieldOn
+    sq_negativeBesovSeminormTwo_le_intrinsicGlobalEnergyForce
       (Q := Q) (a := a) (g := g) (u := u)
       (s := s) (lam := lam) (Lam := Lam)
       hs hs_le hEll hu hg hGlobalBdd hlocal
@@ -209,7 +210,7 @@ theorem cubeBesovNegativeVectorSeminormTwo_le_sqrt_intrinsicGlobalEnergyForce_no
               (cubeBesovPositiveVectorSeminormTwo Q s g) ^ 2) :=
             Real.sqrt_le_sqrt hsq
 
-theorem sq_cubeBesovNegativeVectorSeminormTwo_le_intrinsicGlobalEnergyForce_noteConstants_expanded_of_parent_potential_solenoidal
+theorem sq_negativeBesovSeminormTwo_le_intrinsicGlobalEnergyForce_of_parent_potential
     {d : ℕ} [NeZero d] (Q : TriadicCube d) (a : CoeffField d)
     (g u : Vec d → Vec d) {s lam Lam : ℝ}
     (hs : 0 < s) (hs_le : s ≤ 1)
@@ -245,17 +246,17 @@ theorem sq_cubeBesovNegativeVectorSeminormTwo_le_intrinsicGlobalEnergyForce_note
       cubeBesovPositiveVectorPartialSeminormTwo_bddAbove_of_parent_bddAbove
         s g hR hGlobalBdd
     exact
-      ZeroTraceDirichletCorrectorData.sq_cubeBesovNegativeVectorSeminormTwo_le_discount_next_add_intrinsicAbsorbedLocalError_noteEta_of_parent_potential_solenoidal
+      ZeroTraceDirichletCorrectorData.negativeBesovSeminormSquare_le_discount_add_intrinsicError
         (Q := Q) (R := R) (n := n) (a := a) (g := g) (u := u)
         (lam := lam) (Lam := Lam) (s := s)
         hs hu_potential hu_residual hR hEll hg hLocalBdd
   exact
-    sq_cubeBesovNegativeVectorSeminormTwo_le_intrinsicGlobalEnergyForce_noteConstants_expanded_of_isEllipticFieldOn
+    sq_negativeBesovSeminormTwo_le_intrinsicGlobalEnergyForce
       (Q := Q) (a := a) (g := g) (u := u)
       (s := s) (lam := lam) (Lam := Lam)
       hs hs_le hEll hu hg hGlobalBdd hlocal
 
-theorem cubeBesovNegativeVectorSeminormTwo_le_sqrt_intrinsicGlobalEnergyForce_noteConstants_expanded_of_parent_potential_solenoidal
+theorem negativeBesovSeminormTwo_le_sqrt_intrinsicGlobalEnergyForce_of_parent_potential
     {d : ℕ} [NeZero d] (Q : TriadicCube d) (a : CoeffField d)
     (g u : Vec d → Vec d) {s lam Lam : ℝ}
     (hs : 0 < s) (hs_le : s ≤ 1)
@@ -292,17 +293,17 @@ theorem cubeBesovNegativeVectorSeminormTwo_le_sqrt_intrinsicGlobalEnergyForce_no
       cubeBesovPositiveVectorPartialSeminormTwo_bddAbove_of_parent_bddAbove
         s g hR hGlobalBdd
     exact
-      ZeroTraceDirichletCorrectorData.sq_cubeBesovNegativeVectorSeminormTwo_le_discount_next_add_intrinsicAbsorbedLocalError_noteEta_of_parent_potential_solenoidal
+      ZeroTraceDirichletCorrectorData.negativeBesovSeminormSquare_le_discount_add_intrinsicError
         (Q := Q) (R := R) (n := n) (a := a) (g := g) (u := u)
         (lam := lam) (Lam := Lam) (s := s)
         hs hu_potential hu_residual hR hEll hg hLocalBdd
   exact
-    cubeBesovNegativeVectorSeminormTwo_le_sqrt_intrinsicGlobalEnergyForce_noteConstants_expanded_of_isEllipticFieldOn
+    negativeBesovSeminormTwo_le_sqrt_intrinsicGlobalEnergyForce
       (Q := Q) (a := a) (g := g) (u := u)
       (s := s) (lam := lam) (Lam := Lam)
       hs hs_le hEll hu hg hGlobalBdd hlocal
 
-theorem coarsePoincareRHSSn_le_intrinsicGlobalEnergyForce_noteConstants_expanded_of_parent_potential_solenoidal
+theorem coarsePoincareRHSSn_le_intrinsicGlobalEnergyForce
     {d : ℕ} [NeZero d] (Q : TriadicCube d) (a : CoeffField d)
     (g u : Vec d → Vec d) {s lam Lam : ℝ}
     (hs : 0 < s) (hs_le : s ≤ 1)
@@ -339,7 +340,7 @@ theorem coarsePoincareRHSSn_le_intrinsicGlobalEnergyForce_noteConstants_expanded
       cubeBesovPositiveVectorPartialSeminormTwo_bddAbove_of_parent_bddAbove
         s g hR hGlobalBdd
     exact
-      ZeroTraceDirichletCorrectorData.sq_cubeBesovNegativeVectorSeminormTwo_le_discount_next_add_intrinsicAbsorbedLocalError_noteEta_of_parent_potential_solenoidal
+      ZeroTraceDirichletCorrectorData.negativeBesovSeminormSquare_le_discount_add_intrinsicError
         (Q := Q) (R := R) (n := n) (a := a) (g := g) (u := u)
         (lam := lam) (Lam := Lam) (s := s)
         hs hu_potential hu_residual hR hEll hg hLocalBdd

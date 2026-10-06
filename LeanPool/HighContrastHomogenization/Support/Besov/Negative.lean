@@ -45,36 +45,43 @@ duality-based negative Besov seminorms and their comparison theorems belong in
   rw [Finset.sum_const, nsmul_eq_mul]
   rw [← mul_assoc, inv_mul_cancel₀ hcard, one_mul]
 
+/-- The average over depth-`j` descendants of absolute cube means raised to `p.toReal`. -/
 @[expose]
 noncomputable def cubeBesovCircDepthAverage {d : ℕ} (Q : TriadicCube d) (p : ℝ≥0∞)
     (u : Vec d → ℝ) (j : ℕ) : ℝ :=
   descendantsAverage Q j fun R => ‖cubeAverage R u‖ ^ p.toReal
 
+/-- The side length at depth `j` raised to the order `s`. -/
 @[expose]
 noncomputable def cubeBesovCircDepthWeight {d : ℕ} (Q : TriadicCube d) (s : ℝ) (j : ℕ) : ℝ :=
   (cubeScaleFactor Q / (3 : ℝ) ^ j) ^ s
 
+/-- The `p`-power mean of descendant cube means multiplied by the depth weight. -/
 @[expose]
 noncomputable def cubeBesovCircDepthSeminorm {d : ℕ} (Q : TriadicCube d) (s : ℝ)
     (p : ℝ≥0∞) (u : Vec d → ℝ) (j : ℕ) : ℝ :=
   cubeBesovCircDepthWeight Q s j * (cubeBesovCircDepthAverage Q p u j) ^ (1 / p.toReal)
 
+/-- The `q`-power sum of weighted circ quantities at depths zero through `N`, to power `1/q`. -/
 @[expose]
 noncomputable def cubeBesovCircPartialSeminorm {d : ℕ} (Q : TriadicCube d) (s : ℝ)
     (p q : ℝ≥0∞) (N : ℕ) (u : Vec d → ℝ) : ℝ :=
   (Finset.sum (Finset.range (N + 1))
     fun j => (cubeBesovCircDepthSeminorm Q s p u j) ^ q.toReal) ^ (1 / q.toReal)
 
+/-- The maximum of the weighted circ quantities at depths zero through `N`. -/
 @[expose]
 noncomputable def cubeBesovCircPartialSeminormTop {d : ℕ} (Q : TriadicCube d) (s : ℝ)
     (p : ℝ≥0∞) (N : ℕ) (u : Vec d → ℝ) : ℝ :=
   (Finset.range (N + 1)).sup' ⟨0, by simp⟩ (fun j => cubeBesovCircDepthSeminorm Q s p u j)
 
+/-- The finite circ norm, defined to equal its circ seminorm. -/
 @[expose]
 noncomputable def cubeBesovCircPartialNorm {d : ℕ} (Q : TriadicCube d) (s : ℝ)
     (p q : ℝ≥0∞) (N : ℕ) (u : Vec d → ℝ) : ℝ :=
   cubeBesovCircPartialSeminorm Q s p q N u
 
+/-- The finite circ norm for the maximum aggregation, equal to its circ seminorm. -/
 @[expose]
 noncomputable def cubeBesovCircPartialNormTop {d : ℕ} (Q : TriadicCube d) (s : ℝ)
     (p : ℝ≥0∞) (N : ℕ) (u : Vec d → ℝ) : ℝ :=
@@ -157,7 +164,7 @@ theorem cubeBesovCircDepthAverage_eq_descendantsAverage_projection {d : ℕ}
   unfold cubeBesovCircDepthAverage
   simp [descendantsAverage_const, cubeAverage_const]
 
-@[simp] theorem cubeBesovCircDepthAverage_zero {d : ℕ} (Q : TriadicCube d) (p : ℝ≥0∞)
+theorem cubeBesovCircDepthAverage_zero {d : ℕ} (Q : TriadicCube d) (p : ℝ≥0∞)
     (j : ℕ) (hp0 : p ≠ 0) (hpTop : p ≠ ∞) :
     cubeBesovCircDepthAverage Q p (fun _ => (0 : ℝ)) j = 0 := by
   have hpPos : 0 < p.toReal := ENNReal.toReal_pos hp0 hpTop

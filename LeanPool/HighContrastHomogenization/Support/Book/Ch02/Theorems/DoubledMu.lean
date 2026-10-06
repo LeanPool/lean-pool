@@ -58,7 +58,7 @@ end IsDoubledMuMinimizer
 
 /-- A doubled-`mu` minimizer at loading `(-p, q)` extracts the gradient of the
 scalar canonical response maximizer from its lower block image. -/
-theorem doubledMuMinimizer_neg_left_extracts_canonicalMaximizerGradient
+theorem doubledMuMinimizer_negLeft_eq_canonicalGradient
     {d : ℕ} (U : Domain d) (a : CoeffOn U) (p q : Vec d)
     {X : DoubledField d}
     (hX : IsDoubledMuMinimizer U a (-p, q) X) :
@@ -68,7 +68,7 @@ theorem doubledMuMinimizer_neg_left_extracts_canonicalMaximizerGradient
       =ᵐ[volumeMeasureOn (U : Set (Vec d))]
     fun x =>
       (canonicalMaximizer (responseExistenceTheory U a) p q).toSolution.toH1.grad x :=
-  HCPolySupport.Internal.Ch02.BookCh02.doubledMuMinimizer_neg_left_extracts_canonicalMaximizerGradient
+  HCPolySupport.Internal.Ch02.BookCh02.doubledMuMinimizer_negLeft_eq_canonicalGradient
     U a p q hX
 
 /-- A doubled-`mu` minimizer at loading `(-p, q)` extracts the flux of the

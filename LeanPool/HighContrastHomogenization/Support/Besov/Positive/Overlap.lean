@@ -32,23 +32,27 @@ boundedness/regularity hypotheses, while the unqualified `cubeBesov*` names
 above remain the existing disjoint descendant definitions.
 -/
 
+/-- The normalized `Lᵖ` oscillation about the mean on the overlapping cube attached to `S`. -/
 @[expose]
 noncomputable def cubeBesovOverlapOscillation {d : ℕ}
     (S : TriadicCube d) (p : ℝ≥0∞) (u : Vec d → ℝ) : ℝ :=
   ScalarOverlap.cubeLpNorm S p
     (fun x => u x - ScalarOverlap.cubeAverage S u)
 
+/-- The average over overlap centers at depth `j` of `Lᵖ` oscillations raised to `p.toReal`. -/
 @[expose]
 noncomputable def cubeBesovOverlapDepthAverage {d : ℕ}
     (Q : TriadicCube d) (p : ℝ≥0∞) (u : Vec d → ℝ) (j : ℕ) : ℝ :=
   ScalarOverlap.centersAverage Q j fun S =>
     (cubeBesovOverlapOscillation S p u) ^ p.toReal
 
+/-- The overlap depth weight, equal to the depth-`j` side length raised to `-s`. -/
 @[expose]
 noncomputable def cubeBesovOverlapDepthWeight {d : ℕ}
     (Q : TriadicCube d) (s : ℝ) (j : ℕ) : ℝ :=
   cubeBesovDepthWeight Q s j
 
+/-- The `p`-power mean of overlap oscillations multiplied by the depth weight. -/
 @[expose]
 noncomputable def cubeBesovOverlapDepthSeminorm {d : ℕ}
     (Q : TriadicCube d) (s : ℝ) (p : ℝ≥0∞)
@@ -56,6 +60,7 @@ noncomputable def cubeBesovOverlapDepthSeminorm {d : ℕ}
   cubeBesovOverlapDepthWeight Q s j *
     (cubeBesovOverlapDepthAverage Q p u j) ^ (1 / p.toReal)
 
+/-- The `q`-power aggregation of weighted overlap oscillations at depths zero through `N`. -/
 @[expose]
 noncomputable def cubeBesovOverlapPartialSeminorm {d : ℕ} (Q : TriadicCube d)
     (s : ℝ) (p q : ℝ≥0∞) (N : ℕ) (u : Vec d → ℝ) : ℝ := by
@@ -64,6 +69,7 @@ noncomputable def cubeBesovOverlapPartialSeminorm {d : ℕ} (Q : TriadicCube d)
       (fun j => (cubeBesovOverlapDepthSeminorm Q s p u j) ^ q.toReal)) ^
         (1 / q.toReal)
 
+/-- The maximum of weighted overlap oscillations at depths zero through `N`. -/
 @[expose]
 noncomputable def cubeBesovOverlapPartialSeminormTop {d : ℕ}
     (Q : TriadicCube d) (s : ℝ) (p : ℝ≥0∞) (N : ℕ)
@@ -71,12 +77,15 @@ noncomputable def cubeBesovOverlapPartialSeminormTop {d : ℕ}
   (Finset.range (N + 1)).sup' ⟨0, by simp⟩
     (fun j => cubeBesovOverlapDepthSeminorm Q s p u j)
 
+/-- The overlapping finite seminorm plus the absolute parent mean weighted by side length to
+`-s`. -/
 @[expose]
 noncomputable def cubeBesovOverlapPartialNorm {d : ℕ} (Q : TriadicCube d)
     (s : ℝ) (p q : ℝ≥0∞) (N : ℕ) (u : Vec d → ℝ) : ℝ :=
   cubeBesovOverlapPartialSeminorm Q s p q N u +
     cubeBesovScaleWeight s Q * ‖cubeAverage Q u‖
 
+/-- The overlapping maximum-aggregation seminorm plus the weighted absolute parent mean. -/
 @[expose]
 noncomputable def cubeBesovOverlapPartialNormTop {d : ℕ}
     (Q : TriadicCube d) (s : ℝ) (p : ℝ≥0∞) (N : ℕ)
@@ -166,7 +175,7 @@ theorem cubeBesovOverlapPartialNormTop_nonneg {d : ℕ}
   simpa [havg] using
     ScalarOverlap.cubeLpNorm_zero (S := S) (p := p) (E := ℝ) hp0
 
-@[simp] theorem cubeBesovOverlapOscillation_zero {d : ℕ}
+theorem cubeBesovOverlapOscillation_zero {d : ℕ}
     (S : TriadicCube d) (p : ℝ≥0∞) (hp0 : p ≠ 0) :
     cubeBesovOverlapOscillation S p (fun _ => (0 : ℝ)) = 0 := by
   simpa using cubeBesovOverlapOscillation_const
@@ -185,7 +194,7 @@ theorem cubeBesovOverlapPartialNormTop_nonneg {d : ℕ}
     _ = 0 := by
           simpa using ScalarOverlap.centersAverage_const Q j (0 : ℝ)
 
-@[simp] theorem cubeBesovOverlapDepthAverage_zero {d : ℕ}
+theorem cubeBesovOverlapDepthAverage_zero {d : ℕ}
     (Q : TriadicCube d) (p : ℝ≥0∞) (j : ℕ)
     (hp0 : p ≠ 0) (hpTop : p ≠ ∞) :
     cubeBesovOverlapDepthAverage Q p (fun _ => (0 : ℝ)) j = 0 := by
@@ -275,7 +284,7 @@ theorem cubeBesovOverlapPartialNormTop_mono_N {d : ℕ} (Q : TriadicCube d)
     (Q := Q) (p := p) (c := u) (j := j) hp0 hpTop]
   rw [Real.zero_rpow hpInv, mul_zero]
 
-@[simp] theorem cubeBesovOverlapDepthSeminorm_zero {d : ℕ}
+theorem cubeBesovOverlapDepthSeminorm_zero {d : ℕ}
     (Q : TriadicCube d) (s : ℝ) (p : ℝ≥0∞) (j : ℕ)
     (hp0 : p ≠ 0) (hpTop : p ≠ ∞) :
     cubeBesovOverlapDepthSeminorm Q s p (fun _ => (0 : ℝ)) j = 0 := by
@@ -290,7 +299,7 @@ theorem cubeBesovOverlapPartialNormTop_mono_N {d : ℕ} (Q : TriadicCube d)
   unfold cubeBesovOverlapPartialSeminorm
   simp [cubeBesovOverlapDepthSeminorm_const, hp0, hpTop, hqPos.ne']
 
-@[simp] theorem cubeBesovOverlapPartialSeminorm_zero {d : ℕ}
+theorem cubeBesovOverlapPartialSeminorm_zero {d : ℕ}
     (Q : TriadicCube d) (s : ℝ) (p q : ℝ≥0∞) (N : ℕ)
     (hp0 : p ≠ 0) (hpTop : p ≠ ∞) (hq0 : q ≠ 0) (hqTop : q ≠ ∞) :
     cubeBesovOverlapPartialSeminorm Q s p q N (fun _ => (0 : ℝ)) = 0 := by
@@ -310,7 +319,7 @@ theorem cubeBesovOverlapPartialNormTop_mono_N {d : ℕ} (Q : TriadicCube d)
   intro j hj
   simp [cubeBesovOverlapDepthSeminorm_const, hp0, hpTop]
 
-@[simp] theorem cubeBesovOverlapPartialSeminormTop_zero {d : ℕ}
+theorem cubeBesovOverlapPartialSeminormTop_zero {d : ℕ}
     (Q : TriadicCube d) (s : ℝ) (p : ℝ≥0∞) (N : ℕ)
     (hp0 : p ≠ 0) (hpTop : p ≠ ∞) :
     cubeBesovOverlapPartialSeminormTop Q s p N (fun _ => (0 : ℝ)) = 0 := by
@@ -328,7 +337,7 @@ theorem cubeBesovOverlapPartialNormTop_mono_N {d : ℕ} (Q : TriadicCube d)
     hp0 hpTop hq0 hqTop]
   simp [cubeAverage_const]
 
-@[simp] theorem cubeBesovOverlapPartialNorm_zero {d : ℕ}
+theorem cubeBesovOverlapPartialNorm_zero {d : ℕ}
     (Q : TriadicCube d) (s : ℝ) (p q : ℝ≥0∞) (N : ℕ)
     (hp0 : p ≠ 0) (hpTop : p ≠ ∞) (hq0 : q ≠ 0) (hqTop : q ≠ ∞) :
     cubeBesovOverlapPartialNorm Q s p q N (fun _ => (0 : ℝ)) = 0 := by
@@ -347,7 +356,7 @@ theorem cubeBesovOverlapPartialNormTop_mono_N {d : ℕ} (Q : TriadicCube d)
     (Q := Q) (s := s) (p := p) (N := N) (u := u) hp0 hpTop]
   simp [cubeAverage_const]
 
-@[simp] theorem cubeBesovOverlapPartialNormTop_zero {d : ℕ}
+theorem cubeBesovOverlapPartialNormTop_zero {d : ℕ}
     (Q : TriadicCube d) (s : ℝ) (p : ℝ≥0∞) (N : ℕ)
     (hp0 : p ≠ 0) (hpTop : p ≠ ∞) :
     cubeBesovOverlapPartialNormTop Q s p N (fun _ => (0 : ℝ)) = 0 := by

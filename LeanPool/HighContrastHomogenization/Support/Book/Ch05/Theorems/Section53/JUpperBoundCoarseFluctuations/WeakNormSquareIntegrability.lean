@@ -136,7 +136,7 @@ private theorem barSigmaStarAtScale_pos_of_P4
     Section52.originBlockIntegrableAtScale_from_P4 hP hStruct hP4 m
   have hInv : 0 < hP.barSigmaStarInvAtScale hStruct (m : ℤ) := by
     simpa [Ch04.RestrictionLawCarrier.barSigmaStarInvAtScale] using
-      Ch04.RestrictionLawCarrier.Internal.barSigmaStarInv_pos_of_integrable_coarseFullBlockMatrixAtCube
+      Ch04.RestrictionLawCarrier.Internal.barSigmaStarInverse_pos_of_integrableBlockMatrix
         hP
         (Ch04.Internal.annealedPrimitiveScalarizationData_of_structuralLaw
           hP hStruct (m : ℤ))

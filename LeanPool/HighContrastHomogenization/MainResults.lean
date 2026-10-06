@@ -110,8 +110,8 @@ above in the Loewner order at the same rate, with the constant six of
 `e.algebraic.block.decay`.
 
 The Schur coefficients of the limit block, in the parametrization
-`e.annealed.schur`, satisfy `s̄_* = s̄`, with `s̄` positive definite and `k̄`
-antisymmetric; `ā = s̄ + k̄` is the coefficient matrix associated with the law.
+`e.annealed.schur`, satisfy `s_bar_* = s_bar`, with `s_bar` positive definite and `k_bar`
+antisymmetric; `ā = s_bar + k_bar` is the coefficient matrix associated with the law.
 
 The coefficient fields are locally uniformly elliptic almost everywhere, with
 ellipticity constants belonging to the field and entering no estimate; the

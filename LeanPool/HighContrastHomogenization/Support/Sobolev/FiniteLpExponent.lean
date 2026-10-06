@@ -31,7 +31,9 @@ open scoped ENNReal
 
 noncomputable section
 
+/-- An extended nonnegative real exponent strictly between one and infinity. -/
 structure FiniteLpExponent where
+  /-- The finite exponent greater than one. -/
   exponent : ℝ≥0∞
   one_lt : 1 < exponent
   lt_top : exponent < ∞
@@ -44,6 +46,7 @@ private theorem eq_of_exponent_eq (p q : FiniteLpExponent)
   cases q
   simp_all
 
+/-- The Hölder conjugate exponent, again strictly between one and infinity. -/
 @[expose]
 noncomputable def conjugate (p : FiniteLpExponent) : FiniteLpExponent where
   exponent := ENNReal.conjExponent p.exponent
@@ -72,6 +75,7 @@ theorem holderConjugate (p : FiniteLpExponent) :
       p.exponent := (holderConjugate p).symm
   exact ENNReal.HolderConjugate.conjExponent_eq
 
+/-- The finite exponent two. -/
 @[expose]
 noncomputable def two : FiniteLpExponent where
   exponent := 2
@@ -97,8 +101,10 @@ noncomputable def fractionalOrderHalf
 @[simp] theorem fractionalOrderHalf_value (s : FractionalOrder) :
     (fractionalOrderHalf s).1 = s.1 / 2 := rfl
 
+/-- A vector field with finite Euclidean `Lᵖ` seminorm for normalized cube measure. -/
 structure CubeEuclideanLpField {d : ℕ} (Q : TriadicCube d)
     (p : FiniteLpExponent) where
+  /-- The pointwise vector-valued representative of the integrable field. -/
   toField : Vec d → Vec d
   euclideanMemLp :
     MeasureTheory.MemLp (fun x => HilbertVec.ofVec (toField x)) p.exponent
@@ -110,6 +116,7 @@ instance {d : ℕ} {Q : TriadicCube d} {p : FiniteLpExponent} :
     CoeFun (CubeEuclideanLpField Q p) (fun _ => Vec d → Vec d) where
   coe F := F.toField
 
+/-- Regard the same pointwise field as an `Lᵖ` field on a contained open cube. -/
 @[expose]
 noncomputable def restrictToSubcube {d : ℕ} {Q R : TriadicCube d}
     {p : FiniteLpExponent} (F : CubeEuclideanLpField Q p)

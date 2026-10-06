@@ -111,7 +111,7 @@ theorem map_eq_of_map_restrictCoeffField_eq_of_isLocalObservable
   map_eq_of_map_restrictCoeffField_eq_of_isRestrictionLocalObservable hX_meas hX_local hPQ
 
 theorem integral_map_restrictCoeffField_eq_of_isRestrictionLocalObservable
-    {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] [CompleteSpace E]
+    {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
     [MeasurableSpace E] [BorelSpace E] [SecondCountableTopology E]
     {d : ℕ} {U : Set (Vec d)} {P : MeasureTheory.Measure (CoeffField d)}
     {X : CoeffField d → E}
@@ -286,6 +286,7 @@ theorem integral_eq_of_isTranslationCovariant_of_isStationary_aestronglyMeasurab
 restriction-local on `U`. -/
 structure MeasurableLocalObservable (d : ℕ) (U : Set (Vec d)) (β : Type*)
     [MeasurableSpace β] where
+  /-- The measurable coefficient-field observable determined by the field's values on `U`. -/
   toFun : CoeffField d → β
   measurable_toFun : Measurable toFun
   isLocal_toFun : IsRestrictionLocalObservable U toFun
@@ -317,6 +318,7 @@ theorem measurable_restrictionSigma_mono {V : Set (Vec d)}
   measurable_of_isRestrictionLocalObservable_restrictionSigma_mono X.measurable
     X.isRestrictionLocal hUV
 
+/-- Regard an observable local to `U` as local to a containing region `V`. -/
 @[expose]
 def mono {V : Set (Vec d)} (X : MeasurableLocalObservable d U β) (hUV : U ⊆ V) :
     MeasurableLocalObservable d V β where
@@ -329,12 +331,14 @@ def mono {V : Set (Vec d)} (X : MeasurableLocalObservable d U β) (hUV : U ⊆ V
     X.mono hUV a = X a :=
   rfl
 
+/-- The constant observable with value `c`, local to any region. -/
 @[expose]
 def const (c : β) : MeasurableLocalObservable d U β where
   toFun := fun _ => c
   measurable_toFun := measurable_const
   isLocal_toFun := by intro _ _ _; rfl
 
+/-- Compose a local observable with a measurable function of its value. -/
 @[expose]
 def comp {γ : Type*} [MeasurableSpace γ] (X : MeasurableLocalObservable d U β)
     (f : β → γ) (hf : Measurable f) : MeasurableLocalObservable d U γ where
@@ -344,6 +348,7 @@ def comp {γ : Type*} [MeasurableSpace γ] (X : MeasurableLocalObservable d U β
     intro a₁ a₂ hagree
     simpa [Function.comp] using congrArg f (X.isRestrictionLocal hagree)
 
+/-- The pair of two measurable observables local to the same region. -/
 @[expose]
 def prod {γ : Type*} [MeasurableSpace γ]
     (X : MeasurableLocalObservable d U β) (Y : MeasurableLocalObservable d U γ) :
@@ -355,6 +360,7 @@ def prod {γ : Type*} [MeasurableSpace γ]
     intro a₁ a₂ hagree
     simp [X.isRestrictionLocal hagree, Y.isRestrictionLocal hagree]
 
+/-- The coordinate family formed from measurable observables local to the same region. -/
 @[expose]
 def pi {ι : Type*} {γ : ι → Type*} [∀ i, MeasurableSpace (γ i)]
     (X : ∀ i, MeasurableLocalObservable d U (γ i)) :
@@ -369,12 +375,14 @@ def pi {ι : Type*} {γ : ι → Type*} [∀ i, MeasurableSpace (γ i)]
     funext i
     exact (X i).isRestrictionLocal hagree
 
+/-- The pointwise negation of a measurable local observable. -/
 @[expose]
 def neg {β : Type*} [MeasurableSpace β] [Neg β] [MeasurableNeg β]
     (X : MeasurableLocalObservable d U β) :
     MeasurableLocalObservable d U β :=
   X.comp (fun x => -x) measurable_neg
 
+/-- The pointwise sum of two measurable local observables. -/
 @[expose]
 def add {β : Type*} [MeasurableSpace β] [Add β] [MeasurableAdd₂ β]
     (X Y : MeasurableLocalObservable d U β) :
@@ -385,6 +393,7 @@ def add {β : Type*} [MeasurableSpace β] [Add β] [MeasurableAdd₂ β]
     intro a₁ a₂ hagree
     simp [X.isRestrictionLocal hagree, Y.isRestrictionLocal hagree]
 
+/-- The pointwise difference of two measurable local observables. -/
 @[expose]
 def sub {β : Type*} [MeasurableSpace β] [Sub β] [MeasurableSub₂ β]
     (X Y : MeasurableLocalObservable d U β) :
@@ -395,6 +404,7 @@ def sub {β : Type*} [MeasurableSpace β] [Sub β] [MeasurableSub₂ β]
     intro a₁ a₂ hagree
     simp [X.isRestrictionLocal hagree, Y.isRestrictionLocal hagree]
 
+/-- Multiply a measurable local observable by a fixed scalar. -/
 @[expose]
 def const_smul {M : Type*} [SMul M β] [MeasurableConstSMul M β]
     (c : M) (X : MeasurableLocalObservable d U β) :
@@ -405,8 +415,9 @@ def const_smul {M : Type*} [SMul M β] [MeasurableConstSMul M β]
     intro a₁ a₂ hagree
     simp [X.isRestrictionLocal hagree]
 
+/-- The finite coordinate family of observables, local to the union of their regions. -/
 @[expose]
-def finsetPi {ι : Type*} [DecidableEq ι] {γ : ι → Type*} [∀ i, MeasurableSpace (γ i)]
+def finsetPi {ι : Type*} {γ : ι → Type*} [∀ i, MeasurableSpace (γ i)]
     (s : Finset ι) {V : ι → Set (Vec d)}
     (X : ∀ i, MeasurableLocalObservable d (V i) (γ i)) :
     MeasurableLocalObservable d (⋃ i ∈ s, V i) (∀ i : s, γ i) where
@@ -429,6 +440,7 @@ theorem measurable_subtypeFinsetSum {ι : Type*} (s : Finset ι)
     Measurable (fun y : s → γ => ∑ i, y i) := by
   exact Finset.univ.measurable_sum fun i _ => measurable_pi_apply i
 
+/-- The finite sum of observables, local to the union of their regions. -/
 @[expose]
 noncomputable def finsetSum {ι : Type*} [DecidableEq ι] {γ : Type*}
     [MeasurableSpace γ] [AddCommMonoid γ] [MeasurableAdd₂ γ]
@@ -438,6 +450,7 @@ noncomputable def finsetSum {ι : Type*} [DecidableEq ι] {γ : Type*}
   (finsetPi (d := d) (s := s) X).comp (fun y : s → γ => ∑ i, y i)
     (measurable_subtypeFinsetSum s)
 
+/-- The finite sum multiplied by inverse cardinality, local to the union of the regions. -/
 @[expose]
 noncomputable def finsetAverage {ι : Type*} [DecidableEq ι] {γ : Type*}
     [MeasurableSpace γ] [AddCommMonoid γ] [MeasurableAdd₂ γ]
@@ -790,8 +803,8 @@ theorem law_eq_law_restrictSet_of_isLocalObservable
     (P := A.law μ) hX_meas hX_local
 
 theorem integral_comp_restrictSet_eq_of_isLocalObservable
-    {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] [CompleteSpace E]
-    [MeasurableSpace E] [BorelSpace E] [SecondCountableTopology E]
+    {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+    [MeasurableSpace E]
     (μ : MeasureTheory.Measure Ω) {U : Set (Vec d)} {X : CoeffField d → E}
     (hX_local : IsRestrictionLocalObservable U X) :
     ∫ ω, X ((A.restrictSet U) ω) ∂μ = ∫ ω, X (A ω) ∂μ := by
@@ -819,8 +832,8 @@ theorem law_eq_law_restrictSet
   exact X.map_eq_map_restrictCoeffField (P := A.law μ)
 
 theorem integral_comp_restrictSet_eq
-    {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] [CompleteSpace E]
-    [MeasurableSpace E] [BorelSpace E] [SecondCountableTopology E]
+    {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+    [MeasurableSpace E]
     (μ : MeasureTheory.Measure Ω) {U : Set (Vec d)}
     (X : MeasurableLocalObservable d U E) :
     ∫ ω, X ((A.restrictSet U) ω) ∂μ = ∫ ω, X (A ω) ∂μ := by

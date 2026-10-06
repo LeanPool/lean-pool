@@ -80,7 +80,8 @@ theorem weightedMax_memLp {α ι : Type*} [MeasurableSpace α] {μ : Measure α}
   exact (memLp_congr_ae heq).mp (memLp_finset_sup I hI f hf)
 
 /-- A nonempty joint maximum of nonnegative terms is nonnegative. -/
-theorem weightedMax_nonneg {α ι : Type*} [MeasurableSpace α] {μ : Measure α} (I : Finset ι) (hI : I.Nonempty) (f : ι → α → ℝ)
+theorem weightedMax_nonneg {α ι : Type*} [MeasurableSpace α] {μ : Measure α} (I : Finset ι) (hI
+  : I.Nonempty) (f : ι → α → ℝ)
     (hf0 : ∀ i ∈ I, ∀ᵐ a ∂μ, 0 ≤ f i a) :
     ∀ᵐ a ∂μ, 0 ≤ ⨆ i ∈ (I : Set ι), f i a := by
   filter_upwards [(Filter.eventually_all_finset I).mpr hf0] with a ha
@@ -128,7 +129,8 @@ The hypothesis `1 ≤ Q` cannot be dropped: without it the domination is false.
 At `Q = 0`, with `d = 2` and `G = 2•I`, the right side is `0` while the left side
 is `2`. This added premise is a correct strengthening; the real transport exponent
 satisfies `bigQ ≥ 2`, so the actual consumer supplies `1 ≤ Q`. -/
-theorem meanPenalty_mono_and_dominates (Q : ℕ) (hQ : 1 ≤ Q) {d : ℕ} {Pm G : BlockMat d} (hPm : IsSymmetricBlockMat Pm) (hG : IsSymmetricBlockMat G)
+theorem meanPenalty_mono_and_dominates (Q : ℕ) (hQ : 1 ≤ Q) {d : ℕ} {Pm G : BlockMat d} (hPm :
+  IsSymmetricBlockMat Pm) (hG : IsSymmetricBlockMat G)
     (hI : BlockMatLoewnerLE (Book.Ch02.blockIdentity d) Pm)
     (hPG : BlockMatLoewnerLE Pm G) :
     meanPenalty Q Pm ≤ meanPenalty Q G ∧
@@ -177,7 +179,8 @@ private theorem root_const_mul_read {α : Type*} [MeasurableSpace α] {μ : Meas
 
 private theorem scalar_joint_gap {α ι : Type*} [MeasurableSpace α] {μ : Measure α}
     {N m : ℝ} (hN : 1 < N) (hm : 0 ≤ m) (I : Finset ι) (hI : I.Nonempty)
-    (z s t : ι → α → ℝ) (hz0 : ∀ i ∈ I, ∀ᵐ a ∂μ, 0 ≤ z i a) (hs0 : ∀ i ∈ I, ∀ᵐ a ∂μ, 0 ≤ s i a) (ht0 : ∀ i ∈ I, ∀ᵐ a ∂μ, 0 ≤ t i a) (hz : ∀ i ∈ I, MemLp (z i) (ENNReal.ofReal N) μ)
+    (z s t : ι → α → ℝ) (hz0 : ∀ i ∈ I, ∀ᵐ a ∂μ, 0 ≤ z i a) (hs0 : ∀ i ∈ I, ∀ᵐ a ∂μ, 0 ≤ s i a)
+      (ht0 : ∀ i ∈ I, ∀ᵐ a ∂μ, 0 ≤ t i a) (hz : ∀ i ∈ I, MemLp (z i) (ENNReal.ofReal N) μ)
     (hs : ∀ i ∈ I, MemLp (s i) (ENNReal.ofReal N) μ) (ht : ∀ i ∈ I, Integrable (t i) μ)
     (hpoint : ∀ i ∈ I, ∀ᵐ a ∂μ, z i a ≤ t i a ^ N⁻¹ +
       m ^ ((N - 1) / N ^ 2) * s i a ^ (1 - N⁻¹) * z i a ^ N⁻¹) :
@@ -239,7 +242,8 @@ private theorem scalar_joint_gap {α ι : Type*} [MeasurableSpace α] {μ : Meas
       (∫ a, T a ∂μ) ^ N⁻¹ + m ^ ((N - 1) / N ^ 2) *
         (eLpNorm S (ENNReal.ofReal N) μ).toReal ^ (1 - N⁻¹) *
           (eLpNorm Z (ENNReal.ofReal N) μ).toReal ^ N⁻¹ := by
-    simpa only [mul_assoc] using hnonlinear.trans (add_le_add le_rfl (mul_le_mul_of_nonneg_left hholder hcoef))
+    simpa only [mul_assoc] using hnonlinear.trans (add_le_add le_rfl (mul_le_mul_of_nonneg_left
+      hholder hcoef))
   have habs := scalar_gap_young_absorb hN hm ENNReal.toReal_nonneg ENNReal.toReal_nonneg hnonlinear'
   rw [scalar_eLpNorm_toReal_eq_root hN0 hZ0 hZ,
     scalar_eLpNorm_toReal_eq_root hN0 hS0 hS, integral_finsetSum _ ht] at habs
@@ -261,7 +265,8 @@ private theorem weighted_mixed {N w s z : ℝ} (hw : 0 ≤ w) (hs : 0 ≤ s) (hz
     _ = (w ^ (1 - N⁻¹) * w ^ N⁻¹) * (s ^ (1 - N⁻¹) * z ^ N⁻¹) := by ring
     _ = _ := by rw [← Real.rpow_add' hw (by simp), sub_add_cancel, Real.rpow_one]
 
-private theorem weighted_pointwise_gap {d : ℕ} {N : ℝ} (hN : 1 < N) {D G M : BlockMat d} (hD : (toFullBlockMat D).PosSemidef) (hG : (toFullBlockMat G).IsHermitian)
+private theorem weighted_pointwise_gap {d : ℕ} {N : ℝ} (hN : 1 < N) {D G M : BlockMat d} (hD :
+  (toFullBlockMat D).PosSemidef) (hG : (toFullBlockMat G).IsHermitian)
     (hM : (toFullBlockMat M).IsHermitian) (hDG : BlockMatLoewnerLE D G)
     {w : ℝ} (hw : 0 ≤ w) :
     w * absSchattenNorm N D ≤ (w ^ N * blockOpNorm M ^ (N - 1) * blockTrace D) ^ N⁻¹ +
@@ -279,18 +284,24 @@ private theorem weighted_pointwise_gap {d : ℕ} {N : ℝ} (hN : 1 < N) {D G M :
   have hop : blockOpNorm G ≤ blockOpNorm M + absSchattenNorm N (blockSub G M) := by
     calc
       _ ≤ blockOpNorm (blockSub G M) + blockOpNorm M := by
-        simpa only [blockOpNorm, full_sub] using norm_le_norm_sub_add (toFullBlockMat G) (toFullBlockMat M)
-      _ ≤ absSchattenNorm N (blockSub G M) + blockOpNorm M := add_le_add (blockOpNorm_le_absSchattenNorm (H := blockSub G M) hC hN.le) le_rfl
+        simpa only [blockOpNorm, full_sub] using norm_le_norm_sub_add (toFullBlockMat G)
+          (toFullBlockMat M)
+      _ ≤ absSchattenNorm N (blockSub G M) + blockOpNorm M := add_le_add
+        (blockOpNorm_le_absSchattenNorm (H := blockSub G M) hC hN.le) le_rfl
       _ = _ := add_comm _ _
   have htr := trace_le_dim_rpow_mul_absSchattenNorm hD hN.le
   have hgap : absSchattenNorm N D ≤ blockOpNorm M ^ (1 - N⁻¹) * blockTrace D ^ N⁻¹ +
       (2 * (d : ℝ)) ^ ((N - 1) / N ^ 2) *
         absSchattenNorm N (blockSub G M) ^ (1 - N⁻¹) * absSchattenNorm N D ^ N⁻¹ := by
     calc
-      _ ≤ blockOpNorm G ^ (1 - N⁻¹) * blockTrace D ^ N⁻¹ := absSchattenNorm_gap_le_opNorm_rpow_mul_trace_rpow hD hG hDG hN.le
-      _ ≤ (blockOpNorm M + absSchattenNorm N (blockSub G M)) ^ (1 - N⁻¹) * blockTrace D ^ N⁻¹ := mul_le_mul_of_nonneg_right (Real.rpow_le_rpow (norm_nonneg _) hop hr) (Real.rpow_nonneg ht _)
+      _ ≤ blockOpNorm G ^ (1 - N⁻¹) * blockTrace D ^ N⁻¹ :=
+        absSchattenNorm_gap_le_opNorm_rpow_mul_trace_rpow hD hG hDG hN.le
+      _ ≤ (blockOpNorm M + absSchattenNorm N (blockSub G M)) ^ (1 - N⁻¹) * blockTrace D ^ N⁻¹ :=
+        mul_le_mul_of_nonneg_right (Real.rpow_le_rpow (norm_nonneg _) hop hr) (Real.rpow_nonneg
+        ht _)
       _ ≤ (blockOpNorm M ^ (1 - N⁻¹) + absSchattenNorm N (blockSub G M) ^ (1 - N⁻¹)) *
-          blockTrace D ^ N⁻¹ := mul_le_mul_of_nonneg_right (scalar_gap_power_add_le hN.le hc hs) (Real.rpow_nonneg ht _)
+          blockTrace D ^ N⁻¹ := mul_le_mul_of_nonneg_right (scalar_gap_power_add_le hN.le hc hs)
+            (Real.rpow_nonneg ht _)
       _ ≤ blockOpNorm M ^ (1 - N⁻¹) * blockTrace D ^ N⁻¹ +
           absSchattenNorm N (blockSub G M) ^ (1 - N⁻¹) *
             ((2 * (d : ℝ)) ^ (1 - N⁻¹) * absSchattenNorm N D) ^ N⁻¹ := by
@@ -309,7 +320,8 @@ private theorem weighted_pointwise_gap {d : ℕ} {N : ℝ} (hN : 1 < N) {D G M :
 /-- Young absorption of the joint maximum; deterministic mean terms alone carry a sum. -/
 theorem positiveGap_weighted_joint_absorbed {d : ℕ} {P : Measure (CoeffSpace d)}
     [IsProbabilityMeasure P] {N : ℝ} (hN : 1 < N) {ι : Type*}
-    (I : Finset ι) (hI : I.Nonempty) (w : ι → ℝ) (hw : ∀ i, 0 ≤ w i) (F G : ι → CoeffSpace d → BlockMat d) (hF : ∀ i ∈ I, SchattenMemLp P N (F i)) (hG : ∀ i ∈ I, SchattenMemLp P N (G i))
+    (I : Finset ι) (hI : I.Nonempty) (w : ι → ℝ) (hw : ∀ i, 0 ≤ w i) (F G : ι → CoeffSpace d →
+      BlockMat d) (hF : ∀ i ∈ I, SchattenMemLp P N (F i)) (hG : ∀ i ∈ I, SchattenMemLp P N (G i))
     (hFpos : ∀ i ∈ I, ∀ᵐ a ∂P, BlockMatLoewnerLE (ofFullBlockMat 0) (F i a))
     (hFG : ∀ i ∈ I, ∀ᵐ a ∂P, BlockMatLoewnerLE (F i a) (G i a)) :
     let MF := fun i => ofFullBlockMat (Matrix.of fun α β => ∫ a, blockMatEntry (F i a) α β ∂P)
@@ -326,7 +338,8 @@ theorem positiveGap_weighted_joint_absorbed {d : ℕ} {P : Measure (CoeffSpace d
   let z := fun i a => w i * absSchattenNorm N (D i a)
   let s := fun i a => w i * absSchattenNorm N (blockSub (G i a) (MG i))
   let t := fun i a => w i ^ N * blockOpNorm (MG i) ^ (N - 1) * blockTrace (D i a)
-  have hd (i) (hi : i ∈ I) := positiveGap_ordered_data hN.le (hF i hi) (hG i hi) (hFpos i hi) (hFG i hi)
+  have hd (i) (hi : i ∈ I) := positiveGap_ordered_data hN.le (hF i hi) (hG i hi) (hFpos i hi)
+    (hFG i hi)
   have hc (i) (hi : i ∈ I) := (hG i hi).center hN.le
   have hz0 : ∀ i ∈ I, ∀ᵐ a ∂P, 0 ≤ z i a := by
     intro i hi
@@ -346,7 +359,8 @@ theorem positiveGap_weighted_joint_absorbed {d : ℕ} {P : Measure (CoeffSpace d
       (2 * (d : ℝ)) ^ ((N - 1) / N ^ 2) * s i a ^ (1 - N⁻¹) * z i a ^ N⁻¹ := by
     intro i hi
     filter_upwards [(hd i hi).2.1, (hG i hi).symmetric] with a ha hga
-    exact weighted_pointwise_gap hN ha.1 ((toFullBlockMat_isHermitian_iff _).2 hga) (hd i hi).2.2.2.2.1.isHermitian ha.2 (hw i)
+    exact weighted_pointwise_gap hN ha.1 ((toFullBlockMat_isHermitian_iff _).2 hga) (hd i
+      hi).2.2.2.2.1.isHermitian ha.2 (hw i)
   have h := scalar_joint_gap hN (by positivity : 0 ≤ 2 * (d : ℝ)) I hI z s t hz0 hs0 ht0
     (fun i hi => ((hd i hi).1.memLp_absSchattenNorm hN.le).const_mul (w i))
     (fun i hi => ((hc i hi).memLp_absSchattenNorm hN.le).const_mul (w i))
@@ -368,7 +382,8 @@ private theorem weighted_schatten_data {d : ℕ} {P : Measure (CoeffSpace d)} {N
 
 private theorem root_le_add_const {α : Type*} [MeasurableSpace α] {μ : Measure α}
     [IsProbabilityMeasure μ] {N c : ℝ} (hN : 1 ≤ N) (hc : 0 ≤ c) {u f g : α → ℝ}
-    (hu0 : 0 ≤ᵐ[μ] u) (hf0 : 0 ≤ᵐ[μ] f) (hg0 : 0 ≤ᵐ[μ] g) (hu : MemLp u (ENNReal.ofReal N) μ) (hf : MemLp f (ENNReal.ofReal N) μ)
+    (hu0 : 0 ≤ᵐ[μ] u) (hf0 : 0 ≤ᵐ[μ] f) (hg0 : 0 ≤ᵐ[μ] g) (hu : MemLp u (ENNReal.ofReal N) μ)
+      (hf : MemLp f (ENNReal.ofReal N) μ)
     (hg : MemLp g (ENNReal.ofReal N) μ) (h : ∀ᵐ a ∂μ, u a ≤ f a + g a + c) :
     (∫ a, u a ^ N ∂μ) ^ N⁻¹ ≤ (∫ a, f a ^ N ∂μ) ^ N⁻¹ + (∫ a, g a ^ N ∂μ) ^ N⁻¹ + c := by
   have hN0 := zero_lt_one.trans_le hN
@@ -376,20 +391,24 @@ private theorem root_le_add_const {α : Type*} [MeasurableSpace α] {μ : Measur
   have hsum' := scalar_minkowski_toReal hN hsum.1 (memLp_const c)
   have hdom : ∀ᵐ a ∂μ, ‖u a‖ ≤ ‖f a + g a + c‖ := by
     filter_upwards [hu0, hf0, hg0, h] with a hua hfa hga ha
-    simpa only [Real.norm_of_nonneg hua, Real.norm_of_nonneg (add_nonneg (add_nonneg hfa hga) hc)] using ha
+    simpa only [Real.norm_of_nonneg hua, Real.norm_of_nonneg (add_nonneg (add_nonneg hfa hga)
+      hc)] using ha
   have hconst : (eLpNorm (fun _ : α => c) (ENNReal.ofReal N) μ).toReal = c := by
     rw [scalar_eLpNorm_toReal_eq_root hN0 (ae_of_all μ (fun _ => hc)) (memLp_const c)]
     simpa only [integral_const, probReal_univ, one_smul] using Real.rpow_rpow_inv hc hN0.ne'
   rw [← scalar_eLpNorm_toReal_eq_root hN0 hu0 hu, ← scalar_eLpNorm_toReal_eq_root hN0 hf0 hf,
     ← scalar_eLpNorm_toReal_eq_root hN0 hg0 hg]
   exact (ENNReal.toReal_mono hsum'.1.eLpNorm_ne_top
-    (eLpNorm_mono_ae hu.aestronglyMeasurable hdom)).trans (hsum'.2.trans (by rw [hconst]; exact add_le_add hsum.2 le_rfl))
+    (eLpNorm_mono_ae hu.aestronglyMeasurable hdom)).trans (hsum'.2.trans (by rw [hconst]; exact
+      add_le_add hsum.2 le_rfl))
 
 /-- `p.two.grid.transport`: the full weighted joint-maximum positive gap. -/
 theorem positiveGap_weighted_joint_max (d : ℕ)
     {P : Measure (CoeffSpace d)} [IsProbabilityMeasure P] {N : ℝ} (hN : 2 ≤ N)
     {ι : Type*} (I : Finset ι) (hI : I.Nonempty) (w : ι → ℝ) (hw : ∀ i, 0 ≤ w i)
-    (F G : ι → CoeffSpace d → BlockMat d) (hF : ∀ i ∈ I, SchattenMemLp P N (F i)) (hG : ∀ i ∈ I, SchattenMemLp P N (G i)) (hFpos : ∀ i ∈ I, ∀ᵐ a ∂P, BlockMatLoewnerLE (ofFullBlockMat 0) (F i a))
+    (F G : ι → CoeffSpace d → BlockMat d) (hF : ∀ i ∈ I, SchattenMemLp P N (F i)) (hG : ∀ i ∈ I,
+      SchattenMemLp P N (G i)) (hFpos : ∀ i ∈ I, ∀ᵐ a ∂P, BlockMatLoewnerLE (ofFullBlockMat 0)
+      (F i a))
     (hFG : ∀ i ∈ I, ∀ᵐ a ∂P, BlockMatLoewnerLE (F i a) (G i a)) :
     let MF := fun i => ofFullBlockMat (Matrix.of fun α β => ∫ a, blockMatEntry (F i a) α β ∂P)
     let MG := fun i => ofFullBlockMat (Matrix.of fun α β => ∫ a, blockMatEntry (G i a) α β ∂P)
@@ -410,8 +429,10 @@ theorem positiveGap_weighted_joint_max (d : ℕ)
   let b := fun i => w i ^ N * blockOpNorm (MG i) ^ (N - 1) * blockTrace (blockSub (MG i) (MF i))
   let B := (∑ i ∈ I, b i) ^ N⁻¹
   let c := (2 * (d : ℝ)) ^ (1 - N⁻¹) * B
-  have hd (i) (hi : i ∈ I) := positiveGap_ordered_data hN1 (hF i hi) (hG i hi) (hFpos i hi) (hFG i hi)
-  have hm (i) (hi : i ∈ I) := positiveGap_mean_gap_bounds hN1 (hF i hi) (hG i hi) (hFpos i hi) (hFG i hi)
+  have hd (i) (hi : i ∈ I) := positiveGap_ordered_data hN1 (hF i hi) (hG i hi) (hFpos i hi) (hFG
+    i hi)
+  have hm (i) (hi : i ∈ I) := positiveGap_mean_gap_bounds hN1 (hF i hi) (hG i hi) (hFpos i hi)
+    (hFG i hi)
   have hb (i) (hi : i ∈ I) : 0 ≤ b i := mul_nonneg (mul_nonneg (Real.rpow_nonneg (hw i) _)
     (Real.rpow_nonneg (norm_nonneg _) _)) (hm i hi).1
   have hB : 0 ≤ B := Real.rpow_nonneg (Finset.sum_nonneg hb) _
@@ -421,21 +442,27 @@ theorem positiveGap_weighted_joint_max (d : ℕ)
   have hzd (i) (hi : i ∈ I) := weighted_schatten_data hN1 (hw i) (hd i hi).1
   have hdet (i) (hi : i ∈ I) : w i * absSchattenNorm N (blockSub (MG i) (MF i)) ≤ c := by
     have hh := mul_le_mul_of_nonneg_left ((hm i hi).2.1.trans (hm i hi).2.2.2) (hw i)
-    have hbi : b i ^ N⁻¹ ≤ B := Real.rpow_le_rpow (hb i hi) (Finset.single_le_sum hb hi) (inv_nonneg.mpr hN0.le)
+    have hbi : b i ^ N⁻¹ ≤ B := Real.rpow_le_rpow (hb i hi) (Finset.single_le_sum hb hi)
+      (inv_nonneg.mpr hN0.le)
     have he : w i * ((2 * (d : ℝ)) ^ (1 - N⁻¹) * blockOpNorm (MG i) ^ (1 - N⁻¹) *
         blockTrace (blockSub (MG i) (MF i)) ^ N⁻¹) = (2 * (d : ℝ)) ^ (1 - N⁻¹) * b i ^ N⁻¹ := by
-      dsimp only [b]; rw [weighted_root hN0 (hw i) (c := blockOpNorm (MG i)) (t := blockTrace (blockSub (MG i) (MF i))) (norm_nonneg _) (hm i hi).1]; ring
-    exact (hh.trans_eq he).trans (mul_le_mul_of_nonneg_left hbi (Real.rpow_nonneg (by positivity) _))
+      dsimp only [b]; rw [weighted_root hN0 (hw i) (c := blockOpNorm (MG i)) (t := blockTrace
+        (blockSub (MG i) (MF i))) (norm_nonneg _) (hm i hi).1]; ring
+    exact (hh.trans_eq he).trans (mul_le_mul_of_nonneg_left hbi (Real.rpow_nonneg (by
+      positivity) _))
   have hpoint : ∀ i ∈ I, ∀ᵐ a ∂P, f i a ≤ g i a + z i a + c := by
     intro i hi
     filter_upwards [((hG i hi).center hN1).symmetric, (hd i hi).2.1] with a hga hda
     have hGc := (toFullBlockMat_isHermitian_iff _).2 hga
     have hM := (hd i hi).2.2.2.2.2.1.isHermitian
-    have hDM : (toFullBlockMat (blockSub (blockSub (G i a) (F i a)) (blockSub (MG i) (MF i)))).IsHermitian := by
+    have hDM : (toFullBlockMat (blockSub (blockSub (G i a) (F i a)) (blockSub (MG i) (MF
+      i)))).IsHermitian := by
       rw [full_sub]; exact hda.1.isHermitian.sub hM
-    have ht := (absSchattenNorm_sub_le hGc hDM hN1).trans (add_le_add le_rfl (absSchattenNorm_sub_le hda.1.isHermitian hM hN1))
+    have ht := (absSchattenNorm_sub_le hGc hDM hN1).trans (add_le_add le_rfl
+      (absSchattenNorm_sub_le hda.1.isHermitian hM hN1))
     rw [← positiveGap_centered_identity] at ht; exact (mul_le_mul_of_nonneg_left ht (hw i)).trans
-      (by simpa only [mul_add, add_assoc, g, z, MG] using add_le_add (add_le_add (le_refl (g i a)) (le_refl (z i a))) (hdet i hi))
+      (by simpa only [mul_add, add_assoc, g, z, MG] using add_le_add (add_le_add (le_refl (g i
+        a)) (le_refl (z i a))) (hdet i hi))
   have hmax : ∀ᵐ a ∂P, (⨆ i ∈ (I : Set ι), f i a) ≤
       (⨆ i ∈ (I : Set ι), g i a) + (⨆ i ∈ (I : Set ι), z i a) + c := by
     filter_upwards [(Filter.eventually_all_finset I).mpr (fun i hi => (hfd i hi).1),
@@ -456,7 +483,8 @@ theorem positiveGap_weighted_joint_max (d : ℕ)
   have hy := positiveGap_weighted_joint_absorbed hNlt I hI w hw F G hF hG hFpos hFG
   have hcoef : N / (N - 1) + (2 * (d : ℝ)) ^ (1 - N⁻¹) ≤ 2 * (1 + (d : ℝ) ^ (1 - N⁻¹)) := by
     calc
-      _ ≤ 2 + 2 * (d : ℝ) ^ (1 - N⁻¹) := add_le_add (scalar_gap_absorption_factor_le_two hN) (scalar_gap_dimension_factor_le hN1 (Nat.cast_nonneg d))
+      _ ≤ 2 + 2 * (d : ℝ) ^ (1 - N⁻¹) := add_le_add (scalar_gap_absorption_factor_le_two hN)
+        (scalar_gap_dimension_factor_le hN1 (Nat.cast_nonneg d))
       _ = _ := by ring
   calc
     _ ≤ _ := hroot
@@ -478,12 +506,15 @@ private theorem weightedMax_opNorm_moment_le {d : ℕ} {P : Measure (CoeffSpace 
   have hs (i) (hi : i ∈ I) := weighted_schatten_data hN (hw i) (hH i hi)
   let f := fun i a => w i * blockOpNorm (H i a)
   let g := fun i a => w i * absSchattenNorm N (H i a)
-  have hf0 (i) (_hi : i ∈ I) : ∀ᵐ a ∂P, 0 ≤ f i a := ae_of_all P fun _ => mul_nonneg (hw i) (norm_nonneg _)
+  have hf0 (i) (_hi : i ∈ I) : ∀ᵐ a ∂P, 0 ≤ f i a := ae_of_all P fun _ => mul_nonneg (hw i)
+    (norm_nonneg _)
   have hfg (i) (hi : i ∈ I) : ∀ᵐ a ∂P, f i a ≤ g i a := (hH i hi).symmetric.mono fun _ ha =>
-    mul_le_mul_of_nonneg_left (blockOpNorm_le_absSchattenNorm (H := H i _) ((toFullBlockMat_isHermitian_iff _).2 ha) hN) (hw i)
+    mul_le_mul_of_nonneg_left (blockOpNorm_le_absSchattenNorm (H := H i _)
+      ((toFullBlockMat_isHermitian_iff _).2 ha) hN) (hw i)
   have hf (i) (hi : i ∈ I) : MemLp (f i) (ENNReal.ofReal N) P := by
     have hm : AEMeasurable (fun a => toFullBlockMat (H i a)) P :=
-      AEMeasurable.of_eval fun α => AEMeasurable.of_eval fun β => ((hH i hi).measurable α β).aemeasurable
+      AEMeasurable.of_eval fun α => AEMeasurable.of_eval fun β => ((hH i hi).measurable α
+        β).aemeasurable
     apply (hs i hi).2.mono' (hm.norm.const_mul (w i)).aestronglyMeasurable
     filter_upwards [hfg i hi, hf0 i hi] with a ha hfa
     change ‖f i a‖ ≤ g i a
@@ -494,7 +525,8 @@ private theorem weightedMax_opNorm_moment_le {d : ℕ} {P : Measure (CoeffSpace 
   have hG0 := weightedMax_nonneg I hI g (fun i hi => (hs i hi).1)
   have hint {u : CoeffSpace d → ℝ} (hu : MemLp u (ENNReal.ofReal N) P) (hu0 : 0 ≤ᵐ[P] u) :
       Integrable (fun a => u a ^ N) P := by
-    apply (hu.integrable_norm_rpow (ne_of_gt (ENNReal.ofReal_pos.mpr hN0)) ENNReal.ofReal_ne_top).congr
+    apply (hu.integrable_norm_rpow (ne_of_gt (ENNReal.ofReal_pos.mpr hN0))
+      ENNReal.ofReal_ne_top).congr
     filter_upwards [hu0] with a ha
     simp only [Real.norm_of_nonneg ha, ENNReal.toReal_ofReal hN0.le]
   refine ⟨hint hmF hF0, integral_mono_ae (hint hmF hF0) (hint hmG hG0) ?_⟩
@@ -522,7 +554,9 @@ with the operator norm on the left. -/
 theorem positiveGap_weighted_joint_max_pow (d : ℕ)
     {P : Measure (CoeffSpace d)} [IsProbabilityMeasure P] {N : ℝ} (hN : 2 ≤ N)
     {ι : Type*} (I : Finset ι) (hI : I.Nonempty) (w : ι → ℝ) (hw : ∀ i, 0 ≤ w i)
-    (F G : ι → CoeffSpace d → BlockMat d) (hF : ∀ i ∈ I, SchattenMemLp P N (F i)) (hG : ∀ i ∈ I, SchattenMemLp P N (G i)) (hFpos : ∀ i ∈ I, ∀ᵐ a ∂P, BlockMatLoewnerLE (ofFullBlockMat 0) (F i a))
+    (F G : ι → CoeffSpace d → BlockMat d) (hF : ∀ i ∈ I, SchattenMemLp P N (F i)) (hG : ∀ i ∈ I,
+      SchattenMemLp P N (G i)) (hFpos : ∀ i ∈ I, ∀ᵐ a ∂P, BlockMatLoewnerLE (ofFullBlockMat 0)
+      (F i a))
     (hFG : ∀ i ∈ I, ∀ᵐ a ∂P, BlockMatLoewnerLE (F i a) (G i a)) :
     let MF := fun i => ofFullBlockMat (Matrix.of fun α β => ∫ a, blockMatEntry (F i a) α β ∂P)
     let MG := fun i => ofFullBlockMat (Matrix.of fun α β => ∫ a, blockMatEntry (G i a) α β ∂P)
@@ -540,9 +574,11 @@ theorem positiveGap_weighted_joint_max_pow (d : ℕ)
   let Y := ∫ a, (⨆ i ∈ (I : Set ι), w i * absSchattenNorm N (blockSub (G i a) (MG i))) ^ N ∂P
   let B := ∑ i ∈ I, w i ^ N * blockOpNorm (MG i) ^ (N - 1) * blockTrace (blockSub (MG i) (MF i))
   have hX : 0 ≤ X := integral_nonneg_of_ae <| (weightedMax_nonneg I hI _
-    (fun i hi => (weighted_schatten_data hN1 (hw i) ((hF i hi).center hN1)).1)).mono fun _ ha => Real.rpow_nonneg ha _
+    (fun i hi => (weighted_schatten_data hN1 (hw i) ((hF i hi).center hN1)).1)).mono fun _ ha =>
+      Real.rpow_nonneg ha _
   have hY : 0 ≤ Y := integral_nonneg_of_ae <| (weightedMax_nonneg I hI _
-    (fun i hi => (weighted_schatten_data hN1 (hw i) ((hG i hi).center hN1)).1)).mono fun _ ha => Real.rpow_nonneg ha _
+    (fun i hi => (weighted_schatten_data hN1 (hw i) ((hG i hi).center hN1)).1)).mono fun _ ha =>
+      Real.rpow_nonneg ha _
   have hB : 0 ≤ B := Finset.sum_nonneg fun i hi => mul_nonneg
     (mul_nonneg (Real.rpow_nonneg (hw i) _) (Real.rpow_nonneg (norm_nonneg _) _))
     (positiveGap_mean_gap_bounds hN1 (hF i hi) (hG i hi) (hFpos i hi) (hFG i hi)).1
@@ -573,7 +609,8 @@ theorem transport_target_max_moment {α ι : Type*} [MeasurableSpace α]
       (∫ a, (⨆ z ∈ (Z : Set ι), f z a) ^ N ∂P) ≤ ∑ z ∈ Z, ∫ a, f z a ^ N ∂P := by
   have hint {g : α → ℝ} (hg : MemLp g (ENNReal.ofReal N) P) (hg0 : ∀ᵐ a ∂P, 0 ≤ g a) :
       Integrable (fun a => g a ^ N) P := by
-    apply (hg.integrable_norm_rpow (ne_of_gt (ENNReal.ofReal_pos.mpr hN)) ENNReal.ofReal_ne_top).congr
+    apply (hg.integrable_norm_rpow (ne_of_gt (ENNReal.ofReal_pos.mpr hN))
+      ENNReal.ofReal_ne_top).congr
     filter_upwards [hg0] with a ha
     simp only [Real.norm_of_nonneg ha, ENNReal.toReal_ofReal hN.le]
   have hmax := weightedMax_memLp Z hZ f hf0 hf
@@ -596,14 +633,16 @@ theorem transport_target_max_moment {α ι : Type*} [MeasurableSpace α]
 loss. Both sides are genuine integrable moments. -/
 theorem transport_joint_envelope_moment {α ι : Type*} [MeasurableSpace α]
     {P : Measure α} {N B : ℝ} (hN : 0 < N) (hB : 0 ≤ B)
-    (Z : Finset ι) (hZ : Z.Nonempty) (f : ι → α → ℝ) (hf0 : ∀ z ∈ Z, ∀ᵐ a ∂P, 0 ≤ f z a) (hf : ∀ z ∈ Z, MemLp (f z) (ENNReal.ofReal N) P)
+    (Z : Finset ι) (hZ : Z.Nonempty) (f : ι → α → ℝ) (hf0 : ∀ z ∈ Z, ∀ᵐ a ∂P, 0 ≤ f z a) (hf : ∀
+      z ∈ Z, MemLp (f z) (ENNReal.ofReal N) P)
     (X : α → ℝ) (hX0 : ∀ᵐ a ∂P, 0 ≤ X a) (hX : MemLp X (ENNReal.ofReal N) P)
     (hbound : ∀ z ∈ Z, ∀ᵐ a ∂P, f z a ≤ B * X a) :
     Integrable (fun a => (⨆ z ∈ (Z : Set ι), f z a) ^ N) P ∧
       (∫ a, (⨆ z ∈ (Z : Set ι), f z a) ^ N ∂P) ≤ B ^ N * ∫ a, X a ^ N ∂P := by
   have hmax := (transport_target_max_moment hN Z hZ f hf0 hf).1
   have hXM : Integrable (fun a => X a ^ N) P := by
-    apply (hX.integrable_norm_rpow (ne_of_gt (ENNReal.ofReal_pos.mpr hN)) ENNReal.ofReal_ne_top).congr
+    apply (hX.integrable_norm_rpow (ne_of_gt (ENNReal.ofReal_pos.mpr hN))
+      ENNReal.ofReal_ne_top).congr
     filter_upwards [hX0] with a ha
     simp only [Real.norm_of_nonneg ha, ENNReal.toReal_ofReal hN.le]
   refine ⟨hmax, ?_⟩
@@ -614,7 +653,8 @@ theorem transport_joint_envelope_moment {α ι : Type*} [MeasurableSpace α]
   rw [iSup_mem_finset_eq_finset_sup Z hZ _ ha, ← Real.mul_rpow hB hxa]
   obtain ⟨z, hz⟩ := hZ
   have hZ : Z.Nonempty := ⟨z, hz⟩
-  have hmax0 : 0 ≤ Z.sup' hZ (fun z => f z a) := (ha z hz).trans (Finset.le_sup' (fun z : ι => f z a) hz)
+  have hmax0 : 0 ≤ Z.sup' hZ (fun z => f z a) := (ha z hz).trans (Finset.le_sup' (fun z : ι => f
+    z a) hz)
   exact Real.rpow_le_rpow hmax0 (Finset.sup'_le hZ _ hb) hN.le
 
 end

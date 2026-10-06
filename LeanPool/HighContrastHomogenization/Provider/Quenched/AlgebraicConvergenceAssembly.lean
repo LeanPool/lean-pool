@@ -43,8 +43,8 @@ The limiting doubled block is self-dual, hence the constant doubled block of a
 coefficient matrix.  The first section reads the Schur coefficients of such a
 block in the parametrization `e.annealed.schur`: they are `σ_* = σ = ` the
 symmetric part of the coefficient matrix and `k = ` its antisymmetric part.  The
-limiting block therefore satisfies `s̄_* = s̄`, with `s̄` positive definite and
-`k̄` antisymmetric.
+limiting block therefore satisfies `s_bar_* = s_bar`, with `s_bar` positive definite and
+`k_bar` antisymmetric.
 -/
 
 namespace HCPolySupport
@@ -123,7 +123,7 @@ bounded as in `e.algebraic.entry`, at which the contrast decay
 `e.algebraic.contrast.decay` starts, together with a deterministic symmetric
 positive definite doubled block obeying the two-sided comparison
 `e.algebraic.block.decay`.  Its Schur coefficients, in the parametrization
-`e.annealed.schur`, satisfy `s̄_* = s̄` with `s̄` positive definite and `k̄`
+`e.annealed.schur`, satisfy `s_bar_* = s_bar` with `s_bar` positive definite and `k_bar`
 antisymmetric. -/
 theorem algebraic_convergence_assembly (d : ℕ) (hd : 2 ≤ d) (g : ℝ)
     (hg : g ∈ Set.Ico (0 : ℝ) 1) :

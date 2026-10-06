@@ -167,6 +167,78 @@ theorem activationFoldConstant_nonneg (d : ℕ) [NeZero d] (g kappaRate c : ℝ)
 
 /-! ## The split -/
 
+private theorem geometricDiscount_gap_product_le
+    {g s₀ delta : ℝ}
+    (hgap : (1 - g) / 16 ≤ s₀ - responseWindowOrder g)
+    (hgap0 : 0 < (1 - g) / 16) (hdelta1 : Real.sqrt delta ≤ 1) :
+    Book.Ch02.geometricDiscount s₀ 1 *
+        (Real.sqrt (Book.Ch02.geometricDiscount
+          (s₀ - responseWindowOrder g) 2))⁻¹ *
+        (Real.sqrt (Book.Ch02.geometricDiscount (responseWindowOrder g) 2))⁻¹ *
+        Real.sqrt delta ≤
+      (Real.sqrt (Book.Ch02.geometricDiscount ((1 - g) / 16) 2))⁻¹ *
+        (Real.sqrt (Book.Ch02.geometricDiscount (responseWindowOrder g) 2))⁻¹ := by
+  have hdisc0 : (0 : ℝ) < Book.Ch02.geometricDiscount ((1 - g) / 16) 2 :=
+    Book.Ch02.book_geometricDiscount_pos (by linarith only [hgap0])
+  have hdiscMono : Book.Ch02.geometricDiscount ((1 - g) / 16) 2 ≤
+      Book.Ch02.geometricDiscount (s₀ - responseWindowOrder g) 2 :=
+    geometricDiscount_mono_order (by norm_num) hgap
+  have hsqrtPos : (0 : ℝ) <
+      Real.sqrt (Book.Ch02.geometricDiscount ((1 - g) / 16) 2) :=
+    Real.sqrt_pos.mpr hdisc0
+  have hG1 : (Real.sqrt (Book.Ch02.geometricDiscount
+        (s₀ - responseWindowOrder g) 2))⁻¹ ≤
+      (Real.sqrt (Book.Ch02.geometricDiscount ((1 - g) / 16) 2))⁻¹ := by
+    rw [← one_div, ← one_div]
+    exact one_div_le_one_div_of_le hsqrtPos (Real.sqrt_le_sqrt hdiscMono)
+  have hG0 : Book.Ch02.geometricDiscount s₀ 1 ≤ 1 := by
+    have h3 : (0 : ℝ) < Real.rpow (3 : ℝ) (-s₀ * 1) :=
+      Real.rpow_pos_of_pos (by norm_num) _
+    simp only [Book.Ch02.geometricDiscount]
+    linarith only [h3]
+  have hG10 : (0 : ℝ) ≤ (Real.sqrt (Book.Ch02.geometricDiscount
+      (s₀ - responseWindowOrder g) 2))⁻¹ :=
+    inv_nonneg.mpr (Real.sqrt_nonneg _)
+  have hG1'0 : (0 : ℝ) ≤ (Real.sqrt (Book.Ch02.geometricDiscount
+      ((1 - g) / 16) 2))⁻¹ :=
+    inv_nonneg.mpr (Real.sqrt_nonneg _)
+  have hG20 : (0 : ℝ) ≤ (Real.sqrt (Book.Ch02.geometricDiscount
+      (responseWindowOrder g) 2))⁻¹ :=
+    inv_nonneg.mpr (Real.sqrt_nonneg _)
+  have hSD0 : (0 : ℝ) ≤ Real.sqrt delta := Real.sqrt_nonneg _
+  have hstep1 : Book.Ch02.geometricDiscount s₀ 1 *
+        (Real.sqrt (Book.Ch02.geometricDiscount
+          (s₀ - responseWindowOrder g) 2))⁻¹ ≤
+      1 * (Real.sqrt (Book.Ch02.geometricDiscount ((1 - g) / 16) 2))⁻¹ :=
+    mul_le_mul hG0 hG1 hG10 zero_le_one
+  have hstep2 : Book.Ch02.geometricDiscount s₀ 1 *
+        (Real.sqrt (Book.Ch02.geometricDiscount
+          (s₀ - responseWindowOrder g) 2))⁻¹ *
+        (Real.sqrt (Book.Ch02.geometricDiscount
+          (responseWindowOrder g) 2))⁻¹ ≤
+      1 * (Real.sqrt (Book.Ch02.geometricDiscount ((1 - g) / 16) 2))⁻¹ *
+        (Real.sqrt (Book.Ch02.geometricDiscount
+          (responseWindowOrder g) 2))⁻¹ :=
+    mul_le_mul_of_nonneg_right hstep1 hG20
+  have hprod0 : (0 : ℝ) ≤
+      1 * (Real.sqrt (Book.Ch02.geometricDiscount ((1 - g) / 16) 2))⁻¹ *
+        (Real.sqrt (Book.Ch02.geometricDiscount
+          (responseWindowOrder g) 2))⁻¹ := by
+    rw [one_mul]
+    exact mul_nonneg hG1'0 hG20
+  calc Book.Ch02.geometricDiscount s₀ 1 *
+        (Real.sqrt (Book.Ch02.geometricDiscount
+          (s₀ - responseWindowOrder g) 2))⁻¹ *
+        (Real.sqrt (Book.Ch02.geometricDiscount
+          (responseWindowOrder g) 2))⁻¹ * Real.sqrt delta
+      ≤ 1 * (Real.sqrt (Book.Ch02.geometricDiscount ((1 - g) / 16) 2))⁻¹ *
+          (Real.sqrt (Book.Ch02.geometricDiscount
+            (responseWindowOrder g) 2))⁻¹ * 1 :=
+        mul_le_mul hstep2 hdelta1 hSD0 hprod0
+    _ = (Real.sqrt (Book.Ch02.geometricDiscount ((1 - g) / 16) 2))⁻¹ *
+          (Real.sqrt (Book.Ch02.geometricDiscount
+            (responseWindowOrder g) 2))⁻¹ := by ring
+
 /-- **(α), part two.**  The explicit flux frame constant splits
 into a `(d, s₀, Rad, cnorm)`-level factor and a `(d, g, κ)`-level factor, with
 no factor left in two classes and no dependence on `abar`. -/
@@ -206,24 +278,6 @@ theorem three_rpow_mul_foldedAnchoredFrameConstant_le [NeZero d]
       (by linarith only [hbHalf, hkappa]) hJr
       (by linarith only [hRad]) hJB
   -- the pieces of the `Lg` class
-  have hdisc0 : (0 : ℝ) < Book.Ch02.geometricDiscount ((1 - g) / 16) 2 :=
-    Book.Ch02.book_geometricDiscount_pos (by linarith only [hgap0])
-  have hdiscMono : Book.Ch02.geometricDiscount ((1 - g) / 16) 2 ≤
-      Book.Ch02.geometricDiscount (s₀ - responseWindowOrder g) 2 :=
-    geometricDiscount_mono_order (by norm_num) hgap
-  have hsqrtPos : (0 : ℝ) <
-      Real.sqrt (Book.Ch02.geometricDiscount ((1 - g) / 16) 2) :=
-    Real.sqrt_pos.mpr hdisc0
-  have hG1 : (Real.sqrt (Book.Ch02.geometricDiscount
-        (s₀ - responseWindowOrder g) 2))⁻¹ ≤
-      (Real.sqrt (Book.Ch02.geometricDiscount ((1 - g) / 16) 2))⁻¹ := by
-    rw [← one_div, ← one_div]
-    exact one_div_le_one_div_of_le hsqrtPos (Real.sqrt_le_sqrt hdiscMono)
-  have hG0 : Book.Ch02.geometricDiscount s₀ 1 ≤ 1 := by
-    have h3 : (0 : ℝ) < Real.rpow (3 : ℝ) (-s₀ * 1) :=
-      Real.rpow_pos_of_pos (by norm_num) _
-    simp only [Book.Ch02.geometricDiscount]
-    linarith only [h3]
   have hG00 : (0 : ℝ) ≤ Book.Ch02.geometricDiscount s₀ 1 :=
     Book.Ch02.book_geometricDiscount_nonneg (by linarith only [hs₀0])
   -- nonnegativity
@@ -251,9 +305,6 @@ theorem three_rpow_mul_foldedAnchoredFrameConstant_le [NeZero d]
   have hsi0 : (0 : ℝ) ≤ s₀⁻¹ := (inv_pos.mpr hs₀0).le
   have hG10 : (0 : ℝ) ≤ (Real.sqrt (Book.Ch02.geometricDiscount
       (s₀ - responseWindowOrder g) 2))⁻¹ :=
-    inv_nonneg.mpr (Real.sqrt_nonneg _)
-  have hG1'0 : (0 : ℝ) ≤ (Real.sqrt (Book.Ch02.geometricDiscount
-      ((1 - g) / 16) 2))⁻¹ :=
     inv_nonneg.mpr (Real.sqrt_nonneg _)
   have hG20 : (0 : ℝ) ≤ (Real.sqrt (Book.Ch02.geometricDiscount
       (responseWindowOrder g) 2))⁻¹ :=
@@ -283,39 +334,8 @@ theorem three_rpow_mul_foldedAnchoredFrameConstant_le [NeZero d]
         (Real.sqrt (Book.Ch02.geometricDiscount (responseWindowOrder g) 2))⁻¹ *
         Real.sqrt delta ≤
       (Real.sqrt (Book.Ch02.geometricDiscount ((1 - g) / 16) 2))⁻¹ *
-        (Real.sqrt (Book.Ch02.geometricDiscount (responseWindowOrder g) 2))⁻¹ := by
-    have hstep1 : Book.Ch02.geometricDiscount s₀ 1 *
-          (Real.sqrt (Book.Ch02.geometricDiscount
-            (s₀ - responseWindowOrder g) 2))⁻¹ ≤
-        1 * (Real.sqrt (Book.Ch02.geometricDiscount ((1 - g) / 16) 2))⁻¹ :=
-      mul_le_mul hG0 hG1 hG10 zero_le_one
-    have hstep2 : Book.Ch02.geometricDiscount s₀ 1 *
-          (Real.sqrt (Book.Ch02.geometricDiscount
-            (s₀ - responseWindowOrder g) 2))⁻¹ *
-          (Real.sqrt (Book.Ch02.geometricDiscount
-            (responseWindowOrder g) 2))⁻¹ ≤
-        1 * (Real.sqrt (Book.Ch02.geometricDiscount ((1 - g) / 16) 2))⁻¹ *
-          (Real.sqrt (Book.Ch02.geometricDiscount
-            (responseWindowOrder g) 2))⁻¹ :=
-      mul_le_mul_of_nonneg_right hstep1 hG20
-    have hprod0 : (0 : ℝ) ≤
-        1 * (Real.sqrt (Book.Ch02.geometricDiscount ((1 - g) / 16) 2))⁻¹ *
-          (Real.sqrt (Book.Ch02.geometricDiscount
-            (responseWindowOrder g) 2))⁻¹ := by
-      rw [one_mul]
-      exact mul_nonneg hG1'0 hG20
-    calc Book.Ch02.geometricDiscount s₀ 1 *
-          (Real.sqrt (Book.Ch02.geometricDiscount
-            (s₀ - responseWindowOrder g) 2))⁻¹ *
-          (Real.sqrt (Book.Ch02.geometricDiscount
-            (responseWindowOrder g) 2))⁻¹ * Real.sqrt delta
-        ≤ 1 * (Real.sqrt (Book.Ch02.geometricDiscount ((1 - g) / 16) 2))⁻¹ *
-            (Real.sqrt (Book.Ch02.geometricDiscount
-              (responseWindowOrder g) 2))⁻¹ * 1 :=
-          mul_le_mul hstep2 hdelta1 hSD0 hprod0
-      _ = (Real.sqrt (Book.Ch02.geometricDiscount ((1 - g) / 16) 2))⁻¹ *
-            (Real.sqrt (Book.Ch02.geometricDiscount
-              (responseWindowOrder g) 2))⁻¹ := by ring
+        (Real.sqrt (Book.Ch02.geometricDiscount (responseWindowOrder g) 2))⁻¹ :=
+    geometricDiscount_gap_product_le hgap hgap0 hdelta1
   -- assemble
   have hrest0 : (0 : ℝ) ≤ coarseFluxResponseConstant d * s₀⁻¹ *
       Book.Ch03.constantCoeffMatrixNormHalf (identityConstantCoeffMatrix d) *

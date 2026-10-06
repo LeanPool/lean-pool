@@ -28,7 +28,7 @@ open scoped ENNReal
 testing inequality discharged by the weak-testing bridge and a quantitative
 cutoff family. -/
 theorem
-    coarseCaccioppoli_boundary_qone_of_quantitativeCutoff_of_aHarmonicFamily_of_coefficientBounds_of_multiscaleEllipticity_of_localizedExplicitHeightOfScaleChoice
+    coarseCaccioppoli_boundary_qone_of_quantitativeCutoff_of_of_heightChoice
     {d : ℕ} [NeZero d] (Q : TriadicCube d) (a : CoeffField d)
     (s t C uL2Sq : ℝ) {lam Lam : ℝ}
     (k : ℝ → ℝ → ℕ) {F : ℝ → ℝ}
@@ -148,7 +148,7 @@ theorem
     F (1 / 3 : ℝ) ≤
       coarseCaccioppoliBoundaryExplicitHeightBound Q a s t C uL2Sq := by
   exact
-    coarseCaccioppoli_boundary_qone_of_radiusEnergyBridgeCanonicalAnalyticInputs_of_coefficientBounds_of_multiscaleEllipticity_of_localizedExplicitHeightOfScaleChoice
+    coarseCaccioppoli_boundary_qone_of_radiusEnergyAnalyticInputs
       Q a s t C uL2Sq k
       (fun ρ₁ ρ₂ x => matVecMul (a x) ((w ρ₁ ρ₂).toH1.grad x))
       (fun ρ₁ ρ₂ x => (w ρ₁ ρ₂).toH1 x)
@@ -162,7 +162,9 @@ theorem
       (coarseCaccioppoliQuantitativeCutoffHessianBound Q)
       A1 AS
       hC hs ht hst hu hnonneg hbounded hscale
-      (CoarseCaccioppoliBoundaryRadiusEnergyBridgeCanonicalAnalyticInputs.of_quantitativeCubeCutoff_of_aHarmonicFamily
+      ((open CoarseCaccioppoliBoundaryRadiusEnergyBridgeCanonicalAnalyticInputs
+        (of_quantitativeCubeCutoff_of_aHarmonicFamily) in
+        of_quantitativeCubeCutoff_of_aHarmonicFamily)
           Q a s C
           (fun ρ₁ ρ₂ => (k ρ₁ ρ₂ : ℝ))
           (coarseCaccioppoliBoundaryLocalizedExplicitHeightOfScaleChoice Q a s t C k)
@@ -175,7 +177,7 @@ theorem
 /-- Boundary coarse Caccioppoli for the actual harmonic family, with cutoff
 support discharged from the strict outer-radius condition `ρ₂ < 1`. -/
 theorem
-    coarseCaccioppoli_boundary_qone_of_quantitativeCutoff_of_aHarmonicFamily_of_outerRadius_lt_one_of_coefficientBounds_of_multiscaleEllipticity_of_localizedExplicitHeightOfScaleChoice
+    coarseCaccioppoli_boundary_qone_of_quantitativeCutoff_of_of_outerRadiusBelowOne
     {d : ℕ} [NeZero d] (Q : TriadicCube d) (a : CoeffField d)
     (s t C uL2Sq : ℝ) {lam Lam : ℝ}
     (k : ℝ → ℝ → ℕ) {F : ℝ → ℝ}
@@ -294,7 +296,7 @@ theorem
     F (1 / 3 : ℝ) ≤
       coarseCaccioppoliBoundaryExplicitHeightBound Q a s t C uL2Sq := by
   exact
-    coarseCaccioppoli_boundary_qone_of_radiusEnergyBridgeCanonicalAnalyticInputs_of_coefficientBounds_of_multiscaleEllipticity_of_localizedExplicitHeightOfScaleChoice
+    coarseCaccioppoli_boundary_qone_of_radiusEnergyAnalyticInputs
       Q a s t C uL2Sq k
       (fun ρ₁ ρ₂ x => matVecMul (a x) ((w ρ₁ ρ₂).toH1.grad x))
       (fun ρ₁ ρ₂ x => (w ρ₁ ρ₂).toH1 x)
@@ -308,7 +310,7 @@ theorem
       (coarseCaccioppoliQuantitativeCutoffHessianBound Q)
       A1 AS
       hC hs ht hst hu hnonneg hbounded hscale
-      (CoarseCaccioppoliBoundaryRadiusEnergyBridgeCanonicalAnalyticInputs.of_quantitativeCubeCutoff_of_aHarmonicFamily_of_outerRadius_lt_one
+      (CoarseCaccioppoliBoundaryRadiusEnergyBridgeCanonicalAnalyticInputs.of_harmonicFamily
           Q a s C
           (fun ρ₁ ρ₂ => (k ρ₁ ρ₂ : ℝ))
           (coarseCaccioppoliBoundaryLocalizedExplicitHeightOfScaleChoice Q a s t C k)
@@ -321,7 +323,7 @@ theorem
 /-- Interior coarse Caccioppoli for the actual harmonic family, transported
 across the radius agreement used for the centered quantity. -/
 theorem
-    coarseCaccioppoli_interior_qone_of_quantitativeCutoff_of_aHarmonicFamily_of_coefficientBounds_of_multiscaleEllipticity_of_radiusAgreement_of_localizedExplicitHeightOfScaleChoice
+    coarseCaccioppoli_interior_qone_of_quantitativeCutoff_of_of_radiusAgreement
     {d : ℕ} [NeZero d] (Q : TriadicCube d) (a : CoeffField d)
     (s t C uL2Sq : ℝ) {lam Lam : ℝ}
     (k : ℝ → ℝ → ℕ) {F G₀ : ℝ → ℝ}
@@ -442,7 +444,7 @@ theorem
     F (1 / 3 : ℝ) ≤
       coarseCaccioppoliInteriorExplicitHeightBound Q a s t C uL2Sq := by
   exact
-    coarseCaccioppoli_interior_qone_of_radiusEnergyBridgeCanonicalAnalyticInputs_of_coefficientBounds_of_multiscaleEllipticity_of_radiusAgreement_of_localizedExplicitHeightOfScaleChoice
+    coarseCaccioppoli_interior_qone_of_radiusEnergyAnalyticInputs
       Q a s t C uL2Sq k
       (fun ρ₁ ρ₂ x => matVecMul (a x) ((w ρ₁ ρ₂).toH1.grad x))
       (fun ρ₁ ρ₂ x => (w ρ₁ ρ₂).toH1 x)
@@ -456,7 +458,9 @@ theorem
       (coarseCaccioppoliQuantitativeCutoffHessianBound Q)
       A1 AS
       hC hs ht hst hu hagree hG_nonneg hG_bounded hscale
-      (CoarseCaccioppoliBoundaryRadiusEnergyBridgeCanonicalAnalyticInputs.of_quantitativeCubeCutoff_of_aHarmonicFamily
+      ((open CoarseCaccioppoliBoundaryRadiusEnergyBridgeCanonicalAnalyticInputs
+        (of_quantitativeCubeCutoff_of_aHarmonicFamily) in
+        of_quantitativeCubeCutoff_of_aHarmonicFamily)
           Q a s C
           (fun ρ₁ ρ₂ => (k ρ₁ ρ₂ : ℝ))
           (coarseCaccioppoliBoundaryLocalizedExplicitHeightOfScaleChoice Q a s t C k)
@@ -469,7 +473,7 @@ theorem
 /-- Interior coarse Caccioppoli for the actual harmonic family, with cutoff
 support discharged from the strict outer-radius condition `ρ₂ < 1`. -/
 theorem
-    coarseCaccioppoli_interior_qone_of_quantitativeCutoff_of_aHarmonicFamily_of_outerRadius_lt_one_of_coefficientBounds_of_multiscaleEllipticity_of_radiusAgreement_of_localizedExplicitHeightOfScaleChoice
+    coarseCaccioppoli_interior_qone_of_quantitativeCutoff_of_of_outerRadiusBelowOne
     {d : ℕ} [NeZero d] (Q : TriadicCube d) (a : CoeffField d)
     (s t C uL2Sq : ℝ) {lam Lam : ℝ}
     (k : ℝ → ℝ → ℕ) {F G₀ : ℝ → ℝ}
@@ -589,7 +593,7 @@ theorem
     F (1 / 3 : ℝ) ≤
       coarseCaccioppoliInteriorExplicitHeightBound Q a s t C uL2Sq := by
   exact
-    coarseCaccioppoli_interior_qone_of_radiusEnergyBridgeCanonicalAnalyticInputs_of_coefficientBounds_of_multiscaleEllipticity_of_radiusAgreement_of_localizedExplicitHeightOfScaleChoice
+    coarseCaccioppoli_interior_qone_of_radiusEnergyAnalyticInputs
       Q a s t C uL2Sq k
       (fun ρ₁ ρ₂ x => matVecMul (a x) ((w ρ₁ ρ₂).toH1.grad x))
       (fun ρ₁ ρ₂ x => (w ρ₁ ρ₂).toH1 x)
@@ -603,7 +607,7 @@ theorem
       (coarseCaccioppoliQuantitativeCutoffHessianBound Q)
       A1 AS
       hC hs ht hst hu hagree hG_nonneg hG_bounded hscale
-      (CoarseCaccioppoliBoundaryRadiusEnergyBridgeCanonicalAnalyticInputs.of_quantitativeCubeCutoff_of_aHarmonicFamily_of_outerRadius_lt_one
+      (CoarseCaccioppoliBoundaryRadiusEnergyBridgeCanonicalAnalyticInputs.of_harmonicFamily
           Q a s C
           (fun ρ₁ ρ₂ => (k ρ₁ ρ₂ : ℝ))
           (coarseCaccioppoliBoundaryLocalizedExplicitHeightOfScaleChoice Q a s t C k)

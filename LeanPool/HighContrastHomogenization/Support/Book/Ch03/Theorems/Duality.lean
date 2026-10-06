@@ -66,7 +66,7 @@ private theorem fluxDefectDualityTheory_of_scalarSolutionComparisonDualityEstima
         solutionComparisonNegativeBesovLhs Q s (publicCoeffField Q a)
           (scalarMatrix (d := d) sigma0) w.u.grad w.v.grad := by
     simpa [ha0eq] using
-      homogenizationComparisonNegativeBesovLHS_eq_solutionComparisonNegativeBesovLhs_publicCoeffField
+      homogenizationNegativeBesovLHS_eq_solutionComparisonLHS
         Q a a0 s w.u w.v
   have hcomparison :
       IsHomogenizationComparisonPairOn (cubeSet Q)
@@ -97,7 +97,7 @@ private theorem fluxDefectDualityTheory_of_scalarSolutionComparisonDualityEstima
       localizedHomogenizationFluxDefectAverage Q a a0 t j w.u = L := by
     dsimp [L]
     simpa [ha0eq] using
-      localizedHomogenizationFluxDefectAverage_eq_localizedFluxDefectNegativeBesovAverageTwo_publicCoeffField
+      HomogenizationFluxDefectAverage_eq_negativeBesovFluxAverage
         Q a a0 t j w.u
   have hL_nonneg : 0 ≤ L := by
     dsimp [L]
@@ -137,14 +137,15 @@ private theorem fluxDefectDualityTheory_of_scalarSolutionComparisonDualityEstima
           unfold dualityFromFluxDefectExponentLossRHS
           rw [hlocalized_eq]
 
-private theorem fluxDefectDualityTheory_of_dirichletBesov_of_coordinateBridgeSharpLoss_of_localizedPairing
+private theorem
+  fluxDefectDualityTheory_of_dirichletBesov_of_coordinateBridgeSharpLoss_of_localizedPairing
     {d : ℕ} [NeZero d] {Cdir Cbridge Cpairing : ℝ}
     (hdir : DiscreteConstantCoefficientDirichletBesovFunctionSpacesUniform d Cdir)
     (hbridge : UnitFullDualCoordinateOverlappingBridgeSharpLoss d Cbridge)
     (hpair : LocalizedFluxDefectPositivePairingEstimate d Cpairing) :
     FluxDefectDualityTheory d :=
   fluxDefectDualityTheory_of_scalarSolutionComparisonDualityEstimateExponentLoss
-    ((scalarSolutionComparisonGenuineDualityEstimateSharpLoss_of_dirichletBesov_of_coordinateBridgeSharpLoss_of_localizedPairing
+    ((scalarSolutionComparisonGenuineDualityEstimateSharpLoss
       hdir hbridge hpair).to_exponentLoss)
 
 /-- Public two-exponent duality package with the Dirichlet Besov theorem and

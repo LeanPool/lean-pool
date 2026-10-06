@@ -77,6 +77,7 @@ private theorem entryTestR_coarseToRegular_eq_bilinearTest {d : ℕ}
   filter_upwards with x
   simp [vecDot, matVecMul, Pi.single_apply]
 
+/-- The integral of the bilinear coefficient probe `(e' · a(x)e) φ(x)` over Euclidean space. -/
 @[expose]
 public noncomputable def regularBilinearTest {d : ℕ} (e e' : Vec d)
     (φ : Vec d → ℝ) (a : RegCoeffField d) : ℝ :=

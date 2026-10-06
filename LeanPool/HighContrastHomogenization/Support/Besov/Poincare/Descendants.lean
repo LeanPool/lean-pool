@@ -49,7 +49,7 @@ theorem CubeDescendantProjectedDualMeanZeroPoincareEstimate.to_localEstimate
       cubeBesovCircNorm R 1 (2 : ℝ≥0∞) (1 : ℝ≥0∞) (cubeProjection R (M - j) g) ≤
         (3 / 2 : ℝ) *
           cubeBesovCircPartialNorm R 1 (2 : ℝ≥0∞) (1 : ℝ≥0∞) (M - j) g :=
-    cubeBesovCircNorm_projection_le_three_halves_mul_cubeBesovCircPartialNorm_on_descendants_of_memLp
+    cubeBesovCircNorm_projection_le_threeHalves_partial_onDescendants
       (Q := Q) (u := g) (M := M) hg j hj R hR
   have hnote_nonneg : 0 ≤ C * (3 : ℝ) ^ ((d : ℝ) + 1) := by
     exact mul_nonneg hC (Real.rpow_nonneg (by positivity) _)

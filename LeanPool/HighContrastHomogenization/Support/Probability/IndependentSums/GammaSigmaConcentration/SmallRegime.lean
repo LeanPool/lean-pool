@@ -31,7 +31,7 @@ variable {μ : Measure Ω}
 range `σ ∈ (0, 1)`. This is the concrete `Γ_σ` wrapper around the generic
 rounded truncation-Chernoff theorem from `PsiConcentration.lean`. -/
 theorem
-  measureReal_upperTailEvent_finset_sum_le_exp_card_mul_add_card_mul_exp_neg_of_iIndepFun_of_isBigO_of_integral_eq_zero_of_lt_one
+  upperTailProbability_finiteSum_le_exp_card_mul_add_card_mul_exp_neg
     [IsProbabilityMeasure μ]
     {X : ι → Ω → ℝ} {s : Finset ι} {σ a l L : ℝ}
     (h_indep : iIndepFun X μ)
@@ -46,7 +46,7 @@ theorem
       Real.exp (-l * a + (s.card : ℝ) * (l ^ (2 : ℕ) * gammaSigmaHeavyTailRoundedConst σ)) +
         (s.card : ℝ) * Real.exp (-(L ^ σ)) := by
   have hmain :=
-    measureReal_upperTailEvent_finset_sum_le_exp_card_mul_add_card_mul_invPsi_of_iIndepFun_of_isBigO_of_integral_eq_zero_of_log_constraint_rounded
+    upperTailProbability_finiteSum_le_exp_card_mul_add_card_mul_invPsi_of_invPsi
       (μ := μ) (Ψ := gammaSigma σ) (X := X) (s := s) (a := a) (l := l) (L := L)
       (CΨ := gammaSigmaTailIntegralConst σ) (M := gammaSigmaLogControlConst σ)
       h_indep h_meas h_int h_mean
@@ -325,7 +325,7 @@ lemma smallRegime_heavyTail_union_le {σ R t : ℝ}
 /-- Small-regime one-sided heavy-tail concentration for centered independent
 unit-scale `O_{Γ_σ}` summands. -/
 theorem
-  measureReal_upperTailEvent_finset_sum_le_exp_neg_of_iIndepFun_of_isBigO_of_integral_eq_zero_of_lt_one_unit_smallRegime
+  upperTailProbability_finiteSum_le_exp_neg_of_iIndepFun_of_isBigO_of_iIndepFun
     [IsProbabilityMeasure μ]
     {X : ι → Ω → ℝ} {s : Finset ι} {σ t : ℝ}
     (h_indep : iIndepFun X μ)
@@ -462,7 +462,7 @@ theorem
   have hlL : l ≤ (1 / 2) * L ^ (σ - 1) := by
     rw [hlL_eq]
   have htail :=
-    measureReal_upperTailEvent_finset_sum_le_exp_card_mul_add_card_mul_exp_neg_of_iIndepFun_of_isBigO_of_integral_eq_zero_of_lt_one
+    upperTailProbability_finiteSum_le_exp_card_mul_add_card_mul_exp_neg
       (μ := μ) (X := X) (s := s) (σ := σ)
       (a := B * Real.sqrt R * t) (l := l) (L := L)
       h_indep h_meas h_int h_mean hσ₀ hσ₁ hX hl_nonneg hl_one hL_one hlL

@@ -125,6 +125,104 @@ theorem descendantsAverageFluctuationOperatorNormSqWithNormalizer_le_probeSqBudg
   simpa [descendantsAverageFluctuationOperatorNormSqWithNormalizer] using
     Section54.VarianceBoundGoodScale.fullBlock_operatorNorm_sq_le_probeSqBudget hM
 
+private theorem normalizerProbeSquareBudgetIntegralFormula
+    {d : ℕ} {P : Ch04.RestrictionCoeffLaw d}
+    (M : RegCoeffField d → FullBlockMat d)
+    (hcoord_int : ∀ α : BlockCoord d,
+      Integrable (fun a : RegCoeffField d =>
+        (fullBlockQuadratic (M a)
+          (Section54.VarianceBoundGoodScale.fullBlockCoordinateProbe α)) ^ (2 : ℕ)) P)
+    (hplus_int : ∀ α β : BlockCoord d,
+      Integrable (fun a : RegCoeffField d =>
+        (fullBlockQuadratic (M a)
+          (Section54.VarianceBoundGoodScale.fullBlockPlusProbe α β)) ^ (2 : ℕ)) P)
+    (hminus_int : ∀ α β : BlockCoord d,
+      Integrable (fun a : RegCoeffField d =>
+        (fullBlockQuadratic (M a)
+          (Section54.VarianceBoundGoodScale.fullBlockMinusProbe α β)) ^ (2 : ℕ)) P)
+    (hterm_int : ∀ α β : BlockCoord d,
+      Integrable
+        (fun a : RegCoeffField d =>
+          3 *
+            ((fullBlockQuadratic (M a)
+                (Section54.VarianceBoundGoodScale.fullBlockCoordinateProbe α)) ^ (2 : ℕ) +
+              (fullBlockQuadratic (M a)
+                (Section54.VarianceBoundGoodScale.fullBlockPlusProbe α β)) ^ (2 : ℕ) +
+              (fullBlockQuadratic (M a)
+                (Section54.VarianceBoundGoodScale.fullBlockMinusProbe α β)) ^ (2 : ℕ))) P) :
+    ∫ a, Section54.VarianceBoundGoodScale.fullBlockProbeSqBudget (M a) ∂P =
+        (Fintype.card (BlockCoord d) : ℝ) *
+          ∑ α : BlockCoord d,
+            (Fintype.card (BlockCoord d) : ℝ) *
+              ∑ β : BlockCoord d,
+                3 *
+                  (∫ a,
+                      (fullBlockQuadratic (M a)
+                        (Section54.VarianceBoundGoodScale.fullBlockCoordinateProbe α)) ^
+                        (2 : ℕ) ∂P +
+                    ∫ a,
+                      (fullBlockQuadratic (M a)
+                        (Section54.VarianceBoundGoodScale.fullBlockPlusProbe α β)) ^
+                        (2 : ℕ) ∂P +
+                    ∫ a,
+                      (fullBlockQuadratic (M a)
+                        (Section54.VarianceBoundGoodScale.fullBlockMinusProbe α β)) ^
+                        (2 : ℕ) ∂P) := by
+  classical
+  unfold Section54.VarianceBoundGoodScale.fullBlockProbeSqBudget
+  rw [integral_const_mul]
+  congr 1
+  rw [integral_finsetSum]
+  · congr
+    ext α
+    rw [integral_const_mul]
+    congr 1
+    rw [integral_finsetSum]
+    · congr
+      ext β
+      let f : RegCoeffField d → ℝ :=
+        fun a =>
+          (fullBlockQuadratic (M a)
+            (Section54.VarianceBoundGoodScale.fullBlockCoordinateProbe α)) ^
+              (2 : ℕ)
+      let g : RegCoeffField d → ℝ :=
+        fun a =>
+          (fullBlockQuadratic (M a)
+            (Section54.VarianceBoundGoodScale.fullBlockPlusProbe α β)) ^
+              (2 : ℕ)
+      let h : RegCoeffField d → ℝ :=
+        fun a =>
+          (fullBlockQuadratic (M a)
+            (Section54.VarianceBoundGoodScale.fullBlockMinusProbe α β)) ^
+              (2 : ℕ)
+      have hf_int : Integrable f P := by
+        simpa [f] using hcoord_int α
+      have hg_int : Integrable g P := by
+        simpa [g] using hplus_int α β
+      have hh_int : Integrable h P := by
+        simpa [h] using hminus_int α β
+      change
+        ∫ a, 3 * (f a + g a + h a) ∂P =
+          3 * (∫ a, f a ∂P + ∫ a, g a ∂P + ∫ a, h a ∂P)
+      rw [integral_const_mul]
+      change
+        3 * ∫ a, (fun a => f a + g a) a + h a ∂P =
+          3 * (∫ a, f a ∂P + ∫ a, g a ∂P + ∫ a, h a ∂P)
+      have hfg_fun : (fun a : RegCoeffField d => f a + g a) = f + g := by
+        ext a
+        rfl
+      rw [hfg_fun]
+      rw [integral_add (hf_int.add hg_int) hh_int]
+      change
+        3 * (∫ a, f a + g a ∂P + ∫ a, h a ∂P) =
+          3 * (∫ a, f a ∂P + ∫ a, g a ∂P + ∫ a, h a ∂P)
+      rw [integral_add hf_int hg_int]
+    · intro β _hβ
+      exact hterm_int α β
+  · intro α _hα
+    exact (MeasureTheory.integrable_finsetSum _ fun β _hβ =>
+      hterm_int α β).const_mul _
+
 theorem descendantsAverageFluctuationOperatorNormSqWithNormalizer_integral_le_probeBounds
     {d : ℕ} [NeZero d] {P : Ch04.RestrictionCoeffLaw d}
     (hP : Ch04.RestrictionLawCarrier P) (hStruct : Ch04.RestrictionStructuralLaw P)
@@ -293,59 +391,7 @@ theorem descendantsAverageFluctuationOperatorNormSqWithNormalizer_integral_le_pr
                       (fullBlockQuadratic (M a)
                         (Section54.VarianceBoundGoodScale.fullBlockMinusProbe α β)) ^
                         (2 : ℕ) ∂P) := by
-    unfold Section54.VarianceBoundGoodScale.fullBlockProbeSqBudget
-    rw [integral_const_mul]
-    congr 1
-    rw [integral_finsetSum]
-    · congr
-      ext α
-      rw [integral_const_mul]
-      congr 1
-      rw [integral_finsetSum]
-      · congr
-        ext β
-        let f : RegCoeffField d → ℝ :=
-          fun a =>
-            (fullBlockQuadratic (M a)
-              (Section54.VarianceBoundGoodScale.fullBlockCoordinateProbe α)) ^
-                (2 : ℕ)
-        let g : RegCoeffField d → ℝ :=
-          fun a =>
-            (fullBlockQuadratic (M a)
-              (Section54.VarianceBoundGoodScale.fullBlockPlusProbe α β)) ^
-                (2 : ℕ)
-        let h : RegCoeffField d → ℝ :=
-          fun a =>
-            (fullBlockQuadratic (M a)
-              (Section54.VarianceBoundGoodScale.fullBlockMinusProbe α β)) ^
-                (2 : ℕ)
-        have hf_int : Integrable f P := by
-          simpa [f, M, Q, j] using hcoord_int α
-        have hg_int : Integrable g P := by
-          simpa [g, M, Q, j] using hplus_int α β
-        have hh_int : Integrable h P := by
-          simpa [h, M, Q, j] using hminus_int α β
-        change
-          ∫ a, 3 * (f a + g a + h a) ∂P =
-            3 * (∫ a, f a ∂P + ∫ a, g a ∂P + ∫ a, h a ∂P)
-        rw [integral_const_mul]
-        change
-          3 * ∫ a, (fun a => f a + g a) a + h a ∂P =
-            3 * (∫ a, f a ∂P + ∫ a, g a ∂P + ∫ a, h a ∂P)
-        have hfg_fun : (fun a : RegCoeffField d => f a + g a) = f + g := by
-          ext a
-          rfl
-        rw [hfg_fun]
-        rw [integral_add (hf_int.add hg_int) hh_int]
-        change
-          3 * (∫ a, f a + g a ∂P + ∫ a, h a ∂P) =
-            3 * (∫ a, f a ∂P + ∫ a, g a ∂P + ∫ a, h a ∂P)
-        rw [integral_add hf_int hg_int]
-      · intro β _hβ
-        exact hterm_int α β
-    · intro α _hα
-      exact (MeasureTheory.integrable_finsetSum _ fun β _hβ =>
-        hterm_int α β).const_mul _
+    exact normalizerProbeSquareBudgetIntegralFormula M hcoord_int hplus_int hminus_int hterm_int
   have hbudget_bound :
       ∫ a, Section54.VarianceBoundGoodScale.fullBlockProbeSqBudget (M a) ∂P ≤
         (Fintype.card (BlockCoord d) : ℝ) *

@@ -166,6 +166,8 @@ theorem interior_cubeSet_eq_openCubeSet {d : ℕ} (Q : TriadicCube d) :
     interior_pi_set Set.finite_univ]
   simp [interior_Ico]
 
+/-- The central triadic child of `Q`, with scale decreased by one and each index multiplied by
+three. -/
 @[expose]
 def middleChildCube {d : ℕ} (Q : TriadicCube d) : TriadicCube d :=
   { scale := Q.scale - 1
@@ -344,7 +346,7 @@ noncomputable def normalizedCubeMeasure {d : ℕ} (S : TriadicCube d) :
     cubeMeasure S Set.univ = MeasureTheory.volume (cubeSet S) := by
   rw [cubeMeasure, MeasureTheory.Measure.restrict_apply_univ]
 
-@[simp] theorem cubeMeasure_apply_univ_toReal {d : ℕ} (S : TriadicCube d) :
+theorem cubeMeasure_apply_univ_toReal {d : ℕ} (S : TriadicCube d) :
     (cubeMeasure S Set.univ).toReal = cubeVolume S := by
   simp [cubeMeasure]
 
@@ -359,7 +361,7 @@ theorem cubeMeasure_apply_univ_ne_top {d : ℕ} (S : TriadicCube d) :
     simpa [hvol] using hzero
   exact (cubeVolume_pos S).ne' this
 
-@[simp] theorem cubeMeasure_apply_univ_eq {d : ℕ} (S : TriadicCube d) :
+theorem cubeMeasure_apply_univ_eq {d : ℕ} (S : TriadicCube d) :
     cubeMeasure S Set.univ = ENNReal.ofReal (cubeVolume S) := by
   exact (ENNReal.toReal_eq_toReal_iff' (cubeMeasure_apply_univ_ne_top S)
     ENNReal.ofReal_ne_top).1 (by

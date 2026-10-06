@@ -40,6 +40,121 @@ namespace CubeCalderonZygmund
 
 open MeasureTheory Set
 
+private theorem weighted_tail_eq_of_restricted_equality
+    {α E : Type*} [MeasurableSpace α] [NormedAddCommGroup E]
+    {μ : Measure α} {B : Set α} {F G : α → E} {a : ℝ}
+    (hB : MeasurableSet B) (hFG : F =ᵐ[μ.restrict B] G) :
+    sqWeightedMeasure F μ ({x | a < ‖F x‖} ∩ B) =
+      sqWeightedMeasure G μ ({x | a < ‖G x‖} ∩ B) := by
+  have hreplace :
+      sqWeightedMeasure F μ ({x | a < ‖F x‖} ∩ B) =
+        sqWeightedMeasure G μ ({x | a < ‖F x‖} ∩ B) :=
+    sqWeightedMeasure_apply_inter_eq_of_ae_eq_restrict hB hFG
+  have hFG_base : ∀ᵐ x ∂μ, x ∈ B → F x = G x :=
+    (ae_restrict_iff' hB).mp hFG
+  have hFG_weighted :
+      ∀ᵐ x ∂sqWeightedMeasure G μ, x ∈ B → F x = G x :=
+    (withDensity_absolutelyContinuous μ _).ae_le hFG_base
+  have htail :
+      sqWeightedMeasure G μ ({x | a < ‖F x‖} ∩ B) =
+        sqWeightedMeasure G μ ({x | a < ‖G x‖} ∩ B) := by
+    apply measure_congr
+    filter_upwards [hFG_weighted] with x hx
+    apply propext
+    change (a < ‖F x‖ ∧ x ∈ B) ↔ (a < ‖G x‖ ∧ x ∈ B)
+    by_cases hxB : x ∈ B
+    · rw [hx hxB]
+    · constructor
+      · intro h
+        exact False.elim (hxB h.2)
+      · intro h
+        exact False.elim (hxB h.2)
+  exact hreplace.trans htail
+
+private theorem reflected_parent_scaled_datum_tail_eq
+    {d : ℕ} [NeZero d] {m : ℤ} (sigma0 : ℝ) (H : Vec d → Vec d)
+    (hH : MemVectorL2 (openCubeSet (originCube d m)) H) (a : ℝ) :
+    sqWeightedMeasure
+        (sigma0⁻¹ • hilbertifyVecField (reflectedParentDatumExtension m
+          (cubeDirichletOddReflectionVectorField (originCube d m) H))) volume
+        ({x | a < ‖(sigma0⁻¹ • hilbertifyVecField (reflectedParentDatumExtension m
+          (cubeDirichletOddReflectionVectorField (originCube d m) H))) x‖} ∩
+          openCubeSet (originCube d (m + 1))) =
+      sqWeightedMeasure (sigma0⁻¹ • hilbertifyVecField H) volume
+        ({x | a < ‖(sigma0⁻¹ • hilbertifyVecField H) x‖} ∩
+          openCubeSet (originCube d m)) * ((3 : ℝ≥0∞) ^ d) := by
+  let Q : Set (Vec d) := openCubeSet (originCube d m)
+  let P : Set (Vec d) := openCubeSet (originCube d (m + 1))
+  let HP : Vec d → Vec d := cubeDirichletOddReflectionVectorField (originCube d m) H
+  let Hext : Vec d → Vec d := reflectedParentDatumExtension m HP
+  let gext : Vec d → HilbertVec d := sigma0⁻¹ • hilbertifyVecField Hext
+  let g : Vec d → HilbertVec d := sigma0⁻¹ • hilbertifyVecField H
+  have hPmeas : MeasurableSet P := measurableSet_openCubeSet (originCube d (m + 1))
+  have hHP_scalar :
+      (fun x => HilbertVec.ofVec
+        (cubeDirichletOddReflectionVectorField (originCube d m)
+          (sigma0⁻¹ • H) x)) =
+        sigma0⁻¹ • hilbertifyVecField HP := by
+    funext x
+    change (HilbertVec.ofVecL d)
+        (cubeDirichletOddReflectionVectorField (originCube d m) (sigma0⁻¹ • H) x) =
+      sigma0⁻¹ • (HilbertVec.ofVecL d) (HP x)
+    rw [← (HilbertVec.ofVecL d).map_smul]
+    congr 1
+    funext i
+    simp only [HP, cubeDirichletOddReflectionVectorField,
+      cubeCoordinateFoldReflectedVectorField, Pi.smul_apply, smul_eq_mul]
+    ring
+  have hgext_indicator : gext = P.indicator (sigma0⁻¹ • hilbertifyVecField HP) := by
+    change sigma0⁻¹ • hilbertifyVecField Hext = P.indicator (sigma0⁻¹ • hilbertifyVecField HP)
+    rw [show hilbertifyVecField Hext = P.indicator (hilbertifyVecField HP) by
+      simpa only [Hext] using hilbertifyVecField_reflectedParentDatumExtension m HP]
+    funext x
+    change sigma0⁻¹ • (P.indicator (hilbertifyVecField HP)) x =
+      P.indicator (sigma0⁻¹ • hilbertifyVecField HP) x
+    by_cases hx : x ∈ P
+    · rw [Set.indicator_of_mem hx, Set.indicator_of_mem hx]
+      rfl
+    · rw [Set.indicator_of_notMem hx, Set.indicator_of_notMem hx]
+      exact smul_zero _
+  have hH_source_meas : AEStronglyMeasurable (sigma0⁻¹ • hilbertifyVecField H)
+      (volume.restrict Q) :=
+    (memHilbertVectorL2_hilbertifyVecField hH).const_smul sigma0⁻¹ |>.aestronglyMeasurable
+  have hgext_tail (a : ℝ) :
+      sqWeightedMeasure gext volume ({x | a < ‖gext x‖} ∩ P) =
+        sqWeightedMeasure g volume ({x | a < ‖g x‖} ∩ Q) * ((3 : ℝ≥0∞) ^ d) := by
+    have hindicator := sqWeightedMeasure_indicator_tail_inter_eq_of_subset
+      (μ := volume) (f := sigma0⁻¹ • hilbertifyVecField HP) (a := a)
+      hPmeas hPmeas (by rintro x hx; exact hx)
+    have hreflect :
+        sqWeightedMeasure gext volume ({x | a < ‖gext x‖} ∩ P) =
+          sqWeightedMeasure
+            (fun x => HilbertVec.ofVec
+              (cubeDirichletOddReflectionVectorField (originCube d m)
+                (sigma0⁻¹ • H) x)) volume
+            ({x | a < ‖HilbertVec.ofVec
+              (cubeDirichletOddReflectionVectorField (originCube d m)
+                (sigma0⁻¹ • H) x)‖} ∩ P) := by
+      rw [hgext_indicator, hindicator]
+      rw [← hHP_scalar]
+    calc
+      sqWeightedMeasure gext volume ({x | a < ‖gext x‖} ∩ P) =
+          sqWeightedMeasure
+            (fun x => HilbertVec.ofVec
+              (cubeDirichletOddReflectionVectorField (originCube d m)
+                (sigma0⁻¹ • H) x)) volume
+            ({x | a < ‖HilbertVec.ofVec
+              (cubeDirichletOddReflectionVectorField (originCube d m)
+                (sigma0⁻¹ • H) x)‖} ∩ P) := hreflect
+      _ = ((3 : ℝ≥0∞) ^ d) *
+          sqWeightedMeasure g volume ({x | a < ‖g x‖} ∩ Q) := by
+            simpa only [g, Q, mul_comm] using!
+              oddReflectionVector_tail_sqWeightedMeasure_scale
+                (sigma0⁻¹ • H) hH_source_meas
+      _ = sqWeightedMeasure g volume ({x | a < ‖g x‖} ∩ Q) *
+          ((3 : ℝ≥0∞) ^ d) := by ring
+  exact hgext_tail a
+
 /-- The centered-cube one-level good-`λ` bound obtained from the reflected
 parent problem.  The stopping energy is the corrected square root of the sum
 of the two squared normalized energies. -/
@@ -218,92 +333,19 @@ theorem sqWeightedMeasure_reflected_oneLevel_tail_originCube
       _ = ((3 : ℝ≥0∞) ^ d) *
           sqWeightedMeasure fu volume ({x | a < ‖fu x‖} ∩ Q) := by
             simpa only [fu, Q, mul_comm] using!
-              sqWeightedMeasure_openCubeSet_succ_originCube_cubeDirichletOddReflectionVectorField_tail
+              oddReflectionVector_tail_sqWeightedMeasure_scale
                 (fun y => u.toH1Function.grad y) hfu_meas
       _ = sqWeightedMeasure fu volume ({x | a < ‖fu x‖} ∩ Q) *
           ((3 : ℝ≥0∞) ^ d) := by ring
-  have hFQpoint : ∀ x ∈ Q, F x = fu x := by
-    intro x hx
-    change (P.indicator (hilbertifyVecField uP.grad)) x = fu x
-    rw [Set.indicator_of_mem (hQP hx)]
-    change HilbertVec.ofVec (uP.grad x) = HilbertVec.ofVec (u.toH1Function.grad x)
-    rw [huP_grad, cubeDirichletOddReflectionVectorField_eq_self_of_mem_openCubeSet
-      (originCube d m) _ hx]
-  have hT_eq : T = {x | M * level < ‖fu x‖} ∩ Q := by
-    ext x
-    simp only [T, Set.mem_inter_iff, Set.mem_ofPred_eq]
-    constructor
-    · intro hx
-      exact ⟨by rw [hFQpoint x hx.2] at hx; exact hx.1, hx.2⟩
-    · intro hx
-      exact ⟨by rw [hFQpoint x hx.2]; exact hx.1, hx.2⟩
   have hT_source : sqWeightedMeasure F volume T =
       sqWeightedMeasure fu volume ({x | M * level < ‖fu x‖} ∩ Q) := by
-    rw [hT_eq]
-    exact sqWeightedMeasure_apply_inter_eq_of_ae_eq_restrict hQmeas hFQ
-  have hHP_scalar :
-      (fun x => HilbertVec.ofVec
-        (cubeDirichletOddReflectionVectorField (originCube d m)
-          (sigma0⁻¹ • H) x)) =
-        sigma0⁻¹ • hilbertifyVecField HP := by
-    funext x
-    change (HilbertVec.ofVecL d)
-        (cubeDirichletOddReflectionVectorField (originCube d m) (sigma0⁻¹ • H) x) =
-      sigma0⁻¹ • (HilbertVec.ofVecL d) (HP x)
-    rw [← (HilbertVec.ofVecL d).map_smul]
-    congr 1
-    funext i
-    simp only [HP, cubeDirichletOddReflectionVectorField,
-      cubeCoordinateFoldReflectedVectorField, Pi.smul_apply, smul_eq_mul]
-    ring
-  have hgext_indicator : gext = P.indicator (sigma0⁻¹ • hilbertifyVecField HP) := by
-    change sigma0⁻¹ • hilbertifyVecField Hext = P.indicator (sigma0⁻¹ • hilbertifyVecField HP)
-    rw [show hilbertifyVecField Hext = P.indicator (hilbertifyVecField HP) by
-      simpa only [Hext] using hilbertifyVecField_reflectedParentDatumExtension m HP]
-    funext x
-    change sigma0⁻¹ • (P.indicator (hilbertifyVecField HP)) x =
-      P.indicator (sigma0⁻¹ • hilbertifyVecField HP) x
-    by_cases hx : x ∈ P
-    · rw [Set.indicator_of_mem hx, Set.indicator_of_mem hx]
-      rfl
-    · rw [Set.indicator_of_notMem hx, Set.indicator_of_notMem hx]
-      exact smul_zero _
-  have hH_source_meas : AEStronglyMeasurable (sigma0⁻¹ • hilbertifyVecField H)
-      (volume.restrict Q) :=
-    (memHilbertVectorL2_hilbertifyVecField hH).const_smul sigma0⁻¹ |>.aestronglyMeasurable
+    simpa only [T] using weighted_tail_eq_of_restricted_equality
+      (a := M * level) hQmeas hFQ
   have hgext_tail (a : ℝ) :
       sqWeightedMeasure gext volume ({x | a < ‖gext x‖} ∩ P) =
         sqWeightedMeasure g volume ({x | a < ‖g x‖} ∩ Q) * ((3 : ℝ≥0∞) ^ d) := by
-    have hindicator := sqWeightedMeasure_indicator_tail_inter_eq_of_subset
-      (μ := volume) (f := sigma0⁻¹ • hilbertifyVecField HP) (a := a)
-      hPmeas hPmeas (by rintro x hx; exact hx)
-    have hreflect :
-        sqWeightedMeasure gext volume ({x | a < ‖gext x‖} ∩ P) =
-          sqWeightedMeasure
-            (fun x => HilbertVec.ofVec
-              (cubeDirichletOddReflectionVectorField (originCube d m)
-                (sigma0⁻¹ • H) x)) volume
-            ({x | a < ‖HilbertVec.ofVec
-              (cubeDirichletOddReflectionVectorField (originCube d m)
-                (sigma0⁻¹ • H) x)‖} ∩ P) := by
-      rw [hgext_indicator, hindicator]
-      rw [← hHP_scalar]
-    calc
-      sqWeightedMeasure gext volume ({x | a < ‖gext x‖} ∩ P) =
-          sqWeightedMeasure
-            (fun x => HilbertVec.ofVec
-              (cubeDirichletOddReflectionVectorField (originCube d m)
-                (sigma0⁻¹ • H) x)) volume
-            ({x | a < ‖HilbertVec.ofVec
-              (cubeDirichletOddReflectionVectorField (originCube d m)
-                (sigma0⁻¹ • H) x)‖} ∩ P) := hreflect
-      _ = ((3 : ℝ≥0∞) ^ d) *
-          sqWeightedMeasure g volume ({x | a < ‖g x‖} ∩ Q) := by
-            simpa only [g, Q, mul_comm] using!
-              sqWeightedMeasure_openCubeSet_succ_originCube_cubeDirichletOddReflectionVectorField_tail
-                (sigma0⁻¹ • H) hH_source_meas
-      _ = sqWeightedMeasure g volume ({x | a < ‖g x‖} ∩ Q) *
-          ((3 : ℝ≥0∞) ^ d) := by ring
+    simpa only [gext, Hext, HP, P, g, Q] using
+      reflected_parent_scaled_datum_tail_eq sigma0 H hH a
   have hkappa : oneStoppingBallTailControl F gext eps level P =
       sqWeightedMeasure F volume ({x | level / 2 < ‖F x‖} ∩ P) +
         ENNReal.ofReal ((eps⁻¹) ^ (2 : ℕ)) *

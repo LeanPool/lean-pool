@@ -59,7 +59,7 @@ theorem AELocallyUniformlyEllipticField.adjointReg {d : ℕ}
   rcases ha Q with ⟨lam, Lam, hlam, hle, hEll⟩
   refine ⟨lam, Lam, hlam, hle, ?_⟩
   have hEll' : IsAEEllipticFieldOn lam Lam (openCubeSet Q) a.toFun := hEll
-  show IsAEEllipticFieldOn lam Lam (openCubeSet Q) (HCPolySupport.adjointReg a).toFun
+  change IsAEEllipticFieldOn lam Lam (openCubeSet Q) (HCPolySupport.adjointReg a).toFun
   rw [adjointReg_toFun]
   exact IsAEEllipticFieldOn.adjointCoeffField hEll'
 
@@ -79,7 +79,7 @@ private theorem isRestrictionLocalRandomVariable_fullBlockMat_of_entries
     fun β => ?_
   exact hX α β
 
-theorem exists_isRestrictionLocalRandomVariable_ae_eq_coarseBlockMatrix_upperRight_apply_cubeSet
+theorem exists_restrictionLocalRandomVariable_ae_eq_coarseUpperRightEntry
     {d : ℕ} {P : RestrictionCoeffLaw d} (hP : RestrictionLawCarrier P)
     (Q : TriadicCube d) (i j : Fin d) :
     ∃ Y : RegCoeffField d → ℝ,
@@ -104,7 +104,7 @@ theorem exists_isRestrictionLocalRandomVariable_ae_eq_coarseBlockMatrix_upperRig
           simp [coarseBlockMatrix_upperRight_apply]
     _ = Ysum a - Yi a - Yj a := by rw [hsum, hi, hj]
 
-theorem exists_isRestrictionLocalRandomVariable_ae_eq_coarseBlockMatrix_lowerLeft_apply_cubeSet
+theorem exists_restrictionLocalRandomVariable_ae_eq_coarseLowerLeftEntry
     {d : ℕ} {P : RestrictionCoeffLaw d} (hP : RestrictionLawCarrier P)
     (Q : TriadicCube d) (i j : Fin d) :
     ∃ Y : RegCoeffField d → ℝ,
@@ -148,20 +148,20 @@ theorem exists_isRestrictionLocalRandomVariable_ae_eq_coarseFullBlockMatrix_cube
         cases β with
         | inl j =>
             simpa [toFullBlockMat] using
-              hP.exists_isRestrictionLocalRandomVariable_ae_eq_coarseBlockMatrix_upperLeft_apply_cubeSet Q i j
+              hP.exists_restrictionLocalRandomVariable_ae_eq_coarseUpperLeftEntry Q i j
         | inr j =>
             simpa [toFullBlockMat] using
-              exists_isRestrictionLocalRandomVariable_ae_eq_coarseBlockMatrix_upperRight_apply_cubeSet
+              exists_restrictionLocalRandomVariable_ae_eq_coarseUpperRightEntry
                 hP Q i j
     | inr i =>
         cases β with
         | inl j =>
             simpa [toFullBlockMat] using
-              exists_isRestrictionLocalRandomVariable_ae_eq_coarseBlockMatrix_lowerLeft_apply_cubeSet
+              exists_restrictionLocalRandomVariable_ae_eq_coarseLowerLeftEntry
                 hP Q i j
         | inr j =>
             simpa [toFullBlockMat] using
-              hP.exists_isRestrictionLocalRandomVariable_ae_eq_coarseBlockMatrix_lowerRight_apply_cubeSet Q i j
+              hP.exists_restrictionLocalRandomVariable_ae_eq_coarseLowerRightEntry Q i j
   let Yentry : BlockCoord d → BlockCoord d → RegCoeffField d → ℝ :=
     fun α β => Classical.choose (entry_exists α β)
   let Y : RegCoeffField d → FullBlockMat d := fun a α β => Yentry α β a
@@ -208,7 +208,7 @@ theorem blockJObservableCubeSetBlockVec_nonneg {d : ℕ}
         restrictionResponseJObservableCubeSet Q (pStar + p) (qStar + q) (adjointReg a)
   nlinarith
 
-theorem blockJObservableCubeSetBlockVec_le_descendantsAverage_cubeSet_of_aelocallyUniformlyEllipticField
+theorem blockJObservable_le_descendantAverage_of_uniformEllipticity
     {d : ℕ} [NeZero d] {a : RegCoeffField d}
     (ha : AELocallyUniformlyEllipticField a) (Q : TriadicCube d) {k : ℤ}
     (hk : k ≤ Q.scale) (P Qv : BlockVec d) :
@@ -223,10 +223,10 @@ theorem blockJObservableCubeSetBlockVec_le_descendantsAverage_cubeSet_of_aelocal
   let R₂ : TriadicCube d → ℝ :=
     fun R => restrictionResponseJObservableCubeSet R (pStar + p) (qStar + q) (adjointReg a)
   have h1 :=
-    restrictionResponseJObservableCubeSet_le_descendantsAverage_cubeSet_of_aelocallyUniformlyEllipticField
+    responseJObservableSet_le_descendantMean_cube_of_locallyEllipticField
       (a := a) ha Q hk (p - pStar) (qStar - q)
   have h2 :=
-    restrictionResponseJObservableCubeSet_le_descendantsAverage_cubeSet_of_aelocallyUniformlyEllipticField
+    responseJObservableSet_le_descendantMean_cube_of_locallyEllipticField
       (a := adjointReg a) ha.adjointReg Q hk
       (pStar + p) (qStar + q)
   have hhalf_nonneg : 0 ≤ (1 / 2 : ℝ) := by norm_num
@@ -384,10 +384,11 @@ private theorem measurable_blockJQuadraticFullBlockMat {d : ℕ}
   unfold blockJQuadraticFullBlockMat
   exact
     (((measurable_fullBlockQuadraticCh04 (toFullBlockVec P)).const_mul (1 / 2 : ℝ)).add
-      (((measurable_fullBlockQuadraticCh04 (toFullBlockVec Qv)).comp measurable_fullBlockReflect).const_mul
+      (((measurable_fullBlockQuadraticCh04 (toFullBlockVec Qv)).comp
+        measurable_fullBlockReflect).const_mul
         (1 / 2 : ℝ))).sub measurable_const
 
-theorem blockJObservableCubeSetBlockVec_eq_blockJQuadraticFullBlockMat_of_aelocallyUniformlyEllipticField
+theorem blockJObservable_eq_blockJQuadraticForm_of_uniformEllipticity
     {d : ℕ} [NeZero d] {a : RegCoeffField d}
     (ha : AELocallyUniformlyEllipticField a)
     (Q : TriadicCube d) (P Qv : BlockVec d) :
@@ -405,7 +406,7 @@ theorem blockJObservableCubeSetBlockVec_eq_blockJQuadraticFullBlockMat_of_aeloca
       coarseBlockMatrix (cubeSet Q) a.toFun =
         Ch02.coarseBlockMatrix (Ch02.cubeDomain Q) (F.coeffOn Q) := by
     simpa [F] using
-      RestrictionLawCarrier.coarseBlockMatrix_cubeSet_eq_ch02_coarseBlockMatrix_of_aelocallyUniformlyEllipticField
+      RestrictionLawCarrier.coarseBlockMatrix_cubeSet_eq_chapterCoarse
         (a := a) ha Q
   have hstar :
       Ch02.coarseStarredBlockMatrixInv (Ch02.cubeDomain Q) (F.coeffOn Q) =
@@ -438,7 +439,7 @@ theorem blockJObservableCubeSetBlockVec_ae_eq_blockJQuadraticFullBlockMat
           (toFullBlockMat (coarseBlockMatrix (cubeSet Q) a.toFun)) P Qv := by
   filter_upwards [hPμ.ae_locallyUniformlyEllipticField] with a ha
   exact
-    blockJObservableCubeSetBlockVec_eq_blockJQuadraticFullBlockMat_of_aelocallyUniformlyEllipticField
+    blockJObservable_eq_blockJQuadraticForm_of_uniformEllipticity
       ha Q P Qv
 
 theorem exists_isRestrictionLocalRandomVariable_ae_eq_blockJObservableCubeSetBlockVec
@@ -604,7 +605,7 @@ theorem isBigO_gammaSigma_blockJObservableCubeSetBlockVec_originCube_of_scaleZer
         blockJObservableCubeSetBlockVec (originCube d n) P Qv a ≤ Avg a := by
     filter_upwards [hPμ.ae_locallyUniformlyEllipticField] with a ha
     have hsub :=
-      blockJObservableCubeSetBlockVec_le_descendantsAverage_cubeSet_of_aelocallyUniformlyEllipticField
+      blockJObservable_le_descendantAverage_of_uniformEllipticity
         (a := a) ha (originCube d n) (k := 0) hn0 P Qv
     simpa [Avg, D, descendantsAverage,
       descendantsAtScale_eq_descendantsAtDepth (originCube d n) hn0] using hsub
@@ -751,7 +752,7 @@ theorem isBigOWith_gammaSigma_blockJObservableCubeSetBlockVec_originCube_sub_int
         (gammaSigmaDescendantsAtScaleConst d n σ *
           (Real.sqrt ((descendantsAtScale Q n).card : ℝ) /
             ((descendantsAtScale Q n).card : ℝ)) * centerK) :=
-    isBigO_gammaSigma_restrictionCenteredDescendantAverageOnCube_of_restrictionUnitRangeDependentLaw_of_ae_eq_local
+    isBigO_gammaSigma_centeredDescendantMean_of_unitRangeLaw
       (Q := Q) (n := n) (P := Pμ) hPμ hn hnQ hstat hdep X
       hX_local hX_cov hX0_aemeas hX_desc_aemeas hσ₀ hσ₂
       hcenterK_pos hcenter
@@ -762,11 +763,11 @@ theorem isBigOWith_gammaSigma_blockJObservableCubeSetBlockVec_originCube_sub_int
           restrictionCenteredDescendantAverageOnCube Pμ Q n X a := by
     filter_upwards [hPμ.ae_locallyUniformlyEllipticField] with a ha
     have hsub :=
-      blockJObservableCubeSetBlockVec_le_descendantsAverage_cubeSet_of_aelocallyUniformlyEllipticField
+      blockJObservable_le_descendantAverage_of_uniformEllipticity
         (a := a) ha Q (k := n) hnQ P Qv
     have hcenter_eq :=
       congrFun
-        (restrictionCenteredDescendantAverageOnCube_eq_restrictionDescendantAverageOnCube_sub
+        (centeredDescendantAverage_eq_descendantAverage_sub_originMean
           (P := Pμ) (Q := Q) (n := n) hnQ X) a
     calc
       blockJObservableCubeSetBlockVec (originCube d m) P Qv a -
@@ -925,7 +926,8 @@ theorem concentration_of_blockJObservableCubeSetBlockVec
     ∃ C : ℝ, 0 < C ∧
       ∀ {θ : ℝ}, 0 < θ →
       ∀ {Pμ : RestrictionCoeffLaw d} [IsProbabilityMeasure Pμ],
-        RestrictionLawCarrier Pμ → RestrictionStationaryLaw Pμ → RestrictionUnitRangeDependentLaw Pμ →
+        RestrictionLawCarrier Pμ → RestrictionStationaryLaw Pμ →
+          RestrictionUnitRangeDependentLaw Pμ →
       ∀ (P Qv : BlockVec d),
         IsBigO Pμ (gammaSigma σ)
           (blockJObservableCubeSetBlockVec (originCube d 0) P Qv) θ →

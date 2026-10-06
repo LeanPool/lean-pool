@@ -51,7 +51,7 @@ theorem cubeBesovOverlappingPositiveVectorDepthSeminorm_cubeIncrementVec_le_sqrt
             ((2 * d * (3 ^ (d - 1)) ^ (j - m) : ℝ) *
               ∑ R ∈ descendantsAtDepth Q (m + 1), B R)) := by
   have havg :=
-    cubeBesovOverlappingPositiveVectorDepthAverage_cubeIncrementVec_le_pow_inv_const_mul_ancestor_sum
+    overlappingPositiveDepthAverage_increment_le_ancestorSum
       (Q := Q) (u := u) (j := j) (m := m) hmj B hB hbound
   have hweight_nonneg :
       0 ≤ Real.rpow (3 : ℝ) (s * (j : ℝ)) :=

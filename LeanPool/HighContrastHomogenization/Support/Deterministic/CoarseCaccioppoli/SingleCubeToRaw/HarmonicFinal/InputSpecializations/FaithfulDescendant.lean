@@ -13,7 +13,8 @@ public import LeanPool.HighContrastHomogenization.Support.Deterministic.Multisca
 
 /-!
 # Coarse-graining support:
-Support.Deterministic.CoarseCaccioppoli.SingleCubeToRaw.HarmonicFinal.InputSpecializations.FaithfulDescendant
+Support.Deterministic.CoarseCaccioppoli.SingleCubeToRaw.HarmonicFinal.InputSpecializations
+.FaithfulDescendant
 
 Imported from the Apache-2.0 CoarseGraining development at commit
 `c7ddd76c08ade64fed1b8d2ca51be14dfee8deb4`.
@@ -78,7 +79,7 @@ theorem faithful_centered_descendant_product_le_parent_theta
       (Q := Q) (R := R) (j := j) a t ht.le hR hSigmaSum_t
   have hellipticR :
       CoarseCaccioppoliBoundarySingleCubeEllipticityLocalization R a s t :=
-    CoarseCaccioppoliBoundarySingleCubeEllipticityLocalization.of_isEllipticFieldOn_of_isSigmaCoarse
+    CoarseCaccioppoliBoundarySingleCubeEllipticityLocalization.of_ellipticity_sigmaCoarse
       R a hs ht hst hEllRopen hDataR hBsumR_s hSigmaSumR_t
   have hfactor_nonneg : 0 ≤ Real.rpow (3 : ℝ) (-(j : ℝ)) :=
     Real.rpow_nonneg (by norm_num : 0 ≤ (3 : ℝ)) _

@@ -174,7 +174,8 @@ private theorem matrix_signFlip_conj_integral_eq {d : ℕ} [NeZero d]
     _ = ∫ a, F a r c ∂P :=
           hIso.integral_comp_rotateReg (isSignedPermutationMatrix_signFlipMatrix i)
             (fun a => F a r c) (hmeas r c)
-    _ = (Matrix.of fun r c => ∫ a, F a r c ∂P) r c := (Matrix.of_apply (fun r c => ∫ a, F a r c ∂P) r c).symm
+    _ = (Matrix.of fun r c => ∫ a, F a r c ∂P) r c := (Matrix.of_apply (fun r c => ∫ a, F a r c
+      ∂P) r c).symm
 
 /-- **Hoisted invariance core (swap).**  Opaque block observable `F`, as in
 `matrix_signFlip_conj_integral_eq`. -/
@@ -205,7 +206,8 @@ private theorem matrix_swap_conj_integral_eq {d : ℕ} [NeZero d]
     _ = ∫ a, F a r c ∂P :=
           hIso.integral_comp_rotateReg (isSignedPermutationMatrix_swap i j)
             (fun a => F a r c) (hmeas r c)
-    _ = (Matrix.of fun r c => ∫ a, F a r c ∂P) r c := (Matrix.of_apply (fun r c => ∫ a, F a r c ∂P) r c).symm
+    _ = (Matrix.of fun r c => ∫ a, F a r c ∂P) r c := (Matrix.of_apply (fun r c => ∫ a, F a r c
+      ∂P) r c).symm
 
 /-- **Hoisted vanishing core (adjoint).**  Opaque block observable `G`. -/
 private theorem matrix_adjoint_neg_integral_eq_zero {d : ℕ} [NeZero d]
@@ -531,7 +533,8 @@ theorem RestrictionLawCarrier.barSigmaStarAtScale_eq_inv_barSigmaStarInvAtScale
     (hStruct : RestrictionStructuralLaw P) (n : ℤ) :
     hP.barSigmaStarAtScale hStruct n =
       (hP.barSigmaStarInvAtScale hStruct n)⁻¹ := by
-  simpa [RestrictionLawCarrier.barSigmaStarAtScale, RestrictionLawCarrier.barSigmaStarInvAtScale] using
+  simpa [RestrictionLawCarrier.barSigmaStarAtScale,
+    RestrictionLawCarrier.barSigmaStarInvAtScale] using
     Internal.AnnealedPrimitiveScalarizationData.barSigmaStar_eq_inv_barSigmaStarInv
       (Internal.annealedScalarizationTheory_of_structuralLaw hP hStruct)
       (Internal.annealedPrimitiveScalarizationData_of_structuralLaw hP hStruct n)

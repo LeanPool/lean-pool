@@ -87,7 +87,8 @@ theorem coarseBlockMatrix_upperLeft_eq_sigmaCoarse_of_isSymmetricCoeffField_of_i
     kappaCoarse_eq_zero_of_isSymmetricCoeffField_of_isCoarseBlockMatrix ha hA]
   simp
 
-theorem coarseBlockMatrix_lowerRight_eq_sigmaStarInvCoarse_of_isSymmetricCoeffField_of_isCoarseBlockMatrix
+theorem
+  coarseBlockMatrix_lowerRight_eq_sigmaStarInvCoarse_of_isSymmetricCoeffField_of_isCoarseBlockMatrix
     {d : ℕ} {U : Set (Vec d)} {a : CoeffField d}
     (_ha : IsSymmetricCoeffField a)
     (hA : IsCoarseBlockMatrix U a (deterministicCoarseBlockMatrix U a)) :

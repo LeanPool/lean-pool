@@ -65,7 +65,8 @@ theorem tendsto_eLpNorm_two_of_tendsto_ae_of_dominated
   set B : Vec d → ℝ≥0∞ := fun x => (‖h x‖ₑ + ‖g x‖ₑ) ^ (2 : ℝ) with hB
   have hFmeas : ∀ n, AEMeasurable (F n) μ := by
     intro n
-    exact ENNReal.continuous_rpow_const.measurable.comp_aemeasurable (((hf n).sub hg.aestronglyMeasurable).enorm)
+    exact ENNReal.continuous_rpow_const.measurable.comp_aemeasurable (((hf n).sub
+      hg.aestronglyMeasurable).enorm)
   have hBound : ∀ n, F n ≤ᵐ[μ] B := by
     intro n
     filter_upwards [hbound n] with x hx

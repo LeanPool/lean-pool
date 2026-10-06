@@ -127,12 +127,14 @@ noncomputable def potential {d : ℕ} (P : Measure (CoeffSpace d)) (γ : ℝ) (j
   η * Real.log (1 +
       (profile P γ (Geometry.explicitRoundedGrid jStar m) jStar k n +
         determinantDrift P γ (Geometry.explicitRoundedGrid jStar m) jStar n) / η) +
-    a * projectiveDistance m (explicitCanonicalMetric (adaptedMean P (Geometry.explicitRoundedGrid jStar m) k))
+    a * projectiveDistance m (explicitCanonicalMetric (adaptedMean P
+      (Geometry.explicitRoundedGrid jStar m) k))
 
 /-- `e.global.selection.h.step`: an `h`-step on a fixed grid with the synchronized
 propagation output `e.fixed.geometry.synchronized.propagation` and `x > η` decreases `Φ` by
 `c = ½ η log(16/9)` up to `(aC/d) Δ̂_h(n)`. Uses `scalar_growth_bound`, `scalar_contraction`. -/
-theorem potential_step_sub_le_of_exp_bound {d : ℕ} (P : Measure (CoeffSpace d)) (γ : ℝ) (jStar : ℕ) (η a c C Q : ℝ)
+theorem potential_step_sub_le_of_exp_bound {d : ℕ} (P : Measure (CoeffSpace d)) (γ : ℝ) (jStar :
+  ℕ) (η a c C Q : ℝ)
     (m : Mat d) (k n : ℤ) (h : ℕ) (hd : 0 < d) (hη : η ∈ Set.Ioc (0 : ℝ) 1) (hC : 1 ≤ C)
     (hQ : 0 ≤ Q) (ha : 4 * Q * max 1 C ≤ a * C / d) (hc : c = 1 / 2 * η * Real.log (16 / 9))
     (hx : η < profile P γ (Geometry.explicitRoundedGrid jStar m) jStar k n +
@@ -213,21 +215,25 @@ theorem long_step_decrease {d : ℕ} (P : Measure (CoeffSpace d)) (γ : ℝ) (jS
       determinantDrift P γ (Geometry.explicitRoundedGrid jStar m) jStar n ≤ 1)
     (hx'0 : 0 ≤ profile P γ (Geometry.explicitRoundedGrid jStar m) jStar k (n + 2 * (L : ℤ)) +
       determinantDrift P γ (Geometry.explicitRoundedGrid jStar m) jStar (n + 2 * (L : ℤ)))
-    (hΔ : (d : ℝ) * ε * σ < detIncrement P (Geometry.explicitRoundedGrid jStar m) n (n + 2 * (L : ℤ)))
+    (hΔ : (d : ℝ) * ε * σ < detIncrement P (Geometry.explicitRoundedGrid jStar m) n (n + 2 * (L
+      : ℤ)))
     (hspan : profile P γ (Geometry.explicitRoundedGrid jStar m) jStar k (n + 2 * (L : ℤ)) +
         determinantDrift P γ (Geometry.explicitRoundedGrid jStar m) jStar (n + 2 * (L : ℤ)) ≤
       C * (2 * L) *
         (profile P γ (Geometry.explicitRoundedGrid jStar m) jStar k n +
             determinantDrift P γ (Geometry.explicitRoundedGrid jStar m) jStar n +
-          (Real.exp (Q * detIncrement P (Geometry.explicitRoundedGrid jStar m) n (n + 2 * (L : ℤ))) - 1))) :
+          (Real.exp (Q * detIncrement P (Geometry.explicitRoundedGrid jStar m) n (n + 2 * (L :
+            ℤ))) - 1))) :
     potential P γ jStar η a m k (n + 2 * (L : ℤ)) - potential P γ jStar η a m k n ≤
-      -c + a * C / d * detIncrement P (Geometry.explicitRoundedGrid jStar m) n (n + 2 * (L : ℤ)) := by
+      -c + a * C / d * detIncrement P (Geometry.explicitRoundedGrid jStar m) n (n + 2 * (L : ℤ))
+        := by
   let x := profile P γ (Geometry.explicitRoundedGrid jStar m) jStar k n +
       determinantDrift P γ (Geometry.explicitRoundedGrid jStar m) jStar n
   let x' := profile P γ (Geometry.explicitRoundedGrid jStar m) jStar k (n + 2 * (L : ℤ)) +
       determinantDrift P γ (Geometry.explicitRoundedGrid jStar m) jStar (n + 2 * (L : ℤ))
   let Δ := detIncrement P (Geometry.explicitRoundedGrid jStar m) n (n + 2 * (L : ℤ))
-  let M := a * projectiveDistance m (explicitCanonicalMetric (adaptedMean P (Geometry.explicitRoundedGrid jStar m) k))
+  let M := a * projectiveDistance m (explicitCanonicalMetric (adaptedMean P
+    (Geometry.explicitRoundedGrid jStar m) k))
   have hC0 : 0 ≤ C := le_trans zero_le_one hC
   have hCpos : 0 < C := lt_of_lt_of_le zero_lt_one hC
   have hdR : (0 : ℝ) < d := by exact_mod_cast hd

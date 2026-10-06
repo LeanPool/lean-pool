@@ -33,7 +33,7 @@ hand.
 -/
 
 private theorem descendantWitnesses_of_deterministicCoarseData
-    {d : ℕ} [NeZero d] {Q : TriadicCube d} {a : CoeffField d}
+    {d : ℕ} {Q : TriadicCube d} {a : CoeffField d}
     (hData : OpenCubeDescendantDeterministicCoarseData Q a) (j : ℕ) :
     ∀ R ∈ descendantsAtDepth Q j,
       ∃ sigmaR sigmaStarR kappaR,
@@ -57,7 +57,7 @@ private theorem descendantWitnesses_of_deterministicCoarseData
 
 /-- Subadditivity of the coarse block matrix in Loewner order, packaged from
 deterministic coarse data on all descendants. -/
-theorem coarseBlockMatrix_subadditive_openCubeSet_descendantsAtDepth_in_loewner_order_of_deterministicCoarseData
+theorem coarseMatrix_subadditive_cube_descendants_in_loewner_of_deterministicCoarseData
     {d : ℕ} [NeZero d] (j : ℕ) (Q : TriadicCube d) (a : CoeffField d) {lam Lam : ℝ}
     (hEll : IsEllipticFieldOn lam Lam (openCubeSet Q) a)
     (hData : OpenCubeDescendantDeterministicCoarseData Q a) :
@@ -71,21 +71,22 @@ theorem coarseBlockMatrix_subadditive_openCubeSet_descendantsAtDepth_in_loewner_
 
 /-- Subadditivity of the inverse starred block matrix in Loewner order,
 packaged from deterministic coarse data on all descendants. -/
-theorem coarseStarredBlockMatrixInv_subadditive_openCubeSet_descendantsAtDepth_in_loewner_order_of_deterministicCoarseData
+theorem coarseStarredBlockMatrixInv_subadditive_cubeDescendants_in_loewner_order
     {d : ℕ} [NeZero d] (j : ℕ) (Q : TriadicCube d) (a : CoeffField d) {lam Lam : ℝ}
     (hEll : IsEllipticFieldOn lam Lam (openCubeSet Q) a)
     (hData : OpenCubeDescendantDeterministicCoarseData Q a) :
     BlockMatLoewnerLE (coarseStarredBlockMatrixInv (openCubeSet Q) a)
-      (descendantsAverageBlockMat Q j (fun R => coarseStarredBlockMatrixInv (openCubeSet R) a)) := by
+      (descendantsAverageBlockMat Q j (fun R => coarseStarredBlockMatrixInv (openCubeSet R) a))
+        := by
   rcases hData.self with ⟨sigmaQ, sigmaStarQ, kappaQ, hAQ, hSQ, hKQ, hSigmaQ, hdetQ⟩
   exact
-    coarseStarredBlockMatrixInv_subadditive_openCubeSet_descendantsAtDepth_in_loewner_order_of_isSigmaCoarse
+    coarseStarredBlockMatrixInv_subadditive_cubeDescendants_in_of_isSigmaCoarse
       j Q a hEll hAQ hSQ hKQ hSigmaQ hdetQ
       (descendantWitnesses_of_deterministicCoarseData hData j)
 
 /-- Subadditivity of `σ_*^{-1}` in Loewner order, packaged from deterministic
 coarse data on all descendants. -/
-theorem sigmaStarInvCoarse_subadditive_openCubeSet_descendantsAtDepth_in_loewner_order_of_deterministicCoarseData
+theorem sigmaStarInvCoarse_subadditive_cube_descendants_in_of_deterministicCoarseData
     {d : ℕ} [NeZero d] (j : ℕ) (Q : TriadicCube d) (a : CoeffField d) {lam Lam : ℝ}
     (hEll : IsEllipticFieldOn lam Lam (openCubeSet Q) a)
     (hData : OpenCubeDescendantDeterministicCoarseData Q a) :
@@ -93,13 +94,14 @@ theorem sigmaStarInvCoarse_subadditive_openCubeSet_descendantsAtDepth_in_loewner
       (descendantsAverageMat Q j (fun R => sigmaStarInvCoarse (openCubeSet R) a)) := by
   rcases hData.self with ⟨sigmaQ, sigmaStarQ, kappaQ, hAQ, hSQ, hKQ, hSigmaQ, hdetQ⟩
   exact
-    sigmaStarInvCoarse_subadditive_openCubeSet_descendantsAtDepth_in_loewner_order_of_isSigmaCoarse
+    sigmaStarInvCoarse_subadditive_descendants_in_loewnerOrder
       j Q a hEll hSQ hKQ hSigmaQ hdetQ
       (descendantWitnesses_of_deterministicCoarseData hData j)
 
 /-- Subadditivity of the canonical `b`-matrix in Loewner order, packaged from
 deterministic coarse data on all descendants. -/
-theorem bCoarse_subadditive_openCubeSet_descendantsAtDepth_in_loewner_order_of_deterministicCoarseData
+theorem
+  bCoarse_subadditive_openCubeSet_descendantsAtDepth_in_loewner_order_of_deterministicCoarseData
     {d : ℕ} [NeZero d] (j : ℕ) (Q : TriadicCube d) (a : CoeffField d) {lam Lam : ℝ}
     (hEll : IsEllipticFieldOn lam Lam (openCubeSet Q) a)
     (hData : OpenCubeDescendantDeterministicCoarseData Q a) :
@@ -114,40 +116,42 @@ theorem bCoarse_subadditive_openCubeSet_descendantsAtDepth_in_loewner_order_of_d
             (kappaCoarse (openCubeSet R) a))) := by
   rcases hData.self with ⟨sigmaQ, sigmaStarQ, kappaQ, hAQ, hSQ, hKQ, hSigmaQ, hdetQ⟩
   exact
-    bCoarse_subadditive_openCubeSet_descendantsAtDepth_in_loewner_order_of_isSigmaCoarse
+    bCoarse_le_descendantAverage_in_loewnerOrder
       j Q a hEll hSQ hKQ hSigmaQ hdetQ
       (descendantWitnesses_of_deterministicCoarseData hData j)
 
 /-- Recovery-family wrapper for coarse-block-matrix subadditivity in Loewner
 order. -/
-theorem coarseBlockMatrix_subadditive_openCubeSet_descendantsAtDepth_in_loewner_order_of_recoveryFamily
+theorem
+  coarseBlockMatrix_subadditive_openCubeSet_descendantsAtDepth_in_loewner_order_of_recoveryFamily
     {d : ℕ} [NeZero d] (j : ℕ) (Q : TriadicCube d) (a : CoeffField d) {lam Lam : ℝ}
     (hEll : IsEllipticFieldOn lam Lam (openCubeSet Q) a)
     (hRec : OpenCubeDescendantEllipticRecoveryFamily Q a (lam := lam) (Lam := Lam)) :
     BlockMatLoewnerLE (coarseBlockMatrix (openCubeSet Q) a)
       (descendantsAverageBlockMat Q j (fun R => coarseBlockMatrix (openCubeSet R) a)) :=
-  coarseBlockMatrix_subadditive_openCubeSet_descendantsAtDepth_in_loewner_order_of_deterministicCoarseData
+  coarseMatrix_subadditive_cube_descendants_in_loewner_of_deterministicCoarseData
     j Q a hEll (openCubeDescendantDeterministicCoarseData_of_recoveryFamily hRec)
 
 /-- Recovery-family wrapper for inverse-starred-block-matrix subadditivity in
 Loewner order. -/
-theorem coarseStarredBlockMatrixInv_subadditive_openCubeSet_descendantsAtDepth_in_loewner_order_of_recoveryFamily
+theorem coarseStarredBlockMatrixInv_subadditive_cubeDescendants_in_of_recoveryFamily
     {d : ℕ} [NeZero d] (j : ℕ) (Q : TriadicCube d) (a : CoeffField d) {lam Lam : ℝ}
     (hEll : IsEllipticFieldOn lam Lam (openCubeSet Q) a)
     (hRec : OpenCubeDescendantEllipticRecoveryFamily Q a (lam := lam) (Lam := Lam)) :
     BlockMatLoewnerLE (coarseStarredBlockMatrixInv (openCubeSet Q) a)
       (descendantsAverageBlockMat Q j (fun R => coarseStarredBlockMatrixInv (openCubeSet R) a)) :=
-  coarseStarredBlockMatrixInv_subadditive_openCubeSet_descendantsAtDepth_in_loewner_order_of_deterministicCoarseData
+  coarseStarredBlockMatrixInv_subadditive_cubeDescendants_in_loewner_order
     j Q a hEll (openCubeDescendantDeterministicCoarseData_of_recoveryFamily hRec)
 
 /-- Recovery-family wrapper for `σ_*^{-1}` subadditivity in Loewner order. -/
-theorem sigmaStarInvCoarse_subadditive_openCubeSet_descendantsAtDepth_in_loewner_order_of_recoveryFamily
+theorem
+  sigmaStarInvCoarse_subadditive_openCubeSet_descendantsAtDepth_in_loewner_order_of_recoveryFamily
     {d : ℕ} [NeZero d] (j : ℕ) (Q : TriadicCube d) (a : CoeffField d) {lam Lam : ℝ}
     (hEll : IsEllipticFieldOn lam Lam (openCubeSet Q) a)
     (hRec : OpenCubeDescendantEllipticRecoveryFamily Q a (lam := lam) (Lam := Lam)) :
     MatLoewnerLE (sigmaStarInvCoarse (openCubeSet Q) a)
       (descendantsAverageMat Q j (fun R => sigmaStarInvCoarse (openCubeSet R) a)) :=
-  sigmaStarInvCoarse_subadditive_openCubeSet_descendantsAtDepth_in_loewner_order_of_deterministicCoarseData
+  sigmaStarInvCoarse_subadditive_cube_descendants_in_of_deterministicCoarseData
     j Q a hEll (openCubeDescendantDeterministicCoarseData_of_recoveryFamily hRec)
 
 /-- Recovery-family wrapper for canonical `b`-matrix subadditivity in Loewner

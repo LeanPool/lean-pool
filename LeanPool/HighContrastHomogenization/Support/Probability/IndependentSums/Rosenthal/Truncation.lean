@@ -62,12 +62,12 @@ omit [MeasurableSpace Ω]
     absTruncation X r ω = X ω - absTailIndicator X r ω :=
   rfl
 
-@[simp] theorem absTailIndicator_of_lt_abs {X : Ω → ℝ} {r : ℝ} {ω : Ω}
+theorem absTailIndicator_of_lt_abs {X : Ω → ℝ} {r : ℝ} {ω : Ω}
     (h : r < |X ω|) :
     absTailIndicator X r ω = X ω := by
   simp [absTailIndicator, h]
 
-@[simp] theorem absTailIndicator_of_not_lt_abs {X : Ω → ℝ} {r : ℝ} {ω : Ω}
+theorem absTailIndicator_of_not_lt_abs {X : Ω → ℝ} {r : ℝ} {ω : Ω}
     (h : ¬ r < |X ω|) :
     absTailIndicator X r ω = 0 := by
   simp [absTailIndicator, h]
@@ -83,13 +83,13 @@ theorem abs_absTailIndicator_le {X : Ω → ℝ} {r : ℝ} (ω : Ω) :
   · simp [absTailIndicator, h]
   · simp [absTailIndicator, h]
 
-@[simp] theorem absTruncation_of_abs_le {X : Ω → ℝ} {r : ℝ} {ω : Ω}
+theorem absTruncation_of_abs_le {X : Ω → ℝ} {r : ℝ} {ω : Ω}
     (h : |X ω| ≤ r) :
     absTruncation X r ω = X ω := by
   have h' : ¬ r < |X ω| := not_lt_of_ge h
   simp [absTruncation, absTailIndicator, h']
 
-@[simp] theorem absTruncation_of_lt_abs {X : Ω → ℝ} {r : ℝ} {ω : Ω}
+theorem absTruncation_of_lt_abs {X : Ω → ℝ} {r : ℝ} {ω : Ω}
     (h : r < |X ω|) :
     absTruncation X r ω = 0 := by
   simp [absTruncation, absTailIndicator, h]

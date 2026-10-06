@@ -147,7 +147,7 @@ theorem coarsePoincareRHSSn_le_zeroTraceDirichletGradientTailBudget_noteConstant
             ((lambdaSq Q (s / 2) (.finite 2) a)⁻¹) ^ 2 *
             ((d : ℝ) * ((3 : ℝ) ^ ((d : ℝ) + s) * Real.sqrt 2)) ^ 2 *
             (cubeBesovPositiveVectorSeminormTwo Q s g) ^ 2 :=
-    coarsePoincareRHSSn_le_intrinsicGlobalEnergyForce_noteConstants_expanded_of_parent_potential_solenoidal
+    coarsePoincareRHSSn_le_intrinsicGlobalEnergyForce
       (Q := Q) (a := a) (g := g)
       (u := fun x => ρ.toH10.toH1Function.grad x)
       (s := s) (lam := lam) (Lam := Lam)

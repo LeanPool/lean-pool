@@ -53,7 +53,7 @@ noncomputable def coarseFluxResponseRHSWeakFluxExpandedBound {d : ℕ}
 Depth-zero bridge from the localized §3.2.3 weak-flux output to the one-cube
 `q = 2` component estimate used in the §3.2.4 split.
 -/
-theorem cubeBesovNegativeVectorSeminormTwo_matVecMul_le_coarseFluxResponseRHSWeakFluxCorrectionBound_of_localized_depth_zero
+theorem negativeBesovSeminormTwo_matrixVectorMultiply_le_weakFluxCorrectionBound
     {d : ℕ} (Q : TriadicCube d) (a : CoeffField d)
     (s : ℝ) (gradV g : Vec d → Vec d) {BU BV : ℝ}
     (hfluxV_bdd :
@@ -94,7 +94,7 @@ note-facing H¹ §3.2.3 weak-flux RHS apex.  The remaining scalar hypothesis is
 the manuscript constant-absorption step comparing the expanded weak-flux RHS
 with the compact §3.2.4 component.
 -/
-theorem cubeBesovNegativeVectorSeminormTwo_matVecMul_grad_le_coarseFluxResponseRHSWeakFluxCorrectionBound_of_h1DirichletRhsWeakSolutionOn
+theorem negativeBesovSeminormTwo_matrixVectorMultiply_grad_le_weakFluxCorrectionBound
     {d : ℕ} [NeZero d] (Q : TriadicCube d) (a : CoeffField d)
     (s : ℝ) (g : Vec d → Vec d) (v : H1Function (cubeSet Q))
     {lam Lam : ℝ}
@@ -195,7 +195,7 @@ theorem cubeBesovNegativeVectorSeminormTwo_matVecMul_grad_le_coarseFluxResponseR
           (fun x => matVecMul (a x) (v.grad x)) 0 ≤
         coarseFluxResponseRHSWeakFluxExpandedBound Q a s g v.grad 0 BU BV := by
     simpa [coarseFluxResponseRHSWeakFluxExpandedBound] using
-      localizedFluxDefectNegativeBesovAverageTwo_matVecMul_le_sqrt_of_scaled_noteEnergySeminormsForce_of_h1DirichletRhsWeakSolutionOn_of_constructed_harmonicRemainder_bounds
+      negativeBesovFluxAverage_matVecMul_le_sqrt_of_weakSolution
         (Q := Q) (a := a) (s := s) (g := g) (u := v) (lam := lam)
         (Lam := Lam) hs hs_le hweak hEll_desc hu_mem_desc hg_mem_desc
         hC_desc hData_desc hsum_desc hchildBdd huBdd_desc
@@ -204,7 +204,7 @@ theorem cubeBesovNegativeVectorSeminormTwo_matVecMul_grad_le_coarseFluxResponseR
         hmem hGlobalBdd hLocalBdd hBU_nonneg hBV_nonneg
         (by intro k; simpa using hu_tail k) hvConstructed
   exact
-    cubeBesovNegativeVectorSeminormTwo_matVecMul_le_coarseFluxResponseRHSWeakFluxCorrectionBound_of_localized_depth_zero
+    negativeBesovSeminormTwo_matrixVectorMultiply_le_weakFluxCorrectionBound
       Q a s v.grad g hfluxV_bdd hlocalized hscalar
 
 /--
@@ -444,7 +444,7 @@ noncomputable def coarseFluxResponseRHSPoincareExpandedBound {d : ℕ}
 Poincare-correction bridge from a gradient RHS Poincare bound plus a
 constant-matrix action estimate to the `a₀∇v` component in the §3.2.4 split.
 -/
-theorem cubeBesovNegativeVectorSeminormTwo_constMatMul_le_coarseFluxResponseRHSPoincareCorrectionBound_of_grad_bound
+theorem negativeBesovSeminormTwo_constMatMul_le_fluxPoincareCorrectionBound
     {d : ℕ} (Q : TriadicCube d) (a : CoeffField d) (a0 : Mat d)
     (s : ℝ) (gradV g : Vec d → Vec d) {Bgrad : ℝ}
     (hmat :
@@ -471,7 +471,7 @@ theorem cubeBesovNegativeVectorSeminormTwo_constMatMul_le_coarseFluxResponseRHSP
 Poincare-correction bridge where the constant-matrix action is discharged from
 descendant-local `L²` data plus bounded finite negative seminorms.
 -/
-theorem cubeBesovNegativeVectorSeminormTwo_constMatMul_le_coarseFluxResponseRHSPoincareCorrectionBound_of_grad_bound_and_descendant_mem
+theorem negativeBesovSeminormTwo_matrixAction_le_poincareCorrection_of_scalarBound
     {d : ℕ} (Q : TriadicCube d) (a : CoeffField d) (a0 : Mat d)
     (s : ℝ) (gradV g : Vec d → Vec d) {Bgrad : ℝ}
     (hgrad_mem_desc :
@@ -495,7 +495,7 @@ theorem cubeBesovNegativeVectorSeminormTwo_constMatMul_le_coarseFluxResponseRHSP
     cubeBesovNegativeVectorSeminormTwo_constMatMul_le
       Q s a0 gradV hgrad_mem_desc hgrad_bdd
   exact
-    cubeBesovNegativeVectorSeminormTwo_constMatMul_le_coarseFluxResponseRHSPoincareCorrectionBound_of_grad_bound
+    negativeBesovSeminormTwo_constMatMul_le_fluxPoincareCorrectionBound
       Q a a0 s gradV g hmat hgrad hscalar
 
 /--
@@ -503,7 +503,7 @@ The `a₀∇v` correction component routed through the H¹ RHS Poincare theorem.
 The constant-matrix action is discharged by the seminorm bridge above; the
 remaining scalar hypothesis is the compact-manuscript absorption step.
 -/
-theorem cubeBesovNegativeVectorSeminormTwo_constMatMul_grad_le_coarseFluxResponseRHSPoincareCorrectionBound_of_h1DirichletRhsWeakSolutionOn
+theorem negativeBesovSeminormTwo_constMatMul_grad_le_fluxPoincareCorrectionBound
     {d : ℕ} [NeZero d] (Q : TriadicCube d) (a : CoeffField d) (a0 : Mat d)
     (s : ℝ) (g : Vec d → Vec d) (v : H1Function (cubeSet Q))
     {lam Lam : ℝ}
@@ -530,12 +530,12 @@ theorem cubeBesovNegativeVectorSeminormTwo_constMatMul_grad_le_coarseFluxRespons
       cubeBesovNegativeVectorSeminormTwo Q s v.grad ≤
         coarseFluxResponseRHSPoincareExpandedBound Q a s g v.grad := by
     simpa [coarseFluxResponseRHSPoincareExpandedBound] using
-      cubeBesovNegativeVectorSeminormTwo_grad_le_sqrt_intrinsicGlobalEnergyForce_noteConstants_expanded_of_h1DirichletRhsWeakSolutionOn
+      negativeBesovSeminormTwo_grad_le_sqrt_intrinsicGlobalEnergyForce
         (Q := Q) (a := a) (g := g) (u := v)
         (s := s) (lam := lam) (Lam := Lam)
         hs hs_le hEll hweak hg hGlobalBdd
   exact
-    cubeBesovNegativeVectorSeminormTwo_constMatMul_le_coarseFluxResponseRHSPoincareCorrectionBound_of_grad_bound_and_descendant_mem
+    negativeBesovSeminormTwo_matrixAction_le_poincareCorrection_of_scalarBound
       Q a a0 s v.grad g hgrad_mem_desc hgrad_bdd hgrad hscalar
 
 end

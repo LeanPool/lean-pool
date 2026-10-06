@@ -118,7 +118,7 @@ theorem abs_neg_integral_forwardDifferenceQuotient_mul_fderiv_openCube_innerCube
               ((uQ.forwardDifferenceQuotientOn step i hV.isOpen hVU hVshift).grad x)
             ∂MeasureTheory.volume ≤ R := by
     simpa only [R, one_div] using!
-      h.directDifferenceQuotient_quantitativeCubeCutoff_openCube_innerCube_energy_quarter_le_forcing_sq_add_quantitative_lower_h1_terms_of_step_abs_le
+      h.differenceQuotient_openCubeCutoffEnergy_le_forcingAndLowerH1Terms
         hf hV hstep i η hη_sub hinnerV θ hVν hν_nonneg hνσ hσ₁_lt_one
         hσ₂_nonneg hσ₂_lt_one hstep_abs
   have hbound :=
@@ -131,7 +131,7 @@ theorem abs_neg_integral_forwardDifferenceQuotient_mul_fderiv_openCube_innerCube
 
 /-- Open-cube homogeneous test-functional bound obtained by combining the
 inner-cube Caccioppoli estimate with the full-gradient Cauchy handoff. -/
-theorem abs_neg_integral_forwardDifferenceQuotient_mul_fderiv_openCube_innerCube_le_sqrt_energy_bound_mul_l2_of_step_abs_le
+theorem neg_integral_forwardDifference_mul_derivative_innerCube_le_energyRoot_l2Bound
     {Q : TriadicCube d} {uQ : H1Function (openCubeSet Q)} {f : Vec d → ℝ}
     (h : WeakPoissonEquationOn (openCubeSet Q) uQ f)
     (hf : MemScalarL2 (openCubeSet Q) f)
@@ -205,7 +205,7 @@ theorem abs_neg_integral_forwardDifferenceQuotient_mul_fderiv_openCube_innerCube
               ((uQ.forwardDifferenceQuotientOn step i hV.isOpen hVU hVshift).grad x)
             ∂MeasureTheory.volume ≤ R := by
     simpa only [R, one_div] using!
-      h.directDifferenceQuotient_quantitativeCubeCutoff_openCube_innerCube_energy_quarter_le_forcing_sq_add_quantitative_lower_h1_terms_of_step_abs_le
+      h.differenceQuotient_openCubeCutoffEnergy_le_forcingAndLowerH1Terms
         hf hV hstep i η hη_sub hinnerV θ hVν hν_nonneg hνσ hσ₁_lt_one
         hσ₂_nonneg hσ₂_lt_one hstep_abs
   have hbound :=
@@ -218,7 +218,7 @@ theorem abs_neg_integral_forwardDifferenceQuotient_mul_fderiv_openCube_innerCube
 
 /-- Open-cube version of the zero-seminorm well-definedness consequence for
 the quotient Hessian test functional. -/
-theorem neg_integral_forwardDifferenceQuotient_mul_fderiv_openCube_innerCube_eq_zero_of_l2_norm_zero_of_step_abs_le
+theorem neg_integral_forwardDifference_mul_derivative_openCube_innerCube_eq_zero
     {Q : TriadicCube d} {uQ : H1Function (openCubeSet Q)} {f : Vec d → ℝ}
     (h : WeakPoissonEquationOn (openCubeSet Q) uQ f)
     (hf : MemScalarL2 (openCubeSet Q) f)
@@ -267,7 +267,7 @@ theorem neg_integral_forwardDifferenceQuotient_mul_fderiv_openCube_innerCube_eq_
           (∫ x in scaledClosedCubeSet Q ρ₁, ‖φ x‖ ^ (2 : ℝ)
             ∂MeasureTheory.volume) ^ (1 / (2 : ℝ)) := by
     simpa [T] using
-      h.abs_neg_integral_forwardDifferenceQuotient_mul_fderiv_openCube_innerCube_le_sqrt_energy_bound_mul_l2_of_step_abs_le
+      h.neg_integral_forwardDifference_mul_derivative_innerCube_le_energyRoot_l2Bound
         hf hV hstep i j η hη_sub hinnerV θ hVν hν_nonneg hνσ hσ₁_lt_one
         hσ₂_nonneg hσ₂_lt_one hstep_abs hφ hφ_compact hφ_sub_inner
   have hroot_zero :
@@ -299,7 +299,7 @@ theorem neg_integral_forwardDifferenceQuotient_mul_fderiv_openCube_innerCube_eq_
 
 /-- Open-cube version of the distance-zero well-definedness consequence for
 the quotient Hessian test functional. -/
-theorem neg_integral_forwardDifferenceQuotient_mul_fderiv_openCube_innerCube_eq_of_l2_dist_zero_of_step_abs_le
+theorem neg_integral_forwardDifference_mul_derivative_openCube_innerCube_eq_of_step_abs
     {Q : TriadicCube d} {uQ : H1Function (openCubeSet Q)} {f : Vec d → ℝ}
     (h : WeakPoissonEquationOn (openCubeSet Q) uQ f)
     (hf : MemScalarL2 (openCubeSet Q) f)
@@ -367,7 +367,7 @@ theorem neg_integral_forwardDifferenceQuotient_mul_fderiv_openCube_innerCube_eq_
               ((uQ.forwardDifferenceQuotientOn step i hV.isOpen hVU hVshift).grad x)
             ∂MeasureTheory.volume ≤ R := by
     simpa only [R, one_div] using!
-      h.directDifferenceQuotient_quantitativeCubeCutoff_openCube_innerCube_energy_quarter_le_forcing_sq_add_quantitative_lower_h1_terms_of_step_abs_le
+      h.differenceQuotient_openCubeCutoffEnergy_le_forcingAndLowerH1Terms
         hf hV hstep i η hη_sub hinnerV θ hVν hν_nonneg hνσ hσ₁_lt_one
         hσ₂_nonneg hσ₂_lt_one hstep_abs
   exact
@@ -379,7 +379,7 @@ theorem neg_integral_forwardDifferenceQuotient_mul_fderiv_openCube_innerCube_eq_
 
 /-- The open-cube quotient-Hessian pairing depends only on the scalar `L²`
 class of a smooth weak test on the inner cube. -/
-theorem neg_integral_forwardDifferenceQuotient_mul_fderiv_openCube_innerCube_eq_of_h1WeakTest_toScalarL2_eq_of_step_abs_le
+theorem neg_integral_forwardDifference_mul_derivative_openCube_innerCube_eq
     {Q : TriadicCube d} {uQ : H1Function (openCubeSet Q)} {f : Vec d → ℝ}
     (h : WeakPoissonEquationOn (openCubeSet Q) uQ f)
     (hf : MemScalarL2 (openCubeSet Q) f)
@@ -410,7 +410,7 @@ theorem neg_integral_forwardDifferenceQuotient_mul_fderiv_openCube_innerCube_eq_
         ∂MeasureTheory.volume = 0 :=
     integral_norm_sq_sub_eq_zero_of_h1WeakTestFunction_toScalarL2_eq φ ψ hφψ
   exact
-    h.neg_integral_forwardDifferenceQuotient_mul_fderiv_openCube_innerCube_eq_of_l2_dist_zero_of_step_abs_le
+    h.neg_integral_forwardDifference_mul_derivative_openCube_innerCube_eq_of_step_abs
       hf hV hstep i j η hη_sub hinnerV θ hVν hν_nonneg hνσ hσ₁_lt_one
       hσ₂_nonneg hσ₂_lt_one hstep_abs
       φ.smooth ψ.smooth φ.compactSupport ψ.compactSupport
@@ -492,7 +492,7 @@ noncomputable def openCubeInnerQuotientHessianSmoothTestFunctional
         pairing (rep (x + y)) = pairing ((rep x).add (rep y)) := by
       unfold pairing
       exact
-        h.neg_integral_forwardDifferenceQuotient_mul_fderiv_openCube_innerCube_eq_of_h1WeakTest_toScalarL2_eq_of_step_abs_le
+        h.neg_integral_forwardDifference_mul_derivative_openCube_innerCube_eq
           hf hV hstep i j η hη_sub hinnerV θ hVν hν_nonneg hνσ hσ₁_lt_one
           hσ₂_nonneg hσ₂_lt_one hstep_abs
           (rep (x + y)) ((rep x).add (rep y)) (by
@@ -514,7 +514,7 @@ noncomputable def openCubeInnerQuotientHessianSmoothTestFunctional
         pairing (rep (c • x)) = pairing ((rep x).smul c) := by
       unfold pairing
       exact
-        h.neg_integral_forwardDifferenceQuotient_mul_fderiv_openCube_innerCube_eq_of_h1WeakTest_toScalarL2_eq_of_step_abs_le
+        h.neg_integral_forwardDifference_mul_derivative_openCube_innerCube_eq
           hf hV hstep i j η hη_sub hinnerV θ hVν hν_nonneg hνσ hσ₁_lt_one
           hσ₂_nonneg hσ₂_lt_one hstep_abs
           (rep (c • x)) ((rep x).smul c) (by
@@ -563,7 +563,7 @@ theorem norm_openCubeInnerQuotientHessianSmoothTestFunctional_apply_le
   let φ : H1WeakTestFunction (scaledClosedCubeSet Q ρ₁) :=
     h1WeakTestScalarL2Representative x
   have hbound :=
-    h.abs_neg_integral_forwardDifferenceQuotient_mul_fderiv_openCube_innerCube_le_sqrt_energy_bound_mul_l2_of_step_abs_le
+    h.neg_integral_forwardDifference_mul_derivative_innerCube_le_energyRoot_l2Bound
       hf hV hstep i j η hη_sub hinnerV θ hVν hν_nonneg hνσ hσ₁_lt_one
       hσ₂_nonneg hσ₂_lt_one hstep_abs
       φ.smooth φ.compactSupport φ.support_subset
@@ -759,7 +759,8 @@ theorem cutoffForwardDifferenceQuotientToH10_grad_ae
     intro j
     exact cutoffForwardDifferenceQuotientToH10_grad_coord_ae
       u hV hVU step i j hVshift hφ hφ_compact hφ_sub
-  filter_upwards [(Filter.eventually_all (l := MeasureTheory.ae (MeasureTheory.volume.restrict V))).2 hcoord] with x hx
+  filter_upwards [(Filter.eventually_all (l := MeasureTheory.ae (MeasureTheory.volume.restrict
+    V))).2 hcoord] with x hx
   ext j
   exact hx j
 
@@ -792,7 +793,8 @@ theorem cutoffBackwardDifferenceQuotientToH10_grad_ae
     intro j
     exact cutoffBackwardDifferenceQuotientToH10_grad_coord_ae
       u hV hVU step i j hVshift hφ hφ_compact hφ_sub
-  filter_upwards [(Filter.eventually_all (l := MeasureTheory.ae (MeasureTheory.volume.restrict V))).2 hcoord] with x hx
+  filter_upwards [(Filter.eventually_all (l := MeasureTheory.ae (MeasureTheory.volume.restrict
+    V))).2 hcoord] with x hx
   ext j
   exact hx j
 

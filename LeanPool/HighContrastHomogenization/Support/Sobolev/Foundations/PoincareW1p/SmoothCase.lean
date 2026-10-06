@@ -24,6 +24,8 @@ open scoped ENNReal
 namespace W1pFunction
 
 variable {d : ℕ} {U : Set (Vec d)} {p : ENNReal}
+/-- The geometric base of the smooth Lᵖ Poincare bound, formed from the domain volume, a chosen
+coordinate bound, the dimension, and the unit-ball volume. -/
 @[expose]
 public noncomputable def smoothPoincareLpBase
     (hU : IsOpenBoundedConvexDomain U) : ℝ :=
@@ -32,6 +34,7 @@ public noncomputable def smoothPoincareLpBase
     ((d : ℝ) * (MeasureTheory.volume (Metric.ball (0 : Vec d) 1)).toReal *
       (4 * Classical.choose hU.isBoundedDomain))
 
+/-- One plus the absolute value of the geometric base for the smooth Lᵖ Poincare bound. -/
 @[expose]
 noncomputable def smoothPoincareLpConst
     (hU : IsOpenBoundedConvexDomain U) : ℝ :=

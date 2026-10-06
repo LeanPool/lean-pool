@@ -225,23 +225,32 @@ factor `t^4` in the raw Chernoff theorem. -/
 noncomputable def psiSigmaPolynomialLogControlConst (σ C : ℝ) : ℝ :=
   Real.exp (C + 8 * σ ^ (2 : ℕ))
 
+/-- The logarithmic tail exponent `log(1 + σ t)² / σ²`. -/
 @[expose]
 noncomputable def psiSigmaLogExponent (σ t : ℝ) : ℝ :=
   (σ ^ (2 : ℕ))⁻¹ * (Real.log (1 + σ * t)) ^ (2 : ℕ)
 
+/-- The raw independent-sum constant combining `3`, the polynomial-log control at `exp(2)`, and
+the tail-integral constant. -/
 @[expose]
 noncomputable def psiSigmaIndependentSumRawConst (σ : ℝ) : ℝ :=
   3 + psiSigmaPolynomialLogControlConst σ (Real.exp 2) + psiSigmaTailIntegralConst σ
 
+/-- The independent-sum normalization constant `128 exp(σ² / 2)` times the square root of the raw
+constant. -/
 @[expose]
 noncomputable def psiSigmaIndependentSumConst (σ : ℝ) : ℝ :=
   128 * Real.exp (σ ^ (2 : ℕ) / 2) *
     Real.sqrt (psiSigmaIndependentSumRawConst σ)
 
+/-- The truncation threshold `((1 + σ t) exp(σ sqrt(log(4R))) - 1) / σ` used for independent sums.
+-/
 @[expose]
 noncomputable def psiSigmaIndependentSumCutoff (σ R t : ℝ) : ℝ :=
   ((1 + σ * t) * Real.exp (σ * Real.sqrt (Real.log (4 * R))) - 1) / σ
 
+/-- The exponential-moment parameter `4(log(1 + σ t)² / σ² + log 2)` divided by the sum constant
+times `sqrt(R) t`. -/
 @[expose]
 noncomputable def psiSigmaIndependentSumLambda (σ R t : ℝ) : ℝ :=
   4 * (psiSigmaLogExponent σ t + Real.log 2) /

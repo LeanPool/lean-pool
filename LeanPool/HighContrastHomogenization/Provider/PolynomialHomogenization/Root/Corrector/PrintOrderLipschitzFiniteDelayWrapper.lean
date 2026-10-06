@@ -67,7 +67,9 @@ theorem exists_printOrderRootFiniteDelaySurface
   intro kappa abar a x hgood
   obtain ⟨surface⟩ := hsurface kappa abar a x hgood
   exact ⟨surface,
-    HCPolySupport.HighContrast.Root.PrintOrderDecoupledFiniteTerminalSurface.printOrderStartIndex_le_rootStart_add_delay
+    (open HCPolySupport.HighContrast.Root.PrintOrderDecoupledFiniteTerminalSurface
+      (printOrderStartIndex_le_rootStart_add_delay) in
+      printOrderStartIndex_le_rootStart_add_delay)
       surface hg⟩
 
 /-- The same finite-delay package is available from the root's paired

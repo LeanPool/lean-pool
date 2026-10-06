@@ -66,7 +66,8 @@ private theorem quadratic_completion {ι : Type*} [Fintype ι] [DecidableEq ι]
     rw [mulVec_mulVec, Matrix.mul_nonsing_inv M (M.isUnit_iff_isUnit_det.mp hM.isUnit), one_mulVec]
   have hsym : (M⁻¹.mulVec x) ⬝ᵥ M.mulVec y = x ⬝ᵥ y := by
     rw [dotProduct_mulVec, ← Matrix.mulVec_transpose]
-    rw [show M.transpose = M from by simpa only [Matrix.conjTranspose_eq_transpose_of_trivial] using! hM.isHermitian, hMx]
+    rw [show M.transpose = M from by simpa only [Matrix.conjTranspose_eq_transpose_of_trivial]
+      using! hM.isHermitian, hMx]
   simp only [mulVec_sub, dotProduct_sub, sub_dotProduct, hMx, hsym]
   rw [dotProduct_comm y x, dotProduct_comm (M⁻¹.mulVec x) x]
   ring
@@ -283,7 +284,8 @@ private theorem abs_entry_le_half_diag {ι : Type*} [Fintype ι] [DecidableEq ι
   have hsym : M j i = M i j := by
     simpa only [Matrix.conjTranspose_apply, star_trivial] using congrArg (fun N => N i j) hM.1
   simp only [star_trivial, mulVec_add, mulVec_sub, dotProduct_add, dotProduct_sub,
-    add_dotProduct, sub_dotProduct, single_dotProduct, mulVec_single_one, Matrix.col_apply, one_mul, hsym] at hp hn
+    add_dotProduct, sub_dotProduct, single_dotProduct, mulVec_single_one, Matrix.col_apply,
+      one_mul, hsym] at hp hn
   exact abs_le.mpr ⟨by linarith only [hp], by linarith only [hn]⟩
 
 private theorem diagonal_mono {ι : Type*} [Fintype ι] [DecidableEq ι]

@@ -602,6 +602,28 @@ theorem centralDescendant_after_centralChild {d : ℕ} (Q : TriadicCube d) (n : 
     centralDescendant (centralChild Q) n = centralDescendant Q (n + 1) :=
   centralDescendant_centralChild Q n
 
+public theorem scaled_row_sum_le_dimension_mul_energy
+    {d : ℕ} (values : Fin d → ℝ≥0∞) (energy : Fin d → Fin d → ℝ≥0∞) (i : Fin d)
+    {childScale parentScale coefficient A R : ℝ≥0∞}
+    (hvalues : ∀ j, values j ≤ coefficient * ∑ k : Fin d, energy i k)
+    (hscale : childScale ≤ parentScale)
+    (henergy : parentScale * ∑ a : Fin d, ∑ b : Fin d, energy a b ≤ A * R) :
+    childScale * ∑ j : Fin d, values j ≤ (d : ℝ≥0∞) * coefficient * A * R := by
+  have hsum := sum_fin_le_natCast_mul values _ hvalues
+  have hrow := row_sum_le_double_sum energy i
+  calc
+    childScale * ∑ j : Fin d, values j ≤
+        childScale * ((d : ℝ≥0∞) * (coefficient * ∑ k : Fin d, energy i k)) :=
+      mul_le_mul_right hsum _
+    _ = (d : ℝ≥0∞) * coefficient * (childScale * ∑ k : Fin d, energy i k) := by
+      ring
+    _ ≤ (d : ℝ≥0∞) * coefficient *
+        (parentScale * ∑ a : Fin d, ∑ b : Fin d, energy a b) := by
+      apply mul_le_mul_right
+      exact (mul_le_mul_left hscale _).trans (mul_le_mul_right hrow _)
+    _ ≤ (d : ℝ≥0∞) * coefficient * (A * R) := mul_le_mul_right henergy _
+    _ = (d : ℝ≥0∞) * coefficient * A * R := by ring
+
 private theorem HarmonicGradientGain.restrict_one_more {d : ℕ} {r : FiniteLpExponent}
     {depth : ℕ} (G : HarmonicGradientGain d r depth)
     (Q : TriadicCube d) (u : H1Function (openCubeSet Q))
@@ -721,21 +743,6 @@ noncomputable def HarmonicGradientGain.upgrade {d : ℕ} (hd : 0 < d)
               (normalizedCubeMeasure P) := by
       intro j
       simpa [HD, v, hD_eq] using! G.bound P v hv j
-    have hsum : ∑ j : Fin d,
-        MeasureTheory.eLpNorm (fun x => HD.hess i j x) r.exponent
-            (normalizedCubeMeasure D) ≤
-          (d : ℝ≥0∞) * (G.constantValue * ∑ k : Fin d,
-            MeasureTheory.eLpNorm (fun x => HP.hess i k x) 2
-              (normalizedCubeMeasure P)) :=
-      sum_fin_le_natCast_mul _ _ hgrad
-    have hrow : ∑ k : Fin d,
-        MeasureTheory.eLpNorm (fun x => HP.hess i k x) 2
-          (normalizedCubeMeasure P) ≤
-        ∑ a : Fin d, ∑ b : Fin d,
-          MeasureTheory.eLpNorm (fun x => HP.hess a b x) 2
-            (normalizedCubeMeasure P) :=
-      row_sum_le_double_sum (fun a b => MeasureTheory.eLpNorm
-        (fun x => HP.hess a b x) 2 (normalizedCubeMeasure P)) i
     have hscale : ENNReal.ofReal (cubeScaleFactor D) ≤
         ENNReal.ofReal (cubeScaleFactor P) := by
       rw [← hD_eq]
@@ -749,32 +756,11 @@ noncomputable def HarmonicGradientGain.upgrade {d : ℕ} (hd : 0 < d)
         ∑ j : Fin d, MeasureTheory.eLpNorm (fun x => HD.hess i j x) r.exponent
           (normalizedCubeMeasure D) ≤
         (d : ℝ≥0∞) * G.constantValue * A * R := by
-      calc
-        _ ≤ ENNReal.ofReal (cubeScaleFactor D) *
-            ((d : ℝ≥0∞) * (G.constantValue * ∑ k : Fin d,
-              MeasureTheory.eLpNorm (fun x => HP.hess i k x) 2
-                (normalizedCubeMeasure P))) := by gcongr
-        _ = (d : ℝ≥0∞) * G.constantValue *
-            (ENNReal.ofReal (cubeScaleFactor D) * ∑ k : Fin d,
-              MeasureTheory.eLpNorm (fun x => HP.hess i k x) 2
-                (normalizedCubeMeasure P)) := by ring
-        _ ≤ (d : ℝ≥0∞) * G.constantValue *
-            (ENNReal.ofReal (cubeScaleFactor P) * ∑ a : Fin d, ∑ b : Fin d,
-              MeasureTheory.eLpNorm (fun x => HP.hess a b x) 2
-                (normalizedCubeMeasure P)) := by
-              apply mul_le_mul_right
-              calc
-                ENNReal.ofReal (cubeScaleFactor D) * ∑ k : Fin d,
-                    MeasureTheory.eLpNorm (fun x => HP.hess i k x) 2
-                      (normalizedCubeMeasure P) ≤
-                    ENNReal.ofReal (cubeScaleFactor P) * ∑ k : Fin d,
-                      MeasureTheory.eLpNorm (fun x => HP.hess i k x) 2
-                      (normalizedCubeMeasure P) := mul_le_mul_left hscale _
-                _ ≤ _ := mul_le_mul_right hrow _
-
-        _ ≤ (d : ℝ≥0∞) * G.constantValue * (A * R) :=
-          mul_le_mul_right henergy' _
-        _ = _ := by ring
+      exact INTERNAL.scaled_row_sum_le_dimension_mul_energy
+        (fun j => MeasureTheory.eLpNorm (fun x => HD.hess i j x) r.exponent
+          (normalizedCubeMeasure D))
+        (fun a b => MeasureTheory.eLpNorm (fun x => HP.hess a b x) 2
+          (normalizedCubeMeasure P)) i hgrad hscale henergy'
     let w : W1pFunction (openCubeSet D) r.exponent := hessianGradCoordToW1p HD i r
       (memLpOn_openCubeSet_of_memLp_normalizedCubeMeasure D (by
         simpa [HD, HP, H1Function.restrict] using! G.restrict_one_more Q u h i))

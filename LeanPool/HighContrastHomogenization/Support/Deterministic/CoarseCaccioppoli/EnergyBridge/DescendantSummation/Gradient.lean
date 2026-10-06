@@ -106,7 +106,7 @@ theorem cubeBesovCircPartialNorm_component_le_parent_canonicalGradientAcirc_of_d
         ≤ cubeBesovScaleWeight (-r) R *
             cubeBesovNegativeVectorPartialSeminorm R r N g := by
           exact
-            cubeBesovCircPartialNorm_two_one_component_le_scaleWeight_neg_mul_negativeVectorPartialSeminorm
+            besovCircPartial_twoOne_component_le_negativeVectorPartial
               R r g i N
     _ ≤ cubeBesovScaleWeight (-r) R *
           (((geometricDiscount r 1)⁻¹ *
@@ -166,7 +166,7 @@ theorem cubeBesovCircPartialNorm_component_le_local_canonicalGradientAcirc
         ≤ cubeBesovScaleWeight (-r) Q *
             cubeBesovNegativeVectorPartialSeminorm Q r N g := by
           exact
-            cubeBesovCircPartialNorm_two_one_component_le_scaleWeight_neg_mul_negativeVectorPartialSeminorm
+            besovCircPartial_twoOne_component_le_negativeVectorPartial
               Q r g i N
     _ ≤ cubeBesovScaleWeight (-r) Q *
           (((geometricDiscount r 1)⁻¹ *

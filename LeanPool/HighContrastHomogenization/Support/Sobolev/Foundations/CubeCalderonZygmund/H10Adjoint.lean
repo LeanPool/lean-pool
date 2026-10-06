@@ -96,7 +96,7 @@ theorem exists_axisCubeScalarDivergenceSolution
     simpa [U, g] using! hG.neg
   have hRealize :
       PotentialSolenoidalL2Data.HasPotentialZeroTraceClosureRealization U :=
-    PotentialSolenoidalL2Data.hasPotentialZeroTraceClosureRealization_of_isOpenBoundedConvexDomain
+    PotentialSolenoidalL2Data.hasPotentialZeroTraceClosureRealization_of_convexDomain
       hUgeom
   have hne : Set.Nonempty U := by
     simpa [U] using nonempty_axisCube_of_pos z hL

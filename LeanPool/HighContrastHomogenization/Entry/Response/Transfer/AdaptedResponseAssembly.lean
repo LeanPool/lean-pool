@@ -236,7 +236,8 @@ private theorem key_bound (Call C3 C6 C7 C8 : ℝ) (CH : ℕ → ℝ) (d : ℕ) 
     linarith only [htau0p, q1, q2, q4, hW0p]
   have hLcube : (0 : ℝ) ≤ Real.sqrt (respKappa P jStar F s) ^ 3 := pow_nonneg hsq0 3
   have hm := cutoff_substitution Call ((3 : ℝ) ^ (-(H : ℝ))) (respRatio P jStar F s t)
-    ((3 : ℝ) ^ (-(Quenched.contrastAlpha γ * (H : ℝ))) + CH H * η ^ ((1 : ℝ) / (2 * (bigQ d γ : ℝ))))
+    ((3 : ℝ) ^ (-(Quenched.contrastAlpha γ * (H : ℝ))) + CH H * η ^ ((1 : ℝ) / (2 * (bigQ d γ :
+      ℝ))))
     (Real.sqrt (respKappa P jStar F s)) (respEJMinus P jStar F t e)
     (respTauMinus P jStar F s t e) (respLsMinus P jStar F s t e) (respWMinus P jStar F t e)
     |respCenteredJMinus P jStar F t e| hCall1 hT0 hr1 hth0 hKq1 hEJ0m
@@ -248,7 +249,8 @@ private theorem key_bound (Call C3 C6 C7 C8 : ℝ) (CH : ℕ → ℝ) (d : ℕ) 
       (mul_le_mul_of_nonneg_right hC6le hth0) hsq0))
     (le_trans hcbm (mul_le_mul_of_nonneg_right hC8le hbr0m))
   have hp := cutoff_substitution Call ((3 : ℝ) ^ (-(H : ℝ))) (respRatio P jStar F s t)
-    ((3 : ℝ) ^ (-(Quenched.contrastAlpha γ * (H : ℝ))) + CH H * η ^ ((1 : ℝ) / (2 * (bigQ d γ : ℝ))))
+    ((3 : ℝ) ^ (-(Quenched.contrastAlpha γ * (H : ℝ))) + CH H * η ^ ((1 : ℝ) / (2 * (bigQ d γ :
+      ℝ))))
     (Real.sqrt (respKappa P jStar F s)) (respEJPlus P jStar F t e)
     (respTauPlus P jStar F s t e) (respLsPlus P jStar F s t e) (respWPlus P jStar F t e)
     |respCenteredJPlus P jStar F t e| hCall1 hT0 hr1 hth0 hKq1 hEJ0p
@@ -304,7 +306,8 @@ theorem adapted_response_core_of_holes (d : ℕ) (_hd : 2 ≤ d) (γ : ℝ)
                       (Src : CoeffSpace d → ℝ) (B : ℝ) (jStar : ℕ) (F : BlockMat d) (s t : ℤ),
                       RawOutput d γ S ε σ Cglob Cprof Csrc H Bresp P E Ψ K Src B jStar F s t →
                       canonicalImbalance
-                          (adaptedMean P (Geometry.explicitRoundedGrid jStar (explicitCanonicalMetric F)) t) ≤
+                          (adaptedMean P (Geometry.explicitRoundedGrid jStar
+                            (explicitCanonicalMetric F)) t) ≤
                           1 + δad := by
   obtain ⟨C2, hC2, h2⟩ := response_calibrated_blocks d _hd γ _hγ S _hS
   obtain ⟨Csrc10, hCsrc10, C10, hC10, h10⟩ := response_source_smallness d _hd γ _hγ S _hS
@@ -383,7 +386,8 @@ theorem adapted_response_core_of_holes (d : ℕ) (_hd : 2 ≤ d) (γ : ℝ)
   have hT0 : (0 : ℝ) ≤ (3 : ℝ) ^ (-(H : ℝ)) := Real.rpow_nonneg (by norm_num) _
   have hth0 : (0 : ℝ) ≤ (3 : ℝ) ^ (-(Quenched.contrastAlpha γ * (H : ℝ))) +
       CH H * η ^ ((1 : ℝ) / (2 * (bigQ d γ : ℝ))) := by
-    have p1 : (0 : ℝ) ≤ (3 : ℝ) ^ (-(Quenched.contrastAlpha γ * (H : ℝ))) := Real.rpow_nonneg (by norm_num) _
+    have p1 : (0 : ℝ) ≤ (3 : ℝ) ^ (-(Quenched.contrastAlpha γ * (H : ℝ))) := Real.rpow_nonneg
+      (by norm_num) _
     have p2 : (0 : ℝ) ≤ η ^ ((1 : ℝ) / (2 * (bigQ d γ : ℝ))) := Real.rpow_nonneg hη.1.le _
     have p3 : (0 : ℝ) ≤ CH H := (hCH H).le
     have p4 : (0 : ℝ) ≤ CH H * η ^ ((1 : ℝ) / (2 * (bigQ d γ : ℝ))) := mul_nonneg p3 p2

@@ -72,7 +72,7 @@ theorem test_backwardDifferenceQuotient_sqCutoffForwardDifferenceQuotient_gradie
 /-- The split direct-test gradient pairing reduces to two interior pairings:
 the unshifted pairing against `G(x)` and the transported shifted pairing
 against `G(x+h e_i)`. -/
-theorem integral_vecDot_backwardDifferenceQuotientSqCutoffForwardDifferenceQuotientToAmbient_grad_eq_sub_integrals_on
+theorem integral_dot_backwardDifference_cutoffForwardDifference_grad_eq_sub_integrals_on
     {G : Vec d → Vec d} (hG : MemVectorL2 U G)
     (u : H1Function U) (hV : IsOpenBoundedConvexDomain V) (hVU : V ⊆ U)
     (step : ℝ) (i : Fin d)
@@ -122,7 +122,7 @@ theorem integral_vecDot_backwardDifferenceQuotientSqCutoffForwardDifferenceQuoti
         ∫ x in V, vecDot (G (euclideanCoordShift step i x)) (F.grad x)
           ∂MeasureTheory.volume := by
     simpa [F, S] using
-      integral_vecDot_localizedSqShiftedCutoffBackwardDifferenceQuotientToAmbient_grad_eq_integral_on
+      shiftedCutoff_backwardGradient_integral_eq_forward
         (U := U) (V := V) G u hV hVU step i hVshift hη hη_compact hη_sub
   calc
     ∫ x in U, vecDot (G x) (T.grad x) ∂MeasureTheory.volume =
@@ -164,7 +164,7 @@ theorem integral_vecDot_backwardDifferenceQuotientSqCutoffForwardDifferenceQuoti
 
 /-- The transported split is the negative of the interior pairing with the
 forward quotient of the vector field `G`. -/
-theorem integral_vecDot_backwardDifferenceQuotientSqCutoffForwardDifferenceQuotientToAmbient_grad_eq_neg_integral_forwardDifferenceQuotient_on
+theorem integral_dot_backwardDifference_cutoffGradient_eq_neg_integral_forwardDifference
     {G : Vec d → Vec d} (hG : MemVectorL2 U G)
     (u : H1Function U) (hV : IsOpenBoundedConvexDomain V) (hVU : V ⊆ U)
     (step : ℝ) (i : Fin d)
@@ -200,7 +200,7 @@ theorem integral_vecDot_backwardDifferenceQuotientSqCutoffForwardDifferenceQuoti
             ∫ x in V, vecDot (G (euclideanCoordShift step i x)) (F.grad x)
               ∂MeasureTheory.volume) := by
     simpa [F] using
-      integral_vecDot_backwardDifferenceQuotientSqCutoffForwardDifferenceQuotientToAmbient_grad_eq_sub_integrals_on
+      integral_dot_backwardDifference_cutoffForwardDifference_grad_eq_sub_integrals_on
         (U := U) (V := V) (G := G) hG u hV hVU step i hVshift
         hη hη_compact hη_sub
   have hGV : MemVectorL2 V G := by
@@ -301,7 +301,7 @@ theorem forwardDifferenceQuotientOn_grad_eq_vectorForwardDifferenceQuotient
 This is the distributional handoff used by the Hessian limit argument: each
 coordinate of `∇D_i^+u` pairs against a test as `D_i^+u` paired against the
 corresponding test derivative. -/
-theorem integral_forwardDifferenceQuotientOn_grad_coord_mul_eq_neg_integral_forwardDifferenceQuotient_mul_fderiv
+theorem integral_forwardDifferenceGradient_eq_neg_integral_forwardDifferenceDerivative
     (u : H1Function U) (hV : IsOpenBoundedConvexDomain V) (hVU : V ⊆ U)
     {step : ℝ} (i j : Fin d)
     (hVshift : V ⊆ translateSet ((-step) • basisVec i) U)
@@ -328,7 +328,7 @@ theorem integral_forwardDifferenceQuotientOn_grad_coord_mul_eq_neg_integral_forw
 
 /-- Coordinatewise `L²` pairing bound by the full vector energy and the scalar
 test energy. -/
-theorem abs_integral_coord_mul_le_half_integral_vecNormSq_add_half_integral_sq_of_memVectorL2_memScalarL2
+theorem abs_integral_coordProduct_le_half_normSquares
     {G : Vec d → Vec d} {φ : Vec d → ℝ}
     (hG : MemVectorL2 U G) (hφ : MemScalarL2 U φ) (j : Fin d) :
     |∫ x in U, G x j * φ x ∂MeasureTheory.volume| ≤
@@ -389,7 +389,7 @@ theorem abs_integral_coord_mul_le_half_integral_vecNormSq_add_half_integral_sq_o
 
 /-- Version of the coordinatewise `L²` pairing bound localized by support:
 when the scalar test is supported in `S ⊆ V`, only the energy on `S` appears. -/
-theorem abs_integral_coord_mul_le_half_integral_subset_vecNormSq_add_half_integral_subset_sq_of_support_subset
+theorem abs_integral_coord_mul_le_half_integral_vectorNormSq_add_half_integral_sq
     {S V : Set (Vec d)} {G : Vec d → Vec d} {φ : Vec d → ℝ}
     (hSV : S ⊆ V) (hφ_support : Function.support φ ⊆ S)
     (hG : MemVectorL2 V G) (hφS : MemScalarL2 S φ) (j : Fin d) :
@@ -411,7 +411,7 @@ theorem abs_integral_coord_mul_le_half_integral_subset_vecNormSq_add_half_integr
       (MeasureTheory.Measure.restrict_mono_set MeasureTheory.volume hSV)
   rw [hrestrict]
   exact
-    abs_integral_coord_mul_le_half_integral_vecNormSq_add_half_integral_sq_of_memVectorL2_memScalarL2
+    abs_integral_coordProduct_le_half_normSquares
       (U := S) hGS hφS j
 
 /-- Coordinatewise Cauchy-Schwarz pairing bound in `L²`.  Unlike the Young
@@ -527,7 +527,7 @@ theorem abs_neg_integral_forwardDifferenceQuotient_mul_fderiv_le_l2_mul_l2_on_in
   let G : Vec d → Vec d :=
     fun x => (u.forwardDifferenceQuotientOn step i hV.isOpen hVU hVshift).grad x
   have hpair :=
-    integral_forwardDifferenceQuotientOn_grad_coord_mul_eq_neg_integral_forwardDifferenceQuotient_mul_fderiv
+    integral_forwardDifferenceGradient_eq_neg_integral_forwardDifferenceDerivative
       (U := U) (V := V) u hV hVU i j hVshift
       hφ hφ_compact (hφ_subS.trans hSV)
   have hφS : MemScalarL2 S φ := by
@@ -775,19 +775,19 @@ theorem neg_integral_forwardDifferenceQuotient_mul_fderiv_eq_of_l2_dist_zero_on_
   have hpairχ :
       ∫ x in V, G x * χ x ∂MeasureTheory.volume = Tχ := by
     simpa [G, w, Tχ] using
-      integral_forwardDifferenceQuotientOn_grad_coord_mul_eq_neg_integral_forwardDifferenceQuotient_mul_fderiv
+      integral_forwardDifferenceGradient_eq_neg_integral_forwardDifferenceDerivative
         (U := U) (V := V) u hV hVU
         (step := step) i j hVshift hχ hχ_compact (hχ_subS.trans hSV)
   have hpairφ :
       ∫ x in V, G x * φ x ∂MeasureTheory.volume = Tφ := by
     simpa [G, w, Tφ] using
-      integral_forwardDifferenceQuotientOn_grad_coord_mul_eq_neg_integral_forwardDifferenceQuotient_mul_fderiv
+      integral_forwardDifferenceGradient_eq_neg_integral_forwardDifferenceDerivative
         (U := U) (V := V) u hV hVU
         (step := step) i j hVshift hφ hφ_compact (hφ_subS.trans hSV)
   have hpairψ :
       ∫ x in V, G x * ψ x ∂MeasureTheory.volume = Tψ := by
     simpa [G, w, Tψ] using
-      integral_forwardDifferenceQuotientOn_grad_coord_mul_eq_neg_integral_forwardDifferenceQuotient_mul_fderiv
+      integral_forwardDifferenceGradient_eq_neg_integral_forwardDifferenceDerivative
         (U := U) (V := V) u hV hVU
         (step := step) i j hVshift hψ hψ_compact (hψ_subS.trans hSV)
   have hG : MemScalarL2 V G := by

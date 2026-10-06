@@ -178,7 +178,7 @@ theorem blockMatEntry_abs_le_unitScaleEllipticityFactorSum_origin_ae
       coarseBlockMatrix (cubeSet Q) a.toFun =
         Ch02.coarseBlockMatrix (Ch02.cubeDomain Q) (F.coeffOn Q) := by
     simpa [F] using
-      Ch04.RestrictionLawCarrier.coarseBlockMatrix_cubeSet_eq_ch02_coarseBlockMatrix_of_aelocallyUniformlyEllipticField
+      Ch04.RestrictionLawCarrier.coarseBlockMatrix_cubeSet_eq_chapterCoarse
         ha Q
   have hSymm : IsSymmetricBlockMat (coarseBlockMatrix (cubeSet Q) a.toFun) := by
     rw [hEq]
@@ -244,7 +244,8 @@ theorem blockMatEntry_abs_le_unitScaleEllipticityFactorSum_origin_ae
               |blockMatEntry (coarseBlockMatrix (cubeSet Q) a.toFun) (Sum.inl i) (Sum.inr j)| ≤
                 (1 / 2 : ℝ) *
                   (blockMatEntry (coarseBlockMatrix (cubeSet Q) a.toFun) (Sum.inl i) (Sum.inl i) +
-                    blockMatEntry (coarseBlockMatrix (cubeSet Q) a.toFun) (Sum.inr j) (Sum.inr j)) :=
+                    blockMatEntry (coarseBlockMatrix (cubeSet Q) a.toFun) (Sum.inr j) (Sum.inr
+                      j)) :=
             abs_cross_blockMatEntry_le_diag_sum_of_blockPosDef' hSymm hPos
               (by intro h; cases h)
           have hUL :
@@ -268,7 +269,8 @@ theorem blockMatEntry_abs_le_unitScaleEllipticityFactorSum_origin_ae
               |blockMatEntry (coarseBlockMatrix (cubeSet Q) a.toFun) (Sum.inr i) (Sum.inl j)| ≤
                 (1 / 2 : ℝ) *
                   (blockMatEntry (coarseBlockMatrix (cubeSet Q) a.toFun) (Sum.inr i) (Sum.inr i) +
-                    blockMatEntry (coarseBlockMatrix (cubeSet Q) a.toFun) (Sum.inl j) (Sum.inl j)) :=
+                    blockMatEntry (coarseBlockMatrix (cubeSet Q) a.toFun) (Sum.inl j) (Sum.inl
+                      j)) :=
             abs_cross_blockMatEntry_le_diag_sum_of_blockPosDef' hSymm hPos
               (by intro h; cases h)
           have hLR :
@@ -401,7 +403,7 @@ theorem fullBlockNormalizedQuadraticObservable_coordinateProbe_abs_le_factorSum_
     (hP4 : QuantitativeCoarseGrainedEllipticity P)
     (center : ℤ) (α : BlockCoord d) :
     (fun a : RegCoeffField d =>
-        |fullBlockNormalizedQuadraticObservable hP hStruct center
+        |normalizedQuadraticObservable hP hStruct center
           (fullBlockCoordinateProbe α) (cubeSet (originCube d 0)) a|)
       ≤ᵐ[P]
         fun a =>
@@ -415,16 +417,16 @@ theorem fullBlockNormalizedQuadraticObservable_coordinateProbe_abs_le_factorSum_
   let r := Ch04.scalarFullBlockInvSqrtDiag (d := d) b c
   have hF_nonneg := unitScaleEllipticityFactorSum_nonneg hP4 a
   have hquad :
-      fullBlockNormalizedQuadraticObservable hP hStruct center
+      normalizedQuadraticObservable hP hStruct center
           (fullBlockCoordinateProbe α) (cubeSet (originCube d 0)) a =
         r α *
           blockMatEntry (coarseBlockMatrix (cubeSet (originCube d 0)) a) α α *
           r α := by
-    simpa [fullBlockNormalizedQuadraticObservable, b, c, r] using
+    simpa [normalizedQuadraticObservable, b, c, r] using
       fullBlockQuadratic_diagonal_coordinateProbe r
         (coarseBlockMatrix (cubeSet (originCube d 0)) a) α
   calc
-    |fullBlockNormalizedQuadraticObservable hP hStruct center
+    |normalizedQuadraticObservable hP hStruct center
         (fullBlockCoordinateProbe α) (cubeSet (originCube d 0)) a|
         = |r α *
             blockMatEntry (coarseBlockMatrix (cubeSet (originCube d 0)) a) α α *
@@ -450,7 +452,7 @@ private theorem fullBlockNormalizedQuadraticObservable_pairProbe_abs_le_factorSu
             s * (r α * blockMatEntry A α β * r β) +
             r β * blockMatEntry A β β * r β) :
     (fun a : RegCoeffField d =>
-        |fullBlockNormalizedQuadraticObservable hP hStruct center
+        |normalizedQuadraticObservable hP hStruct center
           probe (cubeSet (originCube d 0)) a|)
       ≤ᵐ[P]
         fun a =>
@@ -475,7 +477,7 @@ private theorem fullBlockNormalizedQuadraticObservable_pairProbe_abs_le_factorSu
       A = Ch02.coarseBlockMatrix (Ch02.cubeDomain Q)
         ((Ch04.triadicCoeffFamilyOfAELocallyUniformlyEllipticField a ha).coeffOn Q) := by
     simpa [A, Q] using
-      Ch04.RestrictionLawCarrier.coarseBlockMatrix_cubeSet_eq_ch02_coarseBlockMatrix_of_aelocallyUniformlyEllipticField
+      Ch04.RestrictionLawCarrier.coarseBlockMatrix_cubeSet_eq_chapterCoarse
         ha Q
   have hSymm : IsSymmetricBlockMat A := by
     rw [hEq]
@@ -503,10 +505,10 @@ private theorem fullBlockNormalizedQuadraticObservable_pairProbe_abs_le_factorSu
         (e := blockMatEntry (coarseBlockMatrix (cubeSet (originCube d 0)) a) α β)
         hoff
   have hquad :
-      fullBlockNormalizedQuadraticObservable hP hStruct center
+      normalizedQuadraticObservable hP hStruct center
           probe (cubeSet Q) a =
         Tα + s * Tαβ + Tβ := by
-    simpa [fullBlockNormalizedQuadraticObservable, b, c, r, A, Tα, Tαβ, Tβ] using
+    simpa [normalizedQuadraticObservable, b, c, r, A, Tα, Tαβ, Tβ] using
       hexpand r hSymm
   have h_abs :
       |Tα + s * Tαβ + Tβ| ≤
@@ -524,7 +526,7 @@ private theorem fullBlockNormalizedQuadraticObservable_pairProbe_abs_le_factorSu
       _ = (|r α| * |r α| + 2 * (|r α| * |r β|) +
             |r β| * |r β|) * Fsum := by ring
   calc
-    |fullBlockNormalizedQuadraticObservable hP hStruct center
+    |normalizedQuadraticObservable hP hStruct center
         probe (cubeSet (originCube d 0)) a|
         = |Tα + s * Tαβ + Tβ| := by
           simpa [Q] using congrArg abs hquad
@@ -542,7 +544,7 @@ theorem fullBlockNormalizedQuadraticObservable_plusProbe_abs_le_factorSum_ae
     (hP4 : QuantitativeCoarseGrainedEllipticity P)
     (center : ℤ) {α β : BlockCoord d} (hαβ : α ≠ β) :
     (fun a : RegCoeffField d =>
-        |fullBlockNormalizedQuadraticObservable hP hStruct center
+        |normalizedQuadraticObservable hP hStruct center
           (fullBlockPlusProbe α β) (cubeSet (originCube d 0)) a|)
       ≤ᵐ[P]
         fun a =>
@@ -560,7 +562,7 @@ theorem fullBlockNormalizedQuadraticObservable_minusProbe_abs_le_factorSum_ae
     (hP4 : QuantitativeCoarseGrainedEllipticity P)
     (center : ℤ) {α β : BlockCoord d} (hαβ : α ≠ β) :
     (fun a : RegCoeffField d =>
-        |fullBlockNormalizedQuadraticObservable hP hStruct center
+        |normalizedQuadraticObservable hP hStruct center
           (fullBlockMinusProbe α β) (cubeSet (originCube d 0)) a|)
       ≤ᵐ[P]
         fun a =>
@@ -579,9 +581,10 @@ private theorem fullBlockNormalizedQuadraticObservable_origin_regular
     (center : ℤ) (q : FullBlockVec d) :
     AEMeasurable
       (fun a : RegCoeffField d =>
-        fullBlockNormalizedQuadraticObservable hP hStruct center q
+        normalizedQuadraticObservable hP hStruct center q
           (cubeSet (originCube d 0)) a) P := by
-  rcases exists_isRestrictionLocalRandomVariable_ae_eq_fullBlockNormalizedQuadraticObservable_cubeSet
+  rcases
+    exists_isRestrictionLocalRandomVariable_ae_eq_fullBlockNormalizedQuadraticObservable_cubeSet
       hP hStruct center q (originCube d 0) with ⟨Y, hY_local, hY_eq⟩
   exact (hP.aemeasurable_of_isLocalRandomVariable hY_local).congr hY_eq.symm
 
@@ -592,7 +595,7 @@ private theorem centeredOriginMomentRoot_le_factorSum_of_probe_abs_le
     {center : ℤ} {q : FullBlockVec d} {C : ℝ} (hC : 0 ≤ C)
     (hbound :
       (fun a : RegCoeffField d =>
-          |fullBlockNormalizedQuadraticObservable hP hStruct center q
+          |normalizedQuadraticObservable hP hStruct center q
             (cubeSet (originCube d 0)) a|)
         ≤ᵐ[P]
           fun a => C * unitScaleEllipticityFactorSum hP4 a) :
@@ -611,7 +614,7 @@ private theorem centeredOriginMomentRoot_le_factorSum_of_probe_abs_le
               Ch04.lambdaInvMomentAtScale P 0 hP4.sLower hP4.xi) := by
   let X : RegCoeffField d → ℝ :=
     fun a =>
-      fullBlockNormalizedQuadraticObservable hP hStruct center q
+      normalizedQuadraticObservable hP hStruct center q
         (cubeSet (originCube d 0)) a
   have hX_meas : AEMeasurable X P := by
     simpa [X] using

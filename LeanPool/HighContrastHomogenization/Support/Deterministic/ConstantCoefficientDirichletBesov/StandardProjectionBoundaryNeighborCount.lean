@@ -226,7 +226,7 @@ This is the closed geometric version of the hit-count interface from
 `StandardProjectionBoundaryNeighbor`: the only remaining inputs are the local
 `L²` hypotheses needed to form the overlap norms and the ordinary standard
 parent `L²` hypotheses. -/
-theorem cubeBesovOverlappingPositiveVectorDepthSeminorm_gap_zero_le_sum_sqrt_sharpBoundary_depthAverage
+theorem overlappingPositiveDepthSeminorm_gapZero_le_sharpBoundaryAverage
     {d : ℕ} (Q : TriadicCube d) (s : ℝ) (u : Vec d → Vec d) (j : ℕ)
     (hincLoc :
       ∀ S ∈ overlapCentersAtDepth Q j, ∀ m ∈ Finset.range j,
@@ -324,7 +324,7 @@ theorem sq_cubeBesovOverlappingPositiveVectorDepthSeminorm_le_standard_add_sharp
           (cubeProjectionGapVec Q 0 j u) j ≤ G := by
     dsimp [G]
     exact
-      cubeBesovOverlappingPositiveVectorDepthSeminorm_gap_zero_le_sum_sqrt_sharpBoundary_depthAverage
+      overlappingPositiveDepthSeminorm_gapZero_le_sharpBoundaryAverage
         Q s u j hincLoc huParent
   have hG_nonneg : 0 ≤ G := by
     dsimp [G]

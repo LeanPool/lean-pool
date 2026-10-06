@@ -307,7 +307,7 @@ theorem measureReal_localizedFirstQuenchedEstimate_normalizedProbeJMax_tail_noLo
 
 /-- Uniform-in-`σ` version of
 `measureReal_localizedFirstQuenchedEstimate_normalizedProbeJMax_tail_noLog`. -/
-theorem measureReal_localizedFirstQuenchedEstimate_normalizedProbeJMax_tail_noLog_uniformAnnealedExponent
+theorem localizedQuenchedEstimate_probeTail_noLog_of_uniformExponent
     {d : ℕ} [NeZero d]
     (params : QuantitativeCoarseGrainedEllipticityParams d) :
     ∃ Centry a : ℝ, 0 < Centry ∧ 0 < a ∧

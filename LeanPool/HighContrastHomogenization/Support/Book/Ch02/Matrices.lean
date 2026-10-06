@@ -71,8 +71,11 @@ theorem averagedSymmPartPlusCorrection_eq_ofAEEq {d : ℕ} {U : Domain d}
 functional. We keep `sigmaStarInv` primitive at this stage; constructing
 `sigmaStar` itself belongs to the later positivity/invertibility theorem. -/
 structure CoarseMatrices (d : ℕ) where
+  /-- The matrix parameter `σ` in the coarse quadratic response representation. -/
   sigma : Mat d
+  /-- The primitive matrix parameter representing `σ*⁻¹` in the coarse quadratic response. -/
   sigmaStarInv : Mat d
+  /-- The coupling matrix `κ` in the coarse quadratic response representation. -/
   kappa : Mat d
 
 namespace CoarseMatrices

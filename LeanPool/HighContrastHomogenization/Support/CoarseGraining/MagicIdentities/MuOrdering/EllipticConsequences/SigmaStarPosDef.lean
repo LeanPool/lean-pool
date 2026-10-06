@@ -26,7 +26,7 @@ namespace HCPolySupport
 noncomputable section
 
 private theorem volumeAverage_le_volumeAverage_of_le_on_local
-    {d : ℕ} {U : Set (Vec d)} [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
+    {d : ℕ} {U : Set (Vec d)}
     {f g : Vec d → ℝ}
     (hU : MeasurableSet U)
     (hf : MeasureTheory.IntegrableOn f U)
@@ -169,7 +169,7 @@ theorem sigmaStarInvCoarse_posDef_of_isEllipticFieldOn_of_hodgeConverseCriterion
       ∀ q : Vec d, Mu U (0, q) a = ResponseJ U 0 q a := by
     intro q
     exact
-      Rc.mu_zero_right_eq_responseJ_zero_of_isEllipticFieldOn_of_hodgeConverseCriterion
+      Rc.mu_zeroRight_eq_responseJ_zero_of_HodgeConverse
         system hU hEll hHodge hvol.ne' compat.mu_eq_muCandidate q
   have hSInvLower :
       IsSigmaStarInvCoarse U a (coarseBlockMatrix U a).lowerRight := by

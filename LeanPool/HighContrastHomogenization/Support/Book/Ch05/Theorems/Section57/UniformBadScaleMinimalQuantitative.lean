@@ -37,6 +37,21 @@ scale.  The bad-scale tail has exponent `d`, so the resulting random scale is
 
 noncomputable section
 
+private theorem shifted_bad_scale_tail_bound
+    {Ω : Type*} [MeasurableSpace Ω] (μ : Measure Ω)
+    [IsFiniteMeasure μ] (H : ℕ → ℕ → Ω → ℝ) {t α η B : ℝ} {Q : ℕ}
+    (hα : 0 ≤ α) (hB : 0 < B) (hη : 0 < η)
+    (hQ : ∀ N : ℕ, Q ≤ N → μ.real (badScaleEvent H t α N) ≤
+      Real.exp (-(((3 : ℝ) ^ (N : ℝ) / B) ^ η))) :
+    ∀ N : ℕ, Q ≤ N → μ.real (badTailEvent (badScaleEvent H t α) N) ≤
+      Real.exp (-((Real.rpow (3 : ℝ) ((N - Q : ℕ) : ℝ) / max 1 B) ^ η)) := by
+  intro N hQN
+  have hmono : μ.real (badTailEvent (badScaleEvent H t α) N) ≤
+      μ.real (badScaleEvent H t α N) :=
+    measureReal_mono (μ := μ) (badTailEvent_badScaleEvent_subset hα)
+  exact hmono.trans ((hQ N hQN).trans
+    (exp_neg_rpow_three_nat_div_le_exp_neg_shifted_max_one hB hη))
+
 /-- The uniform-endpoint bad-scale tail yields the shifted localized estimate
 above an explicit quantitative minimal scale.  The deterministic prefactor
 threshold is selected before the probability law. -/
@@ -211,25 +226,8 @@ theorem exists_quantitative_shifted_quenchedLocalizedEstimate_uniformEndpoint
         P.real (badTailEvent Bad N) ≤
           Real.exp
             (-(((Real.rpow (3 : ℝ) ((N - Q : ℕ) : ℝ)) / B) ^ η)) := by
-    intro N hQN
-    have hmono :
-        P.real (badTailEvent Bad N) ≤ P.real (Bad N) :=
-      measureReal_mono (μ := P)
-        (badTailEvent_badScaleEvent_subset
-          (H := Hshift) (t := t) (α := αbad) hα_nonneg)
-    have hscale :
-        P.real (Bad N) ≤
-          Real.exp (-(((3 : ℝ) ^ (N : ℝ) / Btail) ^ η)) := by
-      simpa [Bad] using hQ N hQN
-    have hcompare :
-        Real.exp (-(((3 : ℝ) ^ (N : ℝ) / Btail) ^ η)) ≤
-          Real.exp
-            (-(((Real.rpow (3 : ℝ) ((N - Q : ℕ) : ℝ)) / B) ^ η)) := by
-      simpa [B] using
-        exp_neg_rpow_three_nat_div_le_exp_neg_shifted_max_one
-          (Q := Q) (N := N) (B := Btail) (η := η)
-          hBtail_pos hη_pos
-    exact hmono.trans (hscale.trans hcompare)
+    simpa [Bad, B] using shifted_bad_scale_tail_bound P Hshift
+      hα_nonneg hBtail_pos hη_pos hQ
   have hlocalized :=
     quenchedLocalizedEstimate_shifted_from_badTailBound
       hP hStruct (hInf.toGammaSigma 1 zero_lt_one)

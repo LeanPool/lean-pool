@@ -20,16 +20,19 @@ public section
 
 namespace HCPolySupport
 
+/-- The pointwise pairing of `X` with the block coefficient matrix applied to `Y`. -/
 @[expose]
 noncomputable def blockPairingIntegrand {d : ℕ} (a : CoeffField d)
     (X Y : BlockState d) : Vec d → ℝ :=
   fun x => blockVecDot (X.eval x) (blockMatVecMul (blockCoeffField a x) (Y.eval x))
 
+/-- The volume average of a block state's quadratic energy on `U`. -/
 @[expose]
 noncomputable def blockEnergyAverage {d : ℕ} (U : Set (Vec d)) (a : CoeffField d)
     (X : BlockState d) : ℝ :=
   volumeAverage U (blockEnergyDensity a X)
 
+/-- The volume average of the block coefficient pairing of two states on `U`. -/
 @[expose]
 noncomputable def blockPairingAverage {d : ℕ} (U : Set (Vec d)) (a : CoeffField d)
     (X Y : BlockState d) : ℝ :=
@@ -153,6 +156,8 @@ analytic content of the notes: once such a family is available, `μ(U,·;a)` is
 automatically quadratic, hence the coarse block matrix exists canonically.
 -/
 structure LinearMuMinimizerFamily {d : ℕ} (U : Set (Vec d)) (a : CoeffField d) where
+  /-- The linear family of admissible block states realizing the minimum energy for each
+  constant pair. -/
   field : BlockVec d → BlockState d
   map_add : ∀ P Q : BlockVec d, field (P + Q) = field P + field Q
   map_smul : ∀ (c : ℝ) (P : BlockVec d), field (c • P) = c • field P
@@ -165,6 +170,8 @@ namespace LinearMuMinimizerFamily
 
 variable {d : ℕ} {U : Set (Vec d)} {a : CoeffField d}
 
+/-- The bilinear form obtained by averaging coefficient pairings of the family's minimizing
+states. -/
 @[expose]
 noncomputable def toBilin (F : LinearMuMinimizerFamily U a) :
     FullBlockVec d →ₗ[ℝ] FullBlockVec d →ₗ[ℝ] ℝ where
@@ -208,6 +215,7 @@ noncomputable def toBilin (F : LinearMuMinimizerFamily U a) :
         (F.field (ofFullBlockVec x))
         (F.field (ofFullBlockVec z)))
 
+/-- The quadratic form obtained by pairing each minimizing state with itself. -/
 @[expose]
 noncomputable def quadraticForm (F : LinearMuMinimizerFamily U a) :
     QuadraticForm ℝ (FullBlockVec d) :=

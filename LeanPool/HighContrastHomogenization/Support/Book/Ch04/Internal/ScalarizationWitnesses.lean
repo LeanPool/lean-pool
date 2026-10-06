@@ -38,7 +38,9 @@ noncomputable section
 /-- Witness data for scalarization of annealed matrices at scale `n`. -/
 structure AnnealedScalarizationWitness {d : ℕ}
     (P : RestrictionCoeffLaw d) (n : ℤ) where
+  /-- The scalar multiplying the identity in the annealed `σ` matrix at scale `n`. -/
   sigma : ℝ
+  /-- The scalar multiplying the identity in the annealed `σ*` matrix at scale `n`. -/
   sigmaStar : ℝ
   sigma_eq : annealedSigmaAtScale P n = sigma • 1
   sigmaStar_eq : annealedSigmaStarAtScale P n = sigmaStar • 1
@@ -217,6 +219,8 @@ namespace AnnealedScalarizationInvarianceData
 
 variable {d : ℕ} [NeZero d] {P : RestrictionCoeffLaw d} {n : ℤ}
 
+/-- A scalarization witness obtained from sign-flip and coordinate-swap invariance and vanishing
+annealed coupling. -/
 @[expose]
 noncomputable def toWitness (h : AnnealedScalarizationInvarianceData P n) :
     AnnealedScalarizationWitness P n :=
@@ -233,6 +237,8 @@ namespace AnnealedScalarizationPrimitiveData
 
 variable {d : ℕ} [NeZero d] {P : RestrictionCoeffLaw d} {n : ℤ}
 
+/-- A scalarization witness obtained from invariance of the primitive inverse and energy matrices
+and vanishing mixed mean. -/
 @[expose]
 noncomputable def toWitness (h : AnnealedScalarizationPrimitiveData P n) :
     AnnealedScalarizationWitness P n :=

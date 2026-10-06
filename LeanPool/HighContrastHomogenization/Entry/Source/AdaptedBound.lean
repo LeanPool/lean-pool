@@ -89,7 +89,8 @@ theorem source_finer_standard_bound {d : ℕ} (γ : ℝ) (E : BlockMat d)
     rw [hrel]
     dsimp only [standardCellCenter] at hcenter ⊢
     constructor <;> linarith only [(hcenter i).1, (hcenter i).2]
-  have htranslate : translateSet (standardCellCenter m v) (standardCell d k u) = standardCell d k w := by
+  have htranslate : translateSet (standardCellCenter m v) (standardCell d k u) = standardCell d
+    k w := by
     simpa only [hkn, u, sub_add_cancel] using translate_standardCell_by_coarser_center k n v u
   have hb := hcoarse (fun i => (3 : ℤ) ^ (jStar + r) * v i) m
     (by simpa only [m, zpow_natCast] using hs) k hkm u hu
@@ -146,7 +147,8 @@ theorem source_standard_bound {d : ℕ} [NeZero d] (γ : ℝ) (E : BlockMat d)
       (fun u _ => measurableSet_standardCell m u) hsub hdisj hnull
   have hb : ∀ u ∈ s, BlockMatLoewnerLE (coarseBlock (U u) a) (blockScale 1 E) := by
     intro u hu
-    have ht := source_finer_standard_bound γ E S a jStar r hcoarse hsuccess m u le_rfl (hu.trans hcell)
+    have ht := source_finer_standard_bound γ E S a jStar r hcoarse hsuccess m u le_rfl (hu.trans
+      hcell)
     simpa only [m, Int.cast_natCast, sub_self, mul_zero, Real.rpow_zero] using ht
   have hresult := coarseBlock_adapted_partition_bound hs (1 : Mat d) isUnit_one k
     (standardCellCenter k w) (fun _ => (1 : Mat d)) (fun _ _ => isUnit_one)
@@ -242,10 +244,12 @@ theorem source_whitney_weighted_sum {d : ℕ} [NeZero d]
       _ ≤ (12 * (d : ℝ) ^ ((3 : ℝ) / 2) * (3 : ℝ) ^ (r - j)) *
           (3 : ℝ) ^ (γ * max ((J : ℝ) - (r : ℝ)) 0) := by gcongr
       _ ≤ (12 * (d : ℝ) ^ ((3 : ℝ) / 2)) *
-          ((3 : ℝ) ^ (γ * max ((J : ℝ) - (j : ℝ)) 0) * (3 : ℝ) ^ ((1 - γ) * ((r : ℝ) - (j : ℝ)))) := by
+          ((3 : ℝ) ^ (γ * max ((J : ℝ) - (j : ℝ)) 0) * (3 : ℝ) ^ ((1 - γ) * ((r : ℝ) - (j :
+            ℝ)))) := by
         rw [mul_assoc, ← Real.rpow_intCast, Int.cast_sub]
         exact mul_le_mul_of_nonneg_left
-          (source_penalty_decay γ J j r hγ.1 (by dsimp [r]; push_cast; linarith only [Nat.cast_nonneg (α := ℝ) n])) (by positivity)
+          (source_penalty_decay γ J j r hγ.1 (by dsimp [r]; push_cast; linarith only
+            [Nat.cast_nonneg (α := ℝ) n])) (by positivity)
       _ = D * ρ ^ n := by
         simp only [D, ρ, r, Int.cast_sub, Int.cast_natCast, ← Real.rpow_natCast,
           ← Real.rpow_mul (by norm_num : (0 : ℝ) ≤ 3)]
@@ -388,8 +392,10 @@ theorem source_multiplier_and_adapted_bound (d : ℕ) (hd : 2 ≤ d) (γ : ℝ)
                 BlockMatLoewnerLE (coarseBlock (standardCell d k w) a)
                   (blockScale (X a * (3 : ℝ) ^ (γ * max ((jStar : ℝ) - (k : ℝ)) 0)) E)) ∧
               (∀ (m : Mat d), m.PosDef → ∀ (j : ℤ) (y : Vec d),
-                adaptedCellTranslate (explicitRoundedGrid jStar m) j y ⊆ centeredCube d (2 * (jStar : ℤ)) →
-                BlockMatLoewnerLE (coarseBlock (adaptedCellTranslate (explicitRoundedGrid jStar m) j y) a)
+                adaptedCellTranslate (explicitRoundedGrid jStar m) j y ⊆ centeredCube d (2 *
+                  (jStar : ℤ)) →
+                BlockMatLoewnerLE (coarseBlock (adaptedCellTranslate (explicitRoundedGrid jStar
+                  m) j y) a)
                   (blockScale (C * Real.sqrt (‖m‖ * ‖m⁻¹‖) * X a *
                     (3 : ℝ) ^ (γ * max ((jStar : ℝ) - (j : ℝ)) 0)) E))) := by
   let : NeZero d := ⟨by omega⟩

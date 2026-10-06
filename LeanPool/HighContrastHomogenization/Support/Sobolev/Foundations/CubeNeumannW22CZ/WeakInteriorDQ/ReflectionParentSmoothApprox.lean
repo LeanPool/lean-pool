@@ -98,7 +98,8 @@ theorem tendsto_toScalarL2_openCubeSet_succ_originCube_reflectedGradient_convexA
               (m := m)
               (H1Function.convexApproxSmoothH1
                 (U := openCubeSet (originCube d m))
-                (isOpenBoundedConvexDomain_openCubeSet (originCube d m)) u x0 hr n).grad_memVectorL2)
+                (isOpenBoundedConvexDomain_openCubeSet (originCube d m)) u x0 hr
+                  n).grad_memVectorL2)
             j))
       Filter.atTop
       (nhds

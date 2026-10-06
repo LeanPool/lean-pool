@@ -79,7 +79,7 @@ theorem abs_cubeAverage_le_descendantsAverage_of_local_abs_bounds
 
 /-- Descendant summation specialized to the Caccioppoli cutoff pairing.  The
 local estimates may come from any source, in particular from
-`abs_cubeAverage_vecDot_scalar_smul_le_singleCubeBoundaryNoteRhs_of_parentQuantitativeCutoff_on_descendant`.
+`abs_cubeAverage_vectorDot_scalarMultiply_le_singleCubeBoundaryNoteRhs`.
 -/
 theorem abs_cubeAverage_vecDot_scalar_smul_le_descendantsAverage_of_local_bounds
     {d : ℕ} (Q : TriadicCube d) (j : ℕ)
@@ -99,7 +99,7 @@ theorem abs_cubeAverage_vecDot_scalar_smul_le_descendantsAverage_of_local_bounds
 
 /-- If a cube lies outside the outer support of a quantitative cutoff, then
 the local cutoff-gradient flux pairing over that cube is zero. -/
-theorem cubeAverage_vecDot_scalar_smul_scalarCutoffGradientField_eq_zero_of_forall_notMem_scaledClosedCubeSet
+theorem cubeAverage_vectorDot_scalarMultiply_scalarCutoffGradientField_eq_zero
     {d : ℕ} {Q R : TriadicCube d} {ρ₁ ρ₂ : ℝ}
     (η : QuantitativeCubeCutoff Q ρ₁ ρ₂)
     (flux : Vec d → Vec d) (u : Vec d → ℝ)
@@ -298,7 +298,8 @@ theorem descendantsAverage_cubeLpNorm_two_mul_sqrt_cubeAverage_indicator_scaledC
 
 /-- Descendant averages of the arbitrary-center local-patch energy density
 collapse to the corresponding local parent profile. -/
-theorem descendantsAverage_cubeAverage_indicator_coarseCaccioppoliLocalClosedCube_eq_localEnergyProfile
+theorem
+  descendantsAverage_cubeAverage_indicator_coarseCaccioppoliLocalClosedCube_eq_localEnergyProfile
     {d : ℕ} (Q : TriadicCube d) (center : Vec d) (j : ℕ) (rho : ℝ)
     (energy : Vec d → ℝ)
     (henergy_int :
@@ -324,7 +325,7 @@ theorem descendantsAverage_cubeAverage_indicator_coarseCaccioppoliLocalClosedCub
 /-- Finite Cauchy for the constant branch after replacing the energy density by
 the arbitrary-center local-patch localization. -/
 theorem
-    descendantsAverage_cubeLpNorm_two_mul_sqrt_cubeAverage_indicator_coarseCaccioppoliLocalClosedCube_le
+    descendantsAverage_L2Norm_sqrtLocalEnergy_le_parentProduct
     {d : ℕ} (Q : TriadicCube d) (center : Vec d) (j : ℕ) (rho : ℝ)
     (u energy : Vec d → ℝ)
     (hu : MeasureTheory.MemLp u (2 : ℝ≥0∞) (normalizedCubeMeasure Q))

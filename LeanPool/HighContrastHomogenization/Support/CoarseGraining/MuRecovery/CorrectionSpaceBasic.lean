@@ -359,7 +359,7 @@ theorem recoveredField_admissible
       Y.isSolenoidalZeroNormalTrace
 
 theorem recoveredField_integral_pairing_openCubeSet_originCube
-    {d : ℕ} [NeZero d] {n : ℤ} {a : CoeffField d}
+    {d : ℕ} {n : ℤ} {a : CoeffField d}
     (R : MuCorrectionSpaceRecoveryData (openCubeSet (originCube d n)))
     (system : MuOperatorSystemData (openCubeSet (originCube d n)) a)
     (P : BlockVec d) :
@@ -376,7 +376,7 @@ theorem recoveredField_integral_pairing_openCubeSet_originCube
       (X := Y) (p := P.1) (q := P.2))
 
 theorem recoveredField_integral_pairing_cubeSet_originCube
-    {d : ℕ} [NeZero d] {n : ℤ} {a : CoeffField d}
+    {d : ℕ} {n : ℤ} {a : CoeffField d}
     (R : MuCorrectionSpaceRecoveryData (cubeSet (originCube d n)))
     (system : MuOperatorSystemData (cubeSet (originCube d n)) a)
     (P : BlockVec d) :
@@ -393,7 +393,7 @@ theorem recoveredField_integral_pairing_cubeSet_originCube
       (X := Y) (p := P.1) (q := P.2))
 
 theorem recoveredField_integrableOn_pairing_openCubeSet_originCube
-    {d : ℕ} [NeZero d] {n : ℤ} {a : CoeffField d}
+    {d : ℕ} {n : ℤ} {a : CoeffField d}
     (R : MuCorrectionSpaceRecoveryData (openCubeSet (originCube d n)))
     (system : MuOperatorSystemData (openCubeSet (originCube d n)) a)
     (P : BlockVec d) :
@@ -407,7 +407,7 @@ theorem recoveredField_integrableOn_pairing_openCubeSet_originCube
     Y.integrableOn_pairing_affine P.1 P.2
 
 theorem recoveredField_integrableOn_pairing_cubeSet_originCube
-    {d : ℕ} [NeZero d] {n : ℤ} {a : CoeffField d}
+    {d : ℕ} {n : ℤ} {a : CoeffField d}
     (R : MuCorrectionSpaceRecoveryData (cubeSet (originCube d n)))
     (system : MuOperatorSystemData (cubeSet (originCube d n)) a)
     (P : BlockVec d) :
@@ -455,7 +455,7 @@ theorem recoveredField_average_pairing_cubeSet_originCube
   field_simp [hvol]
 
 theorem recoveredField_average_state_openCubeSet_originCube
-    {d : ℕ} [NeZero d] {n : ℤ} {a : CoeffField d}
+    {d : ℕ} {n : ℤ} {a : CoeffField d}
     (R : MuCorrectionSpaceRecoveryData (openCubeSet (originCube d n)))
     (system : MuOperatorSystemData (openCubeSet (originCube d n)) a)
     (P : BlockVec d) :
@@ -477,7 +477,7 @@ theorem recoveredField_average_state_openCubeSet_originCube
       (hvol := hvol) (X := Y) (P := P))
 
 theorem recoveredField_average_state_cubeSet_originCube
-    {d : ℕ} [NeZero d] {n : ℤ} {a : CoeffField d}
+    {d : ℕ} {n : ℤ} {a : CoeffField d}
     (R : MuCorrectionSpaceRecoveryData (cubeSet (originCube d n)))
     (system : MuOperatorSystemData (cubeSet (originCube d n)) a)
     (P : BlockVec d) :
@@ -526,7 +526,8 @@ theorem recoveredField_integrableOn_pairing_of_integral_eq_zero
       (fun x => vecDot ((R.recoveredField system P).potential x)
         ((R.recoveredField system P).flux x)) U := by
   let Y := R.recoveredCorrectionField system P
-  simpa [MuCorrectionSpaceRecoveryData.recoveredField, MuCorrectionSpaceRecoveryData.recoveredCorrectionField,
+  simpa [MuCorrectionSpaceRecoveryData.recoveredField,
+    MuCorrectionSpaceRecoveryData.recoveredCorrectionField,
     Y] using Y.integrableOn_pairing_affine P.1 P.2
 
 theorem recoveredField_average_pairing_of_integral_eq_zero
@@ -551,7 +552,8 @@ theorem recoveredField_average_pairing_of_integral_eq_zero
       ∫ x in U, vecDot ((R.recoveredField system P).potential x)
           ((R.recoveredField system P).flux x) ∂MeasureTheory.volume =
         (MeasureTheory.volume U).toReal * vecDot P.1 P.2 := by
-    simpa [MuCorrectionSpaceRecoveryData.recoveredField, MuCorrectionSpaceRecoveryData.recoveredCorrectionField,
+    simpa [MuCorrectionSpaceRecoveryData.recoveredField,
+      MuCorrectionSpaceRecoveryData.recoveredCorrectionField,
       Y] using
       Y.integral_pairing_affine_eq_volume_mul_vecDot_of_integral_eq_zero
         P.1 P.2 (hpotZero P) (hfluxZero P)
@@ -564,7 +566,8 @@ theorem recoveredField_minimizer_eq
     (system : MuOperatorSystemData U a)
     (P : BlockVec d) :
     toHilbertBlockL2OfBlockField (R.recoveredField_memBlockL2 system P) =
-      (system.toMuOperatorRealization.toMuHilbertRealization R.toMuCorrectionSpaceData).minimizerMap P := by
+      (system.toMuOperatorRealization.toMuHilbertRealization
+        R.toMuCorrectionSpaceData).minimizerMap P := by
   let H := system.toMuOperatorRealization.toMuHilbertRealization R.toMuCorrectionSpaceData
   let Y := R.recoveredCorrectionField system P
   have hpot : MemVectorL2 U ((fun _ : Vec d => P.1) + Y.potential) :=
@@ -592,10 +595,12 @@ theorem recoveredField_minimizer_eq
             hilbertBlockField Y.potential Y.flux x := by
       apply HilbertBlockVec.ext
       · ext i
-        simp [Y, BlockState.eval, MuCorrectionSpaceRecoveryData.recoveredField, hilbertifyBlockField,
+        simp [Y, BlockState.eval, MuCorrectionSpaceRecoveryData.recoveredField,
+          hilbertifyBlockField,
           hilbertBlockField, blockField]
       · ext i
-        simp [Y, BlockState.eval, MuCorrectionSpaceRecoveryData.recoveredField, hilbertifyBlockField,
+        simp [Y, BlockState.eval, MuCorrectionSpaceRecoveryData.recoveredField,
+          hilbertifyBlockField,
           hilbertBlockField, blockField]
     calc
       (toHilbertBlockL2OfBlockField (R.recoveredField_memBlockL2 system P)) x

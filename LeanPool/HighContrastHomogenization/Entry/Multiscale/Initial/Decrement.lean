@@ -217,7 +217,8 @@ theorem synchronized_loss_budget_one (d : ℕ) (hd : 2 ≤ d) (γ : ℝ)
     linarith only [hQZ, hKnn]
   obtain ⟨-, -, -, -, -, hlog⟩ := hnorm P E Ψ K Src hP hstat hunit hdag jStar hjStar h₂
     (R + 1) (R + 2 * (bigQ d γ : ℤ) + (Ksteps : ℤ) * (2 * (bigQ d γ : ℤ))) hjle hmle
-  have hPi : 1 ≤ aspectRatio E := HCPolySupport.HighContrast.one_le_aspectRatio_of_coarseEllipticityDagger hdag
+  have hPi : 1 ≤ aspectRatio E :=
+    HCPolySupport.HighContrast.one_le_aspectRatio_of_coarseEllipticityDagger hdag
   have hlogb := log_aspect_le_logb (aspectRatio E) hPi
   have h2Qnn : (0 : ℝ) ≤ 2 * (bigQ d γ : ℝ) := by linarith only [hQpos]
   have hdnn : (0 : ℝ) ≤ 2 * (d : ℝ) := by linarith only [hdR]
@@ -260,7 +261,8 @@ theorem starting_log_le_one (d : ℕ) (hd : 2 ≤ d) (γ : ℝ) (hγ : γ ∈ Se
   intro P E Ψ K Src hP hstat hunit hdag jStar hjStar hthr m hm
   have := hP
   have : NeZero d := ⟨by omega⟩
-  have hPi : (1 : ℝ) ≤ aspectRatio E := HCPolySupport.HighContrast.one_le_aspectRatio_of_coarseEllipticityDagger hdag
+  have hPi : (1 : ℝ) ≤ aspectRatio E :=
+    HCPolySupport.HighContrast.one_le_aspectRatio_of_coarseEllipticityDagger hdag
   have h3le : (3 : ℝ) ≤ 2 + aspectRatio E := by linarith only [hPi]
   have hXpos : (0 : ℝ) < 2 + aspectRatio E := by linarith only [hPi]
   have hXN1 : (1 : ℝ) ≤ (2 + aspectRatio E) ^ N := one_le_pow₀ (by linarith only [hPi])

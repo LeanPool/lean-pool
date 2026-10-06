@@ -214,6 +214,8 @@ theorem volumeAverage_blockFirstVariationIntegrand_zero_data_eq_zero_of_mem_resp
   rw [MeasureTheory.integral_neg]
   simpa using horth
 
+/-- An explicit upper bound for the block response density in terms of the ellipticity parameters
+and the squared norms of `P` and `Q`. -/
 @[expose]
 noncomputable def blockResponsePlainUpperBound {d : ℕ} (lam Lam : ℝ)
     (P Q : BlockVec d) : ℝ :=
@@ -401,7 +403,7 @@ theorem blockJValueSet_bddAbove_of_isEllipticFieldOn
   rintro m ⟨X, hX, hIntX, rfl⟩
   exact volumeAverage_blockResponseIntegrand_le_plainUpperBound_of_isEllipticFieldOn
     hU hEll P Q X
-    (blockResponseIntegrand_integrableOn_of_mem_responseSpace_of_integrabilityData_of_isEllipticFieldOn
+    (blockResponseIntegrand_integrable_of_integrabilityData
       hX hIntX hEll P Q)
     hvol
 
@@ -461,7 +463,7 @@ theorem blockJ_le_plainUpperBound_of_isEllipticFieldOn
   · rintro m ⟨X, hX, hIntX, rfl⟩
     exact volumeAverage_blockResponseIntegrand_le_plainUpperBound_of_isEllipticFieldOn
       hU hEll P Q X
-      (blockResponseIntegrand_integrableOn_of_mem_responseSpace_of_integrabilityData_of_isEllipticFieldOn
+      (blockResponseIntegrand_integrable_of_integrabilityData
         hX hIntX hEll P Q)
       hvol
 

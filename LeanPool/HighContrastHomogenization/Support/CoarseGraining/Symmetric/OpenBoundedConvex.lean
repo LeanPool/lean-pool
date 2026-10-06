@@ -33,7 +33,7 @@ supplies this guard from the usual deterministic hypotheses.
 /--
 Open-bounded-convex wrapper for the symmetric split quadratic response formula.
 -/
-theorem responseJ_eq_half_vecDot_sigmaCoarse_add_half_vecDot_sigmaStarInvCoarse_sub_dot_of_isSymmetricCoeffField_of_isEllipticFieldOn_of_isOpenBoundedConvexDomain
+theorem responseJ_eq_half_dot_sigmaCoarse_add_half_dot_of_isSymmetricCoeffField
     {d : ℕ} {U : Set (Vec d)} [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     (R : PotentialSolenoidalL2RecoveryData U) (hConv : IsOpenBoundedConvexDomain U)
     {a : CoeffField d} {lam Lam : ℝ}
@@ -57,13 +57,13 @@ theorem responseJ_eq_half_vecDot_sigmaCoarse_add_half_vecDot_sigmaStarInvCoarse_
     isUnit_det_of_isSigmaStarCoarse_of_isEllipticFieldOn_of_isOpenBoundedConvexDomain
       (U := U) (a := a) R hConv hEll hvol compat hS
   exact
-    responseJ_eq_half_vecDot_sigmaCoarse_add_half_vecDot_sigmaStarInvCoarse_sub_dot_of_isSymmetricCoeffField
+    responseJ_eq_half_dot_sigmaCoarse_add_half_dot_sigmaStarInvCoarse_sub_dot
       ha hA hS hK hSigma hdet p q
 
 /--
 Open-bounded-convex wrapper for the symmetric completed-square identity.
 -/
-theorem responseJ_completedSquare_of_isSymmetricCoeffField_of_isEllipticFieldOn_of_isOpenBoundedConvexDomain
+theorem responseJ_completedSquare_of_symmetricEllipticOnConvexDomain
     {d : ℕ} {U : Set (Vec d)} [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     (R : PotentialSolenoidalL2RecoveryData U) (hConv : IsOpenBoundedConvexDomain U)
     {a : CoeffField d} {lam Lam : ℝ}
@@ -94,7 +94,7 @@ theorem responseJ_completedSquare_of_isSymmetricCoeffField_of_isEllipticFieldOn_
 Open-bounded-convex wrapper for the canonical symmetric gap identity at
 `q = sigmaStarCoarse p`.
 -/
-theorem responseJ_sigmaStarCoarse_mul_eq_half_gap_of_isSymmetricCoeffField_of_isEllipticFieldOn_of_isOpenBoundedConvexDomain
+theorem responseJ_sigmaStarCoarse_mul_eq_half_gap_of_of_isSymmetricCoeffField
     {d : ℕ} {U : Set (Vec d)} [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     (R : PotentialSolenoidalL2RecoveryData U) (hConv : IsOpenBoundedConvexDomain U)
     {a : CoeffField d} {lam Lam : ℝ}

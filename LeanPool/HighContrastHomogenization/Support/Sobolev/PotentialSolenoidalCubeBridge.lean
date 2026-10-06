@@ -47,6 +47,8 @@ namespace H1Function
     u.toCubeSetOriginCube.toFun = u.toFun :=
   rfl
 
+/-- Transport of an H¹ function along an equality of domains, retaining its value and weak
+gradient. -/
 @[expose]
 public noncomputable def castDomain {d : ℕ} {U V : Set (Vec d)}
     (hUV : U = V) (u : H1Function U) : H1Function V :=
@@ -119,6 +121,7 @@ end H1Function
 
 namespace H10Function
 
+/-- Transport of a zero-trace H¹ function along an equality of domains. -/
 @[expose]
 public noncomputable def castDomain {d : ℕ} {U V : Set (Vec d)}
     (hUV : U = V) (u : H10Function U) : H10Function V :=
@@ -288,7 +291,7 @@ theorem isSolenoidalOn_cubeSet_triadicCube_iff_openCubeSet
   · exact isSolenoidalOn_cubeSet_triadicCube_of_openCubeSet
 
 theorem isSolenoidalZeroNormalTraceOn_cubeSet_triadicCube_of_openCubeSet
-    {d : ℕ} [NeZero d] {Q : TriadicCube d} {g : Vec d → Vec d}
+    {d : ℕ} {Q : TriadicCube d} {g : Vec d → Vec d}
     (hg : IsSolenoidalZeroNormalTraceOn (openCubeSet Q) g) :
     IsSolenoidalZeroNormalTraceOn (cubeSet Q) g := by
   intro φ

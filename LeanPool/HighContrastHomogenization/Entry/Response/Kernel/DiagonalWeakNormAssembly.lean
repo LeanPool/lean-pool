@@ -443,7 +443,8 @@ theorem recentHead_halves_forall_le
             Real.sqrt (respLsqMinus P jStar F t e) *
             (weakCellSum (respGrid jStar F) t H (respEhatMinus P jStar F t)
                 (respCoeffMinus F a) +
-              weakAverageSum (respGrid jStar F) t H (Quenched.contrastRho γ) (respEhatMinus P jStar F t)
+              weakAverageSum (respGrid jStar F) t H (Quenched.contrastRho γ) (respEhatMinus P
+                jStar F t)
                 (respCoeffMinus F a)) := by
   classical
   set K : ℝ :=
@@ -580,7 +581,8 @@ theorem recentHead_actual_le
             Real.sqrt (respLsqMinus P jStar F t e) *
             (weakCellSum (respGrid jStar F) t H (respEhatMinus P jStar F t)
                 (respCoeffMinus F a) +
-              weakAverageSum (respGrid jStar F) t H (Quenched.contrastRho γ) (respEhatMinus P jStar F t)
+              weakAverageSum (respGrid jStar F) t H (Quenched.contrastRho γ) (respEhatMinus P
+                jStar F t)
                 (respCoeffMinus F a)) := by
   classical
   obtain ⟨V, hV⟩ := recentHead_halves_forall_le P γ hγ jStar H F t e hgrid a u hu hE hM0 hgood
@@ -680,7 +682,8 @@ theorem recentHead_actual_of_analytic
             Real.sqrt (respLsqMinus P jStar F t e) *
             (weakCellSum (respGrid jStar F) t H (respEhatMinus P jStar F t)
                 (respCoeffMinus F a) +
-              weakAverageSum (respGrid jStar F) t H (Quenched.contrastRho γ) (respEhatMinus P jStar F t)
+              weakAverageSum (respGrid jStar F) t H (Quenched.contrastRho γ) (respEhatMinus P
+                jStar F t)
                 (respCoeffMinus F a)) := by
   classical
   -- The former hypothesis `hLsq`, discharged from `hE`.

@@ -83,7 +83,7 @@ theorem exists_metricBall_subset_ellipsoid (hd : 0 < d) (abar : Mat d) {r : ℝ}
     (euclideanBallAt_zero_subset_ellipsoid abar r)
 
 /-- **The admissible-test family of the corrector estimate is not empty.**  The
-family of the `H̲^{-1}` dual norm on an ellipsoid contains a nonzero field, so
+family of the `H_underlined^{-1}` dual norm on an ellipsoid contains a nonzero field, so
 the estimate `e.random.corrector` is not
 satisfied by the absence of anything to estimate. -/
 theorem exists_nonzero_admissible_test_h1_ellipsoid (hd : 0 < d) {abar : Mat d}

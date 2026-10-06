@@ -107,7 +107,8 @@ theorem exists_account_one_step_entry_of_block_at_level (d : ℕ) (hd : 2 ≤ d)
                 adaptedHattedContrast P (roundedGrid lAl mAl) t)) +
           rowValue2Isotropy d (rowSplitConstant cIso cDeep) kapE eps +
           weakValueBoundSharpIsotropyAt (Response.recentConstantAtLevel lev)
-            (Response.maxGroupConstantAtLevel lev) (Response.energyGoodConstantAtLevel lev) P mAl (Response.responseSkew K0) F
+            (Response.maxGroupConstantAtLevel lev) (Response.energyGoodConstantAtLevel lev) P
+              mAl (Response.responseSkew K0) F
             (loadScaleOfScalar cF (kapE)) mAl rho Hw
             (R ^ 4 * badMomentMajorant K (t + ((Gacc + 1 : ℕ) : ℤ) - 1 - sKw)) (R / 2) lev
             t lAl V V0 (meanDrop2ValueIsotropy P lAl cF mAl E F t) Vmean) +
@@ -121,7 +122,8 @@ theorem exists_account_one_step_entry_of_block_at_level (d : ℕ) (hd : 2 ≤ d)
     hqnorm rho hrho0 hrho1 hrhog s t hst hteq hlAlS Hw hstart sKw hsKw
     hsKrange hentry hblocksAll S0 SStar0 K0 hS0 hStar0 hform eps hpos
     heps1 htr hsmall hdrop hdropSmall k0 cIso hcIso hiso cDeep hcDeep F hFsym
-    hFpd cF hcF0 hFeq henvF kapE hkapE1 hcompE R lev hR1 hlev henvMax V V0 Vmean hV hV0 hVmean hvar hvart hvmean
+    hFpd cF hcF0 hFeq henvF kapE hkapE1 hcompE R lev hR1 hlev henvMax V V0 Vmean hV hV0 hVmean
+      hvar hvart hvmean
   -- the derived comparability constant is nonnegative
   have hq : (roundedGrid lAl mAl).PosDef := Recurrence.posDef_of_isRoundedGrid hgrid
   have hd1 : 1 ≤ d := by omega
@@ -143,7 +145,8 @@ theorem exists_account_one_step_entry_of_block_at_level (d : ℕ) (hd : 2 ≤ d)
     refine mul_nonneg (rowSplitConstant_nonneg hcIso hcDeep0) ?_
     exact mul_nonneg hkap0 (by positivity)
   have hW0 : 0 ≤ weakValueBoundSharpIsotropyAt (Response.recentConstantAtLevel lev)
-            (Response.maxGroupConstantAtLevel lev) (Response.energyGoodConstantAtLevel lev) P mAl (Response.responseSkew K0) F
+            (Response.maxGroupConstantAtLevel lev) (Response.energyGoodConstantAtLevel lev) P
+              mAl (Response.responseSkew K0) F
       (loadScaleOfScalar cF (kapE)) mAl rho Hw
       (R ^ 4 * badMomentMajorant K (t + ((Gacc + 1 : ℕ) : ℤ) - 1 - sKw)) (R / 2) lev
       t lAl V V0 (meanDrop2ValueIsotropy P lAl cF mAl E F t) Vmean := by

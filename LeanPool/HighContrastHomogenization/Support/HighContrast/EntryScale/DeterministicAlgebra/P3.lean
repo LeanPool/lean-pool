@@ -40,7 +40,7 @@ namespace HCPolySupport.HighContrast.EntryScale
 Source label `l.union.bound`: `ENNReal` form of the terminal/intermediate
 normalization comparison, ready to combine with the high-moment envelope.
 -/
-theorem ofReal_fullBlockOperatorNorm_terminalNormalizedCenteredFullBlock_le_initialWidetildeTheta_mul_intermediate_of_P4
+theorem ofReal_terminalCenteredBlockOperatorNorm_le_initialTheta_mul_intermediate
     {d : ℕ} [NeZero d] {P : HCPolySupport.Book.Ch04.RestrictionCoeffLaw d}
     (hP : HCPolySupport.Book.Ch04.RestrictionLawCarrier P)
     (hStruct : HCPolySupport.Book.Ch04.RestrictionStructuralLaw P)
@@ -75,7 +75,7 @@ theorem ofReal_fullBlockOperatorNorm_terminalNormalizedCenteredFullBlock_le_init
     linarith
   have hreal : terminalNorm ≤ T * intermediateNorm := by
     simpa [terminalNorm, intermediateNorm, T] using
-      fullBlockOperatorNorm_terminalNormalizedCenteredFullBlock_le_initialWidetildeTheta_mul_intermediate_of_P4
+      fullBlockOperatorNorm_terminalCenteredBlock_le_initialTheta_mul_intermediate
         hP hStruct hP4 hjm Y
   calc
     ENNReal.ofReal terminalNorm ≤ ENNReal.ofReal (T * intermediateNorm) :=
@@ -144,7 +144,7 @@ theorem terminalCenteredFullBlockDeviation_le_initialWidetildeTheta_mul_intermed
   unfold terminalCenteredFullBlockDeviation
   unfold intermediateCenteredFullBlockDeviation
   exact
-    ofReal_fullBlockOperatorNorm_terminalNormalizedCenteredFullBlock_le_initialWidetildeTheta_mul_intermediate_of_P4
+    ofReal_terminalCenteredBlockOperatorNorm_le_initialTheta_mul_intermediate
       hP hStruct hP4 hjm (Y j Q ω)
 
 /--

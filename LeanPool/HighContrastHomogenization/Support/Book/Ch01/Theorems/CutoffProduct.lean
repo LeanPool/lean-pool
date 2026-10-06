@@ -62,7 +62,7 @@ theorem cutoffProductPositiveBesov_partial {d : ℕ}
         normalizedLpNorm Q ∞ ξ *
           cubeBesovPositiveScalarPartialSeminormTwo Q s N (cubeFluctuation Q u)) := by
   simpa [normalizedAverage, normalizedLpNorm] using!
-    HCPolySupport.cubeBesovPositiveVectorPartialSeminormTwo_centered_scalar_smul_le_cutoff_terms_of_contDiff_component_bound
+    HCPolySupport.cubeBesovPositiveVectorPartialSeminormTwo_centered_scalar_smul_le_cutoff_terms
       Q s N u ξ hB hu hξLp hξ hderiv
 
 /-- Depth zero of the scalar positive Besov seminorm of a fluctuation is the
@@ -174,7 +174,8 @@ private theorem cubeBesovScaleWeight_mul_positiveScalarDepthSeminorm_le_partialN
         =
           (cubeBesovScaleWeight s Q * cubeBesovScaleWeight (-s) Q) *
             cubeBesovDepthSeminorm Q s (2 : ℝ≥0∞) v j := by
-          rw [cubeBesovPositiveScalarDepthSeminorm_eq_scaleWeight_neg_mul_cubeBesovDepthSeminorm_two]
+          rw [
+          cubeBesovPositiveScalarDepthSeminorm_eq_scaleWeight_neg_mul_cubeBesovDepthSeminorm_two]
           ring
     _ = cubeBesovDepthSeminorm Q s (2 : ℝ≥0∞) v j := by
           have hmul : cubeBesovScaleWeight s Q * cubeBesovScaleWeight (-s) Q = 1 := by

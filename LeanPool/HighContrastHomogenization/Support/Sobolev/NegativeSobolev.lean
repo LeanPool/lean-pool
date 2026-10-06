@@ -204,6 +204,7 @@ theorem meanZeroNegativeSobolevAbsSeminorm_eq_iSup (p : ENNReal) (hp_one : 1 < p
 
 /-! ## Test-class symmetry -/
 
+/-- The `W^{1,p}` function with value and weak gradient equal to the negatives of those of `u`. -/
 @[expose]
 public noncomputable def negW1pFunction {p : ENNReal} (u : W1pFunction U p) :
     W1pFunction U p :=
@@ -229,6 +230,7 @@ public noncomputable def negW1pFunction {p : ENNReal} (u : W1pFunction U p) :
               apply MeasureTheory.integral_congr_ae
               exact Filter.Eventually.of_forall fun x => by ring }
 
+/-- The zero `W^{1,p}` function with zero weak gradient. -/
 @[expose]
 public noncomputable def zeroW1pFunction (p : ENNReal) : W1pFunction U p :=
   { toFun := 0
@@ -376,6 +378,7 @@ theorem meanZeroPairing_neg (p : ENNReal) (hp_one : 1 < p)
     -normalizedPairing hU hne p hp_one f hf φ.toW1pFunction.toFun _
   exact normalizedPairing_neg_right hU hne p hp_one f hf φ.toW1pFunction.toFun _
 
+/-- Negation of an admissible smooth test, retaining its negative Sobolev test admissibility. -/
 @[expose]
 public noncomputable def smoothAdmissibleNeg (p : ENNReal) (hp_one : 1 < p)
     (hp_top : p ≠ ∞)
@@ -383,6 +386,8 @@ public noncomputable def smoothAdmissibleNeg (p : ENNReal) (hp_one : 1 < p)
     {φ : SmoothTestFunction hU // SmoothTestAdmissible hU hne p hp_one hp_top φ} :=
   ⟨-φ.1, smoothTestAdmissible_neg hU hne p hp_one hp_top φ.2⟩
 
+/-- Negation of an admissible mean-zero `W^{1,p}` test, retaining its zero mean and test
+admissibility. -/
 @[expose]
 public noncomputable def meanZeroAdmissibleNeg (p : ENNReal) (hp_one : 1 < p)
     (hp_top : p ≠ ∞)

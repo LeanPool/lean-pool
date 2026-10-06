@@ -56,7 +56,8 @@ theorem exists_rangeCompletePhysicalC1_of_exactRootGaugeTerminal
                     (matVecMul (Selection.normalizedRoot (symmPart abar)) y))) =ᵐ[volume]
                   fun y ↦ matVecMul (Selection.normalizedRoot (symmPart abar)) e +
                     (PhiRef (matVecMul
-                      (Selection.normalizedRoot (symmPart abar)) e)).globalGradientRepresentative y) →
+                      (Selection.normalizedRoot (symmPart abar))
+                        e)).globalGradientRepresentative y) →
               ∀ R : ℝ, x ≤ R →
                 ∀ (u : Vec d → ℝ) (Du : Vec d → Vec d),
                   MemH1a (fun y ↦ a.1 y) (ellipsoid abar R) u Du →

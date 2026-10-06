@@ -84,7 +84,7 @@ theorem responseJ_eq_blockQuadratic [NeZero d] {U : Set (Vec d)}
     Internal.Ch02.BookCh02.exists_oldCanonicalMatrixData_of_isOpenBoundedConvexDomain
       hU hEll hvol
   exact
-    magic_identity_responseJ_block_quadratic_coarseBlockMatrix_of_isEllipticFieldOn_of_isOpenBoundedConvexDomain
+    magic_identity_responseJ_block_quadratic_coarseMatrix_of_of_ellipticField
       R hU hEll hvol compat hA hS hK hSigma p q
 
 /-! ## Competitor restriction -/

@@ -31,103 +31,123 @@ recorded separately in regularity packages whenever a theorem needs these full
 wrappers to behave as finite norms.
 -/
 
+/-- The set of disjoint Besov seminorm truncations over all depths. -/
 @[expose]
 noncomputable def cubeBesovDisjointSeminormValueSet {d : ℕ}
     (Q : TriadicCube d) (s : ℝ) (p q : ℝ≥0∞) (u : Vec d → ℝ) : Set ℝ :=
   Set.range fun N : ℕ => cubeBesovDisjointPartialSeminorm Q s p q N u
 
+/-- The real supremum of all disjoint Besov seminorm truncations. -/
 @[expose]
 noncomputable def cubeBesovDisjointSeminorm {d : ℕ}
     (Q : TriadicCube d) (s : ℝ) (p q : ℝ≥0∞) (u : Vec d → ℝ) : ℝ :=
   sSup (cubeBesovDisjointSeminormValueSet Q s p q u)
 
+/-- The set of disjoint maximum-aggregation seminorm truncations over all depths. -/
 @[expose]
 noncomputable def cubeBesovDisjointSeminormTopValueSet {d : ℕ}
     (Q : TriadicCube d) (s : ℝ) (p : ℝ≥0∞) (u : Vec d → ℝ) : Set ℝ :=
   Set.range fun N : ℕ => cubeBesovDisjointPartialSeminormTop Q s p N u
 
+/-- The real supremum of all disjoint maximum-aggregation seminorm truncations. -/
 @[expose]
 noncomputable def cubeBesovDisjointSeminormTop {d : ℕ}
     (Q : TriadicCube d) (s : ℝ) (p : ℝ≥0∞) (u : Vec d → ℝ) : ℝ :=
   sSup (cubeBesovDisjointSeminormTopValueSet Q s p u)
 
+/-- The set of disjoint Besov norm truncations, including the weighted parent mean. -/
 @[expose]
 noncomputable def cubeBesovDisjointNormValueSet {d : ℕ}
     (Q : TriadicCube d) (s : ℝ) (p q : ℝ≥0∞) (u : Vec d → ℝ) : Set ℝ :=
   Set.range fun N : ℕ => cubeBesovDisjointPartialNorm Q s p q N u
 
+/-- The real supremum of all disjoint Besov norm truncations. -/
 @[expose]
 noncomputable def cubeBesovDisjointNorm {d : ℕ}
     (Q : TriadicCube d) (s : ℝ) (p q : ℝ≥0∞) (u : Vec d → ℝ) : ℝ :=
   sSup (cubeBesovDisjointNormValueSet Q s p q u)
 
+/-- The set of disjoint maximum-aggregation norm truncations over all depths. -/
 @[expose]
 noncomputable def cubeBesovDisjointNormTopValueSet {d : ℕ}
     (Q : TriadicCube d) (s : ℝ) (p : ℝ≥0∞) (u : Vec d → ℝ) : Set ℝ :=
   Set.range fun N : ℕ => cubeBesovDisjointPartialNormTop Q s p N u
 
+/-- The real supremum of all disjoint maximum-aggregation norm truncations. -/
 @[expose]
 noncomputable def cubeBesovDisjointNormTop {d : ℕ}
     (Q : TriadicCube d) (s : ℝ) (p : ℝ≥0∞) (u : Vec d → ℝ) : ℝ :=
   sSup (cubeBesovDisjointNormTopValueSet Q s p u)
 
+/-- The set of overlapping Besov seminorm truncations over all depths. -/
 @[expose]
 noncomputable def cubeBesovOverlapSeminormValueSet {d : ℕ}
     (Q : TriadicCube d) (s : ℝ) (p q : ℝ≥0∞) (u : Vec d → ℝ) : Set ℝ :=
   Set.range fun N : ℕ => cubeBesovOverlapPartialSeminorm Q s p q N u
 
+/-- The real supremum of all overlapping Besov seminorm truncations. -/
 @[expose]
 noncomputable def cubeBesovOverlapSeminorm {d : ℕ}
     (Q : TriadicCube d) (s : ℝ) (p q : ℝ≥0∞) (u : Vec d → ℝ) : ℝ :=
   sSup (cubeBesovOverlapSeminormValueSet Q s p q u)
 
+/-- The set of overlapping maximum-aggregation seminorm truncations over all depths. -/
 @[expose]
 noncomputable def cubeBesovOverlapSeminormTopValueSet {d : ℕ}
     (Q : TriadicCube d) (s : ℝ) (p : ℝ≥0∞) (u : Vec d → ℝ) : Set ℝ :=
   Set.range fun N : ℕ => cubeBesovOverlapPartialSeminormTop Q s p N u
 
+/-- The real supremum of all overlapping maximum-aggregation seminorm truncations. -/
 @[expose]
 noncomputable def cubeBesovOverlapSeminormTop {d : ℕ}
     (Q : TriadicCube d) (s : ℝ) (p : ℝ≥0∞) (u : Vec d → ℝ) : ℝ :=
   sSup (cubeBesovOverlapSeminormTopValueSet Q s p u)
 
+/-- The set of overlapping Besov norm truncations, including the weighted parent mean. -/
 @[expose]
 noncomputable def cubeBesovOverlapNormValueSet {d : ℕ}
     (Q : TriadicCube d) (s : ℝ) (p q : ℝ≥0∞) (u : Vec d → ℝ) : Set ℝ :=
   Set.range fun N : ℕ => cubeBesovOverlapPartialNorm Q s p q N u
 
+/-- The full overlapping seminorm plus the absolute parent mean weighted by side length to `-s`. -/
 @[expose]
 noncomputable def cubeBesovOverlapNorm {d : ℕ}
     (Q : TriadicCube d) (s : ℝ) (p q : ℝ≥0∞) (u : Vec d → ℝ) : ℝ :=
   cubeBesovOverlapSeminorm Q s p q u +
     cubeBesovScaleWeight s Q * ‖cubeAverage Q u‖
 
+/-- The set of overlapping maximum-aggregation norm truncations over all depths. -/
 @[expose]
 noncomputable def cubeBesovOverlapNormTopValueSet {d : ℕ}
     (Q : TriadicCube d) (s : ℝ) (p : ℝ≥0∞) (u : Vec d → ℝ) : Set ℝ :=
   Set.range fun N : ℕ => cubeBesovOverlapPartialNormTop Q s p N u
 
+/-- The full overlapping maximum-aggregation seminorm plus the weighted absolute parent mean. -/
 @[expose]
 noncomputable def cubeBesovOverlapNormTop {d : ℕ}
     (Q : TriadicCube d) (s : ℝ) (p : ℝ≥0∞) (u : Vec d → ℝ) : ℝ :=
   cubeBesovOverlapSeminormTop Q s p u +
     cubeBesovScaleWeight s Q * ‖cubeAverage Q u‖
 
+/-- Boundedness above of all disjoint Besov seminorm truncations. -/
 structure CubeBesovDisjointRegularity {d : ℕ}
     (Q : TriadicCube d) (s : ℝ) (p q : ℝ≥0∞) (u : Vec d → ℝ) : Prop where
   partialSeminorms_bddAbove :
     BddAbove (cubeBesovDisjointSeminormValueSet Q s p q u)
 
+/-- Boundedness above of all disjoint maximum-aggregation seminorm truncations. -/
 structure CubeBesovDisjointRegularityTop {d : ℕ}
     (Q : TriadicCube d) (s : ℝ) (p : ℝ≥0∞) (u : Vec d → ℝ) : Prop where
   partialSeminorms_bddAbove :
     BddAbove (cubeBesovDisjointSeminormTopValueSet Q s p u)
 
+/-- Boundedness above of all overlapping Besov seminorm truncations. -/
 structure CubeBesovOverlapRegularity {d : ℕ}
     (Q : TriadicCube d) (s : ℝ) (p q : ℝ≥0∞) (u : Vec d → ℝ) : Prop where
   partialSeminorms_bddAbove :
     BddAbove (cubeBesovOverlapSeminormValueSet Q s p q u)
 
+/-- Boundedness above of all overlapping maximum-aggregation seminorm truncations. -/
 structure CubeBesovOverlapRegularityTop {d : ℕ}
     (Q : TriadicCube d) (s : ℝ) (p : ℝ≥0∞) (u : Vec d → ℝ) : Prop where
   partialSeminorms_bddAbove :
@@ -554,7 +574,7 @@ theorem CubeBesovOverlapRegularityTop.norm_nonneg {d : ℕ}
   unfold cubeBesovDisjointSeminorm cubeBesovDisjointSeminormValueSet
   simp [cubeBesovDisjointPartialSeminorm, hp0, hpTop, hq0, hqTop]
 
-@[simp] theorem cubeBesovDisjointSeminorm_zero {d : ℕ}
+theorem cubeBesovDisjointSeminorm_zero {d : ℕ}
     (Q : TriadicCube d) (s : ℝ) (p q : ℝ≥0∞)
     (hp0 : p ≠ 0) (hpTop : p ≠ ∞) (hq0 : q ≠ 0) (hqTop : q ≠ ∞) :
     cubeBesovDisjointSeminorm Q s p q (fun _ => (0 : ℝ)) = 0 := by
@@ -569,7 +589,7 @@ theorem CubeBesovOverlapRegularityTop.norm_nonneg {d : ℕ}
   unfold cubeBesovDisjointSeminormTop cubeBesovDisjointSeminormTopValueSet
   simp [cubeBesovDisjointPartialSeminormTop, hp0, hpTop]
 
-@[simp] theorem cubeBesovDisjointSeminormTop_zero {d : ℕ}
+theorem cubeBesovDisjointSeminormTop_zero {d : ℕ}
     (Q : TriadicCube d) (s : ℝ) (p : ℝ≥0∞)
     (hp0 : p ≠ 0) (hpTop : p ≠ ∞) :
     cubeBesovDisjointSeminormTop Q s p (fun _ => (0 : ℝ)) = 0 := by
@@ -584,7 +604,7 @@ theorem CubeBesovOverlapRegularityTop.norm_nonneg {d : ℕ}
   unfold cubeBesovDisjointNorm cubeBesovDisjointNormValueSet
   simp [cubeBesovDisjointPartialNorm, hp0, hpTop, hq0, hqTop]
 
-@[simp] theorem cubeBesovDisjointNorm_zero {d : ℕ}
+theorem cubeBesovDisjointNorm_zero {d : ℕ}
     (Q : TriadicCube d) (s : ℝ) (p q : ℝ≥0∞)
     (hp0 : p ≠ 0) (hpTop : p ≠ ∞) (hq0 : q ≠ 0) (hqTop : q ≠ ∞) :
     cubeBesovDisjointNorm Q s p q (fun _ => (0 : ℝ)) = 0 := by
@@ -600,7 +620,7 @@ theorem CubeBesovOverlapRegularityTop.norm_nonneg {d : ℕ}
   unfold cubeBesovDisjointNormTop cubeBesovDisjointNormTopValueSet
   simp [cubeBesovDisjointPartialNormTop, hp0, hpTop]
 
-@[simp] theorem cubeBesovDisjointNormTop_zero {d : ℕ}
+theorem cubeBesovDisjointNormTop_zero {d : ℕ}
     (Q : TriadicCube d) (s : ℝ) (p : ℝ≥0∞)
     (hp0 : p ≠ 0) (hpTop : p ≠ ∞) :
     cubeBesovDisjointNormTop Q s p (fun _ => (0 : ℝ)) = 0 := by
@@ -614,7 +634,7 @@ theorem CubeBesovOverlapRegularityTop.norm_nonneg {d : ℕ}
   unfold cubeBesovOverlapSeminorm cubeBesovOverlapSeminormValueSet
   simp [hp0, hpTop, hq0, hqTop]
 
-@[simp] theorem cubeBesovOverlapSeminorm_zero {d : ℕ}
+theorem cubeBesovOverlapSeminorm_zero {d : ℕ}
     (Q : TriadicCube d) (s : ℝ) (p q : ℝ≥0∞)
     (hp0 : p ≠ 0) (hpTop : p ≠ ∞) (hq0 : q ≠ 0) (hqTop : q ≠ ∞) :
     cubeBesovOverlapSeminorm Q s p q (fun _ => (0 : ℝ)) = 0 := by
@@ -629,7 +649,7 @@ theorem CubeBesovOverlapRegularityTop.norm_nonneg {d : ℕ}
   unfold cubeBesovOverlapSeminormTop cubeBesovOverlapSeminormTopValueSet
   simp [hp0, hpTop]
 
-@[simp] theorem cubeBesovOverlapSeminormTop_zero {d : ℕ}
+theorem cubeBesovOverlapSeminormTop_zero {d : ℕ}
     (Q : TriadicCube d) (s : ℝ) (p : ℝ≥0∞)
     (hp0 : p ≠ 0) (hpTop : p ≠ ∞) :
     cubeBesovOverlapSeminormTop Q s p (fun _ => (0 : ℝ)) = 0 := by
@@ -647,7 +667,7 @@ theorem CubeBesovOverlapRegularityTop.norm_nonneg {d : ℕ}
   rw [cubeAverage_const Q u]
   simp
 
-@[simp] theorem cubeBesovOverlapNorm_zero {d : ℕ}
+theorem cubeBesovOverlapNorm_zero {d : ℕ}
     (Q : TriadicCube d) (s : ℝ) (p q : ℝ≥0∞)
     (hp0 : p ≠ 0) (hpTop : p ≠ ∞) (hq0 : q ≠ 0) (hqTop : q ≠ ∞) :
     cubeBesovOverlapNorm Q s p q (fun _ => (0 : ℝ)) = 0 := by
@@ -666,7 +686,7 @@ theorem CubeBesovOverlapRegularityTop.norm_nonneg {d : ℕ}
   rw [cubeAverage_const Q u]
   simp
 
-@[simp] theorem cubeBesovOverlapNormTop_zero {d : ℕ}
+theorem cubeBesovOverlapNormTop_zero {d : ℕ}
     (Q : TriadicCube d) (s : ℝ) (p : ℝ≥0∞)
     (hp0 : p ≠ 0) (hpTop : p ≠ ∞) :
     cubeBesovOverlapNormTop Q s p (fun _ => (0 : ℝ)) = 0 := by

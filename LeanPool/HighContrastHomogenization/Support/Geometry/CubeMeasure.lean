@@ -300,14 +300,14 @@ theorem volume_cubeBoundaryLayer_toReal_of_nonneg_le_half {d : ℕ}
     volume_cubeSet_toReal, volume_cubeShrunkSet_toReal_of_le_half Q ht_half]
 
 theorem integrableOn_cubeSet_iff_integrableOn_openCubeSet
-    {d : ℕ} {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] [CompleteSpace E]
+    {d : ℕ} {E : Type*} [NormedAddCommGroup E]
     {Q : TriadicCube d} {f : Vec d → E} :
     MeasureTheory.IntegrableOn f (cubeSet Q) MeasureTheory.volume ↔
       MeasureTheory.IntegrableOn f (openCubeSet Q) MeasureTheory.volume := by
   exact MeasureTheory.integrableOn_congr_set_ae (cubeSet_ae_eq_openCubeSet Q)
 
 theorem setIntegral_cubeSet_eq_setIntegral_openCubeSet
-    {d : ℕ} {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] [CompleteSpace E]
+    {d : ℕ} {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
     {Q : TriadicCube d} {f : Vec d → E} :
     ∫ x in cubeSet Q, f x ∂MeasureTheory.volume =
       ∫ x in openCubeSet Q, f x ∂MeasureTheory.volume := by

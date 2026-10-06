@@ -163,7 +163,8 @@ theorem cubeBesovNegativeVectorDepthAverage_sub_le_two_mul_add
                 _ ≤ 2 * (vecNormSq (cubeAverageVec R u) + vecNormSq (cubeAverageVec R v)) := by
                       exact vecNormSq_sub_le (cubeAverageVec R u) (cubeAverageVec R v)
     _ =
-        2 * descendantsAverage Q j (fun R => vecNormSq (cubeAverageVec R u) + vecNormSq (cubeAverageVec R v)) := by
+        2 * descendantsAverage Q j (fun R => vecNormSq (cubeAverageVec R u) + vecNormSq
+          (cubeAverageVec R v)) := by
           rw [descendantsAverage_smul Q j (2 : ℝ)
             (fun R => vecNormSq (cubeAverageVec R u) + vecNormSq (cubeAverageVec R v))]
     _ =
@@ -277,7 +278,8 @@ theorem cubeBesovNegativeVectorDepthAverage_add_le_two_mul_add
                 _ ≤ 2 * (vecNormSq (cubeAverageVec R u) + vecNormSq (cubeAverageVec R v)) := by
                       exact vecNormSq_add_le (cubeAverageVec R u) (cubeAverageVec R v)
     _ =
-        2 * descendantsAverage Q j (fun R => vecNormSq (cubeAverageVec R u) + vecNormSq (cubeAverageVec R v)) := by
+        2 * descendantsAverage Q j (fun R => vecNormSq (cubeAverageVec R u) + vecNormSq
+          (cubeAverageVec R v)) := by
           rw [descendantsAverage_smul Q j (2 : ℝ)
             (fun R => vecNormSq (cubeAverageVec R u) + vecNormSq (cubeAverageVec R v))]
     _ =

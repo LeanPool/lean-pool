@@ -83,7 +83,8 @@ theorem transport_application (d : ℕ) (hd : 2 ≤ d) (γ : ℝ) (hγ : γ ∈ 
     (hη : profile P γ (Geometry.explicitRoundedGrid jStar m) jStar k n +
         determinantDrift P γ (Geometry.explicitRoundedGrid jStar m) jStar n ≤ c₀ * ε * σ)
     (hlong : (d : ℝ)⁻¹ *
-        detIncrement P (Geometry.explicitRoundedGrid jStar m) n (n + 2 * (selectionLength L₀ σ : ℤ)) ≤
+        detIncrement P (Geometry.explicitRoundedGrid jStar m) n (n + 2 * (selectionLength L₀ σ :
+          ℤ)) ≤
       ε * σ) :
     profile P γ
           (Geometry.explicitRoundedGrid jStar
@@ -174,7 +175,8 @@ theorem transport_alternative (d : ℕ) (hd : 2 ≤ d) (γ : ℝ) (hγ : γ ∈ 
     (hη : profile P γ (Geometry.explicitRoundedGrid jStar m) jStar k n +
         determinantDrift P γ (Geometry.explicitRoundedGrid jStar m) jStar n ≤ c₀ * ε * σ)
     (hlong : (d : ℝ)⁻¹ *
-        detIncrement P (Geometry.explicitRoundedGrid jStar m) n (n + 2 * (selectionLength L₀ σ : ℤ)) ≤
+        detIncrement P (Geometry.explicitRoundedGrid jStar m) n (n + 2 * (selectionLength L₀ σ :
+          ℤ)) ≤
       ε * σ) :
     (k < n ∧
         profile P γ (Geometry.explicitRoundedGrid jStar m) jStar k n +

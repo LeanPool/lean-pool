@@ -48,6 +48,72 @@ open scoped ENNReal
 
 noncomputable section
 
+private theorem affine_scaled_pair_le_physical_rate
+    {d : ℕ} [NeZero d] (abar : Mat d) (hSRaw : (symmPart abar).PosDef)
+    {kappa xRate r x : ℝ} {m : ℤ}
+    (hKappa : 0 < kappa) (hxRate : 0 < xRate) (hr : 0 < r)
+    (hrm : r ≤ (3 : ℝ) ^ m) (B : ℝ) (hB : 0 < B)
+    (Cjoint : ℝ≥0∞) (hCjointTop : Cjoint < ⊤) (e : Vec d)
+    (hxCommonEq : x = roundedAffineMultiplier
+      (Transport.roundedOuterResponseAffineConstant d)
+      (specBound (symmPart abar) * specBound (symmPart abar)⁻¹) kappa * xRate) :
+    ENNReal.ofReal
+        (Real.sqrt (h1AffineFactor (Selection.normalizedRoot (symmPart abar))) * B) *
+      (Cjoint * ENNReal.ofReal
+        (((((3 : ℝ) ^ m) / xRate) ^ (-kappa)) *
+          euclideanNorm (matVecMul (matSqrt (symmPart abar)) e))) ≤
+      ENNReal.ofReal
+        (((Real.sqrt d / Transport.roundedOuterResponseAffineConstant d) * B *
+          Cjoint.toReal) * Real.sqrt (vecDot e (matVecMul (symmPart abar) e)) *
+          (r / x) ^ (-kappa)) := by
+  let S : Mat d := symmPart abar
+  let Caff : ℝ := Transport.roundedOuterResponseAffineConstant d
+  let overlinePi : ℝ := specBound S * specBound S⁻¹
+  let mult : ℝ := roundedAffineMultiplier Caff overlinePi kappa
+  let C : ℝ := (Real.sqrt d / Caff) * B * Cjoint.toReal
+  have hrateAffine := affineRate_absorption hSRaw hKappa hxRate hr hrm
+  have hrateFull :
+      (Real.sqrt (h1AffineFactor (Selection.normalizedRoot S)) * B) *
+          (Cjoint.toReal *
+            (((((3 : ℝ) ^ m) / xRate) ^ (-kappa)) *
+              euclideanNorm (matVecMul (matSqrt S) e))) ≤
+        C * Real.sqrt (vecDot e (matVecMul S e)) *
+          (r / x) ^ (-kappa) := by
+    have hnonneg : 0 ≤ B * Cjoint.toReal *
+        euclideanNorm (matVecMul (matSqrt S) e) :=
+      mul_nonneg (mul_nonneg hB.le ENNReal.toReal_nonneg)
+        (euclideanNorm_nonneg _)
+    have hmul := mul_le_mul_of_nonneg_right hrateAffine hnonneg
+    have hnorm := euclideanNorm_matSqrt_eq_sqrt_vecDot hSRaw.posSemidef e
+    calc
+      (Real.sqrt (h1AffineFactor (Selection.normalizedRoot S)) * B) *
+            (Cjoint.toReal *
+              (((((3 : ℝ) ^ m) / xRate) ^ (-kappa)) *
+                euclideanNorm (matVecMul (matSqrt S) e))) =
+          (Real.sqrt (h1AffineFactor (Selection.normalizedRoot S)) *
+            ((((3 : ℝ) ^ m) / xRate) ^ (-kappa))) *
+            (B * Cjoint.toReal *
+              euclideanNorm (matVecMul (matSqrt S) e)) := by ring
+      _ ≤ (Real.sqrt d / Caff) *
+            (r / (mult * xRate)) ^ (-kappa) *
+            (B * Cjoint.toReal *
+              euclideanNorm (matVecMul (matSqrt S) e)) := by
+        simpa only [S, Caff, overlinePi, mult] using hmul
+      _ = C * Real.sqrt (vecDot e (matVecMul S e)) *
+            (r / x) ^ (-kappa) := by
+        rw [hxCommonEq, ← hnorm]
+        dsimp only [C]
+        ring
+  calc
+    _ = ENNReal.ofReal
+        ((Real.sqrt (h1AffineFactor (Selection.normalizedRoot S)) * B) *
+          (Cjoint.toReal *
+            (((((3 : ℝ) ^ m) / xRate) ^ (-kappa)) *
+              euclideanNorm (matVecMul (matSqrt S) e)))) := by
+      rw [ENNReal.ofReal_mul (mul_nonneg (Real.sqrt_nonneg _) hB.le),
+        ENNReal.ofReal_mul ENNReal.toReal_nonneg, ENNReal.ofReal_toReal hCjointTop.ne]
+    _ ≤ _ := ENNReal.ofReal_le_ofReal hrateFull
+
 /-- **The corrector-decay terminal at an arbitrary certificate the reconciled-smallness
 certificate.**  The
 corrector-decay terminal closes in the exact square-root gauge.  The identity
@@ -235,94 +301,11 @@ theorem exists_gaugeFrameCorrectorDecayConstant_atCertificate
           ENNReal.ofReal
             (Real.sqrt (h1AffineFactor (Selection.normalizedRoot S)) * B) := hmul
       _ = _ := mul_comm _ _
-  have hCjointEq : Cjoint = ENNReal.ofReal Cjoint.toReal :=
-    (ENNReal.ofReal_toReal hCjointTop.ne).symm
-  have hrateAffine := affineRate_absorption hSRaw hKappa hxRate hr hrm
-  have hrateFull :
-      (Real.sqrt (h1AffineFactor (Selection.normalizedRoot S)) * B) *
-          (Cjoint.toReal *
-            (((((3 : ℝ) ^ m) / xRate) ^ (-kappa)) *
-              euclideanNorm (matVecMul (matSqrt S) e))) ≤
-        C * Real.sqrt (vecDot e (matVecMul S e)) *
-          (r / x) ^ (-kappa) := by
-    have hnonneg : 0 ≤ B * Cjoint.toReal *
-        euclideanNorm (matVecMul (matSqrt S) e) :=
-      mul_nonneg (mul_nonneg hB.le ENNReal.toReal_nonneg)
-        (euclideanNorm_nonneg _)
-    have hmul := mul_le_mul_of_nonneg_right hrateAffine hnonneg
-    have hnorm := euclideanNorm_matSqrt_eq_sqrt_vecDot hSRaw.posSemidef e
-    calc
-      (Real.sqrt (h1AffineFactor (Selection.normalizedRoot S)) * B) *
-            (Cjoint.toReal *
-              (((((3 : ℝ) ^ m) / xRate) ^ (-kappa)) *
-                euclideanNorm (matVecMul (matSqrt S) e))) =
-          (Real.sqrt (h1AffineFactor (Selection.normalizedRoot S)) *
-            ((((3 : ℝ) ^ m) / xRate) ^ (-kappa))) *
-            (B * Cjoint.toReal *
-              euclideanNorm (matVecMul (matSqrt S) e)) := by ring
-      _ ≤ (Real.sqrt d / Caff) *
-            (r / (mult * xRate)) ^ (-kappa) *
-            (B * Cjoint.toReal *
-              euclideanNorm (matVecMul (matSqrt S) e)) := by
-        simpa only [S, Caff, overlinePi, mult] using hmul
-      _ = C * Real.sqrt (vecDot e (matVecMul S e)) *
-            (r / x) ^ (-kappa) := by
-        rw [hxCommonEq, ← hnorm]
-        dsimp only [C]
-        ring
-  calc
-    ENNReal.ofReal r⁻¹ *
-          negOneNorm (ellipsoid abar r)
-            (fun y ↦ matVecMul (matSqrt (symmPart abar))
-              (gradPhi e a y)) +
-        ENNReal.ofReal r⁻¹ *
-          negOneNorm (ellipsoid abar r)
-            (fun y ↦ matVecMul (matSqrt (symmPart abar))⁻¹
-              (matVecMul ((a.1 y : Mat d) - skewPart abar)
-                  (e + gradPhi e a y) -
-                matVecMul (symmPart abar) e)) ≤
-        ENNReal.ofReal
-            (Real.sqrt (h1AffineFactor (Selection.normalizedRoot S)) * B) *
-          (Cjoint * ENNReal.ofReal
-            (((((3 : ℝ) ^ m) / xRate) ^ (-kappa)) *
-              euclideanNorm (matVecMul (matSqrt S) e))) := by
-      refine hphysical.trans ?_
-      simpa only [S, B] using hscaled
-    _ = ENNReal.ofReal
-        ((Real.sqrt (h1AffineFactor (Selection.normalizedRoot S)) * B) *
-          (Cjoint.toReal *
-            (((((3 : ℝ) ^ m) / xRate) ^ (-kappa)) *
-              euclideanNorm (matVecMul (matSqrt S) e)))) := by
-      let A : ℝ :=
-        Real.sqrt (h1AffineFactor (Selection.normalizedRoot S)) * B
-      let R : ℝ := ((((3 : ℝ) ^ m) / xRate) ^ (-kappa)) *
-        euclideanNorm (matVecMul (matSqrt S) e)
-      have hA : 0 ≤ A := by
-        dsimp only [A]
-        exact mul_nonneg (Real.sqrt_nonneg _) hB.le
-      calc
-        ENNReal.ofReal
-              (Real.sqrt (h1AffineFactor (Selection.normalizedRoot S)) * B) *
-            (Cjoint * ENNReal.ofReal
-              (((((3 : ℝ) ^ m) / xRate) ^ (-kappa)) *
-                euclideanNorm (matVecMul (matSqrt S) e))) =
-          ENNReal.ofReal A *
-            (ENNReal.ofReal Cjoint.toReal * ENNReal.ofReal R) := by
-          change ENNReal.ofReal A * (Cjoint * ENNReal.ofReal R) =
-            ENNReal.ofReal A *
-              (ENNReal.ofReal Cjoint.toReal * ENNReal.ofReal R)
-          exact congrArg
-            (fun z : ℝ≥0∞ ↦ ENNReal.ofReal A * (z * ENNReal.ofReal R))
-            hCjointEq
-        _ = ENNReal.ofReal (A * (Cjoint.toReal * R)) := by
-          symm
-          rw [ENNReal.ofReal_mul hA,
-            ENNReal.ofReal_mul ENNReal.toReal_nonneg]
-        _ = _ := rfl
-    _ ≤ ENNReal.ofReal
-        (C * Real.sqrt (vecDot e (matVecMul S e)) *
-          (r / x) ^ (-kappa)) := ENNReal.ofReal_le_ofReal hrateFull
-    _ = _ := by simp only [S]
+  have hrate := affine_scaled_pair_le_physical_rate abar hSRaw
+    hKappa hxRate hr hrm B hB Cjoint hCjointTop e hxCommonEq
+  have hfinal := hphysical.trans (by
+    simpa only [S, B] using hscaled.trans hrate)
+  simpa only [C, Caff, B, S] using hfinal
 
 end
 

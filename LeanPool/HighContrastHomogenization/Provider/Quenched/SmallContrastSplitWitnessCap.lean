@@ -128,83 +128,14 @@ theorem three_rpow_mul_logb {x : ℝ} (hx : 0 < x) (c : ℝ) :
   rw [mul_comm, Real.rpow_mul (by norm_num : (0:ℝ) ≤ 3),
     Real.rpow_logb (by norm_num) (by norm_num) hx]
 
-/-- **The burn-split witness exponent.** -/
-theorem exists_burnSplit_witness_exponent (d : ℕ) (hd : 2 ≤ d)
-    {Cd : ℝ} (hCd : max 1 (12 * (d : ℝ) * Real.sqrt d) ≤ Cd)
-    {g : ℝ} (hg : g ∈ Set.Ico (0 : ℝ) 1) :
-    ∃ cW : ℝ, 0 ≤ cW ∧
-      ∀ K Pi : ℝ, 1 < K → 1 ≤ Pi →
-        ∀ n : ℕ, K ^ (n + 2) ≤ 2 * K ^ 3 →
-        burnSplitThreshold d K
-            (burnSplitAnchor d 1 K (burnSplitDepth d Cd g Pi))
-            (burnSplitAnchor d 1 K (burnSplitDepth d Cd g Pi) +
-              ((2 * burnSplitDepth d Cd g Pi : ℕ) : ℤ)) *
-          K * K ^ (n + 1) ≤ Real.rpow (2 + Pi * K) cW := by
+private theorem source_burn_power_bound
+    (d : ℕ) (K : ℝ) (hgK2 : (2 : ℝ) ≤ growthBar K)
+    (hgK0 : (0 : ℝ) < growthBar K)
+    {lgK : ℝ} (hlgKdef : lgK = Real.logb 3 (growthBar K))
+    (hlgK0 : 0 ≤ lgK) :
+    (3 : ℝ) ^ (sourceBurn d 1 K) ≤
+      (3 : ℝ) ^ ((kZero d : ℕ) : ℤ) * 243 * growthBar K ^ (4 * d + 8) := by
   classical
-  have : Nonempty (Fin d) := ⟨⟨0, by omega⟩⟩
-  have hCd1 : (1 : ℝ) ≤ Cd := (le_max_left _ _).trans hCd
-  have hzeta : (1 : ℝ) ≤ zetaG g := by
-    have hlt : (3 : ℝ) ^ (-(1 - g)) < 1 :=
-      Real.rpow_lt_one_of_one_lt_of_neg (by norm_num)
-        (by linarith only [hg.2])
-    have hpos : (0 : ℝ) < (3 : ℝ) ^ (-(1 - g)) :=
-      Real.rpow_pos_of_pos (by norm_num) _
-    rw [zetaG]
-    rw [le_inv_comm₀ (by norm_num) (by linarith only [hlt, hpos])]
-    linarith only [hpos]
-  have hsd1 : (1 : ℝ) ≤ Real.sqrt d := by
-    have h1 : (1 : ℝ) ≤ (d : ℝ) := by exact_mod_cast (by omega : 1 ≤ d)
-    calc (1 : ℝ) = Real.sqrt 1 := Real.sqrt_one.symm
-      _ ≤ Real.sqrt d := Real.sqrt_le_sqrt h1
-  set CW : ℝ := (100 / 99 : ℝ) * Cd * zetaG g * Real.sqrt d with hCWdef
-  have hCW1 : (1 : ℝ) ≤ CW := by
-    rw [hCWdef]
-    have hcz : (1 : ℝ) ≤ Cd * zetaG g := by
-      nlinarith only [hCd1, hzeta,
-        mul_nonneg (sub_nonneg.mpr hCd1) (sub_nonneg.mpr hzeta)]
-    have hczs : (1 : ℝ) ≤ Cd * zetaG g * Real.sqrt d := by
-      nlinarith only [hcz, hsd1,
-        mul_nonneg (sub_nonneg.mpr hcz) (sub_nonneg.mpr hsd1)]
-    nlinarith only [hczs]
-  obtain ⟨c1, hc10, hc1⟩ := exists_rpow_ge_uniform
-    (2 * ((3 : ℝ) ^ ((kZero d : ℕ) : ℤ) * 729 + 3) * (3 * CW) ^ (3 : ℕ))
-  refine ⟨c1 + (9 * (d : ℝ) + 19), by positivity, ?_⟩
-  intro K Pi hK hPi n hn
-  set D : ℕ := burnSplitDepth d Cd g Pi with hDdef
-  set jS : ℤ := burnSplitAnchor d 1 K D with hjSdef
-  set base : ℝ := 2 + Pi * K with hbasedef
-  have hK1 : (1 : ℝ) ≤ K := hK.le
-  have hbase3 : (3 : ℝ) ≤ base := by
-    rw [hbasedef]
-    have h := mul_le_mul hPi hK.le (by norm_num) (by linarith only [hPi])
-    linarith only [h]
-  have hbase0 : (0 : ℝ) < base := by linarith only [hbase3]
-  have hgK2 : (2 : ℝ) ≤ growthBar K := le_max_left _ _
-  have hgK0 : (0 : ℝ) < growthBar K := by linarith only [hgK2]
-  have hgKb : growthBar K ≤ base := by
-    rw [hbasedef, growthBar]
-    have hPK : K ≤ Pi * K := by
-      nlinarith only [hPi, hK]
-    refine max_le (by linarith only [hPK, hK]) (by linarith only [hPK])
-  have hPib : Pi ≤ base := by
-    rw [hbasedef]; nlinarith only [hPi, hK]
-  set lgK : ℝ := Real.logb 3 (growthBar K) with hlgKdef
-  have hlgK0 : 0 ≤ lgK := by
-    rw [hlgKdef]
-    exact Real.logb_nonneg (by norm_num) (by linarith only [hgK2])
-  -- S1: the depth power
-  have hD3 : (3 : ℝ) ^ (D : ℕ) ≤ 3 * (CW * Pi) := by
-    have heq : (100 / 99 : ℝ) * (Cd * Pi * zetaG g) * Real.sqrt d =
-        CW * Pi := by
-      rw [hCWdef]; ring
-    have harg : (1 : ℝ) ≤ CW * Pi := by nlinarith only [hCW1, hPi]
-    have h := three_pow_ceil_logb_le (x := CW * Pi)
-      (by linarith only [harg])
-    rw [max_eq_right harg] at h
-    rw [hDdef, burnSplitDepth, canonicalGridEnlargement, heq]
-    exact h
-  have hD31 : (1 : ℝ) ≤ (3 : ℝ) ^ (D : ℕ) := one_le_pow₀ (by norm_num)
-  -- S3a: the source burn
   have hmm : momentMultiplier 1 (growthBar K) ≤ 3 * growthBar K ^ 2 := by
     rw [momentMultiplier]
     have hlog : Real.log (growthBar K) ≤ growthBar K - 1 :=
@@ -216,7 +147,7 @@ theorem exists_burnSplit_witness_exponent (d : ℕ) (hd : 2 ≤ d)
     nlinarith only [hlog, hgK2]
   have hsb : (3 : ℝ) ^ (sourceBurn d 1 K) ≤
       (3 : ℝ) ^ ((kZero d : ℕ) : ℤ) * 243 * growthBar K ^ (4 * d + 8) := by
-    rw [sourceBurn]
+    rw [sourceBurn, ← hlgKdef]
     have hc2 : (0 : ℤ) ≤ ⌈2 * lgK⌉ := by
       refine Int.ceil_nonneg ?_
       linarith only [hlgK0]
@@ -310,7 +241,17 @@ theorem exists_burnSplit_witness_exponent (d : ℕ) (hd : 2 ≤ d)
           growthBar K ^ (4 * d + 8) := by
           rw [show 4 * d + 8 = 2 + (4 * d + 4) + 2 from by omega]
           ring
-  -- S3b: the quotient ceiling
+  exact hsb
+
+private theorem burn_quotient_ceiling_power_bound
+    (d : ℕ) (hd : 2 ≤ d) (D : ℕ) (K : ℝ)
+    (hgK0 : (0 : ℝ) < growthBar K)
+    {lgK : ℝ} (hlgKdef : lgK = Real.logb 3 (growthBar K))
+    (hlgK0 : 0 ≤ lgK) :
+    (3 : ℝ) ^ (⌈((d : ℝ) * (2 * (D : ℝ)) +
+      16 * ((d : ℝ) + 1) ^ 2 * lgK) / (4 * (d : ℝ) + 3)⌉ : ℤ) ≤
+      3 * ((3 : ℝ) ^ (D : ℕ) * growthBar K ^ (5 * d + 5)) := by
+  classical
   have hq : ((d : ℝ) * (2 * (D : ℝ)) +
       16 * ((d : ℝ) + 1) ^ 2 * lgK) / (4 * (d : ℝ) + 3) ≤
       (D : ℝ) + 5 * ((d : ℝ) + 1) * lgK := by
@@ -352,39 +293,19 @@ theorem exists_burnSplit_witness_exponent (d : ℕ) (hd : 2 ≤ d)
         rw [Real.rpow_natCast]
     refine le_trans (mul_le_mul_of_nonneg_left hmono (by norm_num)) ?_
     rw [hsplit]
-  -- S5: the anchor power
-  have hjSnn : (0 : ℤ) ≤ jS := by
-    rw [hjSdef, burnSplitAnchor]
-    refine le_trans ?_ (le_max_left _ _)
-    rw [sourceBurn]
-    exact le_max_of_le_left (Int.natCast_nonneg _)
-  have hjS : (3 : ℝ) ^ jS ≤
+  exact hqceil
+
+private theorem burn_split_threshold_power_bound
+    (d : ℕ) (K : ℝ) (D : ℕ) (jS : ℤ)
+    (hgKpow : ∀ a b : ℕ, a ≤ b → growthBar K ^ a ≤ growthBar K ^ b)
+    (hD31 : (1 : ℝ) ≤ (3 : ℝ) ^ D)
+    (hjS : (3 : ℝ) ^ jS ≤
       ((3 : ℝ) ^ ((kZero d : ℕ) : ℤ) * 243 * growthBar K ^ (4 * d + 8)) *
-        (3 * ((3 : ℝ) ^ (D : ℕ) * growthBar K ^ (5 * d + 5))) := by
-    rw [hjSdef, burnSplitAnchor]
-    have hsbnn : (0 : ℤ) ≤ sourceBurn d 1 K := by
-      rw [sourceBurn]
-      exact le_max_of_le_left (Int.natCast_nonneg _)
-    have hcnn : (0 : ℤ) ≤ ⌈((d : ℝ) * (2 * (D : ℝ)) +
-        16 * ((d : ℝ) + 1) ^ 2 * Real.logb 3 (growthBar K)) /
-        (4 * (d : ℝ) + 3)⌉ := by
-      refine Int.ceil_nonneg ?_
-      have hden : (0 : ℝ) < 4 * (d : ℝ) + 3 := by positivity
-      refine div_nonneg ?_ hden.le
-      have hD0 : (0 : ℝ) ≤ (D : ℝ) := Nat.cast_nonneg _
-      have h1 : (0 : ℝ) ≤ (d : ℝ) * (2 * (D : ℝ)) := by positivity
-      have h2 : (0 : ℝ) ≤ 16 * ((d : ℝ) + 1) ^ 2 *
-          Real.logb 3 (growthBar K) := by
-        rw [← hlgKdef]
-        positivity
-      linarith only [h1, h2]
-    refine le_trans (three_zpow_max_le_mul hsbnn hcnn) ?_
-    rw [← hlgKdef]
-    exact mul_le_mul hsb hqceil (by positivity) (by positivity)
-  -- S4/S6: the threshold and the witness value
-  have hgKpow : ∀ a b : ℕ, a ≤ b →
-      growthBar K ^ a ≤ growthBar K ^ b := fun a b hab =>
-    pow_le_pow_right₀ (by linarith only [hgK2]) hab
+        (3 * ((3 : ℝ) ^ D * growthBar K ^ (5 * d + 5)))) :
+    burnSplitThreshold d K jS (jS + ((2 * D : ℕ) : ℤ)) ≤
+      ((3 : ℝ) ^ ((kZero d : ℕ) : ℤ) * 729 + 3) *
+        ((3 : ℝ) ^ (D : ℕ)) ^ (3 : ℕ) * growthBar K ^ (9 * d + 13) := by
+  classical
   have hthr : burnSplitThreshold d K jS (jS + ((2 * D : ℕ) : ℤ)) ≤
       ((3 : ℝ) ^ ((kZero d : ℕ) : ℤ) * 729 + 3) *
         ((3 : ℝ) ^ (D : ℕ)) ^ (3 : ℕ) * growthBar K ^ (9 * d + 13) := by
@@ -441,6 +362,122 @@ theorem exists_burnSplit_witness_exponent (d : ℕ) (hd : 2 ≤ d)
       have h2 : (0 : ℝ) ≤ (3 : ℝ) ^ ((kZero d : ℕ) : ℤ) * 243 := by
         positivity
       nlinarith only [h1, h2]
+  exact hthr
+
+/-- **The burn-split witness exponent.** -/
+theorem exists_burnSplit_witness_exponent (d : ℕ) (hd : 2 ≤ d)
+    {Cd : ℝ} (hCd : max 1 (12 * (d : ℝ) * Real.sqrt d) ≤ Cd)
+    {g : ℝ} (hg : g ∈ Set.Ico (0 : ℝ) 1) :
+    ∃ cW : ℝ, 0 ≤ cW ∧
+      ∀ K Pi : ℝ, 1 < K → 1 ≤ Pi →
+        ∀ n : ℕ, K ^ (n + 2) ≤ 2 * K ^ 3 →
+        burnSplitThreshold d K
+            (burnSplitAnchor d 1 K (burnSplitDepth d Cd g Pi))
+            (burnSplitAnchor d 1 K (burnSplitDepth d Cd g Pi) +
+              ((2 * burnSplitDepth d Cd g Pi : ℕ) : ℤ)) *
+          K * K ^ (n + 1) ≤ Real.rpow (2 + Pi * K) cW := by
+  classical
+  have : Nonempty (Fin d) := ⟨⟨0, by omega⟩⟩
+  have hCd1 : (1 : ℝ) ≤ Cd := (le_max_left _ _).trans hCd
+  have hzeta : (1 : ℝ) ≤ zetaG g := by
+    have hlt : (3 : ℝ) ^ (-(1 - g)) < 1 :=
+      Real.rpow_lt_one_of_one_lt_of_neg (by norm_num)
+        (by linarith only [hg.2])
+    have hpos : (0 : ℝ) < (3 : ℝ) ^ (-(1 - g)) :=
+      Real.rpow_pos_of_pos (by norm_num) _
+    rw [zetaG]
+    rw [le_inv_comm₀ (by norm_num) (by linarith only [hlt, hpos])]
+    linarith only [hpos]
+  have hsd1 : (1 : ℝ) ≤ Real.sqrt d := by
+    have h1 : (1 : ℝ) ≤ (d : ℝ) := by exact_mod_cast (by omega : 1 ≤ d)
+    calc (1 : ℝ) = Real.sqrt 1 := Real.sqrt_one.symm
+      _ ≤ Real.sqrt d := Real.sqrt_le_sqrt h1
+  set CW : ℝ := (100 / 99 : ℝ) * Cd * zetaG g * Real.sqrt d with hCWdef
+  have hCW1 : (1 : ℝ) ≤ CW := by
+    rw [hCWdef]
+    have hcz : (1 : ℝ) ≤ Cd * zetaG g := by
+      nlinarith only [hCd1, hzeta,
+        mul_nonneg (sub_nonneg.mpr hCd1) (sub_nonneg.mpr hzeta)]
+    have hczs : (1 : ℝ) ≤ Cd * zetaG g * Real.sqrt d := by
+      nlinarith only [hcz, hsd1,
+        mul_nonneg (sub_nonneg.mpr hcz) (sub_nonneg.mpr hsd1)]
+    nlinarith only [hczs]
+  obtain ⟨c1, hc10, hc1⟩ := exists_rpow_ge_uniform
+    (2 * ((3 : ℝ) ^ ((kZero d : ℕ) : ℤ) * 729 + 3) * (3 * CW) ^ (3 : ℕ))
+  refine ⟨c1 + (9 * (d : ℝ) + 19), by positivity, ?_⟩
+  intro K Pi hK hPi n hn
+  set D : ℕ := burnSplitDepth d Cd g Pi with hDdef
+  set jS : ℤ := burnSplitAnchor d 1 K D with hjSdef
+  set base : ℝ := 2 + Pi * K with hbasedef
+  have hK1 : (1 : ℝ) ≤ K := hK.le
+  have hbase3 : (3 : ℝ) ≤ base := by
+    rw [hbasedef]
+    have h := mul_le_mul hPi hK.le (by norm_num) (by linarith only [hPi])
+    linarith only [h]
+  have hbase0 : (0 : ℝ) < base := by linarith only [hbase3]
+  have hgK2 : (2 : ℝ) ≤ growthBar K := le_max_left _ _
+  have hgK0 : (0 : ℝ) < growthBar K := by linarith only [hgK2]
+  have hgKb : growthBar K ≤ base := by
+    rw [hbasedef, growthBar]
+    have hPK : K ≤ Pi * K := by
+      nlinarith only [hPi, hK]
+    refine max_le (by linarith only [hPK, hK]) (by linarith only [hPK])
+  have hPib : Pi ≤ base := by
+    rw [hbasedef]; nlinarith only [hPi, hK]
+  set lgK : ℝ := Real.logb 3 (growthBar K) with hlgKdef
+  have hlgK0 : 0 ≤ lgK := by
+    rw [hlgKdef]
+    exact Real.logb_nonneg (by norm_num) (by linarith only [hgK2])
+  -- S1: the depth power
+  have hD3 : (3 : ℝ) ^ (D : ℕ) ≤ 3 * (CW * Pi) := by
+    have heq : (100 / 99 : ℝ) * (Cd * Pi * zetaG g) * Real.sqrt d =
+        CW * Pi := by
+      rw [hCWdef]; ring
+    have harg : (1 : ℝ) ≤ CW * Pi := by nlinarith only [hCW1, hPi]
+    have h := three_pow_ceil_logb_le (x := CW * Pi)
+      (by linarith only [harg])
+    rw [max_eq_right harg] at h
+    rw [hDdef, burnSplitDepth, canonicalGridEnlargement, heq]
+    exact h
+  have hD31 : (1 : ℝ) ≤ (3 : ℝ) ^ (D : ℕ) := one_le_pow₀ (by norm_num)
+  -- S3a: the source burn
+  have hsb := source_burn_power_bound d K hgK2 hgK0 hlgKdef hlgK0
+  -- S3b: the quotient ceiling
+  have hqceil := burn_quotient_ceiling_power_bound d hd D K hgK0 hlgKdef hlgK0
+  -- S5: the anchor power
+  have hjSnn : (0 : ℤ) ≤ jS := by
+    rw [hjSdef, burnSplitAnchor]
+    refine le_trans ?_ (le_max_left _ _)
+    rw [sourceBurn]
+    exact le_max_of_le_left (Int.natCast_nonneg _)
+  have hjS : (3 : ℝ) ^ jS ≤
+      ((3 : ℝ) ^ ((kZero d : ℕ) : ℤ) * 243 * growthBar K ^ (4 * d + 8)) *
+        (3 * ((3 : ℝ) ^ (D : ℕ) * growthBar K ^ (5 * d + 5))) := by
+    rw [hjSdef, burnSplitAnchor]
+    have hsbnn : (0 : ℤ) ≤ sourceBurn d 1 K := by
+      rw [sourceBurn]
+      exact le_max_of_le_left (Int.natCast_nonneg _)
+    have hcnn : (0 : ℤ) ≤ ⌈((d : ℝ) * (2 * (D : ℝ)) +
+        16 * ((d : ℝ) + 1) ^ 2 * Real.logb 3 (growthBar K)) /
+        (4 * (d : ℝ) + 3)⌉ := by
+      refine Int.ceil_nonneg ?_
+      have hden : (0 : ℝ) < 4 * (d : ℝ) + 3 := by positivity
+      refine div_nonneg ?_ hden.le
+      have hD0 : (0 : ℝ) ≤ (D : ℝ) := Nat.cast_nonneg _
+      have h1 : (0 : ℝ) ≤ (d : ℝ) * (2 * (D : ℝ)) := by positivity
+      have h2 : (0 : ℝ) ≤ 16 * ((d : ℝ) + 1) ^ 2 *
+          Real.logb 3 (growthBar K) := by
+        rw [← hlgKdef]
+        positivity
+      linarith only [h1, h2]
+    refine le_trans (three_zpow_max_le_mul hsbnn hcnn) ?_
+    rw [← hlgKdef]
+    exact mul_le_mul hsb hqceil (by positivity) (by positivity)
+  -- S4/S6: the threshold and the witness value
+  have hgKpow : ∀ a b : ℕ, a ≤ b →
+      growthBar K ^ a ≤ growthBar K ^ b := fun a b hab =>
+    pow_le_pow_right₀ (by linarith only [hgK2]) hab
+  have hthr := burn_split_threshold_power_bound d K D jS hgKpow hD31 hjS
   -- the final assembly
   have hval : burnSplitThreshold d K jS (jS + ((2 * D : ℕ) : ℤ)) *
       K * K ^ (n + 1) ≤

@@ -378,13 +378,13 @@ noncomputable def applyBlockMat {d : ℕ} (A : BlockMat d) :
   rw [PiLp.inner_apply, Fin.sum_univ_two]
   simp [blockVecDot, HilbertVec.inner_def]
 
-@[simp] theorem inner_ofBlockVec_applyBlockMat {d : ℕ} (A : BlockMat d)
+theorem inner_ofBlockVec_applyBlockMat {d : ℕ} (A : BlockMat d)
     (X Y : BlockVec d) :
     inner ℝ (ofBlockVec X) (applyBlockMat A (ofBlockVec Y)) =
       blockVecDot X (blockMatVecMul A Y) := by
   simp [applyBlockMat_apply, inner_def]
 
-@[simp] theorem norm_sq_ofBlockVec {d : ℕ} (X : BlockVec d) :
+theorem norm_sq_ofBlockVec {d : ℕ} (X : BlockVec d) :
     ‖ofBlockVec X‖ ^ 2 = blockVecDot X X := by
   rw [← real_inner_self_eq_norm_sq, inner_def, toBlockVec_ofBlockVec]
 
@@ -392,7 +392,7 @@ noncomputable def applyBlockMat {d : ℕ} (A : BlockMat d) :
     ‖X‖ ^ 2 = blockVecDot X.toBlockVec X.toBlockVec := by
   simpa [ofBlockVec_toBlockVec X] using norm_sq_ofBlockVec X.toBlockVec
 
-@[simp] theorem norm_sq_applyBlockMat {d : ℕ} (A : BlockMat d) (X : HilbertBlockVec d) :
+theorem norm_sq_applyBlockMat {d : ℕ} (A : BlockMat d) (X : HilbertBlockVec d) :
     ‖applyBlockMat A X‖ ^ 2 =
       blockVecDot (blockMatVecMul A X.toBlockVec) (blockMatVecMul A X.toBlockVec) := by
   rw [applyBlockMat_apply, norm_sq_ofBlockVec]
@@ -419,11 +419,11 @@ theorem opNorm_applyBlockMat_le_of_block_bound {d : ℕ} {A : BlockMat d} {C : �
   have habs : |‖applyBlockMat A X‖| ≤ |C * ‖X‖| := sq_le_sq.mp hsq
   simpa [abs_of_nonneg (norm_nonneg _), abs_of_nonneg hCnorm_nonneg] using habs
 
-@[simp] theorem norm_sq_eq_components {d : ℕ} (X : HilbertBlockVec d) :
+theorem norm_sq_eq_components {d : ℕ} (X : HilbertBlockVec d) :
     ‖X‖ ^ 2 = ‖X.potential‖ ^ 2 + ‖X.flux‖ ^ 2 := by
   rw [PiLp.norm_sq_eq_of_L2, Fin.sum_univ_two]
 
-@[simp] theorem norm_sq_eq_sum_sq {d : ℕ} (X : HilbertBlockVec d) :
+theorem norm_sq_eq_sum_sq {d : ℕ} (X : HilbertBlockVec d) :
     ‖X‖ ^ 2 = ∑ i, X.potential i ^ 2 + ∑ i, X.flux i ^ 2 := by
   rw [norm_sq_eq_components, HilbertVec.norm_sq_eq_sum_sq, HilbertVec.norm_sq_eq_sum_sq]
 

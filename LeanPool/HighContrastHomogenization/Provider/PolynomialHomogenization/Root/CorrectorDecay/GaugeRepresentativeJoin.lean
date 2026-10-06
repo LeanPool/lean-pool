@@ -118,7 +118,8 @@ theorem physicalPair_le_identityGaugePair
           (matVecMul (Selection.normalizedRoot (symmPart abar)) y))) =ᵐ[volume]
         fun y ↦ matVecMul (Selection.normalizedRoot (symmPart abar)) e +
           (finiteAffineCorrectionJointLocalLimit aRaw hCauchy
-            (matVecMul (Selection.normalizedRoot (symmPart abar)) e)).globalGradientRepresentative y)
+            (matVecMul (Selection.normalizedRoot (symmPart abar))
+              e)).globalGradientRepresentative y)
     {r : ℝ} (hr : 0 < r) (m : ℤ)
     (hm : m = outerTriadicGeneration (4 * r) (by positivity)) :
     ENNReal.ofReal r⁻¹ *

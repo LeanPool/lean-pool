@@ -222,7 +222,7 @@ theorem basic_cg_identities_average_pairing_eq_vecDot_average_gradient_sub_avera
   rw [hgrad, hflux]
 
 theorem
-    basic_cg_identities_average_pairing_eq_vecDot_average_gradient_sub_average_flux_of_isEllipticFieldOn
+    averagePairing_eq_averageGradient_minusFlux_of_ellipticity
     {d : ℕ} (U : Set (Vec d)) (a : CoeffField d) {lam Lam : ℝ}
     [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     (hEll : IsEllipticFieldOn lam Lam U a)

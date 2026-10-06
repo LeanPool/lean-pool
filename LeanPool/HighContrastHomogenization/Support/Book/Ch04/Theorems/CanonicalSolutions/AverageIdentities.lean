@@ -292,6 +292,32 @@ private theorem canonicalDoubledMuResponseUpperImageAverageCubeSet_eq_integral_o
             (blockMatVecMul (blockCoeffField a x) (X.eval x)).1 i ∂volume := by
           field_simp [ne_of_gt (cubeVolume_pos Q)]
 
+private theorem memVectorL2_remainder_of_ae_sum
+    {d : ℕ} {U : Set (Vec d)} (F G H : Vec d → Vec d)
+    (hF : MemVectorL2 U F) (hG : MemVectorL2 U G)
+    (hSum : (fun x => F x + H x) =ᵐ[volumeMeasureOn U] G) :
+    MemVectorL2 U H := by
+  have hDiff : MemVectorL2 U (fun x => G x - F x) := hG.sub hF
+  refine MeasureTheory.MemLp.ae_eq ?_ hDiff
+  filter_upwards [hSum] with x hx
+  ext i
+  have hxi := congrArg (fun v : Vec d => v i) hx
+  simp [Pi.add_apply, Pi.sub_apply] at hxi ⊢
+  linarith
+
+private theorem memVectorL2_descendantCubeSet_of_parentCubeDomain
+    {d : ℕ} {Q R : TriadicCube d} {j : ℕ}
+    (hR : R ∈ descendantsAtDepth Q j) (F : Vec d → Vec d)
+    (hF : MemVectorL2 (Ch02.cubeDomain Q : Set (Vec d)) F) :
+    MemVectorL2 (cubeSet R) F := by
+  have hOpen : MemVectorL2 (openCubeSet R) F :=
+    hF.mono_measure (by
+      simpa [Ch02.cubeDomain_coe, volumeMeasureOn] using
+        MeasureTheory.Measure.restrict_mono_set MeasureTheory.volume
+          (openCubeSet_subset_of_mem_descendantsAtDepth hR))
+  simpa [MemVectorL2, volumeMeasureOn,
+    volume_restrict_cubeSet_eq_volume_restrict_openCubeSet R] using hOpen
+
 /-- Correctness of the Ch4 scalar-response gradient average: on the a.e.
 elliptic support it is the descendant-cube average of the raw Chapter 2
 canonical scalar-response maximizer gradient. -/
@@ -324,7 +350,7 @@ theorem canonicalScalarResponseGradientAverageCubeSet_eq_cubeAverageVec_canonica
     (Ch02.doubledMuTheory (Ch02.cubeDomain Q) aQ).minimizer_exists (-p, q)
   let Xold : BlockState d := { potential := X.potential, flux := X.flux }
   obtain ⟨hAdm, hHilbert⟩ :=
-    exists_isBlockMuAdmissible_cubeSet_and_hilbert_eq_canonicalAEEMuHilbertMinimizer_of_isDoubledMuMinimizer
+    exists_isBlockMuAdmissible_cube_and_hilbert_eq_canonicalAEEMuHilbertMinimizer
       Q k aSlice (-p, q) aQ haQ hX
   have hRQ : cubeSet R ⊆ cubeSet Q :=
     cubeSet_subset_of_mem_descendantsAtDepth hR
@@ -370,29 +396,11 @@ theorem canonicalScalarResponseGradientAverageCubeSet_eq_cubeAverageVec_canonica
         (fun x =>
           (Ch02.canonicalMaximizer
             (Ch02.responseExistenceTheory (Ch02.cubeDomain Q) aQ)
-            p q).toSolution.toH1.grad x) := by
-    have hGradOpen :
-        MemVectorL2 (Ch02.cubeDomain Q : Set (Vec d))
-          (fun x =>
-            (Ch02.canonicalMaximizer
-              (Ch02.responseExistenceTheory (Ch02.cubeDomain Q) aQ)
-              p q).toSolution.toH1.grad x) :=
+            p q).toSolution.toH1.grad x) :=
+    memVectorL2_descendantCubeSet_of_parentCubeDomain hR _
       (Ch02.canonicalMaximizer
         (Ch02.responseExistenceTheory (Ch02.cubeDomain Q) aQ)
         p q).toSolution.toH1.grad_memVectorL2
-    have hGradOpenR :
-        MemVectorL2 (openCubeSet R)
-          (fun x =>
-            (Ch02.canonicalMaximizer
-              (Ch02.responseExistenceTheory (Ch02.cubeDomain Q) aQ)
-              p q).toSolution.toH1.grad x) := by
-      exact hGradOpen.mono_measure
-        (by
-          simpa [Ch02.cubeDomain_coe, volumeMeasureOn] using
-            MeasureTheory.Measure.restrict_mono_set MeasureTheory.volume
-              (openCubeSet_subset_of_mem_descendantsAtDepth hR))
-    simpa [MemVectorL2, volumeMeasureOn,
-      volume_restrict_cubeSet_eq_volume_restrict_openCubeSet R] using hGradOpenR
   have hExtractOpen :
       (fun x =>
           Xold.potential x +
@@ -403,7 +411,7 @@ theorem canonicalScalarResponseGradientAverageCubeSet_eq_cubeAverageVec_canonica
           (Ch02.responseExistenceTheory (Ch02.cubeDomain Q) aQ)
           p q).toSolution.toH1.grad x := by
     simpa only [Xold, haQ, Ch02.cubeDomain_coe] using!
-      Ch02.doubledMuMinimizer_neg_left_extracts_canonicalMaximizerGradient
+      Ch02.doubledMuMinimizer_negLeft_eq_canonicalGradient
         (Ch02.cubeDomain Q) aQ p q hX
   have hExtractR :
       (fun x =>
@@ -417,20 +425,8 @@ theorem canonicalScalarResponseGradientAverageCubeSet_eq_cubeAverageVec_canonica
     ae_eq_cubeSet_of_mem_descendantsAtDepth_of_ae_eq_openCubeSet hR hExtractOpen
   have hLowerMemR :
       MemVectorL2 (cubeSet R)
-        (fun x => (blockMatVecMul (blockCoeffField a x) (Xold.eval x)).2) := by
-    have hDiff :
-        MemVectorL2 (cubeSet R)
-          (fun x =>
-            (Ch02.canonicalMaximizer
-              (Ch02.responseExistenceTheory (Ch02.cubeDomain Q) aQ)
-              p q).toSolution.toH1.grad x - Xold.potential x) :=
-      hGradMemR.sub hPotMemR
-    refine MeasureTheory.MemLp.ae_eq ?_ hDiff
-    filter_upwards [hExtractR] with x hx
-    ext i
-    have hxi := congrArg (fun v : Vec d => v i) hx
-    simp [Pi.add_apply, Pi.sub_apply] at hxi ⊢
-    linarith
+        (fun x => (blockMatVecMul (blockCoeffField a x) (Xold.eval x)).2) :=
+    memVectorL2_remainder_of_ae_sum _ _ _ hPotMemR hGradMemR hExtractR
   have hEnergyLower :
       ∀ i : Fin d,
         canonicalMuHilbertEnergyBilinFixedCubeSet Q (-p, q)
@@ -552,7 +548,7 @@ theorem canonicalScalarResponseFluxAverageCubeSet_eq_cubeAverageVec_canonicalMax
     (Ch02.doubledMuTheory (Ch02.cubeDomain Q) aQ).minimizer_exists (-p, q)
   let Xold : BlockState d := { potential := X.potential, flux := X.flux }
   obtain ⟨hAdm, hHilbert⟩ :=
-    exists_isBlockMuAdmissible_cubeSet_and_hilbert_eq_canonicalAEEMuHilbertMinimizer_of_isDoubledMuMinimizer
+    exists_isBlockMuAdmissible_cube_and_hilbert_eq_canonicalAEEMuHilbertMinimizer
       Q k aSlice (-p, q) aQ haQ hX
   have hRQ : cubeSet R ⊆ cubeSet Q :=
     cubeSet_subset_of_mem_descendantsAtDepth hR
@@ -599,31 +595,11 @@ theorem canonicalScalarResponseFluxAverageCubeSet_eq_cubeAverageVec_canonicalMax
           matVecMul (aQ.toCoeffField x)
             ((Ch02.canonicalMaximizer
               (Ch02.responseExistenceTheory (Ch02.cubeDomain Q) aQ)
-              p q).toSolution.toH1.grad x)) := by
-    have hFluxOpen :
-        MemVectorL2 (Ch02.cubeDomain Q : Set (Vec d))
-          (fun x =>
-            matVecMul (aQ.toCoeffField x)
-              ((Ch02.canonicalMaximizer
-                (Ch02.responseExistenceTheory (Ch02.cubeDomain Q) aQ)
-                p q).toSolution.toH1.grad x)) :=
+              p q).toSolution.toH1.grad x)) :=
+    memVectorL2_descendantCubeSet_of_parentCubeDomain hR _
       (Ch02.canonicalMaximizer
         (Ch02.responseExistenceTheory (Ch02.cubeDomain Q) aQ)
         p q).toSolution.flux_memVectorL2
-    have hFluxOpenR :
-        MemVectorL2 (openCubeSet R)
-          (fun x =>
-            matVecMul (aQ.toCoeffField x)
-              ((Ch02.canonicalMaximizer
-                (Ch02.responseExistenceTheory (Ch02.cubeDomain Q) aQ)
-                p q).toSolution.toH1.grad x)) := by
-      exact hFluxOpen.mono_measure
-        (by
-          simpa [Ch02.cubeDomain_coe, volumeMeasureOn] using
-            MeasureTheory.Measure.restrict_mono_set MeasureTheory.volume
-              (openCubeSet_subset_of_mem_descendantsAtDepth hR))
-    simpa [MemVectorL2, volumeMeasureOn,
-      volume_restrict_cubeSet_eq_volume_restrict_openCubeSet R] using hFluxOpenR
   have hExtractOpen :
       (fun x =>
           Xold.flux x +
@@ -650,21 +626,8 @@ theorem canonicalScalarResponseFluxAverageCubeSet_eq_cubeAverageVec_canonicalMax
     ae_eq_cubeSet_of_mem_descendantsAtDepth_of_ae_eq_openCubeSet hR hExtractOpen
   have hUpperMemR :
       MemVectorL2 (cubeSet R)
-        (fun x => (blockMatVecMul (blockCoeffField a x) (Xold.eval x)).1) := by
-    have hDiff :
-        MemVectorL2 (cubeSet R)
-          (fun x =>
-            matVecMul (aQ.toCoeffField x)
-              ((Ch02.canonicalMaximizer
-                (Ch02.responseExistenceTheory (Ch02.cubeDomain Q) aQ)
-                p q).toSolution.toH1.grad x) - Xold.flux x) :=
-      hCanonicalFluxMemR.sub hFluxMemR
-    refine MeasureTheory.MemLp.ae_eq ?_ hDiff
-    filter_upwards [hExtractR] with x hx
-    ext i
-    have hxi := congrArg (fun v : Vec d => v i) hx
-    simp [Pi.add_apply, Pi.sub_apply] at hxi ⊢
-    linarith
+        (fun x => (blockMatVecMul (blockCoeffField a x) (Xold.eval x)).1) :=
+    memVectorL2_remainder_of_ae_sum _ _ _ hFluxMemR hCanonicalFluxMemR hExtractR
   have hEnergyUpper :
       ∀ i : Fin d,
         canonicalMuHilbertEnergyBilinFixedCubeSet Q (-p, q)

@@ -118,7 +118,8 @@ theorem quadraticEnergy_responseCellMuCandidate
   simpa [responseCellMuHilbert, responseCellMuSystem,
     AEEMuOperatorSystemData.toMuHilbertRealization,
     MuOperatorRealization.toMuHilbertRealization, MuHilbertRealization.ofOperator] using
-    (responseCellMuSystem hvol a).toMuOperatorRealization.quadraticEnergy_eq_blockEnergyAverage_of_blockState
+    (responseCellMuSystem hvol
+      a).toMuOperatorRealization.quadraticEnergy_eq_blockEnergyAverage_of_blockState
       (canonicalMuGeneratorAffineField_memBlockL2 (U := U) P0 Y)
 
 /-- On a general response cell, `Mu` is the energy of the Hilbert minimizer. -/
@@ -419,7 +420,8 @@ theorem energyBilin_responseCellMuCandidate_eq_blockPairingAverage
   simpa [responseCellMuHilbert, responseCellMuSystem,
     AEEMuOperatorSystemData.toMuHilbertRealization,
     MuOperatorRealization.toMuHilbertRealization, MuHilbertRealization.ofOperator] using
-    (responseCellMuSystem hvol a).toMuOperatorRealization.energyBilin_eq_blockPairingAverage_of_blockState
+    (responseCellMuSystem hvol
+      a).toMuOperatorRealization.energyBilin_eq_blockPairingAverage_of_blockState
       (canonicalMuGeneratorAffineField_memBlockL2 (U := U) P0 Z) hY
 
 /-- The coefficient-dependent doubled energy pairing of the minimizer against a fixed block state
@@ -453,7 +455,8 @@ theorem measurable_energyBilin_responseCellMuMinimizer
     exact energyBilin_responseCellMuCandidate_eq_blockPairingAverage
       hvol (responseSliceOf hSlice w) P0 hY Z
   rw [heq]
-  exact Selection.measurable_blockPairingAverage_of_measurable_entryTest hUopen hUfin hSlice hEntry _ Y
+  exact Selection.measurable_blockPairingAverage_of_measurable_entryTest hUopen hUfin hSlice
+    hEntry _ Y
     (canonicalMuGeneratorAffineField_memBlockL2 (U := U) P0 Z) hY
 
 end
@@ -567,7 +570,8 @@ theorem toHilbertBlockL2_eq_responseMinimizer_of_isDoubledMuMinimizer
     simpa [H, a, responseCellMuHilbert, responseCellMuSystem,
       AEEMuOperatorSystemData.toMuHilbertRealization,
       MuOperatorRealization.toMuHilbertRealization, MuHilbertRealization.ofOperator] using
-      (responseCellMuSystem hvol a).toMuOperatorRealization.quadraticEnergy_eq_blockEnergyAverage_of_blockState
+      (responseCellMuSystem hvol
+        a).toMuOperatorRealization.quadraticEnergy_eq_blockEnergyAverage_of_blockState
         hAdm.memBlockL2_eval
   refine H.eq_minimizerMap_of_quadraticEnergy_le_muCandidate P0 _ hcorr (le_of_eq ?_)
   rw [hQuad]
@@ -588,7 +592,7 @@ theorem ae_toFullBlockVec_canonicalOptimizerBlockState
   cases α with
   | inl i =>
       filter_upwards
-        [Book.Ch02.doubledMuMinimizer_neg_left_extracts_canonicalMaximizerGradient U aU p q hX]
+        [Book.Ch02.doubledMuMinimizer_negLeft_eq_canonicalGradient U aU p q hX]
         with x hx
       show (canonicalOptimizerBlockState U aU p q x).1 i = _
       rw [canonicalOptimizerBlockState, ← hx]
@@ -672,7 +676,8 @@ theorem integral_weighted_canonicalOptimizerBlockState
       simpa [responseCellMuHilbert, responseCellMuSystem,
         AEEMuOperatorSystemData.toMuHilbertRealization,
         MuOperatorRealization.toMuHilbertRealization, MuHilbertRealization.ofOperator] using
-        (responseCellMuSystem hvol ⟨aU.toCoeffField, hk⟩).toMuOperatorRealization.energyBilin_eq_blockPairingAverage_of_blockState
+        (responseCellMuSystem hvol ⟨aU.toCoeffField,
+          hk⟩).toMuOperatorRealization.energyBilin_eq_blockPairingAverage_of_blockState
           (Selection.blockTestState_memBlockL2 hη α.swap) hXmem
     rw [hbil, blockPairingAverage, volumeAverage, hpairEq, ← mul_assoc,
       mul_inv_cancel₀ (ne_of_gt hvol), one_mul]

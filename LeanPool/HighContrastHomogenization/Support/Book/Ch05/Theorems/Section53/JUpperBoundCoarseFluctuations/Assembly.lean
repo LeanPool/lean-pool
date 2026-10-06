@@ -252,7 +252,7 @@ theorem expectedCenteredResponseJAtScale_le_specialWeakNormManuscriptRHSAtScale
 Ch4 law-facing stationarity theorem.  The observable is the Ch4 normalized
 full-block operator-norm-square fluctuation; this theorem only rewrites the
 proof-folder alias and applies stationarity. -/
-private theorem integral_descendantsAverage_fullBlockNormalizedFluctuationOperatorNormSqAtScale_eq_originCube_of_stationary
+private theorem integral_descendantMean_fullBlockFluctuationNormSq_eq_cube
     {d : ℕ} [NeZero d] {P : Ch04.RestrictionCoeffLaw d}
     (hP : Ch04.RestrictionLawCarrier P) (hstat : Ch04.RestrictionStationaryLaw P)
     (hStruct : Ch04.RestrictionStructuralLaw P) (center : ℤ)
@@ -270,7 +270,7 @@ private theorem integral_descendantsAverage_fullBlockNormalizedFluctuationOperat
         fullBlockNormalizedFluctuationOperatorNormSqAtScale
           hP hStruct center (originCube d n) a ∂P := by
   simpa [fullBlockNormalizedFluctuationOperatorNormSqAtScale] using
-    hP.integral_descendantsAverage_fullBlockNormalizedFluctuationOperatorNormSqAtScale_eq_originCube_of_stationary
+    hP.integral_descendantMean_fullBlockFluctuationNormSq_eq_cube
       hstat hStruct center hn hnm
       (by simpa [fullBlockNormalizedFluctuationOperatorNormSqAtScale] using! hOrigin)
 
@@ -278,7 +278,7 @@ private theorem integral_descendantsAverage_fullBlockNormalizedFluctuationOperat
 average also stationarize to the origin cube.  This is the form used after the
 deterministic coarse-average bridge, whose right side carries the deterministic
 factor `2 * thetaAtScale`. -/
-private theorem integral_descendantsAverage_const_mul_fullBlockNormalizedFluctuationOperatorNormSqAtScale_eq_originCube_of_stationary
+private theorem integral_descendantMean_const_mul_fullBlockFluctuationNormSq_eq_cube
     {d : ℕ} [NeZero d] {P : Ch04.RestrictionCoeffLaw d}
     (hP : Ch04.RestrictionLawCarrier P) (hstat : Ch04.RestrictionStationaryLaw P)
     (hStruct : Ch04.RestrictionStructuralLaw P) (center : ℤ)
@@ -298,7 +298,7 @@ private theorem integral_descendantsAverage_const_mul_fullBlockNormalizedFluctua
           fullBlockNormalizedFluctuationOperatorNormSqAtScale
             hP hStruct center (originCube d n) a ∂P := by
   have hbase :=
-    integral_descendantsAverage_fullBlockNormalizedFluctuationOperatorNormSqAtScale_eq_originCube_of_stationary
+    integral_descendantMean_fullBlockFluctuationNormSq_eq_cube
       hP hstat hStruct center hn hnm hOrigin
   calc
     ∫ a,
@@ -389,7 +389,7 @@ theorem integral_weighted_descendantsAverage_fullBlockNormalizedFluctuationOpera
           (fullBlockNormalizedFluctuationOperatorNormSqAtScale
             hP hStruct (m : ℤ) (originCube d n)) P := by
       have hnat :=
-        Section52.integrable_fullBlockNormalizedFluctuationOperatorNormSqAtScale_originCube_from_P4
+        Section52.integrable_fullBlockFluctuationNormSquare_of_P4_atOrigin
           hP hStruct hP4 (m : ℤ) (Int.toNat n)
       simpa [Int.toNat_of_nonneg hn_nonneg] using! hnat
     have hdesc :
@@ -407,7 +407,7 @@ theorem integral_weighted_descendantsAverage_fullBlockNormalizedFluctuationOpera
         simpa [descendantsAtScale_eq_descendantsAtDepth
           (originCube d (m : ℤ)) hnm] using! hR
       exact
-        (hP.integrable_fullBlockNormalizedFluctuationOperatorNormSqAtScale_of_mem_descendantsAtScale_originCube
+        (hP.fluctuationOperatorNormSq_integrable_on_originDescendants
           hstat hStruct (m : ℤ) hn_nonneg hnm hRscale hOrigin).const_mul (2 * θ)
     exact hdesc.const_mul (w n)
   calc
@@ -448,11 +448,11 @@ theorem integral_weighted_descendantsAverage_fullBlockNormalizedFluctuationOpera
                 (fullBlockNormalizedFluctuationOperatorNormSqAtScale
                   hP hStruct (m : ℤ) (originCube d n)) P := by
             have hnat :=
-              Section52.integrable_fullBlockNormalizedFluctuationOperatorNormSqAtScale_originCube_from_P4
+              Section52.integrable_fullBlockFluctuationNormSquare_of_P4_atOrigin
                 hP hStruct hP4 (m : ℤ) (Int.toNat n)
             simpa [Int.toNat_of_nonneg hn_nonneg] using! hnat
           have hstatn :=
-            integral_descendantsAverage_const_mul_fullBlockNormalizedFluctuationOperatorNormSqAtScale_eq_originCube_of_stationary
+            integral_descendantMean_const_mul_fullBlockFluctuationNormSq_eq_cube
               hP hstat hStruct (m : ℤ) hn_nonneg hnm (2 * θ) hOrigin
           calc
             ∫ a,

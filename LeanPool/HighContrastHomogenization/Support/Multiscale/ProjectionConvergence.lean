@@ -25,6 +25,7 @@ namespace HCPolySupport
 
 open scoped Topology
 
+/-- The unique depth-`n` descendant of `Q` whose half-open cube contains `x`. -/
 @[expose]
 noncomputable def descendantContaining {d : ℕ} (Q : TriadicCube d) (x : Vec d) (n : ℕ)
     (hx : x ∈ cubeSet Q) : TriadicCube d :=

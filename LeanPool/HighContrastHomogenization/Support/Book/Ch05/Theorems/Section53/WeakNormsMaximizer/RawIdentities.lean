@@ -53,11 +53,11 @@ theorem canonicalScalarResponseGradientWeakNormCubeSet_eq_raw
   constructor
   · rintro ⟨N, rfl⟩
     exact ⟨N,
-      JUpperBoundWeakNorms.cubeBesovNegativeVectorPartialSeminorm_canonicalMaximizerGradientDefectOnDependentFamily_eq_ch04
+      JUpperBoundWeakNorms.negativeVectorPartial_canonicalGradientDefect_eq_chapter04
         a ha Q s N p q p0⟩
   · rintro ⟨N, rfl⟩
     exact ⟨N,
-      (JUpperBoundWeakNorms.cubeBesovNegativeVectorPartialSeminorm_canonicalMaximizerGradientDefectOnDependentFamily_eq_ch04
+      (JUpperBoundWeakNorms.negativeVectorPartial_canonicalGradientDefect_eq_chapter04
         a ha Q s N p q p0).symm⟩
 
 theorem canonicalScalarResponseFluxWeakNormCubeSet_eq_raw
@@ -76,11 +76,11 @@ theorem canonicalScalarResponseFluxWeakNormCubeSet_eq_raw
   constructor
   · rintro ⟨N, rfl⟩
     exact ⟨N,
-      JUpperBoundWeakNorms.cubeBesovNegativeVectorPartialSeminorm_canonicalMaximizerFluxDefectOnDependentFamily_eq_ch04
+      JUpperBoundWeakNorms.cubeNegativeVectorBesov_eq_canonicalFluxWeakNorm
         a ha Q s N p q q0⟩
   · rintro ⟨N, rfl⟩
     exact ⟨N,
-      (JUpperBoundWeakNorms.cubeBesovNegativeVectorPartialSeminorm_canonicalMaximizerFluxDefectOnDependentFamily_eq_ch04
+      (JUpperBoundWeakNorms.cubeNegativeVectorBesov_eq_canonicalFluxWeakNorm
         a ha Q s N p q q0).symm⟩
 
 end

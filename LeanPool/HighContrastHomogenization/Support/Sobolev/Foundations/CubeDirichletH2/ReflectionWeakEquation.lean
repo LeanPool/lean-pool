@@ -554,7 +554,7 @@ theorem setIntegral_cubeFaceReflectionCellCube_cubeDirichletOddReflectionScalar_
 
 /-- The block pairing with the odd-reflected vector field is the original-cube
 pairing against the folded derivative sum. -/
-theorem setIntegral_cubeFaceReflectionBlockSet_vecDot_cubeDirichletOddReflectionVectorField_eq_folded_derivSum
+theorem setIntegral_cubeReflection_vectorDot_oddReflectedField_eq_foldedDerivativeSum
     {d : ℕ} {Q : TriadicCube d} {G : Vec d → Vec d}
     (hG : MemVectorL2 (openCubeSet Q) G)
     {φ : Vec d → ℝ}
@@ -918,7 +918,7 @@ theorem cubeFaceReflectionBlock_oddWeakEquationOnBlock_originCube
     simpa [MemVectorL2, volumeMeasureOn] using
       u.toH1Function.grad_memVectorL2
   rw [
-    setIntegral_cubeFaceReflectionBlockSet_vecDot_cubeDirichletOddReflectionVectorField_eq_folded_derivSum
+    setIntegral_cubeReflection_vectorDot_oddReflectedField_eq_foldedDerivativeSum
       (Q := originCube d m) (G := fun y => u.toH1Function.grad y)
       hG hφ hφ_compact,
     setIntegral_cubeFaceReflectionBlockSet_cubeDirichletOddReflectionScalar_mul_eq_folded
@@ -963,7 +963,7 @@ theorem cubeDirichletOddReflectionParent_weakEquationOnParent_originCube
 
 /-- Centered parent-cube weak equation, with the forcing hypothesis in the
 normalized cube measure used by the public regularity contract. -/
-theorem cubeDirichletOddReflectionParent_weakEquationOnParent_originCube_of_memLp_normalizedCubeMeasure
+theorem oddReflectedParent_satisfies_weakEquation
     {d : ℕ} {m : ℤ} {u : H10Function (openCubeSet (originCube d m))}
     {F φ : Vec d → ℝ}
     (hweak : CubeDirichletWeakPoissonProblem (originCube d m) u F)
@@ -1009,7 +1009,7 @@ theorem cubeDirichletOddReflectionParent_weakPoissonEquationOn_originCube_of_gra
   intro φ hφ hφ_compact hφ_sub
   rw [huP_grad]
   exact
-    hweak.cubeDirichletOddReflectionParent_weakEquationOnParent_originCube_of_memLp_normalizedCubeMeasure
+    hweak.oddReflectedParent_satisfies_weakEquation
       hF hφ hφ_compact hφ_sub
 
 end CubeDirichletWeakPoissonProblem

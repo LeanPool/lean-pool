@@ -287,7 +287,7 @@ theorem descendantsAverage_sq_cubeBesovPositiveVectorSeminormTwo_le_parent_of_bd
     simpa using
       (Real.rpow_le_rpow_of_exponent_le
         (by norm_num : (1 : ℝ) ≤ 3)
-        (mul_nonneg hs (by exact_mod_cast Nat.zero_le n)))
+        (mul_nonneg hs (Nat.cast_nonneg n)))
   have hc_sq_one : 1 ≤ c ^ 2 := by
     nlinarith [sq_nonneg c]
   have havg_nonneg :
@@ -554,7 +554,7 @@ theorem coarsePoincareRHSLocalCoeff_le_parentHalfLambda_of_mem_descendantsAtDept
   have hRscale : R ∈ descendantsAtScale Q (Q.scale - (n : ℤ)) :=
     mem_descendantsAtScale_of_mem_descendantsAtDepth hR
   have hlambda :=
-    multiscale_ellipticity_lambdaSq_two_inv_le_rpow_s_of_mem_descendantsAtScale_of_half_of_isEllipticFieldOn_of_isSigmaCoarse
+    multiscale_ellipticity_lambdaSq_two_inv_le_rpow_s_of_half_of_ellipticField
       (Q := Q) (R := R) (k := Q.scale - (n : ℤ)) a hs hRscale hEll hData hsum_half
   have htoNat :
       Int.toNat (Q.scale - (Q.scale - (n : ℤ))) = n := by
@@ -660,7 +660,7 @@ theorem coarsePoincareRHSIntrinsicLocalForceMultiplier_sq_le_of_localCoeffBound 
     exact mul_le_mul_of_nonneg_right hcoeff hP_nonneg
   simpa [P] using pow_le_pow_left₀ hlocal_nonneg hle 2
 
-theorem coarsePoincareRHSIntrinsicLocalForceMultiplier_sq_le_parentHalfLambda_of_mem_descendantsAtDepth
+theorem coarsePoincare_intrinsicForceMultiplier_sq_le_parentHalfLambda
     {d : ℕ} [NeZero d] {Q R : TriadicCube d} (a : CoeffField d)
     {s lam Lam : ℝ} (n : ℕ) (hs : 0 < s)
     (hR : R ∈ descendantsAtDepth Q n)
@@ -687,7 +687,8 @@ theorem coarsePoincareRHSIntrinsicLocalForceMultiplier_sq_le_parentHalfLambda_of
       (coarsePoincareRHSLocalCoeff_le_parentHalfLambda_of_mem_descendantsAtDepth
         (Q := Q) (R := R) a n hs hR hEll hData hsum_half)
 
-theorem coarsePoincareRHSIntrinsicForceErrorAverage_le_of_multiplierSqBound_of_centeredForceAverageBound
+theorem
+  coarsePoincareRHSIntrinsicForceErrorAverage_le_of_multiplierSqBound_of_centeredForceAverageBound
     {d : ℕ} (Q : TriadicCube d) (a : CoeffField d) (g : Vec d → Vec d)
     (s : ℝ) (n : ℕ) {K2 B : ℝ}
     (hK2 : 0 ≤ K2)
@@ -741,7 +742,7 @@ theorem coarsePoincareRHSIntrinsicForceErrorAverage_le_parentHalfLambda_of_cente
   · exact sq_nonneg _
   · intro R hR
     exact
-      coarsePoincareRHSIntrinsicLocalForceMultiplier_sq_le_parentHalfLambda_of_mem_descendantsAtDepth
+      coarsePoincare_intrinsicForceMultiplier_sq_le_parentHalfLambda
         (Q := Q) (R := R) a n hs hR hEll hData hsum_half
 
 end

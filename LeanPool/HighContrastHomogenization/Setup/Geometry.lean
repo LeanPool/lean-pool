@@ -134,9 +134,9 @@ def adaptedCellTranslate (q : Mat d) (j : ℤ) (y : Vec d) : Set (Vec d) :=
 
 /-! ## Ellipsoids for the homogenization theorem -/
 
-/-- The ellipsoid `E_r = {x : x · s̄⁻¹ x ≤ λ̄⁻¹ r²}` of
+/-- The ellipsoid `E_r = {x : x · s_bar⁻¹ x ≤ λ_bar⁻¹ r²}` of
 `e.homogenized.ellipsoids`, where
-`s̄ = ½(ā + āᵗ)` and `λ̄⁻¹ = |s̄⁻¹|`. -/
+`s_bar = ½(ā + āᵗ)` and `λ_bar⁻¹ = |s_bar⁻¹|`. -/
 @[expose]
 def ellipsoid (abar : Mat d) (r : ℝ) : Set (Vec d) :=
   {x | vecDot x (matVecMul (symmPart abar)⁻¹ x) ≤

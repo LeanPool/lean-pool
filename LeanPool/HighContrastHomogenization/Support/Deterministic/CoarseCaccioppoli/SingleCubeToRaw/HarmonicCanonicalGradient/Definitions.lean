@@ -105,11 +105,14 @@ theorem CoarseCaccioppoliBoundaryCanonicalGradientProjectedPoincareVectorFamily.
       (fun x => (w ρ₁ ρ₂).toH1.grad x) N :=
   hproj hρ₁ hlt hρ₂ N
 
+namespace CoarseCaccioppoliBoundaryCanonicalGradientProjectedPoincareVectorFamily
+
 /-- Descendant-local version of the canonical projected vector Poincare
 family.  This is the Poincare input needed by the small-cube Caccioppoli
 proof on a depth-`j` descendant `R`; the oscillation is recentered from the
 parent cube average to the local cube average. -/
-theorem CoarseCaccioppoliBoundaryCanonicalGradientProjectedPoincareVectorFamily.vectorPoincare_on_descendant
+theorem
+  vectorPoincare_on_descendant
     {d : ℕ} {Q R : TriadicCube d} {a : CoeffField d} {C : ℝ} {j : ℕ}
     {w : ℝ → ℝ → AHarmonicFunction a (openCubeSet Q)}
     (hproj :
@@ -131,6 +134,8 @@ theorem CoarseCaccioppoliBoundaryCanonicalGradientProjectedPoincareVectorFamily.
         (memLp_harmonicFunction_normalizedCubeMeasure Q a (w ρ₁ ρ₂))
   · intro M
     exact hproj.vectorPoincare hρ₁ hlt hρ₂ M
+
+end CoarseCaccioppoliBoundaryCanonicalGradientProjectedPoincareVectorFamily
 
 /-- Enlarge the constant in the canonical projected vector Poincare family. -/
 theorem CoarseCaccioppoliBoundaryCanonicalGradientProjectedPoincareVectorFamily.mono_C
@@ -179,10 +184,13 @@ theorem CoarseCaccioppoliBoundaryCanonicalGradientFullDualPoincareVectorFamily.m
   intro ρ₁ ρ₂ hρ₁ hlt hρ₂ N
   exact (hfull hρ₁ hlt hρ₂ N).mono_C hC
 
+namespace CoarseCaccioppoliBoundaryCanonicalGradientFullDualPoincareVectorFamily
+
 /-- Descendant-local version of the canonical full-dual vector Poincare
 family.  This is the corrected local input for consumers that work on a
 depth-`j` descendant `R`, with the oscillation recentered at the local cube. -/
-theorem CoarseCaccioppoliBoundaryCanonicalGradientFullDualPoincareVectorFamily.vectorPoincare_on_descendant
+theorem
+  vectorPoincare_on_descendant
     {d : ℕ} {Q R : TriadicCube d} {a : CoeffField d} {C : ℝ} {j : ℕ}
     {w : ℝ → ℝ → AHarmonicFunction a (openCubeSet Q)}
     (hfull :
@@ -204,6 +212,8 @@ theorem CoarseCaccioppoliBoundaryCanonicalGradientFullDualPoincareVectorFamily.v
         (memLp_harmonicFunction_normalizedCubeMeasure Q a (w ρ₁ ρ₂))
   · intro M
     exact hfull.vectorPoincare hρ₁ hlt hρ₂ M
+
+end CoarseCaccioppoliBoundaryCanonicalGradientFullDualPoincareVectorFamily
 
 /-! ### Analytical input stubs (to be discharged by Sobolev/Besov pass)
 
@@ -240,7 +250,7 @@ theorem CubeDescendantDualFullVectorPoincareEstimate.of_aHarmonicFunction
 /-- Variant exposing the Sobolev-level selected corrected uniform analytic
 constant directly. This is definitionally the same constant as
 `fullVectorPoincareCubeConstant Q`. -/
-theorem CubeDescendantDualFullVectorPoincareEstimate.of_aHarmonicFunction_uniformAnalyticConstant
+theorem CubeDescendantDualFullVectorPoincareEstimate.of_harmonicFunction
     {d : ℕ} [NeZero d] (Q : TriadicCube d) (a : CoeffField d)
     (u : AHarmonicFunction a (openCubeSet Q)) (N : ℕ) :
     CubeDescendantDualFullVectorPoincareEstimate Q
@@ -264,14 +274,15 @@ theorem CoarseCaccioppoliBoundaryCanonicalGradientFullDualPoincareVectorFamily.o
 
 /-- Specialisation using the selected corrected uniform analytic constant over
 all descendants of `Q`. -/
-theorem CoarseCaccioppoliBoundaryCanonicalGradientFullDualPoincareVectorFamily.of_aHarmonicFunction_uniformAnalyticConstant
+theorem
+  CoarseCaccioppoliBoundaryCanonicalGradientFullDualPoincareVectorFamily.of_harmonicFunction
     {d : ℕ} [NeZero d] (Q : TriadicCube d) (a : CoeffField d)
     (w : ℝ → ℝ → AHarmonicFunction a (openCubeSet Q)) :
     CoarseCaccioppoliBoundaryCanonicalGradientFullDualPoincareVectorFamily Q a
       (cubeFullVectorPoincareUniformAnalyticConstant Q) w := by
   intro ρ₁ ρ₂ _ _ _ N
   exact
-    CubeDescendantDualFullVectorPoincareEstimate.of_aHarmonicFunction_uniformAnalyticConstant
+    CubeDescendantDualFullVectorPoincareEstimate.of_harmonicFunction
       Q a (w ρ₁ ρ₂) N
 
 /-- The two genuinely solution-dependent strict positivity facts still needed
@@ -336,7 +347,7 @@ theorem CoarseCaccioppoliBoundaryCanonicalGradientNonzeroEnergyFactors.to_positi
 * `A1` is the canonical gradient `Acirc(1)` profile;
 * `AS` is the canonical gradient `Acirc(1-s)` profile. -/
 theorem
-    coarseCaccioppoli_boundary_qone_of_canonicalQuantitativeCutoff_of_aHarmonicFamily_of_positiveFactors_of_canonicalHarmonicL2GradientAcircCoefficientBounds_of_localizationData_of_localizedExplicitHeightOfScaleChoice
+    coarseCaccioppoli_boundary_qone_of_quantitativeCutoff_of_localizedHeight
     {d : ℕ} [NeZero d] (Q : TriadicCube d) (a : CoeffField d)
     (s t C uL2Sq : ℝ) {lam Lam : ℝ}
     (k : ℝ → ℝ → ℕ) {F : ℝ → ℝ}
@@ -395,7 +406,7 @@ theorem
     F (1 / 3 : ℝ) ≤
       coarseCaccioppoliBoundaryExplicitHeightBound Q a s t C uL2Sq := by
   exact
-    coarseCaccioppoli_boundary_qone_of_canonicalQuantitativeCutoff_of_aHarmonicFamily_of_positiveFactors_of_canonicalGradientAcircCoefficientBounds_of_localizationData_of_localizedExplicitHeightOfScaleChoice
+    coarseCaccioppoli_boundary_qone_of_quantitativeCutoff_of_of_harmonicFamily
       (Q := Q) (a := a) (s := s) (t := t) (C := C) (uL2Sq := uL2Sq)
       (k := k) (F := F) (w := w) (i := i)
       (U := coarseCaccioppoliCanonicalHarmonicL2Profile Q a w)
@@ -418,7 +429,7 @@ theorem
 /-- Interior canonical harmonic Caccioppoli with the concrete Chapter 3
 `U/A1/AS` choices installed in the coefficient-bound package. -/
 theorem
-    coarseCaccioppoli_interior_qone_of_canonicalQuantitativeCutoff_of_aHarmonicFamily_of_positiveFactors_of_canonicalHarmonicL2GradientAcircCoefficientBounds_of_localizationData_of_radiusAgreement_of_localizedExplicitHeightOfScaleChoice
+    coarseCaccioppoli_interior_qone_of_quantitativeCutoff_of_localizedHeight
     {d : ℕ} [NeZero d] (Q : TriadicCube d) (a : CoeffField d)
     (s t C uL2Sq : ℝ) {lam Lam : ℝ}
     (k : ℝ → ℝ → ℕ) {F G₀ : ℝ → ℝ}
@@ -479,7 +490,7 @@ theorem
     F (1 / 3 : ℝ) ≤
       coarseCaccioppoliInteriorExplicitHeightBound Q a s t C uL2Sq := by
   exact
-    coarseCaccioppoli_interior_qone_of_canonicalQuantitativeCutoff_of_aHarmonicFamily_of_positiveFactors_of_canonicalGradientAcircCoefficientBounds_of_localizationData_of_radiusAgreement_of_localizedExplicitHeightOfScaleChoice
+    coarseCaccioppoli_interior_qone_of_quantitativeCutoff_of_of_harmonicFamily
       (Q := Q) (a := a) (s := s) (t := t) (C := C) (uL2Sq := uL2Sq)
       (k := k) (F := F) (G₀ := G₀) (w := w) (i := i)
       (U := coarseCaccioppoliCanonicalHarmonicL2Profile Q a w)
@@ -505,7 +516,7 @@ localized-profile-lower hypotheses from the strongest boundary surface; the
 only remaining profile-specific input is the pointwise agreement of the fixed
 energy with the pair-dependent local energy on the inner cube. -/
 theorem
-    coarseCaccioppoli_boundary_qone_of_canonicalQuantitativeCutoff_of_aHarmonicFamily_of_positiveFactors_of_canonicalHarmonicL2GradientAcircCoefficientBounds_of_fixedLocalizedEnergyProfile
+    coarseCaccioppoli_boundary_qone_of_quantitativeCutoff_of_fixedEnergyProfile
     {d : ℕ} [NeZero d] (Q : TriadicCube d) (a : CoeffField d)
     (s t C uL2Sq : ℝ) {lam Lam : ℝ}
     (k : ℝ → ℝ → ℕ)
@@ -568,7 +579,7 @@ theorem
     coarseCaccioppoliLocalizedEnergyRadiusProfile Q baseEnergy (1 / 3 : ℝ) ≤
       coarseCaccioppoliBoundaryExplicitHeightBound Q a s t C uL2Sq := by
   exact
-    coarseCaccioppoli_boundary_qone_of_canonicalQuantitativeCutoff_of_aHarmonicFamily_of_positiveFactors_of_canonicalHarmonicL2GradientAcircCoefficientBounds_of_localizationData_of_localizedExplicitHeightOfScaleChoice
+    coarseCaccioppoli_boundary_qone_of_quantitativeCutoff_of_localizedHeight
       (Q := Q) (a := a) (s := s) (t := t) (C := C) (uL2Sq := uL2Sq)
       (k := k)
       (F := coarseCaccioppoliLocalizedEnergyRadiusProfile Q baseEnergy)

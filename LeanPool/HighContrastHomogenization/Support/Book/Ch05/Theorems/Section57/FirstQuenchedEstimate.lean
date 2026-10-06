@@ -234,7 +234,7 @@ theorem firstQuenchedEstimate_limitNormalized
     have hparams_eq :
         hΓ.toQuantitativeCoarseGrainedEllipticity.params = hΓ.params := by
       simp [GammaSigmaCoarseGrainedEllipticity.toQuantitativeCoarseGrainedEllipticity,
-        GammaSigmaCoarseGrainedEllipticity.toQuantitativeCoarseGrainedEllipticity_of_barSigmaAtScale_zero_pos,
+        GammaSigmaCoarseGrainedEllipticity.quantitativeEllipticity_of_positiveBarSigma,
         QuantitativeCoarseGrainedEllipticity.params]
     rw [hparams_eq]
     exact hparams
@@ -357,7 +357,7 @@ theorem firstQuenchedEstimate_limitNormalized_uniformAnnealedExponent
     have hparams_eq :
         hΓ.toQuantitativeCoarseGrainedEllipticity.params = hΓ.params := by
       simp [GammaSigmaCoarseGrainedEllipticity.toQuantitativeCoarseGrainedEllipticity,
-        GammaSigmaCoarseGrainedEllipticity.toQuantitativeCoarseGrainedEllipticity_of_barSigmaAtScale_zero_pos,
+        GammaSigmaCoarseGrainedEllipticity.quantitativeEllipticity_of_positiveBarSigma,
         QuantitativeCoarseGrainedEllipticity.params]
     rw [hparams_eq]
     exact hparams

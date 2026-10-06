@@ -153,7 +153,8 @@ theorem normalizedCentered_lattice_eq_comp_translateCoeff
         (HighContrast.adaptedCellTranslate (Geometry.explicitRoundedGrid jStar m) j
           (adaptedCellCenter (Geometry.explicitRoundedGrid jStar m) j w)) a) A) R)
       = (fun a => normalizedBlock (blockSub (coarseBlock
-          (HighContrast.adaptedCell (Geometry.explicitRoundedGrid jStar m) j) a) A) R) ∘ translateCoeff v := by
+          (HighContrast.adaptedCell (Geometry.explicitRoundedGrid jStar m) j) a) A) R) ∘
+            translateCoeff v := by
   obtain ⟨v, hv⟩ := adaptedCellCenter_eq_intTranslation jStar m hj w
   refine ⟨v, ?_⟩
   funext a
@@ -181,14 +182,16 @@ theorem lqSchattenNorm_normalizedCentered_transport
         (HighContrast.adaptedCellTranslate (Geometry.explicitRoundedGrid jStar m) j
           (adaptedCellCenter (Geometry.explicitRoundedGrid jStar m) j w)) a) A) R)
       = lqSchattenNorm P N (fun a => normalizedBlock (blockSub
-          (coarseBlock (HighContrast.adaptedCell (Geometry.explicitRoundedGrid jStar m) j) a) A) R) := by
+          (coarseBlock (HighContrast.adaptedCell (Geometry.explicitRoundedGrid jStar m) j) a) A)
+            R) := by
   obtain ⟨v, hcomp⟩ :=
     normalizedCentered_lattice_eq_comp_translateCoeff jStar m hj w A R
   set F : CoeffSpace d → BlockMat d := fun a => normalizedBlock (blockSub
     (coarseBlock (HighContrast.adaptedCell (Geometry.explicitRoundedGrid jStar m) j) a) A) R with hF
   have hmap : Measure.map (translateCoeff v) P = P := hstat v
   have hg : AEStronglyMeasurable (fun b => absSchattenNorm N (F b) ^ N) P := by
-    refine ((Analysis.aestronglyMeasurable_absSchattenNorm hmem.measurable hN).aemeasurable.pow_const
+    refine ((Analysis.aestronglyMeasurable_absSchattenNorm hmem.measurable
+      hN).aemeasurable.pow_const
       N).aestronglyMeasurable
   have hint : ∫ a, absSchattenNorm N (F (translateCoeff v a)) ^ N ∂P
       = ∫ b, absSchattenNorm N (F b) ^ N ∂P := by

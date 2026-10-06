@@ -699,7 +699,7 @@ theorem cubeTranslationTestBound_pos (d : ℕ) [NeZero d] (n : ℕ) {s W : ℝ}
 
 /-- The dual test norm of the displaced-cube test is at most the cube's scale
 weight times the explicit bound. -/
-theorem cubeTranslationTest_dualTestNorm_le_bound (d : ℕ) [NeZero d] (n : ℕ)
+theorem cubeTranslationTest_dualTestNorm_le_bound (d : ℕ) (n : ℕ)
     (t : Vec d) {s : ℝ} (hs2 : s < 1 / 2) {W : ℝ} (hW : 0 ≤ W)
     (hWle : W ≤ (3 : ℝ) ^ n) (htW : ∀ i, |t i| ≤ W) {J : ℕ} (hJ : 1 ≤ J) (M : ℕ) :
     cubeBesovDualTestNorm (originCube d ((n + 1 : ℕ) : ℤ)) s (2 : ℝ≥0∞) (2 : ℝ≥0∞) M

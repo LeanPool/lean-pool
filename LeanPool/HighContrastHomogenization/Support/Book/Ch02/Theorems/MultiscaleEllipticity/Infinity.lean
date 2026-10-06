@@ -57,7 +57,7 @@ theorem LambdaSqInfinity_valueSet_bddAbove {d : ℕ} [NeZero d]
   refine ⟨C, ?_⟩
   rintro M ⟨n, rfl⟩
   have hk : Q.scale - (n : ℤ) ≤ Q.scale :=
-    sub_le_self _ (by exact_mod_cast Nat.zero_le n)
+    sub_le_self _ (Nat.cast_nonneg n)
   have hBound :
       maxDescendantBMatrixNormAtScale Q (Q.scale - (n : ℤ)) a ≤ C := by
     calc
@@ -68,7 +68,7 @@ theorem LambdaSqInfinity_valueSet_bddAbove {d : ℕ} [NeZero d]
               (a := a) Q hk
       _ ≤ C := by
           simpa [A, C] using
-            HCPolySupport.maxDescendantBBlockNormAtScale_le_uniform_of_isEllipticFieldOn_openCubeSet_of_openCubeDescendantDeterministicCoarseData
+            HCPolySupport.maxDescendantBBlockNorm_le_uniform_of_ellipticField_openCubeSet
               (Q := Q) (a := A) hEll hData n
   have hMaxNonneg :
       0 ≤ maxDescendantBMatrixNormAtScale Q (Q.scale - (n : ℤ)) a :=
@@ -104,7 +104,7 @@ theorem lambdaSqInfinity_denominator_valueSet_bddAbove {d : ℕ} [NeZero d]
   refine ⟨C, ?_⟩
   rintro M ⟨n, rfl⟩
   have hk : Q.scale - (n : ℤ) ≤ Q.scale :=
-    sub_le_self _ (by exact_mod_cast Nat.zero_le n)
+    sub_le_self _ (Nat.cast_nonneg n)
   have hBound :
       maxDescendantSigmaStarInvMatrixNormAtScale Q (Q.scale - (n : ℤ)) a ≤ C := by
     calc
@@ -115,7 +115,7 @@ theorem lambdaSqInfinity_denominator_valueSet_bddAbove {d : ℕ} [NeZero d]
               (a := a) Q hk
       _ ≤ C := by
           simpa [A, C] using
-            HCPolySupport.maxDescendantSigmaStarInvNormAtScale_le_uniform_of_isEllipticFieldOn_openCubeSet_of_openCubeDescendantDeterministicCoarseData
+            HCPolySupport.maxDescendantSigmaStarInvNorm_le_uniform_of_ellipticField_openCubeSet
               (Q := Q) (a := A) hEll hData n
   have hMaxNonneg :
       0 ≤ maxDescendantSigmaStarInvMatrixNormAtScale Q (Q.scale - (n : ℤ)) a :=
@@ -234,7 +234,7 @@ theorem LambdaSq_infinity_antitone {d : ℕ} [NeZero d]
   refine csSup_le hne_s ?_
   rintro M ⟨n, rfl⟩
   have hk : Q.scale - (n : ℤ) ≤ Q.scale :=
-    sub_le_self _ (by exact_mod_cast Nat.zero_le n)
+    sub_le_self _ (Nat.cast_nonneg n)
   have hmax :
       0 ≤ maxDescendantBMatrixNormAtScale Q (Q.scale - (n : ℤ)) a :=
     maxDescendantBMatrixNormAtScale_nonneg Q hk a
@@ -270,7 +270,7 @@ theorem lambdaSqInfinity_denominator_antitone {d : ℕ} [NeZero d]
   refine csSup_le hne_s ?_
   rintro M ⟨n, rfl⟩
   have hk : Q.scale - (n : ℤ) ≤ Q.scale :=
-    sub_le_self _ (by exact_mod_cast Nat.zero_le n)
+    sub_le_self _ (Nat.cast_nonneg n)
   have hmax :
       0 ≤ maxDescendantSigmaStarInvMatrixNormAtScale Q (Q.scale - (n : ℤ)) a :=
     maxDescendantSigmaStarInvMatrixNormAtScale_nonneg Q hk a

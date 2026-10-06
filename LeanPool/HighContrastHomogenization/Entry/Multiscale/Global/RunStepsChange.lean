@@ -107,8 +107,10 @@ private theorem run_gauge_step {d : ℕ} (hd : 2 ≤ d)
   have hwc : w * charge = a * C / d * charge := by rw [hwdef]
   have hfinal := run_energy_transfer
     (potential P γ jStar η a m k n) (potential P γ jStar η a mP s t)
-    (run_reserve (fun r => blockLogDet (adaptedMean P (Geometry.explicitRoundedGrid jStar m) r)) h k n)
-    (run_reserve (fun r => blockLogDet (adaptedMean P (Geometry.explicitRoundedGrid jStar mP) r)) h s t)
+    (run_reserve (fun r => blockLogDet (adaptedMean P (Geometry.explicitRoundedGrid jStar m) r))
+      h k n)
+    (run_reserve (fun r => blockLogDet (adaptedMean P (Geometry.explicitRoundedGrid jStar mP)
+      r)) h s t)
     c w charge (2 * (d : ℝ) * ((h : ℝ) + 2) * Real.log (1 + δ)) hw0
     (by rw [hwJ, hwc]; exact hstep)
     (by unfold detIncrement at hcharge; linarith only [hcharge, hres])
@@ -258,7 +260,8 @@ theorem run_step_change {d : ℕ} (hd : 2 ≤ d) (γ : ℝ) (hγ : γ ∈ Set.Ic
   have hFpos := run_adaptedMean_blockPosDef hd P γ E Ψ K Src hP hst hce jStar hjStar
     st.m st.hm (st.n + 2 * (S.L ε σ : ℤ))
   have hmStar : (explicitCanonicalMetric
-      (adaptedMean P (Geometry.explicitRoundedGrid jStar st.m) (st.n + 2 * (S.L ε σ : ℤ)))).PosDef :=
+      (adaptedMean P (Geometry.explicitRoundedGrid jStar st.m) (st.n + 2 * (S.L ε σ :
+        ℤ)))).PosDef :=
     explicitCanonicalMetric_posDef _ hFsym hFpos
   have hmP : (geometryUpdate ε st.m (explicitCanonicalMetric
       (adaptedMean P (Geometry.explicitRoundedGrid jStar st.m)
@@ -322,7 +325,8 @@ theorem run_step_change {d : ℕ} (hd : 2 ≤ d) (γ : ℝ) (hγ : γ ∈ Set.Ic
       (st.n + (S.L ε σ : ℤ) + (S.h : ℤ))
       hw
       (by rw [hw]
-          exact div_nonneg (mul_nonneg (by linarith only [ha1] : (0 : ℝ) ≤ a) (by linarith only [hC] : (0 : ℝ) ≤ C))
+          exact div_nonneg (mul_nonneg (by linarith only [ha1] : (0 : ℝ) ≤ a) (by linarith only
+            [hC] : (0 : ℝ) ≤ C))
             (Nat.cast_nonneg d))
       hδ0 hstk hstkn (by omega) (by omega) (by omega) le_rfl hbr₂ hpd le_rfl
 
@@ -475,7 +479,8 @@ theorem run_step_failed_test {d : ℕ} (hd : 2 ≤ d) (γ : ℝ) (hγ : γ ∈ S
   have hFpos := run_adaptedMean_blockPosDef hd P γ E Ψ K Src hP hst hce jStar hjStar
     st.m st.hm (st.n + 2 * (S.L ε σ : ℤ))
   have hmStar : (explicitCanonicalMetric
-      (adaptedMean P (Geometry.explicitRoundedGrid jStar st.m) (st.n + 2 * (S.L ε σ : ℤ)))).PosDef :=
+      (adaptedMean P (Geometry.explicitRoundedGrid jStar st.m) (st.n + 2 * (S.L ε σ :
+        ℤ)))).PosDef :=
     explicitCanonicalMetric_posDef _ hFsym hFpos
   have hmP : (geometryUpdate ε st.m (explicitCanonicalMetric
       (adaptedMean P (Geometry.explicitRoundedGrid jStar st.m)
@@ -488,7 +493,8 @@ theorem run_step_failed_test {d : ℕ} (hd : 2 ≤ d) (γ : ℝ) (hγ : γ ∈ S
     (adaptedMean P (Geometry.explicitRoundedGrid jStar (geometryUpdate ε st.m
       (explicitCanonicalMetric (adaptedMean P (Geometry.explicitRoundedGrid jStar st.m)
         (st.n + 2 * (S.L ε σ : ℤ)))))) (st.n + (S.L ε σ : ℤ)))
-    (Real.sqrt ε * σ) ⟨hδ0, hδ1⟩ hFsym hFpos (Recurrence.isSymmetricBlockMat_adaptedMean _ _ _) hGpos hbr₁ hbr₂
+    (Real.sqrt ε * σ) ⟨hδ0, hδ1⟩ hFsym hFpos (Recurrence.isSymmetricBlockMat_adaptedMean _ _ _)
+      hGpos hbr₁ hbr₂
   have hmet := pd_rw _ _ _ _ heq hsand
   have hold : 0 ≤ projectiveDistance st.m
       (explicitCanonicalMetric (adaptedMean P (Geometry.explicitRoundedGrid jStar st.m) st.k)) :=
@@ -544,7 +550,8 @@ theorem run_step_failed_test {d : ℕ} (hd : 2 ≤ d) (γ : ℝ) (hγ : γ ∈ S
       (st.n + (S.L ε σ : ℤ) + (H : ℤ))
       hw
       (by rw [hw]
-          exact div_nonneg (mul_nonneg (by linarith only [ha1] : (0 : ℝ) ≤ a) (by linarith only [hC] : (0 : ℝ) ≤ C))
+          exact div_nonneg (mul_nonneg (by linarith only [ha1] : (0 : ℝ) ≤ a) (by linarith only
+            [hC] : (0 : ℝ) ≤ C))
             (Nat.cast_nonneg d))
       hδ0 hstk hstkn (by omega) (by omega) (by omega) (by omega) hbr₂ hft (by linarith only [hΔ])
 end

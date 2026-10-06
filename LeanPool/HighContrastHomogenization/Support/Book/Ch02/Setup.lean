@@ -26,6 +26,7 @@ noncomputable section
 
 /-- Public Chapter 2 domains: nonempty bounded open convex subsets of `R^d`. -/
 structure Domain (d : ℕ) where
+  /-- The nonempty bounded open convex set underlying the domain. -/
   carrier : Set (Vec d)
   isDomain : IsOpenBoundedConvexDomain carrier
   nonempty : carrier.Nonempty
@@ -66,8 +67,11 @@ representative, and all public regularity/ellipticity data is stated with respec
 to `volumeMeasureOn U`.
 -/
 structure CoeffOn {d : ℕ} (U : Domain d) where
+  /-- The representative matrix-valued coefficient field on the domain. -/
   toCoeffField : CoeffField d
+  /-- The positive lower ellipticity parameter of the coefficient field on the domain. -/
   lam : ℝ
+  /-- The upper ellipticity parameter of the coefficient field on the domain. -/
   Lam : ℝ
   lam_pos : 0 < lam
   lam_le_Lam : lam ≤ Lam

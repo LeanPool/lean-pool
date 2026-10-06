@@ -201,16 +201,22 @@ theorem averagePairingOfIsEllipticFieldOn {d : ℕ} {U : Set (Vec d)}
       ResponseJ U p q a + ResponseJ U p' q' a - ResponseJ U (p - p') (q - q') a :=
   averagePairing v v' (ResponseLinearIntegrabilityData.of_isEllipticFieldOn hEll)
 
+/-- A family of canonical scalar response maximizers for loads `p = 0` and `q = eᵢ`. -/
 structure GradientBasisData {d : ℕ} (U : Set (Vec d)) (a : CoeffField d) where
+  /-- The canonical maximizer for zero `p` load and the `i`th coordinate vector as `q` load. -/
   grad :
     ∀ i : Fin d, ScalarCanonicalMaximizer U 0 (Pi.single i 1) a
 
+/-- A family of canonical scalar response maximizers for loads `p = eᵢ` and `q = 0`. -/
 structure FluxBasisData {d : ℕ} (U : Set (Vec d)) (a : CoeffField d) where
+  /-- The canonical maximizer for the `i`th coordinate vector as `p` load and zero `q` load. -/
   flux :
     ∀ i : Fin d, ScalarCanonicalMaximizer U (Pi.single i 1) 0 a
 
 namespace GradientBasisData
 
+/-- A chosen family of canonical maximizers for the coordinate `q` loads, from their nonemptiness.
+-/
 @[expose]
 noncomputable def ofNonempty {d : ℕ} {U : Set (Vec d)} {a : CoeffField d}
     (h : ∀ i : Fin d, Nonempty (ScalarCanonicalMaximizer U 0 (Pi.single i 1) a)) :
@@ -256,6 +262,8 @@ end GradientBasisData
 
 namespace FluxBasisData
 
+/-- A chosen family of canonical maximizers for the coordinate `p` loads, from their nonemptiness.
+-/
 @[expose]
 noncomputable def ofNonempty {d : ℕ} {U : Set (Vec d)} {a : CoeffField d}
     (h : ∀ i : Fin d, Nonempty (ScalarCanonicalMaximizer U (Pi.single i 1) 0 a)) :

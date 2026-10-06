@@ -31,7 +31,7 @@ open scoped ENNReal
 /-- Interior canonical harmonic Caccioppoli specialized to a fixed localized
 energy radius profile for the centered quantity. -/
 theorem
-    coarseCaccioppoli_interior_qone_of_canonicalQuantitativeCutoff_of_aHarmonicFamily_of_positiveFactors_of_canonicalHarmonicL2GradientAcircCoefficientBounds_of_fixedLocalizedEnergyProfile
+    coarseCaccioppoli_interior_qone_of_quantitativeCutoff_of_fixedEnergyProfile
     {d : ℕ} [NeZero d] (Q : TriadicCube d) (a : CoeffField d)
     (s t C uL2Sq : ℝ) {lam Lam : ℝ}
     (k : ℝ → ℝ → ℕ) {F : ℝ → ℝ}
@@ -97,7 +97,7 @@ theorem
     F (1 / 3 : ℝ) ≤
       coarseCaccioppoliInteriorExplicitHeightBound Q a s t C uL2Sq := by
   exact
-    coarseCaccioppoli_interior_qone_of_canonicalQuantitativeCutoff_of_aHarmonicFamily_of_positiveFactors_of_canonicalHarmonicL2GradientAcircCoefficientBounds_of_localizationData_of_radiusAgreement_of_localizedExplicitHeightOfScaleChoice
+    coarseCaccioppoli_interior_qone_of_quantitativeCutoff_of_localizedHeight
       (Q := Q) (a := a) (s := s) (t := t) (C := C) (uL2Sq := uL2Sq)
       (k := k) (F := F)
       (G₀ := coarseCaccioppoliLocalizedEnergyRadiusProfile Q baseEnergy)
@@ -118,7 +118,7 @@ theorem
 profile specialized directly to the fixed localized energy profile.  This is
 the no-public-`hagree` version of the fixed-profile wrapper. -/
 theorem
-    coarseCaccioppoli_interior_qone_of_canonicalQuantitativeCutoff_of_aHarmonicFamily_of_positiveFactors_of_canonicalHarmonicL2GradientAcircCoefficientBounds_of_fixedLocalizedEnergyProfile_self
+    coarseCaccioppoliInteriorExponentOne_of_fixedLocalizedEnergyProfile
     {d : ℕ} [NeZero d] (Q : TriadicCube d) (a : CoeffField d)
     (s t C uL2Sq : ℝ) {lam Lam : ℝ}
     (k : ℝ → ℝ → ℕ)
@@ -181,7 +181,7 @@ theorem
     coarseCaccioppoliLocalizedEnergyRadiusProfile Q baseEnergy (1 / 3 : ℝ) ≤
       coarseCaccioppoliInteriorExplicitHeightBound Q a s t C uL2Sq := by
   exact
-    coarseCaccioppoli_interior_qone_of_canonicalQuantitativeCutoff_of_aHarmonicFamily_of_positiveFactors_of_canonicalHarmonicL2GradientAcircCoefficientBounds_of_fixedLocalizedEnergyProfile
+    coarseCaccioppoli_interior_qone_of_quantitativeCutoff_of_fixedEnergyProfile
       (Q := Q) (a := a) (s := s) (t := t) (C := C) (uL2Sq := uL2Sq)
       (k := k)
       (F := coarseCaccioppoliLocalizedEnergyRadiusProfile Q baseEnergy)
@@ -194,7 +194,7 @@ theorem
 /-- Boundary fixed-localized-energy canonical harmonic Caccioppoli with the
 canonical Chapter 3 triadic gap scale installed. -/
 theorem
-    coarseCaccioppoli_boundary_qone_of_canonicalQuantitativeCutoff_of_aHarmonicFamily_of_positiveFactors_of_canonicalHarmonicL2GradientAcircCoefficientBounds_of_fixedLocalizedEnergyProfile_of_canonicalTriadicGapScale
+    coarseCaccioppoli_boundary_qone_of_quantitativeCutoff_of_triadicGapScale
     {d : ℕ} [NeZero d] (Q : TriadicCube d) (a : CoeffField d)
     (s t C uL2Sq : ℝ) {lam Lam : ℝ}
     (baseEnergy : Vec d → ℝ)
@@ -254,7 +254,7 @@ theorem
     coarseCaccioppoliLocalizedEnergyRadiusProfile Q baseEnergy (1 / 3 : ℝ) ≤
       coarseCaccioppoliBoundaryExplicitHeightBound Q a s t C uL2Sq := by
   exact
-    coarseCaccioppoli_boundary_qone_of_canonicalQuantitativeCutoff_of_aHarmonicFamily_of_positiveFactors_of_canonicalHarmonicL2GradientAcircCoefficientBounds_of_fixedLocalizedEnergyProfile
+    coarseCaccioppoli_boundary_qone_of_quantitativeCutoff_of_fixedEnergyProfile
       (Q := Q) (a := a) (s := s) (t := t) (C := C) (uL2Sq := uL2Sq)
       (k := coarseCaccioppoliTriadicGapScale) (baseEnergy := baseEnergy)
       (w := w) (i := i)
@@ -267,7 +267,7 @@ theorem
 /-- Interior fixed-localized-energy canonical harmonic Caccioppoli with both
 the fixed profile and canonical Chapter 3 triadic gap scale installed. -/
 theorem
-    coarseCaccioppoli_interior_qone_of_canonicalQuantitativeCutoff_of_aHarmonicFamily_of_positiveFactors_of_canonicalHarmonicL2GradientAcircCoefficientBounds_of_fixedLocalizedEnergyProfile_self_of_canonicalTriadicGapScale
+    coarseCaccioppoli_interior_qone_of_quantitativeCutoff_of_triadicGapScale
     {d : ℕ} [NeZero d] (Q : TriadicCube d) (a : CoeffField d)
     (s t C uL2Sq : ℝ) {lam Lam : ℝ}
     (baseEnergy : Vec d → ℝ)
@@ -327,7 +327,7 @@ theorem
     coarseCaccioppoliLocalizedEnergyRadiusProfile Q baseEnergy (1 / 3 : ℝ) ≤
       coarseCaccioppoliInteriorExplicitHeightBound Q a s t C uL2Sq := by
   exact
-    coarseCaccioppoli_interior_qone_of_canonicalQuantitativeCutoff_of_aHarmonicFamily_of_positiveFactors_of_canonicalHarmonicL2GradientAcircCoefficientBounds_of_fixedLocalizedEnergyProfile_self
+    coarseCaccioppoliInteriorExponentOne_of_fixedLocalizedEnergyProfile
       (Q := Q) (a := a) (s := s) (t := t) (C := C) (uL2Sq := uL2Sq)
       (k := coarseCaccioppoliTriadicGapScale) (baseEnergy := baseEnergy)
       (w := w) (i := i)
@@ -341,7 +341,7 @@ theorem
 canonical Chapter 3 triadic gap scale installed, requiring only domination of
 the fixed localized energy by the pair-dependent energy on each inner cube. -/
 theorem
-    coarseCaccioppoli_boundary_qone_of_canonicalQuantitativeCutoff_of_aHarmonicFamily_of_positiveFactors_of_canonicalHarmonicL2GradientAcircCoefficientBounds_of_fixedLocalizedEnergyProfile_le_of_canonicalTriadicGapScale
+    coarseCaccioppoli_boundary_qone_of_quantitativeCutoff_of_of_positiveFactors
     {d : ℕ} [NeZero d] (Q : TriadicCube d) (a : CoeffField d)
     (s t C uL2Sq : ℝ) {lam Lam : ℝ}
     (baseEnergy : Vec d → ℝ)
@@ -401,7 +401,7 @@ theorem
     coarseCaccioppoliLocalizedEnergyRadiusProfile Q baseEnergy (1 / 3 : ℝ) ≤
       coarseCaccioppoliBoundaryExplicitHeightBound Q a s t C uL2Sq := by
   exact
-    coarseCaccioppoli_boundary_qone_of_canonicalQuantitativeCutoff_of_aHarmonicFamily_of_positiveFactors_of_canonicalHarmonicL2GradientAcircCoefficientBounds_of_localizationData_of_localizedExplicitHeightOfScaleChoice
+    coarseCaccioppoli_boundary_qone_of_quantitativeCutoff_of_localizedHeight
       (Q := Q) (a := a) (s := s) (t := t) (C := C) (uL2Sq := uL2Sq)
       (k := coarseCaccioppoliTriadicGapScale)
       (F := coarseCaccioppoliLocalizedEnergyRadiusProfile Q baseEnergy)
@@ -423,7 +423,7 @@ theorem
 canonical Chapter 3 triadic gap scale installed, requiring only domination of
 the fixed localized energy by the pair-dependent energy on each inner cube. -/
 theorem
-    coarseCaccioppoli_interior_qone_of_canonicalQuantitativeCutoff_of_aHarmonicFamily_of_positiveFactors_of_canonicalHarmonicL2GradientAcircCoefficientBounds_of_fixedLocalizedEnergyProfile_self_le_of_canonicalTriadicGapScale
+    coarseCaccioppoli_interior_qone_of_quantitativeCutoff_of_of_positiveFactors
     {d : ℕ} [NeZero d] (Q : TriadicCube d) (a : CoeffField d)
     (s t C uL2Sq : ℝ) {lam Lam : ℝ}
     (baseEnergy : Vec d → ℝ)
@@ -483,7 +483,7 @@ theorem
     coarseCaccioppoliLocalizedEnergyRadiusProfile Q baseEnergy (1 / 3 : ℝ) ≤
       coarseCaccioppoliInteriorExplicitHeightBound Q a s t C uL2Sq := by
   exact
-    coarseCaccioppoli_interior_qone_of_canonicalQuantitativeCutoff_of_aHarmonicFamily_of_positiveFactors_of_canonicalHarmonicL2GradientAcircCoefficientBounds_of_localizationData_of_radiusAgreement_of_localizedExplicitHeightOfScaleChoice
+    coarseCaccioppoli_interior_qone_of_quantitativeCutoff_of_localizedHeight
       (Q := Q) (a := a) (s := s) (t := t) (C := C) (uL2Sq := uL2Sq)
       (k := coarseCaccioppoliTriadicGapScale)
       (F := coarseCaccioppoliLocalizedEnergyRadiusProfile Q baseEnergy)

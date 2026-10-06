@@ -30,7 +30,7 @@ each threshold is polynomial in the data.  Both are, and both by the same
 elementary bound `3^{max 1 ⌈y⌉} ≤ 3·max 1 (3^y)`:
 
 * `3^{euclideanEntryThreshold K cEnt sK} ≤ 3^{sK}·3·max 1 (M₂(K)/cEnt)` — linear
-  in the second source moment, i.e. polynomial in `K̄_S`; this is's first
+  in the second source moment, i.e. polynomial in `K_bar_S`; this is's first
   input, which the rework was predicted to shrink, and it does;
 * `3^{tiltGap Cd g cEnt nu G} ≤ 3·max 1 ((2·boundaryConst·3^{gG}/cEnt)^{1/(1-g)})`
   — and at the fusion's binding `nu = canonicalMetric 𝐄`,

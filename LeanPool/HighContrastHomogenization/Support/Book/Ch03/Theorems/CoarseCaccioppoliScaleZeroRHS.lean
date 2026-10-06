@@ -68,7 +68,7 @@ theorem boundary_localPatch_deterministic_note_from_public_standardExplicitBudge
     simpa [Ch02.cubeDomain, coarseCaccioppoliLocalOpenCube_one_eq_openCubeAtScale Q x]
       using u.zeroTraceOnBoundaryPatch
   exact
-    coarseCaccioppoli_boundary_qone_standard_note_of_closedCubeEllipticity_of_localPatchBuffered_constantFamily_of_localizedZeroTraceOnLocalOpenCube_explicitBudgetSplit
+    coarseCaccioppoli_boundary_qone_standard_note_of_of_closedCubeEllipticity
       (Q := Q) (center := x) (a := pointwiseCoeffFor Q a) (s := s) (t := t)
       (u := u.toPointwiseAHarmonic) hzero hs ht hst
       (pointwiseCoeffFor_isEllipticFieldOn_cubeSet Q a)
@@ -201,7 +201,8 @@ private theorem coarseCaccioppoliLocalizedEnergyRadiusProfile_normalizeMeanZero_
   exact Filter.Eventually.of_forall fun y => by
     simp [scalarVariationEnergyIntegrand]
 
-theorem coarseCaccioppoliLocalEnergyRadiusProfile_cubeCenter_one_third_le_localizedEnergyRadiusProfile
+theorem
+  coarseCaccioppoliLocalEnergyRadiusProfile_cubeCenter_one_third_le_localizedEnergyRadiusProfile
     {d : ℕ} (Q : TriadicCube d) {energy : Vec d → ℝ}
     (henergy_nonneg : ∀ y ∈ cubeSet Q, 0 ≤ energy y)
     (henergy_int :
@@ -263,7 +264,7 @@ theorem
     simpa [volumeMeasureOn] using
       (isOpenBoundedConvexDomain_openCubeSet Q).isFiniteMeasure_restrict_volume
   rcases
-      coarseCaccioppoli_interior_qone_standard_note_of_closedCubeEllipticity_of_buffered_constantFamily_explicitBudgetSplit
+      coarseCaccioppoli_interior_qone_standard_note_of_closedCubeEllipticity
         (Q := Q) (a := pointwiseCoeffFor Q a) (s := s) (t := t)
         (u := u.toPointwiseAHarmonic.normalizeMeanZero) hs ht hst
         (pointwiseCoeffFor_isEllipticFieldOn_cubeSet Q a) with

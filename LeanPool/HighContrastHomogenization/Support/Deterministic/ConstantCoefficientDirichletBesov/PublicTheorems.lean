@@ -199,7 +199,7 @@ theorem cubeVectorH1DivergencePoissonRealization
       (isOpenBoundedConvexDomain_openCubeSet Q).isFiniteMeasure_restrict_volume
   have hRealize :
       PotentialSolenoidalL2Data.HasPotentialZeroTraceClosureRealization U :=
-    PotentialSolenoidalL2Data.hasPotentialZeroTraceClosureRealization_of_isOpenBoundedConvexDomain
+    PotentialSolenoidalL2Data.hasPotentialZeroTraceClosureRealization_of_convexDomain
       (by simpa [U] using isOpenBoundedConvexDomain_openCubeSet Q)
   have hEll : IsEllipticFieldOn 1 1 U a := by
     simpa [a] using isEllipticFieldOn_identityCoeffField
@@ -458,7 +458,7 @@ for all `s ∈ (0,1)`.  It is not the source theorem pending the continuum
 theorem exists_discreteConstantCoefficientDirichletBesovFunctionSpacesUniform
     (d : ℕ) [NeZero d] :
     ∃ C : ℝ, DiscreteConstantCoefficientDirichletBesovFunctionSpacesUniform d C :=
-  exists_discreteConstantCoefficientDirichletBesovFunctionSpacesUniform_of_partialBoundByOverlappingPositiveUniform
+  exists_of_partialBoundByOverlappingPositiveUniform
     (cubeKBesovPartialBoundByOverlappingPositiveUniform d)
     (cubeKBesovDirichletRegularityComponents d)
 

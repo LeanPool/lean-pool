@@ -54,7 +54,7 @@ generality in which they are actually printed.
   transfer and therefore no `boundaryConst` — plus the Markov step on the
   source scale that the construction already uses elsewhere.  The resulting defect is
   `M₂(K)·3^{-(n - s_K)}`, so the scale threshold it forces is
-  `n ≳ s_K + log₃ M₂(K) ≈ 4 log₃ K̄_S`: exactly the `4 log K_{Ψ_S}` term of the
+  `n ≳ s_K + log₃ M₂(K) ≈ 4 log₃ K_bar_S`: exactly the `4 log K_{Ψ_S}` term of the
   printed `n₁` (the printed argument).
 
 Both halves are free of the reference aspect ratio `Π`: the whole point of the

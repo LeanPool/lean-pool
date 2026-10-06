@@ -335,7 +335,7 @@ theorem coarseFluctuationResponseMomentAtScale_le_zero
         integrable_rpow_restrictionResponseJObservableCubeSet_originCube_from_P4
           hP hStruct hP4 k p_e q_e
     · have hmem :=
-        memLp_zeta_descendantsAverage_restrictionResponseJObservableCubeSet_originCube_from_P4_of_stationary
+        zeta_descendantResponseObservable_memLp_from_P4_of_stationarity
           hP hstat hStruct hP4 (by norm_num : (0 : ℤ) ≤ 0) hk_nonneg_int p_e q_e
       have hζ_ne_zero : ENNReal.ofReal ζ ≠ 0 := by
         simp [ENNReal.ofReal_eq_zero, not_le.mpr hζ_pos]
@@ -362,7 +362,7 @@ theorem coarseFluctuationResponseMomentAtScale_le_zero
           Real.rpow
             (Ch04.restrictionResponseJObservableCubeSet (originCube d (0 : ℤ)) p_e q_e a) ζ ∂P := by
     simpa [unitAvg, ζ, p_e, q_e] using
-      integral_rpow_descendantsAverage_restrictionResponseJObservableCubeSet_originCube_le_originCube_of_stationary
+      integral_rpow_descendantMean_responseJObservableSet_cube_le_cube
         hP hstat hStruct hP4 (k := (0 : ℤ)) (m := (k : ℤ))
         (by norm_num) (by exact_mod_cast Nat.zero_le k) p_e q_e
   have hintegral_nonneg :
@@ -417,7 +417,7 @@ theorem coarseFluctuationUnitMomentWeight_mul_responseMoment_le_sixteen_of_small
         hP hStruct hP4 m e (vecNorm_eq_one_of_vecNormSq_eq_one he)
   have hU_le : U ≤ 4 := by
     have h :=
-      Section54.OneStepContraction.coarseFluctuationUnitMomentWeightAtScale_le_two_widetildeTheta_zero
+      Section54.OneStepContraction.coarseFluctuationMomentWeight_le_twoThetaZero
         hP hStruct hP4 m
     calc
       U ≤ 2 * widetildeThetaAtScale P (0 : ℤ) hP4 := by simpa [U] using h
@@ -727,8 +727,8 @@ theorem section53CoarseFluctuationBetaCoreParams_pos {d : ℕ}
 
 theorem section53CoarseFluctuationBetaParams_pos {d : ℕ}
     (params : QuantitativeCoarseGrainedEllipticityParams d) :
-    0 < section53CoarseFluctuationBetaParams params := by
-  unfold section53CoarseFluctuationBetaParams
+    0 < coarseFluctuationBeta params := by
+  unfold coarseFluctuationBeta
   nlinarith [section53CoarseFluctuationBetaCoreParams_pos params]
 
 theorem self_le_half_add_of_le

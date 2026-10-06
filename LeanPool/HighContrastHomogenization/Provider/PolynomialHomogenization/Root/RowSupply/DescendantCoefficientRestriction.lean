@@ -40,8 +40,7 @@ theorem coeffOn_descendant_ae_eq_of_root_ae_eq
     {Q R : TriadicCube d} {k : ℤ} (hk : k ≤ Q.scale)
     (hR : R ∈ descendantsAtScale Q k)
     {f : Vec d → Mat d}
-    (hroot : (a.coeffOn Q).toCoeffField =ᵐ[
-      volumeMeasureOn (openCubeSet Q)] f) :
+    (hroot : (a.coeffOn Q).toCoeffField =ᵐ[ volumeMeasureOn (openCubeSet Q)] f) :
     (a.coeffOn R).toCoeffField =ᵐ[
       volumeMeasureOn (openCubeSet R)] f := by
   have hRdepth : R ∈ descendantsAtDepth Q (Q.scale - k).toNat := by

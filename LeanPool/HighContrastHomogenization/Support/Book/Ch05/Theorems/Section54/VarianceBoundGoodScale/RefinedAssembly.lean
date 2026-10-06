@@ -93,26 +93,26 @@ private theorem integral_plusProbe_self_sq_eq
     (m j : ℕ) (α : BlockCoord d) :
     ∫ a,
         (fullBlockQuadratic
-          (fullBlockNormalizedFluctuationMatrix hP hStruct (m : ℤ)
+          (normalizedFluctuationMatrix hP hStruct (m : ℤ)
             (cubeSet (originCube d (j : ℤ))) a)
           (fullBlockPlusProbe α α)) ^ (2 : ℕ) ∂P =
       16 *
         ∫ a,
           (fullBlockQuadratic
-            (fullBlockNormalizedFluctuationMatrix hP hStruct (m : ℤ)
+            (normalizedFluctuationMatrix hP hStruct (m : ℤ)
               (cubeSet (originCube d (j : ℤ))) a)
             (fullBlockCoordinateProbe α)) ^ (2 : ℕ) ∂P := by
   have hpoint :
       (fun a : RegCoeffField d =>
         (fullBlockQuadratic
-          (fullBlockNormalizedFluctuationMatrix hP hStruct (m : ℤ)
+          (normalizedFluctuationMatrix hP hStruct (m : ℤ)
             (cubeSet (originCube d (j : ℤ))) a)
           (fullBlockPlusProbe α α)) ^ (2 : ℕ))
         =
       fun a : RegCoeffField d =>
         16 *
           (fullBlockQuadratic
-            (fullBlockNormalizedFluctuationMatrix hP hStruct (m : ℤ)
+            (normalizedFluctuationMatrix hP hStruct (m : ℤ)
               (cubeSet (originCube d (j : ℤ))) a)
             (fullBlockCoordinateProbe α)) ^ (2 : ℕ) := by
     funext a
@@ -126,13 +126,13 @@ private theorem integral_minusProbe_self_sq_eq_zero
     (m j : ℕ) (α : BlockCoord d) :
     ∫ a,
         (fullBlockQuadratic
-          (fullBlockNormalizedFluctuationMatrix hP hStruct (m : ℤ)
+          (normalizedFluctuationMatrix hP hStruct (m : ℤ)
             (cubeSet (originCube d (j : ℤ))) a)
           (fullBlockMinusProbe α α)) ^ (2 : ℕ) ∂P = 0 := by
   have hpoint :
       (fun a : RegCoeffField d =>
         (fullBlockQuadratic
-          (fullBlockNormalizedFluctuationMatrix hP hStruct (m : ℤ)
+          (normalizedFluctuationMatrix hP hStruct (m : ℤ)
             (cubeSet (originCube d (j : ℤ))) a)
           (fullBlockMinusProbe α α)) ^ (2 : ℕ))
         =
@@ -143,7 +143,7 @@ private theorem integral_minusProbe_self_sq_eq_zero
   rw [hpoint, integral_zero]
 
 /-- Per-scale matrix variance bound using the refined scalar probe estimates. -/
-theorem fullBlockNormalizedFluctuationOperatorNormSqAtScale_integral_le_refinedMatrixVarianceScaleBound
+theorem fluctuationNormSq_integral_le_refinedMatrixVarianceBound
     {d : ℕ} [NeZero d] {P : Ch04.RestrictionCoeffLaw d}
     (hP : Ch04.RestrictionLawCarrier P) (hStruct : Ch04.RestrictionStructuralLaw P)
     (hP4 : QuantitativeCoarseGrainedEllipticity P)
@@ -169,7 +169,7 @@ theorem fullBlockNormalizedFluctuationOperatorNormSqAtScale_integral_le_refinedM
       Integrable
         (fun a : RegCoeffField d =>
           (fullBlockQuadratic
-            (fullBlockNormalizedFluctuationMatrix hP hStruct (m : ℤ)
+            (normalizedFluctuationMatrix hP hStruct (m : ℤ)
               (cubeSet (originCube d (j : ℤ))) a)
             (fullBlockCoordinateProbe α)) ^ (2 : ℕ)) P := by
     intro α
@@ -179,7 +179,7 @@ theorem fullBlockNormalizedFluctuationOperatorNormSqAtScale_integral_le_refinedM
       Integrable
         (fun a : RegCoeffField d =>
           (fullBlockQuadratic
-            (fullBlockNormalizedFluctuationMatrix hP hStruct (m : ℤ)
+            (normalizedFluctuationMatrix hP hStruct (m : ℤ)
               (cubeSet (originCube d (j : ℤ))) a)
             (fullBlockPlusProbe α β)) ^ (2 : ℕ)) P := by
     intro α β
@@ -189,7 +189,7 @@ theorem fullBlockNormalizedFluctuationOperatorNormSqAtScale_integral_le_refinedM
       Integrable
         (fun a : RegCoeffField d =>
           (fullBlockQuadratic
-            (fullBlockNormalizedFluctuationMatrix hP hStruct (m : ℤ)
+            (normalizedFluctuationMatrix hP hStruct (m : ℤ)
               (cubeSet (originCube d (j : ℤ))) a)
             (fullBlockMinusProbe α β)) ^ (2 : ℕ)) P := by
     intro α β
@@ -198,7 +198,7 @@ theorem fullBlockNormalizedFluctuationOperatorNormSqAtScale_integral_le_refinedM
   have hcoord : ∀ α : BlockCoord d,
       (∫ a,
         (fullBlockQuadratic
-          (fullBlockNormalizedFluctuationMatrix hP hStruct (m : ℤ)
+          (normalizedFluctuationMatrix hP hStruct (m : ℤ)
             (cubeSet (originCube d (j : ℤ))) a)
           (fullBlockCoordinateProbe α)) ^ (2 : ℕ) ∂P) ≤ Ccoord α := by
     intro α
@@ -210,7 +210,7 @@ theorem fullBlockNormalizedFluctuationOperatorNormSqAtScale_integral_le_refinedM
   have hplus : ∀ α β : BlockCoord d,
       (∫ a,
         (fullBlockQuadratic
-          (fullBlockNormalizedFluctuationMatrix hP hStruct (m : ℤ)
+          (normalizedFluctuationMatrix hP hStruct (m : ℤ)
             (cubeSet (originCube d (j : ℤ))) a)
           (fullBlockPlusProbe α β)) ^ (2 : ℕ) ∂P) ≤ Cplus α β := by
     intro α β
@@ -219,7 +219,7 @@ theorem fullBlockNormalizedFluctuationOperatorNormSqAtScale_integral_le_refinedM
       rw [integral_plusProbe_self_sq_eq hP hStruct m j α]
       have hc :
           (∫ a,
-            fullBlockNormalizedFluctuationMatrix hP hStruct (m : ℤ)
+            normalizedFluctuationMatrix hP hStruct (m : ℤ)
               (cubeSet (originCube d (j : ℤ))) a α α ^ (2 : ℕ) ∂P) ≤
             Ccoord α := by
         simpa using hcoord α
@@ -234,7 +234,7 @@ theorem fullBlockNormalizedFluctuationOperatorNormSqAtScale_integral_le_refinedM
   have hminus : ∀ α β : BlockCoord d,
       (∫ a,
         (fullBlockQuadratic
-          (fullBlockNormalizedFluctuationMatrix hP hStruct (m : ℤ)
+          (normalizedFluctuationMatrix hP hStruct (m : ℤ)
             (cubeSet (originCube d (j : ℤ))) a)
           (fullBlockMinusProbe α β)) ^ (2 : ℕ) ∂P) ≤ Cminus α β := by
     intro α β
@@ -273,7 +273,7 @@ theorem varianceGoodScaleFullBlockSumAtScale_le_weighted_refinedMatrixVarianceSc
   refine varianceGoodScaleFullBlockSumAtScale_le_weighted_sum hP hStruct hP4 m ?_
   intro j hj
   exact
-    fullBlockNormalizedFluctuationOperatorNormSqAtScale_integral_le_refinedMatrixVarianceScaleBound
+    fluctuationNormSq_integral_le_refinedMatrixVarianceBound
       hP hStruct hP4 hdelta_nonneg m j (Finset.mem_Icc.mp hj).2
       hgood_upper hgood_lower
 

@@ -117,7 +117,7 @@ theorem memVectorL2_openCubeSet_succ_originCube_cubeCoordinateFoldReflectedVecto
 
 /-- Scalar reflected-difference energy on the centered parent cube is `3^d`
 copies of the original difference energy. -/
-theorem setIntegral_openCubeSet_succ_originCube_cubeCoordinateFoldReflectedScalar_sub_sq_of_memScalarL2_three_pow
+theorem setIntegral_successorCube_foldedReflectedScalar_sub_sq
     {F U : Vec d → ℝ}
     (hFU : MemScalarL2 (openCubeSet (originCube d m)) (fun x => F x - U x)) :
     ∫ x in openCubeSet (originCube d (m + 1)),
@@ -130,12 +130,12 @@ theorem setIntegral_openCubeSet_succ_originCube_cubeCoordinateFoldReflectedScala
         ∫ y in openCubeSet (originCube d m),
           (F y - U y) * (F y - U y) ∂MeasureTheory.volume := by
   simpa using
-    setIntegral_openCubeSet_succ_originCube_cubeCoordinateFoldReflectedScalar_sq_of_memScalarL2_three_pow
+    setIntegral_successorCube_foldedReflectedScalar_sq
       (m := m) (F := fun y => F y - U y) hFU
 
 /-- Vector reflected-difference energy on the centered parent cube is `3^d`
 copies of the original difference energy. -/
-theorem setIntegral_openCubeSet_succ_originCube_cubeCoordinateFoldReflectedVectorField_sub_self_pairing_of_memVectorL2_three_pow
+theorem setIntegral_successorCube_foldedReflectedVectorField_sub_self_pairing
     {G H : Vec d → Vec d}
     (hGH : MemVectorL2 (openCubeSet (originCube d m)) (fun x => G x - H x)) :
     ∫ x in openCubeSet (originCube d (m + 1)),
@@ -158,7 +158,7 @@ theorem setIntegral_openCubeSet_succ_originCube_cubeCoordinateFoldReflectedVecto
     exact cubeCoordinateFoldReflectedVectorField_sub_apply
       (originCube d m) G H x
   simpa [hfun] using
-    setIntegral_openCubeSet_succ_originCube_cubeCoordinateFoldReflectedVectorField_self_pairing_of_memVectorL2_three_pow
+    setIntegral_successorCube_foldedReflectedVectorField_self_pairing
       (m := m) (G := fun y => G y - H y) hGH
 
 /-- Scalar `L²` convergence on the original cube transfers to the all-face
@@ -231,7 +231,7 @@ theorem tendsto_eLpNorm_openCubeSet_succ_originCube_cubeCoordinateFoldReflectedS
     have hsq_eq :
         a ^ 2 = (3 : ℝ) ^ d * b ^ 2 := by
       have henergy :=
-        setIntegral_openCubeSet_succ_originCube_cubeCoordinateFoldReflectedScalar_sub_sq_of_memScalarL2_three_pow
+        setIntegral_successorCube_foldedReflectedScalar_sub_sq
           (m := m) (F := F n) (U := U) (hFU n)
       rw [toReal_eLpNorm_two_sq_eq_integral_sq (hparent_mem n),
         toReal_eLpNorm_two_sq_eq_integral_sq (hFU n)]
@@ -259,7 +259,7 @@ theorem tendsto_eLpNorm_openCubeSet_succ_originCube_cubeCoordinateFoldReflectedS
 
 /-- A coordinate of a reflected vector-field difference has the same `3^d`
 energy transfer as a reflected scalar difference. -/
-theorem setIntegral_openCubeSet_succ_originCube_cubeCoordinateFoldReflectedVectorField_sub_coord_sq_of_memScalarL2_three_pow
+theorem setIntegral_successorCube_foldedReflectedVectorField_sub_coord_sq
     {G H : Vec d → Vec d} (j : Fin d)
     (hGHj :
       MemScalarL2 (openCubeSet (originCube d m)) (fun x => G x j - H x j)) :
@@ -273,7 +273,7 @@ theorem setIntegral_openCubeSet_succ_originCube_cubeCoordinateFoldReflectedVecto
         ∫ y in openCubeSet (originCube d m),
           (G y j - H y j) * (G y j - H y j) ∂MeasureTheory.volume := by
   have hscalar :=
-    setIntegral_openCubeSet_succ_originCube_cubeCoordinateFoldReflectedScalar_sub_sq_of_memScalarL2_three_pow
+    setIntegral_successorCube_foldedReflectedScalar_sub_sq
       (m := m) (F := fun y => G y j) (U := fun y => H y j) hGHj
   calc
     ∫ x in openCubeSet (originCube d (m + 1)),
@@ -382,7 +382,7 @@ theorem tendsto_eLpNorm_openCubeSet_succ_originCube_cubeCoordinateFoldReflectedV
     have hsq_eq :
         a ^ 2 = (3 : ℝ) ^ d * b ^ 2 := by
       have henergy :=
-        setIntegral_openCubeSet_succ_originCube_cubeCoordinateFoldReflectedVectorField_sub_coord_sq_of_memScalarL2_three_pow
+        setIntegral_successorCube_foldedReflectedVectorField_sub_coord_sq
           (m := m) (G := G n) (H := H) j (hGHj n)
       rw [toReal_eLpNorm_two_sq_eq_integral_sq (hparent_mem n),
         toReal_eLpNorm_two_sq_eq_integral_sq (hGHj n)]

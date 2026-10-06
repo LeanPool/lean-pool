@@ -261,7 +261,7 @@ theorem maxDescendantNormalizedBlockResponseAtScale_scalarMatrix_le_weightedElli
   have hS :
       Ch02.coarseSigmaStarInvMatrixNorm R a ≤
         Ch02.maxDescendantSigmaStarInvMatrixNormAtScale Q k a :=
-    Ch02.coarseSigmaStarInvMatrixNorm_le_maxDescendantSigmaStarInvMatrixNormAtScale_of_mem_descendantsAtScale
+    Ch02.coarseSigmaStarInvMatrixNorm_le_maxDescendantNorm_atScale
       a hR
   have hweighted :
       σ⁻¹ * Ch02.coarseBMatrixNorm R a +

@@ -51,7 +51,7 @@ theorem exists_isAffineDirichletSolution_of_isEllipticFieldOn
     simpa [Uset, g] using memVectorL2_neg_matVecMul_const hEll p
   have hRealize :
       PotentialSolenoidalL2Data.HasPotentialZeroTraceClosureRealization Uset :=
-    PotentialSolenoidalL2Data.hasPotentialZeroTraceClosureRealization_of_isOpenBoundedConvexDomain
+    PotentialSolenoidalL2Data.hasPotentialZeroTraceClosureRealization_of_convexDomain
       (U := Uset) U.isDomain
   let φ : H10Function Uset :=
     zeroTraceDirichletRhsProblemSolution_of_potentialZeroTraceClosureRealization
@@ -59,7 +59,7 @@ theorem exists_isAffineDirichletSolution_of_isEllipticFieldOn
       hg hRealize (by simpa [Uset] using U.nonempty) hEll
   have hφ :
       IsZeroTraceDirichletRhsWeakSolution a.toCoeffField Uset φ g :=
-    isZeroTraceDirichletRhsWeakSolution_zeroTraceDirichletRhsProblemSolution_of_potentialZeroTraceClosureRealization
+    isZeroTraceDirichletRhsWeakSolution_zeroTraceDirichletRhsProblemSolution
       (a := a.toCoeffField) (U := Uset) (g := g) (lam := a.lam) (Lam := a.Lam)
       hg hRealize (by simpa [Uset] using U.nonempty) hEll
   let u : H1Function Uset := uAff + φ.toH1Function

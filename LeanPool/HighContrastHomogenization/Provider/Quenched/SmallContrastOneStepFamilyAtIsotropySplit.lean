@@ -146,7 +146,8 @@ theorem exists_one_step_family_at_isotropy_var_at_level_conv_family_split (d : �
       0 ≤ euclideanEntryThreshold K (cEnt / 2) sKw →
       lAl ≤ isotropySplit K (cEnt / 2) Cd g mAl (Gacc + 1) sKw →
       (∀ n : ℕ, ns ≤ n →
-        isotropySplit K (cEnt / 2) Cd g mAl (Gacc + 1) sKw ≤ (N₀ : ℤ) + (n : ℤ) - ((Hw n : ℕ) : ℤ)) →
+        isotropySplit K (cEnt / 2) Cd g mAl (Gacc + 1) sKw ≤ (N₀ : ℤ) + (n : ℤ) - ((Hw n : ℕ) :
+          ℤ)) →
       sourceMomentTwo K ≤ (3 : ℝ) ^
         (isotropySplit K (cEnt / 2) Cd g mAl (Gacc + 1) sKw + ((Gacc + 1 : ℕ) : ℤ) - sKw) →
       ∀ {cDeep : ℝ},
@@ -174,12 +175,15 @@ theorem exists_one_step_family_at_isotropy_var_at_level_conv_family_split (d : �
                 (16 * (d : ℝ) *
                   (adaptedHattedContrast P (roundedGrid lAl mAl) ((N₀ : ℤ) + ((n - H : ℕ) : ℤ)) -
                     adaptedHattedContrast P (roundedGrid lAl mAl) ((N₀ : ℤ) + (n : ℤ)))) +
-              rowValue2Isotropy d (rowSplitConstant (nearIdentityDefect cEnt sigma) cDeep) (isotropyKap2 (nearIdentityDefect cEnt sigma))
+              rowValue2Isotropy d (rowSplitConstant (nearIdentityDefect cEnt sigma) cDeep)
+                (isotropyKap2 (nearIdentityDefect cEnt sigma))
                 (hatExcessAt P (roundedGrid lAl mAl) ((N₀ : ℤ) + (n : ℤ))) +
               weakValueBoundSharpIsotropyAt (Response.recentConstantAtLevel lev)
-            (Response.maxGroupConstantAtLevel lev) (Response.energyGoodConstantAtLevel lev) P mAl (Response.responseSkew (K0 n))
+            (Response.maxGroupConstantAtLevel lev) (Response.energyGoodConstantAtLevel lev) P
+              mAl (Response.responseSkew (K0 n))
                 (isotropyReference (nearIdentityDefect cEnt sigma) E)
-                (loadScaleOfScalar (1 + nearIdentityDefect cEnt sigma) (isotropyKap2 (nearIdentityDefect cEnt sigma))) mAl
+                (loadScaleOfScalar (1 + nearIdentityDefect cEnt sigma) (isotropyKap2
+                  (nearIdentityDefect cEnt sigma))) mAl
                 rho (Hw n)
                 (R ^ 4 * badMomentMajorant K
                   (((N₀ : ℤ) + (n : ℤ)) + ((Gacc + 1 : ℕ) : ℤ) - 1 - sKw))
@@ -196,7 +200,8 @@ theorem exists_one_step_family_at_isotropy_var_at_level_conv_family_split (d : �
                     ((N₀ : ℤ) + ((jb n : ℕ) : ℤ)))
                   ((((N₀ : ℤ) + (n : ℤ)) -
                     ((N₀ : ℤ) + ((jb n : ℕ) : ℤ))).toNat) 0)
-                (meanDrop2ValueIsotropy P lAl (1 + nearIdentityDefect cEnt sigma) mAl E (isotropyReference (nearIdentityDefect cEnt sigma) E) ((N₀ : ℤ) + (n : ℤ)))
+                (meanDrop2ValueIsotropy P lAl (1 + nearIdentityDefect cEnt sigma) mAl E
+                  (isotropyReference (nearIdentityDefect cEnt sigma) E) ((N₀ : ℤ) + (n : ℤ)))
                 (meanSlotConversionAt d (1 + nearIdentityDefect cEnt sigma)
                     (isotropyKap2 (nearIdentityDefect cEnt sigma)) *
                   slotFamilyValue d Csub (supplyMscSplit d E) delta

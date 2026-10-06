@@ -105,7 +105,7 @@ theorem measureReal_shiftedBadScaleEvent_quenchedProbeEnvelope_le_interpolated_t
         P.real (badScaleEvent Hshift t αbad q) ≤ Real.exp (-Atail) := by
   obtain ⟨Cfluct, Ccrude, Centry, a,
       hCfluct, hCcrude, hCentry, ha, hselected⟩ :=
-    measureReal_shiftedBadScaleEvent_quenchedProbeEnvelope_le_interpolated_component_sum_selected_denominator
+    shiftedBadScaleProbability_le_interpolated_component_sum_selected_denominator
       (d := d) (σ := σ) hσ_pos params
   refine ⟨Cfluct, Ccrude, Centry, a,
     hCfluct, hCcrude, hCentry, ha, ?_⟩
@@ -251,7 +251,7 @@ theorem measureReal_shiftedBadScaleEvent_quenchedProbeEnvelope_le_interpolated_t
 
 /-- Uniform-in-`σ` version of
 `measureReal_shiftedBadScaleEvent_quenchedProbeEnvelope_le_interpolated_tail_of_prefactor_gap`. -/
-theorem measureReal_shiftedBadScaleEvent_quenchedProbeEnvelope_le_interpolated_tail_of_prefactor_gap_uniformAnnealedExponent
+theorem shiftedBadScaleProbability_le_interpolated_tail
     {d : ℕ} [NeZero d]
     (params : QuantitativeCoarseGrainedEllipticityParams d) :
     ∃ Centry a : ℝ, 0 < Centry ∧ 0 < a ∧
@@ -318,7 +318,7 @@ theorem measureReal_shiftedBadScaleEvent_quenchedProbeEnvelope_le_interpolated_t
               Real.exp (Alead - Atail) →
             P.real (badScaleEvent Hshift t αbad q) ≤ Real.exp (-Atail) := by
   obtain ⟨Centry, a, hCentry, ha, hselectedBase⟩ :=
-    measureReal_shiftedBadScaleEvent_quenchedProbeEnvelope_le_interpolated_component_sum_selected_denominator_uniformAnnealedExponent
+    badScaleProbability_le_interpolatedSum_selectedDenominator_annealedExponent
       (d := d) params
   refine ⟨Centry, a, hCentry, ha, ?_⟩
   intro σ hσ_pos
@@ -468,7 +468,7 @@ theorem measureReal_shiftedBadScaleEvent_quenchedProbeEnvelope_le_interpolated_t
 /-- The same tail collapse after discharging the deterministic lower bound on
 the lead tail parameter and the crude-top cutoff by explicit ceiling
 thresholds.  The prefactor gap is the only remaining large-scale condition. -/
-theorem measureReal_shiftedBadScaleEvent_quenchedProbeEnvelope_le_interpolated_tail_of_thresholds_and_prefactor_gap
+theorem shiftedBadScaleProbability_le_interpolated_tail_of_thresholds
     {d : ℕ} [NeZero d] {σ : ℝ}
     (hσ_pos : 0 < σ)
     (params : QuantitativeCoarseGrainedEllipticityParams d) :
@@ -596,9 +596,9 @@ theorem measureReal_shiftedBadScaleEvent_quenchedProbeEnvelope_le_interpolated_t
           Blead] using hpref)
 
 /-- Uniform-in-`σ` version of
-`measureReal_shiftedBadScaleEvent_quenchedProbeEnvelope_le_interpolated_tail_of_thresholds_and_prefactor_gap`.
+`shiftedBadScaleProbability_le_interpolated_tail_of_thresholds`.
 -/
-theorem measureReal_shiftedBadScaleEvent_quenchedProbeEnvelope_le_interpolated_tail_of_thresholds_and_prefactor_gap_uniformAnnealedExponent
+theorem shiftedBadScaleProbability_le_interpolatedTail_of_thresholds
     {d : ℕ} [NeZero d]
     (params : QuantitativeCoarseGrainedEllipticityParams d) :
     ∃ Centry a : ℝ, 0 < Centry ∧ 0 < a ∧
@@ -664,7 +664,7 @@ theorem measureReal_shiftedBadScaleEvent_quenchedProbeEnvelope_le_interpolated_t
               Real.exp (Alead - Atail) →
             P.real (badScaleEvent Hshift t αbad q) ≤ Real.exp (-Atail) := by
   obtain ⟨Centry, a, hCentry, ha, htailBase⟩ :=
-    measureReal_shiftedBadScaleEvent_quenchedProbeEnvelope_le_interpolated_tail_of_prefactor_gap_uniformAnnealedExponent
+    shiftedBadScaleProbability_le_interpolated_tail
       (d := d) params
   refine ⟨Centry, a, hCentry, ha, ?_⟩
   intro σ hσ_pos

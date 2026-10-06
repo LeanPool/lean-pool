@@ -100,6 +100,43 @@ tail-integration step of Rosenthal's inequality. -/
 noncomputable def rosenthalBennettIntegralConst : ℝ :=
   4 * Real.exp 2
 
+private theorem positive_integral_bound_of_three_regions
+    {p : ℝ} (hp : 2 ≤ p) {f : ℝ → ℝ}
+    (hdecomp :
+      ∫ r in Set.Ioi (0 : ℝ), f r =
+        (∫ r in Set.Ioc (0 : ℝ) 1, f r) +
+          ((∫ r in Set.Ioc (1 : ℝ) (Real.exp 2), f r) +
+            (∫ r in Set.Ioi (Real.exp 2), f r)))
+    (hsmall : p * ∫ r in Set.Ioc (0 : ℝ) 1, f r ≤ 1)
+    (hmiddle : p * ∫ r in Set.Ioc (1 : ℝ) (Real.exp 2), f r ≤ (Real.exp 2) ^ p)
+    (htail : p * ∫ r in Set.Ioi (Real.exp 2), f r ≤ 2) :
+    p * ∫ r in Set.Ioi (0 : ℝ), f r ≤ rosenthalBennettIntegralConst ^ p := by
+  have hp_nonneg : 0 ≤ p := le_trans zero_le_two hp
+  have hsum : p * ∫ r in Set.Ioi (0 : ℝ), f r ≤ 1 + (Real.exp 2) ^ p + 2 := by
+    calc
+      p * ∫ r in Set.Ioi (0 : ℝ), f r
+          = (p * ∫ r in Set.Ioc (0 : ℝ) 1, f r) +
+              ((p * ∫ r in Set.Ioc (1 : ℝ) (Real.exp 2), f r) +
+                (p * ∫ r in Set.Ioi (Real.exp 2), f r)) := by
+                  rw [hdecomp]
+                  ring
+      _ ≤ 1 + (Real.exp 2) ^ p + 2 := by linarith [hsmall, hmiddle, htail]
+  have h_one_exp_two : (1 : ℝ) ≤ Real.exp 2 := by
+    exact le_of_lt ((Real.one_lt_exp_iff).2 (by norm_num))
+  have hexp_two_pow_one : 1 ≤ (Real.exp 2) ^ p :=
+    Real.one_le_rpow h_one_exp_two hp_nonneg
+  have hsum' : 1 + (Real.exp 2) ^ p + 2 ≤ 4 * (Real.exp 2) ^ p := by
+    linarith
+  have hfour_le : (4 : ℝ) ≤ (4 : ℝ) ^ p :=
+    Real.self_le_rpow_of_one_le (by norm_num) (by linarith)
+  have hfinal : 4 * (Real.exp 2) ^ p ≤ rosenthalBennettIntegralConst ^ p := by
+    calc
+      4 * (Real.exp 2) ^ p ≤ (4 : ℝ) ^ p * (Real.exp 2) ^ p := by
+        gcongr
+      _ = rosenthalBennettIntegralConst ^ p := by
+        rw [rosenthalBennettIntegralConst, ← Real.mul_rpow (by positivity) (by positivity)]
+  exact hsum.trans (hsum'.trans hfinal)
+
 theorem rosenthal_bennett_kernel_integral_le
     {p : ℝ} (hp : 2 ≤ p) :
     p * ∫ r in Set.Ioi (0 : ℝ),
@@ -286,31 +323,7 @@ theorem rosenthal_bennett_kernel_integral_le
               (∫ r in Set.Ioi (Real.exp 2), f r)) := by
               rw [hsplit2]
               rw [setIntegral_union Set.Ioc_disjoint_Ioi_same measurableSet_Ioi hmid htail]
-  have hsum :
-      p * ∫ r in Set.Ioi (0 : ℝ), f r ≤ 1 + (Real.exp 2) ^ p + 2 := by
-    calc
-      p * ∫ r in Set.Ioi (0 : ℝ), f r
-          = (p * ∫ r in Set.Ioc (0 : ℝ) 1, f r) +
-              ((p * ∫ r in Set.Ioc (1 : ℝ) (Real.exp 2), f r) +
-                (p * ∫ r in Set.Ioi (Real.exp 2), f r)) := by
-                  rw [hdecomp]
-                  ring
-      _ ≤ 1 + (Real.exp 2) ^ p + 2 := by
-            linarith [hsmall_bound, hmid_bound, htail_bound]
-  have hexp_two_pow_one : 1 ≤ (Real.exp 2) ^ p := by
-    exact Real.one_le_rpow h_one_exp_two hp_nonneg
-  have hsum' : 1 + (Real.exp 2) ^ p + 2 ≤ 4 * (Real.exp 2) ^ p := by
-    linarith
-  have hfour_le : (4 : ℝ) ≤ (4 : ℝ) ^ p := by
-    exact Real.self_le_rpow_of_one_le (by norm_num) (by linarith)
-  have hfinal :
-      4 * (Real.exp 2) ^ p ≤ rosenthalBennettIntegralConst ^ p := by
-    calc
-      4 * (Real.exp 2) ^ p ≤ (4 : ℝ) ^ p * (Real.exp 2) ^ p := by
-        gcongr
-      _ = rosenthalBennettIntegralConst ^ p := by
-        rw [rosenthalBennettIntegralConst, ← Real.mul_rpow (by positivity) (by positivity)]
-  exact hsum.trans (hsum'.trans hfinal)
+  exact positive_integral_bound_of_three_regions hp hdecomp hsmall_bound hmid_bound htail_bound
 
 /-- The universal Bennett kernel appearing in the Rosenthal proof is
 integrable on `(0, ∞)`. -/
@@ -545,7 +558,6 @@ theorem integrableOn_rosenthal_bennett_scaled_kernel
 tail formula to the scaled maximum `p M` gives the exact `p^p E[M^p]`
 contribution. -/
 theorem lintegral_rpow_sup'_abs_eq_scaled_tail
-    [IsProbabilityMeasure μ]
     {X : ι → Ω → ℝ} {s : Finset ι} (hs : s.Nonempty) {p : ℝ}
     (hp : 0 < p) (h_meas : ∀ i, Measurable (X i)) :
     ENNReal.ofReal p *

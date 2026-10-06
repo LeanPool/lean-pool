@@ -379,7 +379,7 @@ theorem scalarSolutionComparisonGenuineDualityEstimateSharpLoss_of_component_ful
       cubeScaleNormalizedDualNegativeBesovVectorNormTwo Q t
           (fun x => matVecMul (scalarMatrix (d := d) sigma0) (w x)) ≤
         cubeBesovScaleWeight t Q * ((Fintype.card (Fin d) : ℝ) * B) :=
-    cubeScaleNormalizedDualNegativeBesovVectorNormTwo_le_card_mul_of_forall_component_fullTest_pairing_le
+    cubeScaleNormalizedDualNegativeBesovVectorNormTwo_le_card_mul
       Q t (fun x => matVecMul (scalarMatrix (d := d) sigma0) (w x))
       (B := B)
       (fun i g hg => by
@@ -389,7 +389,7 @@ theorem scalarSolutionComparisonGenuineDualityEstimateSharpLoss_of_component_ful
       cubeScaleNormalizedDualNegativeBesovVectorNormTwo Q t
           (fun x => matVecMul (scalarMatrix (d := d) sigma0) (w x) + F x) ≤
         cubeBesovScaleWeight t Q * ((Fintype.card (Fin d) : ℝ) * B) :=
-    cubeScaleNormalizedDualNegativeBesovVectorNormTwo_le_card_mul_of_forall_component_fullTest_pairing_le
+    cubeScaleNormalizedDualNegativeBesovVectorNormTwo_le_card_mul
       Q t (fun x => matVecMul (scalarMatrix (d := d) sigma0) (w x) + F x)
       (B := B)
       (fun i g hg => by
@@ -448,7 +448,7 @@ Close the genuine-dual scalar solution-comparison estimate from the restored
 LaTeX argument, but using the honest low-exponent coordinate bridge with the
 sharp-boundary loss displayed.
 -/
-theorem scalarSolutionComparisonGenuineDualityEstimateSharpLoss_of_dirichletBesov_of_coordinateBridgeSharpLoss_of_localizedPairing
+theorem scalarSolutionComparisonGenuineDualityEstimateSharpLoss
     {d : ℕ} [NeZero d] {Cdir Cbridge Cpairing : ℝ}
     (hdir : DiscreteConstantCoefficientDirichletBesovFunctionSpacesUniform d Cdir)
     (hbridge : UnitFullDualCoordinateOverlappingBridgeSharpLoss d Cbridge)
@@ -537,7 +537,7 @@ theorem scalarSolutionComparisonGenuineDualityEstimateSharpLoss_of_dirichletBeso
           cubeAverage Q
             (fun x => vecDot (F x)
               (v.toH1Function.grad x + coordinateVectorField i g x)) :=
-      cubeBesovPairing_fluxComparison_component_eq_cubeAverage_fluxDefect_dualGradient_add_coordinate
+      BesovPairing_fluxComparison_component_eq_fluxDefect_dualGradient
         (Q := Q) (sigma0 := sigma0) (w := w) (F := F) (v := v)
         i hg hF hv hw hsol
     have hFOpen : MemVectorL2 (openCubeSet Q) F := by
@@ -877,7 +877,7 @@ theorem ScalarSolutionComparisonGenuineDualityEstimateSharpLoss.to_exponentLoss
 
 /-- Use the sharp-loss half-exponent scalar-background duality estimate on a
 comparison pair. -/
-theorem solutionComparisonNegativeBesovLhs_le_of_scalarSolutionComparisonDualityEstimateHalfExponentSharpLoss
+theorem solutionNegativeBesovLhs_le_of_halfExponentSharpLoss
     {d : ℕ} [NeZero d] {C : ℝ}
     (hduality : ScalarSolutionComparisonDualityEstimateHalfExponentSharpLoss d C)
     (Q : TriadicCube d) (a : CoeffField d) (sigma0 : ℝ)

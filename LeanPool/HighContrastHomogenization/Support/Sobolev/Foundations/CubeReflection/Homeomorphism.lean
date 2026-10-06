@@ -33,6 +33,8 @@ theorem injective_coordFaceReflection {d : ℕ}
   have h := congrArg (coordFaceReflection a i) hxy
   simpa using h
 
+/-- Reflection through the coordinate hyperplane `x i = a`, packaged as an involutive
+homeomorphism. -/
 @[expose]
 def coordFaceReflectionHomeomorph {d : ℕ}
     (a : ℝ) (i : Fin d) : Vec d ≃ₜ Vec d where
@@ -43,11 +45,13 @@ def coordFaceReflectionHomeomorph {d : ℕ}
   continuous_toFun := continuous_coordFaceReflection a i
   continuous_invFun := continuous_coordFaceReflection a i
 
+/-- Reflection through the upper `i`th cube face, packaged as an involutive homeomorphism. -/
 @[expose]
 def cubeUpperFaceReflectionHomeomorph {d : ℕ}
     (Q : TriadicCube d) (i : Fin d) : Vec d ≃ₜ Vec d :=
   coordFaceReflectionHomeomorph (cubeUpperFaceCoord Q i) i
 
+/-- Reflection through the lower `i`th cube face, packaged as an involutive homeomorphism. -/
 @[expose]
 def cubeLowerFaceReflectionHomeomorph {d : ℕ}
     (Q : TriadicCube d) (i : Fin d) : Vec d ≃ₜ Vec d :=

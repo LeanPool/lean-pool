@@ -207,7 +207,7 @@ theorem integrable_fullBlockFluctuationOperatorNormSqWithNormalizer_originCube_f
                   toFullBlockMat (coarseBlockMatrix (cubeSet Q) a.toFun) δ γ)
                 (2 : ENNReal) P := by
             simpa [Q, toFullBlockMat, blockMatEntry] using
-              HCPolySupport.Book.Ch05.Section52.memLp_two_blockMatEntry_coarseBlockMatrix_cubeSet_from_P4
+              HCPolySupport.Book.Ch05.Section52.memLp_two_coarseBlockMatrixEntry_of_P4
                 hP hStruct hP4 n δ γ
           simpa using! hentry.sub
             (memLp_const
@@ -296,7 +296,7 @@ theorem integrable_fullBlockFluctuationOperatorNormSqWithNormalizer_from_P4_of_n
         hP hStruct center S (cubeSet (originCube d R.scale)) z a
   exact hcomp.congr hae.symm
 
-theorem integrable_descendantsAverage_fullBlockFluctuationOperatorNormSqWithNormalizer_from_P4_of_stationary
+theorem fluctuationNormSq_descendantAverage_integrable_from_P4_stationary
     {d : ℕ} [NeZero d] {P : Ch04.RestrictionCoeffLaw d}
     (hP : Ch04.RestrictionLawCarrier P) (hStruct : Ch04.RestrictionStructuralLaw P)
     (hP4 : QuantitativeCoarseGrainedEllipticity P)
@@ -430,7 +430,7 @@ theorem integrable_descendantsAverageFluctuationOperatorNormSqWithNormalizer_fro
               fullBlockFluctuationOperatorNormSqWithNormalizer
                 hP hStruct (m : ℤ) S (cubeSet R) a)) P := by
     simpa [Q, j] using
-      integrable_descendantsAverage_fullBlockFluctuationOperatorNormSqWithNormalizer_from_P4_of_stationary
+      fluctuationNormSq_descendantAverage_integrable_from_P4_stationary
         hP hStruct hP4 m n k hk S
   refine Integrable.mono' hdomInt
     (aemeasurable_descendantsAverageFluctuationOperatorNormSqWithNormalizer
@@ -514,7 +514,7 @@ theorem integrable_blockJTraceAverageSqWithNormalizers_from_P4_of_stationary
 /-- Integrated Section 5.6 variance estimate with quadratic `J` error and
 arbitrary deterministic normalizers.  The manuscript specialization is
 `S = B^{-1/2}` and `T = B^{1/2}`. -/
-theorem fullBlockFluctuationOperatorNormSqAtScaleWithNormalizer_integral_le_two_descendantsAverageWithNormalizer_add_eight_blockJTraceAverageSqWithNormalizers
+theorem fullBlockFluctuationNormSq_integral_le_two_childMean_add_eight_JTraceAverageSq
     {d : ℕ} [NeZero d] {P : Ch04.RestrictionCoeffLaw d}
     (hP : Ch04.RestrictionLawCarrier P) (hStruct : Ch04.RestrictionStructuralLaw P)
     (hP4 : QuantitativeCoarseGrainedEllipticity P)
@@ -555,7 +555,7 @@ theorem fullBlockFluctuationOperatorNormSqAtScaleWithNormalizer_integral_le_two_
         ≤ᵐ[P]
       fun a : RegCoeffField d => 2 * F a + 8 * J a := by
     simpa [F, J, Q, j] using
-      fullBlockFluctuationOperatorNormSqAtScaleWithNormalizer_le_two_descendantsAverageWithNormalizer_add_eight_blockJTraceAverageSqWithNormalizers_ae
+      fullBlockFluctuationNormSq_le_two_childMean_add_eight_JTraceAverageSq_ae
         hP hStruct (m : ℤ) S T Q j
   have hmono :
       ∫ a,

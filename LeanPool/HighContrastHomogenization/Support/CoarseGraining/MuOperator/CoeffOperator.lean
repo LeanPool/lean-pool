@@ -57,6 +57,7 @@ namespace MuCoeffOperatorData
 
 variable {d : ℕ} {U : Set (Vec d)} {a : CoeffField d}
 
+/-- The square root of the block matrix squared norm bound, divided by the real volume of `U`. -/
 @[expose]
 noncomputable def normalizedBlockCoeffOperatorNormBound
     (U : Set (Vec d)) (lam Lam : ℝ) : ℝ :=
@@ -402,7 +403,6 @@ noncomputable def rawBlockCoeffOperatorField {d : ℕ} {U : Set (Vec d)}
 integrable on `U`. -/
 theorem blockPairingIntegrand_integrableOn_of_memBlockL2_of_isEllipticFieldOn
     {d : ℕ} {U : Set (Vec d)} {a : CoeffField d}
-    [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     {lam Lam : ℝ} {X Y : BlockState d}
     (hX : MemBlockL2 U X.eval) (hY : MemBlockL2 U Y.eval)
     (hEll : IsEllipticFieldOn lam Lam U a) :

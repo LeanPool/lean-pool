@@ -37,6 +37,18 @@ manuscript-scale stochastic envelope as the quenched `J` stopping scale:
 
 noncomputable section
 
+private theorem powered_scale_denominator_le_polynomial
+    {scale G θ exponent : ℝ} (hscale : scale ≤ G * θ ^ (2 : ℕ))
+    (hθ : 0 ≤ θ) (hexponent : 0 ≤ exponent) :
+    (max 1 scale) ^ exponent ≤
+      (max 1 G) ^ exponent * (max 1 θ) ^ (2 * exponent) := by
+  have hmax_scale : max 1 scale ≤ max 1 (G * θ ^ (2 : ℕ)) := by
+    refine max_le (le_max_left 1 _) ?_
+    exact hscale.trans (le_max_right 1 _)
+  have hraw : (max 1 scale) ^ exponent ≤ (max 1 (G * θ ^ (2 : ℕ))) ^ exponent :=
+    Real.rpow_le_rpow (le_trans zero_le_one (le_max_left 1 scale)) hmax_scale hexponent
+  exact hraw.trans (rpow_max_one_mul_sq_le_const_mul_rpow hθ hexponent)
+
 /-- The localized unit-ellipticity minimal scale with the note-facing
 `exp(C log^2(2 + thetaHat))` stochastic size. -/
 theorem exists_unitEllipticityMinimalScale_interpolated_expLogSq
@@ -201,26 +213,9 @@ theorem exists_unitEllipticityMinimalScale_interpolated_expLogSq
         (scale := scale) (η := η) (σ := σ) hη_pos hσ_pos.le
   have hBlead_poly :
       Blead ≤ A * (max 1 hΓ.thetaHat) ^ p := by
-    have hmax_scale :
-        max 1 scale ≤ max 1 (G * hΓ.thetaHat ^ (2 : ℕ)) := by
-      refine max_le ?_ ?_
-      · exact le_max_left 1 (G * hΓ.thetaHat ^ (2 : ℕ))
-      · exact hscale_le.trans
-          (le_max_right 1 (G * hΓ.thetaHat ^ (2 : ℕ)))
-    have hraw :
-        (max 1 scale) ^ (σ / η) ≤
-          (max 1 (G * hΓ.thetaHat ^ (2 : ℕ))) ^ (σ / η) := by
-      exact Real.rpow_le_rpow
-        (le_trans zero_le_one (le_max_left 1 scale)) hmax_scale
-        (by positivity)
-    have hpoly :
-        (max 1 (G * hΓ.thetaHat ^ (2 : ℕ))) ^ (σ / η) ≤
-          A * (max 1 hΓ.thetaHat) ^ p := by
-      simpa [A, p] using
-        rpow_max_one_mul_sq_le_const_mul_rpow
-          (A := G) (θ := hΓ.thetaHat) (r := σ / η)
-          hΓ.thetaHat_pos.le (by positivity)
-    simpa [Blead, smallBottomTailDenominator] using hraw.trans hpoly
+    simpa [Blead, smallBottomTailDenominator, A, p] using
+      powered_scale_denominator_le_polynomial hscale_le hΓ.thetaHat_pos.le
+        (div_nonneg hσ_pos.le hη_pos.le)
   have hscaleC :
       C ≤
         Real.exp

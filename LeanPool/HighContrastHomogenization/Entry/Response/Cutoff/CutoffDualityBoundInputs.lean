@@ -250,7 +250,8 @@ section
 ## The negative-Besov duality bound at the pulled-back cutoff data
 
 The generic cutoff-product duality bound
-`Book.Ch05.Section53.JUpperBoundWeakNorms.abs_cubeAverage_vecDot_centered_scalar_cutoff_le_scaledWeakNormProduct`
+`abs_cubeAverage_vecDot_centered_scalar_cutoff_le_scaledWeakNormProduct` in namespace
+`Book.Ch05.Section53.JUpperBoundWeakNorms`
 is the direct full-dual pairing form of `AK.HC` Lemma A.1, (A.4).  This file reads it on the
 reference cube after the linear change of variables of the cutoff argument: with `q = respGrid
 jStar F`

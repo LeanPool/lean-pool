@@ -352,7 +352,7 @@ private theorem centeredOriginNormalizedQuadratic_sq_integral_le_smallContrastCo
         hP hStruct hP4 child q
   have hF_int : Integrable F P := by
     simpa [F] using
-      integrable_origin_fullBlockNormalizedFluctuationOperatorNormSqAtScale_from_P4
+      integrable_fullBlockFluctuationNormSquare_of_P4_atScale
         hP hStruct hP4 (child : ℤ) child
   have hright_int : Integrable (fun a : RegCoeffField d => F a * Dq) P :=
     hF_int.mul_const Dq
@@ -363,7 +363,7 @@ private theorem centeredOriginNormalizedQuadratic_sq_integral_le_smallContrastCo
     filter_upwards with a
     have hmean :
         (∫ b,
-          fullBlockNormalizedQuadraticObservable hP hStruct (child : ℤ) q
+          normalizedQuadraticObservable hP hStruct (child : ℤ) q
             (cubeSet (originCube d (child : ℤ))) b.toFun ∂P) =
           dotProduct q q :=
       integral_origin_fullBlockNormalizedQuadraticObservable_self_eq_dotProduct
@@ -371,21 +371,21 @@ private theorem centeredOriginNormalizedQuadratic_sq_integral_le_smallContrastCo
     have hcenter :
         Ch04.restrictionCenteredOriginObservable P (child : ℤ) X a =
           fullBlockQuadratic
-            (fullBlockNormalizedFluctuationMatrix hP hStruct (child : ℤ)
+            (normalizedFluctuationMatrix hP hStruct (child : ℤ)
               (cubeSet (originCube d (child : ℤ))) a) q := by
       simp only [Ch04.restrictionCenteredOriginObservable, X,
         fullBlockNormalizedQuadraticObservableR]
       rw [hmean]
       exact
-        fullBlockNormalizedQuadraticObservable_sub_dotProduct_eq_fluctuationQuadratic
+        normalizedQuadraticIdentity
           hP hStruct hP4 child q (cubeSet (originCube d (child : ℤ))) a
     have hquad :=
       fullBlockQuadratic_abs_sq_le_operatorNorm_sq_mul_dotProduct_sq
-        (fullBlockNormalizedFluctuationMatrix hP hStruct (child : ℤ)
+        (normalizedFluctuationMatrix hP hStruct (child : ℤ)
           (cubeSet (originCube d (child : ℤ))) a) q
     simpa [X, F, Dq, hcenter,
       Ch04.fullBlockNormalizedFluctuationOperatorNormSqAtScale,
-      fullBlockNormalizedFluctuationOperatorNormSq_eq_norm_sq] using hquad
+      fullBlockFluctuationNormSquare_eq_matrixNormSquare] using hquad
   have hmono :
       ∫ a, |Ch04.restrictionCenteredOriginObservable P (child : ℤ) X a| ^ (2 : ℕ) ∂P ≤
         ∫ a, F a * Dq ∂P :=
@@ -400,7 +400,7 @@ private theorem centeredOriginNormalizedQuadratic_sq_integral_le_smallContrastCo
     have hrefined :
         ∫ a, F a ∂P ≤ refinedMatrixVarianceScaleBound hP4 (1 : ℝ) child := by
       simpa [F] using
-        fullBlockNormalizedFluctuationOperatorNormSqAtScale_integral_le_refinedMatrixVarianceScaleBound
+        fluctuationNormSq_integral_le_refinedMatrixVarianceBound
           hP hStruct hP4 (by norm_num : (0 : ℝ) ≤ 1) child child
           (le_rfl : child ≤ child) hgood_upper hgood_lower
     have hbasic :

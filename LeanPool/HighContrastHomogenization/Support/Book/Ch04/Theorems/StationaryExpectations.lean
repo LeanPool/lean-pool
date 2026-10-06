@@ -69,7 +69,8 @@ theorem coarseBlockMatrix_entry_translation_covariant {d : ℕ}
 structural-law scale.  The lower-right block is the inverse starred scalar. -/
 @[expose]
 noncomputable def scalarAnnealedBlockMatrixAtScale {d : ℕ} [NeZero d]
-    {P : RestrictionCoeffLaw d} (hP : RestrictionLawCarrier P) (hStruct : RestrictionStructuralLaw P)
+    {P : RestrictionCoeffLaw d} (hP : RestrictionLawCarrier P) (hStruct :
+      RestrictionStructuralLaw P)
     (m : ℤ) : BlockMat d :=
   Ch02.blockDiag
     (hP.barSigmaAtScale hStruct m • (1 : Mat d))
@@ -141,7 +142,7 @@ theorem integral_comp_toFun_translation_transfer_of_restrictionStationaryLaw
         fun a : RegCoeffField d =>
           (fun a : RegCoeffField d => X U a.toFun) (translateReg (intVecToRealVec z) a) := by
     funext a
-    show X (translateSet (intVecToRealVec z) U) a.toFun =
+    change X (translateSet (intVecToRealVec z) U) a.toFun =
       X U (translateReg (intVecToRealVec z) a).toFun
     rw [hcov U z a.toFun, translateReg_toFun]
   calc
@@ -166,7 +167,7 @@ theorem isRestrictionTranslationCovariant_comp_toFun {β : Type*} {d : ℕ}
     {X : Set (Vec d) → CoeffField d → β} (hX : IsTranslationCovariant X) :
     IsRestrictionTranslationCovariant (fun U a => X U a.toFun) := by
   intro U z a
-  show X (translateSet (intVecToRealVec z) U) a.toFun =
+  change X (translateSet (intVecToRealVec z) U) a.toFun =
     X U (translateReg (intVecToRealVec z) a).toFun
   rw [hX U z a.toFun, translateReg_toFun]
 
@@ -359,7 +360,7 @@ theorem expectedResponseJCubeSet_eq_originCube_of_mem_descendantsAtScale_originC
 /-- Under stationarity, every coarse block matrix entry on a child cube of an
 origin cube has the same expectation as the corresponding origin-cube entry at
 the child scale. -/
-theorem integral_coarseBlockMatrix_entry_cubeSet_eq_originCube_of_mem_descendantsAtScale_originCube
+theorem integral_coarseBlockEntry_eq_origin_on_originDescendant
     {d : ℕ} [NeZero d] {P : RestrictionCoeffLaw d} (hP : RestrictionLawCarrier P)
     (hstat : RestrictionStationaryLaw P) {n m : ℤ} (hn : 0 ≤ n) (hnm : n ≤ m)
     {R : TriadicCube d} (hR : R ∈ descendantsAtScale (originCube d m) n)
@@ -385,7 +386,7 @@ theorem integral_coarseBlockMatrix_entry_cubeSet_eq_originCube_of_mem_descendant
 nonnegative-scale cube has the same expectation as the corresponding
 origin-cube fluctuation.  The norm is the Euclidean operator norm of the full
 block matrix. -/
-theorem integral_fullBlockNormalizedFluctuationOperatorNormSqAtScale_eq_originCube_of_stationary
+theorem fluctuationOperatorNormSq_integral_eq_origin_of_stationarity
     {d : ℕ} [NeZero d] {P : RestrictionCoeffLaw d} (hP : RestrictionLawCarrier P)
     (hstat : RestrictionStationaryLaw P) (hStruct : RestrictionStructuralLaw P) (center : ℤ)
     (R : TriadicCube d) (hR_nonneg : 0 ≤ R.scale)
@@ -453,7 +454,7 @@ theorem integrable_fullBlockNormalizedFluctuationOperatorNormSqAtScale_of_statio
   have hcomp := hmap.comp_measurable (measurable_translateReg (intVecToRealVec z))
   refine hcomp.congr ?_
   filter_upwards with a
-  show fullBlockNormalizedFluctuationOperatorNormSqAtScale hP hStruct center
+  change fullBlockNormalizedFluctuationOperatorNormSqAtScale hP hStruct center
         (originCube d R.scale) (translateReg (intVecToRealVec z) a) =
       fullBlockNormalizedFluctuationOperatorNormSqAtScale hP hStruct center R a
   simp only [fullBlockNormalizedFluctuationOperatorNormSqAtScale, translateReg_toFun]
@@ -465,7 +466,7 @@ theorem integrable_fullBlockNormalizedFluctuationOperatorNormSqAtScale_of_statio
 /-- Under stationarity, integrability of the origin-cube normalized full-block
 fluctuation at the child scale transfers to descendants of a larger origin
 cube. -/
-theorem integrable_fullBlockNormalizedFluctuationOperatorNormSqAtScale_of_mem_descendantsAtScale_originCube
+theorem fluctuationOperatorNormSq_integrable_on_originDescendants
     {d : ℕ} [NeZero d] {P : RestrictionCoeffLaw d} (hP : RestrictionLawCarrier P)
     (hstat : RestrictionStationaryLaw P) (hStruct : RestrictionStructuralLaw P) (center : ℤ)
     {n m : ℤ} (hn : 0 ≤ n) (hnm : n ≤ m)
@@ -488,7 +489,7 @@ theorem integrable_fullBlockNormalizedFluctuationOperatorNormSqAtScale_of_mem_de
 full-block fluctuation observables is the corresponding origin-cube
 expectation at the descendant scale.  The observable uses the Euclidean
 operator norm of the full block matrix. -/
-theorem integral_descendantsAverage_fullBlockNormalizedFluctuationOperatorNormSqAtScale_eq_originCube_of_stationary
+theorem integral_descendantMean_fullBlockFluctuationNormSq_eq_cube
     {d : ℕ} [NeZero d] {P : RestrictionCoeffLaw d} (hP : RestrictionLawCarrier P)
     (hstat : RestrictionStationaryLaw P) (hStruct : RestrictionStructuralLaw P) (center : ℤ)
     {n m : ℤ} (hn : 0 ≤ n) (hnm : n ≤ m)
@@ -517,7 +518,7 @@ theorem integral_descendantsAverage_fullBlockNormalizedFluctuationOperatorNormSq
     have hRscale : R ∈ descendantsAtScale (originCube d m) n := by
       simpa [Q, j, descendantsAtScale_eq_descendantsAtDepth (originCube d m) hnm] using! hR
     exact
-      hP.integrable_fullBlockNormalizedFluctuationOperatorNormSqAtScale_of_mem_descendantsAtScale_originCube
+      hP.fluctuationOperatorNormSq_integrable_on_originDescendants
         hstat hStruct center hn hnm hRscale hOrigin
   calc
     ∫ a,
@@ -560,7 +561,7 @@ theorem integral_descendantsAverage_fullBlockNormalizedFluctuationOperatorNormSq
             ∫ a,
               fullBlockNormalizedFluctuationOperatorNormSqAtScale
                 hP hStruct center (originCube d R.scale) a ∂P :=
-              hP.integral_fullBlockNormalizedFluctuationOperatorNormSqAtScale_eq_originCube_of_stationary
+              hP.fluctuationOperatorNormSq_integral_eq_origin_of_stationarity
                 hstat hStruct center R hR_nonneg (by simpa [hscale] using hOrigin)
           _ =
             ∫ a,
@@ -597,7 +598,7 @@ theorem integrable_coarseFullBlockMatrixAtCube_of_mem_descendantsAtScale_originC
   have hcomp := hmap.comp_measurable (measurable_translateReg (intVecToRealVec z))
   refine hcomp.congr ?_
   filter_upwards with a
-  show coarseFullBlockMatrixAtCube (originCube d n) (translateReg (intVecToRealVec z) a) =
+  change coarseFullBlockMatrixAtCube (originCube d n) (translateReg (intVecToRealVec z) a) =
       coarseFullBlockMatrixAtCube R a
   simp only [coarseFullBlockMatrixAtCube, coarseFullBlockMatrixObservable, translateReg_toFun]
   rw [hset, coarseBlockMatrix_translateSet_eq_translateCoeffField]
@@ -644,7 +645,7 @@ theorem expectedDescendantsAverageResponseJCubeSet_eq_originCube_of_stationary
 /-- Under stationarity, the expectation of the finite descendant average of
 response observables is the annealed response on the origin cube at the child
 scale. -/
-theorem integral_descendantsAverage_restrictionResponseJObservableCubeSet_eq_originCube_of_stationary
+theorem integral_responseJDescendantAverage_eq_origin_of_stationarity
     {d : ℕ} [NeZero d] {P : RestrictionCoeffLaw d} (hP : RestrictionLawCarrier P)
     (hstat : RestrictionStationaryLaw P) {n m : ℤ} (hn : 0 ≤ n) (hnm : n ≤ m)
     (p q : Vec d)
@@ -667,7 +668,7 @@ theorem integral_descendantsAverage_restrictionResponseJObservableCubeSet_eq_ori
         =
       expectedDescendantsAverageResponseJCubeSet P (originCube d m)
         (Int.toNat (m - n)) p q :=
-        integral_descendantsAverage_restrictionResponseJObservableCubeSet_eq_expectedDescendantsAverageResponseJCubeSet
+        integral_descendantResponseJAverages_eq_expectedResponseJAverages
           (P := P) (Q := originCube d m) (j := Int.toNat (m - n)) p q hJ_depth
     _ = expectedResponseJCubeSet P (originCube d n) p q :=
         hP.expectedDescendantsAverageResponseJCubeSet_eq_originCube_of_stationary
@@ -679,7 +680,7 @@ deterministic weights times the origin-cube expectation under stationarity.
 This is the source theorem for the cancellation step in Section 5.3: Ch5
 supplies the cutoff weights and the scalar identity saying their finite
 descendant average is zero. -/
-theorem integral_weightedDescendantsAverage_restrictionResponseJObservableCubeSet_eq_weight_average_mul_originCube_of_stationary
+theorem integral_weightedResponseJAverages_eq_weightAverage_mul_cubeAverage
     {d : ℕ} [NeZero d] {P : RestrictionCoeffLaw d} (hP : RestrictionLawCarrier P)
     (hstat : RestrictionStationaryLaw P) {n m : ℤ} (hn : 0 ≤ n) (hnm : n ≤ m)
     (weight : TriadicCube d → ℝ) (p q : Vec d)

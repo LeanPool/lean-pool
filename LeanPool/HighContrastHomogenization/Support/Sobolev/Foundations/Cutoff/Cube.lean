@@ -216,7 +216,7 @@ theorem norm_iteratedFDeriv_two_cubeArgument_le {d : ℕ}
     (ρ₂ * cubeRadius Q) ^ 2 / ((ρ₂ * cubeRadius Q) ^ 2 - (ρ₁ * cubeRadius Q) ^ 2)
   have hfun : cubeArgument Q ρ₁ ρ₂ i = fun y : Vec d => f y + g y := by
     funext y
-    simp [f, g]
+    simp only [neg_smul, one_div, Pi.neg_apply, Pi.smul_apply, smul_eq_mul, f, g]
     unfold cubeArgument
     field_simp [hden_pos.ne']
     ring
@@ -355,7 +355,7 @@ theorem fderiv_cubeFactor_apply_basisVec_eq_zero_of_ne {d : ℕ}
 
 /-- The canonical coordinate-product cutoff has zero `i`-direction derivative
 away from the `i`-normal transition collar. -/
-theorem fderiv_cubeCutoff_apply_basisVec_eq_zero_of_abs_sub_center_lt_inner {d : ℕ}
+theorem fderiv_cubeCutoff_basisVec_eq_zero_inner {d : ℕ}
     (θ : QuantitativeTransitionProfile) (Q : TriadicCube d) {ρ₁ ρ₂ : ℝ}
     (hρ₁ : 0 < ρ₁) (hρ₁₂ : ρ₁ < ρ₂) {i : Fin d} {x : Vec d}
     (hx : |x i - cubeCenter Q i| < ρ₁ * cubeRadius Q) :

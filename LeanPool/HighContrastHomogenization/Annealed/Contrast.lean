@@ -23,8 +23,8 @@ public section
 
 The reference text writes the annealed contrast `Θ_m` of `e.Theta.m`
 as a minimum over skew matrices `h` of the conjugated norms
-`|σ̄_*^{-1/2} (σ̄ + (k̄ - h)ᵗ σ̄_*⁻¹ (k̄ - h)) σ̄_*^{-1/2}|`,
-the Schur data being that of the annealed block `𝐀̄(□_m)`.  The encoding
+`|σ_bar_*^{-1/2} (σ_bar + (k_bar - h)ᵗ σ_bar_*⁻¹ (k_bar - h)) σ_bar_*^{-1/2}|`,
+the Schur data being that of the annealed block `𝐀_bar(□_m)`.  The encoding
 `annealedContrast` is instead the Loewner-scaling infimum, and the identification
 of the two is available on symmetric positive definite doubled blocks.
 
@@ -60,9 +60,9 @@ theorem isSymmetricBlockMat_annealedBlock (P : Measure (CoeffSpace d))
 
 /-- **The annealed contrast in printed form.**  On a positive definite annealed
 block, `Θ_m` is the infimum over skew `h` of the conjugated norms
-`|σ̄_*^{-1/2} (σ̄ + (k̄ - h)ᵗ σ̄_*⁻¹ (k̄ - h)) σ̄_*^{-1/2}|`
+`|σ_bar_*^{-1/2} (σ_bar + (k_bar - h)ᵗ σ_bar_*⁻¹ (k_bar - h)) σ_bar_*^{-1/2}|`
 of `e.Theta.m`, the conjugating matrix being the positive
-semidefinite square root of the lower-right block `σ̄_*⁻¹`. -/
+semidefinite square root of the lower-right block `σ_bar_*⁻¹`. -/
 theorem annealedContrast_eq_sInf_conj {P : Measure (CoeffSpace d)} {m : ℤ}
     (hpos : Book.Ch02.BlockPosDef (annealedBlock P (centeredCube d m))) :
     annealedContrast P m =
@@ -93,7 +93,7 @@ theorem annealedContrast_eq_sInf_conj_of_coarseEllipticityDagger [NeZero d]
 
 /-- **`Θ_m` is exactly the printed object.**  Under `e.coarse.ellipticity`
 the annealed contrast of the frozen conclusion is the least value of
-`|σ̄_*^{-1/2} (σ̄ + (k̄ - h)ᵗ σ̄_*⁻¹ (k̄ - h)) σ̄_*^{-1/2}|`
+`|σ_bar_*^{-1/2} (σ_bar + (k_bar - h)ᵗ σ_bar_*⁻¹ (k_bar - h)) σ_bar_*^{-1/2}|`
 over the skew matrices, the bars being the spectral norm: the minimum written at
 `e.Theta.m`, attained, with no infimum reading left over. -/
 theorem isLeast_norm_annealedContrast_of_coarseEllipticityDagger [NeZero d]

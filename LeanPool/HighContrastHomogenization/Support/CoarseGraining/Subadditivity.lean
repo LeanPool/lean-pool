@@ -52,7 +52,7 @@ private theorem volumeAverage_openCubeSet_eq_cubeAverage {d : ℕ} (Q : TriadicC
           rw [setIntegral_cubeSet_eq_setIntegral_openCubeSet]
     _ = cubeAverage Q f := rfl
 
-private theorem volumeAverage_openCubeSet_eq_descendantsAverage_volumeAverage_openCubeSet_of_integrableOn
+private theorem volumeAverage_eq_descendantAverage_of_integrable
     {d : ℕ} (Q : TriadicCube d) (f : Vec d → ℝ)
     (hf : MeasureTheory.IntegrableOn f (openCubeSet Q) MeasureTheory.volume) :
     volumeAverage (openCubeSet Q) f =
@@ -204,7 +204,7 @@ theorem responseJ_subadditive_openCubeSet_childCubes_of_isEllipticFieldOn {d : �
           (fun R => volumeAverage (openCubeSet R)
             (scalarResponseIntegrand (openCubeSet Q) a p q u)) := by
               exact
-                volumeAverage_openCubeSet_eq_descendantsAverage_volumeAverage_openCubeSet_of_integrableOn
+                volumeAverage_eq_descendantAverage_of_integrable
                   Q (scalarResponseIntegrand (openCubeSet Q) a p q u) hrespInt
     _ ≤ descendantsAverage Q 1 (fun R => ResponseJ (openCubeSet R) p q a) := by
           unfold descendantsAverage
@@ -352,7 +352,8 @@ theorem responseJ_subadditive_cubeSet_originCube_descendantsAtDepth_of_isEllipti
     responseJ_subadditive_cubeSet_descendantsAtDepth_of_isEllipticFieldOn
       (Q := originCube d n) j a hEll p q
 
-theorem coarseBlockMatrix_subadditive_openCubeSet_descendantsAtDepth_pair_of_responseJ_blockQuadratic
+theorem
+  coarseBlockMatrix_subadditive_openCubeSet_descendantsAtDepth_pair_of_responseJ_blockQuadratic
     {d : ℕ} (j : ℕ) (Q : TriadicCube d) (a : CoeffField d) {lam Lam : ℝ}
     (hEll : IsEllipticFieldOn lam Lam (openCubeSet Q) a)
     (hRespQ :
@@ -401,7 +402,7 @@ theorem coarseBlockMatrix_subadditive_openCubeSet_descendantsAtDepth_pair_of_res
           intro R hR
           linarith [hRespDesc R hR p q]
 
-theorem coarseBlockMatrix_subadditive_openCubeSet_descendantsAtDepth_blockQuadratic_of_responseJ_blockQuadratic
+theorem coarseMatrix_subadditive_cube_descendants_blockQuadratic
     {d : ℕ} (j : ℕ) (Q : TriadicCube d) (a : CoeffField d) {lam Lam : ℝ}
     (hEll : IsEllipticFieldOn lam Lam (openCubeSet Q) a)
     (hRespQ :
@@ -427,7 +428,7 @@ theorem coarseBlockMatrix_subadditive_openCubeSet_descendantsAtDepth_blockQuadra
     coarseBlockMatrix_subadditive_openCubeSet_descendantsAtDepth_pair_of_responseJ_blockQuadratic
       j Q a hEll hRespQ hRespDesc (-X.1) X.2
 
-theorem coarseBlockMatrix_subadditive_openCubeSet_descendantsAtDepth_in_loewner_order_of_responseJ_blockQuadratic
+theorem coarseMatrix_subadditive_cube_descendants_in_loewner_order_of_blockQuadratic
     {d : ℕ} (j : ℕ) (Q : TriadicCube d) (a : CoeffField d) {lam Lam : ℝ}
     (hEll : IsEllipticFieldOn lam Lam (openCubeSet Q) a)
     (hRespQ :
@@ -453,16 +454,17 @@ theorem coarseBlockMatrix_subadditive_openCubeSet_descendantsAtDepth_in_loewner_
             (1 / 2 : ℝ) * blockVecDot X
               (blockMatVecMul (coarseBlockMatrix (openCubeSet R) a) X)) := by
             exact
-              coarseBlockMatrix_subadditive_openCubeSet_descendantsAtDepth_blockQuadratic_of_responseJ_blockQuadratic
+              coarseMatrix_subadditive_cube_descendants_blockQuadratic
                 j Q a hEll hRespQ hRespDesc X
     _ = (1 / 2 : ℝ) *
           blockVecDot X
             (blockMatVecMul
-              (descendantsAverageBlockMat Q j (fun R => coarseBlockMatrix (openCubeSet R) a)) X) := by
+              (descendantsAverageBlockMat Q j (fun R => coarseBlockMatrix (openCubeSet R) a)) X)
+                := by
             rw [descendantsAverage_smul]
             rw [blockVecDot_blockMatVecMul_descendantsAverageBlockMat]
 
-theorem coarseStarredBlockMatrixInv_subadditive_openCubeSet_descendantsAtDepth_blockQuadratic_of_responseJ_blockQuadratic
+theorem coarseStarredBlockMatrixInv_subadditive_cubeDescendants_of_blockQuadratic
     {d : ℕ} (j : ℕ) (Q : TriadicCube d) (a : CoeffField d) {lam Lam : ℝ}
     (hEll : IsEllipticFieldOn lam Lam (openCubeSet Q) a)
     (hRespQ :
@@ -485,10 +487,10 @@ theorem coarseStarredBlockMatrixInv_subadditive_openCubeSet_descendantsAtDepth_b
           (1 / 2 : ℝ) * blockVecDot X
             (blockMatVecMul (coarseStarredBlockMatrixInv (openCubeSet R) a) X)) := by
   simpa [coarseStarredBlockMatrixInv_eq_blockReflect] using
-    coarseBlockMatrix_subadditive_openCubeSet_descendantsAtDepth_blockQuadratic_of_responseJ_blockQuadratic
+    coarseMatrix_subadditive_cube_descendants_blockQuadratic
       j Q a hEll hRespQ hRespDesc (X.2, X.1)
 
-theorem coarseStarredBlockMatrixInv_subadditive_openCubeSet_descendantsAtDepth_in_loewner_order_of_responseJ_blockQuadratic
+theorem coarseStarredBlockMatrixInv_subadditive_cubeDescendants_in_loewner_of_responseJ
     {d : ℕ} (j : ℕ) (Q : TriadicCube d) (a : CoeffField d) {lam Lam : ℝ}
     (hEll : IsEllipticFieldOn lam Lam (openCubeSet Q) a)
     (hRespQ :
@@ -515,7 +517,7 @@ theorem coarseStarredBlockMatrixInv_subadditive_openCubeSet_descendantsAtDepth_i
             (1 / 2 : ℝ) * blockVecDot X
               (blockMatVecMul (coarseStarredBlockMatrixInv (openCubeSet R) a) X)) := by
             exact
-              coarseStarredBlockMatrixInv_subadditive_openCubeSet_descendantsAtDepth_blockQuadratic_of_responseJ_blockQuadratic
+              coarseStarredBlockMatrixInv_subadditive_cubeDescendants_of_blockQuadratic
                 j Q a hEll hRespQ hRespDesc X
     _ = (1 / 2 : ℝ) *
           blockVecDot X
@@ -525,7 +527,7 @@ theorem coarseStarredBlockMatrixInv_subadditive_openCubeSet_descendantsAtDepth_i
             rw [descendantsAverage_smul]
             rw [blockVecDot_blockMatVecMul_descendantsAverageBlockMat]
 
-theorem coarseStarredBlockMatrixInv_upperLeft_subadditive_openCubeSet_descendantsAtDepth_of_responseJ_blockQuadratic
+theorem coarseStarredBlockMatrixInv_upperLeft_subadditive_cubeDescendants
     {d : ℕ} (j : ℕ) (Q : TriadicCube d) (a : CoeffField d) {lam Lam : ℝ}
     (hEll : IsEllipticFieldOn lam Lam (openCubeSet Q) a)
     (hRespQ :
@@ -548,10 +550,10 @@ theorem coarseStarredBlockMatrixInv_upperLeft_subadditive_openCubeSet_descendant
           (1 / 2 : ℝ) * vecDot p
             (matVecMul (coarseStarredBlockMatrixInv (openCubeSet R) a).upperLeft p)) := by
   simpa [blockVecDot, blockMatVecMul, matVecMul_zero, vecDot_zero_left, vecDot_zero_right] using
-    coarseStarredBlockMatrixInv_subadditive_openCubeSet_descendantsAtDepth_blockQuadratic_of_responseJ_blockQuadratic
+    coarseStarredBlockMatrixInv_subadditive_cubeDescendants_of_blockQuadratic
       j Q a hEll hRespQ hRespDesc (p, 0)
 
-theorem coarseStarredBlockMatrixInv_lowerRight_subadditive_openCubeSet_descendantsAtDepth_of_responseJ_blockQuadratic
+theorem coarseStarredBlockMatrixInv_lowerRight_subadditive_cubeDescendants
     {d : ℕ} (j : ℕ) (Q : TriadicCube d) (a : CoeffField d) {lam Lam : ℝ}
     (hEll : IsEllipticFieldOn lam Lam (openCubeSet Q) a)
     (hRespQ :
@@ -574,7 +576,7 @@ theorem coarseStarredBlockMatrixInv_lowerRight_subadditive_openCubeSet_descendan
           (1 / 2 : ℝ) * vecDot q
             (matVecMul (coarseStarredBlockMatrixInv (openCubeSet R) a).lowerRight q)) := by
   simpa [blockVecDot, blockMatVecMul, matVecMul_zero, vecDot_zero_left, vecDot_zero_right] using
-    coarseStarredBlockMatrixInv_subadditive_openCubeSet_descendantsAtDepth_blockQuadratic_of_responseJ_blockQuadratic
+    coarseStarredBlockMatrixInv_subadditive_cubeDescendants_of_blockQuadratic
       j Q a hEll hRespQ hRespDesc (0, q)
 
 end

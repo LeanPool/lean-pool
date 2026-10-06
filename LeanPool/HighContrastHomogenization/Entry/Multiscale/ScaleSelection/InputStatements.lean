@@ -64,7 +64,8 @@ theorem synchronizedLogDetLoss_nonneg (d : ℕ) (hd : 2 ≤ d)
   apply Finset.sum_nonneg
   intro a ha
   rw [Finset.mem_Icc] at ha
-  exact HCPolySupport.HighContrast.Annealed.logDetLoss_nonneg d hd P γ E Ψ K S hstat hdag jStar hjStar m hm
+  exact HCPolySupport.HighContrast.Annealed.logDetLoss_nonneg d hd P γ E Ψ K S hstat hdag jStar
+    hjStar m hm
     (a - h) a (by omega) (sub_le_self a h0)
 
 theorem profile_add_determinantDrift_nonneg (d : ℕ) (hd : 2 ≤ d)
@@ -74,7 +75,9 @@ theorem profile_add_determinantDrift_nonneg (d : ℕ) (hd : 2 ≤ d)
     (jStar : ℕ) (hj : 2 * d ≤ 3 ^ jStar) (m : Mat d) (hm : m.PosDef)
     (k n : ℤ) (hk : (jStar : ℤ) ≤ k) (hkn : k ≤ n) :
     0 ≤ profile P γ (Geometry.explicitRoundedGrid jStar m) jStar k n +
-      determinantDrift P γ (Geometry.explicitRoundedGrid jStar m) jStar n := by exact add_nonneg (Annealed.bridge_profile_nonneg d hd P γ E Ψ K S hstat hdag jStar hj m hm k n hk hkn) (Annealed.bridge_determinantDrift_nonneg d hd P γ E Ψ K S hstat hdag jStar hj m hm n)
+      determinantDrift P γ (Geometry.explicitRoundedGrid jStar m) jStar n := by exact add_nonneg
+        (Annealed.bridge_profile_nonneg d hd P γ E Ψ K S hstat hdag jStar hj m hm k n hk hkn)
+        (Annealed.bridge_determinantDrift_nonneg d hd P γ E Ψ K S hstat hdag jStar hj m hm n)
 
 /-- `p.successful.short.bridge`: the short-bridge statement with its `B₀(σ,L)` Skolemized. -/
 theorem bridge_skolem (d : ℕ) (hd : 2 ≤ d) (γ : ℝ) (hγ : γ ∈ Set.Ico (0 : ℝ) 1) :
@@ -98,12 +101,14 @@ theorem bridge_skolem (d : ℕ) (hd : 2 ≤ d) (γ : ℝ) (hγ : γ ∈ Set.Ico 
 theorem oneGridBody_mono_src (d : ℕ) (γ Csrc Csrc' C : ℝ) (hle : Csrc ≤ Csrc')
     (hbody : OneGridBody d γ Csrc C) : OneGridBody d γ Csrc' C := by
   intro P E Ψ K S hP hstat hunit hdag h hh L hL jStar hj hsrc
-  exact hbody P E Ψ K S hP hstat hunit hdag h hh L hL jStar hj ((ceil_mul_le_ceil_mul _ _ _ hle (logb_two_mul_nonneg K hdag.one_lt_growthWitness)).trans hsrc)
+  exact hbody P E Ψ K S hP hstat hunit hdag h hh L hL jStar hj ((ceil_mul_le_ceil_mul _ _ _ hle
+    (logb_two_mul_nonneg K hdag.one_lt_growthWitness)).trans hsrc)
 
 theorem transportBody_mono_src (d : ℕ) (γ C Csrc Csrc' : ℝ) (hle : Csrc ≤ Csrc')
     (hbody : TransportBody d γ C Csrc) : TransportBody d γ C Csrc' := by
   intro ρ hρ δ hδ P E Ψ K S hP hstat hunit hdag jStar hj hsrc
-  exact hbody ρ hρ δ hδ P E Ψ K S hP hstat hunit hdag jStar hj ((ceil_mul_le_ceil_mul _ _ _ hle (logb_two_mul_nonneg K hdag.one_lt_growthWitness)).trans hsrc)
+  exact hbody ρ hρ δ hδ P E Ψ K S hP hstat hunit hdag jStar hj ((ceil_mul_le_ceil_mul _ _ _ hle
+    (logb_two_mul_nonneg K hdag.one_lt_growthWitness)).trans hsrc)
 
 theorem bridgeBody_mono_src (d : ℕ) (γ : ℝ) (L₀ : ℕ) (c₀ Csrc Csrc' : ℝ) (B₀ : ℝ → ℕ → ℝ)
     (hle : Csrc ≤ Csrc') (hbody : BridgeBody d γ L₀ c₀ Csrc B₀) :
@@ -111,7 +116,8 @@ theorem bridgeBody_mono_src (d : ℕ) (γ : ℝ) (L₀ : ℕ) (c₀ Csrc Csrc' :
   intro σ hσ L hL
   refine ⟨(hbody σ hσ L hL).1, ?_⟩
   intro P E Ψ K S hP hstat hunit hdag jStar hj hsrc
-  exact (hbody σ hσ L hL).2 P E Ψ K S hP hstat hunit hdag jStar hj ((ceil_mul_le_ceil_mul _ _ _ hle (logb_two_mul_nonneg K hdag.one_lt_growthWitness)).trans hsrc)
+  exact (hbody σ hσ L hL).2 P E Ψ K S hP hstat hunit hdag jStar hj ((ceil_mul_le_ceil_mul _ _ _
+    hle (logb_two_mul_nonneg K hdag.one_lt_growthWitness)).trans hsrc)
 
 /-! ### Group C — the two input statements, repeated at their exact types -/
 
@@ -138,7 +144,8 @@ theorem one_grid_provider_input
                   history P γ (Geometry.explicitRoundedGrid jStar metric) jStar m ≤
                       C * profile P γ (Geometry.explicitRoundedGrid jStar metric) jStar n m ∧
                     (n + (h : ℤ) ≤ m →
-                      profile P γ (Geometry.explicitRoundedGrid jStar metric) jStar n (m + (h : ℤ)) ≤
+                      profile P γ (Geometry.explicitRoundedGrid jStar metric) jStar n (m + (h :
+                        ℤ)) ≤
                         1 / 8 *
                             Real.exp ((bigQ d γ : ℝ) *
                               synchCharge P (Geometry.explicitRoundedGrid jStar metric)
@@ -154,21 +161,26 @@ theorem one_grid_provider_input
                           C * (L : ℝ) *
                             (profile P γ (Geometry.explicitRoundedGrid jStar metric) jStar n m +
                               Real.exp ((bigQ d γ : ℝ) *
-                                detIncrement P (Geometry.explicitRoundedGrid jStar metric) m (m + L)) - 1)) ∧
+                                detIncrement P (Geometry.explicitRoundedGrid jStar metric) m (m
+                                  + L)) - 1)) ∧
                     (m = n →
                       history P γ (Geometry.explicitRoundedGrid jStar metric) jStar n ≤ 1 →
                         profile P γ (Geometry.explicitRoundedGrid jStar metric) jStar n (n + L) ≤
                           C * (L : ℝ) *
                             (history P γ (Geometry.explicitRoundedGrid jStar metric) jStar n +
                               Real.exp ((bigQ d γ : ℝ) *
-                                detIncrement P (Geometry.explicitRoundedGrid jStar metric) n (n + L)) - 1)) ∧
+                                detIncrement P (Geometry.explicitRoundedGrid jStar metric) n (n
+                                  + L)) - 1)) ∧
                     fluctuationHistory P γ (Geometry.explicitRoundedGrid jStar metric) jStar m +
-                          meanHistory P γ (Geometry.explicitRoundedGrid jStar metric) (jStar : ℤ) m +
+                          meanHistory P γ (Geometry.explicitRoundedGrid jStar metric) (jStar :
+                            ℤ) m +
                           determinantDrift P γ (Geometry.explicitRoundedGrid jStar metric) jStar m ≤
                         C * (profile P γ (Geometry.explicitRoundedGrid jStar metric) jStar n m +
-                          determinantDrift P γ (Geometry.explicitRoundedGrid jStar metric) jStar m) ∧
+                          determinantDrift P γ (Geometry.explicitRoundedGrid jStar metric) jStar
+                            m) ∧
                     (n + (h : ℤ) ≤ m →
-                      profile P γ (Geometry.explicitRoundedGrid jStar metric) jStar n (m + (h : ℤ)) +
+                      profile P γ (Geometry.explicitRoundedGrid jStar metric) jStar n (m + (h :
+                        ℤ)) +
                           determinantDrift P γ (Geometry.explicitRoundedGrid jStar metric) jStar
                             (m + (h : ℤ)) ≤
                         1 / 8 *
@@ -176,7 +188,8 @@ theorem one_grid_provider_input
                               synchCharge P (Geometry.explicitRoundedGrid jStar metric)
                                 (h : ℤ) m) *
                             (profile P γ (Geometry.explicitRoundedGrid jStar metric) jStar n m +
-                              determinantDrift P γ (Geometry.explicitRoundedGrid jStar metric) jStar m) +
+                              determinantDrift P γ (Geometry.explicitRoundedGrid jStar metric)
+                                jStar m) +
                           C *
                             (Real.exp ((bigQ d γ : ℝ) *
                                 synchCharge P (Geometry.explicitRoundedGrid jStar metric)
@@ -191,12 +204,15 @@ theorem one_grid_provider_input
                               (m₀ + 1 - (h : ℤ)) (m₀ + (Ksteps : ℤ) * (h : ℤ))) ∧
                     ((m = n ∨ n + (h : ℤ) ≤ m) →
                       profile P γ (Geometry.explicitRoundedGrid jStar metric) jStar n m +
-                          determinantDrift P γ (Geometry.explicitRoundedGrid jStar metric) jStar m ≤ 1 →
+                          determinantDrift P γ (Geometry.explicitRoundedGrid jStar metric) jStar
+                            m ≤ 1 →
                         profile P γ (Geometry.explicitRoundedGrid jStar metric) jStar n (m + L) +
-                            determinantDrift P γ (Geometry.explicitRoundedGrid jStar metric) jStar (m + L) ≤
+                            determinantDrift P γ (Geometry.explicitRoundedGrid jStar metric)
+                              jStar (m + L) ≤
                           C * (L : ℝ) *
                             (profile P γ (Geometry.explicitRoundedGrid jStar metric) jStar n m +
-                              determinantDrift P γ (Geometry.explicitRoundedGrid jStar metric) jStar m +
+                              determinantDrift P γ (Geometry.explicitRoundedGrid jStar metric)
+                                jStar m +
                               Real.exp ((bigQ d γ : ℝ) *
                                 detIncrement P (Geometry.explicitRoundedGrid jStar metric) m
                                   (m + L)) - 1)) :=
@@ -223,8 +239,10 @@ theorem two_grid_transport_provider_input
               ∀ (m mPlus : Mat d), m.PosDef → mPlus.PosDef →
                 ∀ k n : ℤ, (jStar : ℤ) ≤ k → k ≤ n →
                   ∀ L : ℕ,
-                    HighContrast.adaptedCell (Geometry.explicitRoundedGrid jStar m) (n + 2 * (L : ℤ)) ∪
-                        HighContrast.adaptedCell (Geometry.explicitRoundedGrid jStar mPlus) (n + (L : ℤ)) ⊆
+                    HighContrast.adaptedCell (Geometry.explicitRoundedGrid jStar m) (n + 2 * (L
+                      : ℤ)) ∪
+                        HighContrast.adaptedCell (Geometry.explicitRoundedGrid jStar mPlus) (n +
+                          (L : ℤ)) ⊆
                       HighContrast.centeredCube d (2 * (jStar : ℤ)) →
                     C * ((L : ℝ) +
                         Real.logb 3 ((2 + aspectRatio E) * (‖m‖ * ‖m⁻¹‖))) ≤
@@ -242,7 +260,8 @@ theorem two_grid_transport_provider_input
                     BlockMatLoewnerLE
                         (adaptedMean P (Geometry.explicitRoundedGrid jStar mPlus) (n + (L : ℤ)))
                         (blockScale (1 + δ)
-                          (adaptedMean P (Geometry.explicitRoundedGrid jStar m) (n + 2 * (L : ℤ)))) →
+                          (adaptedMean P (Geometry.explicitRoundedGrid jStar m) (n + 2 * (L :
+                            ℤ)))) →
                     profile P γ (Geometry.explicitRoundedGrid jStar mPlus) jStar (n + (L : ℤ))
                           (n + (L : ℤ)) +
                         determinantDrift P γ (Geometry.explicitRoundedGrid jStar mPlus) jStar

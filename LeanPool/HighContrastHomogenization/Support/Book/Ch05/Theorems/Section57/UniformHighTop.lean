@@ -38,7 +38,8 @@ noncomputable section
 
 /-- Endpoint high-top component estimate after rewriting the localized
 `Γ_2` branch with the endpoint exponent `d`. -/
-theorem measureReal_shiftedHighTopBadScaleEvent_quenchedProbeEnvelope_le_weighted_kernel_gammaInfinity
+theorem
+  measureReal_shiftedHighTopBadScaleEvent_quenchedProbeEnvelope_le_weighted_kernel_gammaInfinity
     {d : ℕ} [NeZero d]
     (params : QuantitativeCoarseGrainedEllipticityParams d) :
     ∃ Cfluct Centry a : ℝ,
@@ -171,7 +172,7 @@ theorem measureReal_shiftedHighTopBadScaleEvent_quenchedProbeEnvelope_le_weighte
           (Real.exp (-(Aold ^ (2 : ℝ))) *
             weightedLinearExpKernelConst w (ρtop ^ (2 : ℝ))) := by
     have htop :=
-      measureReal_shiftedHighTopBadScaleEvent_quenchedProbeEnvelope_le_weighted_kernel_of_badPair_bound
+      shiftedHighTopBadScaleMeasure_le_weightedKernel_of_pairBound
         (d := d) (σ := (2 : ℝ)) (Cfluct := Cfluct)
         (Centry := Centry) (a := a)
         (by norm_num : (0 : ℝ) < (2 : ℝ))

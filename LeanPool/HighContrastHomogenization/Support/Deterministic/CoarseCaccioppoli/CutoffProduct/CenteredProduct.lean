@@ -52,7 +52,8 @@ theorem cubeL2ScalarPartialSeminormTwo_le_note_rhs_of_meanZero_projectedDualMean
             (cubeLpNorm_two_le_note_rhs_of_meanZero_projectedDualMeanZeroPoincareEstimate
               Q N v g hv hproj hg havg hC) hfactor_nonneg
 
-theorem cubeL2ScalarPartialSeminormTwo_fluctuation_le_note_rhs_of_projectedDualMeanZeroPoincareEstimate
+theorem
+  cubeL2ScalarPartialSeminormTwo_fluctuation_le_note_rhs_of_projectedDualMeanZeroPoincareEstimate
     {d : ℕ} (Q : TriadicCube d) (s : ℝ) (N : ℕ) (u g : Vec d → ℝ) {C : ℝ}
     (hu : MeasureTheory.MemLp u (2 : ℝ≥0∞) (normalizedCubeMeasure Q))
     (hproj : CubeDescendantProjectedDualMeanZeroPoincareEstimate Q C (cubeFluctuation Q u) g N)
@@ -220,7 +221,7 @@ theorem cubeLpNorm_two_le_note_rhs_of_meanZero_dualFullVectorPoincareEstimate
     _ = ((3 / 2 : ℝ) * C * (3 : ℝ) ^ ((d : ℝ) + 1)) *
           ((Fintype.card (Fin d) : ℝ) * Bcirc) := by ring
 
-theorem cubeL2ScalarPartialSeminormTwo_fluctuation_le_note_rhs_of_projectedDualMeanZeroVectorPoincareEstimate
+theorem cubeL2ScalarPartialSeminormTwo_fluctuation_le_note_rhs
     {d : ℕ} (Q : TriadicCube d) (s : ℝ) (N : ℕ) (u : Vec d → ℝ)
     (G : Vec d → Vec d) {C Bcirc : ℝ}
     (hu : MeasureTheory.MemLp u (2 : ℝ≥0∞) (normalizedCubeMeasure Q))
@@ -297,7 +298,7 @@ theorem cubeL2ScalarPartialSeminormTwo_fluctuation_le_note_rhs_of_dualFullVector
               (cubeAverage_cubeFluctuation Q u) hC hBcirc hGcirc) hfactor_nonneg
 
 theorem
-    abs_cubeAverage_vecDot_centered_scalar_smul_le_collapsed_average_note_terms_of_partialBounds_of_projectedDualMeanZeroPoincareEstimate
+    abs_cubeAverage_vectorDot_centered_scalar_smul_le_noteTerms_of_partialBounds
     {d : ℕ} (Q : TriadicCube d) (s : ℝ) (flux : Vec d → Vec d)
     (u g : Vec d → ℝ) (ξ : Vec d → Vec d) {Bu Bg Bavg Bcirc1 C : ℝ}
     (hs : 0 < s)
@@ -391,7 +392,7 @@ theorem
               exact add_le_add havgTerm le_rfl
 
 theorem
-    abs_cubeAverage_vecDot_centered_scalar_smul_le_collapsed_sharp_average_note_terms_of_partialBounds_of_projectedDualMeanZeroPoincareEstimate
+    abs_cubeAverage_vectorDot_centered_scalar_smul_le_of_partialBounds
     {d : ℕ} (Q : TriadicCube d) (s : ℝ) (flux : Vec d → Vec d)
     (u g : Vec d → ℝ) (ξ : Vec d → Vec d) {Bu Bg Bavg Bcirc1 C : ℝ}
     (hs : 0 < s)
@@ -482,7 +483,7 @@ theorem
               exact add_le_add havgTerm le_rfl
 
 theorem
-    abs_cubeAverage_vecDot_centered_scalar_smul_le_collapsed_average_note_terms_of_partialBounds_of_projectedDualMeanZeroVectorPoincareEstimate
+    abs_cubeAverage_vectorDot_centered_scalar_smul_le_partialPoincareBounds
     {d : ℕ} (Q : TriadicCube d) (s : ℝ) (flux : Vec d → Vec d)
     (u : Vec d → ℝ) (G : Vec d → Vec d) (ξ : Vec d → Vec d)
     {Bu Bg Bavg Bcirc1 C : ℝ}
@@ -576,7 +577,7 @@ theorem
               exact add_le_add havgTerm le_rfl
 
 theorem
-    abs_cubeAverage_vecDot_centered_scalar_smul_le_collapsed_sharp_average_note_terms_of_partialBounds_of_projectedDualMeanZeroVectorPoincareEstimate
+    abs_cubeAverage_vectorDot_centered_scalar_smul_le_sharpPartialPoincareBounds
     {d : ℕ} (Q : TriadicCube d) (s : ℝ) (flux : Vec d → Vec d)
     (u : Vec d → ℝ) (G : Vec d → Vec d) (ξ : Vec d → Vec d)
     {Bu Bg Bavg Bcirc1 C : ℝ}
@@ -702,7 +703,7 @@ theorem cubeBesovPositiveVectorPartialSeminormTwo_centered_scalar_smul_le_poinca
         cubeLpNorm Q ∞ ξ *
           cubeBesovPositiveScalarPartialSeminormTwo Q s N (cubeFluctuation Q u)) := by
             simpa [cubeFluctuation] using!
-              cubeBesovPositiveVectorPartialSeminormTwo_centered_scalar_smul_le_cutoff_terms_of_contDiff_component_bound
+              cubeBesovPositiveVectorPartialSeminormTwo_centered_scalar_smul_le_cutoff_terms
                 Q s N u ξ hB hu hξLp hξ hderiv
     _ ≤
       2 * (cubeScaleFactor Q * B *
@@ -798,7 +799,7 @@ theorem cubeBesovPositiveVectorPartialSeminormTwo_centered_scalar_smul_le_note_p
     cubeBesovPositiveVectorPartialSeminormTwo_centered_scalar_smul_le_poincare_cutoff_terms
       Q s N u g ξ hB hu hproj hg hξLp hξ hderiv hs1 hC
   have hpos :=
-    hproj.fluctuation_positiveScalarPartialSeminormTwo_le_note_rhs
+    hproj.projectedFluctuation_scalarBesov_le_bound
       (u := u) (hg := hg) hs0 hC
   have hterm2 :
       cubeLpNorm Q ∞ ξ * cubeBesovPositiveScalarPartialSeminormTwo Q s N (cubeFluctuation Q u) ≤
@@ -827,7 +828,7 @@ theorem cubeBesovPositiveVectorPartialSeminormTwo_centered_scalar_smul_le_note_p
               cubeBesovCircPartialNorm Q (1 - s) (2 : ℝ≥0∞) (1 : ℝ≥0∞) N g))) := by
           exact mul_le_mul_of_nonneg_left (add_le_add le_rfl hterm2) (by norm_num)
 
-theorem cubeBesovPositiveVectorPartialSeminormTwo_centered_scalar_smul_le_note_vector_poincare_cutoff_terms
+theorem cubeBesovPositiveVectorPartial_centered_smul_le_poincareCutoff
     {d : ℕ} (Q : TriadicCube d) (s : ℝ) (N : ℕ) (u : Vec d → ℝ)
     (G : Vec d → Vec d) (ξ : Vec d → Vec d) {B C Bcirc1 BcircS : ℝ}
     (hB : 0 ≤ B)
@@ -859,17 +860,17 @@ theorem cubeBesovPositiveVectorPartialSeminormTwo_centered_scalar_smul_le_note_v
               (1 - (3 : ℝ) ^ (-s))⁻¹) *
               ((Fintype.card (Fin d) : ℝ) * BcircS)))) := by
   have hpartial :=
-    cubeBesovPositiveVectorPartialSeminormTwo_centered_scalar_smul_le_cutoff_terms_of_contDiff_component_bound
+    cubeBesovPositiveVectorPartialSeminormTwo_centered_scalar_smul_le_cutoff_terms
       Q s N u ξ hB hu hξLp hξ hderiv
   have hraw :
       cubeL2ScalarPartialSeminormTwo Q (s - 1) N (cubeFluctuation Q u) ≤
         Real.sqrt ((1 - Real.rpow (3 : ℝ) (2 * (s - 1)))⁻¹) *
           (((3 / 2 : ℝ) * C * (3 : ℝ) ^ ((d : ℝ) + 1)) *
             ((Fintype.card (Fin d) : ℝ) * Bcirc1)) :=
-    cubeL2ScalarPartialSeminormTwo_fluctuation_le_note_rhs_of_projectedDualMeanZeroVectorPoincareEstimate
+    cubeL2ScalarPartialSeminormTwo_fluctuation_le_note_rhs
       Q s N u G hu hproj hG hs1 hC hGcirc1
   have hpos :=
-    CubeDescendantProjectedDualMeanZeroVectorPoincareEstimate.fluctuation_positiveScalarPartialSeminormTwo_le_note_rhs_of_component_bound
+    CubeDescendantProjectedDualMeanZeroVectorPoincareEstimate.fluctuationScalarBesov_le_bound
       (Q := Q) (s := s) (C := C) (Bcirc := BcircS) (u := u) (G := G)
       (M := N) hproj hG hs0 hC hBcircS hGcircS
   have hcoeff_nonneg : 0 ≤ cubeScaleFactor Q * B := by

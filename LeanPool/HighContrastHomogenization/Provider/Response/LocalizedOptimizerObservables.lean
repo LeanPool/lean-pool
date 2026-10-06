@@ -167,8 +167,10 @@ theorem memScalarL2_indicator_cutoffOscillation [NeZero d] {q : Mat d} (hq : q.P
   refine memScalarL2_indicator_of_bounded hV
     (((Response.adaptedPreYoungCutoff_smooth hq t).continuous).sub continuous_const)
     (C := 2 + |m|) (by positivity) fun x => ?_
-  have h0 : 0 ≤ Response.adaptedPreYoungCutoff q hq t x := Response.adaptedPreYoungCutoff_nonneg hq t x
-  have h2 : Response.adaptedPreYoungCutoff q hq t x ≤ 2 := Response.adaptedPreYoungCutoff_le_two hq t x
+  have h0 : 0 ≤ Response.adaptedPreYoungCutoff q hq t x := Response.adaptedPreYoungCutoff_nonneg
+    hq t x
+  have h2 : Response.adaptedPreYoungCutoff q hq t x ≤ 2 := Response.adaptedPreYoungCutoff_le_two
+    hq t x
   have hmabs : -|m| ≤ m ∧ m ≤ |m| := ⟨neg_abs_le m, le_abs_self m⟩
   rw [abs_le]
   constructor
@@ -273,7 +275,8 @@ theorem measurable_toFullBlockVec_blockCellAverage_diagonalWeakState_subSkew
     (hVU : V ⊆ adaptedCell q t) (hVfin : volume V ≠ ⊤) :
     Measurable fun a : CoeffSpace d =>
       toFullBlockVec
-        (Response.blockCellAverage V (Response.diagonalWeakState hq t (a.subSkew g hg) p r)) alpha := by
+        (Response.blockCellAverage V (Response.diagonalWeakState hq t (a.subSkew g hg) p r))
+          alpha := by
   have hw : MemScalarL2 (adaptedCell q t)
       (Set.indicator V fun _ => (1 : ℝ)) := by
     refine MeasureTheory.memLp_indicator_const (p := (2 : ℝ≥0∞)) (μ := volumeMeasureOn
@@ -283,7 +286,8 @@ theorem measurable_toFullBlockVec_blockCellAverage_diagonalWeakState_subSkew
     exact ne_top_of_le_ne_top hVfin hle
   have hrw : (fun a : CoeffSpace d =>
       toFullBlockVec
-        (Response.blockCellAverage V (Response.diagonalWeakState hq t (a.subSkew g hg) p r)) alpha) =
+        (Response.blockCellAverage V (Response.diagonalWeakState hq t (a.subSkew g hg) p r))
+          alpha) =
       fun a : CoeffSpace d =>
         volumeAverage V (fun x =>
           (1 : ℝ) *
@@ -330,7 +334,7 @@ theorem aestronglyMeasurable_volumeAverage_weighted_diagonalWeakState_subSkew_al
 
 /-- **The adjoint block cell average of the terminal optimizer state on an
 aligned child cell is measurable.** -/
-theorem aestronglyMeasurable_blockCellAverage_diagonalWeakAdjointState_subSkew_alignedIndex
+theorem aestronglyMeasurable_alignedCellAverage_diagonalAdjointState
     {q : Mat d} (hq : q.PosDef) {s t : ℤ} (hst : s ≤ t)
     (P : Measure (CoeffSpace d)) (g : Mat d) (hg : IsSkewMat g) (p r : Vec d)
     {w : Fin d → ℤ} (hw : w ∈ Response.alignedIndex q s t) (alpha : BlockCoord d) :
@@ -374,7 +378,7 @@ theorem aestronglyMeasurable_blockCellAverage_diagonalWeakAdjointState_subSkew_a
 
 /-- **The adjoint localized oscillation readout of the terminal optimizer state
 on an aligned child cell is measurable.** -/
-theorem aestronglyMeasurable_volumeAverage_weighted_diagonalWeakAdjointState_subSkew_alignedIndex
+theorem aestronglyMeasurable_weightedCellAverage_diagonalAdjointState
     {q : Mat d} (hq : q.PosDef) {s t : ℤ} (hst : s ≤ t)
     (P : Measure (CoeffSpace d)) (g : Mat d) (hg : IsSkewMat g) (p r : Vec d)
     {w : Fin d → ℤ} (hw : w ∈ Response.alignedIndex q s t) (alpha : BlockCoord d)

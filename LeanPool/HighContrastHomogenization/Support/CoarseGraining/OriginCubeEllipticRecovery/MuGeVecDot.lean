@@ -53,7 +53,7 @@ This exposes the existing deterministic pair-half reconstruction directly from
 identity `Mu(U; (0,q), a) = ResponseJ(U; 0, q, a)`.
 -/
 theorem
-    exists_blockResponsePairHalfState_ae_eq_recoveredField_openCubeSet_originCube_of_isEllipticFieldOn
+    exists_responsePairHalfState_ae_eq_recoveredField_of_ellipticity
     {d : ℕ} {n : ℤ}
     (R : PotentialSolenoidalL2RecoveryData (openCubeSet (originCube d n)))
     {lam Lam : ℝ} {a : CoeffField d}
@@ -67,8 +67,10 @@ theorem
           AHarmonicFunction (HCPolySupport.adjointCoeffField a)
             (openCubeSet (originCube d n)),
         (fun x =>
-          (blockResponsePairHalfState a u v).eval x) =ᵐ[volumeMeasureOn (openCubeSet (originCube d n))]
-            fun x => ((R.toMuCorrectionSpaceRecoveryData).recoveredField system (0, q0)).eval x := by
+          (blockResponsePairHalfState a u v).eval x) =ᵐ[volumeMeasureOn (openCubeSet (originCube
+            d n))]
+            fun x => ((R.toMuCorrectionSpaceRecoveryData).recoveredField system (0, q0)).eval x
+              := by
   let U : Set (Vec d) := openCubeSet (originCube d n)
   let hCube : IsOpenBoundedConvexDomain U := by
     simpa [U] using isOpenBoundedConvexDomain_openCubeSet (originCube d n)
@@ -80,11 +82,11 @@ theorem
   have hvol : (MeasureTheory.volume U).toReal ≠ 0 :=
     (volume_openCubeSet_originCube_toReal_pos (d := d) n).ne'
   simpa [U, system] using
-    (R.toMuCorrectionSpaceRecoveryData).exists_blockResponsePairHalfState_ae_eq_recoveredField_zero_right_of_isEllipticFieldOn_of_isOpenBoundedConvexDomain
+    (R.toMuCorrectionSpaceRecoveryData).exists_responseHalfState_ae_eq_recoveredZeroRight
       (a := a) system hCube hEll hvol q0
 
 theorem
-    exists_blockResponsePairHalfState_ae_eq_recoveredField_openCubeSet_originCube_of_isEllipticFieldOn_of_blockVec
+    exists_blockResponseHalfState_ae_eq_recoveredField_cube_of_ellipticField
     {d : ℕ} {n : ℤ}
     (R : PotentialSolenoidalL2RecoveryData (openCubeSet (originCube d n)))
     {lam Lam : ℝ} {a : CoeffField d}
@@ -98,7 +100,8 @@ theorem
           AHarmonicFunction (HCPolySupport.adjointCoeffField a)
             (openCubeSet (originCube d n)),
         (fun x =>
-          (blockResponsePairHalfState a u v).eval x) =ᵐ[volumeMeasureOn (openCubeSet (originCube d n))]
+          (blockResponsePairHalfState a u v).eval x) =ᵐ[volumeMeasureOn (openCubeSet (originCube
+            d n))]
             fun x => ((R.toMuCorrectionSpaceRecoveryData).recoveredField system P).eval x := by
   let U : Set (Vec d) := openCubeSet (originCube d n)
   let hCube : IsOpenBoundedConvexDomain U := by
@@ -111,11 +114,11 @@ theorem
   have hvol : (MeasureTheory.volume U).toReal ≠ 0 :=
     (volume_openCubeSet_originCube_toReal_pos (d := d) n).ne'
   simpa [U, system] using
-    (R.toMuCorrectionSpaceRecoveryData).exists_blockResponsePairHalfState_ae_eq_recoveredField_of_isEllipticFieldOn_of_isOpenBoundedConvexDomain
+    (R.toMuCorrectionSpaceRecoveryData).exists_responseHalfState_ae_eq_recoveredField
       (a := a) system hCube hEll hvol P
 
 theorem
-    exists_blockResponsePairHalfState_ae_eq_recoveredField_openCubeSet_originCube_of_hasOpenCubeEllipticRecoveryData
+    exists_blockResponseHalfState_ae_eq_recoveredField_cube
     {d : ℕ} {n : ℤ}
     (R : PotentialSolenoidalL2RecoveryData (openCubeSet (originCube d n)))
     {lam Lam : ℝ} {a : CoeffField d}
@@ -130,15 +133,17 @@ theorem
           AHarmonicFunction (HCPolySupport.adjointCoeffField a)
             (openCubeSet (originCube d n)),
         (fun x =>
-          (blockResponsePairHalfState a u v).eval x) =ᵐ[volumeMeasureOn (openCubeSet (originCube d n))]
-            fun x => ((R.toMuCorrectionSpaceRecoveryData).recoveredField system (0, q0)).eval x := by
+          (blockResponsePairHalfState a u v).eval x) =ᵐ[volumeMeasureOn (openCubeSet (originCube
+            d n))]
+            fun x => ((R.toMuCorrectionSpaceRecoveryData).recoveredField system (0, q0)).eval x
+              := by
   rcases hData with ⟨hEll, _hCompat⟩
   simpa using
-    exists_blockResponsePairHalfState_ae_eq_recoveredField_openCubeSet_originCube_of_isEllipticFieldOn
+    exists_responsePairHalfState_ae_eq_recoveredField_of_ellipticity
       (R := R) (a := a) hEll q0
 
 theorem
-    exists_blockResponsePairHalfState_ae_eq_recoveredField_openCubeSet_originCube_of_hasOpenCubeEllipticRecoveryData_of_blockVec
+    exists_blockResponseHalfState_ae_eq_recoveredField_cube_of_blockVec
     {d : ℕ} {n : ℤ}
     (R : PotentialSolenoidalL2RecoveryData (openCubeSet (originCube d n)))
     {lam Lam : ℝ} {a : CoeffField d}
@@ -153,11 +158,12 @@ theorem
           AHarmonicFunction (HCPolySupport.adjointCoeffField a)
             (openCubeSet (originCube d n)),
         (fun x =>
-          (blockResponsePairHalfState a u v).eval x) =ᵐ[volumeMeasureOn (openCubeSet (originCube d n))]
+          (blockResponsePairHalfState a u v).eval x) =ᵐ[volumeMeasureOn (openCubeSet (originCube
+            d n))]
             fun x => ((R.toMuCorrectionSpaceRecoveryData).recoveredField system P).eval x := by
   rcases hData with ⟨hEll, _hCompat⟩
   simpa using
-    exists_blockResponsePairHalfState_ae_eq_recoveredField_openCubeSet_originCube_of_isEllipticFieldOn_of_blockVec
+    exists_blockResponseHalfState_ae_eq_recoveredField_cube_of_ellipticField
       (R := R) (a := a) hEll P
 
 theorem
@@ -176,7 +182,8 @@ theorem
           AHarmonicFunction (HCPolySupport.adjointCoeffField a)
             (openCubeSet (originCube d n)),
         ((fun x =>
-          (blockResponsePairHalfState a u v).eval x) =ᵐ[volumeMeasureOn (openCubeSet (originCube d n))]
+          (blockResponsePairHalfState a u v).eval x) =ᵐ[volumeMeasureOn (openCubeSet (originCube
+            d n))]
             fun x => ((R.toMuCorrectionSpaceRecoveryData).recoveredField system (0, q0)).eval x) ∧
         ∀ p pStar q qStar : Vec d,
           volumeAverage (openCubeSet (originCube d n))
@@ -201,7 +208,7 @@ theorem
     R.toMuOperatorSystemDataOfIsEllipticFieldOn hEll
       (volume_openCubeSet_originCube_toReal_pos (d := d) n)
   rcases
-      exists_blockResponsePairHalfState_ae_eq_recoveredField_openCubeSet_originCube_of_isEllipticFieldOn
+      exists_responsePairHalfState_ae_eq_recoveredField_of_ellipticity
         (R := R) (a := a) hEll q0 with
     ⟨u, v, hEq⟩
   have hSplit :
@@ -217,7 +224,8 @@ theorem
                   (pStar + p) (qStar + q) v) := by
     intro p pStar q qStar
     have hIntegrandEq :
-        blockResponseIntegrand a (p, q) (qStar, pStar) (blockResponsePairHalfState a u v) =ᵐ[volumeMeasureOn U]
+        blockResponseIntegrand a (p, q) (qStar, pStar) (blockResponsePairHalfState a u v)
+          =ᵐ[volumeMeasureOn U]
           blockResponseIntegrand a (p, q) (qStar, pStar)
             ((R.toMuCorrectionSpaceRecoveryData).recoveredField system (0, q0)) := by
       filter_upwards [hEq] with x hx
@@ -230,7 +238,8 @@ theorem
             (blockResponseIntegrand a (p, q) (qStar, pStar)
               ((R.toMuCorrectionSpaceRecoveryData).recoveredField system (0, q0))) =
           volumeAverage U
-            (blockResponseIntegrand a (p, q) (qStar, pStar) (blockResponsePairHalfState a u v)) := by
+            (blockResponseIntegrand a (p, q) (qStar, pStar) (blockResponsePairHalfState a u v))
+              := by
       unfold volumeAverage
       congr 1
       exact MeasureTheory.integral_congr_ae hIntegrandEq.symm
@@ -239,14 +248,15 @@ theorem
           (blockResponseIntegrand a (p, q) (qStar, pStar)
             ((R.toMuCorrectionSpaceRecoveryData).recoveredField system (0, q0))) =
         volumeAverage U
-          (blockResponseIntegrand a (p, q) (qStar, pStar) (blockResponsePairHalfState a u v)) := hAvgEq
+          (blockResponseIntegrand a (p, q) (qStar, pStar) (blockResponsePairHalfState a u v)) :=
+            hAvgEq
       _ = (1 / 2 : ℝ) * volumeAverage U (scalarResponseIntegrand U a (p - pStar) (qStar - q) u) +
             (1 / 2 : ℝ) *
               volumeAverage U
                 (scalarResponseIntegrand U (HCPolySupport.adjointCoeffField a)
                   (pStar + p) (qStar + q) v) := by
             exact
-              volumeAverage_blockResponseIntegrand_pair_half_eq_scalarResponse_sum_of_isEllipticFieldOn
+              volumeAverage_halfBlockPair_eq_scalarResponseSum_of_ellipticity
                 (a := a) hCube.1.measurableSet hEll p pStar q qStar u v
   exact ⟨u, v, hEq, by simpa [U, system] using hSplit⟩
 
@@ -260,7 +270,7 @@ scalar response value. The remaining bridge is therefore exactly the derivation
 of the `hPairFirst` first-variation clause from recovery data.
 -/
 theorem
-    mu_zero_right_eq_responseJ_zero_openCubeSet_originCube_of_hasOpenCubeEllipticRecoveryData_of_exists_recovered_pair_firstVariation_eq_zero
+    mu_zero_right_eq_responseJ_zero_cube_of_hasOpenCubeEllipticRecoveryData
     {d : ℕ} [NeZero d] {n : ℤ}
     (R : PotentialSolenoidalL2RecoveryData (openCubeSet (originCube d n)))
     {lam Lam : ℝ} {a : CoeffField d}
@@ -276,7 +286,8 @@ theorem
             AHarmonicFunction (HCPolySupport.adjointCoeffField a)
               (openCubeSet (originCube d n)),
           ((fun x =>
-            (blockResponsePairHalfState a u v).eval x) =ᵐ[volumeMeasureOn (openCubeSet (originCube d n))]
+            (blockResponsePairHalfState a u v).eval x) =ᵐ[volumeMeasureOn (openCubeSet
+              (originCube d n))]
               fun x => ((R.toMuCorrectionSpaceRecoveryData).recoveredField system (0, q0)).eval x) ∧
           ∀ w : AHarmonicFunction a (openCubeSet (originCube d n)),
             volumeAverage (openCubeSet (originCube d n))
@@ -341,7 +352,7 @@ theorem
   have hCouple :
       blockEnergyAverage U a Xpair = ResponseJ U 0 q0 a := by
     simpa [U, Xpair] using
-      blockEnergyAverage_blockResponsePairHalfState_eq_responseJ_zero_of_pairingAverage_eq_zero_of_firstVariation_eq_zero
+      blockEnergyAverage_blockResponseHalfState_eq_responseJ_zero
         (a := a) (measurableSet_openCubeSet (originCube d n)) hEll q0 u v hPair hfirst
   calc
     Mu (openCubeSet (originCube d n)) (0, q0) a = Mu U (0, q0) a := by rfl
@@ -378,7 +389,7 @@ theorem
     R.toMuOperatorSystemDataOfIsEllipticFieldOn hEll
       (volume_openCubeSet_originCube_toReal_pos (d := d) n)
   rcases
-      exists_blockResponsePairHalfState_ae_eq_recoveredField_openCubeSet_originCube_of_hasOpenCubeEllipticRecoveryData
+      exists_blockResponseHalfState_ae_eq_recoveredField_cube
         (R := R) (a := a) hData q0 with
     ⟨u, v, hEq⟩
   let Xrec : BlockState d :=
@@ -394,7 +405,7 @@ theorem
         (a := a) (U := U) (hU := measurableSet_openCubeSet (originCube d n))
         hEll q0 u v Xrec hEq hAdm
   refine
-    mu_zero_right_eq_responseJ_zero_openCubeSet_originCube_of_hasOpenCubeEllipticRecoveryData_of_exists_recovered_pair_firstVariation_eq_zero
+    mu_zero_right_eq_responseJ_zero_cube_of_hasOpenCubeEllipticRecoveryData
       (R := R) (a := a) hData q0 ?_
   exact ⟨u, v, hEq, hfirst⟩
 
@@ -425,7 +436,7 @@ theorem
     R.toMuOperatorSystemDataOfIsEllipticFieldOn hEll
       (volume_openCubeSet_originCube_toReal_pos (d := d) n)
   rcases
-      exists_blockResponsePairHalfState_ae_eq_recoveredField_openCubeSet_originCube_of_hasOpenCubeEllipticRecoveryData_of_blockVec
+      exists_blockResponseHalfState_ae_eq_recoveredField_cube_of_blockVec
         (R := R) (a := a) hData (p0, 0) with
     ⟨u, v, hEq⟩
   let Xrec : BlockState d :=
@@ -485,7 +496,7 @@ theorem
   have hCouple :
       blockEnergyAverage U a Xpair = ResponseJ U p0 0 a := by
     simpa [U, Xpair] using
-      blockEnergyAverage_blockResponsePairHalfState_eq_responseJ_left_zero_of_pairingAverage_eq_zero_of_firstVariation_neg_left_zero
+      blockEnergyAverage_blockResponseHalfState_eq_responseJ_left_zero
         (a := a) hEll p0 u v hPair hfirst
   calc
     Mu (openCubeSet (originCube d n)) (p0, 0) a = Mu U (p0, 0) a := by rfl
@@ -522,7 +533,7 @@ theorem
     R.toMuOperatorSystemDataOfIsEllipticFieldOn hEll
       (volume_openCubeSet_originCube_toReal_pos (d := d) n)
   rcases
-      exists_blockResponsePairHalfState_ae_eq_recoveredField_openCubeSet_originCube_of_hasOpenCubeEllipticRecoveryData_of_blockVec
+      exists_blockResponseHalfState_ae_eq_recoveredField_cube_of_blockVec
         (R := R) (a := a) hData (-p0, q0) with
     ⟨u, v, hEq⟩
   let Xrec : BlockState d :=
@@ -582,7 +593,7 @@ theorem
   have hCouple :
       blockEnergyAverage U a Xpair = ResponseJ U p0 q0 a - (-vecDot p0 q0) := by
     simpa [U, Xpair] using
-      blockEnergyAverage_blockResponsePairHalfState_eq_responseJ_sub_pairing_of_pairingAverage_eq_of_firstVariation_eq_zero
+      blockEnergyAverage_blockResponseHalfState_eq_responseJ_sub_pairing
         (a := a) hEll p0 q0 u v (-vecDot p0 q0) hPair hfirst
   have hMu :
       Mu U (-p0, q0) a = ResponseJ U p0 q0 a + vecDot p0 q0 := by
@@ -597,7 +608,7 @@ theorem
     _ = Mu (openCubeSet (originCube d n)) (-p0, q0) a - vecDot p0 q0 := by rfl
 
 theorem
-    recoveredField_volumeAverage_blockResponseIntegrand_eq_scalarResponse_sum_openCubeSet_originCube_of_isEllipticFieldOn
+    recoveredField_volumeAverage_blockResponseIntegrand_eq_of_ellipticField
     {d : ℕ} {n : ℤ}
     (R : PotentialSolenoidalL2RecoveryData (openCubeSet (originCube d n)))
     {lam Lam : ℝ} {a : CoeffField d}
@@ -634,11 +645,11 @@ theorem
   have hvol : (MeasureTheory.volume U).toReal ≠ 0 :=
     (volume_openCubeSet_originCube_toReal_pos (d := d) n).ne'
   simpa [U, system] using
-    (R.toMuCorrectionSpaceRecoveryData).volumeAverage_blockResponseIntegrand_eq_scalarResponse_sum_recoveredField_zero_right_of_isEllipticFieldOn_of_isOpenBoundedConvexDomain
+    (R.toMuCorrectionSpaceRecoveryData).volumeAverage_blockResponse_eq_scalarSum_recoveredZeroRight
       (a := a) system hCube hEll hvol q0 p pStar q qStar
 
 theorem
-    recoveredField_volumeAverage_blockResponseIntegrand_eq_scalarResponse_sum_openCubeSet_originCube_of_hasOpenCubeEllipticRecoveryData
+    recoveredField_volumeAverage_blockResponseIntegrand_eq_scalarResponse_sum_cube
     {d : ℕ} {n : ℤ}
     (R : PotentialSolenoidalL2RecoveryData (openCubeSet (originCube d n)))
     {lam Lam : ℝ} {a : CoeffField d}
@@ -666,7 +677,7 @@ theorem
                   (pStar + p) (qStar + q) v) := by
   rcases hData with ⟨hEll, _hCompat⟩
   simpa using
-    recoveredField_volumeAverage_blockResponseIntegrand_eq_scalarResponse_sum_openCubeSet_originCube_of_isEllipticFieldOn
+    recoveredField_volumeAverage_blockResponseIntegrand_eq_of_ellipticField
       (R := R) (a := a) hEll q0 p pStar q qStar
 
 /--
@@ -675,7 +686,7 @@ deterministic recovery-plus-ellipticity data together with the current
 deterministic coarse block/sigma data.
 -/
 theorem
-    mu_zero_right_eq_responseJ_zero_openCubeSet_originCube_of_hasOpenCubeEllipticRecoveryData_of_isSigmaCoarse
+    mu_zero_right_eq_responseJ_zero_cube_of_of_hasOpenCubeEllipticRecoveryData
     {d : ℕ} [NeZero d] {n : ℤ}
     (R : PotentialSolenoidalL2RecoveryData (openCubeSet (originCube d n)))
     {lam Lam : ℝ} {a : CoeffField d}
@@ -703,7 +714,7 @@ deterministic recovery-plus-ellipticity data together with the current
 deterministic coarse block/sigma data.
 -/
 theorem
-    mu_left_zero_eq_responseJ_zero_openCubeSet_originCube_of_hasOpenCubeEllipticRecoveryData_of_isSigmaCoarse
+    mu_left_zero_eq_responseJ_zero_cube_of_hasOpenCubeEllipticRecoveryData
     {d : ℕ} [NeZero d] {n : ℤ}
     (R : PotentialSolenoidalL2RecoveryData (openCubeSet (originCube d n)))
     {lam Lam : ℝ} {a : CoeffField d}

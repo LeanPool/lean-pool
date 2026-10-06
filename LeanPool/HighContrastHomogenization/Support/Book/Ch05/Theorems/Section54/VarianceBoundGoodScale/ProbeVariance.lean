@@ -43,8 +43,9 @@ private theorem fullBlockNormalizedQuadraticObservable_cubeSet_regular
     (center : ℤ) (q : FullBlockVec d) (Q : TriadicCube d) :
     AEMeasurable
       (fun a : RegCoeffField d =>
-        fullBlockNormalizedQuadraticObservable hP hStruct center q (cubeSet Q) a) P := by
-  rcases exists_isRestrictionLocalRandomVariable_ae_eq_fullBlockNormalizedQuadraticObservable_cubeSet
+        normalizedQuadraticObservable hP hStruct center q (cubeSet Q) a) P := by
+  rcases
+    exists_isRestrictionLocalRandomVariable_ae_eq_fullBlockNormalizedQuadraticObservable_cubeSet
       hP hStruct center q Q with ⟨Y, hY_local, hY_eq⟩
   exact (hP.aemeasurable_of_isLocalRandomVariable hY_local).congr hY_eq.symm
 
@@ -55,7 +56,7 @@ private theorem fullBlockNormalizedQuadraticObservable_descendants_regular
     ∀ R ∈ descendantsAtScale Q n,
       AEMeasurable
         (fun a : RegCoeffField d =>
-          fullBlockNormalizedQuadraticObservable hP hStruct center q (cubeSet R) a) P := by
+          normalizedQuadraticObservable hP hStruct center q (cubeSet R) a) P := by
   intro R hR
   exact
     fullBlockNormalizedQuadraticObservable_cubeSet_regular
@@ -105,14 +106,14 @@ theorem integrable_abs_sub_dotProduct_sq_fullBlockNormalizedQuadraticObservable_
     (m j : ℕ) (q : FullBlockVec d) :
     Integrable
       (fun a : RegCoeffField d =>
-        |fullBlockNormalizedQuadraticObservable hP hStruct (m : ℤ) q
+        |normalizedQuadraticObservable hP hStruct (m : ℤ) q
             (cubeSet (originCube d (j : ℤ))) a - dotProduct q q| ^ (2 : ℕ)) P := by
   let F : RegCoeffField d → ℝ := fun a =>
     Ch04.fullBlockNormalizedFluctuationOperatorNormSqAtScale
       hP hStruct (m : ℤ) (originCube d (j : ℤ)) a
   have hF_int : Integrable F P := by
     simpa [F] using
-      integrable_origin_fullBlockNormalizedFluctuationOperatorNormSqAtScale_from_P4
+      integrable_fullBlockFluctuationNormSquare_of_P4_atScale
         hP hStruct hP4 (m : ℤ) j
   have hR_int : Integrable
       (fun a : RegCoeffField d => F a * (dotProduct q q) ^ (2 : ℕ)) P :=
@@ -124,15 +125,15 @@ theorem integrable_abs_sub_dotProduct_sq_fullBlockNormalizedQuadraticObservable_
     exact (((hX_meas.sub aemeasurable_const).norm.pow_const (2 : ℕ)).aestronglyMeasurable)
   · filter_upwards with a
     have hquad :=
-      fullBlockNormalizedQuadraticObservable_sub_dotProduct_eq_fluctuationQuadratic
+      normalizedQuadraticIdentity
         hP hStruct hP4 m q (cubeSet (originCube d (j : ℤ))) a
     have hbound :=
       fullBlockQuadratic_abs_sq_le_operatorNorm_sq_mul_dotProduct_sq
-        (fullBlockNormalizedFluctuationMatrix hP hStruct (m : ℤ)
+        (normalizedFluctuationMatrix hP hStruct (m : ℤ)
           (cubeSet (originCube d (j : ℤ))) a) q
     rw [hquad]
     let M : FullBlockMat d :=
-      fullBlockNormalizedFluctuationMatrix hP hStruct (m : ℤ)
+      normalizedFluctuationMatrix hP hStruct (m : ℤ)
         (cubeSet (originCube d (j : ℤ))) a
     have hleft_nonneg : 0 ≤ |fullBlockQuadratic M q| ^ (2 : ℕ) :=
       pow_nonneg (abs_nonneg _) (2 : ℕ)
@@ -145,7 +146,7 @@ theorem integrable_abs_sub_dotProduct_sq_fullBlockNormalizedQuadraticObservable_
               (dotProduct q q) ^ (2 : ℕ) := by
             simpa [M] using hbound
       _ = F a * (dotProduct q q) ^ (2 : ℕ) := by
-            rw [← fullBlockNormalizedFluctuationOperatorNormSq_eq_norm_sq]
+            rw [← fullBlockFluctuationNormSquare_eq_matrixNormSquare]
             rfl
 
 /-- `(P4)` also gives the L1 integrability inputs for one normalized scalar
@@ -157,19 +158,19 @@ theorem integrable_fullBlockNormalizedQuadraticObservable_and_abs_sub_dotProduct
     (m j : ℕ) (q : FullBlockVec d) :
     Integrable
         (fun a : RegCoeffField d =>
-          fullBlockNormalizedQuadraticObservable hP hStruct (m : ℤ) q
+          normalizedQuadraticObservable hP hStruct (m : ℤ) q
             (cubeSet (originCube d (j : ℤ))) a) P ∧
       Integrable
         (fun a : RegCoeffField d =>
-          |fullBlockNormalizedQuadraticObservable hP hStruct (m : ℤ) q
+          |normalizedQuadraticObservable hP hStruct (m : ℤ) q
             (cubeSet (originCube d (j : ℤ))) a - dotProduct q q|) P ∧
       Integrable
         (fun a : RegCoeffField d =>
-          |fullBlockNormalizedQuadraticObservable hP hStruct (m : ℤ) q
+          |normalizedQuadraticObservable hP hStruct (m : ℤ) q
             (cubeSet (originCube d (j : ℤ))) a - dotProduct q q| ^ (2 : ℕ)) P := by
   let : IsProbabilityMeasure P := hP.isProbability
   let X : RegCoeffField d → ℝ := fun a =>
-    fullBlockNormalizedQuadraticObservable hP hStruct (m : ℤ) q
+    normalizedQuadraticObservable hP hStruct (m : ℤ) q
       (cubeSet (originCube d (j : ℤ))) a
   let Y : RegCoeffField d → ℝ := fun a => X a - dotProduct q q
   have hSq :
@@ -200,7 +201,7 @@ theorem integrable_fullBlockNormalizedQuadraticObservable_and_abs_sub_dotProduct
 /-- Convert the Section 5.4 Rosenthal root bound for a normalized quadratic
 probe descendant average into the L1 and L2 estimates used by the scalar
 variance reduction. -/
-theorem fullBlockNormalizedQuadraticObservable_restrictionCenteredDescendantAverage_abs_and_sq_le_of_root
+theorem centeredQuadraticObservable_abs_and_sq_le_of_root
     {d : ℕ} [NeZero d] {P : Ch04.RestrictionCoeffLaw d}
     (hP : Ch04.RestrictionLawCarrier P) (hStruct : Ch04.RestrictionStructuralLaw P)
     (hP4 : QuantitativeCoarseGrainedEllipticity P)
@@ -262,7 +263,7 @@ theorem fullBlockNormalizedQuadraticObservable_restrictionCenteredDescendantAver
 /-- Integrability of the L1 and L2 sizes of the normalized quadratic-probe
 descendant average, derived internally from the origin `L^ξ` moment supplied by
 `(P4)`. -/
-theorem fullBlockNormalizedQuadraticObservable_restrictionCenteredDescendantAverage_abs_and_sq_integrable
+theorem centeredQuadraticObservable_abs_and_sq_integrable
     {d : ℕ} [NeZero d] {P : Ch04.RestrictionCoeffLaw d}
     (hP : Ch04.RestrictionLawCarrier P) (hStruct : Ch04.RestrictionStructuralLaw P)
     (hP4 : QuantitativeCoarseGrainedEllipticity P)
@@ -381,7 +382,7 @@ theorem coordinateProbe_restrictionCenteredDescendantAverage_abs_and_sq_le
       coordinateProbe_restrictionCenteredDescendantAverage_pow_rpow_inv_le
         hP hStruct hP4 hm α
   exact
-    fullBlockNormalizedQuadraticObservable_restrictionCenteredDescendantAverage_abs_and_sq_le_of_root
+    centeredQuadraticObservable_abs_and_sq_le_of_root
       hP hStruct hP4 (q := fullBlockCoordinateProbe α)
       (center := center) (n := 0) (m := m) (by norm_num) hm hOrigin.1 hroot
 
@@ -440,7 +441,7 @@ theorem plusProbe_restrictionCenteredDescendantAverage_abs_and_sq_le
       plusProbe_restrictionCenteredDescendantAverage_pow_rpow_inv_le
         hP hStruct hP4 hm hαβ
   exact
-    fullBlockNormalizedQuadraticObservable_restrictionCenteredDescendantAverage_abs_and_sq_le_of_root
+    centeredQuadraticObservable_abs_and_sq_le_of_root
       hP hStruct hP4 (q := fullBlockPlusProbe α β)
       (center := center) (n := 0) (m := m) (by norm_num) hm hOrigin.1 hroot
 
@@ -499,7 +500,7 @@ theorem minusProbe_restrictionCenteredDescendantAverage_abs_and_sq_le
       minusProbe_restrictionCenteredDescendantAverage_pow_rpow_inv_le
         hP hStruct hP4 hm hαβ
   exact
-    fullBlockNormalizedQuadraticObservable_restrictionCenteredDescendantAverage_abs_and_sq_le_of_root
+    centeredQuadraticObservable_abs_and_sq_le_of_root
       hP hStruct hP4 (q := fullBlockMinusProbe α β)
       (center := center) (n := 0) (m := m) (by norm_num) hm hOrigin.1 hroot
 

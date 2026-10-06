@@ -66,6 +66,8 @@ that the representatives are compatible across nested cubes only modulo null
 sets; this is the public replacement for old representative-level cube
 restrictions. -/
 structure TriadicCoeffFamily (d : ℕ) where
+  /-- The measurable, almost-everywhere elliptic coefficient object assigned to each open triadic
+  cube. -/
   coeffOn : (Q : TriadicCube d) → CoeffOn (cubeDomain Q)
   restrictsTo_of_subset :
     ∀ {Q R : TriadicCube d}, openCubeSet R ⊆ openCubeSet Q →

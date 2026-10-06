@@ -61,6 +61,80 @@ open scoped ENNReal
 
 noncomputable section
 
+private theorem terminal_affine_excess_le_solution_energy
+    {d : ℕ} [NeZero d] (a : Book.Ch02.TriadicCoeffFamily d) (m : ℕ)
+    (u : Book.Ch03.CubeSolution (originCube d (m : ℤ)) a) :
+    finiteAffineGradientExcess a (m : ℤ) (m : ℤ) u ≤
+      weightedGradNorm
+        (a.coeffOn (originCube d (m : ℤ))).toCoeffField
+        (openCubeSet (originCube d (m : ℤ))) u.toH1.grad := by
+  have hcandidate := finiteAffineGradientExcess_le
+    a (m : ℤ) (m : ℤ) u (0 : Vec d)
+  have hzero := finiteAffineSolution_grad_smul
+    a (m : ℤ) (0 : ℝ) (0 : Vec d)
+  have hzero' : (finiteAffineSolution a (m : ℤ) (0 : Vec d)).toH1.grad
+      =ᵐ[volumeMeasureOn (openCubeSet (originCube d (m : ℤ)))]
+        fun _ ↦ 0 := by
+    simpa only [zero_smul] using! hzero
+  refine hcandidate.trans_eq ?_
+  apply weightedGradNorm_congr_ae
+  filter_upwards [hzero'] with x hx
+  rw [hx]
+  simp
+
+private theorem comparison_error_le_energy_of_slope_bound
+    {d : ℕ} [NeZero d] (a : Book.Ch02.TriadicCoeffFamily d)
+    (m q : ℕ) (u : Book.Ch03.CubeSolution (originCube d (m : ℤ)) a)
+    (finiteQ jointQ : H1Function (openCubeSet (originCube d (q : ℤ))))
+    {K Cabs eta : ℝ} (hK : 0 < K) (hCabs : 0 < Cabs) (e : Vec d)
+    (heNorm : euclideanNorm e ≤ 2 * K * Book.Ch03.h1EnergyNormOnCube
+      (originCube d (m : ℤ)) a u.toH1)
+    (hreverseQ : weightedGradNorm
+      (a.coeffOn (originCube d (q : ℤ))).toCoeffField
+      (openCubeSet (originCube d (q : ℤ)))
+      (fun x ↦ finiteQ.grad x - jointQ.grad x) ≤
+        ENNReal.ofReal (Cabs * Real.rpow 3 (-eta * ((m - q : ℕ) : ℝ)) *
+          euclideanNorm e)) :
+    weightedGradNorm (a.coeffOn (originCube d (q : ℤ))).toCoeffField
+        (openCubeSet (originCube d (q : ℤ)))
+        (fun x ↦ finiteQ.grad x - jointQ.grad x) ≤
+      ENNReal.ofReal (2 * K * Cabs * Real.rpow 3 (-eta * ((m - q : ℕ) : ℝ))) *
+        weightedGradNorm (a.coeffOn (originCube d (m : ℤ))).toCoeffField
+          (openCubeSet (originCube d (m : ℤ))) u.toH1.grad := by
+  rw [weightedGradNorm_eq_ofReal_h1EnergyNormOnCube]
+  refine hreverseQ.trans ?_
+  rw [← ENNReal.ofReal_mul
+    (p := 2 * K * Cabs * Real.rpow 3 (-eta * ((m - q : ℕ) : ℝ)))
+    (q := Book.Ch03.h1EnergyNormOnCube
+      (originCube d (m : ℤ)) a u.toH1)
+    (mul_nonneg
+      (mul_nonneg (mul_nonneg (by norm_num) hK.le) hCabs.le)
+      (Real.rpow_nonneg (by norm_num) _))]
+  exact ENNReal.ofReal_le_ofReal (by
+    have hrate := Real.rpow_nonneg (by norm_num : (0 : ℝ) ≤ 3)
+      (-eta * ((m - q : ℕ) : ℝ))
+    calc
+      Cabs * Real.rpow 3 (-eta * ((m - q : ℕ) : ℝ)) * euclideanNorm e ≤
+          Cabs * Real.rpow 3 (-eta * ((m - q : ℕ) : ℝ)) *
+            (2 * K * Book.Ch03.h1EnergyNormOnCube
+              (originCube d (m : ℤ)) a u.toH1) := by gcongr
+      _ = (2 * K * Cabs * Real.rpow 3
+            (-eta * ((m - q : ℕ) : ℝ))) *
+          Book.Ch03.h1EnergyNormOnCube
+            (originCube d (m : ℤ)) a u.toH1 := by ring)
+
+private theorem slope_norm_le_twice_base_energy_of_projection
+    {d : ℕ} (P : Vec d → Vec d)
+    (hinv : ∀ e, euclideanNorm e ≤ 2 * euclideanNorm (P e))
+    (bBase e : Vec d) (he : P e = bBase) {K energy : ℝ}
+    (hb : euclideanNorm bBase ≤ K * energy) :
+    euclideanNorm e ≤ 2 * K * energy := by
+  calc
+    euclideanNorm e ≤ 2 * euclideanNorm (P e) := hinv e
+    _ = 2 * euclideanNorm bBase := by rw [he]
+    _ ≤ 2 * (K * energy) := by gcongr
+    _ = 2 * K * energy := by ring
+
 /-- A scalar-identity cube solution admits one infinite-corrector slope which
 works simultaneously on every intermediate centered cube. -/
 theorem exists_scalarIdentityInfiniteCorrectorC1ConstantsWithSlope
@@ -136,14 +210,8 @@ theorem exists_scalarIdentityInfiniteCorrectorC1ConstantsWithSlope
     (hgood.mono_start hn) hnm2 u
   have heNorm : euclideanNorm e ≤
       2 * K * Book.Ch03.h1EnergyNormOnCube
-        (originCube d (m : ℤ)) a u.toH1 := by
-    calc
-      euclideanNorm e ≤ 2 * euclideanNorm (P e) := hinv e
-      _ = 2 * euclideanNorm bBase := by rw [he]
-      _ ≤ 2 * (K * Book.Ch03.h1EnergyNormOnCube
-          (originCube d (m : ℤ)) a u.toH1) := by gcongr
-      _ = 2 * K * Book.Ch03.h1EnergyNormOnCube
-          (originCube d (m : ℤ)) a u.toH1 := by ring
+        (originCube d (m : ℤ)) a u.toH1 :=
+    slope_norm_le_twice_base_energy_of_projection P hinv bBase e he hb
   refine ⟨e, heNorm, ?_⟩
   intro q hq
   have hnq : n ≤ q := (Finset.mem_Icc.mp hq).1
@@ -170,20 +238,8 @@ theorem exists_scalarIdentityInfiniteCorrectorC1ConstantsWithSlope
   have hexcessOuter : finiteAffineGradientExcess a (m : ℤ) (m : ℤ) u ≤
       weightedGradNorm
         (a.coeffOn (originCube d (m : ℤ))).toCoeffField
-        (openCubeSet (originCube d (m : ℤ))) u.toH1.grad := by
-    have hcandidate := finiteAffineGradientExcess_le
-      a (m : ℤ) (m : ℤ) u (0 : Vec d)
-    have hzero := finiteAffineSolution_grad_smul
-      a (m : ℤ) (0 : ℝ) (0 : Vec d)
-    have hzero' : (finiteAffineSolution a (m : ℤ) (0 : Vec d)).toH1.grad
-        =ᵐ[volumeMeasureOn (openCubeSet (originCube d (m : ℤ)))]
-          fun _ ↦ 0 := by
-      simpa only [zero_smul] using! hzero
-    refine hcandidate.trans_eq ?_
-    apply weightedGradNorm_congr_ae
-    filter_upwards [hzero'] with x hx
-    rw [hx]
-    simp
+        (openCubeSet (originCube d (m : ℤ))) u.toH1.grad :=
+    terminal_affine_excess_le_solution_energy a m u
   have hfixedEnergy : weightedGradNorm
         (a.coeffOn (originCube d (q : ℤ))).toCoeffField
         (openCubeSet (originCube d (q : ℤ)))
@@ -206,7 +262,8 @@ theorem exists_scalarIdentityInfiniteCorrectorC1ConstantsWithSlope
           finiteAffineBoundaryH1 (q : ℤ) e).grad = fun _ ↦ e := by
     simpa only using! finiteAffineBoundaryH1_grad (m := (q : ℤ)) e
   have hglobal :=
-    (finiteAffineCorrectionJointLocalLimit a hCauchy e).globalGradientRepresentative_ae_eq_localH1Gradient q
+    (finiteAffineCorrectionJointLocalLimit a hCauchy
+      e).globalGradientRepresentative_ae_eq_localH1Gradient q
   have hjointField : jointQ.grad =ᵐ[volumeMeasureOn
       (openCubeSet (originCube d (q : ℤ)))]
       (fun x ↦ e + (Phi e).globalGradientRepresentative x) := by
@@ -244,28 +301,9 @@ theorem exists_scalarIdentityInfiniteCorrectorC1ConstantsWithSlope
           (2 * K * Cabs * Real.rpow 3 (-eta * ((m - q : ℕ) : ℝ))) *
         weightedGradNorm
           (a.coeffOn (originCube d (m : ℤ))).toCoeffField
-          (openCubeSet (originCube d (m : ℤ))) u.toH1.grad := by
-    rw [weightedGradNorm_eq_ofReal_h1EnergyNormOnCube]
-    refine hreverseQ.trans ?_
-    rw [← ENNReal.ofReal_mul
-      (p := 2 * K * Cabs * Real.rpow 3 (-eta * ((m - q : ℕ) : ℝ)))
-      (q := Book.Ch03.h1EnergyNormOnCube
-        (originCube d (m : ℤ)) a u.toH1)
-      (mul_nonneg
-        (mul_nonneg (mul_nonneg (by norm_num) hK.le) hCabs.le)
-        (Real.rpow_nonneg (by norm_num) _))]
-    exact ENNReal.ofReal_le_ofReal (by
-      have hrate := Real.rpow_nonneg (by norm_num : (0 : ℝ) ≤ 3)
-        (-eta * ((m - q : ℕ) : ℝ))
-      calc
-        Cabs * Real.rpow 3 (-eta * ((m - q : ℕ) : ℝ)) * euclideanNorm e ≤
-            Cabs * Real.rpow 3 (-eta * ((m - q : ℕ) : ℝ)) *
-              (2 * K * Book.Ch03.h1EnergyNormOnCube
-                (originCube d (m : ℤ)) a u.toH1) := by gcongr
-        _ = (2 * K * Cabs * Real.rpow 3
-              (-eta * ((m - q : ℕ) : ℝ))) *
-            Book.Ch03.h1EnergyNormOnCube
-              (originCube d (m : ℤ)) a u.toH1 := by ring)
+          (openCubeSet (originCube d (m : ℤ))) u.toH1.grad :=
+    comparison_error_le_energy_of_slope_bound a m q u finiteQ jointQ
+      hK hCabs e heNorm hreverseQ
   have htargetEq : weightedGradNorm
         (a.coeffOn (originCube d (q : ℤ))).toCoeffField
         (openCubeSet (originCube d (q : ℤ)))

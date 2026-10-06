@@ -30,6 +30,7 @@ open scoped RealInnerProductSpace
 /-- Smooth compactly supported test functions used to encode the weak-gradient
 constraints inside the `L²(U) × L²(U; ℝᵈ)` ambient product. -/
 structure H1WeakTestFunction {d : ℕ} (U : Set (Vec d)) where
+  /-- The smooth scalar test function with compact topological support contained in `U`. -/
   toFun : Vec d → ℝ
   smooth : ContDiff ℝ (⊤ : ℕ∞) toFun
   compactSupport : HasCompactSupport toFun

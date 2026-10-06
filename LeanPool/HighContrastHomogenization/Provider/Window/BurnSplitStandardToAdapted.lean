@@ -53,268 +53,208 @@ noncomputable section
 
 variable {d : ℕ}
 
-/-- **The burn-split Whitney bridge.**  Standard-cell bounds whose envelope is
-truncated `D` scales above the adapted cell's own imply the adapted-cell bound
-with constant `1 + Cd * 𝔢 * ζ_g * 3 ^ (-D)`: the eccentricity rides on the burn
-depth instead of multiplying. -/
-theorem adapted_burnsplit_of_standard
-    (hd : 2 ≤ d) {g : ℝ} (hg : g ∈ Set.Ico (0 : ℝ) 1)
-    {jStar : ℤ} (hj : (kZero d : ℤ) ≤ jStar)
-    {Cd : ℝ} (hCd : max 1 (12 * (d : ℝ) * Real.sqrt d) ≤ Cd)
-    {n : Mat d} (hn : n.PosDef) {a : CoeffSpace d} {E : BlockMat d}
-    (hE : Book.Ch02.BlockPosDef E) {Y : ℝ} (hY : 0 ≤ Y)
-    (D : ℕ) (r : ℤ) (y : Vec d)
-    (hstandard : ∀ (k : ℤ) (w : Fin d → ℤ),
-      standardCell d k w ⊆
-        adaptedCellTranslate (roundedGrid jStar n) r y →
-        BlockMatLoewnerLE (coarseBlock (standardCell d k w) a)
-          (blockScale
-            (Y * (3 : ℝ) ^
-              (g * max ((r : ℝ) - (k : ℝ) - (D : ℝ)) 0)) E)) :
-    BlockMatLoewnerLE
-      (coarseBlock (adaptedCellTranslate (roundedGrid jStar n) r y) a)
-      (blockScale
-        ((1 + Cd * witnessEccentricity n * zetaG g *
-          (3 : ℝ) ^ (-(D : ℤ))) * Y) E) := by
-  classical
-  let : NeZero d := ⟨by omega⟩
-  let : Nonempty (Fin d) := ⟨⟨0, by omega⟩⟩
-  let p : Mat d := roundedGrid jStar n
-  have hp : p.PosDef := Recurrence.posDef_roundedGrid hj hn
-  obtain ⟨Z, hZ, hsub, hdom, _hvol, hdisj, _hrowENN, _hrowOneENN, hnull⟩ :=
-    Transport.maximal_filling hp Matrix.PosDef.one r r y
-  have hidentity : ∀ (b : ℤ) (w : Fin d → ℤ),
-      adaptedCellAt (1 : Mat d) b w = standardCell d b w := by
-    intro b w
-    rw [Recurrence.adaptedCellAt_eq_image]
-    have hone : matVecMul (1 : Mat d) = fun x => x := by
-      funext x i
-      exact congrFun (Matrix.one_mulVec x) i
-    rw [hone, Set.image_id']
-  let I := Σ u : ℕ, {w // w ∈ Z (r - (u : ℤ))}
-  let c : I → Set (Vec d) := fun i =>
-    adaptedCellAt (1 : Mat d) (r - (i.1 : ℤ)) i.2.1
-  let : Countable I := inferInstance
-  have hc : ∀ i : I, IsOpenBoundedConvexDomain (c i) := fun i =>
-    hdom _ _ i.2.2
-  have hcsub : ∀ i : I, c i ⊆ adaptedCellTranslate p r y := fun i =>
-    hsub _ _ i.2.2
-  have hcpair : Pairwise fun i j : I => Disjoint (c i) (c j) := by
-    intro i j hij
-    apply hdisj _ _ _ i.2.2 _ j.2.2
-    intro heq
-    apply hij
-    rcases i with ⟨u, w⟩
-    rcases j with ⟨v, z⟩
-    have huv : u = v := by
-      have hs := congrArg Prod.fst heq
-      dsimp at hs
-      omega
-    subst v
-    have hwz : w = z := Subtype.ext (congrArg Prod.snd heq)
-    subst z
-    rfl
-  have hc0 : ∀ i : I, volume (c i) ≠ 0 := fun i =>
-    (Recurrence.volume_adaptedCellAt_pos Matrix.PosDef.one _ _).ne'
-  have hcover : (⋃ i : I, c i) =
+private theorem descendingCellUnion_eq_integerRowUnion
+    (Z : ℤ → Finset (Fin d → ℤ)) (r : ℤ) :
+    (⋃ i : (Σ u : ℕ, {w // w ∈ Z (r - (u : ℤ))}),
+      adaptedCellAt (1 : Mat d) (r - (i.1 : ℤ)) i.2.1) =
       ⋃ b ∈ Set.Iic r, ⋃ w ∈ (Z b : Set (Fin d → ℤ)),
         adaptedCellAt (1 : Mat d) b w := by
-    ext x
-    constructor
-    · intro hx
-      obtain ⟨⟨u, w⟩, hx⟩ := Set.mem_iUnion.mp hx
-      refine Set.mem_iUnion.mpr ⟨r - (u : ℤ), Set.mem_iUnion.mpr ⟨?_, ?_⟩⟩
-      · exact Set.mem_Iic.mpr (by omega)
-      · exact Set.mem_iUnion.mpr ⟨w.1, Set.mem_iUnion.mpr ⟨w.2, hx⟩⟩
-    · intro hx
-      obtain ⟨b, hb⟩ := Set.mem_iUnion.mp hx
-      obtain ⟨hbr, hb⟩ := Set.mem_iUnion.mp hb
-      obtain ⟨w, hw⟩ := Set.mem_iUnion.mp hb
-      obtain ⟨hwZ, hx⟩ := Set.mem_iUnion.mp hw
-      have hscale : r - (((r - b).toNat : ℕ) : ℤ) = b := by
-        rw [Int.toNat_of_nonneg (sub_nonneg.mpr (Set.mem_Iic.mp hbr))]
-        omega
-      have hwZ' : w ∈ Z (r - (((r - b).toNat : ℕ) : ℤ)) := by
-        rw [hscale]
-        exact hwZ
-      refine Set.mem_iUnion.mpr ⟨⟨(r - b).toNat, ⟨w, hwZ'⟩⟩, ?_⟩
-      change x ∈ adaptedCellAt (1 : Mat d)
-        (r - (((r - b).toNat : ℕ) : ℤ)) w
-      rwa [hscale]
-  have hcnull : volume (adaptedCellTranslate p r y \ ⋃ i : I, c i) = 0 := by
-    rw [hcover]
-    exact hnull
-  have hparent0 : volume (adaptedCellTranslate p r y) ≠ 0 :=
-    Transport.volume_adaptedCellTranslate_ne_zero hp r y
-  have hparentTop : volume (adaptedCellTranslate p r y) ≠ ⊤ :=
-    Transport.volume_adaptedCellTranslate_ne_top p r y
-  intro X
-  let eQuad : ℝ := 1 / 2 * blockVecDot X (blockMatVecMul E X)
-  have heQuad0 : 0 ≤ eQuad := by
-    by_cases hX : X = 0
-    · subst X
-      simp [eQuad, blockMatVecMul, blockVecDot, vecDot]
-    · exact mul_nonneg (by norm_num) (hE X hX).le
-  let term : I → ℝ := fun i =>
-    (volume (c i)).toReal / (volume (adaptedCellTranslate p r y)).toReal *
-      (1 / 2 * blockVecDot X (blockMatVecMul (coarseBlock (c i) a) X))
-  have hterm0 : ∀ i : I, 0 ≤ term i := by
-    intro i
-    have hquad0 : 0 ≤ 1 / 2 *
-        blockVecDot X (blockMatVecMul (coarseBlock (c i) a) X) := by
-      by_cases hX : X = 0
-      · subst X
-        simp [blockMatVecMul, blockVecDot, vecDot]
-      · exact mul_nonneg (by norm_num)
-          ((Recurrence.blockPosDef_coarseBlock_adaptedCellAt
-            Matrix.PosDef.one _ _ a) X hX).le
-    exact mul_nonneg
-      (div_nonneg ENNReal.toReal_nonneg ENNReal.toReal_nonneg) hquad0
-  have hecc : 1 ≤ witnessEccentricity n := Initialization.one_le_witnessEccentricity hn
-  have hecc0 : (0 : ℝ) ≤ witnessEccentricity n := by linarith only [hecc]
-  have hCd1 : 1 ≤ Cd := (le_max_left _ _).trans hCd
-  have hCd0 : (0 : ℝ) ≤ Cd := by linarith only [hCd1]
-  -- the row weights
-  let wrow : ℕ → ℝ := fun u =>
-    ∑ w ∈ Z (r - (u : ℤ)),
-      (volume (adaptedCellAt (1 : Mat d) (r - (u : ℤ)) w)).toReal /
-        (volume (adaptedCellTranslate p r y)).toReal
-  let envu : ℕ → ℝ := fun u =>
-    (3 : ℝ) ^ (g * max ((u : ℝ) - (D : ℝ)) 0)
-  have hwrow0 : ∀ u : ℕ, 0 ≤ wrow u := by
-    intro u
-    exact Finset.sum_nonneg fun w _ =>
-      div_nonneg ENNReal.toReal_nonneg ENNReal.toReal_nonneg
-  have hdim : 6 * (d : ℝ) * Real.sqrt d * ‖p⁻¹ * (1 : Mat d)‖ ≤
+  classical
+  let I := Σ u : ℕ, {w // w ∈ Z (r - (u : ℤ))}
+  ext x
+  constructor
+  · intro hx
+    obtain ⟨⟨u, w⟩, hx⟩ := Set.mem_iUnion.mp hx
+    refine Set.mem_iUnion.mpr ⟨r - (u : ℤ), Set.mem_iUnion.mpr ⟨?_, ?_⟩⟩
+    · exact Set.mem_Iic.mpr (by omega)
+    · exact Set.mem_iUnion.mpr ⟨w.1, Set.mem_iUnion.mpr ⟨w.2, hx⟩⟩
+  · intro hx
+    obtain ⟨b, hb⟩ := Set.mem_iUnion.mp hx
+    obtain ⟨hbr, hb⟩ := Set.mem_iUnion.mp hb
+    obtain ⟨w, hw⟩ := Set.mem_iUnion.mp hb
+    obtain ⟨hwZ, hx⟩ := Set.mem_iUnion.mp hw
+    have hscale : r - (((r - b).toNat : ℕ) : ℤ) = b := by
+      rw [Int.toNat_of_nonneg (sub_nonneg.mpr (Set.mem_Iic.mp hbr))]
+      omega
+    have hwZ' : w ∈ Z (r - (((r - b).toNat : ℕ) : ℤ)) := by
+      rw [hscale]
+      exact hwZ
+    refine Set.mem_iUnion.mpr ⟨⟨(r - b).toNat, ⟨w, hwZ'⟩⟩, ?_⟩
+    change x ∈ adaptedCellAt (1 : Mat d)
+      (r - (((r - b).toNat : ℕ) : ℤ)) w
+    rwa [hscale]
+
+private theorem roundedGrid_boundaryFactor_le [Nonempty (Fin d)]
+    {jStar : ℤ} (hj : (kZero d : ℤ) ≤ jStar)
+    {Cd : ℝ} (hCd : max 1 (12 * (d : ℝ) * Real.sqrt d) ≤ Cd)
+    {n : Mat d} (hn : n.PosDef) :
+    6 * (d : ℝ) * Real.sqrt d * ‖(roundedGrid jStar n)⁻¹ * (1 : Mat d)‖ ≤
       Cd * witnessEccentricity n := by
-    have hnorm : ‖p⁻¹ * (1 : Mat d)‖ ≤ 2 := by
-      rw [Matrix.mul_one]
-      exact (norm_inv_roundedGrid_le hj hn).trans (by norm_num)
-    have hCdDim : 12 * (d : ℝ) * Real.sqrt d ≤ Cd :=
-      (le_max_right _ _).trans hCd
-    have hbase : 6 * (d : ℝ) * Real.sqrt d * ‖p⁻¹ * (1 : Mat d)‖ ≤
-        12 * (d : ℝ) * Real.sqrt d := by
-      have hnonneg : 0 ≤ 6 * (d : ℝ) * Real.sqrt d := by positivity
-      have := mul_le_mul_of_nonneg_left hnorm hnonneg
-      linarith only [this]
-    exact hbase.trans <| hCdDim.trans <|
-      (le_mul_of_one_le_right (by linarith only [hCd1]) hecc)
-  -- OBLIGATIONS 1 and 2 : summability and the partition bound, together
-  have hwrowPartial : ∀ N : ℕ, ∑ u ∈ Finset.range N, wrow u ≤ 1 := by
-    intro N
-    classical
-    have hmemZ : ∀ i ∈ (Finset.range N).sigma (fun u => Z (r - (u : ℤ))),
-        i.2 ∈ Z (r - (i.1 : ℤ)) := by
-      intro i hi
-      exact (Finset.mem_sigma.mp hi).2
-    have hnested : ∑ u ∈ Finset.range N, wrow u =
-        ∑ i ∈ (Finset.range N).sigma (fun u => Z (r - (u : ℤ))),
-          (volume (adaptedCellAt (1 : Mat d) (r - (i.1 : ℤ)) i.2)).toReal /
-            (volume (adaptedCellTranslate p r y)).toReal :=
-      Finset.sum_sigma' (Finset.range N) (fun u => Z (r - (u : ℤ)))
-        (fun u w =>
-          (volume (adaptedCellAt (1 : Mat d) (r - (u : ℤ)) w)).toReal /
-            (volume (adaptedCellTranslate p r y)).toReal)
-    rw [hnested]
-    refine Quenched.finset_relative_volume_le_one
-      ((Finset.range N).sigma (fun u => Z (r - (u : ℤ))))
-      (c := fun i => adaptedCellAt (1 : Mat d) (r - (i.1 : ℤ)) i.2)
-      ?_ ?_ ?_ hparentTop hparent0
-    · intro i hi
-      exact (hdom _ _ (hmemZ i hi)).isOpen.measurableSet
-    · intro i hi j hj hij
-      refine hdisj _ _ _ (hmemZ i (by simpa using hi)) _
-        (hmemZ j (by simpa using hj)) ?_
-      intro heq
-      apply hij
-      have h1 : r - (i.1 : ℤ) = r - (j.1 : ℤ) := congrArg Prod.fst heq
-      have h2 : i.2 = j.2 := congrArg Prod.snd heq
-      have h3 : i.1 = j.1 := by omega
-      exact Sigma.ext h3 (heq_of_eq h2)
-    · intro i hi
-      exact hsub _ _ (hmemZ i hi)
-  obtain ⟨hwrowSummable, hwrowTotal⟩ :=
-    Quenched.summable_and_tsum_le_one_of_sum_range_le hwrow0 hwrowPartial
-  -- OBLIGATION 3 : the deep-row bound
-  have hwrowDeep : ∀ v : ℕ, wrow (v + (D + 1)) ≤
-      (Cd * witnessEccentricity n) *
-        (3 : ℝ) ^ (-((v : ℝ) + (D : ℝ) + 1)) := by
-    intro v
-    have hlt : r - ((v + (D + 1) : ℕ) : ℤ) < r := by omega
-    have hrowle := Transport.sum_relative_volume_row_le hp Matrix.PosDef.one hlt
-      (hZ (r - ((v + (D + 1) : ℕ) : ℤ)))
-    have hpw : (r - ((v + (D + 1) : ℕ) : ℤ)) - r =
-        -((v + (D + 1) : ℕ) : ℤ) := by omega
-    rw [hpw] at hrowle
-    have hzr : (3 : ℝ) ^ (-((v + (D + 1) : ℕ) : ℤ)) =
-        (3 : ℝ) ^ (-((v : ℝ) + (D : ℝ) + 1)) := by
-      rw [← Real.rpow_intCast (3 : ℝ) (-((v + (D + 1) : ℕ) : ℤ))]
-      congr 1
-      push_cast
-      ring
-    rw [hzr] at hrowle
-    exact hrowle.trans
-      (mul_le_mul_of_nonneg_right hdim (Real.rpow_nonneg (by norm_num) _))
+  have hecc : 1 ≤ witnessEccentricity n := Initialization.one_le_witnessEccentricity hn
+  have hCd1 : 1 ≤ Cd := (le_max_left _ _).trans hCd
+  have hnorm : ‖(roundedGrid jStar n)⁻¹ * (1 : Mat d)‖ ≤ 2 := by
+    rw [Matrix.mul_one]
+    exact (norm_inv_roundedGrid_le hj hn).trans (by norm_num)
+  have hCdDim : 12 * (d : ℝ) * Real.sqrt d ≤ Cd :=
+    (le_max_right _ _).trans hCd
+  have hbase : 6 * (d : ℝ) * Real.sqrt d *
+      ‖(roundedGrid jStar n)⁻¹ * (1 : Mat d)‖ ≤
+      12 * (d : ℝ) * Real.sqrt d := by
+    have hnonneg : 0 ≤ 6 * (d : ℝ) * Real.sqrt d := by positivity
+    have := mul_le_mul_of_nonneg_left hnorm hnonneg
+    linarith only [this]
+  exact hbase.trans <| hCdDim.trans <|
+    (le_mul_of_one_le_right (by linarith only [hCd1]) hecc)
+
+private theorem summable_burnWeightedRows
+    {g boundary : ℝ} (hg : g < 1) (D : ℕ) (wrow : ℕ → ℝ)
+    (hwrow0 : ∀ u, 0 ≤ wrow u)
+    (hwrowDeep : ∀ v : ℕ, wrow (v + (D + 1)) ≤
+      boundary * (3 : ℝ) ^ (-((v : ℝ) + (D : ℝ) + 1))) :
+    Summable (fun u : ℕ ↦
+      wrow u * (3 : ℝ) ^ (g * max ((u : ℝ) - (D : ℝ)) 0)) := by
+  let envu : ℕ → ℝ := fun u ↦ (3 : ℝ) ^ (g * max ((u : ℝ) - (D : ℝ)) 0)
   -- the geometric comparison series
   have hr0 : (0 : ℝ) < (3 : ℝ) ^ (-(1 - g)) :=
     Real.rpow_pos_of_pos (by norm_num) _
   have hr1 : (3 : ℝ) ^ (-(1 - g)) < 1 :=
-    Real.rpow_lt_one_of_one_lt_of_neg (by norm_num) (by linarith only [hg.2])
+    Real.rpow_lt_one_of_one_lt_of_neg (by norm_num) (by linarith only [hg])
   have hgeomS : Summable fun v : ℕ => ((3 : ℝ) ^ (-(1 - g))) ^ (v + 1) := by
     have := (summable_geometric_of_lt_one hr0.le hr1).mul_left
       ((3 : ℝ) ^ (-(1 - g)))
     refine this.congr fun v => ?_
     rw [pow_succ]
     ring
-  have hB0 : (0 : ℝ) ≤ Cd * witnessEccentricity n := mul_nonneg hCd0 hecc0
-  have hD0 : (0 : ℝ) < (3 : ℝ) ^ (-(D : ℝ)) :=
-    Real.rpow_pos_of_pos (by norm_num) _
   -- OBLIGATION 4 : summability of the weighted row series
-  have hprodSummable : Summable fun u : ℕ => wrow u * envu u := by
-    rw [← summable_nat_add_iff (D + 1)]
-    refine Summable.of_nonneg_of_le
-      (fun v => mul_nonneg (hwrow0 _) (Real.rpow_nonneg (by norm_num) _))
-      (fun v => ?_) ((hgeomS.mul_left ((Cd * witnessEccentricity n) *
-        (3 : ℝ) ^ (-(D : ℝ)))))
-    have henv : envu (v + (D + 1)) = (3 : ℝ) ^ (g * ((v : ℝ) + 1)) := by
-      show (3 : ℝ) ^ (g * max (((v + (D + 1) : ℕ) : ℝ) - (D : ℝ)) 0) = _
-      congr 1
-      have hpos : (0 : ℝ) ≤ ((v + (D + 1) : ℕ) : ℝ) - (D : ℝ) := by
-        push_cast
-        linarith only [Nat.cast_nonneg (α := ℝ) v]
-      rw [max_eq_left hpos]
+  rw [← summable_nat_add_iff (D + 1)]
+  refine Summable.of_nonneg_of_le
+    (fun v => mul_nonneg (hwrow0 _) (Real.rpow_nonneg (by norm_num) _))
+    (fun v => ?_) ((hgeomS.mul_left (boundary *
+      (3 : ℝ) ^ (-(D : ℝ)))))
+  have henv : envu (v + (D + 1)) = (3 : ℝ) ^ (g * ((v : ℝ) + 1)) := by
+    show (3 : ℝ) ^ (g * max (((v + (D + 1) : ℕ) : ℝ) - (D : ℝ)) 0) = _
+    congr 1
+    have hpos : (0 : ℝ) ≤ ((v + (D + 1) : ℕ) : ℝ) - (D : ℝ) := by
       push_cast
+      linarith only [Nat.cast_nonneg (α := ℝ) v]
+    rw [max_eq_left hpos]
+    push_cast
+    ring
+  have hgrow : (0 : ℝ) ≤ (3 : ℝ) ^ (g * ((v : ℝ) + 1)) :=
+    Real.rpow_nonneg (by norm_num) _
+  have hsplit : (3 : ℝ) ^ (-((v : ℝ) + (D : ℝ) + 1)) =
+      (3 : ℝ) ^ (-(D : ℝ)) * (3 : ℝ) ^ (-((v : ℝ) + 1)) := by
+    rw [← Real.rpow_add (by norm_num : (0 : ℝ) < 3)]
+    congr 1
+    ring
+  have hterm : ((3 : ℝ) ^ (-(1 - g))) ^ (v + 1) =
+      (3 : ℝ) ^ (-((v : ℝ) + 1)) * (3 : ℝ) ^ (g * ((v : ℝ) + 1)) := by
+    rw [← Real.rpow_add (by norm_num : (0 : ℝ) < 3),
+      ← Real.rpow_natCast ((3 : ℝ) ^ (-(1 - g))) (v + 1),
+      ← Real.rpow_mul (by norm_num : (0 : ℝ) ≤ 3)]
+    congr 1
+    push_cast
+    ring
+  have hbase := hwrowDeep v
+  rw [hsplit] at hbase
+  calc
+    wrow (v + (D + 1)) * envu (v + (D + 1)) =
+        wrow (v + (D + 1)) * (3 : ℝ) ^ (g * ((v : ℝ) + 1)) := by rw [henv]
+    _ ≤ (boundary *
+          ((3 : ℝ) ^ (-(D : ℝ)) * (3 : ℝ) ^ (-((v : ℝ) + 1)))) *
+        (3 : ℝ) ^ (g * ((v : ℝ) + 1)) :=
+      mul_le_mul_of_nonneg_right hbase hgrow
+    _ = (boundary * (3 : ℝ) ^ (-(D : ℝ))) *
+        ((3 : ℝ) ^ (-((v : ℝ) + 1)) * (3 : ℝ) ^ (g * ((v : ℝ) + 1))) := by
       ring
-    have hgrow : (0 : ℝ) ≤ (3 : ℝ) ^ (g * ((v : ℝ) + 1)) :=
-      Real.rpow_nonneg (by norm_num) _
-    have hsplit : (3 : ℝ) ^ (-((v : ℝ) + (D : ℝ) + 1)) =
-        (3 : ℝ) ^ (-(D : ℝ)) * (3 : ℝ) ^ (-((v : ℝ) + 1)) := by
-      rw [← Real.rpow_add (by norm_num : (0 : ℝ) < 3)]
-      congr 1
-      ring
-    have hterm : ((3 : ℝ) ^ (-(1 - g))) ^ (v + 1) =
-        (3 : ℝ) ^ (-((v : ℝ) + 1)) * (3 : ℝ) ^ (g * ((v : ℝ) + 1)) := by
-      rw [← Real.rpow_add (by norm_num : (0 : ℝ) < 3),
-        ← Real.rpow_natCast ((3 : ℝ) ^ (-(1 - g))) (v + 1),
-        ← Real.rpow_mul (by norm_num : (0 : ℝ) ≤ 3)]
-      congr 1
-      push_cast
-      ring
-    have hbase := hwrowDeep v
-    rw [hsplit] at hbase
-    calc
-      wrow (v + (D + 1)) * envu (v + (D + 1)) =
-          wrow (v + (D + 1)) * (3 : ℝ) ^ (g * ((v : ℝ) + 1)) := by rw [henv]
-      _ ≤ ((Cd * witnessEccentricity n) *
-            ((3 : ℝ) ^ (-(D : ℝ)) * (3 : ℝ) ^ (-((v : ℝ) + 1)))) *
-          (3 : ℝ) ^ (g * ((v : ℝ) + 1)) :=
-        mul_le_mul_of_nonneg_right hbase hgrow
-      _ = ((Cd * witnessEccentricity n) * (3 : ℝ) ^ (-(D : ℝ))) *
-          ((3 : ℝ) ^ (-((v : ℝ) + 1)) * (3 : ℝ) ^ (g * ((v : ℝ) + 1))) := by
-        ring
-      _ = ((Cd * witnessEccentricity n) * (3 : ℝ) ^ (-(D : ℝ))) *
-          ((3 : ℝ) ^ (-(1 - g))) ^ (v + 1) := by rw [hterm]
-  -- OBLIGATION 5 : the per-row quadratic bound, with wrow kept explicit
+    _ = (boundary * (3 : ℝ) ^ (-(D : ℝ))) *
+        ((3 : ℝ) ^ (-(1 - g))) ^ (v + 1) := by rw [hterm]
+
+private theorem finiteDescendingRows_relativeVolume_le_one
+    (Z : ℤ → Finset (Fin d → ℤ)) (r : ℤ) (U : Set (Vec d))
+    (hdom : ∀ a, ∀ w ∈ Z a,
+      IsOpenBoundedConvexDomain (adaptedCellAt (1 : Mat d) a w))
+    (hdisj : ∀ a b : ℤ, ∀ w ∈ Z a, ∀ v ∈ Z b, (a, w) ≠ (b, v) →
+      Disjoint (adaptedCellAt (1 : Mat d) a w) (adaptedCellAt (1 : Mat d) b v))
+    (hsub : ∀ a, ∀ w ∈ Z a, adaptedCellAt (1 : Mat d) a w ⊆ U)
+    (hparentTop : volume U ≠ ⊤) (hparent0 : volume U ≠ 0) :
+    ∀ N : ℕ, ∑ u ∈ Finset.range N,
+      (∑ w ∈ Z (r - (u : ℤ)),
+        (volume (adaptedCellAt (1 : Mat d) (r - (u : ℤ)) w)).toReal /
+          (volume U).toReal) ≤ 1 := by
+  let wrow : ℕ → ℝ := fun u ↦
+    ∑ w ∈ Z (r - (u : ℤ)),
+      (volume (adaptedCellAt (1 : Mat d) (r - (u : ℤ)) w)).toReal / (volume U).toReal
+  intro N
+  change ∑ u ∈ Finset.range N, wrow u ≤ 1
+  classical
+  have hmemZ : ∀ i ∈ (Finset.range N).sigma (fun u => Z (r - (u : ℤ))),
+      i.2 ∈ Z (r - (i.1 : ℤ)) := by
+    intro i hi
+    exact (Finset.mem_sigma.mp hi).2
+  have hnested : ∑ u ∈ Finset.range N, wrow u =
+      ∑ i ∈ (Finset.range N).sigma (fun u => Z (r - (u : ℤ))),
+        (volume (adaptedCellAt (1 : Mat d) (r - (i.1 : ℤ)) i.2)).toReal /
+          (volume U).toReal :=
+    Finset.sum_sigma' (Finset.range N) (fun u => Z (r - (u : ℤ)))
+      (fun u w =>
+        (volume (adaptedCellAt (1 : Mat d) (r - (u : ℤ)) w)).toReal /
+          (volume U).toReal)
+  rw [hnested]
+  refine Quenched.finset_relative_volume_le_one
+    ((Finset.range N).sigma (fun u => Z (r - (u : ℤ))))
+    (c := fun i => adaptedCellAt (1 : Mat d) (r - (i.1 : ℤ)) i.2)
+    ?_ ?_ ?_ hparentTop hparent0
+  · intro i hi
+    exact (hdom _ _ (hmemZ i hi)).isOpen.measurableSet
+  · intro i hi j hj hij
+    refine hdisj _ _ _ (hmemZ i (by simpa using hi)) _
+      (hmemZ j (by simpa using hj)) ?_
+    intro heq
+    apply hij
+    have h1 : r - (i.1 : ℤ) = r - (j.1 : ℤ) := congrArg Prod.fst heq
+    have h2 : i.2 = j.2 := congrArg Prod.snd heq
+    have h3 : i.1 = j.1 := by omega
+    exact Sigma.ext h3 (heq_of_eq h2)
+  · intro i hi
+    exact hsub _ _ (hmemZ i hi)
+
+private theorem burnRowQuadratic_le_relativeVolume
+    (p : Mat d) (r : ℤ) (y : Vec d) (D : ℕ) (g Y : ℝ)
+    (a : CoeffSpace d) (E : BlockMat d) (X : BlockVec d)
+    (Z : ℤ → Finset (Fin d → ℤ))
+    (hidentity : ∀ (b : ℤ) (w : Fin d → ℤ),
+      adaptedCellAt (1 : Mat d) b w = standardCell d b w)
+    (hsub : ∀ k, ∀ w ∈ Z k, adaptedCellAt (1 : Mat d) k w ⊆ adaptedCellTranslate p r y)
+    (hstandard : ∀ (k : ℤ) (w : Fin d → ℤ),
+      standardCell d k w ⊆ adaptedCellTranslate p r y →
+      BlockMatLoewnerLE (coarseBlock (standardCell d k w) a)
+        (blockScale (Y * (3 : ℝ) ^
+          (g * max ((r : ℝ) - (k : ℝ) - (D : ℝ)) 0)) E)) :
+    ∀ u : ℕ,
+      (∑' w : {w // w ∈ Z (r - (u : ℤ))},
+        (volume (adaptedCellAt (1 : Mat d) (r - (u : ℤ)) w.1)).toReal /
+          (volume (adaptedCellTranslate p r y)).toReal *
+        (1 / 2 * blockVecDot X (blockMatVecMul
+          (coarseBlock (adaptedCellAt (1 : Mat d) (r - (u : ℤ)) w.1) a) X))) ≤
+      (Y * (1 / 2 * blockVecDot X (blockMatVecMul E X))) *
+        ((∑ w ∈ Z (r - (u : ℤ)),
+          (volume (adaptedCellAt (1 : Mat d) (r - (u : ℤ)) w)).toReal /
+            (volume (adaptedCellTranslate p r y)).toReal) *
+          (3 : ℝ) ^ (g * max ((u : ℝ) - (D : ℝ)) 0)) := by
+  classical
+  let I := Σ u : ℕ, {w // w ∈ Z (r - (u : ℤ))}
+  let c : I → Set (Vec d) := fun i ↦
+    adaptedCellAt (1 : Mat d) (r - (i.1 : ℤ)) i.2.1
+  let eQuad : ℝ := 1 / 2 * blockVecDot X (blockMatVecMul E X)
+  let term : I → ℝ := fun i ↦
+    (volume (c i)).toReal / (volume (adaptedCellTranslate p r y)).toReal *
+      (1 / 2 * blockVecDot X (blockMatVecMul (coarseBlock (c i) a) X))
+  let wrow : ℕ → ℝ := fun u ↦
+    ∑ w ∈ Z (r - (u : ℤ)),
+      (volume (adaptedCellAt (1 : Mat d) (r - (u : ℤ)) w)).toReal /
+        (volume (adaptedCellTranslate p r y)).toReal
+  let envu : ℕ → ℝ := fun u ↦ (3 : ℝ) ^ (g * max ((u : ℝ) - (D : ℝ)) 0)
   have hcastu : ∀ u : ℕ,
       (3 : ℝ) ^ (g * max ((r : ℝ) - ((r - (u : ℤ) : ℤ) : ℝ) - (D : ℝ)) 0) =
         envu u := by
@@ -380,6 +320,152 @@ theorem adapted_burnsplit_of_standard
                 (volume (adaptedCellTranslate p r y)).toReal := rfl
         rw [hwu]
         ring
+  exact hrow
+
+/-- **The burn-split Whitney bridge.**  Standard-cell bounds whose envelope is
+truncated `D` scales above the adapted cell's own imply the adapted-cell bound
+with constant `1 + Cd * 𝔢 * ζ_g * 3 ^ (-D)`: the eccentricity rides on the burn
+depth instead of multiplying. -/
+theorem adapted_burnsplit_of_standard
+    (hd : 2 ≤ d) {g : ℝ} (hg : g ∈ Set.Ico (0 : ℝ) 1)
+    {jStar : ℤ} (hj : (kZero d : ℤ) ≤ jStar)
+    {Cd : ℝ} (hCd : max 1 (12 * (d : ℝ) * Real.sqrt d) ≤ Cd)
+    {n : Mat d} (hn : n.PosDef) {a : CoeffSpace d} {E : BlockMat d}
+    (hE : Book.Ch02.BlockPosDef E) {Y : ℝ} (hY : 0 ≤ Y)
+    (D : ℕ) (r : ℤ) (y : Vec d)
+    (hstandard : ∀ (k : ℤ) (w : Fin d → ℤ),
+      standardCell d k w ⊆
+        adaptedCellTranslate (roundedGrid jStar n) r y →
+        BlockMatLoewnerLE (coarseBlock (standardCell d k w) a)
+          (blockScale
+            (Y * (3 : ℝ) ^
+              (g * max ((r : ℝ) - (k : ℝ) - (D : ℝ)) 0)) E)) :
+    BlockMatLoewnerLE
+      (coarseBlock (adaptedCellTranslate (roundedGrid jStar n) r y) a)
+      (blockScale
+        ((1 + Cd * witnessEccentricity n * zetaG g *
+          (3 : ℝ) ^ (-(D : ℤ))) * Y) E) := by
+  classical
+  let : NeZero d := ⟨by omega⟩
+  let : Nonempty (Fin d) := ⟨⟨0, by omega⟩⟩
+  let p : Mat d := roundedGrid jStar n
+  have hp : p.PosDef := Recurrence.posDef_roundedGrid hj hn
+  obtain ⟨Z, hZ, hsub, hdom, _hvol, hdisj, _hrowENN, _hrowOneENN, hnull⟩ :=
+    Transport.maximal_filling hp Matrix.PosDef.one r r y
+  have hidentity : ∀ (b : ℤ) (w : Fin d → ℤ),
+      adaptedCellAt (1 : Mat d) b w = standardCell d b w := by
+    intro b w
+    rw [Recurrence.adaptedCellAt_eq_image]
+    have hone : matVecMul (1 : Mat d) = fun x => x := by
+      funext x i
+      exact congrFun (Matrix.one_mulVec x) i
+    rw [hone, Set.image_id']
+  let I := Σ u : ℕ, {w // w ∈ Z (r - (u : ℤ))}
+  let c : I → Set (Vec d) := fun i =>
+    adaptedCellAt (1 : Mat d) (r - (i.1 : ℤ)) i.2.1
+  let : Countable I := inferInstance
+  have hc : ∀ i : I, IsOpenBoundedConvexDomain (c i) := fun i =>
+    hdom _ _ i.2.2
+  have hcsub : ∀ i : I, c i ⊆ adaptedCellTranslate p r y := fun i =>
+    hsub _ _ i.2.2
+  have hcpair : Pairwise fun i j : I => Disjoint (c i) (c j) := by
+    intro i j hij
+    apply hdisj _ _ _ i.2.2 _ j.2.2
+    intro heq
+    apply hij
+    rcases i with ⟨u, w⟩
+    rcases j with ⟨v, z⟩
+    have huv : u = v := by
+      have hs := congrArg Prod.fst heq
+      dsimp at hs
+      omega
+    subst v
+    have hwz : w = z := Subtype.ext (congrArg Prod.snd heq)
+    subst z
+    rfl
+  have hc0 : ∀ i : I, volume (c i) ≠ 0 := fun i =>
+    (Recurrence.volume_adaptedCellAt_pos Matrix.PosDef.one _ _).ne'
+  have hcover : (⋃ i : I, c i) =
+      ⋃ b ∈ Set.Iic r, ⋃ w ∈ (Z b : Set (Fin d → ℤ)),
+        adaptedCellAt (1 : Mat d) b w :=
+    descendingCellUnion_eq_integerRowUnion Z r
+  have hcnull : volume (adaptedCellTranslate p r y \ ⋃ i : I, c i) = 0 := by
+    rw [hcover]
+    exact hnull
+  have hparent0 : volume (adaptedCellTranslate p r y) ≠ 0 :=
+    Transport.volume_adaptedCellTranslate_ne_zero hp r y
+  have hparentTop : volume (adaptedCellTranslate p r y) ≠ ⊤ :=
+    Transport.volume_adaptedCellTranslate_ne_top p r y
+  intro X
+  let eQuad : ℝ := 1 / 2 * blockVecDot X (blockMatVecMul E X)
+  have heQuad0 : 0 ≤ eQuad := by
+    by_cases hX : X = 0
+    · subst X
+      simp [eQuad, blockMatVecMul, blockVecDot, vecDot]
+    · exact mul_nonneg (by norm_num) (hE X hX).le
+  let term : I → ℝ := fun i =>
+    (volume (c i)).toReal / (volume (adaptedCellTranslate p r y)).toReal *
+      (1 / 2 * blockVecDot X (blockMatVecMul (coarseBlock (c i) a) X))
+  have hterm0 : ∀ i : I, 0 ≤ term i := by
+    intro i
+    have hquad0 : 0 ≤ 1 / 2 *
+        blockVecDot X (blockMatVecMul (coarseBlock (c i) a) X) := by
+      by_cases hX : X = 0
+      · subst X
+        simp [blockMatVecMul, blockVecDot, vecDot]
+      · exact mul_nonneg (by norm_num)
+          ((Recurrence.blockPosDef_coarseBlock_adaptedCellAt
+            Matrix.PosDef.one _ _ a) X hX).le
+    exact mul_nonneg
+      (div_nonneg ENNReal.toReal_nonneg ENNReal.toReal_nonneg) hquad0
+  have hecc : 1 ≤ witnessEccentricity n := Initialization.one_le_witnessEccentricity hn
+  have hecc0 : (0 : ℝ) ≤ witnessEccentricity n := by linarith only [hecc]
+  have hCd1 : 1 ≤ Cd := (le_max_left _ _).trans hCd
+  have hCd0 : (0 : ℝ) ≤ Cd := by linarith only [hCd1]
+  -- the row weights
+  let wrow : ℕ → ℝ := fun u =>
+    ∑ w ∈ Z (r - (u : ℤ)),
+      (volume (adaptedCellAt (1 : Mat d) (r - (u : ℤ)) w)).toReal /
+        (volume (adaptedCellTranslate p r y)).toReal
+  let envu : ℕ → ℝ := fun u =>
+    (3 : ℝ) ^ (g * max ((u : ℝ) - (D : ℝ)) 0)
+  have hwrow0 : ∀ u : ℕ, 0 ≤ wrow u := by
+    intro u
+    exact Finset.sum_nonneg fun w _ =>
+      div_nonneg ENNReal.toReal_nonneg ENNReal.toReal_nonneg
+  have hdim : 6 * (d : ℝ) * Real.sqrt d * ‖p⁻¹ * (1 : Mat d)‖ ≤
+      Cd * witnessEccentricity n := roundedGrid_boundaryFactor_le hj hCd hn
+  -- OBLIGATIONS 1 and 2 : summability and the partition bound, together
+  have hwrowPartial : ∀ N : ℕ, ∑ u ∈ Finset.range N, wrow u ≤ 1 :=
+    finiteDescendingRows_relativeVolume_le_one Z r _ hdom hdisj hsub hparentTop hparent0
+  obtain ⟨hwrowSummable, hwrowTotal⟩ :=
+    Quenched.summable_and_tsum_le_one_of_sum_range_le hwrow0 hwrowPartial
+  -- OBLIGATION 3 : the deep-row bound
+  have hwrowDeep : ∀ v : ℕ, wrow (v + (D + 1)) ≤
+      (Cd * witnessEccentricity n) *
+        (3 : ℝ) ^ (-((v : ℝ) + (D : ℝ) + 1)) := by
+    intro v
+    have hlt : r - ((v + (D + 1) : ℕ) : ℤ) < r := by omega
+    have hrowle := Transport.sum_relative_volume_row_le hp Matrix.PosDef.one hlt
+      (hZ (r - ((v + (D + 1) : ℕ) : ℤ)))
+    have hpw : (r - ((v + (D + 1) : ℕ) : ℤ)) - r =
+        -((v + (D + 1) : ℕ) : ℤ) := by omega
+    rw [hpw] at hrowle
+    have hzr : (3 : ℝ) ^ (-((v + (D + 1) : ℕ) : ℤ)) =
+        (3 : ℝ) ^ (-((v : ℝ) + (D : ℝ) + 1)) := by
+      rw [← Real.rpow_intCast (3 : ℝ) (-((v + (D + 1) : ℕ) : ℤ))]
+      congr 1
+      push_cast
+      ring
+    rw [hzr] at hrowle
+    exact hrowle.trans
+      (mul_le_mul_of_nonneg_right hdim (Real.rpow_nonneg (by norm_num) _))
+  have hprodSummable : Summable fun u : ℕ => wrow u * envu u :=
+    summable_burnWeightedRows hg.2 D wrow hwrow0 hwrowDeep
+  -- OBLIGATION 5 : the per-row quadratic bound, with wrow kept explicit
+  have hrow : ∀ u : ℕ, (∑' w : {w // w ∈ Z (r - (u : ℤ))}, term ⟨u, w⟩) ≤
+      (Y * eQuad) * (wrow u * envu u) :=
+    burnRowQuadratic_le_relativeVolume p r y D g Y a E X Z hidentity hsub hstandard
   -- OBLIGATION 6 : summability of the row sums
   have hrowSummable : Summable fun u : ℕ =>
       ∑' w : {w // w ∈ Z (r - (u : ℤ))}, term ⟨u, w⟩ :=

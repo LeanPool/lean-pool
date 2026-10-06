@@ -22,21 +22,27 @@ namespace HCPolySupport.Source.Coarse
 
 open MeasureTheory
 
+/-- Every point of `U` is at Euclidean distance at least one from every point of `V`. -/
 @[expose]
 def EuclideanUnitSeparated {d : ℕ}
     (U V : Set (Vec d)) : Prop :=
   ∀ ⦃x y : Vec d⦄, x ∈ U → y ∈ V → 1 ≤ euclideanDist x y
 
+/-- The coefficient law is invariant under every integer coordinate translation. -/
 @[expose]
 def IsStationary {d : ℕ} (P : Measure (Carrier d)) : Prop :=
   ∀ z : Fin d → ℤ, Measure.map (Carrier.translate z) P = P
 
+/-- The local sigma algebras of measurable sets separated by Euclidean distance at least one are
+independent under the coefficient law. -/
 @[expose]
 def IsUnitRangeDependent {d : ℕ} (P : Measure (Carrier d)) : Prop :=
   ∀ (U V : Set (Vec d)) (hU : MeasurableSet U) (hV : MeasurableSet V),
     EuclideanUnitSeparated U V →
       ProbabilityTheory.Indep (localSigma U hU) (localSigma V hV) P
 
+/-- The coefficient law is invariant under signed coordinate permutations and under taking the
+adjoint. -/
 @[expose]
 def IsIsotropicAndAdjointInvariant {d : ℕ}
     (P : Measure (Carrier d)) : Prop :=

@@ -82,7 +82,8 @@ theorem avsum_sq_head_annealed_respCoeffMinus_eq {d : ℕ} [NeZero d]
       = (Real.sqrt (vecDot Y.1 (matVecMul (annealedBlockOf P
               (adaptedCellAtCenter (respGrid jStar F) j 0) (respCoeffMinus F)).upperLeft Y.1))
           + Real.sqrt (vecDot Y.2 (matVecMul (annealedBlockOf P
-              (adaptedCellAtCenter (respGrid jStar F) j 0) (respCoeffMinus F)).lowerRight Y.2))) ^ 2 := by
+              (adaptedCellAtCenter (respGrid jStar F) j 0) (respCoeffMinus F)).lowerRight Y.2)))
+                ^ 2 := by
   have h0mem : (0 : Fin d → ℤ) ∈ triadicIndexBox d n := by
     rw [triadicIndexBox, Fintype.mem_piFinset]
     intro i
@@ -93,16 +94,20 @@ theorem avsum_sq_head_annealed_respCoeffMinus_eq {d : ℕ} [NeZero d]
   simp only [respGrid]
   have hsum : ∀ w ∈ triadicIndexBox d n,
       (Real.sqrt (vecDot Y.1 (matVecMul (annealedBlockOf P
-            (adaptedCellAtCenter (Geometry.explicitRoundedGrid jStar (explicitCanonicalMetric F)) j w)
+            (adaptedCellAtCenter (Geometry.explicitRoundedGrid jStar (explicitCanonicalMetric
+              F)) j w)
             (respCoeffMinus F)).upperLeft Y.1))
           + Real.sqrt (vecDot Y.2 (matVecMul (annealedBlockOf P
-            (adaptedCellAtCenter (Geometry.explicitRoundedGrid jStar (explicitCanonicalMetric F)) j w)
+            (adaptedCellAtCenter (Geometry.explicitRoundedGrid jStar (explicitCanonicalMetric
+              F)) j w)
             (respCoeffMinus F)).lowerRight Y.2))) ^ 2
       = (Real.sqrt (vecDot Y.1 (matVecMul (annealedBlockOf P
-            (adaptedCellAtCenter (Geometry.explicitRoundedGrid jStar (explicitCanonicalMetric F)) j 0)
+            (adaptedCellAtCenter (Geometry.explicitRoundedGrid jStar (explicitCanonicalMetric
+              F)) j 0)
             (respCoeffMinus F)).upperLeft Y.1))
           + Real.sqrt (vecDot Y.2 (matVecMul (annealedBlockOf P
-            (adaptedCellAtCenter (Geometry.explicitRoundedGrid jStar (explicitCanonicalMetric F)) j 0)
+            (adaptedCellAtCenter (Geometry.explicitRoundedGrid jStar (explicitCanonicalMetric
+              F)) j 0)
             (respCoeffMinus F)).lowerRight Y.2))) ^ 2 := by
     intro w _
     have hw := annealedBlockOf_adaptedCellAtCenter_respCoeffMinus_eq P hstat jStar
@@ -137,7 +142,8 @@ theorem avsum_sq_head_annealed_respCoeffPlus_eq {d : ℕ} [NeZero d]
       = (Real.sqrt (vecDot Y.1 (matVecMul (annealedBlockOf P
               (adaptedCellAtCenter (respGrid jStar F) j 0) (respCoeffPlus F)).upperLeft Y.1))
           + Real.sqrt (vecDot Y.2 (matVecMul (annealedBlockOf P
-              (adaptedCellAtCenter (respGrid jStar F) j 0) (respCoeffPlus F)).lowerRight Y.2))) ^ 2 := by
+              (adaptedCellAtCenter (respGrid jStar F) j 0) (respCoeffPlus F)).lowerRight Y.2)))
+                ^ 2 := by
   have h0mem : (0 : Fin d → ℤ) ∈ triadicIndexBox d n := by
     rw [triadicIndexBox, Fintype.mem_piFinset]
     intro i
@@ -148,16 +154,20 @@ theorem avsum_sq_head_annealed_respCoeffPlus_eq {d : ℕ} [NeZero d]
   simp only [respGrid]
   have hsum : ∀ w ∈ triadicIndexBox d n,
       (Real.sqrt (vecDot Y.1 (matVecMul (annealedBlockOf P
-            (adaptedCellAtCenter (Geometry.explicitRoundedGrid jStar (explicitCanonicalMetric F)) j w)
+            (adaptedCellAtCenter (Geometry.explicitRoundedGrid jStar (explicitCanonicalMetric
+              F)) j w)
             (respCoeffPlus F)).upperLeft Y.1))
           + Real.sqrt (vecDot Y.2 (matVecMul (annealedBlockOf P
-            (adaptedCellAtCenter (Geometry.explicitRoundedGrid jStar (explicitCanonicalMetric F)) j w)
+            (adaptedCellAtCenter (Geometry.explicitRoundedGrid jStar (explicitCanonicalMetric
+              F)) j w)
             (respCoeffPlus F)).lowerRight Y.2))) ^ 2
       = (Real.sqrt (vecDot Y.1 (matVecMul (annealedBlockOf P
-            (adaptedCellAtCenter (Geometry.explicitRoundedGrid jStar (explicitCanonicalMetric F)) j 0)
+            (adaptedCellAtCenter (Geometry.explicitRoundedGrid jStar (explicitCanonicalMetric
+              F)) j 0)
             (respCoeffPlus F)).upperLeft Y.1))
           + Real.sqrt (vecDot Y.2 (matVecMul (annealedBlockOf P
-            (adaptedCellAtCenter (Geometry.explicitRoundedGrid jStar (explicitCanonicalMetric F)) j 0)
+            (adaptedCellAtCenter (Geometry.explicitRoundedGrid jStar (explicitCanonicalMetric
+              F)) j 0)
             (respCoeffPlus F)).lowerRight Y.2))) ^ 2 := by
     intro w _
     have hw := annealedBlockOf_adaptedCellAtCenter_respCoeffPlus_eq P hstat jStar

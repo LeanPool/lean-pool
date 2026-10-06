@@ -42,7 +42,7 @@ theorem doubled_response_by_scalar_of_isEllipticFieldOn {d : ℕ}
           (1 / 2 : ℝ) * responseJ U a.transpose (pStar + p) (qStar + q) := by
   intro p pStar q qStar
   have hBlock :=
-    blockJ_eq_half_responseJ_adjoint_sum_of_isEllipticFieldOn_of_isOpenBoundedConvexDomain
+    blockJ_eq_half_adjointResponseSum_of_ConvexDomain
       (a := a.toCoeffField) U.isDomain hEll (domain_volume_pos U).ne'
       p pStar q qStar
   calc
@@ -131,7 +131,7 @@ theorem doubledResponseValue_scalarMaximizers_eq_scalar_responseJ_of_isEllipticF
               (scalarResponseIntegrand (U : Set (Vec d))
                 (HCPolySupport.adjointCoeffField a.toCoeffField)
                 (pStar + p) (qStar + q) vStar) :=
-        volumeAverage_blockResponseIntegrand_pair_half_eq_scalarResponse_sum_of_isEllipticFieldOn
+        volumeAverage_halfBlockPair_eq_scalarResponseSum_of_ellipticity
           (a := a.toCoeffField) U.measurableSet hEll p pStar q qStar v vStar
     _ =
         (1 / 2 : ℝ) * ResponseJ (U : Set (Vec d)) (p - pStar) (qStar - q)
@@ -220,7 +220,7 @@ theorem doubledResponseValue_scalarPair_eq_scalar_values_of_isEllipticFieldOn
               (scalarResponseIntegrand (U : Set (Vec d))
                 (HCPolySupport.adjointCoeffField a.toCoeffField)
                 (pStar + p) (qStar + q) vStar) :=
-        volumeAverage_blockResponseIntegrand_pair_half_eq_scalarResponse_sum_of_isEllipticFieldOn
+        volumeAverage_halfBlockPair_eq_scalarResponseSum_of_ellipticity
           (a := a.toCoeffField) U.measurableSet hEll p pStar q qStar v vStar
 
 theorem old_isResponseMaximizer_of_value_eq_responseJ {d : ℕ}
@@ -281,7 +281,8 @@ theorem scalar_maximizers_give_doubled_maximizer_of_isEllipticFieldOn {d : ℕ}
             IsDoubledResponseMaximizer U a (p, q) (qStar, pStar)
               (doubledFieldOfScalarMaximizers a v vStar) := by
   intro p pStar q qStar v vStar hv hvStar
-  refine ⟨doubledFieldOfScalarMaximizers_mem_responseField_of_isEllipticFieldOn U a hEll v vStar, ?_⟩
+  refine ⟨doubledFieldOfScalarMaximizers_mem_responseField_of_isEllipticFieldOn U a hEll v
+    vStar, ?_⟩
   intro Y hY
   have hYOld :
       BlockResponseSpace a.toCoeffField (U : Set (Vec d)) (blockStateOfDoubled Y) :=
@@ -373,7 +374,7 @@ theorem doubled_maximizer_sameAE_scalar_maximizers_of_isEllipticFieldOn {d : ℕ
         (a := a.toCoeffField) (X := blockStateOfDoubled X)
         hXmax.1.1.1.1 hXmax.1.1.2.1 hEll
   rcases
-    exists_blockResponsePairHalfState_ae_eq_of_mem_responseSpace_of_lowerImage_memVectorL2_of_isEllipticFieldOn_of_isOpenBoundedConvexDomain
+    exists_blockResponseHalfState_ae_eq_of_lowerImage_memVectorL2
       (a := a.toCoeffField) U.isDomain hOld hLowerL2 hEll with
     ⟨v, vStarOld, hhalf⟩
   let vStar : Solution U a.transpose := by
@@ -410,7 +411,7 @@ theorem doubled_maximizer_sameAE_scalar_maximizers_of_isEllipticFieldOn {d : ℕ
         doubledResponseValue U a (p, q) (qStar, pStar) X :=
     doubledResponseJ_eq_value_of_maximizer hXmax
   have hBlockSplit :=
-    blockJ_eq_half_responseJ_adjoint_sum_of_isEllipticFieldOn_of_isOpenBoundedConvexDomain
+    blockJ_eq_half_adjointResponseSum_of_ConvexDomain
       (a := a.toCoeffField) U.isDomain hEll (domain_volume_pos U).ne'
       p pStar q qStar
   let val := volumeAverage (U : Set (Vec d))

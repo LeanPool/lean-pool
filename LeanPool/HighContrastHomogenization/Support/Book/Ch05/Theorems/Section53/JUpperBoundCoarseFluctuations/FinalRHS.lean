@@ -251,6 +251,109 @@ private theorem coarseFluctuationManuscriptRHSAtScale_eq_decomp
   simp [mul_assoc, mul_left_comm, mul_comm]
   ring
 
+private theorem responseMomentContribution_nonneg
+    {d : ℕ}
+    [NeZero d]
+    {P : Ch04.RestrictionCoeffLaw d}
+    (hP : Ch04.RestrictionLawCarrier P)
+    (hStruct : Ch04.RestrictionStructuralLaw P)
+    (hP4 : QuantitativeCoarseGrainedEllipticity P)
+    (k : ℕ)
+    (m : ℕ)
+    (e : Vec d)
+    :
+    let β := section53CoarseFluctuationBeta hP4
+    let R :=
+      (hP4.xi : ℝ) * (β ^ 3)⁻¹ * Real.rpow (3 : ℝ) (-β * (m : ℝ)) *
+        coarseFluctuationUnitMomentWeightAtScale hP hStruct hP4 m *
+          coarseFluctuationResponseMomentAtScale hP hStruct hP4 k m e
+    ∀ (hβ_pos : 0 < β),
+    0 ≤ R := by
+  classical
+  let : IsProbabilityMeasure P := hP.isProbability
+  dsimp only
+  let β := section53CoarseFluctuationBeta hP4
+  let R :=
+    (hP4.xi : ℝ) * (β ^ 3)⁻¹ * Real.rpow (3 : ℝ) (-β * (m : ℝ)) *
+      coarseFluctuationUnitMomentWeightAtScale hP hStruct hP4 m *
+        coarseFluctuationResponseMomentAtScale hP hStruct hP4 k m e
+  intro hβ_pos
+  dsimp [R]
+  exact mul_nonneg
+    (mul_nonneg
+      (mul_nonneg
+        (mul_nonneg (by exact_mod_cast Nat.zero_le hP4.xi)
+          (inv_nonneg.mpr (pow_nonneg hβ_pos.le 3)))
+        (Real.rpow_nonneg (by norm_num : 0 ≤ (3 : ℝ)) _))
+      (coarseFluctuationUnitMomentWeightAtScale_nonneg hP hStruct hP4 m))
+    (coarseFluctuationResponseMomentAtScale_nonneg hP hStruct hP4 k m e)
+
+private theorem lowScaleContribution_nonneg
+    {d : ℕ}
+    [NeZero d]
+    {P : Ch04.RestrictionCoeffLaw d}
+    (hP : Ch04.RestrictionLawCarrier P)
+    (hStruct : Ch04.RestrictionStructuralLaw P)
+    (hP4 : QuantitativeCoarseGrainedEllipticity P)
+    (k : ℕ)
+    (m : ℕ)
+    :
+    let β := section53CoarseFluctuationBeta hP4
+    let θ := thetaAtScale hP hStruct (m : ℤ)
+    let D :=
+      (β ^ 2)⁻¹ *
+        Real.rpow (3 : ℝ) (-2 * β * (((m - k : ℕ) : ℝ))) *
+          coarseFluctuationScalarWeightAtScale hP hStruct m * (θ - 1)
+    ∀ (hθ_one : 1 ≤ θ),
+    0 ≤ D := by
+  classical
+  let : IsProbabilityMeasure P := hP.isProbability
+  dsimp only
+  let β := section53CoarseFluctuationBeta hP4
+  let θ := thetaAtScale hP hStruct (m : ℤ)
+  let D :=
+    (β ^ 2)⁻¹ *
+      Real.rpow (3 : ℝ) (-2 * β * (((m - k : ℕ) : ℝ))) *
+        coarseFluctuationScalarWeightAtScale hP hStruct m * (θ - 1)
+  intro hθ_one
+  dsimp [D]
+  exact mul_nonneg
+    (mul_nonneg
+      (mul_nonneg (inv_nonneg.mpr (sq_nonneg _))
+        (Real.rpow_nonneg (by norm_num : 0 ≤ (3 : ℝ)) _))
+      (coarseFluctuationScalarWeightAtScale_nonneg hP hStruct hP4 m))
+    (by linarith)
+
+private theorem weightedTauContribution_nonneg
+    {d : ℕ}
+    [NeZero d]
+    {P : Ch04.RestrictionCoeffLaw d}
+    (hP : Ch04.RestrictionLawCarrier P)
+    (hstat : Ch04.RestrictionStationaryLaw P)
+    (hStruct : Ch04.RestrictionStructuralLaw P)
+    (hP4 : QuantitativeCoarseGrainedEllipticity P)
+    (k : ℕ)
+    (m : ℕ)
+    (e : Vec d)
+    :
+    let β := section53CoarseFluctuationBeta hP4
+    let B :=
+      (β ^ 2)⁻¹ * coarseFluctuationScalarWeightAtScale hP hStruct m *
+        coarseFluctuationTauSumAtScale hP hStruct hP4 k m e
+    0 ≤ B := by
+  classical
+  let : IsProbabilityMeasure P := hP.isProbability
+  dsimp only
+  let β := section53CoarseFluctuationBeta hP4
+  let B :=
+    (β ^ 2)⁻¹ * coarseFluctuationScalarWeightAtScale hP hStruct m *
+      coarseFluctuationTauSumAtScale hP hStruct hP4 k m e
+  dsimp [B]
+  exact mul_nonneg
+    (mul_nonneg (inv_nonneg.mpr (sq_nonneg _))
+      (coarseFluctuationScalarWeightAtScale_nonneg hP hStruct hP4 m))
+    (coarseFluctuationTauSumAtScale_nonneg hP hstat hStruct hP4 k m e)
+
 /-- The first-lemma special-vector RHS is bounded by the final manuscript
 coarse-fluctuation RHS. -/
 theorem specialWeakNormManuscriptRHSAtScale_le_coarseFluctuationManuscriptRHSAtScale
@@ -391,30 +494,13 @@ theorem specialWeakNormManuscriptRHSAtScale_le_coarseFluctuationManuscriptRHSAtS
     exact mul_nonneg
       (mul_nonneg (inv_nonneg.mpr hβ_pos.le) hθ_nonneg)
       (coarseFluctuationFullBlockSumAtScale_nonneg hP hStruct hP4 k m)
-  have hB_nonneg : 0 ≤ B := by
-    dsimp [B]
-    exact mul_nonneg
-      (mul_nonneg (inv_nonneg.mpr (sq_nonneg _))
-        (coarseFluctuationScalarWeightAtScale_nonneg hP hStruct hP4 m))
-      (coarseFluctuationTauSumAtScale_nonneg hP hstat hStruct hP4 k m e)
-  have hR_nonneg : 0 ≤ R := by
-    dsimp [R]
-    exact mul_nonneg
-      (mul_nonneg
-        (mul_nonneg
-          (mul_nonneg (by exact_mod_cast Nat.zero_le hP4.xi)
-            (inv_nonneg.mpr (pow_nonneg hβ_pos.le 3)))
-          (Real.rpow_nonneg (by norm_num : 0 ≤ (3 : ℝ)) _))
-        (coarseFluctuationUnitMomentWeightAtScale_nonneg hP hStruct hP4 m))
-      (coarseFluctuationResponseMomentAtScale_nonneg hP hStruct hP4 k m e)
-  have hD_nonneg : 0 ≤ D := by
-    dsimp [D]
-    exact mul_nonneg
-      (mul_nonneg
-        (mul_nonneg (inv_nonneg.mpr (sq_nonneg _))
-          (Real.rpow_nonneg (by norm_num : 0 ≤ (3 : ℝ)) _))
-        (coarseFluctuationScalarWeightAtScale_nonneg hP hStruct hP4 m))
-      (by linarith)
+  have hB_nonneg := weightedTauContribution_nonneg (d := d) (P := P) (hP := hP) (hstat := hstat)
+    (hStruct := hStruct) (hP4 := hP4) (k := k) (m := m) (e := e)
+  have hR_nonneg := responseMomentContribution_nonneg (d := d) (P := P) (hP := hP) (hStruct :=
+    hStruct)
+    (hP4 := hP4) (k := k) (m := m) (e := e) hβ_pos
+  have hD_nonneg := lowScaleContribution_nonneg (d := d) (P := P) (hP := hP) (hStruct := hStruct)
+    (hP4 := hP4) (k := k) (m := m) hθ_one
   have hS_nonneg : 0 ≤ Ssum := by
     simpa [Ssum] using
       finalRHS_sum_four_nonneg hA_nonneg hB_nonneg hR_nonneg hD_nonneg

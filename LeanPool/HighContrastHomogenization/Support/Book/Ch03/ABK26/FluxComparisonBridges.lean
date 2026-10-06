@@ -115,7 +115,7 @@ theorem cubeDirichletDivergenceProblem_to_centeredCubeH10ScalarDivergenceSolutio
 
 /-- The same normalization bridge when the datum already carries both its
 finite-exponent and `L²` certificates. -/
-theorem CubeEuclideanL2LpField.to_centeredCubeH10ScalarDivergenceSolution
+theorem CubeEuclideanL2LpField.to_centeredH10DivergenceSolution
     {d : ℕ} {p : FiniteLpExponent} (m : ℤ)
     (h : CubeEuclideanL2LpField (originCube d m) p)
     (z : H10Function (openCubeSet (originCube d m)))

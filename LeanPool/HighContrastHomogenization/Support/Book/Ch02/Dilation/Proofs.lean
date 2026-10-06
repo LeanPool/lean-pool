@@ -317,6 +317,7 @@ structure CubeDilation {d : ℕ} {k : ℤ} {Q : TriadicCube d}
     {b : CoeffOn (cubeDomain (dilateCube k Q))}
     (hCoeff : CoeffOn.IsCubeDilation k a b)
     (u : Solution (cubeDomain Q) a) where
+  /-- The solution on the dilated cube associated with the coefficient dilation. -/
   toSolution : Solution (cubeDomain (dilateCube k Q)) b
   isDilation : IsCubeDilation hCoeff u toSolution
 

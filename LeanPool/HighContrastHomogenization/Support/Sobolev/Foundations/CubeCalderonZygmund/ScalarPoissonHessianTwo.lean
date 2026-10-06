@@ -50,11 +50,12 @@ theorem exists_scalarPoisson_hessianHilbertMat_normalizedCubeMeasure_le_two
               (normalizedCubeMeasure (originCube d m)) ≤
             C * eLpNorm F 2 (normalizedCubeMeasure (originCube d m)) := by
   refine ⟨ENNReal.ofReal
-    (CubeDirichletWeakPoissonProblem.cubeDirichletH2RegularityVolumeL2ConstantExact d),
+    (CubeDirichletWeakPoissonProblem.cubeDirichletH2VolumeL2Constant d),
     ENNReal.ofReal_lt_top, ?_⟩
   intro m F hF u hweak
   let Q : TriadicCube d := originCube d m
-  rcases CubeDirichletWeakPoissonProblem.exists_originCube_dirichlet_calderon_zygmund_regularity_q_two
+  rcases
+    CubeDirichletWeakPoissonProblem.exists_originCube_dirichlet_calderon_zygmund_regularity_q_two
     m u F hF hweak with
     ⟨H, hH⟩
   have hHmat : MemLp (fun x ↦ HilbertMat.ofMat (fun i j ↦ H.hess i j x)) 2
@@ -97,7 +98,7 @@ theorem exists_scalarPoisson_hessianHilbertMat_normalizedCubeMeasure_le_two
       (cubeBoundedMeasurableDomain_normalizedVolume_eq_normalizedCubeMeasure Q).symm
   have hright :
       H.frobeniusNormalizedL2 Q ≤
-        CubeDirichletWeakPoissonProblem.cubeDirichletH2RegularityVolumeL2ConstantExact d *
+        CubeDirichletWeakPoissonProblem.cubeDirichletH2VolumeL2Constant d *
           (eLpNorm F 2 (normalizedCubeMeasure Q)).toReal := by
     simpa only [Q, BoundedMeasurableDomain.normalizedLpNorm,
       BoundedMeasurableDomain.normalizedLpFiniteENorm,
@@ -107,7 +108,7 @@ theorem exists_scalarPoisson_hessianHilbertMat_normalizedCubeMeasure_le_two
     (ENNReal.mul_ne_top ENNReal.ofReal_ne_top hF.eLpNorm_ne_top)).mp
   rw [ENNReal.toReal_mul,
     ENNReal.toReal_ofReal
-      (CubeDirichletWeakPoissonProblem.cubeDirichletH2RegularityVolumeL2ConstantExact_nonneg d)]
+      (CubeDirichletWeakPoissonProblem.cubeDirichletH2VolumeL2Constant_nonneg d)]
   exact hleft.trans_le hright
 
 end CubeCalderonZygmund

@@ -51,7 +51,7 @@ variational coarse block matrix of the sample field. -/
 def coarseBlock (U : Set (Vec d)) (a : CoeffSpace d) : BlockMat d :=
   coarseBlockMatrix U ⇑a.1
 
-/-- The deterministic annealed block `𝐀̄(U) = E[𝐀(U; ·)]`, entrywise. -/
+/-- The deterministic annealed block `𝐀_bar(U) = E[𝐀(U; ·)]`, entrywise. -/
 @[expose]
 def annealedBlock (P : Measure (CoeffSpace d)) (U : Set (Vec d)) : BlockMat d :=
   { upperLeft := Matrix.of fun i j => ∫ a, (coarseBlock U a).upperLeft i j ∂P

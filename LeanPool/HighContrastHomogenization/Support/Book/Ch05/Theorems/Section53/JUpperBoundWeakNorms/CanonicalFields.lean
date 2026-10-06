@@ -283,7 +283,7 @@ theorem canonicalMaximizerGradientOnCube_memLp_descendant {d : ℕ}
           (openCubeSet_subset_of_mem_descendantsAtDepth hR))
   exact memLp_normalizedCubeMeasure_of_memVectorL2_openCubeSet R hgradOpenR
 
-theorem cubeAverageVec_canonicalMaximizerGradientDefectOnDependentFamily_eq_ch04
+theorem cubeAverageCanonicalGradientDefect_eq_responseGradientAverage
     {d : ℕ} [NeZero d] (a : RegCoeffField d)
     (ha : Ch04.AELocallyUniformlyEllipticField a)
     {Q R : TriadicCube d} {j : ℕ}
@@ -314,11 +314,12 @@ theorem cubeAverageVec_canonicalMaximizerGradientDefectOnDependentFamily_eq_ch04
         cubeAverageVec R (fun x => canonicalMaximizerGradientOnCube Q aQ p q x - p0) := by
           rfl
     _ = cubeAverageVec R (canonicalMaximizerGradientOnCube Q aQ p q) - p0 := by
-          simpa using cubeAverageVec_sub_const R (canonicalMaximizerGradientOnCube Q aQ p q) p0 hgrad
+          simpa using cubeAverageVec_sub_const R (canonicalMaximizerGradientOnCube Q aQ p q) p0
+            hgrad
     _ = Ch04.canonicalScalarResponseGradientAverageCubeSet Q R p q a.toFun - p0 := by
           rw [hch04]
 
-theorem cubeBesovNegativeVectorPartialSeminorm_canonicalMaximizerGradientDefectOnDependentFamily_eq_ch04
+theorem negativeVectorPartial_canonicalGradientDefect_eq_chapter04
     {d : ℕ} [NeZero d] (a : RegCoeffField d)
     (ha : Ch04.AELocallyUniformlyEllipticField a)
     (Q : TriadicCube d) (s : ℝ) (N : ℕ) (p q p0 : Vec d) :
@@ -337,10 +338,10 @@ theorem cubeBesovNegativeVectorPartialSeminorm_canonicalMaximizerGradientDefectO
   apply congrArg (fun z : ℝ => (((descendantsAtDepth Q j).card : ℝ)⁻¹) * z)
   refine Finset.sum_congr rfl ?_
   intro R hR
-  rw [cubeAverageVec_canonicalMaximizerGradientDefectOnDependentFamily_eq_ch04
+  rw [cubeAverageCanonicalGradientDefect_eq_responseGradientAverage
     a ha hR p q p0]
 
-theorem cubeBesovNegativeVectorPartialSeminorm_canonicalMaximizerGradientDefectOnDependentFamily_le_ch04WeakNorm
+theorem negativePartialSeminorm_maximizerGradientDefect_le_ch04WeakNorm
     {d : ℕ} [NeZero d] (a : RegCoeffField d)
     (ha : Ch04.AELocallyUniformlyEllipticField a)
     (Q : TriadicCube d) {s : ℝ} (hs : 0 < s) (N : ℕ) (p q p0 : Vec d) :
@@ -370,9 +371,9 @@ theorem cubeBesovNegativeVectorPartialSeminorm_canonicalMaximizerGradientDefectO
               ((Ch04.triadicCoeffFamilyOfAELocallyUniformlyEllipticField a ha).coeffOn Q)
               p q p0) ≤ B := by
       simpa [F, aQ] using hB ⟨M, rfl⟩
-    simpa [cubeBesovNegativeVectorPartialSeminorm_canonicalMaximizerGradientDefectOnDependentFamily_eq_ch04
+    simpa [negativeVectorPartial_canonicalGradientDefect_eq_chapter04
       a ha Q s M p q p0] using hRaw
-  rw [cubeBesovNegativeVectorPartialSeminorm_canonicalMaximizerGradientDefectOnDependentFamily_eq_ch04
+  rw [negativeVectorPartial_canonicalGradientDefect_eq_chapter04
     a ha Q s N p q p0]
   exact le_csSup hCh4Bdd ⟨N, rfl⟩
 
@@ -431,7 +432,7 @@ theorem cubeAverageVec_canonicalMaximizerFluxDefectOnDependentFamily_eq_ch04
     _ = Ch04.canonicalScalarResponseFluxAverageCubeSet Q R p q a.toFun - q0 := by
           rw [hch04]
 
-theorem cubeBesovNegativeVectorPartialSeminorm_canonicalMaximizerFluxDefectOnDependentFamily_eq_ch04
+theorem cubeNegativeVectorBesov_eq_canonicalFluxWeakNorm
     {d : ℕ} [NeZero d] (a : RegCoeffField d)
     (ha : Ch04.AELocallyUniformlyEllipticField a)
     (Q : TriadicCube d) (s : ℝ) (N : ℕ) (p q q0 : Vec d) :
@@ -453,7 +454,7 @@ theorem cubeBesovNegativeVectorPartialSeminorm_canonicalMaximizerFluxDefectOnDep
   rw [cubeAverageVec_canonicalMaximizerFluxDefectOnDependentFamily_eq_ch04
     a ha hR p q q0]
 
-theorem cubeBesovNegativeVectorPartialSeminorm_canonicalMaximizerFluxDefectOnDependentFamily_le_ch04WeakNorm
+theorem negativeVectorPartial_canonicalFluxDefect_le_chapter04WeakNorm
     {d : ℕ} [NeZero d] (a : RegCoeffField d)
     (ha : Ch04.AELocallyUniformlyEllipticField a)
     (Q : TriadicCube d) {s : ℝ} (hs : 0 < s) (N : ℕ) (p q q0 : Vec d) :
@@ -483,9 +484,10 @@ theorem cubeBesovNegativeVectorPartialSeminorm_canonicalMaximizerFluxDefectOnDep
               ((Ch04.triadicCoeffFamilyOfAELocallyUniformlyEllipticField a ha).coeffOn Q)
               p q q0) ≤ B := by
       simpa [F, aQ] using hB ⟨M, rfl⟩
-    simpa [cubeBesovNegativeVectorPartialSeminorm_canonicalMaximizerFluxDefectOnDependentFamily_eq_ch04
+    simpa
+      [cubeNegativeVectorBesov_eq_canonicalFluxWeakNorm
       a ha Q s M p q q0] using hRaw
-  rw [cubeBesovNegativeVectorPartialSeminorm_canonicalMaximizerFluxDefectOnDependentFamily_eq_ch04
+  rw [cubeNegativeVectorBesov_eq_canonicalFluxWeakNorm
     a ha Q s N p q q0]
   exact le_csSup hCh4Bdd ⟨N, rfl⟩
 

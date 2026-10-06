@@ -68,7 +68,7 @@ theorem homogenizationErrorOnCube_infinity_two_le_of_lt
   have hnonneg : ∀ n : ℕ, 0 ≤ H n := by
     intro n
     exact Ch02.maxDescendantNormalizedBlockResponseAtScale_nonneg Q
-      (sub_le_self Q.scale (by exact_mod_cast Nat.zero_le n)) a a0
+      (sub_le_self Q.scale (Nat.cast_nonneg n)) a a0
   have hsumOld : Summable (fun n : ℕ =>
       HCPolySupport.geometricWeight t 2 n * H n) := by
     simpa [H, Ch02.geometricWeight_eq_old] using

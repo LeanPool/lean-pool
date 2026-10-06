@@ -77,7 +77,8 @@ theorem blockVecDot_cellAverage_subcell_le {d : ℕ} [NeZero d]
     (v : AHarmonicFunction b (HighContrast.adaptedCell q t))
     (K : ℝ) (hK : 0 < K)
     (hB : ∀ X : BlockVec d, blockVecDot X (blockMatVecMul
-          (ofFullBlockMat (toFullBlockMat (coarseBlockMatrix (adaptedCellAtCenter q (t - (n : ℤ)) w) b)
+          (ofFullBlockMat (toFullBlockMat (coarseBlockMatrix (adaptedCellAtCenter q (t - (n :
+            ℤ)) w) b)
             + toFullBlockMat (blockSwap d))) X) ≤ K * blockVecDot X X) :
     blockVecDot (cellAverage (adaptedCellAtCenter q (t - (n : ℤ)) w) (optimizerField b v))
         (cellAverage (adaptedCellAtCenter q (t - (n : ℤ)) w) (optimizerField b v))
@@ -153,14 +154,18 @@ theorem avsum_optimizerState_sq_le_of_inputs {d : ℕ} [NeZero d]
     (K : ℝ) (hK : 0 < K)
     (hB : ∀ w ∈ triadicIndexBox d n, ∀ X : BlockVec d,
       blockVecDot X (blockMatVecMul
-        (ofFullBlockMat (toFullBlockMat (coarseBlockMatrix (adaptedCellAtCenter q (t - (n : ℤ)) w) b)
+        (ofFullBlockMat (toFullBlockMat (coarseBlockMatrix (adaptedCellAtCenter q (t - (n : ℤ))
+          w) b)
           + toFullBlockMat (blockSwap d))) X) ≤ K * blockVecDot X X)
     (hint : IntegrableOn (scalarVariationEnergyIntegrand b v) (HighContrast.adaptedCell q t)) :
     (((triadicIndexBox d n).card : ℝ))⁻¹ * ∑ w ∈ triadicIndexBox d n,
         blockVecDot
-          (blockMatVecMul S (cellAverage (adaptedCellAtCenter q (t - (n : ℤ)) w) (optimizerField b v) - Y))
-          (blockMatVecMul S (cellAverage (adaptedCellAtCenter q (t - (n : ℤ)) w) (optimizerField b v) - Y))
-      ≤ kS * (2 * (K * volumeAverage (HighContrast.adaptedCell q t) (scalarVariationEnergyIntegrand b v))
+          (blockMatVecMul S (cellAverage (adaptedCellAtCenter q (t - (n : ℤ)) w) (optimizerField
+            b v) - Y))
+          (blockMatVecMul S (cellAverage (adaptedCellAtCenter q (t - (n : ℤ)) w) (optimizerField
+            b v) - Y))
+      ≤ kS * (2 * (K * volumeAverage (HighContrast.adaptedCell q t)
+        (scalarVariationEnergyIntegrand b v))
               + 2 * blockVecDot Y Y) := by
   classical
   have hNpos : (0 : ℝ) < ((triadicIndexBox d n).card : ℝ) := by
@@ -311,8 +316,10 @@ theorem avsum_optimizerState_sq_le_of_inputs {d : ℕ} [NeZero d]
   calc
     (((triadicIndexBox d n).card : ℝ))⁻¹ * ∑ w ∈ triadicIndexBox d n,
         blockVecDot
-          (blockMatVecMul S (cellAverage (adaptedCellAtCenter q (t - (n : ℤ)) w) (optimizerField b v) - Y))
-          (blockMatVecMul S (cellAverage (adaptedCellAtCenter q (t - (n : ℤ)) w) (optimizerField b v) - Y))
+          (blockMatVecMul S (cellAverage (adaptedCellAtCenter q (t - (n : ℤ)) w) (optimizerField
+            b v) - Y))
+          (blockMatVecMul S (cellAverage (adaptedCellAtCenter q (t - (n : ℤ)) w) (optimizerField
+            b v) - Y))
         ≤ (((triadicIndexBox d n).card : ℝ))⁻¹ *
             ∑ w ∈ triadicIndexBox d n,
               kS * (2 * (blockVecDot
@@ -384,7 +391,8 @@ theorem besovSeminorm_sq_optimizerState_le_of_scale_bounds {d : ℕ} [NeZero d]
     (K₀ : ℝ) (hK₀ : 0 < K₀)
     (hB : ∀ (n : ℕ), ∀ w ∈ triadicIndexBox d n, ∀ X : BlockVec d,
       blockVecDot X (blockMatVecMul
-        (ofFullBlockMat (toFullBlockMat (coarseBlockMatrix (adaptedCellAtCenter q (t - (n : ℤ)) w) b)
+        (ofFullBlockMat (toFullBlockMat (coarseBlockMatrix (adaptedCellAtCenter q (t - (n : ℤ))
+          w) b)
           + toFullBlockMat (blockSwap d))) X)
         ≤ (K₀ * (3 : ℝ) ^ (ρ * (n : ℝ))) * blockVecDot X X)
     (hint : IntegrableOn (scalarVariationEnergyIntegrand b v) (HighContrast.adaptedCell q t))
@@ -552,12 +560,14 @@ theorem coarseBlock_subcell_le_one_add_scaled_respAllScaleMax (d : ℕ) (hd : 2 
     ∀ᵐ a ∂P, ∀ (n : ℕ), ∀ z ∈ triadicIndexBox d n,
       BlockMatLoewnerLE
         (coarseBlock (adaptedCellAtCenter (respGrid jStar F) (t - (n : ℤ)) z) a)
-        (blockScale (1 + (3 : ℝ) ^ (Quenched.contrastRho γ * (n : ℝ)) * respAllScaleMax P γ jStar F t a)
+        (blockScale (1 + (3 : ℝ) ^ (Quenched.contrastRho γ * (n : ℝ)) * respAllScaleMax P γ
+          jStar F t a)
           (respMean P jStar F t)) := by
   let : NeZero d := ⟨by omega⟩
   have _hγ := hγ
   have hEt : (toFullBlockMat (respMean P jStar F t)).PosDef :=
-    Annealed.adaptedMean_posDef d hd P γ E Ψ Kg Src hstat hdag jStar hj (explicitCanonicalMetric F) hm t
+    Annealed.adaptedMean_posDef d hd P γ E Ψ Kg Src hstat hdag jStar hj (explicitCanonicalMetric
+      F) hm t
   filter_upwards [pathwise_envelope hd γ P E Ψ Kg Src hstat hdag jStar hj F hm t]
     with a ha
   obtain ⟨C, _hC0, _hL0, hterms⟩ := ha
@@ -579,7 +589,8 @@ theorem coarseBlock_subcell_le_one_add_scaled_respAllScaleMax (d : ℕ) (hd : 2 
       {y : ℝ | ∃ n : ℕ, ∃ z ∈ triadicIndexBox d n, y =
         (3 : ℝ) ^ (-(Quenched.contrastRho γ * (n : ℝ))) *
           blockSpecBound (blockSub
-            (normalizedBlock (coarseBlock (adaptedCellAtCenter (respGrid jStar F) (t - (n : ℤ)) z) a)
+            (normalizedBlock (coarseBlock (adaptedCellAtCenter (respGrid jStar F) (t - (n : ℤ))
+              z) a)
               (respMean P jStar F t)) (Book.Ch02.blockIdentity d))} :=
     ⟨n, z, hz, rfl⟩
   have hle : (3 : ℝ) ^ (-(Quenched.contrastRho γ * (n : ℝ))) *
@@ -598,7 +609,8 @@ theorem coarseBlock_subcell_le_one_add_scaled_respAllScaleMax (d : ℕ) (hd : 2 
     have hcancel : (3 : ℝ) ^ (Quenched.contrastRho γ * (n : ℝ)) *
         (3 : ℝ) ^ (-(Quenched.contrastRho γ * (n : ℝ))) = 1 := by
       rw [← Real.rpow_add (by norm_num : (0 : ℝ) < 3)]
-      have hexp : Quenched.contrastRho γ * (n : ℝ) + -(Quenched.contrastRho γ * (n : ℝ)) = 0 := by ring
+      have hexp : Quenched.contrastRho γ * (n : ℝ) + -(Quenched.contrastRho γ * (n : ℝ)) = 0 :=
+        by ring
       rw [hexp, Real.rpow_zero]
     calc blockSpecBound (blockSub
           (normalizedBlock (coarseBlock (adaptedCellAtCenter (respGrid jStar F) (t - (n : ℤ)) z) a)
@@ -624,7 +636,8 @@ theorem coarseBlock_subcell_le_one_add_scaled_respAllScaleMax (d : ℕ) (hd : 2 
   have hfin : BlockMatLoewnerLE
       (normalizedBlock (coarseBlock (adaptedCellAtCenter (respGrid jStar F) (t - (n : ℤ)) z) a)
         (respMean P jStar F t))
-      (blockScale (1 + (3 : ℝ) ^ (Quenched.contrastRho γ * (n : ℝ)) * respAllScaleMax P γ jStar F t a)
+      (blockScale (1 + (3 : ℝ) ^ (Quenched.contrastRho γ * (n : ℝ)) * respAllScaleMax P γ jStar
+        F t a)
         (Book.Ch02.blockIdentity d)) :=
     le_one_add_specBound _ _ _ (norm_nonneg _) hwit hspec
   exact le_scale_of_normalizedBlock_le hEt hfin

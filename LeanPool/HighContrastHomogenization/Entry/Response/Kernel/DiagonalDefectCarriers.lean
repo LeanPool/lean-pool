@@ -120,7 +120,8 @@ def weakAverageSum (q : Mat d) (t : ℤ) (H : ℕ) (rho : ℝ) (E : BlockMat d) 
     (3 : ℝ) ^ (-((1 / 2 : ℝ) - rho / 2) * (n : ℝ)) *
       Real.sqrt ‖toFullBlockMat (weakAverageDefect q t n E b)‖
 
-/-- The pathwise normalized optimizer energy `ℰ_t = (2 J_t)^{1/2} = ‖symm(b)^{1/2}∇v‖_{L̲²(U)}`
+/-- The pathwise normalized optimizer energy
+`ℰ_t = (2 J_t)^{1/2} = ‖symm(b)^{1/2}∇v‖_{L_underlined²(U)}`
 (`p.response.transfer`).  CoarseGraining's `variationEnergyValue` (`Book/Ch02/Response.lean`)
 needs a `Domain d` together with a `CoeffOn` of it and a `Solution`, none of which the binders here
 carry (they carry a bare `Set (Vec d)` and an `AHarmonicFunction`).  The integrand is therefore
@@ -159,7 +160,8 @@ omit [NeZero d] in
 theorem blockResponseMean_sub_blockResponseMean (A B : BlockMat d) (x : BlockVec d) :
     blockResponseMean A x - blockResponseMean B x =
       blockMatVecMul (blockSwap d) (blockMatVecMul (blockSub A B) x) := by
-  rw [Response.blockMatVecMul_blockSub, blockMatVecMul_sub_vec, blockResponseMean, blockResponseMean]
+  rw [Response.blockMatVecMul_blockSub, blockMatVecMul_sub_vec, blockResponseMean,
+    blockResponseMean]
   abel
 
 /-- The mean identity on a general open bounded convex domain of positive volume. -/
@@ -384,7 +386,8 @@ private theorem adaptedCellAtCenter_nonempty (q : Mat d) (hq : IsUnit q) (k : �
 
 omit [NeZero d] in
 /-- Nonnegativity of the recent cell defect. -/
-private theorem weakCellDefect_nonneg (q : Mat d) (t : ℤ) (n : ℕ) (E : BlockMat d) (b : CoeffField d) :
+private theorem weakCellDefect_nonneg (q : Mat d) (t : ℤ) (n : ℕ) (E : BlockMat d) (b :
+  CoeffField d) :
     0 ≤ weakCellDefect q t n E b := Real.sqrt_nonneg _
 
 omit [NeZero d] in
@@ -563,8 +566,10 @@ theorem toFullBlockMat_respM0_left_inv {F : BlockMat d}
     (hu : IsUnit (explicitCanonicalMetric F).det) :
     toFullBlockMat (⟨(explicitCanonicalMetric F)⁻¹, 0, 0, explicitCanonicalMetric F⟩ : BlockMat d) *
         toFullBlockMat (respM0 F) = 1 := by
-  have hmm : (explicitCanonicalMetric F)⁻¹ * explicitCanonicalMetric F = 1 := Matrix.nonsing_inv_mul _ hu
-  have hmm' : explicitCanonicalMetric F * (explicitCanonicalMetric F)⁻¹ = 1 := Matrix.mul_nonsing_inv _ hu
+  have hmm : (explicitCanonicalMetric F)⁻¹ * explicitCanonicalMetric F = 1 :=
+    Matrix.nonsing_inv_mul _ hu
+  have hmm' : explicitCanonicalMetric F * (explicitCanonicalMetric F)⁻¹ = 1 :=
+    Matrix.mul_nonsing_inv _ hu
   ext a b
   rw [Matrix.mul_apply, Fintype.sum_sum_type]
   cases a with
@@ -572,7 +577,8 @@ theorem toFullBlockMat_respM0_left_inv {F : BlockMat d}
     cases b with
     | inl j =>
       have hij : ∑ k : Fin d, (explicitCanonicalMetric F)⁻¹ i k * explicitCanonicalMetric F k j
-          = ((explicitCanonicalMetric F)⁻¹ * explicitCanonicalMetric F) i j := (Matrix.mul_apply).symm
+          = ((explicitCanonicalMetric F)⁻¹ * explicitCanonicalMetric F) i j :=
+            (Matrix.mul_apply).symm
       simp only [toFullBlockMat, respM0]
       rw [show (∑ k : Fin d, (explicitCanonicalMetric F)⁻¹ i k * explicitCanonicalMetric F k j) +
           (∑ k : Fin d, (0 : Mat d) i k * (0 : Mat d) k j) = _ from rfl]
@@ -585,10 +591,12 @@ theorem toFullBlockMat_respM0_left_inv {F : BlockMat d}
       simp [toFullBlockMat, respM0]
     | inr j =>
       have hij : ∑ k : Fin d, explicitCanonicalMetric F i k * (explicitCanonicalMetric F)⁻¹ k j
-          = (explicitCanonicalMetric F * (explicitCanonicalMetric F)⁻¹) i j := (Matrix.mul_apply).symm
+          = (explicitCanonicalMetric F * (explicitCanonicalMetric F)⁻¹) i j :=
+            (Matrix.mul_apply).symm
       simp only [toFullBlockMat, respM0]
       rw [show (∑ k : Fin d, (0 : Mat d) i k * (0 : Mat d) k j) +
-          (∑ k : Fin d, explicitCanonicalMetric F i k * (explicitCanonicalMetric F)⁻¹ k j) = _ from rfl]
+          (∑ k : Fin d, explicitCanonicalMetric F i k * (explicitCanonicalMetric F)⁻¹ k j) = _
+            from rfl]
       simp [hij, hmm', Matrix.one_apply]
 
 /-- Hence on the unit branch the flattened metric block is invertible, with NO
@@ -777,7 +785,8 @@ theorem branchfree_tail_le (γ : ℝ) (_hγ : γ ∈ Set.Ico (0 : ℝ) 1) (H : �
     (hgood : M ≤ 1 → Agood ≤ cgood * (3 : ℝ) ^ (-(Quenched.contrastAlpha γ * (H : ℝ))))
     (hbad : 1 < M → Abad ≤ cbad * Real.sqrt M) :
     (if 1 < M then Abad else Agood)
-      ≤ max cgood cbad * (if 1 < M then Real.sqrt M else (3 : ℝ) ^ (-(Quenched.contrastAlpha γ * (H : ℝ)))) := by
+      ≤ max cgood cbad * (if 1 < M then Real.sqrt M else (3 : ℝ) ^ (-(Quenched.contrastAlpha γ *
+        (H : ℝ)))) := by
   by_cases h : 1 < M
   · simp only [ite_eq_left h]
     calc Abad ≤ cbad * Real.sqrt M := hbad h

@@ -44,7 +44,6 @@ omit [NeZero d] in
 transports under `vectorL2ToHilbertVectorL2` to an element in the range of
 the gradient projection from the closed `H¹₀` graph. -/
 private theorem vectorL2ToHilbertVectorL2_mem_range_gradientCLM_of_mem_potentialZeroTraceSubmodule
-    [NeZero d]
     {F : VectorL2 U} (hF : F ∈ potentialZeroTraceSubmodule U) :
     vectorL2ToHilbertVectorL2 (U := U) F ∈
       Set.range (H10GraphClosed.gradientCLM (d := d) (U := U)) := by
@@ -79,7 +78,7 @@ private theorem vectorL2ToHilbertVectorL2_mem_range_gradientCLM_of_mem_potential
 /-- Main realization theorem: on bounded open convex domains, every member
 of the canonical closed zero-trace potential subspace is the gradient of an
 actual `H¹₀` function. -/
-theorem hasPotentialZeroTraceClosureRealization_of_isOpenBoundedConvexDomain
+theorem hasPotentialZeroTraceClosureRealization_of_convexDomain
     (hU : IsOpenBoundedConvexDomain U) :
     HasPotentialZeroTraceClosureRealization U := by
   intro F hF

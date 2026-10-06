@@ -24,7 +24,7 @@ open scoped ENNReal
 namespace W1pFunction
 
 variable {d : ℕ} {U : Set (Vec d)} {p : ENNReal}
-theorem subAverageLpSeminorm_le_smoothPoincareLpConst_mul_gradientCoordLpSeminormSum
+theorem subAverageLpSeminorm_le_poincare_mul_gradientCoordLpSeminormSum
     [NeZero d] (hU : IsOpenBoundedConvexDomain U)
     {q : ℝ} (hq : 1 < q) (hvol : 0 < (MeasureTheory.volume U).toReal)
     (u : W1pFunction U (ENNReal.ofReal q)) :
@@ -129,7 +129,7 @@ theorem exists_subAverage_poincare_constant_of_isOpenBoundedConvexDomain
     intro u
     have hvol : 0 < (MeasureTheory.volume U).toReal :=
       lt_of_le_of_ne ENNReal.toReal_nonneg (Ne.symm hvol0)
-    exact subAverageLpSeminorm_le_smoothPoincareLpConst_mul_gradientCoordLpSeminormSum
+    exact subAverageLpSeminorm_le_poincare_mul_gradientCoordLpSeminormSum
       (U := U) hU hq hvol u
 
 theorem integralAverage_eq_zero_of_meanZero
@@ -173,6 +173,7 @@ end W1pFunction
 /-- Mean-zero `W^{1,p}(U)` functions, represented by a chosen witness together
 with the zero-average condition. -/
 structure W1pMeanZeroFunction {d : ℕ} (U : Set (Vec d)) (p : ENNReal) where
+  /-- The `W^{1,p}` function underlying the mean-zero Sobolev function. -/
   toW1pFunction : W1pFunction U p
   meanZero : MeanZeroOn U toW1pFunction.toFun
 
@@ -222,7 +223,7 @@ theorem subAverageLpSeminorm_eq_valueLpSeminorm
     u.toW1pFunction.subAverageLpSeminorm_eq_valueLpSeminorm_of_meanZero u.meanZero
 
 theorem valueLpSeminorm_eq_zero_of_dim_zero
-    {U : Set (Vec 0)} [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
+    {U : Set (Vec 0)}
     (hvol : 0 < (MeasureTheory.volume U).toReal) (u : W1pMeanZeroFunction U p) :
     u.valueLpSeminorm = 0 := by
   let c : ℝ := u.toW1pFunction.toFun 0
@@ -252,6 +253,8 @@ end W1pMeanZeroFunction
 
 /-- A bundled finite-`p` mean-zero Poincare estimate for the `W^{1,p}` layer. -/
 structure W1pPoincareEstimate {d : ℕ} (U : Set (Vec d)) (p : ENNReal) where
+  /-- The nonnegative constant bounding a mean-zero `W^{1,p}` function's value seminorm by the sum
+  of its coordinate gradient seminorms. -/
   constantValue : ℝ
   constant_nonneg : 0 ≤ constantValue
   bound :
@@ -314,7 +317,7 @@ noncomputable def w1pPoincareEstimate_of_isOpenBoundedConvexDomain
           bound := by
             intro u
             have hsub :=
-              W1pFunction.subAverageLpSeminorm_le_smoothPoincareLpConst_mul_gradientCoordLpSeminormSum
+              W1pFunction.subAverageLpSeminorm_le_poincare_mul_gradientCoordLpSeminormSum
                 (U := U) hU hq hvol u.toW1pFunction
             simpa [W1pMeanZeroFunction.valueLpSeminorm,
               W1pMeanZeroFunction.gradientCoordLpSeminormSum,

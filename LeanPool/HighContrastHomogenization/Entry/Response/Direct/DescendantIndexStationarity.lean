@@ -198,7 +198,8 @@ theorem volumeAverage_sub_one_eq_cellPart_add_sum_range_add_rem {d : ℕ} [NeZer
               * volumeAverage (adaptedCellAtCenter q (t - (H : ℤ)) w) f
         + (∑ n ∈ Finset.range N,
             ((triadicIndexBox d (H + n + 1)).card : ℝ)⁻¹ * ∑ W ∈ triadicIndexBox d (H + n + 1),
-              (volumeAverage (adaptedCellAtCenter q (t - ((H + n + 1 : ℕ) : ℤ)) W) (fun x => φ x - 1)
+              (volumeAverage (adaptedCellAtCenter q (t - ((H + n + 1 : ℕ) : ℤ)) W) (fun x => φ x
+                - 1)
                   - volumeAverage (adaptedCellAtCenter q (t - ((H + n : ℕ) : ℤ))
                       (Transport.gridParent W)) (fun x => φ x - 1))
                 * volumeAverage (adaptedCellAtCenter q (t - ((H + n + 1 : ℕ) : ℤ)) W) f)
@@ -568,7 +569,8 @@ private theorem integral_descendantCell_eq_aux {d : ℕ} [NeZero d]
     (hG : ∀ (zz : Fin d → ℤ) (a : CoeffSpace d),
       G (translateSet (Source.AKL.intTranslation zz)
           (adaptedCellAtCenter (explicitRoundedGrid jStar m) (j - (n : ℤ)) z)) a
-        = G (adaptedCellAtCenter (explicitRoundedGrid jStar m) (j - (n : ℤ)) z) (translateCoeff zz a))
+        = G (adaptedCellAtCenter (explicitRoundedGrid jStar m) (j - (n : ℤ)) z) (translateCoeff
+          zz a))
     (hmeas : AEStronglyMeasurable
       (G (adaptedCellAtCenter (explicitRoundedGrid jStar m) (j - (n : ℤ)) z)) P) :
     (∫ a, G (adaptedCellAtCenter (explicitRoundedGrid jStar m) (j - (n : ℤ))
@@ -619,9 +621,11 @@ theorem annealedBlockOf_descendant_respCoeffMinus_eq {d : ℕ} [NeZero d]
         (fun i => 3 ^ n * w i + z i)) (respCoeffMinus F)).upperLeft i k
           = ∫ a, (coarseBlockMatrix (adaptedCellAtCenter (explicitRoundedGrid jStar m) (j - (n : ℤ))
               (fun i => 3 ^ n * w i + z i)) (respCoeffMinus F a)).upperLeft i k ∂P := rfl
-    have hred' : (annealedBlockOf P (adaptedCellAtCenter (explicitRoundedGrid jStar m) (j - (n : ℤ)) z)
+    have hred' : (annealedBlockOf P (adaptedCellAtCenter (explicitRoundedGrid jStar m) (j - (n :
+      ℤ)) z)
         (respCoeffMinus F)).upperLeft i k
-          = ∫ a, (coarseBlockMatrix (adaptedCellAtCenter (explicitRoundedGrid jStar m) (j - (n : ℤ)) z)
+          = ∫ a, (coarseBlockMatrix (adaptedCellAtCenter (explicitRoundedGrid jStar m) (j - (n :
+            ℤ)) z)
               (respCoeffMinus F a)).upperLeft i k ∂P := rfl
     rw [hred, hred']
     exact h
@@ -636,9 +640,11 @@ theorem annealedBlockOf_descendant_respCoeffMinus_eq {d : ℕ} [NeZero d]
         (fun i => 3 ^ n * w i + z i)) (respCoeffMinus F)).lowerRight i k
           = ∫ a, (coarseBlockMatrix (adaptedCellAtCenter (explicitRoundedGrid jStar m) (j - (n : ℤ))
               (fun i => 3 ^ n * w i + z i)) (respCoeffMinus F a)).lowerRight i k ∂P := rfl
-    have hred' : (annealedBlockOf P (adaptedCellAtCenter (explicitRoundedGrid jStar m) (j - (n : ℤ)) z)
+    have hred' : (annealedBlockOf P (adaptedCellAtCenter (explicitRoundedGrid jStar m) (j - (n :
+      ℤ)) z)
         (respCoeffMinus F)).lowerRight i k
-          = ∫ a, (coarseBlockMatrix (adaptedCellAtCenter (explicitRoundedGrid jStar m) (j - (n : ℤ)) z)
+          = ∫ a, (coarseBlockMatrix (adaptedCellAtCenter (explicitRoundedGrid jStar m) (j - (n :
+            ℤ)) z)
               (respCoeffMinus F a)).lowerRight i k ∂P := rfl
     rw [hred, hred']
     exact h
@@ -675,9 +681,11 @@ theorem annealedBlockOf_descendant_respCoeffPlus_eq {d : ℕ} [NeZero d]
         (fun i => 3 ^ n * w i + z i)) (respCoeffPlus F)).upperLeft i k
           = ∫ a, (coarseBlockMatrix (adaptedCellAtCenter (explicitRoundedGrid jStar m) (j - (n : ℤ))
               (fun i => 3 ^ n * w i + z i)) (respCoeffPlus F a)).upperLeft i k ∂P := rfl
-    have hred' : (annealedBlockOf P (adaptedCellAtCenter (explicitRoundedGrid jStar m) (j - (n : ℤ)) z)
+    have hred' : (annealedBlockOf P (adaptedCellAtCenter (explicitRoundedGrid jStar m) (j - (n :
+      ℤ)) z)
         (respCoeffPlus F)).upperLeft i k
-          = ∫ a, (coarseBlockMatrix (adaptedCellAtCenter (explicitRoundedGrid jStar m) (j - (n : ℤ)) z)
+          = ∫ a, (coarseBlockMatrix (adaptedCellAtCenter (explicitRoundedGrid jStar m) (j - (n :
+            ℤ)) z)
               (respCoeffPlus F a)).upperLeft i k ∂P := rfl
     rw [hred, hred']
     exact h
@@ -692,9 +700,11 @@ theorem annealedBlockOf_descendant_respCoeffPlus_eq {d : ℕ} [NeZero d]
         (fun i => 3 ^ n * w i + z i)) (respCoeffPlus F)).lowerRight i k
           = ∫ a, (coarseBlockMatrix (adaptedCellAtCenter (explicitRoundedGrid jStar m) (j - (n : ℤ))
               (fun i => 3 ^ n * w i + z i)) (respCoeffPlus F a)).lowerRight i k ∂P := rfl
-    have hred' : (annealedBlockOf P (adaptedCellAtCenter (explicitRoundedGrid jStar m) (j - (n : ℤ)) z)
+    have hred' : (annealedBlockOf P (adaptedCellAtCenter (explicitRoundedGrid jStar m) (j - (n :
+      ℤ)) z)
         (respCoeffPlus F)).lowerRight i k
-          = ∫ a, (coarseBlockMatrix (adaptedCellAtCenter (explicitRoundedGrid jStar m) (j - (n : ℤ)) z)
+          = ∫ a, (coarseBlockMatrix (adaptedCellAtCenter (explicitRoundedGrid jStar m) (j - (n :
+            ℤ)) z)
               (respCoeffPlus F a)).lowerRight i k ∂P := rfl
     rw [hred, hred']
     exact h

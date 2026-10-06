@@ -70,61 +70,16 @@ private theorem norm_le_norm_of_psd_le' {X Y : FullBlockMat d}
     have h2 := neg_le_neg h1
     simpa only [neg_zero, neg_smul] using h2
 
-/-- **The abstract pathwise variance split.** -/
-theorem norm_normalized_parent_fluctuation_le [NeZero d]
+private theorem average_parent_gap_le_sharp_fluctuation
     {ι : Type*} [DecidableEq ι] (Z : Finset ι) (hZne : Z.Nonempty)
     (A : ι → FullBlockMat d) (hA : ∀ i ∈ Z, (A i).PosDef)
-    {Ap Gj Gp : FullBlockMat d}
-    (hAp : Ap.PosDef) (hGj : Gj.PosDef) (hGp : Gp.PosDef)
-    (hparentLe : Ap ≤ (Z.card : ℝ)⁻¹ • ∑ i ∈ Z, A i)
-    (hparentSharp : fullBlockSharp Ap ≤ Ap)
-    (hsharpJle : fullBlockSharp Gj ≤ Gj)
-    (horder : Gp ≤ Gj)
-    {cH cJ cD : ℝ} (hcH0 : 0 ≤ cH) (hcJ0 : 0 ≤ cJ) (hcD0 : 0 ≤ cD)
-    (hsharpPinv : (fullBlockSharp Gp)⁻¹ ≤ cH • Gp⁻¹)
-    (hgapJ : Gj - fullBlockSharp Gj ≤ cJ • Gp)
-    (hdil : Gj ≤ (1 + cD) • Gp) :
-    ‖matSqrt Gp⁻¹ * (Ap - Gp) * matSqrt Gp⁻¹‖ ≤
-      (2 + cH * (1 + cD) ^ 2) *
-        ‖matSqrt Gp⁻¹ * ((Z.card : ℝ)⁻¹ • ∑ i ∈ Z, A i - Gj) *
-          matSqrt Gp⁻¹‖ +
-      cH * (1 + cD) ^ 2 * cJ + cD := by
+    {Ap Gj avgA : FullBlockMat d} (hAp : Ap.PosDef) (hGj : Gj.PosDef)
+    (havgAdef : avgA = (Z.card : ℝ)⁻¹ • ∑ i ∈ Z, A i)
+    (hparentLe : Ap ≤ avgA) (hparentSharp : fullBlockSharp Ap ≤ Ap)
+    (hGjherm : Gjᴴ = Gj) :
+    avgA - Ap ≤ (Z.card : ℝ)⁻¹ •
+      ∑ i ∈ Z, fullBlockSharpFluctuation (A i) Gj := by
   classical
-  set avgA : FullBlockMat d := (Z.card : ℝ)⁻¹ • ∑ i ∈ Z, A i with havgAdef
-  set R : FullBlockMat d := fullBlockRefl d with hRdef
-  have hGpherm : Gpᴴ = Gp := hGp.isHermitian
-  have hGjherm : Gjᴴ = Gj := hGj.isHermitian
-  have hApherm : Apᴴ = Ap := hAp.isHermitian
-  have hRherm : Rᴴ = R := by
-    rw [hRdef, conjTranspose_eq_transpose', fullBlockRefl,
-      Matrix.fromBlocks_transpose]
-    simp
-  -- the normalization
-  set N : FullBlockMat d := matSqrt Gp⁻¹ with hNdef
-  have hNherm : Nᴴ = N :=
-    (matSqrt_spec hGp.inv.posSemidef).1.isHermitian
-  have hNN : N * N = Gp⁻¹ := (matSqrt_spec hGp.inv.posSemidef).2
-  have hNGpN : N * Gp * N = 1 := matSqrt_inv_conj hGp
-  have hsqGp : matSqrt Gp * matSqrt Gp = Gp :=
-    (matSqrt_spec hGp.posSemidef).2
-  have hsqGpherm : (matSqrt Gp)ᴴ = matSqrt Gp :=
-    (matSqrt_spec hGp.posSemidef).1.isHermitian
-  have hNinv : matSqrt Gp * N = 1 := by
-    rw [hNdef, matSqrt_inv hGp]
-    exact Matrix.mul_nonsing_inv _
-      ((Matrix.isUnit_iff_isUnit_det _).mp (isUnit_matSqrt hGp))
-  have hNinv' : N * matSqrt Gp = 1 := by
-    rw [hNdef, matSqrt_inv hGp]
-    exact Matrix.nonsing_inv_mul _
-      ((Matrix.isUnit_iff_isUnit_det _).mp (isUnit_matSqrt hGp))
-  have hcard0 : (Z.card : ℝ) ≠ 0 := by
-    have h := Finset.card_pos.mpr hZne
-    positivity
-  -- the average sandwich, rebuilt abstractly
-  have hgap1 : (0 : FullBlockMat d) ≤ avgA - Ap := by
-    refine Matrix.le_iff.mpr ?_
-    rw [sub_zero, havgAdef]
-    exact Matrix.le_iff.mp hparentLe
   have hgap2 : avgA - Ap ≤ (Z.card : ℝ)⁻¹ •
       ∑ i ∈ Z, fullBlockSharpFluctuation (A i) Gj := by
     have hGjsymm : Gj.IsSymm := isSymm_of_isHermitian hGjherm
@@ -161,7 +116,20 @@ theorem norm_normalized_parent_fluctuation_le [NeZero d]
         (hA i hi) hGj).symm
     rw [hsplitavg, hfluctsplit]
     exact hpre
-  -- the burrito identity
+  exact hgap2
+
+private theorem average_sharp_fluctuation_expansion
+    {ι : Type*} [DecidableEq ι] (Z : Finset ι)
+    (A : ι → FullBlockMat d) (hA : ∀ i ∈ Z, (A i).PosDef)
+    {Gj R avgA : FullBlockMat d}
+    (hRdef : R = fullBlockRefl d)
+    (havgAdef : avgA = (Z.card : ℝ)⁻¹ • ∑ i ∈ Z, A i)
+    (hcard0 : (Z.card : ℝ) ≠ 0) :
+    (Z.card : ℝ)⁻¹ •
+      ∑ i ∈ Z, fullBlockSharpFluctuation (A i) Gj =
+      (avgA - Gj) + Gj * R * (avgA - Gj) * R * Gj +
+        Gj * R * (Gj - fullBlockSharp Gj) * R * Gj := by
+  classical
   have hGjinv : Gj⁻¹ = R * fullBlockSharp Gj * R := by
     have h : R * fullBlockSharp Gj * R = Gj⁻¹ := by
       rw [fullBlockSharp, hRdef]
@@ -205,53 +173,20 @@ theorem norm_normalized_parent_fluctuation_le [NeZero d]
     · congr 1
       simp only [Matrix.mul_smul, Matrix.smul_mul]
     · rw [smul_smul, inv_mul_cancel₀ hcard0, one_smul]
-  -- the three normalized terms
-  have hT3 : ‖N * (Gj - Gp) * N‖ ≤ cD := by
-    have hup : Gj - Gp ≤ cD • Gp := by
-      have h := sub_le_sub_right hdil Gp
-      refine h.trans (le_of_eq ?_)
-      rw [add_smul, one_smul, add_sub_cancel_left]
-    have hupN : N * (Gj - Gp) * N ≤ cD • (1 : FullBlockMat d) := by
-      have h := conj_mono' hup N
-      rw [hNherm] at h
-      refine h.trans (le_of_eq ?_)
-      rw [Matrix.mul_smul, Matrix.smul_mul, hNGpN]
-    have hloN : (0 : FullBlockMat d) ≤ N * (Gj - Gp) * N := by
-      have hpsd : (0 : FullBlockMat d) ≤ Gj - Gp := by
-        refine Matrix.le_iff.mpr ?_
-        rw [sub_zero]
-        exact Matrix.le_iff.mp horder
-      have h := conj_mono' hpsd N
-      have h0 : N * 0 * N = (0 : FullBlockMat d) := by
-        noncomm_ring
-      rw [hNherm, h0] at h
-      exact h
-    refine PortableHistory.norm_le_of_sandwich
-      (conj_herm' hNherm (by rw [Matrix.conjTranspose_sub, hGjherm,
-        hGpherm])) hcD0 hupN ?_
-    refine le_trans ?_ hloN
-    have h1 : (0 : FullBlockMat d) ≤ cD • (1 : FullBlockMat d) := by
-      refine Matrix.le_iff.mpr ?_
-      rw [sub_zero]
-      exact Matrix.PosSemidef.one.smul hcD0
-    have h2 := neg_le_neg h1
-    simpa only [neg_zero, neg_smul] using h2
-  -- the conjugator
-  set M : FullBlockMat d := N * Gj * R * matSqrt Gp with hMdef
-  have hMherm : Mᴴ = matSqrt Gp * R * Gj * N := by
-    rw [hMdef, Matrix.conjTranspose_mul, Matrix.conjTranspose_mul,
-      Matrix.conjTranspose_mul, hNherm, hGjherm, hRherm, hsqGpherm]
-    noncomm_ring
-  have hconjM : ∀ Y : FullBlockMat d,
-      N * (Gj * R * Y * R * Gj) * N = M * (N * Y * N) * Mᴴ := by
-    intro Y
-    have h1 : M * (N * Y * N) * Mᴴ =
-        N * Gj * R * ((matSqrt Gp * N) * Y * (N * matSqrt Gp)) * R *
-          Gj * N := by
-      rw [hMherm, hMdef]
-      noncomm_ring
-    rw [h1, hNinv, hNinv', Matrix.one_mul, Matrix.mul_one]
-    noncomm_ring
+  exact hburrito
+
+private theorem normalized_conjugator_norm_squared_bound [NeZero d]
+    {Gp Gj N R M : FullBlockMat d} (hGp : Gp.PosDef) (hGj : Gj.PosDef)
+    {cH cD : ℝ} (hcH0 : 0 ≤ cH) (hcD0 : 0 ≤ cD)
+    (hsharpPinv : (fullBlockSharp Gp)⁻¹ ≤ cH • Gp⁻¹)
+    (hdil : Gj ≤ (1 + cD) • Gp)
+    (hNherm : Nᴴ = N) (hGjherm : Gjᴴ = Gj)
+    (hNGpN : N * Gp * N = 1) (hNN : N * N = Gp⁻¹)
+    (hMdef : M = N * Gj * R * matSqrt Gp)
+    (hMherm : Mᴴ = matSqrt Gp * R * Gj * N)
+    (hsqGp : matSqrt Gp * matSqrt Gp = Gp) (hRdef : R = fullBlockRefl d) :
+    ‖M‖ ^ 2 ≤ cH * (1 + cD) ^ 2 := by
+  classical
   have hNGjN_le : N * Gj * N ≤ (1 + cD) • (1 : FullBlockMat d) := by
     have h := conj_mono' hdil N
     rw [hNherm] at h
@@ -334,7 +269,18 @@ theorem norm_normalized_parent_fluctuation_le [NeZero d]
       rw [Matrix.conjTranspose_conjTranspose]
     rw [← e1, ← e2, e3]
     exact hnormMMt
-  -- the sharp-gap term
+  exact hM2
+
+private theorem normalized_sharp_gap_norm_bound
+    {Gp Gj N R : FullBlockMat d} {cJ : ℝ} (hcJ0 : 0 ≤ cJ)
+    (hsharpJle : fullBlockSharp Gj ≤ Gj)
+    (hgapJ : Gj - fullBlockSharp Gj ≤ cJ • Gp)
+    (hNherm : Nᴴ = N) (hGjherm : Gjᴴ = Gj)
+    (hNGpN : N * Gp * N = 1)
+    (hRdef : R = fullBlockRefl d) (hRherm : Rᴴ = R) :
+    (Gj - fullBlockSharp Gj)ᴴ = Gj - fullBlockSharp Gj ∧
+      ‖N * (Gj - fullBlockSharp Gj) * N‖ ≤ cJ := by
+  classical
   have hgapJ0 : (0 : FullBlockMat d) ≤ Gj - fullBlockSharp Gj := by
     refine Matrix.le_iff.mpr ?_
     rw [sub_zero]
@@ -369,6 +315,131 @@ theorem norm_normalized_parent_fluctuation_le [NeZero d]
       exact Matrix.PosSemidef.one.smul hcJ0
     have h2 := neg_le_neg h1
     simpa only [neg_zero, neg_smul] using h2
+  exact ⟨hgapJherm, hgapN⟩
+
+private theorem normalized_dilation_difference_norm_bound [NeZero d]
+    {Gp Gj N : FullBlockMat d} {cD : ℝ} (hcD0 : 0 ≤ cD)
+    (horder : Gp ≤ Gj) (hdil : Gj ≤ (1 + cD) • Gp)
+    (hNherm : Nᴴ = N) (hGjherm : Gjᴴ = Gj) (hGpherm : Gpᴴ = Gp)
+    (hNGpN : N * Gp * N = 1) :
+    ‖N * (Gj - Gp) * N‖ ≤ cD := by
+  classical
+  have hT3 : ‖N * (Gj - Gp) * N‖ ≤ cD := by
+    have hup : Gj - Gp ≤ cD • Gp := by
+      have h := sub_le_sub_right hdil Gp
+      refine h.trans (le_of_eq ?_)
+      rw [add_smul, one_smul, add_sub_cancel_left]
+    have hupN : N * (Gj - Gp) * N ≤ cD • (1 : FullBlockMat d) := by
+      have h := conj_mono' hup N
+      rw [hNherm] at h
+      refine h.trans (le_of_eq ?_)
+      rw [Matrix.mul_smul, Matrix.smul_mul, hNGpN]
+    have hloN : (0 : FullBlockMat d) ≤ N * (Gj - Gp) * N := by
+      have hpsd : (0 : FullBlockMat d) ≤ Gj - Gp := by
+        refine Matrix.le_iff.mpr ?_
+        rw [sub_zero]
+        exact Matrix.le_iff.mp horder
+      have h := conj_mono' hpsd N
+      have h0 : N * 0 * N = (0 : FullBlockMat d) := by
+        noncomm_ring
+      rw [hNherm, h0] at h
+      exact h
+    refine PortableHistory.norm_le_of_sandwich
+      (conj_herm' hNherm (by rw [Matrix.conjTranspose_sub, hGjherm,
+        hGpherm])) hcD0 hupN ?_
+    refine le_trans ?_ hloN
+    have h1 : (0 : FullBlockMat d) ≤ cD • (1 : FullBlockMat d) := by
+      refine Matrix.le_iff.mpr ?_
+      rw [sub_zero]
+      exact Matrix.PosSemidef.one.smul hcD0
+    have h2 := neg_le_neg h1
+    simpa only [neg_zero, neg_smul] using h2
+  exact hT3
+
+/-- **The abstract pathwise variance split.** -/
+theorem norm_normalized_parent_fluctuation_le [NeZero d]
+    {ι : Type*} [DecidableEq ι] (Z : Finset ι) (hZne : Z.Nonempty)
+    (A : ι → FullBlockMat d) (hA : ∀ i ∈ Z, (A i).PosDef)
+    {Ap Gj Gp : FullBlockMat d}
+    (hAp : Ap.PosDef) (hGj : Gj.PosDef) (hGp : Gp.PosDef)
+    (hparentLe : Ap ≤ (Z.card : ℝ)⁻¹ • ∑ i ∈ Z, A i)
+    (hparentSharp : fullBlockSharp Ap ≤ Ap)
+    (hsharpJle : fullBlockSharp Gj ≤ Gj)
+    (horder : Gp ≤ Gj)
+    {cH cJ cD : ℝ} (hcH0 : 0 ≤ cH) (hcJ0 : 0 ≤ cJ) (hcD0 : 0 ≤ cD)
+    (hsharpPinv : (fullBlockSharp Gp)⁻¹ ≤ cH • Gp⁻¹)
+    (hgapJ : Gj - fullBlockSharp Gj ≤ cJ • Gp)
+    (hdil : Gj ≤ (1 + cD) • Gp) :
+    ‖matSqrt Gp⁻¹ * (Ap - Gp) * matSqrt Gp⁻¹‖ ≤
+      (2 + cH * (1 + cD) ^ 2) *
+        ‖matSqrt Gp⁻¹ * ((Z.card : ℝ)⁻¹ • ∑ i ∈ Z, A i - Gj) *
+          matSqrt Gp⁻¹‖ +
+      cH * (1 + cD) ^ 2 * cJ + cD := by
+  classical
+  set avgA : FullBlockMat d := (Z.card : ℝ)⁻¹ • ∑ i ∈ Z, A i with havgAdef
+  set R : FullBlockMat d := fullBlockRefl d with hRdef
+  have hGpherm : Gpᴴ = Gp := hGp.isHermitian
+  have hGjherm : Gjᴴ = Gj := hGj.isHermitian
+  have hApherm : Apᴴ = Ap := hAp.isHermitian
+  have hRherm : Rᴴ = R := by
+    rw [hRdef, conjTranspose_eq_transpose', fullBlockRefl,
+      Matrix.fromBlocks_transpose]
+    simp
+  -- the normalization
+  set N : FullBlockMat d := matSqrt Gp⁻¹ with hNdef
+  have hNherm : Nᴴ = N :=
+    (matSqrt_spec hGp.inv.posSemidef).1.isHermitian
+  have hNN : N * N = Gp⁻¹ := (matSqrt_spec hGp.inv.posSemidef).2
+  have hNGpN : N * Gp * N = 1 := matSqrt_inv_conj hGp
+  have hsqGp : matSqrt Gp * matSqrt Gp = Gp :=
+    (matSqrt_spec hGp.posSemidef).2
+  have hsqGpherm : (matSqrt Gp)ᴴ = matSqrt Gp :=
+    (matSqrt_spec hGp.posSemidef).1.isHermitian
+  have hNinv : matSqrt Gp * N = 1 := by
+    rw [hNdef, matSqrt_inv hGp]
+    exact Matrix.mul_nonsing_inv _
+      ((Matrix.isUnit_iff_isUnit_det _).mp (isUnit_matSqrt hGp))
+  have hNinv' : N * matSqrt Gp = 1 := by
+    rw [hNdef, matSqrt_inv hGp]
+    exact Matrix.nonsing_inv_mul _
+      ((Matrix.isUnit_iff_isUnit_det _).mp (isUnit_matSqrt hGp))
+  have hcard0 : (Z.card : ℝ) ≠ 0 := by
+    have h := Finset.card_pos.mpr hZne
+    positivity
+  -- the average sandwich, rebuilt abstractly
+  have hgap1 : (0 : FullBlockMat d) ≤ avgA - Ap := by
+    refine Matrix.le_iff.mpr ?_
+    rw [sub_zero, havgAdef]
+    exact Matrix.le_iff.mp hparentLe
+  have hgap2 := average_parent_gap_le_sharp_fluctuation Z hZne A hA hAp hGj
+    havgAdef hparentLe hparentSharp hGjherm
+  -- the burrito identity
+  have hburrito := average_sharp_fluctuation_expansion (Gj := Gj) Z A hA hRdef havgAdef hcard0
+  -- the three normalized terms
+  have hT3 := normalized_dilation_difference_norm_bound hcD0 horder hdil
+    hNherm hGjherm hGpherm hNGpN
+  -- the conjugator
+  set M : FullBlockMat d := N * Gj * R * matSqrt Gp with hMdef
+  have hMherm : Mᴴ = matSqrt Gp * R * Gj * N := by
+    rw [hMdef, Matrix.conjTranspose_mul, Matrix.conjTranspose_mul,
+      Matrix.conjTranspose_mul, hNherm, hGjherm, hRherm, hsqGpherm]
+    noncomm_ring
+  have hconjM : ∀ Y : FullBlockMat d,
+      N * (Gj * R * Y * R * Gj) * N = M * (N * Y * N) * Mᴴ := by
+    intro Y
+    have h1 : M * (N * Y * N) * Mᴴ =
+        N * Gj * R * ((matSqrt Gp * N) * Y * (N * matSqrt Gp)) * R *
+          Gj * N := by
+      rw [hMherm, hMdef]
+      noncomm_ring
+    rw [h1, hNinv, hNinv', Matrix.one_mul, Matrix.mul_one]
+    noncomm_ring
+  have hM2 := normalized_conjugator_norm_squared_bound hGp hGj hcH0 hcD0
+    hsharpPinv hdil hNherm hGjherm hNGpN hNN
+    hMdef hMherm hsqGp hRdef
+  -- the sharp-gap term
+  obtain ⟨hgapJherm, hgapN⟩ := normalized_sharp_gap_norm_bound hcJ0 hsharpJle
+    hgapJ hNherm hGjherm hNGpN hRdef hRherm
   -- the T2 quantity
   set T2 : FullBlockMat d := avgA - Gj with hT2def
   have hsumherm : (∑ i ∈ Z, A i)ᴴ = ∑ i ∈ Z, A i := by

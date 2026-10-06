@@ -37,7 +37,7 @@ assembly.
 noncomputable section
 
 /-- Crude-bottom component estimate using a supplied raw crude fixed-pair tail. -/
-theorem measureReal_shiftedCrudeBottomBadScaleEvent_quenchedProbeEnvelope_le_weighted_kernel_of_badPair_bound
+theorem measureReal_shiftedBottomBadScaleProbability_le_weighted_kernel
     {d : ℕ} [NeZero d] {σ Ccrude : ℝ}
     (hσ_pos : 0 < σ) (hCcrude : 0 < Ccrude)
     (params : QuantitativeCoarseGrainedEllipticityParams d)

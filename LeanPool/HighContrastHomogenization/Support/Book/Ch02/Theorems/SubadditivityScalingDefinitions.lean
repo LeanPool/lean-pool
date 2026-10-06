@@ -33,10 +33,14 @@ Book-layer theorem keeps a small abstraction here, but the abstraction carries a
 triadic realization: cells enumerate descendants of one parent triadic cube, and
 the weights are the uniform `\avsum` weights from the notes. -/
 structure DomainPartition {d : ℕ} (U : Domain d) where
+  /-- The index type enumerating the triadic cells of the partition. -/
   Cell : Type
+  /-- A finite enumeration of the partition's cell indices. -/
   [instFintype : Fintype Cell]
+  /-- The open convex subdomain assigned to each partition cell index. -/
   cell : Cell → Domain d
   cell_subset_parent : ∀ i : Cell, (cell i : Set (Vec d)) ⊆ (U : Set (Vec d))
+  /-- The uniform normalized weight of each triadic partition cell. -/
   weight : Cell → ℝ
   weight_nonneg : ∀ i : Cell, 0 ≤ weight i
   weight_sum_one : ∑ i : Cell, weight i = 1

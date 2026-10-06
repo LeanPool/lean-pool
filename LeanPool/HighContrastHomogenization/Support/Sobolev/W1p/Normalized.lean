@@ -79,7 +79,7 @@ namespace NormalizedW1pKernel
 
 /-- The finite-exponent normalized `W^{1,p}` seminorm in the generic kernel. -/
 @[expose]
-noncomputable def seminorm {d : ℕ} [NeZero d]
+noncomputable def seminorm {d : ℕ}
     (U : BoundedMeasurableDomain d) (p : ℝ≥0∞) (_hp_one : 1 ≤ p) (_hp_top : p ≠ ∞)
     (u : W1pFunction (U : Set (Vec d)) p) : ℝ :=
   U.normalizedEuclideanLpNorm p u.grad (u.gradEuclideanMemLp U p)
@@ -142,7 +142,7 @@ theorem norm_congr_ae {d : ℕ} [NeZero d]
 
 /-- The generic normalized `W^{1,∞}` seminorm of a weak Sobolev witness. -/
 @[expose]
-noncomputable def seminormTop {d : ℕ} [NeZero d]
+noncomputable def seminormTop {d : ℕ}
     (U : BoundedMeasurableDomain d) (u : W1pFunction (U : Set (Vec d)) ∞) : ℝ :=
   U.normalizedEuclideanLpNorm ∞ u.grad (u.gradEuclideanMemLp U ∞)
 

@@ -749,6 +749,169 @@ theorem exists_finiteAffineBestFitTerminalBandConstant
           linarith only [hX, hY]) hbound_nonneg
       _ = C * delta * euclideanNorm b := by ring
 
+private theorem finiteAffineForwardSlope_bound
+    {d : ℕ} [NeZero d] (a : Book.Ch02.TriadicCoeffFamily d) (m : ℤ) (b : Vec d)
+    (j : ℤ) (L : ℕ) (hjfar : j + (L : ℤ) ≤ m)
+    (Ca C delta : ℝ) (hCa : 0 < Ca) (hCpos : 0 < C) (hdelta_nonneg : 0 ≤ delta)
+    (hwindow : (L : ℝ) * (Ca * C * delta) ≤ 1 / 2)
+    (hfuture : ∀ t : ℕ, 0 < t → t ≤ L → ∀ hjtm : j + (t : ℤ) ≤ m,
+      finiteAffineBestFitError a (j + (t : ℤ)) m hjtm b ≤
+        C * delta * euclideanNorm (finiteAffineBestFitSlope a (j + (t : ℤ)) m hjtm b))
+    (hadj : ∀ (a : Book.Ch02.TriadicCoeffFamily d) (k m : ℤ)
+      (hkm : k + 1 ≤ m) (b : Vec d),
+      euclideanNorm (finiteAffineBestFitSlope a k m (by omega) b -
+        finiteAffineBestFitSlope a (k + 1) m hkm b) ≤
+        Ca * finiteAffineBestFitError a (k + 1) m hkm b) :
+    ∀ (t : ℕ) (ht : t ≤ L),
+      euclideanNorm (finiteAffineBestFitSlope a (j + (t : ℤ)) m (by omega) b) ≤
+        2 * euclideanNorm (finiteAffineBestFitSlope a j m (by omega) b) := by
+  let pseq : ℕ → ℝ := fun t ↦
+    if ht : t ≤ L then
+      euclideanNorm
+        (finiteAffineBestFitSlope a (j + (t : ℤ)) m (by omega) b)
+    else 0
+  have hpseq : ∀ t, 0 ≤ pseq t := by
+    intro t
+    by_cases ht : t ≤ L
+    · simp only [pseq, dite_eq_left ht]
+      exact euclideanNorm_nonneg _
+    · simp only [pseq, dite_eq_right ht]
+      exact le_rfl
+  have hadjseq : ∀ t : ℕ, t < L →
+      pseq (t + 1) ≤ pseq t + (Ca * C * delta) * pseq (t + 1) := by
+    intro t ht
+    have htL : t ≤ L := by omega
+    have hsuccL : t + 1 ≤ L := by omega
+    have hE := hfuture (t + 1) (by omega) hsuccL (by omega)
+    have ha := hadj a (j + (t : ℤ)) m (by omega) b
+    have hnorm : euclideanNorm
+          (finiteAffineBestFitSlope a (j + ((t + 1 : ℕ) : ℤ)) m
+            (by omega) b) ≤
+        euclideanNorm
+          (finiteAffineBestFitSlope a (j + (t : ℤ)) m (by omega) b) +
+        euclideanNorm
+          (finiteAffineBestFitSlope a (j + (t : ℤ)) m (by omega) b -
+            finiteAffineBestFitSlope a (j + ((t + 1 : ℕ) : ℤ)) m
+              (by omega) b) := by
+      exact euclideanNorm_le_add_sub
+        (finiteAffineBestFitSlope a (j + (t : ℤ)) m (by omega) b)
+        (finiteAffineBestFitSlope a (j + ((t + 1 : ℕ) : ℤ)) m
+          (by omega) b)
+    simp only [pseq, dite_eq_left htL, dite_eq_left hsuccL]
+    calc
+      euclideanNorm
+          (finiteAffineBestFitSlope a (j + ((t + 1 : ℕ) : ℤ)) m
+            (by omega) b) ≤
+          euclideanNorm
+              (finiteAffineBestFitSlope a (j + (t : ℤ)) m (by omega) b) +
+            euclideanNorm
+              (finiteAffineBestFitSlope a (j + (t : ℤ)) m (by omega) b -
+                finiteAffineBestFitSlope a (j + ((t + 1 : ℕ) : ℤ)) m
+                  (by omega) b) := hnorm
+      _ ≤ euclideanNorm
+              (finiteAffineBestFitSlope a (j + (t : ℤ)) m (by omega) b) +
+            Ca * finiteAffineBestFitError a
+              (j + ((t + 1 : ℕ) : ℤ)) m (by omega) b :=
+        add_le_add (le_refl _) (by
+          simpa only [show j + (t : ℤ) + 1 =
+              j + ((t + 1 : ℕ) : ℤ) by push_cast; ring] using ha)
+      _ ≤ euclideanNorm
+              (finiteAffineBestFitSlope a (j + (t : ℤ)) m (by omega) b) +
+            Ca * (C * delta * euclideanNorm
+              (finiteAffineBestFitSlope a (j + ((t + 1 : ℕ) : ℤ)) m
+                (by omega) b)) :=
+        add_le_add (le_refl _)
+          (mul_le_mul_of_nonneg_left hE hCa.le)
+      _ = euclideanNorm
+              (finiteAffineBestFitSlope a (j + (t : ℤ)) m (by omega) b) +
+            (Ca * C * delta) * euclideanNorm
+              (finiteAffineBestFitSlope a (j + ((t + 1 : ℕ) : ℤ)) m
+                (by omega) b) := by ring
+  have hx : 0 ≤ Ca * C * delta := by positivity
+  have hpbound := finiteForwardBound_two pseq L (Ca * C * delta)
+    hpseq hx hwindow hadjseq
+  intro t ht
+  have := hpbound t ht
+  simp only [pseq, dite_eq_left ht, dite_eq_left (Nat.zero_le L), Nat.cast_zero] at this
+  have hbase := congrArg euclideanNorm
+    (finiteAffineBestFitSlope_congr_index a (by ring : j + (0 : ℤ) = j)
+      (by omega) (by omega) b)
+  rw [hbase] at this
+  exact this
+
+private theorem terminalError_le_currentSlope
+    {d : ℕ} (slope boundary : Vec d) {error factor boundFactor delta : ℝ}
+    (hfactor : 0 ≤ factor) (hdelta : 0 ≤ delta) (hsmall : factor * delta ≤ 1 / 2)
+    (hconstant : 2 * factor ≤ boundFactor)
+    (herror : error ≤ factor * delta * euclideanNorm boundary)
+    (hslope : euclideanNorm (slope - boundary) ≤ factor * delta * euclideanNorm boundary) :
+    error ≤ boundFactor * delta * euclideanNorm slope := by
+  have htriangle := euclideanNorm_le_add_sub slope boundary
+  have hscaled := mul_le_mul_of_nonneg_right hsmall (euclideanNorm_nonneg boundary)
+  have hboundary : euclideanNorm boundary ≤ 2 * euclideanNorm slope := by
+    nlinarith only [htriangle, hslope, hscaled, euclideanNorm_nonneg slope]
+  calc
+    error ≤ factor * delta * euclideanNorm boundary := herror
+    _ ≤ factor * delta * (2 * euclideanNorm slope) :=
+      mul_le_mul_of_nonneg_left hboundary (mul_nonneg hfactor hdelta)
+    _ = (2 * factor) * delta * euclideanNorm slope := by ring
+    _ ≤ boundFactor * delta * euclideanNorm slope :=
+      mul_le_mul_of_nonneg_right
+        (mul_le_mul_of_nonneg_right hconstant hdelta) (euclideanNorm_nonneg slope)
+
+private theorem energy_le_four_times_slope
+    {energy error current future factor errorFactor : ℝ}
+    (hfactor : 0 ≤ factor) (hcurrent : 0 ≤ current) (hfuture : 0 ≤ future)
+    (henergy : energy ≤ factor * (error + future))
+    (herror : error ≤ errorFactor * future) (hsmall : errorFactor ≤ 1 / 2)
+    (hforward : future ≤ 2 * current) :
+    energy ≤ 4 * factor * current := by
+  have hscaled := mul_le_mul_of_nonneg_right hsmall hfuture
+  have hcombined : error + future ≤ 3 * current := by
+    linarith only [herror, hscaled, hforward]
+  calc
+    energy ≤ factor * (error + future) := henergy
+    _ ≤ factor * (3 * current) := mul_le_mul_of_nonneg_left hcombined hfactor
+    _ ≤ 4 * factor * current := by nlinarith only [hfactor, hcurrent]
+
+private theorem finiteAffineError_recurrence_of_weakBound
+    {d : ℕ} [NeZero d] (a : Book.Ch02.TriadicCoeffFamily d)
+    (m : ℤ) (b : Vec d) (j : ℤ) (N : ℕ) (hjm : j ≤ m)
+    (hjNm : j + (N : ℤ) ≤ m) (s Cs delta : ℝ) (hCs : 0 < Cs)
+    (herrStep : scalarIdentityWeakError a s (j + (N : ℤ)) ≤ delta)
+    (hrec : finiteAffineBestFitError a (j + (N : ℤ) - (N : ℤ)) m (by omega) b ≤
+      (1 / 8 : ℝ) * finiteAffineBestFitError a (j + (N : ℤ)) m hjNm b +
+        Cs * scalarIdentityWeakError a s (j + (N : ℤ)) *
+          finiteCenteredCubeSolutionEnergy a m (finiteAffineCubeSolution a m b)
+            (j + (N : ℤ))) :
+    finiteAffineBestFitError a j m hjm b ≤
+      (1 / 8 : ℝ) * finiteAffineBestFitError a (j + (N : ℤ)) m hjNm b +
+        Cs * delta * finiteCenteredCubeSolutionEnergy a m
+          (finiteAffineCubeSolution a m b) (j + (N : ℤ)) := by
+  have henergyNonneg : 0 ≤ finiteCenteredCubeSolutionEnergy a m
+      (finiteAffineCubeSolution a m b) (j + (N : ℤ)) := by
+    unfold finiteCenteredCubeSolutionEnergy Book.Ch03.h1EnergyNormOnCube
+    exact Real.sqrt_nonneg _
+  calc
+    finiteAffineBestFitError a j m hjm b =
+        finiteAffineBestFitError a (j + (N : ℤ) - (N : ℤ)) m
+          (by omega) b :=
+      (finiteAffineBestFitError_congr_index a
+        (show j + (N : ℤ) - (N : ℤ) = j by ring)
+        (by omega) hjm b).symm
+    _ ≤ (1 / 8 : ℝ) * finiteAffineBestFitError a (j + (N : ℤ)) m
+          (by omega) b +
+        Cs * scalarIdentityWeakError a s (j + (N : ℤ)) *
+          finiteCenteredCubeSolutionEnergy a m
+            (finiteAffineCubeSolution a m b) (j + (N : ℤ)) := hrec
+    _ ≤ (1 / 8 : ℝ) * finiteAffineBestFitError a (j + (N : ℤ)) m
+          (by omega) b +
+        Cs * delta * finiteCenteredCubeSolutionEnergy a m
+          (finiteAffineCubeSolution a m b) (j + (N : ℤ)) :=
+      add_le_add (le_refl _)
+        (mul_le_mul_of_nonneg_right
+          (mul_le_mul_of_nonneg_left herrStep hCs.le) henergyNonneg)
+
 /-- A sufficiently small good-max row forces the canonical best-affine
 error to be proportional to the current best-fit slope at every scale. -/
 theorem exists_scalarIdentityFiniteAffineBestFitErrorInductionConstants
@@ -838,36 +1001,12 @@ theorem exists_scalarIdentityFiniteAffineBestFitErrorInductionConstants
           (Finset.mem_Icc.2 ⟨hnm.le, le_rfl⟩)
         obtain ⟨hE, hpj⟩ := hterminal a m b delta j
           hdelta_nonneg hdelta_one hband hjm herrm
-        have hb : euclideanNorm b ≤ 2 * euclideanNorm
-            (finiteAffineBestFitSlope a j m hjm b) := by
-          have htri : euclideanNorm b ≤
-              euclideanNorm (finiteAffineBestFitSlope a j m hjm b) +
-                euclideanNorm
-                  (finiteAffineBestFitSlope a j m hjm b - b) := by
-            exact euclideanNorm_le_add_sub
-              (finiteAffineBestFitSlope a j m hjm b) b
-          have hsmall : Ct * delta * euclideanNorm b ≤
-              (1 / 2 : ℝ) * euclideanNorm b :=
-            mul_le_mul_of_nonneg_right hdeltaCt (euclideanNorm_nonneg b)
-          nlinarith only [htri, hpj, hsmall, euclideanNorm_nonneg b,
-            euclideanNorm_nonneg (finiteAffineBestFitSlope a j m hjm b)]
-        calc
-          finiteAffineBestFitError a j m hjm b ≤
-              Ct * delta * euclideanNorm b := hE
-          _ ≤ Ct * delta *
-              (2 * euclideanNorm (finiteAffineBestFitSlope a j m hjm b)) :=
-            mul_le_mul_of_nonneg_left hb
-              (mul_nonneg hCt.le hdelta_nonneg)
-          _ = (2 * Ct) * delta *
-              euclideanNorm (finiteAffineBestFitSlope a j m hjm b) := by ring
-          _ ≤ C * delta *
-              euclideanNorm (finiteAffineBestFitSlope a j m hjm b) := by
-            apply mul_le_mul_of_nonneg_right
-            · apply mul_le_mul_of_nonneg_right _ hdelta_nonneg
-              dsimp [C]
-              have : 0 ≤ 8 * Z := by positivity
-              linarith only [this]
-            · exact euclideanNorm_nonneg _
+        exact terminalError_le_currentSlope
+          (finiteAffineBestFitSlope a j m hjm b) b hCt.le hdelta_nonneg hdeltaCt
+          (by
+            dsimp [C]
+            have : 0 ≤ 8 * Z := by positivity
+            linarith only [this]) hE hpj
       · have hjfar : j + (L : ℤ) ≤ m := by omega
         have hfuture : ∀ t : ℕ, 0 < t → t ≤ L →
             ∀ hjtm : j + (t : ℤ) ≤ m,
@@ -888,96 +1027,18 @@ theorem exists_scalarIdentityFiniteAffineBestFitErrorInductionConstants
             omega
           have hqttotal : qt ≤ total := le_trans hqtq.le hqtotal
           exact ih qt hqtq hqttotal (j + (t : ℤ)) hjtn hjtm rfl
-        let pseq : ℕ → ℝ := fun t ↦
-          if ht : t ≤ L then
-            euclideanNorm
-              (finiteAffineBestFitSlope a (j + (t : ℤ)) m (by omega) b)
-          else 0
-        have hpseq : ∀ t, 0 ≤ pseq t := by
-          intro t
-          by_cases ht : t ≤ L
-          · simp only [pseq, dite_eq_left ht]
-            exact euclideanNorm_nonneg _
-          · simp only [pseq, dite_eq_right ht]
-            exact le_rfl
-        have hadjseq : ∀ t : ℕ, t < L →
-            pseq (t + 1) ≤ pseq t + (Ca * C * delta) * pseq (t + 1) := by
-          intro t ht
-          have htL : t ≤ L := by omega
-          have hsuccL : t + 1 ≤ L := by omega
-          have hE := hfuture (t + 1) (by omega) hsuccL (by omega)
-          have ha := hadj a (j + (t : ℤ)) m (by omega) b
-          have hnorm : euclideanNorm
-                (finiteAffineBestFitSlope a (j + ((t + 1 : ℕ) : ℤ)) m
-                  (by omega) b) ≤
-              euclideanNorm
-                (finiteAffineBestFitSlope a (j + (t : ℤ)) m (by omega) b) +
-              euclideanNorm
-                (finiteAffineBestFitSlope a (j + (t : ℤ)) m (by omega) b -
-                  finiteAffineBestFitSlope a (j + ((t + 1 : ℕ) : ℤ)) m
-                    (by omega) b) := by
-            exact euclideanNorm_le_add_sub
-              (finiteAffineBestFitSlope a (j + (t : ℤ)) m (by omega) b)
-              (finiteAffineBestFitSlope a (j + ((t + 1 : ℕ) : ℤ)) m
-                (by omega) b)
-          simp only [pseq, dite_eq_left htL, dite_eq_left hsuccL]
-          calc
-            euclideanNorm
-                (finiteAffineBestFitSlope a (j + ((t + 1 : ℕ) : ℤ)) m
-                  (by omega) b) ≤
-                euclideanNorm
-                    (finiteAffineBestFitSlope a (j + (t : ℤ)) m (by omega) b) +
-                  euclideanNorm
-                    (finiteAffineBestFitSlope a (j + (t : ℤ)) m (by omega) b -
-                      finiteAffineBestFitSlope a (j + ((t + 1 : ℕ) : ℤ)) m
-                        (by omega) b) := hnorm
-            _ ≤ euclideanNorm
-                    (finiteAffineBestFitSlope a (j + (t : ℤ)) m (by omega) b) +
-                  Ca * finiteAffineBestFitError a
-                    (j + ((t + 1 : ℕ) : ℤ)) m (by omega) b :=
-              add_le_add (le_refl _) (by
-                simpa only [show j + (t : ℤ) + 1 =
-                    j + ((t + 1 : ℕ) : ℤ) by push_cast; ring] using ha)
-            _ ≤ euclideanNorm
-                    (finiteAffineBestFitSlope a (j + (t : ℤ)) m (by omega) b) +
-                  Ca * (C * delta * euclideanNorm
-                    (finiteAffineBestFitSlope a (j + ((t + 1 : ℕ) : ℤ)) m
-                      (by omega) b)) :=
-              add_le_add (le_refl _)
-                (mul_le_mul_of_nonneg_left hE hCa.le)
-            _ = euclideanNorm
-                    (finiteAffineBestFitSlope a (j + (t : ℤ)) m (by omega) b) +
-                  (Ca * C * delta) * euclideanNorm
-                    (finiteAffineBestFitSlope a (j + ((t + 1 : ℕ) : ℤ)) m
-                      (by omega) b) := by ring
-        have hx : 0 ≤ Ca * C * delta := by positivity
         have hwindow : (L : ℝ) * (Ca * C * delta) ≤ 1 / 2 := by
           dsimp [W] at hdeltaW
           nlinarith only [hdeltaW]
-        have hpbound := finiteForwardBound_two pseq L (Ca * C * delta)
-          hpseq hx hwindow hadjseq
+        have hforward := finiteAffineForwardSlope_bound a m b j L hjfar
+          Ca C delta hCa hCpos hdelta_nonneg hwindow hfuture hadj
         have hPN : euclideanNorm
             (finiteAffineBestFitSlope a (j + (N : ℤ)) m (by omega) b) ≤
-              2 * euclideanNorm (finiteAffineBestFitSlope a j m hjm b) := by
-          have := hpbound N (by dsimp [L]; omega)
-          have hNL : N ≤ L := by dsimp [L]; omega
-          simp only [pseq, dite_eq_left hNL, dite_eq_left (Nat.zero_le L), Nat.cast_zero] at this
-          have hbase := congrArg euclideanNorm
-            (finiteAffineBestFitSlope_congr_index a (by ring : j + (0 : ℤ) = j)
-              (by omega) hjm b)
-          rw [hbase] at this
-          exact this
+              2 * euclideanNorm (finiteAffineBestFitSlope a j m hjm b) :=
+          hforward N (by dsimp [L]; omega)
         have hPL : euclideanNorm
             (finiteAffineBestFitSlope a (j + (L : ℤ)) m (by omega) b) ≤
-              2 * euclideanNorm (finiteAffineBestFitSlope a j m hjm b) := by
-          have := hpbound L le_rfl
-          simp only [pseq, dite_eq_left le_rfl, dite_eq_left (Nat.zero_le L), Nat.cast_zero]
-            at this
-          have hbase := congrArg euclideanNorm
-            (finiteAffineBestFitSlope_congr_index a (by ring : j + (0 : ℤ) = j)
-              (by omega) hjm b)
-          rw [hbase] at this
-          exact this
+              2 * euclideanNorm (finiteAffineBestFitSlope a j m hjm b) := hforward L le_rfl
         have hEN := hfuture N hN (by dsimp [L]; omega) (by omega)
         have hEL := hfuture L (by dsimp [L]; omega) le_rfl hjfar
         have herrCacc : scalarIdentityWeakError a s (j + (N : ℤ) + 2) ≤ 1 :=
@@ -990,36 +1051,10 @@ theorem exists_scalarIdentityFiniteAffineBestFitErrorInductionConstants
               (finiteAffineCubeSolution a m b) (j + (N : ℤ)) ≤
             4 * Cc * euclideanNorm
               (finiteAffineBestFitSlope a j m hjm b) := by
-          calc
-            finiteCenteredCubeSolutionEnergy a m
-                (finiteAffineCubeSolution a m b) (j + (N : ℤ)) ≤
-                Cc * (finiteAffineBestFitError a (j + (L : ℤ)) m
-                    (by dsimp [L] at hjfar ⊢; omega) b +
-                  euclideanNorm
-                    (finiteAffineBestFitSlope a (j + (L : ℤ)) m
-                      (by dsimp [L] at hjfar ⊢; omega) b)) := by
-              simpa only [L, show j + (N : ℤ) + 2 = j + ((N + 2 : ℕ) : ℤ) by
-                push_cast; ring] using hD
-            _ ≤ Cc * ((C * delta) *
-                  euclideanNorm
-                    (finiteAffineBestFitSlope a (j + (L : ℤ)) m
-                      (by omega) b) +
-                euclideanNorm
-                  (finiteAffineBestFitSlope a (j + (L : ℤ)) m
-                    (by omega) b)) :=
-              mul_le_mul_of_nonneg_left
-                (add_le_add hEL (le_refl _)) hCc.le
-            _ ≤ Cc * ((1 / 2 : ℝ) *
-                  (2 * euclideanNorm (finiteAffineBestFitSlope a j m hjm b)) +
-                2 * euclideanNorm (finiteAffineBestFitSlope a j m hjm b)) := by
-              apply mul_le_mul_of_nonneg_left _ hCc.le
-              exact add_le_add
-                (mul_le_mul hdeltaC hPL (euclideanNorm_nonneg _) (by norm_num)) hPL
-            _ ≤ 4 * Cc * euclideanNorm
-                (finiteAffineBestFitSlope a j m hjm b) := by
-              ring_nf
-              nlinarith only [hCc.le,
-                euclideanNorm_nonneg (finiteAffineBestFitSlope a j m hjm b)]
+          apply energy_le_four_times_slope hCc.le
+            (euclideanNorm_nonneg _) (euclideanNorm_nonneg _) _ hEL hdeltaC hPL
+          simpa only [L, show j + (N : ℤ) + 2 = j + ((N + 2 : ℕ) : ℤ) by
+            push_cast; ring] using hD
         have herrStep : scalarIdentityWeakError a s (j + (N : ℤ)) ≤ delta :=
           hgood.weakError_le
           (Finset.mem_Icc.2 ⟨by omega, by dsimp [L] at hjfar; omega⟩)
@@ -1028,30 +1063,9 @@ theorem exists_scalarIdentityFiniteAffineBestFitErrorInductionConstants
             (1 / 8 : ℝ) * finiteAffineBestFitError a (j + (N : ℤ)) m
                 (by omega) b +
               Cs * delta * finiteCenteredCubeSolutionEnergy a m
-                (finiteAffineCubeSolution a m b) (j + (N : ℤ)) := by
-          have henergyNonneg : 0 ≤ finiteCenteredCubeSolutionEnergy a m
-              (finiteAffineCubeSolution a m b) (j + (N : ℤ)) := by
-            unfold finiteCenteredCubeSolutionEnergy Book.Ch03.h1EnergyNormOnCube
-            exact Real.sqrt_nonneg _
-          calc
-            finiteAffineBestFitError a j m hjm b =
-                finiteAffineBestFitError a (j + (N : ℤ) - (N : ℤ)) m
-                  (by omega) b :=
-              (finiteAffineBestFitError_congr_index a
-                (show j + (N : ℤ) - (N : ℤ) = j by ring)
-                (by omega) hjm b).symm
-            _ ≤ (1 / 8 : ℝ) * finiteAffineBestFitError a (j + (N : ℤ)) m
-                  (by omega) b +
-                Cs * scalarIdentityWeakError a s (j + (N : ℤ)) *
-                  finiteCenteredCubeSolutionEnergy a m
-                    (finiteAffineCubeSolution a m b) (j + (N : ℤ)) := hrec
-            _ ≤ (1 / 8 : ℝ) * finiteAffineBestFitError a (j + (N : ℤ)) m
-                  (by omega) b +
-                Cs * delta * finiteCenteredCubeSolutionEnergy a m
-                  (finiteAffineCubeSolution a m b) (j + (N : ℤ)) :=
-              add_le_add (le_refl _)
-                (mul_le_mul_of_nonneg_right
-                  (mul_le_mul_of_nonneg_left herrStep hCs.le) henergyNonneg)
+                (finiteAffineCubeSolution a m b) (j + (N : ℤ)) :=
+          finiteAffineError_recurrence_of_weakBound a m b j N hjm (by omega)
+            s Cs delta hCs herrStep hrec
         calc
           finiteAffineBestFitError a j m hjm b ≤
               (1 / 8 : ℝ) * finiteAffineBestFitError a (j + (N : ℤ)) m

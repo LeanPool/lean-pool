@@ -246,7 +246,6 @@ Gram/RHS probe measurability.  Unlike `measurable_galerkinAffineMinimizer`,
 this theorem does not require a second-countable target space; it assembles the
 finite-dimensional correction from strongly measurable real coordinates. -/
 theorem stronglyMeasurable_galerkinAffineMinimizer_of_scalar_probes
-    [MeasurableSpace V]
     {B : Ω → V →L[ℝ] V →L[ℝ] ℝ} {x : Ω → V} {e : Fin n → V}
     (hx : StronglyMeasurable x)
     (hB : ∀ i j, Measurable fun ω => B ω (e j) (e i))
@@ -460,7 +459,7 @@ theorem _root_.HCPolySupport.Measurable.correctionMap_apply
 of the affine shift, the restricted Lax-Milgram operator, and the affine
 right-hand side. -/
 theorem _root_.HCPolySupport.Measurable.affineMinimizerMap_apply
-    [MeasurableSpace V] [BorelSpace V] [MeasurableAdd₂ V]
+    [MeasurableSpace V] [MeasurableAdd₂ V]
     (K : ClosedSubmodule ℝ V)
     [BorelSpace K.toSubmodule]
     [OpensMeasurableSpace ((K.toSubmodule →L[ℝ] K.toSubmodule) × K.toSubmodule)]

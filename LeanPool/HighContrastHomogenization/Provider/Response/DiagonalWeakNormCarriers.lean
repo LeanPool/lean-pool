@@ -46,7 +46,7 @@ variable {d : ℕ}
 /-! ## Metric and load factors -/
 
 /-- The metric comparison factor
-`K_{M,E} = |M₀⁻¹ᐟ² E M₀⁻¹ᐟ²|¹ᐟ²`, one of the normalization prefactors of the
+`K_{M,E} = |M₀⁻¹_prime² E M₀⁻¹_prime²|¹_prime²`, one of the normalization prefactors of the
 weak-norm estimate. -/
 @[expose]
 def diagonalWeakMetricFactor (m0 : Mat d) (E : BlockMat d) : ℝ :=
@@ -58,7 +58,7 @@ theorem diagonalWeakMetricFactor_eq (m0 : Mat d) (E : BlockMat d) :
       Real.sqrt (blockSize E (blockDiag m0 m0⁻¹)) := rfl
 
 /-- The primal load factor
-`L_E⁻(p,q) = |E¹ᐟ²(-p,q)|`, the first of the two load sizes of the weak-norm
+`L_E⁻(p,q) = |E¹_prime²(-p,q)|`, the first of the two load sizes of the weak-norm
 estimate. -/
 @[expose]
 def diagonalWeakLoadMinus (E : BlockMat d) (p q : Vec d) : ℝ :=
@@ -74,7 +74,7 @@ theorem diagonalWeakLoadMinus_eq (E : BlockMat d) (p q : Vec d) :
           (blockMatVecMul E ((-p, q) : BlockVec d))) := rfl
 
 /-- The adjoint load factor
-`L_E⁺(p,q) = |E¹ᐟ²(p,q)|`, the second of the two load sizes of the weak-norm
+`L_E⁺(p,q) = |E¹_prime²(p,q)|`, the second of the two load sizes of the weak-norm
 estimate. -/
 @[expose]
 def diagonalWeakLoadPlus (E : BlockMat d) (p q : Vec d) : ℝ :=

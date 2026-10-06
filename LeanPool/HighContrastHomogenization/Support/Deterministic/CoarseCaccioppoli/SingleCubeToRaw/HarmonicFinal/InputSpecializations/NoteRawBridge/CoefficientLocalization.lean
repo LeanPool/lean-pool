@@ -13,7 +13,8 @@ public import LeanPool.HighContrastHomogenization.Support.Deterministic.Multisca
 
 /-!
 # Coarse-graining support:
-Support.Deterministic.CoarseCaccioppoli.SingleCubeToRaw.HarmonicFinal.InputSpecializations.NoteRawBridge.CoefficientLocalization
+Support.Deterministic.CoarseCaccioppoli.SingleCubeToRaw.HarmonicFinal.InputSpecializations
+.NoteRawBridge.CoefficientLocalization
 
 Imported from the Apache-2.0 CoarseGraining development at commit
 `c7ddd76c08ade64fed1b8d2ca51be14dfee8deb4`.
@@ -36,7 +37,7 @@ surface needed to keep the public note constant split all the way back to the
 small-cube estimates. -/
 @[expose]
 def
-    CoarseCaccioppoliBoundaryCanonicalHarmonicVectorFaithfulWorkSmallCubeBufferedExactRawCoefficientBoundsSplit
+    BoundaryCaccioppoliHarmonicVectorSmallCubeCoefficientSplit
     {d : ℕ} [NeZero d] (Q : TriadicCube d) (a : CoeffField d)
     (s t Clocal Calpha Ccross : ℝ) : Prop :=
   ∀ n : ℕ,
@@ -75,7 +76,7 @@ buffered localized-energy route.  This is the coefficient package needed by
 the standard beta-dependent radius iteration. -/
 @[expose]
 def
-    CoarseCaccioppoliBoundaryCanonicalHarmonicVectorFaithfulWorkSmallCubeBufferedExactRawCoefficientBoundsSplitAllRadii
+    BoundaryCaccioppoliHarmonicVectorSmallCubeCoefficientSplit_allRadii
     {d : ℕ} [NeZero d] (Q : TriadicCube d) (a : CoeffField d)
     (s t Clocal Calpha Ccross : ℝ) : Prop :=
   ∀ ⦃ρ₁ ρ₂ : ℝ⦄, (1 / 3 : ℝ) ≤ ρ₁ → ρ₁ < ρ₂ → ρ₂ ≤ 1 →
@@ -110,13 +111,13 @@ def
 /-- The all-radii split coefficient package restricts to the legacy
 Chapter-3 radius sequence. -/
 theorem
-    CoarseCaccioppoliBoundaryCanonicalHarmonicVectorFaithfulWorkSmallCubeBufferedExactRawCoefficientBoundsSplit.of_allRadii
+    BoundaryCaccioppoliHarmonicVectorSmallCubeCoefficientSplit.of_allRadii
     {d : ℕ} [NeZero d] (Q : TriadicCube d) (a : CoeffField d)
     (s t Clocal Calpha Ccross : ℝ)
     (h :
-      CoarseCaccioppoliBoundaryCanonicalHarmonicVectorFaithfulWorkSmallCubeBufferedExactRawCoefficientBoundsSplitAllRadii
+      BoundaryCaccioppoliHarmonicVectorSmallCubeCoefficientSplit_allRadii
         Q a s t Clocal Calpha Ccross) :
-    CoarseCaccioppoliBoundaryCanonicalHarmonicVectorFaithfulWorkSmallCubeBufferedExactRawCoefficientBoundsSplit
+    BoundaryCaccioppoliHarmonicVectorSmallCubeCoefficientSplit
       Q a s t Clocal Calpha Ccross := by
   intro n
   have hρ₁ : (1 / 3 : ℝ) ≤ coarseCaccioppoliRadiusSequence n :=
@@ -128,8 +129,8 @@ theorem
   have hρ₂ : coarseCaccioppoliRadiusSequence (n + 1) ≤ 1 :=
     (coarseCaccioppoliRadiusSequence_mem_Icc (n + 1)).2
   simpa [
-    CoarseCaccioppoliBoundaryCanonicalHarmonicVectorFaithfulWorkSmallCubeBufferedExactRawCoefficientBoundsSplit,
-    CoarseCaccioppoliBoundaryCanonicalHarmonicVectorFaithfulWorkSmallCubeBufferedExactRawCoefficientBoundsSplitAllRadii]
+    BoundaryCaccioppoliHarmonicVectorSmallCubeCoefficientSplit,
+    BoundaryCaccioppoliHarmonicVectorSmallCubeCoefficientSplit_allRadii]
     using h hρ₁ hlt hρ₂
 
 

@@ -10,7 +10,8 @@ public import LeanPool.HighContrastHomogenization.Support.Deterministic.CoarseCa
 
 /-!
 # Coarse-graining support:
-Support.Deterministic.CoarseCaccioppoli.SingleCubeToRaw.HarmonicFinal.ExactSmallCube.CenteredFactors.LocalAlpha
+Support.Deterministic.CoarseCaccioppoli.SingleCubeToRaw.HarmonicFinal.ExactSmallCube
+.CenteredFactors.LocalAlpha
 
 Imported from the Apache-2.0 CoarseGraining development at commit
 `c7ddd76c08ade64fed1b8d2ca51be14dfee8deb4`.
@@ -27,6 +28,53 @@ namespace HCPolySupport
 noncomputable section
 
 open scoped ENNReal
+
+private theorem centeredGeometricProductHeightBound
+    {hessian gradient firstProduct secondProduct front theta sigma height depth scale : ℝ}
+    (hhessian : 0 ≤ hessian) (hgradient : 0 ≤ gradient)
+    (hfront : 0 ≤ front) (htheta : 0 ≤ theta) (hsigma : 0 ≤ sigma)
+    (hheight : height ≤ depth)
+    (hfirst : Real.rpow (3 : ℝ) (-depth) * firstProduct ≤
+      Real.rpow (3 : ℝ) (-sigma * depth) * theta)
+    (hsecond : Real.rpow (3 : ℝ) (-depth) * secondProduct ≤
+      Real.rpow (3 : ℝ) (-sigma * depth) * theta)
+    (hscale : (hessian + gradient) * Real.rpow (3 : ℝ) scale ≤ front) :
+    hessian * Real.rpow (3 : ℝ) (scale - depth) * firstProduct +
+        gradient * Real.rpow (3 : ℝ) (scale - depth) * secondProduct ≤
+      front * (Real.rpow (3 : ℝ) (-sigma * height) * theta) := by
+  have hpower : 0 ≤ Real.rpow (3 : ℝ) scale := Real.rpow_nonneg (by norm_num) _
+  have hdepth : 0 ≤ Real.rpow (3 : ℝ) (-sigma * depth) * theta :=
+    mul_nonneg (Real.rpow_nonneg (by norm_num) _) htheta
+  have hexponent : -sigma * depth ≤ -sigma * height :=
+    mul_le_mul_of_nonpos_left hheight (neg_nonpos.mpr hsigma)
+  have hheightPower := Real.rpow_le_rpow_of_exponent_le
+    (by norm_num : (1 : ℝ) ≤ 3) hexponent
+  have hpowerSplit : Real.rpow (3 : ℝ) (scale - depth) =
+      Real.rpow (3 : ℝ) scale * Real.rpow (3 : ℝ) (-depth) := by
+    rw [sub_eq_add_neg]
+    exact Real.rpow_add (by norm_num : (0 : ℝ) < 3) _ _
+  calc
+    hessian * Real.rpow (3 : ℝ) (scale - depth) * firstProduct +
+        gradient * Real.rpow (3 : ℝ) (scale - depth) * secondProduct =
+      (hessian * Real.rpow (3 : ℝ) scale) *
+          (Real.rpow (3 : ℝ) (-depth) * firstProduct) +
+        (gradient * Real.rpow (3 : ℝ) scale) *
+          (Real.rpow (3 : ℝ) (-depth) * secondProduct) := by
+            rw [hpowerSplit]
+            ring
+    _ ≤ (hessian * Real.rpow (3 : ℝ) scale) *
+          (Real.rpow (3 : ℝ) (-sigma * depth) * theta) +
+        (gradient * Real.rpow (3 : ℝ) scale) *
+          (Real.rpow (3 : ℝ) (-sigma * depth) * theta) :=
+            add_le_add (mul_le_mul_of_nonneg_left hfirst (mul_nonneg hhessian hpower))
+              (mul_le_mul_of_nonneg_left hsecond (mul_nonneg hgradient hpower))
+    _ = ((hessian + gradient) * Real.rpow (3 : ℝ) scale) *
+        (Real.rpow (3 : ℝ) (-sigma * depth) * theta) := by ring
+    _ ≤ front * (Real.rpow (3 : ℝ) (-sigma * depth) * theta) :=
+      mul_le_mul_of_nonneg_right hscale hdepth
+    _ ≤ front * (Real.rpow (3 : ℝ) (-sigma * height) * theta) :=
+      mul_le_mul_of_nonneg_left
+        (mul_le_mul_of_nonneg_right hheightPower htheta) hfront
 
 /-- The Besov/cutoff-product part of the centered exact coefficient localizes
 to the parent `Alpha` coefficient once the two Besov scalar fronts are absorbed
@@ -99,104 +147,21 @@ theorem
     simpa [Psub, Theta, depthTheta] using
       (faithful_centered_descendant_product_le_parent_theta
         (Q := Q) (R := R) (j := j) a hs ht hst hEllCube hR hBsum_s hSigmaSum_t)
-  have hPone_nonneg : 0 ≤ Pone := by
-    dsimp [Pone]
-    exact mul_nonneg
-      (Real.rpow_nonneg (multiscale_ellipticity_LambdaSq_one_nonneg R s a hs.le) _)
-      (Real.rpow_nonneg
-        (multiscale_ellipticity_lambdaSq_one_nonneg R (1 : ℝ) a (by norm_num)) _)
-  have hPsub_nonneg : 0 ≤ Psub := by
-    dsimp [Psub]
-    exact mul_nonneg
-      (Real.rpow_nonneg (multiscale_ellipticity_LambdaSq_one_nonneg R s a hs.le) _)
-      (Real.rpow_nonneg
-        (multiscale_ellipticity_lambdaSq_one_nonneg R (1 - s) a
-          (sub_nonneg.mpr hs1.le)) _)
-  have hprod_one_left_nonneg :
-      0 ≤ Real.rpow (3 : ℝ) (-(j : ℝ)) * Pone :=
-    mul_nonneg (Real.rpow_nonneg (by norm_num : 0 ≤ (3 : ℝ)) _) hPone_nonneg
-  have hprod_sub_left_nonneg :
-      0 ≤ Real.rpow (3 : ℝ) (-(j : ℝ)) * Psub :=
-    mul_nonneg (Real.rpow_nonneg (by norm_num : 0 ≤ (3 : ℝ)) _) hPsub_nonneg
   have hTheta_nonneg : 0 ≤ Theta := by
     dsimp [Theta]
     exact Real.rpow_nonneg (thetaRatio_nonneg Q s t a hs.le ht.le) _
-  have hdepthTheta_nonneg : 0 ≤ depthTheta := by
-    dsimp [depthTheta]
-    exact mul_nonneg (Real.rpow_nonneg (by norm_num : 0 ≤ (3 : ℝ)) _) hTheta_nonneg
   have hH_nonneg : 0 ≤ H := by
     simpa [H] using
       (coarseCaccioppoliCenteredBesovHessianFront_nonneg d hCeffLocal hs)
   have hG_nonneg : 0 ≤ G := by
     simpa [G] using
       (coarseCaccioppoliCenteredBesovGradientFront_nonneg d hCeffLocal hs hs1)
-  have hpowk_nonneg : 0 ≤ Real.rpow (3 : ℝ) (k : ℝ) :=
-    Real.rpow_nonneg (by norm_num : 0 ≤ (3 : ℝ)) _
-  have hHpow_nonneg : 0 ≤ H * Real.rpow (3 : ℝ) (k : ℝ) :=
-    mul_nonneg hH_nonneg hpowk_nonneg
-  have hGpow_nonneg : 0 ≤ G * Real.rpow (3 : ℝ) (k : ℝ) :=
-    mul_nonneg hG_nonneg hpowk_nonneg
   have hden_nonneg : 0 ≤ s * (1 - s) :=
     mul_nonneg hs.le (sub_nonneg.mpr hs1.le)
   have hfront_nonneg : 0 ≤ front := by
     dsimp [front]
     exact mul_nonneg (div_nonneg hCeffWork hden_nonneg)
       (coarseCaccioppoliGapInv_nonneg hlt)
-  have hpow_split :
-      Real.rpow (3 : ℝ) ((k : ℝ) - (j : ℝ)) =
-        Real.rpow (3 : ℝ) (k : ℝ) * Real.rpow (3 : ℝ) (-(j : ℝ)) := by
-    rw [sub_eq_add_neg]
-    exact Real.rpow_add (by norm_num : 0 < (3 : ℝ)) _ _
-  have hsub_rhs_eq :
-      H * Real.rpow (3 : ℝ) ((k : ℝ) - (j : ℝ)) * Pone +
-          G * Real.rpow (3 : ℝ) ((k : ℝ) - (j : ℝ)) * Psub =
-        (H * Real.rpow (3 : ℝ) (k : ℝ)) *
-            (Real.rpow (3 : ℝ) (-(j : ℝ)) * Pone) +
-          (G * Real.rpow (3 : ℝ) (k : ℝ)) *
-            (Real.rpow (3 : ℝ) (-(j : ℝ)) * Psub) := by
-    rw [hpow_split]
-    ring
-  have hterms_to_depth :
-      (H * Real.rpow (3 : ℝ) (k : ℝ)) *
-            (Real.rpow (3 : ℝ) (-(j : ℝ)) * Pone) +
-          (G * Real.rpow (3 : ℝ) (k : ℝ)) *
-            (Real.rpow (3 : ℝ) (-(j : ℝ)) * Psub) ≤
-        ((H + G) * Real.rpow (3 : ℝ) (k : ℝ)) * depthTheta := by
-    calc
-      (H * Real.rpow (3 : ℝ) (k : ℝ)) *
-            (Real.rpow (3 : ℝ) (-(j : ℝ)) * Pone) +
-          (G * Real.rpow (3 : ℝ) (k : ℝ)) *
-            (Real.rpow (3 : ℝ) (-(j : ℝ)) * Psub)
-          ≤
-        (H * Real.rpow (3 : ℝ) (k : ℝ)) * depthTheta +
-          (G * Real.rpow (3 : ℝ) (k : ℝ)) * depthTheta := by
-            exact add_le_add
-              (mul_le_mul_of_nonneg_left hprod_one hHpow_nonneg)
-              (mul_le_mul_of_nonneg_left hprod_sub hGpow_nonneg)
-      _ = ((H + G) * Real.rpow (3 : ℝ) (k : ℝ)) * depthTheta := by
-            ring
-  have hfront_depth :
-      ((H + G) * Real.rpow (3 : ℝ) (k : ℝ)) * depthTheta ≤
-        front * depthTheta := by
-    exact mul_le_mul_of_nonneg_right
-      (by simpa [H, G, front] using hscale) hdepthTheta_nonneg
-  have hσ_pos : 0 < coarseCaccioppoliSigma s t :=
-    coarseCaccioppoli_sigma_pos hst
-  have hexp_le :
-      -coarseCaccioppoliSigma s t * (j : ℝ) ≤
-        -coarseCaccioppoliSigma s t * hheight ρ₁ ρ₂ := by
-    nlinarith
-  have hpow_height :
-      Real.rpow (3 : ℝ) (-coarseCaccioppoliSigma s t * (j : ℝ)) ≤
-        Real.rpow (3 : ℝ) (-coarseCaccioppoliSigma s t * hheight ρ₁ ρ₂) :=
-    Real.rpow_le_rpow_of_exponent_le (by norm_num : (1 : ℝ) ≤ (3 : ℝ)) hexp_le
-  have hheight_step :
-      front * depthTheta ≤
-        front * (Real.rpow (3 : ℝ) (-coarseCaccioppoliSigma s t * hheight ρ₁ ρ₂) *
-          Theta) := by
-    refine mul_le_mul_of_nonneg_left ?_ hfront_nonneg
-    dsimp [depthTheta]
-    exact mul_le_mul_of_nonneg_right hpow_height hTheta_nonneg
   calc
     coarseCaccioppoliFluxEnergyExactCenteredBesovCoeffFactorBound R s
         (coarseCaccioppoliLambdaFactor R a s)
@@ -210,17 +175,13 @@ theorem
         ≤ H * Real.rpow (3 : ℝ) ((k : ℝ) - (j : ℝ)) * Pone +
           G * Real.rpow (3 : ℝ) ((k : ℝ) - (j : ℝ)) * Psub := by
             simpa [H, G, Pone, Psub] using hsub
-    _ =
-        (H * Real.rpow (3 : ℝ) (k : ℝ)) *
-            (Real.rpow (3 : ℝ) (-(j : ℝ)) * Pone) +
-          (G * Real.rpow (3 : ℝ) (k : ℝ)) *
-            (Real.rpow (3 : ℝ) (-(j : ℝ)) * Psub) := hsub_rhs_eq
-    _ ≤ ((H + G) * Real.rpow (3 : ℝ) (k : ℝ)) * depthTheta :=
-          hterms_to_depth
-    _ ≤ front * depthTheta := hfront_depth
     _ ≤ front *
         (Real.rpow (3 : ℝ) (-coarseCaccioppoliSigma s t * hheight ρ₁ ρ₂) *
-          Theta) := hheight_step
+          Theta) := by
+          exact centeredGeometricProductHeightBound
+            hH_nonneg hG_nonneg hfront_nonneg hTheta_nonneg
+            (coarseCaccioppoli_sigma_pos hst).le hheight_le_j hprod_one hprod_sub
+            (by simpa [H, G, front] using hscale)
     _ = CeffWork / (s * (1 - s)) *
         coarseCaccioppoliGapInv ρ₁ ρ₂ *
         Real.rpow (3 : ℝ) (-coarseCaccioppoliSigma s t * hheight ρ₁ ρ₂) *
@@ -311,19 +272,6 @@ theorem
     simpa [Psub, Theta, depthTheta] using
       (faithful_centered_descendant_product_le_parent_theta
         (Q := Q) (R := R) (j := j) a hs ht hst hEllCube hR hBsum_s hSigmaSum_t)
-  have hPone_nonneg : 0 ≤ Pone := by
-    dsimp [Pone]
-    exact mul_nonneg
-      (Real.rpow_nonneg (multiscale_ellipticity_LambdaSq_one_nonneg R s a hs.le) _)
-      (Real.rpow_nonneg
-        (multiscale_ellipticity_lambdaSq_one_nonneg R (1 : ℝ) a (by norm_num)) _)
-  have hPsub_nonneg : 0 ≤ Psub := by
-    dsimp [Psub]
-    exact mul_nonneg
-      (Real.rpow_nonneg (multiscale_ellipticity_LambdaSq_one_nonneg R s a hs.le) _)
-      (Real.rpow_nonneg
-        (multiscale_ellipticity_lambdaSq_one_nonneg R (1 - s) a
-          (sub_nonneg.mpr hs1.le)) _)
   have hA_nonneg : 0 ≤ A := by
     simpa [A] using
       (coarseCaccioppoliCenteredAverageFront_nonneg d hCeffLocal hs)
@@ -336,28 +284,12 @@ theorem
   have hTheta_nonneg : 0 ≤ Theta := by
     dsimp [Theta]
     exact Real.rpow_nonneg (thetaRatio_nonneg Q s t a hs.le ht.le) _
-  have hdepthTheta_nonneg : 0 ≤ depthTheta := by
-    dsimp [depthTheta]
-    exact mul_nonneg (Real.rpow_nonneg (by norm_num : 0 ≤ (3 : ℝ)) _) hTheta_nonneg
-  have hpowk_nonneg : 0 ≤ Real.rpow (3 : ℝ) (k : ℝ) :=
-    Real.rpow_nonneg (by norm_num : 0 ≤ (3 : ℝ)) _
-  have hApow_nonneg : 0 ≤ A * Real.rpow (3 : ℝ) (k : ℝ) :=
-    mul_nonneg hA_nonneg hpowk_nonneg
-  have hHpow_nonneg : 0 ≤ H * Real.rpow (3 : ℝ) (k : ℝ) :=
-    mul_nonneg hH_nonneg hpowk_nonneg
-  have hGpow_nonneg : 0 ≤ G * Real.rpow (3 : ℝ) (k : ℝ) :=
-    mul_nonneg hG_nonneg hpowk_nonneg
   have hden_nonneg : 0 ≤ s * (1 - s) :=
     mul_nonneg hs.le (sub_nonneg.mpr hs1.le)
   have hfront_nonneg : 0 ≤ front := by
     dsimp [front]
     exact mul_nonneg (div_nonneg hCeffWork hden_nonneg)
       (coarseCaccioppoliGapInv_nonneg hlt)
-  have hpow_split :
-      Real.rpow (3 : ℝ) ((k : ℝ) - (j : ℝ)) =
-        Real.rpow (3 : ℝ) (k : ℝ) * Real.rpow (3 : ℝ) (-(j : ℝ)) := by
-    rw [sub_eq_add_neg]
-    exact Real.rpow_add (by norm_num : 0 < (3 : ℝ)) _ _
   have havg_rhs_eq :
       ((d : ℝ) * (((3 / 2 : ℝ) * CeffLocal * (3 : ℝ) ^ ((d : ℝ) + 1)) *
           ((geometricDiscount s 1)⁻¹ * (geometricDiscount (1 : ℝ) 1)⁻¹)) *
@@ -386,66 +318,6 @@ theorem
             G * Real.rpow (3 : ℝ) ((k : ℝ) - (j : ℝ)) * Psub) := by
     exact add_le_add (by simpa [Pone] using le_trans havg_sub havg_rhs_eq.le)
       (by simpa [H, G, Pone, Psub] using hbesov_sub)
-  have hsub_rhs_eq :
-      A * Real.rpow (3 : ℝ) ((k : ℝ) - (j : ℝ)) * Pone +
-          (H * Real.rpow (3 : ℝ) ((k : ℝ) - (j : ℝ)) * Pone +
-            G * Real.rpow (3 : ℝ) ((k : ℝ) - (j : ℝ)) * Psub) =
-        (A * Real.rpow (3 : ℝ) (k : ℝ)) *
-            (Real.rpow (3 : ℝ) (-(j : ℝ)) * Pone) +
-          (H * Real.rpow (3 : ℝ) (k : ℝ)) *
-            (Real.rpow (3 : ℝ) (-(j : ℝ)) * Pone) +
-          (G * Real.rpow (3 : ℝ) (k : ℝ)) *
-            (Real.rpow (3 : ℝ) (-(j : ℝ)) * Psub) := by
-    rw [hpow_split]
-    ring
-  have hterms_to_depth :
-      (A * Real.rpow (3 : ℝ) (k : ℝ)) *
-            (Real.rpow (3 : ℝ) (-(j : ℝ)) * Pone) +
-          (H * Real.rpow (3 : ℝ) (k : ℝ)) *
-            (Real.rpow (3 : ℝ) (-(j : ℝ)) * Pone) +
-          (G * Real.rpow (3 : ℝ) (k : ℝ)) *
-            (Real.rpow (3 : ℝ) (-(j : ℝ)) * Psub) ≤
-        ((A + H + G) * Real.rpow (3 : ℝ) (k : ℝ)) * depthTheta := by
-    calc
-      (A * Real.rpow (3 : ℝ) (k : ℝ)) *
-            (Real.rpow (3 : ℝ) (-(j : ℝ)) * Pone) +
-          (H * Real.rpow (3 : ℝ) (k : ℝ)) *
-            (Real.rpow (3 : ℝ) (-(j : ℝ)) * Pone) +
-          (G * Real.rpow (3 : ℝ) (k : ℝ)) *
-            (Real.rpow (3 : ℝ) (-(j : ℝ)) * Psub)
-          ≤
-        (A * Real.rpow (3 : ℝ) (k : ℝ)) * depthTheta +
-          (H * Real.rpow (3 : ℝ) (k : ℝ)) * depthTheta +
-          (G * Real.rpow (3 : ℝ) (k : ℝ)) * depthTheta := by
-            exact add_le_add
-              (add_le_add
-                (mul_le_mul_of_nonneg_left hprod_one hApow_nonneg)
-                (mul_le_mul_of_nonneg_left hprod_one hHpow_nonneg))
-              (mul_le_mul_of_nonneg_left hprod_sub hGpow_nonneg)
-      _ = ((A + H + G) * Real.rpow (3 : ℝ) (k : ℝ)) * depthTheta := by
-            ring
-  have hfront_depth :
-      ((A + H + G) * Real.rpow (3 : ℝ) (k : ℝ)) * depthTheta ≤
-        front * depthTheta := by
-    exact mul_le_mul_of_nonneg_right
-      (by simpa [A, H, G, front] using hscale) hdepthTheta_nonneg
-  have hσ_pos : 0 < coarseCaccioppoliSigma s t :=
-    coarseCaccioppoli_sigma_pos hst
-  have hexp_le :
-      -coarseCaccioppoliSigma s t * (j : ℝ) ≤
-        -coarseCaccioppoliSigma s t * hheight ρ₁ ρ₂ := by
-    nlinarith
-  have hpow_height :
-      Real.rpow (3 : ℝ) (-coarseCaccioppoliSigma s t * (j : ℝ)) ≤
-        Real.rpow (3 : ℝ) (-coarseCaccioppoliSigma s t * hheight ρ₁ ρ₂) :=
-    Real.rpow_le_rpow_of_exponent_le (by norm_num : (1 : ℝ) ≤ (3 : ℝ)) hexp_le
-  have hheight_step :
-      front * depthTheta ≤
-        front * (Real.rpow (3 : ℝ) (-coarseCaccioppoliSigma s t * hheight ρ₁ ρ₂) *
-          Theta) := by
-    refine mul_le_mul_of_nonneg_left ?_ hfront_nonneg
-    dsimp [depthTheta]
-    exact mul_le_mul_of_nonneg_right hpow_height hTheta_nonneg
   calc
     coarseCaccioppoliFluxEnergyExactCenteredAverageCoeffFactorBound
         (d := d) (coarseCaccioppoliLambdaFactor R a s)
@@ -463,19 +335,20 @@ theorem
         ≤ A * Real.rpow (3 : ℝ) ((k : ℝ) - (j : ℝ)) * Pone +
           (H * Real.rpow (3 : ℝ) ((k : ℝ) - (j : ℝ)) * Pone +
             G * Real.rpow (3 : ℝ) ((k : ℝ) - (j : ℝ)) * Psub) := hfactor_sub
-    _ =
-        (A * Real.rpow (3 : ℝ) (k : ℝ)) *
-            (Real.rpow (3 : ℝ) (-(j : ℝ)) * Pone) +
-          (H * Real.rpow (3 : ℝ) (k : ℝ)) *
-            (Real.rpow (3 : ℝ) (-(j : ℝ)) * Pone) +
-          (G * Real.rpow (3 : ℝ) (k : ℝ)) *
-            (Real.rpow (3 : ℝ) (-(j : ℝ)) * Psub) := hsub_rhs_eq
-    _ ≤ ((A + H + G) * Real.rpow (3 : ℝ) (k : ℝ)) * depthTheta :=
-          hterms_to_depth
-    _ ≤ front * depthTheta := hfront_depth
     _ ≤ front *
         (Real.rpow (3 : ℝ) (-coarseCaccioppoliSigma s t * hheight ρ₁ ρ₂) *
-          Theta) := hheight_step
+          Theta) := by
+          calc
+            A * Real.rpow (3 : ℝ) ((k : ℝ) - (j : ℝ)) * Pone +
+                (H * Real.rpow (3 : ℝ) ((k : ℝ) - (j : ℝ)) * Pone +
+                  G * Real.rpow (3 : ℝ) ((k : ℝ) - (j : ℝ)) * Psub) =
+              (A + H) * Real.rpow (3 : ℝ) ((k : ℝ) - (j : ℝ)) * Pone +
+                G * Real.rpow (3 : ℝ) ((k : ℝ) - (j : ℝ)) * Psub := by ring
+            _ ≤ _ := by
+              exact centeredGeometricProductHeightBound
+                (add_nonneg hA_nonneg hH_nonneg) hG_nonneg hfront_nonneg hTheta_nonneg
+                (coarseCaccioppoli_sigma_pos hst).le hheight_le_j hprod_one hprod_sub
+                (by simpa [A, H, G, front] using hscale)
     _ = CeffWork / (s * (1 - s)) *
         coarseCaccioppoliGapInv ρ₁ ρ₂ *
         Real.rpow (3 : ℝ) (-coarseCaccioppoliSigma s t * hheight ρ₁ ρ₂) *

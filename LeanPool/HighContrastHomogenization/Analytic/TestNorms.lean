@@ -22,7 +22,7 @@ public section
 /-!
 # Homogeneity and finiteness of the normalized norms on a test field
 
-The dual norms `‖·‖_{H^{-s}(V)}` and `‖·‖_{H̲^{-1}(V)}` of
+The dual norms `‖·‖_{H^{-s}(V)}` and `‖·‖_{H_underlined^{-1}(V)}` of
 `e.physical.negative.norm` are suprema over the admissible tests, that is over
 the smooth compactly supported fields of unit normalized norm.  For that index
 family to be nontrivial one needs two things about the

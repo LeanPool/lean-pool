@@ -117,11 +117,13 @@ theorem moment_diagonal_le_fluctuationHistory (d : ℕ) (hd : 2 ≤ d) (γ : ℝ
       rintro _ ⟨i, rfl⟩
       exact hbound a i
     have hm : AEStronglyMeasurable (fun a => ⨆ i ∈ s, f i a) P :=
-      (AEMeasurable.biSup s hs.countable (fun i hi => (hint i hi).aemeasurable)).aestronglyMeasurable
+      (AEMeasurable.biSup s hs.countable (fun i hi => (hint i
+        hi).aemeasurable)).aestronglyMeasurable
     refine ⟨?_, ?_⟩
     · apply (integrable_finsetSum hs.toFinset (fun i hi => hint i (hs.mem_toFinset.mp hi))).mono' hm
       filter_upwards [] with a
-      rw [Real.norm_eq_abs, abs_of_nonneg (Real.iSup_nonneg (fun i => Real.iSup_nonneg (fun _ => hf i a)))]
+      rw [Real.norm_eq_abs, abs_of_nonneg (Real.iSup_nonneg (fun i => Real.iSup_nonneg (fun _ =>
+        hf i a)))]
       exact Real.iSup_le (hbound a) (hsum a)
     · intro a i hi
       have h := le_ciSup (hbdd a) i
@@ -134,7 +136,8 @@ theorem moment_diagonal_le_fluctuationHistory (d : ℕ) (hd : 2 ≤ d) (γ : ℝ
     have hs := (Annealed.alignedCenterSet_finite_card d j (n - j).toNat).1
     rw [heq] at hs
     have hset : adaptedLatticeAtScale q j ∩ HighContrast.adaptedCell q n =
-        adaptedCellCenter q j '' {w : Fin d → ℤ | HighContrast.standardCellCenter j w ∈ HighContrast.centeredCube d n} := by
+        adaptedCellCenter q j '' {w : Fin d → ℤ | HighContrast.standardCellCenter j w ∈
+          HighContrast.centeredCube d n} := by
       ext z
       constructor
       · rintro ⟨⟨w, rfl⟩, hw⟩
@@ -177,7 +180,8 @@ theorem moment_diagonal_le_fluctuationHistory (d : ℕ) (hd : 2 ≤ d) (γ : ℝ
     filter_upwards [(hmem j z).symmetric] with a ha
     rw [Real.norm_eq_abs, abs_of_nonneg (pow_nonneg (norm_nonneg _) _)]
     exact pow_le_pow_left₀ (norm_nonneg _)
-      (Analysis.blockOpNorm_le_absSchattenNorm ((Analysis.toFullBlockMat_isHermitian_iff _).mpr ha) hQR) _
+      (Analysis.blockOpNorm_le_absSchattenNorm ((Analysis.toFullBlockMat_isHermitian_iff _).mpr
+        ha) hQR) _
   let f : ℤ → CoeffSpace d → ℝ := fun j a =>
     (3 : ℝ) ^ (-(bigQ d γ : ℝ) * rhoMax d γ * ((n : ℝ) - (j : ℝ))) *
       ⨆ z ∈ adaptedLatticeAtScale q j ∩ HighContrast.adaptedCell q n,
@@ -187,7 +191,8 @@ theorem moment_diagonal_le_fluctuationHistory (d : ℕ) (hd : 2 ≤ d) (γ : ℝ
     (fun z a => blockOpNorm (normalizedFluctuation P q j n z a) ^ bigQ d γ)
     (fun _ _ => pow_nonneg (norm_nonneg _) _) (fun z _ => hopint j z)
   have hf (j : ℤ) (a : CoeffSpace d) : 0 ≤ f j a := mul_nonneg
-    (Real.rpow_nonneg (by norm_num) _) (Real.iSup_nonneg fun _ => Real.iSup_nonneg fun _ => pow_nonneg (norm_nonneg _) _)
+    (Real.rpow_nonneg (by norm_num) _) (Real.iSup_nonneg fun _ => Real.iSup_nonneg fun _ =>
+      pow_nonneg (norm_nonneg _) _)
   have houter := hfiniteSup (Set.Icc (jStar : ℤ) n) (Set.finite_Icc _ _) f hf
     (fun j hj => (hinner j hj.2).1.const_mul _)
   have hpoint (a : CoeffSpace d) :
@@ -235,7 +240,8 @@ theorem moment_diagonal_le_fluctuationHistory (d : ℕ) (hd : 2 ≤ d) (γ : ℝ
   exact (hspectral _ ((Analysis.toFullBlockMat_isHermitian_iff _).mpr ha)).trans
     (mul_le_mul_of_nonneg_left (hpoint a) (by positivity))
 
-private theorem moment_weight_comparison (d A B H x decay recurrenceExp laterExp seed current weight : ℝ)
+private theorem moment_weight_comparison (d A B H x decay recurrenceExp laterExp seed current
+  weight : ℝ)
     (hd : 0 ≤ d) (hA : 0 ≤ A) (hB : 0 ≤ B) (hH : 0 ≤ H) (hx : 0 ≤ x)
     (hHone : H ≤ 1) (hdecay_le : decay ≤ 1)
     (hexp : 0 ≤ recurrenceExp) (hlater : 1 ≤ laterExp)
@@ -321,7 +327,8 @@ theorem startup_fluctuation_sum_le (d : ℕ) (hd : 2 ≤ d) (γ : ℝ)
                       ∑ j ∈ Finset.Icc (n + 1) (n + L),
                           (3 : ℝ) ^ (-((1 - γ) / 4) * (((n + L : ℤ) : ℝ) - (j : ℝ))) *
                               Real.exp ((bigQ d γ : ℝ) *
-                                detIncrement P (Geometry.explicitRoundedGrid jStar metric) j (n + L)) *
+                                detIncrement P (Geometry.explicitRoundedGrid jStar metric) j (n
+                                  + L)) *
                             ∫ a, absSchattenNorm (bigQ d γ : ℝ)
                                 (normalizedFluctuationSelf P
                                   (Geometry.explicitRoundedGrid jStar metric) j a) ^ bigQ d γ ∂P ≤

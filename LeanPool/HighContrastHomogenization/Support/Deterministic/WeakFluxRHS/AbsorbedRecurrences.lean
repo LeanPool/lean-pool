@@ -27,7 +27,7 @@ variable {d : ℕ} {Q : TriadicCube d} {a : CoeffField d} {g : Vec d → Vec d}
 
 /-- Local weak-flux recurrence packaged with the explicit corrector-energy
 local-error envelope. -/
-theorem sq_cubeBesovNegativeVectorSeminormTwo_flux_le_descendantsAverage_add_correctorEnergyLocalError_of_childBddAbove
+theorem sq_negativeBesovSeminormTwo_flux_le_descendantMean_add_correctorError
     (ω : MeanZeroNeumannCorrectorData Q a (fun x => g x - cubeAverageVec Q g))
     {u : Vec d → Vec d} (w : AHarmonicFunction a (cubeSet Q))
     (s : ℝ) (hs : 0 < s)
@@ -60,13 +60,13 @@ theorem sq_cubeBesovNegativeVectorSeminormTwo_flux_le_descendantsAverage_add_cor
       weakFluxRHSCorrectorEnergyLocalError Q a u
         (fun x => ω.toH1MeanZero.toH1Function.grad x) s := by
   have hstep :=
-    ω.sq_cubeBesovNegativeVectorSeminormTwo_flux_le_descendantsAverage_add_uCoeffEnergy_add_correctorCoeffEnergy_of_childBddAbove
+    ω.sq_negativeBesovSeminormTwo_flux_le_childMean_add_energy_add_correctorEnergy
       (u := u) w s hs hEll hu_mem hg hflux hsum huw hchildBdd
   simpa [weakFluxRHSCorrectorEnergyLocalError, add_assoc] using hstep
 
 /-- Local absorbed weak-flux recurrence packaged with the explicit absorbed
 local-error envelope. -/
-theorem sq_cubeBesovNegativeVectorSeminormTwo_flux_le_descendantsAverage_add_absorbedLocalError_of_childBddAbove
+theorem sq_negativeBesovSeminormTwo_flux_le_descendantMean_add_absorbedError
     (ω : MeanZeroNeumannCorrectorData Q a (fun x => g x - cubeAverageVec Q g))
     {u : Vec d → Vec d} (w : AHarmonicFunction a (cubeSet Q))
     (s : ℝ) {η : ℝ} (hs : 0 < s) (hη : 0 < η)
@@ -109,7 +109,7 @@ theorem sq_cubeBesovNegativeVectorSeminormTwo_flux_le_descendantsAverage_add_abs
               (fun x => matVecMul (a x) (u x))) ^ 2) +
       weakFluxRHSAbsorbedLocalError Q a g u (fun x => w.toH1.grad x) s η := by
   have hstep :=
-    ω.sq_cubeBesovNegativeVectorSeminormTwo_flux_le_descendantsAverage_add_uCoeffEnergy_add_eta_uSq_eta_wSq_invEta_gSq_of_childBddAbove
+    ω.sq_negativeBesovSeminormTwo_flux_le_childMean_add_energy_add_YoungError
       (u := u) w s hs hη hEll hu_mem hg_mem hflux hsum huw
       hchildBdd huBdd hwBdd hgBdd
   simpa [weakFluxRHSAbsorbedLocalError, add_assoc] using hstep
@@ -118,7 +118,7 @@ end MeanZeroNeumannCorrectorData
 
 /-- Descendant-cube coefficient-energy recurrence with the explicit
 corrector-energy local-error envelope. -/
-theorem exists_centeredCorrector_aHarmonicRemainder_fluxSeminormStepCorrectorEnergyLocalError_of_parent_potential_solenoidal_h1CoerciveEstimate_of_coarseData
+theorem exists_centeredCorrector_aHarmonicRemainder_fluxSeminormStepCorrectorEnergyError
     {d : ℕ} [NeZero d] {P R : TriadicCube d} (a : CoeffField d)
     {n : ℕ} {lam Lam s : ℝ} {u g : Vec d → Vec d}
     (hs : 0 < s)
@@ -154,7 +154,7 @@ theorem exists_centeredCorrector_aHarmonicRemainder_fluxSeminormStepCorrectorEne
           weakFluxRHSCorrectorEnergyLocalError R a u
             (fun x => ω.toH1MeanZero.toH1Function.grad x) s := by
   rcases
-      MeanZeroNeumannCorrectorData.exists_centeredCorrector_aHarmonicRemainder_fluxSeminormStepCoeffEnergy_of_parent_potential_solenoidal_h1CoerciveEstimate_of_coarseData
+      MeanZeroNeumannCorrectorData.exists_centeredCorrector_aHarmonicRemainder_of_coarseData
         (P := P) (R := R) (a := a) (n := n)
         (lam := lam) (Lam := Lam) (s := s) (u := u) (g := g)
         hs hu_potential hu_residual hR hEllR hu_memR hg_memR hC hDataR
@@ -168,7 +168,7 @@ Choose Neumann-corrector gradients on all descendants of a parent cube and
 package the local corrected-energy weak-flux recurrence in the global-selector
 shape consumed by the public corrected route.
 -/
-theorem exists_correctorGradientSelector_fluxSeminormStepCorrectorEnergyLocalError_of_parent_potential_solenoidal_h1CoerciveEstimate_of_coarseData
+theorem exists_correctorGradientSelector_fluxSeminormStepCorrectorEnergyError
     {d : ℕ} [NeZero d] (Q : TriadicCube d) (a : CoeffField d)
     {s lam Lam : ℝ} {u g : Vec d → Vec d}
     (hs : 0 < s)
@@ -236,7 +236,7 @@ theorem exists_correctorGradientSelector_fluxSeminormStepCorrectorEnergyLocalErr
     intro R hRdesc
     rcases hRdesc with ⟨n, hR⟩
     exact
-      exists_centeredCorrector_aHarmonicRemainder_fluxSeminormStepCorrectorEnergyLocalError_of_parent_potential_solenoidal_h1CoerciveEstimate_of_coarseData
+      exists_centeredCorrector_aHarmonicRemainder_fluxSeminormStepCorrectorEnergyError
         (P := Q) (R := R) (a := a) (n := n)
         (lam := lam) (Lam := Lam) (s := s) (u := u) (g := g)
         hs hu_potential hu_residual hR
@@ -279,7 +279,7 @@ theorem exists_correctorGradientSelector_fluxSeminormStepCorrectorEnergyLocalErr
 
 /-- Descendant-cube absorbed recurrence with the explicit absorbed local-error
 envelope. -/
-theorem exists_centeredCorrector_aHarmonicRemainder_fluxSeminormStepAbsorbedLocalError_of_parent_potential_solenoidal_h1CoerciveEstimate_of_coarseData
+theorem exists_centeredCorrector_aHarmonicRemainder_fluxSeminormStepAbsorbedError
     {d : ℕ} [NeZero d] {P R : TriadicCube d} (a : CoeffField d)
     {n : ℕ} {lam Lam s η : ℝ} {u g : Vec d → Vec d}
     (hs : 0 < s) (hη : 0 < η)
@@ -324,7 +324,7 @@ theorem exists_centeredCorrector_aHarmonicRemainder_fluxSeminormStepAbsorbedLoca
                   (fun x => matVecMul (a x) (u x))) ^ 2) +
           weakFluxRHSAbsorbedLocalError R a g u (fun x => w.toH1.grad x) s η) := by
   rcases
-      MeanZeroNeumannCorrectorData.exists_centeredCorrector_aHarmonicRemainder_fluxSeminormStepAbsorbedShortTerm_of_parent_potential_solenoidal_h1CoerciveEstimate_of_coarseData
+      MeanZeroNeumannCorrectorData.exists_centeredCorrector_harmonicRemainder_fluxStepBound
         (P := P) (R := R) (a := a) (n := n)
         (lam := lam) (Lam := Lam) (s := s) (η := η) (u := u) (g := g)
         hs hη hu_potential hu_residual hR hEllR hu_memR hg_memR hC hDataR
@@ -342,7 +342,7 @@ The only remaining local assumption after the selector is chosen is
 boundedness of the selected harmonic remainder's finite negative Besov
 partials, exactly the boundedness input required by the local absorbed step.
 -/
-theorem exists_harmonicRemainderSelector_fluxSeminormStepAbsorbedLocalError_of_parent_potential_solenoidal_h1CoerciveEstimate_of_coarseData
+theorem exists_harmonicRemainder_fluxSeminormStepAbsorbedError_of_coarseData
     {d : ℕ} [NeZero d] (Q : TriadicCube d) (a : CoeffField d)
     {s η lam Lam : ℝ} {u g : Vec d → Vec d}
     (hs : 0 < s) (hη : 0 < η)
@@ -420,7 +420,7 @@ theorem exists_harmonicRemainderSelector_fluxSeminormStepAbsorbedLocalError_of_p
     intro R hRdesc
     rcases hRdesc with ⟨n, hR⟩
     exact
-      exists_centeredCorrector_aHarmonicRemainder_fluxSeminormStepAbsorbedLocalError_of_parent_potential_solenoidal_h1CoerciveEstimate_of_coarseData
+      exists_centeredCorrector_aHarmonicRemainder_fluxSeminormStepAbsorbedError
         (P := Q) (R := R) (a := a) (n := n)
         (lam := lam) (Lam := Lam) (s := s) (η := η) (u := u) (g := g)
         hs hη hu_potential hu_residual hR
@@ -471,7 +471,7 @@ Choose harmonic remainders on all descendants and also expose that each
 selected value is the gradient of one of the local harmonic remainders produced
 by the centered Neumann-corrector construction.
 -/
-theorem exists_harmonicRemainderSelector_fluxSeminormStepAbsorbedLocalError_with_decomposition_of_parent_potential_solenoidal_h1CoerciveEstimate_of_coarseData
+theorem exists_harmonicRemainder_fluxSeminormStepAbsorbedError_and_decomposition
     {d : ℕ} [NeZero d] (Q : TriadicCube d) (a : CoeffField d)
     {s η lam Lam : ℝ} {u g : Vec d → Vec d}
     (hs : 0 < s) (hη : 0 < η)
@@ -556,7 +556,7 @@ theorem exists_harmonicRemainderSelector_fluxSeminormStepAbsorbedLocalError_with
     intro R hRdesc
     rcases hRdesc with ⟨n, hR⟩
     exact
-      exists_centeredCorrector_aHarmonicRemainder_fluxSeminormStepAbsorbedLocalError_of_parent_potential_solenoidal_h1CoerciveEstimate_of_coarseData
+      exists_centeredCorrector_aHarmonicRemainder_fluxSeminormStepAbsorbedError
         (P := Q) (R := R) (a := a) (n := n)
         (lam := lam) (Lam := Lam) (s := s) (η := η) (u := u) (g := g)
         hs hη hu_potential hu_residual hR
@@ -637,7 +637,7 @@ theorem exists_harmonicRemainderSelector_fluxSeminormStepAbsorbedLocalError_with
 
 /-- PDE-facing coefficient-energy recurrence with the explicit
 corrector-energy local-error envelope. -/
-theorem exists_centeredNeumannCorrector_aHarmonicRemainder_fluxSeminormStepCorrectorEnergyLocalError_of_h1DirichletRhsWeakSolutionOn_of_coarseData
+theorem exists_centeredCorrector_harmonicRemainder_fluxSeminormStepCorrectorEnergyError
     {d : ℕ} [NeZero d] (Q : TriadicCube d) (a : CoeffField d)
     (g : Vec d → Vec d) (u : H1Function (cubeSet Q)) {s lam Lam : ℝ}
     (hs : 0 < s)
@@ -669,7 +669,7 @@ theorem exists_centeredNeumannCorrector_aHarmonicRemainder_fluxSeminormStepCorre
           weakFluxRHSCorrectorEnergyLocalError Q a u.grad
             (fun x => ω.toH1MeanZero.toH1Function.grad x) s := by
   rcases
-      exists_centeredNeumannCorrector_aHarmonicRemainder_fluxSeminormStepCoeffEnergy_of_h1DirichletRhsWeakSolutionOn_of_coarseData
+      exists_centeredCorrector_harmonicRemainder_of_h1DirichletRhsWeakSolutionOn
         (Q := Q) (a := a) (g := g) (u := u)
         (s := s) (lam := lam) (Lam := Lam)
         hs hEll hu hg hC hData hsum hchildBdd with
@@ -679,7 +679,7 @@ theorem exists_centeredNeumannCorrector_aHarmonicRemainder_fluxSeminormStepCorre
 
 /-- PDE-facing absorbed recurrence with the explicit absorbed local-error
 envelope. -/
-theorem exists_centeredNeumannCorrector_aHarmonicRemainder_fluxSeminormStepAbsorbedLocalError_of_h1DirichletRhsWeakSolutionOn_of_coarseData
+theorem exists_centeredCorrector_harmonicRemainder_fluxSeminormStepAbsorbedError
     {d : ℕ} [NeZero d] (Q : TriadicCube d) (a : CoeffField d)
     (g : Vec d → Vec d) (u : H1Function (cubeSet Q)) {s η lam Lam : ℝ}
     (hs : 0 < s) (hη : 0 < η)
@@ -720,7 +720,7 @@ theorem exists_centeredNeumannCorrector_aHarmonicRemainder_fluxSeminormStepAbsor
                   (fun x => matVecMul (a x) (u.grad x))) ^ 2) +
           weakFluxRHSAbsorbedLocalError Q a g u.grad (fun x => w.toH1.grad x) s η) := by
   rcases
-      exists_centeredNeumannCorrector_aHarmonicRemainder_fluxSeminormStepAbsorbedShortTerm_of_h1DirichletRhsWeakSolutionOn_of_coarseData
+      exists_centeredCorrector_harmonicRemainder_fluxSeminormStepAbsorbedShortTerm
         (Q := Q) (a := a) (g := g) (u := u)
         (s := s) (η := η) (lam := lam) (Lam := Lam)
         hs hη hEll hu hg hC hData hsum hchildBdd huBdd hgBdd with

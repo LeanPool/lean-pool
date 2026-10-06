@@ -216,7 +216,8 @@ theorem negSobolevNorm_le_fractionalDualToBesovConstant_mul_fullDualSum
               (fun x => F.toField x i) * B := by
         apply Finset.sum_le_sum
         intro i _hi
-        exact Book.Ch01.Legacy.abs_cubeBesovPairing_le_mul_cubeBesovDualFullNorm_of_uniform_bound_two_two_of_nonneg
+        exact
+          Book.Ch01.Legacy.abs_cubeBesovPairing_le_dualFullNorm_mul_bound
           Q s (fun x => F.toField x i) (fun x => h.toField x i)
           hs (hFcoord i) hBnonneg (hcoordBound i) (hcoordLocal i)
       _ = B * ∑ i : Fin d,

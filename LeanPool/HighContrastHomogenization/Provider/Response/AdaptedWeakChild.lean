@@ -233,7 +233,7 @@ theorem ofReal_cubeBesovCircPartialNorm_child_rawPullback_le
   cases alpha with
   | inl i =>
       have hcomp :=
-        cubeBesovCircPartialNorm_two_one_component_le_scaleWeight_neg_mul_negativeVectorPartialSeminorm
+        besovCircPartial_twoOne_component_le_negativeVectorPartial
           (originCube d t) (1 / 2) (fun y ↦ (G y).1) i (H + N)
       calc
         ENNReal.ofReal (cubeBesovCircPartialNorm (originCube d t) (1 / 2) 2 1
@@ -257,7 +257,7 @@ theorem ofReal_cubeBesovCircPartialNorm_child_rawPullback_le
             (mul_le_mul_right (mul_le_mul_right htransport' _) _)
   | inr i =>
       have hcomp :=
-        cubeBesovCircPartialNorm_two_one_component_le_scaleWeight_neg_mul_negativeVectorPartialSeminorm
+        besovCircPartial_twoOne_component_le_negativeVectorPartial
           (originCube d t) (1 / 2) (fun y ↦ (G y).2) i (H + N)
       calc
         ENNReal.ofReal (cubeBesovCircPartialNorm (originCube d t) (1 / 2) 2 1

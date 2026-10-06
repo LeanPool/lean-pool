@@ -37,6 +37,22 @@ the two tails by taking the maximum of their stretched-exponential exponents.
 
 noncomputable section
 
+private theorem measureReal_le_softPairTail_of_threshold_bound
+    {Ω : Type*} [MeasurableSpace Ω] {μ : Measure Ω} [IsProbabilityMeasure μ]
+    {E F : Set Ω} {pref lower lam exponent : ℝ}
+    (hEF : E ⊆ F) (hpref : 0 ≤ pref) (hexponent : 0 < exponent)
+    (hlower : lower ≤ lam)
+    (hbound : 1 ≤ lam → μ.real F ≤ pref * Real.exp (-(lam ^ exponent))) :
+    μ.real E ≤ softPairTail pref lower exponent := by
+  have hsoft : μ.real E ≤ softPairTail pref lam exponent := by
+    by_cases hlam : 1 ≤ lam
+    · exact (measureReal_mono (μ := μ) hEF).trans
+        ((hbound hlam).trans
+          (pref_mul_exp_le_softPairTail_of_one_le_lam hpref hlam))
+    · exact (measureReal_le_one (μ := μ) (s := E)).trans
+        (one_le_softPairTail_of_not_one_le_lam hlam)
+  exact hsoft.trans (softPairTail_mono_lam hexponent hlower)
+
 /-- If a quantity is bounded by `max y z`, then subtracting a nonnegative
 offset only from the left branch still controls the offset quantity. -/
 theorem sub_nonneg_le_max_sub_left_of_le_max
@@ -335,96 +351,44 @@ theorem measureReal_shiftedHighBottomPairEvent_quenchedProbeEnvelope_le_soft_max
       have hhighSoft :
           P.real (highBottomPairEvent Hshift K a t αbad q m n) ≤
             softPairTail pref highA tau := by
-        have hsoft_raw :
-            P.real (highBottomPairEvent Hshift K a t αbad q m n) ≤
-              softPairTail pref highLam tau := by
-          by_cases hlam : 1 ≤ highLam
-          · have hraw :=
-              hhighRaw (t := t) (αbad := αbad)
-                hP hStruct hΓ hσ_eq hparams
-                (q := q) (m := m) (n := n)
-            dsimp only at hraw
-            have hbad :
-                P.real (badPairEvent Hshift t αbad q m n) ≤
-                  (S.card : ℝ) *
-                    ((D.card : ℝ) * Real.exp (-(highLam ^ tau))) := by
-              simpa [K, x, ell, selectedBadPairScale, N0, Hshift, D, S, tau,
-                highScale, T, highLam] using
-                hraw hell hnm hqm hlam
-            have hmono :
-                P.real (highBottomPairEvent Hshift K a t αbad q m n) ≤
-                  P.real (badPairEvent Hshift t αbad q m n) :=
-              measureReal_mono (μ := P) (by
-                intro ω hω
-                exact hω.2.2)
-            have hpref : 0 ≤ pref := by
-              dsimp [pref]
-              positivity
-            exact
-              hmono.trans
-                (hbad.trans
-                  (by
-                    simpa [pref, mul_assoc] using
-                      pref_mul_exp_le_softPairTail_of_one_le_lam
-                        (pref := pref) (lam := highLam) (η := tau)
-                        hpref hlam))
-          · exact
-              (measureReal_le_one
-                (μ := P)
-                (s := highBottomPairEvent Hshift K a t αbad q m n)).trans
-                (one_le_softPairTail_of_not_one_le_lam
-                  (pref := pref) (lam := highLam) (η := tau) hlam)
-        exact
-          hsoft_raw.trans
-            (softPairTail_mono_lam
-              (pref := pref) (lam₁ := highA) (lam₂ := highLam)
-              (η := tau) htau_pos hHighLam)
+        refine measureReal_le_softPairTail_of_threshold_bound
+          (F := badPairEvent Hshift t αbad q m n)
+          (lam := highLam) (by intro ω hω; exact hω.2.2)
+          (by dsimp [pref]; positivity) htau_pos hHighLam ?_
+        intro hlam
+        have hraw :=
+          hhighRaw (t := t) (αbad := αbad)
+            hP hStruct hΓ hσ_eq hparams
+            (q := q) (m := m) (n := n)
+        dsimp only at hraw
+        have hbad :
+            P.real (badPairEvent Hshift t αbad q m n) ≤
+              (S.card : ℝ) *
+                ((D.card : ℝ) * Real.exp (-(highLam ^ tau))) := by
+          simpa [K, x, ell, selectedBadPairScale, N0, Hshift, D, S, tau,
+            highScale, T, highLam] using
+            hraw hell hnm hqm hlam
+        simpa [pref, mul_assoc] using hbad
       have hcrudeSoft :
           P.real (highBottomPairEvent Hshift K a t αbad q m n) ≤
             softPairTail pref crudeA σ := by
-        have hsoft_raw :
-            P.real (highBottomPairEvent Hshift K a t αbad q m n) ≤
-              softPairTail pref crudeLam σ := by
-          by_cases hlam : 1 ≤ crudeLam
-          · have hraw :=
-              hcrudeRaw (t := t) (αbad := αbad)
-                hP hStruct hΓ hσ_eq hparams
-                (N0 := N0) (q := q) (m := m) (n := n)
-            dsimp only at hraw
-            have hbad :
-                P.real (badPairEvent Hshift t αbad q m n) ≤
-                  (S.card : ℝ) *
-                    ((D.card : ℝ) * Real.exp (-(crudeLam ^ σ))) := by
-              simpa [K, Hshift, x, D, S, crudeScale, T, crudeLam] using
-                hraw hnm hqm hlam
-            have hmono :
-                P.real (highBottomPairEvent Hshift K a t αbad q m n) ≤
-                  P.real (badPairEvent Hshift t αbad q m n) :=
-              measureReal_mono (μ := P) (by
-                intro ω hω
-                exact hω.2.2)
-            have hpref : 0 ≤ pref := by
-              dsimp [pref]
-              positivity
-            exact
-              hmono.trans
-                (hbad.trans
-                  (by
-                    simpa [pref, mul_assoc] using
-                      pref_mul_exp_le_softPairTail_of_one_le_lam
-                        (pref := pref) (lam := crudeLam) (η := σ)
-                        hpref hlam))
-          · exact
-              (measureReal_le_one
-                (μ := P)
-                (s := highBottomPairEvent Hshift K a t αbad q m n)).trans
-                (one_le_softPairTail_of_not_one_le_lam
-                  (pref := pref) (lam := crudeLam) (η := σ) hlam)
-        exact
-          hsoft_raw.trans
-            (softPairTail_mono_lam
-              (pref := pref) (lam₁ := crudeA) (lam₂ := crudeLam)
-              (η := σ) hσ_pos hCrudeLam)
+        refine measureReal_le_softPairTail_of_threshold_bound
+          (F := badPairEvent Hshift t αbad q m n)
+          (lam := crudeLam) (by intro ω hω; exact hω.2.2)
+          (by dsimp [pref]; positivity) hσ_pos hCrudeLam ?_
+        intro hlam
+        have hraw :=
+          hcrudeRaw (t := t) (αbad := αbad)
+            hP hStruct hΓ hσ_eq hparams
+            (N0 := N0) (q := q) (m := m) (n := n)
+        dsimp only at hraw
+        have hbad :
+            P.real (badPairEvent Hshift t αbad q m n) ≤
+              (S.card : ℝ) *
+                ((D.card : ℝ) * Real.exp (-(crudeLam ^ σ))) := by
+          simpa [K, Hshift, x, D, S, crudeScale, T, crudeLam] using
+            hraw hnm hqm hlam
+        simpa [pref, mul_assoc] using hbad
       exact
         le_maxExponent_softPairTail_of_le_both
           (x := P.real (highBottomPairEvent Hshift K a t αbad q m n))
@@ -449,11 +413,149 @@ theorem measureReal_shiftedHighBottomPairEvent_quenchedProbeEnvelope_le_soft_max
       ((by norm_num : (0 : ℝ) ≤ 1).trans (le_max_left 1 pref))
       (Real.exp_pos _).le
 
+private theorem maximum_one_product_le_weighted_prefactor
+    {S D w : ℝ} {q r : ℕ} (hD_nonneg : 0 ≤ D) (hw : 1 ≤ w)
+    (hDcard : D ≤ w ^ q * w ^ r) :
+    max 1 (S * D) ≤ max 1 S * w ^ q * w ^ r := by
+  have hpref_le : S * D ≤ max 1 S * w ^ q * w ^ r := by
+    calc
+      S * D ≤ max 1 S * (w ^ q * w ^ r) :=
+        mul_le_mul (le_max_right 1 S) hDcard hD_nonneg
+          (zero_le_one.trans (le_max_left 1 S))
+      _ = max 1 S * w ^ q * w ^ r := by ring
+  have hone : 1 ≤ max 1 S * w ^ q * w ^ r := by
+    have hmaxS : 1 ≤ max 1 S := le_max_left 1 S
+    have hwq_one : 1 ≤ w ^ q := one_le_pow₀ hw
+    have hwr_one : 1 ≤ w ^ r := one_le_pow₀ hw
+    nlinarith [hmaxS, hwq_one, hwr_one]
+  exact max_le hone hpref_le
+
+private theorem mixedBottom_row_power_le_branch_maximum
+    {d : ℕ} [NeZero d] {σ t αbad L Dhigh Dcrude Den : ℝ} {q r m n : ℕ}
+    (hσ_pos : 0 < σ) (ht : 0 < t) (htb : t ≤ (d : ℝ) / 2) (hαt : αbad < t)
+    (hm_sub_q : m - q = r)
+    (hη_pos : 0 < finiteQuenchedTailExponent d σ t)
+    (hτ_pos : 0 < finiteQuenchedTailTau σ)
+    (hDhigh_pos : 0 < Dhigh) (hDcrude_pos : 0 < Dcrude) (hDen : 0 < Den)
+    (hDen_high : Dhigh ^ finiteQuenchedTailTau σ ≤
+      Den ^ finiteQuenchedTailExponent d σ t)
+    (hDen_crude : Dcrude ^ σ ≤ Den ^ finiteQuenchedTailExponent d σ t)
+    (hoff_nonneg : 0 ≤ finiteQuenchedTailTau σ * ((d : ℝ) / 2) * (L + 1)) :
+    let b : ℝ := (d : ℝ) / 2
+    let τ : ℝ := finiteQuenchedTailTau σ
+    let η : ℝ := finiteQuenchedTailExponent d σ t
+    let A : ℝ := (3 : ℝ) ^ ((q : ℝ) - (τ * b * (L + 1)) / η) / Den
+    let ρ : ℝ := (3 : ℝ) ^ (τ * (t - αbad) / η)
+    (A * ρ ^ r) ^ η ≤
+      max
+        ((max 1 ((3 : ℝ) ^
+          (b * (q : ℝ) - (b - t) * ((q - n : ℕ) : ℝ) +
+            (t - αbad) * ((m - q : ℕ) : ℝ) - b * (L + 1)) / Dhigh)) ^ τ)
+        ((max 1 ((3 : ℝ) ^
+          (t * ((q - n : ℕ) : ℝ) +
+            (t - αbad) * ((m - q : ℕ) : ℝ)) / Dcrude)) ^ σ) := by
+  let b : ℝ := (d : ℝ) / 2
+  let τ : ℝ := finiteQuenchedTailTau σ
+  let η : ℝ := finiteQuenchedTailExponent d σ t
+  let A : ℝ := (3 : ℝ) ^ ((q : ℝ) - (τ * b * (L + 1)) / η) / Den
+  let ρ : ℝ := (3 : ℝ) ^ (τ * (t - αbad) / η)
+  let highA : ℝ :=
+    (3 : ℝ) ^
+      (b * (q : ℝ) - (b - t) * ((q - n : ℕ) : ℝ) +
+        (t - αbad) * ((m - q : ℕ) : ℝ) - b * (L + 1)) / Dhigh
+  let crudeA : ℝ :=
+    (3 : ℝ) ^
+      (t * ((q - n : ℕ) : ℝ) +
+        (t - αbad) * ((m - q : ℕ) : ℝ)) / Dcrude
+  let row : ℝ := τ * (t - αbad)
+  let offset : ℝ := τ * b * (L + 1)
+  let X : ℝ := η * (q : ℝ) - offset + row * (r : ℝ)
+  let Xhigh : ℝ :=
+    τ *
+      (b * (q : ℝ) - (b - t) * ((q - n : ℕ) : ℝ) +
+        (t - αbad) * ((m - q : ℕ) : ℝ) - b * (L + 1))
+  let Xcrude : ℝ :=
+    σ *
+      (t * ((q - n : ℕ) : ℝ) +
+        (t - αbad) * ((m - q : ℕ) : ℝ))
+  have hcollapse_raw :
+      η * (q : ℝ) + τ * (t - αbad) * (r : ℝ) ≤
+        max
+          (τ *
+            (b * (q : ℝ) - (b - t) * ((q - n : ℕ) : ℝ) +
+              (t - αbad) * (r : ℝ)))
+          (σ * (t * ((q - n : ℕ) : ℝ) + (t - αbad) * (r : ℝ))) := by
+    have hmain :=
+      finiteQuenchedTailExponent_mul_nat_add_row_le_max_bottom
+        (d := d) (q := q) (n := n) (r := r)
+        (σ := σ) (t := t) (α := αbad) hσ_pos ht hαt
+        (by simpa [b] using htb)
+    simpa [b, τ, η] using hmain
+  have hcollapse :
+      X ≤ max Xhigh Xcrude := by
+    have hsub :=
+      sub_nonneg_le_max_sub_left_of_le_max
+        (c := offset) (by simpa [offset] using hoff_nonneg)
+        hcollapse_raw
+    have hX_eq :
+        X = η * (q : ℝ) + τ * (t - αbad) * (r : ℝ) - offset := by
+      dsimp [X, row]
+      ring
+    have hXhigh_eq :
+        Xhigh =
+          τ *
+            (b * (q : ℝ) - (b - t) * ((q - n : ℕ) : ℝ) +
+              (t - αbad) * (r : ℝ)) - offset := by
+      dsimp [Xhigh, offset]
+      rw [hm_sub_q]
+      ring
+    have hXcrude_eq :
+        Xcrude =
+          σ * (t * ((q - n : ℕ) : ℝ) + (t - αbad) * (r : ℝ)) := by
+      dsimp [Xcrude]
+      rw [hm_sub_q]
+    rw [hX_eq, hXhigh_eq, hXcrude_eq]
+    exact hsub
+  have hAρ :
+      A * ρ ^ r = (3 : ℝ) ^ (X / η) / Den := by
+    simpa [A, ρ, X, row, offset] using
+      rpow_three_row_parameter_div_eq
+        (q := q) (r := r) (offset := offset)
+        (row := row) (Den := Den) (η := η) hη_pos
+  have hhigh_exp :
+      Xhigh / τ =
+        b * (q : ℝ) - (b - t) * ((q - n : ℕ) : ℝ) +
+          (t - αbad) * ((m - q : ℕ) : ℝ) - b * (L + 1) := by
+    dsimp [Xhigh]
+    field_simp [hτ_pos.ne']
+  have hcrude_exp :
+      Xcrude / σ =
+        t * ((q - n : ℕ) : ℝ) +
+          (t - αbad) * ((m - q : ℕ) : ℝ) := by
+    dsimp [Xcrude]
+    field_simp [hσ_pos.ne']
+  have hpow :
+      (A * ρ ^ r) ^ η ≤
+        max ((max 1 highA) ^ τ) ((max 1 crudeA) ^ σ) := by
+    rw [hAρ]
+    have hgeneric :=
+      rpow_three_div_den_le_branch_max_of_exponent_le_max
+        (X := X) (Xhigh := Xhigh) (Xcrude := Xcrude)
+        (Dhigh := Dhigh) (Dcrude := Dcrude) (Den := Den)
+        (η := η) (τ := τ) (σ := σ)
+        hη_pos hτ_pos hσ_pos hDhigh_pos hDcrude_pos hDen
+        (by simpa [Dhigh, τ, η] using hDen_high)
+        (by simpa [Dcrude, η] using hDen_crude)
+        hcollapse
+    rw [hhigh_exp, hcrude_exp] at hgeneric
+    simpa [highA, crudeA] using hgeneric
+  exact hpow
+
 /-- Concrete mixed-bottom fixed-pair estimate in the weighted row shape, with
 the corrected finite bad-scale exponent.  The only remaining denominator
 conditions are explicit algebraic domination conditions for the chosen
 normalizing denominator `Den`. -/
-theorem measureReal_shiftedHighBottomPairEvent_quenchedProbeEnvelope_le_interpolated_weighted_row_of_denominator
+theorem measureReal_shiftedHighBottomPairProbability_le_interpolated_weighted_row
     {d : ℕ} [NeZero d] {σ : ℝ}
     (hσ_pos : 0 < σ)
     (params : QuantitativeCoarseGrainedEllipticityParams d) :
@@ -598,8 +700,6 @@ theorem measureReal_shiftedHighBottomPairEvent_quenchedProbeEnvelope_le_interpol
       have hn : 1 ≤ 3 ^ d :=
         Nat.succ_le_of_lt (pow_pos (by norm_num : (0 : ℕ) < 3) d)
       simpa [w] using (by exact_mod_cast hn : (1 : ℝ) ≤ ((3 ^ d : ℕ) : ℝ))
-    have hwq_one : 1 ≤ w ^ q := one_le_pow₀ hw_one
-    have hwr_one : 1 ≤ w ^ r := one_le_pow₀ hw_one
     have hDcard :
         (D.card : ℝ) ≤ w ^ q * w ^ r := by
       have hnm_le : n ≤ m := le_of_lt hnm
@@ -607,108 +707,13 @@ theorem measureReal_shiftedHighBottomPairEvent_quenchedProbeEnvelope_le_interpol
         descendantsAtScale_bottom_row_card_le_weight
           (d := d) (N := N0) (q := q) (r := r) (j := j) hnm_le
     have hpref_bound : max 1 pref ≤ max 1 (S.card : ℝ) * w ^ q * w ^ r := by
-      have hD_nonneg : 0 ≤ (D.card : ℝ) := by positivity
-      have hpref_le :
-          pref ≤ max 1 (S.card : ℝ) * w ^ q * w ^ r := by
-        calc
-          pref = (S.card : ℝ) * (D.card : ℝ) := rfl
-          _ ≤ max 1 (S.card : ℝ) * (w ^ q * w ^ r) :=
-            mul_le_mul
-              (le_max_right 1 (S.card : ℝ)) hDcard
-              hD_nonneg
-              ((by norm_num : (0 : ℝ) ≤ 1).trans
-                (le_max_left 1 (S.card : ℝ)))
-          _ = max 1 (S.card : ℝ) * w ^ q * w ^ r := by ring
-      have hone :
-          1 ≤ max 1 (S.card : ℝ) * w ^ q * w ^ r := by
-        have hmaxS : 1 ≤ max 1 (S.card : ℝ) := le_max_left 1 (S.card : ℝ)
-        nlinarith [hmaxS, hwq_one, hwr_one]
-      exact max_le hone hpref_le
-    let row : ℝ := τ * (t - αbad)
-    let offset : ℝ := τ * b * (L + 1)
-    let X : ℝ := η * (q : ℝ) - offset + row * (r : ℝ)
-    let Xhigh : ℝ :=
-      τ *
-        (b * (q : ℝ) - (b - t) * ((q - n : ℕ) : ℝ) +
-          (t - αbad) * ((m - q : ℕ) : ℝ) - b * (L + 1))
-    let Xcrude : ℝ :=
-      σ *
-        (t * ((q - n : ℕ) : ℝ) +
-          (t - αbad) * ((m - q : ℕ) : ℝ))
-    have hm_sub_q : m - q = r := by
-      dsimp [m]
-      exact Nat.add_sub_cancel_left q r
-    have hcollapse_raw :
-        η * (q : ℝ) + τ * (t - αbad) * (r : ℝ) ≤
-          max
-            (τ *
-              (b * (q : ℝ) - (b - t) * ((q - n : ℕ) : ℝ) +
-                (t - αbad) * (r : ℝ)))
-            (σ * (t * ((q - n : ℕ) : ℝ) + (t - αbad) * (r : ℝ))) := by
-      have hmain :=
-        finiteQuenchedTailExponent_mul_nat_add_row_le_max_bottom
-          (d := d) (q := q) (n := n) (r := r)
-          (σ := σ) (t := t) (α := αbad) hσ_pos ht hαt
-          (by simpa [b] using htb)
-      simpa [b, τ, η] using hmain
-    have hcollapse :
-        X ≤ max Xhigh Xcrude := by
-      have hsub :=
-        sub_nonneg_le_max_sub_left_of_le_max
-          (c := offset) (by simpa [offset] using hoff_nonneg)
-          hcollapse_raw
-      have hX_eq :
-          X = η * (q : ℝ) + τ * (t - αbad) * (r : ℝ) - offset := by
-        dsimp [X, row]
-        ring
-      have hXhigh_eq :
-          Xhigh =
-            τ *
-              (b * (q : ℝ) - (b - t) * ((q - n : ℕ) : ℝ) +
-                (t - αbad) * (r : ℝ)) - offset := by
-        dsimp [Xhigh, offset]
-        rw [hm_sub_q]
-        ring
-      have hXcrude_eq :
-          Xcrude =
-            σ * (t * ((q - n : ℕ) : ℝ) + (t - αbad) * (r : ℝ)) := by
-        dsimp [Xcrude]
-        rw [hm_sub_q]
-      rw [hX_eq, hXhigh_eq, hXcrude_eq]
-      exact hsub
-    have hAρ :
-        A * ρ ^ r = (3 : ℝ) ^ (X / η) / Den := by
-      simpa [A, ρ, X, row, offset] using
-        rpow_three_row_parameter_div_eq
-          (q := q) (r := r) (offset := offset)
-          (row := row) (Den := Den) (η := η) hη_pos
-    have hhigh_exp :
-        Xhigh / τ =
-          b * (q : ℝ) - (b - t) * ((q - n : ℕ) : ℝ) +
-            (t - αbad) * ((m - q : ℕ) : ℝ) - b * (L + 1) := by
-      dsimp [Xhigh]
-      field_simp [hτ_pos.ne']
-    have hcrude_exp :
-        Xcrude / σ =
-          t * ((q - n : ℕ) : ℝ) +
-            (t - αbad) * ((m - q : ℕ) : ℝ) := by
-      dsimp [Xcrude]
-      field_simp [hσ_pos.ne']
+      exact maximum_one_product_le_weighted_prefactor (by positivity) hw_one hDcard
     have hpow :
         (A * ρ ^ r) ^ η ≤
           max ((max 1 highA) ^ τ) ((max 1 crudeA) ^ σ) := by
-      rw [hAρ]
-      have hgeneric :=
-        rpow_three_div_den_le_branch_max_of_exponent_le_max
-          (X := X) (Xhigh := Xhigh) (Xcrude := Xcrude)
-          (Dhigh := Dhigh) (Dcrude := Dcrude) (Den := Den)
-          (η := η) (τ := τ) (σ := σ)
-          hη_pos hτ_pos hσ_pos hDhigh_pos hDcrude_pos hDen
-          (by simpa [Dhigh, τ, η] using hDen_high)
-          (by simpa [Dcrude, η] using hDen_crude)
-          hcollapse
-      rw [hhigh_exp, hcrude_exp] at hgeneric
-      simpa [highA, crudeA] using hgeneric
+      exact mixedBottom_row_power_le_branch_maximum
+        hσ_pos ht htb hαt (by dsimp [m]; omega)
+        hη_pos hτ_pos hDhigh_pos hDcrude_pos hDen hDen_high hDen_crude hoff_nonneg
     have hCpref_nonneg : 0 ≤ max 1 (S.card : ℝ) := by
       exact (by norm_num : (0 : ℝ) ≤ 1).trans (le_max_left 1 (S.card : ℝ))
     have hrow :=
@@ -741,7 +746,7 @@ theorem measureReal_shiftedHighBottomPairEvent_quenchedProbeEnvelope_le_interpol
 /-- Summed high-bottom component estimate with the corrected finite
 interpolated exponent, conditional only on the explicit denominator choice and
 the deterministic lower cutoff `1 <= A`. -/
-theorem measureReal_shiftedHighBottomBadScaleEvent_quenchedProbeEnvelope_le_interpolated_weighted_kernel_of_denominator
+theorem shiftedHighBottomBadScaleProbability_le_interpolated_weighted_kernel
     {d : ℕ} [NeZero d] {σ : ℝ}
     (hσ_pos : 0 < σ)
     (params : QuantitativeCoarseGrainedEllipticityParams d) :
@@ -786,7 +791,7 @@ theorem measureReal_shiftedHighBottomBadScaleEvent_quenchedProbeEnvelope_le_inte
               weightedGeometricExpKernelConst w (ρ ^ η)) := by
   obtain ⟨Cfluct, Ccrude, Centry, a,
       hCfluct, hCcrude, hCentry, ha, hrow⟩ :=
-    measureReal_shiftedHighBottomPairEvent_quenchedProbeEnvelope_le_interpolated_weighted_row_of_denominator
+    measureReal_shiftedHighBottomPairProbability_le_interpolated_weighted_row
       (d := d) (σ := σ) hσ_pos params
   refine ⟨Cfluct, Ccrude, Centry, a,
     hCfluct, hCcrude, hCentry, ha, ?_⟩

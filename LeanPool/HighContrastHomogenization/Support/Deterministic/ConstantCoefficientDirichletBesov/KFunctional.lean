@@ -48,7 +48,7 @@ theorem cubeVectorKFunctionalCompetitorValue_nonneg {d : ℕ}
     0 ≤ cubeVectorKFunctionalCompetitorValue Q t F G :=
   Real.sqrt_nonneg _
 
-theorem sqrt_cubeBesovOverlappingPositiveVectorDepthAverage_le_mul_cubeVectorKFunctionalCompetitorValue_of_overlapPoincare
+theorem sqrt_overlappingPositiveDepthMean_le_mul_KFunctionalCompetitorValue
     {d : ℕ} {C : ℝ}
     (hC : 0 ≤ C) (hPoincare : CubeVectorH1OverlapPoincareEstimate d C)
     (Q : TriadicCube d) (F : Vec d → Vec d) (j : ℕ)
@@ -338,7 +338,7 @@ theorem cubeKBesovVectorDepthSeminorm_nonneg {d : ℕ}
     (Real.rpow_nonneg (by norm_num : 0 ≤ (3 : ℝ)) _)
     (cubeVectorKFunctional_nonneg Q (Real.rpow (3 : ℝ) (-(j : ℝ))) F)
 
-theorem sqrt_cubeBesovOverlappingPositiveVectorDepthAverage_le_mul_cubeVectorKFunctional_of_forall_competitorValue
+theorem sqrt_cubeBesovOverlappingPositiveVectorDepthAverage_le_mul_cubeVectorKFunctional
     {d : ℕ} (Q : TriadicCube d) (C : ℝ) (F : Vec d → Vec d) (j : ℕ)
     (hC : 0 ≤ C)
     (hcomp :
@@ -366,7 +366,7 @@ theorem sqrt_cubeBesovOverlappingPositiveVectorDepthAverage_le_mul_cubeVectorKFu
       (div_le_iff₀ hC_pos).1 hdiv_le
     simpa [A, t, mul_comm] using hA_le
 
-theorem cubeBesovOverlappingPositiveVectorDepthSeminorm_le_mul_cubeKBesovVectorDepthSeminorm_of_forall_competitorValue
+theorem overlappingPositiveDepthSeminorm_le_mul_KBesovVectorDepthSeminorm
     {d : ℕ} (Q : TriadicCube d) (s C : ℝ) (F : Vec d → Vec d) (j : ℕ)
     (hC : 0 ≤ C)
     (hcomp :
@@ -382,7 +382,7 @@ theorem cubeBesovOverlappingPositiveVectorDepthSeminorm_le_mul_cubeKBesovVectorD
   have hbase :
       Real.sqrt (cubeBesovOverlappingPositiveVectorDepthAverage Q F j) ≤
         C * cubeVectorKFunctional Q (Real.rpow (3 : ℝ) (-(j : ℝ))) F :=
-    sqrt_cubeBesovOverlappingPositiveVectorDepthAverage_le_mul_cubeVectorKFunctional_of_forall_competitorValue
+    sqrt_cubeBesovOverlappingPositiveVectorDepthAverage_le_mul_cubeVectorKFunctional
       Q C F j hC hcomp
   calc
     cubeBesovOverlappingPositiveVectorDepthSeminorm Q s F j
@@ -516,7 +516,7 @@ theorem cubeKBesovVectorPartialSeminormTwo_le_of_forall_kFunctional_le
       cubeKBesovVectorDepthSeminorm_le_of_kFunctional_le
         Q s C F G j (hK j hj)
 
-theorem cubeBesovOverlappingPositiveVectorPartialSeminormTwo_le_mul_cubeKBesovVectorPartialSeminormTwo_of_forall_depthSeminorm_le
+theorem overlappingPositivePartialSeminormTwo_le_mul_KPartialSeminormTwo_of_forall
     {d : ℕ} (Q : TriadicCube d) (s C : ℝ) (N : ℕ)
     (F : Vec d → Vec d) (hC : 0 ≤ C)
     (hdepth :
@@ -582,7 +582,7 @@ theorem cubeBesovOverlappingPositiveVectorPartialSeminormTwo_le_mul_cubeKBesovVe
     _ = C * cubeKBesovVectorPartialSeminormTwo Q s N F := by
           rfl
 
-theorem cubeBesovOverlappingPositiveVectorPartialSeminormTwo_le_mul_cubeKBesovVectorPartialSeminormTwo_of_forall_competitorValue
+theorem overlappingPositivePartialSeminormTwo_le_mul_KPartialSeminormTwo
     {d : ℕ} (Q : TriadicCube d) (s C : ℝ) (N : ℕ)
     (F : Vec d → Vec d) (hC : 0 ≤ C)
     (hcomp :
@@ -594,12 +594,12 @@ theorem cubeBesovOverlappingPositiveVectorPartialSeminormTwo_le_mul_cubeKBesovVe
                 (Real.rpow (3 : ℝ) (-(j : ℝ))) F G) :
     cubeBesovOverlappingPositiveVectorPartialSeminormTwo Q s N F ≤
       C * cubeKBesovVectorPartialSeminormTwo Q s N F :=
-  cubeBesovOverlappingPositiveVectorPartialSeminormTwo_le_mul_cubeKBesovVectorPartialSeminormTwo_of_forall_depthSeminorm_le
+  overlappingPositivePartialSeminormTwo_le_mul_KPartialSeminormTwo_of_forall
     Q s C N F hC fun j hj =>
-      cubeBesovOverlappingPositiveVectorDepthSeminorm_le_mul_cubeKBesovVectorDepthSeminorm_of_forall_competitorValue
+      overlappingPositiveDepthSeminorm_le_mul_KBesovVectorDepthSeminorm
         Q s C F j hC (hcomp j hj)
 
-theorem cubeBesovOverlappingPositiveVectorPartialSeminormTwo_le_mul_cubeKBesovVectorPartialSeminormTwo_of_overlapPoincare
+theorem overlappingPositivePartialSeminormTwo_le_mul_of_overlapPoincare
     {d : ℕ} {C : ℝ}
     (hC : 0 ≤ C) (hPoincare : CubeVectorH1OverlapPoincareEstimate d C)
     (Q : TriadicCube d) (s : ℝ) (N : ℕ) (F : Vec d → Vec d)
@@ -612,10 +612,10 @@ theorem cubeBesovOverlappingPositiveVectorPartialSeminormTwo_le_mul_cubeKBesovVe
     dsimp [K]
     positivity
   exact
-    cubeBesovOverlappingPositiveVectorPartialSeminormTwo_le_mul_cubeKBesovVectorPartialSeminormTwo_of_forall_competitorValue
+    overlappingPositivePartialSeminormTwo_le_mul_KPartialSeminormTwo
       Q s K N F hK_nonneg fun j hj G => by
         simpa [K] using
-          sqrt_cubeBesovOverlappingPositiveVectorDepthAverage_le_mul_cubeVectorKFunctionalCompetitorValue_of_overlapPoincare
+          sqrt_overlappingPositiveDepthMean_le_mul_KFunctionalCompetitorValue
             hC hPoincare Q F j G hF
 
 /-- Assemble the reverse finite-level comparison from a depthwise
@@ -624,7 +624,7 @@ K-functional bound by the corrected overlapping depth seminorm.
 This is the square-sum part of the remaining interpolation proof.  The hard
 analytic construction still has to provide the depthwise estimate, but once it
 does, no additional summability argument is needed. -/
-theorem cubeKBesovVectorPartialSeminormTwo_le_mul_cubeBesovOverlappingPositiveVectorPartialSeminormTwo_of_forall_depthSeminorm_le
+theorem KPartialSeminormTwo_le_mul_overlappingPositivePartialSeminormTwo
     {d : ℕ} (Q : TriadicCube d) (s C : ℝ) (N : ℕ)
     (F : Vec d → Vec d) (hC : 0 ≤ C)
     (hdepth :

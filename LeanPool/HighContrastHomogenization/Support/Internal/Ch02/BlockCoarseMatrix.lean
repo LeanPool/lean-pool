@@ -355,7 +355,7 @@ private theorem responseJ_eq_block_quadratic_of_isEllipticFieldOn {d : ℕ}
         HCPolySupport.coarseBlockMatrix (U : Set (Vec d)) a.toCoeffField :=
     book_coarseBlockMatrix_eq_old_coarseBlockMatrix_of_data U a hA hS hK hSigma hdet
   have hOld :=
-    magic_identity_responseJ_block_quadratic_coarseBlockMatrix_of_isEllipticFieldOn_of_isOpenBoundedConvexDomain
+    magic_identity_responseJ_block_quadratic_coarseMatrix_of_of_ellipticField
       (U := (U : Set (Vec d))) (a := a.toCoeffField) R U.isDomain hEll hvol
       compat hA hS hK hSigma p q
   calc

@@ -106,7 +106,7 @@ theorem
   exact le_trans (add_le_add havgCoeff_le hbesovCoeff_le) hcentered
 
 theorem
-    coarseCaccioppoliFluxEnergyExactCenteredCoeff_le_singleCubeBoundaryCenteredCoeff_of_separated_factor_bounds
+    coarseCaccioppoliCenteredFluxEnergy_le_boundaryCenteredCoefficient
     {d : ℕ} (Q : TriadicCube d) (a : CoeffField d) (s C k h : ℝ)
     (ξ : Vec d → Vec d) (Acirc1 AcircS B : ℝ)
     {Aavg AfluxS Xi D A1 AS : ℝ}
@@ -175,12 +175,12 @@ theorem
   exact le_trans (add_le_add havgCoeff_le hbesovCoeff_le) hcentered
 
 /-- Local small-cube version of
-`coarseCaccioppoliFluxEnergyExactCenteredCoeff_le_singleCubeBoundaryCenteredCoeff_of_separated_factor_bounds`.
+`coarseCaccioppoliCenteredFluxEnergy_le_boundaryCenteredCoefficient`.
 
 The conclusion has the descendant-local scale `kR - j` and height `j`, which is
 the exact centered branch consumed by the small-cube summation layer. -/
 theorem
-    coarseCaccioppoliFluxEnergyExactCenteredCoeff_le_local_singleCubeBoundaryCenteredCoeff_of_separated_factor_bounds
+    coarseCaccioppoliCenteredFluxEnergy_le_local_of_separated_factor
     {d : ℕ} (R : TriadicCube d) (a : CoeffField d) (s Ceff kR : ℝ) (j : ℕ)
     (ξ : Vec d → Vec d) (Acirc1 AcircS B : ℝ)
     {Aavg AfluxS Xi D A1 AS : ℝ}
@@ -204,7 +204,7 @@ theorem
       coarseCaccioppoliSingleCubeBoundaryCenteredCoeff R a s Ceff
         (kR - (j : ℝ)) (j : ℝ) := by
   exact
-    coarseCaccioppoliFluxEnergyExactCenteredCoeff_le_singleCubeBoundaryCenteredCoeff_of_separated_factor_bounds
+    coarseCaccioppoliCenteredFluxEnergy_le_boundaryCenteredCoefficient
       R a s Ceff (kR - (j : ℝ)) (j : ℝ) ξ Acirc1 AcircS B
       hs0 hCeff hB_nonneg hAcirc1_nonneg hAcircS_nonneg hAavg hAfluxS
       hξ hB hAcirc1 hAcircS hcentered
@@ -214,7 +214,7 @@ theorem
 This fills the average and flux slots with `coarseCaccioppoliLambdaFactor` and
 uses the descendant cutoff-gradient bound supplied as `hξ`. -/
 theorem
-    coarseCaccioppoliFluxEnergyExactCenteredCoeff_le_local_singleCubeBoundaryCenteredCoeff_of_canonical_factor_bounds
+    coarseCaccioppoliCenteredFluxEnergy_le_local_boundaryCenteredCoefficient
     {d : ℕ} (R : TriadicCube d) (a : CoeffField d) (s Ceff kR : ℝ) (j : ℕ)
     (ξ : Vec d → Vec d) (Acirc1 AcircS B : ℝ)
     {Xi D A1 AS : ℝ}
@@ -241,7 +241,7 @@ theorem
       coarseCaccioppoliSingleCubeBoundaryCenteredCoeff R a s Ceff
         (kR - (j : ℝ)) (j : ℝ) := by
   exact
-    coarseCaccioppoliFluxEnergyExactCenteredCoeff_le_local_singleCubeBoundaryCenteredCoeff_of_separated_factor_bounds
+    coarseCaccioppoliCenteredFluxEnergy_le_local_of_separated_factor
       R a s Ceff kR j ξ Acirc1 AcircS B hs0 hCeff
       hB_nonneg hAcirc1_nonneg hAcircS_nonneg
       (sqrt_coarseBBlockNorm_le_coarseCaccioppoliLambdaFactor R a hs0 hsumS)
@@ -254,7 +254,7 @@ The `L^\infty` bound for the gradient field is supplied by
 `quantitativeCubeCutoff_cubeLpNorm_infty_gradientField_le_on_descendant`; the
 only remaining cutoff-size comparison is the scalar Hessian bound `hB`. -/
 theorem
-    coarseCaccioppoliFluxEnergyExactCenteredCoeff_le_local_singleCubeBoundaryCenteredCoeff_of_quantitativeCutoff_descendant
+    coarseCaccioppoliCenteredFluxEnergy_le_local_of_quantitativeCutoff_descendant
     {d : ℕ} {Q R : TriadicCube d} {j : ℕ}
     (hR : R ∈ descendantsAtDepth Q j) (a : CoeffField d)
     (s Ceff kR : ℝ) {ρ₁ ρ₂ : ℝ} (η : QuantitativeCubeCutoff Q ρ₁ ρ₂)
@@ -286,7 +286,7 @@ theorem
       coarseCaccioppoliSingleCubeBoundaryCenteredCoeff R a s Ceff
         (kR - (j : ℝ)) (j : ℝ) := by
   exact
-    coarseCaccioppoliFluxEnergyExactCenteredCoeff_le_local_singleCubeBoundaryCenteredCoeff_of_canonical_factor_bounds
+    coarseCaccioppoliCenteredFluxEnergy_le_local_boundaryCenteredCoefficient
       R a s Ceff kR j (scalarCutoffGradientField η) Acirc1 AcircS B
       hs0 hCeff hsumS hB_nonneg hAcirc1_nonneg hAcircS_nonneg
       (quantitativeCubeCutoff_cubeLpNorm_infty_gradientField_le_on_descendant hR η)

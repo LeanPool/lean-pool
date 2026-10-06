@@ -37,6 +37,8 @@ This file collects the shared helper lemmas and the first structural wrappers
 used by the later `MultiscaleQuantitiesBasic` submodules.
 -/
 
+/-- Existence of deterministic coarse response matrices on the open cube, with the canonical block
+matrix representation and invertible `σ*`. -/
 @[expose]
 def OpenCubeDeterministicCoarseData {d : ℕ} (Q : TriadicCube d)
     (a : CoeffField d) : Prop :=
@@ -48,6 +50,8 @@ def OpenCubeDeterministicCoarseData {d : ℕ} (Q : TriadicCube d)
     IsSigmaCoarse (openCubeSet Q) a sigma sigmaStar kappa ∧
     IsUnit sigmaStar.det
 
+/-- Deterministic coarse response data on every descendant open cube at scales no greater than
+`Q.scale`. -/
 @[expose]
 def OpenCubeDescendantDeterministicCoarseData {d : ℕ} (Q : TriadicCube d)
     (a : CoeffField d) : Prop :=
@@ -500,7 +504,8 @@ theorem matNormSq_le_of_matLoewnerLE_of_posSemidef {d : ℕ}
     ring
   have htrace_expand :
       Matrix.trace (B ^ 2) =
-        Matrix.trace (A ^ 2) + Matrix.trace (A * D) + Matrix.trace (D * A) + Matrix.trace (D ^ 2) := by
+        Matrix.trace (A ^ 2) + Matrix.trace (A * D) + Matrix.trace (D * A) + Matrix.trace (D ^
+          2) := by
     calc
       Matrix.trace (B ^ 2) = Matrix.trace ((A + D) ^ 2) := by rw [← hB_eq]
       _ = Matrix.trace (A ^ 2 + A * D + (D * A + D ^ 2)) := by
@@ -512,7 +517,8 @@ theorem matNormSq_le_of_matLoewnerLE_of_posSemidef {d : ℕ}
       _ = (Matrix.trace (A ^ 2) + Matrix.trace (A * D)) +
             (Matrix.trace (D * A) + Matrix.trace (D ^ 2)) := by
         rw [Matrix.trace_add, Matrix.trace_add]
-      _ = Matrix.trace (A ^ 2) + Matrix.trace (A * D) + Matrix.trace (D * A) + Matrix.trace (D ^ 2) := by
+      _ = Matrix.trace (A ^ 2) + Matrix.trace (A * D) + Matrix.trace (D * A) + Matrix.trace (D ^
+        2) := by
         ac_rfl
   have hextra_nonneg :
       0 ≤ Matrix.trace (A * D) + Matrix.trace (D * A) + Matrix.trace (D ^ 2) := by

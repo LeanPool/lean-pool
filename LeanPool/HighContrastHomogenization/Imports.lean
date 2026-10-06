@@ -369,6 +369,7 @@ public import LeanPool.HighContrastHomogenization.Geometry.SchurData
 public import LeanPool.HighContrastHomogenization.Geometry.Sharp
 public import LeanPool.HighContrastHomogenization.Geometry.SizeAlignment
 public import LeanPool.HighContrastHomogenization.Geometry.SqrtOrder
+public import LeanPool.HighContrastHomogenization.IdentifierMap
 public import LeanPool.HighContrastHomogenization.MainResults
 public import LeanPool.HighContrastHomogenization.Meta.AxiomsAudit
 public import LeanPool.HighContrastHomogenization.Provider.Bridge.ComparisonMatrixRows

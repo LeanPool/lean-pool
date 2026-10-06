@@ -26,16 +26,19 @@ noncomputable section
 open MeasureTheory.Measure
 open scoped BigOperators ENNReal
 
+/-- The uniform average of squared cube L² norms of `v` over descendants at depth `j`. -/
 @[expose]
 noncomputable def cubeL2ScalarDepthAverage {d : ℕ}
     (Q : TriadicCube d) (v : Vec d → ℝ) (j : ℕ) : ℝ :=
   descendantsAverage Q j fun R => (cubeLpNorm R (2 : ℝ≥0∞) v) ^ 2
 
+/-- The square root of the depth-`j` average of squared L² norms, weighted by `3^(s j)`. -/
 @[expose]
 noncomputable def cubeL2ScalarDepthSeminorm {d : ℕ}
     (Q : TriadicCube d) (s : ℝ) (v : Vec d → ℝ) (j : ℕ) : ℝ :=
   Real.rpow (3 : ℝ) (s * (j : ℝ)) * Real.sqrt (cubeL2ScalarDepthAverage Q v j)
 
+/-- The ℓ² aggregation of the weighted L² depth quantities from depth zero through `N`. -/
 @[expose]
 noncomputable def cubeL2ScalarPartialSeminormTwo {d : ℕ}
     (Q : TriadicCube d) (s : ℝ) (N : ℕ) (v : Vec d → ℝ) : ℝ :=
@@ -43,22 +46,29 @@ noncomputable def cubeL2ScalarPartialSeminormTwo {d : ℕ}
     Finset.sum (Finset.range (N + 1)) fun j =>
       (cubeL2ScalarDepthSeminorm Q s v j) ^ 2
 
+/-- The uniform average of squared L² oscillations of `v` over descendants at depth `j`. -/
 @[expose]
 noncomputable def cubeBesovPositiveScalarDepthAverage {d : ℕ}
     (Q : TriadicCube d) (v : Vec d → ℝ) (j : ℕ) : ℝ :=
   descendantsAverage Q j fun R => (cubeBesovOscillation R (2 : ℝ≥0∞) v) ^ 2
 
+/-- The square root of the depth-`j` average of squared oscillations, weighted by `3^(s j)`. -/
 @[expose]
 noncomputable def cubeBesovPositiveScalarDepthSeminorm {d : ℕ}
     (Q : TriadicCube d) (s : ℝ) (v : Vec d → ℝ) (j : ℕ) : ℝ :=
   Real.rpow (3 : ℝ) (s * (j : ℝ)) * Real.sqrt (cubeBesovPositiveScalarDepthAverage Q v j)
 
+
+
+/-- The ℓ² aggregation of the weighted positive Besov depth quantities from depth zero through
+`N`. -/
 @[expose]
 noncomputable def cubeBesovPositiveScalarPartialSeminormTwo {d : ℕ}
     (Q : TriadicCube d) (s : ℝ) (N : ℕ) (v : Vec d → ℝ) : ℝ :=
   Real.sqrt <|
     Finset.sum (Finset.range (N + 1)) fun j =>
       (cubeBesovPositiveScalarDepthSeminorm Q s v j) ^ 2
+
 
 theorem cubeL2ScalarDepthAverage_nonneg {d : ℕ}
     (Q : TriadicCube d) (v : Vec d → ℝ) (j : ℕ) :

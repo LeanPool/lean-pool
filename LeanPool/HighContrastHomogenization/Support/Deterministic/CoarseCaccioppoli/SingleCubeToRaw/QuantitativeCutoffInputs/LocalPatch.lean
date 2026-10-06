@@ -131,7 +131,7 @@ theorem cubeBesovScaleWeight_neg_one_mul_localPatch_buffered_cutoffGradient_le_r
 /-- Algebraic normal form for the local-patch Hessian contribution in the
 centered coefficient.  The local scale `cubeRadius Q / 3` is exactly offset by
 the extra descendant generation. -/
-theorem cubeBesovScaleWeight_neg_one_mul_localPatchDescendantBufferedCutoffHessianScaleBound_eq_depthGap
+theorem cubeBesovScaleWeight_hessianScaleBound_eq_depthGap
     {d : ℕ} {Q R : TriadicCube d} {j : ℕ} {ρ₁ ρ₂ : ℝ}
     (hR : R ∈ descendantsAtDepth Q (j + 1)) (hlt : ρ₁ < ρ₂) :
     cubeBesovScaleWeight (-1) R *
@@ -157,7 +157,7 @@ theorem cubeBesovScaleWeight_neg_one_mul_localPatchDescendantBufferedCutoffHessi
   ring
 
 /-- LaTeX-shaped normalized Hessian bound for the local-patch midpoint cutoff. -/
-theorem cubeBesovScaleWeight_neg_one_mul_localPatchDescendantBufferedCutoffHessianScaleBound_le_rpow_sub
+theorem cubeBesovScaleWeight_hessianScaleBound_le_geometricGap
     {d : ℕ} {Q R : TriadicCube d} {k j : ℕ} {ρ₁ ρ₂ : ℝ}
     (hR : R ∈ descendantsAtDepth Q (j + 1))
     (hchoice : CoarseCaccioppoliTriadicGapScaleChoice k ρ₁ ρ₂)
@@ -188,7 +188,7 @@ theorem cubeBesovScaleWeight_neg_one_mul_localPatchDescendantBufferedCutoffHessi
       (16 * quantitativeCubeCutoffHessianConst d) *
         (((3 : ℝ) ^ j)⁻¹ *
           (((3 : ℝ) ^ j)⁻¹ * (coarseCaccioppoliGapInv ρ₁ ρ₂) ^ (2 : ℕ))) :=
-          cubeBesovScaleWeight_neg_one_mul_localPatchDescendantBufferedCutoffHessianScaleBound_eq_depthGap
+          cubeBesovScaleWeight_hessianScaleBound_eq_depthGap
             hR hlt
     _ ≤
       (16 * quantitativeCubeCutoffHessianConst d) *
@@ -365,7 +365,7 @@ theorem cubeBesovScaleWeight_neg_one_mul_localPatch_buffered_cutoff_terms_le_rad
 local-patch midpoint cutoff.  The cutoff is supported on the `m-1` patch, so
 descendants are taken one generation deeper than the height depth. -/
 theorem
-    coarseCaccioppoliFluxEnergyExactConstantCoeffFactorBound_mul_localPatch_buffered_cutoff_terms_le_singleCubeBoundaryConstantBaseCoeff_of_descendant_succ
+    coarseCaccioppoliFactorBound_mul_bufferedTerms_le_boundaryCoefficient_of_child
     {d : ℕ} {Q R : TriadicCube d} (a : CoeffField d)
     {Ceff : ℝ} {k j : ℕ} {ρ₁ ρ₂ : ℝ}
     (hR : R ∈ descendantsAtDepth Q (j + 1))

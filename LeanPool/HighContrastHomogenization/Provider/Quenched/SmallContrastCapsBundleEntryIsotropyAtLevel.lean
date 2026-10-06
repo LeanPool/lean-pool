@@ -144,7 +144,8 @@ theorem profile_caps_bundle_entry_of_block_at_level [NeZero d]
           (Response.centeredResponseLoadQ S0 SStar0 K0 e) ≤
         ENNReal.ofReal
           (weakValueBoundSharpIsotropyAt (Response.recentConstantAtLevel lev)
-            (Response.maxGroupConstantAtLevel lev) (Response.energyGoodConstantAtLevel lev) P mAl (Response.responseSkew K0) F
+            (Response.maxGroupConstantAtLevel lev) (Response.energyGoodConstantAtLevel lev) P
+              mAl (Response.responseSkew K0) F
             (loadScaleOfScalar cF kap) mAl rho Hw
             (R ^ 4 * badMomentMajorant K (t + (G : ℤ) - 1 - sK)) (R / 2) lev t lAl
             V V0 Dr Vmean) ∧
@@ -156,7 +157,8 @@ theorem profile_caps_bundle_entry_of_block_at_level [NeZero d]
           (Response.centeredResponseLoadQ S0 SStar0 K0 e) ≤
         ENNReal.ofReal
           (weakValueBoundSharpIsotropyAt (Response.recentConstantAtLevel lev)
-            (Response.maxGroupConstantAtLevel lev) (Response.energyGoodConstantAtLevel lev) P mAl (Response.responseSkew K0) F
+            (Response.maxGroupConstantAtLevel lev) (Response.energyGoodConstantAtLevel lev) P
+              mAl (Response.responseSkew K0) F
             (loadScaleOfScalar cF kap) mAl rho Hw
             (R ^ 4 * badMomentMajorant K (t + (G : ℤ) - 1 - sK)) (R / 2) lev t lAl
             V V0 Dr Vmean) ∧

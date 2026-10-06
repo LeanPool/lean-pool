@@ -13,7 +13,8 @@ public import LeanPool.HighContrastHomogenization.Provider.Regularity.CubeVolume
 
 /-!
 # High-contrast homogenization:
-Provider.PolynomialHomogenization.Root.Corrector.SelectedGenerationRoundedEllipsoidWeightedNormBridge
+Provider.PolynomialHomogenization.Root.Corrector
+.SelectedGenerationRoundedEllipsoidWeightedNormBridge
 
 Imported from the Apache-2.0 HighContrastHomogenization development at commit
 `7a13dbcd8d6609264a713373f5c69ceeac870472`.

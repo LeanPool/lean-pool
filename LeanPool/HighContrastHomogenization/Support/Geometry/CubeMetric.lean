@@ -24,10 +24,12 @@ namespace HCPolySupport
 
 open scoped Topology
 
+/-- The cube center with coordinates `Q.index i` times the cube scale factor. -/
 @[expose]
 noncomputable def cubeCenter {d : ℕ} (Q : TriadicCube d) : Vec d :=
   fun i => (Q.index i : ℝ) * cubeScaleFactor Q
 
+/-- Half the cube scale factor, the radius of the cube in the coordinate supremum norm. -/
 @[expose]
 noncomputable def cubeRadius {d : ℕ} (Q : TriadicCube d) : ℝ :=
   (1 / 2 : ℝ) * cubeScaleFactor Q

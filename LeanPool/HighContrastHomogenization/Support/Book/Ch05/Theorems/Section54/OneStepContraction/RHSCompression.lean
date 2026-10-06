@@ -166,7 +166,7 @@ private theorem inv_sigmaHatAtScale_le_lambdaInvMomentAtScale_zero_of_P4
         0
   exact hσ_inv_le_cm_inv.trans (hcm_inv_le_c0_inv.trans hc0_inv_le_l0)
 
-theorem coarseFluctuationUnitMomentWeightAtScale_le_two_widetildeTheta_zero
+theorem coarseFluctuationMomentWeight_le_twoThetaZero
     {d : ℕ} [NeZero d] {P : Ch04.RestrictionCoeffLaw d}
     (hP : Ch04.RestrictionLawCarrier P) (hStruct : Ch04.RestrictionStructuralLaw P)
     (hP4 : QuantitativeCoarseGrainedEllipticity P) (m : ℕ) :
@@ -456,7 +456,7 @@ private theorem responseMomentTail_le_four_sqrt_delta
       coarseFluctuationUnitMomentWeightAtScale_nonneg hP hStruct hP4 m
   have hU_le : U ≤ 2 * T := by
     simpa [U, T] using
-      coarseFluctuationUnitMomentWeightAtScale_le_two_widetildeTheta_zero
+      coarseFluctuationMomentWeight_le_twoThetaZero
         hP hStruct hP4 m
   have hUR_le_sq : U * R ≤ U ^ (2 : ℕ) := by
     simpa [U, R] using
@@ -671,19 +671,18 @@ private theorem coarseFluctuationManuscriptRHSAtScale_zero_eq_decomp
   dsimp only
   ring_nf
 
-theorem coarseFluctuationManuscriptRHSAtScale_zero_le_compressed
+private theorem coarseFullBlockAndTauCompressionBounds
     {d : ℕ} [NeZero d] {P : Ch04.RestrictionCoeffLaw d}
     (hP : Ch04.RestrictionLawCarrier P) (hStruct : Ch04.RestrictionStructuralLaw P)
     (hP4 : QuantitativeCoarseGrainedEllipticity P)
-    {C0 Csep delta epsilon : ℝ} {m : ℕ}
-    (hC0_nonneg : 0 ≤ C0)
+    {Csep delta epsilon : ℝ} {m : ℕ}
     (hCsep : oneStepScaleSeparationConst hP4 ≤ Csep)
     (hdelta_pos : 0 < delta) (hdelta_le : delta ≤ 1 / 2)
     (hsep :
       Csep * (hP4.xi : ℝ) *
         Real.log (2 + delta⁻¹ * (hP4.xi : ℝ) *
           widetildeThetaAtScale P (0 : ℤ) hP4) ≤ (m : ℝ))
-    (hepsilon_pos : 0 < epsilon) (hepsilon_le : epsilon ≤ 1)
+    (hepsilon_pos : 0 < epsilon)
     (hgood_upper :
       hP.barSigmaAtScale hStruct 0 ≤
         (1 + delta) * hP.barSigmaAtScale hStruct (m : ℤ))
@@ -692,112 +691,42 @@ theorem coarseFluctuationManuscriptRHSAtScale_zero_le_compressed
         (1 + delta) * (hP.barSigmaStarAtScale hStruct (m : ℤ))⁻¹)
     (e : Vec d) (he : Ch02.vecNorm e = 1) :
     let β := section53CoarseFluctuationBeta hP4
-    let M :=
-      3 +
-        β⁻¹ * oneStepCoarseFullBlockConst hP4 +
-          (β ^ 2)⁻¹ * oneStepCoarseTauSumConst hP4 +
-            (hP4.xi : ℝ) * (β ^ 3)⁻¹ * 4 +
-              (β ^ 2)⁻¹ * 3
-    coarseFluctuationManuscriptRHSAtScale hP hStruct hP4 C0 epsilon 0 m e ≤
-      C0 * M *
-        ((epsilon + epsilon⁻¹ * Real.sqrt delta) *
-          thetaAtScale hP hStruct (0 : ℤ)) := by
-  dsimp only
+    let θ0 := thetaAtScale hP hStruct (0 : ℤ)
+    let θ := thetaAtScale hP hStruct (m : ℤ)
+    let target := (epsilon + epsilon⁻¹ * Real.sqrt delta) * θ0
+    let A := β⁻¹ * θ * coarseFluctuationFullBlockSumAtScale hP hStruct hP4 0 m
+    let B :=
+      (β ^ 2)⁻¹ * coarseFluctuationScalarWeightAtScale hP hStruct m *
+        coarseFluctuationTauSumAtScale hP hStruct hP4 0 m e
+    let coefA := β⁻¹ * oneStepCoarseFullBlockConst hP4
+    let coefB := (β ^ 2)⁻¹ * oneStepCoarseTauSumConst hP4
+    (epsilon⁻¹ * A ≤ coefA * target) ∧ (epsilon⁻¹ * B ≤ coefB * target) := by
   let β := section53CoarseFluctuationBeta hP4
   let θ0 := thetaAtScale hP hStruct (0 : ℤ)
   let θ := thetaAtScale hP hStruct (m : ℤ)
   let target := (epsilon + epsilon⁻¹ * Real.sqrt delta) * θ0
-  let p_e := specialPAtScale hP hStruct (m : ℤ) e
-  let q_e := specialQAtScale hP hStruct (m : ℤ) e
-  let Tfirst :=
-    Real.sqrt (tauAtScale P (m : ℤ) (0 : ℤ) p_e q_e) *
-      Real.sqrt (Ch04.expectedResponseJCubeSet P (originCube d (0 : ℤ)) p_e q_e)
-  let Center := (Real.sqrt θ - 1) ^ (2 : ℕ)
   let A := β⁻¹ * θ * coarseFluctuationFullBlockSumAtScale hP hStruct hP4 0 m
   let B :=
     (β ^ 2)⁻¹ * coarseFluctuationScalarWeightAtScale hP hStruct m *
       coarseFluctuationTauSumAtScale hP hStruct hP4 0 m e
-  let R :=
-    (hP4.xi : ℝ) * (β ^ 3)⁻¹ * Real.rpow (3 : ℝ) (-β * (m : ℝ)) *
-      coarseFluctuationUnitMomentWeightAtScale hP hStruct hP4 m *
-        coarseFluctuationResponseMomentAtScale hP hStruct hP4 0 m e
-  let D :=
-    (β ^ 2)⁻¹ *
-      Real.rpow (3 : ℝ) (-2 * β * (((m - 0 : ℕ) : ℝ))) *
-        coarseFluctuationScalarWeightAtScale hP hStruct m * (θ - 1)
-  let Ssum := A + B + R + D
   let coefA := β⁻¹ * oneStepCoarseFullBlockConst hP4
   let coefB := (β ^ 2)⁻¹ * oneStepCoarseTauSumConst hP4
-  let coefR := (hP4.xi : ℝ) * (β ^ 3)⁻¹ * 4
-  let coefD := (β ^ 2)⁻¹ * 3
-  let M := 3 + coefA + coefB + coefR + coefD
   have hβ_pos : 0 < β := by
     simpa [β] using section53CoarseFluctuationBeta_pos hP4
   have hβinv_nonneg : 0 ≤ β⁻¹ := inv_nonneg.mpr hβ_pos.le
   have hβ2inv_nonneg : 0 ≤ (β ^ 2)⁻¹ :=
     inv_nonneg.mpr (sq_nonneg β)
-  have hβ3inv_nonneg : 0 ≤ (β ^ 3)⁻¹ :=
-    inv_nonneg.mpr (pow_nonneg hβ_pos.le 3)
-  have hxi_nonneg : 0 ≤ (hP4.xi : ℝ) := by exact_mod_cast Nat.zero_le hP4.xi
   have hθ0_one : 1 ≤ θ0 := by
     simpa [θ0] using one_le_thetaAtScale_zero_of_P4 hP hStruct hP4
   have hθ0_nonneg : 0 ≤ θ0 := le_trans zero_le_one hθ0_one
-  have hsqrtdelta_nonneg : 0 ≤ Real.sqrt delta := Real.sqrt_nonneg delta
-  have htarget_nonneg : 0 ≤ target := by
-    dsimp [target]
-    exact mul_nonneg
-      (add_nonneg hepsilon_pos.le
-        (mul_nonneg (inv_nonneg.mpr hepsilon_pos.le) hsqrtdelta_nonneg))
-      hθ0_nonneg
-  have hsqrt_delta_theta_le :
-      Real.sqrt delta * θ0 ≤ target := by
-    simpa [target, θ0] using
-      sqrt_delta_mul_theta_le_compressionTarget hdelta_pos.le
-        hepsilon_pos hepsilon_le hθ0_nonneg
-  have hepsilon_theta_le :
-      epsilon * θ0 ≤ target := by
-    simpa [target, θ0] using
-      epsilon_mul_theta_le_compressionTarget hdelta_pos.le
-        hepsilon_pos hθ0_nonneg
   have hepsilon_inv_sqrt_theta_le :
       epsilon⁻¹ * Real.sqrt delta * θ0 ≤ target := by
     simpa [target, θ0] using
       epsilon_inv_mul_sqrt_delta_mul_theta_le_compressionTarget
         hdelta_pos.le hepsilon_pos hθ0_nonneg
-  have hepsilon_inv_sqrt_le :
-      epsilon⁻¹ * Real.sqrt delta ≤ target := by
-    simpa [target, θ0] using
-      epsilon_inv_mul_sqrt_delta_le_compressionTarget_of_one_le_theta
-        hdelta_pos.le hepsilon_pos hθ0_one
-  have hTfirst_le :
-      Tfirst ≤ 2 * target := by
-    have h :=
-      firstCoarseRhsTerm_le_two_sqrt_delta_theta
-        hP hStruct hP4 hdelta_pos hdelta_le
-        hgood_upper hgood_lower e he
-    calc
-      Tfirst ≤ 2 * Real.sqrt delta * θ0 := by
-        simpa [Tfirst, p_e, q_e, θ0] using h
-      _ = 2 * (Real.sqrt delta * θ0) := by ring
-      _ ≤ 2 * target :=
-        mul_le_mul_of_nonneg_left hsqrt_delta_theta_le (by norm_num)
-  have hCenter_le :
-      Center ≤ θ0 := by
-    simpa [Center, θ, θ0] using
-      centerTerm_le_theta_zero hP hStruct hP4 m
-  have hCenterTerm_le :
-      epsilon * Center ≤ target := by
-    calc
-      epsilon * Center ≤ epsilon * θ0 :=
-        mul_le_mul_of_nonneg_left hCenter_le hepsilon_pos.le
-      _ ≤ target := hepsilon_theta_le
   have hθ_le : θ ≤ θ0 := by
     simpa [θ, θ0] using
       thetaAtScale_m_le_thetaAtScale_zero_of_P4 hP hStruct hP4 m
-  have hθ_nonneg : 0 ≤ θ := by
-    have hθ_one : 1 ≤ θ := by
-      simpa [θ] using GoodScale.one_le_thetaAtScale_of_P4 hP hStruct hP4 m
-    exact le_trans zero_le_one hθ_one
   have hfull_nonneg :
       0 ≤ coarseFluctuationFullBlockSumAtScale hP hStruct hP4 0 m :=
     coarseFluctuationFullBlockSumAtScale_nonneg hP hStruct hP4 0 m
@@ -876,6 +805,144 @@ theorem coarseFluctuationManuscriptRHSAtScale_zero_le_compressed
       _ = coefB * (epsilon⁻¹ * Real.sqrt delta * θ0) := by ring
       _ ≤ coefB * target :=
           mul_le_mul_of_nonneg_left hepsilon_inv_sqrt_theta_le hcoef_nonneg
+  exact ⟨hAterm_le, hBterm_le⟩
+
+private theorem weightedResponseTailCompressionBound
+    {beta delta epsilon theta xi tail : ℝ}
+    (hbeta : 0 < beta) (hxi : 0 ≤ xi) (hepsilon : 0 < epsilon)
+    (htheta : 1 ≤ theta) (hdelta : 0 ≤ delta)
+    (htail : tail ≤ 4 * Real.sqrt delta) :
+    epsilon⁻¹ * (xi * (beta ^ 3)⁻¹ * tail) ≤
+      (xi * (beta ^ 3)⁻¹ * 4) *
+        ((epsilon + epsilon⁻¹ * Real.sqrt delta) * theta) := by
+  have hcoefficient : 0 ≤ xi * (beta ^ 3)⁻¹ := by positivity
+  have htarget := epsilon_inv_mul_sqrt_delta_le_compressionTarget_of_one_le_theta
+    hdelta hepsilon htheta
+  calc
+    epsilon⁻¹ * (xi * (beta ^ 3)⁻¹ * tail) ≤
+        epsilon⁻¹ * (xi * (beta ^ 3)⁻¹ * (4 * Real.sqrt delta)) :=
+      mul_le_mul_of_nonneg_left
+        (mul_le_mul_of_nonneg_left htail hcoefficient) (by positivity)
+    _ = (xi * (beta ^ 3)⁻¹ * 4) * (epsilon⁻¹ * Real.sqrt delta) := by ring
+    _ ≤ (xi * (beta ^ 3)⁻¹ * 4) *
+        ((epsilon + epsilon⁻¹ * Real.sqrt delta) * theta) :=
+      mul_le_mul_of_nonneg_left htarget (by positivity)
+
+theorem coarseFluctuationManuscriptRHSAtScale_zero_le_compressed
+    {d : ℕ} [NeZero d] {P : Ch04.RestrictionCoeffLaw d}
+    (hP : Ch04.RestrictionLawCarrier P) (hStruct : Ch04.RestrictionStructuralLaw P)
+    (hP4 : QuantitativeCoarseGrainedEllipticity P)
+    {C0 Csep delta epsilon : ℝ} {m : ℕ}
+    (hC0_nonneg : 0 ≤ C0)
+    (hCsep : oneStepScaleSeparationConst hP4 ≤ Csep)
+    (hdelta_pos : 0 < delta) (hdelta_le : delta ≤ 1 / 2)
+    (hsep :
+      Csep * (hP4.xi : ℝ) *
+        Real.log (2 + delta⁻¹ * (hP4.xi : ℝ) *
+          widetildeThetaAtScale P (0 : ℤ) hP4) ≤ (m : ℝ))
+    (hepsilon_pos : 0 < epsilon) (hepsilon_le : epsilon ≤ 1)
+    (hgood_upper :
+      hP.barSigmaAtScale hStruct 0 ≤
+        (1 + delta) * hP.barSigmaAtScale hStruct (m : ℤ))
+    (hgood_lower :
+      (hP.barSigmaStarAtScale hStruct 0)⁻¹ ≤
+        (1 + delta) * (hP.barSigmaStarAtScale hStruct (m : ℤ))⁻¹)
+    (e : Vec d) (he : Ch02.vecNorm e = 1) :
+    let β := section53CoarseFluctuationBeta hP4
+    let M :=
+      3 +
+        β⁻¹ * oneStepCoarseFullBlockConst hP4 +
+          (β ^ 2)⁻¹ * oneStepCoarseTauSumConst hP4 +
+            (hP4.xi : ℝ) * (β ^ 3)⁻¹ * 4 +
+              (β ^ 2)⁻¹ * 3
+    coarseFluctuationManuscriptRHSAtScale hP hStruct hP4 C0 epsilon 0 m e ≤
+      C0 * M *
+        ((epsilon + epsilon⁻¹ * Real.sqrt delta) *
+          thetaAtScale hP hStruct (0 : ℤ)) := by
+  dsimp only
+  let β := section53CoarseFluctuationBeta hP4
+  let θ0 := thetaAtScale hP hStruct (0 : ℤ)
+  let θ := thetaAtScale hP hStruct (m : ℤ)
+  let target := (epsilon + epsilon⁻¹ * Real.sqrt delta) * θ0
+  let p_e := specialPAtScale hP hStruct (m : ℤ) e
+  let q_e := specialQAtScale hP hStruct (m : ℤ) e
+  let Tfirst :=
+    Real.sqrt (tauAtScale P (m : ℤ) (0 : ℤ) p_e q_e) *
+      Real.sqrt (Ch04.expectedResponseJCubeSet P (originCube d (0 : ℤ)) p_e q_e)
+  let Center := (Real.sqrt θ - 1) ^ (2 : ℕ)
+  let A := β⁻¹ * θ * coarseFluctuationFullBlockSumAtScale hP hStruct hP4 0 m
+  let B :=
+    (β ^ 2)⁻¹ * coarseFluctuationScalarWeightAtScale hP hStruct m *
+      coarseFluctuationTauSumAtScale hP hStruct hP4 0 m e
+  let R :=
+    (hP4.xi : ℝ) * (β ^ 3)⁻¹ * Real.rpow (3 : ℝ) (-β * (m : ℝ)) *
+      coarseFluctuationUnitMomentWeightAtScale hP hStruct hP4 m *
+        coarseFluctuationResponseMomentAtScale hP hStruct hP4 0 m e
+  let D :=
+    (β ^ 2)⁻¹ *
+      Real.rpow (3 : ℝ) (-2 * β * (((m - 0 : ℕ) : ℝ))) *
+        coarseFluctuationScalarWeightAtScale hP hStruct m * (θ - 1)
+  let Ssum := A + B + R + D
+  let coefA := β⁻¹ * oneStepCoarseFullBlockConst hP4
+  let coefB := (β ^ 2)⁻¹ * oneStepCoarseTauSumConst hP4
+  let coefR := (hP4.xi : ℝ) * (β ^ 3)⁻¹ * 4
+  let coefD := (β ^ 2)⁻¹ * 3
+  let M := 3 + coefA + coefB + coefR + coefD
+  have hβ_pos : 0 < β := by
+    simpa [β] using section53CoarseFluctuationBeta_pos hP4
+  have hβ2inv_nonneg : 0 ≤ (β ^ 2)⁻¹ :=
+    inv_nonneg.mpr (sq_nonneg β)
+  have hxi_nonneg : 0 ≤ (hP4.xi : ℝ) := by exact_mod_cast Nat.zero_le hP4.xi
+  have hθ0_one : 1 ≤ θ0 := by
+    simpa [θ0] using one_le_thetaAtScale_zero_of_P4 hP hStruct hP4
+  have hθ0_nonneg : 0 ≤ θ0 := le_trans zero_le_one hθ0_one
+  have hsqrtdelta_nonneg : 0 ≤ Real.sqrt delta := Real.sqrt_nonneg delta
+  have htarget_nonneg : 0 ≤ target := by
+    dsimp [target]
+    exact mul_nonneg
+      (add_nonneg hepsilon_pos.le
+        (mul_nonneg (inv_nonneg.mpr hepsilon_pos.le) hsqrtdelta_nonneg))
+      hθ0_nonneg
+  have hsqrt_delta_theta_le :
+      Real.sqrt delta * θ0 ≤ target := by
+    simpa [target, θ0] using
+      sqrt_delta_mul_theta_le_compressionTarget hdelta_pos.le
+        hepsilon_pos hepsilon_le hθ0_nonneg
+  have hepsilon_theta_le :
+      epsilon * θ0 ≤ target := by
+    simpa [target, θ0] using
+      epsilon_mul_theta_le_compressionTarget hdelta_pos.le
+        hepsilon_pos hθ0_nonneg
+  have hepsilon_inv_sqrt_le :
+      epsilon⁻¹ * Real.sqrt delta ≤ target := by
+    simpa [target, θ0] using
+      epsilon_inv_mul_sqrt_delta_le_compressionTarget_of_one_le_theta
+        hdelta_pos.le hepsilon_pos hθ0_one
+  have hTfirst_le :
+      Tfirst ≤ 2 * target := by
+    have h :=
+      firstCoarseRhsTerm_le_two_sqrt_delta_theta
+        hP hStruct hP4 hdelta_pos hdelta_le
+        hgood_upper hgood_lower e he
+    calc
+      Tfirst ≤ 2 * Real.sqrt delta * θ0 := by
+        simpa [Tfirst, p_e, q_e, θ0] using h
+      _ = 2 * (Real.sqrt delta * θ0) := by ring
+      _ ≤ 2 * target :=
+        mul_le_mul_of_nonneg_left hsqrt_delta_theta_le (by norm_num)
+  have hCenter_le :
+      Center ≤ θ0 := by
+    simpa [Center, θ, θ0] using
+      centerTerm_le_theta_zero hP hStruct hP4 m
+  have hCenterTerm_le :
+      epsilon * Center ≤ target := by
+    calc
+      epsilon * Center ≤ epsilon * θ0 :=
+        mul_le_mul_of_nonneg_left hCenter_le hepsilon_pos.le
+      _ ≤ target := hepsilon_theta_le
+  obtain ⟨hAterm_le, hBterm_le⟩ :=
+    coarseFullBlockAndTauCompressionBounds hP hStruct hP4 hCsep hdelta_pos hdelta_le
+      hsep hepsilon_pos hgood_upper hgood_lower e he
   have hRtail :
       Real.rpow (3 : ℝ) (-β * (m : ℝ)) *
           coarseFluctuationUnitMomentWeightAtScale hP hStruct hP4 m *
@@ -884,33 +951,10 @@ theorem coarseFluctuationManuscriptRHSAtScale_zero_le_compressed
     simpa [β] using
       responseMomentTail_le_four_sqrt_delta
         hP hStruct hP4 hCsep hdelta_pos hdelta_le hsep e he
-  have hR_le :
-      R ≤ coefR * Real.sqrt delta := by
-    calc
-      R =
-          ((hP4.xi : ℝ) * (β ^ 3)⁻¹) *
-            (Real.rpow (3 : ℝ) (-β * (m : ℝ)) *
-              coarseFluctuationUnitMomentWeightAtScale hP hStruct hP4 m *
-                coarseFluctuationResponseMomentAtScale hP hStruct hP4 0 m e) := by
-          simp [R]
-          ring
-      _ ≤ ((hP4.xi : ℝ) * (β ^ 3)⁻¹) * (4 * Real.sqrt delta) :=
-          mul_le_mul_of_nonneg_left hRtail
-            (mul_nonneg hxi_nonneg hβ3inv_nonneg)
-      _ = coefR * Real.sqrt delta := by
-          simp [coefR]
-          ring
-  have hRterm_le :
-      epsilon⁻¹ * R ≤ coefR * target := by
-    have hcoef_nonneg : 0 ≤ coefR := by
-      dsimp [coefR]
-      positivity
-    calc
-      epsilon⁻¹ * R ≤ epsilon⁻¹ * (coefR * Real.sqrt delta) :=
-          mul_le_mul_of_nonneg_left hR_le (inv_nonneg.mpr hepsilon_pos.le)
-      _ = coefR * (epsilon⁻¹ * Real.sqrt delta) := by ring
-      _ ≤ coefR * target :=
-          mul_le_mul_of_nonneg_left hepsilon_inv_sqrt_le hcoef_nonneg
+  have hRterm_le : epsilon⁻¹ * R ≤ coefR * target := by
+    have hbound := weightedResponseTailCompressionBound
+      hβ_pos hxi_nonneg hepsilon_pos hθ0_one hdelta_pos.le hRtail
+    simpa [R, coefR, target, mul_assoc] using hbound
   have hDtail :
       Real.rpow (3 : ℝ) (-2 * β * (((m - 0 : ℕ) : ℝ))) *
           coarseFluctuationScalarWeightAtScale hP hStruct m * (θ - 1) ≤

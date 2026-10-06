@@ -58,6 +58,18 @@ private theorem blockQuad_nonneg' {H : BlockMat d}
     simp [blockMatVecMul, blockVecDot, vecDot]
   · exact (hpos X hX).le
 
+private theorem scaled_reference_quadratic_bound
+    {E F H : BlockMat d} {c k b : ℝ} (hc : 0 ≤ c) (hk : 0 ≤ k)
+    (hF : F = blockScale c E)
+    (hcomp : ∀ X : BlockVec d, blockVecDot X (blockMatVecMul E X) ≤
+      k * blockVecDot X (blockMatVecMul H X))
+    (X : BlockVec d) (hX : blockVecDot X (blockMatVecMul H X) ≤ b) :
+    blockVecDot X (blockMatVecMul F X) ≤ c * k * b := by
+  rw [hF, Sharp.blockVecDot_blockMatVecMul_blockScale]
+  refine le_trans (mul_le_mul_of_nonneg_left (hcomp X) hc) ?_
+  rw [← mul_assoc]
+  exact mul_le_mul_of_nonneg_left hX (mul_nonneg hc hk)
+
 /-- **The six calibrated weak-load bounds.** -/
 theorem calibrated_weak_loads [NeZero d]
     {P : Measure (CoeffSpace d)} [IsProbabilityMeasure P]
@@ -242,50 +254,8 @@ theorem calibrated_weak_loads [NeZero d]
   rw [hslotp] at hmeanYA
   have hmeanYA7 := hmeanYA ▸ hm7A
   -- the reference quadratics at the shifted slots
-  have hF2Y : blockVecDot
-      ((-(matSqrt (matGeomMean (S0 + Response.responseSymmetric K0 * SStar0⁻¹ *
-          Response.responseSymmetric K0) SStar0)⁻¹ *ᵥ e),
-        matSqrt (matGeomMean (S0 + Response.responseSymmetric K0 * SStar0⁻¹ *
-          Response.responseSymmetric K0) SStar0) *ᵥ e -
-          matVecMul (Response.responseSkew K0)
-            (matSqrt (matGeomMean (S0 + Response.responseSymmetric K0 *
-              SStar0⁻¹ * Response.responseSymmetric K0) SStar0)⁻¹ *ᵥ e)) :
-        BlockVec d)
-      (blockMatVecMul F2
-        ((-(matSqrt (matGeomMean (S0 + Response.responseSymmetric K0 *
-            SStar0⁻¹ * Response.responseSymmetric K0) SStar0)⁻¹ *ᵥ e),
-          matSqrt (matGeomMean (S0 + Response.responseSymmetric K0 * SStar0⁻¹ *
-            Response.responseSymmetric K0) SStar0) *ᵥ e -
-            matVecMul (Response.responseSkew K0)
-              (matSqrt (matGeomMean (S0 + Response.responseSymmetric K0 *
-                SStar0⁻¹ * Response.responseSymmetric K0) SStar0)⁻¹ *ᵥ e)) :
-          BlockVec d)) ≤ cF * kap * 7 := by
-    rw [hF2eq, Sharp.blockVecDot_blockMatVecMul_blockScale]
-    refine le_trans (mul_le_mul_of_nonneg_left (hcomp _) hcF0) ?_
-    rw [← mul_assoc]
-    exact mul_le_mul_of_nonneg_left hmeanY7 (mul_nonneg hcF0 hkap0)
-  have hF2YA : blockVecDot
-      ((matSqrt (matGeomMean (S0 + Response.responseSymmetric K0 * SStar0⁻¹ *
-          Response.responseSymmetric K0) SStar0)⁻¹ *ᵥ e,
-        matSqrt (matGeomMean (S0 + Response.responseSymmetric K0 * SStar0⁻¹ *
-          Response.responseSymmetric K0) SStar0) *ᵥ e +
-          matVecMul (Response.responseSkew K0)
-            (matSqrt (matGeomMean (S0 + Response.responseSymmetric K0 *
-              SStar0⁻¹ * Response.responseSymmetric K0) SStar0)⁻¹ *ᵥ e)) :
-        BlockVec d)
-      (blockMatVecMul F2
-        ((matSqrt (matGeomMean (S0 + Response.responseSymmetric K0 * SStar0⁻¹ *
-            Response.responseSymmetric K0) SStar0)⁻¹ *ᵥ e,
-          matSqrt (matGeomMean (S0 + Response.responseSymmetric K0 * SStar0⁻¹ *
-            Response.responseSymmetric K0) SStar0) *ᵥ e +
-            matVecMul (Response.responseSkew K0)
-              (matSqrt (matGeomMean (S0 + Response.responseSymmetric K0 *
-                SStar0⁻¹ * Response.responseSymmetric K0) SStar0)⁻¹ *ᵥ e)) :
-          BlockVec d)) ≤ cF * kap * 7 := by
-    rw [hF2eq, Sharp.blockVecDot_blockMatVecMul_blockScale]
-    refine le_trans (mul_le_mul_of_nonneg_left (hcomp _) hcF0) ?_
-    rw [← mul_assoc]
-    exact mul_le_mul_of_nonneg_left hmeanYA7 (mul_nonneg hcF0 hkap0)
+  have hF2Y := scaled_reference_quadratic_bound hcF0 hkap0 hF2eq hcomp _ hmeanY7
+  have hF2YA := scaled_reference_quadratic_bound hcF0 hkap0 hF2eq hcomp _ hmeanYA7
   -- the hatted reference quadratics
   have hhatF2 := skew_quad_pair (Response.responseSkew K0) F2
     (-(matSqrt (matGeomMean (S0 + Response.responseSymmetric K0 * SStar0⁻¹ *

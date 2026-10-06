@@ -158,7 +158,8 @@ theorem exists_one_step_with_slots_of_block_at_level_conv_split (d : ℕ) (hd : 
               rowValue2Isotropy d (rowSplitConstant cIso cDeep) kapE
                 (hatExcessAt P (roundedGrid lAl mAl) t) +
               weakValueBoundSharpIsotropyAt (Response.recentConstantAtLevel lev)
-            (Response.maxGroupConstantAtLevel lev) (Response.energyGoodConstantAtLevel lev) P mAl (Response.responseSkew K0) F
+            (Response.maxGroupConstantAtLevel lev) (Response.energyGoodConstantAtLevel lev) P
+              mAl (Response.responseSkew K0) F
                 (loadScaleOfScalar cF (kapE)) mAl
                 rho Hw
                 (R ^ 4 * badMomentMajorant K

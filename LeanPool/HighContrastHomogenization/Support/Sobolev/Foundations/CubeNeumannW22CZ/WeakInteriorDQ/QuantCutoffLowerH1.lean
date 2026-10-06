@@ -97,10 +97,10 @@ theorem directDifferenceQuotient_sqCutoff_energy_quarter_le_two_forcing_sq_add_t
       2 * (euclideanForwardDifferenceQuotient step i u.toFun x) ^ 2 *
         vecNormSq (euclideanGradient η x) ∂MeasureTheory.volume
   have hbase :=
-    h.directDifferenceQuotient_sqCutoff_energy_half_le_two_forcing_sq_add_eighth_localizedSqCutoffForwardGradient_sq_add_error
+    h.differenceQuotientEnergy_le_twoForcingAndCutoffGradientSquares
       hU hf hV hVU hstep i hVshift hη hη_compact hη_sub
   have habsorb :=
-    eighth_integral_sq_localizedSqCutoffForwardDifferenceQuotientToAmbient_grad_coord_le_quarter_energy_add_error
+    eighth_integral_sq_cutoffGradient_coord_le_quarter_energy_add_error
       (U := U) (V := V) u hV hVU step i hVshift
       hη hη_compact hη_sub hη_abs_le_one
   have hbase' :
@@ -383,7 +383,7 @@ theorem integral_vecNormSq_le_integral_sqCutoff_vecNormSq_of_subset_eq_one
 
 /-- Quantitative-cube Caccioppoli estimate with the left side localized to
 any measurable inner set on which the cutoff is identically one. -/
-theorem directDifferenceQuotient_quantitativeCubeCutoff_inner_energy_quarter_le_forcing_sq_add_quotient_sq
+theorem differenceQuotient_innerEnergy_le_forcing_and_quotient
     (h : WeakPoissonEquationOn U u f) (hU : IsOpen U) (hf : MemScalarL2 U f)
     (hV : IsOpenBoundedConvexDomain V) (hVU : V ⊆ U)
     {step : ℝ} (hstep : step ≠ 0) (i : Fin d)
@@ -462,7 +462,7 @@ theorem directDifferenceQuotient_quantitativeCubeCutoff_inner_energy_quarter_le_
 /-- Nested-cube version of the quantitative direct Caccioppoli estimate:
 the inner energy is taken over `scaledClosedCubeSet Q ρ₁`, where the
 quantitative cutoff is exactly one. -/
-theorem directDifferenceQuotient_quantitativeCubeCutoff_innerCube_energy_quarter_le_forcing_sq_add_quotient_sq
+theorem differenceQuotient_cubeCutoffEnergy_quarter_le_forcingAndQuotientSquares
     (h : WeakPoissonEquationOn U u f) (hU : IsOpen U) (hf : MemScalarL2 U f)
     (hV : IsOpenBoundedConvexDomain V) (hVU : V ⊆ U)
     {step : ℝ} (hstep : step ≠ 0) (i : Fin d)
@@ -485,7 +485,7 @@ theorem directDifferenceQuotient_quantitativeCubeCutoff_innerCube_energy_quarter
             (euclideanForwardDifferenceQuotient step i u.toFun x) ^ 2
             ∂MeasureTheory.volume := by
   exact
-    h.directDifferenceQuotient_quantitativeCubeCutoff_inner_energy_quarter_le_forcing_sq_add_quotient_sq
+    h.differenceQuotient_innerEnergy_le_forcing_and_quotient
       hU hf hV hVU hstep i hVshift η hη_sub
       (isClosed_scaledClosedCubeSet Q ρ₁).measurableSet hinnerV
       (by
@@ -614,7 +614,8 @@ theorem mulContDiffHasCompactSupportToH10_grad_ae
     intro j
     exact mulContDiffHasCompactSupportToH10_grad_coord_ae
       u hU hφ hφ_compact hφ_sub j
-  filter_upwards [(Filter.eventually_all (l := MeasureTheory.ae (MeasureTheory.volume.restrict U))).2 hcoord] with x hx
+  filter_upwards [(Filter.eventually_all (l := MeasureTheory.ae (MeasureTheory.volume.restrict
+    U))).2 hcoord] with x hx
   ext j
   exact hx j
 
@@ -662,7 +663,8 @@ theorem integral_set_forwardDifferenceQuotient_sq_le_integral_localized_product_
     (U := U) u hU hφ hφ_compact hφ_sub i] at hbase
 
 /-- The product-rule square is controlled by the two usual square terms. -/
-theorem integral_product_rule_grad_sq_le_two_integral_cutoff_grad_sq_add_two_integral_value_fderiv_sq
+theorem
+  integral_product_rule_grad_sq_le_two_integral_cutoff_grad_sq_add_two_integral_value_fderiv_sq
     (u : H1Function U)
     {φ : Vec d → ℝ} (hφ : ContDiff ℝ (⊤ : ℕ∞) φ)
     (hφ_compact : HasCompactSupport φ) (i : Fin d) :
@@ -732,7 +734,7 @@ theorem integral_product_rule_grad_sq_le_two_integral_cutoff_grad_sq_add_two_int
   rwa [hright_eq] at hmono
 
 /-- Lower-order quotient control by the two standard localized H¹ terms. -/
-theorem integral_set_forwardDifferenceQuotient_sq_le_two_integral_cutoff_grad_sq_add_two_integral_value_fderiv_sq
+theorem integral_forwardDifferenceSq_le_two_cutoffGradientSq_add_two_valueDerivativeSq
     (u : H1Function U) (hU : IsOpenBoundedConvexDomain U)
     {φ : Vec d → ℝ} (hφ : ContDiff ℝ (⊤ : ℕ∞) φ)
     (hφ_compact : HasCompactSupport φ) (hφ_sub : tsupport φ ⊆ U)
@@ -755,7 +757,7 @@ theorem integral_set_forwardDifferenceQuotient_sq_le_two_integral_cutoff_grad_sq
 
 /-- Nested quantitative Caccioppoli with the lower-order quotient term replaced
 by the two standard localized H¹ terms. -/
-theorem directDifferenceQuotient_quantitativeCubeCutoff_inner_energy_quarter_le_forcing_sq_add_lower_h1_terms
+theorem differenceQuotient_cubeCutoff_innerEnergy_quarter_le_forcing_sq_add_lowerH1Terms
     (h : WeakPoissonEquationOn U u f) (hU : IsOpenBoundedConvexDomain U)
     (hf : MemScalarL2 U f)
     (hV : IsOpenBoundedConvexDomain V) (hVU : V ⊆ U)
@@ -790,10 +792,10 @@ theorem directDifferenceQuotient_quantitativeCubeCutoff_inner_energy_quarter_le_
         (quantitativeCubeCutoffGradientConst d /
           ((ρ₂ - ρ₁) * cubeRadius Q)) ^ 2)
   have hbase :=
-    h.directDifferenceQuotient_quantitativeCubeCutoff_inner_energy_quarter_le_forcing_sq_add_quotient_sq
+    h.differenceQuotient_innerEnergy_le_forcing_and_quotient
       hU.isOpen hf hV hVU hstep i hVshift η hη_sub hS_meas hSV hη_one
   have hlower :=
-    integral_set_forwardDifferenceQuotient_sq_le_two_integral_cutoff_grad_sq_add_two_integral_value_fderiv_sq
+    integral_forwardDifferenceSq_le_two_cutoffGradientSq_add_two_valueDerivativeSq
       (U := U) u hU hθ hθ_compact hθ_sub hV.isOpen.measurableSet hstep i
       hθ_one hθ_shift_one
   have hK_nonneg : 0 ≤ K := by
@@ -816,7 +818,7 @@ theorem directDifferenceQuotient_quantitativeCubeCutoff_inner_energy_quarter_le_
 chosen from the quantitative cube-cutoff package. The outer cutoff is assumed
 to be identically one on the intermediate domain and on its forward-shifted
 points. -/
-theorem directDifferenceQuotient_quantitativeCubeCutoff_inner_energy_quarter_le_forcing_sq_add_quantitative_lower_h1_terms
+theorem differenceQuotient_cutoffEnergy_le_forcingAndLowerH1Terms
     (h : WeakPoissonEquationOn U u f) (hU : IsOpenBoundedConvexDomain U)
     (hf : MemScalarL2 U f)
     (hV : IsOpenBoundedConvexDomain V) (hVU : V ⊆ U)
@@ -848,7 +850,7 @@ theorem directDifferenceQuotient_quantitativeCubeCutoff_inner_energy_quarter_le_
                 (u.toFun x * (fderiv ℝ (θ : Vec d → ℝ) x) (basisVec i)) ^ 2
                 ∂MeasureTheory.volume) := by
   exact
-    h.directDifferenceQuotient_quantitativeCubeCutoff_inner_energy_quarter_le_forcing_sq_add_lower_h1_terms
+    h.differenceQuotient_cubeCutoff_innerEnergy_quarter_le_forcing_sq_add_lowerH1Terms
       hU hf hV hVU hstep i hVshift η hη_sub hS_meas hSV hη_one
       θ.smooth θ.hasCompactSupport hθ_sub
       (by
@@ -860,7 +862,7 @@ theorem directDifferenceQuotient_quantitativeCubeCutoff_inner_energy_quarter_le_
 
 /-- Inner-cube version of the nested quantitative Caccioppoli estimate with a
 quantitative outer lower-order cutoff. -/
-theorem directDifferenceQuotient_quantitativeCubeCutoff_innerCube_energy_quarter_le_forcing_sq_add_quantitative_lower_h1_terms
+theorem differenceQuotient_cubeCutoffEnergy_le_forcingAndLowerH1Terms
     (h : WeakPoissonEquationOn U u f) (hU : IsOpenBoundedConvexDomain U)
     (hf : MemScalarL2 U f)
     (hV : IsOpenBoundedConvexDomain V) (hVU : V ⊆ U)
@@ -891,7 +893,7 @@ theorem directDifferenceQuotient_quantitativeCubeCutoff_innerCube_energy_quarter
                 (u.toFun x * (fderiv ℝ (θ : Vec d → ℝ) x) (basisVec i)) ^ 2
                 ∂MeasureTheory.volume) := by
   exact
-    h.directDifferenceQuotient_quantitativeCubeCutoff_inner_energy_quarter_le_forcing_sq_add_quantitative_lower_h1_terms
+    h.differenceQuotient_cutoffEnergy_le_forcingAndLowerH1Terms
       hU hf hV hVU hstep i hVshift η hη_sub
       (isClosed_scaledClosedCubeSet Q ρ₁).measurableSet hinnerV
       (by
@@ -901,7 +903,7 @@ theorem directDifferenceQuotient_quantitativeCubeCutoff_innerCube_energy_quarter
 
 /-- Inner-cube nested quantitative Caccioppoli with the outer shifted-containment
 hypothesis discharged by a one-coordinate step-size restriction. -/
-theorem directDifferenceQuotient_quantitativeCubeCutoff_innerCube_energy_quarter_le_forcing_sq_add_quantitative_lower_h1_terms_of_step_abs_le
+theorem differenceQuotient_cubeCutoffEnergy_le_forcingAndLowerH1Terms_of_step_abs
     (h : WeakPoissonEquationOn U u f) (hU : IsOpenBoundedConvexDomain U)
     (hf : MemScalarL2 U f)
     (hV : IsOpenBoundedConvexDomain V) (hVU : V ⊆ U)
@@ -933,7 +935,7 @@ theorem directDifferenceQuotient_quantitativeCubeCutoff_innerCube_energy_quarter
                 (u.toFun x * (fderiv ℝ (θ : Vec d → ℝ) x) (basisVec i)) ^ 2
                 ∂MeasureTheory.volume) := by
   exact
-    h.directDifferenceQuotient_quantitativeCubeCutoff_innerCube_energy_quarter_le_forcing_sq_add_quantitative_lower_h1_terms
+    h.differenceQuotient_cubeCutoffEnergy_le_forcingAndLowerH1Terms
       hU hf hV hVU hstep i hVshift η hη_sub hinnerV θ hθ_sub
       (by
         intro x hx
@@ -947,7 +949,7 @@ theorem directDifferenceQuotient_quantitativeCubeCutoff_innerCube_energy_quarter
 /-- Open-cube ambient version of the nested quantitative Caccioppoli estimate:
 the ambient-domain containment, shifted containment, and outer cutoff support
 are all discharged by strict subcube radii and the step-size bound. -/
-theorem directDifferenceQuotient_quantitativeCubeCutoff_openCube_innerCube_energy_quarter_le_forcing_sq_add_quantitative_lower_h1_terms_of_step_abs_le
+theorem differenceQuotient_openCubeCutoffEnergy_le_forcingAndLowerH1Terms
     {Q : TriadicCube d} {uQ : H1Function (openCubeSet Q)} {f : Vec d → ℝ}
     (h : WeakPoissonEquationOn (openCubeSet Q) uQ f)
     (hf : MemScalarL2 (openCubeSet Q) f)
@@ -1017,7 +1019,7 @@ theorem directDifferenceQuotient_quantitativeCubeCutoff_openCube_innerCube_energ
         Q hσ₁_nonneg hσ₁_lt_one hxshift
     simpa [euclideanCoordShift, sub_eq_add_neg, neg_smul] using hxopen
   exact
-    h.directDifferenceQuotient_quantitativeCubeCutoff_innerCube_energy_quarter_le_forcing_sq_add_quantitative_lower_h1_terms_of_step_abs_le
+    h.differenceQuotient_cubeCutoffEnergy_le_forcingAndLowerH1Terms_of_step_abs
       (isOpenBoundedConvexDomain_openCubeSet Q) hf hV hVU hstep i hVshift
       η hη_sub hinnerV θ
       (θ.tsupport_subset_openCubeSet_of_nonneg_of_lt_one hσ₂_nonneg hσ₂_lt_one)

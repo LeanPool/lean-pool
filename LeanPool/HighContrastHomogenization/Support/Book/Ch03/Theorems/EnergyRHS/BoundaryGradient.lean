@@ -227,7 +227,7 @@ theorem dirichletBoundaryGradient_sqrt_two_energy_le_dirichletEnergySecondTerm_o
 zero-trace and boundary pieces are each bounded by their public RHS
 contributions, the full Dirichlet energy bound follows from the coefficient
 energy triangle inequality. -/
-theorem dirichletForcedSolutionEnergyNorm_le_dirichletEnergyWithRHSRHS_of_zeroTraceDifference_and_boundary_bounds
+theorem dirichletForcedSolutionEnergyNorm_le_dirichletEnergyWithRHSRHS_of_boundary
     {d : ℕ} [NeZero d] {C : ℝ}
     {Q : TriadicCube d} {a : CoeffFamily d} {s : ℝ}
     {g : Vec d → Vec d} (v : DirichletForcedCubeSolution Q a g)
@@ -297,7 +297,7 @@ theorem dirichletForcedSolutionEnergyNorm_le_dirichletEnergyWithRHSRHS_of_zeroTr
 /-- Dirichlet energy assembly with the boundary-gradient half discharged by
 the raw-ellipticity absorption bridge.  This leaves only the zero-trace
 difference estimate as an external input. -/
-theorem dirichletForcedSolutionEnergyNorm_le_dirichletEnergyWithRHSRHS_of_zeroTraceDifference_bound_and_rawLam_absorption
+theorem dirichletForcedSolutionEnergyNorm_le_dirichletEnergyWithRHSRHS_of_absorption
     {d : ℕ} [NeZero d] {C : ℝ}
     {Q : TriadicCube d} {a : CoeffFamily d} {s : ℝ}
     {g : Vec d → Vec d} (v : DirichletForcedCubeSolution Q a g)
@@ -317,7 +317,7 @@ theorem dirichletForcedSolutionEnergyNorm_le_dirichletEnergyWithRHSRHS_of_zeroTr
     (hboundary : ForceBesovRegularity Q s (dirichletBoundaryGradientField v)) :
     dirichletForcedSolutionEnergyNorm Q a v ≤
       dirichletEnergyWithRHSRHS C Q a s g v :=
-  dirichletForcedSolutionEnergyNorm_le_dirichletEnergyWithRHSRHS_of_zeroTraceDifference_and_boundary_bounds
+  dirichletForcedSolutionEnergyNorm_le_dirichletEnergyWithRHSRHS_of_boundary
     (Q := Q) (a := a) (s := s) (g := g) v hzero
     (dirichletBoundaryGradient_sqrt_two_energy_le_dirichletEnergySecondTerm_of_rawLam_absorption
       (Q := Q) (a := a) (s := s) (g := g) v habsorb hboundary)

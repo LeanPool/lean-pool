@@ -56,7 +56,7 @@ theorem outerTriadicGeneration_nonneg_of_one_le
 
 /-- A discrete `O(3^q)` bound with local square-integrability becomes an
 eventual `O(r)` bound for the frozen normalized `L²` norm on Euclidean balls. -/
-theorem exists_eventually_normalizedL2Norm_euclideanBall_le_linear_of_cubeGrowth
+theorem exists_eventually_normalizedBallL2_le_linear_cubeGrowth
     {d : ℕ} [NeZero d] (f : Vec d → ℝ)
     (q₀ : ℕ) (C : ℝ) (hC : 0 ≤ C)
     (hmem : ∀ q : ℕ, MemLp f 2
@@ -140,7 +140,8 @@ theorem exists_eventually_normalizedL2Norm_euclideanBall_le_linear_of_cubeGrowth
       ac_rfl
 
 /-- Carrier-specialized form of the preceding real-radius bridge. -/
-theorem NormalizedLocalH1Carrier.exists_eventually_normalizedL2Norm_euclideanBall_le_linear_of_cubeGrowth
+theorem
+  NormalizedLocalH1Carrier.exists_eventually_normalizedBallL2_le_linear_cubeGrowth
     {d : ℕ} [NeZero d] (z : NormalizedLocalH1Carrier d)
     (q₀ : ℕ) (C : ℝ) (hC : 0 ≤ C)
     (hcube : ∀ q : ℕ, q₀ ≤ q →
@@ -149,7 +150,7 @@ theorem NormalizedLocalH1Carrier.exists_eventually_normalizedL2Norm_euclideanBal
     ∃ D : ℝ≥0∞, D ≠ ⊤ ∧ ∀ᶠ r : ℝ in atTop,
       normalizedL2Norm (euclideanBall d r) z.globalValueRepresentative ≤
         D * ENNReal.ofReal r :=
-  _root_.HCPolySupport.HighContrast.exists_eventually_normalizedL2Norm_euclideanBall_le_linear_of_cubeGrowth
+  _root_.HCPolySupport.HighContrast.exists_eventually_normalizedBallL2_le_linear_cubeGrowth
     z.globalValueRepresentative q₀ C hC
     z.memLp_globalValueRepresentative_normalizedCubeMeasure hcube
 
@@ -212,7 +213,7 @@ theorem NormalizedLocalH1Carrier.tendsto_normalizedL2Norm_sublinear_of_cubeGrowt
         normalizedL2Norm (euclideanBall d r) z.globalValueRepresentative)
       atTop (nhds 0) :=
   tendsto_normalizedL2Norm_sublinear_of_eventually_linear hϑ
-    (z.exists_eventually_normalizedL2Norm_euclideanBall_le_linear_of_cubeGrowth
+    (z.exists_eventually_normalizedBallL2_le_linear_cubeGrowth
       q₀ C hC hcube)
 
 /-- Generic discrete-to-continuous frozen growth bridge. -/
@@ -229,7 +230,7 @@ theorem tendsto_normalizedL2Norm_sublinear_of_cubeGrowth
         normalizedL2Norm (euclideanBall d r) f)
       atTop (nhds 0) :=
   tendsto_normalizedL2Norm_sublinear_of_eventually_linear hϑ
-    (exists_eventually_normalizedL2Norm_euclideanBall_le_linear_of_cubeGrowth
+    (exists_eventually_normalizedBallL2_le_linear_cubeGrowth
       f q₀ C hC hmem hcube)
 
 end

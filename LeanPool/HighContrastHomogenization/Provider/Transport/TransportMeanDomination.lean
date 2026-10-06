@@ -44,7 +44,7 @@ bounded-window multiplier supplies.
 
 *The normalization.*  Conjugating that mean domination by the inverse square root
 of the new terminal block turns it into the printed
-`K_W = S^tP̄_WS - (1-m_W)S^tS + R_W` of `e.two.grid.whitney.mean.bound`, because
+`K_W = S^tP_bar_WS - (1-m_W)S^tS + R_W` of `e.two.grid.whitney.mean.bound`, because
 the bridge congruence `S = (E_t^q)^{1/2}(E_n^{q'})^{-1/2}` carries the old
 relative mean `P_{r,t}^q` exactly onto the normalization of `E_r^q` by
 `E_n^{q'}`.  That identity is the reason the bridge error enters additively and
@@ -236,12 +236,12 @@ theorem bridgeMap_conj_relMean {P : Measure (CoeffSpace d)} {q q' : Mat d} {r t 
 
 /-- **The normalized mean domination**, in the exact shape the cell gap of
 `e.two.grid.whitney.mean.bound` and the nonlinear row consume:
-`P_{j,n}^{q'} ≤ S^tP̄_WS - (1-m_W)S^tS + R_W`.
+`P_{j,n}^{q'} ≤ S^tP_bar_WS - (1-m_W)S^tS + R_W`.
 
 Conjugating the annealed domination by the inverse square root of the new
 terminal block is monotone, the bridge carries each old relative mean onto the
 new normalization, and the unfilled mass is exactly the identity part of the
-convex combination `P̄_W`. -/
+convex combination `P_bar_W`. -/
 theorem relMean_le_of_annealedBlock_le {P : Measure (CoeffSpace d)} {q q' : Mat d}
     {j n t : ℤ} {R : Finset ℤ} {theta : ℤ → ℝ} {Pbar Rm : BlockMat d}
     {G : FullBlockMat d}

@@ -120,7 +120,10 @@ theorem measurableCoeffField_aeSymmetric {d : ℕ} (U : Domain d)
   filter_upwards [measurableCoeffField_ae_eq U a, hsym] with x hx hsymx
   simpa [hx] using hsymx
 
+/-- A measurable set of full measure on `U` where the measurable coefficient representative is
+elliptic. -/
 structure GoodSetData {d : ℕ} (U : Domain d) (a : CoeffOn U) where
+  /-- The chosen full-measure measurable set of pointwise ellipticity. -/
   set : Set (Vec d)
   ae_mem : set ∈ MeasureTheory.ae (volumeMeasureOn (U : Set (Vec d)))
   measurableSet : MeasurableSet set
@@ -132,13 +135,18 @@ theorem exists_goodSetData {d : ℕ} (U : Domain d)
     ⟨E, hEae, hEmeas, hEell⟩
   exact ⟨⟨E, hEae, hEmeas, hEell⟩⟩
 
+/-- Choose a measurable full-measure set where the coefficient representative has its
+ellipticity bounds. -/
 @[expose]
 noncomputable def goodSetData {d : ℕ} (U : Domain d)
     (a : CoeffOn U) : GoodSetData U a :=
   Classical.choice (exists_goodSetData U a)
 
+/-- A measurable full-measure set where the coefficient representative is both elliptic and
+symmetric. -/
 structure GoodSymmetricSetData {d : ℕ} (U : Domain d) (a : CoeffOn U)
     (hsym : CoeffOn.IsSymmetric a) where
+  /-- The chosen full-measure measurable set of pointwise ellipticity and symmetry. -/
   set : Set (Vec d)
   ae_mem : set ∈ MeasureTheory.ae (volumeMeasureOn (U : Set (Vec d)))
   measurableSet : MeasurableSet set
@@ -158,6 +166,8 @@ theorem exists_goodSymmetricSetData {d : ℕ} (U : Domain d)
   exact ⟨⟨E, hEae, hEmeas, fun x hx => (hEboth x hx).1,
     fun x hx => (hEboth x hx).2⟩⟩
 
+/-- Choose a measurable full-measure set where the symmetric coefficient representative is
+elliptic. -/
 @[expose]
 noncomputable def goodSymmetricSetData {d : ℕ} (U : Domain d)
     (a : CoeffOn U) (hsym : CoeffOn.IsSymmetric a) :
@@ -284,6 +294,8 @@ theorem pointwiseCoeffField_isEllipticFieldOn_cubeSet {d : ℕ}
   · simpa [pointwiseCoeffField, hxGood] using
       isEllipticMatrix_smul_one (d := d) a.lam_pos a.lam_le_Lam
 
+/-- The coefficient representative using the measurable field on its good set and `a.lam • 1`
+elsewhere. -/
 @[expose]
 noncomputable def pointwiseCoeffOn {d : ℕ} (U : Domain d)
     (a : CoeffOn U) : CoeffOn U where
@@ -415,6 +427,8 @@ theorem pointwiseSymmetricCoeffField_isSymmetricCoeffField {d : ℕ}
       (goodSymmetricSetData U a hsym).symmetric x hxGood
   · simp [pointwiseSymmetricCoeffField, hxGood]
 
+/-- The symmetric coefficient representative using its measurable field on the good set and
+`a.lam • 1` elsewhere. -/
 @[expose]
 noncomputable def pointwiseSymmetricCoeffOn {d : ℕ} (U : Domain d)
     (a : CoeffOn U) (hsym : CoeffOn.IsSymmetric a) : CoeffOn U where

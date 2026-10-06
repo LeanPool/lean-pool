@@ -40,7 +40,7 @@ noncomputable section
 replaced by the scalar-response weak-norm cutoff-product bridge.  The
 cutoff-oscillation and linear-pair terms are still displayed separately here;
 those are the next deterministic terms to insert before taking expectations. -/
-theorem abs_centeredResponseJOnCube_sub_cutoffWeightedChildResponseJOnDependentFamily_le_additivityDefect_add_cutoffOscillation_add_linearPair_add_cutoffProductBridgeRHS
+theorem abs_responseJDifference_le_additivityError_cutoffOscillation_pair_productRHS
     {d : ℕ} [NeZero d] (a : RegCoeffField d)
     (ha : Ch04.AELocallyUniformlyEllipticField a) (Q : TriadicCube d)
     (j : ℕ) (s : ℝ) (φ : Vec d → ℝ) (p q p0 q0 : Vec d)
@@ -173,7 +173,7 @@ theorem abs_centeredResponseJOnCube_sub_cutoffWeightedChildResponseJOnDependentF
             |cutoffLinearPairTermOnCube Q (F.coeffOn Q) φ p q p0 q0| +
               |cutoffProductTermOnCube Q (F.coeffOn Q) φ p q p0 q0| := by
     simpa [F] using
-      abs_centeredResponseJOnCube_sub_cutoffWeightedChildResponseJOnDependentFamily_le_additivityDefect_add_cutoffOscillation_add_linearPair_add_product
+      abs_responseJDifference_le_additivityError_cutoffOscillation_pair_product
         (a := a) (ha := ha) (Q := Q) (j := j) (φ := φ)
         (p := p) (q := q) (p0 := p0) (q0 := q0)
         hC hCut hφ_int hRem_int hProduct_int hGradLinear_int hFluxLinear_int hOsc_int hMean
@@ -199,7 +199,7 @@ theorem abs_centeredResponseJOnCube_sub_cutoffWeightedChildResponseJOnDependentF
 oscillation term and the product term replaced by their manuscript bounds.
 The linear pair is the only displayed deterministic split term still not
 inserted here. -/
-theorem abs_centeredResponseJOnCube_sub_cutoffWeightedChildResponseJOnDependentFamily_le_additivityDefect_add_cutoffOscillationBound_add_linearPair_add_cutoffProductBridgeRHS
+theorem abs_responseJDifference_le_additivityError_cutoffBound_pair_productRHS
     {d : ℕ} [NeZero d] (a : RegCoeffField d)
     (ha : Ch04.AELocallyUniformlyEllipticField a) (Q : TriadicCube d)
     (j : ℕ) (s : ℝ) (φ : Vec d → ℝ) (p q p0 q0 : Vec d)
@@ -339,7 +339,7 @@ theorem abs_centeredResponseJOnCube_sub_cutoffWeightedChildResponseJOnDependentF
             |cutoffLinearPairTermOnCube Q (F.coeffOn Q) φ p q p0 q0| +
               P := by
     simpa [F, P] using
-      abs_centeredResponseJOnCube_sub_cutoffWeightedChildResponseJOnDependentFamily_le_additivityDefect_add_cutoffOscillation_add_linearPair_add_cutoffProductBridgeRHS
+      abs_responseJDifference_le_additivityError_cutoffOscillation_pair_productRHS
         (a := a) (ha := ha) (Q := Q) (j := j) (s := s) (φ := φ)
         (p := p) (q := q) (p0 := p0) (q0 := q0)
         (dualField := dualField) (cutoffGradient := cutoffGradient)
@@ -357,7 +357,7 @@ theorem abs_centeredResponseJOnCube_sub_cutoffWeightedChildResponseJOnDependentF
       |cutoffOscillationTermOnCubeAtDepth Q (F.coeffOn Q) j φ p q| ≤
         Cosc * scaleSep * Ch04.restrictionResponseJObservableCubeSet Q p q a := by
     simpa [F] using
-      abs_cutoffOscillationTermOnDependentFamilyAtDepth_le_scale_mul_restrictionResponseJObservableCubeSet_of_ae_bounded_cutoff
+      abs_cutoffOscillationTerm_le_scale_mul_responseJObservableSet
         (a := a) (ha := ha) (Q := Q) (j := j) (φ := φ)
         (B := B) (C := Cosc) (scaleSep := scaleSep)
         p q hφ_meas hφ_bound hOscPoint
@@ -366,7 +366,7 @@ theorem abs_centeredResponseJOnCube_sub_cutoffWeightedChildResponseJOnDependentF
 /-- Deterministic assembled Section 5.3 estimate with all four displayed
 split terms replaced by their current deterministic manuscript bounds.  This
 is the pointwise estimate to feed into the expectation step. -/
-theorem abs_centeredResponseJOnCube_sub_cutoffWeightedChildResponseJOnDependentFamily_le_additivityDefect_add_cutoffOscillationBound_add_linearWeakNorms_add_cutoffProductBridgeRHS
+theorem abs_responseJDifference_le_additivityError_cutoffBound_weakNorms_productRHS
     {d : ℕ} [NeZero d] (a : RegCoeffField d)
     (ha : Ch04.AELocallyUniformlyEllipticField a) (Q : TriadicCube d)
     (j : ℕ) (s t : ℝ) (φ : Vec d → ℝ) (p q p0 q0 : Vec d)
@@ -532,7 +532,7 @@ theorem abs_centeredResponseJOnCube_sub_cutoffWeightedChildResponseJOnDependentF
           cutoffWeightedChildResponseJOnFamilyAtDepth F Q j φ p q| ≤
         A + |cutoffLinearPairTermOnCube Q (F.coeffOn Q) φ p q p0 q0| + P := by
     simpa [F, P, A, add_assoc] using
-      abs_centeredResponseJOnCube_sub_cutoffWeightedChildResponseJOnDependentFamily_le_additivityDefect_add_cutoffOscillationBound_add_linearPair_add_cutoffProductBridgeRHS
+      abs_responseJDifference_le_additivityError_cutoffBound_pair_productRHS
         (a := a) (ha := ha) (Q := Q) (j := j) (s := s) (φ := φ)
         (p := p) (q := q) (p0 := p0) (q0 := q0)
         (dualField := dualField) (cutoffGradient := cutoffGradient)
@@ -567,7 +567,7 @@ theorem abs_centeredResponseJOnCube_sub_cutoffWeightedChildResponseJOnDependentF
 
 /-- Deterministic pointwise estimate with the product term in the final
 scaled-gradient/scaled-flux weak-norm form. -/
-theorem abs_centeredResponseJOnCube_sub_cutoffWeightedChildResponseJOnDependentFamily_le_additivityDefect_add_cutoffOscillationBound_add_linearWeakNorms_add_scaledProduct
+theorem abs_responseJDifference_le_additivityError_cutoffBound_weakNorms_product
     {d : ℕ} [NeZero d] (a : RegCoeffField d)
     (ha : Ch04.AELocallyUniformlyEllipticField a) (Q : TriadicCube d)
     (j : ℕ) (s t : ℝ) (φ : Vec d → ℝ) (p q p0 q0 : Vec d)
@@ -700,7 +700,7 @@ theorem abs_centeredResponseJOnCube_sub_cutoffWeightedChildResponseJOnDependentF
             |cutoffLinearPairTermOnCube Q (F.coeffOn Q) φ p q p0 q0| +
               |cutoffProductTermOnCube Q (F.coeffOn Q) φ p q p0 q0| := by
     simpa [F] using
-      abs_centeredResponseJOnCube_sub_cutoffWeightedChildResponseJOnDependentFamily_le_additivityDefect_add_cutoffOscillation_add_linearPair_add_product
+      abs_responseJDifference_le_additivityError_cutoffOscillation_pair_product
         (a := a) (ha := ha) (Q := Q) (j := j) (φ := φ)
         (p := p) (q := q) (p0 := p0) (q0 := q0)
         hC hCut hφ_int hRem_int hProduct_int hGradLinear_int hFluxLinear_int
@@ -709,7 +709,7 @@ theorem abs_centeredResponseJOnCube_sub_cutoffWeightedChildResponseJOnDependentF
       |cutoffOscillationTermOnCubeAtDepth Q (F.coeffOn Q) j φ p q| ≤
         Cosc * scaleSep * Ch04.restrictionResponseJObservableCubeSet Q p q a := by
     simpa [F] using
-      abs_cutoffOscillationTermOnDependentFamilyAtDepth_le_scale_mul_restrictionResponseJObservableCubeSet_of_ae_bounded_cutoff
+      abs_cutoffOscillationTerm_le_scale_mul_responseJObservableSet
         (a := a) (ha := ha) (Q := Q) (j := j) (φ := φ)
         (B := B) (C := Cosc) (scaleSep := scaleSep)
         p q hφ_meas hφ_bound hOscPoint

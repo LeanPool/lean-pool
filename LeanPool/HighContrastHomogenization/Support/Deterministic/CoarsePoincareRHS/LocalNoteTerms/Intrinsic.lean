@@ -25,7 +25,7 @@ namespace ZeroTraceDirichletCorrectorData
 
 variable {d : ℕ} {Q : TriadicCube d} {a : CoeffField d} {g : Vec d → Vec d}
 
-theorem sq_cubeBesovNegativeVectorSeminormTwo_le_descendantsAverage_add_intrinsicAbsorbedLocalError_two_two_of_childBddAbove
+theorem sq_negativeBesovSeminormTwo_le_descendantMean_add_intrinsicError_two
     (ρ : ZeroTraceDirichletCorrectorData Q a g)
     {u : Vec d → Vec d} (w : AHarmonicFunction a (cubeSet Q))
     {lam Lam : ℝ} (s : ℝ) {η : ℝ}
@@ -76,7 +76,7 @@ theorem sq_cubeBesovNegativeVectorSeminormTwo_le_descendantsAverage_add_intrinsi
       cubeBesovNegativeVectorPartialSeminormTwo_le_seminormTwo_of_bddAbove
         R s u (hchildBdd R hR) N
   have hmain :=
-    ρ.sq_cubeBesovNegativeVectorSeminormTwo_le_descendantsAverage_add_uCoeffEnergy_add_absorbed_uSq_gSq_two_two_of_partialChildBounds
+    ρ.sq_negativeBesovSeminormTwo_le_childMean_add_energy_add_error
       (u := u) w s (Bchild := fun R => cubeBesovNegativeVectorSeminormTwo R s u)
       hs hη hη_lt hEll hu hgrad hsum huw
       hmem hg hgradρ hBg huBdd hwBdd hgBdd hchild
@@ -86,7 +86,7 @@ theorem sq_cubeBesovNegativeVectorSeminormTwo_le_descendantsAverage_add_intrinsi
     coarsePoincareRHSLocalCenteredForceSeminorm,
     coarsePoincareRHSLocalCoeff, add_assoc] using hmain
 
-theorem sq_cubeBesovNegativeVectorSeminormTwo_le_discount_next_add_intrinsicAbsorbedLocalError_noteEta_of_parent_potential_solenoidal
+theorem negativeBesovSeminormSquare_le_discount_add_intrinsicError
     {d : ℕ} [NeZero d] {Q R : TriadicCube d} {n : ℕ}
     {a : CoeffField d} {g u : Vec d → Vec d} {lam Lam s : ℝ}
     (hs : 0 < s)
@@ -121,10 +121,10 @@ theorem sq_cubeBesovNegativeVectorSeminormTwo_le_discount_next_add_intrinsicAbso
       Summable (fun m : ℕ =>
         geometricWeight s 2 m *
           maxDescendantSigmaStarInvNormAtScale R (R.scale - (m : ℤ)) a) :=
-    summable_qtwo_maxDescendantSigmaStarInvNormAtScale_of_isEllipticFieldOn_of_openCubeOriginEllipticRecoveryExistence
+    summable_exponentTwo_maxDescendantSigmaStarInverseNorm_of_cubeEllipticity
       (Q := R) (a := a) s hs hEllR hOrigin
   rcases
-      ZeroTraceDirichletCorrectorData.exists_corrector_aHarmonicRemainder_of_parent_potential_solenoidal
+      ZeroTraceDirichletCorrectorData.exists_harmonicCorrectorDecomposition
         (Q := Q) (R := R) (n := n) (a := a) (g := g) (u := u)
         (lam := lam) (Lam := Lam)
         hu_potential hu_residual hR hEllR huMemR hgMemR with
@@ -132,7 +132,7 @@ theorem sq_cubeBesovNegativeVectorSeminormTwo_le_discount_next_add_intrinsicAbso
   have hgradScalar :
       CubeAverageGradientEnergyControl R a (fun x => w.toH1.grad x)
         (fun x => scalarVariationEnergyIntegrand a w x) :=
-    cubeAverageGradientEnergyControl_of_aHarmonicFunction_of_openCubeOriginEllipticRecoveryExistence
+    harmonicGradientEnergy_le_scalarVariation_of_recovery
       (Q := R) (a := a) hEllR w hOrigin
   have hgradCoeff :
       CubeAverageGradientEnergyControl R a (fun x => w.toH1.grad x)
@@ -198,7 +198,7 @@ theorem sq_cubeBesovNegativeVectorSeminormTwo_le_discount_next_add_intrinsicAbso
     cubeBesovPositiveVectorSeminormTwo_nonneg_of_bddAbove
       R s (fun x => g x - cubeAverageVec R g) hgBdd
   have hmain :=
-    ρ.sq_cubeBesovNegativeVectorSeminormTwo_le_descendantsAverage_add_intrinsicAbsorbedLocalError_two_two_of_childBddAbove
+    ρ.sq_negativeBesovSeminormTwo_le_descendantMean_add_intrinsicError_two
       (u := u) w s hs hη_pos hη_lt_one hEllR huMemR hgradCoeff hsum huw
       hgMemR hgR hgradρ hBg huBdd hwBdd hgBdd hchildBdd
   simpa [coarsePoincareRHSDiscount, coarsePoincareRHSRn] using hmain

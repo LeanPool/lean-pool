@@ -252,7 +252,7 @@ theorem abs_cubeBesovPairing_projection_le_max_mul_cubeBesovCircNormEntry_of_dua
             cubeBesovPartialNorm Q s pConj 1 N g *
             cubeBesovCircPartialNormTop Q s p (N + 1) u := by
       simpa [pConj, hpDouble] using
-        abs_cubeBesovPairing_projection_le_max_mul_cubeBesovPartialNormOne_cubeBesovCircPartialNormTop
+        abs_cubeBesovPairing_projection_le_max_partialOne_circTop
           (Q := Q) (s := s) (p := pConj) (f := g) (g := u) (N := N)
           huInt hpConj hpConjTop hpDoubleTop hgMem huMem
     have hCirc_nonneg : 0 ≤ cubeBesovCircNormEntry Q s p q N u := by
@@ -284,7 +284,7 @@ theorem abs_cubeBesovPairing_projection_le_max_mul_cubeBesovCircNormEntry_of_dua
               cubeBesovPartialNormTop Q s pConj N g *
               cubeBesovCircPartialNorm Q s p 1 (N + 1) u := by
         simpa [pConj, hpDouble] using
-          abs_cubeBesovPairing_projection_le_max_mul_cubeBesovPartialNormTop_cubeBesovCircPartialNormOne
+          abs_cubeBesovPairing_projection_le_max_partialTop_circOne
             (Q := Q) (s := s) (p := pConj) (f := g) (g := u) (N := N)
             huInt hpConj hpConjTop hpDoubleTop hgMem huMem
       have hCirc_nonneg : 0 ≤ cubeBesovCircNormEntry Q s p q N u := by

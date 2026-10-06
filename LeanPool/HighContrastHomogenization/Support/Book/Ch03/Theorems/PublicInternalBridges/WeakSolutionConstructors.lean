@@ -82,7 +82,7 @@ theorem forcedSolutionGradientField_coarsePoincareRHSSn_le_expanded_publicCoeffF
     isH1DirichletRhsWeakSolutionOn_publicCoeffField_cubeSet_of_isForcedEquation
       (Q := Q) (a := a) (u := u.toH1) (g := g) u.weakSolution
   have hdet :=
-    _root_.HCPolySupport.coarsePoincareRHSSn_le_intrinsicGlobalEnergyForce_noteConstants_expanded_of_parent_potential_solenoidal
+    _root_.HCPolySupport.coarsePoincareRHSSn_le_intrinsicGlobalEnergyForce
       (Q := Q) (a := publicCoeffField Q a) (g := g)
       (u := (publicH1ToCubeSet u.toH1).grad) (s := s)
       (lam := (a.coeffOn Q).lam) (Lam := (a.coeffOn Q).Lam)
@@ -112,7 +112,7 @@ theorem isH1DirichletRhsWeakSolutionOn_constantCoeff_cubeSet_of_isConstantCoeffF
       (Q := Q) (a := constantCoeffField a0.matrix)
       (u := castH1Domain (Ch02.cubeDomain_coe Q) u) (g := g) hopen
 
-theorem isZeroTraceDirichletRhsWeakSolution_publicCoeffField_cubeSet_of_zeroTraceForcedCubeSolution
+theorem forcedCubeSolution_is_zeroTraceDirichletWeakSolution
     {d : ℕ} [NeZero d] {Q : TriadicCube d} {a : CoeffFamily d}
     {g : Vec d → Vec d}
     (u : ZeroTraceForcedCubeSolution Q a g) :

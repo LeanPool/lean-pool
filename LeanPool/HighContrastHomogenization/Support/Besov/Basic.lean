@@ -31,6 +31,7 @@ and scale weights that later positive and negative Besov definitions will
 assemble across descendants and scales.
 -/
 
+/-- The cube Lᵖ norm of the fluctuation of `u` about its cube average. -/
 @[expose]
 noncomputable def cubeBesovOscillation {d : ℕ} (Q : TriadicCube d) (p : ℝ≥0∞)
     (u : Vec d → ℝ) : ℝ :=
@@ -41,10 +42,12 @@ noncomputable abbrev cubeBesovDisjointOscillation {d : ℕ}
     (Q : TriadicCube d) (p : ℝ≥0∞) (u : Vec d → ℝ) : ℝ :=
   cubeBesovOscillation Q p u
 
+/-- The Besov weight given by the cube scale factor raised to the power `-s`. -/
 @[expose]
 noncomputable def cubeBesovScaleWeight {d : ℕ} (s : ℝ) (Q : TriadicCube d) : ℝ :=
   (cubeScaleFactor Q) ^ (-s)
 
+/-- The uniform arithmetic average of `F` over all descendants at depth `j` in `Q`. -/
 @[expose]
 noncomputable def descendantsAverage {d : ℕ} (Q : TriadicCube d) (j : ℕ)
     (F : TriadicCube d → ℝ) : ℝ := by
@@ -293,7 +296,7 @@ theorem cubeBesovOscillation_cubeFluctuation_eq_of_memLp_two {d : ℕ}
   change cubeLpNorm Q p (fun _ => (0 : ℝ)) = 0
   simp
 
-@[simp] theorem cubeBesovOscillation_zero {d : ℕ} (Q : TriadicCube d) (p : ℝ≥0∞) :
+theorem cubeBesovOscillation_zero {d : ℕ} (Q : TriadicCube d) (p : ℝ≥0∞) :
     cubeBesovOscillation Q p (fun _ => (0 : ℝ)) = 0 := by
   unfold cubeBesovOscillation
   rw [cubeFluctuation_zero]

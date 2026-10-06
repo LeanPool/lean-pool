@@ -178,7 +178,7 @@ theorem
       simp only [Set.mem_ofPred_eq]
       rw [hreflectedNorm x]
     have hvector :=
-      sqWeightedMeasure_openCubeSet_succ_originCube_cubeDirichletOddReflectionVectorField_tail
+      oddReflectionVector_tail_sqWeightedMeasure_scale
         G hG (a := a)
     change sqWeightedMeasure Sref volume
         ({x | a < ‖Sref x‖} ∩ openCubeSet (originCube d (m + 1))) = _

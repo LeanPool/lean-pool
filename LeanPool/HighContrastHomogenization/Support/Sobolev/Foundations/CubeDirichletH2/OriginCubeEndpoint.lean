@@ -134,7 +134,7 @@ theorem exists_cubeDirichletOddReflectionParent_hasWeakHessianOn_restrict_hessia
 
 /-- The parent reflected Hessian estimate specialized to the one-third inner
 cube, read back as an estimate on the original centered cube. -/
-theorem exists_cubeDirichletOddReflectionParent_hasWeakHessianOn_originCube_hessianCoordL2NormSum_le
+theorem exists_reflectionHessian_le_smoothTestBound
     (hweak : CubeDirichletWeakPoissonProblem (originCube d m) u F)
     (hF :
       MeasureTheory.MemLp F (2 : ℝ≥0∞)
@@ -181,7 +181,7 @@ theorem exists_cubeDirichletOddReflectionParent_hasWeakHessianOn_originCube_hess
 
 /-- The one-third reflected-parent Hessian estimate with fixed numerical
 cutoffs. -/
-theorem exists_cubeDirichletOddReflectionParent_hasWeakHessianOn_originCube_canonicalRadii_hessianCoordL2NormSum_le
+theorem exists_oddReflectionParent_hasWeakHessianOn_cube_hessianCoordinateL2NormSum_le
     (hweak : CubeDirichletWeakPoissonProblem (originCube d m) u F)
     (hF :
       MeasureTheory.MemLp F (2 : ℝ≥0∞)
@@ -227,7 +227,7 @@ theorem exists_cubeDirichletOddReflectionParent_hasWeakHessianOn_originCube_cano
     scaledOpenCubeSet_subset_scaledClosedCubeSet Qp (2 / 3 : ℝ)
   simpa [Qp, Vp, originCubeParentOneThirdHalfCutoff,
     originCubeParentThreeQuarterSevenEighthCutoff] using
-    hweak.exists_cubeDirichletOddReflectionParent_hasWeakHessianOn_originCube_hessianCoordL2NormSum_le
+    hweak.exists_reflectionHessian_le_smoothTestBound
       hF hV (originCubeParentOneThirdHalfCutoff d m) hη_sub hinnerV
       (originCubeParentThreeQuarterSevenEighthCutoff d m) hVν
       (by norm_num : 0 ≤ (2 / 3 : ℝ)) (by norm_num : (2 / 3 : ℝ) < 3 / 4)
@@ -257,7 +257,7 @@ theorem exists_hasWeakHessianOn_originCube_canonicalRadii_hessianCoordL2NormSum_
                   i (1 / 3 : ℝ) (1 / 2 : ℝ) (3 / 4 : ℝ) (7 / 8 : ℝ)
                   (originCubeParentThreeQuarterSevenEighthCutoff d m) := by
   rcases
-    hweak.exists_cubeDirichletOddReflectionParent_hasWeakHessianOn_originCube_canonicalRadii_hessianCoordL2NormSum_le
+    hweak.exists_oddReflectionParent_hasWeakHessianOn_cube_hessianCoordinateL2NormSum_le
       hF with
     ⟨uP, huP_toFun, huP_grad, uS, _huS_toFun, huS_grad, H, hH⟩
   let HW : HasWeakHessianOn (openCubeSet (originCube d m)) u.toH1Function :=

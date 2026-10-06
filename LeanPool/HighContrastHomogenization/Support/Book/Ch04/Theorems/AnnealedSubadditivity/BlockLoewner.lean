@@ -275,7 +275,8 @@ theorem matLoewnerLE_upperLeft_of_blockMatLoewnerLE {d : ℕ} {A B : BlockMat d}
 /-- Pointwise response subadditivity for the Ch4 scalar response observable,
 with the a.e. coefficient representative handled by the Chapter 2 coefficient
 family. -/
-theorem restrictionResponseJObservableCubeSet_le_descendantsAverage_of_aelocallyUniformlyEllipticField
+theorem
+  restrictionResponseJ_le_descendantAverage
     {d : ℕ} [NeZero d] {a : RegCoeffField d}
     (ha : AELocallyUniformlyEllipticField a) {n m : ℤ} (hnm : n ≤ m)
     (p q : Vec d) :
@@ -362,7 +363,7 @@ theorem restrictionResponseJObservableCubeSet_le_descendantsAverage_of_aelocally
 /-- Pointwise response subadditivity on an arbitrary triadic cube for the Ch4
 scalar response observable, with the a.e. coefficient representative handled
 by the Chapter 2 coefficient family. -/
-theorem restrictionResponseJObservableCubeSet_le_descendantsAverage_cubeSet_of_aelocallyUniformlyEllipticField
+theorem responseJObservableSet_le_descendantMean_cube_of_locallyEllipticField
     {d : ℕ} [NeZero d] {a : RegCoeffField d}
     (ha : AELocallyUniformlyEllipticField a) (Q : TriadicCube d) {k : ℤ}
     (hk : k ≤ Q.scale) (p q : Vec d) :
@@ -447,7 +448,7 @@ theorem restrictionResponseJObservableCubeSet_le_descendantsAverage_cubeSet_of_a
 /-- Pointwise block coarse-matrix subadditivity on an arbitrary triadic cube
 for a locally a.e.-elliptic coefficient field, with the a.e. representative
 handled by the Chapter 2 coefficient family. -/
-theorem coarseBlockMatrix_le_descendantsAverageBlockMat_cubeSet_of_aelocallyUniformlyEllipticField
+theorem coarseBlockMatrix_le_descendantAverage
     {d : ℕ} [NeZero d] {a : RegCoeffField d}
     (ha : AELocallyUniformlyEllipticField a) (Q : TriadicCube d) {k : ℤ}
     (hk : k ≤ Q.scale) :
@@ -476,7 +477,7 @@ theorem coarseBlockMatrix_le_descendantsAverageBlockMat_cubeSet_of_aelocallyUnif
       coarseBlockMatrix (cubeSet Q) a.toFun =
         Ch02.coarseBlockMatrix (Ch02.cubeDomain Q) (F.coeffOn Q) := by
     simpa [F] using
-      RestrictionLawCarrier.coarseBlockMatrix_cubeSet_eq_ch02_coarseBlockMatrix_of_aelocallyUniformlyEllipticField
+      RestrictionLawCarrier.coarseBlockMatrix_cubeSet_eq_chapterCoarse
         ha Q
   have hTerm :
       (fun R : TriadicCube d =>
@@ -484,7 +485,7 @@ theorem coarseBlockMatrix_le_descendantsAverageBlockMat_cubeSet_of_aelocallyUnif
         fun R : TriadicCube d => coarseBlockMatrix (cubeSet R) a.toFun := by
     funext R
     simpa [F] using
-      (RestrictionLawCarrier.coarseBlockMatrix_cubeSet_eq_ch02_coarseBlockMatrix_of_aelocallyUniformlyEllipticField
+      (RestrictionLawCarrier.coarseBlockMatrix_cubeSet_eq_chapterCoarse
         ha R).symm
   have hAvg :
       Pcell.weightedBlockAverage
@@ -517,7 +518,7 @@ theorem coarseBlockMatrix_le_descendantsAverageBlockMat_of_aelocallyUniformlyEll
       (descendantsAverageBlockMat (originCube d m) (Int.toNat (m - n))
         (fun R => coarseBlockMatrix (cubeSet R) a.toFun)) := by
   simpa using!
-    coarseBlockMatrix_le_descendantsAverageBlockMat_cubeSet_of_aelocallyUniformlyEllipticField
+    coarseBlockMatrix_le_descendantAverage
       ha (originCube d m) hnm
 
 

@@ -239,7 +239,8 @@ private theorem lowerRight_ofFullBlockMat (M : FullBlockMat d) :
 /-- **The positive semidefinite link.**  The canonical metric is positive semidefinite for
 every doubled block, with no symmetry and no positivity hypothesis: the junk values of
 `matSqrt` and of `Matrix.inv` are themselves positive semidefinite. -/
-theorem explicitCanonicalMetric_posSemidef (F : BlockMat d) : (explicitCanonicalMetric F).PosSemidef := by
+theorem explicitCanonicalMetric_posSemidef (F : BlockMat d) : (explicitCanonicalMetric
+  F).PosSemidef := by
   have hM :=
     posSemidef_conj_same
       (matSqrt_posSemidef
@@ -279,8 +280,10 @@ either the canonical metric `m(F)` is positive definite, or the rounded grid `�
 from it is singular. -/
 theorem explicitCanonicalMetric_posDef_or_det_roundedGrid_eq_zero [NeZero d] (jStar : ℕ)
     (F : BlockMat d) :
-    (explicitCanonicalMetric F).PosDef ∨ (explicitRoundedGrid jStar (explicitCanonicalMetric F)).det = 0 :=
-  (explicitCanonicalMetric_posDef_or_inv_eq_zero F).imp id (det_roundedGrid_eq_zero_of_inv_eq_zero jStar)
+    (explicitCanonicalMetric F).PosDef ∨ (explicitRoundedGrid jStar (explicitCanonicalMetric
+      F)).det = 0 :=
+  (explicitCanonicalMetric_posDef_or_inv_eq_zero F).imp id
+    (det_roundedGrid_eq_zero_of_inv_eq_zero jStar)
 
 /-- O4 at the rounded adapted means used by scale selection. -/
 theorem explicitCanonicalMetric_adaptedMean_posDef (d : ℕ) (hd : 2 ≤ d)
@@ -300,7 +303,8 @@ theorem explicitCanonicalMetric_adaptedMean_posDef (d : ℕ) (hd : 2 ≤ d)
       jStar hjStar m hm j
   have hblock : Book.Ch02.BlockPosDef (adaptedMean P (explicitRoundedGrid jStar m) j) := by
     have hconverted :=
-      blockPosDef_of_full_posDef (d := d) (M := toFullBlockMat (adaptedMean P (explicitRoundedGrid jStar m) j))
+      blockPosDef_of_full_posDef (d := d) (M := toFullBlockMat (adaptedMean P
+        (explicitRoundedGrid jStar m) j))
         hfull
     simpa using hconverted
   exact explicitCanonicalMetric_posDef hsymm hblock

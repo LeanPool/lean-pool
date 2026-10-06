@@ -45,7 +45,8 @@ theorem jointTargetHarmonicGradient_eq_restricted_outer
         LocalGradientL2 d q) =
       (finiteCubeSolutionRestriction a
         (show (q : ℤ) ≤ (m : ℤ) by exact_mod_cast hqm)
-        (finiteAffineCorrectionJointLocalCubeSolution a hCauchy e m)).toH1.gradToHilbertVectorL2 := by
+        (finiteAffineCorrectionJointLocalCubeSolution a hCauchy e m)).toH1.gradToHilbertVectorL2
+          := by
   have hq := jointTargetHarmonicGradient_field_eq a hCauchy q e
   have hm := jointTargetHarmonicGradient_field_eq a hCauchy m e
   have hJq : ((jointTargetHarmonicGradientLinearMap a hCauchy q) e :
@@ -63,15 +64,18 @@ theorem jointTargetHarmonicGradient_eq_restricted_outer
         (show (q : ℤ) ≤ (m : ℤ) by exact_mod_cast hqm)
         (finiteAffineCorrectionJointLocalCubeSolution a hCauchy e m)).toH1.gradToHilbertVectorL2 =
       localGradientRestrict hqm
-        (finiteAffineCorrectionJointLocalCubeSolution a hCauchy e m).toH1.gradToHilbertVectorL2 := by
+        (finiteAffineCorrectionJointLocalCubeSolution a hCauchy e m).toH1.gradToHilbertVectorL2
+          := by
     apply MeasureTheory.Lp.ext
     filter_upwards
         [(finiteCubeSolutionRestriction a
           (show (q : ℤ) ≤ (m : ℤ) by exact_mod_cast hqm)
-          (finiteAffineCorrectionJointLocalCubeSolution a hCauchy e m)).toH1.coeFn_gradToHilbertVectorL2,
+          (finiteAffineCorrectionJointLocalCubeSolution a hCauchy e
+            m)).toH1.coeFn_gradToHilbertVectorL2,
         localGradientRestrict_coeFn_ae hqm
           (finiteAffineCorrectionJointLocalCubeSolution a hCauchy e m).toH1.gradToHilbertVectorL2,
-        (finiteAffineCorrectionJointLocalCubeSolution a hCauchy e m).toH1.coeFn_gradToHilbertVectorL2.filter_mono
+        (finiteAffineCorrectionJointLocalCubeSolution a hCauchy e
+          m).toH1.coeFn_gradToHilbertVectorL2.filter_mono
           (ae_mono (Measure.restrict_mono_set volume (localGradientCube_mono hqm)))]
       with x hleft hright houter
     rw [hleft, finiteCubeSolutionRestriction_grad]

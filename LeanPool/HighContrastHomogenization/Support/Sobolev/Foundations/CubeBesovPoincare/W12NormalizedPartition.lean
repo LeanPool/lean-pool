@@ -98,7 +98,7 @@ theorem openCubeSet_normalizedW1pSeminorm_two_eq_cubeLpNorm_euclideanGrad
 measure-theoretic ingredient needed to aggregate the restricted open-cube
 Sobolev seminorms. -/
 theorem descendantsAverage_cubeLpNorm_euclideanGrad_two_sq_eq
-    {d : ℕ} [NeZero d] (Q : TriadicCube d)
+    {d : ℕ} (Q : TriadicCube d)
     (u : W1pFunction (openCubeSet Q) (2 : ℝ≥0∞)) (j : ℕ) :
     descendantsAverage Q j
       (fun R => cubeLpNorm R (2 : ℝ≥0∞)

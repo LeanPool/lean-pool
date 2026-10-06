@@ -489,6 +489,79 @@ private theorem exists_sigmaTailScaleConstant
             simp [Ctail]
             ring
 
+private theorem quarterTailBoundAtLargerConstant
+    {d : ℕ} (params : QuantitativeCoarseGrainedEllipticityParams d)
+    {W sigma Cstep Ctail C : ℝ} (hW_nonneg : 0 ≤ W)
+    (hCtail_le_C : Ctail ≤ C) (htail_base :
+      Cstep * (params.xi : ℝ) * ((sigma / 4)⁻¹ ^ (4 : ℕ)) *
+            |Real.log (sigma / 4)| *
+            Real.log (2 + (sigma / 4)⁻¹ ^ (4 : ℕ) *
+              (params.xi : ℝ) * W) ≤
+          Ctail * (params.xi : ℝ) * (sigma⁻¹ ^ (4 : ℕ)) *
+            |Real.log sigma| *
+            Real.log (2 + sigma⁻¹ ^ (4 : ℕ) * (params.xi : ℝ) * W)) :
+      Cstep * (params.xi : ℝ) * ((sigma / 4)⁻¹ ^ (4 : ℕ)) *
+            |Real.log (sigma / 4)| *
+            Real.log (2 + (sigma / 4)⁻¹ ^ (4 : ℕ) *
+              (params.xi : ℝ) * W) ≤
+          C * (params.xi : ℝ) * (sigma⁻¹ ^ (4 : ℕ)) *
+            |Real.log sigma| *
+            Real.log (2 + sigma⁻¹ ^ (4 : ℕ) * (params.xi : ℝ) * W) := by
+  have htail_factor_nonneg :
+      0 ≤ (params.xi : ℝ) * (sigma⁻¹ ^ (4 : ℕ)) *
+        |Real.log sigma| *
+        Real.log (2 + sigma⁻¹ ^ (4 : ℕ) * (params.xi : ℝ) * W) := by
+    have hlog_arg_ge_one :
+        1 ≤ 2 + sigma⁻¹ ^ (4 : ℕ) * (params.xi : ℝ) * W := by
+      have hprod :
+          0 ≤ sigma⁻¹ ^ (4 : ℕ) * (params.xi : ℝ) * W := by
+        positivity
+      calc
+        (1 : ℝ) ≤ 2 := by norm_num
+        _ ≤ 2 + sigma⁻¹ ^ (4 : ℕ) * (params.xi : ℝ) * W :=
+          le_add_of_nonneg_right hprod
+    have hlog_nonneg :
+        0 ≤ Real.log (2 + sigma⁻¹ ^ (4 : ℕ) *
+            (params.xi : ℝ) * W) :=
+      Real.log_nonneg hlog_arg_ge_one
+    positivity
+  have htail_C :
+      Ctail * ((params.xi : ℝ) * (sigma⁻¹ ^ (4 : ℕ)) *
+          |Real.log sigma| *
+          Real.log (2 + sigma⁻¹ ^ (4 : ℕ) * (params.xi : ℝ) * W)) ≤
+        C * ((params.xi : ℝ) * (sigma⁻¹ ^ (4 : ℕ)) *
+          |Real.log sigma| *
+          Real.log (2 + sigma⁻¹ ^ (4 : ℕ) * (params.xi : ℝ) * W)) :=
+    mul_le_mul_of_nonneg_right hCtail_le_C htail_factor_nonneg
+  have htail_upgraded :
+      Cstep * (params.xi : ℝ) * ((sigma / 4)⁻¹ ^ (4 : ℕ)) *
+          |Real.log (sigma / 4)| *
+          Real.log (2 + (sigma / 4)⁻¹ ^ (4 : ℕ) *
+            (params.xi : ℝ) * W) ≤
+        C * (params.xi : ℝ) * (sigma⁻¹ ^ (4 : ℕ)) *
+          |Real.log sigma| *
+          Real.log (2 + sigma⁻¹ ^ (4 : ℕ) * (params.xi : ℝ) * W) := by
+    calc
+      Cstep * (params.xi : ℝ) * ((sigma / 4)⁻¹ ^ (4 : ℕ)) *
+          |Real.log (sigma / 4)| *
+          Real.log (2 + (sigma / 4)⁻¹ ^ (4 : ℕ) *
+            (params.xi : ℝ) * W)
+          ≤ Ctail * (params.xi : ℝ) * (sigma⁻¹ ^ (4 : ℕ)) *
+            |Real.log sigma| *
+            Real.log (2 + sigma⁻¹ ^ (4 : ℕ) * (params.xi : ℝ) * W) :=
+            htail_base
+      _ = Ctail * ((params.xi : ℝ) * (sigma⁻¹ ^ (4 : ℕ)) *
+            |Real.log sigma| *
+            Real.log (2 + sigma⁻¹ ^ (4 : ℕ) * (params.xi : ℝ) * W)) := by ring
+      _ ≤ C * ((params.xi : ℝ) * (sigma⁻¹ ^ (4 : ℕ)) *
+            |Real.log sigma| *
+            Real.log (2 + sigma⁻¹ ^ (4 : ℕ) * (params.xi : ℝ) * W)) :=
+            htail_C
+      _ = C * (params.xi : ℝ) * (sigma⁻¹ ^ (4 : ℕ)) *
+            |Real.log sigma| *
+            Real.log (2 + sigma⁻¹ ^ (4 : ℕ) * (params.xi : ℝ) * W) := by ring
+  exact htail_upgraded
+
 /-- Proposition `p.annealed.convergence.homogenization.scale`.
 
 The constant is chosen from the parameter record before the law and the target
@@ -608,61 +681,9 @@ theorem annealedPerturbativeEntry_homogenizationScale
           Real.log (2 + (sigma / 4)⁻¹ ^ (4 : ℕ) *
             (params.xi : ℝ) * W) ≤
         (Ntail : ℝ) := by
-    have htail_base :=
-      htail (T := W) (sigma := sigma) hW_nonneg hsigma_pos hsigma_le
-    have htail_factor_nonneg :
-        0 ≤ (params.xi : ℝ) * (sigma⁻¹ ^ (4 : ℕ)) *
-          |Real.log sigma| *
-          Real.log (2 + sigma⁻¹ ^ (4 : ℕ) * (params.xi : ℝ) * W) := by
-      have hlog_arg_ge_one :
-          1 ≤ 2 + sigma⁻¹ ^ (4 : ℕ) * (params.xi : ℝ) * W := by
-        have hprod :
-            0 ≤ sigma⁻¹ ^ (4 : ℕ) * (params.xi : ℝ) * W := by
-          positivity
-        calc
-          (1 : ℝ) ≤ 2 := by norm_num
-          _ ≤ 2 + sigma⁻¹ ^ (4 : ℕ) * (params.xi : ℝ) * W :=
-            le_add_of_nonneg_right hprod
-      have hlog_nonneg :
-          0 ≤ Real.log (2 + sigma⁻¹ ^ (4 : ℕ) *
-              (params.xi : ℝ) * W) :=
-        Real.log_nonneg hlog_arg_ge_one
-      positivity
-    have htail_C :
-        Ctail * ((params.xi : ℝ) * (sigma⁻¹ ^ (4 : ℕ)) *
-            |Real.log sigma| *
-            Real.log (2 + sigma⁻¹ ^ (4 : ℕ) * (params.xi : ℝ) * W)) ≤
-          C * ((params.xi : ℝ) * (sigma⁻¹ ^ (4 : ℕ)) *
-            |Real.log sigma| *
-            Real.log (2 + sigma⁻¹ ^ (4 : ℕ) * (params.xi : ℝ) * W)) :=
-      mul_le_mul_of_nonneg_right hCtail_le_C htail_factor_nonneg
-    have htail_upgraded :
-        Cstep * (params.xi : ℝ) * ((sigma / 4)⁻¹ ^ (4 : ℕ)) *
-            |Real.log (sigma / 4)| *
-            Real.log (2 + (sigma / 4)⁻¹ ^ (4 : ℕ) *
-              (params.xi : ℝ) * W) ≤
-          C * (params.xi : ℝ) * (sigma⁻¹ ^ (4 : ℕ)) *
-            |Real.log sigma| *
-            Real.log (2 + sigma⁻¹ ^ (4 : ℕ) * (params.xi : ℝ) * W) := by
-      calc
-        Cstep * (params.xi : ℝ) * ((sigma / 4)⁻¹ ^ (4 : ℕ)) *
-            |Real.log (sigma / 4)| *
-            Real.log (2 + (sigma / 4)⁻¹ ^ (4 : ℕ) *
-              (params.xi : ℝ) * W)
-            ≤ Ctail * (params.xi : ℝ) * (sigma⁻¹ ^ (4 : ℕ)) *
-              |Real.log sigma| *
-              Real.log (2 + sigma⁻¹ ^ (4 : ℕ) * (params.xi : ℝ) * W) :=
-              htail_base
-        _ = Ctail * ((params.xi : ℝ) * (sigma⁻¹ ^ (4 : ℕ)) *
-              |Real.log sigma| *
-              Real.log (2 + sigma⁻¹ ^ (4 : ℕ) * (params.xi : ℝ) * W)) := by ring
-        _ ≤ C * ((params.xi : ℝ) * (sigma⁻¹ ^ (4 : ℕ)) *
-              |Real.log sigma| *
-              Real.log (2 + sigma⁻¹ ^ (4 : ℕ) * (params.xi : ℝ) * W)) :=
-              htail_C
-        _ = C * (params.xi : ℝ) * (sigma⁻¹ ^ (4 : ℕ)) *
-              |Real.log sigma| *
-              Real.log (2 + sigma⁻¹ ^ (4 : ℕ) * (params.xi : ℝ) * W) := by ring
+    have htail_upgraded :=
+      quarterTailBoundAtLargerConstant params hW_nonneg hCtail_le_C
+        (htail (T := W) (sigma := sigma) hW_nonneg hsigma_pos hsigma_le)
     have hceil_tail :
         C * (params.xi : ℝ) * (sigma⁻¹ ^ (4 : ℕ)) *
             |Real.log sigma| *

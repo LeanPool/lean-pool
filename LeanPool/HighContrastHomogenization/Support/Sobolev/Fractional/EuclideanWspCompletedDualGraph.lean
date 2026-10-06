@@ -80,6 +80,8 @@ noncomputable def cubeEuclideanWspGraphFieldScale {d : ℕ} (Q : TriadicCube d)
 
 namespace CubeEuclideanWspSmoothTest
 
+/-- The normalized Hilbert-vector Lᵖ field component of the graph associated with a smooth
+fractional Sobolev test. -/
 @[expose]
 public noncomputable def graphFieldComponent {d : ℕ} {Q : TriadicCube d}
     {s : FractionalOrder} {p : FiniteLpExponent}
@@ -88,6 +90,8 @@ public noncomputable def graphFieldComponent {d : ℕ} {Q : TriadicCube d}
   h.toCubeEuclideanWspField.euclideanMemLp.toLp
     (fun x => HilbertVec.ofVec (h.toField x))
 
+/-- The Lᵖ fractional difference kernel component of the graph associated with a smooth Sobolev
+test. -/
 @[expose]
 public noncomputable def graphKernelComponent {d : ℕ} {Q : TriadicCube d}
     {s : FractionalOrder} {p : FiniteLpExponent}

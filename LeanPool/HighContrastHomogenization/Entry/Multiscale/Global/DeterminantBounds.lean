@@ -48,7 +48,8 @@ open scoped MatrixOrder
 
 /-- Local copy of `Analysis.hermitian_smul` (private there): scalar multiples of a Hermitian
 real matrix are Hermitian. -/
-private theorem rc_hermitian_smul {ι : Type*} [Fintype ι] {M : Matrix ι ι ℝ} (hM : M.IsHermitian) (c : ℝ) :
+private theorem rc_hermitian_smul {ι : Type*} [Fintype ι] {M : Matrix ι ι ℝ} (hM :
+  M.IsHermitian) (c : ℝ) :
     (c • M).IsHermitian := by
   change (c • M)ᴴ = c • M
   rw [Matrix.conjTranspose_smul, star_trivial, hM.eq]
@@ -276,7 +277,8 @@ private theorem rc_corrected_pos {d : ℕ} {E : BlockMat d} (hs : IsSymmetricBlo
 `Recurrence.one_le_normalize` / `det_normalized_eq_div` /
 `Recurrence.trace_sub_one_le_det_sub_one` toolkit
 already in this namespace (`HCPoly/Entry/Multiscale/DriftAdvance.lean`). -/
-private theorem det_le_det_of_posDef_of_le {ι : Type*} [Fintype ι] [DecidableEq ι] {F G : Matrix ι ι ℝ}
+private theorem det_le_det_of_posDef_of_le {ι : Type*} [Fintype ι] [DecidableEq ι] {F G : Matrix
+  ι ι ℝ}
     (hF : F.PosDef) (hG : G.PosDef) (hGF : G ≤ F) : G.det ≤ F.det := by
   let T := matSqrt G⁻¹
   have hT : T.PosDef := matSqrt_inv_posDef_full hG
@@ -307,7 +309,8 @@ theorem refBlock_le_six_aspect {d : ℕ} (E : BlockMat d) (hEs : IsSymmetricBloc
     BlockMatLoewnerLE E
       (blockScale (6 * aspectRatio E)
         (ofFullBlockMat
-          (toFullBlockMat (blockSwap d) * (toFullBlockMat E)⁻¹ * toFullBlockMat (blockSwap d))))  := by
+          (toFullBlockMat (blockSwap d) * (toFullBlockMat E)⁻¹ * toFullBlockMat (blockSwap d))))
+            := by
   rcases Nat.eq_zero_or_pos d with hd0 | hdpos
   · subst hd0
     intro X
@@ -348,8 +351,10 @@ theorem refBlock_le_six_aspect {d : ℕ} (E : BlockMat d) (hEs : IsSymmetricBloc
       (by linarith only [hπ0] : 4 * aspectRatio E ≤ 6 * aspectRatio E)
       (by simpa only [toFullBlockMat_ofFullBlockMat] using hspos.posSemidef.nonneg)
     apply (Annealed.fullBlock_le_iff hp.isHermitian (by
-      rw [HCPolySupport.HighContrast.toFullBlockMat_blockScale]; exact rc_hermitian_smul hspos.isHermitian _)).1
-    simpa only [HCPolySupport.HighContrast.toFullBlockMat_blockScale, toFullBlockMat_ofFullBlockMat] using hfull.trans hlast
+      rw [HCPolySupport.HighContrast.toFullBlockMat_blockScale]; exact rc_hermitian_smul
+        hspos.isHermitian _)).1
+    simpa only [HCPolySupport.HighContrast.toFullBlockMat_blockScale,
+      toFullBlockMat_ofFullBlockMat] using hfull.trans hlast
 
 /-- `p.global.selection` upper bound: `det 𝐀 ≤ 2^{2d} det 𝐄 ≤ (24Π)^d` from `𝐀 ≤ 2𝐄`, `𝐄 ≤ 6Π
 𝐑𝐄⁻¹𝐑` and
@@ -383,7 +388,8 @@ theorem blockLogDet_le_of_initial_sandwich {d : ℕ} (E A : BlockMat d) (hEs : I
         (ofFullBlockMat (toFullBlockMat (blockSwap d) * (toFullBlockMat E)⁻¹ *
           toFullBlockMat (blockSwap d))) := by
       have h := (Annealed.fullBlock_le_iff hEfull.isHermitian (by
-        rw [HCPolySupport.HighContrast.toFullBlockMat_blockScale]; exact rc_hermitian_smul hR'pos.isHermitian _)).2 hsix
+        rw [HCPolySupport.HighContrast.toFullBlockMat_blockScale]; exact rc_hermitian_smul
+          hR'pos.isHermitian _)).2 hsix
       rwa [HCPolySupport.HighContrast.toFullBlockMat_blockScale] at h
     have hd := det_le_det_of_posDef_of_le (hR'pos.smul h6pos) hEfull hsixFull
     rw [Matrix.det_smul, Analysis.det_swapConj] at hd

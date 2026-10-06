@@ -174,59 +174,23 @@ private theorem ofReal_abs_volumeAverage_le_sqrt_mul_negSobolevNorm
   rw [havg, abs_mul, abs_of_pos hr, ENNReal.ofReal_mul hr.le]
   gcongr
 
-theorem cubeEuclideanNegativeWspSmoothDualENorm_le_negSobolevNorm
-    {d : ℕ} [NeZero d] (Q : TriadicCube d)
-    {s : ℝ} (hs : 0 < s) (hsHalf : s < 1 / 2)
-    (F : CubeEuclideanLpField Q FiniteLpExponent.two) :
-    cubeEuclideanNegativeWspSmoothDualENorm Q
-        (⟨s, hs, hsHalf.trans (by norm_num)⟩ : FractionalOrder)
-        FiniteLpExponent.two F ≤
-      negSobolevNorm (openCubeSet Q) s F.toField := by
+private theorem compact_test_norm_le_perturbed_unit
+    {d : ℕ} [NeZero d] (Q : TriadicCube d) {s : ℝ}
+    (hs : 0 < s) (hsHalf : s < 1 / 2)
+    (h : CubeEuclideanWspSmoothTest Q
+      (⟨s, hs, hsHalf.trans (by norm_num)⟩ : FractionalOrder)
+      FiniteLpExponent.two.conjugate)
+    (hunit : cubeEuclideanWspFullENorm Q
+      (⟨s, hs, hsHalf.trans (by norm_num)⟩ : FractionalOrder)
+      FiniteLpExponent.two.conjugate h.toField ≤ 1)
+    {delta : ℝ} (hdelta : 0 < delta) (psi : Vec d → Vec d)
+    (hpsi : IsLocalVecTest (openCubeSet Q) psi)
+    (herr : hsNormSq (openCubeSet Q) s (fun x => psi x - h.toField x) <
+      (ENNReal.ofReal delta) ^ (2 : ℕ)) :
+    hsNormSq (openCubeSet Q) s psi ≤ ENNReal.ofReal ((1 + delta) ^ 2) := by
   let sF : FractionalOrder := ⟨s, hs, hsHalf.trans (by norm_num)⟩
-  let N : ℝ≥0∞ := negSobolevNorm (openCubeSet Q) s F.toField
-  change cubeEuclideanNegativeWspSmoothDualENorm Q sF
-      FiniteLpExponent.two F ≤ N
-  unfold cubeEuclideanNegativeWspSmoothDualENorm
-  apply iSup_le
-  rintro ⟨h, hunit⟩
-  change ENNReal.ofReal |cubeEuclideanNormalizedSmoothPairing F h| ≤ N
-  by_cases hNtop : N = ⊤
-  · rw [hNtop]
-    exact le_top
-  apply (ENNReal.toReal_le_toReal ENNReal.ofReal_ne_top hNtop).mp
-  rw [ENNReal.toReal_ofReal (abs_nonneg _)]
-  apply le_of_forall_pos_le_add
-  intro epsilon hepsilon
-  let A : ℝ := (eLpNorm (fun x => HilbertVec.ofVec (F.toField x)) 2
-    (normalizedCubeMeasure Q)).toReal
-  let delta : ℝ := epsilon / (A + N.toReal + 1)
-  have hA : 0 ≤ A := ENNReal.toReal_nonneg
-  have hN : 0 ≤ N.toReal := ENNReal.toReal_nonneg
-  have hden : 0 < A + N.toReal + 1 := by positivity
-  have hdelta : 0 < delta := div_pos hepsilon hden
-  have honeDelta : 0 ≤ 1 + delta := by linarith only [hdelta]
   let deltaE : ℝ≥0∞ := ENNReal.ofReal delta
-  let W : ℝ≥0∞ := volume (openCubeSet Q) ^ (-(2 * s) / (d : ℝ))
-  have hvolEq : volume (openCubeSet Q) = ENNReal.ofReal (cubeVolume Q) := by
-    exact (ENNReal.toReal_eq_toReal_iff'
-      (volume_openCubeSet_lt_top Q).ne ENNReal.ofReal_ne_top).1 (by
-        rw [volume_openCubeSet_toReal,
-          ENNReal.toReal_ofReal (cubeVolume_nonneg Q)])
-  have hvolPos : 0 < volume (openCubeSet Q) := by
-    rw [hvolEq]
-    exact ENNReal.ofReal_pos.mpr (cubeVolume_pos Q)
-  have hWpos : 0 < W := by
-    exact ENNReal.rpow_pos hvolPos (volume_openCubeSet_lt_top Q).ne
-  have hWtop : W ≠ ⊤ := ENNReal.rpow_ne_top_of_ne_zero
-    hvolPos.ne' (volume_openCubeSet_lt_top Q).ne
-  have hdeltaE : 0 < deltaE := ENNReal.ofReal_pos.mpr hdelta
-  let q : ℝ≥0∞ := min (deltaE ^ (2 : ℕ)) (W * deltaE ^ (2 : ℕ))
-  have hq : 0 < q := by
-    exact lt_min (ENNReal.pow_pos hdeltaE 2)
-      (ENNReal.mul_pos hWpos.ne' (ENNReal.pow_pos hdeltaE 2).ne')
-  obtain ⟨psi, hpsi, herr⟩ :=
-    exists_localVecTest_hsNormSq_sub_lt_smooth_of_lt_half Q hs hsHalf
-      h.toField h.contDiff (epsilon := q) hq
+  have honeDelta : 0 ≤ 1 + delta := by linarith only [hdelta]
   let psiS : CubeEuclideanWspSmoothTest Q sF
       FiniteLpExponent.two.conjugate :=
     { toField := psi
@@ -261,7 +225,7 @@ theorem cubeEuclideanNegativeWspSmoothDualENorm_le_negSobolevNorm
           (fun x => psi x - h.toField x)) ^
           (2 : ℕ) < deltaE ^ (2 : ℕ) := by
     rw [herrBridge]
-    exact herr.trans_le (min_le_left _ _)
+    exact herr
   have herrFull :
       cubeEuclideanWspFullENorm Q sF FiniteLpExponent.two
           (fun x => psi x - h.toField x) <
@@ -333,6 +297,69 @@ theorem cubeEuclideanNegativeWspSmoothDualENorm_le_negSobolevNorm
           simpa only [ENNReal.ofReal_one] using
             (ENNReal.ofReal_add (by norm_num : (0 : ℝ) ≤ 1) hdelta.le).symm]
         rw [ENNReal.ofReal_pow honeDelta]
+  exact hpsiNorm
+
+theorem cubeEuclideanNegativeWspSmoothDualENorm_le_negSobolevNorm
+    {d : ℕ} [NeZero d] (Q : TriadicCube d)
+    {s : ℝ} (hs : 0 < s) (hsHalf : s < 1 / 2)
+    (F : CubeEuclideanLpField Q FiniteLpExponent.two) :
+    cubeEuclideanNegativeWspSmoothDualENorm Q
+        (⟨s, hs, hsHalf.trans (by norm_num)⟩ : FractionalOrder)
+        FiniteLpExponent.two F ≤
+      negSobolevNorm (openCubeSet Q) s F.toField := by
+  let sF : FractionalOrder := ⟨s, hs, hsHalf.trans (by norm_num)⟩
+  let N : ℝ≥0∞ := negSobolevNorm (openCubeSet Q) s F.toField
+  change cubeEuclideanNegativeWspSmoothDualENorm Q sF
+      FiniteLpExponent.two F ≤ N
+  unfold cubeEuclideanNegativeWspSmoothDualENorm
+  apply iSup_le
+  rintro ⟨h, hunit⟩
+  change ENNReal.ofReal |cubeEuclideanNormalizedSmoothPairing F h| ≤ N
+  by_cases hNtop : N = ⊤
+  · rw [hNtop]
+    exact le_top
+  apply (ENNReal.toReal_le_toReal ENNReal.ofReal_ne_top hNtop).mp
+  rw [ENNReal.toReal_ofReal (abs_nonneg _)]
+  apply le_of_forall_pos_le_add
+  intro epsilon hepsilon
+  let A : ℝ := (eLpNorm (fun x => HilbertVec.ofVec (F.toField x)) 2
+    (normalizedCubeMeasure Q)).toReal
+  let delta : ℝ := epsilon / (A + N.toReal + 1)
+  have hA : 0 ≤ A := ENNReal.toReal_nonneg
+  have hN : 0 ≤ N.toReal := ENNReal.toReal_nonneg
+  have hden : 0 < A + N.toReal + 1 := by positivity
+  have hdelta : 0 < delta := div_pos hepsilon hden
+  have honeDelta : 0 ≤ 1 + delta := by linarith only [hdelta]
+  let deltaE : ℝ≥0∞ := ENNReal.ofReal delta
+  let W : ℝ≥0∞ := volume (openCubeSet Q) ^ (-(2 * s) / (d : ℝ))
+  have hvolEq : volume (openCubeSet Q) = ENNReal.ofReal (cubeVolume Q) := by
+    exact (ENNReal.toReal_eq_toReal_iff'
+      (volume_openCubeSet_lt_top Q).ne ENNReal.ofReal_ne_top).1 (by
+        rw [volume_openCubeSet_toReal,
+          ENNReal.toReal_ofReal (cubeVolume_nonneg Q)])
+  have hvolPos : 0 < volume (openCubeSet Q) := by
+    rw [hvolEq]
+    exact ENNReal.ofReal_pos.mpr (cubeVolume_pos Q)
+  have hWpos : 0 < W := by
+    exact ENNReal.rpow_pos hvolPos (volume_openCubeSet_lt_top Q).ne
+  have hWtop : W ≠ ⊤ := ENNReal.rpow_ne_top_of_ne_zero
+    hvolPos.ne' (volume_openCubeSet_lt_top Q).ne
+  have hdeltaE : 0 < deltaE := ENNReal.ofReal_pos.mpr hdelta
+  let q : ℝ≥0∞ := min (deltaE ^ (2 : ℕ)) (W * deltaE ^ (2 : ℕ))
+  have hq : 0 < q := by
+    exact lt_min (ENNReal.pow_pos hdeltaE 2)
+      (ENNReal.mul_pos hWpos.ne' (ENNReal.pow_pos hdeltaE 2).ne')
+  obtain ⟨psi, hpsi, herr⟩ :=
+    exists_localVecTest_hsNormSq_sub_lt_smooth_of_lt_half Q hs hsHalf
+      h.toField h.contDiff (epsilon := q) hq
+  let psiS : CubeEuclideanWspSmoothTest Q sF
+      FiniteLpExponent.two.conjugate :=
+    { toField := psi
+      contDiff := hpsi.contDiff }
+  have hpsiNorm : hsNormSq (openCubeSet Q) s psi ≤
+      ENNReal.ofReal ((1 + delta) ^ 2) :=
+    compact_test_norm_le_perturbed_unit Q hs hsHalf h hunit hdelta psi hpsi
+      (herr.trans_le (min_le_left _ _))
   have hpairPsi :=
     ofReal_abs_volumeAverage_le_sqrt_mul_negSobolevNorm F.toField psi
       (K := (1 + delta) ^ 2) (by positivity) hpsi hpsiNorm

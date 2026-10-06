@@ -283,7 +283,8 @@ theorem exists_entry_generation (d : ℕ) (hd : 2 ≤ d) (γ : ℝ) (hγ : γ �
     hgen' P E Ψ K Src hP hstat hunit hdag jStar hjStar h₂ R hR
   refine ⟨n₀, hn₀R, hn₀up, ?_⟩
   have hjn : (jStar : ℤ) ≤ n₀ := le_trans hR hn₀R
-  have hposdef := HCPolySupport.HighContrast.Annealed.adaptedMean_posDef d hd P γ E Ψ K Src hstat hdag
+  have hposdef := HCPolySupport.HighContrast.Annealed.adaptedMean_posDef d hd P γ E Ψ K Src
+    hstat hdag
     jStar hjStar (1 : Mat d) (HCPolySupport.HighContrast.Geometry.one_posDef d) n₀
   rw [HCPolySupport.HighContrast.Geometry.explicitRoundedGrid_one] at hposdef
   have hself : profile P γ (1 : Mat d) jStar n₀ n₀ = history P γ (1 : Mat d) jStar n₀ :=
@@ -346,7 +347,8 @@ theorem geometry_at_generation (d : ℕ) (hd : 2 ≤ d) :
   have : NeZero d := ⟨by omega⟩
   obtain ⟨h1, h2⟩ := hsrc P E Ψ K Src hP hstat hunit hdag jStar hjStar hCsrcle n₀ hn₀
   refine ⟨h1, h2, ?_⟩
-  have hposdef := HCPolySupport.HighContrast.Annealed.adaptedMean_posDef d hd P γ E Ψ K Src hstat hdag jStar
+  have hposdef := HCPolySupport.HighContrast.Annealed.adaptedMean_posDef d hd P γ E Ψ K Src
+    hstat hdag jStar
       hjStar (1 : Mat d) (HCPolySupport.HighContrast.Geometry.one_posDef d) n₀
   rw [HCPolySupport.HighContrast.Geometry.explicitRoundedGrid_one] at hposdef
   exact hrad E (adaptedMean P (1 : Mat d) n₀) hdag.refBlock_isSymm hdag.refBlock_posDef

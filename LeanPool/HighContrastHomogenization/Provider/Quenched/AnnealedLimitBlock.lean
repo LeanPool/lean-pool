@@ -24,19 +24,19 @@ public section
 # The annealed limit block of the Euclidean cubes
 
 The endgame display `e.algebraic.block.decay`
-compares the Euclidean annealed blocks `𝐀̄(□_m)` of `e.Theta.m`
+compares the Euclidean annealed blocks `𝐀_bar(□_m)` of `e.Theta.m`
 with a single deterministic limit block.  This file constructs that limit and
 proves the half of the comparison that the coarse ellipticity assumption
 `e.coarse.ellipticity` already carries.
 
 The annealed mean order of `p.fixed.geometry.parent.child.recurrence`, read on the identity
-grid, makes the doubled quadratic form of `𝐀̄(□_n)` nonincreasing along the
+grid, makes the doubled quadratic form of `𝐀_bar(□_n)` nonincreasing along the
 nonnegative generations; positivity of the annealed block bounds it below.  Each
 form therefore converges to its infimum, and the polarization identity of the
 doubled block turns the convergence of the three forms attached to a pair of
 doubled coordinates into convergence of the corresponding entry.  The entrywise
 limits assemble into a symmetric doubled block whose form is exactly the
-infimum of the forms, so it lies Loewner-below every `𝐀̄(□_m)` with `m ≥ 0`.
+infimum of the forms, so it lies Loewner-below every `𝐀_bar(□_m)` with `m ≥ 0`.
 
 The last section records the scalar dilation algebra of the doubled block that
 the two-sided comparison uses.
@@ -86,7 +86,7 @@ def annealedLimitEntry (P : Measure (CoeffSpace d)) (α β : BlockCoord d) : ℝ
       (⨅ n, annealedForm P (blockBasis α) n) -
       (⨅ n, annealedForm P (blockBasis β) n)) / 2
 
-/-- The annealed limit block `𝐀̄`: the doubled block assembled from the
+/-- The annealed limit block `𝐀_bar`: the doubled block assembled from the
 entrywise limits of the Euclidean annealed blocks. -/
 @[expose]
 def annealedLimitBlock (P : Measure (CoeffSpace d)) : BlockMat d :=

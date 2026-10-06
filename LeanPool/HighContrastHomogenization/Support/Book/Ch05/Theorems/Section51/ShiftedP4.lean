@@ -55,8 +55,8 @@ private theorem section53CoarseFluctuationBetaCoreParams_pos {d : ℕ}
 
 theorem section53CoarseFluctuationBetaParams_pos {d : ℕ}
     (params : QuantitativeCoarseGrainedEllipticityParams d) :
-    0 < section53CoarseFluctuationBetaParams params := by
-  unfold section53CoarseFluctuationBetaParams
+    0 < coarseFluctuationBeta params := by
+  unfold coarseFluctuationBeta
   nlinarith [section53CoarseFluctuationBetaCoreParams_pos params]
 
 private theorem section53CoarseFluctuationBetaCoreParams_le_sum_gap {d : ℕ}
@@ -68,29 +68,29 @@ private theorem section53CoarseFluctuationBetaCoreParams_le_sum_gap {d : ℕ}
 
 theorem twoBetaShiftedParams_sum_lt_one {d : ℕ}
     (params : QuantitativeCoarseGrainedEllipticityParams d) :
-    (params.sUpper + 2 * section53CoarseFluctuationBetaParams params) +
-        (params.sLower + 2 * section53CoarseFluctuationBetaParams params) < 1 := by
+    (params.sUpper + 2 * coarseFluctuationBeta params) +
+        (params.sLower + 2 * coarseFluctuationBeta params) < 1 := by
   have hcore_le := section53CoarseFluctuationBetaCoreParams_le_sum_gap params
   have hsum := params.sum_lt_one
-  unfold section53CoarseFluctuationBetaParams
+  unfold coarseFluctuationBeta
   nlinarith
 
 theorem twoBetaShiftedParams_sUpper_lt_one {d : ℕ}
     (params : QuantitativeCoarseGrainedEllipticityParams d) :
-    params.sUpper + 2 * section53CoarseFluctuationBetaParams params < 1 := by
+    params.sUpper + 2 * coarseFluctuationBeta params < 1 := by
   have hsum := twoBetaShiftedParams_sum_lt_one params
   have hlower_nonneg :
-      0 ≤ params.sLower + 2 * section53CoarseFluctuationBetaParams params := by
+      0 ≤ params.sLower + 2 * coarseFluctuationBeta params := by
     have hβ := (section53CoarseFluctuationBetaParams_pos params).le
     nlinarith [params.sLower_nonneg]
   nlinarith
 
 theorem twoBetaShiftedParams_sLower_lt_one {d : ℕ}
     (params : QuantitativeCoarseGrainedEllipticityParams d) :
-    params.sLower + 2 * section53CoarseFluctuationBetaParams params < 1 := by
+    params.sLower + 2 * coarseFluctuationBeta params < 1 := by
   have hsum := twoBetaShiftedParams_sum_lt_one params
   have hupper_nonneg :
-      0 ≤ params.sUpper + 2 * section53CoarseFluctuationBetaParams params := by
+      0 ≤ params.sUpper + 2 * coarseFluctuationBeta params := by
     have hβ := (section53CoarseFluctuationBetaParams_pos params).le
     nlinarith [params.sUpper_nonneg]
   nlinarith
@@ -100,8 +100,8 @@ theorem twoBetaShiftedParams_sLower_lt_one {d : ℕ}
 def twoBetaShiftedParams {d : ℕ}
     (params : QuantitativeCoarseGrainedEllipticityParams d) :
     QuantitativeCoarseGrainedEllipticityParams d where
-  sUpper := params.sUpper + 2 * section53CoarseFluctuationBetaParams params
-  sLower := params.sLower + 2 * section53CoarseFluctuationBetaParams params
+  sUpper := params.sUpper + 2 * coarseFluctuationBeta params
+  sLower := params.sLower + 2 * coarseFluctuationBeta params
   xi := params.xi
   two_le_dim := params.two_le_dim
   sUpper_nonneg := by

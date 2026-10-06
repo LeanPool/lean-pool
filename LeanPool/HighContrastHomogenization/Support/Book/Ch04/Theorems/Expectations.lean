@@ -48,7 +48,8 @@ theorem integral_vecDot_matVecMul_eq_entrywise_integral
     (hM : ∀ i j, Integrable (fun a => M a i j) P) (x y : Vec d) :
     ∫ a, vecDot x (matVecMul (M a) y) ∂P =
       vecDot x (matVecMul (fun i j => ∫ a, M a i j ∂P) y) := by
-  simp [vecDot, matVecMul]
+  change (∫ a, ∑ i, x i * (∑ j, M a i j * y j) ∂P) =
+    ∑ i, x i * (∑ j, (∫ a, M a i j ∂P) * y j)
   rw [MeasureTheory.integral_finsetSum Finset.univ]
   · congr 1
     ext i
@@ -68,7 +69,8 @@ private theorem integrable_blockMatEntry_of_integrable_coarseFullBlockMatrixAtCu
     (hInt : Integrable (coarseFullBlockMatrixAtCube Q) P) :
     ∀ α β,
       Integrable
-        (fun a : RegCoeffField d => blockMatEntry (coarseBlockMatrix (cubeSet Q) a.toFun) α β) P := by
+        (fun a : RegCoeffField d => blockMatEntry (coarseBlockMatrix (cubeSet Q) a.toFun) α β) P
+          := by
   intro α β
   have hα : Integrable (fun a : RegCoeffField d => coarseFullBlockMatrixAtCube Q a α) P :=
     MeasureTheory.Integrable.eval hInt α
@@ -103,7 +105,8 @@ theorem restrictionResponseJObservableCubeSet_ae_eq_quadratic_coarseBlockMatrix_
         (1 / 2 : ℝ) * vecDot q (matVecMul (coarseBlockMatrix (cubeSet Q) a.toFun).lowerRight q) -
           vecDot p q -
           vecDot q (matVecMul (coarseBlockMatrix (cubeSet Q) a.toFun).lowerLeft p) +
-          (1 / 2 : ℝ) * vecDot p (matVecMul (coarseBlockMatrix (cubeSet Q) a.toFun).upperLeft p)) := by
+          (1 / 2 : ℝ) * vecDot p (matVecMul (coarseBlockMatrix (cubeSet Q) a.toFun).upperLeft
+            p)) := by
   filter_upwards
     [hP.ResponseJ_cubeSet_eq_Mu_neg_left_sub_vecDot_ae Q p q,
       hP.ae_exists_coarseBlockMatrix_openCubeSet Q] with a hResponse hex
@@ -139,7 +142,8 @@ theorem restrictionResponseJObservableCubeSet_ae_eq_quadratic_coarseBlockMatrix_
             vecDot p (matVecMul (coarseBlockMatrix (cubeSet Q) a.toFun).upperLeft p) := by
         rw [coarseBlockMatrix_cubeSet_eq_openCubeSet_of_triadicCube Q a.toFun]
 
-private theorem integrable_responseJQuadratic_coarseBlockMatrix_of_integrable_coarseFullBlockMatrixAtCube
+private theorem
+  integrable_responseJQuadratic_coarseBlockMatrix_of_integrable_coarseFullBlockMatrixAtCube
     {d : ℕ} {P : RestrictionCoeffLaw d} [IsFiniteMeasure P] {Q : TriadicCube d} (p q : Vec d)
     (hBlock : Integrable (coarseFullBlockMatrixAtCube Q) P) :
     Integrable
@@ -147,7 +151,8 @@ private theorem integrable_responseJQuadratic_coarseBlockMatrix_of_integrable_co
         (1 / 2 : ℝ) * vecDot q (matVecMul (coarseBlockMatrix (cubeSet Q) a.toFun).lowerRight q) -
           vecDot p q -
           vecDot q (matVecMul (coarseBlockMatrix (cubeSet Q) a.toFun).lowerLeft p) +
-          (1 / 2 : ℝ) * vecDot p (matVecMul (coarseBlockMatrix (cubeSet Q) a.toFun).upperLeft p)) P := by
+          (1 / 2 : ℝ) * vecDot p (matVecMul (coarseBlockMatrix (cubeSet Q) a.toFun).upperLeft
+            p)) P := by
   let M : RegCoeffField d → BlockMat d := fun a => coarseBlockMatrix (cubeSet Q) a.toFun
   have hEntry := integrable_blockMatEntry_of_integrable_coarseFullBlockMatrixAtCube hBlock
   have hLR : ∀ i j, Integrable (fun a : RegCoeffField d => (M a).lowerRight i j) P := by
@@ -161,19 +166,22 @@ private theorem integrable_responseJQuadratic_coarseBlockMatrix_of_integrable_co
     simpa [M, blockMatEntry] using hEntry (Sum.inl i) (Sum.inl j)
   have hTermLR :
       Integrable (fun a : RegCoeffField d => vecDot q (matVecMul (M a).lowerRight q)) P := by
-    simp [vecDot, matVecMul]
+    change Integrable (fun a : RegCoeffField d =>
+      ∑ i, q i * (∑ j, (M a).lowerRight i j * q j)) P
     exact MeasureTheory.integrable_finsetSum Finset.univ fun i _ =>
       (MeasureTheory.integrable_finsetSum Finset.univ fun j _ =>
         (hLR i j).mul_const (q j)).const_mul (q i)
   have hTermLL :
       Integrable (fun a : RegCoeffField d => vecDot q (matVecMul (M a).lowerLeft p)) P := by
-    simp [vecDot, matVecMul]
+    change Integrable (fun a : RegCoeffField d =>
+      ∑ i, q i * (∑ j, (M a).lowerLeft i j * p j)) P
     exact MeasureTheory.integrable_finsetSum Finset.univ fun i _ =>
       (MeasureTheory.integrable_finsetSum Finset.univ fun j _ =>
         (hLL i j).mul_const (p j)).const_mul (q i)
   have hTermUL :
       Integrable (fun a : RegCoeffField d => vecDot p (matVecMul (M a).upperLeft p)) P := by
-    simp [vecDot, matVecMul]
+    change Integrable (fun a : RegCoeffField d =>
+      ∑ i, p i * (∑ j, (M a).upperLeft i j * p j)) P
     exact MeasureTheory.integrable_finsetSum Finset.univ fun i _ =>
       (MeasureTheory.integrable_finsetSum Finset.univ fun j _ =>
         (hUL i j).mul_const (p j)).const_mul (p i)
@@ -249,17 +257,20 @@ theorem integral_restrictionResponseJObservableCubeSet_eq_quadratic_annealedBloc
         let g : RegCoeffField d → ℝ := fun a => vecDot q (matVecMul (M a).lowerLeft p)
         let h : RegCoeffField d → ℝ := fun a => vecDot p (matVecMul (M a).upperLeft p)
         have hf : Integrable f P := by
-          simp [f, vecDot, matVecMul]
+          change Integrable (fun a : RegCoeffField d =>
+            ∑ i, q i * (∑ j, (M a).lowerRight i j * q j)) P
           exact MeasureTheory.integrable_finsetSum Finset.univ fun i _ =>
             (MeasureTheory.integrable_finsetSum Finset.univ fun j _ =>
               (hLR i j).mul_const (q j)).const_mul (q i)
         have hg : Integrable g P := by
-          simp [g, vecDot, matVecMul]
+          change Integrable (fun a : RegCoeffField d =>
+            ∑ i, q i * (∑ j, (M a).lowerLeft i j * p j)) P
           exact MeasureTheory.integrable_finsetSum Finset.univ fun i _ =>
             (MeasureTheory.integrable_finsetSum Finset.univ fun j _ =>
               (hLL i j).mul_const (p j)).const_mul (q i)
         have hh : Integrable h P := by
-          simp [h, vecDot, matVecMul]
+          change Integrable (fun a : RegCoeffField d =>
+            ∑ i, p i * (∑ j, (M a).upperLeft i j * p j)) P
           exact MeasureTheory.integrable_finsetSum Finset.univ fun i _ =>
             (MeasureTheory.integrable_finsetSum Finset.univ fun j _ =>
               (hUL i j).mul_const (p j)).const_mul (p i)
@@ -334,19 +345,22 @@ theorem integral_restrictionResponseJObservableCubeSet_eq_quadratic_annealedBloc
     simpa [M, blockMatEntry] using hEntry (Sum.inl i) (Sum.inl j)
   have hTermLR :
       Integrable (fun a : RegCoeffField d => vecDot q (matVecMul (M a).lowerRight q)) P := by
-    simp [vecDot, matVecMul]
+    change Integrable (fun a : RegCoeffField d =>
+      ∑ i, q i * (∑ j, (M a).lowerRight i j * q j)) P
     exact MeasureTheory.integrable_finsetSum Finset.univ fun i _ =>
       (MeasureTheory.integrable_finsetSum Finset.univ fun j _ =>
         (hLR i j).mul_const (q j)).const_mul (q i)
   have hTermLL :
       Integrable (fun a : RegCoeffField d => vecDot q (matVecMul (M a).lowerLeft p)) P := by
-    simp [vecDot, matVecMul]
+    change Integrable (fun a : RegCoeffField d =>
+      ∑ i, q i * (∑ j, (M a).lowerLeft i j * p j)) P
     exact MeasureTheory.integrable_finsetSum Finset.univ fun i _ =>
       (MeasureTheory.integrable_finsetSum Finset.univ fun j _ =>
         (hLL i j).mul_const (p j)).const_mul (q i)
   have hTermUL :
       Integrable (fun a : RegCoeffField d => vecDot p (matVecMul (M a).upperLeft p)) P := by
-    simp [vecDot, matVecMul]
+    change Integrable (fun a : RegCoeffField d =>
+      ∑ i, p i * (∑ j, (M a).upperLeft i j * p j)) P
     exact MeasureTheory.integrable_finsetSum Finset.univ fun i _ =>
       (MeasureTheory.integrable_finsetSum Finset.univ fun j _ =>
         (hUL i j).mul_const (p j)).const_mul (p i)
@@ -535,7 +549,7 @@ theorem memLp_restrictionCenteredResponseJObservableCubeSet
 
 /-- The integral of the centered response is the annealed response minus the
 deterministic centering scalar. -/
-theorem integral_restrictionCenteredResponseJObservableCubeSet_eq_expectedResponseJCubeSet_sub_half_dot
+theorem integral_centeredResponseJ_eq_expectedResponseJ_sub_halfDot
     {d : ℕ} {P : RestrictionCoeffLaw d} [IsProbabilityMeasure P]
     (Q : TriadicCube d) (p q p0 q0 : Vec d)
     (hJ : Integrable (restrictionResponseJObservableCubeSet Q p q) P) :
@@ -559,7 +573,7 @@ theorem integral_restrictionCenteredResponseJObservableCubeSet_eq_expectedRespon
 
 /-- Finite descendant response averages commute with expectation, assuming
 childwise integrability. -/
-theorem integral_descendantsAverage_restrictionResponseJObservableCubeSet_eq_expectedDescendantsAverageResponseJCubeSet
+theorem integral_descendantResponseJAverages_eq_expectedResponseJAverages
     {d : ℕ} {P : RestrictionCoeffLaw d}
     (Q : TriadicCube d) (j : ℕ) (p q : Vec d)
     (hJ : ∀ R, R ∈ descendantsAtDepth Q j →
@@ -642,7 +656,8 @@ theorem aestronglyMeasurable_descendantsAverage_restrictionResponseJObservableCu
     AEStronglyMeasurable
       (fun a : RegCoeffField d =>
         descendantsAverage Q j (fun R => restrictionResponseJObservableCubeSet R p q a)) P :=
-  (hP.aemeasurable_descendantsAverage_restrictionResponseJObservableCubeSet Q j p q).aestronglyMeasurable
+  (hP.aemeasurable_descendantsAverage_restrictionResponseJObservableCubeSet Q j p
+    q).aestronglyMeasurable
 
 end RestrictionLawCarrier
 

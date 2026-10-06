@@ -59,7 +59,8 @@ def swap {d : ℕ} (X : BlockState d) (i j : Fin d) : BlockState d :=
       calc
         signFlipVecContinuousLinearEquiv i
             (signFlipVecContinuousLinearEquiv i
-              (potential (signFlipVecContinuousLinearEquiv i (signFlipVecContinuousLinearEquiv i x))))
+              (potential (signFlipVecContinuousLinearEquiv i (signFlipVecContinuousLinearEquiv i
+                x))))
             = signFlipVecContinuousLinearEquiv i
                 (signFlipVecContinuousLinearEquiv i (potential x)) := by
                   rw [hxx]
@@ -205,7 +206,7 @@ private theorem measurePreserving_swapVecContinuousLinearEquiv {d : ℕ} (i j : 
     (MeasureTheory.volume_measurePreserving_piCongrLeft
       (fun _ : Fin d => ℝ) (Equiv.swap i j))
 
-private theorem measurePreserving_signFlipVecContinuousLinearEquiv_restrict_openCubeSet_originCube_coarseGraining
+private theorem signFlip_preserves_originCubeMeasure
     {d : ℕ} (i : Fin d) (n : ℤ) :
     MeasureTheory.MeasurePreserving (signFlipVecContinuousLinearEquiv i)
       (MeasureTheory.volume.restrict (openCubeSet (originCube d n)))
@@ -218,7 +219,7 @@ private theorem measurePreserving_signFlipVecContinuousLinearEquiv_restrict_open
     (measurePreserving_signFlipVecContinuousLinearEquiv i).restrict_preimage_emb
       (signFlipVecContinuousLinearEquiv i).toHomeomorph.measurableEmbedding U
 
-private theorem measurePreserving_swapVecContinuousLinearEquiv_restrict_openCubeSet_originCube_coarseGraining
+private theorem coordinateSwap_preserves_originCubeMeasure
     {d : ℕ} (i j : Fin d) (n : ℤ) :
     MeasureTheory.MeasurePreserving (swapVecContinuousLinearEquiv i j)
       (MeasureTheory.volume.restrict (openCubeSet (originCube d n)))
@@ -241,7 +242,7 @@ theorem isBlockMuAdmissible_signFlip_openCubeSet_originCube
   · convert
       ((signFlipVecContinuousLinearEquiv i).toContinuousLinearMap.comp_memLp'
         (hpotL2.comp_measurePreserving
-          (measurePreserving_signFlipVecContinuousLinearEquiv_restrict_openCubeSet_originCube_coarseGraining
+          (signFlip_preserves_originCubeMeasure
             i n))) using 1
     funext x
     simp [BlockState.signFlip, blockVecConj, signFlipVecContinuousLinearEquiv_apply, map_sub]
@@ -254,7 +255,7 @@ theorem isBlockMuAdmissible_signFlip_openCubeSet_originCube
   · convert
       ((signFlipVecContinuousLinearEquiv i).toContinuousLinearMap.comp_memLp'
         (hsolL2.comp_measurePreserving
-          (measurePreserving_signFlipVecContinuousLinearEquiv_restrict_openCubeSet_originCube_coarseGraining
+          (signFlip_preserves_originCubeMeasure
             i n))) using 1
     funext x
     simp [BlockState.signFlip, blockVecConj, signFlipVecContinuousLinearEquiv_apply, map_sub]
@@ -275,7 +276,7 @@ theorem isBlockMuAdmissible_swap_openCubeSet_originCube
   · convert
       ((swapVecContinuousLinearEquiv i j).toContinuousLinearMap.comp_memLp'
         (hpotL2.comp_measurePreserving
-          (measurePreserving_swapVecContinuousLinearEquiv_restrict_openCubeSet_originCube_coarseGraining i j n)))
+          (coordinateSwap_preserves_originCubeMeasure i j n)))
       using 1
     funext x
     simp [BlockState.swap, blockVecConj, swapVecContinuousLinearEquiv_apply, map_sub]
@@ -288,7 +289,7 @@ theorem isBlockMuAdmissible_swap_openCubeSet_originCube
   · convert
       ((swapVecContinuousLinearEquiv i j).toContinuousLinearMap.comp_memLp'
         (hsolL2.comp_measurePreserving
-          (measurePreserving_swapVecContinuousLinearEquiv_restrict_openCubeSet_originCube_coarseGraining i j n)))
+          (coordinateSwap_preserves_originCubeMeasure i j n)))
       using 1
     funext x
     simp [BlockState.swap, blockVecConj, swapVecContinuousLinearEquiv_apply, map_sub]

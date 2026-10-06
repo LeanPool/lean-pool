@@ -33,7 +33,7 @@ states under IsBlockMuAdmissible.
 
 /-- The half-pair witness has block energy equal to one quarter of the sum of
 the primal and adjoint scalar variation energies. -/
-theorem blockEnergyAverage_blockResponsePairHalfState_eq_quarter_scalarVariationEnergySum_of_isEllipticFieldOn
+theorem blockEnergyAverage_blockResponseHalfState_eq_quarter_scalarVariationEnergySum
     {d : ℕ} {U : Set (Vec d)} (a : CoeffField d) {lam Lam : ℝ}
     [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     (hU : MeasurableSet U)
@@ -45,7 +45,7 @@ theorem blockEnergyAverage_blockResponsePairHalfState_eq_quarter_scalarVariation
           volumeAverage U
             (scalarVariationEnergyIntegrand (HCPolySupport.adjointCoeffField a) v) := by
   have hsplit :=
-    volumeAverage_blockResponseIntegrand_pair_half_eq_scalarResponse_sum_of_isEllipticFieldOn_of_finiteMeasure
+    volumeAverage_blockResponseIntegrand_pair_half_eq_scalarResponse_sum
       (a := a) hU hEll (p := 0) (pStar := 0) (q := 0) (qStar := 0) u v
   have hleft :
       volumeAverage U
@@ -93,7 +93,8 @@ theorem blockEnergyAverage_blockResponsePairHalfState_eq_quarter_scalarVariation
             (scalarVariationEnergyIntegrand (HCPolySupport.adjointCoeffField a) v) := by
     have hfun :
         scalarResponseIntegrand U (HCPolySupport.adjointCoeffField a) 0 0 v =
-          (-(1 / 2 : ℝ)) • scalarVariationEnergyIntegrand (HCPolySupport.adjointCoeffField a) v := by
+          (-(1 / 2 : ℝ)) • scalarVariationEnergyIntegrand (HCPolySupport.adjointCoeffField a) v
+            := by
       funext x
       simp [scalarResponseIntegrand, scalarVariationEnergyIntegrand, smul_eq_mul,
         vecDot_zero_left]
@@ -101,7 +102,8 @@ theorem blockEnergyAverage_blockResponsePairHalfState_eq_quarter_scalarVariation
       volumeAverage U
           (scalarResponseIntegrand U (HCPolySupport.adjointCoeffField a) 0 0 v) =
         volumeAverage U
-          ((-(1 / 2 : ℝ)) • scalarVariationEnergyIntegrand (HCPolySupport.adjointCoeffField a) v) := by
+          ((-(1 / 2 : ℝ)) • scalarVariationEnergyIntegrand (HCPolySupport.adjointCoeffField a)
+            v) := by
             rw [hfun]
       _ = (-(1 / 2 : ℝ)) *
             volumeAverage U
@@ -218,7 +220,7 @@ theorem scalarFirstVariation_zero_right_of_ae_eq_blockResponsePairHalfState_of_i
               ring_nf
     rw [hInt, MeasureTheory.integral_neg, horth, neg_zero, mul_zero]
   have hsplit :=
-    volumeAverage_blockFirstVariationIntegrand_pair_half_eq_scalarFirstVariation_sum_of_isEllipticFieldOn
+    volumeAverage_blockFirstVariationIntegrand_pair_half_eq_scalarFirstVariation_sum
       (a := a) hU hEll (0 : Vec d) (0 : Vec d) (0 : Vec d) q u w v zeroAdj
   have hsplit' :
       volumeAverage U
@@ -232,7 +234,8 @@ theorem scalarFirstVariation_zero_right_of_ae_eq_blockResponsePairHalfState_of_i
     simpa [Xpair, T] using hsplit
   have hAdjZero :
       volumeAverage U
-        (scalarFirstVariationIntegrand U (HCPolySupport.adjointCoeffField a) 0 q v zeroAdj) = 0 := by
+        (scalarFirstVariationIntegrand U (HCPolySupport.adjointCoeffField a) 0 q v zeroAdj) = 0
+          := by
     have hfun :
         scalarFirstVariationIntegrand U (HCPolySupport.adjointCoeffField a) 0 q v zeroAdj =
           fun _ => 0 := by
@@ -250,7 +253,8 @@ at coarse data `(p,0)` yields the primal scalar Euler-Lagrange identity for
 `ResponseJ U (-p) 0 a`. The final energy statement removes this sign using the
 quadratic homogeneity of `ResponseJ`.
 -/
-theorem scalarFirstVariation_neg_left_zero_of_ae_eq_blockResponsePairHalfState_of_isBlockMuAdmissible
+theorem
+  scalarFirstVariation_neg_left_zero_of_ae_eq_blockResponsePairHalfState_of_isBlockMuAdmissible
     {d : ℕ} {U : Set (Vec d)} (a : CoeffField d) {lam Lam : ℝ}
     [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     (hU : MeasurableSet U)
@@ -384,7 +388,7 @@ theorem scalarFirstVariation_neg_left_zero_of_ae_eq_blockResponsePairHalfState_o
               ring_nf
     rw [hInt, MeasureTheory.integral_neg, horth, neg_zero, mul_zero]
   have hsplit :=
-    volumeAverage_blockFirstVariationIntegrand_pair_half_eq_scalarFirstVariation_sum_of_isEllipticFieldOn
+    volumeAverage_blockFirstVariationIntegrand_pair_half_eq_scalarFirstVariation_sum
       (a := a) hU hEll (0 : Vec d) p (0 : Vec d) (0 : Vec d) u w v zeroAdj
   have hsplit' :
       volumeAverage U
@@ -398,7 +402,8 @@ theorem scalarFirstVariation_neg_left_zero_of_ae_eq_blockResponsePairHalfState_o
     simpa [Xpair, T] using hsplit
   have hAdjZero :
       volumeAverage U
-        (scalarFirstVariationIntegrand U (HCPolySupport.adjointCoeffField a) p 0 v zeroAdj) = 0 := by
+        (scalarFirstVariationIntegrand U (HCPolySupport.adjointCoeffField a) p 0 v zeroAdj) = 0
+          := by
     have hfun :
         scalarFirstVariationIntegrand U (HCPolySupport.adjointCoeffField a) p 0 v zeroAdj =
           fun _ => 0 := by
@@ -416,7 +421,8 @@ The sign in the primal scalar first variation is dictated by the block
 convention: a recovered `\mu`-admissible state at coarse datum `(p,q)` yields
 the Euler-Lagrange identity for `ResponseJ U (-p) q a`.
 -/
-theorem scalarFirstVariation_neg_left_right_of_ae_eq_blockResponsePairHalfState_of_isBlockMuAdmissible
+theorem
+  scalarFirstVariation_neg_left_right_of_ae_eq_blockResponsePairHalfState_of_isBlockMuAdmissible
     {d : ℕ} {U : Set (Vec d)} (a : CoeffField d) {lam Lam : ℝ}
     [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     (hU : MeasurableSet U)
@@ -561,7 +567,7 @@ theorem scalarFirstVariation_neg_left_right_of_ae_eq_blockResponsePairHalfState_
               ring_nf
     rw [hInt, MeasureTheory.integral_neg, horth, neg_zero, mul_zero]
   have hsplit :=
-    volumeAverage_blockFirstVariationIntegrand_pair_half_eq_scalarFirstVariation_sum_of_isEllipticFieldOn
+    volumeAverage_blockFirstVariationIntegrand_pair_half_eq_scalarFirstVariation_sum
       (a := a) hU hEll (0 : Vec d) p (0 : Vec d) q u w v zeroAdj
   have hsplit' :
       volumeAverage U
@@ -575,7 +581,8 @@ theorem scalarFirstVariation_neg_left_right_of_ae_eq_blockResponsePairHalfState_
     simpa [Xpair, T] using hsplit
   have hAdjZero :
       volumeAverage U
-        (scalarFirstVariationIntegrand U (HCPolySupport.adjointCoeffField a) p q v zeroAdj) = 0 := by
+        (scalarFirstVariationIntegrand U (HCPolySupport.adjointCoeffField a) p q v zeroAdj) = 0
+          := by
     have hfun :
         scalarFirstVariationIntegrand U (HCPolySupport.adjointCoeffField a) p q v zeroAdj =
           fun _ => 0 := by

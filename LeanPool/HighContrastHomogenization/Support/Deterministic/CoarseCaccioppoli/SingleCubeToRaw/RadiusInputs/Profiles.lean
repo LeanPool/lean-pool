@@ -203,7 +203,7 @@ theorem abs_cubeAverage_vecDot_scalar_smul_le_boundaryRawEstimate_of_canonical_v
 package and raw coefficient bounds stated with the effective scalar-facing
 constant `(Fintype.card (Fin d) : ℝ) * C`. -/
 theorem
-    coarseCaccioppoli_boundary_noteRawEstimate_of_radiusEnergyBridgeCanonicalVectorAnalyticInputs_of_rawCoefficientBounds
+    coarseCaccioppoli_boundary_noteEstimate_of_rawCoefficientBounds
     {d : ℕ} (Q : TriadicCube d) (a : CoeffField d) (s t C uL2Sq : ℝ)
     (h : ℝ → ℝ → ℝ) {F : ℝ → ℝ}
     (flux : ℝ → ℝ → Vec d → Vec d) (u : ℝ → ℝ → Vec d → ℝ)
@@ -247,7 +247,7 @@ package and the note-shaped single-cube coefficient bounds.  The local vector
 Poincare constant is `C`; the scalar-facing single-cube RHS uses the effective
 constant `(Fintype.card (Fin d) : ℝ) * C`. -/
 theorem
-    coarseCaccioppoli_boundary_singleCubeRawEstimate_of_radiusEnergyBridgeCanonicalVectorAnalyticInputs_of_coefficientBounds
+    coarseCaccioppoli_boundary_singleCubeEstimate_of_coefficientBounds
     {d : ℕ} (Q : TriadicCube d) (a : CoeffField d) (s C uL2Sq : ℝ)
     (k h : ℝ → ℝ → ℝ) {F : ℝ → ℝ}
     (flux : ℝ → ℝ → Vec d → Vec d) (u : ℝ → ℝ → Vec d → ℝ)

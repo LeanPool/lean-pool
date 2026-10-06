@@ -193,7 +193,7 @@ theorem exists_cubeKBesovVectorPartialSeminormTwo_le_mul_overlapPartialSeminorm
       (mul_le_mul_of_nonneg_right hc_le_C
         (cubeBesovOverlappingPositiveVectorDepthSeminorm_nonneg Q s h j))
   exact
-    cubeKBesovVectorPartialSeminormTwo_le_mul_cubeBesovOverlappingPositiveVectorPartialSeminormTwo_of_forall_depthSeminorm_le
+    KPartialSeminormTwo_le_mul_overlappingPositivePartialSeminormTwo
       Q s C N h hC_nonneg hdepth
 
 end SmoothOverlapPartition

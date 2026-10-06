@@ -61,16 +61,16 @@ theorem scalarChain_of_integrable_coarseFullBlockMatrixAtCube
   let hPrim_n :=
     Ch04.Internal.annealedPrimitiveScalarizationData_of_structuralLaw hP hStruct n
   have hStarInv_m_pos : 0 < hPrim_m.barSigmaStarInv :=
-    Ch04.RestrictionLawCarrier.Internal.barSigmaStarInv_pos_of_integrable_coarseFullBlockMatrixAtCube
+    Ch04.RestrictionLawCarrier.Internal.barSigmaStarInverse_pos_of_integrableBlockMatrix
       hP hPrim_m hParentBlockInt
   have hStarInv_n_pos : 0 < hPrim_n.barSigmaStarInv :=
-    Ch04.RestrictionLawCarrier.Internal.barSigmaStarInv_pos_of_integrable_coarseFullBlockMatrixAtCube
+    Ch04.RestrictionLawCarrier.Internal.barSigmaStarInverse_pos_of_integrableBlockMatrix
       hP hPrim_n hChildBlockInt
   have hContrast_m : 1 ≤ hPrim_m.contrast :=
-    Ch04.RestrictionLawCarrier.Internal.one_le_primitive_contrast_of_integrable_coarseFullBlockMatrixAtCube
+    Ch04.RestrictionLawCarrier.Internal.one_le_primitiveContrast_of_integrableCoarseBlock
       hP hPrim_m hParentBlockInt
   have hChain :=
-    Ch04.RestrictionLawCarrier.Internal.scalar_chain_of_primitive_of_integrable_coarseFullBlockMatrixAtCube
+    Ch04.RestrictionLawCarrier.Internal.primitiveContrast_scaleChain_of_integrableCoarseBlocks
       hP hStruct.stationary hn_nonneg hnm scalarization hPrim_m hPrim_n
       hParentBlockInt hDescBlockInt hStarInv_m_pos hContrast_m
   have hStar_nm :
@@ -81,10 +81,12 @@ theorem scalarChain_of_integrable_coarseFullBlockMatrixAtCube
     simpa [Ch04.RestrictionLawCarrier.barSigmaAtScale, scalarization] using hChain.2.2
   have hStar_m_pos : 0 < hP.barSigmaStarAtScale hStruct m := by
     rw [hP.barSigmaStarAtScale_eq_inv_barSigmaStarInvAtScale hStruct m]
-    simpa [Ch04.RestrictionLawCarrier.barSigmaStarInvAtScale, hPrim_m] using inv_pos.mpr hStarInv_m_pos
+    simpa [Ch04.RestrictionLawCarrier.barSigmaStarInvAtScale, hPrim_m] using inv_pos.mpr
+      hStarInv_m_pos
   have hStar_n_pos : 0 < hP.barSigmaStarAtScale hStruct n := by
     rw [hP.barSigmaStarAtScale_eq_inv_barSigmaStarInvAtScale hStruct n]
-    simpa [Ch04.RestrictionLawCarrier.barSigmaStarInvAtScale, hPrim_n] using inv_pos.mpr hStarInv_n_pos
+    simpa [Ch04.RestrictionLawCarrier.barSigmaStarInvAtScale, hPrim_n] using inv_pos.mpr
+      hStarInv_n_pos
   refine ⟨hStar_nm, ?_, hSigma_mn⟩
   exact (inv_le_inv₀ hStar_m_pos hStar_n_pos).2 hStar_nm
 
@@ -132,7 +134,7 @@ theorem barSigmaStarAtScale_pos_of_P4
     Section52.originBlockIntegrableAtScale_from_P4 hP hStruct hP4 m
   have hInv : 0 < hP.barSigmaStarInvAtScale hStruct (m : ℤ) := by
     simpa [Ch04.RestrictionLawCarrier.barSigmaStarInvAtScale] using
-      Ch04.RestrictionLawCarrier.Internal.barSigmaStarInv_pos_of_integrable_coarseFullBlockMatrixAtCube
+      Ch04.RestrictionLawCarrier.Internal.barSigmaStarInverse_pos_of_integrableBlockMatrix
         hP
         (Ch04.Internal.annealedPrimitiveScalarizationData_of_structuralLaw
           hP hStruct (m : ℤ))

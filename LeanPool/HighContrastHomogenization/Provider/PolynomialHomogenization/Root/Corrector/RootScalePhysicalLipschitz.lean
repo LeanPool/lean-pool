@@ -104,7 +104,9 @@ theorem PrintOrderDecoupledFiniteTerminalSurface.physicalLipschitz_from_rootScal
   have hq : 1 ≤ q := one_le_printOrderToBaseResponseScaleFactor d g kappa
   have hxPrint : xPrint ≤ q * x := by
     simpa only [xPrint, q] using
-      HCPolySupport.HighContrast.Root.PrintOrderDecoupledFiniteTerminalSurface.printOrderScale_le_factor_mul_rootScale
+      (open HCPolySupport.HighContrast.Root.PrintOrderDecoupledFiniteTerminalSurface
+        (printOrderScale_le_factor_mul_rootScale) in
+        printOrderScale_le_factor_mul_rootScale)
         surface hg
   obtain ⟨_, _, _, _, _, _, hxPrintOne, _, _⟩ := surface.finalCertificate
   have hx : 0 < x := by
@@ -116,7 +118,9 @@ theorem PrintOrderDecoupledFiniteTerminalSurface.physicalLipschitz_from_rootScal
   have hr : 0 < r := hx.trans_le hrange.1
   by_cases hRPrint : xPrint ≤ R
   · have hterminal :=
-      HCPolySupport.HighContrast.Root.PrintOrderDecoupledFiniteTerminalSurface.physicalLipschitz_from_printStart
+      (open HCPolySupport.HighContrast.Root.PrintOrderDecoupledFiniteTerminalSurface
+        (physicalLipschitz_from_printStart) in
+        physicalLipschitz_from_printStart)
         surface
       R hRPrint u Du hu hweak
     by_cases hrPrint : xPrint ≤ r

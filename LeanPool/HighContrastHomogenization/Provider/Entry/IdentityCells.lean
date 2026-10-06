@@ -101,7 +101,8 @@ theorem standardCell_eq_translateSet {k : ℤ} {w u v : Fin d → ℤ}
     rw [add_mul, add_mul, h i]
     ring
   ext x
-  rw [mem_translateSet_iff_sub_mem, Recurrence.mem_standardCell_iff, Recurrence.mem_standardCell_iff]
+  rw [mem_translateSet_iff_sub_mem, Recurrence.mem_standardCell_iff,
+    Recurrence.mem_standardCell_iff]
   have hsub : ∀ i, (x - Source.AKL.intTranslation u) i = x i - (u i : ℝ) := fun _ => rfl
   constructor
   · intro hx i
@@ -185,9 +186,11 @@ theorem exists_intVec_adaptedCellCenter_one {j : ℤ} (hj : 0 ≤ j) (w : Fin d 
 integer translates of the centered cube. -/
 theorem adaptedCellAt_one_eq_translateSet {j : ℤ} (hj : 0 ≤ j) (w : Fin d → ℤ) :
     ∃ v : Fin d → ℤ,
-      adaptedCellAt (1 : Mat d) j w = translateSet (Source.AKL.intTranslation v) (centeredCube d j) := by
+      adaptedCellAt (1 : Mat d) j w = translateSet (Source.AKL.intTranslation v) (centeredCube d
+        j) := by
   obtain ⟨v, hv⟩ := exists_intVec_adaptedCellCenter_one hj w
-  exact ⟨v, by rw [Recurrence.adaptedCellAt_eq_translateSet_intVec hv, Initialization.adaptedCell_one]⟩
+  exact ⟨v, by rw [Recurrence.adaptedCellAt_eq_translateSet_intVec hv,
+    Initialization.adaptedCell_one]⟩
 
 /-- The annealed block of an aligned identity cell at a nonnegative generation is
 the Euclidean mean at that generation. -/

@@ -71,6 +71,8 @@ def quantitativeCubeCutoffHessianConst (d : ℕ) : ℝ :=
 
 /-- A quantitative smooth cutoff between two concentric balls. -/
 structure QuantitativeBallCutoff {d : ℕ} (x₀ : Vec d) (r R : ℝ) where
+  /-- The smooth compactly supported scalar cutoff in `[0, 1]`, equal to one on the inner ball and
+  supported in the outer ball. -/
   toFun : Vec d → ℝ
   smooth : ContDiff ℝ (⊤ : ℕ∞) toFun
   hasCompactSupport : HasCompactSupport toFun
@@ -233,6 +235,8 @@ end QuantitativeBallCutoff
 
 /-- A quantitative smooth cutoff between two concentric subcubes of a triadic cube. -/
 structure QuantitativeCubeCutoff {d : ℕ} (Q : TriadicCube d) (ρ₁ ρ₂ : ℝ) where
+  /-- The smooth compactly supported scalar cutoff in `[0, 1]`, equal to one on the inner closed
+  subcube and supported in the outer open subcube. -/
   toFun : Vec d → ℝ
   smooth : ContDiff ℝ (⊤ : ℕ∞) toFun
   hasCompactSupport : HasCompactSupport toFun
@@ -303,7 +307,7 @@ theorem canonicalFun_fderiv_apply_basisVec_eq_zero_of_abs_sub_center_lt_inner {d
     (hx : |x i - cubeCenter Q i| < ρ₁ * cubeRadius Q) :
     (fderiv ℝ (canonicalFun Q ρ₁ ρ₂) x) (basisVec i) = 0 := by
   simpa [canonicalFun] using
-    QuantitativeTransitionProfile.fderiv_cubeCutoff_apply_basisVec_eq_zero_of_abs_sub_center_lt_inner
+    QuantitativeTransitionProfile.fderiv_cubeCutoff_basisVec_eq_zero_inner
         smoothTransitionProfile.quantitativeProfile Q hρ₁ hρ₁₂ hx
 
 /-- Support form of `canonicalFun_fderiv_apply_basisVec_eq_zero_of_abs_sub_center_lt_inner`. -/

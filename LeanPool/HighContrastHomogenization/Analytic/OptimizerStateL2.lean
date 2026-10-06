@@ -64,7 +64,8 @@ theorem exists_blockState_toHilbertBlockL2 {U : Set (Vec d)} (f : HilbertBlockL2
     fun x => ((f : Vec d → HilbertBlockVec d) x).toBlockVec with hF
   have hFmem : MemBlockL2 U F := by
     have hcomp :=
-      ((HilbertBlockVec.continuousLinearEquivBlockVec d).toContinuousLinearMap.lipschitzWith).comp_memLp
+      ((HilbertBlockVec.continuousLinearEquivBlockVec
+        d).toContinuousLinearMap.lipschitzWith).comp_memLp
         (by simp) (MeasureTheory.Lp.memLp f)
     simpa [hF, Function.comp_def] using hcomp
   refine ⟨⟨fun x => (F x).1, fun x => (F x).2⟩, ?_, ?_⟩

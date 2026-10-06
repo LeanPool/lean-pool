@@ -407,7 +407,7 @@ theorem dirichletHarmonicRemainder_fluxPartialSeminorm_le_poincareUpperElliptici
     openCubeOriginEllipticRecoveryExistence (d := d)
       (lam := (a.coeffOn Q).lam) (Lam := (a.coeffOn Q).Lam)
   have hsum_flux :=
-    summable_qtwo_maxDescendantBBlockNormAtScale_of_isEllipticFieldOn_of_openCubeOriginEllipticRecoveryExistence
+    summable_exponentTwo_maxDescendantBBlockNorm_of_cubeEllipticity
       (Q := Q) (a := A) s hs (publicCoeffField_isEllipticFieldOn_cubeSet Q a)
       hOrigin
   have hdet :=

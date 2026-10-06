@@ -329,7 +329,8 @@ theorem cubeBesovCircPartialNorm_projection_eq {d : ℕ}
     (hu : MeasureTheory.MemLp u (2 : ℝ≥0∞) (normalizedCubeMeasure Q)) :
     cubeBesovCircPartialNorm Q 1 (2 : ℝ≥0∞) (1 : ℝ≥0∞) (N + 1) (cubeProjection Q (N + 1) u) =
       cubeBesovCircPartialNorm Q 1 (2 : ℝ≥0∞) (1 : ℝ≥0∞) (N + 1) u := by
-  simp [cubeBesovCircPartialNorm, cubeBesovCircPartialSeminorm]
+  simp only [cubeBesovCircPartialNorm, cubeBesovCircPartialSeminorm, ENNReal.toReal_one,
+    Real.rpow_one, ne_eq, one_ne_zero, not_false_eq_true, div_self]
   refine Finset.sum_congr rfl ?_
   intro j hj
   have hj_le : j ≤ N + 1 := Nat.lt_succ_iff.mp (Finset.mem_range.mp hj)
@@ -339,7 +340,8 @@ theorem cubeBesovCircPartialNorm_projection_eq {d : ℕ}
     (Q : TriadicCube d) (s : ℝ) (p : ℝ≥0∞) (N : ℕ) (u : Vec d → ℝ) :
     cubeBesovCircPartialNorm Q s p (1 : ℝ≥0∞) N u =
       ∑ n ∈ Finset.range (N + 1), cubeBesovCircDepthSeminorm Q s p u n := by
-  simp [cubeBesovCircPartialNorm, cubeBesovCircPartialSeminorm]
+  simp only [cubeBesovCircPartialNorm, cubeBesovCircPartialSeminorm, ENNReal.toReal_one,
+    Real.rpow_one, ne_eq, one_ne_zero, not_false_eq_true, div_self]
 
 theorem cubeBesovCircPartialNorm_one_mono {d : ℕ}
     (Q : TriadicCube d) (s : ℝ) (p : ℝ≥0∞) (u : Vec d → ℝ) {M N : ℕ}
@@ -510,7 +512,7 @@ theorem cubeBesovCircNorm_projection_succ_le_three_halves_mul_cubeBesovCircParti
             rw [hP_eq]
 
 theorem
-  cubeBesovCircNorm_projection_succ_le_three_halves_mul_cubeBesovCircPartialNorm_on_descendants_of_memLp
+  circNorm_projection_succ_le_three_halves_mul_circPartialNorm_on_descendants
     {d : ℕ} (Q : TriadicCube d) (u : Vec d → ℝ) (M : ℕ)
     (hu : MeasureTheory.MemLp u (2 : ℝ≥0∞) (normalizedCubeMeasure Q)) :
     ∀ j ∈ Finset.range (M + 1), ∀ R ∈ descendantsAtDepth Q j,
@@ -539,7 +541,7 @@ theorem cubeBesovCircNorm_projection_le_three_halves_mul_cubeBesovCircPartialNor
           (Q := Q) (u := u) (N := N) hu
 
 theorem
-  cubeBesovCircNorm_projection_le_three_halves_mul_cubeBesovCircPartialNorm_on_descendants_of_memLp
+  cubeBesovCircNorm_projection_le_threeHalves_partial_onDescendants
     {d : ℕ} (Q : TriadicCube d) (u : Vec d → ℝ) (M : ℕ)
     (hu : MeasureTheory.MemLp u (2 : ℝ≥0∞) (normalizedCubeMeasure Q)) :
     ∀ j ∈ Finset.range (M + 1), ∀ R ∈ descendantsAtDepth Q j,

@@ -159,7 +159,7 @@ private theorem abs_cubeAverage_vecDot_scalar_smul_le_split_of_const_centered_bo
 /-- Full-dual/local-multiscale version of the sharp vector split pairing
 estimate. -/
 theorem
-    abs_cubeAverage_vecDot_scalar_smul_le_split_collapsed_sharp_note_terms_of_dualFull_localMultiscale
+    abs_cubeAverage_fluxCutoff_le_sharpNote_of_fullDual_localScales
     {d : ℕ} (Q : TriadicCube d) (s : ℝ) (flux : Vec d → Vec d)
     (u : Vec d → ℝ) (G ξ : Vec d → Vec d)
     {Bu1 BuS Bavg Bcirc1 BcircS B C BgConst BgCent : ℝ}
@@ -214,7 +214,7 @@ theorem
             ((((3 : ℝ) ^ ((d : ℝ) + s) * (cubeBesovScaleWeight (-s) Q * BuS)) *
               (cubeBesovScaleWeight s Q * BgCent)))) := by
   have hconst :=
-    abs_cubeAverage_vecDot_cubeAverage_scalar_smul_le_collapsed_sharp_note_terms_of_contDiff_component_bound
+    abs_cubeAverage_vectorDot_cubeAverage_scalar_smul_le_collapsed_sharp_note_terms
       Q flux u ξ hB hflux hu hξLp hBgConst hfluxNeg1 hξ hderiv hBgConst_bound
   have hpos :
       ∀ N : ℕ,
@@ -222,12 +222,12 @@ theorem
           (fun x => (u x - cubeAverage Q u) • ξ x) ≤ BgCent := by
     intro N
     exact le_trans
-      (cubeBesovPositiveVectorPartialSeminormTwo_centered_scalar_smul_le_fullDual_localMultiscale_cutoff_terms
+      (positivePartialSeminormTwo_centeredScalarMultiply_le_fullDual_multiscaleCutoff
         Q s N u G ξ hB hu (hfull N) (hlocal N) hG hξLp hξ hderiv
         hs0 hs1 hC hBcirc1 hBcircS hGcirc1 (fun i => hGcircS i N))
       hBgCent_bound
   have hcent :=
-    abs_cubeAverage_vecDot_centered_scalar_smul_le_collapsed_sharp_average_note_terms_of_partialBounds_of_dualFullVectorPoincareEstimate
+    abs_cubeAverage_vectorDot_centered_scalar_smul_le_sharpNoteTerms
       Q s flux u G ξ hs0 hflux hu hG hξLp hBgCent hBavg hC hBcirc1
       havg hfluxNegS hpos hfull hGcirc1
   exact
@@ -237,7 +237,7 @@ theorem
 /-- Effective-constant wrapper for the full-dual/local-multiscale sharp vector
 split estimate. -/
 theorem
-    abs_cubeAverage_vecDot_scalar_smul_le_split_collapsed_sharp_note_terms_of_dualFull_localMultiscale_effective_constant
+    abs_cubeAverage_vectorDot_scalarMultiply_le_sharpSplit_of_effectiveConstant
     {d : ℕ} (Q : TriadicCube d) (s : ℝ) (flux : Vec d → Vec d)
     (u : Vec d → ℝ) (G ξ : Vec d → Vec d)
     {Bu1 BuS Bavg Bcirc1 BcircS B C BgConst BgCent : ℝ}
@@ -303,7 +303,7 @@ theorem
               ((Fintype.card (Fin d) : ℝ) * BcircS)))) ≤ BgCent := by
     simpa [mul_assoc, mul_left_comm, mul_comm] using hBgCent_bound
   have hraw :=
-    abs_cubeAverage_vecDot_scalar_smul_le_split_collapsed_sharp_note_terms_of_dualFull_localMultiscale
+    abs_cubeAverage_fluxCutoff_le_sharpNote_of_fullDual_localScales
       Q s flux u G ξ hB hs0 hs1 hflux hu hG hξLp hBgConst hBgCent hBavg hC
       hBcirc1 hBcircS havg hfluxNeg1 hfluxNegS hfull hlocal hξ hderiv
       hGcirc1 hGcircS hBgConst_bound hBgCent_bound_vec
@@ -367,7 +367,7 @@ theorem
             ((((3 : ℝ) ^ ((d : ℝ) + s) * (cubeBesovScaleWeight (-s) Q * BuS)) *
               (cubeBesovScaleWeight s Q * BgCent)))) := by
   have hconst :=
-    abs_cubeAverage_vecDot_cubeAverage_scalar_smul_le_collapsed_sharp_note_terms_of_contDiff_component_bound
+    abs_cubeAverage_vectorDot_cubeAverage_scalar_smul_le_collapsed_sharp_note_terms
       Q flux u ξ hB hflux hu hξLp hBgConst hfluxNeg1 hξ hderiv hBgConst_bound
   have hcent :=
     abs_cubeAverage_vecDot_centered_scalar_smul_le_collapsed_sharp_note_terms_of_dualFull_fullCirc
@@ -381,7 +381,7 @@ theorem
 /-- Effective-constant wrapper for the full-dual/full-circ sharp vector split
 estimate. -/
 theorem
-    abs_cubeAverage_vecDot_scalar_smul_le_split_collapsed_sharp_note_terms_of_dualFull_fullCirc_effective_constant
+    abs_cubeAverage_vectorDot_scalarMultiply_le_split_collapsed_sharp_of_constant
     {d : ℕ} (Q : TriadicCube d) (s : ℝ) (flux : Vec d → Vec d)
     (u : Vec d → ℝ) (G ξ : Vec d → Vec d)
     {Bu1 BuS Bavg Bcirc1 BcircS B C BgConst BgCent : ℝ}

@@ -150,7 +150,8 @@ theorem gridEnlargement_le (hd : 2 ≤ d) {chop CN Lam : ℝ}
     calc
       (1 : ℝ) < 100 / 99 := by norm_num
       _ ≤ Real.sqrt d * (100 / 99 : ℝ) := by
-        simpa only [one_mul] using mul_le_mul_of_nonneg_right hsqrt1 (by norm_num : (0 : ℝ) ≤ 100 / 99)
+        simpa only [one_mul] using mul_le_mul_of_nonneg_right hsqrt1 (by norm_num : (0 : ℝ) ≤
+          100 / 99)
   have hlogbase :
       Real.logb 3 (Real.sqrt d * (100 / 99 : ℝ)) =
         (1 / 2 : ℝ) * Real.logb 3 d + Real.logb 3 (100 / 99 : ℝ) := by

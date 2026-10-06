@@ -112,7 +112,7 @@ private theorem exactDualTopPairing_le_exactCircTopSeminorm
       rw [hpTestDouble]
       exact cubeProjection_memLp_of_parent_descendant Q P.p f (j + 1) j R hR
     have hpair :=
-      abs_cubeBesovPairing_projection_le_max_mul_cubeBesovPartialNormOne_cubeBesovCircPartialNormTop
+      abs_cubeBesovPairing_projection_le_max_partialOne_circTop
         (Q := Q) (s := P.s) (p := ENNReal.ofReal p') (f := g) (g := f) (N := n)
         hfInt hpTest ENNReal.ofReal_ne_top hpTestDoubleTop hlocalG hlocalF
     have hoverlapENN :

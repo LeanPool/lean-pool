@@ -479,7 +479,8 @@ theorem avg_difference_energy_eq_responseJ_deficit_adaptedCell_ae
       IntegrableOn (scalarResponseIntegrand (adaptedCellAtCenter q (t - (n : ℤ)) w) a p r (v w))
         (adaptedCellAtCenter q (t - (n : ℤ)) w))
     (hlin : ∀ w (hw : w ∈ triadicIndexBox d n),
-      IntegrableOn (scalarFirstVariationIntegrand (adaptedCellAtCenter q (t - (n : ℤ)) w) a p r (v w)
+      IntegrableOn (scalarFirstVariationIntegrand (adaptedCellAtCenter q (t - (n : ℤ)) w) a p r
+        (v w)
         (AHarmonicFunction.addSMulOfIntegrable
           (u.restrictOfIsEllipticFieldOn (isOpen_adaptedCell_of_isUnit hq t)
             (isOpen_adaptedCellAtCenter_of_isUnit hq (t - (n : ℤ)) w)

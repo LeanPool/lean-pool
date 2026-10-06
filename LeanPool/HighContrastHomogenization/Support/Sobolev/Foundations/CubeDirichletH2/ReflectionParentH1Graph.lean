@@ -300,7 +300,7 @@ namespace H10Function
 
 /-- The zero-trace weak-gradient identity tested against the signed
 coordinate-folded graph test, with the derivative expanded cellwise. -/
-theorem integral_mul_cubeDirichletOddReflectionFoldedParentCoordTest_derivSum_eq_neg_integral_mul_originCube
+theorem foldedParentTest_integral_by_parts
     {d : ℕ} {m : ℤ}
     (u : H10Function (openCubeSet (originCube d m))) (i : Fin d)
     {φ : Vec d → ℝ}
@@ -416,7 +416,7 @@ private theorem integrable_openCubeSet_cubeDirichletOddCellVectorCoordPairing
 
 /-- Change variables on one reflection cell in one coordinate of the
 odd-reflected vector-field pairing. -/
-theorem setIntegral_cubeFaceReflectionCellCube_cubeDirichletOddReflectionVectorField_coord_mul_eq
+theorem reflectedCellVector_component_integral_eq_folded
     {d : ℕ} {Q : TriadicCube d} {G : Vec d → Vec d} {φ : Vec d → ℝ}
     (choice : Fin d → Fin 3) (i : Fin d) :
     ∫ x in openCubeSet (cubeFaceReflectionCellCube Q choice),
@@ -468,7 +468,8 @@ theorem setIntegral_cubeFaceReflectionCellCube_cubeDirichletOddReflectionVectorF
 
 /-- The block pairing with one coordinate of the odd-reflected vector field is
 the original-cube pairing against the signed coordinate-folded graph test. -/
-theorem setIntegral_cubeFaceReflectionBlockSet_cubeDirichletOddReflectionVectorField_coord_mul_eq_folded
+theorem
+  setIntegral_cubeFaceReflectionBlockSet_cubeDirichletOddReflectionVectorField_coord_mul_eq_folded
     {d : ℕ} {Q : TriadicCube d} {G : Vec d → Vec d} {φ : Vec d → ℝ}
     (hG : MemVectorL2 (openCubeSet Q) G)
     (hφ : ContDiff ℝ (⊤ : ℕ∞) φ) (hφ_compact : HasCompactSupport φ)
@@ -545,7 +546,7 @@ theorem setIntegral_cubeFaceReflectionBlockSet_cubeDirichletOddReflectionVectorF
           apply Finset.sum_congr rfl
           intro choice _hchoice
           simpa [f] using
-            setIntegral_cubeFaceReflectionCellCube_cubeDirichletOddReflectionVectorField_coord_mul_eq
+            reflectedCellVector_component_integral_eq_folded
               (Q := Q) (G := G) (φ := φ) choice i
     _ = ∫ y in openCubeSet Q,
         ∑ choice : Fin d → Fin 3,
@@ -580,7 +581,7 @@ theorem setIntegral_cubeFaceReflectionBlockSet_cubeDirichletOddReflectionVectorF
           rw [Finset.mul_sum]
 
 /-- Centered parent-cube form of the reflected vector coordinate pairing. -/
-theorem setIntegral_openCubeSet_succ_originCube_cubeDirichletOddReflectionVectorField_coord_mul_eq_folded
+theorem successorReflectedVector_component_integral_eq_folded
     {d : ℕ} {m : ℤ} {G : Vec d → Vec d} {φ : Vec d → ℝ}
     (hG : MemVectorL2 (openCubeSet (originCube d m)) G)
     (hφ : ContDiff ℝ (⊤ : ℕ∞) φ) (hφ_compact : HasCompactSupport φ)
@@ -669,11 +670,11 @@ theorem mem_h1GraphClosedSubmodule_cubeDirichletOddReflection_originCube
       simpa [MemVectorL2, volumeMeasureOn, Q] using
         u.toH1Function.grad_memVectorL2
     simpa [Uparent, GR, Q] using
-      setIntegral_openCubeSet_succ_originCube_cubeDirichletOddReflectionVectorField_coord_mul_eq_folded
+      successorReflectedVector_component_integral_eq_folded
         (m := m) (G := fun y => u.toH1Function.grad y) (φ := φ)
         hG φ.smooth φ.compactSupport i
   have hweak :=
-    u.integral_mul_cubeDirichletOddReflectionFoldedParentCoordTest_derivSum_eq_neg_integral_mul_originCube
+    u.foldedParentTest_integral_by_parts
       i φ.smooth φ.compactSupport
   calc
     h1WeakConstraintCLM

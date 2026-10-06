@@ -71,7 +71,7 @@ This file proves the public basic properties of the homogenization error
   rw [descendantsAtScale_self]
   simp
 
-@[simp] theorem scaleResponseAtScale_infinity_self_eq {d : ℕ} [NeZero d]
+theorem scaleResponseAtScale_infinity_self_eq {d : ℕ} [NeZero d]
     (Q : TriadicCube d) (a : TriadicCoeffFamily d) (a0 : Mat d) :
     scaleResponseAtScale Q Q.scale .infinity a a0 =
       Real.rpow (normalizedBlockResponseMax Q a a0) (1 / 2 : ℝ) := by

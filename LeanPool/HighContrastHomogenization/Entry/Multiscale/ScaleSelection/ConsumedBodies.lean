@@ -102,14 +102,16 @@ def OneGridBody (d : ℕ) (γ Csrc C : ℝ) : Prop :=
                       C * (L : ℝ) *
                         (profile P γ (Geometry.explicitRoundedGrid jStar metric) jStar n m +
                           Real.exp ((bigQ d γ : ℝ) *
-                            detIncrement P (Geometry.explicitRoundedGrid jStar metric) m (m + L)) - 1)) ∧
+                            detIncrement P (Geometry.explicitRoundedGrid jStar metric) m (m +
+                              L)) - 1)) ∧
                 (m = n →
                   history P γ (Geometry.explicitRoundedGrid jStar metric) jStar n ≤ 1 →
                     profile P γ (Geometry.explicitRoundedGrid jStar metric) jStar n (n + L) ≤
                       C * (L : ℝ) *
                         (history P γ (Geometry.explicitRoundedGrid jStar metric) jStar n +
                           Real.exp ((bigQ d γ : ℝ) *
-                            detIncrement P (Geometry.explicitRoundedGrid jStar metric) n (n + L)) - 1)) ∧
+                            detIncrement P (Geometry.explicitRoundedGrid jStar metric) n (n +
+                              L)) - 1)) ∧
                 fluctuationHistory P γ (Geometry.explicitRoundedGrid jStar metric) jStar m +
                       meanHistory P γ (Geometry.explicitRoundedGrid jStar metric) (jStar : ℤ) m +
                       determinantDrift P γ (Geometry.explicitRoundedGrid jStar metric) jStar m ≤
@@ -124,7 +126,8 @@ def OneGridBody (d : ℕ) (γ Csrc C : ℝ) : Prop :=
                           synchCharge P (Geometry.explicitRoundedGrid jStar metric)
                             (h : ℤ) m) *
                         (profile P γ (Geometry.explicitRoundedGrid jStar metric) jStar n m +
-                          determinantDrift P γ (Geometry.explicitRoundedGrid jStar metric) jStar m) +
+                          determinantDrift P γ (Geometry.explicitRoundedGrid jStar metric) jStar
+                            m) +
                       C *
                         (Real.exp ((bigQ d γ : ℝ) *
                             synchCharge P (Geometry.explicitRoundedGrid jStar metric)
@@ -141,7 +144,8 @@ def OneGridBody (d : ℕ) (γ Csrc C : ℝ) : Prop :=
                   profile P γ (Geometry.explicitRoundedGrid jStar metric) jStar n m +
                       determinantDrift P γ (Geometry.explicitRoundedGrid jStar metric) jStar m ≤ 1 →
                     profile P γ (Geometry.explicitRoundedGrid jStar metric) jStar n (m + L) +
-                        determinantDrift P γ (Geometry.explicitRoundedGrid jStar metric) jStar (m + L) ≤
+                        determinantDrift P γ (Geometry.explicitRoundedGrid jStar metric) jStar
+                          (m + L) ≤
                       C * (L : ℝ) *
                         (profile P γ (Geometry.explicitRoundedGrid jStar metric) jStar n m +
                           determinantDrift P γ (Geometry.explicitRoundedGrid jStar metric) jStar m +
@@ -167,7 +171,8 @@ def TransportBody (d : ℕ) (γ C Csrc : ℝ) : Prop :=
           ∀ k n : ℤ, (jStar : ℤ) ≤ k → k ≤ n →
             ∀ L : ℕ,
               HighContrast.adaptedCell (Geometry.explicitRoundedGrid jStar m) (n + 2 * (L : ℤ)) ∪
-                  HighContrast.adaptedCell (Geometry.explicitRoundedGrid jStar mPlus) (n + (L : ℤ)) ⊆
+                  HighContrast.adaptedCell (Geometry.explicitRoundedGrid jStar mPlus) (n + (L :
+                    ℤ)) ⊆
                 HighContrast.centeredCube d (2 * (jStar : ℤ)) →
               C * ((L : ℝ) +
                   Real.logb 3 ((2 + aspectRatio E) * (‖m‖ * ‖m⁻¹‖))) ≤

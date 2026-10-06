@@ -57,7 +57,7 @@ instance instIsFiniteMeasureVolumeMeasureOnCubeSetOriginCube {d : ℕ} {n : ℤ}
 On an open centered cube, the affine pairing attached to a zero-trace /
 zero-normal-trace `L²` correction is integrable.
 -/
-theorem integrableOn_pairing_affine_openCubeSet_originCube {d : ℕ} [NeZero d] {n : ℤ}
+theorem integrableOn_pairing_affine_openCubeSet_originCube {d : ℕ} {n : ℤ}
     (X : CorrectionFieldData (openCubeSet (originCube d n))) (p q : Vec d) :
     MeasureTheory.IntegrableOn
       (fun x => vecDot (p + X.potential x) (q + X.flux x))
@@ -285,7 +285,7 @@ theorem integral_flux_affine_openCubeSet_originCube {d : ℕ} [NeZero d] {n : �
 On the half-open centered cube, the affine pairing attached to a zero-trace /
 zero-normal-trace `L²` correction is integrable.
 -/
-theorem integrableOn_pairing_affine_cubeSet_originCube {d : ℕ} [NeZero d] {n : ℤ}
+theorem integrableOn_pairing_affine_cubeSet_originCube {d : ℕ} {n : ℤ}
     (X : CorrectionFieldData (cubeSet (originCube d n))) (p q : Vec d) :
     MeasureTheory.IntegrableOn
       (fun x => vecDot (p + X.potential x) (q + X.flux x))

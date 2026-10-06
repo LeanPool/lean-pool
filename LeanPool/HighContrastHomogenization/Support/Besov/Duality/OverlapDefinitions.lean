@@ -100,6 +100,8 @@ theorem memLp_sub_cubeAverage_of_mem_centersAtDepth_of_memLp {d : ℕ}
 
 end ScalarOverlap
 
+/-- The overlap Besov test norm through depth `N` at conjugate exponents, using a supremum when
+the conjugate of `q` is infinite. -/
 @[expose]
 noncomputable def cubeBesovOverlapDualTestNorm {d : ℕ} (Q : TriadicCube d) (s : ℝ)
     (p q : ℝ≥0∞) (N : ℕ) (g : Vec d → ℝ) : ℝ :=
@@ -109,6 +111,8 @@ noncomputable def cubeBesovOverlapDualTestNorm {d : ℕ} (Q : TriadicCube d) (s 
     cubeBesovOverlapPartialNorm Q s (cubeBesovConjExponent p)
       (cubeBesovConjExponent q) N g
 
+/-- The overlap Besov test seminorm through depth `N` at conjugate exponents, using a supremum
+when the conjugate of `q` is infinite. -/
 @[expose]
 noncomputable def cubeBesovOverlapDualTestSeminorm {d : ℕ} (Q : TriadicCube d) (s : ℝ)
     (p q : ℝ≥0∞) (N : ℕ) (g : Vec d → ℝ) : ℝ :=
@@ -165,6 +169,8 @@ theorem cubeBesovOverlapDualTestNorm_eq_cubeBesovOverlapDualTestSeminorm_of_cube
     rw [havg]
     simp
 
+/-- Local Lᵖ integrability at the conjugate exponent of `p` for the mean-subtracted test on every
+overlap cube through depth `N`. -/
 @[expose]
 def CubeBesovOverlapDualLocalMemLp {d : ℕ} (Q : TriadicCube d)
     (p : ℝ≥0∞) (N : ℕ) (g : Vec d → ℝ) : Prop :=
@@ -179,12 +185,16 @@ theorem CubeBesovOverlapDualLocalMemLp.of_memLp_parent {d : ℕ} {Q : TriadicCub
   intro j hj S hS
   exact ScalarOverlap.memLp_sub_cubeAverage_of_mem_centersAtDepth_of_memLp hS hg
 
+/-- An overlap dual test with norm at most one and locally integrable fluctuations at the
+conjugate exponent of `p`. -/
 @[expose]
 def CubeBesovOverlapDualTest {d : ℕ} (Q : TriadicCube d) (s : ℝ)
     (p q : ℝ≥0∞) (N : ℕ) (g : Vec d → ℝ) : Prop :=
   cubeBesovOverlapDualTestNorm Q s p q N g ≤ 1 ∧
     CubeBesovOverlapDualLocalMemLp Q p N g
 
+/-- An overlap dual test of mean zero on `Q`, with seminorm at most one and locally integrable
+fluctuations at the conjugate exponent of `p`. -/
 @[expose]
 def CubeBesovOverlapDualMeanZeroTest {d : ℕ} (Q : TriadicCube d) (s : ℝ)
     (p q : ℝ≥0∞) (N : ℕ) (g : Vec d → ℝ) : Prop :=

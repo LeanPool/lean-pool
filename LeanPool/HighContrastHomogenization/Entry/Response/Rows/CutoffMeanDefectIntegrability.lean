@@ -111,7 +111,8 @@ theorem integrable_cutoffMeanDefect_coords_respCoeffMinus {d : ℕ} [NeZero d]
       HasIntegrableCoarseBlock P (adaptedCellAtCenter (respGrid jStar F) k w) := fun k w =>
     hasIntegrableCoarseBlock_adaptedCellAtCenter_respGrid hd P γ E Ψ Kg Src hstat hdag jStar hjStar
       F hm k w
-  have hUcell : adaptedCellAtCenter (respGrid jStar F) (t - ((0 : ℕ) : ℤ)) 0 = respCell jStar F t := by
+  have hUcell : adaptedCellAtCenter (respGrid jStar F) (t - ((0 : ℕ) : ℤ)) 0 = respCell jStar F
+    t := by
     rw [Nat.cast_zero, sub_zero]
     exact adaptedCellAtCenter_zero (respGrid jStar F) t
   have hφc : Continuous φ := hφ.2.2.2.2.2.1.continuous
@@ -352,7 +353,8 @@ theorem integrable_cutoffMeanDefect_coords_respCoeffPlus {d : ℕ} [NeZero d]
       HasIntegrableCoarseBlock P (adaptedCellAtCenter (respGrid jStar F) k w) := fun k w =>
     hasIntegrableCoarseBlock_adaptedCellAtCenter_respGrid hd P γ E Ψ Kg Src hstat hdag jStar hjStar
       F hm k w
-  have hUcell : adaptedCellAtCenter (respGrid jStar F) (t - ((0 : ℕ) : ℤ)) 0 = respCell jStar F t := by
+  have hUcell : adaptedCellAtCenter (respGrid jStar F) (t - ((0 : ℕ) : ℤ)) 0 = respCell jStar F
+    t := by
     rw [Nat.cast_zero, sub_zero]
     exact adaptedCellAtCenter_zero (respGrid jStar F) t
   have hφc : Continuous φ := hφ.2.2.2.2.2.1.continuous

@@ -77,7 +77,8 @@ theorem log_aspect_le_logb (Pi : ℝ) (hPi : 1 ≤ Pi) :
   have hPi_pos : 0 < Pi := by linarith only [hPi]
   have log_3_pos : 0 < Real.log 3 := Real.log_pos (by norm_num)
   have log_24_pos : 0 < Real.log 24 := Real.log_pos (by norm_num)
-  have h3_le : Real.log 3 ≤ Real.log (2 + Pi) := Real.log_le_log (by norm_num) (by linarith only [hPi])
+  have h3_le : Real.log 3 ≤ Real.log (2 + Pi) := Real.log_le_log (by norm_num) (by linarith only
+    [hPi])
   have hPi_le : Real.log Pi ≤ Real.log (2 + Pi) := Real.log_le_log hPi_pos (by linarith only [])
   rw [Real.log_mul (by norm_num : (24 : ℝ) ≠ 0) (by linarith only [hPi] : Pi ≠ 0)]
   unfold Real.logb
@@ -297,7 +298,8 @@ theorem geometric_weight_sum_Ico_le (θ : ℝ) (hθ : 0 < θ) (a b : ℤ) :
     omega
   rw [h_eq]
   have h_weight : ∀ j ∈ Finset.Icc a (b - 1),
-      (3 : ℝ) ^ (-θ * ((b : ℝ) - 1 - (j : ℝ))) = (3 : ℝ) ^ (-θ * (((b - 1 : ℤ) : ℝ) - (j : ℝ))) := by
+      (3 : ℝ) ^ (-θ * ((b : ℝ) - 1 - (j : ℝ))) = (3 : ℝ) ^ (-θ * (((b - 1 : ℤ) : ℝ) - (j : ℝ)))
+        := by
     intro j _
     push_cast
     ring
@@ -506,7 +508,8 @@ theorem normalizedBlock_le_scale_and_logDet_le {d : ℕ} (F G : BlockMat d)
   have hAB : toFullBlockMat F ≤ toFullBlockMat (blockScale c G) :=
     (HCPolySupport.HighContrast.Annealed.fullBlock_le_iff hF.isHermitian hscale.isHermitian).mpr hFG
   have hu : matSqrt (toFullBlockMat G)⁻¹ * toFullBlockMat F * matSqrt (toFullBlockMat G)⁻¹ ≤
-      matSqrt (toFullBlockMat G)⁻¹ * toFullBlockMat (blockScale c G) * matSqrt (toFullBlockMat G)⁻¹ := by
+      matSqrt (toFullBlockMat G)⁻¹ * toFullBlockMat (blockScale c G) * matSqrt (toFullBlockMat
+        G)⁻¹ := by
     apply Matrix.le_iff.mpr
     simpa only [hS.isHermitian.eq, mul_sub, sub_mul] using
       (Matrix.le_iff.mp hAB).conjTranspose_mul_mul_same (matSqrt (toFullBlockMat G)⁻¹)

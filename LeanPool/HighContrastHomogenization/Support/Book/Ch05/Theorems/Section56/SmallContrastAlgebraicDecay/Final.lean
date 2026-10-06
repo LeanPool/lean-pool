@@ -70,7 +70,7 @@ theorem smallContrastAlgebraicDecay_homogenizationScale
       dsimp [L]
       exact_mod_cast Nat.le_succ (Nat.ceil Cgap)
     exact hceil_ge.trans hceil_le_L
-  let βp : ℝ := section53CoarseFluctuationBetaParams params
+  let βp : ℝ := coarseFluctuationBeta params
   have hβp_pos : 0 < βp := by
     dsimp [βp]
     exact section53CoarseFluctuationBetaParams_pos params
@@ -104,7 +104,7 @@ theorem smallContrastAlgebraicDecay_homogenizationScale
         F n ≤ δ0 := by
       dsimp [F]
       exact
-        thetaAtScale_sub_one_le_delta_of_widetildeThetaAtScale_zero_sub_one_le_delta
+        thetaAtScale_le_delta_of_widetildeAtZero
           hP hStruct hP4 hsmall0 n
     exact hleδ0.trans hδ0_le_seq
   have hrec :

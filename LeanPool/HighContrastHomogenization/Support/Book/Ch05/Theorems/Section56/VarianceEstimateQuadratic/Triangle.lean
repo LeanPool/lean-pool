@@ -120,12 +120,12 @@ theorem descendantsAverageNormalizedFluctuationOperatorNormSq_le_descendantsAver
             (cubeSet R) a) := by
   simpa [descendantsAverageNormalizedFluctuationOperatorNormSq,
     descendantsAverageNormalizedFluctuationMatrix,
-    Section54.VarianceBoundGoodScale.fullBlockNormalizedFluctuationOperatorNormSq_eq_norm_sq]
+    Section54.VarianceBoundGoodScale.fullBlockFluctuationNormSquare_eq_matrixNormSquare]
     using
       descendantsAverageFullBlockMat_operatorNormSq_le_descendantsAverage_operatorNormSq
         (Q := Q) (j := j)
         (F := fun R =>
-          Section54.VarianceBoundGoodScale.fullBlockNormalizedFluctuationMatrix
+          Section54.VarianceBoundGoodScale.normalizedFluctuationMatrix
             hP hStruct center (cubeSet R) a)
 
 theorem aemeasurable_fullBlockNormalizedFluctuationMatrix_cubeSet
@@ -134,7 +134,7 @@ theorem aemeasurable_fullBlockNormalizedFluctuationMatrix_cubeSet
     (center : ℤ) (Q : TriadicCube d) :
     AEMeasurable
       (fun a : RegCoeffField d =>
-        Section54.VarianceBoundGoodScale.fullBlockNormalizedFluctuationMatrix
+        Section54.VarianceBoundGoodScale.normalizedFluctuationMatrix
           hP hStruct center (cubeSet Q) a) P := by
   let b := hP.barSigmaAtScale hStruct center
   let c := hP.barSigmaStarAtScale hStruct center
@@ -152,7 +152,7 @@ theorem aemeasurable_fullBlockNormalizedFluctuationMatrix_cubeSet
         (fun a : RegCoeffField d =>
           toFullBlockMat (coarseBlockMatrix (cubeSet Q) a.toFun)) P :=
     hP.aemeasurable_coarseFullBlockMatrix_cubeSet Q
-  simpa [Section54.VarianceBoundGoodScale.fullBlockNormalizedFluctuationMatrix,
+  simpa [Section54.VarianceBoundGoodScale.normalizedFluctuationMatrix,
     b, c, D, Abar, g] using! hg.comp_aemeasurable hM
 
 theorem aemeasurable_descendantsAverageNormalizedFluctuationMatrix
@@ -168,7 +168,7 @@ theorem aemeasurable_descendantsAverageNormalizedFluctuationMatrix
       AEMeasurable
         (fun a : RegCoeffField d =>
           ∑ R ∈ D,
-            Section54.VarianceBoundGoodScale.fullBlockNormalizedFluctuationMatrix
+            Section54.VarianceBoundGoodScale.normalizedFluctuationMatrix
               hP hStruct center (cubeSet R) a) P := by
     refine (Finset.aemeasurable_sum D (fun R _hR =>
         aemeasurable_fullBlockNormalizedFluctuationMatrix_cubeSet
@@ -180,7 +180,7 @@ theorem aemeasurable_descendantsAverageNormalizedFluctuationMatrix
         (fun a : RegCoeffField d =>
           ((D.card : ℝ)⁻¹) •
             (∑ R ∈ D,
-              Section54.VarianceBoundGoodScale.fullBlockNormalizedFluctuationMatrix
+              Section54.VarianceBoundGoodScale.normalizedFluctuationMatrix
                 hP hStruct center (cubeSet R) a)) P :=
     hsum.const_smul ((D.card : ℝ)⁻¹)
   refine hscaled.congr ?_
@@ -239,7 +239,7 @@ theorem integrable_descendantsAverageNormalizedFluctuationOperatorNormSq_from_P4
         exact Nat.sub_le n k
       exact sub_nonneg.mpr (by exact_mod_cast hj_le)
     exact
-      HCPolySupport.Book.Ch05.Section54.VarianceBoundGoodScale.integrable_fullBlockNormalizedFluctuationOperatorNormSqAtScale_from_P4_of_nonneg_scale
+      HCPolySupport.Book.Ch05.Section54.VarianceBoundGoodScale.integrable_fluctuationNormSquare
           hP hStruct hP4 (m : ℤ) R hR_nonneg
   refine Integrable.mono' hdomInt
     (aemeasurable_descendantsAverageNormalizedFluctuationOperatorNormSq
@@ -263,7 +263,7 @@ theorem integrable_descendantsAverageNormalizedFluctuationOperatorNormSq_from_P4
         Ch04.fullBlockNormalizedFluctuationOperatorNormSqAtScale
           hP hStruct (m : ℤ) R a)
       (fun R _hR =>
-        HCPolySupport.Book.Ch05.Section54.VarianceBoundGoodScale.fullBlockNormalizedFluctuationOperatorNormSqAtScale_nonneg
+        HCPolySupport.Book.Ch05.Section54.VarianceBoundGoodScale.fluctuationNormSquare_nonneg
             hP hStruct (m : ℤ) R a)
   rw [Real.norm_of_nonneg (by simpa [Q, j] using hleft_nonneg)]
   simpa [Q, j, Ch04.fullBlockNormalizedFluctuationOperatorNormSqAtScale] using hle
@@ -292,7 +292,7 @@ theorem descendantsAverageFluctuationOperatorNormSqWithNormalizer_le_descendants
             hP hStruct center S (cubeSet R) a)
 
 /-- Pointwise variance triangle for an arbitrary deterministic normalizer. -/
-theorem fullBlockFluctuationOperatorNormSqAtScaleWithNormalizer_le_two_descendantsAverageWithNormalizer_add_two_error
+theorem fullBlockFluctuationNormSq_le_two_descendantMean_add_two_error
     {d : ℕ} [NeZero d] {P : Ch04.RestrictionCoeffLaw d}
     (hP : Ch04.RestrictionLawCarrier P) (hStruct : Ch04.RestrictionStructuralLaw P)
     (center : ℤ) (S : FullBlockMat d) (Q : TriadicCube d) (j : ℕ)
@@ -339,7 +339,8 @@ theorem fullBlockFluctuationOperatorNormSqAtScaleWithNormalizer_le_two_descendan
 
 /-- A version whose first term is the descendant average of the
 arbitrary-normalizer fluctuation observable. -/
-theorem fullBlockFluctuationOperatorNormSqAtScaleWithNormalizer_le_two_descendantsAverage_add_two_error
+theorem
+  fullBlockFluctuationOperatorNormSqAtScaleWithNormalizer_le_two_descendantsAverage_add_two_error
     {d : ℕ} [NeZero d] {P : Ch04.RestrictionCoeffLaw d}
     (hP : Ch04.RestrictionLawCarrier P) (hStruct : Ch04.RestrictionStructuralLaw P)
     (center : ℤ) (S : FullBlockMat d) (Q : TriadicCube d) (j : ℕ)
@@ -353,7 +354,7 @@ theorem fullBlockFluctuationOperatorNormSqAtScaleWithNormalizer_le_two_descendan
       2 * coarseAverageErrorOperatorNormSqWithNormalizer
         hP hStruct center S Q j a := by
   have htriangle :=
-    fullBlockFluctuationOperatorNormSqAtScaleWithNormalizer_le_two_descendantsAverageWithNormalizer_add_two_error
+    fullBlockFluctuationNormSq_le_two_descendantMean_add_two_error
       hP hStruct center S Q j a
   have hjensen :=
     descendantsAverageFluctuationOperatorNormSqWithNormalizer_le_descendantsAverage
@@ -363,7 +364,7 @@ theorem fullBlockFluctuationOperatorNormSqAtScaleWithNormalizer_le_two_descendan
 /-- Section 5.6 variance estimate with quadratic `J` error and arbitrary
 deterministic normalizers.  The manuscript specialization is
 `S = B^{-1/2}` and `T = B^{1/2}`. -/
-theorem fullBlockFluctuationOperatorNormSqAtScaleWithNormalizer_le_two_descendantsAverageWithNormalizer_add_eight_blockJTraceAverageSqWithNormalizers_ae
+theorem fullBlockFluctuationNormSq_le_two_childMean_add_eight_JTraceAverageSq_ae
     {d : ℕ} [NeZero d] {P : Ch04.RestrictionCoeffLaw d}
     (hP : Ch04.RestrictionLawCarrier P) (hStruct : Ch04.RestrictionStructuralLaw P)
     (center : ℤ) (S T : FullBlockMat d) (Q : TriadicCube d) (j : ℕ) :
@@ -379,12 +380,12 @@ theorem fullBlockFluctuationOperatorNormSqAtScaleWithNormalizer_le_two_descendan
     [coarseAverageErrorOperatorNormSqWithNormalizer_le_four_blockJTraceAverageSqWithNormalizers_ae
       hP hStruct center S T Q j] with a herror
   have htriangle :=
-    fullBlockFluctuationOperatorNormSqAtScaleWithNormalizer_le_two_descendantsAverageWithNormalizer_add_two_error
+    fullBlockFluctuationNormSq_le_two_descendantMean_add_two_error
       hP hStruct center S Q j a
   nlinarith
 
 /-- Jensen-relaxed version of the arbitrary-normalizer variance estimate. -/
-theorem fullBlockFluctuationOperatorNormSqAtScaleWithNormalizer_le_two_descendantsAverage_add_eight_blockJTraceAverageSqWithNormalizers_ae
+theorem fullBlockFluctuationNormSq_le_two_childMean_add_eight_JTraceAverageSq_of_eight
     {d : ℕ} [NeZero d] {P : Ch04.RestrictionCoeffLaw d}
     (hP : Ch04.RestrictionLawCarrier P) (hStruct : Ch04.RestrictionStructuralLaw P)
     (center : ℤ) (S T : FullBlockMat d) (Q : TriadicCube d) (j : ℕ) :

@@ -85,7 +85,7 @@ private theorem inv_natCast_smul_sum_const {N d : ℕ} [NeZero N]
   rw [Finset.sum_const, Finset.card_fin, ← Nat.cast_smul_eq_nsmul ℝ]
   rw [smul_smul, inv_mul_cancel₀ (ne_of_gt (natCast_pos_of_neZero N)), one_smul]
 
-private theorem inv_natCast_smul_sum_mul_left_right {N d : ℕ} [NeZero N]
+private theorem inv_natCast_smul_sum_mul_left_right {N d : ℕ}
     (G : FullBlockMat d) (A : Fin N → FullBlockMat d) :
     (N : ℝ)⁻¹ • (∑ i, G * A i * G) =
       G * ((N : ℝ)⁻¹ • ∑ i, A i) * G := by

@@ -40,7 +40,7 @@ theorem cubeAverage_cubeProjectionResidual_eq_zero_of_mem_descendantsAtDepth {d 
         = ∫ x, cubeProjectionResidual R 0 f x ∂ normalizedCubeMeasure R := by
             refine MeasureTheory.integral_congr_ae ?_
             exact
-              cubeProjectionResidual_ae_eq_cubeProjectionResidual_depth_zero_of_mem_descendantsAtDepth
+              cubeProjectionResidual_ae_eq_childDepthZero
               (Q := Q) (R := R) (j := j) f hR
     _ = 0 := by
           simpa [cubeAverage_eq_integral_normalizedCubeMeasure] using hzero0
@@ -154,7 +154,7 @@ theorem cubeAverage_cubeProjection_succ_eq_cubeAverage_of_mem_descendantsAtDepth
               (Q := R) (j := 1) (f := g) hg).symm
 
 theorem
-  cubeAverage_mul_projection_projection_succ_eq_mul_projection_projection_of_mem_descendantsAtDepth_of_integrableOn
+  cubeAverage_mul_projection_projection_succ_eq_mul_projection_projection
     {d : ℕ} {Q R : TriadicCube d} {j : ℕ} (f g : Vec d → ℝ)
     (hR : R ∈ descendantsAtDepth Q j)
     (hg : MeasureTheory.IntegrableOn g (cubeSet R) MeasureTheory.volume) :
@@ -189,7 +189,8 @@ theorem
     cubeAverage R (fun x => cubeAverage R f * cubeProjection Q (j + 1) g x)
         = cubeAverage R f * cubeAverage R (cubeProjection Q (j + 1) g) := hconst_succ
     _ = cubeAverage R f * cubeAverage R (cubeProjection Q j g) := by
-          rw [cubeAverage_cubeProjection_succ_eq_cubeAverage_of_mem_descendantsAtDepth_of_integrableOn
+          rw [
+          cubeAverage_cubeProjection_succ_eq_cubeAverage_of_mem_descendantsAtDepth_of_integrableOn
             (Q := Q) (R := R) (j := j) (g := g) hR hg,
             cubeAverage_cubeProjection_eq_cubeAverage_of_mem_descendantsAtDepth
               (Q := Q) (R := R) (j := j) (g := g) hR]
@@ -275,7 +276,7 @@ theorem cubeAverage_mul_projection_eq_mul_projection_projection_of_mem_descendan
     _ = cubeAverage R (fun x => cubeProjection Q j f x * cubeProjection Q j g x) := by ring
 
 theorem
-  cubeAverage_mul_projection_succ_eq_add_cubeAverage_mul_projection_add_projectionResidual_of_mem_descendantsAtDepth_of_integrableOn
+  cubeAverage_projectionSucc_eq_cubeAverageProjection_add_projectionResidual
     {d : ℕ} {Q R : TriadicCube d} {j : ℕ} (p : ℝ≥0∞) (f g : Vec d → ℝ)
     (hR : R ∈ descendantsAtDepth Q j)
     (hgInt : MeasureTheory.IntegrableOn g (cubeSet R) MeasureTheory.volume)
@@ -351,7 +352,7 @@ theorem
           cubeAverage R (fun x => f x * cubeProjection Q j g x) +
             cubeAverage R (fun x => cubeProjection Q (j + 1) g x * cubeProjectionResidual Q j f
               x) := by
-              rw [cubeAverage_mul_projection_projection_succ_eq_mul_projection_projection_of_mem_descendantsAtDepth_of_integrableOn
+              rw [cubeAverage_mul_projection_projection_succ_eq_mul_projection_projection
                 (Q := Q) (R := R) (j := j) (f := f) (g := g) hR hgInt,
                 ← cubeAverage_mul_projection_eq_mul_projection_projection_of_mem_descendantsAtDepth
                   (Q := Q) (R := R) (j := j) (p := p) (f := f) (g := g) hR hf hp,
@@ -378,7 +379,7 @@ theorem cubeBesovPairing_projection_zero_eq_cubeAverage_mul_cubeAverage {d : ℕ
   rw [hcongr, cubeAverage_eq_integral_normalizedCubeMeasure, MeasureTheory.integral_mul_const,
     ← cubeAverage_eq_integral_normalizedCubeMeasure]
 
-theorem cubeBesovPairing_projection_succ_eq_add_cubeBesovPairing_projection_add_projectionResidual
+theorem cubeBesovPairing_projection_succ_eq_projection_add_residual
     {d : ℕ} (Q : TriadicCube d) (p : ℝ≥0∞) (f g : Vec d → ℝ) (j : ℕ)
     (hgInt : MeasureTheory.IntegrableOn g (cubeSet Q) MeasureTheory.volume)
     (hf : ∀ R ∈ descendantsAtDepth Q j,
@@ -442,7 +443,7 @@ theorem cubeBesovPairing_projection_succ_eq_add_cubeBesovPairing_projection_add_
     have hgIntR : MeasureTheory.IntegrableOn g (cubeSet R) MeasureTheory.volume :=
       hgInt.mono_set (cubeSet_subset_of_mem_descendantsAtDepth hR)
     simpa [hsucc, hcur, hres] using
-      cubeAverage_mul_projection_succ_eq_add_cubeAverage_mul_projection_add_projectionResidual_of_mem_descendantsAtDepth_of_integrableOn
+      cubeAverage_projectionSucc_eq_cubeAverageProjection_add_projectionResidual
         (Q := Q) (R := R) (j := j) (p := p) (f := f) (g := g)
         hR hgIntR (hf R hR) (hg R hR) hp
   unfold cubeBesovPairing
@@ -504,7 +505,7 @@ theorem cubeBesovPairing_projection_eq_cubeAverage_mul_cubeAverage_add_sum
         cubeBesovPairing Q f (cubeProjection Q (N + 1) g)
             = cubeBesovPairing Q f (cubeProjection Q N g) + T N := by
                 simpa [T] using
-                  cubeBesovPairing_projection_succ_eq_add_cubeBesovPairing_projection_add_projectionResidual
+                  cubeBesovPairing_projection_succ_eq_projection_add_residual
                     (Q := Q) (p := p) (f := f) (g := g) (j := N)
                     hgInt
                     (fun R hR => hf N (Nat.lt_succ_self N) R hR)

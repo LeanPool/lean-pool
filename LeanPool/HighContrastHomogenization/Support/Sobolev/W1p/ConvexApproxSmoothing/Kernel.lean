@@ -52,6 +52,8 @@ and `MeasureTheory.*` call. This single private instance drops cumulative
 private instance instHasContDiffBumpVec (d : ℕ) : HasContDiffBump (Vec d) :=
   inferInstance
 
+/-- The kernel is smooth and nonnegative, has compact topological support in the closed unit ball,
+and has integral one over its support. -/
 structure IsConvexApproxKernel {d : ℕ} (ρ : Vec d → ℝ) : Prop where
   smooth : ContDiff ℝ (⊤ : ℕ∞) ρ
   compactSupport : HasCompactSupport ρ

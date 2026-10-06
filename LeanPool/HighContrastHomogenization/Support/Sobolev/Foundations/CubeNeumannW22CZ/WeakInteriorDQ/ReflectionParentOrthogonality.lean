@@ -363,7 +363,7 @@ solenoidal zero-normal field back to the original cube preserves the
 solenoidal zero-normal test identity. This is the remaining Sobolev gluing
 lemma in its most concrete form. -/
 theorem
-  cubeFaceReflectionFoldedParentVectorField_isSolenoidalZeroNormalTraceOn_of_parent_reflected_h1_tests
+  foldedParent_isSolenoidalZeroTrace_of_reflectedTests
     {d : ℕ} {m : ℤ} {g : Vec d → Vec d}
     (hg : MemVectorL2 (openCubeSet (originCube d (m + 1))) g)
     (hsol :
@@ -491,7 +491,7 @@ theorem
       (by
         intro g hg hsol
         exact
-          cubeFaceReflectionFoldedParentVectorField_isSolenoidalZeroNormalTraceOn_of_parent_reflected_h1_tests
+          foldedParent_isSolenoidalZeroTrace_of_reflectedTests
             hg hsol hreflect)
       hmean hF
 

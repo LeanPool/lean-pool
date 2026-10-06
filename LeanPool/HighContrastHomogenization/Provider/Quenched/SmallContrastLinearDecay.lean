@@ -199,49 +199,24 @@ theorem gs_of_gs3 {A d0 : ℝ} (hA : 1 ≤ A) (hd0 : 0 < d0)
     mul_nonneg hxd hsq
   nlinarith only [hgs3, h3]
 
-/-- The per-round spacing is at most `Cs` times the level logarithm. -/
-theorem linSpacing_le {A alpha b0 bA b2 d0 S0 : ℝ} {cA j : ℕ}
-    (hA : 1 ≤ A) (halpha : 0 < alpha) (hb0 : 0 < b0) (hbA : 0 < bA)
-    (hb2 : 0 < b2) (hS0 : 1 ≤ S0) (hd0 : 0 < d0)
-    (hgs3 : (128 * A ^ 2) ^ 3 * d0 ≤ 1 / 3) :
-    ((max (linL A b0 S0 (linLam A d0 j)) (linT alpha d0 (linLam A d0 j)) +
-      linII A (linLam A d0 j) * (cA + 1) +
-      linPad A bA b2 (linLam A d0 j) + 1 : ℕ) : ℝ) ≤
-      linCs A alpha b0 bA b2 cA S0 * linY A d0 j := by
-  have hA0 : (0 : ℝ) < A := lt_of_lt_of_le one_pos hA
+
+private theorem linear_source_spacing_bound {A b0 d0 S0 : ℝ} {j : ℕ}
+    (hA : 1 ≤ A) (hb0 : 0 < b0)
+     (hS0 : 1 ≤ S0) (hd0 : 0 < d0)
+    (hA0 : (0 : ℝ) < A)
+    (hgs : 128 * A ^ 2 * d0 ≤ 1)
+    (hd01 : d0 ≤ 1)
+    (hy1 : 1 ≤ (linY A d0 j))
+    (hlamsq : Real.logb 3 (1 / linLam A d0 j ^ 2) = 2 * (linY A d0 j))
+    : ((1 : ℝ) ≤ S0 / (2 * A * linLam A d0 j ^ 2)) ∧
+    (Real.logb 3 (S0 / (2 * A * linLam A d0 j ^ 2)) / b0 ≤
+      (Real.logb 3 S0 + 2 * (linY A d0 j)) / b0) ∧
+    (((linL A b0 S0 (linLam A d0 j) : ℕ) : ℝ) ≤
+      (linY A d0 j) * (Real.logb 3 S0 / b0 + 2 / b0 + 1)) := by
+  classical
   have hlam := linLam_pos hA hd0 j
-  have hgs : 128 * A ^ 2 * d0 ≤ 1 := gs_of_gs3 hA hd0 hgs3
   have hlamd0 := linLam_le_floor hA hd0 hgs j
-  have hd01 : d0 ≤ 1 := by nlinarith only [hgs, hA]
   set y : ℝ := linY A d0 j with hydef
-  have hy1 : 1 ≤ y := by
-    have hz := linZ_one_le hA hd0 hgs3 j
-    have hzy := linY_ge_linZ (d0 := d0) hA j
-    rw [hydef]
-    linarith only [hz, hzy]
-  have hycs : Real.logb 3 (1 / linLam A d0 j) = y := by rw [hydef, linY]
-  have hylam : Real.logb 3 (linLam A d0 j) = -y := by
-    rw [← hycs, one_div, Real.logb_inv]
-    ring
-  have hcstar : Real.logb 3 (1 / (128 * A ^ 2 * linLam A d0 j)) =
-      y - Real.logb 3 (128 * A ^ 2) := by
-    rw [one_div, mul_inv, Real.logb_mul (by positivity) (by positivity),
-      Real.logb_inv, Real.logb_inv, hylam]
-    ring
-  have hlamsq : Real.logb 3 (1 / linLam A d0 j ^ 2) = 2 * y := by
-    rw [one_div, Real.logb_inv, Real.logb_pow, hylam]
-    push_cast
-    ring
-  have hrate : 0 < Real.logb 3 ((2 * A + 1) / (2 * A)) := by
-    have h1 : (1 : ℝ) < (2 * A + 1) / (2 * A) := by
-      rw [lt_div_iff₀ (by positivity)]
-      linarith only []
-    exact Real.logb_pos (by norm_num) h1
-  -- linL bound
-  have h2d0 : 2 * d0 ≤ 1 := by
-    have h5 : (0 : ℝ) ≤ d0 * (128 * A ^ 2 - 2) :=
-      mul_nonneg hd0.le (by nlinarith only [hA])
-    nlinarith only [hgs, h5]
   have hLarg : (1 : ℝ) ≤ S0 / (2 * A * linLam A d0 j ^ 2) := by
     rw [le_div_iff₀ (by positivity)]
     have h0 : linLam A d0 j ^ 2 ≤ d0 ^ 2 := by nlinarith only [hlamd0, hlam]
@@ -298,6 +273,22 @@ theorem linSpacing_le {A alpha b0 bA b2 d0 S0 : ℝ} {cA j : ℕ}
       nlinarith only [hy1, h4]
     linarith only [hceil, h2, h5, hy1]
   -- linT bound
+  exact ⟨hLarg, hLx, hL⟩
+
+private theorem linear_tolerance_spacing_bound {A alpha d0 : ℝ} {j : ℕ}
+    (hA : 1 ≤ A) (halpha : 0 < alpha)
+      (hd0 : 0 < d0)
+    (hgs : 128 * A ^ 2 * d0 ≤ 1)
+    (hd01 : d0 ≤ 1)
+    (hy1 : 1 ≤ (linY A d0 j))
+    (hlamsq : Real.logb 3 (1 / linLam A d0 j ^ 2) = 2 * (linY A d0 j))
+    (h2d0 : 2 * d0 ≤ 1)
+    : ((1 : ℝ) ≤ d0 / (2 * linLam A d0 j ^ 2)) ∧
+    (((linT alpha d0 (linLam A d0 j) : ℕ) : ℝ) ≤ (linY A d0 j) * (2 / alpha + 1)) := by
+  classical
+  have hlam := linLam_pos hA hd0 j
+  have hlamd0 := linLam_le_floor hA hd0 hgs j
+  set y : ℝ := linY A d0 j with hydef
   have hTarg : (1 : ℝ) ≤ d0 / (2 * linLam A d0 j ^ 2) := by
     rw [le_div_iff₀ (by positivity)]
     have ha : 2 * linLam A d0 j ^ 2 ≤ 2 * d0 * linLam A d0 j := by
@@ -333,6 +324,56 @@ theorem linSpacing_le {A alpha b0 bA b2 d0 S0 : ℝ} {cA j : ℕ}
     rw [hexp]
     linarith only [hceil, h5, hy1]
   -- linII bound
+  exact ⟨hTarg, hT⟩
+/-- The per-round spacing is at most `Cs` times the level logarithm. -/
+theorem linSpacing_le {A alpha b0 bA b2 d0 S0 : ℝ} {cA j : ℕ}
+    (hA : 1 ≤ A) (halpha : 0 < alpha) (hb0 : 0 < b0) (hbA : 0 < bA)
+    (hb2 : 0 < b2) (hS0 : 1 ≤ S0) (hd0 : 0 < d0)
+    (hgs3 : (128 * A ^ 2) ^ 3 * d0 ≤ 1 / 3) :
+    ((max (linL A b0 S0 (linLam A d0 j)) (linT alpha d0 (linLam A d0 j)) +
+      linII A (linLam A d0 j) * (cA + 1) +
+      linPad A bA b2 (linLam A d0 j) + 1 : ℕ) : ℝ) ≤
+      linCs A alpha b0 bA b2 cA S0 * linY A d0 j := by
+  have hA0 : (0 : ℝ) < A := lt_of_lt_of_le one_pos hA
+  have hlam := linLam_pos hA hd0 j
+  have hgs : 128 * A ^ 2 * d0 ≤ 1 := gs_of_gs3 hA hd0 hgs3
+  have hlamd0 := linLam_le_floor hA hd0 hgs j
+  have hd01 : d0 ≤ 1 := by nlinarith only [hgs, hA]
+  set y : ℝ := linY A d0 j with hydef
+  have hy1 : 1 ≤ y := by
+    have hz := linZ_one_le hA hd0 hgs3 j
+    have hzy := linY_ge_linZ (d0 := d0) hA j
+    rw [hydef]
+    linarith only [hz, hzy]
+  have hycs : Real.logb 3 (1 / linLam A d0 j) = y := by rw [hydef, linY]
+  have hylam : Real.logb 3 (linLam A d0 j) = -y := by
+    rw [← hycs, one_div, Real.logb_inv]
+    ring
+  have hcstar : Real.logb 3 (1 / (128 * A ^ 2 * linLam A d0 j)) =
+      y - Real.logb 3 (128 * A ^ 2) := by
+    rw [one_div, mul_inv, Real.logb_mul (by positivity) (by positivity),
+      Real.logb_inv, Real.logb_inv, hylam]
+    ring
+  have hlamsq : Real.logb 3 (1 / linLam A d0 j ^ 2) = 2 * y := by
+    rw [one_div, Real.logb_inv, Real.logb_pow, hylam]
+    push_cast
+    ring
+  have hrate : 0 < Real.logb 3 ((2 * A + 1) / (2 * A)) := by
+    have h1 : (1 : ℝ) < (2 * A + 1) / (2 * A) := by
+      rw [lt_div_iff₀ (by positivity)]
+      linarith only []
+    exact Real.logb_pos (by norm_num) h1
+  -- linL bound
+  have h2d0 : 2 * d0 ≤ 1 := by
+    have h5 : (0 : ℝ) ≤ d0 * (128 * A ^ 2 - 2) :=
+      mul_nonneg hd0.le (by nlinarith only [hA])
+    nlinarith only [hgs, h5]
+  obtain ⟨hLarg, hLx, hL⟩ :=
+    linear_source_spacing_bound hA hb0 hS0 hd0
+      hA0 hgs hd01 hy1 hlamsq
+  obtain ⟨hTarg, hT⟩ :=
+    linear_tolerance_spacing_bound hA halpha hd0 hgs
+      hd01 hy1 hlamsq h2d0
   have hIarg : (1 : ℝ) ≤ 1 / (16 * A ^ 2 * linLam A d0 j) := by
     rw [le_div_iff₀ (by positivity)]
     nlinarith only [hlamd0, hgs, hlam, hA0]

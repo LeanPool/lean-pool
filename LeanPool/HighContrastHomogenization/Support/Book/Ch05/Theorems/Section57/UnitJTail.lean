@@ -405,7 +405,7 @@ theorem fullBlockQuadraticCh04_diagonal_toFullBlockMat
     Ch04.fullBlockQuadraticCh04_toFullBlockMat A
       (ofFullBlockVec (Matrix.mulVec (Matrix.diagonal r) q))
   have hright :=
-    Section54.VarianceBoundGoodScale.fullBlockQuadratic_diagonal_toFullBlockMat_eq_blockVecDot
+    Section54.VarianceBoundGoodScale.diagonalForm_eq_dotProduct
       r A q
   rw [toFullBlockVec_ofFullBlockVec] at hleft
   calc
@@ -576,7 +576,7 @@ private theorem abs_limitInvSqrt_quadratic_le_card_sq_mul_weighted_ae
         ((Ch04.triadicCoeffFamilyOfAELocallyUniformlyEllipticField a ha).coeffOn
           (originCube d 0)) := by
     simpa [A] using
-      Ch04.RestrictionLawCarrier.coarseBlockMatrix_cubeSet_eq_ch02_coarseBlockMatrix_of_aelocallyUniformlyEllipticField
+      Ch04.RestrictionLawCarrier.coarseBlockMatrix_cubeSet_eq_chapterCoarse
         ha (originCube d 0)
   have hSymm : IsSymmetricBlockMat A := by
     rw [hEq]
@@ -692,7 +692,7 @@ private theorem abs_limitSqrt_reflect_quadratic_le_card_sq_mul_weighted_ae
         ((Ch04.triadicCoeffFamilyOfAELocallyUniformlyEllipticField a ha).coeffOn
           (originCube d 0)) := by
     simpa [A] using
-      Ch04.RestrictionLawCarrier.coarseBlockMatrix_cubeSet_eq_ch02_coarseBlockMatrix_of_aelocallyUniformlyEllipticField
+      Ch04.RestrictionLawCarrier.coarseBlockMatrix_cubeSet_eq_chapterCoarse
         ha (originCube d 0)
   have hSymm : IsSymmetricBlockMat A := by
     rw [hEq]

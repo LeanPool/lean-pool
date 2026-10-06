@@ -1573,7 +1573,8 @@ private theorem partial_le_scale_mul_disjoint_root_mul_holderTail_of_two_lt
 /-- Uniform sharp strict-`p` bridge.  Its tail is deliberately left as the
 geometric-discount expression: the forcing assembly later couples it to the
 outer physical-scale tail, yielding the frozen single inverse-gap loss. -/
-private theorem cubeBesovPositiveVectorSeminormTwo_le_scale_mul_disjoint_root_mul_holderTail_of_two_lt
+private theorem
+  cubeBesovPositiveVectorSeminormTwo_le_scale_mul_disjoint_root_mul_holderTail_of_two_lt
     {d : ℕ} (Q : TriadicCube d) (s s2 : FractionalOrder)
     (hss2 : s.1 < s2.1) (p : FiniteLpExponent)
     (hp : (2 : ℝ≥0∞) < p.exponent) (g : Vec d → Vec d)
@@ -2346,6 +2347,29 @@ private theorem ENNReal_rpow_four_factor
     mul_inv_cancel₀ hr.ne', ENNReal.rpow_one]
   simp only [ENNReal.rpow_one]
 
+private theorem forcingGeometricTailRoot_le_discountPower
+    (w : ℕ → ℝ≥0∞) {D r : ℝ} (hr : 0 < r) (hDpos : 0 < D)
+    (htail : ∑' j : ℕ, w j ≤ ENNReal.ofReal D⁻¹) :
+    (∑' j : ℕ, w j) ^ r⁻¹ ≤
+      ENNReal.ofReal (Real.rpow D (-1 / r)) := by
+  have htail_root : (∑' j : ℕ, w j) ^ r⁻¹ ≤
+      ENNReal.ofReal (Real.rpow D (-1 / r)) := by
+    calc
+      (∑' j : ℕ, w j) ^ r⁻¹ ≤ (ENNReal.ofReal D⁻¹) ^ r⁻¹ :=
+        ENNReal.rpow_le_rpow htail (inv_nonneg.mpr hr.le)
+      _ = ENNReal.ofReal (Real.rpow D (-1 / r)) := by
+        rw [ENNReal.ofReal_rpow_of_pos (inv_pos.mpr hDpos)]
+        congr 1
+        calc
+          Real.rpow D⁻¹ r⁻¹ = Real.rpow (Real.rpow D (-1)) r⁻¹ := by
+            congr 1
+            exact (Real.rpow_neg_one D).symm
+          _ = Real.rpow D ((-1 : ℝ) * r⁻¹) :=
+            (Real.rpow_mul hDpos.le _ _).symm
+          _ = Real.rpow D (-1 / r) := by
+            congr 1
+  exact htail_root
+
 /-- Assemble a one-level sharp forcing estimate over all physical scales.
 The hypotheses deliberately expose only the internal retained-tail factor
 `A`; the public theorem below supplies it in the strict and endpoint cases. -/
@@ -2403,22 +2427,10 @@ private theorem localCoarseGrainingForcingLp_le_of_sharp_local
   have htail : ∑' j : ℕ, w j ≤ ENNReal.ofReal D⁻¹ := by
     dsimp [w, D]
     exact forcing_outer_tsum_le_discount hdelta hbeta hr
-  have htail_root : (∑' j : ℕ, w j) ^ r⁻¹ ≤
-      ENNReal.ofReal (Real.rpow D (-1 / r)) := by
-    calc
-      (∑' j : ℕ, w j) ^ r⁻¹ ≤ (ENNReal.ofReal D⁻¹) ^ r⁻¹ :=
-        ENNReal.rpow_le_rpow htail (inv_nonneg.mpr hr.le)
-      _ = ENNReal.ofReal (Real.rpow D (-1 / r)) := by
-        rw [ENNReal.ofReal_rpow_of_pos (inv_pos.mpr hDpos)]
-        congr 1
-        calc
-          Real.rpow D⁻¹ r⁻¹ = Real.rpow (Real.rpow D (-1)) r⁻¹ := by
-            congr 1
-            exact (Real.rpow_neg_one D).symm
-          _ = Real.rpow D ((-1 : ℝ) * r⁻¹) :=
-            (Real.rpow_mul hDpos.le _ _).symm
-          _ = Real.rpow D (-1 / r) := by
-            congr 1
+  have htail_root :
+      (∑' j : ℕ, w j) ^ r⁻¹ ≤
+      ENNReal.ofReal (Real.rpow D (-1 / r)) :=
+    forcingGeometricTailRoot_le_discountPower w hr hDpos htail
   have hlocal' : ∀ j : ℕ,
       descendantsAtScaleENNAverage Q (n - (j : ℤ)) (fun R =>
           (ENNReal.ofReal (cubeBesovPositiveVectorSeminormTwo R s.1 g)) ^ r) ≤

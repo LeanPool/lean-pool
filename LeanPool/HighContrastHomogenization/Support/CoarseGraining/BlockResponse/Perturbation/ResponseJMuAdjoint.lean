@@ -32,7 +32,7 @@ blockJValueSet / blockJ membership / bound theorems.
 -/
 
 /-- Coupling lemma with arbitrary scalar response data. -/
-theorem blockEnergyAverage_blockResponsePairHalfState_eq_responseJ_of_pairingAverage_eq_zero_of_firstVariation_eq_zero
+theorem blockEnergyAverage_blockResponseHalfState_eq_responseJ
     {d : ℕ} {U : Set (Vec d)} (a : CoeffField d) {lam Lam : ℝ}
     [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     (hEll : IsEllipticFieldOn lam Lam U a)
@@ -58,7 +58,7 @@ theorem blockEnergyAverage_blockResponsePairHalfState_eq_responseJ_of_pairingAve
       blockEnergyAverage U a (blockResponsePairHalfState a u v) =
         (1 / 4 : ℝ) * Eu + (1 / 4 : ℝ) * Ev := by
     simpa [Eu, Ev] using
-      blockEnergyAverage_blockResponsePairHalfState_eq_quarter_scalarVariationEnergySum_of_isEllipticFieldOn
+      blockEnergyAverage_blockResponseHalfState_eq_quarter_scalarVariationEnergySum
         (a := a) (measurableSet_of_isEllipticFieldOn hEll) hEll u v
   have hPairSplit :
       (1 / 4 : ℝ) * Eu - (1 / 4 : ℝ) * Ev = 0 := by
@@ -81,7 +81,7 @@ theorem blockEnergyAverage_blockResponsePairHalfState_eq_responseJ_of_pairingAve
 /-- Coupling lemma with arbitrary scalar response data and nonzero average
 state-pairing. The pairing is exactly the correction term between the block
 half-pair energy and the scalar response value. -/
-theorem blockEnergyAverage_blockResponsePairHalfState_eq_responseJ_sub_pairing_of_pairingAverage_eq_of_firstVariation_eq_zero
+theorem blockEnergyAverage_blockResponseHalfState_eq_responseJ_sub_pairing
     {d : ℕ} {U : Set (Vec d)} (a : CoeffField d) {lam Lam : ℝ}
     [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     (hEll : IsEllipticFieldOn lam Lam U a)
@@ -108,7 +108,7 @@ theorem blockEnergyAverage_blockResponsePairHalfState_eq_responseJ_sub_pairing_o
       blockEnergyAverage U a (blockResponsePairHalfState a u v) =
         (1 / 4 : ℝ) * Eu + (1 / 4 : ℝ) * Ev := by
     simpa [Eu, Ev] using
-      blockEnergyAverage_blockResponsePairHalfState_eq_quarter_scalarVariationEnergySum_of_isEllipticFieldOn
+      blockEnergyAverage_blockResponseHalfState_eq_quarter_scalarVariationEnergySum
         (a := a) (measurableSet_of_isEllipticFieldOn hEll) hEll u v
   have hPairSplit :
       (1 / 4 : ℝ) * Eu - (1 / 4 : ℝ) * Ev = pairing := by
@@ -133,7 +133,7 @@ Pure-gradient coupling: the recovered first variation appears at `(-p,0)`,
 and the final statement uses the quadratic evenness of `ResponseJ` in the
 pure-gradient slice.
 -/
-theorem blockEnergyAverage_blockResponsePairHalfState_eq_responseJ_left_zero_of_pairingAverage_eq_zero_of_firstVariation_neg_left_zero
+theorem blockEnergyAverage_blockResponseHalfState_eq_responseJ_left_zero
     {d : ℕ} {U : Set (Vec d)} (a : CoeffField d) {lam Lam : ℝ}
     [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     (hEll : IsEllipticFieldOn lam Lam U a)
@@ -153,7 +153,7 @@ theorem blockEnergyAverage_blockResponsePairHalfState_eq_responseJ_left_zero_of_
   have hneg :
       blockEnergyAverage U a (blockResponsePairHalfState a u v) =
         ResponseJ U (-p) 0 a :=
-    blockEnergyAverage_blockResponsePairHalfState_eq_responseJ_of_pairingAverage_eq_zero_of_firstVariation_eq_zero
+    blockEnergyAverage_blockResponseHalfState_eq_responseJ
       (a := a) hEll (-p) 0 u v hpair hfirst
   have heven : ResponseJ U (-p) 0 a = ResponseJ U p 0 a := by
     simpa using
@@ -165,7 +165,7 @@ theorem blockEnergyAverage_blockResponsePairHalfState_eq_responseJ_left_zero_of_
 state-pairing and its primal scalar component satisfies the Euler-Lagrange
 identity for `ResponseJ U 0 q a`, then the block half-pair energy is exactly
 that scalar response value. -/
-theorem blockEnergyAverage_blockResponsePairHalfState_eq_responseJ_zero_of_pairingAverage_eq_zero_of_firstVariation_eq_zero
+theorem blockEnergyAverage_blockResponseHalfState_eq_responseJ_zero
     {d : ℕ} {U : Set (Vec d)} (a : CoeffField d) {lam Lam : ℝ}
     [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     (hU : MeasurableSet U)
@@ -192,7 +192,7 @@ theorem blockEnergyAverage_blockResponsePairHalfState_eq_responseJ_zero_of_pairi
       blockEnergyAverage U a (blockResponsePairHalfState a u v) =
         (1 / 4 : ℝ) * Eu + (1 / 4 : ℝ) * Ev := by
     simpa [Eu, Ev] using
-      blockEnergyAverage_blockResponsePairHalfState_eq_quarter_scalarVariationEnergySum_of_isEllipticFieldOn
+      blockEnergyAverage_blockResponseHalfState_eq_quarter_scalarVariationEnergySum
         (a := a) hU hEll u v
   have hPairSplit :
       (1 / 4 : ℝ) * Eu - (1 / 4 : ℝ) * Ev = 0 := by
@@ -215,7 +215,7 @@ theorem blockEnergyAverage_blockResponsePairHalfState_eq_responseJ_zero_of_pairi
 /-- If the two scalar inputs are response maximizers, the half-pair witness has
 block energy equal to one half of the sum of the corresponding response
 values. -/
-theorem blockEnergyAverage_blockResponsePairHalfState_eq_half_responseJ_sum_of_isResponseMaximizer_of_isEllipticFieldOn
+theorem blockEnergyAverage_blockResponseHalfState_eq_half_responseJ_sum
     {d : ℕ} {U : Set (Vec d)} (a : CoeffField d) {lam Lam : ℝ}
     [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     (hU : MeasurableSet U)
@@ -233,7 +233,7 @@ theorem blockEnergyAverage_blockResponsePairHalfState_eq_half_responseJ_sum_of_i
   have hInt := ResponseLinearIntegrabilityData.of_isEllipticFieldOn hEll
   have hIntAdj := ResponseLinearIntegrabilityData.of_isEllipticFieldOn hEllAdj
   have henergy :=
-    blockEnergyAverage_blockResponsePairHalfState_eq_quarter_scalarVariationEnergySum_of_isEllipticFieldOn
+    blockEnergyAverage_blockResponseHalfState_eq_quarter_scalarVariationEnergySum
       (a := a) hU hEll u v
   have hu :
       ResponseJ U p q a = (1 / 2 : ℝ) * volumeAverage U (scalarVariationEnergyIntegrand a u) :=
@@ -252,7 +252,7 @@ theorem blockEnergyAverage_blockResponsePairHalfState_eq_half_responseJ_sum_of_i
 
 /-- Scalar canonical maximizers feed the previous half-pair energy identity
 without extra bookkeeping. -/
-theorem blockEnergyAverage_blockResponsePairHalfState_eq_half_responseJ_sum_of_scalarCanonicalMaximizers_of_isEllipticFieldOn
+theorem blockEnergyAverage_blockResponseHalfState_eq_half_responseJ_sum_of_ellipticField
     {d : ℕ} {U : Set (Vec d)} (a : CoeffField d) {lam Lam : ℝ}
     [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     (hU : MeasurableSet U)
@@ -267,13 +267,13 @@ theorem blockEnergyAverage_blockResponsePairHalfState_eq_half_responseJ_sum_of_s
       (1 / 2 : ℝ) * ResponseJ U p q a +
         (1 / 2 : ℝ) * ResponseJ U p' q' (HCPolySupport.adjointCoeffField a) := by
   exact
-    blockEnergyAverage_blockResponsePairHalfState_eq_half_responseJ_sum_of_isResponseMaximizer_of_isEllipticFieldOn
+    blockEnergyAverage_blockResponseHalfState_eq_half_responseJ_sum
       (a := a) hU hEll p q p' q'
       (u := (u : AHarmonicFunction a U))
       (v := (v : AHarmonicFunction (HCPolySupport.adjointCoeffField a) U))
       u.isResponseMaximizer v.isResponseMaximizer
 
-theorem blockResponse_half_scalarResponse_sum_mem_blockJValueSet_of_isEllipticFieldOn_of_finiteMeasure
+theorem blockResponse_half_scalarResponse_sum_mem_blockJ
     {d : ℕ} {U : Set (Vec d)} (a : CoeffField d) {lam Lam : ℝ}
     [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     (hU : MeasurableSet U)
@@ -307,10 +307,10 @@ theorem blockResponse_half_scalarResponse_sum_le_blockJ_of_isEllipticFieldOn
   exact
     le_blockJ_of_mem_blockJValueSet_of_isEllipticFieldOn
       hU hEll hvol (p, q) (qStar, pStar)
-      (blockResponse_half_scalarResponse_sum_mem_blockJValueSet_of_isEllipticFieldOn_of_finiteMeasure
+      (blockResponse_half_scalarResponse_sum_mem_blockJ
         (a := a) hU hEll p pStar q qStar u v)
 
-theorem blockResponse_half_responseJ_adjoint_sum_note_form_mem_blockJValueSet_of_isResponseMaximizer_of_isEllipticFieldOn
+theorem blockResponse_half_responseJ_adjoint_sum_note_form_mem_blockJValueSet
     {d : ℕ} {U : Set (Vec d)} (a : CoeffField d) {lam Lam : ℝ}
     [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     (hU : MeasurableSet U)
@@ -328,7 +328,8 @@ theorem blockResponse_half_responseJ_adjoint_sum_note_form_mem_blockJValueSet_of
     blockResponse_half_responseJ_adjoint_sum_note_form_mem_blockJValueSet_of_isResponseMaximizer
       (a := a) hU hEll p q h u v hmax hmaxAdj
 
-theorem blockResponse_half_responseJ_adjoint_sum_le_blockJ_of_isResponseMaximizer_of_isEllipticFieldOn
+theorem
+  blockResponse_half_responseJ_adjoint_sum_le_blockJ_of_isResponseMaximizer_of_isEllipticFieldOn
     {d : ℕ} {U : Set (Vec d)} (a : CoeffField d) {lam Lam : ℝ}
     [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     (hU : MeasurableSet U)
@@ -349,7 +350,7 @@ theorem blockResponse_half_responseJ_adjoint_sum_le_blockJ_of_isResponseMaximize
       (blockResponse_half_responseJ_adjoint_sum_mem_blockJValueSet_of_isResponseMaximizer
         (a := a) hU hEll p pStar q qStar u v hmax hmaxAdj)
 
-theorem blockResponse_half_responseJ_adjoint_sum_note_form_le_blockJ_of_isResponseMaximizer_of_isEllipticFieldOn
+theorem blockResponse_half_responseJ_adjoint_sum_note_form_le_blockJ
     {d : ℕ} {U : Set (Vec d)} (a : CoeffField d) {lam Lam : ℝ}
     [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     (hU : MeasurableSet U)
@@ -374,7 +375,7 @@ theorem blockResponse_half_responseJ_adjoint_sum_note_form_le_blockJ_of_isRespon
       (a := a) hU hEll hvol (p := p) (pStar := 0) (q := h) (qStar := q) u v
       hmax' hmaxAdj'
 
-theorem blockResponse_half_responseJ_adjoint_sum_mem_blockJValueSet_of_scalarCanonicalMaximizer_of_isEllipticFieldOn
+theorem blockResponse_half_responseJ_adjoint_sum_mem_blockJValueSet
     {d : ℕ} {U : Set (Vec d)} (a : CoeffField d) {lam Lam : ℝ}
     [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     (hU : MeasurableSet U)
@@ -393,7 +394,7 @@ theorem blockResponse_half_responseJ_adjoint_sum_mem_blockJValueSet_of_scalarCan
       (v := (v : AHarmonicFunction (HCPolySupport.adjointCoeffField a) U))
       u.isResponseMaximizer v.isResponseMaximizer
 
-theorem blockResponse_half_responseJ_adjoint_sum_note_form_mem_blockJValueSet_of_scalarCanonicalMaximizer_of_isEllipticFieldOn
+theorem blockResponse_half_responseJ_adjoint_sum_note_form_mem_of_ellipticField
     {d : ℕ} {U : Set (Vec d)} (a : CoeffField d) {lam Lam : ℝ}
     [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     (hU : MeasurableSet U)
@@ -406,13 +407,13 @@ theorem blockResponse_half_responseJ_adjoint_sum_note_form_mem_blockJValueSet_of
           ResponseJ U p (q + h) (HCPolySupport.adjointCoeffField a) ∈
       blockJValueSet U (p, h) (q, 0) a := by
   exact
-    blockResponse_half_responseJ_adjoint_sum_note_form_mem_blockJValueSet_of_isResponseMaximizer_of_isEllipticFieldOn
+    blockResponse_half_responseJ_adjoint_sum_note_form_mem_blockJValueSet
       (a := a) hU hEll p q h
       (u := (u : AHarmonicFunction a U))
       (v := (v : AHarmonicFunction (HCPolySupport.adjointCoeffField a) U))
       u.isResponseMaximizer v.isResponseMaximizer
 
-theorem blockResponse_half_responseJ_adjoint_sum_le_blockJ_of_scalarCanonicalMaximizer_of_isEllipticFieldOn
+theorem blockResponse_half_adjointResponseJ_sum_le_blockJ_of_maximizers
     {d : ℕ} {U : Set (Vec d)} (a : CoeffField d) {lam Lam : ℝ}
     [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     (hU : MeasurableSet U)
@@ -432,7 +433,7 @@ theorem blockResponse_half_responseJ_adjoint_sum_le_blockJ_of_scalarCanonicalMax
       (v := (v : AHarmonicFunction (HCPolySupport.adjointCoeffField a) U))
       u.isResponseMaximizer v.isResponseMaximizer
 
-theorem blockResponse_half_responseJ_adjoint_sum_note_form_le_blockJ_of_scalarCanonicalMaximizer_of_isEllipticFieldOn
+theorem blockResponse_half_responseJ_adjoint_sum_note_form_le_blockJ_of_ellipticField
     {d : ℕ} {U : Set (Vec d)} (a : CoeffField d) {lam Lam : ℝ}
     [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     (hU : MeasurableSet U)
@@ -446,7 +447,7 @@ theorem blockResponse_half_responseJ_adjoint_sum_note_form_le_blockJ_of_scalarCa
           ResponseJ U p (q + h) (HCPolySupport.adjointCoeffField a) ≤
       BlockJ U (p, h) (q, 0) a := by
   exact
-    blockResponse_half_responseJ_adjoint_sum_note_form_le_blockJ_of_isResponseMaximizer_of_isEllipticFieldOn
+    blockResponse_half_responseJ_adjoint_sum_note_form_le_blockJ
       (a := a) hU hEll hvol p q h
       (u := (u : AHarmonicFunction a U))
       (v := (v : AHarmonicFunction (HCPolySupport.adjointCoeffField a) U))

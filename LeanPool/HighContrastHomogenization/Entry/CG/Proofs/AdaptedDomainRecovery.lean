@@ -57,7 +57,7 @@ theorem exists_recoveryData_of_mu_eq_muCandidate_of_isOpenBoundedConvexDomain
           ((R.toMuHilbertRealization
             (R.toMuOperatorSystemDataOfIsEllipticFieldOn hEll hvol)).muCandidate P) := by
   have hRealize : PotentialSolenoidalL2Data.HasPotentialZeroTraceClosureRealization U :=
-    PotentialSolenoidalL2Data.hasPotentialZeroTraceClosureRealization_of_isOpenBoundedConvexDomain
+    PotentialSolenoidalL2Data.hasPotentialZeroTraceClosureRealization_of_convexDomain
       hConv
   let R : PotentialSolenoidalL2RecoveryData U :=
     potentialSolenoidalL2RecoveryData_ofSubmoduleClosures_of_potentialZeroTraceClosureRealization
@@ -73,7 +73,8 @@ theorem exists_recoveryData_of_mu_eq_muCandidate_of_isOpenBoundedConvexDomain
     let Y : CorrectionFieldData U := hX.toCorrectionFieldDataOfAdmissible
     have hXmemBlock : MemBlockL2 U X.eval := hX.memBlockL2_eval
     have hcorr :
-        Y.toHilbertBlockL2 ∈ R.toPotentialSolenoidalL2Data.toMuCorrectionSpaceData.correctionSpace := by
+        Y.toHilbertBlockL2 ∈
+          R.toPotentialSolenoidalL2Data.toMuCorrectionSpaceData.correctionSpace := by
       exact
         R.toPotentialSolenoidalL2Data.toMuCorrectionSpaceData.mem_correctionSpace
           Y.potential_memL2 Y.flux_memL2 Y.isPotentialZeroTrace Y.isSolenoidalZeroNormalTrace
@@ -184,7 +185,7 @@ theorem exists_recovery_compatibility_of_isOpenBoundedConvexDomain
     ⟨R, hmu⟩
   exact
     ⟨R,
-      ⟨PotentialSolenoidalL2RecoveryData.muRecoveryCompatibilityData_of_isEllipticFieldOn_of_mu_eq_muCandidate
+      ⟨PotentialSolenoidalL2RecoveryData.muRecoveryData_of_ellipticity_candidateEquality
           R hEll hvol hmu⟩⟩
 
 /-- The canonical coarse block matrix is characterized by the variational quadratic identity
@@ -215,7 +216,7 @@ theorem responseJ_eq_block_quadratic_of_isOpenBoundedConvexDomain
     ⟨R, ⟨compat⟩⟩
   have hResp :
       ResponseJ U p r a = Mu U (-p, r) a - vecDot p r :=
-    R.responseJ_eq_mu_neg_left_sub_vecDot_of_isEllipticFieldOn_of_isOpenBoundedConvexDomain
+    R.responseJ_eq_mu_negLeft_sub_vecDot
       hConv hEll hvol compat p r
   have hMu :=
     R.mu_eq_half_blockVecDot_coarseBlockMatrixOfIsEllipticFieldOn hEll hvol compat (-p, r)
@@ -298,7 +299,7 @@ theorem blockPosDef_coarseBlockMatrix_of_isOpenBoundedConvexDomain
 
 /-- Invertible affine images of open triadic cubes are bounded open convex domains. -/
 theorem isOpenBoundedConvexDomain_affine_openCube
-    {d : ℕ} [NeZero d] (q : Mat d) (hq : IsUnit q) (j : ℤ) (y : Vec d) :
+    {d : ℕ} (q : Mat d) (hq : IsUnit q) (j : ℤ) (y : Vec d) :
     IsOpenBoundedConvexDomain
       (translateSet y (matVecMul q '' openCubeSet (originCube d j))) := by
   apply IsOpenBoundedConvexDomain.translateSet

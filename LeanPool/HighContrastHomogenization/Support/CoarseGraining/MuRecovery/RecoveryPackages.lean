@@ -96,7 +96,8 @@ noncomputable def ofCorrectionSpaceRecovery
     (mu_eq_muCandidate :
       ∀ P : BlockVec d,
         Mu U P a =
-          (system.toMuOperatorRealization.toMuHilbertRealization R.toMuCorrectionSpaceData).muCandidate
+          (system.toMuOperatorRealization.toMuHilbertRealization
+            R.toMuCorrectionSpaceData).muCandidate
             P) :
     MuMinimizerRecoveryData U a where
   system := system.withCorrectionSpace R.toMuCorrectionSpaceData
@@ -145,7 +146,7 @@ structure MuRecoveryCompatibilityData
 `MuRecoveryCompatibilityData` is the identification of `Mu` with the Hilbert
 minimizer value. Pairing integrability follows automatically from the `L²`
 control of recovered fields. -/
-theorem muRecoveryCompatibilityData_of_isEllipticFieldOn_of_mu_eq_muCandidate
+theorem muRecoveryData_of_ellipticity_candidateEquality
     (R : PotentialSolenoidalL2RecoveryData U)
     {lam Lam : ℝ} (hEll : IsEllipticFieldOn lam Lam U a)
     (hvol : 0 < (MeasureTheory.volume U).toReal)
@@ -357,7 +358,7 @@ theorem mu_left_zero_eq_responseJ_zero_of_isEllipticFieldOn_of_isSigmaCoarse
 /-- If the pure-flux slice of `\mu` matches the pure-flux slice of
 `\mathcal J`, then the lower-right block of `\mathbf A(U; a)` is the canonical
 `\sigma_*^{-1}(U; a)`, packaged directly from recovery data and ellipticity. -/
-theorem coarseBlockMatrix_lowerRight_eq_sigmaStarInvCoarse_of_mu_zero_right_eq_responseJ_zero_of_isEllipticFieldOn
+theorem coarseMatrix_lowerRight_eq_sigmaStarInvCoarse_of_ellipticField
     (R : PotentialSolenoidalL2RecoveryData U)
     {lam Lam : ℝ} (hEll : IsEllipticFieldOn lam Lam U a)
     (hvol : 0 < (MeasureTheory.volume U).toReal)
@@ -374,7 +375,7 @@ theorem coarseBlockMatrix_lowerRight_eq_sigmaStarInvCoarse_of_mu_zero_right_eq_r
 `\mathcal J`, then the upper-left block of `\mathbf A_*^{-1}(U; a)` is the
 canonical `\sigma_*^{-1}(U; a)`, packaged directly from recovery data and
 ellipticity. -/
-theorem coarseStarredBlockMatrixInv_upperLeft_eq_sigmaStarInvCoarse_of_mu_zero_right_eq_responseJ_zero_of_isEllipticFieldOn
+theorem coarseStarredBlockMatrixInv_upperLeft_eq_sigmaStarInvCoarse
     (R : PotentialSolenoidalL2RecoveryData U)
     {lam Lam : ℝ} (hEll : IsEllipticFieldOn lam Lam U a)
     (hvol : 0 < (MeasureTheory.volume U).toReal)

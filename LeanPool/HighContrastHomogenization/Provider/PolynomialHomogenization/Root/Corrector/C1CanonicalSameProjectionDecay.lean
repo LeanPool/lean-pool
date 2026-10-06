@@ -99,7 +99,8 @@ theorem exists_canonicalFiniteCorrectorSameProjectionDecayConstants
     Measure.restrict_mono_set volume
       (openCubeSet_originCube_subset_of_le (by exact_mod_cast hqm))
   have hglobal :=
-    ((finiteAffineCorrectionJointLocalLimit a hCauchy e).globalGradientRepresentative_ae_eq_localH1Gradient m).filter_mono
+    ((finiteAffineCorrectionJointLocalLimit a hCauchy
+      e).globalGradientRepresentative_ae_eq_localH1Gradient m).filter_mono
       (ae_mono hmu)
   have hfield : u.toH1.grad =ᵐ[volumeMeasureOn
       (openCubeSet (originCube d (q : ℤ)))]
@@ -129,7 +130,8 @@ theorem exists_canonicalFiniteCorrectorSameProjectionDecayConstants
   rw [← hleft]
   refine hraw.trans ?_
   have hglobalM :=
-    (finiteAffineCorrectionJointLocalLimit a hCauchy e).globalGradientRepresentative_ae_eq_localH1Gradient m
+    (finiteAffineCorrectionJointLocalLimit a hCauchy
+      e).globalGradientRepresentative_ae_eq_localH1Gradient m
   have hfieldM : u.toH1.grad =ᵐ[volumeMeasureOn
       (openCubeSet (originCube d (m : ℤ)))]
       (fun x ↦ e + (Phi e).globalGradientRepresentative x) := by

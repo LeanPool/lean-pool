@@ -147,7 +147,7 @@ theorem setIntegral_cubeFaceReflectionCellCube_cubeCoordinateFoldReflectedScalar
 
 /-- The vector self-pairing energy on any reflection-block cell is one copy
 of the original cube energy. -/
-theorem setIntegral_cubeFaceReflectionCellCube_cubeCoordinateFoldReflectedVectorField_self_pairing
+theorem foldedCellVector_selfPairing_eq_parent
     {d : ℕ} {G : Vec d → Vec d}
     (Q : TriadicCube d) (choice : Fin d → Fin 3) :
     ∫ x in openCubeSet (cubeFaceReflectionCellCube Q choice),
@@ -294,7 +294,7 @@ theorem setIntegral_cubeFaceReflectionBlockSet_cubeCoordinateFoldReflectedVector
           apply Finset.sum_congr rfl
           intro choice _hchoice
           simpa [f] using
-            setIntegral_cubeFaceReflectionCellCube_cubeCoordinateFoldReflectedVectorField_self_pairing
+            foldedCellVector_selfPairing_eq_parent
               Q choice
     _ = (Fintype.card (Fin d → Fin 3) : ℝ) *
         ∫ y in openCubeSet Q, vecDot (G y) (G y) ∂volume := by
@@ -303,7 +303,7 @@ theorem setIntegral_cubeFaceReflectionBlockSet_cubeCoordinateFoldReflectedVector
 /-- Set-integral split over the union of an open cube and its upper face
 neighbor. -/
 theorem setIntegral_openCubeSet_union_upperFaceNeighbor {d : ℕ}
-    {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] [CompleteSpace E]
+    {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
     (Q : TriadicCube d) (i : Fin d) (f : Vec d → E)
     (hQ :
       MeasureTheory.Integrable f
@@ -322,7 +322,7 @@ theorem setIntegral_openCubeSet_union_upperFaceNeighbor {d : ℕ}
 /-- Set-integral split over the union of an open cube and its lower face
 neighbor. -/
 theorem setIntegral_openCubeSet_union_lowerFaceNeighbor {d : ℕ}
-    {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] [CompleteSpace E]
+    {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
     (Q : TriadicCube d) (i : Fin d) (f : Vec d → E)
     (hQ :
       MeasureTheory.Integrable f
@@ -341,7 +341,7 @@ theorem setIntegral_openCubeSet_union_lowerFaceNeighbor {d : ℕ}
 /-- Set-integral split over the lower/original/upper one-coordinate
 face-neighbor slab. -/
 theorem setIntegral_cubeFaceNeighborSlabSet {d : ℕ}
-    {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] [CompleteSpace E]
+    {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
     (Q : TriadicCube d) (i : Fin d) (f : Vec d → E)
     (hL :
       MeasureTheory.Integrable f

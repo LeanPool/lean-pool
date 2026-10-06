@@ -86,6 +86,36 @@ private theorem collapsed_square_envelope_le_of_le
       (Real.rpow_pos_of_pos (by norm_num : (0 : ℝ) < 3) _).le
   exact pow_le_pow_left₀ hleft_nonneg hmul 2
 
+private theorem maximumResponseEnvelopeBounds
+    {response negative exponent : ℝ}
+    (hresponse : 0 ≤ response) (hnegative : 0 ≤ negative) (hexponent : 0 ≤ exponent) :
+    let envelope := max response negative * Real.rpow (3 : ℝ) exponent
+    0 ≤ envelope ∧ response ≤ envelope ∧ negative ≤ envelope ∧
+      response * Real.rpow (3 : ℝ) exponent ≤ envelope ∧
+      negative * Real.rpow (3 : ℝ) exponent ≤ envelope := by
+  dsimp only
+  have hpower : 1 ≤ Real.rpow (3 : ℝ) exponent :=
+    Real.one_le_rpow (by norm_num : (1 : ℝ) ≤ 3) hexponent
+  have hmaximum : 0 ≤ max response negative := le_max_of_le_left hresponse
+  have hbound : max response negative ≤
+      max response negative * Real.rpow (3 : ℝ) exponent := by
+    calc
+      max response negative = max response negative * 1 := by ring
+      _ ≤ max response negative * Real.rpow (3 : ℝ) exponent :=
+        mul_le_mul_of_nonneg_left hpower hmaximum
+  have hnegative_bound : negative ≤
+      max response negative * Real.rpow (3 : ℝ) exponent := by
+    calc
+      negative = negative * 1 := by ring
+      _ ≤ negative * Real.rpow (3 : ℝ) exponent :=
+        mul_le_mul_of_nonneg_left hpower hnegative
+      _ ≤ max response negative * Real.rpow (3 : ℝ) exponent :=
+        mul_le_mul_of_nonneg_right (le_max_right _ _) (zero_le_one.trans hpower)
+  exact ⟨mul_nonneg hmaximum (zero_le_one.trans hpower),
+    (le_max_left _ _).trans hbound, hnegative_bound,
+    mul_le_mul_of_nonneg_right (le_max_left _ _) (zero_le_one.trans hpower),
+    mul_le_mul_of_nonneg_right (le_max_right _ _) (zero_le_one.trans hpower)⟩
+
 /-- Whole-cube finite-`q` homogenization-error control from one random scale
 which controls both the positive-scale `J` rows and the negative-scale
 unit-ellipticity rows. -/
@@ -155,45 +185,8 @@ theorem homogenizationErrorOnOriginCube_le_of_minimalScaleUnitJ_and_unitElliptic
   have hCneg_nonneg : 0 ≤ Cneg := by
     dsimp [Cneg]
     positivity
-  have hA_nonneg : 0 ≤ A := by
-    dsimp [A]
-    positivity
-  have hA_ge_resp : Cresp ≤ A := by
-    dsimp [A]
-    have hpow_one : 1 ≤ Real.rpow (3 : ℝ) (τ / 2) :=
-      Real.one_le_rpow (by norm_num : (1 : ℝ) ≤ 3) hτ2_pos.le
-    calc
-      Cresp ≤ max Cresp Cneg := le_max_left _ _
-      _ ≤ max Cresp Cneg * Real.rpow (3 : ℝ) (τ / 2) := by
-        have hmax_nonneg : 0 ≤ max Cresp Cneg :=
-          le_max_of_le_left hCresp_nonneg
-        calc
-          max Cresp Cneg = max Cresp Cneg * 1 := by ring
-          _ ≤ max Cresp Cneg * Real.rpow (3 : ℝ) (τ / 2) :=
-            mul_le_mul_of_nonneg_left hpow_one hmax_nonneg
-  have hA_ge_neg : Cneg ≤ A := by
-    dsimp [A]
-    have hpow_one : 1 ≤ Real.rpow (3 : ℝ) (τ / 2) :=
-      Real.one_le_rpow (by norm_num : (1 : ℝ) ≤ 3) hτ2_pos.le
-    calc
-      Cneg ≤ max Cresp Cneg := le_max_right _ _
-      _ ≤ max Cresp Cneg * Real.rpow (3 : ℝ) (τ / 2) := by
-        have hmax_nonneg : 0 ≤ max Cresp Cneg :=
-          le_max_of_le_right hCneg_nonneg
-        calc
-          max Cresp Cneg = max Cresp Cneg * 1 := by ring
-          _ ≤ max Cresp Cneg * Real.rpow (3 : ℝ) (τ / 2) :=
-            mul_le_mul_of_nonneg_left hpow_one hmax_nonneg
-  have hA_ge_resp_step :
-      Cresp * Real.rpow (3 : ℝ) (τ / 2) ≤ A := by
-    dsimp [A]
-    exact mul_le_mul_of_nonneg_right (le_max_left Cresp Cneg)
-      (Real.rpow_pos_of_pos (by norm_num : (0 : ℝ) < 3) _).le
-  have hA_ge_neg_step :
-      Cneg * Real.rpow (3 : ℝ) (τ / 2) ≤ A := by
-    dsimp [A]
-    exact mul_le_mul_of_nonneg_right (le_max_right Cresp Cneg)
-      (Real.rpow_pos_of_pos (by norm_num : (0 : ℝ) < 3) _).le
+  obtain ⟨hA_nonneg, hA_ge_resp, hA_ge_neg, hA_ge_resp_step, hA_ge_neg_step⟩ :=
+    maximumResponseEnvelopeBounds hCresp_nonneg hCneg_nonneg hτ2_pos.le
   have hell :=
     scaleZero_ellipticity_sup_bounds_of_localizedLimitWeightedUnitEllipticitySup_le
       hP hStruct hΓ ha (m := m) (t := τ / 2)
@@ -457,45 +450,8 @@ theorem homogenizationErrorOnOriginCube_le_of_positiveScaleResponses_and_unitEll
   have hCneg_nonneg : 0 ≤ Cneg := by
     dsimp [Cneg]
     positivity
-  have hA_nonneg : 0 ≤ A := by
-    dsimp [A]
-    positivity
-  have hA_ge_resp : Cresp ≤ A := by
-    dsimp [A]
-    have hpow_one : 1 ≤ Real.rpow (3 : ℝ) (τ / 2) :=
-      Real.one_le_rpow (by norm_num : (1 : ℝ) ≤ 3) hτ2_pos.le
-    calc
-      Cresp ≤ max Cresp Cneg := le_max_left _ _
-      _ ≤ max Cresp Cneg * Real.rpow (3 : ℝ) (τ / 2) := by
-        have hmax_nonneg : 0 ≤ max Cresp Cneg :=
-          le_max_of_le_left hCresp_nonneg
-        calc
-          max Cresp Cneg = max Cresp Cneg * 1 := by ring
-          _ ≤ max Cresp Cneg * Real.rpow (3 : ℝ) (τ / 2) :=
-            mul_le_mul_of_nonneg_left hpow_one hmax_nonneg
-  have hA_ge_neg : Cneg ≤ A := by
-    dsimp [A]
-    have hpow_one : 1 ≤ Real.rpow (3 : ℝ) (τ / 2) :=
-      Real.one_le_rpow (by norm_num : (1 : ℝ) ≤ 3) hτ2_pos.le
-    calc
-      Cneg ≤ max Cresp Cneg := le_max_right _ _
-      _ ≤ max Cresp Cneg * Real.rpow (3 : ℝ) (τ / 2) := by
-        have hmax_nonneg : 0 ≤ max Cresp Cneg :=
-          le_max_of_le_right hCneg_nonneg
-        calc
-          max Cresp Cneg = max Cresp Cneg * 1 := by ring
-          _ ≤ max Cresp Cneg * Real.rpow (3 : ℝ) (τ / 2) :=
-            mul_le_mul_of_nonneg_left hpow_one hmax_nonneg
-  have hA_ge_resp_step :
-      Cresp * Real.rpow (3 : ℝ) (τ / 2) ≤ A := by
-    dsimp [A]
-    exact mul_le_mul_of_nonneg_right (le_max_left Cresp Cneg)
-      (Real.rpow_pos_of_pos (by norm_num : (0 : ℝ) < 3) _).le
-  have hA_ge_neg_step :
-      Cneg * Real.rpow (3 : ℝ) (τ / 2) ≤ A := by
-    dsimp [A]
-    exact mul_le_mul_of_nonneg_right (le_max_right Cresp Cneg)
-      (Real.rpow_pos_of_pos (by norm_num : (0 : ℝ) < 3) _).le
+  obtain ⟨hA_nonneg, hA_ge_resp, hA_ge_neg, hA_ge_resp_step, hA_ge_neg_step⟩ :=
+    maximumResponseEnvelopeBounds hCresp_nonneg hCneg_nonneg hτ2_pos.le
   have hell :=
     scaleZero_ellipticity_sup_bounds_of_localizedLimitWeightedUnitEllipticitySup_le
       hP hStruct hΓ ha (m := m) (t := τ / 2)

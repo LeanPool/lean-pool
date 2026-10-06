@@ -92,7 +92,7 @@ structure HighContrastExponents (d : ℕ) where
   sourceMaxLowerGap :
     rhoM <
       params.sLower +
-        HCPolySupport.Book.Ch05.Section53.JUpperBoundCoarseFluctuations.section53CoarseFluctuationBetaParams
+        HCPolySupport.Book.Ch05.Section53.JUpperBoundCoarseFluctuations.coarseFluctuationBeta
           params
   /--
   Source-max edge-loss compatibility at the upper ellipticity exponent.
@@ -103,7 +103,7 @@ structure HighContrastExponents (d : ℕ) where
   sourceMaxUpperGap :
     rhoM <
       params.sUpper +
-        HCPolySupport.Book.Ch05.Section53.JUpperBoundCoarseFluctuations.section53CoarseFluctuationBetaParams
+        HCPolySupport.Book.Ch05.Section53.JUpperBoundCoarseFluctuations.coarseFluctuationBeta
           params
 
 namespace HighContrastExponents

@@ -48,13 +48,13 @@ omit [MeasurableSpace Ω] in
   rfl
 
 omit [MeasurableSpace Ω] in
-@[simp] theorem upperTruncation_of_le {X : Ω → ℝ} {L : ℝ} {ω : Ω}
+theorem upperTruncation_of_le {X : Ω → ℝ} {L : ℝ} {ω : Ω}
     (h : X ω ≤ L) :
     upperTruncation X L ω = X ω := by
   simp [upperTruncation, min_eq_left h]
 
 omit [MeasurableSpace Ω] in
-@[simp] theorem upperTruncation_of_lt {X : Ω → ℝ} {L : ℝ} {ω : Ω}
+theorem upperTruncation_of_lt {X : Ω → ℝ} {L : ℝ} {ω : Ω}
     (h : L < X ω) :
     upperTruncation X L ω = L := by
   simp [upperTruncation, min_eq_right (le_of_lt h)]

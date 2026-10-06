@@ -94,6 +94,22 @@ private theorem isWeakSolutionOn_of_constantCoeffForcedEquation_zero
   simpa only [constantCoeffField, hpsiGrad, Pi.zero_apply, vecDot_comm,
     vecDot_zero_left, vecDot_zero_right, integral_zero] using hzero
 
+private theorem normalizedChildDistance_le_comparison
+    {d : ℕ} (k : ℤ) (u v : Vec d → ℝ) {bound : ℝ}
+    (hcomparison : cubeBesovScaleWeight 1 (originCube d k) *
+      cubeLpNorm (originCube d (k - 1)) 2 (fun x ↦ u x - v x) ≤ bound) :
+    normalizedCubeL2Distance (originCube d (k - 1)) u v ≤ 3 * bound := by
+  have hweight : cubeBesovScaleWeight 1 (originCube d (k - 1)) =
+      3 * cubeBesovScaleWeight 1 (originCube d k) := by
+    simpa only [Nat.cast_one, pow_one] using
+      cubeBesovScaleWeight_one_originCube_sub_nat (d := d) k 1
+  unfold normalizedCubeL2Distance
+  rw [hweight]
+  calc
+    _ = 3 * (cubeBesovScaleWeight 1 (originCube d k) *
+        cubeLpNorm (originCube d (k - 1)) 2 (fun x ↦ u x - v x)) := by ring
+    _ ≤ 3 * bound := mul_le_mul_of_nonneg_left hcomparison (by norm_num)
+
 private theorem exists_roundedOneStepAffineExcessConstants_of_comparison
     (d : ℕ) [NeZero d] (geom : RoundedGenerationAnalyticGeometry d)
     (s Ccomparison : ℝ) (hCcomparison : 0 ≤ Ccomparison) :
@@ -258,36 +274,17 @@ private theorem exists_roundedOneStepAffineExcessConstants_of_comparison
       (originCube d (k - (N : ℤ))) uk.toH1.toFun c' e' ≤
         A₀ * H + theta * (H + R₁ * E) :=
     htransfer.trans (add_le_add hHchild hdecBound)
-  have hweight₁ : cubeBesovScaleWeight 1 (originCube d (k - 1)) =
-      3 * cubeBesovScaleWeight 1 (originCube d k) := by
-    simpa only [Nat.cast_one, pow_one] using
-      cubeBesovScaleWeight_one_originCube_sub_nat (d := d) k 1
   have hH : H ≤ 3 * Ccomparison *
       geom.spatialWeakError a abar hS s k * D := by
-    unfold H normalizedCubeL2Distance
-    rw [hweight₁]
-    calc
-      (3 * cubeBesovScaleWeight 1 (originCube d k)) *
-          cubeLpNorm (originCube d (k - 1)) 2
-            (fun x ↦ uk.toH1.toFun x - W.v.toFun x) =
-        3 * (cubeBesovScaleWeight 1 (originCube d k) *
-          cubeLpNorm (originCube d (k - 1)) 2
-            (fun x ↦ uk.toH1.toFun x - W.v.toFun x)) := by ring
-      _ ≤ 3 * (Ccomparison * geom.spatialWeakError
-          a abar hS s k *
-            Book.Ch03.h1EnergyNormOnCube
-              (originCube d k) aRounded uk.toH1) :=
-        mul_le_mul_of_nonneg_left
-          (by simpa only [W] using hcomparisonL2) (by norm_num)
-      _ = 3 * Ccomparison * geom.spatialWeakError
-          a abar hS s k * D := by
-        have henergy : Book.Ch03.h1EnergyNormOnCube
-            (originCube d k) aRounded uk.toH1 = D := by
-          simpa only [D, uk] using
-            (finiteLipschitzEnergyRow_eq_h1EnergyNormOnCube_of_le
-              aRounded m u k hkm).symm
-        rw [henergy]
-        ring
+    have henergy : Book.Ch03.h1EnergyNormOnCube
+        (originCube d k) aRounded uk.toH1 = D := by
+      simpa only [D, uk] using
+        (finiteLipschitzEnergyRow_eq_h1EnergyNormOnCube_of_le
+          aRounded m u k hkm).symm
+    have hbound := normalizedChildDistance_le_comparison k
+      uk.toH1.toFun W.v.toFun (by simpa only [W] using hcomparisonL2)
+    rw [henergy] at hbound
+    simpa only [H, mul_assoc] using hbound
   have hthetaR₁ : theta * R₁ = (1 / 8 : ℝ) := by
     dsimp [theta]
     field_simp [hR₁.ne']

@@ -33,10 +33,12 @@ single-cube coefficient bounds plus the localized multiscale ellipticity
 comparison.
 -/
 
+namespace CoarseCaccioppoliBoundaryRadiusEnergyBridgeCanonicalRawCoefficientBounds
+
 /-- Canonical raw coefficient bounds from the note's single-cube coefficient
 bounds and localized explicit-height coefficient localization. -/
 theorem
-    CoarseCaccioppoliBoundaryRadiusEnergyBridgeCanonicalRawCoefficientBounds.of_coefficientBounds_of_multiscaleEllipticity_of_localizedExplicitHeightOfScaleChoice
+    of_coefficientBounds_of_multiscaleEllipticity_of_localizedExplicitHeightOfScaleChoice
     {d : ℕ} [NeZero d] (Q : TriadicCube d) (a : CoeffField d)
     (s t C uL2Sq : ℝ) {lam Lam : ℝ}
     (k : ℝ → ℝ → ℕ)
@@ -76,18 +78,22 @@ theorem
       (coarseCaccioppoliBoundaryLocalizedExplicitHeightOfScaleChoice Q a s t C k)
       U Xi D A1 AS := by
   exact
-    CoarseCaccioppoliBoundaryRadiusEnergyBridgeCanonicalRawCoefficientBounds.of_coefficientBounds_of_localization
+    (open CoarseCaccioppoliBoundaryRadiusEnergyBridgeCanonicalRawCoefficientBounds
+      (of_coefficientBounds_of_localization) in
+      of_coefficientBounds_of_localization)
       Q a s t C uL2Sq
       (fun ρ₁ ρ₂ => (k ρ₁ ρ₂ : ℝ))
       (coarseCaccioppoliBoundaryLocalizedExplicitHeightOfScaleChoice Q a s t C k)
       U Xi D A1 AS hcoeff
-      (CoarseCaccioppoliBoundarySingleCubeCoefficientLocalization.of_triadicGapScaleChoice_of_localizedExplicitHeightOfScaleChoice_of_isEllipticFieldOn_of_isSigmaCoarse
+      (CoarseCaccioppoliBoundarySingleCubeCoefficientLocalization.of_heightChoice_ellipticSigma
         Q a C uL2Sq k hC hs ht hst hscale hEll hData hBsum_s hSigmaSum_t)
+
+end CoarseCaccioppoliBoundaryRadiusEnergyBridgeCanonicalRawCoefficientBounds
 
 /-- Boundary canonical harmonic Caccioppoli with the raw coefficient hypothesis
 rebuilt from localized multiscale coefficient data. -/
 theorem
-    coarseCaccioppoli_boundary_qone_of_canonicalQuantitativeCutoff_of_aHarmonicFamily_of_scalarCutoffControls_of_coefficientBounds_of_localizationData_of_localizedExplicitHeightOfScaleChoice
+    coarseCaccioppoli_boundary_qone_of_quantitativeCutoff_of_of_scalarCutoffControls
     {d : ℕ} [NeZero d] (Q : TriadicCube d) (a : CoeffField d)
     (s t C uL2Sq : ℝ) {lam Lam : ℝ}
     (k : ℝ → ℝ → ℕ) {F : ℝ → ℝ}
@@ -183,13 +189,15 @@ theorem
     F (1 / 3 : ℝ) ≤
       coarseCaccioppoliBoundaryExplicitHeightBound Q a s t C uL2Sq := by
   exact
-    coarseCaccioppoli_boundary_qone_of_canonicalQuantitativeCutoff_of_aHarmonicFamily_of_scalarCutoffControls_of_coefficientBounds_of_multiscaleEllipticity_of_localizedExplicitHeightOfScaleChoice
+    coarseCaccioppoli_boundary_qone_of_quantitativeCutoff_of_scalarCutoffControl
       (Q := Q) (a := a) (s := s) (t := t) (C := C) (uL2Sq := uL2Sq)
       (k := k) (F := F) (w := w) (g := g)
       (Acirc1 := Acirc1) (AcircS := AcircS) (U := U) (A1 := A1) (AS := AS)
       hC hs ht hst hu hnonneg hbounded hscale hlower henergyAvg hfluxMem huMem
       hgMem hfluxEnergy hscalar hAcirc1_nonneg hAcircS_nonneg hU hA1 hAS hEll
-      (CoarseCaccioppoliBoundaryRadiusEnergyBridgeCanonicalRawCoefficientBounds.of_coefficientBounds_of_multiscaleEllipticity_of_localizedExplicitHeightOfScaleChoice
+      ((open CoarseCaccioppoliBoundaryRadiusEnergyBridgeCanonicalRawCoefficientBounds
+        (of_coefficientBounds_of_multiscaleEllipticity_of_localizedExplicitHeightOfScaleChoice) in
+        of_coefficientBounds_of_multiscaleEllipticity_of_localizedExplicitHeightOfScaleChoice)
         Q a s t C uL2Sq k U
         (coarseCaccioppoliQuantitativeCutoffGradientBound Q)
         (coarseCaccioppoliQuantitativeCutoffHessianBound Q)
@@ -198,7 +206,7 @@ theorem
 /-- Interior canonical harmonic Caccioppoli with the raw coefficient hypothesis
 rebuilt from localized multiscale coefficient data. -/
 theorem
-    coarseCaccioppoli_interior_qone_of_canonicalQuantitativeCutoff_of_aHarmonicFamily_of_scalarCutoffControls_of_coefficientBounds_of_localizationData_of_radiusAgreement_of_localizedExplicitHeightOfScaleChoice
+    coarseCaccioppoli_interior_qone_of_quantitativeCutoff_of_of_scalarCutoffControls
     {d : ℕ} [NeZero d] (Q : TriadicCube d) (a : CoeffField d)
     (s t C uL2Sq : ℝ) {lam Lam : ℝ}
     (k : ℝ → ℝ → ℕ) {F G₀ : ℝ → ℝ}
@@ -296,14 +304,16 @@ theorem
     F (1 / 3 : ℝ) ≤
       coarseCaccioppoliInteriorExplicitHeightBound Q a s t C uL2Sq := by
   exact
-    coarseCaccioppoli_interior_qone_of_canonicalQuantitativeCutoff_of_aHarmonicFamily_of_scalarCutoffControls_of_coefficientBounds_of_multiscaleEllipticity_of_radiusAgreement_of_localizedExplicitHeightOfScaleChoice
+    coarseCaccioppoli_interior_qone_of_quantitativeCutoff_of_scalarCutoffControl
       (Q := Q) (a := a) (s := s) (t := t) (C := C) (uL2Sq := uL2Sq)
       (k := k) (F := F) (G₀ := G₀) (w := w) (g := g)
       (Acirc1 := Acirc1) (AcircS := AcircS) (U := U) (A1 := A1) (AS := AS)
       hC hs ht hst hu hagree hG_nonneg hG_bounded hscale hlower henergyAvg
       hfluxMem huMem hgMem hfluxEnergy hscalar hAcirc1_nonneg hAcircS_nonneg
       hU hA1 hAS hEll
-      (CoarseCaccioppoliBoundaryRadiusEnergyBridgeCanonicalRawCoefficientBounds.of_coefficientBounds_of_multiscaleEllipticity_of_localizedExplicitHeightOfScaleChoice
+      ((open CoarseCaccioppoliBoundaryRadiusEnergyBridgeCanonicalRawCoefficientBounds
+        (of_coefficientBounds_of_multiscaleEllipticity_of_localizedExplicitHeightOfScaleChoice) in
+        of_coefficientBounds_of_multiscaleEllipticity_of_localizedExplicitHeightOfScaleChoice)
         Q a s t C uL2Sq k U
         (coarseCaccioppoliQuantitativeCutoffGradientBound Q)
         (coarseCaccioppoliQuantitativeCutoffHessianBound Q)
@@ -487,7 +497,7 @@ theorem
 /-- Boundary canonical harmonic Caccioppoli with the scalar cutoff-control
 bundle rebuilt from the canonical cutoff-product/Poincare inputs. -/
 theorem
-    coarseCaccioppoli_boundary_qone_of_canonicalQuantitativeCutoff_of_aHarmonicFamily_of_cutoffProductControls_of_coefficientBounds_of_localizationData_of_localizedExplicitHeightOfScaleChoice
+    coarseCaccioppoli_boundary_qone_of_quantitativeCutoff_of_harmonicFamily
     {d : ℕ} [NeZero d] (Q : TriadicCube d) (a : CoeffField d)
     (s t C uL2Sq : ℝ) {lam Lam : ℝ}
     (k : ℝ → ℝ → ℕ) {F : ℝ → ℝ}
@@ -625,7 +635,7 @@ theorem
         (hBgConst hρ₁ hlt hρ₂) (hBgCent hρ₁ hlt hρ₂) hC
         (hproj hρ₁ hlt hρ₂) (hgCirc1 hρ₁ hlt hρ₂) (hgCircS hρ₁ hlt hρ₂)
   exact
-    coarseCaccioppoli_boundary_qone_of_canonicalQuantitativeCutoff_of_aHarmonicFamily_of_scalarCutoffControls_of_coefficientBounds_of_localizationData_of_localizedExplicitHeightOfScaleChoice
+    coarseCaccioppoli_boundary_qone_of_quantitativeCutoff_of_of_scalarCutoffControls
       (Q := Q) (a := a) (s := s) (t := t) (C := C) (uL2Sq := uL2Sq)
       (k := k) (F := F) (w := w) (g := g)
       (Acirc1 := Acirc1) (AcircS := AcircS) (U := U) (A1 := A1) (AS := AS)
@@ -636,7 +646,7 @@ theorem
 /-- Interior canonical harmonic Caccioppoli with the scalar cutoff-control
 bundle rebuilt from the canonical cutoff-product/Poincare inputs. -/
 theorem
-    coarseCaccioppoli_interior_qone_of_canonicalQuantitativeCutoff_of_aHarmonicFamily_of_cutoffProductControls_of_coefficientBounds_of_localizationData_of_radiusAgreement_of_localizedExplicitHeightOfScaleChoice
+    coarseCaccioppoli_interior_qone_of_quantitativeCutoff_of_harmonicFamily
     {d : ℕ} [NeZero d] (Q : TriadicCube d) (a : CoeffField d)
     (s t C uL2Sq : ℝ) {lam Lam : ℝ}
     (k : ℝ → ℝ → ℕ) {F G₀ : ℝ → ℝ}
@@ -776,7 +786,7 @@ theorem
         (hBgConst hρ₁ hlt hρ₂) (hBgCent hρ₁ hlt hρ₂) hC
         (hproj hρ₁ hlt hρ₂) (hgCirc1 hρ₁ hlt hρ₂) (hgCircS hρ₁ hlt hρ₂)
   exact
-    coarseCaccioppoli_interior_qone_of_canonicalQuantitativeCutoff_of_aHarmonicFamily_of_scalarCutoffControls_of_coefficientBounds_of_localizationData_of_radiusAgreement_of_localizedExplicitHeightOfScaleChoice
+    coarseCaccioppoli_interior_qone_of_quantitativeCutoff_of_of_scalarCutoffControls
       (Q := Q) (a := a) (s := s) (t := t) (C := C) (uL2Sq := uL2Sq)
       (k := k) (F := F) (G₀ := G₀) (w := w) (g := g)
       (Acirc1 := Acirc1) (AcircS := AcircS) (U := U) (A1 := A1) (AS := AS)

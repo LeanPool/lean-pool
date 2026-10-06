@@ -379,7 +379,8 @@ theorem abs_vecDot_cellPart_respYMinus_le {d : ℕ} [NeZero d]
                   (respYMinus P jStar F t e).2))) ^ 2)
         * Real.sqrt (((triadicIndexBox d H).card : ℝ)⁻¹ *
             ∑ w ∈ triadicIndexBox d H, 2 *
-              (ResponseJ (adaptedCellAtCenter (respGrid jStar F) s w) (respP (respMean P jStar F t) e)
+              (ResponseJ (adaptedCellAtCenter (respGrid jStar F) s w) (respP (respMean P jStar F
+                t) e)
                   (respqMinus P jStar F t e) (respCoeffMinus F a)
                 - volumeAverage (adaptedCellAtCenter (respGrid jStar F) s w)
                     (scalarResponseIntegrand (respCell jStar F t) (respCoeffMinus F a)
@@ -394,7 +395,8 @@ theorem abs_vecDot_cellPart_respYMinus_le {d : ℕ} [NeZero d]
                     (adaptedCellAtCenter (respGrid jStar F) s w) (respCoeffMinus F a)).lowerRight
                     (respYMinus P jStar F t e).2))) ^ 2)
           * Real.sqrt (2 *
-              (ResponseJ (adaptedCellAtCenter (respGrid jStar F) s w) (respP (respMean P jStar F t) e)
+              (ResponseJ (adaptedCellAtCenter (respGrid jStar F) s w) (respP (respMean P jStar F
+                t) e)
                   (respqMinus P jStar F t e) (respCoeffMinus F a)
                 - volumeAverage (adaptedCellAtCenter (respGrid jStar F) s w)
                     (scalarResponseIntegrand (respCell jStar F t) (respCoeffMinus F a)
@@ -413,7 +415,8 @@ theorem abs_vecDot_cellPart_respYMinus_le {d : ℕ} [NeZero d]
               - (cellAverage (adaptedCellAtCenter (respGrid jStar F) s w)
                 (optimizerField (respCoeffMinus F a) (v w a)))).2)) P)
     (hmeasBlk : ∀ α β : BlockCoord d, AEStronglyMeasurable (fun a => blockMatEntry
-      (coarseBlockMatrix (HighContrast.adaptedCell (respGrid jStar F) s) (respCoeffMinus F a)) α β) P)
+      (coarseBlockMatrix (HighContrast.adaptedCell (respGrid jStar F) s) (respCoeffMinus F a)) α
+        β) P)
     (hintM1 : ∀ w ∈ triadicIndexBox d H, ∀ i : Fin d, Integrable (fun a =>
       (cellAverage (adaptedCellAtCenter (respGrid jStar F) s w)
         (optimizerField (respCoeffMinus F a) (uM a))).1 i) P)
@@ -457,7 +460,8 @@ theorem abs_vecDot_cellPart_respYMinus_le {d : ℕ} [NeZero d]
       (scalarResponseIntegrand (respCell jStar F t) (respCoeffMinus F a) p q (uM a))
   let G : (Fin d → ℤ) → CoeffSpace d → ℝ := fun w a =>
     Real.sqrt (vecDot Y.1 (matVecMul (coarseBlockMatrix (V w) (respCoeffMinus F a)).upperLeft Y.1))
-    + Real.sqrt (vecDot Y.2 (matVecMul (coarseBlockMatrix (V w) (respCoeffMinus F a)).lowerRight Y.2))
+    + Real.sqrt (vecDot Y.2 (matVecMul (coarseBlockMatrix (V w) (respCoeffMinus F a)).lowerRight
+      Y.2))
   let pairing : (Fin d → ℤ) → CoeffSpace d → ℝ := fun w a =>
     vecDot ((M w a - Ns w a)).1 Y.2 + vecDot Y.1 ((M w a - Ns w a)).2
   have hc : ∀ w ∈ triadicIndexBox d H, |c w| ≤ 1 := by
@@ -497,11 +501,13 @@ theorem abs_vecDot_cellPart_respYMinus_le {d : ℕ} [NeZero d]
     simpa only [Ns, V] using
       cellAverage_optimizerField_adaptedCellAtCenter_eq_blockResponseMean (q := respGrid jStar F)
         hq s w hEllV haeV p q (v w a) (hmaxV w hw a)
-  let A : BlockMat d := annealedBlockOf P (HighContrast.adaptedCell (respGrid jStar F) s) (respCoeffMinus F)
+  let A : BlockMat d := annealedBlockOf P (HighContrast.adaptedCell (respGrid jStar F) s)
+    (respCoeffMinus F)
   have hann : ∀ w ∈ triadicIndexBox d H, annealedBlockOf P (V w) (respCoeffMinus F) = A := by
     intro w hw
     simpa only [A, V, respGrid] using
-      annealedBlockOf_adaptedCellAtCenter_respCoeffMinus_eq_full P hstat jStar (explicitCanonicalMetric F) F s hjs w
+      annealedBlockOf_adaptedCellAtCenter_respCoeffMinus_eq_full P hstat jStar
+        (explicitCanonicalMetric F) F s hjs w
         hmeasBlk
   have hquad : ∀ w ∈ triadicIndexBox d H, ∀ a : CoeffSpace d,
       HasQuadraticMu (V w) (⇑a.1 : CoeffField d) := by
@@ -646,7 +652,8 @@ theorem abs_vecDot_cellPart_respYPlus_le {d : ℕ} [NeZero d]
                   (respYPlus P jStar F t e).2))) ^ 2)
         * Real.sqrt (((triadicIndexBox d H).card : ℝ)⁻¹ *
             ∑ w ∈ triadicIndexBox d H, 2 *
-              (ResponseJ (adaptedCellAtCenter (respGrid jStar F) s w) (respP (respMean P jStar F t) e)
+              (ResponseJ (adaptedCellAtCenter (respGrid jStar F) s w) (respP (respMean P jStar F
+                t) e)
                   (respqPlus P jStar F t e) (respCoeffPlus F a)
                 - volumeAverage (adaptedCellAtCenter (respGrid jStar F) s w)
                     (scalarResponseIntegrand (respCell jStar F t) (respCoeffPlus F a)
@@ -661,7 +668,8 @@ theorem abs_vecDot_cellPart_respYPlus_le {d : ℕ} [NeZero d]
                     (adaptedCellAtCenter (respGrid jStar F) s w) (respCoeffPlus F a)).lowerRight
                     (respYPlus P jStar F t e).2))) ^ 2)
           * Real.sqrt (2 *
-              (ResponseJ (adaptedCellAtCenter (respGrid jStar F) s w) (respP (respMean P jStar F t) e)
+              (ResponseJ (adaptedCellAtCenter (respGrid jStar F) s w) (respP (respMean P jStar F
+                t) e)
                   (respqPlus P jStar F t e) (respCoeffPlus F a)
                 - volumeAverage (adaptedCellAtCenter (respGrid jStar F) s w)
                     (scalarResponseIntegrand (respCell jStar F t) (respCoeffPlus F a)
@@ -680,7 +688,8 @@ theorem abs_vecDot_cellPart_respYPlus_le {d : ℕ} [NeZero d]
               - (cellAverage (adaptedCellAtCenter (respGrid jStar F) s w)
                 (optimizerField (respCoeffPlus F a) (v w a)))).2)) P)
     (hmeasBlk : ∀ α β : BlockCoord d, AEStronglyMeasurable (fun a => blockMatEntry
-      (coarseBlockMatrix (HighContrast.adaptedCell (respGrid jStar F) s) (respCoeffPlus F a)) α β) P)
+      (coarseBlockMatrix (HighContrast.adaptedCell (respGrid jStar F) s) (respCoeffPlus F a)) α
+        β) P)
     (hintM1 : ∀ w ∈ triadicIndexBox d H, ∀ i : Fin d, Integrable (fun a =>
       (cellAverage (adaptedCellAtCenter (respGrid jStar F) s w)
         (optimizerField (respCoeffPlus F a) (uP a))).1 i) P)
@@ -724,7 +733,8 @@ theorem abs_vecDot_cellPart_respYPlus_le {d : ℕ} [NeZero d]
       (scalarResponseIntegrand (respCell jStar F t) (respCoeffPlus F a) p q (uP a))
   let G : (Fin d → ℤ) → CoeffSpace d → ℝ := fun w a =>
     Real.sqrt (vecDot Y.1 (matVecMul (coarseBlockMatrix (V w) (respCoeffPlus F a)).upperLeft Y.1))
-    + Real.sqrt (vecDot Y.2 (matVecMul (coarseBlockMatrix (V w) (respCoeffPlus F a)).lowerRight Y.2))
+    + Real.sqrt (vecDot Y.2 (matVecMul (coarseBlockMatrix (V w) (respCoeffPlus F a)).lowerRight
+      Y.2))
   let pairing : (Fin d → ℤ) → CoeffSpace d → ℝ := fun w a =>
     vecDot ((M w a - Ns w a)).1 Y.2 + vecDot Y.1 ((M w a - Ns w a)).2
   have hc : ∀ w ∈ triadicIndexBox d H, |c w| ≤ 1 := by
@@ -764,11 +774,13 @@ theorem abs_vecDot_cellPart_respYPlus_le {d : ℕ} [NeZero d]
     simpa only [Ns, V] using
       cellAverage_optimizerField_adaptedCellAtCenter_eq_blockResponseMean (q := respGrid jStar F)
         hq s w hEllV haeV p q (v w a) (hmaxV w hw a)
-  let A : BlockMat d := annealedBlockOf P (HighContrast.adaptedCell (respGrid jStar F) s) (respCoeffPlus F)
+  let A : BlockMat d := annealedBlockOf P (HighContrast.adaptedCell (respGrid jStar F) s)
+    (respCoeffPlus F)
   have hann : ∀ w ∈ triadicIndexBox d H, annealedBlockOf P (V w) (respCoeffPlus F) = A := by
     intro w hw
     simpa only [A, V, respGrid] using
-      annealedBlockOf_adaptedCellAtCenter_respCoeffPlus_eq_full P hstat jStar (explicitCanonicalMetric F) F s hjs w
+      annealedBlockOf_adaptedCellAtCenter_respCoeffPlus_eq_full P hstat jStar
+        (explicitCanonicalMetric F) F s hjs w
         hmeasBlk
   have hquad : ∀ w ∈ triadicIndexBox d H, ∀ a : CoeffSpace d,
       HasQuadraticMu (V w) (⇑a.1 : CoeffField d) := by

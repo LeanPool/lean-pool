@@ -263,7 +263,7 @@ theorem measurable_l2WeightedFullBlockCoeffEntry_carrier
             ∂volumeMeasureOn U := by
         refine MeasureTheory.integral_congr_ae ?_
         filter_upwards
-            [AEEQuantitativeEllipticSlice.ae_toHilbertMatrixL2_mem_quantitativeEllipticHilbertMatSet
+            [AEEQuantitativeEllipticSlice.ae_hilbertMatrixL2_mem_ellipticMatrixSet
               (rawSlice A hSlice ω)]
           with x hx
         have h :

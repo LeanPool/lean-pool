@@ -43,7 +43,7 @@ noncomputable section
 
 open scoped ENNReal
 
-private theorem boundary_publicCoreEnergy_le_eighteen_pow_mul_publicRHS_of_scale_zero_standardExplicitBudgetSplit
+private theorem boundaryCoreEnergy_le_scaled_RHS_of_standardBudget
     {d : ℕ} [NeZero d] {Q : TriadicCube d} {a : CoeffFamily d}
     {x : Vec d} (u : BoundaryCaccioppoliDatum Q a x) {s t : ℝ}
     (hs : 0 < s) (ht : 0 < t) (hst : s + t < 1)
@@ -142,7 +142,7 @@ private theorem boundary_publicCoreEnergy_le_eighteen_pow_mul_publicRHS_of_scale
   simpa [CalphaQ, CcrossQ, CalphaInternalQ, CcrossInternalQ, CnoteQ, halpha, hcross]
     using And.intro hCnote hbound
 
-private theorem interior_centered_publicCoreEnergy_le_eighteen_pow_mul_publicRHS_of_scale_zero_standardExplicitBudgetSplit
+private theorem interior_centeredCoreEnergy_le_eighteen_power_mulRHS
     {d : ℕ} [NeZero d] {Q : TriadicCube d} {a : CoeffFamily d}
     (u : CubeSolution Q a) {s t : ℝ}
     (hs : 0 < s) (ht : 0 < t) (hst : s + t < 1)
@@ -342,7 +342,7 @@ theorem boundary_publicCoreEnergy_le_publicRHS_of_scale_zero_of_unitStandardExpl
     coarseCaccioppoliBoundaryStandardExplicitNoteConstantSplit
       Q (pointwiseCoeffFor Q a) s t CalphaInternal CcrossInternal
   have hexact :=
-    boundary_publicCoreEnergy_le_eighteen_pow_mul_publicRHS_of_scale_zero_standardExplicitBudgetSplit
+    boundaryCoreEnergy_le_scaled_RHS_of_standardBudget
       (Q := Q) (a := a) (x := x) u hs ht hst hx hQscale
   have hexact' :
       0 ≤ Cnote ∧
@@ -376,7 +376,7 @@ theorem boundary_publicCoreEnergy_le_publicRHS_of_scale_zero_of_unitStandardExpl
     boundary_publicCoreEnergy_le_publicRHS_of_scale_zero_of_noteConstant_mul_le
       (Q := Q) (a := a) (x := x) u hs ht hst hCnote hCnote_le hbound
 
-theorem interior_centered_publicCoreEnergy_le_publicRHS_of_scale_zero_of_unitStandardExplicitBoundSplit
+theorem interiorCoreEnergy_le_RHS_of_standardBudget
     {d : ℕ} [NeZero d] {Q : TriadicCube d} {a : CoeffFamily d}
     (u : CubeSolution Q a) {s t C : ℝ}
     (hs : 0 < s) (ht : 0 < t) (hst : s + t < 1)
@@ -403,7 +403,7 @@ theorem interior_centered_publicCoreEnergy_le_publicRHS_of_scale_zero_of_unitSta
     coarseCaccioppoliBoundaryStandardExplicitNoteConstantSplit
       Q (pointwiseCoeffFor Q a) s t CalphaInternal CcrossInternal
   have hexact :=
-    interior_centered_publicCoreEnergy_le_eighteen_pow_mul_publicRHS_of_scale_zero_standardExplicitBudgetSplit
+    interior_centeredCoreEnergy_le_eighteen_power_mulRHS
       (Q := Q) (a := a) u hs ht hst hQscale
   have hexact' :
       0 ≤ Cnote ∧

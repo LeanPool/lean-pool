@@ -192,7 +192,7 @@ theorem measureReal_shiftedHigh_badPairEvent_quenchedProbeEnvelope_le_card_mul_c
 
 /-- Uniform-in-`σ` version of
 `measureReal_shiftedHigh_badPairEvent_quenchedProbeEnvelope_le_card_mul_card_mul_exp_noLog`. -/
-theorem measureReal_shiftedHigh_badPairEvent_quenchedProbeEnvelope_le_card_mul_card_mul_exp_noLog_uniformAnnealedExponent
+theorem shiftedHighBadPairProbability_le_cardSquaredExponential_annealedExponent
     {d : ℕ} [NeZero d]
     (params : QuantitativeCoarseGrainedEllipticityParams d) :
     ∃ Centry a : ℝ, 0 < Centry ∧ 0 < a ∧
@@ -235,7 +235,7 @@ theorem measureReal_shiftedHigh_badPairEvent_quenchedProbeEnvelope_le_card_mul_c
             P.real (badPairEvent Hshift t αbad q m n) ≤
               (S.card : ℝ) * ((D.card : ℝ) * Real.exp (-(lam ^ tau))) := by
   obtain ⟨Centry, a, hCentry, ha, htailBase⟩ :=
-    measureReal_localizedFirstQuenchedEstimate_normalizedProbeJMax_tail_noLog_uniformAnnealedExponent
+    localizedQuenchedEstimate_probeTail_noLog_of_uniformExponent
       (d := d) params
   refine ⟨Centry, a, hCentry, ha, ?_⟩
   intro σ hσ_pos

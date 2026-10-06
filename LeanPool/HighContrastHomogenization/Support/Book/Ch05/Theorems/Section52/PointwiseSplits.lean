@@ -415,7 +415,8 @@ theorem lowerSmallSqrtTailCoeffField_nonneg
       (maxDescendantSigmaStarInvMatrixNormCoeffFieldAtScale_nonneg_of_le
         (originCube d (m : ℤ)) a (by simp [originCube])) _)
 
-theorem lambdaSqCoeffField_originCube_finite_one_inv_le_two_lowerSmallSqrtTail_sq_add_two_largeScale_sum
+theorem
+  lambdaSqCoeffField_originCube_finite_one_inv_le_two_lowerSmallSqrtTail_sq_add_two_largeScale_sum
     {d : ℕ} [NeZero d] (m : ℕ) {s : ℝ} (hs : 0 < s)
     (a : RegCoeffField d) :
     (Ch04.lambdaSqCoeffField (originCube d (m : ℤ)) s (.finite 1) a)⁻¹ ≤
@@ -441,7 +442,7 @@ theorem lambdaSqCoeffField_originCube_finite_one_inv_le_two_lowerSmallSqrtTail_s
       Summable (fun l : ℕ =>
         geometricWeight s 1 l * F ((m : ℤ) - (l : ℤ))) := by
     simpa [F, Q, originCube, Ch02.geometricWeight_eq_old] using
-      Ch04.RestrictionLawCarrier.summable_weighted_maxDescendantSigmaStarInvMatrixNormCoeffFieldAtScale
+      Ch04.RestrictionLawCarrier.summable_weightedMaxDescendantSigmaStarInverseMatrixNorm
         (Q := Q) a hs
   have hsplit : S = L + T := by
     simpa [S, L, T] using
@@ -554,7 +555,7 @@ theorem lambdaSqCoeffField_originCube_finite_one_inv_le_lowerSmallSqrtTail_sq_di
       Summable (fun l : ℕ =>
         geometricWeight s 1 l * F ((m : ℤ) - (l : ℤ))) := by
     simpa [F, Q, originCube, Ch02.geometricWeight_eq_old] using
-      Ch04.RestrictionLawCarrier.summable_weighted_maxDescendantSigmaStarInvMatrixNormCoeffFieldAtScale
+      Ch04.RestrictionLawCarrier.summable_weightedMaxDescendantSigmaStarInverseMatrixNorm
         (Q := Q) a hs
   have hsplit : S = L + T := by
     simpa [S, L, T] using

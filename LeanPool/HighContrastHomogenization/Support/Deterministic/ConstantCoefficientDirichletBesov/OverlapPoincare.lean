@@ -218,6 +218,49 @@ theorem cubeLpNorm_two_grad_le_volume_inv_rpow_half_mul_gradientCoordL2NormSum
             u.norm_gradToVectorL2_le_gradientCoordL2NormSum
             (Real.rpow_nonneg (inv_nonneg.mpr (cubeVolume_nonneg Q)) _)
 
+private theorem cubeVectorGradientNormSquareSum_le_normalizedCoordinateBound
+    {d : ℕ} (Q : TriadicCube d) (G : CubeVectorH1Function Q) :
+    ∑ i : Fin d, (cubeLpNorm Q (2 : ℝ≥0∞) (G.coord i).grad) ^ 2 ≤
+      ((((cubeVolume Q)⁻¹) ^ (1 / 2 : ℝ) * G.gradientCoordL2NormSum) ^ 2) := by
+  let parent : ℝ := ((cubeVolume Q)⁻¹) ^ (1 / 2 : ℝ) * G.gradientCoordL2NormSum
+  let a : ℝ := ((cubeVolume Q)⁻¹) ^ (1 / 2 : ℝ)
+  let c : Fin d → ℝ := fun i => (G.coord i).gradientCoordL2NormSum
+  have ha_nonneg : 0 ≤ a := by
+    dsimp [a]
+    exact Real.rpow_nonneg (inv_nonneg.mpr (cubeVolume_nonneg Q)) _
+  have hc_nonneg : ∀ i : Fin d, 0 ≤ c i := by
+    intro i
+    dsimp [c]
+    exact (G.coord i).gradientCoordL2NormSum_nonneg
+  have hterm :
+      ∀ i : Fin d,
+        (cubeLpNorm Q (2 : ℝ≥0∞) (G.coord i).grad) ^ 2 ≤
+          (a * c i) ^ 2 := by
+    intro i
+    have hle :=
+      cubeLpNorm_two_grad_le_volume_inv_rpow_half_mul_gradientCoordL2NormSum
+        (Q := Q) (G.coord i)
+    exact (sq_le_sq₀
+      (cubeLpNorm_nonneg Q (2 : ℝ≥0∞) (G.coord i).grad)
+      (mul_nonneg ha_nonneg (hc_nonneg i))).mpr (by simpa [a, c] using hle)
+  calc
+    ∑ i : Fin d,
+        (cubeLpNorm Q (2 : ℝ≥0∞) (G.coord i).grad) ^ 2
+        ≤ ∑ i : Fin d, (a * c i) ^ 2 := by
+          exact Finset.sum_le_sum fun i _hi => hterm i
+    _ = a ^ 2 * ∑ i : Fin d, (c i) ^ 2 := by
+          simp_rw [mul_pow]
+          rw [← Finset.mul_sum]
+    _ ≤ a ^ 2 * (∑ i : Fin d, c i) ^ 2 := by
+          exact mul_le_mul_of_nonneg_left
+            (Finset.sum_sq_le_sq_sum_of_nonneg
+              (s := (Finset.univ : Finset (Fin d)))
+              (f := c) (fun i _hi => hc_nonneg i))
+            (sq_nonneg a)
+    _ = parent ^ 2 := by
+          simp [parent, a, c, CubeVectorH1Function.gradientCoordL2NormSum]
+          ring
+
 theorem cubeBesovOverlappingPositiveVectorDepthAverage_toField_le_raw
     {d : ℕ} (Q : TriadicCube d) (j : ℕ) (G : CubeVectorH1Function Q) :
     cubeBesovOverlappingPositiveVectorDepthAverage Q G.toField j ≤
@@ -370,44 +413,8 @@ theorem cubeBesovOverlappingPositiveVectorDepthAverage_toField_le_raw
   have hparent_sum :
       ∑ i : Fin d,
           (cubeLpNorm Q (2 : ℝ≥0∞) (G.coord i).grad) ^ 2 ≤
-        parent ^ 2 := by
-    let a : ℝ := ((cubeVolume Q)⁻¹) ^ (1 / 2 : ℝ)
-    let c : Fin d → ℝ := fun i => (G.coord i).gradientCoordL2NormSum
-    have ha_nonneg : 0 ≤ a := by
-      dsimp [a]
-      exact Real.rpow_nonneg (inv_nonneg.mpr (cubeVolume_nonneg Q)) _
-    have hc_nonneg : ∀ i : Fin d, 0 ≤ c i := by
-      intro i
-      dsimp [c]
-      exact (G.coord i).gradientCoordL2NormSum_nonneg
-    have hterm :
-        ∀ i : Fin d,
-          (cubeLpNorm Q (2 : ℝ≥0∞) (G.coord i).grad) ^ 2 ≤
-            (a * c i) ^ 2 := by
-      intro i
-      have hle :=
-        cubeLpNorm_two_grad_le_volume_inv_rpow_half_mul_gradientCoordL2NormSum
-          (Q := Q) (G.coord i)
-      exact (sq_le_sq₀
-        (cubeLpNorm_nonneg Q (2 : ℝ≥0∞) (G.coord i).grad)
-        (mul_nonneg ha_nonneg (hc_nonneg i))).mpr (by simpa [a, c] using hle)
-    calc
-      ∑ i : Fin d,
-          (cubeLpNorm Q (2 : ℝ≥0∞) (G.coord i).grad) ^ 2
-          ≤ ∑ i : Fin d, (a * c i) ^ 2 := by
-            exact Finset.sum_le_sum fun i _hi => hterm i
-      _ = a ^ 2 * ∑ i : Fin d, (c i) ^ 2 := by
-            simp_rw [mul_pow]
-            rw [← Finset.mul_sum]
-      _ ≤ a ^ 2 * (∑ i : Fin d, c i) ^ 2 := by
-            exact mul_le_mul_of_nonneg_left
-              (Finset.sum_sq_le_sq_sum_of_nonneg
-                (s := (Finset.univ : Finset (Fin d)))
-                (f := c) (fun i _hi => hc_nonneg i))
-              (sq_nonneg a)
-      _ = parent ^ 2 := by
-            simp [parent, a, c, CubeVectorH1Function.gradientCoordL2NormSum]
-            ring
+        parent ^ 2 :=
+    cubeVectorGradientNormSquareSum_le_normalizedCoordinateBound Q G
   calc
     cubeBesovOverlappingPositiveVectorDepthAverage Q G.toField j
         ≤

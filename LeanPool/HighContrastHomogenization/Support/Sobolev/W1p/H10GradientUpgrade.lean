@@ -48,6 +48,8 @@ private theorem tendsto_eLpNorm_restrict_of_tendsto_global
   exact tendsto_of_tendsto_of_tendsto_of_le_of_le' tendsto_const_nhds h
     (Filter.Eventually.of_forall fun _ => zero_le) (Filter.Eventually.of_forall hle)
 
+/-- The zero extension of `u` mollified at scale `r / (n + 1)` and evaluated after the outward
+affine dilation based at `x0`. -/
 @[expose]
 public noncomputable def inwardApproximation
     {d : ℕ} {U : Set (Vec d)} (u : H10Function U)
@@ -145,6 +147,8 @@ theorem tendsto_inwardApproximation_grad
     rfl
   exact hrestricted.congr' heq
 
+/-- Upgrade of a zero-trace H¹ function with Lᵖ gradient to `W^{1,p}_0` on a nonempty bounded open
+convex domain, using inward smooth approximations. -/
 @[expose]
 public noncomputable def toW10pOfGradMemLpNonempty
     {d : ℕ} [NeZero d] {U : Set (Vec d)} (hU : IsOpenBoundedConvexDomain U)
@@ -187,6 +191,8 @@ public noncomputable def toW10pOfGradMemLpNonempty
         simpa only [v, H1Function.toW1pOfGradMemLp_grad] using
           u.tendsto_inwardApproximation_grad hU p hgrad x0 hr i }
 
+/-- Upgrade of a zero-trace H¹ function with Lᵖ gradient to `W^{1,p}_0` on the empty domain, using
+zero smooth approximations. -/
 @[expose]
 public noncomputable def toW10pOfGradMemLpEmpty
     {d : ℕ} [NeZero d] {U : Set (Vec d)} (hU : IsOpenBoundedConvexDomain U)

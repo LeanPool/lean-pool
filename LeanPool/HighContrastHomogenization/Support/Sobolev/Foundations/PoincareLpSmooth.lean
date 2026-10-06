@@ -141,7 +141,7 @@ theorem norm_sub_le_integral_norm_fderiv_mul_norm_sub_along_segment
           exact ContinuousLinearMap.le_opNorm _ _
 
 theorem
-  integral_norm_fderiv_mul_norm_sub_along_segment_le_two_mul_choose_mul_integral_norm_fderiv_along_segment
+  integral_derivativeDistanceAlongSegment_le_twoChoose_mul_segmentDerivativeNorm
     {d : ℕ} {U : Set (Vec d)} (hU : IsBoundedDomain U)
     {u : Vec d → ℝ} (hu : ContDiff ℝ (⊤ : ℕ∞) u) {x y : Vec d}
     (hx : x ∈ U) (hy : y ∈ U) :

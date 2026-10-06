@@ -105,7 +105,7 @@ theorem mgf_finset_sum_le_exp_card_mul_of_iIndepFun_of_isBigO_gammaSigma_of_one_
 /-- Large-`λ` Chernoff bound for finite sums of independent
 `O_{Γ_σ}` variables when `σ > 1`. -/
 theorem
-  measureReal_upperTailEvent_finset_sum_le_exp_card_mul_of_iIndepFun_of_isBigO_gammaSigma_of_one_lt
+  upperTail_sum_le_exp_of_independent_bigO
     [IsProbabilityMeasure μ]
     {ι : Type*} {X : ι → Ω → ℝ} {s : Finset ι} {σ K l a : ℝ}
     (h_indep : iIndepFun X μ)
@@ -175,7 +175,7 @@ theorem mgf_finset_sum_le_exp_of_iIndepFun_of_gammaMomentGrowth_small_of_integra
 /-- Chernoff upper-tail estimate for finite independent sums of centered
 `Γ_σ` variables in the small-`λ` regime. -/
 theorem
-  measureReal_upperTailEvent_finset_sum_le_exp_of_iIndepFun_of_gammaMomentGrowth_small_of_integral_eq_zero
+  upperTailProbability_finiteSum_le_exp_of_iIndepFun
     [IsProbabilityMeasure μ]
     {ι : Type*} {X : ι → Ω → ℝ} {M : ι → ℝ} {s : Finset ι} {σ l a : ℝ}
     (h_indep : iIndepFun X μ)
@@ -249,7 +249,7 @@ theorem mgf_finset_sum_le_exp_card_mul_of_iIndepFun_of_gammaMomentGrowth_small_o
 
 /-- Uniform-witness version of the finite-sum small-`λ` Chernoff estimate. -/
 theorem
-  measureReal_upperTailEvent_finset_sum_le_exp_card_mul_of_iIndepFun_of_gammaMomentGrowth_small_of_integral_eq_zero
+  upperTailProbability_finiteSum_le_exp_card_mul_of_iIndepFun
     [IsProbabilityMeasure μ]
     {ι : Type*} {X : ι → Ω → ℝ} {s : Finset ι} {σ M l a : ℝ}
     (h_indep : iIndepFun X μ)
@@ -261,7 +261,7 @@ theorem
     μ.real (upperTailEvent (fun ω => ∑ i ∈ s, X i ω) a) ≤
       Real.exp (-l * a + 2 * (s.card : ℝ) * (Real.exp 1 * M * l) ^ (2 : ℕ)) := by
   have hmain :=
-    measureReal_upperTailEvent_finset_sum_le_exp_of_iIndepFun_of_gammaMomentGrowth_small_of_integral_eq_zero
+    upperTailProbability_finiteSum_le_exp_of_iIndepFun
       (μ := μ) (X := X) (M := fun _ : ι => M) (s := s) (σ := σ) (l := l) (a := a)
       h_indep h_meas hσ hl
       (fun _ _ => hM)
@@ -301,6 +301,128 @@ lemma gammaSigmaLargeMgfConst_pos {σ : ℝ} (hσ : 1 < σ) :
     (gammaExpLargeLambdaConst_pos hσ)
     (Real.rpow_pos_of_pos
       (mul_pos (Real.exp_pos 1) (gammaMomentConst_pos hσ_pos)) _)
+
+private lemma gammaSigmaLargeRegimeExponent_le
+    {σ K R A C t : ℝ}
+    (hσ : 1 < σ) (hσ₂ : σ ≤ 2) (hK : 0 < K) (hR : 0 < R)
+    (hsqrtR_one : 1 ≤ Real.sqrt R)
+    (ht : 0 ≤ t) (hlarge : 2 * Real.sqrt R < t) (hA : 2 + C ≤ A) :
+    let l : ℝ := (t / Real.sqrt R) ^ (σ - 1) / K;
+    -l * (A * Real.sqrt R * K * t) +
+      R * (Real.log 2 + C * (K * l) ^ gammaExpConjExponent σ) ≤ -(t ^ σ) := by
+  let l : ℝ := (t / Real.sqrt R) ^ (σ - 1) / K
+  let S : ℝ := R * (t / Real.sqrt R) ^ σ
+  have hσ_pos : 0 < σ := by linarith
+  have hsqrtR_pos : 0 < Real.sqrt R := Real.sqrt_pos.2 hR
+  have hsqrtR_nonneg : 0 ≤ Real.sqrt R := hsqrtR_pos.le
+  have hsqrtR_sq : (Real.sqrt R) ^ (2 : ℕ) = R := by
+    simpa [pow_two] using Real.sq_sqrt hR.le
+  have hbase_nonneg : 0 ≤ t / Real.sqrt R := by positivity
+  have hbase_gt_two : 2 < t / Real.sqrt R := by
+    exact (lt_div_iff₀ hsqrtR_pos).2 hlarge
+  have hbase_one : 1 ≤ t / Real.sqrt R := by linarith
+  have hS_nonneg : 0 ≤ S := by
+    dsimp [S]
+    positivity
+  have hS_ge_log : R * Real.log 2 ≤ S := by
+    have hlog_le_one : Real.log 2 ≤ 1 := by
+      refine (Real.log_le_iff_le_exp (by norm_num : 0 < (2 : ℝ))).2 ?_
+      have htwo_exp_one : (2 : ℝ) < Real.exp 1 := by
+        exact lt_trans (by norm_num) Real.exp_one_gt_d9
+      simpa using htwo_exp_one.le
+    have hone_le : 1 ≤ (t / Real.sqrt R) ^ σ :=
+      Real.one_le_rpow hbase_one hσ_pos.le
+    have hlog_le : Real.log 2 ≤ (t / Real.sqrt R) ^ σ := le_trans hlog_le_one hone_le
+    have hmul := mul_le_mul_of_nonneg_left hlog_le hR.le
+    simpa [S] using hmul
+  have hS_ge_tpow : t ^ σ ≤ S := by
+    have hsqrt_pow_le : (Real.sqrt R) ^ σ ≤ R := by
+      calc
+        (Real.sqrt R) ^ σ ≤ (Real.sqrt R) ^ (2 : ℝ) :=
+          Real.rpow_le_rpow_of_exponent_le hsqrtR_one hσ₂
+        _ = R := by simpa [Real.rpow_natCast] using hsqrtR_sq
+    calc
+      t ^ σ = (Real.sqrt R * (t / Real.sqrt R)) ^ σ := by
+        congr 1
+        field_simp [hsqrtR_pos.ne']
+      _ = (Real.sqrt R) ^ σ * (t / Real.sqrt R) ^ σ :=
+        Real.mul_rpow hsqrtR_nonneg hbase_nonneg
+      _ ≤ R * (t / Real.sqrt R) ^ σ := by gcongr
+      _ = S := rfl
+  have hpow_q :
+      (K * l) ^ gammaExpConjExponent σ = (t / Real.sqrt R) ^ σ := by
+    calc
+      (K * l) ^ gammaExpConjExponent σ
+        = ((t / Real.sqrt R) ^ (σ - 1)) ^ gammaExpConjExponent σ := by
+            dsimp [l]
+            congr 1
+            field_simp [hK.ne']
+      _ = (t / Real.sqrt R) ^ ((σ - 1) * gammaExpConjExponent σ) :=
+        (Real.rpow_mul hbase_nonneg _ _).symm
+      _ = (t / Real.sqrt R) ^ σ := by
+        dsimp [gammaExpConjExponent]
+        congr 2
+        field_simp [sub_ne_zero.mpr hσ.ne']
+  have hla : l * (A * Real.sqrt R * K * t) = A * S := by
+    calc
+      l * (A * Real.sqrt R * K * t)
+        = A * (((t / Real.sqrt R) ^ (σ - 1)) * (Real.sqrt R * t)) := by
+            dsimp [l]
+            field_simp [hK.ne']
+      _ = A * (R * (t / Real.sqrt R) ^ σ) := by
+        congr 1
+        calc
+          (t / Real.sqrt R) ^ (σ - 1) * (Real.sqrt R * t)
+            = (t / Real.sqrt R) ^ (σ - 1) * (R * (t / Real.sqrt R)) := by
+                have hRt : R * (t / Real.sqrt R) = Real.sqrt R * t := by
+                  field_simp [hsqrtR_pos.ne']
+                  rw [hsqrtR_sq]
+                  ring
+                rw [hRt]
+          _ = R * ((t / Real.sqrt R) ^ (σ - 1) * (t / Real.sqrt R)) := by ring
+          _ = R * (t / Real.sqrt R) ^ σ := by
+            have hpow_base :
+                (t / Real.sqrt R) ^ (σ - 1) * (t / Real.sqrt R) =
+                  (t / Real.sqrt R) ^ σ := by
+              calc
+                (t / Real.sqrt R) ^ (σ - 1) * (t / Real.sqrt R)
+                  = (t / Real.sqrt R) ^ (σ - 1) * (t / Real.sqrt R) ^ (1 : ℝ) := by
+                      rw [Real.rpow_one]
+                _ = (t / Real.sqrt R) ^ σ := by
+                    rw [← Real.rpow_add' hbase_nonneg]
+                    · ring_nf
+                    · linarith
+            rw [hpow_base]
+      _ = A * S := rfl
+  calc
+    -l * (A * Real.sqrt R * K * t) +
+        R * (Real.log 2 + C * (K * l) ^ gammaExpConjExponent σ)
+      = -(l * (A * Real.sqrt R * K * t)) +
+          R * (Real.log 2 + C * (K * l) ^ gammaExpConjExponent σ) := by ring
+    _ = -(A * S) + R * (Real.log 2 + C * (K * l) ^ gammaExpConjExponent σ) := by rw [hla]
+    _ = -(A - C) * S + R * Real.log 2 := by
+        rw [hpow_q]
+        dsimp [S]
+        ring
+    _ ≤ -(2 : ℝ) * S + R * Real.log 2 := by
+        have htwo_le : (2 : ℝ) ≤ A - C := by rwa [le_sub_iff_add_le]
+        have hmul : (2 : ℝ) * S ≤ (A - C) * S := mul_le_mul_of_nonneg_right htwo_le hS_nonneg
+        have hneg : -(A - C) * S ≤ -(2 : ℝ) * S := by
+          calc
+            -(A - C) * S = -((A - C) * S) := by ring
+            _ ≤ -((2 : ℝ) * S) := neg_le_neg hmul
+            _ = -(2 : ℝ) * S := by ring
+        calc
+          -(A - C) * S + R * Real.log 2 = R * Real.log 2 + -(A - C) * S := by ring
+          _ ≤ R * Real.log 2 + -(2 : ℝ) * S := add_le_add_right hneg (R * Real.log 2)
+          _ = -(2 : ℝ) * S + R * Real.log 2 := by ring
+    _ ≤ -S := by
+        calc
+          -(2 : ℝ) * S + R * Real.log 2 ≤ S + -(2 : ℝ) * S := by
+            rw [add_comm (-(2 : ℝ) * S)]
+            exact add_le_add_left hS_ge_log (-(2 : ℝ) * S)
+          _ = -S := by ring
+    _ ≤ -(t ^ σ) := neg_le_neg hS_ge_tpow
 
 /-- One-sided direct concentration in the exponential regime `1 < σ ≤ 2`. -/
 theorem isBigOWith_gammaSigma_finset_sum_of_iIndepFun_of_isBigO_of_integral_eq_zero_of_one_lt
@@ -367,7 +489,7 @@ theorem isBigOWith_gammaSigma_finset_sum_of_iIndepFun_of_isBigO_of_integral_eq_z
               field_simp [hM_pos.ne', hsqrtR_pos.ne']
               norm_num
     have htail :=
-      measureReal_upperTailEvent_finset_sum_le_exp_card_mul_of_iIndepFun_of_gammaMomentGrowth_small_of_integral_eq_zero
+      upperTailProbability_finiteSum_le_exp_card_mul_of_iIndepFun
         (μ := μ) (X := X) (s := s) (σ := σ) (M := M) (l := l)
         (a := A * Real.sqrt R * K * t)
         h_indep h_meas hσ.le hM_pos.le hl_nonneg hl_small hXmean hXmom
@@ -440,134 +562,19 @@ theorem isBigOWith_gammaSigma_finset_sum_of_iIndepFun_of_isBigO_of_integral_eq_z
       dsimp [l]
       positivity
     have htail :=
-      measureReal_upperTailEvent_finset_sum_le_exp_card_mul_of_iIndepFun_of_isBigO_gammaSigma_of_one_lt
+      upperTail_sum_le_exp_of_independent_bigO
         (μ := μ) (X := X) (s := s) (σ := σ) (K := K) (l := l)
         (a := A * Real.sqrt R * K * t)
         h_indep h_meas hσ hK hl_nonneg hX
     refine htail.trans ?_
-    apply (Real.exp_le_exp).2
-    have hbase_nonneg : 0 ≤ t / Real.sqrt R := by positivity
-    have hbase_gt_two : 2 < t / Real.sqrt R := by
-      exact (lt_div_iff₀ hsqrtR_pos).2 (lt_of_not_ge hsmall)
-    have hbase_one : 1 ≤ t / Real.sqrt R := by
-      linarith
     have hA_large : 2 + C ≤ A := by
       dsimp [A, C, gammaSigmaExpRegimeConst]
       exact le_max_right _ _
-    have hS_nonneg : 0 ≤ S := by
-      dsimp [S]
-      positivity
-    have hS_ge_log : R * Real.log 2 ≤ S := by
-      have hlog_le_one : Real.log 2 ≤ 1 := by
-        refine (Real.log_le_iff_le_exp (by norm_num : 0 < (2 : ℝ))).2 ?_
-        have htwo_exp_one : (2 : ℝ) < Real.exp 1 := by
-          exact lt_trans (by norm_num) Real.exp_one_gt_d9
-        simpa using htwo_exp_one.le
-      have hone_le : 1 ≤ (t / Real.sqrt R) ^ σ := by
-        exact Real.one_le_rpow hbase_one hσ_pos.le
-      have hlog_le : Real.log 2 ≤ (t / Real.sqrt R) ^ σ := by
-        exact le_trans hlog_le_one hone_le
-      have hmul := mul_le_mul_of_nonneg_left hlog_le hR_nonneg
-      simpa [S] using hmul
-    have hS_ge_tpow : t ^ σ ≤ S := by
-      have hsqrt_pow_le : (Real.sqrt R) ^ σ ≤ R := by
-        calc
-          (Real.sqrt R) ^ σ ≤ (Real.sqrt R) ^ (2 : ℝ) := by
-                exact Real.rpow_le_rpow_of_exponent_le hsqrtR_one_le hσ₂
-          _ = R := by
-                simpa [Real.rpow_natCast] using hsqrtR_sq
-      calc
-        t ^ σ = (Real.sqrt R * (t / Real.sqrt R)) ^ σ := by
-                  congr 1
-                  field_simp [hsqrtR_pos.ne']
-        _ = (Real.sqrt R) ^ σ * (t / Real.sqrt R) ^ σ := by
-                  rw [Real.mul_rpow hsqrtR_nonneg hbase_nonneg]
-        _ ≤ R * (t / Real.sqrt R) ^ σ := by
-                  gcongr
-        _ = S := by
-                  rfl
-    have hpow_q :
-        (K * l) ^ gammaExpConjExponent σ = (t / Real.sqrt R) ^ σ := by
-      calc
-        (K * l) ^ gammaExpConjExponent σ
-          = ((t / Real.sqrt R) ^ (σ - 1)) ^ gammaExpConjExponent σ := by
-                dsimp [l]
-                congr 1
-                field_simp [hK.ne']
-        _ = (t / Real.sqrt R) ^ ((σ - 1) * gammaExpConjExponent σ) := by
-                rw [← Real.rpow_mul hbase_nonneg]
-        _ = (t / Real.sqrt R) ^ σ := by
-                dsimp [gammaExpConjExponent]
-                congr 2
-                field_simp [sub_ne_zero.mpr hσ.ne']
-    have hla : l * (A * Real.sqrt R * K * t) = A * S := by
-      calc
-        l * (A * Real.sqrt R * K * t)
-          = A * (((t / Real.sqrt R) ^ (σ - 1)) * (Real.sqrt R * t)) := by
-                dsimp [l]
-                field_simp [hK.ne']
-        _ = A * (R * (t / Real.sqrt R) ^ σ) := by
-                congr 1
-                calc
-                  (t / Real.sqrt R) ^ (σ - 1) * (Real.sqrt R * t)
-                    = (t / Real.sqrt R) ^ (σ - 1) * (R * (t / Real.sqrt R)) := by
-                          have hRt : R * (t / Real.sqrt R) = Real.sqrt R * t := by
-                            field_simp [hsqrtR_pos.ne']
-                            rw [hsqrtR_sq]
-                          rw [hRt]
-                  _ = R * ((t / Real.sqrt R) ^ (σ - 1) * (t / Real.sqrt R)) := by ring
-                  _ = R * (t / Real.sqrt R) ^ σ := by
-                        have hpow_base :
-                            (t / Real.sqrt R) ^ (σ - 1) * (t / Real.sqrt R) =
-                              (t / Real.sqrt R) ^ σ := by
-                          calc
-                            (t / Real.sqrt R) ^ (σ - 1) * (t / Real.sqrt R)
-                              = (t / Real.sqrt R) ^ (σ - 1) * (t / Real.sqrt R) ^ (1 : ℝ) := by
-                                    rw [Real.rpow_one]
-                            _ = (t / Real.sqrt R) ^ σ := by
-                                    rw [← Real.rpow_add' hbase_nonneg]
-                                    · ring_nf
-                                    · linarith
-                        rw [hpow_base]
-        _ = A * S := by
-                rfl
-    calc
-      -l * (A * Real.sqrt R * K * t) +
-          R * (Real.log 2 + C * (K * l) ^ gammaExpConjExponent σ)
-        = -(l * (A * Real.sqrt R * K * t)) +
-            R * (Real.log 2 + C * (K * l) ^ gammaExpConjExponent σ) := by
-              ring
-      _ = -(A * S) +
-            R * (Real.log 2 + C * (K * l) ^ gammaExpConjExponent σ) := by
-              rw [hla]
-      _ = -(A - C) * S + R * Real.log 2 := by
-              rw [hpow_q]
-              dsimp [S]
-              ring
-      _ ≤ -(2 : ℝ) * S + R * Real.log 2 := by
-            have htwo_le : (2 : ℝ) ≤ A - C := by
-              rwa [le_sub_iff_add_le]
-            have hmul : (2 : ℝ) * S ≤ (A - C) * S :=
-              mul_le_mul_of_nonneg_right htwo_le hS_nonneg
-            have hneg : -(A - C) * S ≤ -(2 : ℝ) * S := by
-              calc
-                -(A - C) * S = -((A - C) * S) := by ring
-                _ ≤ -((2 : ℝ) * S) := neg_le_neg hmul
-                _ = -(2 : ℝ) * S := by ring
-            calc
-              -(A - C) * S + R * Real.log 2 = R * Real.log 2 + -(A - C) * S := by
-                ring
-              _ ≤ R * Real.log 2 + -(2 : ℝ) * S :=
-                add_le_add_right hneg (R * Real.log 2)
-              _ = -(2 : ℝ) * S + R * Real.log 2 := by ring
-      _ ≤ -S := by
-            calc
-              -(2 : ℝ) * S + R * Real.log 2 ≤ S + -(2 : ℝ) * S := by
-                rw [add_comm (-(2 : ℝ) * S)]
-                exact add_le_add_left hS_ge_log (-(2 : ℝ) * S)
-              _ = -S := by ring
-      _ ≤ -(t ^ σ) := by
-            exact neg_le_neg hS_ge_tpow
+    apply (Real.exp_le_exp).2
+    simpa [l, A, C, R] using
+      (gammaSigmaLargeRegimeExponent_le
+        (σ := σ) (K := K) (R := R) (A := A) (C := C) (t := t)
+        hσ hσ₂ hK hR_pos hsqrtR_one_le ht_nonneg (lt_of_not_ge hsmall) hA_large)
 
 /-- Symmetric direct concentration in the exponential regime `1 < σ ≤ 2`. -/
 theorem isBigO_gammaSigma_finset_sum_of_iIndepFun_of_isBigO_of_integral_eq_zero_of_one_lt
@@ -775,7 +782,7 @@ theorem isBigOWith_gammaOne_finset_sum_of_iIndepFun_of_isBigO_of_integral_eq_zer
     dsimp [l]
     positivity
   have htail :=
-    measureReal_upperTailEvent_finset_sum_le_exp_card_mul_of_iIndepFun_of_gammaMomentGrowth_small_of_integral_eq_zero
+    upperTailProbability_finiteSum_le_exp_card_mul_of_iIndepFun
       (μ := μ) (X := X) (s := s) (σ := 1) (M := M) (l := l)
       (a := gammaOneExpRegimeConst * Real.sqrt R * K * t)
       h_indep h_meas le_rfl hM_nonneg hl_nonneg
@@ -992,7 +999,7 @@ noncomputable def gammaSigmaExpRegimeEndpointConst (σ : ℝ) : ℝ :=
 
 /-- Note-facing direct concentration theorem in the exponential regime
 `σ ∈ [1, 2]`. -/
-theorem isBigO_gammaSigma_finset_sum_of_iIndepFun_of_isBigO_of_integral_eq_zero_expRegime
+theorem isBigO_gammaSigma_sum_iIndep_bigO_meanZero_expRegime
     [IsProbabilityMeasure μ]
     {ι : Type*} {X : ι → Ω → ℝ} {s : Finset ι} {σ K : ℝ}
     (h_indep : iIndepFun X μ)
@@ -1019,7 +1026,7 @@ theorem isBigO_gammaSigma_finset_sum_of_iIndepFun_of_isBigO_of_integral_eq_zero_
 
 /-- Averaged version of the direct exponential-regime concentration theorem on
 the range `σ ∈ [1, 2]`. -/
-theorem isBigO_gammaSigma_finsetAverage_of_iIndepFun_of_isBigO_of_integral_eq_zero_expRegime
+theorem isBigO_gammaSigma_average_iIndep_bigO_meanZero_expRegime
     [IsProbabilityMeasure μ]
     {ι : Type*} {X : ι → Ω → ℝ} {s : Finset ι} {σ K : ℝ}
     (h_indep : iIndepFun X μ)

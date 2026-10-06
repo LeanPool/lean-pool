@@ -283,7 +283,8 @@ theorem posDef_blockG_conj {E : BlockMat d} (hs : IsSymmetricBlockMat E)
     (hp : Book.Ch02.BlockPosDef E) (h : Mat d) :
     ((toFullBlockMat (Book.Ch02.blockG h))ᴴ * toFullBlockMat E *
       toFullBlockMat (Book.Ch02.blockG h)).PosDef :=
-  (posDef_toFullBlockMat_of_blockPosDef hs hp).conjTranspose_mul_mul_same (Matrix.mulVec_injective_of_isUnit (isUnit_toFullBlockMat_blockG h))
+  (posDef_toFullBlockMat_of_blockPosDef hs hp).conjTranspose_mul_mul_same
+    (Matrix.mulVec_injective_of_isUnit (isUnit_toFullBlockMat_blockG h))
 
 /-- On Hermitian matrices the matrix order is the Loewner order read on quadratic forms. -/
 theorem matrix_le_iff_matLoewnerLE {A B : Mat d} (hA : A.IsHermitian) (hB : B.IsHermitian) :

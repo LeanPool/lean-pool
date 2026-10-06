@@ -36,6 +36,195 @@ open MeasureTheory
 
 noncomputable section
 
+
+private theorem rebased_reference_aspect_bound (d : ℕ)
+    [NeZero d] {g delta : ℝ}
+    (hg : g ∈ Set.Ico (0 : ℝ) 1) (hdelta : delta ∈ Set.Ioo (0 : ℝ) 1)
+    {P : Measure (CoeffSpace d)} [IsProbabilityMeasure P]
+    {E : BlockMat d} {Psi : ℝ → ℝ} {K : ℝ} {S : CoeffSpace d → ℝ}
+    (hdag : HCPoly.Frozen.CoarseEllipticityDagger P g E Psi K S)
+    {mEnt q : ℕ} (hqLow : (2 + aspectRatio E * K) ^ 2 ≤ (3 : ℝ) ^ (q : ℤ))
+    (hbase0 : 0 < (2 + aspectRatio E * K))
+    (hAhatSymm : IsSymmetricBlockMat (annealedBlock P (centeredCube d ((mEnt + q) : ℤ))))
+    (hAhatPos : Book.Ch02.BlockPosDef (annealedBlock P (centeredCube d ((mEnt + q) : ℤ))))
+    (hKle : K ≤ (2 + aspectRatio E * K))
+    (hAspect : 1 ≤ aspectRatio E)
+    : (((1 + 6 * K ^ 2 * (3 : ℝ) ^ (-((mEnt + q) : ℤ))) ^ g) ≤ (7 : ℝ) ^ g) ∧
+    (0 < ((1 + 6 * K ^ 2 * (3 : ℝ) ^ (-((mEnt + q) : ℤ))) ^ g)) ∧
+    (aspectRatio (annealedBlock P (centeredCube d ((mEnt + q) : ℤ))) ≤ ((1 + 6 * K ^ 2 * (3 : ℝ) ^
+      (-((mEnt + q) : ℤ))) ^ g) ^ 2 * aspectRatio E) ∧
+    (aspectRatio (blockScale (1 + delta) (annealedBlock P (centeredCube d ((mEnt + q) : ℤ)))) ≤ ((1
+      + delta) ^ 2 * ((7 : ℝ) ^ g) ^ 2) * aspectRatio E) ∧
+    (1 ≤ ((1 + delta) ^ 2 * ((7 : ℝ) ^ g) ^ 2)) := by
+  classical
+  let Casp : ℝ := (1 + delta) ^ 2 * ((7 : ℝ) ^ g) ^ 2
+  let base : ℝ := 2 + aspectRatio E * K
+  let inner : ℕ := mEnt + q
+  let Ahat : BlockMat d := annealedBlock P (centeredCube d (inner : ℤ))
+  let Ebase : BlockMat d := blockScale (1 + delta) Ahat
+  have hAhatUpper := Entry.annealedBlock_centeredCube_le_blockScale hdag (inner : ℤ)
+  let cA : ℝ := (1 + 6 * K ^ 2 * (3 : ℝ) ^ (-(inner : ℤ))) ^ g
+  have hcA : cA ≤ (7 : ℝ) ^ g := by
+    have hKsq : K ^ 2 ≤ (3 : ℝ) ^ (inner : ℤ) := by
+      have hK0 : 0 ≤ K := (le_of_lt hdag.one_lt_growthWitness).trans' (by norm_num)
+      have hKsqBase : K ^ 2 ≤ base ^ 2 := by
+        nlinarith only [hK0, hbase0.le, hKle]
+      exact (hKsqBase.trans hqLow).trans
+          (zpow_le_zpow_right₀ (by norm_num) (by dsimp only [inner]; omega))
+    have hratio : K ^ 2 * (3 : ℝ) ^ (-(inner : ℤ)) ≤ 1 := by
+      rw [zpow_neg]
+      exact mul_inv_le_one_of_le₀ hKsq (by positivity)
+    have hinside : 1 + 6 * K ^ 2 * (3 : ℝ) ^ (-(inner : ℤ)) ≤ 7 := by
+      nlinarith only [hratio]
+    dsimp only [cA]
+    exact Real.rpow_le_rpow (by positivity) hinside hg.1
+  have hcApos : 0 < cA := by dsimp only [cA]; positivity
+  have hAhatAspect : aspectRatio Ahat ≤ cA ^ 2 * aspectRatio E := by
+    have hscaledSymm := isSymmetricBlockMat_blockScale cA hdag.refBlock_isSymm
+    have hscaledPos : Book.Ch02.BlockPosDef (blockScale cA E) := by
+      intro X hX
+      rw [blockVecDot_blockMatVecMul_blockScale]
+      exact mul_pos hcApos (hdag.refBlock_posDef X hX)
+    have hmono := aspectRatio_mono hAhatSymm hAhatPos hscaledSymm hscaledPos
+      (by simpa only [Ahat, cA] using hAhatUpper)
+    rwa [aspectRatio_blockScale hcApos E] at hmono
+  have hAspectBound : aspectRatio Ebase ≤ Casp * aspectRatio E := by
+    rw [show Ebase = blockScale (1 + delta) Ahat by rfl,
+      aspectRatio_blockScale (by linarith only [hdelta.1]) Ahat]
+    have hsquare := mul_le_mul_of_nonneg_left
+      (pow_le_pow_left₀ hcApos.le hcA 2)
+      (sq_nonneg (1 + delta))
+    dsimp only [Casp]
+    exact (mul_le_mul_of_nonneg_left hAhatAspect (sq_nonneg (1 + delta))).trans <| by
+      nlinarith only [hsquare, hAspect]
+  have hCasp : 1 ≤ Casp := by
+    have hdeltaOne : 1 ≤ 1 + delta := by linarith only [hdelta.1]
+    have hseven : 1 ≤ (7 : ℝ) ^ g := Real.one_le_rpow (by norm_num) hg.1
+    have hdeltaSq : 1 ≤ (1 + delta) ^ 2 := one_le_pow₀ hdeltaOne
+    have hsevenSq : 1 ≤ ((7 : ℝ) ^ g) ^ 2 := one_le_pow₀ hseven
+    dsimp only [Casp]
+    exact one_le_mul_of_one_le_of_one_le hdeltaSq hsevenSq
+  exact ⟨hcA, hcApos, hAhatAspect, hAspectBound, hCasp⟩
+
+private theorem rebasing_cell_gain_bound (d : ℕ)
+    [NeZero d] {g : ℝ}
+    {P : Measure (CoeffSpace d)} [IsProbabilityMeasure P]
+    {E : BlockMat d} {Psi : ℝ → ℝ} {K : ℝ} {S : CoeffSpace d → ℝ}
+    (hdag : HCPoly.Frozen.CoarseEllipticityDagger P g E Psi K S)
+    : (unitRangeCellGain d g E ≤ (192 * (d : ℝ) ^ 2 * (3 : ℝ) ^ g * frThreshold d *
+    (1 + unitRangeRenormShift d)) * (2 + aspectRatio E * K)) := by
+  classical
+  let G0 : ℝ := 192 * (d : ℝ) ^ 2 * (3 : ℝ) ^ g * frThreshold d *
+    (1 + unitRangeRenormShift d)
+  let base : ℝ := 2 + aspectRatio E * K
+  have hGainBound : unitRangeCellGain d g E ≤ G0 * base := by
+    have hkappa := Initialization.kappaRef_le_six_mul_aspectRatio_of_coarseEllipticityDagger hdag
+    have haspectBase : aspectRatio E ≤ base := by
+      have hK1 : 1 ≤ K := le_of_lt hdag.one_lt_growthWitness
+      have hAspect : 0 ≤ aspectRatio E :=
+        zero_le_one.trans (one_le_aspectRatio_of_coarseEllipticityDagger hdag)
+      dsimp only [base]
+      nlinarith only [hK1, hAspect]
+    have hkbase : kappaRef E ≤ 6 * base :=
+      hkappa.trans (mul_le_mul_of_nonneg_left haspectBase (by norm_num))
+    have hfactor : 0 < 32 * (d : ℝ) ^ 2 * (3 : ℝ) ^ g * frThreshold d *
+        (1 + unitRangeRenormShift d) := by
+      have hd0 : (0 : ℝ) < d := by exact_mod_cast Nat.pos_of_ne_zero (NeZero.ne d)
+      have hs : 0 ≤ unitRangeRenormShift d := unitRangeRenormShift_nonneg d
+      have hs1 : 0 < 1 + unitRangeRenormShift d := by linarith only [hs]
+      have hpowg : 0 < (3 : ℝ) ^ g := by positivity
+      have hfr : 0 < frThreshold d := frThreshold_pos d
+      positivity
+    rw [unitRangeCellGain]
+    dsimp only [G0]
+    have hmul := mul_le_mul_of_nonneg_left hkbase hfactor.le
+    nlinarith only [hmul]
+  exact hGainBound
+
+private theorem rebased_block_contrast_bound (d : ℕ)
+    [NeZero d] {g : ℝ}
+    {P : Measure (CoeffSpace d)} [IsProbabilityMeasure P]
+    {E : BlockMat d} {Psi : ℝ → ℝ} {K : ℝ} {S : CoeffSpace d → ℝ}
+    (hdag : HCPoly.Frozen.CoarseEllipticityDagger P g E Psi K S)
+    {cSc cStar delta : ℝ} {mEnt q : ℕ}
+    (hstat : HCPoly.Frozen.IsStationaryLaw P)
+    (hsmall : annealedContrast P (mEnt : ℤ) - 1 ≤ cStar)
+    (hdelta : delta ∈ Set.Ioo (0 : ℝ) 1)
+    (hcal : (1 + delta) ^ 2 * (1 + cStar) ≤ 1 + cSc)
+    (hAhatSymm : IsSymmetricBlockMat (annealedBlock P (centeredCube d ((mEnt + q) : ℤ))))
+    (hAhatPos : Book.Ch02.BlockPosDef (annealedBlock P (centeredCube d ((mEnt + q) : ℤ))))
+    : (blockContrast (annealedBlock P (centeredCube d ((mEnt + q) : ℤ))) ≤ 1 + cStar) ∧
+    (blockContrast (blockScale (1 + delta) (annealedBlock P (centeredCube d ((mEnt + q) : ℤ)))) ≤ 1
+      + cSc) := by
+  classical
+  let inner : ℕ := mEnt + q
+  let Ahat : BlockMat d := annealedBlock P (centeredCube d (inner : ℤ))
+  let Ebase : BlockMat d := blockScale (1 + delta) Ahat
+  have hcontrastInner : blockContrast Ahat ≤ 1 + cStar := by
+    have hmono := annealedContrast_antitone hstat hdag
+      (show mEnt ≤ inner by dsimp only [inner]; omega)
+    change annealedContrast P (inner : ℤ) ≤ 1 + cStar
+    linarith only [hmono, hsmall]
+  have hcontrastBase : blockContrast Ebase ≤ 1 + cSc := by
+    have hscale := blockContrast_blockScale_le hAhatSymm hAhatPos
+      (by linarith only [hdelta.1] : 0 < 1 + delta)
+    dsimp only [Ebase] at hscale ⊢
+    exact hscale.trans <| (mul_le_mul_of_nonneg_left hcontrastInner
+      (sq_nonneg (1 + delta))).trans hcal
+  exact ⟨hcontrastInner, hcontrastBase⟩
+
+private theorem rebasing_cell_threshold_certificate (d : ℕ)
+    [NeZero d] {g : ℝ} {P : Measure (CoeffSpace d)} [IsProbabilityMeasure P]
+    {E : BlockMat d} {Psi : ℝ → ℝ} {K : ℝ} {S : CoeffSpace d → ℝ}
+    (hdag : HCPoly.Frozen.CoarseEllipticityDagger P g E Psi K S)
+    (hstat : HCPoly.Frozen.IsStationaryLaw P) (hunit : HCPoly.Frozen.IsUnitRangeLaw P)
+    {mEnt A D q : ℕ} {T delta : ℝ} (hT : 1 ≤ T)
+    (hTthr : Real.log 2 ≤ frGaugeConst d * T ^ 2 *
+      ((3 : ℝ) ^ (2 * ((d : ℝ) / 2 - g)) - 1))
+    (hinner : ((mEnt + ((A + D + 1) * q)) : ℤ) - (((A + D) * q) : ℤ) = ((mEnt + q) : ℤ))
+    (hhalf : (Psi ((3 : ℝ) ^ ((mEnt + q) : ℤ)))⁻¹ ≤ 1 / 2)
+    (hTbase : T ≤ renormBase g ((d : ℝ) / 2) ((d : ℝ) / 2 - g) delta
+      (unitRangeCellGain d g E) ((A + D) * q) (A * q))
+    (hl0 : 1 ≤ renormBase g ((d : ℝ) / 2) ((d : ℝ) / 2 - g) delta
+      (unitRangeCellGain d g E) ((A + D) * q) (A * q))
+    : (Real.log 2 ≤ frGaugeConst d *
+      renormBase g ((d : ℝ) / 2) ((d : ℝ) / 2 - g) delta
+        (unitRangeCellGain d g E) ((A + D) * q) (A * q) ^ 2 *
+        ((3 : ℝ) ^ (2 * ((d : ℝ) / 2 - g)) - 1)) ∧
+    (HasCellRenormalization P S (annealedBlock P (centeredCube d ((mEnt + q) : ℤ))) g ((d : ℝ) / 2)
+      (unitRangeCellGain d g E) (mEnt + ((A + D + 1) * q)) ((A + D) * q) (A * q)) := by
+  classical
+  let mu : ℝ := (d : ℝ) / 2 - g
+  let h : ℕ := A * q
+  let l0 : ℕ := (A + D) * q
+  let inner : ℕ := mEnt + q
+  let nBase : ℕ := mEnt + ((A + D + 1) * q)
+  let Ahat : BlockMat d := annealedBlock P (centeredCube d (inner : ℤ))
+  have hthr : Real.log 2 ≤ frGaugeConst d *
+      renormBase g ((d : ℝ) / 2) mu delta
+        (unitRangeCellGain d g E) l0 h ^ 2 *
+        ((3 : ℝ) ^ (2 * mu) - 1) := by
+    have hren : T ≤ renormBase g ((d : ℝ) / 2) mu delta
+        (unitRangeCellGain d g E) l0 h := hTbase
+    have hsq := sq_le_sq₀ (zero_le_one.trans hT)
+      (zero_le_one.trans hl0) |>.2 hren
+    have hfac : 0 ≤ frGaugeConst d * ((3 : ℝ) ^ (2 * mu) - 1) := by
+      have hone : 1 ≤ (3 : ℝ) ^ (2 * mu) :=
+        Real.one_le_rpow (by norm_num) (by positivity)
+      exact mul_nonneg (frGaugeConst_pos d).le (sub_nonneg.mpr hone)
+    have hmul := mul_le_mul_of_nonneg_right hsq hfac
+    nlinarith only [hTthr, hmul]
+  have hcell : HasCellRenormalization P S Ahat g ((d : ℝ) / 2)
+      (unitRangeCellGain d g E) nBase l0 h := by
+    have hn0 : 0 ≤ (nBase : ℤ) - (l0 : ℤ) := by rw [hinner]; positivity
+    have hhl0 : h ≤ l0 + 1 := by
+      dsimp only [h, l0]
+      have hAD : A ≤ A + D := Nat.le_add_right A D
+      exact (Nat.mul_le_mul_right q hAD).trans (Nat.le_add_right _ 1)
+    simpa only [Ahat, hinner] using
+      hasCellRenormalization_unitRangeCellGain_of_frozen hstat hunit hdag hn0 hhl0
+        (by simpa only [hinner] using hhalf)
+  exact ⟨hthr, hcell⟩
 /-- The one-time rebase provider used by the annealed-to-quenched step. -/
 theorem exists_prop211_rebase_provider (d : ℕ) (hd : 2 ≤ d) :
     ∀ {cSc g cStar Centry : ℝ},
@@ -153,28 +342,8 @@ theorem exists_prop211_rebase_provider (d : ℕ) (hd : 2 ≤ d) :
   have hGainPos : 0 < unitRangeCellGain d g E :=
     unitRangeCellGain_pos hdag.refBlock_isSymm hdag.refBlock_posDef
       (Initialization.blockMatLoewnerLE_blockSharp_reference hdag)
-  have hGainBound : unitRangeCellGain d g E ≤ G0 * base := by
-    have hkappa := Initialization.kappaRef_le_six_mul_aspectRatio_of_coarseEllipticityDagger hdag
-    have haspectBase : aspectRatio E ≤ base := by
-      have hK1 : 1 ≤ K := le_of_lt hdag.one_lt_growthWitness
-      have hAspect : 0 ≤ aspectRatio E :=
-        zero_le_one.trans (one_le_aspectRatio_of_coarseEllipticityDagger hdag)
-      dsimp only [base]
-      nlinarith only [hK1, hAspect]
-    have hkbase : kappaRef E ≤ 6 * base :=
-      hkappa.trans (mul_le_mul_of_nonneg_left haspectBase (by norm_num))
-    have hfactor : 0 < 32 * (d : ℝ) ^ 2 * (3 : ℝ) ^ g * frThreshold d *
-        (1 + unitRangeRenormShift d) := by
-      have hd0 : (0 : ℝ) < d := by exact_mod_cast Nat.pos_of_ne_zero (NeZero.ne d)
-      have hs : 0 ≤ unitRangeRenormShift d := unitRangeRenormShift_nonneg d
-      have hs1 : 0 < 1 + unitRangeRenormShift d := by linarith only [hs]
-      have hpowg : 0 < (3 : ℝ) ^ g := by positivity
-      have hfr : 0 < frThreshold d := frThreshold_pos d
-      positivity
-    rw [unitRangeCellGain]
-    dsimp only [G0]
-    have hmul := mul_le_mul_of_nonneg_left hkbase hfactor.le
-    nlinarith only [hmul]
+  have hGainBound :=
+    rebasing_cell_gain_bound d hdag
   have hl0Exp : g - (d : ℝ) / 2 +
       mu * ((l0 : ℝ) - (h : ℝ)) =
         mu * ((D * q : ℕ) : ℝ) - mu := by
@@ -193,30 +362,9 @@ theorem exists_prop211_rebase_provider (d : ℕ) (hd : 2 ≤ d) :
   have hl0 : 1 ≤ renormBase g ((d : ℝ) / 2) mu delta
       (unitRangeCellGain d g E) l0 h :=
     hT.trans hTbase
-  have hthr : Real.log 2 ≤ frGaugeConst d *
-      renormBase g ((d : ℝ) / 2) mu delta
-        (unitRangeCellGain d g E) l0 h ^ 2 *
-        ((3 : ℝ) ^ (2 * mu) - 1) := by
-    have hren : T ≤ renormBase g ((d : ℝ) / 2) mu delta
-        (unitRangeCellGain d g E) l0 h := hTbase
-    have hsq := sq_le_sq₀ (zero_le_one.trans hT)
-      (zero_le_one.trans hl0) |>.2 hren
-    have hfac : 0 ≤ frGaugeConst d * ((3 : ℝ) ^ (2 * mu) - 1) := by
-      have hone : 1 ≤ (3 : ℝ) ^ (2 * mu) :=
-        Real.one_le_rpow (by norm_num) (by positivity)
-      exact mul_nonneg (frGaugeConst_pos d).le (sub_nonneg.mpr hone)
-    have hmul := mul_le_mul_of_nonneg_right hsq hfac
-    nlinarith only [hTthr, hmul]
-  have hcell : HasCellRenormalization P S Ahat g ((d : ℝ) / 2)
-      (unitRangeCellGain d g E) nBase l0 h := by
-    have hn0 : 0 ≤ (nBase : ℤ) - (l0 : ℤ) := by rw [hinner]; positivity
-    have hhl0 : h ≤ l0 + 1 := by
-      dsimp only [h, l0]
-      have hAD : A ≤ A + D := Nat.le_add_right A D
-      exact (Nat.mul_le_mul_right q hAD).trans (Nat.le_add_right _ 1)
-    simpa only [Ahat, hinner] using
-      hasCellRenormalization_unitRangeCellGain_of_frozen hstat hunit hdag hn0 hhl0
-        (by simpa only [hinner] using hhalf)
+  obtain ⟨hthr, hcell⟩ :=
+    rebasing_cell_threshold_certificate d hdag hstat hunit hT
+      hTthr hinner hhalf hTbase hl0
   have hb1 : 1 ≤ b := by
     dsimp only [b]
     exact Nat.mul_pos hB hq
@@ -250,17 +398,9 @@ theorem exists_prop211_rebase_provider (d : ℕ) (hd : 2 ≤ d) :
     exact coarseEllipticityDagger_rebased_of_renormalization hdag hAhatSymm
       hAhatPos hdelta.1.le rfl hmu hgr
       hrho hGainPos hl0 hthr hcell hb1 hh1 hbuf href hburn
-  have hcontrastInner : blockContrast Ahat ≤ 1 + cStar := by
-    have hmono := annealedContrast_antitone hstat hdag
-      (show mEnt ≤ inner by dsimp only [inner]; omega)
-    change annealedContrast P (inner : ℤ) ≤ 1 + cStar
-    linarith only [hmono, hsmall]
-  have hcontrastBase : blockContrast Ebase ≤ 1 + cSc := by
-    have hscale := blockContrast_blockScale_le hAhatSymm hAhatPos
-      (by linarith only [hdelta.1] : 0 < 1 + delta)
-    dsimp only [Ebase] at hscale ⊢
-    exact hscale.trans <| (mul_le_mul_of_nonneg_left hcontrastInner
-      (sq_nonneg (1 + delta))).trans hcal
+  obtain ⟨hcontrastInner, hcontrastBase⟩ :=
+    rebased_block_contrast_bound d hdag hstat hsmall
+      hdelta hcal hAhatSymm hAhatPos
   have hnCost0 : (3 : ℝ) ^ nBase ≤ base ^ Cgen := by
     dsimp only [nBase, Cgen]
     exact rebase_generation_cost hbase hmEntCost hqCost
@@ -279,46 +419,8 @@ theorem exists_prop211_rebase_provider (d : ℕ) (hd : 2 ≤ d) :
   have hAspect : 1 ≤ aspectRatio E := one_le_aspectRatio_of_coarseEllipticityDagger hdag
   have hAhatUpper := Entry.annealedBlock_centeredCube_le_blockScale hdag (inner : ℤ)
   let cA : ℝ := (1 + 6 * K ^ 2 * (3 : ℝ) ^ (-(inner : ℤ))) ^ g
-  have hcA : cA ≤ (7 : ℝ) ^ g := by
-    have hKsq : K ^ 2 ≤ (3 : ℝ) ^ (inner : ℤ) := by
-      have hK0 : 0 ≤ K := (le_of_lt hdag.one_lt_growthWitness).trans' (by norm_num)
-      have hKsqBase : K ^ 2 ≤ base ^ 2 := by
-        nlinarith only [hK0, hbase0.le, hKle]
-      exact (hKsqBase.trans hqLow).trans
-          (zpow_le_zpow_right₀ (by norm_num) (by dsimp only [inner]; omega))
-    have hratio : K ^ 2 * (3 : ℝ) ^ (-(inner : ℤ)) ≤ 1 := by
-      rw [zpow_neg]
-      exact mul_inv_le_one_of_le₀ hKsq (by positivity)
-    have hinside : 1 + 6 * K ^ 2 * (3 : ℝ) ^ (-(inner : ℤ)) ≤ 7 := by
-      nlinarith only [hratio]
-    dsimp only [cA]
-    exact Real.rpow_le_rpow (by positivity) hinside hg.1
-  have hcApos : 0 < cA := by dsimp only [cA]; positivity
-  have hAhatAspect : aspectRatio Ahat ≤ cA ^ 2 * aspectRatio E := by
-    have hscaledSymm := isSymmetricBlockMat_blockScale cA hdag.refBlock_isSymm
-    have hscaledPos : Book.Ch02.BlockPosDef (blockScale cA E) := by
-      intro X hX
-      rw [blockVecDot_blockMatVecMul_blockScale]
-      exact mul_pos hcApos (hdag.refBlock_posDef X hX)
-    have hmono := aspectRatio_mono hAhatSymm hAhatPos hscaledSymm hscaledPos
-      (by simpa only [Ahat, cA] using hAhatUpper)
-    rwa [aspectRatio_blockScale hcApos E] at hmono
-  have hAspectBound : aspectRatio Ebase ≤ Casp * aspectRatio E := by
-    rw [show Ebase = blockScale (1 + delta) Ahat by rfl,
-      aspectRatio_blockScale (by linarith only [hdelta.1]) Ahat]
-    have hsquare := mul_le_mul_of_nonneg_left
-      (pow_le_pow_left₀ hcApos.le hcA 2)
-      (sq_nonneg (1 + delta))
-    dsimp only [Casp]
-    exact (mul_le_mul_of_nonneg_left hAhatAspect (sq_nonneg (1 + delta))).trans <| by
-      nlinarith only [hsquare, hAspect]
-  have hCasp : 1 ≤ Casp := by
-    have hdeltaOne : 1 ≤ 1 + delta := by linarith only [hdelta.1]
-    have hseven : 1 ≤ (7 : ℝ) ^ g := Real.one_le_rpow (by norm_num) hg.1
-    have hdeltaSq : 1 ≤ (1 + delta) ^ 2 := one_le_pow₀ hdeltaOne
-    have hsevenSq : 1 ≤ ((7 : ℝ) ^ g) ^ 2 := one_le_pow₀ hseven
-    dsimp only [Casp]
-    exact one_le_mul_of_one_le_of_one_le hdeltaSq hsevenSq
+  obtain ⟨hcA, hcApos, hAhatAspect, hAspectBound, hCasp⟩ :=
+    rebased_reference_aspect_bound d hg hdelta hdag hqLow hbase0 hAhatSymm hAhatPos hKle hAspect
   have hAspectNew : 1 ≤ aspectRatio Ebase :=
     one_le_aspectRatio_of_coarseEllipticityDagger hdagBase
   have hKbaseOne : 1 ≤ Kbase := by

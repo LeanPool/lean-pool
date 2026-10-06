@@ -315,7 +315,8 @@ private theorem swapConj_quad {A : BlockMat d} (hs : IsSymmetricBlockMat A)
         = toFullBlockVec ((X.2, X.1) : BlockVec d) := by
       rw [← toFullBlockVec_blockMatVecMul, blockMatVecMul_blockSwap]
     rw [hswapX]
-    have hAu' : toFullBlockMat A *ᵥ toFullBlockVec u = toFullBlockVec ((X.2, X.1) : BlockVec d) := by
+    have hAu' : toFullBlockMat A *ᵥ toFullBlockVec u = toFullBlockVec ((X.2, X.1) : BlockVec d)
+      := by
       rw [← toFullBlockVec_blockMatVecMul, hAu]
     rw [← hAu', Matrix.mulVec_mulVec, hAinv, Matrix.one_mulVec, hAu',
       dotProduct_toFullBlockVec]
@@ -533,7 +534,8 @@ private theorem quadG_smul {ι : Type*} [Fintype ι] [DecidableEq ι]
 private theorem le_sqrt_smul_one {ι : Type*} [Fintype ι] [DecidableEq ι]
     {Z : Matrix ι ι ℝ} (hZ : Z.PosDef) {c : ℝ} (hc : 0 ≤ c) (h : Z ≤ c • Z⁻¹) :
     Z ≤ Real.sqrt c • (1 : Matrix ι ι ℝ) := by
-  have hsqT : (matSqrt Z)ᴴ = matSqrt Z := HCPolySupport.HighContrast.conjTranspose_matSqrt hZ.posSemidef
+  have hsqT : (matSqrt Z)ᴴ = matSqrt Z := HCPolySupport.HighContrast.conjTranspose_matSqrt
+    hZ.posSemidef
   have hZZ : matSqrt Z * matSqrt Z = Z := (matSqrt_spec hZ.posSemidef).2
   have hsqpd : (matSqrt Z).PosDef := HCPolySupport.HighContrast.posDef_matSqrt hZ
   have hu : IsUnit (matSqrt Z).det := (Matrix.isUnit_iff_isUnit_det _).mp hsqpd.isUnit
@@ -694,7 +696,8 @@ theorem respEJ_le [NeZero d] (hd : 2 ≤ d) (P : Measure (CoeffSpace d))
     (hkts : respKappa P jStar F t ≤ respKappa P jStar F s) :
     respEJMinus P jStar F t e ≤ 2 * Real.sqrt (respKappa P jStar F s) ∧
       respEJPlus P jStar F t e ≤ 2 * Real.sqrt (respKappa P jStar F s) := by
-  have hM : (respM (respMean P jStar F t)).PosDef := response_by_centered_energies_respM_posDef hsymm hposd
+  have hM : (respM (respMean P jStar F t)).PosDef := response_by_centered_energies_respM_posDef
+    hsymm hposd
   have h1 := respEJMinus_nonneg P jStar F t e hq hg
   have h2 := respEJPlus_nonneg P jStar F t e hq hg
   have h3 := respEJMinus_eq_final P jStar F t e he hq hg hM hint

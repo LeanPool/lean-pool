@@ -38,7 +38,7 @@ noncomputable section
 
 /-- One-child additivity-cross Cauchy estimate with local obligations
 discharged. -/
-theorem abs_cubeAverage_childAdditivityCrossDensityOnFamilyOnCube_le_sqrt_diff_avg_mul_sqrt_sum_avg_of_descendant
+theorem abs_cubeAverage_childAdditivityCrossDensity_le_sqrt_diff_avg_mul_sqrt_sum_avg
     {d : ℕ} [NeZero d] (a : Ch02.TriadicCoeffFamily d)
     (Q : TriadicCube d) {R : TriadicCube d} {j : ℕ}
     (hR : R ∈ descendantsAtDepth Q j) (p q : Vec d) :
@@ -370,7 +370,7 @@ theorem additivitySumHalfEnergyDensityOnFamilyOnCube_le_two_topHalfEnergy_add_tw
 
 /-- One-cube averaged comparison of sum energy with parent top energy plus
 child response. -/
-theorem cubeAverage_additivitySumHalfEnergyDensityOnFamilyOnCube_le_two_topHalfEnergy_add_two_childResponse
+theorem cubeAverage_halfEnergy_le_parentAndChildResponse
     {d : ℕ} [NeZero d] (a : Ch02.TriadicCoeffFamily d)
     (Q : TriadicCube d) {R : TriadicCube d} {j : ℕ}
     (hR : R ∈ descendantsAtDepth Q j) (p q : Vec d)
@@ -443,7 +443,7 @@ theorem cubeAverage_additivitySumHalfEnergyDensityOnFamilyOnCube_le_two_topHalfE
 
 /-- The descendant average of parent top half-energy over children is the
 parent response. -/
-theorem descendantsAverage_cubeAverage_topHalfEnergyOnCube_eq_responseJOnCube
+theorem descendantsAverage_topHalfEnergy_eq_responseJ
     {d : ℕ} (Q : TriadicCube d) (a : Ch02.CoeffOn (Ch02.cubeDomain Q))
     (j : ℕ) (p q : Vec d) :
     descendantsAverage Q j
@@ -462,7 +462,7 @@ theorem descendantsAverage_cubeAverage_topHalfEnergyOnCube_eq_responseJOnCube
 
 /-- The descendant-averaged sum-energy factor is controlled by twice the parent
 response plus twice the child-response average. -/
-theorem descendantsAverage_additivitySumHalfEnergyOnDependentFamily_le_two_responseJ_add_two_childResponse
+theorem descendantAverage_energy_le_parentAndChildResponse
     {d : ℕ} [NeZero d] (a : RegCoeffField d)
     (ha : Ch04.AELocallyUniformlyEllipticField a)
     (Q : TriadicCube d) (j : ℕ) (p q : Vec d) :
@@ -486,7 +486,7 @@ theorem descendantsAverage_additivitySumHalfEnergyOnDependentFamily_le_two_respo
             2 * Ch02.responseJ (Ch02.cubeDomain R) (F.coeffOn R) p q := by
     intro R hR
     exact
-      cubeAverage_additivitySumHalfEnergyDensityOnFamilyOnCube_le_two_topHalfEnergy_add_two_childResponse
+      cubeAverage_halfEnergy_le_parentAndChildResponse
         F Q (by simpa [S] using hR) p q (by rfl)
   have hsum :
       ∑ R ∈ S,
@@ -524,7 +524,7 @@ theorem descendantsAverage_additivitySumHalfEnergyOnDependentFamily_le_two_respo
     _ =
         2 * Ch02.responseJ (Ch02.cubeDomain Q) (F.coeffOn Q) p q +
           2 * childResponseJAverageOnFamilyAtDepth F Q j p q := by
-          rw [descendantsAverage_cubeAverage_topHalfEnergyOnCube_eq_responseJOnCube]
+          rw [descendantsAverage_topHalfEnergy_eq_responseJ]
 
 /-- The descendant-averaged sum-energy factor is bounded by four times the
 child-response average. -/
@@ -539,7 +539,7 @@ theorem descendantsAverage_additivitySumHalfEnergyOnDependentFamily_le_four_chil
       4 * childResponseJAverageOnFamilyAtDepth F Q j p q := by
   intro F
   have hsum :=
-    descendantsAverage_additivitySumHalfEnergyOnDependentFamily_le_two_responseJ_add_two_childResponse
+    descendantAverage_energy_le_parentAndChildResponse
       a ha Q j p q
   have hparent_le_child :
       Ch02.responseJ (Ch02.cubeDomain Q) (F.coeffOn Q) p q ≤
@@ -576,7 +576,7 @@ theorem sqrt_le_two_mul_sqrt_of_le_four_mul {x y : ℝ}
           rw [hsqrt4]
 
 /-- One-child additivity-cross estimate with the cutoff mean factor included. -/
-theorem abs_one_sub_cubeAverage_mul_cubeAverage_childAdditivityCrossDensityOnFamilyOnCube_le_const_mul_sqrt_diff_avg_mul_sqrt_sum_avg
+theorem abs_productChildCrossDensity_le_constant_mul_sqrtDifferenceMean_mul_sqrtSumMean
     {d : ℕ} [NeZero d] (a : Ch02.TriadicCoeffFamily d)
     (Q : TriadicCube d) {R : TriadicCube d} {j : ℕ}
     (hR : R ∈ descendantsAtDepth Q j) (φ : Vec d → ℝ)
@@ -592,7 +592,7 @@ theorem abs_one_sub_cubeAverage_mul_cubeAverage_childAdditivityCrossDensityOnFam
   have hC_nonneg : 0 ≤ C :=
     (abs_nonneg (1 - cubeAverage R φ)).trans hCut
   have hCross :=
-    abs_cubeAverage_childAdditivityCrossDensityOnFamilyOnCube_le_sqrt_diff_avg_mul_sqrt_sum_avg_of_descendant
+    abs_cubeAverage_childAdditivityCrossDensity_le_sqrt_diff_avg_mul_sqrt_sum_avg
       (a := a) (Q := Q) (R := R) hR p q
   calc
     |(1 - cubeAverage R φ) *
@@ -614,7 +614,7 @@ theorem abs_one_sub_cubeAverage_mul_cubeAverage_childAdditivityCrossDensityOnFam
               hC_nonneg
 
 /-- Descendant-averaged additivity-cross term after the one-cube Cauchy step. -/
-theorem abs_concreteAdditivityCrossTermOnFamilyAtDepth_le_const_mul_sqrt_descAvg_diffEnergy_mul_sqrt_descAvg_sumEnergy
+theorem abs_additivityCross_le_constant_mul_sqrtDiffEnergy_mul_sqrtSumEnergy
     {d : ℕ} [NeZero d] (a : Ch02.TriadicCoeffFamily d)
     (Q : TriadicCube d) (j : ℕ) (φ : Vec d → ℝ) (p q : Vec d)
     {C : ℝ}
@@ -650,7 +650,7 @@ theorem abs_concreteAdditivityCrossTermOnFamilyAtDepth_le_const_mul_sqrt_descAvg
         intro R
         by_cases hR : R ∈ descendantsAtDepth Q j
         · simpa [X, A, B, hR] using
-            abs_one_sub_cubeAverage_mul_cubeAverage_childAdditivityCrossDensityOnFamilyOnCube_le_const_mul_sqrt_diff_avg_mul_sqrt_sum_avg
+            abs_productChildCrossDensity_le_constant_mul_sqrtDifferenceMean_mul_sqrtSumMean
               (a := a) (Q := Q) (R := R) hR φ p q (hCut R hR)
         · have hRight_nonneg :
               0 ≤ C * (Real.sqrt (A R) * Real.sqrt (B R)) :=
@@ -661,7 +661,7 @@ theorem abs_concreteAdditivityCrossTermOnFamilyAtDepth_le_const_mul_sqrt_descAvg
 
 /-- Deterministic additivity-cross bound for the Chapter 4 dependent family,
 with the second energy factor reduced to child responses. -/
-theorem abs_concreteAdditivityCrossTermOnDependentFamilyAtDepth_le_two_const_mul_sqrt_descAvg_diffEnergy_mul_sqrt_childResponseJAverage
+theorem abs_additivityCross_le_twoConstant_mul_sqrtDiffEnergy_mul_sqrtResponseMean
     {d : ℕ} [NeZero d] (a : RegCoeffField d)
     (ha : Ch04.AELocallyUniformlyEllipticField a)
     (Q : TriadicCube d) (j : ℕ) (φ : Vec d → ℝ) (p q : Vec d)
@@ -687,7 +687,7 @@ theorem abs_concreteAdditivityCrossTermOnDependentFamilyAtDepth_le_two_const_mul
       |concreteAdditivityCrossTermOnFamilyAtDepth F Q j φ p q| ≤
         C * (Real.sqrt diffAvg * Real.sqrt sumAvg) := by
     simpa [diffAvg, sumAvg, F] using
-      abs_concreteAdditivityCrossTermOnFamilyAtDepth_le_const_mul_sqrt_descAvg_diffEnergy_mul_sqrt_descAvg_sumEnergy
+      abs_additivityCross_le_constant_mul_sqrtDiffEnergy_mul_sqrtSumEnergy
         (a := F) (Q := Q) (j := j) (φ := φ) (p := p) (q := q)
         hC hCut
   have hsum_le : sumAvg ≤ 4 * childAvg := by
@@ -713,7 +713,7 @@ theorem abs_concreteAdditivityCrossTermOnDependentFamilyAtDepth_le_two_const_mul
 
 /-- Deterministic additivity-cross bound in the manuscript form, with the
 difference-energy factor identified as the response partition defect. -/
-theorem abs_concreteAdditivityCrossTermOnDependentFamilyAtDepth_le_two_const_mul_sqrt_responseJPartitionDefect_mul_sqrt_childResponseJAverage
+theorem abs_additivityCross_le_constant_mul_sqrtPartitionDefect_mul_sqrtChildResponse
     {d : ℕ} [NeZero d] (a : RegCoeffField d)
     (ha : Ch04.AELocallyUniformlyEllipticField a)
     (Q : TriadicCube d) (j : ℕ) (φ : Vec d → ℝ) (p q : Vec d)
@@ -727,11 +727,11 @@ theorem abs_concreteAdditivityCrossTermOnDependentFamilyAtDepth_le_two_const_mul
           Real.sqrt (childResponseJAverageOnFamilyAtDepth F Q j p q)) := by
   intro F
   have hbase :=
-    abs_concreteAdditivityCrossTermOnDependentFamilyAtDepth_le_two_const_mul_sqrt_descAvg_diffEnergy_mul_sqrt_childResponseJAverage
+    abs_additivityCross_le_twoConstant_mul_sqrtDiffEnergy_mul_sqrtResponseMean
       (a := a) (ha := ha) (Q := Q) (j := j) (φ := φ) (p := p) (q := q)
       hC hCut
   have hdefect :=
-    descendantsAverage_additivityDiffHalfEnergyOnDependentFamily_eq_responseJPartitionDefectOnFamilyAtDepth
+    descendantMean_additivityHalfEnergy_eq_responseJDefect
       a ha Q j p q
   simpa [F, hdefect] using hbase
 

@@ -24,25 +24,25 @@ public section
 
 The Dirichlet estimate `e.random.dirichlet`
 is stated for a domain `U ⊆ E_1` whose constant depends on `U` only through the
-shape of the adapted domain `s̄^{-1/2}U`.  In the formalization the shape datum
+shape of the adapted domain `s_bar^{-1/2}U`.  In the formalization the shape datum
 is the concentric ball sandwich `HasBallSandwich`, so the hypothesis of the
 estimate is the conjunction
 
 * `U` is a nonempty bounded open convex domain;
-* the adapted domain `s̄^{-1/2}U` admits a concentric ball sandwich;
+* the adapted domain `s_bar^{-1/2}U` admits a concentric ball sandwich;
 * `U ⊆ E_1`.
 
 This module produces such a `U` from the positivity of the symmetric part of
 `ā` alone, so the estimate is not read on an empty family of domains.
 
-The witness is exact rather than approximate.  For `S = s̄` positive definite
+The witness is exact rather than approximate.  For `S = s_bar` positive definite
 with square root `B`, the change of variables `y = B z` turns the ellipsoid
 quadratic form into the Euclidean one, `(B z) · S⁻¹ (B z) = ‖z‖²`, so the
-`B`-image of the Euclidean ball of radius `|s̄⁻¹|^{1/2}` is carried into `E_1`
+`B`-image of the Euclidean ball of radius `|s_bar⁻¹|^{1/2}` is carried into `E_1`
 by an identity.  Its adapted image is that ball again, which sandwiches itself.
 
 The degenerate dimension is treated separately: for `d = 0` the space is a
-single point, every quadratic form vanishes and `s̄^{-1/2}` acts as the
+single point, every quadratic form vanishes and `s_bar^{-1/2}` acts as the
 identity, so the Euclidean unit ball serves directly.
 -/
 
@@ -82,8 +82,8 @@ theorem isUnit_det_matSqrt {M : Mat d} (hM : M.PosDef) : IsUnit (matSqrt M).det 
     simp at hpos
   exact (Matrix.isUnit_iff_isUnit_det _).mp (Matrix.mulVec_injective_iff_isUnit.mp hinj)
 
-/-- The inverse of the adapted matrix `s̄^{1/2}` is invertible, so the adapted
-domain `s̄^{-1/2}U` is a linear image under an invertible matrix and the shape
+/-- The inverse of the adapted matrix `s_bar^{1/2}` is invertible, so the adapted
+domain `s_bar^{-1/2}U` is a linear image under an invertible matrix and the shape
 lemmas for linear images apply. -/
 theorem isUnit_det_matSqrt_inv {M : Mat d} (hM : M.PosDef) :
     IsUnit ((matSqrt M)⁻¹).det :=
@@ -121,8 +121,8 @@ theorem vecDot_matVecMul_inv_matSqrt {S : Mat d} (hS : S.PosDef) (z : Vec d) :
   rfl
 
 /-- **The adapted image of a small ball sits in the unit ellipsoid.**  The
-radius constraint `r² ≤ |s̄⁻¹|` is the exact one: the inclusion is the
-identity `(B z) · s̄⁻¹ (B z) = ‖z‖²` combined with `‖z‖² < r²`. -/
+radius constraint `r² ≤ |s_bar⁻¹|` is the exact one: the inclusion is the
+identity `(B z) · s_bar⁻¹ (B z) = ‖z‖²` combined with `‖z‖² < r²`. -/
 theorem matImage_matSqrt_euclideanBallAt_subset_ellipsoid {abar : Mat d}
     (hS : (symmPart abar).PosDef) {r : ℝ}
     (hr : r ^ 2 ≤ specBound ((symmPart abar)⁻¹)) :
@@ -138,7 +138,7 @@ theorem matImage_matSqrt_euclideanBallAt_subset_ellipsoid {abar : Mat d}
   rw [vecDot_matVecMul_inv_matSqrt hS z, one_pow, mul_one]
   linarith only [hz', hr]
 
-/-! ## Positivity of `|s̄⁻¹|` -/
+/-! ## Positivity of `|s_bar⁻¹|` -/
 
 /-- A coordinate basis vector is nonzero. -/
 theorem basisVec_ne_zero {i : Fin d} : (basisVec i : Vec d) ≠ 0 := by
@@ -147,7 +147,7 @@ theorem basisVec_ne_zero {i : Fin d} : (basisVec i : Vec d) ≠ 0 := by
   rw [h] at h1
   simp [vecNormSq, vecDot] at h1
 
-/-- **`|s̄⁻¹| > 0` in positive dimension.**  The hypothesis `0 < d` is
+/-- **`|s_bar⁻¹| > 0` in positive dimension.**  The hypothesis `0 < d` is
 necessary: in dimension `0` every quadratic form vanishes identically, so
 `specBound M = 0` for every `M` and the conclusion is false.  The three lemmas
 below record that failure explicitly. -/
@@ -212,7 +212,7 @@ theorem matImage_of_dim_zero (M : Mat 0) (U : Set (Vec 0)) : matImage M U = U :=
 
 /-- **The domain class of the Dirichlet estimate is inhabited.**  There is a
 nonempty bounded open convex domain `U` inside the unit ellipsoid whose adapted
-image `s̄^{-1/2}U` carries a concentric ball sandwich.
+image `s_bar^{-1/2}U` carries a concentric ball sandwich.
 
 All three domain conjuncts of
 `e.random.dirichlet` appear.  The only

@@ -203,7 +203,7 @@ theorem abs_centeredJMinusCutoffWeightedChildAtScale_le_jUpperWeakNormPointwiseR
                 ‖Ch04.canonicalScalarResponseFluxAverageCubeSet Q Q p q a.toFun - q0‖
                 cutoffCircOne poincareConst cutoffConstant centeredCutoffConstant := by
     simpa [Q, j, F] using
-      abs_centeredResponseJOnCube_sub_cutoffWeightedChildResponseJOnDependentFamily_le_additivityDefect_add_cutoffOscillationBound_add_linearWeakNorms_add_cutoffProductBridgeRHS
+      abs_responseJDifference_le_additivityError_cutoffBound_weakNorms_productRHS
         (a := a) (ha := ha) (Q := Q) (j := j) (s := s) (t := t)
         (φ := φ) (p := p) (q := q) (p0 := p0) (q0 := q0)
         (dualField := dualField) (cutoffGradient := cutoffGradient)

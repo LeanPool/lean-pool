@@ -116,7 +116,8 @@ theorem adapted_le_euclidean_comparison (d : ℕ) (hd : 2 ≤ d) (γ : ℝ)
                 HighContrast.centeredCube d (2 * (jStar : ℤ)) →
               ∀ ℓ r : ℕ, 1 ≤ ℓ → 1 ≤ r →
                 BlockMatLoewnerLE
-                  (blockSub (adaptedMean P (Geometry.explicitRoundedGrid jStar m) (t + (ℓ : ℤ) + (r : ℤ)))
+                  (blockSub (adaptedMean P (Geometry.explicitRoundedGrid jStar m) (t + (ℓ : ℤ) +
+                    (r : ℤ)))
                     (blockScale (C * aspectRatio E * (‖m‖ * ‖m⁻¹‖) * (3 : ℝ) ^ (-(r : ℝ)))
                       (adaptedMean P (Geometry.explicitRoundedGrid jStar m) t)))
                   (adaptedMean P (1 : Mat d) (t + (ℓ : ℤ))) := by
@@ -442,7 +443,8 @@ theorem exists_gap_of_eccentricity (C Cglob η : ℝ) (hC : 0 < C) (hCglob : 0 <
         have hDge : 1 ≤ D := le_max_left _ _
         have hL : 1 ≤ L := by
           dsimp [L]
-          rw [Real.le_logb_iff_rpow_le (by norm_num : (1 : ℝ) < 3) (by linarith only [hP] : 0 < 2 + Pival)]
+          rw [Real.le_logb_iff_rpow_le (by norm_num : (1 : ℝ) < 3) (by linarith only [hP] : 0 <
+            2 + Pival)]
           norm_num
           linarith only [hP]
         dsimp [A, C0]
@@ -466,7 +468,8 @@ theorem exists_gap_of_eccentricity (C Cglob η : ℝ) (hC : 0 < C) (hCglob : 0 <
         have hsquares : (e ^ ((1 : ℝ) / 2)) ^ 2 ≤ ((2 + Pival) ^ Cglob) ^ 2 := by
           nlinarith only [hhalf, hhalf_nonneg, hbaseC_nonneg]
         calc
-          e = (e ^ ((1 : ℝ) / 2)) ^ 2 := (HCPolySupport.sq_rpow_half_eq_self_of_nonneg he_nonneg).symm
+          e = (e ^ ((1 : ℝ) / 2)) ^ 2 := (HCPolySupport.sq_rpow_half_eq_self_of_nonneg
+            he_nonneg).symm
           _ ≤ ((2 + Pival) ^ Cglob) ^ 2 := hsquares
           _ = (2 + Pival) ^ (2 * Cglob) := by
             rw [← Real.rpow_natCast, ← Real.rpow_mul hbase_nonneg]
@@ -475,7 +478,8 @@ theorem exists_gap_of_eccentricity (C Cglob η : ℝ) (hC : 0 < C) (hCglob : 0 <
       have hCP_le : (C / η) * Pival ≤ (2 + Pival) ^ (D + 1) := by
         calc
           (C / η) * Pival ≤ (2 + Pival) ^ D * (2 + Pival) := by
-            exact mul_le_mul hCη_le_baseD hP_le_base (by linarith only [hP]) (Real.rpow_nonneg hbase_nonneg _)
+            exact mul_le_mul hCη_le_baseD hP_le_base (by linarith only [hP]) (Real.rpow_nonneg
+              hbase_nonneg _)
           _ = (2 + Pival) ^ (D + 1) := by
             rw [Real.rpow_add hbase_pos, Real.rpow_one]
       have hX_le_base : C * Pival * e / η ≤ (2 + Pival) ^ C0 := by
@@ -503,12 +507,14 @@ theorem exists_gap_of_eccentricity (C Cglob η : ℝ) (hC : 0 < C) (hCglob : 0 <
         calc
           C * Pival * e / η ≤ (2 + Pival) ^ C0 := hX_le_base
           _ = (3 : ℝ) ^ A := hbaseC0_eq
-          _ ≤ (3 : ℝ) ^ (ℓ : ℝ) := Real.rpow_le_rpow_of_exponent_le (by norm_num : (1 : ℝ) ≤ 3) hA_le_ell
+          _ ≤ (3 : ℝ) ^ (ℓ : ℝ) := Real.rpow_le_rpow_of_exponent_le (by norm_num : (1 : ℝ) ≤ 3)
+            hA_le_ell
       have hCPe_le : C * Pival * e ≤ η * (3 : ℝ) ^ (ℓ : ℝ) := by
         have hm := mul_le_mul_of_nonneg_left hX_le_threeell hηpos.le
         have heq : η * (C * Pival * e / η) = C * Pival * e := by field_simp [hηpos.ne']
         rwa [heq] at hm
-      have hdecay_nonneg : 0 ≤ (3 : ℝ) ^ (-(ℓ : ℝ)) := Real.rpow_nonneg (by norm_num : (0 : ℝ) ≤ 3) _
+      have hdecay_nonneg : 0 ≤ (3 : ℝ) ^ (-(ℓ : ℝ)) := Real.rpow_nonneg (by norm_num : (0 : ℝ) ≤
+        3) _
       calc
         C * Pival * e * (3 : ℝ) ^ (-(ℓ : ℝ)) ≤ (η * (3 : ℝ) ^ (ℓ : ℝ)) * (3 : ℝ) ^ (-(ℓ : ℝ)) :=
           mul_le_mul_of_nonneg_right hCPe_le hdecay_nonneg
@@ -519,7 +525,8 @@ theorem exists_gap_of_eccentricity (C Cglob η : ℝ) (hC : 0 < C) (hCglob : 0 <
           norm_num
     · have hL : 1 ≤ L := by
         dsimp [L]
-        rw [Real.le_logb_iff_rpow_le (by norm_num : (1 : ℝ) < 3) (by linarith only [hP] : 0 < 2 + Pival)]
+        rw [Real.le_logb_iff_rpow_le (by norm_num : (1 : ℝ) < 3) (by linarith only [hP] : 0 < 2
+          + Pival)]
         norm_num
         linarith only [hP]
       have hDge : 1 ≤ D := le_max_left _ _
@@ -541,7 +548,8 @@ theorem exists_gap_of_eccentricity (C Cglob η : ℝ) (hC : 0 < C) (hCglob : 0 <
 
 /-- **S1**. `e.global.selection.scales` (RawOutput `hs_lo`,
 `j_* + ⌈B log₃(2+Pival)⌉ ≤ s`) turns `3^{-ρ(s - j_*)}` into `(2+Pival)^{-ρB}` for `ρ ≥ 0`. -/
-theorem scale_decay_of_hs_lo (jStar : ℕ) (s : ℤ) (B Pival ρ : ℝ) (hPival : 3 ≤ 2 + Pival) (hρ : 0 ≤ ρ)
+theorem scale_decay_of_hs_lo (jStar : ℕ) (s : ℤ) (B Pival ρ : ℝ) (hPival : 3 ≤ 2 + Pival) (hρ :
+  0 ≤ ρ)
     (hs : (jStar : ℤ) + ⌈B * Real.logb 3 (2 + Pival)⌉ ≤ s) :
     (3 : ℝ) ^ (-(ρ * ((s : ℝ) - (jStar : ℝ)))) ≤ (2 + Pival) ^ (-(ρ * B)) := by
   have pos_3 : (0 : ℝ) < 3 := by norm_num
@@ -560,7 +568,8 @@ theorem scale_decay_of_hs_lo (jStar : ℕ) (s : ℤ) (B Pival ρ : ℝ) (hPival 
   have exp_ineq : -(ρ * ((s : ℝ) - (jStar : ℝ))) ≤ -(ρ * B * Real.logb 3 (2 + Pival)) := by
     nlinarith only [key_ineq, hρ]
 
-  have eq_rearrange : (-(ρ * B * Real.logb 3 (2 + Pival)) : ℝ) = -(ρ * B) * Real.logb 3 (2 + Pival) := by
+  have eq_rearrange : (-(ρ * B * Real.logb 3 (2 + Pival)) : ℝ) = -(ρ * B) * Real.logb 3 (2 +
+    Pival) := by
     ring
 
   calc (3 : ℝ) ^ (-(ρ * ((s : ℝ) - (jStar : ℝ))))

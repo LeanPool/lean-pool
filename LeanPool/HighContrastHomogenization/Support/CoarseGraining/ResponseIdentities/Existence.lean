@@ -357,6 +357,8 @@ theorem isResponseMaximizer_toCubeSet_of_openCubeSet {d : ℕ} [NeZero d]
             ((v : AHarmonicFunction a (openCubeSet Q)).toCubeSet)) := by
             exact (volumeAverage_cubeSet_eq_openCubeSet_of_triadicCube Q _).symm
 
+/-- Transport of a canonical maximizer from an open triadic cube to its half-open cube, using
+equality up to a null boundary. -/
 @[expose]
 noncomputable def toCubeSetOfOpenCubeSet {d : ℕ} [NeZero d]
     {Q : TriadicCube d} {a : CoeffField d} {p q : Vec d}

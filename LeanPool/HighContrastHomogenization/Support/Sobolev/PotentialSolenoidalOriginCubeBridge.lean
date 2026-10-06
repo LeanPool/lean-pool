@@ -38,11 +38,12 @@ theorem isPotentialOn_cubeSet_originCube_of_openCubeSet
   exact (u.toCubeSetOriginCube).isPotentialOn
 
 theorem isPotentialOn_openCubeSet_originCube_of_cubeSet
-    {d : ℕ} [NeZero d] {n : ℤ} {f : Vec d → Vec d}
+    {d : ℕ} {n : ℤ} {f : Vec d → Vec d}
     (hf : IsPotentialOn (cubeSet (originCube d n)) f) :
     IsPotentialOn (openCubeSet (originCube d n)) f := by
   rcases hf with ⟨u, rfl⟩
-  exact (u.restrict (isOpen_openCubeSet (originCube d n)) (openCubeSet_subset_cubeSet _)).isPotentialOn
+  exact (u.restrict (isOpen_openCubeSet (originCube d n)) (openCubeSet_subset_cubeSet
+    _)).isPotentialOn
 
 theorem isPotentialOn_cubeSet_originCube_iff_openCubeSet
     {d : ℕ} [NeZero d] {n : ℤ} {f : Vec d → Vec d} :
@@ -119,7 +120,7 @@ theorem isSolenoidalOn_cubeSet_originCube_iff_openCubeSet
   · exact isSolenoidalOn_cubeSet_originCube_of_openCubeSet
 
 theorem isSolenoidalZeroNormalTraceOn_cubeSet_originCube_of_openCubeSet
-    {d : ℕ} [NeZero d] {n : ℤ} {g : Vec d → Vec d}
+    {d : ℕ} {n : ℤ} {g : Vec d → Vec d}
     (hg : IsSolenoidalZeroNormalTraceOn (openCubeSet (originCube d n)) g) :
     IsSolenoidalZeroNormalTraceOn (cubeSet (originCube d n)) g := by
   intro φ
@@ -163,14 +164,15 @@ theorem isSolenoidalZeroNormalTraceOn_cubeSet_originCube_iff_openCubeSet
   · exact isSolenoidalZeroNormalTraceOn_cubeSet_originCube_of_openCubeSet
 
 theorem IsPotentialZeroTraceOn.integral_eq_zero_openCubeSet_originCube
-    {d : ℕ} [NeZero d] {n : ℤ} {f : Vec d → Vec d}
+    {d : ℕ} {n : ℤ} {f : Vec d → Vec d}
     (hf : IsPotentialZeroTraceOn (openCubeSet (originCube d n)) f) :
     (fun i => ∫ x in openCubeSet (originCube d n), f x i ∂MeasureTheory.volume) = 0 := by
   rcases hf with ⟨u, rfl⟩
   ext i
   let U : Set (Vec d) := openCubeSet (originCube d n)
   let μ := MeasureTheory.volume.restrict U
-  have : Fact (MeasureTheory.volume U < ⊤) := ⟨volume_openCubeSet_originCube_lt_top_bridge (d := d) n⟩
+  have : Fact (MeasureTheory.volume U < ⊤) := ⟨volume_openCubeSet_originCube_lt_top_bridge (d :=
+    d) n⟩
   have : MeasureTheory.IsFiniteMeasure μ := inferInstance
   let D : ℕ → Vec d → ℝ := fun m x => (fderiv ℝ (u.approx m) x) (basisVec i)
   have hD_integrable : ∀ m, MeasureTheory.Integrable (D m) MeasureTheory.volume := by
@@ -310,7 +312,7 @@ theorem IsPotentialZeroTraceOn.integral_eq_zero_cubeSet_originCube
           (d := d) (n := n) (f := f) hf_open) i
 
 theorem IsSolenoidalZeroNormalTraceOn.integral_eq_zero_openCubeSet_originCube
-    {d : ℕ} [NeZero d] {n : ℤ} {g : Vec d → Vec d}
+    {d : ℕ} {n : ℤ} {g : Vec d → Vec d}
     (hg : IsSolenoidalZeroNormalTraceOn (openCubeSet (originCube d n)) g) :
     (fun i => ∫ x in openCubeSet (originCube d n), g x i ∂MeasureTheory.volume) = 0 := by
   ext i

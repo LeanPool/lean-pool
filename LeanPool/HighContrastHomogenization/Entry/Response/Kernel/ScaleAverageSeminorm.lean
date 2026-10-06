@@ -265,7 +265,8 @@ theorem avsum_cellAverageFamily_sq_le (q : Mat d) (hq : IsUnit q) (t : ℤ)
   have hXint : IntegrableOn f U := (memLp_one_iff_integrable.mp hX)
   -- per-cell data
   set V : (Fin d → ℤ) → Set (Vec d) := fun w => adaptedCellAtCenter q (t - (n : ℤ)) w with hV
-  have hVmeas : ∀ w, MeasurableSet (V w) := fun w => (isOpen_adaptedCellAtCenter_of_isUnit hq _ w).measurableSet
+  have hVmeas : ∀ w, MeasurableSet (V w) := fun w => (isOpen_adaptedCellAtCenter_of_isUnit hq _
+    w).measurableSet
   have hVreal : ∀ w, (volume (V w)).toReal = |q.det| * ((3 : ℝ) ^ (t - (n : ℤ))) ^ d := by
     intro w
     rw [hV, Geometry.volume_adaptedCellAtCenter]
@@ -503,7 +504,8 @@ theorem isUnit_toFullBlockMat_respG (F : BlockMat d) :
   refine (Matrix.isUnit_iff_isUnit_det _).2
     (Matrix.isUnit_det_of_right_inverse
       (B := toFullBlockMat (⟨1, 0, -(respg F), 1⟩ : BlockMat d)) ?_)
-  rw [respG, toFullBlockMat_shear_eq_fromBlocks, toFullBlockMat_shear_eq_fromBlocks, Matrix.fromBlocks_multiply]
+  rw [respG, toFullBlockMat_shear_eq_fromBlocks, toFullBlockMat_shear_eq_fromBlocks,
+    Matrix.fromBlocks_multiply]
   simp only [one_mul, mul_one, zero_mul, mul_zero, add_zero, zero_add, add_neg_cancel,
     Matrix.fromBlocks_one]
 

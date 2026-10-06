@@ -122,7 +122,8 @@ theorem measureReal_badScaleEvent_le_exp_tail_of_uniformEndpoint_component_sum
 
 /-- Uniform endpoint bad-scale tail after selected denominator, with the
 deterministic prefactor gap still explicit. -/
-theorem measureReal_shiftedBadScaleEvent_quenchedProbeEnvelope_le_uniformEndpoint_tail_of_prefactor_gap
+theorem
+  measureReal_shiftedBadScaleEvent_quenchedProbeEnvelope_le_uniformEndpoint_tail_of_prefactor_gap
     {d : ℕ} [NeZero d]
     (params : QuantitativeCoarseGrainedEllipticityParams d) :
     ∃ Cfluct Ccrude Centry a : ℝ,
@@ -275,7 +276,7 @@ theorem measureReal_shiftedBadScaleEvent_quenchedProbeEnvelope_le_uniformEndpoin
 
 /-- Endpoint tail after discharging the lead, crude-bottom, and crude-top
 threshold side conditions by explicit ceilings. -/
-theorem measureReal_shiftedBadScaleEvent_quenchedProbeEnvelope_le_uniformEndpoint_tail_of_thresholds_and_prefactor_gap
+theorem shiftedBadScaleProbability_le_uniformEndpoint_tail
     {d : ℕ} [NeZero d]
     (params : QuantitativeCoarseGrainedEllipticityParams d) :
     ∃ Cfluct Ccrude Centry a : ℝ,

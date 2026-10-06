@@ -90,7 +90,7 @@ theorem abs_cutoffProductTermOnCube_le_scaledWeakNormProduct
         (((u x - cubeAverage Q (fun y => u y)) • ξ x : Vec d)))
   have hid : cutoffProductTermOnCube Q a φ p q p0 q0 = -(1 / 2 : ℝ) * A := by
     have hraw :=
-      cutoffProductTermOnCube_eq_neg_half_cubeAverage_fluxDefect_centeredPotentialDefect_smul_scalarCutoffGradientField
+      cutoffProduct_eq_neg_half_cubeMean_centeredFluxDefect_smul_cutoffGradient
         (Q := Q) (a := a) (φ := φ) p q p0 q0
         hφ hφ_compact hφ_sub hcutoffGradient
     simpa [A, u, flux, ξ] using hraw

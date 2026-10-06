@@ -73,8 +73,8 @@ private theorem responseJ_translate_of_aeeq
     {U V : Book.Ch02.Domain d} (z : Vec d)
     (hset : (U : Set (Vec d)) = translateSet z (V : Set (Vec d)))
     (aU : Book.Ch02.CoeffOn U) (aV : Book.Ch02.CoeffOn V)
-    (hcoeff : translateCoeffField z aU.toCoeffField =ᵐ[
-      volumeMeasureOn (V : Set (Vec d))] aV.toCoeffField)
+    (hcoeff : translateCoeffField z aU.toCoeffField
+      =ᵐ[ volumeMeasureOn (V : Set (Vec d))] aV.toCoeffField)
     (p q : Vec d) :
     Book.Ch02.responseJ U aU p q = Book.Ch02.responseJ V aV p q := by
   let bV : Book.Ch02.CoeffOn V :=
@@ -100,8 +100,8 @@ theorem doubledResponseJ_translate_of_aeeq
     {U V : Book.Ch02.Domain d} (z : Vec d)
     (hset : (U : Set (Vec d)) = translateSet z (V : Set (Vec d)))
     (aU : Book.Ch02.CoeffOn U) (aV : Book.Ch02.CoeffOn V)
-    (hcoeff : translateCoeffField z aU.toCoeffField =ᵐ[
-      volumeMeasureOn (V : Set (Vec d))] aV.toCoeffField)
+    (hcoeff : translateCoeffField z aU.toCoeffField
+      =ᵐ[ volumeMeasureOn (V : Set (Vec d))] aV.toCoeffField)
     (P Q : BlockVec d) :
     Book.Ch02.doubledResponseJ U aU P Q =
       Book.Ch02.doubledResponseJ V aV P Q := by

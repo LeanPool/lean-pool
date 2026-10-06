@@ -179,17 +179,24 @@ def SelectedOutput {d : ℕ} (P : Measure (CoeffSpace d)) (γ ε σ Cprof C : �
         HighContrast.centeredCube d (2 * (jStar : ℤ)) ∧
       BlockMatLoewnerLE (blockScale (1 - Real.sqrt ε * σ) F)
         (adaptedMean P (Geometry.explicitRoundedGrid jStar (explicitCanonicalMetric F)) s) ∧
-      BlockMatLoewnerLE (adaptedMean P (Geometry.explicitRoundedGrid jStar (explicitCanonicalMetric F)) s)
+      BlockMatLoewnerLE (adaptedMean P (Geometry.explicitRoundedGrid jStar
+        (explicitCanonicalMetric F)) s)
         (blockScale (1 + Real.sqrt ε * σ) F) ∧
-      (d : ℝ)⁻¹ * detIncrement P (Geometry.explicitRoundedGrid jStar (explicitCanonicalMetric F)) s t < σ ∧
+      (d : ℝ)⁻¹ * detIncrement P (Geometry.explicitRoundedGrid jStar (explicitCanonicalMetric
+        F)) s t < σ ∧
       max
-          (max (profile P γ (Geometry.explicitRoundedGrid jStar (explicitCanonicalMetric F)) jStar s s)
-            (profile P γ (Geometry.explicitRoundedGrid jStar (explicitCanonicalMetric F)) jStar s t))
+          (max (profile P γ (Geometry.explicitRoundedGrid jStar (explicitCanonicalMetric F))
+            jStar s s)
+            (profile P γ (Geometry.explicitRoundedGrid jStar (explicitCanonicalMetric F)) jStar
+              s t))
           (profile P γ (Geometry.explicitRoundedGrid jStar (explicitCanonicalMetric F)) jStar t t) +
-        determinantDrift P γ (Geometry.explicitRoundedGrid jStar (explicitCanonicalMetric F)) jStar s +
-        determinantDrift P γ (Geometry.explicitRoundedGrid jStar (explicitCanonicalMetric F)) jStar t ≤
+        determinantDrift P γ (Geometry.explicitRoundedGrid jStar (explicitCanonicalMetric F))
+          jStar s +
+        determinantDrift P γ (Geometry.explicitRoundedGrid jStar (explicitCanonicalMetric F))
+          jStar t ≤
         Cprof * σ ^ ((1 - γ) / 8) ∧
-      (‖explicitCanonicalMetric F‖ * ‖(explicitCanonicalMetric F)⁻¹‖) ^ ((1 : ℝ) / 2) ≤ (2 + aspectRatio E) ^ C
+      (‖explicitCanonicalMetric F‖ * ‖(explicitCanonicalMetric F)⁻¹‖) ^ ((1 : ℝ) / 2) ≤ (2 +
+        aspectRatio E) ^ C
 
 end
 

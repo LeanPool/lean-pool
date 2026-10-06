@@ -244,7 +244,8 @@ theorem fluctuation_term_le (d : ℕ) (hd : 2 ≤ d) (γ : ℝ)
   obtain ⟨-, hn2⟩ := Set.mem_Icc.mp hn
   have hk1 : (jStar : ℤ) ≤ t - (n : ℤ) := by omega
   have hk2 : t - (n : ℤ) ≤ t := by omega
-  have hwnn : (0 : ℝ) ≤ (3 : ℝ) ^ (-(Quenched.contrastRho γ * (n : ℝ))) := Real.rpow_nonneg (by norm_num) _
+  have hwnn : (0 : ℝ) ≤ (3 : ℝ) ^ (-(Quenched.contrastRho γ * (n : ℝ))) := Real.rpow_nonneg (by
+    norm_num) _
   have hF00 : (0 : ℝ) ≤ ⨆ j ∈ Set.Icc (jStar : ℤ) t,
       (3 : ℝ) ^ (-(bigQ d γ : ℝ) * rhoMax d γ * ((t : ℝ) - (j : ℝ))) *
         ⨆ y ∈ adaptedLatticeAtScale (Geometry.explicitRoundedGrid jStar mt) j ∩
@@ -298,7 +299,8 @@ theorem source_term_le (d : ℕ) (hd : 2 ≤ d) (γ : ℝ)
     (hstat : IsStationaryLaw P) (hdag : CoarseEllipticityDagger P γ E Ψ Kg Src)
     (jStar : ℕ) (hj : 2 * d ≤ 3 ^ jStar) (F : BlockMat d)
     (hm : (explicitCanonicalMetric F).PosDef) (t : ℤ) (ht : (jStar : ℤ) ≤ t)
-    (hcube : HighContrast.adaptedCell (Geometry.explicitRoundedGrid jStar (explicitCanonicalMetric F)) t ⊆
+    (hcube : HighContrast.adaptedCell (Geometry.explicitRoundedGrid jStar
+      (explicitCanonicalMetric F)) t ⊆
       HighContrast.centeredCube d (2 * (jStar : ℤ)))
     (C₀ Cn Cs η : ℝ) (hC₀ : 0 < C₀) (hCn : 0 < Cn) (hCs : 0 < Cs)
     (X : CoeffSpace d → ℝ) (a : CoeffSpace d) (hXa : 0 < X a)
@@ -312,24 +314,29 @@ theorem source_term_le (d : ℕ) (hd : 2 ≤ d) (γ : ℝ)
     (hnormt : BlockMatLoewnerLE E (blockScale (Cn * aspectRatio E *
       Real.sqrt (‖explicitCanonicalMetric F‖ * ‖(explicitCanonicalMetric F)⁻¹‖))
       (adaptedMean P (Geometry.explicitRoundedGrid jStar (explicitCanonicalMetric F)) t)))
-    (hsrcsmall : Cs * aspectRatio E * (‖explicitCanonicalMetric F‖ * ‖(explicitCanonicalMetric F)⁻¹‖) *
+    (hsrcsmall : Cs * aspectRatio E * (‖explicitCanonicalMetric F‖ * ‖(explicitCanonicalMetric
+      F)⁻¹‖) *
       (3 : ℝ) ^ (-(rhoMax d γ * ((t : ℝ) - (jStar : ℝ)))) ≤
       η ^ ((1 : ℝ) / (bigQ d γ : ℝ)))
     (n : ℕ) (hn : (t - (jStar : ℤ)).toNat < n) (z : Fin d → ℤ)
     (hz : z ∈ triadicIndexBox d n) :
     (3 : ℝ) ^ (-(Quenched.contrastRho γ * (n : ℝ))) *
         blockOpNorm (blockSub (normalizedBlock (coarseBlock
-          (adaptedCellAtCenter (Geometry.explicitRoundedGrid jStar (explicitCanonicalMetric F)) (t - (n : ℤ)) z) a)
+          (adaptedCellAtCenter (Geometry.explicitRoundedGrid jStar (explicitCanonicalMetric F))
+            (t - (n : ℤ)) z) a)
           (adaptedMean P (Geometry.explicitRoundedGrid jStar (explicitCanonicalMetric F)) t))
           (Book.Ch02.blockIdentity d)) ≤
       C₀ * Cn / Cs * η ^ ((1 : ℝ) / (bigQ d γ : ℝ)) * X a +
         η ^ ((1 : ℝ) / (bigQ d γ : ℝ)) / Cs := by
   let : NeZero d := ⟨by omega⟩
-  have hwnn : (0 : ℝ) ≤ (3 : ℝ) ^ (-(Quenched.contrastRho γ * (n : ℝ))) := Real.rpow_nonneg (by norm_num) _
+  have hwnn : (0 : ℝ) ≤ (3 : ℝ) ^ (-(Quenched.contrastRho γ * (n : ℝ))) := Real.rpow_nonneg (by
+    norm_num) _
   have hEt : (toFullBlockMat (adaptedMean P
       (Geometry.explicitRoundedGrid jStar (explicitCanonicalMetric F)) t)).PosDef :=
-    Annealed.adaptedMean_posDef d hd P γ E Ψ Kg Src hstat hdag jStar hj (explicitCanonicalMetric F) hm t
-  have hee : (0 : ℝ) ≤ ‖explicitCanonicalMetric F‖ * ‖(explicitCanonicalMetric F)⁻¹‖ := by positivity
+    Annealed.adaptedMean_posDef d hd P γ E Ψ Kg Src hstat hdag jStar hj (explicitCanonicalMetric
+      F) hm t
+  have hee : (0 : ℝ) ≤ ‖explicitCanonicalMetric F‖ * ‖(explicitCanonicalMetric F)⁻¹‖ := by
+    positivity
   have heesq : Real.sqrt (‖explicitCanonicalMetric F‖ * ‖(explicitCanonicalMetric F)⁻¹‖) *
       Real.sqrt (‖explicitCanonicalMetric F‖ * ‖(explicitCanonicalMetric F)⁻¹‖) =
       ‖explicitCanonicalMetric F‖ * ‖(explicitCanonicalMetric F)⁻¹‖ := Real.mul_self_sqrt hee
@@ -348,9 +355,11 @@ theorem source_term_le (d : ℕ) (hd : 2 ≤ d) (γ : ℝ)
     exact fun x hx => hcube (adaptedCellAtCenter_subset_adaptedCell
       (Geometry.explicitRoundedGrid jStar (explicitCanonicalMetric F)) t n hz hx)
   have hb := hpath (explicitCanonicalMetric F) hm (t - (n : ℤ))
-    (adaptedCellCenter (Geometry.explicitRoundedGrid jStar (explicitCanonicalMetric F)) (t - (n : ℤ)) z) hcell
+    (adaptedCellCenter (Geometry.explicitRoundedGrid jStar (explicitCanonicalMetric F)) (t - (n
+      : ℤ)) z) hcell
   rw [adaptedCellTranslate_center] at hb
-  have hc1 : (0 : ℝ) ≤ C₀ * Real.sqrt (‖explicitCanonicalMetric F‖ * ‖(explicitCanonicalMetric F)⁻¹‖) *
+  have hc1 : (0 : ℝ) ≤ C₀ * Real.sqrt (‖explicitCanonicalMetric F‖ * ‖(explicitCanonicalMetric
+    F)⁻¹‖) *
       X a * (3 : ℝ) ^ (γ * max ((jStar : ℝ) - ((t - (n : ℤ) : ℤ) : ℝ)) 0) :=
     mul_nonneg (mul_nonneg (mul_nonneg hC₀.le hsq0) hXa.le)
       (Real.rpow_nonneg (by norm_num) _)
@@ -362,18 +371,21 @@ theorem source_term_le (d : ℕ) (hd : 2 ≤ d) (γ : ℝ)
       (normalizedBlock (coarseBlock (adaptedCellAtCenter
         (Geometry.explicitRoundedGrid jStar (explicitCanonicalMetric F)) (t - (n : ℤ)) z) a)
         (adaptedMean P (Geometry.explicitRoundedGrid jStar (explicitCanonicalMetric F)) t))
-      (blockScale ((C₀ * Real.sqrt (‖explicitCanonicalMetric F‖ * ‖(explicitCanonicalMetric F)⁻¹‖) * X a *
+      (blockScale ((C₀ * Real.sqrt (‖explicitCanonicalMetric F‖ * ‖(explicitCanonicalMetric
+        F)⁻¹‖) * X a *
         (3 : ℝ) ^ (γ * max ((jStar : ℝ) - ((t - (n : ℤ) : ℤ) : ℝ)) 0)) *
         (Cn * aspectRatio E *
           Real.sqrt (‖explicitCanonicalMetric F‖ * ‖(explicitCanonicalMetric F)⁻¹‖)))
         (Book.Ch02.blockIdentity d)) :=
     normalizedBlock_le_scale _ _ hEt _
       (hb.trans (blockScale_mono_of_nonneg E
-        (adaptedMean P (Geometry.explicitRoundedGrid jStar (explicitCanonicalMetric F)) t) _ _ hc1 hnormt))
+        (adaptedMean P (Geometry.explicitRoundedGrid jStar (explicitCanonicalMetric F)) t) _ _
+          hc1 hnormt))
   -- the LOWER side, free: the coarse block of an aligned cell is positive semidefinite
   have hpsd : (toFullBlockMat (normalizedBlock (coarseBlock (adaptedCellAtCenter
       (Geometry.explicitRoundedGrid jStar (explicitCanonicalMetric F)) (t - (n : ℤ)) z) a)
-      (adaptedMean P (Geometry.explicitRoundedGrid jStar (explicitCanonicalMetric F)) t))).PosSemidef :=
+      (adaptedMean P (Geometry.explicitRoundedGrid jStar (explicitCanonicalMetric F))
+        t))).PosSemidef :=
     normalizedBlock_posSemidef_of_posDef
       (coarseBlock_adaptedCellAtCenter_posSemidef _
         (Geometry.isUnit_roundedGrid hj hm) (t - (n : ℤ)) z a) hEt
@@ -408,7 +420,8 @@ theorem source_term_le (d : ℕ) (hd : 2 ≤ d) (γ : ℝ)
   have hw3 : (0 : ℝ) ≤ (3 : ℝ) ^ (-(rhoMax d γ * ((t : ℝ) - (jStar : ℝ)))) :=
     Real.rpow_nonneg (by norm_num) _
   -- the extra summand of the lower side is `eta`-small
-  have hB : (3 : ℝ) ^ (-(Quenched.contrastRho γ * (n : ℝ))) ≤ η ^ ((1 : ℝ) / (bigQ d γ : ℝ)) / Cs := by
+  have hB : (3 : ℝ) ^ (-(Quenched.contrastRho γ * (n : ℝ))) ≤ η ^ ((1 : ℝ) / (bigQ d γ : ℝ)) /
+    Cs := by
     have hge1 : (1 : ℝ) ≤
         (3 : ℝ) ^ (γ * max ((jStar : ℝ) - ((t - (n : ℤ) : ℤ) : ℝ)) 0) := by
       have h := Real.rpow_le_rpow_of_exponent_le (by norm_num : (1 : ℝ) ≤ 3)
@@ -419,7 +432,8 @@ theorem source_term_le (d : ℕ) (hd : 2 ≤ d) (γ : ℝ)
       refine le_trans ?_ hpw
       nlinarith only [hwnn, hge1]
     rw [le_div_iff₀ hCs]
-    have hpk : (1 : ℝ) ≤ aspectRatio E * (‖explicitCanonicalMetric F‖ * ‖(explicitCanonicalMetric F)⁻¹‖) := by
+    have hpk : (1 : ℝ) ≤ aspectRatio E * (‖explicitCanonicalMetric F‖ *
+      ‖(explicitCanonicalMetric F)⁻¹‖) := by
       nlinarith only [hPi1, hkap]
     have hprod : (0 : ℝ) ≤ Cs * (3 : ℝ) ^ (-(rhoMax d γ * ((t : ℝ) - (jStar : ℝ)))) *
         (aspectRatio E * (‖explicitCanonicalMetric F‖ * ‖(explicitCanonicalMetric F)⁻¹‖) - 1) :=

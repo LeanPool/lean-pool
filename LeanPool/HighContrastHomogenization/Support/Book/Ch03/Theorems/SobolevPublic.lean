@@ -534,13 +534,13 @@ theorem homogenizationComparisonNegativeSobolevLHS_le_const_mul_negativeBesovLHS
       scaleNormalizedNegativeSobolevVectorNormTwo Q s Gc ≤
         K * cubeBesovNegativeVectorSeminormTwo Q s Gc := by
     simpa [scaleNormalizedNegativeSobolevVectorNormTwo, K] using
-      scaleNormalizedDualNegativeBesovVectorNormTwo_le_note_constant_mul_cubeBesovNegativeVectorSeminormTwo
+      normalizedDualNegativeBesovNormTwo_le_constant_mul_negativeBesovSeminormTwo
         Q s Gc hs hGc_mem
   have hGf_bound :
       scaleNormalizedNegativeSobolevVectorNormTwo Q s Gf ≤
         K * cubeBesovNegativeVectorSeminormTwo Q s Gf := by
     simpa [scaleNormalizedNegativeSobolevVectorNormTwo, K] using
-      scaleNormalizedDualNegativeBesovVectorNormTwo_le_note_constant_mul_cubeBesovNegativeVectorSeminormTwo
+      normalizedDualNegativeBesovNormTwo_le_constant_mul_negativeBesovSeminormTwo
         Q s Gf hs hGf_mem
   calc
     homogenizationComparisonNegativeSobolevLHS Q a a0 s u v

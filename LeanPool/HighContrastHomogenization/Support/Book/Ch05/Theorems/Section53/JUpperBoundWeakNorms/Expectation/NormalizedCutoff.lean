@@ -411,6 +411,120 @@ theorem section53_linearCutoffCoeff_origin_le_dimensional
           ((8 * quantitativeCubeCutoffGradientConst d + 1) * (2 : ℝ) ^ d)) := by
           simp
 
+private theorem scaledCutoffProductCore_le_dimensional
+    {d : ℕ}
+    [NeZero d]
+    (m : ℕ)
+    (s : ℝ)
+    (t : ℝ)
+    :
+    let Q : TriadicCube d := originCube d (m : ℤ)
+    let A : ℝ :=
+      2 * cubeScaleFactor Q * section53CutoffDerivativeBound Q +
+        3 * cubeLpNorm Q ∞ (scalarCutoffGradientField (section53NormalizedCutoff Q))
+    let Kcut : ℝ :=
+      (128 * quantitativeCubeCutoffHessianConst d +
+        24 * quantitativeCubeCutoffGradientConst d) * (2 : ℝ) ^ d
+    let Poinc : ℝ :=
+      (Ch01.Legacy.fullVectorPoincareConstant Q * (3 : ℝ) ^ ((d : ℝ) + 1)) *
+        (Fintype.card (Fin d) : ℝ)
+    let Flux : ℝ :=
+      (Fintype.card (Fin d) : ℝ) *
+        ((3 : ℝ) ^ ((d : ℝ) + (1 - s)) *
+          cubeBesovScaleWeight (-(1 - s - t)) Q)
+    ∀ (hKcut_nonneg : 0 ≤ Kcut),
+    ∀ (hA_le : A ≤ Kcut * cubeBesovScaleWeight 1 Q),
+    ∀ (hWneg_nonneg : 0 ≤ cubeBesovScaleWeight (-(1 - s - t)) Q),
+    ∀ (hpow_flux : (3 : ℝ) ^ ((d : ℝ) + (1 - s)) ≤ (3 : ℝ) ^ ((d : ℝ) + 1)),
+    ∀ (hpow_flux_nonneg : 0 ≤ (3 : ℝ) ^ ((d : ℝ) + (1 - s))),
+    ∀ (hPoinc_nonneg : 0 ≤ Poinc),
+    ∀ (hW_s_nonneg : 0 ≤ cubeBesovScaleWeight (-s) Q),
+    ∀ (hW_t_nonneg : 0 ≤ cubeBesovScaleWeight (-t) Q),
+    ∀ (hweights_cancel : cubeBesovScaleWeight 1 Q *
+          cubeBesovScaleWeight (-(1 - s - t)) Q *
+          cubeBesovScaleWeight (-s) Q *
+          cubeBesovScaleWeight (-t) Q = 1),
+    A * Poinc * Flux *
+          cubeBesovScaleWeight (-s) Q * cubeBesovScaleWeight (-t) Q ≤
+        Kcut * Poinc *
+          ((Fintype.card (Fin d) : ℝ) * (3 : ℝ) ^ ((d : ℝ) + 1)) := by
+  classical
+  dsimp only
+  let Q : TriadicCube d := originCube d (m : ℤ)
+  let A : ℝ :=
+    2 * cubeScaleFactor Q * section53CutoffDerivativeBound Q +
+      3 * cubeLpNorm Q ∞ (scalarCutoffGradientField (section53NormalizedCutoff Q))
+  let Kcut : ℝ :=
+    (128 * quantitativeCubeCutoffHessianConst d +
+      24 * quantitativeCubeCutoffGradientConst d) * (2 : ℝ) ^ d
+  let Poinc : ℝ :=
+    (Ch01.Legacy.fullVectorPoincareConstant Q * (3 : ℝ) ^ ((d : ℝ) + 1)) *
+      (Fintype.card (Fin d) : ℝ)
+  let Flux : ℝ :=
+    (Fintype.card (Fin d) : ℝ) *
+      ((3 : ℝ) ^ ((d : ℝ) + (1 - s)) *
+        cubeBesovScaleWeight (-(1 - s - t)) Q)
+  intro hKcut_nonneg hA_le hWneg_nonneg hpow_flux hpow_flux_nonneg hPoinc_nonneg hW_s_nonneg
+    hW_t_nonneg hweights_cancel
+  have hfactor_nonneg :
+      0 ≤ ((3 : ℝ) ^ ((d : ℝ) + (1 - s)) *
+            cubeBesovScaleWeight (-(1 - s - t)) Q) *
+          cubeBesovScaleWeight (-s) Q * cubeBesovScaleWeight (-t) Q := by
+    exact mul_nonneg
+      (mul_nonneg (mul_nonneg hpow_flux_nonneg hWneg_nonneg) hW_s_nonneg)
+      hW_t_nonneg
+  have hflux_part :
+      A *
+          (((3 : ℝ) ^ ((d : ℝ) + (1 - s)) *
+              cubeBesovScaleWeight (-(1 - s - t)) Q) *
+            cubeBesovScaleWeight (-s) Q * cubeBesovScaleWeight (-t) Q) ≤
+        Kcut * (3 : ℝ) ^ ((d : ℝ) + 1) := by
+    calc
+      A *
+          (((3 : ℝ) ^ ((d : ℝ) + (1 - s)) *
+              cubeBesovScaleWeight (-(1 - s - t)) Q) *
+            cubeBesovScaleWeight (-s) Q * cubeBesovScaleWeight (-t) Q)
+          ≤
+        (Kcut * cubeBesovScaleWeight 1 Q) *
+          (((3 : ℝ) ^ ((d : ℝ) + (1 - s)) *
+              cubeBesovScaleWeight (-(1 - s - t)) Q) *
+            cubeBesovScaleWeight (-s) Q * cubeBesovScaleWeight (-t) Q) := by
+          exact mul_le_mul_of_nonneg_right hA_le hfactor_nonneg
+      _ =
+        Kcut *
+          (cubeBesovScaleWeight 1 Q *
+            cubeBesovScaleWeight (-(1 - s - t)) Q *
+            cubeBesovScaleWeight (-s) Q *
+            cubeBesovScaleWeight (-t) Q) *
+          (3 : ℝ) ^ ((d : ℝ) + (1 - s)) := by ring
+      _ = Kcut * (3 : ℝ) ^ ((d : ℝ) + (1 - s)) := by
+          rw [hweights_cancel]
+          ring
+      _ ≤ Kcut * (3 : ℝ) ^ ((d : ℝ) + 1) :=
+          mul_le_mul_of_nonneg_left hpow_flux hKcut_nonneg
+  calc
+    A * Poinc * Flux *
+        cubeBesovScaleWeight (-s) Q * cubeBesovScaleWeight (-t) Q =
+      Poinc *
+        ((Fintype.card (Fin d) : ℝ) *
+          (A *
+            (((3 : ℝ) ^ ((d : ℝ) + (1 - s)) *
+                cubeBesovScaleWeight (-(1 - s - t)) Q) *
+              cubeBesovScaleWeight (-s) Q * cubeBesovScaleWeight (-t) Q))) := by
+        dsimp [Flux]
+        ring
+    _ ≤
+      Poinc *
+        ((Fintype.card (Fin d) : ℝ) *
+          (Kcut * (3 : ℝ) ^ ((d : ℝ) + 1))) := by
+        exact mul_le_mul_of_nonneg_left
+          (mul_le_mul_of_nonneg_left hflux_part (Nat.cast_nonneg _))
+          hPoinc_nonneg
+    _ =
+      Kcut * Poinc *
+        ((Fintype.card (Fin d) : ℝ) * (3 : ℝ) ^ ((d : ℝ) + 1)) := by
+        ring
+
 /-- The concrete cutoff-product coefficient is bounded by a dimension-only
 constant on origin cubes in the Section 5.3 exponent range.  The proof keeps
 the scale cancellation explicit:
@@ -486,43 +600,12 @@ theorem section53CutoffProductCoeff_origin_le_dimensional
           cubeBesovScaleWeight 1 Q := by
           exact mul_le_mul_of_nonneg_right
             (mul_le_mul_of_nonneg_left hB hcoef) hW1_nonneg
-  have hA_nonneg : 0 ≤ A := by
-    dsimp [A]
-    exact add_nonneg
-      (mul_nonneg (mul_nonneg (by norm_num) (cubeScaleFactor_nonneg Q))
-        (section53CutoffDerivativeBound_nonneg Q))
-      (mul_nonneg (by norm_num) (cubeLpNorm_nonneg Q ∞ _))
   have hA_le :
       A ≤ Kcut * cubeBesovScaleWeight 1 Q := by
     dsimp [A, Kcut]
     nlinarith [hD_le, hGrad_le]
-  have hWprod :
-      cubeBesovScaleWeight 1 Q * cubeBesovScaleWeight (-(1 - s - t)) Q =
-        cubeBesovScaleWeight (s + t) Q := by
-    rw [cubeBesovScaleWeight_mul_eq_scaleWeight_add]
-    ring_nf
-  have hWst_le : cubeBesovScaleWeight (s + t) Q ≤ 1 := by
-    simpa [Q] using
-      cubeBesovScaleWeight_originCube_nat_le_one (d := d) m hst_nonneg
   have hWneg_nonneg : 0 ≤ cubeBesovScaleWeight (-(1 - s - t)) Q :=
     cubeBesovScaleWeight_nonneg (-(1 - s - t)) Q
-  have hA_weight_le :
-      A * cubeBesovScaleWeight (-(1 - s - t)) Q ≤ Kcut := by
-    calc
-      A * cubeBesovScaleWeight (-(1 - s - t)) Q ≤
-          (Kcut * cubeBesovScaleWeight 1 Q) *
-            cubeBesovScaleWeight (-(1 - s - t)) Q := by
-            exact mul_le_mul_of_nonneg_right hA_le hWneg_nonneg
-      _ =
-          Kcut * cubeBesovScaleWeight (s + t) Q := by
-            rw [show Kcut * cubeBesovScaleWeight 1 Q *
-                cubeBesovScaleWeight (-(1 - s - t)) Q =
-                  Kcut * (cubeBesovScaleWeight 1 Q *
-                    cubeBesovScaleWeight (-(1 - s - t)) Q) by ring]
-            rw [hWprod]
-      _ ≤ Kcut * 1 := by
-            exact mul_le_mul_of_nonneg_left hWst_le hKcut_nonneg
-      _ = Kcut := by ring
   have hpow_flux :
       (3 : ℝ) ^ ((d : ℝ) + (1 - s)) ≤ (3 : ℝ) ^ ((d : ℝ) + 1) := by
     refine Real.rpow_le_rpow_of_exponent_le (by norm_num : (1 : ℝ) ≤ 3) ?_
@@ -536,48 +619,6 @@ theorem section53CutoffProductCoeff_origin_le_dimensional
     exact mul_nonneg
       (mul_nonneg (Ch01.Legacy.fullVectorPoincareConstant_nonneg Q) hpow_upper_nonneg)
       (Nat.cast_nonneg _)
-  have hFlux_nonneg : 0 ≤ Flux := by
-    dsimp [Flux]
-    exact mul_nonneg (Nat.cast_nonneg _)
-      (mul_nonneg hpow_flux_nonneg hWneg_nonneg)
-  have hcore :
-      A * Poinc * Flux ≤
-        Kcut * Poinc *
-          ((Fintype.card (Fin d) : ℝ) * (3 : ℝ) ^ ((d : ℝ) + 1)) := by
-    have hflux_part :
-        A *
-            ((3 : ℝ) ^ ((d : ℝ) + (1 - s)) *
-              cubeBesovScaleWeight (-(1 - s - t)) Q) ≤
-          Kcut * (3 : ℝ) ^ ((d : ℝ) + 1) := by
-      calc
-        A *
-            ((3 : ℝ) ^ ((d : ℝ) + (1 - s)) *
-              cubeBesovScaleWeight (-(1 - s - t)) Q)
-            =
-          (A * cubeBesovScaleWeight (-(1 - s - t)) Q) *
-            (3 : ℝ) ^ ((d : ℝ) + (1 - s)) := by ring
-        _ ≤ Kcut * (3 : ℝ) ^ ((d : ℝ) + 1) := by
-            exact mul_le_mul hA_weight_le hpow_flux hpow_flux_nonneg hKcut_nonneg
-    calc
-      A * Poinc * Flux =
-          Poinc *
-            ((Fintype.card (Fin d) : ℝ) *
-              (A *
-                ((3 : ℝ) ^ ((d : ℝ) + (1 - s)) *
-                  cubeBesovScaleWeight (-(1 - s - t)) Q))) := by
-            dsimp [Flux]
-            ring
-      _ ≤
-          Poinc *
-            ((Fintype.card (Fin d) : ℝ) *
-              (Kcut * (3 : ℝ) ^ ((d : ℝ) + 1))) := by
-            exact mul_le_mul_of_nonneg_left
-              (mul_le_mul_of_nonneg_left hflux_part (Nat.cast_nonneg _))
-              hPoinc_nonneg
-      _ =
-          Kcut * Poinc *
-            ((Fintype.card (Fin d) : ℝ) * (3 : ℝ) ^ ((d : ℝ) + 1)) := by
-            ring
   have hdim :
       Kcut * Poinc *
           ((Fintype.card (Fin d) : ℝ) * (3 : ℝ) ^ ((d : ℝ) + 1)) =
@@ -615,69 +656,10 @@ theorem section53CutoffProductCoeff_origin_le_dimensional
           congr 2 <;> ring
       _ = 1 := by
           simpa [mul_comm] using cubeBesovScaleWeight_neg_mul_cubeBesovScaleWeight Q (s + t)
-  have hcore_scaled :
-      A * Poinc * Flux *
-          cubeBesovScaleWeight (-s) Q * cubeBesovScaleWeight (-t) Q ≤
-        Kcut * Poinc *
-          ((Fintype.card (Fin d) : ℝ) * (3 : ℝ) ^ ((d : ℝ) + 1)) := by
-    have hfactor_nonneg :
-        0 ≤ ((3 : ℝ) ^ ((d : ℝ) + (1 - s)) *
-              cubeBesovScaleWeight (-(1 - s - t)) Q) *
-            cubeBesovScaleWeight (-s) Q * cubeBesovScaleWeight (-t) Q := by
-      exact mul_nonneg
-        (mul_nonneg (mul_nonneg hpow_flux_nonneg hWneg_nonneg) hW_s_nonneg)
-        hW_t_nonneg
-    have hflux_part :
-        A *
-            (((3 : ℝ) ^ ((d : ℝ) + (1 - s)) *
-                cubeBesovScaleWeight (-(1 - s - t)) Q) *
-              cubeBesovScaleWeight (-s) Q * cubeBesovScaleWeight (-t) Q) ≤
-          Kcut * (3 : ℝ) ^ ((d : ℝ) + 1) := by
-      calc
-        A *
-            (((3 : ℝ) ^ ((d : ℝ) + (1 - s)) *
-                cubeBesovScaleWeight (-(1 - s - t)) Q) *
-              cubeBesovScaleWeight (-s) Q * cubeBesovScaleWeight (-t) Q)
-            ≤
-          (Kcut * cubeBesovScaleWeight 1 Q) *
-            (((3 : ℝ) ^ ((d : ℝ) + (1 - s)) *
-                cubeBesovScaleWeight (-(1 - s - t)) Q) *
-              cubeBesovScaleWeight (-s) Q * cubeBesovScaleWeight (-t) Q) := by
-            exact mul_le_mul_of_nonneg_right hA_le hfactor_nonneg
-        _ =
-          Kcut *
-            (cubeBesovScaleWeight 1 Q *
-              cubeBesovScaleWeight (-(1 - s - t)) Q *
-              cubeBesovScaleWeight (-s) Q *
-              cubeBesovScaleWeight (-t) Q) *
-            (3 : ℝ) ^ ((d : ℝ) + (1 - s)) := by ring
-        _ = Kcut * (3 : ℝ) ^ ((d : ℝ) + (1 - s)) := by
-            rw [hweights_cancel]
-            ring
-        _ ≤ Kcut * (3 : ℝ) ^ ((d : ℝ) + 1) :=
-            mul_le_mul_of_nonneg_left hpow_flux hKcut_nonneg
-    calc
-      A * Poinc * Flux *
-          cubeBesovScaleWeight (-s) Q * cubeBesovScaleWeight (-t) Q =
-        Poinc *
-          ((Fintype.card (Fin d) : ℝ) *
-            (A *
-              (((3 : ℝ) ^ ((d : ℝ) + (1 - s)) *
-                  cubeBesovScaleWeight (-(1 - s - t)) Q) *
-                cubeBesovScaleWeight (-s) Q * cubeBesovScaleWeight (-t) Q))) := by
-          dsimp [Flux]
-          ring
-      _ ≤
-        Poinc *
-          ((Fintype.card (Fin d) : ℝ) *
-            (Kcut * (3 : ℝ) ^ ((d : ℝ) + 1))) := by
-          exact mul_le_mul_of_nonneg_left
-            (mul_le_mul_of_nonneg_left hflux_part (Nat.cast_nonneg _))
-            hPoinc_nonneg
-      _ =
-        Kcut * Poinc *
-          ((Fintype.card (Fin d) : ℝ) * (3 : ℝ) ^ ((d : ℝ) + 1)) := by
-          ring
+  have hcore_scaled := scaledCutoffProductCore_le_dimensional (d := d) (m := m) (s := s) (t :=
+    t) hKcut_nonneg
+    hA_le hWneg_nonneg hpow_flux hpow_flux_nonneg hPoinc_nonneg hW_s_nonneg hW_t_nonneg
+    hweights_cancel
   have hinside :
       cutoffProductScaledWeakNormCoeff Q s t (section53CutoffDerivativeBound Q)
           (scalarCutoffGradientField (section53NormalizedCutoff Q)) *
@@ -717,7 +699,7 @@ theorem section53CutoffProductCoeff_origin_le_dimensional
 /-- The first Section 5.3 expectation assembly after selecting the concrete
 normalized quantitative cutoff.  The remaining hypotheses are law-facing
 integrability/moment facts for the Ch4 observables. -/
-theorem expectedResponseJCubeSet_sub_half_dot_le_jUpperWeakNormManuscriptExpectedRHSAtScale_of_normalizedCutoff
+theorem expectedResponseJCubeSet_sub_half_dot_le_jUpperWeakNormExpectedRHS_of_cutoff
     {d : ℕ} [NeZero d] {P : Ch04.RestrictionCoeffLaw d}
     (hP : Ch04.RestrictionLawCarrier P) (hstat : Ch04.RestrictionStationaryLaw P)
     {k m : ℤ} (hk_nonneg : 0 ≤ k) (hkm : k ≤ m)
@@ -887,7 +869,7 @@ theorem expectedResponseJCubeSet_sub_half_dot_le_jUpperWeakNormManuscriptExpecte
         (section53CutoffDualBound Q t) (section53CutoffProductCoeff Q s t)
         p q p0 q0
   exact
-    expectedResponseJCubeSet_sub_half_dot_le_jUpperWeakNormManuscriptExpectedRHSAtScale_of_cutoffControls
+    expectedResponseJCubeSet_sub_half_dot_le_jUpperWeakNormExpectedRHS
       hP hstat hk_nonneg hkm hs hs_lt_one ht hst
       (section53NormalizedCutoff Q)
       (1 + section53CutoffBound Q) (section53CutoffBound Q)
@@ -904,7 +886,7 @@ theorem expectedResponseJCubeSet_sub_half_dot_le_jUpperWeakNormManuscriptExpecte
 from the Section 5.2 `(P4)` integrability theorem and Ch4 stationarity.  The
 remaining inputs are exactly the two square-integrability facts for the scalar
 maximizer weak norms. -/
-theorem expectedResponseJCubeSet_sub_half_dot_le_jUpperWeakNormManuscriptExpectedRHSAtScale_of_normalizedCutoff_of_P4
+theorem expectedResponseJ_sub_half_dot_le_weakNormBound_of_coarseEllipticity
     {d : ℕ} [NeZero d] {P : Ch04.RestrictionCoeffLaw d}
     (hP : Ch04.RestrictionLawCarrier P) (hstat : Ch04.RestrictionStationaryLaw P)
     (hStruct : Ch04.RestrictionStructuralLaw P)
@@ -968,7 +950,7 @@ theorem expectedResponseJCubeSet_sub_half_dot_le_jUpperWeakNormManuscriptExpecte
       hP.integrable_restrictionResponseJObservableCubeSet_of_integrable_coarseFullBlockMatrixAtCube
         R p q hBlockR
   exact
-    expectedResponseJCubeSet_sub_half_dot_le_jUpperWeakNormManuscriptExpectedRHSAtScale_of_normalizedCutoff
+    expectedResponseJCubeSet_sub_half_dot_le_jUpperWeakNormExpectedRHS_of_cutoff
       hP hstat hk_nonneg hkm hs hs_lt_one ht hst p q p0 q0
       hParent hJ hGradSq hFluxSq
 

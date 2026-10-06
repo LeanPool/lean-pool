@@ -53,13 +53,15 @@ theorem scalarIdentityGoodTail_liouvilleDoubleInclusion_fixedFamily_after_restar
           MemLiouvilleClass b theta v Dv →
           ∃ (e : Vec d) (c₀ : ℝ),
             v =ᵐ[volume] fun x ↦ vecDot e x +
-              (finiteAffineCorrectionJointLocalLimit a hCauchy e).globalValueRepresentative x + c₀) ∧
+              (finiteAffineCorrectionJointLocalLimit a hCauchy e).globalValueRepresentative x +
+                c₀) ∧
         ∀ (e : Vec d) (c₀ : ℝ),
           MemLiouvilleClass b theta
             (fun x ↦ vecDot e x +
               (finiteAffineCorrectionJointLocalLimit a hCauchy e).globalValueRepresentative x + c₀)
             (fun x ↦ e +
-              (finiteAffineCorrectionJointLocalLimit a hCauchy e).globalGradientRepresentative x) := by
+              (finiteAffineCorrectionJointLocalLimit a hCauchy e).globalGradientRepresentative
+                x) := by
   intro theta htheta
   obtain ⟨_K, cForward, _hK, hcForward, hforward⟩ :=
     exists_scalarIdentityGoodTailAffineCorrectorMemLiouvilleConstant

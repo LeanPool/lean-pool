@@ -75,7 +75,7 @@ def coupledExecBurn (d : ℕ) (Q K Cexec Lam : ℝ) : ℤ :=
 
 /-! ## The windowed source collection -/
 
-/-- The windowed source fields `𝖲𝗋𝖼^S_{q,j_*}(s,t;P,Y_P)` read at the two
+/-- The windowed source fields `S_sansr_sansc_sans^S_{q,j_*}(s,t;P,Y_P)` read at the two
 endpoints of a terminal window: the primal and adjoint bounded-window localized
 rows on every contained cell below the alignment, the two all-earlier annealed
 rows at the weight `λ_resp = 3/2`, and the reference comparisons at both
@@ -164,7 +164,7 @@ def transferGauge (g K : ℝ) (j : ℤ) : ℝ :=
   (1 - g)⁻¹ * (1 + K ^ 2 * (3 : ℝ) ^ (-j)) ^ g
 
 /-- The deterministic comparison size
-`𝒯̄_{q,S}(j) = U C_AE(d) C_src(d) κ_𝐄 𝔢_q² ζ_g Γ_{g,S}(j)`.  It involves the
+`𝒯_bar_{q,S}(j) = U C_AE(d) C_src(d) κ_𝐄 𝔢_q² ζ_g Γ_{g,S}(j)`.  It involves the
 mean of the window multiplier only through the deterministic normalization
 constant `U`. -/
 @[expose]

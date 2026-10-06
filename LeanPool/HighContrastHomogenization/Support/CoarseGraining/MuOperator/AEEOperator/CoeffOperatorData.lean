@@ -220,6 +220,23 @@ theorem le_normalizedBlockCoeffOperatorNormBound_of_isEllipticMatrix_of_mem
     _ = MuCoeffOperatorData.normalizedBlockCoeffOperatorNormBound (d := d) U lam Lam := by
         simp [MuCoeffOperatorData.normalizedBlockCoeffOperatorNormBound]
 
+/-- Normalization preserves measurability of the associated block operator. -/
+public theorem measurable_normalizedBlockMatrixOperator
+    (A : Vec d → Mat d) (hA_meas : Measurable A) :
+    Measurable (fun x : Vec d => (MeasureTheory.volume U).toReal⁻¹ •
+      HilbertBlockVec.applyBlockMat (blockMatrixOfCoeff (A x))) := by
+  have hfull : Measurable (fun x : Vec d => fun α β =>
+      toFullBlockMat (blockMatrixOfCoeff (A x)) α β) := by
+    exact measurable_toFullBlockMat_blockCoeffField hA_meas
+  have hmeas : Measurable (fun x : Vec d =>
+      fullEntriesToHilbertOperator d (toFullBlockMat (blockMatrixOfCoeff (A x)))) := by
+    exact measurable_fullEntriesToHilbertOperator hfull
+  have hsmul : Measurable (fun x : Vec d =>
+      (MeasureTheory.volume U).toReal⁻¹ •
+        fullEntriesToHilbertOperator d (toFullBlockMat (blockMatrixOfCoeff (A x)))) :=
+    hmeas.const_smul ((MeasureTheory.volume U).toReal⁻¹)
+  simpa [fullEntriesToHilbertOperator_toFullBlockMat] using hsmul
+
 theorem normalizedBlockCoeffOperator_self_inner_lowerBound_of_isEllipticMatrix_of_mem
     {lam Lam : ℝ} {x : Vec d} (hx : x ∈ U)
     (hmat : IsEllipticMatrix lam Lam (a x)) (X : HilbertBlockVec d) :
@@ -235,7 +252,8 @@ theorem normalizedBlockCoeffOperator_self_inner_lowerBound_of_isEllipticMatrix_o
     positivity
   have htoBlock :
       (((MeasureTheory.volume U).toReal⁻¹ •
-          HilbertBlockVec.ofBlockVec (blockMatVecMul (blockCoeffField a x) X.toBlockVec)).toBlockVec) =
+          HilbertBlockVec.ofBlockVec (blockMatVecMul (blockCoeffField a x)
+            X.toBlockVec)).toBlockVec) =
         (MeasureTheory.volume U).toReal⁻¹ •
           blockMatVecMul (blockCoeffField a x) X.toBlockVec := by
     ext i <;> simp [HilbertVec.toVec, mul_add]
@@ -288,18 +306,8 @@ noncomputable def ofIsAEEllipticFieldOn {lam Lam : ℝ}
   let op0 : Vec d → HilbertBlockVec d →L[ℝ] HilbertBlockVec d := fun x =>
     (MeasureTheory.volume U).toReal⁻¹ •
       HilbertBlockVec.applyBlockMat (blockMatrixOfCoeff (A x))
-  have hop0_meas : Measurable op0 := by
-    have hfull : Measurable (fun x : Vec d => fun α β =>
-        toFullBlockMat (blockMatrixOfCoeff (A x)) α β) := by
-      exact measurable_toFullBlockMat_blockCoeffField hA_meas
-    have hmeas : Measurable (fun x : Vec d =>
-        fullEntriesToHilbertOperator d (toFullBlockMat (blockMatrixOfCoeff (A x)))) := by
-      exact measurable_fullEntriesToHilbertOperator hfull
-    have hsmul : Measurable (fun x : Vec d =>
-        (MeasureTheory.volume U).toReal⁻¹ •
-          fullEntriesToHilbertOperator d (toFullBlockMat (blockMatrixOfCoeff (A x)))) :=
-      hmeas.const_smul ((MeasureTheory.volume U).toReal⁻¹)
-    simpa [op0, fullEntriesToHilbertOperator_toFullBlockMat] using hsmul
+  have hop0_meas : Measurable op0 :=
+    measurable_normalizedBlockMatrixOperator (U := U) A hA_meas
   have hop0_eq_raw : op0 =ᵐ[volumeMeasureOn U] normalizedBlockCoeffOperator U a := by
     filter_upwards [hA_eq] with x hx
     apply ContinuousLinearMap.ext
@@ -514,7 +522,7 @@ theorem muCandidate_eq_sInf_quadraticEnergy_correctionSpace
 value. -/
 theorem muCandidate_eq_sInf_quadraticEnergy_denseRange
     (H : MuHilbertRealization U a) (P : BlockVec d)
-    {β : Type*} [TopologicalSpace β] [Nonempty β]
+    {β : Type*} [Nonempty β]
     (g : β → H.correctionSpace.correctionSpace.toSubmodule)
     (hg : DenseRange g) :
     H.muCandidate P =
@@ -587,7 +595,7 @@ noncomputable def submoduleClosureToMuCorrectionSpace
     M.blockPotentialZeroTraceSolenoidalZeroNormalTrace.toSubmodule →
       M.toMuCorrectionSpaceData.correctionSpace.toSubmodule :=
   fun X => ⟨blockL2ToHilbertBlockL2 (U := U) X, by
-    show
+    change
       hilbertBlockL2ToBlockL2 (U := U)
           (blockL2ToHilbertBlockL2 (U := U) X) ∈
         M.blockPotentialZeroTraceSolenoidalZeroNormalTrace
@@ -636,7 +644,8 @@ noncomputable def canonicalMuCorrectionGeneratorEmbedding (U : Set (Vec d)) :
       (PotentialSolenoidalL2Data.ofSubmoduleClosures U).submoduleClosureToMuCorrectionSpace
         ⟨Y, by
           change (Y : BlockL2 U) ∈
-            (PotentialSolenoidalL2Data.blockPotentialZeroTraceSolenoidalZeroNormalTraceSubmodule U).closure
+            (PotentialSolenoidalL2Data.blockPotentialZeroTraceSolenoidalZeroNormalTraceSubmodule
+              U).closure
           exact subset_closure Y.property⟩
 
 theorem denseRange_canonicalMuCorrectionGeneratorEmbedding (U : Set (Vec d)) :
@@ -646,7 +655,8 @@ theorem denseRange_canonicalMuCorrectionGeneratorEmbedding (U : Set (Vec d)) :
     (PotentialSolenoidalL2Data.blockPotentialZeroTraceSolenoidalZeroNormalTraceSubmodule U :
       Set (BlockL2 U))
   let T : Set (BlockL2 U) :=
-    ((PotentialSolenoidalL2Data.blockPotentialZeroTraceSolenoidalZeroNormalTraceSubmodule U).closure :
+    ((PotentialSolenoidalL2Data.blockPotentialZeroTraceSolenoidalZeroNormalTraceSubmodule
+      U).closure :
       Set (BlockL2 U))
   let incl : S → T := Set.inclusion (by
     intro x hx
@@ -778,7 +788,8 @@ theorem canonicalMuGeneratorAffineField_memBlockL2
 
 theorem canonicalMuGeneratorAffineField_correction_eq
     (P : BlockVec d) (Y : canonicalMuBlockCorrectionGeneratorSubmodule U) :
-    ((canonicalMuGeneratorAffineField_admissible (U := U) P Y).toCorrectionFieldDataOfAdmissible).toHilbertBlockL2 =
+    ((canonicalMuGeneratorAffineField_admissible (U := U) P
+      Y).toCorrectionFieldDataOfAdmissible).toHilbertBlockL2 =
       (canonicalMuGeneratorCorrectionFieldData (U := U) Y).toHilbertBlockL2 := by
   let Z := canonicalMuGeneratorCorrectionFieldData (U := U) Y
   change

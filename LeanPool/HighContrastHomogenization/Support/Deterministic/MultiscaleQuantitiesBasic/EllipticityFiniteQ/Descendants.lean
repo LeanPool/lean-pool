@@ -51,7 +51,7 @@ theorem multiscale_ellipticity_LambdaSq_finite_rpow_q_div_two_le_of_mem_descenda
     refine mul_nonneg (geometricWeight_nonneg n (mul_nonneg hs hq.le)) ?_
     refine Real.rpow_nonneg ?_ _
     exact maxDescendantBBlockNormAtScale_nonneg Q
-      (sub_le_self _ (by exact_mod_cast Nat.zero_le n)) a
+      (sub_le_self _ (Nat.cast_nonneg n)) a
   have htailSummable : Summable (fun n : ℕ => fQ (n + h)) := (summable_nat_add_iff h).2 hsum
   have hfactorNonneg : 0 ≤ factor := by
     dsimp [factor]
@@ -66,7 +66,7 @@ theorem multiscale_ellipticity_LambdaSq_finite_rpow_q_div_two_le_of_mem_descenda
     have hmax :
         maxDescendantBBlockNormAtScale R (R.scale - (n : ℤ)) a ≤
           maxDescendantBBlockNormAtScale Q (Q.scale - ((n + h : ℕ) : ℤ)) a := by
-      have hl : R.scale - (n : ℤ) ≤ R.scale := sub_le_self _ (by exact_mod_cast Nat.zero_le n)
+      have hl : R.scale - (n : ℤ) ≤ R.scale := sub_le_self _ (Nat.cast_nonneg n)
       simpa [hscale] using
         (maxDescendantBBlockNormAtScale_le_of_mem_descendantsAtScale
           (Q := Q) (R := R) (k := k) (l := R.scale - (n : ℤ)) a hR hl)
@@ -76,7 +76,7 @@ theorem multiscale_ellipticity_LambdaSq_finite_rpow_q_div_two_le_of_mem_descenda
             (q / 2) := by
       refine Real.rpow_le_rpow
         (maxDescendantBBlockNormAtScale_nonneg R
-          (sub_le_self _ (by exact_mod_cast Nat.zero_le n)) a)
+          (sub_le_self _ (Nat.cast_nonneg n)) a)
         hmax ?_
       positivity
     calc
@@ -102,7 +102,7 @@ theorem multiscale_ellipticity_LambdaSq_finite_rpow_q_div_two_le_of_mem_descenda
     refine mul_nonneg (geometricWeight_nonneg n (mul_nonneg hs hq.le)) ?_
     refine Real.rpow_nonneg ?_ _
     exact maxDescendantBBlockNormAtScale_nonneg R
-      (sub_le_self _ (by exact_mod_cast Nat.zero_le n)) a
+      (sub_le_self _ (Nat.cast_nonneg n)) a
   have hscaledSummable : Summable (fun n : ℕ => factor * fQ (n + h)) :=
     htailSummable.mul_left factor
   have hRsummable : Summable fR :=
@@ -172,7 +172,8 @@ theorem multiscale_ellipticity_LambdaSq_finite_le_of_mem_descendantsAtScale {d :
 
 /-- A summable upper-ellipticity finite-`q` series remains summable after
 restricting the base cube to a descendant. -/
-theorem summable_geometricWeight_maxDescendantBBlockNormAtScale_rpow_q_div_two_of_mem_descendantsAtScale
+theorem
+  summable_geometricWeight_maxDescendantBBlockNormAtScale_rpow_q_div_two_of_mem_descendantsAtScale
     {d : ℕ} {Q R : TriadicCube d} {k : ℤ} (a : CoeffField d) (s q : ℝ)
     (hs : 0 ≤ s) (hq : 0 < q) (hR : R ∈ descendantsAtScale Q k)
     (hsum :
@@ -213,7 +214,7 @@ theorem summable_geometricWeight_maxDescendantBBlockNormAtScale_rpow_q_div_two_o
         maxDescendantBBlockNormAtScale R (R.scale - (n : ℤ)) a ≤
           maxDescendantBBlockNormAtScale Q (Q.scale - ((n + h : ℕ) : ℤ)) a := by
       have hl : R.scale - (n : ℤ) ≤ R.scale :=
-        sub_le_self _ (by exact_mod_cast Nat.zero_le n)
+        sub_le_self _ (Nat.cast_nonneg n)
       simpa [hscale] using
         (maxDescendantBBlockNormAtScale_le_of_mem_descendantsAtScale
           (Q := Q) (R := R) (k := k) (l := R.scale - (n : ℤ)) a hR hl)
@@ -225,7 +226,7 @@ theorem summable_geometricWeight_maxDescendantBBlockNormAtScale_rpow_q_div_two_o
               (Q.scale - ((n + h : ℕ) : ℤ)) a) (q / 2) := by
       refine Real.rpow_le_rpow
         (maxDescendantBBlockNormAtScale_nonneg R
-          (sub_le_self _ (by exact_mod_cast Nat.zero_le n)) a)
+          (sub_le_self _ (Nat.cast_nonneg n)) a)
         hmax ?_
       positivity
     calc
@@ -253,12 +254,13 @@ theorem summable_geometricWeight_maxDescendantBBlockNormAtScale_rpow_q_div_two_o
     refine mul_nonneg (geometricWeight_nonneg n (mul_nonneg hs hq.le)) ?_
     refine Real.rpow_nonneg ?_ _
     exact maxDescendantBBlockNormAtScale_nonneg R
-      (sub_le_self _ (by exact_mod_cast Nat.zero_le n)) a
+      (sub_le_self _ (Nat.cast_nonneg n)) a
   have hscaledSummable : Summable (fun n : ℕ => factor * fQ (n + h)) :=
     htailSummable.mul_left factor
   exact Summable.of_nonneg_of_le hRnonneg hterm hscaledSummable
 
-theorem multiscale_ellipticity_lambdaSq_finite_rpow_neg_q_div_two_le_of_mem_descendantsAtScale {d : ℕ}
+theorem multiscale_ellipticity_lambdaSq_finite_rpow_neg_q_div_two_le_of_mem_descendantsAtScale
+  {d : ℕ}
     {Q R : TriadicCube d} {k : ℤ} (a : CoeffField d) (s q : ℝ)
     (hs : 0 ≤ s) (hq : 0 < q) (hR : R ∈ descendantsAtScale Q k)
     (hsum :
@@ -288,7 +290,7 @@ theorem multiscale_ellipticity_lambdaSq_finite_rpow_neg_q_div_two_le_of_mem_desc
     refine mul_nonneg (geometricWeight_nonneg n (mul_nonneg hs hq.le)) ?_
     refine Real.rpow_nonneg ?_ _
     exact maxDescendantSigmaStarInvNormAtScale_nonneg Q
-      (sub_le_self _ (by exact_mod_cast Nat.zero_le n)) a
+      (sub_le_self _ (Nat.cast_nonneg n)) a
   have htailSummable : Summable (fun n : ℕ => fQ (n + h)) := (summable_nat_add_iff h).2 hsum
   have hfactorNonneg : 0 ≤ factor := by
     dsimp [factor]
@@ -303,7 +305,7 @@ theorem multiscale_ellipticity_lambdaSq_finite_rpow_neg_q_div_two_le_of_mem_desc
     have hmax :
         maxDescendantSigmaStarInvNormAtScale R (R.scale - (n : ℤ)) a ≤
           maxDescendantSigmaStarInvNormAtScale Q (Q.scale - ((n + h : ℕ) : ℤ)) a := by
-      have hl : R.scale - (n : ℤ) ≤ R.scale := sub_le_self _ (by exact_mod_cast Nat.zero_le n)
+      have hl : R.scale - (n : ℤ) ≤ R.scale := sub_le_self _ (Nat.cast_nonneg n)
       simpa [hscale] using
         (maxDescendantSigmaStarInvNormAtScale_le_of_mem_descendantsAtScale
           (Q := Q) (R := R) (k := k) (l := R.scale - (n : ℤ)) a hR hl)
@@ -313,7 +315,7 @@ theorem multiscale_ellipticity_lambdaSq_finite_rpow_neg_q_div_two_le_of_mem_desc
             (q / 2) := by
       refine Real.rpow_le_rpow
         (maxDescendantSigmaStarInvNormAtScale_nonneg R
-          (sub_le_self _ (by exact_mod_cast Nat.zero_le n)) a)
+          (sub_le_self _ (Nat.cast_nonneg n)) a)
         hmax ?_
       positivity
     calc
@@ -340,7 +342,7 @@ theorem multiscale_ellipticity_lambdaSq_finite_rpow_neg_q_div_two_le_of_mem_desc
     refine mul_nonneg (geometricWeight_nonneg n (mul_nonneg hs hq.le)) ?_
     refine Real.rpow_nonneg ?_ _
     exact maxDescendantSigmaStarInvNormAtScale_nonneg R
-      (sub_le_self _ (by exact_mod_cast Nat.zero_le n)) a
+      (sub_le_self _ (Nat.cast_nonneg n)) a
   have hscaledSummable : Summable (fun n : ℕ => factor * fQ (n + h)) :=
     htailSummable.mul_left factor
   have hRsummable : Summable fR :=
@@ -410,7 +412,7 @@ theorem summable_geometricWeight_maxDescendantSigmaStarInvNormAtScale_of_mem_des
         maxDescendantSigmaStarInvNormAtScale R (R.scale - (n : ℤ)) a ≤
           maxDescendantSigmaStarInvNormAtScale Q (Q.scale - ((n + h : ℕ) : ℤ)) a := by
       have hl : R.scale - (n : ℤ) ≤ R.scale :=
-        sub_le_self _ (by exact_mod_cast Nat.zero_le n)
+        sub_le_self _ (Nat.cast_nonneg n)
       simpa [hscale] using
         (maxDescendantSigmaStarInvNormAtScale_le_of_mem_descendantsAtScale
           (Q := Q) (R := R) (k := k) (l := R.scale - (n : ℤ)) a hR hl)
@@ -422,7 +424,7 @@ theorem summable_geometricWeight_maxDescendantSigmaStarInvNormAtScale_of_mem_des
               (Q.scale - ((n + h : ℕ) : ℤ)) a) (q / 2) := by
       refine Real.rpow_le_rpow
         (maxDescendantSigmaStarInvNormAtScale_nonneg R
-          (sub_le_self _ (by exact_mod_cast Nat.zero_le n)) a)
+          (sub_le_self _ (Nat.cast_nonneg n)) a)
         hmax ?_
       positivity
     calc
@@ -450,7 +452,7 @@ theorem summable_geometricWeight_maxDescendantSigmaStarInvNormAtScale_of_mem_des
     refine mul_nonneg (geometricWeight_nonneg n (mul_nonneg hs hq.le)) ?_
     refine Real.rpow_nonneg ?_ _
     exact maxDescendantSigmaStarInvNormAtScale_nonneg R
-      (sub_le_self _ (by exact_mod_cast Nat.zero_le n)) a
+      (sub_le_self _ (Nat.cast_nonneg n)) a
   have hscaledSummable : Summable (fun n : ℕ => factor * fQ (n + h)) :=
     htailSummable.mul_left factor
   exact Summable.of_nonneg_of_le hRnonneg hterm hscaledSummable
@@ -511,7 +513,7 @@ theorem multiscale_ellipticity_lambdaSq_finite_inv_le_of_mem_descendantsAtScale 
           (lambdaSq Q s (.finite q) a)⁻¹ := by
       rw [hfactorEq]
 
-theorem multiscale_ellipticity_LambdaSq_finite_le_of_mem_descendantsAtScale_of_lt_of_isEllipticFieldOn_of_isSigmaCoarse
+theorem multiscale_ellipticity_LambdaSq_finite_le_of_ellipticField_of_isSigmaCoarse
     {d : ℕ} [NeZero d] {Q R : TriadicCube d} {k : ℤ}
     (a : CoeffField d) {t s q : ℝ} {lam Lam : ℝ}
     (hq : 0 < q) (ht : 0 < t) (hts : t < s) (hR : R ∈ descendantsAtScale Q k)
@@ -531,7 +533,7 @@ theorem multiscale_ellipticity_LambdaSq_finite_le_of_mem_descendantsAtScale_of_l
     intro n
     refine Real.rpow_nonneg ?_ _
     exact maxDescendantBBlockNormAtScale_nonneg Q
-      (sub_le_self _ (by exact_mod_cast Nat.zero_le n)) a
+      (sub_le_self _ (Nat.cast_nonneg n)) a
   have hsum_s :
       Summable (fun n : ℕ =>
         geometricWeight s q n *
@@ -546,11 +548,12 @@ theorem multiscale_ellipticity_LambdaSq_finite_le_of_mem_descendantsAtScale_of_l
     _ ≤ Real.rpow (3 : ℝ) (2 * s * (Int.toNat (Q.scale - k) : ℝ)) *
           LambdaSq Q t (.finite q) a := by
           refine mul_le_mul_of_nonneg_left ?_ ?_
-          · exact multiscale_ellipticity_LambdaSq_finite_le_of_lt_of_isEllipticFieldOn_of_isSigmaCoarse
+          · exact
+            multiscale_ellipticity_LambdaSq_finite_le_of_lt_of_isEllipticFieldOn_of_isSigmaCoarse
               Q a hq ht hts hEll hData hsum_t
           · exact Real.rpow_nonneg (by norm_num : 0 ≤ (3 : ℝ)) _
 
-theorem multiscale_ellipticity_lambdaSq_finite_inv_le_of_mem_descendantsAtScale_of_lt_of_isEllipticFieldOn_of_isSigmaCoarse
+theorem multiscale_ellipticity_lambdaSq_finite_inv_le_of_ellipticField
     {d : ℕ} [NeZero d] {Q R : TriadicCube d} {k : ℤ}
     (a : CoeffField d) {t s q : ℝ} {lam Lam : ℝ}
     (hq : 0 < q) (ht : 0 < t) (hts : t < s) (hR : R ∈ descendantsAtScale Q k)
@@ -572,7 +575,7 @@ theorem multiscale_ellipticity_lambdaSq_finite_inv_le_of_mem_descendantsAtScale_
     intro n
     refine Real.rpow_nonneg ?_ _
     exact maxDescendantSigmaStarInvNormAtScale_nonneg Q
-      (sub_le_self _ (by exact_mod_cast Nat.zero_le n)) a
+      (sub_le_self _ (Nat.cast_nonneg n)) a
   have hsum_s :
       Summable (fun n : ℕ =>
         geometricWeight s q n *
@@ -588,7 +591,7 @@ theorem multiscale_ellipticity_lambdaSq_finite_inv_le_of_mem_descendantsAtScale_
     _ ≤ Real.rpow (3 : ℝ) (2 * s * (Int.toNat (Q.scale - k) : ℝ)) *
           (lambdaSq Q t (.finite q) a)⁻¹ := by
           refine mul_le_mul_of_nonneg_left ?_ ?_
-          · exact multiscale_ellipticity_lambdaSq_finite_inv_le_of_lt_of_isEllipticFieldOn_of_isSigmaCoarse
+          · exact multiscale_lambdaSq_inv_le_of_sigmaCoarse_elliptic
               Q a hq ht hts hEll hData hsum_t
           · exact Real.rpow_nonneg (by norm_num : 0 ≤ (3 : ℝ)) _
 

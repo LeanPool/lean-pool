@@ -26,23 +26,33 @@ open scoped BigOperators
 
 namespace HCPolySupport
 
+/-- Real coordinate vectors in dimension `d`. -/
 abbrev Vec (d : ℕ) := Fin d → ℝ
 
+/-- Real square matrices with `d` rows and columns. -/
 abbrev Mat (d : ℕ) := Matrix (Fin d) (Fin d) ℝ
 
+/-- Pairs of real `d`-dimensional vectors. -/
 abbrev BlockVec (d : ℕ) := Vec d × Vec d
 
+/-- A two-by-two block matrix with real `d`-by-`d` blocks. -/
 structure BlockMat (d : ℕ) where
+  /-- The block mapping the first input vector to the first output vector. -/
   upperLeft : Mat d
+  /-- The block mapping the second input vector to the first output vector. -/
   upperRight : Mat d
+  /-- The block mapping the first input vector to the second output vector. -/
   lowerLeft : Mat d
+  /-- The block mapping the second input vector to the second output vector. -/
   lowerRight : Mat d
 deriving Inhabited
 
+/-- The Euclidean dot product, given by the sum of coordinate products. -/
 @[expose]
 def vecDot {d : ℕ} (x y : Vec d) : ℝ :=
   ∑ i, x i * y i
 
+/-- The squared Euclidean length of a vector. -/
 @[expose]
 def vecNormSq {d : ℕ} (x : Vec d) : ℝ :=
   vecDot x x
@@ -215,18 +225,22 @@ theorem vecNormSq_sub_le {d : ℕ} (x y : Vec d) :
       rw [hx, hy]
       rfl
 
+/-- Matrix multiplication applied to a coordinate vector. -/
 @[expose]
 def matVecMul {d : ℕ} (A : Mat d) (x : Vec d) : Vec d :=
   fun i => ∑ j, A i j * x j
 
+/-- The matrix obtained by interchanging row and column indices. -/
 @[expose]
 def matTranspose {d : ℕ} (A : Mat d) : Mat d :=
   Matrix.transpose A
 
+/-- The sum of the Euclidean dot products of the two vector components. -/
 @[expose]
 def blockVecDot {d : ℕ} (X Y : BlockVec d) : ℝ :=
   vecDot X.1 Y.1 + vecDot X.2 Y.2
 
+/-- The action of a two-by-two block matrix on a pair of vectors. -/
 @[expose]
 def blockMatVecMul {d : ℕ} (A : BlockMat d) (X : BlockVec d) : BlockVec d :=
   ( matVecMul A.upperLeft X.1 + matVecMul A.upperRight X.2
@@ -240,10 +254,12 @@ def blockMatVecMul {d : ℕ} (A : BlockMat d) (X : BlockVec d) : BlockVec d :=
     (blockMatVecMul A (p, q)).2 = matVecMul A.lowerLeft p + matVecMul A.lowerRight q :=
   rfl
 
+/-- The symmetric part `(A + Aᵀ) / 2` of a real matrix. -/
 @[expose]
 noncomputable def symmPart {d : ℕ} (A : Mat d) : Mat d :=
   fun i j => (A i j + A j i) / 2
 
+/-- The skew-symmetric part `(A - Aᵀ) / 2` of a real matrix. -/
 @[expose]
 noncomputable def skewPart {d : ℕ} (A : Mat d) : Mat d :=
   fun i j => (A i j - A j i) / 2

@@ -81,6 +81,90 @@ private theorem weakRoot_ne_top_of_quantity_ne_top {P : Measure (CoeffSpace d)}
     eLpNorm root 2 P ≠ ⊤ :=
   (ENNReal.pow_ne_top_iff.mp h).resolve_right (by norm_num)
 
+private theorem cutoffOscillation_average_centering
+    [NeZero d] {q : Mat d} (hq : q.PosDef) {s t : ℤ} (hst : s ≤ t)
+    {w : Fin d → ℤ} (hw : w ∈ alignedIndex q s t)
+    (X : Vec d → BlockVec d) (center : BlockVec d) (alpha : BlockCoord d)
+    (hcentered₁ : MemVectorL2 (adaptedCell q t) (fun x ↦ (X x - center).1))
+    (hcentered₂ : MemVectorL2 (adaptedCell q t) (fun x ↦ (X x - center).2)) :
+    volumeAverage (adaptedCellAt q s w) (fun x ↦
+      (adaptedPreYoungCutoff q hq t x - volumeAverage (adaptedCellAt q s w)
+        (adaptedPreYoungCutoff q hq t)) * toFullBlockVec (X x) alpha) =
+      volumeAverage (adaptedCellAt q s w) (fun x ↦
+      (adaptedPreYoungCutoff q hq t x - volumeAverage (adaptedCellAt q s w)
+        (adaptedPreYoungCutoff q hq t)) * toFullBlockVec (X x - center) alpha) := by
+  let F : Vec d → BlockVec d := fun x ↦ X x - center
+  let U := adaptedCellAt q s w
+  let eta : Vec d → ℝ := fun x ↦ adaptedPreYoungCutoff q hq t x -
+    volumeAverage U (adaptedPreYoungCutoff q hq t)
+  have hUdom := Recurrence.isOpenBoundedConvexDomain_adaptedCellAt hq s w
+  have hcut : IntegrableOn (adaptedPreYoungCutoff q hq t) U volume :=
+    ((adaptedPreYoungCutoff_smooth hq t).continuous.continuousOn.integrableOn_compact
+      hUdom.isBoundedDomain.isBounded.isCompact_closure).mono_set subset_closure
+  have hconst : IntegrableOn (fun _ : Vec d ↦
+      volumeAverage U (adaptedPreYoungCutoff q hq t)) U volume :=
+    integrableOn_const hUdom.volume_lt_top.ne (by simp)
+  have heta : IntegrableOn eta U volume := hcut.sub hconst
+  have havgEta : volumeAverage U eta = 0 := by
+    rw [show eta = (adaptedPreYoungCutoff q hq t) -
+        fun _ ↦ volumeAverage U (adaptedPreYoungCutoff q hq t) by rfl]
+    rw [volumeAverage_sub hcut hconst,
+      volumeAverage_const
+        (ENNReal.toReal_pos (Recurrence.volume_adaptedCellAt_pos hq s w).ne'
+          hUdom.volume_lt_top.ne).ne']
+    ring
+  have hcomp : IntegrableOn (fun x ↦ toFullBlockVec (F x) alpha) U volume := by
+    cases alpha with
+    | inl i =>
+        simpa only [toFullBlockVec, adaptedDomainAt_carrier] using
+          integrableOn_component (U := adaptedDomainAt hq s w)
+            (memVectorL2_mono
+              (adaptedCellAt_subset_of_mem_alignedIndex hq hst hw) hcentered₁) i
+    | inr i =>
+        simpa only [toFullBlockVec, adaptedDomainAt_carrier] using
+          integrableOn_component (U := adaptedDomainAt hq s w)
+            (memVectorL2_mono
+              (adaptedCellAt_subset_of_mem_alignedIndex hq hst hw) hcentered₂) i
+  have hetaMeas := heta.aestronglyMeasurable
+  have hetaBound : ∀ᵐ x ∂volume.restrict U,
+      ‖eta x‖ ≤ 2 + |volumeAverage U (adaptedPreYoungCutoff q hq t)| :=
+    _root_.Filter.Eventually.of_forall fun x ↦ by
+      rw [Real.norm_eq_abs, abs_le]
+      constructor <;>
+        linarith only [adaptedPreYoungCutoff_nonneg hq t x,
+          adaptedPreYoungCutoff_le_two hq t x,
+          neg_abs_le (volumeAverage U (adaptedPreYoungCutoff q hq t)),
+          le_abs_self (volumeAverage U (adaptedPreYoungCutoff q hq t))]
+  have hetaF : IntegrableOn
+      (fun x ↦ eta x * toFullBlockVec (F x) alpha) U volume := by
+    simpa only [mul_comm] using! hcomp.bdd_mul hetaMeas hetaBound
+  have hetaConst : IntegrableOn
+      (fun x ↦ toFullBlockVec center alpha * eta x) U volume :=
+    heta.const_mul _
+  have hcoord : ∀ x, toFullBlockVec (X x) alpha =
+      toFullBlockVec (F x) alpha + toFullBlockVec center alpha := by
+    intro x
+    cases alpha <;>
+      simp only [F, toFullBlockVec, Prod.fst_sub, Prod.snd_sub, Pi.sub_apply,
+        sub_add_cancel]
+  have hpoint : (fun x ↦
+      (adaptedPreYoungCutoff q hq t x -
+        volumeAverage U (adaptedPreYoungCutoff q hq t)) *
+        toFullBlockVec (X x) alpha) =
+    (fun x ↦ eta x * toFullBlockVec (F x) alpha) +
+      fun x ↦ toFullBlockVec center alpha * eta x := by
+    funext x
+    rw [hcoord]
+    dsimp only [eta, Pi.add_apply]
+    ring
+  have havgConst : volumeAverage U
+      (fun x ↦ toFullBlockVec center alpha * eta x) =
+      toFullBlockVec center alpha * volumeAverage U eta := by
+    simpa only [Pi.smul_apply, smul_eq_mul] using!
+      volumeAverage_smul U (toFullBlockVec center alpha) eta
+  rw [hpoint, volumeAverage_add hetaF hetaConst, havgConst, havgEta,
+    mul_zero, add_zero]
+
 /-- The centered child mean and its cutoff oscillation are bounded pointwise by
 finite geometric factors times the normalized adapted weak root. -/
 theorem centeredChild_readout_enorm_bounds [NeZero d]
@@ -202,77 +286,8 @@ theorem centeredChild_readout_enorm_bounds [NeZero d]
         (adaptedPreYoungCutoff q hq t)) * toFullBlockVec (X x) alpha) =
       volumeAverage (adaptedCellAt q s w) (fun x ↦
       (adaptedPreYoungCutoff q hq t x - volumeAverage (adaptedCellAt q s w)
-        (adaptedPreYoungCutoff q hq t)) * toFullBlockVec (F x) alpha) := by
-    let U := adaptedCellAt q s w
-    let eta : Vec d → ℝ := fun x ↦ adaptedPreYoungCutoff q hq t x -
-      volumeAverage U (adaptedPreYoungCutoff q hq t)
-    have hUdom := Recurrence.isOpenBoundedConvexDomain_adaptedCellAt hq s w
-    have hcut : IntegrableOn (adaptedPreYoungCutoff q hq t) U volume :=
-      ((adaptedPreYoungCutoff_smooth hq t).continuous.continuousOn.integrableOn_compact
-        hUdom.isBoundedDomain.isBounded.isCompact_closure).mono_set subset_closure
-    have hconst : IntegrableOn (fun _ : Vec d ↦
-        volumeAverage U (adaptedPreYoungCutoff q hq t)) U volume :=
-      integrableOn_const hUdom.volume_lt_top.ne (by simp)
-    have heta : IntegrableOn eta U volume := hcut.sub hconst
-    have havgEta : volumeAverage U eta = 0 := by
-      rw [show eta = (adaptedPreYoungCutoff q hq t) -
-          fun _ ↦ volumeAverage U (adaptedPreYoungCutoff q hq t) by rfl]
-      rw [volumeAverage_sub hcut hconst,
-        volumeAverage_const
-          (ENNReal.toReal_pos (Recurrence.volume_adaptedCellAt_pos hq s w).ne'
-            hUdom.volume_lt_top.ne).ne']
-      ring
-    have hcomp : IntegrableOn (fun x ↦ toFullBlockVec (F x) alpha) U volume := by
-      cases alpha with
-      | inl i =>
-          simpa only [toFullBlockVec, adaptedDomainAt_carrier] using
-            integrableOn_component (U := adaptedDomainAt hq s w)
-              (memVectorL2_mono
-                (adaptedCellAt_subset_of_mem_alignedIndex hq hst hw) hcentered₁) i
-      | inr i =>
-          simpa only [toFullBlockVec, adaptedDomainAt_carrier] using
-            integrableOn_component (U := adaptedDomainAt hq s w)
-              (memVectorL2_mono
-                (adaptedCellAt_subset_of_mem_alignedIndex hq hst hw) hcentered₂) i
-    have hetaMeas := heta.aestronglyMeasurable
-    have hetaBound : ∀ᵐ x ∂volume.restrict U,
-        ‖eta x‖ ≤ 2 + |volumeAverage U (adaptedPreYoungCutoff q hq t)| :=
-      _root_.Filter.Eventually.of_forall fun x ↦ by
-        rw [Real.norm_eq_abs, abs_le]
-        constructor <;>
-          linarith only [adaptedPreYoungCutoff_nonneg hq t x,
-            adaptedPreYoungCutoff_le_two hq t x,
-            neg_abs_le (volumeAverage U (adaptedPreYoungCutoff q hq t)),
-            le_abs_self (volumeAverage U (adaptedPreYoungCutoff q hq t))]
-    have hetaF : IntegrableOn
-        (fun x ↦ eta x * toFullBlockVec (F x) alpha) U volume := by
-      simpa only [mul_comm] using! hcomp.bdd_mul hetaMeas hetaBound
-    have hetaConst : IntegrableOn
-        (fun x ↦ toFullBlockVec center alpha * eta x) U volume :=
-      heta.const_mul _
-    have hcoord : ∀ x, toFullBlockVec (X x) alpha =
-        toFullBlockVec (F x) alpha + toFullBlockVec center alpha := by
-      intro x
-      cases alpha <;>
-        simp only [F, toFullBlockVec, Prod.fst_sub, Prod.snd_sub, Pi.sub_apply,
-          sub_add_cancel]
-    have hpoint : (fun x ↦
-        (adaptedPreYoungCutoff q hq t x -
-          volumeAverage U (adaptedPreYoungCutoff q hq t)) *
-          toFullBlockVec (X x) alpha) =
-      (fun x ↦ eta x * toFullBlockVec (F x) alpha) +
-        fun x ↦ toFullBlockVec center alpha * eta x := by
-      funext x
-      rw [hcoord]
-      dsimp only [eta, Pi.add_apply]
-      ring
-    have havgConst : volumeAverage U
-        (fun x ↦ toFullBlockVec center alpha * eta x) =
-        toFullBlockVec center alpha * volumeAverage U eta := by
-      simpa only [Pi.smul_apply, smul_eq_mul] using!
-        volumeAverage_smul U (toFullBlockVec center alpha) eta
-    rw [hpoint, volumeAverage_add hetaF hetaConst, havgConst, havgEta,
-      mul_zero, add_zero]
+        (adaptedPreYoungCutoff q hq t)) * toFullBlockVec (F x) alpha) :=
+    cutoffOscillation_average_centering hq hst hw X center alpha hcentered₁ hcentered₂
   dsimp only
   refine ⟨?_, ?_⟩
   · rw [hmeanPhysical]

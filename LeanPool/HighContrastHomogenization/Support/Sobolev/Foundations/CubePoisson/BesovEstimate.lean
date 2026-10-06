@@ -94,6 +94,8 @@ theorem sum_cubeBesovCircNorm_one_two_top_le_geometric_mul_sum_cubeLpNorm
         ∑ i : Fin d, cubeLpNorm Q (2 : ℝ≥0∞) (fun x => G x i) := by
           rfl
 
+/-- The explicit Poisson-gradient Besov bound obtained by multiplying the geometric Besov factor
+by the cube energy and coercivity factors. -/
 @[expose]
 noncomputable def cubeNeumannPoissonGradientBesovEnergyConstant {d : ℕ}
     (Q : TriadicCube d) : ℝ :=

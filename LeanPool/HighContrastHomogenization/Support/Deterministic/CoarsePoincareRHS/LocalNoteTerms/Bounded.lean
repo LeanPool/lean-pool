@@ -25,7 +25,7 @@ namespace ZeroTraceDirichletCorrectorData
 
 variable {d : ℕ} {Q : TriadicCube d} {a : CoeffField d} {g : Vec d → Vec d}
 
-theorem sq_cubeBesovNegativeVectorPartialSeminormTwo_succ_le_descendantsAverage_add_uCoeffEnergy_add_eta_uSq_eta_wSq_invEta_gSq_two_two_of_bddAbove
+theorem sq_negativePartialSeminormTwo_succ_le_childMean_add_energy_add_YoungError_two
     (ρ : ZeroTraceDirichletCorrectorData Q a g)
     {u : Vec d → Vec d} (w : AHarmonicFunction a (cubeSet Q))
     {lam Lam : ℝ} (s : ℝ) {η : ℝ}
@@ -102,7 +102,7 @@ theorem sq_cubeBesovNegativeVectorPartialSeminormTwo_succ_le_descendantsAverage_
       cubeBesovPositiveVectorPartialSeminormTwo_le_seminormTwo_of_bddAbove
         Q s (fun x => g x - cubeAverageVec Q g) hgBdd N
   have hmain :=
-    ρ.sq_cubeBesovNegativeVectorPartialSeminormTwo_succ_le_descendantsAverage_add_uCoeffEnergy_add_centeredCollapsedNoteTerm_two_two
+    ρ.sq_negativePartialSeminormTwo_succ_le_childMean_add_energy_add_centeredError_two
       (u := u) w s hs N hEll hu hgrad hsum huw hmem hg hgradρ hBg hnegρ hposg
   have hmain' :
       (cubeBesovNegativeVectorPartialSeminormTwo Q s (N + 1) u) ^ 2 ≤
@@ -127,7 +127,7 @@ theorem sq_cubeBesovNegativeVectorPartialSeminormTwo_succ_le_descendantsAverage_
     linarith
   simpa [Child, U, W, G, C, A, K] using hfinal
 
-theorem sq_cubeBesovNegativeVectorPartialSeminormTwo_harmonic_le_uCoeffEnergy_add_correctorShortTerm_two_two_of_bddAbove
+theorem sq_negativePartialSeminormTwo_harmonic_le_energy_add_correction_two
     (ρ : ZeroTraceDirichletCorrectorData Q a g)
     {u : Vec d → Vec d} (w : AHarmonicFunction a (cubeSet Q))
     {lam Lam : ℝ} (s : ℝ) (hs : 0 < s) (N : ℕ)
@@ -256,7 +256,7 @@ theorem sq_cubeBesovNegativeVectorPartialSeminormTwo_harmonic_le_uCoeffEnergy_ad
                 (fun x => g x - cubeAverageVec Q g))) := by
             simp [C, Short, U, W, G]
 
-theorem sq_cubeBesovNegativeVectorSeminormTwo_harmonic_le_uCoeffEnergy_add_correctorShortTerm_two_two_of_bddAbove
+theorem sq_negativeBesovSeminormTwo_harmonic_le_energy_add_correction_two
     (ρ : ZeroTraceDirichletCorrectorData Q a g)
     {u : Vec d → Vec d} (w : AHarmonicFunction a (cubeSet Q))
     {lam Lam : ℝ} (s : ℝ)
@@ -356,14 +356,14 @@ theorem sq_cubeBesovNegativeVectorSeminormTwo_harmonic_le_uCoeffEnergy_add_corre
     intro N
     dsimp [B]
     exact
-      ρ.sq_cubeBesovNegativeVectorPartialSeminormTwo_harmonic_le_uCoeffEnergy_add_correctorShortTerm_two_two_of_bddAbove
+      ρ.sq_negativePartialSeminormTwo_harmonic_le_energy_add_correction_two
         (u := u) w s hs N hEll hu hgrad hsum huw
         hmem hg hgradρ hBg huBdd hwBdd hgBdd
   simpa [B] using
     sq_cubeBesovNegativeVectorSeminormTwo_le_of_partialSqBound
       (Q := Q) (s := s) (u := fun x => w.toH1.grad x) hB_nonneg hpartial
 
-theorem sq_cubeBesovNegativeVectorSeminormTwo_harmonic_le_uCoeffEnergy_add_eta_uSq_add_invEta_gSq_two_two_of_bddAbove
+theorem sq_negativeBesovSeminormTwo_harmonic_le_energy_add_YoungError
     (ρ : ZeroTraceDirichletCorrectorData Q a g)
     {u : Vec d → Vec d} (w : AHarmonicFunction a (cubeSet Q))
     {lam Lam : ℝ} (s : ℝ) {η : ℝ}
@@ -415,7 +415,7 @@ theorem sq_cubeBesovNegativeVectorSeminormTwo_harmonic_le_uCoeffEnergy_add_eta_u
   let K : ℝ := C * ((d : ℝ) * ((3 : ℝ) ^ ((d : ℝ) + s) * Real.sqrt 2))
   let D : ℝ := 2 * K
   have hmain :=
-    ρ.sq_cubeBesovNegativeVectorSeminormTwo_harmonic_le_uCoeffEnergy_add_correctorShortTerm_two_two_of_bddAbove
+    ρ.sq_negativeBesovSeminormTwo_harmonic_le_energy_add_correction_two
       (u := u) w s hs hEll hu hgrad hsum huw
       hmem hg hgradρ hBg huBdd hwBdd hgBdd
   have hmain' : W ^ 2 ≤ A + D * (U + W) * G := by
@@ -437,7 +437,7 @@ theorem sq_cubeBesovNegativeVectorSeminormTwo_harmonic_le_uCoeffEnergy_add_eta_u
             rw [hhalf]
   simpa [U, W, G, C, A, K] using hfinal
 
-theorem sq_cubeBesovNegativeVectorPartialSeminormTwo_succ_le_descendantsAverage_add_uCoeffEnergy_add_absorbed_uSq_gSq_two_two_of_bddAbove
+theorem sq_negativePartialSeminormTwo_succ_le_childMean_add_energy_add_error
     (ρ : ZeroTraceDirichletCorrectorData Q a g)
     {u : Vec d → Vec d} (w : AHarmonicFunction a (cubeSet Q))
     {lam Lam : ℝ} (s : ℝ) {η : ℝ}
@@ -506,7 +506,7 @@ theorem sq_cubeBesovNegativeVectorPartialSeminormTwo_succ_le_descendantsAverage_
   let K : ℝ := C * ((d : ℝ) * ((3 : ℝ) ^ ((d : ℝ) + s) * Real.sqrt 2))
   let H : ℝ := (1 - η)⁻¹ * (A + η * U ^ 2 + 2 * η⁻¹ * ((K * G) ^ 2))
   have hrec :=
-    ρ.sq_cubeBesovNegativeVectorPartialSeminormTwo_succ_le_descendantsAverage_add_uCoeffEnergy_add_eta_uSq_eta_wSq_invEta_gSq_two_two_of_bddAbove
+    ρ.sq_negativePartialSeminormTwo_succ_le_childMean_add_energy_add_YoungError_two
       (u := u) w s hs hη N hEll hu hgrad hsum huw
       hmem hg hgradρ hBg huBdd hwBdd hgBdd
   have hrec' :
@@ -514,7 +514,7 @@ theorem sq_cubeBesovNegativeVectorPartialSeminormTwo_succ_le_descendantsAverage_
         Child + A + η * U ^ 2 + η * W ^ 2 + 2 * η⁻¹ * ((K * G) ^ 2) := by
     simpa [Child, U, W, G, C, A, K] using hrec
   have hharm :=
-    ρ.sq_cubeBesovNegativeVectorSeminormTwo_harmonic_le_uCoeffEnergy_add_eta_uSq_add_invEta_gSq_two_two_of_bddAbove
+    ρ.sq_negativeBesovSeminormTwo_harmonic_le_energy_add_YoungError
       (u := u) w s hs hη hη_lt hEll hu hgrad hsum huw
       hmem hg hgradρ hBg huBdd hwBdd hgBdd
   have hharm' : W ^ 2 ≤ H := by
@@ -527,7 +527,7 @@ theorem sq_cubeBesovNegativeVectorPartialSeminormTwo_succ_le_descendantsAverage_
     linarith
   simpa [Child, U, G, C, A, K, H] using hfinal
 
-theorem sq_cubeBesovNegativeVectorSeminormTwo_le_descendantsAverage_add_uCoeffEnergy_add_absorbed_uSq_gSq_two_two_of_partialChildBounds
+theorem sq_negativeBesovSeminormTwo_le_childMean_add_energy_add_error
     (ρ : ZeroTraceDirichletCorrectorData Q a g)
     {u : Vec d → Vec d} (w : AHarmonicFunction a (cubeSet Q))
     {lam Lam : ℝ} (s : ℝ) {η : ℝ} (Bchild : TriadicCube d → ℝ)
@@ -639,7 +639,7 @@ theorem sq_cubeBesovNegativeVectorSeminormTwo_le_descendantsAverage_add_uCoeffEn
           F := by
     intro N
     have hN :=
-      ρ.sq_cubeBesovNegativeVectorPartialSeminormTwo_succ_le_descendantsAverage_add_uCoeffEnergy_add_absorbed_uSq_gSq_two_two_of_bddAbove
+      ρ.sq_negativePartialSeminormTwo_succ_le_childMean_add_energy_add_error
         (u := u) w s hs hη hη_lt N hEll hu hgrad hsum huw
         hmem hg hgradρ hBg huBdd hwBdd hgBdd
     simpa [U, G, C, A, K, H, F, add_assoc] using hN

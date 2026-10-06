@@ -208,7 +208,8 @@ private theorem annealedMomentRoot_le_const_add_of_nonneg_le_of_error_pow_integr
       hξ hA_nonneg hX_nonneg hE_nonneg hX_le
       hX_meas hE_meas hX_abs_pow_int hE_abs_pow_int
 
-private theorem LambdaMomentAtScale_le_barSigma_zero_add_positiveExcessMomentAtScale_of_excess_pow_integrable
+private theorem
+  LambdaMomentAtScale_le_barSigma_zero_add_positiveExcessMomentAtScale_of_excess_pow_integrable
     {d : ℕ} [NeZero d] {P : Ch04.RestrictionCoeffLaw d}
     (hP : Ch04.RestrictionLawCarrier P) (hStruct : Ch04.RestrictionStructuralLaw P)
     {m : ℤ} {s : ℝ} {ξ : ℕ}
@@ -250,7 +251,7 @@ private theorem LambdaMomentAtScale_le_barSigma_zero_add_positiveExcessMomentAtS
           (X a) (hP.barSigmaAtScale hStruct 0))
       hX_meas hE_meas hE_pow_int
 
-private theorem lambdaInvMomentAtScale_le_barSigmaStar_zero_inv_add_positiveExcessMomentAtScale_of_excess_pow_integrable
+private theorem lambdaInvMoment_le_barSigmaStar_zero_inv_add_excessPartMoment
     {d : ℕ} [NeZero d] {P : Ch04.RestrictionCoeffLaw d}
     (hP : Ch04.RestrictionLawCarrier P) (hStruct : Ch04.RestrictionStructuralLaw P)
     {m : ℤ} {s : ℝ} {ξ : ℕ}
@@ -379,7 +380,8 @@ private theorem shiftedWidetildeThetaAtScale_le_thetaAtScale_zero_add_positiveEx
             lambdaInvPositiveExcessMomentAtScale P m rLower hP4.xi hP hStruct := by
       simp [UE, LE, L0, l0]
 
-private theorem shiftedWidetildeThetaAtScale_le_thetaAtScale_zero_add_positiveExcess_products_of_integrable
+private theorem
+  shiftedWidetildeThetaAtScale_le_thetaAtScale_zero_add_positiveExcess_products_of_integrable
     {d : ℕ} [NeZero d] {P : Ch04.RestrictionCoeffLaw d}
     (hP : Ch04.RestrictionLawCarrier P) (hStruct : Ch04.RestrictionStructuralLaw P)
     (hP4 : QuantitativeCoarseGrainedEllipticity P)
@@ -434,7 +436,7 @@ private theorem shiftedWidetildeThetaAtScale_le_thetaAtScale_zero_add_positiveEx
     have hstar := hP.barSigmaStarAtScale_eq_inv_barSigmaStarInvAtScale hStruct (0 : ℤ)
     rw [hstar, inv_inv]
     simpa [Ch04.RestrictionLawCarrier.barSigmaStarInvAtScale] using
-      (Ch04.RestrictionLawCarrier.Internal.barSigmaStarInv_pos_of_integrable_coarseFullBlockMatrixAtCube hP
+      (Ch04.RestrictionLawCarrier.Internal.barSigmaStarInverse_pos_of_integrableBlockMatrix hP
         (Ch04.Internal.annealedPrimitiveScalarizationData_of_structuralLaw hP hStruct (0 : ℤ))
         (hBlock 0)).le
   have hUpper0 :
@@ -473,7 +475,7 @@ private theorem shiftedWidetildeThetaAtScale_le_thetaAtScale_zero_add_positiveEx
         (hP.barSigmaStarAtScale hStruct 0)⁻¹ +
           lambdaInvPositiveExcessMomentAtScale P (m : ℤ) rLower hP4.xi
             hP hStruct :=
-    lambdaInvMomentAtScale_le_barSigmaStar_zero_inv_add_positiveExcessMomentAtScale_of_excess_pow_integrable
+    lambdaInvMoment_le_barSigmaStar_zero_inv_add_excessPartMoment
       hP hStruct (Nat.succ_le_of_lt hP4.xi_pos) hrLower_pos
       hBarSigmaStar0_inv_nonneg hLowerExcessPowInt
   exact
@@ -566,7 +568,8 @@ private theorem shiftedWidetildeThetaAtScale_le_thetaAtScale_zero_add_error_of_p
     _ = thetaAtScale hP hStruct 0 + finalCoeff * widetildeThetaAtScale P 0 hP4 := by
       simp [widetildeThetaAtScale, Ch04.widetildeThetaAtScale, L0, l0]
 
-private theorem shiftedWidetildeThetaAtScale_le_thetaAtScale_zero_add_error_of_integrable_positiveExcess_bounds
+private theorem
+  shiftedWidetildeThetaAtScale_le_thetaAtScale_zero_add_error_of_integrable_positiveExcess_bounds
     {d : ℕ} [NeZero d] {P : Ch04.RestrictionCoeffLaw d}
     (hP : Ch04.RestrictionLawCarrier P) (hStruct : Ch04.RestrictionStructuralLaw P)
     (hP4 : QuantitativeCoarseGrainedEllipticity P)

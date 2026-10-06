@@ -167,7 +167,6 @@ end H10Function
 
 /-- The finite-measure comparison from a lower finite exponent to `L²`. -/
 theorem eLpNorm_finiteMeasure_downgrade_le {d : ℕ} {U : Set (Vec d)}
-    [MeasureTheory.IsFiniteMeasure (MeasureTheory.volume.restrict U)]
     (p : FiniteLpExponent) (hp : p.exponent ≤ 2) (f : Vec d → ℝ)
     (hf : MeasureTheory.AEStronglyMeasurable f (MeasureTheory.volume.restrict U)) :
     MeasureTheory.eLpNorm f p.exponent (MeasureTheory.volume.restrict U) ≤

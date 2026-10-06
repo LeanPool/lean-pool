@@ -90,7 +90,8 @@ theorem exists_common_jointSlope_of_liouvilleFixedCubeExcess
       fun x => HilbertVec.ofVec (Dv x) := by
     intro q
     have hcoe :=
-      (finiteCubeSolutionRestriction a (n := (q : ℤ)) (by omega) (u (q + 4))).toH1.coeFn_gradToHilbertVectorL2
+      (finiteCubeSolutionRestriction a (n := (q : ℤ)) (by omega) (u (q +
+        4))).toH1.coeFn_gradToHilbertVectorL2
     rw [finiteCubeSolutionRestriction_grad, huGrad (q + 4)] at hcoe
     exact hcoe
   have hcompat : ∀ {q r : ℕ} (hqr : q ≤ r),
@@ -132,10 +133,12 @@ theorem exists_common_jointSlope_of_liouvilleFixedCubeExcess
       hthreshold hdelta hgood hCauchy q hnq uq Dv huqGrad hexcessq
     refine ⟨e, ?_⟩
     have hcoe0 :=
-      (finiteCubeSolutionRestriction a (n := (q : ℤ)) (by omega) (uq 0)).toH1.coeFn_gradToHilbertVectorL2
+      (finiteCubeSolutionRestriction a (n := (q : ℤ)) (by omega) (uq
+        0)).toH1.coeFn_gradToHilbertVectorL2
     rw [finiteCubeSolutionRestriction_grad, huqGrad 0] at hcoe0
     have hgq : g q =
-        (finiteCubeSolutionRestriction a (n := (q : ℤ)) (by omega) (uq 0)).toH1.gradToHilbertVectorL2 := by
+        (finiteCubeSolutionRestriction a (n := (q : ℤ)) (by omega) (uq
+          0)).toH1.gradToHilbertVectorL2 := by
       apply MeasureTheory.Lp.ext
       exact (hgRep q).trans hcoe0.symm
     exact hgq.trans he

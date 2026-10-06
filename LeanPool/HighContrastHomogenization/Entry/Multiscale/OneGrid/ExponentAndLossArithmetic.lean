@@ -385,7 +385,8 @@ theorem averaging_coefficient_le (d : ℕ) (hd : 2 ≤ d) (γ : ℝ)
         rw [← Real.sqrt_mul (by norm_num : (0:ℝ) ≤ 3)]
         congr 1
         ring
-      have expand : Real.sqrt 3 * (1 + Real.sqrt (2*(n:ℝ))) = Real.sqrt 3 + Real.sqrt (6*(n:ℝ)) := by
+      have expand : Real.sqrt 3 * (1 + Real.sqrt (2*(n:ℝ))) = Real.sqrt 3 + Real.sqrt (6*(n:ℝ))
+        := by
         rw [mul_add, mul_one, hmul]
       have key_mul : Real.sqrt 3 * (1 + Real.sqrt (2*(n:ℝ))) ≤ (3:ℝ)^((n:ℝ)/2) * Real.sqrt 3 := by
         rw [mul_comm ((3:ℝ)^((n:ℝ)/2)) (Real.sqrt 3)]
@@ -543,7 +544,8 @@ theorem logDetLoss_le_synchronizedLogDetLoss (d : ℕ) (hd : 2 ≤ d) (γ : ℝ)
         ∀ (jStar : ℕ), 2 * d ≤ 3 ^ jStar →
           ∀ (metric : Mat d), metric.PosDef →
             ∀ m j : ℤ, (jStar : ℤ) + (h : ℤ) ≤ m → m < j → j ≤ m + (h : ℤ) →
-              detIncrement P (Geometry.explicitRoundedGrid jStar metric) (j - (h : ℤ)) (m + (h : ℤ)) ≤
+              detIncrement P (Geometry.explicitRoundedGrid jStar metric) (j - (h : ℤ)) (m + (h :
+                ℤ)) ≤
                 synchCharge P (Geometry.explicitRoundedGrid jStar metric) (h : ℤ) m := by
   intro P E Ψ K S hP hstat _hunit hdag h hh jStar hjStar metric hmetric m j hm1 hmj hjm
   unfold synchCharge
@@ -572,7 +574,8 @@ theorem logDetLoss_le_synchronizedLogDetLoss (d : ℕ) (hd : 2 ≤ d) (γ : ℝ)
         detIncrement P (Geometry.explicitRoundedGrid jStar metric) (j - (h : ℤ)) (m + (h : ℤ))
           = detIncrement P (Geometry.explicitRoundedGrid jStar metric) (j - (h : ℤ)) j +
             detIncrement P (Geometry.explicitRoundedGrid jStar metric) j (m + (h : ℤ)) :=
-      (logDetLoss_add P (Geometry.explicitRoundedGrid jStar metric) (j - (h : ℤ)) j (m + (h : ℤ))).symm
+      (logDetLoss_add P (Geometry.explicitRoundedGrid jStar metric) (j - (h : ℤ)) j (m + (h :
+        ℤ))).symm
     have hextendEq :
         detIncrement P (Geometry.explicitRoundedGrid jStar metric) m (m + (h : ℤ))
           = detIncrement P (Geometry.explicitRoundedGrid jStar metric) m j +

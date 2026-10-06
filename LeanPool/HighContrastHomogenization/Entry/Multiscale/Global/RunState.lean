@@ -31,7 +31,7 @@ This file carries the continuing datum of the run that closes `global_run`
   the tail clauses do not re-establish — the accumulated projective displacement
   `d_pr(Id, 𝔪_i) ≤ ε(i+1)` and the generation budget `n_i ≤ n₀ + (2L+H+h)(i+1)`. Those last
   two buy the containment premise at step `i+1` (`R1`).
-* `runGauge` is the transferred Lyapunov function `Φ̃ = Φ + w·R` of `run_energy_transfer`:
+* `runGauge` is the transferred Lyapunov function `Φ_tilde = Φ + w·R` of `run_energy_transfer`:
   the determinant charges are paid out of the reserve `run_reserve` as they are made, so
   `exists_stop_of_potential` is applied with `charge ≡ 0` and `Bud = 0`, and the paper's
   budget `Φ₁ + aC(h+2)log(24Π)` appears as the initial bound `R4` + `R5`.
@@ -95,20 +95,22 @@ structure RunState {d : ℕ} (P : Measure (CoeffSpace d)) (γ : ℝ) (S : Select
   counted step.  `run_initial` produces `k = n₀ < n₀ + S.h` and every step output keeps it. -/
   hlt : k < n
 
-/-- The transferred Lyapunov gauge `Φ̃ = Φ + w·R` of `run_energy_transfer`: the potential
+/-- The transferred Lyapunov gauge `Φ_tilde = Φ + w·R` of `run_energy_transfer`: the potential
 plus `w` times the determinant reserve of the retained grid. -/
 @[expose]
 def runGauge {d : ℕ} (P : Measure (CoeffSpace d)) (γ : ℝ) (jStar : ℕ) (η a w : ℝ) (h : ℕ)
     (m : Mat d) (k n : ℤ) : ℝ :=
   potential P γ jStar η a m k n +
-    w * run_reserve (fun r => blockLogDet (adaptedMean P (Geometry.explicitRoundedGrid jStar m) r)) h k n
+    w * run_reserve (fun r => blockLogDet (adaptedMean P (Geometry.explicitRoundedGrid jStar m)
+      r)) h k n
 
 /-! ## §2 Entry premises of `Selects` (landed) -/
 
 /-- `√(4d) = 2 √d`. -/
 private theorem sqrt_four_mul (x : ℝ) (_hx : 0 ≤ x) :
     Real.sqrt (4 * x) = 2 * Real.sqrt x := by
-  rw [show (4 : ℝ) * x = 2 ^ 2 * x by ring, Real.sqrt_mul (by positivity), Real.sqrt_sq (by norm_num)]
+  rw [show (4 : ℝ) * x = 2 ^ 2 * x by ring, Real.sqrt_mul (by positivity), Real.sqrt_sq (by
+    norm_num)]
 
 /-- The containment argument `2 √d · (2 e^e) = (2 √(4d)) · e^e`, in logarithms. -/
 private theorem logb_containment_arg (x e : ℝ) (hx : 0 < x) :
@@ -294,11 +296,13 @@ theorem run_initial {d : ℕ} (hd : 2 ≤ d) (γ : ℝ) (hγ : γ ∈ Set.Ico (0
   have hspan := scalar_span (S.eta ε σ) (bigQ d γ : ℝ) C 1 x x' y hηmem (by linarith only [hC])
     le_rfl hQ0 hx0 hinit hy0 hx'0 (by rw [mul_one]; linarith only [hstart])
   have hmetric : projectiveDistance (1 : Mat d)
-      (explicitCanonicalMetric (adaptedMean P (Geometry.explicitRoundedGrid jStar (1 : Mat d)) n₀)) ≤
+      (explicitCanonicalMetric (adaptedMean P (Geometry.explicitRoundedGrid jStar (1 : Mat d))
+        n₀)) ≤
       Cgeom * Real.log (2 + 4 * aspectRatio E) := by rw [hgrid]; exact hgeo
   have ha0 : (0 : ℝ) ≤ a := by linarith only [ha1]
   have hmetric' : a * projectiveDistance (1 : Mat d)
-      (explicitCanonicalMetric (adaptedMean P (Geometry.explicitRoundedGrid jStar (1 : Mat d)) n₀)) ≤
+      (explicitCanonicalMetric (adaptedMean P (Geometry.explicitRoundedGrid jStar (1 : Mat d))
+        n₀)) ≤
       a * Cgeom * Real.log (2 + 4 * aspectRatio E) := by
     have hm2 := mul_le_mul_of_nonneg_left hmetric ha0
     linarith only [hm2]
@@ -310,7 +314,8 @@ theorem run_initial {d : ℕ} (hd : 2 ≤ d) (γ : ℝ) (hγ : γ ∈ Set.Ico (0
   have hpot : potential P γ jStar (S.eta ε σ) a (1 : Mat d) n₀ (n₀ + (S.h : ℤ)) =
       S.eta ε σ * Real.log (1 + x' / S.eta ε σ) +
         a * projectiveDistance (1 : Mat d)
-          (explicitCanonicalMetric (adaptedMean P (Geometry.explicitRoundedGrid jStar (1 : Mat d)) n₀)) := rfl
+          (explicitCanonicalMetric (adaptedMean P (Geometry.explicitRoundedGrid jStar (1 : Mat
+            d)) n₀)) := rfl
   rw [hpot]
   linarith only [hspan, hmetric', hlogmono, hfin]
 
@@ -338,7 +343,8 @@ theorem run_initial_reserve {d : ℕ} (hd : 2 ≤ d) (γ : ℝ) (hγ : γ ∈ Se
       (adaptedMean P (1 : Mat d) n₀))
     (hsand₂ : BlockMatLoewnerLE (adaptedMean P (1 : Mat d) n₀) (blockScale 2 E)) :
     run_reserve
-        (fun r => blockLogDet (adaptedMean P (Geometry.explicitRoundedGrid jStar (1 : Mat d)) r)) h n₀
+        (fun r => blockLogDet (adaptedMean P (Geometry.explicitRoundedGrid jStar (1 : Mat d))
+          r)) h n₀
         (n₀ + (h : ℤ)) ≤
       ((h : ℝ) + 2) * ((d : ℝ) * Real.log (24 * aspectRatio E)) := by
   let := hP
@@ -357,7 +363,8 @@ theorem run_initial_reserve {d : ℕ} (hd : 2 ≤ d) (γ : ℝ) (hγ : γ ∈ Se
     simp only [detIncrement] at hloss
     linarith only [hloss]
   have hres := run_reserve_initial
-    (fun r => blockLogDet (adaptedMean P (Geometry.explicitRoundedGrid jStar (1 : Mat d)) r)) h n₀ hmono
+    (fun r => blockLogDet (adaptedMean P (Geometry.explicitRoundedGrid jStar (1 : Mat d)) r)) h
+      n₀ hmono
   have hApos : Book.Ch02.BlockPosDef (adaptedMean P (1 : Mat d) n₀) := by
     have := run_adaptedMean_blockPosDef hd P γ E Ψ K Src hP hst hce jStar hjStar
       (1 : Mat d) (Geometry.one_posDef d) n₀
@@ -370,7 +377,8 @@ theorem run_initial_reserve {d : ℕ} (hd : 2 ≤ d) (γ : ℝ) (hγ : γ ∈ Se
       (refBlock_le_six_aspect E hEs hE) hsand₂
   have hh2 : (0 : ℝ) ≤ (h : ℝ) + 2 := by positivity
   calc run_reserve
-        (fun r => blockLogDet (adaptedMean P (Geometry.explicitRoundedGrid jStar (1 : Mat d)) r)) h n₀
+        (fun r => blockLogDet (adaptedMean P (Geometry.explicitRoundedGrid jStar (1 : Mat d))
+          r)) h n₀
         (n₀ + (h : ℤ))
       ≤ ((h : ℝ) + 2) *
           blockLogDet (adaptedMean P (Geometry.explicitRoundedGrid jStar (1 : Mat d)) n₀) := hres

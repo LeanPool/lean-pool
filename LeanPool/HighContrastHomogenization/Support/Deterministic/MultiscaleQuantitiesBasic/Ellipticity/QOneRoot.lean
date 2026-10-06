@@ -60,7 +60,8 @@ theorem geometricWeight_mul_sqrt_coarseSigmaStarInvBlockNorm_le {d : ℕ}
     {Q R : TriadicCube d} {k : ℤ} (a : CoeffField d) (s q : ℝ) (n : ℕ)
     (hsq : 0 ≤ s * q) (hR : R ∈ descendantsAtScale Q k) :
     geometricWeight s q n * Real.rpow (coarseSigmaStarInvBlockNorm R a) (1 / 2 : ℝ) ≤
-      geometricWeight s q n * Real.rpow (maxDescendantSigmaStarInvNormAtScale Q k a) (1 / 2 : ℝ) := by
+      geometricWeight s q n * Real.rpow (maxDescendantSigmaStarInvNormAtScale Q k a) (1 / 2 : ℝ)
+        := by
   exact mul_le_mul_of_nonneg_left
     (sqrt_coarseSigmaStarInvBlockNorm_le_sqrt_maxDescendantSigmaStarInvNormAtScale a hR)
     (geometricWeight_nonneg n hsq)
@@ -103,7 +104,7 @@ theorem weighted_sqrt_coarseBBlockNorm_le_LambdaSqFinite_one_series {d : ℕ}
     intro n
     refine mul_nonneg (geometricWeight_nonneg n (by simpa using hs)) ?_
     refine Real.rpow_nonneg ?_ _
-    exact maxDescendantBBlockNormAtScale_nonneg Q (sub_le_self _ (by exact_mod_cast Nat.zero_le n)) a
+    exact maxDescendantBBlockNormAtScale_nonneg Q (sub_le_self _ (Nat.cast_nonneg n)) a
   have hsingleton :
       ∑ n ∈ ({N} : Finset ℕ),
         geometricWeight s 1 n *
@@ -157,7 +158,7 @@ theorem weighted_sqrt_coarseSigmaStarInvBlockNorm_le_lambdaSqFinite_one_series {
     refine mul_nonneg (geometricWeight_nonneg n (by simpa using hs)) ?_
     refine Real.rpow_nonneg ?_ _
     exact maxDescendantSigmaStarInvNormAtScale_nonneg Q
-      (sub_le_self _ (by exact_mod_cast Nat.zero_le n)) a
+      (sub_le_self _ (Nat.cast_nonneg n)) a
   have hsingleton :
       ∑ n ∈ ({N} : Finset ℕ),
         geometricWeight s 1 n *
@@ -188,7 +189,7 @@ theorem weighted_sqrt_coarseBBlockNorm_le_LambdaSq_one_rpow_half {d : ℕ}
     intro n
     refine mul_nonneg (geometricWeight_nonneg n (by simpa using hs)) ?_
     refine Real.rpow_nonneg ?_ _
-    exact maxDescendantBBlockNormAtScale_nonneg Q (sub_le_self _ (by exact_mod_cast Nat.zero_le n)) a
+    exact maxDescendantBBlockNormAtScale_nonneg Q (sub_le_self _ (Nat.cast_nonneg n)) a
   have hseries_nonneg :
       0 ≤
         ∑' n : ℕ,
@@ -230,7 +231,7 @@ theorem weighted_sqrt_coarseSigmaStarInvBlockNorm_le_lambdaSq_one_rpow_neg_half 
     refine mul_nonneg (geometricWeight_nonneg n (by simpa using hs)) ?_
     refine Real.rpow_nonneg ?_ _
     exact maxDescendantSigmaStarInvNormAtScale_nonneg Q
-      (sub_le_self _ (by exact_mod_cast Nat.zero_le n)) a
+      (sub_le_self _ (Nat.cast_nonneg n)) a
   have hseries_nonneg :
       0 ≤
         ∑' n : ℕ,
@@ -300,7 +301,7 @@ theorem geometricDiscount_mul_sqrt_coarseBBlockNorm_le_LambdaSq_one_rpow_half {d
     intro n
     refine mul_nonneg (geometricWeight_nonneg n (by simpa using hs)) ?_
     refine Real.rpow_nonneg ?_ _
-    exact maxDescendantBBlockNormAtScale_nonneg Q (sub_le_self _ (by exact_mod_cast Nat.zero_le n)) a
+    exact maxDescendantBBlockNormAtScale_nonneg Q (sub_le_self _ (Nat.cast_nonneg n)) a
   have hseries_nonneg :
       0 ≤
         ∑' n : ℕ,
@@ -340,7 +341,7 @@ theorem geometricDiscount_mul_sqrt_coarseSigmaStarInvBlockNorm_le_lambdaSq_one_r
     refine mul_nonneg (geometricWeight_nonneg n (by simpa using hs)) ?_
     refine Real.rpow_nonneg ?_ _
     exact maxDescendantSigmaStarInvNormAtScale_nonneg Q
-      (sub_le_self _ (by exact_mod_cast Nat.zero_le n)) a
+      (sub_le_self _ (Nat.cast_nonneg n)) a
   have hseries_nonneg :
       0 ≤
         ∑' n : ℕ,
@@ -374,7 +375,7 @@ theorem multiscale_ellipticity_LambdaSq_one_series_nonneg {d : ℕ}
   refine mul_nonneg (geometricWeight_nonneg n (by simpa using hs)) ?_
   refine Real.rpow_nonneg ?_ _
   exact maxDescendantBBlockNormAtScale_nonneg Q
-    (sub_le_self _ (by exact_mod_cast Nat.zero_le n)) a
+    (sub_le_self _ (Nat.cast_nonneg n)) a
 
 theorem multiscale_ellipticity_lambdaSq_one_series_nonneg {d : ℕ}
     (Q : TriadicCube d) (s : ℝ) (a : CoeffField d) (hs : 0 ≤ s) :
@@ -387,7 +388,7 @@ theorem multiscale_ellipticity_lambdaSq_one_series_nonneg {d : ℕ}
   refine mul_nonneg (geometricWeight_nonneg n (by simpa using hs)) ?_
   refine Real.rpow_nonneg ?_ _
   exact maxDescendantSigmaStarInvNormAtScale_nonneg Q
-    (sub_le_self _ (by exact_mod_cast Nat.zero_le n)) a
+    (sub_le_self _ (Nat.cast_nonneg n)) a
 
 theorem multiscale_ellipticity_LambdaSq_one_nonneg {d : ℕ}
     (Q : TriadicCube d) (s : ℝ) (a : CoeffField d) (hs : 0 ≤ s) :
@@ -488,7 +489,7 @@ theorem multiscale_ellipticity_LambdaSq_one_series_pos_of_isEllipticFieldOn_of_o
     refine mul_nonneg (geometricWeight_nonneg n (by simpa using hs.le)) ?_
     refine Real.rpow_nonneg ?_ _
     exact maxDescendantBBlockNormAtScale_nonneg Q
-      (sub_le_self _ (by exact_mod_cast Nat.zero_le n)) a
+      (sub_le_self _ (Nat.cast_nonneg n)) a
   have hf_zero_pos : 0 < f 0 := by
     have hweight : 0 < geometricWeight s 1 0 :=
       geometricWeight_pos 0 (by simpa using hs)
@@ -526,7 +527,7 @@ theorem multiscale_ellipticity_lambdaSq_one_series_pos_of_openCubeData
     refine mul_nonneg (geometricWeight_nonneg n (by simpa using hs.le)) ?_
     refine Real.rpow_nonneg ?_ _
     exact maxDescendantSigmaStarInvNormAtScale_nonneg Q
-      (sub_le_self _ (by exact_mod_cast Nat.zero_le n)) a
+      (sub_le_self _ (Nat.cast_nonneg n)) a
   have hf_zero_pos : 0 < f 0 := by
     have hweight : 0 < geometricWeight s 1 0 :=
       geometricWeight_pos 0 (by simpa using hs)
@@ -696,7 +697,7 @@ theorem coarseSigmaStarInvBlockNorm_le_lambdaSq_one_inv_of_isEllipticFieldOn_of_
     (coarseSigmaStarInvBlockNorm_le_lambdaSq_finite_inv_of_isEllipticFieldOn_of_isSigmaCoarse
       (Q := Q) (a := a) (s := s) (q := 1) hs (by norm_num) hEll hData hsum)
 
-@[simp] theorem multiscale_ellipticity_LambdaSq_one_rpow_half_eq_tsum {d : ℕ}
+theorem multiscale_ellipticity_LambdaSq_one_rpow_half_eq_tsum {d : ℕ}
     (Q : TriadicCube d) (s : ℝ) (a : CoeffField d) (hs : 0 ≤ s) :
     Real.rpow (LambdaSq Q s (.finite 1) a) (1 / 2 : ℝ) =
       ∑' n : ℕ,
@@ -709,7 +710,7 @@ theorem coarseSigmaStarInvBlockNorm_le_lambdaSq_one_inv_of_isEllipticFieldOn_of_
       (multiscale_ellipticity_LambdaSq_one_series_nonneg Q s a hs)
       (show (2 : ℝ) ≠ 0 by norm_num))
 
-@[simp] theorem multiscale_ellipticity_lambdaSq_one_rpow_neg_half_eq_tsum {d : ℕ}
+theorem multiscale_ellipticity_lambdaSq_one_rpow_neg_half_eq_tsum {d : ℕ}
     (Q : TriadicCube d) (s : ℝ) (a : CoeffField d) (hs : 0 ≤ s) :
     Real.rpow (lambdaSq Q s (.finite 1) a) (-1 / 2 : ℝ) =
       ∑' n : ℕ,
@@ -751,7 +752,7 @@ theorem multiscale_ellipticity_LambdaSq_one_rpow_half_le_of_lt_of_isEllipticFiel
   · intro n
     refine Real.rpow_nonneg ?_ _
     exact maxDescendantBBlockNormAtScale_nonneg Q
-      (sub_le_self _ (by exact_mod_cast Nat.zero_le n)) a
+      (sub_le_self _ (Nat.cast_nonneg n)) a
 
 theorem multiscale_ellipticity_LambdaSq_one_le_of_lt_of_isEllipticFieldOn_of_isSigmaCoarse
     {d : ℕ} [NeZero d] (Q : TriadicCube d) (a : CoeffField d) {t s : ℝ} {lam Lam : ℝ}
@@ -782,7 +783,8 @@ theorem multiscale_ellipticity_LambdaSq_one_le_of_lt_of_isEllipticFieldOn_of_isS
           exact sq_rpow_half_eq_self_of_nonneg
             (multiscale_ellipticity_LambdaSq_one_nonneg Q t a ht.le)
 
-theorem multiscale_ellipticity_lambdaSq_one_rpow_neg_half_le_of_lt_of_isEllipticFieldOn_of_isSigmaCoarse
+theorem
+  multiscale_ellipticity_lambdaSq_one_rpow_neg_half_le_of_lt_of_isEllipticFieldOn_of_isSigmaCoarse
     {d : ℕ} [NeZero d] (Q : TriadicCube d) (a : CoeffField d) {t s : ℝ} {lam Lam : ℝ}
     (ht : 0 < t) (hts : t < s)
     (hEll : IsEllipticFieldOn lam Lam (openCubeSet Q) a)
@@ -812,7 +814,7 @@ theorem multiscale_ellipticity_lambdaSq_one_rpow_neg_half_le_of_lt_of_isElliptic
   · intro n
     refine Real.rpow_nonneg ?_ _
     exact maxDescendantSigmaStarInvNormAtScale_nonneg Q
-      (sub_le_self _ (by exact_mod_cast Nat.zero_le n)) a
+      (sub_le_self _ (Nat.cast_nonneg n)) a
 
 theorem multiscale_ellipticity_lambdaSq_one_inv_le_of_lt_of_isEllipticFieldOn_of_isSigmaCoarse
     {d : ℕ} [NeZero d] (Q : TriadicCube d) (a : CoeffField d) {t s : ℝ} {lam Lam : ℝ}

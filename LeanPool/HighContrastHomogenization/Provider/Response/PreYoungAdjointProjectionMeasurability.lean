@@ -57,7 +57,7 @@ theorem aestronglyMeasurable_volumeAverage_weighted_vecDot_adjoint_gradient
         volumeAverage V (fun x ↦ eta x * (X a x).1 i)) P := by
     intro i
     simpa only [V, X, toFullBlockVec] using
-      Selection.aestronglyMeasurable_volumeAverage_weighted_diagonalWeakAdjointState_subSkew_alignedIndex
+      Selection.aestronglyMeasurable_weightedCellAverage_diagonalAdjointState
         hq hst P g hg p r hz (Sum.inl i) heta
   have hVU : V ⊆ adaptedCell q t :=
     adaptedCellAt_subset_of_mem_alignedIndex hq hst hz
@@ -132,7 +132,7 @@ theorem aestronglyMeasurable_volumeAverage_weighted_vecDot_adjoint_flux
         volumeAverage V (fun x ↦ eta x * (X a x).2 i)) P := by
     intro i
     simpa only [V, X, toFullBlockVec] using
-      Selection.aestronglyMeasurable_volumeAverage_weighted_diagonalWeakAdjointState_subSkew_alignedIndex
+      Selection.aestronglyMeasurable_weightedCellAverage_diagonalAdjointState
         hq hst P g hg p r hz (Sum.inr i) heta
   have hVU : V ⊆ adaptedCell q t :=
     adaptedCellAt_subset_of_mem_alignedIndex hq hst hz

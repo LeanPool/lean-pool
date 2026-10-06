@@ -185,11 +185,13 @@ theorem bridge_increment_trace_bound {d : ℕ} (H F : BlockMat d)
     rw [normalizedBlock, toFullBlockMat_ofFullBlockMat, hscale, Matrix.mul_smul, Matrix.smul_mul,
       matSqrt_inv_conj hF]
   apply bridge_unnormalize_order hH.isHermitian
-    (by rw [hscale]; simp only [Matrix.IsHermitian, Matrix.conjTranspose_smul, star_trivial, hF.isHermitian.eq]) hF
+    (by rw [hscale]; simp only [Matrix.IsHermitian, Matrix.conjTranspose_smul, star_trivial,
+      hF.isHermitian.eq]) hF
   apply (fullBlock_le_iff hN.isHermitian _).1
   · simpa only [hnscale, blockTrace] using ht
   · rw [hnscale]
-    simp only [Matrix.IsHermitian, Matrix.conjTranspose_smul, star_trivial, Matrix.conjTranspose_one]
+    simp only [Matrix.IsHermitian, Matrix.conjTranspose_smul, star_trivial,
+      Matrix.conjTranspose_one]
 
 private theorem bridge_normalized_sub_trace {d : ℕ} (A B F : BlockMat d) :
     blockTrace (blockSub (normalizedBlock A F) (normalizedBlock B F)) =
@@ -316,7 +318,8 @@ theorem bridge_boundary_sum (d : ℕ) (hd : 2 ≤ d)
       (ofFullBlockMat (∑ r ∈ Finset.Icc (jStar : ℤ) (j - (L : ℤ)),
         (3 : ℝ) ^ ((r : ℝ) - j) • toFullBlockMat (adaptedMean P (explicitRoundedGrid jStar m) r)))
       (blockScale ((3 / 2 : ℝ) * ((3 : ℝ) ^ (-(L : ℝ)) +
-        (3 : ℝ) ^ (-(1 - (1 - γ) / 8) * (L : ℝ)) * determinantDrift P γ (explicitRoundedGrid jStar m) jStar j))
+        (3 : ℝ) ^ (-(1 - (1 - γ) / 8) * (L : ℝ)) * determinantDrift P γ (explicitRoundedGrid
+          jStar m) jStar j))
         (adaptedMean P (explicitRoundedGrid jStar m) j)) := by
   have h := bridge_boundary_family (fun r => adaptedMean P (explicitRoundedGrid jStar m) r)
     (fun r => adaptedMean_posDef d hd P γ E Ψ K S hstat hdag jStar hj m hm r)
@@ -466,7 +469,8 @@ theorem bridge_mean_sandwich (d : ℕ) (hd : 2 ≤ d)
       hA.posSemidef.conjTranspose_mul_mul_same (matSqrt (toFullBlockMat F)⁻¹)
   have hI : (1 : FullBlockMat d) ≤ toFullBlockMat (normalizedBlock A F) := by
     simpa only [normalizedBlock, toFullBlockMat_ofFullBlockMat] using
-      Recurrence.one_le_normalize hF ((fullBlock_le_iff hF.isHermitian hA.isHermitian).2 (ho _ _ hn (by omega)))
+      Recurrence.one_le_normalize hF ((fullBlock_le_iff hF.isHermitian hA.isHermitian).2 (ho _ _
+        hn (by omega)))
   have hb := matrix_le_det_smul_one hN.isHermitian hI
   have hdet := (adaptedMean_order_consequences d hd P γ E Ψ K S hstat hdag jStar hj m hm
     n (n + 2 * (L : ℤ)) hn (by omega)).2.2.1
@@ -484,7 +488,8 @@ theorem bridge_mean_sandwich (d : ℕ) (hd : 2 ≤ d)
   apply (fullBlock_le_iff hN.isHermitian _).1
   · simpa only [hnscale] using hb
   · rw [hnscale]
-    simp only [Matrix.IsHermitian, Matrix.conjTranspose_smul, star_trivial, Matrix.conjTranspose_one]
+    simp only [Matrix.IsHermitian, Matrix.conjTranspose_smul, star_trivial,
+      Matrix.conjTranspose_one]
 
 private theorem bridge_quadratic_add {d : ℕ} (A B : BlockMat d) (v : BlockVec d) :
     (1 / 2 : ℝ) * blockVecDot v (blockMatVecMul
@@ -562,10 +567,14 @@ theorem bridge_endpoint_errors (d : ℕ) (hd : 2 ≤ d) (γ : ℝ)
     dsimp [C]; nlinarith only [hCu, hCv, mul_nonneg hCv.le hK0]
   have hCεv : 45 * Cv * K₀ ≤ C := by
     dsimp [C]; nlinarith only [hCu, hCv, mul_nonneg hCu.le hK0]
-  have hCwu : 5 * Cu ≤ C := by dsimp [C]; nlinarith only [hCu, hCv, mul_nonneg (add_nonneg hCu.le hCv.le) hK0]
-  have hCwv : 5 * Cv ≤ C := by dsimp [C]; nlinarith only [hCu, hCv, mul_nonneg (add_nonneg hCu.le hCv.le) hK0]
-  have hCuC : Cu ≤ C := by dsimp [C]; nlinarith only [hCu, hCv, mul_nonneg (add_nonneg hCu.le hCv.le) hK0]
-  have hCvC : Cv ≤ C := by dsimp [C]; nlinarith only [hCu, hCv, mul_nonneg (add_nonneg hCu.le hCv.le) hK0]
+  have hCwu : 5 * Cu ≤ C := by dsimp [C]; nlinarith only [hCu, hCv, mul_nonneg (add_nonneg
+    hCu.le hCv.le) hK0]
+  have hCwv : 5 * Cv ≤ C := by dsimp [C]; nlinarith only [hCu, hCv, mul_nonneg (add_nonneg
+    hCu.le hCv.le) hK0]
+  have hCuC : Cu ≤ C := by dsimp [C]; nlinarith only [hCu, hCv, mul_nonneg (add_nonneg hCu.le
+    hCv.le) hK0]
+  have hCvC : Cv ≤ C := by dsimp [C]; nlinarith only [hCu, hCv, mul_nonneg (add_nonneg hCu.le
+    hCv.le) hK0]
   refine ⟨max CsU CsV, C, hCsU.trans_le (le_max_left _ _), hC, ?_⟩
   intro P hP E Ψ K S hstat hdag jStar hj hsrc m mPlus hm hmPlus hratio n L hn hL
     hcontain ε hε hD hΔ F H T
@@ -579,7 +588,8 @@ theorem bridge_endpoint_errors (d : ℕ) (hd : 2 ≤ d) (γ : ℝ)
   let A := fun r => adaptedMean P q r
   let w := (3 : ℝ) ^ (-(L : ℝ))
   let W := 1 + aspectRatio E * (Real.sqrt (‖m‖ * ‖m⁻¹‖) + Real.sqrt (‖mPlus‖ * ‖mPlus⁻¹‖)) ^ 2
-  have hW : 0 ≤ W := by dsimp [W]; have := one_le_aspectRatio_of_coarseEllipticityDagger hdag; positivity
+  have hW : 0 ≤ W := by dsimp [W]; have := one_le_aspectRatio_of_coarseEllipticityDagger hdag;
+    positivity
   have hLn : (0 : ℝ) ≤ L := Nat.cast_nonneg L
   have hnR : (jStar : ℝ) ≤ n := by exact_mod_cast hn
   have hT : 0 ≤ T := mul_nonneg (mul_nonneg hW (by linarith only [hnR, hLn]))
@@ -600,10 +610,14 @@ theorem bridge_endpoint_errors (d : ℕ) (hd : 2 ≤ d) (γ : ℝ)
     n hn L hL ε hε hD hΔ
   have hExp := hadv.2.2.2.1
   have hDrifts := hadv.2.2.2.2
-  have hmid0 := bridge_determinantDrift_nonneg d hd P γ E Ψ K S hstat hdag jStar hj m hm (n + (L : ℤ))
-  have hend0 := bridge_determinantDrift_nonneg d hd P γ E Ψ K S hstat hdag jStar hj m hm (n + 2 * (L : ℤ))
-  have hmid : determinantDrift P γ q jStar (n + (L : ℤ)) ≤ 10 * ε := by linarith only [hDrifts, hend0]
-  have hend : determinantDrift P γ q jStar (n + 2 * (L : ℤ)) ≤ 10 * ε := by linarith only [hDrifts, hmid0]
+  have hmid0 := bridge_determinantDrift_nonneg d hd P γ E Ψ K S hstat hdag jStar hj m hm (n + (L
+    : ℤ))
+  have hend0 := bridge_determinantDrift_nonneg d hd P γ E Ψ K S hstat hdag jStar hj m hm (n + 2
+    * (L : ℤ))
+  have hmid : determinantDrift P γ q jStar (n + (L : ℤ)) ≤ 10 * ε := by linarith only [hDrifts,
+    hend0]
+  have hend : determinantDrift P γ q jStar (n + 2 * (L : ℤ)) ≤ 10 * ε := by linarith only
+    [hDrifts, hmid0]
   have hmeans := bridge_mean_sandwich d hd P γ E Ψ K S hstat hdag jStar hj m hm n hn L
   have hdecay : (3 : ℝ) ^ (-(1 - (1 - γ) / 8) * (L : ℝ)) ≤ 1 := by
     apply Real.rpow_le_one_of_one_le_of_nonpos (by norm_num)
@@ -613,7 +627,8 @@ theorem bridge_endpoint_errors (d : ℕ) (hd : 2 ≤ d) (γ : ℝ)
       (hDj : determinantDrift P γ q jStar j ≤ 10 * ε)
       (hjF : BlockMatLoewnerLE (A j) (blockScale 3 F)) :
       BlockMatLoewnerLE (ofFullBlockMat
-        (∑ r ∈ Finset.Icc (jStar : ℤ) (j - (L : ℤ)), (3 : ℝ) ^ ((r : ℝ) - j) • toFullBlockMat (A r)))
+        (∑ r ∈ Finset.Icc (jStar : ℤ) (j - (L : ℤ)), (3 : ℝ) ^ ((r : ℝ) - j) • toFullBlockMat (A
+          r)))
         (blockScale ((9 / 2 : ℝ) * (w + 10 * ε)) F) := by
     have hb := bridge_boundary_sum d hd P γ hγ E Ψ K S hstat hdag jStar hj m hm j L
     intro z
@@ -627,7 +642,8 @@ theorem bridge_endpoint_errors (d : ℕ) (hd : 2 ≤ d) (γ : ℝ)
     have hAj0 : 0 ≤ (1 / 2 : ℝ) * blockVecDot z (blockMatVecMul (A j) z) := by
       apply mul_nonneg (by norm_num)
       simpa only [← dotProduct_toFullBlockVec, toFullBlockVec_blockMatVecMul, star_trivial] using
-        (adaptedMean_posDef d hd P γ E Ψ K S hstat hdag jStar hj m hm j).posSemidef.dotProduct_mulVec_nonneg
+        (adaptedMean_posDef d hd P γ E Ψ K S hstat hdag jStar hj m hm
+          j).posSemidef.dotProduct_mulVec_nonneg
           (toFullBlockVec z)
     have h₁ := mul_le_mul_of_nonneg_right hcoef hAj0
     have hbc : 0 ≤ (3 / 2 : ℝ) * (w + 10 * ε) :=
@@ -671,9 +687,11 @@ theorem bridge_endpoint_errors (d : ℕ) (hd : 2 ≤ d) (γ : ℝ)
     have hbU' := hbU z
     have hbV' := hbV z
     have hAF' := hAF z
-    simp only [bridge_quadratic_sub, bridge_quadratic_add, Source.quadratic_blockScale] at hu' hv' hbU' hbV' hAF'
+    simp only [bridge_quadratic_sub, bridge_quadratic_add, Source.quadratic_blockScale] at hu'
+      hv' hbU' hbV' hAF'
     have htu := mul_le_mul_of_nonneg_right (mul_le_mul_of_nonneg_left (htail L hLn) hCu.le) (hF0 z)
-    have htv := mul_le_mul_of_nonneg_right (mul_le_mul_of_nonneg_left (htail (2 * L) (by positivity)) hCv.le) (hF0 z)
+    have htv := mul_le_mul_of_nonneg_right (mul_le_mul_of_nonneg_left (htail (2 * L) (by
+      positivity)) hCv.le) (hF0 z)
     dsimp only [W] at htu htv
     simp only [← mul_assoc] at htu htv
     exact bridge_scalar_errors Cu Cv K₀ ε w T _ _

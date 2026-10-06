@@ -134,7 +134,7 @@ theorem coarseBMatrixNorm_le_maxDescendantBMatrixNormAtScale_of_mem_descendantsA
     exact ((Set.toFinite _).image (fun R : TriadicCube d => coarseBMatrixNorm R a)).bddAbove
   exact le_csSup hbdd ⟨R, hR, rfl⟩
 
-theorem coarseSigmaStarInvMatrixNorm_le_maxDescendantSigmaStarInvMatrixNormAtScale_of_mem_descendantsAtScale
+theorem coarseSigmaStarInvMatrixNorm_le_maxDescendantNorm_atScale
     {d : ℕ} {Q R : TriadicCube d} {k : ℤ}
     (a : TriadicCoeffFamily d) (hR : R ∈ descendantsAtScale Q k) :
     coarseSigmaStarInvMatrixNorm R a ≤
@@ -428,7 +428,7 @@ theorem rpow_half_maxDescendantSigmaStarInvMatrixNormAtScale_originCube_neg_nat_
     have hlocal_le :
         coarseSigmaStarInvMatrixNorm R a ≤
           maxDescendantSigmaStarInvMatrixNormAtScale U (-(j : ℤ)) a :=
-      coarseSigmaStarInvMatrixNorm_le_maxDescendantSigmaStarInvMatrixNormAtScale_of_mem_descendantsAtScale
+      coarseSigmaStarInvMatrixNorm_le_maxDescendantNorm_atScale
         a hRU
     have hsqrt_le_T :
         Real.rpow (maxDescendantSigmaStarInvMatrixNormAtScale U (-(j : ℤ)) a)
@@ -611,7 +611,7 @@ theorem rpow_half_maxDescendantSigmaStarInvMatrixNormAtScale_originCube_neg_nat_
     have hlocal_le :
         coarseSigmaStarInvMatrixNorm R a ≤
           maxDescendantSigmaStarInvMatrixNormAtScale U (-(j : ℤ)) a :=
-      coarseSigmaStarInvMatrixNorm_le_maxDescendantSigmaStarInvMatrixNormAtScale_of_mem_descendantsAtScale
+      coarseSigmaStarInvMatrixNorm_le_maxDescendantNorm_atScale
         a hRU
     have hsqrt_le_T :
         Real.rpow (maxDescendantSigmaStarInvMatrixNormAtScale U (-(j : ℤ)) a)

@@ -271,6 +271,8 @@ instance {d : ℕ} {U : Set (Vec d)} : AddCommGroup (H1Function U) :=
         change (((n : ℝ) • u).grad x i) = (n • u.grad) x i
         simp [zsmul_eq_mul])
 
+/-- The additive homomorphism sending an H¹ function to its pair of value and weak-gradient
+representatives. -/
 @[expose]
 noncomputable def toFunGradAddMonoidHom {d : ℕ} {U : Set (Vec d)} :
     H1Function U →+ ((Vec d → ℝ) × (Vec d → Vec d)) where
@@ -479,6 +481,8 @@ noncomputable def mulContDiffMemLpTop {d : ℕ} {U : Set (Vec d)}
   by
     simp [H1Function.mulContDiffMemLpTop]
 
+/-- The H¹ product `φ u` for a smooth compactly supported multiplier, with gradient `φ∇u + u∇φ`.
+-/
 @[expose]
 noncomputable def mulContDiffHasCompactSupport {d : ℕ} {U : Set (Vec d)}
     (u : H1Function U) {φ : Vec d → ℝ} (hφ : ContDiff ℝ (⊤ : ℕ∞) φ)

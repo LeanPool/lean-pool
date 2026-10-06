@@ -502,7 +502,8 @@ theorem integral_avsum_sq_head_descendant_le_respCoeffMinus_car {d : ℕ} [NeZer
                   (respCoeffMinus F)).lowerRight Y.2))) ^ 2 := by
   have hblk : ∀ W : Fin d → ℤ, HasIntegrableCoarseBlock P
       (adaptedCellAtCenter (respGrid jStar F) (s - (n : ℤ)) W) :=
-    fun W => hasIntegrableCoarseBlock_adaptedCellAtCenter_respGrid hd P γ E Ψ Kg Src hstat hdag jStar
+    fun W => hasIntegrableCoarseBlock_adaptedCellAtCenter_respGrid hd P γ E Ψ Kg Src hstat hdag
+      jStar
       hjStar F hm (s - (n : ℤ)) W
   have hULe : ∀ W : Fin d → ℤ, ∀ i k : Fin d, Integrable (fun a =>
       (coarseBlockMatrix (adaptedCellAtCenter (respGrid jStar F) (s - (n : ℤ)) W)
@@ -525,12 +526,14 @@ theorem integral_avsum_sq_head_descendant_le_respCoeffMinus_car {d : ℕ} [NeZer
   have hUL0 : ∀ (W : Fin d → ℤ) (a : CoeffSpace d), 0 ≤ vecDot Y.1 (matVecMul
       (coarseBlockMatrix (adaptedCellAtCenter (respGrid jStar F) (s - (n : ℤ)) W)
         (respCoeffMinus F a)).upperLeft Y.1) :=
-    fun W a => (zero_le_vecDot_coarseBlockMatrix_respCoeffMinus_adaptedCellAtCenter jStar hjStar F hm
+    fun W a => (zero_le_vecDot_coarseBlockMatrix_respCoeffMinus_adaptedCellAtCenter jStar hjStar
+      F hm
       (s - (n : ℤ)) a Y W).1
   have hLR0 : ∀ (W : Fin d → ℤ) (a : CoeffSpace d), 0 ≤ vecDot Y.2 (matVecMul
       (coarseBlockMatrix (adaptedCellAtCenter (respGrid jStar F) (s - (n : ℤ)) W)
         (respCoeffMinus F a)).lowerRight Y.2) :=
-    fun W a => (zero_le_vecDot_coarseBlockMatrix_respCoeffMinus_adaptedCellAtCenter jStar hjStar F hm
+    fun W a => (zero_le_vecDot_coarseBlockMatrix_respCoeffMinus_adaptedCellAtCenter jStar hjStar
+      F hm
       (s - (n : ℤ)) a Y W).2
   have hUL : ∀ W : Fin d → ℤ, Integrable (fun a => vecDot Y.1 (matVecMul
       (coarseBlockMatrix (adaptedCellAtCenter (respGrid jStar F) (s - (n : ℤ)) W)
@@ -577,7 +580,8 @@ theorem integral_avsum_sq_head_descendant_le_respCoeffPlus_car {d : ℕ} [NeZero
                   (respCoeffPlus F)).lowerRight Y.2))) ^ 2 := by
   have hblk : ∀ W : Fin d → ℤ, HasIntegrableCoarseBlock P
       (adaptedCellAtCenter (respGrid jStar F) (s - (n : ℤ)) W) :=
-    fun W => hasIntegrableCoarseBlock_adaptedCellAtCenter_respGrid hd P γ E Ψ Kg Src hstat hdag jStar
+    fun W => hasIntegrableCoarseBlock_adaptedCellAtCenter_respGrid hd P γ E Ψ Kg Src hstat hdag
+      jStar
       hjStar F hm (s - (n : ℤ)) W
   have hULe : ∀ W : Fin d → ℤ, ∀ i k : Fin d, Integrable (fun a =>
       (coarseBlockMatrix (adaptedCellAtCenter (respGrid jStar F) (s - (n : ℤ)) W)

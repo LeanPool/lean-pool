@@ -35,7 +35,7 @@ The only scalar input is the expected fixed-constant calibration: the local
 constant `Ceff` dominates the dimension/geometric-discount factor times the
 parent-radius cutoff front. -/
 theorem
-    coarseCaccioppoliFluxEnergyExactConstantCoeffFactorBound_mul_parent_cutoff_terms_le_singleCubeBoundaryConstantBaseCoeff_of_descendant
+    coarseCaccioppoliFactorBound_mul_parentCutoffTerms_le_boundaryCoefficient
     {d : ℕ} {Q R : TriadicCube d} (a : CoeffField d)
     {Ceff : ℝ} {k j : ℕ} {ρ₁ ρ₂ : ℝ}
     (hR : R ∈ descendantsAtDepth Q j)
@@ -131,7 +131,7 @@ theorem
 The midpoint cutoff uses the full-gap triadic scale but requires the inflated
 fixed cutoff front `4 * Hessian + 2 * Gradient`. -/
 theorem
-    coarseCaccioppoliFluxEnergyExactConstantCoeffFactorBound_mul_parent_buffered_cutoff_terms_le_singleCubeBoundaryConstantBaseCoeff_of_descendant
+    coarseCaccioppoliFactorBound_mul_bufferedCutoffTerms_le_of_descendant
     {d : ℕ} {Q R : TriadicCube d} (a : CoeffField d)
     {Ceff : ℝ} {k j : ℕ} {ρ₁ ρ₂ : ℝ}
     (hR : R ∈ descendantsAtDepth Q j)

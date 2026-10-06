@@ -137,7 +137,7 @@ theorem coarseCaccioppoliInteriorExplicitHeightBound_le_noteRhs_of_coeff_le
       Q a s t Cinternal Cnote uL2Sq hcoeff hu)
 
 theorem
-    coarseCaccioppoliBoundaryExplicitHeightBound_le_noteRhs_of_coeff_le_noteCoeff_of_noteConstant_le
+    coarseCaccioppoliBoundaryHeightBound_le_noteRhs
     {d : ℕ} (Q : TriadicCube d) (a : CoeffField d)
     (s t Cinternal Cadequate Cnote uL2Sq : ℝ)
     (hcoeff :
@@ -170,7 +170,7 @@ theorem
       coarseCaccioppoliInteriorNoteRhs Q a s t Cnote uL2Sq :=
   coarseCaccioppoliInteriorExplicitHeightBound_le_noteRhs_of_boundary Q a s t
     Cinternal Cnote uL2Sq
-    (coarseCaccioppoliBoundaryExplicitHeightBound_le_noteRhs_of_coeff_le_noteCoeff_of_noteConstant_le
+    (coarseCaccioppoliBoundaryHeightBound_le_noteRhs
       Q a s t Cinternal Cadequate Cnote uL2Sq hcoeff
       hCadequate hCadequateCnote hs ht hst hu)
 
@@ -256,7 +256,7 @@ theorem coarseCaccioppoli_boundary_preRecurrence_of_noteEstimate {d : ℕ}
 
 /-- Boundary pre-recurrence from the note-shaped raw estimate plus the two
 remaining note-specific bookkeeping obligations. -/
-theorem coarseCaccioppoli_boundary_preRecurrence_of_noteEstimate_of_absorptionCondition_of_crossTermBound
+theorem coarseCaccioppoli_boundary_preRecurrence_of_absorbedCrossTerm
     {d : ℕ} (Q : TriadicCube d) (a : CoeffField d) (s t C uL2Sq : ℝ)
     (h : ℝ → ℝ → ℝ) {F : ℝ → ℝ}
     (hC : 0 ≤ C) (hs : 0 < s) (ht : 0 < t) (hst : s + t < 1)
@@ -277,7 +277,7 @@ theorem coarseCaccioppoli_boundary_preRecurrence_of_noteEstimate_of_absorptionCo
 
 /-- Explicit-height pre-recurrence from a note-shaped raw estimate, absorption,
 and the enlarged explicit-height cross-term square bound. -/
-theorem coarseCaccioppoli_boundary_explicitHeightPreRecurrence_of_noteEstimate_of_absorptionCondition_of_explicitCrossTermBound
+theorem coarseCaccioppoli_boundary_explicitHeightPreRecurrence_of_noteEstimate
     {d : ℕ} (Q : TriadicCube d) (a : CoeffField d) (s t C uL2Sq : ℝ)
     (h : ℝ → ℝ → ℝ) {F : ℝ → ℝ}
     (hC : 0 ≤ C) (hs : 0 < s) (ht : 0 < t) (hst : s + t < 1)

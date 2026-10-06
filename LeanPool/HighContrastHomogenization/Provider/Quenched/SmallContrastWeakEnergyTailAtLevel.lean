@@ -48,6 +48,29 @@ noncomputable section
 
 variable {d : ℕ}
 
+private theorem source_scale_delay_identity
+    (S : CoeffSpace d → ℝ) (t sK Delta : ℤ) (G : ℕ)
+    (hDeltadef : Delta = t + (G : ℤ) - 1 - sK) :
+    ∀ a, 3 * S a * (3 : ℝ) ^ (-((t : ℝ) + (G : ℝ))) =
+      S a * (3 : ℝ) ^ (-sK) * (3 : ℝ) ^ (-Delta) := by
+  classical
+  have hXeq : ∀ a, 3 * S a * (3 : ℝ) ^ (-((t : ℝ) + (G : ℝ))) =
+      S a * (3 : ℝ) ^ (-sK) * (3 : ℝ) ^ (-Delta) := by
+    intro a
+    rw [← Real.rpow_intCast (3 : ℝ) (-sK),
+      ← Real.rpow_intCast (3 : ℝ) (-Delta)]
+    rw [show (3 : ℝ) * S a * (3 : ℝ) ^ (-((t : ℝ) + (G : ℝ))) =
+        S a * ((3 : ℝ) ^ (1 : ℝ) * (3 : ℝ) ^ (-((t : ℝ) + (G : ℝ)))) from by
+      rw [Real.rpow_one]
+      ring]
+    rw [mul_assoc, ← Real.rpow_add (by norm_num : (0 : ℝ) < 3),
+      ← Real.rpow_add (by norm_num : (0 : ℝ) < 3)]
+    congr 1
+    rw [hDeltadef]
+    push_cast
+    ring_nf
+  exact hXeq
+
 /-- **The moment package at the matched threshold.**  The excess above `R / 2`,
 its fourth moment against `R ^ 4` times the crude moment — with no residue —
 and the maximum's own `L⁴` norm. -/
@@ -103,21 +126,7 @@ theorem weakMaximum_moment_package_at [NeZero d]
     refine measurableSet_lt measurable_const ?_
     exact Measurable.max measurable_const (hdag.source_measurable.mul_const _)
   -- the scale identity `3·S·3^{-(t+G)} = (S·3^{-s_K})·3^{-Δ}`
-  have hXeq : ∀ a, 3 * S a * (3 : ℝ) ^ (-((t : ℝ) + (G : ℝ))) =
-      S a * (3 : ℝ) ^ (-sK) * (3 : ℝ) ^ (-Delta) := by
-    intro a
-    rw [← Real.rpow_intCast (3 : ℝ) (-sK),
-      ← Real.rpow_intCast (3 : ℝ) (-Delta)]
-    rw [show (3 : ℝ) * S a * (3 : ℝ) ^ (-((t : ℝ) + (G : ℝ))) =
-        S a * ((3 : ℝ) ^ (1 : ℝ) * (3 : ℝ) ^ (-((t : ℝ) + (G : ℝ)))) from by
-      rw [Real.rpow_one]
-      ring]
-    rw [mul_assoc, ← Real.rpow_add (by norm_num : (0 : ℝ) < 3),
-      ← Real.rpow_add (by norm_num : (0 : ℝ) < 3)]
-    congr 1
-    rw [hDeltadef]
-    push_cast
-    ring_nf
+  have hXeq := source_scale_delay_identity S t sK Delta G hDeltadef
   have h3D1 : (1 : ℝ) ≤ (3 : ℝ) ^ Delta := by
     rw [show (1 : ℝ) = (3 : ℝ) ^ (0 : ℤ) from by norm_num]
     exact zpow_le_zpow_right₀ (by norm_num) (by omega)

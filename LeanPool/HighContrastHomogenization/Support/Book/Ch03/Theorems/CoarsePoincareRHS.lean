@@ -83,6 +83,84 @@ private theorem sqrt_const_mul_fourth_mul_sq_mul_sq_mul_sq
         rw [Real.sqrt_sq (mul_nonneg hz hw)]
     _ = Real.sqrt A * x ^ 2 * y * z * w := by ring
 
+private theorem poincareForcingTerm_le_fractionalPowerBound
+    {d : ℕ} {C s D L B : ℝ}
+    (hs : 0 < s) (hs_le : s ≤ 1) (hC_nonneg : 0 ≤ C)
+    (hC_force : Real.sqrt 15000 *
+      ((d : ℝ) * (Real.rpow (3 : ℝ) ((d : ℝ) + 1) * Real.sqrt 2)) ≤ C)
+    (hD_le : D ≤
+      (d : ℝ) * (Real.rpow (3 : ℝ) ((d : ℝ) + 1) * Real.sqrt 2))
+    (hL_inv_nonneg : 0 ≤ L⁻¹) (hB_nonneg : 0 ≤ B) :
+    Real.sqrt 15000 * (s⁻¹) ^ 2 * L⁻¹ * D * B ≤
+        C * Real.rpow s (-3 : ℝ) * L⁻¹ * B := by
+  have hs_inv_sq_eq : (s⁻¹) ^ 2 = Real.rpow s (-(2 : ℝ)) := by
+    calc
+      (s⁻¹) ^ 2 = (Real.rpow s (-1 : ℝ)) ^ 2 := by
+        exact congrArg (fun x : ℝ => x ^ 2) (Real.rpow_neg_one s).symm
+      _ = Real.rpow (Real.rpow s (-1 : ℝ)) (2 : ℝ) := by
+        exact (Real.rpow_natCast (Real.rpow s (-1 : ℝ)) 2).symm
+      _ = Real.rpow s ((-1 : ℝ) * (2 : ℝ)) := by
+        exact (Real.rpow_mul hs.le (-1 : ℝ) (2 : ℝ)).symm
+      _ = Real.rpow s (-(2 : ℝ)) := by ring_nf
+  have hs_inv_sq_le :
+      (s⁻¹) ^ 2 ≤ Real.rpow s (-3 : ℝ) := by
+    calc
+      (s⁻¹) ^ 2 = Real.rpow s (-(2 : ℝ)) := hs_inv_sq_eq
+      _ ≤ Real.rpow s (-3 : ℝ) :=
+        Real.rpow_le_rpow_of_exponent_ge hs hs_le (by norm_num)
+  have hforce_coeff_bound :
+      Real.sqrt 15000 * D ≤ C := by
+    calc
+      Real.sqrt 15000 * D ≤
+          Real.sqrt 15000 *
+            ((d : ℝ) *
+              (Real.rpow (3 : ℝ) ((d : ℝ) + 1) * Real.sqrt 2)) :=
+          mul_le_mul_of_nonneg_left hD_le (Real.sqrt_nonneg 15000)
+      _ = Real.sqrt 15000 *
+          ((d : ℝ) *
+            (Real.rpow (3 : ℝ) ((d : ℝ) + 1) * Real.sqrt 2)) := rfl
+      _ ≤ C := hC_force
+  have hforce_coeff :
+      (Real.sqrt 15000 * D) * (s⁻¹) ^ 2 ≤
+        C * Real.rpow s (-3 : ℝ) := by
+    exact mul_le_mul hforce_coeff_bound hs_inv_sq_le
+      (sq_nonneg s⁻¹) hC_nonneg
+  have hforce_term :
+      Real.sqrt 15000 * (s⁻¹) ^ 2 * L⁻¹ * D * B ≤
+        C * Real.rpow s (-3 : ℝ) * L⁻¹ * B := by
+    have htail : 0 ≤ L⁻¹ * B := mul_nonneg hL_inv_nonneg hB_nonneg
+    calc
+      Real.sqrt 15000 * (s⁻¹) ^ 2 * L⁻¹ * D * B
+          = ((Real.sqrt 15000 * D) * (s⁻¹) ^ 2) * (L⁻¹ * B) := by ring
+      _ ≤ (C * Real.rpow s (-3 : ℝ)) * (L⁻¹ * B) :=
+          mul_le_mul_of_nonneg_right hforce_coeff htail
+      _ = C * Real.rpow s (-3 : ℝ) * L⁻¹ * B := by ring
+  exact hforce_term
+
+private theorem poincareEnergyTerm_le_of_coefficientBound
+    {C s L E : ℝ}
+    (henergy_coeff : Real.sqrt 250 * s⁻¹ ≤ C * Real.rpow s (-(3 / 2 : ℝ))) :
+    Real.sqrt 250 * s⁻¹ * Real.sqrt L⁻¹ * Real.sqrt E ≤
+        C * Real.rpow s (-(3 / 2 : ℝ)) * Real.sqrt L⁻¹ *
+          Real.sqrt E := by
+  have henergy_term :
+      Real.sqrt 250 * s⁻¹ * Real.sqrt L⁻¹ * Real.sqrt E ≤
+        C * Real.rpow s (-(3 / 2 : ℝ)) * Real.sqrt L⁻¹ *
+          Real.sqrt E := by
+    have htail :
+        0 ≤ Real.sqrt L⁻¹ * Real.sqrt E :=
+      mul_nonneg (Real.sqrt_nonneg _) (Real.sqrt_nonneg _)
+    calc
+      Real.sqrt 250 * s⁻¹ * Real.sqrt L⁻¹ * Real.sqrt E
+          = (Real.sqrt 250 * s⁻¹) * (Real.sqrt L⁻¹ * Real.sqrt E) := by ring
+      _ ≤
+          (C * Real.rpow s (-(3 / 2 : ℝ))) *
+            (Real.sqrt L⁻¹ * Real.sqrt E) :=
+          mul_le_mul_of_nonneg_right henergy_coeff htail
+      _ = C * Real.rpow s (-(3 / 2 : ℝ)) * Real.sqrt L⁻¹ *
+          Real.sqrt E := by ring
+  exact henergy_term
+
 private theorem coarsePoincareRHSGradientExpanded_le_publicRHS
     {d : ℕ} [NeZero d] {C : ℝ}
     (hC_nonneg : 0 ≤ C) (hC_energy : Real.sqrt 250 ≤ C)
@@ -157,21 +235,6 @@ private theorem coarsePoincareRHSGradientExpanded_le_publicRHS
   have hs_inv_le :
       s⁻¹ ≤ Real.rpow s (-(3 / 2 : ℝ)) := by
     exact inv_le_rpow_neg_three_halves hs hs_le
-  have hs_inv_sq_eq : (s⁻¹) ^ 2 = Real.rpow s (-(2 : ℝ)) := by
-    calc
-      (s⁻¹) ^ 2 = (Real.rpow s (-1 : ℝ)) ^ 2 := by
-        exact congrArg (fun x : ℝ => x ^ 2) (Real.rpow_neg_one s).symm
-      _ = Real.rpow (Real.rpow s (-1 : ℝ)) (2 : ℝ) := by
-        exact (Real.rpow_natCast (Real.rpow s (-1 : ℝ)) 2).symm
-      _ = Real.rpow s ((-1 : ℝ) * (2 : ℝ)) := by
-        exact (Real.rpow_mul hs.le (-1 : ℝ) (2 : ℝ)).symm
-      _ = Real.rpow s (-(2 : ℝ)) := by ring_nf
-  have hs_inv_sq_le :
-      (s⁻¹) ^ 2 ≤ Real.rpow s (-3 : ℝ) := by
-    calc
-      (s⁻¹) ^ 2 = Real.rpow s (-(2 : ℝ)) := hs_inv_sq_eq
-      _ ≤ Real.rpow s (-3 : ℝ) :=
-        Real.rpow_le_rpow_of_exponent_ge hs hs_le (by norm_num)
   have hA_nonneg :
       0 ≤ 250 * (s⁻¹) ^ 2 * L⁻¹ * E := by
     positivity
@@ -204,46 +267,13 @@ private theorem coarsePoincareRHSGradientExpanded_le_publicRHS
   have henergy_term :
       Real.sqrt 250 * s⁻¹ * Real.sqrt L⁻¹ * Real.sqrt E ≤
         C * Real.rpow s (-(3 / 2 : ℝ)) * Real.sqrt L⁻¹ *
-          Real.sqrt E := by
-    have htail :
-        0 ≤ Real.sqrt L⁻¹ * Real.sqrt E :=
-      mul_nonneg (Real.sqrt_nonneg _) (Real.sqrt_nonneg _)
-    calc
-      Real.sqrt 250 * s⁻¹ * Real.sqrt L⁻¹ * Real.sqrt E
-          = (Real.sqrt 250 * s⁻¹) * (Real.sqrt L⁻¹ * Real.sqrt E) := by ring
-      _ ≤
-          (C * Real.rpow s (-(3 / 2 : ℝ))) *
-            (Real.sqrt L⁻¹ * Real.sqrt E) :=
-          mul_le_mul_of_nonneg_right henergy_coeff htail
-      _ = C * Real.rpow s (-(3 / 2 : ℝ)) * Real.sqrt L⁻¹ *
-          Real.sqrt E := by ring
-  have hforce_coeff_bound :
-      Real.sqrt 15000 * D ≤ C := by
-    calc
-      Real.sqrt 15000 * D ≤
-          Real.sqrt 15000 *
-            ((d : ℝ) *
-              (Real.rpow (3 : ℝ) ((d : ℝ) + 1) * Real.sqrt 2)) :=
-          mul_le_mul_of_nonneg_left hD_le (Real.sqrt_nonneg 15000)
-      _ = Real.sqrt 15000 *
-          ((d : ℝ) *
-            (Real.rpow (3 : ℝ) ((d : ℝ) + 1) * Real.sqrt 2)) := rfl
-      _ ≤ C := hC_force
-  have hforce_coeff :
-      (Real.sqrt 15000 * D) * (s⁻¹) ^ 2 ≤
-        C * Real.rpow s (-3 : ℝ) := by
-    exact mul_le_mul hforce_coeff_bound hs_inv_sq_le
-      (sq_nonneg s⁻¹) hC_nonneg
+          Real.sqrt E :=
+    poincareEnergyTerm_le_of_coefficientBound henergy_coeff
   have hforce_term :
       Real.sqrt 15000 * (s⁻¹) ^ 2 * L⁻¹ * D * B ≤
-        C * Real.rpow s (-3 : ℝ) * L⁻¹ * B := by
-    have htail : 0 ≤ L⁻¹ * B := mul_nonneg hL_inv_nonneg hB_nonneg
-    calc
-      Real.sqrt 15000 * (s⁻¹) ^ 2 * L⁻¹ * D * B
-          = ((Real.sqrt 15000 * D) * (s⁻¹) ^ 2) * (L⁻¹ * B) := by ring
-      _ ≤ (C * Real.rpow s (-3 : ℝ)) * (L⁻¹ * B) :=
-          mul_le_mul_of_nonneg_right hforce_coeff htail
-      _ = C * Real.rpow s (-3 : ℝ) * L⁻¹ * B := by ring
+        C * Real.rpow s (-3 : ℝ) * L⁻¹ * B :=
+    poincareForcingTerm_le_fractionalPowerBound hs hs_le hC_nonneg
+      hC_force hD_le hL_inv_nonneg hB_nonneg
   have hsqrtL_public :
       Real.sqrt L⁻¹ ≤
         (d : ℝ) *
@@ -600,7 +630,7 @@ theorem coarsePoincareRHSTheory {d : ℕ} [NeZero d] :
     refine ⟨C, hC_pos, ?_, ?_⟩
     · intro Q a s g u hs hs_lt hg
       have hdet :=
-        _root_.HCPolySupport.cubeBesovNegativeVectorSeminormTwo_grad_le_sqrt_intrinsicGlobalEnergyForce_noteConstants_expanded_of_h1DirichletRhsWeakSolutionOn_of_cubeVectorBesovHRegularity
+        _root_.HCPolySupport.negativeBesovSeminormTwo_grad_le_sqrt_of_h1DirichletRhsWeakSolutionOn
           (Q := Q) (a := publicCoeffField Q a) (g := g)
           (u := publicH1ToCubeSet u.toH1)
           (s := s) (lam := (a.coeffOn Q).lam) (Lam := (a.coeffOn Q).Lam)
@@ -611,19 +641,19 @@ theorem coarsePoincareRHSTheory {d : ℕ} [NeZero d] :
       have hpub :=
         coarsePoincareRHSGradientExpanded_le_publicRHS
           (d := d) (C := Cbase) hCbase_nonneg hC_energy hC_force u hs hs_lt hg
-      rw [scaleNormalizedNegativeBesovVectorNorm_finite_two_eq_cubeBesovNegativeVectorSeminormTwo]
+      rw [scaleNegativeBesovVectorNorm_finiteTwo_eq_cubeNegativeSeminorm]
       have hmain := hdet.trans (by simpa [C, forcedSolutionGradientField] using hpub)
       simpa [forcedSolutionGradientField] using hmain
     · intro Q a t g v ht ht_lt hg
       have htwo_t_pos : 0 < 2 * t := by nlinarith
       have htwo_t_le_one : 2 * t ≤ 1 := by nlinarith
       have hdet :=
-        _root_.HCPolySupport.coefficientEnergy_average_le_zeroTraceDirichletEnergyEnvelope_noteConstants_expanded_of_isZeroTraceDirichletRhsWeakSolution_of_cubeVectorBesovHRegularity
+        _root_.HCPolySupport.coefficientEnergy_average_le_of_isZeroTraceDirichletRhsWeakSolution
           (Q := Q) (a := publicCoeffField Q a) (g := g)
           (v := publicH10ToCubeSet v.toH10)
           (s := 2 * t) (lam := (a.coeffOn Q).lam) (Lam := (a.coeffOn Q).Lam)
           htwo_t_pos htwo_t_le_one (publicCoeffField_isEllipticFieldOn_cubeSet Q a)
-          (isZeroTraceDirichletRhsWeakSolution_publicCoeffField_cubeSet_of_zeroTraceForcedCubeSolution
+          (forcedCubeSolution_is_zeroTraceDirichletWeakSolution
             v)
           hg
       have henergy :
@@ -633,7 +663,7 @@ theorem coarsePoincareRHSTheory {d : ℕ} [NeZero d] :
             _root_.HCPolySupport.zeroTraceDirichletEnergyEnvelope
               Q (publicCoeffField Q a) (2 * t) g := by
         simpa using hdet
-      rw [zeroTraceForcedSolutionEnergyNorm_eq_sqrt_cubeAverage_coefficientEnergyDensity_publicCoeffField]
+      rw [forcedSolution_energyNorm_eq_sqrt_coefficientEnergy]
       exact (Real.sqrt_le_sqrt henergy).trans
         (zeroTraceDirichletEnergyEnvelope_sqrt_le_publicRHS
           (d := d) (C := Cbase) hCbase_nonneg hC_zero ht ht_lt hg)

@@ -23,7 +23,7 @@ public section
 /-!
 # Minkowski for the volume-normalized weighted norm, on an arbitrary domain
 
-`weightedGradNorm b V F = ‖s(b)^{1/2} F‖_{L̲²(V)}` is built on `∫⁻`, Mathlib's
+`weightedGradNorm b V F = ‖s(b)^{1/2} F‖_{L_underlined²(V)}` is built on `∫⁻`, Mathlib's
 **lower** Lebesgue integral, so the triangle inequality is **false** for
 arbitrary `F, G`: for a Bernstein set `S` the pair `F = 1_S • v`,
 `G = -1_{Sᶜ} • v` has both norms `0` while `F - G = v`.  It is true, and is
@@ -128,7 +128,7 @@ private theorem toHilbertVectorL2OfVecField_sub {U : Set (Vec d)}
 
 /-! ## Minkowski, for a pointwise elliptic coefficient -/
 
-/-- **The triangle inequality for `‖s^{1/2} ·‖_{L̲²(U)}`**, on two
+/-- **The triangle inequality for `‖s^{1/2} ·‖_{L_underlined²(U)}`**, on two
 square-integrable fields.  The membership hypotheses are not removable (`∫⁻`
 is the lower integral). -/
 theorem weightedGradNorm_sub_le_add_of_memVectorL2

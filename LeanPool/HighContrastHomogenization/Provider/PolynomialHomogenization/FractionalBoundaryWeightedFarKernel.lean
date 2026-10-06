@@ -36,6 +36,46 @@ noncomputable section
 
 variable {d : ℕ}
 
+private theorem dyadic_annuli_cover_complement
+    (U : Set (Vec d)) (x : Vec d) {r0 : ℝ} (hr0 : 0 < r0) :
+    U \ euclideanBallAt x r0 ⊆
+      ⋃ k : ℕ, U ∩ (euclideanBallAt x ((2 : ℝ) ^ (k + 1) * r0) \
+        euclideanBallAt x ((2 : ℝ) ^ k * r0)) := by
+  classical
+  rintro y ⟨hyU, hyfar⟩
+  have hfar : r0 ≤ euclideanDist x y := by
+    rw [mem_euclideanBallAt_iff_euclideanDist_lt hr0] at hyfar
+    simpa only [euclideanDist_comm, not_lt] using hyfar
+  have hex : ∃ n : ℕ,
+      euclideanDist x y < (2 : ℝ) ^ (n + 1) * r0 := by
+    have hevent : ∀ᶠ n : ℕ in Filter.atTop,
+        euclideanDist x y / r0 < (2 : ℝ) ^ n :=
+      (tendsto_pow_atTop_atTop_of_one_lt
+        (by norm_num : (1 : ℝ) < 2)).eventually_gt_atTop _
+    obtain ⟨n, hn⟩ := hevent.exists
+    refine ⟨n, ?_⟩
+    have hn' : euclideanDist x y < (2 : ℝ) ^ n * r0 :=
+      (div_lt_iff₀ hr0).mp hn
+    exact hn'.trans_le (by
+      rw [pow_succ]
+      exact mul_le_mul_of_nonneg_right
+        (le_mul_of_one_le_right (by positivity) (by norm_num)) hr0.le)
+  let n := Nat.find hex
+  have hnouter : euclideanDist x y < (2 : ℝ) ^ (n + 1) * r0 :=
+    Nat.find_spec hex
+  have hninner : (2 : ℝ) ^ n * r0 ≤ euclideanDist x y := by
+    rcases Nat.eq_zero_or_pos n with hn | hn
+    · simpa only [hn, pow_zero, one_mul] using hfar
+    · have hmin := Nat.find_min hex (Nat.pred_lt hn.ne')
+      push Not at hmin
+      have hnid : n.pred + 1 = n := Nat.succ_pred_eq_of_pos hn
+      rwa [hnid] at hmin
+  refine Set.mem_iUnion.mpr ⟨n, hyU, ?_, ?_⟩
+  · exact (mem_euclideanBallAt_iff_euclideanDist_lt (by positivity)).mpr
+      (by simpa only [euclideanDist_comm] using hnouter)
+  · rw [mem_euclideanBallAt_iff_euclideanDist_lt (by positivity)]
+    simpa only [euclideanDist_comm, not_lt] using hninner
+
 /-- Outside half the center boundary distance, the Riesz kernel against a
 negative boundary-distance moment has homogeneous order `s-p`. -/
 theorem exists_bound_lintegral_far_fractionalBoundaryKernel
@@ -200,40 +240,8 @@ theorem exists_bound_lintegral_far_fractionalBoundaryKernel
       _ = M * ENNReal.ofReal (T k) := by
         rw [ENNReal.ofReal_mul (Real.rpow_nonneg hinner.le _)]
         ac_rfl
-  have hcover : U \ euclideanBallAt x r0 ⊆ ⋃ k, shell k := by
-    rintro y ⟨hyU, hyfar⟩
-    have hfar : r0 ≤ euclideanDist x y := by
-      rw [mem_euclideanBallAt_iff_euclideanDist_lt hr0] at hyfar
-      simpa only [euclideanDist_comm, not_lt] using hyfar
-    have hex : ∃ n : ℕ,
-        euclideanDist x y < (2 : ℝ) ^ (n + 1) * r0 := by
-      have hevent : ∀ᶠ n : ℕ in Filter.atTop,
-          euclideanDist x y / r0 < (2 : ℝ) ^ n :=
-        (tendsto_pow_atTop_atTop_of_one_lt
-          (by norm_num : (1 : ℝ) < 2)).eventually_gt_atTop _
-      obtain ⟨n, hn⟩ := hevent.exists
-      refine ⟨n, ?_⟩
-      have hn' : euclideanDist x y < (2 : ℝ) ^ n * r0 :=
-        (div_lt_iff₀ hr0).mp hn
-      exact hn'.trans_le (by
-        rw [pow_succ]
-        exact mul_le_mul_of_nonneg_right
-          (le_mul_of_one_le_right (by positivity) (by norm_num)) hr0.le)
-    let n := Nat.find hex
-    have hnouter : euclideanDist x y < (2 : ℝ) ^ (n + 1) * r0 :=
-      Nat.find_spec hex
-    have hninner : (2 : ℝ) ^ n * r0 ≤ euclideanDist x y := by
-      rcases Nat.eq_zero_or_pos n with hn | hn
-      · simpa only [hn, pow_zero, one_mul] using hfar
-      · have hmin := Nat.find_min hex (Nat.pred_lt hn.ne')
-        push Not at hmin
-        have hnid : n.pred + 1 = n := Nat.succ_pred_eq_of_pos hn
-        rwa [hnid] at hmin
-    refine Set.mem_iUnion.mpr ⟨n, hyU, ?_, ?_⟩
-    · exact (mem_euclideanBallAt_iff_euclideanDist_lt (by positivity)).mpr
-        (by simpa only [euclideanDist_comm] using hnouter)
-    · rw [mem_euclideanBallAt_iff_euclideanDist_lt (by positivity)]
-      simpa only [euclideanDist_comm, not_lt] using hninner
+  have hcover : U \ euclideanBallAt x r0 ⊆ ⋃ k, shell k :=
+    dyadic_annuli_cover_complement U x hr0
   calc
     (∫⁻ y in U \ euclideanBallAt x
         (euclideanBoundaryDistance U x / 2),

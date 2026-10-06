@@ -32,7 +32,7 @@ this leaf exposes the same hooks with a caller-supplied nonnegative multiplier.
 open scoped BigOperators ENNReal
 
 /-- Weak-flux radicand component budgets closing into `C * correctionBound`. -/
-theorem coarseFluxResponseRHSWeakFluxExpandedRadicand_zero_le_const_mul_correctionBound_sq_of_component_bounds
+theorem coarseFluxRHSWeakFluxRadicand_zero_le_const_mul_correctionBound_sq
     {d : ℕ} (Q : TriadicCube d) (a : CoeffField d) (C s : ℝ)
     (g gradV : Vec d → Vec d) {BU BV Benergy BUtail BVtail Bforce : ℝ}
     (henergy :
@@ -107,7 +107,7 @@ theorem coarseFluxResponseRHSWeakFluxExpandedBound_le_const_mul_correctionBound_
       C * coarseFluxResponseRHSWeakFluxCorrectionBound Q a s g :=
   coarseFluxResponseRHSWeakFluxExpandedBound_le_const_mul_correctionBound_of_radicand_le_sq
     Q a g gradV 0 hC_nonneg hs havg_nonneg hBU_nonneg hBV_nonneg hgBdd
-    (coarseFluxResponseRHSWeakFluxExpandedRadicand_zero_le_const_mul_correctionBound_sq_of_component_bounds
+    (coarseFluxRHSWeakFluxRadicand_zero_le_const_mul_correctionBound_sq
       Q a C s g gradV henergy hBU hBV hforce hsum)
 
 /--
@@ -186,7 +186,7 @@ theorem cubeBesovNegativeVectorSeminormTwo_matVecMul_le_of_localized_depth_zero
 H¹ weak-solution weak-flux correction with the scalar side supplied as
 component budgets closing into a caller-supplied multiple of the compact bound.
 -/
-theorem cubeBesovNegativeVectorSeminormTwo_matVecMul_grad_le_const_mul_coarseFluxResponseRHSWeakFluxCorrectionBound_of_h1DirichletRhsWeakSolutionOn_of_component_bounds
+theorem negativeBesovSeminormTwo_matVecMul_grad_le_const_mul_of_weakFluxCorrectionBound
     {d : ℕ} [NeZero d] (Q : TriadicCube d) (a : CoeffField d)
     (s : ℝ) (g : Vec d → Vec d) (v : H1Function (cubeSet Q))
     (C : ℝ) {lam Lam : ℝ}
@@ -299,7 +299,7 @@ theorem cubeBesovNegativeVectorSeminormTwo_matVecMul_grad_le_const_mul_coarseFlu
           (fun x => matVecMul (a x) (v.grad x)) 0 ≤
         coarseFluxResponseRHSWeakFluxExpandedBound Q a s g v.grad 0 BU BV := by
     simpa [coarseFluxResponseRHSWeakFluxExpandedBound] using
-      localizedFluxDefectNegativeBesovAverageTwo_matVecMul_le_sqrt_of_scaled_noteEnergySeminormsForce_of_h1DirichletRhsWeakSolutionOn_of_constructed_harmonicRemainder_bounds
+      negativeBesovFluxAverage_matVecMul_le_sqrt_of_weakSolution
         (Q := Q) (a := a) (s := s) (g := g) (u := v) (lam := lam)
         (Lam := Lam) hs hs_le hweak hEll_desc hu_mem_desc hg_mem_desc
         hC_desc hData_desc hsum_desc hchildBdd huBdd_desc
@@ -318,7 +318,7 @@ theorem cubeBesovNegativeVectorSeminormTwo_matVecMul_grad_le_const_mul_coarseFlu
 H¹ weak-solution weak-flux correction with the scalar side stated as the exact
 expanded depth-zero budget.
 -/
-theorem cubeBesovNegativeVectorSeminormTwo_matVecMul_grad_le_const_mul_coarseFluxResponseRHSWeakFluxCorrectionBound_of_h1DirichletRhsWeakSolutionOn_of_exact_budget
+theorem negativeBesovSeminormTwo_matVecMul_grad_le_const_mul_of_exact_budget
     {d : ℕ} [NeZero d] (Q : TriadicCube d) (a : CoeffField d)
     (s : ℝ) (g : Vec d → Vec d) (v : H1Function (cubeSet Q))
     (C : ℝ) {lam Lam : ℝ}
@@ -420,7 +420,7 @@ theorem cubeBesovNegativeVectorSeminormTwo_matVecMul_grad_le_const_mul_coarseFlu
     cubeBesovNegativeVectorSeminormTwo Q s
         (fun x => matVecMul (a x) (v.grad x)) ≤
       C * coarseFluxResponseRHSWeakFluxCorrectionBound Q a s g :=
-  cubeBesovNegativeVectorSeminormTwo_matVecMul_grad_le_const_mul_coarseFluxResponseRHSWeakFluxCorrectionBound_of_h1DirichletRhsWeakSolutionOn_of_component_bounds
+  negativeBesovSeminormTwo_matVecMul_grad_le_const_mul_of_weakFluxCorrectionBound
     (Q := Q) (a := a) (s := s) (g := g) (v := v) (C := C)
     (lam := lam) (Lam := Lam) (BU := BU) (BV := BV)
     (Benergy :=
@@ -442,7 +442,7 @@ theorem cubeBesovNegativeVectorSeminormTwo_matVecMul_grad_le_const_mul_coarseFlu
 Exact-budget weak-flux correction with coefficient-energy average
 nonnegativity derived from descendant ellipticity.
 -/
-theorem cubeBesovNegativeVectorSeminormTwo_matVecMul_grad_le_const_mul_coarseFluxResponseRHSWeakFluxCorrectionBound_of_h1DirichletRhsWeakSolutionOn_of_exact_budget_of_descendant_isEllipticFieldOn
+theorem negativeBesovSeminormTwo_matVecMul_grad_le_weakFluxCorrection_of_exactBudget
     {d : ℕ} [NeZero d] (Q : TriadicCube d) (a : CoeffField d)
     (s : ℝ) (g : Vec d → Vec d) (v : H1Function (cubeSet Q))
     (C : ℝ) {lam Lam : ℝ}
@@ -549,7 +549,7 @@ theorem cubeBesovNegativeVectorSeminormTwo_matVecMul_grad_le_const_mul_coarseFlu
     cubeAverage_coefficientEnergyDensity_nonneg_of_descendant_isEllipticFieldOn
       Q a v.grad hEll_desc
   exact
-    cubeBesovNegativeVectorSeminormTwo_matVecMul_grad_le_const_mul_coarseFluxResponseRHSWeakFluxCorrectionBound_of_h1DirichletRhsWeakSolutionOn_of_exact_budget
+    negativeBesovSeminormTwo_matVecMul_grad_le_const_mul_of_exact_budget
       Q a s g v C hCmul_nonneg hs hs_le hweak hEll_desc hu_mem_desc
       hg_mem_desc hC_desc hData_desc hsum_desc hchildBdd huBdd_desc
       hgBdd_centered_desc hBdd hEll_open hData hsum_half
@@ -557,7 +557,7 @@ theorem cubeBesovNegativeVectorSeminormTwo_matVecMul_grad_le_const_mul_coarseFlu
       hBU_nonneg hBV_nonneg hu_tail hvConstructed hfluxV_bdd hbudget
 
 /-- Poincare radicand budgets closing into `C * correctionBound`. -/
-theorem matNorm_sq_mul_coarseFluxResponseRHSPoincareExpandedRadicand_le_const_mul_correctionBound_sq_of_component_bounds
+theorem matNorm_sq_mul_fluxPoincareRadicand_le_const_mul_correctionBound_sq
     {d : ℕ} (Q : TriadicCube d) (a : CoeffField d) (a0 : Mat d) (C s : ℝ)
     (g gradV : Vec d → Vec d) {Benergy Bforce : ℝ}
     (henergy :
@@ -582,7 +582,7 @@ theorem matNorm_sq_mul_coarseFluxResponseRHSPoincareExpandedRadicand_le_const_mu
   nlinarith [henergy, hforce, hsum]
 
 /-- Poincare square-root absorption into `C * correctionBound`. -/
-theorem matNorm_mul_coarseFluxResponseRHSPoincareExpandedBound_le_const_mul_correctionBound_of_radicand_le_sq
+theorem matrixNorm_mul_fluxPoincareBound_le_constant_mul_correctionBound_of_radicand
     {d : ℕ} (Q : TriadicCube d) (a : CoeffField d) (a0 : Mat d) {C s : ℝ}
     (g gradV : Vec d → Vec d)
     (hC_nonneg : 0 ≤ C) (hs : 0 < s)
@@ -612,7 +612,7 @@ theorem matNorm_mul_coarseFluxResponseRHSPoincareExpandedBound_le_const_mul_corr
   simpa [hleft_sq] using hrad
 
 /-- Poincare square-root absorption into `C * correctionBound` from budgets. -/
-theorem matNorm_mul_coarseFluxResponseRHSPoincareExpandedBound_le_const_mul_correctionBound_of_component_bounds
+theorem matNorm_mul_fluxPoincareBound_le_const_mul_correctionBound
     {d : ℕ} (Q : TriadicCube d) (a : CoeffField d) (a0 : Mat d) {C s : ℝ}
     (g gradV : Vec d → Vec d)
     (hC_nonneg : 0 ≤ C) (hs : 0 < s)
@@ -638,16 +638,16 @@ theorem matNorm_mul_coarseFluxResponseRHSPoincareExpandedBound_le_const_mul_corr
         (C * coarseFluxResponseRHSPoincareCorrectionBound Q a a0 s g) ^ 2) :
     matNorm a0 * coarseFluxResponseRHSPoincareExpandedBound Q a s g gradV ≤
       C * coarseFluxResponseRHSPoincareCorrectionBound Q a a0 s g :=
-  matNorm_mul_coarseFluxResponseRHSPoincareExpandedBound_le_const_mul_correctionBound_of_radicand_le_sq
+  matrixNorm_mul_fluxPoincareBound_le_constant_mul_correctionBound_of_radicand
     Q a a0 g gradV hC_nonneg hs havg_nonneg hgBdd
-    (matNorm_sq_mul_coarseFluxResponseRHSPoincareExpandedRadicand_le_const_mul_correctionBound_sq_of_component_bounds
+    (matNorm_sq_mul_fluxPoincareRadicand_le_const_mul_correctionBound_sq
       Q a a0 C s g gradV henergy hforce hsum)
 
 /--
 Poincare square-root absorption with the scalar side stated as the exact
 matrix-weighted expanded budget.
 -/
-theorem matNorm_mul_coarseFluxResponseRHSPoincareExpandedBound_le_const_mul_correctionBound_of_exact_budget
+theorem matNorm_mul_coarseFluxPoincareBound_le_const_correction_budget
     {d : ℕ} (Q : TriadicCube d) (a : CoeffField d) (a0 : Mat d) {C s : ℝ}
     (g gradV : Vec d → Vec d)
     (hC_nonneg : 0 ≤ C) (hs : 0 < s)
@@ -667,7 +667,7 @@ theorem matNorm_mul_coarseFluxResponseRHSPoincareExpandedBound_le_const_mul_corr
         (C * coarseFluxResponseRHSPoincareCorrectionBound Q a a0 s g) ^ 2) :
     matNorm a0 * coarseFluxResponseRHSPoincareExpandedBound Q a s g gradV ≤
       C * coarseFluxResponseRHSPoincareCorrectionBound Q a a0 s g :=
-  matNorm_mul_coarseFluxResponseRHSPoincareExpandedBound_le_const_mul_correctionBound_of_component_bounds
+  matNorm_mul_fluxPoincareBound_le_const_mul_correctionBound
     (Q := Q) (a := a) (a0 := a0) (g := g) (gradV := gradV)
     (C := C) (s := s)
     (Benergy :=
@@ -707,7 +707,7 @@ theorem cubeBesovNegativeVectorSeminormTwo_constMatMul_le_of_grad_bound
 H¹ weak-solution Poincare correction with the scalar side supplied as
 matrix-weighted budgets closing into a caller-supplied multiple.
 -/
-theorem cubeBesovNegativeVectorSeminormTwo_constMatMul_grad_le_const_mul_coarseFluxResponseRHSPoincareCorrectionBound_of_h1DirichletRhsWeakSolutionOn_of_component_bounds
+theorem negativeBesovSeminormTwo_constMatMul_le_const_mul_fluxPoincareCorrectionBound
     {d : ℕ} [NeZero d] (Q : TriadicCube d) (a : CoeffField d) (a0 : Mat d)
     (s : ℝ) (g : Vec d → Vec d) (v : H1Function (cubeSet Q))
     (C : ℝ) {lam Lam : ℝ}
@@ -752,7 +752,7 @@ theorem cubeBesovNegativeVectorSeminormTwo_constMatMul_grad_le_const_mul_coarseF
       cubeBesovNegativeVectorSeminormTwo Q s v.grad ≤
         coarseFluxResponseRHSPoincareExpandedBound Q a s g v.grad := by
     simpa [coarseFluxResponseRHSPoincareExpandedBound] using
-      cubeBesovNegativeVectorSeminormTwo_grad_le_sqrt_intrinsicGlobalEnergyForce_noteConstants_expanded_of_h1DirichletRhsWeakSolutionOn
+      negativeBesovSeminormTwo_grad_le_sqrt_intrinsicGlobalEnergyForce
         (Q := Q) (a := a) (g := g) (u := v)
         (s := s) (lam := lam) (Lam := Lam)
         hs hs_le hEll hweak hg hGlobalBdd
@@ -765,7 +765,7 @@ theorem cubeBesovNegativeVectorSeminormTwo_constMatMul_grad_le_const_mul_coarseF
   exact
     cubeBesovNegativeVectorSeminormTwo_constMatMul_le_of_grad_bound
       Q a0 s v.grad hmat hgrad
-      (matNorm_mul_coarseFluxResponseRHSPoincareExpandedBound_le_const_mul_correctionBound_of_component_bounds
+      (matNorm_mul_fluxPoincareBound_le_const_mul_correctionBound
         Q a a0 g v.grad hCmul_nonneg hs havg_nonneg hGlobalBdd
         henergy hforce hbudget)
 
@@ -773,7 +773,7 @@ theorem cubeBesovNegativeVectorSeminormTwo_constMatMul_grad_le_const_mul_coarseF
 H¹ weak-solution Poincare correction with the scalar side stated as the exact
 matrix-weighted expanded budget.
 -/
-theorem cubeBesovNegativeVectorSeminormTwo_constMatMul_grad_le_const_mul_coarseFluxResponseRHSPoincareCorrectionBound_of_h1DirichletRhsWeakSolutionOn_of_exact_budget
+theorem negativeBesovSeminormTwo_constMatMul_le_const_mul_of_fluxPoincareCorrectionBound
     {d : ℕ} [NeZero d] (Q : TriadicCube d) (a : CoeffField d) (a0 : Mat d)
     (s : ℝ) (g : Vec d → Vec d) (v : H1Function (cubeSet Q))
     (C : ℝ) {lam Lam : ℝ}
@@ -804,7 +804,7 @@ theorem cubeBesovNegativeVectorSeminormTwo_constMatMul_grad_le_const_mul_coarseF
     cubeBesovNegativeVectorSeminormTwo Q s
         (fun x => matVecMul a0 (v.grad x)) ≤
       C * coarseFluxResponseRHSPoincareCorrectionBound Q a a0 s g :=
-  cubeBesovNegativeVectorSeminormTwo_constMatMul_grad_le_const_mul_coarseFluxResponseRHSPoincareCorrectionBound_of_h1DirichletRhsWeakSolutionOn_of_component_bounds
+  negativeBesovSeminormTwo_constMatMul_le_const_mul_fluxPoincareCorrectionBound
     (Q := Q) (a := a) (a0 := a0) (s := s) (g := g) (v := v) (C := C)
     (lam := lam) (Lam := Lam)
     (Benergy :=

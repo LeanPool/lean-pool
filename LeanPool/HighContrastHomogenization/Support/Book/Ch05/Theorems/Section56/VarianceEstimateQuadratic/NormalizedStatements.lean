@@ -30,7 +30,7 @@ noncomputable section
 
 /-- Pointwise form of the variance triangle after interpreting variance as the
 Section 5.4 squared operator-norm fluctuation. -/
-theorem fullBlockNormalizedFluctuationOperatorNormSqAtScale_le_two_descendantsAverageNormalized_add_two_error
+theorem fullBlockFluctuationNormSq_le_two_descendantMean_add_two_error_of_error
     {d : ℕ} [NeZero d] {P : Ch04.RestrictionCoeffLaw d}
     (hP : Ch04.RestrictionLawCarrier P) (hStruct : Ch04.RestrictionStructuralLaw P)
     (center : ℤ) (Q : TriadicCube d) (j : ℕ) (a : RegCoeffField d) :
@@ -41,7 +41,7 @@ theorem fullBlockNormalizedFluctuationOperatorNormSqAtScale_le_two_descendantsAv
       2 * normalizedCoarseAverageErrorOperatorNormSq
         hP hStruct center Q j a := by
   let parentMatrix : FullBlockMat d :=
-    Section54.VarianceBoundGoodScale.fullBlockNormalizedFluctuationMatrix
+    Section54.VarianceBoundGoodScale.normalizedFluctuationMatrix
       hP hStruct center (cubeSet Q) a
   let averageMatrix : FullBlockMat d :=
     descendantsAverageNormalizedFluctuationMatrix hP hStruct center Q j a
@@ -62,7 +62,7 @@ theorem fullBlockNormalizedFluctuationOperatorNormSqAtScale_le_two_descendantsAv
         hP hStruct center Q a
         = ‖parentCLM‖ ^ (2 : ℕ) := by
           simp [Ch04.fullBlockNormalizedFluctuationOperatorNormSqAtScale,
-            Section54.VarianceBoundGoodScale.fullBlockNormalizedFluctuationOperatorNormSq_eq_norm_sq,
+            Section54.VarianceBoundGoodScale.fullBlockFluctuationNormSquare_eq_matrixNormSquare,
             parentMatrix, parentCLM]
     _ = ‖averageCLM + errorCLM‖ ^ (2 : ℕ) := by
           rw [hclm]
@@ -92,7 +92,7 @@ theorem fullBlockNormalizedFluctuationOperatorNormSqAtScale_le_two_descendantsAv
       2 * normalizedCoarseAverageErrorOperatorNormSq
         hP hStruct center Q j a := by
   have htriangle :=
-    fullBlockNormalizedFluctuationOperatorNormSqAtScale_le_two_descendantsAverageNormalized_add_two_error
+    fullBlockFluctuationNormSq_le_two_descendantMean_add_two_error_of_error
       hP hStruct center Q j a
   have hjensen :=
     descendantsAverageNormalizedFluctuationOperatorNormSq_le_descendantsAverage
@@ -103,7 +103,7 @@ theorem fullBlockNormalizedFluctuationOperatorNormSqAtScale_le_two_descendantsAv
 descendant-average fluctuation term.  This is the pointwise form of the
 manuscript variance splitting before the Jensen relaxation to the average of
 child variances. -/
-theorem fullBlockNormalizedFluctuationOperatorNormSqAtScale_le_two_descendantsAverageNormalized_add_eight_JTraceAverageSq_ae
+theorem fullBlockFluctuationNormSq_le_two_childMean_add_eight_traceAverageSq_ae
     {d : ℕ} [NeZero d] {P : Ch04.RestrictionCoeffLaw d}
     (hP : Ch04.RestrictionLawCarrier P) (hStruct : Ch04.RestrictionStructuralLaw P)
     (hP4 : QuantitativeCoarseGrainedEllipticity P)
@@ -120,7 +120,7 @@ theorem fullBlockNormalizedFluctuationOperatorNormSqAtScale_le_two_descendantsAv
     [normalizedCoarseAverageErrorOperatorNormSq_le_four_normalizedBlockJTraceAverageSq_ae
       hP hStruct hP4 m Q j] with a herror
   have htriangle :=
-    fullBlockNormalizedFluctuationOperatorNormSqAtScale_le_two_descendantsAverageNormalized_add_two_error
+    fullBlockFluctuationNormSq_le_two_descendantMean_add_two_error_of_error
       hP hStruct (m : ℤ) Q j a
   nlinarith
 
@@ -128,7 +128,7 @@ theorem fullBlockNormalizedFluctuationOperatorNormSqAtScale_le_two_descendantsAv
 the Section 5.4 squared operator-norm fluctuation observable for the variance
 terms.  The integrability needed to pass from the a.e. estimate to expectation
 is supplied by `(P4)`. -/
-theorem fullBlockNormalizedFluctuationOperatorNormSqAtScale_integral_le_two_descendantsAverageNormalized_add_eight_JTraceAverageSq
+theorem fullBlockFluctuationNormSq_integral_le_two_childMean_add_eight_of_eight
     {d : ℕ} [NeZero d] {P : Ch04.RestrictionCoeffLaw d}
     (hP : Ch04.RestrictionLawCarrier P) (hStruct : Ch04.RestrictionStructuralLaw P)
     (hP4 : QuantitativeCoarseGrainedEllipticity P)
@@ -169,7 +169,7 @@ theorem fullBlockNormalizedFluctuationOperatorNormSqAtScale_integral_le_two_desc
         ≤ᵐ[P]
       fun a : RegCoeffField d => 2 * F a + 8 * J a := by
     simpa [F, J, Q, j] using
-      fullBlockNormalizedFluctuationOperatorNormSqAtScale_le_two_descendantsAverageNormalized_add_eight_JTraceAverageSq_ae
+      fullBlockFluctuationNormSq_le_two_childMean_add_eight_traceAverageSq_ae
         hP hStruct hP4 m Q j
   have hmono :
       ∫ a,
@@ -179,7 +179,7 @@ theorem fullBlockNormalizedFluctuationOperatorNormSqAtScale_integral_le_two_desc
     refine integral_mono_of_nonneg ?_ hRhsInt hpoint
     filter_upwards with a
     exact
-      HCPolySupport.Book.Ch05.Section54.VarianceBoundGoodScale.fullBlockNormalizedFluctuationOperatorNormSqAtScale_nonneg
+      HCPolySupport.Book.Ch05.Section54.VarianceBoundGoodScale.fluctuationNormSquare_nonneg
         hP hStruct (m : ℤ) Q a
   calc
     ∫ a,
@@ -209,7 +209,7 @@ theorem fullBlockNormalizedFluctuationOperatorNormSqAtScale_integral_le_two_desc
 the Section 5.4 squared operator-norm fluctuation observable.  This is the
 a.s. pointwise inequality whose expectation gives the manuscript display
 `e.var.a.star` for the scalar block normalization used in Section 5.4. -/
-theorem fullBlockNormalizedFluctuationOperatorNormSqAtScale_le_two_descendantsAverage_add_eight_JTraceAverageSq_ae
+theorem fullBlockFluctuationNormSq_le_two_childMean_add_eight_of_eight_JTraceAverageSq
     {d : ℕ} [NeZero d] {P : Ch04.RestrictionCoeffLaw d}
     (hP : Ch04.RestrictionLawCarrier P) (hStruct : Ch04.RestrictionStructuralLaw P)
     (hP4 : QuantitativeCoarseGrainedEllipticity P)

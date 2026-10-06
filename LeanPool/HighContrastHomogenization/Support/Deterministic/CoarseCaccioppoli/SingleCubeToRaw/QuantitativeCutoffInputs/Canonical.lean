@@ -27,7 +27,7 @@ open scoped ENNReal
 /-- Canonical-cutoff harmonic analytic inputs with the scalar cutoff package
 bundled as `CoarseCaccioppoliScalarCutoffControls`. -/
 theorem
-    coarseCaccioppoliBoundaryRadiusEnergyBridgeCanonicalAnalyticInputs_at_pair_of_canonicalQuantitativeCutoff_of_aHarmonicFamily_of_outerRadius_lt_one_of_scalarCutoffControls
+    coarseCaccioppoliBoundaryRadiusEnergyAnalyticInputs_at_pair
     {d : ℕ} (Q : TriadicCube d) (a : CoeffField d) (s C : ℝ) {lam Lam : ℝ}
     (F : ℝ → ℝ)
     (w : ℝ → ℝ → AHarmonicFunction a (openCubeSet Q))
@@ -122,7 +122,7 @@ theorem
                 scalarCutoffGradientField (QuantitativeCubeCutoff.canonicalFun Q ρ₁ ρ₂) x))| := by
     simpa [ηρ, coarseCaccioppoliCanonicalQuantitativeCutoff,
       QuantitativeCubeCutoff.canonical] using
-      (le_abs_cubeAverage_vecDot_flux_scalarCutoffGradientField_of_aHarmonicFunction_of_le_cubeAverage_mul_scalarVariationEnergyIntegrand
+      (le_abs_cubeAverage_vectorDot_flux_scalarCutoffGradientField
         Q a (w ρ₁ ρ₂) hEll ηρ.smooth ηρ.hasCompactSupport
         (coarseCaccioppoliCanonicalQuantitativeCutoff_tsupport_subset_openCubeSet_of_lt_one
           Q hρ₁ hlt houter)
@@ -150,7 +150,7 @@ theorem
 sequence pair `(ρ_n, ρ_{n+1})`, with the strict outer-radius hypothesis
 discharged by the sequence itself. -/
 theorem
-    coarseCaccioppoliBoundaryRadiusEnergyBridgeCanonicalAnalyticInputs_at_radiusSequence_of_canonicalQuantitativeCutoff_of_aHarmonicFamily_of_scalarCutoffControls
+    coarseCaccioppoliBoundaryRadiusEnergyAnalyticInputs_at_radiusSequence
     {d : ℕ} (Q : TriadicCube d) (a : CoeffField d) (s C : ℝ) {lam Lam : ℝ}
     (F : ℝ → ℝ)
     (w : ℝ → ℝ → AHarmonicFunction a (openCubeSet Q))
@@ -355,7 +355,7 @@ theorem
         AS (coarseCaccioppoliRadiusSequence n)
           (coarseCaccioppoliRadiusSequence (n + 1)) := by
   exact
-    coarseCaccioppoliBoundaryRadiusEnergyBridgeCanonicalAnalyticInputs_at_pair_of_canonicalQuantitativeCutoff_of_aHarmonicFamily_of_outerRadius_lt_one_of_scalarCutoffControls
+    coarseCaccioppoliBoundaryRadiusEnergyAnalyticInputs_at_pair
       Q a s C F w g Acirc1 AcircS U A1 AS hEll
       (coarseCaccioppoliRadiusSequence_mem_Icc n).1
       (coarseCaccioppoliRadiusSequence_strictMono (Nat.lt_succ_self n))
@@ -368,7 +368,7 @@ theorem
 /-- Canonical-cutoff harmonic analytic inputs with the scalar cutoff package
 bundled as `CoarseCaccioppoliScalarCutoffControls`. -/
 theorem
-    CoarseCaccioppoliBoundaryRadiusEnergyBridgeCanonicalAnalyticInputs.of_canonicalQuantitativeCutoff_of_aHarmonicFamily_of_outerRadius_lt_one_of_scalarCutoffControls
+    CoarseCaccioppoliBoundaryRadiusEnergyBridgeCanonicalAnalyticInputs.of_scalarCutoffControls
     {d : ℕ} (Q : TriadicCube d) (a : CoeffField d) (s C : ℝ) {lam Lam : ℝ}
     (k h : ℝ → ℝ → ℝ) (F : ℝ → ℝ)
     (w : ℝ → ℝ → AHarmonicFunction a (openCubeSet Q))
@@ -444,7 +444,7 @@ theorem
       A1 AS := by
   intro ρ₁ ρ₂ hρ₁ hlt hρ₂
   exact
-    coarseCaccioppoliBoundaryRadiusEnergyBridgeCanonicalAnalyticInputs_at_pair_of_canonicalQuantitativeCutoff_of_aHarmonicFamily_of_outerRadius_lt_one_of_scalarCutoffControls
+    coarseCaccioppoliBoundaryRadiusEnergyAnalyticInputs_at_pair
       Q a s C F w g Acirc1 AcircS U A1 AS hEll hρ₁ hlt hρ₂
       (hlower hρ₁ hlt hρ₂) (houter hρ₁ hlt hρ₂)
       (henergyAvg hρ₁ hlt hρ₂) (hfluxMem hρ₁ hlt hρ₂) (huMem hρ₁ hlt hρ₂)
@@ -455,7 +455,8 @@ theorem
 
 /-- Quantitative cutoff analytic inputs combine with the separated canonical
 coefficient algebra to produce the full canonical factor inputs. -/
-theorem CoarseCaccioppoliBoundaryRadiusEnergyBridgeCanonicalFactorInputs.of_quantitativeCubeCutoff_of_coefficientBounds
+theorem
+  CoarseCaccioppoliBoundaryRadiusEnergyBridgeCanonicalFactorInputs.of_cutoff_coefficientBounds
     {d : ℕ} (Q : TriadicCube d) (a : CoeffField d) (s C uL2Sq : ℝ)
     (k h : ℝ → ℝ → ℝ) (F : ℝ → ℝ)
     (flux : ℝ → ℝ → Vec d → Vec d) (u g : ℝ → ℝ → Vec d → ℝ)
@@ -542,7 +543,7 @@ theorem CoarseCaccioppoliBoundaryRadiusEnergyBridgeCanonicalFactorInputs.of_quan
       (coarseCaccioppoliQuantitativeCutoffHessianBound Q)
       A1 AS := by
   exact
-    CoarseCaccioppoliBoundaryRadiusEnergyBridgeCanonicalFactorInputs.of_analyticInputs_of_coefficientBounds
+    CoarseCaccioppoliBoundaryRadiusEnergyBridgeCanonicalFactorInputs.of_analytic_inputs_bounds
       Q a s C uL2Sq k h F flux u g
       (fun ρ₁ ρ₂ => scalarCutoffGradientField (η ρ₁ ρ₂))
       energy Acirc1 AcircS
@@ -565,7 +566,7 @@ This is the direct handoff from the actual smooth cutoff
 `Xi` and `D` slots, while the remaining scalar-control and coefficient
 inequalities stay explicit. -/
 theorem
-    CoarseCaccioppoliBoundaryRadiusEnergyBridgeCanonicalFactorInputs.of_canonicalQuantitativeCutoff_of_aHarmonicFamily_of_outerRadius_lt_one_of_scalarCutoffControls_of_coefficientBounds
+    CoarseCaccioppoliBoundaryRadiusEnergyBridgeCanonicalFactorInputs.of_familyCoefficientBounds
     {d : ℕ} (Q : TriadicCube d) (a : CoeffField d) (s C uL2Sq : ℝ) {lam Lam : ℝ}
     (k h : ℝ → ℝ → ℝ) (F : ℝ → ℝ)
     (w : ℝ → ℝ → AHarmonicFunction a (openCubeSet Q))
@@ -648,7 +649,7 @@ theorem
       (coarseCaccioppoliQuantitativeCutoffHessianBound Q)
       A1 AS := by
   exact
-    CoarseCaccioppoliBoundaryRadiusEnergyBridgeCanonicalFactorInputs.of_analyticInputs_of_coefficientBounds
+    CoarseCaccioppoliBoundaryRadiusEnergyBridgeCanonicalFactorInputs.of_analytic_inputs_bounds
       Q a s C uL2Sq k h F
       (fun ρ₁ ρ₂ x => matVecMul (a x) ((w ρ₁ ρ₂).toH1.grad x))
       (fun ρ₁ ρ₂ x => (w ρ₁ ρ₂).toH1 x)
@@ -661,7 +662,7 @@ theorem
       (coarseCaccioppoliQuantitativeCutoffGradientBound Q)
       (coarseCaccioppoliQuantitativeCutoffHessianBound Q)
       A1 AS
-      (CoarseCaccioppoliBoundaryRadiusEnergyBridgeCanonicalAnalyticInputs.of_canonicalQuantitativeCutoff_of_aHarmonicFamily_of_outerRadius_lt_one_of_scalarCutoffControls
+      (CoarseCaccioppoliBoundaryRadiusEnergyBridgeCanonicalAnalyticInputs.of_scalarCutoffControls
         Q a s C k h F w g Acirc1 AcircS U A1 AS hEll hlower houter
         henergyAvg hfluxMem huMem hgMem hfluxEnergy hscalar hC
         hAcirc1_nonneg hAcircS_nonneg hU hA1 hAS)

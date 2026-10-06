@@ -35,29 +35,28 @@ open Book.Ch02
 This file is split mechanically out of `Internal.Ch02.SymmetricDirichletNeumann`.
 -/
 
-theorem responseSymmetricDirichletNeumannTheory_of_isEllipticFieldOn
+private theorem symmetricDirichletNeumann_values_of_canonicalCoarseData
     {d : ℕ} [NeZero d] (U : Domain d) (a : CoeffOn U)
-    (hsym : CoeffOn.IsSymmetric a)
     (ha : IsSymmetricCoeffField a.toCoeffField)
-    (hEll : IsEllipticFieldOn a.lam a.Lam (U : Set (Vec d)) a.toCoeffField) :
-    ResponseSymmetricDirichletNeumannTheory U a hsym := by
+    (hEll : IsEllipticFieldOn a.lam a.Lam (U : Set (Vec d)) a.toCoeffField)
+    {sigma0 : Mat d}
+    (hA : IsCoarseBlockMatrix (U : Set (Vec d)) a.toCoeffField
+      (deterministicCoarseBlockMatrix (U : Set (Vec d)) a.toCoeffField))
+    (hS : IsSigmaStarCoarse (U : Set (Vec d)) a.toCoeffField
+      (HCPolySupport.sigmaStarCoarse (U : Set (Vec d)) a.toCoeffField))
+    (hK : IsKappaCoarse (U : Set (Vec d)) a.toCoeffField
+      (HCPolySupport.sigmaStarCoarse (U : Set (Vec d)) a.toCoeffField)
+      (HCPolySupport.kappaCoarse (U : Set (Vec d)) a.toCoeffField))
+    (hSigma : IsSigmaCoarse (U : Set (Vec d)) a.toCoeffField
+      sigma0
+      (HCPolySupport.sigmaStarCoarse (U : Set (Vec d)) a.toCoeffField)
+      (HCPolySupport.kappaCoarse (U : Set (Vec d)) a.toCoeffField))
+    (hdet : IsUnit (HCPolySupport.sigmaStarCoarse (U : Set (Vec d)) a.toCoeffField).det)
+    : (∀ p : Vec d, symmetricDirichletNu U a p =
+        (1 / 2 : ℝ) * vecDot p (matVecMul (sigmaCoarse U a) p)) ∧
+      (∀ q : Vec d, symmetricNeumannNu U a q =
+        (1 / 2 : ℝ) * vecDot q (matVecMul (sigmaStarInvCoarse U a) q)) := by
   let Uset : Set (Vec d) := (U : Set (Vec d))
-  let hvol : 0 < (MeasureTheory.volume Uset).toReal := domain_volume_pos U
-  rcases
-      exists_oldCanonicalMatrixData_of_isOpenBoundedConvexDomain
-        (U := Uset) U.isDomain hEll hvol with
-    ⟨R, sigma0, compat, hA, _hSInv, hS, hK, hSigma, _hSigmaCanonical⟩
-  have hdet : IsUnit (HCPolySupport.sigmaStarCoarse Uset a.toCoeffField).det :=
-    isUnit_det_of_isSigmaStarCoarse_of_isEllipticFieldOn_of_isOpenBoundedConvexDomain
-      (U := Uset) (a := a.toCoeffField) R U.isDomain hEll hvol compat hS
-  let hInt : ResponseLinearIntegrabilityData Uset a.toCoeffField :=
-    ResponseLinearIntegrabilityData.of_isEllipticFieldOn hEll
-  rcases ScalarCanonicalMaximizer.GradientBasisData.nonempty_of_isOpenBoundedConvexDomain
-      (U := Uset) (a := a.toCoeffField) U.nonempty U.isDomain hEll with
-    ⟨basisGrad⟩
-  rcases ScalarCanonicalMaximizer.FluxBasisData.nonempty_of_isOpenBoundedConvexDomain
-      (U := Uset) (a := a.toCoeffField) U.nonempty U.isDomain hEll with
-    ⟨basisFlux⟩
   have hDirValue :
       ∀ p : Vec d,
         symmetricDirichletNu U a p =
@@ -124,6 +123,33 @@ theorem responseSymmetricDirichletNeumannTheory_of_isEllipticFieldOn
       huN.energy_eq_vecDot_sigmaStarInvCoarse_of_isSymmetricCoeffField_of_isEllipticFieldOn
         ha hEll hS
     rw [hnu, hHalf, hOld]
+  exact ⟨hDirValue, hNeuValue⟩
+
+theorem responseSymmetricDirichletNeumannTheory_of_isEllipticFieldOn
+    {d : ℕ} [NeZero d] (U : Domain d) (a : CoeffOn U)
+    (hsym : CoeffOn.IsSymmetric a)
+    (ha : IsSymmetricCoeffField a.toCoeffField)
+    (hEll : IsEllipticFieldOn a.lam a.Lam (U : Set (Vec d)) a.toCoeffField) :
+    ResponseSymmetricDirichletNeumannTheory U a hsym := by
+  let Uset : Set (Vec d) := (U : Set (Vec d))
+  let hvol : 0 < (MeasureTheory.volume Uset).toReal := domain_volume_pos U
+  rcases
+      exists_oldCanonicalMatrixData_of_isOpenBoundedConvexDomain
+        (U := Uset) U.isDomain hEll hvol with
+    ⟨R, sigma0, compat, hA, _hSInv, hS, hK, hSigma, _hSigmaCanonical⟩
+  have hdet : IsUnit (HCPolySupport.sigmaStarCoarse Uset a.toCoeffField).det :=
+    isUnit_det_of_isSigmaStarCoarse_of_isEllipticFieldOn_of_isOpenBoundedConvexDomain
+      (U := Uset) (a := a.toCoeffField) R U.isDomain hEll hvol compat hS
+  let hInt : ResponseLinearIntegrabilityData Uset a.toCoeffField :=
+    ResponseLinearIntegrabilityData.of_isEllipticFieldOn hEll
+  rcases ScalarCanonicalMaximizer.GradientBasisData.nonempty_of_isOpenBoundedConvexDomain
+      (U := Uset) (a := a.toCoeffField) U.nonempty U.isDomain hEll with
+    ⟨basisGrad⟩
+  rcases ScalarCanonicalMaximizer.FluxBasisData.nonempty_of_isOpenBoundedConvexDomain
+      (U := Uset) (a := a.toCoeffField) U.nonempty U.isDomain hEll with
+    ⟨basisFlux⟩
+  obtain ⟨hDirValue, hNeuValue⟩ :=
+    symmetricDirichletNeumann_values_of_canonicalCoarseData U a ha hEll hA hS hK hSigma hdet
   refine
     { dirichlet_minimizer_exists := ?_
       neumann_meanZero_maximizer_exists := ?_
@@ -185,7 +211,7 @@ theorem responseSymmetricDirichletNeumannTheory_of_isEllipticFieldOn
     rw [hvx, hv0x, ← hNx, ← hDx]
   · intro p q
     have hOld :=
-      responseJ_eq_half_vecDot_sigmaCoarse_add_half_vecDot_sigmaStarInvCoarse_sub_dot_of_isSymmetricCoeffField_of_isEllipticFieldOn_of_isOpenBoundedConvexDomain
+      responseJ_eq_half_dot_sigmaCoarse_add_half_dot_of_isSymmetricCoeffField
         (U := Uset) (a := a.toCoeffField) R U.isDomain ha hEll hvol compat
         hA hS hK hSigma p q
     rw [book_responseJ_eq_ResponseJ U a p q, hOld, hDirValue p, hNeuValue q]
@@ -247,7 +273,7 @@ theorem responseSymmetricDirichletNeumannTheory_of_isEllipticFieldOn
           book_sigmaStarInvCoarse_eq_sigmaStarInvCoarse U a] using! hOld
   · intro p q
     have hOld :=
-      responseJ_completedSquare_of_isSymmetricCoeffField_of_isEllipticFieldOn_of_isOpenBoundedConvexDomain
+      responseJ_completedSquare_of_symmetricEllipticOnConvexDomain
         (U := Uset) (a := a.toCoeffField) R U.isDomain ha hEll hvol compat
         hA hS hK hSigma p q
     rw [book_responseJ_eq_ResponseJ U a p q, hOld,
@@ -274,20 +300,20 @@ theorem responseSymmetricDirichletNeumannTheory_of_isEllipticFieldOn
         Book.Ch02.coarseMatrices, hk, matTranspose]
   · constructor
     · have h :=
-        harmonicMeanCoeffField_le_sigmaStarCoarse_of_isSymmetricCoeffField_of_isEllipticFieldOn_of_isOpenBoundedConvexDomain
+        harmonicMeanCoeffField_le_sigmaStarCoarse_of_isSymmetricCoeffField
           (U := Uset) (a := a.toCoeffField) R U.isDomain ha hEll hvol compat
       simpa [book_averagedSymmPartInv_eq_averagedSymmPartInv U a,
         averagedSymmPartInv_eq_volumeAverageMat_inv_of_isSymmetricCoeffField ha,
         book_sigmaStarCoarse_eq_sigmaStarCoarse U a] using h
     constructor
     · have h :=
-        sigmaStarCoarse_le_sigmaCoarse_of_isSymmetricCoeffField_of_isEllipticFieldOn_of_isOpenBoundedConvexDomain
+        sigmaStarCoarse_le_sigmaCoarse_of_isSymmetricCoeffField_of_ellipticField
           (U := Uset) (a := a.toCoeffField) R U.isDomain ha hEll hvol compat
           hA hS hK hSigma
       simpa [book_sigmaStarCoarse_eq_sigmaStarCoarse U a,
         book_sigmaCoarse_eq_sigmaCoarse U a] using h
     · have h :=
-        sigmaCoarse_le_volumeAverageMat_of_isSymmetricCoeffField_of_isEllipticFieldOn_of_isOpenBoundedConvexDomain
+        sigmaCoarse_le_volumeAverageMat_of_isSymmetricCoeffField_of_ellipticField
           (U := Uset) (a := a.toCoeffField) R U.isDomain ha hEll hvol compat
           hA hS hK hSigma
       simpa [book_sigmaCoarse_eq_sigmaCoarse U a, averageMat] using! h

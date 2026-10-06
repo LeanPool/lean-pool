@@ -31,7 +31,8 @@ elliptic-bridge wrappers establishing the harmonic-mean-style upper bound
 `HodgeConverseCriterion` / `IsOpenBoundedConvexDomain`.
 -/
 
-theorem sigmaStarInvCoarse_le_average_blockMatrixOfCoeff_lowerRight_of_mu_zero_right_eq_responseJ_zero
+theorem
+  sigmaStarInvCoarse_le_average_blockMatrixOfCoeff_lowerRight_of_mu_zero_right_eq_responseJ_zero
     {d : ℕ} {U : Set (Vec d)} [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     {a : CoeffField d}
     (hU : IsSobolevRegularDomain U)
@@ -109,7 +110,8 @@ theorem sigmaStarInvCoarse_le_average_blockMatrixOfCoeff_lowerRight_of_mu_zero_r
             simp [P, blockVecDot, matVecMul_zero, vecDot_zero_left]
       _ =
           (1 / 2 : ℝ) * vecDot q (matVecMul (sigmaStarInvCoarse U a) q) := by
-            rw [coarseBlockMatrix_lowerRight_eq_sigmaStarInvCoarse_of_mu_zero_right_eq_responseJ_zero
+            rw [
+            coarseBlockMatrix_lowerRight_eq_sigmaStarInvCoarse_of_mu_zero_right_eq_responseJ_zero
               (U := U) (a := a) hex hMuResp]
   have hEnergy :
       blockEnergyDensity a X =
@@ -120,9 +122,11 @@ theorem sigmaStarInvCoarse_le_average_blockMatrixOfCoeff_lowerRight_of_mu_zero_r
       matVecMul_zero, vecDot_zero_left]
   rw [hMuEq, hEnergy] at hMuLe
   have hAvgHalf :
-      volumeAverage U (fun x => (1 / 2 : ℝ) * vecDot q (matVecMul ((blockMatrixOfCoeff (a x)).lowerRight) q)) =
+      volumeAverage U (fun x => (1 / 2 : ℝ) * vecDot q (matVecMul ((blockMatrixOfCoeff (a
+        x)).lowerRight) q)) =
         (1 / 2 : ℝ) *
-          volumeAverage U (fun x => vecDot q (matVecMul ((blockMatrixOfCoeff (a x)).lowerRight) q)) := by
+          volumeAverage U (fun x => vecDot q (matVecMul ((blockMatrixOfCoeff (a x)).lowerRight)
+            q)) := by
     simpa [smul_eq_mul] using!
       (volumeAverage_smul U (1 / 2 : ℝ)
         (fun x => vecDot q (matVecMul ((blockMatrixOfCoeff (a x)).lowerRight) q)))
@@ -152,13 +156,14 @@ theorem sigmaStarInvCoarse_le_averaged_symmPart_inv_of_isEllipticFieldOn_of_hodg
       ∀ q : Vec d, Mu U (0, q) a = ResponseJ U 0 q a := by
     intro q
     exact
-      Rc.mu_zero_right_eq_responseJ_zero_of_isEllipticFieldOn_of_hodgeConverseCriterion
+      Rc.mu_zeroRight_eq_responseJ_zero_of_HodgeConverse
         system hU hEll hHodge hvol.ne' compat.mu_eq_muCandidate q
   simpa [blockMatrixOfCoeff] using
     sigmaStarInvCoarse_le_average_blockMatrixOfCoeff_lowerRight_of_mu_zero_right_eq_responseJ_zero
       (U := U) (a := a) hU hEll hex hvol.ne' hMuResp q
 
-theorem sigmaStarInvCoarse_le_averaged_symmPart_inv_of_isEllipticFieldOn_of_isOpenBoundedConvexDomain
+theorem
+  sigmaStarInvCoarse_le_averaged_symmPart_inv_of_isEllipticFieldOn_of_isOpenBoundedConvexDomain
     {d : ℕ} {U : Set (Vec d)} [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     (R : PotentialSolenoidalL2RecoveryData U)
     (hConv : IsOpenBoundedConvexDomain U)

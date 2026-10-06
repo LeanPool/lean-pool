@@ -92,8 +92,8 @@ theorem openParentGradientExtension_reflectedHessianRow_tail_transfer
             (originCube d m) i R x))
     (hQsource :
       openParentGradientExtension
-          (scaledOpenCubeSet (originCube d (m + 1)) (1 / 2 : ℝ)) uU =ᵐ[
-        volume.restrict (openCubeSet (originCube d m))]
+          (scaledOpenCubeSet (originCube d (m + 1)) (1 / 2 : ℝ)) uU
+            =ᵐ[ volume.restrict (openCubeSet (originCube d m))]
         fun x => HilbertVec.ofVec (R x)) :
     ∀ a : ℝ,
       (sqWeightedMeasure

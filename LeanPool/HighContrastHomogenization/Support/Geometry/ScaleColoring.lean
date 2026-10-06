@@ -107,7 +107,7 @@ theorem mem_descendantsAtScaleScaleColorClass_self {d : ℕ} {Q R : TriadicCube 
     R ∈ descendantsAtScaleScaleColorClass Q k (cubeScaleColor k R) := by
   simp [descendantsAtScaleScaleColorClass, hR]
 
-@[simp] theorem card_scaleColor (d : ℕ) (k : ℤ) :
+theorem card_scaleColor (d : ℕ) (k : ℤ) :
     Fintype.card (ScaleColor d k) = scaleColorPeriod k ^ d := by
   simp [ScaleColor]
 

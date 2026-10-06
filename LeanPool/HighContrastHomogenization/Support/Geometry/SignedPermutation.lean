@@ -184,6 +184,7 @@ theorem continuous_matVecMul_signedPermutation {d : ℕ} (R : Mat d) :
   exact continuous_pi fun i =>
     continuous_finsetSum Finset.univ fun j _ => continuous_const.mul (continuous_apply j)
 
+/-- The homeomorphism `x ↦ R x` for a signed permutation matrix, with inverse `x ↦ Rᵀ x`. -/
 @[expose]
 noncomputable def signedPermutationHomeomorph {d : ℕ} (R : Mat d)
     (hR : IsSignedPermutationMatrix R) : Vec d ≃ₜ Vec d where

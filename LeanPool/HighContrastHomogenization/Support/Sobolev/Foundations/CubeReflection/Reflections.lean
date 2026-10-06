@@ -193,7 +193,7 @@ theorem vecDot_coordReflectionLinear_coordReflectionLinear {d : ℕ}
     ring
   · simp [coordFaceReflection, coordFaceReflectionOffset, h]
 
-@[simp] theorem coordFaceReflection_apply_self {d : ℕ}
+theorem coordFaceReflection_apply_self {d : ℕ}
     (a : ℝ) (i : Fin d) (x : Vec d) :
     coordFaceReflection a i x i = 2 * a - x i := by
   simp

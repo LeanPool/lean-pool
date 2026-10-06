@@ -132,7 +132,7 @@ private theorem exactDualQOnePairing_le_exactCircFiniteSeminorm
             cubeBesovCircPartialNorm Q P.s (ENNReal.ofReal P.p) 1 (n + 1) f := by
       simpa [K, p',
         cubeBesovConjExponent_exactDualConjExponent_eq_ofReal P.p P.p_one_lt] using
-        abs_cubeBesovPairing_projection_le_max_mul_cubeBesovPartialNormTop_cubeBesovCircPartialNormOne
+        abs_cubeBesovPairing_projection_le_max_partialTop_circOne
           (Q := Q) (s := P.s) (p := ENNReal.ofReal p') (f := g) (g := f) (N := n)
           htargetInt hp'_ofReal_one hp'_ofReal_top hp'_conj_top hgFluct hfProjection
     have hoverlap :

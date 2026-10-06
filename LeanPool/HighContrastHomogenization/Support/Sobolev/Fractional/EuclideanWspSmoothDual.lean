@@ -192,6 +192,8 @@ noncomputable def cubeEuclideanNormalizedSmoothPairing {d : ℕ}
     (h : CubeEuclideanWspSmoothTest Q s p) : ℝ :=
   ∫ x, vecDot (F.toField x) (h.toField x) ∂normalizedCubeMeasure Q
 
+/-- The smooth fractional Sobolev test obtained by multiplying its vector field by the real scalar
+`c`. -/
 @[expose]
 public def CubeEuclideanWspSmoothTest.smul {d : ℕ}
     {Q : TriadicCube d} {s : FractionalOrder} {p : FiniteLpExponent}

@@ -25,7 +25,7 @@ noncomputable section
 open MeasureTheory.Measure
 open scoped BigOperators ENNReal
 
-theorem abs_cubeAverage_vecDot_scalar_smul_le_split_collapsed_note_terms_of_contDiff_component_vector_bound
+theorem abs_cubeAverage_fluxCutoff_le_collapsedNote_of_smoothComponents
     {d : ℕ} (Q : TriadicCube d) (s : ℝ) (flux : Vec d → Vec d)
     (u : Vec d → ℝ) (G ξ : Vec d → Vec d)
     {Bu1 BuS Bavg Bcirc1 BcircS B C BgConst BgCent : ℝ}
@@ -76,10 +76,10 @@ theorem abs_cubeAverage_vecDot_scalar_smul_le_split_collapsed_note_terms_of_cont
               cubeBesovScaleWeight s Q * Bavg) *
               (cubeBesovScaleWeight s Q * BgCent)))) := by
   have hconst :=
-    abs_cubeAverage_vecDot_cubeAverage_scalar_smul_le_collapsed_note_terms_of_contDiff_component_bound
+    abs_cubeAverage_fluxMeanCutoff_le_collapsedNote_of_smoothBound
       Q flux u ξ hB hflux hu hξLp hBgConst hBavg havg hfluxNeg1 hξ hderiv hBgConst_bound
   have hcent :=
-    abs_cubeAverage_vecDot_centered_scalar_smul_le_collapsed_note_terms_of_contDiff_component_vector_bound
+    abs_cubeAverage_vectorDot_centered_scalar_smul_le_collapsed_note_terms
       Q s flux u G ξ hB hs0 hs1 hflux hu hG hξLp hBgCent hBavg hC hBcircS havg
       hfluxNegS hproj hξ hderiv hGcirc1 hGcircS hBgCent_bound
   have hconstVecInfty :
@@ -197,7 +197,7 @@ theorem abs_cubeAverage_vecDot_scalar_smul_le_split_collapsed_note_terms_of_cont
 
 /-- Vector projected-Poincare version of the sharp split pairing estimate. -/
 theorem
-    abs_cubeAverage_vecDot_scalar_smul_le_split_collapsed_sharp_note_terms_of_contDiff_component_vector_bound
+    abs_cubeAverage_vectorDot_scalarMultiply_le_split_collapsed_sharp_note_terms
     {d : ℕ} (Q : TriadicCube d) (s : ℝ) (flux : Vec d → Vec d)
     (u : Vec d → ℝ) (G ξ : Vec d → Vec d)
     {Bu1 BuS Bavg Bcirc1 BcircS B C BgConst BgCent : ℝ}
@@ -247,10 +247,10 @@ theorem
             ((((3 : ℝ) ^ ((d : ℝ) + s) * (cubeBesovScaleWeight (-s) Q * BuS)) *
               (cubeBesovScaleWeight s Q * BgCent)))) := by
   have hconst :=
-    abs_cubeAverage_vecDot_cubeAverage_scalar_smul_le_collapsed_sharp_note_terms_of_contDiff_component_bound
+    abs_cubeAverage_vectorDot_cubeAverage_scalar_smul_le_collapsed_sharp_note_terms
       Q flux u ξ hB hflux hu hξLp hBgConst hfluxNeg1 hξ hderiv hBgConst_bound
   have hcent :=
-    abs_cubeAverage_vecDot_centered_scalar_smul_le_collapsed_sharp_note_terms_of_contDiff_component_vector_bound
+    abs_cubeAverage_vectorDot_centered_scalar_smul_le_collapsed_sharp_note_of_vector
       Q s flux u G ξ hB hs0 hs1 hflux hu hG hξLp hBgCent hBavg hC hBcircS havg
       hfluxNegS hproj hξ hderiv hGcirc1 hGcircS hBgCent_bound
   have hconstVecInfty :
@@ -366,7 +366,7 @@ theorem
             exact add_le_add hconst hcent
 
 theorem
-    abs_cubeAverage_vecDot_scalar_smul_le_split_collapsed_note_terms_of_contDiff_component_vector_effective_constant
+    abs_cubeAverage_vectorDot_scalarMultiply_le_split_collapsed_note_terms
     {d : ℕ} (Q : TriadicCube d) (s : ℝ) (flux : Vec d → Vec d)
     (u : Vec d → ℝ) (G ξ : Vec d → Vec d)
     {Bu1 BuS Bavg Bcirc1 BcircS B C BgConst BgCent : ℝ}
@@ -428,7 +428,7 @@ theorem
               ((Fintype.card (Fin d) : ℝ) * BcircS)))) ≤ BgCent := by
     simpa [mul_assoc, mul_left_comm, mul_comm] using hBgCent_bound
   have hraw :=
-    abs_cubeAverage_vecDot_scalar_smul_le_split_collapsed_note_terms_of_contDiff_component_vector_bound
+    abs_cubeAverage_fluxCutoff_le_collapsedNote_of_smoothComponents
       Q s flux u G ξ hB hs0 hs1 hflux hu hG hξLp hBgConst hBgCent hBavg hC
       hBcircS havg hfluxNeg1 hfluxNegS hproj hξ hderiv hGcirc1 hGcircS
       hBgConst_bound hBgCent_bound_vec
@@ -436,7 +436,7 @@ theorem
 
 /-- Effective-constant wrapper for the sharp vector split estimate. -/
 theorem
-    abs_cubeAverage_vecDot_scalar_smul_le_split_collapsed_sharp_note_terms_of_contDiff_component_vector_effective_constant
+    abs_cubeAverage_vectorDot_scalarMultiply_le_split_collapsed_sharp_note_of_vector
     {d : ℕ} (Q : TriadicCube d) (s : ℝ) (flux : Vec d → Vec d)
     (u : Vec d → ℝ) (G ξ : Vec d → Vec d)
     {Bu1 BuS Bavg Bcirc1 BcircS B C BgConst BgCent : ℝ}
@@ -497,7 +497,7 @@ theorem
               ((Fintype.card (Fin d) : ℝ) * BcircS)))) ≤ BgCent := by
     simpa [mul_assoc, mul_left_comm, mul_comm] using hBgCent_bound
   have hraw :=
-    abs_cubeAverage_vecDot_scalar_smul_le_split_collapsed_sharp_note_terms_of_contDiff_component_vector_bound
+    abs_cubeAverage_vectorDot_scalarMultiply_le_split_collapsed_sharp_note_terms
       Q s flux u G ξ hB hs0 hs1 hflux hu hG hξLp hBgConst hBgCent hBavg hC
       hBcircS havg hfluxNeg1 hfluxNegS hproj hξ hderiv hGcirc1 hGcircS
       hBgConst_bound hBgCent_bound_vec
@@ -572,7 +572,7 @@ theorem abs_cubeAverage_vecDot_scalar_smul_le_split_energy_coefficients_of_contD
 This is the coefficient-times-energy wrapper for the descendant/local
 Caccioppoli pairing used by the harmonic-vector endpoint. -/
 theorem
-    abs_cubeAverage_vecDot_scalar_smul_le_split_energy_coefficients_of_contDiff_component_vector_bound
+    abs_cubeAverage_fluxCutoff_le_energyCoeffSplit_of_smoothVector
     {d : ℕ} (Q : TriadicCube d) (s : ℝ) (flux : Vec d → Vec d)
     (u : Vec d → ℝ) (G ξ : Vec d → Vec d)
     {Aflux1 AfluxS Aavg Acirc1 AcircS E B C BgConst BgCent : ℝ}
@@ -625,7 +625,7 @@ theorem
               cubeBesovScaleWeight s Q * (Aavg * E)) *
               (cubeBesovScaleWeight s Q * BgCent)))) := by
   exact
-    abs_cubeAverage_vecDot_scalar_smul_le_split_collapsed_note_terms_of_contDiff_component_vector_effective_constant
+    abs_cubeAverage_vectorDot_scalarMultiply_le_split_collapsed_note_terms
       (Q := Q) (s := s) (flux := flux) (u := u) (G := G) (ξ := ξ)
       (Bu1 := Aflux1 * E) (BuS := AfluxS * E) (Bavg := Aavg * E)
       (Bcirc1 := Acirc1 * E) (BcircS := AcircS * E)

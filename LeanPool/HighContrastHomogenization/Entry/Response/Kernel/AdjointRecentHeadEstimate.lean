@@ -150,7 +150,8 @@ theorem recentHead_halves_forall_le_plus
             Real.sqrt (respLsqPlus P jStar F t e) *
             (weakCellSum (respGrid jStar F) t H (respEhatPlus P jStar F t)
                 (respCoeffPlus F a) +
-              weakAverageSum (respGrid jStar F) t H (Quenched.contrastRho γ) (respEhatPlus P jStar F t)
+              weakAverageSum (respGrid jStar F) t H (Quenched.contrastRho γ) (respEhatPlus P
+                jStar F t)
                 (respCoeffPlus F a)) := by
   classical
   set K : ℝ :=
@@ -315,7 +316,8 @@ theorem recentHead_actual_le_plus
             Real.sqrt (respLsqPlus P jStar F t e) *
             (weakCellSum (respGrid jStar F) t H (respEhatPlus P jStar F t)
                 (respCoeffPlus F a) +
-              weakAverageSum (respGrid jStar F) t H (Quenched.contrastRho γ) (respEhatPlus P jStar F t)
+              weakAverageSum (respGrid jStar F) t H (Quenched.contrastRho γ) (respEhatPlus P
+                jStar F t)
                 (respCoeffPlus F a)) := by
   classical
   obtain ⟨V, hV⟩ := recentHead_halves_forall_le_plus P γ hγ jStar H F t e hgrid a u hu hE hM0 hgood
@@ -403,7 +405,8 @@ theorem recentHead_actual_of_analytic_plus
             Real.sqrt (respLsqPlus P jStar F t e) *
             (weakCellSum (respGrid jStar F) t H (respEhatPlus P jStar F t)
                 (respCoeffPlus F a) +
-              weakAverageSum (respGrid jStar F) t H (Quenched.contrastRho γ) (respEhatPlus P jStar F t)
+              weakAverageSum (respGrid jStar F) t H (Quenched.contrastRho γ) (respEhatPlus P
+                jStar F t)
                 (respCoeffPlus F a)) := by
   classical
   -- The former side hypothesis `hLsq`, now discharged from `hE`.
@@ -488,7 +491,8 @@ theorem recentHead_carrier_plus (P : Measure (CoeffSpace d)) [IsProbabilityMeasu
           Real.sqrt (respLsqPlus P jStar F t e) *
           (weakCellSum (respGrid jStar F) t H (respEhatPlus P jStar F t)
               (respCoeffPlus F a) +
-            weakAverageSum (respGrid jStar F) t H (Quenched.contrastRho γ) (respEhatPlus P jStar F t)
+            weakAverageSum (respGrid jStar F) t H (Quenched.contrastRho γ) (respEhatPlus P jStar
+              F t)
               (respCoeffPlus F a)) := by
   classical
   have hE : (toFullBlockMat (respEhatPlus P jStar F t)).PosDef :=
@@ -733,7 +737,8 @@ representative of `respCoeffMinus F a` on the cell. -/
 theorem memVectorL2_optimizerField_respCoeffMinus_cell (q : Mat d) (hq : IsUnit q)
     (t : ℤ) (F : BlockMat d) (a : CoeffSpace d)
     (u : AHarmonicFunction (respCoeffMinus F a) (HighContrast.adaptedCell q t)) :
-    MemVectorL2 (HighContrast.adaptedCell q t) (fun x => (optimizerField (respCoeffMinus F a) u x).1) ∧
+    MemVectorL2 (HighContrast.adaptedCell q t) (fun x => (optimizerField (respCoeffMinus F a) u
+      x).1) ∧
       MemVectorL2 (HighContrast.adaptedCell q t)
         (fun x => (optimizerField (respCoeffMinus F a) u x).2) := by
   obtain ⟨lam, Lam, f, _hlam, _hle, hEll, hae⟩ :=
@@ -768,7 +773,8 @@ theorem integrableOn_optimizerField_respCoeffMinus_cell (q : Mat d) (hq : IsUnit
 theorem memVectorL2_optimizerField_respCoeffPlus_cell (q : Mat d) (hq : IsUnit q)
     (t : ℤ) (F : BlockMat d) (a : CoeffSpace d)
     (u : AHarmonicFunction (respCoeffPlus F a) (HighContrast.adaptedCell q t)) :
-    MemVectorL2 (HighContrast.adaptedCell q t) (fun x => (optimizerField (respCoeffPlus F a) u x).1) ∧
+    MemVectorL2 (HighContrast.adaptedCell q t) (fun x => (optimizerField (respCoeffPlus F a) u
+      x).1) ∧
       MemVectorL2 (HighContrast.adaptedCell q t)
         (fun x => (optimizerField (respCoeffPlus F a) u x).2) := by
   obtain ⟨lam, Lam, f, _hlam, _hle, hEll, hae⟩ :=

@@ -48,7 +48,8 @@ variable {d : ℕ}
 
 /-- Bilinear scalar observable of a block-entry-measurable matrix family is
 a.e.-measurable. -/
-private theorem aemeasurable_vecDot_matVecMul {L : RestrictionCoeffLaw d} {Bfield : RegCoeffField d → Mat d}
+private theorem aemeasurable_vecDot_matVecMul {L : RestrictionCoeffLaw d} {Bfield :
+  RegCoeffField d → Mat d}
     (u v : Vec d) (hB : ∀ i j, AEMeasurable (fun a => Bfield a i j) L) :
     AEMeasurable (fun a => vecDot u (matVecMul (Bfield a) v)) L := by
   have heq :

@@ -36,6 +36,14 @@ component summation lemmas.
 
 noncomputable section
 
+private theorem one_le_tailParameter_of_geometric_lower_bound
+    {A ρ lam : ℝ} {r : ℕ} (hA : 1 ≤ A) (hρ : 1 ≤ ρ)
+    (hlower : A * ρ ^ r ≤ lam) : 1 ≤ lam := by
+  have hρpow : 1 ≤ ρ ^ r := one_le_pow₀ hρ
+  have hproduct : 1 ≤ A * ρ ^ r := by
+    simpa using mul_le_mul hA hρpow zero_le_one (zero_le_one.trans hA)
+  exact hproduct.trans hlower
+
 private theorem rpow_three_mul_rpow_pow_nat_eq
     {x y : ℝ} {r : ℕ} :
     (3 : ℝ) ^ x * ((3 : ℝ) ^ y) ^ r =
@@ -331,8 +339,37 @@ theorem crudeBottom_lam_lower
       (by norm_num : (1 : ℝ) ≤ 3) hexp_lower
   exact div_le_div_of_nonneg_right hpow_le hden_pos.le
 
+private theorem bottom_decay_ratio_greater_than_one
+    {a b t αbad : ℝ} (ha : 0 < a) (hb_pos : 0 < b) (ht_pos : 0 < t)
+    (hαt : αbad < t) (hαb : αbad < b) (hαharm : αbad * (1 + b / a) < b) :
+    let c : ℝ :=
+      min t (min b (min (t - αbad) (min (b - αbad)
+        (min ((t - αbad) * (1 + b / a)) (b - αbad * (1 + b / a))))))
+    1 < (3 : ℝ) ^ c := by
+  intro c
+  let ρ : ℝ := (3 : ℝ) ^ c
+  have hc_pos : 0 < c := by
+    dsimp [c]
+    have hta : 0 < t - αbad := sub_pos.mpr hαt
+    have hba : 0 < b - αbad := sub_pos.mpr hαb
+    have hone_ba : 0 < 1 + b / a := by positivity
+    have hprod : 0 < (t - αbad) * (1 + b / a) :=
+      mul_pos hta hone_ba
+    have hharm : 0 < b - αbad * (1 + b / a) :=
+      sub_pos.mpr hαharm
+    positivity
+  have hρ_gt : 1 < ρ := by
+    dsimp [ρ]
+    calc
+      (1 : ℝ) = (3 : ℝ) ^ (0 : ℝ) := by simp
+      _ < (3 : ℝ) ^ c :=
+          Real.rpow_lt_rpow_of_exponent_lt
+            (by norm_num : (1 : ℝ) < 3) hc_pos
+  exact hρ_gt
+
 /-- Concrete high-bottom row estimate from a fixed high-pair tail bound. -/
-theorem measureReal_shiftedHighBottomPairEvent_quenchedProbeEnvelope_le_weighted_row_of_badPair_bound
+theorem
+  measureReal_shiftedHighBottomPairEvent_quenchedProbeEnvelope_le_weighted_row_of_badPair_bound
     {d : ℕ} [NeZero d] {σ Cfluct Centry a : ℝ}
     (hσ_pos : 0 < σ)
     (params : QuantitativeCoarseGrainedEllipticityParams d)
@@ -473,29 +510,13 @@ theorem measureReal_shiftedHighBottomPairEvent_quenchedProbeEnvelope_le_weighted
     have hd_pos : 0 < (d : ℝ) := by
       exact_mod_cast Nat.pos_of_ne_zero (NeZero.ne d)
     positivity
-  have hc_pos : 0 < c := by
-    dsimp [c]
-    have hta : 0 < t - αbad := sub_pos.mpr hαt
-    have hba : 0 < b - αbad := sub_pos.mpr hαb
-    have hone_ba : 0 < 1 + b / a := by positivity
-    have hprod : 0 < (t - αbad) * (1 + b / a) :=
-      mul_pos hta hone_ba
-    have hharm : 0 < b - αbad * (1 + b / a) :=
-      sub_pos.mpr hαharm
-    positivity
   have hw_pos : 0 < w := by
     dsimp [w]
     exact_mod_cast pow_pos (by norm_num : (0 : ℕ) < 3) d
   have hρ_pos : 0 < ρ := by
     dsimp [ρ]
     exact Real.rpow_pos_of_pos (by norm_num : (0 : ℝ) < 3) _
-  have hρ_gt : 1 < ρ := by
-    dsimp [ρ]
-    calc
-      (1 : ℝ) = (3 : ℝ) ^ (0 : ℝ) := by simp
-      _ < (3 : ℝ) ^ c :=
-          Real.rpow_lt_rpow_of_exponent_lt
-            (by norm_num : (1 : ℝ) < 3) hc_pos
+  have hρ_gt : 1 < ρ := bottom_decay_ratio_greater_than_one ha hb_pos ht_pos hαt hαb hαharm
   have hS_nonneg : 0 ≤ (S.card : ℝ) := by positivity
   have hA_nonneg : 0 ≤ A := by linarith [hA_one_local]
   have hAρ_nonneg : 0 ≤ A * ρ ^ r :=
@@ -527,14 +548,8 @@ theorem measureReal_shiftedHighBottomPairEvent_quenchedProbeEnvelope_le_weighted
             (q := q) (r := r) (j := j)
             hK_pos hCfluct hΓ.thetaHat_pos ha ht_pos hαt hαb hαharm
             hℓn hnm
-      have hρ_pow_one : 1 ≤ ρ ^ r :=
-        one_le_pow₀ (le_of_lt hρ_gt)
-      have hlam_one : 1 ≤ lam := by
-        have hAρ_one : 1 ≤ A * ρ ^ r := by
-          simpa using
-            mul_le_mul hA_one_local hρ_pow_one
-              (by norm_num : (0 : ℝ) ≤ 1) hA_nonneg
-        exact hAρ_one.trans hlam_lower
+      have hlam_one : 1 ≤ lam :=
+        one_le_tailParameter_of_geometric_lower_bound hA_one_local hρ_gt.le hlam_lower
       have hbad :
           P.real (badPairEvent Hshift t αbad q m n) ≤
             (S.card : ℝ) * ((D.card : ℝ) * Real.exp (-(lam ^ τ))) := by
@@ -625,7 +640,7 @@ theorem measureReal_shiftedHighBottomPairEvent_quenchedProbeEnvelope_le_weighted
 
 /-- Concrete high-bottom component estimate obtained by summing a fixed
 weighted row estimate. -/
-theorem measureReal_shiftedHighBottomBadScaleEvent_quenchedProbeEnvelope_le_weighted_kernel_of_row_bound
+theorem shiftedHighBottomBadScaleMeasure_le_weightedKernel_of_rowBound
     {d : ℕ} [NeZero d] {σ Cfluct Centry a : ℝ}
     (hσ_pos : 0 < σ)
     (params : QuantitativeCoarseGrainedEllipticityParams d)
@@ -839,7 +854,7 @@ theorem measureReal_shiftedHighBottomBadScaleEvent_quenchedProbeEnvelope_le_weig
       (d := d) (σ := σ) hσ_pos params
   exact
     ⟨Cfluct, Centry, a, hCfluct, hCentry, ha,
-      measureReal_shiftedHighBottomBadScaleEvent_quenchedProbeEnvelope_le_weighted_kernel_of_row_bound
+      shiftedHighBottomBadScaleMeasure_le_weightedKernel_of_rowBound
         (d := d) (σ := σ) (Cfluct := Cfluct) (Centry := Centry) (a := a)
         hσ_pos params hCfluct hCentry ha hrow⟩
 

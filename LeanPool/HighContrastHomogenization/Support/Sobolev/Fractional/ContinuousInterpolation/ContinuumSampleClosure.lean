@@ -78,7 +78,7 @@ theorem triadicContinuousKShiftedSampleEnergy_le_lowerSeriesConstant_inv_mul_con
 /-- The full sampled continuous K energy is controlled by the normalized
 Euclidean `L²` energy and the continuum K energy. -/
 theorem
-  triadicContinuousKSampleEnergy_le_sq_normalizedEuclideanLpENorm_add_lowerSeriesConstant_inv_mul_continuumEnergy
+  triadicSampleEnergy_le_sq_LpNorm_add_inverseSeriesConstant_mul_continuumEnergy
     {d : ℕ} (s : FractionalOrder) (F : UnitCubeEuclideanL2Field d) :
     triadicContinuousKSampleEnergy s F ≤
       ((unitCenteredCubeDomain d).normalizedEuclideanLpENorm (2 : ℝ≥0∞) F) ^ 2 +

@@ -83,7 +83,7 @@ theorem abs_cutoffProductTermOnDependentFamily_le_scaledWeakNormProduct
   have hid :
       cutoffProductTermOnCube Q aQ φ p q p0 q0 = -(1 / 2 : ℝ) * A := by
     have hraw :=
-      cutoffProductTermOnCube_eq_neg_half_cubeAverage_fluxDefect_centeredPotentialDefect_smul_scalarCutoffGradientField
+      cutoffProduct_eq_neg_half_cubeMean_centeredFluxDefect_smul_cutoffGradient
         (Q := Q) (a := aQ) (φ := φ) p q p0 q0
         hφ hφ_compact hφ_sub hcutoffGradient
     simpa [A, u, flux, ξ, F, aQ] using hraw
@@ -108,14 +108,14 @@ theorem abs_cutoffProductTermOnDependentFamily_le_scaledWeakNormProduct
         (by
           intro N
           have hraw :=
-            cubeBesovNegativeVectorPartialSeminorm_canonicalMaximizerGradientDefectOnDependentFamily_le_ch04WeakNorm
+            negativePartialSeminorm_maximizerGradientDefect_le_ch04WeakNorm
               a ha Q hs_pos N p q p0
           unfold canonicalMaximizerGradientDefectOnCube at hraw
           simpa [u, F, aQ, gradWeak, canonicalMaximizerPotentialDefectH1OnCube_grad] using hraw)
         (by
           intro N
           simpa [flux, F, aQ, fluxWeak] using
-            cubeBesovNegativeVectorPartialSeminorm_canonicalMaximizerFluxDefectOnDependentFamily_le_ch04WeakNorm
+            negativeVectorPartial_canonicalFluxDefect_le_chapter04WeakNorm
               a ha Q ht_pos N p q q0)
   simpa [F, aQ] using hhalf.trans hmain
 
@@ -205,7 +205,7 @@ theorem abs_cutoffProductTermOnDependentFamily_le_cutoffProductBridgeRHS
       cutoffProductTermOnCube Q aQ φ p q p0 q0 =
         -(1 / 2 : ℝ) * T := by
     have hraw :=
-      cutoffProductTermOnCube_eq_neg_half_cubeAverage_fluxDefect_potentialDefect_smul_scalarCutoffGradientField
+      cutoffProductTerm_eq_neg_half_cubeMean_fluxPotentialDefect_smul_cutoffGradient
         (Q := Q) (a := aQ) (φ := φ) p q p0 q0 hφ hφ_compact hφ_sub
     simpa [T, hcutoffGradient_eq] using hraw
   have hprod_abs : |cutoffProductTermOnCube Q aQ φ p q p0 q0| ≤ |T| := by

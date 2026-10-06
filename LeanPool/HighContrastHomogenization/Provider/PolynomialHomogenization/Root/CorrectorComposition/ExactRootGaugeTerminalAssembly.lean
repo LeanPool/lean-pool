@@ -47,7 +47,7 @@ discharged:
   — the terminal closes at `eRef := 0` with **no** triangle inequality, because
   the corrector at slope `0` is trivial.
 
-`ExactRootBallTriangle` is Minkowski for `‖s^{1/2} ·‖_{L̲²(V)}`, stated for the
+`ExactRootBallTriangle` is Minkowski for `‖s^{1/2} ·‖_{L_underlined²(V)}`, stated for the
 exact pair of square-integrable fields the terminal compares.  The repository
 proves it only for `H1Function`s on triadic cubes
 (`weightedGradNorm_sub_le_add_sub_h1`), never on a general set; the
@@ -72,7 +72,7 @@ weighted-energy triangle inequality on the exact-root pullback ball, for the
 **two fields the terminal actually compares** — the exact-root pullback of an
 `MemH1a` solution gradient, and an affine-plus-corrector field of a joint local
 equation.  Both are square-integrable on the ball, which is exactly what makes
-the statement true; it is Minkowski for `‖s^{1/2} ·‖_{L̲²(V)}`.
+the statement true; it is Minkowski for `‖s^{1/2} ·‖_{L_underlined²(V)}`.
 
 **The membership premises are deliberately part of the statement.**  The
 unrestricted triangle inequality over arbitrary fields is *false*: `lintegral`
@@ -150,6 +150,189 @@ theorem degenerate_le_nearBranchConstant [NeZero d] {B Aslope : ℝ}
     ring
   rw [heq]
   linarith only [hextra]
+
+private theorem exists_terminal_triadic_bracket
+    [NeZero d] {rS R : ℝ} (hrSpos : 0 < rS) (hrS1 : 1 ≤ rS)
+    (hcase : 108 * (Real.sqrt d * rS) ≤ R)
+    (hquot : 0 < R / Real.sqrt d) :
+    ∃ nN mN : ℕ,
+      (nN : ℤ) = outerTriadicGeneration (2 * (2 * rS)) (by positivity) ∧
+      (mN : ℤ) = innerTriadicGeneration (R / Real.sqrt d) hquot ∧
+      nN + 2 ≤ mN ∧ Real.sqrt d * (3 : ℝ) ^ mN ≤ R ∧
+      R < 3 * (Real.sqrt d * (3 : ℝ) ^ mN) ∧
+      R ≤ (3 : ℝ) ^ innerTriadicGeneration (R / Real.sqrt d) hquot *
+        (3 * Real.sqrt d) := by
+  have hdreal : (0 : ℝ) < d := by exact_mod_cast NeZero.pos d
+  have hsq : 0 < Real.sqrt d := Real.sqrt_pos.2 hdreal
+  have hmRle : Real.sqrt d * (3 : ℝ) ^ innerTriadicGeneration
+      (R / Real.sqrt d) hquot ≤ R := by
+    have h := innerTriadicGeneration_scale_le hquot
+    rw [le_div_iff₀ hsq] at h
+    linarith only [h]
+  have hmRlt : R < 3 * (Real.sqrt d * (3 : ℝ) ^ innerTriadicGeneration
+      (R / Real.sqrt d) hquot) := by
+    have h := lt_three_mul_innerTriadicGeneration_scale hquot
+    rw [div_lt_iff₀ hsq] at h
+    linarith only [h]
+  have hmRbound : R ≤ (3 : ℝ) ^ innerTriadicGeneration
+      (R / Real.sqrt d) hquot * (3 * Real.sqrt d) := by
+    linarith only [hmRlt]
+  obtain ⟨-, -, hgap⟩ := farBranch_bounds (d := d) (rStart := rS) (r := rS)
+    (R := R) hrSpos le_rfl hmRbound hcase hcase
+  have hnZ0 : 0 ≤ outerTriadicGeneration (2 * (2 * rS)) (by positivity) :=
+    outerTriadicGeneration_nonneg_of_one_le (by positivity)
+      (by linarith only [hrS1])
+  have hmZ0 : 0 ≤ innerTriadicGeneration (R / Real.sqrt d) hquot := by
+    omega
+  set nN : ℕ := (outerTriadicGeneration (2 * (2 * rS))
+    (by positivity)).toNat with hnNdef
+  set mN : ℕ := (innerTriadicGeneration (R / Real.sqrt d) hquot).toNat
+    with hmNdef
+  have hnNcast : (nN : ℤ) = outerTriadicGeneration (2 * (2 * rS))
+      (by positivity) := Int.toNat_of_nonneg hnZ0
+  have hmNcast : (mN : ℤ) = innerTriadicGeneration (R / Real.sqrt d) hquot :=
+    Int.toNat_of_nonneg hmZ0
+  have hnm : nN + 2 ≤ mN := by omega
+  have hmRleN : Real.sqrt d * (3 : ℝ) ^ mN ≤ R := by
+    have hz : (3 : ℝ) ^ mN = (3 : ℝ) ^ ((mN : ℤ)) := by
+      rw [zpow_natCast]
+    rw [hz, hmNcast]
+    exact hmRle
+  have hmRltN : R < 3 * (Real.sqrt d * (3 : ℝ) ^ mN) := by
+    have hz : (3 : ℝ) ^ mN = (3 : ℝ) ^ ((mN : ℤ)) := by
+      rw [zpow_natCast]
+    rw [hz, hmNcast]
+    exact hmRlt
+  exact ⟨nN, mN, hnNcast, hmNcast, hnm, hmRleN, hmRltN, hmRbound⟩
+
+private theorem zero_slope_error_le_near_band_rate
+    [NeZero d] (aIdentity : Book.Ch03.CoeffFamily d)
+    (hCauchyId : FiniteAffineCorrectionLocalCauchy aIdentity)
+    (PhiRow : Vec d → NormalizedLocalH1Carrier d)
+    (hPhiRow : IsFiniteAffineCorrectionJointLocalEquation aIdentity PhiRow)
+    (coeff : CoeffField d) (Fld : Vec d → Vec d)
+    {r R theta Benergy Aslope A₀ : ℝ}
+    (hrpos : 0 < r) (hRpos : 0 < R) (hrR : r ≤ R)
+    (hnear : R < 108 * (Real.sqrt d * r)) (htheta : theta ≤ 1)
+    (hBenergy : 0 < Benergy) (hAslope : 0 < Aslope) :
+    weightedGradNorm coeff (closedNormBall d r)
+        (fun y ↦ Fld y - (0 + (PhiRow 0).globalGradientRepresentative y)) ≤
+      ENNReal.ofReal (max (farBranchConstant d * A₀)
+          (nearBranchConstant d Benergy Aslope) * (r / R) ^ theta) *
+        weightedGradNorm coeff (closedNormBall d R) Fld := by
+  have hdreal : (0 : ℝ) < d := by exact_mod_cast NeZero.pos d
+  have hsq : 0 < Real.sqrt d := Real.sqrt_pos.2 hdreal
+  have hzero := jointLimit_zero_grad_ae hCauchyId PhiRow hPhiRow
+  have hfield : (fun y ↦ Fld y -
+      (0 + (PhiRow 0).globalGradientRepresentative y)) =ᵐ[volume] Fld := by
+    filter_upwards [hzero] with y hy
+    rw [hy]
+    simp
+  have hcongr : weightedGradNorm
+      coeff
+      (closedNormBall d r)
+      (fun y ↦ Fld y - (0 + (PhiRow 0).globalGradientRepresentative y)) =
+      weightedGradNorm
+        coeff
+        (closedNormBall d r) Fld :=
+    weightedGradNorm_congr_ae _ _ (ae_restrict_of_ae hfield)
+  have hballs := weightedGradNorm_closedNormBall_le_of_near hrpos hRpos hrR
+    hnear
+    coeff Fld
+  have hratioLower : (1 : ℝ) ≤ (108 * Real.sqrt d) *
+      (r / R) ^ theta := by
+    have hrR1 : r / R ≤ 1 := (div_le_one hRpos).2 hrR
+    have hrRpos : (0 : ℝ) < r / R := by positivity
+    have hpow : r / R ≤ (r / R) ^ theta := by
+      have h := Real.rpow_le_rpow_of_exponent_ge hrRpos hrR1 htheta
+      rwa [Real.rpow_one] at h
+    have hlow : 1 < (108 * Real.sqrt d) * (r / R) := by
+      rw [← mul_div_assoc, lt_div_iff₀ hRpos, one_mul]
+      linarith only [hnear]
+    have hcoefN : (0 : ℝ) ≤ 108 * Real.sqrt d := by positivity
+    have := mul_le_mul_of_nonneg_left hpow hcoefN
+    linarith only [hlow, this]
+  have hnearC : (0 : ℝ) < (216 * Real.sqrt d) ^ d := by positivity
+  have hbase : (0 : ℝ) ≤ ((216 * Real.sqrt d) ^ d) ^ (1 / 2 : ℝ) :=
+    Real.rpow_nonneg hnearC.le _
+  have hconst : ((216 * Real.sqrt d) ^ d) ^ (1 / 2 : ℝ) ≤
+      max (farBranchConstant d * A₀)
+          (nearBranchConstant d Benergy Aslope) *
+        (r / R) ^ theta := by
+    calc ((216 * Real.sqrt d) ^ d) ^ (1 / 2 : ℝ)
+      = ((216 * Real.sqrt d) ^ d) ^ (1 / 2 : ℝ) * 1 := by ring
+    _ ≤ ((216 * Real.sqrt d) ^ d) ^ (1 / 2 : ℝ) *
+        ((108 * Real.sqrt d) * (r / R) ^ theta) :=
+      mul_le_mul_of_nonneg_left hratioLower hbase
+    _ = (((216 * Real.sqrt d) ^ d) ^ (1 / 2 : ℝ) * (108 * Real.sqrt d)) *
+        (r / R) ^ theta := by ring
+    _ ≤ nearBranchConstant d Benergy Aslope *
+        (r / R) ^ theta :=
+      mul_le_mul_of_nonneg_right
+        (degenerate_le_nearBranchConstant hBenergy hAslope)
+        (Real.rpow_nonneg (by positivity) _)
+    _ ≤ max (farBranchConstant d * A₀)
+          (nearBranchConstant d Benergy Aslope) *
+        (r / R) ^ theta :=
+      mul_le_mul_of_nonneg_right (le_max_right _ _)
+        (Real.rpow_nonneg (by positivity) _)
+  have hfinal : weightedGradNorm
+      coeff
+      (closedNormBall d r)
+      (fun y ↦ Fld y -
+        (0 + (PhiRow 0).globalGradientRepresentative y)) ≤
+      ENNReal.ofReal (max (farBranchConstant d * A₀)
+          (nearBranchConstant d Benergy Aslope) *
+            (r / R) ^ theta) *
+        weightedGradNorm
+          coeff
+          (closedNormBall d R) Fld := by
+    rw [hcongr]
+    refine hballs.trans ?_
+    rw [ENNReal.ofReal_rpow_of_pos hnearC]
+    exact mul_le_mul' (ENNReal.ofReal_le_ofReal hconst) le_rfl
+  exact hfinal
+
+private theorem ceiling_product_scale_covers
+    {factor x xRow : ℝ} (hfactor : 1 ≤ factor) (hx : 1 ≤ x)
+    (hrow : xRow ≤ factor * x) :
+    xRow ≤ (3 : ℝ) ^ (Quenched.triadicCeilingIndex x +
+      Quenched.triadicCeilingIndex factor) := by
+  have h1 := Quenched.le_pow_triadicCeilingIndex hfactor
+  have h2 := Quenched.le_pow_triadicCeilingIndex hx
+  have hstep := hrow.trans (mul_le_mul h1 h2 (le_trans zero_le_one hx) (by positivity))
+  rw [pow_add]
+  simpa only [mul_comm] using hstep
+
+private theorem exists_outer_cube_ball_comparison
+    [NeZero d] {r : ℝ} (hrpos : 0 < r) (hrOne : 1 ≤ r) :
+    ∃ qN : ℕ,
+      (qN : ℤ) = outerTriadicGeneration (2 * (2 * r)) (by positivity) ∧
+      (3 : ℝ) ^ qN ≤ 12 * r ∧
+      closedNormBall d r ⊆ openCubeSet (originCube d (qN : ℤ)) ∧
+      volume (openCubeSet (originCube d (qN : ℤ))) / volume (closedNormBall d r) ≤
+        ENNReal.ofReal ((6 * Real.sqrt d) ^ d) := by
+  have hqZ0 : 0 ≤ outerTriadicGeneration (2 * (2 * r)) (by positivity) :=
+    outerTriadicGeneration_nonneg_of_one_le (by positivity) (by linarith only [hrOne])
+  let qN : ℕ := (outerTriadicGeneration (2 * (2 * r)) (by positivity)).toNat
+  have hqNcast : (qN : ℤ) = outerTriadicGeneration (2 * (2 * r))
+      (by positivity) := Int.toNat_of_nonneg hqZ0
+  have hq3 : (3 : ℝ) ^ qN ≤ 12 * r := by
+    have hlt := outerTriadicGeneration_scale_lt_three_mul
+      (by positivity : (0 : ℝ) < 2 * (2 * r))
+    have hz : (3 : ℝ) ^ qN = (3 : ℝ) ^ ((qN : ℤ)) := by rw [zpow_natCast]
+    rw [hz, hqNcast]
+    linarith only [hlt]
+  have hcubeq : closedNormBall d r ⊆
+      openCubeSet (originCube d (qN : ℤ)) := by
+    rw [hqNcast]
+    exact closedNormBall_subset_outerCube hrpos
+  have hratioq : volume (openCubeSet (originCube d (qN : ℤ))) /
+      volume (closedNormBall d r) ≤
+      ENNReal.ofReal ((6 * Real.sqrt d) ^ d) := by
+    rw [hqNcast]
+    exact outerCube_closedNormBall_volume_ratio_le hrpos
+  exact ⟨qN, hqNcast, hq3, hcubeq, hratioq⟩
 
 /-! ## The terminal -/
 
@@ -241,62 +424,13 @@ theorem exactRootGaugeTerminal_onReconciled_of_ballTriangle (d : ℕ) [NeZero d]
     matVecMul (Selection.normalizedRoot (symmPart abar))
       (Du (matVecMul (Selection.normalizedRoot (symmPart abar)) y)) with hFlddef
   -- the row's start index is below the canonical outer generation of `rS`
-  have hxRowrS : xRow ≤ rS := by
-    have h1 := Quenched.le_pow_triadicCeilingIndex hK1
-    have h2 := Quenched.le_pow_triadicCeilingIndex hx
-    have hstep : xRow ≤ (3 : ℝ) ^ Quenched.triadicCeilingIndex
-        ((cStar g / min (cStar g) (min cMax (2 * cB))) ^ κc⁻¹) *
-        (3 : ℝ) ^ Quenched.triadicCeilingIndex x :=
-      hxRowLe.trans (mul_le_mul h1 h2 (le_trans zero_le_one hx) (by positivity))
-    rw [hrSdef, pow_add]
-    calc xRow ≤ (3 : ℝ) ^ Quenched.triadicCeilingIndex
-          ((cStar g / min (cStar g) (min cMax (2 * cB))) ^ κc⁻¹) *
-          (3 : ℝ) ^ Quenched.triadicCeilingIndex x := hstep
-      _ = (3 : ℝ) ^ Quenched.triadicCeilingIndex x *
-          (3 : ℝ) ^ Quenched.triadicCeilingIndex
-            ((cStar g / min (cStar g) (min cMax (2 * cB))) ^ κc⁻¹) := by ring
+  have hxRowrS : xRow ≤ rS :=
+    ceiling_product_scale_covers hK1 hx hxRowLe
   by_cases hcase : 108 * (Real.sqrt d * rS) ≤ R
   · -- the mixed case: the far branch is available
     have hquot : (0 : ℝ) < R / Real.sqrt d := by positivity
-    have hmRle : Real.sqrt d * (3 : ℝ) ^ innerTriadicGeneration
-        (R / Real.sqrt d) hquot ≤ R := by
-      have h := innerTriadicGeneration_scale_le hquot
-      rw [le_div_iff₀ hsq] at h
-      linarith only [h]
-    have hmRlt : R < 3 * (Real.sqrt d * (3 : ℝ) ^ innerTriadicGeneration
-        (R / Real.sqrt d) hquot) := by
-      have h := lt_three_mul_innerTriadicGeneration_scale hquot
-      rw [div_lt_iff₀ hsq] at h
-      linarith only [h]
-    have hmRbound : R ≤ (3 : ℝ) ^ innerTriadicGeneration
-        (R / Real.sqrt d) hquot * (3 * Real.sqrt d) := by
-      linarith only [hmRlt]
-    obtain ⟨-, -, hgap⟩ := farBranch_bounds (d := d) (rStart := rS) (r := rS)
-      (R := R) hrSpos le_rfl hmRbound hcase hcase
-    have hnZ0 : 0 ≤ outerTriadicGeneration (2 * (2 * rS)) (by positivity) :=
-      outerTriadicGeneration_nonneg_of_one_le (by positivity)
-        (by linarith only [hrS1])
-    have hmZ0 : 0 ≤ innerTriadicGeneration (R / Real.sqrt d) hquot := by
-      omega
-    set nN : ℕ := (outerTriadicGeneration (2 * (2 * rS))
-      (by positivity)).toNat with hnNdef
-    set mN : ℕ := (innerTriadicGeneration (R / Real.sqrt d) hquot).toNat
-      with hmNdef
-    have hnNcast : (nN : ℤ) = outerTriadicGeneration (2 * (2 * rS))
-        (by positivity) := Int.toNat_of_nonneg hnZ0
-    have hmNcast : (mN : ℤ) = innerTriadicGeneration (R / Real.sqrt d) hquot :=
-      Int.toNat_of_nonneg hmZ0
-    have hnm : nN + 2 ≤ mN := by omega
-    have hmRleN : Real.sqrt d * (3 : ℝ) ^ mN ≤ R := by
-      have hz : (3 : ℝ) ^ mN = (3 : ℝ) ^ ((mN : ℤ)) := by
-        rw [zpow_natCast]
-      rw [hz, hmNcast]
-      exact hmRle
-    have hmRltN : R < 3 * (Real.sqrt d * (3 : ℝ) ^ mN) := by
-      have hz : (3 : ℝ) ^ mN = (3 : ℝ) ^ ((mN : ℤ)) := by
-        rw [zpow_natCast]
-      rw [hz, hmNcast]
-      exact hmRlt
+    obtain ⟨nN, mN, hnNcast, hmNcast, hnm, hmRleN, hmRltN, hmRbound⟩ :=
+      exists_terminal_triadic_bracket hrSpos hrS1 hcase hquot
     -- the terminal cube solution
     have hmcube : matImage (Selection.normalizedRoot (symmPart abar))
         (openCubeSet (originCube d (mN : ℤ))) ⊆ ellipsoid abar R :=
@@ -336,29 +470,10 @@ theorem exactRootGaugeTerminal_onReconciled_of_ballTriangle (d : ℕ) [NeZero d]
         (R := R) hrSpos hrS_le_r hmRbound hthr hcase
       obtain ⟨hnq, -, -⟩ := farBranch_bounds (d := d) (rStart := rS) (r := r)
         (R := R) hrSpos hrS_le_r hmRbound hthr hcase
-      have hqZ0 : 0 ≤ outerTriadicGeneration (2 * (2 * r)) (by positivity) := by
-        omega
-      set qN : ℕ := (outerTriadicGeneration (2 * (2 * r))
-        (by positivity)).toNat with hqNdef
-      have hqNcast : (qN : ℤ) = outerTriadicGeneration (2 * (2 * r))
-          (by positivity) := Int.toNat_of_nonneg hqZ0
+      obtain ⟨qN, hqNcast, hq3, hcubeq, hratioq⟩ :=
+        exists_outer_cube_ball_comparison hrpos (hrS1.trans hrS_le_r)
       have hqmN : qN ≤ mN := by omega
       have hnqN : nN ≤ qN := by omega
-      have hq3 : (3 : ℝ) ^ qN ≤ 12 * r := by
-        have hlt := outerTriadicGeneration_scale_lt_three_mul
-          (by positivity : (0 : ℝ) < 2 * (2 * r))
-        have hz : (3 : ℝ) ^ qN = (3 : ℝ) ^ ((qN : ℤ)) := by rw [zpow_natCast]
-        rw [hz, hqNcast]
-        linarith only [hlt]
-      have hcubeq : closedNormBall d r ⊆
-          openCubeSet (originCube d (qN : ℤ)) := by
-        rw [hqNcast]
-        exact closedNormBall_subset_outerCube hrpos
-      have hratioq : volume (openCubeSet (originCube d (qN : ℤ))) /
-          volume (closedNormBall d r) ≤
-          ENNReal.ofReal ((6 * Real.sqrt d) ^ d) := by
-        rw [hqNcast]
-        exact outerCube_closedNormBall_volume_ratio_le hrpos
       have hrowAt := hrowq qN (Finset.mem_Icc.mpr ⟨hnqN, hqmN⟩)
       rw [hwF] at hrowAt
       have hfar := farBranch_estimate d hcoeff hϑ0 hϑ1.le hA₀ hrpos hRpos hqmN
@@ -372,22 +487,8 @@ theorem exactRootGaugeTerminal_onReconciled_of_ballTriangle (d : ℕ) [NeZero d]
       exact mul_le_mul_of_nonneg_right (le_max_left _ _) hratio0
     · -- near band
       have hnear : R < 108 * (Real.sqrt d * r) := lt_of_not_ge hthr
-      have hJZ0 : 0 ≤ outerTriadicGeneration (2 * (2 * R)) (by positivity) :=
-        outerTriadicGeneration_nonneg_of_one_le (by positivity)
-          (by linarith only [hR1])
-      set JN : ℕ := (outerTriadicGeneration (2 * (2 * R))
-        (by positivity)).toNat with hJNdef
-      have hJNcast : (JN : ℤ) = outerTriadicGeneration (2 * (2 * R))
-          (by positivity) := Int.toNat_of_nonneg hJZ0
-      have hcubeJ : closedNormBall d R ⊆
-          openCubeSet (originCube d (JN : ℤ)) := by
-        rw [hJNcast]
-        exact closedNormBall_subset_outerCube hRpos
-      have hratioJ : volume (openCubeSet (originCube d (JN : ℤ))) /
-          volume (closedNormBall d R) ≤
-          ENNReal.ofReal ((6 * Real.sqrt d) ^ d) := by
-        rw [hJNcast]
-        exact outerCube_closedNormBall_volume_ratio_le hRpos
+      obtain ⟨JN, hJNcast, _hJscale, hcubeJ, hratioJ⟩ :=
+        exists_outer_cube_ball_comparison hRpos hR1
       have hnJ : nN ≤ JN := by
         have hmono := outerTriadicGeneration_le_outerTriadicGeneration
           (rStart := rS) (r := R) hrSpos hstartR
@@ -421,91 +522,12 @@ theorem exactRootGaugeTerminal_onReconciled_of_ballTriangle (d : ℕ) [NeZero d]
       have hmono : Real.sqrt d * rS ≤ Real.sqrt d * r :=
         mul_le_mul_of_nonneg_left hrS_le_r hsq.le
       linarith only [hallNear, hmono]
-    have hzero := jointLimit_zero_grad_ae hCauchyId PhiRow hPhiRow
-    have hfield : (fun y ↦ Fld y -
-        (0 + (PhiRow 0).globalGradientRepresentative y)) =ᵐ[volume] Fld := by
-      filter_upwards [hzero] with y hy
-      rw [hy]
-      simp
-    have hcongr : weightedGradNorm
-        (affineCoefficient (Selection.normalizedRoot (symmPart abar))
-          ((Matrix.isUnit_iff_isUnit_det _).mp
-            (normalizedRoot_posDef_of_posDef hS3).isUnit)
-          (⇑(normalizedCenteredCoeff a abar hS3).1))
-        (closedNormBall d r)
-        (fun y ↦ Fld y - (0 + (PhiRow 0).globalGradientRepresentative y)) =
-        weightedGradNorm
-          (affineCoefficient (Selection.normalizedRoot (symmPart abar))
-            ((Matrix.isUnit_iff_isUnit_det _).mp
-              (normalizedRoot_posDef_of_posDef hS3).isUnit)
-            (⇑(normalizedCenteredCoeff a abar hS3).1))
-          (closedNormBall d r) Fld :=
-      weightedGradNorm_congr_ae _ _ (ae_restrict_of_ae hfield)
-    have hballs := weightedGradNorm_closedNormBall_le_of_near hrpos hRpos hrR
-      hnear
+    exact zero_slope_error_le_near_band_rate aIdentity hCauchyId PhiRow hPhiRow
       (affineCoefficient (Selection.normalizedRoot (symmPart abar))
         ((Matrix.isUnit_iff_isUnit_det _).mp
           (normalizedRoot_posDef_of_posDef hS3).isUnit)
         (⇑(normalizedCenteredCoeff a abar hS3).1)) Fld
-    have hratioLower : (1 : ℝ) ≤ (108 * Real.sqrt d) *
-        (r / R) ^ max eta (1 / 2 : ℝ) := by
-      have hrR1 : r / R ≤ 1 := (div_le_one hRpos).2 hrR
-      have hrRpos : (0 : ℝ) < r / R := by positivity
-      have hpow : r / R ≤ (r / R) ^ max eta (1 / 2 : ℝ) := by
-        have h := Real.rpow_le_rpow_of_exponent_ge hrRpos hrR1 hϑ1.le
-        rwa [Real.rpow_one] at h
-      have hlow : 1 < (108 * Real.sqrt d) * (r / R) := by
-        rw [← mul_div_assoc, lt_div_iff₀ hRpos, one_mul]
-        linarith only [hnear]
-      have hcoefN : (0 : ℝ) ≤ 108 * Real.sqrt d := by positivity
-      have := mul_le_mul_of_nonneg_left hpow hcoefN
-      linarith only [hlow, this]
-    have hnearC : (0 : ℝ) < (216 * Real.sqrt d) ^ d := by positivity
-    have hbase : (0 : ℝ) ≤ ((216 * Real.sqrt d) ^ d) ^ (1 / 2 : ℝ) :=
-      Real.rpow_nonneg hnearC.le _
-    have hconst : ((216 * Real.sqrt d) ^ d) ^ (1 / 2 : ℝ) ≤
-        max (farBranchConstant d * A₀)
-            (nearBranchConstant d Benergy Aslope) *
-          (r / R) ^ max eta (1 / 2 : ℝ) := by
-      calc ((216 * Real.sqrt d) ^ d) ^ (1 / 2 : ℝ)
-        = ((216 * Real.sqrt d) ^ d) ^ (1 / 2 : ℝ) * 1 := by ring
-      _ ≤ ((216 * Real.sqrt d) ^ d) ^ (1 / 2 : ℝ) *
-          ((108 * Real.sqrt d) * (r / R) ^ max eta (1 / 2 : ℝ)) :=
-        mul_le_mul_of_nonneg_left hratioLower hbase
-      _ = (((216 * Real.sqrt d) ^ d) ^ (1 / 2 : ℝ) * (108 * Real.sqrt d)) *
-          (r / R) ^ max eta (1 / 2 : ℝ) := by ring
-      _ ≤ nearBranchConstant d Benergy Aslope *
-          (r / R) ^ max eta (1 / 2 : ℝ) :=
-        mul_le_mul_of_nonneg_right
-          (degenerate_le_nearBranchConstant hBenergy hAslope)
-          (Real.rpow_nonneg (by positivity) _)
-      _ ≤ max (farBranchConstant d * A₀)
-            (nearBranchConstant d Benergy Aslope) *
-          (r / R) ^ max eta (1 / 2 : ℝ) :=
-        mul_le_mul_of_nonneg_right (le_max_right _ _)
-          (Real.rpow_nonneg (by positivity) _)
-    have hfinal : weightedGradNorm
-        (affineCoefficient (Selection.normalizedRoot (symmPart abar))
-          ((Matrix.isUnit_iff_isUnit_det _).mp
-            (normalizedRoot_posDef_of_posDef hS3).isUnit)
-          (⇑(normalizedCenteredCoeff a abar hS3).1))
-        (closedNormBall d r)
-        (fun y ↦ Fld y -
-          (0 + (PhiRow 0).globalGradientRepresentative y)) ≤
-        ENNReal.ofReal (max (farBranchConstant d * A₀)
-            (nearBranchConstant d Benergy Aslope) *
-              (r / R) ^ max eta (1 / 2 : ℝ)) *
-          weightedGradNorm
-            (affineCoefficient (Selection.normalizedRoot (symmPart abar))
-              ((Matrix.isUnit_iff_isUnit_det _).mp
-                (normalizedRoot_posDef_of_posDef hS3).isUnit)
-              (⇑(normalizedCenteredCoeff a abar hS3).1))
-            (closedNormBall d R) Fld := by
-      rw [hcongr]
-      refine hballs.trans ?_
-      rw [ENNReal.ofReal_rpow_of_pos hnearC]
-      exact mul_le_mul' (ENNReal.ofReal_le_ofReal hconst) le_rfl
-    exact hfinal
+      hrpos hRpos hrR hnear hϑ1.le hBenergy hAslope
 
 end
 

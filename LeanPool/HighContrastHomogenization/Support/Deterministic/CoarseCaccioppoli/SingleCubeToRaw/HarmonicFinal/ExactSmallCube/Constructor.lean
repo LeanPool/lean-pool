@@ -147,7 +147,7 @@ ellipticity and separate note budgets.
 `Calpha` controls the explicit height and centered absorption coefficient,
 while `Ccross` controls only the constant/cross branch. -/
 theorem
-    CoarseCaccioppoliBoundaryCanonicalHarmonicVectorFaithfulWorkSmallCubeBufferedExactRawCoefficientBoundsSplit.of_closedCubeEllipticity_of_bufferedCutoffRadiusConst_of_centeredFronts
+    BoundaryCaccioppoliHarmonicVectorSmallCubeCoefficientSplit.of_centeredFronts
     {d : ℕ} [NeZero d] (Q : TriadicCube d) (a : CoeffField d)
     (s t Clocal Calpha Ccross : ℝ) {lam Lam : ℝ}
     (hClocal : 0 ≤ Clocal) (hCalpha : 0 ≤ Calpha) (hCcross : 0 ≤ Ccross)
@@ -173,7 +173,7 @@ theorem
               (cubeRadius Q) ^ (2 : ℕ)) +
           2 * (quantitativeCubeCutoffGradientConst d / cubeRadius Q)) ≤
         (Fintype.card (Fin d) : ℝ) * Clocal) :
-    CoarseCaccioppoliBoundaryCanonicalHarmonicVectorFaithfulWorkSmallCubeBufferedExactRawCoefficientBoundsSplit
+    BoundaryCaccioppoliHarmonicVectorSmallCubeCoefficientSplit
       Q a s t Clocal Calpha Ccross := by
   let CeffLocal : ℝ := (Fintype.card (Fin d) : ℝ) * Clocal
   let CeffAlpha : ℝ := (Fintype.card (Fin d) : ℝ) * Calpha
@@ -215,14 +215,14 @@ theorem
         geometricWeight s 1 n *
           Real.rpow (maxDescendantBBlockNormAtScale Q (Q.scale - (n : ℤ)) a)
             (1 / 2 : ℝ)) :=
-    summable_qone_maxDescendantBBlockNormAtScale_of_isEllipticFieldOn_of_openCubeDescendantDeterministicCoarseData
+    summable_qone_maxDescendantBBlockNorm_of_ellipticField
       Q a s hs hEllCube hData
   have hSigmaSum_t :
       Summable (fun n : ℕ =>
         geometricWeight t 1 n *
           Real.rpow (maxDescendantSigmaStarInvNormAtScale Q (Q.scale - (n : ℤ)) a)
             (1 / 2 : ℝ)) :=
-    summable_qone_maxDescendantSigmaStarInvNormAtScale_of_isEllipticFieldOn_of_openCubeDescendantDeterministicCoarseData
+    summable_qone_maxDescendantSigmaStarInvNorm_of_ellipticField
       Q a t ht hEllCube hData
   let hconst :
       ∀ n : ℕ,
@@ -245,7 +245,7 @@ theorem
         ∀ R ∈ descendantsAtDepth Q j,
           coarseCaccioppoliFluxEnergyExactConstantCoeff R a *
               (B + cubeBesovScaleWeight 1 R * cubeLpNorm R ∞ ξ) ≤ K :=
-    faithfulWorkSmallCubeExactRawConstantBranchSplit_of_closedCubeEllipticity_of_bufferedCutoffRadiusConst
+    SmallCubeConstantBranchSplit_of_closedCubeEllipticity
       (Q := Q) (a := a) (s := s) (t := t) (Clocal := Clocal)
       (Calpha := Calpha) (Ccross := Ccross)
       hClocal hCcross hwork_constant_cross hs ht hst hEllCube hlarge
@@ -309,7 +309,7 @@ closed-cube ellipticity and separate note budgets.
 This is the proof-producing coefficient package used by the standard
 beta-dependent radius iteration. -/
 theorem
-    CoarseCaccioppoliBoundaryCanonicalHarmonicVectorFaithfulWorkSmallCubeBufferedExactRawCoefficientBoundsSplitAllRadii.of_closedCubeEllipticity_of_bufferedCutoffRadiusConst_of_centeredFronts
+    BoundaryCaccioppoliHarmonicVectorSmallCubeCoefficientSplit_allRadii.of_centeredFronts
     {d : ℕ} [NeZero d] (Q : TriadicCube d) (a : CoeffField d)
     (s t Clocal Calpha Ccross : ℝ) {lam Lam : ℝ}
     (hClocal : 0 ≤ Clocal) (hCalpha : 0 ≤ Calpha) (hCcross : 0 ≤ Ccross)
@@ -335,7 +335,7 @@ theorem
               (cubeRadius Q) ^ (2 : ℕ)) +
           2 * (quantitativeCubeCutoffGradientConst d / cubeRadius Q)) ≤
         (Fintype.card (Fin d) : ℝ) * Clocal) :
-    CoarseCaccioppoliBoundaryCanonicalHarmonicVectorFaithfulWorkSmallCubeBufferedExactRawCoefficientBoundsSplitAllRadii
+    BoundaryCaccioppoliHarmonicVectorSmallCubeCoefficientSplit_allRadii
       Q a s t Clocal Calpha Ccross := by
   let CeffLocal : ℝ := (Fintype.card (Fin d) : ℝ) * Clocal
   let CeffAlpha : ℝ := (Fintype.card (Fin d) : ℝ) * Calpha
@@ -377,17 +377,17 @@ theorem
         geometricWeight s 1 n *
           Real.rpow (maxDescendantBBlockNormAtScale Q (Q.scale - (n : ℤ)) a)
             (1 / 2 : ℝ)) :=
-    summable_qone_maxDescendantBBlockNormAtScale_of_isEllipticFieldOn_of_openCubeDescendantDeterministicCoarseData
+    summable_qone_maxDescendantBBlockNorm_of_ellipticField
       Q a s hs hEllCube hData
   have hSigmaSum_t :
       Summable (fun n : ℕ =>
         geometricWeight t 1 n *
           Real.rpow (maxDescendantSigmaStarInvNormAtScale Q (Q.scale - (n : ℤ)) a)
             (1 / 2 : ℝ)) :=
-    summable_qone_maxDescendantSigmaStarInvNormAtScale_of_isEllipticFieldOn_of_openCubeDescendantDeterministicCoarseData
+    summable_qone_maxDescendantSigmaStarInvNorm_of_ellipticField
       Q a t ht hEllCube hData
   have hconst :=
-    faithfulWorkSmallCubeExactRawConstantBranchSplitAllRadii_of_closedCubeEllipticity_of_bufferedCutoffRadiusConst
+    SmallCubeConstantBranchSplitAllRadii_of_closedCubeEllipticity
       (Q := Q) (a := a) (s := s) (t := t) (Clocal := Clocal)
       (Calpha := Calpha) (Ccross := Ccross)
       hClocal hCcross hwork_constant_cross hs ht hst hEllCube hlarge

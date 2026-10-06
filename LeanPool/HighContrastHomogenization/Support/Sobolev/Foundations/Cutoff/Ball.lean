@@ -208,7 +208,7 @@ theorem norm_iteratedFDeriv_two_ballArgument_le {d : ℕ}
   have hfun :
       ballArgument x₀ r s = fun y : Vec d => f y + g y := by
     funext y
-    simp [f, g]
+    simp only [neg_smul, one_div, Pi.neg_apply, Pi.smul_apply, smul_eq_mul, f, g]
     unfold ballArgument
     field_simp [hden_pos.ne']
     ring

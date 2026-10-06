@@ -133,7 +133,8 @@ theorem exists_isRestrictionLocalRandomVariable_ae_eq_Mu_cubeSet
                 (A := fun x : cover (some k) => (x : RegCoeffField d))
                 (fun x => x.2) hEntry P0
       exact measurable_liftCover cover hcover_meas f hfm hagree hcover
-    exact IsRestrictionLocalRandomVariable.of_measurable_localSigmaR (measurableSet_cubeSet Q) hY_localSigma
+    exact IsRestrictionLocalRandomVariable.of_measurable_localSigmaR (measurableSet_cubeSet Q)
+      hY_localSigma
   · -- `Y` agrees with `Mu ∘ toFun` on the a.s.-full elliptic locus.
     have hcovered_ae : ∀ᵐ a ∂P, a ∈ covered := by
       filter_upwards

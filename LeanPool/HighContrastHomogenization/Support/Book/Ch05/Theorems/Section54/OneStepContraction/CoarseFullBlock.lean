@@ -663,7 +663,7 @@ theorem oneStepCoarseFullBlockSumAtScale_le_budget
           refine Finset.sum_le_sum ?_
           intro j hj
           exact mul_le_mul_of_nonneg_left
-            (VarianceBoundGoodScale.fullBlockNormalizedFluctuationOperatorNormSqAtScale_integral_le_refinedMatrixVarianceScaleBound
+            (VarianceBoundGoodScale.fluctuationNormSq_integral_le_refinedMatrixVarianceBound
               hP hStruct hP4 hdelta_nonneg m j (Finset.mem_Icc.mp hj).2
               hgood_upper hgood_lower)
             (VarianceBoundGoodScale.varianceWeight_nonneg β m j)

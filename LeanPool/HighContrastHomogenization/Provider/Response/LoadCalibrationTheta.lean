@@ -44,7 +44,7 @@ The two halves go in opposite directions and are proved by different routes.
 
 **Route note.**  The printed proof obtains both halves
 from [Armstrong–Kuusi, (2.81),(2.82)] through the *uncorrected* ratio
-`θ̃ = |S_*^{-1/2}SS_*^{-1/2}|`.  Both of those displays are false as printed —
+`θ_tilde = |S_*^{-1/2}SS_*^{-1/2}|`.  Both of those displays are false as printed —
 the counterexample `σ_* = 1, σ = 9, k = 4` gives `64 > 16` in (2.81) and
 `80 > 48` in the upper half of (2.82) — and neither is used here.  The
 conclusions of the printed lemma are unchanged; only the route is.

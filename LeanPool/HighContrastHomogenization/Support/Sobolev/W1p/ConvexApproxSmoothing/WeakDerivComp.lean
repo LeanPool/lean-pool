@@ -31,6 +31,253 @@ indicator products, and integrability of the kernel × indicator × comp tensor
 against a locally integrable datum.
 -/
 
+private theorem convexApproxAffineTestProperties
+    {d : ℕ} {i : Fin d} {U : Set (Vec d)} {φ : Vec d → ℝ}
+    (hφ_smooth : ContDiff ℝ (⊤ : ℕ∞) φ) (hφ_compact : HasCompactSupport φ)
+    (hφ_sub : tsupport φ ⊆ U) (a : ℝ) (b : Vec d) (c : ℝ)
+    (ha_ne : a ≠ 0) (ha_inv_ne : a⁻¹ ≠ 0)
+    (hc_scale : c = a * (a ^ d)⁻¹) (V : Set (Vec d))
+    (hV : V = translateSet b (a • U)) :
+    let ψ : Vec d → ℝ := fun y => c * φ (a⁻¹ • (y - b));
+    ContDiff ℝ (⊤ : ℕ∞) ψ ∧ HasCompactSupport ψ ∧ tsupport ψ ⊆ V ∧
+      (∀ y ∈ U \ V, ψ y = 0) ∧
+      (∀ x, x ∉ U → (fderiv ℝ φ x) (basisVec i) = 0) ∧
+      (∀ y, (fderiv ℝ ψ y) (basisVec i) =
+        (a ^ d)⁻¹ * (fderiv ℝ φ (a⁻¹ • (y - b))) (basisVec i)) := by
+  dsimp
+  let ψ : Vec d → ℝ := fun y => c * φ (a⁻¹ • (y - b))
+  have hψ_smooth : ContDiff ℝ (⊤ : ℕ∞) ψ := by
+    have hinner : ContDiff ℝ (⊤ : ℕ∞) (fun y : Vec d => a⁻¹ • (y - b)) := by
+      have h1 : ContDiff ℝ (⊤ : ℕ∞) (fun _ : Vec d => a⁻¹) := contDiff_const
+      have h2 : ContDiff ℝ (⊤ : ℕ∞) (fun y : Vec d => y - b) :=
+        contDiff_id.sub contDiff_const
+      exact h1.smul h2
+    simpa [ψ] using contDiff_const.mul (hφ_smooth.comp hinner)
+  have hψ_compact : HasCompactSupport ψ := by
+    let e : Homeomorph (Vec d) (Vec d) :=
+      (Homeomorph.subRight b).trans (Homeomorph.smulOfNeZero a⁻¹ ha_inv_ne)
+    have hbase : HasCompactSupport (fun y : Vec d => φ (a⁻¹ • (y - b))) := by
+      change HasCompactSupport (φ ∘ e)
+      simpa [e, Function.comp] using hφ_compact.comp_homeomorph e
+    have hmul :
+        HasCompactSupport
+          (fun y : Vec d => (fun _ : Vec d => c) y * (fun y : Vec d => φ (a⁻¹ • (y - b))) y) := by
+      simpa using! (HasCompactSupport.mul_left (f := fun _ : Vec d => c) hbase)
+    simpa [ψ] using hmul
+  have hψ_subV : tsupport ψ ⊆ V := by
+    rw [hV]
+    intro y hy
+    have hy' :
+        y ∈ tsupport (fun y : Vec d => φ (a⁻¹ • (y - b))) := by
+      have hsub :
+          tsupport (fun y : Vec d => c * φ (a⁻¹ • (y - b))) ⊆
+            tsupport (fun y : Vec d => φ (a⁻¹ • (y - b))) :=
+        tsupport_mul_subset_right
+          (f := fun _ : Vec d => c)
+          (g := fun y : Vec d => φ (a⁻¹ • (y - b)))
+      exact hsub (by simpa [ψ] using hy)
+    let e : Homeomorph (Vec d) (Vec d) :=
+      (Homeomorph.subRight b).trans (Homeomorph.smulOfNeZero a⁻¹ ha_inv_ne)
+    have hx_tsupport : a⁻¹ • (y - b) ∈ tsupport φ := by
+      rw [show (fun y : Vec d => φ (a⁻¹ • (y - b))) = φ ∘ e by
+            funext t
+            simp [e, Function.comp],
+        tsupport_comp_eq_preimage φ e] at hy'
+      exact hy'
+    let x : Vec d := a⁻¹ • (y - b)
+    have hxU : x ∈ U := hφ_sub hx_tsupport
+    refine ⟨a • x, Set.smul_mem_smul_set hxU, ?_⟩
+    calc
+      y = a • x + b := by
+            dsimp [x]
+            rw [smul_smul, mul_inv_cancel₀ ha_ne, one_smul]
+            abel
+      _ = a • x + b := rfl
+  have hψ_value_zero : ∀ y ∈ U \ V, ψ y = 0 := by
+    intro y hy
+    have hy_notin : y ∉ tsupport ψ := fun hy' => hy.2 (hψ_subV hy')
+    exact image_eq_zero_of_notMem_tsupport hy_notin
+  have hdφ_zero : ∀ x, x ∉ U → (fderiv ℝ φ x) (basisVec i) = 0 := by
+    intro x hx
+    have hx_notin : x ∉ tsupport φ := fun hx' => hx (hφ_sub hx')
+    have hφ_eq : φ =ᶠ[nhds x] 0 :=
+      (isClosed_tsupport (f := φ)).isOpen_compl.eventually_mem hx_notin |>.mono
+        (fun y hy => image_eq_zero_of_notMem_tsupport hy)
+    rw [Filter.EventuallyEq.fderiv_eq hφ_eq]
+    simp
+  have hdψ_formula :
+      ∀ y : Vec d, (fderiv ℝ ψ y) (basisVec i) =
+        (a ^ d)⁻¹ * (fderiv ℝ φ (a⁻¹ • (y - b))) (basisVec i) := by
+    intro y
+    have hbase_smooth :
+        ContDiff ℝ 1 (fun t : Vec d => φ (a⁻¹ • (t - b))) := by
+      have hinner : ContDiff ℝ 1 (fun t : Vec d => a⁻¹ • (t - b)) := by
+        have h1 : ContDiff ℝ 1 (fun _ : Vec d => a⁻¹) := contDiff_const
+        have h2 : ContDiff ℝ 1 (fun t : Vec d => t - b) :=
+          contDiff_id.sub contDiff_const
+        exact h1.smul h2
+      exact (hφ_smooth.of_le (by simp)).comp hinner
+    have hbase_diff : DifferentiableAt ℝ (fun t : Vec d => φ (a⁻¹ • (t - b))) y :=
+      (hbase_smooth.contDiffAt).differentiableAt (by simp)
+    have hderiv_base :
+        fderiv ℝ (fun t : Vec d => φ (a⁻¹ • (t - b))) y =
+          a⁻¹ • fderiv ℝ φ (a⁻¹ • (y - b)) := by
+      calc
+        fderiv ℝ (fun t : Vec d => φ (a⁻¹ • (t - b))) y
+            = fderiv ℝ (fun s : Vec d => φ (a⁻¹ • s)) (y - b) := by
+                simpa [sub_eq_add_neg] using
+                  (fderiv_comp_sub (𝕜 := ℝ) (f := fun s : Vec d => φ (a⁻¹ • s)) (x := y) b)
+        _ = a⁻¹ • fderiv ℝ φ (a⁻¹ • (y - b)) := by
+              simpa using
+                (fderiv_comp_smul (𝕜 := ℝ) (f := φ) (x := y - b) (c := a⁻¹))
+    have hcoord :
+        (fderiv ℝ ψ y) (basisVec i) =
+          c * (a⁻¹ * (fderiv ℝ φ (a⁻¹ • (y - b))) (basisVec i)) := by
+      have hderiv :
+          fderiv ℝ ψ y =
+            c • fderiv ℝ (fun t : Vec d => φ (a⁻¹ • (t - b))) y := by
+        simpa [ψ] using
+          (fderiv_const_mul
+            (𝕜 := ℝ)
+            (a := fun t : Vec d => φ (a⁻¹ • (t - b)))
+            (x := y)
+            hbase_diff
+            c)
+      rw [hderiv, hderiv_base]
+      simp [mul_assoc, smul_smul]
+    calc
+      (fderiv ℝ ψ y) (basisVec i)
+          = c * (a⁻¹ * (fderiv ℝ φ (a⁻¹ • (y - b))) (basisVec i)) := hcoord
+      _ = (c * a⁻¹) * (fderiv ℝ φ (a⁻¹ • (y - b))) (basisVec i) := by ring
+      _ = (a ^ d)⁻¹ * (fderiv ℝ φ (a⁻¹ • (y - b))) (basisVec i) := by
+            have hc_factor : c * a⁻¹ = (a ^ d)⁻¹ := by
+              rw [hc_scale]
+              field_simp [ha_ne]
+            rw [hc_factor]
+  exact ⟨hψ_smooth, hψ_compact, hψ_subV, hψ_value_zero, hdφ_zero, hdψ_formula⟩
+
+private theorem convexApproxAffineTestIntegralChanges
+    {d : ℕ} {i : Fin d} {U : Set (Vec d)} (u gi φ : Vec d → ℝ)
+    (x0 z : Vec d) (r ε a : ℝ) (b : Vec d) (c : ℝ)
+    (ha_pos : 0 < a) (ha_eq : a = 1 - ε)
+    (hb_eq : b = ε • (x0 - r • z))
+    (hc_eq : c = a * (a ^ d)⁻¹) :
+    let V : Set (Vec d) := translateSet b (a • U)
+    (∫ y in V, u y *
+        ((a ^ d)⁻¹ * (fderiv ℝ φ (a⁻¹ • (y - b))) (basisVec i))
+        ∂MeasureTheory.volume) =
+      ∫ x in U, u (convexApproxSample x0 z r ε x) *
+        (fderiv ℝ φ x) (basisVec i) ∂MeasureTheory.volume ∧
+    (∫ y in V, gi y * (c * φ (a⁻¹ • (y - b))) ∂MeasureTheory.volume) =
+      a * ∫ x in U, gi (convexApproxSample x0 z r ε x) * φ x
+        ∂MeasureTheory.volume := by
+  dsimp
+  let V : Set (Vec d) := translateSet b (a • U)
+  have h_affine_cancel : ∀ y : Vec d, a • (a⁻¹ • (y - b)) + b = y := by
+    intro y
+    rw [smul_smul, mul_inv_cancel₀ ha_pos.ne', one_smul]
+    abel
+  have hleft_change :
+      (∫ y in V, u y *
+          ((a ^ d)⁻¹ * (fderiv ℝ φ (a⁻¹ • (y - b))) (basisVec i))
+          ∂MeasureTheory.volume) =
+        ∫ x in U, u (convexApproxSample x0 z r ε x) *
+          (fderiv ℝ φ x) (basisVec i) ∂MeasureTheory.volume := by
+    have haux :
+        (a ^ d)⁻¹ *
+            ∫ y in V, u y * (fderiv ℝ φ (a⁻¹ • (y - b))) (basisVec i)
+              ∂MeasureTheory.volume =
+          ∫ x in U, u (convexApproxSample x0 z r ε x) *
+            (fderiv ℝ φ x) (basisVec i) ∂MeasureTheory.volume := by
+      calc
+        (a ^ d)⁻¹ *
+            ∫ y in V, (fun y : Vec d =>
+              u y * (fderiv ℝ φ (a⁻¹ • (y - b))) (basisVec i)) y
+              ∂MeasureTheory.volume
+          = (a ^ d)⁻¹ *
+              ∫ y in V, u (a • (a⁻¹ • (y - b)) + b) *
+                (fderiv ℝ φ (a⁻¹ • (y - b))) (basisVec i)
+                ∂MeasureTheory.volume := by
+                  congr 1
+                  apply MeasureTheory.integral_congr_ae
+                  filter_upwards with y
+                  simp [h_affine_cancel y]
+        _ = ∫ x in U, u (convexApproxSample x0 z r ε x) *
+              (fderiv ℝ φ x) (basisVec i) ∂MeasureTheory.volume := by
+                simpa [V, ha_eq, hb_eq, smul_eq_mul, convexApproxSample] using
+                  (setIntegral_comp_inv_smul_sub_of_pos
+                    (d := d)
+                    (E := ℝ)
+                    ha_pos
+                    b
+                    U
+                    (fun x : Vec d => u (a • x + b) * (fderiv ℝ φ x) (basisVec i)))
+    calc
+      ∫ y in V, u y *
+          ((a ^ d)⁻¹ * (fderiv ℝ φ (a⁻¹ • (y - b))) (basisVec i))
+          ∂MeasureTheory.volume
+          = ∫ y in V, (a ^ d)⁻¹ *
+              (u y * (fderiv ℝ φ (a⁻¹ • (y - b))) (basisVec i))
+              ∂MeasureTheory.volume := by
+                apply MeasureTheory.integral_congr_ae
+                filter_upwards with y
+                ring
+      _ = (a ^ d)⁻¹ *
+            ∫ y in V, (fun y : Vec d =>
+              u y * (fderiv ℝ φ (a⁻¹ • (y - b))) (basisVec i)) y
+              ∂MeasureTheory.volume := by
+                rw [MeasureTheory.integral_const_mul]
+      _ = ∫ x in U, u (convexApproxSample x0 z r ε x) *
+            (fderiv ℝ φ x) (basisVec i) ∂MeasureTheory.volume := haux
+  have hright_change :
+      (∫ y in V, gi y * (c * φ (a⁻¹ • (y - b))) ∂MeasureTheory.volume) =
+        a * ∫ x in U, gi (convexApproxSample x0 z r ε x) * φ x
+          ∂MeasureTheory.volume := by
+    have haux :
+        (a ^ d)⁻¹ *
+            ∫ y in V, gi y * φ (a⁻¹ • (y - b)) ∂MeasureTheory.volume =
+          ∫ x in U, gi (convexApproxSample x0 z r ε x) * φ x
+            ∂MeasureTheory.volume := by
+      calc
+        (a ^ d)⁻¹ *
+            ∫ y in V, (fun y : Vec d => gi y * φ (a⁻¹ • (y - b))) y
+              ∂MeasureTheory.volume
+          = (a ^ d)⁻¹ *
+              ∫ y in V, gi (a • (a⁻¹ • (y - b)) + b) *
+                φ (a⁻¹ • (y - b)) ∂MeasureTheory.volume := by
+                  congr 1
+                  apply MeasureTheory.integral_congr_ae
+                  filter_upwards with y
+                  simp [h_affine_cancel y]
+        _ = ∫ x in U, gi (convexApproxSample x0 z r ε x) * φ x
+              ∂MeasureTheory.volume := by
+                simpa [V, ha_eq, hb_eq, smul_eq_mul, convexApproxSample] using
+                  (setIntegral_comp_inv_smul_sub_of_pos
+                    (d := d)
+                    (E := ℝ)
+                    ha_pos
+                    b
+                    U
+                    (fun x : Vec d => gi (a • x + b) * φ x))
+    calc
+      ∫ y in V, gi y * (c * φ (a⁻¹ • (y - b))) ∂MeasureTheory.volume
+          = ∫ y in V, c * (gi y * φ (a⁻¹ • (y - b))) ∂MeasureTheory.volume := by
+              apply MeasureTheory.integral_congr_ae
+              filter_upwards with y
+              ring
+      _ = c * ∫ y in V, (fun y : Vec d =>
+            gi y * φ (a⁻¹ • (y - b))) y ∂MeasureTheory.volume := by
+              rw [MeasureTheory.integral_const_mul]
+      _ = a *
+            ((a ^ d)⁻¹ * ∫ y in V, (fun y : Vec d =>
+              gi y * φ (a⁻¹ • (y - b))) y ∂MeasureTheory.volume) := by
+                rw [hc_eq]
+                ring
+      _ = a * ∫ x in U, gi (convexApproxSample x0 z r ε x) * φ x
+            ∂MeasureTheory.volume := by
+              rw [haux]
+  exact ⟨hleft_change, hright_change⟩
+
 theorem HasWeakPartialDerivOn.comp_convexApproxSample
     {d : ℕ} {U : Set (Vec d)} (hU : IsOpenBoundedConvexDomain U)
     {i : Fin d} {u gi : Vec d → ℝ}
@@ -60,126 +307,10 @@ theorem HasWeakPartialDerivOn.comp_convexApproxSample
   have hV_sub : V ⊆ U :=
     translateSet_smul_subset_of_convexApproxSample_mapsTo (x0 := x0) (z := z) (r := r) (ε := ε)
       hmap
-  have hψ_eq :
-      ψ = fun y => c * φ (a⁻¹ • (y - b)) := rfl
-  have h_affine_cancel : ∀ y : Vec d, a • (a⁻¹ • (y - b)) + b = y := by
-    intro y
-    rw [smul_smul, mul_inv_cancel₀ ha_ne, one_smul]
-    abel
-  have hdφ_zero :
-      ∀ x, x ∉ U → dφ x = 0 := by
-    intro x hx
-    have hx_notin : x ∉ tsupport φ := fun hx' => hx (hφ_sub hx')
-    have hφ_eq : φ =ᶠ[nhds x] 0 :=
-      (isClosed_tsupport (f := φ)).isOpen_compl.eventually_mem hx_notin |>.mono
-        (fun y hy => image_eq_zero_of_notMem_tsupport hy)
-    change (fderiv ℝ φ x) (basisVec i) = 0
-    rw [Filter.EventuallyEq.fderiv_eq hφ_eq]
-    simp
-  have hψ_smooth : ContDiff ℝ (⊤ : ℕ∞) ψ := by
-    have hinner : ContDiff ℝ (⊤ : ℕ∞) (fun y : Vec d => a⁻¹ • (y - b)) := by
-      have h1 : ContDiff ℝ (⊤ : ℕ∞) (fun _ : Vec d => a⁻¹) := contDiff_const
-      have h2 : ContDiff ℝ (⊤ : ℕ∞) (fun y : Vec d => y - b) :=
-        contDiff_id.sub contDiff_const
-      exact h1.smul h2
-    simpa [ψ, hψ_eq] using contDiff_const.mul (hφ_smooth.comp hinner)
-  have hψ_compact : HasCompactSupport ψ := by
-    let e : Homeomorph (Vec d) (Vec d) :=
-      (Homeomorph.subRight b).trans (Homeomorph.smulOfNeZero a⁻¹ ha_inv_ne)
-    have hbase : HasCompactSupport (fun y : Vec d => φ (a⁻¹ • (y - b))) := by
-      change HasCompactSupport (φ ∘ e)
-      simpa [e, Function.comp] using hφ_compact.comp_homeomorph e
-    have hmul :
-        HasCompactSupport
-          (fun y : Vec d => (fun _ : Vec d => c) y * (fun y : Vec d => φ (a⁻¹ • (y - b))) y) := by
-      simpa using! (HasCompactSupport.mul_left (f := fun _ : Vec d => c) hbase)
-    simpa [ψ, hψ_eq] using hmul
-  have hψ_subV : tsupport ψ ⊆ V := by
-    intro y hy
-    have hy' :
-        y ∈ tsupport (fun y : Vec d => φ (a⁻¹ • (y - b))) := by
-      have hsub :
-          tsupport (fun y : Vec d => c * φ (a⁻¹ • (y - b))) ⊆
-            tsupport (fun y : Vec d => φ (a⁻¹ • (y - b))) :=
-        tsupport_mul_subset_right
-          (f := fun _ : Vec d => c)
-          (g := fun y : Vec d => φ (a⁻¹ • (y - b)))
-      exact hsub (by simpa [ψ, hψ_eq] using hy)
-    let e : Homeomorph (Vec d) (Vec d) :=
-      (Homeomorph.subRight b).trans (Homeomorph.smulOfNeZero a⁻¹ ha_inv_ne)
-    have hx_tsupport : a⁻¹ • (y - b) ∈ tsupport φ := by
-      rw [show (fun y : Vec d => φ (a⁻¹ • (y - b))) = φ ∘ e by
-            funext t
-            simp [e, Function.comp],
-        tsupport_comp_eq_preimage φ e] at hy'
-      exact hy'
-    let x : Vec d := a⁻¹ • (y - b)
-    have hxU : x ∈ U := hφ_sub hx_tsupport
-    refine ⟨a • x, Set.smul_mem_smul_set hxU, ?_⟩
-    calc
-      y = a • x + b := by
-            dsimp [x]
-            rw [smul_smul, mul_inv_cancel₀ ha_ne, one_smul]
-            abel
-      _ = a • x + ε • (x0 - r • z) := by rfl
-  have hψ_sub : tsupport ψ ⊆ U :=
-    hψ_subV.trans hV_sub
-  have hψ_value_zero :
-      ∀ y ∈ U \ V, ψ y = 0 := by
-    intro y hy
-    have hy_notinV : y ∉ V := hy.2
-    have hy_notin : y ∉ tsupport ψ := fun hy' => hy_notinV (hψ_subV hy')
-    exact image_eq_zero_of_notMem_tsupport hy_notin
-  have hdψ_formula :
-      ∀ y : Vec d, dψ y = (a ^ d)⁻¹ * dφ (a⁻¹ • (y - b)) := by
-    intro y
-    have hbase_smooth :
-        ContDiff ℝ 1 (fun t : Vec d => φ (a⁻¹ • (t - b))) := by
-      have hinner : ContDiff ℝ 1 (fun t : Vec d => a⁻¹ • (t - b)) := by
-        have h1 : ContDiff ℝ 1 (fun _ : Vec d => a⁻¹) := contDiff_const
-        have h2 : ContDiff ℝ 1 (fun t : Vec d => t - b) :=
-          contDiff_id.sub contDiff_const
-        exact h1.smul h2
-      exact (hφ_smooth.of_le (by simp)).comp hinner
-    have hbase_diff : DifferentiableAt ℝ (fun t : Vec d => φ (a⁻¹ • (t - b))) y :=
-      (hbase_smooth.contDiffAt).differentiableAt (by simp)
-    have hderiv_base :
-        fderiv ℝ (fun t : Vec d => φ (a⁻¹ • (t - b))) y =
-          a⁻¹ • fderiv ℝ φ (a⁻¹ • (y - b)) := by
-      calc
-        fderiv ℝ (fun t : Vec d => φ (a⁻¹ • (t - b))) y
-            = fderiv ℝ (fun s : Vec d => φ (a⁻¹ • s)) (y - b) := by
-                simpa [sub_eq_add_neg] using
-                  (fderiv_comp_sub (𝕜 := ℝ) (f := fun s : Vec d => φ (a⁻¹ • s)) (x := y) b)
-        _ = a⁻¹ • fderiv ℝ φ (a⁻¹ • (y - b)) := by
-              simpa using
-                (fderiv_comp_smul (𝕜 := ℝ) (f := φ) (x := y - b) (c := a⁻¹))
-    have hcoord :
-        dψ y = c * ((a⁻¹) * dφ (a⁻¹ • (y - b))) := by
-      have hderiv :
-          fderiv ℝ ψ y =
-            c • fderiv ℝ (fun t : Vec d => φ (a⁻¹ • (t - b))) y := by
-        simpa [ψ, hψ_eq] using
-          (fderiv_const_mul
-            (𝕜 := ℝ)
-            (a := fun t : Vec d => φ (a⁻¹ • (t - b)))
-            (x := y)
-            hbase_diff
-            c)
-      change (fderiv ℝ ψ y) (basisVec i) = c * (a⁻¹ * dφ (a⁻¹ • (y - b)))
-      rw [hderiv]
-      rw [hderiv_base]
-      simp [dφ, mul_assoc, smul_smul]
-    let g : ℝ := dφ (a⁻¹ • (y - b))
-    calc
-      dψ y = c * ((a⁻¹) * g) := hcoord
-      _ = (c * a⁻¹) * g := by ring
-      _ = (a ^ d)⁻¹ * g := by
-            have hc : c * a⁻¹ = (a ^ d)⁻¹ := by
-              dsimp [c]
-              field_simp [ha_ne]
-            rw [hc]
-      _ = (a ^ d)⁻¹ * dφ (a⁻¹ • (y - b)) := by rfl
+  have ⟨hψ_smooth, hψ_compact, hψ_subV, hψ_value_zero, hdφ_zero, hdψ_formula⟩ :=
+    convexApproxAffineTestProperties (i := i) hφ_smooth hφ_compact hφ_sub a b c ha_ne ha_inv_ne
+      (by rfl) V (by rfl)
+  have hψ_sub : tsupport ψ ⊆ U := hψ_subV.trans hV_sub
   have hdψ_zero :
       ∀ y ∈ U \ V, dψ y = 0 := by
     intro y hy
@@ -192,113 +323,34 @@ theorem HasWeakPartialDerivOn.comp_convexApproxSample
         · rw [smul_smul, mul_inv_cancel₀ ha_ne, one_smul]
           abel
       exact hy_notV hy_memV
+    dsimp only [dψ, ψ]
     rw [hdψ_formula]
-    simp [hdφ_zero _ hx_notU]
+    simp only [hdφ_zero _ hx_notU, mul_zero]
   have hweak := hu ψ hψ_smooth hψ_compact hψ_sub
   have hleft_restrict :
       ∫ y in U, u y * dψ y ∂MeasureTheory.volume =
         ∫ y in V, u y * dψ y ∂MeasureTheory.volume := by
     exact
       MeasureTheory.setIntegral_eq_of_subset_of_forall_sdiff_eq_zero
-        hU.1.measurableSet hV_sub (fun y hy => by simp [hdψ_zero y hy])
+        hU.1.measurableSet hV_sub (fun y hy => by simp only [hdψ_zero y hy, mul_zero])
   have hright_restrict :
       ∫ y in U, gi y * ψ y ∂MeasureTheory.volume =
         ∫ y in V, gi y * ψ y ∂MeasureTheory.volume := by
     exact
       MeasureTheory.setIntegral_eq_of_subset_of_forall_sdiff_eq_zero
-        hU.1.measurableSet hV_sub (fun y hy => by simp [hψ_value_zero y hy])
+        hU.1.measurableSet hV_sub (fun y hy => by simp only [ψ, hψ_value_zero y hy, mul_zero])
+  have ⟨hleft_raw, hright_raw⟩ :=
+    convexApproxAffineTestIntegralChanges (i := i) (U := U)
+      u gi φ x0 z r ε a b c ha_pos (by rfl) (by rfl) (by rfl)
   have hleft_change :
-      ∫ y in V, u y * dψ y ∂MeasureTheory.volume =
-        ∫ x in U, u (convexApproxSample x0 z r ε x) * dφ x ∂MeasureTheory.volume := by
-    have haux :
-        (a ^ d)⁻¹ *
-            ∫ y in V, u y * dφ (a⁻¹ • (y - b)) ∂MeasureTheory.volume =
-          ∫ x in U, u (convexApproxSample x0 z r ε x) * dφ x ∂MeasureTheory.volume := by
-      calc
-        (a ^ d)⁻¹ *
-            ∫ y in V, (fun y : Vec d => u y * dφ (a⁻¹ • (y - b))) y
-              ∂MeasureTheory.volume
-          = (a ^ d)⁻¹ *
-              ∫ y in V, u (a • (a⁻¹ • (y - b)) + b) * dφ (a⁻¹ • (y - b))
-                ∂MeasureTheory.volume := by
-                  congr 1
-                  apply MeasureTheory.integral_congr_ae
-                  filter_upwards with y
-                  simp [h_affine_cancel y]
-        _ = ∫ x in U, u (convexApproxSample x0 z r ε x) * dφ x
-              ∂MeasureTheory.volume := by
-                simpa [V, a, b, smul_eq_mul, convexApproxSample] using
-                  (setIntegral_comp_inv_smul_sub_of_pos
-                    (d := d)
-                    (E := ℝ)
-                    ha_pos
-                    b
-                    U
-                    (fun x : Vec d => u (a • x + b) * dφ x))
-    calc
-      ∫ y in V, u y * dψ y ∂MeasureTheory.volume
-          = ∫ y in V, u y * ((a ^ d)⁻¹ * dφ (a⁻¹ • (y - b))) ∂MeasureTheory.volume := by
-              apply MeasureTheory.integral_congr_ae
-              filter_upwards with y
-              rw [hdψ_formula y]
-      _ = ∫ y in V, (a ^ d)⁻¹ * (u y * dφ (a⁻¹ • (y - b))) ∂MeasureTheory.volume := by
-            apply MeasureTheory.integral_congr_ae
-            filter_upwards with y
-            ring
-      _ = (a ^ d)⁻¹ *
-            ∫ y in V, (fun y : Vec d => u y * dφ (a⁻¹ • (y - b))) y ∂MeasureTheory.volume := by
-              rw [MeasureTheory.integral_const_mul]
-      _ = ∫ x in U, u (convexApproxSample x0 z r ε x) * dφ x ∂MeasureTheory.volume := by
-            exact haux
+      (∫ y in V, u y * dψ y ∂MeasureTheory.volume) =
+        ∫ x in U, u (convexApproxSample x0 z r ε x) *
+          (fderiv ℝ φ x) (basisVec i) ∂MeasureTheory.volume := by
+    simpa only [dψ, ψ, hdψ_formula] using hleft_raw
   have hright_change :
-      ∫ y in V, gi y * ψ y ∂MeasureTheory.volume =
-        a * ∫ x in U, gi (convexApproxSample x0 z r ε x) * φ x ∂MeasureTheory.volume := by
-    have haux :
-        (a ^ d)⁻¹ *
-            ∫ y in V, gi y * φ (a⁻¹ • (y - b)) ∂MeasureTheory.volume =
-          ∫ x in U, gi (convexApproxSample x0 z r ε x) * φ x ∂MeasureTheory.volume := by
-      calc
-        (a ^ d)⁻¹ *
-            ∫ y in V, (fun y : Vec d => gi y * φ (a⁻¹ • (y - b))) y
-              ∂MeasureTheory.volume
-          = (a ^ d)⁻¹ *
-              ∫ y in V, gi (a • (a⁻¹ • (y - b)) + b) * φ (a⁻¹ • (y - b))
-                ∂MeasureTheory.volume := by
-                  congr 1
-                  apply MeasureTheory.integral_congr_ae
-                  filter_upwards with y
-                  simp [h_affine_cancel y]
-        _ = ∫ x in U, gi (convexApproxSample x0 z r ε x) * φ x
-              ∂MeasureTheory.volume := by
-                simpa [V, a, b, smul_eq_mul, convexApproxSample] using
-                  (setIntegral_comp_inv_smul_sub_of_pos
-                    (d := d)
-                    (E := ℝ)
-                    ha_pos
-                    b
-                    U
-                    (fun x : Vec d => gi (a • x + b) * φ x))
-    calc
-      ∫ y in V, gi y * ψ y ∂MeasureTheory.volume
-          = ∫ y in V, gi y * (c * φ (a⁻¹ • (y - b))) ∂MeasureTheory.volume := by
-              apply MeasureTheory.integral_congr_ae
-              filter_upwards with y
-              simp [ψ]
-      _ = ∫ y in V, c * (gi y * φ (a⁻¹ • (y - b))) ∂MeasureTheory.volume := by
-            apply MeasureTheory.integral_congr_ae
-            filter_upwards with y
-            ring
-      _ = c * ∫ y in V, (fun y : Vec d => gi y * φ (a⁻¹ • (y - b))) y
-            ∂MeasureTheory.volume := by
-              rw [MeasureTheory.integral_const_mul]
-      _ = a *
-            ((a ^ d)⁻¹ * ∫ y in V, (fun y : Vec d => gi y * φ (a⁻¹ • (y - b))) y
-              ∂MeasureTheory.volume) := by
-                dsimp [c]
-                ring
-      _ = a * ∫ x in U, gi (convexApproxSample x0 z r ε x) * φ x
-            ∂MeasureTheory.volume := by
-              rw [haux]
+      (∫ y in V, gi y * ψ y ∂MeasureTheory.volume) =
+        a * ∫ x in U, gi (convexApproxSample x0 z r ε x) * φ x
+          ∂MeasureTheory.volume := hright_raw
   calc
     ∫ x in U, u (convexApproxSample x0 z r ε x) * (fderiv ℝ φ x) (basisVec i)
         ∂MeasureTheory.volume
@@ -456,6 +508,56 @@ theorem aestronglyMeasurable_kernel_mul_indicator_comp_convexApproxSample_prod_m
     (hψ.comp continuous_fst).aestronglyMeasurable
   simpa [mul_assoc] using! hρ_meas.mul (hcomp.mul hψ_meas)
 
+private theorem integral_abs_comp_convexApproxSample_le_of_integrableOn
+    {d : ℕ} {U : Set (Vec d)} (hU : IsOpenBoundedConvexDomain U)
+    {u ψ : Vec d → ℝ} (hu : MeasureTheory.IntegrableOn u U MeasureTheory.volume)
+    (hψ_sub : tsupport ψ ⊆ U)
+    {x0 z : Vec d} {r ε a : ℝ} (ha_pos : 0 < a) (ha_eq : a = 1 - ε)
+    (hball : Metric.closedBall x0 r ⊆ U) (hr : 0 ≤ r) (hz_norm : ‖z‖ ≤ 1)
+    (hε0 : 0 ≤ ε) (hε1 : ε < 1) :
+    ∫ x in tsupport ψ, |u (convexApproxSample x0 z r ε x)| ∂MeasureTheory.volume ≤
+      (a ^ d)⁻¹ * ∫ y in U, |u y| ∂MeasureTheory.volume := by
+  have hsample_integrable_on_U :
+      MeasureTheory.IntegrableOn
+        (fun x => |u (convexApproxSample x0 z r ε x)|) U MeasureTheory.volume := by
+    simpa [Real.norm_eq_abs] using
+      integrableOn_comp_convexApproxSample hU
+        (show MeasureTheory.IntegrableOn (fun y => ‖u y‖) U MeasureTheory.volume from hu.norm)
+        hball hr hz_norm hε0 hε1
+  let V : Set (Vec d) := translateSet (ε • (x0 - r • z)) (a • U)
+  have hmap : Set.MapsTo (convexApproxSample x0 z r ε) U U :=
+    convexApproxSample_mapsTo_of_isOpenBoundedConvexDomain hU hball hr hz_norm hε0
+      (le_of_lt hε1)
+  have hV_sub : V ⊆ U := by
+    simpa only [V, ha_eq] using
+      translateSet_smul_subset_of_convexApproxSample_mapsTo (x0 := x0) (z := z) (r := r)
+        (ε := ε) hmap
+  have hchange :
+      ∫ x in U, |u (convexApproxSample x0 z r ε x)| ∂MeasureTheory.volume =
+        (a ^ d)⁻¹ * ∫ y in V, |u y| ∂MeasureTheory.volume := by
+    simpa [convexApproxSample, ha_eq, V, smul_eq_mul] using
+      (setIntegral_comp_smul_add_of_pos (d := d) (E := ℝ) ha_pos
+        (ε • (x0 - r • z)) U (fun y => |u y|))
+  have hV_le :
+      ∫ y in V, |u y| ∂MeasureTheory.volume ≤
+        ∫ y in U, |u y| ∂MeasureTheory.volume :=
+    MeasureTheory.setIntegral_mono_set hu.norm
+      (Filter.Eventually.of_forall fun y => abs_nonneg _)
+      (Filter.Eventually.of_forall hV_sub)
+  have hsupport_le :
+      ∫ x in tsupport ψ, |u (convexApproxSample x0 z r ε x)| ∂MeasureTheory.volume ≤
+        ∫ x in U, |u (convexApproxSample x0 z r ε x)| ∂MeasureTheory.volume :=
+    MeasureTheory.setIntegral_mono_set hsample_integrable_on_U
+      (Filter.Eventually.of_forall fun x => abs_nonneg _)
+      (Filter.Eventually.of_forall hψ_sub)
+  calc
+    ∫ x in tsupport ψ, |u (convexApproxSample x0 z r ε x)| ∂MeasureTheory.volume
+        ≤ ∫ x in U, |u (convexApproxSample x0 z r ε x)| ∂MeasureTheory.volume := hsupport_le
+    _ = (a ^ d)⁻¹ * ∫ y in V, |u y| ∂MeasureTheory.volume := hchange
+    _ ≤ (a ^ d)⁻¹ * ∫ y in U, |u y| ∂MeasureTheory.volume := by
+          refine mul_le_mul_of_nonneg_left hV_le ?_
+          positivity
+
 theorem integrable_kernel_mul_indicator_comp_convexApproxSample_prod_mul_of_integrableOn
     {d : ℕ} {U : Set (Vec d)} (hU : IsOpenBoundedConvexDomain U)
     {u ρ ψ : Vec d → ℝ} (hu : MeasureTheory.IntegrableOn u U MeasureTheory.volume)
@@ -530,8 +632,7 @@ theorem integrable_kernel_mul_indicator_comp_convexApproxSample_prod_mul_of_inte
     refine MeasureTheory.Integrable.mono hbound_int hinner_meas ?_
     filter_upwards with z
     by_cases hzρ : z ∈ tsupport ρ
-    · let V : Set (Vec d) := translateSet (ε • (x0 - r • z)) (a • U)
-      have hz_norm : ‖z‖ ≤ 1 := by
+    · have hz_norm : ‖z‖ ≤ 1 := by
         simpa [Metric.mem_closedBall, dist_eq_norm] using hρ.support_subset_closedBall hzρ
       have hmap :
           Set.MapsTo (convexApproxSample x0 z r ε) U U :=
@@ -546,14 +647,6 @@ theorem integrable_kernel_mul_indicator_comp_convexApproxSample_prod_mul_of_inte
         simpa [Real.norm_eq_abs] using
           integrableOn_comp_convexApproxSample_of_locallyIntegrableOn hU hu_norm.locallyIntegrableOn
             hψ_sub hψ_compact.isCompact hball hr hz_norm hε0 hε1
-      have hsample_int_U :
-          MeasureTheory.IntegrableOn
-            (fun x => |u (convexApproxSample x0 z r ε x)|)
-            U MeasureTheory.volume := by
-        simpa [Real.norm_eq_abs] using
-          integrableOn_comp_convexApproxSample hU (show MeasureTheory.IntegrableOn (fun y => ‖u
-            y‖) U MeasureTheory.volume from hu.norm)
-            hball hr hz_norm hε0 hε1
       have hdom_int :
           MeasureTheory.Integrable
             (fun x => ρ z * (|u (convexApproxSample x0 z r ε x)| * Cψ)) μψ := by
@@ -583,36 +676,9 @@ theorem integrable_kernel_mul_indicator_comp_convexApproxSample_prod_mul_of_inte
                 exact mul_le_mul_of_nonneg_left (hψ_bound x) (abs_nonneg _)
       have hsample_bound :
           ∫ x, |u (convexApproxSample x0 z r ε x)| ∂μψ ≤ (a ^ d)⁻¹ * Cu := by
-        have hmono :
-            ∫ x in tsupport ψ, |u (convexApproxSample x0 z r ε x)| ∂MeasureTheory.volume ≤
-              ∫ x in U, |u (convexApproxSample x0 z r ε x)| ∂MeasureTheory.volume := by
-          exact MeasureTheory.setIntegral_mono_set hsample_int_U
-            (Filter.Eventually.of_forall fun x => abs_nonneg _)
-            (Filter.Eventually.of_forall hψ_sub)
-        have hV_sub : V ⊆ U :=
-          translateSet_smul_subset_of_convexApproxSample_mapsTo (x0 := x0) (z := z) (r := r)
-            (ε := ε) hmap
-        have hchange :
-            ∫ x in U, |u (convexApproxSample x0 z r ε x)| ∂MeasureTheory.volume =
-              (a ^ d)⁻¹ * ∫ y in V, |u y| ∂MeasureTheory.volume := by
-          simpa [convexApproxSample, a, V, smul_eq_mul] using
-            (setIntegral_comp_smul_add_of_pos (d := d) (E := ℝ) ha_pos
-              (ε • (x0 - r • z)) U (fun y => |u y|))
-        have hV_le :
-            ∫ y in V, |u y| ∂MeasureTheory.volume ≤ Cu := by
-          exact MeasureTheory.setIntegral_mono_set hu.norm
-            (Filter.Eventually.of_forall fun y => abs_nonneg _)
-            (Filter.Eventually.of_forall hV_sub)
-        exact
-          calc
-          ∫ x, |u (convexApproxSample x0 z r ε x)| ∂μψ
-              = ∫ x in tsupport ψ, |u (convexApproxSample x0 z r ε x)| ∂MeasureTheory.volume := by
-                  simp [μψ]
-          _ ≤ ∫ x in U, |u (convexApproxSample x0 z r ε x)| ∂MeasureTheory.volume := hmono
-          _ = (a ^ d)⁻¹ * ∫ y in V, |u y| ∂MeasureTheory.volume := hchange
-          _ ≤ (a ^ d)⁻¹ * Cu := by
-                refine mul_le_mul_of_nonneg_left hV_le ?_
-                positivity
+        simpa [μψ, Cu] using
+          integral_abs_comp_convexApproxSample_le_of_integrableOn hU hu hψ_sub
+            ha_pos rfl hball hr hz_norm hε0 hε1
       change ‖∫ x, ‖ρ z * Set.indicator U u (convexApproxSample x0 z r ε x) * ψ x‖ ∂μψ‖ ≤
           ‖bound z‖
       calc

@@ -326,7 +326,7 @@ theorem abs_cubeAverage_vecDot_const_scalar_smul_le_collapsed_note_terms_of_comp
     intro i
     exact memLp_component_of_memLp flux i hflux
   have hmain :=
-    abs_cubeAverage_vecDot_le_sum_note_rhs_mul_of_uniform_component_bounds_two_one_of_nonneg
+    absCubeAverage_dot_le_componentBounds_twoOne
       Q 1 flux (fun x => c • ξ x) (fun _ => Bg) (by norm_num) hflux_comp (fun _ => hBg)
       (by
         intro i N
@@ -363,7 +363,7 @@ theorem abs_cubeAverage_vecDot_const_scalar_smul_le_collapsed_note_terms_of_comp
                 cubeBesovCircNorm Q 1 (2 : ℝ≥0∞) (1 : ℝ≥0∞) (fun x => flux x i) ≤
                   cubeBesovScaleWeight (-1) Q * Bu := by
               exact
-                cubeBesovCircNorm_two_one_component_le_scaleWeight_neg_mul_of_negativeVectorPartialBound
+                circNorm_component_le_negativeVectorPartialBound
                   Q 1 flux i hneg
             have hinner :
                 (3 : ℝ) ^ ((d : ℝ) + 1) *
@@ -396,7 +396,8 @@ theorem abs_cubeAverage_vecDot_const_scalar_smul_le_collapsed_note_terms_of_comp
 `[a∇u]_{B^{-1}}` line: the full negative Besov dual norm is controlled by the
 negative circ norm alone, so the flux side contributes only the
 `cubeBesovScaleWeight (-1)` factor. -/
-theorem abs_cubeAverage_vecDot_const_scalar_smul_le_collapsed_sharp_note_terms_of_componentDualBounds
+theorem
+  abs_cubeAverage_vecDot_const_scalar_smul_le_collapsed_sharp_note_terms_of_componentDualBounds
     {d : ℕ} (Q : TriadicCube d) (flux ξ : Vec d → Vec d) (c : ℝ) {Bu Bg : ℝ}
     (hflux : MeasureTheory.MemLp flux (2 : ℝ≥0∞) (normalizedCubeMeasure Q))
     (hBg : 0 ≤ Bg)
@@ -416,7 +417,7 @@ theorem abs_cubeAverage_vecDot_const_scalar_smul_le_collapsed_sharp_note_terms_o
     intro i
     exact memLp_component_of_memLp flux i hflux
   have hmain :=
-    abs_cubeAverage_vecDot_le_sum_note_constant_mul_of_uniform_component_bounds_two_one_of_nonneg
+    absCubeAverage_dot_le_componentBounds_twoOne_noMeanTerm
       Q 1 flux (fun x => c • ξ x) (fun _ => Bg) (by norm_num) hflux_comp
       (fun _ => hBg)
       (by
@@ -448,7 +449,7 @@ theorem abs_cubeAverage_vecDot_const_scalar_smul_le_collapsed_sharp_note_terms_o
                 cubeBesovCircNorm Q 1 (2 : ℝ≥0∞) (1 : ℝ≥0∞) (fun x => flux x i) ≤
                   cubeBesovScaleWeight (-1) Q * Bu := by
               exact
-                cubeBesovCircNorm_two_one_component_le_scaleWeight_neg_mul_of_negativeVectorPartialBound
+                circNorm_component_le_negativeVectorPartialBound
                   Q 1 flux i hneg
             have hinner :
                 (3 : ℝ) ^ ((d : ℝ) + 1) *
@@ -464,7 +465,7 @@ theorem abs_cubeAverage_vecDot_const_scalar_smul_le_collapsed_sharp_note_terms_o
             simp
   exact le_trans hmain hnote_term
 
-theorem abs_cubeAverage_vecDot_cubeAverage_scalar_smul_le_collapsed_note_terms_of_contDiff_component_bound
+theorem abs_cubeAverage_fluxMeanCutoff_le_collapsedNote_of_smoothBound
     {d : ℕ} (Q : TriadicCube d) (flux : Vec d → Vec d)
     (u : Vec d → ℝ) (ξ : Vec d → Vec d) {Bu Bavg B Bg : ℝ}
     (hB : 0 ≤ B)
@@ -534,7 +535,7 @@ the quantitative derivative bound.  This is the direct Lean counterpart of
 the LaTeX bound
 `C 3^k Λ_1(R)^{1/2} |u_R| E_R`, before the local mean is bounded by the
 local `L²` norm. -/
-theorem abs_cubeAverage_vecDot_cubeAverage_scalar_smul_le_collapsed_sharp_note_terms_of_contDiff_component_bound
+theorem abs_cubeAverage_vectorDot_cubeAverage_scalar_smul_le_collapsed_sharp_note_terms
     {d : ℕ} (Q : TriadicCube d) (flux : Vec d → Vec d)
     (u : Vec d → ℝ) (ξ : Vec d → Vec d) {Bu B Bg : ℝ}
     (hB : 0 ≤ B)

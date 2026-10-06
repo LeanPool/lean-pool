@@ -57,13 +57,13 @@ noncomputable def weightedBetaSumConst (β : ℝ) : ℝ :=
 @[expose]
 noncomputable def weightedBetaSumConstParams {d : ℕ}
     (params : QuantitativeCoarseGrainedEllipticityParams d) : ℝ :=
-  weightedBetaSumConst (section53CoarseFluctuationBetaParams params)
+  weightedBetaSumConst (coarseFluctuationBeta params)
 
 /-- Parameter-only constant for the deterministic tau-sum compression. -/
 @[expose]
 noncomputable def coarseFluctuationTauSumConstParams {d : ℕ}
     (params : QuantitativeCoarseGrainedEllipticityParams d) : ℝ :=
-  5 * (section53CoarseFluctuationBetaParams params)⁻¹
+  5 * (coarseFluctuationBeta params)⁻¹
 
 theorem weightedScaleDecaySumConst_pos {d : ℕ} [NeZero d] :
     0 < weightedScaleDecaySumConst d := by
@@ -358,7 +358,7 @@ theorem coarseFluctuationTauSumAtScale_le_const_tauAtScale_of_params
       hP hstat hStruct hP4 hkm e
   have hβeq :
       section53CoarseFluctuationBeta hP4 =
-        section53CoarseFluctuationBetaParams params := by
+        coarseFluctuationBeta params := by
     rw [← section53CoarseFluctuationBetaParams_eq_of_P4 hP4, hparams]
   simpa [coarseFluctuationTauSumConstParams, hβeq] using hraw
 

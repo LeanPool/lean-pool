@@ -335,7 +335,7 @@ theorem isBigO_gammaSigma_finset_sum_of_iIndepFun_of_isBigO_of_integral_eq_zero_
     hsumXY).2 hsumY
 
 theorem isBigO_gammaSigma_const_of_abs_le
-    [IsFiniteMeasure μ] {σ A c : ℝ}
+    {σ A c : ℝ}
     (hA : 0 ≤ A) (hc : |c| ≤ A) :
     IsBigO μ (gammaSigma σ) (fun _ω : Ω => c) A := by
   rw [isBigO_gammaSigma_iff]

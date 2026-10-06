@@ -24,18 +24,23 @@ namespace HCPolySupport
 
 open scoped BigOperators
 
+/-- The integral of `f` on the half-open cube divided by its volume. -/
 @[expose]
 noncomputable def cubeAverage {d : ℕ} (Q : TriadicCube d) (f : Vec d → ℝ) : ℝ :=
   (cubeVolume Q)⁻¹ * ∫ x in cubeSet Q, f x ∂MeasureTheory.volume
 
+/-- The vector of coordinatewise averages of a vector field on the cube. -/
 @[expose]
 noncomputable def cubeAverageVec {d : ℕ} (Q : TriadicCube d) (f : Vec d → Vec d) : Vec d :=
   fun i => cubeAverage Q (fun x => f x i)
 
+/-- The matrix of entrywise averages of a matrix field on the cube. -/
 @[expose]
 noncomputable def cubeAverageMat {d : ℕ} (Q : TriadicCube d) (f : Vec d → Mat d) : Mat d :=
   fun i j => cubeAverage Q (fun x => f x i j)
 
+/-- The piecewise constant function equal to the average of `f` on each depth-`j` descendant of
+`Q`, and zero outside their union. -/
 @[expose]
 noncomputable def cubeProjection {d : ℕ} (Q : TriadicCube d) (j : ℕ)
     (f : Vec d → ℝ) : Vec d → ℝ := by
@@ -44,6 +49,8 @@ noncomputable def cubeProjection {d : ℕ} (Q : TriadicCube d) (j : ℕ)
     Finset.sum (descendantsAtDepth Q j) fun R =>
       if x ∈ cubeSet R then cubeAverage R f else 0
 
+/-- The initial cube projection at depth zero, or the difference of consecutive cube projections
+at a positive depth. -/
 @[expose]
 noncomputable def cubeIncrement {d : ℕ} (Q : TriadicCube d) (j : ℕ)
     (f : Vec d → ℝ) : Vec d → ℝ :=

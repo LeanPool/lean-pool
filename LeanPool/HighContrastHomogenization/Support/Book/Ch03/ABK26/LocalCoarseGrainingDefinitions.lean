@@ -197,7 +197,7 @@ noncomputable def localSymmetricEnergyENorm {d : ℕ}
 
 /-- The weighted descendant `ell^p` aggregation of local symmetric energies. -/
 @[expose]
-noncomputable def weightedLocalSymmetricEnergyLp {d : ℕ} [NeZero d]
+noncomputable def weightedLocalSymmetricEnergyLp {d : ℕ}
     (Q : TriadicCube d) (n : ℤ) (hn : n ≤ Q.scale)
     (a : Book.Ch02.CoeffOn (Book.Ch02.cubeDomain Q))
     (u : H1Function (openCubeSet Q))
@@ -233,7 +233,7 @@ noncomputable def localFluxDefectL2Field {d : ℕ}
 /-- The normalized `ell^p` average of descendant negative Besov flux defects. -/
 @[expose]
 noncomputable def localFluxDefectNegativeBesovLpAverage {d : ℕ}
-    [NeZero d] (Q : TriadicCube d) (n : ℤ) (hn : n ≤ Q.scale)
+    (Q : TriadicCube d) (n : ℤ) (hn : n ≤ Q.scale)
     (a : Book.Ch02.CoeffOn (Book.Ch02.cubeDomain Q))
     (sigma0 : ℝ) (u : H1Function (openCubeSet Q))
     (s : FractionalOrder) (p : FiniteLpExponent) : ℝ≥0∞ := by

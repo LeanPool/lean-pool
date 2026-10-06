@@ -361,7 +361,8 @@ supplies in its Alternative-1 service disjunct (`SelectionData.lean`):
 into `exists_stop_of_potential` with the same `c` and the same charge.  Needs `d ≤ a` (the
 weight already satisfies `4 Q max 1 C ≤ a C / d`; `d ≤ a` is an extra, freely enforceable
 requirement on `weight_choice`'s `a`).  No `Q` and no growth bound are needed. -/
-theorem potential_step_sub_le_of_quarter_bound {d : ℕ} (P : Measure (CoeffSpace d)) (γ : ℝ) (jStar : ℕ)
+theorem potential_step_sub_le_of_quarter_bound {d : ℕ} (P : Measure (CoeffSpace d)) (γ : ℝ)
+  (jStar : ℕ)
     (η a c C : ℝ) (m : Mat d) (k n : ℤ) (h : ℕ) (hd : 0 < d) (hη : 0 < η) (hC : 1 ≤ C)
     (ha : (d : ℝ) ≤ a) (hc : c = 1 / 2 * η * Real.log (16 / 9))
     (hx : η < profile P γ (Geometry.explicitRoundedGrid jStar m) jStar k n +

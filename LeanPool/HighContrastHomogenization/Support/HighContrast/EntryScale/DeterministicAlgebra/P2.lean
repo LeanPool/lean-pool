@@ -834,7 +834,7 @@ Source label `l.union.bound`: the concrete terminal/intermediate diagonal
 normalization-change matrix has full-block operator norm at most
 `sqrt widetildeTheta_0`.
 -/
-theorem fullBlockOperatorNorm_terminalNormalizerChangeMatrixAtScales_le_sqrt_initialWidetildeTheta_of_P4
+theorem terminalNormalizer_operatorNorm_le_sqrt_widetildeTheta
     {d : ℕ} [NeZero d] {P : HCPolySupport.Book.Ch04.RestrictionCoeffLaw d}
     (hP : HCPolySupport.Book.Ch04.RestrictionLawCarrier P)
     (hStruct : HCPolySupport.Book.Ch04.RestrictionStructuralLaw P)
@@ -874,7 +874,7 @@ theorem fullBlockOperatorNorm_terminalNormalizerChange_two_sided_le_initialWidet
     terminalNormalizerChangeMatrixAtScales hP hStruct j m
   have hD : fullBlockOperatorNorm D ≤ Real.sqrt T := by
     simpa [D, T] using
-      fullBlockOperatorNorm_terminalNormalizerChangeMatrixAtScales_le_sqrt_initialWidetildeTheta_of_P4
+      terminalNormalizer_operatorNorm_le_sqrt_widetildeTheta
         hP hStruct hP4 hjm
   have hsqrt_nonneg : 0 ≤ Real.sqrt T := Real.sqrt_nonneg T
   have htwo :=
@@ -900,7 +900,7 @@ Source label `l.union.bound`: terminal normalization of a block centered at
 scale `j` costs at most `T = widetildeTheta_0` times the same centered block
 with its intermediate-scale normalization.
 -/
-theorem fullBlockOperatorNorm_terminalNormalizedCenteredFullBlock_le_initialWidetildeTheta_mul_intermediate_of_P4
+theorem fullBlockOperatorNorm_terminalCenteredBlock_le_initialTheta_mul_intermediate
     {d : ℕ} [NeZero d] {P : HCPolySupport.Book.Ch04.RestrictionCoeffLaw d}
     (hP : HCPolySupport.Book.Ch04.RestrictionLawCarrier P)
     (hStruct : HCPolySupport.Book.Ch04.RestrictionStructuralLaw P)

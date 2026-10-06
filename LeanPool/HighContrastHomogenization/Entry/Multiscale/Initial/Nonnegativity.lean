@@ -71,21 +71,29 @@ theorem normalizedMean_one_antitone_left (d : ℕ) (hd : 2 ≤ d) (γ : ℝ)
   intro P E Ψ K Src hP hstat _hunit hdag jStar hjStar i j m hi hij
   have := hP
   have : NeZero d := ⟨by omega⟩
-  have hAi : Matrix.PosDef (HCPolySupport.toFullBlockMat (HCPolySupport.HighContrast.adaptedMean P (1 : Mat d) i)) := by
-    have h := HCPolySupport.HighContrast.Annealed.adaptedMean_posDef d hd P γ E Ψ K Src hstat hdag jStar hjStar
+  have hAi : Matrix.PosDef (HCPolySupport.toFullBlockMat (HCPolySupport.HighContrast.adaptedMean
+    P (1 : Mat d) i)) := by
+    have h := HCPolySupport.HighContrast.Annealed.adaptedMean_posDef d hd P γ E Ψ K Src hstat
+      hdag jStar hjStar
       (1 : Mat d) (HCPolySupport.HighContrast.Geometry.one_posDef d) i
     rwa [HCPolySupport.HighContrast.Geometry.explicitRoundedGrid_one] at h
-  have hAj : Matrix.PosDef (HCPolySupport.toFullBlockMat (HCPolySupport.HighContrast.adaptedMean P (1 : Mat d) j)) := by
-    have h := HCPolySupport.HighContrast.Annealed.adaptedMean_posDef d hd P γ E Ψ K Src hstat hdag jStar hjStar
+  have hAj : Matrix.PosDef (HCPolySupport.toFullBlockMat (HCPolySupport.HighContrast.adaptedMean
+    P (1 : Mat d) j)) := by
+    have h := HCPolySupport.HighContrast.Annealed.adaptedMean_posDef d hd P γ E Ψ K Src hstat
+      hdag jStar hjStar
       (1 : Mat d) (HCPolySupport.HighContrast.Geometry.one_posDef d) j
     rwa [HCPolySupport.HighContrast.Geometry.explicitRoundedGrid_one] at h
-  have hAm : Matrix.PosDef (HCPolySupport.toFullBlockMat (HCPolySupport.HighContrast.adaptedMean P (1 : Mat d) m)) := by
-    have h := HCPolySupport.HighContrast.Annealed.adaptedMean_posDef d hd P γ E Ψ K Src hstat hdag jStar hjStar
+  have hAm : Matrix.PosDef (HCPolySupport.toFullBlockMat (HCPolySupport.HighContrast.adaptedMean
+    P (1 : Mat d) m)) := by
+    have h := HCPolySupport.HighContrast.Annealed.adaptedMean_posDef d hd P γ E Ψ K Src hstat
+      hdag jStar hjStar
       (1 : Mat d) (HCPolySupport.HighContrast.Geometry.one_posDef d) m
     rwa [HCPolySupport.HighContrast.Geometry.explicitRoundedGrid_one] at h
   have hanti : HCPolySupport.BlockMatLoewnerLE
-      (HCPolySupport.HighContrast.adaptedMean P (1 : Mat d) j) (HCPolySupport.HighContrast.adaptedMean P (1 : Mat d) i) := by
-    have h := HCPolySupport.HighContrast.Annealed.adaptedMean_antitone d hd P γ E Ψ K Src hstat hdag jStar hjStar
+      (HCPolySupport.HighContrast.adaptedMean P (1 : Mat d) j)
+        (HCPolySupport.HighContrast.adaptedMean P (1 : Mat d) i) := by
+    have h := HCPolySupport.HighContrast.Annealed.adaptedMean_antitone d hd P γ E Ψ K Src hstat
+      hdag jStar hjStar
       (1 : Mat d) (HCPolySupport.HighContrast.Geometry.one_posDef d) i j hi hij
     rwa [HCPolySupport.HighContrast.Geometry.explicitRoundedGrid_one] at h
   set Ai := HCPolySupport.HighContrast.adaptedMean P (1 : Mat d) i
@@ -104,16 +112,19 @@ theorem normalizedMean_one_antitone_left (d : ℕ) (hd : 2 ≤ d) (γ : ℝ)
     simpa only [hT.eq, mul_sub, sub_mul] using hcm
   have hfinal : T * HCPolySupport.toFullBlockMat Aj * T ≤ T * HCPolySupport.toFullBlockMat Ai * T :=
     Matrix.le_iff.mpr hstep
-  have hHj : Matrix.PosDef (HCPolySupport.toFullBlockMat (HCPolySupport.HighContrast.normalizedBlock Aj Am)) :=
+  have hHj : Matrix.PosDef (HCPolySupport.toFullBlockMat
+    (HCPolySupport.HighContrast.normalizedBlock Aj Am)) :=
     HCPolySupport.HighContrast.Annealed.normalizedBlock_posDef Aj Am hAj hAm
-  have hHi : Matrix.PosDef (HCPolySupport.toFullBlockMat (HCPolySupport.HighContrast.normalizedBlock Ai Am)) :=
+  have hHi : Matrix.PosDef (HCPolySupport.toFullBlockMat
+    (HCPolySupport.HighContrast.normalizedBlock Ai Am)) :=
     HCPolySupport.HighContrast.Annealed.normalizedBlock_posDef Ai Am hAi hAm
   have hgoal : HCPolySupport.toFullBlockMat (HCPolySupport.HighContrast.normalizedBlock Aj Am)
       ≤ HCPolySupport.toFullBlockMat (HCPolySupport.HighContrast.normalizedBlock Ai Am) := by
     unfold HCPolySupport.HighContrast.normalizedBlock
     simp only [HCPolySupport.toFullBlockMat_ofFullBlockMat]
     exact hfinal
-  exact (HCPolySupport.HighContrast.Annealed.fullBlock_le_iff hHj.isHermitian hHi.isHermitian).mp hgoal
+  exact (HCPolySupport.HighContrast.Annealed.fullBlock_le_iff hHj.isHermitian
+    hHi.isHermitian).mp hgoal
 
 /-- C4. The Euclidean drift is nonnegative (`p.initial.fixed.grid.scale`). -/
 theorem determinantDrift_one_nonneg (d : ℕ) (hd : 2 ≤ d) (γ : ℝ)
@@ -139,7 +150,8 @@ theorem determinantDrift_one_nonneg (d : ℕ) (hd : 2 ≤ d) (γ : ℝ)
   · have hAi : Matrix.PosDef (HCPolySupport.toFullBlockMat
         (HCPolySupport.HighContrast.adaptedMean P (1 : HCPolySupport.Mat d) (j - 1))) := by
       have h := HCPolySupport.HighContrast.Annealed.adaptedMean_posDef d hd P γ E Ψ K Src hstat hdag
-        jStar hjStar (1 : HCPolySupport.Mat d) (HCPolySupport.HighContrast.Geometry.one_posDef d) (j - 1)
+        jStar hjStar (1 : HCPolySupport.Mat d) (HCPolySupport.HighContrast.Geometry.one_posDef
+          d) (j - 1)
       rwa [HCPolySupport.HighContrast.Geometry.explicitRoundedGrid_one] at h
     have hAj : Matrix.PosDef (HCPolySupport.toFullBlockMat
         (HCPolySupport.HighContrast.adaptedMean P (1 : HCPolySupport.Mat d) j)) := by
@@ -154,14 +166,17 @@ theorem determinantDrift_one_nonneg (d : ℕ) (hd : 2 ≤ d) (γ : ℝ)
     have hanti : HCPolySupport.BlockMatLoewnerLE
         (HCPolySupport.HighContrast.adaptedMean P (1 : HCPolySupport.Mat d) j)
         (HCPolySupport.HighContrast.adaptedMean P (1 : HCPolySupport.Mat d) (j - 1)) := by
-      have h := HCPolySupport.HighContrast.Annealed.adaptedMean_antitone d hd P γ E Ψ K Src hstat hdag
-        jStar hjStar (1 : HCPolySupport.Mat d) (HCPolySupport.HighContrast.Geometry.one_posDef d) (j - 1) j hi (by omega)
+      have h := HCPolySupport.HighContrast.Annealed.adaptedMean_antitone d hd P γ E Ψ K Src
+        hstat hdag
+        jStar hjStar (1 : HCPolySupport.Mat d) (HCPolySupport.HighContrast.Geometry.one_posDef
+          d) (j - 1) j hi (by omega)
       rwa [HCPolySupport.HighContrast.Geometry.explicitRoundedGrid_one] at h
     set Ai := HCPolySupport.HighContrast.adaptedMean P (1 : HCPolySupport.Mat d) (j - 1)
     set Aj := HCPolySupport.HighContrast.adaptedMean P (1 : HCPolySupport.Mat d) j
     set Am := HCPolySupport.HighContrast.adaptedMean P (1 : HCPolySupport.Mat d) m
     have hraw : HCPolySupport.toFullBlockMat Aj ≤ HCPolySupport.toFullBlockMat Ai :=
-      (HCPolySupport.HighContrast.Annealed.fullBlock_le_iff hAj.isHermitian hAi.isHermitian).mpr hanti
+      (HCPolySupport.HighContrast.Annealed.fullBlock_le_iff hAj.isHermitian hAi.isHermitian).mpr
+        hanti
     have hdiff : (HCPolySupport.toFullBlockMat Ai - HCPolySupport.toFullBlockMat Aj).PosSemidef :=
       Matrix.le_iff.mp hraw
     set T := HCPolySupport.HighContrast.matSqrt (HCPolySupport.toFullBlockMat Am)⁻¹
@@ -173,7 +188,8 @@ theorem determinantDrift_one_nonneg (d : ℕ) (hd : 2 ≤ d) (γ : ℝ)
       simpa only [hT.eq, mul_sub, sub_mul] using hcm
     have hle : HCPolySupport.toFullBlockMat (relMean P (1 : HCPolySupport.Mat d) j m) ≤
         HCPolySupport.toFullBlockMat (relMean P (1 : HCPolySupport.Mat d) (j - 1) m) := by
-      have hfinal : T * HCPolySupport.toFullBlockMat Aj * T ≤ T * HCPolySupport.toFullBlockMat Ai * T :=
+      have hfinal : T * HCPolySupport.toFullBlockMat Aj * T ≤ T * HCPolySupport.toFullBlockMat
+        Ai * T :=
         Matrix.le_iff.mpr hstep
       simpa [relMean, HCPolySupport.HighContrast.normalizedBlock, Ai, Aj, Am,
         HCPolySupport.toFullBlockMat_ofFullBlockMat] using hfinal

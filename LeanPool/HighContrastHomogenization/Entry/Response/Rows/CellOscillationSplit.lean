@@ -100,7 +100,8 @@ theorem integrable_volumeAverage_energy_depth_respCoeffMinus {d : ℕ} [NeZero d
   have ht' : t = (t - (m : ℤ)) + (m : ℤ) := by ring
   exact integrable_volumeAverage_energy_adaptedCellAtCenter_respCoeffMinus P jStar hjStar F hm
     m (t - (m : ℤ)) t ht' e uM hmax hJt
-    (fun w hw => (measurable_volumeAverage_energy_adaptedCellAtCenter_respCoeffMinus P jStar hjStar F
+    (fun w hw => (measurable_volumeAverage_energy_adaptedCellAtCenter_respCoeffMinus P jStar
+      hjStar F
       hm m (t - (m : ℤ)) t ht' e uM hmax w hw).aestronglyMeasurable) W hW
 
 /-- **The annealed cell energy of the terminal optimizer on an aligned cell of any generation,
@@ -162,7 +163,8 @@ theorem integrable_volumeAverage_cross_optimizerField_respCoeffMinus {d : ℕ} [
       (t - (m : ℤ)) a Y W).2
   have hheadsq : Integrable (fun a =>
       (Real.sqrt (vecDot Y.1 (matVecMul (coarseBlockMatrix
-            (adaptedCellAtCenter (respGrid jStar F) (t - (m : ℤ)) W) (respCoeffMinus F a)).upperLeft Y.1))
+            (adaptedCellAtCenter (respGrid jStar F) (t - (m : ℤ)) W) (respCoeffMinus F
+              a)).upperLeft Y.1))
         + Real.sqrt (vecDot Y.2 (matVecMul (coarseBlockMatrix
             (adaptedCellAtCenter (respGrid jStar F) (t - (m : ℤ)) W)
               (respCoeffMinus F a)).lowerRight Y.2))) ^ 2) P :=
@@ -179,7 +181,8 @@ theorem integrable_volumeAverage_cross_optimizerField_respCoeffMinus {d : ℕ} [
   refine Integrable.mono' (hheadsq.add hE) hmeas.aestronglyMeasurable ?_
   filter_upwards with a
   rw [Real.norm_eq_abs]
-  have hbd := abs_volumeAverage_cross_optimizerField_respCoeffMinus_adaptedCellAtCenter_le jStar hjStar
+  have hbd := abs_volumeAverage_cross_optimizerField_respCoeffMinus_adaptedCellAtCenter_le jStar
+    hjStar
     F hm t m a (uM a) Y hW
     (fun i => (integrableOn_optimizerField_respCoeffMinus_box (respGrid jStar F) hq t F a
       (uM a) m W hW i).1)
@@ -189,7 +192,8 @@ theorem integrable_volumeAverage_cross_optimizerField_respCoeffMinus {d : ℕ} [
       (uM a) hW).1 Y.2)
     ((integrableOn_vecDot_optimizerField_respCoeffMinus_adaptedCellAtCenter jStar hjStar F hm t m a
       (uM a) hW).2 Y.1)
-  have hDnn := zero_le_volumeAverage_scalarVariationEnergyIntegrand_respCoeffMinus_adaptedCellAtCenter
+  have hDnn :=
+    zero_le_volumeAverage_scalarVariationEnergyIntegrand_respCoeffMinus_adaptedCellAtCenter
     jStar hjStar F hm t m a (uM a) hW
   have hyoung := mul_sqrt_two_mul_two_mul_le (G := Real.sqrt (vecDot Y.1 (matVecMul
       (coarseBlockMatrix (adaptedCellAtCenter (respGrid jStar F) (t - (m : ℤ)) W)
@@ -237,7 +241,8 @@ theorem integrable_volumeAverage_cross_optimizerField_respCoeffPlus {d : ℕ} [N
       (t - (m : ℤ)) a Y W).2
   have hheadsq : Integrable (fun a =>
       (Real.sqrt (vecDot Y.1 (matVecMul (coarseBlockMatrix
-            (adaptedCellAtCenter (respGrid jStar F) (t - (m : ℤ)) W) (respCoeffPlus F a)).upperLeft Y.1))
+            (adaptedCellAtCenter (respGrid jStar F) (t - (m : ℤ)) W) (respCoeffPlus F
+              a)).upperLeft Y.1))
         + Real.sqrt (vecDot Y.2 (matVecMul (coarseBlockMatrix
             (adaptedCellAtCenter (respGrid jStar F) (t - (m : ℤ)) W)
               (respCoeffPlus F a)).lowerRight Y.2))) ^ 2) P :=
@@ -254,7 +259,8 @@ theorem integrable_volumeAverage_cross_optimizerField_respCoeffPlus {d : ℕ} [N
   refine Integrable.mono' (hheadsq.add hE) hmeas.aestronglyMeasurable ?_
   filter_upwards with a
   rw [Real.norm_eq_abs]
-  have hbd := abs_volumeAverage_cross_optimizerField_respCoeffPlus_adaptedCellAtCenter_le jStar hjStar
+  have hbd := abs_volumeAverage_cross_optimizerField_respCoeffPlus_adaptedCellAtCenter_le jStar
+    hjStar
     F hm t m a (uP a) Y hW
     (fun i => (integrableOn_optimizerField_respCoeffPlus_box (respGrid jStar F) hq t F a
       (uP a) m W hW i).1)
@@ -264,7 +270,8 @@ theorem integrable_volumeAverage_cross_optimizerField_respCoeffPlus {d : ℕ} [N
       (uP a) hW).1 Y.2)
     ((integrableOn_vecDot_optimizerField_respCoeffPlus_adaptedCellAtCenter jStar hjStar F hm t m a
       (uP a) hW).2 Y.1)
-  have hDnn := zero_le_volumeAverage_scalarVariationEnergyIntegrand_respCoeffPlus_adaptedCellAtCenter
+  have hDnn :=
+    zero_le_volumeAverage_scalarVariationEnergyIntegrand_respCoeffPlus_adaptedCellAtCenter
     jStar hjStar F hm t m a (uP a) hW
   have hyoung := mul_sqrt_two_mul_two_mul_le (G := Real.sqrt (vecDot Y.1 (matVecMul
       (coarseBlockMatrix (adaptedCellAtCenter (respGrid jStar F) (t - (m : ℤ)) W)

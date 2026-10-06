@@ -228,7 +228,8 @@ theorem loewner_le_opNorm_identity (N : BlockMat d) :
     BlockMatLoewnerLE N
       (blockScale ‖toFullBlockMat N‖ (Book.Ch02.blockIdentity d)) := by
   intro X
-  have h := HCPolySupport.HighContrast.dotProduct_mulVec_le_norm_mul (toFullBlockMat N) (toFullBlockVec X)
+  have h := HCPolySupport.HighContrast.dotProduct_mulVec_le_norm_mul (toFullBlockMat N)
+    (toFullBlockVec X)
   rw [qform_flat, qform_blockScale_eq_mul, qform_identity_eq_dotProduct_toFullBlockVec]
   linarith only [h]
 

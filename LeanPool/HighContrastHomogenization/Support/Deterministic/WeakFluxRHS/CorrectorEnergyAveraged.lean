@@ -176,6 +176,83 @@ theorem weakFluxRHSCorrectorEnergyForceScale_mul_inv_one_sub_step_le_noteForceSc
         dsimp [F, LamQ, L, N, G]
         ring
 
+private theorem weakFluxHalfScale_descendantCoefficient_bounds
+    {d : ℕ} [NeZero d] (Q : TriadicCube d) (a : CoeffField d) {s lam Lam : ℝ}
+    (hs : 0 < s) (hEll : IsEllipticFieldOn lam Lam (cubeSet Q) a) (n : ℕ) :
+    (∀ R ∈ descendantsAtDepth Q n,
+      (lambdaSq R (s / 2) (.finite 2) a)⁻¹ ≤
+        Real.rpow (3 : ℝ) (s * (n : ℝ)) * (lambdaSq Q (s / 2) (.finite 2) a)⁻¹) ∧
+    (∀ R ∈ descendantsAtDepth Q n, weakFluxRHSLocalCoeff R a s ≤
+      (geometricDiscount s 2)⁻¹ *
+        (Real.rpow (3 : ℝ) (s * (n : ℝ)) * LambdaSq Q (s / 2) (.finite 2) a)) := by
+  let D : ℝ := (geometricDiscount s 2)⁻¹
+  let T : ℝ := Real.rpow (3 : ℝ) (s * (n : ℝ))
+  let LamQ : ℝ := LambdaSq Q (s / 2) (.finite 2) a
+  let L : ℝ := (lambdaSq Q (s / 2) (.finite 2) a)⁻¹
+  have hs_half : 0 < s / 2 := by nlinarith
+  let hOrigin : OpenCubeOriginEllipticRecoveryExistence (d := d) lam Lam :=
+    openCubeOriginEllipticRecoveryExistence (d := d) (lam := lam) (Lam := Lam)
+  have hData : OpenCubeDescendantDeterministicCoarseData Q a :=
+    openCubeDescendantDeterministicCoarseData_of_recoveryFamily
+      (openCubeDescendantEllipticRecoveryFamily_of_isEllipticFieldOn_of_originCubeRecoveryExistence
+        (Q := Q) (a := a) hEll hOrigin)
+  have hEllOpen : IsEllipticFieldOn lam Lam (openCubeSet Q) a :=
+    hEll.mono (measurableSet_openCubeSet Q) (openCubeSet_subset_cubeSet Q)
+  have hsum_B_half :
+      Summable (fun m : ℕ =>
+        geometricWeight (s / 2) 2 m *
+          Real.rpow (maxDescendantBBlockNormAtScale Q (Q.scale - (m : ℤ)) a) 1) := by
+    have hsum :
+        Summable (fun m : ℕ =>
+          geometricWeight (s / 2) 2 m *
+            maxDescendantBBlockNormAtScale Q (Q.scale - (m : ℤ)) a) :=
+      summable_qtwo_maxDescendantBBlockNorm_of_ellipticField
+        (Q := Q) (a := a) (s := s / 2) hs_half hEll hData
+    simpa [Real.rpow_one] using hsum
+  have hsum_lambda_half :
+      Summable (fun m : ℕ =>
+        geometricWeight (s / 2) 2 m *
+          Real.rpow (maxDescendantSigmaStarInvNormAtScale Q (Q.scale - (m : ℤ)) a)
+            (2 / 2)) := by
+    have hsum :
+        Summable (fun m : ℕ =>
+          geometricWeight (s / 2) 2 m *
+            maxDescendantSigmaStarInvNormAtScale Q (Q.scale - (m : ℤ)) a) :=
+      summable_qtwo_maxDescendantSigmaStarInvNorm_of_ellipticField
+        (Q := Q) (a := a) (s := s / 2) hs_half hEll hData
+    simpa using hsum
+  have hlocal_lambda :
+      ∀ R ∈ descendantsAtDepth Q n,
+        (lambdaSq R (s / 2) (.finite 2) a)⁻¹ ≤ T * L := by
+    intro R hR
+    have hRscale : R ∈ descendantsAtScale Q (Q.scale - (n : ℤ)) :=
+      mem_descendantsAtScale_of_mem_descendantsAtDepth hR
+    have hloc :
+        (lambdaSq R (s / 2) (.finite 2) a)⁻¹ ≤
+          Real.rpow (3 : ℝ)
+              (2 * (s / 2) *
+                (Int.toNat (Q.scale - (Q.scale - (n : ℤ))) : ℝ)) *
+            L := by
+      simpa [L] using
+        multiscale_ellipticity_lambdaSq_finite_inv_le_of_mem_descendantsAtScale
+          (Q := Q) (R := R) (k := Q.scale - (n : ℤ)) a (s / 2) 2
+          (by nlinarith : 0 ≤ s / 2) (by norm_num) hRscale hsum_lambda_half
+    have htoNat : Int.toNat (Q.scale - (Q.scale - (n : ℤ))) = n := by
+      have hdiff : Q.scale - (Q.scale - (n : ℤ)) = (n : ℤ) := by
+        omega
+      rw [hdiff]
+      simp
+    have hloc' :
+        (lambdaSq R (s / 2) (.finite 2) a)⁻¹ ≤
+          Real.rpow (3 : ℝ) (2 * (s / 2) * (n : ℝ)) * L := by
+      simpa [htoNat] using hloc
+    simpa [T, show 2 * (s / 2) * (n : ℝ) = s * (n : ℝ) by ring] using hloc'
+  refine ⟨hlocal_lambda, ?_⟩
+  intro R hR
+  simpa [D, T, LamQ, mul_assoc] using
+    weakFluxRHSLocalCoeff_le_parentHalfLambda_of_mem_descendantsAtDepth
+      (Q := Q) (R := R) a hs hR hEllOpen hData hsum_B_half
+
 /--
 Depth-weighted averaged control of the corrector-energy component in the
 corrected weak-flux RHS recurrence.
@@ -219,64 +296,8 @@ theorem weakFluxRHSDepthWeight_mul_correctorEnergyErrorAverage_le_forceScale
     weakFluxRHSLocalCorrectorEnergyError R a (z R) s
   let GR : TriadicCube d → ℝ := fun R => cubeBesovPositiveVectorSeminormTwo R s g
   let C : ℝ := 1000 * D * (s⁻¹) ^ 2 * LamQ * L * N ^ 2 * T ^ 2
-  have hs_half : 0 < s / 2 := by nlinarith
-  let hOrigin : OpenCubeOriginEllipticRecoveryExistence (d := d) lam Lam :=
-    openCubeOriginEllipticRecoveryExistence (d := d) (lam := lam) (Lam := Lam)
-  have hData : OpenCubeDescendantDeterministicCoarseData Q a :=
-    openCubeDescendantDeterministicCoarseData_of_recoveryFamily
-      (openCubeDescendantEllipticRecoveryFamily_of_isEllipticFieldOn_of_originCubeRecoveryExistence
-        (Q := Q) (a := a) hEll hOrigin)
-  have hEllOpen : IsEllipticFieldOn lam Lam (openCubeSet Q) a :=
-    hEll.mono (measurableSet_openCubeSet Q) (openCubeSet_subset_cubeSet Q)
-  have hsum_B_half :
-      Summable (fun m : ℕ =>
-        geometricWeight (s / 2) 2 m *
-          Real.rpow (maxDescendantBBlockNormAtScale Q (Q.scale - (m : ℤ)) a) 1) := by
-    have hsum :
-        Summable (fun m : ℕ =>
-          geometricWeight (s / 2) 2 m *
-            maxDescendantBBlockNormAtScale Q (Q.scale - (m : ℤ)) a) :=
-      summable_qtwo_maxDescendantBBlockNormAtScale_of_isEllipticFieldOn_of_openCubeDescendantDeterministicCoarseData
-        (Q := Q) (a := a) (s := s / 2) hs_half hEll hData
-    simpa [Real.rpow_one] using hsum
-  have hsum_lambda_half :
-      Summable (fun m : ℕ =>
-        geometricWeight (s / 2) 2 m *
-          Real.rpow (maxDescendantSigmaStarInvNormAtScale Q (Q.scale - (m : ℤ)) a)
-            (2 / 2)) := by
-    have hsum :
-        Summable (fun m : ℕ =>
-          geometricWeight (s / 2) 2 m *
-            maxDescendantSigmaStarInvNormAtScale Q (Q.scale - (m : ℤ)) a) :=
-      summable_qtwo_maxDescendantSigmaStarInvNormAtScale_of_isEllipticFieldOn_of_openCubeDescendantDeterministicCoarseData
-        (Q := Q) (a := a) (s := s / 2) hs_half hEll hData
-    simpa using hsum
-  have hlocal_lambda :
-      ∀ R ∈ descendantsAtDepth Q n,
-        (lambdaSq R (s / 2) (.finite 2) a)⁻¹ ≤ T * L := by
-    intro R hR
-    have hRscale : R ∈ descendantsAtScale Q (Q.scale - (n : ℤ)) :=
-      mem_descendantsAtScale_of_mem_descendantsAtDepth hR
-    have hloc :
-        (lambdaSq R (s / 2) (.finite 2) a)⁻¹ ≤
-          Real.rpow (3 : ℝ)
-              (2 * (s / 2) *
-                (Int.toNat (Q.scale - (Q.scale - (n : ℤ))) : ℝ)) *
-            L := by
-      simpa [L] using
-        multiscale_ellipticity_lambdaSq_finite_inv_le_of_mem_descendantsAtScale
-          (Q := Q) (R := R) (k := Q.scale - (n : ℤ)) a (s / 2) 2
-          (by nlinarith : 0 ≤ s / 2) (by norm_num) hRscale hsum_lambda_half
-    have htoNat : Int.toNat (Q.scale - (Q.scale - (n : ℤ))) = n := by
-      have hdiff : Q.scale - (Q.scale - (n : ℤ)) = (n : ℤ) := by
-        omega
-      rw [hdiff]
-      simp
-    have hloc' :
-        (lambdaSq R (s / 2) (.finite 2) a)⁻¹ ≤
-          Real.rpow (3 : ℝ) (2 * (s / 2) * (n : ℝ)) * L := by
-      simpa [htoNat] using hloc
-    simpa [T, show 2 * (s / 2) * (n : ℝ) = s * (n : ℝ) by ring] using hloc'
+  obtain ⟨hlocal_lambda, hlocal_coefficient⟩ :=
+    weakFluxHalfScale_descendantCoefficient_bounds Q a hs hEll n
   have hlambda_nonneg :
       0 ≤ lambdaSq Q (s / 2) (.finite 2) a :=
     multiscale_ellipticity_lambdaSq_finite_nonneg Q (s / 2) 2 a
@@ -326,10 +347,8 @@ theorem weakFluxRHSDepthWeight_mul_correctorEnergyErrorAverage_le_forceScale
     have hgR : MeasureTheory.MemLp g (2 : ENNReal) (normalizedCubeMeasure R) :=
       memLp_on_descendant_of_memLp_generic (E := Vec d) hR hg
     have hcoeff :
-        weakFluxRHSLocalCoeff R a s ≤ D * (T * LamQ) := by
-      simpa [D, T, LamQ, mul_assoc] using
-        weakFluxRHSLocalCoeff_le_parentHalfLambda_of_mem_descendantsAtDepth
-          (Q := Q) (R := R) a hs hR hEllOpen hData hsum_B_half
+        weakFluxRHSLocalCoeff R a s ≤ D * (T * LamQ) :=
+      hlocal_coefficient R hR
     have hER_nonneg : 0 ≤ ER := by
       dsimp [ER]
       exact cubeAverage_nonneg_of_nonneg_on

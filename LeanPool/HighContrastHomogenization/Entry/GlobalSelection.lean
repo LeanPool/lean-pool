@@ -67,31 +67,39 @@ theorem global_selection
                               HighContrast.centeredCube d (2 * (jStar : ℤ)) ∧
                             BlockMatLoewnerLE (blockScale (1 - Real.sqrt ε * σ) F)
                               (adaptedMean P
-                                (Geometry.explicitRoundedGrid jStar (explicitCanonicalMetric F)) s) ∧
+                                (Geometry.explicitRoundedGrid jStar (explicitCanonicalMetric F))
+                                  s) ∧
                             BlockMatLoewnerLE
                               (adaptedMean P
                                 (Geometry.explicitRoundedGrid jStar (explicitCanonicalMetric F)) s)
                               (blockScale (1 + Real.sqrt ε * σ) F) ∧
                             (d : ℝ)⁻¹ *
                                 detIncrement P
-                                  (Geometry.explicitRoundedGrid jStar (explicitCanonicalMetric F)) s t < σ ∧
+                                  (Geometry.explicitRoundedGrid jStar (explicitCanonicalMetric
+                                    F)) s t < σ ∧
                             max
                                   (max
                                     (profile P γ
-                                      (Geometry.explicitRoundedGrid jStar (explicitCanonicalMetric F)) jStar
+                                      (Geometry.explicitRoundedGrid jStar
+                                        (explicitCanonicalMetric F)) jStar
                                       s s)
                                     (profile P γ
-                                      (Geometry.explicitRoundedGrid jStar (explicitCanonicalMetric F)) jStar
+                                      (Geometry.explicitRoundedGrid jStar
+                                        (explicitCanonicalMetric F)) jStar
                                       s t))
                                   (profile P γ
-                                    (Geometry.explicitRoundedGrid jStar (explicitCanonicalMetric F)) jStar
+                                    (Geometry.explicitRoundedGrid jStar (explicitCanonicalMetric
+                                      F)) jStar
                                     t t) +
                                 determinantDrift P γ
-                                  (Geometry.explicitRoundedGrid jStar (explicitCanonicalMetric F)) jStar s +
+                                  (Geometry.explicitRoundedGrid jStar (explicitCanonicalMetric
+                                    F)) jStar s +
                                 determinantDrift P γ
-                                  (Geometry.explicitRoundedGrid jStar (explicitCanonicalMetric F)) jStar t ≤
+                                  (Geometry.explicitRoundedGrid jStar (explicitCanonicalMetric
+                                    F)) jStar t ≤
                               Cprof * σ ^ ((1 - γ) / 8) ∧
-                            (‖explicitCanonicalMetric F‖ * ‖(explicitCanonicalMetric F)⁻¹‖) ^ ((1 : ℝ) / 2) ≤
+                            (‖explicitCanonicalMetric F‖ * ‖(explicitCanonicalMetric F)⁻¹‖) ^
+                              ((1 : ℝ) / 2) ≤
                               (2 + aspectRatio E) ^ C  :=
   Multiscale.global_run d hd γ hγ S hS
 

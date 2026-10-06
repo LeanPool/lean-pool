@@ -36,10 +36,85 @@ open scoped ENNReal BigOperators
 
 noncomputable section
 
+private theorem weak_gradient_coordinates_equal_almost_everywhere
+    {d : ℕ} {U : Set (Vec d)} (hU : IsOpen U)
+    (v w : H1Function U) (f : Vec d → ℝ)
+    (hv : ∀ i, HasWeakPartialDerivOn U i f (fun x => v.grad x i))
+    (hw : ∀ i, HasWeakPartialDerivOn U i f (fun x => w.grad x i)) :
+    ∀ i : Fin d,
+      (fun x => v.grad x i) =ᵐ[MeasureTheory.volume.restrict U]
+        (fun x => w.grad x i) := by
+  intro i
+  have hv_loc : LocallyIntegrableOn (fun x => v.grad x i) U volume :=
+    locallyIntegrableOn_of_locallyIntegrable_restrict
+      ((v.gradMemL2 i).locallyIntegrable (by norm_num : (1 : ENNReal) ≤ 2))
+  have hw_loc : LocallyIntegrableOn (fun x => w.grad x i) U volume :=
+    locallyIntegrableOn_of_locallyIntegrable_restrict
+      ((w.gradMemL2 i).locallyIntegrable (by norm_num : (1 : ENNReal) ≤ 2))
+  exact HasWeakPartialDerivOn.ae_eq hU hv_loc hw_loc (hv i) (hw i)
+
+private theorem flux_pairing_zero_of_equal_gradient_coordinates
+    {d : ℕ} {U : Set (Vec d)} (flux : Vec d → Vec d)
+    (v w : H1Function U) (hflux : MemVectorL2 U flux)
+    (hcoord_ae : ∀ i : Fin d,
+      (fun x => v.grad x i) =ᵐ[MeasureTheory.volume.restrict U]
+        (fun x => w.grad x i))
+    (hzero : ∫ x in U, vecDot (flux x) (v.grad x) ∂volume = 0) :
+    ∫ x in U, vecDot (flux x) (w.grad x) ∂volume = 0 := by
+  have hcoord_int_w :
+      ∀ i : Fin d,
+        MeasureTheory.Integrable
+          (fun x => flux x i * w.grad x i)
+          (MeasureTheory.volume.restrict U) := by
+    intro i
+    exact
+      (memScalarL2_coord_of_memVectorL2 hflux i).integrable_mul
+        (w.gradMemL2 i)
+  have hcoord_int_ψ :
+      ∀ i : Fin d,
+        MeasureTheory.Integrable
+          (fun x => flux x i * v.grad x i)
+          (MeasureTheory.volume.restrict U) := by
+    intro i
+    exact
+      (memScalarL2_coord_of_memVectorL2 hflux i).integrable_mul
+        (v.gradMemL2 i)
+  calc
+    ∫ x in U, vecDot (flux x) (w.grad x) ∂MeasureTheory.volume
+        =
+      ∑ i, ∫ x in U, flux x i * w.grad x i ∂MeasureTheory.volume := by
+          rw [show
+            (fun x => vecDot (flux x) (w.grad x)) =
+              fun x => ∑ i, flux x i * w.grad x i by
+                funext x
+                simp [vecDot]]
+          rw [MeasureTheory.integral_finsetSum]
+          intro i hi
+          exact hcoord_int_w i
+    _ = ∑ i, ∫ x in U,
+          flux x i * v.grad x i ∂MeasureTheory.volume := by
+          refine Finset.sum_congr rfl ?_
+          intro i hi
+          apply MeasureTheory.integral_congr_ae
+          filter_upwards [hcoord_ae i] with x hx
+          simp [hx]
+    _ = ∫ x in U, vecDot (flux x) (v.grad x)
+          ∂MeasureTheory.volume := by
+          symm
+          rw [show
+            (fun x => vecDot (flux x) (v.grad x)) =
+              fun x => ∑ i, flux x i * v.grad x i by
+                funext x
+                simp [vecDot]]
+          rw [MeasureTheory.integral_finsetSum]
+          intro i hi
+          exact hcoord_int_ψ i
+    _ = 0 := hzero
+
 /-- First-variation identity converting the actual cutoff product term into
 the flux-defect/product-gradient pairing consumed by the deterministic
 cutoff-product bridge. -/
-theorem cutoffProductTermOnCube_eq_neg_half_cubeAverage_fluxDefect_potentialDefect_smul_scalarCutoffGradientField
+theorem cutoffProductTerm_eq_neg_half_cubeMean_fluxPotentialDefect_smul_cutoffGradient
     {d : ℕ} (Q : TriadicCube d)
     (a : Ch02.CoeffOn (Ch02.cubeDomain Q)) {φ : Vec d → ℝ}
     (p q p0 q0 : Vec d)
@@ -103,31 +178,13 @@ theorem cutoffProductTermOnCube_eq_neg_half_cubeAverage_fluxDefect_potentialDefe
       ∀ i : Fin d,
         (fun x => ψ.toH1Function.grad x i) =ᵐ[MeasureTheory.volume.restrict U]
           (fun x => uφ.grad x i) := by
-    intro i
-    have hψ_loc :
-        MeasureTheory.LocallyIntegrableOn (fun x => ψ.toH1Function.grad x i)
-          U MeasureTheory.volume :=
-      MeasureTheory.locallyIntegrableOn_of_locallyIntegrable_restrict
-        ((ψ.toH1Function.gradMemL2 i).locallyIntegrable
-          (by norm_num : (1 : ENNReal) ≤ 2))
-    have huφ_loc :
-        MeasureTheory.LocallyIntegrableOn (fun x => uφ.grad x i)
-          U MeasureTheory.volume :=
-      MeasureTheory.locallyIntegrableOn_of_locallyIntegrable_restrict
-        ((uφ.gradMemL2 i).locallyIntegrable
-          (by norm_num : (1 : ENNReal) ≤ 2))
-    have hψ_weak :
-        HasWeakPartialDerivOn U i (fun x => φ x * u x)
-          (fun x => ψ.toH1Function.grad x i) := by
+    apply weak_gradient_coordinates_equal_almost_everywhere
+      (Ch02.cubeDomain Q).isOpen ψ.toH1Function uφ (fun x => φ x * u x)
+    · intro i
       simpa [hψ_toFun] using ψ.toH1Function.hasWeakGradient i
-    have huφ_weak :
-        HasWeakPartialDerivOn U i (fun x => φ x * u x)
-          (fun x => uφ.grad x i) := by
+    · intro i
       simpa [uφ, H1Function.mulContDiffHasCompactSupport_toFun] using
         uφ.hasWeakGradient i
-    exact
-      HasWeakPartialDerivOn.ae_eq (Ch02.cubeDomain Q).isOpen
-        hψ_loc huφ_loc hψ_weak huφ_weak
   have hsol_ψ :
       ∫ x in U, vecDot (fluxDef x) (ψ.toH1Function.grad x)
           ∂MeasureTheory.volume = 0 := by
@@ -148,55 +205,8 @@ theorem cutoffProductTermOnCube_eq_neg_half_cubeAverage_fluxDefect_potentialDefe
           (canonicalMaximizerSolutionOnCube Q a p q).isHarmonic.2 ψ
   have hsol_uφ :
       ∫ x in U, vecDot (fluxDef x) (uφ.grad x) ∂MeasureTheory.volume = 0 := by
-    have hcoord_int_uφ :
-        ∀ i : Fin d,
-          MeasureTheory.Integrable
-            (fun x => fluxDef x i * uφ.grad x i)
-            (MeasureTheory.volume.restrict U) := by
-      intro i
-      exact
-        (memScalarL2_coord_of_memVectorL2 hfluxDef_mem i).integrable_mul
-          (uφ.gradMemL2 i)
-    have hcoord_int_ψ :
-        ∀ i : Fin d,
-          MeasureTheory.Integrable
-            (fun x => fluxDef x i * ψ.toH1Function.grad x i)
-            (MeasureTheory.volume.restrict U) := by
-      intro i
-      exact
-        (memScalarL2_coord_of_memVectorL2 hfluxDef_mem i).integrable_mul
-          (ψ.toH1Function.gradMemL2 i)
-    calc
-      ∫ x in U, vecDot (fluxDef x) (uφ.grad x) ∂MeasureTheory.volume
-          =
-        ∑ i, ∫ x in U, fluxDef x i * uφ.grad x i ∂MeasureTheory.volume := by
-            rw [show
-              (fun x => vecDot (fluxDef x) (uφ.grad x)) =
-                fun x => ∑ i, fluxDef x i * uφ.grad x i by
-                  funext x
-                  simp [vecDot]]
-            rw [MeasureTheory.integral_finsetSum]
-            intro i hi
-            exact hcoord_int_uφ i
-      _ = ∑ i, ∫ x in U,
-            fluxDef x i * ψ.toH1Function.grad x i ∂MeasureTheory.volume := by
-            refine Finset.sum_congr rfl ?_
-            intro i hi
-            apply MeasureTheory.integral_congr_ae
-            filter_upwards [hcoord_ae i] with x hx
-            simp [hx]
-      _ = ∫ x in U, vecDot (fluxDef x) (ψ.toH1Function.grad x)
-            ∂MeasureTheory.volume := by
-            symm
-            rw [show
-              (fun x => vecDot (fluxDef x) (ψ.toH1Function.grad x)) =
-                fun x => ∑ i, fluxDef x i * ψ.toH1Function.grad x i by
-                  funext x
-                  simp [vecDot]]
-            rw [MeasureTheory.integral_finsetSum]
-            intro i hi
-            exact hcoord_int_ψ i
-      _ = 0 := hsol_ψ
+    exact flux_pairing_zero_of_equal_gradient_coordinates
+      fluxDef ψ.toH1Function uφ hfluxDef_mem hcoord_ae hsol_ψ
   let first : Vec d → ℝ :=
     fun x => φ x * vecDot (fluxDef x) (u.grad x)
   let bridge : Vec d → ℝ :=
@@ -395,7 +405,7 @@ theorem cubeAverage_vecDot_canonicalMaximizerFluxDefect_const_smul_scalarCutoffG
   rw [htarget_open]
   ring
 
-theorem cutoffProductTermOnCube_eq_neg_half_cubeAverage_fluxDefect_centeredPotentialDefect_smul_scalarCutoffGradientField
+theorem cutoffProduct_eq_neg_half_cubeMean_centeredFluxDefect_smul_cutoffGradient
     {d : ℕ} (Q : TriadicCube d)
     (a : Ch02.CoeffOn (Ch02.cubeDomain Q)) {φ : Vec d → ℝ}
     (p q p0 q0 : Vec d)
@@ -418,7 +428,7 @@ theorem cutoffProductTermOnCube_eq_neg_half_cubeAverage_fluxDefect_centeredPoten
   let ξ : Vec d → Vec d := scalarCutoffGradientField φ
   let c : ℝ := cubeAverage Q u
   have hbase :=
-    cutoffProductTermOnCube_eq_neg_half_cubeAverage_fluxDefect_potentialDefect_smul_scalarCutoffGradientField
+    cutoffProductTerm_eq_neg_half_cubeMean_fluxPotentialDefect_smul_cutoffGradient
       (Q := Q) (a := a) (φ := φ) p q p0 q0 hφ hφ_compact hφ_sub
   have hconst_zero :
       cubeAverage Q (fun x => vecDot (flux x) (c • ξ x)) = 0 := by

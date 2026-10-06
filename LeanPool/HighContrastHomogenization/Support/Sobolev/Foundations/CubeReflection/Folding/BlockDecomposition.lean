@@ -237,7 +237,8 @@ theorem disjoint_cubeFaceReflectionCellCoordSet_of_ne {d : ℕ}
     have hxB' :
         cubeLowerFaceCoord Q i < x i ∧
           x i < cubeUpperFaceCoord Q i := by
-      simp [cubeFaceReflectionCellCoordSet] at hxB
+      simp only [cubeFaceReflectionCellCoordSet, Fin.mk_one, Fin.isValue, one_ne_zero,
+        ↓reduceIte, Set.mem_ofPred_eq] at hxB
       exact hxB
     linarith
   · have hxA' :
@@ -247,13 +248,15 @@ theorem disjoint_cubeFaceReflectionCellCoordSet_of_ne {d : ℕ}
     have hxB' :
         cubeUpperFaceCoord Q i < x i ∧
           x i < cubeUpperFaceCoord Q i + cubeScaleFactor Q := by
-      simp [cubeFaceReflectionCellCoordSet] at hxB
+      simp only [cubeFaceReflectionCellCoordSet, Fin.reduceFinMk, Fin.isValue, Fin.reduceEq,
+        ↓reduceIte, Set.mem_ofPred_eq] at hxB
       exact hxB
     linarith
   · have hxA' :
         cubeLowerFaceCoord Q i < x i ∧
           x i < cubeUpperFaceCoord Q i := by
-      simp [cubeFaceReflectionCellCoordSet] at hxA
+      simp only [cubeFaceReflectionCellCoordSet, Fin.mk_one, Fin.isValue, one_ne_zero,
+        ↓reduceIte, Set.mem_ofPred_eq] at hxA
       exact hxA
     have hxB' :
         cubeLowerFaceCoord Q i - cubeScaleFactor Q < x i ∧
@@ -264,18 +267,21 @@ theorem disjoint_cubeFaceReflectionCellCoordSet_of_ne {d : ℕ}
   · have hxA' :
         cubeLowerFaceCoord Q i < x i ∧
           x i < cubeUpperFaceCoord Q i := by
-      simp [cubeFaceReflectionCellCoordSet] at hxA
+      simp only [cubeFaceReflectionCellCoordSet, Fin.mk_one, Fin.isValue, one_ne_zero,
+        ↓reduceIte, Set.mem_ofPred_eq] at hxA
       exact hxA
     have hxB' :
         cubeUpperFaceCoord Q i < x i ∧
           x i < cubeUpperFaceCoord Q i + cubeScaleFactor Q := by
-      simp [cubeFaceReflectionCellCoordSet] at hxB
+      simp only [cubeFaceReflectionCellCoordSet, Fin.reduceFinMk, Fin.isValue, Fin.reduceEq,
+        ↓reduceIte, Set.mem_ofPred_eq] at hxB
       exact hxB
     linarith
   · have hxA' :
         cubeUpperFaceCoord Q i < x i ∧
           x i < cubeUpperFaceCoord Q i + cubeScaleFactor Q := by
-      simp [cubeFaceReflectionCellCoordSet] at hxA
+      simp only [cubeFaceReflectionCellCoordSet, Fin.reduceFinMk, Fin.isValue, Fin.reduceEq,
+        ↓reduceIte, Set.mem_ofPred_eq] at hxA
       exact hxA
     have hxB' :
         cubeLowerFaceCoord Q i - cubeScaleFactor Q < x i ∧
@@ -285,12 +291,14 @@ theorem disjoint_cubeFaceReflectionCellCoordSet_of_ne {d : ℕ}
   · have hxA' :
         cubeUpperFaceCoord Q i < x i ∧
           x i < cubeUpperFaceCoord Q i + cubeScaleFactor Q := by
-      simp [cubeFaceReflectionCellCoordSet] at hxA
+      simp only [cubeFaceReflectionCellCoordSet, Fin.reduceFinMk, Fin.isValue, Fin.reduceEq,
+        ↓reduceIte, Set.mem_ofPred_eq] at hxA
       exact hxA
     have hxB' :
         cubeLowerFaceCoord Q i < x i ∧
           x i < cubeUpperFaceCoord Q i := by
-      simp [cubeFaceReflectionCellCoordSet] at hxB
+      simp only [cubeFaceReflectionCellCoordSet, Fin.mk_one, Fin.isValue, one_ne_zero,
+        ↓reduceIte, Set.mem_ofPred_eq] at hxB
       exact hxB
     linarith
   · exact (hab rfl).elim
@@ -329,7 +337,7 @@ theorem disjoint_openCubeSet_cubeFaceReflectionCellCube_of_ne {d : ℕ}
 /-- Set-integral split over the all-coordinate reflection block, written as a
 finite sum over its translated open triadic-cube cells. -/
 theorem setIntegral_cubeFaceReflectionBlockSet_cellCube {d : ℕ}
-    {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] [CompleteSpace E]
+    {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
     (Q : TriadicCube d) (f : Vec d → E)
     (hf : ∀ choice : Fin d → Fin 3,
       MeasureTheory.Integrable f
@@ -495,8 +503,8 @@ theorem cubeCoordinateFold_eq_cubeLowerFaceReflection_of_mem_neighbor {d : ℕ}
   · subst j
     have hLower : x i < cubeLowerFaceCoord Q i := by
       have hxi := (hx i).2
-      simp [cubeLowerFaceNeighbor, coordIndexShift,
-        translateCube, cubeScaleFactor] at hxi
+      simp only [cubeLowerFaceNeighbor, translateCube, coordIndexShift, Int.reduceNeg,
+        ↓reduceIte, Int.cast_add, Int.cast_neg, Int.cast_one, one_div, cubeScaleFactor] at hxi
       have hface :
           (↑(Q.index i) + -1 + (2 : ℝ)⁻¹) * 3 ^ Q.scale =
             cubeLowerFaceCoord Q i := by
@@ -530,8 +538,8 @@ theorem cubeCoordinateFold_eq_cubeUpperFaceReflection_of_mem_neighbor {d : ℕ}
       have hscale : 0 < (3 : ℝ) ^ Q.scale := by
         simpa [cubeScaleFactor] using
           (zpow_pos (show (0 : ℝ) < 3 by norm_num) Q.scale)
-      simp [cubeUpperFaceNeighbor, coordIndexShift, translateCube,
-        cubeScaleFactor] at hxi
+      simp only [cubeUpperFaceNeighbor, translateCube, coordIndexShift, ↓reduceIte,
+        Int.cast_add, Int.cast_one, one_div, cubeScaleFactor] at hxi
       have hface :
           (↑(Q.index i) + 1 - (2 : ℝ)⁻¹) * 3 ^ Q.scale =
             cubeUpperFaceCoord Q i := by
@@ -548,8 +556,8 @@ theorem cubeCoordinateFold_eq_cubeUpperFaceReflection_of_mem_neighbor {d : ℕ}
       exact le_trans hLowerUpper.le hxi.le
     have hnotUpper : ¬ x i < cubeUpperFaceCoord Q i := by
       have hxi := (hx i).1
-      simp [cubeUpperFaceNeighbor, coordIndexShift, translateCube,
-        cubeScaleFactor] at hxi
+      simp only [cubeUpperFaceNeighbor, translateCube, coordIndexShift, ↓reduceIte,
+        Int.cast_add, Int.cast_one, one_div, cubeScaleFactor] at hxi
       have hface :
           (↑(Q.index i) + 1 - (2 : ℝ)⁻¹) * 3 ^ Q.scale =
             cubeUpperFaceCoord Q i := by
@@ -592,8 +600,8 @@ theorem cubeCoordinateFoldSign_of_mem_cubeLowerFaceNeighbor {d : ℕ}
   · subst j
     have hLower : x i < cubeLowerFaceCoord Q i := by
       have hxi := (hx i).2
-      simp [cubeLowerFaceNeighbor, coordIndexShift,
-        translateCube, cubeScaleFactor] at hxi
+      simp only [cubeLowerFaceNeighbor, translateCube, coordIndexShift, Int.reduceNeg,
+        ↓reduceIte, Int.cast_add, Int.cast_neg, Int.cast_one, one_div, cubeScaleFactor] at hxi
       have hface :
           (↑(Q.index i) + -1 + (2 : ℝ)⁻¹) * 3 ^ Q.scale =
             cubeLowerFaceCoord Q i := by
@@ -625,8 +633,8 @@ theorem cubeCoordinateFoldSign_of_mem_cubeUpperFaceNeighbor {d : ℕ}
       have hscale : 0 < (3 : ℝ) ^ Q.scale := by
         simpa [cubeScaleFactor] using
           (zpow_pos (show (0 : ℝ) < 3 by norm_num) Q.scale)
-      simp [cubeUpperFaceNeighbor, coordIndexShift, translateCube,
-        cubeScaleFactor] at hxi
+      simp only [cubeUpperFaceNeighbor, translateCube, coordIndexShift, ↓reduceIte,
+        Int.cast_add, Int.cast_one, one_div, cubeScaleFactor] at hxi
       have hface :
           (↑(Q.index i) + 1 - (2 : ℝ)⁻¹) * 3 ^ Q.scale =
             cubeUpperFaceCoord Q i := by
@@ -643,8 +651,8 @@ theorem cubeCoordinateFoldSign_of_mem_cubeUpperFaceNeighbor {d : ℕ}
       exact le_trans hLowerUpper.le hxi.le
     have hnotUpper : ¬ x i < cubeUpperFaceCoord Q i := by
       have hxi := (hx i).1
-      simp [cubeUpperFaceNeighbor, coordIndexShift, translateCube,
-        cubeScaleFactor] at hxi
+      simp only [cubeUpperFaceNeighbor, translateCube, coordIndexShift, ↓reduceIte,
+        Int.cast_add, Int.cast_one, one_div, cubeScaleFactor] at hxi
       have hface :
           (↑(Q.index i) + 1 - (2 : ℝ)⁻¹) * 3 ^ Q.scale =
             cubeUpperFaceCoord Q i := by

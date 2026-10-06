@@ -91,7 +91,8 @@ private theorem normalizedDefect_le_respAllScaleAbs_minus (hd : 2 ≤ d) (γ : �
   have _hγ := hγ
   have hq : IsUnit (respGrid jStar F) := Geometry.isUnit_roundedGrid hj hm
   have hEt : (toFullBlockMat (respMean P jStar F t)).PosDef :=
-    Annealed.adaptedMean_posDef d hd P γ E Ψ Kg Src hstat hdag jStar hj (explicitCanonicalMetric F) hm t
+    Annealed.adaptedMean_posDef d hd P γ E Ψ Kg Src hstat hdag jStar hj (explicitCanonicalMetric
+      F) hm t
   have hEhat : (toFullBlockMat (respEhatMinus P jStar F t)).PosDef :=
     respEhatMinus_posDef hd γ P E Ψ Kg Src hstat hdag jStar hj F hm t
   filter_upwards
@@ -140,7 +141,8 @@ private theorem normalizedDefect_le_respAllScaleAbs_plus (hd : 2 ≤ d) (γ : �
   have _hγ := hγ
   have hq : IsUnit (respGrid jStar F) := Geometry.isUnit_roundedGrid hj hm
   have hEt : (toFullBlockMat (respMean P jStar F t)).PosDef :=
-    Annealed.adaptedMean_posDef d hd P γ E Ψ Kg Src hstat hdag jStar hj (explicitCanonicalMetric F) hm t
+    Annealed.adaptedMean_posDef d hd P γ E Ψ Kg Src hstat hdag jStar hj (explicitCanonicalMetric
+      F) hm t
   have hEhat : (toFullBlockMat (respEhatPlus P jStar F t)).PosDef :=
     respEhatPlus_posDef hd γ P E Ψ Kg Src hstat hdag jStar hj F hm t
   filter_upwards
@@ -312,7 +314,8 @@ theorem integral_respRecentre_sq_le_minus (d : ℕ) (hd : 2 ≤ d) (γ : ℝ)
           Integrable (fun a => respAllScaleAbs P γ jStar F t a ^ bigQ d γ) P →
           ∫ a, respAllScaleAbs P γ jStar F t a ^ bigQ d γ ∂P ≤ Cm * η →
           ∀ e : Vec d, vecDot e e = 1 →
-            ∀ (u : (a : CoeffSpace d) → AHarmonicFunction (respCoeffMinus F a) (respCell jStar F t)),
+            ∀ (u : (a : CoeffSpace d) → AHarmonicFunction (respCoeffMinus F a) (respCell jStar F
+              t)),
               (∀ a, IsResponseMaximizer (respCell jStar F t) (respP (respMean P jStar F t) e)
                 (respqMinus P jStar F t e) (respCoeffMinus F a) (u a)) →
               Integrable (fun a => blockVecDot (respRecentreMinus P jStar F t e a (u a))
@@ -329,7 +332,8 @@ theorem integral_respRecentre_sq_le_minus (d : ℕ) (hd : 2 ≤ d) (γ : ℝ)
   refine ⟨Cm ^ ((2 : ℝ) / (bigQ d γ : ℝ)), Real.rpow_pos_of_pos hCm _, ?_⟩
   intro ε σ Cglob Cprof Csrc Bresp H P E Ψ Kg Src B jStar F s t raw _hcal η hη hAint hAle e _he u hu
   have := raw.prob
-  have hm : (explicitCanonicalMetric F).PosDef := Geometry.explicitCanonicalMetric_posDef raw.symm raw.pos
+  have hm : (explicitCanonicalMetric F).PosDef := Geometry.explicitCanonicalMetric_posDef
+    raw.symm raw.pos
   have hq : IsUnit (respGrid jStar F) := Geometry.isUnit_roundedGrid raw.hj hm
   have hEhat : (toFullBlockMat (respEhatMinus P jStar F t)).PosDef :=
     respEhatMinus_posDef hd γ P E Ψ Kg Src raw.stat raw.ell jStar raw.hj F hm t
@@ -439,7 +443,8 @@ theorem integral_respRecentre_sq_le_plus (d : ℕ) (hd : 2 ≤ d) (γ : ℝ)
   refine ⟨Cm ^ ((2 : ℝ) / (bigQ d γ : ℝ)), Real.rpow_pos_of_pos hCm _, ?_⟩
   intro ε σ Cglob Cprof Csrc Bresp H P E Ψ Kg Src B jStar F s t raw _hcal η hη hAint hAle e _he u hu
   have := raw.prob
-  have hm : (explicitCanonicalMetric F).PosDef := Geometry.explicitCanonicalMetric_posDef raw.symm raw.pos
+  have hm : (explicitCanonicalMetric F).PosDef := Geometry.explicitCanonicalMetric_posDef
+    raw.symm raw.pos
   have hq : IsUnit (respGrid jStar F) := Geometry.isUnit_roundedGrid raw.hj hm
   have hEhat : (toFullBlockMat (respEhatPlus P jStar F t)).PosDef :=
     respEhatPlus_posDef hd γ P E Ψ Kg Src raw.stat raw.ell jStar raw.hj F hm t
@@ -696,7 +701,8 @@ theorem respK0Sq_mul_Lsq_le_kappa (d : ℕ) (hd : 2 ≤ d) (γ : ℝ) (hγ : γ 
   intro ε σ Cglob Cprof Csrc Bresp H P E Ψ Kg Src B jStar F s t hε hσ raw hcal e _he hED _hLM
   let : NeZero d := ⟨by omega⟩
   -- `M_0 = diag(m, m^{-1})` is positive definite: `m = m(F)` is, by `raw.symm` and `raw.pos`.
-  have hm : (explicitCanonicalMetric F).PosDef := Geometry.explicitCanonicalMetric_posDef raw.symm raw.pos
+  have hm : (explicitCanonicalMetric F).PosDef := Geometry.explicitCanonicalMetric_posDef
+    raw.symm raw.pos
   have hM0 : (toFullBlockMat (respM0 F)).PosDef := respM0_full_posDef hm
   have hcnn : 0 ≤ Cc * Real.sqrt (respKappa P jStar F t) :=
     mul_nonneg hCc.le (Real.sqrt_nonneg _)

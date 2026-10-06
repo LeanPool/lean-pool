@@ -42,11 +42,13 @@ open Book.Ch02
 This file is split mechanically out of `Internal.Ch02.DoubledResponse`.
 -/
 
+/-- The block state with the same potential and flux fields as a doubled field. -/
 @[expose]
 def blockStateOfDoubled {d : ℕ} (X : DoubledField d) : BlockState d :=
   { potential := X.potential
     flux := X.flux }
 
+/-- The doubled field with the same potential and flux fields as a block state. -/
 @[expose]
 def doubledFieldOfBlockState {d : ℕ} (X : BlockState d) : DoubledField d :=
   { potential := X.potential
@@ -122,6 +124,8 @@ theorem doubledFieldOfScalarMaximizers_sameAE_ofAEEq {d : ℕ}
   doubledSameAE_smul (1 / 2 : ℝ)
     (doubledFieldOfSolutions_sameAE_ofAEEq h v vStar)
 
+/-- Scalar multiplication of a harmonic solution, with its value and gradient multiplied by `c`.
+-/
 @[expose]
 noncomputable def solutionSMul {d : ℕ} (U : Domain d) (a : CoeffOn U)
     (c : ℝ) (u : Solution U a) : Solution U a :=
@@ -129,6 +133,8 @@ noncomputable def solutionSMul {d : ℕ} (U : Domain d) (a : CoeffOn U)
     isHarmonic := by
       simpa using! isAHarmonicGradient_smul u.isHarmonic c }
 
+/-- The load-dependent first variation density `Q · T - P · BT`, where `B` is the block
+coefficient field. -/
 @[expose]
 noncomputable def doubledResponseFirstVariationLeft {d : ℕ}
     (U : Domain d) (a : CoeffOn U) (P Q : BlockVec d)
@@ -137,12 +143,14 @@ noncomputable def doubledResponseFirstVariationLeft {d : ℕ}
     blockVecDot Q (T.eval x) -
       blockVecDot P (blockMatVecMul (blockMatrixField a x) (T.eval x))
 
+/-- The bilinear first variation density `T · BS`, where `B` is the block coefficient field. -/
 @[expose]
 noncomputable def doubledResponseFirstVariationRight {d : ℕ}
     (U : Domain d) (a : CoeffOn U) (S T : DoubledField d) : Vec d → ℝ :=
   fun x =>
     blockVecDot (T.eval x)
       (blockMatVecMul (blockMatrixField a x) (S.eval x))
+
 
 theorem average_eq_of_average_sub_eq_zero {d : ℕ}
     (U : Domain d) {f g : Vec d → ℝ}

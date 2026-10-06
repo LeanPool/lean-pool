@@ -286,6 +286,442 @@ theorem integral_indicator_normalizedSourceScale_le
 
 /-! ## The tilt comparison -/
 
+
+private theorem adapted_filling_tail_row_bound [NeZero d]
+     {g : ℝ}
+    {E : BlockMat d} {S : CoeffSpace d → ℝ}
+    {l : ℤ}
+    {Cd : ℝ}
+    {nu : Mat d}
+    {sK : ℤ}
+    {k r : ℤ} {G : ℕ}
+    {Z : ℤ → Finset (Fin d → ℤ)} {X : BlockVec d}
+    {a : CoeffSpace d} {m : ℤ}
+    (hZ : ∀ b, ↑(Z b) = Transport.fillingIndex (1 : Mat d) k
+      (adaptedCellTranslate (roundedGrid l nu) r (0 : Vec d)) b)
+    (hm3 : (3 : ℝ) ^ (g * ((m : ℝ) - ((r + (G : ℤ) : ℤ) : ℝ))) ≤
+      1 + ({b | (3 : ℝ) ^ (r + (G : ℤ)) < S b}).indicator
+        (normalizedSourceScale S sK) a)
+    (hp : (roundedGrid l nu).PosDef)
+    (hCd1 : (1 : ℝ) ≤ Cd)
+    (hecc : 1 ≤ witnessEccentricity nu)
+    (hidentity : ∀ (b : ℤ) (w : Fin d → ℤ),
+      adaptedCellAt (1 : Mat d) b w = standardCell d b w)
+    (hdim : 6 * (d : ℝ) * Real.sqrt d * ‖(roundedGrid l nu)⁻¹ * (1 : Mat d)‖ ≤
+      Cd * witnessEccentricity nu)
+    (heQuad0 : 0 ≤ (1 / 2 * blockVecDot X (blockMatVecMul E X)))
+    (hDcore0 : (0 : ℝ) < ((3 : ℝ) ^ (-(1 - g) * ((r : ℝ) - (k : ℝ)) + g * (G : ℝ))))
+    (hcellbound : ∀ (b : ℤ) (w : Fin d → ℤ), w ∈ Z b →
+        1 / 2 * blockVecDot X
+            (blockMatVecMul (coarseBlock (standardCell d b w) a) X) ≤
+          (3 : ℝ) ^ (g * ((m : ℝ) - (b : ℝ))) * (1 / 2 * blockVecDot X (blockMatVecMul E X)))
+    : (∀ u : ℕ,
+        (∑' w : {w // w ∈ Z (k - ((u + 1 : ℕ) : ℤ))}, (fun i =>
+      (volume (adaptedCellAt (1 : Mat d) (k - (i.1 : ℤ)) i.2.1)).toReal /
+          (volume (adaptedCellTranslate (roundedGrid l nu) r 0)).toReal *
+        (1 / 2 * blockVecDot X
+          (blockMatVecMul
+            (coarseBlock (adaptedCellAt (1 : Mat d) (k - (i.1 : ℤ)) i.2.1) a) X))) ⟨u + 1, w⟩) ≤
+          (Cd * witnessEccentricity nu * ((3 : ℝ) ^ (-(1 - g) * ((r : ℝ) - (k : ℝ)) + g * (G : ℝ)))
+            * (1 + ({b | (3 : ℝ) ^ (r + (G : ℤ)) < S b}).indicator (normalizedSourceScale S sK) a)
+            * (1 / 2 * blockVecDot X (blockMatVecMul E X))) *
+            ((3 : ℝ) ^ (-((u : ℤ) + 1)) * (3 : ℝ) ^ (g * ((u : ℝ) + 1)))) := by
+  classical
+  set p : Mat d := roundedGrid l nu with hpdef
+  set eQuad : ℝ := 1 / 2 * blockVecDot X (blockMatVecMul E X) with heQdef
+  set nss : CoeffSpace d → ℝ := normalizedSourceScale S sK with hnssdef
+  set bad : Set (CoeffSpace d) := {b | (3 : ℝ) ^ (r + (G : ℤ)) < S b} with hbaddef
+  set Dcore : ℝ :=
+    (3 : ℝ) ^ (-(1 - g) * ((r : ℝ) - (k : ℝ)) + g * (G : ℝ)) with hDcoredef
+  set term : (Σ u : ℕ, {w // w ∈ Z (k - (u : ℤ))}) → ℝ := fun i =>
+    (volume (adaptedCellAt (1 : Mat d) (k - (i.1 : ℤ)) i.2.1)).toReal /
+        (volume (adaptedCellTranslate p r 0)).toReal *
+      (1 / 2 * blockVecDot X
+        (blockMatVecMul
+          (coarseBlock (adaptedCellAt (1 : Mat d) (k - (i.1 : ℤ)) i.2.1) a) X))
+    with htermdef
+  have hrowTail : ∀ u : ℕ,
+      (∑' w : {w // w ∈ Z (k - ((u + 1 : ℕ) : ℤ))}, term ⟨u + 1, w⟩) ≤
+        (Cd * witnessEccentricity nu * Dcore * (1 + bad.indicator nss a) * eQuad) *
+          ((3 : ℝ) ^ (-((u : ℤ) + 1)) * (3 : ℝ) ^ (g * ((u : ℝ) + 1))) := by
+    intro u
+    rw [tsum_fintype]
+    have hbk : k - ((u + 1 : ℕ) : ℤ) < k := by omega
+    set b : ℤ := k - ((u + 1 : ℕ) : ℤ) with hbdef
+    set rowTerm : (Fin d → ℤ) → ℝ := fun w =>
+      (volume (adaptedCellAt (1 : Mat d) b w)).toReal /
+          (volume (adaptedCellTranslate p r 0)).toReal *
+        (1 / 2 * blockVecDot X
+          (blockMatVecMul (coarseBlock (adaptedCellAt (1 : Mat d) b w) a) X))
+      with hrowTermdef
+    have hchange : (∑ w : {w // w ∈ Z b}, term ⟨u + 1, w⟩) =
+        ∑ w ∈ Z b, rowTerm w := by
+      rw [← Finset.sum_subtype (Z b) (fun _ => Iff.rfl) rowTerm]
+    rw [hchange]
+    have henv : ∀ w ∈ Z b, rowTerm w ≤
+        ((volume (adaptedCellAt (1 : Mat d) b w)).toReal /
+            (volume (adaptedCellTranslate p r 0)).toReal) *
+          ((3 : ℝ) ^ (g * ((m : ℝ) - (b : ℝ))) * eQuad) := by
+      intro w hw
+      rw [hrowTermdef]
+      refine mul_le_mul_of_nonneg_left ?_
+        (div_nonneg ENNReal.toReal_nonneg ENNReal.toReal_nonneg)
+      rw [hidentity b w]
+      exact hcellbound b w hw
+    have hrowsum := Transport.sum_relative_volume_row_le hp Matrix.PosDef.one hbk (hZ b)
+    have hexp : (3 : ℝ) ^ ((b - r : ℤ)) *
+        (3 : ℝ) ^ (g * ((m : ℝ) - (b : ℝ))) =
+        Dcore * (3 : ℝ) ^ (g * ((m : ℝ) - ((r + (G : ℤ) : ℤ) : ℝ))) *
+          ((3 : ℝ) ^ (-((u : ℤ) + 1)) * (3 : ℝ) ^ (g * ((u : ℝ) + 1))) := by
+      rw [hDcoredef, ← Real.rpow_intCast (3 : ℝ) (b - r),
+        ← Real.rpow_intCast (3 : ℝ) (-((u : ℤ) + 1)),
+        ← Real.rpow_add (by norm_num : (0 : ℝ) < 3),
+        ← Real.rpow_add (by norm_num : (0 : ℝ) < 3),
+        ← Real.rpow_add (by norm_num : (0 : ℝ) < 3),
+        ← Real.rpow_add (by norm_num : (0 : ℝ) < 3)]
+      congr 1
+      rw [hbdef]
+      push_cast
+      ring
+    have hgeo0 : (0 : ℝ) ≤
+        (3 : ℝ) ^ (-((u : ℤ) + 1)) * (3 : ℝ) ^ (g * ((u : ℝ) + 1)) :=
+      mul_nonneg (zpow_pos (by norm_num) _).le (Real.rpow_nonneg (by norm_num) _)
+    have hCdecc0 : (0 : ℝ) ≤ Cd * witnessEccentricity nu * eQuad := by
+      have hCd0 : (0 : ℝ) ≤ Cd := by linarith only [hCd1]
+      have hecc0 : (0 : ℝ) ≤ witnessEccentricity nu := by linarith only [hecc]
+      positivity
+    calc
+      ∑ w ∈ Z b, rowTerm w ≤
+          ∑ w ∈ Z b, ((volume (adaptedCellAt (1 : Mat d) b w)).toReal /
+              (volume (adaptedCellTranslate p r 0)).toReal) *
+            ((3 : ℝ) ^ (g * ((m : ℝ) - (b : ℝ))) * eQuad) :=
+        Finset.sum_le_sum henv
+      _ = (∑ w ∈ Z b, (volume (adaptedCellAt (1 : Mat d) b w)).toReal /
+            (volume (adaptedCellTranslate p r 0)).toReal) *
+          ((3 : ℝ) ^ (g * ((m : ℝ) - (b : ℝ))) * eQuad) := by
+        rw [Finset.sum_mul]
+      _ ≤ (6 * (d : ℝ) * Real.sqrt d * ‖p⁻¹ * (1 : Mat d)‖ *
+            (3 : ℝ) ^ ((b - r : ℤ))) *
+          ((3 : ℝ) ^ (g * ((m : ℝ) - (b : ℝ))) * eQuad) := by
+        refine mul_le_mul_of_nonneg_right hrowsum ?_
+        exact mul_nonneg (Real.rpow_nonneg (by norm_num) _) heQuad0
+      _ ≤ (Cd * witnessEccentricity nu * (3 : ℝ) ^ ((b - r : ℤ))) *
+          ((3 : ℝ) ^ (g * ((m : ℝ) - (b : ℝ))) * eQuad) := by
+        refine mul_le_mul_of_nonneg_right
+          (mul_le_mul_of_nonneg_right hdim (zpow_pos (by norm_num) _).le) ?_
+        exact mul_nonneg (Real.rpow_nonneg (by norm_num) _) heQuad0
+      _ = (Cd * witnessEccentricity nu * eQuad) *
+          ((3 : ℝ) ^ ((b - r : ℤ)) * (3 : ℝ) ^ (g * ((m : ℝ) - (b : ℝ)))) := by
+        ring
+      _ = (Cd * witnessEccentricity nu * eQuad) *
+          (Dcore * (3 : ℝ) ^ (g * ((m : ℝ) - ((r + (G : ℤ) : ℤ) : ℝ))) *
+            ((3 : ℝ) ^ (-((u : ℤ) + 1)) * (3 : ℝ) ^ (g * ((u : ℝ) + 1)))) := by
+        rw [hexp]
+      _ ≤ (Cd * witnessEccentricity nu * eQuad) *
+          (Dcore * (1 + bad.indicator nss a) *
+            ((3 : ℝ) ^ (-((u : ℤ) + 1)) * (3 : ℝ) ^ (g * ((u : ℝ) + 1)))) := by
+        refine mul_le_mul_of_nonneg_left ?_ hCdecc0
+        refine mul_le_mul_of_nonneg_right ?_ hgeo0
+        exact mul_le_mul_of_nonneg_left hm3 hDcore0.le
+      _ = (Cd * witnessEccentricity nu * Dcore * (1 + bad.indicator nss a) * eQuad) *
+            ((3 : ℝ) ^ (-((u : ℤ) + 1)) * (3 : ℝ) ^ (g * ((u : ℝ) + 1))) := by
+        ring
+  exact hrowTail
+
+private theorem adapted_filling_union_reindex [NeZero d]
+    {k : ℤ}
+    {Z : ℤ → Finset (Fin d → ℤ)}
+    : ((⋃ i : Σ u : ℕ, {w // w ∈ Z (k - (u : ℤ))},
+        adaptedCellAt (1 : Mat d) (k - (i.1 : ℤ)) i.2.1) =
+      ⋃ b ∈ Set.Iic k, ⋃ w ∈ (Z b : Set (Fin d → ℤ)),
+        adaptedCellAt (1 : Mat d) b w) := by
+  classical
+  have hcover : (⋃ i : Σ u : ℕ, {w // w ∈ Z (k - (u : ℤ))},
+        adaptedCellAt (1 : Mat d) (k - (i.1 : ℤ)) i.2.1) =
+      ⋃ b ∈ Set.Iic k, ⋃ w ∈ (Z b : Set (Fin d → ℤ)),
+        adaptedCellAt (1 : Mat d) b w := by
+    ext x
+    constructor
+    · intro hx
+      obtain ⟨⟨u, w⟩, hx⟩ := Set.mem_iUnion.mp hx
+      refine Set.mem_iUnion.mpr ⟨k - (u : ℤ), Set.mem_iUnion.mpr ⟨?_, ?_⟩⟩
+      · exact Set.mem_Iic.mpr (by omega)
+      · exact Set.mem_iUnion.mpr ⟨w.1, Set.mem_iUnion.mpr ⟨w.2, hx⟩⟩
+    · intro hx
+      obtain ⟨b, hb⟩ := Set.mem_iUnion.mp hx
+      obtain ⟨hbk, hb⟩ := Set.mem_iUnion.mp hb
+      obtain ⟨w, hw⟩ := Set.mem_iUnion.mp hb
+      obtain ⟨hwZ, hx⟩ := Set.mem_iUnion.mp hw
+      have hscale : k - (((k - b).toNat : ℕ) : ℤ) = b := by
+        rw [Int.toNat_of_nonneg (sub_nonneg.mpr (Set.mem_Iic.mp hbk))]
+        omega
+      have hwZ' : w ∈ Z (k - (((k - b).toNat : ℕ) : ℤ)) := by
+        rw [hscale]
+        exact hwZ
+      refine Set.mem_iUnion.mpr ⟨⟨(k - b).toNat, ⟨w, hwZ'⟩⟩, ?_⟩
+      show x ∈ adaptedCellAt (1 : Mat d) (k - (((k - b).toNat : ℕ) : ℤ)) w
+      rwa [hscale]
+  exact hcover
+
+private theorem adapted_filling_integral_identity [NeZero d]
+     {g : ℝ}
+    {P : Measure (CoeffSpace d)} [IsProbabilityMeasure P]
+    {E : BlockMat d} {S : CoeffSpace d → ℝ}
+    {l : ℤ}
+    {Cd : ℝ}
+    {nu : Mat d}
+    {sK : ℤ}
+    {k r : ℤ} {G : ℕ}
+    {Z : ℤ → Finset (Fin d → ℤ)} {X : BlockVec d}
+    (hintCell : ∀ w : Fin d → ℤ, HasIntegrableCoarseBlock P (standardCell d k w))
+    (hmeanCell : ∀ w : Fin d → ℤ,
+      annealedBlock P (standardCell d k w) = annealedBlock P (centeredCube d k))
+    (hindint : Integrable (fun a => ({b | (3 : ℝ) ^ (r + (G : ℤ)) < S b}).indicator
+      (normalizedSourceScale S sK) a) P)
+    : (∫ a,
+      ((∑ w ∈ Z k, (fun w =>
+    (volume (standardCell d k w)).toReal /
+      (volume (adaptedCellTranslate (roundedGrid l nu) r 0)).toReal) w *
+          (1 / 2 * blockVecDot X
+            (blockMatVecMul (coarseBlock (standardCell d k w) a) X))) +
+        boundaryConst Cd g nu * ((3 : ℝ) ^ (-(1 - g) * ((r : ℝ) - (k : ℝ)) + g * (G : ℝ))) * (1 +
+          ({b | (3 : ℝ) ^ (r + (G : ℤ)) < S b}).indicator (normalizedSourceScale S sK) a) * (1 / 2
+          * blockVecDot X (blockMatVecMul E X))) ∂P =
+      (∑ w ∈ Z k, (fun w =>
+    (volume (standardCell d k w)).toReal /
+      (volume (adaptedCellTranslate (roundedGrid l nu) r 0)).toReal) w) *
+          (1 / 2 * blockVecDot X
+            (blockMatVecMul (annealedBlock P (centeredCube d k)) X)) +
+        boundaryConst Cd g nu * ((3 : ℝ) ^ (-(1 - g) * ((r : ℝ) - (k : ℝ)) + g * (G : ℝ))) *
+          (1 + ∫ a, ({b | (3 : ℝ) ^ (r + (G : ℤ)) < S b}).indicator (normalizedSourceScale S sK) a
+            ∂P) * (1 / 2 * blockVecDot X (blockMatVecMul E X))) := by
+  classical
+  set p : Mat d := roundedGrid l nu with hpdef
+  set eQuad : ℝ := 1 / 2 * blockVecDot X (blockMatVecMul E X) with heQdef
+  set nss : CoeffSpace d → ℝ := normalizedSourceScale S sK with hnssdef
+  set bad : Set (CoeffSpace d) := {b | (3 : ℝ) ^ (r + (G : ℤ)) < S b} with hbaddef
+  set Dcore : ℝ :=
+    (3 : ℝ) ^ (-(1 - g) * ((r : ℝ) - (k : ℝ)) + g * (G : ℝ)) with hDcoredef
+  set wt : (Fin d → ℤ) → ℝ := fun w =>
+    (volume (standardCell d k w)).toReal /
+      (volume (adaptedCellTranslate p r 0)).toReal with hwtdef
+  have hReq : ∫ a,
+      ((∑ w ∈ Z k, wt w *
+          (1 / 2 * blockVecDot X
+            (blockMatVecMul (coarseBlock (standardCell d k w) a) X))) +
+        boundaryConst Cd g nu * Dcore * (1 + bad.indicator nss a) * eQuad) ∂P =
+      (∑ w ∈ Z k, wt w) *
+          (1 / 2 * blockVecDot X
+            (blockMatVecMul (annealedBlock P (centeredCube d k)) X)) +
+        boundaryConst Cd g nu * Dcore *
+          (1 + ∫ a, bad.indicator nss a ∂P) * eQuad := by
+    rw [integral_add
+      (integrable_finsetSum _ fun w _ =>
+        ((integrable_blockVecDot_coarseBlock (hintCell w) X).const_mul _).const_mul _)
+      (by
+        have h := (((integrable_const (1 : ℝ)).add hindint).const_mul
+          (boundaryConst Cd g nu * Dcore)).mul_const eQuad
+        refine h.congr (_root_.Filter.Eventually.of_forall fun a => ?_)
+        simp only [Pi.add_apply])]
+    congr 1
+    · rw [integral_finsetSum _ fun w _ =>
+        ((integrable_blockVecDot_coarseBlock (hintCell w) X).const_mul _).const_mul _,
+        Finset.sum_mul]
+      refine Finset.sum_congr rfl fun w _ => ?_
+      rw [integral_const_mul, integral_const_mul,
+        ← blockVecDot_blockMatVecMul_annealedBlock (hintCell w) X, hmeanCell w]
+    · rw [show (fun a => boundaryConst Cd g nu * Dcore *
+          (1 + bad.indicator nss a) * eQuad) =
+          fun a => boundaryConst Cd g nu * Dcore * eQuad +
+            (boundaryConst Cd g nu * Dcore * eQuad) * bad.indicator nss a from by
+        funext a
+        ring]
+      rw [integral_add (integrable_const _) (hindint.const_mul _),
+        integral_const, probReal_univ, one_smul, integral_const_mul]
+      ring
+  exact hReq
+
+private theorem adapted_filling_pathwise_quadratic_bound [NeZero d]
+     {g : ℝ} (hg : g ∈ Set.Ico (0 : ℝ) 1)
+    {P : Measure (CoeffSpace d)} [IsProbabilityMeasure P]
+    {E : BlockMat d} {Ψ : ℝ → ℝ} {K : ℝ} {S : CoeffSpace d → ℝ}
+    (hdag : HCPoly.Frozen.CoarseEllipticityDagger P g E Ψ K S)
+    {l : ℤ}
+    {Cd : ℝ}
+    {nu : Mat d}
+    {sK : ℤ}
+    {k r : ℤ} {G : ℕ}
+    (hDelta : 0 ≤ r + (G : ℤ) - 1 - sK)
+    {Z : ℤ → Finset (Fin d → ℤ)} {X : BlockVec d}
+    (hZ : ∀ b, ↑(Z b) = Transport.fillingIndex (1 : Mat d) k
+      (adaptedCellTranslate (roundedGrid l nu) r (0 : Vec d)) b)
+    (hgeomSummable : Summable (fun u : ℕ => (3 : ℝ) ^ (-((u : ℤ) + 1)) *
+      (3 : ℝ) ^ (g * ((u : ℝ) + 1))))
+    (hgeomTsum : (∑' u : ℕ, (3 : ℝ) ^ (-((u : ℤ) + 1)) *
+      (3 : ℝ) ^ (g * ((u : ℝ) + 1))) ≤ zetaG g)
+    (hd0 : 0 < d)
+    (hp : (roundedGrid l nu).PosDef)
+    (hCd1 : (1 : ℝ) ≤ Cd)
+    (hecc : 1 ≤ witnessEccentricity nu)
+    (hparent : adaptedCellTranslate (roundedGrid l nu) r (0 : Vec d) = adaptedCell (roundedGrid l
+      nu) r)
+    (hidentity : ∀ (b : ℤ) (w : Fin d → ℤ),
+      adaptedCellAt (1 : Mat d) b w = standardCell d b w)
+    (hcellsub : ∀ (b : ℤ) (w : Fin d → ℤ), w ∈ Z b →
+      standardCell d b w ⊆ centeredCube d (r + (G : ℤ)))
+    (hc : ∀ i : Σ u : ℕ, {w // w ∈ Z (k - (u : ℤ))},
+      IsOpenBoundedConvexDomain (adaptedCellAt (1 : Mat d) (k - (i.1 : ℤ)) i.2.1))
+    (hcsub : ∀ i : Σ u : ℕ, {w // w ∈ Z (k - (u : ℤ))},
+      adaptedCellAt (1 : Mat d) (k - (i.1 : ℤ)) i.2.1 ⊆
+        adaptedCellTranslate (roundedGrid l nu) r 0)
+    (hcpair : Pairwise fun i j : Σ u : ℕ, {w // w ∈ Z (k - (u : ℤ))} =>
+      Disjoint (adaptedCellAt (1 : Mat d) (k - (i.1 : ℤ)) i.2.1)
+        (adaptedCellAt (1 : Mat d) (k - (j.1 : ℤ)) j.2.1))
+    (hc0 : ∀ i : Σ u : ℕ, {w // w ∈ Z (k - (u : ℤ))},
+      volume (adaptedCellAt (1 : Mat d) (k - (i.1 : ℤ)) i.2.1) ≠ 0)
+    (hcnull : volume (adaptedCellTranslate (roundedGrid l nu) r 0 \
+      ⋃ i : Σ u : ℕ, {w // w ∈ Z (k - (u : ℤ))},
+        adaptedCellAt (1 : Mat d) (k - (i.1 : ℤ)) i.2.1) = 0)
+    (hparent0 : volume (adaptedCellTranslate (roundedGrid l nu) r 0) ≠ 0)
+    (hdim : 6 * (d : ℝ) * Real.sqrt d * ‖(roundedGrid l nu)⁻¹ * (1 : Mat d)‖ ≤
+      Cd * witnessEccentricity nu)
+    (heQuad0 : 0 ≤ (1 / 2 * blockVecDot X (blockMatVecMul E X)))
+    (hDcore0 : (0 : ℝ) < ((3 : ℝ) ^ (-(1 - g) * ((r : ℝ) - (k : ℝ)) + g * (G : ℝ))))
+    : (∀ᵐ a ∂P,
+      1 / 2 * blockVecDot X
+          (blockMatVecMul (coarseBlock (adaptedCell (roundedGrid l nu) r) a) X) ≤
+        (∑ w ∈ Z k, (fun w =>
+    (volume (standardCell d k w)).toReal /
+      (volume (adaptedCellTranslate (roundedGrid l nu) r 0)).toReal) w *
+            (1 / 2 * blockVecDot X
+              (blockMatVecMul (coarseBlock (standardCell d k w) a) X))) +
+          boundaryConst Cd g nu * ((3 : ℝ) ^ (-(1 - g) * ((r : ℝ) - (k : ℝ)) + g * (G : ℝ))) * (1 +
+            ({b | (3 : ℝ) ^ (r + (G : ℤ)) < S b}).indicator (normalizedSourceScale S sK) a) * (1 /
+            2 * blockVecDot X (blockMatVecMul E X))) := by
+  classical
+  set p : Mat d := roundedGrid l nu with hpdef
+  set eQuad : ℝ := 1 / 2 * blockVecDot X (blockMatVecMul E X) with heQdef
+  set nss : CoeffSpace d → ℝ := normalizedSourceScale S sK with hnssdef
+  set bad : Set (CoeffSpace d) := {b | (3 : ℝ) ^ (r + (G : ℤ)) < S b} with hbaddef
+  set Dcore : ℝ :=
+    (3 : ℝ) ^ (-(1 - g) * ((r : ℝ) - (k : ℝ)) + g * (G : ℝ)) with hDcoredef
+  set wt : (Fin d → ℤ) → ℝ := fun w =>
+    (volume (standardCell d k w)).toReal /
+      (volume (adaptedCellTranslate p r 0)).toReal with hwtdef
+  have hpath : ∀ᵐ a ∂P,
+      1 / 2 * blockVecDot X
+          (blockMatVecMul (coarseBlock (adaptedCell p r) a) X) ≤
+        (∑ w ∈ Z k, wt w *
+            (1 / 2 * blockVecDot X
+              (blockMatVecMul (coarseBlock (standardCell d k w) a) X))) +
+          boundaryConst Cd g nu * Dcore * (1 + bad.indicator nss a) * eQuad := by
+    filter_upwards [hdag.coarse_bound] with a hbound
+    obtain ⟨m, hm1, hm2, hm3⟩ :=
+      exists_burnScale (S := S) (sK := sK) (t := r + (G : ℤ)) hg hDelta a
+    set term : (Σ u : ℕ, {w // w ∈ Z (k - (u : ℤ))}) → ℝ := fun i =>
+      (volume (adaptedCellAt (1 : Mat d) (k - (i.1 : ℤ)) i.2.1)).toReal /
+          (volume (adaptedCellTranslate p r 0)).toReal *
+        (1 / 2 * blockVecDot X
+          (blockMatVecMul
+            (coarseBlock (adaptedCellAt (1 : Mat d) (k - (i.1 : ℤ)) i.2.1) a) X))
+      with htermdef
+    have hterm0 : ∀ i, 0 ≤ term i := by
+      intro i
+      have hquad0 : 0 ≤ 1 / 2 *
+          blockVecDot X (blockMatVecMul
+            (coarseBlock (adaptedCellAt (1 : Mat d) (k - (i.1 : ℤ)) i.2.1) a) X) := by
+        by_cases hX : X = 0
+        · subst X
+          simp [blockMatVecMul, blockVecDot, vecDot]
+        · exact mul_nonneg (by norm_num)
+            ((Recurrence.blockPosDef_coarseBlock_adaptedCellAt Matrix.PosDef.one _ _ a) X hX).le
+      exact mul_nonneg
+        (div_nonneg ENNReal.toReal_nonneg ENNReal.toReal_nonneg) hquad0
+    have hcellbound : ∀ (b : ℤ) (w : Fin d → ℤ), w ∈ Z b →
+        1 / 2 * blockVecDot X
+            (blockMatVecMul (coarseBlock (standardCell d b w) a) X) ≤
+          (3 : ℝ) ^ (g * ((m : ℝ) - (b : ℝ))) * eQuad := by
+      intro b w hw
+      have hsubm : standardCell d b w ⊆ centeredCube d m :=
+        (hcellsub b w hw).trans (Window.centeredCube_mono hm1)
+      have hbm : b ≤ m :=
+        Window.scale_le_of_standardCell_subset_centeredCube hd0 hsubm
+      have hcenter : standardCellCenter b w ∈ centeredCube d m :=
+        hsubm (Recurrence.standardCellCenter_mem_standardCell b w)
+      have h := hbound m hm2 b hbm w hcenter X
+      rw [Sharp.blockVecDot_blockMatVecMul_blockScale] at h
+      rw [heQdef]
+      linarith only [h]
+    have hCoef0 : (0 : ℝ) ≤
+        Cd * witnessEccentricity nu * Dcore * (1 + bad.indicator nss a) * eQuad := by
+      have hind0 : 0 ≤ bad.indicator nss a := by
+        refine Set.indicator_nonneg (fun b _ => ?_) a
+        exact le_trans zero_le_one (one_le_normalizedSourceScale S sK b)
+      have hCd0 : (0 : ℝ) ≤ Cd := by linarith only [hCd1]
+      have hecc0 : (0 : ℝ) ≤ witnessEccentricity nu := by linarith only [hecc]
+      have hone : (0 : ℝ) ≤ 1 + bad.indicator nss a := by linarith only [hind0]
+      have hDc : (0 : ℝ) ≤ Dcore := hDcore0.le
+      positivity
+    have hrowTail :=
+      adapted_filling_tail_row_bound hZ hm3
+        hp hCd1 hecc hidentity hdim heQuad0 hDcore0 hcellbound
+    have hrow0 : ∀ u : ℕ, 0 ≤ ∑' w : {w // w ∈ Z (k - (u : ℤ))}, term ⟨u, w⟩ :=
+      fun u => tsum_nonneg fun w => hterm0 ⟨u, w⟩
+    have hTailSummable : Summable
+        (fun u : ℕ => ∑' w : {w // w ∈ Z (k - ((u + 1 : ℕ) : ℤ))}, term ⟨u + 1, w⟩) :=
+      Summable.of_nonneg_of_le (fun u => hrow0 (u + 1)) hrowTail
+        (hgeomSummable.mul_left _)
+    have hrowSummable : Summable
+        (fun u : ℕ => ∑' w : {w // w ∈ Z (k - (u : ℤ))}, term ⟨u, w⟩) :=
+      (summable_nat_add_iff 1).mp hTailSummable
+    have htermSummable : Summable term :=
+      (summable_sigma_of_nonneg hterm0).2
+        ⟨fun _ => (hasSum_fintype _).summable, hrowSummable⟩
+    have hsubadd : 1 / 2 * blockVecDot X
+        (blockMatVecMul (coarseBlock (adaptedCellTranslate p r 0) a) X) ≤
+        ∑' i, term i :=
+      Window.blockQuadratic_le_tsum_weight_of_countable_aePartition
+        (Transport.isOpenBoundedConvexDomain_adaptedCellTranslate hp r 0) hparent0 a
+        hc hcsub hcpair hcnull hc0 X htermSummable
+    have hsigma : ∑' i, term i =
+        (∑' w : {w // w ∈ Z (k - ((0 : ℕ) : ℤ))}, term ⟨0, w⟩) +
+          ∑' u : ℕ, ∑' w : {w // w ∈ Z (k - ((u + 1 : ℕ) : ℤ))}, term ⟨u + 1, w⟩ := by
+      rw [htermSummable.tsum_sigma' (fun _ => (hasSum_fintype _).summable)]
+      exact hrowSummable.tsum_eq_zero_add
+    have htailbound : (∑' u : ℕ,
+        ∑' w : {w // w ∈ Z (k - ((u + 1 : ℕ) : ℤ))}, term ⟨u + 1, w⟩) ≤
+        boundaryConst Cd g nu * Dcore * (1 + bad.indicator nss a) * eQuad := by
+      refine le_trans (hTailSummable.tsum_le_tsum hrowTail (hgeomSummable.mul_left _)) ?_
+      rw [tsum_mul_left]
+      have hmul := mul_le_mul_of_nonneg_left hgeomTsum hCoef0
+      refine le_trans hmul (le_of_eq ?_)
+      rw [boundaryConst]
+      ring
+    have hhead : (∑' w : {w // w ∈ Z (k - ((0 : ℕ) : ℤ))}, term ⟨0, w⟩) =
+        ∑ w ∈ Z k, wt w *
+          (1 / 2 * blockVecDot X
+            (blockMatVecMul (coarseBlock (standardCell d k w) a) X)) := by
+      rw [tsum_fintype]
+      have hz : k - ((0 : ℕ) : ℤ) = k := by omega
+      set headTerm : (Fin d → ℤ) → ℝ := fun w =>
+        (volume (adaptedCellAt (1 : Mat d) (k - ((0 : ℕ) : ℤ)) w)).toReal /
+            (volume (adaptedCellTranslate p r 0)).toReal *
+          (1 / 2 * blockVecDot X
+            (blockMatVecMul
+              (coarseBlock (adaptedCellAt (1 : Mat d) (k - ((0 : ℕ) : ℤ)) w) a) X))
+        with hheadTermdef
+      have hchange : (∑ w : {w // w ∈ Z (k - ((0 : ℕ) : ℤ))}, term ⟨0, w⟩) =
+          ∑ w ∈ Z (k - ((0 : ℕ) : ℤ)), headTerm w := by
+        rw [← Finset.sum_subtype (Z (k - ((0 : ℕ) : ℤ))) (fun _ => Iff.rfl) headTerm]
+      rw [hchange, hz]
+      refine Finset.sum_congr rfl fun w _ => ?_
+      rw [hheadTermdef, hwtdef]
+      simp only [hz, hidentity]
+    rw [hparent] at hsubadd
+    rw [hsigma, hhead] at hsubadd
+    linarith only [hsubadd, htailbound]
+  -- integrate the pathwise split
+  exact hpath
 /-- **The adapted-to-Euclidean tilt comparison** (Lemma 2.15 of HC,
 equation (2.127)).  For `0 ≤ k ≤ r` the annealed adapted cell of scale `r` is
 dominated by the annealed *Euclidean* cube of scale `k` plus a boundary defect
@@ -367,31 +803,8 @@ theorem adaptedMean_quadratic_le_add_tiltDefect [NeZero d]
   have hc0 : ∀ i : Σ u : ℕ, {w // w ∈ Z (k - (u : ℤ))},
       volume (adaptedCellAt (1 : Mat d) (k - (i.1 : ℤ)) i.2.1) ≠ 0 := fun i =>
     (Recurrence.volume_adaptedCellAt_pos Matrix.PosDef.one _ _).ne'
-  have hcover : (⋃ i : Σ u : ℕ, {w // w ∈ Z (k - (u : ℤ))},
-        adaptedCellAt (1 : Mat d) (k - (i.1 : ℤ)) i.2.1) =
-      ⋃ b ∈ Set.Iic k, ⋃ w ∈ (Z b : Set (Fin d → ℤ)),
-        adaptedCellAt (1 : Mat d) b w := by
-    ext x
-    constructor
-    · intro hx
-      obtain ⟨⟨u, w⟩, hx⟩ := Set.mem_iUnion.mp hx
-      refine Set.mem_iUnion.mpr ⟨k - (u : ℤ), Set.mem_iUnion.mpr ⟨?_, ?_⟩⟩
-      · exact Set.mem_Iic.mpr (by omega)
-      · exact Set.mem_iUnion.mpr ⟨w.1, Set.mem_iUnion.mpr ⟨w.2, hx⟩⟩
-    · intro hx
-      obtain ⟨b, hb⟩ := Set.mem_iUnion.mp hx
-      obtain ⟨hbk, hb⟩ := Set.mem_iUnion.mp hb
-      obtain ⟨w, hw⟩ := Set.mem_iUnion.mp hb
-      obtain ⟨hwZ, hx⟩ := Set.mem_iUnion.mp hw
-      have hscale : k - (((k - b).toNat : ℕ) : ℤ) = b := by
-        rw [Int.toNat_of_nonneg (sub_nonneg.mpr (Set.mem_Iic.mp hbk))]
-        omega
-      have hwZ' : w ∈ Z (k - (((k - b).toNat : ℕ) : ℤ)) := by
-        rw [hscale]
-        exact hwZ
-      refine Set.mem_iUnion.mpr ⟨⟨(k - b).toNat, ⟨w, hwZ'⟩⟩, ?_⟩
-      show x ∈ adaptedCellAt (1 : Mat d) (k - (((k - b).toNat : ℕ) : ℤ)) w
-      rwa [hscale]
+  have hcover :=
+    adapted_filling_union_reindex
   have hcnull : volume (adaptedCellTranslate p r 0 \
       ⋃ i : Σ u : ℕ, {w // w ∈ Z (k - (u : ℤ))},
         adaptedCellAt (1 : Mat d) (k - (i.1 : ℤ)) i.2.1) = 0 := by
@@ -429,202 +842,10 @@ theorem adaptedMean_quadratic_le_add_tiltDefect [NeZero d]
       (volume (adaptedCellTranslate p r 0)).toReal with hwtdef
   obtain ⟨hgeomSummable, hgeomTsum⟩ := summable_tail_and_tsum_le hg
   -- the pathwise split of the filling
-  have hpath : ∀ᵐ a ∂P,
-      1 / 2 * blockVecDot X
-          (blockMatVecMul (coarseBlock (adaptedCell p r) a) X) ≤
-        (∑ w ∈ Z k, wt w *
-            (1 / 2 * blockVecDot X
-              (blockMatVecMul (coarseBlock (standardCell d k w) a) X))) +
-          boundaryConst Cd g nu * Dcore * (1 + bad.indicator nss a) * eQuad := by
-    filter_upwards [hdag.coarse_bound] with a hbound
-    obtain ⟨m, hm1, hm2, hm3⟩ :=
-      exists_burnScale (S := S) (sK := sK) (t := r + (G : ℤ)) hg hDelta a
-    set term : (Σ u : ℕ, {w // w ∈ Z (k - (u : ℤ))}) → ℝ := fun i =>
-      (volume (adaptedCellAt (1 : Mat d) (k - (i.1 : ℤ)) i.2.1)).toReal /
-          (volume (adaptedCellTranslate p r 0)).toReal *
-        (1 / 2 * blockVecDot X
-          (blockMatVecMul
-            (coarseBlock (adaptedCellAt (1 : Mat d) (k - (i.1 : ℤ)) i.2.1) a) X))
-      with htermdef
-    have hterm0 : ∀ i, 0 ≤ term i := by
-      intro i
-      have hquad0 : 0 ≤ 1 / 2 *
-          blockVecDot X (blockMatVecMul
-            (coarseBlock (adaptedCellAt (1 : Mat d) (k - (i.1 : ℤ)) i.2.1) a) X) := by
-        by_cases hX : X = 0
-        · subst X
-          simp [blockMatVecMul, blockVecDot, vecDot]
-        · exact mul_nonneg (by norm_num)
-            ((Recurrence.blockPosDef_coarseBlock_adaptedCellAt Matrix.PosDef.one _ _ a) X hX).le
-      exact mul_nonneg
-        (div_nonneg ENNReal.toReal_nonneg ENNReal.toReal_nonneg) hquad0
-    have hcellbound : ∀ (b : ℤ) (w : Fin d → ℤ), w ∈ Z b →
-        1 / 2 * blockVecDot X
-            (blockMatVecMul (coarseBlock (standardCell d b w) a) X) ≤
-          (3 : ℝ) ^ (g * ((m : ℝ) - (b : ℝ))) * eQuad := by
-      intro b w hw
-      have hsubm : standardCell d b w ⊆ centeredCube d m :=
-        (hcellsub b w hw).trans (Window.centeredCube_mono hm1)
-      have hbm : b ≤ m :=
-        Window.scale_le_of_standardCell_subset_centeredCube hd0 hsubm
-      have hcenter : standardCellCenter b w ∈ centeredCube d m :=
-        hsubm (Recurrence.standardCellCenter_mem_standardCell b w)
-      have h := hbound m hm2 b hbm w hcenter X
-      rw [Sharp.blockVecDot_blockMatVecMul_blockScale] at h
-      rw [heQdef]
-      linarith only [h]
-    have hCoef0 : (0 : ℝ) ≤
-        Cd * witnessEccentricity nu * Dcore * (1 + bad.indicator nss a) * eQuad := by
-      have hind0 : 0 ≤ bad.indicator nss a := by
-        refine Set.indicator_nonneg (fun b _ => ?_) a
-        exact le_trans zero_le_one (one_le_normalizedSourceScale S sK b)
-      have hCd0 : (0 : ℝ) ≤ Cd := by linarith only [hCd1]
-      have hecc0 : (0 : ℝ) ≤ witnessEccentricity nu := by linarith only [hecc]
-      have hone : (0 : ℝ) ≤ 1 + bad.indicator nss a := by linarith only [hind0]
-      have hDc : (0 : ℝ) ≤ Dcore := hDcore0.le
-      positivity
-    have hrowTail : ∀ u : ℕ,
-        (∑' w : {w // w ∈ Z (k - ((u + 1 : ℕ) : ℤ))}, term ⟨u + 1, w⟩) ≤
-          (Cd * witnessEccentricity nu * Dcore * (1 + bad.indicator nss a) * eQuad) *
-            ((3 : ℝ) ^ (-((u : ℤ) + 1)) * (3 : ℝ) ^ (g * ((u : ℝ) + 1))) := by
-      intro u
-      rw [tsum_fintype]
-      have hbk : k - ((u + 1 : ℕ) : ℤ) < k := by omega
-      set b : ℤ := k - ((u + 1 : ℕ) : ℤ) with hbdef
-      set rowTerm : (Fin d → ℤ) → ℝ := fun w =>
-        (volume (adaptedCellAt (1 : Mat d) b w)).toReal /
-            (volume (adaptedCellTranslate p r 0)).toReal *
-          (1 / 2 * blockVecDot X
-            (blockMatVecMul (coarseBlock (adaptedCellAt (1 : Mat d) b w) a) X))
-        with hrowTermdef
-      have hchange : (∑ w : {w // w ∈ Z b}, term ⟨u + 1, w⟩) =
-          ∑ w ∈ Z b, rowTerm w := by
-        rw [← Finset.sum_subtype (Z b) (fun _ => Iff.rfl) rowTerm]
-      rw [hchange]
-      have henv : ∀ w ∈ Z b, rowTerm w ≤
-          ((volume (adaptedCellAt (1 : Mat d) b w)).toReal /
-              (volume (adaptedCellTranslate p r 0)).toReal) *
-            ((3 : ℝ) ^ (g * ((m : ℝ) - (b : ℝ))) * eQuad) := by
-        intro w hw
-        rw [hrowTermdef]
-        refine mul_le_mul_of_nonneg_left ?_
-          (div_nonneg ENNReal.toReal_nonneg ENNReal.toReal_nonneg)
-        rw [hidentity b w]
-        exact hcellbound b w hw
-      have hrowsum := Transport.sum_relative_volume_row_le hp Matrix.PosDef.one hbk (hZ b)
-      have hexp : (3 : ℝ) ^ ((b - r : ℤ)) *
-          (3 : ℝ) ^ (g * ((m : ℝ) - (b : ℝ))) =
-          Dcore * (3 : ℝ) ^ (g * ((m : ℝ) - ((r + (G : ℤ) : ℤ) : ℝ))) *
-            ((3 : ℝ) ^ (-((u : ℤ) + 1)) * (3 : ℝ) ^ (g * ((u : ℝ) + 1))) := by
-        rw [hDcoredef, ← Real.rpow_intCast (3 : ℝ) (b - r),
-          ← Real.rpow_intCast (3 : ℝ) (-((u : ℤ) + 1)),
-          ← Real.rpow_add (by norm_num : (0 : ℝ) < 3),
-          ← Real.rpow_add (by norm_num : (0 : ℝ) < 3),
-          ← Real.rpow_add (by norm_num : (0 : ℝ) < 3),
-          ← Real.rpow_add (by norm_num : (0 : ℝ) < 3)]
-        congr 1
-        rw [hbdef]
-        push_cast
-        ring
-      have hgeo0 : (0 : ℝ) ≤
-          (3 : ℝ) ^ (-((u : ℤ) + 1)) * (3 : ℝ) ^ (g * ((u : ℝ) + 1)) :=
-        mul_nonneg (zpow_pos (by norm_num) _).le (Real.rpow_nonneg (by norm_num) _)
-      have hCdecc0 : (0 : ℝ) ≤ Cd * witnessEccentricity nu * eQuad := by
-        have hCd0 : (0 : ℝ) ≤ Cd := by linarith only [hCd1]
-        have hecc0 : (0 : ℝ) ≤ witnessEccentricity nu := by linarith only [hecc]
-        positivity
-      calc
-        ∑ w ∈ Z b, rowTerm w ≤
-            ∑ w ∈ Z b, ((volume (adaptedCellAt (1 : Mat d) b w)).toReal /
-                (volume (adaptedCellTranslate p r 0)).toReal) *
-              ((3 : ℝ) ^ (g * ((m : ℝ) - (b : ℝ))) * eQuad) :=
-          Finset.sum_le_sum henv
-        _ = (∑ w ∈ Z b, (volume (adaptedCellAt (1 : Mat d) b w)).toReal /
-              (volume (adaptedCellTranslate p r 0)).toReal) *
-            ((3 : ℝ) ^ (g * ((m : ℝ) - (b : ℝ))) * eQuad) := by
-          rw [Finset.sum_mul]
-        _ ≤ (6 * (d : ℝ) * Real.sqrt d * ‖p⁻¹ * (1 : Mat d)‖ *
-              (3 : ℝ) ^ ((b - r : ℤ))) *
-            ((3 : ℝ) ^ (g * ((m : ℝ) - (b : ℝ))) * eQuad) := by
-          refine mul_le_mul_of_nonneg_right hrowsum ?_
-          exact mul_nonneg (Real.rpow_nonneg (by norm_num) _) heQuad0
-        _ ≤ (Cd * witnessEccentricity nu * (3 : ℝ) ^ ((b - r : ℤ))) *
-            ((3 : ℝ) ^ (g * ((m : ℝ) - (b : ℝ))) * eQuad) := by
-          refine mul_le_mul_of_nonneg_right
-            (mul_le_mul_of_nonneg_right hdim (zpow_pos (by norm_num) _).le) ?_
-          exact mul_nonneg (Real.rpow_nonneg (by norm_num) _) heQuad0
-        _ = (Cd * witnessEccentricity nu * eQuad) *
-            ((3 : ℝ) ^ ((b - r : ℤ)) * (3 : ℝ) ^ (g * ((m : ℝ) - (b : ℝ)))) := by
-          ring
-        _ = (Cd * witnessEccentricity nu * eQuad) *
-            (Dcore * (3 : ℝ) ^ (g * ((m : ℝ) - ((r + (G : ℤ) : ℤ) : ℝ))) *
-              ((3 : ℝ) ^ (-((u : ℤ) + 1)) * (3 : ℝ) ^ (g * ((u : ℝ) + 1)))) := by
-          rw [hexp]
-        _ ≤ (Cd * witnessEccentricity nu * eQuad) *
-            (Dcore * (1 + bad.indicator nss a) *
-              ((3 : ℝ) ^ (-((u : ℤ) + 1)) * (3 : ℝ) ^ (g * ((u : ℝ) + 1)))) := by
-          refine mul_le_mul_of_nonneg_left ?_ hCdecc0
-          refine mul_le_mul_of_nonneg_right ?_ hgeo0
-          exact mul_le_mul_of_nonneg_left hm3 hDcore0.le
-        _ = (Cd * witnessEccentricity nu * Dcore * (1 + bad.indicator nss a) * eQuad) *
-              ((3 : ℝ) ^ (-((u : ℤ) + 1)) * (3 : ℝ) ^ (g * ((u : ℝ) + 1))) := by
-          ring
-    have hrow0 : ∀ u : ℕ, 0 ≤ ∑' w : {w // w ∈ Z (k - (u : ℤ))}, term ⟨u, w⟩ :=
-      fun u => tsum_nonneg fun w => hterm0 ⟨u, w⟩
-    have hTailSummable : Summable
-        (fun u : ℕ => ∑' w : {w // w ∈ Z (k - ((u + 1 : ℕ) : ℤ))}, term ⟨u + 1, w⟩) :=
-      Summable.of_nonneg_of_le (fun u => hrow0 (u + 1)) hrowTail
-        (hgeomSummable.mul_left _)
-    have hrowSummable : Summable
-        (fun u : ℕ => ∑' w : {w // w ∈ Z (k - (u : ℤ))}, term ⟨u, w⟩) :=
-      (summable_nat_add_iff 1).mp hTailSummable
-    have htermSummable : Summable term :=
-      (summable_sigma_of_nonneg hterm0).2
-        ⟨fun _ => (hasSum_fintype _).summable, hrowSummable⟩
-    have hsubadd : 1 / 2 * blockVecDot X
-        (blockMatVecMul (coarseBlock (adaptedCellTranslate p r 0) a) X) ≤
-        ∑' i, term i :=
-      Window.blockQuadratic_le_tsum_weight_of_countable_aePartition
-        (Transport.isOpenBoundedConvexDomain_adaptedCellTranslate hp r 0) hparent0 a
-        hc hcsub hcpair hcnull hc0 X htermSummable
-    have hsigma : ∑' i, term i =
-        (∑' w : {w // w ∈ Z (k - ((0 : ℕ) : ℤ))}, term ⟨0, w⟩) +
-          ∑' u : ℕ, ∑' w : {w // w ∈ Z (k - ((u + 1 : ℕ) : ℤ))}, term ⟨u + 1, w⟩ := by
-      rw [htermSummable.tsum_sigma' (fun _ => (hasSum_fintype _).summable)]
-      exact hrowSummable.tsum_eq_zero_add
-    have htailbound : (∑' u : ℕ,
-        ∑' w : {w // w ∈ Z (k - ((u + 1 : ℕ) : ℤ))}, term ⟨u + 1, w⟩) ≤
-        boundaryConst Cd g nu * Dcore * (1 + bad.indicator nss a) * eQuad := by
-      refine le_trans (hTailSummable.tsum_le_tsum hrowTail (hgeomSummable.mul_left _)) ?_
-      rw [tsum_mul_left]
-      have hmul := mul_le_mul_of_nonneg_left hgeomTsum hCoef0
-      refine le_trans hmul (le_of_eq ?_)
-      rw [boundaryConst]
-      ring
-    have hhead : (∑' w : {w // w ∈ Z (k - ((0 : ℕ) : ℤ))}, term ⟨0, w⟩) =
-        ∑ w ∈ Z k, wt w *
-          (1 / 2 * blockVecDot X
-            (blockMatVecMul (coarseBlock (standardCell d k w) a) X)) := by
-      rw [tsum_fintype]
-      have hz : k - ((0 : ℕ) : ℤ) = k := by omega
-      set headTerm : (Fin d → ℤ) → ℝ := fun w =>
-        (volume (adaptedCellAt (1 : Mat d) (k - ((0 : ℕ) : ℤ)) w)).toReal /
-            (volume (adaptedCellTranslate p r 0)).toReal *
-          (1 / 2 * blockVecDot X
-            (blockMatVecMul
-              (coarseBlock (adaptedCellAt (1 : Mat d) (k - ((0 : ℕ) : ℤ)) w) a) X))
-        with hheadTermdef
-      have hchange : (∑ w : {w // w ∈ Z (k - ((0 : ℕ) : ℤ))}, term ⟨0, w⟩) =
-          ∑ w ∈ Z (k - ((0 : ℕ) : ℤ)), headTerm w := by
-        rw [← Finset.sum_subtype (Z (k - ((0 : ℕ) : ℤ))) (fun _ => Iff.rfl) headTerm]
-      rw [hchange, hz]
-      refine Finset.sum_congr rfl fun w _ => ?_
-      rw [hheadTermdef, hwtdef]
-      simp only [hz, hidentity]
-    rw [hparent] at hsubadd
-    rw [hsigma, hhead] at hsubadd
-    linarith only [hsubadd, htailbound]
-  -- integrate the pathwise split
+  have hpath :=
+    adapted_filling_pathwise_quadratic_bound hg hdag
+      hDelta hZ hgeomSummable hgeomTsum hd0 hp hCd1 hecc hparent hidentity hcellsub hc hcsub hcpair
+      hc0 hcnull hparent0 hdim heQuad0 hDcore0
   have hintCube : HasIntegrableCoarseBlock P (centeredCube d k) :=
     hasIntegrableCoarseBlock_of_coarseEllipticityDagger hdag k
   have hintCell : ∀ w : Fin d → ℤ, HasIntegrableCoarseBlock P (standardCell d k w) := by
@@ -661,40 +882,8 @@ theorem adaptedMean_quadratic_le_add_tiltDefect [NeZero d]
         (blockMatVecMul (adaptedMean P p r) X) := by
     rw [integral_const_mul, ← blockVecDot_blockMatVecMul_annealedBlock hint X]
     rfl
-  have hReq : ∫ a,
-      ((∑ w ∈ Z k, wt w *
-          (1 / 2 * blockVecDot X
-            (blockMatVecMul (coarseBlock (standardCell d k w) a) X))) +
-        boundaryConst Cd g nu * Dcore * (1 + bad.indicator nss a) * eQuad) ∂P =
-      (∑ w ∈ Z k, wt w) *
-          (1 / 2 * blockVecDot X
-            (blockMatVecMul (annealedBlock P (centeredCube d k)) X)) +
-        boundaryConst Cd g nu * Dcore *
-          (1 + ∫ a, bad.indicator nss a ∂P) * eQuad := by
-    rw [integral_add
-      (integrable_finsetSum _ fun w _ =>
-        ((integrable_blockVecDot_coarseBlock (hintCell w) X).const_mul _).const_mul _)
-      (by
-        have h := (((integrable_const (1 : ℝ)).add hindint).const_mul
-          (boundaryConst Cd g nu * Dcore)).mul_const eQuad
-        refine h.congr (_root_.Filter.Eventually.of_forall fun a => ?_)
-        simp only [Pi.add_apply])]
-    congr 1
-    · rw [integral_finsetSum _ fun w _ =>
-        ((integrable_blockVecDot_coarseBlock (hintCell w) X).const_mul _).const_mul _,
-        Finset.sum_mul]
-      refine Finset.sum_congr rfl fun w _ => ?_
-      rw [integral_const_mul, integral_const_mul,
-        ← blockVecDot_blockMatVecMul_annealedBlock (hintCell w) X, hmeanCell w]
-    · rw [show (fun a => boundaryConst Cd g nu * Dcore *
-          (1 + bad.indicator nss a) * eQuad) =
-          fun a => boundaryConst Cd g nu * Dcore * eQuad +
-            (boundaryConst Cd g nu * Dcore * eQuad) * bad.indicator nss a from by
-        funext a
-        ring]
-      rw [integral_add (integrable_const _) (hindint.const_mul _),
-        integral_const, probReal_univ, one_smul, integral_const_mul]
-      ring
+  have hReq :=
+    adapted_filling_integral_identity hintCell hmeanCell hindint
   rw [hLeq, hReq] at hmono
   -- the head weight is at most one and the tail moment at most one
   have hwtsum : (∑ w ∈ Z k, wt w) ≤ 1 := by
@@ -899,7 +1088,8 @@ theorem adaptedMean_near_reference [NeZero d]
         (Recurrence.isOpenBoundedConvexDomain_adaptedCell hq r)
         (Recurrence.adaptedCell_nonempty (roundedGrid l nu) r) hint
   have hkappa : kappaRef E ≤ 1 + 6 * sigma := by
-    have h := Initialization.kappaRef_le_one_add_six_mul_refContrast_sub_one_of_coarseEllipticityDagger
+    have h :=
+      Initialization.kappaRef_le_one_add_six_mul_refContrast_sub_one_of_coarseEllipticityDagger
       hdag
     linarith only [h, hsigma]
   have hprod : (1 + cEnt) * kappaRef E ≤ 1 + nearIdentityDefect cEnt sigma := by

@@ -131,6 +131,81 @@ private theorem weightedBlockSMulL_toHilbertBlockL2OfBlockField {U : Set (Vec d)
   simp only [hilbertifyBlockField]
   rw [blockStateSmulField_eval, ofBlockVec_smul]
 
+private theorem measurable_weighted_energy_candidate
+    {Om : Type*} [MeasurableSpace Om] {U : Book.Ch02.Domain d}
+    [IsFiniteMeasure (volumeMeasureOn (U : Set (Vec d)))] {k : ℕ}
+    (hUopen : IsOpen (U : Set (Vec d))) (hUfin : volume (U : Set (Vec d)) ≠ ⊤)
+    (hvol : 0 < (volume (U : Set (Vec d))).toReal) {A : Om → RegCoeffField d}
+    (hSlice : ∀ w : Om, AEEQuantitativeEllipticSlice (U : Set (Vec d)) k (A w).toFun)
+    (hEntry : ∀ (i j : Fin d) {φ : Vec d → ℝ}, ContDiff ℝ (⊤ : ℕ∞) φ →
+      HasCompactSupport φ → tsupport φ ⊆ (U : Set (Vec d)) →
+        Measurable fun w : Om ↦ entryTestR i j φ (A w))
+    (P0 : BlockVec d) {φ : Vec d → ℝ}
+    (hφm : AEStronglyMeasurable φ (volumeMeasureOn (U : Set (Vec d))))
+    (hφb : ∀ᵐ x ∂volumeMeasureOn (U : Set (Vec d)), ‖φ x‖ ≤ 2) :
+    let R : Om → HilbertBlockL2 (U : Set (Vec d)) → ℝ := fun w z ↦
+      (responseCellMuHilbert hvol (responseSliceOf hSlice w)).energyBilin
+          (weightedBlockSMulL hφm hφb z) z +
+        2 * cutoffQuadReadout (U : Set (Vec d)) φ z
+    ∀ Y : canonicalMuBlockCorrectionGeneratorSubmodule (U : Set (Vec d)),
+      Measurable fun w : Om ↦
+        R w (Selection.cellMuCandidate (U := (U : Set (Vec d))) P0 Y) := by
+  classical
+  intro R
+  intro Y
+  let Xc : BlockState d :=
+    canonicalMuGeneratorAffineField (U := (U : Set (Vec d))) P0 Y
+  have hXc : MemBlockL2 (U : Set (Vec d)) Xc.eval :=
+    canonicalMuGeneratorAffineField_memBlockL2 (U := (U : Set (Vec d))) P0 Y
+  have hφXc : MemBlockL2 (U : Set (Vec d)) (blockStateSmulField φ Xc).eval :=
+    memBlockL2_blockStateSmulField hφm hφb hXc
+  have hcand : toHilbertBlockL2OfBlockField (U := (U : Set (Vec d))) hXc =
+      Selection.cellMuCandidate (U := (U : Set (Vec d))) P0 Y :=
+    canonicalMuGeneratorAffineField_hilbert_eq_const_add (U := (U : Set (Vec d))) P0 Y
+  have hsmul := weightedBlockSMulL_toHilbertBlockL2OfBlockField hφm hφb hXc
+  have hE : ∀ w : Om,
+      (responseCellMuHilbert hvol (responseSliceOf hSlice w)).energyBilin
+        (toHilbertBlockL2OfBlockField (U := (U : Set (Vec d))) hφXc)
+        (toHilbertBlockL2OfBlockField (U := (U : Set (Vec d))) hXc) =
+      blockPairingAverage (U : Set (Vec d)) (A w).toFun Xc (blockStateSmulField φ Xc) := by
+    intro w
+    simpa [responseCellMuHilbert, responseCellMuSystem, responseSliceOf,
+      AEEMuOperatorSystemData.toMuHilbertRealization,
+      MuOperatorRealization.toMuHilbertRealization, MuHilbertRealization.ofOperator] using
+      (responseCellMuSystem hvol (responseSliceOf hSlice
+        w)).toMuOperatorRealization.energyBilin_eq_blockPairingAverage_of_blockState
+        hXc hφXc
+  have henergy : Measurable fun w : Om ↦
+      (responseCellMuHilbert hvol (responseSliceOf hSlice w)).energyBilin
+        (toHilbertBlockL2OfBlockField (U := (U : Set (Vec d))) hφXc)
+        (toHilbertBlockL2OfBlockField (U := (U : Set (Vec d))) hXc) := by
+    rw [show (fun w : Om ↦
+        (responseCellMuHilbert hvol (responseSliceOf hSlice w)).energyBilin
+          (toHilbertBlockL2OfBlockField (U := (U : Set (Vec d))) hφXc)
+          (toHilbertBlockL2OfBlockField (U := (U : Set (Vec d))) hXc)) =
+          fun w : Om ↦
+            blockPairingAverage (U : Set (Vec d)) (A w).toFun Xc (blockStateSmulField φ Xc)
+        from funext hE]
+    exact Selection.measurable_blockPairingAverage_of_measurable_entryTest hUopen hUfin hSlice
+      hEntry
+      Xc (blockStateSmulField φ Xc) hXc hφXc
+  have hconst : Measurable fun _ : Om ↦
+      (2 : ℝ) * cutoffQuadReadout (U : Set (Vec d)) φ
+        (toHilbertBlockL2OfBlockField (U := (U : Set (Vec d))) hXc) := measurable_const
+  have hgoal : (fun w : Om ↦
+        R w (Selection.cellMuCandidate (U := (U : Set (Vec d))) P0 Y)) =
+      fun w : Om ↦
+        (responseCellMuHilbert hvol (responseSliceOf hSlice w)).energyBilin
+            (toHilbertBlockL2OfBlockField (U := (U : Set (Vec d))) hφXc)
+            (toHilbertBlockL2OfBlockField (U := (U : Set (Vec d))) hXc) +
+          2 * cutoffQuadReadout (U : Set (Vec d)) φ
+            (toHilbertBlockL2OfBlockField (U := (U : Set (Vec d))) hXc) := by
+    funext w
+    simp only [R]
+    rw [← hcand, hsmul]
+  rw [hgoal]
+  exact henergy.add hconst
+
 /-- On one quantitative ellipticity slice, the cutoff-weighted quadratic readout of the canonical
 optimizer state is measurable in the sample.  The canonical state is recovered from the doubled
 minimizer of the slice through the almost-everywhere extraction identity, and the resulting readout
@@ -162,58 +237,8 @@ private theorem measurable_cutoffQuad_canonical_of_fixedSlice
       (responseSliceOf hSlice w) hφm hφb
   have hRmeas : ∀ Y : canonicalMuBlockCorrectionGeneratorSubmodule (U : Set (Vec d)),
       Measurable fun w : Om ↦
-        R w (Selection.cellMuCandidate (U := (U : Set (Vec d))) P0 Y) := by
-    intro Y
-    let Xc : BlockState d :=
-      canonicalMuGeneratorAffineField (U := (U : Set (Vec d))) P0 Y
-    have hXc : MemBlockL2 (U : Set (Vec d)) Xc.eval :=
-      canonicalMuGeneratorAffineField_memBlockL2 (U := (U : Set (Vec d))) P0 Y
-    have hφXc : MemBlockL2 (U : Set (Vec d)) (blockStateSmulField φ Xc).eval :=
-      memBlockL2_blockStateSmulField hφm hφb hXc
-    have hcand : toHilbertBlockL2OfBlockField (U := (U : Set (Vec d))) hXc =
-        Selection.cellMuCandidate (U := (U : Set (Vec d))) P0 Y :=
-      canonicalMuGeneratorAffineField_hilbert_eq_const_add (U := (U : Set (Vec d))) P0 Y
-    have hsmul := weightedBlockSMulL_toHilbertBlockL2OfBlockField hφm hφb hXc
-    have hE : ∀ w : Om,
-        (responseCellMuHilbert hvol (responseSliceOf hSlice w)).energyBilin
-          (toHilbertBlockL2OfBlockField (U := (U : Set (Vec d))) hφXc)
-          (toHilbertBlockL2OfBlockField (U := (U : Set (Vec d))) hXc) =
-        blockPairingAverage (U : Set (Vec d)) (A w).toFun Xc (blockStateSmulField φ Xc) := by
-      intro w
-      simpa [responseCellMuHilbert, responseCellMuSystem, responseSliceOf,
-        AEEMuOperatorSystemData.toMuHilbertRealization,
-        MuOperatorRealization.toMuHilbertRealization, MuHilbertRealization.ofOperator] using
-        (responseCellMuSystem hvol (responseSliceOf hSlice w)).toMuOperatorRealization.energyBilin_eq_blockPairingAverage_of_blockState
-          hXc hφXc
-    have henergy : Measurable fun w : Om ↦
-        (responseCellMuHilbert hvol (responseSliceOf hSlice w)).energyBilin
-          (toHilbertBlockL2OfBlockField (U := (U : Set (Vec d))) hφXc)
-          (toHilbertBlockL2OfBlockField (U := (U : Set (Vec d))) hXc) := by
-      rw [show (fun w : Om ↦
-          (responseCellMuHilbert hvol (responseSliceOf hSlice w)).energyBilin
-            (toHilbertBlockL2OfBlockField (U := (U : Set (Vec d))) hφXc)
-            (toHilbertBlockL2OfBlockField (U := (U : Set (Vec d))) hXc)) =
-            fun w : Om ↦
-              blockPairingAverage (U : Set (Vec d)) (A w).toFun Xc (blockStateSmulField φ Xc)
-          from funext hE]
-      exact Selection.measurable_blockPairingAverage_of_measurable_entryTest hUopen hUfin hSlice hEntry
-        Xc (blockStateSmulField φ Xc) hXc hφXc
-    have hconst : Measurable fun _ : Om ↦
-        (2 : ℝ) * cutoffQuadReadout (U : Set (Vec d)) φ
-          (toHilbertBlockL2OfBlockField (U := (U : Set (Vec d))) hXc) := measurable_const
-    have hgoal : (fun w : Om ↦
-          R w (Selection.cellMuCandidate (U := (U : Set (Vec d))) P0 Y)) =
-        fun w : Om ↦
-          (responseCellMuHilbert hvol (responseSliceOf hSlice w)).energyBilin
-              (toHilbertBlockL2OfBlockField (U := (U : Set (Vec d))) hφXc)
-              (toHilbertBlockL2OfBlockField (U := (U : Set (Vec d))) hXc) +
-            2 * cutoffQuadReadout (U : Set (Vec d)) φ
-              (toHilbertBlockL2OfBlockField (U := (U : Set (Vec d))) hXc) := by
-      funext w
-      simp only [R]
-      rw [← hcand, hsmul]
-    rw [hgoal]
-    exact henergy.add hconst
+        R w (Selection.cellMuCandidate (U := (U : Set (Vec d))) P0 Y) :=
+    measurable_weighted_energy_candidate hUopen hUfin hvol hSlice hEntry P0 hφm hφb
   have hfun : (fun w : Om ↦ volumeAverage (U : Set (Vec d)) (fun x ↦ φ x * vecDot
         (canonicalOptimizerBlockState U (aU w) p r x).1
         (canonicalOptimizerBlockState U (aU w) p r x).2)) =
@@ -322,7 +347,8 @@ private theorem measurable_cutoffQuad_canonical_of_fixedSlice
         simpa [responseCellMuHilbert, responseCellMuSystem, responseSliceOf, haU w,
           AEEMuOperatorSystemData.toMuHilbertRealization,
           MuOperatorRealization.toMuHilbertRealization, MuHilbertRealization.ofOperator] using
-          (responseCellMuSystem hvol (responseSliceOf hSlice w)).toMuOperatorRealization.energyBilin_eq_blockPairingAverage_of_blockState
+          (responseCellMuSystem hvol (responseSliceOf hSlice
+            w)).toMuOperatorRealization.energyBilin_eq_blockPairingAverage_of_blockState
             hXbMem hφXb
       rw [← hmain, hsmulB]
     calc

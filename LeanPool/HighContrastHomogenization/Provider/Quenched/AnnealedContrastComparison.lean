@@ -32,7 +32,7 @@ what converts the one into the other.
 
 The intermediate applies to every Euclidean annealed block, because the annealed
 primal-adjoint order puts that block above its own sharp.  Combined with
-`𝐀̄(□_m) ≼ 𝔡(𝐀̄(□_m)) · 𝐀̄`, this yields the printed comparison, with the
+`𝐀_bar(□_m) ≼ 𝔡(𝐀_bar(□_m)) · 𝐀_bar`, this yields the printed comparison, with the
 printed constant six and no further input.
 
 Consequently the whole annealed package of the endgame — the limit block, its

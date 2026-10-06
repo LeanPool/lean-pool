@@ -20,6 +20,7 @@ public section
 
 namespace HCPolySupport
 
+/-- The integral of `u` over `U` multiplied by the reciprocal of the real volume of `U`. -/
 @[expose]
 noncomputable def integralAverage {d : ℕ} (U : Set (Vec d)) (u : Vec d → ℝ) : ℝ :=
   (MeasureTheory.volume U).toReal⁻¹ * ∫ x in U, u x ∂MeasureTheory.volume
@@ -32,6 +33,7 @@ theorem integrableOn {d : ℕ} {U : Set (Vec d)} [MeasureTheory.IsFiniteMeasure 
   simpa [MeasureTheory.IntegrableOn, volumeMeasureOn] using
     u.memL2.integrable (by norm_num : (1 : ENNReal) ≤ 2)
 
+/-- The constant H¹ function with value `c` and zero weak gradient. -/
 @[expose]
 noncomputable def const {d : ℕ} {U : Set (Vec d)}
     [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)] (c : ℝ) : H1Function U :=
@@ -62,6 +64,7 @@ noncomputable def const {d : ℕ} {U : Set (Vec d)}
     (H1Function.const (U := U) c).grad x = 0 :=
   rfl
 
+/-- The H¹ function `u + c`, retaining the weak gradient of `u`. -/
 @[expose]
 noncomputable def addConst {d : ℕ} {U : Set (Vec d)}
     [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
@@ -82,6 +85,7 @@ noncomputable def addConst {d : ℕ} {U : Set (Vec d)}
   change (u.grad x + 0) i = u.grad x i
   simp
 
+/-- The H¹ function obtained by subtracting its integral average on `U`. -/
 @[expose]
 noncomputable def subAverage {d : ℕ} {U : Set (Vec d)}
     [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)] (u : H1Function U) : H1Function U :=
@@ -162,6 +166,8 @@ theorem meanZeroOn_subAverage {d : ℕ} {U : Set (Vec d)}
               rw [hcancel]
               ring)
 
+/-- The coordinate function `x ↦ x i` as an H¹ function on a bounded measurable domain, with
+gradient `eᵢ`. -/
 @[expose]
 noncomputable def coordOnIsBoundedDomain {d : ℕ} {U : Set (Vec d)}
     [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
@@ -221,12 +227,15 @@ noncomputable def coordOnIsBoundedDomain {d : ℕ} {U : Set (Vec d)}
   by
     simp [H1Function.coordOnIsBoundedDomain]
 
+/-- The coordinate function `x ↦ x i` as an H¹ function on a Sobolev regular domain, with gradient
+`eᵢ`. -/
 @[expose]
 noncomputable def coordOnIsSobolevRegularDomain {d : ℕ} {U : Set (Vec d)}
     [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     (hU : IsSobolevRegularDomain U) (i : Fin d) :
     H1Function U :=
   H1Function.coordOnIsBoundedDomain hU.measurableSet hU.isBoundedDomain i
+
 
 @[simp] theorem coordOnIsSobolevRegularDomain_apply {d : ℕ} {U : Set (Vec d)}
     [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
@@ -244,7 +253,7 @@ noncomputable def coordOnIsSobolevRegularDomain {d : ℕ} {U : Set (Vec d)}
 domain. -/
 @[expose]
 noncomputable def averageGradient {d : ℕ} {U : Set (Vec d)}
-    [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)] (u : H1Function U) : Vec d :=
+    (u : H1Function U) : Vec d :=
   fun i => integralAverage U (fun x => u.grad x i)
 
 /-- If each gradient coordinate of an `H¹` function has zero integral, then its

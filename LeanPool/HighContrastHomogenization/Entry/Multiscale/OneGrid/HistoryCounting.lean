@@ -75,8 +75,10 @@ theorem meanHistory_nonneg (d : ℕ) (hd : 2 ≤ d) (γ : ℝ) (hγ : γ ∈ Set
     exact
       (HCPolySupport.HighContrast.Annealed.normalizedBlock_order_consequences
         (HCPolySupport.HighContrast.bigQ d γ)
-        (HCPolySupport.HighContrast.adaptedMean P (HCPolySupport.HighContrast.Geometry.explicitRoundedGrid jStar metric) j)
-        (HCPolySupport.HighContrast.adaptedMean P (HCPolySupport.HighContrast.Geometry.explicitRoundedGrid jStar metric) m)
+        (HCPolySupport.HighContrast.adaptedMean P
+          (HCPolySupport.HighContrast.Geometry.explicitRoundedGrid jStar metric) j)
+        (HCPolySupport.HighContrast.adaptedMean P
+          (HCPolySupport.HighContrast.Geometry.explicitRoundedGrid jStar metric) m)
         (HCPolySupport.HighContrast.Annealed.adaptedMean_posDef
           d hd P γ E Ψ K S hstat hdag jStar hjStar metric hmetric j)
         (HCPolySupport.HighContrast.Annealed.adaptedMean_posDef
@@ -120,7 +122,8 @@ in the carried-history step, `p.fixed.geometry.one.grid.propagation`. -/
 theorem oneGrid_centers_finite_card {d : ℕ} (q : Mat d) (hq : IsUnit q)
     (j m : ℤ) (hjm : j ≤ m) :
     (adaptedLatticeAtScale q j ∩ HighContrast.adaptedCell q m).Finite ∧
-      (adaptedLatticeAtScale q j ∩ HighContrast.adaptedCell q m).ncard = 3 ^ (d * (m - j).toNat) := by
+      (adaptedLatticeAtScale q j ∩ HighContrast.adaptedCell q m).ncard = 3 ^ (d * (m - j).toNat)
+        := by
   have hqinj : Function.Injective (matVecMul q) := Matrix.mulVec_injective_iff_isUnit.mpr hq
   have heq : j + ((m - j).toNat : ℤ) = m := by omega
   have hs := Annealed.alignedCenterSet_finite_card d j (m - j).toNat
@@ -305,7 +308,8 @@ theorem oneGrid_integrable_opNorm_pow {d : ℕ} (P : Measure (CoeffSpace d))
   filter_upwards [hmem.symmetric] with a ha
   rw [Real.norm_eq_abs, abs_of_nonneg (pow_nonneg (norm_nonneg _) _)]
   exact pow_le_pow_left₀ (norm_nonneg _)
-    (Analysis.blockOpNorm_le_absSchattenNorm ((Analysis.toFullBlockMat_isHermitian_iff _).mpr ha) hN) _
+    (Analysis.blockOpNorm_le_absSchattenNorm ((Analysis.toFullBlockMat_isHermitian_iff _).mpr
+      ha) hN) _
 
 /-- Integrability and pointwise domination for the actual weighted history integrand,
 as used in the carried-history step, `p.fixed.geometry.one.grid.propagation`. -/
@@ -424,7 +428,8 @@ theorem oneGrid_lattice_moment_le (d : ℕ) (hd : 2 ≤ d) (γ : ℝ)
     apply integral_mono_ae (hint j 0) hmoment
     filter_upwards [(hmem j 0).symmetric] with a ha
     exact pow_le_pow_left₀ (norm_nonneg _)
-      (Analysis.blockOpNorm_le_absSchattenNorm ((Analysis.toFullBlockMat_isHermitian_iff _).mpr ha) hQ) Q
+      (Analysis.blockOpNorm_le_absSchattenNorm ((Analysis.toFullBlockMat_isHermitian_iff _).mpr
+        ha) hQ) Q
   rw [he] at hi
   exact hi.trans (mul_le_mul_of_nonneg_left hspectral (Real.exp_nonneg _))
 
@@ -519,7 +524,8 @@ theorem oneGrid_lower_pointwise (d : ℕ) (hd : 2 ≤ d) (γ : ℝ)
       HighContrast.adaptedCell (Geometry.explicitRoundedGrid jStar metric) m)
     (τ : Vec d → Fin d → ℤ)
     (hτ : ∀ y ∈ adaptedLatticeAtScale (Geometry.explicitRoundedGrid jStar metric) n ∩
-      HighContrast.adaptedCell (Geometry.explicitRoundedGrid jStar metric) m, y = Source.AKL.intTranslation (τ y)) :
+      HighContrast.adaptedCell (Geometry.explicitRoundedGrid jStar metric) m, y =
+        Source.AKL.intTranslation (τ y)) :
     let q := Geometry.explicitRoundedGrid jStar metric
     let H := fun a => ⨆ j ∈ Set.Icc (jStar : ℤ) n,
       (3 : ℝ) ^ (-(bigQ d γ : ℝ) * rhoMax d γ * ((n : ℝ) - (j : ℝ))) *

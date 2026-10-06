@@ -946,7 +946,7 @@ theorem cubeBesovOverlappingPositiveVectorDepthAverage_cubeIncrementVec_le_const
 /-- Lowering the overlap-center normalization to the explicit standard
 cardinality lower bound gives the scale-separated counted form of the
 one-increment boundary estimate. -/
-theorem cubeBesovOverlappingPositiveVectorDepthAverage_cubeIncrementVec_le_pow_inv_const_mul_ancestor_sum
+theorem overlappingPositiveDepthAverage_increment_le_ancestorSum
     {d : ℕ} (Q : TriadicCube d) (u : Vec d → Vec d) {j m : ℕ}
     (hmj : m ≤ j) (B : TriadicCube d → ℝ)
     (hB : ∀ R ∈ descendantsAtDepth Q (m + 1), 0 ≤ B R)

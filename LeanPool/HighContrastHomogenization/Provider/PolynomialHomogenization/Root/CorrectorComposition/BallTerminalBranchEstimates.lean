@@ -39,7 +39,7 @@ that the assembly only has to supply the geometry.
 
 The near band consumes one hypothesis this module could not discharge, the
 **weighted-energy triangle inequality on the closed ball** (`htri` below).  It
-is exactly Minkowski for `‖s^{1/2} ·‖_{L̲²(V)}`; the repository has it only for
+is exactly Minkowski for `‖s^{1/2} ·‖_{L_underlined²(V)}`; the repository has it only for
 `H1Function`s on triadic cubes (`weightedGradNorm_sub_le_add_sub_h1`), never for
 a general set.  Its statement is passed in, never assumed globally.
 -/

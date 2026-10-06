@@ -116,7 +116,8 @@ private theorem cutoffFluctuation_split {d : ℕ} [NeZero d] (q : Mat d) (hq : I
             (volumeAverage (adaptedCellAtCenter q (t - (H : ℤ)) w) φ - 1) *
               volumeAverage (adaptedCellAtCenter q (t - (H : ℤ)) w) g := by
   have hsplit := volumeAverage_fluct_eq_osc_add_cell q hq t H φ g
-    ((hg.bdd_mul (c := 1) (hφ.2.2.2.2.2.1.continuous.sub continuous_const).measurable.aestronglyMeasurable.restrict)
+    ((hg.bdd_mul (c := 1) (hφ.2.2.2.2.2.1.continuous.sub
+      continuous_const).measurable.aestronglyMeasurable.restrict)
       (Filter.Eventually.of_forall fun x => by
         rw [Real.norm_eq_abs, abs_le]
         exact ⟨by linarith only [hφ.1 x], by linarith only [hφ.2.1 x]⟩))
@@ -356,7 +357,8 @@ theorem cutoffMeanRowMinus_of_carriers {d : ℕ} [NeZero d]
             + vecDot (respYMinus P jStar F t e).1
               (optimizerField (respCoeffMinus F a) (uM a) x).2) (respCell jStar F t) := by
       intro a
-      have h := integrableOn_cross_optimizerField_respCoeffMinus_adaptedCellAtCenter jStar hjStar F hm
+      have h := integrableOn_cross_optimizerField_respCoeffMinus_adaptedCellAtCenter jStar
+        hjStar F hm
         t 0 a (uM a) (respYMinus P jStar F t e) (zero_mem_triadicIndexBox 0)
       have hUcell : adaptedCellAtCenter (respGrid jStar F) (t - ((0 : ℕ) : ℤ)) 0
           = respCell jStar F t := by
@@ -559,7 +561,8 @@ theorem cutoffMeanRowPlus_of_carriers {d : ℕ} [NeZero d]
             + vecDot (respYPlus P jStar F t e).1
               (optimizerField (respCoeffPlus F a) (uP a) x).2) (respCell jStar F t) := by
       intro a
-      have h := integrableOn_cross_optimizerField_respCoeffPlus_adaptedCellAtCenter jStar hjStar F hm
+      have h := integrableOn_cross_optimizerField_respCoeffPlus_adaptedCellAtCenter jStar hjStar
+        F hm
         t 0 a (uP a) (respYPlus P jStar F t e) (zero_mem_triadicIndexBox 0)
       have hUcell : adaptedCellAtCenter (respGrid jStar F) (t - ((0 : ℕ) : ℤ)) 0
           = respCell jStar F t := by

@@ -27,6 +27,8 @@ namespace Book.Ch02
 
 noncomputable section
 
+/-- Doubled responses converted to extended nonnegative reals, on unit block vectors transformed
+by the inverse square root and square root of the constant block matrix. -/
 @[expose]
 public noncomputable def normalizedBlockResponseESetOnCube {d : ℕ}
     [NeZero d] (Q : TriadicCube d) (a : CoeffOn (cubeDomain Q))
@@ -39,12 +41,15 @@ public noncomputable def normalizedBlockResponseESetOnCube {d : ℕ}
         (ofFullBlockVec
           (Matrix.mulVec (constantFullBlockMatrixSqrt a0) e)))}
 
+/-- The extended nonnegative supremum of the constant-matrix-normalized doubled responses. -/
 @[expose]
 public noncomputable def normalizedBlockResponseEMaxOnCube {d : ℕ}
     [NeZero d] (Q : TriadicCube d) (a : CoeffOn (cubeDomain Q))
     (a0 : Mat d) : ℝ≥0∞ :=
   sSup (normalizedBlockResponseESetOnCube Q a a0)
 
+/-- The maximum normalized doubled response over scale-`k` descendants, using the parent
+coefficient restricted to each subcube. -/
 @[expose]
 public noncomputable def parentMaxNormalizedBlockResponseAtScale {d : ℕ}
     [NeZero d] (Q : TriadicCube d) (k : ℤ) (hk : k ≤ Q.scale)
@@ -55,12 +60,15 @@ public noncomputable def parentMaxNormalizedBlockResponseAtScale {d : ℕ}
       (a.restrictToSubcube
         (openCubeSet_subset_of_mem_descendantsAtScale hk R.2)) a0
 
+/-- The extended nonnegative geometric weight formed from `1 - 3 ^ (-s*q)` and `3 ^ (-s*q*j)`. -/
 @[expose]
 public noncomputable def homogenizationErrorGeometricEWeight
     (s q : ℝ) (j : ℕ) : ℝ≥0∞ :=
   ENNReal.ofReal (1 - Real.rpow 3 (-s * q)) *
     ENNReal.ofReal (Real.rpow 3 (-s * q * (j : ℝ)))
 
+/-- The weighted sum of maximal descendant responses below `n` to power `q/2`, raised to `1/q`
+in the extended nonnegative reals. -/
 @[expose]
 public noncomputable def parentTruncatedHomogenizationErrorInfinityFinite
     {d : ℕ} [NeZero d] (Q : TriadicCube d) (n : ℤ)
@@ -184,6 +192,8 @@ private theorem normalizedBlockResponseESetOnCube_elements_nonneg_real {d : ℕ}
         (Matrix.mulVec (constantFullBlockMatrixSqrt a0) e)) :=
   doubledResponseJ_nonneg (cubeDomain Q) a _ _
 
+/-- The ellipticity-based expression combining row bounds for the constant block matrix's square
+root and inverse square root, used to bound the normalized response. -/
 @[expose]
 public noncomputable def normalizedBlockResponseEUpperBoundOnCube {d : ℕ}
     [NeZero d] (Q : TriadicCube d) (a : CoeffOn (cubeDomain Q))

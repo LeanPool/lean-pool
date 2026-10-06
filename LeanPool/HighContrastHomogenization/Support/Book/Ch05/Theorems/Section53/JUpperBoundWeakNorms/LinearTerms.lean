@@ -292,7 +292,7 @@ theorem abs_cutoffLinearPairTermOnDependentFamily_le_ch04WeakNorms_of_cutoffDual
         cubeBesovNegativeVectorPartialSeminorm Q s 0
             (canonicalMaximizerGradientDefectOnCube Q aQ p q p0) ≤ gradWeak := by
       simpa [F, aQ, gradWeak] using
-        cubeBesovNegativeVectorPartialSeminorm_canonicalMaximizerGradientDefectOnDependentFamily_le_ch04WeakNorm
+        negativePartialSeminorm_maximizerGradientDefect_le_ch04WeakNorm
           a ha Q hs 0 p q p0
     exact hpartial_nonneg.trans hpartial_le
   have hfluxWeak_nonneg : 0 ≤ fluxWeak := by
@@ -305,7 +305,7 @@ theorem abs_cutoffLinearPairTermOnDependentFamily_le_ch04WeakNorms_of_cutoffDual
         cubeBesovNegativeVectorPartialSeminorm Q t 0
             (canonicalMaximizerFluxDefectOnCube Q aQ p q q0) ≤ fluxWeak := by
       simpa [F, aQ, fluxWeak] using
-        cubeBesovNegativeVectorPartialSeminorm_canonicalMaximizerFluxDefectOnDependentFamily_le_ch04WeakNorm
+        negativeVectorPartial_canonicalFluxDefect_le_chapter04WeakNorm
           a ha Q ht 0 p q q0
     exact hpartial_nonneg.trans hpartial_le
   have hgradCoeff_nonneg : 0 ≤ gradCoeff := by
@@ -338,7 +338,7 @@ theorem abs_cutoffLinearPairTermOnDependentFamily_le_ch04WeakNorms_of_cutoffDual
               (canonicalMaximizerGradientDefectOnCube Q aQ p q p0) ≤ gradWeak := by
       intro N
       simpa [F, aQ, gradWeak] using
-        cubeBesovNegativeVectorPartialSeminorm_canonicalMaximizerGradientDefectOnDependentFamily_le_ch04WeakNorm
+        negativePartialSeminorm_maximizerGradientDefect_le_ch04WeakNorm
           a ha Q hs N p q p0
     simpa [F, aQ, gradField, gradCoeff] using
       norm_cubeAverage_smul_component_le_cutoffDualCoeff_mul_negativeVectorPartialBound
@@ -360,7 +360,7 @@ theorem abs_cutoffLinearPairTermOnDependentFamily_le_ch04WeakNorms_of_cutoffDual
               (canonicalMaximizerFluxDefectOnCube Q aQ p q q0) ≤ fluxWeak := by
       intro N
       simpa [F, aQ, fluxWeak] using
-        cubeBesovNegativeVectorPartialSeminorm_canonicalMaximizerFluxDefectOnDependentFamily_le_ch04WeakNorm
+        negativeVectorPartial_canonicalFluxDefect_le_chapter04WeakNorm
           a ha Q ht N p q q0
     simpa [F, aQ, fluxField, fluxCoeff] using
       norm_cubeAverage_smul_component_le_cutoffDualCoeff_mul_negativeVectorPartialBound

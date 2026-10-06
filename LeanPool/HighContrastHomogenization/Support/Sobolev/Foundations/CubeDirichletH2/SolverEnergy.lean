@@ -488,7 +488,7 @@ private theorem originCubeParentReducedSolverEnergyInsideExact_eq_volume_mul_uni
   rw [hBsq]
   field_simp [hs_ne]
 
-theorem originCubeParentReducedSolverEnergyConstantExact_volume_cancel
+theorem parentSolverEnergyConstant_volumeCancel
     (d : ℕ) [NeZero d] (m : ℤ) :
     ((cubeVolume (originCube d m))⁻¹) ^ (1 / 2 : ℝ) *
         originCubeParentReducedSolverEnergyConstantExact d m =
@@ -701,7 +701,7 @@ theorem originCubeParentReducedNormEnergyBound_le_solverEnergyBoundExact
 
 /-- The fixed-radii reflected-parent Hessian estimate controlled by the
 forcing-facing Dirichlet solver energy expression. -/
-theorem exists_hasWeakHessianOn_originCube_canonicalRadii_hessianCoordL2NormSum_le_solverEnergyBoundExact
+theorem exists_reflected_parent_weakHessian_energyBound
     [NeZero d]
     (hweak : CubeDirichletWeakPoissonProblem (originCube d m) u F)
     (hF :
@@ -719,7 +719,7 @@ theorem exists_hasWeakHessianOn_originCube_canonicalRadii_hessianCoordL2NormSum_
               ∑ i : Fin d, ∑ _j : Fin d,
                 originCubeParentReducedSolverEnergyBoundExact d m F i := by
   rcases
-    hweak.exists_hasWeakHessianOn_originCube_canonicalRadii_hessianCoordL2NormSum_le_normEnergyBound
+    hweak.exists_reflectedHessian_energyBound
       hF with
     ⟨uP, huP_toFun, huP_grad, H, hH⟩
   refine ⟨uP, huP_toFun, huP_grad, H, hH.trans ?_⟩

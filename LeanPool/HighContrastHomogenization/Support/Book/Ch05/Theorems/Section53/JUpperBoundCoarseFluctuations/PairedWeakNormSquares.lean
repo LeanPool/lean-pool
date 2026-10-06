@@ -195,6 +195,52 @@ private theorem sqrt_sub_one_sq_le_sub_one {θ : ℝ} (hθ : 1 ≤ θ) :
         exact mul_le_mul_of_nonneg_left (by linarith) hs_nonneg
     _ = θ - 1 := hfactor
 
+private theorem gradientConstantTailSquare_eq_ellipticityWeight
+    {d : ℕ}
+    [NeZero d]
+    {P : Ch04.RestrictionCoeffLaw d}
+    (hP : Ch04.RestrictionLawCarrier P)
+    (hStruct : Ch04.RestrictionStructuralLaw P)
+    (hP4 : QuantitativeCoarseGrainedEllipticity P)
+    {k : ℕ}
+    {m : ℕ}
+    (e : Vec d)
+    :
+    let β := section53CoarseFluctuationBeta hP4
+    let s := hP4.sLower + 2 * β
+    let p_e := specialPAtScale hP hStruct (m : ℤ) e
+    let q_e := specialQAtScale hP hStruct (m : ℤ) e
+    let p0_e := (hP.barSigmaStarAtScale hStruct (m : ℤ))⁻¹ • q_e - p_e
+    (WeakNormsMaximizer.gradientConstantTailAtScale
+          (m : ℤ) (k : ℤ) s p0_e) ^ 2 =
+        s⁻¹ ^ 2 *
+          Real.rpow (3 : ℝ)
+            (-2 * s * (((m - k : ℕ) : ℝ))) * ‖p0_e‖ ^ 2 := by
+  classical
+  let : IsProbabilityMeasure P := hP.isProbability
+  dsimp only
+  let β := section53CoarseFluctuationBeta hP4
+  let s := hP4.sLower + 2 * β
+  let p_e := specialPAtScale hP hStruct (m : ℤ) e
+  let q_e := specialQAtScale hP hStruct (m : ℤ) e
+  let p0_e := (hP.barSigmaStarAtScale hStruct (m : ℤ))⁻¹ • q_e - p_e
+  dsimp [WeakNormsMaximizer.gradientConstantTailAtScale]
+  have hmk :
+      (Int.toNat ((m : ℤ) - (k : ℤ)) : ℝ) = ((m - k : ℕ) : ℝ) := by
+    have hmk_nat : Int.toNat ((m : ℤ) - (k : ℤ)) = m - k := by omega
+    exact_mod_cast hmk_nat
+  rw [hmk]
+  rw [mul_pow, mul_pow]
+  change
+    s⁻¹ ^ 2 *
+        (Real.rpow (3 : ℝ) (-s * (((m - k : ℕ) : ℝ)))) ^ 2 *
+          ‖p0_e‖ ^ 2 =
+      s⁻¹ ^ 2 *
+        Real.rpow (3 : ℝ) (-2 * s * (((m - k : ℕ) : ℝ))) *
+          ‖p0_e‖ ^ 2
+  rw [rpow_three_sq]
+  ring_nf
+
 /-- The constant affine tails in the weak-norm maximizer RHS are absorbed by
 the low-scale scalar tail of the final manuscript RHS. -/
 theorem paired_constantTail_special_le_lowScaleTail
@@ -288,28 +334,8 @@ theorem paired_constantTail_special_le_lowScaleTail
   have hscalar_one :
       1 ≤ coarseFluctuationScalarWeightAtScale hP hStruct m :=
     one_le_coarseFluctuationScalarWeightAtScale hP hStruct hP4 m
-  have hgrad_sq :
-      (WeakNormsMaximizer.gradientConstantTailAtScale
-          (m : ℤ) (k : ℤ) s p0_e) ^ 2 =
-        s⁻¹ ^ 2 *
-          Real.rpow (3 : ℝ)
-            (-2 * s * (((m - k : ℕ) : ℝ))) * ‖p0_e‖ ^ 2 := by
-    dsimp [WeakNormsMaximizer.gradientConstantTailAtScale]
-    have hmk :
-        (Int.toNat ((m : ℤ) - (k : ℤ)) : ℝ) = ((m - k : ℕ) : ℝ) := by
-      have hmk_nat : Int.toNat ((m : ℤ) - (k : ℤ)) = m - k := by omega
-      exact_mod_cast hmk_nat
-    rw [hmk]
-    rw [mul_pow, mul_pow]
-    change
-      s⁻¹ ^ 2 *
-          (Real.rpow (3 : ℝ) (-s * (((m - k : ℕ) : ℝ)))) ^ 2 *
-            ‖p0_e‖ ^ 2 =
-        s⁻¹ ^ 2 *
-          Real.rpow (3 : ℝ) (-2 * s * (((m - k : ℕ) : ℝ))) *
-            ‖p0_e‖ ^ 2
-    rw [rpow_three_sq]
-    ring_nf
+  have hgrad_sq := gradientConstantTailSquare_eq_ellipticityWeight (d := d) (P := P) (hP := hP)
+    (hStruct := hStruct) (hP4 := hP4) (k := k) (m := m) (e := e)
   have hflux_sq :
       (WeakNormsMaximizer.fluxConstantTailAtScale
           (m : ℤ) (k : ℤ) t q0_e) ^ 2 =
@@ -405,6 +431,363 @@ theorem paired_constantTail_special_le_lowScaleTail
             (-2 * β * (((m - k : ℕ) : ℝ))) *
           coarseFluctuationScalarWeightAtScale hP hStruct m * (θ - 1)) := by
         simp [tail, mul_assoc]
+
+private theorem integral_pairedComponentMajorant_eq_componentIntegrals
+    {d : ℕ}
+    [NeZero d]
+    {P : Ch04.RestrictionCoeffLaw d}
+    (hP : Ch04.RestrictionLawCarrier P)
+    (hStruct : Ch04.RestrictionStructuralLaw P)
+    (hP4 : QuantitativeCoarseGrainedEllipticity P)
+    {k : ℕ}
+    {m : ℕ}
+    (e : Vec d)
+    :
+    let β := section53CoarseFluctuationBeta hP4
+    let s := hP4.sLower + 2 * β
+    let s' := hP4.sLower + β
+    let t := hP4.sUpper + 2 * β
+    let t' := hP4.sUpper + β
+    let p_e := specialPAtScale hP hStruct (m : ℤ) e
+    let q_e := specialQAtScale hP hStruct (m : ℤ) e
+    let p0_e := (hP.barSigmaStarAtScale hStruct (m : ℤ))⁻¹ • q_e - p_e
+    let q0_e := q_e - hP.barSigmaAtScale hStruct (m : ℤ) • p_e
+    let σ := sigmaHatAtScale hP hStruct (m : ℤ)
+    let K := WeakNormsMaximizer.section53WeakNormMaximizerConst d
+    let H : RegCoeffField d → ℝ := fun a =>
+      σ *
+          (WeakNormsMaximizer.gradientAverageTermAtScale
+            (m : ℤ) (k : ℤ) s p_e q_e p0_e a) ^ 2 +
+        σ⁻¹ *
+          (WeakNormsMaximizer.fluxAverageTermAtScale
+            (m : ℤ) (k : ℤ) t p_e q_e q0_e a) ^ 2
+    let M : RegCoeffField d → ℝ := fun a =>
+      σ *
+          (WeakNormsMaximizer.gradientMismatchTermAtScale
+            (m : ℤ) (k : ℤ) s s' p_e q_e a) ^ 2 +
+        σ⁻¹ *
+          (WeakNormsMaximizer.fluxMismatchTermAtScale
+            (m : ℤ) (k : ℤ) t t' p_e q_e a) ^ 2
+    let L : RegCoeffField d → ℝ := fun a =>
+      σ *
+          (WeakNormsMaximizer.gradientLowScaleTailAtScale
+            (m : ℤ) (k : ℤ) s s' p_e q_e a) ^ 2 +
+        σ⁻¹ *
+          (WeakNormsMaximizer.fluxLowScaleTailAtScale
+            (m : ℤ) (k : ℤ) t t' p_e q_e a) ^ 2
+    let T : ℝ :=
+      σ *
+          (WeakNormsMaximizer.gradientConstantTailAtScale
+            (m : ℤ) (k : ℤ) s p0_e) ^ 2 +
+        σ⁻¹ *
+          (WeakNormsMaximizer.fluxConstantTailAtScale
+            (m : ℤ) (k : ℤ) t q0_e) ^ 2
+    let Z : RegCoeffField d → ℝ := fun a =>
+      16 * (((H a + K ^ 2 * M a) + K ^ 2 * L a) + K ^ 2 * T)
+    ∀ (hHInt : Integrable H P),
+    ∀ (hMInt : Integrable M P),
+    ∀ (hLInt : Integrable L P),
+    ∫ a, Z a ∂P =
+        16 *
+          ((∫ a, H a ∂P) +
+            K ^ 2 * (∫ a, M a ∂P) +
+              K ^ 2 * (∫ a, L a ∂P) +
+                K ^ 2 * T) := by
+  classical
+  let : IsProbabilityMeasure P := hP.isProbability
+  dsimp only
+  let β := section53CoarseFluctuationBeta hP4
+  let s := hP4.sLower + 2 * β
+  let s' := hP4.sLower + β
+  let t := hP4.sUpper + 2 * β
+  let t' := hP4.sUpper + β
+  let p_e := specialPAtScale hP hStruct (m : ℤ) e
+  let q_e := specialQAtScale hP hStruct (m : ℤ) e
+  let p0_e := (hP.barSigmaStarAtScale hStruct (m : ℤ))⁻¹ • q_e - p_e
+  let q0_e := q_e - hP.barSigmaAtScale hStruct (m : ℤ) • p_e
+  let σ := sigmaHatAtScale hP hStruct (m : ℤ)
+  let K := WeakNormsMaximizer.section53WeakNormMaximizerConst d
+  let H : RegCoeffField d → ℝ := fun a =>
+    σ *
+        (WeakNormsMaximizer.gradientAverageTermAtScale
+          (m : ℤ) (k : ℤ) s p_e q_e p0_e a) ^ 2 +
+      σ⁻¹ *
+        (WeakNormsMaximizer.fluxAverageTermAtScale
+          (m : ℤ) (k : ℤ) t p_e q_e q0_e a) ^ 2
+  let M : RegCoeffField d → ℝ := fun a =>
+    σ *
+        (WeakNormsMaximizer.gradientMismatchTermAtScale
+          (m : ℤ) (k : ℤ) s s' p_e q_e a) ^ 2 +
+      σ⁻¹ *
+        (WeakNormsMaximizer.fluxMismatchTermAtScale
+          (m : ℤ) (k : ℤ) t t' p_e q_e a) ^ 2
+  let L : RegCoeffField d → ℝ := fun a =>
+    σ *
+        (WeakNormsMaximizer.gradientLowScaleTailAtScale
+          (m : ℤ) (k : ℤ) s s' p_e q_e a) ^ 2 +
+      σ⁻¹ *
+        (WeakNormsMaximizer.fluxLowScaleTailAtScale
+          (m : ℤ) (k : ℤ) t t' p_e q_e a) ^ 2
+  let T : ℝ :=
+    σ *
+        (WeakNormsMaximizer.gradientConstantTailAtScale
+          (m : ℤ) (k : ℤ) s p0_e) ^ 2 +
+      σ⁻¹ *
+        (WeakNormsMaximizer.fluxConstantTailAtScale
+          (m : ℤ) (k : ℤ) t q0_e) ^ 2
+  let Z : RegCoeffField d → ℝ := fun a =>
+    16 * (((H a + K ^ 2 * M a) + K ^ 2 * L a) + K ^ 2 * T)
+  intro hHInt hMInt hLInt
+  let HM : RegCoeffField d → ℝ := fun a => H a + K ^ 2 * M a
+  let HML : RegCoeffField d → ℝ := fun a => HM a + K ^ 2 * L a
+  let TC : RegCoeffField d → ℝ := fun _ => K ^ 2 * T
+  have hHMInt : Integrable HM P := by
+    simpa [HM] using! hHInt.add (hMInt.const_mul (K ^ 2))
+  have hHMLInt : Integrable HML P := by
+    simpa [HML] using! hHMInt.add (hLInt.const_mul (K ^ 2))
+  have hTCInt : Integrable TC P := by
+    simpa [TC] using integrable_const (K ^ 2 * T : ℝ)
+  have hBody :
+      ∫ a, ((H a + K ^ 2 * M a) + K ^ 2 * L a) + K ^ 2 * T ∂P =
+        (∫ a, H a ∂P) +
+          K ^ 2 * (∫ a, M a ∂P) +
+            K ^ 2 * (∫ a, L a ∂P) +
+              K ^ 2 * T := by
+    calc
+      ∫ a, ((H a + K ^ 2 * M a) + K ^ 2 * L a) + K ^ 2 * T ∂P
+          = ∫ a, HML a + TC a ∂P := by
+              simp [HML, HM, TC]
+      _ = ∫ a, HML a ∂P + ∫ a, TC a ∂P := by
+              rw [integral_add hHMLInt hTCInt]
+      _ = (∫ a, HM a ∂P + ∫ a, K ^ 2 * L a ∂P) +
+            ∫ a, TC a ∂P := by
+              rw [integral_add hHMInt (hLInt.const_mul (K ^ 2))]
+      _ = ((∫ a, H a ∂P + ∫ a, K ^ 2 * M a ∂P) +
+            ∫ a, K ^ 2 * L a ∂P) +
+            ∫ a, TC a ∂P := by
+              rw [integral_add hHInt (hMInt.const_mul (K ^ 2))]
+      _ =
+        (∫ a, H a ∂P) +
+          K ^ 2 * (∫ a, M a ∂P) +
+            K ^ 2 * (∫ a, L a ∂P) +
+              K ^ 2 * T := by
+              rw [integral_const_mul, integral_const_mul, integral_const]
+              simp
+  calc
+    ∫ a, Z a ∂P =
+        16 * ∫ a, ((H a + K ^ 2 * M a) + K ^ 2 * L a) + K ^ 2 * T ∂P := by
+          rw [integral_const_mul]
+    _ =
+        16 *
+          ((∫ a, H a ∂P) +
+            K ^ 2 * (∫ a, M a ∂P) +
+              K ^ 2 * (∫ a, L a ∂P) +
+                K ^ 2 * T) := by
+          rw [hBody]
+
+private theorem pairedWeakNormSquares_le_integrableComponentMajorant
+    {d : ℕ}
+    [NeZero d]
+    {P : Ch04.RestrictionCoeffLaw d}
+    (hP : Ch04.RestrictionLawCarrier P)
+    (hStruct : Ch04.RestrictionStructuralLaw P)
+    (hP4 : QuantitativeCoarseGrainedEllipticity P)
+    {k : ℕ}
+    {m : ℕ}
+    (hkm : k < m)
+    (e : Vec d)
+    :
+    let β := section53CoarseFluctuationBeta hP4
+    let s := hP4.sLower + 2 * β
+    let s' := hP4.sLower + β
+    let t := hP4.sUpper + 2 * β
+    let t' := hP4.sUpper + β
+    let Q : TriadicCube d := originCube d (m : ℤ)
+    let p_e := specialPAtScale hP hStruct (m : ℤ) e
+    let q_e := specialQAtScale hP hStruct (m : ℤ) e
+    let p0_e := (hP.barSigmaStarAtScale hStruct (m : ℤ))⁻¹ • q_e - p_e
+    let q0_e := q_e - hP.barSigmaAtScale hStruct (m : ℤ) • p_e
+    let σ := sigmaHatAtScale hP hStruct (m : ℤ)
+    let K := WeakNormsMaximizer.section53WeakNormMaximizerConst d
+    let gradWeak :=
+      Ch04.canonicalScalarResponseGradientWeakNormCubeSet Q s p_e q_e p0_e
+    let fluxWeak :=
+      Ch04.canonicalScalarResponseFluxWeakNormCubeSet Q t p_e q_e q0_e
+    let H : RegCoeffField d → ℝ := fun a =>
+      σ *
+          (WeakNormsMaximizer.gradientAverageTermAtScale
+            (m : ℤ) (k : ℤ) s p_e q_e p0_e a) ^ 2 +
+        σ⁻¹ *
+          (WeakNormsMaximizer.fluxAverageTermAtScale
+            (m : ℤ) (k : ℤ) t p_e q_e q0_e a) ^ 2
+    let M : RegCoeffField d → ℝ := fun a =>
+      σ *
+          (WeakNormsMaximizer.gradientMismatchTermAtScale
+            (m : ℤ) (k : ℤ) s s' p_e q_e a) ^ 2 +
+        σ⁻¹ *
+          (WeakNormsMaximizer.fluxMismatchTermAtScale
+            (m : ℤ) (k : ℤ) t t' p_e q_e a) ^ 2
+    let L : RegCoeffField d → ℝ := fun a =>
+      σ *
+          (WeakNormsMaximizer.gradientLowScaleTailAtScale
+            (m : ℤ) (k : ℤ) s s' p_e q_e a) ^ 2 +
+        σ⁻¹ *
+          (WeakNormsMaximizer.fluxLowScaleTailAtScale
+            (m : ℤ) (k : ℤ) t t' p_e q_e a) ^ 2
+    let T : ℝ :=
+      σ *
+          (WeakNormsMaximizer.gradientConstantTailAtScale
+            (m : ℤ) (k : ℤ) s p0_e) ^ 2 +
+        σ⁻¹ *
+          (WeakNormsMaximizer.fluxConstantTailAtScale
+            (m : ℤ) (k : ℤ) t q0_e) ^ 2
+    let W : RegCoeffField d → ℝ := fun a =>
+      σ * (gradWeak a) ^ 2 + σ⁻¹ * (fluxWeak a) ^ 2
+    let Z : RegCoeffField d → ℝ := fun a =>
+      16 * (((H a + K ^ 2 * M a) + K ^ 2 * L a) + K ^ 2 * T)
+    ∀ (hσ_nonneg : 0 ≤ σ),
+    W ≤ᵐ[P] Z := by
+  classical
+  let : IsProbabilityMeasure P := hP.isProbability
+  dsimp only
+  let β := section53CoarseFluctuationBeta hP4
+  let s := hP4.sLower + 2 * β
+  let s' := hP4.sLower + β
+  let t := hP4.sUpper + 2 * β
+  let t' := hP4.sUpper + β
+  let Q : TriadicCube d := originCube d (m : ℤ)
+  let p_e := specialPAtScale hP hStruct (m : ℤ) e
+  let q_e := specialQAtScale hP hStruct (m : ℤ) e
+  let p0_e := (hP.barSigmaStarAtScale hStruct (m : ℤ))⁻¹ • q_e - p_e
+  let q0_e := q_e - hP.barSigmaAtScale hStruct (m : ℤ) • p_e
+  let σ := sigmaHatAtScale hP hStruct (m : ℤ)
+  let K := WeakNormsMaximizer.section53WeakNormMaximizerConst d
+  let gradWeak :=
+    Ch04.canonicalScalarResponseGradientWeakNormCubeSet Q s p_e q_e p0_e
+  let fluxWeak :=
+    Ch04.canonicalScalarResponseFluxWeakNormCubeSet Q t p_e q_e q0_e
+  let H : RegCoeffField d → ℝ := fun a =>
+    σ *
+        (WeakNormsMaximizer.gradientAverageTermAtScale
+          (m : ℤ) (k : ℤ) s p_e q_e p0_e a) ^ 2 +
+      σ⁻¹ *
+        (WeakNormsMaximizer.fluxAverageTermAtScale
+          (m : ℤ) (k : ℤ) t p_e q_e q0_e a) ^ 2
+  let M : RegCoeffField d → ℝ := fun a =>
+    σ *
+        (WeakNormsMaximizer.gradientMismatchTermAtScale
+          (m : ℤ) (k : ℤ) s s' p_e q_e a) ^ 2 +
+      σ⁻¹ *
+        (WeakNormsMaximizer.fluxMismatchTermAtScale
+          (m : ℤ) (k : ℤ) t t' p_e q_e a) ^ 2
+  let L : RegCoeffField d → ℝ := fun a =>
+    σ *
+        (WeakNormsMaximizer.gradientLowScaleTailAtScale
+          (m : ℤ) (k : ℤ) s s' p_e q_e a) ^ 2 +
+      σ⁻¹ *
+        (WeakNormsMaximizer.fluxLowScaleTailAtScale
+          (m : ℤ) (k : ℤ) t t' p_e q_e a) ^ 2
+  let T : ℝ :=
+    σ *
+        (WeakNormsMaximizer.gradientConstantTailAtScale
+          (m : ℤ) (k : ℤ) s p0_e) ^ 2 +
+      σ⁻¹ *
+        (WeakNormsMaximizer.fluxConstantTailAtScale
+          (m : ℤ) (k : ℤ) t q0_e) ^ 2
+  let W : RegCoeffField d → ℝ := fun a =>
+    σ * (gradWeak a) ^ 2 + σ⁻¹ * (fluxWeak a) ^ 2
+  let Z : RegCoeffField d → ℝ := fun a =>
+    16 * (((H a + K ^ 2 * M a) + K ^ 2 * L a) + K ^ 2 * T)
+  intro hσ_nonneg
+  filter_upwards [ae_paired_weakNormSquares_special_le_four_rhsSquares
+    hP hStruct hP4 hkm e] with a hweak
+  have hAlg :=
+    paired_rhsSquares_le_componentSquares
+      (σ := σ) (K := K)
+      (AG := WeakNormsMaximizer.gradientAverageTermAtScale
+        (m : ℤ) (k : ℤ) s p_e q_e p0_e a)
+      (MG := WeakNormsMaximizer.gradientMismatchTermAtScale
+        (m : ℤ) (k : ℤ) s s' p_e q_e a)
+      (LG := WeakNormsMaximizer.gradientLowScaleTailAtScale
+        (m : ℤ) (k : ℤ) s s' p_e q_e a)
+      (CG := WeakNormsMaximizer.gradientConstantTailAtScale
+        (m : ℤ) (k : ℤ) s p0_e)
+      (AF := WeakNormsMaximizer.fluxAverageTermAtScale
+        (m : ℤ) (k : ℤ) t p_e q_e q0_e a)
+      (MF := WeakNormsMaximizer.fluxMismatchTermAtScale
+        (m : ℤ) (k : ℤ) t t' p_e q_e a)
+      (LF := WeakNormsMaximizer.fluxLowScaleTailAtScale
+        (m : ℤ) (k : ℤ) t t' p_e q_e a)
+      (CF := WeakNormsMaximizer.fluxConstantTailAtScale
+        (m : ℤ) (k : ℤ) t q0_e) hσ_nonneg
+  calc
+    W a ≤
+        4 *
+          (σ *
+              (WeakNormsMaximizer.gradientRHSAtScale K
+                (m : ℤ) (k : ℤ) s s' p_e q_e p0_e a) ^ 2 +
+            σ⁻¹ *
+              (WeakNormsMaximizer.fluxRHSAtScale K
+                (m : ℤ) (k : ℤ) t t' p_e q_e q0_e a) ^ 2) := by
+        simpa [W, gradWeak, fluxWeak, K, Q, β, s, s', t, t',
+          p_e, q_e, p0_e, q0_e, σ] using hweak
+    _ ≤ Z a := by
+        dsimp [Z, H, M, L, T, WeakNormsMaximizer.gradientRHSAtScale,
+          WeakNormsMaximizer.fluxRHSAtScale]
+        nlinarith [hAlg]
+
+private theorem integrable_pairedWeakNormSquares
+    {d : ℕ}
+    [NeZero d]
+    {P : Ch04.RestrictionCoeffLaw d}
+    (hP : Ch04.RestrictionLawCarrier P)
+    (hStruct : Ch04.RestrictionStructuralLaw P)
+    (hP4 : QuantitativeCoarseGrainedEllipticity P)
+    {m : ℕ}
+    (e : Vec d)
+    :
+    let β := section53CoarseFluctuationBeta hP4
+    let s := hP4.sLower + 2 * β
+    let t := hP4.sUpper + 2 * β
+    let Q : TriadicCube d := originCube d (m : ℤ)
+    let p_e := specialPAtScale hP hStruct (m : ℤ) e
+    let q_e := specialQAtScale hP hStruct (m : ℤ) e
+    let p0_e := (hP.barSigmaStarAtScale hStruct (m : ℤ))⁻¹ • q_e - p_e
+    let q0_e := q_e - hP.barSigmaAtScale hStruct (m : ℤ) • p_e
+    let σ := sigmaHatAtScale hP hStruct (m : ℤ)
+    let gradWeak :=
+      Ch04.canonicalScalarResponseGradientWeakNormCubeSet Q s p_e q_e p0_e
+    let fluxWeak :=
+      Ch04.canonicalScalarResponseFluxWeakNormCubeSet Q t p_e q_e q0_e
+    let W : RegCoeffField d → ℝ := fun a =>
+      σ * (gradWeak a) ^ 2 + σ⁻¹ * (fluxWeak a) ^ 2
+    ∀ (hGradWeakSqInt : Integrable (fun a : RegCoeffField d => (gradWeak a) ^ 2) P),
+    ∀ (hFluxWeakSqInt : Integrable (fun a : RegCoeffField d => (fluxWeak a) ^ 2) P),
+    Integrable W P := by
+  classical
+  let : IsProbabilityMeasure P := hP.isProbability
+  dsimp only
+  let β := section53CoarseFluctuationBeta hP4
+  let s := hP4.sLower + 2 * β
+  let t := hP4.sUpper + 2 * β
+  let Q : TriadicCube d := originCube d (m : ℤ)
+  let p_e := specialPAtScale hP hStruct (m : ℤ) e
+  let q_e := specialQAtScale hP hStruct (m : ℤ) e
+  let p0_e := (hP.barSigmaStarAtScale hStruct (m : ℤ))⁻¹ • q_e - p_e
+  let q0_e := q_e - hP.barSigmaAtScale hStruct (m : ℤ) • p_e
+  let σ := sigmaHatAtScale hP hStruct (m : ℤ)
+  let gradWeak :=
+    Ch04.canonicalScalarResponseGradientWeakNormCubeSet Q s p_e q_e p0_e
+  let fluxWeak :=
+    Ch04.canonicalScalarResponseFluxWeakNormCubeSet Q t p_e q_e q0_e
+  let W : RegCoeffField d → ℝ := fun a =>
+    σ * (gradWeak a) ^ 2 + σ⁻¹ * (fluxWeak a) ^ 2
+  intro hGradWeakSqInt hFluxWeakSqInt
+  have hG : Integrable (fun a : RegCoeffField d => σ * (gradWeak a) ^ 2) P :=
+    hGradWeakSqInt.const_mul σ
+  have hF : Integrable (fun a : RegCoeffField d => σ⁻¹ * (fluxWeak a) ^ 2) P :=
+    hFluxWeakSqInt.const_mul σ⁻¹
+  simpa [W] using! hG.add hF
 
 /-- The paired special-vector weak-norm square expectation is bounded by the
 four component square expectations coming from the weak-norm maximizer RHS.
@@ -545,12 +928,8 @@ theorem paired_weakNormSquares_special_le_componentIntegrals
   have hFluxWeakSqInt :
       Integrable (fun a : RegCoeffField d => (fluxWeak a) ^ 2) P := by
     simpa [fluxWeak, Q, t, p_e, q_e, q0_e, β] using hFluxSq
-  have hWInt : Integrable W P := by
-    have hG : Integrable (fun a : RegCoeffField d => σ * (gradWeak a) ^ 2) P :=
-      hGradWeakSqInt.const_mul σ
-    have hF : Integrable (fun a : RegCoeffField d => σ⁻¹ * (fluxWeak a) ^ 2) P :=
-      hFluxWeakSqInt.const_mul σ⁻¹
-    simpa [W] using! hG.add hF
+  have hWInt := integrable_pairedWeakNormSquares (d := d) (P := P) (hP := hP) (hStruct := hStruct)
+    (hP4 := hP4) (m := m) (e := e) hGradWeakSqInt hFluxWeakSqInt
   have hHigh := integral_paired_highScaleAverageTerms_special_le_fullBlockSumAtScale
       hP hstat hStruct hP4 hkm e he
   rcases integral_paired_mismatchTermSquares_special_le_coarseFluctuationTerms_uniform
@@ -572,147 +951,143 @@ theorem paired_weakNormSquares_special_le_componentIntegrals
       ((hHInt.add (hMInt.const_mul (K ^ 2))).add
         (hLInt.const_mul (K ^ 2))).add (integrable_const (K ^ 2 * T))
     simpa [Z, mul_assoc] using hinside.const_mul 16
-  have hPoint : W ≤ᵐ[P] Z := by
-    filter_upwards [ae_paired_weakNormSquares_special_le_four_rhsSquares
-      hP hStruct hP4 hkm e] with a hweak
-    have hAlg :=
-      paired_rhsSquares_le_componentSquares
-        (σ := σ) (K := K)
-        (AG := WeakNormsMaximizer.gradientAverageTermAtScale
-          (m : ℤ) (k : ℤ) s p_e q_e p0_e a)
-        (MG := WeakNormsMaximizer.gradientMismatchTermAtScale
-          (m : ℤ) (k : ℤ) s s' p_e q_e a)
-        (LG := WeakNormsMaximizer.gradientLowScaleTailAtScale
-          (m : ℤ) (k : ℤ) s s' p_e q_e a)
-        (CG := WeakNormsMaximizer.gradientConstantTailAtScale
-          (m : ℤ) (k : ℤ) s p0_e)
-        (AF := WeakNormsMaximizer.fluxAverageTermAtScale
-          (m : ℤ) (k : ℤ) t p_e q_e q0_e a)
-        (MF := WeakNormsMaximizer.fluxMismatchTermAtScale
-          (m : ℤ) (k : ℤ) t t' p_e q_e a)
-        (LF := WeakNormsMaximizer.fluxLowScaleTailAtScale
-          (m : ℤ) (k : ℤ) t t' p_e q_e a)
-        (CF := WeakNormsMaximizer.fluxConstantTailAtScale
-          (m : ℤ) (k : ℤ) t q0_e) hσ_nonneg
-    calc
-      W a ≤
-          4 *
-            (σ *
-                (WeakNormsMaximizer.gradientRHSAtScale K
-                  (m : ℤ) (k : ℤ) s s' p_e q_e p0_e a) ^ 2 +
-              σ⁻¹ *
-                (WeakNormsMaximizer.fluxRHSAtScale K
-                  (m : ℤ) (k : ℤ) t t' p_e q_e q0_e a) ^ 2) := by
-          simpa [W, gradWeak, fluxWeak, K, Q, β, s, s', t, t',
-            p_e, q_e, p0_e, q0_e, σ] using hweak
-      _ ≤ Z a := by
-          dsimp [Z, H, M, L, T, WeakNormsMaximizer.gradientRHSAtScale,
-            WeakNormsMaximizer.fluxRHSAtScale]
-          nlinarith [hAlg]
+  have hPoint := pairedWeakNormSquares_le_integrableComponentMajorant (d := d) (P := P) (hP := hP)
+    (hStruct := hStruct) (hP4 := hP4) (k := k) (m := m) (hkm := hkm) (e := e) hσ_nonneg
   have hmono : ∫ a, W a ∂P ≤ ∫ a, Z a ∂P :=
     integral_mono_ae hWInt hZInt hPoint
-  have hZeq :
-      ∫ a, Z a ∂P =
-        16 *
-          ((∫ a, H a ∂P) +
-            K ^ 2 * (∫ a, M a ∂P) +
-              K ^ 2 * (∫ a, L a ∂P) +
-                K ^ 2 * T) := by
-    let HM : RegCoeffField d → ℝ := fun a => H a + K ^ 2 * M a
-    let HML : RegCoeffField d → ℝ := fun a => HM a + K ^ 2 * L a
-    let TC : RegCoeffField d → ℝ := fun _ => K ^ 2 * T
-    have hHMInt : Integrable HM P := by
-      simpa [HM] using! hHInt.add (hMInt.const_mul (K ^ 2))
-    have hHMLInt : Integrable HML P := by
-      simpa [HML] using! hHMInt.add (hLInt.const_mul (K ^ 2))
-    have hTCInt : Integrable TC P := by
-      simpa [TC] using integrable_const (K ^ 2 * T : ℝ)
-    have hBody :
-        ∫ a, ((H a + K ^ 2 * M a) + K ^ 2 * L a) + K ^ 2 * T ∂P =
-          (∫ a, H a ∂P) +
-            K ^ 2 * (∫ a, M a ∂P) +
-              K ^ 2 * (∫ a, L a ∂P) +
-                K ^ 2 * T := by
-      calc
-        ∫ a, ((H a + K ^ 2 * M a) + K ^ 2 * L a) + K ^ 2 * T ∂P
-            = ∫ a, HML a + TC a ∂P := by
-                simp [HML, HM, TC]
-        _ = ∫ a, HML a ∂P + ∫ a, TC a ∂P := by
-                rw [integral_add hHMLInt hTCInt]
-        _ = (∫ a, HM a ∂P + ∫ a, K ^ 2 * L a ∂P) +
-              ∫ a, TC a ∂P := by
-                rw [integral_add hHMInt (hLInt.const_mul (K ^ 2))]
-        _ = ((∫ a, H a ∂P + ∫ a, K ^ 2 * M a ∂P) +
-              ∫ a, K ^ 2 * L a ∂P) +
-              ∫ a, TC a ∂P := by
-                rw [integral_add hHInt (hMInt.const_mul (K ^ 2))]
-        _ =
-          (∫ a, H a ∂P) +
-            K ^ 2 * (∫ a, M a ∂P) +
-              K ^ 2 * (∫ a, L a ∂P) +
-                K ^ 2 * T := by
-                rw [integral_const_mul, integral_const_mul, integral_const]
-                simp
+  have hZeq := integral_pairedComponentMajorant_eq_componentIntegrals (d := d) (P := P) (hP := hP)
+    (hStruct := hStruct) (hP4 := hP4) (k := k) (m := m) (e := e) hHInt hMInt hLInt
+  simpa only [H, M, L, T] using
     calc
-      ∫ a, Z a ∂P =
-          16 * ∫ a, ((H a + K ^ 2 * M a) + K ^ 2 * L a) + K ^ 2 * T ∂P := by
-            rw [integral_const_mul]
+      σ * (∫ a, (gradWeak a) ^ 2 ∂P) +
+          σ⁻¹ * (∫ a, (fluxWeak a) ^ 2 ∂P)
+          = ∫ a, W a ∂P := by
+            have hG : Integrable (fun a : RegCoeffField d => σ * (gradWeak a) ^ 2) P :=
+              hGradWeakSqInt.const_mul σ
+            have hF : Integrable (fun a : RegCoeffField d => σ⁻¹ * (fluxWeak a) ^ 2) P :=
+              hFluxWeakSqInt.const_mul σ⁻¹
+            rw [integral_add hG hF, integral_const_mul, integral_const_mul]
+      _ ≤ ∫ a, Z a ∂P := hmono
       _ =
           16 *
             ((∫ a, H a ∂P) +
               K ^ 2 * (∫ a, M a ∂P) +
                 K ^ 2 * (∫ a, L a ∂P) +
-                  K ^ 2 * T) := by
-            rw [hBody]
-  calc
-    σ * (∫ a, (gradWeak a) ^ 2 ∂P) +
-        σ⁻¹ * (∫ a, (fluxWeak a) ^ 2 ∂P)
-        = ∫ a, W a ∂P := by
-          have hG : Integrable (fun a : RegCoeffField d => σ * (gradWeak a) ^ 2) P :=
-            hGradWeakSqInt.const_mul σ
-          have hF : Integrable (fun a : RegCoeffField d => σ⁻¹ * (fluxWeak a) ^ 2) P :=
-            hFluxWeakSqInt.const_mul σ⁻¹
-          rw [integral_add hG hF, integral_const_mul, integral_const_mul]
-    _ ≤ ∫ a, Z a ∂P := hmono
-    _ =
-        16 *
-          ((∫ a, H a ∂P) +
-            K ^ 2 * (∫ a, M a ∂P) +
-              K ^ 2 * (∫ a, L a ∂P) +
-                K ^ 2 * T) := hZeq
-    _ =
-        16 *
-          ((∫ a,
-              (σ *
-                  (WeakNormsMaximizer.gradientAverageTermAtScale
-                    (m : ℤ) (k : ℤ) s p_e q_e p0_e a) ^ 2 +
-                σ⁻¹ *
-                  (WeakNormsMaximizer.fluxAverageTermAtScale
-                    (m : ℤ) (k : ℤ) t p_e q_e q0_e a) ^ 2) ∂P) +
-            K ^ 2 *
-              (∫ a,
-                (σ *
-                    (WeakNormsMaximizer.gradientMismatchTermAtScale
-                      (m : ℤ) (k : ℤ) s s' p_e q_e a) ^ 2 +
-                  σ⁻¹ *
-                    (WeakNormsMaximizer.fluxMismatchTermAtScale
-                      (m : ℤ) (k : ℤ) t t' p_e q_e a) ^ 2) ∂P) +
-            K ^ 2 *
-              (∫ a,
-                (σ *
-                    (WeakNormsMaximizer.gradientLowScaleTailAtScale
-                      (m : ℤ) (k : ℤ) s s' p_e q_e a) ^ 2 +
-                  σ⁻¹ *
-                    (WeakNormsMaximizer.fluxLowScaleTailAtScale
-                      (m : ℤ) (k : ℤ) t t' p_e q_e a) ^ 2) ∂P) +
-            K ^ 2 *
-              (σ *
-                  (WeakNormsMaximizer.gradientConstantTailAtScale
-                    (m : ℤ) (k : ℤ) s p0_e) ^ 2 +
-                σ⁻¹ *
-                  (WeakNormsMaximizer.fluxConstantTailAtScale
-                    (m : ℤ) (k : ℤ) t q0_e) ^ 2)) := by
-          simp [H, M, L, T]
+                  K ^ 2 * T) := hZeq
+
+private theorem coarseFluctuationComponents_nonnegative_and_le_total
+    {d : ℕ}
+    [NeZero d]
+    {P : Ch04.RestrictionCoeffLaw d}
+    (hP : Ch04.RestrictionLawCarrier P)
+    (hstat : Ch04.RestrictionStationaryLaw P)
+    (hStruct : Ch04.RestrictionStructuralLaw P)
+    (hP4 : QuantitativeCoarseGrainedEllipticity P)
+    (k : ℕ)
+    (m : ℕ)
+    (e : Vec d)
+    :
+    let β := section53CoarseFluctuationBeta hP4
+    let θ := thetaAtScale hP hStruct (m : ℤ)
+    let A : ℝ :=
+      β⁻¹ * θ *
+        coarseFluctuationFullBlockSumAtScale hP hStruct hP4 k m
+    let B : ℝ :=
+      (β ^ 2)⁻¹ * coarseFluctuationScalarWeightAtScale hP hStruct m *
+        coarseFluctuationTauSumAtScale hP hStruct hP4 k m e
+    let R : ℝ :=
+      (hP4.xi : ℝ) * (β ^ 3)⁻¹ *
+        Real.rpow (3 : ℝ) (-β * (m : ℝ)) *
+        coarseFluctuationUnitMomentWeightAtScale hP hStruct hP4 m *
+          coarseFluctuationResponseMomentAtScale hP hStruct hP4 k m e
+    let D : ℝ :=
+      (β ^ 2)⁻¹ *
+        Real.rpow (3 : ℝ) (-2 * β * (((m - k : ℕ) : ℝ))) *
+        coarseFluctuationScalarWeightAtScale hP hStruct m * (θ - 1)
+    let Ssum : ℝ := A + B + R + D
+    (0 ≤ Ssum) ∧
+      (A ≤ Ssum) ∧
+      (B + R ≤ Ssum) ∧
+      (D + R ≤ Ssum) ∧
+      (D ≤ Ssum) := by
+  classical
+  let : IsProbabilityMeasure P := hP.isProbability
+  dsimp only
+  let β := section53CoarseFluctuationBeta hP4
+  let θ := thetaAtScale hP hStruct (m : ℤ)
+  let A : ℝ :=
+    β⁻¹ * θ *
+      coarseFluctuationFullBlockSumAtScale hP hStruct hP4 k m
+  let B : ℝ :=
+    (β ^ 2)⁻¹ * coarseFluctuationScalarWeightAtScale hP hStruct m *
+      coarseFluctuationTauSumAtScale hP hStruct hP4 k m e
+  let R : ℝ :=
+    (hP4.xi : ℝ) * (β ^ 3)⁻¹ *
+      Real.rpow (3 : ℝ) (-β * (m : ℝ)) *
+      coarseFluctuationUnitMomentWeightAtScale hP hStruct hP4 m *
+        coarseFluctuationResponseMomentAtScale hP hStruct hP4 k m e
+  let D : ℝ :=
+    (β ^ 2)⁻¹ *
+      Real.rpow (3 : ℝ) (-2 * β * (((m - k : ℕ) : ℝ))) *
+      coarseFluctuationScalarWeightAtScale hP hStruct m * (θ - 1)
+  let Ssum : ℝ := A + B + R + D
+  have hβ_pos : 0 < β := by
+    simpa [β] using section53CoarseFluctuationBeta_pos hP4
+  have hA_nonneg : 0 ≤ A := by
+    dsimp [A]
+    exact mul_nonneg
+      (mul_nonneg (inv_nonneg.mpr hβ_pos.le)
+        (by
+          have hθ : 1 ≤ θ := by
+            simpa [θ] using one_le_thetaAtScale_of_P4 hP hStruct hP4 m
+          linarith))
+      (coarseFluctuationFullBlockSumAtScale_nonneg hP hStruct hP4 k m)
+  have hB_nonneg : 0 ≤ B := by
+    dsimp [B]
+    exact mul_nonneg
+      (mul_nonneg (inv_nonneg.mpr (sq_nonneg _))
+        (coarseFluctuationScalarWeightAtScale_nonneg hP hStruct hP4 m))
+      (coarseFluctuationTauSumAtScale_nonneg hP hstat hStruct hP4 k m e)
+  have hR_nonneg : 0 ≤ R := by
+    dsimp [R]
+    exact mul_nonneg
+      (mul_nonneg
+        (mul_nonneg
+          (mul_nonneg (by exact_mod_cast Nat.zero_le hP4.xi)
+            (inv_nonneg.mpr (pow_nonneg hβ_pos.le 3)))
+          (Real.rpow_nonneg (by norm_num : 0 ≤ (3 : ℝ)) _))
+        (coarseFluctuationUnitMomentWeightAtScale_nonneg hP hStruct hP4 m))
+      (coarseFluctuationResponseMomentAtScale_nonneg hP hStruct hP4 k m e)
+  have hD_nonneg : 0 ≤ D := by
+    dsimp [D]
+    exact mul_nonneg
+      (mul_nonneg
+        (mul_nonneg (inv_nonneg.mpr (sq_nonneg _))
+          (Real.rpow_nonneg (by norm_num : 0 ≤ (3 : ℝ)) _))
+        (coarseFluctuationScalarWeightAtScale_nonneg hP hStruct hP4 m))
+      (by
+        have hθ : 1 ≤ θ := by
+          simpa [θ] using one_le_thetaAtScale_of_P4 hP hStruct hP4 m
+        linarith)
+  have hS_nonneg : 0 ≤ Ssum := by
+    simpa [Ssum] using rhsSum_nonneg hA_nonneg hB_nonneg hR_nonneg hD_nonneg
+  have hA_le_Ssum : A ≤ Ssum := by
+    simpa [Ssum] using first_le_rhsSum hB_nonneg hR_nonneg hD_nonneg
+  have hBR_le_Ssum : B + R ≤ Ssum := by
+    simpa [Ssum] using middle_pair_le_rhsSum hA_nonneg hD_nonneg
+  have hDR_le_Ssum : D + R ≤ Ssum := by
+    simpa [Ssum] using last_pair_le_rhsSum hA_nonneg hB_nonneg
+  have hD_le_Ssum : D ≤ Ssum := by
+    simpa [Ssum] using fourth_le_rhsSum (D := D) hA_nonneg hB_nonneg hR_nonneg
+  exact ⟨hS_nonneg, hA_le_Ssum, hBR_le_Ssum, hDR_le_Ssum, hD_le_Ssum⟩
+
+private theorem highScaleIntegral_le_totalCoarseFluctuationBound
+    {integralValue coefficient component total : ℝ}
+    (hCoefficient : 0 ≤ coefficient)
+    (hIntegral : integralValue ≤ coefficient * component)
+    (hComponent : component ≤ total) :
+    integralValue ≤ coefficient * total :=
+  hIntegral.trans (mul_le_mul_of_nonneg_left hComponent hCoefficient)
 
 /-- The paired special-vector weak-norm square expectations are bounded by the
 four square-conversion terms of the manuscript coarse-fluctuation RHS. -/
@@ -862,96 +1237,33 @@ theorem paired_weakNormSquares_special_le_coarseFluctuationTerms
   have hcomp :=
     paired_weakNormSquares_special_le_componentIntegrals
       hP hstat hStruct hP4 hkm e he hGradSq hFluxSq
-  have hH := hH_all hP hstat hStruct hP4 hkm e he
+  have hH : H ≤ CH * β⁻¹ * θ *
+      coarseFluctuationFullBlockSumAtScale hP hStruct hP4 k m := by
+    simpa [H, β, s, t, p_e, q_e, p0_e, q0_e, σ, θ] using
+      hH_all hP hstat hStruct hP4 hkm e he
   have hM := hM_all hP hstat hStruct hP4 rfl hkm e
   have hL := hL_all hP hstat hStruct hP4 rfl hkm e he
   have hT :=
     paired_constantTail_special_le_lowScaleTail hP hStruct hP4 hkm e he
-  have hβ_pos : 0 < β := by
-    simpa [β] using section53CoarseFluctuationBeta_pos hP4
-  have hA_nonneg : 0 ≤ A := by
-    dsimp [A]
-    exact mul_nonneg
-      (mul_nonneg (inv_nonneg.mpr hβ_pos.le)
-        (by
-          have hθ : 1 ≤ θ := by
-            simpa [θ] using one_le_thetaAtScale_of_P4 hP hStruct hP4 m
-          linarith))
-      (coarseFluctuationFullBlockSumAtScale_nonneg hP hStruct hP4 k m)
-  have hB_nonneg : 0 ≤ B := by
-    dsimp [B]
-    exact mul_nonneg
-      (mul_nonneg (inv_nonneg.mpr (sq_nonneg _))
-        (coarseFluctuationScalarWeightAtScale_nonneg hP hStruct hP4 m))
-      (coarseFluctuationTauSumAtScale_nonneg hP hstat hStruct hP4 k m e)
-  have hR_nonneg : 0 ≤ R := by
-    dsimp [R]
-    exact mul_nonneg
-      (mul_nonneg
-        (mul_nonneg
-          (mul_nonneg (by exact_mod_cast Nat.zero_le hP4.xi)
-            (inv_nonneg.mpr (pow_nonneg hβ_pos.le 3)))
-          (Real.rpow_nonneg (by norm_num : 0 ≤ (3 : ℝ)) _))
-        (coarseFluctuationUnitMomentWeightAtScale_nonneg hP hStruct hP4 m))
-      (coarseFluctuationResponseMomentAtScale_nonneg hP hStruct hP4 k m e)
-  have hD_nonneg : 0 ≤ D := by
-    dsimp [D]
-    exact mul_nonneg
-      (mul_nonneg
-        (mul_nonneg (inv_nonneg.mpr (sq_nonneg _))
-          (Real.rpow_nonneg (by norm_num : 0 ≤ (3 : ℝ)) _))
-        (coarseFluctuationScalarWeightAtScale_nonneg hP hStruct hP4 m))
-      (by
-        have hθ : 1 ≤ θ := by
-          simpa [θ] using one_le_thetaAtScale_of_P4 hP hStruct hP4 m
-        linarith)
-  have hS_nonneg : 0 ≤ Ssum := by
-    simpa [Ssum] using rhsSum_nonneg hA_nonneg hB_nonneg hR_nonneg hD_nonneg
-  have hA_le_Ssum : A ≤ Ssum := by
-    simpa [Ssum] using first_le_rhsSum hB_nonneg hR_nonneg hD_nonneg
-  have hBR_le_Ssum : B + R ≤ Ssum := by
-    simpa [Ssum] using middle_pair_le_rhsSum hA_nonneg hD_nonneg
-  have hDR_le_Ssum : D + R ≤ Ssum := by
-    simpa [Ssum] using last_pair_le_rhsSum hA_nonneg hB_nonneg
-  have hD_le_Ssum : D ≤ Ssum := by
-    simpa [Ssum] using fourth_le_rhsSum (D := D) hA_nonneg hB_nonneg hR_nonneg
-  have hH_le : H ≤ CH * Ssum := by
-    have hHA' :
-        H ≤ CH * β⁻¹ * θ *
-          coarseFluctuationFullBlockSumAtScale hP hStruct hP4 k m := by
-      simpa [H, β, s, t, p_e, q_e, p0_e, q0_e, σ, θ] using hH
-    have hHA : H ≤ CH * A := by
-      calc
-        H ≤ CH * β⁻¹ * θ *
-            coarseFluctuationFullBlockSumAtScale hP hStruct hP4 k m := hHA'
-        _ = CH * A := by
-            simp [A]
-            ring
-    calc
-      H ≤ CH * A := hHA
-      _ ≤ CH * Ssum := by
-        exact mul_le_mul_of_nonneg_left hA_le_Ssum hCH_nonneg
+  have hExtractedConclusion := coarseFluctuationComponents_nonnegative_and_le_total (d := d) (P
+    := P) (hP := hP)
+    (hstat := hstat) (hStruct := hStruct) (hP4 := hP4) (k := k) (m := m) (e := e)
+  rcases hExtractedConclusion with ⟨hS_nonneg, hA_le_Ssum, hBR_le_Ssum, hDR_le_Ssum, hD_le_Ssum⟩
+  have hH_le : H ≤ CH * Ssum :=
+    highScaleIntegral_le_totalCoarseFluctuationBound hCH_nonneg
+      (by simpa [A, mul_assoc] using hH) hA_le_Ssum
   have hM_le : M ≤ CM * Ssum := by
     have hMBR : M ≤ CM * (B + R) := by
       simpa [M, B, R, β, s, s', t, t', p_e, q_e, σ] using hM.2
-    calc
-      M ≤ CM * (B + R) := hMBR
-      _ ≤ CM * Ssum := by
-        exact mul_le_mul_of_nonneg_left hBR_le_Ssum hCM_nonneg
+    exact hMBR.trans (mul_le_mul_of_nonneg_left hBR_le_Ssum hCM_nonneg)
   have hL_le : L ≤ CL * Ssum := by
     have hLDR : L ≤ CL * (D + R) := by
       simpa [L, D, R, β, s, s', t, t', p_e, q_e, σ, θ] using hL
-    calc
-      L ≤ CL * (D + R) := hLDR
-      _ ≤ CL * Ssum := by
-        exact mul_le_mul_of_nonneg_left hDR_le_Ssum hCL_nonneg
+    exact hLDR.trans (mul_le_mul_of_nonneg_left hDR_le_Ssum hCL_nonneg)
   have hT_le : T ≤ 2 * Ssum := by
     have hTD : T ≤ 2 * D := by
       simpa [T, D, β, s, t, p_e, q_e, p0_e, q0_e, σ, θ] using hT
-    calc
-      T ≤ 2 * D := hTD
-      _ ≤ 2 * Ssum := by
-        exact mul_le_mul_of_nonneg_left hD_le_Ssum (by norm_num)
+    exact hTD.trans (mul_le_mul_of_nonneg_left hD_le_Ssum (by norm_num))
   have hinside :
       H + K ^ 2 * M + K ^ 2 * L + K ^ 2 * T ≤ C0 * Ssum := by
     exact pairedComponentSum_le hH_le hM_le hL_le hT_le (sq_nonneg K) (by rfl)

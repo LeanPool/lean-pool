@@ -179,7 +179,7 @@ theorem bridge_annealed_partition_bound {d : ℕ} [NeZero d]
       simp only [neg_neg, Prod.mk.eta]
       dsimp [f, b]
       ring
-    have hr := summable_volumeRatio_mul_responseJ_of_isEllipticFieldOn_provider
+    have hr := summable_volumeWeightedResponseJ
       hs hopen hsub hdis hEll (-v.1) v.2
     have hfs : Summable (fun i => f i a) := by
       have h := hr.add (hw.mul_right b)
@@ -337,7 +337,8 @@ private theorem bridge_split_weighted_sum {ι : Type*}
     have hhigh := bridge_finite_row_bound (fun i : O => w i) (fun i => r i)
       (fun i => hw0 i) (hw.subtype old) J cap j C hrow b hb
       (FO.filter (fun i => ¬r i < J)) (fun i hi =>
-        Finset.mem_Icc.mpr ⟨by change J ≤ r i; have := (Finset.mem_filter.mp hi).2; omega, hcap i i.2⟩)
+        Finset.mem_Icc.mpr ⟨by change J ≤ r i; have := (Finset.mem_filter.mp hi).2; omega, hcap
+          i i.2⟩)
     have hheq : (∑ i ∈ FO with ¬r (i : O) < J, w i * g i) =
         ∑ i ∈ FO with ¬r (i : O) < J, w i * b (r i) := by
       apply Finset.sum_congr rfl
@@ -390,8 +391,10 @@ theorem bridge_partition_comparison (d : ℕ) (hd : 2 ≤ d) (γ : ℝ)
               let W := adaptedCell (explicitRoundedGrid jStar mParent) j
               let U := fun i => adaptedCellTranslate (qi i) (ji i) (yi i)
               (∀ i ∈ I, U i ⊆ W) → I.PairwiseDisjoint U → volume (W \ ⋃ i ∈ I, U i) = 0 →
-              (∀ i ∈ I, old i → U i = adaptedCellAtCenter (explicitRoundedGrid jStar m) (r i) (z i)) →
-              (∀ i ∈ I, ¬old i → U i = adaptedCellAtCenter (explicitRoundedGrid jStar mBase) b (z i)) →
+              (∀ i ∈ I, old i → U i = adaptedCellAtCenter (explicitRoundedGrid jStar m) (r i) (z
+                i)) →
+              (∀ i ∈ I, ¬old i → U i = adaptedCellAtCenter (explicitRoundedGrid jStar mBase) b
+                (z i)) →
               (∀ i ∈ I, old i → r i ≤ cap) →
               ∀ Cw : ℝ, 0 ≤ Cw →
                 (∀ t : ℤ, t ≤ cap →
@@ -520,7 +523,8 @@ theorem bridge_partition_comparison (d : ℕ) (hd : 2 ≤ d) (γ : ℝ)
       have hwt : (∑' i, w i) ≤ 1 := by
         have hWvol : (volume W).toReal ≠ 0 := by
           rw [hWp, volume_adaptedCellTranslate_toReal]
-          have hdet := ((Matrix.isUnit_iff_isUnit_det _).mp (isUnit_roundedGrid hj hmParent)).ne_zero
+          have hdet := ((Matrix.isUnit_iff_isUnit_det _).mp (isUnit_roundedGrid hj
+            hmParent)).ne_zero
           positivity
         exact le_of_eq (Source.tsum_volumeRatio_eq_one (Set.to_countable I) hWvol
           (fun i hi => (isOpen_adaptedCellTranslate (hqi i hi) _ _).measurableSet) hsub hdis hnull)
@@ -544,7 +548,8 @@ theorem bridge_partition_comparison (d : ℕ) (hd : 2 ≤ d) (γ : ℝ)
         (fun i => (1 / 2 : ℝ) * blockVecDot v (blockMatVecMul (A i) v))
         (fun t => (1 / 2 : ℝ) * blockVecDot v
           (blockMatVecMul (adaptedMean P (explicitRoundedGrid jStar m) t) v))
-        ((1 / 2 : ℝ) * blockVecDot v (blockMatVecMul (adaptedMean P (explicitRoundedGrid jStar mBase) b) v))
+        ((1 / 2 : ℝ) * blockVecDot v (blockMatVecMul (adaptedMean P (explicitRoundedGrid jStar
+          mBase) b) v))
         ((1 / 2 : ℝ) * blockVecDot v (blockMatVecMul T v))
         (hquad0 mBase hmBase b v) (fun t _ => hquad0 m hm t v)
         (fun i hi => by dsimp [A]; rw [hbase i i.2 hi,
@@ -563,7 +568,8 @@ theorem bridge_partition_comparison (d : ℕ) (hd : 2 ≤ d) (γ : ℝ)
   change (1 / 2 : ℝ) * blockVecDot v
     (blockMatVecMul (blockSub (adaptedMean P (explicitRoundedGrid jStar mParent) j)
       (adaptedMean P (explicitRoundedGrid jStar mBase) b)) v) ≤
-    (1 / 2 : ℝ) * blockVecDot v (blockMatVecMul (ofFullBlockMat (toFullBlockMat B + toFullBlockMat T)) v)
+    (1 / 2 : ℝ) * blockVecDot v (blockMatVecMul (ofFullBlockMat (toFullBlockMat B +
+      toFullBlockMat T)) v)
   rw [bridge_quadratic_add]
   have he := blockVecDot_blockMatVecMul_ofFullBlockMat_sub
     (adaptedMean P (explicitRoundedGrid jStar mParent) j)

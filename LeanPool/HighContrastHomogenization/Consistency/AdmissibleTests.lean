@@ -34,7 +34,7 @@ corrector estimate `e.random.corrector` of `t.random.homogenization`, would be
 vacuous: satisfied by the absence of anything to estimate.  This module is a
 consistency check of that definition and is not a result of the paper.
 
-The dual norms `‖F‖_{H^{-s}(V)}` and `‖F‖_{H̲^{-1}(V)}` of
+The dual norms `‖F‖_{H^{-s}(V)}` and `‖F‖_{H_underlined^{-1}(V)}` of
 `e.physical.negative.norm` are suprema over the smooth compactly supported
 fields on `V` whose normalized norm is at most `1`.  This module shows that this
 failure does not occur: over any domain containing a ball, each of the two
@@ -169,7 +169,7 @@ theorem exists_nonzero_admissible_test {d : ℕ} (hd : 0 < d) {U : Set (Vec d)}
     linarith only [h1, hs.1]
   · linarith only [hs.2]
 
-/-- **The admissible-test family of the `H̲^{-1}` dual norm contains a nonzero
+/-- **The admissible-test family of the `H_underlined^{-1}` dual norm contains a nonzero
 field.**  Only openness, boundedness and nonemptiness of `U` are used, together
 with `0 < d`. -/
 theorem exists_nonzero_admissible_test_h1_of_ball {d : ℕ} (hd : 0 < d) {U : Set (Vec d)}

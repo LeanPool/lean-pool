@@ -45,7 +45,7 @@ theorem restrictionResponseJObservableCubeSet_le_descendantsAverage_ae
           (fun R => restrictionResponseJObservableCubeSet R p q a) := by
   filter_upwards [hP.ae_locallyUniformlyEllipticField] with a ha
   exact
-    restrictionResponseJObservableCubeSet_le_descendantsAverage_of_aelocallyUniformlyEllipticField
+    restrictionResponseJ_le_descendantAverage
       ha hnm p q
 
 /-- The deterministic descendant-average comparison for coarse block matrices on
@@ -60,7 +60,7 @@ theorem coarseBlockMatrix_le_descendantsAverageBlockMat_cubeSet_ae
           (fun R => coarseBlockMatrix (cubeSet R) a.toFun)) := by
   filter_upwards [hP.ae_locallyUniformlyEllipticField] with a ha
   exact
-    coarseBlockMatrix_le_descendantsAverageBlockMat_cubeSet_of_aelocallyUniformlyEllipticField
+    coarseBlockMatrix_le_descendantAverage
       ha Q hk
 
 /-- The deterministic descendant-average comparison for coarse block matrices
@@ -79,7 +79,7 @@ theorem coarseBlockMatrix_le_descendantsAverageBlockMat_ae
 
 /-- Diagonal upper-left block positive excess is controlled by the centered
 descendant average of the corresponding entry observable. -/
-theorem coarseBlockMatrix_upperLeft_apply_positiveExcess_le_abs_restrictionCenteredDescendantAverageOnCube_ae
+theorem coarseMatrix_upperLeft_apply_excessPart_le_abs_centeredDescendantMean_ae
     {d : ℕ} [NeZero d] {P : RestrictionCoeffLaw d} (hP : RestrictionLawCarrier P)
     (Q : TriadicCube d) {k : ℤ} (hk : k ≤ Q.scale) (i : Fin d) :
     (fun a : RegCoeffField d =>
@@ -111,7 +111,7 @@ theorem coarseBlockMatrix_upperLeft_apply_positiveExcess_le_abs_restrictionCente
       restrictionCenteredDescendantAverageOnCube P Q k X a =
         restrictionDescendantAverageOnCube Q k X a - μ0 := by
     exact congrFun
-      (restrictionCenteredDescendantAverageOnCube_eq_restrictionDescendantAverageOnCube_sub
+      (centeredDescendantAverage_eq_descendantAverage_sub_originMean
         (P := P) (Q := Q) (n := k) hk X) a
   have hPoint :
       max ((coarseBlockMatrix (cubeSet Q) a.toFun).upperLeft i i - μ0) 0 ≤
@@ -134,7 +134,7 @@ theorem coarseBlockMatrix_upperLeft_apply_positiveExcess_le_abs_restrictionCente
 /-- Operator-norm upper-left positive excess is controlled by the entrywise
 centered descendant-average fluctuations.  The norm here is
 `Ch02.matrixNorm`, i.e. the matrix operator norm. -/
-theorem coarseBlockMatrix_upperLeft_matrixNorm_positiveExcess_le_sum_abs_restrictionCenteredDescendantAverageOnCube_ae
+theorem coarseMatrix_upperLeft_normExcess_le_sum_abs_centeredDescendantMean_ae
     {d : ℕ} [NeZero d] {P : RestrictionCoeffLaw d} (hP : RestrictionLawCarrier P)
     (Q : TriadicCube d) {k : ℤ} (hk : k ≤ Q.scale) (center : Mat d)
     (hcenter :
@@ -164,7 +164,7 @@ theorem coarseBlockMatrix_upperLeft_matrixNorm_positiveExcess_le_sum_abs_restric
       coarseBlockMatrix (cubeSet Q) a.toFun =
         Ch02.coarseBlockMatrix (Ch02.cubeDomain Q) (F.coeffOn Q) := by
     simpa [F] using
-      RestrictionLawCarrier.coarseBlockMatrix_cubeSet_eq_ch02_coarseBlockMatrix_of_aelocallyUniformlyEllipticField
+      RestrictionLawCarrier.coarseBlockMatrix_cubeSet_eq_chapterCoarse
         ha Q
   have hApsd : A.PosSemidef := by
     change ((coarseBlockMatrix (cubeSet Q) a.toFun).upperLeft).PosSemidef
@@ -185,7 +185,7 @@ theorem coarseBlockMatrix_upperLeft_matrixNorm_positiveExcess_le_sum_abs_restric
         coarseBlockMatrix (cubeSet R) a.toFun =
           Ch02.coarseBlockMatrix (Ch02.cubeDomain R) (F.coeffOn R) := by
       simpa [F] using
-        RestrictionLawCarrier.coarseBlockMatrix_cubeSet_eq_ch02_coarseBlockMatrix_of_aelocallyUniformlyEllipticField
+        RestrictionLawCarrier.coarseBlockMatrix_cubeSet_eq_chapterCoarse
           ha R
     rw [hEqR]
     exact Ch02.bCoarse_posSemidef (Ch02.cubeDomain R) (F.coeffOn R)
@@ -225,7 +225,7 @@ theorem coarseBlockMatrix_upperLeft_matrixNorm_positiveExcess_le_sum_abs_restric
                 restrictionDescendantAverageOnCube Q k X a -
                   ∫ b, X (cubeSet (originCube d k)) b ∂P := by
                   exact congrFun
-                    (restrictionCenteredDescendantAverageOnCube_eq_restrictionDescendantAverageOnCube_sub
+                    (centeredDescendantAverage_eq_descendantAverage_sub_originMean
                       (P := P) (Q := Q) (n := k) hk X) a
             _ = restrictionDescendantAverageOnCube Q k X a - center i j := by
                   exact congrArg
@@ -250,7 +250,7 @@ theorem coarseBlockMatrix_upperLeft_matrixNorm_positiveExcess_le_sum_abs_restric
 /-- Finite-parent version of the upper-left operator-norm positive-excess
 domination.  This is the clean raw deterministic input for the Ch4
 large-scale fluctuation theorem: no representative observable is exposed. -/
-theorem coarseBlockMatrix_upperLeft_matrixNorm_positiveExcess_finsetSup_le_sum_finsetSup_abs_restrictionCenteredDescendantAverageOnCube_ae
+theorem coarseMatrix_upperLeft_normExcess_finiteSup_le_sum_finiteSup_centeredMean_ae
     {d : ℕ} [NeZero d] {P : RestrictionCoeffLaw d} (hP : RestrictionLawCarrier P)
     {parents : Finset (TriadicCube d)} (hparents : parents.Nonempty)
     {k : ℤ}
@@ -283,7 +283,7 @@ theorem coarseBlockMatrix_upperLeft_matrixNorm_positiveExcess_finsetSup_le_sum_f
             |restrictionCenteredDescendantAverageOnCube P Q k
               (fun U a => (coarseBlockMatrix U a.toFun).upperLeft i j) a| :=
     ae_forall_mem_finset (P := P) parents fun Q hQ =>
-      hP.coarseBlockMatrix_upperLeft_matrixNorm_positiveExcess_le_sum_abs_restrictionCenteredDescendantAverageOnCube_ae
+      hP.coarseMatrix_upperLeft_normExcess_le_sum_abs_centeredDescendantMean_ae
         Q (hparent_scale Q hQ) center hcenter
   filter_upwards [hPoint] with a hPoint_a
   refine Finset.sup'_le hparents _ ?_
@@ -310,10 +310,10 @@ theorem coarseBlockMatrix_upperLeft_matrixNorm_positiveExcess_finsetSup_le_sum_f
                     (fun U a => (coarseBlockMatrix U a.toFun).upperLeft i j) a|) hQ
 
 /-- Representative version of
-`coarseBlockMatrix_upperLeft_matrixNorm_positiveExcess_le_sum_abs_restrictionCenteredDescendantAverageOnCube_ae`.
+`coarseMatrix_upperLeft_normExcess_le_sum_abs_centeredDescendantMean_ae`.
 Each entry may be replaced by an a.e.-equal local/measurable representative
 before applying the probabilistic partition-average theorem. -/
-theorem coarseBlockMatrix_upperLeft_matrixNorm_positiveExcess_le_sum_abs_restrictionCenteredDescendantAverageOnCube_rep_ae
+theorem coarseMatrix_upperLeft_normExcess_le_sum_abs_centeredDescendantMean_rep_ae
     {d : ℕ} [NeZero d] {P : RestrictionCoeffLaw d} (hP : RestrictionLawCarrier P)
     (Q : TriadicCube d) {k : ℤ} (hk : k ≤ Q.scale) (center : Mat d)
     (hcenter :
@@ -342,7 +342,7 @@ theorem coarseBlockMatrix_upperLeft_matrixNorm_positiveExcess_le_sum_abs_restric
   let X : Fin d → Fin d → Set (Vec d) → RegCoeffField d → ℝ :=
     fun i j U a => (coarseBlockMatrix U a.toFun).upperLeft i j
   have hRaw :=
-    hP.coarseBlockMatrix_upperLeft_matrixNorm_positiveExcess_le_sum_abs_restrictionCenteredDescendantAverageOnCube_ae
+    hP.coarseMatrix_upperLeft_normExcess_le_sum_abs_centeredDescendantMean_ae
       Q hk center hcenter
   have hCentered :
       ∀ i j : Fin d,
@@ -374,7 +374,7 @@ theorem coarseBlockMatrix_upperLeft_matrixNorm_positiveExcess_le_sum_abs_restric
 /-- Same upper-left diagonal positive-excess control, after replacing the raw
 coarse-block entry by an a.e.-equal representative.  This is the form consumed
 by local/measurable representative arguments. -/
-theorem coarseBlockMatrix_upperLeft_apply_positiveExcess_le_abs_restrictionCenteredDescendantAverageOnCube_rep_ae
+theorem coarseMatrix_upperLeft_apply_excessPart_le_abs_centeredDescendantMean_rep_ae
     {d : ℕ} [NeZero d] {P : RestrictionCoeffLaw d} (hP : RestrictionLawCarrier P)
     (Q : TriadicCube d) {k : ℤ} (hk : k ≤ Q.scale) (i : Fin d)
     (Y : Set (Vec d) → RegCoeffField d → ℝ)
@@ -395,7 +395,7 @@ theorem coarseBlockMatrix_upperLeft_apply_positiveExcess_le_abs_restrictionCente
   let X : Set (Vec d) → RegCoeffField d → ℝ :=
     fun U a => (coarseBlockMatrix U a.toFun).upperLeft i i
   have hRaw :=
-    hP.coarseBlockMatrix_upperLeft_apply_positiveExcess_le_abs_restrictionCenteredDescendantAverageOnCube_ae
+    hP.coarseMatrix_upperLeft_apply_excessPart_le_abs_centeredDescendantMean_ae
       Q hk i
   have hCentered :
       restrictionCenteredDescendantAverageOnCube P Q k X =ᵐ[P]
@@ -409,7 +409,7 @@ theorem coarseBlockMatrix_upperLeft_apply_positiveExcess_le_abs_restrictionCente
 
 /-- Diagonal lower-right block positive excess is controlled by the centered
 descendant average of the corresponding entry observable. -/
-theorem coarseBlockMatrix_lowerRight_apply_positiveExcess_le_abs_restrictionCenteredDescendantAverageOnCube_ae
+theorem coarseMatrix_lowerRight_apply_excessPart_le_abs_centeredDescendantMean_ae
     {d : ℕ} [NeZero d] {P : RestrictionCoeffLaw d} (hP : RestrictionLawCarrier P)
     (Q : TriadicCube d) {k : ℤ} (hk : k ≤ Q.scale) (i : Fin d) :
     (fun a : RegCoeffField d =>
@@ -441,7 +441,7 @@ theorem coarseBlockMatrix_lowerRight_apply_positiveExcess_le_abs_restrictionCent
       restrictionCenteredDescendantAverageOnCube P Q k X a =
         restrictionDescendantAverageOnCube Q k X a - μ0 := by
     exact congrFun
-      (restrictionCenteredDescendantAverageOnCube_eq_restrictionDescendantAverageOnCube_sub
+      (centeredDescendantAverage_eq_descendantAverage_sub_originMean
         (P := P) (Q := Q) (n := k) hk X) a
   have hPoint :
       max ((coarseBlockMatrix (cubeSet Q) a.toFun).lowerRight i i - μ0) 0 ≤
@@ -464,7 +464,7 @@ theorem coarseBlockMatrix_lowerRight_apply_positiveExcess_le_abs_restrictionCent
 /-- Operator-norm lower-right positive excess is controlled by the entrywise
 centered descendant-average fluctuations.  The norm here is
 `Ch02.matrixNorm`, i.e. the matrix operator norm. -/
-theorem coarseBlockMatrix_lowerRight_matrixNorm_positiveExcess_le_sum_abs_restrictionCenteredDescendantAverageOnCube_ae
+theorem coarseMatrix_lowerRight_normExcess_le_sum_abs_centeredDescendantMean_ae
     {d : ℕ} [NeZero d] {P : RestrictionCoeffLaw d} (hP : RestrictionLawCarrier P)
     (Q : TriadicCube d) {k : ℤ} (hk : k ≤ Q.scale) (center : Mat d)
     (hcenter :
@@ -494,7 +494,7 @@ theorem coarseBlockMatrix_lowerRight_matrixNorm_positiveExcess_le_sum_abs_restri
       coarseBlockMatrix (cubeSet Q) a.toFun =
         Ch02.coarseBlockMatrix (Ch02.cubeDomain Q) (F.coeffOn Q) := by
     simpa [F] using
-      RestrictionLawCarrier.coarseBlockMatrix_cubeSet_eq_ch02_coarseBlockMatrix_of_aelocallyUniformlyEllipticField
+      RestrictionLawCarrier.coarseBlockMatrix_cubeSet_eq_chapterCoarse
         ha Q
   have hApsd : A.PosSemidef := by
     change ((coarseBlockMatrix (cubeSet Q) a.toFun).lowerRight).PosSemidef
@@ -515,7 +515,7 @@ theorem coarseBlockMatrix_lowerRight_matrixNorm_positiveExcess_le_sum_abs_restri
         coarseBlockMatrix (cubeSet R) a.toFun =
           Ch02.coarseBlockMatrix (Ch02.cubeDomain R) (F.coeffOn R) := by
       simpa [F] using
-        RestrictionLawCarrier.coarseBlockMatrix_cubeSet_eq_ch02_coarseBlockMatrix_of_aelocallyUniformlyEllipticField
+        RestrictionLawCarrier.coarseBlockMatrix_cubeSet_eq_chapterCoarse
           ha R
     rw [hEqR]
     exact (Ch02.sigmaStarInvCoarse_posDef (Ch02.cubeDomain R) (F.coeffOn R)).posSemidef
@@ -555,7 +555,7 @@ theorem coarseBlockMatrix_lowerRight_matrixNorm_positiveExcess_le_sum_abs_restri
                 restrictionDescendantAverageOnCube Q k X a -
                   ∫ b, X (cubeSet (originCube d k)) b ∂P := by
                   exact congrFun
-                    (restrictionCenteredDescendantAverageOnCube_eq_restrictionDescendantAverageOnCube_sub
+                    (centeredDescendantAverage_eq_descendantAverage_sub_originMean
                       (P := P) (Q := Q) (n := k) hk X) a
             _ = restrictionDescendantAverageOnCube Q k X a - center i j := by
                   exact congrArg
@@ -580,7 +580,7 @@ theorem coarseBlockMatrix_lowerRight_matrixNorm_positiveExcess_le_sum_abs_restri
 /-- Finite-parent version of the lower-right operator-norm positive-excess
 domination.  This is the clean raw deterministic input for the Ch4
 large-scale fluctuation theorem: no representative observable is exposed. -/
-theorem coarseBlockMatrix_lowerRight_matrixNorm_positiveExcess_finsetSup_le_sum_finsetSup_abs_restrictionCenteredDescendantAverageOnCube_ae
+theorem coarseMatrix_lowerRight_normExcess_finiteSup_le_sum_finiteSup_centeredMean_ae
     {d : ℕ} [NeZero d] {P : RestrictionCoeffLaw d} (hP : RestrictionLawCarrier P)
     {parents : Finset (TriadicCube d)} (hparents : parents.Nonempty)
     {k : ℤ}
@@ -613,7 +613,7 @@ theorem coarseBlockMatrix_lowerRight_matrixNorm_positiveExcess_finsetSup_le_sum_
             |restrictionCenteredDescendantAverageOnCube P Q k
               (fun U a => (coarseBlockMatrix U a.toFun).lowerRight i j) a| :=
     ae_forall_mem_finset (P := P) parents fun Q hQ =>
-      hP.coarseBlockMatrix_lowerRight_matrixNorm_positiveExcess_le_sum_abs_restrictionCenteredDescendantAverageOnCube_ae
+      hP.coarseMatrix_lowerRight_normExcess_le_sum_abs_centeredDescendantMean_ae
         Q (hparent_scale Q hQ) center hcenter
   filter_upwards [hPoint] with a hPoint_a
   refine Finset.sup'_le hparents _ ?_
@@ -640,10 +640,10 @@ theorem coarseBlockMatrix_lowerRight_matrixNorm_positiveExcess_finsetSup_le_sum_
                     (fun U a => (coarseBlockMatrix U a.toFun).lowerRight i j) a|) hQ
 
 /-- Representative version of
-`coarseBlockMatrix_lowerRight_matrixNorm_positiveExcess_le_sum_abs_restrictionCenteredDescendantAverageOnCube_ae`.
+`coarseMatrix_lowerRight_normExcess_le_sum_abs_centeredDescendantMean_ae`.
 Each entry may be replaced by an a.e.-equal local/measurable representative
 before applying the probabilistic partition-average theorem. -/
-theorem coarseBlockMatrix_lowerRight_matrixNorm_positiveExcess_le_sum_abs_restrictionCenteredDescendantAverageOnCube_rep_ae
+theorem coarseMatrix_lowerRight_normExcess_le_sum_abs_centeredDescendantMean_rep_ae
     {d : ℕ} [NeZero d] {P : RestrictionCoeffLaw d} (hP : RestrictionLawCarrier P)
     (Q : TriadicCube d) {k : ℤ} (hk : k ≤ Q.scale) (center : Mat d)
     (hcenter :
@@ -672,7 +672,7 @@ theorem coarseBlockMatrix_lowerRight_matrixNorm_positiveExcess_le_sum_abs_restri
   let X : Fin d → Fin d → Set (Vec d) → RegCoeffField d → ℝ :=
     fun i j U a => (coarseBlockMatrix U a.toFun).lowerRight i j
   have hRaw :=
-    hP.coarseBlockMatrix_lowerRight_matrixNorm_positiveExcess_le_sum_abs_restrictionCenteredDescendantAverageOnCube_ae
+    hP.coarseMatrix_lowerRight_normExcess_le_sum_abs_centeredDescendantMean_ae
       Q hk center hcenter
   have hCentered :
       ∀ i j : Fin d,
@@ -703,7 +703,7 @@ theorem coarseBlockMatrix_lowerRight_matrixNorm_positiveExcess_le_sum_abs_restri
 
 /-- Same lower-right diagonal positive-excess control, after replacing the raw
 coarse-block entry by an a.e.-equal representative. -/
-theorem coarseBlockMatrix_lowerRight_apply_positiveExcess_le_abs_restrictionCenteredDescendantAverageOnCube_rep_ae
+theorem coarseMatrix_lowerRight_apply_excessPart_le_abs_centeredDescendantMean_rep_ae
     {d : ℕ} [NeZero d] {P : RestrictionCoeffLaw d} (hP : RestrictionLawCarrier P)
     (Q : TriadicCube d) {k : ℤ} (hk : k ≤ Q.scale) (i : Fin d)
     (Y : Set (Vec d) → RegCoeffField d → ℝ)
@@ -724,7 +724,7 @@ theorem coarseBlockMatrix_lowerRight_apply_positiveExcess_le_abs_restrictionCent
   let X : Set (Vec d) → RegCoeffField d → ℝ :=
     fun U a => (coarseBlockMatrix U a.toFun).lowerRight i i
   have hRaw :=
-    hP.coarseBlockMatrix_lowerRight_apply_positiveExcess_le_abs_restrictionCenteredDescendantAverageOnCube_ae
+    hP.coarseMatrix_lowerRight_apply_excessPart_le_abs_centeredDescendantMean_ae
       Q hk i
   have hCentered :
       restrictionCenteredDescendantAverageOnCube P Q k X =ᵐ[P]

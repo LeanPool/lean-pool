@@ -617,7 +617,8 @@ theorem response_cutoff_estimate (d : ℕ) (_hd : 2 ≤ d) (γ : ℝ) (_hγ : γ
     s t (RawOutput.of_le_csrc raw (le_max_left _ _))
   have := raw.prob
   -- The selected grid is invertible (`RawOutput.hj`, `RawOutput.symm`, `RawOutput.pos`).
-  have hm : (explicitCanonicalMetric F).PosDef := Geometry.explicitCanonicalMetric_posDef raw.symm raw.pos
+  have hm : (explicitCanonicalMetric F).PosDef := Geometry.explicitCanonicalMetric_posDef
+    raw.symm raw.pos
   have hq : IsUnit (respGrid jStar F) := Geometry.isUnit_roundedGrid raw.hj hm
   -- The weak-pairing estimate carries `2 * d ≤ 3 ^ jStar`, without which the selected grid
   -- need not be invertible and the change of variables `x = q y` of `p.response.transfer` is
@@ -677,7 +678,8 @@ theorem response_cutoff_estimate (d : ℕ) (_hd : 2 ≤ d) (γ : ℝ) (_hγ : γ
   have hjs : (jStar : ℤ) ≤ s := by
     have hB : (1 : ℝ) ≤ Bb :=
       le_trans (S.one_le_B0 ε σ hε hσ) (le_trans (le_max_left _ _) raw.hB)
-    have hA : (1 : ℝ) ≤ aspectRatio E := HCPolySupport.HighContrast.one_le_aspectRatio_of_coarseEllipticityDagger raw.ell
+    have hA : (1 : ℝ) ≤ aspectRatio E :=
+      HCPolySupport.HighContrast.one_le_aspectRatio_of_coarseEllipticityDagger raw.ell
     have h3 : (3 : ℝ) ≤ 2 + aspectRatio E := by linarith only [hA]
     have hlog : (1 : ℝ) ≤ Real.logb 3 (2 + aspectRatio E) := by
       have hl3 : (0 : ℝ) < Real.log 3 := Real.log_pos (by norm_num)
@@ -698,7 +700,8 @@ theorem response_cutoff_estimate (d : ℕ) (_hd : 2 ≤ d) (γ : ℝ) (_hγ : γ
   have hblk : ∀ k : ℤ, (jStar : ℤ) ≤ k → k ≤ t →
       HasIntegrableCoarseBlock P (respCell jStar F k) := by
     intro k _ _
-    simpa only [respCell, respGrid, HighContrast.adaptedCellTranslate, zero_add, Set.image_id'] using
+    simpa only [respCell, respGrid, HighContrast.adaptedCellTranslate, zero_add, Set.image_id']
+      using
       Annealed.hasIntegrableCoarseBlock_adapted d _hd P γ E Ψ Kg Src raw.stat raw.ell jStar raw.hj
         (explicitCanonicalMetric F) hm k 0
   have hblkw : ∀ (k : ℤ) (w : Fin d → ℤ),

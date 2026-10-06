@@ -117,7 +117,8 @@ theorem matSqrt_physicalGradient_pullback_ae
           (matVecMul (Selection.normalizedRoot (symmPart abar)) y))) =ᵐ[volume]
         fun y ↦ matVecMul (Selection.normalizedRoot (symmPart abar)) e +
           (finiteAffineCorrectionJointLocalLimit aRef hCauchy
-            (matVecMul (Selection.normalizedRoot (symmPart abar)) e)).globalGradientRepresentative y) :
+            (matVecMul (Selection.normalizedRoot (symmPart abar))
+              e)).globalGradientRepresentative y) :
     (fun y ↦ matVecMul (matSqrt (symmPart abar))
       (gradPhi e a
         (matVecMul (Selection.normalizedRoot (symmPart abar)) y))) =ᵐ[volume]
@@ -183,7 +184,8 @@ theorem physicalFlux_pullback_ae
           (matVecMul (Selection.normalizedRoot (symmPart abar)) y))) =ᵐ[volume]
         fun y ↦ matVecMul (Selection.normalizedRoot (symmPart abar)) e +
           (finiteAffineCorrectionJointLocalLimit aRef hCauchy
-            (matVecMul (Selection.normalizedRoot (symmPart abar)) e)).globalGradientRepresentative y) :
+            (matVecMul (Selection.normalizedRoot (symmPart abar))
+              e)).globalGradientRepresentative y) :
     (fun y ↦ matVecMul (matSqrt (symmPart abar))⁻¹
       (matVecMul
           ((a.1 (matVecMul (Selection.normalizedRoot (symmPart abar)) y) : Mat d) -

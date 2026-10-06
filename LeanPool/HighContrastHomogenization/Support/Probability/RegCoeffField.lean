@@ -72,12 +72,13 @@ instance : CoeFun (RegCoeffField d) (fun _ => Vec d → Mat d) := ⟨toFun⟩
 @[simp] theorem coe_mk (f h₁ h₂) (x : Vec d) :
     (⟨f, h₁, h₂⟩ : RegCoeffField d) x = f x := rfl
 
-@[simp] theorem toFun_eq_coe (a : RegCoeffField d) : a.toFun = a := rfl
-
 /-- Coercion back to the raw deterministic carrier `CoeffField d`.  Deterministic
 layers receive `a.toCoeffField = a.toFun` and are untouched by the carrier. -/
 @[expose]
 def toCoeffField (a : RegCoeffField d) : CoeffField d := a.toFun
+
+/-- The existing raw-carrier projection agrees with the stored coefficient function. -/
+theorem toFun_eq_coe (a : RegCoeffField d) : a.toFun = a.toCoeffField := rfl
 
 @[simp] theorem toCoeffField_apply (a : RegCoeffField d) (x : Vec d) :
     a.toCoeffField x = a x := rfl

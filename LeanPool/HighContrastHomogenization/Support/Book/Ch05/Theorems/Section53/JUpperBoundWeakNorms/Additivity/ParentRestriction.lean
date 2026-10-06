@@ -106,7 +106,7 @@ theorem parentResponseSolutionOnDependentFamilyRestrictedToCube_grad
 One-child diff-energy identity with the restricted parent solution supplied by
 the Chapter 4 dependent coefficient family.
 -/
-theorem cubeAverage_additivityDiffHalfEnergyDensityOnDependentFamilyOnCube_eq_responseJOnCube_sub_parentRestrictedResponseValue
+theorem cubeAverage_additivityEnergyDensity_eq_responseJ_sub_parentResponseValue
     {d : ℕ} [NeZero d] (a : RegCoeffField d)
     (ha : Ch04.AELocallyUniformlyEllipticField a)
     (Q : TriadicCube d) {R : TriadicCube d} {j : ℕ}
@@ -118,7 +118,7 @@ theorem cubeAverage_additivityDiffHalfEnergyDensityOnDependentFamilyOnCube_eq_re
           (parentResponseSolutionOnDependentFamilyRestrictedToCube a ha Q hR p q) := by
   intro F
   exact
-    cubeAverage_additivityDiffHalfEnergyDensityOnFamilyOnCube_eq_responseJOnCube_sub_responseValue_of_grad_eq
+    cubeAverage_additivityEnergyDensity_eq_responseJ_sub_responseValue
       (a := F) (Q := Q) (R := R) (p := p) (q := q)
       (w := parentResponseSolutionOnDependentFamilyRestrictedToCube a ha Q hR p q)
       (by
@@ -164,7 +164,7 @@ noncomputable def parentRestrictedResponseValueOnDependentFamilyAtDepth
 The descendant average of restricted-parent response values is the parent
 response.
 -/
-theorem descendantsAverage_parentRestrictedResponseValueOnDependentFamilyAtDepth_eq_responseJOnCube
+theorem parentRestrictedResponseAverage_eq_responseJOnCube
     {d : ℕ} [NeZero d] (a : RegCoeffField d)
     (ha : Ch04.AELocallyUniformlyEllipticField a)
     (Q : TriadicCube d) (j : ℕ) (p q : Vec d) :
@@ -217,7 +217,7 @@ theorem descendantsAverage_parentRestrictedResponseValueOnDependentFamilyAtDepth
 The descendant average of the local difference half-energy is exactly the
 response partition defect for the Chapter 4 dependent coefficient family.
 -/
-theorem descendantsAverage_additivityDiffHalfEnergyOnDependentFamily_eq_responseJPartitionDefectOnFamilyAtDepth
+theorem descendantMean_additivityHalfEnergy_eq_responseJDefect
     {d : ℕ} [NeZero d] (a : RegCoeffField d)
     (ha : Ch04.AELocallyUniformlyEllipticField a)
     (Q : TriadicCube d) (j : ℕ) (p q : Vec d) :
@@ -239,7 +239,7 @@ theorem descendantsAverage_additivityDiffHalfEnergyOnDependentFamily_eq_response
     apply descendantsAverage_congr_of_eq_on_descendants
     intro R hR
     have hdiff :=
-      cubeAverage_additivityDiffHalfEnergyDensityOnDependentFamilyOnCube_eq_responseJOnCube_sub_parentRestrictedResponseValue
+      cubeAverage_additivityEnergyDensity_eq_responseJ_sub_parentResponseValue
         (a := a) (ha := ha) (Q := Q) (R := R) hR p q
     have hParent :
         Parent R =
@@ -281,7 +281,7 @@ theorem descendantsAverage_additivityDiffHalfEnergyOnDependentFamily_eq_response
     _ =
         childResponseJAverageOnFamilyAtDepth F Q j p q -
           Ch02.responseJ (Ch02.cubeDomain Q) (F.coeffOn Q) p q := by
-          rw [descendantsAverage_parentRestrictedResponseValueOnDependentFamilyAtDepth_eq_responseJOnCube]
+          rw [parentRestrictedResponseAverage_eq_responseJOnCube]
           rfl
     _ = responseJPartitionDefectOnFamilyAtDepth F Q j p q := by
           rfl

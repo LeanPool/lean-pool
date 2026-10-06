@@ -46,8 +46,8 @@ private theorem section53CoarseFluctuationBetaCoreParams_pos {d : ℕ}
 
 theorem section53CoarseFluctuationBetaParams_pos_shiftedOneStepContraction {d : ℕ}
     (params : QuantitativeCoarseGrainedEllipticityParams d) :
-    0 < section53CoarseFluctuationBetaParams params := by
-  unfold section53CoarseFluctuationBetaParams
+    0 < coarseFluctuationBeta params := by
+  unfold coarseFluctuationBeta
   exact div_pos (section53CoarseFluctuationBetaCoreParams_pos params) (by norm_num)
 
 private theorem section53CoarseFluctuationBetaCoreParams_le_sum_gap {d : ℕ}
@@ -59,29 +59,29 @@ private theorem section53CoarseFluctuationBetaCoreParams_le_sum_gap {d : ℕ}
 
 theorem betaShiftedParams_sUpper_lt_one {d : ℕ}
     (params : QuantitativeCoarseGrainedEllipticityParams d) :
-    params.sUpper + section53CoarseFluctuationBetaParams params < 1 := by
+    params.sUpper + coarseFluctuationBeta params < 1 := by
   have hcore_le := section53CoarseFluctuationBetaCoreParams_le_sum_gap params
   have hcore_pos := section53CoarseFluctuationBetaCoreParams_pos params
   have hlower_nonneg := params.sLower_nonneg
-  unfold section53CoarseFluctuationBetaParams
+  unfold coarseFluctuationBeta
   linarith
 
 theorem betaShiftedParams_sLower_lt_one {d : ℕ}
     (params : QuantitativeCoarseGrainedEllipticityParams d) :
-    params.sLower + section53CoarseFluctuationBetaParams params < 1 := by
+    params.sLower + coarseFluctuationBeta params < 1 := by
   have hcore_le := section53CoarseFluctuationBetaCoreParams_le_sum_gap params
   have hcore_pos := section53CoarseFluctuationBetaCoreParams_pos params
   have hupper_nonneg := params.sUpper_nonneg
-  unfold section53CoarseFluctuationBetaParams
+  unfold coarseFluctuationBeta
   linarith
 
 theorem betaShiftedParams_sum_lt_one {d : ℕ}
     (params : QuantitativeCoarseGrainedEllipticityParams d) :
-    (params.sUpper + section53CoarseFluctuationBetaParams params) +
-        (params.sLower + section53CoarseFluctuationBetaParams params) < 1 := by
+    (params.sUpper + coarseFluctuationBeta params) +
+        (params.sLower + coarseFluctuationBeta params) < 1 := by
   have hcore_le := section53CoarseFluctuationBetaCoreParams_le_sum_gap params
   have hcore_pos := section53CoarseFluctuationBetaCoreParams_pos params
-  unfold section53CoarseFluctuationBetaParams
+  unfold coarseFluctuationBeta
   linarith
 
 /-- Parameter-only `(P4)` data with both regularity exponents shifted by the
@@ -90,8 +90,8 @@ Section 5.3/5.5 exponent `β`. -/
 def betaShiftedParams {d : ℕ}
     (params : QuantitativeCoarseGrainedEllipticityParams d) :
     QuantitativeCoarseGrainedEllipticityParams d where
-  sUpper := params.sUpper + section53CoarseFluctuationBetaParams params
-  sLower := params.sLower + section53CoarseFluctuationBetaParams params
+  sUpper := params.sUpper + coarseFluctuationBeta params
+  sLower := params.sLower + coarseFluctuationBeta params
   xi := params.xi
   two_le_dim := params.two_le_dim
   sUpper_nonneg :=
@@ -137,7 +137,7 @@ theorem shiftedOneStepContraction_homogenizationScale_of_local_shifted_budget
         C * (params.xi : ℝ) *
           Real.log (2 + delta⁻¹ * (params.xi : ℝ) *
             shiftedWidetildeThetaAtScale P (k : ℤ) hP4
-              (section53CoarseFluctuationBetaParams params)) ≤
+              (coarseFluctuationBeta params)) ≤
             ((n - k : ℕ) : ℝ) →
         hP.barSigmaAtScale hStruct (k : ℤ) ≤
           (1 + delta) * hP.barSigmaAtScale hStruct (n : ℤ) →
@@ -160,7 +160,7 @@ theorem shiftedOneStepContraction_homogenizationScale_of_local_shifted_budget
   let m : ℕ := n - k
   have hβeq :
       section53CoarseFluctuationBeta hP4 =
-        section53CoarseFluctuationBetaParams params := by
+        coarseFluctuationBeta params := by
     simpa [hparams] using (section53CoarseFluctuationBetaParams_eq_of_P4 hP4).symm
   have hparamsβ : hP4kβ.params = betaShiftedParams params := by
     calc
@@ -171,20 +171,20 @@ theorem shiftedOneStepContraction_homogenizationScale_of_local_shifted_budget
   have hW :
       widetildeThetaAtScale Pk (0 : ℤ) hP4kβ =
         shiftedWidetildeThetaAtScale P (k : ℤ) hP4
-          (section53CoarseFluctuationBetaParams params) := by
+          (coarseFluctuationBeta params) := by
     have hβeq_k :
         section53CoarseFluctuationBeta hP4k =
-          section53CoarseFluctuationBetaParams params := by
+          coarseFluctuationBeta params := by
       simpa [hP4k, QuantitativeCoarseGrainedEllipticity.scaleNormalized] using! hβeq
     have hshift :=
       shiftedWidetildeThetaAtScale_restrictionScaleNormalizedLaw hP hStruct hP4
-        (η := section53CoarseFluctuationBetaParams params)
+        (η := coarseFluctuationBeta params)
         (by
-          have hβpos : 0 < section53CoarseFluctuationBetaParams params := by
+          have hβpos : 0 < coarseFluctuationBeta params := by
             simpa [← hβeq] using section53CoarseFluctuationBeta_pos hP4
           linarith [hP4.sUpper_pos])
         (by
-          have hβpos : 0 < section53CoarseFluctuationBetaParams params := by
+          have hβpos : 0 < coarseFluctuationBeta params := by
             simpa [← hβeq] using section53CoarseFluctuationBeta_pos hP4
           linarith [hP4.sLower_pos])
         k 0
@@ -324,6 +324,102 @@ private theorem log_two_add_mul_le_const_mul_log_two_add
 
 The constant is chosen from the parameter-only `(P4)` data before the law,
 the scale window, and `δ`. -/
+private theorem shiftedMomentLogarithmBound
+    {d : ℕ} [NeZero d] (params : QuantitativeCoarseGrainedEllipticityParams d)
+    {P : Ch04.RestrictionCoeffLaw d} (hP4 : QuantitativeCoarseGrainedEllipticity P)
+    {delta A : ℝ} {k : ℕ} (hdelta_pos : 0 < delta)
+    (hβpos : 0 < coarseFluctuationBeta params) (hA_ge_one : 1 ≤ A)
+    (hSβk :
+      shiftedWidetildeThetaAtScale P (k : ℤ) hP4 (coarseFluctuationBeta params) ≤
+        A * widetildeThetaAtScale P 0 hP4) :
+    Real.log
+          (2 + delta⁻¹ * (params.xi : ℝ) *
+            shiftedWidetildeThetaAtScale P (k : ℤ) hP4
+              (coarseFluctuationBeta params)) ≤
+        (1 + 2 * A) * Real.log
+          (2 + delta⁻¹ * (params.xi : ℝ) *
+            widetildeThetaAtScale P (0 : ℤ) hP4) := by
+  have hW0_nonneg : 0 ≤ widetildeThetaAtScale P 0 hP4 :=
+    widetildeThetaAtScale_nonneg P hP4 0
+  have harg_nonneg :
+      0 ≤ delta⁻¹ * (params.xi : ℝ) * widetildeThetaAtScale P 0 hP4 := by
+    have hdelta_inv_nonneg : 0 ≤ delta⁻¹ := inv_nonneg.mpr hdelta_pos.le
+    have hxi_nonneg : 0 ≤ (params.xi : ℝ) := by positivity
+    positivity
+  let x : ℝ := delta⁻¹ * (params.xi : ℝ) *
+    widetildeThetaAtScale P (0 : ℤ) hP4
+  have hx : 0 ≤ x := by simpa [x] using harg_nonneg
+  have hlocal_arg_le :
+      2 + delta⁻¹ * (params.xi : ℝ) *
+            shiftedWidetildeThetaAtScale P (k : ℤ) hP4
+              (coarseFluctuationBeta params) ≤
+        2 + x * A := by
+    have hcoef_nonneg : 0 ≤ delta⁻¹ * (params.xi : ℝ) := by positivity
+    calc
+      2 + delta⁻¹ * (params.xi : ℝ) *
+            shiftedWidetildeThetaAtScale P (k : ℤ) hP4
+              (coarseFluctuationBeta params)
+          ≤ 2 + delta⁻¹ * (params.xi : ℝ) *
+              (A * widetildeThetaAtScale P 0 hP4) := by
+            have hmul := mul_le_mul_of_nonneg_left hSβk hcoef_nonneg
+            calc
+              2 + delta⁻¹ * (params.xi : ℝ) *
+                  shiftedWidetildeThetaAtScale P (k : ℤ) hP4
+                    (coarseFluctuationBeta params)
+                  = delta⁻¹ * (params.xi : ℝ) *
+                    shiftedWidetildeThetaAtScale P (k : ℤ) hP4
+                      (coarseFluctuationBeta params) + 2 := by
+                    ring
+              _ ≤ delta⁻¹ * (params.xi : ℝ) *
+                    (A * widetildeThetaAtScale P 0 hP4) + 2 :=
+                    add_le_add_left hmul 2
+              _ = 2 + delta⁻¹ * (params.xi : ℝ) *
+                    (A * widetildeThetaAtScale P 0 hP4) := by ring
+      _ = 2 + x * A := by
+            dsimp [x]
+            ring
+  have hleft_pos :
+      0 < 2 + delta⁻¹ * (params.xi : ℝ) *
+            shiftedWidetildeThetaAtScale P (k : ℤ) hP4
+              (coarseFluctuationBeta params) := by
+    have hS_nonneg :
+        0 ≤ shiftedWidetildeThetaAtScale P (k : ℤ) hP4
+          (coarseFluctuationBeta params) := by
+      unfold shiftedWidetildeThetaAtScale Ch04.widetildeThetaAtScale
+      exact mul_nonneg
+        (Ch04.LambdaMomentAtScale_nonneg P (k : ℤ) hP4.xi
+          (by
+            have hβp : 0 < coarseFluctuationBeta params := hβpos
+            linarith [hP4.sUpper_pos]))
+        (Ch04.lambdaInvMomentAtScale_nonneg P (k : ℤ) hP4.xi
+          (by
+            have hβp : 0 < coarseFluctuationBeta params := hβpos
+            linarith [hP4.sLower_pos]))
+    have hcoef_nonneg : 0 ≤ delta⁻¹ * (params.xi : ℝ) := by positivity
+    have hprod_nonneg :
+        0 ≤ delta⁻¹ * (params.xi : ℝ) *
+          shiftedWidetildeThetaAtScale P (k : ℤ) hP4
+            (coarseFluctuationBeta params) :=
+      mul_nonneg hcoef_nonneg hS_nonneg
+    exact lt_of_lt_of_le (by norm_num : (0 : ℝ) < 2)
+      (by simpa using add_le_add_left hprod_nonneg (2 : ℝ))
+  have hmono :=
+    Real.log_le_log hleft_pos hlocal_arg_le
+  have hconst :=
+    log_two_add_mul_le_const_mul_log_two_add (A := A) (x := x)
+      hA_ge_one hx
+  calc
+    Real.log
+        (2 + delta⁻¹ * (params.xi : ℝ) *
+          shiftedWidetildeThetaAtScale P (k : ℤ) hP4
+            (coarseFluctuationBeta params))
+        ≤ Real.log (2 + x * A) := hmono
+    _ ≤ (1 + 2 * A) * Real.log (2 + x) := hconst
+    _ = (1 + 2 * A) * Real.log
+        (2 + delta⁻¹ * (params.xi : ℝ) *
+          widetildeThetaAtScale P (0 : ℤ) hP4) := by
+        dsimp [x]
+
 theorem shiftedOneStepContraction_homogenizationScale
     {d : ℕ} [NeZero d]
     (params : QuantitativeCoarseGrainedEllipticityParams d) :
@@ -348,11 +444,11 @@ theorem shiftedOneStepContraction_homogenizationScale
   obtain ⟨Cstep, hCstep_pos, hCstep⟩ :=
     shiftedOneStepContraction_homogenizationScale_of_local_shifted_budget
       (d := d) params
-  have hβpos : 0 < section53CoarseFluctuationBetaParams params :=
+  have hβpos : 0 < coarseFluctuationBeta params :=
     section53CoarseFluctuationBetaParams_pos_shiftedOneStepContraction params
   obtain ⟨Cshift, hCshift_nonneg, hCshift⟩ :=
     shiftedWidetildeThetaAtScale_shifted_bound_homogenizationScale
-      (d := d) params.xi (section53CoarseFluctuationBetaParams params) hβpos
+      (d := d) params.xi (coarseFluctuationBeta params) hβpos
   let A : ℝ := 1 + Cshift
   let L : ℝ := 1 + 2 * A
   let C : ℝ := max (Cstep * L) Cstep
@@ -374,7 +470,7 @@ theorem shiftedOneStepContraction_homogenizationScale
     simp [← hparams]
   have hβeq :
       section53CoarseFluctuationBeta hP4 =
-        section53CoarseFluctuationBetaParams params := by
+        coarseFluctuationBeta params := by
     simpa [hparams] using (section53CoarseFluctuationBetaParams_eq_of_P4 hP4).symm
   have hW0_nonneg : 0 ≤ widetildeThetaAtScale P 0 hP4 :=
     widetildeThetaAtScale_nonneg P hP4 0
@@ -385,7 +481,7 @@ theorem shiftedOneStepContraction_homogenizationScale
     hCshift hP hStruct hP4 hxi hβeq (k := 0) (n := k) (Nat.zero_le k)
   let decay0k : ℝ :=
     Real.rpow (3 : ℝ)
-      (-(section53CoarseFluctuationBetaParams params) * ((k - 0 : ℕ) : ℝ))
+      (-(coarseFluctuationBeta params) * ((k - 0 : ℕ) : ℝ))
   have hdecay0k_nonneg : 0 ≤ decay0k := by
     dsimp [decay0k]
     exact Real.rpow_nonneg (by norm_num : 0 ≤ (3 : ℝ)) _
@@ -396,7 +492,7 @@ theorem shiftedOneStepContraction_homogenizationScale
     exact mul_nonpos_of_nonpos_of_nonneg (neg_nonpos.mpr hβpos.le) hk_nonneg
   have hSβk :
       shiftedWidetildeThetaAtScale P (k : ℤ) hP4
-          (section53CoarseFluctuationBetaParams params) ≤
+          (coarseFluctuationBeta params) ≤
         A * widetildeThetaAtScale P 0 hP4 := by
     have hterm_le :
         Cshift * decay0k * widetildeThetaAtScale P 0 hP4 ≤
@@ -410,7 +506,7 @@ theorem shiftedOneStepContraction_homogenizationScale
         _ = Cshift * widetildeThetaAtScale P 0 hP4 := by ring
     calc
       shiftedWidetildeThetaAtScale P (k : ℤ) hP4
-          (section53CoarseFluctuationBetaParams params)
+          (coarseFluctuationBeta params)
           ≤ thetaAtScale hP hStruct (0 : ℤ) +
               Cshift * decay0k * widetildeThetaAtScale P (0 : ℤ) hP4 := by
             simpa [decay0k] using hlocal_shift
@@ -429,88 +525,16 @@ theorem shiftedOneStepContraction_homogenizationScale
       Real.log
           (2 + delta⁻¹ * (params.xi : ℝ) *
             shiftedWidetildeThetaAtScale P (k : ℤ) hP4
-              (section53CoarseFluctuationBetaParams params)) ≤
+              (coarseFluctuationBeta params)) ≤
         L * Real.log
           (2 + delta⁻¹ * (params.xi : ℝ) *
             widetildeThetaAtScale P (0 : ℤ) hP4) := by
-    let x : ℝ := delta⁻¹ * (params.xi : ℝ) *
-      widetildeThetaAtScale P (0 : ℤ) hP4
-    have hx : 0 ≤ x := by simpa [x] using harg_nonneg
-    have hlocal_arg_le :
-        2 + delta⁻¹ * (params.xi : ℝ) *
-              shiftedWidetildeThetaAtScale P (k : ℤ) hP4
-                (section53CoarseFluctuationBetaParams params) ≤
-          2 + x * A := by
-      have hcoef_nonneg : 0 ≤ delta⁻¹ * (params.xi : ℝ) := by positivity
-      calc
-        2 + delta⁻¹ * (params.xi : ℝ) *
-              shiftedWidetildeThetaAtScale P (k : ℤ) hP4
-                (section53CoarseFluctuationBetaParams params)
-            ≤ 2 + delta⁻¹ * (params.xi : ℝ) *
-                (A * widetildeThetaAtScale P 0 hP4) := by
-              have hmul := mul_le_mul_of_nonneg_left hSβk hcoef_nonneg
-              calc
-                2 + delta⁻¹ * (params.xi : ℝ) *
-                    shiftedWidetildeThetaAtScale P (k : ℤ) hP4
-                      (section53CoarseFluctuationBetaParams params)
-                    = delta⁻¹ * (params.xi : ℝ) *
-                      shiftedWidetildeThetaAtScale P (k : ℤ) hP4
-                        (section53CoarseFluctuationBetaParams params) + 2 := by
-                      ring
-                _ ≤ delta⁻¹ * (params.xi : ℝ) *
-                      (A * widetildeThetaAtScale P 0 hP4) + 2 :=
-                      add_le_add_left hmul 2
-                _ = 2 + delta⁻¹ * (params.xi : ℝ) *
-                      (A * widetildeThetaAtScale P 0 hP4) := by ring
-        _ = 2 + x * A := by
-              dsimp [x]
-              ring
-    have hleft_pos :
-        0 < 2 + delta⁻¹ * (params.xi : ℝ) *
-              shiftedWidetildeThetaAtScale P (k : ℤ) hP4
-                (section53CoarseFluctuationBetaParams params) := by
-      have hS_nonneg :
-          0 ≤ shiftedWidetildeThetaAtScale P (k : ℤ) hP4
-            (section53CoarseFluctuationBetaParams params) := by
-        unfold shiftedWidetildeThetaAtScale Ch04.widetildeThetaAtScale
-        exact mul_nonneg
-          (Ch04.LambdaMomentAtScale_nonneg P (k : ℤ) hP4.xi
-            (by
-              have hβp : 0 < section53CoarseFluctuationBetaParams params := hβpos
-              linarith [hP4.sUpper_pos]))
-          (Ch04.lambdaInvMomentAtScale_nonneg P (k : ℤ) hP4.xi
-            (by
-              have hβp : 0 < section53CoarseFluctuationBetaParams params := hβpos
-              linarith [hP4.sLower_pos]))
-      have hcoef_nonneg : 0 ≤ delta⁻¹ * (params.xi : ℝ) := by positivity
-      have hprod_nonneg :
-          0 ≤ delta⁻¹ * (params.xi : ℝ) *
-            shiftedWidetildeThetaAtScale P (k : ℤ) hP4
-              (section53CoarseFluctuationBetaParams params) :=
-        mul_nonneg hcoef_nonneg hS_nonneg
-      exact lt_of_lt_of_le (by norm_num : (0 : ℝ) < 2)
-        (by simpa using add_le_add_left hprod_nonneg (2 : ℝ))
-    have hmono :=
-      Real.log_le_log hleft_pos hlocal_arg_le
-    have hconst :=
-      log_two_add_mul_le_const_mul_log_two_add (A := A) (x := x)
-        hA_ge_one hx
-    calc
-      Real.log
-          (2 + delta⁻¹ * (params.xi : ℝ) *
-            shiftedWidetildeThetaAtScale P (k : ℤ) hP4
-              (section53CoarseFluctuationBetaParams params))
-          ≤ Real.log (2 + x * A) := hmono
-      _ ≤ (1 + 2 * A) * Real.log (2 + x) := hconst
-      _ = L * Real.log
-          (2 + delta⁻¹ * (params.xi : ℝ) *
-            widetildeThetaAtScale P (0 : ℤ) hP4) := by
-          dsimp [L, x]
+    exact shiftedMomentLogarithmBound params hP4 hdelta_pos hβpos hA_ge_one hSβk
   have hsep_local :
       Cstep * (params.xi : ℝ) *
         Real.log (2 + delta⁻¹ * (params.xi : ℝ) *
           shiftedWidetildeThetaAtScale P (k : ℤ) hP4
-            (section53CoarseFluctuationBetaParams params)) ≤
+            (coarseFluctuationBeta params)) ≤
           ((n - k : ℕ) : ℝ) := by
     have hlog_nonneg :
         0 ≤ Real.log
@@ -524,7 +548,7 @@ theorem shiftedOneStepContraction_homogenizationScale
         Cstep * (params.xi : ℝ) *
           Real.log (2 + delta⁻¹ * (params.xi : ℝ) *
             shiftedWidetildeThetaAtScale P (k : ℤ) hP4
-              (section53CoarseFluctuationBetaParams params)) ≤
+              (coarseFluctuationBeta params)) ≤
         (Cstep * L) * (params.xi : ℝ) *
           Real.log (2 + delta⁻¹ * (params.xi : ℝ) *
             widetildeThetaAtScale P (0 : ℤ) hP4) := by
@@ -532,7 +556,7 @@ theorem shiftedOneStepContraction_homogenizationScale
         Cstep * (params.xi : ℝ) *
           Real.log (2 + delta⁻¹ * (params.xi : ℝ) *
             shiftedWidetildeThetaAtScale P (k : ℤ) hP4
-              (section53CoarseFluctuationBetaParams params))
+              (coarseFluctuationBeta params))
             ≤ Cstep * (params.xi : ℝ) *
                 (L * Real.log (2 + delta⁻¹ * (params.xi : ℝ) *
                   widetildeThetaAtScale P (0 : ℤ) hP4)) := by

@@ -228,7 +228,7 @@ theorem cubeAverage_topHalfEnergyDensityOnCube_eq_responseJ {d : ℕ}
       volume := topHalfEnergyDensityOnCube_integrableOn_cubeSet Q a p r
   rw [cubeAverage_eq_descendantsAverage_cubeAverage_of_integrableOn
     (Q := Q) (j := 0) (f := topHalfEnergyDensityOnCube Q a p r) hint]
-  exact descendantsAverage_cubeAverage_topHalfEnergyOnCube_eq_responseJOnCube
+  exact descendantsAverage_topHalfEnergy_eq_responseJ
     Q a 0 p r
 
 /-- Descendant averages are additive. -/

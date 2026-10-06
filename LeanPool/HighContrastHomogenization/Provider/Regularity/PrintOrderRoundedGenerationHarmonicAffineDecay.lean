@@ -606,7 +606,7 @@ theorem exists_printOrderRoundedReference_harmonic_normalized_affine_candidate_e
               theta * normalizedAffineCandidateError
                 (originCube d k) u.toFun c e := by
   obtain ⟨depth, C₀, hC₀, hidentity⟩ :=
-    CubeCalderonZygmund.exists_identity_harmonic_normalized_affine_candidate_error_decay_at_integer_rate
+    CubeCalderonZygmund.exists_identityHarmonic_affineErrorDecay_atIntegerRate
       d 1 (by norm_num)
   let G : ℕ := d + 2
   let K : ℝ := roundedAffineNormFactor d

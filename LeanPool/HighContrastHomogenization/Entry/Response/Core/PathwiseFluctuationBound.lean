@@ -58,7 +58,8 @@ theorem profile_self_le_eta (d : ℕ) (hd : 2 ≤ d) (γ : ℝ)
   have _hγ := hγ
   let : NeZero d := ⟨by omega⟩
   have := raw.prob
-  have hm : (explicitCanonicalMetric F).PosDef := Geometry.explicitCanonicalMetric_posDef raw.symm raw.pos
+  have hm : (explicitCanonicalMetric F).PosDef := Geometry.explicitCanonicalMetric_posDef
+    raw.symm raw.pos
   have hDs : 0 ≤ determinantDrift P γ (respGrid jStar F) jStar s :=
     determinantDrift_nonneg d hd γ P E Ψ Kg Src raw.prob raw.stat raw.unit raw.ell
       jStar raw.hj (explicitCanonicalMetric F) hm s
@@ -309,7 +310,8 @@ theorem le_rpow_inv (Q : ℕ) (hQ : Q ≠ 0) (x y : ℝ) (hx : 0 ≤ x) (hy : 0 
 
 /-- The aligned adapted cell is the translate of the adapted cell to its centre. -/
 theorem adaptedCellTranslate_center (q : Mat d) (j : ℤ) (z : Fin d → ℤ) :
-    HighContrast.adaptedCellTranslate q j (adaptedCellCenter q j z) = adaptedCellAtCenter q j z := rfl
+    HighContrast.adaptedCellTranslate q j (adaptedCellCenter q j z) = adaptedCellAtCenter q j z
+      := rfl
 
 /-- The normalized fluctuation at an aligned centre, spelled with `adaptedCellAtCenter`. -/
 theorem normalizedFluctuation_eq (P : Measure (CoeffSpace d)) (q : Mat d) (j k : ℤ)
@@ -346,7 +348,8 @@ private theorem fluctuation_term_le_max (d : ℕ) (hd : 2 ≤ d) (γ : ℝ)
   obtain ⟨-, hn2⟩ := Set.mem_Icc.mp hn
   have hk1 : (jStar : ℤ) ≤ t - (n : ℤ) := by omega
   have hk2 : t - (n : ℤ) ≤ t := by omega
-  have hwnn : (0 : ℝ) ≤ (3 : ℝ) ^ (-(Quenched.contrastRho γ * (n : ℝ))) := Real.rpow_nonneg (by norm_num) _
+  have hwnn : (0 : ℝ) ≤ (3 : ℝ) ^ (-(Quenched.contrastRho γ * (n : ℝ))) := Real.rpow_nonneg (by
+    norm_num) _
   have hF00 : (0 : ℝ) ≤ ⨆ j ∈ Set.Icc (jStar : ℤ) t,
       (3 : ℝ) ^ (-(bigQ d γ : ℝ) * rhoMax d γ * ((t : ℝ) - (j : ℝ))) *
         ⨆ y ∈ adaptedLatticeAtScale (Geometry.explicitRoundedGrid jStar mt) j ∩
@@ -397,7 +400,8 @@ private theorem source_term_le_max (d : ℕ) (hd : 2 ≤ d) (γ : ℝ)
     (hstat : IsStationaryLaw P) (hdag : CoarseEllipticityDagger P γ E Ψ Kg Src)
     (jStar : ℕ) (hj : 2 * d ≤ 3 ^ jStar) (F : BlockMat d)
     (hm : (explicitCanonicalMetric F).PosDef) (t : ℤ) (ht : (jStar : ℤ) ≤ t)
-    (hcube : HighContrast.adaptedCell (Geometry.explicitRoundedGrid jStar (explicitCanonicalMetric F)) t ⊆
+    (hcube : HighContrast.adaptedCell (Geometry.explicitRoundedGrid jStar
+      (explicitCanonicalMetric F)) t ⊆
       HighContrast.centeredCube d (2 * (jStar : ℤ)))
     (C₀ Cn Cs η : ℝ) (hC₀ : 0 < C₀) (hCn : 0 < Cn) (hCs : 0 < Cs)
     (X : CoeffSpace d → ℝ) (a : CoeffSpace d) (hXa : 0 < X a)
@@ -411,23 +415,28 @@ private theorem source_term_le_max (d : ℕ) (hd : 2 ≤ d) (γ : ℝ)
     (hnormt : BlockMatLoewnerLE E (blockScale (Cn * aspectRatio E *
       Real.sqrt (‖explicitCanonicalMetric F‖ * ‖(explicitCanonicalMetric F)⁻¹‖))
       (adaptedMean P (Geometry.explicitRoundedGrid jStar (explicitCanonicalMetric F)) t)))
-    (hsrcsmall : Cs * aspectRatio E * (‖explicitCanonicalMetric F‖ * ‖(explicitCanonicalMetric F)⁻¹‖) *
+    (hsrcsmall : Cs * aspectRatio E * (‖explicitCanonicalMetric F‖ * ‖(explicitCanonicalMetric
+      F)⁻¹‖) *
       (3 : ℝ) ^ (-(rhoMax d γ * ((t : ℝ) - (jStar : ℝ)))) ≤
       η ^ ((1 : ℝ) / (bigQ d γ : ℝ)))
     (n : ℕ) (hn : (t - (jStar : ℤ)).toNat < n) (z : Fin d → ℤ)
     (hz : z ∈ triadicIndexBox d n) :
     (3 : ℝ) ^ (-(Quenched.contrastRho γ * (n : ℝ))) *
         blockSpecBound (blockSub (normalizedBlock (coarseBlock
-          (adaptedCellAtCenter (Geometry.explicitRoundedGrid jStar (explicitCanonicalMetric F)) (t - (n : ℤ)) z) a)
+          (adaptedCellAtCenter (Geometry.explicitRoundedGrid jStar (explicitCanonicalMetric F))
+            (t - (n : ℤ)) z) a)
           (adaptedMean P (Geometry.explicitRoundedGrid jStar (explicitCanonicalMetric F)) t))
           (Book.Ch02.blockIdentity d)) ≤
       C₀ * Cn / Cs * η ^ ((1 : ℝ) / (bigQ d γ : ℝ)) * X a := by
   let : NeZero d := ⟨by omega⟩
-  have hwnn : (0 : ℝ) ≤ (3 : ℝ) ^ (-(Quenched.contrastRho γ * (n : ℝ))) := Real.rpow_nonneg (by norm_num) _
+  have hwnn : (0 : ℝ) ≤ (3 : ℝ) ^ (-(Quenched.contrastRho γ * (n : ℝ))) := Real.rpow_nonneg (by
+    norm_num) _
   have hEt : (toFullBlockMat (adaptedMean P
       (Geometry.explicitRoundedGrid jStar (explicitCanonicalMetric F)) t)).PosDef :=
-    Annealed.adaptedMean_posDef d hd P γ E Ψ Kg Src hstat hdag jStar hj (explicitCanonicalMetric F) hm t
-  have hee : (0 : ℝ) ≤ ‖explicitCanonicalMetric F‖ * ‖(explicitCanonicalMetric F)⁻¹‖ := by positivity
+    Annealed.adaptedMean_posDef d hd P γ E Ψ Kg Src hstat hdag jStar hj (explicitCanonicalMetric
+      F) hm t
+  have hee : (0 : ℝ) ≤ ‖explicitCanonicalMetric F‖ * ‖(explicitCanonicalMetric F)⁻¹‖ := by
+    positivity
   have heesq : Real.sqrt (‖explicitCanonicalMetric F‖ * ‖(explicitCanonicalMetric F)⁻¹‖) *
       Real.sqrt (‖explicitCanonicalMetric F‖ * ‖(explicitCanonicalMetric F)⁻¹‖) =
       ‖explicitCanonicalMetric F‖ * ‖(explicitCanonicalMetric F)⁻¹‖ := Real.mul_self_sqrt hee
@@ -442,9 +451,11 @@ private theorem source_term_le_max (d : ℕ) (hd : 2 ≤ d) (γ : ℝ)
     exact fun x hx => hcube (adaptedCellAtCenter_subset_adaptedCell
       (Geometry.explicitRoundedGrid jStar (explicitCanonicalMetric F)) t n hz hx)
   have hb := hpath (explicitCanonicalMetric F) hm (t - (n : ℤ))
-    (adaptedCellCenter (Geometry.explicitRoundedGrid jStar (explicitCanonicalMetric F)) (t - (n : ℤ)) z) hcell
+    (adaptedCellCenter (Geometry.explicitRoundedGrid jStar (explicitCanonicalMetric F)) (t - (n
+      : ℤ)) z) hcell
   rw [adaptedCellTranslate_center] at hb
-  have hc1 : (0 : ℝ) ≤ C₀ * Real.sqrt (‖explicitCanonicalMetric F‖ * ‖(explicitCanonicalMetric F)⁻¹‖) *
+  have hc1 : (0 : ℝ) ≤ C₀ * Real.sqrt (‖explicitCanonicalMetric F‖ * ‖(explicitCanonicalMetric
+    F)⁻¹‖) *
       X a * (3 : ℝ) ^ (γ * max ((jStar : ℝ) - ((t - (n : ℤ) : ℤ) : ℝ)) 0) :=
     mul_nonneg (mul_nonneg (mul_nonneg hC₀.le hsq0) hXa.le)
       (Real.rpow_nonneg (by norm_num) _)
@@ -452,7 +463,8 @@ private theorem source_term_le_max (d : ℕ) (hd : 2 ≤ d) (γ : ℝ)
       Real.sqrt (‖explicitCanonicalMetric F‖ * ‖(explicitCanonicalMetric F)⁻¹‖) :=
     mul_nonneg (mul_nonneg hCn.le hPi.le) hsq0
   have hspec := cell_specBound_le
-    (coarseBlock (adaptedCellAtCenter (Geometry.explicitRoundedGrid jStar (explicitCanonicalMetric F))
+    (coarseBlock (adaptedCellAtCenter (Geometry.explicitRoundedGrid jStar
+      (explicitCanonicalMetric F))
       (t - (n : ℤ)) z) a)
     (adaptedMean P (Geometry.explicitRoundedGrid jStar (explicitCanonicalMetric F)) t) E hEt _ _
     hc1 hc2 hb hnormt
@@ -521,7 +533,8 @@ theorem pathwise_bound_max (d : ℕ) (hd : 2 ≤ d) (γ : ℝ)
     (hdag : CoarseEllipticityDagger P γ E Ψ Kg Src)
     (jStar : ℕ) (hj : 2 * d ≤ 3 ^ jStar) (F : BlockMat d)
     (hm : (explicitCanonicalMetric F).PosDef) (t : ℤ) (ht : (jStar : ℤ) ≤ t)
-    (hcube : HighContrast.adaptedCell (Geometry.explicitRoundedGrid jStar (explicitCanonicalMetric F)) t ⊆
+    (hcube : HighContrast.adaptedCell (Geometry.explicitRoundedGrid jStar
+      (explicitCanonicalMetric F)) t ⊆
       HighContrast.centeredCube d (2 * (jStar : ℤ)))
     (C₀ Cn Cs η : ℝ) (hC₀ : 0 < C₀) (hCn : 0 < Cn) (hCs : 0 < Cs) (hη : 0 < η)
     (X : CoeffSpace d → ℝ) (a : CoeffSpace d) (hXa : 0 < X a)
@@ -535,24 +548,31 @@ theorem pathwise_bound_max (d : ℕ) (hd : 2 ≤ d) (γ : ℝ)
     (hnormt : BlockMatLoewnerLE E (blockScale (Cn * aspectRatio E *
       Real.sqrt (‖explicitCanonicalMetric F‖ * ‖(explicitCanonicalMetric F)⁻¹‖))
       (adaptedMean P (Geometry.explicitRoundedGrid jStar (explicitCanonicalMetric F)) t)))
-    (hsrcsmall : Cs * aspectRatio E * (‖explicitCanonicalMetric F‖ * ‖(explicitCanonicalMetric F)⁻¹‖) *
+    (hsrcsmall : Cs * aspectRatio E * (‖explicitCanonicalMetric F‖ * ‖(explicitCanonicalMetric
+      F)⁻¹‖) *
       (3 : ℝ) ^ (-(rhoMax d γ * ((t : ℝ) - (jStar : ℝ)))) ≤
       η ^ ((1 : ℝ) / (bigQ d γ : ℝ))) :
     respAllScaleMax P γ jStar F t a ≤
       (⨆ j ∈ Set.Icc (jStar : ℤ) t,
         (3 : ℝ) ^ (-(bigQ d γ : ℝ) * rhoMax d γ * ((t : ℝ) - (j : ℝ))) *
-          ⨆ y ∈ adaptedLatticeAtScale (Geometry.explicitRoundedGrid jStar (explicitCanonicalMetric F)) j ∩
-              HighContrast.adaptedCell (Geometry.explicitRoundedGrid jStar (explicitCanonicalMetric F)) t,
+          ⨆ y ∈ adaptedLatticeAtScale (Geometry.explicitRoundedGrid jStar
+            (explicitCanonicalMetric F)) j ∩
+              HighContrast.adaptedCell (Geometry.explicitRoundedGrid jStar
+                (explicitCanonicalMetric F)) t,
             blockOpNorm (normalizedFluctuation P
-              (Geometry.explicitRoundedGrid jStar (explicitCanonicalMetric F)) j t y a) ^ bigQ d γ) ^
+              (Geometry.explicitRoundedGrid jStar (explicitCanonicalMetric F)) j t y a) ^ bigQ d
+                γ) ^
           ((bigQ d γ : ℝ)⁻¹) +
-        determinantDrift P γ (Geometry.explicitRoundedGrid jStar (explicitCanonicalMetric F)) jStar t +
+        determinantDrift P γ (Geometry.explicitRoundedGrid jStar (explicitCanonicalMetric F))
+          jStar t +
         C₀ * Cn / Cs * η ^ ((1 : ℝ) / (bigQ d γ : ℝ)) * X a := by
   let : NeZero d := ⟨by omega⟩
   have hF00 : (0 : ℝ) ≤ ⨆ j ∈ Set.Icc (jStar : ℤ) t,
       (3 : ℝ) ^ (-(bigQ d γ : ℝ) * rhoMax d γ * ((t : ℝ) - (j : ℝ))) *
-        ⨆ y ∈ adaptedLatticeAtScale (Geometry.explicitRoundedGrid jStar (explicitCanonicalMetric F)) j ∩
-            HighContrast.adaptedCell (Geometry.explicitRoundedGrid jStar (explicitCanonicalMetric F)) t,
+        ⨆ y ∈ adaptedLatticeAtScale (Geometry.explicitRoundedGrid jStar (explicitCanonicalMetric
+          F)) j ∩
+            HighContrast.adaptedCell (Geometry.explicitRoundedGrid jStar
+              (explicitCanonicalMetric F)) t,
           blockOpNorm (normalizedFluctuation P
             (Geometry.explicitRoundedGrid jStar (explicitCanonicalMetric F)) j t y a) ^ bigQ d γ :=
     Real.iSup_nonneg fun j => Real.iSup_nonneg fun _ =>
@@ -560,13 +580,16 @@ theorem pathwise_bound_max (d : ℕ) (hd : 2 ≤ d) (γ : ℝ)
         (Real.iSup_nonneg fun y => Real.iSup_nonneg fun _ => pow_nonneg (norm_nonneg _) _)
   have hu0 : (0 : ℝ) ≤ (⨆ j ∈ Set.Icc (jStar : ℤ) t,
       (3 : ℝ) ^ (-(bigQ d γ : ℝ) * rhoMax d γ * ((t : ℝ) - (j : ℝ))) *
-        ⨆ y ∈ adaptedLatticeAtScale (Geometry.explicitRoundedGrid jStar (explicitCanonicalMetric F)) j ∩
-            HighContrast.adaptedCell (Geometry.explicitRoundedGrid jStar (explicitCanonicalMetric F)) t,
+        ⨆ y ∈ adaptedLatticeAtScale (Geometry.explicitRoundedGrid jStar (explicitCanonicalMetric
+          F)) j ∩
+            HighContrast.adaptedCell (Geometry.explicitRoundedGrid jStar
+              (explicitCanonicalMetric F)) t,
           blockOpNorm (normalizedFluctuation P
             (Geometry.explicitRoundedGrid jStar (explicitCanonicalMetric F)) j t y a) ^ bigQ d γ) ^
       ((bigQ d γ : ℝ)⁻¹) := Real.rpow_nonneg hF00 _
   have hv0 : (0 : ℝ) ≤
-      determinantDrift P γ (Geometry.explicitRoundedGrid jStar (explicitCanonicalMetric F)) jStar t :=
+      determinantDrift P γ (Geometry.explicitRoundedGrid jStar (explicitCanonicalMetric F))
+        jStar t :=
     determinantDrift_nonneg d hd γ P E Ψ Kg Src inferInstance hstat hunit hdag jStar hj
       (explicitCanonicalMetric F) hm t
   have hw0 : (0 : ℝ) ≤ C₀ * Cn / Cs * η ^ ((1 : ℝ) / (bigQ d γ : ℝ)) * X a :=

@@ -55,6 +55,8 @@ corollary `of_aHarmonicFunction`, lives downstream in
 (where the `H1Function` and `AHarmonicFunction` types are in scope).
 -/
 
+/-- The L² oscillation of `u` on each descendant through depth `M` is bounded by `C` times the sum
+of the dual mean-zero seminorms of the projected components of `G`. -/
 @[expose]
 def CubeDescendantProjectedDualMeanZeroVectorPoincareEstimate
     (Q : TriadicCube d) (C : ℝ) (u : Vec d → ℝ)

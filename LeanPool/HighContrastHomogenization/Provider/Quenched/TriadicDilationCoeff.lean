@@ -43,6 +43,7 @@ theorem quasiMeasurePreserving_const_smul (r : ℝ) (hr : r ≠ 0) :
     Measure.QuasiMeasurePreserving (fun x : Vec d => r • x) volume volume :=
   Measure.quasiMeasurePreserving_smul volume hr
 
+/-- Pullback of a locally elliptic coefficient class by the nonzero dilation `x ↦ r • x`. -/
 @[expose]
 public noncomputable def scalarPullback (r : ℝ) (hr : r ≠ 0)
     (a : CoeffSpace d) : CoeffSpace d where

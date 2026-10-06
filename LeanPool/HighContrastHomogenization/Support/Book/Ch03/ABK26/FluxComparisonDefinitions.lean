@@ -145,7 +145,8 @@ noncomputable def centeredCubeFluxDifferenceL2Field {d : ℕ}
     matVecMul (a.toCoeffField x) (u.grad x) - sigma0 • v.grad x
   euclideanMemLp := by
     apply memLp_hilbertify_normalizedCube_of_memVectorL2_fluxComparisonDefinitions
-    exact (memVectorL2_matVecMul_pointwiseCoeffOn_fluxComparisonDefinitions (originCube d m) a u).sub
+    exact (memVectorL2_matVecMul_pointwiseCoeffOn_fluxComparisonDefinitions (originCube d m) a
+      u).sub
       (v.grad_memVectorL2.const_smul sigma0)
 
 /-- The local scalar-comparator flux defect on a descendant. -/

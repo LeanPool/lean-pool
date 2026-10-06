@@ -58,6 +58,254 @@ private theorem outer_pair_restrict_gap_three
   simpa only [innerFiniteGradientClass, innerFiniteFluxClass,
     mul_add] using add_le_add hgrad hflux
 
+private theorem outer_finite_dual_rows_le_power_rate
+    {d : ℕ} [NeZero d] (g c kappa x Cfinite : ℝ)
+    (hc : c ∈ Ioo (0 : ℝ) 1) (hKappa : 0 < kappa) (hx : 0 < x)
+    (hCfinite : 0 ≤ Cfinite)
+    (aIdentity : Book.Ch03.CoeffFamily d)
+    (hPower : ScalarIdentityPowerTail aIdentity (printCertificateOrder g)
+      (correctorTargetAmplitude c kappa) kappa x)
+    (hfinite : ∀ (a : Book.Ch03.CoeffFamily d) (m : ℤ) (e : Vec d),
+      scalarIdentityWeakError a (printCertificateOrder g) m ≤ 1 →
+      cubeScaleNormalizedDualNegativeBesovVectorNormTwo (originCube d m)
+          (printCertificateOrder g)
+          (fun y ↦ (finiteAffineSolution a m e).toH1.grad y - e) ≤
+        Cfinite * scalarIdentityWeakError a (printCertificateOrder g) m * euclideanNorm e ∧
+      cubeScaleNormalizedDualNegativeBesovVectorNormTwo (originCube d m)
+          (printCertificateOrder g)
+          (fun y ↦ matVecMul (Book.Ch03.publicCoeffField (originCube d m) a y)
+            ((finiteAffineSolution a m e).toH1.grad y) - e) ≤
+        Cfinite * scalarIdentityWeakError a (printCertificateOrder g) m * euclideanNorm e)
+    (e : Vec d) (q : ℕ) (hxq : x ≤ (3 : ℝ) ^ q)
+    (hdeltaLt : (c / 2) * ((((3 : ℝ) ^ q) / x) ^ (-kappa)) < c) :
+    let rate := (((3 : ℝ) ^ q) / x) ^ (-kappa)
+    cubeScaleNormalizedDualNegativeBesovVectorNormTwo
+        (originCube d ((q + 3 : ℕ) : ℤ)) (printCertificateOrder g)
+        (fun y ↦ (outerFiniteGradientClass aIdentity e ((q + 3 : ℕ) : ℤ) y).toVec) ≤
+      Cfinite * rate * euclideanNorm e ∧
+    cubeScaleNormalizedDualNegativeBesovVectorNormTwo
+        (originCube d ((q + 3 : ℕ) : ℤ)) (printCertificateOrder g)
+        (fun y ↦ (outerFiniteFluxClass aIdentity e ((q + 3 : ℕ) : ℤ) y).toVec) ≤
+      Cfinite * rate * euclideanNorm e := by
+  let rate : ℝ := (((3 : ℝ) ^ q) / x) ^ (-kappa)
+  let delta : ℝ := (c / 2) * rate
+  let m : ℕ := q + 3
+  have hscalePos : 0 < ((3 : ℝ) ^ q) / x := by positivity
+  have hratePos : 0 < rate := Real.rpow_pos_of_pos hscalePos _
+  have hxM : x ≤ (3 : ℝ) ^ m := by
+    calc
+      x ≤ (3 : ℝ) ^ q := hxq
+      _ ≤ (3 : ℝ) ^ m := by
+        exact pow_le_pow_right₀ (by norm_num) (by simp [m])
+  have hPowerM := hPower (m : ℤ)
+    (by simpa only [zpow_natCast] using hxM)
+  have hTargetRateM : correctorTargetAmplitude c kappa *
+      (((3 : ℝ) ^ m) / x) ^ (-kappa) ≤ delta := by
+    have hratioMono : ((3 : ℝ) ^ q) / x ≤ ((3 : ℝ) ^ m) / x := by
+      exact div_le_div_of_nonneg_right
+        (pow_le_pow_right₀ (by norm_num) (by simp [m])) hx.le
+    have hpowMono : (((3 : ℝ) ^ m) / x) ^ (-kappa) ≤ rate := by
+      dsimp only [rate]
+      exact Real.rpow_le_rpow_of_nonpos hscalePos hratioMono
+        (by linarith only [hKappa])
+    rw [correctorTargetAmplitude]
+    have hpow : (3 : ℝ) ^ (-kappa) < 1 :=
+      Real.rpow_lt_one_of_one_lt_of_neg (by norm_num)
+        (neg_neg_of_pos hKappa)
+    have hfactorOne : 1 - (3 : ℝ) ^ (-kappa) ≤ 1 :=
+      sub_le_self _ (Real.rpow_nonneg (by norm_num) _)
+    calc
+      (c / 2 * (1 - (3 : ℝ) ^ (-kappa))) *
+          (((3 : ℝ) ^ m) / x) ^ (-kappa) ≤
+        (c / 2) * (((3 : ℝ) ^ m) / x) ^ (-kappa) := by
+          exact mul_le_mul_of_nonneg_right
+            (by simpa only [mul_one] using
+              mul_le_mul_of_nonneg_left hfactorOne (half_pos hc.1).le)
+            (Real.rpow_nonneg (by positivity) _)
+      _ ≤ (c / 2) * rate :=
+        mul_le_mul_of_nonneg_left hpowMono (half_pos hc.1).le
+      _ = delta := rfl
+  have hweakM : scalarIdentityWeakError aIdentity
+      (printCertificateOrder g) (m : ℤ) ≤ 1 :=
+    hPowerM.trans (hTargetRateM.trans (hdeltaLt.le.trans hc.2.le))
+  have hfiniteRaw := hfinite aIdentity (m : ℤ) e hweakM
+  have hfiniteBound : Cfinite * scalarIdentityWeakError aIdentity
+      (printCertificateOrder g) (m : ℤ) * euclideanNorm e ≤
+      Cfinite * rate * euclideanNorm e := by
+    have hweakRate : scalarIdentityWeakError aIdentity
+        (printCertificateOrder g) (m : ℤ) ≤ rate := by
+      exact hPowerM.trans (hTargetRateM.trans
+        (by
+          dsimp only [delta]
+          have hcHalf : c / 2 ≤ 1 := by linarith only [hc.2]
+          exact mul_le_of_le_one_left hratePos.le hcHalf))
+    exact mul_le_mul_of_nonneg_right
+      (mul_le_mul_of_nonneg_left hweakRate hCfinite)
+      (euclideanNorm_nonneg e)
+  have hfiniteRows :
+      cubeScaleNormalizedDualNegativeBesovVectorNormTwo
+          (originCube d (m : ℤ)) (printCertificateOrder g)
+          (fun y ↦ (outerFiniteGradientClass
+            aIdentity e (m : ℤ) y).toVec) ≤
+        Cfinite * rate * euclideanNorm e ∧
+      cubeScaleNormalizedDualNegativeBesovVectorNormTwo
+          (originCube d (m : ℤ)) (printCertificateOrder g)
+          (fun y ↦ (outerFiniteFluxClass
+            aIdentity e (m : ℤ) y).toVec) ≤
+        Cfinite * rate * euclideanNorm e := by
+    constructor
+    · rw [normalizedDual_eq_of_ae_eq _
+          (outerFiniteGradient_toVec_ae aIdentity e (m : ℤ))]
+      exact hfiniteRaw.1.trans hfiniteBound
+    · rw [normalizedDual_eq_of_ae_eq _
+          (outerFiniteFlux_toVec_ae aIdentity e (m : ℤ))]
+      exact hfiniteRaw.2.trans hfiniteBound
+  exact hfiniteRows
+
+private theorem joint_negative_pair_le_finite_and_remainder_rates
+    {d : ℕ} [NeZero d] (aIdentity : Book.Ch03.CoeffFamily d)
+    (Phi : Vec d → NormalizedLocalH1Carrier d) (e : Vec d) (q : ℕ)
+    (Cdual : ℝ≥0∞) (Cfinite Cremainder Ctail rate : ℝ)
+    (hCfinite : 0 ≤ Cfinite) (hCremainder : 0 < Cremainder)
+    (hCtail : 0 < Ctail) (hratePos : 0 < rate)
+    (houterPair : triadicScaledNegOneNorm ((q + 3 : ℕ) : ℤ)
+          (outerFiniteGradientClass aIdentity e ((q + 3 : ℕ) : ℤ)) +
+        triadicScaledNegOneNorm ((q + 3 : ℕ) : ℤ)
+          (outerFiniteFluxClass aIdentity e ((q + 3 : ℕ) : ℤ)) ≤
+      Cdual * ENNReal.ofReal (Cfinite * rate * euclideanNorm e))
+    (hremPair : triadicScaledNegOneNorm (q : ℤ)
+          (jointGradientRemainderClass aIdentity Phi e q) +
+        triadicScaledNegOneNorm (q : ℤ)
+          (jointFluxRemainderClass aIdentity Phi e q) ≤
+      Cdual * ENNReal.ofReal ((2 * Cremainder * Ctail) * rate * euclideanNorm e)) :
+    triadicScaledNegOneNorm (q : ℤ)
+          (correctorGradientOnOriginCube Phi e (q : ℤ)) +
+        triadicScaledNegOneNorm (q : ℤ)
+          (scalarIdentityCorrectorFluxDefectOnOriginCube aIdentity Phi e (q : ℤ)) ≤
+      (1 + Cdual * (gapThreeNegOneRestrictionConstant d + 1) *
+        ENNReal.ofReal (Cfinite + 2 * Cremainder * Ctail)) *
+        ENNReal.ofReal (rate * euclideanNorm e) := by
+  let m : ℕ := q + 3
+  let Creal : ℝ := Cfinite + 2 * Cremainder * Ctail
+  let C : ℝ≥0∞ := 1 + Cdual *
+    (gapThreeNegOneRestrictionConstant d + 1) * ENNReal.ofReal Creal
+  have hinnerPair := outer_pair_restrict_gap_three aIdentity e q
+  have houterIndex : ((m : ℕ) : ℤ) = (q : ℤ) + 3 := by
+    simp only [m]
+    omega
+  rw [← houterIndex] at hinnerPair
+  have hjointGrad := triadicScaledNegOneNorm_add_le (q : ℤ)
+    (innerFiniteGradientClass aIdentity e q)
+    (jointGradientRemainderClass aIdentity Phi e q)
+  have hjointFlux := triadicScaledNegOneNorm_add_le (q : ℤ)
+    (innerFiniteFluxClass aIdentity e q)
+    (jointFluxRemainderClass aIdentity Phi e q)
+  have hjoint :
+      triadicScaledNegOneNorm (q : ℤ)
+            (correctorGradientOnOriginCube Phi e (q : ℤ)) +
+          triadicScaledNegOneNorm (q : ℤ)
+            (scalarIdentityCorrectorFluxDefectOnOriginCube
+              aIdentity Phi e (q : ℤ)) ≤
+        (gapThreeNegOneRestrictionConstant d *
+          (Cdual * ENNReal.ofReal
+            (Cfinite * rate * euclideanNorm e))) +
+        Cdual * ENNReal.ofReal
+          ((2 * Cremainder * Ctail) * rate * euclideanNorm e) := by
+    rw [correctorGradient_eq_innerFinite_add_remainder
+      aIdentity Phi e q,
+      correctorFlux_eq_innerFinite_add_remainder
+        aIdentity Phi e q]
+    calc
+      _ ≤ (triadicScaledNegOneNorm (q : ℤ)
+              (innerFiniteGradientClass aIdentity e q) +
+            triadicScaledNegOneNorm (q : ℤ)
+              (jointGradientRemainderClass aIdentity Phi e q)) +
+          (triadicScaledNegOneNorm (q : ℤ)
+              (innerFiniteFluxClass aIdentity e q) +
+            triadicScaledNegOneNorm (q : ℤ)
+              (jointFluxRemainderClass aIdentity Phi e q)) :=
+        add_le_add hjointGrad hjointFlux
+      _ = (triadicScaledNegOneNorm (q : ℤ)
+              (innerFiniteGradientClass aIdentity e q) +
+            triadicScaledNegOneNorm (q : ℤ)
+              (innerFiniteFluxClass aIdentity e q)) +
+          (triadicScaledNegOneNorm (q : ℤ)
+              (jointGradientRemainderClass aIdentity Phi e q) +
+            triadicScaledNegOneNorm (q : ℤ)
+              (jointFluxRemainderClass aIdentity Phi e q)) := by ring
+      _ ≤ gapThreeNegOneRestrictionConstant d *
+              (Cdual * ENNReal.ofReal
+                (Cfinite * rate * euclideanNorm e)) +
+            Cdual * ENNReal.ofReal
+              ((2 * Cremainder * Ctail) * rate * euclideanNorm e) :=
+        add_le_add (hinnerPair.trans (by
+          simpa only [mul_comm] using
+            mul_le_mul_left houterPair
+              (gapThreeNegOneRestrictionConstant d))) hremPair
+  have hcollapse :
+      gapThreeNegOneRestrictionConstant d *
+          (Cdual * ENNReal.ofReal
+            (Cfinite * rate * euclideanNorm e)) +
+        Cdual * ENNReal.ofReal
+          ((2 * Cremainder * Ctail) * rate * euclideanNorm e) ≤
+      C * ENNReal.ofReal (rate * euclideanNorm e) := by
+    have hrateNorm : 0 ≤ rate * euclideanNorm e :=
+      mul_nonneg hratePos.le (euclideanNorm_nonneg e)
+    have hfiniteOfReal : ENNReal.ofReal
+        (Cfinite * rate * euclideanNorm e) =
+        ENNReal.ofReal Cfinite * ENNReal.ofReal
+          (rate * euclideanNorm e) := by
+      rw [show Cfinite * rate * euclideanNorm e =
+        Cfinite * (rate * euclideanNorm e) by ring,
+        ENNReal.ofReal_mul hCfinite]
+    have hremOfReal : ENNReal.ofReal
+        ((2 * Cremainder * Ctail) * rate * euclideanNorm e) =
+        ENNReal.ofReal (2 * Cremainder * Ctail) *
+          ENNReal.ofReal (rate * euclideanNorm e) := by
+      rw [show (2 * Cremainder * Ctail) * rate * euclideanNorm e =
+        (2 * Cremainder * Ctail) * (rate * euclideanNorm e) by ring,
+        ENNReal.ofReal_mul
+          (mul_nonneg (mul_nonneg (by norm_num) hCremainder.le) hCtail.le)]
+    rw [hfiniteOfReal, hremOfReal]
+    have hcoeff : gapThreeNegOneRestrictionConstant d *
+          (Cdual * ENNReal.ofReal Cfinite) +
+        Cdual * ENNReal.ofReal (2 * Cremainder * Ctail) ≤ C := by
+      have hremCoeffNonneg : 0 ≤ 2 * Cremainder * Ctail :=
+        mul_nonneg (mul_nonneg (by norm_num) hCremainder.le) hCtail.le
+      have hfiniteReal : ENNReal.ofReal Cfinite ≤ ENNReal.ofReal Creal :=
+        ENNReal.ofReal_le_ofReal (by
+          dsimp only [Creal]
+          exact le_add_of_nonneg_right hremCoeffNonneg)
+      have hremReal : ENNReal.ofReal (2 * Cremainder * Ctail) ≤
+          ENNReal.ofReal Creal :=
+        ENNReal.ofReal_le_ofReal (by
+          dsimp only [Creal]
+          exact le_add_of_nonneg_left hCfinite)
+      calc
+        _ ≤ gapThreeNegOneRestrictionConstant d *
+              (Cdual * ENNReal.ofReal Creal) +
+            Cdual * ENNReal.ofReal Creal :=
+          add_le_add
+            (by
+              simpa only [mul_comm, mul_left_comm, mul_assoc] using
+                mul_le_mul_left (mul_le_mul_left hfiniteReal Cdual)
+                  (gapThreeNegOneRestrictionConstant d))
+            (by simpa only [mul_comm] using
+              mul_le_mul_left hremReal Cdual)
+        _ = Cdual * (gapThreeNegOneRestrictionConstant d + 1) *
+              ENNReal.ofReal Creal := by ring
+        _ ≤ C := by
+          dsimp only [C]
+          exact le_add_left le_rfl
+    calc
+      _ = (gapThreeNegOneRestrictionConstant d *
+              (Cdual * ENNReal.ofReal Cfinite) +
+            Cdual * ENNReal.ofReal (2 * Cremainder * Ctail)) *
+          ENNReal.ofReal (rate * euclideanNorm e) := by ring
+      _ ≤ C * ENNReal.ofReal (rate * euclideanNorm e) :=
+        mul_le_mul_left hcoeff _
+  exact hjoint.trans hcollapse
+
 /-- The exact identity-gauge joint corrector inherits the
 inverse-side-length normalized negative-one power rate.  The finite part is
 taken three generations out and restricted back before it is joined to the
@@ -233,74 +481,10 @@ theorem exists_identityGaugeJointScaledNegOnePowerConstant
           (jointFluxRemainder_toVec_ae
             aIdentity Phi hPhi e q)]
       exact hremRowsRaw.2
-  have hxM : x ≤ (3 : ℝ) ^ m := by
-    calc
-      x ≤ (3 : ℝ) ^ q := hxq
-      _ ≤ (3 : ℝ) ^ m := by
-        exact pow_le_pow_right₀ (by norm_num) (by simp [m])
-  have hPowerM := hPower (m : ℤ)
-    (by simpa only [zpow_natCast] using hxM)
-  have hTargetRateM : correctorTargetAmplitude c kappa *
-      (((3 : ℝ) ^ m) / x) ^ (-kappa) ≤ delta := by
-    have hratioMono : ((3 : ℝ) ^ q) / x ≤ ((3 : ℝ) ^ m) / x := by
-      exact div_le_div_of_nonneg_right
-        (pow_le_pow_right₀ (by norm_num) (by simp [m])) hx.le
-    have hpowMono : (((3 : ℝ) ^ m) / x) ^ (-kappa) ≤ rate := by
-      dsimp only [rate]
-      exact Real.rpow_le_rpow_of_nonpos hscalePos hratioMono
-        (by linarith only [hKappa])
-    rw [correctorTargetAmplitude]
-    have hpow : (3 : ℝ) ^ (-kappa) < 1 :=
-      Real.rpow_lt_one_of_one_lt_of_neg (by norm_num)
-        (neg_neg_of_pos hKappa)
-    have hfactorOne : 1 - (3 : ℝ) ^ (-kappa) ≤ 1 :=
-      sub_le_self _ (Real.rpow_nonneg (by norm_num) _)
-    calc
-      (c / 2 * (1 - (3 : ℝ) ^ (-kappa))) *
-          (((3 : ℝ) ^ m) / x) ^ (-kappa) ≤
-        (c / 2) * (((3 : ℝ) ^ m) / x) ^ (-kappa) := by
-          exact mul_le_mul_of_nonneg_right
-            (by simpa only [mul_one] using
-              mul_le_mul_of_nonneg_left hfactorOne (half_pos hc.1).le)
-            (Real.rpow_nonneg (by positivity) _)
-      _ ≤ (c / 2) * rate :=
-        mul_le_mul_of_nonneg_left hpowMono (half_pos hc.1).le
-      _ = delta := rfl
-  have hweakM : scalarIdentityWeakError aIdentity
-      (printCertificateOrder g) (m : ℤ) ≤ 1 :=
-    hPowerM.trans (hTargetRateM.trans (hdeltaLt.le.trans hc.2.le))
-  have hfiniteRaw := hfinite aIdentity (m : ℤ) e hweakM
-  have hfiniteBound : Cfinite * scalarIdentityWeakError aIdentity
-      (printCertificateOrder g) (m : ℤ) * euclideanNorm e ≤
-      Cfinite * rate * euclideanNorm e := by
-    have hweakRate : scalarIdentityWeakError aIdentity
-        (printCertificateOrder g) (m : ℤ) ≤ rate := by
-      exact hPowerM.trans (hTargetRateM.trans
-        (by
-          dsimp only [delta]
-          have hcHalf : c / 2 ≤ 1 := by linarith only [hc.2]
-          exact mul_le_of_le_one_left hratePos.le hcHalf))
-    exact mul_le_mul_of_nonneg_right
-      (mul_le_mul_of_nonneg_left hweakRate hCfinite)
-      (euclideanNorm_nonneg e)
-  have hfiniteRows :
-      cubeScaleNormalizedDualNegativeBesovVectorNormTwo
-          (originCube d (m : ℤ)) (printCertificateOrder g)
-          (fun y ↦ (outerFiniteGradientClass
-            aIdentity e (m : ℤ) y).toVec) ≤
-        Cfinite * rate * euclideanNorm e ∧
-      cubeScaleNormalizedDualNegativeBesovVectorNormTwo
-          (originCube d (m : ℤ)) (printCertificateOrder g)
-          (fun y ↦ (outerFiniteFluxClass
-            aIdentity e (m : ℤ) y).toVec) ≤
-        Cfinite * rate * euclideanNorm e := by
-    constructor
-    · rw [normalizedDual_eq_of_ae_eq _
-          (outerFiniteGradient_toVec_ae aIdentity e (m : ℤ))]
-      exact hfiniteRaw.1.trans hfiniteBound
-    · rw [normalizedDual_eq_of_ae_eq _
-          (outerFiniteFlux_toVec_ae aIdentity e (m : ℤ))]
-      exact hfiniteRaw.2.1.trans hfiniteBound
+  have hfiniteRows := outer_finite_dual_rows_le_power_rate g c kappa x Cfinite
+    hc hKappa hx hCfinite aIdentity hPower
+    (fun a m e hweak ↦ ⟨(hfinite a m e hweak).1, (hfinite a m e hweak).2.1⟩)
+    e q hxq hdeltaLt
   have houterPair := hdualRows (m : ℤ)
     (outerFiniteGradientClass aIdentity e (m : ℤ))
     (outerFiniteFluxClass aIdentity e (m : ℤ))
@@ -310,122 +494,9 @@ theorem exists_identityGaugeJointScaledNegOnePowerConstant
     (jointFluxRemainderClass aIdentity Phi e q)
     ((2 * Cremainder * Ctail) * rate * euclideanNorm e)
     hremRows.1 hremRows.2
-  have hinnerPair := outer_pair_restrict_gap_three aIdentity e q
-  have houterIndex : ((m : ℕ) : ℤ) = (q : ℤ) + 3 := by
-    simp only [m]
-    omega
-  rw [← houterIndex] at hinnerPair
-  have hjointGrad := triadicScaledNegOneNorm_add_le (q : ℤ)
-    (innerFiniteGradientClass aIdentity e q)
-    (jointGradientRemainderClass aIdentity Phi e q)
-  have hjointFlux := triadicScaledNegOneNorm_add_le (q : ℤ)
-    (innerFiniteFluxClass aIdentity e q)
-    (jointFluxRemainderClass aIdentity Phi e q)
-  have hjoint :
-      triadicScaledNegOneNorm (q : ℤ)
-            (correctorGradientOnOriginCube Phi e (q : ℤ)) +
-          triadicScaledNegOneNorm (q : ℤ)
-            (scalarIdentityCorrectorFluxDefectOnOriginCube
-              aIdentity Phi e (q : ℤ)) ≤
-        (gapThreeNegOneRestrictionConstant d *
-          (Cdual * ENNReal.ofReal
-            (Cfinite * rate * euclideanNorm e))) +
-        Cdual * ENNReal.ofReal
-          ((2 * Cremainder * Ctail) * rate * euclideanNorm e) := by
-    rw [correctorGradient_eq_innerFinite_add_remainder
-      aIdentity Phi e q,
-      correctorFlux_eq_innerFinite_add_remainder
-        aIdentity Phi e q]
-    calc
-      _ ≤ (triadicScaledNegOneNorm (q : ℤ)
-              (innerFiniteGradientClass aIdentity e q) +
-            triadicScaledNegOneNorm (q : ℤ)
-              (jointGradientRemainderClass aIdentity Phi e q)) +
-          (triadicScaledNegOneNorm (q : ℤ)
-              (innerFiniteFluxClass aIdentity e q) +
-            triadicScaledNegOneNorm (q : ℤ)
-              (jointFluxRemainderClass aIdentity Phi e q)) :=
-        add_le_add hjointGrad hjointFlux
-      _ = (triadicScaledNegOneNorm (q : ℤ)
-              (innerFiniteGradientClass aIdentity e q) +
-            triadicScaledNegOneNorm (q : ℤ)
-              (innerFiniteFluxClass aIdentity e q)) +
-          (triadicScaledNegOneNorm (q : ℤ)
-              (jointGradientRemainderClass aIdentity Phi e q) +
-            triadicScaledNegOneNorm (q : ℤ)
-              (jointFluxRemainderClass aIdentity Phi e q)) := by ring
-      _ ≤ gapThreeNegOneRestrictionConstant d *
-              (Cdual * ENNReal.ofReal
-                (Cfinite * rate * euclideanNorm e)) +
-            Cdual * ENNReal.ofReal
-              ((2 * Cremainder * Ctail) * rate * euclideanNorm e) :=
-        add_le_add (hinnerPair.trans (by
-          simpa only [mul_comm] using
-            mul_le_mul_left houterPair
-              (gapThreeNegOneRestrictionConstant d))) hremPair
-  have hcollapse :
-      gapThreeNegOneRestrictionConstant d *
-          (Cdual * ENNReal.ofReal
-            (Cfinite * rate * euclideanNorm e)) +
-        Cdual * ENNReal.ofReal
-          ((2 * Cremainder * Ctail) * rate * euclideanNorm e) ≤
-      C * ENNReal.ofReal (rate * euclideanNorm e) := by
-    have hrateNorm : 0 ≤ rate * euclideanNorm e :=
-      mul_nonneg hratePos.le (euclideanNorm_nonneg e)
-    have hfiniteOfReal : ENNReal.ofReal
-        (Cfinite * rate * euclideanNorm e) =
-        ENNReal.ofReal Cfinite * ENNReal.ofReal
-          (rate * euclideanNorm e) := by
-      rw [show Cfinite * rate * euclideanNorm e =
-        Cfinite * (rate * euclideanNorm e) by ring,
-        ENNReal.ofReal_mul hCfinite]
-    have hremOfReal : ENNReal.ofReal
-        ((2 * Cremainder * Ctail) * rate * euclideanNorm e) =
-        ENNReal.ofReal (2 * Cremainder * Ctail) *
-          ENNReal.ofReal (rate * euclideanNorm e) := by
-      rw [show (2 * Cremainder * Ctail) * rate * euclideanNorm e =
-        (2 * Cremainder * Ctail) * (rate * euclideanNorm e) by ring,
-        ENNReal.ofReal_mul
-          (mul_nonneg (mul_nonneg (by norm_num) hCremainder.le) hCtail.le)]
-    rw [hfiniteOfReal, hremOfReal]
-    have hcoeff : gapThreeNegOneRestrictionConstant d *
-          (Cdual * ENNReal.ofReal Cfinite) +
-        Cdual * ENNReal.ofReal (2 * Cremainder * Ctail) ≤ C := by
-      have hremCoeffNonneg : 0 ≤ 2 * Cremainder * Ctail :=
-        mul_nonneg (mul_nonneg (by norm_num) hCremainder.le) hCtail.le
-      have hfiniteReal : ENNReal.ofReal Cfinite ≤ ENNReal.ofReal Creal :=
-        ENNReal.ofReal_le_ofReal (by
-          dsimp only [Creal]
-          exact le_add_of_nonneg_right hremCoeffNonneg)
-      have hremReal : ENNReal.ofReal (2 * Cremainder * Ctail) ≤
-          ENNReal.ofReal Creal :=
-        ENNReal.ofReal_le_ofReal (by
-          dsimp only [Creal]
-          exact le_add_of_nonneg_left hCfinite)
-      calc
-        _ ≤ gapThreeNegOneRestrictionConstant d *
-              (Cdual * ENNReal.ofReal Creal) +
-            Cdual * ENNReal.ofReal Creal :=
-          add_le_add
-            (by
-              simpa only [mul_comm, mul_left_comm, mul_assoc] using
-                mul_le_mul_left (mul_le_mul_left hfiniteReal Cdual)
-                  (gapThreeNegOneRestrictionConstant d))
-            (by simpa only [mul_comm] using
-              mul_le_mul_left hremReal Cdual)
-        _ = Cdual * (gapThreeNegOneRestrictionConstant d + 1) *
-              ENNReal.ofReal Creal := by ring
-        _ ≤ C := by
-          dsimp only [C]
-          exact le_add_left le_rfl
-    calc
-      _ = (gapThreeNegOneRestrictionConstant d *
-              (Cdual * ENNReal.ofReal Cfinite) +
-            Cdual * ENNReal.ofReal (2 * Cremainder * Ctail)) *
-          ENNReal.ofReal (rate * euclideanNorm e) := by ring
-      _ ≤ C * ENNReal.ofReal (rate * euclideanNorm e) :=
-        mul_le_mul_left hcoeff _
-  exact hjoint.trans hcollapse
+  exact joint_negative_pair_le_finite_and_remainder_rates
+    aIdentity Phi e q Cdual Cfinite Cremainder Ctail rate
+    hCfinite hCremainder hCtail hratePos houterPair hremPair
 
 end
 

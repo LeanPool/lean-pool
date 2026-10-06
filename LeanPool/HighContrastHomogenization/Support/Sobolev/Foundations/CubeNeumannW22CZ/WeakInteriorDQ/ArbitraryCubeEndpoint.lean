@@ -76,7 +76,7 @@ theorem originCubeWeakInteriorDepthConstantExact_eq_unit (d : ℕ) (m : ℤ) :
     MeanZeroNeumannPoissonSolution.originCubeParentReducedSolverEnergyConstantExact d 0
   have hcancel : A * K = K₀ := by
     simpa [A, K, K₀, V] using
-      MeanZeroNeumannPoissonSolution.originCubeParentReducedSolverEnergyConstantExact_volume_cancel d m
+      MeanZeroNeumannPoissonSolution.parentSolverEnergyConstant_volumeCancel d m
   have h0vol : cubeVolume (originCube d 0) = 1 := by
     simp [cubeVolume_eq_scaleFactor_pow]
   have h0 :
@@ -165,7 +165,7 @@ theorem exists_hasWeakHessianOn_cube_hessianCoordL2NormSum_le_solverEnergyBound
     dsimp [Q₀, F₀, z]
     rw [cubeAverage_originCube_comp_addRight_eq Q F, hmean]
   rcases
-    W₀.exists_hasWeakHessianOn_originCube_canonicalRadii_hessianCoordL2NormSum_le_solverEnergyBoundExact
+    W₀.exists_reflected_parent_weakHessian_energyBound
       hmean₀ hF₀ with
     ⟨_uP, _huP_toFun, _huP_grad, H₀, hH₀⟩
   have hU : openCubeSet Q = translateSet z (openCubeSet Q₀) := by

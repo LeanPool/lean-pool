@@ -493,12 +493,14 @@ theorem openCubeSetScalarDivergenceSolution_normalized_weak
         ((ENNReal.ofReal ((cubeVolume (originCube d m))⁻¹)).toReal *
           ∫ x in openCubeSet (originCube d m),
             vecDot
-              ((openCubeSetScalarDivergenceSolution (originCube d m) hsigma0 G hG).toH1Function.grad x)
+              ((openCubeSetScalarDivergenceSolution (originCube d m) hsigma0 G
+                hG).toH1Function.grad x)
               (psi.toH1Function.grad x) ∂volume) =
         (ENNReal.ofReal ((cubeVolume (originCube d m))⁻¹)).toReal *
           (sigma0 * ∫ x in openCubeSet (originCube d m),
             vecDot
-              ((openCubeSetScalarDivergenceSolution (originCube d m) hsigma0 G hG).toH1Function.grad x)
+              ((openCubeSetScalarDivergenceSolution (originCube d m) hsigma0 G
+                hG).toH1Function.grad x)
               (psi.toH1Function.grad x) ∂volume) := by
           ring
     _ = (ENNReal.ofReal ((cubeVolume (originCube d m))⁻¹)).toReal *

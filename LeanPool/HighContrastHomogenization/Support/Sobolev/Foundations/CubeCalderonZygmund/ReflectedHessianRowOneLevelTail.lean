@@ -145,7 +145,7 @@ private theorem integral_sqNorm_reflectedHessianRow_parent_le
     _ = (3 : ℝ) ^ d *
         ∫ x in openCubeSet (originCube d m), vecDot (R x) (R x)
           ∂volume :=
-      setIntegral_openCubeSet_succ_originCube_cubeDirichletOddReflectionVectorField_self_pairing_of_memVectorL2_three_pow
+      setIntegral_successorCube_dirichletOddReflectedVectorField_self_pairing
         hR
     _ = (3 : ℝ) ^ d *
         ∫ x in openCubeSet (originCube d m),
@@ -290,8 +290,97 @@ private theorem integral_sqNorm_openParentDatumExtension_single_le
     _ = (3 : ℝ) ^ d *
         ∫ x in openCubeSet (originCube d m), F x * F x ∂volume := by
       simpa only [P, FR] using
-        setIntegral_openCubeSet_succ_originCube_cubeDirichletOddReflectionScalar_sq_of_memScalarL2_three_pow
+        oddReflectionScalar_sqIntegral_scale_of_L2
           hF
+
+private theorem origin_cube_subset_inner_half_parent (d : ℕ) (m : ℤ) :
+    openCubeSet (originCube d m) ⊆
+      scaledOpenCubeSet (originCube d (m + 1)) (1 / 2 : ℝ) := by
+  change openCubeSet (originCube d m) ⊆
+    scaledOpenCubeSet (originCube d (m + 1)) (1 / 2 : ℝ)
+  rw [← scaledOpenCubeSet_originCube_succ_one_div_three]
+  intro x hx j
+  have hxj := hx j
+  change |x j - cubeCenter (originCube d (m + 1)) j| <
+    (1 / 2 : ℝ) * cubeRadius (originCube d (m + 1))
+  change |x j - cubeCenter (originCube d (m + 1)) j| <
+    (1 / 3 : ℝ) * cubeRadius (originCube d (m + 1)) at hxj
+  nlinarith [cubeRadius_pos (originCube d (m + 1))]
+
+private theorem reflected_single_coordinate_datum_tail_le
+    {d : ℕ} [NeZero d] {m : ℤ} (i : Fin d) (F : Vec d → ℝ)
+    (hFmeas : AEStronglyMeasurable F
+      (volume.restrict (openCubeSet (originCube d m)))) (a : ℝ) :
+    sqWeightedMeasure
+        (hilbertifyVecField (openParentDatumExtension
+          (scaledOpenCubeSet (originCube d (m + 1)) (1 / 2 : ℝ))
+          (fun x j ↦ if j = i then
+            cubeDirichletOddReflectionScalar (originCube d m) F x else 0))) volume
+        ({x | a < ‖hilbertifyVecField (openParentDatumExtension
+          (scaledOpenCubeSet (originCube d (m + 1)) (1 / 2 : ℝ))
+          (fun y j ↦ if j = i then
+            cubeDirichletOddReflectionScalar (originCube d m) F y else 0)) x‖} ∩
+          scaledOpenCubeSet (originCube d (m + 1)) (1 / 2 : ℝ)) ≤
+      ((3 : ℝ≥0∞) ^ d) * sqWeightedMeasure F volume
+        ({x | a < ‖F x‖} ∩ openCubeSet (originCube d m)) := by
+  classical
+  let Q : Set (Vec d) := openCubeSet (originCube d m)
+  let U : Set (Vec d) := scaledOpenCubeSet (originCube d (m + 1)) (1 / 2 : ℝ)
+  let FR : Vec d → ℝ := cubeDirichletOddReflectionScalar (originCube d m) F
+  let datum : Vec d → Vec d := fun x j ↦ if j = i then FR x else 0
+  have hUopen : IsOpen U :=
+    (isOpenBoundedConvexDomain_scaledOpenCubeSet_of_pos
+      (originCube d (m + 1)) (by norm_num : 0 < (1 / 2 : ℝ))).isOpen
+  have hindicator := sqWeightedMeasure_indicator_tail_inter_eq_of_subset
+    (μ := volume) (U := U) (B := U) (f := hilbertifyVecField datum)
+    (a := a) hUopen.measurableSet hUopen.measurableSet
+    (fun _ hx ↦ hx)
+  have hdatumPoint (x : Vec d) : datum x = Pi.single i (FR x) := by
+    funext j
+    by_cases hji : j = i
+    · subst j
+      simp [datum]
+    · simp [datum, hji]
+  have hnorm : ∀ x, ‖(hilbertifyVecField datum) x‖ = ‖FR x‖ := by
+    intro x
+    change ‖HilbertVec.ofVec (datum x)‖ = ‖FR x‖
+    rw [hdatumPoint]
+    exact PiLp.norm_single (2 : ℝ≥0∞) (fun _ : Fin d => ℝ) i (FR x)
+  have hmeasure : sqWeightedMeasure (hilbertifyVecField datum) volume =
+      sqWeightedMeasure FR volume := by
+    apply MeasureTheory.withDensity_congr_ae
+    filter_upwards with x
+    rw [hnorm x]
+  have htail : {x | a < ‖(hilbertifyVecField datum) x‖} =
+      {x | a < ‖FR x‖} := by
+    ext x
+    simp only [Set.mem_ofPred_eq]
+    rw [hnorm x]
+  have hindicator' :
+      sqWeightedMeasure
+          (hilbertifyVecField (openParentDatumExtension U datum)) volume
+          ({x | a <
+            ‖hilbertifyVecField (openParentDatumExtension U datum) x‖} ∩ U) =
+        sqWeightedMeasure (hilbertifyVecField datum) volume
+          ({x | a < ‖hilbertifyVecField datum x‖} ∩ U) := by
+    rw [hilbertifyVecField_openParentDatumExtension]
+    exact hindicator
+  calc
+    sqWeightedMeasure
+        (hilbertifyVecField (openParentDatumExtension U datum)) volume
+        ({x | a <
+          ‖hilbertifyVecField (openParentDatumExtension U datum) x‖} ∩ U) =
+      sqWeightedMeasure (hilbertifyVecField datum) volume
+        ({x | a < ‖hilbertifyVecField datum x‖} ∩ U) :=
+      hindicator'
+    _ = sqWeightedMeasure FR volume
+        ({x | a < ‖FR x‖} ∩ U) := by
+      rw [hmeasure, htail]
+    _ ≤ ((3 : ℝ≥0∞) ^ d) * sqWeightedMeasure F volume
+        ({x | a < ‖F x‖} ∩ Q) := by
+      simpa only [U, Q, FR] using
+        (sqWeightedMeasure_innerHalf_succ_originCube_cubeDirichletOddReflectionScalar_tail_le
+          F hFmeas (a := a))
 
 /-- The global source-cube one-level good-`lambda` estimate for every Hessian
 row of a scalar Dirichlet Poisson solution. All weak Hessians, reflected
@@ -357,17 +446,7 @@ theorem exists_hasWeakHessianOn_sqWeightedMeasure_oneLevel_tail_originCube
       (by norm_num : (1 / 2 : ℝ) < 1)
     intro j
     exact le_of_lt (hx j)
-  have hQU : Q ⊆ U := by
-    change openCubeSet (originCube d m) ⊆
-      scaledOpenCubeSet (originCube d (m + 1)) (1 / 2 : ℝ)
-    rw [← scaledOpenCubeSet_originCube_succ_one_div_three]
-    intro x hx j
-    have hxj := hx j
-    change |x j - cubeCenter (originCube d (m + 1)) j| <
-      (1 / 2 : ℝ) * cubeRadius (originCube d (m + 1))
-    change |x j - cubeCenter (originCube d (m + 1)) j| <
-      (1 / 3 : ℝ) * cubeRadius (originCube d (m + 1)) at hxj
-    nlinarith [cubeRadius_pos (originCube d (m + 1))]
+  have hQU : Q ⊆ U := origin_cube_subset_inner_half_parent d m
   have hFopen : MemScalarL2 Q F := by
     simpa only [Q] using
       memL2On_openCubeSet_of_memLp_normalizedCubeMeasure
@@ -492,57 +571,8 @@ theorem exists_hasWeakHessianOn_sqWeightedMeasure_oneLevel_tail_originCube
               (openParentDatumExtension U datum)) x‖} ∩ U) ≤
         ((3 : ℝ≥0∞) ^ d) * sqWeightedMeasure F volume
           ({x | eps * level / 2 < ‖F x‖} ∩ Q) := by
-    have hindicator := sqWeightedMeasure_indicator_tail_inter_eq_of_subset
-      (μ := volume) (U := U) (B := U) (f := hilbertifyVecField datum)
-      (a := eps * level / 2) hUopen.measurableSet hUopen.measurableSet
-      (fun _ hx ↦ hx)
-    have hdatumPoint (x : Vec d) : datum x = Pi.single i (FR x) := by
-      funext j
-      by_cases hji : j = i
-      · subst j
-        simp [datum]
-      · simp [datum, hji]
-    have hnorm : ∀ x, ‖(hilbertifyVecField datum) x‖ = ‖FR x‖ := by
-      intro x
-      change ‖HilbertVec.ofVec (datum x)‖ = ‖FR x‖
-      rw [hdatumPoint]
-      exact PiLp.norm_single (2 : ℝ≥0∞) (fun _ : Fin d => ℝ) i (FR x)
-    have hmeasure : sqWeightedMeasure (hilbertifyVecField datum) volume =
-        sqWeightedMeasure FR volume := by
-      apply MeasureTheory.withDensity_congr_ae
-      filter_upwards with x
-      rw [hnorm x]
-    have htail : {x | eps * level / 2 < ‖(hilbertifyVecField datum) x‖} =
-        {x | eps * level / 2 < ‖FR x‖} := by
-      ext x
-      simp only [Set.mem_ofPred_eq]
-      rw [hnorm x]
-    have hindicator' :
-        sqWeightedMeasure
-            (hilbertifyVecField (openParentDatumExtension U datum)) volume
-            ({x | eps * level / 2 <
-              ‖hilbertifyVecField (openParentDatumExtension U datum) x‖} ∩ U) =
-          sqWeightedMeasure (hilbertifyVecField datum) volume
-            ({x | eps * level / 2 < ‖hilbertifyVecField datum x‖} ∩ U) := by
-      rw [hilbertifyVecField_openParentDatumExtension]
-      exact hindicator
-    simp only [inv_one, one_smul]
-    calc
-      sqWeightedMeasure
-          (hilbertifyVecField (openParentDatumExtension U datum)) volume
-          ({x | eps * level / 2 <
-            ‖hilbertifyVecField (openParentDatumExtension U datum) x‖} ∩ U) =
-        sqWeightedMeasure (hilbertifyVecField datum) volume
-          ({x | eps * level / 2 < ‖hilbertifyVecField datum x‖} ∩ U) :=
-        hindicator'
-      _ = sqWeightedMeasure FR volume
-          ({x | eps * level / 2 < ‖FR x‖} ∩ U) := by
-        rw [hmeasure, htail]
-      _ ≤ ((3 : ℝ≥0∞) ^ d) * sqWeightedMeasure F volume
-          ({x | eps * level / 2 < ‖F x‖} ∩ Q) := by
-        simpa only [U, Q, FR] using
-          (sqWeightedMeasure_innerHalf_succ_originCube_cubeDirichletOddReflectionScalar_tail_le
-            F hFmeas (a := eps * level / 2))
+    simpa only [inv_one, one_smul, U, datum, FR, Q] using
+      reflected_single_coordinate_datum_tail_le i F hFmeas (eps * level / 2)
   calc
     sqWeightedMeasure row volume
         ({x | M * level < ‖row x‖} ∩ Q) =

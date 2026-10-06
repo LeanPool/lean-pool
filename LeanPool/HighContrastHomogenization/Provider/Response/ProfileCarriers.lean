@@ -187,7 +187,7 @@ def nonlinearAverageWindowCoefficient (H : ℕ) (a Q : ℝ) : ℝ :=
   ∑ r ∈ Finset.Icc 1 H,
     (3 : ℝ) ^ (-a * (r : ℝ) + a * ((r : ℝ) - 1) / (2 * Q))
 
-/-- The constant contribution `c_const = (1 - 3⁻¹˲²)⁻¹`. -/
+/-- The constant contribution `c_const = (1 - 3⁻¹_right²)⁻¹`. -/
 @[expose]
 def constantSeminormCoefficient : ℝ :=
   (1 - (3 : ℝ) ^ (-(1 : ℝ) / 2))⁻¹
@@ -197,7 +197,7 @@ theorem constantSeminormCoefficient_eq :
     constantSeminormCoefficient =
       (1 - (3 : ℝ) ^ (-(1 : ℝ) / 2))⁻¹ := rfl
 
-/-- The response-energy load `Λ_t = ((L_t)^2 + |p·q|)¹˲²`. -/
+/-- The response-energy load `Λ_t = ((L_t)^2 + |p·q|)¹_right²`. -/
 @[expose]
 def profileEnergyLoad (L : ℝ) (p q : Vec d) : ℝ :=
   Real.sqrt (L ^ 2 + |vecDot p q|)

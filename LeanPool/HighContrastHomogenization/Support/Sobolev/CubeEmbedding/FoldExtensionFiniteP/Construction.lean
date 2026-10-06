@@ -241,7 +241,8 @@ def foldExtensionFiniteP {m : ℕ} (lo hi : Vec (m + 1)) (hlt : ∀ k, lo k < hi
             ≤ Cd * eLpNorm (fun y => fderiv ℝ (wn n) y (basisVec i) - gi i y)
               p.exponent (volume.restrict (Box lo hi)) :=
               eLpNorm_foldComp_mul_foldSign_le_finiteLp p
-                ((((hw_smooth n).of_le (by exact_mod_cast le_top) : ContDiff ℝ 1 (wn n)).continuous_fderiv
+                ((((hw_smooth n).of_le (by exact_mod_cast le_top) : ContDiff ℝ 1 (wn
+                  n)).continuous_fderiv
                   (by simp)).clm_apply continuous_const |>.measurable.sub (hgi_meas i)) lo hi hlt i
         _ = Cd * eLpNorm (fun x => (A n).grad x i - u.grad x i) p.exponent
               (volume.restrict (Box lo hi)) := by

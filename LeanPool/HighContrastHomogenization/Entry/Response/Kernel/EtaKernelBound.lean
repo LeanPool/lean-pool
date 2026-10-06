@@ -125,16 +125,20 @@ theorem integral_recentDefect_sq_le_minus (d : ℕ) (hd : 2 ≤ d) (γ : ℝ)
   have _hCc_unused := hCc
   refine ⟨fun n => ((3 : ℝ) ^ (Quenched.contrastRho γ * (n : ℝ)) + 1) ^ 2 *
       Cm ^ ((2 : ℝ) / (bigQ d γ : ℝ)), fun n => ?_, ?_⟩
-  · show (0 : ℝ) < ((3 : ℝ) ^ (Quenched.contrastRho γ * (n : ℝ)) + 1) ^ 2 * Cm ^ ((2 : ℝ) / (bigQ d γ : ℝ))
-    have h1 : (0 : ℝ) < (3 : ℝ) ^ (Quenched.contrastRho γ * (n : ℝ)) := Real.rpow_pos_of_pos (by norm_num) _
+  · show (0 : ℝ) < ((3 : ℝ) ^ (Quenched.contrastRho γ * (n : ℝ)) + 1) ^ 2 * Cm ^ ((2 : ℝ) /
+    (bigQ d γ : ℝ))
+    have h1 : (0 : ℝ) < (3 : ℝ) ^ (Quenched.contrastRho γ * (n : ℝ)) := Real.rpow_pos_of_pos (by
+      norm_num) _
     have h2 : (0 : ℝ) < Cm ^ ((2 : ℝ) / (bigQ d γ : ℝ)) := Real.rpow_pos_of_pos hCm _
     exact mul_pos (pow_pos (by linarith only [h1]) 2) h2
   · intro ε σ Cglob Cprof Csrc Bresp H P E Ψ Kg Src B jStar F s t raw _hcal η hη hAint hAle n w hw
     have := raw.prob
-    have hm : (explicitCanonicalMetric F).PosDef := Geometry.explicitCanonicalMetric_posDef raw.symm raw.pos
+    have hm : (explicitCanonicalMetric F).PosDef := Geometry.explicitCanonicalMetric_posDef
+      raw.symm raw.pos
     have hq : IsUnit (respGrid jStar F) := Geometry.isUnit_roundedGrid raw.hj hm
     have hQ2 : 2 ≤ bigQ d γ := bigQ_two_le d γ hγ
-    have hmeas1 := aestronglyMeasurable_recentDefectBlock_minus hq P t n w (respEhatMinus P jStar F t) F
+    have hmeas1 := aestronglyMeasurable_recentDefectBlock_minus hq P t n w (respEhatMinus P
+      jStar F t) F
     have hg0 : ∀ a : CoeffSpace d, 0 ≤ recentDefect (respGrid jStar F) t n w
         (respEhatMinus P jStar F t) (respCoeffMinus F a) := fun a => norm_nonneg _
     have hgmeas : AEStronglyMeasurable (fun a : CoeffSpace d =>
@@ -197,16 +201,20 @@ theorem integral_recentDefect_sq_le_plus (d : ℕ) (hd : 2 ≤ d) (γ : ℝ)
   have _hCc_unused := hCc
   refine ⟨fun n => ((3 : ℝ) ^ (Quenched.contrastRho γ * (n : ℝ)) + 1) ^ 2 *
       Cm ^ ((2 : ℝ) / (bigQ d γ : ℝ)), fun n => ?_, ?_⟩
-  · show (0 : ℝ) < ((3 : ℝ) ^ (Quenched.contrastRho γ * (n : ℝ)) + 1) ^ 2 * Cm ^ ((2 : ℝ) / (bigQ d γ : ℝ))
-    have h1 : (0 : ℝ) < (3 : ℝ) ^ (Quenched.contrastRho γ * (n : ℝ)) := Real.rpow_pos_of_pos (by norm_num) _
+  · show (0 : ℝ) < ((3 : ℝ) ^ (Quenched.contrastRho γ * (n : ℝ)) + 1) ^ 2 * Cm ^ ((2 : ℝ) /
+    (bigQ d γ : ℝ))
+    have h1 : (0 : ℝ) < (3 : ℝ) ^ (Quenched.contrastRho γ * (n : ℝ)) := Real.rpow_pos_of_pos (by
+      norm_num) _
     have h2 : (0 : ℝ) < Cm ^ ((2 : ℝ) / (bigQ d γ : ℝ)) := Real.rpow_pos_of_pos hCm _
     exact mul_pos (pow_pos (by linarith only [h1]) 2) h2
   · intro ε σ Cglob Cprof Csrc Bresp H P E Ψ Kg Src B jStar F s t raw _hcal η hη hAint hAle n w hw
     have := raw.prob
-    have hm : (explicitCanonicalMetric F).PosDef := Geometry.explicitCanonicalMetric_posDef raw.symm raw.pos
+    have hm : (explicitCanonicalMetric F).PosDef := Geometry.explicitCanonicalMetric_posDef
+      raw.symm raw.pos
     have hq : IsUnit (respGrid jStar F) := Geometry.isUnit_roundedGrid raw.hj hm
     have hQ2 : 2 ≤ bigQ d γ := bigQ_two_le d γ hγ
-    have hmeas1 := aestronglyMeasurable_recentDefectBlock_plus hq P t n w (respEhatPlus P jStar F t) F
+    have hmeas1 := aestronglyMeasurable_recentDefectBlock_plus hq P t n w (respEhatPlus P jStar
+      F t) F
     have hg0 : ∀ a : CoeffSpace d, 0 ≤ recentDefect (respGrid jStar F) t n w
         (respEhatPlus P jStar F t) (respCoeffPlus F a) := fun a => norm_nonneg _
     have hgmeas : AEStronglyMeasurable (fun a : CoeffSpace d =>
@@ -372,81 +380,15 @@ private theorem integral_le_of_sq_le {α : Type*} [MeasurableSpace α] (P : Meas
   have hsq : ∫ a, g a ^ 2 ∂P ≤ c ^ 2 := h
   nlinarith only [hstep, hsq, h2c]
 
-/-- **Bookkeeping from the η-kernel to the squared recent sums** (`p.response.transfer`, finite
-window
-`n ≤ H`): `(S_cell + S_av)^2 ≤ 2S_cell^2 + 2S_av^2`; Cauchy–Schwarz on the finite sums;
-`S_cell`: `∫ weakCellDefect^2 = avg_w ∫ ‖D_{n,w}‖^2 ≤ K_n η^{2/Q} ≤ K_n η^{1/Q}` (`η < 1`);
-`S_av`: `‖avg_w D‖ ≤ avg_w ‖D‖ ≤ (avg_w ‖D‖^2)^{1/2}` (`ofFullBlockMat`/`toFullBlockMat` inverse,
-norm of a mean) and `∫ √f ≤ (∫ f)^{1/2}` on a probability measure, giving `√K_n η^{1/Q}`.
-`D H = 2(H+1) ∑_{n ≤ H} (K n + √(K n)) + 1` works. -/
-theorem integral_weakSums_sq_le (rho : ℝ) (hrho : 0 ≤ rho) (K : ℕ → ℝ) (hK : ∀ n, 0 < K n)
-    (Q : ℕ) (hQ : 1 ≤ Q) :
-    ∃ D : ℕ → ℝ, (∀ H, 0 < D H) ∧
-      ∀ (P : Measure (CoeffSpace d)) [IsProbabilityMeasure P] (q : Mat d) (t : ℤ) (H : ℕ)
-        (E : BlockMat d) (b : CoeffSpace d → CoeffField d) (η : ℝ),
-        η ∈ Set.Ioo (0 : ℝ) (1 / 2) →
-        (∀ n, n ≤ H → ∀ w ∈ triadicIndexBox d n,
-          AEStronglyMeasurable (fun a => recentDefectBlock q t n w E (b a)) P ∧
-          Integrable (fun a => recentDefect q t n w E (b a) ^ 2) P ∧
-          ∫ a, recentDefect q t n w E (b a) ^ 2 ∂P ≤ K n * η ^ ((2 : ℝ) / (Q : ℝ))) →
-        Integrable (fun a => (weakCellSum q t H E (b a) + weakAverageSum q t H rho E (b a)) ^ 2) P ∧
-        ∫ a, (weakCellSum q t H E (b a) + weakAverageSum q t H rho E (b a)) ^ 2 ∂P ≤
-          D H * η ^ ((1 : ℝ) / (Q : ℝ)) := by
-  classical
-  have _hrho : (0 : ℝ) ≤ rho := hrho
+/-- Exponent conversion for the probability-measure square-sum estimate. -/
+private theorem etaExponentBounds (Q : ℕ) (hQ : 1 ≤ Q) (η : ℝ)
+    (hη : η ∈ Set.Ioo (0 : ℝ) (1 / 2)) :
+    0 < (Q : ℝ) ∧ 0 < η ^ ((1 : ℝ) / (Q : ℝ)) ∧
+      (η ^ ((1 : ℝ) / (Q : ℝ))) ^ 2 = η ^ ((2 : ℝ) / (Q : ℝ)) ∧
+      η ^ ((2 : ℝ) / (Q : ℝ)) ≤ η ^ ((1 : ℝ) / (Q : ℝ)) := by
   have hQ0 : (0 : ℝ) < (Q : ℝ) := by
     have : 0 < Q := lt_of_lt_of_le Nat.zero_lt_one hQ
     exact_mod_cast this
-  refine ⟨fun H => 2 * ((H : ℝ) + 1) *
-      ∑ n ∈ Finset.range (H + 1),
-        (((3 : ℝ) ^ (-((n : ℝ) / 2))) ^ 2 * K n
-          + ((3 : ℝ) ^ (-((1 / 2 : ℝ) - rho / 2) * (n : ℝ))) ^ 2 * Real.sqrt (K n)) + 1, ?_, ?_⟩
-  · -- positivity of the constant
-    intro H
-    have hs : 0 ≤ ∑ n ∈ Finset.range (H + 1),
-        (((3 : ℝ) ^ (-((n : ℝ) / 2))) ^ 2 * K n
-          + ((3 : ℝ) ^ (-((1 / 2 : ℝ) - rho / 2) * (n : ℝ))) ^ 2 * Real.sqrt (K n)) :=
-      Finset.sum_nonneg fun n _ =>
-        add_nonneg (mul_nonneg (sq_nonneg _) (hK n).le)
-          (mul_nonneg (sq_nonneg _) (Real.sqrt_nonneg _))
-    have hH : (0 : ℝ) ≤ 2 * ((H : ℝ) + 1) := by positivity
-    nlinarith only [hs, hH]
-  intro P hP q t H E b η hη hbnd
-  have := hP
-  set NB : ℕ → ℝ := fun n => ((triadicIndexBox d n).card : ℝ) with hNB
-  set DD : ℕ → (Fin d → ℤ) → CoeffSpace d → ℝ :=
-    fun n w a => recentDefect q t n w E (b a) with hDD
-  set BB : ℕ → (Fin d → ℤ) → CoeffSpace d → Matrix (Fin d ⊕ Fin d) (Fin d ⊕ Fin d) ℝ :=
-    fun n w a => recentDefectBlock q t n w E (b a) with hBB
-  have hNBpos : ∀ n, 0 < NB n := by
-    intro n
-    simp only [hNB]
-    rw [card_triadicIndexBox]
-    positivity
-  -- unpack the hypothesis
-  have hmeas : ∀ n, n ≤ H → ∀ w ∈ triadicIndexBox d n,
-      AEStronglyMeasurable (fun a => BB n w a) P := fun n hn w hw => (hbnd n hn w hw).1
-  have hint2 : ∀ n, n ≤ H → ∀ w ∈ triadicIndexBox d n,
-      Integrable (fun a => DD n w a ^ 2) P := fun n hn w hw => (hbnd n hn w hw).2.1
-  have hbd2 : ∀ n, n ≤ H → ∀ w ∈ triadicIndexBox d n,
-      ∫ a, DD n w a ^ 2 ∂P ≤ K n * η ^ ((2 : ℝ) / (Q : ℝ)) := fun n hn w hw => (hbnd n hn w hw).2.2
-  have hDDnn : ∀ n w a, 0 ≤ DD n w a := fun _ _ _ => norm_nonneg _
-  have hDDeq : ∀ n w a, DD n w a = ‖BB n w a‖ := fun _ _ _ => rfl
-  have hDmeas : ∀ n, n ≤ H → ∀ w ∈ triadicIndexBox d n,
-      AEStronglyMeasurable (fun a => DD n w a) P := by
-    intro n hn w hw
-    simpa only [hDDeq] using (hmeas n hn w hw).norm
-  have hDint : ∀ n, n ≤ H → ∀ w ∈ triadicIndexBox d n,
-      Integrable (fun a => DD n w a) P := by
-    intro n hn w hw
-    refine Integrable.mono ((hint2 n hn w hw).add (integrable_const (1 : ℝ)))
-      (hDmeas n hn w hw) ?_
-    filter_upwards with a
-    have h0 := hDDnn n w a
-    simp only [Pi.add_apply, Real.norm_eq_abs, abs_of_nonneg h0,
-      abs_of_nonneg (show (0 : ℝ) ≤ DD n w a ^ 2 + 1 by positivity)]
-    nlinarith only [sq_nonneg (DD n w a - 1)]
-  -- the exponent bookkeeping
   have hη0 : (0 : ℝ) < η := hη.1
   have hη1 : η < 1 := lt_trans hη.2 (by norm_num)
   have hZpos : (0 : ℝ) < η ^ ((1 : ℝ) / (Q : ℝ)) := Real.rpow_pos_of_pos hη0 _
@@ -461,108 +403,53 @@ theorem integral_weakSums_sq_le (rho : ℝ) (hrho : 0 ≤ rho) (K : ℕ → ℝ)
     linarith only [hsplit, hpos, hQ0]
   have hηmono : η ^ ((2 : ℝ) / (Q : ℝ)) ≤ η ^ ((1 : ℝ) / (Q : ℝ)) :=
     Real.rpow_le_rpow_of_exponent_ge hη0 hη1.le h12
-  -- ## the recent-cell defect
-  have hcd_eq : ∀ n a, weakCellDefect q t n E (b a)
-      = Real.sqrt ((NB n)⁻¹ * ∑ w ∈ triadicIndexBox d n, DD n w a ^ 2) := by
-    intro n a
-    simp only [hNB, hDD, weakCellDefect, recentDefect, recentDefectBlock]
-  have hcd_sq : ∀ n a, weakCellDefect q t n E (b a) ^ 2
-      = (NB n)⁻¹ * ∑ w ∈ triadicIndexBox d n, DD n w a ^ 2 := by
-    intro n a
-    rw [hcd_eq]
-    exact Real.sq_sqrt (mul_nonneg (inv_nonneg.2 (hNBpos n).le)
-      (Finset.sum_nonneg fun w _ => sq_nonneg _))
-  have hcd_meas : ∀ n, n ≤ H → AEStronglyMeasurable (fun a => weakCellDefect q t n E (b a)) P := by
-    intro n hn
-    have h1 : AEStronglyMeasurable
-        (fun a => (NB n)⁻¹ * ∑ w ∈ triadicIndexBox d n, DD n w a ^ 2) P :=
-      AEStronglyMeasurable.const_mul
-        (Finset.aestronglyMeasurable_fun_sum _ fun w hw => (hDmeas n hn w hw).pow 2) _
-    simpa only [hcd_eq] using Real.continuous_sqrt.comp_aestronglyMeasurable h1
-  have hcd_int2 : ∀ n, n ≤ H → Integrable (fun a => weakCellDefect q t n E (b a) ^ 2) P := by
-    intro n hn
-    have h1 : Integrable (fun a => (NB n)⁻¹ * ∑ w ∈ triadicIndexBox d n, DD n w a ^ 2) P :=
-      Integrable.const_mul (integrable_finsetSum _ fun w hw => hint2 n hn w hw) _
-    exact h1.congr (Filter.Eventually.of_forall fun a => (hcd_sq n a).symm)
-  have hcd_bd : ∀ n, n ≤ H →
-      ∫ a, weakCellDefect q t n E (b a) ^ 2 ∂P ≤ K n * η ^ ((2 : ℝ) / (Q : ℝ)) := by
-    intro n hn
-    have heq : ∫ a, weakCellDefect q t n E (b a) ^ 2 ∂P
-        = (NB n)⁻¹ * ∑ w ∈ triadicIndexBox d n, ∫ a, DD n w a ^ 2 ∂P := by
-      simp only [hcd_sq]
-      rw [integral_const_mul, integral_finsetSum _ fun w hw => hint2 n hn w hw]
-    rw [heq]
-    have hsum : ∑ w ∈ triadicIndexBox d n, ∫ a, DD n w a ^ 2 ∂P
-        ≤ NB n * (K n * η ^ ((2 : ℝ) / (Q : ℝ))) := by
-      have h := Finset.sum_le_sum fun w hw => hbd2 n hn w hw
-      simpa [hNB, Finset.sum_const, nsmul_eq_mul] using h
-    calc (NB n)⁻¹ * ∑ w ∈ triadicIndexBox d n, ∫ a, DD n w a ^ 2 ∂P
-        ≤ (NB n)⁻¹ * (NB n * (K n * η ^ ((2 : ℝ) / (Q : ℝ)))) :=
-          mul_le_mul_of_nonneg_left hsum (inv_nonneg.2 (hNBpos n).le)
-      _ = K n * η ^ ((2 : ℝ) / (Q : ℝ)) := by
-          have hne : NB n ≠ 0 := (hNBpos n).ne'
-          field_simp
-  -- ## the recent averaged defect
-  have hav_eq : ∀ n a, Real.sqrt ‖toFullBlockMat (weakAverageDefect q t n E (b a))‖
-      = Real.sqrt ((NB n)⁻¹ * ‖∑ w ∈ triadicIndexBox d n, BB n w a‖) := by
-    intro n a
-    have hinv : (0 : ℝ) ≤ (((triadicIndexBox d n).card : ℝ))⁻¹ := by positivity
-    simp only [hNB, hBB, weakAverageDefect, recentDefectBlock, toFullBlockMat_ofFullBlockMat,
-      norm_smul, Real.norm_eq_abs, abs_of_nonneg hinv]
-  have hav_le : ∀ n a, (NB n)⁻¹ * ‖∑ w ∈ triadicIndexBox d n, BB n w a‖
-      ≤ (NB n)⁻¹ * ∑ w ∈ triadicIndexBox d n, DD n w a := by
-    intro n a
-    refine mul_le_mul_of_nonneg_left ?_ (inv_nonneg.2 (hNBpos n).le)
-    exact (norm_sum_le _ _).trans_eq (by simp only [hDDeq])
-  have hav_meas : ∀ n, n ≤ H →
-      AEStronglyMeasurable (fun a => (NB n)⁻¹ * ‖∑ w ∈ triadicIndexBox d n, BB n w a‖) P := by
-    intro n hn
-    have h1 : AEStronglyMeasurable (fun a => ∑ w ∈ triadicIndexBox d n, BB n w a) P :=
-      Finset.aestronglyMeasurable_fun_sum _ fun w hw => hmeas n hn w hw
-    exact AEStronglyMeasurable.const_mul h1.norm _
-  have hav_int : ∀ n, n ≤ H →
-      Integrable (fun a => (NB n)⁻¹ * ‖∑ w ∈ triadicIndexBox d n, BB n w a‖) P := by
-    intro n hn
-    refine Integrable.mono
-      (Integrable.const_mul (integrable_finsetSum _ fun w hw => hDint n hn w hw) (NB n)⁻¹)
-      (hav_meas n hn) ?_
-    filter_upwards with a
-    have hnn : 0 ≤ (NB n)⁻¹ * ∑ w ∈ triadicIndexBox d n, DD n w a :=
-      mul_nonneg (inv_nonneg.2 (hNBpos n).le) (Finset.sum_nonneg fun w _ => hDDnn n w a)
-    have hnn2 : 0 ≤ (NB n)⁻¹ * ‖∑ w ∈ triadicIndexBox d n, BB n w a‖ :=
-      mul_nonneg (inv_nonneg.2 (hNBpos n).le) (norm_nonneg _)
-    rw [Real.norm_eq_abs, Real.norm_eq_abs, abs_of_nonneg hnn2, abs_of_nonneg hnn]
-    exact hav_le n a
-  have hav_bd : ∀ n, n ≤ H →
-      ∫ a, (NB n)⁻¹ * ‖∑ w ∈ triadicIndexBox d n, BB n w a‖ ∂P
-        ≤ Real.sqrt (K n) * η ^ ((1 : ℝ) / (Q : ℝ)) := by
-    intro n hn
-    have hc : 0 < Real.sqrt (K n) * η ^ ((1 : ℝ) / (Q : ℝ)) :=
-      mul_pos (Real.sqrt_pos.2 (hK n)) hZpos
-    have hcsq : (Real.sqrt (K n) * η ^ ((1 : ℝ) / (Q : ℝ))) ^ 2 = K n * η ^ ((2 : ℝ) / (Q : ℝ)) := by
-      rw [mul_pow, Real.sq_sqrt (hK n).le, hZsq]
-    have hDbd : ∀ w ∈ triadicIndexBox d n,
-        ∫ a, DD n w a ∂P ≤ Real.sqrt (K n) * η ^ ((1 : ℝ) / (Q : ℝ)) := by
-      intro w hw
-      refine integral_le_of_sq_le P (fun a => DD n w a) (hDint n hn w hw)
-        (hint2 n hn w hw) _ hc ?_
-      rw [hcsq]
-      exact hbd2 n hn w hw
-    calc ∫ a, (NB n)⁻¹ * ‖∑ w ∈ triadicIndexBox d n, BB n w a‖ ∂P
-        ≤ ∫ a, (NB n)⁻¹ * ∑ w ∈ triadicIndexBox d n, DD n w a ∂P :=
-          integral_mono (hav_int n hn)
-            (Integrable.const_mul (integrable_finsetSum _ fun w hw => hDint n hn w hw) _)
-            (fun a => hav_le n a)
-      _ = (NB n)⁻¹ * ∑ w ∈ triadicIndexBox d n, ∫ a, DD n w a ∂P := by
-          rw [integral_const_mul, integral_finsetSum _ fun w hw => hDint n hn w hw]
-      _ ≤ (NB n)⁻¹ * (NB n * (Real.sqrt (K n) * η ^ ((1 : ℝ) / (Q : ℝ)))) := by
-          refine mul_le_mul_of_nonneg_left ?_ (inv_nonneg.2 (hNBpos n).le)
-          have h := Finset.sum_le_sum hDbd
-          simpa [hNB, Finset.sum_const, nsmul_eq_mul] using h
-      _ = Real.sqrt (K n) * η ^ ((1 : ℝ) / (Q : ℝ)) := by
-          have hne : NB n ≠ 0 := (hNBpos n).ne'
-          field_simp
-  -- ## assembly
+  exact ⟨hQ0, hZpos, hZsq, hηmono⟩
+
+/-- Finite-window assembly of the cell and averaged recent-defect bounds. -/
+private theorem weakSums_squared_integrable_of_scale_bounds (rho : ℝ) (K : ℕ → ℝ)
+    (Q : ℕ) (hQ : 1 ≤ Q) (P : Measure (CoeffSpace d)) [IsProbabilityMeasure P]
+    (q : Mat d) (t : ℤ) (H : ℕ) (E : BlockMat d) (b : CoeffSpace d → CoeffField d)
+    (η : ℝ) (hη : η ∈ Set.Ioo (0 : ℝ) (1 / 2))
+    (hCellMeas : ∀ n, n ≤ H → AEStronglyMeasurable
+      (fun a => weakCellDefect q t n E (b a)) P)
+    (hCellInt : ∀ n, n ≤ H → Integrable
+      (fun a => weakCellDefect q t n E (b a) ^ 2) P)
+    (hCellBound : ∀ n, n ≤ H →
+      ∫ a, weakCellDefect q t n E (b a) ^ 2 ∂P ≤ K n * η ^ ((2 : ℝ) / (Q : ℝ)))
+    (hAverageMeas : ∀ n, n ≤ H → AEStronglyMeasurable
+      (fun a => (((triadicIndexBox d n).card : ℝ)⁻¹ *
+        ‖∑ w ∈ triadicIndexBox d n, recentDefectBlock q t n w E (b a)‖)) P)
+    (hAverageInt : ∀ n, n ≤ H → Integrable
+      (fun a => (((triadicIndexBox d n).card : ℝ)⁻¹ *
+        ‖∑ w ∈ triadicIndexBox d n, recentDefectBlock q t n w E (b a)‖)) P)
+    (hAverageBound : ∀ n, n ≤ H →
+      ∫ a, (((triadicIndexBox d n).card : ℝ)⁻¹ *
+        ‖∑ w ∈ triadicIndexBox d n, recentDefectBlock q t n w E (b a)‖) ∂P
+        ≤ Real.sqrt (K n) * η ^ ((1 : ℝ) / (Q : ℝ))) :
+    Integrable (fun a => (weakCellSum q t H E (b a) +
+      weakAverageSum q t H rho E (b a)) ^ 2) P ∧
+      ∫ a, (weakCellSum q t H E (b a) + weakAverageSum q t H rho E (b a)) ^ 2 ∂P ≤
+        (2 * ((H : ℝ) + 1) * ∑ n ∈ Finset.range (H + 1),
+          (((3 : ℝ) ^ (-((n : ℝ) / 2))) ^ 2 * K n +
+            ((3 : ℝ) ^ (-((1 / 2 : ℝ) - rho / 2) * (n : ℝ))) ^ 2 * Real.sqrt (K n)) + 1) *
+          η ^ ((1 : ℝ) / (Q : ℝ)) := by
+  have := ‹IsProbabilityMeasure P›
+  set NB : ℕ → ℝ := fun n => ((triadicIndexBox d n).card : ℝ)
+  set BB : ℕ → (Fin d → ℤ) → CoeffSpace d →
+      Matrix (Fin d ⊕ Fin d) (Fin d ⊕ Fin d) ℝ :=
+    fun n w a => recentDefectBlock q t n w E (b a)
+  have hNBpos : ∀ n, 0 < NB n := by
+    intro n
+    simp only [NB]
+    rw [card_triadicIndexBox]
+    positivity
+  obtain ⟨_, hZpos, _, hηmono⟩ := etaExponentBounds Q hQ η hη
+  have hcd_meas := hCellMeas
+  have hcd_int2 := hCellInt
+  have hcd_bd := hCellBound
+  have hav_meas := hAverageMeas
+  have hav_int := hAverageInt
+  have hav_bd := hAverageBound
   have hcs_eq : ∀ a, weakCellSum q t H E (b a)
       = ∑ n ∈ Finset.range (H + 1),
           (3 : ℝ) ^ (-((n : ℝ) / 2)) * weakCellDefect q t n E (b a) := fun _ => rfl
@@ -698,6 +585,134 @@ theorem integral_weakSums_sq_le (rho : ℝ) (hrho : 0 ≤ rho) (K : ℕ → ℝ)
             + ((3 : ℝ) ^ (-((1 / 2 : ℝ) - rho / 2) * (n : ℝ))) ^ 2 * Real.sqrt (K n)) + 1)
           * η ^ ((1 : ℝ) / (Q : ℝ)) := by
         nlinarith only [hZpos]
+
+/-- **Bookkeeping from the η-kernel to the squared recent sums** (`p.response.transfer`, finite
+window
+`n ≤ H`): `(S_cell + S_av)^2 ≤ 2S_cell^2 + 2S_av^2`; Cauchy–Schwarz on the finite sums;
+`S_cell`: `∫ weakCellDefect^2 = avg_w ∫ ‖D_{n,w}‖^2 ≤ K_n η^{2/Q} ≤ K_n η^{1/Q}` (`η < 1`);
+`S_av`: `‖avg_w D‖ ≤ avg_w ‖D‖ ≤ (avg_w ‖D‖^2)^{1/2}` (`ofFullBlockMat`/`toFullBlockMat` inverse,
+norm of a mean) and `∫ √f ≤ (∫ f)^{1/2}` on a probability measure, giving `√K_n η^{1/Q}`.
+`D H = 2(H+1) ∑_{n ≤ H} (K n + √(K n)) + 1` works. -/
+theorem integral_weakSums_sq_le (rho : ℝ) (hrho : 0 ≤ rho) (K : ℕ → ℝ) (hK : ∀ n, 0 < K n)
+    (Q : ℕ) (hQ : 1 ≤ Q) :
+    ∃ D : ℕ → ℝ, (∀ H, 0 < D H) ∧
+      ∀ (P : Measure (CoeffSpace d)) [IsProbabilityMeasure P] (q : Mat d) (t : ℤ) (H : ℕ)
+        (E : BlockMat d) (b : CoeffSpace d → CoeffField d) (η : ℝ),
+        η ∈ Set.Ioo (0 : ℝ) (1 / 2) →
+        (∀ n, n ≤ H → ∀ w ∈ triadicIndexBox d n,
+          AEStronglyMeasurable (fun a => recentDefectBlock q t n w E (b a)) P ∧
+          Integrable (fun a => recentDefect q t n w E (b a) ^ 2) P ∧
+          ∫ a, recentDefect q t n w E (b a) ^ 2 ∂P ≤ K n * η ^ ((2 : ℝ) / (Q : ℝ))) →
+        Integrable (fun a => (weakCellSum q t H E (b a) + weakAverageSum q t H rho E (b a)) ^ 2) P ∧
+        ∫ a, (weakCellSum q t H E (b a) + weakAverageSum q t H rho E (b a)) ^ 2 ∂P ≤
+          D H * η ^ ((1 : ℝ) / (Q : ℝ)) := by
+  classical
+  have _hrho : (0 : ℝ) ≤ rho := hrho
+  obtain ⟨hQ0, hZpos, hZsq, hηmono⟩ := etaExponentBounds Q hQ η hη
+  -- ## the recent-cell defect
+  have hcd_eq : ∀ n a, weakCellDefect q t n E (b a)
+      = Real.sqrt ((NB n)⁻¹ * ∑ w ∈ triadicIndexBox d n, DD n w a ^ 2) := by
+    intro n a
+    simp only [hNB, hDD, weakCellDefect, recentDefect, recentDefectBlock]
+  have hcd_sq : ∀ n a, weakCellDefect q t n E (b a) ^ 2
+      = (NB n)⁻¹ * ∑ w ∈ triadicIndexBox d n, DD n w a ^ 2 := by
+    intro n a
+    rw [hcd_eq]
+    exact Real.sq_sqrt (mul_nonneg (inv_nonneg.2 (hNBpos n).le)
+      (Finset.sum_nonneg fun w _ => sq_nonneg _))
+  have hcd_meas : ∀ n, n ≤ H → AEStronglyMeasurable (fun a => weakCellDefect q t n E (b a)) P := by
+    intro n hn
+    have h1 : AEStronglyMeasurable
+        (fun a => (NB n)⁻¹ * ∑ w ∈ triadicIndexBox d n, DD n w a ^ 2) P :=
+      AEStronglyMeasurable.const_mul
+        (Finset.aestronglyMeasurable_fun_sum _ fun w hw => (hDmeas n hn w hw).pow 2) _
+    simpa only [hcd_eq] using Real.continuous_sqrt.comp_aestronglyMeasurable h1
+  have hcd_int2 : ∀ n, n ≤ H → Integrable (fun a => weakCellDefect q t n E (b a) ^ 2) P := by
+    intro n hn
+    have h1 : Integrable (fun a => (NB n)⁻¹ * ∑ w ∈ triadicIndexBox d n, DD n w a ^ 2) P :=
+      Integrable.const_mul (integrable_finsetSum _ fun w hw => hint2 n hn w hw) _
+    exact h1.congr (Filter.Eventually.of_forall fun a => (hcd_sq n a).symm)
+  have hcd_bd : ∀ n, n ≤ H →
+      ∫ a, weakCellDefect q t n E (b a) ^ 2 ∂P ≤ K n * η ^ ((2 : ℝ) / (Q : ℝ)) := by
+    intro n hn
+    have heq : ∫ a, weakCellDefect q t n E (b a) ^ 2 ∂P
+        = (NB n)⁻¹ * ∑ w ∈ triadicIndexBox d n, ∫ a, DD n w a ^ 2 ∂P := by
+      simp only [hcd_sq]
+      rw [integral_const_mul, integral_finsetSum _ fun w hw => hint2 n hn w hw]
+    rw [heq]
+    have hsum : ∑ w ∈ triadicIndexBox d n, ∫ a, DD n w a ^ 2 ∂P
+        ≤ NB n * (K n * η ^ ((2 : ℝ) / (Q : ℝ))) := by
+      have h := Finset.sum_le_sum fun w hw => hbd2 n hn w hw
+      simpa [hNB, Finset.sum_const, nsmul_eq_mul] using h
+    calc (NB n)⁻¹ * ∑ w ∈ triadicIndexBox d n, ∫ a, DD n w a ^ 2 ∂P
+        ≤ (NB n)⁻¹ * (NB n * (K n * η ^ ((2 : ℝ) / (Q : ℝ)))) :=
+          mul_le_mul_of_nonneg_left hsum (inv_nonneg.2 (hNBpos n).le)
+      _ = K n * η ^ ((2 : ℝ) / (Q : ℝ)) := by
+          have hne : NB n ≠ 0 := (hNBpos n).ne'
+          field_simp
+  -- ## the recent averaged defect
+  have hav_eq : ∀ n a, Real.sqrt ‖toFullBlockMat (weakAverageDefect q t n E (b a))‖
+      = Real.sqrt ((NB n)⁻¹ * ‖∑ w ∈ triadicIndexBox d n, BB n w a‖) := by
+    intro n a
+    have hinv : (0 : ℝ) ≤ (((triadicIndexBox d n).card : ℝ))⁻¹ := by positivity
+    simp only [hNB, hBB, weakAverageDefect, recentDefectBlock, toFullBlockMat_ofFullBlockMat,
+      norm_smul, Real.norm_eq_abs, abs_of_nonneg hinv]
+  have hav_le : ∀ n a, (NB n)⁻¹ * ‖∑ w ∈ triadicIndexBox d n, BB n w a‖
+      ≤ (NB n)⁻¹ * ∑ w ∈ triadicIndexBox d n, DD n w a := by
+    intro n a
+    refine mul_le_mul_of_nonneg_left ?_ (inv_nonneg.2 (hNBpos n).le)
+    exact (norm_sum_le _ _).trans_eq (by simp only [hDDeq])
+  have hav_meas : ∀ n, n ≤ H →
+      AEStronglyMeasurable (fun a => (NB n)⁻¹ * ‖∑ w ∈ triadicIndexBox d n, BB n w a‖) P := by
+    intro n hn
+    have h1 : AEStronglyMeasurable (fun a => ∑ w ∈ triadicIndexBox d n, BB n w a) P :=
+      Finset.aestronglyMeasurable_fun_sum _ fun w hw => hmeas n hn w hw
+    exact AEStronglyMeasurable.const_mul h1.norm _
+  have hav_int : ∀ n, n ≤ H →
+      Integrable (fun a => (NB n)⁻¹ * ‖∑ w ∈ triadicIndexBox d n, BB n w a‖) P := by
+    intro n hn
+    refine Integrable.mono
+      (Integrable.const_mul (integrable_finsetSum _ fun w hw => hDint n hn w hw) (NB n)⁻¹)
+      (hav_meas n hn) ?_
+    filter_upwards with a
+    have hnn : 0 ≤ (NB n)⁻¹ * ∑ w ∈ triadicIndexBox d n, DD n w a :=
+      mul_nonneg (inv_nonneg.2 (hNBpos n).le) (Finset.sum_nonneg fun w _ => hDDnn n w a)
+    have hnn2 : 0 ≤ (NB n)⁻¹ * ‖∑ w ∈ triadicIndexBox d n, BB n w a‖ :=
+      mul_nonneg (inv_nonneg.2 (hNBpos n).le) (norm_nonneg _)
+    rw [Real.norm_eq_abs, Real.norm_eq_abs, abs_of_nonneg hnn2, abs_of_nonneg hnn]
+    exact hav_le n a
+  have hav_bd : ∀ n, n ≤ H →
+      ∫ a, (NB n)⁻¹ * ‖∑ w ∈ triadicIndexBox d n, BB n w a‖ ∂P
+        ≤ Real.sqrt (K n) * η ^ ((1 : ℝ) / (Q : ℝ)) := by
+    intro n hn
+    have hc : 0 < Real.sqrt (K n) * η ^ ((1 : ℝ) / (Q : ℝ)) :=
+      mul_pos (Real.sqrt_pos.2 (hK n)) hZpos
+    have hcsq : (Real.sqrt (K n) * η ^ ((1 : ℝ) / (Q : ℝ))) ^ 2 = K n * η ^ ((2 : ℝ) / (Q : ℝ))
+      := by
+      rw [mul_pow, Real.sq_sqrt (hK n).le, hZsq]
+    have hDbd : ∀ w ∈ triadicIndexBox d n,
+        ∫ a, DD n w a ∂P ≤ Real.sqrt (K n) * η ^ ((1 : ℝ) / (Q : ℝ)) := by
+      intro w hw
+      refine integral_le_of_sq_le P (fun a => DD n w a) (hDint n hn w hw)
+        (hint2 n hn w hw) _ hc ?_
+      rw [hcsq]
+      exact hbd2 n hn w hw
+    calc ∫ a, (NB n)⁻¹ * ‖∑ w ∈ triadicIndexBox d n, BB n w a‖ ∂P
+        ≤ ∫ a, (NB n)⁻¹ * ∑ w ∈ triadicIndexBox d n, DD n w a ∂P :=
+          integral_mono (hav_int n hn)
+            (Integrable.const_mul (integrable_finsetSum _ fun w hw => hDint n hn w hw) _)
+            (fun a => hav_le n a)
+      _ = (NB n)⁻¹ * ∑ w ∈ triadicIndexBox d n, ∫ a, DD n w a ∂P := by
+          rw [integral_const_mul, integral_finsetSum _ fun w hw => hDint n hn w hw]
+      _ ≤ (NB n)⁻¹ * (NB n * (Real.sqrt (K n) * η ^ ((1 : ℝ) / (Q : ℝ)))) := by
+          refine mul_le_mul_of_nonneg_left ?_ (inv_nonneg.2 (hNBpos n).le)
+          have h := Finset.sum_le_sum hDbd
+          simpa [hNB, Finset.sum_const, nsmul_eq_mul] using h
+      _ = Real.sqrt (K n) * η ^ ((1 : ℝ) / (Q : ℝ)) := by
+          have hne : NB n ≠ 0 := (hNBpos n).ne'
+          field_simp
+  exact weakSums_squared_integrable_of_scale_bounds rho K Q hQ P q t H E b η hη
+    hcd_meas hcd_int2 hcd_bd hav_meas hav_int hav_bd
 
 end
 

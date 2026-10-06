@@ -128,7 +128,8 @@ theorem responseJ_zero_q_eq_half_vecDot_sigmaStarInvCoarse_of_isSigmaStarCoarse
   rw [sigmaStarInvCoarse_eq_inv_of_isSigmaStarCoarse hS]
   exact hS.2 q
 
-theorem responseJ_eq_half_vecDot_sigma_add_half_vecDot_sigmaStar_inv_sub_dot_of_isSymmetricCoeffField
+theorem
+  responseJ_eq_half_vecDot_sigma_add_half_vecDot_sigmaStar_inv_sub_dot_of_isSymmetricCoeffField
     {d : ℕ} {U : Set (Vec d)} {a : CoeffField d} {sigma sigmaStar kappa : Mat d}
     (ha : IsSymmetricCoeffField a)
     (hA : IsCoarseBlockMatrix U a (deterministicCoarseBlockMatrix U a))
@@ -152,7 +153,7 @@ theorem responseJ_eq_half_vecDot_sigma_add_half_vecDot_sigmaStar_inv_sub_dot_of_
       rw [responseJ_p_zero_eq_half_vecDot_sigma_of_isSymmetricCoeffField
         ha hA hS hK hSigma hdet p, hS.2 q]
 
-theorem responseJ_eq_half_vecDot_sigmaCoarse_add_half_vecDot_sigmaStarInvCoarse_sub_dot_of_isSymmetricCoeffField
+theorem responseJ_eq_half_dot_sigmaCoarse_add_half_dot_sigmaStarInvCoarse_sub_dot
     {d : ℕ} {U : Set (Vec d)} {a : CoeffField d} {sigma sigmaStar kappa : Mat d}
     (ha : IsSymmetricCoeffField a)
     (hA : IsCoarseBlockMatrix U a (deterministicCoarseBlockMatrix U a))

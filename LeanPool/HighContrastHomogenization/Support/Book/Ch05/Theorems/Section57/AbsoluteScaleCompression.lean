@@ -346,6 +346,146 @@ theorem explicit_threshold_prefactor_le_exp_logSq_of_Blead_le_poly
     exact mul_le_mul_of_nonneg_right hcoef hL2_nonneg
   exact hpoly.trans (henv.trans henv2)
 
+private theorem smallBottom_threshold_le_denominator_power
+    {Msmall BleadSmall η : ℝ} {Rsmall : ℕ}
+    (hη_pos : 0 < η) (hBlead_one : 1 ≤ BleadSmall) :
+    let BtailSmall : ℝ := 2 * BleadSmall
+    let cgapSmall : ℝ := BleadSmall ^ (-η) - BtailSmall ^ (-η)
+    let ρgap : ℝ := (3 : ℝ) ^ η
+    let QprefSmall : ℕ := max (Nat.ceil (max 0 (Real.log Msmall)))
+      (max Rsmall (Nat.ceil ((2 * max 0 (-(Real.log cgapSmall))) / Real.log ρgap)))
+    let QleadSmall : ℕ := Nat.ceil (Real.log BleadSmall / Real.log 3)
+    let Qsmall : ℕ := max QprefSmall QleadSmall
+    (3 : ℝ) ^ Qsmall * max 1 BtailSmall ≤
+      (18 * (3 : ℝ) ^ (Nat.ceil (max 0 (Real.log Msmall)) + Rsmall + 0) *
+        Real.exp (Real.log 3 *
+          ((2 * max 0 (-(Real.log (1 - (2 : ℝ) ^ (-η))))) /
+            (η * Real.log 3)))) * BleadSmall ^ (4 : ℕ) := by
+  intro BtailSmall cgapSmall ρgap QprefSmall QleadSmall Qsmall
+  have hthreshold :
+      (3 : ℝ) ^ Qsmall * max 1 BtailSmall ≤
+        (18 * (3 : ℝ) ^
+            (Nat.ceil (max 0 (Real.log Msmall)) + Rsmall + 0) *
+          Real.exp
+            (Real.log 3 *
+              ((2 * max 0 (-(Real.log (1 - (2 : ℝ) ^ (-η))))) /
+                (η * Real.log 3)))) *
+          BleadSmall ^ (4 : ℕ) := by
+    let Qaux : ℕ := max QprefSmall (max QleadSmall 0)
+    have hQsmall_le : Qsmall ≤ Qaux := by
+      dsimp [Qaux, Qsmall]
+      omega
+    have hmono :
+        (3 : ℝ) ^ Qsmall * max 1 BtailSmall ≤
+          (3 : ℝ) ^ Qaux * max 1 BtailSmall := by
+      exact mul_le_mul_of_nonneg_right
+        (pow_three_nat_mono hQsmall_le) (by positivity)
+    have haux :
+        (3 : ℝ) ^ Qaux * max 1 BtailSmall ≤
+          (18 * (3 : ℝ) ^
+              (Nat.ceil (max 0 (Real.log Msmall)) + Rsmall + 0) *
+            Real.exp
+              (Real.log 3 *
+                ((2 * max 0 (-(Real.log (1 - (2 : ℝ) ^ (-η))))) /
+                  (η * Real.log 3)))) *
+            BleadSmall ^ (4 : ℕ) := by
+      simpa [BtailSmall, cgapSmall, ρgap, QprefSmall, QleadSmall, Qaux] using
+        pow_three_explicit_threshold_le_const_mul_Blead_four
+          (M := Msmall) (η := η) (Blead := BleadSmall)
+          (R := Rsmall) (Qcut := 0) hη_pos hBlead_one
+    exact hmono.trans haux
+  exact hthreshold
+
+private theorem smallBottom_prefactor_polynomial_bound
+    {N0 Qsmall Rsmall : ℕ} {η Msmall BleadSmall BtailSmall AM G rceil AB θ pB : ℝ}
+    (hG_one : 1 ≤ G) (hG_eq : G = (3 : ℝ) ^ N0)
+    (hthreshold : (3 : ℝ) ^ Qsmall * max 1 BtailSmall ≤
+      (18 * (3 : ℝ) ^ (Nat.ceil (max 0 (Real.log Msmall)) + Rsmall + 0) *
+        Real.exp (Real.log 3 *
+          ((2 * max 0 (-(Real.log (1 - (2 : ℝ) ^ (-η))))) /
+            (η * Real.log 3)))) * BleadSmall ^ (4 : ℕ))
+    (hceil_bound : (3 : ℝ) ^ Nat.ceil (max 0 (Real.log Msmall)) ≤
+      3 * AM ^ Real.log (3 : ℝ) * G ^ rceil)
+    (hBlead_pow : BleadSmall ^ (4 : ℕ) ≤ AB * (max 1 θ) ^ pB)
+    (hAM : 0 < AM) (hAB : 0 < AB) :
+    let Acoef : ℝ := 18 * (3 : ℝ) ^ Rsmall *
+      Real.exp (Real.log 3 *
+        ((2 * max 0 (-(Real.log (1 - (2 : ℝ) ^ (-η))))) / (η * Real.log 3))) *
+      (3 * AM ^ Real.log (3 : ℝ))
+    3 * ((3 : ℝ) ^ (N0 + Qsmall)) * max 1 BtailSmall ≤
+      (3 * Acoef * AB) * G ^ (1 + rceil) * (max 1 θ) ^ pB := by
+  intro Acoef
+  let Afinal : ℝ := 3 * Acoef * AB
+  let rfinal : ℝ := 1 + rceil
+  let pfinal : ℝ := pB
+  have hQsmall_bound :
+      (3 : ℝ) ^ Qsmall * max 1 BtailSmall ≤
+        Acoef * G ^ rceil * (AB * (max 1 θ) ^ pB) := by
+    calc
+      (3 : ℝ) ^ Qsmall * max 1 BtailSmall
+          ≤ (18 * (3 : ℝ) ^
+              (Nat.ceil (max 0 (Real.log Msmall)) + Rsmall + 0) *
+            Real.exp
+              (Real.log 3 *
+                ((2 * max 0 (-(Real.log (1 - (2 : ℝ) ^ (-η))))) /
+                  (η * Real.log 3)))) *
+            BleadSmall ^ (4 : ℕ) := hthreshold
+      _ =
+          (18 * (3 : ℝ) ^ Rsmall *
+            Real.exp
+              (Real.log 3 *
+                ((2 * max 0 (-(Real.log (1 - (2 : ℝ) ^ (-η))))) /
+                  (η * Real.log 3)))) *
+            ((3 : ℝ) ^ Nat.ceil (max 0 (Real.log Msmall))) *
+            BleadSmall ^ (4 : ℕ) := by
+              rw [show Nat.ceil (max 0 (Real.log Msmall)) + Rsmall + 0 =
+                Nat.ceil (max 0 (Real.log Msmall)) + Rsmall by omega]
+              rw [pow_add]
+              ring
+      _ ≤
+          (18 * (3 : ℝ) ^ Rsmall *
+            Real.exp
+              (Real.log 3 *
+                ((2 * max 0 (-(Real.log (1 - (2 : ℝ) ^ (-η))))) /
+                  (η * Real.log 3)))) *
+            (3 * AM ^ Real.log (3 : ℝ) * G ^ rceil) *
+            (AB * (max 1 θ) ^ pB) := by
+              gcongr
+      _ = Acoef * G ^ rceil * (AB * (max 1 θ) ^ pB) := by
+              dsimp [Acoef]
+              ring
+  have htotal_poly :
+      3 * ((3 : ℝ) ^ (N0 + Qsmall)) * max 1 BtailSmall ≤
+        Afinal * G ^ rfinal * (max 1 θ) ^ pfinal := by
+    have hpow_split :
+        (3 : ℝ) ^ (N0 + Qsmall) = G * (3 : ℝ) ^ Qsmall := by
+      rw [hG_eq, pow_add]
+    calc
+      3 * ((3 : ℝ) ^ (N0 + Qsmall)) * max 1 BtailSmall
+          = 3 * G * ((3 : ℝ) ^ Qsmall * max 1 BtailSmall) := by
+              rw [hpow_split]
+              ring
+      _ ≤ 3 * G * (Acoef * G ^ rceil * (AB * (max 1 θ) ^ pB)) := by
+              gcongr
+      _ = Afinal * G ^ rfinal * (max 1 θ) ^ pfinal := by
+              have hG_pos : 0 < G := lt_of_lt_of_le zero_lt_one hG_one
+              have hmulG : G * G ^ rceil = G ^ rfinal := by
+                dsimp [rfinal]
+                calc
+                  G * G ^ rceil = G ^ (1 : ℝ) * G ^ rceil := by
+                    rw [Real.rpow_one]
+                  _ = G ^ ((1 : ℝ) + rceil) := by
+                    rw [← Real.rpow_add hG_pos]
+              calc
+                3 * G * (Acoef * G ^ rceil * (AB * (max 1 θ) ^ pB))
+                    = 3 * Acoef * AB * (G * G ^ rceil) *
+                        (max 1 θ) ^ pB := by ring
+                _ = 3 * Acoef * AB * G ^ rfinal *
+                        (max 1 θ) ^ pB := by rw [hmulG]
+                _ = Afinal * G ^ rfinal * (max 1 θ) ^ pfinal := by
+                    dsimp [Afinal, pfinal]
+  exact htotal_poly
+
 /-- Compress the explicit small-bottom threshold once the annealed entry
 factor has already been compressed. -/
 theorem explicit_smallBottom_prefactor_le_exp_logSq
@@ -471,38 +611,8 @@ theorem explicit_smallBottom_prefactor_le_exp_logSq
     simpa [BleadSmall] using
       one_le_smallBottomTailDenominator
         (scale := scaleSmall) (η := η) (σ := σ) hη_pos hσ.le
-  have hthreshold :
-      (3 : ℝ) ^ Qsmall * max 1 BtailSmall ≤
-        (18 * (3 : ℝ) ^
-            (Nat.ceil (max 0 (Real.log Msmall)) + Rsmall + 0) *
-          Real.exp
-            (Real.log 3 *
-              ((2 * max 0 (-(Real.log (1 - (2 : ℝ) ^ (-η))))) /
-                (η * Real.log 3)))) *
-          BleadSmall ^ (4 : ℕ) := by
-    let Qaux : ℕ := max QprefSmall (max QleadSmall 0)
-    have hQsmall_le : Qsmall ≤ Qaux := by
-      dsimp [Qaux, Qsmall]
-      omega
-    have hmono :
-        (3 : ℝ) ^ Qsmall * max 1 BtailSmall ≤
-          (3 : ℝ) ^ Qaux * max 1 BtailSmall := by
-      exact mul_le_mul_of_nonneg_right
-        (pow_three_nat_mono hQsmall_le) (by positivity)
-    have haux :
-        (3 : ℝ) ^ Qaux * max 1 BtailSmall ≤
-          (18 * (3 : ℝ) ^
-              (Nat.ceil (max 0 (Real.log Msmall)) + Rsmall + 0) *
-            Real.exp
-              (Real.log 3 *
-                ((2 * max 0 (-(Real.log (1 - (2 : ℝ) ^ (-η))))) /
-                  (η * Real.log 3)))) *
-            BleadSmall ^ (4 : ℕ) := by
-      simpa [BtailSmall, cgapSmall, ρgap, QprefSmall, QleadSmall, Qaux] using
-        pow_three_explicit_threshold_le_const_mul_Blead_four
-          (M := Msmall) (η := η) (Blead := BleadSmall)
-          (R := Rsmall) (Qcut := 0) hη_pos hBlead_one
-    exact hmono.trans haux
+  have hthreshold := smallBottom_threshold_le_denominator_power
+    (Msmall := Msmall) (Rsmall := Rsmall) hη_pos hBlead_one
   have hBlead_pow :
       BleadSmall ^ (4 : ℕ) ≤ AB * (max 1 θ) ^ pB := by
     have hden_eq :
@@ -523,73 +633,11 @@ theorem explicit_smallBottom_prefactor_le_exp_logSq
     simpa [AB, pB, Ascale, rB] using
       rpow_max_one_mul_sq_le_const_mul_rpow
         (A := Ascale) (θ := θ) (r := rB) hθ_nonneg hrB_nonneg
-  have hQsmall_bound :
-      (3 : ℝ) ^ Qsmall * max 1 BtailSmall ≤
-        Acoef * G ^ rceil * (AB * (max 1 θ) ^ pB) := by
-    calc
-      (3 : ℝ) ^ Qsmall * max 1 BtailSmall
-          ≤ (18 * (3 : ℝ) ^
-              (Nat.ceil (max 0 (Real.log Msmall)) + Rsmall + 0) *
-            Real.exp
-              (Real.log 3 *
-                ((2 * max 0 (-(Real.log (1 - (2 : ℝ) ^ (-η))))) /
-                  (η * Real.log 3)))) *
-            BleadSmall ^ (4 : ℕ) := hthreshold
-      _ =
-          (18 * (3 : ℝ) ^ Rsmall *
-            Real.exp
-              (Real.log 3 *
-                ((2 * max 0 (-(Real.log (1 - (2 : ℝ) ^ (-η))))) /
-                  (η * Real.log 3)))) *
-            ((3 : ℝ) ^ Nat.ceil (max 0 (Real.log Msmall))) *
-            BleadSmall ^ (4 : ℕ) := by
-              rw [show Nat.ceil (max 0 (Real.log Msmall)) + Rsmall + 0 =
-                Nat.ceil (max 0 (Real.log Msmall)) + Rsmall by omega]
-              rw [pow_add]
-              ring
-      _ ≤
-          (18 * (3 : ℝ) ^ Rsmall *
-            Real.exp
-              (Real.log 3 *
-                ((2 * max 0 (-(Real.log (1 - (2 : ℝ) ^ (-η))))) /
-                  (η * Real.log 3)))) *
-            (3 * AM ^ Real.log (3 : ℝ) * G ^ rceil) *
-            (AB * (max 1 θ) ^ pB) := by
-              gcongr
-      _ = Acoef * G ^ rceil * (AB * (max 1 θ) ^ pB) := by
-              dsimp [Acoef]
-              ring
   have htotal_poly :
       3 * ((3 : ℝ) ^ (N0 + Qsmall)) * max 1 BtailSmall ≤
         Afinal * G ^ rfinal * (max 1 θ) ^ pfinal := by
-    have hpow_split :
-        (3 : ℝ) ^ (N0 + Qsmall) = G * (3 : ℝ) ^ Qsmall := by
-      dsimp [G]
-      rw [pow_add]
-    calc
-      3 * ((3 : ℝ) ^ (N0 + Qsmall)) * max 1 BtailSmall
-          = 3 * G * ((3 : ℝ) ^ Qsmall * max 1 BtailSmall) := by
-              rw [hpow_split]
-              ring
-      _ ≤ 3 * G * (Acoef * G ^ rceil * (AB * (max 1 θ) ^ pB)) := by
-              gcongr
-      _ = Afinal * G ^ rfinal * (max 1 θ) ^ pfinal := by
-              have hG_pos : 0 < G := lt_of_lt_of_le zero_lt_one hG_one
-              have hmulG : G * G ^ rceil = G ^ rfinal := by
-                dsimp [rfinal]
-                calc
-                  G * G ^ rceil = G ^ (1 : ℝ) * G ^ rceil := by
-                    rw [Real.rpow_one]
-                  _ = G ^ ((1 : ℝ) + rceil) := by
-                    rw [← Real.rpow_add hG_pos]
-              calc
-                3 * G * (Acoef * G ^ rceil * (AB * (max 1 θ) ^ pB))
-                    = 3 * Acoef * AB * (G * G ^ rceil) *
-                        (max 1 θ) ^ pB := by ring
-                _ = 3 * Acoef * AB * G ^ rfinal *
-                        (max 1 θ) ^ pB := by rw [hmulG]
-                _ = Afinal * G ^ rfinal * (max 1 θ) ^ pfinal := by
-                    dsimp [Afinal, pfinal]
+    exact smallBottom_prefactor_polynomial_bound
+      hG_one rfl hthreshold hceil_bound hBlead_pow hAM_pos hAB_pos
   have hG_pos : 0 < G := lt_of_lt_of_le zero_lt_one hG_one
   have hentry_r :
       G ^ rfinal ≤ Real.exp ((rfinal * CentryScale) * L2) := by

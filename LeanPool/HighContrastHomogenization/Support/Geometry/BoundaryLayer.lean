@@ -233,7 +233,7 @@ theorem middleChild_mem_descendantsAtScale_pred {d : ℕ} (Q : TriadicCube d) :
   rw [descendantsAtScale_pred]
   exact middleChild_mem_childCubes Q
 
-@[simp] theorem descendantsAtScale_pred_card {d : ℕ} (Q : TriadicCube d) :
+theorem descendantsAtScale_pred_card {d : ℕ} (Q : TriadicCube d) :
     (descendantsAtScale Q (Q.scale - 1)).card = 3 ^ d := by
   rw [descendantsAtScale_pred]
   exact childCubes_card Q

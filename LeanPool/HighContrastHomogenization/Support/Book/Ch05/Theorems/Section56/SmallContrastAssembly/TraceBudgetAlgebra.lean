@@ -74,7 +74,7 @@ theorem blockJTraceAverageWithNormalizers_eq_traceBudget_descendantsAverageBlock
         fun R : TriadicCube d => coarseBlockMatrix (cubeSet R) a.toFun := by
     funext R
     simpa [F] using
-      (Ch04.RestrictionLawCarrier.coarseBlockMatrix_cubeSet_eq_ch02_coarseBlockMatrix_of_aelocallyUniformlyEllipticField
+      (Ch04.RestrictionLawCarrier.coarseBlockMatrix_cubeSet_eq_chapterCoarse
         ha R).symm
   have hAvg :
       Pcell.weightedBlockAverage
@@ -127,7 +127,8 @@ theorem blockJTraceAverageWithNormalizers_eq_traceBudget_descendantsAverageBlock
             funext R
             refine Finset.sum_congr rfl ?_
             intro α _hα
-            rw [doubledResponseJ_eq_blockJObservableCubeSetBlockVec_of_aelocallyUniformlyEllipticField
+            rw [
+            doubledResponseJ_eq_blockJObservableCubeSetBlockVec_of_aelocallyUniformlyEllipticField
               ha R]
   calc
     blockJTraceAverageWithNormalizers S T Q j a
@@ -408,7 +409,7 @@ theorem descendantsAverageNormalizedFluctuationMatrix_eq_diagonal_average_sub_an
       descendantsAverageNormalizedFluctuationMatrix hP hStruct center Q j a =
         D * (descendantsAverageFullBlockMat Q j F - Abar) * D := by
     simpa [descendantsAverageNormalizedFluctuationMatrix, F, Abar,
-      fullBlockNormalizedFluctuationMatrix, D, b, c] using
+      normalizedFluctuationMatrix, D, b, c] using
       descendantsAverageFullBlockMat_diagonal_sub_const_mul_diagonal
         (Q := Q) (j := j) D Abar F
   calc

@@ -116,7 +116,7 @@ theorem cubeBesovNegativeVectorSeminormTwo_fluxDefect_le_of_split_component_boun
 /--
 Constant-envelope version of the one-cube §3.2.4 split recomposition.
 -/
-theorem cubeBesovNegativeVectorSeminormTwo_fluxDefect_le_const_mul_coarseFluxResponseRHSBound_of_split_component_bounds
+theorem negativeBesovSeminormTwo_fluxDefect_le_const_mul_fluxRHSBound
     {d : ℕ} (Q : TriadicCube d) (a : CoeffField d) (a0 : Mat d)
     (C s : ℝ) (gradU gradW gradV g : Vec d → Vec d)
     {BdefectW BfluxV Ba0V : ℝ}
@@ -162,7 +162,7 @@ theorem cubeBesovNegativeVectorSeminormTwo_fluxDefect_le_const_mul_coarseFluxRes
 The split-envelope triangle constants for component bounds that already carry
 the same nonnegative multiplier `C`.
 -/
-theorem coarseFluxResponseRHSScaledSplitEnvelope_le_two_mul_const_mul_coarseFluxResponseRHSBound_of_bddAbove
+theorem coarseFluxResponse_scaledSplitEnvelope_le_two_const_rhs
     {d : ℕ} (Q : TriadicCube d) (a : CoeffField d) (a0 : Mat d)
     {C s : ℝ} (gradU g : Vec d → Vec d)
     (hC_nonneg : 0 ≤ C) (hs : 0 < s)
@@ -201,7 +201,7 @@ theorem coarseFluxResponseRHSScaledSplitEnvelope_le_two_mul_const_mul_coarseFlux
 Split-component recomposition when every component estimate closes into the
 same constant multiple of its compact §3.2.4 component.
 -/
-theorem cubeBesovNegativeVectorSeminormTwo_fluxDefect_le_two_mul_const_mul_coarseFluxResponseRHSBound_of_const_mul_split_component_bounds
+theorem negativeBesovSeminormTwo_fluxDefect_le_two_mul_const_mul_fluxRHSBound_of_split
     {d : ℕ} (Q : TriadicCube d) (a : CoeffField d) (a0 : Mat d)
     {C s : ℝ} (gradU gradW gradV g : Vec d → Vec d)
     (hC_nonneg : 0 ≤ C) (hs : 0 < s)
@@ -245,13 +245,13 @@ theorem cubeBesovNegativeVectorSeminormTwo_fluxDefect_le_two_mul_const_mul_coars
     hdefectW_mem hfluxV_mem ha0V_mem
     hdefectW_bdd hfluxV_bdd ha0V_bdd
     hdefectW hfluxV ha0V
-    (coarseFluxResponseRHSScaledSplitEnvelope_le_two_mul_const_mul_coarseFluxResponseRHSBound_of_bddAbove
+    (coarseFluxResponse_scaledSplitEnvelope_le_two_const_rhs
       Q a a0 gradU g hC_nonneg hs hgBdd)
 
 /--
 Descendant-localized split-component handoff to an arbitrary scalar envelope.
 -/
-theorem localizedFluxDefectNegativeBesovAverageTwo_fluxDefect_le_sqrt_descendantsAverage_bound_sq_of_descendant_split_component_bounds
+theorem negativeBesovFluxAverage_le_sqrt_descendantMean_bound_sq
     {d : ℕ} (Q : TriadicCube d) (a : CoeffField d) (a0 : Mat d)
     (s : ℝ) (gradU gradW gradV : Vec d → Vec d) (j : ℕ)
     {BdefectW BfluxV Ba0V B : TriadicCube d → ℝ}
@@ -326,7 +326,7 @@ theorem localizedFluxDefectNegativeBesovAverageTwo_fluxDefect_le_sqrt_descendant
 Descendant-localized split-component handoff to `C` times the named bare
 one-cube RHS on every descendant.
 -/
-theorem localizedFluxDefectNegativeBesovAverageTwo_fluxDefect_le_sqrt_descendantsAverage_const_mul_coarseFluxResponseRHSBound_sq_of_descendant_split_component_bounds
+theorem negativeBesovFluxAverage_le_sqrt_descendantMean_const_mul_fluxRHSBound_of_split
     {d : ℕ} (Q : TriadicCube d) (a : CoeffField d) (a0 : Mat d)
     (C s : ℝ) (gradU gradW gradV g : Vec d → Vec d) (j : ℕ)
     {BdefectW BfluxV Ba0V : TriadicCube d → ℝ}
@@ -383,7 +383,7 @@ theorem localizedFluxDefectNegativeBesovAverageTwo_fluxDefect_le_sqrt_descendant
       Real.sqrt
         (descendantsAverage Q j fun R =>
           (C * coarseFluxResponseRHSBound R a a0 s gradU g) ^ 2) :=
-  localizedFluxDefectNegativeBesovAverageTwo_fluxDefect_le_sqrt_descendantsAverage_bound_sq_of_descendant_split_component_bounds
+  negativeBesovFluxAverage_le_sqrt_descendantMean_bound_sq
     Q a a0 s gradU gradW gradV j
     hgrad hdefectW_mem hfluxV_mem ha0V_mem
     hdefectU_bdd hdefectW_bdd hfluxV_bdd ha0V_bdd
@@ -449,7 +449,7 @@ theorem sqrt_descendantsAverage_const_mul_coarseFluxResponseRHSBound_sq_eq
 Descendant-localized §3.2.4 handoff from pointwise one-cube bounds with a
 caller-supplied scalar envelope.
 -/
-theorem localizedFluxDefectNegativeBesovAverageTwo_fluxDefect_le_sqrt_descendantsAverage_const_mul_coarseFluxResponseRHSBound_sq_of_descendant_bounds
+theorem negativeBesovFluxAverage_le_sqrt_descendantMean_const_mul_fluxRHSBound_sq
     {d : ℕ} (Q : TriadicCube d) (a : CoeffField d) (a0 : Mat d)
     (C s : ℝ) (gradU g : Vec d → Vec d) (j : ℕ)
     (hdefect_bdd :
@@ -478,7 +478,7 @@ theorem localizedFluxDefectNegativeBesovAverageTwo_fluxDefect_le_sqrt_descendant
 Named descendant-localized §3.2.4 handoff with the nonnegative scalar envelope
 pulled outside the localized RHS norm.
 -/
-theorem localizedFluxDefectNegativeBesovAverageTwo_fluxDefect_le_const_mul_localizedCoarseFluxResponseRHSBound_of_descendant_bounds
+theorem negativeBesovFluxAverage_le_const_mul_CoarseFluxRHSBound
     {d : ℕ} (Q : TriadicCube d) (a : CoeffField d) (a0 : Mat d)
     {C s : ℝ} (gradU g : Vec d → Vec d) (j : ℕ)
     (hC_nonneg : 0 ≤ C)
@@ -501,7 +501,7 @@ theorem localizedFluxDefectNegativeBesovAverageTwo_fluxDefect_le_const_mul_local
       Real.sqrt
         (descendantsAverage Q j fun R =>
           (C * coarseFluxResponseRHSBound R a a0 s gradU g) ^ 2) :=
-        localizedFluxDefectNegativeBesovAverageTwo_fluxDefect_le_sqrt_descendantsAverage_const_mul_coarseFluxResponseRHSBound_sq_of_descendant_bounds
+        negativeBesovFluxAverage_le_sqrt_descendantMean_const_mul_fluxRHSBound_sq
           Q a a0 C s gradU g j hdefect_bdd hbound
     _ = C * localizedCoarseFluxResponseRHSBound Q a a0 s j gradU g :=
         sqrt_descendantsAverage_const_mul_coarseFluxResponseRHSBound_sq_eq
@@ -511,7 +511,7 @@ theorem localizedFluxDefectNegativeBesovAverageTwo_fluxDefect_le_const_mul_local
 Descendant-localized handoff for one-cube apex estimates whose target already
 contains the formal split/recomposition constant `2 * C`.
 -/
-theorem localizedFluxDefectNegativeBesovAverageTwo_fluxDefect_le_two_mul_const_mul_localizedCoarseFluxResponseRHSBound_of_descendant_bounds
+theorem negativeBesovFluxAverage_le_two_mul_const_mul_CoarseFluxRHSBound
     {d : ℕ} (Q : TriadicCube d) (a : CoeffField d) (a0 : Mat d)
     {C s : ℝ} (gradU g : Vec d → Vec d) (j : ℕ)
     (hC_nonneg : 0 ≤ C)
@@ -528,7 +528,7 @@ theorem localizedFluxDefectNegativeBesovAverageTwo_fluxDefect_le_two_mul_const_m
         (fluxDefect a a0 gradU) j ≤
       2 * C * localizedCoarseFluxResponseRHSBound Q a a0 s j gradU g := by
   exact
-    localizedFluxDefectNegativeBesovAverageTwo_fluxDefect_le_const_mul_localizedCoarseFluxResponseRHSBound_of_descendant_bounds
+    negativeBesovFluxAverage_le_const_mul_CoarseFluxRHSBound
       Q a a0 gradU g j (mul_nonneg (by norm_num : 0 ≤ (2 : ℝ)) hC_nonneg)
       hdefect_bdd hbound
 
@@ -536,7 +536,7 @@ theorem localizedFluxDefectNegativeBesovAverageTwo_fluxDefect_le_two_mul_const_m
 Descendant-localized split-component handoff with the formal `2 * C`
 split/recomposition constant already included in the localized endpoint.
 -/
-theorem localizedFluxDefectNegativeBesovAverageTwo_fluxDefect_le_two_mul_const_mul_localizedCoarseFluxResponseRHSBound_of_descendant_const_mul_split_component_bounds
+theorem negativeBesovFluxAverage_le_two_mul_const_mul_CoarseFluxRHSBound_of_component
     {d : ℕ} (Q : TriadicCube d) (a : CoeffField d) (a0 : Mat d)
     {C s : ℝ} (gradU gradW gradV g : Vec d → Vec d) (j : ℕ)
     (hC_nonneg : 0 ≤ C) (hs : 0 < s)
@@ -594,11 +594,11 @@ theorem localizedFluxDefectNegativeBesovAverageTwo_fluxDefect_le_two_mul_const_m
         (fluxDefect a a0 gradU) j ≤
       2 * C * localizedCoarseFluxResponseRHSBound Q a a0 s j gradU g := by
   refine
-    localizedFluxDefectNegativeBesovAverageTwo_fluxDefect_le_two_mul_const_mul_localizedCoarseFluxResponseRHSBound_of_descendant_bounds
+    negativeBesovFluxAverage_le_two_mul_const_mul_CoarseFluxRHSBound
       Q a a0 gradU g j hC_nonneg hdefectU_bdd ?_
   intro R hR
   exact
-    cubeBesovNegativeVectorSeminormTwo_fluxDefect_le_two_mul_const_mul_coarseFluxResponseRHSBound_of_const_mul_split_component_bounds
+    negativeBesovSeminormTwo_fluxDefect_le_two_mul_const_mul_fluxRHSBound_of_split
       (Q := R) (a := a) (a0 := a0) (C := C) (s := s)
       (gradU := gradU) (gradW := gradW) (gradV := gradV) (g := g)
       hC_nonneg hs (hgBdd R hR)

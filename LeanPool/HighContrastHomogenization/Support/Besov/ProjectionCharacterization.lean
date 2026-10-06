@@ -32,11 +32,13 @@ depth-seminorm reformulations. It also records the analogous local
 `cubeIncrement` identity on descendants one generation deeper.
 -/
 
+/-- The pointwise error of `u` relative to its cube projection at depth `j`. -/
 @[expose]
 noncomputable def cubeProjectionResidual {d : ℕ} (Q : TriadicCube d) (j : ℕ)
     (u : Vec d → ℝ) : Vec d → ℝ :=
   fun x => u x - cubeProjection Q j u x
 
+/-- The difference between the cube projections of `u` at depths `j + n` and `j`. -/
 @[expose]
 noncomputable def cubeProjectionGap {d : ℕ} (Q : TriadicCube d) (j n : ℕ)
     (u : Vec d → ℝ) : Vec d → ℝ :=
@@ -177,7 +179,7 @@ theorem cubeLpNorm_sum_cubeIncrement_eq_cubeProjectionGap {d : ℕ}
       cubeLpNorm S p (cubeProjectionGap Q j n u) := by
   rw [sum_cubeIncrement_eq_cubeProjectionGap]
 
-@[simp] theorem cubeBesovDepthAverage_depth_zero_eq_sub_cubeProjection {d : ℕ}
+theorem cubeBesovDepthAverage_depth_zero_eq_sub_cubeProjection {d : ℕ}
     (Q : TriadicCube d) (p : ℝ≥0∞) (u : Vec d → ℝ) :
     cubeBesovDepthAverage Q p u 0 =
       (cubeLpNorm Q p (fun x => u x - cubeProjection Q 0 u x)) ^ p.toReal := by
@@ -186,7 +188,7 @@ theorem cubeLpNorm_sum_cubeIncrement_eq_cubeProjectionGap {d : ℕ}
     (Q := Q) (R := Q) (j := 0) (p := p) u]
   simp
 
-@[simp] theorem cubeBesovDepthAverage_depth_zero_eq_sub_cubeIncrement {d : ℕ}
+theorem cubeBesovDepthAverage_depth_zero_eq_sub_cubeIncrement {d : ℕ}
     (Q : TriadicCube d) (p : ℝ≥0∞) (u : Vec d → ℝ) :
     cubeBesovDepthAverage Q p u 0 =
       (cubeLpNorm Q p (fun x => u x - cubeIncrement Q 0 u x)) ^ p.toReal := by

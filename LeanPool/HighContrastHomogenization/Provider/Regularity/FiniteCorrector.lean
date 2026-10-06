@@ -169,7 +169,7 @@ noncomputable def finiteAffineCorrection {d : ℕ} [NeZero d]
     (g := finiteAffineForcing a m e)
     (Internal.Ch02.BookCh02.memVectorL2_neg_matVecMul_const
       (finiteAffinePointwiseCoeff_isElliptic a m) e)
-    (PotentialSolenoidalL2Data.hasPotentialZeroTraceClosureRealization_of_isOpenBoundedConvexDomain
+    (PotentialSolenoidalL2Data.hasPotentialZeroTraceClosureRealization_of_convexDomain
         (Book.Ch02.cubeDomain (originCube d m)).isDomain)
     (Book.Ch02.cubeDomain (originCube d m)).nonempty
     (finiteAffinePointwiseCoeff_isElliptic a m)
@@ -184,10 +184,10 @@ private theorem finiteAffineCorrection_weakSolution {d : ℕ} [NeZero d]
       (finiteAffineCorrection a m e) (finiteAffineForcing a m e) := by
   unfold finiteAffineCorrection
   exact
-    isZeroTraceDirichletRhsWeakSolution_zeroTraceDirichletRhsProblemSolution_of_potentialZeroTraceClosureRealization
+    isZeroTraceDirichletRhsWeakSolution_zeroTraceDirichletRhsProblemSolution
       (Internal.Ch02.BookCh02.memVectorL2_neg_matVecMul_const
         (finiteAffinePointwiseCoeff_isElliptic a m) e)
-      (PotentialSolenoidalL2Data.hasPotentialZeroTraceClosureRealization_of_isOpenBoundedConvexDomain
+      (PotentialSolenoidalL2Data.hasPotentialZeroTraceClosureRealization_of_convexDomain
           (Book.Ch02.cubeDomain (originCube d m)).isDomain)
       (Book.Ch02.cubeDomain (originCube d m)).nonempty
       (finiteAffinePointwiseCoeff_isElliptic a m)

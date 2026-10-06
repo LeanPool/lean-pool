@@ -52,7 +52,7 @@ Integrability on the half-open centered cube is equivalent to integrability on
 the corresponding open cube.
 -/
 theorem integrableOn_cubeSet_originCube_iff_integrableOn_openCubeSet_originCube
-    {d : ℕ} {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] [CompleteSpace E]
+    {d : ℕ} {E : Type*} [NormedAddCommGroup E]
     {n : ℤ} {f : Vec d → E} :
     MeasureTheory.IntegrableOn f (cubeSet (originCube d n)) MeasureTheory.volume ↔
       MeasureTheory.IntegrableOn f (openCubeSet (originCube d n)) MeasureTheory.volume := by
@@ -64,7 +64,7 @@ Set integrals over the half-open centered cube and the corresponding open cube
 agree.
 -/
 theorem setIntegral_cubeSet_originCube_eq_setIntegral_openCubeSet_originCube
-    {d : ℕ} {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] [CompleteSpace E]
+    {d : ℕ} {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
     {n : ℤ} {f : Vec d → E} :
     ∫ x in cubeSet (originCube d n), f x ∂MeasureTheory.volume =
       ∫ x in openCubeSet (originCube d n), f x ∂MeasureTheory.volume := by

@@ -96,7 +96,8 @@ def respWeakEnergyOf (P : Measure (CoeffSpace d)) (qq : Mat d) (t : ℤ) (M0 : B
   (3 : ℝ) ^ (-(t : ℝ)) *
     ∫ a, besovSeminorm t (fun n z =>
         blockMatVecMul (blockSqrt M0)
-          (cellAverage (adaptedCellAtCenter qq (t - (n : ℤ)) z) (optimizerField (b a) (u a)) - Y)) ^ 2 ∂P
+          (cellAverage (adaptedCellAtCenter qq (t - (n : ℤ)) z) (optimizerField (b a) (u a)) -
+            Y)) ^ 2 ∂P
 
 /-- `K_0^2 = |M_0^{-1/2} Ehat_t^- M_0^{-1/2}|` (paper `p.response.transfer`), minus sign; the
 literal
@@ -340,7 +341,8 @@ own source is `Annealed.exists_elliptic_representative_adapted`
 that
 the flux slot needs. -/
 
-private theorem integrableOn_matVecMul_apply_of_integrableOn {V : Set (Vec d)} (M : Mat d) (Y : Vec d → Vec d)
+private theorem integrableOn_matVecMul_apply_of_integrableOn {V : Set (Vec d)} (M : Mat d) (Y :
+  Vec d → Vec d)
     (hY : ∀ j, IntegrableOn (fun x => Y x j) V) (i : Fin d) :
     IntegrableOn (fun x => matVecMul M (Y x) i) V := by
   have h : (fun x => matVecMul M (Y x) i) = fun x => ∑ j, M i j * Y x j := rfl
@@ -394,7 +396,8 @@ private theorem memLp_one_blockVecDot_of_memVectorL2 {U : Set (Vec d)} {X : Vec 
       simpa [Pi.mul_apply] using! (e2 i).integrable_mul (e2 i)
   simpa [blockVecDot, vecDot] using! hA.add hB
 
-private theorem integrableOn_slot_of_memVectorL2 {U V : Set (Vec d)} (hVU : V ⊆ U) (hVfin : volume V ≠ ⊤)
+private theorem integrableOn_slot_of_memVectorL2 {U V : Set (Vec d)} (hVU : V ⊆ U) (hVfin :
+  volume V ≠ ⊤)
     {g : Vec d → Vec d} (hg : MemVectorL2 U g) (j : Fin d) :
     IntegrableOn (fun x => g x j) V := by
   have : IsFiniteMeasure (volume.restrict V) :=
@@ -595,7 +598,8 @@ theorem besov_pathwise_le_minus [NeZero d] (P : Measure (CoeffSpace d)) [IsProba
               (optimizerField (respCoeffMinus F a) u) - respYMinus P jStar F t e)) ≤
       16 * Real.sqrt (respK0SqMinus P jStar F t) * Real.sqrt (respLsqMinus P jStar F t e) *
           (weakCellSum (respGrid jStar F) t H (respEhatMinus P jStar F t) (respCoeffMinus F a) +
-            weakAverageSum (respGrid jStar F) t H (Quenched.contrastRho γ) (respEhatMinus P jStar F t)
+            weakAverageSum (respGrid jStar F) t H (Quenched.contrastRho γ) (respEhatMinus P
+              jStar F t)
               (respCoeffMinus F a)) +
         (16 / (1 - Quenched.contrastRho γ) * Real.sqrt (respK0SqMinus P jStar F t)) *
           (if 1 < respAllScaleMax P γ jStar F t a then
@@ -660,7 +664,8 @@ theorem besov_pathwise_le_plus [NeZero d] (P : Measure (CoeffSpace d)) [IsProbab
               (optimizerField (respCoeffPlus F a) u) - respYPlus P jStar F t e)) ≤
       16 * Real.sqrt (respK0SqPlus P jStar F t) * Real.sqrt (respLsqPlus P jStar F t e) *
           (weakCellSum (respGrid jStar F) t H (respEhatPlus P jStar F t) (respCoeffPlus F a) +
-            weakAverageSum (respGrid jStar F) t H (Quenched.contrastRho γ) (respEhatPlus P jStar F t)
+            weakAverageSum (respGrid jStar F) t H (Quenched.contrastRho γ) (respEhatPlus P jStar
+              F t)
               (respCoeffPlus F a)) +
         (16 / (1 - Quenched.contrastRho γ) * Real.sqrt (respK0SqPlus P jStar F t)) *
           (if 1 < respAllScaleMax P γ jStar F t a then

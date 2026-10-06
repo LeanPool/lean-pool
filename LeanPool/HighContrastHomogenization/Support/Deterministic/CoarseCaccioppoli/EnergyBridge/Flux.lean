@@ -215,7 +215,7 @@ theorem coarseCaccioppoli_gradient_qone_partialBound_of_cubeAverageEnergyControl
     refine mul_nonneg (geometricWeight_nonneg n (by simpa using hs.le)) ?_
     exact Real.rpow_nonneg
       (maxDescendantSigmaStarInvNormAtScale_nonneg Q
-        (sub_le_self _ (by exact_mod_cast Nat.zero_le n)) a) _
+        (sub_le_self _ (Nat.cast_nonneg n)) a) _
   have hcoeff_eq :
       Finset.sum (Finset.range (N + 1)) coeff =
         (geometricDiscount s 1)⁻¹ *
@@ -353,7 +353,7 @@ theorem coarseCaccioppoli_flux_qone_partialBound_of_cubeAverageEnergyControl {d 
     refine mul_nonneg (geometricWeight_nonneg n (by simpa using hs.le)) ?_
     exact Real.rpow_nonneg
       (maxDescendantBBlockNormAtScale_nonneg Q
-        (sub_le_self _ (by exact_mod_cast Nat.zero_le n)) a) _
+        (sub_le_self _ (Nat.cast_nonneg n)) a) _
   have hcoeff_eq :
       Finset.sum (Finset.range (N + 1)) coeff =
         (geometricDiscount s 1)⁻¹ *

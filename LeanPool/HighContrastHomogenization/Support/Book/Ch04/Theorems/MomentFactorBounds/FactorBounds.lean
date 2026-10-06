@@ -37,7 +37,7 @@ namespace RestrictionLawCarrier
 /-- Lower-right finite-parent coarse-block fluctuation bound, stated directly
 against the law-facing Ch4 surface.  The proof owns all locality,
 measurability, covariance, and deterministic positive-excess domination. -/
-theorem lowerRight_matrixNorm_positiveExcess_finsetSup_momentRoot_le_of_restrictionUnitRangeDependentLaw
+theorem lowerRightNorm_positiveExcess_momentRoot_le_of_unitRangeLaw
     {d : ℕ} [NeZero d] {P : RestrictionCoeffLaw d} (hP : RestrictionLawCarrier P)
     {parents : Finset (TriadicCube d)} (hparents : parents.Nonempty)
     {n : ℤ} {ξ : ℕ} {K B : ℝ}
@@ -153,13 +153,13 @@ theorem lowerRight_matrixNorm_positiveExcess_finsetSup_momentRoot_le_of_restrict
         (∫ a, |entry i j a| ^ ξ ∂P) ^ (1 / (ξ : ℝ)) ≤ C := by
     intro i j
     have hroot :=
-      integral_finsetSup_abs_restrictionCenteredDescendantAverageOnCube_pow_rpow_inv_le_of_restrictionUnitRangeDependentLaw_of_ae_eq_local
+      integral_finiteSupAbs_centeredDescendantMean_pow_rpow_inv_le_of_unitRangeLaw
         (d := d) (n := n) (P := P) (parents := parents) hparents
         (p := ξ) (K := K) (B := B)
         hP hn hparent_scale hPstat hPdep
         (fun U a => (coarseBlockMatrix U a).lowerRight i j)
         (fun Q hQ R hR =>
-          hP.exists_isRestrictionLocalRandomVariable_ae_eq_coarseBlockMatrix_lowerRight_apply_cubeSet R i j)
+          hP.exists_restrictionLocalRandomVariable_ae_eq_coarseLowerRightEntry R i j)
         (by
           simpa [blockMatEntry] using
             isRestrictionTranslationCovariant_comp_toFun
@@ -179,7 +179,7 @@ theorem lowerRight_matrixNorm_positiveExcess_finsetSup_momentRoot_le_of_restrict
   have hpoint :
       excess ≤ᵐ[P] fun a => ∑ i : Fin d, ∑ j : Fin d, entry i j a := by
     simpa [excess, entry] using
-      hP.coarseBlockMatrix_lowerRight_matrixNorm_positiveExcess_finsetSup_le_sum_finsetSup_abs_restrictionCenteredDescendantAverageOnCube_ae
+      hP.coarseMatrix_lowerRight_normExcess_finiteSup_le_sum_finiteSup_centeredMean_ae
         hparents hparent_scale center hcenter
   simpa [excess, entry, C] using
     momentRoot_excess_le_card_mul_entryRootBound
@@ -199,7 +199,7 @@ private theorem upperLeft_abs_entry_le_LambdaSqCoeffField_ae_aux
       coarseBlockMatrix (cubeSet Q) a.toFun =
         Ch02.coarseBlockMatrix (Ch02.cubeDomain Q) (F.coeffOn Q) := by
     simpa [F] using
-      RestrictionLawCarrier.coarseBlockMatrix_cubeSet_eq_ch02_coarseBlockMatrix_of_aelocallyUniformlyEllipticField
+      RestrictionLawCarrier.coarseBlockMatrix_cubeSet_eq_chapterCoarse
         ha Q
   have hEntry :
       |(Ch02.coarseBlockMatrix (Ch02.cubeDomain Q) (F.coeffOn Q)).upperLeft i j| ≤
@@ -229,7 +229,7 @@ private theorem lowerRight_abs_entry_le_lambdaSqCoeffField_inv_ae_aux
       coarseBlockMatrix (cubeSet Q) a.toFun =
         Ch02.coarseBlockMatrix (Ch02.cubeDomain Q) (F.coeffOn Q) := by
     simpa [F] using
-      RestrictionLawCarrier.coarseBlockMatrix_cubeSet_eq_ch02_coarseBlockMatrix_of_aelocallyUniformlyEllipticField
+      RestrictionLawCarrier.coarseBlockMatrix_cubeSet_eq_chapterCoarse
         ha Q
   have hEntry :
       |(Ch02.coarseBlockMatrix (Ch02.cubeDomain Q) (F.coeffOn Q)).lowerRight i j| ≤
@@ -472,7 +472,7 @@ private theorem centered_abs_sub_integrable_and_momentRoot_le_two_of_abs_le_nonn
 
 /-- Unit-scale centered upper-left entries have their `L^ξ` roots controlled
 by the unit upper multiscale ellipticity moment. -/
-theorem restrictionCenteredOriginObservable_upperLeft_entry_momentRoot_le_two_LambdaMomentAtScale
+theorem restrictionOriginUpperLeftMomentRoot_le_twoLambdaMoment
     {d : ℕ} [NeZero d] {P : RestrictionCoeffLaw d} (hP : RestrictionLawCarrier P)
     {s : ℝ} {ξ : ℕ} (hs : 0 < s) (hξ : 1 ≤ ξ)
     (hUpperPowInt :
@@ -515,7 +515,7 @@ theorem restrictionCenteredOriginObservable_upperLeft_entry_momentRoot_le_two_La
 
 /-- Unit-scale centered lower-right entries have their `L^ξ` roots controlled
 by the unit lower inverse multiscale ellipticity moment. -/
-theorem restrictionCenteredOriginObservable_lowerRight_entry_momentRoot_le_two_lambdaInvMomentAtScale
+theorem centeredOriginLowerRightEntry_momentRoot_le_twoLambdaInvMoment
     {d : ℕ} [NeZero d] {P : RestrictionCoeffLaw d} (hP : RestrictionLawCarrier P)
     {s : ℝ} {ξ : ℕ} (hs : 0 < s) (hξ : 1 ≤ ξ)
     (hLowerPowInt :

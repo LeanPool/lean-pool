@@ -81,6 +81,8 @@ theorem gradientCoordLpSeminormSum_translate_eq (u : W1pFunction U p) (z : Vec d
   unfold gradientCoordLpSeminormSum
   exact Finset.sum_congr rfl fun i _ => u.gradCoordLpSeminorm_translate_eq z i
 
+/-- Transport of a `W^{1,p}` function along an equality of its domains, retaining its value and
+weak gradient. -/
 @[expose]
 public noncomputable def castDomain {V : Set (Vec d)}
     (hUV : U = V) (u : W1pFunction U p) : W1pFunction V p :=
@@ -98,6 +100,8 @@ public noncomputable def castDomain {V : Set (Vec d)}
   subst V
   rfl
 
+/-- The `W^{1,p}` function on `U` given by `x ↦ u(x + z)` for a function on the translated domain
+`U + z`. -/
 @[expose]
 public noncomputable def untranslateForPoincare (z : Vec d)
     (u : W1pFunction (translateSet z U) p) : W1pFunction U p := by
@@ -171,6 +175,8 @@ noncomputable def translate (u : W1pMeanZeroFunction U p) (z : Vec d) :
     (u.translate z).toW1pFunction = u.toW1pFunction.translate z :=
   rfl
 
+/-- The mean-zero `W^{1,p}` function on `U` given by `x ↦ u(x + z)` for a mean-zero function on `U
++ z`. -/
 @[expose]
 public noncomputable def untranslateForPoincare (z : Vec d)
     (u : W1pMeanZeroFunction (translateSet z U) p) : W1pMeanZeroFunction U p where

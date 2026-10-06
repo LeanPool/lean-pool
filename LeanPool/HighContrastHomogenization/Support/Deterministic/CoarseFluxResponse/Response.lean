@@ -91,7 +91,7 @@ theorem cubeAverageFluxResponseControl_of_descendantScalarCanonicalFluxDefectDat
           cubeAverage R (scalarVariationEnergyIntegrand a w) := by
     simpa [D, actualDefect, symmPart_eq_of_isSymm ha0symm,
       matTranspose, Matrix.IsSymm] using
-      (cubeAverageFluxDefect_energyForm_le_normalizedBlockResponseMax_mul_energyAverage_of_scalarCanonicalMaximizer
+      (cubeAverageFluxDefect_energyForm_le_BlockResponseMax_mul_energyAverage
         (R := R) (a := a) (a0 := a0) hEll ha0 w hv')
   have hnorm :
       vecNormSq D ≤ matNorm a0 * vecDot D (matVecMul a0⁻¹ D) :=
@@ -290,7 +290,7 @@ theorem coarseFluxResponse_qone_partialSeminorm_le_of_cubeAverageFluxResponseCon
     intro n
     refine mul_nonneg (geometricWeight_nonneg n (by simpa using hs.le)) ?_
     exact scaleResponseAtScale_infinity_nonneg Q
-      (sub_le_self _ (by exact_mod_cast Nat.zero_le n)) a a0
+      (sub_le_self _ (Nat.cast_nonneg n)) a a0
   have hcoeff_eq :
       Finset.sum (Finset.range (N + 1)) coeff =
         (geometricDiscount s 1)⁻¹ *

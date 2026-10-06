@@ -25,9 +25,140 @@ noncomputable section
 open scoped BigOperators MatrixOrder Pointwise
 
 
+private theorem cubeAverageFluxDefect_pairingSquare_le_responseEnergy
+    {d : ℕ} [NeZero d] (R : TriadicCube d) (a : CoeffField d) (a0 : Mat d)
+    {lam Lam : ℝ} (hEll : IsEllipticFieldOn lam Lam (cubeSet R) a)
+    (w : AHarmonicFunction a (cubeSet R)) (ξ : Vec d)
+    (v : ScalarCanonicalMaximizer (cubeSet R) (-ξ) (-matVecMul (matTranspose a0) ξ) a) :
+    (vecDot (cubeAverageVec R
+      (fun x => matVecMul (a x) (w.toH1.grad x) - matVecMul a0 (w.toH1.grad x))) ξ) ^ 2 ≤
+      cubeAverage R (scalarVariationEnergyIntegrand a w) *
+        (2 * ResponseJ (cubeSet R) (-ξ) (-matVecMul (matTranspose a0) ξ) a) := by
+  let := isFiniteMeasureVolumeMeasureOnCubeSet R
+  let defect : Vec d → Vec d :=
+    fun x => matVecMul (a x) (w.toH1.grad x) - matVecMul a0 (w.toH1.grad x)
+  let D : Vec d := cubeAverageVec R defect
+  let avgGrad : Vec d := fun i => volumeAverage (cubeSet R) (fun x => w.toH1.grad x i)
+  let avgFlux : Vec d :=
+    fun i => volumeAverage (cubeSet R) (fun x => matVecMul (a x) (w.toH1.grad x) i)
+  have hraw :=
+    ScalarCanonicalMaximizer.linearResponseSq
+      (U := cubeSet R) (a := a) (p := -ξ) (q := -matVecMul (matTranspose a0) ξ)
+      (lam := lam) (Lam := Lam) v hEll
+      (ResponseLinearIntegrabilityData.of_isEllipticFieldOn hEll) w
+  have havgGrad :
+      cubeAverageVec R (fun x => w.toH1.grad x) = avgGrad := by
+    funext i
+    simp [avgGrad, cubeAverageVec, volumeAverage_cubeSet_eq_cubeAverage]
+  have havgFlux :
+      cubeAverageVec R (fun x => matVecMul (a x) (w.toH1.grad x)) = avgFlux := by
+    funext i
+    simp [avgFlux, cubeAverageVec, volumeAverage_cubeSet_eq_cubeAverage]
+  have hD :
+      D = avgFlux - matVecMul a0 avgGrad := by
+    ext i
+    have hgradCoord :
+        ∀ j : Fin d, MeasureTheory.IntegrableOn (fun x => w.toH1.grad x j) (cubeSet R) := by
+      intro j
+      exact CorrectionFieldData.integrableOn_coord_of_memVectorL2 w.toH1.grad_memVectorL2 j
+    have hfluxMem :
+        MemVectorL2 (cubeSet R) (fun x => matVecMul (a x) (w.toH1.grad x)) :=
+      memVectorL2_matVecMul_of_isEllipticFieldOn hEll w.toH1.grad_memVectorL2
+    have hfluxCoord :
+        ∀ j : Fin d,
+          MeasureTheory.IntegrableOn
+            (fun x => matVecMul (a x) (w.toH1.grad x) j) (cubeSet R) := by
+      intro j
+      exact CorrectionFieldData.integrableOn_coord_of_memVectorL2 hfluxMem j
+    have hA0avg :
+        volumeAverage (cubeSet R) (fun x => matVecMul a0 (w.toH1.grad x) i) =
+          matVecMul a0 avgGrad i := by
+      calc
+        volumeAverage (cubeSet R) (fun x => matVecMul a0 (w.toH1.grad x) i)
+            = ∑ j, volumeAverage (cubeSet R) (fun x => a0 i j * w.toH1.grad x j) := by
+                rw [show (fun x => matVecMul a0 (w.toH1.grad x) i) =
+                    fun x => ∑ j, a0 i j * w.toH1.grad x j by
+                      funext x
+                      simp [matVecMul]]
+                exact volumeAverage_sum (U := cubeSet R) Finset.univ
+                  (fun j x => a0 i j * w.toH1.grad x j)
+                  (fun j hj => (hgradCoord j).const_mul (a0 i j))
+        _ = ∑ j, a0 i j * volumeAverage (cubeSet R) (fun x => w.toH1.grad x j) := by
+              refine Finset.sum_congr rfl ?_
+              intro j hj
+              rw [show (fun x => a0 i j * w.toH1.grad x j) =
+                  (a0 i j) • fun x => w.toH1.grad x j by
+                    funext x
+                    simp]
+              rw [volumeAverage_smul]
+        _ = matVecMul a0 avgGrad i := by
+              simp [avgGrad, matVecMul]
+    calc
+      D i = volumeAverage (cubeSet R) (fun x => defect x i) := by
+        simp [D, cubeAverageVec, volumeAverage_cubeSet_eq_cubeAverage]
+      _ = volumeAverage (cubeSet R) (fun x => matVecMul (a x) (w.toH1.grad x) i) -
+            volumeAverage (cubeSet R) (fun x => matVecMul a0 (w.toH1.grad x) i) := by
+              apply volumeAverage_sub (hfluxCoord i)
+              have hsum :
+                  MeasureTheory.IntegrableOn
+                    (fun x => ∑ j, a0 i j * w.toH1.grad x j) (cubeSet R) := by
+                  refine MeasureTheory.integrable_finsetSum Finset.univ ?_
+                  intro j hj
+                  exact (hgradCoord j).const_mul (a0 i j)
+              simpa [defect, matVecMul] using hsum
+      _ = avgFlux i - volumeAverage (cubeSet R) (fun x => matVecMul a0 (w.toH1.grad x) i) := by
+          simp [avgFlux]
+      _ = avgFlux i - matVecMul a0 avgGrad i := by
+          rw [hA0avg]
+  have hleft :
+      volumeAverage (cubeSet R) (fun x => vecDot (-matVecMul (matTranspose a0) ξ) (w.toH1.grad
+        x)) -
+          volumeAverage (cubeSet R) (fun x => vecDot (-ξ) (matVecMul (a x) (w.toH1.grad x))) =
+        vecDot D ξ := by
+    have hpair :=
+      basic_cg_identities_average_pairing_eq_vecDot_average_gradient_sub_average_flux
+        (cubeSet R) a (-ξ) (-matVecMul (matTranspose a0) ξ)
+        (ResponseLinearIntegrabilityData.of_isEllipticFieldOn hEll) w
+    calc
+      volumeAverage (cubeSet R) (fun x => vecDot (-matVecMul (matTranspose a0) ξ) (w.toH1.grad
+        x)) -
+          volumeAverage (cubeSet R) (fun x => vecDot (-ξ) (matVecMul (a x) (w.toH1.grad x))) =
+          vecDot (-matVecMul (matTranspose a0) ξ) avgGrad - vecDot (-ξ) avgFlux := by
+            simpa [avgGrad, avgFlux] using hpair
+      _ = -vecDot (matVecMul a0 avgGrad) ξ + vecDot ξ avgFlux := by
+            rw [vecDot_neg_left, vecDot_neg_left]
+            rw [vecDot_comm (matVecMul (matTranspose a0) ξ) avgGrad]
+            rw [vecDot_matVecMul_transpose avgGrad ξ a0]
+            ring
+      _ = vecDot ξ avgFlux - vecDot ξ (matVecMul a0 avgGrad) := by
+            rw [vecDot_comm (matVecMul a0 avgGrad) ξ]
+            ring
+      _ = vecDot ξ (avgFlux - matVecMul a0 avgGrad) := by
+            simp [sub_eq_add_neg, vecDot_add_right, vecDot_neg_right]
+      _ = vecDot ξ D := by rw [hD]
+      _ = vecDot D ξ := by rw [vecDot_comm]
+  have hleft' :
+      cubeAverage R (fun x => vecDot (-matVecMul (matTranspose a0) ξ) (w.toH1.grad x)) -
+          cubeAverage R (fun x => vecDot (-ξ) (matVecMul (a x) (w.toH1.grad x))) =
+        vecDot D ξ := by
+    simpa [volumeAverage_cubeSet_eq_cubeAverage] using hleft
+  have hraw' :
+      (cubeAverage R (fun x => vecDot (-matVecMul (matTranspose a0) ξ) (w.toH1.grad x)) -
+          cubeAverage R (fun x => vecDot (-ξ) (matVecMul (a x) (w.toH1.grad x)))) ^ 2 ≤
+        cubeAverage R (scalarVariationEnergyIntegrand a w) *
+          (2 * ResponseJ (cubeSet R) (-ξ) (-matVecMul (matTranspose a0) ξ) a) := by
+    simpa [volumeAverage_cubeSet_eq_cubeAverage] using hraw
+  have hleft_sq :
+      (vecDot D ξ) ^ 2 =
+        (cubeAverage R (fun x => vecDot (-matVecMul (matTranspose a0) ξ) (w.toH1.grad x)) -
+          cubeAverage R (fun x => vecDot (-ξ) (matVecMul (a x) (w.toH1.grad x)))) ^ 2 := by
+    rw [hleft']
+  rw [hleft_sq]
+  exact hraw'
+
 /-- Single-cube response-control theorem for the actual flux defect measured
 against the natural `symmPart a0` energy form. -/
-theorem cubeAverageFluxDefect_energyForm_le_normalizedBlockResponseMax_mul_energyAverage_of_scalarCanonicalMaximizer
+theorem cubeAverageFluxDefect_energyForm_le_BlockResponseMax_mul_energyAverage
     {d : ℕ} [NeZero d] (R : TriadicCube d) (a : CoeffField d) (a0 : Mat d)
     {lam Lam lam0 Lam0 : ℝ}
     (hEll : IsEllipticFieldOn lam Lam (cubeSet R) a)
@@ -167,122 +298,8 @@ theorem cubeAverageFluxDefect_energyForm_le_normalizedBlockResponseMax_mul_energ
   have hlin :
       (vecDot D ξ) ^ 2 ≤
         cubeAverage R (scalarVariationEnergyIntegrand a w) *
-          (2 * ResponseJ (cubeSet R) (-ξ) (-matVecMul (matTranspose a0) ξ) a) := by
-    let avgGrad : Vec d := fun i => volumeAverage (cubeSet R) (fun x => w.toH1.grad x i)
-    let avgFlux : Vec d :=
-      fun i => volumeAverage (cubeSet R) (fun x => matVecMul (a x) (w.toH1.grad x) i)
-    have hraw :=
-      ScalarCanonicalMaximizer.linearResponseSq
-        (U := cubeSet R) (a := a) (p := -ξ) (q := -matVecMul (matTranspose a0) ξ)
-        (lam := lam) (Lam := Lam) v hEll
-        (ResponseLinearIntegrabilityData.of_isEllipticFieldOn hEll) w
-    have havgGrad :
-        cubeAverageVec R (fun x => w.toH1.grad x) = avgGrad := by
-      funext i
-      simp [avgGrad, cubeAverageVec, volumeAverage_cubeSet_eq_cubeAverage]
-    have havgFlux :
-        cubeAverageVec R (fun x => matVecMul (a x) (w.toH1.grad x)) = avgFlux := by
-      funext i
-      simp [avgFlux, cubeAverageVec, volumeAverage_cubeSet_eq_cubeAverage]
-    have hD :
-        D = avgFlux - matVecMul a0 avgGrad := by
-      ext i
-      have hgradCoord :
-          ∀ j : Fin d, MeasureTheory.IntegrableOn (fun x => w.toH1.grad x j) (cubeSet R) := by
-        intro j
-        exact CorrectionFieldData.integrableOn_coord_of_memVectorL2 w.toH1.grad_memVectorL2 j
-      have hfluxMem :
-          MemVectorL2 (cubeSet R) (fun x => matVecMul (a x) (w.toH1.grad x)) :=
-        memVectorL2_matVecMul_of_isEllipticFieldOn hEll w.toH1.grad_memVectorL2
-      have hfluxCoord :
-          ∀ j : Fin d,
-            MeasureTheory.IntegrableOn
-              (fun x => matVecMul (a x) (w.toH1.grad x) j) (cubeSet R) := by
-        intro j
-        exact CorrectionFieldData.integrableOn_coord_of_memVectorL2 hfluxMem j
-      have hA0avg :
-          volumeAverage (cubeSet R) (fun x => matVecMul a0 (w.toH1.grad x) i) =
-            matVecMul a0 avgGrad i := by
-        calc
-          volumeAverage (cubeSet R) (fun x => matVecMul a0 (w.toH1.grad x) i)
-              = ∑ j, volumeAverage (cubeSet R) (fun x => a0 i j * w.toH1.grad x j) := by
-                  rw [show (fun x => matVecMul a0 (w.toH1.grad x) i) =
-                      fun x => ∑ j, a0 i j * w.toH1.grad x j by
-                        funext x
-                        simp [matVecMul]]
-                  exact volumeAverage_sum (U := cubeSet R) Finset.univ
-                    (fun j x => a0 i j * w.toH1.grad x j)
-                    (fun j hj => (hgradCoord j).const_mul (a0 i j))
-          _ = ∑ j, a0 i j * volumeAverage (cubeSet R) (fun x => w.toH1.grad x j) := by
-                refine Finset.sum_congr rfl ?_
-                intro j hj
-                rw [show (fun x => a0 i j * w.toH1.grad x j) =
-                    (a0 i j) • fun x => w.toH1.grad x j by
-                      funext x
-                      simp]
-                rw [volumeAverage_smul]
-          _ = matVecMul a0 avgGrad i := by
-                simp [avgGrad, matVecMul]
-      calc
-        D i = volumeAverage (cubeSet R) (fun x => defect x i) := by
-          simp [D, cubeAverageVec, volumeAverage_cubeSet_eq_cubeAverage]
-        _ = volumeAverage (cubeSet R) (fun x => matVecMul (a x) (w.toH1.grad x) i) -
-              volumeAverage (cubeSet R) (fun x => matVecMul a0 (w.toH1.grad x) i) := by
-                apply volumeAverage_sub (hfluxCoord i)
-                have hsum :
-                    MeasureTheory.IntegrableOn
-                      (fun x => ∑ j, a0 i j * w.toH1.grad x j) (cubeSet R) := by
-                    refine MeasureTheory.integrable_finsetSum Finset.univ ?_
-                    intro j hj
-                    exact (hgradCoord j).const_mul (a0 i j)
-                simpa [defect, matVecMul] using hsum
-        _ = avgFlux i - volumeAverage (cubeSet R) (fun x => matVecMul a0 (w.toH1.grad x) i) := by
-            simp [avgFlux]
-        _ = avgFlux i - matVecMul a0 avgGrad i := by
-            rw [hA0avg]
-    have hleft :
-        volumeAverage (cubeSet R) (fun x => vecDot (-matVecMul (matTranspose a0) ξ) (w.toH1.grad x)) -
-            volumeAverage (cubeSet R) (fun x => vecDot (-ξ) (matVecMul (a x) (w.toH1.grad x))) =
-          vecDot D ξ := by
-      have hpair :=
-        basic_cg_identities_average_pairing_eq_vecDot_average_gradient_sub_average_flux
-          (cubeSet R) a (-ξ) (-matVecMul (matTranspose a0) ξ)
-          (ResponseLinearIntegrabilityData.of_isEllipticFieldOn hEll) w
-      calc
-        volumeAverage (cubeSet R) (fun x => vecDot (-matVecMul (matTranspose a0) ξ) (w.toH1.grad x)) -
-            volumeAverage (cubeSet R) (fun x => vecDot (-ξ) (matVecMul (a x) (w.toH1.grad x))) =
-            vecDot (-matVecMul (matTranspose a0) ξ) avgGrad - vecDot (-ξ) avgFlux := by
-              simpa [avgGrad, avgFlux] using hpair
-        _ = -vecDot (matVecMul a0 avgGrad) ξ + vecDot ξ avgFlux := by
-              rw [vecDot_neg_left, vecDot_neg_left]
-              rw [vecDot_comm (matVecMul (matTranspose a0) ξ) avgGrad]
-              rw [vecDot_matVecMul_transpose avgGrad ξ a0]
-              ring
-        _ = vecDot ξ avgFlux - vecDot ξ (matVecMul a0 avgGrad) := by
-              rw [vecDot_comm (matVecMul a0 avgGrad) ξ]
-              ring
-        _ = vecDot ξ (avgFlux - matVecMul a0 avgGrad) := by
-              simp [sub_eq_add_neg, vecDot_add_right, vecDot_neg_right]
-        _ = vecDot ξ D := by rw [hD]
-        _ = vecDot D ξ := by rw [vecDot_comm]
-    have hleft' :
-        cubeAverage R (fun x => vecDot (-matVecMul (matTranspose a0) ξ) (w.toH1.grad x)) -
-            cubeAverage R (fun x => vecDot (-ξ) (matVecMul (a x) (w.toH1.grad x))) =
-          vecDot D ξ := by
-      simpa [volumeAverage_cubeSet_eq_cubeAverage] using hleft
-    have hraw' :
-        (cubeAverage R (fun x => vecDot (-matVecMul (matTranspose a0) ξ) (w.toH1.grad x)) -
-            cubeAverage R (fun x => vecDot (-ξ) (matVecMul (a x) (w.toH1.grad x)))) ^ 2 ≤
-          cubeAverage R (scalarVariationEnergyIntegrand a w) *
-            (2 * ResponseJ (cubeSet R) (-ξ) (-matVecMul (matTranspose a0) ξ) a) := by
-      simpa [volumeAverage_cubeSet_eq_cubeAverage] using hraw
-    have hleft_sq :
-        (vecDot D ξ) ^ 2 =
-          (cubeAverage R (fun x => vecDot (-matVecMul (matTranspose a0) ξ) (w.toH1.grad x)) -
-            cubeAverage R (fun x => vecDot (-ξ) (matVecMul (a x) (w.toH1.grad x)))) ^ 2 := by
-      rw [hleft']
-    rw [hleft_sq]
-    exact hraw'
+          (2 * ResponseJ (cubeSet R) (-ξ) (-matVecMul (matTranspose a0) ξ) a) :=
+    cubeAverageFluxDefect_pairingSquare_le_responseEnergy R a a0 hEll w ξ v
   have ht_nonneg :
       0 ≤ vecDot D ξ := by
     have hlower := lowerBound_symmPartInv_of_isEllipticMatrix ha0 D
@@ -386,7 +403,8 @@ theorem descendantScalarCanonicalFluxDefectData_of_aHarmonicData {d : ℕ}
           (-matVecMul (matTranspose a0)
             (matVecMul ((symmPart a0)⁻¹)
               (cubeAverageVec R
-                (fun x => matVecMul (a x) (u.toH1.grad x) - matVecMul a0 (u.toH1.grad x))))) a) := by
+                (fun x => matVecMul (a x) (u.toH1.grad x) - matVecMul a0 (u.toH1.grad x))))) a)
+                  := by
     rcases hv with ⟨v⟩
     have hdefectavg :
         cubeAverageVec R

@@ -14,7 +14,8 @@ public import LeanPool.HighContrastHomogenization.Support.Deterministic.CoarseCa
 
 /-!
 # Coarse-graining support:
-Support.Deterministic.CoarseCaccioppoli.SingleCubeToRaw.HarmonicFinal.ExactSmallCube.LocalPatchConstructor.ConstantBranch
+Support.Deterministic.CoarseCaccioppoli.SingleCubeToRaw.HarmonicFinal.ExactSmallCube
+.LocalPatchConstructor.ConstantBranch
 
 Imported from the Apache-2.0 CoarseGraining development at commit
 `c7ddd76c08ade64fed1b8d2ca51be14dfee8deb4`.
@@ -65,7 +66,7 @@ constructor.
 The integerized height/depth is governed by `Calpha`, but the constant/cross
 coefficient itself is paid for by the independent `Ccross` budget. -/
 theorem
-    faithfulWorkSmallCubeExactRawConstantBranchSplit_of_closedCubeEllipticity_of_localPatchBufferedCutoffRadiusConst
+    SmallCubeConstantBranchSplit_of_closedCubeEllipticity_of_closedCubeEllipticity
     {d : ℕ} [NeZero d] (Q : TriadicCube d) (center : Vec d) (a : CoeffField d)
     (s t Clocal Calpha Ccross : ℝ) {lam Lam : ℝ}
     (hClocal : 0 ≤ Clocal)
@@ -175,7 +176,7 @@ theorem
         geometricWeight s 1 m *
           Real.rpow (maxDescendantBBlockNormAtScale Q (Q.scale - (m : ℤ)) a)
             (1 / 2 : ℝ)) :=
-    summable_qone_maxDescendantBBlockNormAtScale_of_isEllipticFieldOn_of_openCubeDescendantDeterministicCoarseData
+    summable_qone_maxDescendantBBlockNorm_of_ellipticField
       Q a s hs hEllCube hData
   dsimp
   intro R hR
@@ -194,7 +195,7 @@ theorem
         geometricWeight s 1 m *
           Real.rpow (maxDescendantBBlockNormAtScale R (R.scale - (m : ℤ)) a)
             (1 / 2 : ℝ)) :=
-    summable_qone_maxDescendantBBlockNormAtScale_of_isEllipticFieldOn_of_openCubeDescendantDeterministicCoarseData
+    summable_qone_maxDescendantBBlockNorm_of_ellipticField
       R a s hs hEllR hDataR
   have hsum_one :
       Summable (fun m : ℕ =>
@@ -222,7 +223,7 @@ theorem
             coarseCaccioppoliLocalPatchCutoffGradientBound Q ρ₁ ρm) ≤
         coarseCaccioppoliSingleCubeBoundaryConstantBaseCoeff R a CeffLocal kR := by
     simpa [B, CeffLocal, kR, k, ρm] using
-      (coarseCaccioppoliFluxEnergyExactConstantCoeffFactorBound_mul_localPatch_buffered_cutoff_terms_le_singleCubeBoundaryConstantBaseCoeff_of_descendant_succ
+      (coarseCaccioppoliFactorBound_mul_bufferedTerms_le_boundaryCoefficient_of_child
         (Q := Q) (R := R) (a := a) (Ceff := CeffLocal)
         (k := k) (j := j0) (ρ₁ := ρ₁) (ρ₂ := ρ₂)
         (by simpa [j] using hRj) hchoice hlt hjk
@@ -235,7 +236,7 @@ theorem
                 (coarseCaccioppoliLocalCanonicalFun Q center ρ₁ ρm))) ≤
         coarseCaccioppoliSingleCubeBoundaryConstantBaseCoeff R a CeffLocal kR := by
     have hlocal' :=
-      coarseCaccioppoliFluxEnergyExactConstantCoeff_mul_le_singleCubeBoundaryConstantBaseCoeff_of_factor_bounds
+      coarseCaccioppoliConstantFluxEnergy_le_boundaryCoefficient_of_factorBounds
         R a
         (scalarCutoffGradientField (coarseCaccioppoliLocalCanonicalFun Q center ρ₁ ρm))
         j hB_nonneg
@@ -275,7 +276,7 @@ coefficient constructor.
 This is the proof-producing version used by the standard beta-dependent
 radius iteration. -/
 theorem
-    faithfulWorkSmallCubeExactRawConstantBranchSplitAllRadii_of_closedCubeEllipticity_of_localPatchBufferedCutoffRadiusConst
+    SmallCubeConstantBranchSplitAllRadii_of_of_closedCubeEllipticity
     {d : ℕ} [NeZero d] (Q : TriadicCube d) (center : Vec d) (a : CoeffField d)
     (s t Clocal Calpha Ccross : ℝ) {lam Lam : ℝ}
     (hClocal : 0 ≤ Clocal)
@@ -374,7 +375,7 @@ theorem
         geometricWeight s 1 m *
           Real.rpow (maxDescendantBBlockNormAtScale Q (Q.scale - (m : ℤ)) a)
             (1 / 2 : ℝ)) :=
-    summable_qone_maxDescendantBBlockNormAtScale_of_isEllipticFieldOn_of_openCubeDescendantDeterministicCoarseData
+    summable_qone_maxDescendantBBlockNorm_of_ellipticField
       Q a s hs hEllCube hData
   dsimp
   intro R hR
@@ -393,7 +394,7 @@ theorem
         geometricWeight s 1 m *
           Real.rpow (maxDescendantBBlockNormAtScale R (R.scale - (m : ℤ)) a)
             (1 / 2 : ℝ)) :=
-    summable_qone_maxDescendantBBlockNormAtScale_of_isEllipticFieldOn_of_openCubeDescendantDeterministicCoarseData
+    summable_qone_maxDescendantBBlockNorm_of_ellipticField
       R a s hs hEllR hDataR
   have hsum_one :
       Summable (fun m : ℕ =>
@@ -421,7 +422,7 @@ theorem
             coarseCaccioppoliLocalPatchCutoffGradientBound Q ρ₁ ρm) ≤
         coarseCaccioppoliSingleCubeBoundaryConstantBaseCoeff R a CeffLocal kR := by
     simpa [B, CeffLocal, kR, k, ρm] using
-      (coarseCaccioppoliFluxEnergyExactConstantCoeffFactorBound_mul_localPatch_buffered_cutoff_terms_le_singleCubeBoundaryConstantBaseCoeff_of_descendant_succ
+      (coarseCaccioppoliFactorBound_mul_bufferedTerms_le_boundaryCoefficient_of_child
         (Q := Q) (R := R) (a := a) (Ceff := CeffLocal)
         (k := k) (j := j0) (ρ₁ := ρ₁) (ρ₂ := ρ₂)
         (by simpa [j] using hRj) hchoice hlt hjk
@@ -434,7 +435,7 @@ theorem
                 (coarseCaccioppoliLocalCanonicalFun Q center ρ₁ ρm))) ≤
         coarseCaccioppoliSingleCubeBoundaryConstantBaseCoeff R a CeffLocal kR := by
     have hlocal' :=
-      coarseCaccioppoliFluxEnergyExactConstantCoeff_mul_le_singleCubeBoundaryConstantBaseCoeff_of_factor_bounds
+      coarseCaccioppoliConstantFluxEnergy_le_boundaryCoefficient_of_factorBounds
         R a
         (scalarCutoffGradientField (coarseCaccioppoliLocalCanonicalFun Q center ρ₁ ρm))
         j hB_nonneg

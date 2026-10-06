@@ -306,7 +306,10 @@ def CoarseCaccioppoliBoundaryRadiusEnergyBridgeCanonicalRawCoefficientBounds {d 
           (Xi ρ₁ ρ₂) (D ρ₁ ρ₂) (A1 ρ₁ ρ₂) (AS ρ₁ ρ₂) C) ≤
       coarseCaccioppoliBoundaryAlphaOfHeight Q a s t C h ρ₁ ρ₂
 
-theorem CoarseCaccioppoliBoundaryRadiusEnergyBridgeCanonicalRawCoefficientBounds.of_coefficientBounds_of_localization
+namespace CoarseCaccioppoliBoundaryRadiusEnergyBridgeCanonicalRawCoefficientBounds
+
+theorem
+  of_coefficientBounds_of_localization
     {d : ℕ} (Q : TriadicCube d) (a : CoeffField d) (s t C uL2Sq : ℝ)
     (k h : ℝ → ℝ → ℝ) (U Xi D A1 AS : ℝ → ℝ → ℝ)
     (hcoeff :
@@ -323,6 +326,8 @@ theorem CoarseCaccioppoliBoundaryRadiusEnergyBridgeCanonicalRawCoefficientBounds
   exact
     ⟨le_trans hconst (hlocConst hρ₁ hlt hρ₂),
       le_trans hcentered (hlocCent hρ₁ hlt hρ₂)⟩
+
+end CoarseCaccioppoliBoundaryRadiusEnergyBridgeCanonicalRawCoefficientBounds
 
 theorem abs_cubeAverage_vecDot_scalar_smul_le_boundaryRawEstimate_of_canonical_factor_bounds
     {d : ℕ} (Q : TriadicCube d) (a : CoeffField d) (s : ℝ)
@@ -484,7 +489,8 @@ theorem abs_cubeAverage_vecDot_scalar_smul_le_boundaryRawEstimate_of_canonical_f
           Bcross * Real.sqrt (cubeAverage Q energy) := by
           ring
 
-theorem CoarseCaccioppoliBoundaryRadiusEnergyBridgeCanonicalFactorInputs.of_analyticInputs_of_coefficientBounds
+theorem
+  CoarseCaccioppoliBoundaryRadiusEnergyBridgeCanonicalFactorInputs.of_analytic_inputs_bounds
     {d : ℕ} (Q : TriadicCube d) (a : CoeffField d) (s C uL2Sq : ℝ)
     (k h : ℝ → ℝ → ℝ) (F : ℝ → ℝ)
     (flux : ℝ → ℝ → Vec d → Vec d) (u g : ℝ → ℝ → Vec d → ℝ)
@@ -509,7 +515,7 @@ theorem CoarseCaccioppoliBoundaryRadiusEnergyBridgeCanonicalFactorInputs.of_anal
       hB_nonneg, hAcirc1_nonneg, hAcircS_nonneg, huBound, hξBound, hB, hAcirc1,
       hAcircS, hconst, hcentered⟩
 
-theorem coarseCaccioppoli_boundary_noteRawEstimate_of_radiusEnergyBridgeCanonicalAnalyticInputs_of_rawCoefficientBounds
+theorem coarseCaccioppoli_boundary_noteEstimate_of_radiusEnergyAnalyticInputs
     {d : ℕ} (Q : TriadicCube d) (a : CoeffField d) (s t C uL2Sq : ℝ)
     (h : ℝ → ℝ → ℝ) {F : ℝ → ℝ}
     (flux : ℝ → ℝ → Vec d → Vec d) (u g : ℝ → ℝ → Vec d → ℝ)

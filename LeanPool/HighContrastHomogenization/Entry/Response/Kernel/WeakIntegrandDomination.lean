@@ -176,7 +176,8 @@ private theorem ae_besovSeminorm_sq_le_envelope_of_recentring {d : ℕ} [NeZero 
   classical
   have hq : IsUnit (respGrid jStar F) := Geometry.isUnit_roundedGrid hj hm
   have hEt : (toFullBlockMat (respMean P jStar F t)).PosDef :=
-    Annealed.adaptedMean_posDef d hd P γ E Ψ Kg Src hstat hdag jStar hj (explicitCanonicalMetric F) hm t
+    Annealed.adaptedMean_posDef d hd P γ E Ψ Kg Src hstat hdag jStar hj (explicitCanonicalMetric
+      F) hm t
   have hEt_psd : (toFullBlockMat (respMean P jStar F t)).PosSemidef := hEt.posSemidef
   have hρ0 : 0 ≤ Quenched.contrastRho γ := by
     simp only [Quenched.contrastRho]; linarith only [hγ.1]
@@ -228,7 +229,8 @@ private theorem ae_besovSeminorm_sq_le_envelope_of_recentring {d : ℕ} [NeZero 
     (adaptedCell_isOpenBoundedConvexDomain (respGrid jStar F) hq t).isOpen.measurableSet
   have : IsFiniteMeasure (volumeMeasureOn (respCell jStar F t)) := by
     simpa only [volumeMeasureOn, respCell] using
-      (adaptedCell_isOpenBoundedConvexDomain (respGrid jStar F) hq t).isFiniteMeasure_restrict_volume
+      (adaptedCell_isOpenBoundedConvexDomain (respGrid jStar F) hq
+        t).isFiniteMeasure_restrict_volume
   have hEnn : 0 ≤ volumeAverage (respCell jStar F t) (scalarVariationEnergyIntegrand f v) :=
     volumeAverage_nonneg_of_nonneg_on hUmeas
       (scalarVariationEnergyIntegrand_nonneg_of_isEllipticFieldOn (respCell jStar F t) f hEll v)
@@ -271,27 +273,34 @@ private theorem ae_besovSeminorm_sq_le_envelope_of_recentring {d : ℕ} [NeZero 
     intro n w hw X
     have hVU : adaptedCellAtCenter (respGrid jStar F) (t - (n : ℤ)) w ⊆ respCell jStar F t :=
       adaptedCellAtCenter_subset_adaptedCell (respGrid jStar F) t n hw
-    have hsub : c a =ᵐ[volumeMeasureOn (adaptedCellAtCenter (respGrid jStar F) (t - (n : ℤ)) w)] f :=
+    have hsub : c a =ᵐ[volumeMeasureOn (adaptedCellAtCenter (respGrid jStar F) (t - (n : ℤ)) w)]
+      f :=
       MeasureTheory.ae_mono (MeasureTheory.Measure.restrict_mono hVU le_rfl) hae
     have hcongr : coarseBlockMatrix (adaptedCellAtCenter (respGrid jStar F) (t - (n : ℤ)) w) f
-        = blockCongr G (coarseBlock (adaptedCellAtCenter (respGrid jStar F) (t - (n : ℤ)) w) a) := by
+        = blockCongr G (coarseBlock (adaptedCellAtCenter (respGrid jStar F) (t - (n : ℤ)) w) a)
+          := by
       rw [← coarseBlockMatrix_congr_of_ae_eq hsub, hcoarse a (t - (n : ℤ)) w]
     have hLo' := hLo n w hw
-    have hc : 0 ≤ 1 + (3 : ℝ) ^ (Quenched.contrastRho γ * (n : ℝ)) * respAllScaleMax P γ jStar F t a := by
-      have hp : 0 ≤ (3 : ℝ) ^ (Quenched.contrastRho γ * (n : ℝ)) * respAllScaleMax P γ jStar F t a :=
+    have hc : 0 ≤ 1 + (3 : ℝ) ^ (Quenched.contrastRho γ * (n : ℝ)) * respAllScaleMax P γ jStar F
+      t a := by
+      have hp : 0 ≤ (3 : ℝ) ^ (Quenched.contrastRho γ * (n : ℝ)) * respAllScaleMax P γ jStar F t
+        a :=
         mul_nonneg (le_of_lt (Real.rpow_pos_of_pos (by norm_num) _)) hMnn
       linarith only [hp]
     have hqA : ∀ X : BlockVec d, blockVecDot X (blockMatVecMul
         (coarseBlock (adaptedCellAtCenter (respGrid jStar F) (t - (n : ℤ)) w) a) X)
-        ≤ ((1 + (3 : ℝ) ^ (Quenched.contrastRho γ * (n : ℝ)) * respAllScaleMax P γ jStar F t a) * kE)
+        ≤ ((1 + (3 : ℝ) ^ (Quenched.contrastRho γ * (n : ℝ)) * respAllScaleMax P γ jStar F t a)
+          * kE)
             * blockVecDot X X :=
       qform_le_of_loewner hc hLo' hEbound
     have hqcon : ∀ X : BlockVec d, blockVecDot X (blockMatVecMul
         (blockCongr G (coarseBlock (adaptedCellAtCenter (respGrid jStar F) (t - (n : ℤ)) w) a)) X)
-        ≤ (((1 + (3 : ℝ) ^ (Quenched.contrastRho γ * (n : ℝ)) * respAllScaleMax P γ jStar F t a) * kE) * kG)
+        ≤ (((1 + (3 : ℝ) ^ (Quenched.contrastRho γ * (n : ℝ)) * respAllScaleMax P γ jStar F t a)
+          * kE) * kG)
             * blockVecDot X X :=
       qform_blockCongr_le G (coarseBlock (adaptedCellAtCenter (respGrid jStar F) (t - (n : ℤ)) w) a)
-        ((1 + (3 : ℝ) ^ (Quenched.contrastRho γ * (n : ℝ)) * respAllScaleMax P γ jStar F t a) * kE) kG
+        ((1 + (3 : ℝ) ^ (Quenched.contrastRho γ * (n : ℝ)) * respAllScaleMax P γ jStar F t a) *
+          kE) kG
         (mul_nonneg hc hkE) hqA hGbound
     have hqadd := qform_add_blockSwap_le hqcon X
     rw [hcongr]
@@ -314,7 +323,8 @@ private theorem ae_besovSeminorm_sq_le_envelope_of_recentring {d : ℕ} [NeZero 
     exact mul_le_mul_of_nonneg_right hcoef (Response.blockVecDot_self_nonneg X)
   -- the pathwise scale-average seminorm bound at the elliptic representative
   have hpath := besovSeminorm_sq_optimizerState_le_of_scale_bounds (q := respGrid jStar F)
-    hq t (Quenched.contrastRho γ) hρ0 hρ1 hEll v (blockSqrt (respM0 F)) Y kS hkS hSbound K₀ hK₀ hBf hint hEnn
+    hq t (Quenched.contrastRho γ) hρ0 hρ1 hEll v (blockSqrt (respM0 F)) Y kS hkS hSbound K₀ hK₀
+      hBf hint hEnn
   -- absorb the energy into the response and the constant into the envelope
   have hYnn : 0 ≤ blockVecDot Y Y := Response.blockVecDot_self_nonneg Y
   have hkEG : 0 ≤ kE * kG := mul_nonneg hkE hkG

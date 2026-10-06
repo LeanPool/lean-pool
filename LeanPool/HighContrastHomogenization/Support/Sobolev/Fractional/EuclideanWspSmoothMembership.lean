@@ -36,6 +36,7 @@ open scoped ENNReal
 
 noncomputable section
 
+/-- The power kernel `‖x - y‖^(a - d)` for the ambient coordinate norm. -/
 @[expose]
 public noncomputable def smoothWspPowerKernel {d : ℕ} (a : ℝ)
     (x y : Vec d) : ℝ :=
@@ -242,6 +243,8 @@ private theorem smoothWspPowerKernel_integrable_gagliardoCubeMeasure {d : ℕ} [
   rw [Gagliardo.gagliardoCubeMeasure, normalizedCubeMeasure, Measure.prod_smul_left]
   exact hprod.smul_measure ENNReal.ofReal_ne_top
 
+/-- The ambient-distance power `‖x - y‖^(1 - s - d/p)` used to majorize a smooth fractional
+difference kernel up to a constant. -/
 @[expose]
 public noncomputable def smoothWspLpMajorant {d : ℕ}
     (s : FractionalOrder) (p : FiniteLpExponent) : Vec d × Vec d → ℝ :=
@@ -274,7 +277,7 @@ private theorem convex_cubeSet_for_smoothMembership {d : ℕ} (Q : TriadicCube d
   intro i hi
   exact convex_Ico _ _
 
-private theorem smoothTest_euclideanNorm_sub_le_lipschitz {d : ℕ} [NeZero d]
+private theorem smoothTest_euclideanNorm_sub_le_lipschitz {d : ℕ}
     (Q : TriadicCube d) {s : FractionalOrder} {p : FiniteLpExponent}
     (h : CubeEuclideanWspSmoothTest Q s p) :
     ∃ L : ℝ, 0 ≤ L ∧ ∀ x ∈ cubeSet Q, ∀ y ∈ cubeSet Q,

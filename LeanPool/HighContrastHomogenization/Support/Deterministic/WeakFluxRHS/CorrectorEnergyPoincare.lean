@@ -76,7 +76,7 @@ The coefficient energy of the centered mean-zero Neumann corrector is bounded
 by the centered positive-Besov forcing seminorm times the square root of the
 RHS Poincare radicand for the same corrector gradient.
 -/
-theorem coefficientEnergy_average_le_centered_force_mul_sqrt_intrinsicGlobalEnergyForce_noteConstants_expanded
+theorem coefficientEnergy_average_le_centered_force_mul_sqrt_intrinsicGlobalEnergyForce
     [NeZero d]
     (ω : MeanZeroNeumannCorrectorData Q a (fun x => g x - cubeAverageVec Q g))
     {s lam Lam : ℝ}
@@ -146,7 +146,7 @@ theorem coefficientEnergy_average_le_centered_force_mul_sqrt_intrinsicGlobalEner
                 ((3 : ℝ) ^ ((d : ℝ) + s) * Real.sqrt 2)) ^ 2 *
               (cubeBesovPositiveVectorSeminormTwo Q s gCentered) ^ 2) := by
     exact
-      cubeBesovNegativeVectorSeminormTwo_le_sqrt_intrinsicGlobalEnergyForce_noteConstants_expanded_of_parent_potential_solenoidal
+      negativeBesovSeminormTwo_le_sqrt_intrinsicGlobalEnergyForce_of_parent_potential
         (Q := Q) (a := a) (g := gCentered) (u := ωgrad)
         (s := s) (lam := lam) (Lam := Lam)
         hs hs_le hEll ω.toH1MeanZero.toH1Function.isPotentialOn
@@ -234,7 +234,7 @@ theorem coefficientEnergy_average_le_forcing_square_envelope_noteConstants_expan
       ((3 : ℝ) ^ ((d : ℝ) + s) *
         cubeBesovPositiveVectorSeminormTwo Q s gCentered)
   have hpre_raw :=
-    ω.coefficientEnergy_average_le_centered_force_mul_sqrt_intrinsicGlobalEnergyForce_noteConstants_expanded
+    ω.coefficientEnergy_average_le_centered_force_mul_sqrt_intrinsicGlobalEnergyForce
       (s := s) (lam := lam) (Lam := Lam)
       hs hs_le hEll hg hCenteredBdd
   have hpre : E ≤ B * Real.sqrt (A * E + F) := by

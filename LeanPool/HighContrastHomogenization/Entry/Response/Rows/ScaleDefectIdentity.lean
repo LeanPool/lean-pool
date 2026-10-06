@@ -112,7 +112,8 @@ theorem integral_avsum_subcellDeficit_eq_respTauMinus {d : ℕ} [NeZero d]
         (respCoeffMinus F a) ∂P)
       = blockResponseEnergy (blockCongr (respG F) (respMean P jStar F s))
           (respP (respMean P jStar F t) e) (respqMinus P jStar F t e) := by
-    have h0 := integral_responseJ_respCoeffMinus_adaptedCellAtCenter_eq_direct P hstat jStar hjStar F hm s hjs 0
+    have h0 := integral_responseJ_respCoeffMinus_adaptedCellAtCenter_eq_direct P hstat jStar
+      hjStar F hm s hjs 0
       (respP (respMean P jStar F t) e) (respqMinus P jStar F t e) (hblk 0)
     rw [adaptedCellAtCenter_zero (respGrid jStar F) s] at h0
     simpa only [respJ] using h0
@@ -144,7 +145,8 @@ theorem integral_avsum_subcellDeficit_eq_respTauMinus {d : ℕ} [NeZero d]
         = (∫ a, respJ (respGrid jStar F) s (respP (respMean P jStar F t) e)
             (respqMinus P jStar F t e) (respCoeffMinus F a) ∂P) := by
       intro w _
-      have hw' := integral_responseJ_respCoeffMinus_adaptedCellAtCenter_eq_direct P hstat jStar hjStar F hm s hjs w
+      have hw' := integral_responseJ_respCoeffMinus_adaptedCellAtCenter_eq_direct P hstat jStar
+        hjStar F hm s hjs w
         (respP (respMean P jStar F t) e) (respqMinus P jStar F t e) (hblk w)
       rw [hcJs]
       exact hw'
@@ -306,7 +308,8 @@ theorem integral_avsum_subcellDeficit_eq_respTauPlus {d : ℕ} [NeZero d]
         (respCoeffPlus F a) ∂P)
       = blockResponseEnergy (blockCongr (respGPlus F) (respMean P jStar F s))
           (respP (respMean P jStar F t) e) (respqPlus P jStar F t e) := by
-    have h0 := integral_responseJ_respCoeffPlus_adaptedCellAtCenter_eq_direct P hstat jStar hjStar F hm s hjs 0
+    have h0 := integral_responseJ_respCoeffPlus_adaptedCellAtCenter_eq_direct P hstat jStar
+      hjStar F hm s hjs 0
       (respP (respMean P jStar F t) e) (respqPlus P jStar F t e) (hblk 0)
     rw [adaptedCellAtCenter_zero (respGrid jStar F) s] at h0
     simpa only [respJ] using h0
@@ -338,7 +341,8 @@ theorem integral_avsum_subcellDeficit_eq_respTauPlus {d : ℕ} [NeZero d]
         = (∫ a, respJ (respGrid jStar F) s (respP (respMean P jStar F t) e)
             (respqPlus P jStar F t e) (respCoeffPlus F a) ∂P) := by
       intro w _
-      have hw' := integral_responseJ_respCoeffPlus_adaptedCellAtCenter_eq_direct P hstat jStar hjStar F hm s hjs w
+      have hw' := integral_responseJ_respCoeffPlus_adaptedCellAtCenter_eq_direct P hstat jStar
+        hjStar F hm s hjs w
         (respP (respMean P jStar F t) e) (respqPlus P jStar F t e) (hblk w)
       rw [hcJs]
       exact hw'

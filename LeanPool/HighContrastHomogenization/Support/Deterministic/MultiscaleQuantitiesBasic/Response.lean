@@ -37,7 +37,8 @@ theorem normalizedBlockResponseMax_le_maxDescendantNormalizedBlockResponseAtScal
   unfold maxDescendantNormalizedBlockResponseAtScale finsetSsup
   have hBdd :
       BddAbove
-        ((fun S => normalizedBlockResponseMax S a a0) '' (↑(descendantsAtScale Q k) : Set (TriadicCube d))) := by
+        ((fun S => normalizedBlockResponseMax S a a0) '' (↑(descendantsAtScale Q k) : Set
+          (TriadicCube d))) := by
     exact ((Set.toFinite _).image (fun S => normalizedBlockResponseMax S a a0)).bddAbove
   exact le_csSup hBdd ⟨R, hR, rfl⟩
 
@@ -212,7 +213,7 @@ theorem normalizedBlockResponseMax_eq_sSup_half_responseJ_adjoint_sum_of_isEllip
   rw [normalizedBlockResponseValueSet_eq_half_responseJ_adjoint_sum_set_of_isEllipticFieldOn
     Q a a0 hEll]
 
-theorem scaleResponseAtScale_infinity_self_eq_rpow_half_sSup_half_responseJ_adjoint_sum_of_isEllipticFieldOn
+theorem scaleResponse_self_eq_sqrt_responseJ_adjoint_sum
     {d : ℕ} [NeZero d] (Q : TriadicCube d) (a : CoeffField d) (a0 : Mat d) {lam Lam : ℝ}
     [MeasureTheory.IsFiniteMeasure (volumeMeasureOn (cubeSet Q))]
     (hEll : IsEllipticFieldOn lam Lam (cubeSet Q) a) :
@@ -265,7 +266,8 @@ theorem maxDescendantNormalizedBlockResponseAtScale_le_of_mem_descendantsAtScale
     exact ((Set.toFinite _).image (fun T => normalizedBlockResponseMax T a a0)).bddAbove
   exact le_csSup hBdd ⟨S, mem_descendantsAtScale_trans hR hS, rfl⟩
 
-theorem normalizedBlockResponseMax_le_maxDescendantNormalizedBlockResponseAtScale_of_isEllipticFieldOn
+theorem
+  normalizedBlockResponseMax_le_maxDescendantNormalizedBlockResponseAtScale_of_isEllipticFieldOn
     {d : ℕ} [NeZero d] (Q : TriadicCube d) {k : ℤ} (hk : k ≤ Q.scale)
     (a : CoeffField d) (a0 : Mat d) {lam Lam : ℝ}
     (hEll : IsEllipticFieldOn lam Lam (cubeSet Q) a) :
@@ -498,7 +500,7 @@ theorem maxDescendantSigmaStarInvNormAtScale_le_of_le_of_isEllipticFieldOn_of_is
     hData.of_mem_descendantsAtScale hlQ hR
   have hRle :
       coarseSigmaStarInvBlockNorm R a ≤ maxDescendantSigmaStarInvNormAtScale R k a :=
-    coarseSigmaStarInvBlockNorm_le_maxDescendantSigmaStarInvNormAtScale_of_isEllipticFieldOn_of_isSigmaCoarse
+    coarseSigmaStarInvBlockNorm_le_maxDescendantSigmaStarInvNorm
       (Q := R) (k := k) hkR a hEllR hDataR
   have hRQ :
       maxDescendantSigmaStarInvNormAtScale R k a ≤
@@ -575,7 +577,7 @@ theorem scaleResponseAtScale_infinity_self_le_of_isEllipticFieldOn
     simpa [maxDescendantNormalizedBlockResponseAtScale_self] using hmax
   · norm_num
 
-theorem scaleResponseAtScale_infinity_self_le_homogenizationErrorOnCube_infinity_one_of_isEllipticFieldOn
+theorem scaleResponse_infinity_self_le_homogenizationError
     {d : ℕ} [NeZero d] (Q : TriadicCube d) (a : CoeffField d) (a0 : Mat d)
     (s : ℝ) {lam Lam : ℝ} (hs : 0 < s)
     (hEll : IsEllipticFieldOn lam Lam (cubeSet Q) a)
@@ -595,7 +597,7 @@ theorem scaleResponseAtScale_infinity_self_le_homogenizationErrorOnCube_infinity
   have hterm : ∀ n : ℕ, g n ≤ f n := by
     intro n
     have hk : Q.scale - (n : ℤ) ≤ Q.scale := by
-      exact sub_le_self _ (by exact_mod_cast Nat.zero_le n)
+      exact sub_le_self _ (Nat.cast_nonneg n)
     have hresp :
         scaleResponseAtScale Q Q.scale .infinity a a0 ≤
           scaleResponseAtScale Q (Q.scale - (n : ℤ)) .infinity a a0 := by
@@ -640,7 +642,7 @@ theorem homogenizationErrorOnCube_infinity_one_le_of_lt_of_isEllipticFieldOn
       hEll
   · intro n
     exact scaleResponseAtScale_infinity_nonneg Q
-      (sub_le_self _ (by exact_mod_cast Nat.zero_le n)) a a0
+      (sub_le_self _ (Nat.cast_nonneg n)) a a0
 
 end
 

@@ -13,7 +13,8 @@ public import LeanPool.HighContrastHomogenization.Support.Deterministic.Multisca
 
 /-!
 # Coarse-graining support:
-Support.Deterministic.CoarseCaccioppoli.SingleCubeToRaw.HarmonicFinal.InputSpecializations.SolutionInputs
+Support.Deterministic.CoarseCaccioppoli.SingleCubeToRaw.HarmonicFinal.InputSpecializations
+.SolutionInputs
 
 Imported from the Apache-2.0 CoarseGraining development at commit
 `c7ddd76c08ade64fed1b8d2ca51be14dfee8deb4`.
@@ -51,7 +52,7 @@ theorem thetaRatio_pos_of_closedCubeHarmonicFamily
         geometricWeight t 1 n *
           Real.rpow (maxDescendantSigmaStarInvNormAtScale Q (Q.scale - (n : ℤ)) a)
             (1 / 2 : ℝ)) :=
-    summable_qone_maxDescendantSigmaStarInvNormAtScale_of_isEllipticFieldOn_of_openCubeOriginEllipticRecoveryExistence
+    summable_exponentOne_maxDescendantSigmaStarInverseNorm_of_cubeEllipticity
       (Q := Q) (a := a) (s := t) ht hEllCube hOrigin
   have hfluxEnergy :
       ∀ ⦃ρ₁ ρ₂ : ℝ⦄, (1 / 3 : ℝ) ≤ ρ₁ → ρ₁ < ρ₂ → ρ₂ ≤ 1 →

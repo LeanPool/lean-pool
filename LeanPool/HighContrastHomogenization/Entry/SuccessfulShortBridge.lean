@@ -51,7 +51,8 @@ theorem successful_short_bridge
                 ⌈Csrc * Real.logb 3 (2 * K)⌉ ≤ (jStar : ℤ) →
                 ∀ (m mPlus : Mat d), m.PosDef → mPlus.PosDef →
                   ∀ k n : ℤ, (jStar : ℤ) ≤ k → k ≤ n →
-                    HighContrast.adaptedCell (Geometry.explicitRoundedGrid jStar m) (n + 2 * (L : ℤ)) ∪
+                    HighContrast.adaptedCell (Geometry.explicitRoundedGrid jStar m) (n + 2 * (L
+                      : ℤ)) ∪
                         HighContrast.adaptedCell (Geometry.explicitRoundedGrid jStar mPlus)
                           (n + (L : ℤ)) ⊆
                       HighContrast.centeredCube d (2 * (jStar : ℤ)) →

@@ -48,6 +48,7 @@ private theorem matSqrt_one'' {n : Type*} [Fintype n] [DecidableEq n] :
   matSqrt_eq Matrix.PosSemidef.one Matrix.PosSemidef.one (by simp)
 
 @[expose]
+
 public def entryCLM' {n : Type*} [Fintype n] [DecidableEq n] (i j : n) :
     Matrix n n ℝ →L[ℝ] ℝ :=
   LinearMap.toContinuousLinearMap (Matrix.entryLinearMap ℝ ℝ i j)
@@ -136,6 +137,101 @@ private theorem trace_le_card_mul_norm {n : Type*} [Fintype n]
     _ = (Fintype.card n : ℝ) * ‖A‖ := by
       rw [Finset.sum_const, Finset.card_univ, nsmul_eq_mul]
 
+
+private theorem integrable_aligned_response_average [NeZero d]
+    {P : Measure (CoeffSpace d)} [IsProbabilityMeasure P]
+    (hstat : HCPoly.Frozen.IsStationaryLaw P)
+    {l : ℤ} {q : Mat d} (hgrid : IsRoundedGrid l q) {k t : ℤ}
+    (hlk : l ≤ k)
+    (hintk : HasFiniteAdaptedMean P q k)
+    (hintt : HasFiniteAdaptedMean P q t)
+    {F : BlockMat d}
+    (hZne : (Response.alignedIndex q k t).Nonempty)
+    : (∀ w ∈ (Response.alignedIndex q k t), ∀ α β : BlockCoord d,
+      Integrable (fun a =>
+        toFullBlockMat (coarseBlock (adaptedCellAt q k w) a) α β) P) ∧
+    (Integrable (fun a => ∑ w ∈ (Response.alignedIndex q k t),
+      toFullBlockMat (coarseBlock (adaptedCellAt q k w) a)) P) ∧
+    (Integrable (fun a => ((Response.alignedIndex q k t).card : ℝ)⁻¹ •
+      ∑ w ∈ (Response.alignedIndex q k t), toFullBlockMat (coarseBlock (adaptedCellAt q k w) a)) P)
+        ∧
+    (∀ α β : BlockCoord d,
+      Integrable (fun a =>
+        toFullBlockMat (coarseBlock (adaptedCell q t) a) α β) P) ∧
+    (Integrable (fun a =>
+    ((Response.alignedIndex q k t).card : ℝ)⁻¹ • ∑ w ∈ (Response.alignedIndex q k t),
+      toFullBlockMat (coarseBlock (adaptedCellAt q k w) a) -
+      toFullBlockMat (coarseBlock (adaptedCell q t) a)) P) ∧
+    (Integrable (fun a => (matSqrt (toFullBlockMat F)⁻¹) * (fun a =>
+    ((Response.alignedIndex q k t).card : ℝ)⁻¹ • ∑ w ∈ (Response.alignedIndex q k t),
+      toFullBlockMat (coarseBlock (adaptedCellAt q k w) a) -
+      toFullBlockMat (coarseBlock (adaptedCell q t) a)) a * (matSqrt (toFullBlockMat F)⁻¹)) P) ∧
+    (∫ a, (fun a =>
+    ((Response.alignedIndex q k t).card : ℝ)⁻¹ • ∑ w ∈ (Response.alignedIndex q k t),
+      toFullBlockMat (coarseBlock (adaptedCellAt q k w) a) -
+      toFullBlockMat (coarseBlock (adaptedCell q t) a)) a ∂P =
+      toFullBlockMat (adaptedMean P q k) -
+        toFullBlockMat (adaptedMean P q t)) := by
+  classical
+  set M : FullBlockMat d := matSqrt (toFullBlockMat F)⁻¹ with hMdef
+  set Z : Finset (Fin d → ℤ) := Response.alignedIndex q k t with hZdef
+  set Y : CoeffSpace d → FullBlockMat d := fun a =>
+    (Z.card : ℝ)⁻¹ • ∑ w ∈ Z,
+      toFullBlockMat (coarseBlock (adaptedCellAt q k w) a) -
+      toFullBlockMat (coarseBlock (adaptedCell q t) a) with hYdef
+  have hentrysum : ∀ w ∈ Z, ∀ α β : BlockCoord d,
+      Integrable (fun a =>
+        toFullBlockMat (coarseBlock (adaptedCellAt q k w) a) α β) P :=
+    fun w _ α β =>
+      (Recurrence.hasIntegrableCoarseBlock_adaptedCellAt hstat hgrid hlk hintk w
+          α β).congr
+        (Filter.Eventually.of_forall fun a =>
+          (toFullBlockMat_eq_blockMatEntry
+            (coarseBlock (adaptedCellAt q k w) a) α β).symm)
+  have hsumint : Integrable (fun a => ∑ w ∈ Z,
+      toFullBlockMat (coarseBlock (adaptedCellAt q k w) a)) P :=
+    integrable_of_entries fun α β => by
+      simpa only [Matrix.sum_apply] using
+        integrable_finsetSum Z fun w hw => hentrysum w hw α β
+  have havgint : Integrable (fun a => (Z.card : ℝ)⁻¹ •
+      ∑ w ∈ Z, toFullBlockMat (coarseBlock (adaptedCellAt q k w) a)) P :=
+    integrable_of_entries fun α β => by
+      simp only [Matrix.smul_apply, Matrix.sum_apply, smul_eq_mul]
+      exact (integrable_finsetSum Z fun w hw => hentrysum w hw α β).const_mul _
+  have htentry : ∀ α β : BlockCoord d,
+      Integrable (fun a =>
+        toFullBlockMat (coarseBlock (adaptedCell q t) a) α β) P :=
+    fun α β => (hintt α β).congr
+      (Filter.Eventually.of_forall fun a =>
+        (toFullBlockMat_eq_blockMatEntry
+          (coarseBlock (adaptedCell q t) a) α β).symm)
+  have hYint : Integrable Y P := by
+    simp only [hYdef]
+    refine integrable_of_entries fun α β => ?_
+    simp only [Matrix.sub_apply, Matrix.smul_apply, Matrix.sum_apply, smul_eq_mul]
+    exact ((integrable_finsetSum Z fun w hw => hentrysum w hw α β).const_mul _).sub
+      (htentry α β)
+  have hZint : Integrable (fun a => M * Y a * M) P :=
+    integrable_mul_left_mul_right M M hYint
+  have hYavg : ∫ a, Y a ∂P =
+      toFullBlockMat (adaptedMean P q k) -
+        toFullBlockMat (adaptedMean P q t) := by
+    have hsplit : ∫ a, Y a ∂P =
+        (∫ a, (Z.card : ℝ)⁻¹ • ∑ w ∈ Z,
+            toFullBlockMat (coarseBlock (adaptedCellAt q k w) a) ∂P) -
+          ∫ a, toFullBlockMat (coarseBlock (adaptedCell q t) a) ∂P := by
+      ext α β
+      rw [Matrix.sub_apply, entry_integral hYint α β,
+        entry_integral havgint α β,
+        entry_integral (integrable_toFullBlockMat hintt) α β]
+      simp only [hYdef, Matrix.sub_apply, Matrix.smul_apply, Matrix.sum_apply,
+        smul_eq_mul]
+      exact integral_sub
+        ((integrable_finsetSum Z fun w hw => hentrysum w hw α β).const_mul _)
+        (htentry α β)
+    rw [hsplit, Recurrence.integral_alignedAverage_eq_adaptedMean hstat hgrid hlk hintk
+      hZne, ← Recurrence.toFullBlockMat_adaptedMean_eq_integral hintt]
+  exact ⟨hentrysum, hsumint, havgint, htentry, hYint, hZint, hYavg⟩
 /-- **The per-depth averaged defect through its trace.**  By the pathwise
 subadditivity of the aligned subdivision, the normalized averaged defect is
 positive semidefinite; its identity-size is therefore at most its trace,
@@ -209,58 +305,9 @@ theorem eLpNorm_sqrt_blockSize_averageDefect_le_drop [NeZero d]
     intro a
     have h := (hYpsd a).conjTranspose_mul_mul_same M
     rwa [hMsym] at h
-  have hentrysum : ∀ w ∈ Z, ∀ α β : BlockCoord d,
-      Integrable (fun a =>
-        toFullBlockMat (coarseBlock (adaptedCellAt q k w) a) α β) P :=
-    fun w _ α β =>
-      (Recurrence.hasIntegrableCoarseBlock_adaptedCellAt hstat hgrid hlk hintk w
-          α β).congr
-        (Filter.Eventually.of_forall fun a =>
-          (toFullBlockMat_eq_blockMatEntry
-            (coarseBlock (adaptedCellAt q k w) a) α β).symm)
-  have hsumint : Integrable (fun a => ∑ w ∈ Z,
-      toFullBlockMat (coarseBlock (adaptedCellAt q k w) a)) P :=
-    integrable_of_entries fun α β => by
-      simpa only [Matrix.sum_apply] using
-        integrable_finsetSum Z fun w hw => hentrysum w hw α β
-  have havgint : Integrable (fun a => (Z.card : ℝ)⁻¹ •
-      ∑ w ∈ Z, toFullBlockMat (coarseBlock (adaptedCellAt q k w) a)) P :=
-    integrable_of_entries fun α β => by
-      simp only [Matrix.smul_apply, Matrix.sum_apply, smul_eq_mul]
-      exact (integrable_finsetSum Z fun w hw => hentrysum w hw α β).const_mul _
-  have htentry : ∀ α β : BlockCoord d,
-      Integrable (fun a =>
-        toFullBlockMat (coarseBlock (adaptedCell q t) a) α β) P :=
-    fun α β => (hintt α β).congr
-      (Filter.Eventually.of_forall fun a =>
-        (toFullBlockMat_eq_blockMatEntry
-          (coarseBlock (adaptedCell q t) a) α β).symm)
-  have hYint : Integrable Y P := by
-    simp only [hYdef]
-    refine integrable_of_entries fun α β => ?_
-    simp only [Matrix.sub_apply, Matrix.smul_apply, Matrix.sum_apply, smul_eq_mul]
-    exact ((integrable_finsetSum Z fun w hw => hentrysum w hw α β).const_mul _).sub
-      (htentry α β)
-  have hZint : Integrable (fun a => M * Y a * M) P :=
-    integrable_mul_left_mul_right M M hYint
-  have hYavg : ∫ a, Y a ∂P =
-      toFullBlockMat (adaptedMean P q k) -
-        toFullBlockMat (adaptedMean P q t) := by
-    have hsplit : ∫ a, Y a ∂P =
-        (∫ a, (Z.card : ℝ)⁻¹ • ∑ w ∈ Z,
-            toFullBlockMat (coarseBlock (adaptedCellAt q k w) a) ∂P) -
-          ∫ a, toFullBlockMat (coarseBlock (adaptedCell q t) a) ∂P := by
-      ext α β
-      rw [Matrix.sub_apply, entry_integral hYint α β,
-        entry_integral havgint α β,
-        entry_integral (integrable_toFullBlockMat hintt) α β]
-      simp only [hYdef, Matrix.sub_apply, Matrix.smul_apply, Matrix.sum_apply,
-        smul_eq_mul]
-      exact integral_sub
-        ((integrable_finsetSum Z fun w hw => hentrysum w hw α β).const_mul _)
-        (htentry α β)
-    rw [hsplit, Recurrence.integral_alignedAverage_eq_adaptedMean hstat hgrid hlk hintk
-      hZne, ← Recurrence.toFullBlockMat_adaptedMean_eq_integral hintt]
+  obtain ⟨hentrysum, hsumint, havgint, htentry, hYint, hZint, hYavg⟩ :=
+    integrable_aligned_response_average hstat
+      hgrid hlk hintk hintt hZne
   set D : FullBlockMat d := M * (toFullBlockMat (adaptedMean P q k) -
       toFullBlockMat (adaptedMean P q t)) * M with hDdef
   have hZavg : ∫ a, M * Y a * M ∂P = D := by

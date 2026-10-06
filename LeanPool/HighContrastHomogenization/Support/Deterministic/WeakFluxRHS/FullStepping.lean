@@ -32,7 +32,7 @@ variable {d : ℕ} {Q : TriadicCube d} {a : CoeffField d} {g : Vec d → Vec d}
 local recurrence from `FluxStepping` into the one-step recurrence for the full
 `q = 2` negative seminorm, assuming the child full seminorms bound their finite
 partials. -/
-theorem sq_cubeBesovNegativeVectorSeminormTwo_flux_le_descendantsAverage_add_harmonic_energy_of_childBddAbove
+theorem sq_negativeBesovSeminormTwo_flux_le_descendantMean_add_harmonic_energy
     (ω : MeanZeroNeumannCorrectorData Q a (fun x => g x - cubeAverageVec Q g))
     {u : Vec d → Vec d} (w : AHarmonicFunction a (cubeSet Q))
     (s : ℝ) (hs : 0 < s) (energy : Vec d → ℝ)
@@ -101,7 +101,7 @@ theorem sq_cubeBesovNegativeVectorSeminormTwo_flux_le_descendantsAverage_add_har
           F := by
     intro N
     simpa [flux, F] using
-      ω.sq_cubeBesovNegativeVectorPartialSeminormTwo_flux_succ_le_descendantsAverage_add_harmonic_energy
+      ω.sq_negativeVectorPartial_flux_succ_le_descendantsEnergy
         (u := u) w s hs N energy hEll hu_mem hg
         henergy_nonneg henergy_int hflux hsum huw
   have hchild :
@@ -121,7 +121,7 @@ theorem sq_cubeBesovNegativeVectorSeminormTwo_flux_le_descendantsAverage_add_har
 /-- Coefficient-energy version of the weak-flux local step after splitting the
 harmonic remainder energy into the original field and the mean-zero Neumann
 corrector. -/
-theorem sq_cubeBesovNegativeVectorSeminormTwo_flux_le_descendantsAverage_add_uCoeffEnergy_add_correctorCoeffEnergy_of_childBddAbove
+theorem sq_negativeBesovSeminormTwo_flux_le_childMean_add_energy_add_correctorEnergy
     (ω : MeanZeroNeumannCorrectorData Q a (fun x => g x - cubeAverageVec Q g))
     {u : Vec d → Vec d} (w : AHarmonicFunction a (cubeSet Q))
     (s : ℝ) (hs : 0 < s)
@@ -170,7 +170,7 @@ theorem sq_cubeBesovNegativeVectorSeminormTwo_flux_le_descendantsAverage_add_uCo
     integrableOn_coefficientEnergyDensity_of_isEllipticFieldOn hEll
       w.toH1.grad_memVectorL2
   have hbase :=
-    ω.sq_cubeBesovNegativeVectorSeminormTwo_flux_le_descendantsAverage_add_harmonic_energy_of_childBddAbove
+    ω.sq_negativeBesovSeminormTwo_flux_le_descendantMean_add_harmonic_energy
       (u := u) w s hs (coefficientEnergyDensity a (fun x => w.toH1.grad x))
       hEll hu_mem hg henergy_nonneg henergy_int hflux hsum huw hchildBdd
   have hsplit :=
@@ -221,7 +221,7 @@ theorem sq_cubeBesovNegativeVectorSeminormTwo_flux_le_descendantsAverage_add_uCo
 
 /-- Full-seminorm local recurrence with the Neumann-corrector energy replaced
 by the sharp centered Besov product bound. -/
-theorem sq_cubeBesovNegativeVectorSeminormTwo_flux_le_descendantsAverage_add_uCoeffEnergy_add_correctorShortTerm_of_childBddAbove
+theorem sq_negativeBesovSeminormTwo_flux_le_childMean_add_energy_add_correction
     (ω : MeanZeroNeumannCorrectorData Q a (fun x => g x - cubeAverageVec Q g))
     {u : Vec d → Vec d} (w : AHarmonicFunction a (cubeSet Q))
     (s : ℝ) (hs : 0 < s)
@@ -278,7 +278,7 @@ theorem sq_cubeBesovNegativeVectorSeminormTwo_flux_le_descendantsAverage_add_uCo
   let G : ℝ := cubeBesovPositiveVectorSeminormTwo Q s (fun x => g x - cubeAverageVec Q g)
   let Short : ℝ := (d : ℝ) * ((3 : ℝ) ^ ((d : ℝ) + s) * (Real.sqrt 2 * (U + W)) * G)
   have hbase :=
-    ω.sq_cubeBesovNegativeVectorSeminormTwo_flux_le_descendantsAverage_add_uCoeffEnergy_add_correctorCoeffEnergy_of_childBddAbove
+    ω.sq_negativeBesovSeminormTwo_flux_le_childMean_add_energy_add_correctorEnergy
       (u := u) w s hs hEll hu_mem hg_mem hflux hsum huw hchildBdd
   have hg :
       MeasureTheory.MemLp g (2 : ENNReal) (normalizedCubeMeasure Q) :=
@@ -364,7 +364,7 @@ theorem sq_cubeBesovNegativeVectorSeminormTwo_flux_le_descendantsAverage_add_uCo
 
 /-- Full-seminorm local recurrence with the short corrector product absorbed
 into quadratic `u`, harmonic-remainder, and forcing terms. -/
-theorem sq_cubeBesovNegativeVectorSeminormTwo_flux_le_descendantsAverage_add_uCoeffEnergy_add_eta_uSq_eta_wSq_invEta_gSq_of_childBddAbove
+theorem sq_negativeBesovSeminormTwo_flux_le_childMean_add_energy_add_YoungError
     (ω : MeanZeroNeumannCorrectorData Q a (fun x => g x - cubeAverageVec Q g))
     {u : Vec d → Vec d} (w : AHarmonicFunction a (cubeSet Q))
     (s : ℝ) {η : ℝ} (hs : 0 < s) (hη : 0 < η)
@@ -427,7 +427,7 @@ theorem sq_cubeBesovNegativeVectorSeminormTwo_flux_le_descendantsAverage_add_uCo
   let K : ℝ := C * ((d : ℝ) * ((3 : ℝ) ^ ((d : ℝ) + s) * Real.sqrt 2))
   let D : ℝ := 2 * K
   have hshort :=
-    ω.sq_cubeBesovNegativeVectorSeminormTwo_flux_le_descendantsAverage_add_uCoeffEnergy_add_correctorShortTerm_of_childBddAbove
+    ω.sq_negativeBesovSeminormTwo_flux_le_childMean_add_energy_add_correction
       (u := u) w s hs hEll hu_mem hg_mem hflux hsum huw hchildBdd huBdd hwBdd hgBdd
   have hshort' :
       (cubeBesovNegativeVectorSeminormTwo Q s
@@ -458,7 +458,7 @@ theorem sq_cubeBesovNegativeVectorSeminormTwo_flux_le_descendantsAverage_add_uCo
 Descendant-cube full-seminorm recurrence from parent potential/solenoidal
 weak-flux data.  This is the local iteration-facing version of the centered
 Neumann-corrector construction. -/
-theorem exists_centeredCorrector_aHarmonicRemainder_fluxSeminormStepEnergy_of_parent_potential_solenoidal_h1CoerciveEstimate
+theorem exists_centeredCorrector_aHarmonicRemainder_fluxSeminormStepEnergy
     [NeZero d] {P R : TriadicCube d} {n : ℕ} {lam Lam s : ℝ}
     {u g : Vec d → Vec d}
     (hs : 0 < s)
@@ -496,7 +496,7 @@ theorem exists_centeredCorrector_aHarmonicRemainder_fluxSeminormStepEnergy_of_pa
             (geometricDiscount s 2)⁻¹ * LambdaSq R s (.finite 2) a *
               cubeAverage R energy := by
   rcases
-      exists_centeredCorrector_aHarmonicRemainder_of_parent_potential_solenoidal_h1CoerciveEstimate
+      exists_centeredCorrector_harmonicRemainder_of_parentCoercivity
         (P := P) (R := R) (n := n) (a := a) (g := g) (u := u)
         (lam := lam) (Lam := Lam)
         hu_potential hu_residual hR hEllR hu_memR hg_memR hC with
@@ -504,14 +504,14 @@ theorem exists_centeredCorrector_aHarmonicRemainder_fluxSeminormStepEnergy_of_pa
   refine ⟨ω, w, huw, ?_⟩
   intro energy henergy_nonneg henergy_int hflux hsum hchildBdd
   exact
-    ω.sq_cubeBesovNegativeVectorSeminormTwo_flux_le_descendantsAverage_add_harmonic_energy_of_childBddAbove
+    ω.sq_negativeBesovSeminormTwo_flux_le_descendantMean_add_harmonic_energy
       (u := u) w s hs energy hEllR hu_memR hg_memR
       henergy_nonneg henergy_int hflux hsum huw hchildBdd
 
 /--
 Descendant-cube local recurrence with the harmonic flux energy split into the
 original-field energy and the mean-zero Neumann-corrector energy. -/
-theorem exists_centeredCorrector_aHarmonicRemainder_fluxSeminormStepCoeffEnergy_of_parent_potential_solenoidal_h1CoerciveEstimate
+theorem exists_centeredCorrector_aHarmonicRemainder_fluxSeminormStepCoeffEnergy
     [NeZero d] {P R : TriadicCube d} {n : ℕ} {lam Lam s : ℝ}
     {u g : Vec d → Vec d}
     (hs : 0 < s)
@@ -551,7 +551,7 @@ theorem exists_centeredCorrector_aHarmonicRemainder_fluxSeminormStepCoeffEnergy_
                 (coefficientEnergyDensity a
                   (fun x => ω.toH1MeanZero.toH1Function.grad x))) := by
   rcases
-      exists_centeredCorrector_aHarmonicRemainder_of_parent_potential_solenoidal_h1CoerciveEstimate
+      exists_centeredCorrector_harmonicRemainder_of_parentCoercivity
         (P := P) (R := R) (n := n) (a := a) (g := g) (u := u)
         (lam := lam) (Lam := Lam)
         hu_potential hu_residual hR hEllR hu_memR hg_memR hC with
@@ -559,13 +559,13 @@ theorem exists_centeredCorrector_aHarmonicRemainder_fluxSeminormStepCoeffEnergy_
   refine ⟨ω, w, huw, ?_⟩
   intro hflux hsum hchildBdd
   exact
-    ω.sq_cubeBesovNegativeVectorSeminormTwo_flux_le_descendantsAverage_add_uCoeffEnergy_add_correctorCoeffEnergy_of_childBddAbove
+    ω.sq_negativeBesovSeminormTwo_flux_le_childMean_add_energy_add_correctorEnergy
       (u := u) w s hs hEllR hu_memR hg_memR hflux hsum huw hchildBdd
 
 /--
 Descendant-cube coefficient-energy recurrence with harmonic flux control
 supplied by deterministic coarse data. -/
-theorem exists_centeredCorrector_aHarmonicRemainder_fluxSeminormStepCoeffEnergy_of_parent_potential_solenoidal_h1CoerciveEstimate_of_coarseData
+theorem exists_centeredCorrector_aHarmonicRemainder_of_coarseData
     [NeZero d] {P R : TriadicCube d} {n : ℕ} {lam Lam s : ℝ}
     {u g : Vec d → Vec d}
     (hs : 0 < s)
@@ -605,7 +605,7 @@ theorem exists_centeredCorrector_aHarmonicRemainder_fluxSeminormStepCoeffEnergy_
               (coefficientEnergyDensity a
                 (fun x => ω.toH1MeanZero.toH1Function.grad x)) := by
   rcases
-      exists_centeredCorrector_aHarmonicRemainder_fluxSeminormStepCoeffEnergy_of_parent_potential_solenoidal_h1CoerciveEstimate
+      exists_centeredCorrector_aHarmonicRemainder_fluxSeminormStepCoeffEnergy
         (P := P) (R := R) (n := n) (a := a) (g := g) (u := u)
         (lam := lam) (Lam := Lam) (s := s)
         hs hu_potential hu_residual hR hEllR hu_memR hg_memR hC with
@@ -622,7 +622,7 @@ Descendant-cube coefficient-energy recurrence with the corrector term replaced
 by the short centered Besov product bound.  The harmonic seminorm boundedness is
 returned as an input to the packaged step because the harmonic remainder is
 created by the local Neumann construction. -/
-theorem exists_centeredCorrector_aHarmonicRemainder_fluxSeminormStepShortTerm_of_parent_potential_solenoidal_h1CoerciveEstimate_of_coarseData
+theorem exists_centeredCorrector_aHarmonicRemainder_fluxSeminormStepShortTerm
     [NeZero d] {P R : TriadicCube d} {n : ℕ} {lam Lam s : ℝ}
     {u g : Vec d → Vec d}
     (hs : 0 < s)
@@ -676,7 +676,7 @@ theorem exists_centeredCorrector_aHarmonicRemainder_fluxSeminormStepShortTerm_of
               cubeBesovPositiveVectorSeminormTwo R s
                 (fun x => g x - cubeAverageVec R g)))) := by
   rcases
-      exists_centeredCorrector_aHarmonicRemainder_of_parent_potential_solenoidal_h1CoerciveEstimate
+      exists_centeredCorrector_harmonicRemainder_of_parentCoercivity
         (P := P) (R := R) (n := n) (a := a) (g := g) (u := u)
         (lam := lam) (Lam := Lam)
         hu_potential hu_residual hR hEllR hu_memR hg_memR hC with
@@ -684,7 +684,7 @@ theorem exists_centeredCorrector_aHarmonicRemainder_fluxSeminormStepShortTerm_of
   refine ⟨ω, w, huw, ?_⟩
   intro hwBdd
   exact
-    ω.sq_cubeBesovNegativeVectorSeminormTwo_flux_le_descendantsAverage_add_uCoeffEnergy_add_correctorShortTerm_of_childBddAbove
+    ω.sq_negativeBesovSeminormTwo_flux_le_childMean_add_energy_add_correction
       (u := u) w s hs hEllR hu_memR hg_memR
       (cubeAverageFluxEnergyControl_of_aHarmonicFunction
         (Q := R) (a := a) hEllR w hDataR)
@@ -693,7 +693,7 @@ theorem exists_centeredCorrector_aHarmonicRemainder_fluxSeminormStepShortTerm_of
 /--
 Descendant-cube recurrence with the short corrector product absorbed into
 quadratic `u`, harmonic, and forcing terms. -/
-theorem exists_centeredCorrector_aHarmonicRemainder_fluxSeminormStepAbsorbedShortTerm_of_parent_potential_solenoidal_h1CoerciveEstimate_of_coarseData
+theorem exists_centeredCorrector_harmonicRemainder_fluxStepBound
     [NeZero d] {P R : TriadicCube d} {n : ℕ} {lam Lam s η : ℝ}
     {u g : Vec d → Vec d}
     (hs : 0 < s) (hη : 0 < η)
@@ -746,7 +746,7 @@ theorem exists_centeredCorrector_aHarmonicRemainder_fluxSeminormStepAbsorbedShor
               cubeBesovPositiveVectorSeminormTwo R s
                 (fun x => g x - cubeAverageVec R g)) ^ 2)) := by
   rcases
-      exists_centeredCorrector_aHarmonicRemainder_of_parent_potential_solenoidal_h1CoerciveEstimate
+      exists_centeredCorrector_harmonicRemainder_of_parentCoercivity
         (P := P) (R := R) (n := n) (a := a) (g := g) (u := u)
         (lam := lam) (Lam := Lam)
         hu_potential hu_residual hR hEllR hu_memR hg_memR hC with
@@ -754,7 +754,7 @@ theorem exists_centeredCorrector_aHarmonicRemainder_fluxSeminormStepAbsorbedShor
   refine ⟨ω, w, huw, ?_⟩
   intro hwBdd
   exact
-    ω.sq_cubeBesovNegativeVectorSeminormTwo_flux_le_descendantsAverage_add_uCoeffEnergy_add_eta_uSq_eta_wSq_invEta_gSq_of_childBddAbove
+    ω.sq_negativeBesovSeminormTwo_flux_le_childMean_add_energy_add_YoungError
       (u := u) w s hs hη hEllR hu_memR hg_memR
       (cubeAverageFluxEnergyControl_of_aHarmonicFunction
         (Q := R) (a := a) hEllR w hDataR)
@@ -767,7 +767,7 @@ PDE-facing full-seminorm local recurrence interface for the weak-flux RHS lane.
 
 This is the one-cube recurrence after constructing the centered Neumann
 corrector from an `H¹` RHS weak solution. -/
-theorem exists_centeredNeumannCorrector_aHarmonicRemainder_fluxSeminormStepEnergy_of_h1DirichletRhsWeakSolutionOn
+theorem exists_centeredCorrector_harmonicRemainder_fluxSeminormStepEnergy
     {d : ℕ} (Q : TriadicCube d) (a : CoeffField d)
     (g : Vec d → Vec d) (u : H1Function (cubeSet Q)) {s lam Lam : ℝ}
     (hs : 0 < s)
@@ -808,7 +808,7 @@ theorem exists_centeredNeumannCorrector_aHarmonicRemainder_fluxSeminormStepEnerg
   refine ⟨ω, w, huw, ?_⟩
   intro energy henergy_nonneg henergy_int hflux hsum hchildBdd
   exact
-    ω.sq_cubeBesovNegativeVectorSeminormTwo_flux_le_descendantsAverage_add_harmonic_energy_of_childBddAbove
+    ω.sq_negativeBesovSeminormTwo_flux_le_descendantMean_add_harmonic_energy
       (u := u.grad) w s hs energy hEll u.grad_memVectorL2 hg
       henergy_nonneg henergy_int hflux hsum huw hchildBdd
 
@@ -817,7 +817,7 @@ PDE-facing coefficient-energy local recurrence for the weak-flux RHS lane.
 
 This is the Step-2-ready form of the one-cube recurrence after constructing
 the centered Neumann corrector from an `H¹` RHS weak solution. -/
-theorem exists_centeredNeumannCorrector_aHarmonicRemainder_fluxSeminormStepCoeffEnergy_of_h1DirichletRhsWeakSolutionOn
+theorem exists_centeredCorrector_harmonicRemainder_fluxSeminormStepCoeffEnergy
     {d : ℕ} (Q : TriadicCube d) (a : CoeffField d)
     (g : Vec d → Vec d) (u : H1Function (cubeSet Q)) {s lam Lam : ℝ}
     (hs : 0 < s)
@@ -860,13 +860,13 @@ theorem exists_centeredNeumannCorrector_aHarmonicRemainder_fluxSeminormStepCoeff
   refine ⟨ω, w, huw, ?_⟩
   intro hflux hsum hchildBdd
   exact
-    ω.sq_cubeBesovNegativeVectorSeminormTwo_flux_le_descendantsAverage_add_uCoeffEnergy_add_correctorCoeffEnergy_of_childBddAbove
+    ω.sq_negativeBesovSeminormTwo_flux_le_childMean_add_energy_add_correctorEnergy
       (u := u.grad) w s hs hEll u.grad_memVectorL2 hg hflux hsum huw hchildBdd
 
 /--
 PDE-facing coefficient-energy recurrence with harmonic flux control supplied by
 deterministic coarse data. -/
-theorem exists_centeredNeumannCorrector_aHarmonicRemainder_fluxSeminormStepCoeffEnergy_of_h1DirichletRhsWeakSolutionOn_of_coarseData
+theorem exists_centeredCorrector_harmonicRemainder_of_h1DirichletRhsWeakSolutionOn
     {d : ℕ} [NeZero d] (Q : TriadicCube d) (a : CoeffField d)
     (g : Vec d → Vec d) (u : H1Function (cubeSet Q)) {s lam Lam : ℝ}
     (hs : 0 < s)
@@ -902,7 +902,7 @@ theorem exists_centeredNeumannCorrector_aHarmonicRemainder_fluxSeminormStepCoeff
               (coefficientEnergyDensity a
                 (fun x => ω.toH1MeanZero.toH1Function.grad x)) := by
   rcases
-      exists_centeredNeumannCorrector_aHarmonicRemainder_fluxSeminormStepCoeffEnergy_of_h1DirichletRhsWeakSolutionOn
+      exists_centeredCorrector_harmonicRemainder_fluxSeminormStepCoeffEnergy
         (Q := Q) (a := a) (g := g) (u := u)
         (s := s) (lam := lam) (Lam := Lam)
         hs hEll hu hg hC with
@@ -919,7 +919,7 @@ PDE-facing coefficient-energy recurrence with the corrector term replaced by
 the short centered Besov product bound.  As in the descendant-cube wrapper, the
 harmonic boundedness assumption is exposed after the harmonic remainder has
 been constructed. -/
-theorem exists_centeredNeumannCorrector_aHarmonicRemainder_fluxSeminormStepShortTerm_of_h1DirichletRhsWeakSolutionOn_of_coarseData
+theorem exists_centeredCorrector_harmonicRemainder_fluxSeminormStepShortTerm
     {d : ℕ} [NeZero d] (Q : TriadicCube d) (a : CoeffField d)
     (g : Vec d → Vec d) (u : H1Function (cubeSet Q)) {s lam Lam : ℝ}
     (hs : 0 < s)
@@ -976,7 +976,7 @@ theorem exists_centeredNeumannCorrector_aHarmonicRemainder_fluxSeminormStepShort
   refine ⟨ω, w, huw, ?_⟩
   intro hwBdd
   exact
-    ω.sq_cubeBesovNegativeVectorSeminormTwo_flux_le_descendantsAverage_add_uCoeffEnergy_add_correctorShortTerm_of_childBddAbove
+    ω.sq_negativeBesovSeminormTwo_flux_le_childMean_add_energy_add_correction
       (u := u.grad) w s hs hEll u.grad_memVectorL2 hg
       (cubeAverageFluxEnergyControl_of_aHarmonicFunction
         (Q := Q) (a := a) hEll w hData)
@@ -985,7 +985,7 @@ theorem exists_centeredNeumannCorrector_aHarmonicRemainder_fluxSeminormStepShort
 /--
 PDE-facing recurrence with the short corrector product absorbed into quadratic
 `u`, harmonic, and forcing terms. -/
-theorem exists_centeredNeumannCorrector_aHarmonicRemainder_fluxSeminormStepAbsorbedShortTerm_of_h1DirichletRhsWeakSolutionOn_of_coarseData
+theorem exists_centeredCorrector_harmonicRemainder_fluxSeminormStepAbsorbedShortTerm
     {d : ℕ} [NeZero d] (Q : TriadicCube d) (a : CoeffField d)
     (g : Vec d → Vec d) (u : H1Function (cubeSet Q)) {s η lam Lam : ℝ}
     (hs : 0 < s) (hη : 0 < η)
@@ -1041,7 +1041,7 @@ theorem exists_centeredNeumannCorrector_aHarmonicRemainder_fluxSeminormStepAbsor
   refine ⟨ω, w, huw, ?_⟩
   intro hwBdd
   exact
-    ω.sq_cubeBesovNegativeVectorSeminormTwo_flux_le_descendantsAverage_add_uCoeffEnergy_add_eta_uSq_eta_wSq_invEta_gSq_of_childBddAbove
+    ω.sq_negativeBesovSeminormTwo_flux_le_childMean_add_energy_add_YoungError
       (u := u.grad) w s hs hη hEll u.grad_memVectorL2 hg
       (cubeAverageFluxEnergyControl_of_aHarmonicFunction
         (Q := Q) (a := a) hEll w hData)

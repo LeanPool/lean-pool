@@ -136,7 +136,8 @@ theorem account_profile_caps_entry_of_block_at_level [NeZero d]
           (Response.centeredResponseLoadQ S0 SStar0 K0 e) ≤
         ENNReal.ofReal
           (weakValueBoundSharpIsotropyAt (Response.recentConstantAtLevel lev)
-            (Response.maxGroupConstantAtLevel lev) (Response.energyGoodConstantAtLevel lev) P mAl (Response.responseSkew K0) F
+            (Response.maxGroupConstantAtLevel lev) (Response.energyGoodConstantAtLevel lev) P
+              mAl (Response.responseSkew K0) F
             (loadScaleOfScalar cF (kapE)) mAl rho Hw
             (R ^ 4 * badMomentMajorant K (t + ((Gacc + 1 : ℕ) : ℤ) - 1 - sKw)) (R / 2) lev t lAl
             V V0 (meanDrop2ValueIsotropy P lAl cF mAl E F t) Vmean) ∧
@@ -148,7 +149,8 @@ theorem account_profile_caps_entry_of_block_at_level [NeZero d]
           (Response.centeredResponseLoadQ S0 SStar0 K0 e) ≤
         ENNReal.ofReal
           (weakValueBoundSharpIsotropyAt (Response.recentConstantAtLevel lev)
-            (Response.maxGroupConstantAtLevel lev) (Response.energyGoodConstantAtLevel lev) P mAl (Response.responseSkew K0) F
+            (Response.maxGroupConstantAtLevel lev) (Response.energyGoodConstantAtLevel lev) P
+              mAl (Response.responseSkew K0) F
             (loadScaleOfScalar cF (kapE)) mAl rho Hw
             (R ^ 4 * badMomentMajorant K (t + ((Gacc + 1 : ℕ) : ℤ) - 1 - sKw)) (R / 2) lev t lAl
             V V0 (meanDrop2ValueIsotropy P lAl cF mAl E F t) Vmean) ∧

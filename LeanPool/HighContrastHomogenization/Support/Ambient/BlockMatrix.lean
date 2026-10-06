@@ -24,25 +24,31 @@ public section
 
 namespace HCPolySupport
 
+/-- Coordinates for two copies of the `d`-dimensional coordinate space. -/
 abbrev BlockCoord (d : ℕ) := Sum (Fin d) (Fin d)
 
 /-- File-level typeclass cache for `Nonempty (BlockCoord d)`. -/
 private instance instNonemptyBlockCoord (d : ℕ) [NeZero d] :
     Nonempty (BlockCoord d) := inferInstance
 
+/-- Real vectors indexed by the coordinates of both blocks. -/
 abbrev FullBlockVec (d : ℕ) := BlockCoord d → ℝ
 
+/-- Real matrices indexed by the coordinates of both blocks. -/
 abbrev FullBlockMat (d : ℕ) := Matrix (BlockCoord d) (BlockCoord d) ℝ
 
+/-- Represent a pair of vectors as one vector indexed by the two blocks. -/
 @[expose]
 def toFullBlockVec {d : ℕ} (X : BlockVec d) : FullBlockVec d
   | Sum.inl i => X.1 i
   | Sum.inr i => X.2 i
 
+/-- Split a vector indexed by both blocks into its two component vectors. -/
 @[expose]
 def ofFullBlockVec {d : ℕ} (x : FullBlockVec d) : BlockVec d :=
   (fun i => x (Sum.inl i), fun i => x (Sum.inr i))
 
+/-- Represent the four blocks as a single matrix on block coordinates. -/
 @[expose]
 def toFullBlockMat {d : ℕ} (A : BlockMat d) : FullBlockMat d
   | Sum.inl i, Sum.inl j => A.upperLeft i j
@@ -50,6 +56,7 @@ def toFullBlockMat {d : ℕ} (A : BlockMat d) : FullBlockMat d
   | Sum.inr i, Sum.inl j => A.lowerLeft i j
   | Sum.inr i, Sum.inr j => A.lowerRight i j
 
+/-- Extract the four component blocks of a matrix on block coordinates. -/
 @[expose]
 def ofFullBlockMat {d : ℕ} (M : FullBlockMat d) : BlockMat d :=
   { upperLeft := fun i j => M (Sum.inl i) (Sum.inl j)
@@ -57,6 +64,7 @@ def ofFullBlockMat {d : ℕ} (M : FullBlockMat d) : BlockMat d :=
     lowerLeft := fun i j => M (Sum.inr i) (Sum.inl j)
     lowerRight := fun i j => M (Sum.inr i) (Sum.inr j) }
 
+/-- The matrix entry selected by a pair of block coordinates. -/
 @[expose]
 def blockMatEntry {d : ℕ} (A : BlockMat d) : BlockCoord d → BlockCoord d → ℝ
   | Sum.inl i, Sum.inl j => A.upperLeft i j
@@ -64,11 +72,13 @@ def blockMatEntry {d : ℕ} (A : BlockMat d) : BlockCoord d → BlockCoord d →
   | Sum.inr i, Sum.inl j => A.lowerLeft i j
   | Sum.inr i, Sum.inr j => A.lowerRight i j
 
+/-- The standard basis vector in the specified component of a vector pair. -/
 @[expose]
 def blockBasis {d : ℕ} : BlockCoord d → BlockVec d
   | Sum.inl i => (Pi.single i 1, 0)
   | Sum.inr i => (0, Pi.single i 1)
 
+/-- Symmetry of all matrix entries under interchange of block coordinates. -/
 @[expose]
 def IsSymmetricBlockMat {d : ℕ} (A : BlockMat d) : Prop :=
   ∀ α β : BlockCoord d, blockMatEntry A α β = blockMatEntry A β α
@@ -497,6 +507,7 @@ theorem blockBasis_sum_pairing {d : ℕ} (A : BlockMat d) (α β : BlockCoord d)
           rw [blockBasis_pairing, blockBasis_pairing, blockBasis_pairing, blockBasis_pairing]
           ac_rfl
 
+/-- The block matrix obtained by exchanging the first and second blocks in both indices. -/
 @[expose]
 def blockReflect {d : ℕ} (A : BlockMat d) : BlockMat d :=
   { upperLeft := A.lowerRight
@@ -585,7 +596,7 @@ theorem BlockMatLoewnerLE.trans {d : ℕ} {A B C : BlockMat d}
   rcases X with ⟨p, q⟩
   ext <;> simp [blockReflect, blockMatVecMul, add_comm]
 
-@[simp] theorem blockVecDot_blockMatVecMul_blockReflect {d : ℕ} (A : BlockMat d)
+theorem blockVecDot_blockMatVecMul_blockReflect {d : ℕ} (A : BlockMat d)
     (X : BlockVec d) :
     blockVecDot X (blockMatVecMul (blockReflect A) X) =
       blockVecDot (X.2, X.1) (blockMatVecMul A (X.2, X.1)) := by

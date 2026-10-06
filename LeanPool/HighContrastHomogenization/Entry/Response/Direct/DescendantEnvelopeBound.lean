@@ -420,10 +420,12 @@ theorem tsum_succ_layer_le_respSourceLoad {d : ℕ} [NeZero d] (P : Measure (Coe
       ((((triadicIndexBox d n).card : ℝ))⁻¹ *
         ∑ z ∈ triadicIndexBox d n,
           (Real.sqrt (vecDot Y.1 (matVecMul
-                (annealedBlockOf P (adaptedCellAtCenter (respGrid jStar F) (s - (n : ℤ)) z) b).upperLeft
+                (annealedBlockOf P (adaptedCellAtCenter (respGrid jStar F) (s - (n : ℤ)) z)
+                  b).upperLeft
                 Y.1)) +
             Real.sqrt (vecDot Y.2 (matVecMul
-                (annealedBlockOf P (adaptedCellAtCenter (respGrid jStar F) (s - (n : ℤ)) z) b).lowerRight
+                (annealedBlockOf P (adaptedCellAtCenter (respGrid jStar F) (s - (n : ℤ)) z)
+                  b).lowerRight
                 Y.2))) ^ 2))) :
     (∑' n : ℕ, (3 : ℝ) ^ (-((3 : ℝ) / 2) * (n : ℝ)) *
         ((((triadicIndexBox d (n + 1)).card : ℝ))⁻¹ *
@@ -443,10 +445,12 @@ theorem tsum_succ_layer_le_respSourceLoad {d : ℕ} [NeZero d] (P : Measure (Coe
     ((((triadicIndexBox d n).card : ℝ))⁻¹ *
       ∑ z ∈ triadicIndexBox d n,
         (Real.sqrt (vecDot Y.1 (matVecMul
-              (annealedBlockOf P (adaptedCellAtCenter (respGrid jStar F) (s - (n : ℤ)) z) b).upperLeft
+              (annealedBlockOf P (adaptedCellAtCenter (respGrid jStar F) (s - (n : ℤ)) z)
+                b).upperLeft
               Y.1)) +
           Real.sqrt (vecDot Y.2 (matVecMul
-              (annealedBlockOf P (adaptedCellAtCenter (respGrid jStar F) (s - (n : ℤ)) z) b).lowerRight
+              (annealedBlockOf P (adaptedCellAtCenter (respGrid jStar F) (s - (n : ℤ)) z)
+                b).lowerRight
               Y.2))) ^ 2)
   have hg : Summable g := hsum
   have hg_nonneg : ∀ n : ℕ, 0 ≤ g n := fun n =>
@@ -676,7 +680,8 @@ theorem abs_sum_range_descendant_pairing_le {iota alpha : Type*} [MeasurableSpac
       |∫ a, ((Z n).card : ℝ)⁻¹ * ∑ w ∈ Z n, θ n w * pairing n w a ∂P|
           ≤ (K * (3 : ℝ) ^ (-(n : ℝ)))
               * (Real.sqrt (L n)
-                * Real.sqrt (2 * ((1 / 2) * ∫ a, ((Z n).card : ℝ)⁻¹ * ∑ w ∈ Z n, 2 * D n w a ∂P))) :=
+                * Real.sqrt (2 * ((1 / 2) * ∫ a, ((Z n).card : ℝ)⁻¹ * ∑ w ∈ Z n, 2 * D n w a
+                  ∂P))) :=
             h1
       _ ≤ (K * (3 : ℝ) ^ (-(n : ℝ))) * (Real.sqrt (L n) * Real.sqrt (2 * EJ)) :=
             mul_le_mul_of_nonneg_left

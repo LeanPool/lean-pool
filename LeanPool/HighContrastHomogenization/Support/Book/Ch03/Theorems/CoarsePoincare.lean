@@ -88,7 +88,7 @@ theorem coarsePoincareGradient_negativeBesov_le {d : ℕ} [NeZero d]
       HCPolySupport.CubeAverageGradientEnergyControl Q A
         (fun x => uCube.toH1.grad x) energy := by
     simpa [energy] using
-      cubeAverageGradientEnergyControl_of_aHarmonicFunction_of_openCubeOriginEllipticRecoveryExistence
+      harmonicGradientEnergy_le_scalarVariation_of_recovery
         (Q := Q) (a := A) hEll uCube hOrigin
   have hgradient_local_public :
       ∀ j : ℕ, ∀ R ∈ descendantsAtDepth Q j,
@@ -111,7 +111,7 @@ theorem coarsePoincareGradient_negativeBesov_le {d : ℕ} [NeZero d]
       hData _ hj R hRscale
     let w : AHarmonicFunction A (cubeSet R) := uCube.restrictToSubcube hEll hR
     have hraw :=
-      cubeAverageGradient_le_matrixNorm_sigmaStarInv_mul_energyAverage_of_isEllipticFieldOn_of_deterministicCoarseData
+      cubeAverageGradient_le_matrixNorm_sigmaStarInv_mul_energyAverage
         (R := R) (a := A) hEllR hDataR w
     have henergy_R :
         cubeAverage R (scalarVariationEnergyIntegrand A w) =
@@ -123,7 +123,7 @@ theorem coarsePoincareGradient_negativeBesov_le {d : ℕ} [NeZero d]
         Ch02.matrixNorm (sigmaStarInvCoarse (cubeSet R) A) =
           Ch02.coarseSigmaStarInvMatrixNorm R a := by
       simpa [A, U, aQ] using
-        (Ch02.coarseSigmaStarInvMatrixNorm_eq_matrixNorm_sigmaStarInv_pointwiseCoeffField_of_mem_descendantsAtScale
+        (Ch02.coarseSigmaStarInvMatrixNorm_eq_matrixNorm_sigmaStarInv_pointwiseCoeffField
           (a := a) (Q := Q) (R := R) (k := Q.scale - (j : ℤ)) hj hRscale).symm
     rw [henergy_R, hnorm_R] at hraw
     simpa [w] using hraw
@@ -295,7 +295,7 @@ theorem coarsePoincareFlux_negativeBesov_le {d : ℕ} [NeZero d]
       hData _ hj R hRscale
     let w : AHarmonicFunction A (cubeSet R) := uCube.restrictToSubcube hEll hR
     have hraw :=
-      cubeAverageFlux_le_matrixNorm_bCoarse_mul_energyAverage_of_isEllipticFieldOn_of_deterministicCoarseData
+      cubeAverageFlux_le_matrixNorm_bCoarse_mul_energyAverage
         (R := R) (a := A) hEllR hDataR w
     have hflux_R :
         cubeAverageVec R (fun x => matVecMul (A x) (w.toH1.grad x)) =

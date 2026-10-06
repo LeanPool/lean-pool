@@ -1594,7 +1594,8 @@ private theorem canonical_cutoff_source_one_gradient_zero
   · funext j
     change (fderiv ℝ (QuantitativeCubeCutoff.canonicalFun Qp (1 / 3 : ℝ)
       (5 / 12 : ℝ)) x) (basisVec j) = 0
-    apply QuantitativeCubeCutoff.canonicalFun_fderiv_apply_basisVec_eq_zero_of_abs_sub_center_lt_inner
+    apply
+      QuantitativeCubeCutoff.canonicalFun_fderiv_apply_basisVec_eq_zero_of_abs_sub_center_lt_inner
       Qp (by norm_num) (by norm_num)
     have hxopen : x ∈ scaledOpenCubeSet Qp (1 / 3 : ℝ) := by
       rw [show Qp = originCube d (m + 1) by rfl,
@@ -1996,7 +1997,8 @@ private theorem actual_mutual_identity_package
       (η : QuantitativeCubeCutoff (originCube d (m + 1)) (1 / 3 : ℝ) (5 / 12 : ℝ)),
       let U := scaledOpenCubeSet (originCube d (m + 1)) (1 / 2 : ℝ)
       let R := fun x j ↦ H.hess i j x
-      let GP := (sourceParentFiniteLpExtension m q.conjugate (sourceHessianRowRadialDatum q H i n)).toField
+      let GP := (sourceParentFiniteLpExtension m q.conjugate (sourceHessianRowRadialDatum q H i
+        n)).toField
       η = QuantitativeCubeCutoff.canonical (originCube d (m + 1))
         (1 / 3 : ℝ) (5 / 12 : ℝ) (by norm_num) (by norm_num) ∧
       (hilbertifyVecField r.grad =ᵐ[volume.restrict U]

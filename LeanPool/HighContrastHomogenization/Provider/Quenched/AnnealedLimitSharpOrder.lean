@@ -29,9 +29,9 @@ reverses the Loewner order, so where the annealed blocks decrease along the
 generations their sharps increase, and the annealed primal-adjoint order keeps
 every sharp below its own block.  Consequently
 
-`𝐀(□_m)^♯ ≼ 𝐀̄ ≼ 𝐀(□_m)`
+`𝐀(□_m)^♯ ≼ 𝐀_bar ≼ 𝐀(□_m)`
 
-at every nonnegative generation, with `𝐀̄` the limit block.  Two consequences are
+at every nonnegative generation, with `𝐀_bar` the limit block.  Two consequences are
 recorded.
 
 *Positivity.*  The sharp of a positive definite doubled block is positive
@@ -41,7 +41,7 @@ decay of the annealed contrast.
 *The upper comparison.*  The canonical imbalance `𝔡` of
 `e.scale.selection.canonical.metric` satisfies `F ≼ 𝔡(F) F^♯` by definition, so
 
-`𝐀̄(□_m) ≼ 𝔡(𝐀̄(□_m)) · 𝐀̄`.
+`𝐀_bar(□_m) ≼ 𝔡(𝐀_bar(□_m)) · 𝐀_bar`.
 
 The upper half of the endgame display
 `e.algebraic.block.decay` therefore follows

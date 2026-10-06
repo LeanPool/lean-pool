@@ -124,7 +124,7 @@ theorem openCubeInnerOpenCubeLimitHessianPairing_eq_of_toScalarL2_eq
           openCubeInnerOpenCubeQuotientHessianPairing uQ V (stepSeq n) i j ψ := by
     funext n
     exact
-      h.neg_integral_forwardDifferenceQuotient_mul_fderiv_openCube_innerOpenCube_eq_of_h1WeakTest_toScalarL2_eq_of_step_abs_le
+      h.neg_integral_forwardDifference_mul_derivative_openCube_innerOpenCube_eq
         hf hV (hstep n) i j η hη_sub hinnerV θ hVν hν_nonneg hνσ
         hσ₁_lt_one hσ₂_nonneg hσ₂_lt_one (hstep_abs n) φ ψ hφψ
   exact tendsto_nhds_unique (hlim φ) (by simpa [hseq] using hlim ψ)

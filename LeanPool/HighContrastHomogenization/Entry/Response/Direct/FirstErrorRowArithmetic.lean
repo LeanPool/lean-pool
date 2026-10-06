@@ -300,7 +300,8 @@ theorem abs_volumeAverage_sub_one_energy_sub_avsum_le {d : ℕ} [NeZero d] {q : 
     (hmax : IsResponseMaximizer (HighContrast.adaptedCell q t) p r b u)
     (hu_int : weakFluxIntegrable (HighContrast.adaptedCell q t) b u)
     (hresp_u : MeasureTheory.IntegrableOn
-      (scalarResponseIntegrand (HighContrast.adaptedCell q t) b p r u) (HighContrast.adaptedCell q t))
+      (scalarResponseIntegrand (HighContrast.adaptedCell q t) b p r u) (HighContrast.adaptedCell
+        q t))
     (hlin_self : MeasureTheory.IntegrableOn
       (scalarFirstVariationIntegrand (HighContrast.adaptedCell q t) b p r u u)
       (HighContrast.adaptedCell q t))

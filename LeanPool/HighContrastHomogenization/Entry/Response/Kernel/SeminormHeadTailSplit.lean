@@ -522,12 +522,14 @@ theorem tail_good_le {γ : ℝ} (hγ : γ ∈ Set.Ico (0 : ℝ) 1) (H : ℕ) {K 
     (hT : ∀ n, T n ≤ Real.sqrt 2 * K *
       (1 + Real.sqrt M * (3 : ℝ) ^ (Quenched.contrastRho γ * (n : ℝ) / 2)) * En) :
     ∑' j : ℕ, (3 : ℝ) ^ (-(((H : ℝ) + 1 + (j : ℝ)) / 2)) * T (H + 1 + j)
-      ≤ 16 / (1 - Quenched.contrastRho γ) * K * (3 : ℝ) ^ (-(Quenched.contrastAlpha γ * (H : ℝ))) * En := by
+      ≤ 16 / (1 - Quenched.contrastRho γ) * K * (3 : ℝ) ^ (-(Quenched.contrastAlpha γ * (H :
+        ℝ))) * En := by
   have h3pos : (0 : ℝ) < 3 := by norm_num
   have _hγ := hγ
   have hρ0 : 0 ≤ Quenched.contrastRho γ := by rw [Quenched.contrastRho]; linarith only [hγ.1]
   have hρ1 : Quenched.contrastRho γ < 1 := by rw [Quenched.contrastRho]; linarith only [hγ.2]
-  have hαeq : (1 - Quenched.contrastRho γ) / 2 = Quenched.contrastAlpha γ := by rw [Quenched.contrastAlpha, Quenched.contrastRho]; ring
+  have hαeq : (1 - Quenched.contrastRho γ) / 2 = Quenched.contrastAlpha γ := by rw
+    [Quenched.contrastAlpha, Quenched.contrastRho]; ring
   have h1mρ : 0 < 1 - Quenched.contrastRho γ := by linarith only [hρ1]
   have hsqM : (Real.sqrt M) ^ 2 ≤ 1 := by rw [Real.sq_sqrt hM]; exact hgood
   have hsqrt_le : Real.sqrt M ≤ 1 :=
@@ -555,7 +557,8 @@ theorem tail_good_le {γ : ℝ} (hγ : γ ∈ Set.Ico (0 : ℝ) 1) (H : ℕ) {K 
           ≤ 1 * (3 : ℝ) ^ (Quenched.contrastRho γ * x / 2) :=
             mul_le_mul_of_nonneg_right hsqrt_le hpowpos.le
         _ = (3 : ℝ) ^ (Quenched.contrastRho γ * x / 2) := by ring
-    have hinner : Real.sqrt 2 * K * (1 + Real.sqrt M * (3 : ℝ) ^ (Quenched.contrastRho γ * x / 2)) * En
+    have hinner : Real.sqrt 2 * K * (1 + Real.sqrt M * (3 : ℝ) ^ (Quenched.contrastRho γ * x /
+      2)) * En
         ≤ Real.sqrt 2 * K * (1 + (3 : ℝ) ^ (Quenched.contrastRho γ * x / 2)) * En := by
       have hs2K : 0 ≤ Real.sqrt 2 * K := mul_nonneg (Real.sqrt_nonneg 2) hK
       have hstep : (1 + Real.sqrt M * (3 : ℝ) ^ (Quenched.contrastRho γ * x / 2))
@@ -629,8 +632,10 @@ theorem tail_bad_le {γ : ℝ} (hγ : γ ∈ Set.Ico (0 : ℝ) 1) {K En M : ℝ}
   have _hγ := hγ
   have hαpos : 0 < Quenched.contrastAlpha γ := by rw [Quenched.contrastAlpha]; linarith only [hγ.2]
   have hαle1 : Quenched.contrastAlpha γ ≤ 1 := by rw [Quenched.contrastAlpha]; linarith only [hγ.1]
-  have hαle_half : Quenched.contrastAlpha γ ≤ 1 / 2 := by rw [Quenched.contrastAlpha]; linarith only [hγ.1]
-  have hαle_quarter : Quenched.contrastAlpha γ ≤ 1 / 4 := by rw [Quenched.contrastAlpha]; linarith only [hγ.1]
+  have hαle_half : Quenched.contrastAlpha γ ≤ 1 / 2 := by rw [Quenched.contrastAlpha]; linarith
+    only [hγ.1]
+  have hαle_quarter : Quenched.contrastAlpha γ ≤ 1 / 4 := by rw [Quenched.contrastAlpha];
+    linarith only [hγ.1]
   have hs1 : 1 ≤ Real.sqrt M := Real.one_le_sqrt.mpr (le_of_lt hbad)
   have hs0 : 0 ≤ Real.sqrt M := Real.sqrt_nonneg M
   have hrα0 : 0 ≤ (3 : ℝ) ^ (-(Quenched.contrastAlpha γ)) := (Real.rpow_pos_of_pos h3pos _).le
@@ -646,7 +651,8 @@ theorem tail_bad_le {γ : ℝ} (hγ : γ ∈ Set.Ico (0 : ℝ) 1) {K En M : ℝ}
   have htermα : ∀ n : ℕ, (3 : ℝ) ^ (-(Quenched.contrastAlpha γ * (n : ℝ)))
       = ((3 : ℝ) ^ (-(Quenched.contrastAlpha γ))) ^ n := by
     intro n
-    rw [show -(Quenched.contrastAlpha γ * (n : ℝ)) = (-(Quenched.contrastAlpha γ)) * (n : ℝ) by ring,
+    rw [show -(Quenched.contrastAlpha γ * (n : ℝ)) = (-(Quenched.contrastAlpha γ)) * (n : ℝ) by
+      ring,
       Real.rpow_mul (by norm_num : (0 : ℝ) ≤ 3), Real.rpow_natCast]
   have hg1_summ : Summable (fun n : ℕ => (3 : ℝ) ^ (-((n : ℝ) / 2))) := by
     rw [show (fun n : ℕ => (3 : ℝ) ^ (-((n : ℝ) / 2)))
@@ -656,7 +662,8 @@ theorem tail_bad_le {γ : ℝ} (hγ : γ ∈ Set.Ico (0 : ℝ) 1) {K En M : ℝ}
       (Real.rpow_lt_one_of_one_lt_of_neg (by norm_num) (by norm_num))
   have hgα_summ : Summable (fun n : ℕ => (3 : ℝ) ^ (-(Quenched.contrastAlpha γ * (n : ℝ)))) := by
     rw [show (fun n : ℕ => (3 : ℝ) ^ (-(Quenched.contrastAlpha γ * (n : ℝ))))
-          = (fun n : ℕ => ((3 : ℝ) ^ (-(Quenched.contrastAlpha γ))) ^ n) by funext n; exact htermα n]
+          = (fun n : ℕ => ((3 : ℝ) ^ (-(Quenched.contrastAlpha γ))) ^ n) by funext n; exact
+            htermα n]
     exact summable_geometric_of_lt_one hrα0 hrα1
   have hg2_summ : Summable (fun n : ℕ =>
       Real.sqrt M * (3 : ℝ) ^ (-(Quenched.contrastAlpha γ * (n : ℝ)))) := hgα_summ.mul_left _
@@ -674,7 +681,8 @@ theorem tail_bad_le {γ : ℝ} (hγ : γ ∈ Set.Ico (0 : ℝ) 1) {K En M : ℝ}
   have hG_summ : Summable G := by
     rw [hG]
     have hgeom : Summable (fun n : ℕ =>
-        (Real.sqrt 2 * K * En * (1 + Real.sqrt M)) * ((3 : ℝ) ^ (-(Quenched.contrastAlpha γ))) ^ n) :=
+        (Real.sqrt 2 * K * En * (1 + Real.sqrt M)) * ((3 : ℝ) ^ (-(Quenched.contrastAlpha γ))) ^
+          n) :=
       (summable_geometric_of_lt_one hrα0 hrα1).mul_left _
     refine Summable.of_nonneg_of_le (fun n => ?_) (fun n => ?_) hgeom
     · exact mul_nonneg (mul_nonneg (mul_nonneg (Real.sqrt_nonneg 2) hK) hEn)
@@ -703,7 +711,8 @@ theorem tail_bad_le {γ : ℝ} (hγ : γ ∈ Set.Ico (0 : ℝ) 1) {K En M : ℝ}
               * ((1 + Real.sqrt M) * ((3 : ℝ) ^ (-(Quenched.contrastAlpha γ))) ^ n) :=
             mul_le_mul_of_nonneg_left hsum
               (mul_nonneg (mul_nonneg (Real.sqrt_nonneg 2) hK) hEn)
-        _ = (Real.sqrt 2 * K * En * (1 + Real.sqrt M)) * ((3 : ℝ) ^ (-(Quenched.contrastAlpha γ))) ^ n := by
+        _ = (Real.sqrt 2 * K * En * (1 + Real.sqrt M)) * ((3 : ℝ) ^ (-(Quenched.contrastAlpha
+          γ))) ^ n := by
             ring
   have hf_nonneg : ∀ n : ℕ, 0 ≤ (3 : ℝ) ^ (-((n : ℝ) / 2)) * T n := by
     intro n
@@ -769,17 +778,20 @@ theorem tail_bad_le {γ : ℝ} (hγ : γ ∈ Set.Ico (0 : ℝ) 1) {K En M : ℝ}
           + Real.sqrt 2 * (Real.sqrt M * (3 / Quenched.contrastAlpha γ))) * Quenched.contrastAlpha γ
         ≤ (8 / Quenched.contrastAlpha γ * Real.sqrt M) * Quenched.contrastAlpha γ := by
       rw [show (Real.sqrt 2 * 3
-              + Real.sqrt 2 * (Real.sqrt M * (3 / Quenched.contrastAlpha γ))) * Quenched.contrastAlpha γ
+              + Real.sqrt 2 * (Real.sqrt M * (3 / Quenched.contrastAlpha γ))) *
+                Quenched.contrastAlpha γ
             = Real.sqrt 2 * 3 * Quenched.contrastAlpha γ + Real.sqrt 2 * 3 * Real.sqrt M by
             field_simp [hαpos.ne'],
-          show (8 / Quenched.contrastAlpha γ * Real.sqrt M) * Quenched.contrastAlpha γ = 8 * Real.sqrt M by
+          show (8 / Quenched.contrastAlpha γ * Real.sqrt M) * Quenched.contrastAlpha γ = 8 *
+            Real.sqrt M by
             field_simp [hαpos.ne']]
       linarith only [hkey]
     exact le_of_mul_le_mul_right hmul hαpos
   have hscalar : Real.sqrt 2 * (A + Real.sqrt M * B)
       ≤ 16 / (1 - Quenched.contrastRho γ) * Real.sqrt M := by
     have h8 : 16 / (1 - Quenched.contrastRho γ) = 8 / Quenched.contrastAlpha γ := by
-      rw [show 1 - Quenched.contrastRho γ = 2 * Quenched.contrastAlpha γ by rw [Quenched.contrastAlpha, Quenched.contrastRho]; ring]
+      rw [show 1 - Quenched.contrastRho γ = 2 * Quenched.contrastAlpha γ by rw
+        [Quenched.contrastAlpha, Quenched.contrastRho]; ring]
       ring_nf
     rw [h8]
     exact hsumAB.trans htarget

@@ -266,7 +266,7 @@ theorem upperLargeScalePositiveExcess_integrable_abs_pow
               hP4.xi) P := by
     intro i j
     exact
-      (Ch04.RestrictionLawCarrier.restrictionCenteredOriginObservable_upperLeft_entry_momentRoot_le_two_LambdaMomentAtScale
+      (Ch04.RestrictionLawCarrier.restrictionOriginUpperLeftMomentRoot_le_twoLambdaMoment
         hP hP4.sUpper_pos (Nat.succ_le_of_lt hP4.xi_pos)
         hP4.upper_moment_integrable i j).1
   have hBase :
@@ -281,7 +281,7 @@ theorem upperLargeScalePositiveExcess_integrable_abs_pow
                         (1 : Mat d)))
                   0))‖ ^ hP4.xi) P := by
     exact
-      Ch04.RestrictionLawCarrier.upperLeft_matrixNorm_positiveExcess_finsetSup_integrable_abs_pow_of_stationary
+      Ch04.RestrictionLawCarrier.upperLeftPositiveMatrixNormExcess_integrable
         hP hparents (n := (0 : ℤ)) (ξ := hP4.xi)
         le_rfl hparent_scale hStruct.stationary
         (hP.barSigmaAtScale hStruct 0 •
@@ -348,7 +348,7 @@ theorem upperLargeScalePositiveExcess_integrable_abs_pow_source
               ξ) P := by
     intro i j
     exact
-      (Ch04.RestrictionLawCarrier.restrictionCenteredOriginObservable_upperLeft_entry_momentRoot_le_two_LambdaMomentAtScale
+      (Ch04.RestrictionLawCarrier.restrictionOriginUpperLeftMomentRoot_le_twoLambdaMoment
         hP hsSource hξ_one hUpperSourceInt i j).1
   have hBase :
       Integrable
@@ -362,7 +362,7 @@ theorem upperLargeScalePositiveExcess_integrable_abs_pow_source
                         (1 : Mat d)))
                   0))‖ ^ ξ) P := by
     exact
-      Ch04.RestrictionLawCarrier.upperLeft_matrixNorm_positiveExcess_finsetSup_integrable_abs_pow_of_stationary
+      Ch04.RestrictionLawCarrier.upperLeftPositiveMatrixNormExcess_integrable
         hP hparents (n := (0 : ℤ)) (ξ := ξ)
         le_rfl hparent_scale hStruct.stationary
         (hP.barSigmaAtScale hStruct 0 •
@@ -633,7 +633,7 @@ theorem upperLargeScalePositiveExcessRoot_le_largeScaleRootCoeff_source
               (1 / (ξ : ℝ)) ≤ K := by
     intro i j
     have h :=
-      Ch04.RestrictionLawCarrier.restrictionCenteredOriginObservable_upperLeft_entry_momentRoot_le_two_LambdaMomentAtScale
+      Ch04.RestrictionLawCarrier.restrictionOriginUpperLeftMomentRoot_le_twoLambdaMoment
         hP hsSource hξ_one hUpperSourceInt i j
     simpa [K, initial] using h
   have hX_nonneg : ∀ a, 0 ≤ X a := by
@@ -651,7 +651,7 @@ theorem upperLargeScalePositiveExcessRoot_le_largeScaleRootCoeff_source
   have hfluct :
       Ch04.annealedMomentRoot P ξ X ≤ entryFactor * (parentFactor * B) := by
     exact
-      Ch04.RestrictionLawCarrier.upperLeft_matrixNorm_positiveExcess_finsetSup_momentRoot_le_of_restrictionUnitRangeDependentLaw
+      Ch04.RestrictionLawCarrier.upperLeftNorm_positiveExcess_momentRoot_le_of_unitRangeLaw
         hP hparents le_rfl hparent_scale hStruct.stationary hStruct.unit_range
         (hP.barSigmaAtScale hStruct 0 •
           (1 : Mat d))

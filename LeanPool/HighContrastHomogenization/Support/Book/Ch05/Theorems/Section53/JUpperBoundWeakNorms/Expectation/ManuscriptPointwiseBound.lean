@@ -151,14 +151,14 @@ theorem abs_centeredJMinusCutoffWeightedChildAtScale_le_jUpperWeakNormManuscript
       simpa [gradWeak, Q, F, aQ] using
         (cubeBesovNegativeVectorPartialSeminorm_nonneg Q s 0
           (canonicalMaximizerGradientDefectOnCube Q aQ p q p0)).trans
-          (cubeBesovNegativeVectorPartialSeminorm_canonicalMaximizerGradientDefectOnDependentFamily_le_ch04WeakNorm
+          (negativePartialSeminorm_maximizerGradientDefect_le_ch04WeakNorm
             a ha Q hs_pos 0 p q p0)
   have hfluxWeak_nonneg : 0 ≤ fluxWeak := by
       let aQ : Ch02.CoeffOn (Ch02.cubeDomain Q) := F.coeffOn Q
       simpa [fluxWeak, Q, F, aQ] using
         (cubeBesovNegativeVectorPartialSeminorm_nonneg Q t 0
           (canonicalMaximizerFluxDefectOnCube Q aQ p q q0)).trans
-          (cubeBesovNegativeVectorPartialSeminorm_canonicalMaximizerFluxDefectOnDependentFamily_le_ch04WeakNorm
+          (negativeVectorPartial_canonicalFluxDefect_le_chapter04WeakNorm
             a ha Q ht_pos 0 p q q0)
   have hscaledGrad_nonneg : 0 ≤ scaledGrad := by
     exact mul_nonneg (cubeBesovScaleWeight_nonneg (-s) Q) hgradWeak_nonneg
@@ -181,7 +181,7 @@ theorem abs_centeredJMinusCutoffWeightedChildAtScale_le_jUpperWeakNormManuscript
                     Ch04.canonicalScalarResponseFluxWeakNormCubeSet Q t p q q0 a.toFun)) +
               productCoeff * (scaledGrad * scaledFlux) := by
     simpa [Q, j, F, productCoeff, scaledGrad, scaledFlux] using
-      abs_centeredResponseJOnCube_sub_cutoffWeightedChildResponseJOnDependentFamily_le_additivityDefect_add_cutoffOscillationBound_add_linearWeakNorms_add_scaledProduct
+      abs_responseJDifference_le_additivityError_cutoffBound_weakNorms_product
         (a := a) (ha := ha) (Q := Q) (j := j) (s := s) (t := t)
         (φ := φ) (p := p) (q := q) (p0 := p0) (q0 := q0)
         (C := C) (B := B) (Cosc := Cosc) (scaleSep := scaleSep)

@@ -40,12 +40,15 @@ instance instMeasurableSpaceMat (d : ℕ) : MeasurableSpace (Mat d) := by
   change MeasurableSpace (Fin d → Fin d → ℝ)
   infer_instance
 
+/-- Uniform ellipticity on every closed ball of radius at least one, with positive bounds `ε`
+and `ε⁻¹` allowed to depend on the ball. -/
 @[expose]
 def IsLocallyUniformlyElliptic {d : ℕ} (a : CoeffField d) : Prop :=
   ∀ R : ℝ, 1 ≤ R →
     ∃ ε : ℝ, 0 < ε ∧ ε ≤ 1 ∧
       IsEllipticFieldOn ε ε⁻¹ (Metric.closedBall (0 : Vec d) R) a
 
+/-- The Lebesgue integral of the coefficient pairing `e'·a e` against `φ`. -/
 @[expose]
 noncomputable def localTestObservable {d : ℕ} (e e' : Vec d) (φ : Vec d → ℝ)
     (a : CoeffField d) : ℝ :=
@@ -262,18 +265,23 @@ theorem measurable_localTestObservable {d : ℕ}
     subset_rfl).mono
     (localSigma_le_coeffField_of_isBounded hφ_compact.isCompact.isBounded) le_rfl
 
+/-- Translation of coefficient fields by the real vector associated with an integer lattice
+vector. -/
 @[expose]
 def translateByInt {d : ℕ} (z : Fin d → ℤ) : CoeffField d → CoeffField d :=
   translateCoeffField (intVecToRealVec z)
 
+/-- Invariance of the coefficient-field measure under every integer translation. -/
 @[expose]
 def IsStationary {d : ℕ} (P : MeasureTheory.Measure (CoeffField d)) : Prop :=
   ∀ z : Fin d → ℤ, MeasureTheory.Measure.map (translateByInt z) P = P
 
+/-- Every point of `U` is at distance at least one from every point of `V`. -/
 @[expose]
 def AreUnitSeparated {d : ℕ} (U V : Set (Vec d)) : Prop :=
   ∀ ⦃x y : Vec d⦄, x ∈ U → y ∈ V → 1 ≤ dist x y
 
+/-- Independence of restriction sigma-algebras for every pair of unit-separated regions. -/
 @[expose]
 def IsRestrictionUnitRangeDependent {d : ℕ}
     (P : MeasureTheory.Measure (CoeffField d)) : Prop :=
@@ -296,10 +304,12 @@ private theorem matVecMul_one {d : ℕ} (x : Vec d) :
   · intro hi
     exact (hi (Finset.mem_univ i)).elim
 
+/-- The transformed field `x ↦ Rᵀ * a (R x) * R`. -/
 @[expose]
 def rotateCoeffField {d : ℕ} (R : Mat d) (a : CoeffField d) : CoeffField d :=
   fun x => (matTranspose R) * (a (matVecMul R x)) * R
 
+/-- The coefficient field obtained by transposing each matrix. -/
 @[expose]
 def adjointCoeffField {d : ℕ} (a : CoeffField d) : CoeffField d :=
   fun x => matTranspose (a x)
@@ -483,18 +493,20 @@ theorem measurable_adjointCoeffField {d : ℕ} :
     intro a b hab x hx
     simp [adjointCoeffField, hab x hx]
 
+/-- Invariance of the coefficient-field measure under signed permutation transformations. -/
 @[expose]
 def IsIsotropicInLaw {d : ℕ} (P : MeasureTheory.Measure (CoeffField d)) : Prop :=
   ∀ R : Mat d, IsSignedPermutationMatrix R →
     MeasureTheory.Measure.map (rotateCoeffField R) P = P
 
+/-- Invariance of the coefficient-field measure under matrix transposition. -/
 @[expose]
 def IsAdjointInvariantInLaw {d : ℕ} (P : MeasureTheory.Measure (CoeffField d)) : Prop :=
   MeasureTheory.Measure.map adjointCoeffField P = P
 
 theorem integral_comp_eq_of_map_eq {α : Type*} [MeasurableSpace α]
-    {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] [CompleteSpace E]
-    [MeasurableSpace E] [BorelSpace E] [SecondCountableTopology E]
+    {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+    [MeasurableSpace E]
     {P : MeasureTheory.Measure α} {f : α → α} (hf : Measurable f)
     (hmap : MeasureTheory.Measure.map f P = P) (g : α → E)
     (hg : MeasureTheory.AEStronglyMeasurable g P) :
@@ -554,7 +566,7 @@ theorem integral_comp_rotateCoeffField_eq_of_isIsotropicInLaw {d : ℕ}
   integral_comp_eq_of_map_eq (measurable_rotateCoeffField R hR) (hP R hR) f hf
 
 theorem integrable_comp_rotateCoeffField_of_isIsotropicInLaw {d : ℕ}
-    {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] [CompleteSpace E]
+    {E : Type*} [NormedAddCommGroup E]
     {P : MeasureTheory.Measure (CoeffField d)} (hP : IsIsotropicInLaw P)
     {R : Mat d} (hR : IsSignedPermutationMatrix R) (f : CoeffField d → E)
     (hf : MeasureTheory.Integrable f P) :
@@ -572,7 +584,7 @@ theorem integral_comp_adjointCoeffField_eq_of_isAdjointInvariantInLaw {d : ℕ}
   integral_comp_eq_of_map_eq measurable_adjointCoeffField hP f hf
 
 theorem integrable_comp_adjointCoeffField_of_isAdjointInvariantInLaw {d : ℕ}
-    {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] [CompleteSpace E]
+    {E : Type*} [NormedAddCommGroup E]
     {P : MeasureTheory.Measure (CoeffField d)} (hP : IsAdjointInvariantInLaw P)
     (f : CoeffField d → E) (hf : MeasureTheory.Integrable f P) :
     MeasureTheory.Integrable (fun a => f (adjointCoeffField a)) P := by
@@ -580,6 +592,7 @@ theorem integrable_comp_adjointCoeffField_of_isAdjointInvariantInLaw {d : ℕ}
     exact hP.symm ▸ hf
   exact hfMap.comp_measurable measurable_adjointCoeffField
 
+/-- The observable takes equal values on coefficient fields agreeing pointwise on `U`. -/
 @[expose]
 def IsRestrictionLocalObservable {β : Type*} {d : ℕ} (U : Set (Vec d))
     (X : CoeffField d → β) : Prop :=
@@ -590,6 +603,7 @@ abbrev IsLocalObservable {β : Type*} {d : ℕ} (U : Set (Vec d))
     (X : CoeffField d → β) : Prop :=
   IsRestrictionLocalObservable U X
 
+/-- Translating the region gives the same observable value as translating the coefficient field. -/
 @[expose]
 def IsTranslationCovariant {β : Type*} {d : ℕ}
     (X : Set (Vec d) → CoeffField d → β) : Prop :=

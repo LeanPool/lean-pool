@@ -169,7 +169,7 @@ theorem LambdaSqFinite_translateCube_of_coarseBMatrixNorm
   apply tsum_congr
   intro n
   have hk : Q.scale - (n : ℤ) ≤ Q.scale := by
-    exact sub_le_self Q.scale (by exact_mod_cast Nat.zero_le n)
+    exact sub_le_self Q.scale (Nat.cast_nonneg n)
   have hmax :=
     maxDescendantBMatrixNormAtScale_translateCube_of_coarseBMatrixNorm
       (a := a) (b := b) z Q (k := Q.scale - (n : ℤ)) hk
@@ -192,7 +192,7 @@ theorem lambdaSqFinite_translateCube_of_coarseSigmaStarInvMatrixNorm
   apply tsum_congr
   intro n
   have hk : Q.scale - (n : ℤ) ≤ Q.scale := by
-    exact sub_le_self Q.scale (by exact_mod_cast Nat.zero_le n)
+    exact sub_le_self Q.scale (Nat.cast_nonneg n)
   have hmax :=
     maxDescendantSigmaStarInvMatrixNormAtScale_translateCube_of_coarseSigmaStarInvMatrixNorm
       (a := a) (b := b) z Q (k := Q.scale - (n : ℤ)) hk
@@ -217,7 +217,7 @@ theorem LambdaSqInfinity_translateCube_of_coarseBMatrixNorm
   · rintro ⟨n, rfl⟩
     refine ⟨n, ?_⟩
     have hk : Q.scale - (n : ℤ) ≤ Q.scale := by
-      exact sub_le_self Q.scale (by exact_mod_cast Nat.zero_le n)
+      exact sub_le_self Q.scale (Nat.cast_nonneg n)
     have hmax :=
       maxDescendantBMatrixNormAtScale_translateCube_of_coarseBMatrixNorm
         (a := a) (b := b) z Q (k := Q.scale - (n : ℤ)) hk
@@ -229,7 +229,7 @@ theorem LambdaSqInfinity_translateCube_of_coarseBMatrixNorm
   · rintro ⟨n, rfl⟩
     refine ⟨n, ?_⟩
     have hk : Q.scale - (n : ℤ) ≤ Q.scale := by
-      exact sub_le_self Q.scale (by exact_mod_cast Nat.zero_le n)
+      exact sub_le_self Q.scale (Nat.cast_nonneg n)
     have hmax :=
       maxDescendantBMatrixNormAtScale_translateCube_of_coarseBMatrixNorm
         (a := a) (b := b) z Q (k := Q.scale - (n : ℤ)) hk
@@ -255,7 +255,7 @@ theorem lambdaSqInfinity_translateCube_of_coarseSigmaStarInvMatrixNorm
   · rintro ⟨n, rfl⟩
     refine ⟨n, ?_⟩
     have hk : Q.scale - (n : ℤ) ≤ Q.scale := by
-      exact sub_le_self Q.scale (by exact_mod_cast Nat.zero_le n)
+      exact sub_le_self Q.scale (Nat.cast_nonneg n)
     have hmax :=
       maxDescendantSigmaStarInvMatrixNormAtScale_translateCube_of_coarseSigmaStarInvMatrixNorm
         (a := a) (b := b) z Q (k := Q.scale - (n : ℤ)) hk
@@ -267,7 +267,7 @@ theorem lambdaSqInfinity_translateCube_of_coarseSigmaStarInvMatrixNorm
   · rintro ⟨n, rfl⟩
     refine ⟨n, ?_⟩
     have hk : Q.scale - (n : ℤ) ≤ Q.scale := by
-      exact sub_le_self Q.scale (by exact_mod_cast Nat.zero_le n)
+      exact sub_le_self Q.scale (Nat.cast_nonneg n)
     have hmax :=
       maxDescendantSigmaStarInvMatrixNormAtScale_translateCube_of_coarseSigmaStarInvMatrixNorm
         (a := a) (b := b) z Q (k := Q.scale - (n : ℤ)) hk

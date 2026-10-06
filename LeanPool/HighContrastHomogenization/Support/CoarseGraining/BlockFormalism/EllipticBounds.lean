@@ -618,6 +618,8 @@ theorem blockMatrixOfCoeff_image_plainUpperBound_of_isEllipticMatrix {d : ℕ}
           (2 * (2 * Lam ^ 2 + 1) * (lam⁻¹ * lam⁻¹)) * vecNormSq q := by
       nlinarith
 
+/-- An explicit squared operator-norm bound for the block matrix induced by a coefficient matrix
+with ellipticity parameters `lam` and `Lam`. -/
 @[expose]
 noncomputable def blockMatrixOfCoeffNormSqBound (lam Lam : ℝ) : ℝ :=
   2 * Lam ^ 2 + 2 * (2 * Lam ^ 2 + 1) * (lam⁻¹ * lam⁻¹) * (Lam ^ 2 + 1)

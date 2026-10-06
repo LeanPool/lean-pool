@@ -33,11 +33,11 @@ between zero and that of `c𝐄` has all its entries bounded by `2|c|` times the
 entry scale of `𝐄`.  That is what makes the annealed block an expectation.
 
 The second is the centered Schatten size at the block's own normalization.
-Writing `Ĝ = E^{-1/2}𝐀E^{-1/2}` for the normalized response, the centered
-normalization is `Ĝ - I`; it is above `-I` for free, since `Ĝ` is positive
-semidefinite, and it is below `tI` as soon as `tr Ĝ ≤ t`, a positive
+Writing `G_hat = E^{-1/2}𝐀E^{-1/2}` for the normalized response, the centered
+normalization is `G_hat - I`; it is above `-I` for free, since `G_hat` is positive
+semidefinite, and it is below `tI` as soon as `tr G_hat ≤ t`, a positive
 semidefinite matrix being below its own trace.  The scalar Loewner sandwich
-`-(1+|t|)I ≤ Ĝ - I ≤ (1+|t|)I` then gives the Schatten size directly.  The
+`-(1+|t|)I ≤ G_hat - I ≤ (1+|t|)I` then gives the Schatten size directly.  The
 trace hypothesis is in turn a consequence of the same Loewner bound, the
 congruence by `E^{-1/2}` being order preserving and the trace monotone.
 -/
@@ -108,8 +108,8 @@ theorem trace_toFullBlockMat_normalizedBlock_le {A Em Eref : BlockMat d}
   linarith only [hnn]
 
 /-- **The centered Schatten size from a trace bound.**  The normalized response
-`Ĝ = E^{-1/2}𝐀E^{-1/2}` is positive semidefinite, hence below `(tr Ĝ)I`; if its
-trace is at most `t`, the centered normalization `Ĝ - I` is caught between
+`G_hat = E^{-1/2}𝐀E^{-1/2}` is positive semidefinite, hence below `(tr G_hat)I`; if its
+trace is at most `t`, the centered normalization `G_hat - I` is caught between
 `∓(1+|t|)I`, and the Schatten size of a block in such a sandwich is at most
 `(2d)^{1/Q}` times the width. -/
 theorem schattenSize_blockSub_le_of_trace_le {Q : ℝ} (hQ : 0 < Q) {A Em : BlockMat d}

@@ -109,7 +109,7 @@ theorem abs_cubeAverage_vecDot_scalar_smul_le_split_of_fluxEnergyControl_of_cont
     norm_cubeAverageVec_le_sqrt_coarseBBlockNorm_mul_sqrt_cubeAverage_of_fluxEnergyControl
       Q a flux energy hfluxCtrl
   exact
-    abs_cubeAverage_vecDot_scalar_smul_le_split_collapsed_sharp_note_terms_of_contDiff_component_bound
+    abs_cubeAverage_fluxCutoff_le_sharpNote_of_smoothBound
       (Q := Q) (s := s) (flux := flux) (u := u) (g := g) (ξ := ξ)
       (Bu1 :=
         (geometricDiscount (1 : ℝ) 1)⁻¹ *
@@ -133,7 +133,7 @@ theorem abs_cubeAverage_vecDot_scalar_smul_le_split_of_fluxEnergyControl_of_cont
           Q a s hs0 flux energy N henergy_nonneg henergy_int hfluxCtrl hsumS)
       hproj hξ hderiv hgCirc1 hgCircS hBgConst_bound hBgCent_bound
 
-theorem abs_cubeAverage_vecDot_scalar_smul_le_split_of_fluxEnergyControl_of_contDiff_component_vector_bound
+theorem abs_cubeAverage_fluxCutoff_le_split_of_fluxEnergyControl
     {d : ℕ} (Q : TriadicCube d) (a : CoeffField d) (s : ℝ)
     (flux : Vec d → Vec d) (u : Vec d → ℝ) (G ξ : Vec d → Vec d)
     (energy : Vec d → ℝ)
@@ -213,7 +213,7 @@ theorem abs_cubeAverage_vecDot_scalar_smul_le_split_of_fluxEnergyControl_of_cont
       0 ≤ AcircS * Real.sqrt (cubeAverage Q energy) :=
     mul_nonneg hAcircS (Real.sqrt_nonneg _)
   exact
-    abs_cubeAverage_vecDot_scalar_smul_le_split_collapsed_sharp_note_terms_of_contDiff_component_vector_effective_constant
+    abs_cubeAverage_vectorDot_scalarMultiply_le_split_collapsed_sharp_note_of_vector
       (Q := Q) (s := s) (flux := flux) (u := u) (G := G) (ξ := ξ)
       (Bu1 :=
         (geometricDiscount (1 : ℝ) 1)⁻¹ *
@@ -404,7 +404,7 @@ theorem abs_cubeAverage_vecDot_scalar_smul_le_fluxEnergyExactRhs_of_vectorContro
   rcases hvector with
     ⟨hB, hAcircS, hBgConst, hBgCent, hC, hproj, hξ, hderiv, hGcirc1, hGcircS⟩
   simpa [coarseCaccioppoliFluxEnergyExactRhs] using
-    abs_cubeAverage_vecDot_scalar_smul_le_split_of_fluxEnergyControl_of_contDiff_component_vector_bound
+    abs_cubeAverage_fluxCutoff_le_split_of_fluxEnergyControl
       (Q := Q) (a := a) (s := s) (flux := flux) (u := u) (G := G) (ξ := ξ)
       (energy := energy) (Acirc1 := Acirc1) (AcircS := AcircS) (B := B) (C := C)
       (BgConst := coarseCaccioppoliConstantCutoffSize Q u ξ B)

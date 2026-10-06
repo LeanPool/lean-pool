@@ -90,7 +90,8 @@ theorem measureReal_shiftedHighBottomPairEvent_quenchedProbeEnvelope_le_soft_hig
 /-- The deterministic crude cutoff in the high-bottom branch.  If the crude
 tail parameter is at least one, the bad-pair event, hence the high-bottom
 subevent, has zero probability. -/
-theorem measureReal_shiftedHighBottomPairEvent_quenchedProbeEnvelope_eq_zero_of_crudeA_one_gammaInfinity
+theorem
+  measureReal_shiftedHighBottomPairEvent_quenchedProbeEnvelope_eq_zero_of_crudeA_one_gammaInfinity
     {d : ℕ} [NeZero d]
     (params : QuantitativeCoarseGrainedEllipticityParams d) :
     ∃ Ccrude : ℝ, 0 < Ccrude ∧
@@ -602,7 +603,8 @@ theorem measureReal_shiftedHighBottomPairEvent_quenchedProbeEnvelope_le_weighted
     exact htail_nonneg
 
 /-- Endpoint high-bottom component estimate after summing the fixed rows. -/
-theorem measureReal_shiftedHighBottomBadScaleEvent_quenchedProbeEnvelope_le_weighted_kernel_gammaInfinity
+theorem
+  measureReal_shiftedHighBottomBadScaleEvent_quenchedProbeEnvelope_le_weighted_kernel_gammaInfinity
     {d : ℕ} [NeZero d]
     (params : QuantitativeCoarseGrainedEllipticityParams d) :
     ∃ Cfluct Ccrude Centry a : ℝ,

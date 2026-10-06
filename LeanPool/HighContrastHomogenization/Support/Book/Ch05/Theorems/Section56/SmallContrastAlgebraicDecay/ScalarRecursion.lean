@@ -52,7 +52,7 @@ theorem widetildeThetaAtScale_zero_le_two_of_sub_one_le_delta
   linarith
 
 /-- Smallness at scale zero propagates to all scalar contrasts. -/
-theorem thetaAtScale_sub_one_le_delta_of_widetildeThetaAtScale_zero_sub_one_le_delta
+theorem thetaAtScale_le_delta_of_widetildeAtZero
     {d : ℕ} [NeZero d] {P : Ch04.RestrictionCoeffLaw d}
     (hP : Ch04.RestrictionLawCarrier P) (hStruct : Ch04.RestrictionStructuralLaw P)
     (hP4 : QuantitativeCoarseGrainedEllipticity P)

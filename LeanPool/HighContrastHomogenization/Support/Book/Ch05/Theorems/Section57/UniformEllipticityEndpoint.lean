@@ -201,7 +201,7 @@ theorem blockJObservableCubeSetBlockVec_originCube_le_of_scaleZero_ae
         Ch04.blockJObservableCubeSetBlockVec (originCube d n) Pvec Qvec a ≤ Avg a := by
     filter_upwards [hPμ.ae_locallyUniformlyEllipticField] with a ha
     have hsub :=
-      Ch04.blockJObservableCubeSetBlockVec_le_descendantsAverage_cubeSet_of_aelocallyUniformlyEllipticField
+      Ch04.blockJObservable_le_descendantAverage_of_uniformEllipticity
         (a := a) ha (originCube d n) (k := 0) hn0 Pvec Qvec
     simpa [Avg, D, descendantsAverage,
       descendantsAtScale_eq_descendantsAtDepth (originCube d n) hn0] using hsub

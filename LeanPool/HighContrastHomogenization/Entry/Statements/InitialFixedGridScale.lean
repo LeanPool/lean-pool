@@ -112,6 +112,8 @@ theorem initial_fixed_grid_scale
                           BlockMatLoewnerLE (adaptedMean P (1 : Mat d) n₀) (blockScale 2 E) ∧
                           projectiveDistance (1 : Mat d)
                               (explicitCanonicalMetric (adaptedMean P (1 : Mat d) n₀)) ≤
-                            Cgeom * Real.log (2 + 4 * aspectRatio E) := by exact HCPolySupport.HighContrast.Entry.initial_fixed_grid_scale d hd
+                            Cgeom * Real.log (2 + 4 * aspectRatio E) := by
+  exact HCPolySupport.HighContrast.Entry.initial_fixed_grid_scale d hd
+
 
 end HCPolySupport.HighContrast

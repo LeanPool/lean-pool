@@ -30,7 +30,8 @@ variable {d : ℕ} {Q : TriadicCube d} {a : CoeffField d} {g : Vec d → Vec d}
 /-- Flux version of the elementary local step: after subtracting the centered
 Neumann corrector, the top-scale flux average is the harmonic remainder's flux
 average. -/
-theorem sq_cubeBesovNegativeVectorPartialSeminormTwo_flux_succ_le_descendantsAverage_add_harmonic_zero
+theorem
+  sq_cubeBesovNegativeVectorPartialSeminormTwo_flux_succ_le_descendantsAverage_add_harmonic_zero
     (ω : MeanZeroNeumannCorrectorData Q a (fun x => g x - cubeAverageVec Q g))
     {u : Vec d → Vec d} (w : AHarmonicFunction a (cubeSet Q))
     (huw : ∀ x ∈ cubeSet Q,
@@ -89,7 +90,7 @@ theorem sq_cubeBesovNegativeVectorPartialSeminormTwo_flux_succ_le_descendantsAve
 
 /-- Flux local step with the harmonic top-scale term bounded by the `q = 2`
 flux coarse Poincare energy control. -/
-theorem sq_cubeBesovNegativeVectorPartialSeminormTwo_flux_succ_le_descendantsAverage_add_harmonic_energy
+theorem sq_negativeVectorPartial_flux_succ_le_descendantsEnergy
     (ω : MeanZeroNeumannCorrectorData Q a (fun x => g x - cubeAverageVec Q g))
     {u : Vec d → Vec d} (w : AHarmonicFunction a (cubeSet Q))
     (s : ℝ) (hs : 0 < s) (N : ℕ) (energy : Vec d → ℝ)

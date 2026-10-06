@@ -116,6 +116,8 @@ theorem fixed_geometry_parent_child_recurrence
                   ((1 - ((N : ℝ))⁻¹) *
                     detIncrement P (Geometry.explicitRoundedGrid jStar m) j (j + h)) *
                 (Real.exp (detIncrement P (Geometry.explicitRoundedGrid jStar m) j (j + h)) - 1) ^
-                  ((N : ℝ))⁻¹ := by exact HCPolySupport.HighContrast.Entry.fixed_geometry_parent_child_recurrence d hd γ hγ
+                  ((N : ℝ))⁻¹ := by
+  exact HCPolySupport.HighContrast.Entry.fixed_geometry_parent_child_recurrence d hd
+    γ hγ
 
 end HCPolySupport.HighContrast

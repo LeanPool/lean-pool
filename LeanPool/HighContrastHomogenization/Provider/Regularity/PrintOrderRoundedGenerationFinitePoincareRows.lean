@@ -100,7 +100,7 @@ theorem exists_roundedGenerationFiniteLipschitzPoincareConstant
   have hnegative :
       N ≤ Book.Ch03.coarsePoincareGradientRHS Q aRounded s (.finite 2) u := by
     simpa only [N,
-      scaleNormalizedNegativeBesovVectorNorm_finite_two_eq_cubeBesovNegativeVectorSeminormTwo]
+      scaleNegativeBesovVectorNorm_finiteTwo_eq_cubeNegativeSeminorm]
       using! Book.Ch03.coarsePoincareGradient_negativeBesov_le
         Q aRounded u hs (q := .finite 2) (by norm_num)
   have hlower :

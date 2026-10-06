@@ -39,7 +39,7 @@ theorem cubeKBesovPartialBoundByOverlappingPositive_of_depthBound
   have hpartial :
       cubeKBesovVectorPartialSeminormTwo Q s N h ≤
         C * cubeBesovOverlappingPositiveVectorPartialSeminormTwo Q s N h :=
-    cubeKBesovVectorPartialSeminormTwo_le_mul_cubeBesovOverlappingPositiveVectorPartialSeminormTwo_of_forall_depthSeminorm_le
+    KPartialSeminormTwo_le_mul_overlappingPositivePartialSeminormTwo
       Q s C N h hC_nonneg fun j _hj => hC Q h j _hh
   have hmean_nonneg : 0 ≤ Real.sqrt (vecNormSq (cubeAverageVec Q h)) :=
     Real.sqrt_nonneg _
@@ -65,7 +65,7 @@ theorem cubeKBesovPartialBoundByOverlappingPositiveUniform_of_depthBound
   have hpartial :
       cubeKBesovVectorPartialSeminormTwo Q s N h ≤
         C * cubeBesovOverlappingPositiveVectorPartialSeminormTwo Q s N h :=
-    cubeKBesovVectorPartialSeminormTwo_le_mul_cubeBesovOverlappingPositiveVectorPartialSeminormTwo_of_forall_depthSeminorm_le
+    KPartialSeminormTwo_le_mul_overlappingPositivePartialSeminormTwo
       Q s C N h hdepth.1 fun j _hj =>
         hdepth.2 hs_pos hs_lt Q h j hh
   have hmean_nonneg : 0 ≤ Real.sqrt (vecNormSq (cubeAverageVec Q h)) :=
@@ -126,7 +126,7 @@ theorem cubeKBesovInputBoundednessOfOverlappingHRegularity_of_partialBoundByOver
 /-- The proved overlap-Poincare estimate controls the full overlapping
 positive seminorm by the full K-functional seminorm, provided the K partial
 seminorms are bounded above so the real `sSup` is a genuine supremum. -/
-theorem cubeBesovOverlappingPositiveVectorSeminormTwo_le_mul_cubeKBesovVectorSeminormTwo_of_overlapPoincare
+theorem overlappingPositiveSeminorm_le_KSeminorm_of_overlapPoincare
     {d : ℕ} {C : ℝ}
     (hC : 0 ≤ C) (hPoincare : CubeVectorH1OverlapPoincareEstimate d C)
     (Q : TriadicCube d) (s : ℝ) (F : Vec d → Vec d)
@@ -149,7 +149,7 @@ theorem cubeBesovOverlappingPositiveVectorSeminormTwo_le_mul_cubeKBesovVectorSem
       cubeBesovOverlappingPositiveVectorPartialSeminormTwo Q s N F ≤
         A * cubeKBesovVectorPartialSeminormTwo Q s N F := by
     simpa [A] using
-      cubeBesovOverlappingPositiveVectorPartialSeminormTwo_le_mul_cubeKBesovVectorPartialSeminormTwo_of_overlapPoincare
+      overlappingPositivePartialSeminormTwo_le_mul_of_overlapPoincare
         hC hPoincare Q s N F hF
   exact hpartial.trans
     (mul_le_mul_of_nonneg_left
@@ -176,7 +176,7 @@ theorem cubeVectorOverlappingBesovHRegularity_of_memLp_of_kPartial_bddAbove
       cubeBesovOverlappingPositiveVectorPartialSeminormTwo Q s N F ≤
         A * cubeKBesovVectorPartialSeminormTwo Q s N F := by
     simpa [A] using
-      cubeBesovOverlappingPositiveVectorPartialSeminormTwo_le_mul_cubeKBesovVectorPartialSeminormTwo_of_overlapPoincare
+      overlappingPositivePartialSeminormTwo_le_mul_of_overlapPoincare
         hC hPoincare Q s N F hF
   exact hpartial.trans (mul_le_mul_of_nonneg_left (hB ⟨N, rfl⟩) hA_nonneg)
 
@@ -210,7 +210,7 @@ theorem cubeBesovOverlappingPositiveVectorNormTwo_le_mul_cubeKBesovVectorNormTwo
   have hsemi : BO ≤ A * BK := by
     dsimp [BO, BK, A]
     exact
-      cubeBesovOverlappingPositiveVectorSeminormTwo_le_mul_cubeKBesovVectorSeminormTwo_of_overlapPoincare
+      overlappingPositiveSeminorm_le_KSeminorm_of_overlapPoincare
         hC hPoincare Q s F hF hK_bdd
   calc
     cubeBesovOverlappingPositiveVectorNormTwo Q s F
@@ -284,7 +284,8 @@ theorem cubeKBesovVectorNormTwo_le_mul_cubeBesovOverlappingPositiveVectorNormTwo
 
 /-- Uniform version of the K-norm bound by the corrected overlapping positive
 norm. -/
-theorem cubeKBesovVectorNormTwo_le_mul_cubeBesovOverlappingPositiveVectorNormTwo_of_partialBoundUniform
+theorem
+  cubeKBesovVectorNormTwo_le_mul_cubeBesovOverlappingPositiveVectorNormTwo_of_partialBoundUniform
     {d : ℕ} {C : ℝ}
     (hpartial : CubeKBesovPartialBoundByOverlappingPositiveUniform d C)
     {s : ℝ} (hs_pos : 0 < s) (hs_lt : s < 1)
@@ -923,7 +924,7 @@ theorem discreteConstantCoefficientDirichletBesovFunctionSpaces_of_discreteKFunc
 /-- Direct uniform assembly of the discrete compatibility Dirichlet Besov
 statement from the uniform finite-partial K/overlapping comparison.  This is
 not the source theorem pending the continuum `K`/`H^s` gate. -/
-theorem exists_discreteConstantCoefficientDirichletBesovFunctionSpacesUniform_of_partialBoundByOverlappingPositiveUniform
+theorem exists_of_partialBoundByOverlappingPositiveUniform
     {d : ℕ} [NeZero d] {Cpartial : ℝ}
     (hpartial : CubeKBesovPartialBoundByOverlappingPositiveUniform d Cpartial)
     (hcomponents : CubeKBesovDirichletRegularityComponents d) :

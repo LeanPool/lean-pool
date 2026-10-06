@@ -35,10 +35,15 @@ It keeps the same Poisson solver and Neumann CZ field as the legacy bundle, but
 uses the full endpoint-duality surface that retains constant modes. -/
 structure CubeFullVectorPoincareAnalyticInput {d : ℕ} (Q : TriadicCube d) where
   poisson : HasMeanZeroNeumannPoissonSolverOnCube Q
+  /-- The nonnegative constant bounding the summed positive Besov norms of a Neumann Poisson
+  gradient by the L² norm of the forcing. -/
   czConstant : ℝ
   cz : CubeNeumannPoissonGradientBesovEstimate Q czConstant
+  /-- The nonnegative constant in full endpoint duality for pairings with a Neumann Poisson
+  gradient. -/
   dualityConstant : ℝ
   duality : CubePoissonGradientFullEndpointDuality Q dualityConstant
+
 
 /-- Slim corrected analytic input bundle for the full-dual vector Poincare
 theorem after the Poisson-gradient endpoint estimate has already been combined
@@ -46,12 +51,15 @@ with the Neumann CZ estimate. This is the interface downstream arguments should
 aim to use: a solver plus one direct `L²` endpoint constant. -/
 structure CubeFullVectorPoincareL2AnalyticInput {d : ℕ} (Q : TriadicCube d) where
   poisson : HasMeanZeroNeumannPoissonSolverOnCube Q
+  /-- The nonnegative constant bounding the Poisson-gradient pairing by the full dual norm of the
+  vector field and the L² norm of the forcing. -/
   endpointConstant : ℝ
   endpoint : CubePoissonGradientFullL2EndpointDuality Q endpointConstant
 
 namespace CubeFullVectorPoincareL2AnalyticInput
 
 variable {d : ℕ} {Q : TriadicCube d}
+
 
 theorem endpointConstant_nonneg (h : CubeFullVectorPoincareL2AnalyticInput Q) :
     0 ≤ h.endpointConstant :=
@@ -86,16 +94,21 @@ end CubeFullVectorPoincareAnalyticInput
 single-cube projected vector Poincare theorem. -/
 structure CubeProjectedVectorPoincareAnalyticInput {d : ℕ} (Q : TriadicCube d) where
   poisson : HasMeanZeroNeumannPoissonSolverOnCube Q
+  /-- The nonnegative constant bounding the summed positive Besov norms of a Neumann Poisson
+  gradient by the L² norm of the forcing. -/
   czConstant : ℝ
   cz : CubeNeumannPoissonGradientBesovEstimate Q czConstant
+  /-- The nonnegative constant in endpoint duality for projected vector-field components. -/
   dualityConstant : ℝ
   duality : CubeProjectedGradientEndpointDuality Q dualityConstant
+  /-- The nonnegative constant in endpoint duality for unprojected vector-field components. -/
   fullDualityConstant : ℝ
   fullDuality : CubeGradientEndpointDuality Q fullDualityConstant
 
 namespace CubeProjectedVectorPoincareAnalyticInput
 
 variable {d : ℕ} {Q : TriadicCube d}
+
 
 theorem czConstant_nonneg (h : CubeProjectedVectorPoincareAnalyticInput Q) :
     0 ≤ h.czConstant :=

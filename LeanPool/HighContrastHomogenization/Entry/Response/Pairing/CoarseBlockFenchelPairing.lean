@@ -103,7 +103,8 @@ theorem integrable_sqrt_mul_sqrt_gen {α : Type*} [MeasurableSpace α] {P : Meas
 /-- **The crossed product of square roots is integrable without a sign hypothesis.**  The square
 root of a negative number is zero, so the product is bounded by the crossed product of the square
 roots of the moduli, and the previous domination applies to those. -/
-theorem integrable_sqrt_mul_sqrt_of_integrable {α : Type*} [MeasurableSpace α] {P : Measure α} {f g : α → ℝ}
+theorem integrable_sqrt_mul_sqrt_of_integrable {α : Type*} [MeasurableSpace α] {P : Measure α}
+  {f g : α → ℝ}
     (hf : Integrable f P) (hg : Integrable g P) :
     Integrable (fun a => Real.sqrt (f a) * Real.sqrt (g a)) P := by
   have habs := integrable_sqrt_mul_sqrt_gen (P := P) (f := fun a => |f a|) (g := fun a => |g a|)

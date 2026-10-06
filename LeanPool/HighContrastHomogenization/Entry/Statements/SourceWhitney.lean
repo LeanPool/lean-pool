@@ -68,7 +68,8 @@ theorem source_whitney
         HighContrast.standardCell d p.1 p.2 ⊆
           HighContrast.adaptedCellTranslate (Geometry.explicitRoundedGrid jStar m) j y) ∧
       (Geometry.maximalCellPairs
-        (HighContrast.adaptedCellTranslate (Geometry.explicitRoundedGrid jStar m) j y) j).PairwiseDisjoint
+        (HighContrast.adaptedCellTranslate (Geometry.explicitRoundedGrid jStar m) j y)
+          j).PairwiseDisjoint
         (fun p => HighContrast.standardCell d p.1 p.2) ∧
       volume (HighContrast.adaptedCellTranslate (Geometry.explicitRoundedGrid jStar m) j y \
         ⋃ p ∈ Geometry.maximalCellPairs
@@ -76,10 +77,14 @@ theorem source_whitney
           HighContrast.standardCell d p.1 p.2) = 0 ∧
       ∀ r ≤ j,
         ∃ hfin : (Geometry.maximalCellIndices
-          (HighContrast.adaptedCellTranslate (Geometry.explicitRoundedGrid jStar m) j y) j r).Finite,
+          (HighContrast.adaptedCellTranslate (Geometry.explicitRoundedGrid jStar m) j y) j
+            r).Finite,
           ∑ w ∈ hfin.toFinset,
               (volume (HighContrast.standardCell d r w)).toReal /
-                (volume (HighContrast.adaptedCellTranslate (Geometry.explicitRoundedGrid jStar m) j y)).toReal ≤
-            12 * (d : ℝ) ^ ((3 : ℝ) / 2) * (3 : ℝ) ^ (r - j) := by exact HCPolySupport.HighContrast.Entry.source_whitney d hd jStar hj m hm j y
+                (volume (HighContrast.adaptedCellTranslate (Geometry.explicitRoundedGrid jStar
+                  m) j y)).toReal ≤
+            12 * (d : ℝ) ^ ((3 : ℝ) / 2) * (3 : ℝ) ^ (r - j) := by
+  exact HCPolySupport.HighContrast.Entry.source_whitney d hd jStar hj m hm j y
+
 
 end HCPolySupport.HighContrast

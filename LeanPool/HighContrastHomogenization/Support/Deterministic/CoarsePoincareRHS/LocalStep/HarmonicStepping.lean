@@ -199,7 +199,7 @@ theorem cubeAverage_coefficientEnergyDensity_harmonic_le_two_mul_add
     ring
   exact havg_raw.trans_eq hsplit
 
-theorem sq_cubeBesovNegativeVectorPartialSeminormTwo_succ_le_descendantsAverage_add_uCoeffEnergy_add_correctorCoeffEnergy
+theorem sq_negativePartialSeminormTwo_succ_le_childMean_add_energy_add_correctorEnergy
     (ρ : ZeroTraceDirichletCorrectorData Q a g)
     {u : Vec d → Vec d} (w : AHarmonicFunction a (cubeSet Q))
     {lam Lam : ℝ} (s : ℝ) (hs : 0 < s) (N : ℕ)
@@ -296,7 +296,7 @@ theorem sq_cubeBesovNegativeVectorPartialSeminormTwo_succ_le_descendantsAverage_
                   (coefficientEnergyDensity a (fun x => ρ.toH10.toH1Function.grad x)) := by
               simp [C]
 
-theorem sq_cubeBesovNegativeVectorPartialSeminormTwo_succ_le_descendantsAverage_add_uCoeffEnergy_of_correctorCoeffEnergyBound
+theorem sq_negativePartialSeminormTwo_succ_le_childMean_add_energy
     (ρ : ZeroTraceDirichletCorrectorData Q a g)
     {u : Vec d → Vec d} (w : AHarmonicFunction a (cubeSet Q))
     {lam Lam : ℝ} (s : ℝ) (hs : 0 < s) (N : ℕ)
@@ -324,7 +324,7 @@ theorem sq_cubeBesovNegativeVectorPartialSeminormTwo_succ_le_descendantsAverage_
       2 *
         ((geometricDiscount s 2)⁻¹ * (lambdaSq Q s (.finite 2) a)⁻¹) * Eρ := by
   have hpre :=
-    ρ.sq_cubeBesovNegativeVectorPartialSeminormTwo_succ_le_descendantsAverage_add_uCoeffEnergy_add_correctorCoeffEnergy
+    ρ.sq_negativePartialSeminormTwo_succ_le_childMean_add_energy_add_correctorEnergy
       (u := u) w s hs N hEll hu hgrad hsum huw
   have hs2 : 0 < s * (2 : ℝ) := by nlinarith
   have hlambda_nonneg : 0 ≤ lambdaSq Q s (.finite 2) a := by

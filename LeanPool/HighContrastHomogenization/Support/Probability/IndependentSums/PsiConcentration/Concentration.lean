@@ -32,7 +32,7 @@ variable {μ : Measure Ω}
 mgf bound in the natural `1 + A` form before the note-facing tail estimates
 are inserted. -/
 theorem
-  mgf_upperTruncation_le_one_add_half_mul_sq_mul_integral_abs_sq_add_integral_Ioc_tail_of_integral_eq_zero
+  mgf_upperTruncation_le_one_add_half_mul_sq_mul_absoluteMoment_add_tail
     [IsProbabilityMeasure μ]
     {X : Ω → ℝ} {l L : ℝ}
     (hXm : Measurable X)
@@ -142,7 +142,7 @@ theorem mgf_upperTruncation_le_exp_of_integral_abs_sq_add_integral_Ioc_tail_of_i
               ∫ t in Set.Ioc 0 L,
                 ((2 * t + l * t ^ (2 : ℕ)) * Real.exp (l * t)) *
                   μ.real {ω | t ≤ X ω} ∂volume) :=
-      mgf_upperTruncation_le_one_add_half_mul_sq_mul_integral_abs_sq_add_integral_Ioc_tail_of_integral_eq_zero
+      mgf_upperTruncation_le_one_add_half_mul_sq_mul_absoluteMoment_add_tail
         (μ := μ) (X := X) (l := l) (L := L) hXm hXint hXsq hXmean hl hL
     _ ≤ Real.exp
           ((l ^ (2 : ℕ) / 2) *
@@ -390,7 +390,7 @@ theorem measureReal_upperTailEvent_finset_sum_upperTruncation_le_exp_of_iIndepFu
 /-- Uniform one-variable mgf bounds produce the expected `card(s)` factor in
 the exponent for the truncated sum. -/
 theorem
-  measureReal_upperTailEvent_finset_sum_upperTruncation_le_exp_card_mul_of_iIndepFun_of_mgf_le_exp
+  upperTruncation_tail_le_exp_of_independent_momentGeneratingFunction
     [IsProbabilityMeasure μ]
     {X : ι → Ω → ℝ} {s : Finset ι} {a l L v : ℝ}
     (h_indep : iIndepFun X μ)
@@ -858,7 +858,7 @@ theorem mgf_upperTruncation_le_exp_of_isBigO_of_lintegral_tail_of_log_constraint
 /-- Generic heavy-tail concentration estimate for centered finite independent
 families under the Chapter 4 admissibility and logarithmic-kernel hypotheses. -/
 theorem
-  measureReal_upperTailEvent_finset_sum_le_exp_card_mul_add_card_mul_invPsi_of_iIndepFun_of_isBigO_of_integral_eq_zero_of_log_constraint
+  upperTailProbability_finiteSum_le_exp_card_mul_add_card_mul_invPsi
     [IsProbabilityMeasure μ]
     {Ψ : ℝ → ℝ} {X : ι → Ω → ℝ} {s : Finset ι} {a l L CΨ M : ℝ}
     (h_indep : iIndepFun X μ)
@@ -889,7 +889,7 @@ theorem
       μ.real (upperTailEvent (fun ω => ∑ i ∈ s, upperTruncation (X i) L ω) a) ≤
         Real.exp (-l * a + (s.card : ℝ) * v) := by
     refine
-      measureReal_upperTailEvent_finset_sum_upperTruncation_le_exp_card_mul_of_iIndepFun_of_mgf_le_exp
+      upperTruncation_tail_le_exp_of_independent_momentGeneratingFunction
       (μ := μ) (X := X) (s := s) (a := a) (l := l) (L := L) (v := v)
       h_indep h_meas hl ?_
     intro i hi
@@ -912,7 +912,7 @@ theorem
 /-- Rounded generic heavy-tail concentration estimate with the cleaner
 constant `3 + M + C_Ψ`. -/
 theorem
-  measureReal_upperTailEvent_finset_sum_le_exp_card_mul_add_card_mul_invPsi_of_iIndepFun_of_isBigO_of_integral_eq_zero_of_log_constraint_rounded
+  upperTailProbability_finiteSum_le_exp_card_mul_add_card_mul_invPsi_of_invPsi
     [IsProbabilityMeasure μ]
     {Ψ : ℝ → ℝ} {X : ι → Ω → ℝ} {s : Finset ι} {a l L CΨ M : ℝ}
     (h_indep : iIndepFun X μ)
@@ -942,7 +942,7 @@ theorem
       μ.real (upperTailEvent (fun ω => ∑ i ∈ s, upperTruncation (X i) L ω) a) ≤
         Real.exp (-l * a + (s.card : ℝ) * v) := by
     refine
-      measureReal_upperTailEvent_finset_sum_upperTruncation_le_exp_card_mul_of_iIndepFun_of_mgf_le_exp
+      upperTruncation_tail_le_exp_of_independent_momentGeneratingFunction
       (μ := μ) (X := X) (s := s) (a := a) (l := l) (L := L) (v := v)
       h_indep h_meas hl ?_
     intro i hi

@@ -224,7 +224,8 @@ theorem blockMatLoewnerLE_blockScale_annealedBlock_reference [NeZero d]
   have href := Initialization.blockMatLoewnerLE_reference_kappaRef_blockSharp hEsymm hEpd
   have hkappa : (0 : ℝ) ≤ kappaRef E :=
     le_trans zero_le_one
-      (Initialization.one_le_kappaRef hEsymm hEpd (Initialization.blockMatLoewnerLE_blockSharp_reference hdag))
+      (Initialization.one_le_kappaRef hEsymm hEpd
+        (Initialization.blockMatLoewnerLE_blockSharp_reference hdag))
   intro X
   have h1 := href X
   rw [blockVecDot_blockMatVecMul_blockScale] at h1

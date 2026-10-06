@@ -156,7 +156,7 @@ theorem integral_blockMatEntry_coarseBlock_translateSet {P : Measure (CoeffSpace
         (integral_map (measurable_translateCoeff z).aemeasurable hmap).symm
     _ = ∫ b, blockMatEntry (coarseBlock U b) α β ∂P := by rw [hP z]
 
-/-- **`𝐀̄(U + z) = 𝐀̄(U)`.**  The consequence drawn from the pathwise
+/-- **`𝐀_bar(U + z) = 𝐀_bar(U)`.**  The consequence drawn from the pathwise
 covariance: under stationarity of the coefficient law the annealed blocks of a
 cell and of its integer translate agree. -/
 theorem annealedBlock_translateSet {P : Measure (CoeffSpace d)}

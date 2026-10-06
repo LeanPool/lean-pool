@@ -111,6 +111,15 @@ theorem section52_rosenthalDescendantsAtScaleSqrtConst_zero_le_color_mul_xi
         Real.sqrt ((((scaleColorPeriod 0) ^ d : ℕ) : ℝ)) * (ξ : ℝ) := by
         ring
 
+private theorem inverseGeometricDiscountBoundFromSmallerGap
+    {gap delta upper : ℝ} (hgap : 0 < gap) (hdelta : 0 < delta)
+    (hdelta_gap : delta ≤ gap) (hgap_upper : gap ≤ upper) (hupper : 1 ≤ upper) :
+    (geometricDiscount gap 1)⁻¹ ≤ 5 * upper * delta⁻¹ := by
+  have hbound := inv_geometricDiscount_one_le_five_mul_upper_mul_inv
+    hgap hgap_upper hupper
+  have hinverse : gap⁻¹ ≤ delta⁻¹ := (inv_le_inv₀ hgap hdelta).2 hdelta_gap
+  exact hbound.trans (mul_le_mul_of_nonneg_left hinverse (by positivity))
+
 theorem section52LargeScalarAbsorptionConst_absorbs
     {d ξ : ℕ} [NeZero d] {s : ℝ}
     (hξ_one : 1 ≤ (ξ : ℝ)) (hξ_two : (2 : ℝ) ≤ (ξ : ℝ))
@@ -167,21 +176,10 @@ theorem section52LargeScalarAbsorptionConst_absorbs
     geometricDiscount_pos (by simpa using hLpGap_pos)
   have hinv_lp_nonneg : 0 ≤ (geometricDiscount ((d : ℝ) - s) 1)⁻¹ :=
     inv_nonneg.mpr hdisc_lp_pos.le
-  have hinv_lp_raw :
-      (geometricDiscount ((d : ℝ) - s) 1)⁻¹ ≤
-        5 * B * (((d : ℝ) - s)⁻¹) :=
-    inv_geometricDiscount_one_le_five_mul_upper_mul_inv
-      hLpGap_pos hLpGap_le_B hB_ge_one
-  have hLpGap_inv_le_delta_inv : ((d : ℝ) - s)⁻¹ ≤ δ⁻¹ :=
-    (inv_le_inv₀ hLpGap_pos hδ_pos).2 hδ_le_LpGap
   have hinv_lp :
-      (geometricDiscount ((d : ℝ) - s) 1)⁻¹ ≤ 5 * B * δ⁻¹ := by
-    calc
-      (geometricDiscount ((d : ℝ) - s) 1)⁻¹ ≤
-          5 * B * (((d : ℝ) - s)⁻¹) := hinv_lp_raw
-      _ ≤ 5 * B * δ⁻¹ := by
-          exact mul_le_mul_of_nonneg_left hLpGap_inv_le_delta_inv
-            (by positivity)
+      (geometricDiscount ((d : ℝ) - s) 1)⁻¹ ≤ 5 * B * δ⁻¹ :=
+    inverseGeometricDiscountBoundFromSmallerGap hLpGap_pos hδ_pos
+      hδ_le_LpGap hLpGap_le_B hB_ge_one
   have hdisc_delta_pos : 0 < geometricDiscount δ 1 :=
     geometricDiscount_pos (by simpa using hδ_pos)
   have hinv_delta_nonneg : 0 ≤ (geometricDiscount δ 1)⁻¹ :=

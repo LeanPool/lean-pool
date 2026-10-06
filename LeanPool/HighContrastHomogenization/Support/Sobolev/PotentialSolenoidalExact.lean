@@ -190,7 +190,7 @@ theorem mem_blockPotentialZeroTraceSolenoidalZeroNormalTrace_iff
 
 /-- A zero-normal-trace solenoidal field has zero (restricted-volume) integral.
 The proof tests against affine `H¹` functions with arbitrary constant gradient. -/
-theorem integral_eq_zero_of_mem_solenoidalZeroNormalTrace {d : ℕ} [NeZero d]
+theorem integral_eq_zero_of_mem_solenoidalZeroNormalTrace {d : ℕ}
     {U : Set (Vec d)} (hU : IsOpenBoundedConvexDomain U)
     (g : HilbertVectorL2 U) (hg : g ∈ solenoidalZeroNormalTrace U) :
     ∫ x, g x ∂volumeMeasureOn U = 0 := by

@@ -337,7 +337,8 @@ theorem abs_cubeAverage_vecDot_le_note_terms_of_partialBounds_of_cubeAverageVec_
 /-- Sharp centered `q = 2` vector pairing bound.  The depth-zero negative
 seminorm absorbs the average contribution, so no separate average tail remains
 when the second field has zero cube average. -/
-theorem abs_cubeAverage_vecDot_le_sharp_note_terms_of_partialBounds_of_cubeAverageVec_eq_zero_two_two
+theorem
+  abs_cubeAverage_vecDot_le_sharp_note_terms_of_partialBounds_of_cubeAverageVec_eq_zero_two_two
     {d : ℕ} (Q : TriadicCube d) (s : ℝ) (u g : Vec d → Vec d) {Bu Bg : ℝ}
     (hs : 0 < s)
     (hu : MeasureTheory.MemLp u (2 : ℝ≥0∞) (normalizedCubeMeasure Q))

@@ -112,7 +112,7 @@ theorem forcedSolutionEnergyNorm_eq_sqrt_cubeAverage_coefficientEnergyDensity_pu
     h1EnergyNormOnCube_eq_sqrt_cubeAverage_coefficientEnergyDensity_publicCoeffField
       Q a u.toH1
 
-theorem zeroTraceForcedSolutionEnergyNorm_eq_sqrt_cubeAverage_coefficientEnergyDensity_publicCoeffField
+theorem forcedSolution_energyNorm_eq_sqrt_coefficientEnergy
     {d : ℕ} (Q : TriadicCube d) (a : CoeffFamily d)
     {g : Vec d → Vec d} (u : ZeroTraceForcedCubeSolution Q a g) :
     zeroTraceForcedSolutionEnergyNorm Q a u =
@@ -124,7 +124,7 @@ theorem zeroTraceForcedSolutionEnergyNorm_eq_sqrt_cubeAverage_coefficientEnergyD
     h1EnergyNormOnCube_eq_sqrt_cubeAverage_coefficientEnergyDensity_publicCoeffField
       Q a u.toH10.toH1Function
 
-theorem dirichletForcedSolutionEnergyNorm_eq_sqrt_cubeAverage_coefficientEnergyDensity_publicCoeffField
+theorem dirichletForced_energyNorm_eq_sqrt_coefficientEnergy
     {d : ℕ} (Q : TriadicCube d) (a : CoeffFamily d)
     {g : Vec d → Vec d} (u : DirichletForcedCubeSolution Q a g) :
     dirichletForcedSolutionEnergyNorm Q a u =
@@ -135,7 +135,8 @@ theorem dirichletForcedSolutionEnergyNorm_eq_sqrt_cubeAverage_coefficientEnergyD
     h1EnergyNormOnCube_eq_sqrt_cubeAverage_coefficientEnergyDensity_publicCoeffField
       Q a u.toH1
 
-theorem neumannForcedSolutionEnergyNorm_eq_sqrt_cubeAverage_coefficientEnergyDensity_publicCoeffField
+theorem
+  neumannForcedSolutionEnergyNorm_eq_sqrt_cubeAverage_coefficientEnergyDensity_publicCoeffField
     {d : ℕ} (Q : TriadicCube d) (a : CoeffFamily d)
     {g : Vec d → Vec d} (u : NeumannForcedCubeSolution Q a g) :
     neumannForcedSolutionEnergyNorm Q a u =

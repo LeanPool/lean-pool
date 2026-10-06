@@ -19,19 +19,24 @@ public section
 
 namespace HCPolySupport
 
+/-- The vector field is the chosen weak gradient of an H¹ function on `U`. -/
 @[expose]
 def IsPotentialOn {d : ℕ} (U : Set (Vec d)) (f : Vec d → Vec d) : Prop :=
   ∃ u : H1Function U, u.grad = f
 
+/-- The vector field is the chosen weak gradient of a zero-trace H¹ function on `U`. -/
 @[expose]
 def IsPotentialZeroTraceOn {d : ℕ} (U : Set (Vec d)) (f : Vec d → Vec d) : Prop :=
   ∃ u : H10Function U, u.toH1Function.grad = f
 
+/-- The integral pairing of `g` with every zero-trace H¹ gradient on `U` vanishes. -/
 @[expose]
 noncomputable def IsSolenoidalOn {d : ℕ} (U : Set (Vec d)) (g : Vec d → Vec d) : Prop :=
   ∀ φ : H10Function U,
     ∫ x in U, vecDot (g x) (φ.toH1Function.grad x) ∂MeasureTheory.volume = 0
 
+/-- The integral pairing of `g` with every H¹ gradient on `U` vanishes, expressing the solenoidal
+zero-normal-trace condition. -/
 @[expose]
 noncomputable def IsSolenoidalZeroNormalTraceOn {d : ℕ} (U : Set (Vec d))
     (g : Vec d → Vec d) : Prop :=

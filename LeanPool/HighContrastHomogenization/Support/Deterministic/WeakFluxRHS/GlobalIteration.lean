@@ -171,7 +171,8 @@ theorem weakFluxRHSScaledAveragedErrorSum_le_base_mul_inv_one_sub_weakFlux
 
 /-- The localized `ℓ²` flux-defect average used by the Section 3.3 black boxes
 is the square root of the averaged squared weak-flux quantity. -/
-@[simp] theorem localizedFluxDefectNegativeBesovAverageTwo_matVecMul_eq_sqrt_weakFluxRHSAveragedSeminormSq
+@[simp] theorem
+  localizedFluxDefectNegativeBesovAverageTwo_matVecMul_eq_sqrt_weakFluxRHSAveragedSeminormSq
     {d : ℕ} (Q : TriadicCube d) (a : CoeffField d) (s : ℝ)
     (u : Vec d → Vec d) (j : ℕ) :
     localizedFluxDefectNegativeBesovAverageTwo Q s
@@ -181,7 +182,8 @@ is the square root of the averaged squared weak-flux quantity. -/
 
 /-- Square-root extraction from a bound on the averaged squared weak-flux
 quantity. -/
-theorem localizedFluxDefectNegativeBesovAverageTwo_matVecMul_le_sqrt_of_weakFluxRHSAveragedSeminormSq_le
+theorem
+  localizedFluxDefectNegativeBesovAverageTwo_matVecMul_le_sqrt_of_weakFluxRHSAveragedSeminormSq_le
     {d : ℕ} (Q : TriadicCube d) (a : CoeffField d) (s : ℝ)
     (u : Vec d → Vec d) (j : ℕ) {B : ℝ}
     (hB :
@@ -193,7 +195,8 @@ theorem localizedFluxDefectNegativeBesovAverageTwo_matVecMul_le_sqrt_of_weakFlux
 
 /-- Square-root extraction from a square bound on the averaged weak-flux
 quantity. -/
-theorem localizedFluxDefectNegativeBesovAverageTwo_matVecMul_le_of_weakFluxRHSAveragedSeminormSq_le_sq
+theorem
+  localizedFluxDefectNegativeBesovAverageTwo_matVecMul_le_of_weakFluxRHSAveragedSeminormSq_le_sq
     {d : ℕ} (Q : TriadicCube d) (a : CoeffField d) (s : ℝ)
     (u : Vec d → Vec d) (j : ℕ) {B : ℝ}
     (hB_nonneg : 0 ≤ B)
@@ -233,7 +236,7 @@ theorem weakFluxRHSAveragedSeminormSq_iterate_le
   have hstep : ∀ j : ℕ, Rseq j ≤ γ * Rseq (j + 1) + Eseq j := by
     intro j
     simpa [Rseq, Eseq, γ, weakFluxRHSAveragedSeminormSq] using
-      descendantsAverage_sq_cubeBesovNegativeVectorSeminormTwo_flux_le_discount_next_add_error_of_localBound
+      descendantMean_sq_negativeBesovSeminormTwo_flux_le_discount_next_add_error
         (Q := Q) (a := a) (s := s) (u := u) (j := j) (E := E)
         (hlocal j)
   simpa [Rseq, Eseq, γ, weakFluxRHSAveragedSeminormSq,
@@ -280,7 +283,7 @@ theorem weakFluxRHSScaledAveragedSeminormSq_iterate_le
           γ * weakFluxRHSAveragedSeminormSq Q a s u (j + 1) +
             descendantsAverage Q j E := by
       simpa [γ, weakFluxRHSAveragedSeminormSq] using
-        descendantsAverage_sq_cubeBesovNegativeVectorSeminormTwo_flux_le_discount_next_add_error_of_localBound
+        descendantMean_sq_negativeBesovSeminormTwo_flux_le_discount_next_add_error
           (Q := Q) (a := a) (s := s) (u := u) (j := j) (E := E)
           (hlocal j)
     have hweight_nonneg : 0 ≤ coarsePoincareRHSDepthWeight s j := by
@@ -501,7 +504,7 @@ theorem weakFluxRHSAveragedSeminormSq_le_inv_depthWeight_mul_of_scaled_le
             (inv_nonneg.mpr hweight_pos.le)
 
 /-- Localized flux-defect handoff from a scaled averaged weak-flux bound. -/
-theorem localizedFluxDefectNegativeBesovAverageTwo_matVecMul_le_sqrt_of_scaled_weakFluxRHSScaledAveragedSeminormSq_le
+theorem negativeBesovFluxAverage_of_weakFluxRHSScaledAveragedSeminormSq
     {d : ℕ} (Q : TriadicCube d) (a : CoeffField d) (s : ℝ)
     (u : Vec d → Vec d) (m : ℕ) {B : ℝ}
     (hB : weakFluxRHSScaledAveragedSeminormSq Q a s u m ≤ B) :
@@ -540,14 +543,14 @@ theorem localizedFluxDefectNegativeBesovAverageTwo_matVecMul_le_sqrt_of_scaled_b
         (fun x => matVecMul (a x) (u x)) m ≤
       Real.sqrt ((coarsePoincareRHSDepthWeight s m)⁻¹ * B) := by
   exact
-    localizedFluxDefectNegativeBesovAverageTwo_matVecMul_le_sqrt_of_scaled_weakFluxRHSScaledAveragedSeminormSq_le
+    negativeBesovFluxAverage_of_weakFluxRHSScaledAveragedSeminormSq
       Q a s u m
       (weakFluxRHSScaledAveragedSeminormSq_le_of_bddAbove
         Q a s u E hs hlocal m hBdd hError)
 
 /-- Localized flux-defect form of the scaled bounded-tail weak-flux iteration
 after closing the finite error sums by a uniform geometric base bound. -/
-theorem localizedFluxDefectNegativeBesovAverageTwo_matVecMul_le_sqrt_of_scaled_base_mul_inv_one_sub_bddAbove
+theorem localizedFluxDefect_negativeBesovAverage_le_sqrt_baseError
     {d : ℕ} (Q : TriadicCube d) (a : CoeffField d) (s : ℝ)
     (u : Vec d → Vec d) (E : TriadicCube d → ℝ)
     (hs : 0 < s)
@@ -576,7 +579,7 @@ theorem localizedFluxDefectNegativeBesovAverageTwo_matVecMul_le_sqrt_of_scaled_b
         ((coarsePoincareRHSDepthWeight s m)⁻¹ *
           (B * (1 - Real.rpow (3 : ℝ) (-s))⁻¹)) := by
   exact
-    localizedFluxDefectNegativeBesovAverageTwo_matVecMul_le_sqrt_of_scaled_weakFluxRHSScaledAveragedSeminormSq_le
+    negativeBesovFluxAverage_of_weakFluxRHSScaledAveragedSeminormSq
       Q a s u m
       (weakFluxRHSScaledAveragedSeminormSq_le_base_mul_inv_one_sub_of_bddAbove
         Q a s u E hs hlocal m hBdd hB_nonneg hterm)

@@ -111,7 +111,8 @@ theorem respAllScaleMax_aestronglyMeasurable_integrable (d : ℕ) (hd : 2 ≤ d)
   intro ε σ hε hσ Cglob Cprof Bresp hCglob H P E Ψ Kg Src B jStar F s t raw
   let : NeZero d := ⟨by omega⟩
   have := raw.prob
-  have hm : (explicitCanonicalMetric F).PosDef := Geometry.explicitCanonicalMetric_posDef raw.symm raw.pos
+  have hm : (explicitCanonicalMetric F).PosDef := Geometry.explicitCanonicalMetric_posDef
+    raw.symm raw.pos
   have hq : IsUnit (respGrid jStar F) := Geometry.isUnit_roundedGrid raw.hj hm
   have hMmeas : Measurable (respAllScaleMax P γ jStar F t) :=
     respAllScaleMax_measurable P γ jStar F hq t
@@ -123,7 +124,8 @@ theorem respAllScaleMax_aestronglyMeasurable_integrable (d : ℕ) (hd : 2 ≤ d)
   have hjt : (jStar : ℤ) ≤ t := le_of_lt hwin.2
   have hB0 : (1 : ℝ) ≤ S.B0 ε σ := S.one_le_B0 ε σ hε hσ
   have hB : (1 : ℝ) ≤ B := hB0.trans ((le_max_left _ _).trans raw.hB)
-  have hA1 : (1 : ℝ) ≤ aspectRatio E := HCPolySupport.HighContrast.one_le_aspectRatio_of_coarseEllipticityDagger raw.ell
+  have hA1 : (1 : ℝ) ≤ aspectRatio E :=
+    HCPolySupport.HighContrast.one_le_aspectRatio_of_coarseEllipticityDagger raw.ell
   have hlog : (1 : ℝ) ≤ Real.logb 3 (2 + aspectRatio E) := by
     have hl3 : (0 : ℝ) < Real.log 3 := Real.log_pos (by norm_num)
     have h2 : Real.log 3 ≤ Real.log (2 + aspectRatio E) :=
@@ -149,9 +151,12 @@ theorem respAllScaleMax_aestronglyMeasurable_integrable (d : ℕ) (hd : 2 ≤ d)
     raw.ell jStar raw.hj (explicitCanonicalMetric F) hm t
   set F0 : CoeffSpace d → ℝ := fun a => ⨆ j ∈ Set.Icc (jStar : ℤ) t,
     (3 : ℝ) ^ (-(bigQ d γ : ℝ) * rhoMax d γ * ((t : ℝ) - (j : ℝ))) *
-      ⨆ z ∈ adaptedLatticeAtScale (Geometry.explicitRoundedGrid jStar (explicitCanonicalMetric F)) j ∩
-          HighContrast.adaptedCell (Geometry.explicitRoundedGrid jStar (explicitCanonicalMetric F)) t,
-        blockOpNorm (normalizedFluctuation P (Geometry.explicitRoundedGrid jStar (explicitCanonicalMetric F))
+      ⨆ z ∈ adaptedLatticeAtScale (Geometry.explicitRoundedGrid jStar (explicitCanonicalMetric
+        F)) j ∩
+          HighContrast.adaptedCell (Geometry.explicitRoundedGrid jStar (explicitCanonicalMetric
+            F)) t,
+        blockOpNorm (normalizedFluctuation P (Geometry.explicitRoundedGrid jStar
+          (explicitCanonicalMetric F))
           j t z a) ^ bigQ d γ with hF0def
   have hF00 : ∀ a, (0 : ℝ) ≤ F0 a := fun a =>
     Real.iSup_nonneg fun j => Real.iSup_nonneg fun _ =>
@@ -174,7 +179,8 @@ theorem respAllScaleMax_aestronglyMeasurable_integrable (d : ℕ) (hd : 2 ≤ d)
   have hηroot : η ^ ((1 : ℝ) / (bigQ d γ : ℝ)) = 1 + Y := by
     rw [hηdef, one_div]
     exact Real.pow_rpow_inv_natCast (by linarith only [hY0]) hQ0
-  have hsrcsmall : (1 : ℝ) * aspectRatio E * (‖explicitCanonicalMetric F‖ * ‖(explicitCanonicalMetric F)⁻¹‖) *
+  have hsrcsmall : (1 : ℝ) * aspectRatio E * (‖explicitCanonicalMetric F‖ *
+    ‖(explicitCanonicalMetric F)⁻¹‖) *
       (3 : ℝ) ^ (-(rhoMax d γ * ((t : ℝ) - (jStar : ℝ)))) ≤
       η ^ ((1 : ℝ) / (bigQ d γ : ℝ)) := by
     rw [hηroot, one_mul, ← hYdef]
@@ -183,7 +189,8 @@ theorem respAllScaleMax_aestronglyMeasurable_integrable (d : ℕ) (hd : 2 ≤ d)
   have hKw : (0 : ℝ) < Kw := by rw [hKwdef]; positivity
   have hkey : ∀ᵐ a ∂P, respAllScaleMax P γ jStar F t a ^ bigQ d γ ≤
       (3 : ℝ) ^ bigQ d γ * (F0 a +
-        (determinantDrift P γ (Geometry.explicitRoundedGrid jStar (explicitCanonicalMetric F)) jStar t) ^
+        (determinantDrift P γ (Geometry.explicitRoundedGrid jStar (explicitCanonicalMetric F))
+          jStar t) ^
           bigQ d γ + (Kw * (1 + Y)) ^ bigQ d γ * X a ^ bigQ d γ) := by
     filter_upwards [hpath] with a ha
     have hu0 : (0 : ℝ) ≤ F0 a ^ ((bigQ d γ : ℝ)⁻¹) := Real.rpow_nonneg (hF00 a) _
@@ -191,13 +198,15 @@ theorem respAllScaleMax_aestronglyMeasurable_integrable (d : ℕ) (hd : 2 ≤ d)
       mul_nonneg (mul_nonneg hKw.le (Real.rpow_nonneg hη.le _)) (hX0 a).le
     have hMle : respAllScaleMax P γ jStar F t a ≤
         F0 a ^ ((bigQ d γ : ℝ)⁻¹) +
-          determinantDrift P γ (Geometry.explicitRoundedGrid jStar (explicitCanonicalMetric F)) jStar t +
+          determinantDrift P γ (Geometry.explicitRoundedGrid jStar (explicitCanonicalMetric F))
+            jStar t +
           Kw * η ^ ((1 : ℝ) / (bigQ d γ : ℝ)) * X a :=
       pathwise_bound_max d hd γ hγ P E Ψ Kg Src raw.stat raw.unit raw.ell jStar raw.hj F hm
         t hjt raw.cube C₀ Cn 1 η hC₀ hCn one_pos hη X a (hX0 a) ha.2 hnormt hsrcsmall
     calc respAllScaleMax P γ jStar F t a ^ bigQ d γ
         ≤ (F0 a ^ ((bigQ d γ : ℝ)⁻¹) +
-            determinantDrift P γ (Geometry.explicitRoundedGrid jStar (explicitCanonicalMetric F)) jStar t +
+            determinantDrift P γ (Geometry.explicitRoundedGrid jStar (explicitCanonicalMetric
+              F)) jStar t +
             Kw * η ^ ((1 : ℝ) / (bigQ d γ : ℝ)) * X a) ^ bigQ d γ :=
           pow_le_pow_left₀ (respAllScaleMax_nonneg P γ jStar F t a) hMle _
       _ ≤ (3 : ℝ) ^ bigQ d γ * ((F0 a ^ ((bigQ d γ : ℝ)⁻¹)) ^ bigQ d γ +
@@ -210,12 +219,14 @@ theorem respAllScaleMax_aestronglyMeasurable_integrable (d : ℕ) (hd : 2 ≤ d)
               jStar t) ^ bigQ d γ + (Kw * (1 + Y)) ^ bigQ d γ * X a ^ bigQ d γ) := by
           rw [Real.rpow_inv_natCast_pow (hF00 a) hQ0, hηroot, mul_pow]
   have hi1 : Integrable (fun a => F0 a +
-      (determinantDrift P γ (Geometry.explicitRoundedGrid jStar (explicitCanonicalMetric F)) jStar t) ^
+      (determinantDrift P γ (Geometry.explicitRoundedGrid jStar (explicitCanonicalMetric F))
+        jStar t) ^
         bigQ d γ) P := hfint.add (integrable_const _)
   have hi2 : Integrable (fun a => (Kw * (1 + Y)) ^ bigQ d γ * X a ^ bigQ d γ) P :=
     hXint.const_mul _
   have hgint : Integrable (fun a => (3 : ℝ) ^ bigQ d γ * (F0 a +
-      (determinantDrift P γ (Geometry.explicitRoundedGrid jStar (explicitCanonicalMetric F)) jStar t) ^
+      (determinantDrift P γ (Geometry.explicitRoundedGrid jStar (explicitCanonicalMetric F))
+        jStar t) ^
         bigQ d γ + (Kw * (1 + Y)) ^ bigQ d γ * X a ^ bigQ d γ)) P :=
     (hi1.add hi2).const_mul _
   refine hgint.mono' ((hMmeas.pow_const _).aestronglyMeasurable) ?_
@@ -334,7 +345,8 @@ theorem aestronglyMeasurable_recentDefectBlock_minus [NeZero d] {q : Mat d} (hq 
       recentDefectBlock q t n w E (respCoeffMinus F a)) P := by
   refine Measurable.aestronglyMeasurable ?_
   refine Measurable.of_eval fun α => Measurable.of_eval fun β => ?_
-  have hcell : HighContrast.adaptedCell q t = adaptedCellAtCenter q t 0 := (adaptedCellAtCenter_zero q t).symm
+  have hcell : HighContrast.adaptedCell q t = adaptedCellAtCenter q t 0 :=
+    (adaptedCellAtCenter_zero q t).symm
   have hrw : (fun a : CoeffSpace d => recentDefectBlock q t n w E (respCoeffMinus F a) α β)
       = fun a : CoeffSpace d =>
         (matSqrt ((toFullBlockMat E)⁻¹) *
@@ -406,7 +418,8 @@ theorem aestronglyMeasurable_recentDefectBlock_plus [NeZero d] {q : Mat d} (hq :
       recentDefectBlock q t n w E (respCoeffPlus F a)) P := by
   refine Measurable.aestronglyMeasurable ?_
   refine Measurable.of_eval fun α => Measurable.of_eval fun β => ?_
-  have hcell : HighContrast.adaptedCell q t = adaptedCellAtCenter q t 0 := (adaptedCellAtCenter_zero q t).symm
+  have hcell : HighContrast.adaptedCell q t = adaptedCellAtCenter q t 0 :=
+    (adaptedCellAtCenter_zero q t).symm
   have hrw : (fun a : CoeffSpace d => recentDefectBlock q t n w E (respCoeffPlus F a) α β)
       = fun a : CoeffSpace d =>
         (matSqrt ((toFullBlockMat E)⁻¹) *
@@ -438,7 +451,8 @@ The lemmas below are the comparison layer that keeps every EXISTING `respAllScal
 `respAllScaleMax ≤ respAllScaleAbs` pointwise. -/
 
 /-- `v ⬝ᵥ (N *ᵥ v) ≤ ‖N‖ (v ⬝ᵥ v)` for an ARBITRARY square matrix -- no positivity. -/
-private theorem dotProduct_mulVec_le_opNorm_mul_dotProduct_self {n : Type*} [Fintype n] [DecidableEq n]
+private theorem dotProduct_mulVec_le_opNorm_mul_dotProduct_self {n : Type*} [Fintype n]
+  [DecidableEq n]
     (N : Matrix n n ℝ) (v : n → ℝ) : v ⬝ᵥ (N *ᵥ v) ≤ ‖N‖ * (v ⬝ᵥ v) := by
   have hsq := vecSq_mulVec_le N v
   have hvv : (0 : ℝ) ≤ v ⬝ᵥ v := dotProduct_self_nonneg v
@@ -693,7 +707,8 @@ theorem blockOpNorm_normalizedBlock_blockCongr_le (G Z E : BlockMat d)
     _ ≤ (‖Uᵀ‖ * ‖T * Zf * T‖) * ‖U‖ := by
           exact mul_le_mul_of_nonneg_right hb2 hU0
     _ ≤ (1 * ‖T * Zf * T‖) * 1 := by
-          exact mul_le_mul (mul_le_mul_of_nonneg_right hUtn hM0) hUn hU0 (by rw [one_mul]; exact hM0)
+          exact mul_le_mul (mul_le_mul_of_nonneg_right hUtn hM0) hUn hU0 (by rw [one_mul]; exact
+            hM0)
     _ = ‖T * Zf * T‖ := by rw [one_mul, mul_one]
 
 /-- **The `respAllScaleAbs` envelope.**  The two-sided defining set is a.e. bounded above, by
@@ -718,7 +733,8 @@ theorem pathwise_envelope_abs (hd : 2 ≤ d) (γ : ℝ)
   let : NeZero d := ⟨by omega⟩
   have hq : IsUnit (respGrid jStar F) := Geometry.isUnit_roundedGrid hj hm
   have hEt : (toFullBlockMat (respMean P jStar F t)).PosDef :=
-    Annealed.adaptedMean_posDef d hd P γ E Ψ Kg Src hstat hdag jStar hj (explicitCanonicalMetric F) hm t
+    Annealed.adaptedMean_posDef d hd P γ E Ψ Kg Src hstat hdag jStar hj (explicitCanonicalMetric
+      F) hm t
   filter_upwards [pathwise_envelope hd γ P E Ψ Kg Src hstat hdag jStar hj F hm t]
     with a ha
   obtain ⟨C, hC0, -, hterms⟩ := ha
@@ -732,7 +748,8 @@ theorem pathwise_envelope_abs (hd : 2 ≤ d) (γ : ℝ)
   have hw0 : (0 : ℝ) ≤ (3 : ℝ) ^ (-(Quenched.contrastRho γ * (n : ℝ))) :=
     Real.rpow_nonneg (by norm_num) _
   have hpsd := normalizedBlock_posSemidef_of_posSemidef_of_posDef
-    (coarseBlock_adaptedCellAtCenter_posSemidef_of_isUnit (respGrid jStar F) hq (t - (n : ℤ)) z a) hEt
+    (coarseBlock_adaptedCellAtCenter_posSemidef_of_isUnit (respGrid jStar F) hq (t - (n : ℤ)) z
+      a) hEt
   have hkey := blockOpNorm_sub_id_le_specBound_add_two _ hpsd
   have hspec := hterms n z hz
   have hs0 : (0 : ℝ) ≤ blockSpecBound (blockSub
@@ -745,12 +762,14 @@ theorem pathwise_envelope_abs (hd : 2 ≤ d) (γ : ℝ)
             (respMean P jStar F t)) (Book.Ch02.blockIdentity d))
       ≤ (3 : ℝ) ^ (-(Quenched.contrastRho γ * (n : ℝ))) *
           (blockSpecBound (blockSub
-            (normalizedBlock (coarseBlock (adaptedCellAtCenter (respGrid jStar F) (t - (n : ℤ)) z) a)
+            (normalizedBlock (coarseBlock (adaptedCellAtCenter (respGrid jStar F) (t - (n : ℤ))
+              z) a)
               (respMean P jStar F t)) (Book.Ch02.blockIdentity d)) + 2) :=
         mul_le_mul_of_nonneg_left hkey hw0
     _ = (3 : ℝ) ^ (-(Quenched.contrastRho γ * (n : ℝ))) *
           blockSpecBound (blockSub
-            (normalizedBlock (coarseBlock (adaptedCellAtCenter (respGrid jStar F) (t - (n : ℤ)) z) a)
+            (normalizedBlock (coarseBlock (adaptedCellAtCenter (respGrid jStar F) (t - (n : ℤ))
+              z) a)
               (respMean P jStar F t)) (Book.Ch02.blockIdentity d)) +
           (3 : ℝ) ^ (-(Quenched.contrastRho γ * (n : ℝ))) * 2 := by rw [mul_add]
     _ ≤ C + 2 := by linarith only [hspec, hw1]

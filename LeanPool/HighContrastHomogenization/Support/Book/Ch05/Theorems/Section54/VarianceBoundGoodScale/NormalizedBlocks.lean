@@ -167,7 +167,7 @@ private theorem dotProduct_diagonal_mulVec_left_eq_right
 
 /-- Diagonal normalization of a block quadratic form is the block quadratic
 form evaluated on the diagonally normalized vector. -/
-theorem fullBlockQuadratic_diagonal_toFullBlockMat_eq_blockVecDot
+theorem diagonalForm_eq_dotProduct
     {d : ℕ} (r : BlockCoord d → ℝ) (A : BlockMat d) (q : FullBlockVec d) :
     fullBlockQuadratic (Matrix.diagonal r * toFullBlockMat A * Matrix.diagonal r) q =
       blockVecDot (ofFullBlockVec (Matrix.mulVec (Matrix.diagonal r) q))
@@ -360,7 +360,7 @@ theorem annealedBlockMatrixAtScale_eq_scalarAnnealedBlockMatrixAtScale
               Ch02.coarseBlockMatrix (Ch02.cubeDomain (originCube d n))
                 (F.coeffOn (originCube d n)) := by
           simpa [F] using
-            Ch04.RestrictionLawCarrier.coarseBlockMatrix_cubeSet_eq_ch02_coarseBlockMatrix_of_aelocallyUniformlyEllipticField
+            Ch04.RestrictionLawCarrier.coarseBlockMatrix_cubeSet_eq_chapterCoarse
               ha (originCube d n)
         have hSymm :=
           Ch02.isSymmetricBlockMat_coarseBlockMatrix
@@ -429,7 +429,7 @@ theorem normalizedAnnealedBlockMatrix_self_eq_one
   exact normalizedScalarAnnealedBlockMatrix_self_eq_one hP hStruct hP4 m
 
 /-- The normalized full-block fluctuation observable is nonnegative. -/
-theorem fullBlockNormalizedFluctuationOperatorNormSqAtScale_nonneg
+theorem fluctuationNormSquare_nonneg
     {d : ℕ} [NeZero d] {P : Ch04.RestrictionCoeffLaw d}
     (hP : Ch04.RestrictionLawCarrier P) (hStruct : Ch04.RestrictionStructuralLaw P)
     (center : ℤ) (R : TriadicCube d) (a : RegCoeffField d) :
@@ -443,7 +443,7 @@ theorem fullBlockNormalizedFluctuationOperatorNormSqAtScale_nonneg
 /-- The normalized full-block fluctuation matrix whose Euclidean operator norm
 is squared in the manuscript observable. -/
 @[expose]
-noncomputable def fullBlockNormalizedFluctuationMatrix
+noncomputable def normalizedFluctuationMatrix
     {d : ℕ} [NeZero d] {P : Ch04.RestrictionCoeffLaw d}
     (hP : Ch04.RestrictionLawCarrier P) (hStruct : Ch04.RestrictionStructuralLaw P)
     (center : ℤ) (U : Set (Vec d)) (a : CoeffField d) : FullBlockMat d :=
@@ -457,12 +457,12 @@ noncomputable def fullBlockNormalizedFluctuationMatrix
 
 /-- The normalized full-block fluctuation matrix is symmetric whenever the
 underlying coarse block matrix is symmetric. -/
-theorem fullBlockNormalizedFluctuationMatrix_isSymm_of_isSymmetricBlockMat
+theorem normalizedFluctuation_isSymm
     {d : ℕ} [NeZero d] {P : Ch04.RestrictionCoeffLaw d}
     (hP : Ch04.RestrictionLawCarrier P) (hStruct : Ch04.RestrictionStructuralLaw P)
     (center : ℤ) {U : Set (Vec d)} {a : CoeffField d}
     (hA : IsSymmetricBlockMat (coarseBlockMatrix U a)) :
-    (fullBlockNormalizedFluctuationMatrix hP hStruct center U a).IsSymm := by
+    (normalizedFluctuationMatrix hP hStruct center U a).IsSymm := by
   let b := hP.barSigmaAtScale hStruct center
   let c := hP.barSigmaStarAtScale hStruct center
   let D : FullBlockMat d := Matrix.diagonal (Ch04.scalarFullBlockInvSqrtDiag b c)
@@ -474,7 +474,7 @@ theorem fullBlockNormalizedFluctuationMatrix_isSymm_of_isSymmetricBlockMat
     isSymm_toFullBlockMat_of_isSymmetricBlockMat
       (isSymmetricBlockMat_scalarAnnealedBlockMatrixAtScale hP hStruct center)
   have hsub : (toFullBlockMat A - toFullBlockMat Abar).IsSymm := hA_full.sub hAbar_full
-  simpa [fullBlockNormalizedFluctuationMatrix, b, c, D, A, Abar] using
+  simpa [normalizedFluctuationMatrix, b, c, D, A, Abar] using
     isSymm_diagonal_mul_fullBlockMat_mul_diagonal
       (Ch04.scalarFullBlockInvSqrtDiag (d := d) b c) hsub
 
@@ -490,7 +490,7 @@ theorem isSymmetricBlockMat_coarseBlockMatrix_cubeSet_ae
       coarseBlockMatrix (cubeSet Q) a.toFun =
         Ch02.coarseBlockMatrix (Ch02.cubeDomain Q) (F.coeffOn Q) := by
     simpa [F] using
-      Ch04.RestrictionLawCarrier.coarseBlockMatrix_cubeSet_eq_ch02_coarseBlockMatrix_of_aelocallyUniformlyEllipticField
+      Ch04.RestrictionLawCarrier.coarseBlockMatrix_cubeSet_eq_chapterCoarse
         ha Q
   rw [hEq]
   exact Ch02.isSymmetricBlockMat_coarseBlockMatrix (Ch02.cubeDomain Q) (F.coeffOn Q)
@@ -502,27 +502,27 @@ theorem fullBlockNormalizedFluctuationMatrix_isSymm_ae
     (hP : Ch04.RestrictionLawCarrier P) (hStruct : Ch04.RestrictionStructuralLaw P)
     (center : ℤ) (Q : TriadicCube d) :
     ∀ᵐ a ∂P,
-      (fullBlockNormalizedFluctuationMatrix hP hStruct center (cubeSet Q) a.toFun).IsSymm := by
+      (normalizedFluctuationMatrix hP hStruct center (cubeSet Q) a.toFun).IsSymm := by
   filter_upwards [isSymmetricBlockMat_coarseBlockMatrix_cubeSet_ae hP Q] with a hA
-  exact fullBlockNormalizedFluctuationMatrix_isSymm_of_isSymmetricBlockMat
+  exact normalizedFluctuation_isSymm
     hP hStruct center hA
 
 /-- The Ch4 normalized fluctuation observable is the squared operator norm of
 `fullBlockNormalizedFluctuationMatrix`. -/
-theorem fullBlockNormalizedFluctuationOperatorNormSq_eq_norm_sq
+theorem fullBlockFluctuationNormSquare_eq_matrixNormSquare
     {d : ℕ} [NeZero d] {P : Ch04.RestrictionCoeffLaw d}
     (hP : Ch04.RestrictionLawCarrier P) (hStruct : Ch04.RestrictionStructuralLaw P)
     (center : ℤ) (U : Set (Vec d)) (a : CoeffField d) :
     Ch04.fullBlockNormalizedFluctuationOperatorNormSq hP hStruct center U a =
       ‖Matrix.toEuclideanCLM (n := BlockCoord d) (𝕜 := ℝ)
-          (fullBlockNormalizedFluctuationMatrix hP hStruct center U a)‖ ^ (2 : ℕ) := by
+          (normalizedFluctuationMatrix hP hStruct center U a)‖ ^ (2 : ℕ) := by
   rfl
 
 /-- Normalized quadratic probe observable used before the finite-probe upgrade
 in the good-scale variance bound.  This is linear in the coarse block matrix;
 centering is supplied by `Ch04.restrictionCenteredOriginObservable`. -/
 @[expose]
-noncomputable def fullBlockNormalizedQuadraticObservable
+noncomputable def normalizedQuadraticObservable
     {d : ℕ} [NeZero d] {P : Ch04.RestrictionCoeffLaw d}
     (hP : Ch04.RestrictionLawCarrier P) (hStruct : Ch04.RestrictionStructuralLaw P)
     (center : ℤ) (q : FullBlockVec d) (U : Set (Vec d))
@@ -542,19 +542,19 @@ noncomputable def fullBlockNormalizedQuadraticObservableR
     (hP : Ch04.RestrictionLawCarrier P) (hStruct : Ch04.RestrictionStructuralLaw P)
     (center : ℤ) (q : FullBlockVec d) (U : Set (Vec d))
     (a : RegCoeffField d) : ℝ :=
-  fullBlockNormalizedQuadraticObservable hP hStruct center q U a.toFun
+  normalizedQuadraticObservable hP hStruct center q U a.toFun
 
 /-- Centering a normalized quadratic probe at the center-scale annealed value
 is the quadratic form of the normalized fluctuation matrix. -/
-theorem fullBlockNormalizedQuadraticObservable_sub_dotProduct_eq_fluctuationQuadratic
+theorem normalizedQuadraticIdentity
     {d : ℕ} [NeZero d] {P : Ch04.RestrictionCoeffLaw d}
     (hP : Ch04.RestrictionLawCarrier P) (hStruct : Ch04.RestrictionStructuralLaw P)
     (hP4 : QuantitativeCoarseGrainedEllipticity P) (m : ℕ)
     (q : FullBlockVec d) (U : Set (Vec d)) (a : CoeffField d) :
-    fullBlockNormalizedQuadraticObservable hP hStruct (m : ℤ) q U a -
+    normalizedQuadraticObservable hP hStruct (m : ℤ) q U a -
         dotProduct q q =
       fullBlockQuadratic
-        (fullBlockNormalizedFluctuationMatrix hP hStruct (m : ℤ) U a) q := by
+        (normalizedFluctuationMatrix hP hStruct (m : ℤ) U a) q := by
   classical
   let b := hP.barSigmaAtScale hStruct (m : ℤ)
   let c := hP.barSigmaStarAtScale hStruct (m : ℤ)
@@ -570,14 +570,14 @@ theorem fullBlockNormalizedQuadraticObservable_sub_dotProduct_eq_fluctuationQuad
     ext α β
     simp [Matrix.mul_apply, Finset.sum_sub_distrib, sub_mul, mul_sub]
   calc
-    fullBlockNormalizedQuadraticObservable hP hStruct (m : ℤ) q U a - dotProduct q q
+    normalizedQuadraticObservable hP hStruct (m : ℤ) q U a - dotProduct q q
         = fullBlockQuadratic (D * toFullBlockMat A * D) q - fullBlockQuadratic 1 q := by
           rw [fullBlockQuadratic_one]
-          simp [fullBlockNormalizedQuadraticObservable, D, A, b, c]
+          simp [normalizedQuadraticObservable, D, A, b, c]
     _ = fullBlockQuadratic (D * toFullBlockMat A * D - 1) q := by
           rw [fullBlockQuadratic_sub]
     _ = fullBlockQuadratic
-          (fullBlockNormalizedFluctuationMatrix hP hStruct (m : ℤ) U a) q := by
+          (normalizedFluctuationMatrix hP hStruct (m : ℤ) U a) q := by
           rw [hmat]
           rfl
 
@@ -595,7 +595,7 @@ theorem fullBlockNormalizedQuadraticObservable_nonneg_ae
     (hP : Ch04.RestrictionLawCarrier P) (hStruct : Ch04.RestrictionStructuralLaw P)
     (center : ℤ) (q : FullBlockVec d) (Q : TriadicCube d) :
     ∀ᵐ a ∂P,
-      0 ≤ fullBlockNormalizedQuadraticObservable hP hStruct center q (cubeSet Q) a.toFun := by
+      0 ≤ normalizedQuadraticObservable hP hStruct center q (cubeSet Q) a.toFun := by
   filter_upwards [hP.ae_locallyUniformlyEllipticField] with a ha
   let b := hP.barSigmaAtScale hStruct center
   let c := hP.barSigmaStarAtScale hStruct center
@@ -607,18 +607,18 @@ theorem fullBlockNormalizedQuadraticObservable_nonneg_ae
       coarseBlockMatrix (cubeSet Q) a.toFun =
         Ch02.coarseBlockMatrix (Ch02.cubeDomain Q) (F.coeffOn Q) := by
     simpa [F] using
-      Ch04.RestrictionLawCarrier.coarseBlockMatrix_cubeSet_eq_ch02_coarseBlockMatrix_of_aelocallyUniformlyEllipticField
+      Ch04.RestrictionLawCarrier.coarseBlockMatrix_cubeSet_eq_chapterCoarse
         ha Q
   have hPos : Ch02.BlockPosDef (coarseBlockMatrix (cubeSet Q) a.toFun) := by
     rw [hEq]
     exact
       (Ch02.blockCoarseMatrixTheory (Ch02.cubeDomain Q) (F.coeffOn Q)).block_matrix_posDef
   have hobs :
-      fullBlockNormalizedQuadraticObservable hP hStruct center q (cubeSet Q) a.toFun =
+      normalizedQuadraticObservable hP hStruct center q (cubeSet Q) a.toFun =
         blockVecDot X (blockMatVecMul (coarseBlockMatrix (cubeSet Q) a.toFun) X) := by
-    dsimp [fullBlockNormalizedQuadraticObservable, fullBlockQuadratic, b, c, D, X]
+    dsimp [normalizedQuadraticObservable, fullBlockQuadratic, b, c, D, X]
     simpa [D] using!
-      fullBlockQuadratic_diagonal_toFullBlockMat_eq_blockVecDot
+      diagonalForm_eq_dotProduct
         (Ch04.scalarFullBlockInvSqrtDiag (d := d) b c)
         (coarseBlockMatrix (cubeSet Q) a.toFun) q
   rw [hobs]
@@ -631,21 +631,21 @@ theorem fullBlockNormalizedQuadraticObservable_translation_covariant
     (center : ℤ) (q : FullBlockVec d) :
     IsTranslationCovariant
       (fun U : Set (Vec d) => fun a : CoeffField d =>
-        fullBlockNormalizedQuadraticObservable hP hStruct center q U a) := by
+        normalizedQuadraticObservable hP hStruct center q U a) := by
   intro U z a
-  simp [fullBlockNormalizedQuadraticObservable, translateByInt,
+  simp [normalizedQuadraticObservable, translateByInt,
     coarseBlockMatrix_translateSet_eq_translateCoeffField]
 
 /-- `(P4)` supplies integrability of the normalized full-block fluctuation on
 origin cubes. -/
-theorem integrable_origin_fullBlockNormalizedFluctuationOperatorNormSqAtScale_from_P4
+theorem integrable_fullBlockFluctuationNormSquare_of_P4_atScale
     {d : ℕ} [NeZero d] {P : Ch04.RestrictionCoeffLaw d}
     (hP : Ch04.RestrictionLawCarrier P) (hStruct : Ch04.RestrictionStructuralLaw P)
     (hP4 : QuantitativeCoarseGrainedEllipticity P) (center : ℤ) (n : ℕ) :
     Integrable
       (Ch04.fullBlockNormalizedFluctuationOperatorNormSqAtScale
         hP hStruct center (originCube d (n : ℤ))) P :=
-  Section52.integrable_fullBlockNormalizedFluctuationOperatorNormSqAtScale_originCube_from_P4
+  Section52.integrable_fullBlockFluctuationNormSquare_of_P4_atOrigin
     hP hStruct hP4 center n
 
 /-- Integer-scale version of the origin-cube integrability consequence of
@@ -659,13 +659,13 @@ theorem integrable_origin_fullBlockNormalizedFluctuationOperatorNormSqAtScale_fr
       (Ch04.fullBlockNormalizedFluctuationOperatorNormSqAtScale
         hP hStruct center (originCube d n)) P := by
   have hnat :=
-    integrable_origin_fullBlockNormalizedFluctuationOperatorNormSqAtScale_from_P4
+    integrable_fullBlockFluctuationNormSquare_of_P4_atScale
       hP hStruct hP4 center (Int.toNat n)
   simpa [Int.toNat_of_nonneg hn] using hnat
 
 /-- Under `(P4)` and stationarity, the normalized full-block fluctuation is
 integrable on every nonnegative-scale cube. -/
-theorem integrable_fullBlockNormalizedFluctuationOperatorNormSqAtScale_from_P4_of_nonneg_scale
+theorem integrable_fluctuationNormSquare
     {d : ℕ} [NeZero d] {P : Ch04.RestrictionCoeffLaw d}
     (hP : Ch04.RestrictionLawCarrier P) (hStruct : Ch04.RestrictionStructuralLaw P)
     (hP4 : QuantitativeCoarseGrainedEllipticity P) (center : ℤ)
@@ -704,7 +704,7 @@ theorem integral_fullBlockNormalizedFluctuationOperatorNormSqAtScale_eq_originCu
     integrable_origin_fullBlockNormalizedFluctuationOperatorNormSqAtScale_from_P4_of_nonneg
       hP hStruct hP4 center R.scale hR_nonneg
   exact
-    hP.integral_fullBlockNormalizedFluctuationOperatorNormSqAtScale_eq_originCube_of_stationary
+    hP.fluctuationOperatorNormSq_integral_eq_origin_of_stationarity
       hStruct.stationary hStruct center R hR_nonneg hOrigin
 
 /-- `(P4)` supplies the integrability hypothesis needed for descendant
@@ -725,13 +725,13 @@ theorem integrable_fullBlockNormalizedFluctuationOperatorNormSqAtScale_of_mem_de
     integrable_origin_fullBlockNormalizedFluctuationOperatorNormSqAtScale_from_P4_of_nonneg
       hP hStruct hP4 center n hn
   exact
-    hP.integrable_fullBlockNormalizedFluctuationOperatorNormSqAtScale_of_mem_descendantsAtScale_originCube
+    hP.fluctuationOperatorNormSq_integrable_on_originDescendants
       hStruct.stationary hStruct center hn hnm hR hOrigin
 
 /-- Expectation of a descendant average of normalized full-block fluctuations
 collapses to the corresponding origin-cube expectation under stationarity, with
 integrability supplied by `(P4)`. -/
-theorem integral_descendantsAverage_fullBlockNormalizedFluctuationOperatorNormSqAtScale_eq_originCube_from_P4
+theorem integral_descendantMean_fullBlockFluctuationNormSq_eq_cube_from_P4
     {d : ℕ} [NeZero d] {P : Ch04.RestrictionCoeffLaw d}
     (hP : Ch04.RestrictionLawCarrier P) (hStruct : Ch04.RestrictionStructuralLaw P)
     (hP4 : QuantitativeCoarseGrainedEllipticity P) (center : ℤ)
@@ -751,7 +751,7 @@ theorem integral_descendantsAverage_fullBlockNormalizedFluctuationOperatorNormSq
     integrable_origin_fullBlockNormalizedFluctuationOperatorNormSqAtScale_from_P4_of_nonneg
       hP hStruct hP4 center n hn
   exact
-    hP.integral_descendantsAverage_fullBlockNormalizedFluctuationOperatorNormSqAtScale_eq_originCube_of_stationary
+    hP.integral_descendantMean_fullBlockFluctuationNormSq_eq_cube
       hStruct.stationary hStruct center hn hnm hOrigin
 
 end

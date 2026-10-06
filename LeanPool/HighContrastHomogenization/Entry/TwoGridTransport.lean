@@ -54,8 +54,10 @@ theorem two_grid_transport
               ∀ (m mPlus : Mat d), m.PosDef → mPlus.PosDef →
                 ∀ k n : ℤ, (jStar : ℤ) ≤ k → k ≤ n →
                   ∀ L : ℕ,
-                    HighContrast.adaptedCell (Geometry.explicitRoundedGrid jStar m) (n + 2 * (L : ℤ)) ∪
-                        HighContrast.adaptedCell (Geometry.explicitRoundedGrid jStar mPlus) (n + (L : ℤ)) ⊆
+                    HighContrast.adaptedCell (Geometry.explicitRoundedGrid jStar m) (n + 2 * (L
+                      : ℤ)) ∪
+                        HighContrast.adaptedCell (Geometry.explicitRoundedGrid jStar mPlus) (n +
+                          (L : ℤ)) ⊆
                       HighContrast.centeredCube d (2 * (jStar : ℤ)) →
                     C * ((L : ℝ) +
                         Real.logb 3 ((2 + aspectRatio E) * (‖m‖ * ‖m⁻¹‖))) ≤
@@ -73,7 +75,8 @@ theorem two_grid_transport
                     BlockMatLoewnerLE
                         (adaptedMean P (Geometry.explicitRoundedGrid jStar mPlus) (n + (L : ℤ)))
                         (blockScale (1 + δ)
-                          (adaptedMean P (Geometry.explicitRoundedGrid jStar m) (n + 2 * (L : ℤ)))) →
+                          (adaptedMean P (Geometry.explicitRoundedGrid jStar m) (n + 2 * (L :
+                            ℤ)))) →
                     profile P γ (Geometry.explicitRoundedGrid jStar mPlus) jStar (n + (L : ℤ))
                           (n + (L : ℤ)) +
                         determinantDrift P γ (Geometry.explicitRoundedGrid jStar mPlus) jStar

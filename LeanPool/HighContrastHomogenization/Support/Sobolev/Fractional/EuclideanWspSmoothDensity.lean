@@ -106,7 +106,8 @@ private theorem tendsto_diagonalConvexApproxSample_atTop {d : ℕ}
         (unitConvexApproxScale n) xy)
       Filter.atTop (nhds xy) := by
   have hz_norm : ‖z‖ ≤ 1 := by
-    have hzball := (isConvexApproxKernel_unitConvexApproxKernel (d := d)).support_subset_closedBall hz
+    have hzball := (isConvexApproxKernel_unitConvexApproxKernel (d :=
+      d)).support_subset_closedBall hz
     simpa only [Metric.mem_closedBall, dist_zero_right] using hzball
   have hε0 : ∀ n : ℕ, 0 ≤ unitConvexApproxScale n :=
     unitConvexApproxScale_nonneg
@@ -1035,7 +1036,8 @@ private theorem tendsto_normalizedEuclideanLpENorm_convexApproxSmoothField_sub_z
       dsimp [unitConvexApproxScale]
       positivity
     exact ((continuous_apply i).comp
-      (contDiff_cubeEuclideanWspConvexApproxSmoothField F x0 hr hpos).continuous).aestronglyMeasurable.sub
+      (contDiff_cubeEuclideanWspConvexApproxSmoothField F x0 hr
+        hpos).continuous).aestronglyMeasurable.sub
       (F.euclideanMemLp.eval_piLp i).aestronglyMeasurable
   have hvec : Filter.Tendsto
       (fun n : ℕ => eLpNorm (fun x => HilbertVec.ofVec (V n x)) p.exponent μ)

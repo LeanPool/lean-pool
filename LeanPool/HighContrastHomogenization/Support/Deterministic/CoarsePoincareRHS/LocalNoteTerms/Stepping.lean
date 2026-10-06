@@ -25,7 +25,7 @@ namespace ZeroTraceDirichletCorrectorData
 
 variable {d : ℕ} {Q : TriadicCube d} {a : CoeffField d} {g : Vec d → Vec d}
 
-theorem sq_cubeBesovNegativeVectorPartialSeminormTwo_succ_le_descendantsAverage_add_uCoeffEnergy_add_centeredCollapsedNoteTerm_two_two
+theorem sq_negativePartialSeminormTwo_succ_le_childMean_add_energy_add_centeredError_two
     (ρ : ZeroTraceDirichletCorrectorData Q a g)
     {u : Vec d → Vec d} (w : AHarmonicFunction a (cubeSet Q))
     {lam Lam : ℝ} (s : ℝ) {Bρ Bg : ℝ}
@@ -68,7 +68,7 @@ theorem sq_cubeBesovNegativeVectorPartialSeminormTwo_succ_le_descendantsAverage_
     ρ.coefficientEnergy_average_le_collapsed_note_term_centered_two_two
       s hs hmem hg hgradρ hBg hneg hpos
   exact
-    ρ.sq_cubeBesovNegativeVectorPartialSeminormTwo_succ_le_descendantsAverage_add_uCoeffEnergy_of_correctorCoeffEnergyBound
+    ρ.sq_negativePartialSeminormTwo_succ_le_childMean_add_energy
       (u := u) w s hs N hEll hu_mem hgrad hsum huw hρenergy
 
 

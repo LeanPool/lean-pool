@@ -125,13 +125,13 @@ theorem setIntegral_cubeFaceReflectionBlockSet_cubeDirichletOddReflectionScalar_
     _ = (Fintype.card (Fin d → Fin 3) : ℝ) *
         ∫ y in openCubeSet Q, F y * F y ∂MeasureTheory.volume := by
           exact
-            setIntegral_cubeFaceReflectionBlockSet_cubeCoordinateFoldReflectedScalar_sq_of_memScalarL2
+            foldedScalar_sqIntegral_scale_card_of_L2
               Q hF
 
 /-- The squared `L²` energy of the odd reflected scalar on the full reflection
 block, with the cell count normalized to `(3 : ℝ)^d`. -/
 theorem
-  setIntegral_cubeFaceReflectionBlockSet_cubeDirichletOddReflectionScalar_sq_of_memScalarL2_three_pow
+  oddReflectionScalar_block_sqIntegral_scale_of_L2
     {d : ℕ} {F : Vec d → ℝ} (Q : TriadicCube d)
     (hF : MemScalarL2 (openCubeSet Q) F) :
     ∫ x in cubeFaceReflectionBlockSet Q,
@@ -257,7 +257,7 @@ theorem memVectorL2_openCubeSet_succ_originCube_cubeDirichletOddReflectionVector
 /-- Scalar odd-reflected energy on the centered parent cube is `3^d` copies
 of the original cube energy. -/
 theorem
-  setIntegral_openCubeSet_succ_originCube_cubeDirichletOddReflectionScalar_sq_of_memScalarL2_three_pow
+  oddReflectionScalar_sqIntegral_scale_of_L2
     {d : ℕ} {m : ℤ} {F : Vec d → ℝ}
     (hF : MemScalarL2 (openCubeSet (originCube d m)) F) :
     ∫ x in openCubeSet (originCube d (m + 1)),
@@ -273,13 +273,13 @@ theorem
       cubeDirichletOddReflectionScalar (originCube d m) F x *
         cubeDirichletOddReflectionScalar (originCube d m) F x)]
   exact
-    setIntegral_cubeFaceReflectionBlockSet_cubeDirichletOddReflectionScalar_sq_of_memScalarL2_three_pow
+    oddReflectionScalar_block_sqIntegral_scale_of_L2
       (originCube d m) hF
 
 /-- Vector odd-reflected energy on the centered parent cube is `3^d` copies
 of the original cube energy. -/
 theorem
-  setIntegral_openCubeSet_succ_originCube_cubeDirichletOddReflectionVectorField_self_pairing_of_memVectorL2_three_pow
+  setIntegral_successorCube_dirichletOddReflectedVectorField_self_pairing
     {d : ℕ} {m : ℤ} {G : Vec d → Vec d}
     (hG : MemVectorL2 (openCubeSet (originCube d m)) G) :
     ∫ x in openCubeSet (originCube d (m + 1)),
@@ -316,7 +316,7 @@ theorem
         ∫ y in openCubeSet (originCube d m), vecDot (G y) (G y)
           ∂MeasureTheory.volume := by
           exact
-            setIntegral_cubeFaceReflectionBlockSet_cubeCoordinateFoldReflectedVectorField_self_pairing_of_memVectorL2_three_pow
+            setIntegral_cubeReflection_foldedVectorSelfPairing
               (originCube d m) hG
 
 end

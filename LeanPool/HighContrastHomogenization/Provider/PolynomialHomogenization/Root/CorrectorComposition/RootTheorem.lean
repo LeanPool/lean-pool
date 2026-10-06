@@ -216,6 +216,7 @@ theorem polynomial_homogenization_root (d : ℕ) (hd : 2 ≤ d) :
                             HCPolySupport.HighContrast.weightedGradNorm (fun x => a.1
                               x)
                               (HCPolySupport.HighContrast.ellipsoid abar R) Du)) :=
-  polynomial_homogenization_root_of_ballTriangle d hd (@CorrectorComposition.exactRootBallTriangle d ⟨by omega⟩)
+  polynomial_homogenization_root_of_ballTriangle d hd
+    (@CorrectorComposition.exactRootBallTriangle d ⟨by omega⟩)
 
 end HCPolySupport.HighContrast.CorrectorComposition

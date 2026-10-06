@@ -114,10 +114,12 @@ theorem memLp_list_prod {Ω E ι : Type*} [MeasurableSpace Ω] [NormedRing E]
     have ht := ih (fun j hj => hf j (by simp [hj]))
     have htriple : ENNReal.HolderTriple p (((l.length : ℝ≥0∞) * p⁻¹)⁻¹)
         ((((i :: l).length : ℝ≥0∞) * p⁻¹)⁻¹) := ⟨by simp [add_mul, add_comm]⟩
-    simpa only [List.map_cons, List.prod_cons, List.length_cons, Nat.cast_add, Nat.cast_one] using (hi.fun_mul ht (hpqr := htriple))
+    simpa only [List.map_cons, List.prod_cons, List.length_cons, Nat.cast_add, Nat.cast_one]
+      using (hi.fun_mul ht (hpqr := htriple))
 
 /-- A Schatten moment controls the full matrix operator-norm moment. -/
-theorem memLp_toFullBlockMat {d : ℕ} {P : Measure (CoeffSpace d)} {N : ℝ} {H : CoeffSpace d → BlockMat d}
+theorem memLp_toFullBlockMat {d : ℕ} {P : Measure (CoeffSpace d)} {N : ℝ} {H : CoeffSpace d →
+  BlockMat d}
     (hH : SchattenMemLp P N H) (hN : 1 ≤ N) :
     MemLp (fun a => toFullBlockMat (H a)) (ENNReal.ofReal N) P := by
   change MemLp (fun a α β => toFullBlockMat (H a) α β) (ENNReal.ofReal N) P
@@ -303,7 +305,8 @@ theorem integral_prod_le_prod_eLpNorm {Ω : Type*} [MeasurableSpace Ω]
   have hr := ENNReal.toReal_mono (ENNReal.prod_ne_top (fun k _ => (hmem k).eLpNorm_ne_top)) h
   rw [ENNReal.toReal_prod] at hr
   have hprodmeas : AEStronglyMeasurable (fun a => ∏ k, f k a) μ :=
-    (Finset.univ.aemeasurable_fun_prod (fun k _ => (hmem k).aestronglyMeasurable.aemeasurable)).aestronglyMeasurable
+    (Finset.univ.aemeasurable_fun_prod (fun k _ => (hmem
+      k).aestronglyMeasurable.aemeasurable)).aestronglyMeasurable
   have hprodnn : 0 ≤ᵐ[μ] fun a => ∏ k, f k a :=
     (ae_all_iff.mpr hnn).mono fun a ha => Finset.prod_nonneg (fun k _ => ha k)
   rw [integral_eq_lintegral_of_nonneg_ae hprodnn hprodmeas]
@@ -600,7 +603,8 @@ theorem lqSchattenNorm_finset_sum_le_of_iIndepFun {d : ℕ} {ι : Type*} [Decida
       Finset.sum_coe_sort s (fun i => lqSchattenNorm P (N : ℝ) (Y i) ^ 2)
     rwa [hsumu] at hbound
   exact le_of_pow_le_pow_left₀ (by omega)
-    (mul_nonneg (by positivity) (Real.rpow_nonneg (Finset.sum_nonneg (fun i _ => sq_nonneg _)) _)) hpow
+    (mul_nonneg (by positivity) (Real.rpow_nonneg (Finset.sum_nonneg (fun i _ => sq_nonneg _))
+      _)) hpow
 
 end
 

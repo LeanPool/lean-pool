@@ -190,6 +190,87 @@ theorem isBigO_gammaSigma_max_two_of_scales
     simp [S]
   simpa [hfun, hA, hcard_real] using hsup
 
+private theorem scaled_maximum_le_exponential_logarithm
+    {K θ first second firstCoefficient secondCoefficient : ℝ}
+    (hK : 0 < K) (hθ : 0 ≤ θ)
+    (hfirstCoefficient : 0 ≤ firstCoefficient) (hsecondCoefficient : 0 ≤ secondCoefficient)
+    (hfirst : first ≤ Real.exp (firstCoefficient * (Real.log (2 + θ)) ^ (2 : ℕ)))
+    (hsecond : second ≤ Real.exp (secondCoefficient * (Real.log (2 + θ)) ^ (2 : ℕ))) :
+    K * max first second ≤
+      Real.exp ((4 * max 0 (Real.log K) + firstCoefficient + secondCoefficient) *
+        (Real.log (2 + θ)) ^ (2 : ℕ)) := by
+  let L2 : ℝ := (Real.log (2 + θ)) ^ (2 : ℕ)
+  let Ck : ℝ := 4 * max 0 (Real.log K)
+  have hL2 : 0 ≤ L2 := by dsimp [L2]; positivity
+  have hfirst_le : first ≤ Real.exp ((firstCoefficient + secondCoefficient) * L2) := by
+    refine hfirst.trans (Real.exp_le_exp.mpr ?_)
+    change firstCoefficient * L2 ≤ (firstCoefficient + secondCoefficient) * L2
+    nlinarith [mul_nonneg hsecondCoefficient hL2]
+  have hsecond_le : second ≤ Real.exp ((firstCoefficient + secondCoefficient) * L2) := by
+    refine hsecond.trans (Real.exp_le_exp.mpr ?_)
+    change secondCoefficient * L2 ≤ (firstCoefficient + secondCoefficient) * L2
+    nlinarith [mul_nonneg hfirstCoefficient hL2]
+  have hmax : max first second ≤ Real.exp ((firstCoefficient + secondCoefficient) * L2) :=
+    max_le hfirst_le hsecond_le
+  have hK_le : K ≤ Real.exp (Ck * L2) := by
+    have hraw := const_mul_rpow_max_one_le_exp_logSq
+      (A := K) (θ := θ) (p := (0 : ℝ)) hK hθ (by norm_num)
+    simpa [Ck, L2] using hraw
+  calc
+    K * max first second ≤ K * Real.exp ((firstCoefficient + secondCoefficient) * L2) :=
+      mul_le_mul_of_nonneg_left hmax hK.le
+    _ ≤ Real.exp (Ck * L2) * Real.exp ((firstCoefficient + secondCoefficient) * L2) :=
+      mul_le_mul_of_nonneg_right hK_le (Real.exp_pos _).le
+    _ = Real.exp ((4 * max 0 (Real.log K) + firstCoefficient + secondCoefficient) * L2) := by
+      rw [← Real.exp_add]
+      dsimp [Ck]
+      ring_nf
+
+private theorem positive_power_scale_bounds
+    {scale α : ℝ} (hα : 0 < α) :
+    let D : ℝ := (max 1 scale) ^ α⁻¹
+    1 ≤ D ∧ 0 < D ∧ scale ≤ D ^ α := by
+  intro D
+  have hD_one : 1 ≤ D :=
+    Real.one_le_rpow (le_max_left 1 scale) (inv_nonneg.mpr hα.le)
+  have hDpow_eq : D ^ α = max 1 scale :=
+    Real.rpow_inv_rpow (le_trans zero_le_one (le_max_left 1 scale)) hα.ne'
+  exact ⟨hD_one, lt_of_lt_of_le zero_lt_one hD_one,
+    (le_max_right 1 scale).trans_eq hDpow_eq.symm⟩
+
+private theorem localized_probe_bound_of_individual_responses
+    {d : ℕ} [NeZero d] {P : Ch04.RestrictionCoeffLaw d}
+    (hP : Ch04.RestrictionLawCarrier P) (hStruct : Ch04.RestrictionStructuralLaw P)
+    {aω : RegCoeffField d} {m : ℕ} {τ α X : ℝ}
+    (hJprobe : ∀ i : NormalizedProbeIndex d, ∀ {n : ℕ}, X ≤ (3 : ℝ) ^ m → n < m →
+      (3 : ℝ) ^ (-τ * ((m - n : ℕ) : ℝ)) *
+        localizedLimitNormalizedJMax hP hStruct m n (normalizedProbeVec i) aω ≤
+          ((3 : ℝ) ^ m / X) ^ (-α)) :
+    ∀ {n : ℕ}, X ≤ (3 : ℝ) ^ m → n < m →
+      Real.rpow (3 : ℝ) (-τ * ((m - n : ℕ) : ℝ)) *
+        localizedNormalizedProbeJMax hP hStruct m n aω ≤
+          ((3 : ℝ) ^ m / X) ^ (-α) := by
+  intro n hX hnm
+  let W : ℝ := Real.rpow (3 : ℝ) (-τ * ((m - n : ℕ) : ℝ))
+  have hW : 0 < W := by dsimp [W]; positivity
+  exact weighted_localizedNormalizedProbeJMax_le_of_forall_probe
+    hP hStruct (m := m) (n := n) aω (W := W)
+    (R := ((3 : ℝ) ^ m / X) ^ (-α)) hW
+    (by intro i; simpa [W] using hJprobe i hX hnm)
+
+private theorem powered_square_scale_le_exponential_logarithm
+    {K θ α : ℝ} (hθ : 0 ≤ θ) (hα : 0 < α) :
+    (max 1 (K * θ ^ (2 : ℕ))) ^ α⁻¹ ≤
+      Real.exp ((4 * max 0 (Real.log ((max 1 K) ^ α⁻¹)) + 2 * (2 * α⁻¹)) *
+        (Real.log (2 + θ)) ^ (2 : ℕ)) := by
+  have hA : 0 < (max 1 K) ^ α⁻¹ :=
+    Real.rpow_pos_of_pos (lt_of_lt_of_le zero_lt_one (le_max_left 1 K)) _
+  have hp : 0 ≤ 2 * α⁻¹ := by positivity
+  exact (rpow_max_one_mul_sq_le_const_mul_rpow
+    (A := K) (θ := θ) (r := α⁻¹) hθ (inv_nonneg.mpr hα.le)).trans
+    (const_mul_rpow_max_one_le_exp_logSq
+      (A := (max 1 K) ^ α⁻¹) (θ := θ) (p := 2 * α⁻¹) hA hθ hp)
+
 /-- Finite-`sigma` minimal-scale control of the full finite-`q`
 homogenization error on origin cubes.
 
@@ -321,35 +402,9 @@ theorem exists_homogenizationErrorOnOriginCube_interpolated_expLogSq
       Ksup * max AJ AU ≤
         Real.exp
           (Cscale * (Real.log (2 + hΓ.thetaHat)) ^ (2 : ℕ)) := by
-    let L2 : ℝ := (Real.log (2 + hΓ.thetaHat)) ^ (2 : ℕ)
-    let Ck : ℝ := 4 * max 0 (Real.log Ksup)
-    have hL2_nonneg : 0 ≤ L2 := by dsimp [L2]; positivity
-    have hAJ_le : AJ ≤ Real.exp ((CJ + CU) * L2) := by
-      refine Real.exp_le_exp.mpr ?_
-      dsimp [AJ, L2]
-      nlinarith [mul_nonneg hCU_pos.le hL2_nonneg]
-    have hAU_le : AU ≤ Real.exp ((CJ + CU) * L2) := by
-      refine Real.exp_le_exp.mpr ?_
-      dsimp [AU, L2]
-      nlinarith [mul_nonneg hCJ_pos.le hL2_nonneg]
-    have hmax_le : max AJ AU ≤ Real.exp ((CJ + CU) * L2) :=
-      max_le hAJ_le hAU_le
-    have hK_le : Ksup ≤ Real.exp (Ck * L2) := by
-      have hraw :=
-        const_mul_rpow_max_one_le_exp_logSq
-          (A := Ksup) (θ := hΓ.thetaHat) (p := (0 : ℝ))
-          hKsup_pos hΓ.thetaHat_pos.le (by norm_num)
-      simpa [Ksup, Ck, L2] using hraw
-    calc
-      Ksup * max AJ AU
-          ≤ Ksup * Real.exp ((CJ + CU) * L2) :=
-            mul_le_mul_of_nonneg_left hmax_le hKsup_pos.le
-      _ ≤ Real.exp (Ck * L2) * Real.exp ((CJ + CU) * L2) :=
-            mul_le_mul_of_nonneg_right hK_le (Real.exp_pos _).le
-      _ = Real.exp (Cscale * L2) := by
-            rw [← Real.exp_add]
-            dsimp [Cscale, Ck]
-            ring_nf
+    simpa [Cscale, AJ, AU] using scaled_maximum_le_exponential_logarithm
+      (K := Ksup) (θ := hΓ.thetaHat) (firstCoefficient := CJ) (secondCoefficient := CU)
+      hKsup_pos hΓ.thetaHat_pos.le hCJ_pos.le hCU_pos.le (le_refl _) (le_refl _)
   have hO :
       IsBigO P (gammaSigma η) X
         (Real.exp
@@ -394,19 +449,8 @@ theorem exists_homogenizationErrorOnOriginCube_interpolated_expLogSq
         Real.rpow (3 : ℝ) (-τ * ((m - n : ℕ) : ℝ)) *
             localizedNormalizedProbeJMax hP hStruct m n aω ≤
           ((3 : ℝ) ^ m / XJ aω) ^ (-α) := by
-    intro n hXJn hnm
-    let W : ℝ := Real.rpow (3 : ℝ) (-τ * ((m - n : ℕ) : ℝ))
-    have hW_pos : 0 < W := by
-      dsimp [W]
-      positivity
-    exact
-      weighted_localizedNormalizedProbeJMax_le_of_forall_probe
-        hP hStruct (m := m) (n := n) aω (W := W)
-        (R := ((3 : ℝ) ^ m / XJ aω) ^ (-α))
-        hW_pos
-        (by
-          intro i
-          simpa [W] using hJprobe i hXJn hnm)
+    exact localized_probe_bound_of_individual_responses hP hStruct
+      (by intro i n; exact hJprobe i)
   have hUnit_m :
       localizedLimitWeightedUnitEllipticitySup hP hStruct hΓ.params m aω ≤
         (Real.rpow (3 : ℝ) ((τ / 2) * (m : ℝ)) *
@@ -502,14 +546,6 @@ theorem exists_homogenizationErrorOnOriginCube_uniformEndpoint_expLogSq
   let CD : ℝ := 4 * max 0 (Real.log Aextra) + 2 * pextra
   let Ksup : ℝ := (3 * Real.log (2 : ℝ)) ^ η⁻¹
   let Cscale : ℝ := 4 * max 0 (Real.log Ksup) + CJ + CD
-  have hKunit_pos : 0 < Kunit := by
-    dsimp [Kunit]
-    exact mul_pos (IndependentSums.gammaMomentConst_pos zero_lt_one)
-      (by exact_mod_cast params.xi_pos)
-  have hAextra_pos : 0 < Aextra := by
-    dsimp [Aextra]
-    exact Real.rpow_pos_of_pos
-      (lt_of_lt_of_le zero_lt_one (le_max_left 1 Kunit)) α⁻¹
   have hpextra_nonneg : 0 ≤ pextra := by
     dsimp [pextra]
     positivity
@@ -534,21 +570,8 @@ theorem exists_homogenizationErrorOnOriginCube_uniformEndpoint_expLogSq
   let θ : ℝ := hInf.thetaHat
   let D : ℝ := (max 1 (Kunit * θ ^ (2 : ℕ))) ^ α⁻¹
   let X : RegCoeffField d → ℝ := fun aω => max (XJ aω) D
-  have hD_one : 1 ≤ D := by
-    dsimp [D]
-    exact Real.one_le_rpow (le_max_left 1 (Kunit * θ ^ (2 : ℕ)))
-      (inv_nonneg.mpr hα_pos.le)
-  have hD_pos : 0 < D := lt_of_lt_of_le zero_lt_one hD_one
-  have hDpow_eq : D ^ α = max 1 (Kunit * θ ^ (2 : ℕ)) := by
-    dsimp [D]
-    exact Real.rpow_inv_rpow
-      (le_trans zero_le_one (le_max_left 1 (Kunit * θ ^ (2 : ℕ))))
-      hα_pos.ne'
-  have hKD_le : Kunit * θ ^ (2 : ℕ) ≤ D ^ α := by
-    calc
-      Kunit * θ ^ (2 : ℕ) ≤ max 1 (Kunit * θ ^ (2 : ℕ)) :=
-        le_max_right 1 _
-      _ = D ^ α := hDpow_eq.symm
+  obtain ⟨hD_one, hD_pos, hKD_le⟩ :=
+    positive_power_scale_bounds (scale := Kunit * θ ^ (2 : ℕ)) hα_pos
   let AJ : ℝ := Real.exp (CJ * (Real.log (2 + θ)) ^ (2 : ℕ))
   have hOD_raw :
       IsBigO P (gammaSigma η) (fun _ : RegCoeffField d => D) D := by
@@ -561,55 +584,16 @@ theorem exists_homogenizationErrorOnOriginCube_uniformEndpoint_expLogSq
       isBigO_gammaSigma_max_two_of_scales
         (μ := P) (η := η) (AJ := AJ) (AU := D)
         hη_pos (by simpa [η, AJ, θ] using hOJ) hOD_raw
-  have hD_poly : D ≤ Aextra * (max 1 θ) ^ pextra := by
-    simpa [D, Kunit, Aextra, pextra, θ] using
-      rpow_max_one_mul_sq_le_const_mul_rpow
-        (A := Kunit) (θ := θ) (r := α⁻¹)
-        hInf.thetaHat_pos.le (inv_nonneg.mpr hα_pos.le)
-  have hD_exp :
-      D ≤ Real.exp (CD * (Real.log (2 + θ)) ^ (2 : ℕ)) := by
-    calc
-      D ≤ Aextra * (max 1 θ) ^ pextra := hD_poly
-      _ ≤ Real.exp (CD * (Real.log (2 + θ)) ^ (2 : ℕ)) := by
-          simpa [CD, θ] using
-            const_mul_rpow_max_one_le_exp_logSq
-              (A := Aextra) (θ := θ) (p := pextra)
-              hAextra_pos hInf.thetaHat_pos.le hpextra_nonneg
+  have hD_exp : D ≤ Real.exp (CD * (Real.log (2 + θ)) ^ (2 : ℕ)) := by
+    simpa [D, CD, Aextra, pextra] using
+      powered_square_scale_le_exponential_logarithm (K := Kunit) hInf.thetaHat_pos.le hα_pos
   have hscale_final :
       Ksup * max AJ D ≤
         Real.exp
           (Cscale * (Real.log (2 + θ)) ^ (2 : ℕ)) := by
-    let L2 : ℝ := (Real.log (2 + θ)) ^ (2 : ℕ)
-    let Ck : ℝ := 4 * max 0 (Real.log Ksup)
-    have hL2_nonneg : 0 ≤ L2 := by dsimp [L2]; positivity
-    have hAJ_le : AJ ≤ Real.exp ((CJ + CD) * L2) := by
-      refine Real.exp_le_exp.mpr ?_
-      dsimp [AJ, L2]
-      nlinarith [mul_nonneg hCD_nonneg hL2_nonneg]
-    have hD_le : D ≤ Real.exp ((CJ + CD) * L2) := by
-      calc
-        D ≤ Real.exp (CD * L2) := by simpa [L2] using hD_exp
-        _ ≤ Real.exp ((CJ + CD) * L2) := by
-            refine Real.exp_le_exp.mpr ?_
-            nlinarith [mul_nonneg hCJ_pos.le hL2_nonneg]
-    have hmax_le : max AJ D ≤ Real.exp ((CJ + CD) * L2) :=
-      max_le hAJ_le hD_le
-    have hK_le : Ksup ≤ Real.exp (Ck * L2) := by
-      have hraw :=
-        const_mul_rpow_max_one_le_exp_logSq
-          (A := Ksup) (θ := θ) (p := (0 : ℝ))
-          hKsup_pos hInf.thetaHat_pos.le (by norm_num)
-      simpa [Ksup, Ck, L2, θ] using hraw
-    calc
-      Ksup * max AJ D
-          ≤ Ksup * Real.exp ((CJ + CD) * L2) :=
-            mul_le_mul_of_nonneg_left hmax_le hKsup_pos.le
-      _ ≤ Real.exp (Ck * L2) * Real.exp ((CJ + CD) * L2) :=
-            mul_le_mul_of_nonneg_right hK_le (Real.exp_pos _).le
-      _ = Real.exp (Cscale * L2) := by
-            rw [← Real.exp_add]
-            dsimp [Cscale, Ck]
-            ring_nf
+    simpa [Cscale, AJ] using scaled_maximum_le_exponential_logarithm
+      (K := Ksup) (θ := θ) (firstCoefficient := CJ) (secondCoefficient := CD)
+      hKsup_pos hInf.thetaHat_pos.le hCJ_pos.le hCD_nonneg (le_refl _) hD_exp
   have hO :
       IsBigO P (gammaSigma η) X
         (Real.exp
@@ -666,40 +650,17 @@ theorem exists_homogenizationErrorOnOriginCube_uniformEndpoint_expLogSq
         Real.rpow (3 : ℝ) (-τ * ((m - n : ℕ) : ℝ)) *
             localizedNormalizedProbeJMax hP hStruct m n aω ≤
           ((3 : ℝ) ^ m / XJ aω) ^ (-α) := by
-    intro n hXJn hnm
-    let W : ℝ := Real.rpow (3 : ℝ) (-τ * ((m - n : ℕ) : ℝ))
-    have hW_pos : 0 < W := by
-      dsimp [W]
-      positivity
-    exact
-      weighted_localizedNormalizedProbeJMax_le_of_forall_probe
-        hP hStruct (m := m) (n := n) aω (W := W)
-        (R := ((3 : ℝ) ^ m / XJ aω) ^ (-α))
-        hW_pos
-        (by
-          intro i
-          simpa [W] using hJprobe i hXJn hnm)
+    exact localized_probe_bound_of_individual_responses hP hStruct
+      (by intro i n; exact hJprobe i)
   have hα_le_τ : α ≤ τ := by nlinarith
   have hUnit_m :
       localizedLimitWeightedUnitEllipticitySup hP hStruct hΓ.params m aω ≤
         (Real.rpow (3 : ℝ) ((τ / 2) * (m : ℝ)) *
           Real.sqrt (((3 : ℝ) ^ m / D) ^ (-α))) ^ (2 : ℕ) := by
-    have hunit' :
-        localizedLimitWeightedUnitEllipticitySup hP hStruct hInf.params m aω ≤
-          Kunit * θ ^ (2 : ℕ) := by
-      exact hUnit m
-    calc
-      localizedLimitWeightedUnitEllipticitySup hP hStruct hΓ.params m aω
-          =
-        localizedLimitWeightedUnitEllipticitySup hP hStruct hInf.params m aω := by
-          simp [hΓ, GammaInfinityCoarseGrainedEllipticity.toGammaSigma]
-      _ ≤ Kunit * θ ^ (2 : ℕ) := hunit'
-      _ ≤
-        (Real.rpow (3 : ℝ) ((τ / 2) * (m : ℝ)) *
-          Real.sqrt (((3 : ℝ) ^ m / D) ^ (-α))) ^ (2 : ℕ) :=
-            deterministic_unitEllipticity_bound_le_squareEnvelope
-              (K := Kunit) (θ := θ) (D := D) (τ := τ) (α := α)
-              (m := m) hKD_le hD_pos hα_le_τ
+    exact (hUnit m).trans
+      (deterministic_unitEllipticity_bound_le_squareEnvelope
+        (K := Kunit) (θ := θ) (D := D) (τ := τ) (α := α)
+        (m := m) hKD_le hD_pos hα_le_τ)
   simpa [X, hΓ, GammaInfinityCoarseGrainedEllipticity.toGammaSigma] using
     homogenizationErrorOnOriginCube_le_of_two_minimalScales_probeJ
       hP hStruct hΓ ha (m := m) (r := r) (τ := τ)

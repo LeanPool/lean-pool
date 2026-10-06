@@ -40,11 +40,13 @@ zero-function API. Overlap finite dual tests live in
 `HCPolySupport.Besov.Duality.OverlapDefinitions`.
 -/
 
+/-- The normalized cube average of the product of two scalar functions. -/
 @[expose]
 noncomputable def cubeBesovPairing {d : ℕ} (Q : TriadicCube d)
     (f g : Vec d → ℝ) : ℝ :=
   cubeAverage Q (fun x => f x * g x)
 
+/-- The Hölder conjugate of an extended nonnegative exponent. -/
 @[expose]
 noncomputable def cubeBesovConjExponent (p : ℝ≥0∞) : ℝ≥0∞ :=
   ENNReal.conjExponent p
@@ -53,6 +55,8 @@ theorem cubeBesovConjExponent_ne_zero (p : ℝ≥0∞) :
     cubeBesovConjExponent p ≠ 0 := by
   simp [cubeBesovConjExponent, ENNReal.conjExponent]
 
+/-- The finite positive Besov norm at conjugate exponents, using the maximum branch when `q' =
+∞`. -/
 @[expose]
 noncomputable def cubeBesovDualTestNorm {d : ℕ} (Q : TriadicCube d) (s : ℝ)
     (p q : ℝ≥0∞) (N : ℕ) (g : Vec d → ℝ) : ℝ :=
@@ -61,6 +65,8 @@ noncomputable def cubeBesovDualTestNorm {d : ℕ} (Q : TriadicCube d) (s : ℝ)
   else
     cubeBesovPartialNorm Q s (cubeBesovConjExponent p) (cubeBesovConjExponent q) N g
 
+/-- The finite positive Besov seminorm at conjugate exponents, using the maximum branch when `q'
+= ∞`. -/
 @[expose]
 noncomputable def cubeBesovDualTestSeminorm {d : ℕ} (Q : TriadicCube d) (s : ℝ)
     (p q : ℝ≥0∞) (N : ℕ) (g : Vec d → ℝ) : ℝ :=
@@ -113,6 +119,7 @@ theorem cubeBesovDualTestNorm_eq_cubeBesovDualTestSeminorm_of_cubeAverage_eq_zer
     rw [havg]
     simp
 
+/-- Membership of every descendant fluctuation through depth `N` in normalized `Lᵖ'`. -/
 @[expose]
 def CubeBesovDualLocalMemLp {d : ℕ} (Q : TriadicCube d)
     (p : ℝ≥0∞) (N : ℕ) (g : Vec d → ℝ) : Prop :=
@@ -120,12 +127,15 @@ def CubeBesovDualLocalMemLp {d : ℕ} (Q : TriadicCube d)
     MeasureTheory.MemLp (cubeFluctuation R g)
       (cubeBesovConjExponent p) (normalizedCubeMeasure R)
 
+/-- A test function with conjugate Besov norm at most one and local `Lᵖ'` fluctuations. -/
 @[expose]
 def CubeBesovDualTest {d : ℕ} (Q : TriadicCube d) (s : ℝ)
     (p q : ℝ≥0∞) (N : ℕ) (g : Vec d → ℝ) : Prop :=
   cubeBesovDualTestNorm Q s p q N g ≤ 1 ∧
     CubeBesovDualLocalMemLp Q p N g
 
+/-- A mean-zero test function with conjugate Besov seminorm at most one and local `Lᵖ'`
+fluctuations. -/
 @[expose]
 def CubeBesovDualMeanZeroTest {d : ℕ} (Q : TriadicCube d) (s : ℝ)
     (p q : ℝ≥0∞) (N : ℕ) (g : Vec d → ℝ) : Prop :=
@@ -185,22 +195,27 @@ theorem cubeBesovDualLocalMemLp_const {d : ℕ} (Q : TriadicCube d)
       MeasureTheory.MemLp (fun _ : Vec d => (0 : ℝ))
         (cubeBesovConjExponent p) (normalizedCubeMeasure R))
 
+/-- Absolute normalized pairings with all admissible finite-depth Besov norm tests. -/
 @[expose]
 def cubeBesovDualPartialNormValueSet {d : ℕ} (Q : TriadicCube d) (s : ℝ)
     (p q : ℝ≥0∞) (N : ℕ) (f : Vec d → ℝ) : Set ℝ :=
   {r | ∃ g : Vec d → ℝ, CubeBesovDualTest Q s p q N g ∧ r = |cubeBesovPairing Q f g|}
 
+/-- Absolute normalized pairings with all admissible finite-depth mean-zero Besov tests. -/
 @[expose]
 def cubeBesovDualPartialSeminormValueSet {d : ℕ} (Q : TriadicCube d) (s : ℝ)
     (p q : ℝ≥0∞) (N : ℕ) (f : Vec d → ℝ) : Set ℝ :=
   {r | ∃ g : Vec d → ℝ, CubeBesovDualMeanZeroTest Q s p q N g ∧
       r = |cubeBesovPairing Q f g|}
 
+/-- The real supremum of absolute pairings against admissible finite-depth Besov norm tests. -/
 @[expose]
 noncomputable def cubeBesovDualPartialNorm {d : ℕ} (Q : TriadicCube d) (s : ℝ)
     (p q : ℝ≥0∞) (N : ℕ) (f : Vec d → ℝ) : ℝ :=
   sSup (cubeBesovDualPartialNormValueSet Q s p q N f)
 
+/-- The real supremum of absolute pairings against admissible finite-depth mean-zero Besov
+tests. -/
 @[expose]
 noncomputable def cubeBesovDualPartialSeminorm {d : ℕ} (Q : TriadicCube d) (s : ℝ)
     (p q : ℝ≥0∞) (N : ℕ) (f : Vec d → ℝ) : ℝ :=

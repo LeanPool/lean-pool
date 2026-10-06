@@ -193,6 +193,8 @@ carry a measurable/topological structure, we pass through the raw function type
 `BlockCoord d → BlockCoord d → ℝ`, which does.
 -/
 
+/-- The real linear map taking full `2d × 2d` entries to the corresponding operator on Hilbert
+block vectors. -/
 @[expose]
 noncomputable def fullEntriesToHilbertOperatorLinear (d : ℕ) :
     (BlockCoord d → BlockCoord d → ℝ) →ₗ[ℝ]
@@ -225,6 +227,8 @@ noncomputable def fullEntriesToHilbertOperatorLinear (d : ℕ) :
       intro i
       simp [ofFullBlockMat, blockMatVecMul, matVecMul, Finset.mul_sum, mul_assoc]
 
+/-- The continuous linear map taking full `2d × 2d` entries to the corresponding operator on
+Hilbert block vectors. -/
 @[expose]
 noncomputable def fullEntriesToHilbertOperator (d : ℕ) :
     (BlockCoord d → BlockCoord d → ℝ) →L[ℝ]

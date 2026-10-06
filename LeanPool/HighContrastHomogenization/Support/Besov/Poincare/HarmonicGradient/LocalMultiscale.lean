@@ -31,7 +31,7 @@ The local input controls oscillation by a sum of componentwise local circ
 partial norms; after averaging over descendants, the component and depth sums
 shift to the parent cube. -/
 theorem
-  cubeBesovDepthSeminorm_two_le_weighted_shifted_sum_components_of_vector_local_circ_bound_poincare
+  cubeBesovDepthSeminorm_two_le_weighted_circSum_of_localPoincare
     {d : ℕ} (Q : TriadicCube d) (s C : ℝ) (u : Vec d → ℝ) (G : Vec d → Vec d)
     (j N : ℕ) (hC : 0 ≤ C)
     (hlocal : ∀ R ∈ descendantsAtDepth Q j,
@@ -214,7 +214,7 @@ theorem CubeLocalMultiscalePoincareVectorEstimate.partialSeminormTop_two_le_geom
             cubeBesovCircDepthSeminorm Q (1 - s) (2 : ℝ≥0∞)
               (fun x => G x i) (j + n) := by
     exact
-      cubeBesovDepthSeminorm_two_le_weighted_shifted_sum_components_of_vector_local_circ_bound_poincare
+      cubeBesovDepthSeminorm_two_le_weighted_circSum_of_localPoincare
         Q s C u G j (M - j) hC (by
           intro R hR
           exact hlocal j hj R hR)

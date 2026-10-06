@@ -477,10 +477,12 @@ theorem respSourceLoad_summand_nonneg {d : ℕ} (P : Measure (CoeffSpace d)) (jS
       ((((triadicIndexBox d n).card : ℝ))⁻¹ *
         ∑ z ∈ triadicIndexBox d n,
           (Real.sqrt (vecDot Y.1 (matVecMul
-                (annealedBlockOf P (adaptedCellAtCenter (respGrid jStar F) (s - (n : ℤ)) z) b).upperLeft
+                (annealedBlockOf P (adaptedCellAtCenter (respGrid jStar F) (s - (n : ℤ)) z)
+                  b).upperLeft
                 Y.1)) +
             Real.sqrt (vecDot Y.2 (matVecMul
-                (annealedBlockOf P (adaptedCellAtCenter (respGrid jStar F) (s - (n : ℤ)) z) b).lowerRight
+                (annealedBlockOf P (adaptedCellAtCenter (respGrid jStar F) (s - (n : ℤ)) z)
+                  b).lowerRight
                 Y.2))) ^ 2) := by
   refine mul_nonneg (le_of_lt (Real.rpow_pos_of_pos (by norm_num) _)) ?_
   exact mul_nonneg (inv_nonneg.mpr (Nat.cast_nonneg _))
@@ -555,7 +557,8 @@ theorem respSourceLoadSummand_zero {d : ℕ} [NeZero d] (P : Measure (CoeffSpace
       = (Real.sqrt (vecDot Y.1 (matVecMul
             (annealedBlockOf P (adaptedCellAtCenter (respGrid jStar F) s 0) b).upperLeft Y.1))
           + Real.sqrt (vecDot Y.2 (matVecMul
-            (annealedBlockOf P (adaptedCellAtCenter (respGrid jStar F) s 0) b).lowerRight Y.2))) ^ 2 := by
+            (annealedBlockOf P (adaptedCellAtCenter (respGrid jStar F) s 0) b).lowerRight Y.2)))
+              ^ 2 := by
   unfold respSourceLoadSummand
   rw [triadicIndexBox_zero d]
   simp only [Nat.cast_zero, mul_zero, Real.rpow_zero, one_mul, Finset.card_singleton,

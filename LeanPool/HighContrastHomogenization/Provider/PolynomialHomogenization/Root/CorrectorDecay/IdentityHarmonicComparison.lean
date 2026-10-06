@@ -84,7 +84,7 @@ private theorem cubeBesovNegativeVectorSeminormTwo_le_responseError
         geometricWeight_nonneg n (by nlinarith only [hs.le])
     · exact Real.rpow_nonneg
         (Book.Ch02.scaleResponseAtScale_infinity_nonneg Q
-          (sub_le_self _ (by exact_mod_cast Nat.zero_le n)) a a0) _
+          (sub_le_self _ (Nat.cast_nonneg n)) a a0) _
   have hsum : Summable coeff := by
     simpa only [coeff] using
       Book.Ch02.summable_geometricWeight_two_mul_maxDescendantNormalizedBlockResponseAtScale
@@ -96,7 +96,7 @@ private theorem cubeBesovNegativeVectorSeminormTwo_le_responseError
       (by simpa only [Book.Ch02.geometricWeight_eq_old] using
         geometricWeight_nonneg n (by nlinarith only [hs.le]))
       (Book.Ch02.maxDescendantNormalizedBlockResponseAtScale_nonneg Q
-        (sub_le_self _ (by exact_mod_cast Nat.zero_le n)) a a0)
+        (sub_le_self _ (Nat.cast_nonneg n)) a a0)
   let B : ℝ :=
     Real.rpow (Book.Ch02.geometricDiscount s 2) (-1 / 2 : ℝ) *
       Real.sqrt ((4 : ℝ) * matNorm a0) *
@@ -272,6 +272,94 @@ private theorem
   exact Book.Ch03.cubeBesovDualFullNorm_eq_of_ae_eq_on_cubeSet
     s (2 : ℝ≥0∞) (2 : ℝ≥0∞) (hFG.fun_comp fun z ↦ z i)
 
+private theorem identity_flux_defect_dual_le_response_error
+    {d : ℕ} [NeZero d] {g : ℝ} (hg : g ∈ Set.Ico (0 : ℝ) 1)
+    (a : Book.Ch03.CoeffFamily d) (m : ℤ)
+    (u : H1Function (Book.Ch02.cubeDomain (originCube d m) : Set (Vec d)))
+    (hu : IsWeakSolutionOn (a.coeffOn (originCube d m)).toCoeffField
+      (Book.Ch02.cubeDomain (originCube d m) : Set (Vec d)) u.grad) :
+    cubeScaleNormalizedDualNegativeBesovVectorNormTwo
+        (originCube d m) (printCertificateOrder g)
+        (fluxDefect (Book.Ch03.publicCoeffField (originCube d m) a) (1 : Mat d) u.grad) ≤
+      ((d : ℝ) * Real.rpow 3 ((d : ℝ) + printCertificateOrder g) *
+        (Real.rpow (Book.Ch02.geometricDiscount (printCertificateOrder g) 2)
+          (-1 / 2 : ℝ) * Real.sqrt ((4 : ℝ) * matNorm (1 : Mat d)))) *
+        scalarIdentityWeakError a (printCertificateOrder g) m *
+        Book.Ch03.h1EnergyNormOnCube (originCube d m) a u := by
+  let s : ℝ := printCertificateOrder g
+  let Q := originCube d m
+  let a0 := identityConstantCoeffMatrix d
+  let E := scalarIdentityWeakError a s m
+  let A := Book.Ch03.h1EnergyNormOnCube Q a u
+  let F := fluxDefect (Book.Ch03.publicCoeffField Q a) (1 : Mat d) u.grad
+  let Kr : ℝ := Real.rpow (Book.Ch02.geometricDiscount s 2) (-1 / 2 : ℝ) *
+    Real.sqrt ((4 : ℝ) * matNorm (1 : Mat d))
+  let Kd : ℝ := (d : ℝ) * Real.rpow 3 ((d : ℝ) + s)
+  let B : ℝ := Kd * Kr
+  have hs : 0 < s := (printOrder_margins hg).1
+  have hEll := Book.Ch03.publicCoeffField_isEllipticFieldOn_cubeSet Q a
+  have huWeak :=
+    Book.Ch03.isH1DirichletRhsWeakSolutionOn_publicCoeffField_cubeSet_of_isForcedEquation
+      (isForcedEquation_zero_of_isWeakSolutionOn u hu)
+  let uh : AHarmonicFunction (Book.Ch03.publicCoeffField Q a) (cubeSet Q) :=
+    { toH1 := Book.Ch03.publicH1ToCubeSet u
+      isHarmonic := ⟨(Book.Ch03.publicH1ToCubeSet u).isPotentialOn, by
+        simpa [Book.Ch03.publicH1ToCubeSet_grad] using
+          huWeak.residual_solenoidal hEll MeasureTheory.MemLp.zero⟩ }
+  let energy := scalarVariationEnergyIntegrand
+    (Book.Ch03.publicCoeffField Q a) uh
+  let := isFiniteMeasureVolumeMeasureOnCubeSet Q
+  have henergy0 : ∀ x ∈ cubeSet Q, 0 ≤ energy x := by
+    exact scalarVariationEnergyIntegrand_nonneg_of_isEllipticFieldOn
+      (cubeSet Q) _ hEll uh
+  have henergyInt : IntegrableOn energy (cubeSet Q) volume := by
+    exact ResponseLinearIntegrabilityData.energy
+      (ResponseLinearIntegrabilityData.of_isEllipticFieldOn hEll) uh
+  have hresp : CubeAverageFluxResponseControl Q
+      (Book.Ch03.publicCoeffField Q a) (1 : Mat d) F energy := by
+    simpa [F, energy, uh, fluxDefect, Book.Ch03.publicH1ToCubeSet_grad] using!
+      cubeAverageFluxResponseControl_of_aHarmonicFunction Q
+        (Book.Ch03.publicCoeffField Q a) (1 : Mat d) hEll
+        (identityConstantCoeffMatrix d).elliptic
+        (identityConstantCoeffMatrix d).isSymm uh
+  have hrec := cubeBesovNegativeVectorSeminormTwo_le_responseError
+    Q a (1 : Mat d) s hs F energy henergy0 henergyInt hresp
+  have henergyFun : energy = coefficientEnergyDensity
+      (Book.Ch03.publicCoeffField Q a) u.grad := by
+    funext x
+    change vecDot ((Book.Ch03.publicH1ToCubeSet u).grad x)
+        (matVecMul (symmPart (Book.Ch03.publicCoeffField Q a x))
+          ((Book.Ch03.publicH1ToCubeSet u).grad x)) = _
+    rw [Book.Ch03.publicH1ToCubeSet_grad]
+    rfl
+  have henergyEq : Real.sqrt (cubeAverage Q energy) = A := by
+    dsimp only [A]
+    rw [Book.Ch03.h1EnergyNormOnCube_eq_sqrt_cubeAverage_coefficientEnergyDensity_publicCoeffField]
+    rw [henergyFun]
+  rw [henergyEq] at hrec
+  have hconcrete : cubeBesovNegativeVectorSeminormTwo Q s F ≤ Kr * E * A := by
+    simpa only [Kr, E, scalarIdentityWeakError] using hrec
+  have hFmem : MemVectorL2 (cubeSet Q) F := by
+    simpa only [Q, F, a0, identityConstantCoeffMatrix_matrix] using
+      Book.Ch03.publicH1_fluxDefect_memVectorL2_descendant_cubeSet
+        (Q := Q) (R := Q) (a := a) (a0 := a0) (j := 0) u (by simp)
+  have hKd : 0 ≤ Kd := by
+    exact mul_nonneg (Nat.cast_nonneg d) (Real.rpow_nonneg (by norm_num) _)
+  have hFdual : cubeScaleNormalizedDualNegativeBesovVectorNormTwo Q s F ≤
+      B * E * A := by
+    have hraw :=
+      Book.Ch03.normalizedDualNegativeBesovNormTwo_le_constant_mul_negativeBesovSeminormTwo
+        Q s F hs hFmem
+    rw [Book.Ch03.scaleNormalizedDualNegativeBesovVectorNormTwo,
+      Book.Ch03.publicDualBesovScaleWeight_eq_cubeBesovScaleWeight] at hraw
+    calc
+      cubeScaleNormalizedDualNegativeBesovVectorNormTwo Q s F ≤
+          Kd * cubeBesovNegativeVectorSeminormTwo Q s F := by
+            simpa only [Kd] using! hraw
+      _ ≤ Kd * (Kr * E * A) := mul_le_mul_of_nonneg_left hconcrete hKd
+      _ = B * E * A := by dsimp only [B]; ring
+  exact hFdual
+
 /-- In the exact gauge frame the printed finite response recurrence closes
 directly against the identity dual regularity theorem.  No rounded reference,
 generation, or tolerance occurs in the statement. -/
@@ -329,67 +417,13 @@ theorem exists_identityHarmonicComparisonConstant
   let A := Book.Ch03.h1EnergyNormOnCube Q a u
   let F := fluxDefect (Book.Ch03.publicCoeffField Q a) (1 : Mat d) u.grad
   let wdiff : Vec d → Vec d := fun x ↦ u.grad x - W.v.grad x
-  have hEll := Book.Ch03.publicCoeffField_isEllipticFieldOn_cubeSet Q a
-  have huWeak :=
-    Book.Ch03.isH1DirichletRhsWeakSolutionOn_publicCoeffField_cubeSet_of_isForcedEquation
-      (isForcedEquation_zero_of_isWeakSolutionOn u hu)
-  let uh : AHarmonicFunction (Book.Ch03.publicCoeffField Q a) (cubeSet Q) :=
-    { toH1 := Book.Ch03.publicH1ToCubeSet u
-      isHarmonic := ⟨(Book.Ch03.publicH1ToCubeSet u).isPotentialOn, by
-        simpa [Book.Ch03.publicH1ToCubeSet_grad] using
-          huWeak.residual_solenoidal hEll MeasureTheory.MemLp.zero⟩ }
-  let energy := scalarVariationEnergyIntegrand
-    (Book.Ch03.publicCoeffField Q a) uh
-  let := isFiniteMeasureVolumeMeasureOnCubeSet Q
-  have henergy0 : ∀ x ∈ cubeSet Q, 0 ≤ energy x := by
-    exact scalarVariationEnergyIntegrand_nonneg_of_isEllipticFieldOn
-      (cubeSet Q) _ hEll uh
-  have henergyInt : IntegrableOn energy (cubeSet Q) volume := by
-    exact ResponseLinearIntegrabilityData.energy
-      (ResponseLinearIntegrabilityData.of_isEllipticFieldOn hEll) uh
-  have hresp : CubeAverageFluxResponseControl Q
-      (Book.Ch03.publicCoeffField Q a) (1 : Mat d) F energy := by
-    simpa [F, energy, uh, fluxDefect, Book.Ch03.publicH1ToCubeSet_grad] using!
-      cubeAverageFluxResponseControl_of_aHarmonicFunction Q
-        (Book.Ch03.publicCoeffField Q a) (1 : Mat d) hEll
-        (identityConstantCoeffMatrix d).elliptic
-        (identityConstantCoeffMatrix d).isSymm uh
-  have hrec := cubeBesovNegativeVectorSeminormTwo_le_responseError
-    Q a (1 : Mat d) s hs F energy henergy0 henergyInt hresp
-  have henergyFun : energy = coefficientEnergyDensity
-      (Book.Ch03.publicCoeffField Q a) u.grad := by
-    funext x
-    change vecDot ((Book.Ch03.publicH1ToCubeSet u).grad x)
-        (matVecMul (symmPart (Book.Ch03.publicCoeffField Q a x))
-          ((Book.Ch03.publicH1ToCubeSet u).grad x)) = _
-    rw [Book.Ch03.publicH1ToCubeSet_grad]
-    rfl
-  have henergyEq : Real.sqrt (cubeAverage Q energy) = A := by
-    dsimp only [A]
-    rw [Book.Ch03.h1EnergyNormOnCube_eq_sqrt_cubeAverage_coefficientEnergyDensity_publicCoeffField]
-    rw [henergyFun]
-  rw [henergyEq] at hrec
-  have hconcrete : cubeBesovNegativeVectorSeminormTwo Q s F ≤ Kr * E * A := by
-    simpa only [Kr, E, scalarIdentityWeakError] using hrec
+  have hFdual : cubeScaleNormalizedDualNegativeBesovVectorNormTwo Q s F ≤
+      B * E * A :=
+    identity_flux_defect_dual_le_response_error hg a m u hu
   have hFmem : MemVectorL2 (cubeSet Q) F := by
     simpa only [Q, F, a0, identityConstantCoeffMatrix_matrix] using
       Book.Ch03.publicH1_fluxDefect_memVectorL2_descendant_cubeSet
         (Q := Q) (R := Q) (a := a) (a0 := a0) (j := 0) u (by simp)
-  have hKd : 0 ≤ Kd := by
-    exact mul_nonneg (Nat.cast_nonneg d) (Real.rpow_nonneg (by norm_num) _)
-  have hFdual : cubeScaleNormalizedDualNegativeBesovVectorNormTwo Q s F ≤
-      B * E * A := by
-    have hraw :=
-      Book.Ch03.scaleNormalizedDualNegativeBesovVectorNormTwo_le_note_constant_mul_cubeBesovNegativeVectorSeminormTwo
-        Q s F hs hFmem
-    rw [Book.Ch03.scaleNormalizedDualNegativeBesovVectorNormTwo,
-      Book.Ch03.publicDualBesovScaleWeight_eq_cubeBesovScaleWeight] at hraw
-    calc
-      cubeScaleNormalizedDualNegativeBesovVectorNormTwo Q s F ≤
-          Kd * cubeBesovNegativeVectorSeminormTwo Q s F := by
-            simpa only [Kd] using! hraw
-      _ ≤ Kd * (Kr * E * A) := mul_le_mul_of_nonneg_left hconcrete hKd
-      _ = B * E * A := by dsimp only [B]; ring
   have hWu : W.u = u := by
     simpa only [W] using identityHarmonicReplacementDatum_u a m u hu
   have hpair := W.isHomogenizationComparisonPairOn_publicCoeffField_cubeSet

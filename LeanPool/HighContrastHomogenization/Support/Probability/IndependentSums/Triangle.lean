@@ -47,29 +47,32 @@ def upperTailIndicator (X : Ω → ℝ) (r : ℝ) : Ω → ℝ :=
     upperTailIndicator X r ω = if r < X ω then X ω else 0 :=
   rfl
 
-@[simp] theorem upperTailIndicator_of_lt {X : Ω → ℝ} {r : ℝ} {ω : Ω}
+theorem upperTailIndicator_of_lt {X : Ω → ℝ} {r : ℝ} {ω : Ω}
     (h : r < X ω) :
     upperTailIndicator X r ω = X ω := by
-  simp [upperTailIndicator, upperTailEvent, h]
+  simp only [upperTailIndicator, upperTailEvent, Set.mem_ofPred_eq, h, Set.indicator_of_mem]
 
-@[simp] theorem upperTailIndicator_of_not_lt {X : Ω → ℝ} {r : ℝ} {ω : Ω}
+theorem upperTailIndicator_of_not_lt {X : Ω → ℝ} {r : ℝ} {ω : Ω}
     (h : ¬ r < X ω) :
     upperTailIndicator X r ω = 0 := by
-  simp [upperTailIndicator, upperTailEvent, h]
+  simp only [upperTailIndicator, upperTailEvent, Set.mem_ofPred_eq, h, not_false_eq_true,
+    Set.indicator_of_notMem]
 
 theorem upperTailIndicator_nonneg {X : Ω → ℝ} {r : ℝ}
     (hr : 0 ≤ r) (ω : Ω) :
     0 ≤ upperTailIndicator X r ω := by
   by_cases h : r < X ω
   · simpa [upperTailIndicator, upperTailEvent, h] using le_trans hr (le_of_lt h)
-  · simp [upperTailIndicator, upperTailEvent, h]
+  · simp only [upperTailIndicator, upperTailEvent, Set.mem_ofPred_eq, h, not_false_eq_true,
+    Set.indicator_of_notMem, Std.le_refl]
 
 theorem le_upperTailIndicator_add {X : Ω → ℝ} {r : ℝ}
     (hr : 0 ≤ r) (ω : Ω) :
     X ω ≤ upperTailIndicator X r ω + r := by
   by_cases h : r < X ω
   · simp [upperTailIndicator, upperTailEvent, h, hr]
-  · simp [upperTailIndicator, upperTailEvent, h]
+  · simp only [upperTailIndicator, upperTailEvent, Set.mem_ofPred_eq, h, not_false_eq_true,
+    Set.indicator_of_notMem, zero_add]
     exact not_lt.mp h
 
 theorem sum_le_sum_upperTailIndicator_add_sum

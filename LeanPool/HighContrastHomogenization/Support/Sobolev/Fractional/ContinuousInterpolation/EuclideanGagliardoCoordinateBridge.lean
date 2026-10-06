@@ -161,7 +161,7 @@ private theorem sum_scalar_gagliardoKernel_eq_distance_mul_numerator {d : ℕ}
       rw [sum_enorm_sq_coordinate_diff_eq_ofReal_numerator]
 
 private theorem euclideanHsIntegrand_le_sum_scalar_gagliardoKernel {d : ℕ}
-    [NeZero d] (s : FractionalOrder) (F : UnitCubeEuclideanL2Field d)
+    (s : FractionalOrder) (F : UnitCubeEuclideanL2Field d)
     (z : Vec d × Vec d) :
     euclideanHsIntegrand s F z ≤
       ∑ i : Fin d,

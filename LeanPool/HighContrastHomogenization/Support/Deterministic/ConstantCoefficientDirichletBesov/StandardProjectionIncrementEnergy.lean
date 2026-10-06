@@ -322,7 +322,7 @@ theorem sq_overlapCubeLpNorm_overlapCubeFluctuationVec_cubeIncrementVec_le_four_
             cubeAverage R (fun y => (u y i - cubeAverageVec T u i) ^ 2) := by
     exact Finset.sum_nonneg fun R hR => childEnergy_sum_nonneg T R u
   exact
-    sq_overlapCubeLpNorm_two_overlapCubeFluctuationVec_le_four_mul_of_forall_overlapCubeSet_vecNormSq_le
+    sq_overlapCubeLpNorm_fluctuation_le_four_pointwiseBound
       (S := S) (u := cubeIncrementVec Q (m + 1) u) hinc hB
       (fun x hxS =>
         vecNormSq_cubeIncrementVec_le_childEnergy_sum_of_mem_parent
@@ -387,7 +387,7 @@ theorem vecNormSq_cubeIncrementVec_le_overlapIntersectingParentEnergy_sum
             (fun A _hA => parentChildEnergy_sum_nonneg A u) hTneighbor
 
 /-- Overlap-fluctuation local-neighbor budget for one martingale increment. -/
-theorem sq_overlapCubeLpNorm_overlapCubeFluctuationVec_cubeIncrementVec_le_four_mul_overlapIntersectingParentEnergy_sum
+theorem overlapCubeLpNorm_fluctuationIncrement_le_fourParentEnergySum
     {d : ℕ} {Q S : TriadicCube d} {m : ℕ} (u : Vec d → Vec d)
     (hSsub : overlapCubeSet S ⊆ cubeSet Q)
     (hinc :
@@ -411,7 +411,7 @@ theorem sq_overlapCubeLpNorm_overlapCubeFluctuationVec_cubeIncrementVec_le_four_
               cubeAverage R (fun y => (u y i - cubeAverageVec T u i) ^ 2) := by
     exact Finset.sum_nonneg fun T _hT => parentChildEnergy_sum_nonneg T u
   exact
-    sq_overlapCubeLpNorm_two_overlapCubeFluctuationVec_le_four_mul_of_forall_overlapCubeSet_vecNormSq_le
+    sq_overlapCubeLpNorm_fluctuation_le_four_pointwiseBound
       (S := S) (u := cubeIncrementVec Q (m + 1) u) hinc hB
       (fun x hxS =>
         vecNormSq_cubeIncrementVec_le_overlapIntersectingParentEnergy_sum

@@ -306,7 +306,7 @@ theorem
 /-- Flux-energy controls may be localized by a local-patch indicator on a cube
 contained in the patch. -/
 theorem
-    CoarseCaccioppoliFluxEnergyControls.indicator_coarseCaccioppoliLocalClosedPatch_of_cubeSet_subset
+    CoarseCaccioppoliFluxEnergyControls.indicator_coarseCaccioppoli_of_cubeSubset
     {d : ℕ} {Q R : TriadicCube d} (center : Vec d) (rho : ℝ)
     {a : CoeffField d} {s : ℝ} {flux : Vec d → Vec d} {energy : Vec d → ℝ}
     (hctrl : CoarseCaccioppoliFluxEnergyControls R a s flux energy)

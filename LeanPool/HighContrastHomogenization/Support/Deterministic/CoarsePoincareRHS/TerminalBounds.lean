@@ -324,7 +324,7 @@ theorem cubeBesovNegativeVectorPartialSeminorm_le_seminorm_of_memLp {d : ℕ}
   cubeBesovNegativeVectorPartialSeminorm_le_seminorm_of_bddAbove Q s u
     (cubeBesovNegativeVectorPartialSeminorm_bddAbove_of_memLp Q hs u hu) N
 
-theorem cubeBesovScaleWeight_mul_cubeBesovNegativeVectorPartialSeminorm_le_mul_cubeBesovNegativeVectorSeminorm_of_memLp
+theorem cubeBesovScaleWeight_mul_negativePartialSeminorm_le_mul_negativeSeminorm
     {d : ℕ} (Q : TriadicCube d) {s : ℝ} (hs : 0 < s) (w : ℝ)
     (u : Vec d → Vec d) (N : ℕ)
     (hu : MeasureTheory.MemLp u (2 : ENNReal) (normalizedCubeMeasure Q)) :

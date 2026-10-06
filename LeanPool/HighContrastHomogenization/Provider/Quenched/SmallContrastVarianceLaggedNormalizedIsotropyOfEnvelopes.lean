@@ -37,6 +37,349 @@ noncomputable section
 
 variable {d : ℕ}
 
+private theorem schatten_parent_le_normalized_variance_majorant [NeZero d]
+    {P : Measure (CoeffSpace d)} {q : Mat d} {j p : ℤ}
+    (Z : Finset (Fin d → ℤ)) {F : BlockMat d}
+    (hFsym : IsSymmetricBlockMat F) (hFpd : Book.Ch02.BlockPosDef F)
+    (hmeanpsym : IsSymmetricBlockMat (adaptedMean P q p))
+    (hmeanppd : Book.Ch02.BlockPosDef (adaptedMean P q p))
+    {cN c1 c2 drop : ℝ} (hcN1 : 1 ≤ cN)
+    (hmeanpF2 : toFullBlockMat (adaptedMean P q p) ≤ cN • toFullBlockMat F)
+    (hreplacement : ∀ a : CoeffSpace d,
+      blockSize (blockSub (coarseBlock (adaptedCell q p) a) (adaptedMean P q p))
+        (adaptedMean P q p) ≤
+      c1 * blockSize
+        (blockSub (ofFullBlockMat ((Z.card : ℝ)⁻¹ •
+          ∑ w ∈ Z, toFullBlockMat (coarseBlock (adaptedCellAt q j w) a)))
+          (adaptedMean P q j)) (adaptedMean P q p) + (c2 + 4 * (d : ℝ) * drop)) :
+    ∀ a : CoeffSpace d,
+      schattenSize 2
+        (blockSub (coarseBlock (adaptedCell q p) a) (adaptedMean P q p))
+        F ≤
+      Real.sqrt (2 * d) * cN *
+        (c1 * blockSize
+          (blockSub (ofFullBlockMat ((Z.card : ℝ)⁻¹ •
+            ∑ w ∈ Z,
+              toFullBlockMat (coarseBlock (adaptedCellAt q j w) a)))
+            (adaptedMean P q j)) (adaptedMean P q p) +
+          (c2 + 4 * (d : ℝ) * drop)) := by
+  classical
+  have hpath : ∀ a : CoeffSpace d,
+      schattenSize 2
+        (blockSub (coarseBlock (adaptedCell q p) a) (adaptedMean P q p))
+        F ≤
+      Real.sqrt (2 * d) * cN *
+        (c1 * blockSize
+          (blockSub (ofFullBlockMat ((Z.card : ℝ)⁻¹ •
+            ∑ w ∈ Z,
+              toFullBlockMat (coarseBlock (adaptedCellAt q j w) a)))
+            (adaptedMean P q j)) (adaptedMean P q p) +
+          (c2 + 4 * (d : ℝ) * drop)) := by
+    intro a
+    have hXsym : IsSymmetricBlockMat
+        (blockSub (coarseBlock (adaptedCell q p) a) (adaptedMean P q p)) :=
+      isSymmetricBlockMat_blockSub
+        (isSymmetricBlockMat_coarseBlock _ a) hmeanpsym
+    -- Schatten to size in the reference normalization
+    have h1 := PortableHistory.schattenSize_le_blockSize hXsym hFsym hFpd
+      (by norm_num : (0 : ℝ) < 2)
+    -- reference size to mean size
+    have hbs0 : 0 ≤ blockSize
+        (blockSub (coarseBlock (adaptedCell q p) a) (adaptedMean P q p))
+        (adaptedMean P q p) :=
+      PortableHistory.blockSize_nonneg hXsym hmeanpsym hmeanppd
+    have hsand := PortableHistory.blockSize_sandwich hXsym hmeanpsym hmeanppd
+    have hup2 : toFullBlockMat
+        (blockSub (coarseBlock (adaptedCell q p) a) (adaptedMean P q p)) ≤
+        (blockSize
+          (blockSub (coarseBlock (adaptedCell q p) a)
+            (adaptedMean P q p)) (adaptedMean P q p) *
+          cN) •
+          toFullBlockMat F := by
+      refine hsand.1.trans ?_
+      have h := smul_le_smul_of_nonneg_left hmeanpF2 hbs0
+      rwa [smul_smul] at h
+    have hlo2 : (-(blockSize
+        (blockSub (coarseBlock (adaptedCell q p) a)
+          (adaptedMean P q p)) (adaptedMean P q p) *
+        cN)) •
+        toFullBlockMat F ≤
+        toFullBlockMat
+          (blockSub (coarseBlock (adaptedCell q p) a)
+            (adaptedMean P q p)) := by
+      refine le_trans ?_ hsand.2
+      have h := smul_le_smul_of_nonneg_left hmeanpF2 hbs0
+      rw [smul_smul] at h
+      have h2 := neg_le_neg h
+      rw [← neg_smul, ← neg_smul] at h2
+      exact h2
+    have h2 : blockSize
+        (blockSub (coarseBlock (adaptedCell q p) a) (adaptedMean P q p))
+        F ≤
+        blockSize
+          (blockSub (coarseBlock (adaptedCell q p) a)
+            (adaptedMean P q p)) (adaptedMean P q p) *
+          cN := by
+      refine PortableHistory.blockSize_le_of_sandwich hXsym hFsym hFpd
+        (mul_nonneg hbs0 (by linarith only [hcN1])) hup2 ?_
+      exact hlo2
+    -- the pathwise wrapper
+    have h3 := hreplacement a
+    have hsq2d : (2 * d : ℝ) ^ (2 : ℝ)⁻¹ ≤ Real.sqrt (2 * d) := by
+      refine le_of_eq ?_
+      rw [Real.sqrt_eq_rpow, one_div]
+    have hbsF20 : 0 ≤ blockSize
+        (blockSub (coarseBlock (adaptedCell q p) a) (adaptedMean P q p))
+        F :=
+      PortableHistory.blockSize_nonneg hXsym hFsym hFpd
+    calc schattenSize 2
+            (blockSub (coarseBlock (adaptedCell q p) a)
+              (adaptedMean P q p))
+            F ≤
+          (2 * d : ℝ) ^ (2 : ℝ)⁻¹ * blockSize
+            (blockSub (coarseBlock (adaptedCell q p) a)
+              (adaptedMean P q p)) F := h1
+      _ ≤ Real.sqrt (2 * d) * blockSize
+          (blockSub (coarseBlock (adaptedCell q p) a)
+            (adaptedMean P q p)) F :=
+        mul_le_mul_of_nonneg_right hsq2d hbsF20
+      _ ≤ Real.sqrt (2 * d) *
+          (blockSize
+            (blockSub (coarseBlock (adaptedCell q p) a)
+              (adaptedMean P q p)) (adaptedMean P q p) *
+            cN) :=
+        mul_le_mul_of_nonneg_left h2 (Real.sqrt_nonneg _)
+      _ ≤ Real.sqrt (2 * d) *
+          ((c1 * blockSize
+            (blockSub (ofFullBlockMat ((Z.card : ℝ)⁻¹ •
+              ∑ w ∈ Z,
+                toFullBlockMat (coarseBlock (adaptedCellAt q j w) a)))
+              (adaptedMean P q j)) (adaptedMean P q p) +
+            (c2 + 4 * (d : ℝ) * drop)) * cN) := by
+        refine mul_le_mul_of_nonneg_left ?_ (Real.sqrt_nonneg _)
+        refine mul_le_mul_of_nonneg_right ?_
+          (by linarith only [hcN1])
+        calc blockSize
+                (blockSub (coarseBlock (adaptedCell q p) a)
+                  (adaptedMean P q p)) (adaptedMean P q p) ≤ _ := h3
+          _ = _ := by ring
+      _ = Real.sqrt (2 * d) * cN *
+          (c1 * blockSize
+            (blockSub (ofFullBlockMat ((Z.card : ℝ)⁻¹ •
+              ∑ w ∈ Z,
+                toFullBlockMat (coarseBlock (adaptedCellAt q j w) a)))
+              (adaptedMean P q j)) (adaptedMean P q p) +
+            (c2 + 4 * (d : ℝ) * drop)) := by ring
+  exact hpath
+
+private theorem constant_variance_majorant_two_norm
+    {P : Measure (CoeffSpace d)} [IsProbabilityMeasure P]
+    {cN c2 drop : ℝ}
+    (hα0 : (0 : ℝ) ≤ Real.sqrt (2 * d) * cN)
+    (hK0 : 0 ≤ c2 + 4 * (d : ℝ) * drop) :
+    eLpNorm
+      (fun _ : CoeffSpace d =>
+        Real.sqrt (2 * d) * cN *
+          (c2 + 4 * (d : ℝ) * drop)) 2 P =
+      ENNReal.ofReal
+        (Real.sqrt (2 * d) * cN *
+          (c2 + 4 * (d : ℝ) * drop)) := by
+  classical
+  have hconstpiece : eLpNorm
+      (fun _ : CoeffSpace d =>
+        Real.sqrt (2 * d) * cN *
+          (c2 + 4 * (d : ℝ) * drop)) 2 P =
+      ENNReal.ofReal
+        (Real.sqrt (2 * d) * cN *
+          (c2 + 4 * (d : ℝ) * drop)) := by
+    rw [eLpNorm_const _ (by norm_num : (2 : ℝ≥0∞) ≠ 0)
+      (by
+        have h : (P Set.univ) = 1 := measure_univ
+        intro hP0
+        rw [hP0] at h
+        simp at h)]
+    rw [measure_univ]
+    simp only [ENNReal.one_rpow, mul_one]
+    rw [Real.enorm_eq_ofReal (mul_nonneg hα0 hK0)]
+  exact hconstpiece
+
+private theorem subdivision_variance_majorant_two_norm
+    {P : Measure (CoeffSpace d)} {q : Mat d} (j p : ℤ)
+    (Z : Finset (Fin d → ℤ)) {cN c1 : ℝ}
+    (hα0 : (0 : ℝ) ≤ Real.sqrt (2 * d) * cN) (hc10 : 0 ≤ c1) :
+    eLpNorm
+      (fun a => Real.sqrt (2 * d) * cN * c1 *
+        blockSize
+          (blockSub (ofFullBlockMat ((Z.card : ℝ)⁻¹ •
+            ∑ w ∈ Z,
+              toFullBlockMat (coarseBlock (adaptedCellAt q j w) a)))
+            (adaptedMean P q j)) (adaptedMean P q p)) 2 P =
+      ENNReal.ofReal
+          (Real.sqrt (2 * d) * cN * c1) *
+        eLpNorm
+          (fun a => blockSize
+            (blockSub (ofFullBlockMat ((Z.card : ℝ)⁻¹ •
+              ∑ w ∈ Z,
+                toFullBlockMat (coarseBlock (adaptedCellAt q j w) a)))
+              (adaptedMean P q j)) (adaptedMean P q p)) 2 P := by
+  classical
+  have hsmulpiece : eLpNorm
+      (fun a => Real.sqrt (2 * d) * cN * c1 *
+        blockSize
+          (blockSub (ofFullBlockMat ((Z.card : ℝ)⁻¹ •
+            ∑ w ∈ Z,
+              toFullBlockMat (coarseBlock (adaptedCellAt q j w) a)))
+            (adaptedMean P q j)) (adaptedMean P q p)) 2 P =
+      ENNReal.ofReal
+          (Real.sqrt (2 * d) * cN * c1) *
+        eLpNorm
+          (fun a => blockSize
+            (blockSub (ofFullBlockMat ((Z.card : ℝ)⁻¹ •
+              ∑ w ∈ Z,
+                toFullBlockMat (coarseBlock (adaptedCellAt q j w) a)))
+              (adaptedMean P q j)) (adaptedMean P q p)) 2 P := by
+    have heq : (fun a => Real.sqrt (2 * d) * cN *
+        c1 * blockSize
+          (blockSub (ofFullBlockMat ((Z.card : ℝ)⁻¹ •
+            ∑ w ∈ Z,
+              toFullBlockMat (coarseBlock (adaptedCellAt q j w) a)))
+            (adaptedMean P q j)) (adaptedMean P q p)) =
+        (Real.sqrt (2 * d) * cN * c1) •
+          fun a => blockSize
+            (blockSub (ofFullBlockMat ((Z.card : ℝ)⁻¹ •
+              ∑ w ∈ Z,
+                toFullBlockMat (coarseBlock (adaptedCellAt q j w) a)))
+              (adaptedMean P q j)) (adaptedMean P q p) := by
+      funext a
+      rw [Pi.smul_apply, smul_eq_mul]
+    rw [heq, eLpNorm_const_smul]
+    congr 1
+    rw [Real.enorm_eq_ofReal (mul_nonneg hα0 hc10)]
+  exact hsmulpiece
+
+private theorem subdivision_block_size_two_norm_le_schatten [NeZero d]
+    {P : Measure (CoeffSpace d)} {q : Mat d} (hq : q.PosDef)
+    (j p : ℤ) (Z : Finset (Fin d → ℤ))
+    (hmeanpsym : IsSymmetricBlockMat (adaptedMean P q p))
+    (hmeanppd : Book.Ch02.BlockPosDef (adaptedMean P q p))
+    (hgmeas : AEMeasurable
+      (fun a => blockSize
+        (blockSub (ofFullBlockMat ((Z.card : ℝ)⁻¹ •
+          ∑ w ∈ Z, toFullBlockMat (coarseBlock (adaptedCellAt q j w) a)))
+          (adaptedMean P q j)) (adaptedMean P q p)) P) :
+    eLpNorm
+      (fun a => blockSize
+        (blockSub (ofFullBlockMat ((Z.card : ℝ)⁻¹ •
+          ∑ w ∈ Z,
+            toFullBlockMat (coarseBlock (adaptedCellAt q j w) a)))
+          (adaptedMean P q j)) (adaptedMean P q p)) 2 P ≤
+      lqSchattenSize P 2
+        (fun a => blockSub
+          (ofFullBlockMat ((Z.card : ℝ)⁻¹ •
+            ∑ w ∈ Z,
+              toFullBlockMat (coarseBlock (adaptedCellAt q j w) a)))
+          (adaptedMean P q j)) (adaptedMean P q p) := by
+  classical
+  have hgs : eLpNorm
+      (fun a => blockSize
+        (blockSub (ofFullBlockMat ((Z.card : ℝ)⁻¹ •
+          ∑ w ∈ Z,
+            toFullBlockMat (coarseBlock (adaptedCellAt q j w) a)))
+          (adaptedMean P q j)) (adaptedMean P q p)) 2 P ≤
+      lqSchattenSize P 2
+        (fun a => blockSub
+          (ofFullBlockMat ((Z.card : ℝ)⁻¹ •
+            ∑ w ∈ Z,
+              toFullBlockMat (coarseBlock (adaptedCellAt q j w) a)))
+          (adaptedMean P q j)) (adaptedMean P q p) := by
+    rw [lqSchattenSize,
+      show (ENNReal.ofReal 2) = (2 : ℝ≥0∞) from by
+        rw [ENNReal.ofReal_ofNat]]
+    refine eLpNorm_mono_real hgmeas.aestronglyMeasurable fun a => ?_
+    have hsubsym : IsSymmetricBlockMat
+        (blockSub (ofFullBlockMat ((Z.card : ℝ)⁻¹ •
+          ∑ w ∈ Z,
+            toFullBlockMat (coarseBlock (adaptedCellAt q j w) a)))
+          (adaptedMean P q j)) := by
+      refine isSymmetricBlockMat_blockSub ?_
+        (Recurrence.isSymmetricBlockMat_adaptedMean P q j)
+      refine isSymmetricBlockMat_of_posSemidef ?_
+      rw [toFullBlockMat_ofFullBlockMat]
+      refine Matrix.PosSemidef.smul ?_ (by positivity : (0 : ℝ) ≤ _)
+      refine Matrix.posSemidef_sum Z fun w hw => ?_
+      exact (posDef_toFullBlockMat
+        (Recurrence.isSymmetricBlockMat_coarseBlock_adaptedCellAt q j w a)
+        (Recurrence.blockPosDef_coarseBlock_adaptedCellAt hq j w a)).posSemidef
+    rw [Real.norm_eq_abs, abs_of_nonneg
+      (PortableHistory.blockSize_nonneg hsubsym hmeanpsym hmeanppd)]
+    exact PortableHistory.blockSize_le_schattenSize hsubsym hmeanpsym hmeanppd
+      (by norm_num)
+  exact hgs
+
+private theorem schatten_two_norm_le_variance_majorant [NeZero d]
+    {P : Measure (CoeffSpace d)} {q : Mat d} (hq : q.PosDef) (j p : ℤ)
+    (Z : Finset (Fin d → ℤ)) {F : BlockMat d} {cN c1 c2 drop : ℝ}
+    (hmeanpsym : IsSymmetricBlockMat (adaptedMean P q p))
+    (hschat0 : ∀ a : CoeffSpace d, 0 ≤ schattenSize 2
+      (blockSub (coarseBlock (adaptedCell q p) a) (adaptedMean P q p)) F)
+    (hpath : ∀ a : CoeffSpace d, schattenSize 2
+      (blockSub (coarseBlock (adaptedCell q p) a) (adaptedMean P q p)) F ≤
+      Real.sqrt (2 * d) * cN *
+        (c1 * blockSize
+          (blockSub (ofFullBlockMat ((Z.card : ℝ)⁻¹ •
+            ∑ w ∈ Z, toFullBlockMat (coarseBlock (adaptedCellAt q j w) a)))
+            (adaptedMean P q j)) (adaptedMean P q p) + (c2 + 4 * (d : ℝ) * drop))) :
+    eLpNorm
+      (fun a => schattenSize 2
+        (blockSub (coarseBlock (adaptedCell q p) a) (adaptedMean P q p))
+        F) 2 P ≤
+      eLpNorm
+        (fun a => Real.sqrt (2 * d) * cN * c1 *
+          blockSize
+            (blockSub (ofFullBlockMat ((Z.card : ℝ)⁻¹ •
+              ∑ w ∈ Z,
+                toFullBlockMat (coarseBlock (adaptedCellAt q j w) a)))
+              (adaptedMean P q j)) (adaptedMean P q p) +
+          Real.sqrt (2 * d) * cN *
+            (c2 + 4 * (d : ℝ) * drop)) 2 P := by
+  classical
+  have hmono : eLpNorm
+      (fun a => schattenSize 2
+        (blockSub (coarseBlock (adaptedCell q p) a) (adaptedMean P q p))
+        F) 2 P ≤
+      eLpNorm
+        (fun a => Real.sqrt (2 * d) * cN * c1 *
+          blockSize
+            (blockSub (ofFullBlockMat ((Z.card : ℝ)⁻¹ •
+              ∑ w ∈ Z,
+                toFullBlockMat (coarseBlock (adaptedCellAt q j w) a)))
+              (adaptedMean P q j)) (adaptedMean P q p) +
+          Real.sqrt (2 * d) * cN *
+            (c2 + 4 * (d : ℝ) * drop)) 2 P := by
+    have hXm : AEStronglyMeasurable (fun a => schattenSize 2
+        (blockSub (coarseBlock (adaptedCell q p) a) (adaptedMean P q p)) F) P := by
+      refine Transport.aestronglyMeasurable_schattenSize (by exact even_two)
+        (fun a => isSymmetricBlockMat_blockSub
+          (isSymmetricBlockMat_coarseBlock _ _) hmeanpsym) ?_
+      intro α β
+      have hmA : AEStronglyMeasurable
+          (fun a : CoeffSpace d ↦
+            toFullBlockMat (coarseBlock (adaptedCell q p) a) α β) P :=
+        Recurrence.hasMeasurableCoarseBlock_adaptedCell P hq p α β
+      have hm := hmA.sub
+        (aestronglyMeasurable_const
+          (b := toFullBlockMat (adaptedMean P q p) α β))
+      simpa only [Recurrence.toFullBlockMat_blockSub_apply] using! hm
+    refine eLpNorm_mono_real hXm fun a => ?_
+    rw [Real.norm_eq_abs, abs_of_nonneg (hschat0 a)]
+    have h := hpath a
+    calc schattenSize 2
+            (blockSub (coarseBlock (adaptedCell q p) a)
+              (adaptedMean P q p))
+            F ≤ _ := h
+      _ = _ := by ring
+  exact hmono
+
 theorem scaleVariance_le_lagged_normalized_of_block_of_envelopes [NeZero d]
     (hd : 2 ≤ d) {g : ℝ} (hg : g ∈ Set.Ico (0 : ℝ) 1)
     {P : Measure (CoeffSpace d)} [IsProbabilityMeasure P]
@@ -163,115 +506,21 @@ theorem scaleVariance_le_lagged_normalized_of_block_of_envelopes [NeZero d]
   have hgmeas := aemeasurable_blockSize_subdivisionDefect hq j Z
     (Recurrence.isSymmetricBlockMat_adaptedMean P q j) hmeanpsym hmeanppd
     (P := P)
-  have hpath : ∀ a : CoeffSpace d,
-      schattenSize 2
-        (blockSub (coarseBlock (adaptedCell q p) a) (adaptedMean P q p))
-        F ≤
-      Real.sqrt (2 * d) * cN *
-        (c1 * blockSize
-          (blockSub (ofFullBlockMat ((Z.card : ℝ)⁻¹ •
-            ∑ w ∈ Z,
-              toFullBlockMat (coarseBlock (adaptedCellAt q j w) a)))
-            (adaptedMean P q j)) (adaptedMean P q p) +
-          (c2 + 4 * (d : ℝ) * drop)) := by
+  have hreplacement : ∀ a : CoeffSpace d,
+      blockSize (blockSub (coarseBlock (adaptedCell q p) a) (adaptedMean P q p))
+        (adaptedMean P q p) ≤
+      c1 * blockSize
+        (blockSub (ofFullBlockMat ((Z.card : ℝ)⁻¹ •
+          ∑ w ∈ Z, toFullBlockMat (coarseBlock (adaptedCellAt q j w) a)))
+          (adaptedMean P q j)) (adaptedMean P q p) + (c2 + 4 * (d : ℝ) * drop) := by
     intro a
-    have hXsym : IsSymmetricBlockMat
-        (blockSub (coarseBlock (adaptedCell q p) a) (adaptedMean P q p)) :=
-      isSymmetricBlockMat_blockSub
-        (isSymmetricBlockMat_coarseBlock _ a) hmeanpsym
-    -- Schatten to size in the reference normalization
-    have h1 := PortableHistory.schattenSize_le_blockSize hXsym hFsym hFpd
-      (by norm_num : (0 : ℝ) < 2)
-    -- reference size to mean size
-    have hbs0 : 0 ≤ blockSize
-        (blockSub (coarseBlock (adaptedCell q p) a) (adaptedMean P q p))
-        (adaptedMean P q p) :=
-      PortableHistory.blockSize_nonneg hXsym hmeanpsym hmeanppd
-    have hsand := PortableHistory.blockSize_sandwich hXsym hmeanpsym hmeanppd
-    have hup2 : toFullBlockMat
-        (blockSub (coarseBlock (adaptedCell q p) a) (adaptedMean P q p)) ≤
-        (blockSize
-          (blockSub (coarseBlock (adaptedCell q p) a)
-            (adaptedMean P q p)) (adaptedMean P q p) *
-          cN) •
-          toFullBlockMat F := by
-      refine hsand.1.trans ?_
-      have h := smul_le_smul_of_nonneg_left hmeanpF2 hbs0
-      rwa [smul_smul] at h
-    have hlo2 : (-(blockSize
-        (blockSub (coarseBlock (adaptedCell q p) a)
-          (adaptedMean P q p)) (adaptedMean P q p) *
-        cN)) •
-        toFullBlockMat F ≤
-        toFullBlockMat
-          (blockSub (coarseBlock (adaptedCell q p) a)
-            (adaptedMean P q p)) := by
-      refine le_trans ?_ hsand.2
-      have h := smul_le_smul_of_nonneg_left hmeanpF2 hbs0
-      rw [smul_smul] at h
-      have h2 := neg_le_neg h
-      rw [← neg_smul, ← neg_smul] at h2
-      exact h2
-    have h2 : blockSize
-        (blockSub (coarseBlock (adaptedCell q p) a) (adaptedMean P q p))
-        F ≤
-        blockSize
-          (blockSub (coarseBlock (adaptedCell q p) a)
-            (adaptedMean P q p)) (adaptedMean P q p) *
-          cN := by
-      refine PortableHistory.blockSize_le_of_sandwich hXsym hFsym hFpd
-        (mul_nonneg hbs0 (by linarith only [hcN1])) hup2 ?_
-      exact hlo2
-    -- the pathwise wrapper
-    have h3 := blockSize_variance_replacement_pathwise hstat hgrid hlj
-      hjp hintj hintp hSj hStarj hformj hSp hStarp hformp hposj.le
-      hepsj1 htrj hposp hepsp1 htrp hposj hdropSmall hZ hZne a
-    have hsq2d : (2 * d : ℝ) ^ (2 : ℝ)⁻¹ ≤ Real.sqrt (2 * d) := by
-      refine le_of_eq ?_
-      rw [Real.sqrt_eq_rpow, one_div]
-    have hbsF20 : 0 ≤ blockSize
-        (blockSub (coarseBlock (adaptedCell q p) a) (adaptedMean P q p))
-        F :=
-      PortableHistory.blockSize_nonneg hXsym hFsym hFpd
-    calc schattenSize 2
-            (blockSub (coarseBlock (adaptedCell q p) a)
-              (adaptedMean P q p))
-            F ≤
-          (2 * d : ℝ) ^ (2 : ℝ)⁻¹ * blockSize
-            (blockSub (coarseBlock (adaptedCell q p) a)
-              (adaptedMean P q p)) F := h1
-      _ ≤ Real.sqrt (2 * d) * blockSize
-          (blockSub (coarseBlock (adaptedCell q p) a)
-            (adaptedMean P q p)) F :=
-        mul_le_mul_of_nonneg_right hsq2d hbsF20
-      _ ≤ Real.sqrt (2 * d) *
-          (blockSize
-            (blockSub (coarseBlock (adaptedCell q p) a)
-              (adaptedMean P q p)) (adaptedMean P q p) *
-            cN) :=
-        mul_le_mul_of_nonneg_left h2 (Real.sqrt_nonneg _)
-      _ ≤ Real.sqrt (2 * d) *
-          ((c1 * blockSize
-            (blockSub (ofFullBlockMat ((Z.card : ℝ)⁻¹ •
-              ∑ w ∈ Z,
-                toFullBlockMat (coarseBlock (adaptedCellAt q j w) a)))
-              (adaptedMean P q j)) (adaptedMean P q p) +
-            (c2 + 4 * (d : ℝ) * drop)) * cN) := by
-        refine mul_le_mul_of_nonneg_left ?_ (Real.sqrt_nonneg _)
-        refine mul_le_mul_of_nonneg_right ?_
-          (by linarith only [hcN1])
-        rw [hc1def, hc2def, hdropdef]
-        calc blockSize
-                (blockSub (coarseBlock (adaptedCell q p) a)
-                  (adaptedMean P q p)) (adaptedMean P q p) ≤ _ := h3
-          _ = _ := by ring
-      _ = Real.sqrt (2 * d) * cN *
-          (c1 * blockSize
-            (blockSub (ofFullBlockMat ((Z.card : ℝ)⁻¹ •
-              ∑ w ∈ Z,
-                toFullBlockMat (coarseBlock (adaptedCellAt q j w) a)))
-              (adaptedMean P q j)) (adaptedMean P q p) +
-            (c2 + 4 * (d : ℝ) * drop)) := by ring
+    rw [hc1def, hc2def, hdropdef]
+    simpa only [add_assoc] using
+      blockSize_variance_replacement_pathwise hstat hgrid hlj hjp hintj hintp
+        hSj hStarj hformj hSp hStarp hformp hposj.le hepsj1 htrj hposp hepsp1 htrp
+        hposj hdropSmall hZ hZne a
+  have hpath := schatten_parent_le_normalized_variance_majorant Z hFsym hFpd
+    hmeanpsym hmeanppd hcN1 hmeanpF2 hreplacement
   -- integrate
   have hschat0 : ∀ a : CoeffSpace d, 0 ≤ schattenSize 2
       (blockSub (coarseBlock (adaptedCell q p) a) (adaptedMean P q p))
@@ -285,41 +534,7 @@ theorem scaleVariance_le_lagged_normalized_of_block_of_envelopes [NeZero d]
   have hα0 : (0 : ℝ) ≤ Real.sqrt (2 * d) * cN :=
     mul_nonneg (Real.sqrt_nonneg _) (by linarith only [hcN1])
   rw [scaleVariance]
-  have hmono : eLpNorm
-      (fun a => schattenSize 2
-        (blockSub (coarseBlock (adaptedCell q p) a) (adaptedMean P q p))
-        F) 2 P ≤
-      eLpNorm
-        (fun a => Real.sqrt (2 * d) * cN * c1 *
-          blockSize
-            (blockSub (ofFullBlockMat ((Z.card : ℝ)⁻¹ •
-              ∑ w ∈ Z,
-                toFullBlockMat (coarseBlock (adaptedCellAt q j w) a)))
-              (adaptedMean P q j)) (adaptedMean P q p) +
-          Real.sqrt (2 * d) * cN *
-            (c2 + 4 * (d : ℝ) * drop)) 2 P := by
-    have hXm : AEStronglyMeasurable (fun a => schattenSize 2
-        (blockSub (coarseBlock (adaptedCell q p) a) (adaptedMean P q p)) F) P := by
-      refine Transport.aestronglyMeasurable_schattenSize (by exact even_two)
-        (fun a => isSymmetricBlockMat_blockSub
-          (isSymmetricBlockMat_coarseBlock _ _) hmeanpsym) ?_
-      intro α β
-      have hmA : AEStronglyMeasurable
-          (fun a : CoeffSpace d ↦
-            toFullBlockMat (coarseBlock (adaptedCell q p) a) α β) P :=
-        Recurrence.hasMeasurableCoarseBlock_adaptedCell P hq p α β
-      have hm := hmA.sub
-        (aestronglyMeasurable_const
-          (b := toFullBlockMat (adaptedMean P q p) α β))
-      simpa only [Recurrence.toFullBlockMat_blockSub_apply] using! hm
-    refine eLpNorm_mono_real hXm fun a => ?_
-    rw [Real.norm_eq_abs, abs_of_nonneg (hschat0 a)]
-    have h := hpath a
-    calc schattenSize 2
-            (blockSub (coarseBlock (adaptedCell q p) a)
-              (adaptedMean P q p))
-            F ≤ _ := h
-      _ = _ := by ring
+  have hmono := schatten_two_norm_le_variance_majorant hq j p Z hmeanpsym hschat0 hpath
   refine le_trans hmono ?_
   have hmeas1 : AEStronglyMeasurable
       (fun a => Real.sqrt (2 * d) * cN * c1 *
@@ -342,91 +557,12 @@ theorem scaleVariance_le_lagged_normalized_of_block_of_envelopes [NeZero d]
     (μ := P) (by norm_num : (1 : ℝ≥0∞) ≤ 2)
   refine le_trans hadd ?_
   -- the constant piece
-  have hconstpiece : eLpNorm
-      (fun _ : CoeffSpace d =>
-        Real.sqrt (2 * d) * cN *
-          (c2 + 4 * (d : ℝ) * drop)) 2 P =
-      ENNReal.ofReal
-        (Real.sqrt (2 * d) * cN *
-          (c2 + 4 * (d : ℝ) * drop)) := by
-    rw [eLpNorm_const _ (by norm_num : (2 : ℝ≥0∞) ≠ 0)
-      (by
-        have h : (P Set.univ) = 1 := measure_univ
-        intro hP0
-        rw [hP0] at h
-        simp at h)]
-    rw [measure_univ]
-    simp only [ENNReal.one_rpow, mul_one]
-    rw [Real.enorm_eq_ofReal (mul_nonneg hα0 hK0)]
+  have hconstpiece := constant_variance_majorant_two_norm (P := P) hα0 hK0
   -- the concentration piece
-  have hsmulpiece : eLpNorm
-      (fun a => Real.sqrt (2 * d) * cN * c1 *
-        blockSize
-          (blockSub (ofFullBlockMat ((Z.card : ℝ)⁻¹ •
-            ∑ w ∈ Z,
-              toFullBlockMat (coarseBlock (adaptedCellAt q j w) a)))
-            (adaptedMean P q j)) (adaptedMean P q p)) 2 P =
-      ENNReal.ofReal
-          (Real.sqrt (2 * d) * cN * c1) *
-        eLpNorm
-          (fun a => blockSize
-            (blockSub (ofFullBlockMat ((Z.card : ℝ)⁻¹ •
-              ∑ w ∈ Z,
-                toFullBlockMat (coarseBlock (adaptedCellAt q j w) a)))
-              (adaptedMean P q j)) (adaptedMean P q p)) 2 P := by
-    have heq : (fun a => Real.sqrt (2 * d) * cN *
-        c1 * blockSize
-          (blockSub (ofFullBlockMat ((Z.card : ℝ)⁻¹ •
-            ∑ w ∈ Z,
-              toFullBlockMat (coarseBlock (adaptedCellAt q j w) a)))
-            (adaptedMean P q j)) (adaptedMean P q p)) =
-        (Real.sqrt (2 * d) * cN * c1) •
-          fun a => blockSize
-            (blockSub (ofFullBlockMat ((Z.card : ℝ)⁻¹ •
-              ∑ w ∈ Z,
-                toFullBlockMat (coarseBlock (adaptedCellAt q j w) a)))
-              (adaptedMean P q j)) (adaptedMean P q p) := by
-      funext a
-      rw [Pi.smul_apply, smul_eq_mul]
-    rw [heq, eLpNorm_const_smul]
-    congr 1
-    rw [Real.enorm_eq_ofReal (mul_nonneg hα0 hc10)]
+  have hsmulpiece := subdivision_variance_majorant_two_norm (P := P) (q := q) j p Z hα0 hc10
   rw [hconstpiece, hsmulpiece]
   -- bound the concentration factor
-  have hgs : eLpNorm
-      (fun a => blockSize
-        (blockSub (ofFullBlockMat ((Z.card : ℝ)⁻¹ •
-          ∑ w ∈ Z,
-            toFullBlockMat (coarseBlock (adaptedCellAt q j w) a)))
-          (adaptedMean P q j)) (adaptedMean P q p)) 2 P ≤
-      lqSchattenSize P 2
-        (fun a => blockSub
-          (ofFullBlockMat ((Z.card : ℝ)⁻¹ •
-            ∑ w ∈ Z,
-              toFullBlockMat (coarseBlock (adaptedCellAt q j w) a)))
-          (adaptedMean P q j)) (adaptedMean P q p) := by
-    rw [lqSchattenSize,
-      show (ENNReal.ofReal 2) = (2 : ℝ≥0∞) from by
-        rw [ENNReal.ofReal_ofNat]]
-    refine eLpNorm_mono_real hgmeas.aestronglyMeasurable fun a => ?_
-    have hsubsym : IsSymmetricBlockMat
-        (blockSub (ofFullBlockMat ((Z.card : ℝ)⁻¹ •
-          ∑ w ∈ Z,
-            toFullBlockMat (coarseBlock (adaptedCellAt q j w) a)))
-          (adaptedMean P q j)) := by
-      refine isSymmetricBlockMat_blockSub ?_
-        (Recurrence.isSymmetricBlockMat_adaptedMean P q j)
-      refine isSymmetricBlockMat_of_posSemidef ?_
-      rw [toFullBlockMat_ofFullBlockMat]
-      refine Matrix.PosSemidef.smul ?_ (by positivity : (0 : ℝ) ≤ _)
-      refine Matrix.posSemidef_sum Z fun w hw => ?_
-      exact (posDef_toFullBlockMat
-        (Recurrence.isSymmetricBlockMat_coarseBlock_adaptedCellAt q j w a)
-        (Recurrence.blockPosDef_coarseBlock_adaptedCellAt hq j w a)).posSemidef
-    rw [Real.norm_eq_abs, abs_of_nonneg
-      (PortableHistory.blockSize_nonneg hsubsym hmeanpsym hmeanppd)]
-    exact PortableHistory.blockSize_le_schattenSize hsubsym hmeanpsym hmeanppd
-      (by norm_num)
+  have hgs := subdivision_block_size_two_norm_le_schatten hq j p Z hmeanpsym hmeanppd hgmeas
   -- the single-cell bound at the mean normalization
   have hsingle : lqSchattenSize P 2
       (fun a => blockSub (coarseBlock (adaptedCell q j) a)

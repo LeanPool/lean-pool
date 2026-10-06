@@ -200,7 +200,8 @@ theorem integrableOn_localCanonicalCutoff_mul_of_integrableOn_cubeSet {d : ℕ}
       MeasureTheory.AEStronglyMeasurable
         (coarseCaccioppoliLocalCanonicalFun Q center rhoInner rhoOuter)
         (MeasureTheory.volume.restrict (cubeSet Q)) :=
-    ((coarseCaccioppoliLocalCanonicalFun_smooth Q center hinner hinnerOuter).continuous).aestronglyMeasurable
+    ((coarseCaccioppoliLocalCanonicalFun_smooth Q center hinner
+      hinnerOuter).continuous).aestronglyMeasurable
   have hcut_bound :
       ∀ᵐ x ∂MeasureTheory.volume.restrict (cubeSet Q),
         ‖coarseCaccioppoliLocalCanonicalFun Q center rhoInner rhoOuter x‖ ≤ 1 := by
@@ -358,7 +359,8 @@ theorem support_scalarCutoffGradientField_coarseCaccioppoliLocalCanonicalFun_sub
     (coarseCaccioppoliLocalCanonicalFun_tsupport_subset_localClosedCube
       hinner hinnerOuter)
 
-theorem scalarCutoffGradientField_coarseCaccioppoliLocalCanonicalFun_eq_zero_of_notMem_localClosedCube
+theorem
+  scalarCutoffGradientField_coarseCaccioppoliLocalCanonicalFun_eq_zero_of_notMem_localClosedCube
     {d : ℕ} {Q : TriadicCube d} {center : Vec d} {rhoInner rhoOuter : ℝ}
     (hinner : 0 < rhoInner) (hinnerOuter : rhoInner < rhoOuter)
     {x : Vec d}

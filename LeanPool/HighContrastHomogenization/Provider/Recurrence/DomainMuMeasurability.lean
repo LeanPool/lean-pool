@@ -66,7 +66,8 @@ theorem mu_eq_aeeMuCandidate {U : Set (Vec d)} [IsFiniteMeasure (volumeMeasureOn
     (hvol : 0 < (volume U).toReal) (P0 : BlockVec d) :
     Mu U P0 a =
       (((PotentialSolenoidalL2Data.ofSubmoduleClosures U).toAEEMuOperatorSystemData
-          (AEEMuCoeffOperatorData.ofIsAEEllipticFieldOn hAEE hvol)).toMuHilbertRealization).muCandidate
+          (AEEMuCoeffOperatorData.ofIsAEEllipticFieldOn hAEE
+            hvol)).toMuHilbertRealization).muCandidate
         P0 := by
   let system : AEEMuOperatorSystemData U a :=
     (PotentialSolenoidalL2Data.ofSubmoduleClosures U).toAEEMuOperatorSystemData

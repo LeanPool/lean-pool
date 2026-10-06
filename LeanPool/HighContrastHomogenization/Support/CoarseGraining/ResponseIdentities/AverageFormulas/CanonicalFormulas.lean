@@ -333,7 +333,7 @@ theorem averageGradientFormulaDeterministicCoarseBlockMatrix
       -p + matVecMul (deterministicCoarseBlockMatrix U a).lowerRight q -
         matVecMul (deterministicCoarseBlockMatrix U a).lowerLeft p := by
   exact
-    basic_cg_identities_average_gradient_formula_deterministicCoarseBlockMatrix_of_isResponseMaximizer
+    averageGradient_eq_deterministicFormula_of_responseMaximizer
     U a hS hK hdet p q hInt (v : AHarmonicFunction a U) v.isResponseMaximizer
     (fun i => (vGrad i : AHarmonicFunction a U))
     (fun i => (vGrad i).isResponseMaximizer)

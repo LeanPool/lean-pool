@@ -372,7 +372,8 @@ theorem abs_volumeAverage_vecDot_symmPart_le {d : ℕ} {U : Set (Vec d)}
       (fun x => vecDot (f x) (matVecMul (symmPart (a x)) (g x))) U) :
     |volumeAverage U (fun x => vecDot (f x) (matVecMul (symmPart (a x)) (g x)))|
       ≤ Real.sqrt (volumeAverage U (fun x => vecDot (f x) (matVecMul (symmPart (a x)) (f x))))
-        * Real.sqrt (volumeAverage U (fun x => vecDot (g x) (matVecMul (symmPart (a x)) (g x)))) := by
+        * Real.sqrt (volumeAverage U (fun x => vecDot (g x) (matVecMul (symmPart (a x)) (g x))))
+          := by
   let A : Vec d → ℝ := fun x => vecDot (f x) (matVecMul (symmPart (a x)) (f x))
   let B : Vec d → ℝ := fun x => vecDot (g x) (matVecMul (symmPart (a x)) (g x))
   let H : Vec d → ℝ := fun x => vecDot (f x) (matVecMul (symmPart (a x)) (g x))
@@ -536,7 +537,8 @@ theorem avsum_volumeAverage_scalarResponseIntegrand_eq_responseJ {d : ℕ} [NeZe
     (u : AHarmonicFunction a (HighContrast.adaptedCell q t))
     (hmax : IsResponseMaximizer (HighContrast.adaptedCell q t) p r a u)
     (hint : MeasureTheory.IntegrableOn
-      (scalarResponseIntegrand (HighContrast.adaptedCell q t) a p r u) (HighContrast.adaptedCell q t)) :
+      (scalarResponseIntegrand (HighContrast.adaptedCell q t) a p r u) (HighContrast.adaptedCell
+        q t)) :
     (((triadicIndexBox d n).card : ℝ))⁻¹ *
         ∑ w ∈ triadicIndexBox d n,
           volumeAverage (adaptedCellAtCenter q (t - (n : ℤ)) w)

@@ -22,14 +22,14 @@ public section
 # The positive-gap estimate read at the carriers of the fixed-grid recurrence
 
 `l.fixed.geometry.positive.gap` is proved for abstract random blocks: a positive excess `D`
-caught below `Ĝ = P + Y`, a bound `b` on the mean of `tr D`, and the mixed norms
+caught below `G_hat = P + Y`, a bound `b` on the mean of `tr D`, and the mixed norms
 `x = ‖D‖_{L^Q(S_Q)}`, `y = ‖Y‖_{L^Q(S_Q)}`.  Three passages carry it onto the
 data of `p.fixed.geometry.parent.child.recurrence`, and they are taken here.
 
 *The expectation identities.*  With `F̂` the response over the parent cell and
-`Ĝ` the average of the responses over its aligned children, both normalized by
+`G_hat` the average of the responses over its aligned children, both normalized by
 the parent mean `E_p^q`, the reference proof records `E[D] = B` and
-`E[tr D] = b` for `D = Ĝ - F̂` and `B = P_{j,p}^q - I`.  Both are the
+`E[tr D] = b` for `D = G_hat - F̂` and `B = P_{j,p}^q - I`.  Both are the
 interchange of a fixed linear functional with the block-valued Bochner integral:
 normalization is a two-sided multiplication by a deterministic matrix and the
 trace is a linear functional, so each passes through.  The mean of the

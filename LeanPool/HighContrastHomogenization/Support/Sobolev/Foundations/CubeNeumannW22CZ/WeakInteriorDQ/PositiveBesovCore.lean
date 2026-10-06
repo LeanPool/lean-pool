@@ -65,7 +65,7 @@ theorem cubeBesovDualTestNorm_two_one_component_le_scaleWeight_mul_posVectorPart
   exact add_le_add
     (by
       simpa [hpConj] using
-        cubeBesovPartialSeminormTop_two_component_le_scaleWeight_mul_positiveVectorPartialSeminormTwo
+        topBesovPartial_component_le_positiveVectorPartial
           Q s u i N hu)
     le_rfl
 

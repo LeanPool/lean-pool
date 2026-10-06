@@ -92,7 +92,7 @@ theorem exists_scalarIdentityFiniteBestFitIntegerRateStepConstants
                   C * scalarIdentityWeakError a s k *
                     finiteCenteredCubeSolutionEnergy a m u k := by
   obtain ⟨depth, C₀, hC₀, hdecay⟩ :=
-    CubeCalderonZygmund.exists_identity_harmonic_normalized_affine_candidate_error_decay_at_integer_rate
+    CubeCalderonZygmund.exists_identityHarmonic_affineErrorDecay_atIntegerRate
       d p hp
   refine ⟨depth, C₀, hC₀, ?_⟩
   intro t

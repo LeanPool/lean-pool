@@ -198,7 +198,7 @@ theorem sq_cubeBesovNegativeVectorPartialSeminormTwo_le_descendantsAverage_same_
               rw [Nat.add_comm]
               rw [descendantsAverage_add_eq_descendantsAverage_descendantsAverage]
 
-theorem cubeBesovNegativeVectorSeminormTwo_le_sqrt_descendantsAverage_sq_of_memLp_of_descendant_bddAbove
+theorem negativeVectorBesov_le_descendantMeanSquare_of_bounded
     {d : ℕ} (Q : TriadicCube d) {s : ℝ} (hs : 0 < s) (u : Vec d → Vec d)
     (hu : MeasureTheory.MemLp u (2 : ENNReal) (normalizedCubeMeasure Q)) (j : ℕ)
     (hBdd : ∀ R ∈ descendantsAtDepth Q j,

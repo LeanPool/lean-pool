@@ -41,7 +41,7 @@ The descendant depth and explicit height are chosen with `Calpha`, while the
 parent cross coefficient is charged only to `Ccross`.  This is the upstream
 constant-branch version of the split note-RHS budget. -/
 theorem
-    faithfulWorkSmallCubeExactRawConstantBranchSplit_of_closedCubeEllipticity_of_bufferedCutoffRadiusConst
+    SmallCubeConstantBranchSplit_of_closedCubeEllipticity
     {d : ℕ} [NeZero d] (Q : TriadicCube d) (a : CoeffField d)
     (s t Clocal Calpha Ccross : ℝ) {lam Lam : ℝ}
     (hClocal : 0 ≤ Clocal) (_hCcross : 0 ≤ Ccross)
@@ -97,7 +97,7 @@ theorem
         geometricWeight s 1 n *
           Real.rpow (maxDescendantBBlockNormAtScale Q (Q.scale - (n : ℤ)) a)
             (1 / 2 : ℝ)) :=
-    summable_qone_maxDescendantBBlockNormAtScale_of_isEllipticFieldOn_of_openCubeDescendantDeterministicCoarseData
+    summable_qone_maxDescendantBBlockNorm_of_ellipticField
       Q a s hs hEllCube hData
   intro n
   let ρ₁ : ℝ := coarseCaccioppoliRadiusSequence n
@@ -161,7 +161,7 @@ theorem
           coarseCaccioppoliSingleCubeBoundaryConstantBaseCoeff R a CeffLocal kR := by
     intro R hR
     simpa [B, CeffLocal, kR, k, ρm] using
-      (coarseCaccioppoliFluxEnergyExactConstantCoeffFactorBound_mul_parent_buffered_cutoff_terms_le_singleCubeBoundaryConstantBaseCoeff_of_descendant
+      (coarseCaccioppoliFactorBound_mul_bufferedCutoffTerms_le_of_descendant
         (Q := Q) (R := R) (a := a) (Ceff := CeffLocal)
         (k := k) (j := j) (ρ₁ := ρ₁) (ρ₂ := ρ₂)
         hR hchoice hlt hjk (by simpa [CeffLocal] using hlarge))
@@ -180,7 +180,7 @@ theorem
         geometricWeight s 1 m *
           Real.rpow (maxDescendantBBlockNormAtScale R (R.scale - (m : ℤ)) a)
             (1 / 2 : ℝ)) :=
-    summable_qone_maxDescendantBBlockNormAtScale_of_isEllipticFieldOn_of_openCubeDescendantDeterministicCoarseData
+    summable_qone_maxDescendantBBlockNorm_of_ellipticField
       R a s hs hEllR hDataR
   have hsum_one :
       Summable (fun m : ℕ =>
@@ -199,7 +199,7 @@ theorem
             cubeLpNorm R ∞ (scalarCutoffGradientField ηρ)) ≤
         coarseCaccioppoliSingleCubeBoundaryConstantBaseCoeff R a CeffLocal kR := by
     have hlocal' :=
-      coarseCaccioppoliFluxEnergyExactConstantCoeff_mul_cutoffGradient_le_singleCubeBoundaryConstantBaseCoeff_of_factor_bounds_on_descendant
+      coarseCaccioppoliConstantFluxEnergy_le_boundaryCoefficient_of_cutoffGradient
         (Q := Q) (R := R) (j := j) hR a (η := ηρ) (B := B)
         (Ceff := CeffLocal) (kR := kR + (j : ℝ))
         (Aavg := coarseCaccioppoliLambdaFactor R a (1 : ℝ))
@@ -232,11 +232,11 @@ theorem
 /-- All-radii split buffered direct exact-raw constant branch calibration.
 
 This is the same constant/cross branch as
-`faithfulWorkSmallCubeExactRawConstantBranchSplit_of_closedCubeEllipticity_of_bufferedCutoffRadiusConst`,
+`SmallCubeConstantBranchSplit_of_closedCubeEllipticity`,
 but with an arbitrary radius pair `1/3 ≤ ρ₁ < ρ₂ ≤ 1`.  It is the
 constant-branch input needed by the standard beta-dependent radius iteration. -/
 theorem
-    faithfulWorkSmallCubeExactRawConstantBranchSplitAllRadii_of_closedCubeEllipticity_of_bufferedCutoffRadiusConst
+    SmallCubeConstantBranchSplitAllRadii_of_closedCubeEllipticity
     {d : ℕ} [NeZero d] (Q : TriadicCube d) (a : CoeffField d)
     (s t Clocal Calpha Ccross : ℝ) {lam Lam : ℝ}
     (hClocal : 0 ≤ Clocal) (_hCcross : 0 ≤ Ccross)
@@ -290,7 +290,7 @@ theorem
         geometricWeight s 1 n *
           Real.rpow (maxDescendantBBlockNormAtScale Q (Q.scale - (n : ℤ)) a)
             (1 / 2 : ℝ)) :=
-    summable_qone_maxDescendantBBlockNormAtScale_of_isEllipticFieldOn_of_openCubeDescendantDeterministicCoarseData
+    summable_qone_maxDescendantBBlockNorm_of_ellipticField
       Q a s hs hEllCube hData
   intro ρ₁ ρ₂ hρ₁ hlt hρ₂
   let ρm : ℝ := coarseCaccioppoliBufferedCutoffRadius ρ₁ ρ₂
@@ -345,7 +345,7 @@ theorem
           coarseCaccioppoliSingleCubeBoundaryConstantBaseCoeff R a CeffLocal kR := by
     intro R hR
     simpa [B, CeffLocal, kR, k, ρm] using
-      (coarseCaccioppoliFluxEnergyExactConstantCoeffFactorBound_mul_parent_buffered_cutoff_terms_le_singleCubeBoundaryConstantBaseCoeff_of_descendant
+      (coarseCaccioppoliFactorBound_mul_bufferedCutoffTerms_le_of_descendant
         (Q := Q) (R := R) (a := a) (Ceff := CeffLocal)
         (k := k) (j := j) (ρ₁ := ρ₁) (ρ₂ := ρ₂)
         hR hchoice hlt hjk (by simpa [CeffLocal] using hlarge))
@@ -364,7 +364,7 @@ theorem
         geometricWeight s 1 m *
           Real.rpow (maxDescendantBBlockNormAtScale R (R.scale - (m : ℤ)) a)
             (1 / 2 : ℝ)) :=
-    summable_qone_maxDescendantBBlockNormAtScale_of_isEllipticFieldOn_of_openCubeDescendantDeterministicCoarseData
+    summable_qone_maxDescendantBBlockNorm_of_ellipticField
       R a s hs hEllR hDataR
   have hsum_one :
       Summable (fun m : ℕ =>
@@ -383,7 +383,7 @@ theorem
             cubeLpNorm R ∞ (scalarCutoffGradientField ηρ)) ≤
         coarseCaccioppoliSingleCubeBoundaryConstantBaseCoeff R a CeffLocal kR := by
     have hlocal' :=
-      coarseCaccioppoliFluxEnergyExactConstantCoeff_mul_cutoffGradient_le_singleCubeBoundaryConstantBaseCoeff_of_factor_bounds_on_descendant
+      coarseCaccioppoliConstantFluxEnergy_le_boundaryCoefficient_of_cutoffGradient
         (Q := Q) (R := R) (j := j) hR a (η := ηρ) (B := B)
         (Ceff := CeffLocal) (kR := kR + (j : ℝ))
         (Aavg := coarseCaccioppoliLambdaFactor R a (1 : ℝ))
@@ -529,7 +529,7 @@ theorem
 `coarseCaccioppoliFluxEnergyExactCenteredAverageCoeffFactorBound_localAcircOne_le_rpow_sub`.
 The midpoint cutoff doubles the average-branch gradient contribution. -/
 theorem
-    coarseCaccioppoliFluxEnergyExactCenteredAverageCoeffFactorBound_localAcircOne_buffered_le_rpow_sub
+    fluxEnergyExactAverageCoeffBound_buffered_le_geometricGap
     {d : ℕ} {Q R : TriadicCube d} (a : CoeffField d) {s Ceff : ℝ}
     {k j : ℕ} {ρ₁ ρ₂ : ℝ}
     (hCeff : 0 ≤ Ceff) (hs : 0 < s)

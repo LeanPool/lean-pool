@@ -84,7 +84,7 @@ theorem summable_geometricWeight_one_mul_maxDescendantBMatrixNormAtScale
     have hblock_le :
         maxDescendantBBlockNormAtScale Q (Q.scale - (n : ℤ)) Apw ≤ C := by
       simpa [Apw, C] using
-        maxDescendantBBlockNormAtScale_le_uniform_of_isEllipticFieldOn_openCubeSet_of_openCubeDescendantDeterministicCoarseData
+        maxDescendantBBlockNorm_le_uniform_of_ellipticField_openCubeSet
           (Q := Q) (a := Apw) hEll hData n
     exact hmatrix_le.trans hblock_le
 
@@ -124,7 +124,7 @@ theorem summable_geometricWeight_one_mul_maxDescendantSigmaStarInvMatrixNormAtSc
     have hblock_le :
         maxDescendantSigmaStarInvNormAtScale Q (Q.scale - (n : ℤ)) Apw ≤ C := by
       simpa [Apw, C] using
-        maxDescendantSigmaStarInvNormAtScale_le_uniform_of_isEllipticFieldOn_openCubeSet_of_openCubeDescendantDeterministicCoarseData
+        maxDescendantSigmaStarInvNorm_le_uniform_of_ellipticField_openCubeSet
           (Q := Q) (a := Apw) hEll hData n
     exact hmatrix_le.trans hblock_le
 
@@ -612,7 +612,7 @@ theorem LambdaSq_finite_antitone {d : ℕ} [NeZero d]
     · intro n
       refine Real.rpow_nonneg ?_ _
       exact maxDescendantBMatrixNormAtScale_nonneg Q
-        (sub_le_self _ (by exact_mod_cast Nat.zero_le n)) a
+        (sub_le_self _ (Nat.cast_nonneg n)) a
   exact (Real.rpow_le_rpow_iff
     (LambdaSq_finite_nonneg Q a hs hq)
     (LambdaSq_finite_nonneg Q a ht hq)
@@ -652,7 +652,7 @@ theorem lambdaSq_finite_mono {d : ℕ} [NeZero d]
     · intro n
       refine Real.rpow_nonneg ?_ _
       exact maxDescendantSigmaStarInvMatrixNormAtScale_nonneg Q
-        (sub_le_self _ (by exact_mod_cast Nat.zero_le n)) a
+        (sub_le_self _ (Nat.cast_nonneg n)) a
   have hpow_inv :
       Real.rpow ((lambdaSq Q s (.finite q) a)⁻¹) (q / 2) ≤
         Real.rpow ((lambdaSq Q t (.finite q) a)⁻¹) (q / 2) := by

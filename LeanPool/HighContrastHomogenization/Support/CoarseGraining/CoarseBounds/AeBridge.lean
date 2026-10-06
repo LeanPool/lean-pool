@@ -148,6 +148,7 @@ theorem isClosed_isEllipticEntry :
     exact isClosed_le (by fun_prop) (by fun_prop)
   exact h1.inter h2
 
+open scoped Classical in
 /-- **C2(ii).**  Given the `IsEllipticFieldOn`-style entrywise measurability of the
 `U`-truncated coefficient field, the elliptic locus intersected with `U` is
 measurable. -/
@@ -228,6 +229,7 @@ theorem isEllipticMatrix_ellipticTruncate (hΘ : 1 ≤ Θ) (x : Vec d) :
   · rw [ellipticTruncate_of_elliptic h]; exact h
   · rw [ellipticTruncate_of_not_elliptic h]; exact isEllipticMatrix_one_one hΘ
 
+open scoped Classical in
 /-- **C2(iii)(a).**  The elliptic truncation is an everywhere-`(1, Θ)`-elliptic
 field on `U`, given `1 ≤ Θ` and the entrywise measurability of the `U`-truncated
 coefficient field. -/
@@ -268,6 +270,7 @@ theorem ellipticTruncate_ae_eq {U : Set (Vec d)}
 
 /-! ## C2(iv) — bridge packaging -/
 
+open scoped Classical in
 /-- **C2(iv).**  From a.e. ellipticity on the (measurable) averaging set plus the
 entrywise measurability of the `U`-truncated field (and `1 ≤ Θ`), produce a
 genuinely `(1, Θ)`-elliptic field `a'` that agrees with `a` a.e. on `U`, gives

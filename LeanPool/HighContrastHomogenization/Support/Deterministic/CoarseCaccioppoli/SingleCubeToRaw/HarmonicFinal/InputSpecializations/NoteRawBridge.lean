@@ -14,7 +14,8 @@ public import LeanPool.HighContrastHomogenization.Support.Deterministic.Multisca
 
 /-!
 # Coarse-graining support:
-Support.Deterministic.CoarseCaccioppoli.SingleCubeToRaw.HarmonicFinal.InputSpecializations.NoteRawBridge
+Support.Deterministic.CoarseCaccioppoli.SingleCubeToRaw.HarmonicFinal.InputSpecializations
+.NoteRawBridge
 
 Imported from the Apache-2.0 CoarseGraining development at commit
 `c7ddd76c08ade64fed1b8d2ca51be14dfee8deb4`.
@@ -31,7 +32,7 @@ open scoped ENNReal
 /-- Split interior raw bridge for a constant harmonic family using the same
 buffered localized-energy summation as the repaired boundary route. -/
 theorem
-    CoarseCaccioppoliInteriorCanonicalHarmonicVectorNoteRawBridgeSplit.of_constantFamily_bufferedFaithfulWorkSmallCubeExactRawCoefficientBoundsSplit_of_closedCubeEllipticity
+    CoarseCaccioppoliInteriorCanonicalHarmonicVectorNoteRawBridgeSplit.of_smallCubeBoundsSplit
     {d : ℕ} [NeZero d] (Q : TriadicCube d) (a : CoeffField d)
     (s t Clocal Calpha Ccross : ℝ) {lam Lam : ℝ}
     (u0 : AHarmonicFunction a (openCubeSet Q))
@@ -40,7 +41,7 @@ theorem
     (hs : 0 < s) (ht : 0 < t) (hst : s + t < 1)
     (hEllCube : IsEllipticFieldOn lam Lam (cubeSet Q) a)
     (hrawcoeff :
-      CoarseCaccioppoliBoundaryCanonicalHarmonicVectorFaithfulWorkSmallCubeBufferedExactRawCoefficientBoundsSplit
+      BoundaryCaccioppoliHarmonicVectorSmallCubeCoefficientSplit
         Q a s t Clocal Calpha Ccross) :
     CoarseCaccioppoliInteriorCanonicalHarmonicVectorNoteRawBridgeSplit
       Q a s t Calpha Ccross (coarseCaccioppoliHarmonicL2Sq Q a u0)
@@ -48,7 +49,7 @@ theorem
   CoarseCaccioppoliInteriorCanonicalHarmonicVectorNoteRawBridgeSplit.of_boundary
     Q a s t Calpha Ccross (coarseCaccioppoliHarmonicL2Sq Q a u0)
     (fun x => scalarVariationEnergyIntegrand a u0 x)
-    (CoarseCaccioppoliBoundaryCanonicalHarmonicVectorNoteRawBridgeSplit.of_constantFamily_bufferedFaithfulWorkSmallCubeExactRawCoefficientBoundsSplit_of_closedCubeEllipticity
+    (CoarseCaccioppoliBoundaryCanonicalHarmonicVectorNoteRawBridgeSplit.of_smallCubeBoundsSplit
       (Q := Q) (a := a) (s := s) (t := t) (Clocal := Clocal)
       (Calpha := Calpha) (Ccross := Ccross) (u0 := u0)
       hClocal hCalpha hCcross hCsol_le hs ht hst hEllCube hrawcoeff)
@@ -56,7 +57,7 @@ theorem
 /-- Boundary note-RHS Caccioppoli from an all-radii split note-faithful raw
 bridge, using the standard beta-dependent radius iteration. -/
 theorem
-    coarseCaccioppoli_boundary_qone_standard_le_noteRhs_explicitSplit_of_profileInputs_of_noteRawBridgeSplitAllRadii
+    coarseCaccioppoli_boundary_qone_standard_le_noteRhs_explicitSplit
     {d : ℕ} [NeZero d] (Q : TriadicCube d) (a : CoeffField d)
     (s t Calpha Ccross uL2Sq : ℝ) {lam Lam : ℝ}
     (baseEnergy : Vec d → ℝ)
@@ -86,7 +87,7 @@ theorem
   have hCeffCross_nonneg : 0 ≤ CeffCross := by
     exact mul_nonneg hcard_pos.le hCcross
   exact
-    coarseCaccioppoli_boundary_qone_standard_le_noteRhs_of_noteEstimate_of_localizedExplicitHeightOfScaleChoice_split
+    coarseCaccioppoli_boundary_qone_standard_le_noteRhs_of_noteEstimate
       (Q := Q) (a := a) (s := s) (t := t)
       (Calpha := CeffAlpha) (Ccross := CeffCross) (uL2Sq := uL2Sq)
       (k := coarseCaccioppoliTriadicGapScale)
@@ -105,7 +106,7 @@ theorem
 /-- Interior note-RHS Caccioppoli from an all-radii split note-faithful raw
 bridge, using the standard beta-dependent radius iteration. -/
 theorem
-    coarseCaccioppoli_interior_qone_standard_le_noteRhs_explicitSplit_of_profileInputs_of_noteRawBridgeSplitAllRadii
+    coarseCaccioppoli_interior_qone_standard_le_noteRhs_explicitSplit
     {d : ℕ} [NeZero d] (Q : TriadicCube d) (a : CoeffField d)
     (s t Calpha Ccross uL2Sq : ℝ) {lam Lam : ℝ}
     (baseEnergy : Vec d → ℝ)
@@ -130,7 +131,7 @@ theorem
     simpa [CoarseCaccioppoliInteriorCanonicalHarmonicVectorNoteRawBridgeSplitAllRadii]
       using hBridge
   simpa [coarseCaccioppoliInteriorNoteRhs] using
-    (coarseCaccioppoli_boundary_qone_standard_le_noteRhs_explicitSplit_of_profileInputs_of_noteRawBridgeSplitAllRadii
+    (coarseCaccioppoli_boundary_qone_standard_le_noteRhs_explicitSplit
       (Q := Q) (a := a) (s := s) (t := t) (Calpha := Calpha)
       (Ccross := Ccross) (uL2Sq := uL2Sq)
       (baseEnergy := baseEnergy) (w := w)
@@ -139,7 +140,7 @@ theorem
 /-- Boundary note-RHS Caccioppoli from an all-radii split arbitrary-center
 local-patch raw bridge, using the standard beta-dependent radius iteration. -/
 theorem
-    coarseCaccioppoli_boundary_localPatch_qone_standard_le_noteRhs_explicitSplit_of_noteRawBridgeSplitAllRadii
+    coarseCaccioppoli_boundary_local_qone_standard_le_of_noteBridgeSplitAllRadii
     {d : ℕ} [NeZero d] (Q : TriadicCube d) (center : Vec d)
     (a : CoeffField d) (s t Calpha Ccross uL2Sq : ℝ) {lam Lam : ℝ}
     (baseEnergy : Vec d → ℝ)
@@ -170,7 +171,7 @@ theorem
   have hCeffCross_nonneg : 0 ≤ CeffCross := by
     exact mul_nonneg hcard_pos.le hCcross
   exact
-    coarseCaccioppoli_boundary_qone_standard_le_noteRhs_of_noteEstimate_of_localizedExplicitHeightOfScaleChoice_split
+    coarseCaccioppoli_boundary_qone_standard_le_noteRhs_of_noteEstimate
       (Q := Q) (a := a) (s := s) (t := t)
       (Calpha := CeffAlpha) (Ccross := CeffCross) (uL2Sq := uL2Sq)
       (k := coarseCaccioppoliTriadicGapScale)

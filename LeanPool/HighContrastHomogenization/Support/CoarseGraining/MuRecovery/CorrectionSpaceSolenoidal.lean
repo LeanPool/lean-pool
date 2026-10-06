@@ -204,7 +204,7 @@ theorem recoveredField_upperImage_memVectorL2_zero_right_of_isEllipticFieldOn
               rw [hsnd]
   simpa [hEq] using hUpper'
 
-theorem recoveredField_lowerImage_isPotential_zero_right_of_isEllipticFieldOn_of_hodgeConverseCriterion
+theorem recoveredLowerImage_potential_zeroRight_of_elliptic_hodge
     (R : MuCorrectionSpaceRecoveryData U)
     (system : MuOperatorSystemData U a)
     {lam Lam : ℝ} (hEll : IsEllipticFieldOn lam Lam U a)
@@ -216,7 +216,7 @@ theorem recoveredField_lowerImage_isPotential_zero_right_of_isEllipticFieldOn_of
         (blockMatVecMul (blockCoeffField a x)
           ((R.recoveredField system (0, q)).eval x)).2) := by
   refine
-    IsPotentialOn.of_orthogonal_to_solenoidalZeroNormalTrace_of_memVectorL2_of_hodgeConverseCriterion
+    IsPotentialOn.potential_of_orthogonalL2
       hHodge
       (R.recoveredField_lowerImage_memVectorL2_zero_right_of_isEllipticFieldOn system hEll q)
       ?_
@@ -235,7 +235,7 @@ theorem recoveredField_lowerImage_isPotential_zero_right_of_isEllipticFieldOn_of
   simpa [blockPairingIntegrand, BlockState.eval, blockVecDot, vecDot_zero_left] using hzero
 
 /-- Convex-domain version of the zero-right lower-image potential recovery. -/
-theorem recoveredField_lowerImage_isPotential_zero_right_of_isEllipticFieldOn_of_isOpenBoundedConvexDomain
+theorem recoveredLowerImage_potential_zeroRight_of_elliptic_convex
     (R : MuCorrectionSpaceRecoveryData U)
     (system : MuOperatorSystemData U a)
     (hConv : IsOpenBoundedConvexDomain U)
@@ -246,7 +246,7 @@ theorem recoveredField_lowerImage_isPotential_zero_right_of_isEllipticFieldOn_of
       (fun x =>
         (blockMatVecMul (blockCoeffField a x)
           ((R.recoveredField system (0, q)).eval x)).2) :=
-  R.recoveredField_lowerImage_isPotential_zero_right_of_isEllipticFieldOn_of_hodgeConverseCriterion
+  R.recoveredLowerImage_potential_zeroRight_of_elliptic_hodge
     system hEll (hodgeConverseCriterion_of_isOpenBoundedConvexDomain (U := U) hConv) hvol q
 
 theorem recoveredField_mem_responseSpace_zero_right_of_isEllipticFieldOn_of_hodgeConverseCriterion
@@ -268,7 +268,7 @@ theorem recoveredField_mem_responseSpace_zero_right_of_isEllipticFieldOn_of_hodg
   have hLowerPot :
       IsPotentialOn U
         (fun x => (blockMatVecMul (blockCoeffField a x) (X.eval x)).2) :=
-    R.recoveredField_lowerImage_isPotential_zero_right_of_isEllipticFieldOn_of_hodgeConverseCriterion
+    R.recoveredLowerImage_potential_zeroRight_of_elliptic_hodge
       system hEll hHodge hvol q
   have hFluxSol :
       IsSolenoidalOn U X.flux := by
@@ -354,7 +354,8 @@ theorem recoveredField_mem_responseSpace_zero_right_of_isEllipticFieldOn
 /-- Convex-domain recovery wrapper for the zero-right response-space witness.
 This is the preferred Chapter-2-facing surface when the domain is known to be
 bounded open convex: no abstract `HasHodgeConverse` package is required. -/
-theorem recoveredField_mem_responseSpace_zero_right_of_isEllipticFieldOn_of_isOpenBoundedConvexDomain
+theorem
+  recoveredField_mem_responseSpace_zero_right_of_isEllipticFieldOn_of_isOpenBoundedConvexDomain
     (R : MuCorrectionSpaceRecoveryData U)
     (system : MuOperatorSystemData U a)
     (hConv : IsOpenBoundedConvexDomain U)
@@ -559,7 +560,7 @@ theorem recoveredField_lowerImage_isPotential_of_isEllipticFieldOn_of_hodgeConve
         (blockMatVecMul (blockCoeffField a x)
           ((R.recoveredField system P).eval x)).2) := by
   refine
-    IsPotentialOn.of_orthogonal_to_solenoidalZeroNormalTrace_of_memVectorL2_of_hodgeConverseCriterion
+    IsPotentialOn.potential_of_orthogonalL2
       hHodge
       (R.recoveredField_lowerImage_memVectorL2_of_isEllipticFieldOn system hEll P)
       ?_
@@ -707,7 +708,7 @@ theorem recoveredField_mem_responseSpace_of_isEllipticFieldOn
 /-- Convex-domain recovery wrapper for the full block response-space witness.
 This keeps the concrete bounded-open-convex Hodge theorem visible at the
 public recovery surface. -/
-theorem recoveredField_mem_responseSpace_of_isEllipticFieldOn_of_isOpenBoundedConvexDomain
+theorem recoveredField_mem_blockResponseSpace
     (R : MuCorrectionSpaceRecoveryData U)
     (system : MuOperatorSystemData U a)
     (hConv : IsOpenBoundedConvexDomain U)

@@ -152,7 +152,7 @@ theorem measureReal_shiftedBadScaleEvent_quenchedProbeEnvelope_le_interpolated_c
           (Real.exp (-(A ^ η)) *
             weightedLinearExpKernelConst w (ρtop ^ τ)) := by
     simpa [K, N0, Hshift, S, b, L, ctop, τ, η, w, Dhigh, A, ρtop] using
-      measureReal_shiftedHighTopBadScaleEvent_quenchedProbeEnvelope_le_interpolated_kernel_of_badPair_bound
+      measureReal_shiftedHighTopBadScaleProbability_le_interpolated_kernel
         (d := d) (σ := σ) (Cfluct := Cfluct) (Centry := Centry) (a := a)
         hσ_pos params hCfluct hCentry ha hhighRaw
         (t := t) (αbad := αbad) (Den := Den)
@@ -165,15 +165,15 @@ theorem measureReal_shiftedBadScaleEvent_quenchedProbeEnvelope_le_interpolated_c
             weightedGeometricExpKernelConst w (ρbottom ^ η)) := by
     simpa [K, N0, Hshift, S, b, L, τ, η, w, Dhigh, Dcrude, A, ρbottom,
       Cbottom] using
-      measureReal_shiftedHighBottomBadScaleEvent_quenchedProbeEnvelope_le_interpolated_weighted_kernel_of_row_bound
+      shiftedHighBottomBadScaleProbability_le_interpolated_weighted_kernel_of_rowBound
         (d := d) (σ := σ) (Cfluct := Cfluct) (Ccrude := Ccrude)
         (Centry := Centry) (a := a)
         hσ_pos params
-        (measureReal_shiftedHighBottomPairEvent_quenchedProbeEnvelope_le_interpolated_weighted_row_of_soft_max_bound
+        (shiftedHighBottomPairProbability_le_interpolatedWeightedRow_of_softMaximum
           (d := d) (σ := σ) (Cfluct := Cfluct) (Ccrude := Ccrude)
           (Centry := Centry) (a := a)
           hσ_pos params hCfluct hCcrude hCentry ha
-          (measureReal_shiftedHighBottomPairEvent_quenchedProbeEnvelope_le_soft_max_mixed_of_badPair_bounds
+          (shiftedHighBottomPairMeasure_le_softMax_of_pairBounds
             (d := d) (σ := σ) (Cfluct := Cfluct) (Ccrude := Ccrude)
             (Centry := Centry) (a := a)
             hσ_pos params hCfluct hCcrude hCentry ha hhighRaw hcrudeRaw))
@@ -186,10 +186,10 @@ theorem measureReal_shiftedBadScaleEvent_quenchedProbeEnvelope_le_interpolated_c
           (Real.exp (-(Acrude ^ η)) *
             weightedGeometricExpKernelConst w (ρcrude ^ σ)) := by
     simpa [K, N0, Hshift, S, L, η, w, Dcrude, Acrude, ρcrude] using
-      measureReal_shiftedCrudeBottomBadScaleEvent_quenchedProbeEnvelope_le_interpolated_kernel_of_component_bound
+      measureReal_shiftedBottomBadScaleProbability_le_interpolated_kernel
         (d := d) (σ := σ) (Ccrude := Ccrude)
         hσ_pos hCcrude (params := params)
-        (measureReal_shiftedCrudeBottomBadScaleEvent_quenchedProbeEnvelope_le_weighted_kernel_of_badPair_bound
+        (measureReal_shiftedBottomBadScaleProbability_le_weighted_kernel
           (d := d) (σ := σ) (Ccrude := Ccrude)
           hσ_pos hCcrude params hcrudeRaw)
         (Centry := Centry) (a := a) (t := t) (αbad := αbad)
@@ -207,7 +207,7 @@ theorem measureReal_shiftedBadScaleEvent_quenchedProbeEnvelope_le_interpolated_c
 
 The annealed entry constant and exponent are fixed before `σ`; the high and
 crude fluctuation constants are still chosen after the finite moment exponent. -/
-theorem measureReal_shiftedBadScaleEvent_quenchedProbeEnvelope_le_interpolated_component_sum_uniformAnnealedExponent
+theorem shiftedBadScaleProbability_le_interpolated_component_sum_uniformAnnealedExponent
     {d : ℕ} [NeZero d]
     (params : QuantitativeCoarseGrainedEllipticityParams d) :
     ∃ Centry a : ℝ, 0 < Centry ∧ 0 < a ∧
@@ -273,7 +273,7 @@ theorem measureReal_shiftedBadScaleEvent_quenchedProbeEnvelope_le_interpolated_c
                   (Real.exp (-(Acrude ^ η)) *
                     weightedGeometricExpKernelConst w (ρcrude ^ σ)) := by
   obtain ⟨Centry, a, hCentry, ha, hhighBase⟩ :=
-    measureReal_shiftedHigh_badPairEvent_quenchedProbeEnvelope_le_card_mul_card_mul_exp_noLog_uniformAnnealedExponent
+    shiftedHighBadPairProbability_le_cardSquaredExponential_annealedExponent
       (d := d) params
   refine ⟨Centry, a, hCentry, ha, ?_⟩
   intro σ hσ_pos
@@ -322,7 +322,7 @@ theorem measureReal_shiftedBadScaleEvent_quenchedProbeEnvelope_le_interpolated_c
           (Real.exp (-(A ^ η)) *
             weightedLinearExpKernelConst w (ρtop ^ τ)) := by
     simpa [K, N0, Hshift, S, b, L, ctop, τ, η, w, Dhigh, A, ρtop] using
-      measureReal_shiftedHighTopBadScaleEvent_quenchedProbeEnvelope_le_interpolated_kernel_of_badPair_bound
+      measureReal_shiftedHighTopBadScaleProbability_le_interpolated_kernel
         (d := d) (σ := σ) (Cfluct := Cfluct) (Centry := Centry) (a := a)
         hσ_pos params hCfluct hCentry ha hhighRaw
         (t := t) (αbad := αbad) (Den := Den)
@@ -335,15 +335,15 @@ theorem measureReal_shiftedBadScaleEvent_quenchedProbeEnvelope_le_interpolated_c
             weightedGeometricExpKernelConst w (ρbottom ^ η)) := by
     simpa [K, N0, Hshift, S, b, L, τ, η, w, Dhigh, Dcrude, A, ρbottom,
       Cbottom] using
-      measureReal_shiftedHighBottomBadScaleEvent_quenchedProbeEnvelope_le_interpolated_weighted_kernel_of_row_bound
+      shiftedHighBottomBadScaleProbability_le_interpolated_weighted_kernel_of_rowBound
         (d := d) (σ := σ) (Cfluct := Cfluct) (Ccrude := Ccrude)
         (Centry := Centry) (a := a)
         hσ_pos params
-        (measureReal_shiftedHighBottomPairEvent_quenchedProbeEnvelope_le_interpolated_weighted_row_of_soft_max_bound
+        (shiftedHighBottomPairProbability_le_interpolatedWeightedRow_of_softMaximum
           (d := d) (σ := σ) (Cfluct := Cfluct) (Ccrude := Ccrude)
           (Centry := Centry) (a := a)
           hσ_pos params hCfluct hCcrude hCentry ha
-          (measureReal_shiftedHighBottomPairEvent_quenchedProbeEnvelope_le_soft_max_mixed_of_badPair_bounds
+          (shiftedHighBottomPairMeasure_le_softMax_of_pairBounds
             (d := d) (σ := σ) (Cfluct := Cfluct) (Ccrude := Ccrude)
             (Centry := Centry) (a := a)
             hσ_pos params hCfluct hCcrude hCentry ha hhighRaw hcrudeRaw))
@@ -356,10 +356,10 @@ theorem measureReal_shiftedBadScaleEvent_quenchedProbeEnvelope_le_interpolated_c
           (Real.exp (-(Acrude ^ η)) *
             weightedGeometricExpKernelConst w (ρcrude ^ σ)) := by
     simpa [K, N0, Hshift, S, L, η, w, Dcrude, Acrude, ρcrude] using
-      measureReal_shiftedCrudeBottomBadScaleEvent_quenchedProbeEnvelope_le_interpolated_kernel_of_component_bound
+      measureReal_shiftedBottomBadScaleProbability_le_interpolated_kernel
         (d := d) (σ := σ) (Ccrude := Ccrude)
         hσ_pos hCcrude (params := params)
-        (measureReal_shiftedCrudeBottomBadScaleEvent_quenchedProbeEnvelope_le_weighted_kernel_of_badPair_bound
+        (measureReal_shiftedBottomBadScaleProbability_le_weighted_kernel
           (d := d) (σ := σ) (Ccrude := Ccrude)
           hσ_pos hCcrude params hcrudeRaw)
         (Centry := Centry) (a := a) (t := t) (αbad := αbad)
@@ -375,7 +375,7 @@ theorem measureReal_shiftedBadScaleEvent_quenchedProbeEnvelope_le_interpolated_c
 
 /-- Same synchronized component-sum bound after selecting the common
 denominator that dominates both raw branch denominators. -/
-theorem measureReal_shiftedBadScaleEvent_quenchedProbeEnvelope_le_interpolated_component_sum_selected_denominator
+theorem shiftedBadScaleProbability_le_interpolated_component_sum_selected_denominator
     {d : ℕ} [NeZero d] {σ : ℝ}
     (hσ_pos : 0 < σ)
     (params : QuantitativeCoarseGrainedEllipticityParams d) :
@@ -487,7 +487,7 @@ theorem measureReal_shiftedBadScaleEvent_quenchedProbeEnvelope_le_interpolated_c
       hDen_bounds.1 hDen_bounds.2 hA_one hAcrude_one hq_large
 
 /-- Uniform-in-`σ` selected-denominator component-sum bound. -/
-theorem measureReal_shiftedBadScaleEvent_quenchedProbeEnvelope_le_interpolated_component_sum_selected_denominator_uniformAnnealedExponent
+theorem badScaleProbability_le_interpolatedSum_selectedDenominator_annealedExponent
     {d : ℕ} [NeZero d]
     (params : QuantitativeCoarseGrainedEllipticityParams d) :
     ∃ Centry a : ℝ, 0 < Centry ∧ 0 < a ∧
@@ -551,7 +551,7 @@ theorem measureReal_shiftedBadScaleEvent_quenchedProbeEnvelope_le_interpolated_c
                   (Real.exp (-(Acrude ^ η)) *
                     weightedGeometricExpKernelConst w (ρcrude ^ σ)) := by
   obtain ⟨Centry, a, hCentry, ha, hcomponentBase⟩ :=
-    measureReal_shiftedBadScaleEvent_quenchedProbeEnvelope_le_interpolated_component_sum_uniformAnnealedExponent
+    shiftedBadScaleProbability_le_interpolated_component_sum_uniformAnnealedExponent
       (d := d) params
   refine ⟨Centry, a, hCentry, ha, ?_⟩
   intro σ hσ_pos

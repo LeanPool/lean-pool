@@ -62,7 +62,8 @@ and local to this file; four of them (`respM0_qform_eq_sum_vecDot`,
 `respM0_blockPosDef_of_canonicalMetric_posDef` of
 `HCPoly/Entry/Response/Core/AnnealedMeanDrift.lean`. -/
 
-private theorem responseLoadMean_matVecMul_step (A : Mat d) (x : Vec d) : matVecMul A x = A.mulVec x := rfl
+private theorem responseLoadMean_matVecMul_step (A : Mat d) (x : Vec d) : matVecMul A x =
+  A.mulVec x := rfl
 
 private theorem qform_of_loewner {A B : BlockMat d} (h : BlockMatLoewnerLE A B)
     (X : BlockVec d) :
@@ -131,7 +132,8 @@ private theorem respM0_qform_eq_sum_vecDot (F : BlockMat d) (Y : BlockVec d) :
         vecDot Y.2 (matVecMul (explicitCanonicalMetric F)⁻¹ Y.2) := by
   simp [respM0, blockVecDot, blockMatVecMul, matVecMul, vecDot]
 
-private theorem respM0_isSymm_of_metric_posDef {F : BlockMat d} (hm : (explicitCanonicalMetric F).PosDef) :
+private theorem respM0_isSymm_of_metric_posDef {F : BlockMat d} (hm : (explicitCanonicalMetric
+  F).PosDef) :
     IsSymmetricBlockMat (respM0 F) := by
   intro α β
   have h1 := hm.isHermitian
@@ -159,7 +161,8 @@ private theorem respM0_qform_nonneg {F : BlockMat d} (hm : (explicitCanonicalMet
     simpa only [star_trivial] using! hm.inv.posSemidef.dotProduct_mulVec_nonneg X.2
   linarith only [h1, h2]
 
-private theorem respM0_blockPosDef_of_metric_posDef {F : BlockMat d} (hm : (explicitCanonicalMetric F).PosDef) :
+private theorem respM0_blockPosDef_of_metric_posDef {F : BlockMat d} (hm :
+  (explicitCanonicalMetric F).PosDef) :
     Book.Ch02.BlockPosDef (respM0 F) := by
   intro X hX
   rw [respM0_qform_eq_sum_vecDot]
@@ -360,7 +363,8 @@ theorem response_load_and_mean (d : ℕ) (_hd : 2 ≤ d) (γ : ℝ) (_hγ : γ �
   intro ε σ hε hσ Cglob Cprof Csrc Bresp H P E Ψ Kg Src B jStar F s t raw hcal e he hed
   have := raw.prob
   let : NeZero d := ⟨by omega⟩
-  have hm : (explicitCanonicalMetric F).PosDef := Geometry.explicitCanonicalMetric_posDef raw.symm raw.pos
+  have hm : (explicitCanonicalMetric F).PosDef := Geometry.explicitCanonicalMetric_posDef
+    raw.symm raw.pos
   obtain ⟨hk1, hkts, -, -, -⟩ :=
     response_imbalance_comparison d _hd γ _hγ S _hS ε σ hε hσ Cglob Cprof Csrc Bresp H P E Ψ
       Kg Src B jStar F s t raw

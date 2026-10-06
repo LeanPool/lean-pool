@@ -150,6 +150,99 @@ theorem smallBottomTailDenominator_rpow_le_crude_scale
     congr 2
     field_simp [hσ.ne']
 
+private theorem exponential_kernel_le_interpolated_tail
+    {z coefficient w W M Blead Btail η σ Aold C₀ ρgap : ℝ} {R q : ℕ}
+    (hcoefficient : 0 ≤ coefficient) (hcoefficient_le : coefficient ≤ M)
+    (hw : 0 ≤ w) (hwW : w ≤ W) (hM_one : 1 ≤ M) (hW_one : 1 ≤ W)
+    (hBlead : 0 < Blead) (hBtail : 0 < Btail) (hη : 0 < η)
+    (hBlead_lt : Blead < Btail) (hρgap_gt : 1 < ρgap)
+    (hC₀ : 2 + Real.log W ≤ C₀) (hρgap : ρgap ≤ (3 : ℝ) ^ η)
+    (hR : ∀ k : ℕ, R ≤ k → C₀ * (k : ℝ) ≤
+      Real.exp ((Real.log ρgap / 2) * (k : ℝ)))
+    (hqM : Nat.ceil (max 0 (Real.log M)) ≤ q) (hqR : R ≤ q)
+    (hqc : Nat.ceil ((2 * max 0 (-(Real.log
+      (Blead ^ (-η) - Btail ^ (-η))))) / Real.log ρgap) ≤ q)
+    (hAlead_to_old : ((3 : ℝ) ^ (q : ℝ) / Blead) ^ η ≤ Aold ^ σ)
+    (hkernel : z ≤ coefficient * w ^ q * Real.exp (-(Aold ^ σ))) :
+    z ≤ Real.exp (-(((3 : ℝ) ^ (q : ℝ) / Btail) ^ η)) := by
+  let Alead : ℝ := ((3 : ℝ) ^ (q : ℝ) / Blead) ^ η
+  let Atail : ℝ := ((3 : ℝ) ^ (q : ℝ) / Btail) ^ η
+  let cgap : ℝ := Blead ^ (-η) - Btail ^ (-η)
+  have hprefix_le : coefficient * w ^ q ≤ M * (((q : ℝ) + 1) * W ^ q) := by
+    have hwq_le : w ^ q ≤ W ^ q := pow_le_pow_left₀ hw hwW q
+    have hWq_nonneg : 0 ≤ W ^ q := pow_nonneg (zero_le_one.trans hW_one) q
+    have hleft : coefficient * w ^ q ≤ M * W ^ q :=
+      mul_le_mul hcoefficient_le hwq_le (pow_nonneg hw q) (zero_le_one.trans hM_one)
+    have hqplus_one : 1 ≤ (q : ℝ) + 1 := by
+      have hq_nonneg : 0 ≤ (q : ℝ) := by positivity
+      linarith
+    have hright : M * W ^ q ≤ M * (((q : ℝ) + 1) * W ^ q) := by
+      have hfactor : W ^ q ≤ ((q : ℝ) + 1) * W ^ q := by
+        calc
+          W ^ q = 1 * W ^ q := by ring
+          _ ≤ ((q : ℝ) + 1) * W ^ q :=
+            mul_le_mul_of_nonneg_right hqplus_one hWq_nonneg
+      exact mul_le_mul_of_nonneg_left hfactor (zero_le_one.trans hM_one)
+    exact hleft.trans hright
+  have hc_pos : 0 < cgap :=
+    inv_rpow_sub_pos_of_lt hBlead hBtail hη hBlead_lt
+  have hpref_gap : M * (((q : ℝ) + 1) * W ^ q) ≤ Real.exp (Alead - Atail) := by
+    have hpref_exp : M * (((q : ℝ) + 1) * W ^ q) ≤
+        Real.exp (cgap * ρgap ^ q) :=
+      linear_prefactor_le_exp_const_mul_pow_of_large
+        (M := M) (W := W) (C₀ := C₀) (c := cgap)
+        (ρ := ρgap) (R := R) (q := q)
+        hM_one hW_one hc_pos hρgap_gt hC₀ hR hqM hqR hqc
+    have hgap : cgap * ρgap ^ q ≤ Alead - Atail := by
+      simpa [Alead, Atail, cgap] using
+        geometric_gap_le_rpow_three_nat_div_gap
+          (Blead := Blead) (Btail := Btail) (η := η)
+          (c := cgap) (ρ := ρgap) (q := q)
+          hBlead hBtail (le_rfl : cgap ≤ Blead ^ (-η) - Btail ^ (-η))
+          hρgap hc_pos.le (le_of_lt (lt_trans zero_lt_one hρgap_gt))
+    exact hpref_exp.trans (Real.exp_le_exp.mpr hgap)
+  have hexp_old : Real.exp (-(Aold ^ σ)) ≤ Real.exp (-Alead) :=
+    Real.exp_le_exp.mpr (neg_le_neg hAlead_to_old)
+  calc
+    z ≤ coefficient * w ^ q * Real.exp (-(Aold ^ σ)) := hkernel
+    _ ≤ coefficient * w ^ q * Real.exp (-Alead) :=
+      mul_le_mul_of_nonneg_left hexp_old (mul_nonneg hcoefficient (pow_nonneg hw q))
+    _ ≤ M * (((q : ℝ) + 1) * W ^ q) * Real.exp (-Alead) :=
+      mul_le_mul_of_nonneg_right hprefix_le (Real.exp_pos _).le
+    _ ≤ Real.exp (Alead - Atail) * Real.exp (-Alead) :=
+      mul_le_mul_of_nonneg_right hpref_gap (Real.exp_pos _).le
+    _ = Real.exp (-Atail) := by
+      rw [← Real.exp_add]
+      ring_nf
+
+private theorem finite_tail_crude_parameter_bounds
+    {d : ℕ} [NeZero d] {σ t scale : ℝ} {q : ℕ}
+    (hσ : 0 < σ) (ht : 0 < t) (hscale : 0 < scale)
+    (hq : Nat.ceil (Real.log (smallBottomTailDenominator scale
+      (finiteQuenchedTailExponent d σ t) σ) / Real.log 3) ≤ q) :
+    let η : ℝ := finiteQuenchedTailExponent d σ t
+    let Blead : ℝ := smallBottomTailDenominator scale η σ
+    let Aold : ℝ := (3 : ℝ) ^ (t * (q : ℝ)) / scale
+    1 ≤ Aold ∧ ((3 : ℝ) ^ (q : ℝ) / Blead) ^ η ≤ Aold ^ σ := by
+  intro η Blead Aold
+  have hη : 0 < η := finiteQuenchedTailExponent_pos hσ ht
+  have hBlead : 0 < Blead := smallBottomTailDenominator_pos
+  have hlead : 1 ≤ (3 : ℝ) ^ (q : ℝ) / Blead := by
+    simpa using one_le_rpow_three_linear_sub_nat_div_of_natCeil_le
+      (β := (1 : ℝ)) (O := (0 : ℝ)) (D := Blead) (q := q)
+      (by norm_num) hBlead (by simpa using hq)
+  have hη_le : η ≤ σ * t := by
+    have hb : 0 < (d : ℝ) / 2 := by
+      have hd : 0 < (d : ℝ) := by exact_mod_cast Nat.pos_of_ne_zero (NeZero.ne d)
+      positivity
+    exact interpolatedQuenchedTailExponent_le_sigma_mul_t hb hσ ht
+  have hcompare : ((3 : ℝ) ^ (q : ℝ) / Blead) ^ η ≤ Aold ^ σ :=
+    smallBottomTailDenominator_rpow_le_crude_scale hscale hη hσ hη_le
+  have hAold : 0 ≤ Aold :=
+    div_nonneg (Real.rpow_pos_of_pos (by norm_num : (0 : ℝ) < 3) _).le hscale.le
+  exact ⟨one_le_of_one_le_rpow hAold hσ
+    ((Real.one_le_rpow hlead hη.le).trans hcompare), hcompare⟩
+
 /-- Quantitative small-bottom bad-tail bound with the fixed prefactor-growth
 threshold chosen before the law. -/
 theorem exists_quantitative_threshold_smallBottomBadTail_quenchedProbeEnvelope_le_interpolated_tail
@@ -307,40 +400,11 @@ theorem exists_quantitative_threshold_smallBottomBadTail_quenchedProbeEnvelope_l
     (le_max_right R
         (Nat.ceil ((2 * max 0 (-(Real.log cgap))) / Real.log ρgap))).trans
       ((le_max_right _ _).trans hq_pref)
-  have hlead_one : 1 ≤ (3 : ℝ) ^ (q : ℝ) / Blead := by
-    simpa [Blead] using
-      one_le_rpow_three_linear_sub_nat_div_of_natCeil_le
-        (β := (1 : ℝ)) (O := (0 : ℝ)) (D := Blead) (q := q)
-        (by norm_num) hBlead_pos
-        (by simpa [Qlead] using hq_lead)
-  have hη_le : η ≤ σ * t := by
-    have hb_pos : 0 < (d : ℝ) / 2 := by
-      have hd : 0 < (d : ℝ) := by
-        exact_mod_cast Nat.pos_of_ne_zero (NeZero.ne d)
-      positivity
-    simpa [η, finiteQuenchedTailExponent] using
-      interpolatedQuenchedTailExponent_le_sigma_mul_t
-        (b := (d : ℝ) / 2) (σ := σ) (t := t)
-        hb_pos hσ_pos ht
   let Aold : ℝ := (3 : ℝ) ^ (t * (q : ℝ)) / scale
   let Alead : ℝ := ((3 : ℝ) ^ (q : ℝ) / Blead) ^ η
-  let Atail : ℝ := ((3 : ℝ) ^ (q : ℝ) / Btail) ^ η
-  have hAlead_to_old : Alead ≤ Aold ^ σ := by
-    simpa [Aold, Alead, Blead] using
-      smallBottomTailDenominator_rpow_le_crude_scale
-        (scale := scale) (η := η) (σ := σ) (t := t) (q := q)
-        hscale_pos hη_pos hσ_pos hη_le
-  have hAold_nonneg : 0 ≤ Aold := by
-    dsimp [Aold]
-    exact div_nonneg
-      (Real.rpow_pos_of_pos (by norm_num : (0 : ℝ) < 3) _).le
-      hscale_pos.le
-  have hAold_one : 1 ≤ Aold := by
-    have hAlead_one : 1 ≤ Alead := by
-      dsimp [Alead]
-      exact Real.one_le_rpow hlead_one hη_pos.le
-    exact one_le_of_one_le_rpow hAold_nonneg hσ_pos
-      (hAlead_one.trans hAlead_to_old)
+  obtain ⟨hAold_one, hAlead_to_old⟩ :=
+    finite_tail_crude_parameter_bounds (d := d) hσ_pos ht hscale_pos
+      (by simpa [Qlead, Blead, η] using hq_lead)
   have hkernel_q :
       P.real (smallBottomBadScaleEvent H Nentry t α (Nentry + q)) ≤
         ((Nentry : ℝ) * ((S.card : ℝ) * w ^ Nentry * w ^ q)) *
@@ -359,99 +423,23 @@ theorem exists_quantitative_threshold_smallBottomBadTail_quenchedProbeEnvelope_l
             (smallBottomBadScaleEvent H Nentry t α) (Nentry + q)) ≤
         P.real (smallBottomBadScaleEvent H Nentry t α (Nentry + q)) :=
     measureReal_mono (μ := P) htail_subset
-  have hprefix_le :
-      pref * Ksmall * w ^ q ≤ M * (((q : ℝ) + 1) * W ^ q) := by
-    have hprefK_nonneg : 0 ≤ pref * Ksmall :=
-      mul_nonneg hpref_nonneg hKsmall_pos.le
-    have hprefK_le_M : pref * Ksmall ≤ M := by
-      calc
-        pref * Ksmall ≤ max 0 (pref * Ksmall) :=
-          le_max_right 0 (pref * Ksmall)
-        _ ≤ M := by
-          dsimp [M]
-          exact le_max_right 1 _
-    have hwW : w ≤ W := by
-      dsimp [W]
-      exact le_max_right 1 w
-    have hwq_le : w ^ q ≤ W ^ q :=
-      pow_le_pow_left₀ hw_pos.le hwW q
-    have hWq_nonneg : 0 ≤ W ^ q := by positivity
-    have hleft :
-        pref * Ksmall * w ^ q ≤ M * W ^ q :=
-      mul_le_mul hprefK_le_M hwq_le
-        (pow_nonneg hw_pos.le q) (zero_le_one.trans hM_one)
-    have hqplus_one : 1 ≤ (q : ℝ) + 1 := by
-      have hq_nonneg : 0 ≤ (q : ℝ) := by positivity
-      linarith
-    have hright :
-        M * W ^ q ≤ M * (((q : ℝ) + 1) * W ^ q) := by
-      have hfactor : W ^ q ≤ ((q : ℝ) + 1) * W ^ q := by
-        calc
-          W ^ q = 1 * W ^ q := by ring
-          _ ≤ ((q : ℝ) + 1) * W ^ q :=
-            mul_le_mul_of_nonneg_right hqplus_one hWq_nonneg
-      exact mul_le_mul_of_nonneg_left hfactor (zero_le_one.trans hM_one)
-    exact hleft.trans hright
-  have hc_pos : 0 < cgap := by
-    simpa [cgap, Btail] using
-      inv_rpow_sub_pos_of_lt hBlead_pos hBtail_pos hη_pos hBlead_lt_Btail
-  have hpref_gap :
-      M * (((q : ℝ) + 1) * W ^ q) ≤ Real.exp (Alead - Atail) := by
-    have hpref_exp :
-        M * (((q : ℝ) + 1) * W ^ q) ≤
-          Real.exp (cgap * ρgap ^ q) :=
-      linear_prefactor_le_exp_const_mul_pow_of_large
-        (M := M) (W := W) (C₀ := C₀) (c := cgap)
-        (ρ := ρgap) (R := R) (q := q)
-        hM_one hW_one hc_pos hρgap_gt
-        (le_rfl : 2 + Real.log W ≤ C₀) hR hqM hqR hqc
-    have hgap :
-        cgap * ρgap ^ q ≤ Alead - Atail := by
-      simpa [Alead, Atail, cgap, ρgap] using
-        geometric_gap_le_rpow_three_nat_div_gap
-          (Blead := Blead) (Btail := Btail) (η := η)
-          (c := cgap) (ρ := ρgap) (q := q)
-          hBlead_pos hBtail_pos
-          (le_rfl : cgap ≤ Blead ^ (-η) - Btail ^ (-η))
-          (le_rfl : ρgap ≤ (3 : ℝ) ^ η) hc_pos.le
-          (le_of_lt (lt_trans zero_lt_one hρgap_gt))
-    exact hpref_exp.trans (Real.exp_le_exp.mpr hgap)
-  have hexp_old :
-      Real.exp (-(Aold ^ σ)) ≤ Real.exp (-Alead) :=
-    Real.exp_le_exp.mpr (by linarith)
-  have hmeasure_tail :
-      P.real
-          (badTailEvent
-            (smallBottomBadScaleEvent H Nentry t α) (Nentry + q)) ≤
-        M * (((q : ℝ) + 1) * W ^ q) * Real.exp (-Alead) := by
-    calc
-      P.real
-          (badTailEvent
-            (smallBottomBadScaleEvent H Nentry t α) (Nentry + q))
-          ≤ P.real (smallBottomBadScaleEvent H Nentry t α (Nentry + q)) :=
-            htail_mono
-      _ ≤ ((Nentry : ℝ) * ((S.card : ℝ) * w ^ Nentry * w ^ q)) *
-            (Real.exp (-(Aold ^ σ)) * Ksmall) :=
-            hkernel_q
-      _ = pref * Ksmall * w ^ q * Real.exp (-(Aold ^ σ)) := by
-            dsimp [pref]
-            ring
-      _ ≤ pref * Ksmall * w ^ q * Real.exp (-Alead) :=
-            mul_le_mul_of_nonneg_left hexp_old
-              (by positivity : 0 ≤ pref * Ksmall * w ^ q)
-      _ ≤ M * (((q : ℝ) + 1) * W ^ q) * Real.exp (-Alead) :=
-            mul_le_mul_of_nonneg_right hprefix_le (Real.exp_pos _).le
+  have hcoefficient_le : pref * Ksmall ≤ M := by
+    exact (le_max_right 0 (pref * Ksmall)).trans (le_max_right 1 _)
+  have hwW : w ≤ W := le_max_right 1 w
+  apply exponential_kernel_le_interpolated_tail
+    (coefficient := pref * Ksmall) (w := w) (W := W) (M := M)
+    (Blead := Blead) (η := η) (σ := σ) (Aold := Aold)
+    (C₀ := C₀) (ρgap := ρgap) (R := R)
+    (mul_nonneg hpref_nonneg hKsmall_pos.le) hcoefficient_le hw_pos.le hwW hM_one hW_one
+    hBlead_pos hBtail_pos hη_pos hBlead_lt_Btail hρgap_gt
+    le_rfl le_rfl hR hqM hqR hqc hAlead_to_old
   calc
-    P.real
-        (badTailEvent
-          (smallBottomBadScaleEvent H Nentry t α) (Nentry + q))
-        ≤ M * (((q : ℝ) + 1) * W ^ q) * Real.exp (-Alead) :=
-          hmeasure_tail
-    _ ≤ Real.exp (Alead - Atail) * Real.exp (-Alead) :=
-          mul_le_mul_of_nonneg_right hpref_gap (Real.exp_pos _).le
-    _ = Real.exp (-Atail) := by
-          rw [← Real.exp_add]
-          ring_nf
+    P.real (badTailEvent (smallBottomBadScaleEvent H Nentry t α) (Nentry + q)) ≤
+        ((Nentry : ℝ) * ((S.card : ℝ) * w ^ Nentry * w ^ q)) *
+          (Real.exp (-(Aold ^ σ)) * Ksmall) := htail_mono.trans hkernel_q
+    _ = pref * Ksmall * w ^ q * Real.exp (-(Aold ^ σ)) := by
+      dsimp [pref]
+      ring
 
 end
 

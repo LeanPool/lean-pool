@@ -72,17 +72,7 @@ open scoped ENNReal
 
 noncomputable section
 
-/-- **The pathwise cutoff pairing bound in the shape of the annealed estimate.**  For a doubled
-block `F` whose canonical metric is positive definite, a reference cube `Q = originCube d t`, a
-cutoff `φ` in the response cutoff class, and a coefficient `b` that agrees almost everywhere on
-the adapted cell with a uniformly elliptic field, the absolute cube average of the pulled-back
-flux defect against the centred pulled-back potential times the pulled-back cutoff gradient is
-bounded by an explicit dimensional constant times the scale weight `3^{-t}` times the square of
-the scale-average seminorm of the recentred `M_0^{1/2}`-transported doubled optimizer state.  This
-is the inequality half of the pathwise form of `e.response.cutoff.estimate`; it is the duality
-bound `AK.HC` Lemma A.1, (A.4) with all four coefficient families and both negative-Besov inputs
-discharged. -/
-theorem abs_cubeAverage_pullback_pairing_le_besov_sq
+private theorem pathwise_cutoff_duality_data
     {d : ℕ} [NeZero d] {jStar : ℕ} (hjStar : 2 * d ≤ 3 ^ jStar)
     {F : BlockMat d} (hm : (explicitCanonicalMetric F).PosDef) (t : ℤ)
     {b : CoeffField d}
@@ -91,26 +81,32 @@ theorem abs_cubeAverage_pullback_pairing_le_besov_sq
         b =ᵐ[volumeMeasureOn (respCell jStar F t)] f)
     (u : AHarmonicFunction b (respCell jStar F t)) (Y : BlockVec d)
     {φ : Vec d → ℝ} (hφ : IsResponseCutoff (respGrid jStar F) t φ) :
-    |cubeAverage (originCube d t)
-        (fun y => vecDot
-          (matVecMul (respGrid jStar F)⁻¹
-            ((optimizerField b u (matVecMul (respGrid jStar F) y) - Y).2))
-          (((respCenteredPullbackH1 hjStar hm t b u Y y
-              - cubeAverage (originCube d t)
-                  (fun z => respCenteredPullbackH1 hjStar hm t b u Y z)) •
-            scalarCutoffGradientField (fun y => φ (matVecMul (respGrid jStar F) y)) y :
-              Vec d)))| ≤
-      (((2048 * (d : ℝ) ^ 4 * responseCutoffProfileConst ^ 2 +
-            96 * (d : ℝ) ^ 2 * responseCutoffProfileConst) *
-          ((((d : ℝ) * HCPolySupport.Legacy.cubeNeumannW22CalderonZygmundConstant d *
-                (3 : ℝ) ^ ((d : ℝ) + 1)) * (d : ℝ)) *
-            ((d : ℝ) * (3 : ℝ) ^ ((d : ℝ) + 1 / 2)))) *
-        (3 * (d : ℝ) ^ 2)) *
-      ((3 : ℝ) ^ (-(t : ℝ)) *
-        besovSeminorm t (fun n z =>
-          blockMatVecMul (blockSqrt (respM0 F))
-            (cellAverage (adaptedCellAtCenter (respGrid jStar F) (t - (n : ℤ)) z)
-              (optimizerField b u) - Y)) ^ 2) := by
+    ∃ (B A Frob₁ Frob₂ : ℝ) (ξ : Vec d → Vec d),
+      B = 1024 * (d : ℝ) ^ 4 * responseCutoffProfileConst ^ 2 * (3 : ℝ) ^ (-2 * t) ∧
+      A = besovSeminorm t (fun n z =>
+        blockMatVecMul (blockSqrt (respM0 F))
+          (cellAverage (adaptedCellAtCenter (respGrid jStar F) (t - (n : ℤ)) z)
+            (optimizerField b u) - Y)) ∧
+      Frob₁ = Real.sqrt (Book.Ch02.matrixFrobeniusNormSq
+        (matTranspose (respGrid jStar F) * (matSqrt (explicitCanonicalMetric F))⁻¹)) ∧
+      Frob₂ = Real.sqrt (Book.Ch02.matrixFrobeniusNormSq
+        ((respGrid jStar F)⁻¹ * matSqrt (explicitCanonicalMetric F))) ∧
+      ξ = scalarCutoffGradientField (fun y => φ (matVecMul (respGrid jStar F) y)) ∧
+      0 ≤ B ∧ 0 ≤ A ∧ 0 ≤ Frob₁ ∧ 0 ≤ Frob₂ ∧
+      MemLp (fun y => matVecMul (respGrid jStar F)⁻¹
+        ((optimizerField b u (matVecMul (respGrid jStar F) y) - Y).2)) 2
+        (normalizedCubeMeasure (originCube d t)) ∧
+      MemLp ξ ∞ (normalizedCubeMeasure (originCube d t)) ∧
+      (∀ i : Fin d, ContDiff ℝ (⊤ : ℕ∞) (fun x => ξ x i)) ∧
+      (∀ i : Fin d, ∀ z ∈ cubeSet (originCube d t),
+        ‖fderiv ℝ (fun x => ξ x i) z‖ ≤ B) ∧
+      (∀ N : ℕ, cubeBesovNegativeVectorPartialSeminorm (originCube d t) (1 / 2) N
+        (respCenteredPullbackH1 hjStar hm t b u Y).grad ≤
+          (3 : ℝ) ^ (-((t : ℝ) / 2)) * Frob₁ * A) ∧
+      (∀ N : ℕ, cubeBesovNegativeVectorPartialSeminorm (originCube d t) (1 / 2) N
+        (fun y => matVecMul (respGrid jStar F)⁻¹
+          ((optimizerField b u (matVecMul (respGrid jStar F) y) - Y).2)) ≤
+          (3 : ℝ) ^ (-((t : ℝ) / 2)) * Frob₂ * A) := by
   classical
   obtain ⟨lam, Lam, f, hlam, hle, hEll, hbf⟩ := hb
   have hq : IsUnit (respGrid jStar F) := isUnit_respGrid hjStar hm
@@ -162,9 +158,11 @@ theorem abs_cubeAverage_pullback_pairing_le_besov_sq
   have hFrob1nonneg : 0 ≤ Frob₁ := by rw [hFrob1def]; exact Real.sqrt_nonneg _
   have hFrob2nonneg : 0 ≤ Frob₂ := by rw [hFrob2def]; exact Real.sqrt_nonneg _
   -- `blockSqrt (respM0 F)` acts as the diagonal metric scaling.
-  have hSS : matSqrt (explicitCanonicalMetric F) * matSqrt (explicitCanonicalMetric F) = explicitCanonicalMetric F :=
+  have hSS : matSqrt (explicitCanonicalMetric F) * matSqrt (explicitCanonicalMetric F) =
+    explicitCanonicalMetric F :=
     (matSqrt_spec hm.posSemidef).2
-  have hSmPD : (matSqrt (explicitCanonicalMetric F)).PosDef := HCPolySupport.HighContrast.posDef_matSqrt hm
+  have hSmPD : (matSqrt (explicitCanonicalMetric F)).PosDef :=
+    HCPolySupport.HighContrast.posDef_matSqrt hm
   have hinv : (matSqrt (explicitCanonicalMetric F))⁻¹ * (matSqrt (explicitCanonicalMetric F))⁻¹ =
       (explicitCanonicalMetric F)⁻¹ := by
     rw [← Matrix.mul_inv_rev, hSS]
@@ -183,7 +181,8 @@ theorem abs_cubeAverage_pullback_pairing_le_besov_sq
     rw [hdiag, Matrix.fromBlocks_multiply]
     simp only [Matrix.mul_zero, Matrix.zero_mul, add_zero, zero_add, hSS, hinv]
   have hsqrt_block : blockSqrt (respM0 F) =
-      (⟨matSqrt (explicitCanonicalMetric F), 0, 0, (matSqrt (explicitCanonicalMetric F))⁻¹⟩ : BlockMat d) := by
+      (⟨matSqrt (explicitCanonicalMetric F), 0, 0, (matSqrt (explicitCanonicalMetric F))⁻¹⟩ :
+        BlockMat d) := by
     unfold blockSqrt
     rw [hmat]
     have hfull : toFullBlockMat (⟨matSqrt (explicitCanonicalMetric F), 0, 0,
@@ -234,7 +233,8 @@ theorem abs_cubeAverage_pullback_pairing_le_besov_sq
       positivity
     have : IsFiniteMeasure (volume.restrict (respCell jStar F t)) := by
       simpa [volumeMeasureOn] using!
-        (adaptedCell_isOpenBoundedConvexDomain (respGrid jStar F) hq t).isFiniteMeasure_restrict_volume
+        (adaptedCell_isOpenBoundedConvexDomain (respGrid jStar F) hq
+          t).isFiniteMeasure_restrict_volume
     obtain ⟨h1i, h2i⟩ :=
       memLp_two_coords_optimizerField_sub_const (q := respGrid jStar F) hq t hEll hbf u 0
     have h1i' : ∀ i, MemLp (fun x => (optimizerField b u x).1 i) 2
@@ -270,6 +270,54 @@ theorem abs_cubeAverage_pullback_pairing_le_besov_sq
     have h := cubeBesov_pullback_fluxDefect_le hjStar hm t hEll hbf u Y N
     rw [hFrob2def]
     rwa [hAeq] at h
+  exact ⟨B, A, Frob₁, Frob₂, ξ, hBdef, hAdef, hFrob1def, hFrob2def,
+    hξdef, hB0, hA0, hFrob1nonneg, hFrob2nonneg, hflux, hξLp, hξ, hderiv,
+    hgradWeak, hfluxWeak⟩
+
+/-- **The pathwise cutoff pairing bound in the shape of the annealed estimate.**  For a doubled
+block `F` whose canonical metric is positive definite, a reference cube `Q = originCube d t`, a
+cutoff `φ` in the response cutoff class, and a coefficient `b` that agrees almost everywhere on
+the adapted cell with a uniformly elliptic field, the absolute cube average of the pulled-back
+flux defect against the centred pulled-back potential times the pulled-back cutoff gradient is
+bounded by an explicit dimensional constant times the scale weight `3^{-t}` times the square of
+the scale-average seminorm of the recentred `M_0^{1/2}`-transported doubled optimizer state.  This
+is the inequality half of the pathwise form of `e.response.cutoff.estimate`; it is the duality
+bound `AK.HC` Lemma A.1, (A.4) with all four coefficient families and both negative-Besov inputs
+discharged. -/
+theorem abs_cubeAverage_pullback_pairing_le_besov_sq
+    {d : ℕ} [NeZero d] {jStar : ℕ} (hjStar : 2 * d ≤ 3 ^ jStar)
+    {F : BlockMat d} (hm : (explicitCanonicalMetric F).PosDef) (t : ℤ)
+    {b : CoeffField d}
+    (hb : ∃ (lam Lam : ℝ) (f : CoeffField d), 0 < lam ∧ lam ≤ Lam ∧
+      IsEllipticFieldOn lam Lam (respCell jStar F t) f ∧
+        b =ᵐ[volumeMeasureOn (respCell jStar F t)] f)
+    (u : AHarmonicFunction b (respCell jStar F t)) (Y : BlockVec d)
+    {φ : Vec d → ℝ} (hφ : IsResponseCutoff (respGrid jStar F) t φ) :
+    |cubeAverage (originCube d t)
+        (fun y => vecDot
+          (matVecMul (respGrid jStar F)⁻¹
+            ((optimizerField b u (matVecMul (respGrid jStar F) y) - Y).2))
+          (((respCenteredPullbackH1 hjStar hm t b u Y y
+              - cubeAverage (originCube d t)
+                  (fun z => respCenteredPullbackH1 hjStar hm t b u Y z)) •
+            scalarCutoffGradientField (fun y => φ (matVecMul (respGrid jStar F) y)) y :
+              Vec d)))| ≤
+      (((2048 * (d : ℝ) ^ 4 * responseCutoffProfileConst ^ 2 +
+            96 * (d : ℝ) ^ 2 * responseCutoffProfileConst) *
+          ((((d : ℝ) * HCPolySupport.Legacy.cubeNeumannW22CalderonZygmundConstant d *
+                (3 : ℝ) ^ ((d : ℝ) + 1)) * (d : ℝ)) *
+            ((d : ℝ) * (3 : ℝ) ^ ((d : ℝ) + 1 / 2)))) *
+        (3 * (d : ℝ) ^ 2)) *
+      ((3 : ℝ) ^ (-(t : ℝ)) *
+        besovSeminorm t (fun n z =>
+          blockMatVecMul (blockSqrt (respM0 F))
+            (cellAverage (adaptedCellAtCenter (respGrid jStar F) (t - (n : ℤ)) z)
+              (optimizerField b u) - Y)) ^ 2) := by
+  rcases pathwise_cutoff_duality_data (jStar := jStar) hjStar hm t hb u Y
+      (φ := φ) hφ with
+    ⟨B, A, Frob₁, Frob₂, ξ, hBdef, hAdef, hFrob1def, hFrob2def, hξdef,
+      hB0, hA0, hFrob1nonneg, hFrob2nonneg, hflux, hξLp, hξ, hderiv,
+      hgradWeak, hfluxWeak⟩
   -- The duality bound at the pulled-back data.
   have hbridge := abs_cubeAverage_pullback_pairing_le (jStar := jStar) hjStar hm t b u Y
     (φ := φ) (B := B) (gradWeak := (3 : ℝ) ^ (-((t : ℝ) / 2)) * Frob₁ * A)

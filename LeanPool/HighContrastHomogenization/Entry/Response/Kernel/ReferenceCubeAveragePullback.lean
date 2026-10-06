@@ -160,8 +160,10 @@ gives
 the paper's own constant `3` instead. -/
 theorem explicitRoundedGrid_metricFrobenius_product_le (l : ℕ) (hl : 2 * d ≤ 3 ^ l)
     (m : Mat d) (hm : m.PosDef) :
-    Real.sqrt (Book.Ch02.matrixFrobeniusNormSq (matTranspose (Geometry.explicitRoundedGrid l m) * (matSqrt m)⁻¹)) *
-        Real.sqrt (Book.Ch02.matrixFrobeniusNormSq ((Geometry.explicitRoundedGrid l m)⁻¹ * matSqrt m)) ≤
+    Real.sqrt (Book.Ch02.matrixFrobeniusNormSq (matTranspose (Geometry.explicitRoundedGrid l m)
+      * (matSqrt m)⁻¹)) *
+        Real.sqrt (Book.Ch02.matrixFrobeniusNormSq ((Geometry.explicitRoundedGrid l m)⁻¹ *
+          matSqrt m)) ≤
       3 * (d : ℝ) ^ 2 := by
   set q := Geometry.explicitRoundedGrid l m with hq
   set S := matSqrt m with hSdef

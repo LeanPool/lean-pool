@@ -185,7 +185,7 @@ theorem oneStepCoarseFullBlockSumAtScale_nonneg
   exact integral_nonneg fun a =>
     by
       simpa using!
-        VarianceBoundGoodScale.fullBlockNormalizedFluctuationOperatorNormSqAtScale_nonneg
+        VarianceBoundGoodScale.fluctuationNormSquare_nonneg
           hP hStruct (m : ℤ) (originCube d (j : ℤ)) a
 
 /-- The harmless geometric constant for the Section 5.3-beta tau sum. -/

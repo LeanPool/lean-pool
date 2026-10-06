@@ -304,7 +304,8 @@ theorem lqSchattenNorm_coloured_average_le {d : ℕ} {ι κ : Type*}
         (ofFullBlockMat (w c • toFullBlockMat (H c a))))) := by
     funext a
     simp only [toFullBlockMat_ofFullBlockMat, H]
-    exact congrArg ofFullBlockMat (average_eq_sum_class_averages Z col (fun i => toFullBlockMat (Y i a)))
+    exact congrArg ofFullBlockMat (average_eq_sum_class_averages Z col (fun i => toFullBlockMat
+      (Y i a)))
   have hclass (c : κ) : w c * lqSchattenNorm P (N : ℝ) (H c) ≤
       (N : ℝ) / (Z.card : ℝ) * ((C c).card : ℝ) ^ ((1 : ℝ) / 2) * u := by
     by_cases hc : (C c).Nonempty
@@ -327,7 +328,8 @@ theorem lqSchattenNorm_coloured_average_le {d : ℕ} {ι κ : Type*}
   calc
     _ ≤ ∑ c : κ, lqSchattenNorm P (N : ℝ)
         (fun a => ofFullBlockMat (w c • toFullBlockMat (H c a))) :=
-      lqSchattenNorm_finset_sum_le hNR Finset.univ _ (fun c _ => memLqSchatten_smul hNR (hH c) (w c))
+      lqSchattenNorm_finset_sum_le hNR Finset.univ _ (fun c _ => memLqSchatten_smul hNR (hH c)
+        (w c))
     _ = ∑ c : κ, w c * lqSchattenNorm P (N : ℝ) (H c) := by
       apply Finset.sum_congr rfl
       intro c _
@@ -364,7 +366,8 @@ theorem matrix_averaging_roundedGrid (d : ℕ) (hd : 2 ≤ d)
     (hRpos : Book.Ch02.BlockPosDef R) :
     lqSchattenNorm P (N : ℝ) (fun a => ofFullBlockMat ((Z.card : ℝ)⁻¹ • ∑ z ∈ Z,
         toFullBlockMat (normalizedBlock (blockSub
-          (coarseBlock (HighContrast.adaptedCellTranslate (Geometry.explicitRoundedGrid jStar m) j z) a)
+          (coarseBlock (HighContrast.adaptedCellTranslate (Geometry.explicitRoundedGrid jStar m)
+            j z) a)
           (adaptedMean P (Geometry.explicitRoundedGrid jStar m) j)) R))) ≤
       (N : ℝ) * (3 : ℝ) ^ ((d : ℝ) / 2) / (Z.card : ℝ) ^ ((1 : ℝ) / 2) *
         lqSchattenNorm P (N : ℝ) (fun a => normalizedBlock (blockSub

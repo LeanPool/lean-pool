@@ -77,7 +77,8 @@ theorem response_imbalance_comparison (d : ℕ) (_hd : 2 ≤ d) (γ : ℝ)
   have hjs : (jStar : ℤ) < s :=
     jStar_lt_s_of_raw d _hd γ _hγ S ε σ Cglob Cprof Csrc Bresp hε hσ H P E Ψ Kg Src B jStar F
       s t _raw
-  have hm : (explicitCanonicalMetric F).PosDef := Geometry.explicitCanonicalMetric_posDef _raw.symm _raw.pos
+  have hm : (explicitCanonicalMetric F).PosDef := Geometry.explicitCanonicalMetric_posDef
+    _raw.symm _raw.pos
   have hEs : (toFullBlockMat (respMean P jStar F s)).PosDef :=
     Annealed.adaptedMean_posDef d _hd P γ E Ψ Kg Src _raw.stat _raw.ell jStar _raw.hj
       (explicitCanonicalMetric F) hm s
@@ -99,7 +100,8 @@ theorem response_imbalance_comparison (d : ℕ) (_hd : 2 ≤ d) (γ : ℝ)
   -- conjunct 1
   have hswapT : toFullBlockMat (blockSwap d) * (toFullBlockMat (respMean P jStar F t))⁻¹ *
       toFullBlockMat (blockSwap d) ≤ toFullBlockMat (respMean P jStar F t) := by
-    have h := Analysis.matrixOrder_of_blockMatLoewnerLE (Analysis.swapConj_posDef hEt).isHermitian hEt.isHermitian
+    have h := Analysis.matrixOrder_of_blockMatLoewnerLE (Analysis.swapConj_posDef
+      hEt).isHermitian hEt.isHermitian
       (Analysis.adaptedMean_swapConj_le _hd P γ E Ψ Kg Src _raw.stat _raw.ell jStar _raw.hj
         (explicitCanonicalMetric F) hm t)
     rwa [toFullBlockMat_ofFullBlockMat] at h
@@ -250,12 +252,14 @@ theorem respCalib_le_detRatio_smul {ι : Type*} [Fintype ι] [DecidableEq ι]
     B ≤ (B.det / A.det) • A := by
   have hP : (matSqrt A).PosDef := HCPolySupport.HighContrast.posDef_matSqrt hA
   have hPP : matSqrt A * matSqrt A = A := (matSqrt_spec hA.posSemidef).2
-  have hPh : (matSqrt A)ᴴ = matSqrt A := HCPolySupport.HighContrast.conjTranspose_matSqrt hA.posSemidef
+  have hPh : (matSqrt A)ᴴ = matSqrt A := HCPolySupport.HighContrast.conjTranspose_matSqrt
+    hA.posSemidef
   have hPih : ((matSqrt A)⁻¹)ᴴ = (matSqrt A)⁻¹ := by
     rw [Matrix.conjTranspose_nonsing_inv, hPh]
   obtain ⟨hPR, hRP⟩ := GeometricMean.sqrtCancel hA
   rw [HCPolySupport.HighContrast.matSqrt_inv hA] at hPR hRP
-  have hX : ((matSqrt A)⁻¹ * B * (matSqrt A)⁻¹).PosDef := GeometricMean.posDef_conj_of_posDef hB hP.inv
+  have hX : ((matSqrt A)⁻¹ * B * (matSqrt A)⁻¹).PosDef := GeometricMean.posDef_conj_of_posDef hB
+    hP.inv
   have h1X : (1 : Matrix ι ι ℝ) ≤ (matSqrt A)⁻¹ * B * (matSqrt A)⁻¹ := by
     have hc := HCPolySupport.HighContrast.conj_le_conj' hPih h
     have hl : (matSqrt A)⁻¹ * A * (matSqrt A)⁻¹ = 1 := by
@@ -430,7 +434,8 @@ theorem respCalib_respg_isSkew {F : BlockMat d} (hA : (toFullBlockMat F).PosDef)
     ext i j
     simpa [blockMatEntry] using hsymm (Sum.inr j) (Sum.inr i)
   have hsd := respCalib_canonicalMean_selfDual hA
-  rw [toFullBlockMat_eq_fromBlocks (canonicalMean F), respCalib_swap_full, Matrix.fromBlocks_multiply,
+  rw [toFullBlockMat_eq_fromBlocks (canonicalMean F), respCalib_swap_full,
+    Matrix.fromBlocks_multiply,
     Matrix.fromBlocks_multiply] at hsd
   simp only [mul_zero, mul_one, zero_add, add_zero] at hsd
   have hid := (Matrix.fromBlocks_inj.mp hsd).2.2.2
@@ -455,7 +460,8 @@ private theorem respCalib_shear_congr {F : BlockMat d} (hA : (toFullBlockMat F).
     show (canonicalMean F).upperLeft -
         ((respg F)ᵀ * (canonicalMean F).lowerRight) * respg F = _
     rw [h2', neg_mul, sub_neg_eq_add]
-  rw [respCalib_respG_full, toFullBlockMat_eq_fromBlocks (canonicalMean F), Matrix.fromBlocks_transpose,
+  rw [respCalib_respG_full, toFullBlockMat_eq_fromBlocks (canonicalMean F),
+    Matrix.fromBlocks_transpose,
     Matrix.transpose_one, Matrix.transpose_zero, Matrix.fromBlocks_multiply,
     Matrix.fromBlocks_multiply]
   refine Matrix.fromBlocks_inj.mpr ⟨?_, ?_, ?_, ?_⟩

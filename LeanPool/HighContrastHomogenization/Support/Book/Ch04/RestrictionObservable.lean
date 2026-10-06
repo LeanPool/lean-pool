@@ -188,6 +188,8 @@ signature remains stable. -/
 structure RestrictionObservable (d : ℕ) (U : Set (Vec d)) (β : Type*)
     [MeasurableSpace β] where
   measurableSet : MeasurableSet U
+  /-- The observable on regular coefficient fields whose measurability is local to restriction on
+  `U`. -/
   toFun : RegCoeffField d → β
   isLocal : IsRestrictionLocalRandomVariable U measurableSet toFun
 

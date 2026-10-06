@@ -66,7 +66,8 @@ theorem respMean_order_of_raw (d : ℕ) (hd : 2 ≤ d) (γ : ℝ)
     jStar_lt_s_of_raw d hd γ hγ S ε σ Cglob Cprof Csrc Bresp hε hσ H P E Ψ Kg Src B jStar F s t raw
   have hm : (explicitCanonicalMetric F).PosDef :=
     HCPolySupport.HighContrast.Geometry.explicitCanonicalMetric_posDef raw.symm raw.pos
-  exact HCPolySupport.HighContrast.Annealed.adaptedMean_antitone d hd P γ E Ψ Kg Src raw.stat raw.ell
+  exact HCPolySupport.HighContrast.Annealed.adaptedMean_antitone d hd P γ E Ψ Kg Src raw.stat
+    raw.ell
     jStar raw.hj (explicitCanonicalMetric F) hm s t (le_of_lt hjs) (le_of_lt raw.hst)
 
 /-! ### Congruence helpers.
@@ -236,7 +237,8 @@ private theorem coarseBlockMatrix_sub_skew_of_isCoarse {U : Set (Vec d)} {a : Co
       (Multiscale.blockCongr (⟨1, 0, g, 1⟩ : BlockMat d) (coarseBlockMatrix U a)) := by
     refine ⟨isSymmetricBlockMat_blockCongr _ hA.1, ?_⟩
     intro Pv
-    rw [Mu_sub_skew_shearLoad U a g hg Pv, blockVecDot_blockCongr, blockMatVecMul_shear_eq_shearLoad]
+    rw [Mu_sub_skew_shearLoad U a g hg Pv, blockVecDot_blockCongr,
+      blockMatVecMul_shear_eq_shearLoad]
     exact hA.2 _
   exact (eq_coarseBlockMatrix_of_isCoarseBlockMatrix hnew).symm
 
@@ -418,7 +420,8 @@ theorem respJ_respCoeffMinus_nonneg [NeZero d] (q : Mat d) (hq : IsUnit q) (u : 
     refine HCPolySupport.HighContrast.CG.responseJ_congr_of_ae_eq ?_ p r
     exact MeasureTheory.ae_restrict_of_ae (hae.mono fun x hx => by simp [respCoeffMinus, hx])
   rw [hcongr]
-  exact (HCPolySupport.HighContrast.CG.responseJ_piece_bounds (ι := Unit) (s := (Set.univ : Set Unit))
+  exact (HCPolySupport.HighContrast.CG.responseJ_piece_bounds (ι := Unit) (s := (Set.univ : Set
+    Unit))
     (W := HighContrast.adaptedCell q u) (U := fun _ => HighContrast.adaptedCell q u)
     (fun _ _ => hdom.isOpen) (fun _ _ => subset_rfl) hEll' p r (Set.mem_univ ()) hvol).1
 
@@ -440,7 +443,8 @@ theorem respJ_respCoeffPlus_nonneg [NeZero d] (q : Mat d) (hq : IsUnit q) (u : �
     refine HCPolySupport.HighContrast.CG.responseJ_congr_of_ae_eq ?_ p r
     exact MeasureTheory.ae_restrict_of_ae (hae.mono fun x hx => by simp [respCoeffPlus, hx])
   rw [hcongr]
-  exact (HCPolySupport.HighContrast.CG.responseJ_piece_bounds (ι := Unit) (s := (Set.univ : Set Unit))
+  exact (HCPolySupport.HighContrast.CG.responseJ_piece_bounds (ι := Unit) (s := (Set.univ : Set
+    Unit))
     (W := HighContrast.adaptedCell q u) (U := fun _ => HighContrast.adaptedCell q u)
     (fun _ _ => hdom.isOpen) (fun _ _ => subset_rfl) hEll' p r (Set.mem_univ ()) hvol).1
 
@@ -464,7 +468,8 @@ theorem respJ_eq_respCoeffMinus [NeZero d] (q : Mat d) (hq : IsUnit q) (u : ℤ)
   have hvol := volume_adaptedCell_toReal_pos q hq u
   rw [respJ, HCPolySupport.HighContrast.CG.responseJ_congr_of_ae_eq hae' p r,
     HCPolySupport.coarseBlockMatrix_congr_of_ae_eq hae']
-  exact HCPolySupport.HighContrast.CG.responseJ_eq_block_quadratic_of_isOpenBoundedConvexDomain hdom hEll'
+  exact HCPolySupport.HighContrast.CG.responseJ_eq_block_quadratic_of_isOpenBoundedConvexDomain
+    hdom hEll'
     hvol p r
 
 /-- The adjoint twin. -/
@@ -487,7 +492,8 @@ theorem respJ_eq_respCoeffPlus [NeZero d] (q : Mat d) (hq : IsUnit q) (u : ℤ)
   have hvol := volume_adaptedCell_toReal_pos q hq u
   rw [respJ, HCPolySupport.HighContrast.CG.responseJ_congr_of_ae_eq hae' p r,
     HCPolySupport.coarseBlockMatrix_congr_of_ae_eq hae']
-  exact HCPolySupport.HighContrast.CG.responseJ_eq_block_quadratic_of_isOpenBoundedConvexDomain hdom hEll'
+  exact HCPolySupport.HighContrast.CG.responseJ_eq_block_quadratic_of_isOpenBoundedConvexDomain
+    hdom hEll'
     hvol p r
 
 /-! #### The annealed identifications -/

@@ -58,11 +58,14 @@ private theorem bridge_lattice_cell_finite {d : ℕ} [NeZero d] (q : Mat d) (hq 
       (adaptedLatticeAtScale q j ∩ adaptedCell q k).Nonempty := by
   classical
   have hzero : adaptedCellAtCenter q k 0 = adaptedCell q k := by
-    simp only [adaptedCellAtCenter, bridge_center_zero, adaptedCellTranslate, zero_add, Set.image_id']
+    simp only [adaptedCellAtCenter, bridge_center_zero, adaptedCellTranslate, zero_add,
+      Set.image_id']
   have hv : volume (adaptedCell q k) ≠ ⊤ := by
-    simpa only [adaptedCellTranslate, zero_add, Set.image_id'] using Transport.volume_adaptedCellTranslate_ne_top q k 0
+    simpa only [adaptedCellTranslate, zero_add, Set.image_id'] using
+      Transport.volume_adaptedCellTranslate_ne_top q k 0
   have hf := finite_contained_adaptedCellIndices hq hv j
-  refine ⟨(hf.image (adaptedCellCenter q j)).subset ?_, ⟨0, ⟨⟨0, bridge_center_zero q j⟩, bridge_zero_mem_cell q k⟩⟩⟩
+  refine ⟨(hf.image (adaptedCellCenter q j)).subset ?_, ⟨0, ⟨⟨0, bridge_center_zero q j⟩,
+    bridge_zero_mem_cell q k⟩⟩⟩
   rintro z ⟨⟨w, rfl⟩, hz⟩
   refine ⟨w, ?_, rfl⟩
   rcases adaptedCellAtCenter_subset_or_disjoint hq hjk w 0 with hs | hs
@@ -122,10 +125,12 @@ theorem bridge_fluctuation_memLqSchatten (d : ℕ) (hd : 2 ≤ d)
     (γ : ℝ) (E : BlockMat d) (Ψ : ℝ → ℝ) (K : ℝ)
     (S : CoeffSpace d → ℝ) (hstat : IsStationaryLaw P) (hdag : CoarseEllipticityDagger P γ E Ψ K S)
     (jStar : ℕ) (hj : 2 * d ≤ 3 ^ jStar) (m : Mat d) (hm : m.PosDef) (j k : ℤ) (z : Vec d) :
-    SchattenMemLp P (bigQ d γ : ℝ) (normalizedFluctuation P (explicitRoundedGrid jStar m) j k z) := by
+    SchattenMemLp P (bigQ d γ : ℝ) (normalizedFluctuation P (explicitRoundedGrid jStar m) j k z)
+      := by
   have hγ := hdag.g_mem
   have hQ : 1 ≤ (bigQ d γ : ℝ) := by exact_mod_cast (bigQ_pos d γ hγ)
-  have hA := Source.memLqSchatten_coarseBlock_adapted d hd P γ E Ψ K S hstat hdag jStar hj m hm j z _ hQ
+  have hA := Source.memLqSchatten_coarseBlock_adapted d hd P γ E Ψ K S hstat hdag jStar hj m hm
+    j z _ hQ
   have hc := Analysis.memLqSchatten_const P hQ (adaptedMean P (explicitRoundedGrid jStar m) j)
     ((Analysis.toFullBlockMat_isHermitian_iff _).1
       (adaptedMean_posDef d hd P γ E Ψ K S hstat hdag jStar hj m hm j).isHermitian)
@@ -142,8 +147,10 @@ theorem bridge_fluctuationHistory_integrable (d : ℕ) (hd : 2 ≤ d)
     (k : ℤ) (hk : (jStar : ℤ) ≤ k) :
     Integrable (fun a => ⨆ j ∈ Set.Icc (jStar : ℤ) k,
       (3 : ℝ) ^ (-(bigQ d γ : ℝ) * rhoMax d γ * ((k : ℝ) - j)) *
-        ⨆ z ∈ adaptedLatticeAtScale (explicitRoundedGrid jStar m) j ∩ adaptedCell (explicitRoundedGrid jStar m) k,
-          blockOpNorm (normalizedFluctuation P (explicitRoundedGrid jStar m) j k z a) ^ bigQ d γ) P ∧
+        ⨆ z ∈ adaptedLatticeAtScale (explicitRoundedGrid jStar m) j ∩ adaptedCell
+          (explicitRoundedGrid jStar m) k,
+          blockOpNorm (normalizedFluctuation P (explicitRoundedGrid jStar m) j k z a) ^ bigQ d
+            γ) P ∧
       0 ≤ fluctuationHistory P γ (explicitRoundedGrid jStar m) jStar k := by
   let : NeZero d := ⟨by omega⟩
   have hγ := hdag.g_mem
@@ -157,7 +164,8 @@ theorem bridge_fluctuationHistory_integrable (d : ℕ) (hd : 2 ≤ d)
       (fun z _ => bridge_integrable_opNorm_pow
         (bridge_fluctuation_memLqSchatten d hd P γ E Ψ K S hstat hdag jStar hj m hm j k z) hQ)
       (fun _ _ _ => pow_nonneg (norm_nonneg _) _)
-  have houter := bridge_integrable_finite_sup P (Set.finite_Icc (jStar : ℤ) k) (Set.nonempty_Icc.mpr hk)
+  have houter := bridge_integrable_finite_sup P (Set.finite_Icc (jStar : ℤ) k)
+    (Set.nonempty_Icc.mpr hk)
     (fun j a => (3 : ℝ) ^ (-(bigQ d γ : ℝ) * rhoMax d γ * ((k : ℝ) - j)) *
       ⨆ z ∈ adaptedLatticeAtScale q j ∩ adaptedCell q k,
         blockOpNorm (normalizedFluctuation P q j k z a) ^ bigQ d γ)
@@ -200,7 +208,8 @@ theorem bridge_profile_nonneg (d : ℕ) (hd : 2 ≤ d)
   apply mul_nonneg (mul_nonneg (Real.rpow_nonneg (by norm_num) _) (Real.exp_pos _).le)
   apply integral_nonneg_of_ae
   filter_upwards [hmem.symmetric] with a ha
-  exact pow_nonneg (Analysis.absSchattenNorm_nonneg ((Analysis.toFullBlockMat_isHermitian_iff _).2 ha) hQ) _
+  exact pow_nonneg (Analysis.absSchattenNorm_nonneg ((Analysis.toFullBlockMat_isHermitian_iff
+    _).2 ha) hQ) _
 
 private theorem bridge_polynomial_exp_decay {b t : ℝ} (hb : 0 < b) (ht : 0 ≤ t) :
     (1 + t) * Real.exp (-2 * b * t) ≤ (1 + 1 / b) * Real.exp (-b * t) := by
@@ -261,7 +270,8 @@ theorem bridge_source_bound (d : ℕ) (hd : 2 ≤ d) (γ : ℝ) (hγ : γ ∈ Se
     have hsq := pow_le_pow_left₀ (add_nonneg (Real.sqrt_nonneg _) (Real.sqrt_nonneg _)) hsum 2
     simpa only [mul_pow, D, ← Real.exp_nat_mul] using! hsq
   have he1 : 1 ≤ Real.exp (2 * x) := Real.one_le_exp_iff.mpr (by linarith only [hx])
-  have hDE : 1 ≤ D * Real.exp (2 * x) := by simpa only [one_mul] using mul_le_mul hD he1 (by norm_num : (0 : ℝ) ≤ 1) hD0.le
+  have hDE : 1 ≤ D * Real.exp (2 * x) := by simpa only [one_mul] using mul_le_mul hD he1 (by
+    norm_num : (0 : ℝ) ≤ 1) hD0.le
   have hW : 1 + Pi * (Real.sqrt (‖m‖ * ‖m⁻¹‖) + Real.sqrt (‖mPlus‖ * ‖mPlus⁻¹‖)) ^ 2 ≤
       D * (2 + Pi) * Real.exp (2 * x) := by
     have hmul := mul_le_mul_of_nonneg_left hsquare hPi0
@@ -311,7 +321,8 @@ theorem bridge_source_bound (d : ℕ) (hd : 2 ≤ d) (γ : ℝ) (hγ : γ ∈ Se
         ((1 + (L : ℝ)) * (1 + 1 / b) * Real.exp (-b * t)) := by
       rw [mul_assoc]
       apply mul_le_mul hW hpoly
-      · exact mul_nonneg (by dsimp [t] at ht; linarith only [ht, hLn]) (Real.rpow_nonneg (by norm_num) _)
+      · exact mul_nonneg (by dsimp [t] at ht; linarith only [ht, hLn]) (Real.rpow_nonneg (by
+        norm_num) _)
       · positivity
     _ = (D * (1 + 1 / b) * (1 + (L : ℝ))) * (2 + Pi) *
         (Real.exp (2 * x) * Real.exp (-b * t)) := by ring
@@ -351,7 +362,8 @@ private theorem bridge_normalize_order {d : ℕ} {A B F : BlockMat d}
   apply (fullBlock_le_iff (hsym A hA) (hsym B hB)).1
   apply Matrix.le_iff.mpr
   have hh := (Matrix.le_iff.mp ((fullBlock_le_iff hA hB).2 h)).conjTranspose_mul_mul_same R
-  simpa only [normalizedBlock, toFullBlockMat_ofFullBlockMat, R, hR.isHermitian.eq, mul_sub, sub_mul] using hh
+  simpa only [normalizedBlock, toFullBlockMat_ofFullBlockMat, R, hR.isHermitian.eq, mul_sub,
+    sub_mul] using hh
 
 private theorem bridge_hermitian_norm_iff {ι : Type*} [Fintype ι] [DecidableEq ι] [Nonempty ι]
     {M : Matrix ι ι ℝ} (hM : M.IsHermitian) (ε : ℝ) :
@@ -461,7 +473,8 @@ theorem bridge_length_decay (L₀ L : ℕ) (σ : ℝ) (hσ : σ ∈ Set.Ioc (0 :
     linarith only [hcast, hceil]
   refine ⟨by omega, ?_⟩
   have he : (3 : ℝ) ^ (-Real.logb 3 σ⁻¹) = σ := by
-    rw [Real.rpow_neg (by norm_num : (0 : ℝ) ≤ 3), Real.rpow_logb (by norm_num) (by norm_num) (inv_pos.mpr hσ.1), inv_inv]
+    rw [Real.rpow_neg (by norm_num : (0 : ℝ) ≤ 3), Real.rpow_logb (by norm_num) (by norm_num)
+      (inv_pos.mpr hσ.1), inv_inv]
   calc
     _ ≤ (3 : ℝ) ^ (-((L₀ : ℝ) + Real.logb 3 σ⁻¹)) :=
       Real.rpow_le_rpow_of_exponent_le (by norm_num) (neg_le_neg hreal)
@@ -564,7 +577,8 @@ theorem bridge_preliminary_comparison (d : ℕ) (hd : 2 ≤ d) (γ : ℝ)
                     detIncrement P (explicitRoundedGrid jStar m) n (n + 2 * (L : ℤ)) ≤ c₀ * σ →
                   blockOpNorm (blockSub
                     (normalizedBlock (adaptedMean P (explicitRoundedGrid jStar mPlus) (n + (L : ℤ)))
-                      (adaptedMean P (explicitRoundedGrid jStar m) (n + 2 * (L : ℤ)))) (Book.Ch02.blockIdentity d)) ≤
+                      (adaptedMean P (explicitRoundedGrid jStar m) (n + 2 * (L : ℤ))))
+                        (Book.Ch02.blockIdentity d)) ≤
                     C * c₀ * σ + C * K₀ * (3 : ℝ) ^ (-(L : ℝ)) +
                       C * (1 + (L : ℝ)) * (2 + aspectRatio E) ^ (1 - (1 - γ) * B₀ / 16) := by
   let : NeZero d := ⟨by omega⟩
@@ -592,7 +606,8 @@ theorem bridge_preliminary_comparison (d : ℕ) (hd : 2 ≤ d) (γ : ℝ)
   have hΔ0 := logDetLoss_nonneg d hd P γ E Ψ K S hstat hdag jStar hj m hm n
     (n + 2 * (L : ℤ)) (hk.trans hkn) (by omega)
   have hD : determinantDrift P γ q jStar n ≤ c₀ * σ := by linarith only [hsmall, hprofile, hΔ0]
-  have hΔ : detIncrement P q n (n + 2 * (L : ℤ)) ≤ c₀ * σ := by linarith only [hsmall, hprofile, hD0]
+  have hΔ : detIncrement P q n (n + 2 * (L : ℤ)) ≤ c₀ * σ := by linarith only [hsmall, hprofile,
+    hD0]
   have herr := hbridge P E Ψ K S hstat hdag jStar hj hsrc m mPlus hm hmPlus
     (hratio jStar hj m mPlus hm hmPlus hpr) n L (hk.trans hkn) hL hcontain (c₀ * σ) ⟨hε0, hε1⟩ hD hΔ
   have hnorm := (bridge_normalized_error_iff H F
@@ -603,7 +618,8 @@ theorem bridge_preliminary_comparison (d : ℕ) (hd : 2 ≤ d) (γ : ℝ)
   have hbase : 0 < 2 + aspectRatio E := by linarith only [hPi]
   have hV : 0 ≤ V := mul_nonneg (by positivity) (Real.rpow_nonneg hbase.le _)
   have hR := bracket_nonneg_of_eccentricity hm hc₀.1 hL hecc
-  have hse := hsource (aspectRatio E) c₀ B₀ hPi hc₀.1 L hL m mPlus hm hmPlus hpr jStar k n hk hkn hecc
+  have hse := hsource (aspectRatio E) c₀ B₀ hPi hc₀.1 L hL m mPlus hm hmPlus hpr jStar k n hk
+    hkn hecc
   have hexp : Real.exp (-((k : ℝ) - jStar -
       (⌈B₀ * Real.logb 3 (2 + aspectRatio E)⌉ : ℤ)) *
         ((1 - γ) * Real.log 3 / 16 - 2 * c₀ / (L : ℝ))) ≤ 1 := by
@@ -645,8 +661,10 @@ theorem successful_short_bridge_roundedGrid (d : ℕ) (hd : 2 ≤ d)
                 ⌈Csrc * Real.logb 3 (2 * K)⌉ ≤ (jStar : ℤ) →
                 ∀ (m mPlus : Mat d), m.PosDef → mPlus.PosDef →
                   ∀ k n : ℤ, (jStar : ℤ) ≤ k → k ≤ n →
-                    HighContrast.adaptedCell (Geometry.explicitRoundedGrid jStar m) (n + 2 * (L : ℤ)) ∪
-                        HighContrast.adaptedCell (Geometry.explicitRoundedGrid jStar mPlus) (n + (L : ℤ)) ⊆
+                    HighContrast.adaptedCell (Geometry.explicitRoundedGrid jStar m) (n + 2 * (L
+                      : ℤ)) ∪
+                        HighContrast.adaptedCell (Geometry.explicitRoundedGrid jStar mPlus) (n +
+                          (L : ℤ)) ⊆
                       HighContrast.centeredCube d (2 * (jStar : ℤ)) →
                     Real.log (‖m‖ * ‖m⁻¹‖) ≤
                       c₀ / (L : ℝ) * ((k : ℝ) - (jStar : ℝ) -
@@ -664,7 +682,8 @@ theorem successful_short_bridge_roundedGrid (d : ℕ) (hd : 2 ≤ d)
                       BlockMatLoewnerLE
                         (adaptedMean P (Geometry.explicitRoundedGrid jStar mPlus) (n + (L : ℤ)))
                         (blockScale (1 + σ)
-                          (adaptedMean P (Geometry.explicitRoundedGrid jStar m) (n + 2 * (L : ℤ)))) := by
+                          (adaptedMean P (Geometry.explicitRoundedGrid jStar m) (n + 2 * (L :
+                            ℤ)))) := by
   let : NeZero d := ⟨by omega⟩
   obtain ⟨K₀, Csrc, C, hK₀, hCsrc, hC, hpre⟩ := bridge_preliminary_comparison d hd γ hγ
   obtain ⟨c₀, L₀, hc₀, hL₀, hCc, hlength, hboundary⟩ := bridge_choose_initial γ C K₀ hγ hC hK₀
@@ -674,7 +693,8 @@ theorem successful_short_bridge_roundedGrid (d : ℕ) (hd : 2 ≤ d)
   have hLpos : 1 ≤ L := hL₀.trans hL₀L
   have hL₀p : 0 < (L₀ : ℝ) := by exact_mod_cast (zero_lt_one.trans_le hL₀)
   have hlong : 2 * c₀ / (L : ℝ) ≤ (1 - γ) * Real.log 3 / 16 := by
-    exact (div_le_div_of_nonneg_left (mul_nonneg (by norm_num : (0 : ℝ) ≤ 2) hc₀.1.le) hL₀p (by exact_mod_cast hL₀L)).trans hlength
+    exact (div_le_div_of_nonneg_left (mul_nonneg (by norm_num : (0 : ℝ) ≤ 2) hc₀.1.le) hL₀p (by
+      exact_mod_cast hL₀L)).trans hlength
   obtain ⟨B₀, hB₀, hsource⟩ := bridge_choose_source_separation γ C hγ hC σ hσ.1 L
   refine ⟨B₀, hB₀, ?_⟩
   intro P hP E Ψ K S hstat _hunit hdag jStar hj hsrc m mPlus hm hmPlus k n hk hkn
@@ -691,7 +711,8 @@ theorem successful_short_bridge_roundedGrid (d : ℕ) (hd : 2 ≤ d)
   have h₃ := hsource (aspectRatio E) (one_le_aspectRatio_of_coarseEllipticityDagger hdag)
   have hnorm : blockOpNorm (blockSub
       (normalizedBlock (adaptedMean P (explicitRoundedGrid jStar mPlus) (n + (L : ℤ)))
-        (adaptedMean P (explicitRoundedGrid jStar m) (n + 2 * (L : ℤ)))) (Book.Ch02.blockIdentity d)) ≤ σ := by
+        (adaptedMean P (explicitRoundedGrid jStar m) (n + 2 * (L : ℤ))))
+          (Book.Ch02.blockIdentity d)) ≤ σ := by
     linarith only [hn, h₁, h₂, h₃]
   have herr := (bridge_normalized_error_iff _ _
     (adaptedMean_posDef d hd P γ E Ψ K S hstat hdag jStar hj mPlus hmPlus (n + (L : ℤ))).isHermitian

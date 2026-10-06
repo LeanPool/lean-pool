@@ -574,7 +574,7 @@ package by deriving the flux and gradient energy-control fields from
 closed-cube ellipticity, while keeping the nondegeneracy and projected
 Poincare inputs explicit. -/
 theorem
-    CoarseCaccioppoliBoundaryCanonicalHarmonicAnalyticInputs.of_profileInputs_closedCubeHarmonicEnergyControls
+    CoarseCaccioppoliBoundaryCanonicalHarmonicAnalyticInputs.of_profile_energyControls
     {d : ℕ} [NeZero d] (Q : TriadicCube d) (a : CoeffField d) (s C : ℝ)
     {lam Lam : ℝ} (baseEnergy : Vec d → ℝ)
     (w : ℝ → ℝ → AHarmonicFunction a (openCubeSet Q)) (i : Fin d)
@@ -607,7 +607,7 @@ theorem
     let hOrigin : OpenCubeOriginEllipticRecoveryExistence (d := d) lam Lam :=
       openCubeOriginEllipticRecoveryExistence (d := d) (lam := lam) (Lam := Lam)
     have hgrad :=
-      cubeAverageGradientEnergyControl_of_aHarmonicFunction_of_openCubeOriginEllipticRecoveryExistence
+      harmonicGradientEnergy_le_scalarVariation_of_recovery
         (Q := Q) (a := a) hEllCube ((w ρ₁ ρ₂).toCubeSet) hOrigin
     simpa [scalarVariationEnergyIntegrand] using hgrad
   projected_poincare := hprojected
@@ -620,7 +620,7 @@ factors.  The analytic package only needs the weaker nonzero-energy part, so
 this bridge forgets the extra `Acirc` positivity while deriving the flux and
 gradient energy controls from closed-cube ellipticity. -/
 theorem
-    CoarseCaccioppoliBoundaryCanonicalHarmonicSolutionInputs.to_analyticInputs_closedCubeHarmonicEnergyControls
+    CoarseCaccioppoliBoundaryCanonicalHarmonicSolutionInputs.to_analyticInputs_energyControls
     {d : ℕ} [NeZero d] {Q : TriadicCube d} {a : CoeffField d}
     {s C lam Lam : ℝ} {baseEnergy : Vec d → ℝ}
     {w : ℝ → ℝ → AHarmonicFunction a (openCubeSet Q)} {i : Fin d}
@@ -639,7 +639,7 @@ theorem
     rcases hSolution.positive_factors hρ₁ hlt hρ₂ with ⟨hU, _hA, hEnergy⟩
     exact ⟨hU, hEnergy⟩
   exact
-    CoarseCaccioppoliBoundaryCanonicalHarmonicAnalyticInputs.of_profileInputs_closedCubeHarmonicEnergyControls
+    CoarseCaccioppoliBoundaryCanonicalHarmonicAnalyticInputs.of_profile_energyControls
       Q a s C baseEnergy w i hs hEllCube henergyAvg hSolution.profile hnonzeroFactors
       hSolution.projected_poincare
 
@@ -689,7 +689,7 @@ theorem
     let hOrigin : OpenCubeOriginEllipticRecoveryExistence (d := d) lam Lam :=
       openCubeOriginEllipticRecoveryExistence (d := d) (lam := lam) (Lam := Lam)
     have hgrad :=
-      cubeAverageGradientEnergyControl_of_aHarmonicFunction_of_openCubeOriginEllipticRecoveryExistence
+      harmonicGradientEnergy_le_scalarVariation_of_recovery
         (Q := Q) (a := a) hEllCube ((w ρ₁ ρ₂).toCubeSet) hOrigin
     simpa [scalarVariationEnergyIntegrand] using hgrad
   projected_poincare := hprojected
@@ -699,7 +699,7 @@ radius-recursion coefficient schedule.  This is the final coefficient-only
 composition step: single-cube coefficient bounds plus standard multiscale data
 produce the raw `Alpha`/`Bcross` inequalities consumed by the newest wrappers. -/
 theorem
-    CoarseCaccioppoliBoundaryCanonicalHarmonicRawCoefficientBounds.of_coefficientBounds_of_multiscaleEllipticity
+    CoarseCaccioppoliBoundaryCanonicalHarmonicRawCoefficientBounds.of_multiscaleEllipticity
     {d : ℕ} [NeZero d] (Q : TriadicCube d) (a : CoeffField d)
     (s t C uL2Sq : ℝ) {lam Lam : ℝ}
     (w : ℝ → ℝ → AHarmonicFunction a (openCubeSet Q))
@@ -728,7 +728,9 @@ theorem
             (1 / 2 : ℝ))) :
     CoarseCaccioppoliBoundaryCanonicalHarmonicRawCoefficientBounds Q a s t C uL2Sq w := by
   exact
-    CoarseCaccioppoliBoundaryRadiusEnergyBridgeCanonicalRawCoefficientBounds.of_coefficientBounds_of_multiscaleEllipticity_of_localizedExplicitHeightOfScaleChoice
+    (open CoarseCaccioppoliBoundaryRadiusEnergyBridgeCanonicalRawCoefficientBounds
+      (of_coefficientBounds_of_multiscaleEllipticity_of_localizedExplicitHeightOfScaleChoice) in
+      of_coefficientBounds_of_multiscaleEllipticity_of_localizedExplicitHeightOfScaleChoice)
       Q a s t C uL2Sq
       coarseCaccioppoliTriadicGapScale
       (coarseCaccioppoliCanonicalHarmonicL2Profile Q a w)

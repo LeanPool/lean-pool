@@ -308,7 +308,7 @@ theorem
 /-- The finite local partial-sum averages converge to the corresponding full
 local circ averages. -/
 theorem
-  tendsto_cubeBesovDepthWeight_mul_L2_descendantsAverage_sum_components_circPartialNorm_to_circNorm
+  tendsto_depthWeight_L2_descendantCircPartial_toCircNorm
     {d : ℕ} (Q : TriadicCube d) (s : ℝ) (G : Vec d → Vec d) (j : ℕ)
     (hG :
       ∀ i : Fin d,
@@ -413,7 +413,7 @@ theorem cubeBesovDepthWeight_mul_L2_descendantsAverage_sum_components_circNorm_l
         cubeBesovCircNorm Q (1 - s) (2 : ℝ≥0∞) (1 : ℝ≥0∞)
           (fun x => G x i) := by
   have htend :=
-    tendsto_cubeBesovDepthWeight_mul_L2_descendantsAverage_sum_components_circPartialNorm_to_circNorm
+    tendsto_depthWeight_L2_descendantCircPartial_toCircNorm
       Q s G j hG
   exact le_of_tendsto htend
     (Filter.Eventually.of_forall fun N =>
@@ -541,7 +541,7 @@ theorem CubeLocalFullCircPoincareVectorEstimate.partialSeminormTop_two_le_sum_ci
         exact hlocal j hj R hR)
 
 /-- Fluctuation form of the finite-depth full-circ Poincare-to-Besov bound. -/
-theorem CubeLocalFullCircPoincareVectorEstimate.fluctuation_partialNormTop_two_le_sum_circNorm
+theorem CubeLocalFullCircPoincareVectorEstimate.fluctuationPartialTop_le_sumCircNorm
     {d : ℕ} {Q : TriadicCube d} {s C : ℝ} {u : Vec d → ℝ}
     {G : Vec d → Vec d} {M : ℕ}
     (hlocal : CubeLocalFullCircPoincareVectorEstimate Q C (cubeFluctuation Q u) G M)

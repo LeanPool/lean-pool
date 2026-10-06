@@ -87,12 +87,17 @@ theorem transport_determinantDrift_abel {d : ℕ} (P : Measure (CoeffSpace d)) (
           (3 : ℝ) ^ (-((1 - γ) / 8) * ((t : ℝ) - j - 1)) *
             blockTrace (blockSub (relMean P q j t) (Book.Ch02.blockIdentity d)) := by
   let f := fun j => blockTrace (blockSub (relMean P q j t) (Book.Ch02.blockIdentity d))
-  have hf : f t = 0 := by simp only [f, relMean, normalizedBlock_self_of_posDef _ ht, transport_trace_sub, sub_self]
-  have hdiff (j : ℤ) : blockTrace (blockSub (relMean P q (j - 1) t) (relMean P q j t)) = f (j - 1) - f j := by
+  have hf : f t = 0 := by simp only [f, relMean, normalizedBlock_self_of_posDef _ ht,
+    transport_trace_sub, sub_self]
+  have hdiff (j : ℤ) : blockTrace (blockSub (relMean P q (j - 1) t) (relMean P q j t)) = f (j -
+    1) - f j := by
     simp only [f, transport_trace_sub]; ring
-  have h := transport_abel_identity (fun r => (3 : ℝ) ^ (-((1 - γ) / 8) * ((t : ℝ) - r))) f jStar t hJt
-  simp only [transport_abel_weight, mul_assoc, ← Finset.mul_sum, hf, mul_zero, sub_zero, Int.cast_add, Int.cast_one, Int.cast_natCast] at h
-  rw [show -((1 - γ) / 8) * ((t : ℝ) - ((jStar : ℝ) + 1)) = -((1 - γ) / 8) * ((t : ℝ) - jStar - 1) by ring] at h
+  have h := transport_abel_identity (fun r => (3 : ℝ) ^ (-((1 - γ) / 8) * ((t : ℝ) - r))) f
+    jStar t hJt
+  simp only [transport_abel_weight, mul_assoc, ← Finset.mul_sum, hf, mul_zero, sub_zero,
+    Int.cast_add, Int.cast_one, Int.cast_natCast] at h
+  rw [show -((1 - γ) / 8) * ((t : ℝ) - ((jStar : ℝ) + 1)) = -((1 - γ) / 8) * ((t : ℝ) - jStar -
+    1) by ring] at h
   simpa only [determinantDrift, hdiff] using h
 
 /-- A mass-one nonnegative Abel combination accumulates a uniform error once. -/
@@ -102,9 +107,12 @@ theorem transport_abel_error (a : ℝ) (ha : 0 ≤ a) (J t : ℤ) (hJt : J < t)
       ∑ j ∈ Finset.Icc (J + 1) (t - 1), (3 : ℝ) ^ (-a * ((t : ℝ) - j - 1)) * f j ≤
     (3 : ℝ) ^ (-a * ((t : ℝ) - J - 1)) * g J + (1 - (3 : ℝ) ^ (-a)) *
       ∑ j ∈ Finset.Icc (J + 1) (t - 1), (3 : ℝ) ^ (-a * ((t : ℝ) - j - 1)) * g j + D := by
-  have hc : 0 ≤ 1 - (3 : ℝ) ^ (-a) := sub_nonneg.mpr (Real.rpow_le_one_of_one_le_of_nonpos (by norm_num) (by linarith only [ha]))
-  have hsum := Finset.sum_le_sum (s := Finset.Icc (J + 1) (t - 1)) (fun j hj => mul_le_mul_of_nonneg_left
-    (hfg j (Finset.mem_Icc.mpr ⟨by have := (Finset.mem_Icc.mp hj).1; omega, (Finset.mem_Icc.mp hj).2⟩))
+  have hc : 0 ≤ 1 - (3 : ℝ) ^ (-a) := sub_nonneg.mpr (Real.rpow_le_one_of_one_le_of_nonpos (by
+    norm_num) (by linarith only [ha]))
+  have hsum := Finset.sum_le_sum (s := Finset.Icc (J + 1) (t - 1)) (fun j hj =>
+    mul_le_mul_of_nonneg_left
+    (hfg j (Finset.mem_Icc.mpr ⟨by have := (Finset.mem_Icc.mp hj).1; omega, (Finset.mem_Icc.mp
+      hj).2⟩))
     (by positivity : 0 ≤ (3 : ℝ) ^ (-a * ((t : ℝ) - j - 1))))
   have hh := add_le_add (mul_le_mul_of_nonneg_left (hfg J (Finset.mem_Icc.mpr ⟨le_rfl, by omega⟩))
     (by positivity : 0 ≤ (3 : ℝ) ^ (-a * ((t : ℝ) - J - 1)))) (mul_le_mul_of_nonneg_left hsum hc)
@@ -199,7 +207,8 @@ theorem transport_drift_trace_nonneg (d : ℕ) (hd : 2 ≤ d)
     (hstat : IsStationaryLaw P) (hdag : CoarseEllipticityDagger P γ E Ψ K S)
     (jStar : ℕ) (hj : 2 * d ≤ 3 ^ jStar) (m : Mat d) (hm : m.PosDef)
     (r t : ℤ) (hJr : (jStar : ℤ) ≤ r) (hrt : r ≤ t) :
-    0 ≤ blockTrace (blockSub (relMean P (explicitRoundedGrid jStar m) r t) (Book.Ch02.blockIdentity d)) := by
+    0 ≤ blockTrace (blockSub (relMean P (explicitRoundedGrid jStar m) r t)
+      (Book.Ch02.blockIdentity d)) := by
   have h := (adaptedMean_order_consequences d hd P γ E Ψ K S hstat hdag jStar hj m hm r t hJr hrt).1
   rw [transport_trace_sub]
   exact sub_nonneg.mpr (Source.blockTrace_le_of_order h)
@@ -208,7 +217,8 @@ theorem transport_drift_trace_nonneg (d : ℕ) (hd : 2 ≤ d)
 theorem transport_normalized_trace_sum {d : ℕ} (A : ℤ → BlockMat d) (F : BlockMat d)
     (hF : (toFullBlockMat F).PosDef) (I : Finset ℤ) (b : ℤ) (w : ℤ → ℝ) (C D : ℝ) :
     blockTrace (normalizedBlock (ofFullBlockMat
-      (toFullBlockMat (A b) + C • (∑ r ∈ I, w r • toFullBlockMat (A r)) + D • toFullBlockMat F)) F) =
+      (toFullBlockMat (A b) + C • (∑ r ∈ I, w r • toFullBlockMat (A r)) + D • toFullBlockMat F))
+        F) =
       blockTrace (normalizedBlock (A b) F) +
         C * (∑ r ∈ I, w r * blockTrace (normalizedBlock (A r) F)) + D * (2 * (d : ℝ)) := by
   simp only [blockTrace, normalizedBlock, toFullBlockMat_ofFullBlockMat, mul_add, add_mul,
@@ -226,13 +236,15 @@ theorem transport_drift_trace_comparison {d : ℕ} (A : ℤ → BlockMat d) (H F
       (toFullBlockMat (A b) + C • (∑ r ∈ I, w r • toFullBlockMat (A r)) + D • toFullBlockMat F))) :
     blockTrace (blockSub (normalizedBlock H F) (Book.Ch02.blockIdentity d)) ≤
       blockTrace (blockSub (normalizedBlock (A b) F) (Book.Ch02.blockIdentity d)) +
-        C * (∑ r ∈ I, w r * blockTrace (blockSub (normalizedBlock (A r) F) (Book.Ch02.blockIdentity d))) +
+        C * (∑ r ∈ I, w r * blockTrace (blockSub (normalizedBlock (A r) F)
+          (Book.Ch02.blockIdentity d))) +
         (2 * (d : ℝ)) * C * (∑ r ∈ I, w r) + (2 * (d : ℝ)) * D := by
   have hsum : (∑ r ∈ I, w r • toFullBlockMat (A r)).PosSemidef :=
     Matrix.nonneg_iff_posSemidef.mp (Finset.sum_nonneg fun r _ =>
       Matrix.nonneg_iff_posSemidef.mpr ((hA r).posSemidef.smul (hw r)))
   have hB : (toFullBlockMat (ofFullBlockMat
-      (toFullBlockMat (A b) + C • (∑ r ∈ I, w r • toFullBlockMat (A r)) + D • toFullBlockMat F))).IsHermitian := by
+      (toFullBlockMat (A b) + C • (∑ r ∈ I, w r • toFullBlockMat (A r)) + D • toFullBlockMat
+        F))).IsHermitian := by
     rw [toFullBlockMat_ofFullBlockMat]
     exact (((hA b).posSemidef.add (hsum.smul hC)).add (hF.posSemidef.smul hD)).isHermitian
   have ht := Source.blockTrace_le_of_order (transport_normalized_order hH.isHermitian hB hF hbound)
@@ -247,7 +259,8 @@ theorem transport_drift_identity_row (J j : ℤ) (L : ℕ) :
   have h := (transport_geometric_Icc 1 (by norm_num) J (j - (L : ℤ) - 1)).2
   calc
     _ = (3 : ℝ) ^ (-(L : ℝ) - 1) *
-      ∑ r ∈ Finset.Icc J (j - (L : ℤ) - 1), (3 : ℝ) ^ (-(1 : ℝ) * (((j - (L : ℤ) - 1 : ℤ) : ℝ) - r)) := by
+      ∑ r ∈ Finset.Icc J (j - (L : ℤ) - 1), (3 : ℝ) ^ (-(1 : ℝ) * (((j - (L : ℤ) - 1 : ℤ) : ℝ) -
+        r)) := by
         rw [Finset.mul_sum]; apply Finset.sum_congr rfl; intro r _
         rw [← Real.rpow_add (by norm_num : (0 : ℝ) < 3)]
         congr 1; push_cast; ring
@@ -255,7 +268,8 @@ theorem transport_drift_identity_row (J j : ℤ) (L : ℕ) :
       mul_le_mul_of_nonneg_left h (by positivity)
     _ ≤ _ := by
       rw [mul_comm]
-      exact mul_le_mul_of_nonneg_left (Real.rpow_le_rpow_of_exponent_le (by norm_num) (by linarith only []))
+      exact mul_le_mul_of_nonneg_left (Real.rpow_le_rpow_of_exponent_le (by norm_num) (by
+        linarith only []))
         (one_div_nonneg.mpr (transport_geometric_Icc 1 (by norm_num) J j).1.le)
 
 /-- Nonnegative Abel coefficients are bounded by the corresponding full geometric sum. -/
@@ -271,7 +285,8 @@ theorem transport_abel_le_sum (a : ℝ) (J t : ℤ) (hJt : J < t) (f : ℤ → �
   apply add_le_add le_rfl
   apply mul_le_of_le_one_left
   · exact Finset.sum_nonneg fun j hj => mul_nonneg (by positivity)
-      (hf j (Finset.mem_Icc.mpr ⟨by have := (Finset.mem_Icc.mp hj).1; omega, (Finset.mem_Icc.mp hj).2⟩))
+      (hf j (Finset.mem_Icc.mpr ⟨by have := (Finset.mem_Icc.mp hj).1; omega, (Finset.mem_Icc.mp
+        hj).2⟩))
   · have h : 0 ≤ (3 : ℝ) ^ (-a) := by positivity
     linarith only [h]
 
@@ -308,7 +323,8 @@ theorem transport_drift_source_weights (a b : ℝ) (ha : 0 ≤ a) (hab : a ≤ b
     exact hcast
   calc
     _ ≤ ∑ _j ∈ Finset.Icc J (n + (L : ℤ) - 1), (3 : ℝ) ^ (-a * ((n : ℝ) - J)) :=
-      Finset.sum_le_sum fun j hj => transport_drift_source_weight a b ha hab J n j (Finset.mem_Icc.mp hj).1 L hL
+      Finset.sum_le_sum fun j hj => transport_drift_source_weight a b ha hab J n j
+        (Finset.mem_Icc.mp hj).1 L hL
     _ = _ := by rw [Finset.sum_const, nsmul_eq_mul, hcard]
 
 /-- Assemble the Abel terms after the uniform comparison and identity errors have been separated. -/
@@ -318,12 +334,14 @@ theorem transport_drift_scalar_assembly (a b : ℝ) (ha : 0 < a) (ha1 : a < 1) (
     (A Cb Y E : ℝ) (hA : 0 ≤ A) (hCb : 0 ≤ Cb) (hY : 0 ≤ Y)
     (hpoint : ∀ j ∈ Finset.Icc J (n + (L : ℤ) - 1),
       g j ≤ A * (if j < J + (L : ℤ) then 0 else
-        f (j - (L : ℤ)) + Cb * ∑ r ∈ Finset.Icc J (j - (L : ℤ) - 1), (3 : ℝ) ^ ((r : ℝ) - j) * f r) +
+        f (j - (L : ℤ)) + Cb * ∑ r ∈ Finset.Icc J (j - (L : ℤ) - 1), (3 : ℝ) ^ ((r : ℝ) - j) * f
+          r) +
         Y * (if j < J + (L : ℤ) then 1 else (3 : ℝ) ^ (-b * ((j : ℝ) - J))) + E) :
     (3 : ℝ) ^ (-a * ((n : ℝ) + L - J - 1)) * g J + (1 - (3 : ℝ) ^ (-a)) *
       (∑ j ∈ Finset.Icc (J + 1) (n + (L : ℤ) - 1), (3 : ℝ) ^ (-a * ((n : ℝ) + L - j - 1)) * g j) ≤
       A * (3 : ℝ) ^ (2 * a * (L : ℝ)) * (1 + Cb / (1 - (3 : ℝ) ^ (-(1 - a)))) *
-        (∑ r ∈ Finset.Icc J (n + 2 * (L : ℤ) - 1), (3 : ℝ) ^ (-a * ((n : ℝ) + 2 * L - r - 1)) * f r) +
+        (∑ r ∈ Finset.Icc J (n + 2 * (L : ℤ) - 1), (3 : ℝ) ^ (-a * ((n : ℝ) + 2 * L - r - 1)) *
+          f r) +
       Y * ((n : ℝ) + L - J) * (3 : ℝ) ^ (-a * ((n : ℝ) - J)) + E := by
   classical
   let U := Finset.Icc J (n + (L : ℤ) - 1)
@@ -333,7 +351,8 @@ theorem transport_drift_scalar_assembly (a b : ℝ) (ha : 0 < a) (ha1 : a < 1) (
   let src := fun j : ℤ => if j < J + (L : ℤ) then 1 else (3 : ℝ) ^ (-b * ((j : ℝ) - J))
   let w := fun j : ℤ => (3 : ℝ) ^ (-a * ((n : ℝ) + L - j - 1))
   let h := fun j => A * old j + Y * src j
-  let T := ∑ r ∈ Finset.Icc J (n + 2 * (L : ℤ) - 1), (3 : ℝ) ^ (-a * ((n : ℝ) + 2 * L - r - 1)) * f r
+  let T := ∑ r ∈ Finset.Icc J (n + 2 * (L : ℤ) - 1), (3 : ℝ) ^ (-a * ((n : ℝ) + 2 * L - r - 1))
+    * f r
   have hT : 0 ≤ T := Finset.sum_nonneg fun r hr => mul_nonneg (by positivity) (hf r hr)
   have ho0 (j : ℤ) (hj : j ∈ U) : 0 ≤ old j := by
     dsimp only [old]
@@ -342,15 +361,18 @@ theorem transport_drift_scalar_assembly (a b : ℝ) (ha : 0 < a) (ha1 : a < 1) (
     · have hjj := Finset.mem_Icc.mp hj
       exact add_nonneg (hf _ (Finset.mem_Icc.mpr ⟨by omega, by omega⟩))
         (mul_nonneg hCb (Finset.sum_nonneg fun r hr => mul_nonneg (by positivity)
-          (hf r (Finset.mem_Icc.mpr ⟨(Finset.mem_Icc.mp hr).1, by have := (Finset.mem_Icc.mp hr).2; omega⟩))))
+          (hf r (Finset.mem_Icc.mpr ⟨(Finset.mem_Icc.mp hr).1, by have := (Finset.mem_Icc.mp
+            hr).2; omega⟩))))
   have hs0 (j : ℤ) : 0 ≤ src j := by dsimp only [src]; split_ifs <;> positivity
-  have hh0 (j : ℤ) (hj : j ∈ U) : 0 ≤ h j := add_nonneg (mul_nonneg hA (ho0 j hj)) (mul_nonneg hY (hs0 j))
+  have hh0 (j : ℤ) (hj : j ∈ U) : 0 ≤ h j := add_nonneg (mul_nonneg hA (ho0 j hj)) (mul_nonneg
+    hY (hs0 j))
   have herr := transport_abel_error a ha.le J (n + (L : ℤ)) (by omega) g h E hpoint
   have hsum := transport_abel_le_sum a J (n + (L : ℤ)) (by omega) h hh0
   simp only [Int.cast_add, Int.cast_natCast] at herr hsum
   have heOld : (∑ j ∈ U, w j * old j) =
       (∑ j ∈ V, w j * f (j - (L : ℤ))) +
-        Cb * ∑ j ∈ V, w j * ∑ r ∈ Finset.Icc J (j - (L : ℤ) - 1), (3 : ℝ) ^ ((r : ℝ) - j) * f r := by
+        Cb * ∑ j ∈ V, w j * ∑ r ∈ Finset.Icc J (j - (L : ℤ) - 1), (3 : ℝ) ^ ((r : ℝ) - j) * f r
+          := by
     have hVU : V ⊆ U := fun j hj => Finset.mem_Icc.mpr
       ⟨by have := (Finset.mem_Icc.mp hj).1; omega, (Finset.mem_Icc.mp hj).2⟩
     have hzero (j : ℤ) (hj : j ∈ U) (hjV : j ∉ V) : w j * old j = 0 := by
@@ -367,7 +389,8 @@ theorem transport_drift_scalar_assembly (a b : ℝ) (ha : 0 < a) (ha1 : a < 1) (
   have hbulk := transport_drift_bulk_weights a J n L f hf
   have hboundary := transport_drift_boundary_weights a ha1 J n L f hf
   have hGrow : (3 : ℝ) ^ (a * (L : ℝ)) ≤ (3 : ℝ) ^ (2 * a * (L : ℝ)) :=
-    Real.rpow_le_rpow_of_exponent_le (by norm_num) (by nlinarith only [mul_nonneg ha.le (Nat.cast_nonneg L)])
+    Real.rpow_le_rpow_of_exponent_le (by norm_num) (by nlinarith only [mul_nonneg ha.le
+      (Nat.cast_nonneg L)])
   have hden := (transport_geometric_Icc (1 - a) (by linarith only [ha1]) J n).1
   have hboundary' : (∑ j ∈ V, w j * ∑ r ∈ Finset.Icc J (j - (L : ℤ) - 1),
       (3 : ℝ) ^ ((r : ℝ) - j) * f r) ≤
@@ -390,7 +413,8 @@ theorem transport_drift_scalar_assembly (a b : ℝ) (ha : 0 < a) (ha1 : a < 1) (
       apply congrArg₂ (· + ·) <;> apply Finset.sum_congr rfl <;> intro j _ <;> ring
     _ ≤ A * ((3 : ℝ) ^ (2 * a * (L : ℝ)) * (1 + Cb / (1 - (3 : ℝ) ^ (-(1 - a)))) * T) +
         Y * (((n : ℝ) + L - J) * (3 : ℝ) ^ (-a * ((n : ℝ) - J))) + E :=
-      add_le_add (add_le_add (mul_le_mul_of_nonneg_left hold hA) (mul_le_mul_of_nonneg_left hsource hY)) le_rfl
+      add_le_add (add_le_add (mul_le_mul_of_nonneg_left hold hA) (mul_le_mul_of_nonneg_left
+        hsource hY)) le_rfl
     _ = _ := by ring
 
 /-- A source matrix upper bound controls its normalized trace excess. -/
@@ -399,8 +423,10 @@ theorem transport_normalized_trace_scalar_bound {d : ℕ} (A F : BlockMat d)
     (M : ℝ) (hM : 0 ≤ M) (hbound : BlockMatLoewnerLE A (blockScale M F)) :
     blockTrace (blockSub (normalizedBlock A F) (Book.Ch02.blockIdentity d)) ≤ 2 * (d : ℝ) * M := by
   have h := Source.blockTrace_le_of_order (transport_normalized_psd_bound hA hF hM hbound).2
-  change blockTrace (normalizedBlock A F) ≤ Matrix.trace (toFullBlockMat (blockScale M (Book.Ch02.blockIdentity d))) at h
-  rw [toFullBlockMat_blockScale, toFullBlockMat_blockIdentity, Matrix.trace_smul, Matrix.trace_one] at h
+  change blockTrace (normalizedBlock A F) ≤ Matrix.trace (toFullBlockMat (blockScale M
+    (Book.Ch02.blockIdentity d))) at h
+  rw [toFullBlockMat_blockScale, toFullBlockMat_blockIdentity, Matrix.trace_smul,
+    Matrix.trace_one] at h
   simp only [BlockCoord, Fintype.card_sum, Fintype.card_fin, Nat.cast_add, smul_eq_mul] at h
   rw [transport_trace_excess]
   nlinarith only [h, (Nat.cast_nonneg d : (0 : ℝ) ≤ d)]

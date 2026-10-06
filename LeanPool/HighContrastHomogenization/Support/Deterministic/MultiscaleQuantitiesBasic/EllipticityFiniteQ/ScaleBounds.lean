@@ -22,7 +22,7 @@ namespace HCPolySupport
 
 noncomputable section
 
-theorem multiscale_ellipticity_lambdaSq_two_inv_le_of_mem_descendantsAtScale_of_half_of_isEllipticFieldOn_of_isSigmaCoarse
+theorem multiscale_ellipticity_lambdaSq_two_inv_le_of_half_of_ellipticField
     {d : ℕ} [NeZero d] {Q R : TriadicCube d} {k : ℤ}
     (a : CoeffField d) {s : ℝ} {lam Lam : ℝ}
     (hs : 0 < s) (hR : R ∈ descendantsAtScale Q k)
@@ -43,11 +43,11 @@ theorem multiscale_ellipticity_lambdaSq_two_inv_le_of_mem_descendantsAtScale_of_
           Real.rpow (maxDescendantSigmaStarInvNormAtScale Q (Q.scale - (n : ℤ)) a) (2 / 2)) := by
     simpa using hsum_half
   simpa using
-    multiscale_ellipticity_lambdaSq_finite_inv_le_of_mem_descendantsAtScale_of_lt_of_isEllipticFieldOn_of_isSigmaCoarse
+    multiscale_ellipticity_lambdaSq_finite_inv_le_of_ellipticField
       (Q := Q) (R := R) (k := k) a (q := 2) (t := s / 2) (s := s)
       (lam := lam) (Lam := Lam) (by norm_num) hhalf hlt hR hEll hData hsum_half'
 
-theorem multiscale_ellipticity_lambdaSq_two_inv_le_rpow_s_of_mem_descendantsAtScale_of_half_of_isEllipticFieldOn_of_isSigmaCoarse
+theorem multiscale_ellipticity_lambdaSq_two_inv_le_rpow_s_of_half_of_ellipticField
     {d : ℕ} [NeZero d] {Q R : TriadicCube d} {k : ℤ}
     (a : CoeffField d) {s : ℝ} {lam Lam : ℝ}
     (hs : 0 < s) (hR : R ∈ descendantsAtScale Q k)
@@ -84,7 +84,7 @@ theorem multiscale_ellipticity_lambdaSq_two_inv_le_rpow_s_of_mem_descendantsAtSc
       (Q := Q) (R := R) (k := k) a (s / 2) 2 hhalf.le (by norm_num) hR hsum_half'
   have hmono :
       (lambdaSq R s (.finite 2) a)⁻¹ ≤ (lambdaSq R (s / 2) (.finite 2) a)⁻¹ :=
-    multiscale_ellipticity_lambdaSq_finite_inv_le_of_lt_of_isEllipticFieldOn_of_isSigmaCoarse
+    multiscale_lambdaSq_inv_le_of_sigmaCoarse_elliptic
       (Q := R) a (q := 2) (t := s / 2) (s := s) (lam := lam) (Lam := Lam)
       (by norm_num) hhalf hlt hEllR hDataR hsumR_half
   have hloc :
@@ -105,7 +105,7 @@ theorem multiscale_ellipticity_lambdaSq_two_inv_le_rpow_s_of_mem_descendantsAtSc
 
 /-- Half-scale upper-ellipticity localization for the finite-`q = 2`
 multiscale coefficient. -/
-theorem multiscale_ellipticity_LambdaSq_two_le_rpow_s_of_mem_descendantsAtScale_of_half_of_isEllipticFieldOn_of_isSigmaCoarse
+theorem multiscale_ellipticity_LambdaSq_two_le_rpow_s_of_half_of_ellipticField
     {d : ℕ} [NeZero d] {Q R : TriadicCube d} {k : ℤ}
     (a : CoeffField d) {s : ℝ} {lam Lam : ℝ}
     (hs : 0 < s) (hR : R ∈ descendantsAtScale Q k)
@@ -224,7 +224,8 @@ theorem multiscale_ellipticity_finite_scale_bounds {d : ℕ}
           (lambdaSq Q s (.finite q) a)⁻¹ := by
   refine ⟨?_, ?_⟩
   · exact multiscale_ellipticity_LambdaSq_finite_descendantsAtScale_le Q hk a s q hs hq hBsum
-  · exact multiscale_ellipticity_lambdaSq_finite_inv_descendantsAtScale_le Q hk a s q hs hq hSigmaSum
+  · exact multiscale_ellipticity_lambdaSq_finite_inv_descendantsAtScale_le Q hk a s q hs hq
+      hSigmaSum
 
 theorem multiscale_ellipticity_finite_basic_properties_of_isEllipticFieldOn_of_isSigmaCoarse
     {d : ℕ} [NeZero d] (Q : TriadicCube d) (a : CoeffField d) {t s q : ℝ} {lam Lam : ℝ}
@@ -258,7 +259,7 @@ theorem multiscale_ellipticity_finite_basic_properties_of_isEllipticFieldOn_of_i
     intro n
     refine Real.rpow_nonneg ?_ _
     exact maxDescendantBBlockNormAtScale_nonneg Q
-      (sub_le_self _ (by exact_mod_cast Nat.zero_le n)) a
+      (sub_le_self _ (Nat.cast_nonneg n)) a
   have hSigmaNonneg :
       ∀ n : ℕ,
         0 ≤ Real.rpow (maxDescendantSigmaStarInvNormAtScale Q (Q.scale - (n : ℤ)) a)
@@ -266,7 +267,7 @@ theorem multiscale_ellipticity_finite_basic_properties_of_isEllipticFieldOn_of_i
     intro n
     refine Real.rpow_nonneg ?_ _
     exact maxDescendantSigmaStarInvNormAtScale_nonneg Q
-      (sub_le_self _ (by exact_mod_cast Nat.zero_le n)) a
+      (sub_le_self _ (Nat.cast_nonneg n)) a
   have hBsum_s :
       Summable (fun n : ℕ =>
         geometricWeight s q n *
@@ -279,7 +280,7 @@ theorem multiscale_ellipticity_finite_basic_properties_of_isEllipticFieldOn_of_i
             (q / 2)) :=
     summable_geometricWeight_of_lt hSigmaNonneg hq ht hts hSigmaSum_t
   refine ⟨?_, ?_, ?_, ?_, fun {k} hk => ?_⟩
-  · exact multiscale_ellipticity_lambdaSq_finite_inv_le_of_lt_of_isEllipticFieldOn_of_isSigmaCoarse
+  · exact multiscale_lambdaSq_inv_le_of_sigmaCoarse_elliptic
       Q a hq ht hts hEll hData hSigmaSum_t
   · exact coarseSigmaStarInvBlockNorm_le_lambdaSq_finite_inv_of_isEllipticFieldOn_of_isSigmaCoarse
       Q a hs hq hEll hData hSigmaSum_s

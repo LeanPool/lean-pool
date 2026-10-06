@@ -72,7 +72,7 @@ theorem JUpperBoundWeakNorms_homogenizationScale
         (JUpperBoundWeakNorms.section53CutoffProductCoeff Q s t)
         p q p0 q0 := by
   exact
-    JUpperBoundWeakNorms.expectedResponseJCubeSet_sub_half_dot_le_jUpperWeakNormManuscriptExpectedRHSAtScale_of_normalizedCutoff_of_P4
+    JUpperBoundWeakNorms.expectedResponseJ_sub_half_dot_le_weakNormBound_of_coarseEllipticity
       hP hstat hStruct hP4 hk_nonneg hkm hs hs_lt_one ht hst p q p0 q0
       hGradSq hFluxSq
 
@@ -112,7 +112,7 @@ theorem JUpperBoundWeakNorms_young_homogenizationScale
         (JUpperBoundWeakNorms.section53CutoffProductCoeff Q s t)
         η p q p0 q0 := by
   exact
-    JUpperBoundWeakNorms.expectedResponseJCubeSet_sub_half_dot_le_jUpperWeakNormYoungManuscriptExpectedRHSAtScale_of_normalizedCutoff_of_P4
+    JUpperBoundWeakNorms.expectedResponseJCubeSet_sub_half_dot_le_jUpperWeakNormYoungExpectedRHS
       hP hstat hStruct hP4 hk_nonneg hkm hs hs_lt_one ht hst p q p0 q0 hη
       hGradSq hFluxSq
 

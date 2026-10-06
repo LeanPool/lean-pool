@@ -284,7 +284,7 @@ theorem disjoint_childCubes_of_ne {d : ℕ} {Q R : TriadicCube d} (hQR : Q ≠ R
 @[simp] theorem descendantsAtDepth_succ {d : ℕ} (Q : TriadicCube d) (n : ℕ) :
     descendantsAtDepth Q (n + 1) = (descendantsAtDepth Q n).biUnion childCubes := rfl
 
-@[simp] theorem descendantsAtDepth_one {d : ℕ} (Q : TriadicCube d) :
+theorem descendantsAtDepth_one {d : ℕ} (Q : TriadicCube d) :
     descendantsAtDepth Q 1 = childCubes Q := by
   simp [descendantsAtDepth_succ]
 
@@ -407,12 +407,12 @@ theorem not_mem_descendantsAtScale_of_lt {d : ℕ} {Q R : TriadicCube d} {k : �
   rw [descendantsAtScale_eq_empty Q hk]
   simp
 
-@[simp] theorem child_scale_of_mem_childCubes {d : ℕ} {Q R : TriadicCube d}
+theorem child_scale_of_mem_childCubes {d : ℕ} {Q R : TriadicCube d}
     (hR : R ∈ childCubes Q) : R.scale = Q.scale - 1 := by
   rcases (mem_childCubes_iff.mp hR) with ⟨digits, rfl⟩
   simp
 
-@[simp] theorem parent_scale_of_mem_childCubes {d : ℕ} {Q R : TriadicCube d}
+theorem parent_scale_of_mem_childCubes {d : ℕ} {Q R : TriadicCube d}
     (hR : R ∈ childCubes Q) : (parentCube R).scale = Q.scale := by
   simp [child_scale_of_mem_childCubes hR]
 

@@ -234,7 +234,7 @@ theorem originCubeParentReducedNormEnergyBound_le_solverEnergyBoundExact
     Real.rpow_le_rpow h4A_nonneg h4AB
       (by norm_num : 0 ≤ (1 / (2 : ℝ)))
 
-theorem exists_hasWeakHessianOn_originCube_canonicalRadii_hessianCoordL2NormSum_le_solverEnergyBoundExact
+theorem exists_reflected_parent_weakHessian_energyBound
     (W : MeanZeroNeumannPoissonSolution (originCube d m) F)
     (hmean : cubeAverage (originCube d m) F = 0)
     (hF :
@@ -252,7 +252,7 @@ theorem exists_hasWeakHessianOn_originCube_canonicalRadii_hessianCoordL2NormSum_
               ∑ i : Fin d, ∑ _j : Fin d,
                 originCubeParentReducedSolverEnergyBoundExact d m F i := by
   rcases
-    W.exists_hasWeakHessianOn_originCube_canonicalRadii_hessianCoordL2NormSum_le_normEnergyBound
+    W.exists_reflectedHessian_energyBound
       hmean hF with
     ⟨uP, huP_toFun, huP_grad, H, hH⟩
   refine ⟨uP, huP_toFun, huP_grad, H, hH.trans ?_⟩
@@ -380,7 +380,7 @@ private theorem originCubeParentReducedSolverEnergyInsideExact_eq_volume_mul_uni
   rw [hBsq]
   field_simp [hs_ne]
 
-theorem originCubeParentReducedSolverEnergyConstantExact_volume_cancel
+theorem parentSolverEnergyConstant_volumeCancel
     (d : ℕ) (m : ℤ) :
     ((cubeVolume (originCube d m))⁻¹) ^ (1 / 2 : ℝ) *
         originCubeParentReducedSolverEnergyConstantExact d m =

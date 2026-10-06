@@ -75,7 +75,7 @@ theorem exists_originCube_dirichlet_calderon_zygmund_regularity_q_two
     (hweak : CubeDirichletWeakPoissonProblem (originCube d m) u F) :
     ∃ H : HasWeakHessianOn (openCubeSet (originCube d m)) u.toH1Function,
       H.frobeniusNormalizedL2 (originCube d m) ≤
-        cubeDirichletH2RegularityVolumeL2ConstantExact d *
+        cubeDirichletH2VolumeL2Constant d *
           (cubeBoundedMeasurableDomain (originCube d m)).normalizedLpNorm
             (2 : ℝ≥0∞) F (by
               simpa [cubeBoundedMeasurableDomain_normalizedVolume_eq_normalizedCubeMeasure]
@@ -84,7 +84,7 @@ theorem exists_originCube_dirichlet_calderon_zygmund_regularity_q_two
     ⟨H, hH⟩
   refine ⟨H, ?_⟩
   let V : ℝ := cubeVolume (originCube d m)
-  let C : ℝ := cubeDirichletH2RegularityVolumeL2ConstantExact d
+  let C : ℝ := cubeDirichletH2VolumeL2Constant d
   let L : ℝ := cubeLpNorm (originCube d m) (2 : ℝ≥0∞) F
   let hFsafe : MeasureTheory.MemLp F (2 : ℝ≥0∞)
       (cubeBoundedMeasurableDomain (originCube d m)).normalizedVolume := by
@@ -113,7 +113,7 @@ theorem exists_originCube_dirichlet_calderon_zygmund_regularity_q_two
       cubeDirichletH2RegularityConstantExact (originCube d m) =
         V ^ (1 / 2 : ℝ) * C := by
     simpa [V, C] using
-      cubeDirichletH2RegularityConstantExact_eq_volume_rpow_half_mul_volumeL2ConstantExact
+      cubeDirichletH2_eq_volumeHalf_mul_volumeL2
         (originCube d m)
   have hcancel :
       (V⁻¹) ^ (1 / 2 : ℝ) * V ^ (1 / 2 : ℝ) = 1 := by
@@ -135,10 +135,10 @@ theorem exists_originCube_dirichlet_calderon_zygmund_regularity_q_two
         (V⁻¹) ^ (1 / 2 : ℝ) * (V ^ (1 / 2 : ℝ) * C * L)
             = ((V⁻¹) ^ (1 / 2 : ℝ) * V ^ (1 / 2 : ℝ)) * (C * L) := by ring
         _ = C * L := by rw [hcancel, one_mul]
-    _ = cubeDirichletH2RegularityVolumeL2ConstantExact d *
+    _ = cubeDirichletH2VolumeL2Constant d *
           (cubeBoundedMeasurableDomain (originCube d m)).normalizedLpNorm
             (2 : ℝ≥0∞) F hFsafe := by rw [hL_safe]
-    _ = cubeDirichletH2RegularityVolumeL2ConstantExact d *
+    _ = cubeDirichletH2VolumeL2Constant d *
           (cubeBoundedMeasurableDomain (originCube d m)).normalizedLpNorm
             (2 : ℝ≥0∞) F (by
               simpa [cubeBoundedMeasurableDomain_normalizedVolume_eq_normalizedCubeMeasure]
@@ -150,8 +150,8 @@ regularity-producing centered-cube Dirichlet `q = 2` predicate. -/
 theorem originCubeDirichletCalderonZygmundRegularityQTwo_exact
     (d : ℕ) [NeZero d] :
     OriginCubeDirichletCalderonZygmundRegularityQTwo d
-      (cubeDirichletH2RegularityVolumeL2ConstantExact d) := by
-  refine ⟨cubeDirichletH2RegularityVolumeL2ConstantExact_nonneg d, ?_⟩
+      (cubeDirichletH2VolumeL2Constant d) := by
+  refine ⟨cubeDirichletH2VolumeL2Constant_nonneg d, ?_⟩
   intro m u F hF hweak
   exact exists_originCube_dirichlet_calderon_zygmund_regularity_q_two m u F hF hweak
 
@@ -199,8 +199,8 @@ witness. -/
 theorem originCubeDirichletCalderonZygmundQTwo_exact
     (d : ℕ) [NeZero d] :
     OriginCubeDirichletCalderonZygmundQTwo d
-      (cubeDirichletH2RegularityVolumeL2ConstantExact d) := by
-  refine ⟨cubeDirichletH2RegularityVolumeL2ConstantExact_nonneg d, ?_⟩
+      (cubeDirichletH2VolumeL2Constant d) := by
+  refine ⟨cubeDirichletH2VolumeL2Constant_nonneg d, ?_⟩
   intro m u F hF hweak H
   rcases exists_originCube_dirichlet_calderon_zygmund_regularity_q_two m u F hF hweak with
     ⟨K, hK⟩

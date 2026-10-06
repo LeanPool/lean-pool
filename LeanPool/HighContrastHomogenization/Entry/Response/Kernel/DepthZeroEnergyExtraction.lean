@@ -78,7 +78,8 @@ private theorem coarseBlock_le_one_add_respAllScaleMax (hd : 2 ≤ d) (γ : ℝ)
   have _hγUsed := hγ
   let : NeZero d := ⟨by omega⟩
   have hEt : (toFullBlockMat (respMean P jStar F t)).PosDef :=
-    Annealed.adaptedMean_posDef d hd P γ E Ψ Kg Src hstat hdag jStar hj (explicitCanonicalMetric F) hm t
+    Annealed.adaptedMean_posDef d hd P γ E Ψ Kg Src hstat hdag jStar hj (explicitCanonicalMetric
+      F) hm t
   filter_upwards [pathwise_envelope hd γ P E Ψ Kg Src hstat hdag jStar hj F hm t]
     with a ha
   obtain ⟨C, hC0, hL0, hterms⟩ := ha
@@ -98,7 +99,8 @@ private theorem coarseBlock_le_one_add_respAllScaleMax (hd : 2 ≤ d) (γ : ℝ)
       {y : ℝ | ∃ n : ℕ, ∃ z ∈ triadicIndexBox d n, y =
         (3 : ℝ) ^ (-(Quenched.contrastRho γ * (n : ℝ))) *
           blockSpecBound (blockSub
-            (normalizedBlock (coarseBlock (adaptedCellAtCenter (respGrid jStar F) (t - (n : ℤ)) z) a)
+            (normalizedBlock (coarseBlock (adaptedCellAtCenter (respGrid jStar F) (t - (n : ℤ))
+              z) a)
               (respMean P jStar F t)) (Book.Ch02.blockIdentity d))} := by
     refine ⟨0, 0, zero_mem_triadicIndexBox 0, ?_⟩
     have h1 : t - ((0 : ℕ) : ℤ) = t := by simp
@@ -212,7 +214,8 @@ theorem weakOptimizerEnergy_sq_le_minus (d : ℕ) (hd : 2 ≤ d) (γ : ℝ)
   let : NeZero d := ⟨by omega⟩
   intro _ε _σ _Cglob _Cprof _Csrc _Bresp _H P E Ψ Kg Src _B jStar F _s t raw e he u hu
   have := raw.prob
-  have hm : (explicitCanonicalMetric F).PosDef := Geometry.explicitCanonicalMetric_posDef raw.symm raw.pos
+  have hm : (explicitCanonicalMetric F).PosDef := Geometry.explicitCanonicalMetric_posDef
+    raw.symm raw.pos
   have hq : IsUnit (respGrid jStar F) := isUnit_respGrid_of_rawOutput raw
   have hEt : (toFullBlockMat (respMean P jStar F t)).PosDef :=
     Annealed.adaptedMean_posDef d hd P γ E Ψ Kg Src raw.stat raw.ell jStar raw.hj
@@ -275,7 +278,8 @@ theorem weakOptimizerEnergy_sq_le_plus (d : ℕ) (hd : 2 ≤ d) (γ : ℝ)
   let : NeZero d := ⟨by omega⟩
   intro _ε _σ _Cglob _Cprof _Csrc _Bresp _H P E Ψ Kg Src _B jStar F _s t raw e he u hu
   have := raw.prob
-  have hm : (explicitCanonicalMetric F).PosDef := Geometry.explicitCanonicalMetric_posDef raw.symm raw.pos
+  have hm : (explicitCanonicalMetric F).PosDef := Geometry.explicitCanonicalMetric_posDef
+    raw.symm raw.pos
   have hq : IsUnit (respGrid jStar F) := isUnit_respGrid_of_rawOutput raw
   have hEt : (toFullBlockMat (respMean P jStar F t)).PosDef :=
     Annealed.adaptedMean_posDef d hd P γ E Ψ Kg Src raw.stat raw.ell jStar raw.hj
@@ -547,7 +551,8 @@ private theorem blockSpecBound_le_of_blockMatLoewnerLE (N : BlockMat d) {c : ℝ
 private theorem blockSpecBound_le_add (N N' : BlockMat d) :
     blockSpecBound N' ≤ blockSpecBound N + entryAbsSum (blockSub N' N) := by
   obtain ⟨h0, hle⟩ := blockSpecBound_mem N
-  refine blockSpecBound_le_of_blockMatLoewnerLE N' (by linarith only [h0, entryAbsSum_nonneg (blockSub N' N)]) ?_
+  refine blockSpecBound_le_of_blockMatLoewnerLE N' (by linarith only [h0, entryAbsSum_nonneg
+    (blockSub N' N)]) ?_
   refine (loewner_iff N' _).mpr fun X => ?_
   have hN := (loewner_iff N _).mp hle X
   have hD := quad_le_entryAbsSum (blockSub N' N) X
@@ -672,7 +677,8 @@ theorem respAllScaleMax_measurable [NeZero d]
   set g : ℕ × (Fin d → ℤ) → CoeffSpace d → ℝ := fun p a =>
     (3 : ℝ) ^ (-(Quenched.contrastRho γ * (p.1 : ℝ))) *
       blockSpecBound (blockSub
-        (normalizedBlock (coarseBlock (adaptedCellAtCenter (respGrid jStar F) (t - (p.1 : ℤ)) p.2) a)
+        (normalizedBlock (coarseBlock (adaptedCellAtCenter (respGrid jStar F) (t - (p.1 : ℤ))
+          p.2) a)
           (respMean P jStar F t)) (Book.Ch02.blockIdentity d)) with hg
   have hrw : respAllScaleMax P γ jStar F t =
       fun a => sSup ((fun p => g p a) ''

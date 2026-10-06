@@ -221,7 +221,8 @@ Then the maximal standard aligned cubes of generation `r` inside `W` (among thos
 generation at most `j`) satisfy `Σ_{z ∈ 𝒵_r(W)} |□_r| / |W| ≤ 12 d^{3/2} 3^{r-j}`. -/
 theorem sum_relVolume_maximalCells_le [NeZero d] {q : Mat d} (hq : InverseNormLE q 2)
     {j r : ℤ} (hrj : r ≤ j) (y : Vec d) :
-    ∑ w ∈ (finite_maximalCellIndices (Transport.volume_adaptedCellTranslate_ne_top q j y) j r).toFinset,
+    ∑ w ∈ (finite_maximalCellIndices (Transport.volume_adaptedCellTranslate_ne_top q j y) j
+      r).toFinset,
         (volume (standardCell d r w)).toReal / (volume (adaptedCellTranslate q j y)).toReal ≤
       12 * (d : ℝ) ^ ((3 : ℝ) / 2) * (3 : ℝ) ^ (r - j) := by
   have hW0 := (volume_adaptedCellTranslate_pos hq j y).ne'

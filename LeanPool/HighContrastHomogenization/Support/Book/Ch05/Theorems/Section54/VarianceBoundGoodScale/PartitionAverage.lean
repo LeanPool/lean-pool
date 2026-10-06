@@ -353,7 +353,8 @@ theorem section54_annealedMomentRoot_add_le
     _ ≤ ENNReal.toReal (eLpNorm X (ξ : ENNReal) P + eLpNorm Y (ξ : ENNReal) P) :=
           ENNReal.toReal_mono hsum_ne_top hadd
     _ = Ch04.annealedMomentRoot P ξ X + Ch04.annealedMomentRoot P ξ Y := by
-          rw [ENNReal.toReal_add hX_mem.eLpNorm_lt_top.ne hY_mem.eLpNorm_lt_top.ne, hX_toReal, hY_toReal]
+          rw [ENNReal.toReal_add hX_mem.eLpNorm_lt_top.ne hY_mem.eLpNorm_lt_top.ne, hX_toReal,
+            hY_toReal]
 
 theorem section54_centeredOrigin_momentRoot_le_factor_sum_of_abs_le
     {d : ℕ} [NeZero d] {P : Ch04.RestrictionCoeffLaw d}
@@ -505,7 +506,7 @@ theorem section54_centeredOrigin_momentRoot_le_factor_sum_of_abs_le
           (Ch04.LambdaMomentAtScale P 0 hP4.sUpper hP4.xi +
             Ch04.lambdaInvMomentAtScale P 0 hP4.sLower hP4.xi) := by ring
 
-private theorem exists_isRestrictionLocalRandomVariable_ae_eq_coarseBlockMatrix_upperRight_apply_cubeSet
+private theorem exists_restrictionLocalRandomVariable_ae_eq_coarseUpperRightEntry
     {d : ℕ} {P : Ch04.RestrictionCoeffLaw d} (hP : Ch04.RestrictionLawCarrier P)
     (Q : TriadicCube d) (i j : Fin d) :
     ∃ Y : RegCoeffField d → ℝ,
@@ -530,7 +531,7 @@ private theorem exists_isRestrictionLocalRandomVariable_ae_eq_coarseBlockMatrix_
           simp [coarseBlockMatrix_upperRight_apply]
     _ = Ysum a - Yi a - Yj a := by rw [hsum, hi, hj]
 
-private theorem exists_isRestrictionLocalRandomVariable_ae_eq_coarseBlockMatrix_lowerLeft_apply_cubeSet
+private theorem exists_restrictionLocalRandomVariable_ae_eq_coarseLowerLeftEntry
     {d : ℕ} {P : Ch04.RestrictionCoeffLaw d} (hP : Ch04.RestrictionLawCarrier P)
     (Q : TriadicCube d) (i j : Fin d) :
     ∃ Y : RegCoeffField d → ℝ,
@@ -574,20 +575,20 @@ private theorem exists_isRestrictionLocalRandomVariable_ae_eq_coarseFullBlockMat
         cases β with
         | inl j =>
             simpa [toFullBlockMat] using
-              hP.exists_isRestrictionLocalRandomVariable_ae_eq_coarseBlockMatrix_upperLeft_apply_cubeSet Q i j
+              hP.exists_restrictionLocalRandomVariable_ae_eq_coarseUpperLeftEntry Q i j
         | inr j =>
             simpa [toFullBlockMat] using
-              exists_isRestrictionLocalRandomVariable_ae_eq_coarseBlockMatrix_upperRight_apply_cubeSet
+              exists_restrictionLocalRandomVariable_ae_eq_coarseUpperRightEntry
                 hP Q i j
     | inr i =>
         cases β with
         | inl j =>
             simpa [toFullBlockMat] using
-              exists_isRestrictionLocalRandomVariable_ae_eq_coarseBlockMatrix_lowerLeft_apply_cubeSet
+              exists_restrictionLocalRandomVariable_ae_eq_coarseLowerLeftEntry
                 hP Q i j
         | inr j =>
             simpa [toFullBlockMat] using
-              hP.exists_isRestrictionLocalRandomVariable_ae_eq_coarseBlockMatrix_lowerRight_apply_cubeSet Q i j
+              hP.exists_restrictionLocalRandomVariable_ae_eq_coarseLowerRightEntry Q i j
   let Yentry : BlockCoord d → BlockCoord d → RegCoeffField d → ℝ :=
     fun α β => Classical.choose (entry_exists α β)
   let Y : RegCoeffField d → FullBlockMat d := fun a α β => Yentry α β a
@@ -639,7 +640,7 @@ private theorem aemeasurable_fullBlockNormalizedFluctuationOperatorNormSq_cubeSe
     normalizedFullBlockCLMLinearMap_apply, Function.comp_def] using
     hg.comp_aemeasurable hM
 
-theorem exists_isRestrictionLocalRandomVariable_ae_eq_fullBlockNormalizedFluctuationOperatorNormSq_cubeSet
+theorem exists_localRandomVariable_ae_eq_fluctuationOperatorNormSq
     {d : ℕ} [NeZero d] {P : Ch04.RestrictionCoeffLaw d}
     (hP : Ch04.RestrictionLawCarrier P) (hStruct : Ch04.RestrictionStructuralLaw P)
     (center : ℤ) (Q : TriadicCube d) :
@@ -669,7 +670,7 @@ private theorem aemeasurable_fullBlockNormalizedQuadraticObservable_cubeSet
     (center : ℤ) (q : FullBlockVec d) (Q : TriadicCube d) :
     AEMeasurable
       (fun a : RegCoeffField d =>
-        fullBlockNormalizedQuadraticObservable
+        normalizedQuadraticObservable
           hP hStruct center q (cubeSet Q) a.toFun) P := by
   let b := hP.barSigmaAtScale hStruct center
   let c := hP.barSigmaStarAtScale hStruct center
@@ -682,7 +683,7 @@ private theorem aemeasurable_fullBlockNormalizedQuadraticObservable_cubeSet
       AEMeasurable
         (fun a : RegCoeffField d => toFullBlockMat (coarseBlockMatrix (cubeSet Q) a.toFun)) P :=
     hP.aemeasurable_coarseFullBlockMatrix_cubeSet Q
-  simpa only [fullBlockNormalizedQuadraticObservable, b, c, D, g,
+  simpa only [normalizedQuadraticObservable, b, c, D, g,
     Function.comp_def] using
     hg.comp_aemeasurable hM
 
@@ -693,7 +694,7 @@ theorem exists_isRestrictionLocalRandomVariable_ae_eq_fullBlockNormalizedQuadrat
     ∃ Y : RegCoeffField d → ℝ,
       Ch04.IsRestrictionLocalRandomVariable (cubeSet Q) (measurableSet_cubeSet Q) Y ∧
         (fun a : RegCoeffField d =>
-          fullBlockNormalizedQuadraticObservable
+          normalizedQuadraticObservable
             hP hStruct center q (cubeSet Q) a.toFun) =ᵐ[P] Y := by
   let b := hP.barSigmaAtScale hStruct center
   let c := hP.barSigmaStarAtScale hStruct center
@@ -706,7 +707,7 @@ theorem exists_isRestrictionLocalRandomVariable_ae_eq_fullBlockNormalizedQuadrat
       hP Q with ⟨Ymat, hYmat_local, hYmat_eq⟩
   refine ⟨fun a => g (Ymat a), hYmat_local.comp_measurable hg, ?_⟩
   filter_upwards [hYmat_eq] with a ha
-  simp [fullBlockNormalizedQuadraticObservable, b, c, D, g, ha]
+  simp [normalizedQuadraticObservable, b, c, D, g, ha]
 
 /-- Descendant-family local representatives for the normalized full-block
 fluctuation observable.  This is the local-representative hypothesis needed by
@@ -723,7 +724,7 @@ theorem fullBlockNormalizedFluctuationOperatorNormSq_descendants_localRep
               hP hStruct center (cubeSet R) a.toFun) =ᵐ[P] Y := by
   intro R _hR
   exact
-    exists_isRestrictionLocalRandomVariable_ae_eq_fullBlockNormalizedFluctuationOperatorNormSq_cubeSet
+    exists_localRandomVariable_ae_eq_fluctuationOperatorNormSq
       hP hStruct center R
 
 /-- Descendant-family a.e.-measurability for the normalized full-block
@@ -751,7 +752,7 @@ theorem fullBlockNormalizedQuadraticObservable_descendants_localRep
       ∃ Y : RegCoeffField d → ℝ,
         Ch04.IsRestrictionLocalRandomVariable (cubeSet R) (measurableSet_cubeSet R) Y ∧
           (fun a : RegCoeffField d =>
-            fullBlockNormalizedQuadraticObservable
+            normalizedQuadraticObservable
               hP hStruct center q (cubeSet R) a.toFun) =ᵐ[P] Y := by
   intro R _hR
   exact
@@ -766,7 +767,7 @@ private theorem aemeasurable_fullBlockNormalizedQuadraticObservable_descendants
     ∀ R ∈ descendantsAtScale Q n,
       AEMeasurable
         (fun a : RegCoeffField d =>
-          fullBlockNormalizedQuadraticObservable
+          normalizedQuadraticObservable
             hP hStruct center q (cubeSet R) a.toFun) P := by
   intro R _hR
   exact
@@ -776,7 +777,7 @@ private theorem aemeasurable_fullBlockNormalizedQuadraticObservable_descendants
 /-- Origin-cube partition-average moment estimate with a.e.-local descendant
 representatives.  This is the Section 5.4-local bridge from the exact-local
 Ch4 Rosenthal theorem to the totalized coarse-block observables used in Ch5. -/
-theorem integral_abs_restrictionCenteredDescendantAverage_pow_rpow_inv_le_of_restrictionUnitRangeDependentLaw_of_ae_eq_local
+theorem centeredDescendantAverageMomentRoot_le_of_unitRangeLaw_of_localRepresentatives
     {d : ℕ} {n m : ℤ} {P : Ch04.RestrictionCoeffLaw d} [IsProbabilityMeasure P]
     {p : ℕ} {K : ℝ}
     (hP : Ch04.RestrictionLawCarrier P)
@@ -786,7 +787,8 @@ theorem integral_abs_restrictionCenteredDescendantAverage_pow_rpow_inv_le_of_res
     (hX_localRep :
       ∀ R ∈ descendantsAtScale (originCube d m) n,
         ∃ Y : RegCoeffField d → ℝ,
-          Ch04.IsRestrictionLocalRandomVariable (cubeSet R) (measurableSet_cubeSet R) Y ∧ X (cubeSet R) =ᵐ[P] Y)
+          Ch04.IsRestrictionLocalRandomVariable (cubeSet R) (measurableSet_cubeSet R) Y ∧ X
+            (cubeSet R) =ᵐ[P] Y)
     (hX_cov : Ch04.IsRestrictionTranslationCovariant X)
     (hX0_aemeas : AEMeasurable (X (cubeSet (originCube d n))) P)
     (hX_desc_aemeas :
@@ -807,7 +809,7 @@ theorem integral_abs_restrictionCenteredDescendantAverage_pow_rpow_inv_le_of_res
             Real.sqrt ((descendantsAtScale (originCube d m) n).card : ℝ) * K) := by
   simpa [Ch04.restrictionCenteredDescendantAverage, Ch04.restrictionCenteredDescendantAverageOnCube]
     using
-      Ch04.integral_abs_restrictionCenteredDescendantAverageOnCube_pow_rpow_inv_le_of_restrictionUnitRangeDependentLaw_of_ae_eq_local
+      Ch04.integral_abs_centeredDescendantMean_pow_rpow_inv_le_of_of_unitRangeLaw
         (d := d) (Q := originCube d m) (n := n) (P := P) (p := p) (K := K)
         hP hn (by simpa [originCube] using hnm) hPstat hPdep X
         hX_localRep hX_cov hX0_aemeas hX_desc_aemeas hp hK_nonneg
@@ -816,7 +818,8 @@ theorem integral_abs_restrictionCenteredDescendantAverage_pow_rpow_inv_le_of_res
 /-- Rosenthal/partition-average estimate for the normalized full-block
 fluctuation observable, assuming only the origin-scale moment root that the
 good-scale scalar estimates will provide. -/
-theorem fullBlockNormalizedFluctuationOperatorNormSq_restrictionCenteredDescendantAverage_pow_rpow_inv_le
+theorem
+  fullBlockNormalizedFluctuationOperatorNormSq_restrictionCenteredDescendantAverage_pow_rpow_inv_le
     {d : ℕ} [NeZero d] {P : Ch04.RestrictionCoeffLaw d}
     (hP : Ch04.RestrictionLawCarrier P) (hStruct : Ch04.RestrictionStructuralLaw P)
     (hP4 : QuantitativeCoarseGrainedEllipticity P)
@@ -855,7 +858,8 @@ theorem fullBlockNormalizedFluctuationOperatorNormSq_restrictionCenteredDescenda
   have hlocal :
       ∀ R ∈ descendantsAtScale (originCube d m) n,
         ∃ Y : RegCoeffField d → ℝ,
-          Ch04.IsRestrictionLocalRandomVariable (cubeSet R) (measurableSet_cubeSet R) Y ∧ X (cubeSet R) =ᵐ[P] Y := by
+          Ch04.IsRestrictionLocalRandomVariable (cubeSet R) (measurableSet_cubeSet R) Y ∧ X
+            (cubeSet R) =ᵐ[P] Y := by
     simpa only [X] using
       fullBlockNormalizedFluctuationOperatorNormSq_descendants_localRep
         hP hStruct center (originCube d m) n
@@ -870,7 +874,7 @@ theorem fullBlockNormalizedFluctuationOperatorNormSq_restrictionCenteredDescenda
       aemeasurable_fullBlockNormalizedFluctuationOperatorNormSq_cubeSet
         hP hStruct center (originCube d n)
   simpa [X] using
-    integral_abs_restrictionCenteredDescendantAverage_pow_rpow_inv_le_of_restrictionUnitRangeDependentLaw_of_ae_eq_local
+    centeredDescendantAverageMomentRoot_le_of_unitRangeLaw_of_localRepresentatives
       (d := d) (n := n) (m := m) (P := P) (p := hP4.xi) (K := K)
       hP hn hnm hStruct.stationary hStruct.unit_range X hlocal
       (Ch04.isRestrictionTranslationCovariant_comp_toFun
@@ -918,7 +922,8 @@ theorem fullBlockNormalizedQuadraticObservable_restrictionCenteredDescendantAver
   have hlocal :
       ∀ R ∈ descendantsAtScale (originCube d m) n,
         ∃ Y : RegCoeffField d → ℝ,
-          Ch04.IsRestrictionLocalRandomVariable (cubeSet R) (measurableSet_cubeSet R) Y ∧ X (cubeSet R) =ᵐ[P] Y := by
+          Ch04.IsRestrictionLocalRandomVariable (cubeSet R) (measurableSet_cubeSet R) Y ∧ X
+            (cubeSet R) =ᵐ[P] Y := by
     simpa only [X, fullBlockNormalizedQuadraticObservableR] using!
       fullBlockNormalizedQuadraticObservable_descendants_localRep
         hP hStruct center q (originCube d m) n
@@ -933,7 +938,7 @@ theorem fullBlockNormalizedQuadraticObservable_restrictionCenteredDescendantAver
       aemeasurable_fullBlockNormalizedQuadraticObservable_cubeSet
         hP hStruct center q (originCube d n)
   simpa [X] using
-    integral_abs_restrictionCenteredDescendantAverage_pow_rpow_inv_le_of_restrictionUnitRangeDependentLaw_of_ae_eq_local
+    centeredDescendantAverageMomentRoot_le_of_unitRangeLaw_of_localRepresentatives
       (d := d) (n := n) (m := m) (P := P) (p := hP4.xi) (K := K)
       hP hn hnm hStruct.stationary hStruct.unit_range X hlocal
       (Ch04.isRestrictionTranslationCovariant_comp_toFun

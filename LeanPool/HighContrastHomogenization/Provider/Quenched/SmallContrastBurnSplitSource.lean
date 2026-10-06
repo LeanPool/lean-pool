@@ -30,7 +30,7 @@ scale rather than by the original source.  The window's own tail
 successor scale has the source gauge dilated by that threshold, and below it the
 gauge is flat, which is what an admissible gauge is allowed to be.
 
-The datum is stated at the enlarged scale `max 𝒮 Ŝ`, so the coarse bound of
+The datum is stated at the enlarged scale `max 𝒮 S_hat`, so the coarse bound of
 `e.coarse.ellipticity` transfers by monotonicity and the tail is the union
 of the two.  The dilation and the union factor both enter the growth witness,
 that is, a scale threshold — which is where the printed account puts them.

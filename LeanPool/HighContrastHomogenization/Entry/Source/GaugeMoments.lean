@@ -106,7 +106,8 @@ theorem gauge_inverse_rpow_bound {Ψ : ℝ → ℝ} {K q t : ℝ}
   simp only [one_mul] at hdouble
   have hpoly : t ^ q ≤ growthBar K ^ (3 * q ^ (2 : ℕ)) * Ψ t :=
     hdouble.trans (mul_le_mul_of_nonneg_left
-      (div_le_self hΨ0.le (hΨ.2 zero_le_one)) (Real.rpow_nonneg (zero_lt_one.trans (one_lt_twoGrowthWitness K)).le _))
+      (div_le_self hΨ0.le (hΨ.2 zero_le_one)) (Real.rpow_nonneg (zero_lt_one.trans
+        (one_lt_twoGrowthWitness K)).le _))
   rw [Real.rpow_neg ht0.le, ← div_eq_mul_inv]
   apply (le_div_iff₀ (Real.rpow_pos_of_pos ht0 q)).2
   rw [inv_mul_eq_div]

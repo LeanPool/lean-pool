@@ -101,7 +101,7 @@ theorem RoundedGenerationSpatialGoodTail.goodMaxOnInterval [NeZero d]
 /-- The printed certificate controls the rounded weak error at its corrected
 common scale. -/
 theorem
-    PrintOrderQuantitativeNormalizedReferenceCertificate.exists_roundedGenerationSpatialWeakError_le_powerTail
+    PrintOrderQuantitativeNormalizedReferenceCertificate.exists_roundedWeakError_le_powerTail
     [NeZero d] {a : CoeffSpace d} {abar : Mat d}
     {g sourceAmplitude target kappa : ℝ} {X : CoeffSpace d → ℝ}
     (h : PrintOrderQuantitativeNormalizedReferenceCertificate
@@ -232,7 +232,7 @@ theorem
           (printOrderCommonQuantitativeAffineScale
             d g sourceAmplitude target kappa abar X a) : ℤ) := by
   obtain ⟨hS, hPower⟩ :=
-    PrintOrderQuantitativeNormalizedReferenceCertificate.exists_roundedGenerationSpatialWeakError_le_powerTail
+    PrintOrderQuantitativeNormalizedReferenceCertificate.exists_roundedWeakError_le_powerTail
       h hl hg hTarget
   obtain ⟨_, _, _, _, _, hKappa, hX, _, _⟩ := h
   let xEff : ℝ := printOrderCommonQuantitativeAffineScale

@@ -521,7 +521,7 @@ private theorem aestronglyMeasurable_abs_vecDot_potential_adjoint
         (diagonalWeakAdjointState hq t (a.subSkew g hg) p r)).1 i) P :=
     Finset.aestronglyMeasurable_fun_sum Finset.univ fun i _ ↦ by
       simpa only [toFullBlockVec] using
-        (Selection.aestronglyMeasurable_blockCellAverage_diagonalWeakAdjointState_subSkew_alignedIndex
+        (Selection.aestronglyMeasurable_alignedCellAverage_diagonalAdjointState
           hq hkt P g hg p r hw (Sum.inl i)).const_mul (Qcen i)
   simpa only [vecDot, Real.norm_eq_abs] using hsum.norm
 
@@ -538,7 +538,7 @@ private theorem aestronglyMeasurable_abs_vecDot_flux_adjoint
         (diagonalWeakAdjointState hq t (a.subSkew g hg) p r)).2 i) P :=
     Finset.aestronglyMeasurable_fun_sum Finset.univ fun i _ ↦ by
       simpa only [toFullBlockVec] using
-        (Selection.aestronglyMeasurable_blockCellAverage_diagonalWeakAdjointState_subSkew_alignedIndex
+        (Selection.aestronglyMeasurable_alignedCellAverage_diagonalAdjointState
           hq hkt P g hg p r hw (Sum.inr i)).const_mul (Pcen i)
   simpa only [vecDot, Real.norm_eq_abs] using hsum.norm
 

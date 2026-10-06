@@ -91,7 +91,8 @@ theorem response_weak_estimate_of_route (d : ℕ) (hd : 2 ≤ d) (γ : ℝ)
     hsrc hM e he hdef hload
   have hraw₁ := RawOutput.of_le_csrc hraw (le_max_left Csrc₁ Csrc₂)
   have hraw₂ := RawOutput.of_le_csrc hraw (le_max_right Csrc₁ Csrc₂)
-  have hR0 : 0 ≤ (3 : ℝ) ^ (-(Quenched.contrastAlpha γ * (H : ℝ))) := Real.rpow_nonneg (by norm_num) _
+  have hR0 : 0 ≤ (3 : ℝ) ^ (-(Quenched.contrastAlpha γ * (H : ℝ))) := Real.rpow_nonneg (by
+    norm_num) _
   have hZ0 : 0 ≤ η ^ ((1 : ℝ) / (2 * (bigQ d γ : ℝ))) := Real.rpow_nonneg hη.1.le _
   have hκ0 : 0 ≤ Real.sqrt (respKappa P jStar F s) := Real.sqrt_nonneg _
   set R : ℝ := (3 : ℝ) ^ (-(Quenched.contrastAlpha γ * (H : ℝ))) with hR

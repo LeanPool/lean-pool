@@ -55,7 +55,8 @@ theorem topGenerationPacking_le_of_gridRatio [NeZero d]
     let W : Set (Vec d) := adaptedCellTranslate q' j y
     let n : ℤ := j - ℓ
     ((finite_maximalAdaptedCellCenters_of_volume_ne_top hq
-        (W := W) (by simpa [W] using Transport.volume_adaptedCellTranslate_ne_top q' j y) n n).toFinset.card : ℝ)
+        (W := W) (by simpa [W] using Transport.volume_adaptedCellTranslate_ne_top q' j y) n
+          n).toFinset.card : ℝ)
       ≤ ((Nat.factorial d : ℝ) * K₀ ^ d) * (3 : ℝ) ^ ((d : ℝ) * (ℓ : ℝ)) := by
   classical
   dsimp
@@ -249,7 +250,8 @@ theorem lowerRowRelVolume_le_of_gridRatio [NeZero d]
       (finite_maximalAdaptedCellCenters_of_volume_ne_top hq
         (Transport.volume_adaptedCellTranslate_ne_top q' j y) n r).toFinset.card =
       (finite_maximalCellIndices
-        (Transport.volume_adaptedCellTranslate_ne_top (q⁻¹ * q') j (matVecMul q⁻¹ y)) n r).toFinset.card := by
+        (Transport.volume_adaptedCellTranslate_ne_top (q⁻¹ * q') j (matVecMul q⁻¹ y)) n
+          r).toFinset.card := by
     rw [← Set.ncard_eq_toFinset_card _
         (finite_maximalAdaptedCellCenters_of_volume_ne_top hq
           (Transport.volume_adaptedCellTranslate_ne_top q' j y) n r),

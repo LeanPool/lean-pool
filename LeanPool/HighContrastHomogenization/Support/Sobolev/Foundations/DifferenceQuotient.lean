@@ -49,15 +49,15 @@ def euclideanCoordShift {d : ℕ} (h : ℝ) (i : Fin d) (x : Vec d) : Vec d :=
     euclideanCoordShift h i x = x + h • basisVec i :=
   rfl
 
-@[simp] theorem euclideanCoordShift_zero {d : ℕ} (i : Fin d) (x : Vec d) :
+theorem euclideanCoordShift_zero {d : ℕ} (i : Fin d) (x : Vec d) :
     euclideanCoordShift 0 i x = x := by
   simp [euclideanCoordShift]
 
-@[simp] theorem euclideanCoordShift_zero_step {d : ℕ} (h : ℝ) (i : Fin d) :
+theorem euclideanCoordShift_zero_step {d : ℕ} (h : ℝ) (i : Fin d) :
     euclideanCoordShift h i 0 = h • basisVec i := by
   simp [euclideanCoordShift]
 
-@[simp] theorem euclideanCoordShift_neg_cancel {d : ℕ}
+theorem euclideanCoordShift_neg_cancel {d : ℕ}
     (h : ℝ) (i : Fin d) (x : Vec d) :
     euclideanCoordShift (-h) i (euclideanCoordShift h i x) = x := by
   ext k
@@ -66,7 +66,7 @@ def euclideanCoordShift {d : ℕ} (h : ℝ) (i : Fin d) (x : Vec d) : Vec d :=
     simp [euclideanCoordShift, basisVec]
   · simp [euclideanCoordShift, basisVec, hk]
 
-@[simp] theorem euclideanCoordShift_cancel_neg {d : ℕ}
+theorem euclideanCoordShift_cancel_neg {d : ℕ}
     (h : ℝ) (i : Fin d) (x : Vec d) :
     euclideanCoordShift h i (euclideanCoordShift (-h) i x) = x := by
   simp
@@ -684,7 +684,7 @@ theorem integrable_sq_coordDeriv_comp_segmentBlend_euclideanCoordShift_neg_prod
 /-- The integrated smooth FTC/Jensen segment term collapses to the unshifted
 coordinate-derivative square norm. -/
 theorem
-  integral_intervalIntegral_sq_coordDeriv_comp_segmentBlend_euclideanCoordShift_neg_eq_integral
+  segmentShift_derivativeSquare_integral_eq_integral
     {d : ℕ} {u : Vec d → ℝ}
     (hu : ContDiff ℝ (⊤ : ℕ∞) u) (hus : HasCompactSupport u)
     (h : ℝ) (i : Fin d) :
@@ -798,7 +798,7 @@ theorem integral_sq_euclideanBackwardDifferenceQuotient_le_integral_sq_coordDeri
               ∂MeasureTheory.volume =
                 ∫ x, (euclideanCoordDeriv i u x) ^ 2 ∂MeasureTheory.volume
           exact
-            integral_intervalIntegral_sq_coordDeriv_comp_segmentBlend_euclideanCoordShift_neg_eq_integral
+            segmentShift_derivativeSquare_integral_eq_integral
               hu hus h i
 
 /-- For real-valued `L²` functions, the square of the `toReal` `eLpNorm` is
@@ -912,7 +912,7 @@ theorem integral_vecDot_comp_euclideanCoordShift_eq_integral_vecDot_comp_euclide
 assumption on `u` supplies the integrability needed to expand the two
 difference quotients into ordinary Lebesgue integrals. -/
 theorem
-  integral_euclideanForwardDifferenceQuotient_mul_eq_neg_integral_mul_euclideanBackwardDifferenceQuotient
+  integral_forwardDifference_mul_eq_neg_integral_mul_backwardDifference
     {d : ℕ} {u v : Vec d → ℝ}
     (hu : ContDiff ℝ (⊤ : ℕ∞) u) (hv : ContDiff ℝ (⊤ : ℕ∞) v)
     (hus : HasCompactSupport u) (h : ℝ) (i : Fin d) :

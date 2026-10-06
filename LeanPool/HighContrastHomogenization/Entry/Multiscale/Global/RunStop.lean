@@ -198,10 +198,12 @@ theorem run_stop_output {d : ℕ} (hd : 2 ≤ d) (γ : ℝ) (hγ : γ ∈ Set.Ic
       (adaptedMean P (Geometry.explicitRoundedGrid jStar st.m) (st.n + 2 * (S.L ε σ : ℤ))) :=
     run_adaptedMean_blockPosDef hd P γ E Ψ K Src hP hst hce jStar hjStar st.m st.hm _
   have hStarPD : (explicitCanonicalMetric
-      (adaptedMean P (Geometry.explicitRoundedGrid jStar st.m) (st.n + 2 * (S.L ε σ : ℤ)))).PosDef :=
+      (adaptedMean P (Geometry.explicitRoundedGrid jStar st.m) (st.n + 2 * (S.L ε σ :
+        ℤ)))).PosDef :=
     explicitCanonicalMetric_posDef _ hFsym hFpos
   have hPlusPD : (geometryUpdate ε st.m (explicitCanonicalMetric
-      (adaptedMean P (Geometry.explicitRoundedGrid jStar st.m) (st.n + 2 * (S.L ε σ : ℤ))))).PosDef := by
+      (adaptedMean P (Geometry.explicitRoundedGrid jStar st.m) (st.n + 2 * (S.L ε σ :
+        ℤ))))).PosDef := by
     rw [heq]; exact hStarPD
   -- Scalar bookkeeping.
   have hH4 : 4 ≤ H := le_trans (le_max_left 4 S.h) hH
@@ -228,7 +230,8 @@ theorem run_stop_output {d : ℕ} (hd : 2 ≤ d) (γ : ℝ) (hγ : γ ∈ Set.Ic
     have hneg := mul_neg_of_pos_of_neg hratio hcon
     linarith only [h0, hneg, hlogm]
   have hkge : (jStar : ℤ) + ⌈B * Real.logb 3 (2 + aspectRatio E)⌉ ≤ st.k := by
-    have hR : (((jStar : ℤ) + ⌈B * Real.logb 3 (2 + aspectRatio E)⌉ : ℤ) : ℝ) ≤ ((st.k : ℤ) : ℝ) := by
+    have hR : (((jStar : ℤ) + ⌈B * Real.logb 3 (2 + aspectRatio E)⌉ : ℤ) : ℝ) ≤ ((st.k : ℤ) : ℝ)
+      := by
       push_cast
       linarith only [hX]
     exact_mod_cast hR
@@ -376,7 +379,8 @@ theorem run_exists_stop {d : ℕ} (hd : 2 ≤ d) (γ : ℝ) (hγ : γ ∈ Set.Ic
     (hst₀ : st₀.i = 0)
     (hbound : runGauge P γ jStar (S.eta ε σ) a w S.h st₀.m st₀.k st₀.n ≤ c * (J : ℝ))
     (hcont : ∀ st : RunState P γ S ε σ B E H jStar n₀, st.i ≤ J →
-      HighContrast.adaptedCell (Geometry.explicitRoundedGrid jStar st.m) (st.n + 2 * (S.L ε σ : ℤ)) ∪
+      HighContrast.adaptedCell (Geometry.explicitRoundedGrid jStar st.m) (st.n + 2 * (S.L ε σ :
+        ℤ)) ∪
           HighContrast.adaptedCell (Geometry.explicitRoundedGrid jStar (geometryUpdate ε st.m
             (explicitCanonicalMetric (adaptedMean P (Geometry.explicitRoundedGrid jStar st.m)
               (st.n + 2 * (S.L ε σ : ℤ)))))) (st.n + (S.L ε σ : ℤ)) ⊆

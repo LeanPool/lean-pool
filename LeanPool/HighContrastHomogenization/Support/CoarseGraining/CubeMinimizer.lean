@@ -46,7 +46,7 @@ Public deliverables (all on `U = cubeSet (originCube d m)`):
 * `mu_eq_half_coarseBlockMatrix_cube` — `Mu = ½ P·A P` (item (e));
 * `isBlockTestOn_sub_of_isBlockMuAdmissible` — the componentwise difference of
   two `Mu`-admissible states for the same `P` is a block test state (load-bearing
-  for the `Y = Z̃ − Z` composition used downstream).
+  for the `Y = Z_tilde − Z` composition used downstream).
 
 All fields are `Vec d = Fin d → ℝ` valued; no `EuclideanSpace`.
 -/
@@ -61,7 +61,7 @@ omit [NeZero d] in
 /-- The componentwise difference `X − X'` of two `Mu`-admissible block states
 for the same parameter `P` is a block test state: its potential part is
 zero-trace and its flux part is zero-normal-trace.  This is the algebraic
-closure the downstream stability lemmas need in order to feed `Y = Z̃ − Z` into
+closure the downstream stability lemmas need in order to feed `Y = Z_tilde − Z` into
 the Euler orthogonality of a minimizer. -/
 theorem isBlockTestOn_sub_of_isBlockMuAdmissible
     {U : Set (Vec d)} {P : BlockVec d} {X X' : BlockState d}
@@ -135,7 +135,7 @@ private theorem exists_openCube_minimizer
   have hConv : IsOpenBoundedConvexDomain (openCubeSet (originCube d m)) :=
     isOpenBoundedConvexDomain_openCubeSet (originCube d m)
   exact
-    R.toMuCorrectionSpaceRecoveryData.recoveredField_mem_responseSpace_of_isEllipticFieldOn_of_isOpenBoundedConvexDomain
+    R.toMuCorrectionSpaceRecoveryData.recoveredField_mem_blockResponseSpace
       system hConv hEllR hvol.ne' P
 
 /-! ## Public deliverables on the half-open cube -/
@@ -176,7 +176,7 @@ theorem cubeBlockMinimizer_euler_orthogonality
   hResp.2.2 Y hY
 
 omit [NeZero d] in
-/-- The `Y = Z̃ − Z` instantiation of Euler orthogonality used downstream:
+/-- The `Y = Z_tilde − Z` instantiation of Euler orthogonality used downstream:
 the difference of two admissible states for the same `P` is a valid test
 perturbation, so it pairs to zero against `𝐁 Z` for a minimizer `Z`. -/
 theorem cubeBlockMinimizer_euler_orthogonality_sub
@@ -344,16 +344,20 @@ theorem cubeBlockMinimizer_ae_unique
       toHilbert_eq_minimizerMap_of_admissible_energy_eq (d := d) R hEllR hCompat hZ'O hZ'minO]
   -- unfold Lp equality to a.e. equality of evaluations
   have hcoeZ :
-      toHilbertBlockL2OfBlockField (U := openCubeSet (originCube d m)) hZO.memBlockL2_eval =ᵐ[volumeMeasureOn (openCubeSet (originCube d m))]
+      toHilbertBlockL2OfBlockField (U := openCubeSet (originCube d m)) hZO.memBlockL2_eval
+        =ᵐ[volumeMeasureOn (openCubeSet (originCube d m))]
         hilbertifyBlockField Z.eval :=
     coeFn_toHilbertBlockL2OfBlockField hZO.memBlockL2_eval
   have hcoeZ' :
-      toHilbertBlockL2OfBlockField (U := openCubeSet (originCube d m)) hZ'O.memBlockL2_eval =ᵐ[volumeMeasureOn (openCubeSet (originCube d m))]
+      toHilbertBlockL2OfBlockField (U := openCubeSet (originCube d m)) hZ'O.memBlockL2_eval
+        =ᵐ[volumeMeasureOn (openCubeSet (originCube d m))]
         hilbertifyBlockField Z'.eval :=
     coeFn_toHilbertBlockL2OfBlockField hZ'O.memBlockL2_eval
   have hcoeEq :
-      (⇑(toHilbertBlockL2OfBlockField (U := openCubeSet (originCube d m)) hZO.memBlockL2_eval)) =ᵐ[volumeMeasureOn (openCubeSet (originCube d m))]
-        (⇑(toHilbertBlockL2OfBlockField (U := openCubeSet (originCube d m)) hZ'O.memBlockL2_eval)) := by
+      (⇑(toHilbertBlockL2OfBlockField (U := openCubeSet (originCube d m)) hZO.memBlockL2_eval))
+        =ᵐ[volumeMeasureOn (openCubeSet (originCube d m))]
+        (⇑(toHilbertBlockL2OfBlockField (U := openCubeSet (originCube d m))
+          hZ'O.memBlockL2_eval)) := by
     rw [hZmap]
   have hHilEq :
       hilbertifyBlockField Z.eval =ᵐ[volumeMeasureOn (openCubeSet (originCube d m))]

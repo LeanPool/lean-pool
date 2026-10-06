@@ -44,7 +44,7 @@ theorem finsetSupReal_eq_sup' {α : Type*}
       ((Set.toFinite _).image f).bddAbove
     exact le_csSup hbdd ⟨x, hx, rfl⟩
 
-theorem maxDescendantBMatrixNormCoeffFieldAtScale_eq_sup_upperLeft_of_aelocallyUniformlyEllipticField
+theorem maxDescendantBMatrixNorm_eq_sup_upperLeft_of_uniformEllipticity
     {d : ℕ} [NeZero d] {a : RegCoeffField d}
     (ha : Ch04.AELocallyUniformlyEllipticField a)
     (Q : TriadicCube d) {k : ℤ} (hk : k ≤ Q.scale) :
@@ -63,7 +63,7 @@ theorem maxDescendantBMatrixNormCoeffFieldAtScale_eq_sup_upperLeft_of_aelocallyU
         coarseBlockMatrix (cubeSet R) a.toFun =
           Ch02.coarseBlockMatrix (Ch02.cubeDomain R) (F.coeffOn R) := by
       simpa [F] using
-        Ch04.RestrictionLawCarrier.coarseBlockMatrix_cubeSet_eq_ch02_coarseBlockMatrix_of_aelocallyUniformlyEllipticField
+        Ch04.RestrictionLawCarrier.coarseBlockMatrix_cubeSet_eq_chapterCoarse
           ha R
     simp [Ch02.coarseBMatrixNorm, hEq]
   calc
@@ -81,7 +81,7 @@ theorem maxDescendantBMatrixNormCoeffFieldAtScale_eq_sup_upperLeft_of_aelocallyU
           exact finsetSupReal_eq_sup' (descendantsAtScale Q k)
             (descendantsAtScale_nonempty Q hk) _
 
-theorem maxDescendantSigmaStarInvMatrixNormCoeffFieldAtScale_eq_sup_lowerRight_of_aelocallyUniformlyEllipticField
+theorem maxDescendantSigmaStarInvMatrixNormCoeffField_eq_sup_lowerRight
     {d : ℕ} [NeZero d] {a : RegCoeffField d}
     (ha : Ch04.AELocallyUniformlyEllipticField a)
     (Q : TriadicCube d) {k : ℤ} (hk : k ≤ Q.scale) :
@@ -100,7 +100,7 @@ theorem maxDescendantSigmaStarInvMatrixNormCoeffFieldAtScale_eq_sup_lowerRight_o
         coarseBlockMatrix (cubeSet R) a.toFun =
           Ch02.coarseBlockMatrix (Ch02.cubeDomain R) (F.coeffOn R) := by
       simpa [F] using
-        Ch04.RestrictionLawCarrier.coarseBlockMatrix_cubeSet_eq_ch02_coarseBlockMatrix_of_aelocallyUniformlyEllipticField
+        Ch04.RestrictionLawCarrier.coarseBlockMatrix_cubeSet_eq_chapterCoarse
           ha R
     simp [Ch02.coarseSigmaStarInvMatrixNorm, hEq]
   calc
@@ -176,7 +176,7 @@ theorem upperLargeScaleRaw_sum_le_base_add_positiveExcess_sum
       matrixNorm_smul_one_eq_of_nonneg hbase
     by_cases ha : Ch04.AELocallyUniformlyEllipticField a
     · have hraw_eq :=
-        maxDescendantBMatrixNormCoeffFieldAtScale_eq_sup_upperLeft_of_aelocallyUniformlyEllipticField
+        maxDescendantBMatrixNorm_eq_sup_upperLeft_of_uniformEllipticity
           (a := a) ha Qm hnle
       simpa [raw, excess, hcenter, hraw_eq] using
         max_sup'_sub_base_le_sup'_max_sub_base
@@ -385,7 +385,7 @@ theorem lowerLargeScaleRaw_sum_le_base_add_positiveExcess_sum
       matrixNorm_smul_one_eq_of_nonneg hbase
     by_cases ha : Ch04.AELocallyUniformlyEllipticField a
     · have hraw_eq :=
-        maxDescendantSigmaStarInvMatrixNormCoeffFieldAtScale_eq_sup_lowerRight_of_aelocallyUniformlyEllipticField
+        maxDescendantSigmaStarInvMatrixNormCoeffField_eq_sup_lowerRight
           (a := a) ha Qm hnle
       simpa [raw, excess, hcenter, hraw_eq] using
         max_sup'_sub_base_le_sup'_max_sub_base
@@ -550,7 +550,8 @@ theorem section52_upperCenter_entries
         (1 : Mat d)) i j =
       ∫ b, (coarseBlockMatrix (cubeSet (originCube d (0 : ℤ))) b).upperLeft i j ∂P := by
   let scalarization := Ch04.Internal.annealedScalarizationTheory_of_structuralLaw hP hStruct
-  let primitive0 := Ch04.Internal.annealedPrimitiveScalarizationData_of_structuralLaw hP hStruct (0 : ℤ)
+  let primitive0 := Ch04.Internal.annealedPrimitiveScalarizationData_of_structuralLaw hP hStruct
+    (0 : ℤ)
   have hb :
       Ch04.annealedBAtScale P (0 : ℤ) = primitive0.barB • (1 : Mat d) := by
     simpa [primitive0] using Ch04.Internal.AnnealedPrimitiveScalarizationData.b_eq primitive0
@@ -572,11 +573,13 @@ theorem section52_lowerCenter_entries
         (1 : Mat d)) i j =
       ∫ b, (coarseBlockMatrix (cubeSet (originCube d (0 : ℤ))) b).lowerRight i j ∂P := by
   let scalarization := Ch04.Internal.annealedScalarizationTheory_of_structuralLaw hP hStruct
-  let primitive0 := Ch04.Internal.annealedPrimitiveScalarizationData_of_structuralLaw hP hStruct (0 : ℤ)
+  let primitive0 := Ch04.Internal.annealedPrimitiveScalarizationData_of_structuralLaw hP hStruct
+    (0 : ℤ)
   have hsigma :
       Ch04.annealedSigmaStarInvAtScale P (0 : ℤ) =
         primitive0.barSigmaStarInv • (1 : Mat d) := by
-    simpa [primitive0] using Ch04.Internal.AnnealedPrimitiveScalarizationData.sigmaStarInv_eq primitive0
+    simpa [primitive0] using Ch04.Internal.AnnealedPrimitiveScalarizationData.sigmaStarInv_eq
+      primitive0
   have hstar :
       scalarization.barSigmaStar 0 =
         (primitive0.barSigmaStarInv)⁻¹ := by
@@ -653,12 +656,12 @@ theorem upperLargeScaleFiniteParentFluctuation
               (1 / (hP4.xi : ℝ)) ≤ K := by
     intro i j
     have h :=
-      Ch04.RestrictionLawCarrier.restrictionCenteredOriginObservable_upperLeft_entry_momentRoot_le_two_LambdaMomentAtScale
+      Ch04.RestrictionLawCarrier.restrictionOriginUpperLeftMomentRoot_le_twoLambdaMoment
         hP hP4.sUpper_pos (Nat.succ_le_of_lt hP4.xi_pos)
         hP4.upper_moment_integrable i j
     simpa [K] using h
   exact
-    Ch04.RestrictionLawCarrier.upperLeft_matrixNorm_positiveExcess_finsetSup_momentRoot_le_of_restrictionUnitRangeDependentLaw
+    Ch04.RestrictionLawCarrier.upperLeftNorm_positiveExcess_momentRoot_le_of_unitRangeLaw
       hP hparents hn_nonneg hparent_scale hStruct.stationary hStruct.unit_range
       (hP.barSigmaAtScale hStruct 0 •
         (1 : Mat d))
@@ -734,12 +737,12 @@ theorem lowerLargeScaleFiniteParentFluctuation
               (1 / (hP4.xi : ℝ)) ≤ K := by
     intro i j
     have h :=
-      Ch04.RestrictionLawCarrier.restrictionCenteredOriginObservable_lowerRight_entry_momentRoot_le_two_lambdaInvMomentAtScale
+      Ch04.RestrictionLawCarrier.centeredOriginLowerRightEntry_momentRoot_le_twoLambdaInvMoment
         hP hP4.sLower_pos (Nat.succ_le_of_lt hP4.xi_pos)
         hP4.lower_inv_moment_integrable i j
     simpa [K] using h
   exact
-    Ch04.RestrictionLawCarrier.lowerRight_matrixNorm_positiveExcess_finsetSup_momentRoot_le_of_restrictionUnitRangeDependentLaw
+    Ch04.RestrictionLawCarrier.lowerRightNorm_positiveExcess_momentRoot_le_of_unitRangeLaw
       hP hparents hn_nonneg hparent_scale hStruct.stationary hStruct.unit_range
       ((hP.barSigmaStarAtScale hStruct 0)⁻¹ •
         (1 : Mat d))

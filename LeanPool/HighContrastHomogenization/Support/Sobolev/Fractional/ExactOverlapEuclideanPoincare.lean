@@ -160,7 +160,7 @@ private theorem exactOverlapRootWeight_mul_localOscillation_le_finiteSeminorm
         exactOverlapLocalOscillation (ScalarOverlap.middleChildCube Q) 2 u
           (hu.overlap 0 _ (by simp)) ≤
       exactOverlapFiniteSeminorm (exactOverlapTwoParameters s) Q u hu := by
-  rw [← exactOverlapDepthTerm_two_zero]
+  rw [← exactOverlapDepthTerm_two_zero s Q u hu]
   rw [exactOverlapFiniteSeminorm_eq]
   change exactOverlapDepthTerm Q s.1 2 u hu 0 ≤
     (∑' j : ℕ, (exactOverlapDepthTerm Q s.1 2 u hu j) ^ (2 : ℝ)) ^
@@ -211,6 +211,7 @@ private theorem mul_euclideanENorm_le_euclideanENorm_of_mul_le {d : ℕ}
       apply ENNReal.rpow_le_rpow hsquares
       norm_num
 
+/-- The vector of certified normalized coordinate means of `F` on the root cube `Q`. -/
 @[expose]
 public noncomputable def exactOverlapRootMeanVec {d : ℕ} (Q : TriadicCube d)
     (F : Vec d → Vec d) (hF : ExactOverlapEuclideanIntegrable Q F) : Vec d :=

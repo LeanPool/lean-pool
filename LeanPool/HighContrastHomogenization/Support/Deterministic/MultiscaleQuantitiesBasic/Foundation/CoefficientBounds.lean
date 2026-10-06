@@ -43,12 +43,12 @@ theorem homogenizationErrorOnCube_eq {d : ℕ}
     HomogenizationErrorOnCube Q s p q a a0 =
       HomogenizationError Q Q.scale s p q a a0 := rfl
 
-@[simp] theorem multiscale_ellipticity_LambdaSq_one_eq {d : ℕ}
+theorem multiscale_ellipticity_LambdaSq_one_eq {d : ℕ}
     (Q : TriadicCube d) (s : ℝ) (a : CoeffField d) :
     LambdaSq Q s (.finite 1) a = LambdaSqFinite Q s 1 a := by
   simp
 
-@[simp] theorem multiscale_ellipticity_lambdaSq_one_eq {d : ℕ}
+theorem multiscale_ellipticity_lambdaSq_one_eq {d : ℕ}
     (Q : TriadicCube d) (s : ℝ) (a : CoeffField d) :
     lambdaSq Q s (.finite 1) a = lambdaSqFinite Q s 1 a := by
   simp
@@ -75,7 +75,7 @@ theorem homogenizationErrorOnCube_eq {d : ℕ}
   unfold lambdaSqFinite
   norm_num
 
-@[simp] theorem multiscale_ellipticity_LambdaSq_one_formula {d : ℕ}
+theorem multiscale_ellipticity_LambdaSq_one_formula {d : ℕ}
     (Q : TriadicCube d) (s : ℝ) (a : CoeffField d) :
     LambdaSq Q s (.finite 1) a =
       Real.rpow
@@ -85,7 +85,7 @@ theorem homogenizationErrorOnCube_eq {d : ℕ}
         2 := by
   rw [multiscale_ellipticity_LambdaSq_one_eq, multiscale_ellipticity_LambdaSqFinite_one_eq]
 
-@[simp] theorem multiscale_ellipticity_lambdaSq_one_formula {d : ℕ}
+theorem multiscale_ellipticity_lambdaSq_one_formula {d : ℕ}
     (Q : TriadicCube d) (s : ℝ) (a : CoeffField d) :
     lambdaSq Q s (.finite 1) a =
       Real.rpow
@@ -100,7 +100,7 @@ theorem homogenizationErrorOnCube_eq {d : ℕ}
     ThetaRatio Q s t a = LambdaSqFinite Q s 1 a / lambdaSqFinite Q t 1 a := by
   simp [thetaRatio_eq_div]
 
-@[simp] theorem homogenizationError_infinity_one_eq {d : ℕ}
+theorem homogenizationError_infinity_one_eq {d : ℕ}
     (Q : TriadicCube d) (n : ℤ) (s : ℝ) (a : CoeffField d) (a0 : Mat d) :
     HomogenizationError Q n s .infinity (.finite 1) a a0 =
       HomogenizationErrorFinite Q n s .infinity 1 a a0 := by
@@ -113,7 +113,7 @@ theorem homogenizationErrorOnCube_eq {d : ℕ}
   unfold HomogenizationErrorFinite
   simp [Real.rpow_one]
 
-@[simp] theorem homogenizationErrorFinite_infinity_one_formula {d : ℕ}
+theorem homogenizationErrorFinite_infinity_one_formula {d : ℕ}
     (Q : TriadicCube d) (n : ℤ) (s : ℝ) (a : CoeffField d) (a0 : Mat d) :
     HomogenizationErrorFinite Q n s .infinity 1 a a0 =
       ∑' l : ℕ,
@@ -128,13 +128,14 @@ theorem homogenizationErrorOnCube_eq {d : ℕ}
       HomogenizationErrorFinite Q Q.scale s .infinity 1 a a0 := by
   simp [homogenizationErrorOnCube_eq]
 
-@[simp] theorem homogenizationErrorOnCube_infinity_one_eq_tsum {d : ℕ}
+theorem homogenizationErrorOnCube_infinity_one_eq_tsum {d : ℕ}
     (Q : TriadicCube d) (s : ℝ) (a : CoeffField d) (a0 : Mat d) :
     HomogenizationErrorOnCube Q s .infinity (.finite 1) a a0 =
-      ∑' l : ℕ, geometricWeight s 1 l * scaleResponseAtScale Q (Q.scale - (l : ℤ)) .infinity a a0 := by
+      ∑' l : ℕ, geometricWeight s 1 l * scaleResponseAtScale Q (Q.scale - (l : ℤ)) .infinity a
+        a0 := by
   rw [homogenizationErrorOnCube_infinity_one_eq, homogenizationErrorFinite_infinity_one_eq_tsum]
 
-@[simp] theorem homogenizationErrorOnCube_infinity_one_formula {d : ℕ}
+theorem homogenizationErrorOnCube_infinity_one_formula {d : ℕ}
     (Q : TriadicCube d) (s : ℝ) (a : CoeffField d) (a0 : Mat d) :
     HomogenizationErrorOnCube Q s .infinity (.finite 1) a a0 =
       ∑' l : ℕ,
@@ -153,6 +154,32 @@ theorem coarseSigmaStarInvBlockNorm_nonneg {d : ℕ} (Q : TriadicCube d) (a : Co
     0 ≤ coarseSigmaStarInvBlockNorm Q a := by
   unfold coarseSigmaStarInvBlockNorm
   exact matNorm_nonneg _
+
+private theorem bCoarse_eq_canonical_closedCube_of_coarseData
+    {d : ℕ} [NeZero d] (Q : TriadicCube d) {a : CoeffField d}
+    {sigmaQ sigmaStarQ kappaQ : Mat d}
+    (hSQ : IsSigmaStarCoarse (openCubeSet Q) a sigmaStarQ)
+    (hKQ : IsKappaCoarse (openCubeSet Q) a sigmaStarQ kappaQ)
+    (hSigmaQ : IsSigmaCoarse (openCubeSet Q) a sigmaQ sigmaStarQ kappaQ)
+    (hdetQ : IsUnit sigmaStarQ.det) :
+    bCoarse sigmaQ sigmaStarQ kappaQ =
+      bCoarse (sigmaCoarse (cubeSet Q) a) (sigmaStarCoarse (cubeSet Q) a)
+        (kappaCoarse (cubeSet Q) a) := by
+  calc
+    bCoarse sigmaQ sigmaStarQ kappaQ =
+        bCoarse (sigmaCoarse (openCubeSet Q) a)
+          (sigmaStarCoarse (openCubeSet Q) a)
+          (kappaCoarse (openCubeSet Q) a) := by
+            rw [sigmaCoarse_eq_of_isSigmaCoarse hSQ hKQ hSigmaQ hdetQ,
+              eq_sigmaStarCoarse_of_isSigmaStarCoarse hSQ hdetQ,
+              eq_kappaCoarse_of_isKappaCoarse hSQ hKQ hdetQ]
+    _ =
+        bCoarse (sigmaCoarse (cubeSet Q) a)
+          (sigmaStarCoarse (cubeSet Q) a)
+          (kappaCoarse (cubeSet Q) a) := by
+            symm
+            rw [bCoarse_sigmaCoarse_sigmaStarCoarse_kappaCoarse_cube_eq_cube
+              (Q := Q) (a := a) hSQ hKQ hSigmaQ hdetQ]
 
 theorem coarseBBlockNorm_le_maxDescendantBBlockNormAtScale_of_isEllipticFieldOn_of_isSigmaCoarse
     {d : ℕ} [NeZero d] (Q : TriadicCube d) {k : ℤ} (hk : k ≤ Q.scale)
@@ -183,22 +210,8 @@ theorem coarseBBlockNorm_le_maxDescendantBBlockNormAtScale_of_isEllipticFieldOn_
       bCoarse sigmaQ sigmaStarQ kappaQ =
         bCoarse (sigmaCoarse (cubeSet Q) a)
           (sigmaStarCoarse (cubeSet Q) a)
-          (kappaCoarse (cubeSet Q) a) := by
-    calc
-      bCoarse sigmaQ sigmaStarQ kappaQ =
-          bCoarse (sigmaCoarse (openCubeSet Q) a)
-            (sigmaStarCoarse (openCubeSet Q) a)
-            (kappaCoarse (openCubeSet Q) a) := by
-              rw [sigmaCoarse_eq_of_isSigmaCoarse hSQ hKQ hSigmaQ hdetQ,
-                eq_sigmaStarCoarse_of_isSigmaStarCoarse hSQ hdetQ,
-                eq_kappaCoarse_of_isKappaCoarse hSQ hKQ hdetQ]
-      _ =
-          bCoarse (sigmaCoarse (cubeSet Q) a)
-            (sigmaStarCoarse (cubeSet Q) a)
-            (kappaCoarse (cubeSet Q) a) := by
-              symm
-              rw [bCoarse_sigmaCoarse_sigmaStarCoarse_kappaCoarse_cubeSet_eq_openCubeSet_of_triadicCube_of_isSigmaCoarse
-                (Q := Q) (a := a) hSQ hKQ hSigmaQ hdetQ]
+          (kappaCoarse (cubeSet Q) a) :=
+    bCoarse_eq_canonical_closedCube_of_coarseData Q hSQ hKQ hSigmaQ hdetQ
   have hAvgEq :
       descendantsAverageMat Q j
         (fun R =>
@@ -225,7 +238,7 @@ theorem coarseBBlockNorm_le_maxDescendantBBlockNormAtScale_of_isEllipticFieldOn_
             (sigmaStarCoarse (cubeSet R) a)
             (kappaCoarse (cubeSet R) a) := by
       symm
-      rw [bCoarse_sigmaCoarse_sigmaStarCoarse_kappaCoarse_cubeSet_eq_openCubeSet_of_triadicCube_of_isSigmaCoarse
+      rw [bCoarse_sigmaCoarse_sigmaStarCoarse_kappaCoarse_cube_eq_cube
         (Q := R) (a := a) hSR hKR hSigmaR hdetR]
     simpa using congrArg (fun M : Mat d => M i l) hcanonR
   have hLoewner :
@@ -250,7 +263,7 @@ theorem coarseBBlockNorm_le_maxDescendantBBlockNormAtScale_of_isEllipticFieldOn_
             (bCoarse (sigmaCoarse (openCubeSet Q) a)
               (sigmaStarCoarse (openCubeSet Q) a)
               (kappaCoarse (openCubeSet Q) a)) p) := by
-            rw [bCoarse_sigmaCoarse_sigmaStarCoarse_kappaCoarse_cubeSet_eq_openCubeSet_of_triadicCube_of_isSigmaCoarse
+            rw [bCoarse_sigmaCoarse_sigmaStarCoarse_kappaCoarse_cube_eq_cube
               (Q := Q) (a := a) hSQ hKQ hSigmaQ hdetQ]
       _ ≤ (1 / 2 : ℝ) * vecDot p
             (matVecMul
@@ -260,7 +273,7 @@ theorem coarseBBlockNorm_le_maxDescendantBBlockNormAtScale_of_isEllipticFieldOn_
                     (sigmaStarCoarse (openCubeSet R) a)
                     (kappaCoarse (openCubeSet R) a))) p) := by
               exact
-                bCoarse_subadditive_openCubeSet_descendantsAtDepth_in_loewner_order_of_isSigmaCoarse
+                bCoarse_le_descendantAverage_in_loewnerOrder
                   j Q a hEll hSQ hKQ hSigmaQ hdetQ hDesc p
       _ = (1 / 2 : ℝ) * vecDot p
             (matVecMul
@@ -274,7 +287,7 @@ theorem coarseBBlockNorm_le_maxDescendantBBlockNormAtScale_of_isEllipticFieldOn_
       (bCoarse (sigmaCoarse (cubeSet Q) a)
         (sigmaStarCoarse (cubeSet Q) a)
         (kappaCoarse (cubeSet Q) a)).PosSemidef := by
-    rw [bCoarse_sigmaCoarse_sigmaStarCoarse_kappaCoarse_cubeSet_eq_openCubeSet_of_triadicCube_of_isSigmaCoarse
+    rw [bCoarse_sigmaCoarse_sigmaStarCoarse_kappaCoarse_cube_eq_cube
       (Q := Q) (a := a) hSQ hKQ hSigmaQ hdetQ]
     exact bCoarse_canonical_posSemidef_of_isSigmaCoarse hSQ hKQ hSigmaQ hdetQ
   have hAvgPSD :
@@ -291,22 +304,8 @@ theorem coarseBBlockNorm_le_maxDescendantBBlockNormAtScale_of_isEllipticFieldOn_
         bCoarse sigmaR sigmaStarR kappaR =
           bCoarse (sigmaCoarse (cubeSet R) a)
             (sigmaStarCoarse (cubeSet R) a)
-            (kappaCoarse (cubeSet R) a) := by
-      calc
-        bCoarse sigmaR sigmaStarR kappaR =
-            bCoarse (sigmaCoarse (openCubeSet R) a)
-              (sigmaStarCoarse (openCubeSet R) a)
-              (kappaCoarse (openCubeSet R) a) := by
-                rw [sigmaCoarse_eq_of_isSigmaCoarse hSR hKR hSigmaR hdetR,
-                  eq_sigmaStarCoarse_of_isSigmaStarCoarse hSR hdetR,
-                  eq_kappaCoarse_of_isKappaCoarse hSR hKR hdetR]
-        _ =
-            bCoarse (sigmaCoarse (cubeSet R) a)
-              (sigmaStarCoarse (cubeSet R) a)
-              (kappaCoarse (cubeSet R) a) := by
-                symm
-                rw [bCoarse_sigmaCoarse_sigmaStarCoarse_kappaCoarse_cubeSet_eq_openCubeSet_of_triadicCube_of_isSigmaCoarse
-                  (Q := R) (a := a) hSR hKR hSigmaR hdetR]
+            (kappaCoarse (cubeSet R) a) :=
+      bCoarse_eq_canonical_closedCube_of_coarseData R hSR hKR hSigmaR hdetR
     rw [← hcanonR]
     exact bCoarse_posSemidef_of_isSigmaCoarse hSR hSigmaR
   have hParentEq :
@@ -333,22 +332,8 @@ theorem coarseBBlockNorm_le_maxDescendantBBlockNormAtScale_of_isEllipticFieldOn_
         bCoarse sigmaR sigmaStarR kappaR =
           bCoarse (sigmaCoarse (cubeSet R) a)
             (sigmaStarCoarse (cubeSet R) a)
-            (kappaCoarse (cubeSet R) a) := by
-      calc
-        bCoarse sigmaR sigmaStarR kappaR =
-            bCoarse (sigmaCoarse (openCubeSet R) a)
-              (sigmaStarCoarse (openCubeSet R) a)
-              (kappaCoarse (openCubeSet R) a) := by
-                rw [sigmaCoarse_eq_of_isSigmaCoarse hSR hKR hSigmaR hdetR,
-                  eq_sigmaStarCoarse_of_isSigmaStarCoarse hSR hdetR,
-                  eq_kappaCoarse_of_isKappaCoarse hSR hKR hdetR]
-        _ =
-            bCoarse (sigmaCoarse (cubeSet R) a)
-              (sigmaStarCoarse (cubeSet R) a)
-              (kappaCoarse (cubeSet R) a) := by
-                symm
-                rw [bCoarse_sigmaCoarse_sigmaStarCoarse_kappaCoarse_cubeSet_eq_openCubeSet_of_triadicCube_of_isSigmaCoarse
-                  (Q := R) (a := a) hSR hKR hSigmaR hdetR]
+            (kappaCoarse (cubeSet R) a) :=
+      bCoarse_eq_canonical_closedCube_of_coarseData R hSR hKR hSigmaR hdetR
     unfold coarseBBlockNorm
     rw [coarseBlockMatrix_cubeSet_eq_openCubeSet_of_triadicCube R a,
       coarseBlockMatrix_upperLeft_eq_bCoarse_of_isCoarseBlockMatrix hAR hSR hKR hSigmaR hdetR,
@@ -399,7 +384,7 @@ theorem coarseBBlockNorm_le_maxDescendantBBlockNormAtScale_of_isEllipticFieldOn_
           unfold maxDescendantBBlockNormAtScale
           rw [descendantsAtScale_eq_descendantsAtDepth Q hk]
 
-theorem coarseSigmaStarInvBlockNorm_le_maxDescendantSigmaStarInvNormAtScale_of_isEllipticFieldOn_of_isSigmaCoarse
+theorem coarseSigmaStarInvBlockNorm_le_maxDescendantSigmaStarInvNorm
     {d : ℕ} [NeZero d] (Q : TriadicCube d) {k : ℤ} (hk : k ≤ Q.scale)
     (a : CoeffField d) {lam Lam : ℝ}
     (hEll : IsEllipticFieldOn lam Lam (openCubeSet Q) a)
@@ -438,7 +423,7 @@ theorem coarseSigmaStarInvBlockNorm_le_maxDescendantSigmaStarInvNormAtScale_of_i
     have hcanonR :
         sigmaStarInvCoarse (openCubeSet R) a = sigmaStarInvCoarse (cubeSet R) a := by
       symm
-      rw [sigmaStarInvCoarse_cubeSet_eq_openCubeSet_of_triadicCube_of_isSigmaStarCoarse
+      rw [sigmaStarInvCoarse_cubeSet_eq_openCubeSet
         (Q := R) (a := a) hSR]
     simpa using congrArg (fun M : Mat d => M i l) hcanonR
   have hLoewner :
@@ -448,20 +433,20 @@ theorem coarseSigmaStarInvBlockNorm_le_maxDescendantSigmaStarInvNormAtScale_of_i
     calc
       (1 / 2 : ℝ) * vecDot q (matVecMul (sigmaStarInvCoarse (cubeSet Q) a) q) =
           (1 / 2 : ℝ) * vecDot q (matVecMul (sigmaStarInvCoarse (openCubeSet Q) a) q) := by
-            rw [sigmaStarInvCoarse_cubeSet_eq_openCubeSet_of_triadicCube_of_isSigmaStarCoarse
+            rw [sigmaStarInvCoarse_cubeSet_eq_openCubeSet
               (Q := Q) (a := a) hSQ]
       _ ≤ (1 / 2 : ℝ) * vecDot q
             (matVecMul (descendantsAverageMat Q j
               (fun R => sigmaStarInvCoarse (openCubeSet R) a)) q) := by
               exact
-                sigmaStarInvCoarse_subadditive_openCubeSet_descendantsAtDepth_in_loewner_order_of_isSigmaCoarse
+                sigmaStarInvCoarse_subadditive_descendants_in_loewnerOrder
                   j Q a hEll hSQ hKQ hSigmaQ hdetQ hDesc q
       _ = (1 / 2 : ℝ) * vecDot q
             (matVecMul (descendantsAverageMat Q j
               (fun R => sigmaStarInvCoarse (cubeSet R) a)) q) := by
               rw [hAvgEq]
   have hParentPSD : (sigmaStarInvCoarse (cubeSet Q) a).PosSemidef := by
-    rw [sigmaStarInvCoarse_cubeSet_eq_openCubeSet_of_triadicCube_of_isSigmaStarCoarse
+    rw [sigmaStarInvCoarse_cubeSet_eq_openCubeSet
       (Q := Q) (a := a) hSQ]
     exact sigmaStarInvCoarse_posSemidef_of_isSigmaStarCoarse (U := openCubeSet Q) (a := a) hSQ
   have hAvgPSD :
@@ -470,7 +455,7 @@ theorem coarseSigmaStarInvBlockNorm_le_maxDescendantSigmaStarInvNormAtScale_of_i
     intro R hR
     rcases hDesc R hR with
       ⟨sigmaR, sigmaStarR, kappaR, hAR, hSR, hKR, hSigmaR, hdetR⟩
-    rw [sigmaStarInvCoarse_cubeSet_eq_openCubeSet_of_triadicCube_of_isSigmaStarCoarse
+    rw [sigmaStarInvCoarse_cubeSet_eq_openCubeSet
       (Q := R) (a := a) hSR]
     exact sigmaStarInvCoarse_posSemidef_of_isSigmaStarCoarse (U := openCubeSet R) (a := a) hSR
   have hcanonQsig : sigmaStarQ⁻¹ = sigmaStarInvCoarse (cubeSet Q) a := by
@@ -480,13 +465,14 @@ theorem coarseSigmaStarInvBlockNorm_le_maxDescendantSigmaStarInvNormAtScale_of_i
         rw [sigmaStarInvCoarse_eq_inv_of_isSigmaStarCoarse hSQ]
       _ = sigmaStarInvCoarse (cubeSet Q) a := by
         symm
-        rw [sigmaStarInvCoarse_cubeSet_eq_openCubeSet_of_triadicCube_of_isSigmaStarCoarse
+        rw [sigmaStarInvCoarse_cubeSet_eq_openCubeSet
           (Q := Q) (a := a) hSQ]
   have hParentEq :
       coarseSigmaStarInvBlockNorm Q a = matNorm (sigmaStarInvCoarse (cubeSet Q) a) := by
     unfold coarseSigmaStarInvBlockNorm
     rw [coarseBlockMatrix_cubeSet_eq_openCubeSet_of_triadicCube Q a,
-      coarseBlockMatrix_lowerRight_eq_sigmaStar_inv_of_isCoarseBlockMatrix hAQ hSQ hKQ hSigmaQ hdetQ,
+      coarseBlockMatrix_lowerRight_eq_sigmaStar_inv_of_isCoarseBlockMatrix hAQ hSQ hKQ hSigmaQ
+        hdetQ,
       hcanonQsig]
   have hterm_eq :
       ∀ R ∈ descendantsAtDepth Q j,
@@ -501,16 +487,18 @@ theorem coarseSigmaStarInvBlockNorm_le_maxDescendantSigmaStarInvNormAtScale_of_i
           rw [sigmaStarInvCoarse_eq_inv_of_isSigmaStarCoarse hSR]
         _ = sigmaStarInvCoarse (cubeSet R) a := by
           symm
-          rw [sigmaStarInvCoarse_cubeSet_eq_openCubeSet_of_triadicCube_of_isSigmaStarCoarse
+          rw [sigmaStarInvCoarse_cubeSet_eq_openCubeSet
             (Q := R) (a := a) hSR]
     unfold coarseSigmaStarInvBlockNorm
     rw [coarseBlockMatrix_cubeSet_eq_openCubeSet_of_triadicCube R a,
-      coarseBlockMatrix_lowerRight_eq_sigmaStar_inv_of_isCoarseBlockMatrix hAR hSR hKR hSigmaR hdetR,
+      coarseBlockMatrix_lowerRight_eq_sigmaStar_inv_of_isCoarseBlockMatrix hAR hSR hKR hSigmaR
+        hdetR,
       hcanonRsig]
   have himage :
       (fun R => matNorm (sigmaStarInvCoarse (cubeSet R) a)) ''
         (↑(descendantsAtDepth Q j) : Set (TriadicCube d)) =
-        (fun R => coarseSigmaStarInvBlockNorm R a) '' (↑(descendantsAtDepth Q j) : Set (TriadicCube d)) := by
+        (fun R => coarseSigmaStarInvBlockNorm R a) '' (↑(descendantsAtDepth Q j) : Set
+          (TriadicCube d)) := by
     ext x
     constructor
     · rintro ⟨R, hR, rfl⟩
@@ -521,7 +509,8 @@ theorem coarseSigmaStarInvBlockNorm_le_maxDescendantSigmaStarInvNormAtScale_of_i
     coarseSigmaStarInvBlockNorm Q a = matNorm (sigmaStarInvCoarse (cubeSet Q) a) := hParentEq
     _ ≤ matNorm (descendantsAverageMat Q j (fun R => sigmaStarInvCoarse (cubeSet R) a)) := by
           exact matNorm_le_of_matLoewnerLE_of_posSemidef hParentPSD hAvgPSD hLoewner
-    _ ≤ finsetSsup (descendantsAtDepth Q j) (fun R => matNorm (sigmaStarInvCoarse (cubeSet R) a)) := by
+    _ ≤ finsetSsup (descendantsAtDepth Q j) (fun R => matNorm (sigmaStarInvCoarse (cubeSet R)
+      a)) := by
           exact matNorm_descendantsAverageMat_le_finsetSsup_matNorm Q j
             (fun R => sigmaStarInvCoarse (cubeSet R) a)
     _ = finsetSsup (descendantsAtDepth Q j) (fun R => coarseSigmaStarInvBlockNorm R a) := by
@@ -552,14 +541,14 @@ theorem coarseSigmaStarInvBlockNorm_le_maxDescendantSigmaStarInvNormAtScale_of_i
   rw [descendantsAtScale_self]
   simp
 
-@[simp] theorem scaleResponseAtScale_finite_self_eq {d : ℕ}
+theorem scaleResponseAtScale_finite_self_eq {d : ℕ}
     (Q : TriadicCube d) (p : ℝ) (a : CoeffField d) (a0 : Mat d) :
     scaleResponseAtScale Q Q.scale (.finite p) a a0 =
       Real.rpow (Real.rpow (normalizedBlockResponseMax Q a a0) (p / 2)) (1 / p) := by
   rw [scaleResponseAtScale_finite_eq]
   rw [descendantsAtScale_self, finsetAverage_singleton]
 
-@[simp] theorem scaleResponseAtScale_infinity_self_eq {d : ℕ}
+theorem scaleResponseAtScale_infinity_self_eq {d : ℕ}
     (Q : TriadicCube d) (a : CoeffField d) (a0 : Mat d) :
     scaleResponseAtScale Q Q.scale .infinity a a0 =
       Real.rpow (normalizedBlockResponseMax Q a a0) (1 / 2) := by
@@ -571,7 +560,8 @@ theorem coarseSigmaStarInvBlockNorm_le_maxDescendantSigmaStarInvNormAtScale_of_i
   unfold maxDescendantSigmaStarInvNormAtScale finsetSsup
   rw [descendantsAtScale_self]
   have himage :
-      ((fun R => coarseSigmaStarInvBlockNorm R a) '' (↑({Q} : Finset (TriadicCube d)) : Set (TriadicCube d))) =
+      ((fun R => coarseSigmaStarInvBlockNorm R a) '' (↑({Q} : Finset (TriadicCube d)) : Set
+        (TriadicCube d))) =
         ({coarseSigmaStarInvBlockNorm Q a} : Set ℝ) := by
     ext x
     simp
@@ -584,7 +574,8 @@ theorem coarseBBlockNorm_le_maxDescendantBBlockNormAtScale {d : ℕ}
     coarseBBlockNorm R a ≤ maxDescendantBBlockNormAtScale Q k a := by
   unfold maxDescendantBBlockNormAtScale finsetSsup
   have hBdd :
-      BddAbove ((fun S => coarseBBlockNorm S a) '' (↑(descendantsAtScale Q k) : Set (TriadicCube d))) := by
+      BddAbove ((fun S => coarseBBlockNorm S a) '' (↑(descendantsAtScale Q k) : Set (TriadicCube
+        d))) := by
     exact ((Set.toFinite _).image (fun S => coarseBBlockNorm S a)).bddAbove
   exact le_csSup hBdd ⟨R, hR, rfl⟩
 
@@ -595,7 +586,8 @@ theorem coarseSigmaStarInvBlockNorm_le_maxDescendantSigmaStarInvNormAtScale {d :
   unfold maxDescendantSigmaStarInvNormAtScale finsetSsup
   have hBdd :
       BddAbove
-        ((fun S => coarseSigmaStarInvBlockNorm S a) '' (↑(descendantsAtScale Q k) : Set (TriadicCube d))) := by
+        ((fun S => coarseSigmaStarInvBlockNorm S a) '' (↑(descendantsAtScale Q k) : Set
+          (TriadicCube d))) := by
     exact ((Set.toFinite _).image (fun S => coarseSigmaStarInvBlockNorm S a)).bddAbove
   exact le_csSup hBdd ⟨R, hR, rfl⟩
 

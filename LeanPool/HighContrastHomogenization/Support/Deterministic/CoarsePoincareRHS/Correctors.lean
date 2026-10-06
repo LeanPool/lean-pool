@@ -56,6 +56,7 @@ theorem openCubeSet_nonempty_rhs {d : ℕ} (Q : TriadicCube d) :
 `- div (a grad rho) = div g`. -/
 structure ZeroTraceDirichletCorrectorData {d : ℕ}
     (Q : TriadicCube d) (a : CoeffField d) (g : Vec d → Vec d) where
+  /-- The zero-trace H¹ function solving the local Dirichlet corrector equation. -/
   toH10 : H10Function (cubeSet Q)
   weakSolution : IsZeroTraceDirichletRhsWeakSolution a (cubeSet Q) toH10 g
 
@@ -74,7 +75,7 @@ public noncomputable def zeroTraceDirichletCorrectorDataOf_potentialZeroTraceClo
     ⟨zeroTraceDirichletRhsProblemSolution_of_potentialZeroTraceClosureRealization
         (a := a) (U := cubeSet Q) (g := g) (lam := lam) (Lam := Lam)
         hg hRealize hne hEll,
-      isZeroTraceDirichletRhsWeakSolution_zeroTraceDirichletRhsProblemSolution_of_potentialZeroTraceClosureRealization
+      isZeroTraceDirichletRhsWeakSolution_zeroTraceDirichletRhsProblemSolution
         (a := a) (U := cubeSet Q) (g := g) (lam := lam) (Lam := Lam)
         hg hRealize hne hEll⟩
 
@@ -136,7 +137,7 @@ noncomputable def zeroTraceDirichletCorrectorDataOf_isEllipticFieldOn_cubeSet
       using hg
   have hRealizeOpen :
       PotentialSolenoidalL2Data.HasPotentialZeroTraceClosureRealization (openCubeSet Q) :=
-    PotentialSolenoidalL2Data.hasPotentialZeroTraceClosureRealization_of_isOpenBoundedConvexDomain
+    PotentialSolenoidalL2Data.hasPotentialZeroTraceClosureRealization_of_convexDomain
       (isOpenBoundedConvexDomain_openCubeSet Q)
   have hEllOpen : IsEllipticFieldOn lam Lam (openCubeSet Q) a :=
     IsEllipticFieldOn.mono hEll (measurableSet_openCubeSet Q) (openCubeSet_subset_cubeSet Q)
@@ -151,7 +152,7 @@ noncomputable def zeroTraceDirichletCorrectorDataOf_isEllipticFieldOn_cubeSet
   exact
     isZeroTraceDirichletRhsWeakSolution_cubeSet_of_openCubeSet
       (Q := Q) (a := a) (g := g) (u := uOpen)
-      (isZeroTraceDirichletRhsWeakSolution_zeroTraceDirichletRhsProblemSolution_of_potentialZeroTraceClosureRealization
+      (isZeroTraceDirichletRhsWeakSolution_zeroTraceDirichletRhsProblemSolution
         (a := a) (U := openCubeSet Q) (g := g) (lam := lam) (Lam := Lam)
         hgOpen hRealizeOpen (openCubeSet_nonempty_rhs Q) hEllOpen)
 
@@ -285,7 +286,7 @@ theorem exists_aHarmonicRemainder_of_parent_potential_solenoidal
 parent potential/solenoidal PDE data. The zero-trace corrector is built on the
 open cube and transported to the half-open cube, so callers no longer need a
 separate realization hypothesis on `cubeSet R`. -/
-theorem exists_corrector_aHarmonicRemainder_of_parent_potential_solenoidal
+theorem exists_harmonicCorrectorDecomposition
     [NeZero d] {R : TriadicCube d} {n : ℕ} {lam Lam : ℝ}
     {u : Vec d → Vec d}
     (hu_potential : IsPotentialOn (cubeSet Q) u)

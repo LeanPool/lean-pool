@@ -502,6 +502,71 @@ theorem measureReal_badTailEvent_unitEllipticityBadScaleEvent_le_weighted_kernel
           hP hStruct hΓ (t := t) (α := α) (N := N)
           ht hαt hA_one)
 
+private theorem exponential_kernel_le_interpolated_tail
+    {z coefficient w W M Blead Btail η σ Aold C₀ ρgap : ℝ} {R q : ℕ}
+    (hcoefficient : 0 ≤ coefficient) (hcoefficient_le : coefficient ≤ M)
+    (hw : 0 ≤ w) (hwW : w ≤ W) (hM_one : 1 ≤ M) (hW_one : 1 ≤ W)
+    (hBlead : 0 < Blead) (hBtail : 0 < Btail) (hη : 0 < η)
+    (hBlead_lt : Blead < Btail) (hρgap_gt : 1 < ρgap)
+    (hC₀ : 2 + Real.log W ≤ C₀) (hρgap : ρgap ≤ (3 : ℝ) ^ η)
+    (hR : ∀ k : ℕ, R ≤ k → C₀ * (k : ℝ) ≤
+      Real.exp ((Real.log ρgap / 2) * (k : ℝ)))
+    (hqM : Nat.ceil (max 0 (Real.log M)) ≤ q) (hqR : R ≤ q)
+    (hqc : Nat.ceil ((2 * max 0 (-(Real.log
+      (Blead ^ (-η) - Btail ^ (-η))))) / Real.log ρgap) ≤ q)
+    (hAlead_to_old : ((3 : ℝ) ^ (q : ℝ) / Blead) ^ η ≤ Aold ^ σ)
+    (hkernel : z ≤ coefficient * w ^ q * Real.exp (-(Aold ^ σ))) :
+    z ≤ Real.exp (-(((3 : ℝ) ^ (q : ℝ) / Btail) ^ η)) := by
+  let Alead : ℝ := ((3 : ℝ) ^ (q : ℝ) / Blead) ^ η
+  let Atail : ℝ := ((3 : ℝ) ^ (q : ℝ) / Btail) ^ η
+  let cgap : ℝ := Blead ^ (-η) - Btail ^ (-η)
+  have hprefix_le : coefficient * w ^ q ≤ M * (((q : ℝ) + 1) * W ^ q) := by
+    have hwq_le : w ^ q ≤ W ^ q := pow_le_pow_left₀ hw hwW q
+    have hWq_nonneg : 0 ≤ W ^ q := pow_nonneg (zero_le_one.trans hW_one) q
+    have hleft : coefficient * w ^ q ≤ M * W ^ q :=
+      mul_le_mul hcoefficient_le hwq_le (pow_nonneg hw q) (zero_le_one.trans hM_one)
+    have hqplus_one : 1 ≤ (q : ℝ) + 1 := by
+      have hq_nonneg : 0 ≤ (q : ℝ) := by positivity
+      linarith
+    have hright : M * W ^ q ≤ M * (((q : ℝ) + 1) * W ^ q) := by
+      have hfactor : W ^ q ≤ ((q : ℝ) + 1) * W ^ q := by
+        calc
+          W ^ q = 1 * W ^ q := by ring
+          _ ≤ ((q : ℝ) + 1) * W ^ q :=
+            mul_le_mul_of_nonneg_right hqplus_one hWq_nonneg
+      exact mul_le_mul_of_nonneg_left hfactor (zero_le_one.trans hM_one)
+    exact hleft.trans hright
+  have hc_pos : 0 < cgap :=
+    inv_rpow_sub_pos_of_lt hBlead hBtail hη hBlead_lt
+  have hpref_gap : M * (((q : ℝ) + 1) * W ^ q) ≤ Real.exp (Alead - Atail) := by
+    have hpref_exp : M * (((q : ℝ) + 1) * W ^ q) ≤
+        Real.exp (cgap * ρgap ^ q) :=
+      linear_prefactor_le_exp_const_mul_pow_of_large
+        (M := M) (W := W) (C₀ := C₀) (c := cgap)
+        (ρ := ρgap) (R := R) (q := q)
+        hM_one hW_one hc_pos hρgap_gt hC₀ hR hqM hqR hqc
+    have hgap : cgap * ρgap ^ q ≤ Alead - Atail := by
+      simpa [Alead, Atail, cgap] using
+        geometric_gap_le_rpow_three_nat_div_gap
+          (Blead := Blead) (Btail := Btail) (η := η)
+          (c := cgap) (ρ := ρgap) (q := q)
+          hBlead hBtail (le_rfl : cgap ≤ Blead ^ (-η) - Btail ^ (-η))
+          hρgap hc_pos.le (le_of_lt (lt_trans zero_lt_one hρgap_gt))
+    exact hpref_exp.trans (Real.exp_le_exp.mpr hgap)
+  have hexp_old : Real.exp (-(Aold ^ σ)) ≤ Real.exp (-Alead) :=
+    Real.exp_le_exp.mpr (neg_le_neg hAlead_to_old)
+  calc
+    z ≤ coefficient * w ^ q * Real.exp (-(Aold ^ σ)) := hkernel
+    _ ≤ coefficient * w ^ q * Real.exp (-Alead) :=
+      mul_le_mul_of_nonneg_left hexp_old (mul_nonneg hcoefficient (pow_nonneg hw q))
+    _ ≤ M * (((q : ℝ) + 1) * W ^ q) * Real.exp (-Alead) :=
+      mul_le_mul_of_nonneg_right hprefix_le (Real.exp_pos _).le
+    _ ≤ Real.exp (Alead - Atail) * Real.exp (-Alead) :=
+      mul_le_mul_of_nonneg_right hpref_gap (Real.exp_pos _).le
+    _ = Real.exp (-Atail) := by
+      rw [← Real.exp_add]
+      ring_nf
+
 theorem exists_quantitative_threshold_unitEllipticityBadTail_le_interpolated_tail
     {d : ℕ} [NeZero d] {σ : ℝ} (hσ_pos : 0 < σ) :
     ∀ {t α : ℝ},
@@ -657,7 +722,6 @@ theorem exists_quantitative_threshold_unitEllipticityBadTail_le_interpolated_tai
     nlinarith
   let Aold : ℝ := (3 : ℝ) ^ (2 * t * (q : ℝ)) / scale
   let Alead : ℝ := ((3 : ℝ) ^ (q : ℝ) / Blead) ^ η
-  let Atail : ℝ := ((3 : ℝ) ^ (q : ℝ) / Btail) ^ η
   have hAlead_to_old : Alead ≤ Aold ^ σ := by
     simpa [Aold, Alead, Blead] using
       smallBottomTailDenominator_rpow_le_crude_scale
@@ -683,90 +747,21 @@ theorem exists_quantitative_threshold_unitEllipticityBadTail_le_interpolated_tai
       measureReal_badTailEvent_unitEllipticityBadScaleEvent_le_weighted_kernel
         hP hStruct hΓ (t := t) (α := α) (N := q)
         ht hα_nonneg hαt hAold_one
-  have hprefix_le :
-      Kunit * w ^ q ≤ M * (((q : ℝ) + 1) * W ^ q) := by
-    have hK_le_M : Kunit ≤ M := by
-      calc
-        Kunit ≤ max 0 Kunit := le_max_right 0 Kunit
-        _ ≤ M := by
-          dsimp [M]
-          exact le_max_right 1 _
-    have hwW : w ≤ W := by
-      dsimp [W]
-      exact le_max_right 1 w
-    have hwq_le : w ^ q ≤ W ^ q :=
-      pow_le_pow_left₀ hw_pos.le hwW q
-    have hWq_nonneg : 0 ≤ W ^ q := by positivity
-    have hleft :
-        Kunit * w ^ q ≤ M * W ^ q :=
-      mul_le_mul hK_le_M hwq_le
-        (pow_nonneg hw_pos.le q) (zero_le_one.trans hM_one)
-    have hqplus_one : 1 ≤ (q : ℝ) + 1 := by
-      have hq_nonneg : 0 ≤ (q : ℝ) := by positivity
-      linarith
-    have hright :
-        M * W ^ q ≤ M * (((q : ℝ) + 1) * W ^ q) := by
-      have hfactor : W ^ q ≤ ((q : ℝ) + 1) * W ^ q := by
-        calc
-          W ^ q = 1 * W ^ q := by ring
-          _ ≤ ((q : ℝ) + 1) * W ^ q :=
-            mul_le_mul_of_nonneg_right hqplus_one hWq_nonneg
-      exact mul_le_mul_of_nonneg_left hfactor (zero_le_one.trans hM_one)
-    exact hleft.trans hright
-  have hc_pos : 0 < cgap := by
-    simpa [cgap, Btail] using
-      inv_rpow_sub_pos_of_lt hBlead_pos hBtail_pos hη_pos hBlead_lt_Btail
-  have hpref_gap :
-      M * (((q : ℝ) + 1) * W ^ q) ≤ Real.exp (Alead - Atail) := by
-    have hpref_exp :
-        M * (((q : ℝ) + 1) * W ^ q) ≤
-          Real.exp (cgap * ρgap ^ q) :=
-      linear_prefactor_le_exp_const_mul_pow_of_large
-        (M := M) (W := W) (C₀ := C₀) (c := cgap)
-        (ρ := ρgap) (R := R) (q := q)
-        hM_one hW_one hc_pos hρgap_gt
-        (le_rfl : 2 + Real.log W ≤ C₀) hR hqM hqR hqc
-    have hgap :
-        cgap * ρgap ^ q ≤ Alead - Atail := by
-      simpa [Alead, Atail, cgap, ρgap] using
-        geometric_gap_le_rpow_three_nat_div_gap
-          (Blead := Blead) (Btail := Btail) (η := η)
-          (c := cgap) (ρ := ρgap) (q := q)
-          hBlead_pos hBtail_pos
-          (le_rfl : cgap ≤ Blead ^ (-η) - Btail ^ (-η))
-          (le_rfl : ρgap ≤ (3 : ℝ) ^ η) hc_pos.le
-          (le_of_lt (lt_trans zero_lt_one hρgap_gt))
-    exact hpref_exp.trans (Real.exp_le_exp.mpr hgap)
-  have hexp_old :
-      Real.exp (-(Aold ^ σ)) ≤ Real.exp (-Alead) :=
-    Real.exp_le_exp.mpr (by linarith)
-  have hmeasure_tail :
-      P.real
-          (badTailEvent
-            (unitEllipticityBadScaleEvent hP hStruct hΓ.params t α) q) ≤
-        M * (((q : ℝ) + 1) * W ^ q) * Real.exp (-Alead) := by
-    calc
-      P.real
-          (badTailEvent
-            (unitEllipticityBadScaleEvent hP hStruct hΓ.params t α) q)
-          ≤ w ^ q * (Real.exp (-(Aold ^ σ)) * Kunit) := hkernel_q
-      _ = Kunit * w ^ q * Real.exp (-(Aold ^ σ)) := by ring
-      _ ≤ Kunit * w ^ q * Real.exp (-Alead) :=
-            mul_le_mul_of_nonneg_left hexp_old
-              (by positivity : 0 ≤ Kunit * w ^ q)
-      _ ≤ M * (((q : ℝ) + 1) * W ^ q) * Real.exp (-Alead) :=
-            mul_le_mul_of_nonneg_right hprefix_le (Real.exp_pos _).le
+  have hcoefficient_le : Kunit ≤ M := by
+    exact (le_max_right 0 (Kunit)).trans (le_max_right 1 _)
+  have hwW : w ≤ W := le_max_right 1 w
+  apply exponential_kernel_le_interpolated_tail
+    (coefficient := Kunit) (w := w) (W := W) (M := M)
+    (Blead := Blead) (η := η) (σ := σ) (Aold := Aold)
+    (C₀ := C₀) (ρgap := ρgap) (R := R)
+    (hKunit_pos.le) hcoefficient_le hw_pos.le hwW hM_one hW_one
+    hBlead_pos hBtail_pos hη_pos hBlead_lt_Btail hρgap_gt
+    le_rfl le_rfl hR hqM hqR hqc hAlead_to_old
   calc
-    P.real
-        (badTailEvent
-          (unitEllipticityBadScaleEvent hP hStruct hΓ.params t α) q)
-        ≤ M * (((q : ℝ) + 1) * W ^ q) * Real.exp (-Alead) :=
-          hmeasure_tail
-    _ ≤ Real.exp (Alead - Atail) * Real.exp (-Alead) :=
-          mul_le_mul_of_nonneg_right hpref_gap (Real.exp_pos _).le
-    _ = Real.exp (-Atail) := by
-          rw [← Real.exp_add]
-          ring_nf
+    P.real (badTailEvent
+        (unitEllipticityBadScaleEvent hP hStruct hΓ.params t α) q) ≤
+        w ^ q * (Real.exp (-(Aold ^ σ)) * Kunit) := hkernel_q
+    _ = Kunit * w ^ q * Real.exp (-(Aold ^ σ)) := by ring
 
 theorem localizedLimitWeightedUnitEllipticitySup_le_of_not_mem_unitEllipticityBadScaleEvent
     {d : ℕ} [NeZero d] {P : Ch04.RestrictionCoeffLaw d}

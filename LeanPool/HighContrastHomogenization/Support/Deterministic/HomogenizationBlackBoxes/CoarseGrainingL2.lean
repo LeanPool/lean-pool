@@ -79,7 +79,7 @@ theorem homogenizationErrorOnCube_infinity_one_nonneg {d : ℕ}
   intro n
   exact mul_nonneg (geometricWeight_nonneg n (by simpa using hs))
     (scaleResponseAtScale_infinity_nonneg Q
-      (sub_le_self _ (by exact_mod_cast Nat.zero_le n)) a a0)
+      (sub_le_self _ (Nat.cast_nonneg n)) a a0)
 
 /-- Each descendant error is bounded by the depth-truncated parent error. -/
 theorem homogenizationErrorOnCube_le_coarseGrainingHomogenizationErrorAtDepth
@@ -207,7 +207,8 @@ theorem coarseGrainingL2FluxDefectBoundTwoExponent_eq_energyTerm_add_forcingTerm
         coarseGrainingL2FluxDefectForcingTermTwoExponent Q a a0 s t j g := by
   rfl
 
-theorem coarseGrainingL2FluxDefectEnergyTerm_le_coarseGrainingL2FluxDefectBound_of_forcingTerm_nonneg
+theorem
+  coarseGrainingL2FluxDefectEnergyTerm_le_coarseGrainingL2FluxDefectBound_of_forcingTerm_nonneg
     {d : ℕ} (Q : TriadicCube d) (a : CoeffField d) (a0 : Mat d)
     (s : ℝ) (j : ℕ) (gradU g : Vec d → Vec d)
     (hforcing_nonneg : 0 ≤ coarseGrainingL2FluxDefectForcingTerm Q a a0 s j g) :
@@ -437,7 +438,7 @@ theorem localizedCoarseFluxResponseAverageBound_le_const_mul_sqrt_cubeAverage_of
 The localized response average is bounded by the parent depth-truncated
 homogenization error with the raw q=1 geometric prefactor.
 -/
-theorem localizedCoarseFluxResponseAverageBound_le_invGeom_mul_errorAtDepth_mul_sqrt_four_matNorm_sqrt_cubeAverage
+theorem CoarseFluxAverageBound_le_geometricError_mul_twoMatrixNorm_sqrtCubeAverage
     {d : ℕ} (Q : TriadicCube d) (a : CoeffField d) (a0 : Mat d)
     {s : ℝ} (j : ℕ) (energy : Vec d → ℝ)
     (hs : 0 < s)
@@ -598,7 +599,7 @@ theorem localizedCoarseFluxResponseAverageBound_le_ten_mul_energyTerm_of_invGeom
         ≤ (H * E * Real.sqrt (((4 : ℝ) * matNorm a0))) *
             Real.sqrt (cubeAverage Q energy) := by
           simpa [H, E] using
-            localizedCoarseFluxResponseAverageBound_le_invGeom_mul_errorAtDepth_mul_sqrt_four_matNorm_sqrt_cubeAverage
+            CoarseFluxAverageBound_le_geometricError_mul_twoMatrixNorm_sqrtCubeAverage
               Q a a0 j energy hs henergy_int henergy_avg_nonneg herror_nonneg
     _ ≤ (((10 * s⁻¹) * S) * E) * Real.sqrt (cubeAverage Q energy) := by
           exact mul_le_mul_of_nonneg_right hcoef hsqrtQ_nonneg
@@ -613,7 +614,7 @@ For the coefficient-energy density, the ten-factor response control is
 absorbed by ten times the full Section 3.3.B flux-defect RHS whenever the
 forcing tail is nonnegative.
 -/
-theorem localizedCoarseFluxResponseAverageBound_coefficientEnergy_le_ten_mul_coarseGrainingL2FluxDefectBound_of_invGeom_le
+theorem CoarseFluxAverageBound_coefficientEnergy_le_ten_mul_coarseGrainingFluxBound
     {d : ℕ} (Q : TriadicCube d) (a : CoeffField d) (a0 : Mat d)
     {s : ℝ} (j : ℕ) (gradU g : Vec d → Vec d)
     (hs : 0 < s)
@@ -657,7 +658,7 @@ This is the bridge between the Section 3.2 flux-response estimates and the
 single localized flux-defect hypothesis consumed by the Section 3.3.B
 coarse-graining apex.
 -/
-theorem localizedFluxDefectNegativeBesovAverageTwo_le_sqrt_descendantsAverage_sq_of_descendant_coarseFluxResponse
+theorem negativeBesovFluxAverage_le_sqrt_descendantMean_sq_of_coarseFluxResponse
     {d : ℕ} (Q : TriadicCube d) (a : CoeffField d) (a0 : Mat d)
     (s : ℝ) (defect : Vec d → Vec d) (energy : Vec d → ℝ) (j : ℕ)
     (hs : 0 < s)
@@ -714,7 +715,7 @@ theorem localizedFluxDefectNegativeBesovAverageTwo_le_sqrt_descendantsAverage_sq
 Localized flux-defect bridge with the existing descendant canonical response
 data package exposed directly.
 -/
-theorem localizedFluxDefectNegativeBesovAverageTwo_le_sqrt_descendantsAverage_sq_of_descendantScalarCanonicalFluxDefectData
+theorem negativeBesovFluxAverage_le_sqrt_descendantMean_sq
     {d : ℕ} [NeZero d] (Q : TriadicCube d) (a : CoeffField d) (a0 : Mat d)
     (s : ℝ) (defect : Vec d → Vec d) (energy : Vec d → ℝ) (j : ℕ)
     {lam0 Lam0 : ℝ}
@@ -744,7 +745,7 @@ theorem localizedFluxDefectNegativeBesovAverageTwo_le_sqrt_descendantsAverage_sq
             HomogenizationErrorOnCube R s .infinity (.finite 1) a a0 *
               (Real.sqrt (((4 : ℝ) * matNorm a0)) *
                 Real.sqrt (cubeAverage R energy))) ^ 2) :=
-  localizedFluxDefectNegativeBesovAverageTwo_le_sqrt_descendantsAverage_sq_of_descendant_coarseFluxResponse
+  negativeBesovFluxAverage_le_sqrt_descendantMean_sq_of_coarseFluxResponse
     Q a a0 s defect energy j hs henergy_nonneg henergy_int
     (fun R hR =>
       cubeAverageFluxResponseControl_of_descendantScalarCanonicalFluxDefectData
@@ -753,9 +754,9 @@ theorem localizedFluxDefectNegativeBesovAverageTwo_le_sqrt_descendantsAverage_sq
     hpartialBdd hsum
 
 /-- Named response-average version of
-`localizedFluxDefectNegativeBesovAverageTwo_le_sqrt_descendantsAverage_sq_of_descendant_coarseFluxResponse`.
+`negativeBesovFluxAverage_le_sqrt_descendantMean_sq_of_coarseFluxResponse`.
 -/
-theorem localizedFluxDefectNegativeBesovAverageTwo_le_localizedCoarseFluxResponseAverageBound_of_descendant_coarseFluxResponse
+theorem negativeBesovFluxAverage_le_coarseFluxAverageBound_of_coarseFluxResponse
     {d : ℕ} (Q : TriadicCube d) (a : CoeffField d) (a0 : Mat d)
     (s : ℝ) (defect : Vec d → Vec d) (energy : Vec d → ℝ) (j : ℕ)
     (hs : 0 < s)
@@ -779,11 +780,11 @@ theorem localizedFluxDefectNegativeBesovAverageTwo_le_localizedCoarseFluxRespons
     localizedFluxDefectNegativeBesovAverageTwo Q s defect j ≤
       localizedCoarseFluxResponseAverageBound Q a a0 s j energy := by
   simpa [localizedCoarseFluxResponseAverageBound] using
-    localizedFluxDefectNegativeBesovAverageTwo_le_sqrt_descendantsAverage_sq_of_descendant_coarseFluxResponse
+    negativeBesovFluxAverage_le_sqrt_descendantMean_sq_of_coarseFluxResponse
       Q a a0 s defect energy j hs henergy_nonneg henergy_int hresp hpartialBdd hsum
 
 /-- Named response-average version with descendant scalar-canonical data. -/
-theorem localizedFluxDefectNegativeBesovAverageTwo_le_localizedCoarseFluxResponseAverageBound_of_descendantScalarCanonicalFluxDefectData
+theorem negativeBesovFluxAverage_le_coarseFluxAverageBound
     {d : ℕ} [NeZero d] (Q : TriadicCube d) (a : CoeffField d) (a0 : Mat d)
     (s : ℝ) (defect : Vec d → Vec d) (energy : Vec d → ℝ) (j : ℕ)
     {lam0 Lam0 : ℝ}
@@ -809,7 +810,7 @@ theorem localizedFluxDefectNegativeBesovAverageTwo_le_localizedCoarseFluxRespons
     localizedFluxDefectNegativeBesovAverageTwo Q s defect j ≤
       localizedCoarseFluxResponseAverageBound Q a a0 s j energy := by
   simpa [localizedCoarseFluxResponseAverageBound] using
-    localizedFluxDefectNegativeBesovAverageTwo_le_sqrt_descendantsAverage_sq_of_descendantScalarCanonicalFluxDefectData
+    negativeBesovFluxAverage_le_sqrt_descendantMean_sq
       Q a a0 s defect energy j hs ha0 ha0symm hdesc henergy_nonneg henergy_int
       hpartialBdd hsum
 
@@ -1035,7 +1036,8 @@ theorem solution_diff_l2_le_coarseGrainingL2Rhs_mul_const_of_sameRhs_of_coarseFl
 Same-right-hand-side general coarse-graining comparison with a caller-supplied
 scalar upper bound for the Section 3.3.B flux-defect RHS.
 -/
-theorem solution_diff_l2_le_dualityConstant_mul_coarseGrainingBound_of_sameRhs_of_coarseFluxDefect_le
+theorem
+  solution_diff_l2_le_dualityConstant_mul_coarseGrainingBound_of_sameRhs_of_coarseFluxDefect_le
     {d : ℕ} [NeZero d] {Cdual : ℝ}
     (hdual : ScalarSolutionComparisonDualityEstimate d Cdual)
     (Q : TriadicCube d) (a : CoeffField d) (a0 : Mat d) (sigma0 : ℝ)

@@ -254,7 +254,7 @@ theorem LambdaS_le_exponentGap_mul_LambdaSq_finite_two
     intro n
     dsimp [M]
     exact Book.Ch02.maxDescendantBMatrixNormAtScale_nonneg Q
-      (sub_le_self _ (by exact_mod_cast Nat.zero_le n)) a
+      (sub_le_self _ (Nat.cast_nonneg n)) a
   have hsum : Summable (fun n ↦ Book.Ch02.geometricWeight b 2 n * M n) := by
     simpa [M] using
       (Book.Ch02.summable_B_series_pointwiseCoeffField Q a hb
@@ -332,7 +332,7 @@ theorem lambdaS_inv_le_exponentGap_mul_lambdaSq_finite_two_inv
     intro n
     dsimp [M]
     exact Book.Ch02.maxDescendantSigmaStarInvMatrixNormAtScale_nonneg Q
-      (sub_le_self _ (by exact_mod_cast Nat.zero_le n)) a
+      (sub_le_self _ (Nat.cast_nonneg n)) a
   have hsum : Summable (fun n ↦ Book.Ch02.geometricWeight b 2 n * M n) := by
     simpa [M] using
       (Book.Ch02.summable_sigmaStarInv_series_pointwiseCoeffField Q a hb

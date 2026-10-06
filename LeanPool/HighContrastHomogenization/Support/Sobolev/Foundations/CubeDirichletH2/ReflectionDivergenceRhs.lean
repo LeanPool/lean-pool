@@ -133,10 +133,10 @@ theorem exists_h1Function_cubeDirichletOddReflectionParent_divergence_rhs_origin
         vecDot
           (cubeDirichletOddReflectionVectorField (originCube d m) h x)
           (euclideanGradient φ x)),
-    setIntegral_cubeFaceReflectionBlockSet_vecDot_cubeDirichletOddReflectionVectorField_eq_folded_derivSum
+    setIntegral_cubeReflection_vectorDot_oddReflectedField_eq_foldedDerivativeSum
       (Q := originCube d m) (G := fun y => u.toH1Function.grad y)
       huGrad hφ hφ_compact,
-    setIntegral_cubeFaceReflectionBlockSet_vecDot_cubeDirichletOddReflectionVectorField_eq_folded_derivSum
+    setIntegral_cubeReflection_vectorDot_oddReflectedField_eq_foldedDerivativeSum
       (Q := originCube d m) (G := h) hh hφ hφ_compact]
   exact hfolded
 

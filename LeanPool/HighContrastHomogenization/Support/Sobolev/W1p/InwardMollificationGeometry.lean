@@ -51,6 +51,8 @@ noncomputable def inwardMollification {d : ℕ} (ρ g : Vec d → ℝ)
         volume] g) ((1 + ε) • x - ε • x0) :=
   rfl
 
+/-- The affine contraction toward `x0` of the sum of the radius-`ε r` closed ball and `closure U`,
+used to contain the inward mollification's support. -/
 @[expose]
 public def inwardMollificationSupportSet {d : ℕ} (U : Set (Vec d))
     (x0 : Vec d) (r ε : ℝ) : Set (Vec d) :=

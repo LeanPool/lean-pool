@@ -583,7 +583,7 @@ It is enough for the weak equation to hold against tests supported in `U`,
 provided the potential itself has topological support in `U`; the test
 `-Δu` is then still supported in `U`. -/
 theorem
-  integral_sum_euclideanCoordSecondDeriv_sq_eq_integral_forcing_mul_neg_laplacian_of_tsupport_subset
+  weakPoisson_hessianEnergy_eq_forcing_laplacian
     {d : ℕ} {U : Set (Vec d)} {u f : Vec d → ℝ}
     (hu : ContDiff ℝ (⊤ : ℕ∞) u) (hu_supp : HasCompactSupport u)
     (hu_sub : tsupport u ⊆ U)
@@ -786,7 +786,7 @@ theorem integral_sum_euclideanCoordSecondDeriv_sq_le_forcing_l2_mul_laplacian_l2
         ∫ x, (euclideanCoordSecondDeriv i j u x) ^ 2 ∂volume) =
         ∫ x, f x * (-L x) ∂volume := by
     simpa [L] using
-      integral_sum_euclideanCoordSecondDeriv_sq_eq_integral_forcing_mul_neg_laplacian_of_tsupport_subset
+      weakPoisson_hessianEnergy_eq_forcing_laplacian
         hu hu_supp hu_sub hweak
   have habs :
       ∫ x, f x * (-L x) ∂volume ≤

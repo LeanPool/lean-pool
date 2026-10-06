@@ -94,12 +94,12 @@ estimate satisfiable by the failure of the very membership it presupposes. -/
 def eVolumeAverage (V : Set (Vec d)) (f : Vec d → ℝ≥0∞) : ℝ≥0∞ :=
   (∫⁻ x in V, f x ∂volume) / volume V
 
-/-- The normalized norm `‖v‖_{L̲²(V)}` (the volume-normalized L^p norm at `p = 2`). -/
+/-- The normalized norm `‖v‖_{L_underlined²(V)}` (the volume-normalized L^p norm at `p = 2`). -/
 @[expose]
 def normalizedL2Norm (V : Set (Vec d)) (v : Vec d → ℝ) : ℝ≥0∞ :=
   (eVolumeAverage V fun x => ENNReal.ofReal (v x ^ 2)) ^ (1 / 2 : ℝ)
 
-/-- The value `‖s^{1/2} F‖_{L̲²(V)}` for the symmetric part `s` of a coefficient
+/-- The value `‖s^{1/2} F‖_{L_underlined²(V)}` for the symmetric part `s` of a coefficient
 field, written through the quadratic form (an exact identity, not a
 re-encoding). -/
 @[expose]
@@ -152,7 +152,7 @@ def negSobolevNorm (V : Set (Vec d)) (s : ℝ) (F : Vec d → Vec d) : ℝ≥0�
   ⨆ ψ : {ψ : Vec d → Vec d // IsLocalVecTest V ψ ∧ hsNormSq V s ψ ≤ 1},
     dualPairing V F ψ.1
 
-/-- The dual norm `‖F‖_{H̲^{-1}(V)}` (the `s = 1` display of
+/-- The dual norm `‖F‖_{H_underlined^{-1}(V)}` (the `s = 1` display of
 the volume-normalized function spaces). -/
 @[expose]
 def negOneNorm (V : Set (Vec d)) (F : Vec d → Vec d) : ℝ≥0∞ :=
@@ -316,7 +316,7 @@ reading of the domain dependence recorded at
 `e.random.dirichlet`. -/
 
 /-- The image of a set under a linear map, used for the adapted domain
-`s̄^{-1/2}U` whose shape governs the endpoint constant. -/
+`s_bar^{-1/2}U` whose shape governs the endpoint constant. -/
 @[expose]
 def matImage (M : Mat d) (U : Set (Vec d)) : Set (Vec d) :=
   matVecMul M '' U

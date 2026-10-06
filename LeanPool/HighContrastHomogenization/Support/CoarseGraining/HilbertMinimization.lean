@@ -248,7 +248,7 @@ noncomputable def subspaceRieszMap (K : ClosedSubmodule ℝ V) :
     (K.toSubmodule →L[ℝ] ℝ) →L[ℝ] K.toSubmodule :=
   (InnerProductSpace.toDual ℝ K.toSubmodule).symm.toContinuousLinearEquiv.toContinuousLinearMap
 
-@[simp] theorem inner_subspaceRieszMap_apply (K : ClosedSubmodule ℝ V)
+theorem inner_subspaceRieszMap_apply (K : ClosedSubmodule ℝ V)
     (ℓ : K.toSubmodule →L[ℝ] ℝ) (w : K.toSubmodule) :
     inner ℝ (subspaceRieszMap K ℓ) w = ℓ w := by
   change inner ℝ (((InnerProductSpace.toDual ℝ K.toSubmodule).symm) ℓ) w = ℓ w
@@ -261,7 +261,7 @@ noncomputable def subspaceRhs (K : ClosedSubmodule ℝ V) (B : V →L[ℝ] V →
     V →L[ℝ] K.toSubmodule :=
   (subspaceRieszMap K).comp (subspaceRhsBilin K B)
 
-@[simp] theorem inner_subspaceRhs_apply (K : ClosedSubmodule ℝ V) (B : V →L[ℝ] V →L[ℝ] ℝ)
+theorem inner_subspaceRhs_apply (K : ClosedSubmodule ℝ V) (B : V →L[ℝ] V →L[ℝ] ℝ)
     (x : V) (w : K.toSubmodule) :
     inner ℝ (subspaceRhs K B x) w = -B x w := by
   change inner ℝ (subspaceRieszMap K (subspaceRhsBilin K B x)) w = -B x w

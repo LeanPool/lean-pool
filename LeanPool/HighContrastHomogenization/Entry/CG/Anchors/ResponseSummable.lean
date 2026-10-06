@@ -54,6 +54,6 @@ theorem summable_volumeRatio_mul_responseJ_of_isEllipticFieldOn {d : ℕ}
     {a : CoeffField d} {lam Lam : ℝ} (hEll : IsEllipticFieldOn lam Lam W a) (p q : Vec d) :
     Summable (fun i : s => (volume (U i)).toReal / (volume W).toReal * ResponseJ (U i) p q a) :=
       by exact
-      HCPolySupport.HighContrast.CG.summable_volumeRatio_mul_responseJ_of_isEllipticFieldOn_provider hs hopen hsub hdisj hEll p q
+      HCPolySupport.HighContrast.CG.summable_volumeWeightedResponseJ hs hopen hsub hdisj hEll p q
 
 end HCPolySupport.HighContrast.CG

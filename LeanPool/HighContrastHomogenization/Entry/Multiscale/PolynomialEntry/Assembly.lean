@@ -200,7 +200,8 @@ private theorem entry_of_law
   have := hP
   have hK : (1 : ℝ) ≤ K := one_le_growth_of_dagger hdag
   have hPi : (1 : ℝ) ≤ aspectRatio E := one_le_aspectRatio_of_dagger hd hdag
-  have ha : (0 : ℝ) ≤ Real.logb 3 (2 + aspectRatio E) := logb_two_add_nonneg _ (by linarith only [hPi])
+  have ha : (0 : ℝ) ≤ Real.logb 3 (2 + aspectRatio E) := logb_two_add_nonneg _ (by linarith only
+    [hPi])
   have hb : (0 : ℝ) ≤ Real.logb 3 (2 * K) := logb_two_mul_nonneg_of_one_le K hK
   have hBm : (1 : ℝ) ≤ max (S.B0 ε τ) Bresp := hBresp.trans (le_max_right _ _)
   have hCs : (0 : ℝ) ≤ max CsrcG CsrcR := le_trans hCsrcG.le (le_max_left _ _)
@@ -279,34 +280,43 @@ theorem polynomial_entry_of_response_transfer
                                   t ≤ (jStar : ℤ) +
                                       ⌈(B + Cglob) * Real.logb 3 (2 + aspectRatio E)⌉ →
                                   HighContrast.adaptedCell
-                                      (Geometry.explicitRoundedGrid jStar (explicitCanonicalMetric F)) t ⊆
+                                      (Geometry.explicitRoundedGrid jStar
+                                        (explicitCanonicalMetric F)) t ⊆
                                     HighContrast.centeredCube d (2 * (jStar : ℤ)) →
                                   BlockMatLoewnerLE
                                     (blockScale (1 - Real.sqrt ε * σ) F)
                                     (adaptedMean P
-                                      (Geometry.explicitRoundedGrid jStar (explicitCanonicalMetric F)) s) →
+                                      (Geometry.explicitRoundedGrid jStar
+                                        (explicitCanonicalMetric F)) s) →
                                   BlockMatLoewnerLE
                                     (adaptedMean P
-                                      (Geometry.explicitRoundedGrid jStar (explicitCanonicalMetric F)) s)
+                                      (Geometry.explicitRoundedGrid jStar
+                                        (explicitCanonicalMetric F)) s)
                                     (blockScale (1 + Real.sqrt ε * σ) F) →
                                   (d : ℝ)⁻¹ *
                                       detIncrement P
-                                        (Geometry.explicitRoundedGrid jStar (explicitCanonicalMetric F)) s t < σ →
+                                        (Geometry.explicitRoundedGrid jStar
+                                          (explicitCanonicalMetric F)) s t < σ →
                                   max
                                         (max
                                           (profile P γ
-                                            (Geometry.explicitRoundedGrid jStar (explicitCanonicalMetric F))
+                                            (Geometry.explicitRoundedGrid jStar
+                                              (explicitCanonicalMetric F))
                                             jStar s s)
                                           (profile P γ
-                                            (Geometry.explicitRoundedGrid jStar (explicitCanonicalMetric F))
+                                            (Geometry.explicitRoundedGrid jStar
+                                              (explicitCanonicalMetric F))
                                             jStar s t))
                                         (profile P γ
-                                          (Geometry.explicitRoundedGrid jStar (explicitCanonicalMetric F))
+                                          (Geometry.explicitRoundedGrid jStar
+                                            (explicitCanonicalMetric F))
                                           jStar t t) +
                                       determinantDrift P γ
-                                        (Geometry.explicitRoundedGrid jStar (explicitCanonicalMetric F)) jStar s +
+                                        (Geometry.explicitRoundedGrid jStar
+                                          (explicitCanonicalMetric F)) jStar s +
                                       determinantDrift P γ
-                                        (Geometry.explicitRoundedGrid jStar (explicitCanonicalMetric F)) jStar t ≤
+                                        (Geometry.explicitRoundedGrid jStar
+                                          (explicitCanonicalMetric F)) jStar t ≤
                                     Cprof * σ ^ ((1 - γ) / 8) →
                                   (‖explicitCanonicalMetric F‖ * ‖(explicitCanonicalMetric F)⁻¹‖) ^
                                       ((1 : ℝ) / 2) ≤
@@ -337,7 +347,8 @@ theorem polynomial_entry_of_response_transfer
   have hBm : (1 : ℝ) ≤ max (S.B0 ε σ₀) Bresp := hBresp.trans (le_max_right _ _)
   refine ⟨entryConst (Cg * (max (S.B0 ε σ₀) Bresp + 1)) (max (S.B0 ε σ₀) Bresp) Cg Cresp
       (max CsrcG CsrcR) d,
-    entryConst_pos _ _ _ _ _ _ (mul_nonneg hCg.le (by linarith only [hBm])) (by linarith only [hBm]) hCg hCresp.le
+    entryConst_pos _ _ _ _ _ _ (mul_nonneg hCg.le (by linarith only [hBm])) (by linarith only
+      [hBm]) hCg hCresp.le
       (le_trans hCsrcG.le (le_max_left _ _)), ?_⟩
   intro P E Ψ K Src hP hst hur hdag
   exact entry_of_law d hd γ σ S ε CsrcG hCsrcG H Cprof σ₀ Cg hCg hGS CsrcR Bresp hBresp

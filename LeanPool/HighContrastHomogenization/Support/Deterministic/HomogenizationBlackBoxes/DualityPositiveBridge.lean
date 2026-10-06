@@ -81,7 +81,7 @@ Uniform scalar full-dual pairing bounds control the note-normalized vector
 genuine-dual negative Besov norm with the expected coordinate-cardinality
 factor.
 -/
-theorem cubeScaleNormalizedDualNegativeBesovVectorNormTwo_le_card_mul_of_forall_component_fullTest_pairing_le
+theorem cubeScaleNormalizedDualNegativeBesovVectorNormTwo_le_card_mul
     {d : ℕ} (Q : TriadicCube d) (t : ℝ) (F : Vec d → Vec d) {B : ℝ}
     (hB :
       ∀ (i : Fin d) (g : Vec d → ℝ),
@@ -109,7 +109,7 @@ theorem exists_cubeDirichletDivergenceProblem_of_memLp_normalizedCubeMeasure
       (isOpenBoundedConvexDomain_openCubeSet Q).isFiniteMeasure_restrict_volume
   have hRealize :
       PotentialSolenoidalL2Data.HasPotentialZeroTraceClosureRealization U :=
-    PotentialSolenoidalL2Data.hasPotentialZeroTraceClosureRealization_of_isOpenBoundedConvexDomain
+    PotentialSolenoidalL2Data.hasPotentialZeroTraceClosureRealization_of_convexDomain
       (by simpa [U] using isOpenBoundedConvexDomain_openCubeSet Q)
   have hEll : IsEllipticFieldOn 1 1 U a := by
     simpa [a] using isEllipticFieldOn_identityCoeffField
@@ -489,7 +489,7 @@ theorem cubeBesovPairing_solutionComparison_component_eq_cubeAverage_fluxDefect_
 Normalized `cubeBesovPairing` form of
 `dirichletDivergence_fluxComparison_integral_identity`.
 -/
-theorem cubeBesovPairing_fluxComparison_component_eq_cubeAverage_fluxDefect_dualGradient_add_coordinate
+theorem BesovPairing_fluxComparison_component_eq_fluxDefect_dualGradient
     {d : ℕ} [NeZero d] {Q : TriadicCube d} {sigma0 s : ℝ}
     {w F : Vec d → Vec d} {v : H10Function (openCubeSet Q)}
     (i : Fin d) {g : Vec d → ℝ}

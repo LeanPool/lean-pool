@@ -43,20 +43,20 @@ theorem cubeDirichletH2RegularityConstantExact_nonneg
 /-- The dimension-only constant for the unnormalized open-cube `L²` forcing
 version of the Dirichlet `H²` estimate. -/
 @[expose]
-noncomputable def cubeDirichletH2RegularityVolumeL2ConstantExact
+noncomputable def cubeDirichletH2VolumeL2Constant
     (d : ℕ) [NeZero d] : ℝ :=
   cubeDirichletH2RegularityConstantExact (originCube d 0)
 
-theorem cubeDirichletH2RegularityVolumeL2ConstantExact_nonneg
+theorem cubeDirichletH2VolumeL2Constant_nonneg
     (d : ℕ) [NeZero d] :
-    0 ≤ cubeDirichletH2RegularityVolumeL2ConstantExact d := by
+    0 ≤ cubeDirichletH2VolumeL2Constant d := by
   exact cubeDirichletH2RegularityConstantExact_nonneg (originCube d 0)
 
-theorem cubeDirichletH2RegularityConstantExact_eq_volume_rpow_half_mul_volumeL2ConstantExact
+theorem cubeDirichletH2_eq_volumeHalf_mul_volumeL2
     {d : ℕ} [NeZero d] (Q : TriadicCube d) :
     cubeDirichletH2RegularityConstantExact Q =
       (cubeVolume Q) ^ (1 / 2 : ℝ) *
-        cubeDirichletH2RegularityVolumeL2ConstantExact d := by
+        cubeDirichletH2VolumeL2Constant d := by
   let Q₀ : TriadicCube d := originCube d Q.scale
   let V : ℝ := cubeVolume Q₀
   let D₂ : ℝ := (d : ℝ) * (d : ℝ)
@@ -69,7 +69,7 @@ theorem cubeDirichletH2RegularityConstantExact_eq_volume_rpow_half_mul_volumeL2C
   have hcancel :
       (V⁻¹) ^ (1 / 2 : ℝ) * K = K₀ := by
     simpa [V, K, K₀, Q₀] using
-      originCubeParentReducedSolverEnergyConstantExact_volume_cancel d Q.scale
+      parentSolverEnergyConstant_volumeCancel d Q.scale
   have hV_cancel :
       V ^ (1 / 2 : ℝ) * (V⁻¹) ^ (1 / 2 : ℝ) = 1 := by
     rw [Real.inv_rpow hV_nonneg (1 / 2 : ℝ)]
@@ -95,9 +95,9 @@ theorem cubeDirichletH2RegularityConstantExact_eq_volume_rpow_half_mul_volumeL2C
           ring
     _ =
         (cubeVolume Q) ^ (1 / 2 : ℝ) *
-          cubeDirichletH2RegularityVolumeL2ConstantExact d := by
+          cubeDirichletH2VolumeL2Constant d := by
           rw [hVQ]
-          dsimp [cubeDirichletH2RegularityVolumeL2ConstantExact,
+          dsimp [cubeDirichletH2VolumeL2Constant,
             cubeDirichletH2RegularityConstantExact, D₂, K₀, originCube]
 
 theorem originCube_sum_reducedSolverEnergyBoundExact_le_regularityConstant_mul_cubeLpNorm
@@ -147,7 +147,7 @@ theorem cubeDirichletH2RegularityExact
   refine ⟨cubeDirichletH2RegularityConstantExact_nonneg Q, ?_⟩
   intro u F hF hweak
   rcases
-    hweak.exists_hasWeakHessianOn_cube_canonicalRadii_hessianCoordL2NormSum_le_solverEnergyBoundExact
+    hweak.exists_reflectedHessian_solverEnergyBound
       hF with
     ⟨_uP, _huP_toFun, _huP_grad, H, hH⟩
   refine ⟨H, hH.trans ?_⟩
@@ -168,19 +168,19 @@ in the unnormalized open-cube `L²` norm. -/
 theorem cubeDirichletH2RegularityVolumeL2Exact
     {d : ℕ} [NeZero d] (Q : TriadicCube d) :
     CubeDirichletH2RegularityVolumeL2 Q
-      (cubeDirichletH2RegularityVolumeL2ConstantExact d) := by
-  refine ⟨cubeDirichletH2RegularityVolumeL2ConstantExact_nonneg d, ?_⟩
+      (cubeDirichletH2VolumeL2Constant d) := by
+  refine ⟨cubeDirichletH2VolumeL2Constant_nonneg d, ?_⟩
   intro u F hF hweak
   rcases (cubeDirichletH2RegularityExact Q).2 u F hF hweak with ⟨H, hH⟩
   refine ⟨H, hH.trans ?_⟩
   let L : ℝ := cubeLpNorm Q (2 : ℝ≥0∞) F
-  let Cvol : ℝ := cubeDirichletH2RegularityVolumeL2ConstantExact d
+  let Cvol : ℝ := cubeDirichletH2VolumeL2Constant d
   let hFopen := memL2On_openCubeSet_of_memLp_normalizedCubeMeasure Q hF
   have hCscale :
       cubeDirichletH2RegularityConstantExact Q =
         (cubeVolume Q) ^ (1 / 2 : ℝ) * Cvol := by
     simpa [Cvol] using
-      cubeDirichletH2RegularityConstantExact_eq_volume_rpow_half_mul_volumeL2ConstantExact Q
+      cubeDirichletH2_eq_volumeHalf_mul_volumeL2 Q
   have hnorm :
       ‖toScalarL2 hFopen‖ =
         (cubeVolume Q) ^ (1 / 2 : ℝ) * L := by
@@ -196,7 +196,7 @@ theorem cubeDirichletH2RegularityVolumeL2Exact
     _ = Cvol * ‖toScalarL2 hFopen‖ := by
           rw [hnorm]
     _ ≤
-        cubeDirichletH2RegularityVolumeL2ConstantExact d *
+        cubeDirichletH2VolumeL2Constant d *
           ‖toScalarL2 (memL2On_openCubeSet_of_memLp_normalizedCubeMeasure Q hF)‖ := by
           exact le_rfl
 
@@ -205,8 +205,8 @@ theorem cubeDirichletH2RegularityVolumeL2Exact
 theorem exists_cubeDirichletH2RegularityVolumeL2InDimension
     (d : ℕ) [NeZero d] :
     ∃ C : ℝ, CubeDirichletH2RegularityVolumeL2InDimension d C := by
-  refine ⟨cubeDirichletH2RegularityVolumeL2ConstantExact d, ?_⟩
-  exact ⟨cubeDirichletH2RegularityVolumeL2ConstantExact_nonneg d,
+  refine ⟨cubeDirichletH2VolumeL2Constant d, ?_⟩
+  exact ⟨cubeDirichletH2VolumeL2Constant_nonneg d,
     fun Q => cubeDirichletH2RegularityVolumeL2Exact Q⟩
 
 end CubeDirichletWeakPoissonProblem

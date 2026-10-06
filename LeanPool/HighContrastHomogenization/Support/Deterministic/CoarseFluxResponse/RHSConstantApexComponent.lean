@@ -40,7 +40,7 @@ the weak-flux and Poincare scalar sides split into energy, tail, and forcing
 component budgets.  These are the inputs that the remaining analytic
 energy-to-force estimates are meant to discharge separately.
 -/
-theorem cubeBesovNegativeVectorSeminormTwo_fluxDefect_le_two_mul_const_mul_coarseFluxResponseRHSBound_of_aHarmonicFunction_h1DirichletRhsWeakSolutionOn_component_budgets_of_descendant_depth_zero_inputs
+theorem negativeBesovSeminormTwo_fluxDefect_le_two_mul_const_mul_fluxRHSBound_of_inputs
     {d : ℕ} [NeZero d] (Q : TriadicCube d) (a : CoeffField d) (a0 : Mat d)
     (s : ℝ) (gradU g : Vec d → Vec d)
     (v : H1Function (cubeSet Q))
@@ -164,7 +164,7 @@ theorem cubeBesovNegativeVectorSeminormTwo_fluxDefect_le_two_mul_const_mul_coars
     have hRn_scale : R ∈ descendantsAtScale Q (Q.scale - (n : ℤ)) :=
       mem_descendantsAtScale_of_mem_descendantsAtDepth hRn
     have hn_scale : Q.scale - (n : ℤ) ≤ Q.scale := by
-      exact sub_le_self _ (by exact_mod_cast Nat.zero_le n)
+      exact sub_le_self _ (Nat.cast_nonneg n)
     exact OpenCubeDescendantDeterministicCoarseData.of_mem_descendantsAtScale
       hData hn_scale hRn_scale
   have hu_mem_desc :
@@ -232,7 +232,7 @@ theorem cubeBesovNegativeVectorSeminormTwo_fluxDefect_le_two_mul_const_mul_coars
       _ ≤ matNorm a0 * M := by
             exact mul_le_mul_of_nonneg_left (hM ⟨N, rfl⟩) (matNorm_nonneg a0)
   exact
-    cubeBesovNegativeVectorSeminormTwo_fluxDefect_le_two_mul_const_mul_coarseFluxResponseRHSBound_of_aHarmonicFunction_h1DirichletRhsWeakSolutionOn_component_budgets
+    negativeBesovSeminormTwo_fluxDefect_le_two_mul_const_mul_fluxRHSBound
       Q a a0 s gradU g v w C hC_nonneg hs hs_le hEll hEll_open
       ha0 ha0symm hweak hgrad hEll_desc hu_mem_desc hg_mem_desc
       hC_desc hData_desc hsum_desc hchildBdd huBdd_desc

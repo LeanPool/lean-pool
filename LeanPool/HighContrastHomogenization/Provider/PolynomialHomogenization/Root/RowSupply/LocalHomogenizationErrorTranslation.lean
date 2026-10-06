@@ -72,10 +72,9 @@ private theorem normalizedBlockResponseMax_translate_of_physical_ae
     (aPhysical aCentered : Book.Ch02.TriadicCoeffFamily d)
     (f : CoeffField d)
     (hPhysical :
-      (aPhysical.coeffOn (translateCube z Q)).toCoeffField =ᵐ[
-        volumeMeasureOn (openCubeSet (translateCube z Q))] f)
-    (hCentered : (aCentered.coeffOn Q).toCoeffField =ᵐ[
-      volumeMeasureOn (openCubeSet Q)]
+      (aPhysical.coeffOn (translateCube z Q)).toCoeffField
+        =ᵐ[ volumeMeasureOn (openCubeSet (translateCube z Q))] f)
+    (hCentered : (aCentered.coeffOn Q).toCoeffField =ᵐ[ volumeMeasureOn (openCubeSet Q)]
         translateCoeffField (cubeTranslationVector z Q) f)
     (a0 : Mat d) :
     Book.Ch02.normalizedBlockResponseMax
@@ -147,10 +146,9 @@ theorem homogenizationErrorOnCube_translate_of_physical_ae
     (aPhysical aCentered : Book.Ch02.TriadicCoeffFamily d)
     (f : CoeffField d)
     (hPhysical :
-      (aPhysical.coeffOn (translateCube z Q)).toCoeffField =ᵐ[
-        volumeMeasureOn (openCubeSet (translateCube z Q))] f)
-    (hCentered : (aCentered.coeffOn Q).toCoeffField =ᵐ[
-      volumeMeasureOn (openCubeSet Q)]
+      (aPhysical.coeffOn (translateCube z Q)).toCoeffField
+        =ᵐ[ volumeMeasureOn (openCubeSet (translateCube z Q))] f)
+    (hCentered : (aCentered.coeffOn Q).toCoeffField =ᵐ[ volumeMeasureOn (openCubeSet Q)]
         translateCoeffField (cubeTranslationVector z Q) f)
     (s : ℝ) (p q : Book.Ch02.MultiscaleExponent) (a0 : Mat d) :
     Book.Ch02.HomogenizationErrorOnCube (translateCube z Q) s p q

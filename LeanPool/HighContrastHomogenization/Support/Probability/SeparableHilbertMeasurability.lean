@@ -38,7 +38,7 @@ measurable.
 
 theorem measurable_of_measurable_dist_denseRange
     {Ω β : Type*} [MeasurableSpace Ω] [PseudoMetricSpace β]
-    [MeasurableSpace β] [BorelSpace β] [SecondCountableTopology β]
+    [MeasurableSpace β] [BorelSpace β]
     (c : ℕ → β) (hc : DenseRange c) {F : Ω → β}
     (hFdist : ∀ n : ℕ, Measurable fun ω => dist (F ω) (c n)) :
     Measurable F := by

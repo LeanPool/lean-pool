@@ -378,10 +378,10 @@ theorem fullBlockNormalizedFluctuationOperatorNormSqAtScale_le_probeSqBudget_ae
     fun a : RegCoeffField d =>
       ((Fintype.card (BlockCoord d) : ℝ) ^ (2 : ℕ)) *
         fullBlockProbeSqBudget
-          (fullBlockNormalizedFluctuationMatrix hP hStruct center (cubeSet Q) a) := by
+          (normalizedFluctuationMatrix hP hStruct center (cubeSet Q) a) := by
   filter_upwards [fullBlockNormalizedFluctuationMatrix_isSymm_ae hP hStruct center Q] with a hM
   rw [Ch04.fullBlockNormalizedFluctuationOperatorNormSqAtScale,
-    fullBlockNormalizedFluctuationOperatorNormSq_eq_norm_sq]
+    fullBlockFluctuationNormSquare_eq_matrixNormSquare]
   exact fullBlock_operatorNorm_sq_le_probeSqBudget hM
 
 end

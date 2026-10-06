@@ -99,7 +99,7 @@ def annealedAdjointOptimizerFlux (P : Measure (CoeffSpace d))
     (centeredAdjointOptimizer U a p q) i ∂P
 
 /-- The deterministic centered primal response
-`J̃_a(U;p,q)`. -/
+`J_tilde_a(U;p,q)`. -/
 @[expose]
 def centeredResponse (P : Measure (CoeffSpace d)) (U : Domain d)
     (p q : Vec d) : ℝ :=
@@ -108,7 +108,7 @@ def centeredResponse (P : Measure (CoeffSpace d)) (U : Domain d)
       (annealedOptimizerFlux P U p q)
 
 /-- The deterministic centered adjoint response
-`J̃_{aᵗ}(U;p,q)`. -/
+`J_tilde_{aᵗ}(U;p,q)`. -/
 @[expose]
 def centeredAdjointResponse (P : Measure (CoeffSpace d)) (U : Domain d)
     (p q : Vec d) : ℝ :=

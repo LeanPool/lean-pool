@@ -61,7 +61,8 @@ theorem le_rpow_factor_mul_of_rpow_q_div_two_le {A B F q : ℝ} (hq : 0 < q)
           _ = Real.rpow F 1 := by simp [hmul]
           _ = F := by exact Real.rpow_one F
       calc
-        F * Real.rpow B (q / 2) = Real.rpow (Real.rpow F (2 / q)) (q / 2) * Real.rpow B (q / 2) := by
+        F * Real.rpow B (q / 2) = Real.rpow (Real.rpow F (2 / q)) (q / 2) * Real.rpow B (q / 2)
+          := by
           rw [hFpow]
         _ = Real.rpow (Real.rpow F (2 / q) * B) (q / 2) := by
           exact (Real.mul_rpow (Real.rpow_nonneg hF _) hB).symm
@@ -249,7 +250,7 @@ theorem multiscale_ellipticity_LambdaSq_finite_rpow_q_div_two_le_changeOfQ {d : 
       (H := fun n => maxDescendantBBlockNormAtScale Q (Q.scale - (n : ℤ)) a)
       (fun n =>
         maxDescendantBBlockNormAtScale_nonneg Q
-          (sub_le_self _ (by exact_mod_cast Nat.zero_le n)) a)
+          (sub_le_self _ (Nat.cast_nonneg n)) a)
       hsum_p
   have hLambdaP_nonneg :
       0 ≤ LambdaSq Q s (.finite p) a := by
@@ -389,7 +390,7 @@ theorem multiscale_ellipticity_lambdaSq_finite_rpow_neg_q_div_two_le_changeOfQ {
       (H := fun n => maxDescendantSigmaStarInvNormAtScale Q (Q.scale - (n : ℤ)) a)
       (fun n =>
         maxDescendantSigmaStarInvNormAtScale_nonneg Q
-          (sub_le_self _ (by exact_mod_cast Nat.zero_le n)) a)
+          (sub_le_self _ (Nat.cast_nonneg n)) a)
       hsum_p
   have hlambdaP_nonneg :
       0 ≤ lambdaSq Q s (.finite p) a := by

@@ -184,13 +184,14 @@ theorem sqCutoffForwardDifferenceQuotientToH10_grad_ae
     intro j
     exact sqCutoffForwardDifferenceQuotientToH10_grad_coord_ae
       hU u hV hVU step i j hVshift hη hη_compact hη_sub
-  filter_upwards [(Filter.eventually_all (l := MeasureTheory.ae (MeasureTheory.volume.restrict U))).2 hcoord] with x hx
+  filter_upwards [(Filter.eventually_all (l := MeasureTheory.ae (MeasureTheory.volume.restrict
+    U))).2 hcoord] with x hx
   ext j
   exact hx j
 
 /-- The whole-space backward quotient bound specialized to the squared-cutoff
 forward difference quotient test. -/
-theorem eLpNorm_backwardDifferenceQuotient_sqCutoffForwardDifferenceQuotient_le_eLpNorm_sqCutoffForwardDifferenceQuotientToH10_grad
+theorem eLpNorm_backwardDifference_cutoffForwardDifference_le_eLpNorm_H10Gradient
     (hU : IsOpen U)
     (u : H1Function U) (hV : IsOpenBoundedConvexDomain V) (hVU : V ⊆ U)
     {step : ℝ} (hstep : step ≠ 0) (i : Fin d)
@@ -220,7 +221,7 @@ theorem eLpNorm_backwardDifferenceQuotient_sqCutoffForwardDifferenceQuotient_le_
 
 /-- The squared-cutoff direct test is controlled by the explicit product-rule
 gradient of `η²D_i^+u`. -/
-theorem eLpNorm_backwardDifferenceQuotient_sqCutoffForwardDifferenceQuotient_le_eLpNorm_localizedSqCutoffForwardDifferenceQuotientToAmbient_grad
+theorem eLpNorm_backwardDifference_cutoffForwardDifference_le_eLpNorm_cutoffGradient
     (hU : IsOpen U)
     (u : H1Function U) (hV : IsOpenBoundedConvexDomain V) (hVU : V ⊆ U)
     {step : ℝ} (hstep : step ≠ 0) (i : Fin d)
@@ -238,7 +239,7 @@ theorem eLpNorm_backwardDifferenceQuotient_sqCutoffForwardDifferenceQuotient_le_
             hη hη_compact hη_sub).grad x i)
         2 (MeasureTheory.volume.restrict U) := by
   have hbase :=
-    eLpNorm_backwardDifferenceQuotient_sqCutoffForwardDifferenceQuotient_le_eLpNorm_sqCutoffForwardDifferenceQuotientToH10_grad
+    eLpNorm_backwardDifference_cutoffForwardDifference_le_eLpNorm_H10Gradient
       (U := U) (V := V) hU u hV hVU hstep i hVshift hη hη_compact hη_sub
   have hgrad_ae :=
     sqCutoffForwardDifferenceQuotientToH10_grad_coord_ae
@@ -493,7 +494,7 @@ theorem support_vecDot_localizedSqShiftedCutoffBackwardDifferenceQuotientToAmbie
 
 /-- Transport the shifted localized-gradient pairing from `U` back to the
 interior set `V`. -/
-theorem integral_vecDot_localizedSqShiftedCutoffBackwardDifferenceQuotientToAmbient_grad_eq_integral_on
+theorem shiftedCutoff_backwardGradient_integral_eq_forward
     (G : Vec d → Vec d)
     (u : H1Function U) (hV : IsOpenBoundedConvexDomain V) (hVU : V ⊆ U)
     (step : ℝ) (i : Fin d)
@@ -808,12 +809,13 @@ theorem backwardDifferenceQuotientSqCutoffForwardDifferenceQuotientToH10_grad_ae
     intro j
     exact backwardDifferenceQuotientSqCutoffForwardDifferenceQuotientToH10_grad_coord_ae
       hU u hV hVU step i j hVshift hη hη_compact hη_sub
-  filter_upwards [(Filter.eventually_all (l := MeasureTheory.ae (MeasureTheory.volume.restrict U))).2 hcoord] with x hx
+  filter_upwards [(Filter.eventually_all (l := MeasureTheory.ae (MeasureTheory.volume.restrict
+    U))).2 hcoord] with x hx
   ext j
   exact hx j
 
 /-- Integral-square form of the specialized direct-test quotient bound. -/
-theorem integral_sq_backwardDifferenceQuotient_sqCutoffForwardDifferenceQuotient_le_integral_sq_localizedSqCutoffForwardDifferenceQuotientToAmbient_grad
+theorem integral_backwardDifference_cutoffForwardDifference_le_integral_cutoffGradient
     (hU : IsOpen U)
     (u : H1Function U) (hV : IsOpenBoundedConvexDomain V) (hVU : V ⊆ U)
     {step : ℝ} (hstep : step ≠ 0) (i : Fin d)
@@ -838,7 +840,7 @@ theorem integral_sq_backwardDifferenceQuotient_sqCutoffForwardDifferenceQuotient
         (U := U) (V := V) u hV hVU step i hVshift
         hη hη_compact hη_sub).grad x i
   have hnorm_global :=
-    eLpNorm_backwardDifferenceQuotient_sqCutoffForwardDifferenceQuotient_le_eLpNorm_localizedSqCutoffForwardDifferenceQuotientToAmbient_grad
+    eLpNorm_backwardDifference_cutoffForwardDifference_le_eLpNorm_cutoffGradient
       (U := U) (V := V) hU u hV hVU hstep i hVshift hη hη_compact hη_sub
   have hT_support : Function.support T ⊆ U := by
     simpa [T] using

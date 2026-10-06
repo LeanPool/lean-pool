@@ -131,7 +131,8 @@ def CoarseCaccioppoliBoundarySingleCubeScaleLocalization
         coarseCaccioppoliGapInv ρ₁ ρ₂ *
           Real.rpow (3 : ℝ) (-coarseCaccioppoliSigma s t * h ρ₁ ρ₂)
 
-theorem CoarseCaccioppoliBoundarySingleCubeScaleLocalization.of_triadicGapScaleChoice_of_height_lower_bounds
+theorem
+  CoarseCaccioppoliBoundarySingleCubeScaleLocalization.of_gapScale_heightBounds
     (s t : ℝ) (k : ℝ → ℝ → ℕ) (h : ℝ → ℝ → ℝ)
     (hs : 0 < s) (ht : 0 < t)
     (hchoice :
@@ -270,7 +271,8 @@ theorem CoarseCaccioppoliBoundarySingleCubeEllipticityLocalization.of_monotonici
       _ = Real.rpow (ThetaRatio Q s t a) (1 / 2 : ℝ) := by
             rw [thetaRatio_rpow_half_eq_mul_rpow_half_rpow_neg_half Q s t a hs ht]
 
-theorem CoarseCaccioppoliBoundarySingleCubeEllipticityLocalization.of_isEllipticFieldOn_of_isSigmaCoarse
+theorem
+  CoarseCaccioppoliBoundarySingleCubeEllipticityLocalization.of_ellipticity_sigmaCoarse
     {d : ℕ} [NeZero d] (Q : TriadicCube d) (a : CoeffField d) {s t lam Lam : ℝ}
     (hs : 0 < s) (ht : 0 < t) (hst : s + t < 1)
     (hEll : IsEllipticFieldOn lam Lam (openCubeSet Q) a)
@@ -350,7 +352,8 @@ theorem CoarseCaccioppoliBoundarySingleCubeBaseLocalization.of_scale_of_elliptic
           (multiscale_ellipticity_lambdaSq_one_nonneg Q (1 - s) a (sub_nonneg.mpr hs1.le)) _)
     exact mul_le_mul hscale_cent helliptic.2 hell_left_nonneg hright_nonneg
 
-theorem CoarseCaccioppoliBoundarySingleCubeBaseLocalization.of_scale_of_isEllipticFieldOn_of_isSigmaCoarse
+theorem
+  CoarseCaccioppoliBoundarySingleCubeBaseLocalization.of_scale_ellipticity_sigmaCoarse
     {d : ℕ} [NeZero d] (Q : TriadicCube d) (a : CoeffField d) {s t lam Lam : ℝ}
     (k h : ℝ → ℝ → ℝ)
     (hs : 0 < s) (ht : 0 < t) (hst : s + t < 1)
@@ -380,7 +383,7 @@ theorem CoarseCaccioppoliBoundarySingleCubeBaseLocalization.of_scale_of_isEllipt
     CoarseCaccioppoliBoundarySingleCubeBaseLocalization.of_scale_of_ellipticity
       Q a s t k h hs (by linarith)
       hscale
-      (CoarseCaccioppoliBoundarySingleCubeEllipticityLocalization.of_isEllipticFieldOn_of_isSigmaCoarse
+      (CoarseCaccioppoliBoundarySingleCubeEllipticityLocalization.of_ellipticity_sigmaCoarse
         Q a hs ht hst hEll hData hBsum_s hSigmaSum_t)
 
 theorem CoarseCaccioppoliBoundarySingleCubeCoefficientLocalization.of_baseLocalization
@@ -451,7 +454,8 @@ theorem CoarseCaccioppoliBoundarySingleCubeCoefficientLocalization.of_scale_of_e
       (CoarseCaccioppoliBoundarySingleCubeBaseLocalization.of_scale_of_ellipticity
         Q a s t k h hs hs1 hscale helliptic)
 
-theorem CoarseCaccioppoliBoundarySingleCubeCoefficientLocalization.of_scale_of_isEllipticFieldOn_of_isSigmaCoarse
+theorem
+  CoarseCaccioppoliBoundarySingleCubeCoefficientLocalization.of_scale_ellipticity_sigmaCoarse
     {d : ℕ} [NeZero d] (Q : TriadicCube d) (a : CoeffField d)
     {s t lam Lam : ℝ} (C uL2Sq : ℝ) (k h : ℝ → ℝ → ℝ)
     (hC : 0 ≤ C) (hs : 0 < s) (ht : 0 < t) (hst : s + t < 1)
@@ -480,10 +484,11 @@ theorem CoarseCaccioppoliBoundarySingleCubeCoefficientLocalization.of_scale_of_i
   exact
     CoarseCaccioppoliBoundarySingleCubeCoefficientLocalization.of_baseLocalization
       Q a s t C uL2Sq k h hC hs (by linarith)
-      (CoarseCaccioppoliBoundarySingleCubeBaseLocalization.of_scale_of_isEllipticFieldOn_of_isSigmaCoarse
+      (CoarseCaccioppoliBoundarySingleCubeBaseLocalization.of_scale_ellipticity_sigmaCoarse
         Q a k h hs ht hst hscale hEll hData hBsum_s hSigmaSum_t)
 
-theorem CoarseCaccioppoliBoundarySingleCubeCoefficientLocalization.of_triadicGapScaleChoice_of_height_lower_bounds_of_isEllipticFieldOn_of_isSigmaCoarse
+theorem
+  CoarseCaccioppoliBoundarySingleCubeCoefficientLocalization.of_heightBounds_sigmaData
     {d : ℕ} [NeZero d] (Q : TriadicCube d) (a : CoeffField d)
     {s t lam Lam : ℝ} (C uL2Sq : ℝ) (k : ℝ → ℝ → ℕ) (h : ℝ → ℝ → ℝ)
     (hC : 0 ≤ C) (hs : 0 < s) (ht : 0 < t) (hst : s + t < 1)
@@ -519,14 +524,15 @@ theorem CoarseCaccioppoliBoundarySingleCubeCoefficientLocalization.of_triadicGap
     CoarseCaccioppoliBoundarySingleCubeCoefficientLocalization Q a s t C uL2Sq
       (fun ρ₁ ρ₂ => (k ρ₁ ρ₂ : ℝ)) h := by
   exact
-    CoarseCaccioppoliBoundarySingleCubeCoefficientLocalization.of_scale_of_isEllipticFieldOn_of_isSigmaCoarse
+    CoarseCaccioppoliBoundarySingleCubeCoefficientLocalization.of_scale_ellipticity_sigmaCoarse
       Q a C uL2Sq (fun ρ₁ ρ₂ => (k ρ₁ ρ₂ : ℝ)) h
       hC hs ht hst
-      (CoarseCaccioppoliBoundarySingleCubeScaleLocalization.of_triadicGapScaleChoice_of_height_lower_bounds
+      (CoarseCaccioppoliBoundarySingleCubeScaleLocalization.of_gapScale_heightBounds
         s t k h hs ht hchoice hheight_const hheight_cent)
       hEll hData hBsum_s hSigmaSum_t
 
-theorem CoarseCaccioppoliBoundarySingleCubeCoefficientLocalization.of_triadicGapScaleChoice_of_localizedExplicitHeightOfScaleChoice_of_isEllipticFieldOn_of_isSigmaCoarse
+theorem
+  CoarseCaccioppoliBoundarySingleCubeCoefficientLocalization.of_heightChoice_ellipticSigma
     {d : ℕ} [NeZero d] (Q : TriadicCube d) (a : CoeffField d)
     {s t lam Lam : ℝ} (C uL2Sq : ℝ) (k : ℝ → ℝ → ℕ)
     (hC : 0 ≤ C) (hs : 0 < s) (ht : 0 < t) (hst : s + t < 1)
@@ -573,16 +579,17 @@ theorem CoarseCaccioppoliBoundarySingleCubeCoefficientLocalization.of_triadicGap
       coarseCaccioppoliBoundaryLocalizedExplicitHeightAtScale_ge_four_div_s_add_t
         Q a (k ρ₁ ρ₂) hs ht
   exact
-    CoarseCaccioppoliBoundarySingleCubeCoefficientLocalization.of_triadicGapScaleChoice_of_height_lower_bounds_of_isEllipticFieldOn_of_isSigmaCoarse
+    CoarseCaccioppoliBoundarySingleCubeCoefficientLocalization.of_heightBounds_sigmaData
       Q a C uL2Sq k
       (coarseCaccioppoliBoundaryLocalizedExplicitHeightOfScaleChoice Q a s t C k)
       hC hs ht hst hchoice hheight_const hheight_cent hEll hData hBsum_s hSigmaSum_t
 
 /-- Integerized variant of
-`of_triadicGapScaleChoice_of_localizedExplicitHeightOfScaleChoice_of_isEllipticFieldOn_of_isSigmaCoarse`.
+`of_heightChoice_ellipticSigma`.
 The resulting height is the real cast of a natural depth, which is the form
 needed by the small-cube proof. -/
-theorem CoarseCaccioppoliBoundarySingleCubeCoefficientLocalization.of_triadicGapScaleChoice_of_integerizedLocalizedExplicitHeightOfScaleChoice_of_isEllipticFieldOn_of_isSigmaCoarse
+theorem
+  CoarseCaccioppoliBoundarySingleCubeCoefficientLocalization.of_integerizedHeightChoice
     {d : ℕ} [NeZero d] (Q : TriadicCube d) (a : CoeffField d)
     {s t lam Lam : ℝ} (C uL2Sq : ℝ) (k : ℝ → ℝ → ℕ)
     (hC : 0 ≤ C) (hs : 0 < s) (ht : 0 < t) (hst : s + t < 1)
@@ -633,7 +640,7 @@ theorem CoarseCaccioppoliBoundarySingleCubeCoefficientLocalization.of_triadicGap
       coarseCaccioppoliBoundaryIntegerizedLocalizedExplicitHeightAtScale_ge_four_div_s_add_t
         Q a (k ρ₁ ρ₂) hs ht
   exact
-    CoarseCaccioppoliBoundarySingleCubeCoefficientLocalization.of_triadicGapScaleChoice_of_height_lower_bounds_of_isEllipticFieldOn_of_isSigmaCoarse
+    CoarseCaccioppoliBoundarySingleCubeCoefficientLocalization.of_heightBounds_sigmaData
       Q a C uL2Sq k
       (coarseCaccioppoliBoundaryIntegerizedLocalizedExplicitHeightOfScaleChoice Q a s t C k)
       hC hs ht hst hchoice hheight_const hheight_cent hEll hData hBsum_s hSigmaSum_t

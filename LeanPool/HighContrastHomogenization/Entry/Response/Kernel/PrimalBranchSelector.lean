@@ -78,7 +78,8 @@ theorem primal_branches {γ : ℝ} (hγ : γ ∈ Set.Ico (0 : ℝ) 1) (t : ℤ) 
         ≤ (∑ n ∈ Finset.range (H + 1), (3 : ℝ) ^ (-((n : ℝ) / 2)) *
               Real.sqrt ((((triadicIndexBox d n).card : ℝ))⁻¹ *
                 ∑ w ∈ triadicIndexBox d n, blockVecDot (avg n w) (avg n w)))
-          + 16 / (1 - Quenched.contrastRho γ) * K * (3 : ℝ) ^ (-(Quenched.contrastAlpha γ * (H : ℝ))) * En) := by
+          + 16 / (1 - Quenched.contrastRho γ) * K * (3 : ℝ) ^ (-(Quenched.contrastAlpha γ * (H :
+            ℝ))) * En) := by
   constructor
   · intro hbad
     -- The bad branch works on the whole series, normalized termwise.
@@ -243,8 +244,10 @@ theorem scaleTail_of_inputs (q : Mat d) (t : ℤ) (n : ℕ) (R : BlockMat d)
                 (optimizerField b u))))
     (hcell : ∀ w ∈ triadicIndexBox d n,
       blockVecDot
-          (blockMatVecMul R (cellAverage (adaptedCellAtCenter q (t - (n : ℤ)) w) (optimizerField b u)))
-          (blockMatVecMul R (cellAverage (adaptedCellAtCenter q (t - (n : ℤ)) w) (optimizerField b u)))
+          (blockMatVecMul R (cellAverage (adaptedCellAtCenter q (t - (n : ℤ)) w) (optimizerField
+            b u)))
+          (blockMatVecMul R (cellAverage (adaptedCellAtCenter q (t - (n : ℤ)) w) (optimizerField
+            b u)))
         ≤ (K * B) ^ 2 *
           (2 * volumeAverage (adaptedCellAtCenter q (t - (n : ℤ)) w)
             (fun x => vecDot (optimizerField b u x).1 (optimizerField b u x).2)))
@@ -483,7 +486,8 @@ theorem summable_centred (q : Mat d) (hq : IsUnit q) (t : ℤ) (A : BlockMat d)
       Real.sqrt ((((triadicIndexBox d n).card : ℝ))⁻¹ *
         ∑ w ∈ triadicIndexBox d n,
           blockVecDot
-            (blockMatVecMul A (cellAverageFamily q t X n w - cellAverage (HighContrast.adaptedCell q t) X))
+            (blockMatVecMul A (cellAverageFamily q t X n w - cellAverage
+              (HighContrast.adaptedCell q t) X))
             (blockMatVecMul A (cellAverageFamily q t X n w -
               cellAverage (HighContrast.adaptedCell q t) X)))) := by
   classical

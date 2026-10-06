@@ -47,15 +47,21 @@ The intended use is:
 Keeping these constants in the profile avoids burying the hard one-dimensional
 analysis inside the ball and cube cutoff proofs. -/
 structure QuantitativeTransitionProfile where
+  /-- The smooth transition function taking values in `[0, 1]`, equal to zero on `t ≤ 0` and one
+  on `t ≥ 1`. -/
   toFun : ℝ → ℝ
   smooth : ContDiff ℝ (⊤ : ℕ∞) toFun
   zero_of_nonpos : ∀ {t : ℝ}, t ≤ 0 → toFun t = 0
   one_of_one_le : ∀ {t : ℝ}, 1 ≤ t → toFun t = 1
   nonneg : ∀ t, 0 ≤ toFun t
   le_one : ∀ t, toFun t ≤ 1
+  /-- A nonnegative uniform bound for the absolute value of the transition function's first
+  derivative. -/
   derivBound : ℝ
   derivBound_nonneg : 0 ≤ derivBound
   norm_deriv_le : ∀ t, ‖deriv toFun t‖ ≤ derivBound
+  /-- A nonnegative uniform bound for the absolute value of the transition function's second
+  derivative. -/
   secondDerivBound : ℝ
   secondDerivBound_nonneg : 0 ≤ secondDerivBound
   norm_secondDeriv_le : ∀ t, ‖deriv (deriv toFun) t‖ ≤ secondDerivBound

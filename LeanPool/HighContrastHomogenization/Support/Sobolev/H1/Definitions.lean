@@ -38,15 +38,20 @@ smooth compactly supported tests. `H¹₀(U)` adds the usual approximation packa
 by smooth compactly supported functions supported in `U`.
 -/
 
+/-- Square-integrability with respect to Lebesgue measure restricted to `U`. -/
 abbrev MemL2On {d : ℕ} (U : Set (Vec d)) (u : Vec d → ℝ) : Prop :=
   MeasureTheory.MemLp u 2 (MeasureTheory.volume.restrict U)
 
+/-- Square-integrability on `U` of every coordinate of the supplied gradient field. -/
 @[expose]
 def GradMemL2On {d : ℕ} (U : Set (Vec d)) (Du : Vec d → Vec d) : Prop :=
   ∀ i : Fin d, MemL2On U (fun x => Du x i)
 
+/-- A scalar function and weak gradient whose components are square-integrable on `U`. -/
 structure H1Function {d : ℕ} (U : Set (Vec d)) where
+  /-- The pointwise scalar representative of the Sobolev function. -/
   toFun : Vec d → ℝ
+  /-- The pointwise weak gradient, with square-integrable coordinates on `U`. -/
   grad : Vec d → Vec d
   memL2 : MemL2On U toFun
   gradMemL2 : GradMemL2On U grad
@@ -55,11 +60,15 @@ structure H1Function {d : ℕ} (U : Set (Vec d)) where
 instance {d : ℕ} {U : Set (Vec d)} : CoeFun (H1Function U) (fun _ => Vec d → ℝ) where
   coe u := u.toFun
 
+/-- Existence of an `H¹` representative on `U` equal to the given function. -/
 @[expose]
 def MemH1 {d : ℕ} (U : Set (Vec d)) (u : Vec d → ℝ) : Prop :=
   ∃ v : H1Function U, v.toFun = u
 
+/-- An `H¹` function approximated in value and gradient by smooth functions compactly supported
+in `U`. -/
 structure H10Function {d : ℕ} (U : Set (Vec d)) extends H1Function U where
+  /-- The smooth compactly supported sequence converging in `H¹` on `U`. -/
   approx : ℕ → Vec d → ℝ
   approx_smooth : ∀ n, ContDiff ℝ (⊤ : ℕ∞) (approx n)
   approx_hasCompactSupport : ∀ n, HasCompactSupport (approx n)
@@ -80,10 +89,12 @@ structure H10Function {d : ℕ} (U : Set (Vec d)) extends H1Function U where
 instance {d : ℕ} {U : Set (Vec d)} : CoeFun (H10Function U) (fun _ => Vec d → ℝ) where
   coe u := u.toH1Function.toFun
 
+/-- Existence of an `H¹₀` representative on `U` equal to the given function. -/
 @[expose]
 def MemH10 {d : ℕ} (U : Set (Vec d)) (u : Vec d → ℝ) : Prop :=
   ∃ v : H10Function U, v.toH1Function.toFun = u
 
+/-- Vanishing of the function's Lebesgue integral over `U`. -/
 @[expose]
 noncomputable def MeanZeroOn {d : ℕ} (U : Set (Vec d)) (u : Vec d → ℝ) : Prop :=
   ∫ x in U, u x ∂MeasureTheory.volume = 0

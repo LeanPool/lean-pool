@@ -135,11 +135,11 @@ theorem
               exact mul_le_mul_of_nonneg_left (add_le_add hterm1 hterm2) (by norm_num)
       _ ≤ Bg := hBg_bound
   exact
-    abs_cubeAverage_vecDot_centered_scalar_smul_le_collapsed_average_note_terms_of_partialBounds_of_projectedDualMeanZeroPoincareEstimate
+    abs_cubeAverage_vectorDot_centered_scalar_smul_le_noteTerms_of_partialBounds
       Q s flux u g ξ hs0 hflux hu hg hξLp hBg hBavg hC havg hneg hpos hproj hneg1
 
 theorem
-    abs_cubeAverage_vecDot_centered_scalar_smul_le_collapsed_sharp_note_terms_of_contDiff_component_bound
+    abs_cubeAverage_vectorDot_centered_scalar_smul_le_collapsed_sharp_note_terms
     {d : ℕ} (Q : TriadicCube d) (s : ℝ) (flux : Vec d → Vec d)
     (u g : Vec d → ℝ) (ξ : Vec d → Vec d) {Bu Bavg Bcirc1 BcircS B C Bg : ℝ}
     (hB : 0 ≤ B) (hs0 : 0 < s) (hs1 : s < 1)
@@ -247,11 +247,11 @@ theorem
               exact mul_le_mul_of_nonneg_left (add_le_add hterm1 hterm2) (by norm_num)
       _ ≤ Bg := hBg_bound
   exact
-    abs_cubeAverage_vecDot_centered_scalar_smul_le_collapsed_sharp_average_note_terms_of_partialBounds_of_projectedDualMeanZeroPoincareEstimate
+    abs_cubeAverage_vectorDot_centered_scalar_smul_le_of_partialBounds
       Q s flux u g ξ hs0 hflux hu hg hξLp hBg hBavg hC havg hneg hpos hproj hneg1
 
 theorem
-    abs_cubeAverage_vecDot_centered_scalar_smul_le_collapsed_note_terms_of_contDiff_component_vector_bound
+    abs_cubeAverage_vectorDot_centered_scalar_smul_le_collapsed_note_terms
     {d : ℕ} (Q : TriadicCube d) (s : ℝ) (flux : Vec d → Vec d)
     (u : Vec d → ℝ) (G : Vec d → Vec d) (ξ : Vec d → Vec d)
     {Bu Bavg Bcirc1 BcircS B C Bg : ℝ}
@@ -299,17 +299,17 @@ theorem
           (fun x => (u x - cubeAverage Q u) • ξ x) ≤ Bg := by
     intro N
     exact le_trans
-      (cubeBesovPositiveVectorPartialSeminormTwo_centered_scalar_smul_le_note_vector_poincare_cutoff_terms
+      (cubeBesovPositiveVectorPartial_centered_smul_le_poincareCutoff
         Q s N u G ξ hB hu (hproj N) hG hξLp hξ hderiv hs0 hs1 hC hBcircS
         (fun i => hGcirc1 i N) (fun i => hGcircS i N))
       hBg_bound
   exact
-    abs_cubeAverage_vecDot_centered_scalar_smul_le_collapsed_average_note_terms_of_partialBounds_of_projectedDualMeanZeroVectorPoincareEstimate
+    abs_cubeAverage_vectorDot_centered_scalar_smul_le_partialPoincareBounds
       Q s flux u G ξ hs0 hflux hu hG hξLp hBg hBavg hC havg hneg hpos hproj
       hGcirc1
 
 theorem
-    abs_cubeAverage_vecDot_centered_scalar_smul_le_collapsed_sharp_note_terms_of_contDiff_component_vector_bound
+    abs_cubeAverage_vectorDot_centered_scalar_smul_le_collapsed_sharp_note_of_vector
     {d : ℕ} (Q : TriadicCube d) (s : ℝ) (flux : Vec d → Vec d)
     (u : Vec d → ℝ) (G : Vec d → Vec d) (ξ : Vec d → Vec d)
     {Bu Bavg Bcirc1 BcircS B C Bg : ℝ}
@@ -356,12 +356,12 @@ theorem
           (fun x => (u x - cubeAverage Q u) • ξ x) ≤ Bg := by
     intro N
     exact le_trans
-      (cubeBesovPositiveVectorPartialSeminormTwo_centered_scalar_smul_le_note_vector_poincare_cutoff_terms
+      (cubeBesovPositiveVectorPartial_centered_smul_le_poincareCutoff
         Q s N u G ξ hB hu (hproj N) hG hξLp hξ hderiv hs0 hs1 hC hBcircS
         (fun i => hGcirc1 i N) (fun i => hGcircS i N))
       hBg_bound
   exact
-    abs_cubeAverage_vecDot_centered_scalar_smul_le_collapsed_sharp_average_note_terms_of_partialBounds_of_projectedDualMeanZeroVectorPoincareEstimate
+    abs_cubeAverage_vectorDot_centered_scalar_smul_le_sharpPartialPoincareBounds
       Q s flux u G ξ hs0 hflux hu hG hξLp hBg hBavg hC havg hneg hpos hproj
       hGcirc1
 

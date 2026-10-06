@@ -421,7 +421,7 @@ Two-exponent descendant-to-parent coefficient localization for the response
 correction component.  The local flux-response exponent is `s`, while the
 force is measured at the stronger positive exponent `t`.
 -/
-theorem coarseFluxResponseRHSResponseCorrectionBound_le_parent_coeff_forceExponent_of_mem_descendantsAtDepth
+theorem coarseFluxResponse_rhsResponseCorrection_le_parentExponent
     {d : ℕ} {Q R : TriadicCube d} (a : CoeffField d) (a0 : Mat d)
     {s t : ℝ} {j : ℕ} (g : Vec d → Vec d)
     (hs : 0 < s) (hst : s ≤ t) (hR : R ∈ descendantsAtDepth Q j)
@@ -477,7 +477,7 @@ theorem coarseFluxResponseRHSResponseCorrectionBound_le_parent_coeff_forceExpone
 Two-exponent descendant-to-parent coefficient localization for the weak-flux
 correction component.
 -/
-theorem coarseFluxResponseRHSWeakFluxCorrectionBound_le_parent_coeff_forceExponent_of_mem_descendantsAtDepth
+theorem coarseFluxResponse_weakFluxCorrection_le_parentExponent
     {d : ℕ} {Q R : TriadicCube d} (a : CoeffField d)
     {s t : ℝ} {j : ℕ} (g : Vec d → Vec d)
     (hs : 0 < s) (hst : s ≤ t) (hR : R ∈ descendantsAtDepth Q j)
@@ -537,7 +537,7 @@ theorem coarseFluxResponseRHSWeakFluxCorrectionBound_le_parent_coeff_forceExpone
 Two-exponent descendant-to-parent coefficient localization for the Poincare
 correction component.
 -/
-theorem coarseFluxResponseRHSPoincareCorrectionBound_le_parent_coeff_forceExponent_of_mem_descendantsAtDepth
+theorem coarseFluxResponse_poincareCorrection_le_parentExponent
     {d : ℕ} {Q R : TriadicCube d} (a : CoeffField d) (a0 : Mat d)
     {s t : ℝ} {j : ℕ} (g : Vec d → Vec d)
     (hs : 0 < s) (hst : s ≤ t) (hR : R ∈ descendantsAtDepth Q j)
@@ -596,7 +596,7 @@ Localized forcing correction absorbed into the §3.3.B forcing term, with the
 three pointwise coefficient localizations discharged from descendant
 multiscale-ellipticity summability.
 -/
-theorem localizedCoarseFluxResponseRHSForcingCorrectionBound_le_coarseGrainingL2FluxDefectForcingTerm_of_bddAbove_of_summable
+theorem FluxForcingCorrectionBound_le_coarseGrainingL2FluxDefectForcingTerm
     {d : ℕ} (Q : TriadicCube d) (a : CoeffField d) (a0 : Mat d)
     {s : ℝ} (j : ℕ) (g : Vec d → Vec d)
     (hs : 0 < s)
@@ -622,7 +622,7 @@ theorem localizedCoarseFluxResponseRHSForcingCorrectionBound_le_coarseGrainingL2
         localizedCoarseFluxResponseRHSWeakFluxCorrectionBound Q a s j g +
         localizedCoarseFluxResponseRHSPoincareCorrectionBound Q a a0 s j g ≤
       coarseGrainingL2FluxDefectForcingTerm Q a a0 s j g :=
-  localizedCoarseFluxResponseRHSForcingCorrectionBound_le_coarseGrainingL2FluxDefectForcingTerm_of_pointwise_parent_coeff_bounds_of_bddAbove
+  fluxForcingCorrectionBound_le_coarseGrainingForcingTerm_of_parentBounds
     Q a a0 j g hs hgBdd hgBdd_desc
     (fun R hR =>
       coarseFluxResponseRHSResponseCorrectionBound_le_parent_coeff_of_mem_descendantsAtDepth
@@ -638,7 +638,7 @@ theorem localizedCoarseFluxResponseRHSForcingCorrectionBound_le_coarseGrainingL2
 Two-exponent localized forcing correction with parent coefficient localization
 and the inverse force-depth weight kept visible.
 -/
-theorem localizedCoarseFluxResponseRHSForcingCorrectionBound_le_parent_coeff_mul_depthWeight_inv_forceExponent_of_bddAbove_of_summable
+theorem FluxForcingCorrectionBound_le_coeff_mul_depthWeight_inv_forceExponent
     {d : ℕ} (Q : TriadicCube d) (a : CoeffField d) (a0 : Mat d)
     {s t : ℝ} (j : ℕ) (g : Vec d → Vec d)
     (hs : 0 < s) (hst : s ≤ t)
@@ -732,7 +732,7 @@ theorem localizedCoarseFluxResponseRHSForcingCorrectionBound_le_parent_coeff_mul
       cubeBesovPositiveVectorPartialSeminormTwo_bddAbove_of_exponent_le
         R g hst (hgBdd_desc R hR)
   have hmain :=
-    localizedCoarseFluxResponseRHSForcingCorrectionBound_le_coeffSum_mul_depthWeight_inv_mul_parent_forceExponent_of_pointwise_le_of_bddAbove
+    FluxForcingCorrectionBound_le_coeffSum_mul_depthWeight_inv_mul_parentExponent
       Q a a0 j g hC₁_nonneg hC₂_nonneg hC₃_nonneg hgBdd hgBdd_desc
       (fun R hR =>
         coarseFluxResponseRHSResponseCorrectionBound_nonneg_of_bddAbove
@@ -746,19 +746,19 @@ theorem localizedCoarseFluxResponseRHSForcingCorrectionBound_le_parent_coeff_mul
       (fun R hR =>
         by
           simpa [C₁] using
-            coarseFluxResponseRHSResponseCorrectionBound_le_parent_coeff_forceExponent_of_mem_descendantsAtDepth
+            coarseFluxResponse_rhsResponseCorrection_le_parentExponent
               (Q := Q) (R := R) a a0 g hs hst hR (hgBdd_desc R hR)
               hsumSigma)
       (fun R hR =>
         by
           simpa [C₂] using
-            coarseFluxResponseRHSWeakFluxCorrectionBound_le_parent_coeff_forceExponent_of_mem_descendantsAtDepth
+            coarseFluxResponse_weakFluxCorrection_le_parentExponent
               (Q := Q) (R := R) a g hs hst hR (hgBdd_desc R hR)
               hsumB hsumSigma)
       (fun R hR =>
         by
           simpa [C₃] using
-            coarseFluxResponseRHSPoincareCorrectionBound_le_parent_coeff_forceExponent_of_mem_descendantsAtDepth
+            coarseFluxResponse_poincareCorrection_le_parentExponent
               (Q := Q) (R := R) a a0 g hs hst hR (hgBdd_desc R hR)
               hsumSigma)
   simpa [C₁, C₂, C₃, add_assoc] using hmain
@@ -767,7 +767,7 @@ theorem localizedCoarseFluxResponseRHSForcingCorrectionBound_le_parent_coeff_mul
 Scalar §3.3 RHS comparison with the localized energy average and the
 scale-separated two-exponent forcing correction.
 -/
-theorem localizedCoarseFluxResponseRHSBound_le_coarseGrainingL2FluxDefectBoundTwoExponent_of_bddAbove_of_isEllipticFieldOn_of_summable
+theorem CoarseFluxRHSBound_le_coarseGrainingFluxBoundTwoExponent
     {d : ℕ} (Q : TriadicCube d) (a : CoeffField d) (a0 : Mat d)
     {s t : ℝ} (j : ℕ) (gradU g : Vec d → Vec d) {lam Lam : ℝ}
     (hs : 0 < s) (hst : s ≤ t)
@@ -806,7 +806,7 @@ theorem localizedCoarseFluxResponseRHSBound_le_coarseGrainingL2FluxDefectBoundTw
   have henergy :
       localizedCoarseFluxResponseRHSEnergyBound Q a a0 s j gradU ≤
         coarseGrainingL2FluxDefectEnergyTerm Q a a0 s j gradU :=
-    localizedCoarseFluxResponseRHSEnergyBound_le_coarseGrainingL2FluxDefectEnergyTerm_of_isEllipticFieldOn
+    CoarseFluxRHSEnergyBound_le_coarseGrainingL2FluxDefectEnergyTerm
       Q a a0 j gradU hs hEll henergy_int
   have hforcing :
       localizedCoarseFluxResponseRHSResponseCorrectionBound Q a a0 s j g +
@@ -814,7 +814,7 @@ theorem localizedCoarseFluxResponseRHSBound_le_coarseGrainingL2FluxDefectBoundTw
           localizedCoarseFluxResponseRHSPoincareCorrectionBound Q a a0 s j g ≤
         coarseGrainingL2FluxDefectForcingTermTwoExponent Q a a0 s t j g := by
     simpa [coarseGrainingL2FluxDefectForcingTermTwoExponent, add_assoc] using
-      localizedCoarseFluxResponseRHSForcingCorrectionBound_le_parent_coeff_mul_depthWeight_inv_forceExponent_of_bddAbove_of_summable
+      FluxForcingCorrectionBound_le_coeff_mul_depthWeight_inv_forceExponent
         Q a a0 j g hs hst hgBdd hgBdd_desc hsumB hsumSigma
   have hmain :=
     localizedCoarseFluxResponseRHSBound_le_energy_add_forcing_of_component_average_bounds
@@ -837,7 +837,7 @@ theorem localizedCoarseFluxResponseRHSBound_le_coarseGrainingL2FluxDefectBoundTw
 Scalar §3.3 RHS comparison with the localized energy average and the three
 forcing-correction coefficient localizations discharged internally.
 -/
-theorem localizedCoarseFluxResponseRHSBound_le_coarseGrainingL2FluxDefectBound_of_bddAbove_of_isEllipticFieldOn_of_summable
+theorem CoarseFluxRHSBound_le_coarseGrainingFluxBound_of_boundedAbove_of_summable
     {d : ℕ} (Q : TriadicCube d) (a : CoeffField d) (a0 : Mat d)
     {s : ℝ} (j : ℕ) (gradU g : Vec d → Vec d) {lam Lam : ℝ}
     (hs : 0 < s)
@@ -865,18 +865,18 @@ theorem localizedCoarseFluxResponseRHSBound_le_coarseGrainingL2FluxDefectBound_o
             (2 / 2))) :
     localizedCoarseFluxResponseRHSBound Q a a0 s j gradU g ≤
       coarseGrainingL2FluxDefectBound Q a a0 s j gradU g :=
-  localizedCoarseFluxResponseRHSBound_le_coarseGrainingL2FluxDefectBound_of_component_average_bounds_of_bddAbove
+  CoarseFluxRHSBound_le_coarseGrainingFluxBound_of_boundedAbove
     Q a a0 j gradU g hs hgBdd_desc
-    (localizedCoarseFluxResponseRHSEnergyBound_le_coarseGrainingL2FluxDefectEnergyTerm_of_isEllipticFieldOn
+    (CoarseFluxRHSEnergyBound_le_coarseGrainingL2FluxDefectEnergyTerm
       Q a a0 j gradU hs hEll henergy_int)
-    (localizedCoarseFluxResponseRHSForcingCorrectionBound_le_coarseGrainingL2FluxDefectForcingTerm_of_bddAbove_of_summable
+    (FluxForcingCorrectionBound_le_coarseGrainingL2FluxDefectForcingTerm
       Q a a0 j g hs hgBdd hgBdd_desc hsumB hsumSigma)
 
 /--
 §3.3 wrapper through descendant one-cube §3.2.4 RHS bounds, with the scalar
 RHS comparison closed from the coefficient-localization hypotheses.
 -/
-theorem solution_diff_l2_le_coarseGrainingL2Rhs_of_descendant_coarseFluxResponseRHSBound_of_bddAbove_of_isEllipticFieldOn_of_summable
+theorem solution_diff_l2_le_coarseGrainingL2Rhs_of_descendant_fluxRHSBound
     {d : ℕ} [NeZero d] {Cdual : ℝ}
     (hdual : ScalarSolutionComparisonDualityEstimate d Cdual)
     (Q : TriadicCube d) (a : CoeffField d) (a0 : Mat d) (sigma0 : ℝ)
@@ -925,7 +925,7 @@ theorem solution_diff_l2_le_coarseGrainingL2Rhs_of_descendant_coarseFluxResponse
       hdual Q a a0 sigma0 gradU gradV g j hs_pos hs_lt_one hsigma0 ha0eq hEll
       ha0 ha0symm hcomparison
     hdefect_bdd hRhs
-    (localizedCoarseFluxResponseRHSBound_le_coarseGrainingL2FluxDefectBound_of_bddAbove_of_isEllipticFieldOn_of_summable
+    (CoarseFluxRHSBound_le_coarseGrainingFluxBound_of_boundedAbove_of_summable
       Q a a0 j gradU g hs_pos hEll henergy_int hgBdd hgBdd_desc
       hsumB hsumSigma)
 
@@ -934,7 +934,7 @@ theorem solution_diff_l2_le_coarseGrainingL2Rhs_of_descendant_coarseFluxResponse
 raw parent/descendant positive-Besov boundedness hypotheses from the note-facing
 `H^s` regularity package for the right-hand side.
 -/
-private theorem solution_diff_l2_le_coarseGrainingL2Rhs_of_descendant_coarseFluxResponseRHSBound_of_cubeVectorBesovHRegularity_of_isEllipticFieldOn_of_summable
+private theorem solution_diff_l2_le_coarseGrainingL2Rhs_of_descendant_fluxRHSBound_of_summable
     {d : ℕ} [NeZero d] {Cdual : ℝ}
     (hdual : ScalarSolutionComparisonDualityEstimate d Cdual)
     (Q : TriadicCube d) (a : CoeffField d) (a0 : Mat d) (sigma0 : ℝ)
@@ -981,7 +981,7 @@ private theorem solution_diff_l2_le_coarseGrainingL2Rhs_of_descendant_coarseFlux
     exact cubeBesovPositiveVectorPartialSeminormTwo_bddAbove_of_parent_bddAbove
       s g hR hg.partialSeminorms_bddAbove
   exact
-      solution_diff_l2_le_coarseGrainingL2Rhs_of_descendant_coarseFluxResponseRHSBound_of_bddAbove_of_isEllipticFieldOn_of_summable
+      solution_diff_l2_le_coarseGrainingL2Rhs_of_descendant_fluxRHSBound
         hdual Q a a0 sigma0 gradU gradV g j hs_pos hs_lt_one hsigma0 ha0eq hEll ha0 ha0symm
         hcomparison henergy_int hdefect_bdd hRhs hg.partialSeminorms_bddAbove
         hgBdd_desc hsumB hsumSigma
@@ -991,7 +991,7 @@ Note-facing same-RHS §3.3 wrapper through descendant one-cube §3.2.4 RHS
 bounds.  The energy-density integrability input is derived from the `H¹`
 solution gradient and ellipticity.
 -/
-private theorem solution_diff_l2_le_coarseGrainingL2Rhs_of_sameRhs_descendant_coarseFluxResponseRHSBound_of_cubeVectorBesovHRegularity_of_isEllipticFieldOn_of_summable
+private theorem solution_diff_l2_le_coarseGrainingL2Rhs_of_sameRhs_descendant_fluxRHSBound
     {d : ℕ} [NeZero d] {Cdual : ℝ}
     (hdual : ScalarSolutionComparisonDualityEstimate d Cdual)
     (Q : TriadicCube d) (a : CoeffField d) (a0 : Mat d) (sigma0 : ℝ)
@@ -1036,7 +1036,7 @@ private theorem solution_diff_l2_le_coarseGrainingL2Rhs_of_sameRhs_descendant_co
     integrableOn_coefficientEnergyDensity_of_isEllipticFieldOn hEll
       u.grad_memVectorL2
   exact
-      solution_diff_l2_le_coarseGrainingL2Rhs_of_descendant_coarseFluxResponseRHSBound_of_cubeVectorBesovHRegularity_of_isEllipticFieldOn_of_summable
+      solution_diff_l2_le_coarseGrainingL2Rhs_of_descendant_fluxRHSBound_of_summable
         hdual Q a a0 sigma0 u.grad v.grad g j hs_pos hs_lt_one hsigma0 ha0eq hEll ha0 ha0symm
         (IsHomogenizationComparisonPairOn.of_sameRhs_h1Functions
           hEll ha0 u v g hu hv hzeroTrace)
@@ -1046,7 +1046,7 @@ private theorem solution_diff_l2_le_coarseGrainingL2Rhs_of_sameRhs_descendant_co
 Same-RHS §3.3 wrapper deriving the half-scale coefficient summability inputs
 from the descendant deterministic coarse-data package.
 -/
-theorem solution_diff_l2_le_coarseGrainingL2Rhs_of_sameRhs_descendant_coarseFluxResponseRHSBound_of_cubeVectorBesovHRegularity_of_openCubeDescendantDeterministicCoarseData
+theorem solution_diff_l2_le_coarseGrainingL2Rhs_of_sameRhs_descendant_of_fluxRHSBound
     {d : ℕ} [NeZero d] {Cdual : ℝ}
     (hdual : ScalarSolutionComparisonDualityEstimate d Cdual)
     (Q : TriadicCube d) (a : CoeffField d) (a0 : Mat d) (sigma0 : ℝ)
@@ -1080,7 +1080,7 @@ theorem solution_diff_l2_le_coarseGrainingL2Rhs_of_sameRhs_descendant_coarseFlux
         Summable (fun n : ℕ =>
           geometricWeight (s / 2) 2 n *
             maxDescendantBBlockNormAtScale Q (Q.scale - (n : ℤ)) a) :=
-      summable_qtwo_maxDescendantBBlockNormAtScale_of_isEllipticFieldOn_of_openCubeDescendantDeterministicCoarseData
+      summable_qtwo_maxDescendantBBlockNorm_of_ellipticField
         (Q := Q) (a := a) (s := s / 2) hs_half hEll hData
     simpa [Real.rpow_one] using hsum
   have hsumSigma :
@@ -1093,7 +1093,7 @@ theorem solution_diff_l2_le_coarseGrainingL2Rhs_of_sameRhs_descendant_coarseFlux
         Summable (fun n : ℕ =>
           geometricWeight (s / 2) 2 n *
             maxDescendantSigmaStarInvNormAtScale Q (Q.scale - (n : ℤ)) a) :=
-      summable_qtwo_maxDescendantSigmaStarInvNormAtScale_of_isEllipticFieldOn_of_openCubeDescendantDeterministicCoarseData
+      summable_qtwo_maxDescendantSigmaStarInvNorm_of_ellipticField
         (Q := Q) (a := a) (s := s / 2) hs_half hEll hData
     simpa [Real.rpow_one] using hsum
   have hdefect_bdd :
@@ -1128,7 +1128,7 @@ theorem solution_diff_l2_le_coarseGrainingL2Rhs_of_sameRhs_descendant_coarseFlux
       (fluxDefect a a0 u.grad)
       (memLp_normalizedCubeMeasure_of_memVectorL2_cubeSet R hdefect_mem)
   exact
-      solution_diff_l2_le_coarseGrainingL2Rhs_of_sameRhs_descendant_coarseFluxResponseRHSBound_of_cubeVectorBesovHRegularity_of_isEllipticFieldOn_of_summable
+      solution_diff_l2_le_coarseGrainingL2Rhs_of_sameRhs_descendant_fluxRHSBound
         hdual Q a a0 sigma0 u v g j hs_pos hs_lt_one hsigma0 ha0eq hEll ha0 ha0symm hu hv
         hzeroTrace hdefect_bdd hRhs hg hsumB hsumSigma
 

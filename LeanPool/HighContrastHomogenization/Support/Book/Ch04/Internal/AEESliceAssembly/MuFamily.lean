@@ -115,7 +115,7 @@ theorem measurable_Mu_aeeQuantitativeSlice_canonical_cubeSet
 Hilbert maximizer/minimizer.  The proof selects the first dense generator whose
 block energy is within `1 / (m + 1)` of `Mu`, and then passes to the Hilbert
 energy-gap limit. -/
-theorem stronglyMeasurable_canonicalAEEMuHilbertMinimizer_aeeQuantitativeSlice_cubeSet
+theorem stronglyMeasurable_canonicalMuMinimizer
     {d : ℕ} (Q : TriadicCube d) {k : ℕ} (P : BlockVec d) :
     letI : MeasurableSpace
       {a : CoeffField d // AEEQuantitativeEllipticSlice (cubeSet Q) k a} :=

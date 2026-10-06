@@ -93,6 +93,7 @@ theorem projective_step
                   1 / 2 * Real.log (‖m‖ * ‖m⁻¹‖) + ε ∧
                 (ε ≤ 1 →
                   gridRatio (Geometry.explicitRoundedGrid jStar m)
-                      (Geometry.explicitRoundedGrid jStar (geometryUpdate ε m mStar)) ≤ C) := by exact HCPolySupport.HighContrast.Entry.projective_step d hd
+                      (Geometry.explicitRoundedGrid jStar (geometryUpdate ε m mStar)) ≤ C) := by
+                        exact HCPolySupport.HighContrast.Entry.projective_step d hd
 
 end HCPolySupport.HighContrast

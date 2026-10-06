@@ -40,7 +40,7 @@ The final scalar hypothesis is the remaining deterministic adequacy comparison
 between the bounded exact coefficient/cutoff expression and the local
 single-cube base coefficient at scale `kR - j`. -/
 theorem
-    coarseCaccioppoliFluxEnergyExactConstantCoeff_mul_le_singleCubeBoundaryConstantBaseCoeff_of_factor_bounds
+    coarseCaccioppoliConstantFluxEnergy_le_boundaryCoefficient_of_factorBounds
     {d : ℕ} (R : TriadicCube d) (a : CoeffField d)
     (ξ : Vec d → Vec d) {B Ceff kR Aavg Aflux1 Xi : ℝ} (j : ℕ)
     (hB_nonneg : 0 ≤ B)
@@ -94,7 +94,7 @@ theorem
 gradient input is supplied by the standard descendant-local quantitative
 cutoff bound. -/
 theorem
-    coarseCaccioppoliFluxEnergyExactConstantCoeff_mul_cutoffGradient_le_singleCubeBoundaryConstantBaseCoeff_of_factor_bounds_on_descendant
+    coarseCaccioppoliConstantFluxEnergy_le_boundaryCoefficient_of_cutoffGradient
     {d : ℕ} {Q R : TriadicCube d} {j : ℕ}
     (hR : R ∈ descendantsAtDepth Q j) (a : CoeffField d)
     {ρ₁ ρ₂ : ℝ} (η : QuantitativeCubeCutoff Q ρ₁ ρ₂)
@@ -116,7 +116,7 @@ theorem
       coarseCaccioppoliSingleCubeBoundaryConstantBaseCoeff R a Ceff
         (kR - (j : ℝ)) := by
   exact
-    coarseCaccioppoliFluxEnergyExactConstantCoeff_mul_le_singleCubeBoundaryConstantBaseCoeff_of_factor_bounds
+    coarseCaccioppoliConstantFluxEnergy_le_boundaryCoefficient_of_factorBounds
       R a (scalarCutoffGradientField η) j hB_nonneg hAavg hAflux1
       (quantitativeCubeCutoff_cubeLpNorm_infty_gradientField_le_on_descendant hR η)
       hbounded

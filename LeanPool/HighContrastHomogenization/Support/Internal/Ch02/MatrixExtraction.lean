@@ -59,7 +59,7 @@ theorem exists_recoveryData_of_mu_eq_muCandidate_of_isOpenBoundedConvexDomain
             (R.toMuOperatorSystemDataOfIsEllipticFieldOn hEll hvol)).muCandidate P) := by
   let hRealize :
       PotentialSolenoidalL2Data.HasPotentialZeroTraceClosureRealization U :=
-    PotentialSolenoidalL2Data.hasPotentialZeroTraceClosureRealization_of_isOpenBoundedConvexDomain
+    PotentialSolenoidalL2Data.hasPotentialZeroTraceClosureRealization_of_convexDomain
       hConv
   let R : PotentialSolenoidalL2RecoveryData U :=
     potentialSolenoidalL2RecoveryData_ofSubmoduleClosures_of_potentialZeroTraceClosureRealization
@@ -75,7 +75,8 @@ theorem exists_recoveryData_of_mu_eq_muCandidate_of_isOpenBoundedConvexDomain
     let Y : CorrectionFieldData U := hX.toCorrectionFieldDataOfAdmissible
     have hXmemBlock : MemBlockL2 U X.eval := hX.memBlockL2_eval
     have hcorr :
-        Y.toHilbertBlockL2 ∈ R.toPotentialSolenoidalL2Data.toMuCorrectionSpaceData.correctionSpace := by
+        Y.toHilbertBlockL2 ∈
+          R.toPotentialSolenoidalL2Data.toMuCorrectionSpaceData.correctionSpace := by
       exact
         R.toPotentialSolenoidalL2Data.toMuCorrectionSpaceData.mem_correctionSpace
           Y.potential_memL2 Y.flux_memL2 Y.isPotentialZeroTrace Y.isSolenoidalZeroNormalTrace
@@ -201,7 +202,7 @@ theorem exists_oldCanonicalMatrixData_of_isOpenBoundedConvexDomain
   have compat :
       PotentialSolenoidalL2RecoveryData.MuRecoveryCompatibilityData (a := a) R system := by
     simpa [system] using!
-      R.muRecoveryCompatibilityData_of_isEllipticFieldOn_of_mu_eq_muCandidate
+      R.muRecoveryData_of_ellipticity_candidateEquality
         hEll hvol hMuEq
   have hex : ∃ Abar : BlockMat d, IsCoarseBlockMatrix U a Abar :=
     R.exists_coarseBlockMatrixOfIsEllipticFieldOn hEll hvol compat
@@ -210,17 +211,17 @@ theorem exists_oldCanonicalMatrixData_of_isOpenBoundedConvexDomain
   have hMuRespQ :
       ∀ q : Vec d, Mu U (0, q) a = ResponseJ U 0 q a := by
     intro q
-    exact R.mu_zero_right_eq_responseJ_zero_of_isEllipticFieldOn_of_isOpenBoundedConvexDomain
+    exact R.mu_zeroRight_eq_responseJ_zero_of_ConvexDomain
       hConv hEll hvol compat q
   have hMuRespP :
       ∀ p : Vec d, Mu U (p, 0) a = ResponseJ U p 0 a := by
     intro p
-    exact R.mu_left_zero_eq_responseJ_zero_of_isEllipticFieldOn_of_isOpenBoundedConvexDomain
+    exact R.mu_zeroLeft_eq_responseJ_zero_of_ConvexDomain
       hConv hEll hvol compat p
   have hResp :
       ∀ p q : Vec d, ResponseJ U p q a = Mu U (-p, q) a - vecDot p q := by
     intro p q
-    exact R.responseJ_eq_mu_neg_left_sub_vecDot_of_isEllipticFieldOn_of_isOpenBoundedConvexDomain
+    exact R.responseJ_eq_mu_negLeft_sub_vecDot
       hConv hEll hvol compat p q
   have hSInvLower :
       IsSigmaStarInvCoarse U a (coarseBlockMatrix U a).lowerRight :=
@@ -516,7 +517,7 @@ theorem canonicalResponseMatrixIdentities_of_isEllipticFieldOn
                   (HCPolySupport.sigmaStarInvCoarse (U : Set (Vec d)) a.toCoeffField)
                   (q + matVecMul
                     (HCPolySupport.kappaCoarse (U : Set (Vec d)) a.toCoeffField) p)) :=
-      magic_identity_responseJ_completed_square_canonical_of_isEllipticFieldOn_of_isOpenBoundedConvexDomain
+      magic_identity_responseJ_completed_square_canonical_of_ellipticField
         R U.isDomain hEll hvol compat hS hK hSigma p q
     calc
       responseJ U a p q =

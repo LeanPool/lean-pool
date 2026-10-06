@@ -23,6 +23,8 @@ public section
 
 namespace HCPolySupport
 
+/-- An `H¹` potential gradient whose coefficient flux pairs to zero with every `H¹₀(U)`
+gradient. -/
 @[expose]
 def IsAHarmonicGradient {d : ℕ} (a : CoeffField d) (U : Set (Vec d)) (f : Vec d → Vec d) : Prop :=
   IsPotentialOn U f ∧ IsSolenoidalOn U (fun x => matVecMul (a x) (f x))
@@ -45,6 +47,7 @@ theorem IsAHarmonicGradient.of_ae_eq_coeff {d : ℕ} {a b : CoeffField d}
             simp [hx]
     _ = 0 := hsol φ
 
+/-- A potential field and solenoidal flux on `U`, with `g = a f` pointwise everywhere. -/
 @[expose]
 def IsAHarmonicPair {d : ℕ} (a : CoeffField d) (U : Set (Vec d))
     (f g : Vec d → Vec d) : Prop :=
@@ -52,6 +55,7 @@ def IsAHarmonicPair {d : ℕ} (a : CoeffField d) (U : Set (Vec d))
     IsSolenoidalOn U g ∧
     ∀ x, g x = matVecMul (a x) (f x)
 
+/-- A potential field and solenoidal flux on `U`, with `g = aᵀ f` pointwise everywhere. -/
 @[expose]
 def IsAdjointHarmonicPair {d : ℕ} (a : CoeffField d) (U : Set (Vec d))
     (f g : Vec d → Vec d) : Prop :=
@@ -59,12 +63,17 @@ def IsAdjointHarmonicPair {d : ℕ} (a : CoeffField d) (U : Set (Vec d))
     IsSolenoidalOn U g ∧
     ∀ x, g x = matVecMul (matTranspose (a x)) (f x)
 
+/-- A pair of potential and flux fields satisfying the `a`-harmonic relation on `U`. -/
 structure AHarmonicPair {d : ℕ} (a : CoeffField d) (U : Set (Vec d)) where
+  /-- The potential field of the harmonic pair. -/
   grad : Vec d → Vec d
+  /-- The solenoidal flux, pointwise equal to the coefficient applied to the potential field. -/
   flux : Vec d → Vec d
   isHarmonicPair : IsAHarmonicPair a U grad flux
 
+/-- An `H¹(U)` function whose coefficient-weighted weak gradient is solenoidal on `U`. -/
 structure AHarmonicFunction {d : ℕ} (a : CoeffField d) (U : Set (Vec d)) where
+  /-- The underlying `H¹` function and its weak gradient. -/
   toH1 : H1Function U
   isHarmonic : IsAHarmonicGradient a U toH1.grad
 
@@ -84,7 +93,9 @@ notation `𝒜*(U; a)` while reusing the existing `AHarmonicFunction` structure.
 abbrev AStarHarmonicFunction {d : ℕ} (U : Set (Vec d)) (a : CoeffField d) :=
   AHarmonicFunction (fun x => matTranspose (a x)) U
 
+/-- An `a`-harmonic `H¹` function with zero integral over `U`. -/
 structure AHarmonicFunctionMeanZero {d : ℕ} (a : CoeffField d) (U : Set (Vec d)) where
+  /-- The underlying harmonic function with zero integral. -/
   toAHarmonicFunction : AHarmonicFunction a U
   meanZero : MeanZeroOn U toAHarmonicFunction.toH1.toFun
 
@@ -279,6 +290,7 @@ instance {d : ℕ} {a : CoeffField d} {U : Set (Vec d)} : SMul ℝ (AHarmonicPai
     (c • X).flux = c • X.flux :=
   rfl
 
+/-- Pair a harmonic gradient with its coefficient flux. -/
 @[expose]
 def ofGradient {d : ℕ} {a : CoeffField d} {U : Set (Vec d)} {f : Vec d → Vec d}
     (hf : IsAHarmonicGradient a U f) : AHarmonicPair a U :=
@@ -296,6 +308,8 @@ def ofGradient {d : ℕ} {a : CoeffField d} {U : Set (Vec d)} {f : Vec d → Vec
     (ofGradient hf).flux = fun x => matVecMul (a x) (f x) :=
   rfl
 
+/-- Add harmonic pairs componentwise when their flux pairings with zero-trace tests are
+integrable. -/
 @[expose]
 def addOfIntegrable {d : ℕ} {a : CoeffField d} {U : Set (Vec d)}
     (X Y : AHarmonicPair a U) (hX_int : h10FluxIntegrable U X.flux)
@@ -320,6 +334,7 @@ def addOfIntegrable {d : ℕ} {a : CoeffField d} {U : Set (Vec d)}
 
 end AHarmonicPair
 
+/-- The harmonic pair consisting of the function's weak gradient and coefficient flux. -/
 @[expose]
 def AHarmonicFunction.toPair {d : ℕ} {a : CoeffField d} {U : Set (Vec d)}
     (u : AHarmonicFunction a U) : AHarmonicPair a U :=
@@ -327,6 +342,7 @@ def AHarmonicFunction.toPair {d : ℕ} {a : CoeffField d} {U : Set (Vec d)}
 
 namespace AHarmonicFunction
 
+/-- Add a scalar constant to a harmonic function on a finite-measure domain. -/
 @[expose]
 noncomputable def addConst {d : ℕ} {a : CoeffField d} {U : Set (Vec d)}
     [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
@@ -344,7 +360,7 @@ noncomputable def addConst {d : ℕ} {a : CoeffField d} {U : Set (Vec d)}
     (u.addConst c).toH1 = u.toH1.addConst c :=
   rfl
 
-@[simp] theorem grad_addConst {d : ℕ} {a : CoeffField d} {U : Set (Vec d)}
+theorem grad_addConst {d : ℕ} {a : CoeffField d} {U : Set (Vec d)}
     [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     (u : AHarmonicFunction a U) (c : ℝ) (x : Vec d) :
     (u.addConst c).toH1.grad x = u.toH1.grad x := by
@@ -358,6 +374,7 @@ noncomputable def addConst {d : ℕ} {a : CoeffField d} {U : Set (Vec d)}
   · simp [AHarmonicFunction.toPair, AHarmonicPair.ofGradient, AHarmonicFunction.addConst]
   · simp [AHarmonicFunction.toPair, AHarmonicPair.ofGradient, AHarmonicFunction.addConst]
 
+/-- Subtract the volume average from a harmonic function. -/
 @[expose]
 noncomputable def normalizeMeanZero {d : ℕ} {a : CoeffField d} {U : Set (Vec d)}
     [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
@@ -381,12 +398,14 @@ theorem meanZeroOn_normalizeMeanZero {d : ℕ} {a : CoeffField d} {U : Set (Vec 
     MeanZeroOn U u.normalizeMeanZero.toH1.toFun := by
   simpa [AHarmonicFunction.normalizeMeanZero] using u.toH1.meanZeroOn_subAverage
 
-@[simp] theorem grad_normalizeMeanZero {d : ℕ} {a : CoeffField d} {U : Set (Vec d)}
+theorem grad_normalizeMeanZero {d : ℕ} {a : CoeffField d} {U : Set (Vec d)}
     [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     (u : AHarmonicFunction a U) (x : Vec d) :
     u.normalizeMeanZero.toH1.grad x = u.toH1.grad x := by
   simp [AHarmonicFunction.normalizeMeanZero]
 
+/-- Package a harmonic function after subtracting its volume average as a mean-zero harmonic
+function. -/
 @[expose]
 noncomputable def toMeanZero {d : ℕ} {a : CoeffField d} {U : Set (Vec d)}
     [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
@@ -424,6 +443,7 @@ theorem integrableOn_smul {d : ℕ} {a : CoeffField d} {U : Set (Vec d)}
           rw [matVecMul_smul, vecDot_smul_left]]
   exact (hu_int φ).integrable.const_mul c
 
+/-- Restrict a harmonic function to an open subset with square-integrable coefficient flux. -/
 @[expose]
 noncomputable def restrictOfMemVectorL2 {d : ℕ} {a : CoeffField d} {U V : Set (Vec d)}
     [MeasureTheory.IsFiniteMeasure (volumeMeasureOn V)]
@@ -440,6 +460,7 @@ noncomputable def restrictOfMemVectorL2 {d : ℕ} {a : CoeffField d} {U V : Set 
     (u.restrictOfMemVectorL2 hU hV hVU hfluxV).toH1 = u.toH1.restrict hV hVU :=
   rfl
 
+/-- Restrict a harmonic function to an open subset where the coefficient field is elliptic. -/
 @[expose]
 noncomputable def restrictOfIsEllipticFieldOn {d : ℕ} {a : CoeffField d} {lam Lam : ℝ}
     {U V : Set (Vec d)} [MeasureTheory.IsFiniteMeasure (volumeMeasureOn V)]
@@ -456,6 +477,7 @@ noncomputable def restrictOfIsEllipticFieldOn {d : ℕ} {a : CoeffField d} {lam 
     (u.restrictOfIsEllipticFieldOn hU hV hVU hEllV).toH1 = u.toH1.restrict hV hVU :=
   rfl
 
+/-- Add harmonic functions whose weak flux pairings are integrable. -/
 @[expose]
 def addOfIntegrable {d : ℕ} {a : CoeffField d} {U : Set (Vec d)}
     (u v : AHarmonicFunction a U)
@@ -470,12 +492,13 @@ def addOfIntegrable {d : ℕ} {a : CoeffField d} {U : Set (Vec d)}
     (addOfIntegrable u v hu_int hv_int).toH1 = u.toH1 + v.toH1 :=
   rfl
 
-@[simp] theorem grad_addOfIntegrable {d : ℕ} {a : CoeffField d} {U : Set (Vec d)}
+theorem grad_addOfIntegrable {d : ℕ} {a : CoeffField d} {U : Set (Vec d)}
     (u v : AHarmonicFunction a U)
     (hu_int : weakFluxIntegrable U a u) (hv_int : weakFluxIntegrable U a v) :
     (addOfIntegrable u v hu_int hv_int).toH1.grad = u.toH1.grad + v.toH1.grad :=
   rfl
 
+/-- Form the harmonic function `u + c • w` using integrable weak flux pairings. -/
 @[expose]
 def addSMulOfIntegrable {d : ℕ} {a : CoeffField d} {U : Set (Vec d)}
     (u w : AHarmonicFunction a U)
@@ -493,7 +516,7 @@ def addSMulOfIntegrable {d : ℕ} {a : CoeffField d} {U : Set (Vec d)}
     (addSMulOfIntegrable u w hu_int hw_int c).toH1 = u.toH1 + c • w.toH1 :=
   rfl
 
-@[simp] theorem grad_addSMulOfIntegrable {d : ℕ} {a : CoeffField d} {U : Set (Vec d)}
+theorem grad_addSMulOfIntegrable {d : ℕ} {a : CoeffField d} {U : Set (Vec d)}
     (u w : AHarmonicFunction a U)
     (hu_int : weakFluxIntegrable U a u) (hw_int : weakFluxIntegrable U a w) (c : ℝ) :
     (addSMulOfIntegrable u w hu_int hw_int c).toH1.grad = u.toH1.grad + c • w.toH1.grad :=

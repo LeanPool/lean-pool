@@ -83,7 +83,8 @@ corrector and harmonic remainder, and packages the flux local-step estimate
 for any supplied descendant flux-energy control of that harmonic remainder.
 This is the Lean counterpart of manuscript Section 3.2.3, Steps 1--3, at the
 single-cube interface level. -/
-theorem exists_centeredNeumannCorrector_aHarmonicRemainder_fluxStepEnergy_of_h1DirichletRhsWeakSolutionOn
+theorem
+  exists_centeredNeumannCorrector_aHarmonicRemainder_fluxStepEnergy_of_h1DirichletRhsWeakSolutionOn
     {d : ℕ} (Q : TriadicCube d) (a : CoeffField d)
     (g : Vec d → Vec d) (u : H1Function (cubeSet Q)) {s lam Lam : ℝ}
     (hs : 0 < s)
@@ -120,7 +121,7 @@ theorem exists_centeredNeumannCorrector_aHarmonicRemainder_fluxStepEnergy_of_h1D
   refine ⟨ω, w, huw, ?_⟩
   intro energy henergy_nonneg henergy_int hflux hsum
   exact
-    ω.sq_cubeBesovNegativeVectorPartialSeminormTwo_flux_succ_le_descendantsAverage_add_harmonic_energy
+    ω.sq_negativeVectorPartial_flux_succ_le_descendantsEnergy
       (u := u.grad) w s hs N energy hEll u.grad_memVectorL2 hg
       henergy_nonneg henergy_int hflux hsum huw
 
@@ -130,12 +131,12 @@ PDE-facing wrapper around the q=2 RHS Poincare final theorem.
 If `u` solves `-div(a grad u) = div g` on `Q`, then `grad u` is a potential
 field whose residual flux `a grad u - g` is solenoidal.  This packages those
 two facts and applies
-`cubeBesovNegativeVectorSeminormTwo_le_sqrt_intrinsicGlobalEnergyForce_noteConstants_expanded_of_parent_potential_solenoidal`.
+`negativeBesovSeminormTwo_le_sqrt_intrinsicGlobalEnergyForce_of_parent_potential`.
 
 This is an infrastructure step for
 `p.weak.flux.RHS.deterministic.theory`, not the final weak-flux estimate.
 -/
-theorem cubeBesovNegativeVectorSeminormTwo_grad_le_sqrt_intrinsicGlobalEnergyForce_noteConstants_expanded_of_h1DirichletRhsWeakSolutionOn
+theorem negativeBesovSeminormTwo_grad_le_sqrt_intrinsicGlobalEnergyForce
     {d : ℕ} [NeZero d] (Q : TriadicCube d) (a : CoeffField d)
     (g : Vec d → Vec d) (u : H1Function (cubeSet Q)) {s lam Lam : ℝ}
     (hs : 0 < s) (hs_le : s ≤ 1)
@@ -155,7 +156,7 @@ theorem cubeBesovNegativeVectorSeminormTwo_grad_le_sqrt_intrinsicGlobalEnergyFor
   have hgMem : MemVectorL2 (cubeSet Q) g :=
     memVectorL2_cubeSet_of_memLp_normalizedCubeMeasure Q hg
   exact
-    cubeBesovNegativeVectorSeminormTwo_le_sqrt_intrinsicGlobalEnergyForce_noteConstants_expanded_of_parent_potential_solenoidal
+    negativeBesovSeminormTwo_le_sqrt_intrinsicGlobalEnergyForce_of_parent_potential
       (Q := Q) (a := a) (g := g) (u := u.grad)
       (s := s) (lam := lam) (Lam := Lam)
       hs hs_le hEll u.isPotentialOn (hu.residual_solenoidal hEll hgMem)
@@ -165,7 +166,7 @@ theorem cubeBesovNegativeVectorSeminormTwo_grad_le_sqrt_intrinsicGlobalEnergyFor
 PDE-facing RHS Poincare estimate with the manuscript `g ∈ H^s` regularity
 package, rather than separate `L²` and positive-Besov boundedness hypotheses.
 -/
-theorem cubeBesovNegativeVectorSeminormTwo_grad_le_sqrt_intrinsicGlobalEnergyForce_noteConstants_expanded_of_h1DirichletRhsWeakSolutionOn_of_cubeVectorBesovHRegularity
+theorem negativeBesovSeminormTwo_grad_le_sqrt_of_h1DirichletRhsWeakSolutionOn
     {d : ℕ} [NeZero d] (Q : TriadicCube d) (a : CoeffField d)
     (g : Vec d → Vec d) (u : H1Function (cubeSet Q)) {s lam Lam : ℝ}
     (hs : 0 < s) (hs_le : s ≤ 1)
@@ -179,7 +180,7 @@ theorem cubeBesovNegativeVectorSeminormTwo_grad_le_sqrt_intrinsicGlobalEnergyFor
           15000 * (s⁻¹) ^ 4 * ((lambdaSq Q (s / 2) (.finite 2) a)⁻¹) ^ 2 *
             ((d : ℝ) * ((3 : ℝ) ^ ((d : ℝ) + s) * Real.sqrt 2)) ^ 2 *
             (cubeBesovPositiveVectorSeminormTwo Q s g) ^ 2) :=
-  cubeBesovNegativeVectorSeminormTwo_grad_le_sqrt_intrinsicGlobalEnergyForce_noteConstants_expanded_of_h1DirichletRhsWeakSolutionOn
+  negativeBesovSeminormTwo_grad_le_sqrt_intrinsicGlobalEnergyForce
     (Q := Q) (a := a) (g := g) (u := u)
     (s := s) (lam := lam) (Lam := Lam)
     hs hs_le hEll hu hg.memLp hg.partialSeminorms_bddAbove

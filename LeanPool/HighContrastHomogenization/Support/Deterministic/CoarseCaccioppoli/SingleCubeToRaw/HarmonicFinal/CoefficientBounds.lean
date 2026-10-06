@@ -71,7 +71,7 @@ theorem
     coarseCaccioppoliLocalizedEnergyRadiusProfile Q baseEnergy (1 / 3 : ℝ) ≤
       coarseCaccioppoliBoundaryExplicitHeightBound Q a s t C uL2Sq := by
   exact
-    coarseCaccioppoli_boundary_qone_of_canonicalHarmonicPositiveFactors_of_canonicalHarmonicRawCoefficientBounds
+    coarseCaccioppoli_boundary_qone_of_of_canonicalHarmonicPositiveFactors
       (Q := Q) (a := a) (s := s) (t := t) (C := C) (uL2Sq := uL2Sq)
       (baseEnergy := baseEnergy) (w := w) (i := i)
       hC hs ht hst hu hbase_nonneg hbase_int hinner_energy_le henergyAvg
@@ -125,7 +125,7 @@ theorem
     coarseCaccioppoliLocalizedEnergyRadiusProfile Q baseEnergy (1 / 3 : ℝ) ≤
       coarseCaccioppoliInteriorExplicitHeightBound Q a s t C uL2Sq := by
   exact
-    coarseCaccioppoli_interior_qone_of_canonicalHarmonicPositiveFactors_of_canonicalHarmonicRawCoefficientBounds
+    coarseCaccioppoli_interior_qone_of_of_canonicalHarmonicPositiveFactors
       (Q := Q) (a := a) (s := s) (t := t) (C := C) (uL2Sq := uL2Sq)
       (baseEnergy := baseEnergy) (w := w) (i := i)
       hC hs ht hst hu hbase_nonneg hbase_int hinner_energy_le henergyAvg
@@ -138,7 +138,7 @@ factor package directly.  This is the same endpoint as the shorter wrapper
 below, but it avoids splitting strict positivity into separate nonzero-energy
 and `lambdaSq` hypotheses. -/
 theorem
-    coarseCaccioppoli_boundary_qone_of_canonicalHarmonicPositiveFactors_of_canonicalHarmonicCoefficientBounds
+    coarseCaccioppoli_boundary_qone_of_canonicalHarmonicPositiveFactors
     {d : ℕ} [NeZero d] (Q : TriadicCube d) (a : CoeffField d)
     (s t C uL2Sq : ℝ) {lam Lam : ℝ}
     (baseEnergy : Vec d → ℝ)
@@ -189,12 +189,12 @@ theorem
     coarseCaccioppoliLocalizedEnergyRadiusProfile Q baseEnergy (1 / 3 : ℝ) ≤
       coarseCaccioppoliBoundaryExplicitHeightBound Q a s t C uL2Sq := by
   exact
-    coarseCaccioppoli_boundary_qone_of_canonicalHarmonicPositiveFactors_of_canonicalHarmonicRawCoefficientBounds
+    coarseCaccioppoli_boundary_qone_of_of_canonicalHarmonicPositiveFactors
       (Q := Q) (a := a) (s := s) (t := t) (C := C) (uL2Sq := uL2Sq)
       (baseEnergy := baseEnergy) (w := w) (i := i)
       hC hs ht hst hu hbase_nonneg hbase_int hinner_energy_le henergyAvg
       hfluxEnergy hpositiveFactors hgrad hprojected
-      (CoarseCaccioppoliBoundaryCanonicalHarmonicRawCoefficientBounds.of_coefficientBounds_of_multiscaleEllipticity
+      (CoarseCaccioppoliBoundaryCanonicalHarmonicRawCoefficientBounds.of_multiscaleEllipticity
         Q a s t C uL2Sq w hC hs ht hst hcoeff hEll hData
         (summable_bBlock_geometricWeight_s_of_fluxEnergyControls_family Q a s hfluxEnergy)
         hSigmaSum_t)
@@ -204,7 +204,7 @@ theorem
 radius/cutoff/profile choices installed, using the canonical gradient positive
 factor package directly. -/
 theorem
-    coarseCaccioppoli_interior_qone_of_canonicalHarmonicPositiveFactors_of_canonicalHarmonicCoefficientBounds
+    coarseCaccioppoli_interior_qone_of_canonicalHarmonicPositiveFactors
     {d : ℕ} [NeZero d] (Q : TriadicCube d) (a : CoeffField d)
     (s t C uL2Sq : ℝ) {lam Lam : ℝ}
     (baseEnergy : Vec d → ℝ)
@@ -255,12 +255,12 @@ theorem
     coarseCaccioppoliLocalizedEnergyRadiusProfile Q baseEnergy (1 / 3 : ℝ) ≤
       coarseCaccioppoliInteriorExplicitHeightBound Q a s t C uL2Sq := by
   exact
-    coarseCaccioppoli_interior_qone_of_canonicalHarmonicPositiveFactors_of_canonicalHarmonicRawCoefficientBounds
+    coarseCaccioppoli_interior_qone_of_of_canonicalHarmonicPositiveFactors
       (Q := Q) (a := a) (s := s) (t := t) (C := C) (uL2Sq := uL2Sq)
       (baseEnergy := baseEnergy) (w := w) (i := i)
       hC hs ht hst hu hbase_nonneg hbase_int hinner_energy_le henergyAvg
       hfluxEnergy hpositiveFactors hgrad hprojected
-      (CoarseCaccioppoliBoundaryCanonicalHarmonicRawCoefficientBounds.of_coefficientBounds_of_multiscaleEllipticity
+      (CoarseCaccioppoliBoundaryCanonicalHarmonicRawCoefficientBounds.of_multiscaleEllipticity
         Q a s t C uL2Sq w hC hs ht hst hcoeff hEll hData
         (summable_bBlock_geometricWeight_s_of_fluxEnergyControls_family Q a s hfluxEnergy)
         hSigmaSum_t)
@@ -322,7 +322,7 @@ theorem
     coarseCaccioppoliLocalizedEnergyRadiusProfile Q baseEnergy (1 / 3 : ℝ) ≤
       coarseCaccioppoliBoundaryExplicitHeightBound Q a s t C uL2Sq := by
   exact
-    coarseCaccioppoli_boundary_qone_of_canonicalHarmonicPositiveFactors_of_canonicalHarmonicCoefficientBounds
+    coarseCaccioppoli_boundary_qone_of_canonicalHarmonicPositiveFactors
       (Q := Q) (a := a) (s := s) (t := t) (C := C) (uL2Sq := uL2Sq)
       (baseEnergy := baseEnergy) (w := w) (i := i)
       hC hs ht hst hu hbase_nonneg hbase_int hinner_energy_le henergyAvg
@@ -386,7 +386,7 @@ theorem
     coarseCaccioppoliLocalizedEnergyRadiusProfile Q baseEnergy (1 / 3 : ℝ) ≤
       coarseCaccioppoliInteriorExplicitHeightBound Q a s t C uL2Sq := by
   exact
-    coarseCaccioppoli_interior_qone_of_canonicalHarmonicPositiveFactors_of_canonicalHarmonicCoefficientBounds
+    coarseCaccioppoli_interior_qone_of_canonicalHarmonicPositiveFactors
       (Q := Q) (a := a) (s := s) (t := t) (C := C) (uL2Sq := uL2Sq)
       (baseEnergy := baseEnergy) (w := w) (i := i)
       hC hs ht hst hu hbase_nonneg hbase_int hinner_energy_le henergyAvg
@@ -398,7 +398,7 @@ theorem
 analytic/profile assumptions bundled into
 `CoarseCaccioppoliBoundaryCanonicalHarmonicAnalyticInputs`. -/
 theorem
-    coarseCaccioppoli_boundary_qone_of_canonicalHarmonicAnalyticInputs_of_canonicalHarmonicCoefficientBounds
+    coarseCaccioppoli_boundary_qone_of_canonicalHarmonicAnalyticInputs
     {d : ℕ} [NeZero d] (Q : TriadicCube d) (a : CoeffField d)
     (s t C uL2Sq : ℝ) {lam Lam : ℝ}
     (baseEnergy : Vec d → ℝ)
@@ -441,7 +441,7 @@ theorem
 analytic/profile assumptions bundled into
 `CoarseCaccioppoliBoundaryCanonicalHarmonicAnalyticInputs`. -/
 theorem
-    coarseCaccioppoli_interior_qone_of_canonicalHarmonicAnalyticInputs_of_canonicalHarmonicCoefficientBounds
+    coarseCaccioppoli_interior_qone_of_canonicalHarmonicAnalyticInputs
     {d : ℕ} [NeZero d] (Q : TriadicCube d) (a : CoeffField d)
     (s t C uL2Sq : ℝ) {lam Lam : ℝ}
     (baseEnergy : Vec d → ℝ)
@@ -488,7 +488,7 @@ This is not yet the pure open-cube note endpoint, but it removes the main
 energy-control bookkeeping hypotheses from the public boundary wrapper under
 the currently available coarse-Poincare compatibility hypothesis. -/
 theorem
-    coarseCaccioppoli_boundary_qone_of_closedCubeHarmonicEnergyControls_of_canonicalHarmonicCoefficientBounds
+    coarseCaccioppoli_boundary_qone_of_closedCubeHarmonicEnergyControls
     {d : ℕ} [NeZero d] (Q : TriadicCube d) (a : CoeffField d)
     (s t C uL2Sq : ℝ) {lam Lam : ℝ}
     (baseEnergy : Vec d → ℝ)
@@ -529,12 +529,12 @@ theorem
         geometricWeight t 1 n *
           Real.rpow (maxDescendantSigmaStarInvNormAtScale Q (Q.scale - (n : ℤ)) a)
             (1 / 2 : ℝ)) :=
-    summable_qone_maxDescendantSigmaStarInvNormAtScale_of_isEllipticFieldOn_of_openCubeOriginEllipticRecoveryExistence
+    summable_exponentOne_maxDescendantSigmaStarInverseNorm_of_cubeEllipticity
       (Q := Q) (a := a) (s := t) ht hEllCube hOrigin
   have hEllOpen : IsEllipticFieldOn lam Lam (openCubeSet Q) a :=
     hEllCube.mono (measurableSet_openCubeSet Q) (openCubeSet_subset_cubeSet Q)
   exact
-    coarseCaccioppoli_boundary_qone_of_canonicalHarmonicAnalyticInputs_of_canonicalHarmonicCoefficientBounds
+    coarseCaccioppoli_boundary_qone_of_canonicalHarmonicAnalyticInputs
       (Q := Q) (a := a) (s := s) (t := t) (C := C) (uL2Sq := uL2Sq)
       (baseEnergy := baseEnergy) (w := w) (i := i)
       hC hs ht hst hu
@@ -546,7 +546,7 @@ theorem
 /-- Interior fixed-localized-energy coarse Caccioppoli with the same
 closed-cube compatibility discharge as the boundary wrapper above. -/
 theorem
-    coarseCaccioppoli_interior_qone_of_closedCubeHarmonicEnergyControls_of_canonicalHarmonicCoefficientBounds
+    coarseCaccioppoli_interior_qone_of_closedCubeHarmonicEnergyControls
     {d : ℕ} [NeZero d] (Q : TriadicCube d) (a : CoeffField d)
     (s t C uL2Sq : ℝ) {lam Lam : ℝ}
     (baseEnergy : Vec d → ℝ)
@@ -587,12 +587,12 @@ theorem
         geometricWeight t 1 n *
           Real.rpow (maxDescendantSigmaStarInvNormAtScale Q (Q.scale - (n : ℤ)) a)
             (1 / 2 : ℝ)) :=
-    summable_qone_maxDescendantSigmaStarInvNormAtScale_of_isEllipticFieldOn_of_openCubeOriginEllipticRecoveryExistence
+    summable_exponentOne_maxDescendantSigmaStarInverseNorm_of_cubeEllipticity
       (Q := Q) (a := a) (s := t) ht hEllCube hOrigin
   have hEllOpen : IsEllipticFieldOn lam Lam (openCubeSet Q) a :=
     hEllCube.mono (measurableSet_openCubeSet Q) (openCubeSet_subset_cubeSet Q)
   exact
-    coarseCaccioppoli_interior_qone_of_canonicalHarmonicAnalyticInputs_of_canonicalHarmonicCoefficientBounds
+    coarseCaccioppoli_interior_qone_of_canonicalHarmonicAnalyticInputs
       (Q := Q) (a := a) (s := s) (t := t) (C := C) (uL2Sq := uL2Sq)
       (baseEnergy := baseEnergy) (w := w) (i := i)
       hC hs ht hst hu

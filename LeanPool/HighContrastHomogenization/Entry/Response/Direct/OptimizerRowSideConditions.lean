@@ -398,7 +398,8 @@ theorem abs_integral_cutoffHalfEnergy_sub_respJ_le_rowMinus_of_carriers {d : ℕ
     obtain ⟨lam, Lam, f, _hlam, _hle, hEll, hae⟩ :=
       exists_elliptic_representative_respCell_respCoeffMinus hjStar hm t a
     have : IsFiniteMeasure (volumeMeasureOn (respCell jStar F t)) :=
-      (adaptedCell_isOpenBoundedConvexDomain (respGrid jStar F) hq t).isFiniteMeasure_restrict_volume
+      (adaptedCell_isOpenBoundedConvexDomain (respGrid jStar F) hq
+        t).isFiniteMeasure_restrict_volume
     have hdata : ResponseLinearIntegrabilityData (respCell jStar F t) f :=
       ResponseLinearIntegrabilityData.of_isEllipticFieldOn hEll
     have hv := hdata.response (respP (respMean P jStar F t) e) (respqMinus P jStar F t e)
@@ -412,7 +413,8 @@ theorem abs_integral_cutoffHalfEnergy_sub_respJ_le_rowMinus_of_carriers {d : ℕ
     obtain ⟨lam, Lam, f, _hlam, _hle, hEll, hae⟩ :=
       exists_elliptic_representative_respCell_respCoeffMinus hjStar hm t a
     have : IsFiniteMeasure (volumeMeasureOn (respCell jStar F t)) :=
-      (adaptedCell_isOpenBoundedConvexDomain (respGrid jStar F) hq t).isFiniteMeasure_restrict_volume
+      (adaptedCell_isOpenBoundedConvexDomain (respGrid jStar F) hq
+        t).isFiniteMeasure_restrict_volume
     have hdata : ResponseLinearIntegrabilityData (respCell jStar F t) f :=
       ResponseLinearIntegrabilityData.of_isEllipticFieldOn hEll
     let v : AHarmonicFunction f (respCell jStar F t) := Response.aHarmonicOfAEEq hae (uM a)
@@ -448,7 +450,8 @@ theorem abs_integral_cutoffHalfEnergy_sub_respJ_le_rowMinus_of_carriers {d : ℕ
       (respqMinus P jStar F t e) (respCoeffMinus F a) ∂P)
       = blockResponseEnergy (blockCongr (respG F) (respMean P jStar F s))
           (respP (respMean P jStar F t) e) (respqMinus P jStar F t e) := by
-    have h0 := integral_responseJ_respCoeffMinus_adaptedCellAtCenter_eq_direct P hstat jStar hjStar F hm s hjs 0
+    have h0 := integral_responseJ_respCoeffMinus_adaptedCellAtCenter_eq_direct P hstat jStar
+      hjStar F hm s hjs 0
       (respP (respMean P jStar F t) e) (respqMinus P jStar F t e) (hblk s 0)
     rw [adaptedCellAtCenter_zero (respGrid jStar F) s] at h0
     simpa only [respJ] using h0
@@ -466,7 +469,8 @@ theorem abs_integral_cutoffHalfEnergy_sub_respJ_le_rowMinus_of_carriers {d : ℕ
         a (uM a) hw
       simpa only [hts] using h)
     (by
-      have h := avsum_volumeAverage_sub_one_eq_zero (qq := respGrid jStar F) hq t H hφ hint hvol hφint
+      have h := avsum_volumeAverage_sub_one_eq_zero (qq := respGrid jStar F) hq t H hφ hint hvol
+        hφint
       simpa only [hts] using h)
     (fun w hw => abs_volumeAverage_sub_one_isResponseCutoff_le_one hq hφ s w)
     (fun w hw a => by
@@ -478,7 +482,8 @@ theorem abs_integral_cutoffHalfEnergy_sub_respJ_le_rowMinus_of_carriers {d : ℕ
         hjStar hm t H (respP (respMean P jStar F t) e) (respqMinus P jStar F t e) a (uM a) hw).2
       simpa only [hts] using h)
     hJt0 hJint hDint hEint hWint hJt
-    (fun w hw => (integral_responseJ_respCoeffMinus_adaptedCellAtCenter_eq_direct P hstat jStar hjStar F hm s hjs w
+    (fun w hw => (integral_responseJ_respCoeffMinus_adaptedCellAtCenter_eq_direct P hstat jStar
+      hjStar F hm s hjs w
       (respP (respMean P jStar F t) e) (respqMinus P jStar F t e) (hblk s w)).trans hJs_eq.symm)
     (integral_avsum_subcellDeficit_eq_respTauMinus P hstat jStar hjStar F hm H s t ht hjs e uM hmax
       (fun w => hblk s w) hrespint hJint hRint hJt hJs)

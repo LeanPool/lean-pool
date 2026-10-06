@@ -451,7 +451,8 @@ theorem volume_hybrid_lower_row_le (d : ℕ) (hd : 2 ≤ d) (K₀ : ℝ) (hK₀ 
       apply ENNReal.ofReal_le_ofReal
       rw [mul_assoc]
       change (A + Cface) * S ≤ (A + Cface + 1) * S
-      exact mul_le_mul_of_nonneg_right (le_add_of_nonneg_right zero_le_one) (by dsimp [S]; positivity)
+      exact mul_le_mul_of_nonneg_right (le_add_of_nonneg_right zero_le_one) (by dsimp [S];
+        positivity)
 
 /-- The smaller hybrid rows satisfy the required `3^(r-j)` relative-volume
 bound, with finiteness produced and one constant before all other data. -/

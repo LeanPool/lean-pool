@@ -171,7 +171,7 @@ theorem scaleNormalizedNegativeBesovVectorNorm_eq_of_ae_eq_on_cubeSet
           negativeBesovVectorDepthSeminorm_eq_of_ae_eq_on_cubeSet
             (Q := Q) (F := F) (G := G) s hFG j⟩
 
-theorem scaleNormalizedNegativeBesovVectorNorm_finite_two_eq_cubeBesovNegativeVectorSeminormTwo
+theorem scaleNegativeBesovVectorNorm_finiteTwo_eq_cubeNegativeSeminorm
     {d : ℕ} (Q : TriadicCube d) (s : ℝ) (F : Vec d → Vec d) :
     scaleNormalizedNegativeBesovVectorNorm Q s (.finite 2) F =
       cubeBesovNegativeVectorSeminormTwo Q s F := by
@@ -208,7 +208,7 @@ theorem publicDualBesovScaleWeight_eq_cubeBesovScaleWeight
     _ = cubeBesovScaleWeight s Q := by
           simp [cubeBesovScaleWeight, cubeScaleFactor, Real.rpow_intCast]
 
-theorem scaleNormalizedDualNegativeBesovVectorNormTwo_le_note_constant_mul_cubeBesovNegativeVectorSeminormTwo
+theorem normalizedDualNegativeBesovNormTwo_le_constant_mul_negativeBesovSeminormTwo
     {d : ℕ} (Q : TriadicCube d) (s : ℝ) (F : Vec d → Vec d)
     (hs : 0 < s) (hF : MemVectorL2 (cubeSet Q) F) :
     scaleNormalizedDualNegativeBesovVectorNormTwo Q s F ≤
@@ -249,7 +249,7 @@ theorem scaleNormalizedDualNegativeBesovVectorNormTwo_le_note_constant_mul_cubeB
         Q s (2 : ℝ≥0∞) (2 : ℝ≥0∞) (fun x => F x i) hs hFi
         (by norm_num) (by norm_num) hpConjTop (by norm_num)
     have hcirc :=
-      cubeBesovCircNorm_two_two_component_le_scaleWeight_neg_mul_of_negativeVectorPartialBoundTwo
+      circNorm_component_le_negativeVectorPartialBoundTwo
         Q s F i hpartial
     exact hdual.trans
       (mul_le_mul_of_nonneg_left hcirc
@@ -301,7 +301,7 @@ theorem scaleNormalizedDualNegativeBesovVectorNormTwo_le_note_constant_mul_cubeB
             hmul]
           ring
 
-theorem forcedSolutionFluxDefect_dualNorm_le_note_constant_mul_cubeBesovNegativeVectorSeminormTwo_publicCoeffField
+theorem forcedSolutionFluxDefect_dualNorm_le_constant_mul_negativeBesovSeminormTwo
     {d : ℕ} [NeZero d] {Q : TriadicCube d} {a : CoeffFamily d}
     {a0 : ConstantCoeffMatrix d} {s : ℝ} {g : Vec d → Vec d}
     (u : ForcedCubeSolution Q a g) (hs : 0 < s) :
@@ -334,7 +334,7 @@ theorem forcedSolutionFluxDefect_dualNorm_le_note_constant_mul_cubeBesovNegative
     dsimp [F, fluxDefect]
     exact hfluxA.sub hflux0
   have hnorm :=
-    scaleNormalizedDualNegativeBesovVectorNormTwo_le_note_constant_mul_cubeBesovNegativeVectorSeminormTwo
+    normalizedDualNegativeBesovNormTwo_le_constant_mul_negativeBesovSeminormTwo
       Q s F hs hF_mem
   have hae :
       forcedSolutionFluxDefectField Q a a0 u
@@ -351,7 +351,7 @@ theorem forcedSolutionFluxDefect_dualNorm_le_note_constant_mul_cubeBesovNegative
     _ ≤ (d : ℝ) * Real.rpow (3 : ℝ) ((d : ℝ) + s) *
         cubeBesovNegativeVectorSeminormTwo Q s F := hnorm
 
-theorem homogenizationComparisonNegativeBesovLHS_eq_solutionComparisonNegativeBesovLhs_publicCoeffField
+theorem homogenizationNegativeBesovLHS_eq_solutionComparisonLHS
     {d : ℕ} [NeZero d] (Q : TriadicCube d) (a : CoeffFamily d)
     (a0 : ConstantCoeffMatrix d) (s : ℝ)
     (u v : H1Function (Ch02.cubeDomain Q : Set (Vec d))) :
@@ -387,7 +387,7 @@ theorem homogenizationComparisonNegativeBesovLHS_eq_solutionComparisonNegativeBe
         a0.matrix u.grad v.grad := by
           rfl
 
-theorem homogenizationComparisonNegativeBesovLHS_le_note_constant_mul_solutionComparisonNegativeBesovLhs_publicCoeffField
+theorem homogenizationNegativeBesovLHS_le_constant_mul_solutionNegativeBesovLhs
     {d : ℕ} [NeZero d] (Q : TriadicCube d) (a : CoeffFamily d)
     (a0 : ConstantCoeffMatrix d) (s : ℝ)
     (u v : H1Function (Ch02.cubeDomain Q : Set (Vec d))) (hs : 0 < s) :
@@ -407,7 +407,7 @@ theorem homogenizationComparisonNegativeBesovLHS_le_note_constant_mul_solutionCo
       homogenizationComparisonNegativeBesovLHS Q a a0 s u v = S := by
     dsimp [S]
     exact
-      homogenizationComparisonNegativeBesovLHS_eq_solutionComparisonNegativeBesovLhs_publicCoeffField
+      homogenizationNegativeBesovLHS_eq_solutionComparisonLHS
         Q a a0 s u v
   have huGrad : MemVectorL2 (cubeSet Q) u.grad := by
     simpa using (publicH1ToCubeSet u).grad_memVectorL2
@@ -471,7 +471,7 @@ theorem homogenizationComparisonNegativeBesovLHS_le_note_constant_mul_solutionCo
             a0.matrix u.grad v.grad := by
           rfl
 
-theorem localizedHomogenizationFluxDefectAverage_eq_localizedFluxDefectNegativeBesovAverageTwo_publicCoeffField
+theorem HomogenizationFluxDefectAverage_eq_negativeBesovFluxAverage
     {d : ℕ} [NeZero d] (Q : TriadicCube d) (a : CoeffFamily d)
     (a0 : ConstantCoeffMatrix d) (s : ℝ) (j : ℕ)
     (u : H1Function (Ch02.cubeDomain Q : Set (Vec d))) :
@@ -502,14 +502,14 @@ theorem localizedHomogenizationFluxDefectAverage_eq_localizedFluxDefectNegativeB
         (u := homogenizationComparisonFluxDefectFromGradient R a a0 u.grad)
         (v := fluxDefect (publicCoeffField Q a) a0.matrix u.grad)
         s
-        (homogenizationComparisonFluxDefectFromGradient_ae_eq_fluxDefect_parent_publicCoeffField_descendant_cubeSet
+        (homogenizationFluxDefectFromGradient_ae_eq_fluxDefect_parent_descendant_cube
           (Q := Q) (R := R) (a := a) (a0 := a0) hR u.grad)
     simp [Fpublic, Finternal, hseminorm]
   simpa [localizedHomogenizationFluxDefectAverage,
     localizedFluxDefectNegativeBesovAverageTwo, Fpublic, Finternal] using
     congrArg Real.sqrt havg
 
-theorem scaleNormalizedNegativeBesovVectorNorm_forcedSolutionFluxField_finite_two_eq_cubeBesovNegativeVectorSeminormTwo_publicCoeffField
+theorem forcedSolutionFluxFieldNegativeBesovNorm_finite_eq_negativeBesovSeminormTwo
     {d : ℕ} [NeZero d] (Q : TriadicCube d) (a : CoeffFamily d)
     (s : ℝ) {g : Vec d → Vec d} (u : ForcedCubeSolution Q a g) :
     scaleNormalizedNegativeBesovVectorNorm Q s (Ch02.MultiscaleExponent.finite 2)
@@ -533,7 +533,7 @@ theorem scaleNormalizedNegativeBesovVectorNorm_forcedSolutionFluxField_finite_tw
             (Q := Q) (F := forcedSolutionFluxField Q a u) (G := F)
             s (Ch02.MultiscaleExponent.finite 2) hae
     _ = cubeBesovNegativeVectorSeminormTwo Q s F :=
-          scaleNormalizedNegativeBesovVectorNorm_finite_two_eq_cubeBesovNegativeVectorSeminormTwo
+          scaleNegativeBesovVectorNorm_finiteTwo_eq_cubeNegativeSeminorm
             Q s F
 
 theorem scaleNormalizedPositiveBesovVectorSeminormTwo_nonneg_of_forceBesovRegularity

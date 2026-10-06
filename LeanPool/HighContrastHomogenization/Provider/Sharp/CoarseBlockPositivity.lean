@@ -40,7 +40,7 @@ block bounds is stated in, over a domain of positive volume, so that the two
 pathwise facts about the response can be read together.  Read together they
 discharge both sample hypotheses of the annealed primal-adjoint order on the
 paper's own random matrix: positive definiteness of the annealed block,
-integrability of the pathwise sharp, and the annealed order `𝐀̄(U)^♯ ≤ 𝐀̄(U)`
+integrability of the pathwise sharp, and the annealed order `𝐀_bar(U)^♯ ≤ 𝐀_bar(U)`
 itself all hold on every bounded open convex domain of positive volume, under
 the printed integrability assumption `E|𝐀(U)| < ∞` alone.
 -/

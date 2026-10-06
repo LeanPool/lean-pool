@@ -183,7 +183,7 @@ theorem cubeEuclideanWspKernel_enorm_rpow {d : ℕ}
 
 /-- Pointwise, replacing the Euclidean distance by the ambient distance can
 only increase the powered kernel. -/
-theorem cubeEuclideanWspKernel_rpow_le_ambientHilbert {d : ℕ} [NeZero d]
+theorem cubeEuclideanWspKernel_rpow_le_ambientHilbert {d : ℕ}
     (s : FractionalOrder) (p : FiniteLpExponent) (F : Vec d → Vec d)
     (z : Vec d × Vec d) :
     ‖cubeEuclideanWspKernel s p F z‖ₑ ^ p.exponent.toReal ≤

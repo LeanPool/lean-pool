@@ -281,7 +281,7 @@ theorem blockResponseSpace_cubeSet_originCube_iff_openCubeSet
       exact hopen
 
 theorem blockResponseIntegrabilityData_cubeSet_originCube_iff_openCubeSet
-    {d : ℕ} [NeZero d] {n : ℤ} {a : CoeffField d} {X : BlockState d} :
+    {d : ℕ} {n : ℤ} {a : CoeffField d} {X : BlockState d} :
     BlockResponseIntegrabilityData (cubeSet (originCube d n)) a X ↔
       BlockResponseIntegrabilityData (openCubeSet (originCube d n)) a X := by
   constructor
@@ -495,7 +495,8 @@ theorem kappaCoarse_cubeSet_originCube_eq_openCubeSet_of_isSigmaStarCoarse_and_i
       ((isSigmaStarCoarse_cubeSet_originCube_iff_openCubeSet (n := n)).1 hS)
       ((isKappaCoarse_cubeSet_originCube_iff_openCubeSet (n := n)).1 hK) hdet]
 
-theorem sigmaCorrectedResponse_cubeSet_originCube_eq_openCubeSet_of_isSigmaStarCoarse_and_isKappaCoarse
+theorem
+  sigmaCorrectedResponse_cubeSet_originCube_eq_openCubeSet_of_isSigmaStarCoarse_and_isKappaCoarse
     {d : ℕ} [NeZero d] {n : ℤ} {a : CoeffField d} {sigmaStar kappa : Mat d}
     (hS : IsSigmaStarCoarse (cubeSet (originCube d n)) a sigmaStar)
     (hK : IsKappaCoarse (cubeSet (originCube d n)) a sigmaStar kappa)
@@ -522,7 +523,8 @@ theorem sigmaCoarse_cubeSet_originCube_eq_openCubeSet_of_isSigmaCoarse
       ((isKappaCoarse_cubeSet_originCube_iff_openCubeSet (n := n)).1 hK)
       ((isSigmaCoarse_cubeSet_originCube_iff_openCubeSet (n := n)).1 hSigma) hdet]
 
-theorem bCoarse_sigmaCoarse_sigmaStarCoarse_kappaCoarse_cubeSet_originCube_eq_openCubeSet_of_isSigmaCoarse
+theorem
+  bCoarse_sigmaCoarse_sigmaStarCoarse_kappaCoarse_cubeSet_originCube_eq_openCubeSet_of_isSigmaCoarse
     {d : ℕ} [NeZero d] {n : ℤ} {a : CoeffField d} {sigma sigmaStar kappa : Mat d}
     (hS : IsSigmaStarCoarse (cubeSet (originCube d n)) a sigmaStar)
     (hK : IsKappaCoarse (cubeSet (originCube d n)) a sigmaStar kappa)

@@ -81,7 +81,7 @@ theorem reflectedHessianRow_sqWeightedMeasure_parent_tail
       ({x | a < ‖Hrow x‖} ∩ openCubeSet (originCube d (m + 1))) = _
   rw [hmeasure, htail]
   exact
-    sqWeightedMeasure_openCubeSet_succ_originCube_cubeDirichletOddReflectionVectorField_tail
+    oddReflectionVector_tail_sqWeightedMeasure_scale
       R hR
 
 /-- The Hessian-row tail on the half-scaled parent is bounded by the same

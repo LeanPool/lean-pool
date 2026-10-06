@@ -70,7 +70,7 @@ theorem abs_cubeAverage_vecDot_le_localized_negative_standard_positive_besov
   have hfull_le_L : cubeBesovNegativeVectorSeminormTwo Q s F ≤ L := by
     dsimp [L]
     exact
-      cubeBesovNegativeVectorSeminormTwo_le_sqrt_descendantsAverage_sq_of_memLp_of_descendant_bddAbove
+      negativeVectorBesov_le_descendantMeanSquare_of_bounded
         Q hs F hF_lp j hdescBdd
   have hparentBdd :
       BddAbove (Set.range fun N : ℕ =>

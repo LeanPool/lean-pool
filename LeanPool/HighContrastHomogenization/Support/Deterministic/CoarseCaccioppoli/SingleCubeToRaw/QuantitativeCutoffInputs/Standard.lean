@@ -24,12 +24,14 @@ noncomputable section
 
 open scoped ENNReal
 
+namespace CoarseCaccioppoliBoundaryRadiusEnergyBridgeCanonicalAnalyticInputs
+
 /-- Specialized analytic-input builder for the actual coarse Caccioppoli
 harmonic family.  This removes the external `htest` hypothesis once the caller
 supplies the weighted-energy lower bound and the cutoff topological-support
 condition needed by the weak-testing bridge. -/
 theorem
-    CoarseCaccioppoliBoundaryRadiusEnergyBridgeCanonicalAnalyticInputs.of_quantitativeCubeCutoff_of_aHarmonicFamily
+    of_quantitativeCubeCutoff_of_aHarmonicFamily
     {d : ℕ} (Q : TriadicCube d) (a : CoeffField d) (s C : ℝ) {lam Lam : ℝ}
     (k h : ℝ → ℝ → ℝ) (F : ℝ → ℝ)
     (w : ℝ → ℝ → AHarmonicFunction a (openCubeSet Q))
@@ -137,12 +139,14 @@ theorem
       hproj hgCirc1 hgCircS hU hA1 hAS
   intro ρ₁ ρ₂ hρ₁ hlt hρ₂
   exact
-    le_abs_cubeAverage_vecDot_flux_scalarCutoffGradientField_of_aHarmonicFunction_of_le_cubeAverage_mul_scalarVariationEnergyIntegrand
+    le_abs_cubeAverage_vectorDot_flux_scalarCutoffGradientField
       Q a (w ρ₁ ρ₂) hEll (η ρ₁ ρ₂).smooth (η ρ₁ ρ₂).hasCompactSupport
       (hη_tsupport hρ₁ hlt hρ₂) (hlower hρ₁ hlt hρ₂)
 
+end CoarseCaccioppoliBoundaryRadiusEnergyBridgeCanonicalAnalyticInputs
+
 theorem
-    CoarseCaccioppoliBoundaryRadiusEnergyBridgeCanonicalAnalyticInputs.of_quantitativeCubeCutoff_of_aHarmonicFamily_of_scalarCutoffControls
+    CoarseCaccioppoliBoundaryRadiusEnergyBridgeCanonicalAnalyticInputs.of_cutoff_scalarControls
     {d : ℕ} (Q : TriadicCube d) (a : CoeffField d) (s C : ℝ) {lam Lam : ℝ}
     (k h : ℝ → ℝ → ℝ) (F : ℝ → ℝ)
     (w : ℝ → ℝ → AHarmonicFunction a (openCubeSet Q))
@@ -216,7 +220,9 @@ theorem
       (coarseCaccioppoliQuantitativeCutoffHessianBound Q)
       A1 AS := by
   refine
-    CoarseCaccioppoliBoundaryRadiusEnergyBridgeCanonicalAnalyticInputs.of_quantitativeCubeCutoff_of_aHarmonicFamily
+    (open CoarseCaccioppoliBoundaryRadiusEnergyBridgeCanonicalAnalyticInputs
+      (of_quantitativeCubeCutoff_of_aHarmonicFamily) in
+      of_quantitativeCubeCutoff_of_aHarmonicFamily)
       Q a s C k h F w g η Acirc1 AcircS U A1 AS
       hEll hlower hη_tsupport henergyAvg hfluxMem huMem hgMem hfluxEnergy
       ?_ ?_ hC hAcirc1_nonneg hAcircS_nonneg ?_ ?_ ?_ hU hA1 hAS
@@ -242,7 +248,7 @@ theorem
     exact hgCircS N
 
 theorem
-    CoarseCaccioppoliBoundaryRadiusEnergyBridgeCanonicalAnalyticInputs.of_quantitativeCubeCutoff_of_aHarmonicFamily_of_outerRadius_lt_one
+    CoarseCaccioppoliBoundaryRadiusEnergyBridgeCanonicalAnalyticInputs.of_harmonicFamily
     {d : ℕ} (Q : TriadicCube d) (a : CoeffField d) (s C : ℝ) {lam Lam : ℝ}
     (k h : ℝ → ℝ → ℝ) (F : ℝ → ℝ)
     (w : ℝ → ℝ → AHarmonicFunction a (openCubeSet Q))
@@ -338,7 +344,9 @@ theorem
       (coarseCaccioppoliQuantitativeCutoffHessianBound Q)
       A1 AS := by
   refine
-    CoarseCaccioppoliBoundaryRadiusEnergyBridgeCanonicalAnalyticInputs.of_quantitativeCubeCutoff_of_aHarmonicFamily
+    (open CoarseCaccioppoliBoundaryRadiusEnergyBridgeCanonicalAnalyticInputs
+      (of_quantitativeCubeCutoff_of_aHarmonicFamily) in
+      of_quantitativeCubeCutoff_of_aHarmonicFamily)
       Q a s C k h F w g η Acirc1 AcircS U A1 AS hEll hlower ?_
       henergyAvg hfluxMem huMem hgMem hfluxEnergy hBgConst hBgCent hC
       hAcirc1_nonneg hAcircS_nonneg hproj hgCirc1 hgCircS hU hA1 hAS
@@ -352,7 +360,7 @@ theorem
 /-- Quantitative-cutoff harmonic analytic inputs with the scalar cutoff package
 bundled as `CoarseCaccioppoliScalarCutoffControls`. -/
 theorem
-    CoarseCaccioppoliBoundaryRadiusEnergyBridgeCanonicalAnalyticInputs.of_quantitativeCubeCutoff_of_aHarmonicFamily_of_outerRadius_lt_one_of_scalarCutoffControls
+    CoarseCaccioppoliBoundaryRadiusEnergyBridgeCanonicalAnalyticInputs.of_cutoff_outerRadius
     {d : ℕ} (Q : TriadicCube d) (a : CoeffField d) (s C : ℝ) {lam Lam : ℝ}
     (k h : ℝ → ℝ → ℝ) (F : ℝ → ℝ)
     (w : ℝ → ℝ → AHarmonicFunction a (openCubeSet Q))
@@ -425,7 +433,7 @@ theorem
       (coarseCaccioppoliQuantitativeCutoffHessianBound Q)
       A1 AS := by
   refine
-    CoarseCaccioppoliBoundaryRadiusEnergyBridgeCanonicalAnalyticInputs.of_quantitativeCubeCutoff_of_aHarmonicFamily_of_scalarCutoffControls
+    CoarseCaccioppoliBoundaryRadiusEnergyBridgeCanonicalAnalyticInputs.of_cutoff_scalarControls
       Q a s C k h F w g η Acirc1 AcircS U A1 AS
       hEll hlower ?_ henergyAvg hfluxMem huMem hgMem hfluxEnergy hscalar
       hC hAcirc1_nonneg hAcircS_nonneg hU hA1 hAS
@@ -441,7 +449,7 @@ chapter-3 canonical quantitative cube cutoff.  The cutoff data are discharged
 from the canonical smooth formula plus the strict outer-radius condition
 `ρ₂ < 1`. -/
 theorem
-    CoarseCaccioppoliBoundaryRadiusEnergyBridgeCanonicalAnalyticInputs.of_canonicalQuantitativeCutoff_of_aHarmonicFamily_of_outerRadius_lt_one
+    CoarseCaccioppoliBoundaryRadiusEnergyBridgeCanonicalAnalyticInputs.of_harmonicCutoff
     {d : ℕ} (Q : TriadicCube d) (a : CoeffField d) (s C : ℝ) {lam Lam : ℝ}
     (k h : ℝ → ℝ → ℝ) (F : ℝ → ℝ)
     (w : ℝ → ℝ → AHarmonicFunction a (openCubeSet Q))
@@ -586,7 +594,7 @@ theorem
                 scalarCutoffGradientField (QuantitativeCubeCutoff.canonicalFun Q ρ₁ ρ₂) x))| := by
     simpa [ηρ, coarseCaccioppoliCanonicalQuantitativeCutoff,
       QuantitativeCubeCutoff.canonical] using
-      (le_abs_cubeAverage_vecDot_flux_scalarCutoffGradientField_of_aHarmonicFunction_of_le_cubeAverage_mul_scalarVariationEnergyIntegrand
+      (le_abs_cubeAverage_vectorDot_flux_scalarCutoffGradientField
         Q a (w ρ₁ ρ₂) hEll ηρ.smooth ηρ.hasCompactSupport
         (coarseCaccioppoliCanonicalQuantitativeCutoff_tsupport_subset_openCubeSet_of_lt_one
           Q hρ₁ hlt (houter hρ₁ hlt hρ₂))

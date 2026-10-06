@@ -31,15 +31,20 @@ namespace HCPolySupport
 but keep the exponent `p` explicit.
 -/
 
+/-- Membership in `Lᵖ` for Lebesgue measure restricted to `U`. -/
 abbrev MemLpOn {d : ℕ} (U : Set (Vec d)) (p : ENNReal) (u : Vec d → ℝ) : Prop :=
   MeasureTheory.MemLp u p (MeasureTheory.volume.restrict U)
 
+/-- Membership in `Lᵖ(U)` of every coordinate of the supplied gradient field. -/
 @[expose]
 def GradMemLpOn {d : ℕ} (U : Set (Vec d)) (p : ENNReal) (Du : Vec d → Vec d) : Prop :=
   ∀ i : Fin d, MemLpOn U p (fun x => Du x i)
 
+/-- A scalar function and weak gradient with value and gradient coordinates in `Lᵖ(U)`. -/
 structure W1pFunction {d : ℕ} (U : Set (Vec d)) (p : ENNReal) where
+  /-- The pointwise scalar representative of the Sobolev function. -/
   toFun : Vec d → ℝ
+  /-- The pointwise weak gradient, with coordinates in `Lᵖ(U)`. -/
   grad : Vec d → Vec d
   memLp : MemLpOn U p toFun
   gradMemLp : GradMemLpOn U p grad
@@ -49,6 +54,7 @@ instance {d : ℕ} {U : Set (Vec d)} {p : ENNReal} :
     CoeFun (W1pFunction U p) (fun _ => Vec d → ℝ) where
   coe u := u.toFun
 
+/-- Existence of a `W¹ᵖ` representative on `U` equal to the given function. -/
 @[expose]
 def MemW1p {d : ℕ} (U : Set (Vec d)) (p : ENNReal) (u : Vec d → ℝ) : Prop :=
   ∃ v : W1pFunction U p, v.toFun = u
@@ -62,6 +68,8 @@ but it does not imply compactly supported approximation inside `U` for every
 Sobolev function. -/
 structure W1pFunction.SupportedSmoothApproximation {d : ℕ} {U : Set (Vec d)}
     {p : ENNReal} (u : W1pFunction U p) where
+  /-- The smooth sequence supported compactly in `U` and converging in value and gradient in
+  `Lᵖ`. -/
   approx : ℕ → Vec d → ℝ
   approx_smooth : ∀ n, ContDiff ℝ (⊤ : ℕ∞) (approx n)
   approx_hasCompactSupport : ∀ n, HasCompactSupport (approx n)
@@ -86,7 +94,10 @@ def W1pFunction.HasSupportedSmoothApproximation {d : ℕ} {U : Set (Vec d)}
     {p : ENNReal} (u : W1pFunction U p) : Prop :=
   Nonempty u.SupportedSmoothApproximation
 
+/-- A `W¹ᵖ` function approximated in value and gradient by smooth functions compactly supported
+in `U`. -/
 structure W10pFunction {d : ℕ} (U : Set (Vec d)) (p : ENNReal) extends W1pFunction U p where
+  /-- The smooth compactly supported sequence converging in value and gradient in `Lᵖ(U)`. -/
   approx : ℕ → Vec d → ℝ
   approx_smooth : ∀ n, ContDiff ℝ (⊤ : ℕ∞) (approx n)
   approx_hasCompactSupport : ∀ n, HasCompactSupport (approx n)
@@ -108,6 +119,7 @@ instance {d : ℕ} {U : Set (Vec d)} {p : ENNReal} :
     CoeFun (W10pFunction U p) (fun _ => Vec d → ℝ) where
   coe u := u.toW1pFunction.toFun
 
+/-- Existence of a `W¹ᵖ₀` representative on `U` equal to the given function. -/
 @[expose]
 def MemW10p {d : ℕ} (U : Set (Vec d)) (p : ENNReal) (u : Vec d → ℝ) : Prop :=
   ∃ v : W10pFunction U p, v.toW1pFunction.toFun = u

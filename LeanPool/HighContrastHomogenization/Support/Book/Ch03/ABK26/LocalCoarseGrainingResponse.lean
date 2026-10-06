@@ -31,7 +31,7 @@ noncomputable section
 /-- The globally measurable pointwise-good representative of a root coefficient,
 viewed as a compatible coefficient family on every triadic cube. -/
 @[expose]
-noncomputable def rootPointwiseCoeffFamily {d : ℕ} [NeZero d]
+noncomputable def rootPointwiseCoeffFamily {d : ℕ}
     (Q : TriadicCube d) (a : Ch02.CoeffOn (Ch02.cubeDomain Q)) :
     Ch02.TriadicCoeffFamily d where
   coeffOn := fun R =>

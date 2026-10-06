@@ -223,7 +223,8 @@ omit [NeZero d] in
 (`DiagonalDefectCarriers.lean`) produces from the swap conjugation. -/
 theorem respM0_inv {F : BlockMat d} (hm : (explicitCanonicalMetric F).PosDef) :
     (toFullBlockMat (respM0 F))⁻¹ =
-      toFullBlockMat (⟨(explicitCanonicalMetric F)⁻¹, 0, 0, explicitCanonicalMetric F⟩ : BlockMat d) := by
+      toFullBlockMat (⟨(explicitCanonicalMetric F)⁻¹, 0, 0, explicitCanonicalMetric F⟩ :
+        BlockMat d) := by
   have hdet : IsUnit (explicitCanonicalMetric F).det :=
     (Matrix.isUnit_iff_isUnit_det _).mp hm.isUnit
   refine Matrix.inv_eq_right_inv ?_
@@ -581,7 +582,8 @@ theorem nonempty_childMaximizerFamily_plus
       ScalarCanonicalMaximizer (adaptedCellAtCenter q (t - (n : ℤ)) w) p r
         (respCoeffPlus F a)) := by
   exact ⟨fun n w => Classical.choice
-    (nonempty_scalarCanonicalMaximizer_respCoeffPlus_adaptedCellAtCenter q hq (t - (n : ℤ)) w F a p r)⟩
+    (nonempty_scalarCanonicalMaximizer_respCoeffPlus_adaptedCellAtCenter q hq (t - (n : ℤ)) w F
+      a p r)⟩
 
 /-! ## The `weakCellSum` half for the adjoint sample -/
 

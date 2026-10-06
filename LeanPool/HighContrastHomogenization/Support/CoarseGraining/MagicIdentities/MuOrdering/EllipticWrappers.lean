@@ -46,7 +46,7 @@ private theorem hdet_of_recovery_hodge
   isUnit_det_of_isSigmaStarCoarse_of_isEllipticFieldOn_of_hodgeConverseCriterion
     (U := U) (a := a) R hU hEll hHodge hvol compat hS
 
-theorem basic_cg_identities_responseJ_zero_formula_canonical_of_isEllipticFieldOn_of_hodgeConverseCriterion
+theorem responseJ_zero_canonicalFormula_of_ellipticity_hodgeConverse
     {d : ℕ} {U : Set (Vec d)} [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     (R : PotentialSolenoidalL2RecoveryData U)
     (hU : IsSobolevRegularDomain U)
@@ -69,7 +69,7 @@ theorem basic_cg_identities_responseJ_zero_formula_canonical_of_isEllipticFieldO
     basic_cg_identities_responseJ_zero_formula_canonical_of_isSigmaCoarse
       U a hS hK hSigma hdet p
 
-theorem basic_cg_identities_responseJ_zero_formula_canonical_of_isEllipticFieldOn_of_isOpenBoundedConvexDomain
+theorem basic_cg_identities_responseJ_zero_formula_canonical_of_ellipticField
     {d : ℕ} {U : Set (Vec d)} [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     (R : PotentialSolenoidalL2RecoveryData U)
     (hConv : IsOpenBoundedConvexDomain U)
@@ -84,12 +84,13 @@ theorem basic_cg_identities_responseJ_zero_formula_canonical_of_isEllipticFieldO
     ResponseJ U p 0 a =
       (1 / 2 : ℝ) * vecDot p
         (matVecMul (bCoarse (sigmaCoarse U a) (sigmaStarCoarse U a) (kappaCoarse U a)) p) :=
-  basic_cg_identities_responseJ_zero_formula_canonical_of_isEllipticFieldOn_of_hodgeConverseCriterion
+  responseJ_zero_canonicalFormula_of_ellipticity_hodgeConverse
     (U := U) (a := a) R hConv.isSobolevRegularDomain hEll
     (hodgeConverseCriterion_of_isOpenBoundedConvexDomain (U := U) hConv)
     hvol compat hS hK hSigma p
 
-theorem basic_cg_identities_responseJ_formula_canonical_of_isEllipticFieldOn_of_hodgeConverseCriterion
+theorem
+  basic_cg_identities_responseJ_formula_canonical_of_isEllipticFieldOn_of_hodgeConverseCriterion
     {d : ℕ} {U : Set (Vec d)} [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     (R : PotentialSolenoidalL2RecoveryData U)
     (hU : IsSobolevRegularDomain U)
@@ -114,7 +115,8 @@ theorem basic_cg_identities_responseJ_formula_canonical_of_isEllipticFieldOn_of_
     basic_cg_identities_responseJ_formula_canonical_of_isSigmaCoarse
       U a hS hK hSigma hdet p q
 
-theorem basic_cg_identities_responseJ_formula_canonical_of_isEllipticFieldOn_of_isOpenBoundedConvexDomain
+theorem
+  basic_cg_identities_responseJ_formula_canonical_of_isEllipticFieldOn_of_isOpenBoundedConvexDomain
     {d : ℕ} {U : Set (Vec d)} [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     (R : PotentialSolenoidalL2RecoveryData U)
     (hConv : IsOpenBoundedConvexDomain U)
@@ -136,7 +138,8 @@ theorem basic_cg_identities_responseJ_formula_canonical_of_isEllipticFieldOn_of_
     (hodgeConverseCriterion_of_isOpenBoundedConvexDomain (U := U) hConv)
     hvol compat hS hK hSigma p q
 
-theorem magic_identity_responseJ_completed_square_canonical_of_isEllipticFieldOn_of_hodgeConverseCriterion
+theorem
+  magic_identity_responseJ_completed_square_canonical_of_isEllipticFieldOn_of_hodgeConverseCriterion
     {d : ℕ} {U : Set (Vec d)} [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     (R : PotentialSolenoidalL2RecoveryData U)
     (hU : IsSobolevRegularDomain U)
@@ -160,7 +163,7 @@ theorem magic_identity_responseJ_completed_square_canonical_of_isEllipticFieldOn
     magic_identity_responseJ_completed_square_canonical_of_isSigmaCoarse
       U a hS hK hSigma hdet p q
 
-theorem magic_identity_responseJ_completed_square_canonical_of_isEllipticFieldOn_of_isOpenBoundedConvexDomain
+theorem magic_identity_responseJ_completed_square_canonical_of_ellipticField
     {d : ℕ} {U : Set (Vec d)} [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     (R : PotentialSolenoidalL2RecoveryData U)
     (hConv : IsOpenBoundedConvexDomain U)
@@ -226,7 +229,7 @@ theorem magic_identity_responseJ_completed_square_of_isEllipticFieldOn_of_isOpen
     (hodgeConverseCriterion_of_isOpenBoundedConvexDomain (U := U) hConv)
     hvol compat hS hK hSigma p q
 
-theorem basic_cg_identities_responseJ_formula_coarseBlockMatrix_of_isEllipticFieldOn_of_hodgeConverseCriterion
+theorem basic_cg_identities_responseJ_formula_coarseMatrix_of_ellipticField
     {d : ℕ} {U : Set (Vec d)} [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     (R : PotentialSolenoidalL2RecoveryData U)
     (hU : IsSobolevRegularDomain U)
@@ -252,7 +255,7 @@ theorem basic_cg_identities_responseJ_formula_coarseBlockMatrix_of_isEllipticFie
     basic_cg_identities_responseJ_formula_coarseBlockMatrix_of_isSigmaCoarse
       U a hA hS hK hSigma hdet p q
 
-theorem basic_cg_identities_responseJ_formula_coarseBlockMatrix_of_isEllipticFieldOn_of_isOpenBoundedConvexDomain
+theorem basic_cg_identities_responseJ_formula_coarseMatrix_of_of_ellipticField
     {d : ℕ} {U : Set (Vec d)} [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     (R : PotentialSolenoidalL2RecoveryData U)
     (hConv : IsOpenBoundedConvexDomain U)
@@ -270,12 +273,12 @@ theorem basic_cg_identities_responseJ_formula_coarseBlockMatrix_of_isEllipticFie
         vecDot p q -
         vecDot q (matVecMul (coarseBlockMatrix U a).lowerLeft p) +
         (1 / 2 : ℝ) * vecDot p (matVecMul (coarseBlockMatrix U a).upperLeft p) :=
-  basic_cg_identities_responseJ_formula_coarseBlockMatrix_of_isEllipticFieldOn_of_hodgeConverseCriterion
+  basic_cg_identities_responseJ_formula_coarseMatrix_of_ellipticField
     (U := U) (a := a) R hConv.isSobolevRegularDomain hEll
     (hodgeConverseCriterion_of_isOpenBoundedConvexDomain (U := U) hConv)
     hvol compat hA hS hK hSigma p q
 
-theorem magic_identity_responseJ_block_quadratic_coarseBlockMatrix_of_isEllipticFieldOn_of_hodgeConverseCriterion
+theorem magic_identity_responseJ_block_quadratic_coarseMatrix_of_ellipticField
     {d : ℕ} {U : Set (Vec d)} [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     (R : PotentialSolenoidalL2RecoveryData U)
     (hU : IsSobolevRegularDomain U)
@@ -300,7 +303,7 @@ theorem magic_identity_responseJ_block_quadratic_coarseBlockMatrix_of_isElliptic
     magic_identity_responseJ_block_quadratic_coarseBlockMatrix_of_isSigmaCoarse
       U a hA hS hK hSigma hdet p q
 
-theorem magic_identity_responseJ_block_quadratic_coarseBlockMatrix_of_isEllipticFieldOn_of_isOpenBoundedConvexDomain
+theorem magic_identity_responseJ_block_quadratic_coarseMatrix_of_of_ellipticField
     {d : ℕ} {U : Set (Vec d)} [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     (R : PotentialSolenoidalL2RecoveryData U)
     (hConv : IsOpenBoundedConvexDomain U)
@@ -317,7 +320,7 @@ theorem magic_identity_responseJ_block_quadratic_coarseBlockMatrix_of_isElliptic
       (1 / 2 : ℝ) * blockVecDot (-p, q)
         (blockMatVecMul (coarseBlockMatrix U a) (-p, q)) -
       vecDot p q :=
-  magic_identity_responseJ_block_quadratic_coarseBlockMatrix_of_isEllipticFieldOn_of_hodgeConverseCriterion
+  magic_identity_responseJ_block_quadratic_coarseMatrix_of_ellipticField
     (U := U) (a := a) R hConv.isSobolevRegularDomain hEll
     (hodgeConverseCriterion_of_isOpenBoundedConvexDomain (U := U) hConv)
     hvol compat hA hS hK hSigma p q
@@ -420,7 +423,7 @@ theorem magic_identity_mu_sub_vecDot_canonical_of_isEllipticFieldOn_of_isOpenBou
     (hodgeConverseCriterion_of_isOpenBoundedConvexDomain (U := U) hConv)
     hvol compat hA hS hK hSigma p q
 
-theorem magic_identity_mu_sub_vecDot_shifted_square_canonical_of_isEllipticFieldOn_of_hodgeConverseCriterion
+theorem Mu_sub_pairing_shiftedSquare_canonical_of_ellipticity_hodge
     {d : ℕ} {U : Set (Vec d)} [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     (R : PotentialSolenoidalL2RecoveryData U)
     (hU : IsSobolevRegularDomain U)
@@ -449,7 +452,7 @@ theorem magic_identity_mu_sub_vecDot_shifted_square_canonical_of_isEllipticField
     magic_identity_mu_sub_vecDot_shifted_square_canonical_of_isSigmaCoarse
       U a hA hS hK hSigma hdet p q
 
-theorem magic_identity_mu_sub_vecDot_shifted_square_canonical_of_isEllipticFieldOn_of_isOpenBoundedConvexDomain
+theorem magic_identity_mu_sub_vectorDot_shifted_square_of_ellipticField
     {d : ℕ} {U : Set (Vec d)} [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     (R : PotentialSolenoidalL2RecoveryData U)
     (hConv : IsOpenBoundedConvexDomain U)
@@ -470,12 +473,12 @@ theorem magic_identity_mu_sub_vecDot_shifted_square_canonical_of_isEllipticField
         (1 / 2 : ℝ) * vecDot (q - matVecMul (sigmaStarCoarse U a + kappaCoarse U a) p)
           (matVecMul (sigmaStarInvCoarse U a)
             (q - matVecMul (sigmaStarCoarse U a + kappaCoarse U a) p)) :=
-  magic_identity_mu_sub_vecDot_shifted_square_canonical_of_isEllipticFieldOn_of_hodgeConverseCriterion
+  Mu_sub_pairing_shiftedSquare_canonical_of_ellipticity_hodge
     (U := U) (a := a) R hConv.isSobolevRegularDomain hEll
     (hodgeConverseCriterion_of_isOpenBoundedConvexDomain (U := U) hConv)
     hvol compat hA hS hK hSigma p q
 
-theorem magic_identity_responseJ_add_mu_sub_vecDot_canonical_of_isEllipticFieldOn_of_hodgeConverseCriterion
+theorem responseJ_add_Mu_sub_pairing_canonical_of_ellipticity_hodge
     {d : ℕ} {U : Set (Vec d)} [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     (R : PotentialSolenoidalL2RecoveryData U)
     (hU : IsSobolevRegularDomain U)
@@ -502,7 +505,7 @@ theorem magic_identity_responseJ_add_mu_sub_vecDot_canonical_of_isEllipticFieldO
     magic_identity_responseJ_add_mu_sub_vecDot_canonical_of_isSigmaCoarse
       U a hA hS hK hSigma hdet p q h
 
-theorem magic_identity_responseJ_add_mu_sub_vecDot_canonical_of_isEllipticFieldOn_of_isOpenBoundedConvexDomain
+theorem magic_identity_responseJ_add_mu_sub_vectorDot_canonical
     {d : ℕ} {U : Set (Vec d)} [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     (R : PotentialSolenoidalL2RecoveryData U)
     (hConv : IsOpenBoundedConvexDomain U)
@@ -521,12 +524,12 @@ theorem magic_identity_responseJ_add_mu_sub_vecDot_canonical_of_isEllipticFieldO
           (matVecMul (sigmaStarInvCoarse U a) (q - matVecMul (sigmaStarCoarse U a) p)) +
         vecDot (h - matVecMul (kappaCoarse U a) p)
           (matVecMul (sigmaStarInvCoarse U a) (h - matVecMul (kappaCoarse U a) p)) :=
-  magic_identity_responseJ_add_mu_sub_vecDot_canonical_of_isEllipticFieldOn_of_hodgeConverseCriterion
+  responseJ_add_Mu_sub_pairing_canonical_of_ellipticity_hodge
     (U := U) (a := a) R hConv.isSobolevRegularDomain hEll
     (hodgeConverseCriterion_of_isOpenBoundedConvexDomain (U := U) hConv)
     hvol compat hA hS hK hSigma p q h
 
-theorem magic_identity_responseJ_add_mu_sub_vecDot_diagonal_canonical_of_isEllipticFieldOn_of_hodgeConverseCriterion
+theorem magic_identity_responseJ_add_mu_sub_vectorDot_diagonal_canonical
     {d : ℕ} {U : Set (Vec d)} [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     (R : PotentialSolenoidalL2RecoveryData U)
     (hU : IsSobolevRegularDomain U)
@@ -551,7 +554,7 @@ theorem magic_identity_responseJ_add_mu_sub_vecDot_diagonal_canonical_of_isEllip
     magic_identity_responseJ_add_mu_sub_vecDot_diagonal_canonical_of_isSigmaCoarse
       U a hA hS hK hSigma hdet p
 
-theorem magic_identity_responseJ_add_mu_sub_vecDot_diagonal_canonical_of_isEllipticFieldOn_of_isOpenBoundedConvexDomain
+theorem magic_identity_responseJ_add_mu_sub_vectorDot_diagonal_canonical_of_convexDomain
     {d : ℕ} {U : Set (Vec d)} [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     (R : PotentialSolenoidalL2RecoveryData U)
     (hConv : IsOpenBoundedConvexDomain U)
@@ -568,12 +571,12 @@ theorem magic_identity_responseJ_add_mu_sub_vecDot_diagonal_canonical_of_isEllip
         (Mu U (p, matVecMul (sigmaStarCoarse U a + kappaCoarse U a) p) a -
           vecDot p (matVecMul (sigmaStarCoarse U a + kappaCoarse U a) p)) =
       vecDot p (matVecMul (sigmaCoarse U a - sigmaStarCoarse U a) p) :=
-  magic_identity_responseJ_add_mu_sub_vecDot_diagonal_canonical_of_isEllipticFieldOn_of_hodgeConverseCriterion
+  magic_identity_responseJ_add_mu_sub_vectorDot_diagonal_canonical
     (U := U) (a := a) R hConv.isSobolevRegularDomain hEll
     (hodgeConverseCriterion_of_isOpenBoundedConvexDomain (U := U) hConv)
     hvol compat hA hS hK hSigma p
 
-theorem magic_identity_mu_sub_vecDot_sigmaStar_add_kappa_canonical_of_isEllipticFieldOn_of_hodgeConverseCriterion
+theorem magic_identity_mu_sub_vectorDot_sigmaStar_add_kappa_canonical
     {d : ℕ} {U : Set (Vec d)} [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     (R : PotentialSolenoidalL2RecoveryData U)
     (hU : IsSobolevRegularDomain U)
@@ -600,7 +603,7 @@ theorem magic_identity_mu_sub_vecDot_sigmaStar_add_kappa_canonical_of_isElliptic
     magic_identity_mu_sub_vecDot_sigmaStar_add_kappa_canonical_of_isSigmaCoarse
       U a hA hS hK hSigma hdet p
 
-theorem magic_identity_mu_sub_vecDot_sigmaStar_add_kappa_canonical_of_isEllipticFieldOn_of_isOpenBoundedConvexDomain
+theorem magic_identity_mu_sub_vectorDot_sigmaStar_add_kappa_canonical_of_kappa_canonical
     {d : ℕ} {U : Set (Vec d)} [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     (R : PotentialSolenoidalL2RecoveryData U)
     (hConv : IsOpenBoundedConvexDomain U)
@@ -619,12 +622,12 @@ theorem magic_identity_mu_sub_vecDot_sigmaStar_add_kappa_canonical_of_isElliptic
         (matVecMul (sigmaCoarse U a - sigmaStarCoarse U a) p) -
         (1 / 2 : ℝ) * vecDot p
           (matVecMul (kappaCoarse U a + matTranspose (kappaCoarse U a)) p) :=
-  magic_identity_mu_sub_vecDot_sigmaStar_add_kappa_canonical_of_isEllipticFieldOn_of_hodgeConverseCriterion
+  magic_identity_mu_sub_vectorDot_sigmaStar_add_kappa_canonical
     (U := U) (a := a) R hConv.isSobolevRegularDomain hEll
     (hodgeConverseCriterion_of_isOpenBoundedConvexDomain (U := U) hConv)
     hvol compat hA hS hK hSigma p
 
-theorem kappaCoarse_add_transpose_le_sigmaCoarse_sub_sigmaStarCoarse_of_isEllipticFieldOn_of_hodgeConverseCriterion
+theorem kappaCoarse_add_transpose_le_sigmaCoarse_sub_sigmaStarCoarse
     {d : ℕ} {U : Set (Vec d)} [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     (R : PotentialSolenoidalL2RecoveryData U)
     (hU : IsSobolevRegularDomain U)
@@ -649,7 +652,7 @@ theorem kappaCoarse_add_transpose_le_sigmaCoarse_sub_sigmaStarCoarse_of_isEllipt
     kappaCoarse_add_transpose_le_sigmaCoarse_sub_sigmaStarCoarse_of_isEllipticFieldOn
       (U := U) (a := a) R hU hEll hvol compat hA hS hK hSigma hdet p
 
-theorem kappaCoarse_add_transpose_le_sigmaCoarse_sub_sigmaStarCoarse_of_isEllipticFieldOn_of_isOpenBoundedConvexDomain
+theorem kappaCoarse_add_transpose_le_sigmaCoarse_sub_sigmaStarCoarse_of_ellipticField
     {d : ℕ} {U : Set (Vec d)} [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     (R : PotentialSolenoidalL2RecoveryData U)
     (hConv : IsOpenBoundedConvexDomain U)
@@ -666,7 +669,7 @@ theorem kappaCoarse_add_transpose_le_sigmaCoarse_sub_sigmaStarCoarse_of_isEllipt
     (p : Vec d) :
     vecDot p (matVecMul (kappaCoarse U a + matTranspose (kappaCoarse U a)) p) ≤
       vecDot p (matVecMul (sigmaCoarse U a - sigmaStarCoarse U a) p) :=
-  kappaCoarse_add_transpose_le_sigmaCoarse_sub_sigmaStarCoarse_of_isEllipticFieldOn_of_hodgeConverseCriterion
+  kappaCoarse_add_transpose_le_sigmaCoarse_sub_sigmaStarCoarse
     (U := U) (a := a) R hConv.isSobolevRegularDomain hEll
     (hodgeConverseCriterion_of_isOpenBoundedConvexDomain (U := U) hConv)
     hvol compat hA hS hK hSigma p
@@ -763,7 +766,7 @@ theorem sigmaStar_le_sigma_of_isEllipticFieldOn_of_isOpenBoundedConvexDomain
     (hodgeConverseCriterion_of_isOpenBoundedConvexDomain (U := U) hConv)
     hvol compat hA hS hK hSigma p
 
-theorem magic_identity_mu_adjointCoeffField_flipFlux_sub_vecDot_of_isEllipticFieldOn_of_hodgeConverseCriterion
+theorem magic_identity_mu_adjointCoeffField_flipFlux_sub_vectorDot
     {d : ℕ} {U : Set (Vec d)} [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     (R : PotentialSolenoidalL2RecoveryData U)
     (hU : IsSobolevRegularDomain U)
@@ -790,7 +793,7 @@ theorem magic_identity_mu_adjointCoeffField_flipFlux_sub_vecDot_of_isEllipticFie
     magic_identity_mu_adjointCoeffField_flipFlux_sub_vecDot_of_isSigmaCoarse
       U a hA hS hK hSigma hdet p q
 
-theorem magic_identity_mu_adjointCoeffField_flipFlux_sub_vecDot_of_isEllipticFieldOn_of_isOpenBoundedConvexDomain
+theorem magic_identity_mu_adjointCoeffField_flipFlux_sub_vectorDot_of_ellipticField
     {d : ℕ} {U : Set (Vec d)} [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     (R : PotentialSolenoidalL2RecoveryData U)
     (hConv : IsOpenBoundedConvexDomain U)
@@ -809,13 +812,13 @@ theorem magic_identity_mu_adjointCoeffField_flipFlux_sub_vecDot_of_isEllipticFie
       (1 / 2 : ℝ) * vecDot p (matVecMul sigma p) +
         (1 / 2 : ℝ) * vecDot (q - matVecMul kappa p)
           (matVecMul sigmaStar⁻¹ (q - matVecMul kappa p)) - vecDot p q :=
-  magic_identity_mu_adjointCoeffField_flipFlux_sub_vecDot_of_isEllipticFieldOn_of_hodgeConverseCriterion
+  magic_identity_mu_adjointCoeffField_flipFlux_sub_vectorDot
     (U := U) (a := a) R hConv.isSobolevRegularDomain hEll
     (hodgeConverseCriterion_of_isOpenBoundedConvexDomain (U := U) hConv)
     hvol compat hA hS hK hSigma p q
 
 theorem
-    magic_identity_mu_adjointCoeffField_flipFlux_sub_vecDot_shifted_square_of_isEllipticFieldOn_of_hodgeConverseCriterion
+    magic_identity_mu_adjointCoeffField_flipFlux_sub_of_ellipticField
     {d : ℕ} {U : Set (Vec d)} [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     (R : PotentialSolenoidalL2RecoveryData U)
     (hU : IsSobolevRegularDomain U)
@@ -844,7 +847,7 @@ theorem
       U a hA hS hK hSigma hdet p q
 
 theorem
-    magic_identity_mu_adjointCoeffField_flipFlux_sub_vecDot_shifted_square_of_isEllipticFieldOn_of_isOpenBoundedConvexDomain
+    magic_identity_mu_adjointCoeffField_flipFlux_sub_vectorDot_of_convexDomain
     {d : ℕ} {U : Set (Vec d)} [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     (R : PotentialSolenoidalL2RecoveryData U)
     (hConv : IsOpenBoundedConvexDomain U)
@@ -864,12 +867,12 @@ theorem
         (1 / 2 : ℝ) * vecDot p (matVecMul (kappa + matTranspose kappa) p) +
         (1 / 2 : ℝ) * vecDot (q - matVecMul (sigmaStar + kappa) p)
           (matVecMul sigmaStar⁻¹ (q - matVecMul (sigmaStar + kappa) p)) :=
-  magic_identity_mu_adjointCoeffField_flipFlux_sub_vecDot_shifted_square_of_isEllipticFieldOn_of_hodgeConverseCriterion
+  magic_identity_mu_adjointCoeffField_flipFlux_sub_of_ellipticField
     (U := U) (a := a) R hConv.isSobolevRegularDomain hEll
     (hodgeConverseCriterion_of_isOpenBoundedConvexDomain (U := U) hConv)
     hvol compat hA hS hK hSigma p q
 
-theorem magic_identity_mu_adjointCoeffField_flipFlux_sub_vecDot_canonical_of_isEllipticFieldOn_of_hodgeConverseCriterion
+theorem magic_identity_mu_adjointCoeffField_flipFlux_sub_vectorDot_canonical
     {d : ℕ} {U : Set (Vec d)} [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     (R : PotentialSolenoidalL2RecoveryData U)
     (hU : IsSobolevRegularDomain U)
@@ -897,7 +900,7 @@ theorem magic_identity_mu_adjointCoeffField_flipFlux_sub_vecDot_canonical_of_isE
     magic_identity_mu_adjointCoeffField_flipFlux_sub_vecDot_canonical_of_isSigmaCoarse
       U a hA hS hK hSigma hdet p q
 
-theorem magic_identity_mu_adjointCoeffField_flipFlux_sub_vecDot_canonical_of_isEllipticFieldOn_of_isOpenBoundedConvexDomain
+theorem magic_identity_mu_adjointField_flipFlux_sub_vectorDot_of_ellipticRecovery
     {d : ℕ} {U : Set (Vec d)} [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     (R : PotentialSolenoidalL2RecoveryData U)
     (hConv : IsOpenBoundedConvexDomain U)
@@ -917,13 +920,13 @@ theorem magic_identity_mu_adjointCoeffField_flipFlux_sub_vecDot_canonical_of_isE
         (1 / 2 : ℝ) * vecDot (q - matVecMul (kappaCoarse U a) p)
           (matVecMul (sigmaStarInvCoarse U a) (q - matVecMul (kappaCoarse U a) p)) -
         vecDot p q :=
-  magic_identity_mu_adjointCoeffField_flipFlux_sub_vecDot_canonical_of_isEllipticFieldOn_of_hodgeConverseCriterion
+  magic_identity_mu_adjointCoeffField_flipFlux_sub_vectorDot_canonical
     (U := U) (a := a) R hConv.isSobolevRegularDomain hEll
     (hodgeConverseCriterion_of_isOpenBoundedConvexDomain (U := U) hConv)
     hvol compat hA hS hK hSigma p q
 
 theorem
-    magic_identity_mu_adjointCoeffField_flipFlux_sub_vecDot_shifted_square_canonical_of_isEllipticFieldOn_of_hodgeConverseCriterion
+    magic_identity_mu_adjointCoeffField_flipFlux_sub_vectorDot_shifted_square
     {d : ℕ} {U : Set (Vec d)} [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     (R : PotentialSolenoidalL2RecoveryData U)
     (hU : IsSobolevRegularDomain U)
@@ -951,11 +954,11 @@ theorem
       IsUnit sigmaStar.det :=
     hdet_of_recovery_hodge (U := U) (a := a) R hU hEll hHodge hvol compat hS
   exact
-    magic_identity_mu_adjointCoeffField_flipFlux_sub_vecDot_shifted_square_canonical_of_isSigmaCoarse
+    magicIdentity_mu_adjointFlux_sub_dot_eq_shiftedSquares
       U a hA hS hK hSigma hdet p q
 
 theorem
-    magic_identity_mu_adjointCoeffField_flipFlux_sub_vecDot_shifted_square_canonical_of_isEllipticFieldOn_of_isOpenBoundedConvexDomain
+    magic_identity_mu_adjointField_flipFlux_shiftedSquare_of_ellipticRecovery
     {d : ℕ} {U : Set (Vec d)} [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     (R : PotentialSolenoidalL2RecoveryData U)
     (hConv : IsOpenBoundedConvexDomain U)
@@ -978,7 +981,7 @@ theorem
         (1 / 2 : ℝ) * vecDot (q - matVecMul (sigmaStarCoarse U a + kappaCoarse U a) p)
           (matVecMul (sigmaStarInvCoarse U a)
             (q - matVecMul (sigmaStarCoarse U a + kappaCoarse U a) p)) :=
-  magic_identity_mu_adjointCoeffField_flipFlux_sub_vecDot_shifted_square_canonical_of_isEllipticFieldOn_of_hodgeConverseCriterion
+  magic_identity_mu_adjointCoeffField_flipFlux_sub_vectorDot_shifted_square
     (U := U) (a := a) R hConv.isSobolevRegularDomain hEll
     (hodgeConverseCriterion_of_isOpenBoundedConvexDomain (U := U) hConv)
     hvol compat hA hS hK hSigma p q

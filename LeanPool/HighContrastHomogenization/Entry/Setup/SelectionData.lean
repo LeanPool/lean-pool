@@ -206,7 +206,8 @@ def SelectionData.Selects (S : SelectionData) (d : ℕ) (γ : ℝ) : Prop :=
                                 (n + (S.h : ℤ)) ≤
                             C *
                               (profile P γ (Geometry.explicitRoundedGrid jStar m) jStar k n +
-                                determinantDrift P γ (Geometry.explicitRoundedGrid jStar m) jStar n +
+                                determinantDrift P γ (Geometry.explicitRoundedGrid jStar m)
+                                  jStar n +
                                 Real.exp ((bigQ d γ : ℝ) *
                                   detIncrement P (Geometry.explicitRoundedGrid jStar m) n
                                     (n + (S.h : ℤ))) - 1)) ∧
@@ -234,7 +235,8 @@ def SelectionData.Selects (S : SelectionData) (d : ℕ) (γ : ℝ) : Prop :=
                                 (n + (S.h : ℤ)) ≤
                             1 / 4 *
                                 (profile P γ (Geometry.explicitRoundedGrid jStar m) jStar k n +
-                                  determinantDrift P γ (Geometry.explicitRoundedGrid jStar m) jStar n) +
+                                  determinantDrift P γ (Geometry.explicitRoundedGrid jStar m)
+                                    jStar n) +
                               C *
                                 synchCharge P (Geometry.explicitRoundedGrid jStar m)
                                   (S.h : ℤ) n) ∧
@@ -268,7 +270,8 @@ def SelectionData.Selects (S : SelectionData) (d : ℕ) (γ : ℝ) : Prop :=
                           (n + (S.L ε σ : ℤ) = n + (S.L ε σ : ℤ) →
                             profile P γ (Geometry.explicitRoundedGrid jStar mPlus) jStar
                                   (n + (S.L ε σ : ℤ)) (n + (S.L ε σ : ℤ)) +
-                                determinantDrift P γ (Geometry.explicitRoundedGrid jStar mPlus) jStar
+                                determinantDrift P γ (Geometry.explicitRoundedGrid jStar mPlus)
+                                  jStar
                                   (n + (S.L ε σ : ℤ)) ≤ 1) ∧
                           (n + (S.L ε σ : ℤ) < n + (S.L ε σ : ℤ) →
                             n + (S.L ε σ : ℤ) + (S.h : ℤ) ≤ n + (S.L ε σ : ℤ))) ∨

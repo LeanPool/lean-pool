@@ -38,7 +38,7 @@ noncomputable section
 
 /-- Localized high-bottom fixed-pair estimate at the uniform endpoint, with the
 raw localized bad-pair estimate supplied externally. -/
-theorem measureReal_shiftedHighBottomPairEvent_quenchedProbeEnvelope_le_soft_high_gammaInfinity_of_badPair_bound
+theorem measureReal_shiftedHighBottomPairProbability_le_soft_high_gammaInfinity
     {d : ℕ} [NeZero d] {Cfluct Centry a : ℝ}
     (params : QuantitativeCoarseGrainedEllipticityParams d)
     (hCfluct : 0 < Cfluct) (_hCentry : 0 < Centry) (ha : 0 < a)
@@ -220,7 +220,7 @@ theorem measureReal_shiftedHighBottomPairEvent_quenchedProbeEnvelope_le_soft_hig
 
 /-- Deterministic high-bottom fixed-pair cutoff at the uniform endpoint, with
 the raw endpoint crude bad-pair cutoff supplied externally. -/
-theorem measureReal_shiftedHighBottomPairEvent_quenchedProbeEnvelope_eq_zero_of_crudeA_one_gammaInfinity_of_badPair_zero
+theorem measureReal_shiftedHighBottomPairProbability_eq_zero_of_badPair_zero
     {d : ℕ} [NeZero d] {Ccrude : ℝ}
     (params : QuantitativeCoarseGrainedEllipticityParams d)
     (hCcrude : 0 < Ccrude)
@@ -311,9 +311,27 @@ theorem measureReal_shiftedHighBottomPairEvent_quenchedProbeEnvelope_eq_zero_of_
     exact hmono.trans_eq hbad_zero
   exact le_antisymm hle_zero MeasureTheory.measureReal_nonneg
 
+private theorem maximum_cardinality_product_le_row_weight
+    {cardinality descendants w : ℝ} {q r : ℕ}
+    (hdescendants : 0 ≤ descendants)
+    (hw_one : 1 ≤ w) (hdescendants_le : descendants ≤ w ^ q * w ^ r) :
+    max 1 (cardinality * descendants) ≤ max 1 cardinality * w ^ q * w ^ r := by
+  have hwq_one : 1 ≤ w ^ q := one_le_pow₀ hw_one
+  have hwr_one : 1 ≤ w ^ r := one_le_pow₀ hw_one
+  have hproduct : cardinality * descendants ≤ max 1 cardinality * w ^ q * w ^ r := by
+    calc
+      cardinality * descendants ≤ max 1 cardinality * (w ^ q * w ^ r) :=
+        mul_le_mul (le_max_right 1 cardinality) hdescendants_le
+          hdescendants ((by norm_num : (0 : ℝ) ≤ 1).trans (le_max_left 1 cardinality))
+      _ = max 1 cardinality * w ^ q * w ^ r := by ring
+  have hone : 1 ≤ max 1 cardinality * w ^ q * w ^ r := by
+    exact one_le_mul_of_one_le_of_one_le
+      (one_le_mul_of_one_le_of_one_le (le_max_left 1 cardinality) hwq_one) hwr_one
+  exact max_le hone hproduct
+
 /-- Endpoint high-bottom fixed row estimate with all constants supplied
 externally. -/
-theorem measureReal_shiftedHighBottomPairEvent_quenchedProbeEnvelope_le_weighted_row_gammaInfinity_of_bounds
+theorem shiftedHighBottomPairMeasure_le_rowGammaInfinity_of_bounds
     {d : ℕ} [NeZero d] {Cfluct Ccrude Centry a : ℝ}
     (params : QuantitativeCoarseGrainedEllipticityParams d)
     (hCfluct : 0 < Cfluct) (hCcrude : 0 < Ccrude)
@@ -494,34 +512,14 @@ theorem measureReal_shiftedHighBottomPairEvent_quenchedProbeEnvelope_le_weighted
         have hn : 1 ≤ 3 ^ d :=
           Nat.succ_le_of_lt (pow_pos (by norm_num : (0 : ℕ) < 3) d)
         simpa [w] using (by exact_mod_cast hn : (1 : ℝ) ≤ ((3 ^ d : ℕ) : ℝ))
-      have hwq_one : 1 ≤ w ^ q := one_le_pow₀ hw_one
-      have hwr_one : 1 ≤ w ^ r := one_le_pow₀ hw_one
-      have hDcard :
-          (D.card : ℝ) ≤ w ^ q * w ^ r := by
+      have hDcard : (D.card : ℝ) ≤ w ^ q * w ^ r := by
         have hnm_le : n ≤ m := le_of_lt hnm
         simpa [D, w, m, n] using
           descendantsAtScale_bottom_row_card_le_weight
             (d := d) (N := N0) (q := q) (r := r) (j := j) hnm_le
       have hpref_bound :
           max 1 pref ≤ max 1 (S.card : ℝ) * w ^ q * w ^ r := by
-        have hD_nonneg : 0 ≤ (D.card : ℝ) := by positivity
-        have hpref_le :
-            pref ≤ max 1 (S.card : ℝ) * w ^ q * w ^ r := by
-          calc
-            pref = (S.card : ℝ) * (D.card : ℝ) := rfl
-            _ ≤ max 1 (S.card : ℝ) * (w ^ q * w ^ r) :=
-              mul_le_mul
-                (le_max_right 1 (S.card : ℝ)) hDcard
-                hD_nonneg
-                ((by norm_num : (0 : ℝ) ≤ 1).trans
-                  (le_max_left 1 (S.card : ℝ)))
-            _ = max 1 (S.card : ℝ) * w ^ q * w ^ r := by ring
-        have hone :
-            1 ≤ max 1 (S.card : ℝ) * w ^ q * w ^ r := by
-          have hmaxS : 1 ≤ max 1 (S.card : ℝ) :=
-            le_max_left 1 (S.card : ℝ)
-          nlinarith [hmaxS, hwq_one, hwr_one]
-        exact max_le hone hpref_le
+        exact maximum_cardinality_product_le_row_weight (by positivity) hw_one hDcard
       have hpow :
           (A * ρ ^ r) ^ η ≤ (max 1 highA) ^ (2 : ℝ) := by
         simpa [b, m, n, highA, A, ρ, η, Dhigh, Dcrude, crudeA] using
@@ -533,25 +531,9 @@ theorem measureReal_shiftedHighBottomPairEvent_quenchedProbeEnvelope_le_weighted
             hDhigh_pos hDcrude_pos hDen
             (by simpa [Dhigh, Dcrude, η] using hDen_dom)
             (by simpa [m, n, Dcrude, crudeA] using hcrude_lt)
-      have hCpref_nonneg : 0 ≤ max 1 (S.card : ℝ) := by
-        exact (by norm_num : (0 : ℝ) ≤ 1).trans (le_max_left 1 (S.card : ℝ))
-      have hrow :=
-        le_weighted_row_of_le_soft_single
-          (x := P.real (highBottomPairEvent Hshift K a t αbad q m n))
-          (pref := pref) (highA := highA) (A := A) (ρ := ρ) (η := η)
-          (C := max 1 (S.card : ℝ)) (w := w) (q := q) (r := r)
-          hfixed hpref_bound hCpref_nonneg hw_pos.le hpow
-      change
-        P.real (highBottomPairEvent Hshift K a t αbad q m n) ≤
-          (Cpref * w ^ q) *
-            (w ^ r * Real.exp (-((A * ρ ^ r) ^ η)))
-      calc
-        P.real (highBottomPairEvent Hshift K a t αbad q m n)
-            ≤ (Real.exp 1 * max 1 (S.card : ℝ) * w ^ q) *
-                (w ^ r * Real.exp (-((A * ρ ^ r) ^ η))) := hrow
-        _ = (Cpref * w ^ q) *
-                (w ^ r * Real.exp (-((A * ρ ^ r) ^ η))) := by
-              dsimp [Cpref]
+      simpa only [Cpref] using
+        le_weighted_row_of_le_soft_single hfixed hpref_bound
+          (zero_le_one.trans (le_max_left 1 (S.card : ℝ))) hw_pos.le hpow
   · have hempty :
         highBottomPairEvent Hshift K a t αbad q m n = ∅ := by
       ext ω
@@ -561,7 +543,7 @@ theorem measureReal_shiftedHighBottomPairEvent_quenchedProbeEnvelope_le_weighted
     exact htail_nonneg
 
 /-- Endpoint high-bottom component estimate from synchronized row bounds. -/
-theorem measureReal_shiftedHighBottomBadScaleEvent_quenchedProbeEnvelope_le_weighted_kernel_gammaInfinity_of_row_bound
+theorem shiftedHighBottomBadScaleProbability_le_weighted_kernel_gammaInfinity
     {d : ℕ} [NeZero d] {Cfluct Ccrude Centry a : ℝ}
     (params : QuantitativeCoarseGrainedEllipticityParams d)
     (hrow :
@@ -694,7 +676,7 @@ theorem measureReal_shiftedHighBottomBadScaleEvent_quenchedProbeEnvelope_le_weig
 
 /-- Endpoint crude-bottom fixed-pair cutoff with the raw endpoint crude
 bad-pair cutoff supplied externally. -/
-theorem measureReal_shiftedCrudeBottomPairEvent_quenchedProbeEnvelope_eq_zero_gammaInfinity_of_badPair_zero
+theorem shiftedCrudeBottomPairMeasure_eq_zero_of_pairZero
     {d : ℕ} [NeZero d] {Ccrude : ℝ}
     (params : QuantitativeCoarseGrainedEllipticityParams d)
     (hCcrude : 0 < Ccrude)
@@ -844,7 +826,7 @@ theorem measureReal_shiftedCrudeBottomPairEvent_quenchedProbeEnvelope_eq_zero_ga
 
 /-- Endpoint crude-bottom component cutoff from synchronized fixed-pair
 cutoffs. -/
-theorem measureReal_shiftedCrudeBottomBadScaleEvent_quenchedProbeEnvelope_eq_zero_gammaInfinity_of_pair_zero
+theorem shiftedCrudeBottomBadScaleMeasure_eq_zero_of_pairZero
     {d : ℕ} [NeZero d] {Ccrude : ℝ}
     (params : QuantitativeCoarseGrainedEllipticityParams d)
     (hpair :

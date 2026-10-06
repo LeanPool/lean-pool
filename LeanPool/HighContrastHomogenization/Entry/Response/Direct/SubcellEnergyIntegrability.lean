@@ -59,7 +59,8 @@ open MeasureTheory
 noncomputable section
 
 /-- The bilinear pairing of a fixed doubled vector with `A X` expands over the flattened basis. -/
-private theorem blockVecDot_blockMatVecMul_eq_sum_bilinear {d : ℕ} (A : BlockMat d) (u X : BlockVec d) :
+private theorem blockVecDot_blockMatVecMul_eq_sum_bilinear {d : ℕ} (A : BlockMat d) (u X :
+  BlockVec d) :
     blockVecDot u (blockMatVecMul A X) =
       ∑ α : BlockCoord d, ∑ β : BlockCoord d,
         toFullBlockVec u α * (toFullBlockMat A α β * toFullBlockVec X β) := by
@@ -99,7 +100,8 @@ theorem integrable_subcellDeficit_respCoeffMinus {d : ℕ} [NeZero d]
   let v : (w : Fin d → ℤ) → (a : CoeffSpace d) →
       AHarmonicFunction (respCoeffMinus F a) (adaptedCellAtCenter (respGrid jStar F) s w) :=
     fun w a => (Classical.choice
-      (nonempty_scalarCanonicalMaximizer_respCoeffMinus_adaptedCellAtCenter (respGrid jStar F) hq s w F a
+      (nonempty_scalarCanonicalMaximizer_respCoeffMinus_adaptedCellAtCenter (respGrid jStar F)
+        hq s w F a
         (respP (respMean P jStar F t) e)
         (respqMinus P jStar F t e))).toAHarmonicFunctionMeanZero.toAHarmonicFunction
   have hv : ∀ (w : Fin d → ℤ) (a : CoeffSpace d),
@@ -107,7 +109,8 @@ theorem integrable_subcellDeficit_respCoeffMinus {d : ℕ} [NeZero d]
         (respP (respMean P jStar F t) e) (respqMinus P jStar F t e)
         (respCoeffMinus F a) (v w a) :=
     fun w a => (Classical.choice
-      (nonempty_scalarCanonicalMaximizer_respCoeffMinus_adaptedCellAtCenter (respGrid jStar F) hq s w F a
+      (nonempty_scalarCanonicalMaximizer_respCoeffMinus_adaptedCellAtCenter (respGrid jStar F)
+        hq s w F a
         (respP (respMean P jStar F t) e)
         (respqMinus P jStar F t e))).isResponseMaximizer
   have hDnn := zero_le_subcellDeficit_respCoeffMinus P jStar hjStar F hm H s t ht e uM v hv
@@ -147,7 +150,8 @@ theorem integrable_subcellDeficit_respCoeffMinus {d : ℕ} [NeZero d]
         = ((triadicIndexBox d H).card : ℝ) *
             ((((triadicIndexBox d H).card : ℝ))⁻¹ *
               ∑ w ∈ triadicIndexBox d H,
-                (ResponseJ (adaptedCellAtCenter (respGrid jStar F) s w) (respP (respMean P jStar F t) e)
+                (ResponseJ (adaptedCellAtCenter (respGrid jStar F) s w) (respP (respMean P jStar
+                  F t) e)
                     (respqMinus P jStar F t e) (respCoeffMinus F a)
                   - volumeAverage (adaptedCellAtCenter (respGrid jStar F) s w)
                       (scalarResponseIntegrand (respCell jStar F t) (respCoeffMinus F a)
@@ -185,7 +189,8 @@ theorem integrable_subcellDeficit_respCoeffMinus {d : ℕ} [NeZero d]
                         (cellAverage (adaptedCellAtCenter (respGrid jStar F) s w)
                           (optimizerField (respCoeffMinus F a) (uM a))))) := by
       funext a
-      rw [volumeAverage_scalarResponseIntegrand_adaptedCellAtCenter_respCoeffMinus_eq P jStar hjStar F hm
+      rw [volumeAverage_scalarResponseIntegrand_adaptedCellAtCenter_respCoeffMinus_eq P jStar
+        hjStar F hm
         H s t ht e uM a w hw]
     rw [hDefEq]
     have hResp : MeasureTheory.AEStronglyMeasurable (fun a : CoeffSpace d =>
@@ -269,7 +274,8 @@ theorem integrable_subcellDeficit_respCoeffPlus {d : ℕ} [NeZero d]
   let v : (w : Fin d → ℤ) → (a : CoeffSpace d) →
       AHarmonicFunction (respCoeffPlus F a) (adaptedCellAtCenter (respGrid jStar F) s w) :=
     fun w a => (Classical.choice
-      (nonempty_scalarCanonicalMaximizer_respCoeffPlus_adaptedCellAtCenter (respGrid jStar F) hq s w F a
+      (nonempty_scalarCanonicalMaximizer_respCoeffPlus_adaptedCellAtCenter (respGrid jStar F) hq
+        s w F a
         (respP (respMean P jStar F t) e)
         (respqPlus P jStar F t e))).toAHarmonicFunctionMeanZero.toAHarmonicFunction
   have hv : ∀ (w : Fin d → ℤ) (a : CoeffSpace d),
@@ -277,7 +283,8 @@ theorem integrable_subcellDeficit_respCoeffPlus {d : ℕ} [NeZero d]
         (respP (respMean P jStar F t) e) (respqPlus P jStar F t e)
         (respCoeffPlus F a) (v w a) :=
     fun w a => (Classical.choice
-      (nonempty_scalarCanonicalMaximizer_respCoeffPlus_adaptedCellAtCenter (respGrid jStar F) hq s w F a
+      (nonempty_scalarCanonicalMaximizer_respCoeffPlus_adaptedCellAtCenter (respGrid jStar F) hq
+        s w F a
         (respP (respMean P jStar F t) e)
         (respqPlus P jStar F t e))).isResponseMaximizer
   have hDnn := zero_le_subcellDeficit_respCoeffPlus P jStar hjStar F hm H s t ht e uP v hv
@@ -317,7 +324,8 @@ theorem integrable_subcellDeficit_respCoeffPlus {d : ℕ} [NeZero d]
         = ((triadicIndexBox d H).card : ℝ) *
             ((((triadicIndexBox d H).card : ℝ))⁻¹ *
               ∑ w ∈ triadicIndexBox d H,
-                (ResponseJ (adaptedCellAtCenter (respGrid jStar F) s w) (respP (respMean P jStar F t) e)
+                (ResponseJ (adaptedCellAtCenter (respGrid jStar F) s w) (respP (respMean P jStar
+                  F t) e)
                     (respqPlus P jStar F t e) (respCoeffPlus F a)
                   - volumeAverage (adaptedCellAtCenter (respGrid jStar F) s w)
                       (scalarResponseIntegrand (respCell jStar F t) (respCoeffPlus F a)
@@ -355,7 +363,8 @@ theorem integrable_subcellDeficit_respCoeffPlus {d : ℕ} [NeZero d]
                         (cellAverage (adaptedCellAtCenter (respGrid jStar F) s w)
                           (optimizerField (respCoeffPlus F a) (uP a))))) := by
       funext a
-      rw [volumeAverage_scalarResponseIntegrand_adaptedCellAtCenter_respCoeffPlus_eq P jStar hjStar F hm
+      rw [volumeAverage_scalarResponseIntegrand_adaptedCellAtCenter_respCoeffPlus_eq P jStar
+        hjStar F hm
         H s t ht e uP a w hw]
     rw [hDefEq]
     have hResp : MeasureTheory.AEStronglyMeasurable (fun a : CoeffSpace d =>

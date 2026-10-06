@@ -102,7 +102,7 @@ theorem normalizedPositiveError_trace_le_two_upperBlockJTraceAverage
       coarseBlockMatrix (cubeSet Q) a.toFun =
         Ch02.coarseBlockMatrix (Ch02.cubeDomain Q) (F.coeffOn Q) := by
     simpa [F] using
-      Ch04.RestrictionLawCarrier.coarseBlockMatrix_cubeSet_eq_ch02_coarseBlockMatrix_of_aelocallyUniformlyEllipticField
+      Ch04.RestrictionLawCarrier.coarseBlockMatrix_cubeSet_eq_chapterCoarse
         ha Q
   have hTerm :
       (fun R : TriadicCube d =>
@@ -110,7 +110,7 @@ theorem normalizedPositiveError_trace_le_two_upperBlockJTraceAverage
         fun R : TriadicCube d => coarseBlockMatrix (cubeSet R) a.toFun := by
     funext R
     simpa [F] using
-      (Ch04.RestrictionLawCarrier.coarseBlockMatrix_cubeSet_eq_ch02_coarseBlockMatrix_of_aelocallyUniformlyEllipticField
+      (Ch04.RestrictionLawCarrier.coarseBlockMatrix_cubeSet_eq_chapterCoarse
         ha R).symm
   have hAvg :
       Pcell.weightedBlockAverage
@@ -174,7 +174,8 @@ theorem normalizedPositiveError_trace_le_two_upperBlockJTraceAverage
             funext R
             refine Finset.sum_congr rfl ?_
             intro l _hl
-            rw [doubledResponseJ_eq_blockJObservableCubeSetBlockVec_of_aelocallyUniformlyEllipticField
+            rw [
+            doubledResponseJ_eq_blockJObservableCubeSetBlockVec_of_aelocallyUniformlyEllipticField
               ha R]
             rw [normalizedInvSqrtBlockProbe_inl_eq hP hStruct (m : ℤ) l,
               normalizedSqrtBlockProbe_inl_eq hP hStruct (m : ℤ) l]
@@ -213,7 +214,7 @@ theorem positiveErrorWithNormalizer_trace_le_two_blockJTraceAverageWithNormalize
       coarseBlockMatrix (cubeSet Q) a.toFun =
         Ch02.coarseBlockMatrix (Ch02.cubeDomain Q) (F.coeffOn Q) := by
     simpa [F] using
-      Ch04.RestrictionLawCarrier.coarseBlockMatrix_cubeSet_eq_ch02_coarseBlockMatrix_of_aelocallyUniformlyEllipticField
+      Ch04.RestrictionLawCarrier.coarseBlockMatrix_cubeSet_eq_chapterCoarse
         ha Q
   have hTerm :
       (fun R : TriadicCube d =>
@@ -221,7 +222,7 @@ theorem positiveErrorWithNormalizer_trace_le_two_blockJTraceAverageWithNormalize
         fun R : TriadicCube d => coarseBlockMatrix (cubeSet R) a.toFun := by
     funext R
     simpa [F] using
-      (Ch04.RestrictionLawCarrier.coarseBlockMatrix_cubeSet_eq_ch02_coarseBlockMatrix_of_aelocallyUniformlyEllipticField
+      (Ch04.RestrictionLawCarrier.coarseBlockMatrix_cubeSet_eq_chapterCoarse
         ha R).symm
   have hAvg :
       Pcell.weightedBlockAverage
@@ -274,7 +275,8 @@ theorem positiveErrorWithNormalizer_trace_le_two_blockJTraceAverageWithNormalize
             funext R
             refine Finset.sum_congr rfl ?_
             intro α _hα
-            rw [doubledResponseJ_eq_blockJObservableCubeSetBlockVec_of_aelocallyUniformlyEllipticField
+            rw [
+            doubledResponseJ_eq_blockJObservableCubeSetBlockVec_of_aelocallyUniformlyEllipticField
               ha R]
   have hParentBudget_nonneg :
       0 ≤ fullBlockJTraceBudgetWithNormalizers S T (coarseBlockMatrix (cubeSet Q) a.toFun) := by
@@ -336,7 +338,7 @@ theorem positiveErrorWithNormalizer_trace_le_two_blockJTraceAverageWithNormalize
       have hj : (0 : ℤ) ≤ (j : ℤ) := by exact_mod_cast Nat.zero_le j
       linarith
     simpa [k] using
-      Ch04.coarseBlockMatrix_le_descendantsAverageBlockMat_cubeSet_of_aelocallyUniformlyEllipticField
+      Ch04.coarseBlockMatrix_le_descendantAverage
         ha Q hk
   have htrace :=
     fullBlockTrace_transpose_blockSub_le_two_fullBlockJTraceBudgetWithNormalizers
@@ -372,7 +374,7 @@ theorem normalizedCoarseAveragePositiveErrorMatrix_posSemidef
         (descendantsAverageBlockMat Q j
           (fun R => coarseBlockMatrix (cubeSet R) a.toFun)) := by
     simpa [k] using
-      Ch04.coarseBlockMatrix_le_descendantsAverageBlockMat_cubeSet_of_aelocallyUniformlyEllipticField
+      Ch04.coarseBlockMatrix_le_descendantAverage
         ha Q hk
   have hParentSymm :
       IsSymmetricBlockMat (coarseBlockMatrix (cubeSet Q) a.toFun) := by
@@ -380,7 +382,7 @@ theorem normalizedCoarseAveragePositiveErrorMatrix_posSemidef
         coarseBlockMatrix (cubeSet Q) a.toFun =
           Ch02.coarseBlockMatrix (Ch02.cubeDomain Q) (F.coeffOn Q) := by
       simpa [F] using
-        Ch04.RestrictionLawCarrier.coarseBlockMatrix_cubeSet_eq_ch02_coarseBlockMatrix_of_aelocallyUniformlyEllipticField
+        Ch04.RestrictionLawCarrier.coarseBlockMatrix_cubeSet_eq_chapterCoarse
           ha Q
     rw [hParent]
     exact Ch02.isSymmetricBlockMat_coarseBlockMatrix (Ch02.cubeDomain Q) (F.coeffOn Q)
@@ -390,7 +392,7 @@ theorem normalizedCoarseAveragePositiveErrorMatrix_posSemidef
         fun R : TriadicCube d => coarseBlockMatrix (cubeSet R) a.toFun := by
     funext R
     simpa [F] using
-      (Ch04.RestrictionLawCarrier.coarseBlockMatrix_cubeSet_eq_ch02_coarseBlockMatrix_of_aelocallyUniformlyEllipticField
+      (Ch04.RestrictionLawCarrier.coarseBlockMatrix_cubeSet_eq_chapterCoarse
         ha R).symm
   have hAvg :
       Pcell.weightedBlockAverage
@@ -456,7 +458,7 @@ theorem coarseAveragePositiveErrorMatrixWithNormalizer_posSemidef
         (descendantsAverageBlockMat Q j
           (fun R => coarseBlockMatrix (cubeSet R) a.toFun)) := by
     simpa [k] using
-      Ch04.coarseBlockMatrix_le_descendantsAverageBlockMat_cubeSet_of_aelocallyUniformlyEllipticField
+      Ch04.coarseBlockMatrix_le_descendantAverage
         ha Q hk
   have hParentSymm :
       IsSymmetricBlockMat (coarseBlockMatrix (cubeSet Q) a.toFun) := by
@@ -464,7 +466,7 @@ theorem coarseAveragePositiveErrorMatrixWithNormalizer_posSemidef
         coarseBlockMatrix (cubeSet Q) a.toFun =
           Ch02.coarseBlockMatrix (Ch02.cubeDomain Q) (F.coeffOn Q) := by
       simpa [F] using
-        Ch04.RestrictionLawCarrier.coarseBlockMatrix_cubeSet_eq_ch02_coarseBlockMatrix_of_aelocallyUniformlyEllipticField
+        Ch04.RestrictionLawCarrier.coarseBlockMatrix_cubeSet_eq_chapterCoarse
           ha Q
     rw [hParent]
     exact Ch02.isSymmetricBlockMat_coarseBlockMatrix (Ch02.cubeDomain Q) (F.coeffOn Q)
@@ -474,7 +476,7 @@ theorem coarseAveragePositiveErrorMatrixWithNormalizer_posSemidef
         fun R : TriadicCube d => coarseBlockMatrix (cubeSet R) a.toFun := by
     funext R
     simpa [F] using
-      (Ch04.RestrictionLawCarrier.coarseBlockMatrix_cubeSet_eq_ch02_coarseBlockMatrix_of_aelocallyUniformlyEllipticField
+      (Ch04.RestrictionLawCarrier.coarseBlockMatrix_cubeSet_eq_chapterCoarse
         ha R).symm
   have hAvg :
       Pcell.weightedBlockAverage
@@ -562,7 +564,8 @@ theorem coarseAverageErrorOperatorNormSqWithNormalizer_le_four_blockJTraceAverag
           simp [blockJTraceAverageSqWithNormalizers, J]
           ring
 
-theorem coarseAverageErrorOperatorNormSqWithNormalizer_le_four_blockJTraceAverageSqWithNormalizers_ae
+theorem
+  coarseAverageErrorOperatorNormSqWithNormalizer_le_four_blockJTraceAverageSqWithNormalizers_ae
     {d : ℕ} [NeZero d] {P : Ch04.RestrictionCoeffLaw d}
     (hP : Ch04.RestrictionLawCarrier P) (hStruct : Ch04.RestrictionStructuralLaw P)
     (center : ℤ) (S T : FullBlockMat d) (Q : TriadicCube d) (j : ℕ) :

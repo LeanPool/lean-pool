@@ -604,7 +604,7 @@ theorem integral_abs_finsetSum_pow_rpow_inv_le_rosenthal_of_iIndepFun_of_integra
 
 /-- Rosenthal's polynomial-moment corollary for finite sums of centered
 independent real random variables. -/
-theorem integral_abs_finsetSum_pow_rpow_inv_le_rosenthal_polynomial_of_iIndepFun_of_integral_eq_zero
+theorem integral_absSum_pow_rpow_inv_le_rosenthalPolynomial
     [IsProbabilityMeasure μ]
     {X : ι → Ω → ℝ} {s : Finset ι} (hs : s.Nonempty) {p : ℕ}
     (hp : 2 ≤ p)
@@ -617,12 +617,12 @@ theorem integral_abs_finsetSum_pow_rpow_inv_le_rosenthal_polynomial_of_iIndepFun
         4 * rosenthalBennettIntegralConst *
           (Real.sqrt p * Real.sqrt (∑ i ∈ s, ProbabilityTheory.moment (X i) 2 μ)) := by
   simpa [rosenthalBennettIntegralConst] using
-    IndependentSums.integral_abs_finsetSum_pow_rpow_inv_le_rosenthal_polynomial_of_iIndepFun_of_integral_eq_zero
+    IndependentSums.integral_absSum_pow_rpow_inv_le_rosenthalPolynomial
       (μ := μ) (X := X) (s := s) hs hp h_indep h_meas hLp_int hXmean
 
 /-- Uniform-`K` polynomial-moment Rosenthal corollary. -/
 theorem
-  integral_abs_finsetSum_pow_rpow_inv_le_rosenthal_uniform_polynomial_of_iIndepFun_of_integral_eq_zero
+  centeredIndependent_sum_moment_le_RosenthalBound
     [IsProbabilityMeasure μ]
     {X : ι → Ω → ℝ} {s : Finset ι} (hs : s.Nonempty) {p : ℕ} {K : ℝ}
     (hp : 2 ≤ p)
@@ -637,7 +637,7 @@ theorem
         4 * rosenthalBennettIntegralConst *
           (Real.sqrt p * (Real.sqrt (s.card : ℝ) * K)) := by
   simpa [rosenthalBennettIntegralConst] using
-    IndependentSums.integral_abs_finsetSum_pow_rpow_inv_le_rosenthal_uniform_polynomial_of_iIndepFun_of_integral_eq_zero
+    IndependentSums.centeredIndependent_sum_moment_le_RosenthalBound
       (μ := μ) (X := X) (s := s) hs hp hK_nonneg h_indep h_meas hLp_int hXmean hK
 
 /-- Uniform-`K` polynomial-moment Rosenthal corollary for a.e.-measurable
@@ -645,7 +645,7 @@ summands.  This is the completed-law version used by Chapter 4 local-test
 observables: independence is kept on the original local observables, while the
 proof applies the measurable-mk representatives internally. -/
 theorem
-  integral_abs_finsetSum_pow_rpow_inv_le_rosenthal_uniform_polynomial_of_iIndepFun_of_integral_eq_zero_aemeasurable
+  integral_abs_finiteSum_pow_rpow_inv_le_rosenthal_uniform_polynomial
     [IsProbabilityMeasure μ]
     {X : ι → Ω → ℝ} {s : Finset ι} (hs : s.Nonempty) {p : ℕ} {K : ℝ}
     (hp : 2 ≤ p)
@@ -686,7 +686,7 @@ theorem
         simp [Y, hω])
     simpa [hint] using hK i hi
   have hY_bound :=
-    integral_abs_finsetSum_pow_rpow_inv_le_rosenthal_uniform_polynomial_of_iIndepFun_of_integral_eq_zero
+    centeredIndependent_sum_moment_le_RosenthalBound
       (μ := μ) (X := Y) (s := s) hs hp hK_nonneg hY_indep hY_meas
       hY_Lp_int hY_mean hY_K
   have hsum_eq :
@@ -708,7 +708,7 @@ theorem
 /-! ## Independent-sum concentration endpoints -/
 
 /-- Direct concentration in the exponential regime `1 ≤ sigma ≤ 2`. -/
-theorem isBigO_gammaSigma_finset_sum_of_iIndepFun_of_isBigO_of_integral_eq_zero_expRegime
+theorem isBigO_gammaSigma_sum_iIndep_bigO_meanZero_expRegime
     [IsProbabilityMeasure μ]
     {X : ι → Ω → ℝ} {s : Finset ι} {σ K : ℝ}
     (h_indep : ProbabilityTheory.iIndepFun X μ)
@@ -721,12 +721,12 @@ theorem isBigO_gammaSigma_finset_sum_of_iIndepFun_of_isBigO_of_integral_eq_zero_
     IsBigO μ (gammaSigma σ) (fun ω => ∑ i ∈ s, X i ω)
       (gammaSigmaExpRegimeEndpointConst σ * Real.sqrt (s.card : ℝ) * K) := by
   simpa [gammaSigmaExpRegimeEndpointConst] using
-    IndependentSums.isBigO_gammaSigma_finset_sum_of_iIndepFun_of_isBigO_of_integral_eq_zero_expRegime
+    IndependentSums.isBigO_gammaSigma_sum_iIndep_bigO_meanZero_expRegime
       (μ := μ) (X := X) (s := s) (σ := σ) (K := K)
       h_indep h_meas hs hσ₁ hσ₂ hK hX hXmean
 
 /-- Averaged direct concentration in the exponential regime `1 ≤ sigma ≤ 2`. -/
-theorem isBigO_gammaSigma_finsetAverage_of_iIndepFun_of_isBigO_of_integral_eq_zero_expRegime
+theorem isBigO_gammaSigma_average_iIndep_bigO_meanZero_expRegime
     [IsProbabilityMeasure μ]
     {X : ι → Ω → ℝ} {s : Finset ι} {σ K : ℝ}
     (h_indep : ProbabilityTheory.iIndepFun X μ)
@@ -740,7 +740,7 @@ theorem isBigO_gammaSigma_finsetAverage_of_iIndepFun_of_isBigO_of_integral_eq_ze
       (fun ω => ((s.card : ℝ)⁻¹) * ∑ i ∈ s, X i ω)
       (gammaSigmaExpRegimeEndpointConst σ * (Real.sqrt (s.card : ℝ) / (s.card : ℝ)) * K) := by
   simpa [gammaSigmaExpRegimeEndpointConst] using
-    IndependentSums.isBigO_gammaSigma_finsetAverage_of_iIndepFun_of_isBigO_of_integral_eq_zero_expRegime
+    IndependentSums.isBigO_gammaSigma_average_iIndep_bigO_meanZero_expRegime
       (μ := μ) (X := X) (s := s) (σ := σ) (K := K)
       h_indep h_meas hs hσ₁ hσ₂ hK hX hXmean
 
@@ -760,12 +760,12 @@ theorem isBigO_gammaSigma_finset_sum_of_iIndepFun_of_isBigO_of_integral_eq_zero
       (gammaSigmaIndependentSumConst σ * Real.sqrt (s.card : ℝ) * K) := by
   by_cases hσ_lt : σ < 1
   · simpa [gammaSigmaIndependentSumConst, hσ_lt, gammaSigmaHeavyTailEndpointConst] using
-      IndependentSums.isBigO_gammaSigma_finset_sum_of_iIndepFun_of_isBigO_of_integral_eq_zero_of_lt_one
+      IndependentSums.isBigO_gammaSigma_sum_iIndep_bigO_meanZero_ltOne
         (μ := μ) (X := X) (s := s) (σ := σ) (K := K)
         h_indep h_meas hs hσ₀ hσ_lt hK hX h_mean
   · have hσ₁ : 1 ≤ σ := le_of_not_gt hσ_lt
     simpa [gammaSigmaIndependentSumConst, hσ_lt, gammaSigmaExpRegimeEndpointConst] using
-      isBigO_gammaSigma_finset_sum_of_iIndepFun_of_isBigO_of_integral_eq_zero_expRegime
+      isBigO_gammaSigma_sum_iIndep_bigO_meanZero_expRegime
         (μ := μ) (X := X) (s := s) (σ := σ) (K := K)
         h_indep h_meas hs hσ₁ hσ₂ hK hX h_mean
 
@@ -786,19 +786,19 @@ theorem isBigO_gammaSigma_finsetAverage_of_iIndepFun_of_isBigO_of_integral_eq_ze
       (gammaSigmaIndependentSumConst σ * (Real.sqrt (s.card : ℝ) / (s.card : ℝ)) * K) := by
   by_cases hσ_lt : σ < 1
   · simpa [gammaSigmaIndependentSumConst, hσ_lt, gammaSigmaHeavyTailEndpointConst] using
-      IndependentSums.isBigO_gammaSigma_finsetAverage_of_iIndepFun_of_isBigO_of_integral_eq_zero_of_lt_one
+      IndependentSums.isBigO_gammaSigma_average_iIndep_bigO_meanZero_ltOne
         (μ := μ) (X := X) (s := s) (σ := σ) (K := K)
         h_indep h_meas hs hσ₀ hσ_lt hK hX h_mean
   · have hσ₁ : 1 ≤ σ := le_of_not_gt hσ_lt
     simpa [gammaSigmaIndependentSumConst, hσ_lt, gammaSigmaExpRegimeEndpointConst] using
-      isBigO_gammaSigma_finsetAverage_of_iIndepFun_of_isBigO_of_integral_eq_zero_expRegime
+      isBigO_gammaSigma_average_iIndep_bigO_meanZero_expRegime
         (μ := μ) (X := X) (s := s) (σ := σ) (K := K)
         h_indep h_meas hs hσ₁ hσ₂ hK hX h_mean
 
 /-- Generic heavy-tail concentration estimate for centered finite independent
 families under a weak-tail logarithmic constraint. -/
 theorem
-  measureReal_upperTailEvent_finset_sum_le_exp_card_mul_add_card_mul_invPsi_of_iIndepFun_of_isBigO_of_integral_eq_zero_of_log_constraint_rounded
+  upperTailProbability_finiteSum_le_exp_card_mul_add_card_mul_invPsi_of_invPsi
     [IsProbabilityMeasure μ]
     {Ψ : ℝ → ℝ} {X : ι → Ω → ℝ} {s : Finset ι} {a l L CΨ M : ℝ}
     (h_indep : ProbabilityTheory.iIndepFun X μ)
@@ -817,7 +817,7 @@ theorem
       Real.exp (-l * a + (s.card : ℝ) * (l ^ (2 : ℕ) * (3 + M + CΨ))) +
         (s.card : ℝ) * (Ψ L)⁻¹ := by
   simpa using
-    IndependentSums.measureReal_upperTailEvent_finset_sum_le_exp_card_mul_add_card_mul_invPsi_of_iIndepFun_of_isBigO_of_integral_eq_zero_of_log_constraint_rounded
+    IndependentSums.upperTailProbability_finiteSum_le_exp_card_mul_add_card_mul_invPsi_of_invPsi
       (μ := μ) (Ψ := Ψ) (X := X) (s := s) (a := a) (l := l) (L := L)
       (CΨ := CΨ) (M := M)
       h_indep h_meas h_int h_mean hAdmissible hCΨ_nonneg hCΨ hX hl hl1 hL hM

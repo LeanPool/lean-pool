@@ -247,7 +247,8 @@ theorem hasIntegrableCoarseBlock_respCell [NeZero d]
     (jStar : ℕ) (hj : 2 * d ≤ 3 ^ jStar)
     (F : BlockMat d) (hm : (explicitCanonicalMetric F).PosDef) (u : ℤ) :
     HasIntegrableCoarseBlock P (respCell jStar F u) :=
-  hasIntegrableCoarseBlock_adaptedCell P γ E Ψ K S hstat hdag jStar hj (explicitCanonicalMetric F) hm u
+  hasIntegrableCoarseBlock_adaptedCell P γ E Ψ K S hstat hdag jStar hj (explicitCanonicalMetric
+    F) hm u
 
 end
 

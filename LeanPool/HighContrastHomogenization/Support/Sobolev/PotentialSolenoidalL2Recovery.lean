@@ -86,7 +86,6 @@ theorem integrableOn_vecDot_const_left_of_memVectorL2
   simpa [vecDot] using hsum
 
 theorem integrableOn_vecDot_of_memVectorL2
-    [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     {f g : Vec d → Vec d} (hf : MemVectorL2 U f) (hg : MemVectorL2 U g) :
     MeasureTheory.IntegrableOn (fun x => vecDot (f x) (g x)) U := by
   have hsum :
@@ -308,11 +307,13 @@ theorem integral_pairing_affine_eq_volume_mul_vecDot_of_integral_eq_zero
 
 end CorrectionFieldData
 
+/-- The continuous linear projection of a block L² field onto its first vector component. -/
 @[expose]
 public noncomputable def blockFstCLM {d : ℕ} {U : Set (Vec d)} :
     BlockL2 U →L[ℝ] VectorL2 U :=
   (ContinuousLinearMap.fst ℝ (Vec d) (Vec d)).compLpL 2 (volumeMeasureOn U)
 
+/-- The continuous linear projection of a block L² field onto its second vector component. -/
 @[expose]
 public noncomputable def blockSndCLM {d : ℕ} {U : Set (Vec d)} :
     BlockL2 U →L[ℝ] VectorL2 U :=
@@ -396,7 +397,7 @@ private theorem toBlockL2OfComponents_blockFstCLM_blockSndCLM
   · simpa [blockField, blockSndCLM] using congrFun hsnd i
 
 theorem
-  PotentialSolenoidalL2Data.mem_potentialZeroTrace_of_mem_blockPotentialZeroTraceSolenoidalZeroNormalTrace_ofSubmoduleClosures
+  PotentialSolenoidalL2Data.potentialZeroTrace_mem_of_blockZeroTraceSolenoidal
     {d : ℕ} {U : Set (Vec d)} (X : BlockL2 U)
     (hX :
       X ∈ (PotentialSolenoidalL2Data.ofSubmoduleClosures
@@ -423,7 +424,7 @@ theorem
   exact hclosure' hX
 
 theorem
-  PotentialSolenoidalL2Data.mem_solenoidalZeroNormalTrace_of_mem_blockPotentialZeroTraceSolenoidalZeroNormalTrace_ofSubmoduleClosures
+  PotentialSolenoidalL2Data.mem_solenoidalZeroNormalTrace_of_submoduleClosure
     {d : ℕ} {U : Set (Vec d)} (X : BlockL2 U)
     (hX :
       X ∈ (PotentialSolenoidalL2Data.ofSubmoduleClosures
@@ -552,7 +553,7 @@ noncomputable def correctionFieldSubmoduleToBlockSubmodule
       (memVectorL2_fst_of_memBlockL2 (U := U) F.2.1)
       (memVectorL2_snd_of_memBlockL2 (U := U) F.2.1)
 
-theorem correctionFieldSubmoduleToBlockSubmodule_surjective_of_potentialZeroTraceClosureRealization
+theorem correctionToBlock_surjective_of_traceClosure
     {d : ℕ} {U : Set (Vec d)}
     (hRealize : PotentialSolenoidalL2Data.HasPotentialZeroTraceClosureRealization U) :
     Function.Surjective (correctionFieldSubmoduleToBlockSubmodule (U := U)) := by
@@ -560,11 +561,11 @@ theorem correctionFieldSubmoduleToBlockSubmodule_surjective_of_potentialZeroTrac
   let M : PotentialSolenoidalL2Data U := PotentialSolenoidalL2Data.ofSubmoduleClosures U
   have hpotMem : blockFstCLM (U := U) X ∈ M.potentialZeroTrace := by
     exact
-      PotentialSolenoidalL2Data.mem_potentialZeroTrace_of_mem_blockPotentialZeroTraceSolenoidalZeroNormalTrace_ofSubmoduleClosures
+      PotentialSolenoidalL2Data.potentialZeroTrace_mem_of_blockZeroTraceSolenoidal
         (U := U) X X.2
   have hsolMem : blockSndCLM (U := U) X ∈ M.solenoidalZeroNormalTrace := by
     exact
-      PotentialSolenoidalL2Data.mem_solenoidalZeroNormalTrace_of_mem_blockPotentialZeroTraceSolenoidalZeroNormalTrace_ofSubmoduleClosures
+      PotentialSolenoidalL2Data.mem_solenoidalZeroNormalTrace_of_submoduleClosure
         (U := U) X X.2
   let F : correctionFieldSubmodule U :=
     ⟨blockField (blockFstCLM (U := U) X) (blockSndCLM (U := U) X),
@@ -573,7 +574,7 @@ theorem correctionFieldSubmoduleToBlockSubmodule_surjective_of_potentialZeroTrac
         (MeasureTheory.Lp.memLp (blockSndCLM (U := U) X)),
       PotentialSolenoidalL2Data.isPotentialZeroTraceOn_of_mem_potentialZeroTrace_ofSubmoduleClosures
         (U := U) hRealize (blockFstCLM (U := U) X) hpotMem,
-      PotentialSolenoidalL2Data.isSolenoidalZeroNormalTraceOn_of_mem_solenoidalZeroNormalTrace_ofSubmoduleClosures
+      PotentialSolenoidalL2Data.isSolenoidalZeroNormalTraceOn_of_mem_closures
         (U := U) (blockSndCLM (U := U) X) hsolMem⟩
   refine ⟨F, ?_⟩
   apply Subtype.ext
@@ -589,7 +590,7 @@ theorem memVectorL2_const {d : ℕ} {U : Set (Vec d)}
     (MeasureTheory.memLp_const (μ := volumeMeasureOn U) (c := p))
 
 theorem IsSolenoidalOn.of_test_of_contDiff_of_memVectorL2
-    {d : ℕ} {U : Set (Vec d)} [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
+    {d : ℕ} {U : Set (Vec d)}
     {g : Vec d → Vec d} (hg : MemVectorL2 U g) (hU : IsOpen U)
     (htest : ∀ ψ : Vec d → ℝ, ContDiff ℝ (⊤ : ℕ∞) ψ → HasCompactSupport ψ →
       tsupport ψ ⊆ U →
@@ -898,7 +899,7 @@ noncomputable def
   let hgExists :=
     L.exists_rightInverse_of_surjective
       (LinearMap.range_eq_top.2
-        (PotentialSolenoidalL2RecoveryData.correctionFieldSubmoduleToBlockSubmodule_surjective_of_potentialZeroTraceClosureRealization
+        (PotentialSolenoidalL2RecoveryData.correctionToBlock_surjective_of_traceClosure
           (U := U) hRealize))
   let g := Classical.choose hgExists
   let hg := Classical.choose_spec hgExists

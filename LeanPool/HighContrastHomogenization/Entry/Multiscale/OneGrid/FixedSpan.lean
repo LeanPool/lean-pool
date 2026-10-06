@@ -71,13 +71,15 @@ theorem profile_old_terms_advance_le (d : ℕ) (hd : 2 ≤ d) (γ : ℝ)
                         ∑ j ∈ Finset.Icc (n + 1) m,
                           (3 : ℝ) ^ (-((1 - γ) / 4) * (((m + L : ℤ) : ℝ) - (j : ℝ))) *
                               Real.exp ((bigQ d γ : ℝ) *
-                                detIncrement P (Geometry.explicitRoundedGrid jStar metric) j (m + L)) *
+                                detIncrement P (Geometry.explicitRoundedGrid jStar metric) j (m
+                                  + L)) *
                             ∫ a, absSchattenNorm (bigQ d γ : ℝ)
                                 (normalizedFluctuationSelf P
                                   (Geometry.explicitRoundedGrid jStar metric) j a) ^ bigQ d γ ∂P ≤
                     profile P γ (Geometry.explicitRoundedGrid jStar metric) jStar n m +
                       C * (Real.exp ((bigQ d γ : ℝ) *
-                        detIncrement P (Geometry.explicitRoundedGrid jStar metric) m (m + L)) - 1) := by
+                        detIncrement P (Geometry.explicitRoundedGrid jStar metric) m (m + L)) -
+                          1) := by
   let B : ℝ := (1 - (3 : ℝ) ^ (-((1 - γ) / 4)))⁻¹
   have hB : 0 < B := by
     apply inv_pos.mpr
@@ -96,7 +98,8 @@ theorem profile_old_terms_advance_le (d : ℕ) (hd : 2 ≤ d) (γ : ℝ)
   have hw (x : ℝ) : 0 ≤ w x := Real.rpow_nonneg (by norm_num) _
   have hwL : w (L : ℝ) ≤ 1 := by
     apply Real.rpow_le_one_of_one_le_of_nonpos (by norm_num)
-    exact mul_nonpos_of_nonpos_of_nonneg (by linarith only [hγ.2]) (by exact_mod_cast (by omega : (0 : ℤ) ≤ L))
+    exact mul_nonpos_of_nonpos_of_nonneg (by linarith only [hγ.2]) (by exact_mod_cast (by omega
+      : (0 : ℤ) ≤ L))
   have hsplit (x : ℝ) : w ((L : ℝ) + x) = w (L : ℝ) * w x := by
     dsimp only [w]
     rw [← Real.rpow_add (by norm_num : (0 : ℝ) < 3)]
@@ -135,7 +138,8 @@ theorem profile_old_terms_advance_le (d : ℕ) (hd : 2 ≤ d) (γ : ℝ)
       convert hsplit ((m : ℝ) - (n : ℝ)) using 1; congr 1; push_cast; ring
     rw [hweight]
     have h := mul_le_mul_of_nonneg_right
-      (mul_le_mul_of_nonneg_left (hadv n hn hnm) (mul_nonneg (hw (L : ℝ)) (hw ((m : ℝ) - (n : ℝ))))) hhistory
+      (mul_le_mul_of_nonneg_left (hadv n hn hnm) (mul_nonneg (hw (L : ℝ)) (hw ((m : ℝ) - (n :
+        ℝ))))) hhistory
     (convert h using 1; try rfl)
     ring
   have hmean : (∑ j ∈ Finset.Ico n m,
@@ -236,7 +240,8 @@ theorem meanPenalty_new_terms_span_sum_le (d : ℕ) (hd : 2 ≤ d) (γ : ℝ)
                         (relMean P (Geometry.explicitRoundedGrid jStar metric) j (m + L)) ≤
                   C * (L : ℝ) *
                     (Real.exp ((bigQ d γ : ℝ) *
-                      detIncrement P (Geometry.explicitRoundedGrid jStar metric) m (m + L)) - 1) := by
+                      detIncrement P (Geometry.explicitRoundedGrid jStar metric) m (m + L)) - 1)
+                        := by
   refine ⟨1, zero_lt_one, ?_⟩
   intro P E Ψ K S hP hstat hunit hdag L hL jStar hjStar metric hmetric m hm
   let := hP
@@ -261,7 +266,8 @@ theorem meanPenalty_new_terms_span_sum_le (d : ℕ) (hd : 2 ≤ d) (γ : ℝ)
     have hloss : detIncrement P q j (m + L) ≤ detIncrement P q m (m + L) := by
       linarith only [hinc, hadd]
     exact (mul_le_of_le_one_left hp hweight).trans (hpen.trans
-      (sub_le_sub_right (Real.exp_le_exp.mpr (mul_le_mul_of_nonneg_left hloss (Nat.cast_nonneg _))) 1))
+      (sub_le_sub_right (Real.exp_le_exp.mpr (mul_le_mul_of_nonneg_left hloss (Nat.cast_nonneg
+        _))) 1))
   have hsum := Finset.sum_le_sum hterm
   have hcard : ((Finset.Ico m (m + L)).card : ℝ) = (L : ℝ) := by
     rw [Int.card_Ico, show m + L - m = L by ring]

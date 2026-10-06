@@ -59,7 +59,7 @@ noncomputable def constantBlockMatrix {d : ℕ} (a0 : Mat d) : BlockMat d :=
 
 /-- Constant block matrix in full `2d × 2d` matrix coordinates. -/
 @[expose]
-noncomputable def constantFullBlockMatrix {d : ℕ} [NeZero d] (a0 : Mat d) :
+noncomputable def constantFullBlockMatrix {d : ℕ} (a0 : Mat d) :
     FullBlockMat d :=
   toFullBlockMat (constantBlockMatrix a0)
 

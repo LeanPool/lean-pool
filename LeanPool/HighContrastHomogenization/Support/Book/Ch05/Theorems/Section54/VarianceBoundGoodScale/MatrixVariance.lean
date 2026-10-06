@@ -86,16 +86,16 @@ theorem integral_fluctuationQuadratic_sq_eq_integral_abs_sub_dotProduct_sq
     (m j : ℕ) (q : FullBlockVec d) :
     ∫ a,
         (fullBlockQuadratic
-          (fullBlockNormalizedFluctuationMatrix hP hStruct (m : ℤ)
+          (normalizedFluctuationMatrix hP hStruct (m : ℤ)
             (cubeSet (originCube d (j : ℤ))) a) q) ^ (2 : ℕ) ∂P =
       ∫ a,
-        |fullBlockNormalizedQuadraticObservable hP hStruct (m : ℤ) q
+        |normalizedQuadraticObservable hP hStruct (m : ℤ) q
           (cubeSet (originCube d (j : ℤ))) a - dotProduct q q| ^
           (2 : ℕ) ∂P := by
   apply integral_congr_ae
   filter_upwards with a
   have hquad :=
-    fullBlockNormalizedQuadraticObservable_sub_dotProduct_eq_fluctuationQuadratic
+    normalizedQuadraticIdentity
       hP hStruct hP4 m q (cubeSet (originCube d (j : ℤ))) a
   symm
   rw [hquad, sq_abs]
@@ -108,7 +108,7 @@ theorem integrable_fluctuationQuadratic_sq_from_P4
     Integrable
       (fun a : RegCoeffField d =>
         (fullBlockQuadratic
-          (fullBlockNormalizedFluctuationMatrix hP hStruct (m : ℤ)
+          (normalizedFluctuationMatrix hP hStruct (m : ℤ)
             (cubeSet (originCube d (j : ℤ))) a) q) ^ (2 : ℕ)) P := by
   have hcenter :=
     integrable_abs_sub_dotProduct_sq_fullBlockNormalizedQuadraticObservable_from_P4
@@ -116,7 +116,7 @@ theorem integrable_fluctuationQuadratic_sq_from_P4
   refine hcenter.congr ?_
   filter_upwards with a
   have hquad :=
-    fullBlockNormalizedQuadraticObservable_sub_dotProduct_eq_fluctuationQuadratic
+    normalizedQuadraticIdentity
       hP hStruct hP4 m q (cubeSet (originCube d (j : ℤ))) a
   rw [hquad, sq_abs]
 
@@ -134,7 +134,7 @@ theorem fullBlockNormalizedFluctuationOperatorNormSqAtScale_integral_le_probeBou
         Integrable
           (fun a : RegCoeffField d =>
             (fullBlockQuadratic
-              (fullBlockNormalizedFluctuationMatrix hP hStruct (m : ℤ)
+              (normalizedFluctuationMatrix hP hStruct (m : ℤ)
                 (cubeSet (originCube d (j : ℤ))) a)
               (fullBlockCoordinateProbe α)) ^ (2 : ℕ)) P)
     (hplus_int :
@@ -142,7 +142,7 @@ theorem fullBlockNormalizedFluctuationOperatorNormSqAtScale_integral_le_probeBou
         Integrable
           (fun a : RegCoeffField d =>
             (fullBlockQuadratic
-              (fullBlockNormalizedFluctuationMatrix hP hStruct (m : ℤ)
+              (normalizedFluctuationMatrix hP hStruct (m : ℤ)
                 (cubeSet (originCube d (j : ℤ))) a)
               (fullBlockPlusProbe α β)) ^ (2 : ℕ)) P)
     (hminus_int :
@@ -150,28 +150,28 @@ theorem fullBlockNormalizedFluctuationOperatorNormSqAtScale_integral_le_probeBou
         Integrable
           (fun a : RegCoeffField d =>
             (fullBlockQuadratic
-              (fullBlockNormalizedFluctuationMatrix hP hStruct (m : ℤ)
+              (normalizedFluctuationMatrix hP hStruct (m : ℤ)
                 (cubeSet (originCube d (j : ℤ))) a)
               (fullBlockMinusProbe α β)) ^ (2 : ℕ)) P)
     (hcoord :
       ∀ α : BlockCoord d,
         (∫ a,
           (fullBlockQuadratic
-            (fullBlockNormalizedFluctuationMatrix hP hStruct (m : ℤ)
+            (normalizedFluctuationMatrix hP hStruct (m : ℤ)
               (cubeSet (originCube d (j : ℤ))) a)
             (fullBlockCoordinateProbe α)) ^ (2 : ℕ) ∂P) ≤ Ccoord α)
     (hplus :
       ∀ α β : BlockCoord d,
         (∫ a,
           (fullBlockQuadratic
-            (fullBlockNormalizedFluctuationMatrix hP hStruct (m : ℤ)
+            (normalizedFluctuationMatrix hP hStruct (m : ℤ)
               (cubeSet (originCube d (j : ℤ))) a)
             (fullBlockPlusProbe α β)) ^ (2 : ℕ) ∂P) ≤ Cplus α β)
     (hminus :
       ∀ α β : BlockCoord d,
         (∫ a,
           (fullBlockQuadratic
-            (fullBlockNormalizedFluctuationMatrix hP hStruct (m : ℤ)
+            (normalizedFluctuationMatrix hP hStruct (m : ℤ)
               (cubeSet (originCube d (j : ℤ))) a)
             (fullBlockMinusProbe α β)) ^ (2 : ℕ) ∂P) ≤ Cminus α β) :
     ∫ a,
@@ -186,13 +186,13 @@ theorem fullBlockNormalizedFluctuationOperatorNormSqAtScale_integral_le_probeBou
   let : IsProbabilityMeasure P := hP.isProbability
   let Q : TriadicCube d := originCube d (j : ℤ)
   let M : RegCoeffField d → FullBlockMat d := fun a =>
-    fullBlockNormalizedFluctuationMatrix hP hStruct (m : ℤ) (cubeSet Q) a
+    normalizedFluctuationMatrix hP hStruct (m : ℤ) (cubeSet Q) a
   have hF_int :
       Integrable
         (Ch04.fullBlockNormalizedFluctuationOperatorNormSqAtScale
           hP hStruct (m : ℤ) Q) P := by
     simpa [Q] using
-      integrable_origin_fullBlockNormalizedFluctuationOperatorNormSqAtScale_from_P4
+      integrable_fullBlockFluctuationNormSquare_of_P4_atScale
         hP hStruct hP4 (m : ℤ) j
   have hterm_int : ∀ α β : BlockCoord d,
       Integrable

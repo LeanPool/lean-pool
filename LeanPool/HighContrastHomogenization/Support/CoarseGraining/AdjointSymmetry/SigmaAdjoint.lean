@@ -563,7 +563,8 @@ theorem sigmaCoarse_adjointCoeffField_eq_of_isCoarseBlockMatrix
       deterministicCoarseBlockMatrix_upperLeft_adjointCoeffField_of_isCoarseBlockMatrix
         (U := U) (a := a) hA hAadj
   rw [kappaCoarse_adjointCoeffField_eq_neg_of_isCoarseBlockMatrix (U := U) (a := a) hA hAadj,
-    sigmaStarInvCoarse_adjointCoeffField_eq_of_isCoarseBlockMatrix (U := U) (a := a) hA hAadj] at hupper
+    sigmaStarInvCoarse_adjointCoeffField_eq_of_isCoarseBlockMatrix (U := U) (a := a) hA hAadj]
+      at hupper
   simp [Matrix.transpose_neg, matTranspose, Matrix.mul_assoc] at hupper
   exact hupper
 

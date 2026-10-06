@@ -122,7 +122,7 @@ theorem cubeLpNorm_cubeIncrement_zero_const {d : ℕ} (Q : TriadicCube d) (p : �
   simpa [cubeIncrement] using
     cubeLpNorm_cubeProjection_const (Q := Q) (p := p) (j := 0) c hp
 
-@[simp] theorem cubeLpNorm_cubeIncrement_succ_const {d : ℕ} (Q : TriadicCube d) (p : ℝ≥0∞)
+theorem cubeLpNorm_cubeIncrement_succ_const {d : ℕ} (Q : TriadicCube d) (p : ℝ≥0∞)
     (j : ℕ) (c : ℝ) : cubeLpNorm Q p (cubeIncrement Q (j + 1) (fun _ => c)) = 0 := by
   unfold cubeLpNorm
   rw [MeasureTheory.eLpNorm_congr_ae (cubeIncrement_ae_eq_zero_const_succ Q j c)]

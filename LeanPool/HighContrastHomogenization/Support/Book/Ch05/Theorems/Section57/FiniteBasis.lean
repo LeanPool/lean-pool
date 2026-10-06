@@ -145,7 +145,7 @@ theorem limitNormalizedBlockJMatrix_quadratic_eq_blockJQuadratic
       fullBlockQuadratic (S * M * S) e =
         Ch04.fullBlockQuadraticCh04 M (toFullBlockVec Pvec) := by
     have hdiag :=
-      fullBlockQuadratic_diagonal_toFullBlockMat_eq_blockVecDot
+      diagonalForm_eq_dotProduct
         (Ch04.scalarFullBlockInvSqrtDiag
           (d := d) (barSigmaLimit hP hStruct) (barSigmaLimit hP hStruct))
         A e
@@ -166,7 +166,7 @@ theorem limitNormalizedBlockJMatrix_quadratic_eq_blockJQuadratic
     have href : Ch04.fullBlockReflect M = toFullBlockMat Aref := by
       simp [Aref, Ch04.fullBlockReflect]
     have hdiag :=
-      fullBlockQuadratic_diagonal_toFullBlockMat_eq_blockVecDot
+      diagonalForm_eq_dotProduct
         (Section56.scalarFullBlockSqrtDiag
           (d := d) (barSigmaLimit hP hStruct) (barSigmaLimit hP hStruct))
         Aref e
@@ -230,7 +230,7 @@ theorem limitNormalizedBlockJObservable_ae_eq_limitNormalizedBlockJMatrix_quadra
   exact (limitNormalizedBlockJMatrix_quadratic_eq_blockJQuadratic
     hP hStruct hΓ Q e a).symm
 
-theorem limitNormalizedBlockJObservable_eq_limitNormalizedBlockJMatrix_quadratic_of_aelocallyUniformlyEllipticField
+theorem limitNormalizedBlockJObservable_eq_limitNormalizedBlockJMatrix_quadratic
     {d : ℕ} [NeZero d] {P : Ch04.RestrictionCoeffLaw d}
     (hP : Ch04.RestrictionLawCarrier P) (hStruct : Ch04.RestrictionStructuralLaw P)
     (hΓ : GammaSigmaCoarseGrainedEllipticity P hP hStruct)
@@ -245,7 +245,7 @@ theorem limitNormalizedBlockJObservable_eq_limitNormalizedBlockJMatrix_quadratic
           (scalarLimitInvSqrtBlockVec hP hStruct e)
           (scalarLimitSqrtBlockVec hP hStruct e) := by
           simpa [limitNormalizedBlockJObservable] using
-            Ch04.blockJObservableCubeSetBlockVec_eq_blockJQuadraticFullBlockMat_of_aelocallyUniformlyEllipticField
+            Ch04.blockJObservable_eq_blockJQuadraticForm_of_uniformEllipticity
               ha Q
               (scalarLimitInvSqrtBlockVec hP hStruct e)
               (scalarLimitSqrtBlockVec hP hStruct e)
@@ -342,7 +342,7 @@ theorem limitNormalizedBlockJObservable_le_probeSum_of_aelocallyUniformlyEllipti
         coarseBlockMatrix (cubeSet Q) a.toFun =
           Ch02.coarseBlockMatrix (Ch02.cubeDomain Q) (F.coeffOn Q) := by
       simpa [F] using
-        Ch04.RestrictionLawCarrier.coarseBlockMatrix_cubeSet_eq_ch02_coarseBlockMatrix_of_aelocallyUniformlyEllipticField
+        Ch04.RestrictionLawCarrier.coarseBlockMatrix_cubeSet_eq_chapterCoarse
           (a := a) ha Q
     rw [hcoarse]
     exact Ch02.isSymmetricBlockMat_coarseBlockMatrix
@@ -355,7 +355,7 @@ theorem limitNormalizedBlockJObservable_le_probeSum_of_aelocallyUniformlyEllipti
       limitNormalizedBlockJObservable hP hStruct Q e a =
         fullBlockQuadratic M e := by
     simpa [M, K] using
-      limitNormalizedBlockJObservable_eq_limitNormalizedBlockJMatrix_quadratic_of_aelocallyUniformlyEllipticField
+      limitNormalizedBlockJObservable_eq_limitNormalizedBlockJMatrix_quadratic
         hP hStruct hΓ ha Q e
   have hcoord :
       ∀ α ∈ (Finset.univ : Finset (BlockCoord d)),
@@ -364,7 +364,7 @@ theorem limitNormalizedBlockJObservable_le_probeSum_of_aelocallyUniformlyEllipti
           fullBlockQuadratic M (fullBlockCoordinateProbe α) := by
     intro α _hα
     simpa [M, K] using
-      limitNormalizedBlockJObservable_eq_limitNormalizedBlockJMatrix_quadratic_of_aelocallyUniformlyEllipticField
+      limitNormalizedBlockJObservable_eq_limitNormalizedBlockJMatrix_quadratic
         hP hStruct hΓ ha Q (fullBlockCoordinateProbe α)
   have hplus :
       ∀ α ∈ (Finset.univ : Finset (BlockCoord d)),
@@ -374,7 +374,7 @@ theorem limitNormalizedBlockJObservable_le_probeSum_of_aelocallyUniformlyEllipti
           fullBlockQuadratic M (fullBlockPlusProbe α β) := by
     intro α _hα β _hβ
     simpa [M, K] using
-      limitNormalizedBlockJObservable_eq_limitNormalizedBlockJMatrix_quadratic_of_aelocallyUniformlyEllipticField
+      limitNormalizedBlockJObservable_eq_limitNormalizedBlockJMatrix_quadratic
         hP hStruct hΓ ha Q (fullBlockPlusProbe α β)
   have hminus :
       ∀ α ∈ (Finset.univ : Finset (BlockCoord d)),
@@ -384,7 +384,7 @@ theorem limitNormalizedBlockJObservable_le_probeSum_of_aelocallyUniformlyEllipti
           fullBlockQuadratic M (fullBlockMinusProbe α β) := by
     intro α _hα β _hβ
     simpa [M, K] using
-      limitNormalizedBlockJObservable_eq_limitNormalizedBlockJMatrix_quadratic_of_aelocallyUniformlyEllipticField
+      limitNormalizedBlockJObservable_eq_limitNormalizedBlockJMatrix_quadratic
         hP hStruct hΓ ha Q (fullBlockMinusProbe α β)
   have hquad_abs :
       |fullBlockQuadratic M e| ≤

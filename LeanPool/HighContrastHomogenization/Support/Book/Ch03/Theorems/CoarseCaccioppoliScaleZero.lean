@@ -86,7 +86,7 @@ private theorem coarseCaccioppoliScaleZeroTheory_of_scalarEnvelope
       mul_assoc, mul_left_comm, mul_comm] using hmul
   · intro Q a s t u hs ht hst hQscale
     refine
-      interior_centered_publicCoreEnergy_le_publicRHS_of_scale_zero_of_unitStandardExplicitBoundSplit
+      interiorCoreEnergy_le_RHS_of_standardBudget
         (Q := Q) (a := a) u hs ht hst hQscale ?_
     have hbase := hinterior hs ht hst
     have hmul : D * interiorCaccioppoliScaleZeroExplicitConstant d s t ≤ D * C :=

@@ -186,7 +186,7 @@ private theorem homogenizationErrorOnCube_infinity_one_le_infinity_two_half
     intro n
     dsimp [M]
     exact Book.Ch02.maxDescendantNormalizedBlockResponseAtScale_nonneg R
-      (sub_le_self _ (by exact_mod_cast Nat.zero_le n)) a a0
+      (sub_le_self _ (Nat.cast_nonneg n)) a a0
   have hw_eq : ∀ n, w n = Book.Ch02.geometricWeight (s / 2) 2 n := by
     intro n
     dsimp [w]
@@ -256,7 +256,7 @@ private theorem homogenizationErrorOnCube_infinity_one_le_infinity_two_half
     intro n
     rw [hg_sq, hw_eq]
     have hk : R.scale - (n : ℤ) ≤ R.scale :=
-      sub_le_self _ (by exact_mod_cast Nat.zero_le n)
+      sub_le_self _ (Nat.cast_nonneg n)
     have hresponse : M n =
         (Book.Ch02.scaleResponseAtScale R (R.scale - (n : ℤ)) .infinity a a0) ^ (2 : ℝ) := by
       dsimp [M]
@@ -345,12 +345,13 @@ private theorem cubeBesovPositiveVectorSeminormTwo_neg_of_memLp
 `0 < s ≤ 1`; we record the endpoint form used by the source envelope. -/
 private theorem zeroTraceDirichletCorrectedWeakFluxApexConstant_le_one
     {d : ℕ} (s : ℝ) (_hs : 0 < s) (hs_one : s ≤ 1) :
-    _root_.HCPolySupport.ZeroTraceDirichletCorrectorData.zeroTraceDirichletCorrectedWeakFluxApexConstant d s ≤
-      _root_.HCPolySupport.ZeroTraceDirichletCorrectorData.zeroTraceDirichletCorrectedWeakFluxApexConstant d 1 := by
+    _root_.HCPolySupport.ZeroTraceDirichletCorrectorData.zeroTraceFluxApexConstant d s ≤
+      _root_.HCPolySupport.ZeroTraceDirichletCorrectorData.zeroTraceFluxApexConstant d 1 := by
   have hdisplay :
-      _root_.HCPolySupport.ZeroTraceDirichletCorrectorData.zeroTraceDirichletCorrectedWeakFluxApexDisplayScale d s ≤
-        _root_.HCPolySupport.ZeroTraceDirichletCorrectorData.zeroTraceDirichletCorrectedWeakFluxApexDisplayScale d 1 := by
-    unfold _root_.HCPolySupport.ZeroTraceDirichletCorrectorData.zeroTraceDirichletCorrectedWeakFluxApexDisplayScale
+      _root_.HCPolySupport.ZeroTraceDirichletCorrectorData.zeroTraceFluxApexDisplayScale d s ≤
+        _root_.HCPolySupport.ZeroTraceDirichletCorrectorData.zeroTraceFluxApexDisplayScale d 1 := by
+    unfold
+      _root_.HCPolySupport.ZeroTraceDirichletCorrectorData.zeroTraceFluxApexDisplayScale
     have hpow :
         (3 : ℝ) ^ ((d : ℝ) + s) ≤ (3 : ℝ) ^ ((d : ℝ) + 1) :=
       Real.rpow_le_rpow_of_exponent_le (by norm_num : (1 : ℝ) ≤ 3)
@@ -360,7 +361,8 @@ private theorem zeroTraceDirichletCorrectedWeakFluxApexConstant_le_one
           (3 : ℝ) ^ ((d : ℝ) + 1) * Real.sqrt 2 :=
       mul_le_mul_of_nonneg_right hpow (Real.sqrt_nonneg 2)
     exact mul_le_mul_of_nonneg_left hinner (by exact_mod_cast Nat.zero_le d)
-  unfold _root_.HCPolySupport.ZeroTraceDirichletCorrectorData.zeroTraceDirichletCorrectedWeakFluxApexConstant
+  unfold
+    _root_.HCPolySupport.ZeroTraceDirichletCorrectorData.zeroTraceFluxApexConstant
   nlinarith
 
 /-- Exact `ENNReal` expansion of the legacy one-cube RHS once its four real
@@ -548,7 +550,7 @@ private theorem sqrt_sigma_mul_lower_mul_homogenizationError_le_qtwo_envelope
               (by positivity : 0 ≤ (s / 2) * (2 : ℝ)))
         (Real.rpow_nonneg
           (Book.Ch02.scaleResponseAtScale_infinity_nonneg R
-            (sub_le_self _ (by exact_mod_cast Nat.zero_le n)) a
+            (sub_le_self _ (Nat.cast_nonneg n)) a
             (scalarMatrix (d := d) sigma)) _)) _
   have hL_nonneg : 0 ≤ L := by
     dsimp [L]
@@ -589,24 +591,27 @@ this quantity is uniform in every local fractional order. -/
 @[expose]
 noncomputable def localCoarseGrainingOneCubeConstant (d : ℕ) : ℝ :=
   64 * (d : ℝ) ^ 3 *
-    (_root_.HCPolySupport.ZeroTraceDirichletCorrectorData.zeroTraceDirichletCorrectedWeakFluxApexConstant d 1 + 1)
+    (_root_.HCPolySupport.ZeroTraceDirichletCorrectorData.zeroTraceFluxApexConstant d 1 + 1)
 
 private theorem localCoarseGrainingOneCubeConstant_nonneg (d : ℕ) :
     0 ≤ localCoarseGrainingOneCubeConstant d := by
   unfold localCoarseGrainingOneCubeConstant
   exact mul_nonneg (mul_nonneg (by norm_num) (pow_nonneg (Nat.cast_nonneg d) _))
     (add_nonneg
-      (_root_.HCPolySupport.ZeroTraceDirichletCorrectorData.zeroTraceDirichletCorrectedWeakFluxApexConstant_nonneg d 1)
+      (_root_.HCPolySupport.ZeroTraceDirichletCorrectorData.zeroTraceFluxApexConstant_nonneg d 1)
       zero_le_one)
 
 private theorem localCoarseGrainingOneCubeConstant_dominates_energy
     {d : ℕ} [NeZero d]
     (X : ℝ) (hX : 0 ≤ X) :
-    (2 * _root_.HCPolySupport.ZeroTraceDirichletCorrectorData.zeroTraceDirichletCorrectedWeakFluxApexConstant d 1 * (d : ℝ)) * X ≤
+    (2 *
+      _root_.HCPolySupport.ZeroTraceDirichletCorrectorData.zeroTraceFluxApexConstant d 1 * (d :
+        ℝ)) * X ≤
       localCoarseGrainingOneCubeConstant d * (X + 0) := by
   have hd : 1 ≤ (d : ℝ) := by
     norm_num [Nat.one_le_iff_ne_zero, NeZero.ne d]
-  have hM := _root_.HCPolySupport.ZeroTraceDirichletCorrectorData.zeroTraceDirichletCorrectedWeakFluxApexConstant_nonneg d 1
+  have hM :=
+    _root_.HCPolySupport.ZeroTraceDirichletCorrectorData.zeroTraceFluxApexConstant_nonneg d 1
   have hd0 : 0 ≤ (d : ℝ) := Nat.cast_nonneg d
   have hd3 : (d : ℝ) ≤ (d : ℝ) ^ 3 := by
     calc
@@ -614,27 +619,39 @@ private theorem localCoarseGrainingOneCubeConstant_dominates_energy
       _ ≤ (d : ℝ) * (d : ℝ) ^ 2 :=
         mul_le_mul_of_nonneg_left (one_le_pow₀ hd : 1 ≤ (d : ℝ) ^ 2) hd0
       _ = (d : ℝ) ^ 3 := by ring
-  have hcoef : 2 * _root_.HCPolySupport.ZeroTraceDirichletCorrectorData.zeroTraceDirichletCorrectedWeakFluxApexConstant d 1 * (d : ℝ) ≤ localCoarseGrainingOneCubeConstant d := by
+  have hcoef : 2 *
+    _root_.HCPolySupport.ZeroTraceDirichletCorrectorData.zeroTraceFluxApexConstant d 1 * (d : ℝ)
+      ≤ localCoarseGrainingOneCubeConstant d := by
     unfold localCoarseGrainingOneCubeConstant
     have hd30 : 0 ≤ (d : ℝ) ^ 3 := pow_nonneg hd0 _
     calc
-      2 * _root_.HCPolySupport.ZeroTraceDirichletCorrectorData.zeroTraceDirichletCorrectedWeakFluxApexConstant d 1 * (d : ℝ) ≤
-          2 * _root_.HCPolySupport.ZeroTraceDirichletCorrectorData.zeroTraceDirichletCorrectedWeakFluxApexConstant d 1 * (d : ℝ) ^ 3 := by
+      2 *
+        _root_.HCPolySupport.ZeroTraceDirichletCorrectorData.zeroTraceFluxApexConstant d 1 * (d
+          : ℝ) ≤
+          2 *
+            _root_.HCPolySupport.ZeroTraceDirichletCorrectorData.zeroTraceFluxApexConstant d 1 *
+              (d : ℝ) ^ 3 := by
         exact mul_le_mul_of_nonneg_left hd3 (mul_nonneg (by norm_num) hM)
       _ ≤ 64 * (d : ℝ) ^ 3 *
-          (_root_.HCPolySupport.ZeroTraceDirichletCorrectorData.zeroTraceDirichletCorrectedWeakFluxApexConstant d 1 + 1) := by
+          (_root_.HCPolySupport.ZeroTraceDirichletCorrectorData.zeroTraceFluxApexConstant d 1 +
+            1) := by
         nlinarith
   simpa using mul_le_mul_of_nonneg_right hcoef hX
 
 private theorem localCoarseGrainingOneCubeConstant_dominates_forcing
     {d : ℕ} [NeZero d]
     (X Y : ℝ) (hX : 0 ≤ X) (hY : 0 ≤ Y) :
-    (2 * _root_.HCPolySupport.ZeroTraceDirichletCorrectorData.zeroTraceDirichletCorrectedWeakFluxApexConstant d 1 * (d : ℝ)) * X +
-        (24 * _root_.HCPolySupport.ZeroTraceDirichletCorrectorData.zeroTraceDirichletCorrectedWeakFluxApexConstant d 1 * (d : ℝ) ^ 3) * Y ≤
+    (2 *
+      _root_.HCPolySupport.ZeroTraceDirichletCorrectorData.zeroTraceFluxApexConstant d 1 * (d :
+        ℝ)) * X +
+        (24 *
+          _root_.HCPolySupport.ZeroTraceDirichletCorrectorData.zeroTraceFluxApexConstant d 1 *
+            (d : ℝ) ^ 3) * Y ≤
       localCoarseGrainingOneCubeConstant d * (X + Y) := by
   have hd : 1 ≤ (d : ℝ) := by
     norm_num [Nat.one_le_iff_ne_zero, NeZero.ne d]
-  have hM := _root_.HCPolySupport.ZeroTraceDirichletCorrectorData.zeroTraceDirichletCorrectedWeakFluxApexConstant_nonneg d 1
+  have hM :=
+    _root_.HCPolySupport.ZeroTraceDirichletCorrectorData.zeroTraceFluxApexConstant_nonneg d 1
   have hd0 : 0 ≤ (d : ℝ) := Nat.cast_nonneg d
   have hd3 : (d : ℝ) ≤ (d : ℝ) ^ 3 := by
     calc
@@ -642,24 +659,37 @@ private theorem localCoarseGrainingOneCubeConstant_dominates_forcing
       _ ≤ (d : ℝ) * (d : ℝ) ^ 2 :=
         mul_le_mul_of_nonneg_left (one_le_pow₀ hd : 1 ≤ (d : ℝ) ^ 2) hd0
       _ = (d : ℝ) ^ 3 := by ring
-  have henergy : 2 * _root_.HCPolySupport.ZeroTraceDirichletCorrectorData.zeroTraceDirichletCorrectedWeakFluxApexConstant d 1 * (d : ℝ) ≤ localCoarseGrainingOneCubeConstant d := by
+  have henergy : 2 *
+    _root_.HCPolySupport.ZeroTraceDirichletCorrectorData.zeroTraceFluxApexConstant d 1 * (d : ℝ)
+      ≤ localCoarseGrainingOneCubeConstant d := by
     unfold localCoarseGrainingOneCubeConstant
     have hd30 : 0 ≤ (d : ℝ) ^ 3 := pow_nonneg hd0 _
     calc
-      2 * _root_.HCPolySupport.ZeroTraceDirichletCorrectorData.zeroTraceDirichletCorrectedWeakFluxApexConstant d 1 * (d : ℝ) ≤
-          2 * _root_.HCPolySupport.ZeroTraceDirichletCorrectorData.zeroTraceDirichletCorrectedWeakFluxApexConstant d 1 * (d : ℝ) ^ 3 := by
+      2 *
+        _root_.HCPolySupport.ZeroTraceDirichletCorrectorData.zeroTraceFluxApexConstant d 1 * (d
+          : ℝ) ≤
+          2 *
+            _root_.HCPolySupport.ZeroTraceDirichletCorrectorData.zeroTraceFluxApexConstant d 1 *
+              (d : ℝ) ^ 3 := by
         exact mul_le_mul_of_nonneg_left hd3 (mul_nonneg (by norm_num) hM)
       _ ≤ 64 * (d : ℝ) ^ 3 *
-          (_root_.HCPolySupport.ZeroTraceDirichletCorrectorData.zeroTraceDirichletCorrectedWeakFluxApexConstant d 1 + 1) := by
+          (_root_.HCPolySupport.ZeroTraceDirichletCorrectorData.zeroTraceFluxApexConstant d 1 +
+            1) := by
         nlinarith
-  have hforcing : 24 * _root_.HCPolySupport.ZeroTraceDirichletCorrectorData.zeroTraceDirichletCorrectedWeakFluxApexConstant d 1 * (d : ℝ) ^ 3 ≤
+  have hforcing : 24 *
+    _root_.HCPolySupport.ZeroTraceDirichletCorrectorData.zeroTraceFluxApexConstant d 1 * (d : ℝ)
+      ^ 3 ≤
       localCoarseGrainingOneCubeConstant d := by
     unfold localCoarseGrainingOneCubeConstant
     have hd30 : 0 ≤ (d : ℝ) ^ 3 := pow_nonneg hd0 _
     nlinarith
   calc
-    (2 * _root_.HCPolySupport.ZeroTraceDirichletCorrectorData.zeroTraceDirichletCorrectedWeakFluxApexConstant d 1 * (d : ℝ)) * X +
-        (24 * _root_.HCPolySupport.ZeroTraceDirichletCorrectorData.zeroTraceDirichletCorrectedWeakFluxApexConstant d 1 * (d : ℝ) ^ 3) * Y ≤
+    (2 *
+      _root_.HCPolySupport.ZeroTraceDirichletCorrectorData.zeroTraceFluxApexConstant d 1 * (d :
+        ℝ)) * X +
+        (24 *
+          _root_.HCPolySupport.ZeroTraceDirichletCorrectorData.zeroTraceFluxApexConstant d 1 *
+            (d : ℝ) ^ 3) * Y ≤
       localCoarseGrainingOneCubeConstant d * X +
         localCoarseGrainingOneCubeConstant d * Y :=
       add_le_add (mul_le_mul_of_nonneg_right henergy hX)
@@ -687,9 +717,10 @@ private theorem cubeBesovNegativeVectorSeminormTwo_fluxDefect_le_legacyApex_of_l
           scaleResponseAtScale R (R.scale - (n : ℤ)) .infinity aLegacy a0)) :
     cubeBesovNegativeVectorSeminormTwo R s
         (fluxDefect aLegacy a0 u.toCubeSet.grad) ≤
-      2 * _root_.HCPolySupport.ZeroTraceDirichletCorrectorData.zeroTraceDirichletCorrectedWeakFluxApexConstant d s *
+      2 *
+        _root_.HCPolySupport.ZeroTraceDirichletCorrectorData.zeroTraceFluxApexConstant d s *
         coarseFluxResponseRHSBound R aLegacy a0 s u.toCubeSet.grad (fun x => -g x) :=
-  _root_.HCPolySupport.ZeroTraceDirichletCorrectorData.cubeBesovNegativeVectorSeminormTwo_fluxDefect_le_two_mul_const_mul_coarseFluxResponseRHSBound_of_h1DirichletRhsWeakSolutionOn_correctedWeakFlux_averagedCorrectorEnergy
+  _root_.HCPolySupport.ZeroTraceDirichletCorrectorData.besovFluxDefect_le_constant_mul_bound
       (Q := R) (a := aLegacy) (a0 := a0) (s := s) (g := fun x => -g x)
       (v := u.toCubeSet) hs hs_le hEll ha0 ha0symm hweak hregularity hresponseSum
 
@@ -705,7 +736,8 @@ private theorem cubeBesovNegativeVectorSeminormTwo_source_fluxDefect_le_legacyAp
     (hregularity : CubeVectorBesovHRegularity R s (fun x => -g x)) :
     cubeBesovNegativeVectorSeminormTwo R s
         (fluxDefect a.toCoeffField (scalarMatrix (d := d) sigma0) u.toCubeSet.grad) ≤
-      2 * _root_.HCPolySupport.ZeroTraceDirichletCorrectorData.zeroTraceDirichletCorrectedWeakFluxApexConstant d s *
+      2 *
+        _root_.HCPolySupport.ZeroTraceDirichletCorrectorData.zeroTraceFluxApexConstant d s *
         coarseFluxResponseRHSBound R (publicCoeffField R (rootPointwiseCoeffFamily R a))
           (scalarMatrix (d := d) sigma0) s u.toCubeSet.grad (fun x => -g x) := by
   let aFam : CoeffFamily d := rootPointwiseCoeffFamily R a
@@ -787,7 +819,8 @@ private theorem ENNReal_ofReal_norm_cubeAverageVec_source_fluxDefect_le_legacyAp
     ENNReal.ofReal ‖cubeAverageVec R
         (fluxDefect a.toCoeffField (scalarMatrix (d := d) sigma0) u.toCubeSet.grad)‖ ≤
       ENNReal.ofReal
-        (2 * _root_.HCPolySupport.ZeroTraceDirichletCorrectorData.zeroTraceDirichletCorrectedWeakFluxApexConstant d s *
+        (2 *
+          _root_.HCPolySupport.ZeroTraceDirichletCorrectorData.zeroTraceFluxApexConstant d s *
           coarseFluxResponseRHSBound R
             (publicCoeffField R (rootPointwiseCoeffFamily R a))
             (scalarMatrix (d := d) sigma0) s u.toCubeSet.grad (fun x => -g x)) := by
@@ -814,7 +847,8 @@ private theorem ENNReal_ofReal_norm_cubeAverageVec_source_fluxDefect_le_legacyAp
         (cubeBesovNegativeVectorSeminormTwo_nonneg_of_memLp R hs _ hmem)).mp
         (ENNReal_ofReal_norm_cubeAverageVec_le_cubeBesovNegativeVectorSeminormTwo
           R hs _ hmem)
-    _ ≤ 2 * _root_.HCPolySupport.ZeroTraceDirichletCorrectorData.zeroTraceDirichletCorrectedWeakFluxApexConstant d s *
+    _ ≤ 2 *
+      _root_.HCPolySupport.ZeroTraceDirichletCorrectorData.zeroTraceFluxApexConstant d s *
           coarseFluxResponseRHSBound R
             (publicCoeffField R (rootPointwiseCoeffFamily R a))
             (scalarMatrix (d := d) sigma0) s u.toCubeSet.grad (fun x => -g x) :=
@@ -826,7 +860,8 @@ input of the deterministic one-cube flux estimate.  In particular, this
 public bridge has no auxiliary boundedness, summability, weak-solution, or
 ellipticity hypotheses: each is constructed internally from `CoeffOn` and
 `IsForcedEquation`. -/
-theorem ENNReal_ofReal_norm_cubeAverageVec_source_fluxDefect_le_legacyApex_of_memCubeEuclideanFullWsp
+theorem
+  ENNReal_ofReal_norm_cubeAverageVec_source_fluxDefect_le_legacyApex_of_memCubeEuclideanFullWsp
     {d : ℕ} [NeZero d] {R : TriadicCube d}
     {a : Book.Ch02.CoeffOn (Book.Ch02.cubeDomain R)}
     {u : H1Function (openCubeSet R)} {g : Vec d → Vec d}
@@ -838,7 +873,8 @@ theorem ENNReal_ofReal_norm_cubeAverageVec_source_fluxDefect_le_legacyApex_of_me
     ENNReal.ofReal ‖cubeAverageVec R
         (fluxDefect a.toCoeffField (scalarMatrix (d := d) sigma0) u.toCubeSet.grad)‖ ≤
       ENNReal.ofReal
-        (2 * _root_.HCPolySupport.ZeroTraceDirichletCorrectorData.zeroTraceDirichletCorrectedWeakFluxApexConstant d s.1 *
+        (2 *
+          _root_.HCPolySupport.ZeroTraceDirichletCorrectorData.zeroTraceFluxApexConstant d s.1 *
           coarseFluxResponseRHSBound R
             (publicCoeffField R (rootPointwiseCoeffFamily R a))
             (scalarMatrix (d := d) sigma0) s.1 u.toCubeSet.grad (fun x => -g x)) := by
@@ -850,7 +886,7 @@ theorem ENNReal_ofReal_norm_cubeAverageVec_source_fluxDefect_le_legacyApex_of_me
 direct handoff for the finite-`p` aggregation: the legacy boundedness witness
 needed to expand the RHS is constructed from the strict source Sobolev
 carrier, and is not exposed as a public premise. -/
-theorem ENNReal_ofReal_norm_cubeAverageVec_source_fluxDefect_le_legacyApex_components_of_memCubeEuclideanFullWsp
+theorem ENNReal_ofReal_norm_cubeAverageVec_source_fluxDefect_le_legacyApex_components
     {d : ℕ} [NeZero d] {R : TriadicCube d}
     {a : Book.Ch02.CoeffOn (Book.Ch02.cubeDomain R)}
     {u : H1Function (openCubeSet R)} {g : Vec d → Vec d}
@@ -862,7 +898,8 @@ theorem ENNReal_ofReal_norm_cubeAverageVec_source_fluxDefect_le_legacyApex_compo
     ENNReal.ofReal ‖cubeAverageVec R
         (fluxDefect a.toCoeffField (scalarMatrix (d := d) sigma0) u.toCubeSet.grad)‖ ≤
       ENNReal.ofReal
-        (2 * _root_.HCPolySupport.ZeroTraceDirichletCorrectorData.zeroTraceDirichletCorrectedWeakFluxApexConstant d s.1) *
+        (2 *
+          _root_.HCPolySupport.ZeroTraceDirichletCorrectorData.zeroTraceFluxApexConstant d s.1) *
         (ENNReal.ofReal (coarseFluxResponseRHSEnergyBound R
             (publicCoeffField R (rootPointwiseCoeffFamily R a))
             (scalarMatrix (d := d) sigma0) s.1 u.toCubeSet.grad) +
@@ -878,10 +915,11 @@ theorem ENNReal_ofReal_norm_cubeAverageVec_source_fluxDefect_le_legacyApex_compo
     hg.toCubeVectorBesovHRegularity_neg_of_lt hp hss2
   let A : CoeffField d := publicCoeffField R (rootPointwiseCoeffFamily R a)
   let a0 : Mat d := scalarMatrix (d := d) sigma0
-  let C : ℝ := 2 * _root_.HCPolySupport.ZeroTraceDirichletCorrectorData.zeroTraceDirichletCorrectedWeakFluxApexConstant d s.1
+  let C : ℝ := 2 *
+    _root_.HCPolySupport.ZeroTraceDirichletCorrectorData.zeroTraceFluxApexConstant d s.1
   let B : ℝ := coarseFluxResponseRHSBound R A a0 s.1 u.toCubeSet.grad (fun x => -g x)
   have hC : 0 ≤ C := mul_nonneg (by norm_num)
-    (_root_.HCPolySupport.ZeroTraceDirichletCorrectorData.zeroTraceDirichletCorrectedWeakFluxApexConstant_nonneg d s.1)
+    (_root_.HCPolySupport.ZeroTraceDirichletCorrectorData.zeroTraceFluxApexConstant_nonneg d s.1)
   have hB : 0 ≤ B := by
     dsimp [B, A, a0]
     exact coarseFluxResponseRHSBound_nonneg_of_bddAbove R
@@ -892,11 +930,13 @@ theorem ENNReal_ofReal_norm_cubeAverageVec_source_fluxDefect_le_legacyApex_compo
       ENNReal.ofReal (coarseFluxResponseRHSEnergyBound R A a0 s.1 u.toCubeSet.grad) +
         ENNReal.ofReal (coarseFluxResponseRHSResponseCorrectionBound R A a0 s.1 (fun x => -g x)) +
         ENNReal.ofReal (coarseFluxResponseRHSWeakFluxCorrectionBound R A s.1 (fun x => -g x)) +
-        ENNReal.ofReal (coarseFluxResponseRHSPoincareCorrectionBound R A a0 s.1 (fun x => -g x)) := by
+        ENNReal.ofReal (coarseFluxResponseRHSPoincareCorrectionBound R A a0 s.1 (fun x => -g x))
+          := by
     dsimp [B]
     exact ENNReal_ofReal_coarseFluxResponseRHSBound_eq_components_of_bddAbove
       R A a0 u.toCubeSet.grad (fun x => -g x) s.2.1 hreg.partialSeminorms_bddAbove
-  have hapex := ENNReal_ofReal_norm_cubeAverageVec_source_fluxDefect_le_legacyApex_of_memCubeEuclideanFullWsp
+  have hapex :=
+    ENNReal_ofReal_norm_cubeAverageVec_source_fluxDefect_le_legacyApex_of_memCubeEuclideanFullWsp
     sigma0 hsigma0 s s2 p hp hss2 hg h
   calc
     ENNReal.ofReal ‖cubeAverageVec R
@@ -907,104 +947,36 @@ theorem ENNReal_ofReal_norm_cubeAverageVec_source_fluxDefect_le_legacyApex_compo
         (ENNReal.ofReal (coarseFluxResponseRHSEnergyBound R A a0 s.1 u.toCubeSet.grad) +
           ENNReal.ofReal (coarseFluxResponseRHSResponseCorrectionBound R A a0 s.1 (fun x => -g x)) +
           ENNReal.ofReal (coarseFluxResponseRHSWeakFluxCorrectionBound R A s.1 (fun x => -g x)) +
-          ENNReal.ofReal (coarseFluxResponseRHSPoincareCorrectionBound R A a0 s.1 (fun x => -g x))) := by rw [hsplit]
+          ENNReal.ofReal (coarseFluxResponseRHSPoincareCorrectionBound R A a0 s.1 (fun x => -g
+            x))) := by rw [hsplit]
     _ = _ := by rfl
 
-/-- Fully absorbed source-facing one-cube estimate.  The `q=1` response term
-and all three ellipticity corrections are internal consequences of the
-canonical root family; the displayed forcing seminorm has the manuscript sign
-convention. -/
-theorem ENNReal_ofReal_norm_cubeAverageVec_source_fluxDefect_le_localCoarseGrainingOneCube
-    {d : ℕ} [NeZero d] {R : TriadicCube d}
-    {a : Book.Ch02.CoeffOn (Book.Ch02.cubeDomain R)}
-    {u : H1Function (openCubeSet R)} {g : Vec d → Vec d}
-    (sigma0 : ℝ) (hsigma0 : 0 < sigma0)
-    (s s2 : FractionalOrder) (p : FiniteLpExponent)
-    (hp : (2 : ℝ≥0∞) ≤ p.exponent) (hss2 : s.1 < s2.1)
-    (hg : MemCubeEuclideanFullWsp R s2 p g)
-    (h : IsForcedEquation R a u g) :
-    ENNReal.ofReal ‖cubeAverageVec R
-        (fluxDefect a.toCoeffField (scalarMatrix (d := d) sigma0) u.toCubeSet.grad)‖ ≤
-      ENNReal.ofReal (localCoarseGrainingOneCubeConstant d) *
-        (ENNReal.ofReal (s.1⁻¹) * ENNReal.ofReal (Real.sqrt sigma0) *
-            ENNReal.ofReal (Book.Ch02.HomogenizationErrorOnCube R s.1 .infinity (.finite 1)
-              (rootPointwiseCoeffFamily R a) (scalarMatrix (d := d) sigma0)) *
-            localSymmetricEnergyENorm R a u +
-          ENNReal.ofReal (Real.rpow s.1 (-(9 / 2 : ℝ))) *
-            (1 + ENNReal.ofReal
-              (Book.Ch02.HomogenizationErrorOnCube R (s.1 / 2) .infinity (.finite 2)
-                (rootPointwiseCoeffFamily R a) (scalarMatrix (d := d) sigma0)) ^ 2) *
-            ENNReal.ofReal (cubeBesovPositiveVectorSeminormTwo R s.1 g)) := by
-  let A : CoeffField d := publicCoeffField R (rootPointwiseCoeffFamily R a)
+private theorem localCoarseGrainingPublicCorrectionEnvelopes
+    {d : ℕ} [NeZero d] (R : TriadicCube d)
+    (a : Book.Ch02.CoeffOn (Book.Ch02.cubeDomain R))
+    (sigma0 : ℝ) (hsigma0 : 0 < sigma0) (s : FractionalOrder) :
+    let a0 : Mat d := scalarMatrix (d := d) sigma0;
+    let H1 : ℝ := Book.Ch02.HomogenizationErrorOnCube R s.1 .infinity (.finite 1)
+      (rootPointwiseCoeffFamily R a) a0;
+    let H2 : ℝ := Book.Ch02.HomogenizationErrorOnCube R (s.1 / 2) .infinity (.finite 2)
+      (rootPointwiseCoeffFamily R a) a0;
+    (Real.sqrt sigma0 *
+      poincareLowerEllipticityFactor R (rootPointwiseCoeffFamily R a) (s.1 / 2) (.finite 2) * H1 ≤
+      4 * (d : ℝ) * (H2 ^ 2 + 1)) ∧
+    (Real.sqrt (Book.Ch02.LambdaSq R (s.1 / 2) (.finite 2)
+        (rootPointwiseCoeffFamily R a)) *
+      Real.sqrt ((Book.Ch02.lambdaSq R (s.1 / 2) (.finite 2)
+        (rootPointwiseCoeffFamily R a))⁻¹) ≤
+      4 * (d : ℝ) * (H2 ^ 2 + 1)) ∧
+    (sigma0 *
+      (Book.Ch02.lambdaSq R (s.1 / 2) (.finite 2)
+        (rootPointwiseCoeffFamily R a))⁻¹ ≤
+      4 * (d : ℝ) * (H2 ^ 2 + 1)) := by
   let a0 : Mat d := scalarMatrix (d := d) sigma0
   let H1 : ℝ := Book.Ch02.HomogenizationErrorOnCube R s.1 .infinity (.finite 1)
     (rootPointwiseCoeffFamily R a) a0
   let H2 : ℝ := Book.Ch02.HomogenizationErrorOnCube R (s.1 / 2) .infinity (.finite 2)
     (rootPointwiseCoeffFamily R a) a0
-  let E : ℝ := Real.sqrt (cubeAverage R (coefficientEnergyDensity A u.toCubeSet.grad))
-  let B : ℝ := cubeBesovPositiveVectorSeminormTwo R s.1 g
-  let M : ℝ := _root_.HCPolySupport.ZeroTraceDirichletCorrectorData.zeroTraceDirichletCorrectedWeakFluxApexConstant d 1
-  let X : ℝ := s.1⁻¹ * Real.sqrt sigma0 * H1 * E
-  let Y : ℝ := Real.rpow s.1 (-(9 / 2 : ℝ)) * (H2 ^ 2 + 1) * B
-  have hBdd : BddAbove (Set.range fun N : ℕ =>
-      cubeBesovPositiveVectorPartialSeminormTwo R s.1 N g) :=
-    cubeBesovPositiveVectorPartialSeminormTwo_bddAbove_of_memLp_finiteP
-      R s s2 hss2 p hp g hg
-  have hBneg : cubeBesovPositiveVectorSeminormTwo R s.1 (fun x => -g x) = B := by
-    dsimp [B]
-    exact cubeBesovPositiveVectorSeminormTwo_neg_of_memLp R s.1 g
-      (MemCubeEuclideanFullWsp.memLpTwo hp hg)
-  have hB_nonneg : 0 ≤ B := by
-    dsimp [B]
-    exact cubeBesovPositiveVectorSeminormTwo_nonneg_of_bddAbove R s.1 g hBdd
-  have hH1_nonneg : 0 ≤ H1 := by
-    dsimp [H1, a0]
-    exact Book.Ch02.HomogenizationErrorOnCube_infinity_one_nonneg R
-      (rootPointwiseCoeffFamily R a) (scalarMatrix (d := d) sigma0) s.2.1
-  have hH2_nonneg : 0 ≤ H2 := by
-    dsimp [H2, a0, Book.Ch02.HomogenizationErrorOnCube,
-      Book.Ch02.HomogenizationError, Book.Ch02.HomogenizationErrorFinite]
-    apply Real.rpow_nonneg
-    apply tsum_nonneg
-    intro j
-    apply mul_nonneg
-    · simpa [Book.Ch02.geometricWeight_eq_old] using
-        (HCPolySupport.geometricWeight_nonneg (s := s.1 / 2) (q := (2 : ℝ)) j
-          (by nlinarith [s.2.1.le] : 0 ≤ (s.1 / 2) * (2 : ℝ)))
-    · exact Real.rpow_nonneg
-        (Book.Ch02.scaleResponseAtScale_infinity_nonneg R (by omega)
-          (rootPointwiseCoeffFamily R a) (scalarMatrix (d := d) sigma0)) _
-  have hE_nonneg : 0 ≤ E := Real.sqrt_nonneg _
-  have hd_nonneg : 0 ≤ (d : ℝ) := Nat.cast_nonneg d
-  have hs_inv_nonneg : 0 ≤ s.1⁻¹ := inv_nonneg.mpr s.2.1.le
-  have hrpow52_nonneg : 0 ≤ Real.rpow s.1 (-(5 / 2 : ℝ)) :=
-    Real.rpow_nonneg s.2.1.le _
-  have hrpow9_nonneg : 0 ≤ Real.rpow s.1 (-(9 / 2 : ℝ)) :=
-    Real.rpow_nonneg s.2.1.le _
-  have hrpow3_nonneg : 0 ≤ Real.rpow s.1 (-3 : ℝ) :=
-    Real.rpow_nonneg s.2.1.le _
-  have hX_nonneg : 0 ≤ X := by
-    dsimp [X]
-    exact mul_nonneg (mul_nonneg (mul_nonneg hs_inv_nonneg (Real.sqrt_nonneg _)) hH1_nonneg) hE_nonneg
-  have hY_nonneg : 0 ≤ Y := by
-    dsimp [Y]
-    exact mul_nonneg (mul_nonneg hrpow9_nonneg (by nlinarith [sq_nonneg H2])) hB_nonneg
-  have hM_nonneg : 0 ≤ M := by
-    dsimp [M]
-    exact _root_.HCPolySupport.ZeroTraceDirichletCorrectorData.zeroTraceDirichletCorrectedWeakFluxApexConstant_nonneg d 1
-  have hC : 2 * _root_.HCPolySupport.ZeroTraceDirichletCorrectorData.zeroTraceDirichletCorrectedWeakFluxApexConstant d s.1 ≤
-      2 * M := by
-    dsimp [M]
-    exact mul_le_mul_of_nonneg_left
-      (zeroTraceDirichletCorrectedWeakFluxApexConstant_le_one s.1 s.2.1 s.2.2.le)
-      (by norm_num)
-  have hmat : Real.sqrt (matNorm a0) ≤ (d : ℝ) * Real.sqrt sigma0 := by
-    dsimp [a0]
-    exact sqrt_matNorm_scalarMatrix_le_dim_mul_sqrt hsigma0.le
-  have hpow52 : Real.rpow s.1 (-(5 / 2 : ℝ)) ≤ Real.rpow s.1 (-(9 / 2 : ℝ)) :=
-    rpow_neg_five_halves_le_rpow_neg_nine_halves s.2.1 s.2.2.le
-  have hpow3 : Real.rpow s.1 (-3 : ℝ) ≤ Real.rpow s.1 (-(9 / 2 : ℝ)) :=
-    rpow_neg_three_le_rpow_neg_nine_halves s.2.1 s.2.2.le
   have hresponseEnvelope : Real.sqrt sigma0 *
       poincareLowerEllipticityFactor R (rootPointwiseCoeffFamily R a) (s.1 / 2) (.finite 2) * H1 ≤
       4 * (d : ℝ) * (H2 ^ 2 + 1) := by
@@ -1045,10 +1017,59 @@ theorem ENNReal_ofReal_norm_cubeAverageVec_source_fluxDefect_le_localCoarseGrain
         (Book.Ch02.LambdaSq_finite_nonneg R (rootPointwiseCoeffFamily R a)
           (by linarith [s.2.1]) (by norm_num))
     simpa only [H2, a0, Fintype.card_fin] using (le_add_of_nonneg_left hupper).trans hweighted
-  have hH1eq : HomogenizationErrorOnCube R s.1 .infinity (.finite 1) A a0 = H1 := by
-    dsimp [A, H1]
-    exact homogenizationErrorOnCube_publicCoeffField_infinity_one_eq_ch02
-      (rootPointwiseCoeffFamily R a) R s.1 a0
+  exact ⟨hresponseEnvelope, hweakEnvelope, hpoincareEnvelope⟩
+
+private theorem localCoarseGrainingInternalCorrectionEnvelopes
+    {d : ℕ} [NeZero d] (R : TriadicCube d)
+    (a : Book.Ch02.CoeffOn (Book.Ch02.cubeDomain R))
+    (sigma0 : ℝ) (hsigma0 : 0 < sigma0) (s : FractionalOrder)
+    (hEnvelopes :
+      let a0 : Mat d := scalarMatrix (d := d) sigma0;
+      let H1 : ℝ := Book.Ch02.HomogenizationErrorOnCube R s.1 .infinity (.finite 1)
+        (rootPointwiseCoeffFamily R a) a0;
+      let H2 : ℝ := Book.Ch02.HomogenizationErrorOnCube R (s.1 / 2) .infinity (.finite 2)
+        (rootPointwiseCoeffFamily R a) a0;
+      (Real.sqrt sigma0 *
+        poincareLowerEllipticityFactor R (rootPointwiseCoeffFamily R a) (s.1 / 2) (.finite 2) * H1 ≤
+        4 * (d : ℝ) * (H2 ^ 2 + 1)) ∧
+      (Real.sqrt (Book.Ch02.LambdaSq R (s.1 / 2) (.finite 2)
+          (rootPointwiseCoeffFamily R a)) *
+        Real.sqrt ((Book.Ch02.lambdaSq R (s.1 / 2) (.finite 2)
+          (rootPointwiseCoeffFamily R a))⁻¹) ≤
+        4 * (d : ℝ) * (H2 ^ 2 + 1)) ∧
+      (sigma0 *
+        (Book.Ch02.lambdaSq R (s.1 / 2) (.finite 2)
+          (rootPointwiseCoeffFamily R a))⁻¹ ≤
+        4 * (d : ℝ) * (H2 ^ 2 + 1))) :
+    let A : CoeffField d := publicCoeffField R (rootPointwiseCoeffFamily R a);
+    let a0 : Mat d := scalarMatrix (d := d) sigma0;
+    let H1 : ℝ := Book.Ch02.HomogenizationErrorOnCube R s.1 .infinity (.finite 1)
+      (rootPointwiseCoeffFamily R a) a0;
+    let H2 : ℝ := Book.Ch02.HomogenizationErrorOnCube R (s.1 / 2) .infinity (.finite 2)
+      (rootPointwiseCoeffFamily R a) a0;
+    (Real.sqrt (matNorm a0) *
+      Real.sqrt ((lambdaSq R (s.1 / 2) (.finite 2) A)⁻¹) * H1 ≤
+      4 * (d : ℝ) ^ 3 * (H2 ^ 2 + 1)) ∧
+    (Real.sqrt (LambdaSq R (s.1 / 2) (.finite 2) A) *
+      Real.sqrt ((lambdaSq R (s.1 / 2) (.finite 2) A)⁻¹) ≤
+      4 * (d : ℝ) ^ 3 * (H2 ^ 2 + 1)) ∧
+    (matNorm a0 * (lambdaSq R (s.1 / 2) (.finite 2) A)⁻¹ ≤
+      4 * (d : ℝ) ^ 3 * (H2 ^ 2 + 1)) := by
+  let A : CoeffField d := publicCoeffField R (rootPointwiseCoeffFamily R a)
+  let a0 : Mat d := scalarMatrix (d := d) sigma0
+  let H1 : ℝ := Book.Ch02.HomogenizationErrorOnCube R s.1 .infinity (.finite 1)
+    (rootPointwiseCoeffFamily R a) a0
+  let H2 : ℝ := Book.Ch02.HomogenizationErrorOnCube R (s.1 / 2) .infinity (.finite 2)
+    (rootPointwiseCoeffFamily R a) a0
+  obtain ⟨hresponseEnvelope, hweakEnvelope, hpoincareEnvelope⟩ := hEnvelopes
+  have hH1_nonneg : 0 ≤ H1 := by
+    dsimp [H1, a0]
+    exact Book.Ch02.HomogenizationErrorOnCube_infinity_one_nonneg R
+      (rootPointwiseCoeffFamily R a) (scalarMatrix (d := d) sigma0) s.2.1
+  have hd_nonneg : 0 ≤ (d : ℝ) := Nat.cast_nonneg d
+  have hmat : Real.sqrt (matNorm a0) ≤ (d : ℝ) * Real.sqrt sigma0 := by
+    dsimp [a0]
+    exact sqrt_matNorm_scalarMatrix_le_dim_mul_sqrt hsigma0.le
   have hlowerBridge : Real.sqrt ((lambdaSq R (s.1 / 2) (.finite 2) A)⁻¹) ≤
       (d : ℝ) * poincareLowerEllipticityFactor R (rootPointwiseCoeffFamily R a)
         (s.1 / 2) (.finite 2) := by
@@ -1155,25 +1176,260 @@ theorem ENNReal_ofReal_norm_cubeAverageVec_source_fluxDefect_le_localCoarseGrain
       _ ≤ (d : ℝ) ^ 2 * (4 * (d : ℝ) * (H2 ^ 2 + 1)) :=
         mul_le_mul_of_nonneg_left hpoincareEnvelope (sq_nonneg _)
       _ = 4 * (d : ℝ) ^ 3 * (H2 ^ 2 + 1) := by ring
-  have henergy :
-      (2 * _root_.HCPolySupport.ZeroTraceDirichletCorrectorData.zeroTraceDirichletCorrectedWeakFluxApexConstant d s.1) *
-        coarseFluxResponseRHSEnergyBound R A a0 s.1 u.toCubeSet.grad ≤
-      (2 * M * (d : ℝ)) * X := by
-    unfold coarseFluxResponseRHSEnergyBound
-    rw [hH1eq]
-    change
-      (2 * _root_.HCPolySupport.ZeroTraceDirichletCorrectorData.zeroTraceDirichletCorrectedWeakFluxApexConstant d s.1) *
-          (s.1⁻¹ * Real.sqrt (matNorm a0) * H1 * E) ≤
-        (2 * M * (d : ℝ)) * X
+  exact ⟨hresponseRaw, hweakRaw, hpoincareRaw⟩
+
+private theorem scaledCorrection_le_of_envelopeBounds
+    {C M weight strongerWeight correction envelope forcing : ℝ} {d : ℕ}
+    (hC : C ≤ 2 * M) (hM : 0 ≤ M)
+    (hWeight : 0 ≤ weight) (hStrongerWeight : 0 ≤ strongerWeight)
+    (hCorrection : 0 ≤ correction) (hForcing : 0 ≤ forcing)
+    (hWeight_le : weight ≤ strongerWeight)
+    (hEnvelope : correction ≤ 4 * (d : ℝ) ^ 3 * envelope) :
+    C * (weight * correction * forcing) ≤
+      (8 * M * (d : ℝ) ^ 3) * (strongerWeight * envelope * forcing) := by
+  calc
+    C * (weight * correction * forcing) ≤
+        (2 * M) * (weight * correction * forcing) :=
+      mul_le_mul_of_nonneg_right hC
+        (mul_nonneg (mul_nonneg hWeight hCorrection) hForcing)
+    _ ≤ (2 * M) * (strongerWeight * correction * forcing) :=
+      mul_le_mul_of_nonneg_left
+        (mul_le_mul_of_nonneg_right
+          (mul_le_mul_of_nonneg_right hWeight_le hCorrection) hForcing)
+        (mul_nonneg (by norm_num) hM)
+    _ ≤ (2 * M) * (strongerWeight * (4 * (d : ℝ) ^ 3 * envelope) * forcing) :=
+      mul_le_mul_of_nonneg_left
+        (mul_le_mul_of_nonneg_right
+          (mul_le_mul_of_nonneg_left hEnvelope hStrongerWeight) hForcing)
+        (mul_nonneg (by norm_num) hM)
+    _ = (8 * M * (d : ℝ) ^ 3) * (strongerWeight * envelope * forcing) := by ring
+
+private theorem localCoarseGrainingComponentSum_le_absorbedEnvelope
+    {d : ℕ} [NeZero d] (R : TriadicCube d) (A : CoeffField d) (a0 : Mat d)
+    (s : FractionalOrder) (F g : Vec d → Vec d) {X Y : ℝ}
+    (hX_nonneg : 0 ≤ X) (hY_nonneg : 0 ≤ Y)
+    (henergy :
+      (2 *
+        _root_.HCPolySupport.ZeroTraceDirichletCorrectorData.zeroTraceFluxApexConstant d s.1) *
+        coarseFluxResponseRHSEnergyBound R A a0 s.1 F ≤
+      (2 * (_root_.HCPolySupport.ZeroTraceDirichletCorrectorData.zeroTraceFluxApexConstant d 1)
+        * (d : ℝ)) * X)
+    (hresponse :
+      (2 *
+        _root_.HCPolySupport.ZeroTraceDirichletCorrectorData.zeroTraceFluxApexConstant d s.1) *
+        coarseFluxResponseRHSResponseCorrectionBound R A a0 s.1 (fun x => -g x) ≤
+      (8 * (_root_.HCPolySupport.ZeroTraceDirichletCorrectorData.zeroTraceFluxApexConstant d 1)
+        * (d : ℝ) ^ 3) * Y)
+    (hweak :
+      (2 *
+        _root_.HCPolySupport.ZeroTraceDirichletCorrectorData.zeroTraceFluxApexConstant d s.1) *
+        coarseFluxResponseRHSWeakFluxCorrectionBound R A s.1 (fun x => -g x) ≤
+      (8 * (_root_.HCPolySupport.ZeroTraceDirichletCorrectorData.zeroTraceFluxApexConstant d 1)
+        * (d : ℝ) ^ 3) * Y)
+    (hpoincare :
+      (2 *
+        _root_.HCPolySupport.ZeroTraceDirichletCorrectorData.zeroTraceFluxApexConstant d s.1) *
+        coarseFluxResponseRHSPoincareCorrectionBound R A a0 s.1 (fun x => -g x) ≤
+      (8 * (_root_.HCPolySupport.ZeroTraceDirichletCorrectorData.zeroTraceFluxApexConstant d 1)
+        * (d : ℝ) ^ 3) * Y) :
+    (2 *
+        _root_.HCPolySupport.ZeroTraceDirichletCorrectorData.zeroTraceFluxApexConstant d s.1) *
+        coarseFluxResponseRHSBound R A a0 s.1 F (fun x => -g x) ≤
+      localCoarseGrainingOneCubeConstant d * (X + Y) := by
+  let M : ℝ := _root_.HCPolySupport.ZeroTraceDirichletCorrectorData.zeroTraceFluxApexConstant d 1
+  have hreal :
+      (2 *
+        _root_.HCPolySupport.ZeroTraceDirichletCorrectorData.zeroTraceFluxApexConstant d s.1) *
+        coarseFluxResponseRHSBound R A a0 s.1 F (fun x => -g x) ≤
+      localCoarseGrainingOneCubeConstant d * (X + Y) := by
+    rw [coarseFluxResponseRHSBound_eq_component_sum]
     calc
-      (2 * _root_.HCPolySupport.ZeroTraceDirichletCorrectorData.zeroTraceDirichletCorrectedWeakFluxApexConstant d s.1) *
-          (s.1⁻¹ * Real.sqrt (matNorm a0) * H1 * E) ≤
-          (2 * M) * (s.1⁻¹ * ((d : ℝ) * Real.sqrt sigma0) *
-            H1 * E) := by
-            gcongr
-      _ = (2 * M * (d : ℝ)) * X := by ring
+      (2 *
+        _root_.HCPolySupport.ZeroTraceDirichletCorrectorData.zeroTraceFluxApexConstant d s.1) *
+          (coarseFluxResponseRHSEnergyBound R A a0 s.1 F +
+            coarseFluxResponseRHSResponseCorrectionBound R A a0 s.1 (fun x => -g x) +
+            coarseFluxResponseRHSWeakFluxCorrectionBound R A s.1 (fun x => -g x) +
+            coarseFluxResponseRHSPoincareCorrectionBound R A a0 s.1 (fun x => -g x)) =
+          (2 *
+            _root_.HCPolySupport.ZeroTraceDirichletCorrectorData.zeroTraceFluxApexConstant d s.1) *
+            coarseFluxResponseRHSEnergyBound R A a0 s.1 F +
+          (2 *
+            _root_.HCPolySupport.ZeroTraceDirichletCorrectorData.zeroTraceFluxApexConstant d s.1) *
+            coarseFluxResponseRHSResponseCorrectionBound R A a0 s.1 (fun x => -g x) +
+          (2 *
+            _root_.HCPolySupport.ZeroTraceDirichletCorrectorData.zeroTraceFluxApexConstant d s.1) *
+            coarseFluxResponseRHSWeakFluxCorrectionBound R A s.1 (fun x => -g x) +
+          (2 *
+            _root_.HCPolySupport.ZeroTraceDirichletCorrectorData.zeroTraceFluxApexConstant d s.1) *
+            coarseFluxResponseRHSPoincareCorrectionBound R A a0 s.1 (fun x => -g x) := by ring
+      _ ≤ (2 * M * (d : ℝ)) * X + (8 * M * (d : ℝ) ^ 3) * Y +
+          (8 * M * (d : ℝ) ^ 3) * Y + (8 * M * (d : ℝ) ^ 3) * Y := by
+        gcongr
+      _ = (2 * M * (d : ℝ)) * X +
+          (24 * M * (d : ℝ) ^ 3) * Y := by ring
+      _ ≤ localCoarseGrainingOneCubeConstant d * (X + Y) :=
+        localCoarseGrainingOneCubeConstant_dominates_forcing X Y hX_nonneg hY_nonneg
+  exact hreal
+
+private theorem localCoarseGrainingEnergyComponent_le_scalarEnvelope
+    {d : ℕ} [NeZero d] (R : TriadicCube d) (A : CoeffField d) (a0 : Mat d)
+    (s : FractionalOrder) (F : Vec d → Vec d) {sigma0 H1 M : ℝ}
+    (hH1eq : HomogenizationErrorOnCube R s.1 .infinity (.finite 1) A a0 = H1)
+    (hH1_nonneg : 0 ≤ H1) (hM_nonneg : 0 ≤ M)
+    (hC : 2 *
+      _root_.HCPolySupport.ZeroTraceDirichletCorrectorData.zeroTraceFluxApexConstant d s.1 ≤
+        2 * M)
+    (hmat : Real.sqrt (matNorm a0) ≤ (d : ℝ) * Real.sqrt sigma0) :
+    (2 *
+        _root_.HCPolySupport.ZeroTraceDirichletCorrectorData.zeroTraceFluxApexConstant d s.1) *
+        coarseFluxResponseRHSEnergyBound R A a0 s.1 F ≤
+      (2 * M * (d : ℝ)) *
+        (s.1⁻¹ * Real.sqrt sigma0 * H1 *
+          Real.sqrt (cubeAverage R (coefficientEnergyDensity A F))) := by
+  let E : ℝ := Real.sqrt (cubeAverage R (coefficientEnergyDensity A F))
+  let X : ℝ := s.1⁻¹ * Real.sqrt sigma0 * H1 * E
+  have hE_nonneg : 0 ≤ E := Real.sqrt_nonneg _
+  have hd_nonneg : 0 ≤ (d : ℝ) := Nat.cast_nonneg d
+  have hs_inv_nonneg : 0 ≤ s.1⁻¹ := inv_nonneg.mpr s.2.1.le
+  unfold coarseFluxResponseRHSEnergyBound
+  rw [hH1eq]
+  change
+    (2 *
+      _root_.HCPolySupport.ZeroTraceDirichletCorrectorData.zeroTraceFluxApexConstant d s.1) *
+        (s.1⁻¹ * Real.sqrt (matNorm a0) * H1 * E) ≤
+      (2 * M * (d : ℝ)) * X
+  calc
+    (2 *
+      _root_.HCPolySupport.ZeroTraceDirichletCorrectorData.zeroTraceFluxApexConstant d s.1) *
+        (s.1⁻¹ * Real.sqrt (matNorm a0) * H1 * E) ≤
+        (2 * M) * (s.1⁻¹ * ((d : ℝ) * Real.sqrt sigma0) *
+          H1 * E) := by
+          gcongr
+    _ = (2 * M * (d : ℝ)) * X := by ring
+
+private theorem homogenizationErrorInfinityTwo_nonnegative
+    {d : ℕ} [NeZero d] (R : TriadicCube d) (F : Book.Ch02.TriadicCoeffFamily d)
+    (a0 : Mat d) {t : ℝ} (ht : 0 ≤ t) :
+    0 ≤ Book.Ch02.HomogenizationErrorOnCube R t .infinity (.finite 2) F a0 := by
+  dsimp [Book.Ch02.HomogenizationErrorOnCube,
+    Book.Ch02.HomogenizationError, Book.Ch02.HomogenizationErrorFinite]
+  apply Real.rpow_nonneg
+  apply tsum_nonneg
+  intro j
+  apply mul_nonneg
+  · simpa [Book.Ch02.geometricWeight_eq_old] using
+      (HCPolySupport.geometricWeight_nonneg (s := t) (q := (2 : ℝ)) j
+        (mul_nonneg ht (by norm_num)))
+  · exact Real.rpow_nonneg
+      (Book.Ch02.scaleResponseAtScale_infinity_nonneg R (by omega) F a0) _
+
+/-- Fully absorbed source-facing one-cube estimate.  The `q=1` response term
+and all three ellipticity corrections are internal consequences of the
+canonical root family; the displayed forcing seminorm has the manuscript sign
+convention. -/
+theorem ENNReal_ofReal_norm_cubeAverageVec_source_fluxDefect_le_localCoarseGrainingOneCube
+    {d : ℕ} [NeZero d] {R : TriadicCube d}
+    {a : Book.Ch02.CoeffOn (Book.Ch02.cubeDomain R)}
+    {u : H1Function (openCubeSet R)} {g : Vec d → Vec d}
+    (sigma0 : ℝ) (hsigma0 : 0 < sigma0)
+    (s s2 : FractionalOrder) (p : FiniteLpExponent)
+    (hp : (2 : ℝ≥0∞) ≤ p.exponent) (hss2 : s.1 < s2.1)
+    (hg : MemCubeEuclideanFullWsp R s2 p g)
+    (h : IsForcedEquation R a u g) :
+    ENNReal.ofReal ‖cubeAverageVec R
+        (fluxDefect a.toCoeffField (scalarMatrix (d := d) sigma0) u.toCubeSet.grad)‖ ≤
+      ENNReal.ofReal (localCoarseGrainingOneCubeConstant d) *
+        (ENNReal.ofReal (s.1⁻¹) * ENNReal.ofReal (Real.sqrt sigma0) *
+            ENNReal.ofReal (Book.Ch02.HomogenizationErrorOnCube R s.1 .infinity (.finite 1)
+              (rootPointwiseCoeffFamily R a) (scalarMatrix (d := d) sigma0)) *
+            localSymmetricEnergyENorm R a u +
+          ENNReal.ofReal (Real.rpow s.1 (-(9 / 2 : ℝ))) *
+            (1 + ENNReal.ofReal
+              (Book.Ch02.HomogenizationErrorOnCube R (s.1 / 2) .infinity (.finite 2)
+                (rootPointwiseCoeffFamily R a) (scalarMatrix (d := d) sigma0)) ^ 2) *
+            ENNReal.ofReal (cubeBesovPositiveVectorSeminormTwo R s.1 g)) := by
+  let A : CoeffField d := publicCoeffField R (rootPointwiseCoeffFamily R a)
+  let a0 : Mat d := scalarMatrix (d := d) sigma0
+  let H1 : ℝ := Book.Ch02.HomogenizationErrorOnCube R s.1 .infinity (.finite 1)
+    (rootPointwiseCoeffFamily R a) a0
+  let H2 : ℝ := Book.Ch02.HomogenizationErrorOnCube R (s.1 / 2) .infinity (.finite 2)
+    (rootPointwiseCoeffFamily R a) a0
+  let E : ℝ := Real.sqrt (cubeAverage R (coefficientEnergyDensity A u.toCubeSet.grad))
+  let B : ℝ := cubeBesovPositiveVectorSeminormTwo R s.1 g
+  let M : ℝ :=
+    _root_.HCPolySupport.ZeroTraceDirichletCorrectorData.zeroTraceFluxApexConstant d 1
+  let X : ℝ := s.1⁻¹ * Real.sqrt sigma0 * H1 * E
+  let Y : ℝ := Real.rpow s.1 (-(9 / 2 : ℝ)) * (H2 ^ 2 + 1) * B
+  have hBdd : BddAbove (Set.range fun N : ℕ =>
+      cubeBesovPositiveVectorPartialSeminormTwo R s.1 N g) :=
+    cubeBesovPositiveVectorPartialSeminormTwo_bddAbove_of_memLp_finiteP
+      R s s2 hss2 p hp g hg
+  have hBneg : cubeBesovPositiveVectorSeminormTwo R s.1 (fun x => -g x) = B := by
+    dsimp [B]
+    exact cubeBesovPositiveVectorSeminormTwo_neg_of_memLp R s.1 g
+      (MemCubeEuclideanFullWsp.memLpTwo hp hg)
+  have hB_nonneg : 0 ≤ B := by
+    dsimp [B]
+    exact cubeBesovPositiveVectorSeminormTwo_nonneg_of_bddAbove R s.1 g hBdd
+  have hH1_nonneg : 0 ≤ H1 := by
+    dsimp [H1, a0]
+    exact Book.Ch02.HomogenizationErrorOnCube_infinity_one_nonneg R
+      (rootPointwiseCoeffFamily R a) (scalarMatrix (d := d) sigma0) s.2.1
+  have hH2_nonneg : 0 ≤ H2 :=
+    homogenizationErrorInfinityTwo_nonnegative R (rootPointwiseCoeffFamily R a) a0
+      (by nlinarith [s.2.1.le])
+  have hE_nonneg : 0 ≤ E := Real.sqrt_nonneg _
+  have hd_nonneg : 0 ≤ (d : ℝ) := Nat.cast_nonneg d
+  have hs_inv_nonneg : 0 ≤ s.1⁻¹ := inv_nonneg.mpr s.2.1.le
+  have hrpow52_nonneg : 0 ≤ Real.rpow s.1 (-(5 / 2 : ℝ)) :=
+    Real.rpow_nonneg s.2.1.le _
+  have hrpow9_nonneg : 0 ≤ Real.rpow s.1 (-(9 / 2 : ℝ)) :=
+    Real.rpow_nonneg s.2.1.le _
+  have hrpow3_nonneg : 0 ≤ Real.rpow s.1 (-3 : ℝ) :=
+    Real.rpow_nonneg s.2.1.le _
+  have hX_nonneg : 0 ≤ X := by
+    dsimp [X]
+    exact mul_nonneg (mul_nonneg (mul_nonneg hs_inv_nonneg (Real.sqrt_nonneg _)) hH1_nonneg)
+      hE_nonneg
+  have hY_nonneg : 0 ≤ Y := by
+    dsimp [Y]
+    exact mul_nonneg (mul_nonneg hrpow9_nonneg (by nlinarith [sq_nonneg H2])) hB_nonneg
+  have hM_nonneg : 0 ≤ M := by
+    dsimp [M]
+    exact
+      _root_.HCPolySupport.ZeroTraceDirichletCorrectorData.zeroTraceFluxApexConstant_nonneg d 1
+  have hC : 2 *
+    _root_.HCPolySupport.ZeroTraceDirichletCorrectorData.zeroTraceFluxApexConstant d s.1 ≤
+      2 * M := by
+    dsimp [M]
+    exact mul_le_mul_of_nonneg_left
+      (zeroTraceDirichletCorrectedWeakFluxApexConstant_le_one s.1 s.2.1 s.2.2.le)
+      (by norm_num)
+  have hmat : Real.sqrt (matNorm a0) ≤ (d : ℝ) * Real.sqrt sigma0 := by
+    dsimp [a0]
+    exact sqrt_matNorm_scalarMatrix_le_dim_mul_sqrt hsigma0.le
+  have hpow52 : Real.rpow s.1 (-(5 / 2 : ℝ)) ≤ Real.rpow s.1 (-(9 / 2 : ℝ)) :=
+    rpow_neg_five_halves_le_rpow_neg_nine_halves s.2.1 s.2.2.le
+  have hpow3 : Real.rpow s.1 (-3 : ℝ) ≤ Real.rpow s.1 (-(9 / 2 : ℝ)) :=
+    rpow_neg_three_le_rpow_neg_nine_halves s.2.1 s.2.2.le
+  have hPublicEnvelopes :=
+    localCoarseGrainingPublicCorrectionEnvelopes R a sigma0 hsigma0 s
+  have hH1eq : HomogenizationErrorOnCube R s.1 .infinity (.finite 1) A a0 = H1 := by
+    dsimp [A, H1]
+    exact homogenizationErrorOnCube_publicCoeffField_infinity_one_eq_ch02
+      (rootPointwiseCoeffFamily R a) R s.1 a0
+  obtain ⟨hresponseRaw, hweakRaw, hpoincareRaw⟩ :=
+    localCoarseGrainingInternalCorrectionEnvelopes R a sigma0 hsigma0 s hPublicEnvelopes
+  have henergy :
+      (2 *
+        _root_.HCPolySupport.ZeroTraceDirichletCorrectorData.zeroTraceFluxApexConstant d s.1) *
+        coarseFluxResponseRHSEnergyBound R A a0 s.1 u.toCubeSet.grad ≤
+      (2 * M * (d : ℝ)) * X :=
+    localCoarseGrainingEnergyComponent_le_scalarEnvelope R A a0 s u.toCubeSet.grad
+      hH1eq hH1_nonneg hM_nonneg hC hmat
   have hresponse :
-      (2 * _root_.HCPolySupport.ZeroTraceDirichletCorrectorData.zeroTraceDirichletCorrectedWeakFluxApexConstant d s.1) *
+      (2 *
+        _root_.HCPolySupport.ZeroTraceDirichletCorrectorData.zeroTraceFluxApexConstant d s.1) *
         coarseFluxResponseRHSResponseCorrectionBound R A a0 s.1 (fun x => -g x) ≤
       (8 * M * (d : ℝ) ^ 3) * Y := by
     unfold coarseFluxResponseRHSResponseCorrectionBound
@@ -1183,41 +1439,20 @@ theorem ENNReal_ofReal_norm_cubeAverageVec_source_fluxDefect_le_localCoarseGrain
         Real.sqrt ((lambdaSq R (s.1 / 2) (.finite 2) A)⁻¹) * H1 :=
       mul_nonneg (mul_nonneg (Real.sqrt_nonneg _) (Real.sqrt_nonneg _)) hH1_nonneg
     calc
-      (2 * _root_.HCPolySupport.ZeroTraceDirichletCorrectorData.zeroTraceDirichletCorrectedWeakFluxApexConstant d s.1) *
-          (Real.rpow s.1 (-(5 / 2 : ℝ)) * Real.sqrt (matNorm a0) *
-            Real.sqrt ((lambdaSq R (s.1 / 2) (.finite 2) A)⁻¹) * H1 * B) =
-          (2 * _root_.HCPolySupport.ZeroTraceDirichletCorrectorData.zeroTraceDirichletCorrectedWeakFluxApexConstant d s.1) *
-            (Real.rpow s.1 (-(5 / 2 : ℝ)) *
-              (Real.sqrt (matNorm a0) * Real.sqrt ((lambdaSq R (s.1 / 2) (.finite 2) A)⁻¹) * H1) * B) := by ring
-      _ ≤
-          (2 * M) * (Real.rpow s.1 (-(5 / 2 : ℝ)) *
-            (Real.sqrt (matNorm a0) * Real.sqrt ((lambdaSq R (s.1 / 2) (.finite 2) A)⁻¹) * H1) * B) := by
-            apply mul_le_mul_of_nonneg_right hC
-            exact mul_nonneg (mul_nonneg hrpow52_nonneg hraw_nonneg) hB_nonneg
-      _ ≤ (2 * M) * (Real.rpow s.1 (-(9 / 2 : ℝ)) *
-            (Real.sqrt (matNorm a0) * Real.sqrt ((lambdaSq R (s.1 / 2) (.finite 2) A)⁻¹) * H1) * B) := by
-            exact mul_le_mul_of_nonneg_left
-              (mul_le_mul_of_nonneg_right
-                (mul_le_mul_of_nonneg_right hpow52 hraw_nonneg) hB_nonneg)
-              (mul_nonneg (by norm_num) hM_nonneg)
-      _ ≤ (2 * M) * (Real.rpow s.1 (-(9 / 2 : ℝ)) *
-            (4 * (d : ℝ) ^ 3 * (H2 ^ 2 + 1)) * B) := by
-            calc
-              (2 * M) * (Real.rpow s.1 (-(9 / 2 : ℝ)) *
-                  (Real.sqrt (matNorm a0) * Real.sqrt ((lambdaSq R (s.1 / 2) (.finite 2) A)⁻¹) * H1) * B) =
-                  (2 * M) * (Real.rpow s.1 (-(9 / 2 : ℝ)) *
-                    ((Real.sqrt (matNorm a0) * Real.sqrt ((lambdaSq R (s.1 / 2) (.finite 2) A)⁻¹) * H1) * B)) := by ring
-              _ ≤ (2 * M) * (Real.rpow s.1 (-(9 / 2 : ℝ)) *
-                    ((4 * (d : ℝ) ^ 3 * (H2 ^ 2 + 1)) * B)) := by
-                  exact mul_le_mul_of_nonneg_left
-                    (mul_le_mul_of_nonneg_left
-                      (mul_le_mul_of_nonneg_right hresponseRaw hB_nonneg) hrpow9_nonneg)
-                    (mul_nonneg (by norm_num) hM_nonneg)
-              _ = (2 * M) * (Real.rpow s.1 (-(9 / 2 : ℝ)) *
-                    (4 * (d : ℝ) ^ 3 * (H2 ^ 2 + 1)) * B) := by ring
-      _ = (8 * M * (d : ℝ) ^ 3) * Y := by dsimp [Y]; ring
+      _ = (2 *
+          _root_.HCPolySupport.ZeroTraceDirichletCorrectorData.zeroTraceFluxApexConstant d s.1) *
+          (Real.rpow s.1 (-(5 / 2 : ℝ)) *
+            (Real.sqrt (matNorm a0) *
+              Real.sqrt ((lambdaSq R (s.1 / 2) (.finite 2) A)⁻¹) * H1) * B) := by ring
+      _ ≤ (8 * M * (d : ℝ) ^ 3) *
+          (Real.rpow s.1 (-(9 / 2 : ℝ)) * (H2 ^ 2 + 1) * B) :=
+        scaledCorrection_le_of_envelopeBounds hC hM_nonneg
+          hrpow52_nonneg hrpow9_nonneg hraw_nonneg hB_nonneg
+          hpow52 hresponseRaw
+      _ = (8 * M * (d : ℝ) ^ 3) * Y := by rfl
   have hweak :
-      (2 * _root_.HCPolySupport.ZeroTraceDirichletCorrectorData.zeroTraceDirichletCorrectedWeakFluxApexConstant d s.1) *
+      (2 *
+        _root_.HCPolySupport.ZeroTraceDirichletCorrectorData.zeroTraceFluxApexConstant d s.1) *
         coarseFluxResponseRHSWeakFluxCorrectionBound R A s.1 (fun x => -g x) ≤
       (8 * M * (d : ℝ) ^ 3) * Y := by
     unfold coarseFluxResponseRHSWeakFluxCorrectionBound
@@ -1226,47 +1461,19 @@ theorem ENNReal_ofReal_norm_cubeAverageVec_source_fluxDefect_le_localCoarseGrain
         Real.sqrt ((lambdaSq R (s.1 / 2) (.finite 2) A)⁻¹) :=
       mul_nonneg (Real.sqrt_nonneg _) (Real.sqrt_nonneg _)
     calc
-      (2 * _root_.HCPolySupport.ZeroTraceDirichletCorrectorData.zeroTraceDirichletCorrectedWeakFluxApexConstant d s.1) *
-          (Real.rpow s.1 (-(5 / 2 : ℝ)) *
-            Real.sqrt (LambdaSq R (s.1 / 2) (.finite 2) A) *
-            Real.sqrt ((lambdaSq R (s.1 / 2) (.finite 2) A)⁻¹) * B) =
-          (2 * _root_.HCPolySupport.ZeroTraceDirichletCorrectorData.zeroTraceDirichletCorrectedWeakFluxApexConstant d s.1) *
-            (Real.rpow s.1 (-(5 / 2 : ℝ)) *
-              (Real.sqrt (LambdaSq R (s.1 / 2) (.finite 2) A) *
-                Real.sqrt ((lambdaSq R (s.1 / 2) (.finite 2) A)⁻¹)) * B) := by ring
-      _ ≤
-          (2 * M) * (Real.rpow s.1 (-(5 / 2 : ℝ)) *
-            (Real.sqrt (LambdaSq R (s.1 / 2) (.finite 2) A) *
-              Real.sqrt ((lambdaSq R (s.1 / 2) (.finite 2) A)⁻¹)) * B) := by
-            apply mul_le_mul_of_nonneg_right hC
-            exact mul_nonneg (mul_nonneg hrpow52_nonneg hraw_nonneg) hB_nonneg
-      _ ≤ (2 * M) * (Real.rpow s.1 (-(9 / 2 : ℝ)) *
-            (Real.sqrt (LambdaSq R (s.1 / 2) (.finite 2) A) *
-              Real.sqrt ((lambdaSq R (s.1 / 2) (.finite 2) A)⁻¹)) * B) := by
-            exact mul_le_mul_of_nonneg_left
-              (mul_le_mul_of_nonneg_right
-                (mul_le_mul_of_nonneg_right hpow52 hraw_nonneg) hB_nonneg)
-              (mul_nonneg (by norm_num) hM_nonneg)
-      _ ≤ (2 * M) * (Real.rpow s.1 (-(9 / 2 : ℝ)) *
-            (4 * (d : ℝ) ^ 3 * (H2 ^ 2 + 1)) * B) := by
-            calc
-              (2 * M) * (Real.rpow s.1 (-(9 / 2 : ℝ)) *
-                  (Real.sqrt (LambdaSq R (s.1 / 2) (.finite 2) A) *
-                    Real.sqrt ((lambdaSq R (s.1 / 2) (.finite 2) A)⁻¹)) * B) =
-                  (2 * M) * (Real.rpow s.1 (-(9 / 2 : ℝ)) *
-                    ((Real.sqrt (LambdaSq R (s.1 / 2) (.finite 2) A) *
-                      Real.sqrt ((lambdaSq R (s.1 / 2) (.finite 2) A)⁻¹)) * B)) := by ring
-              _ ≤ (2 * M) * (Real.rpow s.1 (-(9 / 2 : ℝ)) *
-                    ((4 * (d : ℝ) ^ 3 * (H2 ^ 2 + 1)) * B)) := by
-                  exact mul_le_mul_of_nonneg_left
-                    (mul_le_mul_of_nonneg_left
-                      (mul_le_mul_of_nonneg_right hweakRaw hB_nonneg) hrpow9_nonneg)
-                    (mul_nonneg (by norm_num) hM_nonneg)
-              _ = (2 * M) * (Real.rpow s.1 (-(9 / 2 : ℝ)) *
-                    (4 * (d : ℝ) ^ 3 * (H2 ^ 2 + 1)) * B) := by ring
-      _ = (8 * M * (d : ℝ) ^ 3) * Y := by dsimp [Y]; ring
+      _ = (2 *
+          _root_.HCPolySupport.ZeroTraceDirichletCorrectorData.zeroTraceFluxApexConstant d s.1) *
+          (Real.rpow s.1 (-(5 / 2 : ℝ)) * (Real.sqrt (LambdaSq R (s.1 / 2) (.finite 2) A) *
+            Real.sqrt ((lambdaSq R (s.1 / 2) (.finite 2) A)⁻¹)) * B) := by ring
+      _ ≤ (8 * M * (d : ℝ) ^ 3) *
+          (Real.rpow s.1 (-(9 / 2 : ℝ)) * (H2 ^ 2 + 1) * B) :=
+        scaledCorrection_le_of_envelopeBounds hC hM_nonneg
+          hrpow52_nonneg hrpow9_nonneg hraw_nonneg hB_nonneg
+          hpow52 hweakRaw
+      _ = (8 * M * (d : ℝ) ^ 3) * Y := by rfl
   have hpoincare :
-      (2 * _root_.HCPolySupport.ZeroTraceDirichletCorrectorData.zeroTraceDirichletCorrectedWeakFluxApexConstant d s.1) *
+      (2 *
+        _root_.HCPolySupport.ZeroTraceDirichletCorrectorData.zeroTraceFluxApexConstant d s.1) *
         coarseFluxResponseRHSPoincareCorrectionBound R A a0 s.1 (fun x => -g x) ≤
       (8 * M * (d : ℝ) ^ 3) * Y := by
     unfold coarseFluxResponseRHSPoincareCorrectionBound
@@ -1276,66 +1483,25 @@ theorem ENNReal_ofReal_norm_cubeAverageVec_source_fluxDefect_le_localCoarseGrain
         (multiscale_ellipticity_lambdaSq_finite_nonneg R (s.1 / 2) 2 A
           (by norm_num) (by linarith [s.2.1])))
     calc
-      (2 * _root_.HCPolySupport.ZeroTraceDirichletCorrectorData.zeroTraceDirichletCorrectedWeakFluxApexConstant d s.1) *
-          (Real.rpow s.1 (-3 : ℝ) * matNorm a0 *
-            (lambdaSq R (s.1 / 2) (.finite 2) A)⁻¹ * B) =
-          (2 * _root_.HCPolySupport.ZeroTraceDirichletCorrectorData.zeroTraceDirichletCorrectedWeakFluxApexConstant d s.1) *
-            (Real.rpow s.1 (-3 : ℝ) *
-              (matNorm a0 * (lambdaSq R (s.1 / 2) (.finite 2) A)⁻¹) * B) := by ring
-      _ ≤
-          (2 * M) * (Real.rpow s.1 (-3 : ℝ) *
-            (matNorm a0 * (lambdaSq R (s.1 / 2) (.finite 2) A)⁻¹) * B) := by
-            apply mul_le_mul_of_nonneg_right hC
-            exact mul_nonneg (mul_nonneg hrpow3_nonneg hraw_nonneg) hB_nonneg
-      _ ≤ (2 * M) * (Real.rpow s.1 (-(9 / 2 : ℝ)) *
-            (matNorm a0 * (lambdaSq R (s.1 / 2) (.finite 2) A)⁻¹) * B) := by
-            exact mul_le_mul_of_nonneg_left
-              (mul_le_mul_of_nonneg_right
-                (mul_le_mul_of_nonneg_right hpow3 hraw_nonneg) hB_nonneg)
-              (mul_nonneg (by norm_num) hM_nonneg)
-      _ ≤ (2 * M) * (Real.rpow s.1 (-(9 / 2 : ℝ)) *
-            (4 * (d : ℝ) ^ 3 * (H2 ^ 2 + 1)) * B) := by
-            calc
-              (2 * M) * (Real.rpow s.1 (-(9 / 2 : ℝ)) *
-                  (matNorm a0 * (lambdaSq R (s.1 / 2) (.finite 2) A)⁻¹) * B) =
-                  (2 * M) * (Real.rpow s.1 (-(9 / 2 : ℝ)) *
-                    ((matNorm a0 * (lambdaSq R (s.1 / 2) (.finite 2) A)⁻¹) * B)) := by ring
-              _ ≤ (2 * M) * (Real.rpow s.1 (-(9 / 2 : ℝ)) *
-                    ((4 * (d : ℝ) ^ 3 * (H2 ^ 2 + 1)) * B)) := by
-                  exact mul_le_mul_of_nonneg_left
-                    (mul_le_mul_of_nonneg_left
-                      (mul_le_mul_of_nonneg_right hpoincareRaw hB_nonneg) hrpow9_nonneg)
-                    (mul_nonneg (by norm_num) hM_nonneg)
-              _ = (2 * M) * (Real.rpow s.1 (-(9 / 2 : ℝ)) *
-                    (4 * (d : ℝ) ^ 3 * (H2 ^ 2 + 1)) * B) := by ring
-      _ = (8 * M * (d : ℝ) ^ 3) * Y := by dsimp [Y]; ring
+      _ = (2 *
+          _root_.HCPolySupport.ZeroTraceDirichletCorrectorData.zeroTraceFluxApexConstant d s.1) *
+          (Real.rpow s.1 (-3 : ℝ) *
+            (matNorm a0 * (lambdaSq R (s.1 / 2) (.finite 2) A)⁻¹) * B) := by ring
+      _ ≤ (8 * M * (d : ℝ) ^ 3) *
+          (Real.rpow s.1 (-(9 / 2 : ℝ)) * (H2 ^ 2 + 1) * B) :=
+        scaledCorrection_le_of_envelopeBounds hC hM_nonneg
+          hrpow3_nonneg hrpow9_nonneg hraw_nonneg hB_nonneg
+          hpow3 hpoincareRaw
+      _ = (8 * M * (d : ℝ) ^ 3) * Y := by rfl
   have hreal :
-      (2 * _root_.HCPolySupport.ZeroTraceDirichletCorrectorData.zeroTraceDirichletCorrectedWeakFluxApexConstant d s.1) *
+      (2 *
+        _root_.HCPolySupport.ZeroTraceDirichletCorrectorData.zeroTraceFluxApexConstant d s.1) *
         coarseFluxResponseRHSBound R A a0 s.1 u.toCubeSet.grad (fun x => -g x) ≤
-      localCoarseGrainingOneCubeConstant d * (X + Y) := by
-    rw [coarseFluxResponseRHSBound_eq_component_sum]
-    calc
-      (2 * _root_.HCPolySupport.ZeroTraceDirichletCorrectorData.zeroTraceDirichletCorrectedWeakFluxApexConstant d s.1) *
-          (coarseFluxResponseRHSEnergyBound R A a0 s.1 u.toCubeSet.grad +
-            coarseFluxResponseRHSResponseCorrectionBound R A a0 s.1 (fun x => -g x) +
-            coarseFluxResponseRHSWeakFluxCorrectionBound R A s.1 (fun x => -g x) +
-            coarseFluxResponseRHSPoincareCorrectionBound R A a0 s.1 (fun x => -g x)) =
-          (2 * _root_.HCPolySupport.ZeroTraceDirichletCorrectorData.zeroTraceDirichletCorrectedWeakFluxApexConstant d s.1) *
-            coarseFluxResponseRHSEnergyBound R A a0 s.1 u.toCubeSet.grad +
-          (2 * _root_.HCPolySupport.ZeroTraceDirichletCorrectorData.zeroTraceDirichletCorrectedWeakFluxApexConstant d s.1) *
-            coarseFluxResponseRHSResponseCorrectionBound R A a0 s.1 (fun x => -g x) +
-          (2 * _root_.HCPolySupport.ZeroTraceDirichletCorrectorData.zeroTraceDirichletCorrectedWeakFluxApexConstant d s.1) *
-            coarseFluxResponseRHSWeakFluxCorrectionBound R A s.1 (fun x => -g x) +
-          (2 * _root_.HCPolySupport.ZeroTraceDirichletCorrectorData.zeroTraceDirichletCorrectedWeakFluxApexConstant d s.1) *
-            coarseFluxResponseRHSPoincareCorrectionBound R A a0 s.1 (fun x => -g x) := by ring
-      _ ≤ (2 * M * (d : ℝ)) * X + (8 * M * (d : ℝ) ^ 3) * Y +
-          (8 * M * (d : ℝ) ^ 3) * Y + (8 * M * (d : ℝ) ^ 3) * Y := by
-        gcongr
-      _ = (2 * M * (d : ℝ)) * X +
-          (24 * M * (d : ℝ) ^ 3) * Y := by ring
-      _ ≤ localCoarseGrainingOneCubeConstant d * (X + Y) :=
-        localCoarseGrainingOneCubeConstant_dominates_forcing X Y hX_nonneg hY_nonneg
-  have hapex := ENNReal_ofReal_norm_cubeAverageVec_source_fluxDefect_le_legacyApex_of_memCubeEuclideanFullWsp
+      localCoarseGrainingOneCubeConstant d * (X + Y) :=
+    localCoarseGrainingComponentSum_le_absorbedEnvelope R A a0 s
+      u.toCubeSet.grad g hX_nonneg hY_nonneg henergy hresponse hweak hpoincare
+  have hapex :=
+    ENNReal_ofReal_norm_cubeAverageVec_source_fluxDefect_le_legacyApex_of_memCubeEuclideanFullWsp
     sigma0 hsigma0 s s2 p hp hss2 hg h
   have hmain : ENNReal.ofReal ‖cubeAverageVec R
       (fluxDefect a.toCoeffField (scalarMatrix (d := d) sigma0) u.toCubeSet.grad)‖ ≤

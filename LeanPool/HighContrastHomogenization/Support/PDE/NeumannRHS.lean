@@ -44,7 +44,7 @@ def IsMeanZeroNeumannRhsWeakSolution {d : ℕ}
     ∫ x in U, vecDot (g x) (φ.toH1Function.grad x) ∂MeasureTheory.volume
 
 theorem integrableOn_vecNormSq_meanZeroGrad
-    {d : ℕ} {U : Set (Vec d)} [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
+    {d : ℕ} {U : Set (Vec d)}
     (u : H1MeanZeroFunction U) :
     MeasureTheory.IntegrableOn (fun x => vecNormSq (u.toH1Function.grad x)) U := by
   simpa [vecNormSq] using
@@ -52,7 +52,7 @@ theorem integrableOn_vecNormSq_meanZeroGrad
       u.toH1Function.grad_memVectorL2 u.toH1Function.grad_memVectorL2)
 
 theorem integrableOn_dirichletEnergyDensity_of_isEllipticFieldOn_meanZero
-    {d : ℕ} {U : Set (Vec d)} [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
+    {d : ℕ} {U : Set (Vec d)}
     {a : CoeffField d} {lam Lam : ℝ}
     (hEll : IsEllipticFieldOn lam Lam U a) (u : H1MeanZeroFunction U) :
     MeasureTheory.IntegrableOn
@@ -400,7 +400,7 @@ theorem coeffGradientProblemSolution_firstVariation_eq_integral {f : Vec d → V
             (H1MeanZeroFunction.toH1CoerciveHilbertSpace (U := U) u)
       _ = gradientPairing hf u := by
             simpa using
-              H1MeanZeroFunction.H1CoerciveHilbert_forcingFunctionalCLM_apply_toH1CoerciveHilbertSpace
+              H1MeanZeroFunction.forcingFunctional_apply_toCoerciveHilbert
                 (U := U) hf u
   calc
     ∫ x in U,

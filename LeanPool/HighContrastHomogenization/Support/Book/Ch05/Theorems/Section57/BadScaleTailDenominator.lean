@@ -37,6 +37,20 @@ the maximum of the two branch denominators at the correct powers.
 
 noncomputable section
 
+private theorem highTop_decay_ratio_greater_than_one
+    {a b t αbad : ℝ} (ha : 0 < a) (hb_pos : 0 < b)
+    (hαt : αbad < t) (hαb : αbad < b) (hαharm : αbad * (1 + b / a) < b) :
+    1 < (3 : ℝ) ^
+      (min (t - αbad) (min (b - αbad)
+        (min ((t - αbad) * (1 + b / a)) (b - αbad * (1 + b / a))))) := by
+  have hgap : 0 < t - αbad := sub_pos.mpr hαt
+  have hbα : 0 < b - αbad := sub_pos.mpr hαb
+  have hfactor : 0 < 1 + b / a := by positivity
+  have hthird : 0 < (t - αbad) * (1 + b / a) := mul_pos hgap hfactor
+  have hfourth : 0 < b - αbad * (1 + b / a) := sub_pos.mpr hαharm
+  exact Real.one_lt_rpow (by norm_num : (1 : ℝ) < 3)
+    (lt_min hgap (lt_min hbα (lt_min hthird hfourth)))
+
 /-- If the denominator for a normalized `eta`-tail dominates the branch
 denominator after raising to the relevant powers, and the exponent in the
 normalized tail is no larger than the branch exponent, then the normalized
@@ -158,7 +172,7 @@ theorem branch_denominator_le_mixedBottomTailDenominator_pow_eta
 /-- High-top component rewritten with the corrected finite bad-scale exponent.
 The proof uses the same raw high-range estimate as the original high-top
 component and only changes the deterministic tail parameter. -/
-theorem measureReal_shiftedHighTopBadScaleEvent_quenchedProbeEnvelope_le_interpolated_kernel_of_badPair_bound
+theorem measureReal_shiftedHighTopBadScaleProbability_le_interpolated_kernel
     {d : ℕ} [NeZero d] {σ Cfluct Centry a : ℝ}
     (hσ_pos : 0 < σ)
     (params : QuantitativeCoarseGrainedEllipticityParams d)
@@ -332,7 +346,7 @@ theorem measureReal_shiftedHighTopBadScaleEvent_quenchedProbeEnvelope_le_interpo
           (Real.exp (-(Aold ^ τ)) *
             weightedLinearExpKernelConst w (ρ ^ τ)) := by
     have htop :=
-      measureReal_shiftedHighTopBadScaleEvent_quenchedProbeEnvelope_le_weighted_kernel_of_badPair_bound
+      shiftedHighTopBadScaleMeasure_le_weightedKernel_of_pairBound
         (d := d) (σ := σ) (Cfluct := Cfluct) (Centry := Centry) (a := a)
         hσ_pos params hCfluct hCentry ha hpair
         (t := t) (αbad := αbad)
@@ -342,25 +356,7 @@ theorem measureReal_shiftedHighTopBadScaleEvent_quenchedProbeEnvelope_le_interpo
   have hw_pos : 0 < w := by
     dsimp [w]
     exact_mod_cast pow_pos (by norm_num : (0 : ℕ) < 3) d
-  have hc_pos : 0 < c := by
-    have hgap : 0 < t - αbad := sub_pos.mpr hαt
-    have hbα : 0 < b - αbad := sub_pos.mpr hαb
-    have hfactor : 0 < 1 + b / a := by
-      have hba : 0 < b / a := div_pos hb_pos ha
-      linarith
-    have hthird : 0 < (t - αbad) * (1 + b / a) :=
-      mul_pos hgap hfactor
-    have hfourth : 0 < b - αbad * (1 + b / a) :=
-      sub_pos.mpr hαharm
-    dsimp [c]
-    exact lt_min hgap (lt_min hbα (lt_min hthird hfourth))
-  have hρ_gt : 1 < ρ := by
-    dsimp [ρ]
-    calc
-      (1 : ℝ) = (3 : ℝ) ^ (0 : ℝ) := by simp
-      _ < (3 : ℝ) ^ c :=
-          Real.rpow_lt_rpow_of_exponent_lt
-            (by norm_num : (1 : ℝ) < 3) hc_pos
+  have hρ_gt : 1 < ρ := highTop_decay_ratio_greater_than_one ha hb_pos hαt hαb hαharm
   have hkernel_nonneg :
       0 ≤ weightedLinearExpKernelConst w (ρ ^ τ) :=
     (weightedLinearExpKernelConst_pos
@@ -379,7 +375,7 @@ theorem measureReal_shiftedHighTopBadScaleEvent_quenchedProbeEnvelope_le_interpo
 /-- Crude-bottom component rewritten with the corrected finite bad-scale
 exponent.  This is the deterministic conversion of the crude
 `sigma * t` endpoint into the common finite exponent. -/
-theorem measureReal_shiftedCrudeBottomBadScaleEvent_quenchedProbeEnvelope_le_interpolated_kernel_of_component_bound
+theorem measureReal_shiftedBottomBadScaleProbability_le_interpolated_kernel
     {d : ℕ} [NeZero d] {σ Ccrude : ℝ}
     (hσ_pos : 0 < σ) (hCcrude : 0 < Ccrude)
     {params : QuantitativeCoarseGrainedEllipticityParams d}
@@ -604,7 +600,7 @@ theorem measureReal_shiftedCrudeBottomBadScaleEvent_quenchedProbeEnvelope_le_int
   dsimp only
   intro ha ht hαt hDen hDen_crude hA_one
   exact
-    measureReal_shiftedCrudeBottomBadScaleEvent_quenchedProbeEnvelope_le_interpolated_kernel_of_component_bound
+    measureReal_shiftedBottomBadScaleProbability_le_interpolated_kernel
       (d := d) (σ := σ) (Ccrude := Ccrude) hσ_pos hCcrude
       (by
         intro Centry a t αbad P hP hStruct hΓ hσ_eq' hparams' q
@@ -615,7 +611,8 @@ theorem measureReal_shiftedCrudeBottomBadScaleEvent_quenchedProbeEnvelope_le_int
       ha ht hαt hDen hDen_crude hA_one
 
 /-- High-bottom component bound with the concrete mixed denominator selected. -/
-theorem measureReal_shiftedHighBottomBadScaleEvent_quenchedProbeEnvelope_le_interpolated_weighted_kernel
+theorem
+  measureReal_shiftedHighBottomBadScaleEvent_quenchedProbeEnvelope_le_interpolated_weighted_kernel
     {d : ℕ} [NeZero d] {σ : ℝ}
     (hσ_pos : 0 < σ)
     (params : QuantitativeCoarseGrainedEllipticityParams d) :
@@ -658,7 +655,7 @@ theorem measureReal_shiftedHighBottomBadScaleEvent_quenchedProbeEnvelope_le_inte
               weightedGeometricExpKernelConst w (ρ ^ η)) := by
   obtain ⟨Cfluct, Ccrude, Centry, a,
       hCfluct, hCcrude, hCentry, ha, hcomponent⟩ :=
-    measureReal_shiftedHighBottomBadScaleEvent_quenchedProbeEnvelope_le_interpolated_weighted_kernel_of_denominator
+    shiftedHighBottomBadScaleProbability_le_interpolated_weighted_kernel
       (d := d) (σ := σ) hσ_pos params
   refine ⟨Cfluct, Ccrude, Centry, a,
     hCfluct, hCcrude, hCentry, ha, ?_⟩

@@ -47,6 +47,224 @@ open scoped Matrix MatrixOrder
 variable {d : ℕ}
 /-! ## The source load bound -/
 
+private def responseSourceLoadCoefficient (γ κ Cc Csc A : ℝ) (N n : ℕ) : ℝ :=
+  if n ≤ N then 3 / 2 * ((3 : ℝ) ^ Quenched.contrastRho γ) ^ n * (Cc * Real.sqrt κ)
+  else Csc * A * ((3 : ℝ) ^ γ) ^ (n - N) * (Cc * Real.sqrt κ)
+
+/-- The two geometric regimes for the source load have a summable weighted majorant.
+The coefficient in the coarse regime is controlled by the source smallness at the crossover. -/
+private theorem responseSourceLoadGeometricSum (γ κ Cc Cs Cl Csc A : ℝ) (N : ℕ)
+    (hγ : γ ∈ Set.Ico (0 : ℝ) 1) (hκ : 0 ≤ κ) (hCc : 0 < Cc) (hCs : 0 < Cs)
+    (hCl : 0 ≤ Cl) (hCsc : 0 ≤ Csc) (hA : 0 ≤ A)
+    (hsmall : A * ((3 : ℝ) ^ (-((3 : ℝ) / 2))) ^ N ≤ Cs⁻¹) :
+    Summable (fun n : ℕ => (3 : ℝ) ^ (-((3 : ℝ) / 2) * (n : ℝ)) *
+      (4 * (responseSourceLoadCoefficient γ κ Cc Csc A N n * (Cl * κ)))) ∧
+      ∑' n : ℕ, (3 : ℝ) ^ (-((3 : ℝ) / 2) * (n : ℝ)) *
+        (4 * (responseSourceLoadCoefficient γ κ Cc Csc A N n * (Cl * κ))) ≤
+        Cc * Cl * (6 * (1 - (3 : ℝ) ^ (Quenched.contrastRho γ - 3 / 2))⁻¹ +
+          4 * Csc * Cs⁻¹ * (1 - (3 : ℝ) ^ (γ - 3 / 2))⁻¹) * Real.sqrt κ ^ 3 := by
+  have hrho0 : (0 : ℝ) ≤ Quenched.contrastRho γ := by
+    have : Quenched.contrastRho γ = (1 + γ) / 2 := rfl
+    rw [this]; linarith only [hγ.1]
+  have hr1lt : (3 : ℝ) ^ (Quenched.contrastRho γ - 3 / 2) < 1 := by
+    refine Real.rpow_lt_one_of_one_lt_of_neg (by norm_num) ?_
+    have : Quenched.contrastRho γ = (1 + γ) / 2 := rfl
+    rw [this]; linarith only [hγ.2]
+  have hr2lt : (3 : ℝ) ^ (γ - 3 / 2) < 1 := by
+    refine Real.rpow_lt_one_of_one_lt_of_neg (by norm_num) ?_
+    linarith only [hγ.2]
+  have hr1pos : (0 : ℝ) < (3 : ℝ) ^ (Quenched.contrastRho γ - 3 / 2) :=
+    Real.rpow_pos_of_pos (by norm_num) _
+  have hr2pos : (0 : ℝ) < (3 : ℝ) ^ (γ - 3 / 2) := Real.rpow_pos_of_pos (by norm_num) _
+  have hden1 : (0 : ℝ) < 1 - (3 : ℝ) ^ (Quenched.contrastRho γ - 3 / 2) := by
+    linarith only [hr1lt]
+  have hden2 : (0 : ℝ) < 1 - (3 : ℝ) ^ (γ - 3 / 2) := by linarith only [hr2lt]
+  have hi1 : (0 : ℝ) < (1 - (3 : ℝ) ^ (Quenched.contrastRho γ - 3 / 2))⁻¹ := inv_pos.mpr hden1
+  have hi2 : (0 : ℝ) < (1 - (3 : ℝ) ^ (γ - 3 / 2))⁻¹ := inv_pos.mpr hden2
+  have hCsinv : (0 : ℝ) < Cs⁻¹ := inv_pos.mpr hCs
+  set Msc : ℝ := Cl * κ
+  have hMsc0 : (0 : ℝ) ≤ Msc := mul_nonneg hCl hκ
+  set u : ℕ → ℝ := fun n => (3 : ℝ) ^ (-((3 : ℝ) / 2) * (n : ℝ)) *
+    (4 * (responseSourceLoadCoefficient γ κ Cc Csc A N n * Msc))
+  have hu0 : ∀ n, 0 ≤ u n := fun n =>
+    mul_nonneg (Real.rpow_nonneg (by norm_num) _)
+      (mul_nonneg (by norm_num) (mul_nonneg (by
+        unfold responseSourceLoadCoefficient
+        split_ifs <;> positivity) hMsc0))
+  have hmulpow : ∀ n : ℕ, (3 : ℝ) ^ (-((3 : ℝ) / 2) * (n : ℝ)) =
+      ((3 : ℝ) ^ (-((3 : ℝ) / 2))) ^ n := weight_eq
+  have hr1eq : ((3 : ℝ) ^ (-((3 : ℝ) / 2))) * ((3 : ℝ) ^ Quenched.contrastRho γ) =
+      (3 : ℝ) ^ (Quenched.contrastRho γ - 3 / 2) := by
+    rw [← Real.rpow_add (by norm_num)]
+    ring_nf
+  have hr2eq : ((3 : ℝ) ^ (-((3 : ℝ) / 2))) * ((3 : ℝ) ^ γ) =
+      (3 : ℝ) ^ (γ - 3 / 2) := by
+    rw [← Real.rpow_add (by norm_num)]
+    ring_nf
+  have hreg1 : ∀ n : ℕ, n ≤ N →
+      u n ≤ (6 * (Cc * Real.sqrt κ) * Msc) *
+        ((3 : ℝ) ^ (Quenched.contrastRho γ - 3 / 2)) ^ n := by
+    intro n hn
+    have : u n = (6 * (Cc * Real.sqrt κ) * Msc) *
+        (((3 : ℝ) ^ (-((3 : ℝ) / 2))) * ((3 : ℝ) ^ Quenched.contrastRho γ)) ^ n := by
+      simp [u, responseSourceLoadCoefficient, hn, hmulpow n]
+      ring
+    rw [this, hr1eq]
+  have hreg2 : ∀ n : ℕ, N < n →
+      u n ≤ (4 * Csc * Cs⁻¹ * (Cc * Real.sqrt κ) * Msc) *
+        ((3 : ℝ) ^ (γ - 3 / 2)) ^ (n - N) := by
+    intro n hn
+    have hpowsplit : ((3 : ℝ) ^ (-((3 : ℝ) / 2))) ^ n =
+        ((3 : ℝ) ^ (-((3 : ℝ) / 2))) ^ N *
+          ((3 : ℝ) ^ (-((3 : ℝ) / 2))) ^ (n - N) := by
+      rw [← pow_add]
+      congr 1
+      omega
+    have hue : u n = (4 * Csc * (Cc * Real.sqrt κ) * Msc) *
+        (A * ((3 : ℝ) ^ (-((3 : ℝ) / 2))) ^ N) *
+          (((3 : ℝ) ^ (-((3 : ℝ) / 2))) * ((3 : ℝ) ^ γ)) ^ (n - N) := by
+      simp [u, responseSourceLoadCoefficient, hn, mul_pow, hmulpow n, hpowsplit]
+      ring
+    rw [hue, hr2eq]
+    refine mul_le_mul_of_nonneg_right ?_ (le_of_lt (pow_pos hr2pos _))
+    have hrhs : 4 * Csc * Cs⁻¹ * (Cc * Real.sqrt κ) * Msc =
+        (4 * Csc * (Cc * Real.sqrt κ) * Msc) * Cs⁻¹ := by ring
+    rw [hrhs]
+    refine mul_le_mul_of_nonneg_left hsmall ?_
+    exact mul_nonneg (mul_nonneg (mul_nonneg (by norm_num) hCsc)
+      (mul_nonneg hCc.le (Real.sqrt_nonneg _))) hMsc0
+  have ha0 : (0 : ℝ) ≤ 6 * (Cc * Real.sqrt κ) * Msc :=
+    mul_nonneg (mul_nonneg (by norm_num) (mul_nonneg hCc.le (Real.sqrt_nonneg _))) hMsc0
+  have hb0 : (0 : ℝ) ≤ 4 * Csc * Cs⁻¹ * (Cc * Real.sqrt κ) * Msc :=
+    mul_nonneg (mul_nonneg (mul_nonneg (mul_nonneg (by norm_num) hCsc) hCsinv.le)
+      (mul_nonneg hCc.le (Real.sqrt_nonneg _))) hMsc0
+  obtain ⟨husum, hubound⟩ := tsum_two_regime (u := u) (N := N)
+    (a := 6 * (Cc * Real.sqrt κ) * Msc)
+    (b := 4 * Csc * Cs⁻¹ * (Cc * Real.sqrt κ) * Msc)
+    (r₁ := (3 : ℝ) ^ (Quenched.contrastRho γ - 3 / 2)) (r₂ := (3 : ℝ) ^ (γ - 3 / 2))
+    hu0 ha0 hb0 hr1pos.le hr1lt hr2pos hr2lt hreg1 hreg2
+  refine ⟨husum, le_trans hubound (le_of_eq ?_)⟩
+  have hcube : Real.sqrt κ ^ 3 = κ * Real.sqrt κ := by
+    rw [pow_succ, Real.sq_sqrt hκ]
+  rw [Msc, hcube]
+  ring
+
+private theorem responseSourceBoundConstantPos (γ Cc Cs Cl Csc : ℝ)
+    (hγ : γ ∈ Set.Ico (0 : ℝ) 1) (hCc : 0 < Cc) (hCs : 0 < Cs)
+    (hCl : 0 < Cl) (hCsc : 0 < Csc) :
+    0 < Cc * Cl * (6 * (1 - (3 : ℝ) ^ (Quenched.contrastRho γ - 3 / 2))⁻¹ +
+      4 * Csc * Cs⁻¹ * (1 - (3 : ℝ) ^ (γ - 3 / 2))⁻¹) := by
+  have hr1lt : (3 : ℝ) ^ (Quenched.contrastRho γ - 3 / 2) < 1 := by
+    refine Real.rpow_lt_one_of_one_lt_of_neg (by norm_num) ?_
+    have : Quenched.contrastRho γ = (1 + γ) / 2 := rfl
+    rw [this]; linarith only [hγ.2]
+  have hr2lt : (3 : ℝ) ^ (γ - 3 / 2) < 1 := by
+    refine Real.rpow_lt_one_of_one_lt_of_neg (by norm_num) ?_
+    linarith only [hγ.2]
+  have hi1 : (0 : ℝ) < (1 - (3 : ℝ) ^ (Quenched.contrastRho γ - 3 / 2))⁻¹ :=
+    inv_pos.mpr (by linarith only [hr1lt])
+  have hi2 : (0 : ℝ) < (1 - (3 : ℝ) ^ (γ - 3 / 2))⁻¹ :=
+    inv_pos.mpr (by linarith only [hr2lt])
+  have hCsinv : (0 : ℝ) < Cs⁻¹ := inv_pos.mpr hCs
+  have hp1 : (0 : ℝ) < 6 * (1 - (3 : ℝ) ^ (Quenched.contrastRho γ - 3 / 2))⁻¹ := by
+    linarith only [hi1]
+  have hp2 : (0 : ℝ) < 4 * Csc * Cs⁻¹ * (1 - (3 : ℝ) ^ (γ - 3 / 2))⁻¹ :=
+    mul_pos (mul_pos (by linarith only [hCsc] : (0 : ℝ) < 4 * Csc) hCsinv) hi2
+  exact mul_pos (mul_pos hCc hCl) (add_pos hp1 hp2)
+
+private theorem responseSourceThreshold
+    {d : ℕ} {γ : ℝ} {S : SelectionData} {ε σ Cglob Cprof Csrc0 : ℝ} {H : ℕ}
+    {Bresp : ℝ} {P : Measure (CoeffSpace d)} {E : BlockMat d} {Ψ : ℝ → ℝ}
+    {Kg : ℝ} {Src : CoeffSpace d → ℝ} {B : ℝ} {jStar : ℕ} {F : BlockMat d} {s t : ℤ}
+    (raw : RawOutput d γ S ε σ Cglob Cprof Csrc0 H Bresp P E Ψ Kg Src B jStar F s t)
+    (hCglob : 0 ≤ Cglob) (hε : ε ∈ Set.Ioc (0 : ℝ) S.eps0)
+    (hσ : σ ∈ Set.Ioc (0 : ℝ) ε) :
+    ⌈Csrc0 * Real.logb 3 (2 * Kg)⌉ ≤ (jStar : ℤ) := by
+  have hB1 : (1 : ℝ) ≤ B :=
+    le_trans (S.one_le_B0 ε σ hε hσ) (le_trans (le_max_left _ _) raw.hB)
+  have hPi := Annealed.aspectRatio_pos_and_three_le raw.ell
+  have hlogPi : (1 : ℝ) ≤ Real.logb 3 (2 + aspectRatio E) := by
+    refine (Real.le_logb_iff_rpow_le (by norm_num) (by linarith only [hPi.2])).mpr ?_
+    rw [Real.rpow_one]; linarith only [hPi.2]
+  have h0 : (0 : ℝ) ≤ Cglob * (B + 1) * Real.logb 3 (2 + aspectRatio E) :=
+    mul_nonneg (mul_nonneg hCglob (by linarith only [hB1])) (by linarith only [hlogPi])
+  refine le_trans (Int.ceil_le_ceil ?_) raw.hsrc
+  linarith only [h0]
+
+private theorem responseSourceDistance (jStar : ℕ) (s : ℤ) (hjs : (jStar : ℤ) ≤ s) :
+    ∃ N : ℕ, (N : ℤ) = s - (jStar : ℤ) ∧
+      (N : ℝ) = (s : ℝ) - (jStar : ℝ) := by
+  let N := (s - (jStar : ℤ)).toNat
+  have hNZ : (N : ℤ) = s - (jStar : ℤ) := Int.toNat_of_nonneg (by omega)
+  refine ⟨N, hNZ, ?_⟩
+  exact_mod_cast congrArg (fun z : ℤ => (z : ℝ)) hNZ
+
+private theorem responseProfileControlsSourceDrift
+    {d : ℕ} {γ : ℝ} {S : SelectionData} {ε σ Cglob Cprof Csrc : ℝ} {H : ℕ}
+    {Bresp : ℝ} {P : Measure (CoeffSpace d)} {E : BlockMat d} {Ψ : ℝ → ℝ}
+    {Kg : ℝ} {Src : CoeffSpace d → ℝ} {B : ℝ} {jStar : ℕ} {F : BlockMat d} {s t : ℤ}
+    (raw : RawOutput d γ S ε σ Cglob Cprof Csrc H Bresp P E Ψ Kg Src B jStar F s t)
+    (hd : 2 ≤ d) (hγ : γ ∈ Set.Ico (0 : ℝ) 1) (hjs : (jStar : ℤ) ≤ s)
+    (η Cprof σ : ℝ) (hprof : Cprof * σ ^ ((1 - γ) / 8) ≤ η) :
+    determinantDrift P γ (respGrid jStar F) jStar s ≤ η := by
+  have hDt0 : 0 ≤ determinantDrift P γ (respGrid jStar F) jStar t :=
+    determinantDrift_nonneg d hd γ E Ψ Kg Src raw.prob raw.stat raw.unit raw.ell
+      jStar raw.hj (explicitCanonicalMetric F)
+      (Geometry.explicitCanonicalMetric_posDef raw.symm raw.pos) t
+  have hpr0 : 0 ≤ profile P γ (respGrid jStar F) jStar s s :=
+    profile_nonneg d hd γ hγ P E Ψ Kg Src raw.prob raw.stat raw.unit raw.ell
+      jStar raw.hj (explicitCanonicalMetric F)
+      (Geometry.explicitCanonicalMetric_posDef raw.symm raw.pos) s s hjs le_rfl
+  have hmax : profile P γ (respGrid jStar F) jStar s s ≤
+      max (max (profile P γ (respGrid jStar F) jStar s s)
+        (profile P γ (respGrid jStar F) jStar s t))
+        (profile P γ (respGrid jStar F) jStar t t) :=
+    le_max_of_le_left (le_max_left _ _)
+  have hraw : max
+      (max (profile P γ (respGrid jStar F) jStar s s)
+        (profile P γ (respGrid jStar F) jStar s t))
+      (profile P γ (respGrid jStar F) jStar t t) +
+      determinantDrift P γ (respGrid jStar F) jStar s +
+      determinantDrift P γ (respGrid jStar F) jStar t ≤
+      Cprof * σ ^ ((1 - γ) / 8) := raw.prof
+  linarith only [hmax, hpr0, hDt0, hraw, hprof]
+
+private theorem responseSourceCoefficientIdentities (d : ℕ) (γ : ℝ) (S : SelectionData)
+    (ε σ Cglob Cprof Csrc Bresp : ℝ) (H : ℕ) (P : Measure (CoeffSpace d))
+    (E : BlockMat d) (Ψ : ℝ → ℝ) (Kg : ℝ) (Src : CoeffSpace d → ℝ) (B : ℝ)
+    (jStar : ℕ) (F : BlockMat d) (s t : ℤ)
+    (raw : RawOutput d γ S ε σ Cglob Cprof Csrc H Bresp P E Ψ Kg Src B jStar F s t)
+    (hqU : IsUnit (respGrid jStar F)) (hFfull : (toFullBlockMat F).PosDef)
+    (hmF : (explicitCanonicalMetric F).PosDef)
+    (hint : ∀ (k : ℤ) (y : Vec d),
+      HasIntegrableCoarseBlock P (HighContrast.adaptedCellTranslate (respGrid jStar F) k y)) :
+    ∃ Gplus : BlockMat d,
+      (∀ (k : ℤ) (z : Fin d → ℤ),
+        annealedBlockOf P (adaptedCellAtCenter (respGrid jStar F) k z) (respCoeffMinus F) =
+          blockCongr (respG F) (annealedBlock P (adaptedCellAtCenter (respGrid jStar F) k z))) ∧
+      (∀ (k : ℤ) (z : Fin d → ℤ),
+        annealedBlockOf P (adaptedCellAtCenter (respGrid jStar F) k z) (respCoeffPlus F) =
+          blockCongr Gplus (annealedBlock P (adaptedCellAtCenter (respGrid jStar F) k z))) := by
+  have hbMinus : ∀ (k : ℤ) (z : Fin d → ℤ),
+      annealedBlockOf P (adaptedCellAtCenter (respGrid jStar F) k z) (respCoeffMinus F) =
+        blockCongr (respG F) (annealedBlock P (adaptedCellAtCenter (respGrid jStar F) k z)) :=
+    fun k z => annealedBlockOf_respCoeffMinus_adapted (respGrid jStar F) hqU k
+      (adaptedCellCenter (respGrid jStar F) k z) F hFfull (hint k _)
+  let Gplus : BlockMat d :=
+    ofFullBlockMat (toFullBlockMat (respG F) * toFullBlockMat (blockD d))
+  have hbPlus : ∀ (k : ℤ) (z : Fin d → ℤ),
+      annealedBlockOf P (adaptedCellAtCenter (respGrid jStar F) k z) (respCoeffPlus F) =
+        blockCongr Gplus (annealedBlock P (adaptedCellAtCenter (respGrid jStar F) k z)) := by
+    intro k z
+    have h : annealedBlockOf P (adaptedCellAtCenter (respGrid jStar F) k z) (respCoeffPlus F) =
+        blockAdjoint (blockCongr (respG F)
+          (annealedBlock P (adaptedCellAtCenter (respGrid jStar F) k z))) :=
+      annealedBlockOf_respCoeffPlus_adapted (respGrid jStar F) hqU k
+        (adaptedCellCenter (respGrid jStar F) k z) F hFfull (hint k _)
+    rw [h, blockAdjoint, blockCongr_blockCongr]
+    rfl
+  exact ⟨Gplus, hbMinus, hbPlus⟩
+
 /-- **The source load bound** `response_source_load_bound` (`p.response.transfer`):
 `L_s^± <= C kappa_s^{3/2}`.
 
@@ -81,32 +299,16 @@ theorem response_source_load_bound (d : ℕ) (_hd : 2 ≤ d) (γ : ℝ)
   have hrho0 : (0 : ℝ) ≤ Quenched.contrastRho γ := by
     have : Quenched.contrastRho γ = (1 + γ) / 2 := rfl
     rw [this]; linarith only [_hγ.1]
-  have hr1lt : (3 : ℝ) ^ (Quenched.contrastRho γ - 3 / 2) < 1 := by
-    refine Real.rpow_lt_one_of_one_lt_of_neg (by norm_num) ?_
-    have : Quenched.contrastRho γ = (1 + γ) / 2 := rfl
-    rw [this]; linarith only [_hγ.2]
-  have hr2lt : (3 : ℝ) ^ (γ - 3 / 2) < 1 := by
-    refine Real.rpow_lt_one_of_one_lt_of_neg (by norm_num) ?_
-    linarith only [_hγ.2]
-  have hr1pos : (0 : ℝ) < (3 : ℝ) ^ (Quenched.contrastRho γ - 3 / 2) := Real.rpow_pos_of_pos (by norm_num) _
-  have hr2pos : (0 : ℝ) < (3 : ℝ) ^ (γ - 3 / 2) := Real.rpow_pos_of_pos (by norm_num) _
-  have hden1 : (0 : ℝ) < 1 - (3 : ℝ) ^ (Quenched.contrastRho γ - 3 / 2) := by linarith only [hr1lt]
-  have hden2 : (0 : ℝ) < 1 - (3 : ℝ) ^ (γ - 3 / 2) := by linarith only [hr2lt]
-  have hi1 : (0 : ℝ) < (1 - (3 : ℝ) ^ (Quenched.contrastRho γ - 3 / 2))⁻¹ := inv_pos.mpr hden1
-  have hi2 : (0 : ℝ) < (1 - (3 : ℝ) ^ (γ - 3 / 2))⁻¹ := inv_pos.mpr hden2
-  have hCsinv : (0 : ℝ) < Cs⁻¹ := inv_pos.mpr _hCs
+  have hboundPos := responseSourceBoundConstantPos γ Cc Cs Cl Csc _hγ _hCc _hCs _hCl hCsc
   refine ⟨Csrc0, hCsrc0,
     Cc * Cl * (6 * (1 - (3 : ℝ) ^ (Quenched.contrastRho γ - 3 / 2))⁻¹ +
-      4 * Csc * Cs⁻¹ * (1 - (3 : ℝ) ^ (γ - 3 / 2))⁻¹), ?_, ?_⟩
-  · have hp1 : (0 : ℝ) < 6 * (1 - (3 : ℝ) ^ (Quenched.contrastRho γ - 3 / 2))⁻¹ := by linarith only [hi1]
-    have hp2 : (0 : ℝ) < 4 * Csc * Cs⁻¹ * (1 - (3 : ℝ) ^ (γ - 3 / 2))⁻¹ :=
-      mul_pos (mul_pos (by linarith only [hCsc] : (0 : ℝ) < 4 * Csc) hCsinv) hi2
-    exact mul_pos (mul_pos _hCc _hCl) (add_pos hp1 hp2)
+      4 * Csc * Cs⁻¹ * (1 - (3 : ℝ) ^ (γ - 3 / 2))⁻¹), hboundPos, ?_⟩
   intro ε σ hε hσ Cglob Cprof Bresp hCglob H P E Ψ Kg Src B jStar F s t raw hcal η hη hprof
     hsmall e he hload
   have := raw.prob
   let : NeZero d := ⟨by omega⟩
-  have hmF : (explicitCanonicalMetric F).PosDef := Geometry.explicitCanonicalMetric_posDef raw.symm raw.pos
+  have hmF : (explicitCanonicalMetric F).PosDef := Geometry.explicitCanonicalMetric_posDef
+    raw.symm raw.pos
   have hFfull : (toFullBlockMat F).PosDef :=
     posDef_toFullBlockMat raw.symm raw.pos
   have hM0pd : Book.Ch02.BlockPosDef (respM0 F) := respM0_blockPosDef_of_canonicalMetric_posDef hmF
@@ -119,52 +321,21 @@ theorem response_source_load_bound (d : ℕ) (_hd : 2 ≤ d) (γ : ℝ)
   have hwin : HighContrast.adaptedCell (respGrid jStar F) s ⊆
       HighContrast.centeredCube d (2 * (jStar : ℤ)) :=
     subset_trans (adaptedCell_subset (respGrid jStar F) (le_of_lt raw.hst)) raw.cube
-  have hB1 : (1 : ℝ) ≤ B :=
-    le_trans (S.one_le_B0 ε σ hε hσ) (le_trans (le_max_left _ _) raw.hB)
   have hPi := Annealed.aspectRatio_pos_and_three_le raw.ell
-  have hlogPi : (1 : ℝ) ≤ Real.logb 3 (2 + aspectRatio E) := by
-    refine (Real.le_logb_iff_rpow_le (by norm_num) (by linarith only [hPi.2])).mpr ?_
-    rw [Real.rpow_one]; linarith only [hPi.2]
   have hKg : (1 : ℝ) < Kg := raw.ell.one_lt_growthWitness
   have hlogK : (0 : ℝ) ≤ Real.logb 3 (2 * Kg) :=
     Real.logb_nonneg (by norm_num) (by linarith only [hKg])
-  have hthr : ⌈Csrc0 * Real.logb 3 (2 * Kg)⌉ ≤ (jStar : ℤ) := by
-    refine le_trans (Int.ceil_le_ceil ?_) raw.hsrc
-    have h0 : (0 : ℝ) ≤ Cglob * (B + 1) * Real.logb 3 (2 + aspectRatio E) :=
-      mul_nonneg (mul_nonneg hCglob (by linarith only [hB1])) (by linarith only [hlogPi])
-    linarith only [h0]
-  have hDt0 : 0 ≤ determinantDrift P γ (respGrid jStar F) jStar t :=
-    determinantDrift_nonneg d _hd γ P E Ψ Kg Src raw.prob raw.stat raw.unit raw.ell
-      jStar raw.hj (explicitCanonicalMetric F) hmF t
-  have hpr0 : 0 ≤ profile P γ (respGrid jStar F) jStar s s :=
-    profile_nonneg d _hd γ _hγ P E Ψ Kg Src raw.prob raw.stat raw.unit raw.ell
-      jStar raw.hj (explicitCanonicalMetric F) hmF s s hjs le_rfl
-  have hD : determinantDrift P γ (respGrid jStar F) jStar s ≤ η := by
-    have hmax : profile P γ (respGrid jStar F) jStar s s ≤
-        max (max (profile P γ (respGrid jStar F) jStar s s)
-          (profile P γ (respGrid jStar F) jStar s t))
-          (profile P γ (respGrid jStar F) jStar t t) :=
-      le_max_of_le_left (le_max_left _ _)
-    have hraw : max
-        (max (profile P γ (respGrid jStar F) jStar s s)
-          (profile P γ (respGrid jStar F) jStar s t))
-        (profile P γ (respGrid jStar F) jStar t t) +
-        determinantDrift P γ (respGrid jStar F) jStar s +
-        determinantDrift P γ (respGrid jStar F) jStar t ≤
-        Cprof * σ ^ ((1 - γ) / 8) := raw.prof
-    linarith only [hmax, hpr0, hDt0, hraw, hprof]
+  have hthr := responseSourceThreshold raw hCglob hε hσ
+  have hD := responseProfileControlsSourceDrift raw _hd _hγ hjs η Cprof σ hprof
   set κ : ℝ := respKappa P jStar F s with hκdef
   have hκ0 : 0 ≤ κ := by
     rw [hκdef]
     unfold respKappa canonicalImbalance blockOpNorm
     exact norm_nonneg _
   have hsqκ : (0 : ℝ) ≤ Real.sqrt κ := Real.sqrt_nonneg _
-  set N : ℕ := (s - (jStar : ℤ)).toNat with hNdef
-  have hNZ : ((N : ℕ) : ℤ) = s - (jStar : ℤ) := Int.toNat_of_nonneg (by omega)
-  have hNR : ((N : ℕ) : ℝ) = (s : ℝ) - (jStar : ℝ) := by
-    exact_mod_cast congrArg (fun z : ℤ => (z : ℝ)) hNZ
-  have hasp0 : (0 : ℝ) ≤ aspectRatio E := le_of_lt hPi.1
-  have hecc0 : (0 : ℝ) ≤ ‖explicitCanonicalMetric F‖ * ‖(explicitCanonicalMetric F)⁻¹‖ := by positivity
+  obtain ⟨N, hNZ, hNR⟩ := responseSourceDistance jStar s hjs
+  set A : ℝ := aspectRatio E * (‖explicitCanonicalMetric F‖ * ‖(explicitCanonicalMetric F)⁻¹‖)
+  have hA0 : 0 ≤ A := mul_nonneg (le_of_lt hPi.1) (by positivity)
   have h3rho : (1 : ℝ) ≤ (3 : ℝ) ^ Quenched.contrastRho γ := by
     simpa using Real.rpow_le_rpow_of_exponent_le (by norm_num : (1 : ℝ) ≤ 3) hrho0
   have hkey : ∀ (G' : BlockMat d) (b : CoeffSpace d → CoeffField d) (Y : BlockVec d),
@@ -179,10 +350,7 @@ theorem response_source_load_bound (d : ℕ) (_hd : 2 ≤ d) (γ : ℝ)
           Cc * Cl * (6 * (1 - (3 : ℝ) ^ (Quenched.contrastRho γ - 3 / 2))⁻¹ +
             4 * Csc * Cs⁻¹ * (1 - (3 : ℝ) ^ (γ - 3 / 2))⁻¹) * Real.sqrt κ ^ 3 := by
     intro G' b Y hb hEs hY
-    set cfun : ℕ → ℝ := fun n =>
-      if n ≤ N then 3 / 2 * ((3 : ℝ) ^ Quenched.contrastRho γ) ^ n * (Cc * Real.sqrt κ)
-      else Csc * aspectRatio E * (‖explicitCanonicalMetric F‖ * ‖(explicitCanonicalMetric F)⁻¹‖) *
-        ((3 : ℝ) ^ γ) ^ (n - N) * (Cc * Real.sqrt κ) with hcfun
+    set cfun : ℕ → ℝ := fun n => responseSourceLoadCoefficient γ κ Cc Csc A N n with hcfun
     have hpow1 : ∀ n : ℕ, (0 : ℝ) ≤ ((3 : ℝ) ^ Quenched.contrastRho γ) ^ n := fun n =>
       le_of_lt (pow_pos (Real.rpow_pos_of_pos (by norm_num) _) n)
     have hpow2 : ∀ k : ℕ, (0 : ℝ) ≤ ((3 : ℝ) ^ γ) ^ k := fun k =>
@@ -190,11 +358,11 @@ theorem response_source_load_bound (d : ℕ) (_hd : 2 ≤ d) (γ : ℝ)
     have hcfun0 : ∀ n, 0 ≤ cfun n := by
       intro n
       by_cases h : n ≤ N
-      · simp only [hcfun, h, ite_true]
+      · simp only [hcfun, responseSourceLoadCoefficient, h, ite_true]
         exact mul_nonneg (mul_nonneg (by norm_num) (hpow1 n)) (mul_nonneg _hCc.le hsqκ)
-      · simp only [hcfun, h, ite_false]
-        exact mul_nonneg (mul_nonneg (mul_nonneg (mul_nonneg hCsc.le hasp0) hecc0)
-          (hpow2 (n - N))) (mul_nonneg _hCc.le hsqκ)
+      · simp only [hcfun, responseSourceLoadCoefficient, h, ite_false]
+        exact mul_nonneg (mul_nonneg (mul_nonneg hCsc.le hA0) (hpow2 (n - N)))
+          (mul_nonneg _hCc.le hsqκ)
     -- the per-cell Loewner bound, in both regimes
     have hcellb : ∀ n : ℕ, ∀ z ∈ triadicIndexBox d n,
         BlockMatLoewnerLE
@@ -207,7 +375,8 @@ theorem response_source_load_bound (d : ℕ) (_hd : 2 ≤ d) (γ : ℝ)
         have hk : (jStar : ℤ) ≤ s - (n : ℤ) := by omega
         have h1 : annealedBlock P (adaptedCellAtCenter (respGrid jStar F) (s - (n : ℤ)) z)
             = adaptedMean P (respGrid jStar F) (s - (n : ℤ)) :=
-          Annealed.annealedBlock_adaptedCellAtCenter P raw.stat jStar raw.hj (explicitCanonicalMetric F)
+          Annealed.annealedBlock_adaptedCellAtCenter P raw.stat jStar raw.hj
+            (explicitCanonicalMetric F)
             hmF (s - (n : ℤ)) hk z
         rw [h1]
         have h2 := adaptedMean_le_of_drift d _hd γ _hγ P E Ψ Kg Src raw.stat raw.ell
@@ -221,19 +390,21 @@ theorem response_source_load_bound (d : ℕ) (_hd : 2 ≤ d) (γ : ℝ)
           determinantDrift_nonneg d _hd γ P E Ψ Kg Src raw.prob raw.stat raw.unit raw.ell
             jStar raw.hj (explicitCanonicalMetric F) hmF s
         have hX0 : (0 : ℝ) ≤ ((3 : ℝ) ^ Quenched.contrastRho γ) ^ n := le_trans zero_le_one hXge
-        have hXD : ((3 : ℝ) ^ Quenched.contrastRho γ) ^ n * D ≤ ((3 : ℝ) ^ Quenched.contrastRho γ) ^ n * (1 / 2) :=
+        have hXD : ((3 : ℝ) ^ Quenched.contrastRho γ) ^ n * D ≤ ((3 : ℝ) ^ Quenched.contrastRho
+          γ) ^ n * (1 / 2) :=
           mul_le_mul_of_nonneg_left hDle hX0
         have hXD0 : (0 : ℝ) ≤ ((3 : ℝ) ^ Quenched.contrastRho γ) ^ n * D := mul_nonneg hX0 hD0'
         have hscal : 1 + ((3 : ℝ) ^ Quenched.contrastRho γ) ^ n * D ≤
             3 / 2 * ((3 : ℝ) ^ Quenched.contrastRho γ) ^ n := by linarith only [hXD, hXge]
-        have hfac0 : (0 : ℝ) ≤ 1 + ((3 : ℝ) ^ Quenched.contrastRho γ) ^ n * D := by linarith only [hXD0]
+        have hfac0 : (0 : ℝ) ≤ 1 + ((3 : ℝ) ^ Quenched.contrastRho γ) ^ n * D := by linarith
+          only [hXD0]
         have step1 := blockCongr_mono G' h2
         rw [blockCongr_blockScale] at step1
         have step2 := blockScale_mono_of_loewnerLE hEs hfac0
         refine fun V => le_trans (le_trans (step1 V) (step2 V)) ?_
         rw [blockScale_blockScale]
         refine Source.blockScale_le_blockScale_of_pos hM0pd ?_ V
-        simp only [hcfun, hn, ite_true]
+        simp only [hcfun, responseSourceLoadCoefficient, hn, ite_true]
         exact mul_le_mul_of_nonneg_right hscal (mul_nonneg _hCc.le hsqκ)
       · have h1 := hcell P E Ψ Kg Src raw.stat raw.ell jStar raw.hj hthr (explicitCanonicalMetric F)
           hmF s hjs hwin (s - (n : ℤ)) z
@@ -249,121 +420,49 @@ theorem response_source_load_bound (d : ℕ) (_hd : 2 ≤ d) (γ : ℝ)
         rw [hmaxe, ← hsubcast, pow_eq γ (n - N)] at h1
         have step1 := blockCongr_mono G' h1
         rw [blockCongr_blockScale] at step1
-        have hfac0 : (0 : ℝ) ≤ Csc * aspectRatio E *
-            (‖explicitCanonicalMetric F‖ * ‖(explicitCanonicalMetric F)⁻¹‖) * ((3 : ℝ) ^ γ) ^ (n - N) :=
-          mul_nonneg (mul_nonneg (mul_nonneg hCsc.le hasp0) hecc0) (hpow2 (n - N))
+        have hfac0 : (0 : ℝ) ≤ Csc * A * ((3 : ℝ) ^ γ) ^ (n - N) :=
+          mul_nonneg (mul_nonneg hCsc.le hA0) (hpow2 (n - N))
         have step2 := blockScale_mono_of_loewnerLE hEs hfac0
         refine fun V => le_trans (le_trans (step1 V) (step2 V)) ?_
         rw [blockScale_blockScale]
         refine Source.blockScale_le_blockScale_of_pos hM0pd ?_ V
-        simp only [hcfun, Nat.not_le.mpr hn, ite_false]
+        simp only [hcfun, responseSourceLoadCoefficient, Nat.not_le.mpr hn, ite_false]
         exact le_rfl
-    -- the two-regime summation
+    -- the two-regime summation is independent of the response construction
     set Msc : ℝ := Cl * κ with hMsc
     have hMsc0 : (0 : ℝ) ≤ Msc := mul_nonneg _hCl.le hκ0
-    set u : ℕ → ℝ := fun n => (3 : ℝ) ^ (-((3 : ℝ) / 2) * (n : ℝ)) * (4 * (cfun n * Msc))
-      with hudef
-    have hu0 : ∀ n, 0 ≤ u n := fun n =>
-      mul_nonneg (Real.rpow_nonneg (by norm_num) _)
-        (mul_nonneg (by norm_num) (mul_nonneg (hcfun0 n) hMsc0))
-    have hmulpow : ∀ n : ℕ, (3 : ℝ) ^ (-((3 : ℝ) / 2) * (n : ℝ))
-        = ((3 : ℝ) ^ (-((3 : ℝ) / 2))) ^ n := weight_eq
-    have hr1eq : ((3 : ℝ) ^ (-((3 : ℝ) / 2))) * ((3 : ℝ) ^ Quenched.contrastRho γ)
-        = (3 : ℝ) ^ (Quenched.contrastRho γ - 3 / 2) := by
-      rw [← Real.rpow_add (by norm_num)]
-      ring_nf
-    have hr2eq : ((3 : ℝ) ^ (-((3 : ℝ) / 2))) * ((3 : ℝ) ^ γ)
-        = (3 : ℝ) ^ (γ - 3 / 2) := by
-      rw [← Real.rpow_add (by norm_num)]
-      ring_nf
-    have hreg1 : ∀ n : ℕ, n ≤ N →
-        u n ≤ (6 * (Cc * Real.sqrt κ) * Msc) * ((3 : ℝ) ^ (Quenched.contrastRho γ - 3 / 2)) ^ n := by
-      intro n hn
-      have : u n = (6 * (Cc * Real.sqrt κ) * Msc) *
-          (((3 : ℝ) ^ (-((3 : ℝ) / 2))) * ((3 : ℝ) ^ Quenched.contrastRho γ)) ^ n := by
-        simp only [hudef, hcfun, hn, ite_true, mul_pow, hmulpow n]
-        ring
-      rw [this, hr1eq]
-    have hsmall2 : aspectRatio E * (‖explicitCanonicalMetric F‖ * ‖(explicitCanonicalMetric F)⁻¹‖) *
-        ((3 : ℝ) ^ (-((3 : ℝ) / 2))) ^ N ≤ Cs⁻¹ := by
+    have hsmall2 : A * ((3 : ℝ) ^ (-((3 : ℝ) / 2))) ^ N ≤ Cs⁻¹ := by
       have h := hsmall.2
       have hw : (3 : ℝ) ^ (-((3 : ℝ) / 2 * ((s : ℝ) - (jStar : ℝ))))
           = ((3 : ℝ) ^ (-((3 : ℝ) / 2))) ^ N := by
-        rw [← hNR, ← hmulpow N]
+        rw [← hNR, ← weight_eq]
         ring_nf
       rw [hw] at h
-      have hmul : aspectRatio E * (‖explicitCanonicalMetric F‖ * ‖(explicitCanonicalMetric F)⁻¹‖) *
-          ((3 : ℝ) ^ (-((3 : ℝ) / 2))) ^ N * Cs ≤ 1 := by
+      have hmul : A * ((3 : ℝ) ^ (-((3 : ℝ) / 2))) ^ N * Cs ≤ 1 := by
+        dsimp [A]
         calc aspectRatio E * (‖explicitCanonicalMetric F‖ * ‖(explicitCanonicalMetric F)⁻¹‖) *
-              ((3 : ℝ) ^ (-((3 : ℝ) / 2))) ^ N * Cs
+                ((3 : ℝ) ^ (-((3 : ℝ) / 2))) ^ N * Cs
             = Cs * aspectRatio E * (‖explicitCanonicalMetric F‖ * ‖(explicitCanonicalMetric F)⁻¹‖) *
-              ((3 : ℝ) ^ (-((3 : ℝ) / 2))) ^ N := by ring
+                ((3 : ℝ) ^ (-((3 : ℝ) / 2))) ^ N := by ring
           _ ≤ 1 := h
       have h2 := (le_div_iff₀ _hCs).mpr hmul
       rwa [one_div] at h2
-    have hreg2 : ∀ n : ℕ, N < n →
-        u n ≤ (4 * Csc * Cs⁻¹ * (Cc * Real.sqrt κ) * Msc) *
-          ((3 : ℝ) ^ (γ - 3 / 2)) ^ (n - N) := by
-      intro n hn
-      have hpowsplit : ((3 : ℝ) ^ (-((3 : ℝ) / 2))) ^ n
-          = ((3 : ℝ) ^ (-((3 : ℝ) / 2))) ^ N * ((3 : ℝ) ^ (-((3 : ℝ) / 2))) ^ (n - N) := by
-        rw [← pow_add]
-        congr 1
-        omega
-      have hue : u n = (4 * Csc * (Cc * Real.sqrt κ) * Msc) *
-          (aspectRatio E * (‖explicitCanonicalMetric F‖ * ‖(explicitCanonicalMetric F)⁻¹‖) *
-            ((3 : ℝ) ^ (-((3 : ℝ) / 2))) ^ N) *
-          (((3 : ℝ) ^ (-((3 : ℝ) / 2))) * ((3 : ℝ) ^ γ)) ^ (n - N) := by
-        simp only [hudef, hcfun, Nat.not_le.mpr hn, ite_false, mul_pow, hmulpow n, hpowsplit]
-        ring
-      rw [hue, hr2eq]
-      refine mul_le_mul_of_nonneg_right ?_ (le_of_lt (pow_pos hr2pos _))
-      have hrhs : 4 * Csc * Cs⁻¹ * (Cc * Real.sqrt κ) * Msc
-          = (4 * Csc * (Cc * Real.sqrt κ) * Msc) * Cs⁻¹ := by ring
-      rw [hrhs]
-      refine mul_le_mul_of_nonneg_left hsmall2 ?_
-      exact mul_nonneg (mul_nonneg (mul_nonneg (by norm_num) hCsc.le)
-        (mul_nonneg _hCc.le hsqκ)) hMsc0
-    have ha0 : (0 : ℝ) ≤ 6 * (Cc * Real.sqrt κ) * Msc :=
-      mul_nonneg (mul_nonneg (by norm_num) (mul_nonneg _hCc.le hsqκ)) hMsc0
-    have hb0 : (0 : ℝ) ≤ 4 * Csc * Cs⁻¹ * (Cc * Real.sqrt κ) * Msc :=
-      mul_nonneg (mul_nonneg (mul_nonneg (mul_nonneg (by norm_num) hCsc.le) hCsinv.le)
-        (mul_nonneg _hCc.le hsqκ)) hMsc0
-    obtain ⟨husum, hubound⟩ := tsum_two_regime (u := u) (N := N)
-      (a := 6 * (Cc * Real.sqrt κ) * Msc)
-      (b := 4 * Csc * Cs⁻¹ * (Cc * Real.sqrt κ) * Msc)
-      (r₁ := (3 : ℝ) ^ (Quenched.contrastRho γ - 3 / 2)) (r₂ := (3 : ℝ) ^ (γ - 3 / 2))
-      hu0 ha0 hb0 hr1pos.le hr1lt hr2pos hr2lt hreg1 hreg2
+    have hseries := responseSourceLoadGeometricSum γ κ Cc Cs Cl Csc A N _hγ hκ0
+      _hCc _hCs _hCl.le hCsc.le hA0 hsmall2
+    have husum : Summable fun n : ℕ =>
+        (3 : ℝ) ^ (-((3 : ℝ) / 2) * (n : ℝ)) * (4 * (cfun n * Msc)) := by
+      simpa only [hcfun, responseSourceLoadCoefficient, hMsc] using hseries.1
     have hfinal := respSourceLoad_le_of_loewner_scalewise P jStar F s b Y cfun Msc
       hcfun0 hMsc0 hmF hY husum hcellb
-    refine ⟨hfinal.1, ?_⟩
-    refine le_trans hfinal.2 (le_trans hubound (le_of_eq ?_))
-    have hcube : Real.sqrt κ ^ 3 = κ * Real.sqrt κ := by
-      rw [pow_succ, Real.sq_sqrt hκ0]
-    rw [hMsc, hcube]
-    ring
+    refine ⟨hfinal.1, le_trans hfinal.2 ?_⟩
+    simpa only [hcfun, responseSourceLoadCoefficient, hMsc] using hseries.2
   -- integrability of the coarse block at every adapted cell
   have hint : ∀ (k : ℤ) (y : Vec d),
       HasIntegrableCoarseBlock P (HighContrast.adaptedCellTranslate (respGrid jStar F) k y) :=
     fun k y => Annealed.hasIntegrableCoarseBlock_adapted d _hd P γ E Ψ Kg Src raw.stat raw.ell
       jStar raw.hj (explicitCanonicalMetric F) hmF k y
-  have hbMinus : ∀ (k : ℤ) (z : Fin d → ℤ),
-      annealedBlockOf P (adaptedCellAtCenter (respGrid jStar F) k z) (respCoeffMinus F)
-        = blockCongr (respG F) (annealedBlock P (adaptedCellAtCenter (respGrid jStar F) k z)) :=
-    fun k z => annealedBlockOf_respCoeffMinus_adapted (respGrid jStar F) hqU k
-      (adaptedCellCenter (respGrid jStar F) k z) F hFfull (hint k _)
-  set Gplus : BlockMat d :=
-    ofFullBlockMat (toFullBlockMat (respG F) * toFullBlockMat (blockD d)) with hGplus
-  have hbPlus : ∀ (k : ℤ) (z : Fin d → ℤ),
-      annealedBlockOf P (adaptedCellAtCenter (respGrid jStar F) k z) (respCoeffPlus F)
-        = blockCongr Gplus (annealedBlock P (adaptedCellAtCenter (respGrid jStar F) k z)) := by
-    intro k z
-    have h : annealedBlockOf P (adaptedCellAtCenter (respGrid jStar F) k z) (respCoeffPlus F)
-        = blockAdjoint (blockCongr (respG F)
-            (annealedBlock P (adaptedCellAtCenter (respGrid jStar F) k z))) :=
-      annealedBlockOf_respCoeffPlus_adapted (respGrid jStar F) hqU k
-        (adaptedCellCenter (respGrid jStar F) k z) F hFfull (hint k _)
-    rw [h, blockAdjoint, blockCongr_blockCongr, hGplus]
+  obtain ⟨Gplus, hbMinus, hbPlus⟩ := responseSourceCoefficientIdentities d γ S ε σ Cglob Cprof
+    Csrc0 H Bresp P E Ψ Kg Src B jStar F s t raw hqU hFfull hmF hint
   have hEsPlus : BlockMatLoewnerLE (blockCongr Gplus (adaptedMean P (respGrid jStar F) s))
       (blockScale (Cc * Real.sqrt κ) (respM0 F)) := by
     have h := hcal.2.2.2.2.2
@@ -538,7 +637,8 @@ theorem response_parameter_choice (d : ℕ) (_hd : 2 ≤ d) (h Q : ℕ) (ε δad
   have hA1 : r - 1 ≤ τ := by linarith only [hrle, hm_le_τ]
   have hA1nn : (0 : ℝ) ≤ r - 1 := by linarith only [hr1]
   have hA2 : Real.sqrt (r - 1) ≤ τ := by
-    have : Real.sqrt (r - 1) ≤ Real.sqrt (τ ^ 2) := Real.sqrt_le_sqrt (by linarith only [hrle, hm_le_τ2])
+    have : Real.sqrt (r - 1) ≤ Real.sqrt (τ ^ 2) := Real.sqrt_le_sqrt (by linarith only [hrle,
+      hm_le_τ2])
     rwa [Real.sqrt_sq hτpos.le] at this
   have hA2nn : (0 : ℝ) ≤ Real.sqrt (r - 1) := Real.sqrt_nonneg _
   have hA3nn : (0 : ℝ) < (3 : ℝ) ^ (-(H : ℝ)) := Real.rpow_pos_of_pos (by norm_num) _

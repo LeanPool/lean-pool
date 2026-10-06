@@ -102,10 +102,28 @@ private theorem responseMagicIdentitiesTheory_zero_dim
     rw [hJa, hJb]
     simp [vecDot, matVecMul]
 
-private theorem responseMagicIdentitiesTheory_of_isEllipticFieldOn
+private theorem canonicalCoarseData_primal_and_adjoint_of_ellipticField
     {d : ℕ} [NeZero d] (U : Domain d) (a : CoeffOn U)
     (hEll : IsEllipticFieldOn a.lam a.Lam (U : Set (Vec d)) a.toCoeffField) :
-    ResponseMagicIdentitiesTheory U a := by
+    IsSigmaStarCoarse (U : Set (Vec d)) a.toCoeffField
+      (HCPolySupport.sigmaStarCoarse (U : Set (Vec d)) a.toCoeffField) ∧
+    IsKappaCoarse (U : Set (Vec d)) a.toCoeffField
+      (HCPolySupport.sigmaStarCoarse (U : Set (Vec d)) a.toCoeffField)
+      (HCPolySupport.kappaCoarse (U : Set (Vec d)) a.toCoeffField) ∧
+    IsSigmaCoarse (U : Set (Vec d)) a.toCoeffField
+      (HCPolySupport.sigmaCoarse (U : Set (Vec d)) a.toCoeffField)
+      (HCPolySupport.sigmaStarCoarse (U : Set (Vec d)) a.toCoeffField)
+      (HCPolySupport.kappaCoarse (U : Set (Vec d)) a.toCoeffField) ∧
+    IsSigmaStarCoarse (U : Set (Vec d)) (adjointCoeffField a.toCoeffField)
+      (HCPolySupport.sigmaStarCoarse (U : Set (Vec d)) a.toCoeffField) ∧
+    IsKappaCoarse (U : Set (Vec d)) (adjointCoeffField a.toCoeffField)
+      (HCPolySupport.sigmaStarCoarse (U : Set (Vec d)) a.toCoeffField)
+      (-(HCPolySupport.kappaCoarse (U : Set (Vec d)) a.toCoeffField)) ∧
+    IsSigmaCoarse (U : Set (Vec d)) (adjointCoeffField a.toCoeffField)
+      (HCPolySupport.sigmaCoarse (U : Set (Vec d)) a.toCoeffField)
+      (HCPolySupport.sigmaStarCoarse (U : Set (Vec d)) a.toCoeffField)
+      (-(HCPolySupport.kappaCoarse (U : Set (Vec d)) a.toCoeffField)) ∧
+    IsUnit (HCPolySupport.sigmaStarCoarse (U : Set (Vec d)) a.toCoeffField).det := by
   let hvol : 0 < (MeasureTheory.volume (U : Set (Vec d))).toReal :=
     domain_volume_pos U
   rcases
@@ -177,6 +195,84 @@ private theorem responseMagicIdentitiesTheory_of_isEllipticFieldOn
         (HCPolySupport.sigmaStarCoarse (U : Set (Vec d)) a.toCoeffField)
         (-(HCPolySupport.kappaCoarse (U : Set (Vec d)) a.toCoeffField)) := by
     simpa [hSigmaAdjEq, hStarAdjEq, hKappaAdjEq] using hSigmaAdjCanon0
+  exact ⟨hS, hK, hSigmaCanon, hSAdj, hKAdj, hSigmaAdj, hdet⟩
+
+private theorem response_completedSquare_of_canonicalCoarseData
+    {d : ℕ} [NeZero d] (U : Domain d) (a : CoeffOn U)
+    (hS : IsSigmaStarCoarse (U : Set (Vec d)) a.toCoeffField
+      (HCPolySupport.sigmaStarCoarse (U : Set (Vec d)) a.toCoeffField))
+    (hK : IsKappaCoarse (U : Set (Vec d)) a.toCoeffField
+      (HCPolySupport.sigmaStarCoarse (U : Set (Vec d)) a.toCoeffField)
+      (HCPolySupport.kappaCoarse (U : Set (Vec d)) a.toCoeffField))
+    (hSigmaCanon : IsSigmaCoarse (U : Set (Vec d)) a.toCoeffField
+      (HCPolySupport.sigmaCoarse (U : Set (Vec d)) a.toCoeffField)
+      (HCPolySupport.sigmaStarCoarse (U : Set (Vec d)) a.toCoeffField)
+      (HCPolySupport.kappaCoarse (U : Set (Vec d)) a.toCoeffField))
+    (hdet : IsUnit (HCPolySupport.sigmaStarCoarse (U : Set (Vec d)) a.toCoeffField).det)
+    (p q : Vec d) :
+  responseJ U a p q =
+    (1 / 2 : ℝ) *
+      vecDot p (matVecMul (sigmaCoarse U a - sigmaStarCoarse U a) p) +
+    (1 / 2 : ℝ) *
+      vecDot p
+        (matVecMul (kappaCoarse U a + matTranspose (kappaCoarse U a)) p) +
+    (1 / 2 : ℝ) *
+      vecDot
+        (q - matVecMul (sigmaStarCoarse U a - kappaCoarse U a) p)
+        (matVecMul (sigmaStarInvCoarse U a)
+          (q - matVecMul (sigmaStarCoarse U a - kappaCoarse U a) p)) := by
+  calc
+    responseJ U a p q =
+        ResponseJ (U : Set (Vec d)) p q a.toCoeffField :=
+      book_responseJ_eq_ResponseJ U a p q
+    _ =
+        (1 / 2 : ℝ) *
+          vecDot p
+            (matVecMul
+              (HCPolySupport.sigmaCoarse (U : Set (Vec d)) a.toCoeffField -
+                HCPolySupport.sigmaStarCoarse (U : Set (Vec d)) a.toCoeffField) p) +
+          (1 / 2 : ℝ) *
+            vecDot p
+              (matVecMul
+                (HCPolySupport.kappaCoarse (U : Set (Vec d)) a.toCoeffField +
+                  matTranspose
+                    (HCPolySupport.kappaCoarse (U : Set (Vec d)) a.toCoeffField)) p) +
+          (1 / 2 : ℝ) *
+            vecDot
+              (q -
+                matVecMul
+                  (HCPolySupport.sigmaStarCoarse (U : Set (Vec d)) a.toCoeffField -
+                    HCPolySupport.kappaCoarse (U : Set (Vec d)) a.toCoeffField) p)
+              (matVecMul
+                (HCPolySupport.sigmaStarInvCoarse (U : Set (Vec d)) a.toCoeffField)
+                (q -
+                  matVecMul
+                    (HCPolySupport.sigmaStarCoarse (U : Set (Vec d)) a.toCoeffField -
+                      HCPolySupport.kappaCoarse (U : Set (Vec d)) a.toCoeffField) p)) :=
+      magic_identity_responseJ_shifted_square_canonical_of_isSigmaCoarse
+        (U := (U : Set (Vec d))) (a := a.toCoeffField) hS hK hSigmaCanon hdet p q
+    _ =
+        (1 / 2 : ℝ) *
+          vecDot p (matVecMul (sigmaCoarse U a - sigmaStarCoarse U a) p) +
+        (1 / 2 : ℝ) *
+          vecDot p
+            (matVecMul (kappaCoarse U a + matTranspose (kappaCoarse U a)) p) +
+        (1 / 2 : ℝ) *
+          vecDot
+            (q - matVecMul (sigmaStarCoarse U a - kappaCoarse U a) p)
+            (matVecMul (sigmaStarInvCoarse U a)
+              (q - matVecMul (sigmaStarCoarse U a - kappaCoarse U a) p)) := by
+      rw [← book_sigmaCoarse_eq_sigmaCoarse U a,
+        ← book_sigmaStarCoarse_eq_sigmaStarCoarse U a,
+        ← book_kappaCoarse_eq_kappaCoarse U a,
+        ← book_sigmaStarInvCoarse_eq_sigmaStarInvCoarse U a]
+
+private theorem responseMagicIdentitiesTheory_of_isEllipticFieldOn
+    {d : ℕ} [NeZero d] (U : Domain d) (a : CoeffOn U)
+    (hEll : IsEllipticFieldOn a.lam a.Lam (U : Set (Vec d)) a.toCoeffField) :
+    ResponseMagicIdentitiesTheory U a := by
+  obtain ⟨hS, hK, hSigmaCanon, hSAdj, hKAdj, hSigmaAdj, hdet⟩ :=
+    canonicalCoarseData_primal_and_adjoint_of_ellipticField U a hEll
   refine
     { completed_square := ?_
       adjoint_quadratic := ?_
@@ -186,51 +282,7 @@ private theorem responseMagicIdentitiesTheory_of_isEllipticFieldOn
       kappa_symm_le_defect := ?_
       neg_kappa_symm_le_defect := ?_ }
   · intro p q
-    calc
-      responseJ U a p q =
-          ResponseJ (U : Set (Vec d)) p q a.toCoeffField :=
-        book_responseJ_eq_ResponseJ U a p q
-      _ =
-          (1 / 2 : ℝ) *
-            vecDot p
-              (matVecMul
-                (HCPolySupport.sigmaCoarse (U : Set (Vec d)) a.toCoeffField -
-                  HCPolySupport.sigmaStarCoarse (U : Set (Vec d)) a.toCoeffField) p) +
-            (1 / 2 : ℝ) *
-              vecDot p
-                (matVecMul
-                  (HCPolySupport.kappaCoarse (U : Set (Vec d)) a.toCoeffField +
-                    matTranspose
-                      (HCPolySupport.kappaCoarse (U : Set (Vec d)) a.toCoeffField)) p) +
-            (1 / 2 : ℝ) *
-              vecDot
-                (q -
-                  matVecMul
-                    (HCPolySupport.sigmaStarCoarse (U : Set (Vec d)) a.toCoeffField -
-                      HCPolySupport.kappaCoarse (U : Set (Vec d)) a.toCoeffField) p)
-                (matVecMul
-                  (HCPolySupport.sigmaStarInvCoarse (U : Set (Vec d)) a.toCoeffField)
-                  (q -
-                    matVecMul
-                      (HCPolySupport.sigmaStarCoarse (U : Set (Vec d)) a.toCoeffField -
-                        HCPolySupport.kappaCoarse (U : Set (Vec d)) a.toCoeffField) p)) :=
-        magic_identity_responseJ_shifted_square_canonical_of_isSigmaCoarse
-          (U := (U : Set (Vec d))) (a := a.toCoeffField) hS hK hSigmaCanon hdet p q
-      _ =
-          (1 / 2 : ℝ) *
-            vecDot p (matVecMul (sigmaCoarse U a - sigmaStarCoarse U a) p) +
-          (1 / 2 : ℝ) *
-            vecDot p
-              (matVecMul (kappaCoarse U a + matTranspose (kappaCoarse U a)) p) +
-          (1 / 2 : ℝ) *
-            vecDot
-              (q - matVecMul (sigmaStarCoarse U a - kappaCoarse U a) p)
-              (matVecMul (sigmaStarInvCoarse U a)
-                (q - matVecMul (sigmaStarCoarse U a - kappaCoarse U a) p)) := by
-        rw [← book_sigmaCoarse_eq_sigmaCoarse U a,
-          ← book_sigmaStarCoarse_eq_sigmaStarCoarse U a,
-          ← book_kappaCoarse_eq_kappaCoarse U a,
-          ← book_sigmaStarInvCoarse_eq_sigmaStarInvCoarse U a]
+    exact response_completedSquare_of_canonicalCoarseData U a hS hK hSigmaCanon hdet p q
   · intro p q
     calc
       responseJ U a.transpose p q =

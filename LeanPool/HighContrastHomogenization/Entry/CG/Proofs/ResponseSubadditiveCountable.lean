@@ -193,7 +193,7 @@ private theorem pairwiseDisjoint_subtype_finset {d : ℕ} {ι : Type*} {s : Set 
 
 /-- Countable subadditivity of the scalar response, proved from the integrated
 summability and finite-defect statements. -/
-theorem responseJ_subadditive_countable_of_isEllipticFieldOn_provider {d : ℕ}
+theorem responseJ_le_countableWeightedSum {d : ℕ}
     {ι : Type*} {s : Set ι} (hs : s.Countable) {W : Set (Vec d)} {U : ι → Set (Vec d)}
     [IsFiniteMeasure (volumeMeasureOn W)]
     (hWopen : IsOpen W) (hWvol : (volume W).toReal ≠ 0)
@@ -211,7 +211,7 @@ theorem responseJ_subadditive_countable_of_isEllipticFieldOn_provider {d : ℕ}
         (lam⁻¹ * (Lam ^ 2 * vecNormSq p + vecNormSq q))
   have htermSummable : Summable term := by
     dsimp [term]
-    exact summable_volumeRatio_mul_responseJ_of_isEllipticFieldOn_provider
+    exact summable_volumeWeightedResponseJ
       hs hopen hsub hdisj hEll p q
   have htermLimit :
       Tendsto (fun F : Finset s => ∑ i ∈ F, term i) atTop
@@ -243,7 +243,7 @@ theorem responseJ_subadditive_countable_of_isEllipticFieldOn_provider {d : ℕ}
     have hdisjF : (F : Set s).PairwiseDisjoint fun i : s => U i.1 :=
       pairwiseDisjoint_subtype_finset hdisj F
     have h :=
-      responseJ_le_sum_volumeRatio_mul_responseJ_add_defect_of_isEllipticFieldOn_provider
+      responseJ_le_weightedSum_add_remainder
         (F := F) (W := W) (U := fun i : s => U i.1)
         hWopen hWvol hopenF hsubF hdisjF hEll p q
     simpa [term, defect] using h

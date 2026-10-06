@@ -67,7 +67,8 @@ theorem one_grid_propagation_input
                   history P γ (Geometry.explicitRoundedGrid jStar metric) jStar m ≤
                       C * profile P γ (Geometry.explicitRoundedGrid jStar metric) jStar n m ∧
                     (n + (h : ℤ) ≤ m →
-                      profile P γ (Geometry.explicitRoundedGrid jStar metric) jStar n (m + (h : ℤ)) ≤
+                      profile P γ (Geometry.explicitRoundedGrid jStar metric) jStar n (m + (h :
+                        ℤ)) ≤
                         1 / 8 *
                             Real.exp ((bigQ d γ : ℝ) *
                               synchCharge P (Geometry.explicitRoundedGrid jStar metric)
@@ -83,21 +84,26 @@ theorem one_grid_propagation_input
                           C * (L : ℝ) *
                             (profile P γ (Geometry.explicitRoundedGrid jStar metric) jStar n m +
                               Real.exp ((bigQ d γ : ℝ) *
-                                detIncrement P (Geometry.explicitRoundedGrid jStar metric) m (m + L)) - 1)) ∧
+                                detIncrement P (Geometry.explicitRoundedGrid jStar metric) m (m
+                                  + L)) - 1)) ∧
                     (m = n →
                       history P γ (Geometry.explicitRoundedGrid jStar metric) jStar n ≤ 1 →
                         profile P γ (Geometry.explicitRoundedGrid jStar metric) jStar n (n + L) ≤
                           C * (L : ℝ) *
                             (history P γ (Geometry.explicitRoundedGrid jStar metric) jStar n +
                               Real.exp ((bigQ d γ : ℝ) *
-                                detIncrement P (Geometry.explicitRoundedGrid jStar metric) n (n + L)) - 1)) ∧
+                                detIncrement P (Geometry.explicitRoundedGrid jStar metric) n (n
+                                  + L)) - 1)) ∧
                     fluctuationHistory P γ (Geometry.explicitRoundedGrid jStar metric) jStar m +
-                          meanHistory P γ (Geometry.explicitRoundedGrid jStar metric) (jStar : ℤ) m +
+                          meanHistory P γ (Geometry.explicitRoundedGrid jStar metric) (jStar :
+                            ℤ) m +
                           determinantDrift P γ (Geometry.explicitRoundedGrid jStar metric) jStar m ≤
                         C * (profile P γ (Geometry.explicitRoundedGrid jStar metric) jStar n m +
-                          determinantDrift P γ (Geometry.explicitRoundedGrid jStar metric) jStar m) ∧
+                          determinantDrift P γ (Geometry.explicitRoundedGrid jStar metric) jStar
+                            m) ∧
                     (n + (h : ℤ) ≤ m →
-                      profile P γ (Geometry.explicitRoundedGrid jStar metric) jStar n (m + (h : ℤ)) +
+                      profile P γ (Geometry.explicitRoundedGrid jStar metric) jStar n (m + (h :
+                        ℤ)) +
                           determinantDrift P γ (Geometry.explicitRoundedGrid jStar metric) jStar
                             (m + (h : ℤ)) ≤
                         1 / 8 *
@@ -105,7 +111,8 @@ theorem one_grid_propagation_input
                               synchCharge P (Geometry.explicitRoundedGrid jStar metric)
                                 (h : ℤ) m) *
                             (profile P γ (Geometry.explicitRoundedGrid jStar metric) jStar n m +
-                              determinantDrift P γ (Geometry.explicitRoundedGrid jStar metric) jStar m) +
+                              determinantDrift P γ (Geometry.explicitRoundedGrid jStar metric)
+                                jStar m) +
                           C *
                             (Real.exp ((bigQ d γ : ℝ) *
                                 synchCharge P (Geometry.explicitRoundedGrid jStar metric)
@@ -120,12 +127,15 @@ theorem one_grid_propagation_input
                               (m₀ + 1 - (h : ℤ)) (m₀ + (Ksteps : ℤ) * (h : ℤ))) ∧
                     ((m = n ∨ n + (h : ℤ) ≤ m) →
                       profile P γ (Geometry.explicitRoundedGrid jStar metric) jStar n m +
-                          determinantDrift P γ (Geometry.explicitRoundedGrid jStar metric) jStar m ≤ 1 →
+                          determinantDrift P γ (Geometry.explicitRoundedGrid jStar metric) jStar
+                            m ≤ 1 →
                         profile P γ (Geometry.explicitRoundedGrid jStar metric) jStar n (m + L) +
-                            determinantDrift P γ (Geometry.explicitRoundedGrid jStar metric) jStar (m + L) ≤
+                            determinantDrift P γ (Geometry.explicitRoundedGrid jStar metric)
+                              jStar (m + L) ≤
                           C * (L : ℝ) *
                             (profile P γ (Geometry.explicitRoundedGrid jStar metric) jStar n m +
-                              determinantDrift P γ (Geometry.explicitRoundedGrid jStar metric) jStar m +
+                              determinantDrift P γ (Geometry.explicitRoundedGrid jStar metric)
+                                jStar m +
                               Real.exp ((bigQ d γ : ℝ) *
                                 detIncrement P (Geometry.explicitRoundedGrid jStar metric) m
                                   (m + L)) - 1)) := by
@@ -220,7 +230,8 @@ theorem synchronized_multiplicity_one (d : ℕ) (hd : 2 ≤ d) (γ : ℝ)
   intro P E Ψ K Src hP hstat hunit hdag h hh jStar hjStar hthr m₀ hm₀ Ksteps hK
   have H := hprov P E Ψ K Src hP hstat hunit hdag h hh 1 le_rfl jStar hjStar hthr
     (1 : Mat d) (Geometry.one_posDef d) (jStar : ℤ) (jStar : ℤ) le_rfl le_rfl
-  simpa only [Geometry.explicitRoundedGrid_one (d := d) jStar] using H.2.2.2.2.2.2.1 m₀ hm₀ Ksteps hK
+  simpa only [Geometry.explicitRoundedGrid_one (d := d) jStar] using H.2.2.2.2.2.2.1 m₀ hm₀
+    Ksteps hK
 
 end
 

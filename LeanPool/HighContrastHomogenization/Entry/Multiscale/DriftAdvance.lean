@@ -193,7 +193,8 @@ theorem det_normalized_eq_div {ι : Type*} [Fintype ι] [DecidableEq ι]
   calc
     (matSqrt G⁻¹).det * F.det * (matSqrt G⁻¹).det =
         F.det * (matSqrt G⁻¹).det ^ 2 := by ring
-    _ = F.det / G.det := by rw [det_matSqrt_sq hG.inv.posSemidef, Matrix.det_nonsing_inv, Ring.inverse_eq_inv, div_eq_mul_inv]
+    _ = F.det / G.det := by rw [det_matSqrt_sq hG.inv.posSemidef, Matrix.det_nonsing_inv,
+      Ring.inverse_eq_inv, div_eq_mul_inv]
 
 /-- Full log determinants give the normalization factor with coefficient one. -/
 theorem det_normalizedBlock_eq_exp {d : ℕ} (F G : BlockMat d)
@@ -229,7 +230,8 @@ theorem normalized_trace_sub_one_le {ι : Type*} [Fintype ι] [DecidableEq ι]
   have hnorm := hF.posSemidef.conjTranspose_mul_mul_same (matSqrt G⁻¹)
   rw [(matSqrt_inv_posDef_full hG).isHermitian.eq] at hnorm
   rw [← det_normalized_eq_div F G hG]
-  exact Recurrence.trace_sub_one_le_det_sub_one hnorm.isHermitian (Recurrence.one_le_normalize hG hGF)
+  exact Recurrence.trace_sub_one_le_det_sub_one hnorm.isHermitian (Recurrence.one_le_normalize
+    hG hGF)
 
 private theorem toFullBlockMat_sub {d : ℕ} (A B : BlockMat d) :
     toFullBlockMat (blockSub A B) = toFullBlockMat A - toFullBlockMat B := by

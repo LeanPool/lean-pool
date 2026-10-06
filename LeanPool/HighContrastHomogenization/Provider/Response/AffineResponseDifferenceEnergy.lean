@@ -174,7 +174,7 @@ theorem descendantsAverage_additivityDiffHalfEnergy_eq_responseJPartitionDefect_
           (hcommon R (by simpa [Z] using hR))) := by
       simp [z, hR]
     have hdiff :=
-      cubeAverage_additivityDiffHalfEnergyDensityOnFamilyOnCube_eq_responseJOnCube_sub_responseValue_of_grad_eq
+      cubeAverage_additivityEnergyDensity_eq_responseJ_sub_responseValue
         F Q R p r (z R) (by simpa [hzR] using hgrad)
     have hsecond := Book.Ch02.secondVariation_eq_of_isResponseMaximizer
       (canonicalResponseSolution_isMaximizer (V R) (b R) p r) (z R)

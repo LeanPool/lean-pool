@@ -222,7 +222,8 @@ theorem avsum_subcellDeficit_respCoeffMinus_eq {d : ℕ} [NeZero d]
     obtain ⟨lam, Lam, f, _hlam, _hle, hEll, hae⟩ :=
       exists_elliptic_representative_respCell_respCoeffMinus hjStar hm t a
     have : IsFiniteMeasure (volumeMeasureOn (respCell jStar F t)) :=
-      (adaptedCell_isOpenBoundedConvexDomain (respGrid jStar F) hq t).isFiniteMeasure_restrict_volume
+      (adaptedCell_isOpenBoundedConvexDomain (respGrid jStar F) hq
+        t).isFiniteMeasure_restrict_volume
     have hdata : ResponseLinearIntegrabilityData (respCell jStar F t) f :=
       ResponseLinearIntegrabilityData.of_isEllipticFieldOn hEll
     have hv : IntegrableOn
@@ -291,7 +292,8 @@ theorem avsum_subcellDeficit_respCoeffPlus_eq {d : ℕ} [NeZero d]
     obtain ⟨lam, Lam, f, _hlam, _hle, hEll, hae⟩ :=
       exists_elliptic_representative_respCell_respCoeffPlus hjStar hm t a
     have : IsFiniteMeasure (volumeMeasureOn (respCell jStar F t)) :=
-      (adaptedCell_isOpenBoundedConvexDomain (respGrid jStar F) hq t).isFiniteMeasure_restrict_volume
+      (adaptedCell_isOpenBoundedConvexDomain (respGrid jStar F) hq
+        t).isFiniteMeasure_restrict_volume
     have hdata : ResponseLinearIntegrabilityData (respCell jStar F t) f :=
       ResponseLinearIntegrabilityData.of_isEllipticFieldOn hEll
     have hv : IntegrableOn
@@ -335,7 +337,8 @@ theorem integrable_avsum_responseJ_adaptedCellAtCenter_respCoeffMinus {d : ℕ} 
     (P : Measure (CoeffSpace d)) [IsProbabilityMeasure P] (jStar : ℕ)
     (hjStar : 2 * d ≤ 3 ^ jStar) (F : BlockMat d) (hm : (explicitCanonicalMetric F).PosDef)
     (H : ℕ) (s : ℤ) (p r : Vec d)
-    (hblk : ∀ w : Fin d → ℤ, HasIntegrableCoarseBlock P (adaptedCellAtCenter (respGrid jStar F) s w)) :
+    (hblk : ∀ w : Fin d → ℤ, HasIntegrableCoarseBlock P (adaptedCellAtCenter (respGrid jStar F)
+      s w)) :
     MeasureTheory.Integrable (fun a => (((triadicIndexBox d H).card : ℝ))⁻¹ *
       ∑ w ∈ triadicIndexBox d H, ResponseJ (adaptedCellAtCenter (respGrid jStar F) s w) p r
         (respCoeffMinus F a)) P := by
@@ -350,7 +353,8 @@ theorem integrable_avsum_responseJ_adaptedCellAtCenter_respCoeffPlus {d : ℕ} [
     (P : Measure (CoeffSpace d)) [IsProbabilityMeasure P] (jStar : ℕ)
     (hjStar : 2 * d ≤ 3 ^ jStar) (F : BlockMat d) (hm : (explicitCanonicalMetric F).PosDef)
     (H : ℕ) (s : ℤ) (p r : Vec d)
-    (hblk : ∀ w : Fin d → ℤ, HasIntegrableCoarseBlock P (adaptedCellAtCenter (respGrid jStar F) s w)) :
+    (hblk : ∀ w : Fin d → ℤ, HasIntegrableCoarseBlock P (adaptedCellAtCenter (respGrid jStar F)
+      s w)) :
     MeasureTheory.Integrable (fun a => (((triadicIndexBox d H).card : ℝ))⁻¹ *
       ∑ w ∈ triadicIndexBox d H, ResponseJ (adaptedCellAtCenter (respGrid jStar F) s w) p r
         (respCoeffPlus F a)) P := by
@@ -432,7 +436,8 @@ theorem zero_le_subcellDeficit_respCoeffMinus {d : ℕ} [NeZero d]
     simpa [volumeMeasureOn] using hdom.isFiniteMeasure_restrict_volume
   have hEllV : IsEllipticFieldOn lam Lam (adaptedCellAtCenter (respGrid jStar F) s w) f :=
     hEll.mono hV.measurableSet hVU
-  have haeV : respCoeffMinus F a =ᵐ[volumeMeasureOn (adaptedCellAtCenter (respGrid jStar F) s w)] f :=
+  have haeV : respCoeffMinus F a =ᵐ[volumeMeasureOn (adaptedCellAtCenter (respGrid jStar F) s
+    w)] f :=
     MeasureTheory.ae_mono (MeasureTheory.Measure.restrict_mono hVU le_rfl) hae
   have hmaxV' : IsResponseMaximizer (adaptedCellAtCenter (respGrid jStar F) s w)
       (respP (respMean P jStar F (s + (H : ℤ))) e)
@@ -496,7 +501,8 @@ theorem zero_le_subcellDeficit_respCoeffPlus {d : ℕ} [NeZero d]
     simpa [volumeMeasureOn] using hdom.isFiniteMeasure_restrict_volume
   have hEllV : IsEllipticFieldOn lam Lam (adaptedCellAtCenter (respGrid jStar F) s w) f :=
     hEll.mono hV.measurableSet hVU
-  have haeV : respCoeffPlus F a =ᵐ[volumeMeasureOn (adaptedCellAtCenter (respGrid jStar F) s w)] f :=
+  have haeV : respCoeffPlus F a =ᵐ[volumeMeasureOn (adaptedCellAtCenter (respGrid jStar F) s w)]
+    f :=
     MeasureTheory.ae_mono (MeasureTheory.Measure.restrict_mono hVU le_rfl) hae
   have hmaxV' : IsResponseMaximizer (adaptedCellAtCenter (respGrid jStar F) s w)
       (respP (respMean P jStar F (s + (H : ℤ))) e)
@@ -608,7 +614,8 @@ theorem volumeAverage_scalarResponseIntegrand_subset_eq_blockVecDot {d : ℕ} [N
 aligned adapted subcell of the terminal cell: minus one half of the subcell energy plus the
 pairing of `(-p, q^-)` with the slot-swapped subcell average of the doubled optimizer field.
 The coefficient is transported from its almost-everywhere elliptic representative. -/
-theorem volumeAverage_scalarResponseIntegrand_adaptedCellAtCenter_respCoeffMinus_eq {d : ℕ} [NeZero d]
+theorem volumeAverage_scalarResponseIntegrand_adaptedCellAtCenter_respCoeffMinus_eq {d : ℕ}
+  [NeZero d]
     (P : Measure (CoeffSpace d)) (jStar : ℕ) (hjStar : 2 * d ≤ 3 ^ jStar) (F : BlockMat d)
     (hm : (explicitCanonicalMetric F).PosDef) (H : ℕ) (s t : ℤ) (ht : t = s + (H : ℤ))
     (e : Vec d)
@@ -680,7 +687,8 @@ theorem volumeAverage_scalarResponseIntegrand_adaptedCellAtCenter_respCoeffMinus
 
 /-- The plus twin of the subcell average identity, for the plus response coefficient and the
 load `q^+`. -/
-theorem volumeAverage_scalarResponseIntegrand_adaptedCellAtCenter_respCoeffPlus_eq {d : ℕ} [NeZero d]
+theorem volumeAverage_scalarResponseIntegrand_adaptedCellAtCenter_respCoeffPlus_eq {d : ℕ}
+  [NeZero d]
     (P : Measure (CoeffSpace d)) (jStar : ℕ) (hjStar : 2 * d ≤ 3 ^ jStar) (F : BlockMat d)
     (hm : (explicitCanonicalMetric F).PosDef) (H : ℕ) (s t : ℤ) (ht : t = s + (H : ℤ))
     (e : Vec d)

@@ -55,7 +55,8 @@ theorem muCandidate_le_blockEnergyAverage_affineField
     (system : MuOperatorSystemData U a)
     (P : BlockVec d)
     (Y : R.correctionSpace.toSubmodule) :
-    (system.toMuOperatorRealization.toMuHilbertRealization R.toMuCorrectionSpaceData).muCandidate P ≤
+    (system.toMuOperatorRealization.toMuHilbertRealization
+      R.toMuCorrectionSpaceData).muCandidate P ≤
       blockEnergyAverage U a (R.affineField P Y) := by
   let H : MuHilbertRealization U a :=
     system.toMuOperatorRealization.toMuHilbertRealization R.toMuCorrectionSpaceData
@@ -91,7 +92,8 @@ theorem blockEnergyAverage_affineField_correctionPart_eq_muCandidate
     (system : MuOperatorSystemData U a)
     (P : BlockVec d) :
     blockEnergyAverage U a (R.affineField P (R.correctionPart system P)) =
-      (system.toMuOperatorRealization.toMuHilbertRealization R.toMuCorrectionSpaceData).muCandidate P := by
+      (system.toMuOperatorRealization.toMuHilbertRealization
+        R.toMuCorrectionSpaceData).muCandidate P := by
   let H : MuHilbertRealization U a :=
     system.toMuOperatorRealization.toMuHilbertRealization R.toMuCorrectionSpaceData
   rw [R.affineField_correctionPart system P]
@@ -116,7 +118,8 @@ theorem muCandidate_eq_sInf_blockEnergyAverage_affineField
     (R : MuCorrectionSpaceRecoveryData U)
     (system : MuOperatorSystemData U a)
     (P : BlockVec d) :
-    (system.toMuOperatorRealization.toMuHilbertRealization R.toMuCorrectionSpaceData).muCandidate P =
+    (system.toMuOperatorRealization.toMuHilbertRealization
+      R.toMuCorrectionSpaceData).muCandidate P =
       sInf (Set.range
         (fun Y : R.correctionSpace.toSubmodule => blockEnergyAverage U a (R.affineField P Y))) := by
   let H : MuHilbertRealization U a :=
@@ -162,7 +165,8 @@ theorem muCandidate_eq_sInf_blockEnergyAverage_affineField_denseSeq
     [TopologicalSpace.SeparableSpace ↥R.correctionSpace]
     (system : MuOperatorSystemData U a)
     (P : BlockVec d) :
-    (system.toMuOperatorRealization.toMuHilbertRealization R.toMuCorrectionSpaceData).muCandidate P =
+    (system.toMuOperatorRealization.toMuHilbertRealization
+      R.toMuCorrectionSpaceData).muCandidate P =
       sInf (Set.range
         (fun n : ℕ =>
           blockEnergyAverage U a
@@ -195,7 +199,8 @@ theorem muCandidate_eq_sInf_blockEnergyAverage_affineField_denseSeq
   have ht_subset_closure : t ⊆ closure s := by
     rw [← h_image_eq]
     simpa [f, t] using!
-      (R.continuous_blockEnergyAverage_affineField system P).range_subset_closure_image_dense h_dense
+      (R.continuous_blockEnergyAverage_affineField system P).range_subset_closure_image_dense
+        h_dense
   have ht_nonempty : t.Nonempty := by
     refine ⟨f (R.correctionPart system P), ?_⟩
     exact ⟨R.correctionPart system P, rfl⟩
@@ -217,7 +222,8 @@ theorem muCandidate_eq_iInf_blockEnergyAverage_affineField_denseSeq
     [TopologicalSpace.SeparableSpace ↥R.correctionSpace]
     (system : MuOperatorSystemData U a)
     (P : BlockVec d) :
-    (system.toMuOperatorRealization.toMuHilbertRealization R.toMuCorrectionSpaceData).muCandidate P =
+    (system.toMuOperatorRealization.toMuHilbertRealization
+      R.toMuCorrectionSpaceData).muCandidate P =
       ⨅ n : ℕ,
         blockEnergyAverage U a
           (R.affineField P (TopologicalSpace.denseSeq ↥R.correctionSpace n)) := by
@@ -230,7 +236,8 @@ theorem Mu_eq_sInf_blockEnergyAverage_affineField_denseSeq
     (mu_eq_muCandidate :
       ∀ P : BlockVec d,
         Mu U P a =
-          (system.toMuOperatorRealization.toMuHilbertRealization R.toMuCorrectionSpaceData).muCandidate
+          (system.toMuOperatorRealization.toMuHilbertRealization
+            R.toMuCorrectionSpaceData).muCandidate
             P)
     (P : BlockVec d) :
     Mu U P a =
@@ -248,7 +255,8 @@ theorem Mu_eq_iInf_blockEnergyAverage_affineField_denseSeq
     (mu_eq_muCandidate :
       ∀ P : BlockVec d,
         Mu U P a =
-          (system.toMuOperatorRealization.toMuHilbertRealization R.toMuCorrectionSpaceData).muCandidate
+          (system.toMuOperatorRealization.toMuHilbertRealization
+            R.toMuCorrectionSpaceData).muCandidate
             P)
     (P : BlockVec d) :
     Mu U P a =
@@ -263,7 +271,8 @@ theorem Mu_eq_sInf_blockEnergyAverage_affineField
     (mu_eq_muCandidate :
       ∀ P : BlockVec d,
         Mu U P a =
-          (system.toMuOperatorRealization.toMuHilbertRealization R.toMuCorrectionSpaceData).muCandidate
+          (system.toMuOperatorRealization.toMuHilbertRealization
+            R.toMuCorrectionSpaceData).muCandidate
             P)
     (P : BlockVec d) :
     Mu U P a =
@@ -278,7 +287,8 @@ theorem recoveredField_blockEnergyAverage_eq_mu
     (mu_eq_muCandidate :
       ∀ P : BlockVec d,
         Mu U P a =
-          (system.toMuOperatorRealization.toMuHilbertRealization R.toMuCorrectionSpaceData).muCandidate
+          (system.toMuOperatorRealization.toMuHilbertRealization
+            R.toMuCorrectionSpaceData).muCandidate
             P)
     (P : BlockVec d) :
     blockEnergyAverage U a (R.recoveredField system P) = Mu U P a := by
@@ -390,7 +400,8 @@ theorem mu_ge_vecDot_of_isEllipticFieldOn_of_pairingAverage
     (mu_eq_muCandidate :
       ∀ P : BlockVec d,
         Mu U P a =
-          (system.toMuOperatorRealization.toMuHilbertRealization R.toMuCorrectionSpaceData).muCandidate
+          (system.toMuOperatorRealization.toMuHilbertRealization
+            R.toMuCorrectionSpaceData).muCandidate
             P)
     (P : BlockVec d) :
     vecDot P.1 P.2 ≤ Mu U P a := by
@@ -423,7 +434,8 @@ theorem mu_ge_vecDot_of_isEllipticFieldOn_of_integral_eq_zero
     (mu_eq_muCandidate :
       ∀ P : BlockVec d,
         Mu U P a =
-          (system.toMuOperatorRealization.toMuHilbertRealization R.toMuCorrectionSpaceData).muCandidate
+          (system.toMuOperatorRealization.toMuHilbertRealization
+            R.toMuCorrectionSpaceData).muCandidate
             P)
     (P : BlockVec d) :
     vecDot P.1 P.2 ≤ Mu U P a := by
@@ -497,7 +509,8 @@ theorem mu_ge_vecDot_openCubeSet_originCube
     (mu_eq_muCandidate :
       ∀ P : BlockVec d,
         Mu (openCubeSet (originCube d n)) P a =
-          (system.toMuOperatorRealization.toMuHilbertRealization R.toMuCorrectionSpaceData).muCandidate
+          (system.toMuOperatorRealization.toMuHilbertRealization
+            R.toMuCorrectionSpaceData).muCandidate
             P)
     (P : BlockVec d) :
     vecDot P.1 P.2 ≤ Mu (openCubeSet (originCube d n)) P a := by
@@ -525,7 +538,8 @@ theorem mu_ge_vecDot_cubeSet_originCube
     (mu_eq_muCandidate :
       ∀ P : BlockVec d,
         Mu (cubeSet (originCube d n)) P a =
-          (system.toMuOperatorRealization.toMuHilbertRealization R.toMuCorrectionSpaceData).muCandidate
+          (system.toMuOperatorRealization.toMuHilbertRealization
+            R.toMuCorrectionSpaceData).muCandidate
             P)
     (P : BlockVec d) :
     vecDot P.1 P.2 ≤ Mu (cubeSet (originCube d n)) P a := by

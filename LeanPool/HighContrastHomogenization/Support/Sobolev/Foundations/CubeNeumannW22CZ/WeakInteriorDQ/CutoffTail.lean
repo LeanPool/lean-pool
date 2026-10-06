@@ -228,7 +228,7 @@ namespace QuantitativeCubeCutoff
 
 /-- Product-rule derivative convergence for cutoff tests, with the genuinely
 hard face term isolated as the boundary-error hypothesis. -/
-theorem tendsto_eLpNorm_euclideanCoordDeriv_mul_sub_of_tendsto_inner_of_boundary_error
+theorem tendsto_eLpNorm_productDerivative_sub_derivative
     {d : ℕ} {Q : TriadicCube d} {ψ : Vec d → ℝ} {ρ₁ ρ₂ : ℕ → ℝ}
     (η : ∀ n, QuantitativeCubeCutoff Q (ρ₁ n) (ρ₂ n))
     (hρ₁ : Filter.Tendsto ρ₁ Filter.atTop (nhds 1))

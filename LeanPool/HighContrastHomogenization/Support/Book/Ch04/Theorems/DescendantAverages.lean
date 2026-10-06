@@ -181,7 +181,7 @@ theorem isBigO_gammaSigma_restrictionDescendantAverage_of_restrictionUnitRangeDe
           (gammaSigmaIndependentSumConst σ * Real.sqrt (classCount c) * K) := by
     intro c hc
     have hcolor :=
-      isBigO_gammaSigma_finsetSum_descendantsAtScaleScaleColorClass_of_restrictionUnitRangeDependentLaw
+      gammaSigma_sum_isBigO_of_unitRangeDependentLaw
         (Q := Q) (k := k) (c := c) (P := P) hP hσ₀ hσ₂ hK X
         (fun R hR => hX_local R (mem_descendantsAtScaleScaleColorClass_iff.mp hR).1)
         (fun R hR => hX_meas R (mem_descendantsAtScaleScaleColorClass_iff.mp hR).1)
@@ -281,7 +281,7 @@ theorem isBigO_psiSigma_restrictionDescendantAverage_of_restrictionUnitRangeDepe
           (psiSigmaIndependentSumConst σ * Real.sqrt (classCount c) * K) := by
     intro c hc
     have hcolor :=
-      isBigO_psiSigma_finsetSum_descendantsAtScaleScaleColorClass_of_restrictionUnitRangeDependentLaw
+      psiSigma_sum_isBigO_of_unitRangeDependentLaw
         (Q := Q) (k := k) (c := c) (P := P) hP hσ hK X
         (fun R hR => hX_local R (mem_descendantsAtScaleScaleColorClass_iff.mp hR).1)
         (fun R hR => hX_meas R (mem_descendantsAtScaleScaleColorClass_iff.mp hR).1)

@@ -118,7 +118,7 @@ variable {d : ℕ} {U : Set (Vec d)}
 /-- Translate a coercive `H¹` estimate from `U` to `U + z` without changing its
 constant. -/
 @[expose]
-noncomputable def translate [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
+noncomputable def translate
     (hC : H1CoerciveEstimate U) (z : Vec d) :
     H1CoerciveEstimate (translateSet z U) where
   constantValue := hC.constantValue

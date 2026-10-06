@@ -60,8 +60,7 @@ current development. `HasHodgeConverse` packages the same statement as an
 instance when downstream APIs prefer typeclass style.
 -/
 @[expose]
-def HodgeConverseCriterion {d : ℕ} (U : Set (Vec d))
-    [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)] : Prop :=
+def HodgeConverseCriterion {d : ℕ} (U : Set (Vec d)) : Prop :=
   ∀ {f : Vec d → Vec d}, MemVectorL2 U f →
     (∀ {g : Vec d → Vec d}, MemVectorL2 U g ->
       IsSolenoidalZeroNormalTraceOn U g ->
@@ -261,7 +260,7 @@ theorem hasHodgeConverse_of_isOpenBoundedConvexDomain
 
 namespace IsPotentialOn
 
-theorem of_orthogonal_to_solenoidalZeroNormalTrace_of_memVectorL2_of_hodgeConverseCriterion
+theorem potential_of_orthogonalL2
     {d : ℕ} {U : Set (Vec d)} [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     (h : HodgeConverseCriterion U)
     {f : Vec d → Vec d} (hf : MemVectorL2 U f)
@@ -281,7 +280,7 @@ theorem of_orthogonal_to_solenoidalZeroNormalTrace_of_memVectorL2
         IsSolenoidalZeroNormalTraceOn U g →
           ∫ x in U, vecDot (g x) (f x) ∂MeasureTheory.volume = 0) :
     IsPotentialOn U f :=
-  of_orthogonal_to_solenoidalZeroNormalTrace_of_memVectorL2_of_hodgeConverseCriterion
+  potential_of_orthogonalL2
     (HasHodgeConverse.hodgeConverseCriterion (U := U)) hf horth
 
 theorem of_orthogonal_to_solenoidalZeroNormalTrace_of_memVectorL2_of_h1CoerciveEstimate
@@ -293,11 +292,11 @@ theorem of_orthogonal_to_solenoidalZeroNormalTrace_of_memVectorL2_of_h1CoerciveE
         IsSolenoidalZeroNormalTraceOn U g →
           ∫ x in U, vecDot (g x) (f x) ∂MeasureTheory.volume = 0) :
     IsPotentialOn U f :=
-  of_orthogonal_to_solenoidalZeroNormalTrace_of_memVectorL2_of_hodgeConverseCriterion
+  potential_of_orthogonalL2
     (hodgeConverseCriterion_of_h1CoerciveEstimate (U := U) hC) hf horth
 
 theorem restrict_of_isOpen_of_memVectorL2
-    {d : ℕ} {U V : Set (Vec d)} [MeasureTheory.IsFiniteMeasure (volumeMeasureOn V)]
+    {d : ℕ} {U V : Set (Vec d)}
     {f : Vec d → Vec d} (hf : IsPotentialOn U f) (_hU : IsOpen U) (hV : IsOpen V)
     (hVU : V ⊆ U) (hfV : MemVectorL2 V f) :
     IsPotentialOn V f := by

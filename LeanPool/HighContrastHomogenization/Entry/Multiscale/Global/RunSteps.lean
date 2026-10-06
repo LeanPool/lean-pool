@@ -97,7 +97,8 @@ theorem run_step_service {d : ℕ} (hd : 2 ≤ d) (γ : ℝ) (hγ : γ ∈ Set.I
       determinantDrift P γ (Geometry.explicitRoundedGrid jStar st.m) jStar (st.n + (S.h : ℤ)) :=
     profile_add_determinantDrift_nonneg d hd P γ E Ψ K Src hst hce jStar hjStar st.m st.hm
       st.k (st.n + (S.h : ℤ)) st.hk (by linarith only [st.hkn, hSh_nonneg])
-  have hstep_raw := potential_step_sub_le_of_quarter_bound P γ jStar (S.eta ε σ) a c C st.m st.k st.n S.h
+  have hstep_raw := potential_step_sub_le_of_quarter_bound P γ jStar (S.eta ε σ) a c C st.m st.k
+    st.n S.h
     hd0 hηpos hC ha hc hbig hx'0 hΔ0 hprop
   -- the transferred-gauge decrease
   have hwArg : 0 ≤ w := hwnn
@@ -116,7 +117,8 @@ theorem run_step_service {d : ℕ} (hd : 2 ≤ d) (γ : ℝ) (hγ : γ ∈ Set.I
       - 0 ≤
       run_reserve (fun r => blockLogDet (adaptedMean P (Geometry.explicitRoundedGrid jStar st.m) r))
           S.h st.k st.n -
-        run_reserve (fun r => blockLogDet (adaptedMean P (Geometry.explicitRoundedGrid jStar st.m) r))
+        run_reserve (fun r => blockLogDet (adaptedMean P (Geometry.explicitRoundedGrid jStar
+          st.m) r))
           S.h st.k (st.n + (S.h : ℤ)) := by
     linarith only [hsync, hlogDetLoss_nonneg]
   have hgauge : runGauge P γ jStar (S.eta ε σ) a w S.h st.m st.k (st.n + (S.h : ℤ)) -
@@ -125,9 +127,11 @@ theorem run_step_service {d : ℕ} (hd : 2 ≤ d) (γ : ℝ) (hγ : γ ∈ Set.I
     exact run_energy_transfer
       (potential P γ jStar (S.eta ε σ) a st.m st.k st.n)
       (potential P γ jStar (S.eta ε σ) a st.m st.k (st.n + (S.h : ℤ)))
-      (run_reserve (fun r => blockLogDet (adaptedMean P (Geometry.explicitRoundedGrid jStar st.m) r))
+      (run_reserve (fun r => blockLogDet (adaptedMean P (Geometry.explicitRoundedGrid jStar
+        st.m) r))
         S.h st.k st.n)
-      (run_reserve (fun r => blockLogDet (adaptedMean P (Geometry.explicitRoundedGrid jStar st.m) r))
+      (run_reserve (fun r => blockLogDet (adaptedMean P (Geometry.explicitRoundedGrid jStar
+        st.m) r))
         S.h st.k (st.n + (S.h : ℤ)))
       c w (synchCharge P (Geometry.explicitRoundedGrid jStar st.m) (S.h : ℤ) st.n) 0
       hwArg hstepArg hreserveArg
@@ -226,7 +230,8 @@ theorem run_step_sync {d : ℕ} (hd : 2 ≤ d) (γ : ℝ) (hγ : γ ∈ Set.Ico 
     have := Real.one_le_exp (mul_nonneg hQnonneg hΔ0)
     linarith only [this]
   have hprop1' := hprop1 st.m st.hm st.k st.n st.hk st.hkn hkh
-  have hpropC : profile P γ (Geometry.explicitRoundedGrid jStar st.m) jStar st.k (st.n + (S.h : ℤ)) +
+  have hpropC : profile P γ (Geometry.explicitRoundedGrid jStar st.m) jStar st.k (st.n + (S.h :
+    ℤ)) +
       determinantDrift P γ (Geometry.explicitRoundedGrid jStar st.m) jStar (st.n + (S.h : ℤ)) ≤
       1 / 8 * Real.exp ((bigQ d γ : ℝ) *
             synchCharge P (Geometry.explicitRoundedGrid jStar st.m) (S.h : ℤ) st.n) *
@@ -240,7 +245,8 @@ theorem run_step_sync {d : ℕ} (hd : 2 ≤ d) (γ : ℝ) (hγ : γ ∈ Set.Ico 
           synchCharge P (Geometry.explicitRoundedGrid jStar st.m) (S.h : ℤ) st.n) - 1) :=
       mul_le_mul_of_nonneg_right hCone' hexpnn
     linarith only [hprop1', h2]
-  have hstep_raw := potential_step_sub_le_of_exp_bound P γ jStar (S.eta ε σ) a c C (bigQ d γ : ℝ) st.m st.k st.n
+  have hstep_raw := potential_step_sub_le_of_exp_bound P γ jStar (S.eta ε σ) a c C (bigQ d γ :
+    ℝ) st.m st.k st.n
     S.h hd0 ⟨hηpos, selectionData_eta_le_one S ε σ hε hσ⟩ hC hQnonneg hweight hc hbig hx'0
     hΔ0 hpropC
   have hstepArg : potential P γ jStar (S.eta ε σ) a st.m st.k (st.n + (S.h : ℤ)) -
@@ -258,7 +264,8 @@ theorem run_step_sync {d : ℕ} (hd : 2 ≤ d) (γ : ℝ) (hγ : γ ∈ Set.Ico 
       - 0 ≤
       run_reserve (fun r => blockLogDet (adaptedMean P (Geometry.explicitRoundedGrid jStar st.m) r))
           S.h st.k st.n -
-        run_reserve (fun r => blockLogDet (adaptedMean P (Geometry.explicitRoundedGrid jStar st.m) r))
+        run_reserve (fun r => blockLogDet (adaptedMean P (Geometry.explicitRoundedGrid jStar
+          st.m) r))
           S.h st.k (st.n + (S.h : ℤ)) := by
     linarith only [hsync, hlogDetLoss_nonneg]
   have hgauge : runGauge P γ jStar (S.eta ε σ) a w S.h st.m st.k (st.n + (S.h : ℤ)) -
@@ -267,9 +274,11 @@ theorem run_step_sync {d : ℕ} (hd : 2 ≤ d) (γ : ℝ) (hγ : γ ∈ Set.Ico 
     exact run_energy_transfer
       (potential P γ jStar (S.eta ε σ) a st.m st.k st.n)
       (potential P γ jStar (S.eta ε σ) a st.m st.k (st.n + (S.h : ℤ)))
-      (run_reserve (fun r => blockLogDet (adaptedMean P (Geometry.explicitRoundedGrid jStar st.m) r))
+      (run_reserve (fun r => blockLogDet (adaptedMean P (Geometry.explicitRoundedGrid jStar
+        st.m) r))
         S.h st.k st.n)
-      (run_reserve (fun r => blockLogDet (adaptedMean P (Geometry.explicitRoundedGrid jStar st.m) r))
+      (run_reserve (fun r => blockLogDet (adaptedMean P (Geometry.explicitRoundedGrid jStar
+        st.m) r))
         S.h st.k (st.n + (S.h : ℤ)))
       c w (synchCharge P (Geometry.explicitRoundedGrid jStar st.m) (S.h : ℤ) st.n) 0
       hwnn hstepArg hreserveArg
@@ -405,7 +414,8 @@ theorem run_step_long {d : ℕ} (hd : 2 ≤ d) (γ : ℝ) (hγ : γ ∈ Set.Ico 
       (st.n + 2 * (S.L ε σ : ℤ)) - 0 ≤
       run_reserve (fun r => blockLogDet (adaptedMean P (Geometry.explicitRoundedGrid jStar st.m) r))
           S.h st.k st.n -
-        run_reserve (fun r => blockLogDet (adaptedMean P (Geometry.explicitRoundedGrid jStar st.m) r))
+        run_reserve (fun r => blockLogDet (adaptedMean P (Geometry.explicitRoundedGrid jStar
+          st.m) r))
           S.h st.k (st.n + 2 * (S.L ε σ : ℤ)) := by
     have heq : detIncrement P (Geometry.explicitRoundedGrid jStar st.m) st.n
         (st.n + 2 * (S.L ε σ : ℤ)) =
@@ -421,9 +431,11 @@ theorem run_step_long {d : ℕ} (hd : 2 ≤ d) (γ : ℝ) (hγ : γ ∈ Set.Ico 
     exact run_energy_transfer
       (potential P γ jStar (S.eta ε σ) a st.m st.k st.n)
       (potential P γ jStar (S.eta ε σ) a st.m st.k (st.n + 2 * (S.L ε σ : ℤ)))
-      (run_reserve (fun r => blockLogDet (adaptedMean P (Geometry.explicitRoundedGrid jStar st.m) r))
+      (run_reserve (fun r => blockLogDet (adaptedMean P (Geometry.explicitRoundedGrid jStar
+        st.m) r))
         S.h st.k st.n)
-      (run_reserve (fun r => blockLogDet (adaptedMean P (Geometry.explicitRoundedGrid jStar st.m) r))
+      (run_reserve (fun r => blockLogDet (adaptedMean P (Geometry.explicitRoundedGrid jStar
+        st.m) r))
         S.h st.k (st.n + 2 * (S.L ε σ : ℤ)))
       c w (detIncrement P (Geometry.explicitRoundedGrid jStar st.m) st.n
         (st.n + 2 * (S.L ε σ : ℤ))) 0

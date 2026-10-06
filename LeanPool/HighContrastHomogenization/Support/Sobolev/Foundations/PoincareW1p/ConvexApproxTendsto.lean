@@ -29,6 +29,8 @@ theorem unitConvexApproxScale_pos (n : ℕ) :
   dsimp [unitConvexApproxScale]
   positivity
 
+/-- The `W^{1,p}` smoothing of `u` obtained by convolving its zero extension at scale `r / (n +
+1)` and evaluating at the affine contraction toward `x0`. -/
 @[expose]
 noncomputable def convexApproxSmoothW1p
     (hU : IsOpenBoundedConvexDomain U) (hp1 : 1 ≤ p) (u : W1pFunction U p)

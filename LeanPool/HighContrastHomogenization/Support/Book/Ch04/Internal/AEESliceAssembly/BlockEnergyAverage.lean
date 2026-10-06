@@ -50,7 +50,7 @@ If the single-claim summary above grows into three or more distinct
 claims, split or refactor per the rebuild contract.
 -/
 
-theorem AEEQuantitativeEllipticSlice.ae_toHilbertMatrixL2_mem_quantitativeEllipticHilbertMatSet
+theorem AEEQuantitativeEllipticSlice.ae_hilbertMatrixL2_mem_ellipticMatrixSet
     {d : ℕ} {U : Set (Vec d)} {k : ℕ}
     [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     (a : {a : CoeffField d // AEEQuantitativeEllipticSlice U k a}) :
@@ -102,7 +102,8 @@ theorem AEEQuantitativeEllipticSlice.weightedFullBlockCoeffEntryIntegral_eq_hilb
     with x hx
   rw [hx]
 
-theorem AEEQuantitativeEllipticSlice.measurable_l2WeightedFullBlockCoeffEntryIntegral_of_lipschitzExtension
+theorem
+  AEEQuantitativeEllipticSlice.measurable_l2WeightedBlockEntryIntegral_of_lipschitz
     {d : ℕ} {U : Set (Vec d)} {k : ℕ}
     [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     (hToL2 :
@@ -146,7 +147,7 @@ theorem AEEQuantitativeEllipticSlice.measurable_l2WeightedFullBlockCoeffEntryInt
                 ∂volumeMeasureOn U := by
             refine MeasureTheory.integral_congr_ae ?_
             filter_upwards
-                [AEEQuantitativeEllipticSlice.ae_toHilbertMatrixL2_mem_quantitativeEllipticHilbertMatSet
+                [AEEQuantitativeEllipticSlice.ae_hilbertMatrixL2_mem_ellipticMatrixSet
                   a]
               with x hx
             rw [hQ_eq _ hx]]
@@ -173,7 +174,7 @@ theorem AEEQuantitativeEllipticSlice.measurable_l2WeightedFullBlockCoeffEntryInt
           w x * toFullBlockMat (blockCoeffField a.1 x) α β ∂MeasureTheory.volume) := by
   obtain ⟨Q, hQ_lip, hQ_eq_on⟩ := hLip.extend_real
   refine
-    AEEQuantitativeEllipticSlice.measurable_l2WeightedFullBlockCoeffEntryIntegral_of_lipschitzExtension
+    AEEQuantitativeEllipticSlice.measurable_l2WeightedBlockEntryIntegral_of_lipschitz
       hToL2 hw α β hQ_lip ?_
   intro A hA
   exact (hQ_eq_on hA).symm
@@ -231,7 +232,8 @@ theorem AEEQuantitativeEllipticSlice.integrable_weightedFullBlockCoeffEntry_of_i
         (A := a x) hxEll α β
   simpa [coeff] using hw.mul_bdd hcoeff_ae.aestronglyMeasurable hbound
 
-theorem AEEQuantitativeEllipticSlice.measurable_integrableWeightedFullBlockCoeffEntryIntegral_of_measurable
+theorem
+  AEEQuantitativeEllipticSlice.measurable_integrableWeightedBlockEntryIntegral
     {d : ℕ} {U : Set (Vec d)} {k : ℕ}
     [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     (hToL2 :
@@ -389,7 +391,7 @@ theorem AEEQuantitativeEllipticSlice.measurable_integrableWeightedFullBlockCoeff
           ∫ x in U,
             w' x * toFullBlockMat (blockCoeffField a.1 x) α β
               ∂MeasureTheory.volume) :=
-    AEEQuantitativeEllipticSlice.measurable_integrableWeightedFullBlockCoeffEntryIntegral_of_measurable
+    AEEQuantitativeEllipticSlice.measurable_integrableWeightedBlockEntryIntegral
         hToL2 hw'_meas hw'_int α β
   rw [show
       (fun a : {a : CoeffField d // AEEQuantitativeEllipticSlice U k a} =>
@@ -681,7 +683,8 @@ theorem measurable_galerkinAffineMinimizer_canonicalAEEMuGenerator_aeeQuantitati
 /-- Slice-local strong measurability of the selected canonical doubled-`Mu`
 Hilbert minimizer, once the canonical finite Galerkin approximants satisfy the
 deterministic energy-comparison convergence hypotheses. -/
-theorem stronglyMeasurable_canonicalAEEMuHilbertMinimizer_aeeQuantitativeSlice_cubeSet_of_galerkin_energy
+theorem
+  stronglyMeasurable_canonicalAEEMuHilbertMinimizer_aeeQuantitativeSlice_cubeSet_of_galerkin_energy
     {d : ℕ} (Q : TriadicCube d) (k : ℕ) (P : BlockVec d)
     (e : (m : ℕ) → Fin m → canonicalMuBlockCorrectionGeneratorSubmodule (cubeSet Q))
     (v :

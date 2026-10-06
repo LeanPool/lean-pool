@@ -25,11 +25,11 @@ public section
 The annealed primal-adjoint order is proved on the flattened carrier, for an
 abstract random positive definite doubled matrix.  The paper's own random matrix
 is the variational coarse block `𝐀(U; a)` of `s.introduction`, whose average
-`𝐀̄(U)` is defined one scalar Bochner integral per entry.  This file transports
+`𝐀_bar(U)` is defined one scalar Bochner integral per entry.  This file transports
 the abstract statement onto that carrier.
 
 Two facts do the transporting.  The first is that the entrywise definition of
-`𝐀̄(U)` really is the Bochner integral of the matrix-valued map: a matrix over a
+`𝐀_bar(U)` really is the Bochner integral of the matrix-valued map: a matrix over a
 finite index type is the finite sum `∑ i, ∑ j, M i j • single i j 1` of scalar
 multiples of fixed single-entry matrices, so entrywise integrability is
 integrability, and the vector-valued integral is computed entrywise.  The second

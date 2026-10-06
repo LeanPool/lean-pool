@@ -74,7 +74,8 @@ theorem oneStoppingBallCoefficient_ne_top {d : ℕ} {q : FiniteLpExponent}
       · norm_num
       · exact ENNReal.pow_ne_top (by norm_num)
     · exact ENNReal.rpow_ne_top_of_nonneg ENNReal.toReal_nonneg
-        (ENNReal.mul_ne_top (by norm_num) (axisCube_harmonicEuclideanGradientGain_coefficient_ne_top G))
+        (ENNReal.mul_ne_top (by norm_num)
+          (axisCube_harmonicEuclideanGradientGain_coefficient_ne_top G))
   · apply ENNReal.mul_ne_top
     · norm_num
     · exact ENNReal.ofReal_ne_top
@@ -253,7 +254,8 @@ theorem exists_stoppingComparison_harmonic_remainder
               (by
                 rw [axisCubeNormalizedMeasure_eq_smul_volume_restrict _ _ hL]
                 exact (memHilbertVectorL2_hilbertifyVecField
-                  w.toH1Function.grad_memVectorL2).smul_measure hscale_ne_top |>.neg.aestronglyMeasurable)
+                  w.toH1Function.grad_memVectorL2).smul_measure hscale_ne_top
+                    |>.neg.aestronglyMeasurable)
       _ ≤ (G.constantValue * (d : ℝ≥0∞)) *
             (ENNReal.ofReal level + ENNReal.ofReal (eps * level)) := by
             gcongr

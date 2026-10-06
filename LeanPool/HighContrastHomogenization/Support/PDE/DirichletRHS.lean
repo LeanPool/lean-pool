@@ -482,12 +482,16 @@ noncomputable def closedSubmodule (M : PotentialSolenoidalL2Data U) :
   M.potentialZeroTrace.comap
     ((continuousLinearEquivVectorL2 (U := U)).symm.toContinuousLinearMap)
 
+/-- The submodule of Hilbert L² vector fields corresponding to the closed zero-trace potential
+subspace. -/
 noncomputable abbrev submodule (M : PotentialSolenoidalL2Data U) :
     Submodule ℝ (HilbertVectorL2 U) :=
   (closedSubmodule (M := M)).toSubmodule
 
+/-- The Hilbert-space carrier of the closed zero-trace potential submodule. -/
 noncomputable abbrev Space (M : PotentialSolenoidalL2Data U) :=
   ↥(submodule (M := M))
+
 
 noncomputable instance instSeminormedAddCommGroup (M : PotentialSolenoidalL2Data U) :
     SeminormedAddCommGroup (Space M) := by
@@ -522,6 +526,9 @@ noncomputable def vectorFieldCLM (M : PotentialSolenoidalL2Data U) :
   ((continuousLinearEquivVectorL2 (U := U)).symm.toContinuousLinearMap).comp
     (submodule (M := M)).subtypeL
 
+
+/-- The algebraic vector L² field represented by an element of the zero-trace potential Hilbert
+space. -/
 noncomputable abbrev vectorField {M : PotentialSolenoidalL2Data U} (z : Space M) : VectorL2 U :=
   vectorFieldCLM M z
 
@@ -757,13 +764,16 @@ theorem isCoercive_coeffBilin {M : PotentialSolenoidalL2Data U}
   intro z
   simpa [pow_two, mul_assoc] using coeffBilin_self_ge_lam_mul_norm_sq (M := M) hEll z
 
+
+/-- The Riesz representative in the zero-trace potential Hilbert space of a continuous real linear
+functional. -/
 @[expose]
 noncomputable def forcingRieszMap (M : PotentialSolenoidalL2Data U) :
     (Space M →L[ℝ] ℝ) → Space M :=
   fun ℓ => (InnerProductSpace.toDual ℝ (Space M)).symm ℓ
 
 omit [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)] in
-@[simp] theorem inner_forcingRieszMap_apply (M : PotentialSolenoidalL2Data U)
+theorem inner_forcingRieszMap_apply (M : PotentialSolenoidalL2Data U)
     (ℓ : Space M →L[ℝ] ℝ) (z : Space M) :
     inner ℝ (forcingRieszMap M ℓ) z = ℓ z := by
   change inner ℝ (((InnerProductSpace.toDual ℝ (Space M)).symm) ℓ) z = ℓ z
@@ -774,6 +784,9 @@ omit [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)] in
       (x := z)
       (y := (ℓ : StrongDual ℝ (Space M)))
 
+
+/-- The Riesz representative of the L² pairing with the forcing vector field `g` on the zero-trace
+potential Hilbert space. -/
 @[expose]
 noncomputable def forcingRieszRep (M : PotentialSolenoidalL2Data U)
     {g : Vec d → Vec d} (hg : MemVectorL2 U g) :
@@ -781,7 +794,7 @@ noncomputable def forcingRieszRep (M : PotentialSolenoidalL2Data U)
   forcingRieszMap M (forcingFunctionalCLM (M := M) hg)
 
 omit [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)] in
-@[simp] theorem inner_forcingRieszRep_apply (M : PotentialSolenoidalL2Data U)
+theorem inner_forcingRieszRep_apply (M : PotentialSolenoidalL2Data U)
     {g : Vec d → Vec d} (hg : MemVectorL2 U g) (z : Space M) :
     inner ℝ (forcingRieszRep M hg) z =
       forcingFunctionalCLM (M := M) hg z := by
@@ -824,9 +837,11 @@ theorem coeffBilin_coeffProblemSolution_apply (M : PotentialSolenoidalL2Data U)
 
 end PotentialZeroTraceHilbert
 
+
+/-- The continuous linear functional on vector L² fields given by the integral of their dot
+product with `g` over `U`. -/
 @[expose]
 public noncomputable def vectorPairingCLM {d : ℕ} {U : Set (Vec d)}
-    [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     {g : Vec d → Vec d} (hg : MemVectorL2 U g) :
     VectorL2 U →L[ℝ] ℝ :=
   (InnerProductSpace.toDual ℝ (HilbertVectorL2 U) (toHilbertVectorL2OfVecField hg)).comp
@@ -834,7 +849,6 @@ public noncomputable def vectorPairingCLM {d : ℕ} {U : Set (Vec d)}
 
 theorem exists_isZeroTraceDirichletRhsWeakSolution_of_potentialZeroTraceClosureRealization
     {d : ℕ} {a : CoeffField d} {U : Set (Vec d)}
-    [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     {g : Vec d → Vec d} {lam Lam : ℝ}
     (hg : MemVectorL2 U g)
     (hRealize : PotentialSolenoidalL2Data.HasPotentialZeroTraceClosureRealization U)
@@ -915,7 +929,7 @@ noncomputable def zeroTraceDirichletRhsProblemSolution_of_potentialZeroTraceClos
       hg hRealize hne hEll)
 
 theorem
-    isZeroTraceDirichletRhsWeakSolution_zeroTraceDirichletRhsProblemSolution_of_potentialZeroTraceClosureRealization
+    isZeroTraceDirichletRhsWeakSolution_zeroTraceDirichletRhsProblemSolution
     {d : ℕ} {a : CoeffField d} {U : Set (Vec d)}
     [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     {g : Vec d → Vec d} {lam Lam : ℝ}
@@ -953,7 +967,7 @@ theorem
       (a := a) (U := U) (g := g) (lam := lam) (Lam := Lam)
       hg hRealize hne hEll
   have hv : IsZeroTraceDirichletRhsWeakSolution a U v g :=
-    isZeroTraceDirichletRhsWeakSolution_zeroTraceDirichletRhsProblemSolution_of_potentialZeroTraceClosureRealization
+    isZeroTraceDirichletRhsWeakSolution_zeroTraceDirichletRhsProblemSolution
       (a := a) (U := U) (g := g) (lam := lam) (Lam := Lam)
       hg hRealize hne hEll
   simpa [v] using
@@ -961,7 +975,7 @@ theorem
       (U := U) (a := a) (u := u) (v := v) (g := g) hne hu hv hEll
 
 theorem
-  exists_isZeroTraceDirichletRhsWeakSolution_of_gradient_firstVariation_eq_integral_of_isPotentialZeroTraceOn
+  exists_isZeroTraceDirichletRhsWeakSolution_of_potentialZeroTrace
     {d : ℕ} {a : CoeffField d} {U : Set (Vec d)}
     {f g : Vec d → Vec d}
     (hfirst :
@@ -988,7 +1002,7 @@ theorem
     (hpot : IsPotentialZeroTraceOn U u.grad) :
     ∃ v : H10Function U, IsZeroTraceDirichletRhsWeakSolution a U v g := by
   exact
-    exists_isZeroTraceDirichletRhsWeakSolution_of_gradient_firstVariation_eq_integral_of_isPotentialZeroTraceOn
+    exists_isZeroTraceDirichletRhsWeakSolution_of_potentialZeroTrace
       (a := a) (U := U) (f := u.grad) (g := g) hfirst hpot
 
 end HCPolySupport

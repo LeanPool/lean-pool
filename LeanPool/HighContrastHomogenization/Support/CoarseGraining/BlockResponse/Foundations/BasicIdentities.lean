@@ -100,6 +100,7 @@ theorem blockMatVecMul_blockCoeffField_pair_of_isEllipticFieldOn {d : ℕ}
   exact blockMatVecMul_blockCoeffField_pair_of_isUnit_det_symmPart a x
     (isUnit_det_symmPart_of_isEllipticMatrix (hEll.2 x hx)) ξ η
 
+/-- The scalar response density `-ξ · symmPart(A) ξ / 2 - p · Aξ + q · ξ`. -/
 @[expose]
 def pointwiseScalarResponseIntegrand {d : ℕ} (A : Mat d)
     (p q ξ : Vec d) : ℝ :=
@@ -274,12 +275,15 @@ theorem blockResponse_lowerImage_orthogonal_of_mem_responseSpace {d : ℕ}
   rw [hrewrite] at hzero
   exact hzero
 
+/-- Integrability on `U` of the block response integrand for every state in the response space. -/
 structure BlockJIntegrabilityData {d : ℕ} (U : Set (Vec d)) (a : CoeffField d)
     (P Q : BlockVec d) : Prop where
   response :
     ∀ X : BlockState d, BlockResponseSpace a U X →
       MeasureTheory.IntegrableOn (blockResponseIntegrand a P Q X) U
 
+/-- L² membership on `U` of the lower component of the block coefficient image of every response
+state. -/
 structure BlockResponseLowerImageMemVectorL2Data {d : ℕ} (U : Set (Vec d))
     (a : CoeffField d) : Prop where
   lowerImage_memVectorL2 :
@@ -305,7 +309,7 @@ theorem blockResponse_upperImage_isSolenoidalOn_of_mem_responseSpace {d : ℕ}
   simpa [vecDot_comm] using hzero
 
 theorem
-  blockResponse_lowerImage_isPotential_of_mem_responseSpace_of_memVectorL2_of_hodgeConverseCriterion {d : ℕ}
+  blockResponse_lowerImage_potential_of_hodgeConverse {d : ℕ}
     {a : CoeffField d} {U : Set (Vec d)} {X : BlockState d}
     [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     (hHodge : HodgeConverseCriterion U)
@@ -316,7 +320,7 @@ theorem
     IsPotentialOn U
       (fun x => (blockMatVecMul (blockCoeffField a x) (X.eval x)).2) := by
   refine
-    IsPotentialOn.of_orthogonal_to_solenoidalZeroNormalTrace_of_memVectorL2_of_hodgeConverseCriterion
+    IsPotentialOn.potential_of_orthogonalL2
       hHodge hLowerL2 ?_
   intro g hg hsol
   exact blockResponse_lowerImage_orthogonal_of_mem_responseSpace (hX := hX) (Y := g) hsol
@@ -332,7 +336,7 @@ theorem blockResponse_lowerImage_isPotential_of_mem_responseSpace_of_memVectorL2
     IsPotentialOn U
       (fun x => (blockMatVecMul (blockCoeffField a x) (X.eval x)).2) := by
   exact
-    blockResponse_lowerImage_isPotential_of_mem_responseSpace_of_memVectorL2_of_hodgeConverseCriterion
+    blockResponse_lowerImage_potential_of_hodgeConverse
       (U := U)
       (hHodge := HasHodgeConverse.hodgeConverseCriterion (U := U))
       hX hLowerL2
@@ -341,7 +345,7 @@ theorem blockResponse_lowerImage_isPotential_of_mem_responseSpace_of_memVectorL2
 state to a potential field. This is the Chapter-2-facing surface to use when
 the domain is a bounded open convex set. -/
 theorem
-  blockResponse_lowerImage_isPotential_of_mem_responseSpace_of_memVectorL2_of_isOpenBoundedConvexDomain
+  blockResponse_lowerImage_isPotential_of_memVectorL2_of_convexDomain
     {d : ℕ} {a : CoeffField d} {U : Set (Vec d)} {X : BlockState d}
     [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     (hConv : IsOpenBoundedConvexDomain U)
@@ -352,14 +356,13 @@ theorem
     IsPotentialOn U
       (fun x => (blockMatVecMul (blockCoeffField a x) (X.eval x)).2) := by
   exact
-    blockResponse_lowerImage_isPotential_of_mem_responseSpace_of_memVectorL2_of_hodgeConverseCriterion
+    blockResponse_lowerImage_potential_of_hodgeConverse
       (U := U)
       (hHodge := hodgeConverseCriterion_of_isOpenBoundedConvexDomain (U := U) hConv)
       hX hLowerL2
 
 theorem blockResponse_memBlockL2_of_mem_responseSpace_of_integrabilityData {d : ℕ}
     {a : CoeffField d} {U : Set (Vec d)} {X : BlockState d}
-    [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     (hX : BlockResponseSpace a U X) (hInt : BlockResponseIntegrabilityData U a X) :
     MemBlockL2 U X.eval := by
   simpa [BlockState.eval, blockField] using!

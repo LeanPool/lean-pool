@@ -41,7 +41,8 @@ This file contains the scalar algebra for the manuscript choices
 /-- The centered-response expectation is the raw response expectation with the
 manuscript scalar centering subtracted, specialized to the Section 5.3 special
 vectors. -/
-theorem expectedResponseJCubeSet_sub_half_vecDot_specialCentering_eq_expectedCenteredResponseJAtScale
+theorem
+  expectedResponseJCubeSet_sub_half_vecDot_specialCentering_eq_expectedCenteredResponseJAtScale
     {d : ℕ} [NeZero d] {P : Ch04.RestrictionCoeffLaw d}
     (hP : Ch04.RestrictionLawCarrier P) (hStruct : Ch04.RestrictionStructuralLaw P)
     (hP4 : QuantitativeCoarseGrainedEllipticity P) (m : ℕ) (e : Vec d) :
@@ -223,7 +224,7 @@ private theorem barSigmaStarAtScale_pos_of_P4
     Section52.originBlockIntegrableAtScale_from_P4 hP hStruct hP4 m
   have hInv : 0 < hP.barSigmaStarInvAtScale hStruct (m : ℤ) := by
     simpa [Ch04.RestrictionLawCarrier.barSigmaStarInvAtScale] using
-      Ch04.RestrictionLawCarrier.Internal.barSigmaStarInv_pos_of_integrable_coarseFullBlockMatrixAtCube
+      Ch04.RestrictionLawCarrier.Internal.barSigmaStarInverse_pos_of_integrableBlockMatrix
         hP
         (Ch04.Internal.annealedPrimitiveScalarizationData_of_structuralLaw
           hP hStruct (m : ℤ))

@@ -80,7 +80,8 @@ theorem response_by_centered_energies_full_inv {A : BlockMat d}
     simp only [matTranspose, Matrix.conjTranspose_eq_transpose_of_trivial]
     abel
   apply Matrix.inv_eq_right_inv
-  rw [toFullBlockMat_eq_fromBlocks, hU, hC, hA11, Matrix.fromBlocks_multiply, ← Matrix.fromBlocks_one]
+  rw [toFullBlockMat_eq_fromBlocks, hU, hC, hA11, Matrix.fromBlocks_multiply, ←
+    Matrix.fromBlocks_one]
   congr 1
   · rw [Matrix.add_mul, Matrix.neg_mul, hSi]
     rw [Matrix.mul_assoc ((schurSkew A)ᴴ * A.lowerRight) (schurSkew A) (schurSigma A)⁻¹,
@@ -127,7 +128,8 @@ theorem response_by_centered_energies_sharp_blocks {A : BlockMat d} (hs : IsSymm
         (schurSigma A)⁻¹⟩ : BlockMat d) := by
   have hR : toFullBlockMat (blockSwap d) = Matrix.fromBlocks (0 : Mat d) 1 1 0 := by
     rw [toFullBlockMat_eq_fromBlocks]; rfl
-  rw [response_by_centered_energies_full_inv hs hp, hR, Matrix.fromBlocks_multiply, Matrix.fromBlocks_multiply]
+  rw [response_by_centered_energies_full_inv hs hp, hR, Matrix.fromBlocks_multiply,
+    Matrix.fromBlocks_multiply]
   simp only [zero_mul, mul_zero, one_mul, mul_one, zero_add, add_zero]
   rfl
 
@@ -217,7 +219,8 @@ theorem response_by_centered_energies_block_comparison {A : BlockMat d} (hs : Is
   have hba : ∀ x : Vec d, vecDot x (matVecMul A.lowerRight⁻¹ x) ≤
       vecDot x (matVecMul (schurSigma A) x) := by
     intro x
-    have hmat : schurSigmaStar A ≤ schurSigma A := response_by_centered_energies_aux_sigmaStar_le_sigma hs hp ho
+    have hmat : schurSigmaStar A ≤ schurSigma A :=
+      response_by_centered_energies_aux_sigmaStar_le_sigma hs hp ho
     have h := (BlockGeometricMean.matLE_iff hT.inv.isHermitian hS.isHermitian).1 hmat x
     linarith only [h]
   have hF1 : ∀ x : Vec d, vecDot x (matVecMul (schurSigma A) x) ≤
@@ -267,7 +270,8 @@ theorem response_by_centered_energies_block_comparison {A : BlockMat d} (hs : Is
             (w - (matVecMul (respSym A) x + matVecMul (respSym A) x))) := by
     intro x w
     have h := ho (x, w - matVecMul (matTranspose (schurSkew A)) x)
-    rw [response_by_centered_energies_qform_sharp hs hp, response_by_centered_energies_qform hs hp] at h
+    rw [response_by_centered_energies_qform_sharp hs hp, response_by_centered_energies_qform hs
+      hp] at h
     rw [sub_add_cancel] at h
     rw [show w - matVecMul (matTranspose (schurSkew A)) x - matVecMul (schurSkew A) x =
         w - (matVecMul (respSym A) x + matVecMul (respSym A) x) by
@@ -397,7 +401,8 @@ theorem response_by_centered_energies_rTr_posSemidef {A : BlockMat d} (hs : IsSy
   rwa [response_by_centered_energies_respSym_herm] at h
 
 /-- `b_t` is positive definite. -/
-theorem response_by_centered_energies_respBlockB_posDef {A : BlockMat d} (hs : IsSymmetricBlockMat A)
+theorem response_by_centered_energies_respBlockB_posDef {A : BlockMat d} (hs :
+  IsSymmetricBlockMat A)
     (hp : Book.Ch02.BlockPosDef A) : (respBlockB A).PosDef :=
   (Analysis.posDef_schurSigma hs hp).add_posSemidef
     (response_by_centered_energies_rTr_posSemidef hs hp)
@@ -429,7 +434,8 @@ theorem response_by_centered_energies_trace_conj {A : BlockMat d} (hs : IsSymmet
         rw [Matrix.add_mul, Matrix.trace_add]
 
 /-- `tr(r_t S_*^{-1} r_t S_*^{-1}) ≥ 0`. -/
-theorem response_by_centered_energies_trace_rTrT_nonneg {A : BlockMat d} (hs : IsSymmetricBlockMat A)
+theorem response_by_centered_energies_trace_rTrT_nonneg {A : BlockMat d} (hs :
+  IsSymmetricBlockMat A)
     (hp : Book.Ch02.BlockPosDef A) :
     0 ≤ Matrix.trace (respSym A * A.lowerRight * respSym A * A.lowerRight) := by
   have hRR : matSqrt A.lowerRight * matSqrt A.lowerRight = A.lowerRight :=
@@ -604,16 +610,19 @@ printed weight `3^{-3n/2}` times the flat average over the generation-`(s-n)` ce
 `(|b_{s-n,z}^{1/2} P| + |(S_{*,s-n,z})^{-1/2} Q|)^2`.  `respSourceLoad` is the sum of this family
 over `n`. -/
 @[expose]
-noncomputable def respSourceLoadSummand (P : Measure (CoeffSpace d)) (jStar : ℕ) (F : BlockMat d) (s : ℤ)
+noncomputable def respSourceLoadSummand (P : Measure (CoeffSpace d)) (jStar : ℕ) (F : BlockMat
+  d) (s : ℤ)
     (b : CoeffSpace d → CoeffField d) (Y : BlockVec d) (n : ℕ) : ℝ :=
   (3 : ℝ) ^ (-((3 : ℝ) / 2) * (n : ℝ)) *
     ((((triadicIndexBox d n).card : ℝ))⁻¹ *
       ∑ z ∈ triadicIndexBox d n,
         (Real.sqrt (vecDot Y.1 (matVecMul
-              (annealedBlockOf P (adaptedCellAtCenter (respGrid jStar F) (s - (n : ℤ)) z) b).upperLeft
+              (annealedBlockOf P (adaptedCellAtCenter (respGrid jStar F) (s - (n : ℤ)) z)
+                b).upperLeft
               Y.1)) +
           Real.sqrt (vecDot Y.2 (matVecMul
-              (annealedBlockOf P (adaptedCellAtCenter (respGrid jStar F) (s - (n : ℤ)) z) b).lowerRight
+              (annealedBlockOf P (adaptedCellAtCenter (respGrid jStar F) (s - (n : ℤ)) z)
+                b).lowerRight
               Y.2))) ^ 2)
 
 /-- The source load is the sum of its generation summands. -/
@@ -706,7 +715,8 @@ theorem response_by_centered_energies (d : ℕ) (_hd : 2 ≤ d) (γ : ℝ)
     respKappa P jStar F t - 1 ≤ 12 * (d : ℝ) * M := by
   have := _raw.prob
   let : NeZero d := ⟨by omega⟩
-  have hm : (explicitCanonicalMetric F).PosDef := Geometry.explicitCanonicalMetric_posDef _raw.symm _raw.pos
+  have hm : (explicitCanonicalMetric F).PosDef := Geometry.explicitCanonicalMetric_posDef
+    _raw.symm _raw.pos
   have hEt : (toFullBlockMat (respMean P jStar F t)).PosDef :=
     Annealed.adaptedMean_posDef d _hd P γ E Ψ Kg Src _raw.stat _raw.ell jStar _raw.hj
       (explicitCanonicalMetric F) hm t
@@ -726,7 +736,8 @@ theorem response_by_centered_energies (d : ℕ) (_hd : 2 ≤ d) (γ : ℝ)
     have h := _hM _ he
     linarith only [h, abs_nonneg (respCenteredJMinus P jStar F t (Pi.single i0 (1 : ℝ))),
       abs_nonneg (respCenteredJPlus P jStar F t (Pi.single i0 (1 : ℝ)))]
-  have hmpos : (respM (respMean P jStar F t)).PosDef := response_by_centered_energies_respM_posDef hsT hbT
+  have hmpos : (respM (respMean P jStar F t)).PosDef :=
+    response_by_centered_energies_respM_posDef hsT hbT
   have hsum := response_by_centered_energies_aux_response_sum (respMean P jStar F t) hsT hbT
     (respCenteredJMinus P jStar F t) (respCenteredJPlus P jStar F t) (fun _ => rfl) M _hM
   have ht1 : ∑ i : Fin d, vecDot (respP (respMean P jStar F t) (Pi.single i 1))

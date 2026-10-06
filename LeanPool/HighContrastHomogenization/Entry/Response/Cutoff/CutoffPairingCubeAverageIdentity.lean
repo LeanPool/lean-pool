@@ -304,7 +304,8 @@ theorem cutoffPairingIntegrability_of_inputs {d : ℕ} [NeZero d] {jStar : ℕ} 
     memLp_two_coords_optimizerField_sub_const (q := respGrid jStar F) hq t hEll hbf u Y
   have hfin : IsFiniteMeasure (volume.restrict (respCell jStar F t)) := by
     simpa only [respCell] using
-      (adaptedCell_isOpenBoundedConvexDomain (respGrid jStar F) hq t).isFiniteMeasure_restrict_volume
+      (adaptedCell_isOpenBoundedConvexDomain (respGrid jStar F) hq
+        t).isFiniteMeasure_restrict_volume
   refine integrableOn_cutoff_pairing_of_coords (V := respCell jStar F t)
     (A := fun x => matVecMul (b x) (u.toH1.grad x) - Y.2)
     (B := fun x => u.toH1.grad x - Y.1) ?_ ?_ ?_ ?_

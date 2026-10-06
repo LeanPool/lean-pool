@@ -193,7 +193,8 @@ theorem isMaximalAdaptedCellIn_iff_isMaximalCellIn_preimage
       exact Set.image_mono hsub
     have heq := h.2 r' w' hadapt hsubA
     have himage := congrArg (Set.preimage (matVecMul q)) heq
-    rw [adaptedCellAtCenter_eq_affine_standardCell, adaptedCellAtCenter_eq_affine_standardCell] at himage
+    rw [adaptedCellAtCenter_eq_affine_standardCell, adaptedCellAtCenter_eq_affine_standardCell]
+      at himage
     ext x
     constructor <;> intro hx
     · have : matVecMul q x ∈ matVecMul q '' standardCell d r w := by
@@ -254,6 +255,7 @@ theorem volume_image_iUnion_gridFaces (q : Mat d) :
   have himage : matVecMul q '' (⋃ k : ℤ, gridFaces d k) =
       (fun v : Vec d => (0 : Vec d) + matVecMul q v) '' (⋃ k : ℤ, gridFaces d k) := by
     simp only [zero_add]
-  rw [himage, Transport.volume_image_affine, measure_iUnion_null (fun k => volume_gridFaces k), mul_zero]
+  rw [himage, Transport.volume_image_affine, measure_iUnion_null (fun k => volume_gridFaces k),
+    mul_zero]
 
 end HCPolySupport.HighContrast.Geometry

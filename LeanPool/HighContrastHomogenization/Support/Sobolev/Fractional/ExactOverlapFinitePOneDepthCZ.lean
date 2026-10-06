@@ -244,7 +244,8 @@ private theorem exactOverlapFiniteP_smooth_rpow_le
     (hcomparison : eLpNorm (fun x => HilbertMat.ofMat (V.jacobian x)) q.exponent
         (normalizedCubeMeasure (originCube d m)) ≤ Csplit *
           eLpNorm (fun x => HilbertMat.ofMat
-            (((concreteSmoothOverlapPartition (originCube d m) j).averagingCompetitorW1p h q).jacobian x))
+            (((concreteSmoothOverlapPartition (originCube d m) j).averagingCompetitorW1p h
+              q).jacobian x))
             q.exponent
             (normalizedCubeMeasure (originCube d m))) :
     (cubeEuclideanPositiveBesovOverlapDepthENorm (originCube d m) q V.toField j) ^
@@ -274,7 +275,8 @@ private theorem exactOverlapFiniteP_smooth_rpow_le
   have hell : 0 < ell := by
     exact div_pos (cubeScaleFactor_pos' (originCube d m))
       (pow_pos (by norm_num : (0 : ℝ) < 3) j)
-  have hjacobian := SmoothOverlapPartition.lintegral_enorm_rpow_averagingCompetitorW1p_jacobian_le_depthENorm
+  have hjacobian :=
+    SmoothOverlapPartition.lintegral_enorm_rpow_averagingCompetitorW1p_jacobian_le_depthENorm
     P h q hhq
   have hjacobian' :
       (eLpNorm (fun x => HilbertMat.ofMat ((P.averagingCompetitorW1p h q).jacobian x))
@@ -392,7 +394,8 @@ theorem exists_exactOverlapFiniteP_oneDepth_cz
     by_cases hq : q.exponent.toReal ≤ 2
     · simp only [ite_eq_left hq, one_mul, mul_one]
       exact ENNReal.mul_lt_top
-        (ENNReal.mul_lt_top (ENNReal.natCast_ne_top (Fintype.card (Fin d × Fin d))).lt_top hder) hthree
+        (ENNReal.mul_lt_top (ENNReal.natCast_ne_top (Fintype.card (Fin d × Fin d))).lt_top hder)
+          hthree
     · simp only [ite_eq_right hq]
       have hr : 0 ≤ q.exponent.toReal / 2 - 1 := by
         have htwo : 2 < q.exponent.toReal := lt_of_not_ge hq

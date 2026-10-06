@@ -152,7 +152,8 @@ theorem adaptedResponse_split (q : Mat d) {j b : ℤ} {y w' w v : Fin d → ℤ}
     · intro hu; simpa [sub_sub, add_comm] using hu
   have hcell : adaptedCellAt q j w =
       translateSet (Source.AKL.intTranslation v) (adaptedCellAt q j w') := by
-    rw [Recurrence.adaptedCellAt_eq_translateSet, Recurrence.adaptedCellAt_eq_translateSet, hw, hadd, hv]
+    rw [Recurrence.adaptedCellAt_eq_translateSet, Recurrence.adaptedCellAt_eq_translateSet, hw,
+      hadd, hv]
     rfl
   rw [adaptedResponse, adaptedResponse, hcell, Recurrence.coarseBlock_translateSet]
 

@@ -111,7 +111,8 @@ noncomputable def finiteAffineSuccessorDifference {d : ℕ} [NeZero d]
     (finiteAffineCubeSolution a m e)
     (cubeSolution_weakFluxIntegrable_finiteAffineSuccessorDifference
       (finiteAffineSuccessorRestriction a m e))
-    (cubeSolution_weakFluxIntegrable_finiteAffineSuccessorDifference (finiteAffineCubeSolution a m e))
+    (cubeSolution_weakFluxIntegrable_finiteAffineSuccessorDifference (finiteAffineCubeSolution a
+      m e))
 
 /-- The successor difference has the literal outer-minus-inner value field. -/
 @[simp] theorem finiteAffineSuccessorDifference_toFun {d : ℕ} [NeZero d]

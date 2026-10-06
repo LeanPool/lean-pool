@@ -94,7 +94,7 @@ noncomputable def swapVecContinuousLinearEquiv {d : ℕ} (i j : Fin d) :
     exact congrFun (congrFun hfun x) k
   simp [h, matVecMul_swap_eq_comp]
 
-@[simp] theorem signFlipVecContinuousLinearEquiv_self_apply {d : ℕ} (i : Fin d) (x : Vec d) :
+theorem signFlipVecContinuousLinearEquiv_self_apply {d : ℕ} (i : Fin d) (x : Vec d) :
     signFlipVecContinuousLinearEquiv i (signFlipVecContinuousLinearEquiv i x) = x := by
   have hs : (signFlipVecContinuousLinearEquiv i).symm = signFlipVecContinuousLinearEquiv i := by
     ext y j
@@ -104,12 +104,12 @@ noncomputable def swapVecContinuousLinearEquiv {d : ℕ} (i j : Fin d) :
     · simp [signFlipVecContinuousLinearEquiv, h]
   simpa [hs] using (signFlipVecContinuousLinearEquiv i).apply_symm_apply x
 
-@[simp] theorem swapVecContinuousLinearEquiv_self_apply {d : ℕ} (i j : Fin d) (x : Vec d) :
+theorem swapVecContinuousLinearEquiv_self_apply {d : ℕ} (i j : Fin d) (x : Vec d) :
     swapVecContinuousLinearEquiv i j (swapVecContinuousLinearEquiv i j x) = x := by
   simpa [swapVecContinuousLinearEquiv_symm_apply] using
     (swapVecContinuousLinearEquiv i j).apply_symm_apply x
 
-@[simp] theorem signFlipVecContinuousLinearEquiv_basisVec {d : ℕ} (i k : Fin d) :
+theorem signFlipVecContinuousLinearEquiv_basisVec {d : ℕ} (i k : Fin d) :
     signFlipVecContinuousLinearEquiv i (basisVec k) =
       (if k = i then (-1 : ℝ) else 1) • basisVec k := by
   by_cases hki : k = i
@@ -128,7 +128,7 @@ noncomputable def swapVecContinuousLinearEquiv {d : ℕ} (i j : Fin d) :
     · simp [basisVec_apply, signFlipVecContinuousLinearEquiv_apply, matVecMul_signFlipMatrix_apply,
         hki, hjk]
 
-@[simp] theorem swapVecContinuousLinearEquiv_basisVec {d : ℕ} (i j k : Fin d) :
+theorem swapVecContinuousLinearEquiv_basisVec {d : ℕ} (i j k : Fin d) :
     swapVecContinuousLinearEquiv i j (basisVec k) = basisVec (Equiv.swap i j k) := by
   ext l
   by_cases h : (Equiv.swap i j l) = k

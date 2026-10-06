@@ -187,7 +187,7 @@ theorem diagonal_blockSub_posSemidef_of_blockMatLoewnerLE
           blockVecDot X
             (blockMatVecMul (ofFullBlockMat (toFullBlockMat B - toFullBlockMat A)) X) := by
       simpa [X] using
-        Section54.VarianceBoundGoodScale.fullBlockQuadratic_diagonal_toFullBlockMat_eq_blockVecDot
+        Section54.VarianceBoundGoodScale.diagonalForm_eq_dotProduct
           r (ofFullBlockMat (toFullBlockMat B - toFullBlockMat A)) q
     have hdiff_dot :
         blockVecDot X
@@ -329,15 +329,15 @@ theorem normalizedCoarseAveragePositiveErrorMatrix_eq_diagonal_blockSub
       descendantsAverageNormalizedFluctuationMatrix hP hStruct center Q j a =
         D * (descendantsAverageFullBlockMat Q j F - Abar) * D := by
     simpa [descendantsAverageNormalizedFluctuationMatrix, F, Abar,
-      Section54.VarianceBoundGoodScale.fullBlockNormalizedFluctuationMatrix,
+      Section54.VarianceBoundGoodScale.normalizedFluctuationMatrix,
       D, b, c] using
       descendantsAverageFullBlockMat_diagonal_sub_const_mul_diagonal
         (Q := Q) (j := j) D Abar F
   have hParent :
-      Section54.VarianceBoundGoodScale.fullBlockNormalizedFluctuationMatrix
+      Section54.VarianceBoundGoodScale.normalizedFluctuationMatrix
           hP hStruct center (cubeSet Q) a =
         D * (F Q - Abar) * D := by
-    simp [F, Abar, Section54.VarianceBoundGoodScale.fullBlockNormalizedFluctuationMatrix,
+    simp [F, Abar, Section54.VarianceBoundGoodScale.normalizedFluctuationMatrix,
       D, b, c]
   calc
     normalizedCoarseAveragePositiveErrorMatrix hP hStruct center Q j a

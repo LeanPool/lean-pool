@@ -83,7 +83,8 @@ theorem blockMatVecMul_blockSwap_snd {d : ℕ} (Y : BlockVec d) :
 response maximizer `u`: the cell average of the doubled optimizer field is
 `x + R A(U) x`, `x = (-p, r)`, with `A(U)` the set-level coarse block matrix. -/
 theorem cellAverage_optimizerField_eq_blockResponseMean (q : Mat d) (hq : IsUnit q) (t : ℤ)
-    {lam Lam : ℝ} {b : CoeffField d} (hb : IsEllipticFieldOn lam Lam (HighContrast.adaptedCell q t) b)
+    {lam Lam : ℝ} {b : CoeffField d} (hb : IsEllipticFieldOn lam Lam (HighContrast.adaptedCell q
+      t) b)
     (p r : Vec d) (u : AHarmonicFunction b (HighContrast.adaptedCell q t))
     (hu : IsResponseMaximizer (HighContrast.adaptedCell q t) p r b u) :
     cellAverage (HighContrast.adaptedCell q t) (optimizerField b u) =
@@ -105,11 +106,13 @@ theorem cellAverage_optimizerField_eq_blockResponseMean (q : Mat d) (hq : IsUnit
     simp at hvol
   have hInt : ResponseLinearIntegrabilityData (HighContrast.adaptedCell q t) b :=
     ResponseLinearIntegrabilityData.of_isEllipticFieldOn hb
-  have hA : IsCoarseBlockMatrix (HighContrast.adaptedCell q t) b (coarseBlockMatrix (HighContrast.adaptedCell q t) b) :=
+  have hA : IsCoarseBlockMatrix (HighContrast.adaptedCell q t) b (coarseBlockMatrix
+    (HighContrast.adaptedCell q t) b) :=
     isCoarseBlockMatrix_of_isOpenBoundedConvexDomain hconv hb hvol
   have hJ : ∀ x y : Vec d, ResponseJ (HighContrast.adaptedCell q t) x y b =
       (1 / 2 : ℝ) * blockVecDot (-x, y)
-        (blockMatVecMul (coarseBlockMatrix (HighContrast.adaptedCell q t) b) (-x, y)) - vecDot x y := fun x y =>
+        (blockMatVecMul (coarseBlockMatrix (HighContrast.adaptedCell q t) b) (-x, y)) - vecDot x
+          y := fun x y =>
     responseJ_eq_block_quadratic_of_isOpenBoundedConvexDomain hconv hb hvol x y
   set A : BlockMat d := coarseBlockMatrix (HighContrast.adaptedCell q t) b with hAdef
   have hsym := hA.1
@@ -134,12 +137,14 @@ theorem cellAverage_optimizerField_eq_blockResponseMean (q : Mat d) (hq : IsUnit
     simp only [blockVecDot, blockMatVecMul, vecDot_add_right, vecDot_neg_left, matVecMul_neg,
       vecDot_neg_right]
     ring
-  have hgrad : ∀ i : Fin d, volumeAverage (HighContrast.adaptedCell q t) (fun x => u.toH1.grad x i) =
+  have hgrad : ∀ i : Fin d, volumeAverage (HighContrast.adaptedCell q t) (fun x => u.toH1.grad x
+    i) =
       -p i + (matVecMul A.lowerRight r) i - (matVecMul A.lowerLeft p) i := by
     intro i
     obtain ⟨ug⟩ := ScalarCanonicalMaximizer.nonempty_of_isOpenBoundedConvexDomain hne hconv hb 0
       (Pi.single i 1)
-    rw [basic_cg_identities_average_gradient_coordinate_of_isResponseMaximizer (HighContrast.adaptedCell q t) b p r hInt u hu i
+    rw [basic_cg_identities_average_gradient_coordinate_of_isResponseMaximizer
+      (HighContrast.adaptedCell q t) b p r hInt u hu i
       (ug : AHarmonicFunction b (HighContrast.adaptedCell q t)) ug.isResponseMaximizer]
     have e1 : vecDot p (matVecMul A.upperRight (Pi.single i 1)) = (matVecMul A.lowerLeft p) i := by
       rw [hsw p (Pi.single i 1), vecDot_single_left]
@@ -154,12 +159,14 @@ theorem cellAverage_optimizerField_eq_blockResponseMean (q : Mat d) (hq : IsUnit
     simp only [sub_eq_add_neg, matVecMul_add, matVecMul_neg, vecDot_add_right, vecDot_add_left,
       vecDot_neg_right, vecDot_neg_left, matVecMul_zero, vecDot_zero_left, vecDot_zero_right]
     linarith only [e1, e2, e3, e4, e5]
-  have hflux : ∀ i : Fin d, volumeAverage (HighContrast.adaptedCell q t) (fun x => matVecMul (b x) (u.toH1.grad x) i) =
+  have hflux : ∀ i : Fin d, volumeAverage (HighContrast.adaptedCell q t) (fun x => matVecMul (b
+    x) (u.toH1.grad x) i) =
       r i + (matVecMul A.upperRight r) i - (matVecMul A.upperLeft p) i := by
     intro i
     obtain ⟨uf⟩ := ScalarCanonicalMaximizer.nonempty_of_isOpenBoundedConvexDomain hne hconv hb
       (Pi.single i 1) 0
-    rw [basic_cg_identities_average_flux_coordinate_of_isResponseMaximizer (HighContrast.adaptedCell q t) b p r hInt u hu i
+    rw [basic_cg_identities_average_flux_coordinate_of_isResponseMaximizer
+      (HighContrast.adaptedCell q t) b p r hInt u hu i
       (uf : AHarmonicFunction b (HighContrast.adaptedCell q t)) uf.isResponseMaximizer]
     have f1 : vecDot p (matVecMul A.upperLeft (Pi.single i 1)) = (matVecMul A.upperLeft p) i := by
       rw [hul p (Pi.single i 1), vecDot_single_left]

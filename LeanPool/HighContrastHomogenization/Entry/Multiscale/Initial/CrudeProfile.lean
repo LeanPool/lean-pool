@@ -76,7 +76,8 @@ theorem meanHistory_one_le (d : ℕ) (hd : 2 ≤ d) (γ : ℝ) (hγ : γ ∈ Set
   intro P E Ψ K Src hP hstat hunit hdag jStar hjStar hthr n m hn hnm
   have := hP
   have : NeZero d := ⟨by omega⟩
-  have hPi : (1 : ℝ) ≤ aspectRatio E := HCPolySupport.HighContrast.one_le_aspectRatio_of_coarseEllipticityDagger hdag
+  have hPi : (1 : ℝ) ≤ aspectRatio E :=
+    HCPolySupport.HighContrast.one_le_aspectRatio_of_coarseEllipticityDagger hdag
   have hc : (1 : ℝ) ≤ 24 * aspectRatio E := by linarith only [hPi]
   have hdnn : (0 : ℝ) ≤ (d : ℝ) := Nat.cast_nonneg d
   have hbase : (1 : ℝ) ≤ 1 + 2 * (d : ℝ) * (24 * aspectRatio E - 1) :=
@@ -96,7 +97,8 @@ theorem meanHistory_one_le (d : ℕ) (hd : 2 ≤ d) (γ : ℝ) (hγ : γ ∈ Set
     obtain ⟨hj1, hj2⟩ := Finset.mem_Ico.mp hj
     have hjs : (jStar : ℤ) ≤ j := le_trans hn hj1
     have hjm : j ≤ m := le_of_lt hj2
-    obtain ⟨-, -, hIM, hMc, -⟩ := hnorm P E Ψ K Src hP hstat hunit hdag jStar hjStar hthr j m hjs hjm
+    obtain ⟨-, -, hIM, hMc, -⟩ := hnorm P E Ψ K Src hP hstat hunit hdag jStar hjStar hthr j m
+      hjs hjm
     have hsymm := normalizedMean_one_isSymm hd γ P E Ψ K Src hstat hdag jStar hjStar j m
     refine mul_le_mul_of_nonneg_left ?_ (Real.rpow_nonneg (by norm_num) _)
     exact meanPenalty_le_of_le_scale (bigQ d γ) _ hsymm (24 * aspectRatio E) hc hIM hMc
@@ -230,7 +232,8 @@ theorem profile_one_seed_le (d : ℕ) (hd : 2 ≤ d) (γ : ℝ) (hγ : γ ∈ Se
     ceil_source_threshold_le_of_le K hK Cnorm (max Cnorm Cmom) (le_max_left _ _) _ hthr
   have hthrM : ⌈Cmom * Real.logb 3 (2 * K)⌉ ≤ (jStar : ℤ) :=
     ceil_source_threshold_le_of_le K hK Cmom (max Cnorm Cmom) (le_max_right _ _) _ hthr
-  have hPi : (1 : ℝ) ≤ aspectRatio E := HCPolySupport.HighContrast.one_le_aspectRatio_of_coarseEllipticityDagger hdag
+  have hPi : (1 : ℝ) ≤ aspectRatio E :=
+    HCPolySupport.HighContrast.one_le_aspectRatio_of_coarseEllipticityDagger hdag
   have hc : (1 : ℝ) ≤ 24 * aspectRatio E := by linarith only [hPi]
   have hdnn : (0 : ℝ) ≤ (d : ℝ) := Nat.cast_nonneg d
   have hbase : (1 : ℝ) ≤ 1 + 2 * (d : ℝ) * (24 * aspectRatio E - 1) :=
@@ -314,7 +317,8 @@ theorem profile_one_fluct_sum_le (d : ℕ) (hd : 2 ≤ d) (γ : ℝ) (hγ : γ �
     ceil_source_threshold_le_of_le K hdag.one_lt_growthWitness Cmom (max Cnorm Cmom)
       (le_max_right _ _) (jStar : ℤ) hceil
   have hPi_pos : (0 : ℝ) < 24 * aspectRatio E := by
-    have hPi : (1 : ℝ) ≤ aspectRatio E := HCPolySupport.HighContrast.one_le_aspectRatio_of_coarseEllipticityDagger hdag
+    have hPi : (1 : ℝ) ≤ aspectRatio E :=
+      HCPolySupport.HighContrast.one_le_aspectRatio_of_coarseEllipticityDagger hdag
     exact mul_pos (by norm_num) (lt_of_lt_of_le zero_lt_one hPi)
   have hQpos : (0 : ℝ) < (bigQ d γ : ℝ) :=
     HCPolySupport.HighContrast.Multiscale.bigQ_real_pos d γ hγ
@@ -379,7 +383,8 @@ theorem profile_one_fluct_sum_le (d : ℕ) (hd : 2 ≤ d) (γ : ℝ) (hγ : γ �
       refine MeasureTheory.integral_nonneg_of_ae ?_
       filter_upwards [hmem.symmetric] with a ha
       have hsym : IsSymmetricBlockMat (normalizedFluctuationSelf P (1 : Mat d) j a) := by
-        simpa [normalizedFluctuationSelf, HCPolySupport.HighContrast.Geometry.explicitRoundedGrid_one] using ha
+        simpa [normalizedFluctuationSelf,
+          HCPolySupport.HighContrast.Geometry.explicitRoundedGrid_one] using ha
       exact pow_nonneg
         (HCPolySupport.HighContrast.Analysis.absSchattenNorm_nonneg
           ((HCPolySupport.HighContrast.Analysis.toFullBlockMat_isHermitian_iff _).2 hsym) hQone) _
@@ -470,7 +475,8 @@ theorem initial_crude_profile (d : ℕ) (hd : 2 ≤ d) (γ : ℝ) (hγ : γ ∈ 
   have hc3 : (0 : ℝ) ≤ c3 := by
     rw [hc3def]; exact mul_nonneg (by positivity) hw.le
   have hc4 : (0 : ℝ) ≤ c4 := by rw [hc4def]; positivity
-  refine ⟨max (max C1 C2) (max C3 C4), ?_, c1 + c2 + c3 + c4 + 1, by linarith only [hc1, hc2, hc3, hc4], N, ?_⟩
+  refine ⟨max (max C1 C2) (max C3 C4), ?_, c1 + c2 + c3 + c4 + 1, by linarith only [hc1, hc2,
+    hc3, hc4], N, ?_⟩
   · exact lt_of_lt_of_le hC1 (le_trans (le_max_left _ _) (le_max_left _ _))
   intro P E Ψ K Src hP hstat hunit hdag jStar hjStar hthr m hm
   have := hP
@@ -484,7 +490,8 @@ theorem initial_crude_profile (d : ℕ) (hd : 2 ≤ d) (γ : ℝ) (hγ : γ ∈ 
     ceil_source_threshold_le_of_le K hK C3 _ (le_trans (le_max_left _ _) (le_max_right _ _)) _ hthr
   have hth4 : ⌈C4 * Real.logb 3 (2 * K)⌉ ≤ (jStar : ℤ) :=
     ceil_source_threshold_le_of_le K hK C4 _ (le_trans (le_max_right _ _) (le_max_right _ _)) _ hthr
-  have hPi : (1 : ℝ) ≤ aspectRatio E := HCPolySupport.HighContrast.one_le_aspectRatio_of_coarseEllipticityDagger hdag
+  have hPi : (1 : ℝ) ≤ aspectRatio E :=
+    HCPolySupport.HighContrast.one_le_aspectRatio_of_coarseEllipticityDagger hdag
   have hdnn : (0 : ℝ) ≤ (d : ℝ) := Nat.cast_nonneg d
   have hX : (1 : ℝ) ≤ 2 + aspectRatio E := by linarith only [hPi]
   have hXQ : (1 : ℝ) ≤ (2 + aspectRatio E) ^ Q := one_le_pow₀ hX
@@ -512,7 +519,8 @@ theorem initial_crude_profile (d : ℕ) (hd : 2 ≤ d) (γ : ℝ) (hγ : γ ∈ 
       (2 * (d : ℝ) * (1 + 24 ^ Q)) * (2 + aspectRatio E) ^ Q := by
     have hin : 1 + (24 * aspectRatio E) ^ Q ≤ (1 + 24 ^ Q) * (2 + aspectRatio E) ^ Q := by
       calc 1 + (24 * aspectRatio E) ^ Q
-          ≤ (2 + aspectRatio E) ^ Q + (24 : ℝ) ^ Q * (2 + aspectRatio E) ^ Q := by linarith only [hmomQ, hXQ]
+          ≤ (2 + aspectRatio E) ^ Q + (24 : ℝ) ^ Q * (2 + aspectRatio E) ^ Q := by linarith only
+            [hmomQ, hXQ]
         _ = (1 + 24 ^ Q) * (2 + aspectRatio E) ^ Q := by ring
     calc 2 * (d : ℝ) * (1 + (24 * aspectRatio E) ^ Q)
         ≤ 2 * (d : ℝ) * ((1 + 24 ^ Q) * (2 + aspectRatio E) ^ Q) :=

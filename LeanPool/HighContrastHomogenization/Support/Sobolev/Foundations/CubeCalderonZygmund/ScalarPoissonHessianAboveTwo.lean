@@ -264,7 +264,7 @@ private theorem sourceCutoff_le_normalizedLq
           (originCube d m) * cubeLpNorm (originCube d m) 2 F) :
     reflectedHessianRowGoodLambdaCutoff depth eps H F ≤
       Real.sqrt (((3 : ℝ) * (10 * (3 : ℝ) ^ depth)) ^ d *
-        (CubeDirichletWeakPoissonProblem.cubeDirichletH2RegularityVolumeL2ConstantExact
+        (CubeDirichletWeakPoissonProblem.cubeDirichletH2VolumeL2Constant
             d ^ (2 : ℕ) +
           (eps⁻¹) ^ (2 : ℕ))) *
         (eLpNorm F q.exponent
@@ -274,13 +274,13 @@ private theorem sourceCutoff_le_normalizedLq
   let N₂ : ℝ := (eLpNorm F 2 (normalizedCubeMeasure Q)).toReal
   let Nq : ℝ := (eLpNorm F q.exponent (normalizedCubeMeasure Q)).toReal
   let C₂ : ℝ :=
-    CubeDirichletWeakPoissonProblem.cubeDirichletH2RegularityVolumeL2ConstantExact d
+    CubeDirichletWeakPoissonProblem.cubeDirichletH2VolumeL2Constant d
   have hN : N₂ ≤ Nq := by
     apply ENNReal.toReal_mono hFq.eLpNorm_ne_top
     exact normalized_l2_le_lq hq
   have hHscale : H.hessianCoordL2NormSum ≤ V ^ (1 / 2 : ℝ) * C₂ * N₂ := by
     simpa only [Q, V, C₂, N₂, cubeLpNorm,
-      CubeDirichletWeakPoissonProblem.cubeDirichletH2RegularityConstantExact_eq_volume_rpow_half_mul_volumeL2ConstantExact]
+      CubeDirichletWeakPoissonProblem.cubeDirichletH2_eq_volumeHalf_mul_volumeL2]
       using hH
   have hFopen := memL2On_openCubeSet_of_memLp_normalizedCubeMeasure Q hF2
   have hFint : ∫ x in openCubeSet Q, F x * F x ∂volume = V * N₂ ^ (2 : ℕ) := by
@@ -342,7 +342,7 @@ private theorem sourceCutoff_le_normalizedLq
     have hHsq : H.hessianCoordL2NormSum ^ (2 : ℕ) ≤
         V * C₂ ^ (2 : ℕ) * Nq ^ (2 : ℕ) := by
       have hC : 0 ≤ C₂ :=
-        CubeDirichletWeakPoissonProblem.cubeDirichletH2RegularityVolumeL2ConstantExact_nonneg d
+        CubeDirichletWeakPoissonProblem.cubeDirichletH2VolumeL2Constant_nonneg d
       calc
         H.hessianCoordL2NormSum ^ (2 : ℕ) ≤
             (V ^ (1 / 2 : ℝ) * C₂ * N₂) ^ (2 : ℕ) :=
@@ -396,6 +396,163 @@ private theorem finite_coefficient_ne_top
   · exact ENNReal.add_ne_top.mpr
       ⟨hL, ENNReal.mul_ne_top hB (ENNReal.inv_ne_top.mpr hcdata)⟩
 
+private theorem hessian_row_low_moment_le_datum_moment
+    {d : ℕ} [NeZero d] (q : FiniteLpExponent) (hq : 2 < q.exponent.toReal)
+    {m : ℤ} (F : Vec d → ℝ)
+    (hFq : MemLp F q.exponent (normalizedCubeMeasure (originCube d m)))
+    {u : H10Function (openCubeSet (originCube d m))}
+    (H : HasWeakHessianOn (openCubeSet (originCube d m)) u.toH1Function)
+    (hH : H.hessianCoordL2NormSum ≤
+      CubeDirichletWeakPoissonProblem.cubeDirichletH2RegularityConstantExact
+        (originCube d m) * cubeLpNorm (originCube d m) 2 F)
+    (i : Fin d) {Ccut lambda0 : ℝ} (hCcut : 0 < Ccut) (hlambda : 0 ≤ lambda0)
+    (hlambdaBound : lambda0 ≤ 2 * Ccut *
+      (eLpNorm F q.exponent (normalizedCubeMeasure (originCube d m))).toReal) :
+    sqWeightedMeasure (fun x ↦ HilbertVec.ofVec (fun j ↦ H.hess i j x))
+        (normalizedCubeMeasure (originCube d m)) Set.univ *
+        ENNReal.ofReal (lambda0 ^ (q.exponent.toReal - 2)) ≤
+      (ENNReal.ofReal
+          (CubeDirichletWeakPoissonProblem.cubeDirichletH2VolumeL2Constant d ^ (2 : ℕ)) *
+        (ENNReal.ofReal (2 * Ccut)) ^ (q.exponent.toReal - 2)) *
+        (eLpNorm F q.exponent (normalizedCubeMeasure (originCube d m))) ^
+          q.exponent.toReal := by
+  let Q : TriadicCube d := originCube d m
+  let μ : Measure (Vec d) := normalizedCubeMeasure Q
+  let row : Fin d → Vec d → HilbertVec d := fun i x ↦
+    HilbertVec.ofVec (fun j ↦ H.hess i j x)
+  let Y : ℝ≥0∞ := eLpNorm F q.exponent μ
+  let low : ℝ≥0∞ := sqWeightedMeasure (row i) μ Set.univ *
+    ENNReal.ofReal (lambda0 ^ (q.exponent.toReal - 2))
+  let L : ℝ≥0∞ := ENNReal.ofReal
+      (CubeDirichletWeakPoissonProblem.cubeDirichletH2VolumeL2Constant d ^ (2 : ℕ)) *
+    (ENNReal.ofReal (2 * Ccut)) ^ (q.exponent.toReal - 2)
+  change low ≤ L * Y ^ q.exponent.toReal
+  have hrow2 : MemLp (row i) 2 μ := by
+    simpa only [row, Q, μ] using!
+      H.hessianHilbertRow_memLp_two_normalizedCubeMeasure Q i
+  have hS : sqWeightedMeasure (row i) μ Set.univ ≤
+      ENNReal.ofReal
+        (CubeDirichletWeakPoissonProblem.cubeDirichletH2VolumeL2Constant
+          d ^ (2 : ℕ)) *
+          Y ^ (2 : ℕ) := by
+    rw [sqWeightedMeasure_apply_univ_eq_eLpNorm_two_sq (hf := hrow2.aestronglyMeasurable)]
+    have hrowL2 :=
+      H.eLpNorm_hessianHilbertRow_two_normalizedCubeMeasure_le Q i
+    have hHnorm : ((cubeVolume Q)⁻¹) ^ (1 / 2 : ℝ) *
+        H.hessianCoordL2NormSum ≤
+          CubeDirichletWeakPoissonProblem.cubeDirichletH2VolumeL2Constant
+              d *
+            (eLpNorm F 2 μ).toReal := by
+      have hscale := hH
+      rw [CubeDirichletWeakPoissonProblem.cubeDirichletH2_eq_volumeHalf_mul_volumeL2]
+        at hscale
+      have hscale' : H.hessianCoordL2NormSum ≤
+          cubeVolume Q ^ (1 / 2 : ℝ) *
+              CubeDirichletWeakPoissonProblem.cubeDirichletH2VolumeL2Constant d *
+            cubeLpNorm Q 2 F := by
+        simpa only [Q] using hscale
+      have hcancel : ((cubeVolume Q)⁻¹) ^ (1 / 2 : ℝ) *
+          cubeVolume Q ^ (1 / 2 : ℝ) = 1 := by
+        rw [Real.inv_rpow (cubeVolume_nonneg Q)]
+        exact inv_mul_cancel₀
+          (Real.rpow_pos_of_pos (cubeVolume_pos Q) _).ne'
+      calc
+        _ ≤ ((cubeVolume Q)⁻¹) ^ (1 / 2 : ℝ) *
+            (cubeVolume Q ^ (1 / 2 : ℝ) *
+              CubeDirichletWeakPoissonProblem.cubeDirichletH2VolumeL2Constant
+                d *
+              cubeLpNorm Q 2 F) :=
+          mul_le_mul_of_nonneg_left hscale'
+            (Real.rpow_nonneg (inv_nonneg.mpr (cubeVolume_nonneg Q)) _)
+        _ = _ := by
+          calc
+            ((cubeVolume Q)⁻¹) ^ (1 / 2 : ℝ) *
+                (cubeVolume Q ^ (1 / 2 : ℝ) *
+                  CubeDirichletWeakPoissonProblem.cubeDirichletH2VolumeL2Constant d *
+                  cubeLpNorm Q 2 F) =
+              (((cubeVolume Q)⁻¹) ^ (1 / 2 : ℝ) *
+                cubeVolume Q ^ (1 / 2 : ℝ)) *
+                  (CubeDirichletWeakPoissonProblem.cubeDirichletH2VolumeL2Constant d *
+                    cubeLpNorm Q 2 F) := by ring
+            _ = _ := by rw [hcancel, one_mul, cubeLpNorm]
+    have hN2q : (eLpNorm F 2 μ).toReal ≤ Y.toReal := by
+      apply ENNReal.toReal_mono
+        (by simpa only [Y, μ] using hFq.eLpNorm_ne_top)
+      simpa only [Y, μ] using
+        normalized_l2_le_lq (Q := originCube d m) (F := F) hq
+    have hreal : ((cubeVolume Q)⁻¹) ^ (1 / 2 : ℝ) *
+        H.hessianCoordL2NormSum ≤
+          CubeDirichletWeakPoissonProblem.cubeDirichletH2VolumeL2Constant
+              d * Y.toReal :=
+      hHnorm.trans (mul_le_mul_of_nonneg_left hN2q
+        (CubeDirichletWeakPoissonProblem.cubeDirichletH2VolumeL2Constant_nonneg d))
+    calc
+      eLpNorm (row i) 2 μ ^ (2 : ℕ) ≤
+          ENNReal.ofReal
+            (((cubeVolume Q)⁻¹) ^ (1 / 2 : ℝ) *
+              H.hessianCoordL2NormSum) ^ (2 : ℕ) := by
+        exact pow_le_pow_left₀ bot_le hrowL2 2
+      _ ≤ ENNReal.ofReal
+          (CubeDirichletWeakPoissonProblem.cubeDirichletH2VolumeL2Constant
+              d *
+            Y.toReal) ^ (2 : ℕ) := by
+        have hleft : 0 ≤ ((cubeVolume Q)⁻¹) ^ (1 / 2 : ℝ) *
+            H.hessianCoordL2NormSum :=
+          mul_nonneg (Real.rpow_nonneg (inv_nonneg.mpr
+            (cubeVolume_nonneg Q)) _) H.hessianCoordL2NormSum_nonneg
+        rw [← ENNReal.ofReal_pow hleft]
+        rw [← ENNReal.ofReal_pow (mul_nonneg
+          (CubeDirichletWeakPoissonProblem.cubeDirichletH2VolumeL2Constant_nonneg d)
+          ENNReal.toReal_nonneg)]
+        exact ENNReal.ofReal_le_ofReal
+          (pow_le_pow_left₀ hleft hreal 2)
+      _ = _ := by
+        rw [ENNReal.ofReal_mul
+          (CubeDirichletWeakPoissonProblem.cubeDirichletH2VolumeL2Constant_nonneg d),
+          ENNReal.ofReal_toReal
+            (by simpa only [Y, μ] using hFq.eLpNorm_ne_top), mul_pow,
+          ← ENNReal.ofReal_pow
+            (CubeDirichletWeakPoissonProblem.cubeDirichletH2VolumeL2Constant_nonneg d)]
+  have hlamENN : ENNReal.ofReal lambda0 ≤
+      ENNReal.ofReal (2 * Ccut) * Y := by
+    calc
+      ENNReal.ofReal lambda0 ≤ ENNReal.ofReal (2 * Ccut * Y.toReal) :=
+        ENNReal.ofReal_le_ofReal hlambdaBound
+      _ = ENNReal.ofReal (2 * Ccut) * Y := by
+        rw [ENNReal.ofReal_mul (by positivity),
+          ENNReal.ofReal_toReal
+            (by simpa only [Y, μ] using hFq.eLpNorm_ne_top)]
+  have he : 0 ≤ q.exponent.toReal - 2 := by linarith
+  dsimp only [low, L]
+  rw [← ENNReal.ofReal_rpow_of_nonneg hlambda he]
+  calc
+    sqWeightedMeasure (row i) μ Set.univ *
+        (ENNReal.ofReal lambda0) ^ (q.exponent.toReal - 2) ≤
+      (ENNReal.ofReal
+          (CubeDirichletWeakPoissonProblem.cubeDirichletH2VolumeL2Constant
+            d ^ (2 : ℕ)) *
+        Y ^ (2 : ℕ)) *
+        (ENNReal.ofReal (2 * Ccut) * Y) ^
+          (q.exponent.toReal - 2) :=
+      mul_le_mul hS (ENNReal.rpow_le_rpow hlamENN he) bot_le bot_le
+    _ = ENNReal.ofReal
+          (CubeDirichletWeakPoissonProblem.cubeDirichletH2VolumeL2Constant
+            d ^ (2 : ℕ)) *
+        (ENNReal.ofReal (2 * Ccut)) ^ (q.exponent.toReal - 2) *
+          Y ^ q.exponent.toReal := by
+      rw [ENNReal.mul_rpow_of_nonneg _ _ he]
+      calc
+        _ = ENNReal.ofReal
+              (CubeDirichletWeakPoissonProblem.cubeDirichletH2VolumeL2Constant
+                d ^ (2 : ℕ)) *
+            (ENNReal.ofReal (2 * Ccut)) ^ (q.exponent.toReal - 2) *
+              (Y ^ (2 : ℕ) * Y ^ (q.exponent.toReal - 2)) := by ring
+        _ = _ := by
+          rw [← ENNReal.rpow_natCast,
+            ← ENNReal.rpow_add_of_nonneg _ _ (by norm_num) he]
+          congr 3
+          ring
+
 /-- Above the energy exponent, scalar Dirichlet Poisson data have a weak
 Hessian whose full Hilbert-matrix normalized `L^q` norm is controlled by the
 normalized scalar datum norm, uniformly over the centered-cube scale. -/
@@ -430,11 +587,11 @@ theorem exists_scalarPoisson_hessianHilbertMat_normalizedCubeMeasure_le_of_two_l
     ((2 * M) ^ (q.exponent.toReal - 2))
   let Ccut : ℝ := Real.sqrt
     (((3 : ℝ) * (10 * (3 : ℝ) ^ depth)) ^ d *
-      (CubeDirichletWeakPoissonProblem.cubeDirichletH2RegularityVolumeL2ConstantExact
+      (CubeDirichletWeakPoissonProblem.cubeDirichletH2VolumeL2Constant
           d ^ (2 : ℕ) +
         (eps⁻¹) ^ (2 : ℕ)))
   let L : ℝ≥0∞ := ENNReal.ofReal
-      (CubeDirichletWeakPoissonProblem.cubeDirichletH2RegularityVolumeL2ConstantExact
+      (CubeDirichletWeakPoissonProblem.cubeDirichletH2VolumeL2Constant
         d ^ (2 : ℕ)) *
     (ENNReal.ofReal (2 * Ccut)) ^ (q.exponent.toReal - 2)
   let Crow : ℝ≥0∞ :=
@@ -568,128 +725,9 @@ theorem exists_scalarPoisson_hessianHilbertMat_normalizedCubeMeasure_le_of_two_l
       let low : ℝ≥0∞ := sqWeightedMeasure (row i) μ Set.univ *
         ENNReal.ofReal (lambda0 ^ (q.exponent.toReal - 2))
       have hlow : low ≤ L * Y ^ q.exponent.toReal := by
-        have hS : sqWeightedMeasure (row i) μ Set.univ ≤
-            ENNReal.ofReal
-              (CubeDirichletWeakPoissonProblem.cubeDirichletH2RegularityVolumeL2ConstantExact
-                d ^ (2 : ℕ)) *
-                Y ^ (2 : ℕ) := by
-          rw [sqWeightedMeasure_apply_univ_eq_eLpNorm_two_sq (hf := hrow2.aestronglyMeasurable)]
-          have hrowL2 :=
-            H.eLpNorm_hessianHilbertRow_two_normalizedCubeMeasure_le Q i
-          have hHnorm : ((cubeVolume Q)⁻¹) ^ (1 / 2 : ℝ) *
-              H.hessianCoordL2NormSum ≤
-                CubeDirichletWeakPoissonProblem.cubeDirichletH2RegularityVolumeL2ConstantExact
-                    d *
-                  (eLpNorm F 2 μ).toReal := by
-            have hscale := hH
-            rw [CubeDirichletWeakPoissonProblem.cubeDirichletH2RegularityConstantExact_eq_volume_rpow_half_mul_volumeL2ConstantExact]
-              at hscale
-            have hscale' : H.hessianCoordL2NormSum ≤
-                cubeVolume Q ^ (1 / 2 : ℝ) *
-                    CubeDirichletWeakPoissonProblem.cubeDirichletH2RegularityVolumeL2ConstantExact d *
-                  cubeLpNorm Q 2 F := by
-              simpa only [Q] using hscale
-            have hcancel : ((cubeVolume Q)⁻¹) ^ (1 / 2 : ℝ) *
-                cubeVolume Q ^ (1 / 2 : ℝ) = 1 := by
-              rw [Real.inv_rpow (cubeVolume_nonneg Q)]
-              exact inv_mul_cancel₀
-                (Real.rpow_pos_of_pos (cubeVolume_pos Q) _).ne'
-            calc
-              _ ≤ ((cubeVolume Q)⁻¹) ^ (1 / 2 : ℝ) *
-                  (cubeVolume Q ^ (1 / 2 : ℝ) *
-                    CubeDirichletWeakPoissonProblem.cubeDirichletH2RegularityVolumeL2ConstantExact
-                      d *
-                    cubeLpNorm Q 2 F) :=
-                mul_le_mul_of_nonneg_left hscale'
-                  (Real.rpow_nonneg (inv_nonneg.mpr (cubeVolume_nonneg Q)) _)
-              _ = _ := by
-                calc
-                  ((cubeVolume Q)⁻¹) ^ (1 / 2 : ℝ) *
-                      (cubeVolume Q ^ (1 / 2 : ℝ) *
-                        CubeDirichletWeakPoissonProblem.cubeDirichletH2RegularityVolumeL2ConstantExact d *
-                        cubeLpNorm Q 2 F) =
-                    (((cubeVolume Q)⁻¹) ^ (1 / 2 : ℝ) *
-                      cubeVolume Q ^ (1 / 2 : ℝ)) *
-                        (CubeDirichletWeakPoissonProblem.cubeDirichletH2RegularityVolumeL2ConstantExact d *
-                          cubeLpNorm Q 2 F) := by ring
-                  _ = _ := by rw [hcancel, one_mul, cubeLpNorm]
-          have hN2q : (eLpNorm F 2 μ).toReal ≤ Y.toReal := by
-            apply ENNReal.toReal_mono
-              (by simpa only [Y, μ] using hFq.eLpNorm_ne_top)
-            simpa only [Y, μ] using
-              normalized_l2_le_lq (Q := originCube d m) (F := F) hq
-          have hreal : ((cubeVolume Q)⁻¹) ^ (1 / 2 : ℝ) *
-              H.hessianCoordL2NormSum ≤
-                CubeDirichletWeakPoissonProblem.cubeDirichletH2RegularityVolumeL2ConstantExact
-                    d * Y.toReal :=
-            hHnorm.trans (mul_le_mul_of_nonneg_left hN2q
-              (CubeDirichletWeakPoissonProblem.cubeDirichletH2RegularityVolumeL2ConstantExact_nonneg d))
-          calc
-            eLpNorm (row i) 2 μ ^ (2 : ℕ) ≤
-                ENNReal.ofReal
-                  (((cubeVolume Q)⁻¹) ^ (1 / 2 : ℝ) *
-                    H.hessianCoordL2NormSum) ^ (2 : ℕ) := by
-              exact pow_le_pow_left₀ bot_le hrowL2 2
-            _ ≤ ENNReal.ofReal
-                (CubeDirichletWeakPoissonProblem.cubeDirichletH2RegularityVolumeL2ConstantExact
-                    d *
-                  Y.toReal) ^ (2 : ℕ) := by
-              have hleft : 0 ≤ ((cubeVolume Q)⁻¹) ^ (1 / 2 : ℝ) *
-                  H.hessianCoordL2NormSum :=
-                mul_nonneg (Real.rpow_nonneg (inv_nonneg.mpr
-                  (cubeVolume_nonneg Q)) _) H.hessianCoordL2NormSum_nonneg
-              rw [← ENNReal.ofReal_pow hleft]
-              rw [← ENNReal.ofReal_pow (mul_nonneg
-                (CubeDirichletWeakPoissonProblem.cubeDirichletH2RegularityVolumeL2ConstantExact_nonneg d)
-                ENNReal.toReal_nonneg)]
-              exact ENNReal.ofReal_le_ofReal
-                (pow_le_pow_left₀ hleft hreal 2)
-            _ = _ := by
-              rw [ENNReal.ofReal_mul
-                (CubeDirichletWeakPoissonProblem.cubeDirichletH2RegularityVolumeL2ConstantExact_nonneg d),
-                ENNReal.ofReal_toReal
-                  (by simpa only [Y, μ] using hFq.eLpNorm_ne_top), mul_pow,
-                ← ENNReal.ofReal_pow
-                  (CubeDirichletWeakPoissonProblem.cubeDirichletH2RegularityVolumeL2ConstantExact_nonneg d)]
-        have hlamENN : ENNReal.ofReal lambda0 ≤
-            ENNReal.ofReal (2 * Ccut) * Y := by
-          calc
-            ENNReal.ofReal lambda0 ≤ ENNReal.ofReal (2 * Ccut * Y.toReal) :=
-              ENNReal.ofReal_le_ofReal hlambdaBound
-            _ = ENNReal.ofReal (2 * Ccut) * Y := by
-              rw [ENNReal.ofReal_mul (by positivity),
-                ENNReal.ofReal_toReal
-                  (by simpa only [Y, μ] using hFq.eLpNorm_ne_top)]
-        have he : 0 ≤ q.exponent.toReal - 2 := by linarith
-        dsimp only [low, L]
-        rw [← ENNReal.ofReal_rpow_of_nonneg hlambda.le he]
-        calc
-          sqWeightedMeasure (row i) μ Set.univ *
-              (ENNReal.ofReal lambda0) ^ (q.exponent.toReal - 2) ≤
-            (ENNReal.ofReal
-                (CubeDirichletWeakPoissonProblem.cubeDirichletH2RegularityVolumeL2ConstantExact
-                  d ^ (2 : ℕ)) *
-              Y ^ (2 : ℕ)) *
-              (ENNReal.ofReal (2 * Ccut) * Y) ^
-                (q.exponent.toReal - 2) :=
-            mul_le_mul hS (ENNReal.rpow_le_rpow hlamENN he) bot_le bot_le
-          _ = ENNReal.ofReal
-                (CubeDirichletWeakPoissonProblem.cubeDirichletH2RegularityVolumeL2ConstantExact
-                  d ^ (2 : ℕ)) *
-              (ENNReal.ofReal (2 * Ccut)) ^ (q.exponent.toReal - 2) *
-                Y ^ q.exponent.toReal := by
-            rw [ENNReal.mul_rpow_of_nonneg _ _ he]
-            calc
-              _ = ENNReal.ofReal
-                    (CubeDirichletWeakPoissonProblem.cubeDirichletH2RegularityVolumeL2ConstantExact
-                      d ^ (2 : ℕ)) *
-                  (ENNReal.ofReal (2 * Ccut)) ^ (q.exponent.toReal - 2) *
-                    (Y ^ (2 : ℕ) * Y ^ (q.exponent.toReal - 2)) := by ring
-              _ = _ := by
-                rw [← ENNReal.rpow_natCast,
-                  ← ENNReal.rpow_add_of_nonneg _ _ (by norm_num) he]
-                congr 3
-                ring
+        simpa only [low, L, row, μ, Q, Y] using
+          hessian_row_low_moment_le_datum_moment q hq F hFq H hH i
+            hCcut hlambda.le hlambdaBound
       have hJrow : (eLpNorm (row i) q.exponent μ) ^ q.exponent.toReal =
           cM * Jrow := by
         dsimp only [cM, Jrow]

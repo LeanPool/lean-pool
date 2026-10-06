@@ -29,6 +29,207 @@ noncomputable section
 
 open Section53.JUpperBoundCoarseFluctuations
 
+private theorem smallContrastYoungResponseAbsorptionBound
+    {d : ℕ} [NeZero d] {P : Ch04.RestrictionCoeffLaw d}
+    (hP : Ch04.RestrictionLawCarrier P) (hStruct : Ch04.RestrictionStructuralLaw P)
+    (hP4 : QuantitativeCoarseGrainedEllipticity P)
+    (C0 η : ℝ) (hC0_nonneg : 0 ≤ C0) (k m : ℕ) (e : Vec d) :
+    let β := section53CoarseFluctuationBeta hP4
+    let p_e := specialPAtScale hP hStruct (m : ℤ) e
+    let q_e := specialQAtScale hP hStruct (m : ℤ) e
+    let θ := thetaAtScale hP hStruct (m : ℤ)
+    let J := Ch04.expectedResponseJCubeSet P (originCube d (m : ℤ)) p_e q_e
+    let Jk := Ch04.expectedResponseJCubeSet P (originCube d (k : ℤ)) p_e q_e
+    let tau := tauAtScale P (m : ℤ) (k : ℤ) p_e q_e
+    let F := coarseFluctuationFullBlockSumAtScale hP hStruct hP4 k m
+    let tauSum := coarseFluctuationTauSumAtScale hP hStruct hP4 k m e
+    let scalar := coarseFluctuationScalarWeightAtScale hP hStruct m
+    let U := coarseFluctuationUnitMomentWeightAtScale hP hStruct hP4 m
+    let Rm := coarseFluctuationResponseMomentAtScale hP hStruct hP4 k m e
+    let D1 := Real.rpow (3 : ℝ) (-β * (m : ℝ))
+    let D2 := Real.rpow (3 : ℝ) (-2 * β * (((m - k : ℕ) : ℝ)))
+    let Center := (Real.sqrt θ - 1) ^ (2 : ℕ)
+    let ThetaSq := (θ - 1) ^ (2 : ℕ)
+    let tauTerm1 : ℝ := 2 * C0 * (η + η⁻¹) * tau
+    let thetaTerm : ℝ := 2 * C0 * ThetaSq
+    let fluctTerm : ℝ := 4 * C0 * β⁻¹ * F
+    let tauTerm2 : ℝ := 40 * C0 * (β ^ 3)⁻¹ * tau
+    let tailTerm : ℝ := 32 * C0 * (hP4.xi : ℝ) * (β ^ 3)⁻¹ * D1
+    let reducedBound : ℝ :=
+      fluctTerm + (tauTerm1 + tauTerm2) + tailTerm + thetaTerm
+    (J ≤
+        2 * coarseFluctuationYoungManuscriptRHSAtScale
+          hP hStruct hP4 C0 1 η k m e) →
+    (Center ≤ ThetaSq) →
+    (2 * (C0 * (η * Jk + η⁻¹ * tau)) ≤
+        (1 / 4 : ℝ) * J + 2 * C0 * (η + η⁻¹) * tau) →
+    (2 * (C0 * β⁻¹ * θ * F) ≤ 4 * C0 * β⁻¹ * F) →
+    (2 * (C0 * (β ^ 2)⁻¹ * scalar * tauSum) ≤
+        40 * C0 * (β ^ 3)⁻¹ * tau) →
+    (2 * (C0 * (hP4.xi : ℝ) * (β ^ 3)⁻¹ * D1 * U * Rm) ≤
+        32 * C0 * (hP4.xi : ℝ) * (β ^ 3)⁻¹ * D1) →
+    (2 * (C0 * (β ^ 2)⁻¹ * D2 * scalar * (θ - 1)) ≤
+        (1 / 4 : ℝ) * J) →
+    J ≤ 2 * reducedBound := by
+  dsimp only
+  let β := section53CoarseFluctuationBeta hP4
+  let p_e := specialPAtScale hP hStruct (m : ℤ) e
+  let q_e := specialQAtScale hP hStruct (m : ℤ) e
+  let θ := thetaAtScale hP hStruct (m : ℤ)
+  let J := Ch04.expectedResponseJCubeSet P (originCube d (m : ℤ)) p_e q_e
+  let Jk := Ch04.expectedResponseJCubeSet P (originCube d (k : ℤ)) p_e q_e
+  let tau := tauAtScale P (m : ℤ) (k : ℤ) p_e q_e
+  let F := coarseFluctuationFullBlockSumAtScale hP hStruct hP4 k m
+  let tauSum := coarseFluctuationTauSumAtScale hP hStruct hP4 k m e
+  let scalar := coarseFluctuationScalarWeightAtScale hP hStruct m
+  let U := coarseFluctuationUnitMomentWeightAtScale hP hStruct hP4 m
+  let Rm := coarseFluctuationResponseMomentAtScale hP hStruct hP4 k m e
+  let D1 := Real.rpow (3 : ℝ) (-β * (m : ℝ))
+  let D2 := Real.rpow (3 : ℝ) (-2 * β * (((m - k : ℕ) : ℝ)))
+  let Center := (Real.sqrt θ - 1) ^ (2 : ℕ)
+  let ThetaSq := (θ - 1) ^ (2 : ℕ)
+  let tauTerm1 : ℝ := 2 * C0 * (η + η⁻¹) * tau
+  let thetaTerm : ℝ := 2 * C0 * ThetaSq
+  let fluctTerm : ℝ := 4 * C0 * β⁻¹ * F
+  let tauTerm2 : ℝ := 40 * C0 * (β ^ 3)⁻¹ * tau
+  let tailTerm : ℝ := 32 * C0 * (hP4.xi : ℝ) * (β ^ 3)⁻¹ * D1
+  let reducedBound : ℝ :=
+    fluctTerm + (tauTerm1 + tauTerm2) + tailTerm + thetaTerm
+  intro hraw_young hCenter_le_ThetaSq hfirst hfluct htau_sum_term hresponse_term hlow
+  have hcenter :
+      2 * (C0 * Center) ≤ 2 * C0 * ThetaSq := by
+    calc
+      2 * (C0 * Center) = (2 * C0) * Center := by ring
+      _ ≤ (2 * C0) * ThetaSq :=
+          mul_le_mul_of_nonneg_left hCenter_le_ThetaSq
+            (mul_nonneg (by norm_num) hC0_nonneg)
+      _ = 2 * C0 * ThetaSq := by ring
+  have hT1 :
+      2 *
+          (C0 *
+            (η *
+                Ch04.expectedResponseJCubeSet P (originCube d (k : ℤ))
+                  (specialPAtScale hP hStruct (m : ℤ) e)
+                  (specialQAtScale hP hStruct (m : ℤ) e) +
+              η⁻¹ *
+                tauAtScale P (m : ℤ) (k : ℤ)
+                  (specialPAtScale hP hStruct (m : ℤ) e)
+                  (specialQAtScale hP hStruct (m : ℤ) e))) ≤
+        (1 / 4 : ℝ) * J + tauTerm1 := by
+    change 2 * (C0 * (η * Jk + η⁻¹ * tau)) ≤
+      (1 / 4 : ℝ) * J + 2 * C0 * (η + η⁻¹) * tau
+    exact hfirst
+  have hT2 :
+      2 *
+          (C0 *
+            (Real.sqrt (thetaAtScale hP hStruct (m : ℤ)) - 1) ^
+              (2 : ℕ)) ≤ thetaTerm := by
+    change 2 * (C0 * Center) ≤ 2 * C0 * ThetaSq
+    exact hcenter
+  have hT3 :
+      2 *
+          (C0 * (section53CoarseFluctuationBeta hP4)⁻¹ *
+            thetaAtScale hP hStruct (m : ℤ) *
+            coarseFluctuationFullBlockSumAtScale hP hStruct hP4 k m) ≤
+        fluctTerm := by
+    change 2 * (C0 * β⁻¹ * θ * F) ≤ 4 * C0 * β⁻¹ * F
+    exact hfluct
+  have hT4 :
+      2 *
+          (C0 * ((section53CoarseFluctuationBeta hP4) ^ 2)⁻¹ *
+            coarseFluctuationScalarWeightAtScale hP hStruct m *
+            coarseFluctuationTauSumAtScale hP hStruct hP4 k m e) ≤
+        tauTerm2 := by
+    change 2 * (C0 * (β ^ 2)⁻¹ * scalar * tauSum) ≤
+      40 * C0 * (β ^ 3)⁻¹ * tau
+    exact htau_sum_term
+  have hT5 :
+      2 *
+          (C0 * (hP4.xi : ℝ) *
+            ((section53CoarseFluctuationBeta hP4) ^ 3)⁻¹ *
+            Real.rpow (3 : ℝ)
+              (-(section53CoarseFluctuationBeta hP4) * (m : ℝ)) *
+            coarseFluctuationUnitMomentWeightAtScale hP hStruct hP4 m *
+            coarseFluctuationResponseMomentAtScale hP hStruct hP4 k m e) ≤
+        tailTerm := by
+    change 2 * (C0 * (hP4.xi : ℝ) * (β ^ 3)⁻¹ * D1 * U * Rm) ≤
+      32 * C0 * (hP4.xi : ℝ) * (β ^ 3)⁻¹ * D1
+    exact hresponse_term
+  have hT6 :
+      2 *
+          (C0 * ((section53CoarseFluctuationBeta hP4) ^ 2)⁻¹ *
+            Real.rpow (3 : ℝ)
+              (-2 * section53CoarseFluctuationBeta hP4 *
+                (((m - k : ℕ) : ℝ))) *
+            coarseFluctuationScalarWeightAtScale hP hStruct m *
+            (thetaAtScale hP hStruct (m : ℤ) - 1)) ≤
+        (1 / 4 : ℝ) * J := by
+    change 2 * (C0 * (β ^ 2)⁻¹ * D2 * scalar * (θ - 1)) ≤
+      (1 / 4 : ℝ) * J
+    exact hlow
+  have hYsum :
+      2 * coarseFluctuationYoungManuscriptRHSAtScale
+          hP hStruct hP4 C0 1 η k m e ≤
+        ((1 / 4 : ℝ) * J + tauTerm1) + thetaTerm + fluctTerm +
+          tauTerm2 + tailTerm + (1 / 4 : ℝ) * J := by
+    exact
+      young_rhs_two_mul_le_sum_of_term_bounds hP hStruct hP4 C0 η k m e
+        ((1 / 4 : ℝ) * J + tauTerm1) thetaTerm fluctTerm tauTerm2
+        tailTerm ((1 / 4 : ℝ) * J) hT1 hT2 hT3 hT4 hT5 hT6
+  change J ≤
+    2 * (fluctTerm + (tauTerm1 + tauTerm2) + tailTerm + thetaTerm)
+  exact absorb_quarter_terms (hraw_young.trans hYsum)
+
+private theorem smallContrastResponseMomentTailBound
+    {C0 β D1 U Rm : ℝ} {xi : ℕ}
+    (hC0_nonneg : 0 ≤ C0) (hβ_pos : 0 < β)
+    (hD1_nonneg : 0 ≤ D1) (hUR_le : U * Rm ≤ 16) :
+    2 * (C0 * (xi : ℝ) * (β ^ 3)⁻¹ * D1 * U * Rm) ≤
+        32 * C0 * (xi : ℝ) * (β ^ 3)⁻¹ * D1 := by
+  have hcoeff_nonneg :
+      0 ≤ 2 * C0 * (xi : ℝ) * (β ^ 3)⁻¹ * D1 := by
+    exact mul_nonneg
+      (mul_nonneg
+        (mul_nonneg
+          (mul_nonneg (by positivity) hC0_nonneg)
+          (by exact_mod_cast Nat.zero_le xi))
+        (inv_nonneg.mpr (pow_nonneg hβ_pos.le 3)))
+      hD1_nonneg
+  calc
+    2 * (C0 * (xi : ℝ) * (β ^ 3)⁻¹ * D1 * U * Rm) =
+        (2 * C0 * (xi : ℝ) * (β ^ 3)⁻¹ * D1) * (U * Rm) := by ring
+    _ ≤ (2 * C0 * (xi : ℝ) * (β ^ 3)⁻¹ * D1) * 16 :=
+        mul_le_mul_of_nonneg_left hUR_le hcoeff_nonneg
+    _ = 32 * C0 * (xi : ℝ) * (β ^ 3)⁻¹ * D1 := by ring
+
+private theorem smallContrastAdditivitySumBound
+    {C0 β scalar tauSum tau : ℝ}
+    (hC0_nonneg : 0 ≤ C0) (hβ_pos : 0 < β)
+    (hscalar_le : scalar ≤ 4) (htauSum_nonneg : 0 ≤ tauSum)
+    (htauSum_le : tauSum ≤ 5 * β⁻¹ * tau) :
+    2 * (C0 * (β ^ 2)⁻¹ * scalar * tauSum) ≤
+        40 * C0 * (β ^ 3)⁻¹ * tau := by
+  have hβ_ne : β ≠ 0 := hβ_pos.ne'
+  have hscalar_tau :
+      scalar * tauSum ≤ 20 * β⁻¹ * tau := by
+    calc
+      scalar * tauSum ≤ 4 * tauSum :=
+        mul_le_mul_of_nonneg_right hscalar_le htauSum_nonneg
+      _ ≤ 4 * (5 * β⁻¹ * tau) :=
+        mul_le_mul_of_nonneg_left htauSum_le (by norm_num)
+      _ = 20 * β⁻¹ * tau := by ring
+  have hcoeff_nonneg : 0 ≤ 2 * C0 * (β ^ 2)⁻¹ := by
+    exact mul_nonneg (mul_nonneg (by positivity) hC0_nonneg)
+      (inv_nonneg.mpr (sq_nonneg β))
+  calc
+    2 * (C0 * (β ^ 2)⁻¹ * scalar * tauSum) =
+        (2 * C0 * (β ^ 2)⁻¹) * (scalar * tauSum) := by ring
+    _ ≤ (2 * C0 * (β ^ 2)⁻¹) * (20 * β⁻¹ * tau) :=
+        mul_le_mul_of_nonneg_left hscalar_tau hcoeff_nonneg
+    _ = 40 * C0 * (β ^ 3)⁻¹ * tau := by
+        field_simp [hβ_ne]
+        ring
+
 theorem expectedResponseJCubeSet_special_le_two_smallContrastReducedRHSAtScale
     {d : ℕ} [NeZero d] {P : Ch04.RestrictionCoeffLaw d}
     (hP : Ch04.RestrictionLawCarrier P) (hstat : Ch04.RestrictionStationaryLaw P)
@@ -72,7 +273,6 @@ theorem expectedResponseJCubeSet_special_le_two_smallContrastReducedRHSAtScale
   let ThetaSq := (θ - 1) ^ (2 : ℕ)
   have hβ_pos : 0 < β := by
     simpa [β] using section53CoarseFluctuationBeta_pos hP4
-  have hβ_ne : β ≠ 0 := hβ_pos.ne'
   have hkm_le : k ≤ m := hkm.le
   have hraw_center :
       J ≤ 2 * expectedCenteredResponseJAtScale hP hStruct (m : ℤ) p_e q_e := by
@@ -184,43 +384,12 @@ theorem expectedResponseJCubeSet_special_le_two_smallContrastReducedRHSAtScale
   have htau_sum_term :
       2 * (C0 * (β ^ 2)⁻¹ * scalar * tauSum) ≤
         40 * C0 * (β ^ 3)⁻¹ * tau := by
-    have hscalar_tau :
-        scalar * tauSum ≤ 20 * β⁻¹ * tau := by
-      calc
-        scalar * tauSum ≤ 4 * tauSum :=
-          mul_le_mul_of_nonneg_right hscalar_le htauSum_nonneg
-        _ ≤ 4 * (5 * β⁻¹ * tau) :=
-          mul_le_mul_of_nonneg_left htauSum_le (by norm_num)
-        _ = 20 * β⁻¹ * tau := by ring
-    have hcoeff_nonneg : 0 ≤ 2 * C0 * (β ^ 2)⁻¹ := by
-      exact mul_nonneg (mul_nonneg (by positivity) hC0_nonneg)
-        (inv_nonneg.mpr (sq_nonneg β))
-    calc
-      2 * (C0 * (β ^ 2)⁻¹ * scalar * tauSum) =
-          (2 * C0 * (β ^ 2)⁻¹) * (scalar * tauSum) := by ring
-      _ ≤ (2 * C0 * (β ^ 2)⁻¹) * (20 * β⁻¹ * tau) :=
-          mul_le_mul_of_nonneg_left hscalar_tau hcoeff_nonneg
-      _ = 40 * C0 * (β ^ 3)⁻¹ * tau := by
-          field_simp [hβ_ne]
-          ring
+    exact smallContrastAdditivitySumBound hC0_nonneg hβ_pos hscalar_le
+      htauSum_nonneg htauSum_le
   have hresponse_term :
       2 * (C0 * (hP4.xi : ℝ) * (β ^ 3)⁻¹ * D1 * U * Rm) ≤
         32 * C0 * (hP4.xi : ℝ) * (β ^ 3)⁻¹ * D1 := by
-    have hcoeff_nonneg :
-        0 ≤ 2 * C0 * (hP4.xi : ℝ) * (β ^ 3)⁻¹ * D1 := by
-      exact mul_nonneg
-        (mul_nonneg
-          (mul_nonneg
-            (mul_nonneg (by positivity) hC0_nonneg)
-            (by exact_mod_cast Nat.zero_le hP4.xi))
-          (inv_nonneg.mpr (pow_nonneg hβ_pos.le 3)))
-        hD1_nonneg
-    calc
-      2 * (C0 * (hP4.xi : ℝ) * (β ^ 3)⁻¹ * D1 * U * Rm) =
-          (2 * C0 * (hP4.xi : ℝ) * (β ^ 3)⁻¹ * D1) * (U * Rm) := by ring
-      _ ≤ (2 * C0 * (hP4.xi : ℝ) * (β ^ 3)⁻¹ * D1) * 16 :=
-          mul_le_mul_of_nonneg_left hUR_le hcoeff_nonneg
-      _ = 32 * C0 * (hP4.xi : ℝ) * (β ^ 3)⁻¹ * D1 := by ring
+    exact smallContrastResponseMomentTailBound hC0_nonneg hβ_pos hD1_nonneg hUR_le
   have hlow :
       2 * (C0 * (β ^ 2)⁻¹ * D2 * scalar * (θ - 1)) ≤
         (1 / 4 : ℝ) * J := by
@@ -254,89 +423,8 @@ theorem expectedResponseJCubeSet_special_le_two_smallContrastReducedRHSAtScale
   let reducedBound : ℝ :=
     fluctTerm + (tauTerm1 + tauTerm2) + tailTerm + thetaTerm
   have hJ_le_reduced : J ≤ 2 * reducedBound := by
-    have hcenter :
-        2 * (C0 * Center) ≤ 2 * C0 * ThetaSq := by
-      calc
-        2 * (C0 * Center) = (2 * C0) * Center := by ring
-        _ ≤ (2 * C0) * ThetaSq :=
-            mul_le_mul_of_nonneg_left hCenter_le_ThetaSq
-              (mul_nonneg (by norm_num) hC0_nonneg)
-        _ = 2 * C0 * ThetaSq := by ring
-    have hT1 :
-        2 *
-            (C0 *
-              (η *
-                  Ch04.expectedResponseJCubeSet P (originCube d (k : ℤ))
-                    (specialPAtScale hP hStruct (m : ℤ) e)
-                    (specialQAtScale hP hStruct (m : ℤ) e) +
-                η⁻¹ *
-                  tauAtScale P (m : ℤ) (k : ℤ)
-                    (specialPAtScale hP hStruct (m : ℤ) e)
-                    (specialQAtScale hP hStruct (m : ℤ) e))) ≤
-          (1 / 4 : ℝ) * J + tauTerm1 := by
-      change 2 * (C0 * (η * Jk + η⁻¹ * tau)) ≤
-        (1 / 4 : ℝ) * J + 2 * C0 * (η + η⁻¹) * tau
-      exact hfirst
-    have hT2 :
-        2 *
-            (C0 *
-              (Real.sqrt (thetaAtScale hP hStruct (m : ℤ)) - 1) ^
-                (2 : ℕ)) ≤ thetaTerm := by
-      change 2 * (C0 * Center) ≤ 2 * C0 * ThetaSq
-      exact hcenter
-    have hT3 :
-        2 *
-            (C0 * (section53CoarseFluctuationBeta hP4)⁻¹ *
-              thetaAtScale hP hStruct (m : ℤ) *
-              coarseFluctuationFullBlockSumAtScale hP hStruct hP4 k m) ≤
-          fluctTerm := by
-      change 2 * (C0 * β⁻¹ * θ * F) ≤ 4 * C0 * β⁻¹ * F
-      exact hfluct
-    have hT4 :
-        2 *
-            (C0 * ((section53CoarseFluctuationBeta hP4) ^ 2)⁻¹ *
-              coarseFluctuationScalarWeightAtScale hP hStruct m *
-              coarseFluctuationTauSumAtScale hP hStruct hP4 k m e) ≤
-          tauTerm2 := by
-      change 2 * (C0 * (β ^ 2)⁻¹ * scalar * tauSum) ≤
-        40 * C0 * (β ^ 3)⁻¹ * tau
-      exact htau_sum_term
-    have hT5 :
-        2 *
-            (C0 * (hP4.xi : ℝ) *
-              ((section53CoarseFluctuationBeta hP4) ^ 3)⁻¹ *
-              Real.rpow (3 : ℝ)
-                (-(section53CoarseFluctuationBeta hP4) * (m : ℝ)) *
-              coarseFluctuationUnitMomentWeightAtScale hP hStruct hP4 m *
-              coarseFluctuationResponseMomentAtScale hP hStruct hP4 k m e) ≤
-          tailTerm := by
-      change 2 * (C0 * (hP4.xi : ℝ) * (β ^ 3)⁻¹ * D1 * U * Rm) ≤
-        32 * C0 * (hP4.xi : ℝ) * (β ^ 3)⁻¹ * D1
-      exact hresponse_term
-    have hT6 :
-        2 *
-            (C0 * ((section53CoarseFluctuationBeta hP4) ^ 2)⁻¹ *
-              Real.rpow (3 : ℝ)
-                (-2 * section53CoarseFluctuationBeta hP4 *
-                  (((m - k : ℕ) : ℝ))) *
-              coarseFluctuationScalarWeightAtScale hP hStruct m *
-              (thetaAtScale hP hStruct (m : ℤ) - 1)) ≤
-          (1 / 4 : ℝ) * J := by
-      change 2 * (C0 * (β ^ 2)⁻¹ * D2 * scalar * (θ - 1)) ≤
-        (1 / 4 : ℝ) * J
-      exact hlow
-    have hYsum :
-        2 * coarseFluctuationYoungManuscriptRHSAtScale
-            hP hStruct hP4 C0 1 η k m e ≤
-          ((1 / 4 : ℝ) * J + tauTerm1) + thetaTerm + fluctTerm +
-            tauTerm2 + tailTerm + (1 / 4 : ℝ) * J := by
-      exact
-        young_rhs_two_mul_le_sum_of_term_bounds hP hStruct hP4 C0 η k m e
-          ((1 / 4 : ℝ) * J + tauTerm1) thetaTerm fluctTerm tauTerm2
-          tailTerm ((1 / 4 : ℝ) * J) hT1 hT2 hT3 hT4 hT5 hT6
-    change J ≤
-      2 * (fluctTerm + (tauTerm1 + tauTerm2) + tailTerm + thetaTerm)
-    exact absorb_quarter_terms (hraw_young.trans hYsum)
+    exact smallContrastYoungResponseAbsorptionBound hP hStruct hP4 C0 η hC0_nonneg k m e
+      hraw_young hCenter_le_ThetaSq hfirst hfluct htau_sum_term hresponse_term hlow
   change J ≤
     2 *
       (4 * C0 * β⁻¹ * F +
@@ -451,7 +539,7 @@ theorem smallContrastJBound_homogenizationScale
   rcases
       JUpperBoundCoarseFluctuations_young_homogenizationScale params with
     ⟨C0, hC0_nonneg, hC0⟩
-  let βp := section53CoarseFluctuationBetaParams params
+  let βp := coarseFluctuationBeta params
   let η : ℝ := (8 * (C0 + 1))⁻¹
   let Aabs : ℝ := 32 * C0 * (βp ^ 2)⁻¹
   have hβp_pos : 0 < βp := by

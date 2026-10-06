@@ -63,6 +63,8 @@ and `ε_0(d,γ), c(d,γ) ∈ (0,1)` such that, for every `ε ∈ (0,ε_0]` and `
 theorem scale_selection
     (d : ℕ) (hd : 2 ≤ d)
     (γ : ℝ) (hγ : γ ∈ Set.Ico (0 : ℝ) 1) :
-    ∃ S : SelectionData, S.Selects d γ := by exact HCPolySupport.HighContrast.Entry.scale_selection d hd γ hγ
+    ∃ S : SelectionData, S.Selects d γ := by
+  exact HCPolySupport.HighContrast.Entry.scale_selection d hd γ hγ
+
 
 end HCPolySupport.HighContrast

@@ -24,17 +24,17 @@ public section
 
 This is the second half of the matrix calculation the proof of
 `p.two.grid.transport` isolates and uses at every target cell.
-The convex combination `P̄` of the previous module lives on the old grid; the
+The convex combination `P_bar` of the previous module lives on the old grid; the
 target cell lives on the new one, and the two normalizations differ by the
 bridge congruence `S`.  The display `e.two.grid.whitney.mean.bound` says
-that transporting `P̄` costs a factor depending only on `d` and `Q` plus one
+that transporting `P_bar` costs a factor depending only on `d` and `Q` plus one
 *additive* multiple of the bridge error — the error never multiplies the gain.
 
 The mechanism is the splitting
-`S^tP̄S - I = S^t(P̄ - I)S + (S^tS - I)`.  The first term is positive and its
-trace is at most `(1 + η)tr(P̄ - I)`; the second is bounded above by `η` times
+`S^tP_barS - I = S^t(P_bar - I)S + (S^tS - I)`.  The first term is positive and its
+trace is at most `(1 + η)tr(P_bar - I)`; the second is bounded above by `η` times
 the identity.  So the whole matrix is dominated by a positive matrix of trace at
-most `(1 + η)tr(P̄ - I) + 2dη`, and the trace of a spectral positive part is at
+most `(1 + η)tr(P_bar - I) + 2dη`, and the trace of a spectral positive part is at
 most the trace of any positive matrix above it.
 
 The passage from the trace bound to the gain bound is scalar and uses the

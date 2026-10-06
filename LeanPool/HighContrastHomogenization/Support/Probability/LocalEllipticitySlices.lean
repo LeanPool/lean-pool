@@ -592,6 +592,8 @@ theorem memLp_restrictCoeffField {d : ℕ} {U : Set (Vec d)} {k : ℕ}
       simp [restrictCoeffField, hx, hk_nonneg]
   exact MeasureTheory.MemLp.of_bound hmeas.aestronglyMeasurable (k + 1 : ℝ) hbound
 
+/-- The matrix-valued L² class of the coefficient field restricted to `U` on a quantitative
+ellipticity slice. -/
 @[expose]
 noncomputable def toMatrixL2 {d : ℕ} {U : Set (Vec d)} {k : ℕ}
     [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
@@ -608,6 +610,8 @@ theorem memLp_hilbertMatrix_restrictCoeffField {d : ℕ} {U : Set (Vec d)} {k : 
     ((HilbertMat.continuousLinearEquivMat d).symm).toContinuousLinearMap
   simpa [T] using! T.comp_memLp' h.memLp_restrictCoeffField
 
+/-- The Hilbert-matrix-valued L² class of the coefficient field restricted to `U` on a
+quantitative ellipticity slice. -/
 @[expose]
 noncomputable def toHilbertMatrixL2 {d : ℕ} {U : Set (Vec d)} {k : ℕ}
     [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
@@ -679,6 +683,7 @@ theorem coeFn_toHilbertMatrixL2 {d : ℕ} {U : Set (Vec d)} {k : ℕ}
       fun x => HilbertMat.ofMat (restrictCoeffField U a.1 x) :=
   MeasureTheory.MemLp.coeFn_toLp a.2.memLp_hilbertMatrix_restrictCoeffField
 
+/-- The continuous linear extraction of matrix entry `(i, j)` from a matrix-valued L² class. -/
 @[expose]
 noncomputable def matrixL2Entry {d : ℕ} {U : Set (Vec d)} (i j : Fin d) :
     MeasureTheory.Lp (Fin d → Fin d → ℝ) 2 (volumeMeasureOn U) →L[ℝ] ScalarL2 U := by
@@ -688,6 +693,7 @@ noncomputable def matrixL2Entry {d : ℕ} {U : Set (Vec d)} (i j : Fin d) :
     ContinuousLinearMap.proj (R := ℝ) j
   exact (entry.comp row).compLpL 2 (volumeMeasureOn U)
 
+/-- The continuous linear extraction of entry `(i, j)` from a Hilbert-matrix-valued L² class. -/
 @[expose]
 noncomputable def hilbertMatrixL2Entry {d : ℕ} {U : Set (Vec d)} (i j : Fin d) :
     MeasureTheory.Lp (HilbertMat d) 2 (volumeMeasureOn U) →L[ℝ] ScalarL2 U :=
@@ -755,7 +761,7 @@ theorem inner_toScalarL2_matrixL2Entry_toMatrixL2_eq_setIntegral {d : ℕ}
       (measurableSet_of_isEllipticFieldOn a.2)] with x hx
     simp [restrictCoeffField, hx]
 
-theorem inner_toScalarL2_hilbertMatrixL2Entry_toHilbertMatrixL2_eq_setIntegral {d : ℕ}
+theorem inner_scalarL2_matrixEntry_eq_setIntegral {d : ℕ}
     {U : Set (Vec d)} {k : ℕ} [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     {w : Vec d → ℝ} (hw : MemScalarL2 U w) (i j : Fin d)
     (a : {a : CoeffField d // QuantitativeEllipticSlice U k a}) :
@@ -943,6 +949,8 @@ theorem memLp_hilbertMatrix_restrictCoeffField {d : ℕ} {U : Set (Vec d)} {k : 
     ((HilbertMat.continuousLinearEquivMat d).symm).toContinuousLinearMap
   simpa [T] using! T.comp_memLp' h.memLp_restrictCoeffField
 
+/-- The Hilbert-matrix-valued L² class of the restricted coefficient field on an essential
+quantitative ellipticity slice. -/
 @[expose]
 noncomputable def toHilbertMatrixL2 {d : ℕ} {U : Set (Vec d)} {k : ℕ}
     [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
@@ -1075,6 +1083,8 @@ theorem memLp_hilbertMatrix_restrictCoeffField {d : ℕ} {U : Set (Vec d)} {k : 
     ((HilbertMat.continuousLinearEquivMat d).symm).toContinuousLinearMap
   simpa [T] using! T.comp_memLp' h.memLp_restrictCoeffField
 
+/-- The Hilbert-matrix-valued L² class of the restricted coefficient field on a spatial
+almost-everywhere quantitative ellipticity slice. -/
 @[expose]
 noncomputable def toHilbertMatrixL2 {d : ℕ} {U : Set (Vec d)} {k : ℕ}
     [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]

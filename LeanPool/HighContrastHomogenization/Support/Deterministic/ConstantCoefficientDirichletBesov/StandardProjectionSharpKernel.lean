@@ -562,7 +562,8 @@ theorem sq_cubeBesovOverlappingPositiveVectorPartialSeminormTwo_le_of_sharpBound
 where the geometric kernel bound is supplied term-by-term with the canonical
 sharp boundary kernel base.  The only remaining input is the local
 single-summand scale arithmetic estimate. -/
-theorem sq_cubeBesovOverlappingPositiveVectorPartialSeminormTwo_le_of_sharpBoundaryDepthTailTerm_kernel
+theorem
+  sq_cubeBesovOverlappingPositiveVectorPartialSeminormTwo_le_of_sharpBoundaryDepthTailTerm_kernel
     {d : ℕ} [NeZero d] (Q : TriadicCube d) (t : ℝ) (N : ℕ) (u : Vec d → Vec d)
     {C : ℝ}
     (ht : t < 1 / 2)

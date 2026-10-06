@@ -37,7 +37,7 @@ noncomputable section
 
 /-- Endpoint high-top component estimate with the raw high bad-pair bound
 supplied externally. -/
-theorem measureReal_shiftedHighTopBadScaleEvent_quenchedProbeEnvelope_le_weighted_kernel_gammaInfinity_of_badPair_bound
+theorem measureReal_shiftedHighTopBadScaleProbability_le_weighted_kernel_gammaInfinity
     {d : ℕ} [NeZero d] {Cfluct Centry a : ℝ}
     (params : QuantitativeCoarseGrainedEllipticityParams d)
     (hCfluct : 0 < Cfluct) (_hCentry : 0 < Centry) (ha : 0 < a)
@@ -198,7 +198,7 @@ theorem measureReal_shiftedHighTopBadScaleEvent_quenchedProbeEnvelope_le_weighte
           (Real.exp (-(Aold ^ (2 : ℝ))) *
             weightedLinearExpKernelConst w (ρtop ^ (2 : ℝ))) := by
     have htop :=
-      measureReal_shiftedHighTopBadScaleEvent_quenchedProbeEnvelope_le_weighted_kernel_of_badPair_bound
+      shiftedHighTopBadScaleMeasure_le_weightedKernel_of_pairBound
         (d := d) (σ := (2 : ℝ)) (Cfluct := Cfluct)
         (Centry := Centry) (a := a)
         (by norm_num : (0 : ℝ) < (2 : ℝ))
@@ -349,7 +349,7 @@ theorem measureReal_shiftedBadScaleEvent_quenchedProbeEnvelope_le_uniformEndpoin
           (Real.exp (-(A ^ η)) *
             weightedLinearExpKernelConst w (ρtop ^ (2 : ℝ))) := by
     simpa [K, N0, Hshift, S, b, L, ctop, η, w, Dhigh, A, ρtop] using
-      measureReal_shiftedHighTopBadScaleEvent_quenchedProbeEnvelope_le_weighted_kernel_gammaInfinity_of_badPair_bound
+      measureReal_shiftedHighTopBadScaleProbability_le_weighted_kernel_gammaInfinity
         (d := d) (Cfluct := Cfluct) (Centry := Centry) (a := a)
         params hCfluct hCentry ha hhighRaw
         (t := t) (αbad := αbad) (Den := Den)
@@ -362,17 +362,17 @@ theorem measureReal_shiftedBadScaleEvent_quenchedProbeEnvelope_le_uniformEndpoin
             weightedGeometricExpKernelConst w (ρbottom ^ η)) := by
     simpa [K, N0, Hshift, S, b, L, η, w, Dhigh, Dcrude, A, ρbottom,
       Cbottom] using
-      measureReal_shiftedHighBottomBadScaleEvent_quenchedProbeEnvelope_le_weighted_kernel_gammaInfinity_of_row_bound
+      shiftedHighBottomBadScaleProbability_le_weighted_kernel_gammaInfinity
         (d := d) (Cfluct := Cfluct) (Ccrude := Ccrude)
         (Centry := Centry) (a := a) params
-        (measureReal_shiftedHighBottomPairEvent_quenchedProbeEnvelope_le_weighted_row_gammaInfinity_of_bounds
+        (shiftedHighBottomPairMeasure_le_rowGammaInfinity_of_bounds
           (d := d) (Cfluct := Cfluct) (Ccrude := Ccrude)
           (Centry := Centry) (a := a)
           params hCfluct hCcrude hCentry ha
-          (measureReal_shiftedHighBottomPairEvent_quenchedProbeEnvelope_le_soft_high_gammaInfinity_of_badPair_bound
+          (measureReal_shiftedHighBottomPairProbability_le_soft_high_gammaInfinity
             (d := d) (Cfluct := Cfluct) (Centry := Centry) (a := a)
             params hCfluct hCentry ha hhighRaw)
-          (measureReal_shiftedHighBottomPairEvent_quenchedProbeEnvelope_eq_zero_of_crudeA_one_gammaInfinity_of_badPair_zero
+          (measureReal_shiftedHighBottomPairProbability_eq_zero_of_badPair_zero
             (d := d) (Ccrude := Ccrude) params hCcrude hzeroRaw))
         (t := t) (αbad := αbad) (Den := Den)
         hP hStruct hInf hparams (q := q)
@@ -382,9 +382,9 @@ theorem measureReal_shiftedBadScaleEvent_quenchedProbeEnvelope_le_uniformEndpoin
     have hz :
         P.real (crudeBottomBadScaleEvent Hshift K a t αbad q) = 0 := by
       simpa [K, N0, Hshift, L, Acrude, Dcrude] using
-        (measureReal_shiftedCrudeBottomBadScaleEvent_quenchedProbeEnvelope_eq_zero_gammaInfinity_of_pair_zero
+        (shiftedCrudeBottomBadScaleMeasure_eq_zero_of_pairZero
           (d := d) (Ccrude := Ccrude) params
-          (measureReal_shiftedCrudeBottomPairEvent_quenchedProbeEnvelope_eq_zero_gammaInfinity_of_badPair_zero
+          (shiftedCrudeBottomPairMeasure_eq_zero_of_pairZero
             (d := d) (Ccrude := Ccrude) params hCcrude hzeroRaw))
           hP hStruct hInf hparams (q := q) ha ht hαt hAcrude_one
     rw [hz]
@@ -408,7 +408,8 @@ theorem measureReal_shiftedBadScaleEvent_quenchedProbeEnvelope_le_uniformEndpoin
 
 /-- Endpoint component sum after selecting the common high denominator.  The
 crude-bottom cutoff remains an explicit deterministic side condition. -/
-theorem measureReal_shiftedBadScaleEvent_quenchedProbeEnvelope_le_uniformEndpoint_selected_denominator
+theorem
+  measureReal_shiftedBadScaleEvent_quenchedProbeEnvelope_le_uniformEndpoint_selected_denominator
     {d : ℕ} [NeZero d]
     (params : QuantitativeCoarseGrainedEllipticityParams d) :
     ∃ Cfluct Ccrude Centry a : ℝ,

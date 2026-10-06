@@ -63,7 +63,7 @@ theorem cubeFaceReflectionParent_reflectedGradient_isPotentialOn_originCube_of_o
     memVectorL2_openCubeSet_succ_originCube_cubeCoordinateFoldReflectedVectorField
       hGopen
   exact
-    IsPotentialOn.of_orthogonal_to_solenoidalZeroNormalTrace_of_memVectorL2_of_hodgeConverseCriterion
+    IsPotentialOn.potential_of_orthogonalL2
       (hodgeConverseCriterion_of_isOpenBoundedConvexDomain
         (U := openCubeSet (originCube d (m + 1)))
         (isOpenBoundedConvexDomain_openCubeSet (originCube d (m + 1))))

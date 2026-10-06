@@ -31,7 +31,7 @@ open scoped BigOperators ENNReal
 constructed on the parent cube.  This is the small-cube local form of the
 Chapter 3 proof: the cube being averaged is `R`, while the cutoff transition
 still comes from the annulus between the two radii of `Q`. -/
-theorem abs_cubeAverage_vecDot_scalar_smul_le_fluxEnergyExactRhs_of_parentQuantitativeCutoff_on_descendant
+theorem abs_cubeAverage_fluxCutoff_le_exactRhs_of_parentCutoff
     {d : ℕ} {Q R : TriadicCube d} {j : ℕ} (hR : R ∈ descendantsAtDepth Q j)
     (a : CoeffField d) (s : ℝ) {ρ₁ ρ₂ : ℝ}
     (flux : Vec d → Vec d) (u : Vec d → ℝ) (G : Vec d → Vec d)
@@ -181,7 +181,7 @@ theorem abs_cubeAverage_vecDot_scalar_smul_le_fluxEnergyExactRhs_of_localCanonic
 the RHS energy localized to a larger arbitrary-center local cube, on the branch
 where the averaged cube is contained in that larger local cube. -/
 theorem
-    abs_cubeAverage_vecDot_scalar_smul_le_fluxEnergyExactRhs_indicator_of_localCanonicalCutoff_on_cube_of_cubeSet_subset
+    abs_cubeAverage_vectorDot_scalarMultiply_le_fluxEnergyExactRhs_indicator
     {d : ℕ} {Q R : TriadicCube d} (center : Vec d)
     (a : CoeffField d) (s : ℝ) {rhoInner rhoOuter rho : ℝ}
     (flux : Vec d → Vec d) (u : Vec d → ℝ) (G : Vec d → Vec d)
@@ -293,7 +293,7 @@ theorem
 arbitrary-center canonical cutoff.  The pairing vanishes pointwise on the
 averaged cube. -/
 theorem
-    abs_cubeAverage_vecDot_scalar_smul_le_fluxEnergyExactRhs_indicator_of_localCanonicalCutoff_on_cube_of_forall_notMem_localClosedCube
+    abs_cubeAverage_vectorDot_scalarMultiply_le_fluxEnergyExactRhs_of_forall_notMem
     {d : ℕ} {Q R : TriadicCube d} (center : Vec d)
     (a : CoeffField d) {s : ℝ} {rhoInner rhoOuter rho : ℝ}
     (flux : Vec d → Vec d) (u : Vec d → ℝ)
@@ -344,7 +344,7 @@ theorem
 cutoff.  A descendant either misses the local cutoff support or, if it touches
 the support, the buffer hypothesis forces it into the larger local energy cube. -/
 theorem
-    abs_cubeAverage_vecDot_scalar_smul_le_fluxEnergyExactRhs_indicator_of_localCanonicalCutoff_on_descendant_of_support_buffer
+    abs_cubeAverage_vectorDot_scalarMultiply_le_fluxEnergyExactRhs_of_support_buffer
     {d : ℕ} {Q R : TriadicCube d} {j : ℕ} (_hR : R ∈ descendantsAtDepth Q j)
     (center : Vec d) (a : CoeffField d) (s : ℝ) {rhoInner rhoOuter rho : ℝ}
     (flux : Vec d → Vec d) (u : Vec d → ℝ) (G : Vec d → Vec d)
@@ -411,7 +411,7 @@ theorem
         (Q := Q) (R := R) (center := center)
         (rhoInner := rhoOuter) (rhoOuter := rho) hgap hinter
     exact
-      abs_cubeAverage_vecDot_scalar_smul_le_fluxEnergyExactRhs_indicator_of_localCanonicalCutoff_on_cube_of_cubeSet_subset
+      abs_cubeAverage_vectorDot_scalarMultiply_le_fluxEnergyExactRhs_indicator
         (Q := Q) (R := R) (center := center) (a := a) (s := s)
         (rhoInner := rhoInner) (rhoOuter := rhoOuter) (rho := rho)
         (flux := flux) (u := u) (G := G) (energy := energy)
@@ -423,7 +423,7 @@ theorem
       intro x hxR hxrhoOuter
       exact hinter ⟨x, hxR, hxrhoOuter⟩
     exact
-      abs_cubeAverage_vecDot_scalar_smul_le_fluxEnergyExactRhs_indicator_of_localCanonicalCutoff_on_cube_of_forall_notMem_localClosedCube
+      abs_cubeAverage_vectorDot_scalarMultiply_le_fluxEnergyExactRhs_of_forall_notMem
         (Q := Q) (R := R) (center := center) (a := a) (s := s)
         (rhoInner := rhoInner) (rhoOuter := rhoOuter) (rho := rho)
         (flux := flux) (u := u) (energy := energy)
@@ -444,7 +444,7 @@ the localized indicator agrees with the original energy on every descendant
 of `R`, so the flux-energy controls and the scalar bounds transfer by
 cube-average congruence. -/
 theorem
-    abs_cubeAverage_vecDot_scalar_smul_le_fluxEnergyExactRhs_indicator_of_parentQuantitativeCutoff_on_descendant_of_cubeSet_subset
+    abs_cubeAverage_vectorDot_scalarMultiply_le_fluxEnergyExactRhs_of_cubeSubset
     {d : ℕ} {Q R : TriadicCube d} {j : ℕ} (hR : R ∈ descendantsAtDepth Q j)
     (a : CoeffField d) (s : ℝ) {ρ₁ ρ₂ ρ : ℝ}
     (flux : Vec d → Vec d) (u : Vec d → ℝ) (G : Vec d → Vec d)
@@ -515,7 +515,7 @@ theorem
     intro i N
     simpa [havg] using hGcircS i N
   exact
-    abs_cubeAverage_vecDot_scalar_smul_le_fluxEnergyExactRhs_of_parentQuantitativeCutoff_on_descendant
+    abs_cubeAverage_fluxCutoff_le_exactRhs_of_parentCutoff
       (Q := Q) (R := R) (j := j) hR (a := a) (s := s) (flux := flux) (u := u)
       (G := G) (energy := (scaledClosedCubeSet Q ρ).indicator energy) (η := η)
       (Acirc1 := Acirc1) (AcircS := AcircS) (C := C)
@@ -526,7 +526,7 @@ theorem
 descendant cubes outside the support region of the parent cutoff.  In this
 branch the pairing vanishes pointwise on the averaged cube. -/
 theorem
-    abs_cubeAverage_vecDot_scalar_smul_le_fluxEnergyExactRhs_indicator_of_parentQuantitativeCutoff_on_descendant_of_forall_notMem_scaledClosedCubeSet
+    abs_cubeAverage_vectorDot_scalarMultiply_le_fluxEnergyExactRhs_of_notMem
     {d : ℕ} {Q R : TriadicCube d}
     (a : CoeffField d) {s : ℝ} {ρ₁ ρ₂ ρ : ℝ}
     (flux : Vec d → Vec d) (u : Vec d → ℝ)
@@ -566,7 +566,7 @@ theorem
 descendant either misses the cutoff support, or is entirely contained in the
 larger localization cube. -/
 theorem
-    abs_cubeAverage_vecDot_scalar_smul_le_fluxEnergyExactRhs_indicator_of_parentQuantitativeCutoff_on_descendant_of_support_buffer
+    abs_cubeAverage_vectorDot_scalarMultiply_le_fluxEnergyExactRhs_of_parentBuffer
     {d : ℕ} {Q R : TriadicCube d} {j : ℕ} (hR : R ∈ descendantsAtDepth Q j)
     (a : CoeffField d) (s : ℝ) {ρ₁ ρ₂ ρ : ℝ}
     (flux : Vec d → Vec d) (u : Vec d → ℝ) (G : Vec d → Vec d)
@@ -613,7 +613,7 @@ theorem
       cubeSet_subset_scaledClosedCubeSet_of_intersects_scaledClosedCubeSet_of_scaleFactor_le_gap
         (Q := Q) (R := R) (ρinner := ρ₂) (ρouter := ρ) hgap hinter
     exact
-      abs_cubeAverage_vecDot_scalar_smul_le_fluxEnergyExactRhs_indicator_of_parentQuantitativeCutoff_on_descendant_of_cubeSet_subset
+      abs_cubeAverage_vectorDot_scalarMultiply_le_fluxEnergyExactRhs_of_cubeSubset
         (Q := Q) (R := R) (j := j) hR (a := a) (s := s) (ρ := ρ)
         (flux := flux) (u := u) (G := G) (energy := energy) (η := η)
         (Acirc1 := Acirc1) (AcircS := AcircS) (C := C)
@@ -623,7 +623,7 @@ theorem
       intro x hxR hxρ₂
       exact hinter ⟨x, hxR, hxρ₂⟩
     exact
-      abs_cubeAverage_vecDot_scalar_smul_le_fluxEnergyExactRhs_indicator_of_parentQuantitativeCutoff_on_descendant_of_forall_notMem_scaledClosedCubeSet
+      abs_cubeAverage_vectorDot_scalarMultiply_le_fluxEnergyExactRhs_of_notMem
         (Q := Q) (R := R) (a := a) (s := s) (ρ := ρ)
         (flux := flux) (u := u) (energy := energy) (η := η)
         (Acirc1 := Acirc1) (AcircS := AcircS)

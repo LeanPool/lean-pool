@@ -44,7 +44,7 @@ theorem coarsePoincareRHSRn_le_discount_next_add_intrinsicAbsorbedErrorAverage_o
     simpa [coarsePoincareRHSDiscount, coarsePoincareRHSRn] using hlocal R hR
   simpa [coarsePoincareRHSDiscount, coarsePoincareRHSRn,
     coarsePoincareRHSIntrinsicAbsorbedErrorAverage] using
-      descendantsAverage_sq_cubeBesovNegativeVectorSeminormTwo_le_discount_next_add_error_of_localBound
+      descendantAverage_sq_negativeVectorSeminorm_le_discountNext_error
         Q s u n (fun R => coarsePoincareRHSIntrinsicAbsorbedLocalError R a g u s η)
         hlocal'
 

@@ -40,53 +40,38 @@ open scoped Matrix
 
 noncomputable section
 
-/-- **The corrected three-channel pricing of the entry-slot source.** -/
-theorem corrected_source_pricing (d : ℕ) (hd : 2 ≤ d)
-    {Cpre Mabs L Csub Msc delta conv K R : ℝ}
-    (hCpre : 0 ≤ Cpre) (hM0 : 0 ≤ Mabs)
+
+private theorem corrected_lag_source_group_bound (d : ℕ) (hd : 2 ≤ d)
+    {Mabs L Csub Msc delta conv : ℝ}
+     (hM0 : 0 ≤ Mabs)
     (hCsub : 0 ≤ Csub) (hMsc : 0 ≤ Msc) (hdelta : 0 ≤ delta)
-    (hconv : 0 ≤ conv) (hR : 1 ≤ R)
-    {g : ℝ} (hg1 : g < 1)
-    {beta2 : ℝ} (hb2A : beta2 ≤ contrastAlpha g)
-    {ns n m : ℕ} (hm : ns ≤ m) (hmn : m ≤ n)
-    {Delta : ℤ} (hD0 : 0 ≤ Delta)
-    (hDrate : beta2 * ((n - ns : ℕ) : ℝ) ≤ (1 / 2 : ℝ) * (Delta : ℝ)) :
-    3 * weakCoefficient d Cpre *
+    (hconv : 0 ≤ conv)
+    {g : ℝ}
+    {n m : ℕ}
+    (hrho1 : contrastRho g < 1)
+    (ha1 : (0 : ℝ) ≤ 16 * Mabs * Real.sqrt L)
+    (ha2 : (0 : ℝ) ≤ Response.constantSeminormCoefficient * Mabs * Real.sqrt 7)
+    : (slotVsumSharp d Csub Msc delta (n - m) ≤
+      vsumSourceConstant d Csub Msc delta *
+        (3 : ℝ) ^ (-(1 / 2 : ℝ) * (((n - m : ℕ) : ℕ) : ℝ))) ∧
+    (0 ≤ slotVsumSharp d Csub Msc delta (n - m)) ∧
+    (0 ≤ slotSourceSeq d Csub Msc delta (n - m) 0) ∧
+    (slotSourceSeq d Csub Msc delta (n - m) 0 ≤
+      slotVsumSharp d Csub Msc delta (n - m)) ∧
+    (conv * slotSourceSeq d Csub Msc delta (n - m) 0 ≤
+      conv * vsumSourceConstant d Csub Msc delta *
+        (3 : ℝ) ^ (-(1 / 2 : ℝ) * (((n - m : ℕ) : ℕ) : ℝ))) ∧
+    (weakSourceGroupSummed Mabs L (contrastRho g)
+      (slotVsumSharp d Csub Msc delta (n - m))
+      (conv * slotSourceSeq d Csub Msc delta (n - m) 0) 0 ≤
       weakSourceGroupSummed Mabs L (contrastRho g)
-        (slotVsumSharp d Csub Msc delta (n - m))
-        (conv * slotSourceSeq d Csub Msc delta (n - m) 0)
-        (Real.sqrt 2 * Real.sqrt (L + 1) *
-            Response.profileBadMajorantAt 4 (R ^ 4 * badMomentMajorant K Delta)
-              (R / 2) R +
-          Real.sqrt 2 *
-              (3 : ℝ) ^ (-((1 - contrastRho g) / 2) * ((n - ns : ℕ) : ℝ)) *
-            Real.sqrt (L + 1)) ^ 2 ≤
-      1 * (3 : ℝ) ^ (-(1 * (m : ℝ))) +
-        (1 + 6 * weakCoefficient d Cpre *
-            weakSourceGroupSummed Mabs L (contrastRho g)
-              (vsumSourceConstant d Csub Msc delta)
-              (conv * vsumSourceConstant d Csub Msc delta) 0 ^ 2) *
-          (3 : ℝ) ^ (-(1 * ((n - m : ℕ) : ℝ))) +
-        (1 + 6 * weakCoefficient d Cpre *
-            weakSourceGroupSummed Mabs L (contrastRho g) 0 0
-              (badSourceLegConstantAtLevel L K R) ^ 2 *
-            (3 : ℝ) ^ (2 * beta2 * (ns : ℝ))) *
-          (3 : ℝ) ^ (-(2 * beta2 * (n : ℝ))) := by
-  have hrho1 : contrastRho g < 1 := contrastRho_lt_one hg1
-  have hwC0 : 0 ≤ weakCoefficient d Cpre := weakCoefficient_nonneg d hCpre
-  have hsL : (0 : ℝ) ≤ Real.sqrt L := Real.sqrt_nonneg _
-  have hsL1 : (0 : ℝ) ≤ Real.sqrt (L + 1) := Real.sqrt_nonneg _
-  have hs2 : (0 : ℝ) ≤ Real.sqrt 2 := Real.sqrt_nonneg _
-  have ha1 : (0 : ℝ) ≤ 16 * Mabs * Real.sqrt L :=
-    mul_nonneg (by linarith only [hM0]) hsL
-  have ha2 : (0 : ℝ) ≤ Response.constantSeminormCoefficient * Mabs * Real.sqrt 7 :=
-    mul_nonneg (mul_nonneg constantSeminormCoefficient_nonneg hM0)
-      (Real.sqrt_nonneg _)
-  have hden : (0 : ℝ) < 2 * ((1 - contrastRho g) / 2) := by
-    linarith only [hrho1]
-  have ha3 : (0 : ℝ) ≤ 16 * Mabs / (2 * ((1 - contrastRho g) / 2)) :=
-    div_nonneg (by linarith only [hM0]) hden.le
-  -- the lag legs at the half rate
+        (vsumSourceConstant d Csub Msc delta)
+        (conv * vsumSourceConstant d Csub Msc delta) 0 *
+        (3 : ℝ) ^ (-(1 / 2 : ℝ) * (((n - m : ℕ) : ℕ) : ℝ))) ∧
+    (0 ≤ weakSourceGroupSummed Mabs L (contrastRho g)
+      (slotVsumSharp d Csub Msc delta (n - m))
+      (conv * slotSourceSeq d Csub Msc delta (n - m) 0) 0) := by
+  classical
   have hvleg : slotVsumSharp d Csub Msc delta (n - m) ≤
       vsumSourceConstant d Csub Msc delta *
         (3 : ℝ) ^ (-(1 / 2 : ℝ) * (((n - m : ℕ) : ℕ) : ℝ)) := by
@@ -145,6 +130,152 @@ theorem corrected_source_pricing (d : ℕ) (hd : 2 ≤ d)
       mul_zero _
     nlinarith only [h1, h2, h3]
   -- the bad group at its own rate
+  exact ⟨hvleg, hvs0, hseq0, hseqle, hmleg, hx, hx0⟩
+
+private theorem corrected_source_squared_decay_bounds (d : ℕ)
+    {Mabs L Csub Msc delta conv K R : ℝ}
+    {g : ℝ}
+    {beta2 : ℝ}
+    {ns n m : ℕ} (hm : ns ≤ m) (hmn : m ≤ n)
+    {Delta : ℤ}
+    (hy : weakSourceGroupSummed Mabs L (contrastRho g) 0 0
+      (Real.sqrt 2 * Real.sqrt (L + 1) *
+          Response.profileBadMajorantAt 4 (R ^ 4 * badMomentMajorant K Delta)
+            (R / 2) R +
+        Real.sqrt 2 *
+            (3 : ℝ) ^ (-((1 - contrastRho g) / 2) * ((n - ns : ℕ) : ℝ)) *
+          Real.sqrt (L + 1)) ≤
+      weakSourceGroupSummed Mabs L (contrastRho g) 0 0
+        (badSourceLegConstantAtLevel L K R) *
+        (3 : ℝ) ^ (-beta2 * ((n - ns : ℕ) : ℝ)))
+    (hy0 : 0 ≤ weakSourceGroupSummed Mabs L (contrastRho g) 0 0
+      (Real.sqrt 2 * Real.sqrt (L + 1) *
+          Response.profileBadMajorantAt 4 (R ^ 4 * badMomentMajorant K Delta)
+            (R / 2) R +
+        Real.sqrt 2 *
+            (3 : ℝ) ^ (-((1 - contrastRho g) / 2) * ((n - ns : ℕ) : ℝ)) *
+          Real.sqrt (L + 1)))
+    (hx : weakSourceGroupSummed Mabs L (contrastRho g)
+      (slotVsumSharp d Csub Msc delta (n - m))
+      (conv * slotSourceSeq d Csub Msc delta (n - m) 0) 0 ≤
+      weakSourceGroupSummed Mabs L (contrastRho g)
+        (vsumSourceConstant d Csub Msc delta)
+        (conv * vsumSourceConstant d Csub Msc delta) 0 *
+        (3 : ℝ) ^ (-(1 / 2 : ℝ) * (((n - m : ℕ) : ℕ) : ℝ)))
+    (hx0 : 0 ≤ weakSourceGroupSummed Mabs L (contrastRho g)
+      (slotVsumSharp d Csub Msc delta (n - m))
+      (conv * slotSourceSeq d Csub Msc delta (n - m) 0) 0)
+    : (weakSourceGroupSummed Mabs L (contrastRho g)
+      (slotVsumSharp d Csub Msc delta (n - m))
+      (conv * slotSourceSeq d Csub Msc delta (n - m) 0) 0 ^ 2 ≤
+      (weakSourceGroupSummed Mabs L (contrastRho g)
+    (vsumSourceConstant d Csub Msc delta)
+    (conv * vsumSourceConstant d Csub Msc delta) 0) ^ 2 * (3 : ℝ) ^ (-(1 * ((n - m : ℕ) : ℝ)))) ∧
+    (weakSourceGroupSummed Mabs L (contrastRho g) 0 0
+      (Real.sqrt 2 * Real.sqrt (L + 1) *
+          Response.profileBadMajorantAt 4 (R ^ 4 * badMomentMajorant K Delta)
+            (R / 2) R +
+        Real.sqrt 2 *
+            (3 : ℝ) ^ (-((1 - contrastRho g) / 2) * ((n - ns : ℕ) : ℝ)) *
+          Real.sqrt (L + 1)) ^ 2 ≤
+      (weakSourceGroupSummed Mabs L (contrastRho g) 0 0
+    (badSourceLegConstantAtLevel L K R)) ^ 2 * ((3 : ℝ) ^ (2 * beta2 * (ns : ℝ)) *
+        (3 : ℝ) ^ (-(2 * beta2 * (n : ℝ))))) := by
+  classical
+  set X : ℝ := weakSourceGroupSummed Mabs L (contrastRho g)
+    (vsumSourceConstant d Csub Msc delta)
+    (conv * vsumSourceConstant d Csub Msc delta) 0 with hXdef
+  set Y : ℝ := weakSourceGroupSummed Mabs L (contrastRho g) 0 0
+    (badSourceLegConstantAtLevel L K R) with hYdef
+  have hxsq : weakSourceGroupSummed Mabs L (contrastRho g)
+      (slotVsumSharp d Csub Msc delta (n - m))
+      (conv * slotSourceSeq d Csub Msc delta (n - m) 0) 0 ^ 2 ≤
+      X ^ 2 * (3 : ℝ) ^ (-(1 * ((n - m : ℕ) : ℝ))) := by
+    have h := pow_le_pow_left₀ hx0 hx 2
+    rw [mul_pow] at h
+    refine h.trans (le_of_eq ?_)
+    congr 1
+    rw [← Real.rpow_natCast ((3 : ℝ) ^
+      (-(1 / 2 : ℝ) * (((n - m : ℕ) : ℕ) : ℝ))) 2,
+      ← Real.rpow_mul (by norm_num : (0 : ℝ) ≤ 3)]
+    congr 1
+    push_cast
+    ring
+  have hysq : weakSourceGroupSummed Mabs L (contrastRho g) 0 0
+      (Real.sqrt 2 * Real.sqrt (L + 1) *
+          Response.profileBadMajorantAt 4 (R ^ 4 * badMomentMajorant K Delta)
+            (R / 2) R +
+        Real.sqrt 2 *
+            (3 : ℝ) ^ (-((1 - contrastRho g) / 2) * ((n - ns : ℕ) : ℝ)) *
+          Real.sqrt (L + 1)) ^ 2 ≤
+      Y ^ 2 * ((3 : ℝ) ^ (2 * beta2 * (ns : ℝ)) *
+        (3 : ℝ) ^ (-(2 * beta2 * (n : ℝ)))) := by
+    have h := pow_le_pow_left₀ hy0 hy 2
+    rw [mul_pow] at h
+    refine h.trans (le_of_eq ?_)
+    congr 1
+    rw [← Real.rpow_natCast ((3 : ℝ) ^
+      (-beta2 * ((n - ns : ℕ) : ℝ))) 2,
+      ← Real.rpow_mul (by norm_num : (0 : ℝ) ≤ 3),
+      ← Real.rpow_add (by norm_num : (0 : ℝ) < 3)]
+    congr 1
+    have hcast : ((n - ns : ℕ) : ℝ) = (n : ℝ) - (ns : ℝ) := by
+      have hnsn : ns ≤ n := le_trans hm hmn
+      exact Nat.cast_sub hnsn
+    rw [hcast]
+    ring
+  -- assemble
+  exact ⟨hxsq, hysq⟩
+/-- **The corrected three-channel pricing of the entry-slot source.** -/
+theorem corrected_source_pricing (d : ℕ) (hd : 2 ≤ d)
+    {Cpre Mabs L Csub Msc delta conv K R : ℝ}
+    (hCpre : 0 ≤ Cpre) (hM0 : 0 ≤ Mabs)
+    (hCsub : 0 ≤ Csub) (hMsc : 0 ≤ Msc) (hdelta : 0 ≤ delta)
+    (hconv : 0 ≤ conv) (hR : 1 ≤ R)
+    {g : ℝ} (hg1 : g < 1)
+    {beta2 : ℝ} (hb2A : beta2 ≤ contrastAlpha g)
+    {ns n m : ℕ} (hm : ns ≤ m) (hmn : m ≤ n)
+    {Delta : ℤ} (hD0 : 0 ≤ Delta)
+    (hDrate : beta2 * ((n - ns : ℕ) : ℝ) ≤ (1 / 2 : ℝ) * (Delta : ℝ)) :
+    3 * weakCoefficient d Cpre *
+      weakSourceGroupSummed Mabs L (contrastRho g)
+        (slotVsumSharp d Csub Msc delta (n - m))
+        (conv * slotSourceSeq d Csub Msc delta (n - m) 0)
+        (Real.sqrt 2 * Real.sqrt (L + 1) *
+            Response.profileBadMajorantAt 4 (R ^ 4 * badMomentMajorant K Delta)
+              (R / 2) R +
+          Real.sqrt 2 *
+              (3 : ℝ) ^ (-((1 - contrastRho g) / 2) * ((n - ns : ℕ) : ℝ)) *
+            Real.sqrt (L + 1)) ^ 2 ≤
+      1 * (3 : ℝ) ^ (-(1 * (m : ℝ))) +
+        (1 + 6 * weakCoefficient d Cpre *
+            weakSourceGroupSummed Mabs L (contrastRho g)
+              (vsumSourceConstant d Csub Msc delta)
+              (conv * vsumSourceConstant d Csub Msc delta) 0 ^ 2) *
+          (3 : ℝ) ^ (-(1 * ((n - m : ℕ) : ℝ))) +
+        (1 + 6 * weakCoefficient d Cpre *
+            weakSourceGroupSummed Mabs L (contrastRho g) 0 0
+              (badSourceLegConstantAtLevel L K R) ^ 2 *
+            (3 : ℝ) ^ (2 * beta2 * (ns : ℝ))) *
+          (3 : ℝ) ^ (-(2 * beta2 * (n : ℝ))) := by
+  have hrho1 : contrastRho g < 1 := contrastRho_lt_one hg1
+  have hwC0 : 0 ≤ weakCoefficient d Cpre := weakCoefficient_nonneg d hCpre
+  have hsL : (0 : ℝ) ≤ Real.sqrt L := Real.sqrt_nonneg _
+  have hsL1 : (0 : ℝ) ≤ Real.sqrt (L + 1) := Real.sqrt_nonneg _
+  have hs2 : (0 : ℝ) ≤ Real.sqrt 2 := Real.sqrt_nonneg _
+  have ha1 : (0 : ℝ) ≤ 16 * Mabs * Real.sqrt L :=
+    mul_nonneg (by linarith only [hM0]) hsL
+  have ha2 : (0 : ℝ) ≤ Response.constantSeminormCoefficient * Mabs * Real.sqrt 7 :=
+    mul_nonneg (mul_nonneg constantSeminormCoefficient_nonneg hM0)
+      (Real.sqrt_nonneg _)
+  have hden : (0 : ℝ) < 2 * ((1 - contrastRho g) / 2) := by
+    linarith only [hrho1]
+  have ha3 : (0 : ℝ) ≤ 16 * Mabs / (2 * ((1 - contrastRho g) / 2)) :=
+    div_nonneg (by linarith only [hM0]) hden.le
+  -- the lag legs at the half rate
+  obtain ⟨hvleg, hvs0, hseq0, hseqle, hmleg, hx, hx0⟩ :=
+    corrected_lag_source_group_bound d hd hM0 hCsub hMsc hdelta hconv
+      hrho1 ha1 ha2
   have hNn0 : (0 : ℝ) ≤ ((n - ns : ℕ) : ℝ) := Nat.cast_nonneg _
   have hHrate : beta2 * ((n - ns : ℕ) : ℝ) ≤
       contrastAlpha g * ((n - ns : ℕ) : ℝ) :=
@@ -224,44 +355,8 @@ theorem corrected_source_pricing (d : ℕ) (hd : 2 ≤ d)
     (conv * vsumSourceConstant d Csub Msc delta) 0 with hXdef
   set Y : ℝ := weakSourceGroupSummed Mabs L (contrastRho g) 0 0
     (badSourceLegConstantAtLevel L K R) with hYdef
-  have hxsq : weakSourceGroupSummed Mabs L (contrastRho g)
-      (slotVsumSharp d Csub Msc delta (n - m))
-      (conv * slotSourceSeq d Csub Msc delta (n - m) 0) 0 ^ 2 ≤
-      X ^ 2 * (3 : ℝ) ^ (-(1 * ((n - m : ℕ) : ℝ))) := by
-    have h := pow_le_pow_left₀ hx0 hx 2
-    rw [mul_pow] at h
-    refine h.trans (le_of_eq ?_)
-    congr 1
-    rw [← Real.rpow_natCast ((3 : ℝ) ^
-      (-(1 / 2 : ℝ) * (((n - m : ℕ) : ℕ) : ℝ))) 2,
-      ← Real.rpow_mul (by norm_num : (0 : ℝ) ≤ 3)]
-    congr 1
-    push_cast
-    ring
-  have hysq : weakSourceGroupSummed Mabs L (contrastRho g) 0 0
-      (Real.sqrt 2 * Real.sqrt (L + 1) *
-          Response.profileBadMajorantAt 4 (R ^ 4 * badMomentMajorant K Delta)
-            (R / 2) R +
-        Real.sqrt 2 *
-            (3 : ℝ) ^ (-((1 - contrastRho g) / 2) * ((n - ns : ℕ) : ℝ)) *
-          Real.sqrt (L + 1)) ^ 2 ≤
-      Y ^ 2 * ((3 : ℝ) ^ (2 * beta2 * (ns : ℝ)) *
-        (3 : ℝ) ^ (-(2 * beta2 * (n : ℝ)))) := by
-    have h := pow_le_pow_left₀ hy0 hy 2
-    rw [mul_pow] at h
-    refine h.trans (le_of_eq ?_)
-    congr 1
-    rw [← Real.rpow_natCast ((3 : ℝ) ^
-      (-beta2 * ((n - ns : ℕ) : ℝ))) 2,
-      ← Real.rpow_mul (by norm_num : (0 : ℝ) ≤ 3),
-      ← Real.rpow_add (by norm_num : (0 : ℝ) < 3)]
-    congr 1
-    have hcast : ((n - ns : ℕ) : ℝ) = (n : ℝ) - (ns : ℝ) := by
-      have hnsn : ns ≤ n := le_trans hm hmn
-      exact Nat.cast_sub hnsn
-    rw [hcast]
-    ring
-  -- assemble
+  obtain ⟨hxsq, hysq⟩ :=
+    corrected_source_squared_decay_bounds d hm hmn hy hy0 hx hx0
   have hX20 : 0 ≤ X ^ 2 := sq_nonneg X
   have hY20 : 0 ≤ Y ^ 2 := sq_nonneg Y
   have hsum2 : ∀ x y : ℝ, (x + y) ^ 2 ≤ 2 * x ^ 2 + 2 * y ^ 2 := by

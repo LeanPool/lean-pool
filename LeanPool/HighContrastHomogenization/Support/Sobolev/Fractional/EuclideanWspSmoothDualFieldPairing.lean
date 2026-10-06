@@ -265,7 +265,8 @@ private theorem ennreal_abs_smoothPairing_le_negativeDual_mul_full {d : ℕ}
     _ = cubeEuclideanNegativeWspSmoothDualENorm Q s p F *
         cubeEuclideanWspFullENorm Q s p.conjugate h.toField := by
       rw [show E = CubeEuclideanWspSmoothTest.completedPairingExtension F hD by rfl,
-        CubeEuclideanWspSmoothTest.enorm_completedPairingExtension_eq_negativeWspSmoothDualENorm F hD]
+        CubeEuclideanWspSmoothTest.enorm_completedPairingExtension_eq_negativeWspSmoothDualENorm
+          F hD]
       exact congrArg (fun x : ℝ≥0∞ =>
         cubeEuclideanNegativeWspSmoothDualENorm Q s p F * x)
         (CubeEuclideanWspSmoothTest.graph_enorm_eq_cubeEuclideanWspFullENorm h)

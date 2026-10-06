@@ -148,6 +148,175 @@ private theorem depthELpNorm_centralDescendant_two_mul_le
         MeasureTheory.eLpNorm f (depthTargetExponent d p hp).exponent
           (normalizedCubeMeasure Q) := by rw [depthRestrictionFactor_eq d p t hp]
 
+private theorem descendantVectorOscillation_decay_and_memLp
+    {d : ℕ} [NeZero d] (p t : ℕ) (hp : 0 < p)
+    (D : TriadicCube d)
+    (V : CubeVectorW1pFunction D (depthTargetExponent d p hp))
+    (CP bound : ℝ≥0∞)
+    (hCP : ∀ (Q : TriadicCube d) (j : ℕ) (S : TriadicCube d),
+      S ∈ ScalarOverlap.centersAtDepth Q j →
+      ∀ V : CubeVectorW1pFunction Q (depthTargetExponent d p hp),
+        MeasureTheory.eLpNorm
+          (fun x => HilbertVec.ofVec
+            (V.toField x - ScalarOverlap.cubeAverageVec S V.toField))
+          (depthTargetExponent d p hp).exponent
+          (ScalarOverlap.normalizedCubeMeasure S) ≤
+        CP * ENNReal.ofReal (overlapCubeScaleFactor S) *
+          MeasureTheory.eLpNorm (fun x => HilbertMat.ofMat (V.jacobian x))
+            (depthTargetExponent d p hp).exponent
+            (ScalarOverlap.normalizedCubeMeasure S))
+    (hscaledJacD : ENNReal.ofReal (cubeScaleFactor D) *
+      MeasureTheory.eLpNorm (fun x => HilbertMat.ofMat (V.jacobian x))
+        (depthTargetExponent d p hp).exponent (normalizedCubeMeasure D) ≤ bound) :
+    MeasureTheory.eLpNorm
+        (fun x => HilbertVec.ofVec
+          (V.toField x - cubeAverageVec (centralDescendant D (2 * p * t)) V.toField))
+        (depthTargetExponent d p hp).exponent
+        (normalizedCubeMeasure (centralDescendant D (2 * p * t))) ≤
+      CP * ((3 : ℝ≥0∞)⁻¹) ^ ((2 * p - 1) * t) * bound ∧
+    MeasureTheory.MemLp
+      (fun x => HilbertVec.ofVec
+        (V.toField x - cubeAverageVec (centralDescendant D (2 * p * t)) V.toField))
+      (depthTargetExponent d p hp).exponent
+      (normalizedCubeMeasure (centralDescendant D (2 * p * t))) := by
+  let q : FiniteLpExponent := depthTargetExponent d p hp
+  let R : TriadicCube d := centralDescendant D (2 * p * t)
+  let S : TriadicCube d := ScalarOverlap.middleChildCube R
+  have hScenter : S ∈ ScalarOverlap.centersAtDepth D (2 * p * t) := by
+    exact ScalarOverlap.middleChildCube_mem_centersAtDepth_of_mem_descendantsAtDepth
+      (centralDescendant_mem_descendantsAtDepth D (2 * p * t))
+  have hmean : ScalarOverlap.cubeAverageVec S V.toField =
+      cubeAverageVec R V.toField := by
+    funext i
+    simp only [ScalarOverlap.cubeAverageVec, cubeAverageVec]
+    rw [ScalarOverlap.cubeAverage_middleChildCube]
+  have hpoincare := hCP D (2 * p * t) S hScenter V
+  have hmeasureS : ScalarOverlap.normalizedCubeMeasure S =
+      normalizedCubeMeasure R := by
+    simp [S]
+  have hscaleS : overlapCubeScaleFactor S = cubeScaleFactor R := by
+    change ScalarOverlap.scaleFactor S = cubeScaleFactor R
+    simp [S]
+  have hpoincareR : MeasureTheory.eLpNorm
+        (fun x => HilbertVec.ofVec
+          (V.toField x - cubeAverageVec R V.toField))
+        q.exponent (normalizedCubeMeasure R) ≤
+      CP * ENNReal.ofReal (cubeScaleFactor R) *
+        MeasureTheory.eLpNorm
+          (fun x => HilbertMat.ofMat (V.jacobian x)) q.exponent
+          (normalizedCubeMeasure R) := by
+    rw [hmean, hmeasureS, hscaleS] at hpoincare
+    exact hpoincare
+  have hjacR : MeasureTheory.eLpNorm
+        (fun x => HilbertMat.ofMat (V.jacobian x)) q.exponent
+        (normalizedCubeMeasure R) ≤
+      (3 : ℝ≥0∞) ^ t * MeasureTheory.eLpNorm
+        (fun x => HilbertMat.ofMat (V.jacobian x)) q.exponent
+        (normalizedCubeMeasure D) := by
+    simpa [q, R] using depthELpNorm_centralDescendant_two_mul_le D p t hp
+      (fun x => HilbertMat.ofMat (V.jacobian x))
+  have hq : MeasureTheory.eLpNorm
+        (fun x => HilbertVec.ofVec
+          (V.toField x - cubeAverageVec R V.toField)) q.exponent
+        (normalizedCubeMeasure R) ≤
+      CP * ((3 : ℝ≥0∞)⁻¹) ^ ((2 * p - 1) * t) * bound := by
+    calc
+      _ ≤ CP * ENNReal.ofReal (cubeScaleFactor R) *
+          MeasureTheory.eLpNorm
+            (fun x => HilbertMat.ofMat (V.jacobian x)) q.exponent
+            (normalizedCubeMeasure R) := hpoincareR
+      _ ≤ CP * ENNReal.ofReal (cubeScaleFactor R) *
+          ((3 : ℝ≥0∞) ^ t * MeasureTheory.eLpNorm
+            (fun x => HilbertMat.ofMat (V.jacobian x)) q.exponent
+            (normalizedCubeMeasure D)) := by gcongr
+      _ = CP * ((3 : ℝ≥0∞)⁻¹) ^ ((2 * p - 1) * t) *
+          (ENNReal.ofReal (cubeScaleFactor D) *
+            MeasureTheory.eLpNorm
+              (fun x => HilbertMat.ofMat (V.jacobian x)) q.exponent
+              (normalizedCubeMeasure D)) := by
+        rw [show R = centralDescendant D (2 * p * t) from rfl]
+        calc
+          CP * ENNReal.ofReal
+                (cubeScaleFactor (centralDescendant D (2 * p * t))) *
+                ((3 : ℝ≥0∞) ^ t * MeasureTheory.eLpNorm
+                  (fun x => HilbertMat.ofMat (V.jacobian x)) q.exponent
+                  (normalizedCubeMeasure D)) =
+              CP * (ENNReal.ofReal
+                (cubeScaleFactor (centralDescendant D (2 * p * t))) *
+                (3 : ℝ≥0∞) ^ t) * MeasureTheory.eLpNorm
+                  (fun x => HilbertMat.ofMat (V.jacobian x)) q.exponent
+                  (normalizedCubeMeasure D) := by ring
+          _ = CP * (((3 : ℝ≥0∞)⁻¹) ^ ((2 * p - 1) * t) *
+                ENNReal.ofReal (cubeScaleFactor D)) *
+              MeasureTheory.eLpNorm
+                (fun x => HilbertMat.ofMat (V.jacobian x)) q.exponent
+                (normalizedCubeMeasure D) := by
+            rw [depthScale_mul_restrictionFactor_eq D p t hp]
+          _ = _ := by ring
+      _ ≤ CP * ((3 : ℝ≥0∞)⁻¹) ^ ((2 * p - 1) * t) *
+          bound := by gcongr
+      _ = _ := by ring
+  have hresMem : MeasureTheory.MemLp
+      (fun x => HilbertVec.ofVec
+        (V.toField x - cubeAverageVec R V.toField)) q.exponent
+      (normalizedCubeMeasure R) := by
+    have hresMemS : MeasureTheory.MemLp
+        (fun x => HilbertVec.ofVec
+          (V.toField x - ScalarOverlap.cubeAverageVec S V.toField))
+        q.exponent (ScalarOverlap.normalizedCubeMeasure S) := by
+      rw [MeasureTheory.memLp_piLp_iff]
+      intro i
+      have hVmem := V.euclideanMemLp
+      rw [MeasureTheory.memLp_piLp_iff] at hVmem
+      have hcoord :=
+        ScalarOverlap.memLp_sub_cubeAverage_of_mem_centersAtDepth_of_memLp
+          hScenter (hVmem i)
+      simpa only [Function.comp_apply, HilbertVec.ofVec, PiLp.toLp_apply,
+        V.toField_apply, Pi.sub_apply, ScalarOverlap.cubeAverageVec] using hcoord
+    rw [hmean, hmeasureS] at hresMemS
+    exact hresMemS
+  exact ⟨hq, hresMem⟩
+
+private theorem coordinateOscillationBound_to_vectorL2
+    {d : ℕ} (Q R : TriadicCube d) (gradient : Vec d → Vec d)
+    (q : FiniteLpExponent) (htwoq : (2 : ℝ≥0∞) ≤ q.exponent) (factor : ℝ≥0∞)
+    (hbound : MeasureTheory.eLpNorm
+      (fun x => HilbertVec.ofVec (gradient x - cubeAverageVec R gradient))
+      q.exponent (normalizedCubeMeasure R) ≤
+      factor * ∑ j : Fin d,
+        MeasureTheory.eLpNorm (fun x => gradient x j) 2 (normalizedCubeMeasure Q)) :
+    MeasureTheory.eLpNorm
+      (fun x => HilbertVec.ofVec (gradient x - cubeAverageVec R gradient))
+      2 (normalizedCubeMeasure R) ≤
+      factor * (d : ℝ≥0∞) * MeasureTheory.eLpNorm
+        (fun x => HilbertVec.ofVec (gradient x)) 2 (normalizedCubeMeasure Q) := by
+  let _ : MeasureTheory.IsProbabilityMeasure (normalizedCubeMeasure R) :=
+    ⟨normalizedCubeMeasure_apply_univ R⟩
+  have htwo : MeasureTheory.eLpNorm
+      (fun x => HilbertVec.ofVec (gradient x - cubeAverageVec R gradient))
+      2 (normalizedCubeMeasure R) ≤ MeasureTheory.eLpNorm
+      (fun x => HilbertVec.ofVec (gradient x - cubeAverageVec R gradient))
+      q.exponent (normalizedCubeMeasure R) :=
+    MeasureTheory.eLpNorm_le_eLpNorm_of_exponent_le htwoq
+  have hsum : ∑ j : Fin d,
+      MeasureTheory.eLpNorm (fun x => gradient x j) 2 (normalizedCubeMeasure Q) ≤
+      (d : ℝ≥0∞) * MeasureTheory.eLpNorm
+        (fun x => HilbertVec.ofVec (gradient x)) 2 (normalizedCubeMeasure Q) := by
+    calc
+      _ ≤ ∑ _j : Fin d, MeasureTheory.eLpNorm
+          (fun x => HilbertVec.ofVec (gradient x)) 2 (normalizedCubeMeasure Q) :=
+        Finset.sum_le_sum fun j _ => coordinate_eLpNorm_le_euclidean
+          (normalizedCubeMeasure Q) FiniteLpExponent.two gradient j
+      _ = _ := by simp
+  calc
+    _ ≤ factor * ∑ j : Fin d,
+        MeasureTheory.eLpNorm (fun x => gradient x j) 2 (normalizedCubeMeasure Q) :=
+      htwo.trans hbound
+    _ ≤ factor * ((d : ℝ≥0∞) * MeasureTheory.eLpNorm
+        (fun x => HilbertVec.ofVec (gradient x)) 2 (normalizedCubeMeasure Q)) :=
+      mul_le_mul_right hsum _
+    _ = _ := by ring
+
 /-- A harmonic gradient becomes geometrically close in normalized `L²` to
 its average on sufficiently deep central descendants.  Both the gain depth
 and the prefactor are dimension-only construction data. -/
@@ -301,40 +470,11 @@ theorem exists_harmonic_gradient_oscillation_decay_at_integer_rate
           MeasureTheory.eLpNorm (fun x => u.grad x j) 2
             (normalizedCubeMeasure Q)) := mul_le_mul_right henergy' _
       _ = _ := by ring
-  let S : TriadicCube d := ScalarOverlap.middleChildCube R
-  have hScenter : S ∈ ScalarOverlap.centersAtDepth D (2 * p * t) := by
-    exact ScalarOverlap.middleChildCube_mem_centersAtDepth_of_mem_descendantsAtDepth
-      (centralDescendant_mem_descendantsAtDepth D (2 * p * t))
-  have hmean : ScalarOverlap.cubeAverageVec S V.toField =
-      cubeAverageVec R V.toField := by
-    funext i
-    simp only [ScalarOverlap.cubeAverageVec, cubeAverageVec]
-    rw [ScalarOverlap.cubeAverage_middleChildCube]
-  have hpoincare := hCP D (2 * p * t) S hScenter V
-  have hmeasureS : ScalarOverlap.normalizedCubeMeasure S =
-      normalizedCubeMeasure R := by
-    simp [S]
-  have hscaleS : overlapCubeScaleFactor S = cubeScaleFactor R := by
-    change ScalarOverlap.scaleFactor S = cubeScaleFactor R
-    simp [S]
-  have hpoincareR : MeasureTheory.eLpNorm
-        (fun x => HilbertVec.ofVec
-          (V.toField x - cubeAverageVec R V.toField))
-        q.exponent (normalizedCubeMeasure R) ≤
-      CP * ENNReal.ofReal (cubeScaleFactor R) *
-        MeasureTheory.eLpNorm
-          (fun x => HilbertMat.ofMat (V.jacobian x)) q.exponent
-          (normalizedCubeMeasure R) := by
-    rw [hmean, hmeasureS, hscaleS] at hpoincare
-    exact hpoincare
-  have hjacR : MeasureTheory.eLpNorm
-        (fun x => HilbertMat.ofMat (V.jacobian x)) q.exponent
-        (normalizedCubeMeasure R) ≤
-      (3 : ℝ≥0∞) ^ t * MeasureTheory.eLpNorm
-        (fun x => HilbertMat.ofMat (V.jacobian x)) q.exponent
-        (normalizedCubeMeasure D) := by
-    simpa [q, R] using depthELpNorm_centralDescendant_two_mul_le D p t hp
-      (fun x => HilbertMat.ofMat (V.jacobian x))
+  obtain ⟨hqRaw, hresMemRaw⟩ :=
+    descendantVectorOscillation_decay_and_memLp p t hp D V CP
+      (G.constantValue * A * ∑ j : Fin d,
+        MeasureTheory.eLpNorm (fun x => u.grad x j) 2 (normalizedCubeMeasure Q))
+      hCP hscaledJacD
   have hq : MeasureTheory.eLpNorm
         (fun x => HilbertVec.ofVec
           (u.grad x - cubeAverageVec R u.grad)) q.exponent
@@ -342,65 +482,12 @@ theorem exists_harmonic_gradient_oscillation_decay_at_integer_rate
       CP * G.constantValue * A * ((3 : ℝ≥0∞)⁻¹) ^ ((2 * p - 1) * t) *
         ∑ j : Fin d, MeasureTheory.eLpNorm (fun x => u.grad x j) 2
           (normalizedCubeMeasure Q) := by
-    rw [← hVfield]
-    calc
-      _ ≤ CP * ENNReal.ofReal (cubeScaleFactor R) *
-          MeasureTheory.eLpNorm
-            (fun x => HilbertMat.ofMat (V.jacobian x)) q.exponent
-            (normalizedCubeMeasure R) := hpoincareR
-      _ ≤ CP * ENNReal.ofReal (cubeScaleFactor R) *
-          ((3 : ℝ≥0∞) ^ t * MeasureTheory.eLpNorm
-            (fun x => HilbertMat.ofMat (V.jacobian x)) q.exponent
-            (normalizedCubeMeasure D)) := by gcongr
-      _ = CP * ((3 : ℝ≥0∞)⁻¹) ^ ((2 * p - 1) * t) *
-          (ENNReal.ofReal (cubeScaleFactor D) *
-            MeasureTheory.eLpNorm
-              (fun x => HilbertMat.ofMat (V.jacobian x)) q.exponent
-              (normalizedCubeMeasure D)) := by
-        rw [show R = centralDescendant D (2 * p * t) from rfl]
-        calc
-          CP * ENNReal.ofReal
-                (cubeScaleFactor (centralDescendant D (2 * p * t))) *
-                ((3 : ℝ≥0∞) ^ t * MeasureTheory.eLpNorm
-                  (fun x => HilbertMat.ofMat (V.jacobian x)) q.exponent
-                  (normalizedCubeMeasure D)) =
-              CP * (ENNReal.ofReal
-                (cubeScaleFactor (centralDescendant D (2 * p * t))) *
-                (3 : ℝ≥0∞) ^ t) * MeasureTheory.eLpNorm
-                  (fun x => HilbertMat.ofMat (V.jacobian x)) q.exponent
-                  (normalizedCubeMeasure D) := by ring
-          _ = CP * (((3 : ℝ≥0∞)⁻¹) ^ ((2 * p - 1) * t) *
-                ENNReal.ofReal (cubeScaleFactor D)) *
-              MeasureTheory.eLpNorm
-                (fun x => HilbertMat.ofMat (V.jacobian x)) q.exponent
-                (normalizedCubeMeasure D) := by
-            rw [depthScale_mul_restrictionFactor_eq D p t hp]
-          _ = _ := by ring
-      _ ≤ CP * ((3 : ℝ≥0∞)⁻¹) ^ ((2 * p - 1) * t) *
-          (G.constantValue * A * ∑ j : Fin d,
-            MeasureTheory.eLpNorm (fun x => u.grad x j) 2
-              (normalizedCubeMeasure Q)) := by gcongr
-      _ = _ := by rw [hVfield]; ring
+    rw [hVfield] at hqRaw
+    convert hqRaw using 1 <;> ring
   have hresMem : MeasureTheory.MemLp
-      (fun x => HilbertVec.ofVec
-        (u.grad x - cubeAverageVec R u.grad)) q.exponent
+      (fun x => HilbertVec.ofVec (u.grad x - cubeAverageVec R u.grad)) q.exponent
       (normalizedCubeMeasure R) := by
-    have hresMemS : MeasureTheory.MemLp
-        (fun x => HilbertVec.ofVec
-          (V.toField x - ScalarOverlap.cubeAverageVec S V.toField))
-        q.exponent (ScalarOverlap.normalizedCubeMeasure S) := by
-      rw [MeasureTheory.memLp_piLp_iff]
-      intro i
-      have hVmem := V.euclideanMemLp
-      rw [MeasureTheory.memLp_piLp_iff] at hVmem
-      have hcoord :=
-        ScalarOverlap.memLp_sub_cubeAverage_of_mem_centersAtDepth_of_memLp
-          hScenter (hVmem i)
-      simpa only [Function.comp_apply, HilbertVec.ofVec, PiLp.toLp_apply,
-        V.toField_apply, Pi.sub_apply, ScalarOverlap.cubeAverageVec] using hcoord
-    rw [hmean, hmeasureS] at hresMemS
-    rw [← hVfield]
-    exact hresMemS
+    simpa only [hVfield] using hresMemRaw
   have htwoq : (2 : ℝ≥0∞) ≤ q.exponent := by
     dsimp [q, depthTargetExponent]
     rw [← ENNReal.ofReal_ofNat]
@@ -409,71 +496,20 @@ theorem exists_harmonic_gradient_oscillation_decay_at_integer_rate
       (mul_ne_zero (NeZero.ne d) (Nat.ne_of_gt hp))
     have hdp' : (1 : ℝ) ≤ (d : ℝ) * (p : ℝ) := by exact_mod_cast hdp
     nlinarith only [hdp']
-  let _ : MeasureTheory.IsProbabilityMeasure (normalizedCubeMeasure R) :=
-    ⟨normalizedCubeMeasure_apply_univ R⟩
-  have htwo : MeasureTheory.eLpNorm
-        (fun x => HilbertVec.ofVec
-          (u.grad x - cubeAverageVec R u.grad)) 2
-        (normalizedCubeMeasure R) ≤
-      MeasureTheory.eLpNorm
-        (fun x => HilbertVec.ofVec
-          (u.grad x - cubeAverageVec R u.grad)) q.exponent
-        (normalizedCubeMeasure R) :=
-    MeasureTheory.eLpNorm_le_eLpNorm_of_exponent_le htwoq
-  have hgradSum : ∑ j : Fin d,
-        MeasureTheory.eLpNorm (fun x => u.grad x j) 2
-          (normalizedCubeMeasure Q) ≤
-      (d : ℝ≥0∞) * MeasureTheory.eLpNorm
-        (fun x => HilbertVec.ofVec (u.grad x)) 2
-          (normalizedCubeMeasure Q) := by
-    calc
-      _ ≤ ∑ _j : Fin d, MeasureTheory.eLpNorm
-          (fun x => HilbertVec.ofVec (u.grad x)) 2
-          (normalizedCubeMeasure Q) :=
-        Finset.sum_le_sum fun j _ =>
-          coordinate_eLpNorm_le_euclidean
-            (normalizedCubeMeasure Q) FiniteLpExponent.two u.grad j
-      _ = _ := by simp
+  have hvector := coordinateOscillationBound_to_vectorL2 Q R u.grad q htwoq
+    (CP * G.constantValue * A * ((3 : ℝ≥0∞)⁻¹) ^ ((2 * p - 1) * t)) hq
   calc
-    MeasureTheory.eLpNorm
-        (fun x => HilbertVec.ofVec
-          (u.grad x - cubeAverageVec R u.grad)) 2
-        (normalizedCubeMeasure R) ≤
-      MeasureTheory.eLpNorm
-        (fun x => HilbertVec.ofVec
-          (u.grad x - cubeAverageVec R u.grad)) q.exponent
-        (normalizedCubeMeasure R) := htwo
-    _ ≤ CP * G.constantValue * A * ((3 : ℝ≥0∞)⁻¹) ^ ((2 * p - 1) * t) *
-        ∑ j : Fin d, MeasureTheory.eLpNorm (fun x => u.grad x j) 2
-          (normalizedCubeMeasure Q) := hq
-    _ ≤ CP * G.constantValue * A * ((3 : ℝ≥0∞)⁻¹) ^ ((2 * p - 1) * t) *
-        ((d : ℝ≥0∞) * MeasureTheory.eLpNorm
-          (fun x => HilbertVec.ofVec (u.grad x)) 2
-          (normalizedCubeMeasure Q)) := by gcongr
-    _ ≤ C * ((3 : ℝ≥0∞)⁻¹) ^ ((2 * p - 1) * t) *
-        MeasureTheory.eLpNorm
-          (fun x => HilbertVec.ofVec (u.grad x)) 2
-          (normalizedCubeMeasure Q) := by
-      dsimp [C]
-      calc
-        CP * G.constantValue * A * ((3 : ℝ≥0∞)⁻¹) ^ ((2 * p - 1) * t) *
-              ((d : ℝ≥0∞) * MeasureTheory.eLpNorm
-                (fun x => HilbertVec.ofVec (u.grad x)) 2
-                (normalizedCubeMeasure Q)) =
-            (CP * G.constantValue * A * (d : ℝ≥0∞)) *
-              ((3 : ℝ≥0∞)⁻¹) ^ ((2 * p - 1) * t) * MeasureTheory.eLpNorm
-                (fun x => HilbertVec.ofVec (u.grad x)) 2
-                (normalizedCubeMeasure Q) := by ring
-        _ ≤ (1 + CP * G.constantValue * A * (d : ℝ≥0∞)) *
-              ((3 : ℝ≥0∞)⁻¹) ^ ((2 * p - 1) * t) * MeasureTheory.eLpNorm
-                (fun x => HilbertVec.ofVec (u.grad x)) 2
-                (normalizedCubeMeasure Q) := by
-          have hX : CP * G.constantValue * A * (d : ℝ≥0∞) ≤
-              1 + CP * G.constantValue * A * (d : ℝ≥0∞) :=
-            le_add_of_nonneg_left (by norm_num)
-          exact mul_le_mul_left
-            (mul_le_mul_left hX
-              (((3 : ℝ≥0∞)⁻¹) ^ ((2 * p - 1) * t))) _
+    _ ≤ (CP * G.constantValue * A * ((3 : ℝ≥0∞)⁻¹) ^ ((2 * p - 1) * t)) *
+        (d : ℝ≥0∞) * MeasureTheory.eLpNorm
+          (fun x => HilbertVec.ofVec (u.grad x)) 2 (normalizedCubeMeasure Q) := hvector
+    _ = (CP * G.constantValue * A * (d : ℝ≥0∞)) *
+        ((3 : ℝ≥0∞)⁻¹) ^ ((2 * p - 1) * t) * MeasureTheory.eLpNorm
+          (fun x => HilbertVec.ofVec (u.grad x)) 2 (normalizedCubeMeasure Q) := by ring
+    _ ≤ C * ((3 : ℝ≥0∞)⁻¹) ^ ((2 * p - 1) * t) * MeasureTheory.eLpNorm
+          (fun x => HilbertVec.ofVec (u.grad x)) 2 (normalizedCubeMeasure Q) := by
+      have hconstant : CP * G.constantValue * A * (d : ℝ≥0∞) ≤ C :=
+        le_add_of_nonneg_left (by norm_num)
+      exact mul_le_mul_left (mul_le_mul_left hconstant _) _
 
 /-- The effective per-scale exponents of the integer-rate family approach
 one from below. -/

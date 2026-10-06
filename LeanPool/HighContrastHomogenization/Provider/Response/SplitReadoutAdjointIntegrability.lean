@@ -89,7 +89,7 @@ theorem integrable_adjoint_adaptedFiveTermSplit_readouts [NeZero d]
         ENNReal.ofReal_ne_top ENNReal.ofReal_ne_top) ENNReal.ofReal_ne_top)
         ENNReal.ofReal_ne_top
     have hcentered := integrable_of_enorm_le_finite_mul_root
-      ((Selection.aestronglyMeasurable_blockCellAverage_diagonalWeakAdjointState_subSkew_alignedIndex
+      ((Selection.aestronglyMeasurable_alignedCellAverage_diagonalAdjointState
         hq hst P g hg p r hw alpha).sub aestronglyMeasurable_const)
       hC hroot (fun a ↦ by
         simpa only [C, root, center, profileAdjointWeakRoot,
@@ -118,7 +118,7 @@ theorem integrable_adjoint_adaptedFiveTermSplit_readouts [NeZero d]
     let : IsFiniteMeasure (volumeMeasureOn (adaptedCell q t)) :=
       (Recurrence.isOpenBoundedConvexDomain_adaptedCell hq t).isFiniteMeasure_restrict_volume
     exact integrable_of_enorm_le_finite_mul_root
-      (Selection.aestronglyMeasurable_volumeAverage_weighted_diagonalWeakAdjointState_subSkew_alignedIndex
+      (Selection.aestronglyMeasurable_weightedCellAverage_diagonalAdjointState
         hq hst P g hg p r hw alpha
           (Selection.memScalarL2_indicator_cutoffOscillation hq t
             (Recurrence.isOpenBoundedConvexDomain_adaptedCellAt hq s w).isOpen.measurableSet))

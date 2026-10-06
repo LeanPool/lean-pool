@@ -449,7 +449,7 @@ theorem overlapCubeLpNorm_two_overlapCubeFluctuationVec_le_two_mul_overlapCubeLp
           exact norm_overlapCubeAverageVec_le_overlapCubeLpNorm_two S u hu
     _ = 2 * overlapCubeLpNorm S (2 : ℝ≥0∞) u := by ring
 
-theorem sq_overlapCubeLpNorm_two_overlapCubeFluctuationVec_le_four_mul_of_forall_overlapCubeSet_vecNormSq_le
+theorem sq_overlapCubeLpNorm_fluctuation_le_four_pointwiseBound
     {d : ℕ} {S : TriadicCube d} {u : Vec d → Vec d} {B : ℝ}
     (hu : MeasureTheory.MemLp u (2 : ℝ≥0∞) (normalizedOverlapCubeMeasure S))
     (hB : 0 ≤ B)

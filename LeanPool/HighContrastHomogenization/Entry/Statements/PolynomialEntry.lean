@@ -67,6 +67,8 @@ theorem polynomial_entry
         IsUnitRangeLaw P →
         CoarseEllipticityDagger P γ E Ψ K S →
         ∀ m : ℤ, ⌈C * Real.logb 3 (2 + aspectRatio E * K)⌉ ≤ m →
-          annealedContrast P m ≤ 1 + σ := by exact HCPolySupport.HighContrast.Entry.polynomial_entry d hd γ hγ σ hσ
+          annealedContrast P m ≤ 1 + σ := by
+  exact HCPolySupport.HighContrast.Entry.polynomial_entry d hd γ hγ σ hσ
+
 
 end HCPolySupport.HighContrast

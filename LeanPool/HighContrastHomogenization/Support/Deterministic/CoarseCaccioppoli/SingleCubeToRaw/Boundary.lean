@@ -51,7 +51,7 @@ theorem coarseCaccioppoli_boundary_noteRawEstimate_of_radiusEnergyBridgeInputs
 /-- Radius-indexed energy bridge inputs produce the note-shaped raw estimate
 from pure coefficient-localization data plus nonnegativity of the radius
 energy. -/
-theorem coarseCaccioppoli_boundary_noteRawEstimate_of_radiusEnergyBridgeInputs_of_coefficientLocalization
+theorem coarseCaccioppoli_boundary_rawEstimate_of_radiusBridge_localized
     {d : ℕ} (Q : TriadicCube d) (a : CoeffField d) (s t C uL2Sq : ℝ)
     (k h : ℝ → ℝ → ℝ) {F : ℝ → ℝ}
     (flux : ℝ → ℝ → Vec d → Vec d) (u g : ℝ → ℝ → Vec d → ℝ)
@@ -74,7 +74,8 @@ theorem coarseCaccioppoli_boundary_noteRawEstimate_of_radiusEnergyBridgeInputs_o
 
 /-- Raw boundary note estimate from the primitive scale and ellipticity
 localization inputs. -/
-theorem coarseCaccioppoli_boundary_noteRawEstimate_of_radiusEnergyBridgeInputs_of_scale_of_ellipticity
+theorem
+  coarseCaccioppoli_boundary_noteRawEstimate_of_radiusEnergyBridgeInputs_of_scale_of_ellipticity
     {d : ℕ} (Q : TriadicCube d) (a : CoeffField d) (s t C uL2Sq : ℝ)
     (k h : ℝ → ℝ → ℝ) {F : ℝ → ℝ}
     (flux : ℝ → ℝ → Vec d → Vec d) (u g : ℝ → ℝ → Vec d → ℝ)
@@ -90,14 +91,14 @@ theorem coarseCaccioppoli_boundary_noteRawEstimate_of_radiusEnergyBridgeInputs_o
       CoarseCaccioppoliBoundarySingleCubeEllipticityLocalization Q a s t) :
     CoarseCaccioppoliBoundaryNoteRawEstimate Q a s t C uL2Sq h F := by
   exact
-    coarseCaccioppoli_boundary_noteRawEstimate_of_radiusEnergyBridgeInputs_of_coefficientLocalization
+    coarseCaccioppoli_boundary_rawEstimate_of_radiusBridge_localized
       Q a s t C uL2Sq k h flux u g ξ energy Acirc1 AcircS B hs0 hs1 hnonneg hinputs
       (CoarseCaccioppoliBoundarySingleCubeCoefficientLocalization.of_scale_of_ellipticity
         Q a s t C uL2Sq k h hC hs0 hs1 hscaleLoc helliptic)
 
 /-- Raw boundary note estimate from radius-indexed energy bridge inputs using
 the localized explicit height and the standard multiscale ellipticity data. -/
-theorem coarseCaccioppoli_boundary_noteRawEstimate_of_radiusEnergyBridgeInputs_of_multiscaleEllipticity_of_localizedExplicitHeightOfScaleChoice
+theorem coarseCaccioppoli_boundary_noteEstimate_of_radiusEnergyInputs
     {d : ℕ} [NeZero d] (Q : TriadicCube d) (a : CoeffField d)
     (s t C uL2Sq : ℝ) {lam Lam : ℝ}
     (k : ℝ → ℝ → ℕ) {F : ℝ → ℝ}
@@ -137,18 +138,18 @@ theorem coarseCaccioppoli_boundary_noteRawEstimate_of_radiusEnergyBridgeInputs_o
     CoarseCaccioppoliBoundaryNoteRawEstimate Q a s t C uL2Sq
       (coarseCaccioppoliBoundaryLocalizedExplicitHeightOfScaleChoice Q a s t C k) F := by
   exact
-    coarseCaccioppoli_boundary_noteRawEstimate_of_radiusEnergyBridgeInputs_of_coefficientLocalization
+    coarseCaccioppoli_boundary_rawEstimate_of_radiusBridge_localized
       Q a s t C uL2Sq
       (fun ρ₁ ρ₂ => (k ρ₁ ρ₂ : ℝ))
       (coarseCaccioppoliBoundaryLocalizedExplicitHeightOfScaleChoice Q a s t C k)
       flux u g ξ energy Acirc1 AcircS B hs (by linarith) hnonneg hinputs
-      (CoarseCaccioppoliBoundarySingleCubeCoefficientLocalization.of_triadicGapScaleChoice_of_localizedExplicitHeightOfScaleChoice_of_isEllipticFieldOn_of_isSigmaCoarse
+      (CoarseCaccioppoliBoundarySingleCubeCoefficientLocalization.of_heightChoice_ellipticSigma
         Q a C uL2Sq k hC hs ht hst hscale hEll hData hBsum_s hSigmaSum_t)
 
 /-- Explicit-height boundary pre-recurrence from radius-indexed energy bridge
 inputs using the localized explicit height and standard multiscale ellipticity
 data. -/
-theorem coarseCaccioppoli_boundary_explicitHeightPreRecurrence_of_radiusEnergyBridgeInputs_of_multiscaleEllipticity_of_localizedExplicitHeightOfScaleChoice
+theorem coarseCaccioppoli_boundary_explicitHeightPreRecurrence_of_radiusEnergyInputs
     {d : ℕ} [NeZero d] (Q : TriadicCube d) (a : CoeffField d)
     (s t C uL2Sq : ℝ) {lam Lam : ℝ}
     (k : ℝ → ℝ → ℕ) {F : ℝ → ℝ}
@@ -200,11 +201,11 @@ theorem coarseCaccioppoli_boundary_explicitHeightPreRecurrence_of_radiusEnergyBr
       (coarseCaccioppoliBoundaryLocalizedExplicitHeightOfScaleChoice Q a s t C k)
       hC hs ht hst hheight
   exact
-    coarseCaccioppoli_boundary_explicitHeightPreRecurrence_of_noteEstimate_of_absorptionCondition_of_explicitCrossTermBound
+    coarseCaccioppoli_boundary_explicitHeightPreRecurrence_of_noteEstimate
       Q a s t C uL2Sq
       (coarseCaccioppoliBoundaryLocalizedExplicitHeightOfScaleChoice Q a s t C k)
       hC hs ht hst
-      (coarseCaccioppoli_boundary_noteRawEstimate_of_radiusEnergyBridgeInputs_of_multiscaleEllipticity_of_localizedExplicitHeightOfScaleChoice
+      (coarseCaccioppoli_boundary_noteEstimate_of_radiusEnergyInputs
         Q a s t C uL2Sq k flux u g ξ energy Acirc1 AcircS B
         hC hs ht hst hnonneg hscale hinputs hEll hData hBsum_s hSigmaSum_t)
       habs
@@ -213,7 +214,7 @@ theorem coarseCaccioppoli_boundary_explicitHeightPreRecurrence_of_radiusEnergyBr
 
 /-- Raw boundary note estimate from canonical `LambdaSq` factor inputs using
 the localized explicit height and standard multiscale ellipticity data. -/
-theorem coarseCaccioppoli_boundary_noteRawEstimate_of_radiusEnergyBridgeCanonicalFactorInputs_of_multiscaleEllipticity_of_localizedExplicitHeightOfScaleChoice
+theorem coarseCaccioppoli_boundary_noteEstimate_of_multiscaleEllipticity
     {d : ℕ} [NeZero d] (Q : TriadicCube d) (a : CoeffField d)
     (s t C uL2Sq : ℝ) {lam Lam : ℝ}
     (k : ℝ → ℝ → ℕ) {F : ℝ → ℝ}
@@ -253,7 +254,7 @@ theorem coarseCaccioppoli_boundary_noteRawEstimate_of_radiusEnergyBridgeCanonica
     CoarseCaccioppoliBoundaryNoteRawEstimate Q a s t C uL2Sq
       (coarseCaccioppoliBoundaryLocalizedExplicitHeightOfScaleChoice Q a s t C k) F := by
   exact
-    coarseCaccioppoli_boundary_noteRawEstimate_of_radiusEnergyBridgeInputs_of_multiscaleEllipticity_of_localizedExplicitHeightOfScaleChoice
+    coarseCaccioppoli_boundary_noteEstimate_of_radiusEnergyInputs
       Q a s t C uL2Sq k flux u g ξ energy Acirc1 AcircS B
       hC hs ht hst hnonneg hscale
       (CoarseCaccioppoliBoundaryRadiusEnergyBridgeInputs.of_canonicalFactorInputs
@@ -266,7 +267,7 @@ theorem coarseCaccioppoli_boundary_noteRawEstimate_of_radiusEnergyBridgeCanonica
 /-- Boundary explicit-height pre-recurrence from canonical `LambdaSq` factor
 inputs using localized explicit height and standard multiscale ellipticity data.
 -/
-theorem coarseCaccioppoli_boundary_explicitHeightPreRecurrence_of_radiusEnergyBridgeCanonicalFactorInputs_of_multiscaleEllipticity_of_localizedExplicitHeightOfScaleChoice
+theorem coarseCaccioppoli_boundary_explicitHeightPreRecurrence_of_heightChoice
     {d : ℕ} [NeZero d] (Q : TriadicCube d) (a : CoeffField d)
     (s t C uL2Sq : ℝ) {lam Lam : ℝ}
     (k : ℝ → ℝ → ℕ) {F : ℝ → ℝ}
@@ -306,7 +307,7 @@ theorem coarseCaccioppoli_boundary_explicitHeightPreRecurrence_of_radiusEnergyBr
             (1 / 2 : ℝ))) :
     CoarseCaccioppoliBoundaryExplicitHeightPreRecurrence Q a s t C uL2Sq F := by
   exact
-    coarseCaccioppoli_boundary_explicitHeightPreRecurrence_of_radiusEnergyBridgeInputs_of_multiscaleEllipticity_of_localizedExplicitHeightOfScaleChoice
+    coarseCaccioppoli_boundary_explicitHeightPreRecurrence_of_radiusEnergyInputs
       Q a s t C uL2Sq k flux u g ξ energy Acirc1 AcircS B
       hC hs ht hst hu hnonneg hscale
       (CoarseCaccioppoliBoundaryRadiusEnergyBridgeInputs.of_canonicalFactorInputs
@@ -336,7 +337,7 @@ theorem coarseCaccioppoli_boundary_preRecurrence_of_radiusEnergyBridgeInputs
     (hcross : CoarseCaccioppoliBoundaryNoteCrossTermBound Q a s t C uL2Sq h) :
     CoarseCaccioppoliBoundaryPreRecurrence Q a s t C uL2Sq F := by
   exact
-    coarseCaccioppoli_boundary_preRecurrence_of_noteEstimate_of_absorptionCondition_of_crossTermBound
+    coarseCaccioppoli_boundary_preRecurrence_of_absorbedCrossTerm
       Q a s t C uL2Sq h hC hs ht hst
       (coarseCaccioppoli_boundary_noteRawEstimate_of_radiusEnergyBridgeInputs
         Q a s t C uL2Sq k h flux u g ξ energy Acirc1 AcircS B hs (by linarith)
@@ -345,7 +346,8 @@ theorem coarseCaccioppoli_boundary_preRecurrence_of_radiusEnergyBridgeInputs
 
 /-- Boundary pre-recurrence from radius-indexed energy bridge inputs and pure
 coefficient localization. -/
-theorem coarseCaccioppoli_boundary_preRecurrence_of_radiusEnergyBridgeInputs_of_coefficientLocalization
+theorem
+  coarseCaccioppoli_boundary_preRecurrence_of_radiusEnergyBridgeInputs_of_coefficientLocalization
     {d : ℕ} (Q : TriadicCube d) (a : CoeffField d) (s t C uL2Sq : ℝ)
     (k h : ℝ → ℝ → ℝ) {F : ℝ → ℝ}
     (flux : ℝ → ℝ → Vec d → Vec d) (u g : ℝ → ℝ → Vec d → ℝ)
@@ -470,7 +472,7 @@ pure coefficient-localization data.  This is the same as
 `coarseCaccioppoli_boundary_qone_of_radiusEnergyBridgeInputs_of_explicitHeightOfScaleChoice`,
 but it assembles the mixed single-cube-to-raw coefficient-control bundle from
 the already-available nonnegativity hypothesis. -/
-theorem coarseCaccioppoli_boundary_qone_of_radiusEnergyBridgeInputs_of_coefficientLocalization_of_explicitHeightOfScaleChoice
+theorem coarseCaccioppoli_boundary_qone_of_radiusEnergyInputs_of_heightChoice
     {d : ℕ} (Q : TriadicCube d) (a : CoeffField d) (s t C uL2Sq : ℝ)
     (k : ℝ → ℝ → ℕ) {F : ℝ → ℝ}
     (flux : ℝ → ℝ → Vec d → Vec d) (u g : ℝ → ℝ → Vec d → ℝ)
@@ -506,7 +508,7 @@ theorem coarseCaccioppoli_boundary_qone_of_radiusEnergyBridgeInputs_of_coefficie
 
 /-- Boundary coarse Caccioppoli from the two primitive localization inputs:
 the scale-only radius inequality and the ellipticity-only comparison. -/
-theorem coarseCaccioppoli_boundary_qone_of_radiusEnergyBridgeInputs_of_scale_of_ellipticity_of_explicitHeightOfScaleChoice
+theorem coarseCaccioppoli_boundary_qone_of_radiusEnergyInputs_of_scale
     {d : ℕ} (Q : TriadicCube d) (a : CoeffField d) (s t C uL2Sq : ℝ)
     (k : ℝ → ℝ → ℕ) {F : ℝ → ℝ}
     (flux : ℝ → ℝ → Vec d → Vec d) (u g : ℝ → ℝ → Vec d → ℝ)
@@ -533,7 +535,7 @@ theorem coarseCaccioppoli_boundary_qone_of_radiusEnergyBridgeInputs_of_scale_of_
     F (1 / 3 : ℝ) ≤
       coarseCaccioppoliBoundaryExplicitHeightBound Q a s t C uL2Sq := by
   exact
-    coarseCaccioppoli_boundary_qone_of_radiusEnergyBridgeInputs_of_coefficientLocalization_of_explicitHeightOfScaleChoice
+    coarseCaccioppoli_boundary_qone_of_radiusEnergyInputs_of_heightChoice
       Q a s t C uL2Sq k flux u g ξ energy Acirc1 AcircS B
       hC hs ht hst hu hnonneg hbounded hscale hinputs
       (CoarseCaccioppoliBoundarySingleCubeCoefficientLocalization.of_scale_of_ellipticity
@@ -545,7 +547,7 @@ theorem coarseCaccioppoli_boundary_qone_of_radiusEnergyBridgeInputs_of_scale_of_
 /-- Boundary coarse Caccioppoli from radius-indexed energy bridge inputs and
 fully composed localization data: triadic gap scale choice, concrete lower
 bounds on the explicit height, and the standard multiscale ellipticity data. -/
-theorem coarseCaccioppoli_boundary_qone_of_radiusEnergyBridgeInputs_of_height_lower_bounds_of_multiscaleEllipticity_of_explicitHeightOfScaleChoice
+theorem coarseCaccioppoli_boundary_qone_of_radiusEnergyInputs_of_heightChoice_of_lower
     {d : ℕ} [NeZero d] (Q : TriadicCube d) (a : CoeffField d)
     (s t C uL2Sq : ℝ) {lam Lam : ℝ}
     (k : ℝ → ℝ → ℕ) {F : ℝ → ℝ}
@@ -595,10 +597,10 @@ theorem coarseCaccioppoli_boundary_qone_of_radiusEnergyBridgeInputs_of_height_lo
     F (1 / 3 : ℝ) ≤
       coarseCaccioppoliBoundaryExplicitHeightBound Q a s t C uL2Sq := by
   exact
-    coarseCaccioppoli_boundary_qone_of_radiusEnergyBridgeInputs_of_coefficientLocalization_of_explicitHeightOfScaleChoice
+    coarseCaccioppoli_boundary_qone_of_radiusEnergyInputs_of_heightChoice
       Q a s t C uL2Sq k flux u g ξ energy Acirc1 AcircS B
       hC hs ht hst hu hnonneg hbounded hscale hinputs
-      (CoarseCaccioppoliBoundarySingleCubeCoefficientLocalization.of_triadicGapScaleChoice_of_height_lower_bounds_of_isEllipticFieldOn_of_isSigmaCoarse
+      (CoarseCaccioppoliBoundarySingleCubeCoefficientLocalization.of_heightBounds_sigmaData
         Q a C uL2Sq k
         (coarseCaccioppoliBoundaryExplicitHeightOfScaleChoice Q a s t C k)
         hC hs ht hst hscale hheight_const hheight_cent hEll hData hBsum_s hSigmaSum_t)
@@ -607,7 +609,7 @@ theorem coarseCaccioppoli_boundary_qone_of_radiusEnergyBridgeInputs_of_height_lo
 the localized explicit height.  The localized height supplies the scale-side
 lower bounds internally, so callers only provide the triadic gap choice and the
 standard multiscale ellipticity data. -/
-theorem coarseCaccioppoli_boundary_qone_of_radiusEnergyBridgeInputs_of_multiscaleEllipticity_of_localizedExplicitHeightOfScaleChoice
+theorem coarseCaccioppoli_boundary_qone_of_radiusEnergyInputs_of_of_radiusEnergyInputs
     {d : ℕ} [NeZero d] (Q : TriadicCube d) (a : CoeffField d)
     (s t C uL2Sq : ℝ) {lam Lam : ℝ}
     (k : ℝ → ℝ → ℕ) {F : ℝ → ℝ}
@@ -651,7 +653,7 @@ theorem coarseCaccioppoli_boundary_qone_of_radiusEnergyBridgeInputs_of_multiscal
   exact
     coarseCaccioppoli_boundary_qone_of_explicitHeightPreRecurrence
       Q a s t C uL2Sq hC hs ht hst hu hnonneg hbounded
-      (coarseCaccioppoli_boundary_explicitHeightPreRecurrence_of_radiusEnergyBridgeInputs_of_multiscaleEllipticity_of_localizedExplicitHeightOfScaleChoice
+      (coarseCaccioppoli_boundary_explicitHeightPreRecurrence_of_radiusEnergyInputs
         Q a s t C uL2Sq k flux u g ξ energy Acirc1 AcircS B
         hC hs ht hst hu hnonneg hscale hinputs hEll hData hBsum_s hSigmaSum_t)
 

@@ -153,7 +153,7 @@ theorem coarseBlockMatrix_subadditive_openCubeSet_descendantsAtDepth_pair_of_isS
     exact magic_identity_responseJ_block_quadratic_coarseBlockMatrix_of_isSigmaCoarse
       (openCubeSet R) a hAR hSR hKR hSigmaR hdetR p q
 
-theorem coarseBlockMatrix_subadditive_openCubeSet_descendantsAtDepth_blockQuadratic_of_isSigmaCoarse
+theorem coarseBlockMatrix_subadditive_blockQuadratic_on_openDescendants
     {d : ℕ} (j : ℕ) (Q : TriadicCube d) (a : CoeffField d) {lam Lam : ℝ}
     (hEll : IsEllipticFieldOn lam Lam (openCubeSet Q) a)
     {sigmaQ sigmaStarQ kappaQ : Mat d}
@@ -180,7 +180,7 @@ theorem coarseBlockMatrix_subadditive_openCubeSet_descendantsAtDepth_blockQuadra
           (1 / 2 : ℝ) * blockVecDot X
             (blockMatVecMul (coarseBlockMatrix (openCubeSet R) a) X)) := by
   refine
-    coarseBlockMatrix_subadditive_openCubeSet_descendantsAtDepth_blockQuadratic_of_responseJ_blockQuadratic
+    coarseMatrix_subadditive_cube_descendants_blockQuadratic
       j Q a hEll ?_ ?_ X
   · intro p q
     exact magic_identity_responseJ_block_quadratic_coarseBlockMatrix_of_isSigmaCoarse
@@ -217,7 +217,7 @@ theorem coarseBlockMatrix_upperLeft_subadditive_openCubeSet_descendantsAtDepth_o
           (1 / 2 : ℝ) * vecDot p
             (matVecMul (coarseBlockMatrix (openCubeSet R) a).upperLeft p)) := by
   simpa [blockVecDot, blockMatVecMul, matVecMul_zero, vecDot_zero_left, vecDot_zero_right] using
-    coarseBlockMatrix_subadditive_openCubeSet_descendantsAtDepth_blockQuadratic_of_isSigmaCoarse
+    coarseBlockMatrix_subadditive_blockQuadratic_on_openDescendants
       j Q a hEll hAQ hSQ hKQ hSigmaQ hdetQ hDesc (p, 0)
 
 theorem coarseBlockMatrix_lowerRight_subadditive_openCubeSet_descendantsAtDepth_of_isSigmaCoarse
@@ -247,10 +247,10 @@ theorem coarseBlockMatrix_lowerRight_subadditive_openCubeSet_descendantsAtDepth_
           (1 / 2 : ℝ) * vecDot q
             (matVecMul (coarseBlockMatrix (openCubeSet R) a).lowerRight q)) := by
   simpa [blockVecDot, blockMatVecMul, matVecMul_zero, vecDot_zero_left, vecDot_zero_right] using
-    coarseBlockMatrix_subadditive_openCubeSet_descendantsAtDepth_blockQuadratic_of_isSigmaCoarse
+    coarseBlockMatrix_subadditive_blockQuadratic_on_openDescendants
       j Q a hEll hAQ hSQ hKQ hSigmaQ hdetQ hDesc (0, q)
 
-theorem coarseBlockMatrix_subadditive_openCubeSet_originCube_descendantsAtDepth_pair_of_isSigmaCoarse
+theorem coarseBlockMatrix_subadditive_pair_on_originDescendants
     {d : ℕ} (j : ℕ) (n : ℤ) (a : CoeffField d) {lam Lam : ℝ}
     (hEll : IsEllipticFieldOn lam Lam (openCubeSet (originCube d n)) a)
     {sigmaQ sigmaStarQ kappaQ : Mat d}
@@ -280,7 +280,7 @@ theorem coarseBlockMatrix_subadditive_openCubeSet_originCube_descendantsAtDepth_
     coarseBlockMatrix_subadditive_openCubeSet_descendantsAtDepth_pair_of_isSigmaCoarse
       (j := j) (Q := originCube d n) (a := a) hEll hAQ hSQ hKQ hSigmaQ hdetQ hDesc p q
 
-theorem coarseBlockMatrix_subadditive_openCubeSet_originCube_descendantsAtDepth_blockQuadratic_of_isSigmaCoarse
+theorem coarseMatrix_subadditive_cube_descendants_blockQuadratic_of_isSigmaCoarse
     {d : ℕ} (j : ℕ) (n : ℤ) (a : CoeffField d) {lam Lam : ℝ}
     (hEll : IsEllipticFieldOn lam Lam (openCubeSet (originCube d n)) a)
     {sigmaQ sigmaStarQ kappaQ : Mat d}
@@ -307,10 +307,11 @@ theorem coarseBlockMatrix_subadditive_openCubeSet_originCube_descendantsAtDepth_
           (1 / 2 : ℝ) * blockVecDot X
             (blockMatVecMul (coarseBlockMatrix (openCubeSet R) a) X)) := by
   simpa using
-    coarseBlockMatrix_subadditive_openCubeSet_descendantsAtDepth_blockQuadratic_of_isSigmaCoarse
+    coarseBlockMatrix_subadditive_blockQuadratic_on_openDescendants
       (j := j) (Q := originCube d n) (a := a) hEll hAQ hSQ hKQ hSigmaQ hdetQ hDesc X
 
-theorem coarseBlockMatrix_subadditive_openCubeSet_descendantsAtDepth_in_loewner_order_of_isSigmaCoarse
+theorem
+  coarseBlockMatrix_subadditive_openCubeSet_descendantsAtDepth_in_loewner_order_of_isSigmaCoarse
     {d : ℕ} (j : ℕ) (Q : TriadicCube d) (a : CoeffField d) {lam Lam : ℝ}
     (hEll : IsEllipticFieldOn lam Lam (openCubeSet Q) a)
     {sigmaQ sigmaStarQ kappaQ : Mat d}
@@ -340,16 +341,17 @@ theorem coarseBlockMatrix_subadditive_openCubeSet_descendantsAtDepth_in_loewner_
             (1 / 2 : ℝ) * blockVecDot X
               (blockMatVecMul (coarseBlockMatrix (openCubeSet R) a) X)) := by
             exact
-              coarseBlockMatrix_subadditive_openCubeSet_descendantsAtDepth_blockQuadratic_of_isSigmaCoarse
+              coarseBlockMatrix_subadditive_blockQuadratic_on_openDescendants
                 j Q a hEll hAQ hSQ hKQ hSigmaQ hdetQ hDesc X
     _ = (1 / 2 : ℝ) *
           blockVecDot X
             (blockMatVecMul
-              (descendantsAverageBlockMat Q j (fun R => coarseBlockMatrix (openCubeSet R) a)) X) := by
+              (descendantsAverageBlockMat Q j (fun R => coarseBlockMatrix (openCubeSet R) a)) X)
+                := by
             rw [descendantsAverage_smul]
             rw [blockVecDot_blockMatVecMul_descendantsAverageBlockMat]
 
-theorem coarseBlockMatrix_subadditive_cubeSet_originCube_descendantsAtDepth_in_loewner_order_of_isSigmaCoarse
+theorem coarseMatrix_subadditive_cube_descendants_in_loewner_order
     {d : ℕ} [NeZero d] (j : ℕ) (n : ℤ) (a : CoeffField d) {lam Lam : ℝ}
     (hEll : IsEllipticFieldOn lam Lam (openCubeSet (originCube d n)) a)
     {sigmaQ sigmaStarQ kappaQ : Mat d}
@@ -369,14 +371,16 @@ theorem coarseBlockMatrix_subadditive_cubeSet_originCube_descendantsAtDepth_in_l
           IsSigmaCoarse (openCubeSet R) a sigmaR sigmaStarR kappaR ∧
           IsUnit sigmaStarR.det) :
     BlockMatLoewnerLE (coarseBlockMatrix (cubeSet (originCube d n)) a)
-      (descendantsAverageBlockMat (originCube d n) j (fun R => coarseBlockMatrix (cubeSet R) a)) := by
+      (descendantsAverageBlockMat (originCube d n) j (fun R => coarseBlockMatrix (cubeSet R) a))
+        := by
   intro X
   simpa [descendantsAverageBlockMat, descendantsAverageMat,
     coarseBlockMatrix_cubeSet_eq_openCubeSet_of_triadicCube] using
     (coarseBlockMatrix_subadditive_openCubeSet_descendantsAtDepth_in_loewner_order_of_isSigmaCoarse
       (j := j) (Q := originCube d n) (a := a) hEll hAQ hSQ hKQ hSigmaQ hdetQ hDesc X)
 
-theorem coarseBlockMatrix_upperLeft_subadditive_openCubeSet_originCube_descendantsAtDepth_of_isSigmaCoarse
+theorem
+  coarseBlockMatrix_upperLeft_subadditive_openCubeSet_originCube_descendantsAtDepth_of_isSigmaCoarse
     {d : ℕ} (j : ℕ) (n : ℤ) (a : CoeffField d) {lam Lam : ℝ}
     (hEll : IsEllipticFieldOn lam Lam (openCubeSet (originCube d n)) a)
     {sigmaQ sigmaStarQ kappaQ : Mat d}
@@ -406,7 +410,7 @@ theorem coarseBlockMatrix_upperLeft_subadditive_openCubeSet_originCube_descendan
     coarseBlockMatrix_upperLeft_subadditive_openCubeSet_descendantsAtDepth_of_isSigmaCoarse
       (j := j) (Q := originCube d n) (a := a) hEll hAQ hSQ hKQ hSigmaQ hdetQ hDesc p
 
-theorem coarseBlockMatrix_lowerRight_subadditive_openCubeSet_originCube_descendantsAtDepth_of_isSigmaCoarse
+theorem coarseBlockLowerRight_subadditive_on_originDescendants
     {d : ℕ} (j : ℕ) (n : ℤ) (a : CoeffField d) {lam Lam : ℝ}
     (hEll : IsEllipticFieldOn lam Lam (openCubeSet (originCube d n)) a)
     {sigmaQ sigmaStarQ kappaQ : Mat d}
@@ -473,7 +477,7 @@ theorem coarseBlockMatrix_subadditive_cubeSet_originCube_descendantsAtDepth_pair
             (1 / 2 : ℝ) * blockVecDot (-p, q)
               (blockMatVecMul (coarseBlockMatrix (openCubeSet R) a) (-p, q))) := by
             exact
-              coarseBlockMatrix_subadditive_openCubeSet_originCube_descendantsAtDepth_pair_of_isSigmaCoarse
+              coarseBlockMatrix_subadditive_pair_on_originDescendants
                 j n a hEll hAQ hSQ hKQ hSigmaQ hdetQ hDesc p q
     _ = descendantsAverage (originCube d n) j
           (fun R =>
@@ -485,7 +489,7 @@ theorem coarseBlockMatrix_subadditive_cubeSet_originCube_descendantsAtDepth_pair
             intro R hR
             rw [← coarseBlockMatrix_cubeSet_eq_openCubeSet_of_triadicCube (Q := R) a]
 
-theorem coarseBlockMatrix_subadditive_cubeSet_originCube_descendantsAtDepth_blockQuadratic_of_isSigmaCoarse
+theorem coarseBlockMatrix_subadditive_blockQuadratic_on_cubeDescendants
     {d : ℕ} [NeZero d] (j : ℕ) (n : ℤ) (a : CoeffField d) {lam Lam : ℝ}
     (hEll : IsEllipticFieldOn lam Lam (openCubeSet (originCube d n)) a)
     {sigmaQ sigmaStarQ kappaQ : Mat d}
@@ -522,7 +526,7 @@ theorem coarseBlockMatrix_subadditive_cubeSet_originCube_descendantsAtDepth_bloc
             (1 / 2 : ℝ) * blockVecDot X
               (blockMatVecMul (coarseBlockMatrix (openCubeSet R) a) X)) := by
             exact
-              coarseBlockMatrix_subadditive_openCubeSet_originCube_descendantsAtDepth_blockQuadratic_of_isSigmaCoarse
+              coarseMatrix_subadditive_cube_descendants_blockQuadratic_of_isSigmaCoarse
                 j n a hEll hAQ hSQ hKQ hSigmaQ hdetQ hDesc X
     _ = descendantsAverage (originCube d n) j
           (fun R =>
@@ -534,7 +538,8 @@ theorem coarseBlockMatrix_subadditive_cubeSet_originCube_descendantsAtDepth_bloc
             intro R hR
             rw [← coarseBlockMatrix_cubeSet_eq_openCubeSet_of_triadicCube (Q := R) a]
 
-theorem coarseBlockMatrix_upperLeft_subadditive_cubeSet_originCube_descendantsAtDepth_of_isSigmaCoarse
+theorem
+  coarseBlockMatrix_upperLeft_subadditive_cubeSet_originCube_descendantsAtDepth_of_isSigmaCoarse
     {d : ℕ} [NeZero d] (j : ℕ) (n : ℤ) (a : CoeffField d) {lam Lam : ℝ}
     (hEll : IsEllipticFieldOn lam Lam (openCubeSet (originCube d n)) a)
     {sigmaQ sigmaStarQ kappaQ : Mat d}
@@ -561,10 +566,11 @@ theorem coarseBlockMatrix_upperLeft_subadditive_cubeSet_originCube_descendantsAt
           (1 / 2 : ℝ) * vecDot p
             (matVecMul (coarseBlockMatrix (cubeSet R) a).upperLeft p)) := by
   simpa [blockVecDot, blockMatVecMul, matVecMul_zero, vecDot_zero_left, vecDot_zero_right] using
-    coarseBlockMatrix_subadditive_cubeSet_originCube_descendantsAtDepth_blockQuadratic_of_isSigmaCoarse
+    coarseBlockMatrix_subadditive_blockQuadratic_on_cubeDescendants
       j n a hEll hAQ hSQ hKQ hSigmaQ hdetQ hDesc (p, 0)
 
-theorem coarseBlockMatrix_lowerRight_subadditive_cubeSet_originCube_descendantsAtDepth_of_isSigmaCoarse
+theorem
+  coarseBlockMatrix_lowerRight_subadditive_cubeSet_originCube_descendantsAtDepth_of_isSigmaCoarse
     {d : ℕ} [NeZero d] (j : ℕ) (n : ℤ) (a : CoeffField d) {lam Lam : ℝ}
     (hEll : IsEllipticFieldOn lam Lam (openCubeSet (originCube d n)) a)
     {sigmaQ sigmaStarQ kappaQ : Mat d}
@@ -591,7 +597,7 @@ theorem coarseBlockMatrix_lowerRight_subadditive_cubeSet_originCube_descendantsA
           (1 / 2 : ℝ) * vecDot q
             (matVecMul (coarseBlockMatrix (cubeSet R) a).lowerRight q)) := by
   simpa [blockVecDot, blockMatVecMul, matVecMul_zero, vecDot_zero_left, vecDot_zero_right] using
-    coarseBlockMatrix_subadditive_cubeSet_originCube_descendantsAtDepth_blockQuadratic_of_isSigmaCoarse
+    coarseBlockMatrix_subadditive_blockQuadratic_on_cubeDescendants
       j n a hEll hAQ hSQ hKQ hSigmaQ hdetQ hDesc (0, q)
 
 theorem coarseStarredBlockMatrixInv_cubeSet_eq_openCubeSet_of_triadicCube {d : ℕ}
@@ -676,7 +682,7 @@ theorem isSigmaCoarse_cubeSet_iff_openCubeSet_of_triadicCube {d : ℕ}
     rw [ResponseJ_cubeSet_eq_openCubeSet_of_triadicCube (Q := Q) (p := p) (q := 0) a]
     exact hresp p
 
-theorem sigmaStarInvCoarse_cubeSet_eq_openCubeSet_of_triadicCube_of_isSigmaStarCoarse
+theorem sigmaStarInvCoarse_cubeSet_eq_openCubeSet
     {d : ℕ} [NeZero d] (Q : TriadicCube d) {a : CoeffField d} {sigmaStar : Mat d}
     (hS : IsSigmaStarCoarse (openCubeSet Q) a sigmaStar) :
     sigmaStarInvCoarse (cubeSet Q) a = sigmaStarInvCoarse (openCubeSet Q) a := by
@@ -685,7 +691,7 @@ theorem sigmaStarInvCoarse_cubeSet_eq_openCubeSet_of_triadicCube_of_isSigmaStarC
   rw [sigmaStarInvCoarse_eq_inv_of_isSigmaStarCoarse hSCube,
     sigmaStarInvCoarse_eq_inv_of_isSigmaStarCoarse hS]
 
-theorem bCoarse_sigmaCoarse_sigmaStarCoarse_kappaCoarse_cubeSet_eq_openCubeSet_of_triadicCube_of_isSigmaCoarse
+theorem bCoarse_sigmaCoarse_sigmaStarCoarse_kappaCoarse_cube_eq_cube
     {d : ℕ} [NeZero d] (Q : TriadicCube d) {a : CoeffField d} {sigma sigmaStar kappa : Mat d}
     (hS : IsSigmaStarCoarse (openCubeSet Q) a sigmaStar)
     (hK : IsKappaCoarse (openCubeSet Q) a sigmaStar kappa)

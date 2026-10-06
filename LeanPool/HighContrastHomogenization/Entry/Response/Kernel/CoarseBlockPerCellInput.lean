@@ -121,7 +121,8 @@ theorem coarseBlockMatrix_sub_skew_of_isCoarseBlockMatrix {U : Set (Vec d)} {a :
 block, minus sign.**  This is the identity the recent-difference energy map consumes: the
 Chapter-2 block of the recentred coefficient equals `Gᵀ 𝐀 G` for the cell's set-level coarse
 block. -/
-theorem isCoarseBlockMatrix_respCoeffMinus [NeZero d] (q : Mat d) (hq : IsUnit q) (k : ℤ) (w : Fin d → ℤ)
+theorem isCoarseBlockMatrix_respCoeffMinus [NeZero d] (q : Mat d) (hq : IsUnit q) (k : ℤ) (w :
+  Fin d → ℤ)
     (F : BlockMat d) (a : CoeffSpace d) (aU : Book.Ch02.CoeffOn (adaptedDomainAt q hq k w))
     (haU : aU.toCoeffField = respCoeffMinus F a) :
     Book.Ch02.coarseBlockMatrix (adaptedDomainAt q hq k w) aU
@@ -134,7 +135,8 @@ theorem isCoarseBlockMatrix_respCoeffMinus [NeZero d] (q : Mat d) (hq : IsUnit q
 coarse block, plus sign.**  The recentred adjoint field is `respCoeffPlus F a = aᵀ + g`, so the
 shear identity applies at the adjoint field with skew `-g`, and the adjoint block is the flux
 sign flip `D` of the primal block.  This matches the `hcoarse` shape of the adjoint energy map. -/
-theorem isCoarseBlockMatrix_respCoeffPlus [NeZero d] (q : Mat d) (hq : IsUnit q) (k : ℤ) (w : Fin d → ℤ)
+theorem isCoarseBlockMatrix_respCoeffPlus [NeZero d] (q : Mat d) (hq : IsUnit q) (k : ℤ) (w :
+  Fin d → ℤ)
     (F : BlockMat d) (a : CoeffSpace d) (aU : Book.Ch02.CoeffOn (adaptedDomainAt q hq k w))
     (haU : aU.toCoeffField = respCoeffPlus F a) :
     Book.Ch02.coarseBlockMatrix (adaptedDomainAt q hq k w) aU
@@ -149,7 +151,8 @@ theorem isCoarseBlockMatrix_respCoeffPlus [NeZero d] (q : Mat d) (hq : IsUnit q)
     ⟨_, hA_a⟩
   have hA_b : IsCoarseBlockMatrix (adaptedCellAtCenter q k w)
       (adjointCoeffField (⇑a.1 : CoeffField d))
-      (coarseBlockMatrix (adaptedCellAtCenter q k w) (adjointCoeffField (⇑a.1 : CoeffField d))) := by
+      (coarseBlockMatrix (adaptedCellAtCenter q k w) (adjointCoeffField (⇑a.1 : CoeffField d)))
+        := by
     have h := IsCoarseBlockMatrix.adjointCoeffField_symm hA_a
     rw [← blockCongr_blockD] at h
     rw [coarseBlockMatrix_adjointCoeffField_of_exists hex, ← blockCongr_blockD]
@@ -378,7 +381,8 @@ finite index set and the weight `G` is nonnegative there, then the same bound ho
 larger constant `c₂`.  The nonnegativity of `c₁` is carried because the constant in the analytic
 per-scale input is a product of Loewner sizes, but the monotonicity step itself needs only
 `c₁ ≤ c₂` and `0 ≤ G w`. -/
-theorem perCellHypothesis_of_constants {iota : Type*} (Z : Finset iota) (V : iota → ℝ) (G : iota → ℝ)
+theorem perCellHypothesis_of_constants {iota : Type*} (Z : Finset iota) (V : iota → ℝ) (G : iota
+  → ℝ)
     (c₁ c₂ : ℝ) (hc₁ : 0 ≤ c₁) (hG : ∀ w ∈ Z, 0 ≤ G w) (hcc : c₁ ≤ c₂)
     (hmetric : ∀ w ∈ Z, V w ≤ c₁ * G w) :
     ∀ w ∈ Z, V w ≤ c₂ * G w := by
@@ -492,8 +496,10 @@ theorem recentEnergyMap_port
           (normalizedBlock (coarseBlock (adaptedCellAtCenter (respGrid jStar F) (t - (m : ℤ)) z) a)
             (respMean P jStar F t)) (Book.Ch02.blockIdentity d))})
     (hcoarse : ∀ w ∈ triadicIndexBox d n,
-      Book.Ch02.coarseBlockMatrix (adaptedDomainAt (respGrid jStar F) hgrid (t - (n : ℤ)) w) (aU w) =
-        blockCongr (respG F) (coarseBlock (adaptedCellAtCenter (respGrid jStar F) (t - (n : ℤ)) w) a))
+      Book.Ch02.coarseBlockMatrix (adaptedDomainAt (respGrid jStar F) hgrid (t - (n : ℤ)) w) (aU
+        w) =
+        blockCongr (respG F) (coarseBlock (adaptedCellAtCenter (respGrid jStar F) (t - (n : ℤ))
+          w) a))
     (hG : ∀ w ∈ triadicIndexBox d n, 0 ≤ Book.Ch02.average
       (adaptedDomainAt (respGrid jStar F) hgrid (t - (n : ℤ)) w)
       (fun x => blockVecDot
@@ -681,9 +687,11 @@ theorem recentEnergyMap_port_plus
           (normalizedBlock (coarseBlock (adaptedCellAtCenter (respGrid jStar F) (t - (m : ℤ)) z) a)
             (respMean P jStar F t)) (Book.Ch02.blockIdentity d))})
     (hcoarse : ∀ w ∈ triadicIndexBox d n,
-      Book.Ch02.coarseBlockMatrix (adaptedDomainAt (respGrid jStar F) hgrid (t - (n : ℤ)) w) (aU w) =
+      Book.Ch02.coarseBlockMatrix (adaptedDomainAt (respGrid jStar F) hgrid (t - (n : ℤ)) w) (aU
+        w) =
         blockCongr (blockD d)
-          (blockCongr (respG F) (coarseBlock (adaptedCellAtCenter (respGrid jStar F) (t - (n : ℤ)) w) a)))
+          (blockCongr (respG F) (coarseBlock (adaptedCellAtCenter (respGrid jStar F) (t - (n :
+            ℤ)) w) a)))
     (hG : ∀ w ∈ triadicIndexBox d n, 0 ≤ Book.Ch02.average
       (adaptedDomainAt (respGrid jStar F) hgrid (t - (n : ℤ)) w)
       (fun x => blockVecDot

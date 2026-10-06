@@ -228,7 +228,7 @@ bound, and the conclusion performs the `3^{-sj} 3^{s'j} = 3^{-(s-s')j}`
 weight shift.
 -/
 theorem
-  sum_filter_triadicDepthWeight_mul_sqrt_descendantsAverage_vecNormSq_le_const_mul_shifted_weighted_sqrt
+  filteredTriadicWeight_sqrtDescendantNorm_le_constantWeightedSqrt
     {d : ℕ} (Q : TriadicCube d) (s s' C : ℝ) (N : ℕ)
     (high : ℕ → Prop) [DecidablePred high]
     (component : ℕ → TriadicCube d → Vec d) (gap : ℕ → ℝ)

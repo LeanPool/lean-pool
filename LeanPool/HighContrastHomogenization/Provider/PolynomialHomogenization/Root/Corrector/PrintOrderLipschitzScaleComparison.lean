@@ -230,7 +230,9 @@ theorem
     exact one_le_commonQuantitativeAffineScale hkappa hX
   have hPrintLe : xPrint ≤ A * x := by
     exact
-      HCPolySupport.HighContrast.Root.PrintOrderDecoupledFiniteTerminalSurface.printOrderScale_le_factor_mul_rootScale
+      (open HCPolySupport.HighContrast.Root.PrintOrderDecoupledFiniteTerminalSurface
+        (printOrderScale_le_factor_mul_rootScale) in
+        printOrderScale_le_factor_mul_rootScale)
         surface hg
   have hxCeil : x ≤ (3 : ℝ) ^ Quenched.triadicCeilingIndex x :=
     Quenched.le_pow_triadicCeilingIndex hxOne

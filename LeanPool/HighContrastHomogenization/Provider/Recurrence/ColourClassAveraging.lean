@@ -207,7 +207,7 @@ theorem lqNorm_finsetSum_le_of_iIndepFun {ι : Type*} {P : Measure (CoeffSpace d
   have hsum : ∀ a : CoeffSpace d, ∑ u : {i : ι // i ∈ s}, Y u.1 a = ∑ i ∈ s, Y i a :=
     fun a => Finset.sum_coe_sort s fun i => Y i a
   have hros :=
-    IndependentSums.integral_abs_finsetSum_rpow_rpow_inv_le_rosenthal_uniform_polynomial_of_iIndepFun_of_integral_eq_zero
+    IndependentSums.integral_abs_finiteSum_rpow_rpow_inv_le_rosenthal_uniform_polynomial
       (μ := P) (X := fun u : {i : ι // i ∈ s} => Y u.1) Finset.univ_nonempty hQ hK0 hindep
       (fun u => hmeas u.1)
       (fun u _ => integrable_abs_rpow_of_memLp hQ0 (hmemLp u.1 u.2))

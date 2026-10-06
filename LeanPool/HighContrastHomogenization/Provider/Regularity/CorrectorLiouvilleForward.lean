@@ -50,7 +50,7 @@ theorem NormalizedLocalH1Carrier.tendsto_affineAdd_normalizedL2Norm_sublinear_of
           (fun x => vecDot e x + z.globalValueRepresentative x + c))
       atTop (nhds 0) := by
   obtain ⟨Cfull, hCfull, hfull⟩ :=
-    z.exists_cubeLpNorm_affineAdd_globalValueRepresentative_le_three_pow_of_cubeGrowth
+    z.exists_affineAdd_cubeLpNorm_le_three_pow
       q₀ C hC hcube e c
   let f : Vec d → ℝ :=
     fun x => vecDot e x + z.globalValueRepresentative x + c
@@ -90,7 +90,8 @@ theorem exists_scalarIdentityGoodTailAffineCorrectorSublinearGrowthConstant
             (fun r : ℝ => ENNReal.ofReal (r ^ (-(1 + ϑ))) *
               normalizedL2Norm (euclideanBall d r)
                 (fun x => vecDot e x +
-                  (finiteAffineCorrectionJointLocalLimit a hCauchy e).globalValueRepresentative x + c₀))
+                  (finiteAffineCorrectionJointLocalLimit a hCauchy e).globalValueRepresentative
+                    x + c₀))
             atTop (nhds 0) := by
   obtain ⟨K, c, hK, hc, hcube⟩ :=
     exists_scalarIdentityGoodTailCorrectorCubeGrowthConstant d s hs hs_lt
@@ -121,7 +122,8 @@ theorem exists_scalarIdentityGoodTailAffineCorrectorMemLiouvilleConstant
             (fun x => vecDot e x +
               (finiteAffineCorrectionJointLocalLimit a hCauchy e).globalValueRepresentative x + c₀)
             (fun x => e +
-              (finiteAffineCorrectionJointLocalLimit a hCauchy e).globalGradientRepresentative x) := by
+              (finiteAffineCorrectionJointLocalLimit a hCauchy e).globalGradientRepresentative
+                x) := by
   obtain ⟨K, c, hK, hc, hgrowth⟩ :=
     exists_scalarIdentityGoodTailAffineCorrectorSublinearGrowthConstant
       d s hs hs_lt

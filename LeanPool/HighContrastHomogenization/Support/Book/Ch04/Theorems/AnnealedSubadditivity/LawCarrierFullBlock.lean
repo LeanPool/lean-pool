@@ -86,7 +86,7 @@ theorem integrable_coarseFullBlockMatrixAtCube_of_integrable_diagonalBlockNorms
       coarseBlockMatrix (cubeSet Q) a.toFun =
         Ch02.coarseBlockMatrix (Ch02.cubeDomain Q) (F.coeffOn Q) := by
     simpa [F] using
-      RestrictionLawCarrier.coarseBlockMatrix_cubeSet_eq_ch02_coarseBlockMatrix_of_aelocallyUniformlyEllipticField
+      RestrictionLawCarrier.coarseBlockMatrix_cubeSet_eq_chapterCoarse
         ha Q
   have hSymm : IsSymmetricBlockMat (coarseBlockMatrix (cubeSet Q) a.toFun) := by
     rw [hEq]
@@ -106,12 +106,13 @@ theorem integrable_coarseFullBlockMatrixAtCube_of_integrable_diagonalBlockNorms
 
 /-- Full coarse-block integrability gives entrywise integrability of the
 corresponding doubled coarse matrix. -/
-theorem integrable_blockMatEntry_coarseBlockMatrix_cubeSet_of_integrable_coarseFullBlockMatrixAtCube
+theorem integrable_coarseBlockMatrixEntry_of_integrableFullBlock
     {d : ℕ} {P : RestrictionCoeffLaw d} {Q : TriadicCube d}
     (hInt : Integrable (coarseFullBlockMatrixAtCube Q) P) :
     ∀ α β,
       Integrable
-        (fun a : RegCoeffField d => blockMatEntry (coarseBlockMatrix (cubeSet Q) a.toFun) α β) P := by
+        (fun a : RegCoeffField d => blockMatEntry (coarseBlockMatrix (cubeSet Q) a.toFun) α β) P
+          := by
   intro α β
   have hα : Integrable (fun a : RegCoeffField d => coarseFullBlockMatrixAtCube Q a α) P :=
     MeasureTheory.Integrable.eval hInt α
@@ -133,7 +134,7 @@ theorem coarseBlockMatrix_lowerRight_posDef_cubeSet_ae
       coarseBlockMatrix (cubeSet Q) a.toFun =
         Ch02.coarseBlockMatrix (Ch02.cubeDomain Q) (F.coeffOn Q) := by
     simpa [F] using
-      RestrictionLawCarrier.coarseBlockMatrix_cubeSet_eq_ch02_coarseBlockMatrix_of_aelocallyUniformlyEllipticField
+      RestrictionLawCarrier.coarseBlockMatrix_cubeSet_eq_chapterCoarse
         ha Q
   rw [hEq]
   simpa using Ch02.sigmaStarInvCoarse_posDef (Ch02.cubeDomain Q) (F.coeffOn Q)
@@ -151,14 +152,14 @@ theorem coarseBlockMatrix_upperLeft_posDef_cubeSet_ae
       coarseBlockMatrix (cubeSet Q) a.toFun =
         Ch02.coarseBlockMatrix (Ch02.cubeDomain Q) (F.coeffOn Q) := by
     simpa [F] using
-      RestrictionLawCarrier.coarseBlockMatrix_cubeSet_eq_ch02_coarseBlockMatrix_of_aelocallyUniformlyEllipticField
+      RestrictionLawCarrier.coarseBlockMatrix_cubeSet_eq_chapterCoarse
         ha Q
   rw [hEq]
   simpa using Ch02.bCoarse_posDef (Ch02.cubeDomain Q) (F.coeffOn Q)
 
 /-- Full coarse-block integrability and primitive scalarization make the
 inverse-star scalar coefficient strictly positive. -/
-theorem Internal.barSigmaStarInv_pos_of_integrable_coarseFullBlockMatrixAtCube
+theorem Internal.barSigmaStarInverse_pos_of_integrableBlockMatrix
     {d : ℕ} [NeZero d] {P : RestrictionCoeffLaw d} (hP : RestrictionLawCarrier P) {n : ℤ}
     (hPrim : Internal.AnnealedPrimitiveScalarizationData (d := d) P n)
     (hBlock : Integrable (coarseFullBlockMatrixAtCube (originCube d n)) P) :
@@ -172,7 +173,7 @@ theorem Internal.barSigmaStarInv_pos_of_integrable_coarseFullBlockMatrixAtCube
     refine MeasureTheory.Integrable.of_eval ?_
     intro j
     exact
-      integrable_blockMatEntry_coarseBlockMatrix_cubeSet_of_integrable_coarseFullBlockMatrixAtCube
+      integrable_coarseBlockMatrixEntry_of_integrableFullBlock
         hBlock (Sum.inr i) (Sum.inr j)
   have hScalar : (∫ a, F a ∂P) = hPrim.barSigmaStarInv • (1 : Mat d) := by
     calc
@@ -203,7 +204,7 @@ theorem Internal.barB_pos_of_integrable_coarseFullBlockMatrixAtCube
     refine MeasureTheory.Integrable.of_eval ?_
     intro j
     exact
-      integrable_blockMatEntry_coarseBlockMatrix_cubeSet_of_integrable_coarseFullBlockMatrixAtCube
+      integrable_coarseBlockMatrixEntry_of_integrableFullBlock
         hBlock (Sum.inl i) (Sum.inl j)
   have hScalar : (∫ a, F a ∂P) = hPrim.barB • (1 : Mat d) := by
     calc
@@ -235,7 +236,7 @@ theorem barSigmaAtScale_pos_of_integrable_coarseFullBlockMatrixAtCube
 
 /-- Law-facing primitive lower bound `1 <= Theta_n`, stated at the primitive
 scalarization level. -/
-theorem Internal.one_le_primitive_contrast_of_integrable_coarseFullBlockMatrixAtCube
+theorem Internal.one_le_primitiveContrast_of_integrableCoarseBlock
     {d : ℕ} [NeZero d] {P : RestrictionCoeffLaw d} (hP : RestrictionLawCarrier P) {n : ℤ}
     (hPrim : Internal.AnnealedPrimitiveScalarizationData (d := d) P n)
     (hBlock : Integrable (coarseFullBlockMatrixAtCube (originCube d n)) P) :
@@ -284,7 +285,7 @@ theorem Internal.one_le_primitive_contrast_of_integrable_coarseFullBlockMatrixAt
   rw [hEval] at hExpected_nonneg
   have hStar_pos : 0 < s := by
     dsimp [s]
-    exact Internal.barSigmaStarInv_pos_of_integrable_coarseFullBlockMatrixAtCube hP
+    exact Internal.barSigmaStarInverse_pos_of_integrableBlockMatrix hP
       hPrim hBlock
   have hs_div_pos : 0 < s / 2 := by positivity
   have htheta_minus_nonneg : 0 ≤ b * s - 1 :=
@@ -301,13 +302,13 @@ theorem Internal.barB_nonneg_of_integrable_coarseFullBlockMatrixAtCube
     0 ≤ hPrim.barB := by
   have hContrast :
       1 ≤ hPrim.contrast :=
-    Internal.one_le_primitive_contrast_of_integrable_coarseFullBlockMatrixAtCube hP
+    Internal.one_le_primitiveContrast_of_integrableCoarseBlock hP
       hPrim hBlock
   have hContrast_nonneg : 0 ≤ hPrim.contrast :=
     le_trans zero_le_one hContrast
   have hStar_pos :
       0 < hPrim.barSigmaStarInv :=
-    Internal.barSigmaStarInv_pos_of_integrable_coarseFullBlockMatrixAtCube hP
+    Internal.barSigmaStarInverse_pos_of_integrableBlockMatrix hP
       hPrim hBlock
   exact
     nonneg_of_mul_nonneg_right
@@ -318,14 +319,14 @@ theorem Internal.barB_nonneg_of_integrable_coarseFullBlockMatrixAtCube
 
 /-- Law-facing scalar lower bound `1 <= Theta_n`, stated for the public
 scalarization theory. -/
-theorem Internal.one_le_scalar_contrast_of_primitive_of_integrable_coarseFullBlockMatrixAtCube
+theorem Internal.one_le_scalarContrast_of_integrableCoarseBlock
     {d : ℕ} [NeZero d] {P : RestrictionCoeffLaw d} (hP : RestrictionLawCarrier P) {n : ℤ}
     (hScal : Internal.AnnealedScalarizationTheory (d := d) P)
     (hPrim : Internal.AnnealedPrimitiveScalarizationData (d := d) P n)
     (hBlock : Integrable (coarseFullBlockMatrixAtCube (originCube d n)) P) :
     1 ≤ hScal.contrast n := by
   simpa [Internal.AnnealedPrimitiveScalarizationData.scalar_contrast_eq hScal hPrim] using
-    Internal.one_le_primitive_contrast_of_integrable_coarseFullBlockMatrixAtCube hP
+    Internal.one_le_primitiveContrast_of_integrableCoarseBlock hP
       hPrim hBlock
 
 /-- Law-facing annealed block monotonicity from full coarse-block
@@ -342,14 +343,14 @@ theorem blockMatLoewnerLE_annealedBlockMatrixAtScale_of_integrable_coarseFullBlo
     BlockMatLoewnerLE (annealedBlockMatrixAtScale P m)
       (annealedBlockMatrixAtScale P n) :=
   hP.blockMatLoewnerLE_annealedBlockMatrixAtScale hstat hn hnm
-    (integrable_blockMatEntry_coarseBlockMatrix_cubeSet_of_integrable_coarseFullBlockMatrixAtCube
+    (integrable_coarseBlockMatrixEntry_of_integrableFullBlock
       hParentInt)
     (fun R hR =>
-      integrable_blockMatEntry_coarseBlockMatrix_cubeSet_of_integrable_coarseFullBlockMatrixAtCube
+      integrable_coarseBlockMatrixEntry_of_integrableFullBlock
         (hDescInt R hR))
 
 /-- Law-facing scalar chain from full coarse-block integrability. -/
-theorem Internal.scalar_chain_of_primitive_of_integrable_coarseFullBlockMatrixAtCube
+theorem Internal.primitiveContrast_scaleChain_of_integrableCoarseBlocks
     {d : ℕ} [NeZero d] {P : RestrictionCoeffLaw d} (hP : RestrictionLawCarrier P)
     (hstat : RestrictionStationaryLaw P) {n m : ℤ} (hn_nonneg : 0 ≤ n) (hnm : n ≤ m)
     (hScal : Internal.AnnealedScalarizationTheory (d := d) P)
@@ -390,7 +391,7 @@ theorem Internal.primitive_contrast_le_of_integrable_coarseFullBlockMatrixAtCube
 
 /-- Law-facing scalar contrast monotonicity from full coarse-block
 integrability. -/
-theorem Internal.scalar_contrast_le_of_primitive_of_integrable_coarseFullBlockMatrixAtCube
+theorem Internal.scalarContrast_le_of_integrableCoarseBlocks
     {d : ℕ} [NeZero d] {P : RestrictionCoeffLaw d} (hP : RestrictionLawCarrier P)
     (hstat : RestrictionStationaryLaw P) {n m : ℤ} (hn_nonneg : 0 ≤ n) (hnm : n ≤ m)
     (hScal : Internal.AnnealedScalarizationTheory (d := d) P)

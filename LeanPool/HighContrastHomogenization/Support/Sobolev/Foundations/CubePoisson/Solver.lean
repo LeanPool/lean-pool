@@ -48,6 +48,7 @@ theorem nonneg_le_of_sq_le_mul_self {x y : ℝ}
 space is mean-zero `H¹`, which fixes the additive constant. -/
 structure MeanZeroNeumannPoissonSolution {d : ℕ} (Q : TriadicCube d)
     (F : Vec d → ℝ) where
+  /-- The mean-zero H¹ solution of the weak Neumann Poisson equation on the open cube. -/
   w : H1MeanZeroFunction (openCubeSet Q)
   equation :
     ∀ φ : H1MeanZeroFunction (openCubeSet Q),
@@ -348,6 +349,8 @@ theorem norm_toScalarL2_openCubeSet_eq_volume_rpow_half_mul_cubeLpNorm_two {d : 
     _ = (cubeVolume Q) ^ (1 / 2 : ℝ) *
         cubeLpNorm Q (2 : ℝ≥0∞) f := rfl
 
+/-- The mean-zero weak Neumann Poisson solution constructed using the open cube's H¹ coercive
+estimate for an L² forcing. -/
 @[expose]
 noncomputable def meanZeroNeumannPoissonSolutionOfCoerciveEstimate {d : ℕ}
     (Q : TriadicCube d) (F : Vec d → ℝ)
@@ -377,9 +380,11 @@ theorem cubeMeanZeroNeumannPoissonSolverOnCube {d : ℕ} (Q : TriadicCube d) :
   intro F hF _hmean
   exact ⟨meanZeroNeumannPoissonSolutionOfCoerciveEstimate Q F hF, True.intro⟩
 
+/-- The mean-zero H¹ coercivity constant of the scaled and translated cube estimate. -/
 @[expose]
 noncomputable def cubeMeanZeroH1CoerciveConstant {d : ℕ} (Q : TriadicCube d) : ℝ := by
   exact (scaledTranslatedCubeMeanZeroH1CoerciveEstimate Q).constantValue
+
 
 theorem cubeMeanZeroH1CoerciveConstant_nonneg {d : ℕ} (Q : TriadicCube d) :
     0 ≤ cubeMeanZeroH1CoerciveConstant Q := by

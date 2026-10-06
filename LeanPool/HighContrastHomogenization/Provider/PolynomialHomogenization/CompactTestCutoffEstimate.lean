@@ -144,6 +144,122 @@ private theorem cubeShrunkSet_subset_scaledClosedCubeSet
         (zpow_pos (show (0 : ℝ) < 3 by norm_num) Q.scale)
     linarith only [hi.2, hscale]
 
+private theorem cutoff_error_bounded_lipschitz
+    {d : ℕ} {M L₀ D t : ℝ} (hM : 0 ≤ M) (hL₀ : 0 ≤ L₀)
+    (hD : 0 ≤ D) (ht : 0 < t) (htOne : t ≤ 1)
+    (η : Vec d → ℝ) (h₀ : Vec d → Vec d)
+    (hηnonneg : ∀ x, 0 ≤ η x) (hηone : ∀ x, η x ≤ 1)
+    (hηlip : ∀ x y, |η x - η y| ≤ (D / t) * ‖x - y‖)
+    (h₀bound : ∀ x, ‖h₀ x‖ ≤ M)
+    (h₀lip : ∀ x y, ‖h₀ x - h₀ y‖ ≤ L₀ * ‖x - y‖) :
+    let g : Vec d → Vec d := fun x => η x • h₀ x - h₀ x
+    (∀ x, ‖g x‖ ≤ M) ∧
+      (∀ x y, ‖g x - g y‖ ≤ ((L₀ + M * D + 1) / t) * ‖x - y‖) := by
+  let g : Vec d → Vec d := fun x => η x • h₀ x - h₀ x
+  let B : ℝ := L₀ + M * D + 1
+  let L : ℝ := B / t
+  have hgbound (x : Vec d) : ‖g x‖ ≤ M := by
+    have heta : |η x - 1| ≤ 1 := by
+      rw [abs_of_nonpos (sub_nonpos.mpr (hηone x))]
+      linarith only [hηnonneg x]
+    have heq : g x = (η x - 1) • h₀ x := by
+      dsimp only [g]
+      module
+    rw [heq, norm_smul, Real.norm_eq_abs]
+    exact (mul_le_mul heta (h₀bound x) (norm_nonneg _) (by norm_num)).trans_eq
+      (one_mul M)
+  have hglip : ∀ x y, ‖g x - g y‖ ≤ L * ‖x - y‖ := by
+    intro x y
+    have heta : |η x - 1| ≤ 1 := by
+      rw [abs_of_nonpos (sub_nonpos.mpr (hηone x))]
+      linarith only [hηnonneg x]
+    have hdecomp : g x - g y =
+        (η x - 1) • (h₀ x - h₀ y) + (η x - η y) • h₀ y := by
+      dsimp only [g]
+      module
+    have hfirst : ‖(η x - 1) • (h₀ x - h₀ y)‖ ≤
+        L₀ * ‖x - y‖ := by
+      rw [norm_smul, Real.norm_eq_abs]
+      calc
+        |η x - 1| * ‖h₀ x - h₀ y‖ ≤
+            1 * (L₀ * ‖x - y‖) :=
+          mul_le_mul heta (h₀lip x y) (norm_nonneg _) (by norm_num)
+        _ = L₀ * ‖x - y‖ := one_mul _
+    have hsecond : ‖(η x - η y) • h₀ y‖ ≤
+        (D / t * M) * ‖x - y‖ := by
+      rw [norm_smul, Real.norm_eq_abs]
+      calc
+        |η x - η y| * ‖h₀ y‖ ≤
+            ((D / t) * ‖x - y‖) * M :=
+          mul_le_mul (hηlip x y) (h₀bound y) (norm_nonneg _)
+            (mul_nonneg (div_nonneg hD ht.le) (norm_nonneg _))
+        _ = (D / t * M) * ‖x - y‖ := by ring
+    have hcoef : L₀ + D / t * M ≤ L := by
+      apply (le_div_iff₀ ht).2
+      have hL₀t : L₀ * t ≤ L₀ :=
+        mul_le_of_le_one_right hL₀ htOne
+      dsimp only [L, B]
+      rw [add_mul]
+      field_simp [ht.ne']
+      linarith only [hL₀t, hM, hD]
+    rw [hdecomp]
+    calc
+      ‖(η x - 1) • (h₀ x - h₀ y) + (η x - η y) • h₀ y‖ ≤
+          ‖(η x - 1) • (h₀ x - h₀ y)‖ +
+            ‖(η x - η y) • h₀ y‖ := norm_add_le _ _
+      _ ≤ L₀ * ‖x - y‖ + (D / t * M) * ‖x - y‖ :=
+        add_le_add hfirst hsecond
+      _ = (L₀ + D / t * M) * ‖x - y‖ := by ring
+      _ ≤ L * ‖x - y‖ :=
+        mul_le_mul_of_nonneg_right hcoef (norm_nonneg _)
+  exact ⟨hgbound, hglip⟩
+
+private theorem canonical_cutoff_lipschitz_bound
+    {d : ℕ} [NeZero d] (Q : TriadicCube d) {t : ℝ}
+    (ht : 0 < t) (htHalf : t < 1 / 2) :
+    let η := QuantitativeCubeCutoff.canonicalFun Q (1 - 2 * t) (1 - t)
+    let D := (d : ℝ) * smoothTransitionProfile.derivBound * 2 / cubeRadius Q
+    ∀ x y, |η x - η y| ≤ (D / t) * ‖x - y‖ := by
+  let η : Vec d → ℝ :=
+    QuantitativeCubeCutoff.canonicalFun Q (1 - 2 * t) (1 - t)
+  let D : ℝ := (d : ℝ) * smoothTransitionProfile.derivBound * 2 / cubeRadius Q
+  have hρ₁ : 0 < 1 - 2 * t := by linarith only [htHalf]
+  have hρ₁₂ : 1 - 2 * t < 1 - t := by linarith only [ht]
+  have hηsmooth : ContDiff ℝ (⊤ : ℕ∞) η :=
+    QuantitativeCubeCutoff.canonicalFun_smooth Q hρ₁ hρ₁₂
+  have hD : 0 ≤ D := by
+    dsimp only [D]
+    exact div_nonneg
+      (mul_nonneg
+        (mul_nonneg (Nat.cast_nonneg d)
+          smoothTransitionProfile.derivBound_nonneg) (by norm_num))
+      (cubeRadius_nonneg Q)
+  have hηgrad (x : Vec d) : ‖fderiv ℝ η x‖ ≤ D / t := by
+    have hbase := QuantitativeCubeCutoff.canonicalFun_gradient_bound Q hρ₁ hρ₁₂ x
+    have hradius : cubeRadius Q ≠ 0 := (cubeRadius_pos Q).ne'
+    have hgap : (1 - t) - (1 - 2 * t) = t := by ring
+    dsimp only [η] at hbase ⊢
+    rw [hgap] at hbase
+    calc
+      ‖fderiv ℝ (QuantitativeCubeCutoff.canonicalFun Q (1 - 2 * t) (1 - t)) x‖ ≤
+          (d : ℝ) * smoothTransitionProfile.derivBound *
+            (2 / (t * cubeRadius Q)) := hbase
+      _ = ((d : ℝ) * smoothTransitionProfile.derivBound * 2 /
+          cubeRadius Q) / t := by
+        field_simp [ht.ne', hradius]
+  have hηlip : ∀ x y, |η x - η y| ≤ (D / t) * ‖x - y‖ := by
+    have hDt : 0 ≤ D / t := div_nonneg hD ht.le
+    have hlip : LipschitzWith (D / t).toNNReal η := by
+      refine lipschitzWith_of_nnnorm_fderiv_le
+        (hηsmooth.differentiable (by simp)) ?_
+      intro x
+      exact (Real.le_toNNReal_iff_coe_le hDt).mpr (by
+        simpa using hηgrad x)
+    intro x y
+    have hxy := hlip.norm_sub_le x y
+    simpa only [Real.norm_eq_abs, Real.coe_toNNReal (D / t) hDt] using hxy
+  exact hηlip
+
 /-- The canonical cube cutoff converges in the fractional square norm below order one half. -/
 theorem hsNormSq_canonicalCutoff_sub_le
     {d : ℕ} [NeZero d] (Q : TriadicCube d)
@@ -213,84 +329,10 @@ theorem hsNormSq_canonicalCutoff_sub_le
     have hMD : 0 ≤ M * D := mul_nonneg hM hD
     linarith only [hL₀, hMD]
   have hL : 0 ≤ L := div_nonneg hB.le ht.le
-  have hηgrad (x : Vec d) : ‖fderiv ℝ η x‖ ≤ D / t := by
-    have hbase := QuantitativeCubeCutoff.canonicalFun_gradient_bound Q hρ₁ hρ₁₂ x
-    have hradius : cubeRadius Q ≠ 0 := (cubeRadius_pos Q).ne'
-    have hgap : (1 - t) - (1 - 2 * t) = t := by ring
-    dsimp only [η] at hbase ⊢
-    rw [hgap] at hbase
-    calc
-      ‖fderiv ℝ (QuantitativeCubeCutoff.canonicalFun Q (1 - 2 * t) (1 - t)) x‖ ≤
-          (d : ℝ) * smoothTransitionProfile.derivBound *
-            (2 / (t * cubeRadius Q)) := hbase
-      _ = ((d : ℝ) * smoothTransitionProfile.derivBound * 2 /
-          cubeRadius Q) / t := by
-        field_simp [ht.ne', hradius]
-  have hηlip : ∀ x y, |η x - η y| ≤ (D / t) * ‖x - y‖ := by
-    have hDt : 0 ≤ D / t := div_nonneg hD ht.le
-    have hlip : LipschitzWith (D / t).toNNReal η := by
-      refine lipschitzWith_of_nnnorm_fderiv_le
-        (hηsmooth.differentiable (by simp)) ?_
-      intro x
-      exact (Real.le_toNNReal_iff_coe_le hDt).mpr (by
-        simpa using hηgrad x)
-    intro x y
-    have hxy := hlip.norm_sub_le x y
-    simpa only [Real.norm_eq_abs, Real.coe_toNNReal (D / t) hDt] using hxy
-  have hgbound (x : Vec d) : ‖g x‖ ≤ M := by
-    have heta : |η x - 1| ≤ 1 := by
-      rw [abs_of_nonpos (sub_nonpos.mpr (hηone x))]
-      linarith only [hηnonneg x]
-    have heq : g x = (η x - 1) • h₀ x := by
-      dsimp only [g]
-      module
-    rw [heq, norm_smul, Real.norm_eq_abs]
-    exact (mul_le_mul heta (h₀bound x) (norm_nonneg _) (by norm_num)).trans_eq
-      (one_mul M)
-  have hglip : ∀ x y, ‖g x - g y‖ ≤ L * ‖x - y‖ := by
-    intro x y
-    have heta : |η x - 1| ≤ 1 := by
-      rw [abs_of_nonpos (sub_nonpos.mpr (hηone x))]
-      linarith only [hηnonneg x]
-    have hdecomp : g x - g y =
-        (η x - 1) • (h₀ x - h₀ y) + (η x - η y) • h₀ y := by
-      dsimp only [g]
-      module
-    have hfirst : ‖(η x - 1) • (h₀ x - h₀ y)‖ ≤
-        L₀ * ‖x - y‖ := by
-      rw [norm_smul, Real.norm_eq_abs]
-      calc
-        |η x - 1| * ‖h₀ x - h₀ y‖ ≤
-            1 * (L₀ * ‖x - y‖) :=
-          mul_le_mul heta (h₀lip x y) (norm_nonneg _) (by norm_num)
-        _ = L₀ * ‖x - y‖ := one_mul _
-    have hsecond : ‖(η x - η y) • h₀ y‖ ≤
-        (D / t * M) * ‖x - y‖ := by
-      rw [norm_smul, Real.norm_eq_abs]
-      calc
-        |η x - η y| * ‖h₀ y‖ ≤
-            ((D / t) * ‖x - y‖) * M :=
-          mul_le_mul (hηlip x y) (h₀bound y) (norm_nonneg _)
-            (mul_nonneg (div_nonneg hD ht.le) (norm_nonneg _))
-        _ = (D / t * M) * ‖x - y‖ := by ring
-    have hcoef : L₀ + D / t * M ≤ L := by
-      apply (le_div_iff₀ ht).2
-      have hL₀t : L₀ * t ≤ L₀ :=
-        mul_le_of_le_one_right hL₀ htOne
-      dsimp only [L, B]
-      rw [add_mul]
-      field_simp [ht.ne']
-      linarith only [hL₀t, hM, hD]
-    rw [hdecomp]
-    calc
-      ‖(η x - 1) • (h₀ x - h₀ y) + (η x - η y) • h₀ y‖ ≤
-          ‖(η x - 1) • (h₀ x - h₀ y)‖ +
-            ‖(η x - η y) • h₀ y‖ := norm_add_le _ _
-      _ ≤ L₀ * ‖x - y‖ + (D / t * M) * ‖x - y‖ :=
-        add_le_add hfirst hsecond
-      _ = (L₀ + D / t * M) * ‖x - y‖ := by ring
-      _ ≤ L * ‖x - y‖ :=
-        mul_le_mul_of_nonneg_right hcoef (norm_nonneg _)
+  have hηlip : ∀ x y, |η x - η y| ≤ (D / t) * ‖x - y‖ :=
+    canonical_cutoff_lipschitz_bound Q ht htHalf
+  obtain ⟨hgbound, hglip⟩ := cutoff_error_bounded_lipschitz
+    hM hL₀ hD ht htOne η h₀ hηnonneg hηone hηlip h₀bound h₀lip
   have hAU : A ⊆ U := Set.inter_subset_right
   have hzero : ∀ x ∈ U, x ∉ A → g x = 0 := by
     intro x hxU hxA

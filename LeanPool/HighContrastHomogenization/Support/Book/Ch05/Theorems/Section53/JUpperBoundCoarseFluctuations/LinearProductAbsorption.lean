@@ -48,7 +48,7 @@ private theorem barSigmaStarAtScale_pos_of_P4
     Section52.originBlockIntegrableAtScale_from_P4 hP hStruct hP4 m
   have hInv : 0 < hP.barSigmaStarInvAtScale hStruct (m : ℤ) := by
     simpa [Ch04.RestrictionLawCarrier.barSigmaStarInvAtScale] using
-      Ch04.RestrictionLawCarrier.Internal.barSigmaStarInv_pos_of_integrable_coarseFullBlockMatrixAtCube
+      Ch04.RestrictionLawCarrier.Internal.barSigmaStarInverse_pos_of_integrableBlockMatrix
         hP
         (Ch04.Internal.annealedPrimitiveScalarizationData_of_structuralLaw
           hP hStruct (m : ℤ))
@@ -461,6 +461,331 @@ private theorem linear_product_absorb_into_centering_and_pairedSquares
             _ = C * ε⁻¹ * (σ * G + σ⁻¹ * F) := by ring
         exact add_le_add hleft1 hleft2
 
+private theorem gradientLinearTerm_le_dimensionalSquareRoot
+    {d : ℕ}
+    [NeZero d]
+    {P : Ch04.RestrictionCoeffLaw d}
+    (hP : Ch04.RestrictionLawCarrier P)
+    (hStruct : Ch04.RestrictionStructuralLaw P)
+    (hP4 : QuantitativeCoarseGrainedEllipticity P)
+    (m : ℕ)
+    (e : Vec d)
+    (hGradSq :
+      let β := section53CoarseFluctuationBeta hP4
+      let s := hP4.sLower + 2 * β
+      let p_e := specialPAtScale hP hStruct (m : ℤ) e
+      let q_e := specialQAtScale hP hStruct (m : ℤ) e
+      let p0_e := (hP.barSigmaStarAtScale hStruct (m : ℤ))⁻¹ • q_e - p_e
+      Integrable
+        (fun a : RegCoeffField d =>
+          (Ch04.canonicalScalarResponseGradientWeakNormCubeSet
+            (originCube d (m : ℤ)) s p_e q_e p0_e a.toFun) ^ 2) P)
+    :
+    let Kgrad : ℝ :=
+      (d : ℝ) *
+        ((3 : ℝ) ^ ((d : ℝ) + 1) *
+          ((8 * quantitativeCubeCutoffGradientConst d + 1) * (2 : ℝ) ^ d)) / 2
+    let β := section53CoarseFluctuationBeta hP4
+    let s := hP4.sLower + 2 * β
+    let Q : TriadicCube d := originCube d (m : ℤ)
+    let p_e := specialPAtScale hP hStruct (m : ℤ) e
+    let q_e := specialQAtScale hP hStruct (m : ℤ) e
+    let p0_e := (hP.barSigmaStarAtScale hStruct (m : ℤ))⁻¹ • q_e - p_e
+    let q0_e := q_e - hP.barSigmaAtScale hStruct (m : ℤ) • p_e
+    let gradWeak : RegCoeffField d → ℝ := fun a =>
+      Ch04.canonicalScalarResponseGradientWeakNormCubeSet Q s p_e q_e p0_e a.toFun
+    let gradCoeff :=
+      (Fintype.card (Fin d) : ℝ) *
+        ((3 : ℝ) ^ ((d : ℝ) + s) *
+          cubeBesovScaleWeight (-s) Q *
+            JUpperBoundWeakNorms.section53CutoffDualBound Q s)
+    let G := ∫ a, (gradWeak a) ^ 2 ∂P
+    ∀ (hs_pos : 0 < s),
+    ∀ (hGradCoeff_nonneg : 0 ≤ gradCoeff),
+    ∀ (hGradCoeff_le : gradCoeff ≤ 2 * Kgrad),
+    (1 / 2 : ℝ) * ‖q0_e‖ * (gradCoeff * ∫ a, gradWeak a ∂P) ≤
+        Kgrad * ‖q0_e‖ * Real.sqrt G := by
+  classical
+  let : IsProbabilityMeasure P := hP.isProbability
+  dsimp only
+  let Kgrad : ℝ :=
+    (d : ℝ) *
+      ((3 : ℝ) ^ ((d : ℝ) + 1) *
+        ((8 * quantitativeCubeCutoffGradientConst d + 1) * (2 : ℝ) ^ d)) / 2
+  let β := section53CoarseFluctuationBeta hP4
+  let s := hP4.sLower + 2 * β
+  let Q : TriadicCube d := originCube d (m : ℤ)
+  let p_e := specialPAtScale hP hStruct (m : ℤ) e
+  let q_e := specialQAtScale hP hStruct (m : ℤ) e
+  let p0_e := (hP.barSigmaStarAtScale hStruct (m : ℤ))⁻¹ • q_e - p_e
+  let q0_e := q_e - hP.barSigmaAtScale hStruct (m : ℤ) • p_e
+  let gradWeak : RegCoeffField d → ℝ := fun a =>
+    Ch04.canonicalScalarResponseGradientWeakNormCubeSet Q s p_e q_e p0_e a.toFun
+  let gradCoeff :=
+    (Fintype.card (Fin d) : ℝ) *
+      ((3 : ℝ) ^ ((d : ℝ) + s) *
+        cubeBesovScaleWeight (-s) Q *
+          JUpperBoundWeakNorms.section53CutoffDualBound Q s)
+  let G := ∫ a, (gradWeak a) ^ 2 ∂P
+  intro hs_pos hGradCoeff_nonneg hGradCoeff_le
+  have hgrad_nonneg_ae : 0 ≤ᵐ[P] gradWeak := by
+    simpa [gradWeak, Q, s, p_e, q_e, p0_e] using
+      JUpperBoundWeakNorms.canonicalScalarResponseGradientWeakNormCubeSet_nonneg_ae
+        hP Q hs_pos p_e q_e p0_e
+  have hGradSq' : Integrable (fun a : RegCoeffField d => (gradWeak a) ^ 2) P := by
+    simpa [gradWeak, Q, s, p_e, q_e, p0_e, β] using hGradSq
+  have hIntGrad_le : ∫ a, gradWeak a ∂P ≤ Real.sqrt G := by
+    simpa [G] using
+      integral_le_sqrt_integral_sq_of_ae_nonneg
+        (μ := P) (X := gradWeak) hGradSq' hgrad_nonneg_ae
+  have hint_nonneg : 0 ≤ ∫ a, gradWeak a ∂P :=
+    integral_nonneg_of_ae hgrad_nonneg_ae
+  have hsqrt_nonneg : 0 ≤ Real.sqrt G := Real.sqrt_nonneg _
+  calc
+    (1 / 2 : ℝ) * ‖q0_e‖ * (gradCoeff * ∫ a, gradWeak a ∂P)
+        = (gradCoeff / 2) * ‖q0_e‖ * (∫ a, gradWeak a ∂P) := by ring
+    _ ≤ (gradCoeff / 2) * ‖q0_e‖ * Real.sqrt G := by
+      gcongr
+    _ ≤ Kgrad * ‖q0_e‖ * Real.sqrt G := by
+      have hhalf : gradCoeff / 2 ≤ Kgrad := by linarith [hGradCoeff_le]
+      gcongr
+
+private theorem fluxLinearTerm_le_dimensionalSquareRoot
+    {d : ℕ}
+    [NeZero d]
+    {P : Ch04.RestrictionCoeffLaw d}
+    (hP : Ch04.RestrictionLawCarrier P)
+    (hStruct : Ch04.RestrictionStructuralLaw P)
+    (hP4 : QuantitativeCoarseGrainedEllipticity P)
+    (m : ℕ)
+    (e : Vec d)
+    (hFluxSq :
+      let β := section53CoarseFluctuationBeta hP4
+      let t := hP4.sUpper + 2 * β
+      let p_e := specialPAtScale hP hStruct (m : ℤ) e
+      let q_e := specialQAtScale hP hStruct (m : ℤ) e
+      let q0_e := q_e - hP.barSigmaAtScale hStruct (m : ℤ) • p_e
+      Integrable
+        (fun a : RegCoeffField d =>
+          (Ch04.canonicalScalarResponseFluxWeakNormCubeSet
+            (originCube d (m : ℤ)) t p_e q_e q0_e a.toFun) ^ 2) P)
+    :
+    let Kflux : ℝ :=
+      (d : ℝ) *
+        ((3 : ℝ) ^ ((d : ℝ) + 1) *
+          ((8 * quantitativeCubeCutoffGradientConst d + 1) * (2 : ℝ) ^ d)) / 2
+    let β := section53CoarseFluctuationBeta hP4
+    let t := hP4.sUpper + 2 * β
+    let Q : TriadicCube d := originCube d (m : ℤ)
+    let p_e := specialPAtScale hP hStruct (m : ℤ) e
+    let q_e := specialQAtScale hP hStruct (m : ℤ) e
+    let p0_e := (hP.barSigmaStarAtScale hStruct (m : ℤ))⁻¹ • q_e - p_e
+    let q0_e := q_e - hP.barSigmaAtScale hStruct (m : ℤ) • p_e
+    let fluxWeak : RegCoeffField d → ℝ := fun a =>
+      Ch04.canonicalScalarResponseFluxWeakNormCubeSet Q t p_e q_e q0_e a.toFun
+    let fluxCoeff :=
+      (Fintype.card (Fin d) : ℝ) *
+        ((3 : ℝ) ^ ((d : ℝ) + t) *
+          cubeBesovScaleWeight (-t) Q *
+            JUpperBoundWeakNorms.section53CutoffDualBound Q t)
+    let F := ∫ a, (fluxWeak a) ^ 2 ∂P
+    ∀ (ht_pos : 0 < t),
+    ∀ (hFluxCoeff_nonneg : 0 ≤ fluxCoeff),
+    ∀ (hFluxCoeff_le : fluxCoeff ≤ 2 * Kflux),
+    (1 / 2 : ℝ) * ‖p0_e‖ * (fluxCoeff * ∫ a, fluxWeak a ∂P) ≤
+        Kflux * ‖p0_e‖ * Real.sqrt F := by
+  classical
+  let : IsProbabilityMeasure P := hP.isProbability
+  dsimp only
+  let Kflux : ℝ :=
+    (d : ℝ) *
+      ((3 : ℝ) ^ ((d : ℝ) + 1) *
+        ((8 * quantitativeCubeCutoffGradientConst d + 1) * (2 : ℝ) ^ d)) / 2
+  let β := section53CoarseFluctuationBeta hP4
+  let t := hP4.sUpper + 2 * β
+  let Q : TriadicCube d := originCube d (m : ℤ)
+  let p_e := specialPAtScale hP hStruct (m : ℤ) e
+  let q_e := specialQAtScale hP hStruct (m : ℤ) e
+  let p0_e := (hP.barSigmaStarAtScale hStruct (m : ℤ))⁻¹ • q_e - p_e
+  let q0_e := q_e - hP.barSigmaAtScale hStruct (m : ℤ) • p_e
+  let fluxWeak : RegCoeffField d → ℝ := fun a =>
+    Ch04.canonicalScalarResponseFluxWeakNormCubeSet Q t p_e q_e q0_e a.toFun
+  let fluxCoeff :=
+    (Fintype.card (Fin d) : ℝ) *
+      ((3 : ℝ) ^ ((d : ℝ) + t) *
+        cubeBesovScaleWeight (-t) Q *
+          JUpperBoundWeakNorms.section53CutoffDualBound Q t)
+  let F := ∫ a, (fluxWeak a) ^ 2 ∂P
+  intro ht_pos hFluxCoeff_nonneg hFluxCoeff_le
+  have hflux_nonneg_ae : 0 ≤ᵐ[P] fluxWeak := by
+    simpa [fluxWeak, Q, t, p_e, q_e, q0_e] using
+      JUpperBoundWeakNorms.canonicalScalarResponseFluxWeakNormCubeSet_nonneg_ae
+        hP Q ht_pos p_e q_e q0_e
+  have hFluxSq' : Integrable (fun a : RegCoeffField d => (fluxWeak a) ^ 2) P := by
+    simpa [fluxWeak, Q, t, p_e, q_e, q0_e, β] using hFluxSq
+  have hIntFlux_le : ∫ a, fluxWeak a ∂P ≤ Real.sqrt F := by
+    simpa [F] using
+      integral_le_sqrt_integral_sq_of_ae_nonneg
+        (μ := P) (X := fluxWeak) hFluxSq' hflux_nonneg_ae
+  have hint_nonneg : 0 ≤ ∫ a, fluxWeak a ∂P :=
+    integral_nonneg_of_ae hflux_nonneg_ae
+  have hsqrt_nonneg : 0 ≤ Real.sqrt F := Real.sqrt_nonneg _
+  calc
+    (1 / 2 : ℝ) * ‖p0_e‖ * (fluxCoeff * ∫ a, fluxWeak a ∂P)
+        = (fluxCoeff / 2) * ‖p0_e‖ * (∫ a, fluxWeak a ∂P) := by ring
+    _ ≤ (fluxCoeff / 2) * ‖p0_e‖ * Real.sqrt F := by
+      gcongr
+    _ ≤ Kflux * ‖p0_e‖ * Real.sqrt F := by
+      have hhalf : fluxCoeff / 2 ≤ Kflux := by linarith [hFluxCoeff_le]
+      gcongr
+
+private theorem gradientCutoffCoefficient_le_dimensional
+    {d : ℕ}
+    [NeZero d]
+    {P : Ch04.RestrictionCoeffLaw d}
+    (hP : Ch04.RestrictionLawCarrier P)
+    (hP4 : QuantitativeCoarseGrainedEllipticity P)
+    (m : ℕ)
+    :
+    let Kgrad : ℝ :=
+      (d : ℝ) *
+        ((3 : ℝ) ^ ((d : ℝ) + 1) *
+          ((8 * quantitativeCubeCutoffGradientConst d + 1) * (2 : ℝ) ^ d)) / 2
+    let β := section53CoarseFluctuationBeta hP4
+    let s := hP4.sLower + 2 * β
+    let Q : TriadicCube d := originCube d (m : ℤ)
+    let gradCoeff :=
+      (Fintype.card (Fin d) : ℝ) *
+        ((3 : ℝ) ^ ((d : ℝ) + s) *
+          cubeBesovScaleWeight (-s) Q *
+            JUpperBoundWeakNorms.section53CutoffDualBound Q s)
+    ∀ (hs_nonneg : 0 ≤ s),
+    ∀ (hs_le : s ≤ 1),
+    gradCoeff ≤ 2 * Kgrad := by
+  classical
+  let : IsProbabilityMeasure P := hP.isProbability
+  dsimp only
+  let Kgrad : ℝ :=
+    (d : ℝ) *
+      ((3 : ℝ) ^ ((d : ℝ) + 1) *
+        ((8 * quantitativeCubeCutoffGradientConst d + 1) * (2 : ℝ) ^ d)) / 2
+  let β := section53CoarseFluctuationBeta hP4
+  let s := hP4.sLower + 2 * β
+  let Q : TriadicCube d := originCube d (m : ℤ)
+  let gradCoeff :=
+    (Fintype.card (Fin d) : ℝ) *
+      ((3 : ℝ) ^ ((d : ℝ) + s) *
+        cubeBesovScaleWeight (-s) Q *
+          JUpperBoundWeakNorms.section53CutoffDualBound Q s)
+  intro hs_nonneg hs_le
+  have h :=
+    JUpperBoundWeakNorms.section53_linearCutoffCoeff_le_dimensional
+      Q hs_nonneg hs_le
+  calc
+    gradCoeff ≤
+        (d : ℝ) *
+          ((3 : ℝ) ^ ((d : ℝ) + 1) *
+            ((8 * quantitativeCubeCutoffGradientConst d + 1) * (2 : ℝ) ^ d)) := by
+          simpa [gradCoeff, Q, s, mul_assoc] using h
+    _ = 2 * Kgrad := by ring
+
+private theorem fluxCutoffCoefficient_le_dimensional
+    {d : ℕ}
+    [NeZero d]
+    {P : Ch04.RestrictionCoeffLaw d}
+    (hP : Ch04.RestrictionLawCarrier P)
+    (hP4 : QuantitativeCoarseGrainedEllipticity P)
+    (m : ℕ)
+    :
+    let Kflux : ℝ :=
+      (d : ℝ) *
+        ((3 : ℝ) ^ ((d : ℝ) + 1) *
+          ((8 * quantitativeCubeCutoffGradientConst d + 1) * (2 : ℝ) ^ d)) / 2
+    let β := section53CoarseFluctuationBeta hP4
+    let t := hP4.sUpper + 2 * β
+    let Q : TriadicCube d := originCube d (m : ℤ)
+    let fluxCoeff :=
+      (Fintype.card (Fin d) : ℝ) *
+        ((3 : ℝ) ^ ((d : ℝ) + t) *
+          cubeBesovScaleWeight (-t) Q *
+            JUpperBoundWeakNorms.section53CutoffDualBound Q t)
+    ∀ (ht_nonneg : 0 ≤ t),
+    ∀ (ht_le : t ≤ 1),
+    fluxCoeff ≤ 2 * Kflux := by
+  classical
+  let : IsProbabilityMeasure P := hP.isProbability
+  dsimp only
+  let Kflux : ℝ :=
+    (d : ℝ) *
+      ((3 : ℝ) ^ ((d : ℝ) + 1) *
+        ((8 * quantitativeCubeCutoffGradientConst d + 1) * (2 : ℝ) ^ d)) / 2
+  let β := section53CoarseFluctuationBeta hP4
+  let t := hP4.sUpper + 2 * β
+  let Q : TriadicCube d := originCube d (m : ℤ)
+  let fluxCoeff :=
+    (Fintype.card (Fin d) : ℝ) *
+      ((3 : ℝ) ^ ((d : ℝ) + t) *
+        cubeBesovScaleWeight (-t) Q *
+          JUpperBoundWeakNorms.section53CutoffDualBound Q t)
+  intro ht_nonneg ht_le
+  have h :=
+    JUpperBoundWeakNorms.section53_linearCutoffCoeff_le_dimensional
+      Q ht_nonneg ht_le
+  calc
+    fluxCoeff ≤
+        (d : ℝ) *
+          ((3 : ℝ) ^ ((d : ℝ) + 1) *
+            ((8 * quantitativeCubeCutoffGradientConst d + 1) * (2 : ℝ) ^ d)) := by
+          simpa [fluxCoeff, Q, t, mul_assoc] using h
+    _ = 2 * Kflux := by ring
+
+private theorem bufferedExponents_and_scalarWeight_admissible
+    {d : ℕ}
+    [NeZero d]
+    {P : Ch04.RestrictionCoeffLaw d}
+    (hP : Ch04.RestrictionLawCarrier P)
+    (hStruct : Ch04.RestrictionStructuralLaw P)
+    (hP4 : QuantitativeCoarseGrainedEllipticity P)
+    (m : ℕ)
+    :
+    let β := section53CoarseFluctuationBeta hP4
+    let s := hP4.sLower + 2 * β
+    let t := hP4.sUpper + 2 * β
+    let σ := sigmaHatAtScale hP hStruct (m : ℤ)
+    (0 < s) ∧
+      (0 < t) ∧
+      (0 ≤ s) ∧
+      (0 ≤ t) ∧
+      (s ≤ 1) ∧
+      (t ≤ 1) ∧
+      (0 ≤ s + t) ∧
+      (0 < σ) := by
+  classical
+  let : IsProbabilityMeasure P := hP.isProbability
+  dsimp only
+  let β := section53CoarseFluctuationBeta hP4
+  let s := hP4.sLower + 2 * β
+  let t := hP4.sUpper + 2 * β
+  let σ := sigmaHatAtScale hP hStruct (m : ℤ)
+  have hβ_pos : 0 < β := by
+    simpa [β] using section53CoarseFluctuationBeta_pos hP4
+  have hs_pos : 0 < s := by
+    dsimp [s, β]
+    linarith [hP4.sLower_pos, hβ_pos]
+  have ht_pos : 0 < t := by
+    dsimp [t, β]
+    linarith [hP4.sUpper_pos, hβ_pos]
+  have hs_nonneg : 0 ≤ s := hs_pos.le
+  have ht_nonneg : 0 ≤ t := ht_pos.le
+  have hs_le : s ≤ 1 := by
+    simpa [s, β] using sLower_add_two_beta_le_one hP4
+  have ht_le : t ≤ 1 := by
+    simpa [t, β] using sUpper_add_two_beta_le_one hP4
+  have hst_nonneg : 0 ≤ s + t := add_nonneg hs_nonneg ht_nonneg
+  have hσ_pos : 0 < σ := by
+    simpa [σ] using sigmaHatAtScale_pos_of_P4 hP hStruct hP4 m
+  exact ⟨hs_pos, ht_pos, hs_nonneg, ht_nonneg, hs_le, ht_le, hst_nonneg, hσ_pos⟩
+
 /-- The linear weak-norm terms and the cutoff-product Cauchy term in the first
 Section 5.3 expected RHS are absorbed by the special-vector centering term and
 the paired weak-norm square expectations. -/
@@ -576,23 +901,11 @@ theorem linearProductTerms_special_le_centering_add_pairedWeakNormSquares
     JUpperBoundWeakNorms.section53CutoffProductCoeff Q s t
   let G := ∫ a, (gradWeak a) ^ 2 ∂P
   let F := ∫ a, (fluxWeak a) ^ 2 ∂P
-  have hβ_pos : 0 < β := by
-    simpa [β] using section53CoarseFluctuationBeta_pos hP4
-  have hs_pos : 0 < s := by
-    dsimp [s, β]
-    linarith [hP4.sLower_pos, hβ_pos]
-  have ht_pos : 0 < t := by
-    dsimp [t, β]
-    linarith [hP4.sUpper_pos, hβ_pos]
-  have hs_nonneg : 0 ≤ s := hs_pos.le
-  have ht_nonneg : 0 ≤ t := ht_pos.le
-  have hs_le : s ≤ 1 := by
-    simpa [s, β] using sLower_add_two_beta_le_one hP4
-  have ht_le : t ≤ 1 := by
-    simpa [t, β] using sUpper_add_two_beta_le_one hP4
-  have hst_nonneg : 0 ≤ s + t := add_nonneg hs_nonneg ht_nonneg
-  have hσ_pos : 0 < σ := by
-    simpa [σ] using sigmaHatAtScale_pos_of_P4 hP hStruct hP4 m
+  have hExtractedConclusion := bufferedExponents_and_scalarWeight_admissible (d := d) (P := P)
+    (hP := hP)
+    (hStruct := hStruct) (hP4 := hP4) (m := m)
+  rcases hExtractedConclusion with ⟨hs_pos, ht_pos, hs_nonneg, ht_nonneg, hs_le, ht_le,
+    hst_nonneg, hσ_pos⟩
   have hcenter_nonneg : 0 ≤ (Real.sqrt θ - 1) ^ 2 := sq_nonneg _
   have hG_nonneg : 0 ≤ G := by
     dsimp [G]
@@ -600,26 +913,6 @@ theorem linearProductTerms_special_le_centering_add_pairedWeakNormSquares
   have hF_nonneg : 0 ≤ F := by
     dsimp [F]
     exact integral_nonneg fun a => sq_nonneg _
-  have hgrad_nonneg_ae : 0 ≤ᵐ[P] gradWeak := by
-    simpa [gradWeak, Q, s, p_e, q_e, p0_e] using
-      JUpperBoundWeakNorms.canonicalScalarResponseGradientWeakNormCubeSet_nonneg_ae
-        hP Q hs_pos p_e q_e p0_e
-  have hflux_nonneg_ae : 0 ≤ᵐ[P] fluxWeak := by
-    simpa [fluxWeak, Q, t, p_e, q_e, q0_e] using
-      JUpperBoundWeakNorms.canonicalScalarResponseFluxWeakNormCubeSet_nonneg_ae
-        hP Q ht_pos p_e q_e q0_e
-  have hGradSq' : Integrable (fun a : RegCoeffField d => (gradWeak a) ^ 2) P := by
-    simpa [gradWeak, Q, s, p_e, q_e, p0_e, β] using hGradSq
-  have hFluxSq' : Integrable (fun a : RegCoeffField d => (fluxWeak a) ^ 2) P := by
-    simpa [fluxWeak, Q, t, p_e, q_e, q0_e, β] using hFluxSq
-  have hIntGrad_le : ∫ a, gradWeak a ∂P ≤ Real.sqrt G := by
-    simpa [G] using
-      integral_le_sqrt_integral_sq_of_ae_nonneg
-        (μ := P) (X := gradWeak) hGradSq' hgrad_nonneg_ae
-  have hIntFlux_le : ∫ a, fluxWeak a ∂P ≤ Real.sqrt F := by
-    simpa [F] using
-      integral_le_sqrt_integral_sq_of_ae_nonneg
-        (μ := P) (X := fluxWeak) hFluxSq' hflux_nonneg_ae
   have hGradCoeff_nonneg : 0 ≤ gradCoeff := by
     dsimp [gradCoeff]
     exact mul_nonneg (Nat.cast_nonneg _)
@@ -637,28 +930,12 @@ theorem linearProductTerms_special_le_centering_add_pairedWeakNormSquares
   have hProductCoeff_nonneg : 0 ≤ productCoeff := by
     simpa [productCoeff, Q] using
       JUpperBoundWeakNorms.section53CutoffProductCoeff_nonneg Q s t
-  have hGradCoeff_le : gradCoeff ≤ 2 * Kgrad := by
-    have h :=
-      JUpperBoundWeakNorms.section53_linearCutoffCoeff_le_dimensional
-        Q hs_nonneg hs_le
-    calc
-      gradCoeff ≤
-          (d : ℝ) *
-            ((3 : ℝ) ^ ((d : ℝ) + 1) *
-              ((8 * quantitativeCubeCutoffGradientConst d + 1) * (2 : ℝ) ^ d)) := by
-            simpa [gradCoeff, Q, s, mul_assoc] using h
-      _ = 2 * Kgrad := by ring
-  have hFluxCoeff_le : fluxCoeff ≤ 2 * Kflux := by
-    have h :=
-      JUpperBoundWeakNorms.section53_linearCutoffCoeff_le_dimensional
-        Q ht_nonneg ht_le
-    calc
-      fluxCoeff ≤
-          (d : ℝ) *
-            ((3 : ℝ) ^ ((d : ℝ) + 1) *
-              ((8 * quantitativeCubeCutoffGradientConst d + 1) * (2 : ℝ) ^ d)) := by
-            simpa [fluxCoeff, Q, t, mul_assoc] using h
-      _ = 2 * Kflux := by ring
+  have hGradCoeff_le := gradientCutoffCoefficient_le_dimensional (d := d) (P := P) (hP := hP)
+    (hP4 := hP4)
+    (m := m) hs_nonneg hs_le
+  have hFluxCoeff_le := fluxCutoffCoefficient_le_dimensional (d := d) (P := P) (hP := hP) (hP4
+    := hP4) (m := m)
+    ht_nonneg ht_le
   have hKgrad_nonneg : 0 ≤ Kgrad := by
     linarith [hGradCoeff_le, hGradCoeff_nonneg]
   have hKflux_nonneg : 0 ≤ Kflux := by
@@ -687,34 +964,12 @@ theorem linearProductTerms_special_le_centering_add_pairedWeakNormSquares
       hε hε_le hσ_pos hcenter_nonneg hG_nonneg hF_nonneg
       hKgrad_nonneg hKflux_nonneg hKprod_nonneg hp_center hq_center
   have hAbsorb := hAbsorb_pair.2
-  have hGradTerm_le :
-      (1 / 2 : ℝ) * ‖q0_e‖ * (gradCoeff * ∫ a, gradWeak a ∂P) ≤
-        Kgrad * ‖q0_e‖ * Real.sqrt G := by
-    have hint_nonneg : 0 ≤ ∫ a, gradWeak a ∂P :=
-      integral_nonneg_of_ae hgrad_nonneg_ae
-    have hsqrt_nonneg : 0 ≤ Real.sqrt G := Real.sqrt_nonneg _
-    calc
-      (1 / 2 : ℝ) * ‖q0_e‖ * (gradCoeff * ∫ a, gradWeak a ∂P)
-          = (gradCoeff / 2) * ‖q0_e‖ * (∫ a, gradWeak a ∂P) := by ring
-      _ ≤ (gradCoeff / 2) * ‖q0_e‖ * Real.sqrt G := by
-        gcongr
-      _ ≤ Kgrad * ‖q0_e‖ * Real.sqrt G := by
-        have hhalf : gradCoeff / 2 ≤ Kgrad := by linarith [hGradCoeff_le]
-        gcongr
-  have hFluxTerm_le :
-      (1 / 2 : ℝ) * ‖p0_e‖ * (fluxCoeff * ∫ a, fluxWeak a ∂P) ≤
-        Kflux * ‖p0_e‖ * Real.sqrt F := by
-    have hint_nonneg : 0 ≤ ∫ a, fluxWeak a ∂P :=
-      integral_nonneg_of_ae hflux_nonneg_ae
-    have hsqrt_nonneg : 0 ≤ Real.sqrt F := Real.sqrt_nonneg _
-    calc
-      (1 / 2 : ℝ) * ‖p0_e‖ * (fluxCoeff * ∫ a, fluxWeak a ∂P)
-          = (fluxCoeff / 2) * ‖p0_e‖ * (∫ a, fluxWeak a ∂P) := by ring
-      _ ≤ (fluxCoeff / 2) * ‖p0_e‖ * Real.sqrt F := by
-        gcongr
-      _ ≤ Kflux * ‖p0_e‖ * Real.sqrt F := by
-        have hhalf : fluxCoeff / 2 ≤ Kflux := by linarith [hFluxCoeff_le]
-        gcongr
+  have hGradTerm_le := gradientLinearTerm_le_dimensionalSquareRoot (d := d) (P := P) (hP := hP)
+    (hStruct := hStruct) (hP4 := hP4) (m := m) (e := e) (hGradSq := hGradSq) hs_pos
+    hGradCoeff_nonneg hGradCoeff_le
+  have hFluxTerm_le := fluxLinearTerm_le_dimensionalSquareRoot (d := d) (P := P) (hP := hP)
+    (hStruct := hStruct) (hP4 := hP4) (m := m) (e := e) (hFluxSq := hFluxSq) ht_pos
+    hFluxCoeff_nonneg hFluxCoeff_le
   have hProductTerm_le :
       productCoeff * (Real.sqrt G * Real.sqrt F) ≤
         Kprod * (Real.sqrt G * Real.sqrt F) := by

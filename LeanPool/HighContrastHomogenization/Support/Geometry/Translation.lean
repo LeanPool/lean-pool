@@ -110,7 +110,7 @@ theorem measurePreserving_addRight_restrict_translateSet {d : ℕ} (z : Vec d) (
     MeasurePreserving.restrict_image_emb hμ (Homeomorph.addRight z).measurableEmbedding U
 
 theorem setIntegral_comp_subRight_translateSet {d : ℕ} {E : Type*}
-    [NormedAddCommGroup E] [NormedSpace ℝ E] [CompleteSpace E]
+    [NormedAddCommGroup E] [NormedSpace ℝ E]
     (z : Vec d) (U : Set (Vec d)) (f : Vec d → E) :
     ∫ x in translateSet z U, f (x - z) ∂MeasureTheory.volume =
       ∫ y in U, f y ∂MeasureTheory.volume := by
@@ -119,7 +119,7 @@ theorem setIntegral_comp_subRight_translateSet {d : ℕ} {E : Type*}
       (Homeomorph.subRight z).measurableEmbedding f
 
 theorem setIntegral_comp_addRight_translateSet {d : ℕ} {E : Type*}
-    [NormedAddCommGroup E] [NormedSpace ℝ E] [CompleteSpace E]
+    [NormedAddCommGroup E] [NormedSpace ℝ E]
     (z : Vec d) (U : Set (Vec d)) (f : Vec d → E) :
     ∫ y in U, f (y + z) ∂MeasureTheory.volume =
       ∫ x in translateSet z U, f x ∂MeasureTheory.volume := by

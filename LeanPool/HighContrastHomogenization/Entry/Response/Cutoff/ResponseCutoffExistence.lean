@@ -257,6 +257,42 @@ private theorem cutoff_half_le_volumeAverage {q : Mat d} [NeZero d] (hq : IsUnit
         field_simp
     _ ≤ _ := mul_le_mul_of_nonneg_left hJ (inv_nonneg.mpr hPS.le)
 
+private theorem cutoff_reference_cube_geometry (Q0 : TriadicCube d) (t : ℤ)
+    (ρ₁ ρ₂ : ℝ) (hρ₁pos : 0 < ρ₁) (hρ₂lt : ρ₂ < 1)
+    (hcenter : ∀ i, cubeCenter Q0 i = 0)
+    (hradius : cubeRadius Q0 = (1 / 2 : ℝ) * (3 : ℝ) ^ t) :
+    scaledClosedCubeSet Q0 ρ₂ ⊆ HighContrast.centeredCube d t ∧
+      scaledClosedCubeSet Q0 ρ₁ = Metric.closedBall (0 : Vec d) (ρ₁ * cubeRadius Q0) := by
+  have h3pos : (0 : ℝ) < (3 : ℝ) ^ t := by positivity
+  have hsub2 : scaledClosedCubeSet Q0 ρ₂ ⊆ HighContrast.centeredCube d t := by
+    intro y hy
+    rw [Recurrence.mem_centeredCube_iff]
+    intro i
+    have h := hy i
+    rw [hcenter i, sub_zero, hradius] at h
+    have hlt : ρ₂ * ((1 / 2 : ℝ) * (3 : ℝ) ^ t) < (1 / 2 : ℝ) * (3 : ℝ) ^ t := by
+      calc ρ₂ * ((1 / 2 : ℝ) * (3 : ℝ) ^ t)
+          < 1 * ((1 / 2 : ℝ) * (3 : ℝ) ^ t) :=
+            mul_lt_mul_of_pos_right hρ₂lt (mul_pos (by norm_num) h3pos)
+        _ = (1 / 2 : ℝ) * (3 : ℝ) ^ t := one_mul _
+    have habs := abs_lt.mp (lt_of_le_of_lt h hlt)
+    exact ⟨by linarith only [habs.1], habs.2⟩
+  have hball : scaledClosedCubeSet Q0 ρ₁ = Metric.closedBall (0 : Vec d) (ρ₁ * cubeRadius Q0) := by
+    ext y
+    rw [Metric.mem_closedBall, dist_zero_right,
+      pi_norm_le_iff_of_nonneg (mul_nonneg hρ₁pos.le (cubeRadius_nonneg Q0))]
+    constructor
+    · intro hy i
+      have := hy i
+      rw [hcenter i, sub_zero] at this
+      rwa [Real.norm_eq_abs]
+    · intro hy i
+      have := hy i
+      rw [Real.norm_eq_abs] at this
+      rw [hcenter i, sub_zero]
+      exact this
+  exact ⟨hsub2, hball⟩
+
 /-- The cutoff class `IsResponseCutoff` (`ResponseBlockObjects.lean`) is nonempty on every
 invertible
 grid.
@@ -377,33 +413,8 @@ theorem exists_isResponseCutoff {q : Mat d} (hq : IsUnit q) (t : ℤ) :
           rw [hsq]
   clear_value ψ
   -- geometry of the reference cube
-  have hsub2 : scaledClosedCubeSet Q0 ρ₂ ⊆ HighContrast.centeredCube d t := by
-    intro y hy
-    rw [Recurrence.mem_centeredCube_iff]
-    intro i
-    have h := hy i
-    rw [hcenter i, sub_zero, hradius] at h
-    have hlt : ρ₂ * ((1 / 2 : ℝ) * (3 : ℝ) ^ t) < (1 / 2 : ℝ) * (3 : ℝ) ^ t := by
-      calc ρ₂ * ((1 / 2 : ℝ) * (3 : ℝ) ^ t)
-          < 1 * ((1 / 2 : ℝ) * (3 : ℝ) ^ t) :=
-            mul_lt_mul_of_pos_right hρ₂lt (mul_pos (by norm_num) h3pos)
-        _ = (1 / 2 : ℝ) * (3 : ℝ) ^ t := one_mul _
-    have habs := abs_lt.mp (lt_of_le_of_lt h hlt)
-    exact ⟨by linarith only [habs.1], habs.2⟩
-  have hball : scaledClosedCubeSet Q0 ρ₁ = Metric.closedBall (0 : Vec d) (ρ₁ * cubeRadius Q0) := by
-    ext y
-    rw [Metric.mem_closedBall, dist_zero_right,
-      pi_norm_le_iff_of_nonneg (mul_nonneg hρ₁pos.le (cubeRadius_nonneg Q0))]
-    constructor
-    · intro hy i
-      have := hy i
-      rw [hcenter i, sub_zero] at this
-      rwa [Real.norm_eq_abs]
-    · intro hy i
-      have := hy i
-      rw [Real.norm_eq_abs] at this
-      rw [hcenter i, sub_zero]
-      exact this
+  obtain ⟨hsub2, hball⟩ :=
+    cutoff_reference_cube_geometry Q0 t ρ₁ ρ₂ hρ₁pos hρ₂lt hcenter hradius
   -- the pushforward cutoff, its support and its normalizing average
   set η : Vec d → ℝ := fun x => ψ (matVecMul q⁻¹ x) with hηdef
   have hηapp : ∀ x : Vec d, η x = ψ (matVecMul q⁻¹ x) := fun x => by rw [hηdef]

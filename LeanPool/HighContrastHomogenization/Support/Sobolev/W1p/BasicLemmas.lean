@@ -133,6 +133,8 @@ theorem memW1p {d : ℕ} {U : Set (Vec d)} {p : ENNReal} (u : W1pFunction U p) :
     MemW1p U p u.toFun :=
   ⟨u, rfl⟩
 
+/-- A compactly supported C¹ function viewed as a `W^{1,p}` function on `U`, with its classical
+coordinate derivatives as weak gradient. -/
 @[expose]
 noncomputable def ofContDiff {d : ℕ} {U : Set (Vec d)} (_hU : IsOpen U)
     {f : Vec d → ℝ} (hf : ContDiff ℝ 1 f) (hf_supp : HasCompactSupport f)
@@ -201,6 +203,8 @@ noncomputable def ofContDiffOnIsOpenBoundedConvexDomain
     {f : Vec d → ℝ} (hf : ContDiff ℝ 1 f) : W1pFunction U p :=
   ofContDiffOnIsSobolevRegularDomain hU.isSobolevRegularDomain hf
 
+/-- Restriction of a `W^{1,p}` witness to an open subset, retaining its value and weak-gradient
+representatives. -/
 @[expose]
 def restrict {d : ℕ} {U V : Set (Vec d)} {p : ENNReal} (u : W1pFunction U p)
     (hVopen : IsOpen V) (hVU : V ⊆ U) : W1pFunction V p :=
@@ -246,6 +250,8 @@ theorem memW1p {d : ℕ} {U : Set (Vec d)} {p : ENNReal} (u : W10pFunction U p) 
     MemW1p U p u.toW1pFunction.toFun :=
   u.toW1pFunction.memW1p
 
+/-- A smooth function with compact topological support in `U`, viewed in `W^{1,p}_0` using its
+constant approximation sequence. -/
 @[expose]
 noncomputable def ofContDiff {d : ℕ} {U : Set (Vec d)} (hU : IsOpen U)
     {f : Vec d → ℝ} (hf : ContDiff ℝ (⊤ : ℕ∞) f)

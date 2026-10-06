@@ -91,14 +91,16 @@ theorem profile_startup (d : ℕ) (hd : 2 ≤ d) (γ : ℝ) (hγ : γ ∈ Set.Ic
   have hH0 : 0 ≤ history P γ (Geometry.explicitRoundedGrid jStar metric) jStar n := by
     unfold history
     linarith only [hfluc, hmean0]
-  have hx0 : 0 ≤ (bigQ d γ : ℝ) * detIncrement P (Geometry.explicitRoundedGrid jStar metric) n (n + L) :=
+  have hx0 : 0 ≤ (bigQ d γ : ℝ) * detIncrement P (Geometry.explicitRoundedGrid jStar metric) n
+    (n + L) :=
     mul_nonneg (Nat.cast_nonneg _)
       (Annealed.logDetLoss_nonneg d hd P γ E Ψ K S hstat hdag jStar hjStar metric hmetric
         n (n + L) hn hnL)
   have hL1 : (1 : ℝ) ≤ (L : ℝ) := by exact_mod_cast hL
   have hLnonneg : (0 : ℝ) ≤ (L : ℝ) := by linarith only [hL1]
   have hR0 : 0 ≤ history P γ (Geometry.explicitRoundedGrid jStar metric) jStar n +
-      Real.exp ((bigQ d γ : ℝ) * detIncrement P (Geometry.explicitRoundedGrid jStar metric) n (n + L)) -
+      Real.exp ((bigQ d γ : ℝ) * detIncrement P (Geometry.explicitRoundedGrid jStar metric) n (n
+        + L)) -
         1 := by
     have hone := Real.one_le_exp hx0
     linarith only [hH0, hone]
@@ -119,12 +121,14 @@ theorem profile_startup (d : ℕ) (hd : 2 ≤ d) (γ : ℝ) (hγ : γ ∈ Set.Ic
       Real.exp ((bigQ d γ : ℝ) *
         detIncrement P (Geometry.explicitRoundedGrid jStar metric) n (n + L)) := by
     have hb0 : 0 ≤ 1 + meanPenalty (bigQ d γ)
-        (relMean P (Geometry.explicitRoundedGrid jStar metric) n (n + L)) := by linarith only [hpen0]
+        (relMean P (Geometry.explicitRoundedGrid jStar metric) n (n + L)) := by linarith only
+          [hpen0]
     have hstep := mul_le_of_le_one_left hb0 hweight
     have hble : 1 + meanPenalty (bigQ d γ)
         (relMean P (Geometry.explicitRoundedGrid jStar metric) n (n + L)) ≤
         Real.exp ((bigQ d γ : ℝ) *
-          detIncrement P (Geometry.explicitRoundedGrid jStar metric) n (n + L)) := by linarith only [hpenle]
+          detIncrement P (Geometry.explicitRoundedGrid jStar metric) n (n + L)) := by linarith
+            only [hpenle]
     linarith only [hstep, hble]
   have hT : (3 : ℝ) ^ (-((1 - γ) / 4) * (((n + L : ℤ) : ℝ) - (n : ℝ))) *
       (1 + meanPenalty (bigQ d γ)
@@ -365,9 +369,12 @@ theorem fixed_span_propagation (d : ℕ) (hd : 2 ≤ d) (γ : ℝ) (hγ : γ ∈
       mul_nonneg (mul_nonneg hC2.le (by linarith only [hLr1] : (0:ℝ) ≤ (L:ℝ))) hexpx1,
       mul_nonneg (by linarith only [hLr1] : (0:ℝ) ≤ (L:ℝ)) hD0,
       mul_nonneg (by linarith only [hLr1] : (0:ℝ) ≤ (L:ℝ)) hexpx1,
-      mul_nonneg (mul_nonneg (by norm_num : (0:ℝ) ≤ 3) (by linarith only [hLr1] : (0:ℝ) ≤ (L:ℝ))) hp0,
-      mul_nonneg (mul_nonneg (by norm_num : (0:ℝ) ≤ 3) (by linarith only [hLr1] : (0:ℝ) ≤ (L:ℝ))) hD0,
-      mul_nonneg (mul_nonneg (by norm_num : (0:ℝ) ≤ 3) (by linarith only [hLr1] : (0:ℝ) ≤ (L:ℝ))) hexpx1]
+      mul_nonneg (mul_nonneg (by norm_num : (0:ℝ) ≤ 3) (by linarith only [hLr1] : (0:ℝ) ≤
+        (L:ℝ))) hp0,
+      mul_nonneg (mul_nonneg (by norm_num : (0:ℝ) ≤ 3) (by linarith only [hLr1] : (0:ℝ) ≤
+        (L:ℝ))) hD0,
+      mul_nonneg (mul_nonneg (by norm_num : (0:ℝ) ≤ 3) (by linarith only [hLr1] : (0:ℝ) ≤
+        (L:ℝ))) hexpx1]
   · -- fixed-span case: n + h ≤ m
     have hfixm := hfix P E Ψ K S hP hstat hunit hdag h hh L hL jStar hjStar hsrc1
       metric hmetric n m hn hcase hp1
@@ -378,9 +385,12 @@ theorem fixed_span_propagation (d : ℕ) (hd : 2 ≤ d) (γ : ℝ) (hγ : γ ∈
       mul_nonneg (mul_nonneg hC2.le (by linarith only [hLr1] : (0:ℝ) ≤ (L:ℝ))) hexpx1,
       mul_nonneg (by linarith only [hLr1] : (0:ℝ) ≤ (L:ℝ)) hD0,
       mul_nonneg (by linarith only [hLr1] : (0:ℝ) ≤ (L:ℝ)) hexpx1,
-      mul_nonneg (mul_nonneg (by norm_num : (0:ℝ) ≤ 3) (by linarith only [hLr1] : (0:ℝ) ≤ (L:ℝ))) hp0,
-      mul_nonneg (mul_nonneg (by norm_num : (0:ℝ) ≤ 3) (by linarith only [hLr1] : (0:ℝ) ≤ (L:ℝ))) hD0,
-      mul_nonneg (mul_nonneg (by norm_num : (0:ℝ) ≤ 3) (by linarith only [hLr1] : (0:ℝ) ≤ (L:ℝ))) hexpx1]
+      mul_nonneg (mul_nonneg (by norm_num : (0:ℝ) ≤ 3) (by linarith only [hLr1] : (0:ℝ) ≤
+        (L:ℝ))) hp0,
+      mul_nonneg (mul_nonneg (by norm_num : (0:ℝ) ≤ 3) (by linarith only [hLr1] : (0:ℝ) ≤
+        (L:ℝ))) hD0,
+      mul_nonneg (mul_nonneg (by norm_num : (0:ℝ) ≤ 3) (by linarith only [hLr1] : (0:ℝ) ≤
+        (L:ℝ))) hexpx1]
 
 end
 

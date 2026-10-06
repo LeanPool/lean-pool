@@ -80,7 +80,7 @@ private theorem lintegral_sqNorm_tail_inter_openCubeSet_eq
 
 /-- A square-weighted norm tail of the Dirichlet odd reflection on a centered
 parent cube is exactly `3^d` copies of the source-cube tail. -/
-theorem sqWeightedMeasure_openCubeSet_succ_originCube_cubeDirichletOddReflectionVectorField_tail
+theorem oddReflectionVector_tail_sqWeightedMeasure_scale
     {d : ℕ} {m : ℤ} (G : Vec d → Vec d) {a : ℝ}
     (hG : AEStronglyMeasurable (fun x => HilbertVec.ofVec (G x))
       (volume.restrict (openCubeSet (originCube d m)))) :

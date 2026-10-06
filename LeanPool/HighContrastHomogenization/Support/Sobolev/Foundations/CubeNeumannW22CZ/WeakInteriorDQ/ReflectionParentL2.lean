@@ -64,7 +64,7 @@ theorem memVectorL2_openCubeSet_succ_originCube_cubeCoordinateFoldReflectedVecto
 /-- Scalar reflected energy on the centered parent cube is `3^d` copies of
 the original cube energy. -/
 theorem
-  setIntegral_openCubeSet_succ_originCube_cubeCoordinateFoldReflectedScalar_sq_of_memScalarL2_three_pow
+  setIntegral_successorCube_foldedReflectedScalar_sq
     {F : Vec d → ℝ}
     (hF : MemScalarL2 (openCubeSet (originCube d m)) F) :
     ∫ x in openCubeSet (originCube d (m + 1)),
@@ -80,13 +80,13 @@ theorem
       cubeCoordinateFoldReflectedScalar (originCube d m) F x *
         cubeCoordinateFoldReflectedScalar (originCube d m) F x)]
   exact
-    setIntegral_cubeFaceReflectionBlockSet_cubeCoordinateFoldReflectedScalar_sq_of_memScalarL2_three_pow
+    foldedScalar_sqIntegral_scale_of_L2
       (originCube d m) hF
 
 /-- Vector reflected energy on the centered parent cube is `3^d` copies of
 the original cube energy. -/
 theorem
-  setIntegral_openCubeSet_succ_originCube_cubeCoordinateFoldReflectedVectorField_self_pairing_of_memVectorL2_three_pow
+  setIntegral_successorCube_foldedReflectedVectorField_self_pairing
     {G : Vec d → Vec d}
     (hG : MemVectorL2 (openCubeSet (originCube d m)) G) :
     ∫ x in openCubeSet (originCube d (m + 1)),
@@ -104,7 +104,7 @@ theorem
         (cubeCoordinateFoldReflectedVectorField (originCube d m) G x)
         (cubeCoordinateFoldReflectedVectorField (originCube d m) G x))]
   exact
-    setIntegral_cubeFaceReflectionBlockSet_cubeCoordinateFoldReflectedVectorField_self_pairing_of_memVectorL2_three_pow
+    setIntegral_cubeReflection_foldedVectorSelfPairing
       (originCube d m) hG
 
 end

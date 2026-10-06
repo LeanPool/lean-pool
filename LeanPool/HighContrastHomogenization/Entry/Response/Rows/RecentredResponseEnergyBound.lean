@@ -82,7 +82,8 @@ private theorem respIntegral_respCoeffPlus_eq_blockResponseEnergy {d : ℕ} [NeZ
       respJ (respGrid jStar F) u p q' (respCoeffPlus F a)
         = (1 / 2 : ℝ) * blockVecDot (-p, q')
             (blockMatVecMul
-              (coarseBlockMatrix (HighContrast.adaptedCell (respGrid jStar F) u) (respCoeffPlus F a))
+              (coarseBlockMatrix (HighContrast.adaptedCell (respGrid jStar F) u) (respCoeffPlus
+                F a))
               (-p, q'))
           - vecDot p q' :=
     fun a => respJ_respCoeffPlus_eq (respGrid jStar F) hq u F a p q'

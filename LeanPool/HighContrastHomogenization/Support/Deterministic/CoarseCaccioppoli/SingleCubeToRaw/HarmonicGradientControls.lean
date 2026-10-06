@@ -147,15 +147,17 @@ theorem summable_maxDescendantSigmaStarInvNormAtScale_geometricWeight_one_of_lt 
   exact
     Real.rpow_nonneg
       (maxDescendantSigmaStarInvNormAtScale_nonneg Q
-        (sub_le_self _ (by exact_mod_cast Nat.zero_le n)) a)
+        (sub_le_self _ (Nat.cast_nonneg n)) a)
       _
+
+namespace CoarseCaccioppoliBoundaryCanonicalProjectedPoincareCircBounds
 
 /-- Concrete harmonic-gradient projected/circ package using the already
 available flux-energy controls to supply scalar-energy nonnegativity and
 integrability.  The projected mean-zero Poincare estimate for `partial_i w`
 remains the genuine analytic input. -/
 theorem
-    CoarseCaccioppoliBoundaryCanonicalProjectedPoincareCircBounds.of_harmonicGradientComponent_of_fluxEnergyControls
+    of_harmonicGradientComponent_of_fluxEnergyControls
     {d : ℕ} (Q : TriadicCube d) (a : CoeffField d) (s C : ℝ)
     (w : ℝ → ℝ → AHarmonicFunction a (openCubeSet Q)) (i : Fin d)
     (Acirc1 AcircS : ℝ → ℝ → ℝ)
@@ -199,18 +201,24 @@ theorem
     _root_.HCPolySupport.CoarseCaccioppoliBoundaryCanonicalProjectedPoincareCircBounds
       Q a s C w (fun ρ₁ ρ₂ x => (w ρ₁ ρ₂).toH1.grad x i) Acirc1 AcircS := by
   refine
-    _root_.HCPolySupport.CoarseCaccioppoliBoundaryCanonicalProjectedPoincareCircBounds.of_harmonicGradientComponent
+    (open _root_.HCPolySupport.CoarseCaccioppoliBoundaryCanonicalProjectedPoincareCircBounds
+      (of_harmonicGradientComponent) in
+      of_harmonicGradientComponent)
       Q a s C w i Acirc1 AcircS hs1 ?_ ?_ hgrad hsum1 hsumS hproj hAcirc1 hAcircS
   · intro ρ₁ ρ₂ hρ₁ hlt hρ₂
     exact (hfluxEnergy hρ₁ hlt hρ₂).1
   · intro ρ₁ ρ₂ hρ₁ hlt hρ₂
     exact (hfluxEnergy hρ₁ hlt hρ₂).2.1
 
+end CoarseCaccioppoliBoundaryCanonicalProjectedPoincareCircBounds
+
+namespace CoarseCaccioppoliBoundaryCanonicalProjectedPoincareCircBounds
+
 /-- Concrete harmonic-gradient projected/circ package with the canonical
 gradient `Acirc` factors.  This removes the two explicit `Acirc` lower-bound
 hypotheses from the projected/circ handoff. -/
 theorem
-    CoarseCaccioppoliBoundaryCanonicalProjectedPoincareCircBounds.of_harmonicGradientComponent_of_fluxEnergyControls_canonicalGradientAcirc
+    of_harmonicGradientComponent_of_fluxEnergyControls_canonicalGradientAcirc
     {d : ℕ} (Q : TriadicCube d) (a : CoeffField d) (s C : ℝ)
     (w : ℝ → ℝ → AHarmonicFunction a (openCubeSet Q)) (i : Fin d)
     (hs1 : s < 1)
@@ -243,7 +251,9 @@ theorem
       (coarseCaccioppoliCanonicalGradientAcircOne Q a)
       (coarseCaccioppoliCanonicalGradientAcircOneSub Q a s) := by
   exact
-    _root_.HCPolySupport.CoarseCaccioppoliBoundaryCanonicalProjectedPoincareCircBounds.of_harmonicGradientComponent_of_fluxEnergyControls
+    (open _root_.HCPolySupport.CoarseCaccioppoliBoundaryCanonicalProjectedPoincareCircBounds
+      (of_harmonicGradientComponent_of_fluxEnergyControls) in
+      of_harmonicGradientComponent_of_fluxEnergyControls)
       Q a s C w i
       (coarseCaccioppoliCanonicalGradientAcircOne Q a)
       (coarseCaccioppoliCanonicalGradientAcircOneSub Q a s)
@@ -255,11 +265,13 @@ theorem
         intro ρ₁ ρ₂ _ _ _
         exact le_rfl)
 
+end CoarseCaccioppoliBoundaryCanonicalProjectedPoincareCircBounds
+
 /-- Full scalar-control factors for `g = partial_i w`, with scalar-energy
 nonnegativity/integrability taken from the flux-energy controls already used
 by the single-cube Caccioppoli bridge. -/
 theorem
-    CoarseCaccioppoliBoundaryCanonicalScalarControlFactors.of_positiveFactors_of_harmonicGradientComponent_of_fluxEnergyControls
+    CoarseCaccioppoliBoundaryCanonicalScalarControlFactors.of_positiveFactors_energyControls
     {d : ℕ} (Q : TriadicCube d) (a : CoeffField d) (s C : ℝ)
     (w : ℝ → ℝ → AHarmonicFunction a (openCubeSet Q)) (i : Fin d)
     (Acirc1 AcircS : ℝ → ℝ → ℝ)
@@ -306,16 +318,20 @@ theorem
     _root_.HCPolySupport.CoarseCaccioppoliBoundaryCanonicalScalarControlFactors
       Q a s C w (fun ρ₁ ρ₂ x => (w ρ₁ ρ₂).toH1.grad x i) Acirc1 AcircS := by
   exact
-    _root_.HCPolySupport.CoarseCaccioppoliBoundaryCanonicalScalarControlFactors.of_positiveFactors_of_projectedPoincareCircBounds
+    (open _root_.HCPolySupport.CoarseCaccioppoliBoundaryCanonicalScalarControlFactors
+      (of_positiveFactors_of_projectedPoincareCircBounds) in
+      of_positiveFactors_of_projectedPoincareCircBounds)
       Q a s C w (fun ρ₁ ρ₂ x => (w ρ₁ ρ₂).toH1.grad x i) Acirc1 AcircS hpos
-      (_root_.HCPolySupport.CoarseCaccioppoliBoundaryCanonicalProjectedPoincareCircBounds.of_harmonicGradientComponent_of_fluxEnergyControls
+      ((open _root_.HCPolySupport.CoarseCaccioppoliBoundaryCanonicalProjectedPoincareCircBounds
+        (of_harmonicGradientComponent_of_fluxEnergyControls) in
+        of_harmonicGradientComponent_of_fluxEnergyControls)
         Q a s C w i Acirc1 AcircS hs1 hfluxEnergy hgrad hsum1 hsumS hproj hAcirc1
         hAcircS)
 
 /-- Full scalar-control factors for `g = partial_i w` with the canonical
 gradient `Acirc` factors. -/
 theorem
-    CoarseCaccioppoliBoundaryCanonicalScalarControlFactors.of_positiveFactors_of_harmonicGradientComponent_of_fluxEnergyControls_canonicalGradientAcirc
+    CoarseCaccioppoliBoundaryCanonicalScalarControlFactors.of_gradientFluxEnergyControls
     {d : ℕ} (Q : TriadicCube d) (a : CoeffField d) (s C : ℝ)
     (w : ℝ → ℝ → AHarmonicFunction a (openCubeSet Q)) (i : Fin d)
     (hpos :
@@ -350,13 +366,19 @@ theorem
       (coarseCaccioppoliCanonicalGradientAcircOne Q a)
       (coarseCaccioppoliCanonicalGradientAcircOneSub Q a s) := by
   exact
-    _root_.HCPolySupport.CoarseCaccioppoliBoundaryCanonicalScalarControlFactors.of_positiveFactors_of_projectedPoincareCircBounds
+    (open _root_.HCPolySupport.CoarseCaccioppoliBoundaryCanonicalScalarControlFactors
+      (of_positiveFactors_of_projectedPoincareCircBounds) in
+      of_positiveFactors_of_projectedPoincareCircBounds)
       Q a s C w (fun ρ₁ ρ₂ x => (w ρ₁ ρ₂).toH1.grad x i)
       (coarseCaccioppoliCanonicalGradientAcircOne Q a)
       (coarseCaccioppoliCanonicalGradientAcircOneSub Q a s)
-      (_root_.HCPolySupport.CoarseCaccioppoliBoundaryCanonicalScalarPositiveFactors.of_canonicalGradientAcirc
+      ((open _root_.HCPolySupport.CoarseCaccioppoliBoundaryCanonicalScalarPositiveFactors
+        (of_canonicalGradientAcirc) in
+        of_canonicalGradientAcirc)
         Q a s w hs1 hpos)
-      (_root_.HCPolySupport.CoarseCaccioppoliBoundaryCanonicalProjectedPoincareCircBounds.of_harmonicGradientComponent_of_fluxEnergyControls_canonicalGradientAcirc
+      ((open _root_.HCPolySupport.CoarseCaccioppoliBoundaryCanonicalProjectedPoincareCircBounds
+        (of_harmonicGradientComponent_of_fluxEnergyControls_canonicalGradientAcirc) in
+        of_harmonicGradientComponent_of_fluxEnergyControls_canonicalGradientAcirc)
         Q a s C w i hs1 hfluxEnergy hgrad hsum1 hsumS hproj)
 
 /-- Boundary canonical harmonic Caccioppoli specialized to the concrete scalar
@@ -364,7 +386,7 @@ auxiliary field `g = partial_i w`.  The theorem builds the projected/circ
 package from flux-energy controls plus gradient-energy controls; projected
 mean-zero Poincare for `partial_i w` is still an explicit analytic input. -/
 theorem
-    coarseCaccioppoli_boundary_qone_of_canonicalQuantitativeCutoff_of_aHarmonicFamily_of_positiveFactors_of_harmonicGradientComponent_of_coefficientBounds_of_localizationData_of_localizedExplicitHeightOfScaleChoice
+    coarseCaccioppoli_boundary_qone_of_quantitativeCutoff_of_of_coefficientBounds
     {d : ℕ} [NeZero d] (Q : TriadicCube d) (a : CoeffField d)
     (s t C uL2Sq : ℝ) {lam Lam : ℝ}
     (k : ℝ → ℝ → ℕ) {F : ℝ → ℝ}
@@ -466,7 +488,7 @@ theorem
     summable_maxDescendantSigmaStarInvNormAtScale_geometricWeight_one_of_lt
       Q a ht (by nlinarith [hst]) hSigmaSum_t
   exact
-    coarseCaccioppoli_boundary_qone_of_canonicalQuantitativeCutoff_of_aHarmonicFamily_of_positiveFactors_of_projectedPoincareCircBounds_of_coefficientBounds_of_localizationData_of_localizedExplicitHeightOfScaleChoice
+    coarseCaccioppoli_boundary_qone_of_quantitativeCutoff_of_projectedPoincareBounds
       (Q := Q) (a := a) (s := s) (t := t) (C := C) (uL2Sq := uL2Sq)
       (k := k) (F := F) (w := w)
       (g := fun ρ₁ ρ₂ x => (w ρ₁ ρ₂).toH1.grad x i)
@@ -476,7 +498,9 @@ theorem
         intro ρ₁ ρ₂ _ _ _
         exact memLp_harmonicGradientComponent_normalizedCubeMeasure Q a (w ρ₁ ρ₂) i)
       hfluxEnergy hpositiveFactors
-      (CoarseCaccioppoliBoundaryCanonicalProjectedPoincareCircBounds.of_harmonicGradientComponent_of_fluxEnergyControls
+      ((open CoarseCaccioppoliBoundaryCanonicalProjectedPoincareCircBounds
+        (of_harmonicGradientComponent_of_fluxEnergyControls) in
+        of_harmonicGradientComponent_of_fluxEnergyControls)
         Q a s C w i Acirc1 AcircS hs1 hfluxEnergy hgrad hSigmaSum_one
         hSigmaSum_one_sub_s hproj hAcirc1_lower hAcircS_lower)
       hU hA1 hAS hcoeff hEll hData hSigmaSum_t
@@ -484,7 +508,7 @@ theorem
 /-- Interior canonical harmonic Caccioppoli specialized to
 `g = partial_i w`. -/
 theorem
-    coarseCaccioppoli_interior_qone_of_canonicalQuantitativeCutoff_of_aHarmonicFamily_of_positiveFactors_of_harmonicGradientComponent_of_coefficientBounds_of_localizationData_of_radiusAgreement_of_localizedExplicitHeightOfScaleChoice
+    coarseCaccioppoli_interior_qone_of_quantitativeCutoff_of_of_coefficientBounds
     {d : ℕ} [NeZero d] (Q : TriadicCube d) (a : CoeffField d)
     (s t C uL2Sq : ℝ) {lam Lam : ℝ}
     (k : ℝ → ℝ → ℕ) {F G₀ : ℝ → ℝ}
@@ -588,7 +612,7 @@ theorem
     summable_maxDescendantSigmaStarInvNormAtScale_geometricWeight_one_of_lt
       Q a ht (by nlinarith [hst]) hSigmaSum_t
   exact
-    coarseCaccioppoli_interior_qone_of_canonicalQuantitativeCutoff_of_aHarmonicFamily_of_positiveFactors_of_projectedPoincareCircBounds_of_coefficientBounds_of_localizationData_of_radiusAgreement_of_localizedExplicitHeightOfScaleChoice
+    coarseCaccioppoli_interior_qone_of_quantitativeCutoff_of_projectedPoincareBounds
       (Q := Q) (a := a) (s := s) (t := t) (C := C) (uL2Sq := uL2Sq)
       (k := k) (F := F) (G₀ := G₀) (w := w)
       (g := fun ρ₁ ρ₂ x => (w ρ₁ ρ₂).toH1.grad x i)
@@ -598,7 +622,9 @@ theorem
         intro ρ₁ ρ₂ _ _ _
         exact memLp_harmonicGradientComponent_normalizedCubeMeasure Q a (w ρ₁ ρ₂) i)
       hfluxEnergy hpositiveFactors
-      (CoarseCaccioppoliBoundaryCanonicalProjectedPoincareCircBounds.of_harmonicGradientComponent_of_fluxEnergyControls
+      ((open CoarseCaccioppoliBoundaryCanonicalProjectedPoincareCircBounds
+        (of_harmonicGradientComponent_of_fluxEnergyControls) in
+        of_harmonicGradientComponent_of_fluxEnergyControls)
         Q a s C w i Acirc1 AcircS hs1 hfluxEnergy hgrad hSigmaSum_one
         hSigmaSum_one_sub_s hproj hAcirc1_lower hAcircS_lower)
       hU hA1 hAS hcoeff hEll hData hSigmaSum_t
@@ -608,7 +634,7 @@ gradient `Acirc` factors.  Compared with
 `...of_harmonicGradientComponent...`, the `Acirc` lower-bound hypotheses are
 now definitional. -/
 theorem
-    coarseCaccioppoli_boundary_qone_of_canonicalQuantitativeCutoff_of_aHarmonicFamily_of_positiveFactors_of_canonicalGradientAcirc_of_coefficientBounds_of_localizationData_of_localizedExplicitHeightOfScaleChoice
+    coarseCaccioppoli_boundary_qone_of_quantitativeCutoff_of_projectedPoincare
     {d : ℕ} [NeZero d] (Q : TriadicCube d) (a : CoeffField d)
     (s t C uL2Sq : ℝ) {lam Lam : ℝ}
     (k : ℝ → ℝ → ℕ) {F : ℝ → ℝ}
@@ -684,7 +710,7 @@ theorem
       coarseCaccioppoliBoundaryExplicitHeightBound Q a s t C uL2Sq := by
   have hs1 : s < 1 := by nlinarith [ht, hst]
   exact
-    coarseCaccioppoli_boundary_qone_of_canonicalQuantitativeCutoff_of_aHarmonicFamily_of_positiveFactors_of_harmonicGradientComponent_of_coefficientBounds_of_localizationData_of_localizedExplicitHeightOfScaleChoice
+    coarseCaccioppoli_boundary_qone_of_quantitativeCutoff_of_of_coefficientBounds
       (Q := Q) (a := a) (s := s) (t := t) (C := C) (uL2Sq := uL2Sq)
       (k := k) (F := F) (w := w) (i := i)
       (Acirc1 := coarseCaccioppoliCanonicalGradientAcircOne Q a)
@@ -706,7 +732,7 @@ theorem
 /-- Interior canonical harmonic Caccioppoli specialized to the canonical
 gradient `Acirc` factors. -/
 theorem
-    coarseCaccioppoli_interior_qone_of_canonicalQuantitativeCutoff_of_aHarmonicFamily_of_positiveFactors_of_canonicalGradientAcirc_of_coefficientBounds_of_localizationData_of_radiusAgreement_of_localizedExplicitHeightOfScaleChoice
+    coarseCaccioppoli_interior_qone_of_quantitativeCutoff_of_projectedPoincare
     {d : ℕ} [NeZero d] (Q : TriadicCube d) (a : CoeffField d)
     (s t C uL2Sq : ℝ) {lam Lam : ℝ}
     (k : ℝ → ℝ → ℕ) {F G₀ : ℝ → ℝ}
@@ -784,7 +810,7 @@ theorem
       coarseCaccioppoliInteriorExplicitHeightBound Q a s t C uL2Sq := by
   have hs1 : s < 1 := by nlinarith [ht, hst]
   exact
-    coarseCaccioppoli_interior_qone_of_canonicalQuantitativeCutoff_of_aHarmonicFamily_of_positiveFactors_of_harmonicGradientComponent_of_coefficientBounds_of_localizationData_of_radiusAgreement_of_localizedExplicitHeightOfScaleChoice
+    coarseCaccioppoli_interior_qone_of_quantitativeCutoff_of_of_coefficientBounds
       (Q := Q) (a := a) (s := s) (t := t) (C := C) (uL2Sq := uL2Sq)
       (k := k) (F := F) (G₀ := G₀) (w := w) (i := i)
       (Acirc1 := coarseCaccioppoliCanonicalGradientAcircOne Q a)
@@ -808,7 +834,7 @@ theorem
 the caller-facing `hA1` and `hAS` comparison hypotheses from the canonical
 gradient endpoint. -/
 theorem
-    coarseCaccioppoli_boundary_qone_of_canonicalQuantitativeCutoff_of_aHarmonicFamily_of_positiveFactors_of_canonicalGradientAcircCoefficientBounds_of_localizationData_of_localizedExplicitHeightOfScaleChoice
+    coarseCaccioppoli_boundary_qone_of_quantitativeCutoff_of_of_harmonicFamily
     {d : ℕ} [NeZero d] (Q : TriadicCube d) (a : CoeffField d)
     (s t C uL2Sq : ℝ) {lam Lam : ℝ}
     (k : ℝ → ℝ → ℕ) {F : ℝ → ℝ}
@@ -878,7 +904,7 @@ theorem
     F (1 / 3 : ℝ) ≤
       coarseCaccioppoliBoundaryExplicitHeightBound Q a s t C uL2Sq := by
   exact
-    coarseCaccioppoli_boundary_qone_of_canonicalQuantitativeCutoff_of_aHarmonicFamily_of_positiveFactors_of_canonicalGradientAcirc_of_coefficientBounds_of_localizationData_of_localizedExplicitHeightOfScaleChoice
+    coarseCaccioppoli_boundary_qone_of_quantitativeCutoff_of_projectedPoincare
       (Q := Q) (a := a) (s := s) (t := t) (C := C) (uL2Sq := uL2Sq)
       (k := k) (F := F) (w := w) (i := i)
       (U := U)
@@ -897,7 +923,7 @@ theorem
 /-- Interior canonical harmonic Caccioppoli with the canonical gradient
 `Acirc` factors also installed in the coefficient-bound package. -/
 theorem
-    coarseCaccioppoli_interior_qone_of_canonicalQuantitativeCutoff_of_aHarmonicFamily_of_positiveFactors_of_canonicalGradientAcircCoefficientBounds_of_localizationData_of_radiusAgreement_of_localizedExplicitHeightOfScaleChoice
+    coarseCaccioppoli_interior_qone_of_quantitativeCutoff_of_of_harmonicFamily
     {d : ℕ} [NeZero d] (Q : TriadicCube d) (a : CoeffField d)
     (s t C uL2Sq : ℝ) {lam Lam : ℝ}
     (k : ℝ → ℝ → ℕ) {F G₀ : ℝ → ℝ}
@@ -969,7 +995,7 @@ theorem
     F (1 / 3 : ℝ) ≤
       coarseCaccioppoliInteriorExplicitHeightBound Q a s t C uL2Sq := by
   exact
-    coarseCaccioppoli_interior_qone_of_canonicalQuantitativeCutoff_of_aHarmonicFamily_of_positiveFactors_of_canonicalGradientAcirc_of_coefficientBounds_of_localizationData_of_radiusAgreement_of_localizedExplicitHeightOfScaleChoice
+    coarseCaccioppoli_interior_qone_of_quantitativeCutoff_of_projectedPoincare
       (Q := Q) (a := a) (s := s) (t := t) (C := C) (uL2Sq := uL2Sq)
       (k := k) (F := F) (G₀ := G₀) (w := w) (i := i)
       (U := U)

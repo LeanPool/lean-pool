@@ -52,7 +52,8 @@ theorem IsMaximalCellIn.parent_not_subset [NeZero d] {W : Set (Vec d)} {j k : �
     {w : Fin d → ℤ} (h : IsMaximalCellIn W j k w) (hkj : k < j) :
     ¬ standardCell d (k + 1) (Transport.gridParent w) ⊆ W := by
   intro hsub
-  have heq := h.2 (k + 1) (Transport.gridParent w) ⟨by omega, hsub⟩ (Transport.standardCell_subset_parent k w)
+  have heq := h.2 (k + 1) (Transport.gridParent w) ⟨by omega, hsub⟩
+    (Transport.standardCell_subset_parent k w)
   have := (eq_of_standardCell_eq heq).1
   omega
 

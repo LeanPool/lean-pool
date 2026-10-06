@@ -25,12 +25,15 @@ namespace HCPolySupport
 
 noncomputable section
 
+/-- The coordinatewise measurable structure on real `d × d` matrices. -/
 local instance matMeasurableSpace {d : ℕ} : MeasurableSpace (Mat d) :=
   inferInstanceAs (MeasurableSpace (Fin d → Fin d → ℝ))
 
 local instance matBorelSpace {d : ℕ} : BorelSpace (Mat d) :=
   inferInstanceAs (BorelSpace (Fin d → Fin d → ℝ))
 
+/-- The Borel measurable structure on continuous linear endomorphisms of the Euclidean Hilbert
+space. -/
 local instance hilbertVecOperatorMeasurableSpace {d : ℕ} :
     MeasurableSpace (HilbertVec d →L[ℝ] HilbertVec d) :=
   borel (HilbertVec d →L[ℝ] HilbertVec d)
@@ -69,21 +72,21 @@ noncomputable def applyMat {d : ℕ} (A : Mat d) :
   ext x i
   simp [applyMat_apply, matVecMul]
 
-@[simp] theorem norm_sq_ofVec {d : ℕ} (x : Vec d) :
+theorem norm_sq_ofVec {d : ℕ} (x : Vec d) :
     ‖ofVec x‖ ^ 2 = vecDot x x := by
   rw [norm_sq_eq_sum_sq]
   simp [vecDot, pow_two]
 
-@[simp] theorem norm_sq_eq_vecDot {d : ℕ} (x : HilbertVec d) :
+theorem norm_sq_eq_vecDot {d : ℕ} (x : HilbertVec d) :
     ‖x‖ ^ 2 = vecDot x.toVec x.toVec := by
   simpa [ofVec_toVec x] using norm_sq_ofVec x.toVec
 
-@[simp] theorem inner_ofVec_applyMat {d : ℕ} (A : Mat d) (x y : Vec d) :
+theorem inner_ofVec_applyMat {d : ℕ} (A : Mat d) (x y : Vec d) :
     inner ℝ (ofVec x) (applyMat A (ofVec y)) =
       vecDot x (matVecMul A y) := by
   simp [applyMat_apply, inner_def]
 
-@[simp] theorem norm_sq_applyMat {d : ℕ} (A : Mat d) (x : HilbertVec d) :
+theorem norm_sq_applyMat {d : ℕ} (A : Mat d) (x : HilbertVec d) :
     ‖applyMat A x‖ ^ 2 =
       vecDot (matVecMul A x.toVec) (matVecMul A x.toVec) := by
   rw [applyMat_apply, norm_sq_ofVec]
@@ -269,6 +272,7 @@ theorem coeFn_toContinuousLinearMap (M : PointwiseHilbertVecOperatorField U)
 
 end PointwiseHilbertVecOperatorField
 
+/-- The real linear map sending a matrix to its action on the Euclidean Hilbert vector space. -/
 @[expose]
 public noncomputable def matToHilbertOperatorLinear (d : ℕ) :
     Mat d →ₗ[ℝ] (HilbertVec d →L[ℝ] HilbertVec d) where
@@ -288,6 +292,8 @@ public noncomputable def matToHilbertOperatorLinear (d : ℕ) :
     intro i
     simp [HilbertVec.applyMat_apply, matVecMul, Finset.mul_sum, mul_assoc]
 
+/-- The continuous linear map sending a matrix to its action on the Euclidean Hilbert vector
+space. -/
 @[expose]
 public noncomputable def matToHilbertOperator (d : ℕ) :
     Mat d →L[ℝ] (HilbertVec d →L[ℝ] HilbertVec d) :=

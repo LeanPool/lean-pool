@@ -210,7 +210,7 @@ theorem meanDefectTopEnergyTermOnCubeAtDepth_eq_additivityCross_add_cutoffWeight
 /-- Deterministic analytic core of the first Section 5.3 lemma: the centered
 parent response minus the cutoff-weighted child response splits into the
 additivity cross term, cutoff oscillation, linear terms, and product term. -/
-theorem centeredResponseJOnCube_sub_cutoffWeightedChildResponseJ_eq_additivityCross_add_cutoffOscillation_add_linearPair_add_product
+theorem responseJDifference_eq_additivityCross_cutoffOscillation_linearPair_product
     {d : ℕ} (a : Ch02.TriadicCoeffFamily d) (Q : TriadicCube d)
     (j : ℕ) (φ : Vec d → ℝ) (p q p0 q0 : Vec d)
     (cross : TriadicCube d → ℝ)
@@ -267,7 +267,7 @@ theorem centeredResponseJOnCube_sub_cutoffWeightedChildResponseJ_eq_additivityCr
 
 /-- Concrete deterministic analytic core, with the child-energy equality
 discharged by the explicit additivity-cross density. -/
-theorem centeredResponseJOnCube_sub_cutoffWeightedChildResponseJ_eq_concreteAdditivityCross_add_cutoffOscillation_add_linearPair_add_product
+theorem responseJDifference_eq_concreteCross_cutoffOscillation_linearPair_product
     {d : ℕ} [NeZero d] (a : Ch02.TriadicCoeffFamily d) (Q : TriadicCube d)
     (j : ℕ) (φ : Vec d → ℝ) (p q p0 q0 : Vec d)
     (hTop_int :
@@ -311,7 +311,7 @@ theorem centeredResponseJOnCube_sub_cutoffWeightedChildResponseJ_eq_concreteAddi
           cutoffLinearPairTermOnCube Q (a.coeffOn Q) φ p q p0 q0 +
             cutoffProductTermOnCube Q (a.coeffOn Q) φ p q p0 q0 := by
   simpa [concreteAdditivityCrossTermOnFamilyAtDepth] using
-    centeredResponseJOnCube_sub_cutoffWeightedChildResponseJ_eq_additivityCross_add_cutoffOscillation_add_linearPair_add_product
+    responseJDifference_eq_additivityCross_cutoffOscillation_linearPair_product
       a Q j φ p q p0 q0
       (fun R => cubeAverage R (childAdditivityCrossDensityOnFamilyOnCube a Q R p q))
       hTop_int hφ_int hRem_int hProduct_int hGradLinear_int hFluxLinear_int
@@ -327,7 +327,7 @@ theorem centeredResponseJOnCube_sub_cutoffWeightedChildResponseJ_eq_concreteAddi
 /-- Concrete deterministic analytic core for the Chapter 4 dependent
 coefficient family.  Here the parent and child representatives are definitionally
 the sampled coefficient field, so no representative-equality hypothesis remains. -/
-theorem centeredResponseJOnCube_sub_cutoffWeightedChildResponseJ_eq_concreteAdditivityCross_add_cutoffOscillation_add_linearPair_add_product_of_aELocallyUniformlyEllipticField
+theorem responseJDifference_eq_concreteCross_cutoffOscillation_linearPair_of_linearPair
     {d : ℕ} [NeZero d] (a : RegCoeffField d)
     (ha : Ch04.AELocallyUniformlyEllipticField a) (Q : TriadicCube d)
     (j : ℕ) (φ : Vec d → ℝ) (p q p0 q0 : Vec d)
@@ -379,7 +379,7 @@ theorem centeredResponseJOnCube_sub_cutoffWeightedChildResponseJ_eq_concreteAddi
             cutoffProductTermOnCube Q (F.coeffOn Q) φ p q p0 q0 := by
   intro F
   exact
-    centeredResponseJOnCube_sub_cutoffWeightedChildResponseJ_eq_concreteAdditivityCross_add_cutoffOscillation_add_linearPair_add_product
+    responseJDifference_eq_concreteCross_cutoffOscillation_linearPair_product
       F Q j φ p q p0 q0
       (topHalfEnergyDensityOnCube_integrableOn_cubeSet Q (F.coeffOn Q) p q)
       hφ_int hRem_int hProduct_int hGradLinear_int hFluxLinear_int hOsc_int
@@ -392,7 +392,7 @@ theorem centeredResponseJOnCube_sub_cutoffWeightedChildResponseJ_eq_concreteAddi
 the additivity-cross term is in the manuscript response-partition-defect form,
 while the cutoff oscillation, linear pair, and product terms remain as the
 separate deterministic terms estimated elsewhere. -/
-theorem abs_centeredResponseJOnCube_sub_cutoffWeightedChildResponseJOnDependentFamily_le_additivityDefect_add_cutoffOscillation_add_linearPair_add_product
+theorem abs_responseJDifference_le_additivityError_cutoffOscillation_pair_product
     {d : ℕ} [NeZero d] (a : RegCoeffField d)
     (ha : Ch04.AELocallyUniformlyEllipticField a) (Q : TriadicCube d)
     (j : ℕ) (φ : Vec d → ℝ) (p q p0 q0 : Vec d)
@@ -461,13 +461,13 @@ theorem abs_centeredResponseJOnCube_sub_cutoffWeightedChildResponseJOnDependentF
           cutoffWeightedChildResponseJOnFamilyAtDepth F Q j φ p q =
         X + O + L + Prod := by
     simpa [F, X, O, L, Prod] using
-      centeredResponseJOnCube_sub_cutoffWeightedChildResponseJ_eq_concreteAdditivityCross_add_cutoffOscillation_add_linearPair_add_product_of_aELocallyUniformlyEllipticField
+      responseJDifference_eq_concreteCross_cutoffOscillation_linearPair_of_linearPair
         (a := a) (ha := ha) (Q := Q) (j := j) (φ := φ)
         (p := p) (q := q) (p0 := p0) (q0 := q0)
         hφ_int hRem_int hProduct_int hGradLinear_int hFluxLinear_int hOsc_int hMean
   have hcross : |X| ≤ B := by
     simpa [F, X, B] using
-      abs_concreteAdditivityCrossTermOnDependentFamilyAtDepth_le_two_const_mul_sqrt_responseJPartitionDefect_mul_sqrt_childResponseJAverage
+      abs_additivityCross_le_constant_mul_sqrtPartitionDefect_mul_sqrtChildResponse
         (a := a) (ha := ha) (Q := Q) (j := j) (φ := φ)
         (p := p) (q := q) hC hCut
   have htri : |X + O + L + Prod| ≤ |X| + |O| + |L| + |Prod| := by
@@ -522,7 +522,8 @@ theorem responseJPartitionDefectOnDependentFamilyAtScale_eq_responseJAdditivityD
       (originCube d m) (Int.toNat (m - k)) (by
         intro R _hR
         exact responseJOnDependentFamily_eq_restrictionResponseJObservableCubeSet a ha R p q)
-  · exact responseJOnDependentFamily_eq_restrictionResponseJObservableCubeSet a ha (originCube d m) p q
+  · exact responseJOnDependentFamily_eq_restrictionResponseJObservableCubeSet a ha (originCube d
+    m) p q
 
 /-- Centered raw Ch2 response for the Chapter 4 dependent family is the Ch4
 centered response observable. -/
@@ -567,8 +568,10 @@ theorem centeredResponseJOnDependentFamily_sub_cutoffWeightedChildResponseJ_eq_c
         Q j φ p q =
       Ch04.restrictionCenteredResponseJObservableCubeSet Q p q p0 q0 a -
         descendantsAverage Q j
-          (fun R => cutoffChildWeight φ R * Ch04.restrictionResponseJObservableCubeSet R p q a) := by
-  rw [centeredResponseJOnDependentFamily_eq_restrictionCenteredResponseJObservableCubeSet a ha Q p q p0 q0,
+          (fun R => cutoffChildWeight φ R * Ch04.restrictionResponseJObservableCubeSet R p q a)
+            := by
+  rw [centeredResponseJOnDependentFamily_eq_restrictionCenteredResponseJObservableCubeSet a ha Q
+    p q p0 q0,
     cutoffWeightedChildResponseJOnDependentFamilyAtDepth_eq_ch04 a ha Q j φ p q]
 
 /-- Origin-scale version of the raw/Ch4 left-side bridge, matching the private

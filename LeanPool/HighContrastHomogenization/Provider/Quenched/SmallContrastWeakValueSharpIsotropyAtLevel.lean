@@ -38,6 +38,27 @@ noncomputable section
 
 variable {d : ℕ}
 
+private theorem energy_load_group_bounds
+    {energy bound bad good : ℝ} (henergy : energy ≤ bound)
+    (hbad : 0 ≤ bad) (hgood : 0 ≤ good) :
+    Real.sqrt 2 * energy * bad ≤ Real.sqrt 2 * bound * bad ∧
+      good * energy ≤ good * bound := by
+  constructor
+  · exact mul_le_mul_of_nonneg_right
+      (mul_le_mul_of_nonneg_left henergy (Real.sqrt_nonneg 2)) hbad
+  · exact mul_le_mul_of_nonneg_left henergy hgood
+
+private theorem constant_seminorm_coefficient_nonnegative :
+    0 ≤ Response.constantSeminormCoefficient := by
+  have hconst0 : 0 ≤ Response.constantSeminormCoefficient := by
+    rw [Response.constantSeminormCoefficient_eq]
+    have h31 : (3 : ℝ) ^ (-(1 : ℝ) / 2) < 1 :=
+      Real.rpow_lt_one_of_one_lt_of_neg (by norm_num) (by norm_num)
+    have hpos1 : 0 < 1 - (3 : ℝ) ^ (-(1 : ℝ) / 2) := by
+      linarith only [h31]
+    positivity
+  exact hconst0
+
 /-- **The primal weak quantity by the released sharp weak value.** -/
 theorem profilePrimalWeakQuantity_le_weakValueSharp_of_block_at_level [NeZero d]
     {g : ℝ} (hg : g ∈ Set.Ico (0 : ℝ) 1)
@@ -177,13 +198,7 @@ theorem profilePrimalWeakQuantity_le_weakValueSharp_of_block_at_level [NeZero d]
       (by linarith only [hR0])
   have hpow0 : 0 ≤ (3 : ℝ) ^ (-((1 - rho) / 2) * (Hw : ℝ)) :=
     Real.rpow_nonneg (by norm_num) _
-  have hconst0 : 0 ≤ Response.constantSeminormCoefficient := by
-    rw [Response.constantSeminormCoefficient_eq]
-    have h31 : (3 : ℝ) ^ (-(1 : ℝ) / 2) < 1 :=
-      Real.rpow_lt_one_of_one_lt_of_neg (by norm_num) (by norm_num)
-    have hpos1 : 0 < 1 - (3 : ℝ) ^ (-(1 : ℝ) / 2) := by
-      linarith only [h31]
-    positivity
+  have hconst0 := constant_seminorm_coefficient_nonnegative
   have hc20 : 0 ≤ Response.maxGroupConstantAtLevel lev * Response.diagonalWeakMetricFactor m0
       (Response.skewBlockCongr (Response.responseSkew K0)
         (F)) / (2 * ((1 - rho) / 2)) :=
@@ -237,57 +252,8 @@ theorem profilePrimalWeakQuantity_le_weakValueSharp_of_block_at_level [NeZero d]
   rw [← ENNReal.ofReal_mul
     (mul_nonneg (mul_nonneg hcf0 hMF20)
       hwls0)] at h1
-  have hA1le : Real.sqrt 2 *
-      Response.profileEnergyLoad
-        (Response.diagonalWeakLoadMinus (F)
-          (matSqrt (matGeomMean (S0 + Response.responseSymmetric K0 * SStar0⁻¹ *
-            Response.responseSymmetric K0) SStar0)⁻¹ *ᵥ e)
-          (matSqrt (matGeomMean (S0 + Response.responseSymmetric K0 * SStar0⁻¹ *
-              Response.responseSymmetric K0) SStar0) *ᵥ e -
-            matVecMul (Response.responseSkew K0)
-              (matSqrt (matGeomMean (S0 + Response.responseSymmetric K0 *
-                SStar0⁻¹ * Response.responseSymmetric K0) SStar0)⁻¹ *ᵥ e)))
-        (matSqrt (matGeomMean (S0 + Response.responseSymmetric K0 * SStar0⁻¹ *
-          Response.responseSymmetric K0) SStar0)⁻¹ *ᵥ e)
-        (matSqrt (matGeomMean (S0 + Response.responseSymmetric K0 * SStar0⁻¹ *
-            Response.responseSymmetric K0) SStar0) *ᵥ e -
-          matVecMul (Response.responseSkew K0)
-            (matSqrt (matGeomMean (S0 + Response.responseSymmetric K0 *
-              SStar0⁻¹ * Response.responseSymmetric K0) SStar0)⁻¹ *ᵥ e)) *
-      Response.profileBadMajorantAt 4
-        (R ^ 4 * badMomentMajorant K (t + (G : ℤ) - 1 - sK)) (R / 2) lev ≤
-      Real.sqrt 2 * Real.sqrt
-        (cF * kap * 7 +
-          1) *
-      Response.profileBadMajorantAt 4
-        (R ^ 4 * badMomentMajorant K (t + (G : ℤ) - 1 - sK)) (R / 2) lev :=
-    mul_le_mul_of_nonneg_right
-      (mul_le_mul_of_nonneg_left hloads.2.1 (Real.sqrt_nonneg 2)) hbad0
-  have hA2le : Response.energyGoodConstantAtLevel lev *
-      (3 : ℝ) ^ (-((1 - rho) / 2) * (Hw : ℝ)) *
-      Response.profileEnergyLoad
-        (Response.diagonalWeakLoadMinus (F)
-          (matSqrt (matGeomMean (S0 + Response.responseSymmetric K0 * SStar0⁻¹ *
-            Response.responseSymmetric K0) SStar0)⁻¹ *ᵥ e)
-          (matSqrt (matGeomMean (S0 + Response.responseSymmetric K0 * SStar0⁻¹ *
-              Response.responseSymmetric K0) SStar0) *ᵥ e -
-            matVecMul (Response.responseSkew K0)
-              (matSqrt (matGeomMean (S0 + Response.responseSymmetric K0 *
-                SStar0⁻¹ * Response.responseSymmetric K0) SStar0)⁻¹ *ᵥ e)))
-        (matSqrt (matGeomMean (S0 + Response.responseSymmetric K0 * SStar0⁻¹ *
-          Response.responseSymmetric K0) SStar0)⁻¹ *ᵥ e)
-        (matSqrt (matGeomMean (S0 + Response.responseSymmetric K0 * SStar0⁻¹ *
-            Response.responseSymmetric K0) SStar0) *ᵥ e -
-          matVecMul (Response.responseSkew K0)
-            (matSqrt (matGeomMean (S0 + Response.responseSymmetric K0 *
-              SStar0⁻¹ * Response.responseSymmetric K0) SStar0)⁻¹ *ᵥ e)) ≤
-      Response.energyGoodConstantAtLevel lev *
-          (3 : ℝ) ^ (-((1 - rho) / 2) * (Hw : ℝ)) *
-        Real.sqrt
-          (cF * kap *
-            7 + 1) :=
-    mul_le_mul_of_nonneg_left hloads.2.1
-      (mul_nonneg hct0 hpow0)
+  obtain ⟨hA1le, hA2le⟩ := energy_load_group_bounds hloads.2.1 hbad0
+    (mul_nonneg hct0 hpow0)
   have hB10 : 0 ≤ Real.sqrt 2 * Real.sqrt
       (cF * kap * 7 +
         1) *
@@ -499,13 +465,7 @@ theorem profileAdjointWeakQuantity_le_weakValueSharp_of_block_at_level [NeZero d
       (by linarith only [hR0])
   have hpow0 : 0 ≤ (3 : ℝ) ^ (-((1 - rho) / 2) * (Hw : ℝ)) :=
     Real.rpow_nonneg (by norm_num) _
-  have hconst0 : 0 ≤ Response.constantSeminormCoefficient := by
-    rw [Response.constantSeminormCoefficient_eq]
-    have h31 : (3 : ℝ) ^ (-(1 : ℝ) / 2) < 1 :=
-      Real.rpow_lt_one_of_one_lt_of_neg (by norm_num) (by norm_num)
-    have hpos1 : 0 < 1 - (3 : ℝ) ^ (-(1 : ℝ) / 2) := by
-      linarith only [h31]
-    positivity
+  have hconst0 := constant_seminorm_coefficient_nonnegative
   have hc20 : 0 ≤ Response.maxGroupConstantAtLevel lev * Response.diagonalWeakMetricFactor m0
       (Response.skewBlockCongr (Response.responseSkew K0)
         (F)) / (2 * ((1 - rho) / 2)) :=
@@ -559,57 +519,8 @@ theorem profileAdjointWeakQuantity_le_weakValueSharp_of_block_at_level [NeZero d
   rw [← ENNReal.ofReal_mul
     (mul_nonneg (mul_nonneg hcf0 hMF20)
       hwls0)] at h1
-  have hA1le : Real.sqrt 2 *
-      Response.profileEnergyLoad
-        (Response.diagonalWeakLoadPlus (F)
-          (matSqrt (matGeomMean (S0 + Response.responseSymmetric K0 * SStar0⁻¹ *
-            Response.responseSymmetric K0) SStar0)⁻¹ *ᵥ e)
-          (matSqrt (matGeomMean (S0 + Response.responseSymmetric K0 * SStar0⁻¹ *
-              Response.responseSymmetric K0) SStar0) *ᵥ e +
-            matVecMul (Response.responseSkew K0)
-              (matSqrt (matGeomMean (S0 + Response.responseSymmetric K0 *
-                SStar0⁻¹ * Response.responseSymmetric K0) SStar0)⁻¹ *ᵥ e)))
-        (matSqrt (matGeomMean (S0 + Response.responseSymmetric K0 * SStar0⁻¹ *
-          Response.responseSymmetric K0) SStar0)⁻¹ *ᵥ e)
-        (matSqrt (matGeomMean (S0 + Response.responseSymmetric K0 * SStar0⁻¹ *
-            Response.responseSymmetric K0) SStar0) *ᵥ e +
-          matVecMul (Response.responseSkew K0)
-            (matSqrt (matGeomMean (S0 + Response.responseSymmetric K0 *
-              SStar0⁻¹ * Response.responseSymmetric K0) SStar0)⁻¹ *ᵥ e)) *
-      Response.profileBadMajorantAt 4
-        (R ^ 4 * badMomentMajorant K (t + (G : ℤ) - 1 - sK)) (R / 2) lev ≤
-      Real.sqrt 2 * Real.sqrt
-        (cF * kap * 7 +
-          1) *
-      Response.profileBadMajorantAt 4
-        (R ^ 4 * badMomentMajorant K (t + (G : ℤ) - 1 - sK)) (R / 2) lev :=
-    mul_le_mul_of_nonneg_right
-      (mul_le_mul_of_nonneg_left hloads.2.2.2.2.1 (Real.sqrt_nonneg 2)) hbad0
-  have hA2le : Response.energyGoodConstantAtLevel lev *
-      (3 : ℝ) ^ (-((1 - rho) / 2) * (Hw : ℝ)) *
-      Response.profileEnergyLoad
-        (Response.diagonalWeakLoadPlus (F)
-          (matSqrt (matGeomMean (S0 + Response.responseSymmetric K0 * SStar0⁻¹ *
-            Response.responseSymmetric K0) SStar0)⁻¹ *ᵥ e)
-          (matSqrt (matGeomMean (S0 + Response.responseSymmetric K0 * SStar0⁻¹ *
-              Response.responseSymmetric K0) SStar0) *ᵥ e +
-            matVecMul (Response.responseSkew K0)
-              (matSqrt (matGeomMean (S0 + Response.responseSymmetric K0 *
-                SStar0⁻¹ * Response.responseSymmetric K0) SStar0)⁻¹ *ᵥ e)))
-        (matSqrt (matGeomMean (S0 + Response.responseSymmetric K0 * SStar0⁻¹ *
-          Response.responseSymmetric K0) SStar0)⁻¹ *ᵥ e)
-        (matSqrt (matGeomMean (S0 + Response.responseSymmetric K0 * SStar0⁻¹ *
-            Response.responseSymmetric K0) SStar0) *ᵥ e +
-          matVecMul (Response.responseSkew K0)
-            (matSqrt (matGeomMean (S0 + Response.responseSymmetric K0 *
-              SStar0⁻¹ * Response.responseSymmetric K0) SStar0)⁻¹ *ᵥ e)) ≤
-      Response.energyGoodConstantAtLevel lev *
-          (3 : ℝ) ^ (-((1 - rho) / 2) * (Hw : ℝ)) *
-        Real.sqrt
-          (cF * kap *
-            7 + 1) :=
-    mul_le_mul_of_nonneg_left hloads.2.2.2.2.1
-      (mul_nonneg hct0 hpow0)
+  obtain ⟨hA1le, hA2le⟩ := energy_load_group_bounds hloads.2.2.2.2.1 hbad0
+    (mul_nonneg hct0 hpow0)
   have hB10 : 0 ≤ Real.sqrt 2 * Real.sqrt
       (cF * kap * 7 +
         1) *

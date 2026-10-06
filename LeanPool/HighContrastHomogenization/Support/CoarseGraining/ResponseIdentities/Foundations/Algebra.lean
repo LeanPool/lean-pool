@@ -301,11 +301,13 @@ instance {d : ℕ} {a : CoeffField d} {U : Set (Vec d)} : SMul ℝ (AHarmonicFun
     (0 : AHarmonicFunction a U).toH1.grad = 0 :=
   rfl
 
-@[simp] theorem grad_smul {d : ℕ} {a : CoeffField d} {U : Set (Vec d)}
+theorem grad_smul {d : ℕ} {a : CoeffField d} {U : Set (Vec d)}
     (c : ℝ) (u : AHarmonicFunction a U) :
     (c • u).toH1.grad = c • u.toH1.grad :=
   rfl
 
+/-- The same H¹ function viewed as harmonic for the scalar-multiplied coefficient field `c • a`.
+-/
 @[expose]
 def rescaleCoeff {d : ℕ} {a : CoeffField d} {U : Set (Vec d)}
     (u : AHarmonicFunction a U) (c : ℝ) :
@@ -326,6 +328,8 @@ def rescaleCoeff {d : ℕ} {a : CoeffField d} {U : Set (Vec d)}
     (u.rescaleCoeff c).toH1.grad = u.toH1.grad :=
   rfl
 
+/-- The same H¹ function viewed as harmonic for `a` after removing a nonzero scalar factor from
+the coefficient field. -/
 @[expose]
 def unscaleCoeff {d : ℕ} {a : CoeffField d} {U : Set (Vec d)}
     (c : ℝ) (hc : c ≠ 0) (u : AHarmonicFunction (c • a) U) :
@@ -356,6 +360,8 @@ def unscaleCoeff {d : ℕ} {a : CoeffField d} {U : Set (Vec d)}
     (u.unscaleCoeff c hc).toH1.grad = u.toH1.grad :=
   rfl
 
+/-- The difference of two harmonic H¹ functions, with harmonicity supplied by integrability of
+their weak flux pairings. -/
 @[expose]
 def subOfIntegrable {d : ℕ} {a : CoeffField d} {U : Set (Vec d)}
     (u v : AHarmonicFunction a U)
@@ -373,7 +379,7 @@ def subOfIntegrable {d : ℕ} {a : CoeffField d} {U : Set (Vec d)}
     _ = u.toH1 - v.toH1 := by
       rfl
 
-@[simp] theorem grad_subOfIntegrable {d : ℕ} {a : CoeffField d} {U : Set (Vec d)}
+theorem grad_subOfIntegrable {d : ℕ} {a : CoeffField d} {U : Set (Vec d)}
     (u v : AHarmonicFunction a U)
     (hu_int : weakFluxIntegrable U a u) (hv_int : weakFluxIntegrable U a v) :
     (subOfIntegrable u v hu_int hv_int).toH1.grad = u.toH1.grad - v.toH1.grad := by
@@ -449,6 +455,8 @@ theorem volumeAverage_scalarResponseIntegrand_smul {d : ℕ} (U : Set (Vec d)) (
   rw [MeasureTheory.integral_smul]
   simp [smul_eq_mul, mul_assoc, mul_comm]
 
+/-- The first variation density of the scalar response at `u` in direction `w`, namely `q · ∇w - p
+· a∇w - ∇w · symmPart(a)∇u`. -/
 @[expose]
 noncomputable def scalarFirstVariationIntegrand {d : ℕ} (U : Set (Vec d)) (a : CoeffField d)
     (p q : Vec d) (u w : AHarmonicFunction a U) : Vec d → ℝ :=
@@ -457,6 +465,8 @@ noncomputable def scalarFirstVariationIntegrand {d : ℕ} (U : Set (Vec d)) (a :
       - vecDot p (matVecMul (a x) (w.toH1.grad x))
       - vecDot (w.toH1.grad x) (matVecMul (symmPart (a x)) (u.toH1.grad x))
 
+/-- The symmetric quadratic gradient energy density `∇w · symmPart(a)∇w` of a harmonic variation.
+-/
 @[expose]
 noncomputable def scalarVariationEnergyIntegrand {d : ℕ} (a : CoeffField d)
     {U : Set (Vec d)} (w : AHarmonicFunction a U) : Vec d → ℝ :=

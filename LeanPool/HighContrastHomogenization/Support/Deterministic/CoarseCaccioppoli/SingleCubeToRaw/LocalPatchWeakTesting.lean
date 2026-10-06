@@ -59,7 +59,7 @@ theorem integrableOn_vecDot_harmonicFlux_harmonicFunction_localCanonicalCutoff
 /-- Local-cutoff weak testing for an arbitrary patch center whose outer local
 closed cube stays inside the parent open cube. -/
 theorem
-    le_abs_cubeAverage_vecDot_flux_localCanonicalCutoff_of_aHarmonicFunction_of_le_localCanonicalCutoffEnergy
+    le_abs_cubeAverage_vectorDot_flux_localCanonicalCutoff_of_aHarmonicFunction
     {d : ℕ} (Q : TriadicCube d) (a : CoeffField d) {lam Lam F : ℝ}
     (center : Vec d) {rhoInner rhoOuter : ℝ}
     (w : AHarmonicFunction a (openCubeSet Q))
@@ -80,7 +80,7 @@ theorem
               scalarCutoffGradientField
                 (coarseCaccioppoliLocalCanonicalFun Q center rhoInner rhoOuter) x))| := by
   exact
-    le_abs_cubeAverage_vecDot_flux_scalarCutoffGradientField_of_aHarmonicFunction_of_le_cubeAverage_mul_scalarVariationEnergyIntegrand
+    le_abs_cubeAverage_vectorDot_flux_scalarCutoffGradientField
       Q a w hEll
       (coarseCaccioppoliLocalCanonicalFun_smooth Q center hinner hinnerOuter)
       (coarseCaccioppoliLocalCanonicalFun_hasCompactSupport Q center hinner hinnerOuter)
@@ -93,7 +93,7 @@ requiring the outer local closed cube to sit inside the parent open cube, this
 uses a localized scalar zero-trace hypothesis to make the cutoff product an
 admissible `H¹₀` test function. -/
 theorem
-    le_abs_cubeAverage_vecDot_flux_localCanonicalCutoff_of_aHarmonicFunction_of_localizedZeroTrace_of_le_localCanonicalCutoffEnergy
+    le_abs_cubeAverage_vectorDot_flux_localCanonicalCutoff_of_of_aHarmonicFunction
     {d : ℕ} (Q : TriadicCube d) (a : CoeffField d) {lam Lam F : ℝ}
     (center : Vec d) {rhoInner rhoOuter : ℝ}
     (w : AHarmonicFunction a (openCubeSet Q))
@@ -116,7 +116,7 @@ theorem
               scalarCutoffGradientField
                 (coarseCaccioppoliLocalCanonicalFun Q center rhoInner rhoOuter) x))| := by
   exact
-    le_abs_cubeAverage_vecDot_flux_scalarCutoffGradientField_of_aHarmonicFunction_of_localizedZeroTrace_of_le_cubeAverage_mul_scalarVariationEnergyIntegrand
+    le_abs_cubeAverage_vectorDot_flux_scalarCutoffGradientField_of_aHarmonicFunction
       Q a w hEll hzero
       (coarseCaccioppoliLocalCanonicalFun_smooth Q center hinner hinnerOuter)
       (coarseCaccioppoliLocalCanonicalFun_hasCompactSupport Q center hinner hinnerOuter)

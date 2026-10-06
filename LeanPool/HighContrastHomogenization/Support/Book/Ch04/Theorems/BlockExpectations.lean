@@ -137,7 +137,7 @@ theorem memLp_descendantsAverage_blockJObservableCubeSet
 
 /-- Finite descendant block-response averages commute with expectation,
 assuming childwise integrability. -/
-theorem integral_descendantsAverage_blockJObservableCubeSet_eq_expectedDescendantsAverageBlockJCubeSet
+theorem integral_blockJDescendantAverage_eq_expectedAverage
     {d : ℕ} {P : RestrictionCoeffLaw d}
     (Q : TriadicCube d) (j : ℕ) (p pStar q qStar : Vec d)
     (hB : ∀ R, R ∈ descendantsAtDepth Q j →
@@ -222,7 +222,8 @@ theorem integral_blockJObservableCubeSet_eq_half_expectedResponseJCubeSet_add
     _ =
       (1 / 2 : ℝ) * ∫ a, restrictionResponseJObservableCubeSet Q (p - pStar) (qStar - q) a ∂P +
         (1 / 2 : ℝ) *
-          ∫ a, restrictionResponseJObservableCubeSet Q (pStar + p) (qStar + q) (adjointReg a) ∂P := by
+          ∫ a, restrictionResponseJObservableCubeSet Q (pStar + p) (qStar + q) (adjointReg a) ∂P
+            := by
           rw [integral_const_mul, integral_const_mul]
     _ =
       (1 / 2 : ℝ) * expectedResponseJCubeSet P Q (p - pStar) (qStar - q) +
@@ -417,7 +418,7 @@ theorem integral_descendantsAverage_blockJObservableCubeSet_eq_originCube_of_sta
         =
       expectedDescendantsAverageBlockJCubeSet P (originCube d m)
         (Int.toNat (m - n)) p pStar q qStar :=
-        integral_descendantsAverage_blockJObservableCubeSet_eq_expectedDescendantsAverageBlockJCubeSet
+        integral_blockJDescendantAverage_eq_expectedAverage
           (P := P) (Q := originCube d m) (j := Int.toNat (m - n))
           p pStar q qStar hB_depth
     _ = expectedBlockJCubeSet P (originCube d n) p pStar q qStar :=

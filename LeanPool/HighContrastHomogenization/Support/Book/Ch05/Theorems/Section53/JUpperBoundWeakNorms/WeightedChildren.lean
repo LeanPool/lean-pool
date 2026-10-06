@@ -55,7 +55,7 @@ theorem integral_weightedChildResponseJ_eq_zero_of_stationary
         descendantsAverage (originCube d m) (Int.toNat (m - k))
           (fun R => weight R * Ch04.restrictionResponseJObservableCubeSet R p q a) ∂P = 0 := by
   rw [
-    hP.integral_weightedDescendantsAverage_restrictionResponseJObservableCubeSet_eq_weight_average_mul_originCube_of_stationary
+    hP.integral_weightedResponseJAverages_eq_weightAverage_mul_cubeAverage
       hstat hk_nonneg hkm weight p q hJ,
     hweight]
   ring
@@ -200,7 +200,7 @@ theorem integral_centeredJMinusCutoffWeightedChildAtScale_eq_expectedResponseJCu
         Ch04.expectedResponseJCubeSet P (originCube d m) p q -
           (1 / 2 : ℝ) * vecDot p0 q0 := by
     simpa [centeredResponseJAtScale] using
-      Ch04.integral_restrictionCenteredResponseJObservableCubeSet_eq_expectedResponseJCubeSet_sub_half_dot
+      Ch04.integral_centeredResponseJ_eq_expectedResponseJ_sub_halfDot
         (P := P) (Q := originCube d m) p q p0 q0 hParent
   have hWeightedZero :
       ∫ a, cutoffWeightedChildResponseJAtScale m k φ p q a ∂P = 0 :=
@@ -282,7 +282,7 @@ theorem integral_responseJAdditivityDefectAtScale_eq_tauAtScale
       Ch04.expectedResponseJCubeSet P (originCube d k) p q -
         Ch04.expectedResponseJCubeSet P (originCube d m) p q := by
         rw [
-          hP.integral_descendantsAverage_restrictionResponseJObservableCubeSet_eq_originCube_of_stationary
+          hP.integral_responseJDescendantAverage_eq_origin_of_stationarity
             hstat hk_nonneg hkm p q hDesc]
         rfl
     _ = tauAtScale P m k p q := by

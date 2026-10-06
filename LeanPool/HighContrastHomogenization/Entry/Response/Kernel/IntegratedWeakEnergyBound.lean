@@ -200,7 +200,8 @@ private theorem weakEstimate_arith_engine {α : Type*} [MeasurableSpace α] (P :
       refine pow_le_pow_left₀ (hf a) ?_ 2
       rw [ht1, ht2, ht3, hX]
       exact hpt_a
-    have hcube : (t1 + t2 + t3) ^ 2 ≤ 3 * (t1 ^ 2 + t2 ^ 2 + t3 ^ 2) := Quenched.sq_add_three_le t1 t2 t3
+    have hcube : (t1 + t2 + t3) ^ 2 ≤ 3 * (t1 ^ 2 + t2 ^ 2 + t3 ^ 2) := Quenched.sq_add_three_le
+      t1 t2 t3
     have e1 : t1 ^ 2 = 256 * (K0 * L) * S a ^ 2 := by
       rw [ht1, sqrt_mul_sq 16 K0 L (S a) hK0 hL]; ring
     have hrootK : Real.sqrt K0 ^ 2 = K0 := Real.sq_sqrt hK0
@@ -315,7 +316,8 @@ theorem respWeakEnergyOf_minus_le (d : ℕ) (hd : 2 ≤ d) (γ : ℝ) (hγ : γ 
   obtain ⟨Csrc8, hCsrc8, K, hK, h8⟩ :=
     integral_recentDefect_sq_le_of_rawOutput_minus d hd γ hγ S hS Cc hCc Cs hCs
   obtain ⟨DD, hDD, h9⟩ :=
-    integral_weakSums_sq_le (d := d) (Quenched.contrastRho γ) hrho0 K hK (bigQ d γ) (le_trans one_le_two hQ2)
+    integral_weakSums_sq_le (d := d) (Quenched.contrastRho γ) hrho0 K hK (bigQ d γ) (le_trans
+      one_le_two hQ2)
   obtain ⟨C10, hC10, h10⟩ := integral_respRecentre_sq_le_minus d hd γ hγ S hS Cc Cm hCc hCm
   obtain ⟨C11, hC11, h11⟩ := respK0Sq_mul_Lsq_le_kappa d hd γ hγ S hS Cc Ce Cl hCc hCe hCl
   set cc : ℝ := 16 / (1 - Quenched.contrastRho γ) with hccdef
@@ -346,7 +348,8 @@ theorem respWeakEnergyOf_minus_le (d : ℕ) (hd : 2 ≤ d) (γ : ℝ) (hγ : γ 
   have raw7 := RawOutput.of_le_csrc raw (le_trans (le_max_left _ _) (le_max_left _ _))
   have rawA := RawOutput.of_le_csrc raw (le_trans (le_max_right _ _) (le_max_left _ _))
   have raw8 := RawOutput.of_le_csrc raw (le_max_right _ _)
-  have hm : (explicitCanonicalMetric F).PosDef := Geometry.explicitCanonicalMetric_posDef raw.symm raw.pos
+  have hm : (explicitCanonicalMetric F).PosDef := Geometry.explicitCanonicalMetric_posDef
+    raw.symm raw.pos
   have hgrid : IsUnit (respGrid jStar F) := isUnit_respGrid_of_rawOutput raw
   have hint : HasIntegrableCoarseBlock P (respCell jStar F t) := by
     have h := Annealed.hasIntegrableCoarseBlock_adapted d hd P γ E Ψ Kg Src raw.stat raw.ell
@@ -550,7 +553,8 @@ theorem respWeakEnergyOf_plus_le (d : ℕ) (hd : 2 ≤ d) (γ : ℝ) (hγ : γ �
   obtain ⟨Csrc8, hCsrc8, K, hK, h8⟩ :=
     integral_recentDefect_sq_le_of_rawOutput_plus d hd γ hγ S hS Cc hCc Cs hCs
   obtain ⟨DD, hDD, h9⟩ :=
-    integral_weakSums_sq_le (d := d) (Quenched.contrastRho γ) hrho0 K hK (bigQ d γ) (le_trans one_le_two hQ2)
+    integral_weakSums_sq_le (d := d) (Quenched.contrastRho γ) hrho0 K hK (bigQ d γ) (le_trans
+      one_le_two hQ2)
   obtain ⟨C10, hC10, h10⟩ := integral_respRecentre_sq_le_plus d hd γ hγ S hS Cc Cm hCc hCm
   obtain ⟨C11, hC11, h11⟩ := respK0Sq_mul_Lsq_le_kappa d hd γ hγ S hS Cc Ce Cl hCc hCe hCl
   set cc : ℝ := 16 / (1 - Quenched.contrastRho γ) with hccdef
@@ -581,7 +585,8 @@ theorem respWeakEnergyOf_plus_le (d : ℕ) (hd : 2 ≤ d) (γ : ℝ) (hγ : γ �
   have raw7 := RawOutput.of_le_csrc raw (le_trans (le_max_left _ _) (le_max_left _ _))
   have rawA := RawOutput.of_le_csrc raw (le_trans (le_max_right _ _) (le_max_left _ _))
   have raw8 := RawOutput.of_le_csrc raw (le_max_right _ _)
-  have hm : (explicitCanonicalMetric F).PosDef := Geometry.explicitCanonicalMetric_posDef raw.symm raw.pos
+  have hm : (explicitCanonicalMetric F).PosDef := Geometry.explicitCanonicalMetric_posDef
+    raw.symm raw.pos
   have hgrid : IsUnit (respGrid jStar F) := isUnit_respGrid_of_rawOutput raw
   have hint : HasIntegrableCoarseBlock P (respCell jStar F t) := by
     have h := Annealed.hasIntegrableCoarseBlock_adapted d hd P γ E Ψ Kg Src raw.stat raw.ell

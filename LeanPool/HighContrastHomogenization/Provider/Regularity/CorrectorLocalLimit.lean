@@ -49,6 +49,7 @@ instance localGradientCubeFiniteMeasure (d n : ℕ) :
 abbrev LocalValueL2 (d n : ℕ) :=
   ScalarL2 (localGradientCube d n)
 
+/-- The linear restriction of scalar `L²` classes from the larger local cube to the smaller one. -/
 @[expose]
 public noncomputable def localValueRestrictLinear {d m n : ℕ} (hmn : m ≤ n) :
     LocalValueL2 d n →ₗ[ℝ] LocalValueL2 d m where
@@ -620,6 +621,7 @@ theorem localGradientRestrict_normalizedLocalPairLimit {d : ℕ}
     simpa only [localGradientRestrict_normalizedLocalPair] using hshift
   exact tendsto_nhds_unique hleft hright
 
+/-- The compatible local `L²` value limits of the functions normalized by their unit-cube mean. -/
 @[expose]
 public noncomputable def normalizedLocalValueLimit {d : ℕ}
     (u : ∀ q, H1Function (localGradientCube d q))
@@ -628,6 +630,7 @@ public noncomputable def normalizedLocalValueLimit {d : ℕ}
   ⟨fun n => (normalizedLocalPairLimit u hgrad n).1,
     fun _m _n hmn => localValueRestrict_normalizedLocalPairLimit u hgrad hmn⟩
 
+/-- The compatible local `L²` gradient limits of the normalized functions. -/
 @[expose]
 public noncomputable def normalizedLocalGradientLimit {d : ℕ}
     (u : ∀ q, H1Function (localGradientCube d q))
@@ -640,7 +643,10 @@ public noncomputable def normalizedLocalGradientLimit {d : ℕ}
 value and gradient classes, the closed weak-gradient relation on each cube,
 and the fixed-unit zero-average condition. -/
 structure NormalizedLocalH1Carrier (d : ℕ) where
+  /-- The compatible scalar `L²` classes on the nested local cubes. -/
   value : LocalValueCarrier d
+  /-- The compatible gradient `L²` classes paired with the local values in the closed `H¹`
+  graph. -/
   gradient : LocalGradientCarrier d
   graph : ∀ n,
     (LocalValueCarrier.component value n,
@@ -731,6 +737,7 @@ theorem normalizedLocalPairLimit_unitMeanZero {d : ℕ}
         _root_.Filter.Tendsto (fun _k : ℕ => (0 : ℝ)) _root_.Filter.atTop (nhds 0))
   exact tendsto_nhds_unique hleft hright
 
+/-- Assemble the compatible local value and gradient limits with zero integral on the unit cube. -/
 @[expose]
 public noncomputable def assembledNormalizedLocalH1Carrier {d : ℕ}
     (u : ∀ q, H1Function (localGradientCube d q))

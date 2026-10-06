@@ -344,7 +344,8 @@ theorem determinantDrift_nonneg (d : ℕ) (hd : 2 ≤ d) (γ : ℝ) :
       CoarseEllipticityDagger P γ E Ψ K S →
       ∀ (jStar : ℕ), 2 * d ≤ 3 ^ jStar →
         ∀ (metric : Mat d), metric.PosDef →
-          ∀ m : ℤ, 0 ≤ determinantDrift P γ (Geometry.explicitRoundedGrid jStar metric) jStar m := by
+          ∀ m : ℤ, 0 ≤ determinantDrift P γ (Geometry.explicitRoundedGrid jStar metric) jStar m
+            := by
   intro P E Ψ K S hprob hstat _hunit hdag jStar hjStar metric hmetric m
   let : IsProbabilityMeasure P := hprob
   unfold determinantDrift
@@ -354,17 +355,25 @@ theorem determinantDrift_nonneg (d : ℕ) (hd : 2 ≤ d) (γ : ℝ) :
   · exact Real.rpow_nonneg (by norm_num) _
   · have hj' := Finset.mem_Icc.mp hj
     rw [relMean, relMean]
-    have hF : (toFullBlockMat (adaptedMean P (Geometry.explicitRoundedGrid jStar metric) m)).PosDef :=
-      HCPolySupport.HighContrast.Annealed.adaptedMean_posDef d hd P γ E Ψ K S hstat hdag jStar hjStar metric hmetric m
+    have hF : (toFullBlockMat (adaptedMean P (Geometry.explicitRoundedGrid jStar metric)
+      m)).PosDef :=
+      HCPolySupport.HighContrast.Annealed.adaptedMean_posDef d hd P γ E Ψ K S hstat hdag jStar
+        hjStar metric hmetric m
     have horder : BlockMatLoewnerLE
         (adaptedMean P (Geometry.explicitRoundedGrid jStar metric) j)
         (adaptedMean P (Geometry.explicitRoundedGrid jStar metric) (j - 1)) :=
-      HCPolySupport.HighContrast.Annealed.adaptedMean_antitone d hd P γ E Ψ K S hstat hdag jStar hjStar metric hmetric (j - 1) j (by omega) (by omega)
-    have hJ : (toFullBlockMat (adaptedMean P (Geometry.explicitRoundedGrid jStar metric) j)).PosDef :=
-      HCPolySupport.HighContrast.Annealed.adaptedMean_posDef d hd P γ E Ψ K S hstat hdag jStar hjStar metric hmetric j
-    have hJm1 : (toFullBlockMat (adaptedMean P (Geometry.explicitRoundedGrid jStar metric) (j - 1))).PosDef :=
-      HCPolySupport.HighContrast.Annealed.adaptedMean_posDef d hd P γ E Ψ K S hstat hdag jStar hjStar metric hmetric (j - 1)
-    have hsub_full (A B : BlockMat d) : toFullBlockMat (blockSub A B) = toFullBlockMat A - toFullBlockMat B := by
+      HCPolySupport.HighContrast.Annealed.adaptedMean_antitone d hd P γ E Ψ K S hstat hdag jStar
+        hjStar metric hmetric (j - 1) j (by omega) (by omega)
+    have hJ : (toFullBlockMat (adaptedMean P (Geometry.explicitRoundedGrid jStar metric)
+      j)).PosDef :=
+      HCPolySupport.HighContrast.Annealed.adaptedMean_posDef d hd P γ E Ψ K S hstat hdag jStar
+        hjStar metric hmetric j
+    have hJm1 : (toFullBlockMat (adaptedMean P (Geometry.explicitRoundedGrid jStar metric) (j -
+      1))).PosDef :=
+      HCPolySupport.HighContrast.Annealed.adaptedMean_posDef d hd P γ E Ψ K S hstat hdag jStar
+        hjStar metric hmetric (j - 1)
+    have hsub_full (A B : BlockMat d) : toFullBlockMat (blockSub A B) = toFullBlockMat A -
+      toFullBlockMat B := by
       ext α β
       cases α <;> cases β <;> rfl
     have hgap : (toFullBlockMat (blockSub

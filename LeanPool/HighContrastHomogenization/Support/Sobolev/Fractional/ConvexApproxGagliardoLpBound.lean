@@ -143,7 +143,7 @@ theorem map_gagliardoCubeMeasure_diagonalConvexApproxSample_le {d : ℕ}
 /-- A fixed supported diagonal affine sample is bounded on finite-
 `L^p` Gagliardo kernels by the explicit two-Jacobian factor. -/
 theorem eLpNorm_comp_diagonalConvexApproxSample_le {d : ℕ} {E : Type*}
-    [NormedAddCommGroup E] [TopologicalSpace E] [ContinuousENorm E]
+    [TopologicalSpace E] [ContinuousENorm E]
     (Q : TriadicCube d) (p : FiniteLpExponent) (K : Vec d × Vec d → E)
     (hK : MemLp K p.exponent (Gagliardo.gagliardoCubeMeasure Q))
     {ρ : Vec d → ℝ} (hρ : IsConvexApproxKernel ρ)

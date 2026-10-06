@@ -44,15 +44,15 @@ noncomputable def segmentBlend {d : ℕ} (x : Vec d) (t : ℝ) (y : Vec d) : Vec
     segmentBlend x t y = AffineMap.lineMap y x t :=
   rfl
 
-@[simp] theorem segmentBlend_zero {d : ℕ} (x y : Vec d) :
+theorem segmentBlend_zero {d : ℕ} (x y : Vec d) :
     segmentBlend x 0 y = y := by
   simp [segmentBlend]
 
-@[simp] theorem segmentBlend_one {d : ℕ} (x y : Vec d) :
+theorem segmentBlend_one {d : ℕ} (x y : Vec d) :
     segmentBlend x 1 y = x := by
   simp [segmentBlend]
 
-@[simp] theorem segmentBlend_self {d : ℕ} (x : Vec d) (t : ℝ) :
+theorem segmentBlend_self {d : ℕ} (x : Vec d) (t : ℝ) :
     segmentBlend x t x = x := by
   simp [segmentBlend]
 

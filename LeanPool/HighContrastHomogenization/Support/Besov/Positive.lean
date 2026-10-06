@@ -29,20 +29,24 @@ Scalar overlap definitions and full `sSup` wrappers live in narrow downstream
 modules so ordinary importers of `Besov.Positive` do not pay for overlap geometry.
 -/
 
+/-- The average over depth-`j` descendants of normalized `Lᵖ` oscillations raised to `p.toReal`. -/
 @[expose]
 noncomputable def cubeBesovDepthAverage {d : ℕ} (Q : TriadicCube d) (p : ℝ≥0∞)
     (u : Vec d → ℝ) (j : ℕ) : ℝ :=
   descendantsAverage Q j fun R => (cubeBesovOscillation R p u) ^ p.toReal
 
+/-- The side length at depth `j` raised to `-s`. -/
 @[expose]
 noncomputable def cubeBesovDepthWeight {d : ℕ} (Q : TriadicCube d) (s : ℝ) (j : ℕ) : ℝ :=
   (cubeScaleFactor Q / (3 : ℝ) ^ j) ^ (-s)
 
+/-- The `p`-power mean of descendant oscillations multiplied by the depth weight. -/
 @[expose]
 noncomputable def cubeBesovDepthSeminorm {d : ℕ} (Q : TriadicCube d) (s : ℝ) (p : ℝ≥0∞)
     (u : Vec d → ℝ) (j : ℕ) : ℝ :=
   cubeBesovDepthWeight Q s j * (cubeBesovDepthAverage Q p u j) ^ (1 / p.toReal)
 
+/-- The `q`-power sum of weighted oscillations at depths zero through `N`, to power `1/q`. -/
 @[expose]
 noncomputable def cubeBesovPartialSeminorm {d : ℕ} (Q : TriadicCube d) (s : ℝ)
     (p q : ℝ≥0∞) (N : ℕ) (u : Vec d → ℝ) : ℝ := by
@@ -50,16 +54,19 @@ noncomputable def cubeBesovPartialSeminorm {d : ℕ} (Q : TriadicCube d) (s : �
     (Finset.sum (Finset.range (N + 1))
       (fun j => (cubeBesovDepthSeminorm Q s p u j) ^ q.toReal)) ^ (1 / q.toReal)
 
+/-- The maximum of the weighted oscillations at depths zero through `N`. -/
 @[expose]
 noncomputable def cubeBesovPartialSeminormTop {d : ℕ} (Q : TriadicCube d) (s : ℝ)
     (p : ℝ≥0∞) (N : ℕ) (u : Vec d → ℝ) : ℝ :=
   (Finset.range (N + 1)).sup' ⟨0, by simp⟩ (fun j => cubeBesovDepthSeminorm Q s p u j)
 
+/-- The finite Besov seminorm plus the absolute parent mean weighted by side length to `-s`. -/
 @[expose]
 noncomputable def cubeBesovPartialNorm {d : ℕ} (Q : TriadicCube d) (s : ℝ)
     (p q : ℝ≥0∞) (N : ℕ) (u : Vec d → ℝ) : ℝ :=
   cubeBesovPartialSeminorm Q s p q N u + cubeBesovScaleWeight s Q * ‖cubeAverage Q u‖
 
+/-- The maximum-aggregation Besov seminorm plus the weighted absolute parent mean. -/
 @[expose]
 noncomputable def cubeBesovPartialNormTop {d : ℕ} (Q : TriadicCube d) (s : ℝ)
     (p : ℝ≥0∞) (N : ℕ) (u : Vec d → ℝ) : ℝ :=
@@ -74,30 +81,37 @@ the overlap-based `cubeBesovOverlap*` family in downstream modules. The unqualif
 statements until the public API flip gate.
 -/
 
+/-- The disjoint-descendant average of normalized `Lᵖ` oscillations raised to `p.toReal`. -/
 noncomputable abbrev cubeBesovDisjointDepthAverage {d : ℕ}
     (Q : TriadicCube d) (p : ℝ≥0∞) (u : Vec d → ℝ) (j : ℕ) : ℝ :=
   cubeBesovDepthAverage Q p u j
 
+/-- The disjoint depth weight, equal to the descendant side length raised to `-s`. -/
 noncomputable abbrev cubeBesovDisjointDepthWeight {d : ℕ}
     (Q : TriadicCube d) (s : ℝ) (j : ℕ) : ℝ :=
   cubeBesovDepthWeight Q s j
 
+/-- The weighted `p`-power mean of disjoint-descendant oscillations at depth `j`. -/
 noncomputable abbrev cubeBesovDisjointDepthSeminorm {d : ℕ}
     (Q : TriadicCube d) (s : ℝ) (p : ℝ≥0∞) (u : Vec d → ℝ) (j : ℕ) : ℝ :=
   cubeBesovDepthSeminorm Q s p u j
 
+/-- The `q`-power aggregation of disjoint depth oscillations through depth `N`. -/
 noncomputable abbrev cubeBesovDisjointPartialSeminorm {d : ℕ}
     (Q : TriadicCube d) (s : ℝ) (p q : ℝ≥0∞) (N : ℕ) (u : Vec d → ℝ) : ℝ :=
   cubeBesovPartialSeminorm Q s p q N u
 
+/-- The maximum of the disjoint depth oscillations through depth `N`. -/
 noncomputable abbrev cubeBesovDisjointPartialSeminormTop {d : ℕ}
     (Q : TriadicCube d) (s : ℝ) (p : ℝ≥0∞) (N : ℕ) (u : Vec d → ℝ) : ℝ :=
   cubeBesovPartialSeminormTop Q s p N u
 
+/-- The disjoint finite seminorm plus the absolute parent mean weighted by side length to `-s`. -/
 noncomputable abbrev cubeBesovDisjointPartialNorm {d : ℕ}
     (Q : TriadicCube d) (s : ℝ) (p q : ℝ≥0∞) (N : ℕ) (u : Vec d → ℝ) : ℝ :=
   cubeBesovPartialNorm Q s p q N u
 
+/-- The disjoint maximum-aggregation seminorm plus the weighted absolute parent mean. -/
 noncomputable abbrev cubeBesovDisjointPartialNormTop {d : ℕ}
     (Q : TriadicCube d) (s : ℝ) (p : ℝ≥0∞) (N : ℕ) (u : Vec d → ℝ) : ℝ :=
   cubeBesovPartialNormTop Q s p N u
@@ -236,7 +250,7 @@ theorem cubeBesovPartialNormTop_mono_N {d : ℕ} (Q : TriadicCube d)
   unfold cubeBesovDepthAverage descendantsAverage
   simp [cubeBesovOscillation_const, hpPos.ne']
 
-@[simp] theorem cubeBesovDepthAverage_zero {d : ℕ} (Q : TriadicCube d) (p : ℝ≥0∞)
+theorem cubeBesovDepthAverage_zero {d : ℕ} (Q : TriadicCube d) (p : ℝ≥0∞)
     (j : ℕ) (hp0 : p ≠ 0) (hpTop : p ≠ ∞) :
     cubeBesovDepthAverage Q p (fun _ => (0 : ℝ)) j = 0 := by
   simpa using cubeBesovDepthAverage_const (Q := Q) (p := p) (u := (0 : ℝ)) (j := j) hp0 hpTop
@@ -250,7 +264,7 @@ theorem cubeBesovPartialNormTop_mono_N {d : ℕ} (Q : TriadicCube d)
   rw [cubeBesovDepthAverage_const (Q := Q) (p := p) (u := u) (j := j) hp0 hpTop]
   rw [Real.zero_rpow hpInv, mul_zero]
 
-@[simp] theorem cubeBesovDepthSeminorm_zero {d : ℕ} (Q : TriadicCube d) (s : ℝ) (p : ℝ≥0∞)
+theorem cubeBesovDepthSeminorm_zero {d : ℕ} (Q : TriadicCube d) (s : ℝ) (p : ℝ≥0∞)
     (j : ℕ) (hp0 : p ≠ 0) (hpTop : p ≠ ∞) :
     cubeBesovDepthSeminorm Q s p (fun _ => (0 : ℝ)) j = 0 := by
   simpa using cubeBesovDepthSeminorm_const
@@ -264,7 +278,7 @@ theorem cubeBesovPartialNormTop_mono_N {d : ℕ} (Q : TriadicCube d)
   unfold cubeBesovPartialSeminorm
   simp [cubeBesovDepthSeminorm_const, hp0, hpTop, hqPos.ne']
 
-@[simp] theorem cubeBesovPartialSeminorm_zero {d : ℕ} (Q : TriadicCube d) (s : ℝ)
+theorem cubeBesovPartialSeminorm_zero {d : ℕ} (Q : TriadicCube d) (s : ℝ)
     (p q : ℝ≥0∞) (N : ℕ)
     (hp0 : p ≠ 0) (hpTop : p ≠ ∞) (hq0 : q ≠ 0) (hqTop : q ≠ ∞) :
     cubeBesovPartialSeminorm Q s p q N (fun _ => (0 : ℝ)) = 0 := by
@@ -282,7 +296,7 @@ theorem cubeBesovPartialNormTop_mono_N {d : ℕ} (Q : TriadicCube d)
   intro j hj
   simp [cubeBesovDepthSeminorm_const, hp0, hpTop]
 
-@[simp] theorem cubeBesovPartialSeminormTop_zero {d : ℕ} (Q : TriadicCube d) (s : ℝ)
+theorem cubeBesovPartialSeminormTop_zero {d : ℕ} (Q : TriadicCube d) (s : ℝ)
     (p : ℝ≥0∞) (N : ℕ) (hp0 : p ≠ 0) (hpTop : p ≠ ∞) :
     cubeBesovPartialSeminormTop Q s p N (fun _ => (0 : ℝ)) = 0 := by
   simpa using cubeBesovPartialSeminormTop_const
@@ -297,7 +311,7 @@ theorem cubeBesovPartialNormTop_mono_N {d : ℕ} (Q : TriadicCube d)
     (u := u) hp0 hpTop hq0 hqTop]
   simp [cubeAverage_const]
 
-@[simp] theorem cubeBesovPartialNorm_zero {d : ℕ} (Q : TriadicCube d) (s : ℝ)
+theorem cubeBesovPartialNorm_zero {d : ℕ} (Q : TriadicCube d) (s : ℝ)
     (p q : ℝ≥0∞) (N : ℕ)
     (hp0 : p ≠ 0) (hpTop : p ≠ ∞) (hq0 : q ≠ 0) (hqTop : q ≠ ∞) :
     cubeBesovPartialNorm Q s p q N (fun _ => (0 : ℝ)) = 0 := by
@@ -312,7 +326,7 @@ theorem cubeBesovPartialNormTop_mono_N {d : ℕ} (Q : TriadicCube d)
   rw [cubeBesovPartialSeminormTop_const (Q := Q) (s := s) (p := p) (N := N) (u := u) hp0 hpTop]
   simp [cubeAverage_const]
 
-@[simp] theorem cubeBesovPartialNormTop_zero {d : ℕ} (Q : TriadicCube d) (s : ℝ)
+theorem cubeBesovPartialNormTop_zero {d : ℕ} (Q : TriadicCube d) (s : ℝ)
     (p : ℝ≥0∞) (N : ℕ) (hp0 : p ≠ 0) (hpTop : p ≠ ∞) :
     cubeBesovPartialNormTop Q s p N (fun _ => (0 : ℝ)) = 0 := by
   rw [cubeBesovPartialNormTop_const (Q := Q) (s := s) (p := p) (N := N)

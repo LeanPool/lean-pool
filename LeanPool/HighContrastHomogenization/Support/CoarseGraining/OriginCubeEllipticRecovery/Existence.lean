@@ -156,7 +156,7 @@ data gives ellipticity on the open target cube almost surely, and every open
 descendant lies inside that open target cube.
 -/
 theorem
-    openCubeDescendantEllipticRecoveryFamily_of_isEllipticFieldOn_openCubeSet_of_originCubeRecoveryExistence
+    openCubeDescendantEllipticRecoveryFamily_of_ellipticField_openCubeSet
     {d : ℕ} (Q : TriadicCube d) (a : CoeffField d) {lam Lam : ℝ}
     (hEll : IsEllipticFieldOn lam Lam (openCubeSet Q) a)
     (hOrigin : OpenCubeOriginEllipticRecoveryExistence (d := d) lam Lam) :
@@ -188,7 +188,7 @@ zero-trace potential realization needed by the recovery construction, rather
 than the more opaque packaged assumption `OpenCubeOriginEllipticRecoveryExistence`.
 -/
 theorem
-    exists_recoveryData_of_mu_eq_muCandidate_openCubeSet_originCube_of_isEllipticFieldOn_of_potentialZeroTraceClosureRealization
+    exists_recoveryData_of_ellipticField_of_potentialZeroTraceClosureRealization
     {d : ℕ} (n : ℤ) {lam Lam : ℝ} {a : CoeffField d}
     (hEll : IsEllipticFieldOn lam Lam (openCubeSet (originCube d n)) a)
     (hRealize :
@@ -226,7 +226,8 @@ theorem
     have hflux : MemVectorL2 U X.flux := by
       simpa [BlockState.eval] using memVectorL2_snd_of_memBlockL2 (U := U) hXmemBlock
     have hcorr :
-        Y.toHilbertBlockL2 ∈ R.toPotentialSolenoidalL2Data.toMuCorrectionSpaceData.correctionSpace := by
+        Y.toHilbertBlockL2 ∈
+          R.toPotentialSolenoidalL2Data.toMuCorrectionSpaceData.correctionSpace := by
       exact
         R.toPotentialSolenoidalL2Data.toMuCorrectionSpaceData.mem_correctionSpace
           Y.potential_memL2 Y.flux_memL2 Y.isPotentialZeroTrace Y.isSolenoidalZeroNormalTrace
@@ -354,7 +355,7 @@ theorem openCubeOriginEllipticRecoveryExistence_of_potentialZeroTraceClosureReal
   apply openCubeOriginEllipticRecoveryExistence_of_exists_recoveryData_of_mu_eq_muCandidate
   intro n a hEll
   exact
-    exists_recoveryData_of_mu_eq_muCandidate_openCubeSet_originCube_of_isEllipticFieldOn_of_potentialZeroTraceClosureRealization
+    exists_recoveryData_of_ellipticField_of_potentialZeroTraceClosureRealization
       (d := d) n hEll (hRealize n)
 
 /--
@@ -365,7 +366,7 @@ theorem on every positive dimension, discharged by
 theorem openCubePotentialZeroTraceClosureRealization
     {d : ℕ} [NeZero d] : OpenCubePotentialZeroTraceClosureRealization d :=
   fun n =>
-    PotentialSolenoidalL2Data.hasPotentialZeroTraceClosureRealization_of_isOpenBoundedConvexDomain
+    PotentialSolenoidalL2Data.hasPotentialZeroTraceClosureRealization_of_convexDomain
       (isOpenBoundedConvexDomain_openCubeSet (originCube d n))
 
 /-- Unconditional origin-cube elliptic recovery existence on every positive

@@ -227,7 +227,7 @@ theorem cubeFaceReflectionBlock_reflectedVectorField_weakEquationOnBlock_of_comp
 with the right-hand side given in the normalized cube `L²` measure used by the
 endpoint interfaces. -/
 theorem
-  cubeFaceReflectionBlock_reflectedVectorField_weakEquationOnBlock_of_compactSupport_of_memLp_normalizedCubeMeasure
+  cubeFaceReflection_reflectedVectorField_weakEquationOnBlock
     (W : MeanZeroNeumannPoissonSolution Q F)
     {φ : Vec d → ℝ} (hφ : ContDiff ℝ (⊤ : ℕ∞) φ)
     (hφs : HasCompactSupport φ)
@@ -307,7 +307,7 @@ theorem cubeFaceReflectionBlock_reflectedVectorField_weakEquationOn_univ_of_comp
         ∫ x in cubeFaceReflectionBlockSet Q, forceBlock x
           ∂MeasureTheory.volume := by
     simpa [gradBlock, forceBlock] using
-      W.cubeFaceReflectionBlock_reflectedVectorField_weakEquationOnBlock_of_compactSupport_of_memLp_normalizedCubeMeasure
+      W.cubeFaceReflection_reflectedVectorField_weakEquationOnBlock
         hφ hφs hmean hF
   calc
     ∫ x, gradBlock x ∂MeasureTheory.volume
@@ -383,7 +383,7 @@ theorem cubeFaceReflectionBlock_reflectedVectorField_weakEquationOn_univ_of_tsup
 the reflection-block indicator. This is the global forcing form used by
 Euclidean `L²` estimates. -/
 theorem
-  cubeFaceReflectionBlock_reflectedVectorField_weakEquationOn_univ_indicator_of_tsupport_subset
+  foldedBlockReflection_weakEquation_of_supportedTest
     (W : MeanZeroNeumannPoissonSolution Q F)
     {φ : Vec d → ℝ} (hφ : ContDiff ℝ (⊤ : ℕ∞) φ)
     (hφs : HasCompactSupport φ)
@@ -473,7 +473,7 @@ theorem cubeFaceReflectionBlock_reflectedVectorField_globalWeakEquationWithL2For
         Q hFopen
   · intro φ hφ hφs hφ_sub
     exact
-      W.cubeFaceReflectionBlock_reflectedVectorField_weakEquationOn_univ_indicator_of_tsupport_subset
+      W.foldedBlockReflection_weakEquation_of_supportedTest
         hφ hφs hφ_sub hmean hF
 
 /-- Global reflected weak equation packaged with both global `L²` data: the
@@ -549,7 +549,7 @@ theorem cubeFaceReflectionBlock_reflectedVectorField_weakEquationOnBlock_h10
             ∫ x in U, fR x * ψ x ∂MeasureTheory.volume := by
     intro ψ hψ hψs _hψ_sub
     simpa [U, G, fR] using
-      W.cubeFaceReflectionBlock_reflectedVectorField_weakEquationOnBlock_of_compactSupport_of_memLp_normalizedCubeMeasure
+      W.cubeFaceReflection_reflectedVectorField_weakEquationOnBlock
         (by simpa using hψ) hψs hmean hF
   simpa [U, G, fR] using
     h10WeakEquationOn_of_contDiff_tests
@@ -620,7 +620,7 @@ theorem cubeFaceReflectionBlock_reflectedVectorField_energyIdentity_blockFold
         (3 : ℝ) ^ d *
           ∫ y in openCubeSet Q, vecDot (G y) (G y)
             ∂MeasureTheory.volume :=
-    setIntegral_cubeFaceReflectionBlockSet_cubeCoordinateFoldReflectedVectorField_self_pairing_of_memVectorL2_three_pow
+    setIntegral_cubeReflection_foldedVectorSelfPairing
       Q hGopen
   have hright :
       ∫ x in cubeFaceReflectionBlockSet Q,
@@ -630,7 +630,7 @@ theorem cubeFaceReflectionBlock_reflectedVectorField_energyIdentity_blockFold
         (3 : ℝ) ^ d *
           ∫ y in openCubeSet Q,
             F y * W.w.toH1Function.toFun y ∂MeasureTheory.volume :=
-    setIntegral_cubeFaceReflectionBlockSet_cubeCoordinateFoldReflectedScalar_mul_of_memScalarL2_three_pow
+    setIntegral_cubeReflectionSet_foldedReflectedScalar_mul
       Q hFopen huopen
   calc
     ∫ x in cubeFaceReflectionBlockSet Q,

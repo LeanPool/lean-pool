@@ -532,7 +532,8 @@ theorem tendsto_zero_descendantRemainder_respCoeffMinus {d : ℕ} [NeZero d]
     rw [mem_triadicIndexBox_iff]
     intro i
     simp
-  have hcell : adaptedCellAtCenter (respGrid jStar F) (t - ((0 : ℕ) : ℤ)) 0 = respCell jStar F t := by
+  have hcell : adaptedCellAtCenter (respGrid jStar F) (t - ((0 : ℕ) : ℤ)) 0 = respCell jStar F t
+    := by
     rw [respCell]
     simpa using adaptedCellAtCenter_zero (respGrid jStar F) t
   refine tendsto_zero_of_abs_le_geometric
@@ -607,7 +608,8 @@ theorem tendsto_zero_descendantRemainder_respCoeffPlus {d : ℕ} [NeZero d]
     rw [mem_triadicIndexBox_iff]
     intro i
     simp
-  have hcell : adaptedCellAtCenter (respGrid jStar F) (t - ((0 : ℕ) : ℤ)) 0 = respCell jStar F t := by
+  have hcell : adaptedCellAtCenter (respGrid jStar F) (t - ((0 : ℕ) : ℤ)) 0 = respCell jStar F t
+    := by
     rw [respCell]
     simpa using adaptedCellAtCenter_zero (respGrid jStar F) t
   refine tendsto_zero_of_abs_le_geometric

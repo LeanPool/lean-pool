@@ -251,10 +251,10 @@ theorem CoarseCaccioppoliFluxEnergyControls.of_aHarmonicFunction_of_isEllipticFi
       cubeAverageFluxEnergyControl_of_aHarmonicFunction_of_openCubeOriginEllipticRecoveryExistence
         (Q := Q) (a := a) hEll u hOrigin
   · exact
-      summable_qone_maxDescendantBBlockNormAtScale_of_isEllipticFieldOn_of_openCubeOriginEllipticRecoveryExistence
+      summable_exponentOne_maxDescendantBBlockNorm_of_cubeEllipticity
         (Q := Q) (a := a) (s := (1 : ℝ)) (by norm_num) hEll hOrigin
   · exact
-      summable_qone_maxDescendantBBlockNormAtScale_of_isEllipticFieldOn_of_openCubeOriginEllipticRecoveryExistence
+      summable_exponentOne_maxDescendantBBlockNorm_of_cubeEllipticity
         (Q := Q) (a := a) (s := s) hs hEll hOrigin
 
 /-- Scalar projected-Poincare and cutoff-product hypotheses remaining after the

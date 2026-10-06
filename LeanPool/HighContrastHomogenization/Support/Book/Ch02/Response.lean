@@ -250,6 +250,7 @@ theorem responseJ_eq_responseValue_of_isResponseMaximizer {d : ℕ}
 /-- The mean-zero response maximizer as a packaged object. -/
 structure CanonicalMaximizer {d : ℕ} (U : Domain d) (a : CoeffOn U)
     (p q : Vec d) where
+  /-- The harmonic solution underlying the mean-zero response maximizer. -/
   toSolution : Solution U a
   meanZero : MeanZeroOn (U : Set (Vec d)) toSolution.toH1.toFun
   isMaximizer : IsResponseMaximizer U a p q toSolution

@@ -97,7 +97,7 @@ theorem zeroTraceDirichletHarmonicRemainderSq_le_corrector_energy_and_neumann_yo
               (coefficientEnergyDensity a
                 (fun x => w0.toH1.grad x)) := by
     simpa using
-      sq_cubeBesovNegativeVectorSeminormTwo_le_intrinsicGlobalEnergyForce_noteConstants_expanded_of_parent_potential_solenoidal
+      sq_negativeBesovSeminormTwo_le_intrinsicGlobalEnergyForce_of_parent_potential
         (Q := R) (a := a) (g := (0 : Vec d → Vec d))
         (u := fun x => w0.toH1.grad x)
         (s := s) (lam := lam) (Lam := Lam)
@@ -266,6 +266,60 @@ theorem zeroTraceDirichletHarmonicRemainderSq_le_corrector_energy_and_neumann_yo
         dsimp [K, W, G, M]
         ring
 
+private theorem lambdaSq_half_inverse_le_parent_for_energy
+    {d : ℕ} [NeZero d] {Q : TriadicCube d} {a : CoeffField d} {s lam Lam : ℝ}
+    (hs : 0 < s) (hEll : IsEllipticFieldOn lam Lam (cubeSet Q) a) (j : ℕ) :
+    ∀ R ∈ descendantsAtDepth Q j, (lambdaSq R (s / 2) (.finite 2) a)⁻¹ ≤
+      Real.rpow (3 : ℝ) (s * (j : ℝ)) * (lambdaSq Q (s / 2) (.finite 2) a)⁻¹ := by
+  let L : ℝ := (lambdaSq Q (s / 2) (.finite 2) a)⁻¹
+  let T : ℝ := Real.rpow (3 : ℝ) (s * (j : ℝ))
+  have hs_half : 0 < s / 2 := by nlinarith
+  let hOrigin : OpenCubeOriginEllipticRecoveryExistence (d := d) lam Lam :=
+    openCubeOriginEllipticRecoveryExistence (d := d) (lam := lam) (Lam := Lam)
+  have hData : OpenCubeDescendantDeterministicCoarseData Q a :=
+    openCubeDescendantDeterministicCoarseData_of_recoveryFamily
+      (openCubeDescendantEllipticRecoveryFamily_of_isEllipticFieldOn_of_originCubeRecoveryExistence
+        (Q := Q) (a := a) hEll hOrigin)
+  have hsum_half :
+      Summable (fun m : ℕ =>
+        geometricWeight (s / 2) 2 m *
+          Real.rpow (maxDescendantSigmaStarInvNormAtScale Q (Q.scale - (m : ℤ)) a)
+            (2 / 2)) := by
+    have hsum :
+        Summable (fun m : ℕ =>
+          geometricWeight (s / 2) 2 m *
+            maxDescendantSigmaStarInvNormAtScale Q (Q.scale - (m : ℤ)) a) :=
+      summable_qtwo_maxDescendantSigmaStarInvNorm_of_ellipticField
+        (Q := Q) (a := a) (s := s / 2) hs_half hEll hData
+    simpa using hsum
+  have hlocal_lambda :
+      ∀ R ∈ descendantsAtDepth Q j,
+        (lambdaSq R (s / 2) (.finite 2) a)⁻¹ ≤ T * L := by
+    intro R hR
+    have hRscale : R ∈ descendantsAtScale Q (Q.scale - (j : ℤ)) :=
+      mem_descendantsAtScale_of_mem_descendantsAtDepth hR
+    have hloc :
+        (lambdaSq R (s / 2) (.finite 2) a)⁻¹ ≤
+          Real.rpow (3 : ℝ)
+              (2 * (s / 2) *
+                (Int.toNat (Q.scale - (Q.scale - (j : ℤ))) : ℝ)) *
+            L := by
+      simpa [L] using
+        multiscale_ellipticity_lambdaSq_finite_inv_le_of_mem_descendantsAtScale
+          (Q := Q) (R := R) (k := Q.scale - (j : ℤ)) a (s / 2) 2
+          (by nlinarith : 0 ≤ s / 2) (by norm_num) hRscale hsum_half
+    have htoNat : Int.toNat (Q.scale - (Q.scale - (j : ℤ))) = j := by
+      have hdiff : Q.scale - (Q.scale - (j : ℤ)) = (j : ℤ) := by
+        omega
+      rw [hdiff]
+      simp
+    have hloc' :
+        (lambdaSq R (s / 2) (.finite 2) a)⁻¹ ≤
+          Real.rpow (3 : ℝ) (2 * (s / 2) * (j : ℝ)) * L := by
+      simpa [htoNat] using hloc
+    simpa [T, show 2 * (s / 2) * (j : ℝ) = s * (j : ℝ) by ring] using hloc'
+  exact hlocal_lambda
+
 /--
 Raw averaged control of the zero-trace corrector-energy part of the harmonic
 remainder `BV` budget.
@@ -306,51 +360,10 @@ theorem zeroTraceDirichletHarmonicRemainderRhoEnergyAverage_le_raw_lambdaInv_sq
   let E : ℝ := cubeAverage Q (coefficientEnergyDensity a u)
   let W : ℝ := coarsePoincareRHSDepthWeight s j
   let T : ℝ := Real.rpow (3 : ℝ) (s * (j : ℝ))
-  have hs_half : 0 < s / 2 := by nlinarith
-  let hOrigin : OpenCubeOriginEllipticRecoveryExistence (d := d) lam Lam :=
-    openCubeOriginEllipticRecoveryExistence (d := d) (lam := lam) (Lam := Lam)
-  have hData : OpenCubeDescendantDeterministicCoarseData Q a :=
-    openCubeDescendantDeterministicCoarseData_of_recoveryFamily
-      (openCubeDescendantEllipticRecoveryFamily_of_isEllipticFieldOn_of_originCubeRecoveryExistence
-        (Q := Q) (a := a) hEll hOrigin)
-  have hsum_half :
-      Summable (fun m : ℕ =>
-        geometricWeight (s / 2) 2 m *
-          Real.rpow (maxDescendantSigmaStarInvNormAtScale Q (Q.scale - (m : ℤ)) a)
-            (2 / 2)) := by
-    have hsum :
-        Summable (fun m : ℕ =>
-          geometricWeight (s / 2) 2 m *
-            maxDescendantSigmaStarInvNormAtScale Q (Q.scale - (m : ℤ)) a) :=
-      summable_qtwo_maxDescendantSigmaStarInvNormAtScale_of_isEllipticFieldOn_of_openCubeDescendantDeterministicCoarseData
-        (Q := Q) (a := a) (s := s / 2) hs_half hEll hData
-    simpa using hsum
   have hlocal_lambda :
       ∀ R ∈ descendantsAtDepth Q j,
-        (lambdaSq R (s / 2) (.finite 2) a)⁻¹ ≤ T * L := by
-    intro R hR
-    have hRscale : R ∈ descendantsAtScale Q (Q.scale - (j : ℤ)) :=
-      mem_descendantsAtScale_of_mem_descendantsAtDepth hR
-    have hloc :
-        (lambdaSq R (s / 2) (.finite 2) a)⁻¹ ≤
-          Real.rpow (3 : ℝ)
-              (2 * (s / 2) *
-                (Int.toNat (Q.scale - (Q.scale - (j : ℤ))) : ℝ)) *
-            L := by
-      simpa [L] using
-        multiscale_ellipticity_lambdaSq_finite_inv_le_of_mem_descendantsAtScale
-          (Q := Q) (R := R) (k := Q.scale - (j : ℤ)) a (s / 2) 2
-          (by nlinarith : 0 ≤ s / 2) (by norm_num) hRscale hsum_half
-    have htoNat : Int.toNat (Q.scale - (Q.scale - (j : ℤ))) = j := by
-      have hdiff : Q.scale - (Q.scale - (j : ℤ)) = (j : ℤ) := by
-        omega
-      rw [hdiff]
-      simp
-    have hloc' :
-        (lambdaSq R (s / 2) (.finite 2) a)⁻¹ ≤
-          Real.rpow (3 : ℝ) (2 * (s / 2) * (j : ℝ)) * L := by
-      simpa [htoNat] using hloc
-    simpa [T, show 2 * (s / 2) * (j : ℝ) = s * (j : ℝ) by ring] using hloc'
+        (lambdaSq R (s / 2) (.finite 2) a)⁻¹ ≤ T * L :=
+    lambdaSq_half_inverse_le_parent_for_energy hs hEll j
   have havg_nonneg :
       ∀ R ∈ descendantsAtDepth Q j,
         0 ≤ cubeAverage R (coefficientEnergyDensity a u) := by
@@ -510,7 +523,7 @@ theorem zeroTraceDirichletHarmonicRemainderRhoEnergyAverage_le_raw_lambdaInv_sq
             (cubeBesovPositiveVectorSeminormTwo Q s g) ^ 2) := by
           dsimp [N, L, G]
 
-theorem zeroTraceDirichletHarmonicRemainderScaledAveragedTail_le_of_selectors_corrector_energy_and_neumann_young_average_bounds
+theorem zeroTraceDirichletHarmonicRemainderScaledAveragedTail_le
     {d : ℕ} [NeZero d] {Q : TriadicCube d} {a : CoeffField d}
     {g : Vec d → Vec d} (ρ : ZeroTraceDirichletCorrectorData Q a g)
     (s : ℝ) {BV Bρ BωNeg BωForce lam Lam : ℝ}

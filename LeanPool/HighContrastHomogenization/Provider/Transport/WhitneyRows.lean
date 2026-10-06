@@ -256,7 +256,8 @@ theorem volume_residual_le {p q : Mat d} (hp : p.PosDef) (hq : q.PosDef) {n j J 
 
 private theorem eq_zero_of_le_geometric₀ {x K : ℝ} (hx : 0 ≤ x)
     (h : ∀ m : ℕ, x ≤ K * (1 / 3 : ℝ) ^ m) : x = 0 := by
-  have hlim : _root_.Filter.Tendsto (fun m : ℕ => K * (1 / 3 : ℝ) ^ m) _root_.Filter.atTop (nhds 0) := by
+  have hlim : _root_.Filter.Tendsto (fun m : ℕ => K * (1 / 3 : ℝ) ^ m) _root_.Filter.atTop (nhds
+    0) := by
     have hpow := tendsto_pow_atTop_nhds_zero_of_lt_one (by norm_num : (0 : ℝ) ≤ 1 / 3)
       (by norm_num : (1 : ℝ) / 3 < 1)
     simpa using hpow.const_mul K
@@ -348,13 +349,15 @@ theorem maximal_filling {p q : Mat d} (hp : p.PosDef) (hq : q.PosDef) (n j : ℤ
     · exact volume_row_le hp han
     · rw [(hfin a).coe_toFinset]
       exact fun w hw v hv hwv => disjoint_of_mem_fillingIndex hq hw hv (by simpa using hwv)
-    · exact fun w _ => (Recurrence.isOpenBoundedConvexDomain_adaptedCellAt hq a w).isOpen.measurableSet
+    · exact fun w _ => (Recurrence.isOpenBoundedConvexDomain_adaptedCellAt hq a
+      w).isOpen.measurableSet
   · intro a
     rw [← measure_biUnion_finset ?_ ?_, hrw a]
     · exact volume_row_le_target
     · rw [(hfin a).coe_toFinset]
       exact fun w hw v hv hwv => disjoint_of_mem_fillingIndex hq hw hv (by simpa using hwv)
-    · exact fun w _ => (Recurrence.isOpenBoundedConvexDomain_adaptedCellAt hq a w).isOpen.measurableSet
+    · exact fun w _ => (Recurrence.isOpenBoundedConvexDomain_adaptedCellAt hq a
+      w).isOpen.measurableSet
   · have hcong : ∀ a : ℤ, ((hfin a).toFinset : Set (Fin d → ℤ))
         = fillingIndex q n (adaptedCellTranslate p j y) a := fun a => (hfin a).coe_toFinset
     simp only [hcong]

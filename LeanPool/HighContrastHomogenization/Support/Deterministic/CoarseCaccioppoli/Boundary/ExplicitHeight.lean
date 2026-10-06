@@ -163,7 +163,8 @@ theorem coarseCaccioppoli_boundary_qone_of_noteEstimate_of_absorptionCondition_o
 height whose absorption and cross-term square bound have already been proved.
 This factors out the final radius-iteration step so localized height choices
 can reuse the same bound. -/
-theorem coarseCaccioppoli_boundary_qone_of_noteEstimate_of_absorptionCondition_of_explicitCrossTermBound
+theorem
+  coarseCaccioppoli_boundary_qone_of_noteEstimate_of_absorptionCondition_of_explicitCrossTermBound
     {d : ℕ} (Q : TriadicCube d) (a : CoeffField d) (s t C uL2Sq : ℝ)
     (h : ℝ → ℝ → ℝ) {F : ℝ → ℝ}
     (hC : 0 ≤ C) (hs : 0 < s) (ht : 0 < t) (hst : s + t < 1)
@@ -272,7 +273,7 @@ theorem coarseCaccioppoli_boundary_qone_of_noteEstimate_of_heightChoice_of_triad
 `h = max {k + 4, ceil(...)}` height formula, once the caller supplies a triadic
 scale choice `k(ρ₁, ρ₂)` and the remaining stronger triadic-scale cross-term
 estimate. -/
-theorem coarseCaccioppoli_boundary_qone_of_noteEstimate_of_explicitHeightOfScaleChoice_of_triadicGapScaleChoice
+theorem coarseCaccioppoli_boundary_qone_of_noteEstimate_of_heightChoice
     {d : ℕ} (Q : TriadicCube d) (a : CoeffField d) (s t C uL2Sq : ℝ)
     (k : ℝ → ℝ → ℕ) {F : ℝ → ℝ}
     (hC : 0 ≤ C) (hs : 0 < s) (ht : 0 < t) (hst : s + t < 1)
@@ -385,7 +386,8 @@ theorem coarseCaccioppoli_boundary_qone_of_noteEstimate_of_explicitHeightOfScale
               Real.sqrt (F ρ₂) := hraw hρ₁ hlt hρ₂
       _ ≤ (1 / 2 : ℝ) * F ρ₂ +
             (coarseCaccioppoliBoundaryCrossCoeffOfHeight Q a s C uL2Sq
-              (coarseCaccioppoliBoundaryExplicitHeightOfScaleChoice Q a s t C k) ρ₁ ρ₂) ^ (2 : ℕ) := by
+              (coarseCaccioppoliBoundaryExplicitHeightOfScaleChoice Q a s t C k) ρ₁ ρ₂) ^ (2 :
+                ℕ) := by
             exact coarseCaccioppoli_absorb_cross_term hF₂_nonneg (habs hρ₁ hlt hρ₂)
       _ ≤ (1 / 2 : ℝ) * F ρ₂ +
             coarseCaccioppoliBoundaryExplicitHeightRecursionRhs Q a s t C uL2Sq *
@@ -441,7 +443,7 @@ theorem coarseCaccioppoli_boundary_qone_of_noteEstimate_of_localizedExplicitHeig
 only on the deterministic Chapter-3 radius sequence. This is the concrete
 iteration surface used when the local cutoff construction is only available for
 the consecutive pairs `(ρ_n, ρ_{n+1})`. -/
-theorem coarseCaccioppoli_boundary_qone_of_noteEstimate_on_radiusSequence_of_localizedExplicitHeightOfScaleChoice
+theorem coarseCaccioppoli_boundary_qone_of_heightChoice
     {d : ℕ} (Q : TriadicCube d) (a : CoeffField d) (s t C uL2Sq : ℝ)
     (k : ℝ → ℝ → ℕ) {F : ℝ → ℝ}
     (hC : 0 ≤ C) (hs : 0 < s) (ht : 0 < t) (hst : s + t < 1)
@@ -531,7 +533,7 @@ theorem coarseCaccioppoli_boundary_qone_of_noteEstimate_on_radiusSequence_of_loc
   simpa [mul_comm] using h
 
 theorem
-    coarseCaccioppoli_boundary_qone_of_noteEstimate_on_radiusSequence_of_localizedExplicitHeightOfScaleChoice_split
+    coarseCaccioppoli_boundary_qone_of_heightChoice_split
     {d : ℕ} (Q : TriadicCube d) (a : CoeffField d)
     (s t Calpha Ccross uL2Sq : ℝ)
     (k : ℝ → ℝ → ℕ) {F : ℝ → ℝ}
@@ -639,7 +641,7 @@ theorem
 using the standard beta-dependent radius iteration.  This is the note-facing
 iteration endpoint needed to keep the explicit `s,t` exponents under control. -/
 theorem
-    coarseCaccioppoli_boundary_qone_standard_of_noteEstimate_of_localizedExplicitHeightOfScaleChoice_split
+    coarseCaccioppoli_boundary_qone_standard_of_noteEstimate
     {d : ℕ} (Q : TriadicCube d) (a : CoeffField d)
     (s t Calpha Ccross uL2Sq : ℝ)
     (k : ℝ → ℝ → ℕ) {F : ℝ → ℝ}
@@ -713,7 +715,7 @@ theorem
       hbounded hrec
 
 theorem
-    coarseCaccioppoli_boundary_qone_standard_le_noteRhs_of_noteEstimate_of_localizedExplicitHeightOfScaleChoice_split
+    coarseCaccioppoli_boundary_qone_standard_le_noteRhs_of_noteEstimate
     {d : ℕ} (Q : TriadicCube d) (a : CoeffField d)
     (s t Calpha Ccross uL2Sq : ℝ)
     (k : ℝ → ℝ → ℕ) {F : ℝ → ℝ}
@@ -739,14 +741,14 @@ theorem
         coarseCaccioppoliBoundaryStandardExplicitHeightBoundSplit
           Q a s t Calpha Ccross uL2Sq := by
     have h :=
-      coarseCaccioppoli_boundary_qone_standard_of_noteEstimate_of_localizedExplicitHeightOfScaleChoice_split
+      coarseCaccioppoli_boundary_qone_standard_of_noteEstimate
         (Q := Q) (a := a) (s := s) (t := t) (Calpha := Calpha)
         (Ccross := Ccross) (uL2Sq := uL2Sq) (k := k)
         hCalpha hCcross hs ht hst hu hnonneg hbounded hscale hraw
     simpa [coarseCaccioppoliBoundaryStandardExplicitHeightBoundSplit,
       mul_comm, mul_left_comm, mul_assoc] using h
   exact hqone.trans
-    (coarseCaccioppoliBoundaryStandardExplicitHeightBoundSplit_le_noteRhs_standardExplicitNoteConstantSplit
+    (boundaryCaccioppoliHeightBound_le_rhsConstantSplit
       Q a s t Calpha Ccross uL2Sq hs ht hst hu hTheta)
 
 end

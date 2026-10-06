@@ -135,7 +135,7 @@ theorem annealedConvergence_homogenizationScale
       thetaAtScale hPN hStructN (n : ℤ) - 1 ≤ 1 / 4 := by
     have htheta_delta :
         thetaAtScale hPN hStructN (n : ℤ) - 1 ≤ δ :=
-      Section56.SmallContrastAlgebraicDecay.thetaAtScale_sub_one_le_delta_of_widetildeThetaAtScale_zero_sub_one_le_delta
+      Section56.SmallContrastAlgebraicDecay.thetaAtScale_le_delta_of_widetildeAtZero
           hPN hStructN hP4S hsmall0_delta n
     exact htheta_delta.trans hδ_le_quarter
   have hwide_two : widetildeThetaAtScale PN (0 : ℤ) hP4S ≤ 2 := by

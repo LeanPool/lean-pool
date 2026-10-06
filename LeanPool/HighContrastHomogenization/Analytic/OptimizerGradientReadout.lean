@@ -202,9 +202,11 @@ theorem toHilbertBlockL2_eq_minimizerMap_of_isDoubledMuMinimizer
         Mu (U : Set (Vec d)) P0 aU.toCoeffField := by
     rw [energyBilin_cellMuHilbert, ← hEnergy]
     exact (cellMuSystem hvol
-      ⟨aU.toCoeffField, hk⟩).toMuOperatorRealization.quadraticEnergy_eq_blockEnergyAverage_of_blockState
+      ⟨aU.toCoeffField,
+        hk⟩).toMuOperatorRealization.quadraticEnergy_eq_blockEnergyAverage_of_blockState
       hAdm.memBlockL2_eval
-  refine (cellMuHilbert hvol ⟨aU.toCoeffField, hk⟩).eq_minimizerMap_of_quadraticEnergy_le_muCandidate
+  refine (cellMuHilbert hvol ⟨aU.toCoeffField,
+    hk⟩).eq_minimizerMap_of_quadraticEnergy_le_muCandidate
     P0 _ hcorr (le_of_eq ?_)
   rw [hQuad]
   exact mu_eq_muCandidate_cellMuHilbert hvol ⟨aU.toCoeffField, hk⟩ P0
@@ -224,7 +226,7 @@ theorem ae_toFullBlockVec_optimizerBlockState {U : Book.Ch02.Domain d}
   cases alpha with
   | inl i =>
       filter_upwards
-        [Book.Ch02.doubledMuMinimizer_neg_left_extracts_canonicalMaximizerGradient U aU p q hX]
+        [Book.Ch02.doubledMuMinimizer_negLeft_eq_canonicalGradient U aU p q hX]
         with x hx
       show (optimizerBlockState U aU p q x).1 i = _
       rw [optimizerBlockState, ← hx]
@@ -340,7 +342,8 @@ theorem integral_weighted_optimizerBlockState
       rw [← hMin, (cellMuHilbert hvol ⟨aU.toCoeffField, hk⟩).energySymm,
         energyBilin_cellMuHilbert]
       exact (cellMuSystem hvol
-        ⟨aU.toCoeffField, hk⟩).toMuOperatorRealization.energyBilin_eq_blockPairingAverage_of_blockState
+        ⟨aU.toCoeffField,
+          hk⟩).toMuOperatorRealization.energyBilin_eq_blockPairingAverage_of_blockState
         (blockTestState_memBlockL2 heta alpha.swap) hXmem
     rw [hbil, blockPairingAverage, volumeAverage, hpairrw, ← mul_assoc,
       mul_inv_cancel₀ (ne_of_gt hvol), one_mul]

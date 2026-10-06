@@ -57,7 +57,7 @@ noncomputable def descendantsAverageNormalizedFluctuationMatrix
     FullBlockMat d :=
   descendantsAverageFullBlockMat Q j
     (fun R =>
-      Section54.VarianceBoundGoodScale.fullBlockNormalizedFluctuationMatrix
+      Section54.VarianceBoundGoodScale.normalizedFluctuationMatrix
         hP hStruct center (cubeSet R) a)
 
 /-- Squared operator norm of the normalized descendant-average fluctuation. -/
@@ -79,7 +79,7 @@ noncomputable def normalizedCoarseAverageErrorMatrix
     (hP : Ch04.RestrictionLawCarrier P) (hStruct : Ch04.RestrictionStructuralLaw P)
     (center : ℤ) (Q : TriadicCube d) (j : ℕ) (a : RegCoeffField d) :
     FullBlockMat d :=
-  Section54.VarianceBoundGoodScale.fullBlockNormalizedFluctuationMatrix
+  Section54.VarianceBoundGoodScale.normalizedFluctuationMatrix
       hP hStruct center (cubeSet Q) a -
     descendantsAverageNormalizedFluctuationMatrix hP hStruct center Q j a
 
@@ -93,7 +93,7 @@ noncomputable def normalizedCoarseAveragePositiveErrorMatrix
     (center : ℤ) (Q : TriadicCube d) (j : ℕ) (a : RegCoeffField d) :
     FullBlockMat d :=
   descendantsAverageNormalizedFluctuationMatrix hP hStruct center Q j a -
-    Section54.VarianceBoundGoodScale.fullBlockNormalizedFluctuationMatrix
+    Section54.VarianceBoundGoodScale.normalizedFluctuationMatrix
       hP hStruct center (cubeSet Q) a
 
 /-- Squared operator norm of the normalized parent-minus-descendant-average
@@ -379,12 +379,12 @@ theorem memLp_two_blockJObservableCubeSetBlockVec_from_P4_of_stationary
   have hJ₁ :
       MemLp (Ch04.restrictionResponseJObservableCubeSet R (p - pStar) (qStar - q))
         (2 : ENNReal) P :=
-    HCPolySupport.Book.Ch05.Section53.JUpperBoundCoarseFluctuations.memLp_two_restrictionResponseJObservableCubeSet_cubeSet_from_P4_of_stationary
+    HCPolySupport.Book.Ch05.Section53.JUpperBoundCoarseFluctuations.memLp_two_responseObservable
         hP hStruct.stationary hStruct hP4 R hR_nonneg (p - pStar) (qStar - q)
   have hJ₂base :
       MemLp (Ch04.restrictionResponseJObservableCubeSet R (pStar + p) (qStar + q))
         (2 : ENNReal) P :=
-    HCPolySupport.Book.Ch05.Section53.JUpperBoundCoarseFluctuations.memLp_two_restrictionResponseJObservableCubeSet_cubeSet_from_P4_of_stationary
+    HCPolySupport.Book.Ch05.Section53.JUpperBoundCoarseFluctuations.memLp_two_responseObservable
         hP hStruct.stationary hStruct hP4 R hR_nonneg (pStar + p) (qStar + q)
   have hJ₂ :
       MemLp

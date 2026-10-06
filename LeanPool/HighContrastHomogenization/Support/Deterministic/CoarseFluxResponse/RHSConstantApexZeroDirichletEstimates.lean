@@ -335,7 +335,7 @@ theorem zeroTraceDirichletHarmonicRemainderBVEstimate_of_zeroForce_energy_bounds
               (coefficientEnergyDensity a
                 (fun x => w0.toH1.grad x)) := by
     simpa using
-      sq_cubeBesovNegativeVectorSeminormTwo_le_intrinsicGlobalEnergyForce_noteConstants_expanded_of_parent_potential_solenoidal
+      sq_negativeBesovSeminormTwo_le_intrinsicGlobalEnergyForce_of_parent_potential
         (Q := R) (a := a) (g := (0 : Vec d → Vec d))
         (u := fun x => w0.toH1.grad x)
         (s := s) (lam := lam) (Lam := Lam)
@@ -472,7 +472,8 @@ The centered Neumann-corrector energy identity controls the Neumann half of
 the harmonic-remainder `BV` reduction by the product of the corrector negative
 seminorm and the centered forcing positive seminorm.
 -/
-theorem zeroTraceDirichletHarmonicRemainderBVEstimate_of_corrector_energy_and_neumann_seminorm_bounds
+theorem
+  zeroTraceDirichletHarmonicRemainderBVEstimate_of_corrector_energy_and_neumann_seminorm_bounds
     {d : ℕ} [NeZero d] {Q : TriadicCube d} {a : CoeffField d}
     {g : Vec d → Vec d} (ρ : ZeroTraceDirichletCorrectorData Q a g)
     {s BV Bρ Bω lam Lam : ℝ}

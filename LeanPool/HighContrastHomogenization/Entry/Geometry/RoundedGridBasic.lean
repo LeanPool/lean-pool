@@ -234,7 +234,8 @@ theorem dotProduct_roundedGrid_eq (jStar : ℕ) (m : Mat d) (v : Vec d) :
     v ⬝ᵥ (explicitRoundedGrid jStar m *ᵥ v)
       = v ⬝ᵥ (unroundedGrid m *ᵥ v)
         + v ⬝ᵥ ((explicitRoundedGrid jStar m - unroundedGrid m) *ᵥ v) := by
-  have h : unroundedGrid m + (explicitRoundedGrid jStar m - unroundedGrid m) = explicitRoundedGrid jStar m := by
+  have h : unroundedGrid m + (explicitRoundedGrid jStar m - unroundedGrid m) =
+    explicitRoundedGrid jStar m := by
     abel
   rw [← dotProduct_add, ← add_mulVec, h]
 
@@ -391,10 +392,12 @@ theorem source_whitney_roundedGrid [NeZero d] (hj : 2 * d ≤ 3 ^ jStar)
         ⋃ p ∈ maximalCellPairs (adaptedCellTranslate (explicitRoundedGrid jStar m) j y) j,
           standardCell d p.1 p.2) = 0 ∧
       ∀ r ≤ j,
-        ∃ hfin : (maximalCellIndices (adaptedCellTranslate (explicitRoundedGrid jStar m) j y) j r).Finite,
+        ∃ hfin : (maximalCellIndices (adaptedCellTranslate (explicitRoundedGrid jStar m) j y) j
+          r).Finite,
           ∑ w ∈ hfin.toFinset,
               (MeasureTheory.volume (standardCell d r w)).toReal /
-                (MeasureTheory.volume (adaptedCellTranslate (explicitRoundedGrid jStar m) j y)).toReal ≤
+                (MeasureTheory.volume (adaptedCellTranslate (explicitRoundedGrid jStar m) j
+                  y)).toReal ≤
             12 * (d : ℝ) ^ ((3 : ℝ) / 2) * (3 : ℝ) ^ (r - j) :=
   source_whitney (inverseNormLE_roundedGrid hj hm) j y
 

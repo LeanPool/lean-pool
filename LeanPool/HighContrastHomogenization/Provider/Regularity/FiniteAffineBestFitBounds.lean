@@ -85,6 +85,44 @@ private theorem finiteRealSequence_pow_bounds
   rw [show j + (N : ℤ) = k by omega] at hlow hup
   simpa only [N] using And.intro hlow hup
 
+private theorem relative_slope_difference_le_previous
+    {d : ℕ} (previous next : Vec d) {amplitude : ℝ}
+    (hamplitude : 0 ≤ amplitude) (hsmall : amplitude ≤ 1 / 4)
+    (hdifference : euclideanNorm (next - previous) ≤ amplitude * euclideanNorm next) :
+    euclideanNorm (next - previous) ≤ 2 * amplitude * euclideanNorm previous := by
+  have hreverse : euclideanNorm (previous - next) =
+      euclideanNorm (next - previous) := by
+    rw [show previous - next = -(next - previous) by abel, euclideanNorm_neg]
+  have htriangle := euclideanNorm_le_add_sub previous next
+  rw [hreverse] at htriangle
+  have hscaled := mul_le_mul_of_nonneg_right hsmall (euclideanNorm_nonneg next)
+  have hnext : euclideanNorm next ≤ 2 * euclideanNorm previous := by
+    nlinarith only [htriangle, hdifference, hscaled, euclideanNorm_nonneg previous]
+  calc
+    euclideanNorm (next - previous) ≤ amplitude * euclideanNorm next := hdifference
+    _ ≤ amplitude * (2 * euclideanNorm previous) :=
+      mul_le_mul_of_nonneg_left hnext hamplitude
+    _ = 2 * amplitude * euclideanNorm previous := by ring
+
+private theorem relative_slope_norm_step_bounds
+    {d : ℕ} (previous next : Vec d) (amplitude : ℝ)
+    (hdifference : euclideanNorm (next - previous) ≤ amplitude * euclideanNorm previous) :
+    (1 - amplitude) * euclideanNorm previous ≤ euclideanNorm next ∧
+      euclideanNorm next ≤ (1 + amplitude) * euclideanNorm previous := by
+  have hlower := euclideanNorm_le_add_sub next previous
+  have hupper := euclideanNorm_le_add_sub previous next
+  rw [show previous - next = -(next - previous) by abel, euclideanNorm_neg] at hupper
+  constructor <;> nlinarith only [hdifference, hlower, hupper]
+
+private theorem product_le_inverse_of_inverse_cap
+    {factor divisor value : ℝ} (hfactor : 0 < factor) (hdivisor : 0 < divisor)
+    (hcap : value ≤ (divisor * factor)⁻¹) :
+    factor * value ≤ divisor⁻¹ := by
+  calc
+    factor * value ≤ factor * (divisor * factor)⁻¹ :=
+      mul_le_mul_of_nonneg_left hcap hfactor.le
+    _ = divisor⁻¹ := by field_simp [hfactor.ne', hdivisor.ne']
+
 /-- Shared constants for finite best-fit error, adjacent slope control,
 all-pair multiplicative slope bounds, and terminal slope closeness. -/
 theorem exists_scalarIdentityFiniteAffineBestFitInductionConstants
@@ -169,19 +207,15 @@ theorem exists_scalarIdentityFiniteAffineBestFitInductionConstants
     have hd : delta ≤ (4 * Ca * C₀)⁻¹ :=
       hdelta.2.trans ((min_le_right _ _).trans
         ((min_le_right _ _).trans (min_le_right _ _)))
-    calc
-      Ca * C₀ * delta ≤ Ca * C₀ * (4 * Ca * C₀)⁻¹ :=
-        mul_le_mul_of_nonneg_left hd
-          (mul_nonneg hCa.le (zero_le_one.trans hC₀))
-      _ = 1 / 4 := by field_simp
+    simpa only [mul_assoc, inv_eq_one_div] using product_le_inverse_of_inverse_cap
+      (mul_pos hCa (lt_of_lt_of_le zero_lt_one hC₀)) (by norm_num : (0 : ℝ) < 4)
+      (by simpa only [mul_assoc] using hd)
   have hCdelta : C * delta ≤ 1 / 2 := by
     have hd : delta ≤ (2 * C)⁻¹ :=
       hdelta.2.trans ((min_le_right _ _).trans
         ((min_le_right _ _).trans (min_le_left _ _)))
-    calc
-      C * delta ≤ C * (2 * C)⁻¹ :=
-        mul_le_mul_of_nonneg_left hd hCpos.le
-      _ = 1 / 2 := by field_simp
+    simpa only [inv_eq_one_div] using product_le_inverse_of_inverse_cap
+      hCpos (by norm_num : (0 : ℝ) < 2) hd
   have hE₀ := herror a delta n m hnm hdelta₀ hgood k hk b
   have hE : finiteAffineBestFitError a k m (Finset.mem_Icc.mp hk).2 b ≤
       C * delta * euclideanNorm
@@ -212,58 +246,22 @@ theorem exists_scalarIdentityFiniteAffineBestFitInductionConstants
         euclideanNorm_neg]
       exact ha.trans (by
         simpa only [mul_assoc] using mul_le_mul_of_nonneg_left hE1 hCa.le)
-    have hnext : euclideanNorm
-          (finiteAffineBestFitSlope a (k + 1) m (by omega) b) ≤
-        2 * euclideanNorm
-          (finiteAffineBestFitSlope a k m (Finset.mem_Icc.mp hk).2 b) := by
-      have htri := euclideanNorm_le_add_sub
-        (finiteAffineBestFitSlope a k m (Finset.mem_Icc.mp hk).2 b)
-        (finiteAffineBestFitSlope a (k + 1) m (by omega) b)
-      have hsmall := mul_le_mul_of_nonneg_right hxsmall
-        (euclideanNorm_nonneg
-          (finiteAffineBestFitSlope a (k + 1) m (by omega) b))
-      have hdiff' : euclideanNorm
-            (finiteAffineBestFitSlope a k m (Finset.mem_Icc.mp hk).2 b -
-              finiteAffineBestFitSlope a (k + 1) m (by omega) b) ≤
-          Ca * C₀ * delta * euclideanNorm
-            (finiteAffineBestFitSlope a (k + 1) m (by omega) b) := by
-        rw [show finiteAffineBestFitSlope a k m (Finset.mem_Icc.mp hk).2 b -
-              finiteAffineBestFitSlope a (k + 1) m (by omega) b =
-            -(finiteAffineBestFitSlope a (k + 1) m (by omega) b -
-              finiteAffineBestFitSlope a k m (Finset.mem_Icc.mp hk).2 b) by abel,
-          euclideanNorm_neg]
-        exact hdiff
-      nlinarith only [htri, hdiff', hsmall,
-        euclideanNorm_nonneg
-          (finiteAffineBestFitSlope a k m (Finset.mem_Icc.mp hk).2 b)]
+    have hrelative := relative_slope_difference_le_previous
+      (finiteAffineBestFitSlope a k m (Finset.mem_Icc.mp hk).2 b)
+      (finiteAffineBestFitSlope a (k + 1) m (by omega) b)
+      (mul_nonneg (mul_nonneg hCa.le (zero_le_one.trans hC₀)) hdelta_nonneg)
+      hxsmall hdiff
     calc
-      euclideanNorm
-          (finiteAffineBestFitSlope a (k + 1) m (by omega) b -
-            finiteAffineBestFitSlope a k m (Finset.mem_Icc.mp hk).2 b) ≤
-          Ca * C₀ * delta * euclideanNorm
-            (finiteAffineBestFitSlope a (k + 1) m (by omega) b) := hdiff
-      _ ≤ Ca * C₀ * delta *
-          (2 * euclideanNorm
-            (finiteAffineBestFitSlope a k m (Finset.mem_Icc.mp hk).2 b)) :=
-        mul_le_mul_of_nonneg_left hnext
-          (mul_nonneg (mul_nonneg hCa.le (zero_le_one.trans hC₀)) hdelta_nonneg)
-      _ ≤ C * delta * euclideanNorm
-          (finiteAffineBestFitSlope a k m (Finset.mem_Icc.mp hk).2 b) := by
-        calc
-          Ca * C₀ * delta *
-                (2 * euclideanNorm
-                  (finiteAffineBestFitSlope a k m (Finset.mem_Icc.mp hk).2 b)) =
-              (2 * Ca * C₀) *
-                (delta * euclideanNorm
-                  (finiteAffineBestFitSlope a k m (Finset.mem_Icc.mp hk).2 b)) := by
-            ring
-          _ ≤ C * (delta * euclideanNorm
-                (finiteAffineBestFitSlope a k m (Finset.mem_Icc.mp hk).2 b)) :=
-            mul_le_mul_of_nonneg_right htwoC
-              (mul_nonneg hdelta_nonneg (euclideanNorm_nonneg _))
-          _ = C * delta * euclideanNorm
-                (finiteAffineBestFitSlope a k m (Finset.mem_Icc.mp hk).2 b) := by
-            ring
+      _ ≤ 2 * (Ca * C₀ * delta) * euclideanNorm
+          (finiteAffineBestFitSlope a k m (Finset.mem_Icc.mp hk).2 b) := hrelative
+      _ = (2 * Ca * C₀) * (delta * euclideanNorm
+          (finiteAffineBestFitSlope a k m (Finset.mem_Icc.mp hk).2 b)) := by ring
+      _ ≤ C * (delta * euclideanNorm
+          (finiteAffineBestFitSlope a k m (Finset.mem_Icc.mp hk).2 b)) :=
+        mul_le_mul_of_nonneg_right htwoC
+          (mul_nonneg hdelta_nonneg (euclideanNorm_nonneg _))
+      _ = C * delta * euclideanNorm
+          (finiteAffineBestFitSlope a k m (Finset.mem_Icc.mp hk).2 b) := by ring
   have hpairs : ∀ (j : ℤ) (hj : j ∈ Finset.Icc n m), j ≤ k →
       (1 - C * delta) ^ Int.toNat (k - j) *
           euclideanNorm
@@ -306,49 +304,23 @@ theorem exists_scalarIdentityFiniteAffineBestFitInductionConstants
           euclideanNorm_neg]
         exact ha.trans (by
           simpa only [mul_assoc] using mul_le_mul_of_nonneg_left hEr1 hCa.le)
-      have hnext : euclideanNorm
-            (finiteAffineBestFitSlope a (r + 1) m hr1m b) ≤
-          2 * euclideanNorm (finiteAffineBestFitSlope a r m hrm b) := by
-        have htri := euclideanNorm_le_add_sub
-          (finiteAffineBestFitSlope a r m hrm b)
-          (finiteAffineBestFitSlope a (r + 1) m hr1m b)
-        have hsmall := mul_le_mul_of_nonneg_right hxsmall
-          (euclideanNorm_nonneg
-            (finiteAffineBestFitSlope a (r + 1) m hr1m b))
-        have hdiff' : euclideanNorm
-              (finiteAffineBestFitSlope a r m hrm b -
-                finiteAffineBestFitSlope a (r + 1) m hr1m b) ≤
-            Ca * C₀ * delta * euclideanNorm
-              (finiteAffineBestFitSlope a (r + 1) m hr1m b) := by
-          rw [show finiteAffineBestFitSlope a r m hrm b -
-                finiteAffineBestFitSlope a (r + 1) m hr1m b =
-              -(finiteAffineBestFitSlope a (r + 1) m hr1m b -
-                finiteAffineBestFitSlope a r m hrm b) by abel,
-            euclideanNorm_neg]
-          exact hdiff
-        nlinarith only [htri, hdiff', hsmall,
-          euclideanNorm_nonneg (finiteAffineBestFitSlope a r m hrm b)]
+      have hrelative := relative_slope_difference_le_previous
+        (finiteAffineBestFitSlope a r m hrm b)
+        (finiteAffineBestFitSlope a (r + 1) m hr1m b)
+        (mul_nonneg (mul_nonneg hCa.le (zero_le_one.trans hC₀)) hdelta_nonneg)
+        hxsmall hdiff
       calc
-        euclideanNorm
-            (finiteAffineBestFitSlope a (r + 1) m hr1m b -
-              finiteAffineBestFitSlope a r m hrm b) ≤
-            Ca * C₀ * delta * euclideanNorm
-              (finiteAffineBestFitSlope a (r + 1) m hr1m b) := hdiff
-        _ ≤ Ca * C₀ * delta *
-            (2 * euclideanNorm (finiteAffineBestFitSlope a r m hrm b)) :=
-          mul_le_mul_of_nonneg_left hnext
-            (mul_nonneg (mul_nonneg hCa.le (zero_le_one.trans hC₀)) hdelta_nonneg)
+        _ ≤ 2 * (Ca * C₀ * delta) *
+            euclideanNorm (finiteAffineBestFitSlope a r m hrm b) := hrelative
         _ = (2 * Ca * C₀) *
-            (delta * euclideanNorm (finiteAffineBestFitSlope a r m hrm b)) := by
-          ring
-        _ ≤ C * (delta * euclideanNorm
-              (finiteAffineBestFitSlope a r m hrm b)) :=
+            (delta * euclideanNorm (finiteAffineBestFitSlope a r m hrm b)) := by ring
+        _ ≤ C * (delta * euclideanNorm (finiteAffineBestFitSlope a r m hrm b)) :=
           mul_le_mul_of_nonneg_right htwoC
             (mul_nonneg hdelta_nonneg (euclideanNorm_nonneg _))
-        _ = C * delta * euclideanNorm
-              (finiteAffineBestFitSlope a r m hrm b) := by ring
-    have hlower : ∀ r : ℤ, j ≤ r → r < k →
-        (1 - C * delta) * p r ≤ p (r + 1) := by
+        _ = C * delta * euclideanNorm (finiteAffineBestFitSlope a r m hrm b) := by ring
+    have hsteps : ∀ r : ℤ, j ≤ r → r < k →
+        (1 - C * delta) * p r ≤ p (r + 1) ∧
+          p (r + 1) ≤ (1 + C * delta) * p r := by
       intro r hjr hrk
       have hkmTop : k ≤ m := (Finset.mem_Icc.mp hk).2
       have hnr : n ≤ r := (Finset.mem_Icc.mp hj).1.trans hjr
@@ -359,34 +331,13 @@ theorem exists_scalarIdentityFiniteAffineBestFitInductionConstants
       have hr1 : r + 1 ∈ Finset.Icc n m := Finset.mem_Icc.2 ⟨hnr1, hr1m⟩
       have hd := hlocal r hjr hrk hrm hr1m
       simp only [p, dite_eq_left hr, dite_eq_left hr1]
-      have htri := euclideanNorm_le_add_sub
-        (finiteAffineBestFitSlope a (r + 1) m hr1m b)
+      exact (relative_slope_norm_step_bounds
         (finiteAffineBestFitSlope a r m hrm b)
-      nlinarith only [hd, htri]
-    have hupper : ∀ r : ℤ, j ≤ r → r < k →
-        p (r + 1) ≤ (1 + C * delta) * p r := by
-      intro r hjr hrk
-      have hkmTop : k ≤ m := (Finset.mem_Icc.mp hk).2
-      have hnr : n ≤ r := (Finset.mem_Icc.mp hj).1.trans hjr
-      have hnr1 : n ≤ r + 1 := hnr.trans (by omega)
-      have hrm : r ≤ m := (le_of_lt hrk).trans hkmTop
-      have hr1m : r + 1 ≤ m := (by omega)
-      have hr : r ∈ Finset.Icc n m := Finset.mem_Icc.2 ⟨hnr, hrm⟩
-      have hr1 : r + 1 ∈ Finset.Icc n m := Finset.mem_Icc.2 ⟨hnr1, hr1m⟩
-      have hd := hlocal r hjr hrk hrm hr1m
-      simp only [p, dite_eq_left hr, dite_eq_left hr1]
-      have htri := euclideanNorm_le_add_sub
-        (finiteAffineBestFitSlope a r m hrm b)
-        (finiteAffineBestFitSlope a (r + 1) m hr1m b)
-      rw [show finiteAffineBestFitSlope a r m hrm b -
-            finiteAffineBestFitSlope a (r + 1) m hr1m b =
-          -(finiteAffineBestFitSlope a (r + 1) m hr1m b -
-            finiteAffineBestFitSlope a r m hrm b) by abel,
-        euclideanNorm_neg] at htri
-      nlinarith only [hd, htri]
+        (finiteAffineBestFitSlope a (r + 1) m hr1m b) (C * delta) hd)
     have hpw := finiteRealSequence_pow_bounds p (C * delta)
       (mul_nonneg hCpos.le hdelta_nonneg) (hCdelta.trans (by norm_num))
-      hjk hlower hupper
+      hjk (fun r hjr hrk ↦ (hsteps r hjr hrk).1)
+      (fun r hjr hrk ↦ (hsteps r hjr hrk).2)
     simpa only [p, dite_eq_left hj, dite_eq_left hk] using hpw
   have hterminal' : k = m →
       euclideanNorm (finiteAffineBestFitSlope a m m (le_refl m) b - b) ≤

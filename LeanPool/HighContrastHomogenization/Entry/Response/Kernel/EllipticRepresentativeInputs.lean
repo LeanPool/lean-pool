@@ -40,7 +40,8 @@ section
 would have to be given one, in order to reach
 `MemLp flux 2 (normalizedCubeMeasure Q)` for the pulled-back flux -- the `hflux` slot of the
 generic CG product bridge
-`Book.Ch05.Section53.JUpperBoundWeakNorms.abs_cubeAverage_vecDot_centered_scalar_cutoff_le_scaledWeakNormProduct`.
+`abs_cubeAverage_vecDot_centered_scalar_cutoff_le_scaledWeakNormProduct` in namespace
+`Book.Ch05.Section53.JUpperBoundWeakNorms`.
 
 **It does not have to be given one.**  For the two coefficients the cutoff bound actually
 quantifies over,
@@ -315,7 +316,8 @@ theorem integrableOn_optimizerField_respCoeffMinus_box (q : Mat d) (hq : IsUnit 
     Geometry.volume_adaptedCellAtCenter_ne_top q (t - (n : ℤ)) w
   have : IsFiniteMeasure (volumeMeasureOn (adaptedCellAtCenter q (t - (n : ℤ)) w)) := by
     simpa [volumeMeasureOn] using
-      (isOpenBoundedConvexDomain_adaptedCellAtCenter q hq (t - (n : ℤ)) w).isFiniteMeasure_restrict_volume
+      (isOpenBoundedConvexDomain_adaptedCellAtCenter q hq (t - (n : ℤ))
+        w).isFiniteMeasure_restrict_volume
   have hVmeas : MeasurableSet (adaptedCellAtCenter q (t - (n : ℤ)) w) :=
     (isOpen_adaptedCellAtCenter_of_isUnit hq (t - (n : ℤ)) w).measurableSet
   have hEllV : IsEllipticFieldOn lam Lam (adaptedCellAtCenter q (t - (n : ℤ)) w) f :=
@@ -377,7 +379,8 @@ theorem integrableOn_optimizerField_respCoeffPlus_box (q : Mat d) (hq : IsUnit q
     Geometry.volume_adaptedCellAtCenter_ne_top q (t - (n : ℤ)) w
   have : IsFiniteMeasure (volumeMeasureOn (adaptedCellAtCenter q (t - (n : ℤ)) w)) := by
     simpa [volumeMeasureOn] using
-      (isOpenBoundedConvexDomain_adaptedCellAtCenter q hq (t - (n : ℤ)) w).isFiniteMeasure_restrict_volume
+      (isOpenBoundedConvexDomain_adaptedCellAtCenter q hq (t - (n : ℤ))
+        w).isFiniteMeasure_restrict_volume
   have hVmeas : MeasurableSet (adaptedCellAtCenter q (t - (n : ℤ)) w) :=
     (isOpen_adaptedCellAtCenter_of_isUnit hq (t - (n : ℤ)) w).measurableSet
   have hEllV : IsEllipticFieldOn lam Lam (adaptedCellAtCenter q (t - (n : ℤ)) w) f :=

@@ -52,7 +52,8 @@ Translate origin-cube elliptic recovery data for the shifted field
 `translateCoeffField z a` into existence of the coarse block matrix on the
 translated open cube.
 -/
-theorem exists_coarseBlockMatrix_translateSet_openCubeSet_originCube_of_hasOpenCubeEllipticRecoveryData
+theorem
+  exists_coarseBlockMatrix_translateSet_openCubeSet_originCube_of_hasOpenCubeEllipticRecoveryData
     {d : ℕ} {n : ℤ} (z : Vec d)
     (R : PotentialSolenoidalL2RecoveryData (openCubeSet (originCube d n)))
     {lam Lam : ℝ} {a : CoeffField d}
@@ -149,7 +150,7 @@ Canonical coarse block matrix witness on an arbitrary triadic open cube,
 packaged from translated origin-cube recovery data.
 -/
 theorem
-    isCoarseBlockMatrix_coarseBlockMatrix_openCubeSet_of_triadicCube_of_hasOpenCubeEllipticRecoveryData
+    isCoarseBlockMatrix_of_triadicCube_openRecoveryData
     {d : ℕ} (Q : TriadicCube d)
     (R : PotentialSolenoidalL2RecoveryData (openCubeSet (originCube d Q.scale)))
     {lam Lam : ℝ} {a : CoeffField d}
@@ -167,7 +168,7 @@ Quadratic formula for `Mu` on an arbitrary triadic open cube, packaged from
 translated origin-cube recovery data.
 -/
 theorem
-    Mu_eq_half_blockVecDot_coarseBlockMatrix_openCubeSet_of_triadicCube_of_hasOpenCubeEllipticRecoveryData
+    Mu_eq_half_blockVecDot_coarseMatrix_cube_of_triadicCube
     {d : ℕ} (Q : TriadicCube d)
     (R : PotentialSolenoidalL2RecoveryData (openCubeSet (originCube d Q.scale)))
     {lam Lam : ℝ} {a : CoeffField d}
@@ -240,7 +241,7 @@ Quadratic formula for `Mu` on an arbitrary triadic half-open cube, transported
 from translated origin-cube recovery data.
 -/
 theorem
-    Mu_eq_half_blockVecDot_coarseBlockMatrix_cubeSet_of_triadicCube_of_hasOpenCubeEllipticRecoveryData
+    Mu_eq_half_blockVecPairing_coarseMatrix_of_triadicRecovery
     {d : ℕ} [NeZero d] (Q : TriadicCube d)
     (R : PotentialSolenoidalL2RecoveryData (openCubeSet (originCube d Q.scale)))
     {lam Lam : ℝ} {a : CoeffField d}

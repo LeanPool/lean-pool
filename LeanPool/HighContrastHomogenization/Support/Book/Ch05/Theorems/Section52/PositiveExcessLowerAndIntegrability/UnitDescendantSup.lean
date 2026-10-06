@@ -359,6 +359,198 @@ theorem lower_unitDescendantSup_nonneg
       (Finset.le_sup'
         (f := fun U => (Ch04.lambdaSqCoeffField U s (.finite 1) a)⁻¹) hU0)
 
+private theorem lowerInverseFactorFiniteTailPointwiseBound
+    {d : ℕ} [NeZero d] {P : Ch04.RestrictionCoeffLaw d}
+    (hP : Ch04.RestrictionLawCarrier P) (hStruct : Ch04.RestrictionStructuralLaw P)
+    (hP4 : QuantitativeCoarseGrainedEllipticity P) (m : ℕ) :
+    let s : ℝ := hP4.sLower
+    let D : Finset (TriadicCube d) := descendantsAtScale (originCube d (m : ℤ)) 0
+    let V : ℝ := section52SmallTailWeight s m
+    let scalarization := Ch04.Internal.annealedScalarizationTheory_of_structuralLaw hP hStruct
+    let base : ℝ := (scalarization.barSigmaStar 0)⁻¹
+    let cSmall : ℝ :=
+      Real.rpow (3 : ℝ) (-s * (m : ℝ)) ^ 2 * (D.card : ℝ) / V
+    let small : RegCoeffField d → ℝ :=
+      fun a => cSmall *
+        ∑ U ∈ D, (Ch04.lambdaSqCoeffField U s (.finite 1) a)⁻¹
+    let large : ℤ → RegCoeffField d → ℝ := fun n a =>
+      if hn : n ∈ section52LargeScaleSet m then
+        section52LargeScaleWeight s m n *
+          (let parents := descendantsAtScale (originCube d (m : ℤ)) n
+           let hparents : parents.Nonempty :=
+            descendantsAtScale_nonempty (originCube d (m : ℤ))
+              (section52LargeScaleSet_mem_le_m hn)
+           parents.sup' hparents
+            (fun Q =>
+              max
+                (Ch02.matrixNorm (coarseBlockMatrix (cubeSet Q) a.toFun).lowerRight -
+                  Ch02.matrixNorm (base • (1 : Mat d)))
+                0))
+      else 0
+    let I : Finset (Option ℤ) := insert none ((section52LargeScaleSet m).image some)
+    let G : Option ℤ → RegCoeffField d → ℝ := fun o a =>
+      match o with
+      | none => small a + base
+      | some n => large n a
+    let X : RegCoeffField d → ℝ :=
+      fun a => (Ch04.lambdaSqCoeffField (originCube d (m : ℤ)) s (.finite 1) a)⁻¹
+    0 ≤ base → ∀ a, max (X a - 0) 0 ≤ ∑ o ∈ I, G o a := by
+  classical
+  let s : ℝ := hP4.sLower
+  let D : Finset (TriadicCube d) := descendantsAtScale (originCube d (m : ℤ)) 0
+  let V : ℝ := section52SmallTailWeight s m
+  let scalarization := Ch04.Internal.annealedScalarizationTheory_of_structuralLaw hP hStruct
+  let base : ℝ := (scalarization.barSigmaStar 0)⁻¹
+  let cSmall : ℝ :=
+    Real.rpow (3 : ℝ) (-s * (m : ℝ)) ^ 2 * (D.card : ℝ) / V
+  let small : RegCoeffField d → ℝ :=
+    fun a => cSmall *
+      ∑ U ∈ D, (Ch04.lambdaSqCoeffField U s (.finite 1) a)⁻¹
+  let large : ℤ → RegCoeffField d → ℝ := fun n a =>
+    if hn : n ∈ section52LargeScaleSet m then
+      section52LargeScaleWeight s m n *
+        (let parents := descendantsAtScale (originCube d (m : ℤ)) n
+         let hparents : parents.Nonempty :=
+          descendantsAtScale_nonempty (originCube d (m : ℤ))
+            (section52LargeScaleSet_mem_le_m hn)
+         parents.sup' hparents
+          (fun Q =>
+            max
+              (Ch02.matrixNorm (coarseBlockMatrix (cubeSet Q) a.toFun).lowerRight -
+                Ch02.matrixNorm (base • (1 : Mat d)))
+              0))
+    else 0
+  let I : Finset (Option ℤ) := insert none ((section52LargeScaleSet m).image some)
+  let G : Option ℤ → RegCoeffField d → ℝ := fun o a =>
+    match o with
+    | none => small a + base
+    | some n => large n a
+  let X : RegCoeffField d → ℝ :=
+    fun a => (Ch04.lambdaSqCoeffField (originCube d (m : ℤ)) s (.finite 1) a)⁻¹
+  change 0 ≤ base → ∀ a, max (X a - 0) 0 ≤ ∑ o ∈ I, G o a
+  intro hbase_nonneg a
+  have hs : 0 < s := by
+    simpa [s] using hP4.sLower_pos
+  have hsplit :=
+    lambdaSqCoeffField_originCube_finite_one_inv_le_lowerSmallSqrtTail_sq_div_add_largeScale_sum
+      (d := d) m hs a
+  have hsmall :=
+    lowerSmallTailTerm_le_sameExponent_unitDescendantSum
+      (d := d) m hs a
+  have hlarge :=
+    lowerLargeScaleRaw_sum_le_base_add_positiveExcess_sum
+      (d := d) m hs hbase_nonneg a
+  have hX_nonneg : 0 ≤ X a :=
+    inv_nonneg.mpr
+      (Ch04.lambdaSqCoeffField_finite_nonneg (originCube d (m : ℤ)) a hs
+        (by norm_num : (1 : ℝ) ≤ 1))
+  calc
+    max (X a - 0) 0 = X a := by simp [X, hX_nonneg]
+    _ ≤
+        lowerSmallSqrtTailCoeffField (d := d) m s a ^ 2 /
+            section52SmallTailWeight s m +
+          (∑ n ∈ section52LargeScaleSet m,
+            section52LargeScaleWeight s m n *
+              Ch04.maxDescendantSigmaStarInvMatrixNormCoeffFieldAtScale
+                (originCube d (m : ℤ)) n a) := by
+          simpa [X, s] using hsplit
+    _ ≤ small a +
+          (∑ n ∈ section52LargeScaleSet m,
+            section52LargeScaleWeight s m n *
+              Ch04.maxDescendantSigmaStarInvMatrixNormCoeffFieldAtScale
+                (originCube d (m : ℤ)) n a) := by
+          have hsmall_le :
+              lowerSmallSqrtTailCoeffField (d := d) m s a ^ 2 /
+                  section52SmallTailWeight s m ≤ small a := by
+            simpa [small, cSmall, D, V, s] using hsmall
+          nlinarith
+    _ ≤ small a +
+          (base + ∑ n ∈ section52LargeScaleSet m, large n a) := by
+          have hlarge_sum :
+              (∑ n ∈ section52LargeScaleSet m,
+                section52LargeScaleWeight s m n *
+                  Ch04.maxDescendantSigmaStarInvMatrixNormCoeffFieldAtScale
+                    (originCube d (m : ℤ)) n a) ≤
+                base + ∑ n ∈ section52LargeScaleSet m, large n a := by
+            have hlarge_attach :
+                (∑ n ∈ section52LargeScaleSet m,
+                  section52LargeScaleWeight s m n *
+                    Ch04.maxDescendantSigmaStarInvMatrixNormCoeffFieldAtScale
+                      (originCube d (m : ℤ)) n a) ≤
+                  base +
+                    (section52LargeScaleSet m).attach.sum
+                      (fun n =>
+                        section52LargeScaleWeight s m n *
+                          (descendantsAtScale (originCube d (m : ℤ)) n).sup'
+                            (descendantsAtScale_nonempty (originCube d (m : ℤ))
+                              (section52LargeScaleSet_mem_le_m n.2))
+                            (fun Q =>
+                              max
+                                (Ch02.matrixNorm
+                                    (coarseBlockMatrix (cubeSet Q) a.toFun).lowerRight -
+                                  Ch02.matrixNorm (base • (1 : Mat d)))
+                                0)) := by
+              simpa [s, scalarization, base] using hlarge
+            have hattach :
+                (section52LargeScaleSet m).attach.sum
+                      (fun n =>
+                        section52LargeScaleWeight s m n *
+                          (descendantsAtScale (originCube d (m : ℤ)) n).sup'
+                            (descendantsAtScale_nonempty (originCube d (m : ℤ))
+                              (section52LargeScaleSet_mem_le_m n.2))
+                            (fun Q =>
+                              max
+                                (Ch02.matrixNorm
+                                    (coarseBlockMatrix (cubeSet Q) a.toFun).lowerRight -
+                                  Ch02.matrixNorm (base • (1 : Mat d)))
+                                0)) =
+                  ∑ n ∈ section52LargeScaleSet m, large n a := by
+              calc
+                (section52LargeScaleSet m).attach.sum
+                    (fun n =>
+                      section52LargeScaleWeight s m n *
+                        (descendantsAtScale (originCube d (m : ℤ)) n).sup'
+                          (descendantsAtScale_nonempty (originCube d (m : ℤ))
+                            (section52LargeScaleSet_mem_le_m n.2))
+                          (fun Q =>
+                            max
+                              (Ch02.matrixNorm
+                                  (coarseBlockMatrix (cubeSet Q) a.toFun).lowerRight -
+                                Ch02.matrixNorm (base • (1 : Mat d)))
+                              0)) =
+                  (section52LargeScaleSet m).attach.sum
+                    (fun n => large n a) := by
+                      refine Finset.sum_congr rfl ?_
+                      intro n _hn
+                      simp [large, n.2]
+                _ = ∑ n ∈ section52LargeScaleSet m, large n a :=
+                  Finset.sum_attach (section52LargeScaleSet m)
+                    (fun n => large n a)
+            simpa [hattach] using hlarge_attach
+          nlinarith
+    _ = (small a + base) + ∑ n ∈ section52LargeScaleSet m, large n a := by
+          ring
+    _ = ∑ o ∈ I, G o a := by
+          simp [I, G]
+
+private theorem lowerTailPowerIntegrableAfterAddingConstant
+    {d : ℕ} {P : Ch04.RestrictionCoeffLaw d} [IsProbabilityMeasure P]
+    {small : RegCoeffField d → ℝ} {base : ℝ} {ξ : ℕ}
+    (hξ_one : 1 ≤ ξ) (hsmall_aemeas : AEMeasurable small P)
+    (hsmall_int : Integrable (fun a : RegCoeffField d => |small a| ^ ξ) P) :
+    Integrable (fun a : RegCoeffField d => |small a + base| ^ ξ) P := by
+  have hξ_ne : ξ ≠ 0 := by omega
+  have hsmall_mem : MemLp small (ξ : ENNReal) P := by
+    rw [← MeasureTheory.integrable_norm_rpow_iff
+      hsmall_aemeas.aestronglyMeasurable
+      (by exact_mod_cast hξ_ne) (by simp)]
+    simpa [Real.norm_eq_abs] using hsmall_int
+  have hbase_mem : MemLp (fun _ : RegCoeffField d => base) (ξ : ENNReal) P :=
+    memLp_const base
+  have hadd := hsmall_mem.add hbase_mem
+  have hint := hadd.integrable_norm_pow hξ_ne
+  simpa [Real.norm_eq_abs] using hint
+
 theorem lowerFactorPowerIntegrableAtScale_from_P4
     {d : ℕ} [NeZero d] {P : Ch04.RestrictionCoeffLaw d}
     (hP : Ch04.RestrictionLawCarrier P) (hStruct : Ch04.RestrictionStructuralLaw P)
@@ -411,7 +603,8 @@ theorem lowerFactorPowerIntegrableAtScale_from_P4
       hP4.sUpper_pos hP4.sLower_pos hξ_one
       hP4.upper_moment_integrable hP4.lower_inv_moment_integrable
   have hbase_nonneg : 0 ≤ base := by
-    let primitive0 := Ch04.Internal.annealedPrimitiveScalarizationData_of_structuralLaw hP hStruct (0 : ℤ)
+    let primitive0 := Ch04.Internal.annealedPrimitiveScalarizationData_of_structuralLaw hP
+      hStruct (0 : ℤ)
     have hBarSigmaStar0_inv_eq :
         base = Ch04.Internal.barSigmaStarInvAtScaleOfPrimitive primitive0 := by
       have hstar :
@@ -425,7 +618,7 @@ theorem lowerFactorPowerIntegrableAtScale_from_P4
     have hStar0 :
         0 < Ch04.Internal.barSigmaStarInvAtScaleOfPrimitive primitive0 := by
       simpa [primitive0] using
-        Ch04.RestrictionLawCarrier.Internal.barSigmaStarInv_pos_of_integrable_coarseFullBlockMatrixAtCube hP
+        Ch04.RestrictionLawCarrier.Internal.barSigmaStarInverse_pos_of_integrableBlockMatrix hP
           (Ch04.Internal.annealedPrimitiveScalarizationData_of_structuralLaw hP hStruct (0 : ℤ))
           hBlock0
     simpa [hBarSigmaStar0_inv_eq] using hStar0.le
@@ -511,17 +704,7 @@ theorem lowerFactorPowerIntegrableAtScale_from_P4
     filter_upwards with a
     simp [small, abs_mul, mul_pow]
   have hnone_int : Integrable (fun a : RegCoeffField d => |small a + base| ^ ξ) P := by
-    have hξ_ne : ξ ≠ 0 := by omega
-    have hsmall_mem : MemLp small (ξ : ENNReal) P := by
-      rw [← MeasureTheory.integrable_norm_rpow_iff
-        hsmall_aemeas.aestronglyMeasurable
-        (by exact_mod_cast hξ_ne) (by simp)]
-      simpa [Real.norm_eq_abs] using hsmall_int
-    have hbase_mem : MemLp (fun _ : RegCoeffField d => base) (ξ : ENNReal) P :=
-      memLp_const base
-    have hadd := hsmall_mem.add hbase_mem
-    have hint := hadd.integrable_norm_pow hξ_ne
-    simpa [Real.norm_eq_abs] using hint
+    exact lowerTailPowerIntegrableAfterAddingConstant hξ_one hsmall_aemeas hsmall_int
   have hG_int : ∀ o ∈ I, Integrable (fun a : RegCoeffField d => |G o a| ^ ξ) P := by
     intro o ho
     cases o with
@@ -545,107 +728,7 @@ theorem lowerFactorPowerIntegrableAtScale_from_P4
   have hPoint :
       ∀ᵐ a ∂P, max (X a - 0) 0 ≤ ∑ o ∈ I, G o a := by
     filter_upwards with a
-    have hsplit :=
-      lambdaSqCoeffField_originCube_finite_one_inv_le_lowerSmallSqrtTail_sq_div_add_largeScale_sum
-        (d := d) m hs a
-    have hsmall :=
-      lowerSmallTailTerm_le_sameExponent_unitDescendantSum
-        (d := d) m hs a
-    have hlarge :=
-      lowerLargeScaleRaw_sum_le_base_add_positiveExcess_sum
-        (d := d) m hs hbase_nonneg a
-    have hX_nonneg : 0 ≤ X a :=
-      inv_nonneg.mpr
-        (Ch04.lambdaSqCoeffField_finite_nonneg (originCube d (m : ℤ)) a hs
-          (by norm_num : (1 : ℝ) ≤ 1))
-    calc
-      max (X a - 0) 0 = X a := by simp [X, hX_nonneg]
-      _ ≤
-          lowerSmallSqrtTailCoeffField (d := d) m s a ^ 2 /
-              section52SmallTailWeight s m +
-            (∑ n ∈ section52LargeScaleSet m,
-              section52LargeScaleWeight s m n *
-                Ch04.maxDescendantSigmaStarInvMatrixNormCoeffFieldAtScale
-                  (originCube d (m : ℤ)) n a) := by
-            simpa [X, s] using hsplit
-      _ ≤ small a +
-            (∑ n ∈ section52LargeScaleSet m,
-              section52LargeScaleWeight s m n *
-                Ch04.maxDescendantSigmaStarInvMatrixNormCoeffFieldAtScale
-                  (originCube d (m : ℤ)) n a) := by
-            have hsmall_le :
-                lowerSmallSqrtTailCoeffField (d := d) m s a ^ 2 /
-                    section52SmallTailWeight s m ≤ small a := by
-              simpa [small, cSmall, D, V, s] using hsmall
-            nlinarith
-      _ ≤ small a +
-            (base + ∑ n ∈ section52LargeScaleSet m, large n a) := by
-            have hlarge_sum :
-                (∑ n ∈ section52LargeScaleSet m,
-                  section52LargeScaleWeight s m n *
-                    Ch04.maxDescendantSigmaStarInvMatrixNormCoeffFieldAtScale
-                      (originCube d (m : ℤ)) n a) ≤
-                  base + ∑ n ∈ section52LargeScaleSet m, large n a := by
-              have hlarge_attach :
-                  (∑ n ∈ section52LargeScaleSet m,
-                    section52LargeScaleWeight s m n *
-                      Ch04.maxDescendantSigmaStarInvMatrixNormCoeffFieldAtScale
-                        (originCube d (m : ℤ)) n a) ≤
-                    base +
-                      (section52LargeScaleSet m).attach.sum
-                        (fun n =>
-                          section52LargeScaleWeight s m n *
-                            (descendantsAtScale (originCube d (m : ℤ)) n).sup'
-                              (descendantsAtScale_nonempty (originCube d (m : ℤ))
-                                (section52LargeScaleSet_mem_le_m n.2))
-                              (fun Q =>
-                                max
-                                  (Ch02.matrixNorm
-                                      (coarseBlockMatrix (cubeSet Q) a.toFun).lowerRight -
-                                    Ch02.matrixNorm (base • (1 : Mat d)))
-                                  0)) := by
-                simpa [s, scalarization, base] using hlarge
-              have hattach :
-                  (section52LargeScaleSet m).attach.sum
-                        (fun n =>
-                          section52LargeScaleWeight s m n *
-                            (descendantsAtScale (originCube d (m : ℤ)) n).sup'
-                              (descendantsAtScale_nonempty (originCube d (m : ℤ))
-                                (section52LargeScaleSet_mem_le_m n.2))
-                              (fun Q =>
-                                max
-                                  (Ch02.matrixNorm
-                                      (coarseBlockMatrix (cubeSet Q) a.toFun).lowerRight -
-                                    Ch02.matrixNorm (base • (1 : Mat d)))
-                                  0)) =
-                    ∑ n ∈ section52LargeScaleSet m, large n a := by
-                calc
-                  (section52LargeScaleSet m).attach.sum
-                      (fun n =>
-                        section52LargeScaleWeight s m n *
-                          (descendantsAtScale (originCube d (m : ℤ)) n).sup'
-                            (descendantsAtScale_nonempty (originCube d (m : ℤ))
-                              (section52LargeScaleSet_mem_le_m n.2))
-                            (fun Q =>
-                              max
-                                (Ch02.matrixNorm
-                                    (coarseBlockMatrix (cubeSet Q) a.toFun).lowerRight -
-                                  Ch02.matrixNorm (base • (1 : Mat d)))
-                                0)) =
-                    (section52LargeScaleSet m).attach.sum
-                      (fun n => large n a) := by
-                        refine Finset.sum_congr rfl ?_
-                        intro n _hn
-                        simp [large, n.2]
-                  _ = ∑ n ∈ section52LargeScaleSet m, large n a :=
-                    Finset.sum_attach (section52LargeScaleSet m)
-                      (fun n => large n a)
-              simpa [hattach] using hlarge_attach
-            nlinarith
-      _ = (small a + base) + ∑ n ∈ section52LargeScaleSet m, large n a := by
-            ring
-      _ = ∑ o ∈ I, G o a := by
-            simp [I, G]
+    exact lowerInverseFactorFiniteTailPointwiseBound hP hStruct hP4 m hbase_nonneg a
   have hAbsInt :
       Integrable (fun a : RegCoeffField d => |max (X a - 0) 0| ^ ξ) P :=
     section52_integrable_abs_positiveExcess_pow_of_ae_finset_sum_bound

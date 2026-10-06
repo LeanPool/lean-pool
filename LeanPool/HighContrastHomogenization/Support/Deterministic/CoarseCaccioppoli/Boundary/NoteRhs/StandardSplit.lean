@@ -24,6 +24,8 @@ noncomputable section
 
 open scoped BigOperators
 
+/-- The explicit split boundary constant `σ(max(A / K, 0) + 1)^(1 / p)`, with `A`, `K`, and `p`
+given by the boundary height and ellipticity quantities; zero when `LambdaSq` vanishes. -/
 @[expose]
 noncomputable def coarseCaccioppoliBoundaryStandardExplicitNoteConstantSplit {d : ℕ}
     (Q : TriadicCube d) (a : CoeffField d)
@@ -555,7 +557,7 @@ theorem coarseCaccioppoliBoundaryStandardExplicitNoteConstantSplit_le_explicitBo
       hs ht hst hB_nonneg hdiv htarget
 
 theorem
-    coarseCaccioppoliBoundaryStandardExplicitHeightCoeffSplit_le_noteCoeff_standardExplicitNoteConstantSplit
+    boundaryCaccioppoliHeightCoefficientSplit_le_noteConstantSplit
     {d : ℕ} (Q : TriadicCube d) (a : CoeffField d)
     (s t Calpha Ccross : ℝ)
     (hs : 0 < s) (ht : 0 < t) (hst : s + t < 1)
@@ -654,7 +656,7 @@ Standard split coefficient-level note-RHS comparison after the non-degenerate
 multiscale factor `ThetaRatio` has been identified as positive.
 -/
 theorem
-    coarseCaccioppoliBoundaryStandardExplicitHeightBoundSplit_le_noteRhs_standardExplicitNoteConstantSplit
+    boundaryCaccioppoliHeightBound_le_rhsConstantSplit
     {d : ℕ} (Q : TriadicCube d) (a : CoeffField d)
     (s t Calpha Ccross uL2Sq : ℝ)
     (hs : 0 < s) (ht : 0 < t) (hst : s + t < 1)
@@ -669,7 +671,7 @@ theorem
     coarseCaccioppoliBoundaryStandardExplicitHeightBoundSplit_eq_coeff_mul_uL2Sq,
     coarseCaccioppoliBoundaryNoteRhs_eq_coeff_mul_uL2Sq]
   exact mul_le_mul_of_nonneg_right
-    (coarseCaccioppoliBoundaryStandardExplicitHeightCoeffSplit_le_noteCoeff_standardExplicitNoteConstantSplit
+    (boundaryCaccioppoliHeightCoefficientSplit_le_noteConstantSplit
       Q a s t Calpha Ccross hs ht hst hTheta)
     hu
 

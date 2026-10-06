@@ -252,7 +252,7 @@ def coarseFluxResponseConstant (d : ℕ) [NeZero d] : ℝ :=
   (d : ℝ) ^ 2 *
     max 1
       (((d : ℝ) * Real.rpow (3 : ℝ) ((d : ℝ) + 1)) *
-        (2 * ZeroTraceDirichletCorrectorData.zeroTraceDirichletCorrectedWeakFluxApexConstant d 1))
+        (2 * ZeroTraceDirichletCorrectorData.zeroTraceFluxApexConstant d 1))
 
 /-- The physical flux-defect row is bounded by the coarse flux-response row of
 the cell-based forced family. -/

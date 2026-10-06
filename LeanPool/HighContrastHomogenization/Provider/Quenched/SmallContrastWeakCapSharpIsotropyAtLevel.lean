@@ -438,7 +438,7 @@ theorem eLpNorm_profileAdjointWeakRoot_reference_le_sharp_of_block_at_level [NeZ
       (fun a => (a.subSkew h0 hh0).transpose) p r
       (Response.profileAdjointCenter P hq t (fun a => a.subSkew h0 hh0) p r)
       fun _k hk _w hw alpha =>
-        (Selection.aestronglyMeasurable_blockCellAverage_diagonalWeakAdjointState_subSkew_alignedIndex
+        (Selection.aestronglyMeasurable_alignedCellAverage_diagonalAdjointState
           hq hk P h0 hh0 p r hw alpha).aemeasurable).const_mul _).aestronglyMeasurable
   -- the sample-level majorization
   have hmain := Response.eLpNorm_profileAdjointWeakRoot_sample_at_level_le hq t Hw hm0

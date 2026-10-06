@@ -37,6 +37,20 @@ absorbed by the weighted exponential kernel in the final summation.
 
 noncomputable section
 
+private theorem highTop_decay_ratio_greater_than_one
+    {a b t αbad : ℝ} (ha : 0 < a) (hb_pos : 0 < b)
+    (hαt : αbad < t) (hαb : αbad < b) (hαharm : αbad * (1 + b / a) < b) :
+    1 < (3 : ℝ) ^
+      (min (t - αbad) (min (b - αbad)
+        (min ((t - αbad) * (1 + b / a)) (b - αbad * (1 + b / a))))) := by
+  have hgap : 0 < t - αbad := sub_pos.mpr hαt
+  have hbα : 0 < b - αbad := sub_pos.mpr hαb
+  have hfactor : 0 < 1 + b / a := by positivity
+  have hthird : 0 < (t - αbad) * (1 + b / a) := mul_pos hgap hfactor
+  have hfourth : 0 < b - αbad * (1 + b / a) := sub_pos.mpr hαharm
+  exact Real.one_lt_rpow (by norm_num : (1 : ℝ) < 3)
+    (lt_min hgap (lt_min hbα (lt_min hthird hfourth)))
+
 private theorem rpow_three_mul_rpow_pow_nat_eq
     {x y : ℝ} {r : ℕ} :
     (3 : ℝ) ^ x * ((3 : ℝ) ^ y) ^ r =
@@ -56,10 +70,205 @@ private theorem exp_neg_rpow_le_exp_neg_rpow_of_le
     Real.rpow_le_rpow hx hxy hτ.le
   exact Real.exp_le_exp.mpr (by linarith)
 
+private theorem highTop_tailParameter_lower_bound
+    {d : ℕ} [NeZero d] {K Cfluct θ a t αbad L : ℝ} {q m n ℓ r : ℕ}
+    (ha : 0 < a) (hK_pos : 0 < K) (hCfluct : 0 < Cfluct) (hθ : 0 < θ)
+    (hαt : αbad < t) (hαb : αbad < (d : ℝ) / 2)
+    (hαharm : αbad * (1 + ((d : ℝ) / 2) / a) < (d : ℝ) / 2)
+    (hL_nonneg : 0 ≤ L) (hℓn : ℓ < n) (hqn : q ≤ n) (hnm_le : n ≤ m)
+    (hmr : ((m - q : ℕ) : ℝ) = (r : ℝ))
+    (hceil : (ℓ : ℝ) ≤ L +
+      max ((αbad * ((m - q : ℕ) : ℝ) - t * ((m - n : ℕ) : ℝ)) / a) 0 + 1) :
+    let b : ℝ := (d : ℝ) / 2
+    let c : ℝ := min (t - αbad) (min (b - αbad)
+      (min ((t - αbad) * (1 + b / a)) (b - αbad * (1 + b / a))))
+    ((3 : ℝ) ^ (b * (q : ℝ) - b * (L + 1)) /
+      (2 * K * Cfluct * θ ^ (2 : ℕ))) * ((3 : ℝ) ^ c) ^ r ≤
+      (3 : ℝ) ^ (-(αbad * ((m - q : ℕ) : ℝ) - t * ((m - n : ℕ) : ℝ))) /
+        (2 * K * (Cfluct *
+          (3 : ℝ) ^ ((-(d : ℝ) / 2) * ((n - ℓ : ℕ) : ℝ)) * θ ^ (2 : ℕ))) := by
+  let b : ℝ := (d : ℝ) / 2
+  let c : ℝ := min (t - αbad) (min (b - αbad)
+    (min ((t - αbad) * (1 + b / a)) (b - αbad * (1 + b / a))))
+  let x : ℝ := αbad * ((m - q : ℕ) : ℝ) - t * ((m - n : ℕ) : ℝ)
+  let A : ℝ := (3 : ℝ) ^ (b * (q : ℝ) - b * (L + 1)) /
+    (2 * K * Cfluct * θ ^ (2 : ℕ))
+  let ρ : ℝ := (3 : ℝ) ^ c
+  let scale : ℝ := Cfluct *
+    (3 : ℝ) ^ ((-(d : ℝ) / 2) * ((n - ℓ : ℕ) : ℝ)) * θ ^ (2 : ℕ)
+  let T : ℝ := (3 : ℝ) ^ (-x)
+  let lam : ℝ := T / (2 * K * scale)
+  have hb_pos : 0 < b := by
+    dsimp [b]
+    have hd_pos : 0 < (d : ℝ) := by
+      exact_mod_cast Nat.pos_of_ne_zero (NeZero.ne d)
+    positivity
+  have hexp_comp :
+      b * ((n - ℓ : ℕ) : ℝ) - x ≥
+        b * (q : ℝ) + c * ((m - q : ℕ) : ℝ) - b * (L + 1) := by
+    have hraw :=
+      highNatScaleExponent_lower_bound_of_ceil_q_le_n_sharp
+        (a := a) (b := b) (t := t) (α := αbad) (L := L)
+        (q := q) (m := m) (n := n) (ℓ := ℓ)
+        ha hb_pos hαt hαb hαharm hL_nonneg
+        (le_of_lt hℓn) hqn hnm_le
+        (by simpa [x] using hceil)
+    simpa [x, c] using hraw
+  have hscale_pos : 0 < scale := by
+    dsimp [scale]
+    exact mul_pos
+      (mul_pos hCfluct
+        (Real.rpow_pos_of_pos (by norm_num : (0 : ℝ) < 3) _))
+      (pow_pos hθ 2)
+  have hden_pos : 0 < 2 * K * Cfluct * θ ^ (2 : ℕ) := by
+    exact mul_pos
+      (mul_pos
+        (mul_pos (by norm_num : (0 : ℝ) < 2) hK_pos)
+        hCfluct)
+      (pow_pos hθ 2)
+  have hlam_eq :
+      lam =
+        (3 : ℝ) ^ (b * ((n - ℓ : ℕ) : ℝ) - x) /
+          (2 * K * Cfluct * θ ^ (2 : ℕ)) := by
+    let decay : ℝ :=
+      (3 : ℝ) ^ ((-(d : ℝ) / 2) * ((n - ℓ : ℕ) : ℝ))
+    have hdecay_pos : 0 < decay := by
+      dsimp [decay]
+      exact Real.rpow_pos_of_pos (by norm_num : (0 : ℝ) < 3) _
+    have hquot :
+        (3 : ℝ) ^ (-x) / decay =
+          (3 : ℝ) ^ (b * ((n - ℓ : ℕ) : ℝ) - x) := by
+      dsimp [decay, b]
+      rw [div_eq_mul_inv]
+      rw [← Real.rpow_neg (by norm_num : (0 : ℝ) ≤ 3)]
+      rw [← Real.rpow_add (by norm_num : (0 : ℝ) < 3)]
+      congr 1
+      ring_nf
+    dsimp [lam, T, scale]
+    change
+      (3 : ℝ) ^ (-x) /
+          (2 * K *
+            (Cfluct * decay * θ ^ (2 : ℕ))) =
+        (3 : ℝ) ^ (b * ((n - ℓ : ℕ) : ℝ) - x) /
+          (2 * K * Cfluct * θ ^ (2 : ℕ))
+    calc
+      (3 : ℝ) ^ (-x) /
+          (2 * K *
+            (Cfluct * decay * θ ^ (2 : ℕ)))
+          =
+        ((3 : ℝ) ^ (-x) / decay) /
+          (2 * K * Cfluct * θ ^ (2 : ℕ)) := by
+            field_simp [hK_pos.ne', hCfluct.ne',
+              hθ.ne', hdecay_pos.ne']
+      _ =
+        (3 : ℝ) ^ (b * ((n - ℓ : ℕ) : ℝ) - x) /
+          (2 * K * Cfluct * θ ^ (2 : ℕ)) := by
+            rw [hquot]
+  have hpow_base :
+      (3 : ℝ) ^ (b * (q : ℝ) + c * (r : ℝ) - b * (L + 1)) /
+          (2 * K * Cfluct * θ ^ (2 : ℕ))
+        =
+      A * ρ ^ r := by
+    dsimp [A, ρ]
+    have hrpow :=
+      rpow_three_mul_rpow_pow_nat_eq
+        (x := b * (q : ℝ) - b * (L + 1))
+        (y := c) (r := r)
+    calc
+      (3 : ℝ) ^ (b * (q : ℝ) + c * (r : ℝ) - b * (L + 1)) /
+          (2 * K * Cfluct * θ ^ (2 : ℕ))
+          =
+        ((3 : ℝ) ^ (b * (q : ℝ) - b * (L + 1)) *
+            ((3 : ℝ) ^ c) ^ r) /
+          (2 * K * Cfluct * θ ^ (2 : ℕ)) := by
+            rw [hrpow]
+            congr 1
+            ring_nf
+      _ =
+        ((3 : ℝ) ^ (b * (q : ℝ) - b * (L + 1)) /
+          (2 * K * Cfluct * θ ^ (2 : ℕ))) *
+            ((3 : ℝ) ^ c) ^ r := by
+            field_simp [hden_pos.ne']
+  have hlam_lower : A * ρ ^ r ≤ lam := by
+    rw [hlam_eq]
+    rw [← hpow_base]
+    have hpow_le :
+        (3 : ℝ) ^
+            (b * (q : ℝ) + c * (r : ℝ) - b * (L + 1)) ≤
+          (3 : ℝ) ^ (b * ((n - ℓ : ℕ) : ℝ) - x) := by
+      exact
+        Real.rpow_le_rpow_of_exponent_le
+          (by norm_num : (1 : ℝ) ≤ 3)
+          (by
+            have hcomp := hexp_comp
+            rw [hmr] at hcomp
+            linarith)
+    exact div_le_div_of_nonneg_right hpow_le hden_pos.le
+  exact hlam_lower
+
+private theorem one_le_tailParameter_of_geometric_lower_bound
+    {A ρ lam : ℝ} {r : ℕ} (hA : 1 ≤ A) (hρ : 1 ≤ ρ)
+    (hlower : A * ρ ^ r ≤ lam) : 1 ≤ lam := by
+  have hρpow : 1 ≤ ρ ^ r := one_le_pow₀ hρ
+  have hproduct : 1 ≤ A * ρ ^ r := by
+    simpa using mul_le_mul hA hρpow zero_le_one (zero_le_one.trans hA)
+  exact hproduct.trans hlower
+
+private theorem highTop_pair_measure_le_descendant_weight
+    {d : ℕ} [NeZero d] {Ω : Type*} [MeasurableSpace Ω]
+    {μ : Measure Ω} [IsProbabilityMeasure μ]
+    {Hshift : ℕ → ℕ → Ω → ℝ} {K a t αbad S A ρ τ lam : ℝ}
+    {N0 q m n r : ℕ} (hnm_le : n ≤ m) (hgap_le : m - n ≤ r)
+    (hS_nonneg : 0 ≤ S) (hA_one : 1 ≤ A) (hρ_gt : 1 < ρ) (hτ_pos : 0 < τ)
+    (hlam_lower : A * ρ ^ r ≤ lam)
+    (hbad : μ.real (badPairEvent Hshift t αbad q m n) ≤
+      S * (((descendantsAtScale (originCube d (((N0 + m : ℕ) : ℤ)))
+        (((N0 + n : ℕ) : ℤ))).card : ℝ) * Real.exp (-(lam ^ τ)))) :
+    μ.real (highTopPairEvent Hshift K a t αbad q m n) ≤
+      S * ((((3 ^ d : ℕ) : ℝ) ^ r) * Real.exp (-((A * ρ ^ r) ^ τ))) := by
+  let D : Finset (TriadicCube d) :=
+    descendantsAtScale (originCube d (((N0 + m : ℕ) : ℤ))) (((N0 + n : ℕ) : ℤ))
+  let w : ℝ := ((3 ^ d : ℕ) : ℝ)
+  have hmono :
+      μ.real (highTopPairEvent Hshift K a t αbad q m n) ≤
+        μ.real (badPairEvent Hshift t αbad q m n) := by
+    exact measureReal_mono (μ := μ) (by
+      intro ω hω
+      exact hω.2.2)
+  have hD_le_w : (D.card : ℝ) ≤ w ^ r := by
+    have hcard :
+        D.card = (3 ^ d) ^ (m - n) := by
+      simpa [D] using
+        descendantsAtScale_originCube_nat_shift_card
+          (d := d) (N := N0) (m := m) (n := n) hnm_le
+    have hpow_le_nat : (3 ^ d) ^ (m - n) ≤ (3 ^ d) ^ r :=
+      Nat.pow_le_pow_right
+        (by exact pow_pos (by norm_num : (0 : ℕ) < 3) d) hgap_le
+    dsimp [w]
+    rw [hcard]
+    exact_mod_cast hpow_le_nat
+  have hlam_nonneg : 0 ≤ lam := by
+    exact (by positivity : 0 ≤ A * ρ ^ r).trans hlam_lower
+  have hexp_le :
+      Real.exp (-(lam ^ τ)) ≤
+        Real.exp (-((A * ρ ^ r) ^ τ)) :=
+    exp_neg_rpow_le_exp_neg_rpow_of_le
+      (by positivity : 0 ≤ A * ρ ^ r) hlam_lower hτ_pos
+  have htail :
+      S * ((D.card : ℝ) * Real.exp (-(lam ^ τ))) ≤
+        S *
+          (w ^ r * Real.exp (-((A * ρ ^ r) ^ τ))) := by
+    have hDexp :
+        (D.card : ℝ) * Real.exp (-(lam ^ τ)) ≤
+          w ^ r * Real.exp (-((A * ρ ^ r) ^ τ)) :=
+      mul_le_mul hD_le_w hexp_le (by positivity) (by positivity)
+    exact mul_le_mul_of_nonneg_left hDexp hS_nonneg
+  exact hmono.trans (hbad.trans htail)
+
 /-- Sharp high-top bad-scale component estimate from a fixed high-pair
 tail bound.  This helper exposes the constants so that the top and bottom
 high branches can be assembled with the same intermediate-scale exponent. -/
-theorem measureReal_shiftedHighTopBadScaleEvent_quenchedProbeEnvelope_le_weighted_kernel_of_badPair_bound
+theorem shiftedHighTopBadScaleMeasure_le_weightedKernel_of_pairBound
     {d : ℕ} [NeZero d] {σ Cfluct Centry a : ℝ}
     (hσ_pos : 0 < σ)
     (params : QuantitativeCoarseGrainedEllipticityParams d)
@@ -182,23 +391,7 @@ theorem measureReal_shiftedHighTopBadScaleEvent_quenchedProbeEnvelope_le_weighte
       Real.log_nonneg (le_max_right (2 * K) 1)
     dsimp [L]
     positivity
-  have hc_pos : 0 < c := by
-    dsimp [c]
-    have hta : 0 < t - αbad := sub_pos.mpr hαt
-    have hba : 0 < b - αbad := sub_pos.mpr hαb
-    have hone_ba : 0 < 1 + b / a := by positivity
-    have hprod : 0 < (t - αbad) * (1 + b / a) :=
-      mul_pos hta hone_ba
-    have hharm : 0 < b - αbad * (1 + b / a) :=
-      sub_pos.mpr hαharm
-    positivity
-  have hρ_gt : 1 < ρ := by
-    dsimp [ρ]
-    calc
-      (1 : ℝ) = (3 : ℝ) ^ (0 : ℝ) := by simp
-      _ < (3 : ℝ) ^ c :=
-          Real.rpow_lt_rpow_of_exponent_lt
-            (by norm_num : (1 : ℝ) < 3) hc_pos
+  have hρ_gt : 1 < ρ := highTop_decay_ratio_greater_than_one ha hb_pos hαt hαb hαharm
   have hw_pos : 0 < w := by
     dsimp [w]
     exact_mod_cast pow_pos (by norm_num : (0 : ℕ) < 3) d
@@ -252,120 +445,13 @@ theorem measureReal_shiftedHighTopBadScaleEvent_quenchedProbeEnvelope_le_weighte
           selectedBadPairScale_cast_le_logOffset
             (K := K) (a := a) (t := t) (α := αbad)
             (q := q) (m := m) (n := n) ha
-      have hexp_comp :
-          b * ((n - ℓ : ℕ) : ℝ) - x ≥
-            b * (q : ℝ) + c * ((m - q : ℕ) : ℝ) - b * (L + 1) := by
-        have hraw :=
-          highNatScaleExponent_lower_bound_of_ceil_q_le_n_sharp
-            (a := a) (b := b) (t := t) (α := αbad) (L := L)
-            (q := q) (m := m) (n := n) (ℓ := ℓ)
-            ha hb_pos hαt hαb hαharm hL_nonneg
-            (le_of_lt hℓn) hqn hnm_le
-            (by simpa [x] using hceil)
-        simpa [x, c] using hraw
-      have hK_pos : 0 < K := by
-        simpa [K] using quenchedProbeEnvelopeConst_pos d
-      have hscale_pos : 0 < scale := by
-        dsimp [scale]
-        exact mul_pos
-          (mul_pos hCfluct
-            (Real.rpow_pos_of_pos (by norm_num : (0 : ℝ) < 3) _))
-          (pow_pos hΓ.thetaHat_pos 2)
-      have hden_pos : 0 < 2 * K * Cfluct * hΓ.thetaHat ^ (2 : ℕ) := by
-        exact mul_pos
-          (mul_pos
-            (mul_pos (by norm_num : (0 : ℝ) < 2) hK_pos)
-            hCfluct)
-          (pow_pos hΓ.thetaHat_pos 2)
-      have hlam_eq :
-          lam =
-            (3 : ℝ) ^ (b * ((n - ℓ : ℕ) : ℝ) - x) /
-              (2 * K * Cfluct * hΓ.thetaHat ^ (2 : ℕ)) := by
-        let decay : ℝ :=
-          (3 : ℝ) ^ ((-(d : ℝ) / 2) * ((n - ℓ : ℕ) : ℝ))
-        have hdecay_pos : 0 < decay := by
-          dsimp [decay]
-          exact Real.rpow_pos_of_pos (by norm_num : (0 : ℝ) < 3) _
-        have hquot :
-            (3 : ℝ) ^ (-x) / decay =
-              (3 : ℝ) ^ (b * ((n - ℓ : ℕ) : ℝ) - x) := by
-          dsimp [decay, b]
-          rw [div_eq_mul_inv]
-          rw [← Real.rpow_neg (by norm_num : (0 : ℝ) ≤ 3)]
-          rw [← Real.rpow_add (by norm_num : (0 : ℝ) < 3)]
-          congr 1
-          ring_nf
-        dsimp [lam, T, scale]
-        change
-          (3 : ℝ) ^ (-x) /
-              (2 * K *
-                (Cfluct * decay * hΓ.thetaHat ^ (2 : ℕ))) =
-            (3 : ℝ) ^ (b * ((n - ℓ : ℕ) : ℝ) - x) /
-              (2 * K * Cfluct * hΓ.thetaHat ^ (2 : ℕ))
-        calc
-          (3 : ℝ) ^ (-x) /
-              (2 * K *
-                (Cfluct * decay * hΓ.thetaHat ^ (2 : ℕ)))
-              =
-            ((3 : ℝ) ^ (-x) / decay) /
-              (2 * K * Cfluct * hΓ.thetaHat ^ (2 : ℕ)) := by
-                field_simp [hK_pos.ne', hCfluct.ne',
-                  hΓ.thetaHat_pos.ne', hdecay_pos.ne']
-          _ =
-            (3 : ℝ) ^ (b * ((n - ℓ : ℕ) : ℝ) - x) /
-              (2 * K * Cfluct * hΓ.thetaHat ^ (2 : ℕ)) := by
-                rw [hquot]
-      have hpow_base :
-          (3 : ℝ) ^ (b * (q : ℝ) + c * (r : ℝ) - b * (L + 1)) /
-              (2 * K * Cfluct * hΓ.thetaHat ^ (2 : ℕ))
-            =
-          A * ρ ^ r := by
-        dsimp [A, ρ]
-        have hrpow :=
-          rpow_three_mul_rpow_pow_nat_eq
-            (x := b * (q : ℝ) - b * (L + 1))
-            (y := c) (r := r)
-        calc
-          (3 : ℝ) ^ (b * (q : ℝ) + c * (r : ℝ) - b * (L + 1)) /
-              (2 * K * Cfluct * hΓ.thetaHat ^ (2 : ℕ))
-              =
-            ((3 : ℝ) ^ (b * (q : ℝ) - b * (L + 1)) *
-                ((3 : ℝ) ^ c) ^ r) /
-              (2 * K * Cfluct * hΓ.thetaHat ^ (2 : ℕ)) := by
-                rw [hrpow]
-                congr 1
-                ring_nf
-          _ =
-            ((3 : ℝ) ^ (b * (q : ℝ) - b * (L + 1)) /
-              (2 * K * Cfluct * hΓ.thetaHat ^ (2 : ℕ))) *
-                ((3 : ℝ) ^ c) ^ r := by
-                field_simp [hden_pos.ne']
       have hlam_lower : A * ρ ^ r ≤ lam := by
-        rw [hlam_eq]
-        rw [← hpow_base]
-        have hmr : ((m - q : ℕ) : ℝ) = (r : ℝ) := by
-          dsimp [m]
-          rw [Nat.add_sub_cancel_left]
-        have hpow_le :
-            (3 : ℝ) ^
-                (b * (q : ℝ) + c * (r : ℝ) - b * (L + 1)) ≤
-              (3 : ℝ) ^ (b * ((n - ℓ : ℕ) : ℝ) - x) := by
-          exact
-            Real.rpow_le_rpow_of_exponent_le
-              (by norm_num : (1 : ℝ) ≤ 3)
-              (by
-                have hcomp := hexp_comp
-                rw [hmr] at hcomp
-                linarith)
-        exact div_le_div_of_nonneg_right hpow_le hden_pos.le
-      have hρ_pow_one : 1 ≤ ρ ^ r :=
-        one_le_pow₀ (le_of_lt hρ_gt)
-      have hAρ_one : 1 ≤ A * ρ ^ r := by
-        simpa using
-          mul_le_mul hA_one_local hρ_pow_one
-            (by norm_num : (0 : ℝ) ≤ 1)
-            (by linarith : 0 ≤ A)
-      have hlam_one : 1 ≤ lam := hAρ_one.trans hlam_lower
+        exact highTop_tailParameter_lower_bound
+          ha (by simpa [K] using quenchedProbeEnvelopeConst_pos d)
+          hCfluct hΓ.thetaHat_pos hαt hαb hαharm hL_nonneg hℓn hqn hnm_le
+          (by dsimp [m]; rw [Nat.add_sub_cancel_left]) hceil
+      have hlam_one : 1 ≤ lam :=
+        one_le_tailParameter_of_geometric_lower_bound hA_one_local hρ_gt.le hlam_lower
       have hraw :=
         hpair (t := t) (αbad := αbad) hP hStruct hΓ hσ_eq hparams
           (q := q) (m := m) (n := n)
@@ -375,44 +461,9 @@ theorem measureReal_shiftedHighTopBadScaleEvent_quenchedProbeEnvelope_le_weighte
             (S.card : ℝ) * ((D.card : ℝ) * Real.exp (-(lam ^ τ))) := by
         simpa [K, x, ℓ, N0, Hshift, D, S, τ, scale, T, lam] using
           hraw hℓn hnm hqm hlam_one
-      have hmono :
-          P.real (highTopPairEvent Hshift K a t αbad q m n) ≤
-            P.real (badPairEvent Hshift t αbad q m n) := by
-        exact measureReal_mono (μ := P) (by
-          intro ω hω
-          exact hω.2.2)
-      have hD_le_w : (D.card : ℝ) ≤ w ^ r := by
-        have hcard :
-            D.card = (3 ^ d) ^ (m - n) := by
-          simpa [D] using
-            descendantsAtScale_originCube_nat_shift_card
-              (d := d) (N := N0) (m := m) (n := n) hnm_le
-        have hgap_le : m - n ≤ r := by
-          dsimp [m, n]
-          omega
-        have hpow_le_nat : (3 ^ d) ^ (m - n) ≤ (3 ^ d) ^ r :=
-          Nat.pow_le_pow_right
-            (by exact pow_pos (by norm_num : (0 : ℕ) < 3) d) hgap_le
-        dsimp [w]
-        rw [hcard]
-        exact_mod_cast hpow_le_nat
-      have hlam_nonneg : 0 ≤ lam := by
-        exact (by positivity : 0 ≤ A * ρ ^ r).trans hlam_lower
-      have hexp_le :
-          Real.exp (-(lam ^ τ)) ≤
-            Real.exp (-((A * ρ ^ r) ^ τ)) :=
-        exp_neg_rpow_le_exp_neg_rpow_of_le
-          (by positivity : 0 ≤ A * ρ ^ r) hlam_lower hτ_pos
-      have htail :
-          (S.card : ℝ) * ((D.card : ℝ) * Real.exp (-(lam ^ τ))) ≤
-            (S.card : ℝ) *
-              (w ^ r * Real.exp (-((A * ρ ^ r) ^ τ))) := by
-        have hDexp :
-            (D.card : ℝ) * Real.exp (-(lam ^ τ)) ≤
-              w ^ r * Real.exp (-((A * ρ ^ r) ^ τ)) :=
-          mul_le_mul hD_le_w hexp_le (by positivity) (by positivity)
-        exact mul_le_mul_of_nonneg_left hDexp hS_nonneg
-      exact hmono.trans (hbad.trans htail)
+      exact highTop_pair_measure_le_descendant_weight
+        (d := d) (N0 := N0) hnm_le (by dsimp [m, n]; omega)
+        hS_nonneg hA_one_local hρ_gt hτ_pos hlam_lower hbad
     · have hempty :
           highTopPairEvent Hshift K a t αbad q m n = ∅ := by
         ext ω
@@ -477,7 +528,7 @@ theorem measureReal_shiftedHighTopBadScaleEvent_quenchedProbeEnvelope_le_weighte
       (d := d) (σ := σ) hσ_pos params
   exact
     ⟨Cfluct, Centry, a, hCfluct, hCentry, ha,
-      measureReal_shiftedHighTopBadScaleEvent_quenchedProbeEnvelope_le_weighted_kernel_of_badPair_bound
+      shiftedHighTopBadScaleMeasure_le_weightedKernel_of_pairBound
         (d := d) (σ := σ) (Cfluct := Cfluct) (Centry := Centry) (a := a)
         hσ_pos params hCfluct hCentry ha hpair⟩
 

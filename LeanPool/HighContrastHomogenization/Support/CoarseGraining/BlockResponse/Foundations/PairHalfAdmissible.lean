@@ -63,7 +63,8 @@ theorem blockResponse_pair_half_averagePotential_eq_zero_of_scalarCanonicalMaxim
         (by norm_num : (1 : ENNReal) ≤ 2)
   have hv_int :
       MeasureTheory.IntegrableOn
-        (fun x => (v : AHarmonicFunction (HCPolySupport.adjointCoeffField a) U).toH1.grad x i) U := by
+        (fun x => (v : AHarmonicFunction (HCPolySupport.adjointCoeffField a) U).toH1.grad x i) U
+          := by
     simpa [MeasureTheory.IntegrableOn] using
       ((v : AHarmonicFunction (HCPolySupport.adjointCoeffField a) U).toH1.grad_memL2 i).integrable
         (by norm_num : (1 : ENNReal) ≤ 2)
@@ -101,7 +102,8 @@ theorem blockResponse_pair_half_averagePotential_eq_zero_of_scalarCanonicalMaxim
           (v : AHarmonicFunction (HCPolySupport.adjointCoeffField a) U)).potential x i) =
         (1 / 2 : ℝ) •
           ((fun x => (u : AHarmonicFunction a U).toH1.grad x i) +
-            fun x => (v : AHarmonicFunction (HCPolySupport.adjointCoeffField a) U).toH1.grad x i) := by
+            fun x => (v : AHarmonicFunction (HCPolySupport.adjointCoeffField a) U).toH1.grad x
+              i) := by
     funext x
     rfl
   rw [hsplit, volumeAverage_smul U (1 / 2 : ℝ), volumeAverage_add hu_int hv_int, hu_avg, hv_avg]
@@ -109,7 +111,7 @@ theorem blockResponse_pair_half_averagePotential_eq_zero_of_scalarCanonicalMaxim
 
 /-- Bundled basis-data wrapper for the previous zero-average-potential identity. -/
 theorem
-    blockResponse_pair_half_averagePotential_eq_zero_of_scalarCanonicalMaximizers_zero_right_of_basisData
+    blockResponse_pair_half_averagePotential_eq_zero_of_basisData
     {d : ℕ} {U : Set (Vec d)} {a : CoeffField d}
     [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     {sigmaStar kappa : Mat d} {q : Vec d}
@@ -139,7 +141,6 @@ theorem
 adjoint maximizer at `(0,-q)` has average flux equal to `q`. -/
 theorem blockResponse_pair_half_averageFlux_eq_of_scalarCanonicalMaximizers_zero_right
     {d : ℕ} {U : Set (Vec d)} {a : CoeffField d}
-    [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     {sigma sigmaStar kappa : Mat d} {q : Vec d}
     (u : ScalarCanonicalMaximizer U 0 q a)
     (v : ScalarCanonicalMaximizer U 0 (-q) (HCPolySupport.adjointCoeffField a))
@@ -260,7 +261,7 @@ theorem blockResponse_pair_half_averageFlux_eq_of_scalarCanonicalMaximizers_zero
 /-- Convex-domain wrapper for the zero-average-potential identity. The gradient
 basis-data packages are produced automatically from the Stage-6 canonical
 maximizer existence theorem. -/
-theorem blockResponse_pair_half_averagePotential_eq_zero_of_scalarCanonicalMaximizers_zero_right_of_isOpenBoundedConvexDomain
+theorem blockResponse_pair_half_averagePotential_eq_zero_of_convexDomain
     {d : ℕ} {U : Set (Vec d)} {a : CoeffField d}
     {lam Lam : ℝ} {sigmaStar kappa : Mat d} {q : Vec d}
     (hConv : IsOpenBoundedConvexDomain U)
@@ -297,7 +298,7 @@ theorem blockResponse_pair_half_averagePotential_eq_zero_of_scalarCanonicalMaxim
       (ScalarCanonicalMaximizer.GradientBasisData.nonempty_of_isOpenBoundedConvexDomain
         (U := U) (a := HCPolySupport.adjointCoeffField a) hne hConv hEllAdj)
   exact
-    blockResponse_pair_half_averagePotential_eq_zero_of_scalarCanonicalMaximizers_zero_right_of_basisData
+    blockResponse_pair_half_averagePotential_eq_zero_of_basisData
       (u := u) (v := v) hS hK hSAdj hKAdj hdet
       (ResponseLinearIntegrabilityData.of_isEllipticFieldOn hEll)
       (ResponseLinearIntegrabilityData.of_isEllipticFieldOn hEllAdj)
@@ -307,7 +308,7 @@ theorem blockResponse_pair_half_averagePotential_eq_zero_of_scalarCanonicalMaxim
 average-potential identity. The scalar canonical maximizers are chosen
 internally from the bounded-open-convex existence theorem. -/
 theorem
-    exists_scalarCanonicalMaximizers_blockResponse_pair_half_averagePotential_eq_zero_zero_right_of_isEllipticFieldOn_of_isOpenBoundedConvexDomain
+    exists_canonicalMaximizers_responsePair_half_averagePotential_eq_zero_right
     {d : ℕ} {U : Set (Vec d)} {a : CoeffField d}
     {lam Lam : ℝ} {sigmaStar kappa : Mat d} {q : Vec d}
     (hConv : IsOpenBoundedConvexDomain U)
@@ -324,7 +325,8 @@ theorem
             (fun x =>
               (blockResponsePairHalfState a
                 (u : AHarmonicFunction a U)
-                (v : AHarmonicFunction (HCPolySupport.adjointCoeffField a) U)).potential x i)) = 0 := by
+                (v : AHarmonicFunction (HCPolySupport.adjointCoeffField a) U)).potential x i)) =
+                  0 := by
   classical
   let : MeasureTheory.IsFiniteMeasure (volumeMeasureOn U) := by
     simpa [volumeMeasureOn] using hConv.isFiniteMeasure_restrict_volume
@@ -344,13 +346,13 @@ theorem
     ⟨v⟩
   refine ⟨u, v, ?_⟩
   exact
-    blockResponse_pair_half_averagePotential_eq_zero_of_scalarCanonicalMaximizers_zero_right_of_isOpenBoundedConvexDomain
+    blockResponse_pair_half_averagePotential_eq_zero_of_convexDomain
       hConv hEll hvol u v hS hK hSAdj hKAdj hdet
 
 /-- Convex-domain wrapper for the average-flux identity. The flux basis-data
 packages are produced automatically from the Stage-6 canonical maximizer
 existence theorem. -/
-theorem blockResponse_pair_half_averageFlux_eq_of_scalarCanonicalMaximizers_zero_right_of_isOpenBoundedConvexDomain
+theorem blockResponse_pair_half_averageFlux_eq_of_convexDomain
     {d : ℕ} {U : Set (Vec d)} {a : CoeffField d}
     {lam Lam : ℝ} {sigma sigmaStar kappa : Mat d} {q : Vec d}
     (hConv : IsOpenBoundedConvexDomain U)
@@ -399,7 +401,7 @@ theorem blockResponse_pair_half_averageFlux_eq_of_scalarCanonicalMaximizers_zero
 average-flux identity. The scalar canonical maximizers are chosen internally
 from bounded-open-convex existence. -/
 theorem
-    exists_scalarCanonicalMaximizers_blockResponse_pair_half_averageFlux_eq_zero_right_of_isEllipticFieldOn_of_isOpenBoundedConvexDomain
+    exists_scalarCanonicalMaximizers_responsePair_half_averageFlux_eq_zero_right
     {d : ℕ} {U : Set (Vec d)} {a : CoeffField d}
     {lam Lam : ℝ} {sigma sigmaStar kappa : Mat d} {q : Vec d}
     (hConv : IsOpenBoundedConvexDomain U)
@@ -438,7 +440,7 @@ theorem
     ⟨v⟩
   refine ⟨u, v, ?_⟩
   exact
-    blockResponse_pair_half_averageFlux_eq_of_scalarCanonicalMaximizers_zero_right_of_isOpenBoundedConvexDomain
+    blockResponse_pair_half_averageFlux_eq_of_convexDomain
       hConv hEll hvol u v hS hK hSigma hSAdj hKAdj hSigmaAdj hdet
 
 theorem blockResponseIntegrand_integrableOn_pair_half_of_isEllipticFieldOn
@@ -450,7 +452,7 @@ theorem blockResponseIntegrand_integrableOn_pair_half_of_isEllipticFieldOn
     MeasureTheory.IntegrableOn
       (blockResponseIntegrand a P Q (blockResponsePairHalfState a u v)) U := by
   exact
-    blockResponseIntegrand_integrableOn_of_mem_responseSpace_of_integrabilityData_of_isEllipticFieldOn
+    blockResponseIntegrand_integrable_of_integrabilityData
       (hX := by
         simpa [blockResponsePairHalfState] using!
           (blockResponse_pair_half_mem_responseSpace_of_isEllipticFieldOn (a := a) hEll u v))

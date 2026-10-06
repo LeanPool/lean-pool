@@ -163,7 +163,7 @@ theorem lowerShiftedFactorPowerIntegrableAtScale_from_P4
     have hstar := hP.barSigmaStarAtScale_eq_inv_barSigmaStarInvAtScale hStruct (0 : ℤ)
     rw [hstar, inv_inv]
     simpa [Ch04.RestrictionLawCarrier.barSigmaStarInvAtScale] using
-      (Ch04.RestrictionLawCarrier.Internal.barSigmaStarInv_pos_of_integrable_coarseFullBlockMatrixAtCube hP
+      (Ch04.RestrictionLawCarrier.Internal.barSigmaStarInverse_pos_of_integrableBlockMatrix hP
         (Ch04.Internal.annealedPrimitiveScalarizationData_of_structuralLaw
           hP hStruct (0 : ℤ))
         (Section52.originBlockIntegrableAtScale_from_P4 hP hStruct hP4 0)).le

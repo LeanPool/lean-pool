@@ -37,7 +37,7 @@ variable {ι α : Type*} [Countable ι] [MeasurableSpace α]
 /-- The sum of diagonal product integrals over a countable disjoint family is
 bounded by the product integral over a containing set. -/
 theorem tsum_setLIntegral_prod_self_le
-    (μ : Measure α) [SigmaFinite μ] {A : ι → Set α} {U : Set α}
+    (μ : Measure α) {A : ι → Set α} {U : Set α}
     (hAmeas : ∀ i, MeasurableSet (A i))
     (hAdisj : Pairwise (Disjoint on A))
     (hAsub : ∀ i, A i ⊆ U) (f : α × α → ℝ≥0∞) :

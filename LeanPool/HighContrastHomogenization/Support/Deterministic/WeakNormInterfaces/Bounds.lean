@@ -616,7 +616,7 @@ controlled by the four analytic cube-indexed pieces, while depths `L ≤ j`
 contribute a raw low-scale norm and a geometric constant tail.
 -/
 theorem
-  cubeBesovNegativeVectorPartialSeminorm_le_cubeTerms_below_cutoff_add_low_self_add_geometric_const
+  negativeVectorPartial_le_cutoffTerms_and_geometricTail
     {d : ℕ} (Q : TriadicCube d) (s : ℝ) (N L : ℕ)
     (w lowField : Vec d → Vec d) (c : Vec d)
     (predictor additivity lowScale tail : ℕ → TriadicCube d → Vec d)
@@ -670,7 +670,7 @@ cube-average decomposition, the low-scale constant-tail split, and the
 depthwise estimates with growth factors `3^{s'j}`.
 -/
 theorem
-  cubeBesovNegativeVectorPartialSeminorm_le_shifted_gap_sums_below_cutoff_add_low_self_add_geometric_const
+  negativePartialSeminorm_le_shiftedGapSum_add_lowSelf_add_geometricConstant
     {d : ℕ} (Q : TriadicCube d) (s : ℝ) (N L : ℕ)
     (w lowField : Vec d → Vec d) (c : Vec d)
     (predictor additivity lowScale tail : ℕ → TriadicCube d → Vec d)
@@ -755,33 +755,33 @@ theorem
         (1 - Real.rpow (3 : ℝ) (-s))⁻¹) *
       Real.sqrt (vecNormSq c)
   have hsplit :=
-    cubeBesovNegativeVectorPartialSeminorm_le_cubeTerms_below_cutoff_add_low_self_add_geometric_const
+    negativeVectorPartial_le_cutoffTerms_and_geometricTail
       Q s N L w lowField c predictor additivity lowScale tail hs hhigh hlow
   have hPredSum :
       (∑ j ∈ high, predTerm j) ≤ Cpred * predShifted := by
     simpa [high, predTerm, predShifted] using
-      sum_filter_triadicDepthWeight_mul_sqrt_descendantsAverage_vecNormSq_le_const_mul_shifted_weighted_sqrt
+      filteredTriadicWeight_sqrtDescendantNorm_le_constantWeightedSqrt
         (Q := Q) (s := s) (s' := sPred) (C := Cpred) (N := N)
         (high := fun j => j < L) (component := predictor) (gap := predGap)
         hCpred hPred
   have hAddSum :
       (∑ j ∈ high, addTerm j) ≤ Cadd * addShifted := by
     simpa [high, addTerm, addShifted] using
-      sum_filter_triadicDepthWeight_mul_sqrt_descendantsAverage_vecNormSq_le_const_mul_shifted_weighted_sqrt
+      filteredTriadicWeight_sqrtDescendantNorm_le_constantWeightedSqrt
         (Q := Q) (s := s) (s' := sAdd) (C := Cadd) (N := N)
         (high := fun j => j < L) (component := additivity) (gap := addGap)
         hCadd hAdd
   have hLowSum :
       (∑ j ∈ high, lowTerm j) ≤ Clow * lowShifted := by
     simpa [high, lowTerm, lowShifted] using
-      sum_filter_triadicDepthWeight_mul_sqrt_descendantsAverage_vecNormSq_le_const_mul_shifted_weighted_sqrt
+      filteredTriadicWeight_sqrtDescendantNorm_le_constantWeightedSqrt
         (Q := Q) (s := s) (s' := sLow) (C := Clow) (N := N)
         (high := fun j => j < L) (component := lowScale) (gap := lowGap)
         hClow hLow
   have hTailSum :
       (∑ j ∈ high, tailTerm j) ≤ Ctail * tailShifted := by
     simpa [high, tailTerm, tailShifted] using
-      sum_filter_triadicDepthWeight_mul_sqrt_descendantsAverage_vecNormSq_le_const_mul_shifted_weighted_sqrt
+      filteredTriadicWeight_sqrtDescendantNorm_le_constantWeightedSqrt
         (Q := Q) (s := s) (s' := sTail) (C := Ctail) (N := N)
         (high := fun j => j < L) (component := tail) (gap := tailGap)
         hCtail hTail

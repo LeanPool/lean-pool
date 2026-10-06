@@ -53,7 +53,8 @@ private theorem multiscaleDescendantWeight_sub_nat {d : ℕ}
   rw [hsub]
   norm_num
 
-private theorem averageGradient_parentResponseSolutionOnDependentFamilyRestrictedToCube_eq_cubeAverageVec
+private theorem
+  averageGradient_parentResponseSolutionOnDependentFamilyRestrictedToCube_eq_cubeAverageVec
     {d : ℕ} [NeZero d] (a : RegCoeffField d)
     (ha : Ch04.AELocallyUniformlyEllipticField a)
     (Q : TriadicCube d) {R : TriadicCube d} {j : ℕ}
@@ -71,7 +72,8 @@ private theorem averageGradient_parentResponseSolutionOnDependentFamilyRestricte
   simp [cubeAverageVec, F,
     JUpperBoundWeakNorms.parentResponseSolutionOnDependentFamilyRestrictedToCube_grad]
 
-private theorem averageFlux_parentResponseSolutionOnDependentFamilyRestrictedToCube_eq_cubeAverageVec
+private theorem
+  averageFlux_parentResponseSolutionOnDependentFamilyRestrictedToCube_eq_cubeAverageVec
     {d : ℕ} [NeZero d] (a : RegCoeffField d)
     (ha : Ch04.AELocallyUniformlyEllipticField a)
     (Q : TriadicCube d) {R : TriadicCube d} {j : ℕ}
@@ -168,7 +170,7 @@ private theorem descendantsAverage_parentGradient_le_maxSigmaStarInv_mul_respons
       mem_descendantsAtScale_of_mem_descendantsAtDepth hR
     have hcoarse : Ch02.coarseSigmaStarInvMatrixNorm R F ≤ M := by
       simpa [M] using
-        Ch02.coarseSigmaStarInvMatrixNorm_le_maxDescendantSigmaStarInvMatrixNormAtScale_of_mem_descendantsAtScale
+        Ch02.coarseSigmaStarInvMatrixNorm_le_maxDescendantNorm_atScale
           F hRscale
     have hE_nonneg : 0 ≤ E R := by
       dsimp [E]
@@ -196,7 +198,7 @@ private theorem descendantsAverage_parentGradient_le_maxSigmaStarInv_mul_respons
     _ = 2 * M * descendantsAverage Q j E := by
           rw [descendantsAverage_mul_left]
     _ = 2 * M * Ch02.responseJ (Ch02.cubeDomain Q) (F.coeffOn Q) p q := by
-          rw [JUpperBoundWeakNorms.descendantsAverage_cubeAverage_topHalfEnergyOnCube_eq_responseJOnCube]
+          rw [JUpperBoundWeakNorms.descendantsAverage_topHalfEnergy_eq_responseJ]
 
 private theorem descendantsAverage_parentFlux_le_maxB_mul_responseJ
     {d : ℕ} [NeZero d] (a : RegCoeffField d)
@@ -277,7 +279,7 @@ private theorem descendantsAverage_parentFlux_le_maxB_mul_responseJ
     _ = 2 * M * descendantsAverage Q j E := by
           rw [descendantsAverage_mul_left]
     _ = 2 * M * Ch02.responseJ (Ch02.cubeDomain Q) (F.coeffOn Q) p q := by
-          rw [JUpperBoundWeakNorms.descendantsAverage_cubeAverage_topHalfEnergyOnCube_eq_responseJOnCube]
+          rw [JUpperBoundWeakNorms.descendantsAverage_topHalfEnergy_eq_responseJ]
 
 theorem descendantsAverage_parentGradient_le_lambdaSqCoeffField_responseJ
     {d : ℕ} [NeZero d] (a : RegCoeffField d)
@@ -489,7 +491,7 @@ theorem gradientLowScaleDepthSum_le_lambdaSqCoeffField_responseJ
           ∑ j ∈ (Finset.range (N + 1)).filter low,
             Real.rpow (3 : ℝ) (-(s - s') * (j : ℝ)) * Real.sqrt J := by
     refine
-      sum_filter_triadicDepthWeight_mul_sqrt_descendantsAverage_vecNormSq_le_const_mul_shifted_weighted_sqrt
+      filteredTriadicWeight_sqrtDescendantNorm_le_constantWeightedSqrt
         Q s s' C N low
         (fun _j R =>
           cubeAverageVec R
@@ -552,7 +554,7 @@ theorem fluxLowScaleDepthSum_le_LambdaSqCoeffField_responseJ
           ∑ j ∈ (Finset.range (N + 1)).filter low,
             Real.rpow (3 : ℝ) (-(t - t') * (j : ℝ)) * Real.sqrt J := by
     refine
-      sum_filter_triadicDepthWeight_mul_sqrt_descendantsAverage_vecNormSq_le_const_mul_shifted_weighted_sqrt
+      filteredTriadicWeight_sqrtDescendantNorm_le_constantWeightedSqrt
         Q t t' C N low
         (fun _j R =>
           cubeAverageVec R

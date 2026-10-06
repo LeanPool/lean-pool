@@ -753,7 +753,7 @@ theorem tendsto_eLpNorm_euclideanCoordDeriv_faceCutoff_mul_sub_of_face_zero
           2 (volumeMeasureOn (openCubeSet Q)))
       Filter.atTop (nhds 0) := by
   exact
-    QuantitativeCubeCutoff.tendsto_eLpNorm_euclideanCoordDeriv_mul_sub_of_tendsto_inner_of_boundary_error
+    QuantitativeCubeCutoff.tendsto_eLpNorm_productDerivative_sub_derivative
       (Q := Q) (ψ := ψ)
       (ρ₁ := faceCutoffInnerRadius) (ρ₂ := faceCutoffOuterRadius)
       (η := fun n => faceCutoff Q n)

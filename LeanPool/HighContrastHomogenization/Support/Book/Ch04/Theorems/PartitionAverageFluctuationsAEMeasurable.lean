@@ -35,7 +35,30 @@ open scoped BigOperators
 
 noncomputable section
 
-theorem isBigO_gammaSigma_restrictionCenteredDescendantAverageOnCube_of_restrictionUnitRangeDependentLaw_of_ae_eq_local
+private theorem descendantCubeSet_eq_translate_origin
+    {d : ℕ} {Q R : TriadicCube d} {n : ℤ}
+    (hn : 0 ≤ n) (hnQ : n ≤ Q.scale) (hR : R ∈ descendantsAtScale Q n) :
+    cubeSet R =
+      translateSet (intVecToRealVec (scaleTranslationShift n R))
+        (cubeSet (originCube d n)) := by
+  have hscaleR : R.scale = n := by
+    calc
+      R.scale = Q.scale - Int.toNat (Q.scale - n) :=
+        scale_eq_sub_of_mem_descendantsAtScale hnQ hR
+      _ = n := by
+        rw [Int.toNat_of_nonneg (sub_nonneg.mpr hnQ)]
+        ring
+  have hscale_nonneg : 0 ≤ R.scale := by
+    simpa [hscaleR] using hn
+  calc
+    cubeSet R =
+        translateSet (intVecToRealVec (scaleTranslationShift R.scale R))
+          (cubeSet (originCube d R.scale)) :=
+      cubeSet_eq_translateSet_originCube_of_nonneg_scale hscale_nonneg
+    _ = translateSet (intVecToRealVec (scaleTranslationShift n R))
+          (cubeSet (originCube d n)) := by simp [hscaleR]
+
+theorem isBigO_gammaSigma_centeredDescendantMean_of_unitRangeLaw
     {d : ℕ} {Q : TriadicCube d} {n : ℤ} {P : RestrictionCoeffLaw d} [IsProbabilityMeasure P]
     {σ K : ℝ}
     (hP : RestrictionLawCarrier P)
@@ -45,7 +68,8 @@ theorem isBigO_gammaSigma_restrictionCenteredDescendantAverageOnCube_of_restrict
     (hX_localRep :
       ∀ R ∈ descendantsAtScale Q n,
         ∃ Y : RegCoeffField d → ℝ,
-          IsRestrictionLocalRandomVariable (cubeSet R) (measurableSet_cubeSet R) Y ∧ X (cubeSet R) =ᵐ[P] Y)
+          IsRestrictionLocalRandomVariable (cubeSet R) (measurableSet_cubeSet R) Y ∧ X (cubeSet
+            R) =ᵐ[P] Y)
     (hX_cov : IsRestrictionTranslationCovariant X)
     (hX0_aemeas : AEMeasurable (X (cubeSet (originCube d n))) P)
     (hX_desc_aemeas :
@@ -99,28 +123,7 @@ theorem isBigO_gammaSigma_restrictionCenteredDescendantAverageOnCube_of_restrict
   have hZ_tail :
       ∀ R ∈ D, IsBigO P (gammaSigma σ) (Z R) K := by
     intro R hR
-    have hscaleR : R.scale = n := by
-      calc
-        R.scale = Q.scale - Int.toNat (Q.scale - n) := by
-          exact scale_eq_sub_of_mem_descendantsAtScale (Q := Q) hnQ (by simpa [D] using hR)
-        _ = n := by
-              rw [Int.toNat_of_nonneg (sub_nonneg.mpr hnQ)]
-              ring
-    have hshift :
-        cubeSet R =
-          translateSet (intVecToRealVec (scaleTranslationShift n R))
-            (cubeSet (originCube d n)) := by
-      have hscale_nonneg : 0 ≤ R.scale := by
-        simpa [hscaleR] using hn
-      calc
-        cubeSet R =
-            translateSet (intVecToRealVec (scaleTranslationShift R.scale R))
-              (cubeSet (originCube d R.scale)) :=
-          cubeSet_eq_translateSet_originCube_of_nonneg_scale hscale_nonneg
-        _ =
-            translateSet (intVecToRealVec (scaleTranslationShift n R))
-              (cubeSet (originCube d n)) := by
-              simp [hscaleR]
+    have hshift := descendantCubeSet_eq_translate_origin hn hnQ (by simpa [D] using hR)
     have hYR_aemeas : AEMeasurable (Y (cubeSet R)) P := by
       simpa [Y] using!
         (hX_desc_aemeas R (by simpa [D] using hR)).sub measurable_const.aemeasurable
@@ -184,28 +187,7 @@ theorem isBigO_gammaSigma_restrictionCenteredDescendantAverageOnCube_of_restrict
   have hZraw_mean :
       ∀ R ∈ D, ∫ a, Zraw R a ∂P = 0 := by
     intro R hR
-    have hscaleR : R.scale = n := by
-      calc
-        R.scale = Q.scale - Int.toNat (Q.scale - n) := by
-          exact scale_eq_sub_of_mem_descendantsAtScale (Q := Q) hnQ (by simpa [D] using hR)
-        _ = n := by
-              rw [Int.toNat_of_nonneg (sub_nonneg.mpr hnQ)]
-              ring
-    have hshift :
-        cubeSet R =
-          translateSet (intVecToRealVec (scaleTranslationShift n R))
-            (cubeSet (originCube d n)) := by
-      have hscale_nonneg : 0 ≤ R.scale := by
-        simpa [hscaleR] using hn
-      calc
-        cubeSet R =
-            translateSet (intVecToRealVec (scaleTranslationShift R.scale R))
-              (cubeSet (originCube d R.scale)) :=
-          cubeSet_eq_translateSet_originCube_of_nonneg_scale hscale_nonneg
-        _ =
-            translateSet (intVecToRealVec (scaleTranslationShift n R))
-              (cubeSet (originCube d n)) := by
-              simp [hscaleR]
+    have hshift := descendantCubeSet_eq_translate_origin hn hnQ (by simpa [D] using hR)
     have hint :
         ∫ a, Y (cubeSet R) a ∂P =
           ∫ a, Y (cubeSet (originCube d n)) a ∂P := by
@@ -217,7 +199,8 @@ theorem isBigO_gammaSigma_restrictionCenteredDescendantAverageOnCube_of_restrict
                   (cubeSet (originCube d n))) a ∂P := by
               rw [hshift]
         _ = ∫ a, Y (cubeSet (originCube d n)) a ∂P := by
-              exact integral_eq_of_isRestrictionTranslationCovariant_of_stationary_aestronglyMeasurable
+              exact
+                integral_eq_of_isRestrictionTranslationCovariant_of_stationary_aestronglyMeasurable
                 (P := P) hPstat (U := cubeSet (originCube d n))
                 hY0_aemeas.aestronglyMeasurable hY_cov (scaleTranslationShift n R)
     simpa [Zraw, Y] using hint.trans hY0_mean

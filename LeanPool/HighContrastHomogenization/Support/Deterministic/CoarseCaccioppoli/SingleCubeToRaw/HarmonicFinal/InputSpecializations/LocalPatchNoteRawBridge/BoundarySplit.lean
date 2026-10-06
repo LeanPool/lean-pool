@@ -10,7 +10,8 @@ public import LeanPool.HighContrastHomogenization.Support.Deterministic.CoarseCa
 
 /-!
 # Coarse-graining support:
-Support.Deterministic.CoarseCaccioppoli.SingleCubeToRaw.HarmonicFinal.InputSpecializations.LocalPatchNoteRawBridge.BoundarySplit
+Support.Deterministic.CoarseCaccioppoli.SingleCubeToRaw.HarmonicFinal.InputSpecializations
+.LocalPatchNoteRawBridge.BoundarySplit
 
 Imported from the Apache-2.0 CoarseGraining development at commit
 `c7ddd76c08ade64fed1b8d2ca51be14dfee8deb4`.
@@ -34,11 +35,241 @@ cube, so the compact-support test function is admissible without a boundary
 zero-trace argument.
 -/
 
+private theorem canonicalGradientSummabilityFromEllipticity
+    {d : ℕ} [NeZero d] (Q : TriadicCube d) (a : CoeffField d)
+    {s t lam Lam : ℝ} (hs : 0 < s) (ht : 0 < t) (hst : s + t < 1)
+    (hEllCube : IsEllipticFieldOn lam Lam (cubeSet Q) a) :
+      Summable (fun n : ℕ =>
+        geometricWeight (1 : ℝ) 1 n *
+          Real.rpow (maxDescendantSigmaStarInvNormAtScale Q (Q.scale - (n : ℤ)) a)
+            (1 / 2 : ℝ)) ∧
+      Summable (fun n : ℕ =>
+        geometricWeight (1 - s) 1 n *
+          Real.rpow (maxDescendantSigmaStarInvNormAtScale Q (Q.scale - (n : ℤ)) a)
+            (1 / 2 : ℝ)) := by
+  let hOrigin : OpenCubeOriginEllipticRecoveryExistence (d := d) lam Lam :=
+    openCubeOriginEllipticRecoveryExistence (d := d) (lam := lam) (Lam := Lam)
+  have hRec :
+      OpenCubeDescendantEllipticRecoveryFamily Q a (lam := lam) (Lam := Lam) :=
+    openCubeDescendantEllipticRecoveryFamily_of_isEllipticFieldOn_of_originCubeRecoveryExistence
+      (Q := Q) (a := a) hEllCube hOrigin
+  have hData : OpenCubeDescendantDeterministicCoarseData Q a :=
+    openCubeDescendantDeterministicCoarseData_of_recoveryFamily hRec
+  have hSigmaSum_t :
+      Summable (fun n : ℕ =>
+        geometricWeight t 1 n *
+          Real.rpow (maxDescendantSigmaStarInvNormAtScale Q (Q.scale - (n : ℤ)) a)
+            (1 / 2 : ℝ)) :=
+    summable_qone_maxDescendantSigmaStarInvNorm_of_ellipticField
+      Q a t ht hEllCube hData
+  have hSigmaSum_one :
+      Summable (fun n : ℕ =>
+        geometricWeight (1 : ℝ) 1 n *
+          Real.rpow (maxDescendantSigmaStarInvNormAtScale Q (Q.scale - (n : ℤ)) a)
+            (1 / 2 : ℝ)) :=
+    summable_maxDescendantSigmaStarInvNormAtScale_geometricWeight_one_of_lt
+      Q a ht (by nlinarith [hs, hst]) hSigmaSum_t
+  have hSigmaSum_one_sub_s :
+      Summable (fun n : ℕ =>
+        geometricWeight (1 - s) 1 n *
+          Real.rpow (maxDescendantSigmaStarInvNormAtScale Q (Q.scale - (n : ℤ)) a)
+            (1 / 2 : ℝ)) :=
+    summable_maxDescendantSigmaStarInvNormAtScale_geometricWeight_one_of_lt
+      Q a ht (by nlinarith [hst]) hSigmaSum_t
+  exact ⟨hSigmaSum_one, hSigmaSum_one_sub_s⟩
+
+private theorem harmonicDescendantSquareIntegrability
+    {d : ℕ} (Q : TriadicCube d) (a : CoeffField d) {lam Lam : ℝ}
+    (u0 : AHarmonicFunction a (openCubeSet Q)) (j : ℕ)
+    (hEllOpen : IsEllipticFieldOn lam Lam (openCubeSet Q) a) :
+    MeasureTheory.MemLp (fun x => u0.toH1 x) (2 : ℝ≥0∞) (normalizedCubeMeasure Q) ∧
+    (∀ R ∈ descendantsAtDepth Q j,
+      MeasureTheory.MemLp (fun x => matVecMul (a x) (u0.toH1.grad x))
+        (2 : ℝ≥0∞) (normalizedCubeMeasure R)) ∧
+    (∀ R ∈ descendantsAtDepth Q j,
+      MeasureTheory.MemLp (fun x => u0.toH1 x) (2 : ℝ≥0∞) (normalizedCubeMeasure R)) ∧
+    (∀ R ∈ descendantsAtDepth Q j, ∀ i : Fin d,
+      MeasureTheory.MemLp (fun x => u0.toH1.grad x i)
+        (2 : ℝ≥0∞) (normalizedCubeMeasure R)) := by
+  let flux : Vec d → Vec d := fun x => matVecMul (a x) (u0.toH1.grad x)
+  let u : Vec d → ℝ := fun x => u0.toH1 x
+  let G : Vec d → Vec d := fun x => u0.toH1.grad x
+  have huQ : MeasureTheory.MemLp u (2 : ℝ≥0∞) (normalizedCubeMeasure Q) := by
+    simpa [u] using memLp_harmonicFunction_normalizedCubeMeasure Q a u0
+  have hfluxMem : ∀ R ∈ descendantsAtDepth Q j,
+      MeasureTheory.MemLp flux (2 : ℝ≥0∞) (normalizedCubeMeasure R) := by
+    intro R hR
+    exact memLp_on_descendant_of_memLp_generic (E := Vec d) hR
+      (by simpa [flux] using memLp_harmonicFlux_normalizedCubeMeasure Q a u0 hEllOpen)
+  have huMem : ∀ R ∈ descendantsAtDepth Q j,
+      MeasureTheory.MemLp u (2 : ℝ≥0∞) (normalizedCubeMeasure R) := by
+    intro R hR
+    exact memLp_on_descendant_of_memLp_generic (E := ℝ) hR huQ
+  have hGMem : ∀ R ∈ descendantsAtDepth Q j, ∀ i : Fin d,
+      MeasureTheory.MemLp (fun x => G x i) (2 : ℝ≥0∞) (normalizedCubeMeasure R) := by
+    intro R hR i
+    exact memLp_on_descendant_of_memLp (Q := Q) (R := R) (j := j) hR
+      (by simpa [G] using memLp_harmonicGradientComponent_normalizedCubeMeasure Q a u0 i)
+  exact ⟨huQ, hfluxMem, huMem, hGMem⟩
+
+private theorem harmonicDescendantPoincareAndBesovBounds
+    {d : ℕ} [NeZero d] (Q : TriadicCube d) (a : CoeffField d) {s Clocal lam Lam : ℝ}
+    (u0 : AHarmonicFunction a (openCubeSet Q)) (j : ℕ) {ρ₁ ρm : ℝ}
+    (hCsol_le : fullVectorPoincareCubeConstant Q ≤ Clocal) (hs1 : s < 1)
+    (hEllCube : IsEllipticFieldOn lam Lam (cubeSet Q) a)
+    (hρ₁ : (1 / 3 : ℝ) ≤ ρ₁) (hlt_mid : ρ₁ < ρm) (hρm_le_one : ρm ≤ 1)
+    (henergy_nonneg : ∀ x ∈ cubeSet Q, 0 ≤ scalarVariationEnergyIntegrand a u0 x)
+    (henergy_int : MeasureTheory.IntegrableOn (scalarVariationEnergyIntegrand a u0)
+      (cubeSet Q) MeasureTheory.volume)
+    (hSigmaSum_one :
+      Summable (fun n : ℕ =>
+        geometricWeight (1 : ℝ) 1 n *
+          Real.rpow (maxDescendantSigmaStarInvNormAtScale Q (Q.scale - (n : ℤ)) a)
+            (1 / 2 : ℝ)))
+    (hSigmaSum_one_sub_s :
+      Summable (fun n : ℕ =>
+        geometricWeight (1 - s) 1 n *
+          Real.rpow (maxDescendantSigmaStarInvNormAtScale Q (Q.scale - (n : ℤ)) a)
+            (1 / 2 : ℝ))) :
+    (∀ R ∈ descendantsAtDepth Q j, ∀ N : ℕ,
+      CubeDescendantDualFullVectorPoincareEstimate R Clocal
+        (cubeFluctuation R (fun x => u0.toH1 x)) (fun x => u0.toH1.grad x) N) ∧
+    (∀ R ∈ descendantsAtDepth Q j, ∀ i : Fin d, ∀ N : ℕ,
+      cubeBesovCircPartialNorm R 1 (2 : ℝ≥0∞) (1 : ℝ≥0∞) N
+          (fun x => u0.toH1.grad x i) ≤
+        coarseCaccioppoliCanonicalGradientAcircOne R a ρ₁ ρm *
+          Real.sqrt (cubeAverage R (scalarVariationEnergyIntegrand a u0))) ∧
+    (∀ R ∈ descendantsAtDepth Q j, ∀ i : Fin d, ∀ N : ℕ,
+      cubeBesovCircPartialNorm R (1 - s) (2 : ℝ≥0∞) (1 : ℝ≥0∞) N
+          (fun x => u0.toH1.grad x i) ≤
+        coarseCaccioppoliCanonicalGradientAcircOneSub R a s ρ₁ ρm *
+          Real.sqrt (cubeAverage R (scalarVariationEnergyIntegrand a u0))) := by
+  let energy : Vec d → ℝ := fun x => scalarVariationEnergyIntegrand a u0 x
+  let u : Vec d → ℝ := fun x => u0.toH1 x
+  let G : Vec d → Vec d := fun x => u0.toH1.grad x
+  let Acirc1 : TriadicCube d → ℝ := fun R =>
+    coarseCaccioppoliCanonicalGradientAcircOne R a ρ₁ ρm
+  let AcircS : TriadicCube d → ℝ := fun R =>
+    coarseCaccioppoliCanonicalGradientAcircOneSub R a s ρ₁ ρm
+  let hOrigin : OpenCubeOriginEllipticRecoveryExistence (d := d) lam Lam :=
+    openCubeOriginEllipticRecoveryExistence (d := d) (lam := lam) (Lam := Lam)
+  have hgradQ : CubeAverageGradientEnergyControl Q a G energy := by
+    have hgrad :=
+      harmonicGradientEnergy_le_scalarVariation_of_recovery
+        (Q := Q) (a := a) hEllCube u0.toCubeSet hOrigin
+    simpa [G, energy, scalarVariationEnergyIntegrand] using hgrad
+  have hfullFamily :
+      CoarseCaccioppoliBoundaryCanonicalGradientFullDualPoincareVectorFamily Q a Clocal
+        (fun _ _ => u0) :=
+    (CoarseCaccioppoliBoundaryCanonicalGradientFullDualPoincareVectorFamily.of_aHarmonicFunction
+      Q a (fun _ _ => u0)).mono_C hCsol_le
+  have hfull : ∀ R ∈ descendantsAtDepth Q j, ∀ N : ℕ,
+      CubeDescendantDualFullVectorPoincareEstimate R Clocal
+        (cubeFluctuation R u) G N := by
+    intro R hR N
+    simpa [u, G] using
+      hfullFamily.vectorPoincare_on_descendant
+        hR hρ₁ hlt_mid hρm_le_one N
+  have hGcirc1 : ∀ R ∈ descendantsAtDepth Q j, ∀ i : Fin d, ∀ N : ℕ,
+      cubeBesovCircPartialNorm R 1 (2 : ℝ≥0∞) (1 : ℝ≥0∞) N (fun x => G x i) ≤
+        Acirc1 R * Real.sqrt (cubeAverage R energy) := by
+    intro R hR i N
+    have henergy_nonneg_R : ∀ x ∈ cubeSet R, 0 ≤ energy x := by
+      intro x hx
+      exact henergy_nonneg x (cubeSet_subset_of_mem_descendantsAtDepth hR hx)
+    have henergy_int_R :
+        MeasureTheory.IntegrableOn energy (cubeSet R) MeasureTheory.volume :=
+      henergy_int.mono_set (cubeSet_subset_of_mem_descendantsAtDepth hR)
+    have hgradR : CubeAverageGradientEnergyControl R a G energy :=
+      hgradQ.restrict_to_descendant hR
+    have hSigmaSum_one_R :
+        Summable (fun n : ℕ =>
+          geometricWeight (1 : ℝ) 1 n *
+            Real.rpow (maxDescendantSigmaStarInvNormAtScale R (R.scale - (n : ℤ)) a)
+              (1 / 2 : ℝ)) :=
+      summable_geometricWeight_maxDescendantSigmaStarInvNormAtScale_of_mem_descendantsAtDepth
+        (Q := Q) (R := R) (j := j) a (1 : ℝ) (by norm_num) hR hSigmaSum_one
+    simpa [G, Acirc1, coarseCaccioppoliCanonicalGradientAcircOne,
+      coarseCaccioppoliCanonicalGradientAcirc, energy] using
+      cubeBesovCircPartialNorm_component_le_local_canonicalGradientAcirc
+        R a (1 : ℝ) (by norm_num)
+        henergy_nonneg_R henergy_int_R hgradR hSigmaSum_one_R i N
+  have hGcircS : ∀ R ∈ descendantsAtDepth Q j, ∀ i : Fin d, ∀ N : ℕ,
+      cubeBesovCircPartialNorm R (1 - s) (2 : ℝ≥0∞) (1 : ℝ≥0∞) N
+        (fun x => G x i) ≤ AcircS R * Real.sqrt (cubeAverage R energy) := by
+    intro R hR i N
+    have hs_pos : 0 < 1 - s := by linarith
+    have henergy_nonneg_R : ∀ x ∈ cubeSet R, 0 ≤ energy x := by
+      intro x hx
+      exact henergy_nonneg x (cubeSet_subset_of_mem_descendantsAtDepth hR hx)
+    have henergy_int_R :
+        MeasureTheory.IntegrableOn energy (cubeSet R) MeasureTheory.volume :=
+      henergy_int.mono_set (cubeSet_subset_of_mem_descendantsAtDepth hR)
+    have hgradR : CubeAverageGradientEnergyControl R a G energy :=
+      hgradQ.restrict_to_descendant hR
+    have hSigmaSum_one_sub_s_R :
+        Summable (fun n : ℕ =>
+          geometricWeight (1 - s) 1 n *
+            Real.rpow (maxDescendantSigmaStarInvNormAtScale R (R.scale - (n : ℤ)) a)
+              (1 / 2 : ℝ)) :=
+      summable_geometricWeight_maxDescendantSigmaStarInvNormAtScale_of_mem_descendantsAtDepth
+        (Q := Q) (R := R) (j := j) a (1 - s) hs_pos.le hR hSigmaSum_one_sub_s
+    simpa [G, AcircS, coarseCaccioppoliCanonicalGradientAcircOneSub,
+      coarseCaccioppoliCanonicalGradientAcirc, energy] using
+      cubeBesovCircPartialNorm_component_le_local_canonicalGradientAcirc
+        R a (1 - s) hs_pos
+        henergy_nonneg_R henergy_int_R hgradR hSigmaSum_one_sub_s_R i N
+  exact ⟨hfull, hGcirc1, hGcircS⟩
+
+private theorem canonicalCutoffSizeNonnegativity
+    {d : ℕ} (Q : TriadicCube d) (a : CoeffField d) (s : ℝ)
+    (u : Vec d → ℝ) (ξ : Vec d → Vec d) (energy : Vec d → ℝ)
+    (B CeffLocal : ℝ) (j : ℕ) (ρ₁ ρm : ℝ)
+    (hs : 0 < s) (hs1 : s < 1) (hB_nonneg : 0 ≤ B) (hCeffLocal_nonneg : 0 ≤ CeffLocal) :
+    (∀ R ∈ descendantsAtDepth Q j,
+      0 ≤ coarseCaccioppoliCanonicalGradientAcircOne R a ρ₁ ρm) ∧
+    (∀ R ∈ descendantsAtDepth Q j,
+      0 ≤ coarseCaccioppoliCanonicalGradientAcircOneSub R a s ρ₁ ρm) ∧
+    (∀ R ∈ descendantsAtDepth Q j,
+      0 ≤ coarseCaccioppoliConstantCutoffSize R u ξ B) ∧
+    (∀ R ∈ descendantsAtDepth Q j,
+      0 ≤ coarseCaccioppoliCenteredCutoffSize R s ξ
+        (coarseCaccioppoliCanonicalGradientAcircOne R a ρ₁ ρm)
+        (coarseCaccioppoliCanonicalGradientAcircOneSub R a s ρ₁ ρm)
+        (Real.sqrt (cubeAverage R energy)) B CeffLocal) := by
+  let Acirc1 : TriadicCube d → ℝ := fun R =>
+    coarseCaccioppoliCanonicalGradientAcircOne R a ρ₁ ρm
+  let AcircS : TriadicCube d → ℝ := fun R =>
+    coarseCaccioppoliCanonicalGradientAcircOneSub R a s ρ₁ ρm
+  have hAcirc1_nonneg : ∀ R ∈ descendantsAtDepth Q j, 0 ≤ Acirc1 R := by
+    intro R hR
+    simpa [Acirc1] using
+      coarseCaccioppoliCanonicalGradientAcircOne_nonneg R a ρ₁ ρm
+  have hAcircS_nonneg : ∀ R ∈ descendantsAtDepth Q j, 0 ≤ AcircS R := by
+    intro R hR
+    simpa [AcircS] using
+      coarseCaccioppoliCanonicalGradientAcircOneSub_nonneg R a hs1.le ρ₁ ρm
+  have hBgConst : ∀ R ∈ descendantsAtDepth Q j,
+      0 ≤ coarseCaccioppoliConstantCutoffSize R u ξ B := by
+    intro R hR
+    exact coarseCaccioppoliConstantCutoffSize_nonneg R u ξ hB_nonneg
+  have hBgCent : ∀ R ∈ descendantsAtDepth Q j,
+      0 ≤ coarseCaccioppoliCenteredCutoffSize R s ξ (Acirc1 R) (AcircS R)
+        (Real.sqrt (cubeAverage R energy)) B CeffLocal := by
+    intro R hR
+    exact
+      coarseCaccioppoliCenteredCutoffSize_nonneg R ξ hs
+        (hAcirc1_nonneg R hR) (hAcircS_nonneg R hR)
+        (Real.sqrt_nonneg _) hB_nonneg hCeffLocal_nonneg
+  exact ⟨hAcirc1_nonneg, hAcircS_nonneg, hBgConst, hBgCent⟩
+
+namespace CoarseCaccioppoliBoundaryCanonicalHarmonicVectorLocalPatchNoteRawBridgeSplit
+
 /-- Boundary local-patch raw bridge for a constant harmonic family with split
 note coefficients, once the local weak-testing estimate has been supplied at
 every radius. -/
 theorem
-    CoarseCaccioppoliBoundaryCanonicalHarmonicVectorLocalPatchNoteRawBridgeSplit.of_constantFamily_localPatchBufferedFaithfulWorkSmallCubeExactRawCoefficientBoundsSplit_of_testing_of_closedCubeEllipticity
+    of_constantFamily_bufferedSmallCubeCoefficientBoundsSplit_of_testing
     {d : ℕ} [NeZero d] (Q : TriadicCube d) (center : Vec d) (a : CoeffField d)
     (s t Clocal Calpha Ccross : ℝ) {lam Lam : ℝ}
     (u0 : AHarmonicFunction a (openCubeSet Q))
@@ -59,7 +290,7 @@ theorem
       coarseCaccioppoliLocalEnergyRadiusProfile Q center energy ρ₁ ≤
         |cubeAverage Q (fun x => vecDot (flux x) (u x • ξ x))|)
     (hrawcoeff :
-      CoarseCaccioppoliBoundaryCanonicalHarmonicVectorFaithfulWorkSmallCubeLocalPatchBufferedExactRawCoefficientBoundsSplit
+      BoundaryCaccioppoliHarmonicVectorSmallCubeCoefficientSplit_localPatch
         Q center a s t Clocal Calpha Ccross) :
     CoarseCaccioppoliBoundaryCanonicalHarmonicVectorLocalPatchNoteRawBridgeSplit
       Q center a s t Calpha Ccross (coarseCaccioppoliHarmonicL2Sq Q a u0)
@@ -70,8 +301,6 @@ theorem
   let hheight : ℝ → ℝ → ℝ :=
     coarseCaccioppoliBoundaryLocalizedExplicitHeightOfScaleChoice Q a s t CeffAlpha
       coarseCaccioppoliTriadicGapScale
-  let hOrigin : OpenCubeOriginEllipticRecoveryExistence (d := d) lam Lam :=
-    openCubeOriginEllipticRecoveryExistence (d := d) (lam := lam) (Lam := Lam)
   have hcard_nonneg : 0 ≤ (Fintype.card (Fin d) : ℝ) := by
     exact_mod_cast Nat.zero_le (Fintype.card (Fin d))
   have hCeffLocal_nonneg : 0 ≤ CeffLocal := by
@@ -81,33 +310,8 @@ theorem
   have hs1 : s < 1 := by nlinarith [ht, hst]
   have hEllOpen : IsEllipticFieldOn lam Lam (openCubeSet Q) a :=
     hEllCube.mono (measurableSet_openCubeSet Q) (openCubeSet_subset_cubeSet Q)
-  have hRec :
-      OpenCubeDescendantEllipticRecoveryFamily Q a (lam := lam) (Lam := Lam) :=
-    openCubeDescendantEllipticRecoveryFamily_of_isEllipticFieldOn_of_originCubeRecoveryExistence
-      (Q := Q) (a := a) hEllCube hOrigin
-  have hData : OpenCubeDescendantDeterministicCoarseData Q a :=
-    openCubeDescendantDeterministicCoarseData_of_recoveryFamily hRec
-  have hSigmaSum_t :
-      Summable (fun n : ℕ =>
-        geometricWeight t 1 n *
-          Real.rpow (maxDescendantSigmaStarInvNormAtScale Q (Q.scale - (n : ℤ)) a)
-            (1 / 2 : ℝ)) :=
-    summable_qone_maxDescendantSigmaStarInvNormAtScale_of_isEllipticFieldOn_of_openCubeDescendantDeterministicCoarseData
-      Q a t ht hEllCube hData
-  have hSigmaSum_one :
-      Summable (fun n : ℕ =>
-        geometricWeight (1 : ℝ) 1 n *
-          Real.rpow (maxDescendantSigmaStarInvNormAtScale Q (Q.scale - (n : ℤ)) a)
-            (1 / 2 : ℝ)) :=
-    summable_maxDescendantSigmaStarInvNormAtScale_geometricWeight_one_of_lt
-      Q a ht (by nlinarith [hs, hst]) hSigmaSum_t
-  have hSigmaSum_one_sub_s :
-      Summable (fun n : ℕ =>
-        geometricWeight (1 - s) 1 n *
-          Real.rpow (maxDescendantSigmaStarInvNormAtScale Q (Q.scale - (n : ℤ)) a)
-            (1 / 2 : ℝ)) :=
-    summable_maxDescendantSigmaStarInvNormAtScale_geometricWeight_one_of_lt
-      Q a ht (by nlinarith [hst]) hSigmaSum_t
+  obtain ⟨hSigmaSum_one, hSigmaSum_one_sub_s⟩ :=
+    canonicalGradientSummabilityFromEllipticity Q a hs ht hst hEllCube
   intro n
   let ρ₁ : ℝ := coarseCaccioppoliRadiusSequence n
   let ρ₂ : ℝ := coarseCaccioppoliRadiusSequence (n + 1)
@@ -166,11 +370,6 @@ theorem
       CoarseCaccioppoliFluxEnergyControls.of_aHarmonicFunction_of_isEllipticFieldOn
         (Q := Q) (a := a) (s := s) hs hEllCube u0.toCubeSet
     simpa [flux, energy, scalarVariationEnergyIntegrand] using hflux
-  have hgradQ : CubeAverageGradientEnergyControl Q a G energy := by
-    have hgrad :=
-      cubeAverageGradientEnergyControl_of_aHarmonicFunction_of_openCubeOriginEllipticRecoveryExistence
-        (Q := Q) (a := a) hEllCube u0.toCubeSet hOrigin
-    simpa [G, energy, scalarVariationEnergyIntegrand] using hgrad
   have henergy_nonneg : ∀ x ∈ cubeSet Q, 0 ≤ energy x := by
     intro x hx
     have hnonneg :=
@@ -197,109 +396,22 @@ theorem
     simpa [flux, u, ξ] using
       integrableOn_vecDot_harmonicFlux_harmonicFunction_localCanonicalCutoff
         Q a center u0 hEllOpen hρ₁_pos hlt_mid
-  have huQ : MeasureTheory.MemLp u (2 : ℝ≥0∞) (normalizedCubeMeasure Q) := by
-    simpa [u] using memLp_harmonicFunction_normalizedCubeMeasure Q a u0
-  have hfluxMem : ∀ R ∈ descendantsAtDepth Q j,
-      MeasureTheory.MemLp flux (2 : ℝ≥0∞) (normalizedCubeMeasure R) := by
-    intro R hR
-    exact memLp_on_descendant_of_memLp_generic (E := Vec d) hR
-      (by simpa [flux] using memLp_harmonicFlux_normalizedCubeMeasure Q a u0 hEllOpen)
-  have huMem : ∀ R ∈ descendantsAtDepth Q j,
-      MeasureTheory.MemLp u (2 : ℝ≥0∞) (normalizedCubeMeasure R) := by
-    intro R hR
-    exact memLp_on_descendant_of_memLp_generic (E := ℝ) hR huQ
-  have hGMem : ∀ R ∈ descendantsAtDepth Q j, ∀ i : Fin d,
-      MeasureTheory.MemLp (fun x => G x i) (2 : ℝ≥0∞) (normalizedCubeMeasure R) := by
-    intro R hR i
-    exact memLp_on_descendant_of_memLp (Q := Q) (R := R) (j := j) hR
-      (by simpa [G] using memLp_harmonicGradientComponent_normalizedCubeMeasure Q a u0 i)
+  obtain ⟨huQ, hfluxMem, huMem, hGMem⟩ :=
+    harmonicDescendantSquareIntegrability Q a u0 j hEllOpen
   have hfluxEnergyR : ∀ R ∈ descendantsAtDepth Q j,
       CoarseCaccioppoliFluxEnergyControls R a s flux energy := by
     intro R hR
     exact hfluxEnergyQ.restrict_to_descendant hs.le hR
   have hB_nonneg : 0 ≤ B := by
     exact div_nonneg (quantitativeCubeCutoffHessianConst_nonneg d) (sq_nonneg _)
-  have hAcirc1_nonneg : ∀ R ∈ descendantsAtDepth Q j, 0 ≤ Acirc1 R := by
-    intro R hR
-    simpa [Acirc1] using
-      coarseCaccioppoliCanonicalGradientAcircOne_nonneg R a ρ₁ ρm
-  have hAcircS_nonneg : ∀ R ∈ descendantsAtDepth Q j, 0 ≤ AcircS R := by
-    intro R hR
-    simpa [AcircS] using
-      coarseCaccioppoliCanonicalGradientAcircOneSub_nonneg R a hs1.le ρ₁ ρm
-  have hBgConst : ∀ R ∈ descendantsAtDepth Q j,
-      0 ≤ coarseCaccioppoliConstantCutoffSize R u ξ B := by
-    intro R hR
-    exact coarseCaccioppoliConstantCutoffSize_nonneg R u ξ hB_nonneg
-  have hBgCent : ∀ R ∈ descendantsAtDepth Q j,
-      0 ≤ coarseCaccioppoliCenteredCutoffSize R s ξ (Acirc1 R) (AcircS R)
-        (Real.sqrt (cubeAverage R energy)) B CeffLocal := by
-    intro R hR
-    exact
-      coarseCaccioppoliCenteredCutoffSize_nonneg R ξ hs
-        (hAcirc1_nonneg R hR) (hAcircS_nonneg R hR)
-        (Real.sqrt_nonneg _) hB_nonneg hCeffLocal_nonneg
-  have hfullFamily :
-      CoarseCaccioppoliBoundaryCanonicalGradientFullDualPoincareVectorFamily Q a Clocal
-        (fun _ _ => u0) :=
-    (CoarseCaccioppoliBoundaryCanonicalGradientFullDualPoincareVectorFamily.of_aHarmonicFunction
-      Q a (fun _ _ => u0)).mono_C hCsol_le
-  have hfull : ∀ R ∈ descendantsAtDepth Q j, ∀ N : ℕ,
-      CubeDescendantDualFullVectorPoincareEstimate R Clocal
-        (cubeFluctuation R u) G N := by
-    intro R hR N
-    simpa [u, G] using
-      hfullFamily.vectorPoincare_on_descendant
-        hR hρ₁ hlt_mid hρm_le_one N
-  have hGcirc1 : ∀ R ∈ descendantsAtDepth Q j, ∀ i : Fin d, ∀ N : ℕ,
-      cubeBesovCircPartialNorm R 1 (2 : ℝ≥0∞) (1 : ℝ≥0∞) N (fun x => G x i) ≤
-        Acirc1 R * Real.sqrt (cubeAverage R energy) := by
-    intro R hR i N
-    have henergy_nonneg_R : ∀ x ∈ cubeSet R, 0 ≤ energy x := by
-      intro x hx
-      exact henergy_nonneg x (cubeSet_subset_of_mem_descendantsAtDepth hR hx)
-    have henergy_int_R :
-        MeasureTheory.IntegrableOn energy (cubeSet R) MeasureTheory.volume :=
-      henergy_int.mono_set (cubeSet_subset_of_mem_descendantsAtDepth hR)
-    have hgradR : CubeAverageGradientEnergyControl R a G energy :=
-      hgradQ.restrict_to_descendant hR
-    have hSigmaSum_one_R :
-        Summable (fun n : ℕ =>
-          geometricWeight (1 : ℝ) 1 n *
-            Real.rpow (maxDescendantSigmaStarInvNormAtScale R (R.scale - (n : ℤ)) a)
-              (1 / 2 : ℝ)) :=
-      summable_geometricWeight_maxDescendantSigmaStarInvNormAtScale_of_mem_descendantsAtDepth
-        (Q := Q) (R := R) (j := j) a (1 : ℝ) (by norm_num) hR hSigmaSum_one
-    simpa [G, Acirc1, coarseCaccioppoliCanonicalGradientAcircOne,
-      coarseCaccioppoliCanonicalGradientAcirc, energy] using
-      cubeBesovCircPartialNorm_component_le_local_canonicalGradientAcirc
-        R a (1 : ℝ) (by norm_num)
-        henergy_nonneg_R henergy_int_R hgradR hSigmaSum_one_R i N
-  have hGcircS : ∀ R ∈ descendantsAtDepth Q j, ∀ i : Fin d, ∀ N : ℕ,
-      cubeBesovCircPartialNorm R (1 - s) (2 : ℝ≥0∞) (1 : ℝ≥0∞) N
-        (fun x => G x i) ≤ AcircS R * Real.sqrt (cubeAverage R energy) := by
-    intro R hR i N
-    have hs_pos : 0 < 1 - s := by linarith
-    have henergy_nonneg_R : ∀ x ∈ cubeSet R, 0 ≤ energy x := by
-      intro x hx
-      exact henergy_nonneg x (cubeSet_subset_of_mem_descendantsAtDepth hR hx)
-    have henergy_int_R :
-        MeasureTheory.IntegrableOn energy (cubeSet R) MeasureTheory.volume :=
-      henergy_int.mono_set (cubeSet_subset_of_mem_descendantsAtDepth hR)
-    have hgradR : CubeAverageGradientEnergyControl R a G energy :=
-      hgradQ.restrict_to_descendant hR
-    have hSigmaSum_one_sub_s_R :
-        Summable (fun n : ℕ =>
-          geometricWeight (1 - s) 1 n *
-            Real.rpow (maxDescendantSigmaStarInvNormAtScale R (R.scale - (n : ℤ)) a)
-              (1 / 2 : ℝ)) :=
-      summable_geometricWeight_maxDescendantSigmaStarInvNormAtScale_of_mem_descendantsAtDepth
-        (Q := Q) (R := R) (j := j) a (1 - s) hs_pos.le hR hSigmaSum_one_sub_s
-    simpa [G, AcircS, coarseCaccioppoliCanonicalGradientAcircOneSub,
-      coarseCaccioppoliCanonicalGradientAcirc, energy] using
-      cubeBesovCircPartialNorm_component_le_local_canonicalGradientAcirc
-        R a (1 - s) hs_pos
-        henergy_nonneg_R henergy_int_R hgradR hSigmaSum_one_sub_s_R i N
+  obtain ⟨hAcirc1_nonneg, hAcircS_nonneg, hBgConst, hBgCent⟩ :=
+    canonicalCutoffSizeNonnegativity Q a s u ξ energy B CeffLocal j ρ₁ ρm
+      hs hs1 hB_nonneg hCeffLocal_nonneg
+  have hdescendantBounds :=
+    harmonicDescendantPoincareAndBesovBounds Q a u0 j hCsol_le hs1 hEllCube
+      hρ₁ hlt_mid hρm_le_one henergy_nonneg henergy_int
+      hSigmaSum_one hSigmaSum_one_sub_s
+  rcases hdescendantBounds with ⟨hfull, hGcirc1, hGcircS⟩
   have hL2n : cubeLpNorm Q (2 : ℝ≥0∞) u ≤
       Real.sqrt (coarseCaccioppoliHarmonicL2Sq Q a u0) := by
     simpa [u, coarseCaccioppoliCanonicalHarmonicL2Profile] using
@@ -330,14 +442,14 @@ theorem
         coarseCaccioppoliFluxEnergyExactCenteredCoeff R a s ξ (Acirc1 R) (AcircS R)
             B CeffLocal ≤ Alpha) := by
     simpa [
-      CoarseCaccioppoliBoundaryCanonicalHarmonicVectorFaithfulWorkSmallCubeLocalPatchBufferedExactRawCoefficientBoundsSplit,
+      BoundaryCaccioppoliHarmonicVectorSmallCubeCoefficientSplit_localPatch,
       CeffLocal, CeffAlpha, CeffCross, hheight, ρ₁, ρ₂, ρm, j, j0, ξ, B, Acirc1,
       AcircS, K, Alpha]
       using hrawcoeff n
   rcases hrawn with ⟨hconst_raw, hcent_raw⟩
   refine le_trans htest ?_
   have hraw :=
-    abs_cubeAverage_vecDot_scalar_smul_le_localPatch_raw_of_localCanonicalCutoff_on_descendants_variableAcirc_of_support_buffer_vectorFullDualFullCirc
+    abs_cubeAverage_vectorDot_scalarMultiply_le_local_raw
       (Q := Q) (center := center) (j := j) (a := a) (s := s)
       (rhoInner := ρ₁) (rhoOuter := ρm) (rho := ρ₂)
       (flux := flux) (u := u) (G := G) (energy := energy)
@@ -357,11 +469,15 @@ theorem
     energy, Alpha, Bcross, flux, u, ξ, B]
     using hraw
 
+end CoarseCaccioppoliBoundaryCanonicalHarmonicVectorLocalPatchNoteRawBridgeSplit
+
+namespace CoarseCaccioppoliBoundaryCanonicalHarmonicVectorLocalPatchNoteRawBridgeSplitAllRadii
+
 /-- All-radii boundary local-patch raw bridge for a constant harmonic family
 with split note coefficients, once the local weak-testing estimate has been
 supplied at every admissible radius pair. -/
 theorem
-    CoarseCaccioppoliBoundaryCanonicalHarmonicVectorLocalPatchNoteRawBridgeSplitAllRadii.of_constantFamily_localPatchBufferedFaithfulWorkSmallCubeExactRawCoefficientBoundsSplitAllRadii_of_testing_of_closedCubeEllipticity
+    of_constantFamily_bufferedSmallCubeCoefficientBoundsSplitAllRadii_of_testing
     {d : ℕ} [NeZero d] (Q : TriadicCube d) (center : Vec d) (a : CoeffField d)
     (s t Clocal Calpha Ccross : ℝ) {lam Lam : ℝ}
     (u0 : AHarmonicFunction a (openCubeSet Q))
@@ -381,7 +497,7 @@ theorem
         coarseCaccioppoliLocalEnergyRadiusProfile Q center energy ρ₁ ≤
           |cubeAverage Q (fun x => vecDot (flux x) (u x • ξ x))|)
     (hrawcoeff :
-      CoarseCaccioppoliBoundaryCanonicalHarmonicVectorFaithfulWorkSmallCubeLocalPatchBufferedExactRawCoefficientBoundsSplitAllRadii
+      BoundaryCaccioppoliHarmonicVectorSmallCubeCoefficientSplit_localPatch_allRadii
         Q center a s t Clocal Calpha Ccross) :
     CoarseCaccioppoliBoundaryCanonicalHarmonicVectorLocalPatchNoteRawBridgeSplitAllRadii
       Q center a s t Calpha Ccross (coarseCaccioppoliHarmonicL2Sq Q a u0)
@@ -392,8 +508,6 @@ theorem
   let hheight : ℝ → ℝ → ℝ :=
     coarseCaccioppoliBoundaryLocalizedExplicitHeightOfScaleChoice Q a s t CeffAlpha
       coarseCaccioppoliTriadicGapScale
-  let hOrigin : OpenCubeOriginEllipticRecoveryExistence (d := d) lam Lam :=
-    openCubeOriginEllipticRecoveryExistence (d := d) (lam := lam) (Lam := Lam)
   have hcard_nonneg : 0 ≤ (Fintype.card (Fin d) : ℝ) := by
     exact_mod_cast Nat.zero_le (Fintype.card (Fin d))
   have hCeffLocal_nonneg : 0 ≤ CeffLocal := by
@@ -403,33 +517,8 @@ theorem
   have hs1 : s < 1 := by nlinarith [ht, hst]
   have hEllOpen : IsEllipticFieldOn lam Lam (openCubeSet Q) a :=
     hEllCube.mono (measurableSet_openCubeSet Q) (openCubeSet_subset_cubeSet Q)
-  have hRec :
-      OpenCubeDescendantEllipticRecoveryFamily Q a (lam := lam) (Lam := Lam) :=
-    openCubeDescendantEllipticRecoveryFamily_of_isEllipticFieldOn_of_originCubeRecoveryExistence
-      (Q := Q) (a := a) hEllCube hOrigin
-  have hData : OpenCubeDescendantDeterministicCoarseData Q a :=
-    openCubeDescendantDeterministicCoarseData_of_recoveryFamily hRec
-  have hSigmaSum_t :
-      Summable (fun n : ℕ =>
-        geometricWeight t 1 n *
-          Real.rpow (maxDescendantSigmaStarInvNormAtScale Q (Q.scale - (n : ℤ)) a)
-            (1 / 2 : ℝ)) :=
-    summable_qone_maxDescendantSigmaStarInvNormAtScale_of_isEllipticFieldOn_of_openCubeDescendantDeterministicCoarseData
-      Q a t ht hEllCube hData
-  have hSigmaSum_one :
-      Summable (fun n : ℕ =>
-        geometricWeight (1 : ℝ) 1 n *
-          Real.rpow (maxDescendantSigmaStarInvNormAtScale Q (Q.scale - (n : ℤ)) a)
-            (1 / 2 : ℝ)) :=
-    summable_maxDescendantSigmaStarInvNormAtScale_geometricWeight_one_of_lt
-      Q a ht (by nlinarith [hs, hst]) hSigmaSum_t
-  have hSigmaSum_one_sub_s :
-      Summable (fun n : ℕ =>
-        geometricWeight (1 - s) 1 n *
-          Real.rpow (maxDescendantSigmaStarInvNormAtScale Q (Q.scale - (n : ℤ)) a)
-            (1 / 2 : ℝ)) :=
-    summable_maxDescendantSigmaStarInvNormAtScale_geometricWeight_one_of_lt
-      Q a ht (by nlinarith [hst]) hSigmaSum_t
+  obtain ⟨hSigmaSum_one, hSigmaSum_one_sub_s⟩ :=
+    canonicalGradientSummabilityFromEllipticity Q a hs ht hst hEllCube
   intro ρ₁ ρ₂ hρ₁ hlt hρ₂
   let ρm : ℝ := coarseCaccioppoliBufferedCutoffRadius ρ₁ ρ₂
   let k : ℕ := coarseCaccioppoliTriadicGapScale ρ₁ ρ₂
@@ -477,11 +566,6 @@ theorem
       CoarseCaccioppoliFluxEnergyControls.of_aHarmonicFunction_of_isEllipticFieldOn
         (Q := Q) (a := a) (s := s) hs hEllCube u0.toCubeSet
     simpa [flux, energy, scalarVariationEnergyIntegrand] using hflux
-  have hgradQ : CubeAverageGradientEnergyControl Q a G energy := by
-    have hgrad :=
-      cubeAverageGradientEnergyControl_of_aHarmonicFunction_of_openCubeOriginEllipticRecoveryExistence
-        (Q := Q) (a := a) hEllCube u0.toCubeSet hOrigin
-    simpa [G, energy, scalarVariationEnergyIntegrand] using hgrad
   have henergy_nonneg : ∀ x ∈ cubeSet Q, 0 ≤ energy x := by
     intro x hx
     have hnonneg :=
@@ -508,109 +592,22 @@ theorem
     simpa [flux, u, ξ] using
       integrableOn_vecDot_harmonicFlux_harmonicFunction_localCanonicalCutoff
         Q a center u0 hEllOpen hρ₁_pos hlt_mid
-  have huQ : MeasureTheory.MemLp u (2 : ℝ≥0∞) (normalizedCubeMeasure Q) := by
-    simpa [u] using memLp_harmonicFunction_normalizedCubeMeasure Q a u0
-  have hfluxMem : ∀ R ∈ descendantsAtDepth Q j,
-      MeasureTheory.MemLp flux (2 : ℝ≥0∞) (normalizedCubeMeasure R) := by
-    intro R hR
-    exact memLp_on_descendant_of_memLp_generic (E := Vec d) hR
-      (by simpa [flux] using memLp_harmonicFlux_normalizedCubeMeasure Q a u0 hEllOpen)
-  have huMem : ∀ R ∈ descendantsAtDepth Q j,
-      MeasureTheory.MemLp u (2 : ℝ≥0∞) (normalizedCubeMeasure R) := by
-    intro R hR
-    exact memLp_on_descendant_of_memLp_generic (E := ℝ) hR huQ
-  have hGMem : ∀ R ∈ descendantsAtDepth Q j, ∀ i : Fin d,
-      MeasureTheory.MemLp (fun x => G x i) (2 : ℝ≥0∞) (normalizedCubeMeasure R) := by
-    intro R hR i
-    exact memLp_on_descendant_of_memLp (Q := Q) (R := R) (j := j) hR
-      (by simpa [G] using memLp_harmonicGradientComponent_normalizedCubeMeasure Q a u0 i)
+  obtain ⟨huQ, hfluxMem, huMem, hGMem⟩ :=
+    harmonicDescendantSquareIntegrability Q a u0 j hEllOpen
   have hfluxEnergyR : ∀ R ∈ descendantsAtDepth Q j,
       CoarseCaccioppoliFluxEnergyControls R a s flux energy := by
     intro R hR
     exact hfluxEnergyQ.restrict_to_descendant hs.le hR
   have hB_nonneg : 0 ≤ B := by
     exact div_nonneg (quantitativeCubeCutoffHessianConst_nonneg d) (sq_nonneg _)
-  have hAcirc1_nonneg : ∀ R ∈ descendantsAtDepth Q j, 0 ≤ Acirc1 R := by
-    intro R hR
-    simpa [Acirc1] using
-      coarseCaccioppoliCanonicalGradientAcircOne_nonneg R a ρ₁ ρm
-  have hAcircS_nonneg : ∀ R ∈ descendantsAtDepth Q j, 0 ≤ AcircS R := by
-    intro R hR
-    simpa [AcircS] using
-      coarseCaccioppoliCanonicalGradientAcircOneSub_nonneg R a hs1.le ρ₁ ρm
-  have hBgConst : ∀ R ∈ descendantsAtDepth Q j,
-      0 ≤ coarseCaccioppoliConstantCutoffSize R u ξ B := by
-    intro R hR
-    exact coarseCaccioppoliConstantCutoffSize_nonneg R u ξ hB_nonneg
-  have hBgCent : ∀ R ∈ descendantsAtDepth Q j,
-      0 ≤ coarseCaccioppoliCenteredCutoffSize R s ξ (Acirc1 R) (AcircS R)
-        (Real.sqrt (cubeAverage R energy)) B CeffLocal := by
-    intro R hR
-    exact
-      coarseCaccioppoliCenteredCutoffSize_nonneg R ξ hs
-        (hAcirc1_nonneg R hR) (hAcircS_nonneg R hR)
-        (Real.sqrt_nonneg _) hB_nonneg hCeffLocal_nonneg
-  have hfullFamily :
-      CoarseCaccioppoliBoundaryCanonicalGradientFullDualPoincareVectorFamily Q a Clocal
-        (fun _ _ => u0) :=
-    (CoarseCaccioppoliBoundaryCanonicalGradientFullDualPoincareVectorFamily.of_aHarmonicFunction
-      Q a (fun _ _ => u0)).mono_C hCsol_le
-  have hfull : ∀ R ∈ descendantsAtDepth Q j, ∀ N : ℕ,
-      CubeDescendantDualFullVectorPoincareEstimate R Clocal
-        (cubeFluctuation R u) G N := by
-    intro R hR N
-    simpa [u, G] using
-      hfullFamily.vectorPoincare_on_descendant
-        hR hρ₁ hlt_mid hρm_le_one N
-  have hGcirc1 : ∀ R ∈ descendantsAtDepth Q j, ∀ i : Fin d, ∀ N : ℕ,
-      cubeBesovCircPartialNorm R 1 (2 : ℝ≥0∞) (1 : ℝ≥0∞) N (fun x => G x i) ≤
-        Acirc1 R * Real.sqrt (cubeAverage R energy) := by
-    intro R hR i N
-    have henergy_nonneg_R : ∀ x ∈ cubeSet R, 0 ≤ energy x := by
-      intro x hx
-      exact henergy_nonneg x (cubeSet_subset_of_mem_descendantsAtDepth hR hx)
-    have henergy_int_R :
-        MeasureTheory.IntegrableOn energy (cubeSet R) MeasureTheory.volume :=
-      henergy_int.mono_set (cubeSet_subset_of_mem_descendantsAtDepth hR)
-    have hgradR : CubeAverageGradientEnergyControl R a G energy :=
-      hgradQ.restrict_to_descendant hR
-    have hSigmaSum_one_R :
-        Summable (fun n : ℕ =>
-          geometricWeight (1 : ℝ) 1 n *
-            Real.rpow (maxDescendantSigmaStarInvNormAtScale R (R.scale - (n : ℤ)) a)
-              (1 / 2 : ℝ)) :=
-      summable_geometricWeight_maxDescendantSigmaStarInvNormAtScale_of_mem_descendantsAtDepth
-        (Q := Q) (R := R) (j := j) a (1 : ℝ) (by norm_num) hR hSigmaSum_one
-    simpa [G, Acirc1, coarseCaccioppoliCanonicalGradientAcircOne,
-      coarseCaccioppoliCanonicalGradientAcirc, energy] using
-      cubeBesovCircPartialNorm_component_le_local_canonicalGradientAcirc
-        R a (1 : ℝ) (by norm_num)
-        henergy_nonneg_R henergy_int_R hgradR hSigmaSum_one_R i N
-  have hGcircS : ∀ R ∈ descendantsAtDepth Q j, ∀ i : Fin d, ∀ N : ℕ,
-      cubeBesovCircPartialNorm R (1 - s) (2 : ℝ≥0∞) (1 : ℝ≥0∞) N
-        (fun x => G x i) ≤ AcircS R * Real.sqrt (cubeAverage R energy) := by
-    intro R hR i N
-    have hs_pos : 0 < 1 - s := by linarith
-    have henergy_nonneg_R : ∀ x ∈ cubeSet R, 0 ≤ energy x := by
-      intro x hx
-      exact henergy_nonneg x (cubeSet_subset_of_mem_descendantsAtDepth hR hx)
-    have henergy_int_R :
-        MeasureTheory.IntegrableOn energy (cubeSet R) MeasureTheory.volume :=
-      henergy_int.mono_set (cubeSet_subset_of_mem_descendantsAtDepth hR)
-    have hgradR : CubeAverageGradientEnergyControl R a G energy :=
-      hgradQ.restrict_to_descendant hR
-    have hSigmaSum_one_sub_s_R :
-        Summable (fun n : ℕ =>
-          geometricWeight (1 - s) 1 n *
-            Real.rpow (maxDescendantSigmaStarInvNormAtScale R (R.scale - (n : ℤ)) a)
-              (1 / 2 : ℝ)) :=
-      summable_geometricWeight_maxDescendantSigmaStarInvNormAtScale_of_mem_descendantsAtDepth
-        (Q := Q) (R := R) (j := j) a (1 - s) hs_pos.le hR hSigmaSum_one_sub_s
-    simpa [G, AcircS, coarseCaccioppoliCanonicalGradientAcircOneSub,
-      coarseCaccioppoliCanonicalGradientAcirc, energy] using
-      cubeBesovCircPartialNorm_component_le_local_canonicalGradientAcirc
-        R a (1 - s) hs_pos
-        henergy_nonneg_R henergy_int_R hgradR hSigmaSum_one_sub_s_R i N
+  obtain ⟨hAcirc1_nonneg, hAcircS_nonneg, hBgConst, hBgCent⟩ :=
+    canonicalCutoffSizeNonnegativity Q a s u ξ energy B CeffLocal j ρ₁ ρm
+      hs hs1 hB_nonneg hCeffLocal_nonneg
+  have hdescendantBounds :=
+    harmonicDescendantPoincareAndBesovBounds Q a u0 j hCsol_le hs1 hEllCube
+      hρ₁ hlt_mid hρm_le_one henergy_nonneg henergy_int
+      hSigmaSum_one hSigmaSum_one_sub_s
+  rcases hdescendantBounds with ⟨hfull, hGcirc1, hGcircS⟩
   have hL2n : cubeLpNorm Q (2 : ℝ≥0∞) u ≤
       Real.sqrt (coarseCaccioppoliHarmonicL2Sq Q a u0) := by
     simpa [u, coarseCaccioppoliCanonicalHarmonicL2Profile] using
@@ -641,14 +638,14 @@ theorem
         coarseCaccioppoliFluxEnergyExactCenteredCoeff R a s ξ (Acirc1 R) (AcircS R)
             B CeffLocal ≤ Alpha) := by
     simpa [
-      CoarseCaccioppoliBoundaryCanonicalHarmonicVectorFaithfulWorkSmallCubeLocalPatchBufferedExactRawCoefficientBoundsSplitAllRadii,
+      BoundaryCaccioppoliHarmonicVectorSmallCubeCoefficientSplit_localPatch_allRadii,
       CeffLocal, CeffAlpha, CeffCross, hheight, ρm, j, j0, ξ, B, Acirc1,
       AcircS, K, Alpha, coarseCaccioppoliLocalPatchCutoffHessianBound]
       using hrawcoeff hρ₁ hlt hρ₂
   rcases hrawn with ⟨hconst_raw, hcent_raw⟩
   refine le_trans htest ?_
   have hraw :=
-    abs_cubeAverage_vecDot_scalar_smul_le_localPatch_raw_of_localCanonicalCutoff_on_descendants_variableAcirc_of_support_buffer_vectorFullDualFullCirc
+    abs_cubeAverage_vectorDot_scalarMultiply_le_local_raw
       (Q := Q) (center := center) (j := j) (a := a) (s := s)
       (rhoInner := ρ₁) (rhoOuter := ρm) (rho := ρ₂)
       (flux := flux) (u := u) (G := G) (energy := energy)
@@ -667,6 +664,8 @@ theorem
     coarseCaccioppoliLocalEnergyRadiusProfile, CeffAlpha, CeffCross, hheight,
     energy, Alpha, Bcross, flux, u, ξ, B]
     using hraw
+
+end CoarseCaccioppoliBoundaryCanonicalHarmonicVectorLocalPatchNoteRawBridgeSplitAllRadii
 
 end
 

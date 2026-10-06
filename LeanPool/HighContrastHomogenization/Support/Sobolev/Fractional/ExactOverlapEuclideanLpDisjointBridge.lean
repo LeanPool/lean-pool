@@ -63,7 +63,8 @@ private theorem disjoint_residual_eq_overlap_middleChild {d : ℕ}
       eLpNorm (fun x => HilbertVec.ofVec
         (F x - ScalarOverlap.cubeAverageVec (ScalarOverlap.middleChildCube R) F))
         p.exponent (ScalarOverlap.normalizedCubeMeasure (ScalarOverlap.middleChildCube R)) := by
-  have hmean : ScalarOverlap.cubeAverageVec (ScalarOverlap.middleChildCube R) F = cubeAverageVec R F := by
+  have hmean : ScalarOverlap.cubeAverageVec (ScalarOverlap.middleChildCube R) F = cubeAverageVec
+    R F := by
     funext i
     simp only [ScalarOverlap.cubeAverageVec, cubeAverageVec]
     rw [ScalarOverlap.cubeAverage_middleChildCube]

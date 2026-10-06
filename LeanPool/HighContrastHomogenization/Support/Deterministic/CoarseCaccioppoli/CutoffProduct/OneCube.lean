@@ -133,7 +133,8 @@ theorem cubeLpNorm_two_smul_le_mul_cubeLpNorm_infty {d : ℕ} (Q : TriadicCube d
         MeasureTheory.eLpNorm ξ ∞ (normalizedCubeMeasure Q) ≠ ∞ :=
     ENNReal.mul_ne_top (ne_of_lt hv.eLpNorm_lt_top) (ne_of_lt hξ.eLpNorm_lt_top)
   have htoReal := ENNReal.toReal_mono hmul_top hmul
-  simpa [cubeLpNorm, ne_of_lt hv.eLpNorm_lt_top, ne_of_lt hξ.eLpNorm_lt_top, mul_comm, mul_left_comm, mul_assoc] using htoReal
+  simpa [cubeLpNorm, ne_of_lt hv.eLpNorm_lt_top, ne_of_lt hξ.eLpNorm_lt_top, mul_comm,
+    mul_left_comm, mul_assoc] using htoReal
 
 theorem norm_cubeAverageVec_scalar_smul_le_cubeLpNorm_infty_mul_cubeLpNorm_two {d : ℕ}
     (Q : TriadicCube d) (u : Vec d → ℝ) (ξ : Vec d → Vec d)
@@ -314,7 +315,8 @@ theorem cubeLpNorm_two_cubeFluctuationVec_scalar_smul_le_cutoff_terms_of_contDif
             exact mul_le_mul_of_nonneg_right hoscξ hv_nonneg
           exact mul_le_mul_of_nonneg_left (add_le_add hmul le_rfl) (by norm_num)
 
-theorem cubeLpNorm_two_cubeFluctuationVec_centered_scalar_smul_le_cutoff_terms_of_contDiff_component_bound
+theorem
+  cubeLpNorm_two_cubeFluctuationVec_centered_scalar_smul_le_cutoff_terms_of_contDiff_component_bound
     {d : ℕ} (Q : TriadicCube d) (u : Vec d → ℝ) (ξ : Vec d → Vec d) {B : ℝ}
     (hB : 0 ≤ B)
     (hu : MeasureTheory.MemLp u (2 : ℝ≥0∞) (normalizedCubeMeasure Q))

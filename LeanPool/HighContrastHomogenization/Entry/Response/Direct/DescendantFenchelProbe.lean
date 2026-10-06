@@ -480,7 +480,8 @@ theorem optimizerField_ae_eq_canonicalState_respCoeffMinus {d : ℕ} [NeZero d]
   obtain ⟨lam, Lam, f, hlam, hle, hEll, hbf⟩ :=
     exists_elliptic_representative_respCoeffMinus q hq t F a
   have : IsFiniteMeasure (volumeMeasureOn (HighContrast.adaptedCell q t)) := by
-    simpa [volumeMeasureOn] using (adaptedCell_isOpenBoundedConvexDomain q hq t).isFiniteMeasure_restrict_volume
+    simpa [volumeMeasureOn] using (adaptedCell_isOpenBoundedConvexDomain q hq
+      t).isFiniteMeasure_restrict_volume
   let A : Book.Ch02.CoeffOn (adaptedDomain q hq t) :=
     coeffOnOfIsEllipticFieldOn (U := adaptedDomain q hq t) hlam hle hEll
   let v : ScalarCanonicalMaximizer (HighContrast.adaptedCell q t) p r (respCoeffMinus F a) :=
@@ -531,7 +532,8 @@ theorem optimizerField_ae_eq_canonicalState_respCoeffPlus {d : ℕ} [NeZero d]
   obtain ⟨lam, Lam, f, hlam, hle, hEll, hbf⟩ :=
     exists_elliptic_representative_respCoeffPlus q hq t F a
   have : IsFiniteMeasure (volumeMeasureOn (HighContrast.adaptedCell q t)) := by
-    simpa [volumeMeasureOn] using (adaptedCell_isOpenBoundedConvexDomain q hq t).isFiniteMeasure_restrict_volume
+    simpa [volumeMeasureOn] using (adaptedCell_isOpenBoundedConvexDomain q hq
+      t).isFiniteMeasure_restrict_volume
   let A : Book.Ch02.CoeffOn (adaptedDomain q hq t) :=
     coeffOnOfIsEllipticFieldOn (U := adaptedDomain q hq t) hlam hle hEll
   let v : ScalarCanonicalMaximizer (HighContrast.adaptedCell q t) p r (respCoeffPlus F a) :=

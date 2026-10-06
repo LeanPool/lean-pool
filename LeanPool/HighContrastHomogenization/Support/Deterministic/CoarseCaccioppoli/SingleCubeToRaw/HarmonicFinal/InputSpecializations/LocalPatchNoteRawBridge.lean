@@ -10,7 +10,8 @@ public import LeanPool.HighContrastHomogenization.Support.Deterministic.CoarseCa
 
 /-!
 # Coarse-graining support:
-Support.Deterministic.CoarseCaccioppoli.SingleCubeToRaw.HarmonicFinal.InputSpecializations.LocalPatchNoteRawBridge
+Support.Deterministic.CoarseCaccioppoli.SingleCubeToRaw.HarmonicFinal.InputSpecializations
+.LocalPatchNoteRawBridge
 
 Imported from the Apache-2.0 CoarseGraining development at commit
 `c7ddd76c08ade64fed1b8d2ca51be14dfee8deb4`.
@@ -34,10 +35,12 @@ cube, so the compact-support test function is admissible without a boundary
 zero-trace argument.
 -/
 
+namespace CoarseCaccioppoliBoundaryCanonicalHarmonicVectorLocalPatchNoteRawBridgeSplit
+
 /-- Boundary local-patch split raw bridge for a constant harmonic family, in
 the boundary-touching case supplied by a localized scalar zero-trace condition. -/
 theorem
-    CoarseCaccioppoliBoundaryCanonicalHarmonicVectorLocalPatchNoteRawBridgeSplit.of_constantFamily_localPatchBufferedFaithfulWorkSmallCubeExactRawCoefficientBoundsSplit_of_localizedZeroTrace_of_closedCubeEllipticity
+    of_constantFamily_bufferedSmallCubeCoefficientBoundsSplit_of_zeroTrace
     {d : ℕ} [NeZero d] (Q : TriadicCube d) (center : Vec d) (a : CoeffField d)
     (s t Clocal Calpha Ccross : ℝ) {lam Lam : ℝ} {V : Set (Vec d)}
     (u0 : AHarmonicFunction a (openCubeSet Q))
@@ -52,13 +55,15 @@ theorem
       let ρm : ℝ := coarseCaccioppoliBufferedCutoffRadius ρ₁ ρ₂
       coarseCaccioppoliLocalClosedCube Q center ρm ⊆ V)
     (hrawcoeff :
-      CoarseCaccioppoliBoundaryCanonicalHarmonicVectorFaithfulWorkSmallCubeLocalPatchBufferedExactRawCoefficientBoundsSplit
+      BoundaryCaccioppoliHarmonicVectorSmallCubeCoefficientSplit_localPatch
         Q center a s t Clocal Calpha Ccross) :
     CoarseCaccioppoliBoundaryCanonicalHarmonicVectorLocalPatchNoteRawBridgeSplit
       Q center a s t Calpha Ccross (coarseCaccioppoliHarmonicL2Sq Q a u0)
       (fun x => scalarVariationEnergyIntegrand a u0 x) := by
   refine
-    CoarseCaccioppoliBoundaryCanonicalHarmonicVectorLocalPatchNoteRawBridgeSplit.of_constantFamily_localPatchBufferedFaithfulWorkSmallCubeExactRawCoefficientBoundsSplit_of_testing_of_closedCubeEllipticity
+    (open CoarseCaccioppoliBoundaryCanonicalHarmonicVectorLocalPatchNoteRawBridgeSplit
+      (of_constantFamily_bufferedSmallCubeCoefficientBoundsSplit_of_testing) in
+      of_constantFamily_bufferedSmallCubeCoefficientBoundsSplit_of_testing)
       (Q := Q) (center := center) (a := a) (s := s) (t := t)
       (Clocal := Clocal) (Calpha := Calpha) (Ccross := Ccross) (u0 := u0)
       hClocal hCcross hCsol_le hs ht hst hEllCube ?_ hrawcoeff
@@ -106,17 +111,21 @@ theorem
       coarseCaccioppoliLocalEnergyProfile_le_localCanonicalCutoffEnergy_of_integrable
         Q center energy hρ₁_pos hlt_mid henergy_nonneg henergy_int
   have htestη :=
-    le_abs_cubeAverage_vecDot_flux_localCanonicalCutoff_of_aHarmonicFunction_of_localizedZeroTrace_of_le_localCanonicalCutoffEnergy
+    le_abs_cubeAverage_vectorDot_flux_localCanonicalCutoff_of_of_aHarmonicFunction
       Q a center u0 hEllOpen hzero hρ₁_pos hlt_mid
       (by simpa [ρ₁, ρ₂, ρm] using hcutoffWindow n)
       (by simpa [energy] using hlowerρ)
   simpa [ρ₁, ρ₂, ρm, energy, flux, u, ξ] using htestη
 
+end CoarseCaccioppoliBoundaryCanonicalHarmonicVectorLocalPatchNoteRawBridgeSplit
+
+namespace CoarseCaccioppoliBoundaryCanonicalHarmonicVectorLocalPatchNoteRawBridgeSplitAllRadii
+
 /-- All-radii boundary local-patch split raw bridge for a constant harmonic
 family, in the boundary-touching case supplied by a localized scalar
 zero-trace condition. -/
 theorem
-    CoarseCaccioppoliBoundaryCanonicalHarmonicVectorLocalPatchNoteRawBridgeSplitAllRadii.of_constantFamily_localPatchBufferedFaithfulWorkSmallCubeExactRawCoefficientBoundsSplitAllRadii_of_localizedZeroTrace_of_closedCubeEllipticity
+    of_constantFamily_bufferedSmallCubeCoefficientBoundsSplitAllRadii_of_zeroTrace
     {d : ℕ} [NeZero d] (Q : TriadicCube d) (center : Vec d) (a : CoeffField d)
     (s t Clocal Calpha Ccross : ℝ) {lam Lam : ℝ} {V : Set (Vec d)}
     (u0 : AHarmonicFunction a (openCubeSet Q))
@@ -130,13 +139,15 @@ theorem
         let ρm : ℝ := coarseCaccioppoliBufferedCutoffRadius ρ₁ ρ₂
         coarseCaccioppoliLocalClosedCube Q center ρm ⊆ V)
     (hrawcoeff :
-      CoarseCaccioppoliBoundaryCanonicalHarmonicVectorFaithfulWorkSmallCubeLocalPatchBufferedExactRawCoefficientBoundsSplitAllRadii
+      BoundaryCaccioppoliHarmonicVectorSmallCubeCoefficientSplit_localPatch_allRadii
         Q center a s t Clocal Calpha Ccross) :
     CoarseCaccioppoliBoundaryCanonicalHarmonicVectorLocalPatchNoteRawBridgeSplitAllRadii
       Q center a s t Calpha Ccross (coarseCaccioppoliHarmonicL2Sq Q a u0)
       (fun x => scalarVariationEnergyIntegrand a u0 x) := by
   refine
-    CoarseCaccioppoliBoundaryCanonicalHarmonicVectorLocalPatchNoteRawBridgeSplitAllRadii.of_constantFamily_localPatchBufferedFaithfulWorkSmallCubeExactRawCoefficientBoundsSplitAllRadii_of_testing_of_closedCubeEllipticity
+    (open CoarseCaccioppoliBoundaryCanonicalHarmonicVectorLocalPatchNoteRawBridgeSplitAllRadii
+      (of_constantFamily_bufferedSmallCubeCoefficientBoundsSplitAllRadii_of_testing) in
+      of_constantFamily_bufferedSmallCubeCoefficientBoundsSplitAllRadii_of_testing)
       (Q := Q) (center := center) (a := a) (s := s) (t := t)
       (Clocal := Clocal) (Calpha := Calpha) (Ccross := Ccross) (u0 := u0)
       hClocal hCcross hCsol_le hs ht hst hEllCube ?_ hrawcoeff
@@ -177,17 +188,19 @@ theorem
       coarseCaccioppoliLocalEnergyProfile_le_localCanonicalCutoffEnergy_of_integrable
         Q center energy hρ₁_pos hlt_mid henergy_nonneg henergy_int
   have htestη :=
-    le_abs_cubeAverage_vecDot_flux_localCanonicalCutoff_of_aHarmonicFunction_of_localizedZeroTrace_of_le_localCanonicalCutoffEnergy
+    le_abs_cubeAverage_vectorDot_flux_localCanonicalCutoff_of_of_aHarmonicFunction
       Q a center u0 hEllOpen hzero hρ₁_pos hlt_mid
       (by simpa [ρm] using hcutoffWindow hρ₁ hlt hρ₂)
       (by simpa [energy] using hlowerρ)
   simpa [ρm, energy, flux, u, ξ] using htestη
 
+end CoarseCaccioppoliBoundaryCanonicalHarmonicVectorLocalPatchNoteRawBridgeSplitAllRadii
+
 /-- Boundary local-patch standard note-RHS endpoint for a constant harmonic
 family with zero trace on the full local `cu_{m-1}` window, with split note
 coefficients. -/
 theorem
-    coarseCaccioppoli_boundary_localPatch_qone_standard_le_noteRhs_explicitSplit_of_constantFamily_localPatchBufferedFaithfulWorkSmallCubeExactRawCoefficientBoundsSplitAllRadii_of_localizedZeroTraceOnLocalOpenCube
+    coarseCaccioppoli_boundary_local_qone_standard_le_noteRhs_explicitSplit
     {d : ℕ} [NeZero d] (Q : TriadicCube d) (center : Vec d) (a : CoeffField d)
     (s t Clocal Calpha Ccross : ℝ) {lam Lam : ℝ}
     (u0 : AHarmonicFunction a (openCubeSet Q))
@@ -199,7 +212,7 @@ theorem
     (hs : 0 < s) (ht : 0 < t) (hst : s + t < 1)
     (hEllCube : IsEllipticFieldOn lam Lam (cubeSet Q) a)
     (hrawcoeff :
-      CoarseCaccioppoliBoundaryCanonicalHarmonicVectorFaithfulWorkSmallCubeLocalPatchBufferedExactRawCoefficientBoundsSplitAllRadii
+      BoundaryCaccioppoliHarmonicVectorSmallCubeCoefficientSplit_localPatch_allRadii
         Q center a s t Clocal Calpha Ccross) :
     coarseCaccioppoliLocalEnergyRadiusProfile Q center
         (fun x => scalarVariationEnergyIntegrand a u0 x) (1 / 3 : ℝ) ≤
@@ -242,12 +255,14 @@ theorem
   have hBridge :
       CoarseCaccioppoliBoundaryCanonicalHarmonicVectorLocalPatchNoteRawBridgeSplitAllRadii
         Q center a s t Calpha Ccross (coarseCaccioppoliHarmonicL2Sq Q a u0) energy :=
-    CoarseCaccioppoliBoundaryCanonicalHarmonicVectorLocalPatchNoteRawBridgeSplitAllRadii.of_constantFamily_localPatchBufferedFaithfulWorkSmallCubeExactRawCoefficientBoundsSplitAllRadii_of_localizedZeroTrace_of_closedCubeEllipticity
+    (open CoarseCaccioppoliBoundaryCanonicalHarmonicVectorLocalPatchNoteRawBridgeSplitAllRadii
+      (of_constantFamily_bufferedSmallCubeCoefficientBoundsSplitAllRadii_of_zeroTrace) in
+      of_constantFamily_bufferedSmallCubeCoefficientBoundsSplitAllRadii_of_zeroTrace)
       (Q := Q) (center := center) (a := a) (s := s) (t := t)
       (Clocal := Clocal) (Calpha := Calpha) (Ccross := Ccross) (u0 := u0)
       hzero hClocal hCcross hCsol_le hs ht hst hEllCube hcutoffWindow hrawcoeff
   simpa [energy] using
-    coarseCaccioppoli_boundary_localPatch_qone_standard_le_noteRhs_explicitSplit_of_noteRawBridgeSplitAllRadii
+    coarseCaccioppoli_boundary_local_qone_standard_le_of_noteBridgeSplitAllRadii
       (Q := Q) (center := center) (a := a) (s := s) (t := t)
       (Calpha := Calpha) (Ccross := Ccross)
       (uL2Sq := coarseCaccioppoliHarmonicL2Sq Q a u0)

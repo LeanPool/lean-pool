@@ -32,7 +32,7 @@ annealed contrast there,
 
 with `Θ_m` the intrinsic annealed contrast of `e.Theta.m` and
 `𝔡` the canonical imbalance of `e.scale.selection.canonical.metric`, both read
-on `F_m = 𝐀̄(□_m)`.
+on `F_m = 𝐀_bar(□_m)`.
 
 Two things are proved.
 
@@ -51,11 +51,11 @@ doubled block — one factor of three stronger than the printed display, which i
 recovered from it because `𝔡 ≥ 1`.
 
 The printed route to the display passes through the *uncorrected* Schur ratio
-`Θ̃ = |σ_*^{-1/2} σ σ_*^{-1/2}|`, in two steps: a factor-three comparison
-`Θ - 1 ≤ 3(Θ̃ - 1)`, and then `Θ̃ - 1 ≤ 𝔡 - 1` read off the sharp ordering.  The
+`Θ_tilde = |σ_*^{-1/2} σ σ_*^{-1/2}|`, in two steps: a factor-three comparison
+`Θ - 1 ≤ 3(Θ_tilde - 1)`, and then `Θ_tilde - 1 ≤ 𝔡 - 1` read off the sharp ordering.  The
 second step's source, the lower block inequality of [Armstrong–Kuusi, Lemma 2.6, (2.82)], is false
 as printed: at Schur data `σ_* = 1, σ = 9, k = 4` in
-one dimension the printed bounds are exceeded, both being linear in `Θ̃ - 1`
+one dimension the printed bounds are exceeded, both being linear in `Θ_tilde - 1`
 where the extremal configurations grow quadratically.  Neither step is used
 here.
 

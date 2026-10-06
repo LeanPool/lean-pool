@@ -156,7 +156,8 @@ theorem abs_vecDot_cellPart_respYMinus_le_clean {d : ℕ} [NeZero d]
   let v : (w : Fin d → ℤ) → (a : CoeffSpace d) →
       AHarmonicFunction (respCoeffMinus F a) (adaptedCellAtCenter (respGrid jStar F) s w) :=
     fun w a => (Classical.choice
-      (nonempty_scalarCanonicalMaximizer_respCoeffMinus_adaptedCellAtCenter (respGrid jStar F) hq s w F a
+      (nonempty_scalarCanonicalMaximizer_respCoeffMinus_adaptedCellAtCenter (respGrid jStar F)
+        hq s w F a
         (respP (respMean P jStar F t) e)
         (respqMinus P jStar F t e))).toAHarmonicFunctionMeanZero.toAHarmonicFunction
   have hv : ∀ (w : Fin d → ℤ) (a : CoeffSpace d),
@@ -164,19 +165,22 @@ theorem abs_vecDot_cellPart_respYMinus_le_clean {d : ℕ} [NeZero d]
         (respP (respMean P jStar F t) e) (respqMinus P jStar F t e)
         (respCoeffMinus F a) (v w a) :=
     fun w a => (Classical.choice
-      (nonempty_scalarCanonicalMaximizer_respCoeffMinus_adaptedCellAtCenter (respGrid jStar F) hq s w F a
+      (nonempty_scalarCanonicalMaximizer_respCoeffMinus_adaptedCellAtCenter (respGrid jStar F)
+        hq s w F a
         (respP (respMean P jStar F t) e)
         (respqMinus P jStar F t e))).isResponseMaximizer
   -- the subcell energies and deficits
   have hmeasEae : ∀ w ∈ triadicIndexBox d H, AEStronglyMeasurable (fun a =>
       volumeAverage (adaptedCellAtCenter (respGrid jStar F) s w)
         (scalarVariationEnergyIntegrand (respCoeffMinus F a) (uM a))) P :=
-    fun w hw => (measurable_volumeAverage_energy_adaptedCellAtCenter_respCoeffMinus P jStar hjStar F hm
+    fun w hw => (measurable_volumeAverage_energy_adaptedCellAtCenter_respCoeffMinus P jStar
+      hjStar F hm
       H s t ht e uM hmax w hw).aestronglyMeasurable
   have hE : ∀ w ∈ triadicIndexBox d H, Integrable (fun a =>
       volumeAverage (adaptedCellAtCenter (respGrid jStar F) s w)
         (scalarVariationEnergyIntegrand (respCoeffMinus F a) (uM a))) P :=
-    integrable_volumeAverage_energy_adaptedCellAtCenter_respCoeffMinus P jStar hjStar F hm H s t ht e
+    integrable_volumeAverage_energy_adaptedCellAtCenter_respCoeffMinus P jStar hjStar F hm H s t
+      ht e
       uM hmax hJt hmeasEae
   have hDdef : ∀ w ∈ triadicIndexBox d H, Integrable (fun a =>
       ResponseJ (adaptedCellAtCenter (respGrid jStar F) s w) (respP (respMean P jStar F t) e)
@@ -190,7 +194,8 @@ theorem abs_vecDot_cellPart_respYMinus_le_clean {d : ℕ} [NeZero d]
   have hNs : ∀ w ∈ triadicIndexBox d H,
       (∀ i : Fin d, Integrable (fun a => (cellAverage (adaptedCellAtCenter (respGrid jStar F) s w)
           (optimizerField (respCoeffMinus F a) (v w a))).1 i) P)
-        ∧ (∀ i : Fin d, Integrable (fun a => (cellAverage (adaptedCellAtCenter (respGrid jStar F) s w)
+        ∧ (∀ i : Fin d, Integrable (fun a => (cellAverage (adaptedCellAtCenter (respGrid jStar
+          F) s w)
           (optimizerField (respCoeffMinus F a) (v w a))).2 i) P) :=
     fun w _ => integrable_cellAverage_subcellOptimizer_respCoeffMinus P jStar hjStar F hm s w
       (respP (respMean P jStar F t) e) (respqMinus P jStar F t e) (v w) (hv w) (hblk w)
@@ -216,7 +221,8 @@ theorem abs_vecDot_cellPart_respYMinus_le_clean {d : ℕ} [NeZero d]
           (integrable_finsetSum _ fun i _ => (hM.1 w hw i).const_mul _))
     refine h1.congr ?_
     filter_upwards with a
-    rw [volumeAverage_scalarResponseIntegrand_adaptedCellAtCenter_respCoeffMinus_eq P jStar hjStar F hm
+    rw [volumeAverage_scalarResponseIntegrand_adaptedCellAtCenter_respCoeffMinus_eq P jStar
+      hjStar F hm
       H s t ht e uM a w hw]
     simp only [blockVecDot, blockMatVecMul_blockSwap_fst, blockMatVecMul_blockSwap_snd, vecDot,
       Pi.neg_apply]
@@ -236,7 +242,8 @@ theorem abs_vecDot_cellPart_respYMinus_le_clean {d : ℕ} [NeZero d]
         ∧ 0 ≤ vecDot (respYMinus P jStar F t e).2 (matVecMul (coarseBlockMatrix
           (adaptedCellAtCenter (respGrid jStar F) s w) (respCoeffMinus F a)).lowerRight
           (respYMinus P jStar F t e).2) :=
-    fun w a => zero_le_vecDot_coarseBlockMatrix_respCoeffMinus_adaptedCellAtCenter jStar hjStar F hm s a
+    fun w a => zero_le_vecDot_coarseBlockMatrix_respCoeffMinus_adaptedCellAtCenter jStar hjStar
+      F hm s a
       (respYMinus P jStar F t e) w
   have hent : ∀ w : Fin d → ℤ, ∀ α β : BlockCoord d, Integrable (fun a =>
       blockMatEntry (coarseBlockMatrix (adaptedCellAtCenter (respGrid jStar F) s w)
@@ -278,14 +285,16 @@ theorem abs_vecDot_cellPart_respYMinus_le_clean {d : ℕ} [NeZero d]
     vecDot ((xCell w a).1 - (zCell w a).1) (respYMinus P jStar F t e).2
       + vecDot (respYMinus P jStar F t e).1 ((xCell w a).2 - (zCell w a).2)
   have hpair : ∀ w ∈ triadicIndexBox d H, Integrable (R w) P :=
-    fun w hw => integrable_crossedBlockAverageDifference (xCell w) (zCell w) (respYMinus P jStar F t e)
+    fun w hw => integrable_crossedBlockAverageDifference (xCell w) (zCell w) (respYMinus P jStar
+      F t e)
       (fun i => hM.1 w hw i) (fun i => hM.2 w hw i)
       (fun i => (hNs w hw).1 i) (fun i => (hNs w hw).2 i)
   obtain ⟨hFint, hDint, hMidint, hPint, hPint'⟩ :=
     integrable_cellHalfAnnealedReadouts (P := P) (triadicIndexBox d H) θ q1 q2 D R
       (fun w a => (hULLR w a).1) (fun w a => (hULLR w a).2) hqUL hqLR hDdef hpair
   have hmeasBlk : ∀ α β : BlockCoord d, AEStronglyMeasurable (fun a => blockMatEntry
-      (coarseBlockMatrix (HighContrast.adaptedCell (respGrid jStar F) s) (respCoeffMinus F a)) α β) P :=
+      (coarseBlockMatrix (HighContrast.adaptedCell (respGrid jStar F) s) (respCoeffMinus F a)) α
+        β) P :=
     aestronglyMeasurable_blockMatEntry_respCoeffMinus_adaptedCell P hq s F
   have hrespint : ∀ a : CoeffSpace d, IntegrableOn
       (scalarResponseIntegrand (respCell jStar F t) (respCoeffMinus F a)
@@ -359,7 +368,8 @@ theorem abs_vecDot_cellPart_respYPlus_le_clean {d : ℕ} [NeZero d]
   let v : (w : Fin d → ℤ) → (a : CoeffSpace d) →
       AHarmonicFunction (respCoeffPlus F a) (adaptedCellAtCenter (respGrid jStar F) s w) :=
     fun w a => (Classical.choice
-      (nonempty_scalarCanonicalMaximizer_respCoeffPlus_adaptedCellAtCenter (respGrid jStar F) hq s w F a
+      (nonempty_scalarCanonicalMaximizer_respCoeffPlus_adaptedCellAtCenter (respGrid jStar F) hq
+        s w F a
         (respP (respMean P jStar F t) e)
         (respqPlus P jStar F t e))).toAHarmonicFunctionMeanZero.toAHarmonicFunction
   have hv : ∀ (w : Fin d → ℤ) (a : CoeffSpace d),
@@ -367,14 +377,16 @@ theorem abs_vecDot_cellPart_respYPlus_le_clean {d : ℕ} [NeZero d]
         (respP (respMean P jStar F t) e) (respqPlus P jStar F t e)
         (respCoeffPlus F a) (v w a) :=
     fun w a => (Classical.choice
-      (nonempty_scalarCanonicalMaximizer_respCoeffPlus_adaptedCellAtCenter (respGrid jStar F) hq s w F a
+      (nonempty_scalarCanonicalMaximizer_respCoeffPlus_adaptedCellAtCenter (respGrid jStar F) hq
+        s w F a
         (respP (respMean P jStar F t) e)
         (respqPlus P jStar F t e))).isResponseMaximizer
   -- the subcell energies and deficits
   have hmeasEae : ∀ w ∈ triadicIndexBox d H, AEStronglyMeasurable (fun a =>
       volumeAverage (adaptedCellAtCenter (respGrid jStar F) s w)
         (scalarVariationEnergyIntegrand (respCoeffPlus F a) (uP a))) P :=
-    fun w hw => (measurable_volumeAverage_energy_adaptedCellAtCenter_respCoeffPlus P jStar hjStar F hm
+    fun w hw => (measurable_volumeAverage_energy_adaptedCellAtCenter_respCoeffPlus P jStar
+      hjStar F hm
       H s t ht e uP hmax w hw).aestronglyMeasurable
   have hE : ∀ w ∈ triadicIndexBox d H, Integrable (fun a =>
       volumeAverage (adaptedCellAtCenter (respGrid jStar F) s w)
@@ -393,7 +405,8 @@ theorem abs_vecDot_cellPart_respYPlus_le_clean {d : ℕ} [NeZero d]
   have hNs : ∀ w ∈ triadicIndexBox d H,
       (∀ i : Fin d, Integrable (fun a => (cellAverage (adaptedCellAtCenter (respGrid jStar F) s w)
           (optimizerField (respCoeffPlus F a) (v w a))).1 i) P)
-        ∧ (∀ i : Fin d, Integrable (fun a => (cellAverage (adaptedCellAtCenter (respGrid jStar F) s w)
+        ∧ (∀ i : Fin d, Integrable (fun a => (cellAverage (adaptedCellAtCenter (respGrid jStar
+          F) s w)
           (optimizerField (respCoeffPlus F a) (v w a))).2 i) P) :=
     fun w _ => integrable_cellAverage_subcellOptimizer_respCoeffPlus P jStar hjStar F hm s w
       (respP (respMean P jStar F t) e) (respqPlus P jStar F t e) (v w) (hv w) (hblk w)
@@ -419,7 +432,8 @@ theorem abs_vecDot_cellPart_respYPlus_le_clean {d : ℕ} [NeZero d]
           (integrable_finsetSum _ fun i _ => (hM.1 w hw i).const_mul _))
     refine h1.congr ?_
     filter_upwards with a
-    rw [volumeAverage_scalarResponseIntegrand_adaptedCellAtCenter_respCoeffPlus_eq P jStar hjStar F hm
+    rw [volumeAverage_scalarResponseIntegrand_adaptedCellAtCenter_respCoeffPlus_eq P jStar
+      hjStar F hm
       H s t ht e uP a w hw]
     simp only [blockVecDot, blockMatVecMul_blockSwap_fst, blockMatVecMul_blockSwap_snd, vecDot,
       Pi.neg_apply]
@@ -439,7 +453,8 @@ theorem abs_vecDot_cellPart_respYPlus_le_clean {d : ℕ} [NeZero d]
         ∧ 0 ≤ vecDot (respYPlus P jStar F t e).2 (matVecMul (coarseBlockMatrix
           (adaptedCellAtCenter (respGrid jStar F) s w) (respCoeffPlus F a)).lowerRight
           (respYPlus P jStar F t e).2) :=
-    fun w a => zero_le_vecDot_coarseBlockMatrix_respCoeffPlus_adaptedCellAtCenter jStar hjStar F hm s a
+    fun w a => zero_le_vecDot_coarseBlockMatrix_respCoeffPlus_adaptedCellAtCenter jStar hjStar F
+      hm s a
       (respYPlus P jStar F t e) w
   have hent : ∀ w : Fin d → ℤ, ∀ α β : BlockCoord d, Integrable (fun a =>
       blockMatEntry (coarseBlockMatrix (adaptedCellAtCenter (respGrid jStar F) s w)
@@ -481,14 +496,16 @@ theorem abs_vecDot_cellPart_respYPlus_le_clean {d : ℕ} [NeZero d]
     vecDot ((xCell w a).1 - (zCell w a).1) (respYPlus P jStar F t e).2
       + vecDot (respYPlus P jStar F t e).1 ((xCell w a).2 - (zCell w a).2)
   have hpair : ∀ w ∈ triadicIndexBox d H, Integrable (R w) P :=
-    fun w hw => integrable_crossedBlockAverageDifference (xCell w) (zCell w) (respYPlus P jStar F t e)
+    fun w hw => integrable_crossedBlockAverageDifference (xCell w) (zCell w) (respYPlus P jStar
+      F t e)
       (fun i => hM.1 w hw i) (fun i => hM.2 w hw i)
       (fun i => (hNs w hw).1 i) (fun i => (hNs w hw).2 i)
   obtain ⟨hFint, hDint, hMidint, hPint, hPint'⟩ :=
     integrable_cellHalfAnnealedReadouts (P := P) (triadicIndexBox d H) θ q1 q2 D R
       (fun w a => (hULLR w a).1) (fun w a => (hULLR w a).2) hqUL hqLR hDdef hpair
   have hmeasBlk : ∀ α β : BlockCoord d, AEStronglyMeasurable (fun a => blockMatEntry
-      (coarseBlockMatrix (HighContrast.adaptedCell (respGrid jStar F) s) (respCoeffPlus F a)) α β) P :=
+      (coarseBlockMatrix (HighContrast.adaptedCell (respGrid jStar F) s) (respCoeffPlus F a)) α
+        β) P :=
     aestronglyMeasurable_blockMatEntry_respCoeffPlus_adaptedCell P hq s F
   have hrespint : ∀ a : CoeffSpace d, IntegrableOn
       (scalarResponseIntegrand (respCell jStar F t) (respCoeffPlus F a)

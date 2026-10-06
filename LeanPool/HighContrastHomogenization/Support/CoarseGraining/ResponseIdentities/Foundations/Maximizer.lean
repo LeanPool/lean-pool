@@ -31,6 +31,8 @@ open Pointwise
 (`basic_cg_identities_first_variation_*`, `basic_cg_identities_sub_*`).
 -/
 
+/-- Integrability on `U` of weak fluxes, constant gradient and flux pairings, and symmetric
+coefficient cross energies for all `a`-harmonic functions. -/
 structure ResponseLinearIntegrabilityData {d : ℕ} (U : Set (Vec d)) (a : CoeffField d) : Prop where
   weakFlux : ∀ u : AHarmonicFunction a U, weakFluxIntegrable U a u
   grad :
@@ -171,6 +173,7 @@ theorem response {d : ℕ} {U : Set (Vec d)} {a : CoeffField d}
 
 end ResponseLinearIntegrabilityData
 
+/-- The function's averaged scalar response is at least that of every `a`-harmonic competitor. -/
 @[expose]
 def IsResponseMaximizer {d : ℕ} (U : Set (Vec d)) (p q : Vec d) (a : CoeffField d)
     (u : AHarmonicFunction a U) : Prop :=
@@ -196,8 +199,10 @@ theorem normalizeMeanZero {d : ℕ} {U : Set (Vec d)} {p q : Vec d} {a : CoeffFi
 
 end IsResponseMaximizer
 
+/-- A mean-zero `a`-harmonic function maximizing the averaged scalar response. -/
 structure ScalarCanonicalMaximizer {d : ℕ} (U : Set (Vec d)) (p q : Vec d)
     (a : CoeffField d) where
+  /-- The mean-zero harmonic representative of the maximizing function. -/
   toAHarmonicFunctionMeanZero : AHarmonicFunctionMeanZero a U
   isMaximizer : IsResponseMaximizer U p q a toAHarmonicFunctionMeanZero
 
@@ -221,6 +226,7 @@ theorem isResponseMaximizer {d : ℕ} {U : Set (Vec d)} {p q : Vec d} {a : Coeff
     IsResponseMaximizer U p q a (v : AHarmonicFunction a U) :=
   v.isMaximizer
 
+/-- Normalize a scalar response maximizer by subtracting its volume mean. -/
 @[expose]
 noncomputable def ofIsResponseMaximizer {d : ℕ} {U : Set (Vec d)} {p q : Vec d}
     {a : CoeffField d} [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
@@ -238,6 +244,7 @@ noncomputable def ofIsResponseMaximizer {d : ℕ} {U : Set (Vec d)} {p q : Vec d
 
 end ScalarCanonicalMaximizer
 
+/-- The harmonic perturbation `u + t • w`, built using integrable weak fluxes. -/
 @[expose]
 noncomputable def scalarPerturbation {d : ℕ} {a : CoeffField d} {U : Set (Vec d)}
     (u w : AHarmonicFunction a U) (t : ℝ)
@@ -525,6 +532,7 @@ theorem firstVariation_eq_zero_of_integral_eq_zero {d : ℕ}
   intro w
   exact volumeAverage_eq_zero_of_integral_eq_zero (hfirst w)
 
+/-- Construct a mean-zero response maximizer from vanishing first variation under ellipticity. -/
 @[expose]
 noncomputable def ofFirstVariationEqZeroOfIsEllipticFieldOn {d : ℕ}
     {U : Set (Vec d)} {a : CoeffField d} {lam Lam : ℝ}

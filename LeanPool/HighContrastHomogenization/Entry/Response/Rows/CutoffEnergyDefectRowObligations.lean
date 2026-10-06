@@ -266,7 +266,8 @@ theorem abs_integral_cutoffHalfEnergy_sub_respJ_le_rowPlus_of_carriers {d : ℕ}
     obtain ⟨lam, Lam, f, _hlam, _hle, hEll, hae⟩ :=
       exists_elliptic_representative_respCell_respCoeffPlus hjStar hm t a
     have : IsFiniteMeasure (volumeMeasureOn (respCell jStar F t)) :=
-      (adaptedCell_isOpenBoundedConvexDomain (respGrid jStar F) hq t).isFiniteMeasure_restrict_volume
+      (adaptedCell_isOpenBoundedConvexDomain (respGrid jStar F) hq
+        t).isFiniteMeasure_restrict_volume
     have hdata : ResponseLinearIntegrabilityData (respCell jStar F t) f :=
       ResponseLinearIntegrabilityData.of_isEllipticFieldOn hEll
     have hv : MeasureTheory.IntegrableOn
@@ -284,9 +285,11 @@ theorem abs_integral_cutoffHalfEnergy_sub_respJ_le_rowPlus_of_carriers {d : ℕ}
         = ∫ a, respJ (respGrid jStar F) s (respP (respMean P jStar F t) e)
             (respqPlus P jStar F t e) (respCoeffPlus F a) ∂P := by
     intro w _
-    have hw' := integral_responseJ_respCoeffPlus_adaptedCellAtCenter_eq_direct P hstat jStar hjStar F hm s hjs w
+    have hw' := integral_responseJ_respCoeffPlus_adaptedCellAtCenter_eq_direct P hstat jStar
+      hjStar F hm s hjs w
       (respP (respMean P jStar F t) e) (respqPlus P jStar F t e) (hblk s w)
-    have h0 := integral_responseJ_respCoeffPlus_adaptedCellAtCenter_eq_direct P hstat jStar hjStar F hm s hjs 0
+    have h0 := integral_responseJ_respCoeffPlus_adaptedCellAtCenter_eq_direct P hstat jStar
+      hjStar F hm s hjs 0
       (respP (respMean P jStar F t) e) (respqPlus P jStar F t e) (hblk s 0)
     rw [adaptedCellAtCenter_zero (respGrid jStar F) s] at h0
     have hcJs : (∫ a, respJ (respGrid jStar F) s (respP (respMean P jStar F t) e)
@@ -496,7 +499,8 @@ theorem cutoffEnergyDefectRowMinus_of_carriers_of_measurable {d : ℕ} [NeZero d
   have hE : ∀ w ∈ triadicIndexBox d H, MeasureTheory.Integrable (fun a =>
       volumeAverage (adaptedCellAtCenter (respGrid jStar F) s w)
         (scalarVariationEnergyIntegrand (respCoeffMinus F a) (uM a))) P :=
-    integrable_volumeAverage_energy_adaptedCellAtCenter_respCoeffMinus P jStar hjStar F hm H s t ht e
+    integrable_volumeAverage_energy_adaptedCellAtCenter_respCoeffMinus P jStar hjStar F hm H s t
+      ht e
       uM hmax hJt hmeasEae
   have hW : MeasureTheory.Integrable (fun a =>
       volumeAverage (respCell jStar F t) (fun x => (φ x - 1) *
@@ -596,7 +600,8 @@ theorem cutoffEnergyDefectRowMinus_of_carriers_clean {d : ℕ} [NeZero d]
       P jStar F H s t e φ uM :=
   cutoffEnergyDefectRowMinus_of_carriers_of_measurable P hstat jStar hjStar F hm H s t ht hjs e φ
     hφ uM hmax hblk hJt hJs
-    (fun w hw => measurable_volumeAverage_energy_adaptedCellAtCenter_respCoeffMinus P jStar hjStar F hm
+    (fun w hw => measurable_volumeAverage_energy_adaptedCellAtCenter_respCoeffMinus P jStar
+      hjStar F hm
       H s t ht e uM hmax w hw)
 
 /-- **The terminal-optimizer replacement row of `p.response.transfer` on the carriers, plus
@@ -622,7 +627,8 @@ theorem cutoffEnergyDefectRowPlus_of_carriers_clean {d : ℕ} [NeZero d]
       P jStar F H s t e φ uP :=
   cutoffEnergyDefectRowPlus_of_carriers_of_measurable P hstat jStar hjStar F hm H s t ht hjs e φ
     hφ uP hmax hblk hJt hJs
-    (fun w hw => measurable_volumeAverage_energy_adaptedCellAtCenter_respCoeffPlus P jStar hjStar F hm
+    (fun w hw => measurable_volumeAverage_energy_adaptedCellAtCenter_respCoeffPlus P jStar
+      hjStar F hm
       H s t ht e uP hmax w hw)
 
 end

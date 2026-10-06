@@ -362,7 +362,8 @@ theorem jUpperWeakNormExpectedRHSAtScale_le_manuscriptExpectedRHSAtScale
                   (Ch04.canonicalScalarResponseGradientWeakNormCubeSet Q s p q p0 a.toFun) ^ 2 ∂P) *
               Real.sqrt
                 (∫ a,
-                  (Ch04.canonicalScalarResponseFluxWeakNormCubeSet Q t p q q0 a.toFun) ^ 2 ∂P)) := by
+                  (Ch04.canonicalScalarResponseFluxWeakNormCubeSet Q t p q q0 a.toFun) ^ 2 ∂P))
+                    := by
     simpa [Q] using
       integral_cutoffProductBridgeRHS_le_weakNormSquareProduct
         (P := P) hP Q hs ht cutoffGradient cutoffCircOne poincareConst
@@ -484,7 +485,7 @@ theorem expectedResponseJCubeSet_sub_half_dot_le_jUpperWeakNormManuscriptExpecte
 
 /-- Composed expectation assembly through the manuscript pointwise RHS.  This
 route has no cutoff-product bridge expectation and no `hProductPoint` input. -/
-theorem expectedResponseJCubeSet_sub_half_dot_le_jUpperWeakNormManuscriptExpectedRHSAtScale_of_manuscriptPointwise
+theorem expectedResponseJCubeSet_sub_half_dot_le_of_manuscriptPointwise
     {d : ℕ} [NeZero d] {P : Ch04.RestrictionCoeffLaw d}
     (hP : Ch04.RestrictionLawCarrier P) (hstat : Ch04.RestrictionStationaryLaw P)
     {k m : ℤ} (hk_nonneg : 0 ≤ k) (hkm : k ≤ m)
@@ -560,7 +561,7 @@ theorem expectedResponseJCubeSet_sub_half_dot_le_jUpperWeakNormManuscriptExpecte
 deterministic cutoff controls.  The remaining inputs are law-facing
 integrability/moment facts for the Ch4 observables, not fixed-coefficient proof
 packages. -/
-theorem expectedResponseJCubeSet_sub_half_dot_le_jUpperWeakNormManuscriptExpectedRHSAtScale_of_cutoffControls
+theorem expectedResponseJCubeSet_sub_half_dot_le_jUpperWeakNormExpectedRHS
     {d : ℕ} [NeZero d] {P : Ch04.RestrictionCoeffLaw d}
     (hP : Ch04.RestrictionLawCarrier P) (hstat : Ch04.RestrictionStationaryLaw P)
     {k m : ℤ} (hk_nonneg : 0 ≤ k) (hkm : k ≤ m)
@@ -649,7 +650,7 @@ theorem expectedResponseJCubeSet_sub_half_dot_le_jUpperWeakNormManuscriptExpecte
       hBφS hBφT hφDualS hφDualT hφMem hcutoffGradient hcutoffSmooth hcutoffDeriv
       hProductCoeff
   exact
-    expectedResponseJCubeSet_sub_half_dot_le_jUpperWeakNormManuscriptExpectedRHSAtScale_of_manuscriptPointwise
+    expectedResponseJCubeSet_sub_half_dot_le_of_manuscriptPointwise
       hP hstat hk_nonneg hkm hs ht φ C Cosc scaleSep BφS BφT Cprod p q p0 q0
       hC hCprod hφ_int hMean hParent hJ hGradWeak hFluxWeak hGradSq hFluxSq hBound
 

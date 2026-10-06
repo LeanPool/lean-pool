@@ -124,7 +124,8 @@ private theorem volumeAverage_diffEnergy_congr_ae {V : Set (Vec d)} {b f : Coeff
 scalar difference energies is twice the averaged response deficit.  The proof transports both
 maximizers to that representative and uses almost-everywhere invariance to return to the original
 coefficient. -/
-private theorem headEnergy_response_deficit (P : Measure (CoeffSpace d)) (jStar : ℕ) (F : BlockMat d)
+private theorem headEnergy_response_deficit (P : Measure (CoeffSpace d)) (jStar : ℕ) (F :
+  BlockMat d)
     (t : ℤ) (e : Vec d) (hgrid : IsUnit (respGrid jStar F)) (a : CoeffSpace d) (n : ℕ)
     (u : AHarmonicFunction (respCoeffMinus F a) (respCell jStar F t))
     (hu : IsResponseMaximizer (respCell jStar F t) (respP (respMean P jStar F t) e)
@@ -169,7 +170,8 @@ private theorem headEnergy_response_deficit (P : Measure (CoeffSpace d)) (jStar 
     exact MeasureTheory.ae_mono
       (MeasureTheory.Measure.restrict_mono (hVU w hw) le_rfl) hae
   have : ∀ w, IsFiniteMeasure (volumeMeasureOn (adaptedCellAtCenter q (t - (n : ℤ)) w)) :=
-    fun w => (isOpenBoundedConvexDomain_adaptedCellAtCenter q hgrid (t - (n : ℤ)) w).isFiniteMeasure_restrict_volume
+    fun w => (isOpenBoundedConvexDomain_adaptedCellAtCenter q hgrid (t - (n : ℤ))
+      w).isFiniteMeasure_restrict_volume
   have : IsFiniteMeasure (volumeMeasureOn (HighContrast.adaptedCell q t)) :=
     (adaptedCell_isOpenBoundedConvexDomain q hgrid t).isFiniteMeasure_restrict_volume
   -- Step B.  Transport the parent maximizer and each child maximizer to the representative.
@@ -204,7 +206,8 @@ private theorem headEnergy_response_deficit (P : Measure (CoeffSpace d)) (jStar 
         (adaptedCellAtCenter q (t - (n : ℤ)) w) :=
     fun w hw => (hIntW w hw).response p r (vT w)
   have hlin : ∀ w (hw : w ∈ Z),
-      IntegrableOn (scalarFirstVariationIntegrand (adaptedCellAtCenter q (t - (n : ℤ)) w) f p r (vT w)
+      IntegrableOn (scalarFirstVariationIntegrand (adaptedCellAtCenter q (t - (n : ℤ)) w) f p r
+        (vT w)
         (AHarmonicFunction.addSMulOfIntegrable
           (uT.restrictOfIsEllipticFieldOn (isOpen_adaptedCell_of_isUnit hgrid t)
             (isOpen_adaptedCellAtCenter_of_isUnit hgrid (t - (n : ℤ)) w)

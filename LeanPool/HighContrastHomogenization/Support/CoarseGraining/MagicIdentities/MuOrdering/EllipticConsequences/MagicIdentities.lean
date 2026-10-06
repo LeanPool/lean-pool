@@ -112,7 +112,7 @@ theorem magic_identity_mu_adjointCoeffField_flipFlux_sub_vecDot_canonical_of_isS
       exact magic_identity_mu_sub_vecDot_canonical_of_isSigmaCoarse
         U a hA hS hK hSigma hdet p q
 
-theorem magic_identity_mu_adjointCoeffField_flipFlux_sub_vecDot_shifted_square_canonical_of_isSigmaCoarse
+theorem magicIdentity_mu_adjointFlux_sub_dot_eq_shiftedSquares
     {d : ℕ} (U : Set (Vec d)) (a : CoeffField d) {sigma sigmaStar kappa : Mat d}
     (hA : IsCoarseBlockMatrix U a (deterministicCoarseBlockMatrix U a))
     (hS : IsSigmaStarCoarse U a sigmaStar) (hK : IsKappaCoarse U a sigmaStar kappa)

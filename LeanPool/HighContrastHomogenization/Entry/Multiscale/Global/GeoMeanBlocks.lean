@@ -169,7 +169,8 @@ theorem sandwich {d : ℕ} [NeZero d]
     (c κ : ℝ) (hc : 0 < c) (hκ : 1 ≤ κ)
     (hlo : BlockMatLoewnerLE (blockScale c G) F)
     (hhi : BlockMatLoewnerLE F (blockScale (κ * c) G)) :
-    projectiveDistance (explicitCanonicalMetric F) (explicitCanonicalMetric G) ≤ 1 / 2 * Real.log κ := by
+    projectiveDistance (explicitCanonicalMetric F) (explicitCanonicalMetric G) ≤ 1 / 2 *
+      Real.log κ := by
   have hκ0 : (0:ℝ) < κ := lt_of_lt_of_le zero_lt_one hκ
   have hκc : (0:ℝ) < κ * c := mul_pos hκ0 hc
   have hRsymm := swapFullHerm d
@@ -210,21 +211,26 @@ theorem sandwich {d : ℕ} [NeZero d]
   -- joint monotonicity and homogeneity of the geometric mean
   have harg1 : c * (κ * c)⁻¹ = κ⁻¹ := by field_simp
   have harg2 : (κ * c) * c⁻¹ = κ := by field_simp
-  have hMlo : (Real.sqrt κ)⁻¹ • GeometricMean.geoMean AG (RR * AG⁻¹ * RR) ≤ GeometricMean.geoMean AF (RR * AF⁻¹ * RR) := by
+  have hMlo : (Real.sqrt κ)⁻¹ • GeometricMean.geoMean AG (RR * AG⁻¹ * RR) ≤
+    GeometricMean.geoMean AF (RR * AF⁻¹ * RR) := by
     have h := GeometricMean.geoMean_mono hcG hAFpos (hSG.smul (inv_pos.mpr hκc)) hSF hloF hconj2
     rwa [GeometricMean.geoMean_smul hAGpos hSG hc (inv_pos.mpr hκc), harg1, Real.sqrt_inv] at h
-  have hMhi : GeometricMean.geoMean AF (RR * AF⁻¹ * RR) ≤ Real.sqrt κ • GeometricMean.geoMean AG (RR * AG⁻¹ * RR) := by
+  have hMhi : GeometricMean.geoMean AF (RR * AF⁻¹ * RR) ≤ Real.sqrt κ • GeometricMean.geoMean AG
+    (RR * AG⁻¹ * RR) := by
     have h := GeometricMean.geoMean_mono hAFpos hkcG hSF (hSG.smul (inv_pos.mpr hc)) hhiF hconj1
     rwa [GeometricMean.geoMean_smul hAGpos hSG hκc (inv_pos.mpr hc), harg2] at h
   -- pass to the lower-right blocks and invert
   have hsk : (0:ℝ) < Real.sqrt κ := Real.sqrt_pos.mpr hκ0
-  have hMFpos : (GeometricMean.geoMean AF (RR * AF⁻¹ * RR)).PosDef := GeometricMean.geoMeanPosDef hAFpos hSF
-  have hMGpos : (GeometricMean.geoMean AG (RR * AG⁻¹ * RR)).PosDef := GeometricMean.geoMeanPosDef hAGpos hSG
+  have hMFpos : (GeometricMean.geoMean AF (RR * AF⁻¹ * RR)).PosDef :=
+    GeometricMean.geoMeanPosDef hAFpos hSF
+  have hMGpos : (GeometricMean.geoMean AG (RR * AG⁻¹ * RR)).PosDef :=
+    GeometricMean.geoMeanPosDef hAGpos hSG
   have hLF : (ofFullBlockMat (GeometricMean.geoMean AF (RR * AF⁻¹ * RR))).lowerRight.PosDef :=
     lowerRightPosDef hMFpos
   have hLG : (ofFullBlockMat (GeometricMean.geoMean AG (RR * AG⁻¹ * RR))).lowerRight.PosDef :=
     lowerRightPosDef hMGpos
-  have hLlo : (Real.sqrt κ)⁻¹ • (ofFullBlockMat (GeometricMean.geoMean AG (RR * AG⁻¹ * RR))).lowerRight ≤
+  have hLlo : (Real.sqrt κ)⁻¹ • (ofFullBlockMat (GeometricMean.geoMean AG (RR * AG⁻¹ *
+    RR))).lowerRight ≤
       (ofFullBlockMat (GeometricMean.geoMean AF (RR * AF⁻¹ * RR))).lowerRight := by
     have h := lowerRightMono hMlo
     rwa [lowerRight_smul] at h
@@ -262,7 +268,8 @@ theorem sandwich {d : ℕ} [NeZero d]
 /-- Block-plumbing step for `explicitCanonicalMetric_projectiveDistance_le_logDet`: unit scaling
 of a
 symmetric positive block preserves a Loewner bound above another such block. -/
-theorem explicitCanonicalMetric_projectiveDistance_le_logDet_aux_scale_one_le {d : ℕ} (G F : BlockMat d) (hGs : IsSymmetricBlockMat G)
+theorem explicitCanonicalMetric_projectiveDistance_le_logDet_aux_scale_one_le {d : ℕ} (G F :
+  BlockMat d) (hGs : IsSymmetricBlockMat G)
     (hG : Book.Ch02.BlockPosDef G) (hFs : IsSymmetricBlockMat F)
     (hF : Book.Ch02.BlockPosDef F) (hGF : BlockMatLoewnerLE G F) :
     BlockMatLoewnerLE (blockScale (1 : ℝ) G) F := by
@@ -279,7 +286,8 @@ theorem explicitCanonicalMetric_projectiveDistance_le_logDet_aux_scale_one_le {d
 for
 symmetric positive blocks `G ≤ F`, `F` is Loewner-below `exp(logDet F − logDet G) • G`, and the
 exponent is nonnegative. -/
-theorem explicitCanonicalMetric_projectiveDistance_le_logDet_aux_upper {d : ℕ} (F G : BlockMat d) (hFs : IsSymmetricBlockMat F)
+theorem explicitCanonicalMetric_projectiveDistance_le_logDet_aux_upper {d : ℕ} (F G : BlockMat
+  d) (hFs : IsSymmetricBlockMat F)
     (hF : Book.Ch02.BlockPosDef F) (hGs : IsSymmetricBlockMat G)
     (hG : Book.Ch02.BlockPosDef G) (hGF : BlockMatLoewnerLE G F) :
     BlockMatLoewnerLE F (blockScale (Real.exp (blockLogDet F - blockLogDet G)) G) ∧

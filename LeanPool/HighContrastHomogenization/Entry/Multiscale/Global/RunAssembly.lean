@@ -122,7 +122,7 @@ source constants of `hS`, `initial_provider_input`, `fixed_geometry_one_grid_pro
 and `successful_short_bridge` → `H` → `Cprof` from `run_output_profile` → `σ` →
 `C := max` of the `weight_choice_ge_d`, `scales_arith`, `eccentricity_arith` and
 `containment_arith` constants (the last instantiated at `d := 4d`).
-Then `run_initial` + `run_initial_reserve` give `Φ̃ 0`, `run_step_any` gives the step
+Then `run_initial` + `run_initial_reserve` give `Φ_tilde 0`, `run_step_any` gives the step
 alternative, `run_exists_stop` gives the stopping state, and `run_stop_output` extracts
 `SelectedOutput`. `1 ≤ S.h` is `hh` together with `Multiscale.bigQ_pos`. -/
 theorem global_run_of_gap

@@ -38,6 +38,7 @@ The comparison theorems themselves are still deferred to the later
 projection-limit layer.
 -/
 
+/-- Membership of fluctuations on every descendant cube in normalized `Lᵖ'`, at every depth. -/
 @[expose]
 noncomputable def CubeBesovDualLocalMemLpGlobal {d : ℕ} (Q : TriadicCube d)
     (p : ℝ≥0∞) (g : Vec d → ℝ) : Prop :=
@@ -45,22 +46,28 @@ noncomputable def CubeBesovDualLocalMemLpGlobal {d : ℕ} (Q : TriadicCube d)
     MeasureTheory.MemLp (cubeFluctuation R g) (cubeBesovConjExponent p)
       (normalizedCubeMeasure R)
 
+/-- The real supremum over depths of the conjugate positive Besov test norms. -/
 @[expose]
 noncomputable def cubeBesovDualFullTestNorm {d : ℕ} (Q : TriadicCube d) (s : ℝ)
     (p q : ℝ≥0∞) (g : Vec d → ℝ) : ℝ :=
   sSup (Set.range (fun N : ℕ => cubeBesovDualTestNorm Q s p q N g))
 
+/-- The real supremum over depths of the conjugate positive Besov test seminorms. -/
 @[expose]
 noncomputable def cubeBesovDualMeanZeroTestSeminorm {d : ℕ} (Q : TriadicCube d) (s : ℝ)
     (p q : ℝ≥0∞) (g : Vec d → ℝ) : ℝ :=
   sSup (Set.range (fun N : ℕ => cubeBesovDualTestSeminorm Q s p q N g))
 
+/-- A test function whose conjugate Besov norms are at most one at every depth, with locally
+`Lᵖ'` fluctuations on all descendant cubes. -/
 @[expose]
 def CubeBesovDualFullTest {d : ℕ} (Q : TriadicCube d) (s : ℝ)
     (p q : ℝ≥0∞) (g : Vec d → ℝ) : Prop :=
   (∀ N : ℕ, cubeBesovDualTestNorm Q s p q N g ≤ 1) ∧
     CubeBesovDualLocalMemLpGlobal Q p g
 
+/-- A mean-zero test function whose conjugate Besov seminorms are at most one at every depth,
+with locally `Lᵖ'` fluctuations on all descendant cubes. -/
 @[expose]
 def CubeBesovDualMeanZeroTestGlobal {d : ℕ} (Q : TriadicCube d) (s : ℝ)
     (p q : ℝ≥0∞) (g : Vec d → ℝ) : Prop :=
@@ -83,27 +90,33 @@ theorem CubeBesovDualMeanZeroTestGlobal.to_dual_test {d : ℕ} {Q : TriadicCube 
     exact hg.1 N
   exact ⟨hnorm, fun j hj R hR => hg.2.2 j R hR⟩
 
+/-- Absolute normalized pairings with tests satisfying the Besov norm bound at every depth. -/
 @[expose]
 noncomputable def cubeBesovDualFullNormValueSet {d : ℕ} (Q : TriadicCube d) (s : ℝ)
     (p q : ℝ≥0∞) (f : Vec d → ℝ) : Set ℝ :=
   {r | ∃ g : Vec d → ℝ, CubeBesovDualFullTest Q s p q g ∧ r = |cubeBesovPairing Q f g|}
 
+/-- Absolute normalized pairings with mean-zero tests satisfying the Besov seminorm bound at
+every depth. -/
 @[expose]
 noncomputable def cubeBesovDualMeanZeroSeminormValueSet {d : ℕ} (Q : TriadicCube d) (s : ℝ)
     (p q : ℝ≥0∞) (f : Vec d → ℝ) : Set ℝ :=
   {r | ∃ g : Vec d → ℝ, CubeBesovDualMeanZeroTestGlobal Q s p q g ∧
       r = |cubeBesovPairing Q f g|}
 
+/-- The real supremum of absolute pairings against global Besov norm tests. -/
 @[expose]
 noncomputable def cubeBesovDualFullNorm {d : ℕ} (Q : TriadicCube d) (s : ℝ)
     (p q : ℝ≥0∞) (f : Vec d → ℝ) : ℝ :=
   sSup (cubeBesovDualFullNormValueSet Q s p q f)
 
+/-- The real supremum of absolute pairings against global mean-zero Besov tests. -/
 @[expose]
 noncomputable def cubeBesovDualMeanZeroSeminorm {d : ℕ} (Q : TriadicCube d) (s : ℝ)
     (p q : ℝ≥0∞) (f : Vec d → ℝ) : ℝ :=
   sSup (cubeBesovDualMeanZeroSeminormValueSet Q s p q f)
 
+/-- The circ norm truncated at depth `N + 1`, using the maximum branch when `q = ∞`. -/
 @[expose]
 noncomputable def cubeBesovCircNormEntry {d : ℕ} (Q : TriadicCube d) (s : ℝ)
     (p q : ℝ≥0∞) (N : ℕ) (u : Vec d → ℝ) : ℝ :=
@@ -112,11 +125,13 @@ noncomputable def cubeBesovCircNormEntry {d : ℕ} (Q : TriadicCube d) (s : ℝ)
   else
     cubeBesovCircPartialNorm Q s p q (N + 1) u
 
+/-- The set of circ norm truncations at all positive depths. -/
 @[expose]
 noncomputable def cubeBesovCircNormValueSet {d : ℕ} (Q : TriadicCube d) (s : ℝ)
     (p q : ℝ≥0∞) (u : Vec d → ℝ) : Set ℝ :=
   Set.range (fun N : ℕ => cubeBesovCircNormEntry Q s p q N u)
 
+/-- The real supremum of the circ norm truncations at all positive depths. -/
 @[expose]
 noncomputable def cubeBesovCircNorm {d : ℕ} (Q : TriadicCube d) (s : ℝ)
     (p q : ℝ≥0∞) (u : Vec d → ℝ) : ℝ :=

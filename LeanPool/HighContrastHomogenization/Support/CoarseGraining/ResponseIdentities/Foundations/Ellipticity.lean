@@ -186,6 +186,7 @@ theorem responseJValueSet_nonempty {d : ℕ} (U : Set (Vec d)) (p q : Vec d) (a 
     (responseJValueSet U p q a).Nonempty :=
   ⟨0, responseJValueSet_zero_mem U p q a⟩
 
+/-- The set of averaged scalar response values attained by mean-zero harmonic functions. -/
 @[expose]
 def responseJValueSetMeanZero {d : ℕ} (U : Set (Vec d)) (p q : Vec d) (a : CoeffField d) :
     Set ℝ :=

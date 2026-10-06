@@ -139,6 +139,140 @@ theorem blockMatLoewnerLE_avgBlockOf_of_forall {ι : Type*} {Z : Finset ι} (hZ 
 
 /-! ## The single-cell estimate, for an abstract family of inner cells -/
 
+private theorem cutoff_cell_mean_le_normalized_annealed
+    {P : Measure (CoeffSpace d)} [IsProbabilityMeasure P]
+    {g : ℝ} {E : BlockMat d} {Psi : ℝ → ℝ} {Kg : ℝ}
+    {S : CoeffSpace d → ℝ}
+    (hstat : HCPoly.Frozen.IsStationaryLaw P)
+    (hdag : HCPoly.Frozen.CoarseEllipticityDagger P g E Psi Kg S)
+    {l : ℤ} (hl : 0 ≤ l) {Bcut : ℝ}
+    {Ncut : (Fin d → ℤ) → CoeffSpace d → BlockMat d}
+    (hNcutdef : Ncut = fun u a =>
+      blockCutoff Bcut (normalizedBlock (coarseBlock (standardCell d l u) a) E))
+    (hintN : ∀ u : Fin d → ℤ, HasIntegrableBlock P fun a => Ncut u a)
+    (hNpd : ∀ (u : Fin d → ℤ) (a : CoeffSpace d),
+      Book.Ch02.BlockPosDef (normalizedBlock (coarseBlock (standardCell d l u) a) E)) :
+    ∀ u : Fin d → ℤ, BlockMatLoewnerLE (meanBlock P fun b => Ncut u b)
+      (normalizedBlock (annealedBlock P (centeredCube d l)) E) := by
+  classical
+  have hmeanle : ∀ u : Fin d → ℤ, BlockMatLoewnerLE (meanBlock P fun b => Ncut u b)
+      (normalizedBlock (annealedBlock P (centeredCube d l)) E) := by
+    intro u
+    have hcellint : HasIntegrableCoarseBlock P (standardCell d l u) :=
+      Entry.hasIntegrableCoarseBlock_standardCell_of_stationary hstat hdag l u
+    have hIB2 : HasIntegrableBlock P
+        fun b => normalizedBlock (coarseBlock (standardCell d l u) b) E := by
+      intro α β
+      have hrw : (fun b => blockMatEntry
+          (normalizedBlock (coarseBlock (standardCell d l u) b) E) α β)
+          = fun b => ∑ delta : BlockCoord d, ∑ gamma : BlockCoord d,
+              matSqrt (toFullBlockMat E)⁻¹ α gamma *
+                (blockMatEntry (coarseBlock (standardCell d l u) b) gamma delta *
+                  matSqrt (toFullBlockMat E)⁻¹ delta β) := by
+        funext b
+        exact blockMatEntry_normalizedBlock_eq_sum _ E α β
+      rw [hrw]
+      exact integrable_finsetSum _ fun delta _ => integrable_finsetSum _ fun gamma _ =>
+        ((hcellint gamma delta).mul_const _).const_mul _
+    have hstep := blockMatLoewnerLE_meanBlock (hintN u) hIB2
+      (_root_.Filter.Eventually.of_forall fun b => by
+        simp only [hNcutdef]
+        exact blockMatLoewnerLE_blockCutoff (hNpd u b))
+    rw [meanBlock_normalizedBlock E (hasIntegrableBlock_coarseBlock hcellint),
+      ← annealedBlock_eq_meanBlock,
+      annealedBlock_standardCell_eq_centeredCube hstat hl u
+        (hasMeasurableCoarseBlock_centeredCube P l)] at hstep
+    exact hstep
+  exact hmeanle
+
+private theorem normalized_average_deviation_bound
+    {P : Measure (CoeffSpace d)} {E : BlockMat d} {l : ℤ}
+    {Zi : Finset (Fin d → ℤ)} {Bcut eta kappa : ℝ} (h2B : 0 < 2 * Bcut)
+    (hkappadef : kappa = 2 * Bcut * (2 * (d : ℝ) * eta))
+    {Ncut : (Fin d → ℤ) → CoeffSpace d → BlockMat d}
+    {Hobs : CoeffSpace d → BlockMat d}
+    (hHdef : Hobs = fun a => blockScale (2 * Bcut)⁻¹
+      (blockSub (avgBlockOf Zi fun u => Ncut u a)
+        (avgBlockOf Zi fun u => meanBlock P fun b => Ncut u b)))
+    (hMavg : BlockMatLoewnerLE (avgBlockOf Zi fun u => meanBlock P fun b => Ncut u b)
+      (normalizedBlock (annealedBlock P (centeredCube d l)) E))
+    (a : CoeffSpace d)
+    (hgood : BlockMatLoewnerLE (Hobs a)
+      (blockScale (2 * (d : ℝ) * eta) (scaledBlockIdentity d 1)))
+    (havg : (avgBlockOf Zi fun u => Ncut u a) =
+      normalizedBlock (avgBlockOf Zi fun u => coarseBlock (standardCell d l u) a) E) :
+    BlockMatLoewnerLE
+      (normalizedBlock (blockSub (avgBlockOf Zi fun u => coarseBlock (standardCell d l u) a)
+        (annealedBlock P (centeredCube d l))) E) (scaledBlockIdentity d kappa) := by
+  classical
+  have hD1 : BlockMatLoewnerLE
+      (normalizedBlock (blockSub (avgBlockOf Zi fun u => coarseBlock (standardCell d l u) a)
+        (annealedBlock P (centeredCube d l))) E) (scaledBlockIdentity d kappa) := by
+    intro Y
+    rw [normalizedBlock_blockSub, blockVecDot_blockMatVecMul_blockSub,
+      blockVecDot_scaledBlockIdentity]
+    have hg := hgood Y
+    rw [hHdef] at hg
+    rw [blockVecDot_blockMatVecMul_blockScale, blockVecDot_blockMatVecMul_blockScale,
+      blockVecDot_scaledBlockIdentity, one_mul, blockVecDot_blockMatVecMul_blockSub,
+      havg] at hg
+    have hg' : (2 * Bcut)⁻¹ *
+        (blockVecDot Y (blockMatVecMul
+            (normalizedBlock (avgBlockOf Zi fun u => coarseBlock (standardCell d l u) a) E) Y) -
+          blockVecDot Y (blockMatVecMul
+            (avgBlockOf Zi fun u => meanBlock P fun b => Ncut u b) Y)) ≤
+        2 * (d : ℝ) * eta * ∑ α : BlockCoord d, toFullBlockVec Y α * toFullBlockVec Y α := by
+      linarith only [hg]
+    have hmul := mul_le_mul_of_nonneg_left hg' h2B.le
+    rw [mul_inv_cancel_left₀ (ne_of_gt h2B)] at hmul
+    have hring : (2 * Bcut) *
+        (2 * (d : ℝ) * eta * ∑ α : BlockCoord d, toFullBlockVec Y α * toFullBlockVec Y α)
+        = kappa * ∑ α : BlockCoord d, toFullBlockVec Y α * toFullBlockVec Y α := by
+      rw [hkappadef]
+      ring
+    have hc := hMavg Y
+    linarith only [hmul, hring, hc]
+  exact hD1
+
+private theorem bounded_cutoff_mean_entries
+    {P : Measure (CoeffSpace d)} [IsProbabilityMeasure P] {Bcut : ℝ}
+    {Ncut : (Fin d → ℤ) → CoeffSpace d → BlockMat d}
+    (habsN : ∀ (u : Fin d → ℤ) (a : CoeffSpace d) (α β : BlockCoord d),
+      |blockMatEntry (Ncut u a) α β| ≤ Bcut) :
+    ∀ (u : Fin d → ℤ) (α β : BlockCoord d),
+      |blockMatEntry (meanBlock P fun b => Ncut u b) α β| ≤ Bcut := by
+  classical
+  have habsMean : ∀ (u : Fin d → ℤ) (α β : BlockCoord d),
+      |blockMatEntry (meanBlock P fun b => Ncut u b) α β| ≤ Bcut := by
+    intro u α β
+    rw [blockMatEntry_meanBlock]
+    have hbd : ∀ᵐ a ∂P, ‖blockMatEntry (Ncut u a) α β‖ ≤ Bcut := by
+      filter_upwards with a
+      rw [Real.norm_eq_abs]
+      exact habsN u a α β
+    have hb := norm_integral_le_of_norm_le_const (μ := P) hbd
+    rw [Real.norm_eq_abs, probReal_univ, mul_one] at hb
+    exact hb
+  exact habsMean
+
+private theorem bounded_cutoff_entries_integrable
+    {P : Measure (CoeffSpace d)} [IsProbabilityMeasure P] {Bcut : ℝ} (hB0 : 0 ≤ Bcut)
+    {Ncut : (Fin d → ℤ) → CoeffSpace d → BlockMat d}
+    (hmeasN : ∀ (α β : BlockCoord d) (u : Fin d → ℤ),
+      Measurable fun a => blockMatEntry (Ncut u a) α β)
+    (habsN : ∀ (u : Fin d → ℤ) (a : CoeffSpace d) (α β : BlockCoord d),
+      |blockMatEntry (Ncut u a) α β| ≤ Bcut) :
+    ∀ u : Fin d → ℤ, HasIntegrableBlock P fun a => Ncut u a := by
+  classical
+  have hintN : ∀ u : Fin d → ℤ, HasIntegrableBlock P fun a => Ncut u a := by
+    intro u α β
+    refine ⟨(hmeasN α β u).aestronglyMeasurable, ?_⟩
+    refine (hasFiniteIntegral_const Bcut).mono ?_
+    filter_upwards with a
+    rw [Real.norm_eq_abs, Real.norm_eq_abs, abs_of_nonneg hB0]
+    exact habsN u a α β
+  exact hintN
+
 /-- **The single-cell renormalization estimate.**  For a finite family of
 scale-`l` standard cells whose centres lie in `□_{m+1}` and whose average
 dominates the coarse block of the parent, the coarse block of the parent exceeds
@@ -173,7 +307,8 @@ theorem measureReal_renormCell_le_of_family [NeZero d]
     have hd : 0 < d := Nat.pos_of_ne_zero (NeZero.ne d)
     exact_mod_cast hd
   have hkappa1 : (1 : ℝ) ≤ kappaRef E :=
-    Initialization.one_le_kappaRef hEsymm hEpd (Initialization.blockMatLoewnerLE_blockSharp_reference hdag)
+    Initialization.one_le_kappaRef hEsymm hEpd
+      (Initialization.blockMatLoewnerLE_blockSharp_reference hdag)
   have hintcube : HasIntegrableCoarseBlock P (centeredCube d l) :=
     hasIntegrableCoarseBlock_of_coarseEllipticityDagger hdag l
   have href : BlockMatLoewnerLE E
@@ -227,24 +362,8 @@ theorem measureReal_renormCell_le_of_family [NeZero d]
   have hmeasN : ∀ (α β : BlockCoord d) (u : Fin d → ℤ),
       Measurable fun a => blockMatEntry (Ncut u a) α β :=
     fun α β u => Recurrence.measurable_of_measurable_coeffSigma (hlocN α β u)
-  have hintN : ∀ u : Fin d → ℤ, HasIntegrableBlock P fun a => Ncut u a := by
-    intro u α β
-    refine ⟨(hmeasN α β u).aestronglyMeasurable, ?_⟩
-    refine (hasFiniteIntegral_const Bcut).mono ?_
-    filter_upwards with a
-    rw [Real.norm_eq_abs, Real.norm_eq_abs, abs_of_nonneg hB0]
-    exact habsN u a α β
-  have habsMean : ∀ (u : Fin d → ℤ) (α β : BlockCoord d),
-      |blockMatEntry (meanBlock P fun b => Ncut u b) α β| ≤ Bcut := by
-    intro u α β
-    rw [blockMatEntry_meanBlock]
-    have hbd : ∀ᵐ a ∂P, ‖blockMatEntry (Ncut u a) α β‖ ≤ Bcut := by
-      filter_upwards with a
-      rw [Real.norm_eq_abs]
-      exact habsN u a α β
-    have hb := norm_integral_le_of_norm_le_const (μ := P) hbd
-    rw [Real.norm_eq_abs, probReal_univ, mul_one] at hb
-    exact hb
+  have hintN := bounded_cutoff_entries_integrable (P := P) hB0 hmeasN habsN
+  have habsMean := bounded_cutoff_mean_entries (P := P) habsN
   -- the observable the concentration estimate is applied to
   set Xobs : BlockCoord d → BlockCoord d → (Fin d → ℤ) → CoeffSpace d → ℝ := fun α β u a =>
     (blockMatEntry (Ncut u a) α β - blockMatEntry (meanBlock P fun b => Ncut u b) α β) /
@@ -312,34 +431,7 @@ theorem measureReal_renormCell_le_of_family [NeZero d]
     rw [hkappadef, hBdef, hetadef]
     ring
   -- the centring block of every inner cell sits below the normalized annealed block
-  have hmeanle : ∀ u : Fin d → ℤ, BlockMatLoewnerLE (meanBlock P fun b => Ncut u b)
-      (normalizedBlock (annealedBlock P (centeredCube d l)) E) := by
-    intro u
-    have hcellint : HasIntegrableCoarseBlock P (standardCell d l u) :=
-      Entry.hasIntegrableCoarseBlock_standardCell_of_stationary hstat hdag l u
-    have hIB2 : HasIntegrableBlock P
-        fun b => normalizedBlock (coarseBlock (standardCell d l u) b) E := by
-      intro α β
-      have hrw : (fun b => blockMatEntry
-          (normalizedBlock (coarseBlock (standardCell d l u) b) E) α β)
-          = fun b => ∑ delta : BlockCoord d, ∑ gamma : BlockCoord d,
-              matSqrt (toFullBlockMat E)⁻¹ α gamma *
-                (blockMatEntry (coarseBlock (standardCell d l u) b) gamma delta *
-                  matSqrt (toFullBlockMat E)⁻¹ delta β) := by
-        funext b
-        exact blockMatEntry_normalizedBlock_eq_sum _ E α β
-      rw [hrw]
-      exact integrable_finsetSum _ fun delta _ => integrable_finsetSum _ fun gamma _ =>
-        ((hcellint gamma delta).mul_const _).const_mul _
-    have hstep := blockMatLoewnerLE_meanBlock (hintN u) hIB2
-      (_root_.Filter.Eventually.of_forall fun b => by
-        simp only [hNcutdef]
-        exact blockMatLoewnerLE_blockCutoff (hNpd u b))
-    rw [meanBlock_normalizedBlock E (hasIntegrableBlock_coarseBlock hcellint),
-      ← annealedBlock_eq_meanBlock,
-      annealedBlock_standardCell_eq_centeredCube hstat hl u
-        (hasMeasurableCoarseBlock_centeredCube P l)] at hstep
-    exact hstep
+  have hmeanle := cutoff_cell_mean_le_normalized_annealed hstat hdag hl hNcutdef hintN hNpd
   have hMavg : BlockMatLoewnerLE (avgBlockOf Zi fun u => meanBlock P fun b => Ncut u b)
       (normalizedBlock (annealedBlock P (centeredCube d l)) E) :=
     blockMatLoewnerLE_avgBlockOf_of_forall hZi fun u _ => hmeanle u
@@ -375,32 +467,7 @@ theorem measureReal_renormCell_le_of_family [NeZero d]
     rw [normalizedBlock_avgBlockOf]
     exact avgBlockOf_congr hcutoff
   -- the normalized deviation is below the scaled identity
-  have hD1 : BlockMatLoewnerLE
-      (normalizedBlock (blockSub (avgBlockOf Zi fun u => coarseBlock (standardCell d l u) a)
-        (annealedBlock P (centeredCube d l))) E) (scaledBlockIdentity d kappa) := by
-    intro Y
-    rw [normalizedBlock_blockSub, blockVecDot_blockMatVecMul_blockSub,
-      blockVecDot_scaledBlockIdentity]
-    have hg := hgood Y
-    rw [blockVecDot_blockMatVecMul_blockScale, blockVecDot_blockMatVecMul_blockScale,
-      blockVecDot_scaledBlockIdentity, one_mul, blockVecDot_blockMatVecMul_blockSub,
-      havg] at hg
-    have hg' : (2 * Bcut)⁻¹ *
-        (blockVecDot Y (blockMatVecMul
-            (normalizedBlock (avgBlockOf Zi fun u => coarseBlock (standardCell d l u) a) E) Y) -
-          blockVecDot Y (blockMatVecMul
-            (avgBlockOf Zi fun u => meanBlock P fun b => Ncut u b) Y)) ≤
-        2 * (d : ℝ) * eta * ∑ α : BlockCoord d, toFullBlockVec Y α * toFullBlockVec Y α := by
-      linarith only [hg]
-    have hmul := mul_le_mul_of_nonneg_left hg' h2B.le
-    rw [mul_inv_cancel_left₀ (ne_of_gt h2B)] at hmul
-    have hring : (2 * Bcut) *
-        (2 * (d : ℝ) * eta * ∑ α : BlockCoord d, toFullBlockVec Y α * toFullBlockVec Y α)
-        = kappa * ∑ α : BlockCoord d, toFullBlockVec Y α * toFullBlockVec Y α := by
-      rw [hkappadef]
-      ring
-    have hc := hMavg Y
-    linarith only [hmul, hring, hc]
+  have hD1 := normalized_average_deviation_bound h2B hkappadef hHdef hMavg a hgood havg
   have hD2 : BlockMatLoewnerLE
       (blockSub (avgBlockOf Zi fun u => coarseBlock (standardCell d l u) a)
         (annealedBlock P (centeredCube d l))) (blockScale kappa E) :=

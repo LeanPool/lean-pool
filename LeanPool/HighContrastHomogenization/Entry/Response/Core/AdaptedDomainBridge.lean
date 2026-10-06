@@ -279,7 +279,8 @@ theorem isEllipticFieldOn_transpose_add_skew {lam Lam : ℝ} {U : Set (Vec d)} {
       funext x; by_cases hx : x ∈ U <;> simp [hx, Matrix.add_apply, matTranspose]
     rw [heq]; exact h1.add h2
   · intro x hx
-    have hT : IsEllipticMatrix lam Lam (matTranspose (f x)) := isEllipticMatrix_transpose (hf.2 x hx)
+    have hT : IsEllipticMatrix lam Lam (matTranspose (f x)) := isEllipticMatrix_transpose (hf.2
+      x hx)
     exact isEllipticMatrix_add_skew hT g hg
 
 /-! ### Helpers for the response skewness -/

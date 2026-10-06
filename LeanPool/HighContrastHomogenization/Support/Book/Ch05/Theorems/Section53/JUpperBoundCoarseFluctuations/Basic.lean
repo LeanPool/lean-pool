@@ -72,7 +72,7 @@ noncomputable def section53CoarseFluctuationBetaCoreParams {d : ℕ}
 
 /-- Parameter-only version of the Section 5.3 coarse-fluctuation beta. -/
 @[expose]
-noncomputable def section53CoarseFluctuationBetaParams {d : ℕ}
+noncomputable def coarseFluctuationBeta {d : ℕ}
     (params : QuantitativeCoarseGrainedEllipticityParams d) : ℝ :=
   section53CoarseFluctuationBetaCoreParams params / 8
 
@@ -93,7 +93,7 @@ theorem section53CoarseFluctuationBetaCoreParams_eq_of_P4
 theorem section53CoarseFluctuationBetaParams_eq_of_P4
     {d : ℕ} [NeZero d] {P : Ch04.RestrictionCoeffLaw d}
     (hP4 : QuantitativeCoarseGrainedEllipticity P) :
-    section53CoarseFluctuationBetaParams hP4.params =
+    coarseFluctuationBeta hP4.params =
       section53CoarseFluctuationBeta hP4 := rfl
 
 @[simp]

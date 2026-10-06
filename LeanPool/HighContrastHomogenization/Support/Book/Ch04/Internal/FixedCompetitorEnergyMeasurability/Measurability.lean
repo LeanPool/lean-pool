@@ -171,7 +171,7 @@ theorem measurable_inner_toScalarL2_hilbertMatrixL2Entry_toHilbertMatrixL2_local
               (QuantitativeEllipticSlice.hilbertMatrixL2Entry (U := U) i j
                 (QuantitativeEllipticSlice.toHilbertMatrixL2 a))
               = ∫ x in U, φ x * a.1 x i j ∂MeasureTheory.volume :=
-            QuantitativeEllipticSlice.inner_toScalarL2_hilbertMatrixL2Entry_toHilbertMatrixL2_eq_setIntegral
+            QuantitativeEllipticSlice.inner_scalarL2_matrixEntry_eq_setIntegral
               hφL2 i j a
           _ = ∫ x in U, a.1 x i j * φ x ∂MeasureTheory.volume := by
             apply MeasureTheory.integral_congr_ae
@@ -407,7 +407,7 @@ theorem dense_smoothCompactSupportHilbertMatrixL2_tsupport_subset
       (b := ε) hε.le hnorm
 
 theorem exists_dense_smoothProbeSequence_of_dense_smoothProbeSet
-    {d : ℕ} {U : Set (Vec d)} [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
+    {d : ℕ} {U : Set (Vec d)}
     (hDense : Dense {f : MeasureTheory.Lp (HilbertMat d) 2 (volumeMeasureOn U) |
       ∃ g : Vec d → HilbertMat d,
       ∃ hgL2 : MeasureTheory.MemLp g 2 (volumeMeasureOn U),
@@ -468,7 +468,8 @@ theorem measurable_toHilbertMatrixL2_of_isOpen_volume_ne_top
   exact measurable_toHilbertMatrixL2_of_dense_smoothProbeSet (U := U)
     (dense_smoothCompactSupportHilbertMatrixL2_tsupport_subset hUopen hUfinite)
 
-theorem measurable_inner_toScalarL2_hilbertMatrixL2Entry_toHilbertMatrixL2_essentialLocalMeasurableSpace
+theorem
+  measurable_inner_toScalarL2_hilbertMatrixL2Entry_toHilbertMatrixL2_essentialLocalMeasurableSpace
     {d : ℕ} {U : Set (Vec d)} {k : ℕ}
     [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     (i j : Fin d) {φ : Vec d → ℝ} (hφL2 : MemScalarL2 U φ)

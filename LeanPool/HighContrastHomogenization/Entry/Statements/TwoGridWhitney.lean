@@ -102,35 +102,44 @@ theorem two_grid_whitney
       ∀ (jStar : ℕ), 2 * d ≤ 3 ^ jStar →
         ⌈Csrc γ * Real.logb 3 (2 * K)⌉ ≤ (jStar : ℤ) →
         ∀ (m m' : Mat d), m.PosDef → m'.PosDef →
-          gridRatio (Geometry.explicitRoundedGrid jStar m) (Geometry.explicitRoundedGrid jStar m') ≤ K₀ →
+          gridRatio (Geometry.explicitRoundedGrid jStar m) (Geometry.explicitRoundedGrid jStar
+            m') ≤ K₀ →
             ∀ (j : ℤ) (ℓ : ℕ), 1 ≤ ℓ →
               (∀ y ∈ adaptedLatticeAtScale (Geometry.explicitRoundedGrid jStar m') j,
                 ∃ hfin : ∀ r : ℤ, r ≤ j - (ℓ : ℤ) →
                     (maximalAdaptedCellCenters
-                      (HighContrast.adaptedCellTranslate (Geometry.explicitRoundedGrid jStar m') j y)
+                      (HighContrast.adaptedCellTranslate (Geometry.explicitRoundedGrid jStar m')
+                        j y)
                       (Geometry.explicitRoundedGrid jStar m) (j - (ℓ : ℤ)) r).Finite,
                   (∀ (r : ℤ) (w : Fin d → ℤ),
                       IsMaximalAdaptedCellIn
-                        (HighContrast.adaptedCellTranslate (Geometry.explicitRoundedGrid jStar m') j y)
+                        (HighContrast.adaptedCellTranslate (Geometry.explicitRoundedGrid jStar
+                          m') j y)
                         (Geometry.explicitRoundedGrid jStar m) (j - (ℓ : ℤ)) r w →
                       adaptedCellAtCenter (Geometry.explicitRoundedGrid jStar m) r w ⊆
-                        HighContrast.adaptedCellTranslate (Geometry.explicitRoundedGrid jStar m') j y) ∧
+                        HighContrast.adaptedCellTranslate (Geometry.explicitRoundedGrid jStar
+                          m') j y) ∧
                     Set.PairwiseDisjoint
                       {p : ℤ × (Fin d → ℤ) |
                         IsMaximalAdaptedCellIn
-                          (HighContrast.adaptedCellTranslate (Geometry.explicitRoundedGrid jStar m') j y)
+                          (HighContrast.adaptedCellTranslate (Geometry.explicitRoundedGrid jStar
+                            m') j y)
                           (Geometry.explicitRoundedGrid jStar m) (j - (ℓ : ℤ)) p.1 p.2}
-                      (fun p => adaptedCellAtCenter (Geometry.explicitRoundedGrid jStar m) p.1 p.2) ∧
+                      (fun p => adaptedCellAtCenter (Geometry.explicitRoundedGrid jStar m) p.1
+                        p.2) ∧
                     volume
-                        (HighContrast.adaptedCellTranslate (Geometry.explicitRoundedGrid jStar m') j y \
+                        (HighContrast.adaptedCellTranslate (Geometry.explicitRoundedGrid jStar
+                          m') j y \
                           ⋃ p ∈ {p : ℤ × (Fin d → ℤ) |
                               IsMaximalAdaptedCellIn
                                 (HighContrast.adaptedCellTranslate
                                   (Geometry.explicitRoundedGrid jStar m') j y)
                                 (Geometry.explicitRoundedGrid jStar m) (j - (ℓ : ℤ)) p.1 p.2},
-                            adaptedCellAtCenter (Geometry.explicitRoundedGrid jStar m) p.1 p.2) = 0 ∧
+                            adaptedCellAtCenter (Geometry.explicitRoundedGrid jStar m) p.1 p.2)
+                              = 0 ∧
                     (∀ r : ℤ, r ≤ j - (ℓ : ℤ) →
-                      (volume (HighContrast.adaptedCell (Geometry.explicitRoundedGrid jStar m) r)).toReal /
+                      (volume (HighContrast.adaptedCell (Geometry.explicitRoundedGrid jStar m)
+                        r)).toReal /
                           (volume (HighContrast.adaptedCellTranslate
                             (Geometry.explicitRoundedGrid jStar m') j y)).toReal ≤
                         C * (3 : ℝ) ^ (-(d : ℝ) * ((j : ℝ) - (r : ℝ)))) ∧
@@ -147,7 +156,8 @@ theorem two_grid_whitney
                               (Geometry.explicitRoundedGrid jStar m') j y)).toReal) = 1 ∧
                     (∀ (r : ℤ) (hr : r < j - (ℓ : ℤ)),
                       ∑ _z ∈ (hfin r hr.le).toFinset,
-                          (volume (HighContrast.adaptedCell (Geometry.explicitRoundedGrid jStar m) r)).toReal /
+                          (volume (HighContrast.adaptedCell (Geometry.explicitRoundedGrid jStar
+                            m) r)).toReal /
                             (volume (HighContrast.adaptedCellTranslate
                               (Geometry.explicitRoundedGrid jStar m') j y)).toReal ≤
                         C * (3 : ℝ) ^ ((r : ℝ) - (j : ℝ)))) ∧
@@ -155,29 +165,35 @@ theorem two_grid_whitney
                   ∃ hfin : ∀ r : ℤ, r ≤ j - (ℓ : ℤ) →
                       (maximalAdaptedCellCenters
                         (adaptedUncoveredPart
-                          (HighContrast.adaptedCellTranslate (Geometry.explicitRoundedGrid jStar m) j y)
+                          (HighContrast.adaptedCellTranslate (Geometry.explicitRoundedGrid jStar
+                            m) j y)
                           (Geometry.explicitRoundedGrid jStar m') (j - (ℓ : ℤ)))
                         (Geometry.explicitRoundedGrid jStar m) (j - (ℓ : ℤ)) r).Finite,
                     (∀ (r : ℤ) (w : Fin d → ℤ),
                         IsMaximalAdaptedCellIn
                           (adaptedUncoveredPart
-                            (HighContrast.adaptedCellTranslate (Geometry.explicitRoundedGrid jStar m) j y)
+                            (HighContrast.adaptedCellTranslate (Geometry.explicitRoundedGrid
+                              jStar m) j y)
                             (Geometry.explicitRoundedGrid jStar m') (j - (ℓ : ℤ)))
                           (Geometry.explicitRoundedGrid jStar m) (j - (ℓ : ℤ)) r w →
                         adaptedCellAtCenter (Geometry.explicitRoundedGrid jStar m) r w ⊆
                           adaptedUncoveredPart
-                            (HighContrast.adaptedCellTranslate (Geometry.explicitRoundedGrid jStar m) j y)
+                            (HighContrast.adaptedCellTranslate (Geometry.explicitRoundedGrid
+                              jStar m) j y)
                             (Geometry.explicitRoundedGrid jStar m') (j - (ℓ : ℤ))) ∧
                       Set.PairwiseDisjoint
                         {p : ℤ × (Fin d → ℤ) |
                           IsMaximalAdaptedCellIn
                             (adaptedUncoveredPart
-                              (HighContrast.adaptedCellTranslate (Geometry.explicitRoundedGrid jStar m) j y)
+                              (HighContrast.adaptedCellTranslate (Geometry.explicitRoundedGrid
+                                jStar m) j y)
                               (Geometry.explicitRoundedGrid jStar m') (j - (ℓ : ℤ)))
                             (Geometry.explicitRoundedGrid jStar m) (j - (ℓ : ℤ)) p.1 p.2}
-                        (fun p => adaptedCellAtCenter (Geometry.explicitRoundedGrid jStar m) p.1 p.2) ∧
+                        (fun p => adaptedCellAtCenter (Geometry.explicitRoundedGrid jStar m) p.1
+                          p.2) ∧
                       volume
-                          (HighContrast.adaptedCellTranslate (Geometry.explicitRoundedGrid jStar m) j y \
+                          (HighContrast.adaptedCellTranslate (Geometry.explicitRoundedGrid jStar
+                            m) j y \
                             (adaptedCoveredPart
                                 (HighContrast.adaptedCellTranslate
                                   (Geometry.explicitRoundedGrid jStar m) j y)
@@ -189,13 +205,16 @@ theorem two_grid_whitney
                                         (Geometry.explicitRoundedGrid jStar m) j y)
                                       (Geometry.explicitRoundedGrid jStar m') (j - (ℓ : ℤ)))
                                     (Geometry.explicitRoundedGrid jStar m) (j - (ℓ : ℤ)) p.1 p.2},
-                                adaptedCellAtCenter (Geometry.explicitRoundedGrid jStar m) p.1 p.2)) = 0 ∧
+                                adaptedCellAtCenter (Geometry.explicitRoundedGrid jStar m) p.1
+                                  p.2)) = 0 ∧
                       (∀ (r : ℤ) (hr : r ≤ j - (ℓ : ℤ)),
                         ∑ _z ∈ (hfin r hr).toFinset,
                             (volume (HighContrast.adaptedCell
                                 (Geometry.explicitRoundedGrid jStar m) r)).toReal /
                               (volume (HighContrast.adaptedCellTranslate
                                 (Geometry.explicitRoundedGrid jStar m) j y)).toReal ≤
-                          C * (3 : ℝ) ^ ((r : ℝ) - (j : ℝ)))) := by exact HCPolySupport.HighContrast.Entry.two_grid_whitney d hd
+                          C * (3 : ℝ) ^ ((r : ℝ) - (j : ℝ)))) := by
+  exact HCPolySupport.HighContrast.Entry.two_grid_whitney d hd
+
 
 end HCPolySupport.HighContrast

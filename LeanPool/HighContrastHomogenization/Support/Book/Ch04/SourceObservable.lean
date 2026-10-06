@@ -177,6 +177,7 @@ end IsSourceLocalRandomVariable
 structure SourceObservable (d : ℕ) (U : Set (Vec d)) (β : Type*)
     [MeasurableSpace β] where
   measurableSet : MeasurableSet U
+  /-- The observable on the coarse source carrier whose measurability is local to `U`. -/
   toFun : Source.Coarse.Carrier d → β
   isLocal : IsSourceLocalRandomVariable U measurableSet toFun
 

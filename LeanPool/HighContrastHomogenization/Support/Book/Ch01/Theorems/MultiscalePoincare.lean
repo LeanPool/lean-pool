@@ -106,7 +106,7 @@ theorem h1_fluctuation_partialNormTop_two_le_sum_grad_circNorm
     exact mul_nonneg (fullVectorPoincareConstant_nonneg Q)
       (Real.rpow_nonneg (by positivity) _)
   simpa [C, circNegativeBesovNorm] using
-    HCPolySupport.CubeLocalFullCircPoincareVectorEstimate.fluctuation_partialNormTop_two_le_sum_circNorm
+    HCPolySupport.CubeLocalFullCircPoincareVectorEstimate.fluctuationPartialTop_le_sumCircNorm
       (h1_descendantLocalFullCircPoincare Q u M)
       (Q := Q) (s := s) (C := C) (u := fun x => u x)
       (G := fun x => u.grad x) (M := M)

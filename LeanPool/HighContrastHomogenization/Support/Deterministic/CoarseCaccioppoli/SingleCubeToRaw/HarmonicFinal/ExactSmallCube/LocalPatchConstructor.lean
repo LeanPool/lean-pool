@@ -14,7 +14,8 @@ public import LeanPool.HighContrastHomogenization.Support.Deterministic.CoarseCa
 
 /-!
 # Coarse-graining support:
-Support.Deterministic.CoarseCaccioppoli.SingleCubeToRaw.HarmonicFinal.ExactSmallCube.LocalPatchConstructor
+Support.Deterministic.CoarseCaccioppoli.SingleCubeToRaw.HarmonicFinal.ExactSmallCube
+.LocalPatchConstructor
 
 Imported from the Apache-2.0 CoarseGraining development at commit
 `c7ddd76c08ade64fed1b8d2ca51be14dfee8deb4`.
@@ -36,13 +37,15 @@ arbitrary-center local-patch exact small-cube route. Factor and branch estimates
 live in the `LocalPatchConstructor/` submodules.
 -/
 
+namespace BoundaryCaccioppoliHarmonicVectorSmallCubeCoefficientSplit_localPatch
+
 /-- Direct split local-patch exact-to-parent-raw coefficient bounds from
 closed-cube ellipticity.
 
 The constant branch is paid by `Ccross`, while the centered branch and the
 integerized height are paid by `Calpha`. -/
 theorem
-    CoarseCaccioppoliBoundaryCanonicalHarmonicVectorFaithfulWorkSmallCubeLocalPatchBufferedExactRawCoefficientBoundsSplit.of_closedCubeEllipticity_of_localPatchBufferedCutoffRadiusConst_of_centeredFronts
+    of_closedCubeEllipticity_of_localPatchBufferedCutoffRadiusConst_of_centeredFronts
     {d : ℕ} [NeZero d] (Q : TriadicCube d) (center : Vec d) (a : CoeffField d)
     (s t Clocal Calpha Ccross : ℝ) {lam Lam : ℝ}
     (hClocal : 0 ≤ Clocal) (hCalpha : 0 ≤ Calpha)
@@ -68,7 +71,7 @@ theorem
               (cubeRadius Q) ^ (2 : ℕ)) +
           6 * (quantitativeCubeCutoffGradientConst d / cubeRadius Q)) ≤
         (Fintype.card (Fin d) : ℝ) * Clocal) :
-    CoarseCaccioppoliBoundaryCanonicalHarmonicVectorFaithfulWorkSmallCubeLocalPatchBufferedExactRawCoefficientBoundsSplit
+    BoundaryCaccioppoliHarmonicVectorSmallCubeCoefficientSplit_localPatch
       Q center a s t Clocal Calpha Ccross := by
   let CeffLocal : ℝ := (Fintype.card (Fin d) : ℝ) * Clocal
   let CeffAlpha : ℝ := (Fintype.card (Fin d) : ℝ) * Calpha
@@ -110,14 +113,14 @@ theorem
         geometricWeight s 1 n *
           Real.rpow (maxDescendantBBlockNormAtScale Q (Q.scale - (n : ℤ)) a)
             (1 / 2 : ℝ)) :=
-    summable_qone_maxDescendantBBlockNormAtScale_of_isEllipticFieldOn_of_openCubeDescendantDeterministicCoarseData
+    summable_qone_maxDescendantBBlockNorm_of_ellipticField
       Q a s hs hEllCube hData
   have hSigmaSum_t :
       Summable (fun n : ℕ =>
         geometricWeight t 1 n *
           Real.rpow (maxDescendantSigmaStarInvNormAtScale Q (Q.scale - (n : ℤ)) a)
             (1 / 2 : ℝ)) :=
-    summable_qone_maxDescendantSigmaStarInvNormAtScale_of_isEllipticFieldOn_of_openCubeDescendantDeterministicCoarseData
+    summable_qone_maxDescendantSigmaStarInvNorm_of_ellipticField
       Q a t ht hEllCube hData
   let hconst :
       ∀ n : ℕ,
@@ -140,7 +143,7 @@ theorem
         ∀ R ∈ descendantsAtDepth Q j,
           coarseCaccioppoliFluxEnergyExactConstantCoeff R a *
               (B + cubeBesovScaleWeight 1 R * cubeLpNorm R ∞ ξ) ≤ K :=
-    faithfulWorkSmallCubeExactRawConstantBranchSplit_of_closedCubeEllipticity_of_localPatchBufferedCutoffRadiusConst
+    SmallCubeConstantBranchSplit_of_closedCubeEllipticity_of_closedCubeEllipticity
       (Q := Q) (center := center) (a := a) (s := s) (t := t)
       (Clocal := Clocal) (Calpha := Calpha) (Ccross := Ccross)
       hClocal hwork_constant_cross hs ht hst hEllCube hlarge
@@ -188,7 +191,7 @@ theorem
     simpa [CeffLocal, CeffAlpha, hheight, ρ₁, ρ₂, ρm, j, Scenter,
       coarseCaccioppoliLocalPatchCutoffHessianBound]
       using
-        (coarseCaccioppoliFluxEnergyExactCenteredCoeff_localPatchBuffered_localAcirc_le_alpha_of_scale
+        (fluxEnergyExactCenteredCoeff_localPatch_le_boundaryAlpha
           (Q := Q) (R := R) (center := center) (a := a) (s := s) (t := t)
           (CeffLocal := CeffLocal) (CeffWork := CeffAlpha)
           (k := k) (j := j0) (ρ₁ := ρ₁) (ρ₂ := ρ₂)
@@ -197,13 +200,17 @@ theorem
           hBsum_s hSigmaSum_t hchoice hlt hjk
           (by simpa [Scenter] using hscale) hheight_le_j0)
 
+end BoundaryCaccioppoliHarmonicVectorSmallCubeCoefficientSplit_localPatch
+
+namespace BoundaryCaccioppoliHarmonicVectorSmallCubeCoefficientSplit_localPatch_allRadii
+
 /-- All-radii direct split local-patch exact-to-parent-raw coefficient bounds
 from closed-cube ellipticity.
 
 This is the proof-producing coefficient package for the standard radius
 iteration in the arbitrary-center boundary route. -/
 theorem
-    CoarseCaccioppoliBoundaryCanonicalHarmonicVectorFaithfulWorkSmallCubeLocalPatchBufferedExactRawCoefficientBoundsSplitAllRadii.of_closedCubeEllipticity_of_localPatchBufferedCutoffRadiusConst_of_centeredFronts
+    of_closedCubeEllipticity_of_localPatchBufferedCutoffRadiusConst_of_centeredFronts
     {d : ℕ} [NeZero d] (Q : TriadicCube d) (center : Vec d) (a : CoeffField d)
     (s t Clocal Calpha Ccross : ℝ) {lam Lam : ℝ}
     (hClocal : 0 ≤ Clocal) (hCalpha : 0 ≤ Calpha)
@@ -229,7 +236,7 @@ theorem
               (cubeRadius Q) ^ (2 : ℕ)) +
           6 * (quantitativeCubeCutoffGradientConst d / cubeRadius Q)) ≤
         (Fintype.card (Fin d) : ℝ) * Clocal) :
-    CoarseCaccioppoliBoundaryCanonicalHarmonicVectorFaithfulWorkSmallCubeLocalPatchBufferedExactRawCoefficientBoundsSplitAllRadii
+    BoundaryCaccioppoliHarmonicVectorSmallCubeCoefficientSplit_localPatch_allRadii
       Q center a s t Clocal Calpha Ccross := by
   let CeffLocal : ℝ := (Fintype.card (Fin d) : ℝ) * Clocal
   let CeffAlpha : ℝ := (Fintype.card (Fin d) : ℝ) * Calpha
@@ -271,14 +278,14 @@ theorem
         geometricWeight s 1 n *
           Real.rpow (maxDescendantBBlockNormAtScale Q (Q.scale - (n : ℤ)) a)
             (1 / 2 : ℝ)) :=
-    summable_qone_maxDescendantBBlockNormAtScale_of_isEllipticFieldOn_of_openCubeDescendantDeterministicCoarseData
+    summable_qone_maxDescendantBBlockNorm_of_ellipticField
       Q a s hs hEllCube hData
   have hSigmaSum_t :
       Summable (fun n : ℕ =>
         geometricWeight t 1 n *
           Real.rpow (maxDescendantSigmaStarInvNormAtScale Q (Q.scale - (n : ℤ)) a)
             (1 / 2 : ℝ)) :=
-    summable_qone_maxDescendantSigmaStarInvNormAtScale_of_isEllipticFieldOn_of_openCubeDescendantDeterministicCoarseData
+    summable_qone_maxDescendantSigmaStarInvNorm_of_ellipticField
       Q a t ht hEllCube hData
   let hconst :
       ∀ ⦃ρ₁ ρ₂ : ℝ⦄, (1 / 3 : ℝ) ≤ ρ₁ → ρ₁ < ρ₂ → ρ₂ ≤ 1 →
@@ -299,7 +306,7 @@ theorem
         ∀ R ∈ descendantsAtDepth Q j,
           coarseCaccioppoliFluxEnergyExactConstantCoeff R a *
               (B + cubeBesovScaleWeight 1 R * cubeLpNorm R ∞ ξ) ≤ K :=
-    faithfulWorkSmallCubeExactRawConstantBranchSplitAllRadii_of_closedCubeEllipticity_of_localPatchBufferedCutoffRadiusConst
+    SmallCubeConstantBranchSplitAllRadii_of_of_closedCubeEllipticity
       (Q := Q) (center := center) (a := a) (s := s) (t := t)
       (Clocal := Clocal) (Calpha := Calpha) (Ccross := Ccross)
       hClocal hwork_constant_cross hs ht hst hEllCube hlarge
@@ -331,14 +338,14 @@ theorem
       hScenter_nonneg hcentered_alpha hchoice hlt
   constructor
   · intro R hR
-    simpa [CoarseCaccioppoliBoundaryCanonicalHarmonicVectorFaithfulWorkSmallCubeLocalPatchBufferedExactRawCoefficientBoundsSplitAllRadii,
+    simpa [BoundaryCaccioppoliHarmonicVectorSmallCubeCoefficientSplit_localPatch_allRadii,
       CeffAlpha, CeffCross, hheight, ρm, j, coarseCaccioppoliLocalPatchCutoffHessianBound]
       using hconst hρ₁ hlt hρ₂ R hR
   · intro R hR
     simpa [CeffLocal, CeffAlpha, hheight, ρm, j, Scenter,
       coarseCaccioppoliLocalPatchCutoffHessianBound]
       using
-        (coarseCaccioppoliFluxEnergyExactCenteredCoeff_localPatchBuffered_localAcirc_le_alpha_of_scale
+        (fluxEnergyExactCenteredCoeff_localPatch_le_boundaryAlpha
           (Q := Q) (R := R) (center := center) (a := a) (s := s) (t := t)
           (CeffLocal := CeffLocal) (CeffWork := CeffAlpha)
           (k := k) (j := j0) (ρ₁ := ρ₁) (ρ₂ := ρ₂)
@@ -346,6 +353,8 @@ theorem
           hρ₁_pos hCeffLocal_nonneg hCeffAlpha_nonneg hs ht hst hEllCube hR
           hBsum_s hSigmaSum_t hchoice hlt hjk
           (by simpa [Scenter] using hscale) hheight_le_j0)
+
+end BoundaryCaccioppoliHarmonicVectorSmallCubeCoefficientSplit_localPatch_allRadii
 
 end
 

@@ -169,7 +169,7 @@ theorem descendants_sum_restrict_gradCoordH1Function_gradToVectorL2_norm_sq_le
 
 /-- Scale-sharp depth handoff after disjoint restriction summation, stated
 with the global Hessian row norm. -/
-theorem cubeBesovDepthSeminorm_gradCoord_le_depthWeight_mul_const_mul_cardInvGlobalRow_volumeInvRpowHalf
+theorem besovGradientCoord_le_hessianGradientCoordL2
     (H : HasWeakHessianOn (openCubeSet Q) u) (i : Fin d) (j : ℕ)
     (hC :
       ∀ R ∈ descendantsAtDepth Q j, H1CoerciveEstimate (openCubeSet R))
@@ -183,13 +183,13 @@ theorem cubeBesovDepthSeminorm_gradCoord_le_depthWeight_mul_const_mul_cardInvGlo
           ((((descendantsAtDepth Q j).card : ℝ)⁻¹ *
             ‖(H.gradCoordH1Function i).gradToVectorL2‖ ^ 2) ^ (1 / 2 : ℝ))) := by
   exact
-    H.cubeBesovDepthSeminorm_gradCoord_le_depthWeight_mul_const_mul_cardInvSum_volumeInvRpowHalf_hessianRow
+    H.cubeBesovDepthSeminorm_gradient_le_depthWeightedHessianRow
       i j hC hK hfactor
       (H.descendants_sum_restrict_gradCoordH1Function_gradToVectorL2_norm_sq_le i j)
 
 /-- Scale-sharp depth handoff after disjoint restriction summation, in the
 global Hessian-coordinate-sum form produced by the reflected interior theorem. -/
-theorem cubeBesovDepthSeminorm_gradCoord_le_depthWeight_mul_const_mul_cardInvGlobal_hessianCoordL2NormSum
+theorem besovGradientCoord_le_hessianCoordL2Norm
     (H : HasWeakHessianOn (openCubeSet Q) u) (i : Fin d) (j : ℕ)
     (hC :
       ∀ R ∈ descendantsAtDepth Q j, H1CoerciveEstimate (openCubeSet R))
@@ -203,7 +203,7 @@ theorem cubeBesovDepthSeminorm_gradCoord_le_depthWeight_mul_const_mul_cardInvGlo
           ((((descendantsAtDepth Q j).card : ℝ)⁻¹ *
             H.hessianCoordL2NormSum ^ 2) ^ (1 / 2 : ℝ))) := by
   have hrowDepth :=
-    H.cubeBesovDepthSeminorm_gradCoord_le_depthWeight_mul_const_mul_cardInvGlobalRow_volumeInvRpowHalf
+    H.besovGradientCoord_le_hessianGradientCoordL2
       i j hC hK hfactor
   have hrow :
       ‖(H.gradCoordH1Function i).gradToVectorL2‖ ≤ H.hessianCoordL2NormSum :=

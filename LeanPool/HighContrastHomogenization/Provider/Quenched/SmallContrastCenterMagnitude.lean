@@ -61,76 +61,77 @@ private theorem quad_add_le' {M : Mat d} (hM : M.PosSemidef) (x y : Vec d) :
   rw [hexp₁]
   linarith only [hminus]
 
-/-- **The center magnitudes.**  At the calibrated loads, both components of
-the annealed center — the closed Schur forms of the mean gradient and mean
-flux — are second order in `ε`, in the natural `σ*`-metrics. -/
-theorem centering_center_quads_le
-    {S SStar κ : Mat d} (hS : S.PosDef) (hStar : SStar.PosDef)
+
+private theorem calibration_load_and_trace_bounds
+    {S SStar κ : Mat d} (hStar : SStar.PosDef)
     (hκ : κᴴ = κ)
-    {eps : ℝ} (heps0 : 0 ≤ eps) (heps1 : eps ≤ 1)
+    {eps : ℝ} (heps0 : 0 ≤ eps)
     (horder : SStar ≤ S)
     (hgapM : S - SStar ≤ eps • SStar)
     (hskewM : κ * SStar⁻¹ * κ ≤ (eps ^ 2 / 4) • SStar)
     (htrGap : Matrix.trace ((S - SStar) * SStar⁻¹) ≤ eps)
     (htrSkew : Matrix.trace (κ * SStar⁻¹ * κ * SStar⁻¹) ≤
       (d : ℝ) * eps ^ 2 / 4)
-    (e : Vec d) (he : e ⬝ᵥ e = 1) :
-    ((-(matSqrt (matGeomMean (S + κ * SStar⁻¹ * κ) SStar)⁻¹ *ᵥ e) +
-        SStar⁻¹ *ᵥ (matSqrt (matGeomMean (S + κ * SStar⁻¹ * κ) SStar) *ᵥ e +
-          κ *ᵥ (matSqrt (matGeomMean (S + κ * SStar⁻¹ * κ) SStar)⁻¹ *ᵥ
-            e))) ⬝ᵥ
-      SStar *ᵥ
-        (-(matSqrt (matGeomMean (S + κ * SStar⁻¹ * κ) SStar)⁻¹ *ᵥ e) +
-          SStar⁻¹ *ᵥ
-            (matSqrt (matGeomMean (S + κ * SStar⁻¹ * κ) SStar) *ᵥ e +
-              κ *ᵥ (matSqrt (matGeomMean (S + κ * SStar⁻¹ * κ) SStar)⁻¹ *ᵥ
-                e))) ≤ 5 * (1 + (d : ℝ)) * eps ^ 2) ∧
-    (((1 - κ * SStar⁻¹) *ᵥ
-        (matSqrt (matGeomMean (S + κ * SStar⁻¹ * κ) SStar) *ᵥ e) -
-        (S + κ * SStar⁻¹ * κ) *ᵥ
-          (matSqrt (matGeomMean (S + κ * SStar⁻¹ * κ) SStar)⁻¹ *ᵥ e)) ⬝ᵥ
-      SStar⁻¹ *ᵥ
-        ((1 - κ * SStar⁻¹) *ᵥ
-          (matSqrt (matGeomMean (S + κ * SStar⁻¹ * κ) SStar) *ᵥ e) -
-          (S + κ * SStar⁻¹ * κ) *ᵥ
-            (matSqrt (matGeomMean (S + κ * SStar⁻¹ * κ) SStar)⁻¹ *ᵥ
-              e)) ≤ 24 * (1 + (d : ℝ)) * eps ^ 2) := by
+    (e : Vec d) (he : e ⬝ᵥ e = 1)
+    (hb : (S + κ * SStar⁻¹ * κ).PosDef)
+    (hbStar : SStar ≤ (S + κ * SStar⁻¹ * κ))
+    (hm : (matGeomMean (S + κ * SStar⁻¹ * κ) SStar).PosDef)
+    (hStarInvHerm : (SStar⁻¹)ᴴ = SStar⁻¹)
+    (hBge : (1 : Mat d) ≤ (calibrationB (S + κ * SStar⁻¹ * κ) SStar))
+    (hBinvle : (calibrationB (S + κ * SStar⁻¹ * κ) SStar)⁻¹ ≤ (1 : Mat d))
+    : ((matSqrt (matGeomMean (S + κ * SStar⁻¹ * κ) SStar)⁻¹ *ᵥ e) ⬝ᵥ (matSqrt (matGeomMean (S + κ *
+      SStar⁻¹ * κ) SStar) *ᵥ e) = 1) ∧
+    (((matSqrt (matGeomMean (S + κ * SStar⁻¹ * κ) SStar)⁻¹ *ᵥ e) ⬝ᵥ SStar *ᵥ (matSqrt (matGeomMean
+      (S + κ * SStar⁻¹ * κ) SStar)⁻¹ *ᵥ e)) = e ⬝ᵥ (calibrationB (S + κ * SStar⁻¹ * κ) SStar)⁻¹ *ᵥ
+      e) ∧
+    (((matSqrt (matGeomMean (S + κ * SStar⁻¹ * κ) SStar) *ᵥ e) ⬝ᵥ SStar⁻¹ *ᵥ (matSqrt (matGeomMean
+      (S + κ * SStar⁻¹ * κ) SStar) *ᵥ e)) = e ⬝ᵥ (calibrationB (S + κ * SStar⁻¹ * κ) SStar) *ᵥ e) ∧
+    (((matSqrt (matGeomMean (S + κ * SStar⁻¹ * κ) SStar)⁻¹ *ᵥ e) ⬝ᵥ SStar *ᵥ (matSqrt (matGeomMean
+      (S + κ * SStar⁻¹ * κ) SStar)⁻¹ *ᵥ e)) ≤ 1) ∧
+    (0 ≤ ((matSqrt (matGeomMean (S + κ * SStar⁻¹ * κ) SStar)⁻¹ *ᵥ e) ⬝ᵥ SStar *ᵥ (matSqrt
+      (matGeomMean (S + κ * SStar⁻¹ * κ) SStar)⁻¹ *ᵥ e))) ∧
+    (∀ x : Vec d, x ⬝ᵥ (κ * SStar⁻¹ * κ) *ᵥ x =
+      (κ *ᵥ x) ⬝ᵥ SStar⁻¹ *ᵥ (κ *ᵥ x)) ∧
+    (∀ x y : Vec d, x ⬝ᵥ SStar⁻¹ *ᵥ y = y ⬝ᵥ SStar⁻¹ *ᵥ x) ∧
+    (((matSqrt (matGeomMean (S + κ * SStar⁻¹ * κ) SStar)⁻¹ *ᵥ e) ⬝ᵥ (S - SStar) *ᵥ (matSqrt
+      (matGeomMean (S + κ * SStar⁻¹ * κ) SStar)⁻¹ *ᵥ e)) ≤ eps * ((matSqrt (matGeomMean (S + κ *
+      SStar⁻¹ * κ) SStar)⁻¹ *ᵥ e) ⬝ᵥ SStar *ᵥ (matSqrt (matGeomMean (S + κ * SStar⁻¹ * κ) SStar)⁻¹
+      *ᵥ e))) ∧
+    (0 ≤ ((matSqrt (matGeomMean (S + κ * SStar⁻¹ * κ) SStar)⁻¹ *ᵥ e) ⬝ᵥ (S - SStar) *ᵥ (matSqrt
+      (matGeomMean (S + κ * SStar⁻¹ * κ) SStar)⁻¹ *ᵥ e))) ∧
+    (((κ *ᵥ (matSqrt (matGeomMean (S + κ * SStar⁻¹ * κ) SStar)⁻¹ *ᵥ e)) ⬝ᵥ SStar⁻¹ *ᵥ (κ *ᵥ
+      (matSqrt (matGeomMean (S + κ * SStar⁻¹ * κ) SStar)⁻¹ *ᵥ e))) ≤ eps ^ 2 / 4 * ((matSqrt
+      (matGeomMean (S + κ * SStar⁻¹ * κ) SStar)⁻¹ *ᵥ e) ⬝ᵥ SStar *ᵥ (matSqrt (matGeomMean (S + κ *
+      SStar⁻¹ * κ) SStar)⁻¹ *ᵥ e))) ∧
+    (0 ≤ ((κ *ᵥ (matSqrt (matGeomMean (S + κ * SStar⁻¹ * κ) SStar)⁻¹ *ᵥ e)) ⬝ᵥ SStar⁻¹ *ᵥ (κ *ᵥ
+      (matSqrt (matGeomMean (S + κ * SStar⁻¹ * κ) SStar)⁻¹ *ᵥ e)))) ∧
+    (((calibrationB (S + κ * SStar⁻¹ * κ) SStar) - 1).PosSemidef) ∧
+    (e ⬝ᵥ ((calibrationB (S + κ * SStar⁻¹ * κ) SStar) - 1) *ᵥ e = ((matSqrt (matGeomMean (S + κ *
+      SStar⁻¹ * κ) SStar) *ᵥ e) ⬝ᵥ SStar⁻¹ *ᵥ (matSqrt (matGeomMean (S + κ * SStar⁻¹ * κ) SStar) *ᵥ
+      e)) - 1) ∧
+    (((matSqrt (matGeomMean (S + κ * SStar⁻¹ * κ) SStar) *ᵥ e) ⬝ᵥ SStar⁻¹ *ᵥ (matSqrt (matGeomMean
+      (S + κ * SStar⁻¹ * κ) SStar) *ᵥ e)) = (matSqrt (matGeomMean (S + κ * SStar⁻¹ * κ) SStar)⁻¹ *ᵥ
+      e) ⬝ᵥ (S + κ * SStar⁻¹ * κ) *ᵥ (matSqrt (matGeomMean (S + κ * SStar⁻¹ * κ) SStar)⁻¹ *ᵥ e)) ∧
+    ((matSqrt (matGeomMean (S + κ * SStar⁻¹ * κ) SStar)⁻¹ *ᵥ e) ⬝ᵥ (S + κ * SStar⁻¹ * κ) *ᵥ
+      (matSqrt (matGeomMean (S + κ * SStar⁻¹ * κ) SStar)⁻¹ *ᵥ e) = ((matSqrt (matGeomMean (S + κ *
+      SStar⁻¹ * κ) SStar)⁻¹ *ᵥ e) ⬝ᵥ SStar *ᵥ (matSqrt (matGeomMean (S + κ * SStar⁻¹ * κ) SStar)⁻¹
+      *ᵥ e)) + ((matSqrt (matGeomMean (S + κ * SStar⁻¹ * κ) SStar)⁻¹ *ᵥ e) ⬝ᵥ (S - SStar) *ᵥ
+      (matSqrt (matGeomMean (S + κ * SStar⁻¹ * κ) SStar)⁻¹ *ᵥ e)) + ((κ *ᵥ (matSqrt (matGeomMean (S
+      + κ * SStar⁻¹ * κ) SStar)⁻¹ *ᵥ e)) ⬝ᵥ SStar⁻¹ *ᵥ (κ *ᵥ (matSqrt (matGeomMean (S + κ * SStar⁻¹
+      * κ) SStar)⁻¹ *ᵥ e)))) ∧
+    (((matSqrt (matGeomMean (S + κ * SStar⁻¹ * κ) SStar) *ᵥ e) ⬝ᵥ SStar⁻¹ *ᵥ (matSqrt (matGeomMean
+      (S + κ * SStar⁻¹ * κ) SStar) *ᵥ e)) ≤ 1 + eps + eps ^ 2 / 4) ∧
+    (Matrix.trace ((calibrationB (S + κ * SStar⁻¹ * κ) SStar) - 1) ≤ eps + (d : ℝ) * eps ^ 2 / 4)
+    := by
   classical
   set b : Mat d := S + κ * SStar⁻¹ * κ with hbdef
-  have hκpsd : (κ * SStar⁻¹ * κ).PosSemidef := by
-    have h := hStar.inv.posSemidef.conjTranspose_mul_mul_same κ
-    rwa [hκ] at h
-  have hb : b.PosDef := hS.add_posSemidef hκpsd
-  have hSb : S ≤ b := by
-    refine Initialization.le_of_dotProduct_mulVec_le hS.isHermitian hb.isHermitian
-      fun x => ?_
-    rw [hbdef, Matrix.add_mulVec, dotProduct_add]
-    have h := hκpsd.dotProduct_mulVec_nonneg x
-    simp only [star_trivial] at h
-    linarith only [h]
-  have hbStar : SStar ≤ b := le_trans horder hSb
-  have hm : (matGeomMean b SStar).PosDef := posDef_matGeomMean hb hStar
-  have hStarInvHerm : (SStar⁻¹)ᴴ = SStar⁻¹ := hStar.inv.isHermitian
-  have hStarHerm : SStarᴴ = SStar := hStar.isHermitian
-  have hΔherm : (S - SStar)ᴴ = S - SStar := by
-    rw [Matrix.conjTranspose_sub, hS.isHermitian.eq, hStarHerm]
   set p : Vec d := matSqrt (matGeomMean b SStar)⁻¹ *ᵥ e with hpdef
   set r : Vec d := matSqrt (matGeomMean b SStar) *ᵥ e with hrdef
-  set W : Vec d := r + κ *ᵥ p with hWdef
-  set u : Vec d := SStar⁻¹ *ᵥ W with hudef
-  set δ : Vec d := u - p with hδdef
   set B : Mat d := calibrationB b SStar with hBdef
-  have hBpd : B.PosDef := calibrationB_posDef hb hStar
-  have hBge : (1 : Mat d) ≤ B := one_le_calibrationB hb hStar hbStar
-  have hBinvle : B⁻¹ ≤ (1 : Mat d) := calibrationB_inv_le_one hb hStar hbStar
-  -- scalar abbreviations
   set a1 : ℝ := p ⬝ᵥ SStar *ᵥ p with ha1
   set a2 : ℝ := r ⬝ᵥ SStar⁻¹ *ᵥ r with ha2
   set gp : ℝ := p ⬝ᵥ (S - SStar) *ᵥ p with hgp
   set Rk : ℝ := (κ *ᵥ p) ⬝ᵥ SStar⁻¹ *ᵥ (κ *ᵥ p) with hRkdef
-  set g1 : ℝ := r ⬝ᵥ SStar⁻¹ *ᵥ (κ *ᵥ p) with hg1
-  set A5 : ℝ := ((S - SStar) *ᵥ p) ⬝ᵥ δ with hA5
-  set A6 : ℝ := δ ⬝ᵥ κ *ᵥ δ with hA6
   have hpair : p ⬝ᵥ r = 1 := by
     rw [hpdef, hrdef, calibration_pair hb hStar e, he]
   have ha1B : a1 = e ⬝ᵥ B⁻¹ *ᵥ e := by
@@ -241,109 +242,16 @@ theorem centering_center_quads_le
     have hchain := le_trans hmono (le_of_eq hbtrace)
     rw [htrTB, htrB]
     linarith only [hchain, htrGap, htrSkew]
-  have htrTNN : 0 ≤ Matrix.trace T := hTpsd.trace_nonneg
-  -- the bracket
-  set bracket : ℝ := a1 + a2 - 2 * (p ⬝ᵥ r) with hbracketdef
-  have hB1 : B * B⁻¹ = 1 := Matrix.mul_nonsing_inv _ (isUnit_det_of_posDef hBpd)
-  have hB2 : B⁻¹ * B = 1 := Matrix.nonsing_inv_mul _ (isUnit_det_of_posDef hBpd)
-  have hfact : T * B⁻¹ * T = B + B⁻¹ - (2 : ℝ) • (1 : Mat d) := by
-    have htwo : (2 : ℝ) • (1 : Mat d) = 1 + 1 := by
-      rw [two_smul]
-    rw [hTdef, htwo]
-    calc
-      (B - 1) * B⁻¹ * (B - 1) = (B * B⁻¹ - 1 * B⁻¹) * (B - 1) := by
-        rw [Matrix.sub_mul]
-      _ = (1 - B⁻¹) * (B - 1) := by
-        rw [hB1, Matrix.one_mul]
-      _ = 1 * B - 1 * 1 - (B⁻¹ * B - B⁻¹ * 1) := by
-        rw [Matrix.sub_mul, Matrix.mul_sub, Matrix.mul_sub]
-      _ = B + B⁻¹ - (1 + 1) := by
-        rw [hB2, Matrix.one_mul, Matrix.one_mul, Matrix.mul_one]
-        abel
-  have hbracketEq : bracket = (T *ᵥ e) ⬝ᵥ B⁻¹ *ᵥ (T *ᵥ e) := by
-    have hquad := Initialization.quad_conj T B⁻¹ e
-    rw [hTpsd.isHermitian.eq] at hquad
-    rw [← hquad, hfact, hbracketdef, hpair, ha1B, ha2B]
-    rw [Matrix.sub_mulVec, Matrix.add_mulVec, dotProduct_sub, dotProduct_add,
-      Matrix.smul_mulVec, Matrix.one_mulVec, dotProduct_smul, he,
-      smul_eq_mul]
-    ring
-  have hbracketNN : 0 ≤ bracket := by
-    rw [hbracketEq]
-    have := hBpd.inv.posSemidef.dotProduct_mulVec_nonneg (T *ᵥ e)
-    simpa using this
-  have hbracket_le : bracket ≤ Matrix.trace T * (a2 - 1) := by
-    have hstep1 : (T *ᵥ e) ⬝ᵥ B⁻¹ *ᵥ (T *ᵥ e) ≤ (T *ᵥ e) ⬝ᵥ (T *ᵥ e) := by
-      have h := Initialization.dotProduct_mulVec_le_of_le hBinvle (T *ᵥ e)
-      rwa [Matrix.one_mulVec] at h
-    have hstep2 : (T *ᵥ e) ⬝ᵥ (T *ᵥ e) = e ⬝ᵥ (T * T) *ᵥ e := by
-      rw [mulVec_dotProduct_symm hTpsd.isHermitian.eq,
-        Matrix.mulVec_mulVec]
-    have hTle : T ≤ Matrix.trace T • (1 : Mat d) :=
-      psd_le_smul_one hTpsd fun x => psd_quad_le_trace hTpsd x
-    have hstep3 : e ⬝ᵥ (T * T) *ᵥ e ≤ Matrix.trace T * (e ⬝ᵥ T *ᵥ e) := by
-      have h := Initialization.dotProduct_mulVec_le_of_le
-        (psd_sq_le_smul hTpsd hTle) e
-      rwa [Matrix.smul_mulVec, dotProduct_smul, smul_eq_mul] at h
-    rw [hbracketEq, ← heTe]
-    exact le_trans hstep1 (le_trans (le_of_eq hstep2) hstep3)
-  have hbracket_eps : bracket ≤ 2 * (1 + (d : ℝ)) * eps ^ 2 := by
-    have heTele : a2 - 1 ≤ eps + eps ^ 2 / 4 := by linarith only [ha2le]
-    have heTenn : 0 ≤ a2 - 1 := by
-      rw [← heTe]
-      have := hTpsd.dotProduct_mulVec_nonneg e
-      simpa using this
-    have hd0 : (0 : ℝ) ≤ (d : ℝ) := Nat.cast_nonneg d
-    have hchain := le_trans hbracket_le
-      (mul_le_mul htrT heTele heTenn
-        (by nlinarith only [heps0, hd0, sq_nonneg eps]))
-    have hle1 : 0 ≤ 1 - eps := by linarith only [heps1]
-    have h3 : 0 ≤ eps ^ 2 * (1 - eps) := mul_nonneg (sq_nonneg eps) hle1
-    have h4 : 0 ≤ eps ^ 3 * (1 - eps) :=
-      mul_nonneg (pow_nonneg heps0 3) hle1
-    have hd3 : 0 ≤ (d : ℝ) * (eps ^ 2 * (1 - eps)) := mul_nonneg hd0 h3
-    have hd4 : 0 ≤ (d : ℝ) * (eps ^ 3 * (1 - eps)) := mul_nonneg hd0 h4
-    nlinarith only [hchain, h3, h4, hd3, hd4, heps0, hd0, sq_nonneg eps]
-  -- the deviation quadratic
-  have hSu : SStar *ᵥ u = W := by
-    rw [hudef, Matrix.mulVec_mulVec,
-      Matrix.mul_nonsing_inv _ (isUnit_det_of_posDef hStar),
-      Matrix.one_mulVec]
-  have hδsplit : δ = (SStar⁻¹ *ᵥ r - p) + SStar⁻¹ *ᵥ (κ *ᵥ p) := by
-    rw [hδdef, hudef, hWdef, Matrix.mulVec_add]
-    abel
-  have hvq : (SStar⁻¹ *ᵥ r - p) ⬝ᵥ SStar *ᵥ (SStar⁻¹ *ᵥ r - p) = bracket := by
-    have hcancel : SStar *ᵥ (SStar⁻¹ *ᵥ r) = r := by
-      rw [Matrix.mulVec_mulVec,
-        Matrix.mul_nonsing_inv _ (isUnit_det_of_posDef hStar),
-        Matrix.one_mulVec]
-    have hcross : (SStar⁻¹ *ᵥ r) ⬝ᵥ SStar *ᵥ p = p ⬝ᵥ r := by
-      rw [mulVec_dotProduct_symm hStarInvHerm, Matrix.mulVec_mulVec,
-        Matrix.nonsing_inv_mul _ (isUnit_det_of_posDef hStar),
-        Matrix.one_mulVec, dotProduct_comm]
-    have hself : (SStar⁻¹ *ᵥ r) ⬝ᵥ SStar *ᵥ (SStar⁻¹ *ᵥ r) = a2 := by
-      rw [hcancel, mulVec_dotProduct_symm hStarInvHerm, ← ha2]
-    have hcross₂ : p ⬝ᵥ SStar *ᵥ (SStar⁻¹ *ᵥ r) = p ⬝ᵥ r := by
-      rw [hcancel]
-    simp only [Matrix.mulVec_sub, dotProduct_sub, sub_dotProduct]
-    rw [hself, hcross, hcross₂, ← ha1, hbracketdef]
-    ring
-  have hzq : (SStar⁻¹ *ᵥ (κ *ᵥ p)) ⬝ᵥ SStar *ᵥ (SStar⁻¹ *ᵥ (κ *ᵥ p)) =
-      Rk := by
-    have hcancel : SStar *ᵥ (SStar⁻¹ *ᵥ (κ *ᵥ p)) = κ *ᵥ p := by
-      rw [Matrix.mulVec_mulVec,
-        Matrix.mul_nonsing_inv _ (isUnit_det_of_posDef hStar),
-        Matrix.one_mulVec]
-    rw [hcancel, mulVec_dotProduct_symm hStarInvHerm, ← hRkdef]
-  have hδq : δ ⬝ᵥ SStar *ᵥ δ ≤ 2 * bracket + 2 * Rk := by
-    rw [hδsplit]
-    have h := quad_add_le' hStar.posSemidef (SStar⁻¹ *ᵥ r - p)
-      (SStar⁻¹ *ᵥ (κ *ᵥ p))
-    rwa [hvq, hzq] at h
-  have hδqNN : 0 ≤ δ ⬝ᵥ SStar *ᵥ δ := by
-    have := hStar.posSemidef.dotProduct_mulVec_nonneg δ
-    simpa using this
-  -- the gap-pairing bound
+  exact ⟨hpair, ha1B, ha2B, ha1le, ha1nn, hkq, hMswap, hgapP, hgapNN, hRkle, hRkNN, hTpsd, heTe,
+    ha2b, hbp, ha2le, htrT⟩
+
+private theorem squared_gap_matrix_bound
+    {S SStar : Mat d} (hStar : SStar.PosDef)
+    {eps : ℝ} (heps0 : 0 ≤ eps)
+    (horder : SStar ≤ S)
+    (hgapM : S - SStar ≤ eps • SStar)
+    : ((S - SStar) * SStar⁻¹ * (S - SStar) ≤ (eps ^ 2) • SStar) := by
+  classical
   have hΔ2 : (S - SStar) * SStar⁻¹ * (S - SStar) ≤ (eps ^ 2) • SStar := by
     set C : Mat d := matSqrt SStar⁻¹ with hCdef
     have hCherm : Cᴴ = C := conjTranspose_matSqrt hStar.inv.posSemidef
@@ -412,39 +320,169 @@ theorem centering_center_quads_le
       _ = (eps ^ 2) • SStar := by
         rw [smul_smul]
         ring_nf
-  have hΔp2 : ((S - SStar) *ᵥ p) ⬝ᵥ SStar⁻¹ *ᵥ ((S - SStar) *ᵥ p) ≤
-      eps ^ 2 * a1 := by
-    have htrans : ((S - SStar) *ᵥ p) ⬝ᵥ SStar⁻¹ *ᵥ ((S - SStar) *ᵥ p) =
-        p ⬝ᵥ ((S - SStar) * SStar⁻¹ * (S - SStar)) *ᵥ p := by
-      rw [← Matrix.mulVec_mulVec, ← Matrix.mulVec_mulVec,
-        ← mulVec_dotProduct_symm hΔherm]
-    have h := Initialization.dotProduct_mulVec_le_of_le hΔ2 p
-    rw [Matrix.smul_mulVec, dotProduct_smul, smul_eq_mul, ← ha1] at h
-    rw [htrans]
-    exact h
-  -- the second center component in load form
-  have hXm1 : -p + SStar⁻¹ *ᵥ W = δ := by
-    rw [hδdef, hudef]
-    abel
-  have hmm1 : ∀ v : Vec d, (κ * SStar⁻¹) *ᵥ v = κ *ᵥ (SStar⁻¹ *ᵥ v) := by
-    intro v
-    rw [Matrix.mulVec_mulVec]
-  have hmm2 : ∀ v : Vec d,
-      (κ * SStar⁻¹ * κ) *ᵥ v = κ *ᵥ (SStar⁻¹ *ᵥ (κ *ᵥ v)) := by
-    intro v
-    rw [Matrix.mulVec_mulVec, Matrix.mulVec_mulVec]
-  have hXm2 : (1 - κ * SStar⁻¹) *ᵥ r - b *ᵥ p = (r - S *ᵥ p) - κ *ᵥ u := by
-    rw [hudef, hWdef, hbdef]
-    rw [Matrix.sub_mulVec, Matrix.one_mulVec, Matrix.add_mulVec,
-      hmm1 r, hmm2 p, Matrix.mulVec_add, Matrix.mulVec_add]
-    abel
-  -- the first conclusion
-  have hconc1 : δ ⬝ᵥ SStar *ᵥ δ ≤ 5 * (1 + (d : ℝ)) * eps ^ 2 := by
+  exact hΔ2
+
+private theorem calibration_bracket_quadratic_bound
+    {S SStar κ : Mat d}
+    {eps : ℝ} (heps0 : 0 ≤ eps) (heps1 : eps ≤ 1)
+    (e : Vec d) (he : e ⬝ᵥ e = 1)
+    (hBpd : (calibrationB (S + κ * SStar⁻¹ * κ) SStar).PosDef)
+    (hBinvle : (calibrationB (S + κ * SStar⁻¹ * κ) SStar)⁻¹ ≤ (1 : Mat d))
+    (hpair : (matSqrt (matGeomMean (S + κ * SStar⁻¹ * κ) SStar)⁻¹ *ᵥ e) ⬝ᵥ (matSqrt (matGeomMean (S
+      + κ * SStar⁻¹ * κ) SStar) *ᵥ e) = 1)
+    (ha1B : ((matSqrt (matGeomMean (S + κ * SStar⁻¹ * κ) SStar)⁻¹ *ᵥ e) ⬝ᵥ SStar *ᵥ (matSqrt
+      (matGeomMean (S + κ * SStar⁻¹ * κ) SStar)⁻¹ *ᵥ e)) = e ⬝ᵥ (calibrationB (S + κ * SStar⁻¹ * κ)
+      SStar)⁻¹ *ᵥ e)
+    (ha2B : ((matSqrt (matGeomMean (S + κ * SStar⁻¹ * κ) SStar) *ᵥ e) ⬝ᵥ SStar⁻¹ *ᵥ (matSqrt
+      (matGeomMean (S + κ * SStar⁻¹ * κ) SStar) *ᵥ e)) = e ⬝ᵥ (calibrationB (S + κ * SStar⁻¹ * κ)
+      SStar) *ᵥ e)
+    (hTpsd : ((calibrationB (S + κ * SStar⁻¹ * κ) SStar) - 1).PosSemidef)
+    (heTe : e ⬝ᵥ ((calibrationB (S + κ * SStar⁻¹ * κ) SStar) - 1) *ᵥ e = ((matSqrt (matGeomMean (S
+      + κ * SStar⁻¹ * κ) SStar) *ᵥ e) ⬝ᵥ SStar⁻¹ *ᵥ (matSqrt (matGeomMean (S + κ * SStar⁻¹ * κ)
+      SStar) *ᵥ e)) - 1)
+    (ha2le : ((matSqrt (matGeomMean (S + κ * SStar⁻¹ * κ) SStar) *ᵥ e) ⬝ᵥ SStar⁻¹ *ᵥ (matSqrt
+      (matGeomMean (S + κ * SStar⁻¹ * κ) SStar) *ᵥ e)) ≤ 1 + eps + eps ^ 2 / 4)
+    (htrT : Matrix.trace ((calibrationB (S + κ * SStar⁻¹ * κ) SStar) - 1) ≤ eps + (d : ℝ) * eps ^ 2
+      / 4)
+    : ((calibrationB (S + κ * SStar⁻¹ * κ) SStar) * (calibrationB (S + κ * SStar⁻¹ * κ) SStar)⁻¹ =
+      1) ∧
+    ((calibrationB (S + κ * SStar⁻¹ * κ) SStar)⁻¹ * (calibrationB (S + κ * SStar⁻¹ * κ) SStar) = 1)
+      ∧
+    (((calibrationB (S + κ * SStar⁻¹ * κ) SStar) - 1) * (calibrationB (S + κ * SStar⁻¹ * κ)
+      SStar)⁻¹ * ((calibrationB (S + κ * SStar⁻¹ * κ) SStar) - 1) = (calibrationB (S + κ * SStar⁻¹
+      * κ) SStar) + (calibrationB (S + κ * SStar⁻¹ * κ) SStar)⁻¹ - (2 : ℝ) • (1 : Mat d)) ∧
+    ((((matSqrt (matGeomMean (S + κ * SStar⁻¹ * κ) SStar)⁻¹ *ᵥ e) ⬝ᵥ SStar *ᵥ (matSqrt (matGeomMean
+      (S + κ * SStar⁻¹ * κ) SStar)⁻¹ *ᵥ e)) + ((matSqrt (matGeomMean (S + κ * SStar⁻¹ * κ) SStar)
+      *ᵥ e) ⬝ᵥ SStar⁻¹ *ᵥ (matSqrt (matGeomMean (S + κ * SStar⁻¹ * κ) SStar) *ᵥ e)) - 2 * ((matSqrt
+      (matGeomMean (S + κ * SStar⁻¹ * κ) SStar)⁻¹ *ᵥ e) ⬝ᵥ (matSqrt (matGeomMean (S + κ * SStar⁻¹ *
+      κ) SStar) *ᵥ e))) = (((calibrationB (S + κ * SStar⁻¹ * κ) SStar) - 1) *ᵥ e) ⬝ᵥ (calibrationB
+      (S + κ * SStar⁻¹ * κ) SStar)⁻¹ *ᵥ (((calibrationB (S + κ * SStar⁻¹ * κ) SStar) - 1) *ᵥ e)) ∧
+    (0 ≤ (((matSqrt (matGeomMean (S + κ * SStar⁻¹ * κ) SStar)⁻¹ *ᵥ e) ⬝ᵥ SStar *ᵥ (matSqrt
+      (matGeomMean (S + κ * SStar⁻¹ * κ) SStar)⁻¹ *ᵥ e)) + ((matSqrt (matGeomMean (S + κ * SStar⁻¹
+      * κ) SStar) *ᵥ e) ⬝ᵥ SStar⁻¹ *ᵥ (matSqrt (matGeomMean (S + κ * SStar⁻¹ * κ) SStar) *ᵥ e)) - 2
+      * ((matSqrt (matGeomMean (S + κ * SStar⁻¹ * κ) SStar)⁻¹ *ᵥ e) ⬝ᵥ (matSqrt (matGeomMean (S + κ
+      * SStar⁻¹ * κ) SStar) *ᵥ e)))) ∧
+    ((((matSqrt (matGeomMean (S + κ * SStar⁻¹ * κ) SStar)⁻¹ *ᵥ e) ⬝ᵥ SStar *ᵥ (matSqrt (matGeomMean
+      (S + κ * SStar⁻¹ * κ) SStar)⁻¹ *ᵥ e)) + ((matSqrt (matGeomMean (S + κ * SStar⁻¹ * κ) SStar)
+      *ᵥ e) ⬝ᵥ SStar⁻¹ *ᵥ (matSqrt (matGeomMean (S + κ * SStar⁻¹ * κ) SStar) *ᵥ e)) - 2 * ((matSqrt
+      (matGeomMean (S + κ * SStar⁻¹ * κ) SStar)⁻¹ *ᵥ e) ⬝ᵥ (matSqrt (matGeomMean (S + κ * SStar⁻¹ *
+      κ) SStar) *ᵥ e))) ≤ Matrix.trace ((calibrationB (S + κ * SStar⁻¹ * κ) SStar) - 1) *
+      (((matSqrt (matGeomMean (S + κ * SStar⁻¹ * κ) SStar) *ᵥ e) ⬝ᵥ SStar⁻¹ *ᵥ (matSqrt
+      (matGeomMean (S + κ * SStar⁻¹ * κ) SStar) *ᵥ e)) - 1)) ∧
+    ((((matSqrt (matGeomMean (S + κ * SStar⁻¹ * κ) SStar)⁻¹ *ᵥ e) ⬝ᵥ SStar *ᵥ (matSqrt (matGeomMean
+      (S + κ * SStar⁻¹ * κ) SStar)⁻¹ *ᵥ e)) + ((matSqrt (matGeomMean (S + κ * SStar⁻¹ * κ) SStar)
+      *ᵥ e) ⬝ᵥ SStar⁻¹ *ᵥ (matSqrt (matGeomMean (S + κ * SStar⁻¹ * κ) SStar) *ᵥ e)) - 2 * ((matSqrt
+      (matGeomMean (S + κ * SStar⁻¹ * κ) SStar)⁻¹ *ᵥ e) ⬝ᵥ (matSqrt (matGeomMean (S + κ * SStar⁻¹ *
+      κ) SStar) *ᵥ e))) ≤ 2 * (1 + (d : ℝ)) * eps ^ 2) := by
+  classical
+  set b : Mat d := S + κ * SStar⁻¹ * κ with hbdef
+  set p : Vec d := matSqrt (matGeomMean b SStar)⁻¹ *ᵥ e with hpdef
+  set r : Vec d := matSqrt (matGeomMean b SStar) *ᵥ e with hrdef
+  set B : Mat d := calibrationB b SStar with hBdef
+  set a1 : ℝ := p ⬝ᵥ SStar *ᵥ p with ha1
+  set a2 : ℝ := r ⬝ᵥ SStar⁻¹ *ᵥ r with ha2
+  set T : Mat d := B - 1 with hTdef
+  set bracket : ℝ := a1 + a2 - 2 * (p ⬝ᵥ r) with hbracketdef
+  have hB1 : B * B⁻¹ = 1 := Matrix.mul_nonsing_inv _ (isUnit_det_of_posDef hBpd)
+  have hB2 : B⁻¹ * B = 1 := Matrix.nonsing_inv_mul _ (isUnit_det_of_posDef hBpd)
+  have hfact : T * B⁻¹ * T = B + B⁻¹ - (2 : ℝ) • (1 : Mat d) := by
+    have htwo : (2 : ℝ) • (1 : Mat d) = 1 + 1 := by
+      rw [two_smul]
+    rw [hTdef, htwo]
+    calc
+      (B - 1) * B⁻¹ * (B - 1) = (B * B⁻¹ - 1 * B⁻¹) * (B - 1) := by
+        rw [Matrix.sub_mul]
+      _ = (1 - B⁻¹) * (B - 1) := by
+        rw [hB1, Matrix.one_mul]
+      _ = 1 * B - 1 * 1 - (B⁻¹ * B - B⁻¹ * 1) := by
+        rw [Matrix.sub_mul, Matrix.mul_sub, Matrix.mul_sub]
+      _ = B + B⁻¹ - (1 + 1) := by
+        rw [hB2, Matrix.one_mul, Matrix.one_mul, Matrix.mul_one]
+        abel
+  have hbracketEq : bracket = (T *ᵥ e) ⬝ᵥ B⁻¹ *ᵥ (T *ᵥ e) := by
+    have hquad := Initialization.quad_conj T B⁻¹ e
+    rw [hTpsd.isHermitian.eq] at hquad
+    rw [← hquad, hfact, hbracketdef, hpair, ha1B, ha2B]
+    rw [Matrix.sub_mulVec, Matrix.add_mulVec, dotProduct_sub, dotProduct_add,
+      Matrix.smul_mulVec, Matrix.one_mulVec, dotProduct_smul, he,
+      smul_eq_mul]
+    ring
+  have hbracketNN : 0 ≤ bracket := by
+    rw [hbracketEq]
+    have := hBpd.inv.posSemidef.dotProduct_mulVec_nonneg (T *ᵥ e)
+    simpa using this
+  have hbracket_le : bracket ≤ Matrix.trace T * (a2 - 1) := by
+    have hstep1 : (T *ᵥ e) ⬝ᵥ B⁻¹ *ᵥ (T *ᵥ e) ≤ (T *ᵥ e) ⬝ᵥ (T *ᵥ e) := by
+      have h := Initialization.dotProduct_mulVec_le_of_le hBinvle (T *ᵥ e)
+      rwa [Matrix.one_mulVec] at h
+    have hstep2 : (T *ᵥ e) ⬝ᵥ (T *ᵥ e) = e ⬝ᵥ (T * T) *ᵥ e := by
+      rw [mulVec_dotProduct_symm hTpsd.isHermitian.eq,
+        Matrix.mulVec_mulVec]
+    have hTle : T ≤ Matrix.trace T • (1 : Mat d) :=
+      psd_le_smul_one hTpsd fun x => psd_quad_le_trace hTpsd x
+    have hstep3 : e ⬝ᵥ (T * T) *ᵥ e ≤ Matrix.trace T * (e ⬝ᵥ T *ᵥ e) := by
+      have h := Initialization.dotProduct_mulVec_le_of_le
+        (psd_sq_le_smul hTpsd hTle) e
+      rwa [Matrix.smul_mulVec, dotProduct_smul, smul_eq_mul] at h
+    rw [hbracketEq, ← heTe]
+    exact le_trans hstep1 (le_trans (le_of_eq hstep2) hstep3)
+  have hbracket_eps : bracket ≤ 2 * (1 + (d : ℝ)) * eps ^ 2 := by
+    have heTele : a2 - 1 ≤ eps + eps ^ 2 / 4 := by linarith only [ha2le]
+    have heTenn : 0 ≤ a2 - 1 := by
+      rw [← heTe]
+      have := hTpsd.dotProduct_mulVec_nonneg e
+      simpa using this
     have hd0 : (0 : ℝ) ≤ (d : ℝ) := Nat.cast_nonneg d
-    have h1 : Rk ≤ eps ^ 2 / 4 := by
-      nlinarith only [hRkle, ha1le, heps0, sq_nonneg eps]
-    nlinarith only [hδq, hbracket_eps, h1, hd0, sq_nonneg eps]
-  -- the second conclusion
+    have hchain := le_trans hbracket_le
+      (mul_le_mul htrT heTele heTenn
+        (by nlinarith only [heps0, hd0, sq_nonneg eps]))
+    have hle1 : 0 ≤ 1 - eps := by linarith only [heps1]
+    have h3 : 0 ≤ eps ^ 2 * (1 - eps) := mul_nonneg (sq_nonneg eps) hle1
+    have h4 : 0 ≤ eps ^ 3 * (1 - eps) :=
+      mul_nonneg (pow_nonneg heps0 3) hle1
+    have hd3 : 0 ≤ (d : ℝ) * (eps ^ 2 * (1 - eps)) := mul_nonneg hd0 h3
+    have hd4 : 0 ≤ (d : ℝ) * (eps ^ 3 * (1 - eps)) := mul_nonneg hd0 h4
+    nlinarith only [hchain, h3, h4, hd3, hd4, heps0, hd0, sq_nonneg eps]
+  -- the deviation quadratic
+  exact ⟨hB1, hB2, hfact, hbracketEq, hbracketNN, hbracket_le, hbracket_eps⟩
+
+private theorem calibrated_flux_gap_quadratic_bound
+    {S SStar κ : Mat d} (hStar : SStar.PosDef)
+    {eps : ℝ}
+    (e : Vec d)
+    (hStarHerm : SStarᴴ = SStar)
+    (hΔp2 : ((S - SStar) *ᵥ (matSqrt (matGeomMean (S + κ * SStar⁻¹ * κ) SStar)⁻¹ *ᵥ e)) ⬝ᵥ SStar⁻¹
+      *ᵥ ((S - SStar) *ᵥ (matSqrt (matGeomMean (S + κ * SStar⁻¹ * κ) SStar)⁻¹ *ᵥ e)) ≤
+      eps ^ 2 * ((matSqrt (matGeomMean (S + κ * SStar⁻¹ * κ) SStar)⁻¹ *ᵥ e) ⬝ᵥ SStar *ᵥ (matSqrt
+        (matGeomMean (S + κ * SStar⁻¹ * κ) SStar)⁻¹ *ᵥ e)))
+    : (((matSqrt (matGeomMean (S + κ * SStar⁻¹ * κ) SStar) *ᵥ e) - SStar *ᵥ (matSqrt (matGeomMean
+      (S + κ * SStar⁻¹ * κ) SStar)⁻¹ *ᵥ e)) ⬝ᵥ SStar⁻¹ *ᵥ ((matSqrt (matGeomMean (S + κ * SStar⁻¹ *
+      κ) SStar) *ᵥ e) - SStar *ᵥ (matSqrt (matGeomMean (S + κ * SStar⁻¹ * κ) SStar)⁻¹ *ᵥ e)) =
+      (((matSqrt (matGeomMean (S + κ * SStar⁻¹ * κ) SStar)⁻¹ *ᵥ e) ⬝ᵥ SStar *ᵥ (matSqrt
+      (matGeomMean (S + κ * SStar⁻¹ * κ) SStar)⁻¹ *ᵥ e)) + ((matSqrt (matGeomMean (S + κ * SStar⁻¹
+      * κ) SStar) *ᵥ e) ⬝ᵥ SStar⁻¹ *ᵥ (matSqrt (matGeomMean (S + κ * SStar⁻¹ * κ) SStar) *ᵥ e)) - 2
+      * ((matSqrt (matGeomMean (S + κ * SStar⁻¹ * κ) SStar)⁻¹ *ᵥ e) ⬝ᵥ (matSqrt (matGeomMean (S + κ
+      * SStar⁻¹ * κ) SStar) *ᵥ e)))) ∧
+    (∀ x y : Vec d,
+      (x - y) ⬝ᵥ SStar⁻¹ *ᵥ (x - y) ≤
+        2 * (x ⬝ᵥ SStar⁻¹ *ᵥ x) + 2 * (y ⬝ᵥ SStar⁻¹ *ᵥ y)) ∧
+    (((matSqrt (matGeomMean (S + κ * SStar⁻¹ * κ) SStar) *ᵥ e) - S *ᵥ (matSqrt (matGeomMean (S + κ
+      * SStar⁻¹ * κ) SStar)⁻¹ *ᵥ e)) ⬝ᵥ SStar⁻¹ *ᵥ ((matSqrt (matGeomMean (S + κ * SStar⁻¹ * κ)
+      SStar) *ᵥ e) - S *ᵥ (matSqrt (matGeomMean (S + κ * SStar⁻¹ * κ) SStar)⁻¹ *ᵥ e)) ≤
+      2 * (((matSqrt (matGeomMean (S + κ * SStar⁻¹ * κ) SStar)⁻¹ *ᵥ e) ⬝ᵥ SStar *ᵥ (matSqrt
+        (matGeomMean (S + κ * SStar⁻¹ * κ) SStar)⁻¹ *ᵥ e)) + ((matSqrt (matGeomMean (S + κ *
+        SStar⁻¹ * κ) SStar) *ᵥ e) ⬝ᵥ SStar⁻¹ *ᵥ (matSqrt (matGeomMean (S + κ * SStar⁻¹ * κ) SStar)
+        *ᵥ e)) - 2 * ((matSqrt (matGeomMean (S + κ * SStar⁻¹ * κ) SStar)⁻¹ *ᵥ e) ⬝ᵥ (matSqrt
+        (matGeomMean (S + κ * SStar⁻¹ * κ) SStar) *ᵥ e))) + 2 * (eps ^ 2 * ((matSqrt (matGeomMean
+        (S + κ * SStar⁻¹ * κ) SStar)⁻¹ *ᵥ e) ⬝ᵥ SStar *ᵥ (matSqrt (matGeomMean (S + κ * SStar⁻¹ *
+        κ) SStar)⁻¹ *ᵥ e)))) := by
+  classical
+  set b : Mat d := S + κ * SStar⁻¹ * κ with hbdef
+  set p : Vec d := matSqrt (matGeomMean b SStar)⁻¹ *ᵥ e with hpdef
+  set r : Vec d := matSqrt (matGeomMean b SStar) *ᵥ e with hrdef
+  set a1 : ℝ := p ⬝ᵥ SStar *ᵥ p with ha1
+  set a2 : ℝ := r ⬝ᵥ SStar⁻¹ *ᵥ r with ha2
+  set bracket : ℝ := a1 + a2 - 2 * (p ⬝ᵥ r) with hbracketdef
   have hvq2 : (r - SStar *ᵥ p) ⬝ᵥ SStar⁻¹ *ᵥ (r - SStar *ᵥ p) = bracket := by
     have hcancel : SStar⁻¹ *ᵥ (SStar *ᵥ p) = p := by
       rw [Matrix.mulVec_mulVec,
@@ -479,6 +517,165 @@ theorem centering_center_quads_le
     refine le_trans (hquadsub _ _) ?_
     rw [hvq2]
     linarith only [hΔp2]
+  exact ⟨hvq2, hquadsub, hqx⟩
+/-- **The center magnitudes.**  At the calibrated loads, both components of
+the annealed center — the closed Schur forms of the mean gradient and mean
+flux — are second order in `ε`, in the natural `σ*`-metrics. -/
+theorem centering_center_quads_le
+    {S SStar κ : Mat d} (hS : S.PosDef) (hStar : SStar.PosDef)
+    (hκ : κᴴ = κ)
+    {eps : ℝ} (heps0 : 0 ≤ eps) (heps1 : eps ≤ 1)
+    (horder : SStar ≤ S)
+    (hgapM : S - SStar ≤ eps • SStar)
+    (hskewM : κ * SStar⁻¹ * κ ≤ (eps ^ 2 / 4) • SStar)
+    (htrGap : Matrix.trace ((S - SStar) * SStar⁻¹) ≤ eps)
+    (htrSkew : Matrix.trace (κ * SStar⁻¹ * κ * SStar⁻¹) ≤
+      (d : ℝ) * eps ^ 2 / 4)
+    (e : Vec d) (he : e ⬝ᵥ e = 1) :
+    ((-(matSqrt (matGeomMean (S + κ * SStar⁻¹ * κ) SStar)⁻¹ *ᵥ e) +
+        SStar⁻¹ *ᵥ (matSqrt (matGeomMean (S + κ * SStar⁻¹ * κ) SStar) *ᵥ e +
+          κ *ᵥ (matSqrt (matGeomMean (S + κ * SStar⁻¹ * κ) SStar)⁻¹ *ᵥ
+            e))) ⬝ᵥ
+      SStar *ᵥ
+        (-(matSqrt (matGeomMean (S + κ * SStar⁻¹ * κ) SStar)⁻¹ *ᵥ e) +
+          SStar⁻¹ *ᵥ
+            (matSqrt (matGeomMean (S + κ * SStar⁻¹ * κ) SStar) *ᵥ e +
+              κ *ᵥ (matSqrt (matGeomMean (S + κ * SStar⁻¹ * κ) SStar)⁻¹ *ᵥ
+                e))) ≤ 5 * (1 + (d : ℝ)) * eps ^ 2) ∧
+    (((1 - κ * SStar⁻¹) *ᵥ
+        (matSqrt (matGeomMean (S + κ * SStar⁻¹ * κ) SStar) *ᵥ e) -
+        (S + κ * SStar⁻¹ * κ) *ᵥ
+          (matSqrt (matGeomMean (S + κ * SStar⁻¹ * κ) SStar)⁻¹ *ᵥ e)) ⬝ᵥ
+      SStar⁻¹ *ᵥ
+        ((1 - κ * SStar⁻¹) *ᵥ
+          (matSqrt (matGeomMean (S + κ * SStar⁻¹ * κ) SStar) *ᵥ e) -
+          (S + κ * SStar⁻¹ * κ) *ᵥ
+            (matSqrt (matGeomMean (S + κ * SStar⁻¹ * κ) SStar)⁻¹ *ᵥ
+              e)) ≤ 24 * (1 + (d : ℝ)) * eps ^ 2) := by
+  classical
+  set b : Mat d := S + κ * SStar⁻¹ * κ with hbdef
+  have hκpsd : (κ * SStar⁻¹ * κ).PosSemidef := by
+    have h := hStar.inv.posSemidef.conjTranspose_mul_mul_same κ
+    rwa [hκ] at h
+  have hb : b.PosDef := hS.add_posSemidef hκpsd
+  have hSb : S ≤ b := by
+    refine Initialization.le_of_dotProduct_mulVec_le hS.isHermitian hb.isHermitian
+      fun x => ?_
+    rw [hbdef, Matrix.add_mulVec, dotProduct_add]
+    have h := hκpsd.dotProduct_mulVec_nonneg x
+    simp only [star_trivial] at h
+    linarith only [h]
+  have hbStar : SStar ≤ b := le_trans horder hSb
+  have hm : (matGeomMean b SStar).PosDef := posDef_matGeomMean hb hStar
+  have hStarInvHerm : (SStar⁻¹)ᴴ = SStar⁻¹ := hStar.inv.isHermitian
+  have hStarHerm : SStarᴴ = SStar := hStar.isHermitian
+  have hΔherm : (S - SStar)ᴴ = S - SStar := by
+    rw [Matrix.conjTranspose_sub, hS.isHermitian.eq, hStarHerm]
+  set p : Vec d := matSqrt (matGeomMean b SStar)⁻¹ *ᵥ e with hpdef
+  set r : Vec d := matSqrt (matGeomMean b SStar) *ᵥ e with hrdef
+  set W : Vec d := r + κ *ᵥ p with hWdef
+  set u : Vec d := SStar⁻¹ *ᵥ W with hudef
+  set δ : Vec d := u - p with hδdef
+  set B : Mat d := calibrationB b SStar with hBdef
+  have hBpd : B.PosDef := calibrationB_posDef hb hStar
+  have hBge : (1 : Mat d) ≤ B := one_le_calibrationB hb hStar hbStar
+  have hBinvle : B⁻¹ ≤ (1 : Mat d) := calibrationB_inv_le_one hb hStar hbStar
+  -- scalar abbreviations
+  set a1 : ℝ := p ⬝ᵥ SStar *ᵥ p with ha1
+  set a2 : ℝ := r ⬝ᵥ SStar⁻¹ *ᵥ r with ha2
+  set gp : ℝ := p ⬝ᵥ (S - SStar) *ᵥ p with hgp
+  set Rk : ℝ := (κ *ᵥ p) ⬝ᵥ SStar⁻¹ *ᵥ (κ *ᵥ p) with hRkdef
+  set g1 : ℝ := r ⬝ᵥ SStar⁻¹ *ᵥ (κ *ᵥ p) with hg1
+  set A5 : ℝ := ((S - SStar) *ᵥ p) ⬝ᵥ δ with hA5
+  set A6 : ℝ := δ ⬝ᵥ κ *ᵥ δ with hA6
+  set T : Mat d := B - 1 with hTdef
+  obtain ⟨hpair, ha1B, ha2B, ha1le, ha1nn, hkq, hMswap, hgapP, hgapNN, hRkle, hRkNN, hTpsd, heTe,
+    ha2b, hbp, ha2le, htrT⟩ :=
+    calibration_load_and_trace_bounds hStar hκ heps0
+      horder hgapM hskewM htrGap htrSkew e he hb hbStar hm hStarInvHerm hBge hBinvle
+  have htrTNN : 0 ≤ Matrix.trace T := hTpsd.trace_nonneg
+  -- the bracket
+  set bracket : ℝ := a1 + a2 - 2 * (p ⬝ᵥ r) with hbracketdef
+  obtain ⟨hB1, hB2, hfact, hbracketEq, hbracketNN, hbracket_le, hbracket_eps⟩ :=
+    calibration_bracket_quadratic_bound heps0 heps1
+      e he hBpd hBinvle hpair ha1B ha2B hTpsd heTe ha2le htrT
+  have hSu : SStar *ᵥ u = W := by
+    rw [hudef, Matrix.mulVec_mulVec,
+      Matrix.mul_nonsing_inv _ (isUnit_det_of_posDef hStar),
+      Matrix.one_mulVec]
+  have hδsplit : δ = (SStar⁻¹ *ᵥ r - p) + SStar⁻¹ *ᵥ (κ *ᵥ p) := by
+    rw [hδdef, hudef, hWdef, Matrix.mulVec_add]
+    abel
+  have hvq : (SStar⁻¹ *ᵥ r - p) ⬝ᵥ SStar *ᵥ (SStar⁻¹ *ᵥ r - p) = bracket := by
+    have hcancel : SStar *ᵥ (SStar⁻¹ *ᵥ r) = r := by
+      rw [Matrix.mulVec_mulVec,
+        Matrix.mul_nonsing_inv _ (isUnit_det_of_posDef hStar),
+        Matrix.one_mulVec]
+    have hcross : (SStar⁻¹ *ᵥ r) ⬝ᵥ SStar *ᵥ p = p ⬝ᵥ r := by
+      rw [mulVec_dotProduct_symm hStarInvHerm, Matrix.mulVec_mulVec,
+        Matrix.nonsing_inv_mul _ (isUnit_det_of_posDef hStar),
+        Matrix.one_mulVec, dotProduct_comm]
+    have hself : (SStar⁻¹ *ᵥ r) ⬝ᵥ SStar *ᵥ (SStar⁻¹ *ᵥ r) = a2 := by
+      rw [hcancel, mulVec_dotProduct_symm hStarInvHerm, ← ha2]
+    have hcross₂ : p ⬝ᵥ SStar *ᵥ (SStar⁻¹ *ᵥ r) = p ⬝ᵥ r := by
+      rw [hcancel]
+    simp only [Matrix.mulVec_sub, dotProduct_sub, sub_dotProduct]
+    rw [hself, hcross, hcross₂, ← ha1, hbracketdef]
+    ring
+  have hzq : (SStar⁻¹ *ᵥ (κ *ᵥ p)) ⬝ᵥ SStar *ᵥ (SStar⁻¹ *ᵥ (κ *ᵥ p)) =
+      Rk := by
+    have hcancel : SStar *ᵥ (SStar⁻¹ *ᵥ (κ *ᵥ p)) = κ *ᵥ p := by
+      rw [Matrix.mulVec_mulVec,
+        Matrix.mul_nonsing_inv _ (isUnit_det_of_posDef hStar),
+        Matrix.one_mulVec]
+    rw [hcancel, mulVec_dotProduct_symm hStarInvHerm, ← hRkdef]
+  have hδq : δ ⬝ᵥ SStar *ᵥ δ ≤ 2 * bracket + 2 * Rk := by
+    rw [hδsplit]
+    have h := quad_add_le' hStar.posSemidef (SStar⁻¹ *ᵥ r - p)
+      (SStar⁻¹ *ᵥ (κ *ᵥ p))
+    rwa [hvq, hzq] at h
+  have hδqNN : 0 ≤ δ ⬝ᵥ SStar *ᵥ δ := by
+    have := hStar.posSemidef.dotProduct_mulVec_nonneg δ
+    simpa using this
+  -- the gap-pairing bound
+  have hΔ2 :=
+    squared_gap_matrix_bound hStar heps0 horder hgapM
+  have hΔp2 : ((S - SStar) *ᵥ p) ⬝ᵥ SStar⁻¹ *ᵥ ((S - SStar) *ᵥ p) ≤
+      eps ^ 2 * a1 := by
+    have htrans : ((S - SStar) *ᵥ p) ⬝ᵥ SStar⁻¹ *ᵥ ((S - SStar) *ᵥ p) =
+        p ⬝ᵥ ((S - SStar) * SStar⁻¹ * (S - SStar)) *ᵥ p := by
+      rw [← Matrix.mulVec_mulVec, ← Matrix.mulVec_mulVec,
+        ← mulVec_dotProduct_symm hΔherm]
+    have h := Initialization.dotProduct_mulVec_le_of_le hΔ2 p
+    rw [Matrix.smul_mulVec, dotProduct_smul, smul_eq_mul, ← ha1] at h
+    rw [htrans]
+    exact h
+  -- the second center component in load form
+  have hXm1 : -p + SStar⁻¹ *ᵥ W = δ := by
+    rw [hδdef, hudef]
+    abel
+  have hmm1 : ∀ v : Vec d, (κ * SStar⁻¹) *ᵥ v = κ *ᵥ (SStar⁻¹ *ᵥ v) := by
+    intro v
+    rw [Matrix.mulVec_mulVec]
+  have hmm2 : ∀ v : Vec d,
+      (κ * SStar⁻¹ * κ) *ᵥ v = κ *ᵥ (SStar⁻¹ *ᵥ (κ *ᵥ v)) := by
+    intro v
+    rw [Matrix.mulVec_mulVec, Matrix.mulVec_mulVec]
+  have hXm2 : (1 - κ * SStar⁻¹) *ᵥ r - b *ᵥ p = (r - S *ᵥ p) - κ *ᵥ u := by
+    rw [hudef, hWdef, hbdef]
+    rw [Matrix.sub_mulVec, Matrix.one_mulVec, Matrix.add_mulVec,
+      hmm1 r, hmm2 p, Matrix.mulVec_add, Matrix.mulVec_add]
+    abel
+  -- the first conclusion
+  have hconc1 : δ ⬝ᵥ SStar *ᵥ δ ≤ 5 * (1 + (d : ℝ)) * eps ^ 2 := by
+    have hd0 : (0 : ℝ) ≤ (d : ℝ) := Nat.cast_nonneg d
+    have h1 : Rk ≤ eps ^ 2 / 4 := by
+      nlinarith only [hRkle, ha1le, heps0, sq_nonneg eps]
+    nlinarith only [hδq, hbracket_eps, h1, hd0, sq_nonneg eps]
+  -- the second conclusion
+  obtain ⟨hvq2, hquadsub, hqx⟩ :=
+    calibrated_flux_gap_quadratic_bound hStar e
+      hStarHerm hΔp2
   have hutrans : u ⬝ᵥ SStar *ᵥ u = W ⬝ᵥ SStar⁻¹ *ᵥ W := by
     rw [hSu]
     rw [hudef, mulVec_dotProduct_symm hStarInvHerm]

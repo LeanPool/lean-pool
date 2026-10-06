@@ -253,7 +253,7 @@ theorem responseCompetitor_finite_defect {d : ℕ} {ι : Type*}
           field_simp [hWvol]
         · field_simp [hWvol]
 
-theorem responseJ_le_sum_volumeRatio_mul_responseJ_add_defect_of_isEllipticFieldOn_provider {d : ℕ}
+theorem responseJ_le_weightedSum_add_remainder {d : ℕ}
     {ι : Type*} (F : Finset ι) {W : Set (Vec d)} {U : ι → Set (Vec d)}
     [IsFiniteMeasure (volumeMeasureOn W)]
     (hWopen : IsOpen W) (hWvol : (volume W).toReal ≠ 0)
