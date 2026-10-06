@@ -1773,17 +1773,19 @@ def gather_prior_art(
     prior art was settled when they merged. A search that cannot run degrades to a
     note saying so — never to a failed review.
     A pinned worker supplies the PR base SHA to avoid comparing against its
-    potentially older trusted engine checkout.
+    potentially older trusted engine checkout. An empty base SHA records a failed
+    lookup and never falls back to that local registry.
     """
     if kind != "project":
         return None
     registry = "LeanPool/projects.yml"
     head_text = fetch_file_at(registry, head_sha, repo_full_name)
-    base_text = (
-        fetch_file_at(registry, base_sha, repo_full_name)
-        if base_sha
-        else (REPO_ROOT / registry).read_text(encoding="utf-8")
-    )
+    if base_sha is None:
+        base_text = (REPO_ROOT / registry).read_text(encoding="utf-8")
+    else:
+        base_text = (
+            fetch_file_at(registry, base_sha, repo_full_name) if base_sha else ""
+        )
     if not head_text.strip() or not base_text.strip():
         # Distinguish "could not read the registry" from "the PR adds
         # nothing": both yield zero claims, but only one of them means
@@ -1792,7 +1794,11 @@ def gather_prior_art(
         unreadable = f"{registry} could not be read at {unreadable_sha[:8]}"
         print(f"Mathlib prior-art search skipped: {unreadable}", file=sys.stderr)
         projects = (REPO_ROOT / "LeanPool" / "projects.yml").read_text(encoding="utf-8")
-        return prior_art.render([], {}, projects, unreadable)
+        return (
+            prior_art.render([], {}, projects, unreadable)
+            + "\n\n### Tau Ceti comparison\n\n"
+            + f"_Not searched: {unreadable}. Tau Ceti prior art is unchecked._"
+        )
     claims = prior_art.new_claims(head_text, base_text)
     hits, unavailable = prior_art.search_mathlib(claims)
     if unavailable is not None:
@@ -1937,9 +1943,12 @@ def main() -> int:
         return 0
 
     if kind == "project":
-        base_sha = run_gh(
-            "api", f"repos/{repo_full_name}/pulls/{pr_number}", "--jq", ".base.sha"
-        ).strip()
+        try:
+            base_sha = run_gh(
+                "api", f"repos/{repo_full_name}/pulls/{pr_number}", "--jq", ".base.sha"
+            ).strip()
+        except subprocess.CalledProcessError:
+            base_sha = ""
         outcomes = run_project_rubrics(
             model=model,
             diff=diff,

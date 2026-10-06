@@ -187,7 +187,8 @@ def test_pinned_worker_compares_against_pr_base(monkeypatch) -> None:
     assert "accepted: Accepted project" in section
 
 
-def test_unreadable_pr_base_is_unchecked(monkeypatch) -> None:
+@pytest.mark.parametrize("base_sha", ["base", ""])
+def test_unreadable_pr_base_is_unchecked(monkeypatch, base_sha) -> None:
     """A failed base lookup must not use the pinned registry as a fallback."""
     from lean_pool import review
 
@@ -199,12 +200,14 @@ def test_unreadable_pr_base_is_unchecked(monkeypatch) -> None:
     monkeypatch.setattr(
         review.prior_art, "search_mathlib", lambda claims: pytest.fail("must skip")
     )
-    section = review.gather_prior_art("project", "head", "o/r", base_sha="base")
+    section = review.gather_prior_art("project", "head", "o/r", base_sha=base_sha)
     assert "could not be read at base" in section
     assert "did not run" in section
+    assert "Tau Ceti prior art is unchecked" in section
 
 
-def test_standalone_reviewer_supplies_pr_base(monkeypatch) -> None:
+@pytest.mark.parametrize("base_available", [True, False])
+def test_standalone_reviewer_supplies_pr_base(monkeypatch, base_available) -> None:
     """A CLI review must use the PR baseline even with an older engine checkout."""
     from lean_pool import review
 
@@ -219,6 +222,12 @@ def test_standalone_reviewer_supplies_pr_base(monkeypatch) -> None:
         assert kwargs["prior_art_section"] == "TauCeti evidence"
         return [SimpleNamespace(result=result)]
 
+    def run_gh(*args):
+        assert args[-1] == ".base.sha"
+        if not base_available:
+            raise subprocess.CalledProcessError(1, "gh")
+        return "base\n"
+
     monkeypatch.setenv("PR_NUMBER", "7")
     monkeypatch.setenv("REVIEW_HEAD_SHA", "head")
     monkeypatch.delenv("REVIEW_EVIDENCE_PATH", raising=False)
@@ -228,7 +237,7 @@ def test_standalone_reviewer_supplies_pr_base(monkeypatch) -> None:
         "fetch_head_sha": lambda *args: "head",
         "fetch_diff": lambda *args: "diff",
         "fetch_pr_context": lambda *args: review.PullRequestContext("title", ""),
-        "run_gh": lambda *args: "base\n" if args[-1] == ".base.sha" else "",
+        "run_gh": run_gh,
         "gather_prior_art": gather,
         "run_project_rubrics": rubrics,
         "aggregate_verdict": lambda *args: "approve",
@@ -237,4 +246,4 @@ def test_standalone_reviewer_supplies_pr_base(monkeypatch) -> None:
     }.items():
         monkeypatch.setattr(review, name, value)
     assert review.main() == 0
-    assert fetched == [("project", "head", "o/r", "base")]
+    assert fetched == [("project", "head", "o/r", "base" if base_available else "")]
