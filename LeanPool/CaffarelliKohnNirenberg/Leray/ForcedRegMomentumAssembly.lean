@@ -125,7 +125,8 @@ theorem integral_forcedMomentumIntegrand_slice {t : ℝ} {Y : L2Vec3 → Complex
     forcedQuadPressure_slice ρ ε hε U t
   have hC := integral_transport_pressure_slice hφ hφc Tt hFh hq t
   have hJ : (fun x => ∑ i : Fin 3, ∑ j : Fin 3,
-      regUniformMollifiedVelocity ρ ε hε u (x, t) j * u (x, t) i * spaceDeriv j φ (x, t) i) =ᵐ[volume]
+      regUniformMollifiedVelocity ρ ε hε u (x, t) j * u (x, t) i *
+        spaceDeriv j φ (x, t) i) =ᵐ[volume]
       fun x => ∑ j : Fin 3, ∑ i : Fin 3, forcedTensorComp Tt j i x * spaceDeriv j φ (x, t) i := by
     have hall := ae_all_iff.2 fun j => ae_all_iff.2 fun i =>
       regPressureTensorSlice_ae_eq ρ ε hε hrep j i

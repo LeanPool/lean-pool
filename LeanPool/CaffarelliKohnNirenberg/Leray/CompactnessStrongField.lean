@@ -34,7 +34,7 @@ theorem memLp_two_vec3_on_rectangle_of_slice_bound
     (u : (Vec3 × ℝ) → Vec3) (hu : Measurable u)
     (M : ℝ≥0∞) (hM : M < ⊤)
     (hbound : ∀ t ∈ J, (∫⁻ x in Kc,
-      ENNReal.ofReal (vec3EuclideanNorm (u (x,t))) ^ (2 : ℝ)
+      ENNReal.ofReal (vec3EuclideanNorm (u (x, t))) ^ (2 : ℝ)
       ∂volume) ≤ M) :
     MemLp (fun z : Vec3 × ℝ => (WithLp.toLp 2 (u z) : L2Vec3)) 2
       ((volume.restrict K).prod (volume.restrict J)) := by
@@ -46,9 +46,9 @@ theorem memLp_two_vec3_on_rectangle_of_slice_bound
       unfold vec3EuclideanNorm
       fun_prop
     fun_prop
-  have hfiniteC : (∫⁻ t in J, ∫⁻ x in Kc, F (x,t) ∂volume ∂volume) < ⊤ :=
+  have hfiniteC : (∫⁻ t in J, ∫⁻ x in Kc, F (x, t) ∂volume ∂volume) < ⊤ :=
     finite_lintegral_prod_of_uniform_slice_bound F hF hJ M hM hbound
-  have hfiniteK : (∫⁻ t in J, ∫⁻ x in K, F (x,t) ∂volume ∂volume) < ⊤ := by
+  have hfiniteK : (∫⁻ t in J, ∫⁻ x in K, F (x, t) ∂volume ∂volume) < ⊤ := by
     apply lt_of_le_of_lt ?_ hfiniteC
     apply lintegral_mono
     intro t
@@ -110,34 +110,34 @@ theorem exists_strong_l2_limit_on_compact_rectangle
     (huMeas : ∀ n, Measurable (u n))
     (hDuMeas : ∀ n, Measurable (Du n))
     (hweakW : ∀ n, ∀ᵐ t ∂(volume.restrict J), ∀ i : Fin 3,
-      CKN.HasWeakGradientOn W (fun y => u n (y,t) i)
-        (fun y => Du n (y,t) i))
+      CKN.HasWeakGradientOn W (fun y => u n (y, t) i)
+        (fun y => Du n (y, t) i))
     (M G : ℝ≥0∞) (hM : M < ⊤) (hG : G < ⊤)
     (huBound : ∀ n t, t ∈ J →
-      (∫⁻ x in Kc, ENNReal.ofReal (vec3EuclideanNorm (u n (x,t))) ^
+      (∫⁻ x in Kc, ENNReal.ofReal (vec3EuclideanNorm (u n (x, t))) ^
         (2 : ℝ) ∂volume) ≤ M)
     (hDuBound : ∀ n,
       (∫⁻ t in J, ∫⁻ x in Kc,
-        ENNReal.ofReal (CKN.spatialGradientSq (u n) (Du n) (x,t))
+        ENNReal.ofReal (CKN.spatialGradientSq (u n) (Du n) (x, t))
           ∂volume) ≤ G)
     (χ : Vec3 → ℝ) (hχone : ∀ x ∈ W, χ x = 1)
     (hmem : ∀ n (t : I), MemLp
-      (fun x => χ x • WithLp.toLp 2 (u n (x,t.1)))
+      (fun x => χ x • WithLp.toLp 2 (u n (x, t.1)))
       2 (volume : Measure Vec3))
     (V : I → Lp L2Vec3 2 (volume : Measure Vec3))
     (hweak : ∀ t x, Tendsto
       (fun n => inner ℝ ((hmem n t).toLp
-        (fun y => χ y • WithLp.toLp 2 (u n (y,t.1)))) x) atTop
+        (fun y => χ y • WithLp.toLp 2 (u n (y, t.1)))) x) atTop
       (nhds (inner ℝ (V t) x)))
     (hVcont : ∀ x, Continuous (fun t => inner ℝ (V t) x))
     (huniform : ∀ x ε, 0 < ε → ∀ᶠ n in atTop, ∀ t, (ht : t ∈ J) →
       dist (inner ℝ ((hmem n ⟨t, hJI ht⟩).toLp
-        (fun y => χ y • WithLp.toLp 2 (u n (y,t)))) x)
+        (fun y => χ y • WithLp.toLp 2 (u n (y, t)))) x)
         (inner ℝ (V ⟨t, hJI ht⟩) x) < ε)
     (C : ℝ) (hC : 0 ≤ C)
     (hcutBound : ∀ n t, (ht : t ∈ J) →
       ‖(hmem n ⟨t, hJI ht⟩).toLp
-        (fun y => χ y • WithLp.toLp 2 (u n (y,t)))‖ ≤ C) :
+        (fun y => χ y • WithLp.toLp 2 (u n (y, t)))‖ ≤ C) :
     ∃ hf : ∀ n, MemLp (fun z : Vec3 × ℝ =>
       (WithLp.toLp 2 (u n z) : L2Vec3)) 2
       ((volume.restrict K).prod (volume.restrict J)),

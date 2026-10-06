@@ -46,11 +46,11 @@ theorem weak_partial_of_strong_velocity_and_weak_matrix_on_inner_rectangle
       (nhds (inner ℝ D v)))
     (i j : Fin 3)
     (hpartial : ∀ k, ∀ᵐ t ∂(volume.restrict J),
-      HasWeakPartialDerivOn Ω j (fun x => f k (x,t) i)
-        (fun x => Du k (x,t) i j)) :
+      HasWeakPartialDerivOn Ω j (fun x => f k (x, t) i)
+        (fun x => Du k (x, t) i j)) :
     ∀ᵐ t ∂(volume.restrict J),
-      HasWeakPartialDerivOn Ω j (fun x => g (x,t) i)
-        (fun x => gradientCoordinateCLM i j (D (x,t))) := by
+      HasWeakPartialDerivOn Ω j (fun x => g (x, t) i)
+        (fun x => gradientCoordinateCLM i j (D (x, t))) := by
   let ρK : Measure (Vec3 × ℝ) :=
     (volume.restrict K).prod (volume.restrict J)
   let ρΩ : Measure (Vec3 × ℝ) :=

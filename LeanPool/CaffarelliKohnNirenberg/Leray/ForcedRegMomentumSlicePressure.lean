@@ -38,7 +38,7 @@ theorem integrable_re_inner_of_memLp' {E : Type*} [NormedAddCommGroup E] [InnerP
   · exact (Complex.continuous_re.comp_aestronglyMeasurable
       (hY.aestronglyMeasurable.inner hX.aestronglyMeasurable))
   · rw [Real.norm_eq_abs]
-    show _ ≤ (‖Y ξ‖ ^ 2 + ‖X ξ‖ ^ 2) / 2
+    change _ ≤ (‖Y ξ‖ ^ 2 + ‖X ξ‖ ^ 2) / 2
     have h1 := (Complex.abs_re_le_norm _).trans (norm_inner_le_norm (𝕜 := ℂ) (Y ξ) (X ξ))
     nlinarith only [h1, sq_nonneg (‖Y ξ‖ - ‖X ξ‖)]
 
@@ -141,7 +141,7 @@ theorem integral_transport_pressure_slice (hφ : ContDiff ℝ (⊤ : ℕ∞) φ)
       exact Complex.continuous_re.comp_aestronglyMeasurable
         ((Complex.continuous_conj.comp_aestronglyMeasurable hP).mul hχ2.aestronglyMeasurable)
     · rw [Real.norm_eq_abs]
-      show _ ≤ (‖Fh ξ‖ ^ 2 + ‖𝓕 (scalTestField χ) ξ‖ ^ 2) / 2
+      change _ ≤ (‖Fh ξ‖ ^ 2 + ‖𝓕 (scalTestField χ) ξ‖ ^ 2) / 2
       have h1 : |b ξ| ≤ ‖Fh ξ‖ * ‖𝓕 (scalTestField χ) ξ‖ := by
         refine (Complex.abs_re_le_norm _).trans ?_
         rw [norm_mul, Complex.norm_conj]

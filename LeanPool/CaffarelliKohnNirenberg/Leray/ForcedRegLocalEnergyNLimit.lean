@@ -45,8 +45,8 @@ theorem abs_integral_mul_le_eLpNorm_two {f g : Vec3 → ℝ} (hf : MemLp f 2 vol
   refine ENNReal.toReal_mono (ENNReal.mul_ne_top hf.eLpNorm_ne_top hg.eLpNorm_ne_top) ?_
   refine le_trans (le_of_eq ?_) hH'
   rw [eLpNorm_one_eq_lintegral_enorm]
-  simp_rw [ofReal_norm]
-  exact hf.aestronglyMeasurable.mul hg.aestronglyMeasurable
+  · simp_rw [ofReal_norm]
+  · exact hf.aestronglyMeasurable.mul hg.aestronglyMeasurable
 
 theorem toReal_eLpNorm_mul_le {X h : Vec3 → ℝ} (hX : MemLp X 2 volume)
     (hh : AEStronglyMeasurable h volume) {M : ℝ} (hM : ∀ x, |h x| ≤ M) :

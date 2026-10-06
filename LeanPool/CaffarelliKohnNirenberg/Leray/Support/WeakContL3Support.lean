@@ -25,7 +25,8 @@ public import LeanPool.CaffarelliKohnNirenberg.Pressure.LeibnizLaplacian
 # Weak continuity of the local velocity
 
 The momentum identity gives a weakly continuous representative of the velocity in
-`L^3` through the terminal time, as in `lem:weak-cont-L3` of the Escauriaza–Seregin–Šverák manuscript.
+`L^3` through the terminal time, as in `lem:weak-cont-L3` of the
+Escauriaza–Seregin–Šverák manuscript.
 -/
 
 public section
@@ -97,7 +98,8 @@ theorem weakContL3_cutoff_exists :
       change vec3EuclideanNorm (x - 0) ≤ 7 / 8
       linarith only [hxnorm]
     exact (hχone x (hKW hxK))
-/-- A scalar function with a weakly integrable derivative has a continuous almost-everywhere representative. -/
+/-- A scalar function with a weakly integrable derivative has a continuous
+almost-everywhere representative. -/
 theorem weakContL3_scalarTrace_exists {a b t₀ : ℝ} (hab : a < b)
     (ht₀ : t₀ ∈ Ioo a b) {f g : ℝ → ℝ}
     (hf : LocallyIntegrableOn f (Ioo a b) volume)

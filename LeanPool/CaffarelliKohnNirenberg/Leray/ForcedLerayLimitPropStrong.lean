@@ -182,6 +182,68 @@ private theorem forcedLerayLimitStrong_eLpNorm_le
         rw [eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num) (by norm_num) hG]
         simp only [ENNReal.toReal_ofNat]
 
+private theorem limit_slice_lintegral_bound_of_compactExhaustion
+    (T : ℝ) (A : ℝ≥0∞) (hA : A < ⊤)
+    (V : ℕ → Vec3 × ℝ → Vec3) (v : Vec3 × ℝ → Vec3) (hv : Measurable v)
+    (hEnergy : ∀ n t, t ∈ Ioo (0 : ℝ) T →
+      (∫⁻ x : Vec3, ‖(WithLp.toLp 2 (V n (x, t)) : L2Vec3)‖ₑ ^ (2 : ℝ)) ≤ A ^ (2 : ℕ))
+    (hSliceBound : ∀ C : Set Vec3, IsCompact C →
+      ∀ b₁ b₂ : ℝ, Icc b₁ b₂ ⊆ Ioi (0 : ℝ) →
+      ∀ M : ℝ≥0∞, M < ⊤ →
+        (∀ n t, t ∈ Icc b₁ b₂ →
+          (∫⁻ x in C, ENNReal.ofReal (vec3EuclideanNorm (V n (x, t))) ^ (2 : ℝ)
+            ∂volume) ≤ M) →
+        ∀ t ∈ Icc b₁ b₂,
+          (∫⁻ x in C, ENNReal.ofReal (vec3EuclideanNorm (v (x, t))) ^ (2 : ℝ)
+            ∂volume) ≤ M) :
+    ∀ t ∈ Ioo (0 : ℝ) T,
+      (∫⁻ x : Vec3, ‖(WithLp.toLp 2 (v (x, t)) : L2Vec3)‖ₑ ^ (2 : ℝ)) ≤ A ^ (2 : ℕ) := by
+  intro t ht
+  let K : ℕ → Set Vec3 := fun k => Metric.closedBall (0 : Vec3) (k : ℝ)
+  have hK : AECover ((volume : Measure Vec3).restrict Set.univ) atTop K := by
+    simpa only [Measure.restrict_univ] using
+      (aecover_closedBall tendsto_natCast_atTop_atTop : AECover (volume : Measure Vec3) atTop K)
+  have hbound := lerayLimit_lintegral_bound_of_compactExhaustion
+    (μ := (volume : Measure Vec3)) Set.univ K hK
+    (fun n x => (WithLp.toLp 2 (V n (x, t)) : L2Vec3))
+    (fun x => (WithLp.toLp 2 (v (x, t)) : L2Vec3)) (A ^ (2 : ℕ))
+    (fun m n => by
+      rw [Measure.restrict_univ]
+      exact (setLIntegral_le_lintegral _ _).trans (hEnergy n t ht))
+    (fun m hsrc => by
+      rw [Measure.restrict_univ] at hsrc ⊢
+      have h := hSliceBound (K m) (isCompact_closedBall _ _) t t
+        (fun r hr => lt_of_lt_of_le ht.1 hr.1) (A ^ (2 : ℕ))
+        (ENNReal.pow_lt_top hA) (fun n r hr => by
+          have hrt : r = t := le_antisymm hr.2 hr.1
+          subst hrt
+          simp only [forcedLerayLimitStrong_enorm_sq_eq]
+          exact hsrc n) t ⟨le_rfl, le_rfl⟩
+      simpa only [forcedLerayLimitStrong_enorm_sq_eq] using h)
+    ((PiLp.continuous_toLp 2 _).measurable.comp
+      (hv.comp (measurable_prodMk_right
+        (m := (inferInstance : MeasurableSpace Vec3))))).aemeasurable
+  simpa only [Measure.restrict_univ] using hbound
+
+private theorem forcedLerayLimitStrong_delta_tendsto (T : ℝ) :
+    Tendsto (fun m : ℕ => T / ((m : ℝ) + 2)) atTop (𝓝 0) := by
+  have h := tendsto_const_div_atTop_nhds_zero_nat T
+  have hshift : Tendsto (fun m : ℕ => T / (((m + 2 : ℕ) : ℝ))) atTop (𝓝 0) :=
+    h.comp (tendsto_add_atTop_nat 2)
+  refine hshift.congr fun m => ?_
+  push_cast
+  ring
+
+private theorem forcedLerayLimitStrong_indicator_enorm_sq
+    (K : Set ParabolicPoint) (F : ParabolicPoint → Vec3) :
+    (fun z => ‖(WithLp.toLp 2 (Kᶜ.indicator F z) : L2Vec3)‖ₑ ^ (2 : ℝ)) =
+      Kᶜ.indicator (fun z => ‖(WithLp.toLp 2 (F z) : L2Vec3)‖ₑ ^ (2 : ℝ)) := by
+  funext z
+  by_cases hz : z ∈ Kᶜ
+  · simp only [Set.indicator_of_mem hz]
+  · simp only [Set.indicator_of_notMem hz, WithLp.toLp_zero, enorm_zero]
+    exact ENNReal.zero_rpow_of_pos (by norm_num)
+
 /-- The strong convergence clauses of `prop:forced-limit` on one slab
 `ℝ³ × (0,T)`. The hypotheses are the local strong convergence and the limit
 slice bound of `CKN.Leray.forcedLerayLimit_local_compactness` (its second and
@@ -265,44 +327,14 @@ theorem forcedLerayLimit_strong_clauses
   obtain ⟨A, hA, hAslice⟩ := hEnergyLocal T hT
   have hA2 : A ^ (2 : ℕ) < ⊤ := ENNReal.pow_lt_top hA
   -- the slice energy of the limit on `(0,T]`
-  have hVslice : ∀ t ∈ Ioo (0 : ℝ) T,
-      (∫⁻ x : Vec3, ‖(WithLp.toLp 2 (v (x, t)) : L2Vec3)‖ₑ ^ (2 : ℝ)) ≤ A ^ (2 : ℕ) := by
-    intro t ht
-    let K : ℕ → Set Vec3 := fun k => Metric.closedBall (0 : Vec3) (k : ℝ)
-    have hK : AECover ((volume : Measure Vec3).restrict Set.univ) atTop K := by
-      simpa only [Measure.restrict_univ] using
-        (aecover_closedBall tendsto_natCast_atTop_atTop :
-          AECover (volume : Measure Vec3) atTop K)
-    have hbound := lerayLimit_lintegral_bound_of_compactExhaustion
-      (μ := (volume : Measure Vec3)) Set.univ K hK
-      (fun n x => (WithLp.toLp 2 (forcedRegVelocity ρ a ha f hf (εseq n) (x, t)) : L2Vec3))
-      (fun x => (WithLp.toLp 2 (v (x, t)) : L2Vec3)) (A ^ (2 : ℕ))
-      (fun m n => by
-        rw [Measure.restrict_univ]
-        exact (setLIntegral_le_lintegral _ _).trans (hAslice n t ht.1 ht.2.le))
-      (fun m hsrc => by
-        rw [Measure.restrict_univ] at hsrc ⊢
-        have h := hSliceBound (K m) (isCompact_closedBall _ _) t t
-          (fun r hr => lt_of_lt_of_le ht.1 hr.1) (A ^ (2 : ℕ)) hA2
-          (fun n r hr => by
-            have hrt : r = t := le_antisymm hr.2 hr.1
-            subst hrt
-            simp only [forcedLerayLimitStrong_enorm_sq_eq]
-            exact hsrc n) t ⟨le_rfl, le_rfl⟩
-        simpa only [forcedLerayLimitStrong_enorm_sq_eq] using h)
-      ((PiLp.continuous_toLp 2 _).measurable.comp
-        (hv.comp (measurable_prodMk_right (m := (inferInstance : MeasurableSpace Vec3))))).aemeasurable
-    simpa only [Measure.restrict_univ] using hbound
+  have hVslice := limit_slice_lintegral_bound_of_compactExhaustion T A hA
+    (fun n z => forcedRegVelocity ρ a ha f hf (εseq n) z) v hv
+    (fun n t ht => hAslice n t ht.1 ht.2.le) hSliceBound
   -- the exhausting cylinders
   let δ : ℕ → ℝ := fun m => T / ((m : ℝ) + 2)
   have hδpos : ∀ m, 0 < δ m := fun m => by positivity
   have hδlim : Tendsto δ atTop (𝓝 0) := by
-    have h := tendsto_const_div_atTop_nhds_zero_nat T
-    have hshift : Tendsto (fun m : ℕ => T / (((m + 2 : ℕ) : ℝ))) atTop (𝓝 0) :=
-      h.comp (tendsto_add_atTop_nat 2)
-    refine hshift.congr fun m => ?_
-    push_cast
-    ring
+    simpa [δ] using forcedLerayLimitStrong_delta_tendsto T
   let R : ℕ → ℝ := fun m => 2 * ((m : ℝ) + 1)
   let K : ℕ → Set ParabolicPoint := fun m => forcedLerayLimitStrongCylinder T (R m) (δ m)
   have hKmeas : ∀ m, MeasurableSet (K m) := fun m =>
@@ -365,15 +397,6 @@ theorem forcedLerayLimit_strong_clauses
       using h4
   have hbev : ∀ ε : ℝ≥0∞, 0 < ε → ∀ᶠ m : ℕ in atTop, b m ≤ ε :=
     fun ε hε => (ENNReal.tendsto_nhds_zero.mp hb) ε hε
-  have hindicator : ∀ (m : ℕ) (F : ParabolicPoint → Vec3),
-      (fun z => ‖(WithLp.toLp 2 (((K m)ᶜ.indicator F) z) : L2Vec3)‖ₑ ^ (2 : ℝ)) =
-        (K m)ᶜ.indicator (fun z => ‖(WithLp.toLp 2 (F z) : L2Vec3)‖ₑ ^ (2 : ℝ)) := by
-    intro m F
-    funext z
-    by_cases hz : z ∈ (K m)ᶜ
-    · simp only [Set.indicator_of_mem hz]
-    · simp only [Set.indicator_of_notMem hz, WithLp.toLp_zero, enorm_zero]
-      exact ENNReal.zero_rpow_of_pos (by norm_num)
   have hFtail : ∀ ε : ℝ≥0∞, 0 < ε → ∀ᶠ m : ℕ in atTop,
       ∀ n, eLpNorm ((K m)ᶜ.indicator (U n)) 2
         ((volume : Measure ParabolicPoint).restrict
@@ -382,7 +405,7 @@ theorem forcedLerayLimit_strong_clauses
     filter_upwards [hbev ε hε] with m hm n
     refine le_trans (forcedLerayLimitStrong_eLpNorm_le _
       (((hUmeas n).indicator (hKmeas m).compl).aestronglyMeasurable)) (le_trans ?_ hm)
-    rw [hindicator m (U n)]
+    rw [forcedLerayLimitStrong_indicator_enorm_sq (K m) (U n)]
     refine ENNReal.rpow_le_rpow ?_ (by norm_num)
     refine forcedLerayLimitStrong_complement_lintegral_le T (R m) (δ m) (hδpos m).le
       _ ?_ (S m) (A ^ (2 : ℕ)) (fun t ht => hStailU m n t ht)
@@ -405,7 +428,7 @@ theorem forcedLerayLimit_strong_clauses
     rw [eLpNorm_congr_ae hae]
     refine le_trans (forcedLerayLimitStrong_eLpNorm_le _
       ((hv.indicator (hKmeas m).compl).aestronglyMeasurable)) (le_trans ?_ hm)
-    rw [hindicator m (fun z => v z)]
+    rw [forcedLerayLimitStrong_indicator_enorm_sq (K m) v]
     refine ENNReal.rpow_le_rpow ?_ (by norm_num)
     refine forcedLerayLimitStrong_complement_lintegral_le T (R m) (δ m) (hδpos m).le
       _ ?_ (S m) (A ^ (2 : ℕ)) (fun t ht => hStailV m t ht) (fun t ht => hVslice t ht)

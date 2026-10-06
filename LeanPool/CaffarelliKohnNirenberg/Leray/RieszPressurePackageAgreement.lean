@@ -28,11 +28,11 @@ namespace CKN.Leray
 private theorem rieszPressureSignedTest_mul_nonneg (y : ℝ) :
     0 ≤ y * (if 0 < y then (1 : ℝ) else if y < 0 then -1 else 0) := by
   by_cases hpos : 0 < y
-  · simp [hpos]
+  · simp only [ite_eq_left hpos, mul_one]
     exact le_of_lt hpos
   · by_cases hneg : y < 0
-    · simp [hpos, hneg]
-      exact le_of_lt hneg
+    · simp only [ite_eq_right hpos, ite_eq_left hneg, mul_neg_one]
+      exact neg_nonneg.mpr (le_of_lt hneg)
     · have hy : y = 0 := le_antisymm (le_of_not_gt hpos) (le_of_not_gt hneg)
       simp [hy]
 

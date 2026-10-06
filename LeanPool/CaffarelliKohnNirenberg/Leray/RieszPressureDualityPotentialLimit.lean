@@ -252,9 +252,9 @@ private theorem rieszPressurePotentialSpatialProfile_nonneg
     (K : Set ℝ) (z : Vec3 × ℝ) :
     0 ≤ rieszPressurePotentialSpatialProfile K z := by
   by_cases ht : z.2 ∈ K
-  · simp [rieszPressurePotentialSpatialProfile, ht]
+  · simp only [rieszPressurePotentialSpatialProfile, Set.indicator_of_mem ht, one_mul]
     positivity
-  · simp [rieszPressurePotentialSpatialProfile, ht]
+  · simp only [rieszPressurePotentialSpatialProfile, Set.indicator_of_notMem ht, zero_mul, le_refl]
 
 private theorem rieszPressurePotentialCutoffTest_hessian_bound
     {ψ : Vec3 × ℝ → ℝ} (hψ : ContDiff ℝ (⊤ : ℕ∞) ψ)

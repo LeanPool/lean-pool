@@ -58,7 +58,8 @@ theorem norm_sq_eq_sum_coord (ξ : L2Vec3) : ‖ξ‖ ^ 2 = ∑ k : Fin 3, (ξ k
   rw [Real.norm_eq_abs, sq_abs]
 
 theorem inner_neg_divergence_frequency (ξ : L2Vec3) (F : ComplexTensor3) :
-    inner ℂ (-((2 * Real.pi * Complex.I : ℂ) • tensorDivergenceLinear ξ F)) (complexifyFrequency ξ) =
+    inner ℂ (-((2 * Real.pi * Complex.I : ℂ) • tensorDivergenceLinear ξ F))
+        (complexifyFrequency ξ) =
       (2 * Real.pi * Complex.I) *
         conj (inner ℂ (complexifyFrequency ξ) (tensorDivergenceLinear ξ F)) := by
   rw [inner_neg_left, inner_smul_left, ← inner_conj_symm (tensorDivergenceLinear ξ F)]
