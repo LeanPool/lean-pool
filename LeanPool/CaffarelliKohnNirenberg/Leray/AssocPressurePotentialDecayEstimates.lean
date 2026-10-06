@@ -443,6 +443,98 @@ theorem associatedPressureNewtonianPotential_timePartial
       _ = _ := rfl
   exact htimeH.trans (hchainDeriv'.trans hconvDeriv')
 
+private theorem associatedPressureHelmholtz_direction_zero_of_slice_zero
+    {φ : Vec3 × ℝ → Vec3}
+    (hψsmooth : ContDiff ℝ (⊤ : ℕ∞)
+      (associatedPressureHelmholtzScalarPotential φ))
+    (hzero : ∀ t, t ∉ (tsupport φ).image Prod.snd → ∀ x,
+      associatedPressureHelmholtzScalarPotential φ (x, t) = 0)
+    (i : Fin 3) (t : ℝ) (ht : t ∉ (tsupport φ).image Prod.snd) (x : Vec3) :
+    rieszPressureJointDirection (associatedPressureHelmholtzScalarPotential φ) i (x, t) = 0 := by
+  rw [← rieszPressure_sliceSpatialDeriv_eq_joint hψsmooth i (x, t)]
+  have hslice : (fun y : Vec3 =>
+      associatedPressureHelmholtzScalarPotential φ (y, t)) = fun _ => (0 : ℝ) := by
+    funext y
+    exact hzero t ht y
+  rw [hslice]
+  simp [CKN.spatialDeriv]
+
+private theorem associatedPressureHelmholtz_hessian_zero_of_slice_zero
+    {φ : Vec3 × ℝ → Vec3}
+    (hψsmooth : ContDiff ℝ (⊤ : ℕ∞)
+      (associatedPressureHelmholtzScalarPotential φ))
+    (hzero : ∀ t, t ∉ (tsupport φ).image Prod.snd → ∀ x,
+      associatedPressureHelmholtzScalarPotential φ (x, t) = 0)
+    (i j : Fin 3) (t : ℝ) (ht : t ∉ (tsupport φ).image Prod.snd) (x : Vec3) :
+    rieszPressureJointHessian (associatedPressureHelmholtzScalarPotential φ) i j (x, t) = 0 := by
+  rw [← rieszPressure_sliceMixedSecond_eq_joint hψsmooth i j (x, t)]
+  have hslice : (fun y : Vec3 =>
+      associatedPressureHelmholtzScalarPotential φ (y, t)) = fun _ => (0 : ℝ) := by
+    funext y
+    exact hzero t ht y
+  rw [hslice]
+  have hdir : CKN.spatialDeriv (fun _ : Vec3 => (0 : ℝ)) j = fun _ => 0 := by
+    funext y
+    simp [CKN.spatialDeriv]
+  rw [CKN.mixedSecond]
+  rw [hdir]
+  simp [CKN.spatialDeriv]
+
+private theorem associatedPressureHelmholtz_decay_all_component_bounds
+    {φ : Vec3 × ℝ → Vec3}
+    (hgrad : ∀ i : Fin 3, ∃ C ≥ 0, ∀ z,
+      |rieszPressureJointDirection (associatedPressureHelmholtzScalarPotential φ) i z| ≤
+        C * (1 + vec3EuclideanNorm z.1) ^ (-(3 : ℝ)))
+    (hhess : ∀ i j : Fin 3, ∃ C ≥ 0, ∀ z,
+      |rieszPressureJointHessian (associatedPressureHelmholtzScalarPotential φ) i j z| ≤
+        C * (1 + vec3EuclideanNorm z.1) ^ (-(4 : ℝ))) :
+    (∃ C ≥ 0, ∀ i z,
+      |rieszPressureJointDirection (associatedPressureHelmholtzScalarPotential φ) i z| ≤
+        C * (1 + vec3EuclideanNorm z.1) ^ (-(3 : ℝ))) ∧
+    (∃ C ≥ 0, ∀ i j z,
+      |rieszPressureJointHessian (associatedPressureHelmholtzScalarPotential φ) i j z| ≤
+        C * (1 + vec3EuclideanNorm z.1) ^ (-(4 : ℝ))) := by
+  choose Dg hDg hGbound using hgrad
+  let CgAll : ℝ := ∑ i : Fin 3, Dg i
+  have hCgAll : 0 ≤ CgAll := Finset.sum_nonneg (fun i _ => hDg i)
+  have hDgle (i : Fin 3) : Dg i ≤ CgAll :=
+    Finset.single_le_sum (fun j _ => hDg j) (Finset.mem_univ i)
+  have hgradAll : ∃ C ≥ 0, ∀ i z,
+      |rieszPressureJointDirection
+        (associatedPressureHelmholtzScalarPotential φ) i z| ≤
+        C * (1 + vec3EuclideanNorm z.1) ^ (-(3 : ℝ)) := by
+    refine ⟨CgAll, hCgAll, ?_⟩
+    intro i z
+    have hprof : 0 ≤ (1 + vec3EuclideanNorm z.1) ^ (-(3 : ℝ)) :=
+      Real.rpow_nonneg
+        (add_nonneg (by norm_num) (CKN.Foundation.Parabolic.vec3EuclideanNorm_nonneg z.1)) _
+    exact (hGbound i z).trans
+      (mul_le_mul_of_nonneg_right (hDgle i) hprof)
+  choose Dh hDh hHbound using hhess
+  let ChAll : ℝ := ∑ i : Fin 3, ∑ j : Fin 3, Dh i j
+  have hChAll : 0 ≤ ChAll := Finset.sum_nonneg (fun i _ =>
+    Finset.sum_nonneg (fun j _ => hDh i j))
+  have hDhInner (i j : Fin 3) : Dh i j ≤ ∑ k : Fin 3, Dh i k :=
+    Finset.single_le_sum (fun k _ => hDh i k) (Finset.mem_univ j)
+  have hDhOuter (i : Fin 3) : (∑ j : Fin 3, Dh i j) ≤ ChAll := by
+    dsimp [ChAll]
+    exact Finset.single_le_sum
+      (fun k _ => Finset.sum_nonneg (fun j _ => hDh k j)) (Finset.mem_univ i)
+  have hDhAll (i j : Fin 3) : Dh i j ≤ ChAll :=
+    (hDhInner i j).trans (hDhOuter i)
+  have hhessAll : ∃ C ≥ 0, ∀ i j z,
+      |rieszPressureJointHessian
+        (associatedPressureHelmholtzScalarPotential φ) i j z| ≤
+        C * (1 + vec3EuclideanNorm z.1) ^ (-(4 : ℝ)) := by
+    refine ⟨ChAll, hChAll, ?_⟩
+    intro i j z
+    have hprof : 0 ≤ (1 + vec3EuclideanNorm z.1) ^ (-(4 : ℝ)) :=
+      Real.rpow_nonneg
+        (add_nonneg (by norm_num) (CKN.Foundation.Parabolic.vec3EuclideanNorm_nonneg z.1)) _
+    exact (hHbound i j z).trans
+      (mul_le_mul_of_nonneg_right (hDhAll i j) hprof)
+  exact ⟨hgradAll, hhessAll⟩
+
 /-- The scalar Newtonian Helmholtz potential has all the spatial decay data
 required to invoke the proved Riesz pressure duality result. -/
 theorem associatedPressureHelmholtzScalarPotential_decay
@@ -619,79 +711,21 @@ theorem associatedPressureHelmholtzScalarPotential_decay
     hψsmooth.continuous hK (fun t ht x => hzero t ht x) 2 Rv hRv Cv hCv
     (fun t x hx => hfarVal t x hx)
   have hgradzero (i : Fin 3) (t : ℝ)
-      (ht : t ∉ (tsupport φ).image Prod.snd) (x : Vec3) :
-      rieszPressureJointDirection
-        (associatedPressureHelmholtzScalarPotential φ) i (x, t) = 0 := by
-    rw [← rieszPressure_sliceSpatialDeriv_eq_joint hψsmooth i (x, t)]
-    have hslice : (fun y : Vec3 =>
-        associatedPressureHelmholtzScalarPotential φ (y, t)) = fun _ => (0 : ℝ) := by
-      funext y
-      exact hzero t ht y
-    rw [hslice]
-    simp [CKN.spatialDeriv]
+      (ht : t ∉ (tsupport φ).image Prod.snd) (x : Vec3) :=
+    associatedPressureHelmholtz_direction_zero_of_slice_zero hψsmooth hzero i t ht x
   have hgrad (i : Fin 3) := associatedPressureContinuous_spatialDecay_of_far
     (rieszPressureJointDirection_contDiff hψsmooth i).continuous hK
     (fun t ht x => hgradzero i t ht x) 3 Rg hRg Cg hCg
     (fun t x hx => hfarGrad i t x hx)
   have hhesszero (i j : Fin 3) (t : ℝ)
-      (ht : t ∉ (tsupport φ).image Prod.snd) (x : Vec3) :
-      rieszPressureJointHessian
-        (associatedPressureHelmholtzScalarPotential φ) i j (x, t) = 0 := by
-    rw [← rieszPressure_sliceMixedSecond_eq_joint hψsmooth i j (x, t)]
-    have hslice : (fun y : Vec3 =>
-        associatedPressureHelmholtzScalarPotential φ (y, t)) = fun _ => (0 : ℝ) := by
-      funext y
-      exact hzero t ht y
-    rw [hslice]
-    have hdir : CKN.spatialDeriv (fun _ : Vec3 => (0 : ℝ)) j = fun _ => 0 := by
-      funext y
-      simp [CKN.spatialDeriv]
-    rw [CKN.mixedSecond]
-    rw [hdir]
-    simp [CKN.spatialDeriv]
+      (ht : t ∉ (tsupport φ).image Prod.snd) (x : Vec3) :=
+    associatedPressureHelmholtz_hessian_zero_of_slice_zero hψsmooth hzero i j t ht x
   have hhess (i j : Fin 3) := associatedPressureContinuous_spatialDecay_of_far
     (rieszPressureJointHessian_contDiff hψsmooth i j).continuous hK
     (fun t ht x => hhesszero i j t ht x) 4 Rh hRh Ch hCh
     (fun t x hx => hfarHess i j t x hx)
-  choose Dg hDg hGbound using hgrad
-  let CgAll : ℝ := ∑ i : Fin 3, Dg i
-  have hCgAll : 0 ≤ CgAll := Finset.sum_nonneg (fun i _ => hDg i)
-  have hDgle (i : Fin 3) : Dg i ≤ CgAll :=
-    Finset.single_le_sum (fun j _ => hDg j) (Finset.mem_univ i)
-  have hgradAll : ∃ C ≥ 0, ∀ i z,
-      |rieszPressureJointDirection
-        (associatedPressureHelmholtzScalarPotential φ) i z| ≤
-        C * (1 + vec3EuclideanNorm z.1) ^ (-(3 : ℝ)) := by
-    refine ⟨CgAll, hCgAll, ?_⟩
-    intro i z
-    have hprof : 0 ≤ (1 + vec3EuclideanNorm z.1) ^ (-(3 : ℝ)) :=
-      Real.rpow_nonneg
-        (add_nonneg (by norm_num) (CKN.Foundation.Parabolic.vec3EuclideanNorm_nonneg z.1)) _
-    exact (hGbound i z).trans
-      (mul_le_mul_of_nonneg_right (hDgle i) hprof)
-  choose Dh hDh hHbound using hhess
-  let ChAll : ℝ := ∑ i : Fin 3, ∑ j : Fin 3, Dh i j
-  have hChAll : 0 ≤ ChAll := Finset.sum_nonneg (fun i _ =>
-    Finset.sum_nonneg (fun j _ => hDh i j))
-  have hDhInner (i j : Fin 3) : Dh i j ≤ ∑ k : Fin 3, Dh i k :=
-    Finset.single_le_sum (fun k _ => hDh i k) (Finset.mem_univ j)
-  have hDhOuter (i : Fin 3) : (∑ j : Fin 3, Dh i j) ≤ ChAll := by
-    dsimp [ChAll]
-    exact Finset.single_le_sum
-      (fun k _ => Finset.sum_nonneg (fun j _ => hDh k j)) (Finset.mem_univ i)
-  have hDhAll (i j : Fin 3) : Dh i j ≤ ChAll :=
-    (hDhInner i j).trans (hDhOuter i)
-  have hhessAll : ∃ C ≥ 0, ∀ i j z,
-      |rieszPressureJointHessian
-        (associatedPressureHelmholtzScalarPotential φ) i j z| ≤
-        C * (1 + vec3EuclideanNorm z.1) ^ (-(4 : ℝ)) := by
-    refine ⟨ChAll, hChAll, ?_⟩
-    intro i j z
-    have hprof : 0 ≤ (1 + vec3EuclideanNorm z.1) ^ (-(4 : ℝ)) :=
-      Real.rpow_nonneg
-        (add_nonneg (by norm_num) (CKN.Foundation.Parabolic.vec3EuclideanNorm_nonneg z.1)) _
-    exact (hHbound i j z).trans
-      (mul_le_mul_of_nonneg_right (hDhAll i j) hprof)
+  have ⟨hgradAll, hhessAll⟩ :=
+    associatedPressureHelmholtz_decay_all_component_bounds hgrad hhess
   refine ⟨⟨(tsupport φ).image Prod.snd, hK, fun t ht x => hzero t ht x⟩,
     hval, hgradAll, hhessAll⟩
 

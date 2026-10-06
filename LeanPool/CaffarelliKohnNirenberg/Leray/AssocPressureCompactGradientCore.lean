@@ -222,6 +222,27 @@ theorem associatedPressureCompact_memLp_two
   rw [Measure.volume_eq_prod Vec3 ℝ, ← Measure.prod_restrict] at hrestrict
   simpa using hrestrict
 
+private theorem associatedPressureCompactGradient_third_sum
+    {g : Vec3 × ℝ → ℝ} (hg : ContDiff ℝ (⊤ : ℕ∞) g)
+    (i : Fin 3) (z : Vec3 × ℝ) :
+    (∑ j : Fin 3,
+      CKN.spatialPartialProd (CKN.spatialSecondPartialProd g i j) j z) =
+      CKN.spatialPartialProd (fun q =>
+        ∑ j : Fin 3, CKN.spatialSecondPartialProd g j j q) i z := by
+  calc
+    _ = ∑ j : Fin 3,
+        CKN.spatialPartialProd (CKN.spatialSecondPartialProd g j j) i z := by
+      apply Finset.sum_congr rfl
+      intro j hj
+      exact associatedPressureSpatialTriple_commute hg i j z
+    _ = CKN.spatialPartialProd (fun q =>
+        ∑ j : Fin 3, CKN.spatialSecondPartialProd g j j q) i z := by
+      symm
+      exact associatedPressureSpatialPartial_finset_sum
+        (fun j => CKN.spatialSecondPartialProd g j j)
+        (fun j => CKN.spatialPartial_contDiff
+          (CKN.spatialPartial_contDiff hg j) j) i z
+
 /-- The weak-gradient terms cancel on a compact smooth scalar gradient test.
 This is the viscous cancellation needed when the test is decomposed into its
 solenoidal and gradient parts. -/
@@ -370,17 +391,7 @@ theorem associatedPressureCompactGradient_viscosity_cancel
       ∑ j : Fin 3,
         CKN.spatialPartialProd (CKN.spatialSecondPartialProd g i j) j z =
       CKN.spatialPartialProd L i z := by
-    calc
-      _ = ∑ j : Fin 3,
-          CKN.spatialPartialProd (CKN.spatialSecondPartialProd g j j) i z := by
-        apply Finset.sum_congr rfl
-        intro j hj
-        exact associatedPressureSpatialTriple_commute hg i j z
-      _ = CKN.spatialPartialProd L i z := by
-        symm
-        exact associatedPressureSpatialPartial_finset_sum
-          (fun j => CKN.spatialSecondPartialProd g j j)
-          (fun j => hHsmooth j j) i z
+    simpa [L] using associatedPressureCompactGradient_third_sum hg i z
   have hUSum :
       ∑ i : Fin 3, ∑ j : Fin 3,
         ∫ z : Vec3 × ℝ,

@@ -121,6 +121,276 @@ private theorem regularisedR12_mollified_velocity_continuousOn
   exact regularisedR12Time_mollifiedVelocity_component_convolution
     ρ ε hε u z.2 (hSlice z.2 (hSpositive z hz)) z.1 i
 
+private theorem regularisedR12_momentum_time_ae
+    (ρ : RegMollifierProfile) (ε : ℝ) (hε : 0 < ε)
+    (a : Vec3 → Vec3) (ha : CKN.IsInJ a)
+    (u : ParabolicPoint → Vec3) (T : ℝ) (hT : 0 < T)
+    (hSlice : ∀ t : ℝ, t ∈ Set.Icc 0 T →
+      MemLp (fun x : Vec3 => u (x, t)) 2 volume)
+    (hL2Continuous : Continuous (fun t : Set.Icc (0 : ℝ) T =>
+      realVectorL2OfCoordinateFunction
+        (fun x : Vec3 => u (x, t.1)) (hSlice t.1 t.2)))
+    (hMild : ∀ t : ℝ, (ht : t ∈ Set.Icc 0 T) →
+      realVectorL2OfCoordinateFunction
+        (fun x : Vec3 => u (x, t)) (hSlice t ht) =
+      realHeatOperator t ht.1
+        (realVectorL2OfCoordinateFunction
+          (regUniformMollifiedInitial ρ ε hε a)
+          (regMollifiedInitial_isInJ ρ ε hε ha).1) -
+      regularizedMildStokesIntegral
+        (regularizedMildTensorTrajectory ρ ε hε
+          (regularisedIntervalMildCurve u T hT.le hSlice)) t)
+    (hUspatial : ∀ t : ℝ, t ∈ Set.Ioc 0 T → ∀ i : Fin 3,
+      ContDiff ℝ 1 (fun x : Vec3 => u (x, t) i))
+    (S : Set (Vec3 × ℝ))
+    (hS : S = spaceTimeSet (Set.univ : Set Vec3) (Set.Ioo 0 T))
+    [DecidablePred (fun z : Vec3 × ℝ => z ∈ S)]
+    (Urep : Vec3 × ℝ → Vec3) (Drep : Fin 3 → Fin 3 → Vec3 × ℝ → ℝ)
+    (U : Fin 3 → Vec3 × ℝ → ℝ) (D : Fin 3 → Fin 3 → Vec3 × ℝ → ℝ)
+    (P : Vec3 × ℝ → ℝ)
+    (Uext : Fin 3 → Vec3 × ℝ → ℝ)
+    (Dext : Fin 3 → Fin 3 → Vec3 × ℝ → ℝ)
+    (Jext : Fin 3 → Vec3 × ℝ → ℝ) (Pext : Vec3 × ℝ → ℝ)
+    (Q : Vec3 × ℝ → ℝ) (φProd : Vec3 × ℝ → Vec3)
+    (φ : ParabolicPoint → Vec3) (hφProdEq : φProd = φ)
+    (hUrep : Urep = forcedRegRep ρ ε hε ha
+      (CKN.isLocallySquareIntegrableForce_zero))
+    (hDrep : ∀ i j, Drep i j = fun z => forcedMollifiedGrad Urep z i j)
+    (hU : ∀ i, U i = fun z => u z i)
+    (hD : ∀ i j, D i j = fun z => spatialPartial (fun y => u y i) j z)
+    (hP : P = regularisedIntervalCanonicalPressure ρ ε hε u T hT.le hSlice)
+    (hUext : ∀ i, Uext i = S.piecewise (U i) 0)
+    (hDext : ∀ i j, Dext i j = S.piecewise (D i j) 0)
+    (hJext : ∀ j, Jext j = S.piecewise
+      (fun z => regUniformMollifiedVelocity ρ ε hε u z j) 0)
+    (hPext : Pext = S.piecewise P 0)
+    (hQ : Q = fun z =>
+      -(∑ i : Fin 3, Uext i z * timeDeriv φ z i)
+        - ∑ i : Fin 3, ∑ j : Fin 3,
+          Jext j z * Uext i z * spaceDeriv j φ z i
+        + ∑ i : Fin 3, ∑ j : Fin 3,
+          Dext i j z * spaceDeriv j φ z i
+        - Pext z * stDiv φ z) :
+    ∀ᵐ t ∂((volume : Measure ℝ).restrict (Set.Ioo 0 T)),
+      ∀ᵐ x ∂(volume : Measure Vec3),
+        Q (x, t) = forcedMomentumIntegrand ρ ε hε ha (fun _ => 0)
+          CKN.isLocallySquareIntegrableForce_zero φProd (x, t) := by
+  classical
+  let f : ParabolicPoint → Vec3 := fun _ => 0
+  let hf : CKN.IsLocallySquareIntegrableForce f :=
+    CKN.isLocallySquareIntegrableForce_zero
+  let hForceZero := forcePressure_zero_ae_on_interval T hT
+  have hVelocityAE (t : ℝ) (ht : t ∈ Set.Ioo 0 T) :
+      (fun x : Vec3 => u (x, t)) =ᵐ[volume] (fun x => Urep (x, t)) := by
+    simpa [hUrep] using regularisedInterval_velocity_ae_eq_forcedRegRep
+      ρ ε hε a ha u T hT hSlice hL2Continuous hMild t
+      ⟨le_of_lt ht.1, le_of_lt ht.2⟩
+  have hGradientAE (t : ℝ) (ht : t ∈ Set.Ioo 0 T) (i j : Fin 3) :
+      (fun x : Vec3 => Drep i j (x, t)) =ᵐ[volume] (fun x => D i j (x, t)) := by
+    have hVae := hVelocityAE t ht
+    have hloc := forcedRegRep_locallyIntegrable ρ ε hε ha hf t i
+    have hloc' : LocallyIntegrable (fun x : Vec3 => Urep (x, t) i) volume := by
+      simpa [hUrep] using hloc
+    have hC1 : ContDiff ℝ 1 (fun x : Vec3 => u (x, t) i) :=
+      hUspatial t ⟨ht.1, le_of_lt ht.2⟩ i
+    have hGrad := forcedMollifiedGrad_ae_eq_classical_of_ae_eq Urep u t i j
+      hloc' hVae.symm hC1
+    simpa [hDrep, hUrep, hD] using hGrad
+  have hTensorAE (t : ℝ) (ht : t ∈ Set.Ioo 0 T) (i j : Fin 3) :
+      (fun x : Vec3 => regUniformMollifiedVelocity ρ ε hε u (x, t) j * u (x, t) i) =ᵐ[volume]
+      (fun x : Vec3 => regUniformMollifiedVelocity ρ ε hε Urep (x, t) j * Urep (x, t) i) := by
+    have hUae := hVelocityAE t ht
+    have hUae' : (fun x : Vec3 => u (x, t)) =ᵐ[volume]
+        fun x => forcedRegRep ρ ε hε ha hf (x, t) := by
+      simpa [hUrep] using hUae
+    have hrepU : (fun x : Vec3 => u (x, t)) =ᵐ[volume]
+        realVectorL2Representative (forcedRegCurve ρ ε hε ha hf t) :=
+      hUae'.trans (forcedRegRep_slice ρ ε hε ha hf t)
+    have hrepV := forcedRegRep_slice ρ ε hε ha hf t
+    have hUtensor := regPressureTensorSlice_ae_eq ρ ε hε hrepU j i
+    have hVtensor := regPressureTensorSlice_ae_eq ρ ε hε hrepV j i
+    have hEq := hUtensor.trans hVtensor.symm
+    change regPressureTensorSlice ρ ε hε u t j i =ᵐ[volume]
+      regPressureTensorSlice ρ ε hε Urep t j i
+    simpa [hUrep] using hEq
+  have hPressureAE (t : ℝ) (ht : t ∈ Set.Ioo 0 T)
+    (hforce : (fun x : Vec3 => forcePressure f hf (x, t)) =ᵐ[volume] 0) :
+      (fun x : Vec3 => P (x, t)) =ᵐ[volume]
+        (fun x : Vec3 => forcedQuadPressure ρ ε hε
+          (forcedRegCurve ρ ε hε ha hf) (x, t) + forcePressure f hf (x, t)) := by
+    have hPath := regularisedIntervalMildCurve_eq_forcedRegCurve
+      ρ ε hε a ha u T hT hSlice hL2Continuous hMild t
+        ⟨le_of_lt ht.1, le_of_lt ht.2⟩
+    have hquad (x : Vec3) : P (x, t) = forcedQuadPressure ρ ε hε
+        (forcedRegCurve ρ ε hε ha hf) (x, t) := by
+      rw [hP]
+      change forcedQuadPressure ρ ε hε
+          (regularisedIntervalMildCurve u T hT.le hSlice) (x, t) = _
+      exact congrArg (fun V : RealVectorL2 =>
+        forcedQuadPressure ρ ε hε (fun _ : ℝ => V) (x, t)) hPath
+    filter_upwards [hforce] with x hx
+    rw [hquad x]
+    simp [f, hx]
+  filter_upwards [hForceZero, ae_restrict_mem measurableSet_Ioo] with t hPzero ht
+  have hPzero' : (fun x : Vec3 => forcePressure f hf (x, t)) =ᵐ[volume] 0 := by
+    simpa [f] using hPzero
+  have hUae := hVelocityAE t ht
+  have hDae : ∀ᵐ x ∂(volume : Measure Vec3), ∀ i j : Fin 3,
+      Drep i j (x, t) = D i j (x, t) := by
+    have h := ae_all_iff.2 fun i => ae_all_iff.2 fun j => hGradientAE t ht i j
+    filter_upwards [h] with x hx
+    exact hx
+  have hTae : ∀ᵐ x ∂(volume : Measure Vec3), ∀ i j : Fin 3,
+      regUniformMollifiedVelocity ρ ε hε u (x, t) j * u (x, t) i =
+        regUniformMollifiedVelocity ρ ε hε Urep (x, t) j * Urep (x, t) i := by
+    have h := ae_all_iff.2 fun i => ae_all_iff.2 fun j => hTensorAE t ht i j
+    filter_upwards [h] with x hx
+    exact hx
+  have hPae : ∀ᵐ x ∂(volume : Measure Vec3), P (x, t) =
+      forcedQuadPressure ρ ε hε (forcedRegCurve ρ ε hε ha hf) (x, t) +
+        forcePressure f hf (x, t) := hPressureAE t ht hPzero'
+  filter_upwards [hUae, hDae, hTae, hPae, hPzero'] with x hUx hDx hTx hPx hForcePx
+  have hxS : (x, t) ∈ S := by
+    rw [hS]
+    exact ⟨Set.mem_univ _, ht⟩
+  have hUcomp (i : Fin 3) : u (x, t) i = Urep (x, t) i := congrFun hUx i
+  have hDextAt (i j : Fin 3) : Dext i j (x, t) = D i j (x, t) := by
+    rw [hDext i j]
+    exact Set.piecewise_eq_of_mem S (D i j) 0 hxS
+  have hUextAt (i : Fin 3) : Uext i (x, t) = u (x, t) i := by
+    rw [hUext i, hU i]
+    exact Set.piecewise_eq_of_mem S (fun z => u z i) 0 hxS
+  have hJextAt (j : Fin 3) : Jext j (x, t) =
+      regUniformMollifiedVelocity ρ ε hε u (x, t) j := by
+    rw [hJext j]
+    exact Set.piecewise_eq_of_mem S
+      (fun z => regUniformMollifiedVelocity ρ ε hε u z j) 0 hxS
+  have hPextAt : Pext (x, t) = P (x, t) := by
+    rw [hPext]
+    exact Set.piecewise_eq_of_mem S P 0 hxS
+  have hDforced (i j : Fin 3) :
+      forcedMollifiedGrad (forcedRegRep ρ ε hε ha hf) (x, t) i j = D i j (x, t) := by
+    calc
+      forcedMollifiedGrad (forcedRegRep ρ ε hε ha hf) (x, t) i j =
+          forcedMollifiedGrad Urep (x, t) i j := by rw [← hUrep]
+      _ = Drep i j (x, t) := by rw [hDrep i j]
+      _ = D i j (x, t) := hDx i j
+  have hTxForced (i j : Fin 3) :
+      regUniformMollifiedVelocity ρ ε hε u (x, t) j * u (x, t) i =
+        regUniformMollifiedVelocity ρ ε hε (forcedRegRep ρ ε hε ha hf) (x, t) j *
+          forcedRegRep ρ ε hε ha hf (x, t) i := by
+    calc
+      _ = regUniformMollifiedVelocity ρ ε hε Urep (x, t) j * Urep (x, t) i := hTx i j
+      _ = _ := by rw [hUrep]
+  rw [hQ]
+  simp only [hUextAt, hDextAt, hJextAt, hPextAt,
+    forcedMomentumIntegrand, f, hPx, hDforced, hφProdEq, stDiv,
+    Pi.zero_apply, zero_mul]
+  simp_rw [hTxForced]
+  simp only [hUcomp, hUrep]
+  ring
+
+private theorem regularisedR12_forcedMomentumIntegrand_measurable
+    (ρ : RegMollifierProfile) (ε : ℝ) (hε : 0 < ε)
+    (a : Vec3 → Vec3) (ha : CKN.IsInJ a)
+    (T : ℝ) (φProd : Vec3 × ℝ → Vec3)
+    (hφProd : φProd ∈ spaceTimeTestFunction (V := Vec3)
+      (Set.univ : Set Vec3) (Set.Ioo 0 T)) :
+    Measurable (forcedMomentumIntegrand ρ ε hε ha (fun _ => 0)
+      CKN.isLocallySquareIntegrableForce_zero φProd) := by
+  classical
+  let f : ParabolicPoint → Vec3 := fun _ => 0
+  let hf : CKN.IsLocallySquareIntegrableForce f :=
+    CKN.isLocallySquareIntegrableForce_zero
+  have hVsm : StronglyMeasurable (forcedRegRep ρ ε hε ha hf) :=
+    forcedRegRep_stronglyMeasurable ρ ε hε ha hf
+  have hVmeas : Measurable (forcedRegRep ρ ε hε ha hf) :=
+    StronglyMeasurable.measurable hVsm
+  have hJmeas : Measurable
+      (regUniformMollifiedVelocity ρ ε hε (forcedRegRep ρ ε hε ha hf)) :=
+    (lerayLimit_regUniformMollifiedVelocity_stronglyMeasurable
+      ρ ε hε hVmeas).measurable
+  have hForcePmeas : Measurable (fun z : Vec3 × ℝ => forcePressure f hf z) :=
+    (stronglyMeasurable_forcePressure hf).measurable
+  have hQuadPmeas : Measurable
+      (forcedQuadPressure ρ ε hε (forcedRegCurve ρ ε hε ha hf)) :=
+    (forcedQuadPressure_stronglyMeasurable ρ ε hε
+      (continuous_forcedRegCurve ρ ε hε ha hf)).measurable
+  unfold forcedMomentumIntegrand
+  have hφProdMeas : Measurable φProd := hφProd.1.continuous.measurable
+  have hφProdCoordMeas (i : Fin 3) : Measurable
+      (fun z : Vec3 × ℝ => φProd z i) :=
+    (measurable_pi_apply i).comp hφProdMeas
+  have hUrepCoordMeas (i : Fin 3) : Measurable
+      (fun z : Vec3 × ℝ => forcedRegRep ρ ε hε ha hf z i) :=
+    (measurable_pi_apply i).comp hVmeas
+  have hDmeas (i j : Fin 3) : Measurable
+      (fun z : Vec3 × ℝ => forcedMollifiedGrad
+        (forcedRegRep ρ ε hε ha hf) z i j) := by
+    exact (forcedMollifiedGrad_stronglyMeasurable hVsm
+      (forcedRegRep_locallyIntegrable ρ ε hε ha hf) i j).measurable
+  have hTimeDerivMeas : Measurable (timeDeriv φProd) :=
+    (contDiff_timeDeriv hφProd.1).continuous.measurable
+  have hSpaceDerivMeas (j : Fin 3) : Measurable (spaceDeriv j φProd) :=
+    (contDiff_spaceDeriv hφProd.1 j).continuous.measurable
+  have hStDivMeas : Measurable (stDiv φProd) := by
+    unfold stDiv
+    apply Finset.measurable_sum
+    intro i hi
+    exact (continuous_apply i).measurable.comp (hSpaceDerivMeas i)
+  fun_prop (disch := assumption)
+
+private theorem regularisedR12_forcedMomentum_integral_eq_zero
+    (ρ : RegMollifierProfile) (ε : ℝ) (hε : 0 < ε)
+    (a : Vec3 → Vec3) (ha : CKN.IsInJ a)
+    (f : ParabolicPoint → Vec3) (hf : CKN.IsLocallySquareIntegrableForce f)
+    (T : ℝ) (φProd : Vec3 × ℝ → Vec3)
+    (hφProd : φProd ∈ spaceTimeTestFunction (V := Vec3)
+      (Set.univ : Set Vec3) (Set.Ioo 0 T)) :
+    ∫ z in spaceTimeSet (Set.univ : Set Vec3) (Set.Ioo 0 T),
+      forcedMomentumIntegrand ρ ε hε ha f hf φProd z = 0 := by
+  classical
+  have hForcedIoi := integral_forcedMomentumIntegrand_eq_zero
+    ρ ε hε ha hf hφProd.1 hφProd.2.1 (by
+      intro z hz
+      exact ⟨Set.mem_univ _, (hφProd.2.2 hz).2.1⟩)
+  have hsetIoi : ∫ z in spaceTimeSet (Set.univ : Set Vec3) (Set.Ioi 0),
+    forcedMomentumIntegrand ρ ε hε ha f hf φProd z =
+      ∫ z : ParabolicPoint, forcedMomentumIntegrand ρ ε hε ha f hf φProd z :=
+    setIntegral_eq_integral_of_forall_compl_eq_zero fun z hz =>
+      forcedMomentumIntegrand_eq_zero ρ ε hε ha f hf (φ := φProd) (z := z)
+        (fun h => hz ⟨Set.mem_univ _, (hφProd.2.2 h).2.1⟩)
+  have hsetS : ∫ z in spaceTimeSet (Set.univ : Set Vec3) (Set.Ioo 0 T),
+    forcedMomentumIntegrand ρ ε hε ha f hf φProd z =
+      ∫ z : ParabolicPoint, forcedMomentumIntegrand ρ ε hε ha f hf φProd z :=
+    setIntegral_eq_integral_of_forall_compl_eq_zero fun z hz =>
+      forcedMomentumIntegrand_eq_zero ρ ε hε ha f hf (φ := φProd) (z := z)
+        (fun h => hz (hφProd.2.2 h))
+  calc
+    ∫ z in spaceTimeSet (Set.univ : Set Vec3) (Set.Ioo 0 T),
+        forcedMomentumIntegrand ρ ε hε ha f hf φProd z =
+        ∫ z : ParabolicPoint, forcedMomentumIntegrand ρ ε hε ha f hf φProd z := hsetS
+    _ = ∫ z in spaceTimeSet (Set.univ : Set Vec3) (Set.Ioi 0),
+        forcedMomentumIntegrand ρ ε hε ha f hf φProd z := hsetIoi.symm
+    _ = 0 := hForcedIoi
+
+private theorem regularisedR12_spaceTime_ae_of_slice_ae
+    (T : ℝ) (S : Set (Vec3 × ℝ))
+    (hS : S = spaceTimeSet (Set.univ : Set Vec3) (Set.Ioo 0 T))
+    (Q R : Vec3 × ℝ → ℝ) (hQmeas : Measurable Q) (hRmeas : Measurable R)
+    (htime : ∀ᵐ t ∂((volume : Measure ℝ).restrict (Set.Ioo 0 T)),
+      ∀ᵐ x ∂(volume : Measure Vec3), Q (x, t) = R (x, t)) :
+    Q =ᵐ[(volume : Measure (Vec3 × ℝ)).restrict S] R := by
+  classical
+  have hEqSet : MeasurableSet {z : Vec3 × ℝ | Q z = R z} :=
+    measurableSet_eq_fun hQmeas hRmeas
+  rw [hS]
+  change Q =ᵐ[(volume : Measure ParabolicPoint).restrict
+    (spaceTimeSet (Set.univ : Set Vec3) (Set.Ioo 0 T))] R
+  rw [restrict_spaceTimeSet_eq_prod (Set.Ioo 0 T)]
+  exact (Measure.ae_prod_iff_ae_ae hEqSet).2
+    ((Measure.ae_ae_comm hEqSet).2 htime)
+
 /-- A same-velocity mild path satisfies the forced weak momentum identity on
 its finite regularity interval. -/
 theorem regularisedR12_weakMomentum_spatial
@@ -288,176 +558,18 @@ theorem regularisedR12_weakMomentum_spatial
   have hQmeas : Measurable Q := by
     dsimp [Q]
     fun_prop
-  have hVsm : StronglyMeasurable Urep :=
-    forcedRegRep_stronglyMeasurable ρ ε hε ha hf
-  have hVmeas : Measurable Urep := StronglyMeasurable.measurable hVsm
-  have hJsm : StronglyMeasurable (regUniformMollifiedVelocity ρ ε hε Urep) :=
-    lerayLimit_regUniformMollifiedVelocity_stronglyMeasurable ρ ε hε hVmeas
-  have hJmeas : Measurable (regUniformMollifiedVelocity ρ ε hε Urep) :=
-    StronglyMeasurable.measurable hJsm
-  have hDsm : ∀ i j, StronglyMeasurable (Drep i j) := by
-    intro i j
-    exact forcedMollifiedGrad_stronglyMeasurable hVsm
-      (fun t k => forcedRegRep_locallyIntegrable ρ ε hε ha hf t k) i j
-  have hForcePsm : StronglyMeasurable (fun z : Vec3 × ℝ => forcePressure f hf z) :=
-    stronglyMeasurable_forcePressure hf
-  have hForcePmeas : Measurable (fun z : Vec3 × ℝ => forcePressure f hf z) :=
-    StronglyMeasurable.measurable hForcePsm
-  have hQuadPsm : StronglyMeasurable
-      (forcedQuadPressure ρ ε hε (forcedRegCurve ρ ε hε ha hf)) := by
-    exact forcedQuadPressure_stronglyMeasurable ρ ε hε
-      (continuous_forcedRegCurve ρ ε hε ha hf)
-  have hQuadPmeas : Measurable
-      (forcedQuadPressure ρ ε hε (forcedRegCurve ρ ε hε ha hf)) :=
-    StronglyMeasurable.measurable hQuadPsm
-  have hForcedMeas : Measurable
-      (forcedMomentumIntegrand ρ ε hε ha f hf φProd) := by
-    unfold forcedMomentumIntegrand
-    have hφProdMeas : Measurable φProd := hφProd.1.continuous.measurable
-    have hφProdCoordMeas (i : Fin 3) : Measurable
-        (fun z : Vec3 × ℝ => φProd z i) :=
-      (measurable_pi_apply i).comp hφProdMeas
-    have hUrepCoordMeas (i : Fin 3) : Measurable
-        (fun z : Vec3 × ℝ => forcedRegRep ρ ε hε ha hf z i) :=
-      (measurable_pi_apply i).comp hVmeas
-    have hDmeas (i j : Fin 3) : Measurable
-        (fun z : Vec3 × ℝ => forcedMollifiedGrad
-          (forcedRegRep ρ ε hε ha hf) z i j) := by
-      exact (forcedMollifiedGrad_stronglyMeasurable hVsm
-        (forcedRegRep_locallyIntegrable ρ ε hε ha hf) i j).measurable
-    fun_prop (disch := assumption)
-  have hForceZero := forcePressure_zero_ae_on_interval T hT
-  have hVelocityAE (t : ℝ) (ht : t ∈ Set.Ioo 0 T) :
-      (fun x : Vec3 => u (x, t)) =ᵐ[volume] (fun x => Urep (x, t)) := by
-    apply regularisedInterval_velocity_ae_eq_forcedRegRep
-      ρ ε hε a ha u T hT hSlice hL2Continuous hMild t
-    exact ⟨le_of_lt ht.1, le_of_lt ht.2⟩
-  have hGradientAE (t : ℝ) (ht : t ∈ Set.Ioo 0 T) (i j : Fin 3) :
-      (fun x : Vec3 => Drep i j (x, t)) =ᵐ[volume] (fun x => D i j (x, t)) := by
-    have hVae := hVelocityAE t ht
-    have hloc := forcedRegRep_locallyIntegrable ρ ε hε ha hf t i
-    have hC1 : ContDiff ℝ 1 (fun x : Vec3 => u (x, t) i) :=
-      hUspatial t ⟨ht.1, le_of_lt ht.2⟩ i
-    simpa [Drep, Urep, D] using
-      (forcedMollifiedGrad_ae_eq_classical_of_ae_eq Urep u t i j hloc hVae.symm hC1)
-  have hTensorAE (t : ℝ) (ht : t ∈ Set.Ioo 0 T) (i j : Fin 3) :
-      (fun x : Vec3 => regUniformMollifiedVelocity ρ ε hε u (x, t) j * u (x, t) i) =ᵐ[volume]
-      (fun x : Vec3 => regUniformMollifiedVelocity ρ ε hε Urep (x, t) j * Urep (x, t) i) := by
-    have hUae := hVelocityAE t ht
-    have hrepU : (fun x : Vec3 => u (x, t)) =ᵐ[volume]
-        realVectorL2Representative (forcedRegCurve ρ ε hε ha hf t) :=
-      hUae.trans (forcedRegRep_slice ρ ε hε ha hf t)
-    have hrepV := forcedRegRep_slice ρ ε hε ha hf t
-    have hUtensor := regPressureTensorSlice_ae_eq ρ ε hε hrepU j i
-    have hVtensor := regPressureTensorSlice_ae_eq ρ ε hε hrepV j i
-    have hEq := hUtensor.trans hVtensor.symm
-    change regPressureTensorSlice ρ ε hε u t j i =ᵐ[volume]
-      regPressureTensorSlice ρ ε hε Urep t j i
-    exact hEq
-  have hPressureAE (t : ℝ) (ht : t ∈ Set.Ioo 0 T)
-    (hforce : (fun x : Vec3 => forcePressure f hf (x, t)) =ᵐ[volume] 0) :
-      (fun x : Vec3 => P (x, t)) =ᵐ[volume]
-        (fun x : Vec3 => forcedQuadPressure ρ ε hε
-          (forcedRegCurve ρ ε hε ha hf) (x, t) + forcePressure f hf (x, t)) := by
-    have hPath := regularisedIntervalMildCurve_eq_forcedRegCurve
-      ρ ε hε a ha u T hT hSlice hL2Continuous hMild t
-        ⟨le_of_lt ht.1, le_of_lt ht.2⟩
-    have hquad (x : Vec3) : P (x, t) = forcedQuadPressure ρ ε hε
-        (forcedRegCurve ρ ε hε ha hf) (x, t) := by
-      change forcedQuadPressure ρ ε hε
-          (regularisedIntervalMildCurve u T hT.le hSlice) (x, t) = _
-      exact congrArg (fun V : RealVectorL2 =>
-        forcedQuadPressure ρ ε hε (fun _ : ℝ => V) (x, t)) hPath
-    filter_upwards [hforce] with x hx
-    rw [hquad x]
-    simp [f, hx]
-  have htime : ∀ᵐ t ∂((volume : Measure ℝ).restrict (Set.Ioo 0 T)),
-      ∀ᵐ x ∂(volume : Measure Vec3),
-        Q (x, t) = forcedMomentumIntegrand ρ ε hε ha f hf φProd (x, t) := by
-    filter_upwards [hForceZero, ae_restrict_mem measurableSet_Ioo] with t hPzero ht
-    have hPzero' : (fun x : Vec3 => forcePressure f hf (x, t)) =ᵐ[volume] 0 := by
-      simpa [f] using hPzero
-    have hUae := hVelocityAE t ht
-    have hDae : ∀ᵐ x ∂(volume : Measure Vec3), ∀ i j : Fin 3,
-        Drep i j (x, t) = D i j (x, t) := by
-      have h := ae_all_iff.2 fun i => ae_all_iff.2 fun j => hGradientAE t ht i j
-      filter_upwards [h] with x hx
-      exact hx
-    have hTae : ∀ᵐ x ∂(volume : Measure Vec3), ∀ i j : Fin 3,
-        regUniformMollifiedVelocity ρ ε hε u (x, t) j * u (x, t) i =
-          regUniformMollifiedVelocity ρ ε hε Urep (x, t) j * Urep (x, t) i := by
-      have h := ae_all_iff.2 fun i => ae_all_iff.2 fun j => hTensorAE t ht i j
-      filter_upwards [h] with x hx
-      exact hx
-    have hPae : ∀ᵐ x ∂(volume : Measure Vec3), P (x, t) =
-        forcedQuadPressure ρ ε hε (forcedRegCurve ρ ε hε ha hf) (x, t) +
-          forcePressure f hf (x, t) := hPressureAE t ht hPzero'
-    filter_upwards [hUae, hDae, hTae, hPae, hPzero'] with x hUx hDx hTx hPx hForcePx
-    have hxS : (x, t) ∈ S := ⟨Set.mem_univ _, ht⟩
-    have hUcomp (i : Fin 3) : u (x, t) i = Urep (x, t) i := congrFun hUx i
-    have hDcomp (i j : Fin 3) : Drep i j (x, t) = D i j (x, t) := hDx i j
-    have hUextAt (i : Fin 3) : Uext i (x, t) = u (x, t) i := by
-      change S.piecewise (U i) 0 (x, t) = u (x, t) i
-      rw [Set.piecewise_eq_of_mem S (U i) 0 hxS]
-    have hDextAt (i j : Fin 3) : Dext i j (x, t) = D i j (x, t) := by
-      change S.piecewise (D i j) 0 (x, t) = D i j (x, t)
-      rw [Set.piecewise_eq_of_mem S (D i j) 0 hxS]
-    have hJextAt (j : Fin 3) : Jext j (x, t) =
-        regUniformMollifiedVelocity ρ ε hε u (x, t) j := by
-      change S.piecewise
-        (fun z => regUniformMollifiedVelocity ρ ε hε u z j) 0 (x, t) = _
-      rw [Set.piecewise_eq_of_mem S
-        (fun z => regUniformMollifiedVelocity ρ ε hε u z j) 0 hxS]
-    have hPextAt : Pext (x, t) = P (x, t) := by
-      change S.piecewise P 0 (x, t) = P (x, t)
-      rw [Set.piecewise_eq_of_mem S P 0 hxS]
-    have hDforced (i j : Fin 3) :
-        forcedMollifiedGrad (forcedRegRep ρ ε hε ha hf) (x, t) i j = D i j (x, t) := by
-      simpa [Drep, Urep] using hDx i j
-    have hTxForced (i j : Fin 3) :
-        regUniformMollifiedVelocity ρ ε hε u (x, t) j * u (x, t) i =
-          regUniformMollifiedVelocity ρ ε hε (forcedRegRep ρ ε hε ha hf) (x, t) j *
-            forcedRegRep ρ ε hε ha hf (x, t) i := by
-      simpa [Urep] using hTx i j
-    simp only [Q, hUextAt, hDextAt, hJextAt, hPextAt,
-      forcedMomentumIntegrand, f, hPx, hDforced, hφProdEq, stDiv,
-      Pi.zero_apply, zero_mul]
-    simp_rw [hTxForced]
-    simp only [hUcomp, Urep]
-    ring
-  have hEqSet : MeasurableSet
-      {z : Vec3 × ℝ | Q z = forcedMomentumIntegrand ρ ε hε ha f hf φProd z} :=
-    measurableSet_eq_fun hQmeas hForcedMeas
-  have hQae : Q =ᵐ[(volume : Measure (Vec3 × ℝ)).restrict S]
-      forcedMomentumIntegrand ρ ε hε ha f hf φProd := by
-    change Q =ᵐ[(volume : Measure ParabolicPoint).restrict
-      (spaceTimeSet (Set.univ : Set Vec3) (Set.Ioo 0 T))]
-      forcedMomentumIntegrand ρ ε hε ha f hf φProd
-    rw [restrict_spaceTimeSet_eq_prod (Set.Ioo 0 T)]
-    exact (Measure.ae_prod_iff_ae_ae hEqSet).2
-      ((Measure.ae_ae_comm hEqSet).2 htime)
-  have hForcedIoi := integral_forcedMomentumIntegrand_eq_zero
-    ρ ε hε ha hf hφProd.1 hφProd.2.1 (by
-      intro z hz
-      exact ⟨Set.mem_univ _, (hφProd.2.2 hz).2.1⟩)
-  have hForcedS : ∫ z in S, forcedMomentumIntegrand ρ ε hε ha f hf φProd z = 0 := by
-    have hsetIoi : ∫ z in spaceTimeSet (Set.univ : Set Vec3) (Set.Ioi 0),
-        forcedMomentumIntegrand ρ ε hε ha f hf φProd z =
-        ∫ z : ParabolicPoint, forcedMomentumIntegrand ρ ε hε ha f hf φProd z :=
-      setIntegral_eq_integral_of_forall_compl_eq_zero fun z hz =>
-        forcedMomentumIntegrand_eq_zero ρ ε hε ha f hf (φ := φProd) (z := z)
-          (fun h => hz ⟨Set.mem_univ _, (hφProd.2.2 h).2.1⟩)
-    have hsetS : ∫ z in S, forcedMomentumIntegrand ρ ε hε ha f hf φProd z =
-        ∫ z : ParabolicPoint, forcedMomentumIntegrand ρ ε hε ha f hf φProd z :=
-      setIntegral_eq_integral_of_forall_compl_eq_zero fun z hz =>
-        forcedMomentumIntegrand_eq_zero ρ ε hε ha f hf (φ := φProd) (z := z)
-          (fun h => hz (hφProd.2.2 h))
-    calc
-      ∫ z in S, forcedMomentumIntegrand ρ ε hε ha f hf φProd z =
-          ∫ z : ParabolicPoint, forcedMomentumIntegrand ρ ε hε ha f hf φProd z := hsetS
-      _ = ∫ z in spaceTimeSet (Set.univ : Set Vec3) (Set.Ioi 0),
-          forcedMomentumIntegrand ρ ε hε ha f hf φProd z := hsetIoi.symm
-      _ = 0 := hForcedIoi
+  have hForcedMeas := regularisedR12_forcedMomentumIntegrand_measurable
+    ρ ε hε a ha T φProd hφProd
+  have htime := regularisedR12_momentum_time_ae
+    ρ ε hε a ha u T hT hSlice hL2Continuous hMild hUspatial
+    S (by rfl) Urep Drep U D P Uext Dext Jext Pext Q φProd φ hφProdEq
+    (by rfl) (by intro i j; rfl) (by intro i; rfl) (by intro i j; rfl)
+    (by rfl) (by intro i; rfl) (by intro i j; rfl) (by intro j; rfl)
+    (by rfl) (by rfl)
+  have hQae := regularisedR12_spaceTime_ae_of_slice_ae T S (by rfl) Q
+    (forcedMomentumIntegrand ρ ε hε ha f hf φProd) hQmeas hForcedMeas htime
+  have hForcedS := regularisedR12_forcedMomentum_integral_eq_zero
+    ρ ε hε a ha f hf T φProd hφProd
   have hQzero : ∫ z in S, Q z = 0 := by
     rw [integral_congr_ae hQae]
     exact hForcedS
