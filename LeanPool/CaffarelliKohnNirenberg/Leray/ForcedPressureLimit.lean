@@ -354,9 +354,7 @@ theorem forcedPressureLimit_of_regularised_pressure_data
     ∀ (a : Vec3 → Vec3) (ha : IsInJ a)
       (f : ParabolicPoint → Vec3) (hf : IsLocallySquareIntegrableForce f)
       (εseq : ℕ → ℝ) (hseq : ∀ n, 0 < εseq n ∧ εseq n ≤ 1)
-      (hεseq : Tendsto εseq atTop (nhds 0))
       (σ : ℕ → ℕ) (u : ParabolicPoint → Vec3)
-      (hσ : StrictMono σ) (hσtop : Tendsto σ atTop atTop)
       (hεsubseq : Tendsto (fun n => εseq (σ n)) atTop (nhds 0))
       (hUseqLthree : ∀ T : ℝ, 0 < T →
         Tendsto (fun n => eLpNorm
@@ -389,7 +387,7 @@ theorem forcedPressureLimit_of_regularised_pressure_data
               lerayProductPressureOnSlab T uST uST hu hu ∧
             Tendsto (fun n => eLpNorm (pseq n - pST)
               (ENNReal.ofReal (3 / 2 : ℝ)) μ) atTop (nhds 0) := by
-  intro a ha f hf εseq hseq hεseq σ u hσ hσtop hεsubseq hUseqLthree hJseqLthree
+  intro a ha f hf εseq hseq σ u hεsubseq hUseqLthree hJseqLthree
   let εsub : ℕ → ℝ := fun n => εseq (σ n)
   have hseqSub : ∀ n, 0 < εsub n ∧ εsub n ≤ 1 := fun n => hseq (σ n)
   rcases hlerayLimit a ha f hf εsub hseqSub hεsubseq with

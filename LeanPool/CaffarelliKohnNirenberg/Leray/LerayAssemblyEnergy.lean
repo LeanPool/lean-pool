@@ -203,7 +203,7 @@ private instance : ENNReal.HolderTriple (3 / 2 : ℝ≥0∞) 3 1 := by
     ⟨by norm_num, by norm_num, by norm_num⟩
   simpa [CKN.ofReal_threeHalves] using hreal.ennrealOfReal
 
-/-- An L³ᐟ² field times an L³ field can be paired with a bounded energy
+/-- An L^{3/2} field times an L³ field can be paired with a bounded energy
 test derivative. -/
 theorem lerayAssembly_flux_integrable
     {μ : Measure ParabolicPoint}
@@ -222,7 +222,7 @@ theorem lerayAssembly_flux_integrable
 /-- Strong L³ convergence of velocity and mollified transport velocity
 passes the regularized cubic energy flux to its limit. -/
 theorem lerayAssembly_cubicTerm_tendsto
-    (μ : Measure ParabolicPoint) [IsFiniteMeasure μ]
+    (μ : Measure ParabolicPoint)
     (U J : ℕ → ParabolicPoint → Vec3) (u : ParabolicPoint → Vec3)
     (hU : ∀ n, MemLp (U n) 3 μ) (hJ : ∀ n, MemLp (J n) 3 μ)
     (hu : MemLp u 3 μ)
@@ -316,7 +316,7 @@ theorem lerayAssembly_cubicTerm_tendsto
 /-- Strong local pressure and velocity convergence passes the pressure
 energy flux to its limit. -/
 theorem lerayAssembly_pressureFlux_tendsto
-    (μ : Measure ParabolicPoint) [IsFiniteMeasure μ]
+    (μ : Measure ParabolicPoint)
     (P : ℕ → ParabolicPoint → ℝ) (p : ParabolicPoint → ℝ)
     (U : ℕ → ParabolicPoint → Vec3) (u : ParabolicPoint → Vec3)
     (hP : ∀ n, MemLp (P n) (3 / 2 : ℝ≥0∞) μ)

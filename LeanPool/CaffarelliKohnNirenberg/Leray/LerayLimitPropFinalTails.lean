@@ -31,7 +31,7 @@ noncomputable section
 
 namespace CKN.Leray
 
-/-- The compact pieces `{R + 1/(k+1) ≤ |x|} ∩ B̄_k` exhausting the Euclidean
+/-- The compact pieces `{R + 1/(k+1) ≤ |x|} ∩ closedBall(0,k)` exhausting the Euclidean
 exterior `{R < |x|}`. -/
 @[expose]
 def lerayLimitFinalExteriorPiece (R : ℝ) (k : ℕ) : Set Vec3 :=
@@ -90,7 +90,7 @@ theorem lerayLimit_exterior_lintegral_le_of_local_weak
         tendsto_natCast_atTop_atTop.eventually_ge_atTop _
       filter_upwards [h1, h2] with k hk1 hk2
       refine ⟨?_, ?_⟩
-      · show R + ((k : ℝ) + 1)⁻¹ ≤ vec3EuclideanNorm x
+      · change R + ((k : ℝ) + 1)⁻¹ ≤ vec3EuclideanNorm x
         linarith only [hk1]
       · rw [Metric.mem_closedBall, dist_zero_right]
         exact hk2

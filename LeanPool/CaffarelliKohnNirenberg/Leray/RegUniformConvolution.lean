@@ -27,6 +27,8 @@ noncomputable section
 
 namespace CKN.Leray
 
+/-- The regularized radial profile written as a function on native three-dimensional
+coordinates. -/
 @[expose]
 def regUniformProfileOnVec3 (ρ : RegMollifierProfile)
     (ε : ℝ) (hε : 0 < ε) : Vec3 → ℝ :=
@@ -38,6 +40,7 @@ coordinates. -/
 def regUniformL2VectorNormOnVec3 (f : L2Vec3 → L2Vec3) : Vec3 → ℝ :=
   fun x => ‖f (WithLp.toLp 2 x)‖
 
+/-- The coordinate-space norm profile used to dominate the regularized convolution uniformly. -/
 @[expose]
 def regUniformConvolutionMajor (f : L2Vec3 → L2Vec3)
     (ρ : RegMollifierProfile) (ε : ℝ) (hε : 0 < ε) : L2Vec3 → ℝ :=

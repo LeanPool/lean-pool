@@ -29,11 +29,13 @@ noncomputable section
 
 namespace CKN.Leray
 
+/-- The derivative of a source field in the `i`th standard spatial direction. -/
 @[expose]
 def regularisedSourceDirectionalDerivative (i : Fin 3)
     (g : Vec3 → Vec3) : Vec3 → Vec3 := fun x =>
   fderiv ℝ g x (CKN.basisVec i)
 
+/-- The componentwise spatial Laplacian of a regularized source vector field. -/
 @[expose]
 def regularisedSourceVectorLaplacian
     (g : Vec3 → Vec3) : Vec3 → Vec3 := fun x =>
@@ -41,6 +43,7 @@ def regularisedSourceVectorLaplacian
     regularisedSourceDirectionalDerivative i
       (regularisedSourceDirectionalDerivative i g) x
 
+/-- The pullback of a complex-valued field along the regularized source coordinate map. -/
 @[expose]
 def regularisedComplexPullback (g : Vec3 → Vec3) :
     L2Vec3 → ComplexVec3 := fun x =>

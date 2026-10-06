@@ -42,8 +42,7 @@ theorem lintegral_vec3_ball_average_error_le_of_field_energy
     (henergy :
       (∫⁻ t in J, ∫⁻ x in U,
         ENNReal.ofReal (CKN.spatialGradientSq u Du (x, t)) ∂volume) < ∞)
-    (hball : CKN.euclideanBall x₀ r ⊆ U)
-    [IsFiniteMeasure (volume.restrict (CKN.euclideanBall x₀ r))] :
+    (hball : CKN.euclideanBall x₀ r ⊆ U) :
     (∫⁻ t in J, ∫⁻ x in CKN.euclideanBall x₀ r,
       ENNReal.ofReal (vec3EuclideanNorm
         (u (x, t) - (fun i => average

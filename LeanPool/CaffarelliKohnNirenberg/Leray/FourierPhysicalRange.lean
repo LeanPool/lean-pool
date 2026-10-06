@@ -29,6 +29,8 @@ noncomputable section
 
 namespace CKN.Leray
 
+/-- The canonical continuous linear equivalence between coordinate triples and the Hilbert `L²`
+vector. -/
 @[expose]
 def l2Vec3Equiv : L2Vec3 ≃L[ℝ] Vec3 :=
   PiLp.continuousLinearEquiv 2 ℝ (fun _ : Fin 3 => ℝ)
@@ -38,6 +40,7 @@ def l2Vec3Equiv : L2Vec3 ≃L[ℝ] Vec3 :=
 def realVectorL2Representative (f : RealVectorL2) : Vec3 → Vec3 :=
   fun x => l2Vec3Equiv (f (WithLp.toLp 2 x))
 
+/-- The Hilbert-space representative of the `i`th standard basis vector. -/
 @[expose]
 def l2BasisVec (i : Fin 3) : L2Vec3 :=
   WithLp.toLp 2 (CKN.basisVec i)
@@ -45,6 +48,8 @@ def l2BasisVec (i : Fin 3) : L2Vec3 :=
 private theorem l2BasisVec_norm (i : Fin 3) : ‖l2BasisVec i‖ = 1 := by
   simp [l2BasisVec, CKN.basisVec]
 
+/-- The complex-linear gradient vector associated to a continuous linear covector on Hilbert
+vectors. -/
 @[expose]
 def gradientOfCovectorLinear :
     (L2Vec3 →L[ℝ] ℂ) →ₗ[ℂ] ComplexVec3 where
@@ -78,6 +83,7 @@ theorem gradientOfCovectorLinear_norm_bound (D : L2Vec3 →L[ℝ] ℂ) :
   have htarget : 0 ≤ 2 * ‖D‖ := by positivity
   nlinarith only [hsq, hnonneg, htarget]
 
+/-- The bounded gradient vector associated to a continuous linear covector. -/
 @[expose]
 def gradientOfCovector :
     (L2Vec3 →L[ℝ] ℂ) →L[ℂ] ComplexVec3 :=
@@ -110,22 +116,27 @@ private theorem inner_l2BasisVec (ξ : L2Vec3) (i : Fin 3) :
   rw [PiLp.inner_apply]
   simp [l2BasisVec, CKN.basisVec]
 
+/-- The Schwartz representative of a compactly supported smooth weak test function. -/
 @[expose]
 def weakTestSourceSchwartz
     (ψ : WeakTestFunction (Set.univ : Set Vec3)) : SchwartzMap Vec3 ℝ :=
   ψ.hasCompactSupport.toSchwartzMap ψ.contDiff
 
+/-- The Schwartz-map encoding of a scalar weak test function. -/
 @[expose]
 def weakTestSchwartz {ψ : WeakTestFunction (Set.univ : Set Vec3)} :
     SchwartzMap L2Vec3 ℝ :=
   SchwartzMap.compCLMOfContinuousLinearEquiv ℝ l2Vec3Equiv
     (weakTestSourceSchwartz ψ)
 
+/-- The complex-valued Schwartz encoding of a scalar weak test function on the Hilbert
+coordinates. -/
 @[expose]
 def weakTestComplexSchwartz {ψ : WeakTestFunction (Set.univ : Set Vec3)} :
     SchwartzMap L2Vec3 ℂ :=
   (weakTestSchwartz (ψ := ψ)).postcompCLM Complex.ofRealCLM
 
+/-- The Schwartz encoding of the gradient of a weak test function. -/
 @[expose]
 def weakTestGradientSchwartz
     (ψ : WeakTestFunction (Set.univ : Set Vec3)) :

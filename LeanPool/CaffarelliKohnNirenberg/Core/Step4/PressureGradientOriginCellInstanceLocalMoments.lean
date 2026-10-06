@@ -58,7 +58,8 @@ theorem origin_velocity_cube_locallyIntegrableOn_of_sws
         nlinarith only [sq_pos_of_pos hε]
       exact htime.trans_lt hlt
   refine ⟨parabolicCylinder z.1 (z.2 + R ^ 2) (2 * R),
-    mem_nhdsWithin_of_mem_nhds ?_, tsai_integrable_velocity_cube_on_cylinder (z := (z.1, z.2 + R ^ 2)) hsol h2R hsub⟩
+    mem_nhdsWithin_of_mem_nhds ?_,
+    tsai_integrable_velocity_cube_on_cylinder (z := (z.1, z.2 + R ^ 2)) hsol h2R hsub⟩
   apply mem_interior_iff_mem_nhds.mp
   rw [interior_parabolicCylinder]
   refine ⟨?_, ?_, ?_⟩
@@ -80,7 +81,8 @@ theorem origin_velocity_cube_integrable_on_local_box
   have hsub : parabolicHomeomorph ⁻¹' (closure B ×ˢ closure J) ⊆ spaceTimeSet Ω I := by
     intro w hw
     exact ⟨hbox.2.2.1 hw.1, hbox.2.2.2.2.2 hw.2⟩
-  have hh := (origin_velocity_cube_locallyIntegrableOn_of_sws hsol).integrableOn_compact_subset hsub hcompact
+  have hh := (origin_velocity_cube_locallyIntegrableOn_of_sws hsol).integrableOn_compact_subset
+    hsub hcompact
   exact hh.mono_set (fun w hw => ⟨subset_closure hw.1, subset_closure hw.2⟩)
 
 end CKN.Core.Step4

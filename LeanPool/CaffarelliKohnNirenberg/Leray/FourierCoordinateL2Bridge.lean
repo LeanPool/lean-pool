@@ -25,14 +25,18 @@ noncomputable section
 
 namespace CKN.Leray
 
+/-- The continuous linear map that realizes coordinate vectors in the Hilbert `L²` model. -/
 @[expose]
 def coordinateToHilbertValueBridge : Vec3 →L[ℝ] L2Vec3 :=
   (PiLp.continuousLinearEquiv 2 ℝ (fun _ : Fin 3 => ℝ)).symm.toContinuousLinearMap
 
+/-- The continuous linear map that reads a Hilbert `L²` vector in coordinates. -/
 @[expose]
 def hilbertToCoordinateValue : L2Vec3 →L[ℝ] Vec3 :=
   PiLp.continuousLinearEquiv 2 ℝ (fun _ : Fin 3 => ℝ) |>.toContinuousLinearMap
 
+/-- The measure-preserving transfer from coordinate-valued `L²` functions to real Hilbert-valued
+`L²` functions. -/
 @[expose]
 def coordinateL2Transfer :
     Lp (α := Vec3) Vec3 2 volume →L[ℝ] RealVectorL2 :=

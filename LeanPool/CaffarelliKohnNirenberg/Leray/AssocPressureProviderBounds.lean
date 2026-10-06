@@ -46,12 +46,14 @@ private theorem associatedPressureTimePartialProd_eq_zero_of_timeSupport
   rw [CKN.timePartial_eq_product_fderiv hdiff, hfd.fderiv]
   simp
 
+/-- Decay coefficient for the potential gradient after multiplying by a spatial cutoff. -/
 @[expose]
 def associatedPressurePotentialDirectionCutoffCoefficient
     {ψ : Vec3 × ℝ → ℝ} (hdecay : RieszPressurePotentialDecay ψ) : ℝ :=
   Classical.choose hdecay.gradient_bound +
     CKN.cutoffGradientConstant * Classical.choose hdecay.value_bound
 
+/-- Decay coefficient for the potential Hessian after multiplying by a spatial cutoff. -/
 @[expose]
 def associatedPressurePotentialHessianCutoffCoefficient
     {ψ : Vec3 × ℝ → ℝ} (hdecay : RieszPressurePotentialDecay ψ) : ℝ :=

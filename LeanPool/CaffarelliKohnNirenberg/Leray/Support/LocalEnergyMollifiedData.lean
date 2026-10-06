@@ -29,7 +29,7 @@ namespace CKN
 /-- Transfer a space-time MemLp bound from the parabolic coordinate carrier to the product
 coordinate carrier. -/
 theorem localEnergy_memLp_parabolic_to_product
-    {E : Type} [NormedAddCommGroup E] [NormedSpace ℝ E]
+    {E : Type} [NormedAddCommGroup E]
     {f : ParabolicPoint → E} {p : ℝ≥0∞}
     (hf : MemLp f p
       (volume.restrict

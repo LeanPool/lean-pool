@@ -202,6 +202,7 @@ def scalarVectorActionLinear : ℝ →ₗ[ℝ] L2Vec3 →ₗ[ℝ] L2Vec3 :=
     (by intro c x y; exact smul_add c x y)
     (by intro c d x; exact (smul_comm c d x).symm)
 
+/-- The continuous scalar multiplication map on Hilbert vectors used by convolution. -/
 @[expose]
 def scalarVectorAction : ℝ →L[ℝ] L2Vec3 →L[ℝ] L2Vec3 :=
   scalarVectorActionLinear.mkContinuous₂ 1 (by

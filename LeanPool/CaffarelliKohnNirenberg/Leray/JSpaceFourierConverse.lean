@@ -23,6 +23,7 @@ noncomputable section
 
 namespace CKN
 
+/-- The regularized positive-frequency derivative multiplier used in the Fourier approximation. -/
 @[expose]
 def regularizedPositiveDerivativeSymbol (δ : ℝ) (k j : Fin 3) :
     L2Vec3 → ℂ :=
@@ -444,10 +445,12 @@ private theorem regularizedPotentialCurlComponentLp_distribution_identity
 @[expose]
 def regularizationScale (n : ℕ) : ℝ := 1 / ((n + 1 : ℕ) : ℝ)
 
+/-- The complex Fourier multiplier associated with the regularized frequency weight. -/
 @[expose]
 def regularizedWeightMultiplier (δ : ℝ) : L2Vec3 → ℂ :=
   fun ξ => Complex.ofReal (regularizedFrequencyWeight δ ξ)
 
+/-- The Fourier multiplier representing the regularized curl operation. -/
 @[expose]
 def regularizedCurlMultiplier (δ : ℝ) : L2Vec3 → ℂ :=
   fun ξ => Complex.ofReal (1 - regularizedFrequencyWeight δ ξ)

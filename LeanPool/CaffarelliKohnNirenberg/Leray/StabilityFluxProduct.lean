@@ -27,7 +27,7 @@ private instance : ENNReal.HolderTriple (3 / 2 : ℝ≥0∞) 3 1 := by
   simpa [CKN.ofReal_threeHalves] using
     hreal.ennrealOfReal
 
-/-- Strong local convergence of an `L³ᐟ²` field and an `L³` field passes
+/-- Strong local convergence of an `L^{3/2}` field and an `L³` field passes
 their product against a bounded scalar test to the integral limit. -/
 theorem stability_flux_product_tendsto
     {α : Type*} [MeasurableSpace α] {μ : Measure α}

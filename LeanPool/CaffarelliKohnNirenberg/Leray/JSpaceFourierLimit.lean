@@ -104,17 +104,20 @@ private theorem regularizedPotentialCurl_coord_error_tendsto
   exact tendsto_of_tendsto_of_tendsto_of_le_of_le' tendsto_const_nhds hcomplex
     hnonneg (Filter.Eventually.of_forall hbound)
 
+/-- The sequence of regularized curls used to approximate a weakly divergence-free field. -/
 @[expose]
 def regularizedPotentialCurlSequence {a : Vec3 → Vec3}
     (ha : IsWeakDivFreeL2 a) : ℕ → Vec3 → Vec3 :=
   fun n => regularizedPotentialCurl ha.1 (regularizationScale n)
     (regularizationScale_pos n)
 
+/-- The coordinatewise error between the regularized potential curl and the target field. -/
 @[expose]
 def regularizedPotentialCurlCoordError {a : Vec3 → Vec3}
     (ha : IsWeakDivFreeL2 a) (n : ℕ) (i : Fin 3) : Vec3 → ℝ :=
   fun x => regularizedPotentialCurlSequence ha n x i - a x i
 
+/-- The scalar pointwise majorant for a coordinate error in the regularized curl approximation. -/
 @[expose]
 def regularizedPotentialCurlErrorMajor {a : Vec3 → Vec3}
     (ha : IsWeakDivFreeL2 a) (n : ℕ) : Vec3 → ℝ :=

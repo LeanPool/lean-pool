@@ -26,6 +26,8 @@ noncomputable section
 
 namespace CKN.Leray
 
+/-- The space-time tensor component restricted to the time interval `(0,1)` and extended by zero
+elsewhere. -/
 @[expose]
 def rieszPressurePackageTimeTensor
     (F : Fin 3 → Fin 3 → Vec3 → ℝ) (i j : Fin 3) (z : Vec3 × ℝ) : ℝ :=

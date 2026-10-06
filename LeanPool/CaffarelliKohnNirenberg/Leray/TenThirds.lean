@@ -72,8 +72,8 @@ private theorem enorm_apply_le (v : Vec3) (i : Fin 3) :
   exact ENNReal.ofReal_le_ofReal (norm_le_pi_norm v i)
 
 private theorem eLpNorm_two_sq_eq_lintegral
-    {α E : Type} [MeasurableSpace α] [MeasurableSpace E]
-    [NormedAddCommGroup E] [BorelSpace E] {μ : Measure α} {f : α → E}
+    {α E : Type} [MeasurableSpace α]
+    [NormedAddCommGroup E] {μ : Measure α} {f : α → E}
     (hf : AEStronglyMeasurable f μ) :
     eLpNorm f (2 : ℝ≥0∞) μ ^ (2 : ℝ) =
       ∫⁻ x, ‖f x‖ₑ ^ (2 : ℝ) ∂μ := by
@@ -85,7 +85,7 @@ private theorem eLpNorm_two_sq_eq_lintegral
 
 private theorem eLpNorm_tenThirds_pow_eq_lintegral
     {α E : Type} [MeasurableSpace α] [NormedAddCommGroup E]
-    [MeasurableSpace E] [BorelSpace E] {μ : Measure α} {f : α → E}
+    {μ : Measure α} {f : α → E}
     (hf : AEStronglyMeasurable f μ) :
     eLpNorm f (ENNReal.ofReal (10 / 3 : ℝ)) μ ^ (10 / 3 : ℝ) =
       ∫⁻ x, ‖f x‖ₑ ^ (10 / 3 : ℝ) ∂μ := by
@@ -107,6 +107,7 @@ private theorem memLp_ofReal_of_lintegral_lt_top
     ENNReal.toReal_ofReal hp.le]
   exact ENNReal.rpow_lt_top_of_nonneg (by positivity) hlt.ne
 
+/-- The Sobolev constant chosen from the ball-time interpolation estimate. -/
 @[expose]
 noncomputable def energyInterpolationSobolevConstant : ℝ :=
   Classical.choose CKN.ball_time_sobolev
@@ -137,7 +138,7 @@ private theorem spatialGradientSq_enorm_le
         apply Finset.sum_le_sum
         intro j _
         rw [← sq_abs]
-        exact pow_le_pow_left₀ (abs_nonneg _) 
+        exact pow_le_pow_left₀ (abs_nonneg _)
           ((norm_le_pi_norm (Du z i) j).trans (norm_le_pi_norm (Du z) i)) 2
       _ = 9 * ‖Du z‖ ^ (2 : ℕ) := by
         simp only [Finset.sum_const, Finset.card_univ, Fintype.card_fin, nsmul_eq_mul]
@@ -151,6 +152,7 @@ private theorem spatialGradientSq_enorm_le
         ENNReal.ofReal_pow (norm_nonneg _), ofReal_norm]
       norm_num [ENNReal.rpow_natCast]
 
+/-- The constant in the ball-time Sobolev interpolation estimate. -/
 @[expose]
 noncomputable def ballTimeSobolevConstant : ℝ :=
   energyInterpolationSobolevConstant
@@ -158,6 +160,7 @@ noncomputable def ballTimeSobolevConstant : ℝ :=
 private theorem ballTimeSobolevConstant_pos : 0 < ballTimeSobolevConstant :=
   (Classical.choose_spec CKN.ball_time_sobolev).1
 
+/-- The global energy interpolation constant for the `L^{10/3}` bound. -/
 @[expose]
 noncomputable def energyTenThirdsConstant : ℝ≥0∞ :=
   ENNReal.ofReal ((3 : ℝ) ^ (2 / 3 : ℝ)) * 3 *
@@ -773,7 +776,7 @@ theorem lerayHopf_memLp_tenThirds
       ‖u z‖ₑ ^ (10 / 3 : ℝ) = ENNReal.ofReal (‖u z‖ ^ (10 / 3 : ℝ)) := by
         rw [← ofReal_norm, ENNReal.ofReal_rpow_of_nonneg (norm_nonneg _) (by norm_num)]
       _ ≤ ENNReal.ofReal (vec3EuclideanNorm (u z) ^ (10 / 3 : ℝ)) :=
-        ENNReal.ofReal_le_ofReal (Real.rpow_le_rpow (norm_nonneg _) 
+        ENNReal.ofReal_le_ofReal (Real.rpow_le_rpow (norm_nonneg _)
           (CKN.Foundation.Parabolic.norm_le_vec3EuclideanNorm (u z)) (by norm_num))
       _ = ENNReal.ofReal (vec3EuclideanNorm (u z)) ^ (10 / 3 : ℝ) :=
         (ENNReal.ofReal_rpow_of_nonneg (vec3EuclideanNorm_nonneg _)

@@ -34,9 +34,11 @@ noncomputable section
 
 namespace CKN.Leray
 
+/-- The product topology on parabolic space-time points used in this weak identity. -/
 abbrev regularisedR12FinalWeakParabolicTopology :
     TopologicalSpace ParabolicPoint := inferInstance
 
+/-- The spatial regularization kernel in the physical Euclidean coordinates. -/
 @[expose]
 def regularisedR12TimePhysicalKernel
     (ρ : RegMollifierProfile) (ε : ℝ) (hε : 0 < ε) : Vec3 → ℝ :=

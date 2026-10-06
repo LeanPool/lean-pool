@@ -83,7 +83,7 @@ theorem setIntegral_parabolic_to_product
 locally integrable. -/
 theorem locallyIntegrableOn_pi_eval
     {X ι E : Type*} [TopologicalSpace X] [MeasurableSpace X]
-    [Fintype ι] [NormedAddCommGroup E] [NormedSpace ℝ E]
+    [Fintype ι] [NormedAddCommGroup E]
     {s : Set X} {f : X → ι → E} {μ : Measure X}
     (hf : LocallyIntegrableOn f s μ) (i : ι) :
     LocallyIntegrableOn (fun x => f x i) s μ := by

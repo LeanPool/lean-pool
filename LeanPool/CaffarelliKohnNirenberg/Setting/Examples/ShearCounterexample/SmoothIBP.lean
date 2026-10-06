@@ -37,8 +37,8 @@ private theorem hasCompactSupport_fderiv_apply
 
 theorem integral_mul_fderiv_eq_neg_fderiv_mul_of_contDiff_compact_right
     {E : Type} [NormedAddCommGroup E] [NormedSpace ℝ E] [MeasurableSpace E]
-    [BorelSpace E] [OpensMeasurableSpace E] [SecondCountableTopology E]
-    [LocallyCompactSpace E] [ProperSpace E] [T2Space E] [FiniteDimensional ℝ E]
+    [BorelSpace E] [OpensMeasurableSpace E]
+       [FiniteDimensional ℝ E]
     {μ : Measure E} [IsAddHaarMeasure μ]
     {f g : E → ℝ} {v : E}
     (hf : ContDiff ℝ (⊤ : ℕ∞) f) (hg : ContDiff ℝ (⊤ : ℕ∞) g)

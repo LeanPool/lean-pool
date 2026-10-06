@@ -105,13 +105,11 @@ private theorem eLpNorm_two_rpow_eq_lintegral
 /-- The space-time squared-integral error controls distance in `L²`. -/
 theorem l2_distance_le_of_lintegral_sq_le
     {α E : Type*} [MeasurableSpace α] [NormedAddCommGroup E]
-    [MeasurableSpace E]
-    [BorelSpace E] [SecondCountableTopology E]
     {μ : Measure α} {f g : α → E} {δ : ℝ}
     (hf : MemLp f 2 μ) (hg : MemLp g 2 μ) (hδ : 0 ≤ δ)
     (herror : ∫⁻ x, ‖f x - g x‖ₑ ^ (2 : ℝ) ∂μ ≤
       ENNReal.ofReal δ ^ (2 : ℕ)) :
-    dist (hf.toLp f) (hg.toLp g) ≤ δ := by
+    dist (hf.toLp f) (hg.toLp g) ≤ δ:= by
   have hfg : MemLp (f - g) 2 μ := hf.sub hg
   have hLpEq : hf.toLp f - hg.toLp g = hfg.toLp (f - g) :=
     (hf.toLp_sub hg).symm
@@ -141,12 +139,11 @@ theorem l2_distance_le_of_lintegral_sq_le
 `L²` on a finite-measure region. -/
 theorem tendsto_toLp_of_tendsto_lintegral_sq
     {α E : Type*} [MeasurableSpace α] [NormedAddCommGroup E]
-    [MeasurableSpace E] [BorelSpace E] [SecondCountableTopology E]
     {μ : Measure α} {f : ℕ → α → E} {g : α → E}
     (hf : ∀ n, MemLp (f n) 2 μ) (hg : MemLp g 2 μ)
     (herror : Tendsto
       (fun n => ∫⁻ x, ‖f n x - g x‖ₑ ^ (2 : ℝ) ∂μ) atTop (nhds 0)) :
-    Tendsto (fun n => (hf n).toLp (f n)) atTop (nhds (hg.toLp g)) := by
+    Tendsto (fun n => (hf n).toLp (f n)) atTop (nhds (hg.toLp g)):= by
   rw [Metric.tendsto_nhds]
   intro ε hε
   let δ : ℝ := ε / 2
@@ -190,9 +187,9 @@ theorem tendsto_toLp_of_tendsto_lintegral_sq
 /-- Uniformly accurate finite-rank approximations that converge at each fixed
 rank make the original `L²` sequence converge. -/
 theorem exists_strong_l2_limit_of_lintegral_approximations
-    {α E : Type*} [MeasurableSpace α] [MeasurableSpace E]
-    [NormedAddCommGroup E] [CompleteSpace E] [BorelSpace E]
-    [SecondCountableTopology E] {μ : Measure α} [IsFiniteMeasure μ]
+    {α E : Type*} [MeasurableSpace α]
+    [NormedAddCommGroup E] [CompleteSpace E]
+     {μ : Measure α}
     (f : ℕ → α → E) (hf : ∀ n, MemLp (f n) 2 μ)
     (P : ℕ → ℕ → α → E) (hPmem : ∀ m n, MemLp (P m n) 2 μ)
     (hP : ∀ m, ∃ g : Lp E 2 μ,
@@ -201,7 +198,7 @@ theorem exists_strong_l2_limit_of_lintegral_approximations
       ∫⁻ x, ‖f n x - P m n x‖ₑ ^ (2 : ℝ) ∂μ ≤
         ENNReal.ofReal ε ^ (2 : ℕ)) :
     ∃ g : Lp E 2 μ,
-      Tendsto (fun n => (hf n).toLp (f n)) atTop (nhds g) := by
+      Tendsto (fun n => (hf n).toLp (f n)) atTop (nhds g):= by
   have hdist : ∀ ε : ℝ, 0 < ε → ∃ m, ∀ n,
       dist ((hf n).toLp (f n)) ((hPmem m n).toLp (P m n)) < ε := by
     intro ε hε

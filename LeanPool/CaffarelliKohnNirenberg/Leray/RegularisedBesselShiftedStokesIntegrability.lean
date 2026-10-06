@@ -49,6 +49,7 @@ local instance shiftedIntegrabilityVectorSecondCountable (k : ℕ) :
       (BesselPotentialSpace L2Vec3 ComplexVec3 ((2 * k : ℕ) : ℝ) 2) := by
   exact UniformSpace.secondCountable_of_separable _
 
+/-- The Borel measurable structure on the shifted vector Bessel-potential space. -/
 local instance shiftedIntegrabilityVectorMeasurableSpace (k : ℕ) :
     MeasurableSpace
       (BesselPotentialSpace L2Vec3 ComplexVec3 ((2 * k : ℕ) : ℝ) 2) :=

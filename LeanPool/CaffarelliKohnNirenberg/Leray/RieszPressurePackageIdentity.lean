@@ -25,6 +25,7 @@ noncomputable section
 
 namespace CKN.Leray
 
+/-- The raw `L^r` extension input for the `i,j` Riesz pressure component. -/
 @[expose]
 noncomputable def rieszPressureRawExtensionInput
     (r : ℝ) (hr : 1 < r) (i j : Fin 3) :

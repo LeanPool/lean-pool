@@ -38,12 +38,17 @@ open CKN CKN.Foundation.Parabolic
 
 local instance : Fact (1 ≤ (2 : ℝ≥0∞)) := ⟨by norm_num⟩
 
+/-- The tensor-valued Bessel-potential space of order four and exponent two used for the
+regularized pressure. -/
 abbrev RegR12TensorH4 :=
   BesselPotentialSpace L2Vec3 ComplexTensor3 ((2 * 2 : ℕ) : ℝ) 2
 
+/-- The scalar Bessel-potential space of order four and exponent two used for the regularized
+pressure. -/
 abbrev RegR12ScalarH4 :=
   BesselPotentialSpace L2Vec3 ℂ ((2 * 2 : ℕ) : ℝ) 2
 
+/-- The scalar `L²` space used in the regularized pressure construction. -/
 abbrev RegR12ScalarL2 := Lp (α := L2Vec3) ℂ 2
 
 theorem regR12PressureApplyFormula_add (ξ : L2Vec3)
@@ -181,6 +186,7 @@ private theorem regR12PressurePath_continuous
   exact regR12PressureBesselMap.continuous.comp
     (regularisedBesselClampedTensorPath_continuous ρ ε hε 2 T hT v)
 
+/-- The frequency-space pressure path produced by the regularized `R¹²` construction. -/
 @[expose]
 def regR12PressureFreqPath
     (ρ : RegMollifierProfile) (ε : ℝ) (hε : 0 < ε)
@@ -230,6 +236,7 @@ private theorem regR12PressureModel_continuous
     (regR12PressureFreqPath ρ ε hε T hT v)
     (regR12PressureFreqPath_continuous ρ ε hε T hT v)
 
+/-- The real-space continuous pressure curve obtained from the frequency-space path. -/
 @[expose]
 def regR12PressureRealCurvePath
     (ρ : RegMollifierProfile) (ε : ℝ) (hε : 0 < ε)
@@ -239,6 +246,7 @@ def regR12PressureRealCurvePath
     (regularizedGlobalMildCurve_continuous ρ ε hε _
       (regUniformMollifiedInitial_mildJData ρ ε hε ha)).comp continuous_subtype_val⟩
 
+/-- The tensor Bessel-potential symbol used to construct the regularized pressure path. -/
 @[expose]
 def regR12TensorBesselSymbol : L2Vec3 × ComplexTensor3 → ComplexTensor3 := fun p =>
   (((1 + ‖p.1‖ ^ 2) ^ (-((2 * 2 : ℕ) : ℝ) / 2) : ℝ) : ℂ) • p.2

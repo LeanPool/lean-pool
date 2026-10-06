@@ -29,7 +29,7 @@ namespace CKN.Leray
 
 private theorem regUniform_eLpNorm_two_sq_eq_lintegral
     {α E : Type} [MeasurableSpace α] [NormedAddCommGroup E]
-    [MeasurableSpace E] [BorelSpace E] {μ : Measure α} {f : α → E}
+    {μ : Measure α} {f : α → E}
     (hf : AEStronglyMeasurable f μ) :
     eLpNorm f (2 : ℝ≥0∞) μ ^ (2 : ℝ) =
       ∫⁻ x, ‖f x‖ₑ ^ (2 : ℝ) ∂μ := by
@@ -41,7 +41,7 @@ private theorem regUniform_eLpNorm_two_sq_eq_lintegral
 
 private theorem regUniform_memLp_of_lintegral_lt_top
     {α E : Type} [MeasurableSpace α] [NormedAddCommGroup E]
-    [MeasurableSpace E] [BorelSpace E] {μ : Measure α} {p : ℝ}
+    {μ : Measure α} {p : ℝ}
     (hp : 0 < p) {f : α → E} (hf : AEStronglyMeasurable f μ)
     (hlt : (∫⁻ x, ‖f x‖ₑ ^ p ∂μ) < ⊤) :
     MemLp f (ENNReal.ofReal p) μ := by

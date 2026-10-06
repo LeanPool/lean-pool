@@ -28,6 +28,7 @@ local instance : Measure.IsAddHaarMeasure (volume : Measure (Vec3 × ℝ)) := by
   rw [Measure.volume_eq_prod]
   exact Measure.prod.instIsAddHaarMeasure (volume : Measure Vec3) (volume : Measure ℝ)
 
+/-- The product topology on spatial points and time used for space-time calculus. -/
 local instance (priority := high) : TopologicalSpace ParabolicPoint := instTopologicalSpaceProd
 
 private theorem spatialPartial_eq_fderiv

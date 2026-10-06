@@ -199,6 +199,7 @@ private theorem associatedPressureTestCurlCurl_identity
     rw [hmix 0 0 2 z, hmix 1 1 2 z]
     ring
 
+/-- The componentwise spatial Laplacian of a vector-valued pressure test field. -/
 @[expose]
 def associatedPressureTestLaplacianComponent
     (φ : Vec3 × ℝ → Vec3) (i : Fin 3) : Vec3 × ℝ → ℝ := fun z =>

@@ -30,7 +30,7 @@ local instance stabilityHolderThreeThreeThreeHalves :
     hreal.ennrealOfReal
 
 /-- Products of two strongly `L³`-convergent scalar fields converge strongly
-in `L³ᐟ²`. -/
+in `L^{3/2}`. -/
 theorem stability_tendsto_eLpNorm_product_three
     {α : Type*} [MeasurableSpace α] {μ : Measure α}
     (F G : ℕ → α → ℝ) (f g : α → ℝ)

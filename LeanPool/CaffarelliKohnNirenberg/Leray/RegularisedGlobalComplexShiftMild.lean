@@ -47,7 +47,7 @@ theorem regularisedGlobalComplexShiftPath_linearMild
               (g (regularizedMildTimeClamp T hT (t.1 - τ))))
         else 0 := by
   dsimp only
-  let v := regularizedGlobalMildCurve_shiftPath ρ ε hε b₀ hbJ a T
+  let v := regularizedGlobalMildCurveShiftPath ρ ε hε b₀ hbJ a T
   let F := regularizedMildClampedTensorTrajectory ρ ε hε T hT v
   have hvbound : ∀ q, ‖v q‖ ≤ ‖b₀‖ := by
     intro q

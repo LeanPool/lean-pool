@@ -249,9 +249,11 @@ theorem timePartial_add_at
 
 section Local
 
+/-- The product normed additive group structure used for mixed spatial derivatives. -/
 local instance carlemanCoreMixedNormedAddCommGroup : NormedAddCommGroup ParabolicPoint :=
   carlemanProductNormedAddCommGroup
 
+/-- The real product normed-space structure used for mixed spatial derivatives. -/
 local instance carlemanCoreMixedNormedSpace : NormedSpace ℝ ParabolicPoint :=
   carlemanProductNormedSpace
 

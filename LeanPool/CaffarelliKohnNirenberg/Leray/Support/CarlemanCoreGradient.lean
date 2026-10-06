@@ -28,12 +28,15 @@ noncomputable section
 
 namespace CKN
 
+/-- The product measure structure on space-time for the gradient identities. -/
 local instance carlemanCoreGradientMeasureSpace : MeasureSpace ParabolicPoint :=
   Measure.prod.measureSpace
 
+/-- The product normed additive group structure used in the gradient identities. -/
 local instance carlemanCoreGradientNormedAddCommGroup : NormedAddCommGroup ParabolicPoint :=
   carlemanProductNormedAddCommGroup
 
+/-- The real product normed-space structure used in the gradient identities. -/
 local instance carlemanCoreGradientNormedSpace : NormedSpace ℝ ParabolicPoint :=
   carlemanProductNormedSpace
 

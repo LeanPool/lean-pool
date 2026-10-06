@@ -76,6 +76,20 @@ private theorem forcedLerayLimit_lintegral_sq_slab_le {U : ParabolicPoint → Ve
     _ ≤ ∫⁻ _τ in I, ENNReal.ofReal E := setLIntegral_mono' hI hsl
     _ = ENNReal.ofReal E * volume I := setLIntegral_const _ _
 
+/-- The kinetic-energy bound on time slices gives the local space-time
+coordinate estimate used for the compact test region. -/
+private theorem forcedLerayLimit_velocity_coordinate_sq_slab_le
+    {U : ParabolicPoint → Vec3} (hU : Measurable U)
+    (hSlice : ∀ τ : ℝ, MemLp (fun x : Vec3 => U (x, τ)) 2 volume)
+    {I : Set ℝ} (hI : MeasurableSet I) {E : ℝ} {x : ℝ≥0∞}
+    (hIvolume : volume I = x)
+    (hkin : ∀ τ ∈ I, ∑ j : Fin 3, ∫ x : Vec3, U (x, τ) j ^ 2 ≤ E) :
+    ∀ i, ∫⁻ z in spaceTimeSet (Set.univ : Set Vec3) I, ‖U z i‖ₑ ^ (2 : ℝ) ≤
+      ENNReal.ofReal E * x := by
+  intro i
+  rw [← hIvolume]
+  exact forcedLerayLimit_lintegral_sq_slab_le hU hI (fun τ _ => hSlice τ) hkin i
+
 /-- The pairing of a velocity with continuous `L²` slices against a fixed
 square-integrable field is continuous in time. -/
 private theorem forcedLerayLimit_pairing_continuousOn {U : ParabolicPoint → Vec3}
@@ -97,6 +111,586 @@ private theorem forcedLerayLimit_pairing_continuousOn {U : ParabolicPoint → Ve
       Finset.sum_congr rfl fun i _ => mul_comm _ _)
   rw [heq]
   exact hcont.inner continuous_const
+
+private theorem forcedLerayLimit_toReal_coefficient_le
+    {Cenn coefficient : ℝ≥0∞} {M0 M1 : ℝ}
+    (hM0nn : 0 ≤ M0) (hM1nn : 0 ≤ M1) (hfinite : coefficient ≠ ⊤)
+    (hbound : Cenn ≤ ENNReal.ofReal (M0 + M1) * coefficient) :
+    Cenn.toReal ≤ coefficient.toReal * (M0 + M1) := by
+  rw [mul_comm, ← ENNReal.toReal_ofReal (add_nonneg hM0nn hM1nn), ← ENNReal.toReal_mul]
+  exact ENNReal.toReal_mono (ENNReal.mul_ne_top ENNReal.ofReal_ne_top hfinite) hbound
+
+private theorem forcedLerayLimit_weighted_coefficient_le
+    {a1 a2 a3 a4 a5 : ℝ≥0∞} {M0 M1 : ℝ}
+    (hM0nn : 0 ≤ M0) (hM1nn : 0 ≤ M1) :
+    ENNReal.ofReal M1 * a1 + ENNReal.ofReal M1 * a2 + ENNReal.ofReal M0 * a3 +
+        ENNReal.ofReal (3 * M1) * a4 + ENNReal.ofReal (3 * M1) * a5 ≤
+      ENNReal.ofReal (M0 + M1) * (a1 + a2 + a3 + 3 * a4 + 3 * a5) := by
+  have h3 : ENNReal.ofReal (3 * M1) = 3 * ENNReal.ofReal M1 := by
+    rw [ENNReal.ofReal_mul (by norm_num)]
+    norm_num
+  have hsum : ENNReal.ofReal (M0 + M1) = ENNReal.ofReal M0 + ENNReal.ofReal M1 :=
+    ENNReal.ofReal_add hM0nn hM1nn
+  rw [h3, hsum]
+  calc ENNReal.ofReal M1 * a1 + ENNReal.ofReal M1 * a2 + ENNReal.ofReal M0 * a3 +
+        3 * ENNReal.ofReal M1 * a4 + 3 * ENNReal.ofReal M1 * a5
+      ≤ ENNReal.ofReal M1 * a1 + ENNReal.ofReal M1 * a2 + ENNReal.ofReal M0 * a3 +
+        3 * ENNReal.ofReal M1 * a4 + 3 * ENNReal.ofReal M1 * a5 +
+        (ENNReal.ofReal M0 * (a1 + a2 + 3 * a4 + 3 * a5) + ENNReal.ofReal M1 * a3) :=
+          le_self_add
+    _ = (ENNReal.ofReal M0 + ENNReal.ofReal M1) * (a1 + a2 + a3 + 3 * a4 + 3 * a5) := by
+      ring
+
+/-- Hölder's inequality on a finite slab controls the bounded-divergence
+pairing with the uniformly bounded quadratic-pressure remainder. -/
+private theorem forcedLerayLimit_pressure_remainder_lintegral_le
+    {S : Set ParabolicPoint} {PN div : ParabolicPoint → ℝ}
+    {MP5 vK y : ℝ≥0∞} {M1 : ℝ}
+    (hPNae : AEStronglyMeasurable PN (volume.restrict S))
+    (hnorm : eLpNorm PN (ENNReal.ofReal (5 / 3 : ℝ)) (volume.restrict S) ≤ MP5)
+    (hvol : volume S ^ (1 / (5 / 2 : ℝ)) = vK ^ (2 / 5 : ℝ) * y)
+    (hdiv : ∀ z, |div z| ≤ 3 * M1) :
+    ∫⁻ z in S, ‖PN z * div z‖ₑ ≤
+      ENNReal.ofReal (3 * M1) * (MP5 * vK ^ (2 / 5 : ℝ)) * y := by
+  have h53 : (5 / 3 : ℝ).HolderConjugate (5 / 2) := ⟨by norm_num, by norm_num, by norm_num⟩
+  have hhold := ENNReal.lintegral_mul_le_Lp_mul_Lq (volume.restrict S) h53
+    hPNae.aemeasurable.enorm (aemeasurable_const (b := (1 : ℝ≥0∞)))
+  simp only [Pi.mul_apply, mul_one, ENNReal.one_rpow, lintegral_const,
+    Measure.restrict_apply_univ, one_mul] at hhold
+  have h53ne : ENNReal.ofReal (5 / 3 : ℝ) ≠ 0 := by
+    rw [ne_eq, ENNReal.ofReal_eq_zero, not_le]
+    norm_num
+  have hnorm' : (∫⁻ z in S, ‖PN z‖ₑ ^ (5 / 3 : ℝ)) ^ (1 / (5 / 3 : ℝ)) ≤ MP5 := by
+    have he : (∫⁻ z in S, ‖PN z‖ₑ ^ (5 / 3 : ℝ)) ^ (1 / (5 / 3 : ℝ)) =
+        eLpNorm PN (ENNReal.ofReal (5 / 3 : ℝ)) (volume.restrict S) := by
+      rw [eLpNorm_eq_eLpNorm' h53ne ENNReal.ofReal_ne_top hPNae,
+        ENNReal.toReal_ofReal (by norm_num), eLpNorm'_eq_lintegral_enorm]
+    rw [he]
+    exact hnorm
+  have hpt : ∀ z, ‖PN z * div z‖ₑ ≤ ENNReal.ofReal (3 * M1) * ‖PN z‖ₑ := by
+    intro z
+    rw [enorm_mul, mul_comm]
+    refine mul_le_mul' ?_ le_rfl
+    rw [Real.enorm_eq_ofReal_abs]
+    exact ENNReal.ofReal_le_ofReal (hdiv z)
+  calc ∫⁻ z in S, ‖PN z * div z‖ₑ
+      ≤ ∫⁻ z in S, ENNReal.ofReal (3 * M1) * ‖PN z‖ₑ := lintegral_mono hpt
+    _ = ENNReal.ofReal (3 * M1) * ∫⁻ z in S, ‖PN z‖ₑ :=
+      lintegral_const_mul' _ _ ENNReal.ofReal_ne_top
+    _ ≤ ENNReal.ofReal (3 * M1) *
+        ((∫⁻ z in S, ‖PN z‖ₑ ^ (5 / 3 : ℝ)) ^ (1 / (5 / 3 : ℝ)) *
+          volume S ^ (1 / (5 / 2 : ℝ))) := mul_le_mul' le_rfl hhold
+    _ ≤ ENNReal.ofReal (3 * M1) * (MP5 * (vK ^ (2 / 5 : ℝ) * y)) := by
+      rw [hvol]
+      exact mul_le_mul' le_rfl (mul_le_mul' hnorm' le_rfl)
+    _ = _ := by ring
+
+/-- Turn a space-time flux estimate into the corresponding scalar time
+modulus after identifying its integral with the pairing increment. -/
+private theorem forcedLerayLimit_scalar_interval_modulus
+    {H : ParabolicPoint → ℝ} {g : ℝ → ℝ}
+    {S : Set ParabolicPoint} {s t : ℝ}
+    (hHS : Integrable H (volume.restrict S))
+    (hinc : g t - g s = ∫ z in S, H z) :
+    |g t - g s| ≤ (∫⁻ z in S, ‖H z‖ₑ).toReal := by
+  rw [hinc, ← Real.norm_eq_abs,
+    ← integral_norm_eq_lintegral_enorm hHS.aestronglyMeasurable]
+  exact norm_integral_le_integral_norm _
+
+/-- Local L² estimates for the mollified and unmollified velocities give the
+uniform convection contribution on a time slab. -/
+private theorem forcedLerayLimit_convection_coordinate_estimate
+    {S : Set ParabolicPoint} {J U : ParabolicPoint → Vec3} {i j : Fin 3}
+    {E : ℝ} {x c y : ℝ≥0∞}
+    (hJ : ∫⁻ z in S, ‖J z j‖ₑ ^ (2 : ℝ) ≤ 9 * ENNReal.ofReal E * x)
+    (hU : ∫⁻ z in S, ‖U z i‖ₑ ^ (2 : ℝ) ≤ ENNReal.ofReal E * x)
+    (hx : x ≤ c ^ ((1 : ℝ) - 2 / 5) * y) :
+    (∫⁻ z in S, ‖J z j‖ₑ ^ (2 : ℝ)) ^ (1 / 2 : ℝ) *
+      (∫⁻ z in S, ‖U z i‖ₑ ^ (2 : ℝ)) ^ (1 / 2 : ℝ) ≤
+      (9 * ENNReal.ofReal E) ^ (1 / 2 : ℝ) * ENNReal.ofReal E ^ (1 / 2 : ℝ) *
+        c ^ ((1 : ℝ) - 2 / 5) * y := by
+  calc _ ≤ (9 * ENNReal.ofReal E * x) ^ (1 / 2 : ℝ) *
+        (ENNReal.ofReal E * x) ^ (1 / 2 : ℝ) :=
+      mul_le_mul' (ENNReal.rpow_le_rpow hJ (by norm_num))
+        (ENNReal.rpow_le_rpow hU (by norm_num))
+    _ = (9 * ENNReal.ofReal E) ^ (1 / 2 : ℝ) * ENNReal.ofReal E ^ (1 / 2 : ℝ) *
+        (x ^ (1 / 2 : ℝ) * x ^ (1 / 2 : ℝ)) := by
+      rw [ENNReal.mul_rpow_of_nonneg (9 * ENNReal.ofReal E) x (by norm_num),
+        ENNReal.mul_rpow_of_nonneg (ENNReal.ofReal E) x (by norm_num)]
+      ring
+    _ = (9 * ENNReal.ofReal E) ^ (1 / 2 : ℝ) * ENNReal.ofReal E ^ (1 / 2 : ℝ) * x := by
+      rw [← ENNReal.rpow_add_of_nonneg _ _ (by norm_num) (by norm_num)]
+      norm_num
+    _ ≤ _ := by
+      rw [mul_assoc _ (c ^ _) y]
+      exact mul_le_mul' le_rfl hx
+
+/-- The uniform dissipation estimate controls the gradient contribution on
+the same slab. -/
+private theorem forcedLerayLimit_diffusion_coordinate_estimate
+    {S : Set ParabolicPoint} {D : ParabolicPoint → Fin 3 → Vec3} {i j : Fin 3}
+    {G : ℝ} {vK x c y : ℝ≥0∞}
+    (hD : ∫⁻ z in S, ‖D z i j‖ₑ ^ (2 : ℝ) ≤ ENNReal.ofReal G)
+    (hvolume : volume S = vK * x)
+    (hx : x ^ (1 / 2 : ℝ) ≤ c ^ ((1 / 2 : ℝ) - 2 / 5) * y) :
+    (∫⁻ z in S, ‖D z i j‖ₑ ^ (2 : ℝ)) ^ (1 / 2 : ℝ) *
+      volume S ^ (1 / 2 : ℝ) ≤
+      ENNReal.ofReal G ^ (1 / 2 : ℝ) * vK ^ (1 / 2 : ℝ) *
+        c ^ ((1 / 2 : ℝ) - 2 / 5) * y := by
+  rw [hvolume, ENNReal.mul_rpow_of_nonneg _ _ (by norm_num)]
+  calc _ ≤ ENNReal.ofReal G ^ (1 / 2 : ℝ) * (vK ^ (1 / 2 : ℝ) * x ^ (1 / 2 : ℝ)) :=
+      mul_le_mul' (ENNReal.rpow_le_rpow hD (by norm_num)) le_rfl
+    _ ≤ ENNReal.ofReal G ^ (1 / 2 : ℝ) *
+        (vK ^ (1 / 2 : ℝ) * (c ^ ((1 / 2 : ℝ) - 2 / 5) * y)) := by gcongr
+    _ = _ := by ring
+
+/-- Cauchy--Schwarz turns the local force energy into its contribution to the
+weak momentum flux. -/
+private theorem forcedLerayLimit_force_coordinate_estimate
+    {S : Set ParabolicPoint} {f : ParabolicPoint → Vec3} {i : Fin 3}
+    {F vK x c y : ℝ≥0∞}
+    (hF : ∫⁻ z in S, ‖f z i‖ₑ ^ (2 : ℝ) ≤ F)
+    (hvolume : volume S = vK * x)
+    (hx : x ^ (1 / 2 : ℝ) ≤ c ^ ((1 / 2 : ℝ) - 2 / 5) * y) :
+    (∫⁻ z in S, ‖f z i‖ₑ ^ (2 : ℝ)) ^ (1 / 2 : ℝ) * volume S ^ (1 / 2 : ℝ) ≤
+      F ^ (1 / 2 : ℝ) * vK ^ (1 / 2 : ℝ) * c ^ ((1 / 2 : ℝ) - 2 / 5) * y := by
+  rw [hvolume, ENNReal.mul_rpow_of_nonneg _ _ (by norm_num)]
+  calc _ ≤ F ^ (1 / 2 : ℝ) * (vK ^ (1 / 2 : ℝ) * x ^ (1 / 2 : ℝ)) :=
+      mul_le_mul' (ENNReal.rpow_le_rpow hF (by norm_num)) le_rfl
+    _ ≤ F ^ (1 / 2 : ℝ) * (vK ^ (1 / 2 : ℝ) * (c ^ ((1 / 2 : ℝ) - 2 / 5) * y)) := by gcongr
+    _ = _ := by ring
+
+/-- The force-pressure estimate and the volume of the local slab give the
+uniform pressure contribution with its time exponent. -/
+private theorem forcedLerayLimit_force_pressure_coordinate_estimate
+    {S : Set ParabolicPoint} {p : ParabolicPoint → ℝ}
+    {vK x c Q y : ℝ≥0∞}
+    (hp : (∫⁻ z in S, ‖p z‖ₑ ^ (3 / 2 : ℝ)) ^ (1 / (3 / 2 : ℝ)) ≤
+      vK ^ (1 / 2 : ℝ) * x ^ (1 / 6 : ℝ) * Q ^ (1 / 2 : ℝ))
+    (hvolume : volume S = vK * x)
+    (hx : x ^ (1 / 2 : ℝ) ≤ c ^ ((1 / 2 : ℝ) - 2 / 5) * y) :
+    (∫⁻ z in S, ‖p z‖ₑ ^ (3 / 2 : ℝ)) ^ (1 / (3 / 2 : ℝ)) *
+      volume S ^ (1 / 3 : ℝ) ≤
+      vK ^ (1 / 2 : ℝ) * Q ^ (1 / 2 : ℝ) * vK ^ (1 / 3 : ℝ) *
+        c ^ ((1 / 2 : ℝ) - 2 / 5) * y := by
+  rw [hvolume, ENNReal.mul_rpow_of_nonneg _ _ (by norm_num)]
+  have hx16 : x ^ (1 / 6 : ℝ) * x ^ (1 / 3 : ℝ) = x ^ (1 / 2 : ℝ) := by
+    rw [← ENNReal.rpow_add_of_nonneg _ _ (by norm_num) (by norm_num)]
+    norm_num
+  calc _ ≤ (vK ^ (1 / 2 : ℝ) * x ^ (1 / 6 : ℝ) * Q ^ (1 / 2 : ℝ)) *
+        (vK ^ (1 / 3 : ℝ) * x ^ (1 / 3 : ℝ)) := mul_le_mul' hp le_rfl
+    _ = vK ^ (1 / 2 : ℝ) * Q ^ (1 / 2 : ℝ) * vK ^ (1 / 3 : ℝ) *
+        (x ^ (1 / 6 : ℝ) * x ^ (1 / 3 : ℝ)) := by ring
+    _ = vK ^ (1 / 2 : ℝ) * Q ^ (1 / 2 : ℝ) * vK ^ (1 / 3 : ℝ) * x ^ (1 / 2 : ℝ) := by
+      rw [hx16]
+    _ ≤ vK ^ (1 / 2 : ℝ) * Q ^ (1 / 2 : ℝ) * vK ^ (1 / 3 : ℝ) *
+        (c ^ ((1 / 2 : ℝ) - 2 / 5) * y) := by gcongr
+    _ = _ := by ring
+
+/-- Mollification preserves the local space-time L² coordinate bound, with
+the dimension factor made explicit for the convection estimate. -/
+private theorem forcedLerayLimit_transport_coordinate_sq_slab_le
+    (ρ : RegMollifierProfile) (ε : ℝ) (hε : 0 < ε)
+    {U : ParabolicPoint → Vec3} (hUs : StronglyMeasurable U)
+    (hSlice : ∀ τ : ℝ, MemLp (fun x : Vec3 => U (x, τ)) 2 volume)
+    {I : Set ℝ} {x : ℝ≥0∞}
+    (hU : ∀ k : Fin 3,
+      ∫⁻ z in spaceTimeSet (Set.univ : Set Vec3) I, ‖U z k‖ₑ ^ (2 : ℝ) ≤ x) :
+    ∀ j : Fin 3,
+      ∫⁻ z in spaceTimeSet (Set.univ : Set Vec3) I,
+        ‖regUniformMollifiedVelocity ρ ε hε U z j‖ₑ ^ (2 : ℝ) ≤ 9 * x := by
+  intro j
+  have htr := forcedLerayLimit_transport_eLpNorm_le ρ ε hε U hUs hSlice
+    (p := 2) (by norm_num) (by norm_num) I j
+  simp only [ENNReal.toReal_ofNat] at htr
+  have hl2 : ∀ (φ : ParabolicPoint → ℝ), AEStronglyMeasurable φ
+      (volume.restrict (spaceTimeSet (Set.univ : Set Vec3) I) ) →
+      eLpNorm φ 2 (volume.restrict (spaceTimeSet (Set.univ : Set Vec3) I)) ^ (2 : ℝ) =
+        ∫⁻ z in spaceTimeSet (Set.univ : Set Vec3) I, ‖φ z‖ₑ ^ (2 : ℝ) := by
+    intro φ hφ
+    rw [eLpNorm_eq_eLpNorm' (by norm_num) (by norm_num) hφ, ENNReal.toReal_ofNat,
+      lintegral_rpow_enorm_eq_rpow_eLpNorm' (by norm_num)]
+  have hJmeas : Measurable (regUniformMollifiedVelocity ρ ε hε U) :=
+    forcedLerayLimit_transport_measurable ρ ε hε U hUs hSlice
+  rw [hl2 (fun z => regUniformMollifiedVelocity ρ ε hε U z j)
+    ((measurable_pi_apply j).comp hJmeas).aestronglyMeasurable] at htr
+  have hsum : ∑ k : Fin 3, eLpNorm (fun z : ParabolicPoint => U z k) 2
+      (volume.restrict (spaceTimeSet (Set.univ : Set Vec3) I)) ^ (2 : ℝ) ≤ 3 * x := by
+    calc ∑ k : Fin 3, eLpNorm (fun z : ParabolicPoint => U z k) 2
+          (volume.restrict (spaceTimeSet (Set.univ : Set Vec3) I)) ^ (2 : ℝ)
+        ≤ ∑ _k : Fin 3, x := by
+          refine Finset.sum_le_sum fun k _ => ?_
+          rw [hl2 (fun z => U z k)
+            ((measurable_pi_apply k).comp hUs.measurable).aestronglyMeasurable]
+          exact hU k
+      _ = 3 * x := by simp
+  have h3 : (3 : ℝ≥0∞) ^ ((2 : ℝ) - 1) = 3 := by norm_num
+  rw [h3] at htr
+  calc ∫⁻ z in spaceTimeSet (Set.univ : Set Vec3) I,
+        ‖regUniformMollifiedVelocity ρ ε hε U z j‖ₑ ^ (2 : ℝ)
+      ≤ 3 * ∑ k : Fin 3, eLpNorm (fun z : ParabolicPoint => U z k) 2
+          (volume.restrict (spaceTimeSet (Set.univ : Set Vec3) I)) ^ (2 : ℝ) := htr
+    _ ≤ 3 * (3 * x) := by gcongr
+    _ = 9 * x := by ring
+
+/-- The weak momentum pairing identity integrates the flux over the
+space-time slab between the two times. -/
+private theorem forcedLerayLimit_pairing_increment_eq_slab_flux
+    {H : ParabolicPoint → ℝ} {g h' : ℝ → ℝ} {K : Set Vec3}
+    {T T1 s t : ℝ}
+    (hHint : Integrable H
+      (volume.restrict (spaceTimeSet K (Ioo 0 T1))))
+    (hpair : ∀ τ ∈ Ioo 0 T1,
+      g τ - g 0 = ∫ z in spaceTimeSet K (Ioo 0 τ), H z)
+    (hh' : Integrable h')
+    (hs : s ∈ Icc 0 T) (ht : t ∈ Icc 0 T) (hTT1 : T < T1) (hst : s ≤ t)
+    (hindicator : h' = (Ioo 0 T1).indicator (fun τ => ∫ x in K, H (x, τ))) :
+    g t - g s = ∫ z in spaceTimeSet K (Ioc s t), H z := by
+  have hkey : ∀ τ ∈ Icc 0 T, g τ - g 0 = ∫ τ' in (0 : ℝ)..τ, h' τ' := by
+    intro τ hτ
+    rcases hτ.1.eq_or_lt with hzero | hpositive
+    · subst τ
+      simp
+    · rw [hpair τ ⟨hpositive, hτ.2.trans_lt hTT1⟩]
+      rw [hindicator]
+      exact forcedHopf_setIntegral_slab_eq_intervalIntegral K T1 H hHint τ
+        ⟨hpositive.le, hτ.2.trans hTT1.le⟩
+  have hdiff : g t - g s = ∫ τ in s..t, h' τ := by
+    have hsub := intervalIntegral.integral_interval_sub_left
+      (hh'.intervalIntegrable (a := 0) (b := t)) (hh'.intervalIntegrable (a := 0) (b := s))
+    calc g t - g s = (g t - g 0) - (g s - g 0) := by ring
+      _ = _ := by rw [hkey t ht, hkey s hs, hsub]
+  let S := spaceTimeSet K (Ioc s t)
+  have hSsub : Ioc s t ⊆ Ioo 0 T1 := fun τ hτ =>
+    ⟨hs.1.trans_lt hτ.1, hτ.2.trans_lt (ht.2.trans_lt hTT1)⟩
+  have hSle : volume.restrict S ≤ volume.restrict (spaceTimeSet K (Ioo 0 T1)) :=
+    Measure.restrict_mono_set volume (Set.prod_mono subset_rfl hSsub)
+  have hHS : Integrable H (volume.restrict S) := hHint.mono_measure hSle
+  have hspace : ∫ τ in s..t, h' τ = ∫ z in S, H z := by
+    rw [intervalIntegral.integral_of_le hst, hindicator]
+    have hHS' : Integrable (fun q : Vec3 × ℝ => H q)
+        (((volume : Measure Vec3).restrict K).prod ((volume : Measure ℝ).restrict (Ioc s t))) := by
+      rw [← forcedHopf_slab_measure_eq_prod]
+      exact hHS
+    have hprod : ∫ z in S, H z = ∫ τ in Ioc s t, ∫ x in K, H (x, τ) := by
+      change ∫ q, H q ∂((volume : Measure ParabolicPoint).restrict
+        (spaceTimeSet K (Ioc s t)) : Measure (Vec3 × ℝ)) = _
+      rw [forcedHopf_slab_measure_eq_prod]
+      exact integral_prod_symm _ hHS'
+    rw [hprod]
+    refine setIntegral_congr_fun measurableSet_Ioc fun τ hτ => ?_
+    exact indicator_of_mem (hSsub hτ) _
+  rw [hdiff, hspace]
+
+/-- A global dissipation bound controls every gradient coordinate on a
+smaller compact space-time slab. -/
+private theorem forcedLerayLimit_gradient_coordinate_sq_local_le
+    {D : ParabolicPoint → Fin 3 → Vec3}
+    {S full : Set ParabolicPoint} {i j : Fin 3} {G : ℝ}
+    (hD : MemLp D 2 (volume.restrict full)) (hS : S ⊆ full)
+    (hsum : ∑ k : Fin 3, ∑ l : Fin 3, ∫ z in full, D z k l ^ 2 ≤ G) :
+    ∫⁻ z in S, ‖D z i j‖ₑ ^ (2 : ℝ) ≤ ENNReal.ofReal G := by
+  have hsq : ∀ y : ℝ, ‖y‖ₑ ^ (2 : ℝ) = ENNReal.ofReal (y ^ 2) := by
+    intro y
+    rw [Real.enorm_eq_ofReal_abs, ENNReal.ofReal_rpow_of_nonneg (abs_nonneg _) (by norm_num),
+      show (2 : ℝ) = ((2 : ℕ) : ℝ) by norm_num, Real.rpow_natCast, sq_abs]
+  refine (lintegral_mono_set hS).trans ?_
+  have hint := ((hD.eval i).eval j).integrable_sq
+  simp only [hsq]
+  rw [← ofReal_integral_eq_lintegral_ofReal hint
+    (Eventually.of_forall fun z => sq_nonneg _)]
+  refine ENNReal.ofReal_le_ofReal (le_trans ?_ hsum)
+  refine le_trans ?_ (Finset.single_le_sum (f := fun k => ∑ l : Fin 3,
+    ∫ z in full, D z k l ^ 2) (fun k _ =>
+      Finset.sum_nonneg fun l _ => integral_nonneg fun z => sq_nonneg _)
+      (Finset.mem_univ i))
+  exact Finset.single_le_sum (f := fun l => ∫ z in full, D z i l ^ 2)
+    (fun l _ => integral_nonneg fun z => sq_nonneg _) (Finset.mem_univ j)
+
+/-- A square-integrable vector field has finite total coordinate energy. -/
+private theorem forcedLerayLimit_coordinate_energy_ne_top
+    {f : ParabolicPoint → Vec3} {μ : Measure ParabolicPoint} (hf : MemLp f 2 μ) :
+    (∑ i : Fin 3, ∫⁻ z, ‖f z i‖ₑ ^ (2 : ℝ) ∂μ) ≠ ⊤ := by
+  refine ENNReal.sum_ne_top.2 fun i _ => ?_
+  have hmem := hf.eval i
+  rw [lintegral_rpow_enorm_eq_rpow_eLpNorm' (by norm_num),
+    ← ENNReal.toReal_ofNat 2,
+    ← eLpNorm_eq_eLpNorm' (by norm_num) (by norm_num) hmem.aestronglyMeasurable]
+  exact ENNReal.rpow_ne_top_of_nonneg (by norm_num) hmem.eLpNorm_ne_top
+
+/-- Finite energy, dissipation, force and pressure bounds produce a finite
+uniform Hölder coefficient on a compact spatial region. -/
+private theorem forcedLerayLimit_modulus_coefficient_ne_top
+    (E G : ℝ) (F Q MP c vK : ℝ≥0∞)
+    (hF : F ≠ ⊤) (hQ : Q ≠ ⊤) (hMP : MP ≠ ⊤)
+    (hcne : c ≠ ⊤) (hvK : vK ≠ ⊤) :
+    let a1 : ℝ≥0∞ := ∑ _i : Fin 3, ∑ _j : Fin 3,
+      (9 * ENNReal.ofReal E) ^ (1 / 2 : ℝ) * ENNReal.ofReal E ^ (1 / 2 : ℝ) *
+        c ^ ((1 : ℝ) - 2 / 5)
+    let a2 : ℝ≥0∞ := ∑ _i : Fin 3, ∑ _j : Fin 3,
+      ENNReal.ofReal G ^ (1 / 2 : ℝ) * vK ^ (1 / 2 : ℝ) * c ^ ((1 / 2 : ℝ) - 2 / 5)
+    let a3 : ℝ≥0∞ := ∑ _i : Fin 3,
+      F ^ (1 / 2 : ℝ) * vK ^ (1 / 2 : ℝ) * c ^ ((1 / 2 : ℝ) - 2 / 5)
+    let a4 : ℝ≥0∞ := vK ^ (1 / 2 : ℝ) * Q ^ (1 / 2 : ℝ) * vK ^ (1 / 3 : ℝ) *
+      c ^ ((1 / 2 : ℝ) - 2 / 5)
+    let a5 : ℝ≥0∞ := MP * vK ^ (2 / 5 : ℝ)
+    a1 + a2 + a3 + 3 * a4 + 3 * a5 ≠ ⊤ := by
+  have hrp : ∀ (z : ℝ≥0∞) (r : ℝ), 0 ≤ r → z ≠ ⊤ → z ^ r ≠ ⊤ := fun z r hr hz =>
+    ENNReal.rpow_ne_top_of_nonneg hr hz
+  refine ENNReal.add_ne_top.2 ⟨ENNReal.add_ne_top.2 ⟨ENNReal.add_ne_top.2
+    ⟨ENNReal.add_ne_top.2 ⟨?_, ?_⟩, ?_⟩, ?_⟩, ?_⟩
+  · refine ENNReal.sum_ne_top.2 fun _ _ => ENNReal.sum_ne_top.2 fun _ _ => ?_
+    exact ENNReal.mul_ne_top (ENNReal.mul_ne_top (hrp _ _ (by norm_num)
+      (ENNReal.mul_ne_top (by norm_num) ENNReal.ofReal_ne_top))
+      (hrp _ _ (by norm_num) ENNReal.ofReal_ne_top)) (hrp _ _ (by norm_num) hcne)
+  · refine ENNReal.sum_ne_top.2 fun _ _ => ENNReal.sum_ne_top.2 fun _ _ => ?_
+    exact ENNReal.mul_ne_top (ENNReal.mul_ne_top (hrp _ _ (by norm_num) ENNReal.ofReal_ne_top)
+      (hrp _ _ (by norm_num) hvK)) (hrp _ _ (by norm_num) hcne)
+  · refine ENNReal.sum_ne_top.2 fun _ _ => ?_
+    exact ENNReal.mul_ne_top (ENNReal.mul_ne_top (hrp _ _ (by norm_num) hF)
+      (hrp _ _ (by norm_num) hvK)) (hrp _ _ (by norm_num) hcne)
+  · exact ENNReal.mul_ne_top (by norm_num) (ENNReal.mul_ne_top (ENNReal.mul_ne_top
+      (ENNReal.mul_ne_top (hrp _ _ (by norm_num) hvK) (hrp _ _ (by norm_num) hQ))
+      (hrp _ _ (by norm_num) hvK)) (hrp _ _ (by norm_num) hcne))
+  · exact ENNReal.mul_ne_top (by norm_num)
+      (ENNReal.mul_ne_top hMP (hrp _ _ (by norm_num) hvK))
+
+/-- Local coordinate energy bounds and the two pressure estimates assemble
+into a uniform Hölder estimate for the full momentum flux. -/
+private theorem forcedLerayLimit_flux_twoFifths_le
+    {S : Set ParabolicPoint} {U J f : ParabolicPoint → Vec3}
+    {D : ParabolicPoint → Fin 3 → Vec3} {P pF : ParabolicPoint → ℝ}
+    {wc : Fin 3 → Vec3 → ℝ} {E G M0 M1 : ℝ} {F Q MP vK x c : ℝ≥0∞}
+    (hM0 : ∀ i x, |wc i x| ≤ M0) (hM1 : ∀ i j x, |spatialDeriv (wc i) j x| ≤ M1)
+    (hM2 : ∀ x, |∑ i : Fin 3, spatialDeriv (wc i) i x| ≤ 3 * M1)
+    (hU : AEMeasurable U (volume.restrict S)) (hJ : AEMeasurable J (volume.restrict S))
+    (hD : AEMeasurable D (volume.restrict S)) (hf : AEMeasurable f (volume.restrict S))
+    (hpFae : AEStronglyMeasurable pF (volume.restrict S))
+    (hPNae : AEStronglyMeasurable (fun z => P z - pF z) (volume.restrict S))
+    (hdivS : AEMeasurable (fun z : ParabolicPoint => ∑ i : Fin 3, spatialDeriv (wc i) i z.1)
+      (volume.restrict S))
+    (hUS : ∀ i, ∫⁻ z in S, ‖U z i‖ₑ ^ (2 : ℝ) ≤ ENNReal.ofReal E * x)
+    (hJS : ∀ j, ∫⁻ z in S, ‖J z j‖ₑ ^ (2 : ℝ) ≤ 9 * ENNReal.ofReal E * x)
+    (hDS : ∀ i j, ∫⁻ z in S, ‖D z i j‖ₑ ^ (2 : ℝ) ≤ ENNReal.ofReal G)
+    (hfS : ∀ i, ∫⁻ z in S, ‖f z i‖ₑ ^ (2 : ℝ) ≤ F)
+    (hPS : (∫⁻ z in S, ‖pF z‖ₑ ^ (3 / 2 : ℝ)) ^ (1 / (3 / 2 : ℝ)) ≤
+      vK ^ (1 / 2 : ℝ) * x ^ (1 / 6 : ℝ) * Q ^ (1 / 2 : ℝ))
+    (hPNnorm : eLpNorm (fun z => P z - pF z) (ENNReal.ofReal (5 / 3 : ℝ))
+      (volume.restrict S) ≤ MP)
+    (hvS : volume S = vK * x) (hxc : x ≤ c) :
+    ∫⁻ z in S, ‖forcedHopfPairingFlux J U f D wc z +
+      P z * ∑ i : Fin 3, spatialDeriv (wc i) i z.1‖ₑ ≤
+      (ENNReal.ofReal M1 * ∑ _i : Fin 3, ∑ _j : Fin 3,
+          (9 * ENNReal.ofReal E) ^ (1 / 2 : ℝ) * ENNReal.ofReal E ^ (1 / 2 : ℝ) *
+            c ^ ((1 : ℝ) - 2 / 5) +
+        ENNReal.ofReal M1 * ∑ _i : Fin 3, ∑ _j : Fin 3,
+          ENNReal.ofReal G ^ (1 / 2 : ℝ) * vK ^ (1 / 2 : ℝ) * c ^ ((1 / 2 : ℝ) - 2 / 5) +
+        ENNReal.ofReal M0 * ∑ _i : Fin 3,
+          F ^ (1 / 2 : ℝ) * vK ^ (1 / 2 : ℝ) * c ^ ((1 / 2 : ℝ) - 2 / 5) +
+        ENNReal.ofReal (3 * M1) *
+          (vK ^ (1 / 2 : ℝ) * Q ^ (1 / 2 : ℝ) * vK ^ (1 / 3 : ℝ) *
+            c ^ ((1 / 2 : ℝ) - 2 / 5)) +
+        ENNReal.ofReal (3 * M1) * (MP * vK ^ (2 / 5 : ℝ))) * x ^ (2 / 5 : ℝ) := by
+  let y : ℝ≥0∞ := x ^ (2 / 5 : ℝ)
+  let PN : ParabolicPoint → ℝ := fun z => P z - pF z
+  let H : ParabolicPoint → ℝ := fun z =>
+    forcedHopfPairingFlux J U f D wc z + P z * ∑ i : Fin 3, spatialDeriv (wc i) i z.1
+  let Cenn : ℝ≥0∞ :=
+    ENNReal.ofReal M1 * ∑ _i : Fin 3, ∑ _j : Fin 3,
+        (9 * ENNReal.ofReal E) ^ (1 / 2 : ℝ) * ENNReal.ofReal E ^ (1 / 2 : ℝ) *
+          c ^ ((1 : ℝ) - 2 / 5) +
+      ENNReal.ofReal M1 * ∑ _i : Fin 3, ∑ _j : Fin 3,
+        ENNReal.ofReal G ^ (1 / 2 : ℝ) * vK ^ (1 / 2 : ℝ) * c ^ ((1 / 2 : ℝ) - 2 / 5) +
+      ENNReal.ofReal M0 * ∑ _i : Fin 3,
+        F ^ (1 / 2 : ℝ) * vK ^ (1 / 2 : ℝ) * c ^ ((1 / 2 : ℝ) - 2 / 5) +
+      ENNReal.ofReal (3 * M1) *
+        (vK ^ (1 / 2 : ℝ) * Q ^ (1 / 2 : ℝ) * vK ^ (1 / 3 : ℝ) *
+          c ^ ((1 / 2 : ℝ) - 2 / 5)) +
+      ENNReal.ofReal (3 * M1) * (MP * vK ^ (2 / 5 : ℝ))
+  have hvolPN : volume S ^ (1 / (5 / 2 : ℝ)) = vK ^ (2 / 5 : ℝ) * y := by
+    rw [hvS, ENNReal.mul_rpow_of_nonneg _ _ (by norm_num)]
+    norm_num
+    rfl
+  have hPN := forcedLerayLimit_pressure_remainder_lintegral_le hPNae hPNnorm hvolPN
+    (fun z => hM2 z.1)
+  have hflux := forcedLerayLimit_flux_lintegral_le (S := S) (U := U) (J := J) (f := f) (D := D)
+    (P := pF) (wc := wc) hM0 hM1 hM2 hU hJ hD hf hpFae.aemeasurable
+  have hx12 : x ^ (1 / 2 : ℝ) ≤ c ^ ((1 / 2 : ℝ) - 2 / 5) * y :=
+    forcedLerayLimit_rpow_le_twoFifths hxc (by norm_num)
+  have hx1 : x ≤ c ^ ((1 : ℝ) - 2 / 5) * y := by
+    have h := forcedLerayLimit_rpow_le_twoFifths hxc (r := 1) (by norm_num)
+    rwa [ENNReal.rpow_one] at h
+  have hT1b : ∀ i j : Fin 3, (∫⁻ z in S, ‖J z j‖ₑ ^ (2 : ℝ)) ^ (1 / 2 : ℝ) *
+      (∫⁻ z in S, ‖U z i‖ₑ ^ (2 : ℝ)) ^ (1 / 2 : ℝ) ≤
+      (9 * ENNReal.ofReal E) ^ (1 / 2 : ℝ) * ENNReal.ofReal E ^ (1 / 2 : ℝ) *
+        c ^ ((1 : ℝ) - 2 / 5) * y := by
+    intro i j
+    exact forcedLerayLimit_convection_coordinate_estimate (hJS j) (hUS i) hx1
+  have hT2b : ∀ i j : Fin 3, (∫⁻ z in S, ‖D z i j‖ₑ ^ (2 : ℝ)) ^ (1 / 2 : ℝ) *
+      volume S ^ (1 / 2 : ℝ) ≤
+      ENNReal.ofReal G ^ (1 / 2 : ℝ) * vK ^ (1 / 2 : ℝ) * c ^ ((1 / 2 : ℝ) - 2 / 5) * y := by
+    intro i j
+    exact forcedLerayLimit_diffusion_coordinate_estimate (hDS i j) hvS hx12
+  have hT3b : ∀ i : Fin 3, (∫⁻ z in S, ‖f z i‖ₑ ^ (2 : ℝ)) ^ (1 / 2 : ℝ) *
+      volume S ^ (1 / 2 : ℝ) ≤
+      F ^ (1 / 2 : ℝ) * vK ^ (1 / 2 : ℝ) * c ^ ((1 / 2 : ℝ) - 2 / 5) * y := by
+    intro i
+    exact forcedLerayLimit_force_coordinate_estimate (hfS i) hvS hx12
+  have hT4b : (∫⁻ z in S, ‖pF z‖ₑ ^ (3 / 2 : ℝ)) ^ (1 / (3 / 2 : ℝ)) * volume S ^ (1 / 3 : ℝ) ≤
+      vK ^ (1 / 2 : ℝ) * Q ^ (1 / 2 : ℝ) * vK ^ (1 / 3 : ℝ) * c ^ ((1 / 2 : ℝ) - 2 / 5) * y := by
+    exact forcedLerayLimit_force_pressure_coordinate_estimate hPS hvS hx12
+  have hsplitH : ∀ z, H z = (forcedHopfPairingFlux J U f D wc z +
+      pF z * ∑ i : Fin 3, spatialDeriv (wc i) i z.1) +
+      PN z * ∑ i : Fin 3, spatialDeriv (wc i) i z.1 := by
+    intro z
+    simp only [H, PN]
+    ring
+  have hH2meas : AEMeasurable (fun z => ‖PN z * ∑ i : Fin 3, spatialDeriv (wc i) i z.1‖ₑ)
+      (volume.restrict S) := (hPNae.aemeasurable.mul hdivS).enorm
+  have hlint : ∫⁻ z in S, ‖H z‖ₑ ≤ Cenn * y := by
+    calc ∫⁻ z in S, ‖H z‖ₑ
+        ≤ ∫⁻ z in S, (‖forcedHopfPairingFlux J U f D wc z +
+            pF z * ∑ i : Fin 3, spatialDeriv (wc i) i z.1‖ₑ +
+            ‖PN z * ∑ i : Fin 3, spatialDeriv (wc i) i z.1‖ₑ) :=
+          lintegral_mono fun z => by rw [hsplitH z]; exact enorm_add_le _ _
+      _ = (∫⁻ z in S, ‖forcedHopfPairingFlux J U f D wc z +
+            pF z * ∑ i : Fin 3, spatialDeriv (wc i) i z.1‖ₑ) +
+            ∫⁻ z in S, ‖PN z * ∑ i : Fin 3, spatialDeriv (wc i) i z.1‖ₑ :=
+          lintegral_add_right' _ hH2meas
+      _ ≤ (ENNReal.ofReal M1 * ∑ _i : Fin 3, ∑ _j : Fin 3,
+            (9 * ENNReal.ofReal E) ^ (1 / 2 : ℝ) * ENNReal.ofReal E ^ (1 / 2 : ℝ) *
+              c ^ ((1 : ℝ) - 2 / 5) * y +
+          ENNReal.ofReal M1 * ∑ _i : Fin 3, ∑ _j : Fin 3,
+            ENNReal.ofReal G ^ (1 / 2 : ℝ) * vK ^ (1 / 2 : ℝ) * c ^ ((1 / 2 : ℝ) - 2 / 5) * y +
+          ENNReal.ofReal M0 * ∑ _i : Fin 3,
+            F ^ (1 / 2 : ℝ) * vK ^ (1 / 2 : ℝ) * c ^ ((1 / 2 : ℝ) - 2 / 5) * y +
+          ENNReal.ofReal (3 * M1) * (vK ^ (1 / 2 : ℝ) * Q ^ (1 / 2 : ℝ) * vK ^ (1 / 3 : ℝ) *
+              c ^ ((1 / 2 : ℝ) - 2 / 5) * y)) +
+          ENNReal.ofReal (3 * M1) * (MP * vK ^ (2 / 5 : ℝ)) * y := by
+          refine add_le_add (hflux.trans ?_) hPN
+          refine add_le_add (add_le_add (add_le_add ?_ ?_) ?_) ?_
+          · exact mul_le_mul' le_rfl (Finset.sum_le_sum fun i _ =>
+              Finset.sum_le_sum fun j _ => hT1b i j)
+          · exact mul_le_mul' le_rfl (Finset.sum_le_sum fun i _ =>
+              Finset.sum_le_sum fun j _ => hT2b i j)
+          · exact mul_le_mul' le_rfl (Finset.sum_le_sum fun i _ => hT3b i)
+          · exact mul_le_mul' le_rfl hT4b
+      _ = Cenn * y := by
+          simp only [Cenn, Finset.sum_const, Finset.card_univ, Fintype.card_fin, nsmul_eq_mul]
+          ring
+  exact hlint
+
+/-- The local force-pressure norm bound also bounds its integral power. -/
+private theorem forcedLerayLimit_force_pressure_integral_power_le
+    {p : ParabolicPoint → ℝ} {μ : Measure ParabolicPoint} {B : ℝ≥0∞}
+    (hp : AEStronglyMeasurable p μ)
+    (hbound : eLpNorm p (ENNReal.ofReal (3 / 2 : ℝ)) μ ≤ B) :
+    (∫⁻ z, ‖p z‖ₑ ^ (3 / 2 : ℝ) ∂μ) ^ (1 / (3 / 2 : ℝ)) ≤ B := by
+  have h32 : ENNReal.ofReal (3 / 2 : ℝ) ≠ 0 := by norm_num
+  rwa [eLpNorm_eq_eLpNorm' h32 ENNReal.ofReal_ne_top hp,
+    ENNReal.toReal_ofReal (by norm_num), eLpNorm'_eq_lintegral_enorm] at hbound
+
+/-- Restricting the slice-energy estimate to a compact test region gives
+the local velocity-coordinate bound. -/
+private theorem forcedLerayLimit_velocity_coordinate_sq_local_le
+    {U : ParabolicPoint → Vec3} (hU : Measurable U)
+    (hSlice : ∀ τ : ℝ, MemLp (fun x : Vec3 => U (x, τ)) 2 volume)
+    {I : Set ℝ} (hI : MeasurableSet I) {E : ℝ} {x : ℝ≥0∞}
+    (hIvolume : volume I = x)
+    (hkin : ∀ τ ∈ I, ∑ j : Fin 3, ∫ x : Vec3, U (x, τ) j ^ 2 ≤ E)
+    {S : Set ParabolicPoint} (hS : S ⊆ spaceTimeSet (Set.univ : Set Vec3) I) :
+    ∀ i, ∫⁻ z in S, ‖U z i‖ₑ ^ (2 : ℝ) ≤ ENNReal.ofReal E * x := by
+  intro i
+  exact (lintegral_mono_set hS).trans
+    (forcedLerayLimit_velocity_coordinate_sq_slab_le hU hSlice hI hIvolume hkin i)
+
+/-- The mollified velocity satisfies the same compact-region estimate with
+the dimension factor required by convection. -/
+private theorem forcedLerayLimit_transport_coordinate_sq_local_le
+    (ρ : RegMollifierProfile) (ε : ℝ) (hε : 0 < ε)
+    {U : ParabolicPoint → Vec3} (hUs : StronglyMeasurable U)
+    (hSlice : ∀ τ : ℝ, MemLp (fun x : Vec3 => U (x, τ)) 2 volume)
+    {I : Set ℝ} (hI : MeasurableSet I) {E : ℝ} {x : ℝ≥0∞}
+    (hIvolume : volume I = x)
+    (hkin : ∀ τ ∈ I, ∑ j : Fin 3, ∫ x : Vec3, U (x, τ) j ^ 2 ≤ E)
+    {S : Set ParabolicPoint} (hS : S ⊆ spaceTimeSet (Set.univ : Set Vec3) I) :
+    ∀ j, ∫⁻ z in S, ‖regUniformMollifiedVelocity ρ ε hε U z j‖ₑ ^ (2 : ℝ) ≤
+      9 * ENNReal.ofReal E * x := by
+  have hU := forcedLerayLimit_velocity_coordinate_sq_slab_le hUs.measurable hSlice
+    hI hIvolume hkin
+  have hJ := forcedLerayLimit_transport_coordinate_sq_slab_le ρ ε hε hUs hSlice hU
+  intro j
+  simpa [mul_assoc] using (lintegral_mono_set hS).trans (hJ j)
+
+/-- Integrability of the force pressure and the quadratic-pressure
+remainder gives integrability of the total pressure on a compact slab. -/
+private theorem forcedLerayLimit_pressure_integrable_of_remainder
+    {μ : Measure ParabolicPoint} [IsFiniteMeasure μ] {P pF : ParabolicPoint → ℝ}
+    (hrem : MemLp (fun z => P z - pF z) 2 μ)
+    (hpF : MemLp pF (ENNReal.ofReal (3 / 2 : ℝ)) μ) : Integrable P μ := by
+  have hexponent : 1 ≤ ENNReal.ofReal (3 / 2 : ℝ) := by norm_num
+  refine ((hrem.integrable (by norm_num)).add (hpF.integrable hexponent)).congr
+    (Eventually.of_forall fun z => ?_)
+  simp only [Pi.add_apply, sub_add_cancel]
+
+/-- A slab flux bound yields the scalar Hölder modulus, including the
+initial time and the terminal endpoint of the closed interval. -/
+private theorem forcedLerayLimit_scalar_twoFifths_modulus
+    {H : ParabolicPoint → ℝ} {g : ℝ → ℝ} {K : Set Vec3} {T T1 s t : ℝ} {C : ℝ≥0∞}
+    (hHint : Integrable H (volume.restrict (spaceTimeSet K (Ioo 0 T1))))
+    (hpair : ∀ τ ∈ Ioo 0 T1, g τ - g 0 = ∫ z in spaceTimeSet K (Ioo 0 τ), H z)
+    (hs : s ∈ Icc 0 T) (ht : t ∈ Icc 0 T) (hTT1 : T < T1) (hst : s ≤ t)
+    (hflux : ∫⁻ z in spaceTimeSet K (Ioc s t), ‖H z‖ₑ ≤
+      C * ENNReal.ofReal (t - s) ^ (2 / 5 : ℝ)) (hC : C ≠ ⊤) :
+    |g t - g s| ≤ C.toReal * |t - s| ^ (2 / 5 : ℝ) := by
+  let h' : ℝ → ℝ := (Ioo 0 T1).indicator (fun τ => ∫ x in K, H (x, τ))
+  have hh' : Integrable h' := forcedHopf_integrable_timeDensity K T1 H hHint
+  have hinc := forcedLerayLimit_pairing_increment_eq_slab_flux (h' := h') hHint hpair hh'
+    hs ht hTT1 hst rfl
+  have hsub : Ioc s t ⊆ Ioo 0 T1 := fun τ hτ =>
+    ⟨hs.1.trans_lt hτ.1, hτ.2.trans_lt (ht.2.trans_lt hTT1)⟩
+  have hHS := hHint.mono_measure (Measure.restrict_mono_set volume
+    (Set.prod_mono subset_rfl hsub))
+  calc |g t - g s| ≤ (∫⁻ z in spaceTimeSet K (Ioc s t), ‖H z‖ₑ).toReal :=
+      forcedLerayLimit_scalar_interval_modulus hHS hinc
+    _ ≤ (C * ENNReal.ofReal (t - s) ^ (2 / 5 : ℝ)).toReal :=
+      ENNReal.toReal_mono (ENNReal.mul_ne_top hC
+        (ENNReal.rpow_ne_top_of_nonneg (by norm_num) ENNReal.ofReal_ne_top)) hflux
+    _ = C.toReal * |t - s| ^ (2 / 5 : ℝ) := by
+      rw [ENNReal.toReal_mul, ← ENNReal.toReal_rpow,
+        ENNReal.toReal_ofReal (sub_nonneg.2 hst), abs_of_nonneg (sub_nonneg.2 hst)]
+
+/-- Bounds on test-coordinate derivatives bound the scalar divergence. -/
+private theorem forcedLerayLimit_test_divergence_le
+    {wc : Fin 3 → Vec3 → ℝ} {M1 : ℝ}
+    (hM1 : ∀ i j x, |spatialDeriv (wc i) j x| ≤ M1) :
+    ∀ x, |∑ i : Fin 3, spatialDeriv (wc i) i x| ≤ 3 * M1 := by
+  intro x
+  refine (Finset.abs_sum_le_sum_abs _ _).trans ?_
+  calc ∑ i : Fin 3, |spatialDeriv (wc i) i x| ≤ ∑ _i : Fin 3, M1 :=
+        Finset.sum_le_sum fun i _ => hM1 i i x
+    _ = 3 * M1 := by simp
+
+/-- Restriction to the test region bounds each force coordinate by the
+total force energy on the full slab. -/
+private theorem forcedLerayLimit_force_coordinate_sq_local_le
+    {f : ParabolicPoint → Vec3} {S full : Set ParabolicPoint} (hS : S ⊆ full) :
+    ∀ i, ∫⁻ z in S, ‖f z i‖ₑ ^ (2 : ℝ) ≤
+      ∑ j : Fin 3, ∫⁻ z in full, ‖f z j‖ₑ ^ (2 : ℝ) := by
+  intro i
+  exact (lintegral_mono_set hS).trans (Finset.single_le_sum
+    (f := fun j => ∫⁻ z in full, ‖f z j‖ₑ ^ (2 : ℝ))
+    (fun _ _ => bot_le) (Finset.mem_univ i))
+
+/-- The divergence of a smooth spatial test field is jointly measurable
+when viewed as a time-independent space-time scalar. -/
+private theorem forcedLerayLimit_test_divergence_measurable
+    {wc : Fin 3 → Vec3 → ℝ} (hw : ∀ i, ContDiff ℝ (⊤ : ℕ∞) (wc i)) :
+    Measurable fun z : ParabolicPoint => ∑ i : Fin 3, spatialDeriv (wc i) i z.1 := by
+  have hdivx : Continuous fun x : Vec3 => ∑ i : Fin 3, spatialDeriv (wc i) i x :=
+    continuous_finsetSum _ fun i _ =>
+      ((hw i).continuous_fderiv (by simp)).clm_apply continuous_const
+  exact hdivx.measurable.comp measurable_fst
 
 /-- `lem:forced-equicontinuity` with a constant independent of the test
 field: given the weak momentum identity `eq:reg-momentum-forced` of the
@@ -162,11 +756,7 @@ theorem forcedLerayLimit_time_modulus_uniform
     fun wc hw hwK M0 M1 hM0nn hM1nn hM0 hM1 ε hε => ?_⟩
   have hwc : ∀ i, HasCompactSupport (wc i) := fun i =>
     IsCompact.of_isClosed_subset hK (isClosed_tsupport _) (hwK i)
-  have hM2 : ∀ x, |∑ i : Fin 3, spatialDeriv (wc i) i x| ≤ 3 * M1 := fun x => by
-    refine (Finset.abs_sum_le_sum_abs _ _).trans ?_
-    calc ∑ i : Fin 3, |spatialDeriv (wc i) i x| ≤ ∑ _i : Fin 3, M1 :=
-          Finset.sum_le_sum fun i _ => hM1 i i x
-      _ = 3 * M1 := by simp
+  have hM2 := forcedLerayLimit_test_divergence_le hM1
   let Cenn : ℝ≥0∞ :=
     ENNReal.ofReal M1 * ∑ _i : Fin 3, ∑ _j : Fin 3,
         (9 * ENNReal.ofReal E1) ^ (1 / 2 : ℝ) * ENNReal.ofReal E1 ^ (1 / 2 : ℝ) *
@@ -180,57 +770,14 @@ theorem forcedLerayLimit_time_modulus_uniform
           c ^ ((1 / 2 : ℝ) - 2 / 5)) +
       ENNReal.ofReal (3 * M1) * (MP5 * vK ^ (2 / 5 : ℝ))
   have hCenn_le : Cenn ≤ ENNReal.ofReal (M0 + M1) * (a1 + a2 + a3 + 3 * a4 + 3 * a5) := by
-    have h3 : ENNReal.ofReal (3 * M1) = 3 * ENNReal.ofReal M1 := by
-      rw [ENNReal.ofReal_mul (by norm_num)]
-      norm_num
-    have hsum : ENNReal.ofReal (M0 + M1) = ENNReal.ofReal M0 + ENNReal.ofReal M1 :=
-      ENNReal.ofReal_add hM0nn hM1nn
     change ENNReal.ofReal M1 * a1 + ENNReal.ofReal M1 * a2 + ENNReal.ofReal M0 * a3 +
         ENNReal.ofReal (3 * M1) * a4 + ENNReal.ofReal (3 * M1) * a5 ≤ _
-    rw [h3, hsum]
-    calc ENNReal.ofReal M1 * a1 + ENNReal.ofReal M1 * a2 + ENNReal.ofReal M0 * a3 +
-          3 * ENNReal.ofReal M1 * a4 + 3 * ENNReal.ofReal M1 * a5
-        ≤ ENNReal.ofReal M1 * a1 + ENNReal.ofReal M1 * a2 + ENNReal.ofReal M0 * a3 +
-          3 * ENNReal.ofReal M1 * a4 + 3 * ENNReal.ofReal M1 * a5 +
-          (ENNReal.ofReal M0 * (a1 + a2 + 3 * a4 + 3 * a5) + ENNReal.ofReal M1 * a3) :=
-          le_self_add
-      _ = (ENNReal.ofReal M0 + ENNReal.ofReal M1) * (a1 + a2 + a3 + 3 * a4 + 3 * a5) := by
-          ring
-  have hfin : a1 + a2 + a3 + 3 * a4 + 3 * a5 ≠ ⊤ := by
-    have hrp : ∀ (z : ℝ≥0∞) (r : ℝ), 0 ≤ r → z ≠ ⊤ → z ^ r ≠ ⊤ := fun z r hr hz =>
-      ENNReal.rpow_ne_top_of_nonneg hr hz
-    have hcne : c ≠ ⊤ := ENNReal.ofReal_ne_top
-    have hvK : vK ≠ ⊤ := hK.measure_lt_top.ne
-    have hFf : Ff ≠ ⊤ := by
-      refine ENNReal.sum_ne_top.2 fun i _ => ?_
-      have hmem := (hf T1 hT1).eval i
-      have hl2 : eLpNorm (fun z => f z i) 2
-          (volume.restrict (spaceTimeSet (Set.univ : Set Vec3) (Ioo 0 T1))) ^ (2 : ℝ) =
-          ∫⁻ z in spaceTimeSet (Set.univ : Set Vec3) (Ioo 0 T1), ‖f z i‖ₑ ^ (2 : ℝ) := by
-        rw [eLpNorm_eq_eLpNorm' (by norm_num) (by norm_num) hmem.aestronglyMeasurable,
-          ENNReal.toReal_ofNat, lintegral_rpow_enorm_eq_rpow_eLpNorm' (by norm_num)]
-      rw [← hl2]
-      exact hrp _ _ (by norm_num) hmem.eLpNorm_ne_top
-    refine ENNReal.add_ne_top.2 ⟨ENNReal.add_ne_top.2 ⟨ENNReal.add_ne_top.2
-      ⟨ENNReal.add_ne_top.2 ⟨?_, ?_⟩, ?_⟩, ?_⟩, ?_⟩
-    · refine ENNReal.sum_ne_top.2 fun _ _ => ENNReal.sum_ne_top.2 fun _ _ => ?_
-      exact ENNReal.mul_ne_top (ENNReal.mul_ne_top (hrp _ _ (by norm_num)
-        (ENNReal.mul_ne_top (by norm_num) ENNReal.ofReal_ne_top))
-        (hrp _ _ (by norm_num) ENNReal.ofReal_ne_top)) (hrp _ _ (by norm_num) hcne)
-    · refine ENNReal.sum_ne_top.2 fun _ _ => ENNReal.sum_ne_top.2 fun _ _ => ?_
-      exact ENNReal.mul_ne_top (ENNReal.mul_ne_top (hrp _ _ (by norm_num) ENNReal.ofReal_ne_top)
-        (hrp _ _ (by norm_num) hvK)) (hrp _ _ (by norm_num) hcne)
-    · refine ENNReal.sum_ne_top.2 fun _ _ => ?_
-      exact ENNReal.mul_ne_top (ENNReal.mul_ne_top (hrp _ _ (by norm_num) hFf)
-        (hrp _ _ (by norm_num) hvK)) (hrp _ _ (by norm_num) hcne)
-    · exact ENNReal.mul_ne_top (by norm_num) (ENNReal.mul_ne_top (ENNReal.mul_ne_top
-        (ENNReal.mul_ne_top (hrp _ _ (by norm_num) hvK) (hrp _ _ (by norm_num) hQfin.ne))
-        (hrp _ _ (by norm_num) hvK)) (hrp _ _ (by norm_num) hcne))
-    · exact ENNReal.mul_ne_top (by norm_num)
-        (ENNReal.mul_ne_top hMP5.ne (hrp _ _ (by norm_num) hvK))
-  have hCle : Cenn.toReal ≤ (a1 + a2 + a3 + 3 * a4 + 3 * a5).toReal * (M0 + M1) := by
-    rw [mul_comm, ← ENNReal.toReal_ofReal (add_nonneg hM0nn hM1nn), ← ENNReal.toReal_mul]
-    exact ENNReal.toReal_mono (ENNReal.mul_ne_top ENNReal.ofReal_ne_top hfin) hCenn_le
+    exact forcedLerayLimit_weighted_coefficient_le hM0nn hM1nn
+  have hfin : a1 + a2 + a3 + 3 * a4 + 3 * a5 ≠ ⊤ :=
+    forcedLerayLimit_modulus_coefficient_ne_top E1 G1 Ff Q MP5 c vK
+      (forcedLerayLimit_coordinate_energy_ne_top (hf T1 hT1)) hQfin.ne hMP5.ne
+      ENNReal.ofReal_ne_top hK.measure_lt_top.ne
+  have hCle := forcedLerayLimit_toReal_coefficient_le hM0nn hM1nn hfin hCenn_le
   intro s hs t ht
   suffices hmain : |(∫ x, ∑ i : Fin 3, forcedRegVelocity ρ a ha f hf ε (x, t) i * wc i x) -
       ∫ x, ∑ i : Fin 3, forcedRegVelocity ρ a ha f hf ε (x, s) i * wc i x| ≤
@@ -240,7 +787,6 @@ theorem forcedLerayLimit_time_modulus_uniform
   · have h := H t ht s hs (le_of_not_ge hst)
     rw [abs_sub_comm, abs_sub_comm t s]
     exact h
-  have hst' : 0 ≤ t - s := sub_nonneg.2 hst
   let U := forcedRegVelocity ρ a ha f hf ε
   let J := regUniformMollifiedVelocity ρ ε hε U
   let D := forcedRegGradient ρ a ha f hf ε
@@ -288,14 +834,8 @@ theorem forcedLerayLimit_time_modulus_uniform
         (ENNReal.rpow_lt_top_of_nonneg (by norm_num) hvK)
         (ENNReal.rpow_lt_top_of_nonneg (by norm_num) measure_Ioo_lt_top.ne))
         (ENNReal.rpow_lt_top_of_nonneg (by norm_num) hQfin.ne))
-  have hPK : Integrable P νK := by
-    have h1 : Integrable (fun z => P z - pF z) νK :=
-      ((hR2 T1 hT1).2.mono_measure hνK).integrable (by norm_num)
-    have h2 : Integrable pF νK := hpFK.integrable (by
-      rw [← ENNReal.ofReal_one]
-      exact ENNReal.ofReal_le_ofReal (by norm_num))
-    refine (h1.add h2).congr (Eventually.of_forall fun z => ?_)
-    simp only [Pi.add_apply, sub_add_cancel]
+  have hPK : Integrable P νK := forcedLerayLimit_pressure_integrable_of_remainder
+    ((hR2 T1 hT1).2.mono_measure hνK) hpFK
   have hwvec : MemLp (fun x : Vec3 => fun i : Fin 3 => wc i x) 2 volume :=
     memLp_pi_iff.2 fun i => (hw i).continuous.memLp_of_hasCompactSupport (hwc i)
   have hcontPair := forcedLerayLimit_pairing_continuousOn hSlice hcont hwvec
@@ -303,57 +843,18 @@ theorem forcedLerayLimit_time_modulus_uniform
     (hmom ε hε)
   let H : ParabolicPoint → ℝ := fun z =>
     forcedHopfPairingFlux J U f D wc z + P z * ∑ i : Fin 3, spatialDeriv (wc i) i z.1
-  have hdivx : Continuous fun x : Vec3 => ∑ i : Fin 3, spatialDeriv (wc i) i x :=
-    continuous_finsetSum _ fun i _ =>
-      ((hw i).continuous_fderiv (by simp)).clm_apply continuous_const
-  have hdivc : Measurable fun z : ParabolicPoint => ∑ i : Fin 3, spatialDeriv (wc i) i z.1 :=
-    hdivx.measurable.comp measurable_fst
+  have hdivc := forcedLerayLimit_test_divergence_measurable hw
   have hHint : Integrable H νK :=
     (forcedHopf_pairingFlux_integrable hw hK hwK hJ3 hU3 hD2 hf2).add
       (hPK.mul_bdd hdivc.aestronglyMeasurable (c := 3 * M1)
         (Eventually.of_forall fun z => by
           rw [Real.norm_eq_abs]
           exact hM2 z.1))
-  let g : ℝ → ℝ := fun τ => ∫ x, ∑ i : Fin 3, U (x, τ) i * wc i x
-  let h' : ℝ → ℝ := (Ioo 0 T1).indicator (fun τ => ∫ x in K, H (x, τ))
-  have hh' : Integrable h' := forcedHopf_integrable_timeDensity K T1 H hHint
-  have hkey : ∀ τ ∈ Icc 0 T, g τ - g 0 = ∫ τ' in (0 : ℝ)..τ, h' τ' := by
-    intro τ hτ
-    rcases hτ.1.eq_or_lt with h0 | hpos
-    · subst h0
-      simp
-    · rw [hpair τ ⟨hpos, hτ.2.trans_lt hTT1⟩]
-      exact forcedHopf_setIntegral_slab_eq_intervalIntegral K T1 H hHint τ
-        ⟨hpos.le, hτ.2.trans hTT1.le⟩
-  have hdiff : g t - g s = ∫ τ in s..t, h' τ := by
-    have hsub := intervalIntegral.integral_interval_sub_left
-      (hh'.intervalIntegrable (a := 0) (b := t)) (hh'.intervalIntegrable (a := 0) (b := s))
-    calc g t - g s = (g t - g 0) - (g s - g 0) := by ring
-      _ = _ := by rw [hkey t ht, hkey s hs, hsub]
   let S : Set ParabolicPoint := spaceTimeSet K (Ioc s t)
   have hSsub : Ioc s t ⊆ Ioo 0 T1 := fun τ hτ =>
     ⟨hs.1.trans_lt hτ.1, hτ.2.trans_lt (ht.2.trans_lt hTT1)⟩
   have hSle : volume.restrict S ≤ νK :=
     Measure.restrict_mono_set volume (Set.prod_mono subset_rfl hSsub)
-  have hHS : Integrable H (volume.restrict S) := hHint.mono_measure hSle
-  have hspace : ∫ τ in s..t, h' τ = ∫ z in S, H z := by
-    rw [intervalIntegral.integral_of_le hst]
-    have hHS' : Integrable (fun q : Vec3 × ℝ => H q)
-        ((volume.restrict K).prod (volume.restrict (Ioc s t))) := by
-      rw [← forcedHopf_slab_measure_eq_prod]
-      exact hHS
-    have hprod : ∫ z in S, H z = ∫ τ in Ioc s t, ∫ x in K, H (x, τ) := by
-      change ∫ q, H q ∂((volume : Measure ParabolicPoint).restrict
-        (spaceTimeSet K (Ioc s t)) : Measure (Vec3 × ℝ)) = _
-      rw [forcedHopf_slab_measure_eq_prod]
-      exact integral_prod_symm _ hHS'
-    rw [hprod]
-    refine setIntegral_congr_fun measurableSet_Ioc fun τ hτ => ?_
-    exact indicator_of_mem (hSsub hτ) _
-  have hfinal : |g t - g s| ≤ (∫⁻ z in S, ‖H z‖ₑ).toReal := by
-    rw [hdiff, hspace, ← Real.norm_eq_abs,
-      ← integral_norm_eq_lintegral_enorm hHS.aestronglyMeasurable]
-    exact norm_integral_le_integral_norm _
   -- the bounds on the pieces of the flux
   let x : ℝ≥0∞ := ENNReal.ofReal (t - s)
   have hIoc : volume (Ioc s t) = x := by rw [Real.volume_Ioc]
@@ -366,273 +867,43 @@ theorem forcedLerayLimit_time_modulus_uniform
     Set.prod_mono (subset_univ K) subset_rfl
   have hSsub1 : S ⊆ spaceTimeSet (Set.univ : Set Vec3) (Ioo 0 T1) :=
     Set.prod_mono (subset_univ K) hSsub
-  have hsq : ∀ y : ℝ, ‖y‖ₑ ^ (2 : ℝ) = ENNReal.ofReal (y ^ 2) := by
-    intro y
-    rw [Real.enorm_eq_ofReal_abs, ENNReal.ofReal_rpow_of_nonneg (abs_nonneg _) (by norm_num),
-      show (2 : ℝ) = ((2 : ℕ) : ℝ) by norm_num, Real.rpow_natCast, sq_abs]
-  have hl2 : ∀ (μ : Measure ParabolicPoint) (φ : ParabolicPoint → ℝ),
-      AEStronglyMeasurable φ μ → eLpNorm φ 2 μ ^ (2 : ℝ) = ∫⁻ z, ‖φ z‖ₑ ^ (2 : ℝ) ∂μ := by
-    intro μ φ hφ
-    rw [eLpNorm_eq_eLpNorm' (by norm_num) (by norm_num) hφ, ENNReal.toReal_ofNat,
-      lintegral_rpow_enorm_eq_rpow_eLpNorm' (by norm_num)]
-  have hUsl : ∀ i, ∫⁻ z in spaceTimeSet (Set.univ : Set Vec3) (Ioc s t), ‖U z i‖ₑ ^ (2 : ℝ) ≤
-      ENNReal.ofReal E1 * x := by
-    intro i
-    rw [← hIoc]
-    exact forcedLerayLimit_lintegral_sq_slab_le hUs.measurable measurableSet_Ioc
-      (fun τ _ => hSliceAll τ)
-      (fun τ hτ => hkin τ ⟨hs.1.trans hτ.1.le, hτ.2.trans (ht.2.trans hTT1.le)⟩) i
-  have hUS : ∀ i, ∫⁻ z in S, ‖U z i‖ₑ ^ (2 : ℝ) ≤ ENNReal.ofReal E1 * x := fun i =>
-    (lintegral_mono_set hSsubU).trans (hUsl i)
-  have hJS : ∀ j, ∫⁻ z in S, ‖J z j‖ₑ ^ (2 : ℝ) ≤ 9 * ENNReal.ofReal E1 * x := by
-    intro j
-    refine (lintegral_mono_set hSsubU).trans ?_
-    have htr := forcedLerayLimit_transport_eLpNorm_le ρ ε hε U hUs hSliceAll (p := 2)
-      (by norm_num) (by norm_num) (Ioc s t) j
-    simp only [ENNReal.toReal_ofNat] at htr
-    rw [hl2 _ (fun z => regUniformMollifiedVelocity ρ ε hε U z j)
-      ((measurable_pi_apply j).comp hJm).aestronglyMeasurable] at htr
-    refine htr.trans ?_
-    have hsum : ∑ k : Fin 3, eLpNorm (fun z : ParabolicPoint => U z k) 2
-        (volume.restrict (spaceTimeSet (Set.univ : Set Vec3) (Ioc s t))) ^ (2 : ℝ) ≤
-        3 * (ENNReal.ofReal E1 * x) := by
-      calc ∑ k : Fin 3, eLpNorm (fun z : ParabolicPoint => U z k) 2
-            (volume.restrict (spaceTimeSet (Set.univ : Set Vec3) (Ioc s t))) ^ (2 : ℝ)
-          ≤ ∑ _k : Fin 3, ENNReal.ofReal E1 * x := by
-            refine Finset.sum_le_sum fun k _ => ?_
-            rw [hl2 _ (fun z => U z k)
-              ((measurable_pi_apply k).comp hUs.measurable).aestronglyMeasurable]
-            exact hUsl k
-        _ = 3 * (ENNReal.ofReal E1 * x) := by simp
-    have h3 : (3 : ℝ≥0∞) ^ ((2 : ℝ) - 1) = 3 := by norm_num
-    rw [h3]
-    calc 3 * ∑ k : Fin 3, eLpNorm (fun z : ParabolicPoint => U z k) 2
-          (volume.restrict (spaceTimeSet (Set.univ : Set Vec3) (Ioc s t))) ^ (2 : ℝ)
-        ≤ 3 * (3 * (ENNReal.ofReal E1 * x)) := by gcongr
-      _ = 9 * ENNReal.ofReal E1 * x := by ring
+  have hkinI : ∀ τ ∈ Ioc s t, ∑ j : Fin 3, ∫ x : Vec3, U (x, τ) j ^ 2 ≤ E1 :=
+    fun τ hτ => hkin τ ⟨hs.1.trans hτ.1.le, hτ.2.trans (ht.2.trans hTT1.le)⟩
+  have hUS := forcedLerayLimit_velocity_coordinate_sq_local_le hUs.measurable hSliceAll
+    measurableSet_Ioc hIoc hkinI hSsubU
+  have hJS := forcedLerayLimit_transport_coordinate_sq_local_le ρ ε hε hUs hSliceAll
+    measurableSet_Ioc hIoc hkinI hSsubU
   have hG1 : ∑ i : Fin 3, ∑ j : Fin 3,
       ∫ z in spaceTimeSet (Set.univ : Set Vec3) (Ioo 0 T1), D z i j ^ 2 ≤ G1 := by
     change _ ≤ (A0 + F1 + T1 * E1) / 2
     linarith only [hgrad]
   have hDS : ∀ i j, ∫⁻ z in S, ‖D z i j‖ₑ ^ (2 : ℝ) ≤ ENNReal.ofReal G1 := by
     intro i j
-    refine (lintegral_mono_set hSsub1).trans ?_
-    have hint := ((hD2.eval i).eval j).integrable_sq
-    simp only [hsq]
-    rw [← ofReal_integral_eq_lintegral_ofReal hint
-      (Eventually.of_forall fun z => sq_nonneg _)]
-    refine ENNReal.ofReal_le_ofReal (le_trans ?_ hG1)
-    refine le_trans ?_ (Finset.single_le_sum (f := fun i => ∑ j : Fin 3,
-      ∫ z in spaceTimeSet (Set.univ : Set Vec3) (Ioo 0 T1), D z i j ^ 2)
-      (fun i _ => Finset.sum_nonneg fun j _ => integral_nonneg fun z => sq_nonneg _)
-      (Finset.mem_univ i))
-    exact Finset.single_le_sum (f := fun j => ∫ z in spaceTimeSet (Set.univ : Set Vec3)
-      (Ioo 0 T1), D z i j ^ 2) (fun j _ => integral_nonneg fun z => sq_nonneg _)
-      (Finset.mem_univ j)
-  have hfS : ∀ i, ∫⁻ z in S, ‖f z i‖ₑ ^ (2 : ℝ) ≤ Ff := fun i =>
-    (lintegral_mono_set hSsub1).trans (Finset.single_le_sum (f := fun i =>
-      ∫⁻ z in spaceTimeSet (Set.univ : Set Vec3) (Ioo 0 T1), ‖f z i‖ₑ ^ (2 : ℝ))
-      (fun _ _ => bot_le) (Finset.mem_univ i))
+    exact forcedLerayLimit_gradient_coordinate_sq_local_le hD2 hSsub1 hG1
+  have hfS := forcedLerayLimit_force_coordinate_sq_local_le (f := f) hSsub1
   -- the pressure piece
-  have h32 : ENNReal.ofReal (3 / 2 : ℝ) ≠ 0 := by
-    rw [ne_eq, ENNReal.ofReal_eq_zero, not_le]
-    norm_num
   have hpFae : AEStronglyMeasurable pF (volume.restrict S) :=
     hpFK.aestronglyMeasurable.mono_measure hSle
   have hPS : (∫⁻ z in S, ‖pF z‖ₑ ^ (3 / 2 : ℝ)) ^ (1 / (3 / 2 : ℝ)) ≤
       vK ^ (1 / 2 : ℝ) * x ^ (1 / 6 : ℝ) * Q ^ (1 / 2 : ℝ) := by
-    have hPe : (∫⁻ z in S, ‖pF z‖ₑ ^ (3 / 2 : ℝ)) ^ (1 / (3 / 2 : ℝ)) =
-        eLpNorm pF (ENNReal.ofReal (3 / 2 : ℝ)) (volume.restrict S) := by
-      rw [eLpNorm_eq_eLpNorm' h32 ENNReal.ofReal_ne_top hpFae,
-        ENNReal.toReal_ofReal (by norm_num), eLpNorm'_eq_lintegral_enorm]
-    rw [hPe, ← hIoc]
+    apply forcedLerayLimit_force_pressure_integral_power_le hpFae
+    rw [← hIoc]
     exact hpFloc K (Ioc s t) hKmeas measurableSet_Ioc hSsub
   -- the quadratic pressure piece, in `L^{5/3}`
   let y : ℝ≥0∞ := x ^ (2 / 5 : ℝ)
   let PN : ParabolicPoint → ℝ := fun z => P z - pF z
   have hPNae : AEStronglyMeasurable PN (volume.restrict S) :=
     (hR2 T1 hT1).2.aestronglyMeasurable.mono_measure hSleμ1
-  have hdivS : AEMeasurable (fun z : ParabolicPoint => ∑ i : Fin 3, spatialDeriv (wc i) i z.1)
-      (volume.restrict S) := hdivc.aemeasurable
-  have hPN : ∫⁻ z in S, ‖PN z * ∑ i : Fin 3, spatialDeriv (wc i) i z.1‖ₑ ≤
-      ENNReal.ofReal (3 * M1) * (MP5 * vK ^ (2 / 5 : ℝ)) * y := by
-    have hpt : ∀ z, ‖PN z * ∑ i : Fin 3, spatialDeriv (wc i) i z.1‖ₑ ≤
-        ENNReal.ofReal (3 * M1) * ‖PN z‖ₑ := by
-      intro z
-      rw [enorm_mul, mul_comm]
-      refine mul_le_mul' ?_ le_rfl
-      rw [Real.enorm_eq_ofReal_abs]
-      exact ENNReal.ofReal_le_ofReal (hM2 z.1)
-    have h53 : (5 / 3 : ℝ).HolderConjugate (5 / 2) := ⟨by norm_num, by norm_num, by norm_num⟩
-    have hhold := ENNReal.lintegral_mul_le_Lp_mul_Lq (volume.restrict S) h53
-      hPNae.aemeasurable.enorm (aemeasurable_const (b := (1 : ℝ≥0∞)))
-    simp only [Pi.mul_apply, mul_one, ENNReal.one_rpow, lintegral_const,
-      Measure.restrict_apply_univ, one_mul] at hhold
-    have h53ne : ENNReal.ofReal (5 / 3 : ℝ) ≠ 0 := by
-      rw [ne_eq, ENNReal.ofReal_eq_zero, not_le]
-      norm_num
-    have hnorm : (∫⁻ z in S, ‖PN z‖ₑ ^ (5 / 3 : ℝ)) ^ (1 / (5 / 3 : ℝ)) ≤ MP5 := by
-      have he : (∫⁻ z in S, ‖PN z‖ₑ ^ (5 / 3 : ℝ)) ^ (1 / (5 / 3 : ℝ)) =
-          eLpNorm PN (ENNReal.ofReal (5 / 3 : ℝ)) (volume.restrict S) := by
-        rw [eLpNorm_eq_eLpNorm' h53ne ENNReal.ofReal_ne_top hPNae,
-          ENNReal.toReal_ofReal (by norm_num), eLpNorm'_eq_lintegral_enorm]
-      rw [he]
-      exact (eLpNorm_mono_measure _ hSleμ1).trans (hunif5 ε hε).2.2
-    have hvol : volume S ^ (1 / (5 / 2 : ℝ)) = vK ^ (2 / 5 : ℝ) * y := by
-      rw [hvS, ENNReal.mul_rpow_of_nonneg _ _ (by norm_num)]
-      norm_num
-      rfl
-    calc ∫⁻ z in S, ‖PN z * ∑ i : Fin 3, spatialDeriv (wc i) i z.1‖ₑ
-        ≤ ∫⁻ z in S, ENNReal.ofReal (3 * M1) * ‖PN z‖ₑ := lintegral_mono hpt
-      _ = ENNReal.ofReal (3 * M1) * ∫⁻ z in S, ‖PN z‖ₑ :=
-          lintegral_const_mul' _ _ ENNReal.ofReal_ne_top
-      _ ≤ ENNReal.ofReal (3 * M1) * ((∫⁻ z in S, ‖PN z‖ₑ ^ (5 / 3 : ℝ)) ^ (1 / (5 / 3 : ℝ)) *
-            volume S ^ (1 / (5 / 2 : ℝ))) := mul_le_mul' le_rfl hhold
-      _ ≤ ENNReal.ofReal (3 * M1) * (MP5 * (vK ^ (2 / 5 : ℝ) * y)) := by
-          rw [hvol]
-          exact mul_le_mul' le_rfl (mul_le_mul' hnorm le_rfl)
-      _ = _ := by ring
-  -- combination
-  have hflux := forcedLerayLimit_flux_lintegral_le (S := S) (U := U) (J := J) (f := f) (D := D)
-    (P := pF) (wc := wc) hM0 hM1 hM2 hUs.measurable.aemeasurable hJm.aemeasurable
-    hDm.aemeasurable (hf2.aestronglyMeasurable.mono_measure hSleμ1).aemeasurable
-    hpFae.aemeasurable
-  have hx12 : x ^ (1 / 2 : ℝ) ≤ c ^ ((1 / 2 : ℝ) - 2 / 5) * y :=
-    forcedLerayLimit_rpow_le_twoFifths hxc (by norm_num)
-  have hx1 : x ≤ c ^ ((1 : ℝ) - 2 / 5) * y := by
-    have h := forcedLerayLimit_rpow_le_twoFifths hxc (r := 1) (by norm_num)
-    rwa [ENNReal.rpow_one] at h
-  have hx16 : x ^ (1 / 6 : ℝ) * x ^ (1 / 3 : ℝ) = x ^ (1 / 2 : ℝ) := by
-    rw [← ENNReal.rpow_add_of_nonneg _ _ (by norm_num) (by norm_num)]
-    norm_num
-  have hxx : x ^ (1 / 2 : ℝ) * x ^ (1 / 2 : ℝ) = x := by
-    rw [← ENNReal.rpow_add_of_nonneg _ _ (by norm_num) (by norm_num)]
-    norm_num
-  have hT1b : ∀ i j : Fin 3, (∫⁻ z in S, ‖J z j‖ₑ ^ (2 : ℝ)) ^ (1 / 2 : ℝ) *
-      (∫⁻ z in S, ‖U z i‖ₑ ^ (2 : ℝ)) ^ (1 / 2 : ℝ) ≤
-      (9 * ENNReal.ofReal E1) ^ (1 / 2 : ℝ) * ENNReal.ofReal E1 ^ (1 / 2 : ℝ) *
-        c ^ ((1 : ℝ) - 2 / 5) * y := by
-    intro i j
-    calc _ ≤ (9 * ENNReal.ofReal E1 * x) ^ (1 / 2 : ℝ) * (ENNReal.ofReal E1 * x) ^ (1 / 2 : ℝ) :=
-          mul_le_mul' (ENNReal.rpow_le_rpow (hJS j) (by norm_num))
-            (ENNReal.rpow_le_rpow (hUS i) (by norm_num))
-      _ = (9 * ENNReal.ofReal E1) ^ (1 / 2 : ℝ) * ENNReal.ofReal E1 ^ (1 / 2 : ℝ) *
-            (x ^ (1 / 2 : ℝ) * x ^ (1 / 2 : ℝ)) := by
-          rw [ENNReal.mul_rpow_of_nonneg (9 * ENNReal.ofReal E1) x (by norm_num),
-            ENNReal.mul_rpow_of_nonneg (ENNReal.ofReal E1) x (by norm_num)]
-          ring
-      _ = (9 * ENNReal.ofReal E1) ^ (1 / 2 : ℝ) * ENNReal.ofReal E1 ^ (1 / 2 : ℝ) * x := by
-          rw [hxx]
-      _ ≤ _ := by
-          rw [mul_assoc _ (c ^ _) y]
-          exact mul_le_mul' le_rfl hx1
-  have hT2b : ∀ i j : Fin 3, (∫⁻ z in S, ‖D z i j‖ₑ ^ (2 : ℝ)) ^ (1 / 2 : ℝ) *
-      volume S ^ (1 / 2 : ℝ) ≤
-      ENNReal.ofReal G1 ^ (1 / 2 : ℝ) * vK ^ (1 / 2 : ℝ) * c ^ ((1 / 2 : ℝ) - 2 / 5) * y := by
-    intro i j
-    rw [hvS, ENNReal.mul_rpow_of_nonneg _ _ (by norm_num)]
-    calc _ ≤ ENNReal.ofReal G1 ^ (1 / 2 : ℝ) * (vK ^ (1 / 2 : ℝ) * x ^ (1 / 2 : ℝ)) :=
-          mul_le_mul' (ENNReal.rpow_le_rpow (hDS i j) (by norm_num)) le_rfl
-      _ ≤ ENNReal.ofReal G1 ^ (1 / 2 : ℝ) *
-            (vK ^ (1 / 2 : ℝ) * (c ^ ((1 / 2 : ℝ) - 2 / 5) * y)) := by gcongr
-      _ = _ := by ring
-  have hT3b : ∀ i : Fin 3, (∫⁻ z in S, ‖f z i‖ₑ ^ (2 : ℝ)) ^ (1 / 2 : ℝ) *
-      volume S ^ (1 / 2 : ℝ) ≤
-      Ff ^ (1 / 2 : ℝ) * vK ^ (1 / 2 : ℝ) * c ^ ((1 / 2 : ℝ) - 2 / 5) * y := by
-    intro i
-    rw [hvS, ENNReal.mul_rpow_of_nonneg _ _ (by norm_num)]
-    calc _ ≤ Ff ^ (1 / 2 : ℝ) * (vK ^ (1 / 2 : ℝ) * x ^ (1 / 2 : ℝ)) :=
-          mul_le_mul' (ENNReal.rpow_le_rpow (hfS i) (by norm_num)) le_rfl
-      _ ≤ Ff ^ (1 / 2 : ℝ) * (vK ^ (1 / 2 : ℝ) * (c ^ ((1 / 2 : ℝ) - 2 / 5) * y)) := by gcongr
-      _ = _ := by ring
-  have hT4b : (∫⁻ z in S, ‖pF z‖ₑ ^ (3 / 2 : ℝ)) ^ (1 / (3 / 2 : ℝ)) * volume S ^ (1 / 3 : ℝ) ≤
-      vK ^ (1 / 2 : ℝ) * Q ^ (1 / 2 : ℝ) * vK ^ (1 / 3 : ℝ) * c ^ ((1 / 2 : ℝ) - 2 / 5) * y := by
-    rw [hvS, ENNReal.mul_rpow_of_nonneg _ _ (by norm_num)]
-    calc _ ≤ (vK ^ (1 / 2 : ℝ) * x ^ (1 / 6 : ℝ) * Q ^ (1 / 2 : ℝ)) *
-            (vK ^ (1 / 3 : ℝ) * x ^ (1 / 3 : ℝ)) :=
-          mul_le_mul' hPS le_rfl
-      _ = vK ^ (1 / 2 : ℝ) * Q ^ (1 / 2 : ℝ) * vK ^ (1 / 3 : ℝ) *
-            (x ^ (1 / 6 : ℝ) * x ^ (1 / 3 : ℝ)) := by ring
-      _ = vK ^ (1 / 2 : ℝ) * Q ^ (1 / 2 : ℝ) * vK ^ (1 / 3 : ℝ) * x ^ (1 / 2 : ℝ) := by
-          rw [hx16]
-      _ ≤ vK ^ (1 / 2 : ℝ) * Q ^ (1 / 2 : ℝ) * vK ^ (1 / 3 : ℝ) *
-            (c ^ ((1 / 2 : ℝ) - 2 / 5) * y) := by gcongr
-      _ = _ := by ring
-  have hsplitH : ∀ z, H z = (forcedHopfPairingFlux J U f D wc z +
-      pF z * ∑ i : Fin 3, spatialDeriv (wc i) i z.1) +
-      PN z * ∑ i : Fin 3, spatialDeriv (wc i) i z.1 := by
-    intro z
-    simp only [H, PN]
-    ring
-  have hH2meas : AEMeasurable (fun z => ‖PN z * ∑ i : Fin 3, spatialDeriv (wc i) i z.1‖ₑ)
-      (volume.restrict S) := (hPNae.aemeasurable.mul hdivS).enorm
-  have hlint : ∫⁻ z in S, ‖H z‖ₑ ≤ Cenn * y := by
-    calc ∫⁻ z in S, ‖H z‖ₑ
-        ≤ ∫⁻ z in S, (‖forcedHopfPairingFlux J U f D wc z +
-            pF z * ∑ i : Fin 3, spatialDeriv (wc i) i z.1‖ₑ +
-            ‖PN z * ∑ i : Fin 3, spatialDeriv (wc i) i z.1‖ₑ) :=
-          lintegral_mono fun z => by rw [hsplitH z]; exact enorm_add_le _ _
-      _ = (∫⁻ z in S, ‖forcedHopfPairingFlux J U f D wc z +
-            pF z * ∑ i : Fin 3, spatialDeriv (wc i) i z.1‖ₑ) +
-            ∫⁻ z in S, ‖PN z * ∑ i : Fin 3, spatialDeriv (wc i) i z.1‖ₑ :=
-          lintegral_add_right' _ hH2meas
-      _ ≤ (ENNReal.ofReal M1 * ∑ _i : Fin 3, ∑ _j : Fin 3,
-            (9 * ENNReal.ofReal E1) ^ (1 / 2 : ℝ) * ENNReal.ofReal E1 ^ (1 / 2 : ℝ) *
-              c ^ ((1 : ℝ) - 2 / 5) * y +
-          ENNReal.ofReal M1 * ∑ _i : Fin 3, ∑ _j : Fin 3,
-            ENNReal.ofReal G1 ^ (1 / 2 : ℝ) * vK ^ (1 / 2 : ℝ) * c ^ ((1 / 2 : ℝ) - 2 / 5) * y +
-          ENNReal.ofReal M0 * ∑ _i : Fin 3,
-            Ff ^ (1 / 2 : ℝ) * vK ^ (1 / 2 : ℝ) * c ^ ((1 / 2 : ℝ) - 2 / 5) * y +
-          ENNReal.ofReal (3 * M1) * (vK ^ (1 / 2 : ℝ) * Q ^ (1 / 2 : ℝ) * vK ^ (1 / 3 : ℝ) *
-              c ^ ((1 / 2 : ℝ) - 2 / 5) * y)) +
-          ENNReal.ofReal (3 * M1) * (MP5 * vK ^ (2 / 5 : ℝ)) * y := by
-          refine add_le_add (hflux.trans ?_) hPN
-          refine add_le_add (add_le_add (add_le_add ?_ ?_) ?_) ?_
-          · exact mul_le_mul' le_rfl (Finset.sum_le_sum fun i _ =>
-              Finset.sum_le_sum fun j _ => hT1b i j)
-          · exact mul_le_mul' le_rfl (Finset.sum_le_sum fun i _ =>
-              Finset.sum_le_sum fun j _ => hT2b i j)
-          · exact mul_le_mul' le_rfl (Finset.sum_le_sum fun i _ => hT3b i)
-          · exact mul_le_mul' le_rfl hT4b
-      _ = Cenn * y := by
-          simp only [Cenn, Finset.sum_const, Finset.card_univ, Fintype.card_fin, nsmul_eq_mul]
-          ring
-  have hrp : ∀ (z : ℝ≥0∞) (r : ℝ), 0 ≤ r → z ≠ ⊤ → z ^ r ≠ ⊤ := fun z r hr hz =>
-    ENNReal.rpow_ne_top_of_nonneg hr hz
-  have hcne : c ≠ ⊤ := ENNReal.ofReal_ne_top
-  have hFf : Ff ≠ ⊤ := by
-    refine ENNReal.sum_ne_top.2 fun i _ => ?_
-    have hmem := (hf T1 hT1).eval i
-    rw [← hl2 _ _ hmem.aestronglyMeasurable]
-    exact hrp _ _ (by norm_num) hmem.eLpNorm_ne_top
-  have hCenn : Cenn ≠ ⊤ := by
-    refine ENNReal.add_ne_top.2 ⟨ENNReal.add_ne_top.2 ⟨ENNReal.add_ne_top.2
-      ⟨ENNReal.add_ne_top.2 ⟨?_, ?_⟩, ?_⟩, ?_⟩, ?_⟩
-    · refine ENNReal.mul_ne_top ENNReal.ofReal_ne_top (ENNReal.sum_ne_top.2 fun _ _ =>
-        ENNReal.sum_ne_top.2 fun _ _ => ?_)
-      exact ENNReal.mul_ne_top (ENNReal.mul_ne_top (hrp _ _ (by norm_num)
-        (ENNReal.mul_ne_top (by norm_num) ENNReal.ofReal_ne_top))
-        (hrp _ _ (by norm_num) ENNReal.ofReal_ne_top)) (hrp _ _ (by norm_num) hcne)
-    · refine ENNReal.mul_ne_top ENNReal.ofReal_ne_top (ENNReal.sum_ne_top.2 fun _ _ =>
-        ENNReal.sum_ne_top.2 fun _ _ => ?_)
-      exact ENNReal.mul_ne_top (ENNReal.mul_ne_top (hrp _ _ (by norm_num) ENNReal.ofReal_ne_top)
-        (hrp _ _ (by norm_num) hvK)) (hrp _ _ (by norm_num) hcne)
-    · refine ENNReal.mul_ne_top ENNReal.ofReal_ne_top (ENNReal.sum_ne_top.2 fun _ _ => ?_)
-      exact ENNReal.mul_ne_top (ENNReal.mul_ne_top (hrp _ _ (by norm_num) hFf)
-        (hrp _ _ (by norm_num) hvK)) (hrp _ _ (by norm_num) hcne)
-    · refine ENNReal.mul_ne_top ENNReal.ofReal_ne_top ?_
-      exact ENNReal.mul_ne_top (ENNReal.mul_ne_top (ENNReal.mul_ne_top
-          (hrp _ _ (by norm_num) hvK) (hrp _ _ (by norm_num) hQfin.ne))
-          (hrp _ _ (by norm_num) hvK)) (hrp _ _ (by norm_num) hcne)
-    · exact ENNReal.mul_ne_top ENNReal.ofReal_ne_top
-        (ENNReal.mul_ne_top hMP5.ne (hrp _ _ (by norm_num) hvK))
-  change |g t - g s| ≤ Cenn.toReal * |t - s| ^ (2 / 5 : ℝ)
-  calc |g t - g s| ≤ (∫⁻ z in S, ‖H z‖ₑ).toReal := hfinal
-    _ ≤ (Cenn * y).toReal := ENNReal.toReal_mono (ENNReal.mul_ne_top hCenn
-        (hrp _ _ (by norm_num) ENNReal.ofReal_ne_top)) hlint
-    _ = Cenn.toReal * |t - s| ^ (2 / 5 : ℝ) := by
-        rw [ENNReal.toReal_mul, ← ENNReal.toReal_rpow, ENNReal.toReal_ofReal hst',
-          abs_of_nonneg hst']
+  have hPNnorm : eLpNorm PN (ENNReal.ofReal (5 / 3 : ℝ)) (volume.restrict S) ≤ MP5 :=
+    (eLpNorm_mono_measure _ hSleμ1).trans (hunif5 ε hε).2.2
+  have hlint : ∫⁻ z in S, ‖H z‖ₑ ≤ Cenn * y :=
+    forcedLerayLimit_flux_twoFifths_le hM0 hM1 hM2 hUs.measurable.aemeasurable
+      hJm.aemeasurable hDm.aemeasurable
+      (hf2.aestronglyMeasurable.mono_measure hSleμ1).aemeasurable hpFae hPNae
+      hdivc.aemeasurable hUS hJS hDS hfS hPS hPNnorm hvS hxc
+  have hCenn : Cenn ≠ ⊤ := ne_top_of_le_ne_top
+    (ENNReal.mul_ne_top ENNReal.ofReal_ne_top hfin) hCenn_le
+  exact forcedLerayLimit_scalar_twoFifths_modulus hHint hpair hs ht hTT1 hst hlint hCenn
 
 /-- `lem:forced-equicontinuity`: given the weak momentum identity
 `eq:reg-momentum-forced` of the forced regularized solutions, for every
@@ -667,7 +938,8 @@ theorem forcedLerayLimit_time_modulus
   -- bounds for the test field
   choose C0 hC0 using fun i => (hw i).continuous.bounded_above_of_compact_support (hwc i)
   choose C1 hC1 using fun i j =>
-    (((hw i).continuous_fderiv (by simp)).clm_apply continuous_const).bounded_above_of_compact_support
+    (((hw i).continuous_fderiv
+      (by simp)).clm_apply continuous_const).bounded_above_of_compact_support
       ((hwc i).fderiv_apply (𝕜 := ℝ) (CKN.basisVec j))
   let M0 : ℝ := ∑ i : Fin 3, C0 i
   let M1 : ℝ := ∑ i : Fin 3, ∑ j : Fin 3, C1 i j

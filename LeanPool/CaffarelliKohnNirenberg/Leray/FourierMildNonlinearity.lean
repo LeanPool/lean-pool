@@ -25,6 +25,7 @@ namespace CKN.Leray
 
 open CKN.Foundation.Parabolic
 
+/-- The bilinear scalar multiplication map on the local Hilbert velocity space. -/
 @[expose]
 def localScalarVectorActionLinear : ℝ →ₗ[ℝ] L2Vec3 →ₗ[ℝ] L2Vec3 :=
   LinearMap.mk₂ ℝ (fun c x => c • x)
@@ -33,6 +34,7 @@ def localScalarVectorActionLinear : ℝ →ₗ[ℝ] L2Vec3 →ₗ[ℝ] L2Vec3 :=
     (by intro c x y; exact smul_add c x y)
     (by intro c d x; exact (smul_comm c d x).symm)
 
+/-- The continuous scalar multiplication map on local Hilbert velocities. -/
 @[expose]
 def localScalarVectorAction : ℝ →L[ℝ] L2Vec3 →L[ℝ] L2Vec3 :=
   localScalarVectorActionLinear.mkContinuous₂ 1 (by
@@ -92,6 +94,8 @@ theorem regularizedTensorOuter_norm (v u : L2Vec3) :
   have htarget : 0 ≤ ‖v‖ * ‖u‖ := mul_nonneg (norm_nonneg _) (norm_nonneg _)
   nlinarith only [hnormsq, hnonneg, htarget]
 
+/-- The bilinear map sending two Hilbert vectors to their regularized componentwise tensor
+product. -/
 @[expose]
 def regularizedTensorOuterLinear : L2Vec3 →ₗ[ℝ] L2Vec3 →ₗ[ℝ] RealTensor3 :=
   LinearMap.mk₂ ℝ regularizedTensorOuter

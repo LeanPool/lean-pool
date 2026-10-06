@@ -330,7 +330,7 @@ theorem exists_ae_eq_const_of_weakDeriv_zero {a b : ℝ} (hab : a < b)
           funext x
           simp only [smul_eq_mul]
           ring,
-      integral_sub hφFint hφCint, integral_mul_const] 
+      integral_sub hφFint hφCint, integral_mul_const]
     rw [hidentity]
     ring
   have hzero := isOpen_Ioo.ae_eq_zero_of_integral_contDiff_smul_eq_zero

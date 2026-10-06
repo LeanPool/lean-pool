@@ -229,6 +229,8 @@ theorem regularizedMildLocalMap_sub_norm_le
   have hpoint := hpointwise t
   simpa [D, M, div_eq_mul_inv, mul_assoc, mul_comm, mul_left_comm] using hpoint
 
+/-- The set of continuous mild paths whose values satisfy the `J` condition and the uniform `2M`
+norm bound. -/
 @[expose]
 def regularizedMildLocalBall (T M : ℝ) :
     Set (C(RegularizedMildTimeInterval T, RealVectorL2)) :=

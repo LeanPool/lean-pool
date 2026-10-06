@@ -59,6 +59,7 @@ theorem regularisedComplexTensorOuter_norm (v u : ComplexVec3) :
     mul_nonneg (norm_nonneg _) (norm_nonneg _)
   nlinarith only [hnormsq, hnonneg, htarget]
 
+/-- The complex-bilinear map forming the outer product of two complex vector values. -/
 @[expose]
 def regularisedComplexTensorOuterLinear :
     ComplexVec3 →ₗ[ℂ] ComplexVec3 →ₗ[ℂ] ComplexTensor3 :=
