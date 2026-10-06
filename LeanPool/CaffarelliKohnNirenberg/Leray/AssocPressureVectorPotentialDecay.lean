@@ -100,7 +100,8 @@ private theorem associatedPressureCurlSourceTest_mem_spaceTimeTestFunction
     apply contDiff_pi.2
     intro i
     fin_cases j <;> fin_cases i <;>
-      simp [associatedPressureCurlSourceTest] <;>
+      simp only [associatedPressureCurlSourceTest, Fin.zero_eta, Fin.isValue,
+        Fin.mk_one, Fin.reduceFinMk] <;>
       first
       | exact (contDiff_const : ContDiff ℝ (⊤ : ℕ∞)
           (fun _ : Vec3 × ℝ => (0 : ℝ)))
@@ -200,7 +201,8 @@ theorem associatedPressureHelmholtzVectorPotential_component_decay
     (j : Fin 3) :
     RieszPressurePotentialDecay (fun z => associatedPressureHelmholtzVectorPotential φ z j) ∧
     RieszPressurePotentialDecay (fun z =>
-      CKN.timePartial (fun w : Vec3 × ℝ => associatedPressureHelmholtzVectorPotential φ w j) z) := by
+      CKN.timePartial
+        (fun w : Vec3 × ℝ => associatedPressureHelmholtzVectorPotential φ w j) z) := by
   let η := associatedPressureCurlSourceTest φ j
   have hη := associatedPressureCurlSourceTest_mem_spaceTimeTestFunction hφ j
   have hηt := associatedPressureVectorTimePartial_mem_spaceTimeTestFunction hη

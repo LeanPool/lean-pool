@@ -406,6 +406,191 @@ theorem associatedPressurePotentialCutoff_hessian_eq_of_inner
     hhess i j, hgrad i, hgrad j, heta]
   ring
 
+private theorem spatial_curl_eq_of_second_partials
+    (A B : Vec3 × ℝ → Vec3)
+    (hA : ContDiff ℝ (⊤ : ℕ∞) A) (hB : ContDiff ℝ (⊤ : ℕ∞) B)
+    (i j : Fin 3) (z : Vec3 × ℝ)
+    (hdouble : ∀ k l : Fin 3,
+      CKN.spatialPartialProd
+        (CKN.spatialPartialProd (fun w => B w k) l) j z =
+      CKN.spatialPartialProd
+        (CKN.spatialPartialProd (fun w => A w k) l) j z) :
+    CKN.spatialPartialProd (fun w => associatedPressureTestCurl B w i) j z =
+      CKN.spatialPartialProd (fun w => associatedPressureTestCurl A w i) j z := by
+  have hAcomp (k : Fin 3) : ContDiff ℝ (⊤ : ℕ∞) (fun w => A w k) :=
+    (contDiff_apply ℝ ℝ k).comp hA
+  have hBcomp (k : Fin 3) : ContDiff ℝ (⊤ : ℕ∞) (fun w => B w k) :=
+    (contDiff_apply ℝ ℝ k).comp hB
+  have hsub {f g : Vec3 × ℝ → ℝ}
+      (hf : ContDiff ℝ (⊤ : ℕ∞) f) (hg : ContDiff ℝ (⊤ : ℕ∞) g) :
+      CKN.spatialPartialProd (fun w => f w - g w) j z =
+        CKN.spatialPartialProd f j z - CKN.spatialPartialProd g j z := by
+    have hfSlice : ContDiff ℝ (⊤ : ℕ∞) (fun x : Vec3 => f (x, z.2)) :=
+      hf.comp (contDiff_prodMk_left (𝕜 := ℝ) (n := (⊤ : ℕ∞)) z.2)
+    have hgSlice : ContDiff ℝ (⊤ : ℕ∞) (fun x : Vec3 => g (x, z.2)) :=
+      hg.comp (contDiff_prodMk_left (𝕜 := ℝ) (n := (⊤ : ℕ∞)) z.2)
+    have h := congrArg (fun L : Vec3 →L[ℝ] ℝ => L (CKN.basisVec j))
+      (fderiv_fun_sub (hfSlice.differentiable (by simp) z.1)
+        (hgSlice.differentiable (by simp) z.1))
+    simpa [CKN.spatialPartialProd, CKN.spatialPartial] using h
+  have hpartial (k l : Fin 3) :
+      ContDiff ℝ (⊤ : ℕ∞)
+        (CKN.spatialPartialProd
+          (fun w : Vec3 × ℝ => A w k) l) :=
+    CKN.spatialPartial_contDiff (hAcomp k) l
+  fin_cases i
+  · change CKN.spatialPartialProd
+        (fun w => CKN.spatialPartialProd
+          (fun q : Vec3 × ℝ =>
+                B q 2) 1 w -
+          CKN.spatialPartialProd
+          (fun q : Vec3 × ℝ =>
+                B q 1) 2 w) j z =
+      CKN.spatialPartialProd
+        (fun w => CKN.spatialPartialProd
+          (fun q : Vec3 × ℝ =>
+                A q 2) 1 w -
+          CKN.spatialPartialProd
+          (fun q : Vec3 × ℝ =>
+                A q 1) 2 w) j z
+    have hcutSub := hsub
+      (f := fun w => CKN.spatialPartialProd
+        (fun q : Vec3 × ℝ =>
+                B q 2) 1 w)
+      (g := fun w => CKN.spatialPartialProd
+        (fun q : Vec3 × ℝ =>
+                B q 1) 2 w)
+      (CKN.spatialPartial_contDiff (hBcomp 2) 1)
+      (CKN.spatialPartial_contDiff (hBcomp 1) 2)
+    have hA_sub := hsub
+      (f := fun w => CKN.spatialPartialProd
+        (fun q : Vec3 × ℝ =>
+                A q 2) 1 w)
+      (g := fun w => CKN.spatialPartialProd
+        (fun q : Vec3 × ℝ =>
+                A q 1) 2 w)
+      (hpartial 2 1) (hpartial 1 2)
+    calc
+      _ = CKN.spatialPartialProd
+            (fun w => CKN.spatialPartialProd
+              (fun q : Vec3 × ℝ =>
+                B q 2) 1 w) j z -
+          CKN.spatialPartialProd
+            (fun w => CKN.spatialPartialProd
+              (fun q : Vec3 × ℝ =>
+                B q 1) 2 w) j z := hcutSub
+      _ = CKN.spatialPartialProd
+            (fun w => CKN.spatialPartialProd
+              (fun q : Vec3 × ℝ =>
+                A q 2) 1 w) j z -
+          CKN.spatialPartialProd
+            (fun w => CKN.spatialPartialProd
+              (fun q : Vec3 × ℝ =>
+                A q 1) 2 w) j z := by
+        rw [hdouble 2 1, hdouble 1 2]
+      _ = _ := hA_sub.symm
+  · change CKN.spatialPartialProd
+        (fun w => CKN.spatialPartialProd
+          (fun q : Vec3 × ℝ =>
+                B q 0) 2 w -
+          CKN.spatialPartialProd
+          (fun q : Vec3 × ℝ =>
+                B q 2) 0 w) j z =
+      CKN.spatialPartialProd
+        (fun w => CKN.spatialPartialProd
+          (fun q : Vec3 × ℝ =>
+                A q 0) 2 w -
+          CKN.spatialPartialProd
+          (fun q : Vec3 × ℝ =>
+                A q 2) 0 w) j z
+    have hcutSub := hsub
+      (f := fun w => CKN.spatialPartialProd
+        (fun q : Vec3 × ℝ =>
+                B q 0) 2 w)
+      (g := fun w => CKN.spatialPartialProd
+        (fun q : Vec3 × ℝ =>
+                B q 2) 0 w)
+      (CKN.spatialPartial_contDiff (hBcomp 0) 2)
+      (CKN.spatialPartial_contDiff (hBcomp 2) 0)
+    have hA_sub := hsub
+      (f := fun w => CKN.spatialPartialProd
+        (fun q : Vec3 × ℝ =>
+                A q 0) 2 w)
+      (g := fun w => CKN.spatialPartialProd
+        (fun q : Vec3 × ℝ =>
+                A q 2) 0 w)
+      (hpartial 0 2) (hpartial 2 0)
+    calc
+      _ = CKN.spatialPartialProd
+            (fun w => CKN.spatialPartialProd
+              (fun q : Vec3 × ℝ =>
+                B q 0) 2 w) j z -
+          CKN.spatialPartialProd
+            (fun w => CKN.spatialPartialProd
+              (fun q : Vec3 × ℝ =>
+                B q 2) 0 w) j z := hcutSub
+      _ = CKN.spatialPartialProd
+            (fun w => CKN.spatialPartialProd
+              (fun q : Vec3 × ℝ =>
+                A q 0) 2 w) j z -
+          CKN.spatialPartialProd
+            (fun w => CKN.spatialPartialProd
+              (fun q : Vec3 × ℝ =>
+                A q 2) 0 w) j z := by
+        rw [hdouble 0 2, hdouble 2 0]
+      _ = _ := hA_sub.symm
+  · change CKN.spatialPartialProd
+        (fun w => CKN.spatialPartialProd
+          (fun q : Vec3 × ℝ =>
+                B q 1) 0 w -
+          CKN.spatialPartialProd
+          (fun q : Vec3 × ℝ =>
+                B q 0) 1 w) j z =
+      CKN.spatialPartialProd
+        (fun w => CKN.spatialPartialProd
+          (fun q : Vec3 × ℝ =>
+                A q 1) 0 w -
+          CKN.spatialPartialProd
+          (fun q : Vec3 × ℝ =>
+                A q 0) 1 w) j z
+    have hcutSub := hsub
+      (f := fun w => CKN.spatialPartialProd
+        (fun q : Vec3 × ℝ =>
+                B q 1) 0 w)
+      (g := fun w => CKN.spatialPartialProd
+        (fun q : Vec3 × ℝ =>
+                B q 0) 1 w)
+      (CKN.spatialPartial_contDiff (hBcomp 1) 0)
+      (CKN.spatialPartial_contDiff (hBcomp 0) 1)
+    have hA_sub := hsub
+      (f := fun w => CKN.spatialPartialProd
+        (fun q : Vec3 × ℝ =>
+                A q 1) 0 w)
+      (g := fun w => CKN.spatialPartialProd
+        (fun q : Vec3 × ℝ =>
+                A q 0) 1 w)
+      (hpartial 1 0) (hpartial 0 1)
+    calc
+      _ = CKN.spatialPartialProd
+            (fun w => CKN.spatialPartialProd
+              (fun q : Vec3 × ℝ =>
+                B q 1) 0 w) j z -
+          CKN.spatialPartialProd
+            (fun w => CKN.spatialPartialProd
+              (fun q : Vec3 × ℝ =>
+                B q 0) 1 w) j z := hcutSub
+      _ = CKN.spatialPartialProd
+            (fun w => CKN.spatialPartialProd
+              (fun q : Vec3 × ℝ =>
+                A q 1) 0 w) j z -
+          CKN.spatialPartialProd
+            (fun w => CKN.spatialPartialProd
+              (fun q : Vec3 × ℝ =>
+                A q 0) 1 w) j z := by
+        rw [hdouble 1 0, hdouble 0 1]
+      _ = _ := hA_sub.symm
+
+
 /-- Spatial derivatives of the cutoff curl eventually agree pointwise with
 those of the full Helmholtz curl. -/
 theorem associatedPressureHelmholtzCutoffCurl_spatial_eventually_eq
@@ -467,139 +652,9 @@ theorem associatedPressureHelmholtzCutoffCurl_spatial_eventually_eq
         (fun x : Vec3 => associatedPressureHelmholtzCutoffVectorPotential φ n (x, z.2) k)
         j l z.1 = _
     exact hcutId.trans (hEq.trans hAId.symm)
-  have hsub {f g : Vec3 × ℝ → ℝ}
-      (hf : ContDiff ℝ (⊤ : ℕ∞) f) (hg : ContDiff ℝ (⊤ : ℕ∞) g) :
-      CKN.spatialPartialProd (fun w => f w - g w) j z =
-        CKN.spatialPartialProd f j z - CKN.spatialPartialProd g j z := by
-    have hfSlice : ContDiff ℝ (⊤ : ℕ∞) (fun x : Vec3 => f (x, z.2)) :=
-      hf.comp (contDiff_prodMk_left (𝕜 := ℝ) (n := (⊤ : ℕ∞)) z.2)
-    have hgSlice : ContDiff ℝ (⊤ : ℕ∞) (fun x : Vec3 => g (x, z.2)) :=
-      hg.comp (contDiff_prodMk_left (𝕜 := ℝ) (n := (⊤ : ℕ∞)) z.2)
-    have h := congrArg (fun L : Vec3 →L[ℝ] ℝ => L (CKN.basisVec j))
-      (fderiv_fun_sub (hfSlice.differentiable (by simp) z.1)
-        (hgSlice.differentiable (by simp) z.1))
-    simpa [CKN.spatialPartialProd, CKN.spatialPartial] using h
-  have hpartial (k l : Fin 3) :
-      ContDiff ℝ (⊤ : ℕ∞)
-        (CKN.spatialPartialProd
-          (fun w : Vec3 × ℝ => associatedPressureHelmholtzVectorPotential φ w k) l) :=
-    CKN.spatialPartial_contDiff (hAcomp k) l
-  fin_cases i
-  · change CKN.spatialPartialProd
-        (fun w => CKN.spatialPartialProd
-          (fun q : Vec3 × ℝ => associatedPressureHelmholtzCutoffVectorPotential φ n q 2) 1 w -
-          CKN.spatialPartialProd
-          (fun q : Vec3 × ℝ => associatedPressureHelmholtzCutoffVectorPotential φ n q 1) 2 w) j z =
-      CKN.spatialPartialProd
-        (fun w => CKN.spatialPartialProd
-          (fun q : Vec3 × ℝ => associatedPressureHelmholtzVectorPotential φ q 2) 1 w -
-          CKN.spatialPartialProd
-          (fun q : Vec3 × ℝ => associatedPressureHelmholtzVectorPotential φ q 1) 2 w) j z
-    have hcutSub := hsub
-      (f := fun w => CKN.spatialPartialProd
-        (fun q : Vec3 × ℝ => associatedPressureHelmholtzCutoffVectorPotential φ n q 2) 1 w)
-      (g := fun w => CKN.spatialPartialProd
-        (fun q : Vec3 × ℝ => associatedPressureHelmholtzCutoffVectorPotential φ n q 1) 2 w)
-      (CKN.spatialPartial_contDiff (hcutComp 2) 1)
-      (CKN.spatialPartial_contDiff (hcutComp 1) 2)
-    have hA_sub := hsub
-      (f := fun w => CKN.spatialPartialProd
-        (fun q : Vec3 × ℝ => associatedPressureHelmholtzVectorPotential φ q 2) 1 w)
-      (g := fun w => CKN.spatialPartialProd
-        (fun q : Vec3 × ℝ => associatedPressureHelmholtzVectorPotential φ q 1) 2 w)
-      (hpartial 2 1) (hpartial 1 2)
-    calc
-      _ = CKN.spatialPartialProd
-            (fun w => CKN.spatialPartialProd
-              (fun q : Vec3 × ℝ => associatedPressureHelmholtzCutoffVectorPotential φ n q 2) 1 w) j z -
-          CKN.spatialPartialProd
-            (fun w => CKN.spatialPartialProd
-              (fun q : Vec3 × ℝ => associatedPressureHelmholtzCutoffVectorPotential φ n q 1) 2 w) j z := hcutSub
-      _ = CKN.spatialPartialProd
-            (fun w => CKN.spatialPartialProd
-              (fun q : Vec3 × ℝ => associatedPressureHelmholtzVectorPotential φ q 2) 1 w) j z -
-          CKN.spatialPartialProd
-            (fun w => CKN.spatialPartialProd
-              (fun q : Vec3 × ℝ => associatedPressureHelmholtzVectorPotential φ q 1) 2 w) j z := by
-        rw [hdouble 2 1, hdouble 1 2]
-      _ = _ := hA_sub.symm
-
-  · change CKN.spatialPartialProd
-        (fun w => CKN.spatialPartialProd
-          (fun q : Vec3 × ℝ => associatedPressureHelmholtzCutoffVectorPotential φ n q 0) 2 w -
-          CKN.spatialPartialProd
-          (fun q : Vec3 × ℝ => associatedPressureHelmholtzCutoffVectorPotential φ n q 2) 0 w) j z =
-      CKN.spatialPartialProd
-        (fun w => CKN.spatialPartialProd
-          (fun q : Vec3 × ℝ => associatedPressureHelmholtzVectorPotential φ q 0) 2 w -
-          CKN.spatialPartialProd
-          (fun q : Vec3 × ℝ => associatedPressureHelmholtzVectorPotential φ q 2) 0 w) j z
-    have hcutSub := hsub
-      (f := fun w => CKN.spatialPartialProd
-        (fun q : Vec3 × ℝ => associatedPressureHelmholtzCutoffVectorPotential φ n q 0) 2 w)
-      (g := fun w => CKN.spatialPartialProd
-        (fun q : Vec3 × ℝ => associatedPressureHelmholtzCutoffVectorPotential φ n q 2) 0 w)
-      (CKN.spatialPartial_contDiff (hcutComp 0) 2)
-      (CKN.spatialPartial_contDiff (hcutComp 2) 0)
-    have hA_sub := hsub
-      (f := fun w => CKN.spatialPartialProd
-        (fun q : Vec3 × ℝ => associatedPressureHelmholtzVectorPotential φ q 0) 2 w)
-      (g := fun w => CKN.spatialPartialProd
-        (fun q : Vec3 × ℝ => associatedPressureHelmholtzVectorPotential φ q 2) 0 w)
-      (hpartial 0 2) (hpartial 2 0)
-    calc
-      _ = CKN.spatialPartialProd
-            (fun w => CKN.spatialPartialProd
-              (fun q : Vec3 × ℝ => associatedPressureHelmholtzCutoffVectorPotential φ n q 0) 2 w) j z -
-          CKN.spatialPartialProd
-            (fun w => CKN.spatialPartialProd
-              (fun q : Vec3 × ℝ => associatedPressureHelmholtzCutoffVectorPotential φ n q 2) 0 w) j z := hcutSub
-      _ = CKN.spatialPartialProd
-            (fun w => CKN.spatialPartialProd
-              (fun q : Vec3 × ℝ => associatedPressureHelmholtzVectorPotential φ q 0) 2 w) j z -
-          CKN.spatialPartialProd
-            (fun w => CKN.spatialPartialProd
-              (fun q : Vec3 × ℝ => associatedPressureHelmholtzVectorPotential φ q 2) 0 w) j z := by
-        rw [hdouble 0 2, hdouble 2 0]
-      _ = _ := hA_sub.symm
-  · change CKN.spatialPartialProd
-        (fun w => CKN.spatialPartialProd
-          (fun q : Vec3 × ℝ => associatedPressureHelmholtzCutoffVectorPotential φ n q 1) 0 w -
-          CKN.spatialPartialProd
-          (fun q : Vec3 × ℝ => associatedPressureHelmholtzCutoffVectorPotential φ n q 0) 1 w) j z =
-      CKN.spatialPartialProd
-        (fun w => CKN.spatialPartialProd
-          (fun q : Vec3 × ℝ => associatedPressureHelmholtzVectorPotential φ q 1) 0 w -
-          CKN.spatialPartialProd
-          (fun q : Vec3 × ℝ => associatedPressureHelmholtzVectorPotential φ q 0) 1 w) j z
-    have hcutSub := hsub
-      (f := fun w => CKN.spatialPartialProd
-        (fun q : Vec3 × ℝ => associatedPressureHelmholtzCutoffVectorPotential φ n q 1) 0 w)
-      (g := fun w => CKN.spatialPartialProd
-        (fun q : Vec3 × ℝ => associatedPressureHelmholtzCutoffVectorPotential φ n q 0) 1 w)
-      (CKN.spatialPartial_contDiff (hcutComp 1) 0)
-      (CKN.spatialPartial_contDiff (hcutComp 0) 1)
-    have hA_sub := hsub
-      (f := fun w => CKN.spatialPartialProd
-        (fun q : Vec3 × ℝ => associatedPressureHelmholtzVectorPotential φ q 1) 0 w)
-      (g := fun w => CKN.spatialPartialProd
-        (fun q : Vec3 × ℝ => associatedPressureHelmholtzVectorPotential φ q 0) 1 w)
-      (hpartial 1 0) (hpartial 0 1)
-    calc
-      _ = CKN.spatialPartialProd
-            (fun w => CKN.spatialPartialProd
-              (fun q : Vec3 × ℝ => associatedPressureHelmholtzCutoffVectorPotential φ n q 1) 0 w) j z -
-          CKN.spatialPartialProd
-            (fun w => CKN.spatialPartialProd
-              (fun q : Vec3 × ℝ => associatedPressureHelmholtzCutoffVectorPotential φ n q 0) 1 w) j z := hcutSub
-      _ = CKN.spatialPartialProd
-            (fun w => CKN.spatialPartialProd
-              (fun q : Vec3 × ℝ => associatedPressureHelmholtzVectorPotential φ q 1) 0 w) j z -
-          CKN.spatialPartialProd
-            (fun w => CKN.spatialPartialProd
-              (fun q : Vec3 × ℝ => associatedPressureHelmholtzVectorPotential φ q 0) 1 w) j z := by
-        rw [hdouble 1 0, hdouble 0 1]
-      _ = _ := hA_sub.symm
+  exact spatial_curl_eq_of_second_partials
+    (associatedPressureHelmholtzVectorPotential φ)
+    (associatedPressureHelmholtzCutoffVectorPotential φ n) hA (hcut n) i j z hdouble
 
 end CKN.Leray
 

@@ -275,7 +275,8 @@ theorem forcedHopf_regPairing_sub_eq
   rw [hgK] at hFloc hderiv
   obtain ⟨C, hC⟩ := eq_const_add_intervalIntegral_of_continuous_weakDeriv hT
     (show T / 2 ∈ Ioo 0 T from ⟨by linarith only [hT], by linarith only [hT]⟩)
-    hFloc hGon.locallyIntegrableOn hderiv (hcont.mono (fun x hx => (show x ∈ Ici (0 : ℝ) from hx.1.le)))
+    hFloc hGon.locallyIntegrableOn hderiv
+    (hcont.mono (fun x hx => (show x ∈ Ici (0 : ℝ) from hx.1.le)))
   let h' : ℝ → ℝ := (Ioo 0 T).indicator h
   have hh' : Integrable h' := forcedHopf_integrable_timeDensity K T G hGint
   have hint_eq : ∀ x ∈ Ioo 0 T, ∫ s in T / 2..x, h s = ∫ s in T / 2..x, h' s := by

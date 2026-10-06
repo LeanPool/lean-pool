@@ -38,7 +38,8 @@ variable (ρ : RegMollifierProfile) (ε : ℝ) (hε : 0 < ε) {a : Vec3 → Vec3
 theorem forcedRegTransport_eq (z : Vec3 × ℝ) (i : Fin 3) :
     regUniformMollifiedVelocity ρ ε hε (forcedRegRep ρ ε hε ha hf) z i =
       ∫ y, forcedTransportKernel ρ ε hε y * forcedRegRep ρ ε hε ha hf (z.1 - y, z.2) i := by
-  have h := forcedTransport_component_eq (ρ := ρ) hε (a := fun x => forcedRegRep ρ ε hε ha hf (x, z.2))
+  have h := forcedTransport_component_eq (ρ := ρ) hε
+    (a := fun x => forcedRegRep ρ ε hε ha hf (x, z.2))
     (forcedRegRep_memLp ρ ε hε ha hf z.2) z.1 i
   change regUniformMollifiedInitial ρ ε hε (fun x => forcedRegRep ρ ε hε ha hf (x, z.2)) z.1 i = _
   rw [h, convolution_def]

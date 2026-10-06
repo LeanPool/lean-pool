@@ -514,6 +514,41 @@ theorem associatedPressureForSolution_rieszPressureThreeHalves_ae_eq
       (associatedPressureTensor T u) hF3)
     hSectionEq
 
+private theorem associatedPressureCoordinateProduct_lthreeHalves_bound
+    {u : Vec3 → Vec3} {N : ℝ≥0∞}
+    (hCoordMeas : ∀ i : Fin 3,
+      AEStronglyMeasurable (fun x : Vec3 => u x i) volume)
+    (hCoordBound : ∀ i : Fin 3,
+      eLpNorm (fun x : Vec3 => u x i) (ENNReal.ofReal (3 : ℝ)) volume ≤ N)
+    (i j : Fin 3) :
+    eLpNorm (fun x : Vec3 => u x i * u x j)
+        (ENNReal.ofReal (3 / 2 : ℝ)) volume ≤ N ^ (2 : ℕ) := by
+  let : ENNReal.HolderTriple (ENNReal.ofReal (3 : ℝ))
+      (ENNReal.ofReal (3 : ℝ)) (ENNReal.ofReal (3 / 2 : ℝ)) := by
+    have h : (3 : ℝ).HolderTriple 3 (3 / 2) := by
+      rw [Real.holderTriple_iff]
+      norm_num
+    exact h.ennrealOfReal
+  have hHolder :
+      eLpNorm (fun x : Vec3 => u x i * u x j)
+          (ENNReal.ofReal (3 / 2 : ℝ)) volume ≤
+        eLpNorm (fun x : Vec3 => u x i)
+            (ENNReal.ofReal (3 : ℝ)) volume *
+          eLpNorm (fun x : Vec3 => u x j)
+            (ENNReal.ofReal (3 : ℝ)) volume := by
+    simpa only [ENNReal.coe_one, one_mul] using (eLpNorm_le_eLpNorm_mul_eLpNorm_of_norm
+      (p := ENNReal.ofReal (3 : ℝ)) (q := ENNReal.ofReal (3 : ℝ))
+      (r := ENNReal.ofReal (3 / 2 : ℝ))
+      (fun v w : ℝ => v * w) 1 continuous_mul (hCoordMeas i) (hCoordMeas j)
+      (Filter.Eventually.of_forall fun x => by simp [Real.norm_eq_abs]))
+  calc
+    _ ≤ eLpNorm (fun x : Vec3 => u x i) (ENNReal.ofReal (3 : ℝ)) volume *
+        eLpNorm (fun x : Vec3 => u x j) (ENNReal.ofReal (3 : ℝ)) volume := by
+      simpa using hHolder
+    _ ≤ N * N := mul_le_mul (hCoordBound i) (hCoordBound j)
+        (by positivity) (by positivity)
+    _ = N ^ (2 : ℕ) := by rw [pow_two]
+
 private theorem associatedPressure_rieszPressure_l3_mixed_bound
     {T : ℝ} {a : Vec3 → Vec3}
     {u : ParabolicPoint → Vec3} {Du : ParabolicPoint → Fin 3 → Vec3}
@@ -625,29 +660,9 @@ private theorem associatedPressure_rieszPressure_l3_mixed_bound
         change (x, t) ∈ (Set.univ : Set Vec3) ×ˢ Ioo 0 T
         exact ⟨Set.mem_univ _, ht⟩
       simp [associatedPressureTensor, parabolicHomeomorph_symm_apply, hxmem]
-    have hProductBound (i j : Fin 3) :
-        eLpNorm (fun x : Vec3 => u (x, t) i * u (x, t) j)
-            (ENNReal.ofReal (3 / 2 : ℝ)) volume ≤ N ^ (2 : ℕ) := by
-      have hHolder :
-          eLpNorm (fun x : Vec3 => u (x, t) i * u (x, t) j)
-              (ENNReal.ofReal (3 / 2 : ℝ)) volume ≤
-            eLpNorm (fun x : Vec3 => u (x, t) i)
-                (ENNReal.ofReal (3 : ℝ)) volume *
-              eLpNorm (fun x : Vec3 => u (x, t) j)
-                (ENNReal.ofReal (3 : ℝ)) volume := by
-        simpa only [ENNReal.coe_one, one_mul] using (eLpNorm_le_eLpNorm_mul_eLpNorm_of_norm
-          (p := ENNReal.ofReal (3 : ℝ)) (q := ENNReal.ofReal (3 : ℝ))
-          (r := ENNReal.ofReal (3 / 2 : ℝ))
-          (fun v w : ℝ => v * w) 1 continuous_mul (hCoordMeas i) (hCoordMeas j)
-          (Filter.Eventually.of_forall fun x => by simp [Real.norm_eq_abs]))
-      calc
-        _ ≤ eLpNorm (fun x : Vec3 => u (x, t) i)
-              (ENNReal.ofReal (3 : ℝ)) volume *
-            eLpNorm (fun x : Vec3 => u (x, t) j)
-              (ENNReal.ofReal (3 : ℝ)) volume := by simpa using hHolder
-        _ ≤ N * N := mul_le_mul (hCoordBound i) (hCoordBound j)
-            (by positivity) (by positivity)
-        _ = N ^ (2 : ℕ) := by rw [pow_two]
+    have hProductBound (i j : Fin 3) :=
+      associatedPressureCoordinateProduct_lthreeHalves_bound
+        hCoordMeas hCoordBound i j
     let C3 : PressureTensorLp (3 / 2 : ℝ) := fun i j =>
       (hFt3 i j).toLp (fun x : Vec3 => associatedPressureTensor T u i j (x, t))
     have hC3norm (i j : Fin 3) : ‖C3 i j‖ ≤ N.toReal ^ 2 := by

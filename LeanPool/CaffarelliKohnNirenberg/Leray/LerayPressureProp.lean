@@ -28,6 +28,78 @@ noncomputable section
 
 namespace CKN.Leray
 
+private theorem eventually_memLp_of_strongLp_limit
+    {α E : Type*} [MeasurableSpace α] [NormedAddCommGroup E]
+    {μ : Measure α} (f : α → E) (F : ℕ → α → E)
+    (hf : MemLp f 3 μ)
+    (hconv : Tendsto (fun n => eLpNorm (F n - f) (ENNReal.ofReal (3 : ℝ)) μ)
+      atTop (nhds 0)) :
+    ∀ᶠ n : ℕ in atTop, MemLp (F n) 3 μ := by
+  have h3 : (3 : ℝ≥0∞) = ENNReal.ofReal (3 : ℝ) := by norm_num
+  have hfinite : ∀ᶠ n : ℕ in atTop,
+      eLpNorm (F n - f) (ENNReal.ofReal (3 : ℝ)) μ < ⊤ :=
+    hconv.eventually (Iio_mem_nhds ENNReal.zero_lt_top)
+  filter_upwards [hfinite] with n hn
+  have hdiff : MemLp (F n - f) 3 μ := by
+    rw [memLp_iff]
+    simpa only [h3] using hn
+  have hadd := hdiff.add hf
+  apply (memLp_congr_ae (Filter.Eventually.of_forall fun z => ?_)).1 hadd
+  simp [Pi.sub_apply]
+
+private theorem fill_two_finite_memLp_prefixes
+    {α E : Type*} [MeasurableSpace α] [NormedAddCommGroup E]
+    {μ : Measure α} (f : α → E) (F G : ℕ → α → E)
+    (hf : MemLp f 3 μ)
+    (hFmem : ∀ᶠ n : ℕ in atTop, MemLp (F n) 3 μ)
+    (hGmem : ∀ᶠ n : ℕ in atTop, MemLp (G n) 3 μ)
+    (hFconv : Tendsto (fun n => eLpNorm (F n - f) (ENNReal.ofReal (3 : ℝ)) μ)
+      atTop (nhds 0))
+    (hGconv : Tendsto (fun n => eLpNorm (G n - f) (ENNReal.ofReal (3 : ℝ)) μ)
+      atTop (nhds 0)) :
+    ∃ N : ℕ, ∃ F' G' : ℕ → α → E,
+      (∀ n, MemLp (F' n) 3 μ) ∧ (∀ n, MemLp (G' n) 3 μ) ∧
+      Tendsto (fun n => eLpNorm (F' n - f) (ENNReal.ofReal (3 : ℝ)) μ)
+        atTop (nhds 0) ∧
+      Tendsto (fun n => eLpNorm (G' n - f) (ENNReal.ofReal (3 : ℝ)) μ)
+        atTop (nhds 0) ∧
+      (∀ n, N ≤ n → F' n = F n) ∧ (∀ n, N ≤ n → G' n = G n) := by
+  have h3 : (3 : ℝ≥0∞) = ENNReal.ofReal (3 : ℝ) := by norm_num
+  obtain ⟨NF, hNF⟩ := Filter.eventually_atTop.1 hFmem
+  obtain ⟨NG, hNG⟩ := Filter.eventually_atTop.1 hGmem
+  let N : ℕ := max NF NG
+  let F' : ℕ → α → E := fun n => if n < N then f else F n
+  let G' : ℕ → α → E := fun n => if n < N then f else G n
+  have hF' : ∀ n : ℕ, MemLp (F' n) 3 μ := by
+    intro n
+    by_cases hn : n < N
+    · simpa only [F', ite_eq_left hn] using hf
+    · have hnN : N ≤ n := le_of_not_gt hn
+      have hnF : NF ≤ n := le_trans (le_max_left NF NG) hnN
+      simpa [F', hn] using hNF n hnF
+  have hG' : ∀ n : ℕ, MemLp (G' n) 3 μ := by
+    intro n
+    by_cases hn : n < N
+    · simpa only [G', ite_eq_left hn] using hf
+    · have hnN : N ≤ n := le_of_not_gt hn
+      have hnG : NG ≤ n := le_trans (le_max_right NF NG) hnN
+      simpa [G', hn] using hNG n hnG
+  have hFconv' : Tendsto (fun n => eLpNorm (F' n - f)
+      (ENNReal.ofReal (3 : ℝ)) μ) atTop (nhds 0) := by
+    apply hFconv.congr'
+    filter_upwards [Filter.eventually_atTop.2 ⟨N, fun n hn => hn⟩] with n hn
+    simp [F', not_lt_of_ge hn]
+  have hGconv' : Tendsto (fun n => eLpNorm (G' n - f)
+      (ENNReal.ofReal (3 : ℝ)) μ) atTop (nhds 0) := by
+    apply hGconv.congr'
+    filter_upwards [Filter.eventually_atTop.2 ⟨N, fun n hn => hn⟩] with n hn
+    simp [G', not_lt_of_ge hn]
+  refine ⟨N, F', G', hF', hG', hFconv', hGconv', ?_, ?_⟩
+  · intro n hn
+    simp only [F', ite_eq_right (not_lt_of_ge hn)]
+  · intro n hn
+    simp only [G', ite_eq_right (not_lt_of_ge hn)]
+
 private theorem lerayPressureProp_productMeasure (T : ℝ) :
     (volume : Measure (Vec3 × ℝ)).restrict (lerayPressureLimitSlab T) =
       (volume : Measure Vec3).prod (volume.restrict (Ioo 0 T)) := by
@@ -655,28 +727,8 @@ theorem lerayPressureProp_of_regularised_pressure_data
   have hJconvPar : Tendsto (fun n => eLpNorm (Jpar n - u)
       (ENNReal.ofReal (3 : ℝ)) μPar) atTop (nhds 0) := by
     simpa [Jpar, Upar, μPar] using hJseqLthree T hT
-  have hUmemPar : ∀ᶠ n : ℕ in atTop, MemLp (Upar n) 3 μPar := by
-    have hfinite : ∀ᶠ n : ℕ in atTop,
-        eLpNorm (Upar n - u) (ENNReal.ofReal (3 : ℝ)) μPar < ∞ :=
-      hUconvPar.eventually (Iio_mem_nhds ENNReal.zero_lt_top)
-    filter_upwards [hfinite] with n hn
-    have hdiff : MemLp (Upar n - u) 3 μPar := by
-      rw [memLp_iff]
-      simpa only [h3] using hn
-    have hadd := hdiff.add huParT
-    apply (memLp_congr_ae (Filter.Eventually.of_forall fun z => ?_)).1 hadd
-    simp [Pi.sub_apply]
-  have hJmemPar : ∀ᶠ n : ℕ in atTop, MemLp (Jpar n) 3 μPar := by
-    have hfinite : ∀ᶠ n : ℕ in atTop,
-        eLpNorm (Jpar n - u) (ENNReal.ofReal (3 : ℝ)) μPar < ∞ :=
-      hJconvPar.eventually (Iio_mem_nhds ENNReal.zero_lt_top)
-    filter_upwards [hfinite] with n hn
-    have hdiff : MemLp (Jpar n - u) 3 μPar := by
-      rw [memLp_iff]
-      simpa only [h3] using hn
-    have hadd := hdiff.add huParT
-    apply (memLp_congr_ae (Filter.Eventually.of_forall fun z => ?_)).1 hadd
-    simp [Pi.sub_apply]
+  have hUmemPar := eventually_memLp_of_strongLp_limit u Upar huParT hUconvPar
+  have hJmemPar := eventually_memLp_of_strongLp_limit u Jpar huParT hJconvPar
   have hUmem : ∀ᶠ n : ℕ in atTop, MemLp (Uprod n) 3 μ := by
     filter_upwards [hUmemPar] with n hn
     change MemLp (Upar n ∘ parabolicHomeomorph.symm) 3 μ
@@ -717,37 +769,8 @@ theorem lerayPressureProp_of_regularised_pressure_data
     apply (hJseqLthree T hT).congr'
     filter_upwards [hJmemPar] with n hn
     simpa [Jpar, μPar] using (hJeq n hn).symm
-  obtain ⟨NU, hNU⟩ := Filter.eventually_atTop.1 hUmem
-  obtain ⟨NJ, hNJ⟩ := Filter.eventually_atTop.1 hJmem
-  let N : ℕ := max NU NJ
-  let Umod : ℕ → Vec3 × ℝ → Vec3 := fun n => if n < N then uST else Uprod n
-  let Jmod : ℕ → Vec3 × ℝ → Vec3 := fun n => if n < N then uST else Jprod n
-  have hUmod : ∀ n : ℕ, MemLp (Umod n) 3 μ := by
-    intro n
-    by_cases hn : n < N
-    · simp [Umod, hn]
-      exact huProdT
-    · have hnN : N ≤ n := le_of_not_gt hn
-      have hnU : NU ≤ n := le_trans (le_max_left NU NJ) hnN
-      simpa [Umod, hn] using hNU n hnU
-  have hJmod : ∀ n : ℕ, MemLp (Jmod n) 3 μ := by
-    intro n
-    by_cases hn : n < N
-    · simp [Jmod, hn]
-      exact huProdT
-    · have hnN : N ≤ n := le_of_not_gt hn
-      have hnJ : NJ ≤ n := le_trans (le_max_right NU NJ) hnN
-      simpa [Jmod, hn] using hNJ n hnJ
-  have hUconvMod : Tendsto (fun n => eLpNorm (Umod n - uST)
-      (ENNReal.ofReal (3 : ℝ)) μ) atTop (nhds 0) := by
-    apply hUconv.congr'
-    filter_upwards [Filter.eventually_atTop.2 ⟨N, fun n hn => hn⟩] with n hn
-    simp [Umod, not_lt_of_ge hn]
-  have hJconvMod : Tendsto (fun n => eLpNorm (Jmod n - uST)
-      (ENNReal.ofReal (3 : ℝ)) μ) atTop (nhds 0) := by
-    apply hJconv.congr'
-    filter_upwards [Filter.eventually_atTop.2 ⟨N, fun n hn => hn⟩] with n hn
-    simp [Jmod, not_lt_of_ge hn]
+  obtain ⟨N, Umod, Jmod, hUmod, hJmod, hUconvMod, hJconvMod, hUtail, hJtail⟩ :=
+    fill_two_finite_memLp_prefixes uST Uprod Jprod huProdT hUmem hJmem hUconv hJconv
   have hJconv3 : Tendsto (fun n => eLpNorm (Jmod n - uST) 3 μ) atTop (nhds 0) :=
     by simpa only [h3] using hJconvMod
   have hUconv3 : Tendsto (fun n => eLpNorm (Umod n - uST) 3 μ) atTop (nhds 0) :=
@@ -758,20 +781,18 @@ theorem lerayPressureProp_of_regularised_pressure_data
   have hpressureEq (n : ℕ) (hn : N ≤ n) :
       pε a ha (εseq (σ n)) ∘ parabolicHomeomorph.symm =ᵐ[μ]
         lerayProductPressureOnSlab T (Jmod n) (Umod n) (hJmod n) (hUmod n) := by
-    have hnU : NU ≤ n := le_trans (le_max_left NU NJ) hn
-    have hnJ : NJ ≤ n := le_trans (le_max_right NU NJ) hn
     have hRdata := hregularised a ha (εseq (σ n)) (hseq (σ n)).1
     rcases hRdata with ⟨hPcont, hR4⟩
-    have hU : MemLp (Uprod n) 3 μ := hNU n hnU
-    have hJ : MemLp (Jprod n) 3 μ := hNJ n hnJ
+    have hU : MemLp (Uprod n) 3 μ := by
+      simpa only [hUtail n hn] using hUmod n
+    have hJ : MemLp (Jprod n) 3 μ := by
+      simpa only [hJtail n hn] using hJmod n
     have hactual := lerayPressureProp_pressure_eq_product
       (pε a ha (εseq (σ n))) (Upar n) (Jpar n) hPcont hR4 T hU hJ
     have hmod : lerayProductPressureOnSlab T (Jprod n) (Uprod n) hJ hU =
         lerayProductPressureOnSlab T (Jmod n) (Umod n) (hJmod n) (hUmod n) := by
-      have hJval : Jmod n = Jprod n := by
-        simp [Jmod, show ¬ n < N from not_lt_of_ge hn]
-      have hUval : Umod n = Uprod n := by
-        simp [Umod, show ¬ n < N from not_lt_of_ge hn]
+      have hJval : Jmod n = Jprod n := hJtail n hn
+      have hUval : Umod n = Uprod n := hUtail n hn
       exact lerayPressureProp_productPressure_congr T
         (Jprod n) (Jmod n) (Uprod n) (Umod n) hJ (hJmod n) hU (hUmod n)
         hJval.symm hUval.symm

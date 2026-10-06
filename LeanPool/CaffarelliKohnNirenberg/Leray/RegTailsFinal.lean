@@ -162,6 +162,53 @@ theorem regTailsFinal_compact_weight_bound_initial
       q hq hqc hq0 hM hDq hs.1 hs.2
   exact ge_of_tendsto (hT.add_const c) hev
 
+private theorem regTails_integrable_mul_unit_interval
+    {v q : Vec3 → ℝ} (hv : Integrable v volume) (hvnn : ∀ x, 0 ≤ v x)
+    (hqc : Continuous q) (hq01 : ∀ x, 0 ≤ q x ∧ q x ≤ 1) :
+    Integrable (fun x => v x * q x) volume := by
+  refine hv.mono'
+    (hv.aestronglyMeasurable.mul hqc.aestronglyMeasurable) ?_
+  filter_upwards [] with x
+  rw [Real.norm_eq_abs, abs_mul, abs_of_nonneg (hvnn x),
+    abs_of_nonneg (hq01 x).1]
+  exact mul_le_of_le_one_right (hvnn x) (hq01 x).2
+
+private theorem regTails_exterior_exhaustion_limit
+    {R2 : ℝ} (hR2 : 0 < R2) (v : Vec3 → ℝ) (hv : Integrable v volume) :
+    Tendsto (fun n : ℕ => ∫ x in
+      {x : Vec3 | R2 < vec3EuclideanNorm x} ∩
+        {x : Vec3 | vec3EuclideanNorm x < R2 + (n : ℝ) + 1}, v x)
+      atTop (𝓝 (∫ x in {x : Vec3 | R2 < vec3EuclideanNorm x}, v x)) := by
+  have hnm : Measurable (fun x : Vec3 => vec3EuclideanNorm x) :=
+    CKN.Foundation.Parabolic.continuous_vec3EuclideanNorm.measurable
+  let Sout : Set Vec3 := {x : Vec3 | R2 < vec3EuclideanNorm x}
+  let Sn : ℕ → Set Vec3 := fun n =>
+    Sout ∩ {x : Vec3 | vec3EuclideanNorm x < R2 + (n : ℝ) + 1}
+  have hSout : MeasurableSet Sout := measurableSet_lt measurable_const hnm
+  have hmono : Monotone Sn := by
+    intro m n hmn x hx
+    have hxm : vec3EuclideanNorm x < R2 + (m : ℝ) + 1 := hx.2
+    have hmn' : (m : ℝ) ≤ n := Nat.cast_le.2 hmn
+    refine ⟨hx.1, ?_⟩
+    change vec3EuclideanNorm x < R2 + (n : ℝ) + 1
+    linarith only [hxm, hmn']
+  have hUnion : (⋃ n, Sn n) = Sout := by
+    ext x
+    simp only [mem_iUnion]
+    constructor
+    · rintro ⟨n, hn⟩
+      exact hn.1
+    · intro hx
+      obtain ⟨n, hn⟩ := exists_nat_gt (vec3EuclideanNorm x)
+      refine ⟨n, hx, ?_⟩
+      change vec3EuclideanNorm x < R2 + (n : ℝ) + 1
+      linarith only [hn, hR2]
+  have hSnm : ∀ n, MeasurableSet (Sn n) := fun n =>
+    hSout.inter (measurableSet_lt hnm measurable_const)
+  have hlim := tendsto_setIntegral_of_monotone (μ := volume) (f := v) hSnm hmono
+    hv.integrableOn
+  simpa only [hUnion] using hlim
+
 /-- The exterior energy estimate of `lem:reg-tails` for one regularized
 solution, with the Euclidean `L²` norm `B` of the datum. -/
 theorem regTailsFinal_exterior_bound
@@ -262,11 +309,6 @@ theorem regTailsFinal_exterior_bound
   set B : ℝ := (eLpNorm (regUniformSpatialField a) 2 volume).toReal with hB_def
   set K : ℝ := 18 * B ^ (2 : ℕ) * t ^ (1 / 2 : ℝ) +
     regTailsFluxConstant * B ^ (3 : ℕ) * t ^ (1 / 4 : ℝ) with hK_def
-  have hB : 0 ≤ B := ENNReal.toReal_nonneg
-  have ht2 : 0 ≤ t ^ (1 / 2 : ℝ) := Real.rpow_nonneg ht _
-  have ht4 : 0 ≤ t ^ (1 / 4 : ℝ) := Real.rpow_nonneg ht _
-  have hQ := regTailsFluxConstant_nonneg
-  have hK : 0 ≤ K := by positivity
   have hDpos : 0 < R2 - R1 := sub_pos.2 hR12
   have hnm : Measurable (fun x : Vec3 => vec3EuclideanNorm x) :=
     CKN.Foundation.Parabolic.continuous_vec3EuclideanNorm.measurable
@@ -275,14 +317,9 @@ theorem regTailsFinal_exterior_bound
     (regTailsFinal_euclideanNorm_memLp (hSlice τ hτ)).integrable_sq
   have hVnn : ∀ τ x, 0 ≤ V τ x := fun _ _ => sq_nonneg _
   have hVq : ∀ τ : ℝ, 0 ≤ τ → ∀ q : Vec3 → ℝ, Continuous q →
-      (∀ x, 0 ≤ q x ∧ q x ≤ 1) → Integrable (fun x => V τ x * q x) volume := by
-    intro τ hτ q hqc hq01
-    refine (hVint τ hτ).mono'
-      ((hVint τ hτ).aestronglyMeasurable.mul hqc.aestronglyMeasurable) ?_
-    filter_upwards [] with x
-    rw [Real.norm_eq_abs, abs_mul, abs_of_nonneg (hVnn τ x),
-      abs_of_nonneg (hq01 x).1]
-    exact mul_le_of_le_one_right (hVnn τ x) (hq01 x).2
+      (∀ x, 0 ≤ q x ∧ q x ≤ 1) → Integrable (fun x => V τ x * q x) volume :=
+    fun τ hτ q hqc hq01 =>
+      regTails_integrable_mul_unit_interval (hVint τ hτ) (hVnn τ) hqc hq01
   let Sout : Set Vec3 := {x : Vec3 | R2 < vec3EuclideanNorm x}
   let Sin : Set Vec3 := {x : Vec3 | R1 < vec3EuclideanNorm x}
   have hSin : MeasurableSet Sin := measurableSet_lt measurable_const hnm
@@ -362,30 +399,9 @@ theorem regTailsFinal_exterior_bound
       ring
     rw [hMK] at hE
     linarith only [hlow, hE, hup]
-  -- exhaustion of the exterior
-  have hmono : Monotone Sn := by
-    intro m n hmn x hx
-    have hxm : vec3EuclideanNorm x < R2 + (m : ℝ) + 1 := hx.2
-    have hmn' : (m : ℝ) ≤ n := Nat.cast_le.2 hmn
-    refine ⟨hx.1, ?_⟩
-    change vec3EuclideanNorm x < R2 + (n : ℝ) + 1
-    linarith only [hxm, hmn']
-  have hUnion : (⋃ n, Sn n) = Sout := by
-    ext x
-    simp only [mem_iUnion]
-    constructor
-    · rintro ⟨n, hn⟩
-      exact hn.1
-    · intro hx
-      obtain ⟨n, hn⟩ := exists_nat_gt (vec3EuclideanNorm x)
-      refine ⟨n, hx, ?_⟩
-      change vec3EuclideanNorm x < R2 + (n : ℝ) + 1
-      linarith only [hn, hR1.trans hR12]
-  have hSnm : ∀ n, MeasurableSet (Sn n) := fun n =>
-    hSout.inter (measurableSet_lt hnm measurable_const)
-  have hlim := tendsto_setIntegral_of_monotone (μ := volume) (f := V t) hSnm hmono
-    (hVint t ht).integrableOn
-  rw [hUnion] at hlim
+  have hlim : Tendsto (fun n => ∫ x in Sn n, V t x) atTop
+      (𝓝 (∫ x in Sout, V t x)) :=
+    regTails_exterior_exhaustion_limit (hR1.trans hR12) (V t) (hVint t ht)
   have hNtop : Tendsto N atTop atTop :=
     tendsto_atTop_add_const_right _ 1
       (tendsto_atTop_add_const_left _ R2 tendsto_natCast_atTop_atTop)
