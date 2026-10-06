@@ -62,7 +62,7 @@ def absTailEvent (X : Ω → ℝ) (a : ℝ) : Set Ω :=
 theorem upperTailEvent_mono_right {X : Ω → ℝ} {a b : ℝ} (hab : a ≤ b) :
     upperTailEvent X b ⊆ upperTailEvent X a := by
   intro ω hω
-  show a < X ω
+  change a < X ω
   exact lt_of_le_of_lt hab hω
 
 theorem absTailEvent_mono_right {X : Ω → ℝ} {a b : ℝ} (hab : a ≤ b) :

@@ -9,21 +9,9 @@ module
 public import LeanPool.HighContrastHomogenization.MainResults
 
 /-!
-# High-contrast homogenization: Meta.AxiomsAudit
+# Main-result axiom audit
 
-Imported from the Apache-2.0 HighContrastHomogenization development at commit
-`7a13dbcd8d6609264a713373f5c69ceeac870472`.
--/
-
-public section
-
-/-!
-# Axiom dependencies of the main results
-
-Building this module prints the axiom dependencies of the theorems of
-`HCPoly.MainResults`.  Each must report exactly the three standard foundational
-axioms of Mathlib: `propext`, `Classical.choice`, `Quot.sound`.
-
-This file is intentionally not imported by the library root, so the report runs
-only when it is built explicitly, with `lake build HCPoly.Meta.AxiomsAudit`.
+Lean Pool checks the axiom dependencies of every imported declaration through its
+standard repository audit. The diagnostic commands in the corresponding upstream
+module are omitted here.
 -/
