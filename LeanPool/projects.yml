@@ -13550,13 +13550,6 @@ projects:
           imaginary part of the cube of the principal complex logarithm
           of (1+exp(i t))/2.
         source_ref: Upstream Lemmas/Radial.lean, radial differentiation and domination.
-      - declaration: LeanPolyLog.ofReal_zeta3_eq_riemannZeta_three
-        informal: >-
-          The real series zeta3, embedded in the complex numbers, equals
-          Mathlib's Riemann zeta function evaluated at 3.
-        source_ref: >-
-          Lean Pool bridge from the upstream series definition to Mathlib's
-          zeta_eq_tsum_one_div_nat_add_one_cpow.
     tags:
       - analysis
       - polylogarithms
