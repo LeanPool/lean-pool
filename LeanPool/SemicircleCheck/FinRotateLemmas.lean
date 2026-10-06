@@ -50,7 +50,7 @@ lemma finRotate_pow_self' {m : ℕ} (hm : 0 < m) : (finRotate m) ^ m = 1 := by
   have h := finRotate_pow_apply' hm m x
   simp only [Equiv.Perm.coe_one, id_eq] at h ⊢
   rw [h]
-  exact Fin.ext (by simp [Nat.add_mod_right, Nat.mod_eq_of_lt x.isLt])
+  exact Fin.ext (by simp only [Nat.add_mod_right, Nat.mod_eq_of_lt x.isLt])
 
 section RotationFacts
 
