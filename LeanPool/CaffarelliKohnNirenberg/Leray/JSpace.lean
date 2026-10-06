@@ -288,7 +288,8 @@ theorem smoothL2Potential_curl_memJ {A : Vec3 → Vec3}
   have hdenom' : Tendsto r atTop atTop := by simpa [r] using hdenom
   have hcoefReal : Tendsto (fun k : ℕ => (64 : ℝ) / r k)
       atTop (nhds 0) := by
-    simpa using (tendsto_const_nhds : Tendsto (fun _ : ℕ => (64 : ℝ)) atTop (nhds 64)).div_atTop hdenom'
+    simpa using (tendsto_const_nhds :
+      Tendsto (fun _ : ℕ => (64 : ℝ)) atTop (nhds 64)).div_atTop hdenom'
   have hcoefAbs : Tendsto (fun k : ℕ => |(64 : ℝ) / r k|)
       atTop (nhds 0) := by
     exact hcoefReal.congr' (Filter.Eventually.of_forall fun k =>
