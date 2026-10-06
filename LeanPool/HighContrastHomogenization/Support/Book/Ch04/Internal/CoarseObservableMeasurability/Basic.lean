@@ -69,7 +69,7 @@ underlying Pi type, which instance search will not do on its own. This head-clas
 resolves the resulting `ContinuousENorm` synthesis gap for every `Matrix m n ℝ`-valued
 `Measurable`/`Integrable` statement in this file (and its `Mat d`/`FullBlockMat d`
 specializations). -/
-private instance instContinuousENormMatrix {m n : Type*} [Fintype m] [Fintype n] :
+instance instContinuousENormMatrix {m n : Type*} [Fintype m] [Fintype n] :
     ContinuousENorm (Matrix m n ℝ) := by
   show ContinuousENorm (m → n → ℝ)
   infer_instance

@@ -34,7 +34,7 @@ open scoped ENNReal
 
 noncomputable section
 
-private instance instCubeEuclideanWspGraphFactOneLe (p : FiniteLpExponent) :
+instance instCubeEuclideanWspGraphFactOneLe (p : FiniteLpExponent) :
     Fact (1 ≤ p.exponent) :=
   ⟨p.one_lt.le⟩
 
@@ -45,12 +45,12 @@ noncomputable abbrev CubeEuclideanWspGraphComponent {d : ℕ} (Q : TriadicCube d
   | true => Lp (HilbertVec d) p.exponent
     (Gagliardo.gagliardoCubeMeasure Q)
 
-private instance instCubeEuclideanWspGraphComponentNormedAddCommGroup {d : ℕ}
+instance instCubeEuclideanWspGraphComponentNormedAddCommGroup {d : ℕ}
     (Q : TriadicCube d) (p : FiniteLpExponent) [Fact (1 ≤ p.exponent)]
     (b : Bool) : NormedAddCommGroup (CubeEuclideanWspGraphComponent Q p b) := by
   cases b <;> infer_instance
 
-private instance instCubeEuclideanWspGraphComponentNormedSpace {d : ℕ}
+instance instCubeEuclideanWspGraphComponentNormedSpace {d : ℕ}
     (Q : TriadicCube d) (p : FiniteLpExponent) [Fact (1 ≤ p.exponent)]
     (b : Bool) : NormedSpace ℝ (CubeEuclideanWspGraphComponent Q p b) := by
   cases b <;> infer_instance

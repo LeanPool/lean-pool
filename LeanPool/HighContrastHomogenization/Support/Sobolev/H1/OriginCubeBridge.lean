@@ -612,7 +612,7 @@ theorem tendsto_shifted_originCube_approx {d : ℕ} [NeZero d] {n : ℤ}
       simpa [zero_mul, mul_comm] using ENNReal.tendsto_ofReal (hbase.mul_const cμ)
     exact tendsto_of_tendsto_of_tendsto_of_le_of_le tendsto_const_nhds hbound_tendsto
       (fun _ => bot_le) hbound
-    exact ⟨hshiftApprox, hshiftGrad⟩
+  exact ⟨hshiftApprox, hshiftGrad⟩
 
 theorem tendsto_approx_restrict_originCube {d : ℕ} [NeZero d] {n : ℤ}
     (u : H10Function (cubeSet (originCube d n))) :
@@ -621,7 +621,7 @@ theorem tendsto_approx_restrict_originCube {d : ℕ} [NeZero d] {n : ℤ}
           MeasureTheory.eLpNorm
             (fun x => u.approx m x -
               (u.toH1Function.restrict (isOpen_openCubeSet (originCube d n))
-                (openCubeSet_subset_cubeSet _)).toFun) 2
+                (openCubeSet_subset_cubeSet _)).toFun x) 2
             (MeasureTheory.volume.restrict (openCubeSet (originCube d n))))
         Filter.atTop (𝓝 0) ∧
       (∀ i : Fin d,
@@ -726,8 +726,8 @@ noncomputable def toOpenCubeSetOriginCube {d : ℕ} [NeZero d] {n : ℤ}
   have horigGradRestrict := hrestrict.2
   have hshiftTendsto := tendsto_shifted_originCube_approx
     (d := d) (n := n) u εShift approx'
-    (fun m x => (hεShift m).2.2.1)
-    (fun m i x => (hεShift m).2.2.2 i) happrox'_smooth
+    (fun m x => (hεShift m).2.2.1 x)
+    (fun m i x => (hεShift m).2.2.2 i x) happrox'_smooth
   have hshiftApprox := hshiftTendsto.1
   have hshiftGrad := hshiftTendsto.2
   refine

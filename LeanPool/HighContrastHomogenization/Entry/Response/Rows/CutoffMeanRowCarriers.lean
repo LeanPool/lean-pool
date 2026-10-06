@@ -103,6 +103,92 @@ private theorem oscConst_arith (d : ℕ) (L EJ HH : ℝ) (hEJ : 0 ≤ EJ) :
   rw [h1, h2, h3, respCutoffOscConst]
   ring
 
+/-- Split the cutoff fluctuation against an integrable carrier into its cell oscillation and
+its cell-average contribution. The bounded cutoff keeps each weighted carrier integrable. -/
+private theorem cutoffFluctuation_split {d : ℕ} [NeZero d] (q : Mat d) (hq : IsUnit q)
+    (t : ℤ) (H : ℕ) (φ g : Vec d → ℝ) (hφ : IsResponseCutoff q t φ)
+    (hg : IntegrableOn g (HighContrast.adaptedCell q t)) :
+    ((triadicIndexBox d H).card : ℝ)⁻¹ * ∑ w ∈ triadicIndexBox d H,
+        volumeAverage (adaptedCellAtCenter q (t - (H : ℤ)) w)
+          (fun x => (φ x - volumeAverage (adaptedCellAtCenter q (t - (H : ℤ)) w) φ) * g x)
+      = volumeAverage (HighContrast.adaptedCell q t) (fun x => (φ x - 1) * g x)
+        - ((triadicIndexBox d H).card : ℝ)⁻¹ * ∑ w ∈ triadicIndexBox d H,
+            (volumeAverage (adaptedCellAtCenter q (t - (H : ℤ)) w) φ - 1) *
+              volumeAverage (adaptedCellAtCenter q (t - (H : ℤ)) w) g := by
+  have hsplit := volumeAverage_fluct_eq_osc_add_cell q hq t H φ g
+    ((hg.bdd_mul (c := 1) (hφ.2.2.2.2.2.1.continuous.sub continuous_const).measurable.aestronglyMeasurable.restrict)
+      (Filter.Eventually.of_forall fun x => by
+        rw [Real.norm_eq_abs, abs_le]
+        exact ⟨by linarith only [hφ.1 x], by linarith only [hφ.2.1 x]⟩))
+    (fun w hw => by
+      have hsub : adaptedCellAtCenter q (t - (H : ℤ)) w ⊆ HighContrast.adaptedCell q t :=
+        adaptedCellAtCenter_subset_adaptedCell q t H hw
+      have hA := (hg.mono_set hsub).bdd_mul (c := 2)
+        (hφ.2.2.2.2.2.1.continuous.measurable.aestronglyMeasurable.restrict)
+        (Filter.Eventually.of_forall fun x => by
+          rw [Real.norm_eq_abs, abs_le]
+          exact ⟨by linarith only [hφ.1 x], hφ.2.1 x⟩)
+      have hB := (hg.mono_set hsub).const_mul
+        (volumeAverage (adaptedCellAtCenter q (t - (H : ℤ)) w) φ)
+      refine (hA.sub hB).congr (Filter.Eventually.of_forall fun x => ?_)
+      simp only [Pi.sub_apply]
+      ring)
+    (fun w hw => by
+      have hsub : adaptedCellAtCenter q (t - (H : ℤ)) w ⊆ HighContrast.adaptedCell q t :=
+        adaptedCellAtCenter_subset_adaptedCell q t H hw
+      exact (hg.mono_set hsub).const_mul _)
+  exact eq_sub_of_add_eq hsplit.symm
+
+/-- Integrating the cell and oscillation decomposition preserves the split. -/
+private theorem integral_cutoffFluctuation_split {d : ℕ} [NeZero d] {α : Type*}
+    [MeasurableSpace α] (P : Measure α) (q : Mat d) (hq : IsUnit q) (H : ℕ)
+    (s t : ℤ) (hst : t - (H : ℤ) = s) (φ : Vec d → ℝ)
+    (hφ : IsResponseCutoff q t φ) (g : α → Vec d → ℝ)
+    (hg : ∀ a, IntegrableOn (g a) (HighContrast.adaptedCell q t))
+    (hcell : Integrable (fun a => volumeAverage (HighContrast.adaptedCell q t)
+      (fun x => (φ x - 1) * g a x)) P)
+    (hpart : Integrable (fun a => ((triadicIndexBox d H).card : ℝ)⁻¹ *
+      ∑ w ∈ triadicIndexBox d H,
+        (volumeAverage (adaptedCellAtCenter q s w) φ - 1) *
+          volumeAverage (adaptedCellAtCenter q s w) (g a)) P) :
+    (∫ a, ((triadicIndexBox d H).card : ℝ)⁻¹ * ∑ w ∈ triadicIndexBox d H,
+      volumeAverage (adaptedCellAtCenter q s w)
+        (fun x => (φ x - volumeAverage (adaptedCellAtCenter q s w) φ) * g a x) ∂P)
+      = (∫ a, volumeAverage (HighContrast.adaptedCell q t)
+          (fun x => (φ x - 1) * g a x) ∂P)
+        - ∫ a, ((triadicIndexBox d H).card : ℝ)⁻¹ * ∑ w ∈ triadicIndexBox d H,
+            (volumeAverage (adaptedCellAtCenter q s w) φ - 1) *
+              volumeAverage (adaptedCellAtCenter q s w) (g a) ∂P := by
+  have hpoint : ∀ a, ((triadicIndexBox d H).card : ℝ)⁻¹ *
+      ∑ w ∈ triadicIndexBox d H,
+        volumeAverage (adaptedCellAtCenter q s w)
+          (fun x => (φ x - volumeAverage (adaptedCellAtCenter q s w) φ) * g a x)
+      = volumeAverage (HighContrast.adaptedCell q t) (fun x => (φ x - 1) * g a x)
+        - ((triadicIndexBox d H).card : ℝ)⁻¹ * ∑ w ∈ triadicIndexBox d H,
+            (volumeAverage (adaptedCellAtCenter q s w) φ - 1) *
+              volumeAverage (adaptedCellAtCenter q s w) (g a) := by
+    intro a
+    simpa only [hst] using cutoffFluctuation_split q hq t H φ (g a) hφ (hg a)
+  rw [← integral_sub hcell hpart]
+  exact integral_congr_ae (Filter.Eventually.of_forall hpoint)
+
+/-- Move the cell part's cutoff average from the lower cell index to the terminal index. -/
+private theorem integral_cutoffCellPart_shift {d : ℕ} [NeZero d] {α : Type*}
+    [MeasurableSpace α] (P : Measure α) (q : Mat d) (H : ℕ) (s t : ℤ)
+    (hst : t - (H : ℤ) = s) (φ : Vec d → ℝ) (g : α → Vec d → ℝ)
+    (hwt : ∀ w, volumeAverage (adaptedCellAtCenter q s w)
+      (fun x => φ x - 1) = volumeAverage (adaptedCellAtCenter q s w) φ - 1) :
+    (∫ a, ((triadicIndexBox d H).card : ℝ)⁻¹ * ∑ w ∈ triadicIndexBox d H,
+      (volumeAverage (adaptedCellAtCenter q s w) φ - 1) *
+        volumeAverage (adaptedCellAtCenter q s w) (g a) ∂P)
+      = ∫ a, ((triadicIndexBox d H).card : ℝ)⁻¹ * ∑ w ∈ triadicIndexBox d H,
+          volumeAverage (adaptedCellAtCenter q (t - (H : ℤ)) w)
+            (fun x => φ x - 1) *
+            volumeAverage (adaptedCellAtCenter q (t - (H : ℤ)) w) (g a) ∂P := by
+  refine integral_congr_ae (Filter.Eventually.of_forall fun a => ?_)
+  rw [hst]
+  simp only [hwt]
+
 /-- **The cutoff-mean row at the carriers, minus sign.**  Under the annealed data of the response
 window — stationarity, coarse ellipticity, the invertible rounded grid, the maximizer family, the
 two terminal responses and the convergence of the source-load series at every dual vector — the
@@ -278,95 +364,17 @@ theorem cutoffMeanRowMinus_of_carriers {d : ℕ} [NeZero d]
         exact adaptedCellAtCenter_zero (respGrid jStar F) t
       rw [hUcell] at h
       exact h.1
-    have hfluct : ∀ a : CoeffSpace d,
-        ((triadicIndexBox d H).card : ℝ)⁻¹ * ∑ w ∈ triadicIndexBox d H,
-            volumeAverage (adaptedCellAtCenter (respGrid jStar F) s w)
-              (fun x => (φ x - volumeAverage (adaptedCellAtCenter (respGrid jStar F) s w) φ) *
-                (vecDot (respYMinus P jStar F t e).2
-                    (optimizerField (respCoeffMinus F a) (uM a) x).1
-                  + vecDot (respYMinus P jStar F t e).1
-                    (optimizerField (respCoeffMinus F a) (uM a) x).2))
-          = volumeAverage (respCell jStar F t)
-              (fun x => (φ x - 1) * (vecDot (respYMinus P jStar F t e).2
-                    (optimizerField (respCoeffMinus F a) (uM a) x).1
-                  + vecDot (respYMinus P jStar F t e).1
-                    (optimizerField (respCoeffMinus F a) (uM a) x).2))
-            - ((triadicIndexBox d H).card : ℝ)⁻¹ * ∑ w ∈ triadicIndexBox d H,
-                (volumeAverage (adaptedCellAtCenter (respGrid jStar F) s w) φ - 1) *
-                  volumeAverage (adaptedCellAtCenter (respGrid jStar F) s w)
-                    (fun x => vecDot (respYMinus P jStar F t e).2
-                          (optimizerField (respCoeffMinus F a) (uM a) x).1
-                        + vecDot (respYMinus P jStar F t e).1
-                          (optimizerField (respCoeffMinus F a) (uM a) x).2) := by
-      intro a
-      have hsplit := volumeAverage_fluct_eq_osc_add_cell (respGrid jStar F) hq t H φ
-        (fun x => vecDot (respYMinus P jStar F t e).2
-              (optimizerField (respCoeffMinus F a) (uM a) x).1
-            + vecDot (respYMinus P jStar F t e).1
-              (optimizerField (respCoeffMinus F a) (uM a) x).2)
-        ((hcrossOn a).bdd_mul (c := 1)
-          ((hφc.sub continuous_const).measurable.aestronglyMeasurable.restrict)
-          (Filter.Eventually.of_forall fun x => by
-            rw [Real.norm_eq_abs, abs_le]
-            exact ⟨by linarith only [hφ.1 x], by linarith only [hφ.2.1 x]⟩))
-        (fun w hw => by
-          have hsub : adaptedCellAtCenter (respGrid jStar F) (t - (H : ℤ)) w ⊆ respCell jStar F t :=
-            adaptedCellAtCenter_subset_adaptedCell (respGrid jStar F) t H hw
-          have hA := ((hcrossOn a).mono_set hsub).bdd_mul (c := 2)
-            (hφc.measurable.aestronglyMeasurable.restrict)
-            (Filter.Eventually.of_forall fun x => by
-              rw [Real.norm_eq_abs, abs_le]
-              exact ⟨by linarith only [hφ.1 x], hφ.2.1 x⟩)
-          have hB := ((hcrossOn a).mono_set hsub).const_mul
-            (volumeAverage (adaptedCellAtCenter (respGrid jStar F) (t - (H : ℤ)) w) φ)
-          refine (hA.sub hB).congr (Filter.Eventually.of_forall fun x => ?_)
-          simp only [Pi.sub_apply]
-          ring)
-        (fun w hw => by
-          have hsub : adaptedCellAtCenter (respGrid jStar F) (t - (H : ℤ)) w ⊆ respCell jStar F t :=
-            adaptedCellAtCenter_subset_adaptedCell (respGrid jStar F) t H hw
-          exact ((hcrossOn a).mono_set hsub).const_mul _)
-      rw [hst] at hsplit
-      exact eq_sub_of_add_eq hsplit.symm
-    have hEq1 : (∫ a, ((triadicIndexBox d H).card : ℝ)⁻¹ * ∑ w ∈ triadicIndexBox d H,
-          volumeAverage (adaptedCellAtCenter (respGrid jStar F) s w)
-            (fun x => (φ x - volumeAverage (adaptedCellAtCenter (respGrid jStar F) s w) φ) *
-              (vecDot (respYMinus P jStar F t e).2
-                  (optimizerField (respCoeffMinus F a) (uM a) x).1
-                + vecDot (respYMinus P jStar F t e).1
-                  (optimizerField (respCoeffMinus F a) (uM a) x).2)) ∂P)
-        = (∫ a, volumeAverage (respCell jStar F t)
-              (fun x => (φ x - 1) * (vecDot (respYMinus P jStar F t e).2
-                    (optimizerField (respCoeffMinus F a) (uM a) x).1
-                  + vecDot (respYMinus P jStar F t e).1
-                    (optimizerField (respCoeffMinus F a) (uM a) x).2)) ∂P)
-          - ∫ a, ((triadicIndexBox d H).card : ℝ)⁻¹ * ∑ w ∈ triadicIndexBox d H,
-              (volumeAverage (adaptedCellAtCenter (respGrid jStar F) s w) φ - 1) *
-                volumeAverage (adaptedCellAtCenter (respGrid jStar F) s w)
-                  (fun x => vecDot (respYMinus P jStar F t e).2
-                        (optimizerField (respCoeffMinus F a) (uM a) x).1
-                      + vecDot (respYMinus P jStar F t e).1
-                        (optimizerField (respCoeffMinus F a) (uM a) x).2) ∂P := by
-      rw [← integral_sub hhalf.1 hTint]
-      exact integral_congr_ae (Filter.Eventually.of_forall hfluct)
-    have hEq2 : (∫ a, ((triadicIndexBox d H).card : ℝ)⁻¹ * ∑ w ∈ triadicIndexBox d H,
-          (volumeAverage (adaptedCellAtCenter (respGrid jStar F) s w) φ - 1) *
-            volumeAverage (adaptedCellAtCenter (respGrid jStar F) s w)
-              (fun x => vecDot (respYMinus P jStar F t e).2
-                    (optimizerField (respCoeffMinus F a) (uM a) x).1
-                  + vecDot (respYMinus P jStar F t e).1
-                    (optimizerField (respCoeffMinus F a) (uM a) x).2) ∂P)
-        = ∫ a, ((triadicIndexBox d H).card : ℝ)⁻¹ * ∑ w ∈ triadicIndexBox d H,
-            volumeAverage (adaptedCellAtCenter (respGrid jStar F) (t - (H : ℤ)) w)
-                (fun x => φ x - 1) *
-              volumeAverage (adaptedCellAtCenter (respGrid jStar F) (t - (H : ℤ)) w)
-                (fun x => vecDot (respYMinus P jStar F t e).2
-                      (optimizerField (respCoeffMinus F a) (uM a) x).1
-                    + vecDot (respYMinus P jStar F t e).1
-                      (optimizerField (respCoeffMinus F a) (uM a) x).2) ∂P := by
-      refine integral_congr_ae (Filter.Eventually.of_forall fun a => ?_)
-      rw [hst]
-      simp only [hwt]
+    have hEq1 := integral_cutoffFluctuation_split P (respGrid jStar F) hq H s t hst φ hφ
+      (fun a x => vecDot (respYMinus P jStar F t e).2
+            (optimizerField (respCoeffMinus F a) (uM a) x).1
+          + vecDot (respYMinus P jStar F t e).1
+            (optimizerField (respCoeffMinus F a) (uM a) x).2)
+      (fun a => by simpa only [respCell] using hcrossOn a) hhalf.1 hTint
+    have hEq2 := integral_cutoffCellPart_shift P (respGrid jStar F) H s t hst φ
+      (fun a x => vecDot (respYMinus P jStar F t e).2
+            (optimizerField (respCoeffMinus F a) (uM a) x).1
+          + vecDot (respYMinus P jStar F t e).1
+            (optimizerField (respCoeffMinus F a) (uM a) x).2) hwt
     have hbound : |vecDot (fun i => ∫ a, ((triadicIndexBox d H).card : ℝ)⁻¹ *
             ∑ w ∈ triadicIndexBox d H, volumeAverage (adaptedCellAtCenter (respGrid jStar F) s w)
               (fun x => (φ x - volumeAverage (adaptedCellAtCenter (respGrid jStar F) s w) φ) *
@@ -559,95 +567,17 @@ theorem cutoffMeanRowPlus_of_carriers {d : ℕ} [NeZero d]
         exact adaptedCellAtCenter_zero (respGrid jStar F) t
       rw [hUcell] at h
       exact h.1
-    have hfluct : ∀ a : CoeffSpace d,
-        ((triadicIndexBox d H).card : ℝ)⁻¹ * ∑ w ∈ triadicIndexBox d H,
-            volumeAverage (adaptedCellAtCenter (respGrid jStar F) s w)
-              (fun x => (φ x - volumeAverage (adaptedCellAtCenter (respGrid jStar F) s w) φ) *
-                (vecDot (respYPlus P jStar F t e).2
-                    (optimizerField (respCoeffPlus F a) (uP a) x).1
-                  + vecDot (respYPlus P jStar F t e).1
-                    (optimizerField (respCoeffPlus F a) (uP a) x).2))
-          = volumeAverage (respCell jStar F t)
-              (fun x => (φ x - 1) * (vecDot (respYPlus P jStar F t e).2
-                    (optimizerField (respCoeffPlus F a) (uP a) x).1
-                  + vecDot (respYPlus P jStar F t e).1
-                    (optimizerField (respCoeffPlus F a) (uP a) x).2))
-            - ((triadicIndexBox d H).card : ℝ)⁻¹ * ∑ w ∈ triadicIndexBox d H,
-                (volumeAverage (adaptedCellAtCenter (respGrid jStar F) s w) φ - 1) *
-                  volumeAverage (adaptedCellAtCenter (respGrid jStar F) s w)
-                    (fun x => vecDot (respYPlus P jStar F t e).2
-                          (optimizerField (respCoeffPlus F a) (uP a) x).1
-                        + vecDot (respYPlus P jStar F t e).1
-                          (optimizerField (respCoeffPlus F a) (uP a) x).2) := by
-      intro a
-      have hsplit := volumeAverage_fluct_eq_osc_add_cell (respGrid jStar F) hq t H φ
-        (fun x => vecDot (respYPlus P jStar F t e).2
-              (optimizerField (respCoeffPlus F a) (uP a) x).1
-            + vecDot (respYPlus P jStar F t e).1
-              (optimizerField (respCoeffPlus F a) (uP a) x).2)
-        ((hcrossOn a).bdd_mul (c := 1)
-          ((hφc.sub continuous_const).measurable.aestronglyMeasurable.restrict)
-          (Filter.Eventually.of_forall fun x => by
-            rw [Real.norm_eq_abs, abs_le]
-            exact ⟨by linarith only [hφ.1 x], by linarith only [hφ.2.1 x]⟩))
-        (fun w hw => by
-          have hsub : adaptedCellAtCenter (respGrid jStar F) (t - (H : ℤ)) w ⊆ respCell jStar F t :=
-            adaptedCellAtCenter_subset_adaptedCell (respGrid jStar F) t H hw
-          have hA := ((hcrossOn a).mono_set hsub).bdd_mul (c := 2)
-            (hφc.measurable.aestronglyMeasurable.restrict)
-            (Filter.Eventually.of_forall fun x => by
-              rw [Real.norm_eq_abs, abs_le]
-              exact ⟨by linarith only [hφ.1 x], hφ.2.1 x⟩)
-          have hB := ((hcrossOn a).mono_set hsub).const_mul
-            (volumeAverage (adaptedCellAtCenter (respGrid jStar F) (t - (H : ℤ)) w) φ)
-          refine (hA.sub hB).congr (Filter.Eventually.of_forall fun x => ?_)
-          simp only [Pi.sub_apply]
-          ring)
-        (fun w hw => by
-          have hsub : adaptedCellAtCenter (respGrid jStar F) (t - (H : ℤ)) w ⊆ respCell jStar F t :=
-            adaptedCellAtCenter_subset_adaptedCell (respGrid jStar F) t H hw
-          exact ((hcrossOn a).mono_set hsub).const_mul _)
-      rw [hst] at hsplit
-      exact eq_sub_of_add_eq hsplit.symm
-    have hEq1 : (∫ a, ((triadicIndexBox d H).card : ℝ)⁻¹ * ∑ w ∈ triadicIndexBox d H,
-          volumeAverage (adaptedCellAtCenter (respGrid jStar F) s w)
-            (fun x => (φ x - volumeAverage (adaptedCellAtCenter (respGrid jStar F) s w) φ) *
-              (vecDot (respYPlus P jStar F t e).2
-                  (optimizerField (respCoeffPlus F a) (uP a) x).1
-                + vecDot (respYPlus P jStar F t e).1
-                  (optimizerField (respCoeffPlus F a) (uP a) x).2)) ∂P)
-        = (∫ a, volumeAverage (respCell jStar F t)
-              (fun x => (φ x - 1) * (vecDot (respYPlus P jStar F t e).2
-                    (optimizerField (respCoeffPlus F a) (uP a) x).1
-                  + vecDot (respYPlus P jStar F t e).1
-                    (optimizerField (respCoeffPlus F a) (uP a) x).2)) ∂P)
-          - ∫ a, ((triadicIndexBox d H).card : ℝ)⁻¹ * ∑ w ∈ triadicIndexBox d H,
-              (volumeAverage (adaptedCellAtCenter (respGrid jStar F) s w) φ - 1) *
-                volumeAverage (adaptedCellAtCenter (respGrid jStar F) s w)
-                  (fun x => vecDot (respYPlus P jStar F t e).2
-                        (optimizerField (respCoeffPlus F a) (uP a) x).1
-                      + vecDot (respYPlus P jStar F t e).1
-                        (optimizerField (respCoeffPlus F a) (uP a) x).2) ∂P := by
-      rw [← integral_sub hhalf.1 hTint]
-      exact integral_congr_ae (Filter.Eventually.of_forall hfluct)
-    have hEq2 : (∫ a, ((triadicIndexBox d H).card : ℝ)⁻¹ * ∑ w ∈ triadicIndexBox d H,
-          (volumeAverage (adaptedCellAtCenter (respGrid jStar F) s w) φ - 1) *
-            volumeAverage (adaptedCellAtCenter (respGrid jStar F) s w)
-              (fun x => vecDot (respYPlus P jStar F t e).2
-                    (optimizerField (respCoeffPlus F a) (uP a) x).1
-                  + vecDot (respYPlus P jStar F t e).1
-                    (optimizerField (respCoeffPlus F a) (uP a) x).2) ∂P)
-        = ∫ a, ((triadicIndexBox d H).card : ℝ)⁻¹ * ∑ w ∈ triadicIndexBox d H,
-            volumeAverage (adaptedCellAtCenter (respGrid jStar F) (t - (H : ℤ)) w)
-                (fun x => φ x - 1) *
-              volumeAverage (adaptedCellAtCenter (respGrid jStar F) (t - (H : ℤ)) w)
-                (fun x => vecDot (respYPlus P jStar F t e).2
-                      (optimizerField (respCoeffPlus F a) (uP a) x).1
-                    + vecDot (respYPlus P jStar F t e).1
-                      (optimizerField (respCoeffPlus F a) (uP a) x).2) ∂P := by
-      refine integral_congr_ae (Filter.Eventually.of_forall fun a => ?_)
-      rw [hst]
-      simp only [hwt]
+    have hEq1 := integral_cutoffFluctuation_split P (respGrid jStar F) hq H s t hst φ hφ
+      (fun a x => vecDot (respYPlus P jStar F t e).2
+            (optimizerField (respCoeffPlus F a) (uP a) x).1
+          + vecDot (respYPlus P jStar F t e).1
+            (optimizerField (respCoeffPlus F a) (uP a) x).2)
+      (fun a => by simpa only [respCell] using hcrossOn a) hhalf.1 hTint
+    have hEq2 := integral_cutoffCellPart_shift P (respGrid jStar F) H s t hst φ
+      (fun a x => vecDot (respYPlus P jStar F t e).2
+            (optimizerField (respCoeffPlus F a) (uP a) x).1
+          + vecDot (respYPlus P jStar F t e).1
+            (optimizerField (respCoeffPlus F a) (uP a) x).2) hwt
     have hbound : |vecDot (fun i => ∫ a, ((triadicIndexBox d H).card : ℝ)⁻¹ *
             ∑ w ∈ triadicIndexBox d H, volumeAverage (adaptedCellAtCenter (respGrid jStar F) s w)
               (fun x => (φ x - volumeAverage (adaptedCellAtCenter (respGrid jStar F) s w) φ) *

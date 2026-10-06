@@ -62,6 +62,57 @@ open MeasureTheory
 
 noncomputable section
 
+private theorem integrable_cellHalfAnnealedReadouts {α : Type*} [MeasurableSpace α]
+    {P : Measure α} {d : ℕ} (Z : Finset (Fin d → ℤ)) (θ : (Fin d → ℤ) → ℝ)
+    (q₁ q₂ D R : (Fin d → ℤ) → α → ℝ)
+    (hq₁ : ∀ w a, 0 ≤ q₁ w a) (hq₂ : ∀ w a, 0 ≤ q₂ w a)
+    (hq₁I : ∀ w ∈ Z, Integrable (q₁ w) P) (hq₂I : ∀ w ∈ Z, Integrable (q₂ w) P)
+    (hDI : ∀ w ∈ Z, Integrable (D w) P) (hRI : ∀ w ∈ Z, Integrable (R w) P) :
+    Integrable (fun a => ((Z.card : ℝ)⁻¹ * ∑ w ∈ Z, (Real.sqrt (q₁ w a) +
+      Real.sqrt (q₂ w a)) ^ 2)) P ∧
+    Integrable (fun a => ((Z.card : ℝ)⁻¹ * ∑ w ∈ Z, 2 * D w a)) P ∧
+    Integrable (fun a => Real.sqrt (((Z.card : ℝ)⁻¹ * ∑ w ∈ Z,
+      (Real.sqrt (q₁ w a) + Real.sqrt (q₂ w a)) ^ 2)) *
+      Real.sqrt (((Z.card : ℝ)⁻¹ * ∑ w ∈ Z, 2 * D w a))) P ∧
+    Integrable (fun a => ((Z.card : ℝ)⁻¹ * ∑ w ∈ Z, θ w *
+      (Real.sqrt ((Real.sqrt (q₁ w a) + Real.sqrt (q₂ w a)) ^ 2) *
+        Real.sqrt (2 * D w a)))) P ∧
+    Integrable (fun a => ((Z.card : ℝ)⁻¹ * ∑ w ∈ Z, θ w * R w a)) P := by
+  have hsq : ∀ w ∈ Z, Integrable (fun a =>
+      (Real.sqrt (q₁ w a) + Real.sqrt (q₂ w a)) ^ 2) P :=
+    fun w hw => integrable_sq_sqrt_add_sqrt_gen (hq₁ w) (hq₂ w) (hq₁I w hw) (hq₂I w hw)
+  have hFint := integrable_avsum (P := P) Z
+    (fun w a => (Real.sqrt (q₁ w a) + Real.sqrt (q₂ w a)) ^ 2) hsq
+  have hDint := integrable_avsum (P := P) Z (fun w a => 2 * D w a)
+    (fun w hw => (hDI w hw).const_mul 2)
+  have hMidint := integrable_sqrt_mul_sqrt_of_integrable hFint hDint
+  have hPint := integrable_avsum (P := P) Z
+    (fun w a => θ w * (Real.sqrt ((Real.sqrt (q₁ w a) + Real.sqrt (q₂ w a)) ^ 2) *
+      Real.sqrt (2 * D w a)))
+    (fun w hw => (integrable_sqrt_mul_sqrt_of_integrable (hsq w hw)
+      ((hDI w hw).const_mul 2)).const_mul _)
+  have hPint' := integrable_avsum (P := P) Z (fun w a => θ w * R w a)
+    (fun w hw => (hRI w hw).const_mul _)
+  exact ⟨hFint, hDint, hMidint, hPint, hPint'⟩
+
+private theorem integrable_crossedBlockAverageDifference {α : Type*} [MeasurableSpace α]
+    {P : Measure α} {d : ℕ} (X Z : α → BlockVec d) (Y : BlockVec d)
+    (hX₁ : ∀ i, Integrable (fun a => (X a).1 i) P)
+    (hX₂ : ∀ i, Integrable (fun a => (X a).2 i) P)
+    (hZ₁ : ∀ i, Integrable (fun a => (Z a).1 i) P)
+    (hZ₂ : ∀ i, Integrable (fun a => (Z a).2 i) P) :
+    Integrable (fun a => vecDot ((X a).1 - (Z a).1) Y.2
+      + vecDot Y.1 ((X a).2 - (Z a).2)) P := by
+  have h1 : Integrable (fun a => ∑ i : Fin d,
+      ((X a).1 i - (Z a).1 i) * Y.2 i) P :=
+    integrable_finsetSum _ fun i _ => ((hX₁ i).sub (hZ₁ i)).mul_const _
+  have h2 : Integrable (fun a => ∑ i : Fin d,
+      Y.1 i * ((X a).2 i - (Z a).2 i)) P :=
+    integrable_finsetSum _ fun i _ => ((hX₂ i).sub (hZ₂ i)).const_mul _
+  refine (h1.add h2).congr ?_
+  filter_upwards with a
+  simp only [Pi.add_apply, vecDot, Pi.sub_apply]
+
 /-- **The cell half of the cutoff-mean row on the carriers with no sample-side residue, minus
 sign.**  Under the annealed data of the row — stationarity, the invertible grid, the coarse block
 on every aligned subcell of the coarse scale, and the integrability of the two terminal responses —
@@ -207,94 +258,32 @@ theorem abs_vecDot_cellPart_respYMinus_le_clean {d : ℕ} [NeZero d]
       (fun a => (coarseBlockMatrix (adaptedCellAtCenter (respGrid jStar F) s w)
         (respCoeffMinus F a)).lowerRight) (respYMinus P jStar F t e).2
       (fun i k => hent w (Sum.inr i) (Sum.inr k))
-  have hcross : ∀ w ∈ triadicIndexBox d H, Integrable (fun a =>
-      Real.sqrt (vecDot (respYMinus P jStar F t e).1 (matVecMul (coarseBlockMatrix
-            (adaptedCellAtCenter (respGrid jStar F) s w) (respCoeffMinus F a)).upperLeft
-            (respYMinus P jStar F t e).1))
-        * Real.sqrt (vecDot (respYMinus P jStar F t e).2 (matVecMul (coarseBlockMatrix
-            (adaptedCellAtCenter (respGrid jStar F) s w) (respCoeffMinus F a)).lowerRight
-            (respYMinus P jStar F t e).2))) P :=
-    fun w hw => integrable_sqrt_mul_sqrt_gen (fun a => (hULLR w a).1) (fun a => (hULLR w a).2)
-      (hqUL w hw) (hqLR w hw)
-  have hsq : ∀ w ∈ triadicIndexBox d H, Integrable (fun a =>
-      (Real.sqrt (vecDot (respYMinus P jStar F t e).1 (matVecMul (coarseBlockMatrix
-              (adaptedCellAtCenter (respGrid jStar F) s w) (respCoeffMinus F a)).upperLeft
-              (respYMinus P jStar F t e).1))
-          + Real.sqrt (vecDot (respYMinus P jStar F t e).2 (matVecMul (coarseBlockMatrix
-              (adaptedCellAtCenter (respGrid jStar F) s w) (respCoeffMinus F a)).lowerRight
-              (respYMinus P jStar F t e).2))) ^ 2) P :=
-    fun w hw => integrable_sq_sqrt_add_sqrt_gen (fun a => (hULLR w a).1) (fun a => (hULLR w a).2)
-      (hqUL w hw) (hqLR w hw)
-  have hFint := integrable_avsum (P := P) (triadicIndexBox d H)
-    (fun w a => (Real.sqrt (vecDot (respYMinus P jStar F t e).1 (matVecMul (coarseBlockMatrix
-              (adaptedCellAtCenter (respGrid jStar F) s w) (respCoeffMinus F a)).upperLeft
-              (respYMinus P jStar F t e).1))
-          + Real.sqrt (vecDot (respYMinus P jStar F t e).2 (matVecMul (coarseBlockMatrix
-              (adaptedCellAtCenter (respGrid jStar F) s w) (respCoeffMinus F a)).lowerRight
-              (respYMinus P jStar F t e).2))) ^ 2) hsq
-  have hDint := integrable_avsum (P := P) (triadicIndexBox d H)
-    (fun w a => 2 * (ResponseJ (adaptedCellAtCenter (respGrid jStar F) s w)
-          (respP (respMean P jStar F t) e) (respqMinus P jStar F t e) (respCoeffMinus F a)
-        - volumeAverage (adaptedCellAtCenter (respGrid jStar F) s w)
-            (scalarResponseIntegrand (respCell jStar F t) (respCoeffMinus F a)
-              (respP (respMean P jStar F t) e) (respqMinus P jStar F t e) (uM a))))
-    (fun w hw => (hDdef w hw).const_mul 2)
-  have hMidint := integrable_sqrt_mul_sqrt_of_integrable hFint hDint
-  have hPint := integrable_avsum (P := P) (triadicIndexBox d H)
-    (fun w a => (volumeAverage (adaptedCellAtCenter (respGrid jStar F) s w) (fun x => φ x - 1)) *
-      (Real.sqrt ((Real.sqrt (vecDot (respYMinus P jStar F t e).1 (matVecMul (coarseBlockMatrix
-                  (adaptedCellAtCenter (respGrid jStar F) s w) (respCoeffMinus F a)).upperLeft
-                  (respYMinus P jStar F t e).1))
-              + Real.sqrt (vecDot (respYMinus P jStar F t e).2 (matVecMul (coarseBlockMatrix
-                  (adaptedCellAtCenter (respGrid jStar F) s w) (respCoeffMinus F a)).lowerRight
-                  (respYMinus P jStar F t e).2))) ^ 2)
-        * Real.sqrt (2 * (ResponseJ (adaptedCellAtCenter (respGrid jStar F) s w)
-              (respP (respMean P jStar F t) e) (respqMinus P jStar F t e) (respCoeffMinus F a)
-            - volumeAverage (adaptedCellAtCenter (respGrid jStar F) s w)
-                (scalarResponseIntegrand (respCell jStar F t) (respCoeffMinus F a)
-                  (respP (respMean P jStar F t) e) (respqMinus P jStar F t e) (uM a))))))
-    (fun w hw => (integrable_sqrt_mul_sqrt_of_integrable (hsq w hw) ((hDdef w hw).const_mul 2)).const_mul _)
-  have hpair : ∀ w ∈ triadicIndexBox d H, Integrable (fun a =>
-      vecDot ((cellAverage (adaptedCellAtCenter (respGrid jStar F) s w)
-              (optimizerField (respCoeffMinus F a) (uM a)))
-            - (cellAverage (adaptedCellAtCenter (respGrid jStar F) s w)
-              (optimizerField (respCoeffMinus F a) (v w a)))).1
-          (respYMinus P jStar F t e).2
-        + vecDot (respYMinus P jStar F t e).1
-            ((cellAverage (adaptedCellAtCenter (respGrid jStar F) s w)
-              (optimizerField (respCoeffMinus F a) (uM a)))
-            - (cellAverage (adaptedCellAtCenter (respGrid jStar F) s w)
-              (optimizerField (respCoeffMinus F a) (v w a)))).2) P := by
-    intro w hw
-    have h1 : Integrable (fun a => ∑ i : Fin d,
-        ((cellAverage (adaptedCellAtCenter (respGrid jStar F) s w)
-            (optimizerField (respCoeffMinus F a) (uM a))).1 i
-          - (cellAverage (adaptedCellAtCenter (respGrid jStar F) s w)
-            (optimizerField (respCoeffMinus F a) (v w a))).1 i)
-          * (respYMinus P jStar F t e).2 i) P :=
-      integrable_finsetSum _ fun i _ => ((hM.1 w hw i).sub ((hNs w hw).1 i)).mul_const _
-    have h2 : Integrable (fun a => ∑ i : Fin d, (respYMinus P jStar F t e).1 i *
-        ((cellAverage (adaptedCellAtCenter (respGrid jStar F) s w)
-            (optimizerField (respCoeffMinus F a) (uM a))).2 i
-          - (cellAverage (adaptedCellAtCenter (respGrid jStar F) s w)
-            (optimizerField (respCoeffMinus F a) (v w a))).2 i)) P :=
-      integrable_finsetSum _ fun i _ => ((hM.2 w hw i).sub ((hNs w hw).2 i)).const_mul _
-    refine (h1.add h2).congr ?_
-    filter_upwards with a
-    simp only [Pi.add_apply, vecDot, Prod.fst_sub, Prod.snd_sub, Pi.sub_apply]
-  have hPint' := integrable_avsum (P := P) (triadicIndexBox d H)
-    (fun w a => (volumeAverage (adaptedCellAtCenter (respGrid jStar F) s w) (fun x => φ x - 1)) *
-      (vecDot ((cellAverage (adaptedCellAtCenter (respGrid jStar F) s w)
-              (optimizerField (respCoeffMinus F a) (uM a)))
-            - (cellAverage (adaptedCellAtCenter (respGrid jStar F) s w)
-              (optimizerField (respCoeffMinus F a) (v w a)))).1
-          (respYMinus P jStar F t e).2
-        + vecDot (respYMinus P jStar F t e).1
-            ((cellAverage (adaptedCellAtCenter (respGrid jStar F) s w)
-              (optimizerField (respCoeffMinus F a) (uM a)))
-            - (cellAverage (adaptedCellAtCenter (respGrid jStar F) s w)
-              (optimizerField (respCoeffMinus F a) (v w a)))).2))
-    (fun w hw => (hpair w hw).const_mul _)
+  let q1 := fun w a => vecDot (respYMinus P jStar F t e).1 (matVecMul
+    (coarseBlockMatrix (adaptedCellAtCenter (respGrid jStar F) s w) (respCoeffMinus F a)).upperLeft
+    (respYMinus P jStar F t e).1)
+  let q2 := fun w a => vecDot (respYMinus P jStar F t e).2 (matVecMul
+    (coarseBlockMatrix (adaptedCellAtCenter (respGrid jStar F) s w) (respCoeffMinus F a)).lowerRight
+    (respYMinus P jStar F t e).2)
+  let D := fun w a => ResponseJ (adaptedCellAtCenter (respGrid jStar F) s w)
+    (respP (respMean P jStar F t) e) (respqMinus P jStar F t e) (respCoeffMinus F a)
+    - volumeAverage (adaptedCellAtCenter (respGrid jStar F) s w)
+      (scalarResponseIntegrand (respCell jStar F t) (respCoeffMinus F a)
+        (respP (respMean P jStar F t) e) (respqMinus P jStar F t e) (uM a))
+  let θ := fun w => volumeAverage (adaptedCellAtCenter (respGrid jStar F) s w) (fun x => φ x - 1)
+  let xCell := fun w a => cellAverage (adaptedCellAtCenter (respGrid jStar F) s w)
+    (optimizerField (respCoeffMinus F a) (uM a))
+  let zCell := fun w a => cellAverage (adaptedCellAtCenter (respGrid jStar F) s w)
+    (optimizerField (respCoeffMinus F a) (v w a))
+  let R := fun w a =>
+    vecDot ((xCell w a).1 - (zCell w a).1) (respYMinus P jStar F t e).2
+      + vecDot (respYMinus P jStar F t e).1 ((xCell w a).2 - (zCell w a).2)
+  have hpair : ∀ w ∈ triadicIndexBox d H, Integrable (R w) P :=
+    fun w hw => integrable_crossedBlockAverageDifference (xCell w) (zCell w) (respYMinus P jStar F t e)
+      (fun i => hM.1 w hw i) (fun i => hM.2 w hw i)
+      (fun i => (hNs w hw).1 i) (fun i => (hNs w hw).2 i)
+  obtain ⟨hFint, hDint, hMidint, hPint, hPint'⟩ :=
+    integrable_cellHalfAnnealedReadouts (P := P) (triadicIndexBox d H) θ q1 q2 D R
+      (fun w a => (hULLR w a).1) (fun w a => (hULLR w a).2) hqUL hqLR hDdef hpair
   have hmeasBlk : ∀ α β : BlockCoord d, AEStronglyMeasurable (fun a => blockMatEntry
       (coarseBlockMatrix (HighContrast.adaptedCell (respGrid jStar F) s) (respCoeffMinus F a)) α β) P :=
     aestronglyMeasurable_blockMatEntry_respCoeffMinus_adaptedCell P hq s F
@@ -472,94 +461,32 @@ theorem abs_vecDot_cellPart_respYPlus_le_clean {d : ℕ} [NeZero d]
       (fun a => (coarseBlockMatrix (adaptedCellAtCenter (respGrid jStar F) s w)
         (respCoeffPlus F a)).lowerRight) (respYPlus P jStar F t e).2
       (fun i k => hent w (Sum.inr i) (Sum.inr k))
-  have hcross : ∀ w ∈ triadicIndexBox d H, Integrable (fun a =>
-      Real.sqrt (vecDot (respYPlus P jStar F t e).1 (matVecMul (coarseBlockMatrix
-            (adaptedCellAtCenter (respGrid jStar F) s w) (respCoeffPlus F a)).upperLeft
-            (respYPlus P jStar F t e).1))
-        * Real.sqrt (vecDot (respYPlus P jStar F t e).2 (matVecMul (coarseBlockMatrix
-            (adaptedCellAtCenter (respGrid jStar F) s w) (respCoeffPlus F a)).lowerRight
-            (respYPlus P jStar F t e).2))) P :=
-    fun w hw => integrable_sqrt_mul_sqrt_gen (fun a => (hULLR w a).1) (fun a => (hULLR w a).2)
-      (hqUL w hw) (hqLR w hw)
-  have hsq : ∀ w ∈ triadicIndexBox d H, Integrable (fun a =>
-      (Real.sqrt (vecDot (respYPlus P jStar F t e).1 (matVecMul (coarseBlockMatrix
-              (adaptedCellAtCenter (respGrid jStar F) s w) (respCoeffPlus F a)).upperLeft
-              (respYPlus P jStar F t e).1))
-          + Real.sqrt (vecDot (respYPlus P jStar F t e).2 (matVecMul (coarseBlockMatrix
-              (adaptedCellAtCenter (respGrid jStar F) s w) (respCoeffPlus F a)).lowerRight
-              (respYPlus P jStar F t e).2))) ^ 2) P :=
-    fun w hw => integrable_sq_sqrt_add_sqrt_gen (fun a => (hULLR w a).1) (fun a => (hULLR w a).2)
-      (hqUL w hw) (hqLR w hw)
-  have hFint := integrable_avsum (P := P) (triadicIndexBox d H)
-    (fun w a => (Real.sqrt (vecDot (respYPlus P jStar F t e).1 (matVecMul (coarseBlockMatrix
-              (adaptedCellAtCenter (respGrid jStar F) s w) (respCoeffPlus F a)).upperLeft
-              (respYPlus P jStar F t e).1))
-          + Real.sqrt (vecDot (respYPlus P jStar F t e).2 (matVecMul (coarseBlockMatrix
-              (adaptedCellAtCenter (respGrid jStar F) s w) (respCoeffPlus F a)).lowerRight
-              (respYPlus P jStar F t e).2))) ^ 2) hsq
-  have hDint := integrable_avsum (P := P) (triadicIndexBox d H)
-    (fun w a => 2 * (ResponseJ (adaptedCellAtCenter (respGrid jStar F) s w)
-          (respP (respMean P jStar F t) e) (respqPlus P jStar F t e) (respCoeffPlus F a)
-        - volumeAverage (adaptedCellAtCenter (respGrid jStar F) s w)
-            (scalarResponseIntegrand (respCell jStar F t) (respCoeffPlus F a)
-              (respP (respMean P jStar F t) e) (respqPlus P jStar F t e) (uP a))))
-    (fun w hw => (hDdef w hw).const_mul 2)
-  have hMidint := integrable_sqrt_mul_sqrt_of_integrable hFint hDint
-  have hPint := integrable_avsum (P := P) (triadicIndexBox d H)
-    (fun w a => (volumeAverage (adaptedCellAtCenter (respGrid jStar F) s w) (fun x => φ x - 1)) *
-      (Real.sqrt ((Real.sqrt (vecDot (respYPlus P jStar F t e).1 (matVecMul (coarseBlockMatrix
-                  (adaptedCellAtCenter (respGrid jStar F) s w) (respCoeffPlus F a)).upperLeft
-                  (respYPlus P jStar F t e).1))
-              + Real.sqrt (vecDot (respYPlus P jStar F t e).2 (matVecMul (coarseBlockMatrix
-                  (adaptedCellAtCenter (respGrid jStar F) s w) (respCoeffPlus F a)).lowerRight
-                  (respYPlus P jStar F t e).2))) ^ 2)
-        * Real.sqrt (2 * (ResponseJ (adaptedCellAtCenter (respGrid jStar F) s w)
-              (respP (respMean P jStar F t) e) (respqPlus P jStar F t e) (respCoeffPlus F a)
-            - volumeAverage (adaptedCellAtCenter (respGrid jStar F) s w)
-                (scalarResponseIntegrand (respCell jStar F t) (respCoeffPlus F a)
-                  (respP (respMean P jStar F t) e) (respqPlus P jStar F t e) (uP a))))))
-    (fun w hw => (integrable_sqrt_mul_sqrt_of_integrable (hsq w hw) ((hDdef w hw).const_mul 2)).const_mul _)
-  have hpair : ∀ w ∈ triadicIndexBox d H, Integrable (fun a =>
-      vecDot ((cellAverage (adaptedCellAtCenter (respGrid jStar F) s w)
-              (optimizerField (respCoeffPlus F a) (uP a)))
-            - (cellAverage (adaptedCellAtCenter (respGrid jStar F) s w)
-              (optimizerField (respCoeffPlus F a) (v w a)))).1
-          (respYPlus P jStar F t e).2
-        + vecDot (respYPlus P jStar F t e).1
-            ((cellAverage (adaptedCellAtCenter (respGrid jStar F) s w)
-              (optimizerField (respCoeffPlus F a) (uP a)))
-            - (cellAverage (adaptedCellAtCenter (respGrid jStar F) s w)
-              (optimizerField (respCoeffPlus F a) (v w a)))).2) P := by
-    intro w hw
-    have h1 : Integrable (fun a => ∑ i : Fin d,
-        ((cellAverage (adaptedCellAtCenter (respGrid jStar F) s w)
-            (optimizerField (respCoeffPlus F a) (uP a))).1 i
-          - (cellAverage (adaptedCellAtCenter (respGrid jStar F) s w)
-            (optimizerField (respCoeffPlus F a) (v w a))).1 i)
-          * (respYPlus P jStar F t e).2 i) P :=
-      integrable_finsetSum _ fun i _ => ((hM.1 w hw i).sub ((hNs w hw).1 i)).mul_const _
-    have h2 : Integrable (fun a => ∑ i : Fin d, (respYPlus P jStar F t e).1 i *
-        ((cellAverage (adaptedCellAtCenter (respGrid jStar F) s w)
-            (optimizerField (respCoeffPlus F a) (uP a))).2 i
-          - (cellAverage (adaptedCellAtCenter (respGrid jStar F) s w)
-            (optimizerField (respCoeffPlus F a) (v w a))).2 i)) P :=
-      integrable_finsetSum _ fun i _ => ((hM.2 w hw i).sub ((hNs w hw).2 i)).const_mul _
-    refine (h1.add h2).congr ?_
-    filter_upwards with a
-    simp only [Pi.add_apply, vecDot, Prod.fst_sub, Prod.snd_sub, Pi.sub_apply]
-  have hPint' := integrable_avsum (P := P) (triadicIndexBox d H)
-    (fun w a => (volumeAverage (adaptedCellAtCenter (respGrid jStar F) s w) (fun x => φ x - 1)) *
-      (vecDot ((cellAverage (adaptedCellAtCenter (respGrid jStar F) s w)
-              (optimizerField (respCoeffPlus F a) (uP a)))
-            - (cellAverage (adaptedCellAtCenter (respGrid jStar F) s w)
-              (optimizerField (respCoeffPlus F a) (v w a)))).1
-          (respYPlus P jStar F t e).2
-        + vecDot (respYPlus P jStar F t e).1
-            ((cellAverage (adaptedCellAtCenter (respGrid jStar F) s w)
-              (optimizerField (respCoeffPlus F a) (uP a)))
-            - (cellAverage (adaptedCellAtCenter (respGrid jStar F) s w)
-              (optimizerField (respCoeffPlus F a) (v w a)))).2))
-    (fun w hw => (hpair w hw).const_mul _)
+  let q1 := fun w a => vecDot (respYPlus P jStar F t e).1 (matVecMul
+    (coarseBlockMatrix (adaptedCellAtCenter (respGrid jStar F) s w) (respCoeffPlus F a)).upperLeft
+    (respYPlus P jStar F t e).1)
+  let q2 := fun w a => vecDot (respYPlus P jStar F t e).2 (matVecMul
+    (coarseBlockMatrix (adaptedCellAtCenter (respGrid jStar F) s w) (respCoeffPlus F a)).lowerRight
+    (respYPlus P jStar F t e).2)
+  let D := fun w a => ResponseJ (adaptedCellAtCenter (respGrid jStar F) s w)
+    (respP (respMean P jStar F t) e) (respqPlus P jStar F t e) (respCoeffPlus F a)
+    - volumeAverage (adaptedCellAtCenter (respGrid jStar F) s w)
+      (scalarResponseIntegrand (respCell jStar F t) (respCoeffPlus F a)
+        (respP (respMean P jStar F t) e) (respqPlus P jStar F t e) (uP a))
+  let θ := fun w => volumeAverage (adaptedCellAtCenter (respGrid jStar F) s w) (fun x => φ x - 1)
+  let xCell := fun w a => cellAverage (adaptedCellAtCenter (respGrid jStar F) s w)
+    (optimizerField (respCoeffPlus F a) (uP a))
+  let zCell := fun w a => cellAverage (adaptedCellAtCenter (respGrid jStar F) s w)
+    (optimizerField (respCoeffPlus F a) (v w a))
+  let R := fun w a =>
+    vecDot ((xCell w a).1 - (zCell w a).1) (respYPlus P jStar F t e).2
+      + vecDot (respYPlus P jStar F t e).1 ((xCell w a).2 - (zCell w a).2)
+  have hpair : ∀ w ∈ triadicIndexBox d H, Integrable (R w) P :=
+    fun w hw => integrable_crossedBlockAverageDifference (xCell w) (zCell w) (respYPlus P jStar F t e)
+      (fun i => hM.1 w hw i) (fun i => hM.2 w hw i)
+      (fun i => (hNs w hw).1 i) (fun i => (hNs w hw).2 i)
+  obtain ⟨hFint, hDint, hMidint, hPint, hPint'⟩ :=
+    integrable_cellHalfAnnealedReadouts (P := P) (triadicIndexBox d H) θ q1 q2 D R
+      (fun w a => (hULLR w a).1) (fun w a => (hULLR w a).2) hqUL hqLR hDdef hpair
   have hmeasBlk : ∀ α β : BlockCoord d, AEStronglyMeasurable (fun a => blockMatEntry
       (coarseBlockMatrix (HighContrast.adaptedCell (respGrid jStar F) s) (respCoeffPlus F a)) α β) P :=
     aestronglyMeasurable_blockMatEntry_respCoeffPlus_adaptedCell P hq s F

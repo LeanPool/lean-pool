@@ -57,7 +57,7 @@ theorem cubeEuclideanWspExactOverlapFullControlConstant_lt_top (d : ℕ) :
           (ENNReal.mul_lt_top (by finiteness) (lt_top_iff_ne_top.mpr hlower))
           hpower)⟩
 
-private theorem exactOverlapIntegrableOfEuclideanWspField {d : ℕ}
+theorem exactOverlapIntegrableOfEuclideanWspField {d : ℕ}
     {s : FractionalOrder} (Q : TriadicCube d) (p : FiniteLpExponent)
     (F : CubeEuclideanWspField Q s p) (i : Fin d) :
     ExactOverlapIntegrable Q (fun x => F.toField x i) where

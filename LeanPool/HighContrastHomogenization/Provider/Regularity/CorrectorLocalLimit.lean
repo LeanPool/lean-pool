@@ -37,7 +37,7 @@ noncomputable section
 
 open MeasureTheory
 
-private instance localGradientCubeFiniteMeasure (d n : ℕ) :
+instance localGradientCubeFiniteMeasure (d n : ℕ) :
     IsFiniteMeasure (volumeMeasureOn (localGradientCube d n)) := by
   simpa [localGradientCube, volumeMeasureOn] using
     (isOpenBoundedConvexDomain_openCubeSet
