@@ -260,8 +260,9 @@ Every emitted file is compared byte-for-byte against its source template. The fi
 round-trip.json records counts, per-certificate timings and SHA-256 for every emitted file;
 it is written only after every process, state/step comparison, witness expansion and file
 comparison succeeds. Runtime files and logs remain in the external output directory. The
-driver never edits the checkout. The sampled --certificate option is for diagnosis; the
-default run covers the complete corpus. Regeneration evidence does not replace the ordinary
+driver never edits the checkout. Reports count only the files emitted by the current run;
+older files in a reused output directory are ignored. The sampled --certificate option is
+for diagnosis; the default run covers the complete corpus. Regeneration evidence does not replace the ordinary
 kernel acceptance/replay proofs or the complete build, linters, style and quality/trust gates.
 
 The exact embedded driver was executed with four workers: all 100 certificates, 3,288 states,
@@ -580,8 +581,11 @@ def regenerate(root: Path, output: Path, name: str) -> dict[str, Any]:
         destination.parent.mkdir(parents=True, exist_ok=True)
         destination.write_text(emit_checkpoint(path.read_text(), proposals)
                                if category == 'Checkpoints' else path.read_text())
+    emitted = paths + [certificates / category / f'{name}.lean'
+                       for category in ['Data', 'Checkpoints']]
     return {'certificate': name, 'states': states, 'steps': steps,
-            'exclusions': len(rows), 'files': len(paths) + 2,
+            'exclusions': len(rows), 'files': len(emitted),
+            'emitted_files': [str(path.relative_to(root)) for path in emitted],
             'wall_seconds': time.monotonic() - started}
 
 
@@ -605,13 +609,13 @@ def main() -> None:
     started = time.monotonic()
     with concurrent.futures.ThreadPoolExecutor(max_workers=options.workers) as executor:
         results = list(executor.map(lambda name: regenerate(root, output, name), names))
+    emitted = [relative for row in results for relative in row['emitted_files']]
+    assert len(emitted) == len(set(emitted)) == sum(row['files'] for row in results)
     hashes = []
-    for path in sorted((output / 'corpus').rglob('*.lean')):
-        relative = path.relative_to(output / 'corpus')
+    for relative in sorted(emitted):
         expected = (root / relative).read_bytes()
-        assert path.read_bytes() == expected, relative
-        hashes.append({'file': str(relative), 'sha256': hashlib.sha256(expected).hexdigest()})
-    assert len(hashes) == sum(row['files'] for row in results)
+        assert (output / 'corpus' / relative).read_bytes() == expected, relative
+        hashes.append({'file': relative, 'sha256': hashlib.sha256(expected).hexdigest()})
     report = {'certificates': len(results), 'states': sum(row['states'] for row in results),
               'steps': sum(row['steps'] for row in results),
               'exclusions': sum(row['exclusions'] for row in results), 'files': len(hashes),
