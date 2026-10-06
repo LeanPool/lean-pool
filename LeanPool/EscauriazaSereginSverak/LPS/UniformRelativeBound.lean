@@ -701,7 +701,7 @@ theorem lps_slice_relative_bound_finite_uniform {s : ℝ} (hs : 3 < s)
     · have hIntegralZero : |∫ x : Vec3, F x| = 0 := by
         have hInt : ∫ x : Vec3, F x = 0 := by
           have hle := hAbsolute
-          simp [hDzero, D] at hle
+          simp only [hDzero, mul_zero, abs_nonpos_iff] at hle
           exact hle
         simp [hInt]
       rw [hIntegralZero]

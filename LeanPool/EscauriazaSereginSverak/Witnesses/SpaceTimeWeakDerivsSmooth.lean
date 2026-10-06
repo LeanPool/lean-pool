@@ -13,6 +13,13 @@ public import LeanPool.CaffarelliKohnNirenberg.Foundation.Parabolic.Doubling
 public import LeanPool.CaffarelliKohnNirenberg.Foundation.Parabolic.Topology
 public import LeanPool.CaffarelliKohnNirenberg.Statements.HasSpaceTimeWeakDerivs
 
+/-!
+# Smooth fields have space-time weak derivatives
+
+The classical spatial and time derivatives of a smooth field satisfy the
+space-time integration-by-parts definition in `def:sws`.
+-/
+
 public section
 
 open MeasureTheory Set
@@ -40,12 +47,7 @@ private instance parabolicVolumeIsLocallyFinite :
   ⟨fun z => ⟨Metric.ball z 1, Metric.ball_mem_nhds z one_pos,
     CKN.Foundation.Parabolic.volume_parabolicBall_lt_top one_pos⟩⟩
 
-/-!
-# Smooth fields have space-time weak derivatives
 
-The classical spatial and time derivatives of a smooth field satisfy the
-space-time integration-by-parts definition in `def:sws`.
--/
 
 /-- A smooth field has its classical first, second, and time derivatives as
 space-time weak derivatives on every open product domain. -/
