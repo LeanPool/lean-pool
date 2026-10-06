@@ -1,7 +1,8 @@
 name: Proof Profile
 
-# Profile once when a PR is opened, and again on demand when the PR author (or
-# anyone with write access) comments `/profile`. No `synchronize` trigger — the
+# Profile once when a ready PR is opened or a draft becomes ready, and again
+# on demand when the PR author or anyone with write access comments `/profile`.
+# No `synchronize` trigger — the
 # profile is advisory, so re-run it by hand after a push if you want a fresh
 # one. That on-demand path is what lets an external contributor re-profile
 # their own PR after pushing. workflow_dispatch takes an explicit PR number.
@@ -47,7 +48,7 @@ name: Proof Profile
 
 on:
   pull_request:
-    types: [opened]
+    types: [opened, ready_for_review]
   issue_comment:
     types: [created]
   workflow_dispatch:
@@ -88,7 +89,7 @@ jobs:
   plan:
     runs-on: ubuntu-latest
     name: Plan profile
-    # Run on a fresh PR or a workflow_dispatch unconditionally; for issue
+    # Run automatically on ready PRs; workflow_dispatch also supports drafts. For issue
     # comments, only when the body starts with `/profile` AND the commenter is
     # either the PR author or someone with write access. The measurement jobs
     # check out and *run* the PR's Lean code, so the workflow stays
@@ -100,7 +101,7 @@ jobs:
     # arbitrary commenter from triggering a run on someone else's fork PR.
     if: >-
       github.event_name == 'workflow_dispatch' ||
-      github.event_name == 'pull_request' ||
+      (github.event_name == 'pull_request' && !github.event.pull_request.draft) ||
       (github.event_name == 'issue_comment' &&
        github.event.issue.pull_request != null &&
        startsWith(github.event.comment.body, '/profile') &&

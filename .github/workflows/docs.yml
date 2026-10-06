@@ -15,6 +15,7 @@ on:
       - 'python/lean_pool/quality.py'
       - 'python/lean_pool/validation_cache.py'
       - 'python/lean_pool/ci_artifacts.py'
+      - 'python/lean_pool/ci_cache.py'
       - 'python/lean_pool/rebase_fastpath.py'
       - 'scripts/exposition/**'
       - '.github/workflows/docs.yml'
@@ -38,6 +39,7 @@ on:
       - 'python/lean_pool/quality.py'
       - 'python/lean_pool/validation_cache.py'
       - 'python/lean_pool/ci_artifacts.py'
+      - 'python/lean_pool/ci_cache.py'
       - 'python/lean_pool/rebase_fastpath.py'
       - 'scripts/exposition/**'
       - '.github/workflows/notice.yml'
@@ -70,6 +72,7 @@ jobs:
     runs-on: ubuntu-latest
     name: Documentation preflight
     outputs:
+      build_revision: ${{ steps.build-identity.outputs.revision }}
       readme_only: ${{ steps.scope.outputs.readme_only }}
       rebase_only: ${{ steps.rebase.outputs.rebase_only }}
     steps:
@@ -77,6 +80,13 @@ jobs:
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
         with:
           fetch-depth: 0
+
+      - name: Identify compiled Lean sources
+        id: build-identity
+        run: |
+          set -euo pipefail
+          revision=$(PYTHONPATH=python python3 -m lean_pool.ci_cache revision)
+          echo "revision=$revision" >> "$GITHUB_OUTPUT"
 
       - name: Detect README-only change
         id: scope
@@ -194,6 +204,9 @@ jobs:
        (github.event_name == 'workflow_dispatch' && inputs.preview))
     runs-on: ubuntu-latest
     name: Build exposition site
+    permissions:
+      contents: read
+      actions: write
     steps:
       - name: Checkout project
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
@@ -208,10 +221,11 @@ jobs:
           key: LeanDependencies-v1-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}
 
       - name: Restore pool build
+        id: pool-build
         uses: actions/cache/restore@27d5ce7f107fe9357f9df03efb73ab90386fccae
         with:
           path: .lake/build
-          key: LeanPoolBuild-v1-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json', 'lakefile.toml') }}-${{ github.sha }}
+          key: LeanPoolBuild-v1-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json', 'lakefile.toml') }}-${{ needs.preflight.outputs.build_revision }}
           restore-keys: |
             LeanPoolBuild-v1-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json', 'lakefile.toml') }}-
 
@@ -234,6 +248,7 @@ jobs:
           fi
 
       - name: Reuse matching Lean CI build
+        if: steps.pool-build.outputs.cache-hit != 'true'
         env:
           GH_TOKEN: ${{ github.token }}
           BUILD_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
@@ -270,6 +285,17 @@ jobs:
         with:
           path: .lake/exposition-cache/v1
           key: ${{ steps.extraction-cache.outputs.cache-primary-key }}
+
+      - name: Prune old copies of project extraction cache
+        if: steps.extraction-cache.outputs.cache-hit != 'true' && github.ref == 'refs/heads/main'
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPOSITORY: ${{ github.repository }}
+          CACHE_KEY: ${{ steps.extraction-cache.outputs.cache-primary-key }}
+        run: >-
+          PYTHONPATH=python python3 -m lean_pool.ci_cache prune
+          --repository "$REPOSITORY" --key "$CACHE_KEY"
 
       - name: Upload extraction timings and logs
         if: always()
@@ -318,6 +344,9 @@ jobs:
        (github.event_name == 'workflow_dispatch' && inputs.preview))
     runs-on: ubuntu-latest
     name: Build Mathlib documentation data
+    permissions:
+      contents: read
+      actions: write
     steps:
       - name: Checkout project
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
@@ -401,6 +430,17 @@ jobs:
             .lake/packages/MD4Lean
           key: DocsInfoMathlib-v3-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lakefile.toml', 'lake-manifest.json', 'docbuild/lean-toolchain', 'docbuild/lakefile.toml', 'docbuild/lake-manifest.json') }}
 
+      - name: Prune old copies of mathlib documentation checkpoint
+        if: steps.mathlib-doc-cache.outputs.cache-hit != 'true' && github.ref == 'refs/heads/main'
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPOSITORY: ${{ github.repository }}
+          CACHE_KEY: DocsInfoMathlib-v3-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lakefile.toml', 'lake-manifest.json', 'docbuild/lean-toolchain', 'docbuild/lakefile.toml', 'docbuild/lake-manifest.json') }}
+        run: >-
+          PYTHONPATH=python python3 -m lean_pool.ci_cache prune
+          --repository "$REPOSITORY" --key "$CACHE_KEY"
+
   build:
     needs:
       - preflight
@@ -411,6 +451,9 @@ jobs:
        (github.event_name == 'workflow_dispatch' && inputs.preview))
     runs-on: ubuntu-latest
     name: Build doc-gen4 site
+    permissions:
+      contents: read
+      actions: write
     steps:
       - name: Checkout project
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
@@ -425,10 +468,11 @@ jobs:
           key: LeanDependencies-v1-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}
 
       - name: Restore pool build
+        id: pool-build
         uses: actions/cache/restore@27d5ce7f107fe9357f9df03efb73ab90386fccae
         with:
           path: .lake/build
-          key: LeanPoolBuild-v1-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json', 'lakefile.toml') }}-${{ github.sha }}
+          key: LeanPoolBuild-v1-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json', 'lakefile.toml') }}-${{ needs.preflight.outputs.build_revision }}
           restore-keys: |
             LeanPoolBuild-v1-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json', 'lakefile.toml') }}-
 
@@ -446,7 +490,7 @@ jobs:
             .lake/packages/UnicodeBasic
             .lake/packages/BibtexQuery
             .lake/packages/MD4Lean
-          key: DocsInfo-v3-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lakefile.toml', 'lake-manifest.json', 'docbuild/lean-toolchain', 'docbuild/lakefile.toml', 'docbuild/lake-manifest.json') }}-${{ github.sha }}
+          key: DocsInfo-v3-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lakefile.toml', 'lake-manifest.json', 'docbuild/lean-toolchain', 'docbuild/lakefile.toml', 'docbuild/lake-manifest.json') }}-${{ needs.preflight.outputs.build_revision }}
           restore-keys: |
             DocsInfo-v3-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lakefile.toml', 'lake-manifest.json', 'docbuild/lean-toolchain', 'docbuild/lakefile.toml', 'docbuild/lake-manifest.json') }}-
 
@@ -483,6 +527,7 @@ jobs:
           fi
 
       - name: Reuse matching Lean CI build
+        if: steps.pool-build.outputs.cache-hit != 'true'
         env:
           GH_TOKEN: ${{ github.token }}
           BUILD_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
@@ -526,7 +571,18 @@ jobs:
             .lake/packages/UnicodeBasic
             .lake/packages/BibtexQuery
             .lake/packages/MD4Lean
-          key: DocsInfo-v3-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lakefile.toml', 'lake-manifest.json', 'docbuild/lean-toolchain', 'docbuild/lakefile.toml', 'docbuild/lake-manifest.json') }}-${{ github.sha }}
+          key: DocsInfo-v3-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lakefile.toml', 'lake-manifest.json', 'docbuild/lean-toolchain', 'docbuild/lakefile.toml', 'docbuild/lake-manifest.json') }}-${{ needs.preflight.outputs.build_revision }}
+
+      - name: Prune old copies of pool documentation checkpoint
+        if: steps.pool-doc-cache.outputs.cache-hit != 'true' && github.ref == 'refs/heads/main'
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPOSITORY: ${{ github.repository }}
+          CACHE_KEY: DocsInfo-v3-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lakefile.toml', 'lake-manifest.json', 'docbuild/lean-toolchain', 'docbuild/lakefile.toml', 'docbuild/lake-manifest.json') }}-${{ needs.preflight.outputs.build_revision }}
+        run: >-
+          PYTHONPATH=python python3 -m lean_pool.ci_cache prune
+          --repository "$REPOSITORY" --key "$CACHE_KEY"
 
       - name: Build documentation
         run: cd docbuild && ~/.elan/bin/lake build LeanPool:docs
