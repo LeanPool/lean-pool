@@ -382,6 +382,7 @@ private theorem lerayPressureProp_productPressure_sections_agree
       hPressurePoint x
     _ = lerayProductPressureOnSlab S v w hvS hwS (x, t) := hxS.symm
 
+/-- Pressure assembled from the local representatives by telescoping their time increments. -/
 @[expose]
 def lerayPressurePropGlue
     (q : ℕ → Vec3 × ℝ → ℝ) (z : Vec3 × ℝ) : ℝ :=
@@ -612,9 +613,7 @@ theorem lerayPressureProp_of_regularised_pressure_data
               (spaceTimeSet (Set.univ : Set Vec3) (Ioo 0 T)))))
     : ∀ (a : Vec3 → Vec3) (ha : IsInJ a)
       (εseq : ℕ → ℝ) (hseq : ∀ n, 0 < εseq n ∧ εseq n ≤ 1)
-      (hεseq : Tendsto εseq atTop (nhds 0))
       (σ : ℕ → ℕ) (u : ParabolicPoint → Vec3)
-      (hσ : StrictMono σ) (hσtop : Tendsto σ atTop atTop)
       (hεsubseq : Tendsto (fun n => εseq (σ n)) atTop (nhds 0))
       (hUseqLthree : ∀ T : ℝ, 0 < T →
         Tendsto (fun n => eLpNorm
@@ -646,7 +645,7 @@ theorem lerayPressureProp_of_regularised_pressure_data
             pST =ᵐ[μ] CKN.Leray.lerayProductPressureOnSlab T uST uST hu hu ∧
             Tendsto (fun n => eLpNorm (pseq n - pST)
               (ENNReal.ofReal (3 / 2 : ℝ)) μ) atTop (nhds 0) := by
-  intro a ha εseq hseq hεseq σ u hσ hσtop hεsubseq hUseqLthree hJseqLthree
+  intro a ha εseq hseq σ u hεsubseq hUseqLthree hJseqLthree
   let εsub : ℕ → ℝ := fun n => εseq (σ n)
   have hseqSub : ∀ n, 0 < εsub n ∧ εsub n ≤ 1 := fun n => hseq (σ n)
   rcases hlerayLimit a ha εsub hseqSub hεsubseq with

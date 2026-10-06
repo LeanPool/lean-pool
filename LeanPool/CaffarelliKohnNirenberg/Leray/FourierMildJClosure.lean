@@ -28,6 +28,8 @@ noncomputable section
 
 namespace CKN.Leray
 
+/-- The continuous coordinate identification for the Hilbert vector space used by mild
+solutions. -/
 @[expose]
 def mildCoordinateEquiv : L2Vec3 ≃L[ℝ] Vec3 :=
   PiLp.continuousLinearEquiv 2 ℝ (fun _ : Fin 3 => ℝ)
@@ -122,6 +124,7 @@ theorem mildWeakPairing_integrable (a : Vec3 → Vec3)
       intro i hi
       exact hprod i)
 
+/-- The subspace of real `L²` velocities satisfying the regularized mild-solution `J` condition. -/
 @[expose]
 def regularizedMildJSubmodule : Submodule ℝ RealVectorL2 where
   carrier := {u | RegularizedMildJData u}

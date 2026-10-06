@@ -24,6 +24,7 @@ noncomputable section
 
 namespace CKN.Leray
 
+/-- Product volume on space and the open positive time interval ending at `T`. -/
 @[expose]
 def associatedPressureProviderMeasure (T : ℝ) : Measure (Vec3 × ℝ) :=
   (volume : Measure Vec3).prod (volume.restrict (Ioo 0 T))

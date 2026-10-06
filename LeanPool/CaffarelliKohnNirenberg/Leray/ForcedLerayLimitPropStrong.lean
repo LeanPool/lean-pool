@@ -37,7 +37,7 @@ noncomputable section
 
 namespace CKN.Leray
 
-/-- The compact cylinder `B̄_R × [δ, T - δ]` of the slab. -/
+/-- The compact cylinder `closedBall(0, R) × [δ, T - δ]` of the slab. -/
 @[expose]
 def forcedLerayLimitStrongCylinder (T R δ : ℝ) : Set ParabolicPoint :=
   spaceTimeSet (Metric.closedBall (0 : Vec3) R) (Icc δ (T - δ))
@@ -47,7 +47,7 @@ private theorem forcedLerayLimitStrong_enorm_sq_eq (y : Vec3) :
       ‖(WithLp.toLp 2 y : L2Vec3)‖ₑ ^ (2 : ℝ) := by
   rw [vec3EuclideanNorm_eq_l2, ofReal_norm]
 
-/-- The integral over the slab of a density off the cylinder `B̄_R × [δ,T-δ]`
+/-- The integral over the slab of a density off the cylinder `closedBall(0, R) × [δ,T-δ]`
 is bounded by the exterior spatial tails on `(0,T)` and the slice integrals
 near the two ends of the time interval. -/
 private theorem forcedLerayLimitStrong_complement_lintegral_le

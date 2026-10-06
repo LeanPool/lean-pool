@@ -28,7 +28,6 @@ of the all-time weak slice limit. -/
 theorem strong_product_limit_ae_eq_of_weak_slices
     {K : Set Vec3} {J : Set ℝ}
     [IsFiniteMeasure (volume.restrict K)]
-    [IsFiniteMeasure (volume.restrict J)]
     (hJ : MeasurableSet J)
     (f : ℕ → Vec3 × ℝ → L2Vec3)
     (u : Vec3 × ℝ → L2Vec3) (hu : Measurable u)

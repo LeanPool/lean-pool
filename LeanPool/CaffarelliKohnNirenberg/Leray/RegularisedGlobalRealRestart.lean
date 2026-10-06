@@ -35,7 +35,7 @@ theorem regularizedGlobalMildCurve_shift_isTrajectory
     (a T : ℝ) (ha : 0 ≤ a) (hT : 0 ≤ T) :
     IsRegularizedMildTrajectory ρ ε hε
       (regularizedGlobalMildCurve ρ ε hε b₀ hbJ a) T
-      (regularizedGlobalMildCurve_shiftPath ρ ε hε b₀ hbJ a T) := by
+      (regularizedGlobalMildCurveShiftPath ρ ε hε b₀ hbJ a T) := by
   let L := a + T
   have hL : 0 ≤ L := add_nonneg ha hT
   let U := regularizedGlobalMildCurve ρ ε hε b₀ hbJ
@@ -43,7 +43,7 @@ theorem regularizedGlobalMildCurve_shift_isTrajectory
     ⟨fun s => U s.1,
       (regularizedGlobalMildCurve_continuous ρ ε hε b₀ hbJ).comp
         continuous_subtype_val⟩
-  let W := regularizedGlobalMildCurve_shiftPath ρ ε hε b₀ hbJ a T
+  let W := regularizedGlobalMildCurveShiftPath ρ ε hε b₀ hbJ a T
   let F := regularizedMildClampedTensorTrajectory ρ ε hε L hL V
   let G := regularizedMildClampedTensorTrajectory ρ ε hε T hT W
   have hVbound : ∀ s, ‖V s‖ ≤ ‖b₀‖ := by

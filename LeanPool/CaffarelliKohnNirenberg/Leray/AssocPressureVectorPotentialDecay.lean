@@ -32,6 +32,7 @@ def associatedPressureVectorTimePartial
     (φ : Vec3 × ℝ → Vec3) : Vec3 × ℝ → Vec3 :=
   fun z i => CKN.timePartial (fun w : Vec3 × ℝ => φ w i) z
 
+/-- The signed coordinate expression for the curl of a test field in direction `j`. -/
 @[expose]
 def associatedPressureCurlSourceTest
     (φ : Vec3 × ℝ → Vec3) (j : Fin 3) : Vec3 × ℝ → Vec3 :=

@@ -22,7 +22,7 @@ noncomputable section
 
 namespace CKN
 
-/-- On a finite-measure set, strong `L³ᐟ²` convergence passes to scalar
+/-- On a finite-measure set, strong `L^{3/2}` convergence passes to scalar
 integrals. -/
 theorem stability_tendsto_integral_of_LthreeHalves
     {α : Type*} [MeasurableSpace α]

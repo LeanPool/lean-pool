@@ -71,10 +71,12 @@ private theorem spaceTimeMollify_fderiv_integral
   simp only [ContinuousLinearMap.precompL_apply, ContinuousLinearMap.lsmul_apply,
     smul_eq_mul]
 
+/-- The space-time mollifier reflected and translated to the point `z`. -/
 @[expose]
 def translatedMollifier (z : Vec3 × ℝ) (δ : ℝ) (hδ : 0 < δ) :
     Vec3 × ℝ → ℝ := fun y => spaceTimeMollifier δ hδ (z - y)
 
+/-- A vector test with the translated space-time mollifier in coordinate `i`. -/
 @[expose]
 def mollifierVectorTest (z : Vec3 × ℝ) (i : Fin 3)
     (δ : ℝ) (hδ : 0 < δ) : Vec3 × ℝ → Vec3 :=

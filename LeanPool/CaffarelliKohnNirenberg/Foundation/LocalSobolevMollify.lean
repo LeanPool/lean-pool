@@ -97,6 +97,7 @@ private theorem localSobolevMollify_wordDeriv_bound {h : Vec3 → ℝ}
   · intro x
     simpa using hL x
 
+/-- A smooth cutoff equal to one on the unit ball and supported in the ball of radius two. -/
 @[expose]
 noncomputable def localSobolevMollifyProfile : Vec3 → ℝ :=
   Classical.choose (vorticitySpatialCutoff_exists (r := 1) (R := 2) (by norm_num) (by norm_num))
@@ -113,10 +114,12 @@ private theorem localSobolevMollifyProfile_spec :
     ⟨hs, hc, _, hone, hnonneg, hle⟩
   exact ⟨hs, hc, hone, hnonneg, hle⟩
 
+/-- The inverse scale for cutoffs exhausting the whole spatial domain. -/
 @[expose]
 def localSobolevMollifyScale (n : ℕ) : ℝ :=
   (2 * ((n : ℝ) + 1))⁻¹
 
+/-- The scaled cutoff used in the compactly supported Sobolev approximants. -/
 @[expose]
 def localSobolevMollifyCutoff (n : ℕ) : Vec3 → ℝ :=
   fun x => localSobolevMollifyProfile (localSobolevMollifyScale n • x)
@@ -333,8 +336,9 @@ private theorem localSobolevMollify_wordDeriv_mollify {m : ℕ}
           rw [wordDeriv, hsp]
           exact ih (D := fun β => D (j :: β)) hshift α hlen
 
+/-- Coordinatewise mollification of the vector-valued family. -/
 @[expose]
-def localSobolevMollifyFamily {ι : Type*} [Fintype ι]
+def localSobolevMollifyFamily {ι : Type*}
     (f : ι → Vec3 → ℝ) (ε : ℝ) (hε : 0 < ε) : Vec3 → ι → ℝ :=
   fun x i => CKN.mollify (f i) ε hε x
 
@@ -427,6 +431,7 @@ private theorem localSobolevMollifyFamily_norm_le {ι : Type*} [Fintype ι]
       rfl
     _ ≤ M := hscalar
 
+/-- The exterior region controlling the error of the spatial cutoff. -/
 @[expose]
 def localSobolevMollifyTail (n : ℕ) : Set Vec3 :=
   {x | (n : ℝ) + 1 < vec3EuclideanNorm x}
@@ -552,6 +557,7 @@ private theorem localSobolevMollify_leibniz_one_coeff
         ih (fun β y => D (j :: β) y)]
       simp
 
+/-- The complementary cutoff measuring the part removed from each approximant. -/
 @[expose]
 def localSobolevMollifyRemainder (n : ℕ) : Vec3 → ℝ :=
   (fun _ : Vec3 => 1) - localSobolevMollifyCutoff n

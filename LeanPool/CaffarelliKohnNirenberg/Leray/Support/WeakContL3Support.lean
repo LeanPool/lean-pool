@@ -58,6 +58,7 @@ private instance weakContL3Time_isFiniteMeasure :
   exact lt_of_le_of_lt (measure_mono Ioo_subset_Icc_self)
     isCompact_Icc.measure_lt_top
 
+/-- The closed spatial ball of radius `7 / 8` inside the weak-continuity test ball. -/
 @[expose]
 def weakContL3InnerClosedBall : Set Vec3 :=
   closure (vec3Ball (0 : Vec3) (7 / 8 : ℝ))
@@ -225,6 +226,7 @@ def weakContL3SmoothTest : Submodule ℝ (Vec3 → L2Vec3) where
     intro c φ hφ
     exact ⟨HasCompactSupport.smul_left hφ.1, hφ.2.const_smul c⟩
 
+/-- The `L²` classes admitting a smooth, compactly supported representative. -/
 @[expose]
 def weakContL3SmoothLpSet (μ : Measure Vec3) :
     Set (Lp L2Vec3 2 μ) :=
@@ -252,7 +254,7 @@ private instance weakContL3SmoothLpSet_separable (μ : Measure Vec3)
   TopologicalSpace.SecondCountableTopology.to_separableSpace
 
 private theorem weakContL3_smoothLpSet_dense
-    (μ : Measure Vec3) [IsFiniteMeasureOnCompacts μ] [IsSeparable μ] :
+    (μ : Measure Vec3) [IsFiniteMeasureOnCompacts μ] :
     Dense (weakContL3SmoothLpSet μ) := by
   let _ : Fact (1 ≤ (2 : ℝ≥0∞)) := ⟨by norm_num⟩
   simpa [weakContL3SmoothLpSet] using

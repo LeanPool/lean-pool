@@ -23,9 +23,11 @@ noncomputable section
 
 namespace CKN
 
+/-- The product normed additive group structure used in the conjugation calculation. -/
 local instance carlemanCoreConjugationNormedAddCommGroup : NormedAddCommGroup ParabolicPoint :=
   carlemanProductNormedAddCommGroup
 
+/-- The real product normed-space structure used in the conjugation calculation. -/
 local instance carlemanCoreConjugationNormedSpace : NormedSpace ℝ ParabolicPoint :=
   carlemanProductNormedSpace
 

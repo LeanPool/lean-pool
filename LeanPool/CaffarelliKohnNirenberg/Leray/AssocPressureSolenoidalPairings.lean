@@ -162,6 +162,7 @@ theorem associatedPressureSolution_gradient_memLp_two_productSlab
   rw [hset, ← Measure.prod_restrict] at h
   simpa using h
 
+/-- A compactly supported smooth space-time function restricted to a spatial weak test. -/
 @[expose]
 def associatedPressureScalarSliceWeakTest
     {g : Vec3 × ℝ → ℝ} (hg : ContDiff ℝ (⊤ : ℕ∞) g)

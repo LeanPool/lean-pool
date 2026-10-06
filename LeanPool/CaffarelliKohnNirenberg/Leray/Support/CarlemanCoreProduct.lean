@@ -27,6 +27,7 @@ namespace CKN
 abbrev carlemanProductNormedAddCommGroup : NormedAddCommGroup ParabolicPoint :=
   inferInstanceAs (NormedAddCommGroup (Vec3 × ℝ))
 
+/-- The product normed additive group structure on the spatial-time carrier. -/
 local instance carlemanCoreProductNormedAddCommGroup : NormedAddCommGroup ParabolicPoint :=
   carlemanProductNormedAddCommGroup
 

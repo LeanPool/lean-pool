@@ -25,9 +25,11 @@ noncomputable section
 
 namespace CKN
 
+/-- The product normed additive group structure used in support arguments. -/
 local instance carlemanCoreSupportNormedAddCommGroup : NormedAddCommGroup ParabolicPoint :=
   carlemanProductNormedAddCommGroup
 
+/-- The real product normed-space structure used in support arguments. -/
 local instance carlemanCoreSupportNormedSpace : NormedSpace ℝ ParabolicPoint :=
   carlemanProductNormedSpace
 

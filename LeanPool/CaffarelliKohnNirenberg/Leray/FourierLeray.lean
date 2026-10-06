@@ -73,10 +73,10 @@ theorem lerayApplyFormula_measurable :
 /-- A measurable frequency symbol with a uniform fiber bound acts on spatial
 `L²` by pointwise multiplication in Fourier space. -/
 theorem measurableFourierMultiplier_memLp
-    {F G : Type*} [NormedAddCommGroup F] [NormedSpace ℂ F]
+    {F G : Type*} [NormedAddCommGroup F]
     [MeasurableSpace F] [BorelSpace F]
-    [NormedAddCommGroup G] [NormedSpace ℂ G]
-    [MeasurableSpace G] [BorelSpace G] [TopologicalSpace.PseudoMetrizableSpace G]
+    [NormedAddCommGroup G]
+    [MeasurableSpace G] [TopologicalSpace.PseudoMetrizableSpace G]
     [SecondCountableTopology G] [OpensMeasurableSpace G]
     (m : L2Vec3 × F → G) (hm : Measurable m)
     (C : ℝ)
@@ -96,10 +96,10 @@ theorem measurableFourierMultiplier_memLp
 `L²` by pointwise multiplication in Fourier space. -/
 @[expose]
 noncomputable def measurableFourierMultiplier
-    {F G : Type*} [NormedAddCommGroup F] [NormedSpace ℂ F]
+    {F G : Type*} [NormedAddCommGroup F]
     [MeasurableSpace F] [BorelSpace F]
-    [NormedAddCommGroup G] [NormedSpace ℂ G]
-    [MeasurableSpace G] [BorelSpace G] [TopologicalSpace.PseudoMetrizableSpace G]
+    [NormedAddCommGroup G]
+    [MeasurableSpace G] [TopologicalSpace.PseudoMetrizableSpace G]
     [SecondCountableTopology G] [OpensMeasurableSpace G]
     (m : L2Vec3 × F → G) (hm : Measurable m)
     (C : ℝ)
@@ -111,10 +111,10 @@ noncomputable def measurableFourierMultiplier
 /-- The `L²` multiplier agrees almost everywhere with its pointwise symbol
 formula. -/
 theorem measurableFourierMultiplier_ae_eq
-    {F G : Type*} [NormedAddCommGroup F] [NormedSpace ℂ F]
+    {F G : Type*} [NormedAddCommGroup F]
     [MeasurableSpace F] [BorelSpace F]
-    [NormedAddCommGroup G] [NormedSpace ℂ G]
-    [MeasurableSpace G] [BorelSpace G] [TopologicalSpace.PseudoMetrizableSpace G]
+    [NormedAddCommGroup G]
+    [MeasurableSpace G] [TopologicalSpace.PseudoMetrizableSpace G]
     [SecondCountableTopology G] [OpensMeasurableSpace G]
     (m : L2Vec3 × F → G) (hm : Measurable m)
     (C : ℝ)
@@ -127,10 +127,10 @@ theorem measurableFourierMultiplier_ae_eq
 /-- A measurable Fourier multiplier has the same uniform fiber bound on its
 `L²` operator norm. -/
 theorem measurableFourierMultiplier_norm_le
-    {F G : Type*} [NormedAddCommGroup F] [NormedSpace ℂ F]
+    {F G : Type*} [NormedAddCommGroup F]
     [MeasurableSpace F] [BorelSpace F]
-    [NormedAddCommGroup G] [NormedSpace ℂ G]
-    [MeasurableSpace G] [BorelSpace G] [TopologicalSpace.PseudoMetrizableSpace G]
+    [NormedAddCommGroup G]
+    [MeasurableSpace G] [TopologicalSpace.PseudoMetrizableSpace G]
     [SecondCountableTopology G] [OpensMeasurableSpace G]
     (m : L2Vec3 × F → G) (hm : Measurable m)
     (C : ℝ)

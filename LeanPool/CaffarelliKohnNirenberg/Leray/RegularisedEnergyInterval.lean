@@ -43,9 +43,11 @@ noncomputable section
 
 namespace CKN.Leray
 
+/-- The product normed additive group structure on space-time used for energy intervals. -/
 local instance regularisedEnergyIntervalNormedAddCommGroup : NormedAddCommGroup ParabolicPoint :=
   inferInstanceAs (NormedAddCommGroup (Vec3 × ℝ))
 
+/-- The real normed-space structure on space-time used for regularized energy intervals. -/
 local instance regularisedEnergyIntervalNormedSpace : NormedSpace ℝ ParabolicPoint :=
   inferInstanceAs (NormedSpace ℝ (Vec3 × ℝ))
 

@@ -24,13 +24,16 @@ noncomputable section
 
 namespace CKN.Leray
 
+/-- The product topology on parabolic space-time points used in this weak identity. -/
 abbrev regularisedEquationIntervalWeakParabolicTopology :
     TopologicalSpace ParabolicPoint := inferInstance
 
+/-- The product normed additive group used for spatial and temporal regularity. -/
 local instance regularisedIntervalWeakNormedAddCommGroup :
     NormedAddCommGroup ParabolicPoint :=
   inferInstanceAs (NormedAddCommGroup (Vec3 × ℝ))
 
+/-- The product real normed space used for spatial and temporal derivatives. -/
 local instance regularisedIntervalWeakNormedSpace : NormedSpace ℝ ParabolicPoint :=
   inferInstanceAs (NormedSpace ℝ (Vec3 × ℝ))
 

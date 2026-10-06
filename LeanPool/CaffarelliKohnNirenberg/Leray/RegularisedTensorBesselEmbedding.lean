@@ -27,6 +27,7 @@ namespace CKN.Leray
 
 open CKN.Foundation.Parabolic
 
+/-- The inverse Bessel-potential symbol acting on a complex tensor frequency value. -/
 @[expose]
 def regularisedTensorBesselInverseSymbol
     (s : ℝ) (p : L2Vec3 × ComplexTensor3) : ComplexTensor3 :=
@@ -51,6 +52,7 @@ theorem regularisedTensorBesselInverseSymbol_norm_le
   rw [abs_of_nonneg (Real.rpow_nonneg (by positivity) _)]
   exact (mul_le_mul_of_nonneg_right hweight (norm_nonneg v)).trans_eq (one_mul _)
 
+/-- The bounded Fourier multiplier implementing the inverse Bessel weight on tensor fields. -/
 @[expose]
 def regularisedTensorBesselFourierMultiplier
     (s : ℝ) (hs : 0 ≤ s) (F : ComplexTensorL2) : ComplexTensorL2 :=
@@ -140,6 +142,7 @@ theorem regularisedTensorBesselFourierMultiplier_smul
     _ = c • regularisedTensorBesselFourierMultiplier s hs F ξ := by rw [hF]
     _ = (c • regularisedTensorBesselFourierMultiplier s hs F) ξ := hOut.symm
 
+/-- The `L²` function obtained from a tensor Bessel-potential element by its Fourier multiplier. -/
 @[expose]
 def regularisedTensorBesselSobolevToL2Fun
     (s : ℝ) (hs : 0 ≤ s)
@@ -189,6 +192,7 @@ def regularisedTensorBesselSobolevToL2
       regularisedTensorBesselSobolevToL2_norm_le_fun s hs F)
 
 
+/-- The scalar Fourier weight defining the inverse tensor Bessel-potential operator. -/
 @[expose]
 def regularisedTensorBesselInverseWeight (s : ℝ) (ξ : L2Vec3) : ℂ :=
   (((1 + ‖ξ‖ ^ 2) ^ (-s / 2) : ℝ) : ℂ)
@@ -221,6 +225,7 @@ theorem regularisedTensorBesselInverseWeight_memLp
     abs_of_nonneg (Real.rpow_nonneg (by positivity) _)]
   exact hbound
 
+/-- The `L∞` representative of the inverse tensor Bessel Fourier weight. -/
 @[expose]
 def regularisedTensorBesselInverseWeightLp
     (s : ℝ) (hs : 0 ≤ s) : Lp (α := L2Vec3) ℂ ∞ :=

@@ -23,9 +23,11 @@ noncomputable section
 
 namespace CKN
 
+/-- The product normed additive group structure required for space-time differentiation. -/
 local instance carlemanCoreCalculusNormedAddCommGroup : NormedAddCommGroup ParabolicPoint :=
   carlemanProductNormedAddCommGroup
 
+/-- The real product normed-space structure required for space-time differentiation. -/
 local instance carlemanCoreCalculusNormedSpace : NormedSpace ℝ ParabolicPoint :=
   carlemanProductNormedSpace
 

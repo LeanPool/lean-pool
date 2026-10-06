@@ -33,7 +33,7 @@ noncomputable section
 
 namespace CKN
 
-private def piEvalCLM {ι E : Type*} [Fintype ι] [Nonempty ι]
+private def piEvalCLM {ι E : Type*} [Fintype ι]
     [NormedAddCommGroup E] [NormedSpace ℝ E] (i : ι) : (ι → E) →L[ℝ] E :=
   ContinuousLinearMap.mk (LinearMap.proj i) (by
     have hL : LipschitzWith 1 (fun x : ι → E => x i) := by
@@ -72,7 +72,7 @@ theorem zeroExtend_eq_of_tsupport_subset {E V : Type} [Zero V]
 /-- Local integrability on a CKN space-time product transfers to its product coordinates. -/
 theorem locallyIntegrableOn_parabolic_to_product
     {Ω : Set Vec3} {I : Set ℝ} (hΩ : IsOpen Ω) (hI : IsOpen I)
-    {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+    {E : Type*} [NormedAddCommGroup E]
     {f : ParabolicPoint → E}
     (hf : LocallyIntegrableOn f (spaceTimeSet Ω I) (volume : Measure ParabolicPoint)) :
     LocallyIntegrableOn (fun q : Vec3 × ℝ => f (parabolicHomeomorph.symm q))

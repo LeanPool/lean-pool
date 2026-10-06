@@ -36,13 +36,16 @@ private theorem regularisedR3Final_continuousOn_of_prod
 
 section
 
+/-- The product normed additive group used for spatial and temporal regularity. -/
 local instance regularisedR3FinalNormedAddCommGroup :
     NormedAddCommGroup ParabolicPoint :=
   inferInstanceAs (NormedAddCommGroup (Vec3 × ℝ))
 
+/-- The product real normed space used for spatial and temporal derivatives. -/
 local instance regularisedR3FinalNormedSpace : NormedSpace ℝ ParabolicPoint :=
   inferInstanceAs (NormedSpace ℝ (Vec3 × ℝ))
 
+/-- The product topology on parabolic space-time points used in this weak identity. -/
 local instance (priority := 10000) regularisedR3FinalTopology :
     TopologicalSpace ParabolicPoint :=
   instTopologicalSpaceProd

@@ -34,9 +34,11 @@ noncomputable section
 
 namespace CKN.Leray
 
+/-- The product normed additive group structure on the parabolic space-time carrier. -/
 local instance : NormedAddCommGroup ParabolicPoint :=
   inferInstanceAs (NormedAddCommGroup (Vec3 × ℝ))
 
+/-- The real normed-space structure on the parabolic space-time carrier. -/
 local instance : NormedSpace ℝ ParabolicPoint :=
   inferInstanceAs (NormedSpace ℝ (Vec3 × ℝ))
 
@@ -73,6 +75,7 @@ private theorem regularised_parameter_convolution_continuous
     simp [G, image_eq_zero_of_notMem_tsupport hy]
   exact continuousOn_integral_of_compact_support hκc hG hGzero
 
+/-- The physical-space kernel for the uniform regularized convolution estimate. -/
 @[expose]
 def regUniformPhysicalKernel (ρ : RegMollifierProfile)
     (ε : ℝ) (hε : 0 < ε) : Vec3 → ℝ :=

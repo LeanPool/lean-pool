@@ -252,7 +252,7 @@ theorem ae_leDelta {T : ℝ} (hT : 0 < T) {ψ : Vec3 × ℝ → ℝ} (hψ : Cont
     exact hlim.limUnder_eq
 
 theorem aestronglyMeasurable_leDeltaSlice {ψ : Vec3 × ℝ → ℝ} (hψ : Continuous ψ) (n : ℕ)
-    (k : Fin 3) (ν : Measure ℝ) [SFinite ν] :
+    (k : Fin 3) (ν : Measure ℝ) :
     AEStronglyMeasurable (leDeltaT ρ ε hε ha hf ψ n k) ν := by
   have hm : StronglyMeasurable fun p : Vec3 × ℝ => leW ρ ε hε ha hf (leMol n) p.1 p.2 k *
       leSF ρ ε hε ha hf (leMol n) p.1 p.2 k * ψ p :=

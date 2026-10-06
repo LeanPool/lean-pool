@@ -23,7 +23,7 @@ namespace CKN.Leray
 /-- An exact uniform squared-energy bound passes to a weak `L²` limit. -/
 theorem lintegral_enorm_sq_le_of_weak_l2_bounded
     {α E : Type*} [MeasurableSpace α]
-    [NormedAddCommGroup E] [InnerProductSpace ℝ E] [CompleteSpace E]
+    [NormedAddCommGroup E] [InnerProductSpace ℝ E]
     {μ : Measure α} (f : ℕ → α → E) (g : Lp E 2 μ)
     (hf : ∀ k, MemLp (f k) 2 μ)
     (hweak : ∀ w, Tendsto

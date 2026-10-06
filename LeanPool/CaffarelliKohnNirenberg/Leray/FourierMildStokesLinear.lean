@@ -21,6 +21,7 @@ noncomputable section
 
 namespace CKN.Leray
 
+/-- The real-linear Stokes operator between tensor and vector `L²` spaces at positive time. -/
 @[expose]
 def realStokesLinearMap {t : ℝ} (ht : 0 < t) :
     RealTensorL2 →ₗ[ℝ] RealVectorL2 where

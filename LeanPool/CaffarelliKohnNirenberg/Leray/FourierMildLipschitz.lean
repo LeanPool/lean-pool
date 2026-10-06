@@ -24,6 +24,7 @@ namespace CKN.Leray
 
 open CKN.Foundation.Parabolic
 
+/-- The bilinear scalar multiplication map on the Hilbert velocity space. -/
 @[expose]
 def mildScalarVectorActionLinear : ℝ →ₗ[ℝ] L2Vec3 →ₗ[ℝ] L2Vec3 :=
   LinearMap.mk₂ ℝ (fun c x => c • x)
@@ -32,6 +33,7 @@ def mildScalarVectorActionLinear : ℝ →ₗ[ℝ] L2Vec3 →ₗ[ℝ] L2Vec3 :=
     (by intro c x y; exact smul_add c x y)
     (by intro c d x; exact (smul_comm c d x).symm)
 
+/-- The continuous bilinear scalar multiplication map on Hilbert velocities. -/
 @[expose]
 def mildScalarVectorAction : ℝ →L[ℝ] L2Vec3 →L[ℝ] L2Vec3 :=
   mildScalarVectorActionLinear.mkContinuous₂ 1 (by
@@ -39,6 +41,7 @@ def mildScalarVectorAction : ℝ →L[ℝ] L2Vec3 →L[ℝ] L2Vec3 :=
     change ‖c • x‖ ≤ 1 * ‖c‖ * ‖x‖
     simpa [one_mul] using (norm_smul_le c x))
 
+/-- The bilinear map forming the componentwise tensor product of two Hilbert vectors. -/
 @[expose]
 def mildTensorOuterLinear : L2Vec3 →ₗ[ℝ] L2Vec3 →ₗ[ℝ] RealTensor3 :=
   LinearMap.mk₂ ℝ regularizedTensorOuter
@@ -73,6 +76,7 @@ def mildTensorOuterLinear : L2Vec3 →ₗ[ℝ] L2Vec3 →ₗ[ℝ] RealTensor3 :=
       simp only [regularizedTensorOuter, PiLp.smul_apply, smul_eq_mul]
       ring)
 
+/-- The continuous bilinear tensor-product map on Hilbert vectors. -/
 @[expose]
 def mildTensorOuterCLM : L2Vec3 →L[ℝ] L2Vec3 →L[ℝ] RealTensor3 :=
   mildTensorOuterLinear.mkContinuous₂ 1 (by
@@ -166,6 +170,7 @@ private theorem regMollifyVector_norm_le_scaled
       ENNReal.toReal_ofReal (le_of_lt (Real.rpow_pos_of_pos hε _))] using htoReal
   simpa [regularizedMildMollifierConstant] using hreal
 
+/-- The pointwise tensor product of two Hilbert-valued vector fields. -/
 @[expose]
 def mildTensorProductField (f g : L2Vec3 → L2Vec3) : L2Vec3 → RealTensor3 :=
   fun x => regularizedTensorOuter (f x) (g x)

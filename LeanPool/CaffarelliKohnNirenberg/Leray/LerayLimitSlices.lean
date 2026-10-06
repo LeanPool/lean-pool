@@ -31,7 +31,7 @@ namespace CKN.Leray
 theorem lerayLimit_globalWeakLp_of_compactSupport
     {α E : Type*} [MeasurableSpace α] [PseudoMetricSpace α] [BorelSpace α]
     [R1Space α] [WeaklyLocallyCompactSpace α] {μ : Measure α} [μ.Regular]
-    [NormedAddCommGroup E] [InnerProductSpace ℝ E] [CompleteSpace E]
+    [NormedAddCommGroup E] [InnerProductSpace ℝ E]
     (F : ℕ → α → E) (G : α → E)
     (hF : ∀ n, MemLp (F n) 2 μ) (hG : MemLp G 2 μ)
     (C : ℝ) (hC : 0 ≤ C)

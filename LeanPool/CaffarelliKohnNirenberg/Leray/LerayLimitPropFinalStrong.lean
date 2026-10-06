@@ -108,11 +108,12 @@ theorem lerayLimit_limit_slice_le_of_compact_transfer
           exact hsrc n) t ⟨le_rfl, le_rfl⟩
       simpa only [hsq] using h)
     ((PiLp.continuous_toLp 2 _).measurable.comp
-      (hv.comp (measurable_prodMk_right (m := (inferInstance : MeasurableSpace Vec3))))).aemeasurable
+      (hv.comp
+        (measurable_prodMk_right (m := (inferInstance : MeasurableSpace Vec3))))).aemeasurable
   simpa only [Measure.restrict_univ] using hbound
 
 /-- The integral over the slab `ℝ³ × (0,T)` of a density off the compact
-cylinder `B̄_R × [δ, T - δ]` is bounded by the exterior spatial tails on
+cylinder `closedBall(0,R) × [δ, T - δ]` is bounded by the exterior spatial tails on
 `(0,T)` and the slice integrals near the two ends of the time interval. -/
 private theorem lerayLimitFinal_complement_lintegral_le
     (T R δ : ℝ) (hδ : 0 ≤ δ) (Φ : ParabolicPoint → ℝ≥0∞) (hΦ : Measurable Φ)

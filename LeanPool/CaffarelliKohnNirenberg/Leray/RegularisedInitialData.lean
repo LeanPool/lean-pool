@@ -28,20 +28,24 @@ noncomputable section
 
 namespace CKN.Leray
 
+/-- The continuous coordinate equivalence for the regularized initial-data construction. -/
 @[expose]
 def regularisedCoordinateEquiv : L2Vec3 ≃L[ℝ] Vec3 :=
   PiLp.continuousLinearEquiv 2 ℝ (fun _ : Fin 3 => ℝ)
 
+/-- The physical-space regularized convolution kernel. -/
 @[expose]
 def regularisedPhysicalKernel (ρ : RegMollifierProfile)
     (ε : ℝ) (hε : 0 < ε) : Vec3 → ℝ :=
   fun x => regMollifierKernel ρ ε hε (WithLp.toLp 2 x)
 
+/-- Scalar convolution by the dilated regularized mollifier kernel. -/
 @[expose]
 def regularisedScalarConvolution (κ : Vec3 → ℝ)
     (f : Vec3 → ℝ) : Vec3 → ℝ :=
   MeasureTheory.convolution κ f (ContinuousLinearMap.lsmul ℝ ℝ) volume
 
+/-- The bilinear scalar action on vector-valued functions used by regularized convolution. -/
 @[expose]
 def regularisedVectorActionLinear : ℝ →ₗ[ℝ] L2Vec3 →ₗ[ℝ] L2Vec3 :=
   LinearMap.mk₂ ℝ (fun c x => c • x)
@@ -50,6 +54,7 @@ def regularisedVectorActionLinear : ℝ →ₗ[ℝ] L2Vec3 →ₗ[ℝ] L2Vec3 :=
     (by intro c x y; exact smul_add c x y)
     (by intro c d x; exact (smul_comm c d x).symm)
 
+/-- The continuous scalar action on vector-valued `L²` functions. -/
 @[expose]
 def regularisedVectorAction : ℝ →L[ℝ] L2Vec3 →L[ℝ] L2Vec3 :=
   regularisedVectorActionLinear.mkContinuous₂ 1 (by
@@ -57,6 +62,7 @@ def regularisedVectorAction : ℝ →L[ℝ] L2Vec3 →L[ℝ] L2Vec3 :=
     change ‖c • x‖ ≤ 1 * ‖c‖ * ‖x‖
     simpa [one_mul] using (norm_smul_le c x))
 
+/-- Convolution of a scalar profile with vector-valued initial data. -/
 @[expose]
 def regularisedProfileConvolution (ρ : RegMollifierProfile)
     (ε : ℝ) (hε : 0 < ε) (a : Vec3 → Vec3) : Vec3 → Vec3 :=
@@ -338,6 +344,7 @@ private theorem regularisedScalarConvolution_memLp_of_compactSupport
   exact habsConvolutionLp.of_le hconvκMeas
     (Filter.Eventually.of_forall hpointNorm)
 
+/-- The tuple of coordinate functions associated with the regularized vector data. -/
 @[expose]
 def regularisedCoordinateTuple (n : ℕ) (w : Fin n → Fin 3) :
     Fin n → Vec3 := fun j => CKN.basisVec (w j)

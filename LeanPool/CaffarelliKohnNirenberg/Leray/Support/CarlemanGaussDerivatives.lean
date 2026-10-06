@@ -28,9 +28,12 @@ noncomputable section
 
 namespace CKN
 
+/-- The product normed additive group structure on space-time for Gaussian derivative
+calculations. -/
 local instance gaussDerivativesNormedAddCommGroup : NormedAddCommGroup ParabolicPoint :=
   inferInstanceAs (NormedAddCommGroup (Vec3 × ℝ))
 
+/-- The real product normed-space structure on space-time for Gaussian derivative calculations. -/
 local instance gaussDerivativesNormedSpace : NormedSpace ℝ ParabolicPoint :=
   inferInstanceAs (NormedSpace ℝ (Vec3 × ℝ))
 

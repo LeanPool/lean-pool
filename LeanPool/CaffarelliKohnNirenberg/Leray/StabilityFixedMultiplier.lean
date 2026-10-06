@@ -25,7 +25,7 @@ namespace CKN
 integrals of a strongly `L³`-convergent sequence (`thm:stability`). -/
 theorem stability_tendsto_integral_mul_test_of_Lthree
     {α E : Type*} [MeasurableSpace α]
-    [NormedAddCommGroup E] [NormedSpace ℝ E] [CompleteSpace E]
+    [NormedAddCommGroup E] [NormedSpace ℝ E]
     (μ : Measure α) [IsFiniteMeasure μ]
     (F : ℕ → α → E) (G : α → E) (φ : α → ℝ)
     (hF : ∀ n, MemLp (F n) 3 μ)

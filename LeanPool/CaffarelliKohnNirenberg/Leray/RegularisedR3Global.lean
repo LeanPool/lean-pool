@@ -33,10 +33,12 @@ namespace CKN.Leray
 
 section
 
+/-- The product normed additive group used for spatial and temporal regularity. -/
 local instance regularisedR3GlobalNormedAddCommGroup :
     NormedAddCommGroup ParabolicPoint :=
   inferInstanceAs (NormedAddCommGroup (Vec3 × ℝ))
 
+/-- The product real normed space used for spatial and temporal derivatives. -/
 local instance regularisedR3GlobalNormedSpace : NormedSpace ℝ ParabolicPoint :=
   inferInstanceAs (NormedSpace ℝ (Vec3 × ℝ))
 

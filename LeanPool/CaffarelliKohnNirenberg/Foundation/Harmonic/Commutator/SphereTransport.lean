@@ -26,6 +26,7 @@ namespace CKN.Foundation.Harmonic.Commutator
 
 noncomputable section
 
+/-- The Euclidean three-vector space equipped with the transported `L²` norm. -/
 abbrev E := WithLp 2 (CKN.Vec 3)
 
 /-- The native Euclidean length agrees with the transported \`L²\` norm. -/
@@ -111,6 +112,7 @@ theorem integrable_vecEuclideanNorm_radial_iff {f : ℝ → ℝ} :
   rw [hdim]
   norm_num
 
+/-- The map that represents points of the transported unit sphere as native three-vectors. -/
 @[expose]
 def sphereToVec (w : Metric.sphere (0 : E) 1) : CKN.Vec 3 :=
   (MeasurableEquiv.toLp 2 (CKN.Vec 3)).symm w.1

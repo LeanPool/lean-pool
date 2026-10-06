@@ -52,7 +52,7 @@ def regularizedGlobalMildCurve
     (b : RealVectorL2) (hb : RegularizedMildJData b) :
     ℝ → RealVectorL2 :=
   forcedSolutionCurve ρ ε hε b hb (h := fun _ => 0)
-    stronglyMeasurable_const (fun T => by simp) 
+    stronglyMeasurable_const (fun T => by simp)
 
 /-- The zero-force global mild curve is continuous in spatial L². -/
 theorem regularizedGlobalMildCurve_continuous

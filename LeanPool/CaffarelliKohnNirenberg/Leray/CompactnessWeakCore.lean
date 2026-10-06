@@ -35,6 +35,7 @@ namespace CKN.Leray
 local instance : Fact (1 ≤ (2 : ℝ≥0∞)) := ⟨by norm_num⟩
 local instance : Fact ((2 : ℝ≥0∞) ≠ (⊤ : ℝ≥0∞)) := ⟨by norm_num⟩
 
+/-- The set of `L²` classes with a smooth compactly supported representative. -/
 @[expose]
 def smoothCompactLpSet : Set
     (Lp L2Vec3 (2 : ℝ≥0∞) (volume : Measure Vec3)) :=
@@ -143,7 +144,7 @@ space, with pointwise relatively compact values, is relatively compact in the
 uniform topology. This supplies the fixed-test time compactness in
 `lem:compactness`. -/
 theorem isCompact_closure_range_of_equicontinuous
-    {X β : Type*} [TopologicalSpace X] [CompactSpace X]
+    {X β : Type*} [TopologicalSpace X]
     [CompactlyCoherentSpace X] [UniformSpace β] [T2Space β] [CompleteSpace β]
     (f : ℕ → C(X, β))
     (hequi : EquicontinuousOn (fun g : range f => (g : X → β)) univ)
@@ -210,7 +211,7 @@ converge pointwise everywhere. The limit is again a continuous linear
 functional. This is the extension step in the Riesz representation argument
 for lem:compactness. -/
 theorem exists_limit_clm_of_tendsto_on_dense_range
-    {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] [CompleteSpace E]
+    {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
     (F : ℕ → E →L[ℝ] ℝ) (C : ℝ) (hC : 0 ≤ C)
     (hF : ∀ n, ‖F n‖ ≤ C) (ψ : ℕ → E) (hψ : DenseRange ψ)
     (hconv : ∀ m, ∃ a : ℝ,

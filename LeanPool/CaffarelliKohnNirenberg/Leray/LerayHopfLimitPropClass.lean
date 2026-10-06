@@ -35,8 +35,8 @@ namespace CKN.Leray
 energy integrability in (LH1) of `def:leray-hopf`. -/
 theorem lerayHopfLimit_joint_lintegral_finite
     {α E F : Type*} [MeasurableSpace α]
-    [NormedAddCommGroup E] [MeasurableSpace E] [BorelSpace E]
-    [NormedAddCommGroup F] [MeasurableSpace F] [BorelSpace F]
+    [NormedAddCommGroup E]
+    [NormedAddCommGroup F]
     (μ : Measure α) (u : α → E) (D : α → F)
     (hu : MemLp u (2 : ℝ≥0∞) μ) (hD : MemLp D (2 : ℝ≥0∞) μ) :
     (∫⁻ x, ‖u x‖ₑ ^ (2 : ℝ) + ‖D x‖ₑ ^ (2 : ℝ) ∂μ) < ⊤ := by

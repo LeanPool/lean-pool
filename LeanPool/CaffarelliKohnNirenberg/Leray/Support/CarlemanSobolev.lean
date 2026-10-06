@@ -28,7 +28,7 @@ namespace CKN
 
 private theorem memLp_of_setLIntegral_enorm_sq_lt_top
     {X E : Type*} [MeasurableSpace X] [TopologicalSpace X]
-    [NormedAddCommGroup E] [NormedSpace ℝ E] [SecondCountableTopology X]
+    [NormedAddCommGroup E] [SecondCountableTopology X]
     {μ : Measure X} {s : Set X} {f : X → E}
     (hf : LocallyIntegrableOn f s μ)
     (hfin : ∫⁻ x in s, ‖f x‖ₑ ^ (2 : ℝ) ∂μ < ⊤) :
@@ -181,7 +181,7 @@ theorem zeroExtend_spaceTimeData_memLp
 
 /-- A finite-coordinate projection preserves MemLp (`lem:carleman-sobolev`, ESS). -/
 theorem memLp_pi_component
-    {X ι E : Type*} [MeasurableSpace X] [NormedAddCommGroup E] [NormedSpace ℝ E]
+    {X ι E : Type*} [MeasurableSpace X] [NormedAddCommGroup E]
     [Fintype ι]
     {μ : Measure X} {f : X → ι → E} {p : ℝ≥0∞}
     (hf : MemLp f p μ) (i : ι) : MemLp (fun x => f x i) p μ := by

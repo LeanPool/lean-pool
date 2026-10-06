@@ -31,6 +31,7 @@ noncomputable section
 
 namespace CKN
 
+/-- The linear functional pairing an extended vector field with test gradients. -/
 @[expose]
 def extensionDotLinear : Vec3 →ₗ[ℝ] Vec3 →ₗ[ℝ] ℝ :=
   LinearMap.mk₂ ℝ (fun x y => ∑ i : Fin 3, x i * y i)
@@ -54,6 +55,7 @@ def extensionDotLinear : Vec3 →ₗ[ℝ] Vec3 →ₗ[ℝ] ℝ :=
               ring
         _ = c * ∑ i : Fin 3, x i * y i := (Finset.mul_sum _ _ _).symm)
 
+/-- The continuous extension of the test-gradient pairing on the extension space. -/
 @[expose]
 def extensionDotContinuous : Vec3 →L[ℝ] Vec3 →L[ℝ] ℝ :=
   extensionDotLinear.mkContinuous₂ 3 (by
@@ -68,6 +70,7 @@ def extensionDotContinuous : Vec3 →L[ℝ] Vec3 →L[ℝ] ℝ :=
           (norm_nonneg _) (norm_nonneg _)
       _ = 3 * ‖x‖ * ‖y‖ := by simp [Finset.sum_const, nsmul_eq_mul]; ring)
 
+/-- The Schwartz-space gradient of a scalar Schwartz function on the Hilbert coordinates. -/
 @[expose]
 def schwartzGradient (ψ : 𝓢(Vec3, ℝ)) : Vec3 → Vec3 :=
   fun x i => spatialDeriv ψ i x
@@ -84,6 +87,7 @@ private theorem schwartzGradient_memLp (ψ : 𝓢(Vec3, ℝ)) :
   rw [heq]
   exact h
 
+/-- The gradient of a Schwartz test function after applying the spatial cutoff. -/
 @[expose]
 def cutoffSchwartzGradient (ψ : 𝓢(Vec3, ℝ)) (n : ℕ) : Vec3 → Vec3 :=
   fun x i => spatialDeriv
@@ -119,6 +123,8 @@ private theorem cutoffSchwartzGradient_memLp (ψ : 𝓢(Vec3, ℝ)) (n : ℕ) :
     exact hprodCompact.fderiv_apply (𝕜 := ℝ) (basisVec i)
   exact hscalarCont.memLp_of_hasCompactSupport hscalarCompact
 
+/-- The continuous extension-space pairing with the gradient of a compactly supported test
+function. -/
 @[expose]
 def extensionPairing (a : Lp (α := Vec3) Vec3 (2 : ℝ≥0∞) volume) :
     Lp (α := Vec3) Vec3 (2 : ℝ≥0∞) volume →L[ℝ] ℝ :=

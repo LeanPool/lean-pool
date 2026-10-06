@@ -27,6 +27,7 @@ namespace CKN
 
 noncomputable section
 
+/-- The radius-two spatial ball on which the global `H²` core estimates are formulated. -/
 @[expose]
 def h2CoreBall : Set Vec3 := Metric.ball (0 : Vec3) 2
 

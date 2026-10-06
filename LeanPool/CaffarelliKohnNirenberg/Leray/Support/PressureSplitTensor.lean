@@ -25,6 +25,8 @@ noncomputable section
 
 namespace CKN
 
+/-- The unit spatial ball crossed with the negative unit time interval, supporting the
+pressure-split source. -/
 @[expose]
 def pressureSplitSourceDomain : Set ParabolicPoint :=
   spaceTimeSet (vec3Ball (0 : Vec3) 1) (Ioo (-1 : ℝ) 0)

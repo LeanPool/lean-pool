@@ -24,10 +24,12 @@ noncomputable section
 
 namespace CKN.Foundation.Euclidean
 
+/-- The spatial and amplitude truncation used for dual exponent tests. -/
 @[expose]
 def dualTruncSet (u : Vec3 → ℝ) (R : ℝ) : Set Vec3 :=
   Metric.closedBall 0 R ∩ {x | |u x| ≤ R}
 
+/-- The truncated dual-exponent test field for the real Riesz pairing. -/
 @[expose]
 def dualTruncField (u : Vec3 → ℝ) (p R : ℝ) : Vec3 → ℝ :=
   (dualTruncSet u R).indicator (fun x => |u x| ^ (p - 2) * u x)
@@ -308,10 +310,12 @@ private theorem dualTrunc_energy_bound
       rw [hmul, Real.rpow_one]
     simpa only [u, A, Kq, hpower_eq] using hpower
 
+/-- The increasing spatial and amplitude truncations used in the ENNReal estimate. -/
 @[expose]
 def dualTruncENNSet (u : Vec3 → ℝ) (n : ℕ) : Set Vec3 :=
   dualTruncSet u ((n : ℝ) + 1)
 
+/-- The truncated ENNReal power density used to pass to the full integral. -/
 @[expose]
 def dualTruncENNPower (u : Vec3 → ℝ) (p : ℝ) (n : ℕ) : Vec3 → ℝ≥0∞ :=
   (dualTruncENNSet u n).indicator (fun x => absE u x ^ p)
@@ -487,9 +491,10 @@ private lemma norm_toLp_neg {p : ℝ≥0∞} {f : Vec3 → ℝ}
     ‖(hf.neg).toLp (-f)‖ = ‖hf.toLp f‖ := by
   rw [Lp.norm_toLp, Lp.norm_toLp, eLpNorm_neg]
 
+/-- The extension input for the negative second Riesz transform. -/
 @[expose]
 def negativeRawExtensionInput {i j : Fin 3} {p : ℝ≥0∞} {C : ℝ}
-    [Fact (1 ≤ p)] (hL2 : RieszSecondL2Input i j)
+     (hL2 : RieszSecondL2Input i j)
     (houtput : ∀ {f : Vec3 → ℝ}, MemLp f p volume →
       MemLp f (2 : ℝ≥0∞) volume →
       MemLp (-rieszSecondL2RawOperator hL2 f) p volume)

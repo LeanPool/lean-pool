@@ -27,7 +27,7 @@ Bochner integrals. This is the linear limit step in (S2) and (S3) of
 `thm:stability`. -/
 theorem stability_tendsto_integral_of_Lthree
     {α E : Type*} [MeasurableSpace α]
-    [NormedAddCommGroup E] [NormedSpace ℝ E] [CompleteSpace E]
+    [NormedAddCommGroup E] [NormedSpace ℝ E]
     (μ : Measure α) [IsFiniteMeasure μ]
     (F : ℕ → α → E) (G : α → E)
     (hF : ∀ n, MemLp (F n) 3 μ)

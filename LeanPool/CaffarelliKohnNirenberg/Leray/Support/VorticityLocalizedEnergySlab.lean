@@ -121,7 +121,7 @@ theorem vlConvT_memLp {a τ : ℝ} {k : Vec3 → ℝ} (hk : IsVlKernel k)
   · have hbound : IntegrableOn (fun s => (∫ y, |k y|) ^ 2 * ∫ y, (w (y, s)) ^ 2)
         (Ioo a τ) volume := (vlSlab_sliceSq_integrableOn hw).const_mul _
     refine hbound.mono' ?_ ?_
-    · exact hsqm.norm.prod_swap.integral_prod_right' 
+    · exact hsqm.norm.prod_swap.integral_prod_right'
     · filter_upwards [vlSlab_slice_memLp hwm hw] with s hs
       rw [Real.norm_eq_abs, abs_of_nonneg (integral_nonneg fun x => norm_nonneg _)]
       simp only [Real.norm_eq_abs, abs_pow, sq_abs]

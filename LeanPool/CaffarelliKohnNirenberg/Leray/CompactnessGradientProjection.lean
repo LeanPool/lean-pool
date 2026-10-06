@@ -92,7 +92,7 @@ def gradientCoordinateCLM (i j : Fin 3) :
     gradientCoordinateCLM i j A = A i j := by
   rfl
 
-@[simp] theorem gradientCoordinateCLM_toCompactnessGradientFiber
+theorem gradientCoordinateCLM_toCompactnessGradientFiber
     (i j : Fin 3) (A : Fin 3 → Vec3) :
     gradientCoordinateCLM i j (toCompactnessGradientFiber A) = A i j := by
   rfl

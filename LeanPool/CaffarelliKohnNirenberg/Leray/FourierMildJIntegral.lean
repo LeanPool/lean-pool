@@ -26,6 +26,8 @@ noncomputable section
 namespace CKN.Leray
 
 local instance : Fact ((2 : ℝ≥0∞) ≠ ∞) := ⟨by norm_num⟩
+/-- The continuous identification of Hilbert vectors with coordinate triples for the mild
+integral. -/
 @[expose]
 def mildIntegralCoordinateEquiv : L2Vec3 ≃L[ℝ] Vec3 :=
   PiLp.continuousLinearEquiv 2 ℝ (fun _ : Fin 3 => ℝ)
@@ -59,6 +61,7 @@ theorem mildIntegralWeakPairing_integrable (a : Vec3 → Vec3)
       intro i hi
       exact hprod i)
 
+/-- The subspace of `L²` velocities satisfying the regularized mild integral `J` condition. -/
 @[expose]
 def mildIntegralJSubmodule : Submodule ℝ RealVectorL2 where
   carrier := {u | RegularizedMildJData u}

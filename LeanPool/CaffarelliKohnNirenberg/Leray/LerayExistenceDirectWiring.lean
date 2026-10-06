@@ -184,7 +184,9 @@ theorem leray_existence_of_regularised
   have hregMomentum := regMomentum_of_regularised ρ uε pε hregularised
   refine CKN.lerayExistence_of_limits ρ uε pε hregularised hregMomentum
     (regLocalEnergy_of_regularised ρ uε pε hregularised) hlerayLimit
-    (lerayPressureProp_of_regularised_pressure_data ρ uε pε ?_ ?_)
+    (fun a ha εseq hseq _hεseq σ u _hσ _hσtop hεsubseq hUseqLthree hJseqLthree =>
+      lerayPressureProp_of_regularised_pressure_data ρ uε pε ?_ ?_
+        a ha εseq hseq σ u hεsubseq hUseqLthree hJseqLthree)
     (lerayHopfLimit ρ uε pε hregularised hregMomentum hlerayLimit)
   · intro a ha ε hε
     rcases hregularised a ha ε hε with

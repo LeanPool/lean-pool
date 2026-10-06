@@ -42,6 +42,7 @@ private theorem regularisedSchwartzMollifyDerivative_apply
       ∂^{m} (regularisedSchwartzMollify ρ ε hε ψ) x := by
   exact (SchwartzMap.iteratedLineDerivOp_eq_iteratedFDeriv).symm
 
+/-- The full derivative bound constant for mollifying a Schwartz function. -/
 @[expose]
 noncomputable def regularisedSchwartzMollifyFullConstant
     (ρ : RegMollifierProfile) (ε : ℝ) (hε : 0 < ε)

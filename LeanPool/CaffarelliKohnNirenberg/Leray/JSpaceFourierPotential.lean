@@ -403,14 +403,17 @@ theorem regularizedPotentialCurlComponentLp_toDist
       regularizedPotentialDerivativeComponentLp_toDist_zero,
       regularizedPotentialDerivativeComponentLp_toDist_one]
 
+/-- The complex-valued Fourier coordinate functional for component `i`. -/
 @[expose]
 def frequencyCoordinateComplex (i : Fin 3) : L2Vec3 → ℂ :=
   fun ξ => Complex.ofReal (frequencyL2Coord i ξ)
 
+/-- The complex Fourier weight obtained from the real regularized frequency weight. -/
 @[expose]
 def regularizedWeightComplex (δ : ℝ) : L2Vec3 → ℂ :=
   fun ξ => Complex.ofReal (regularizedFrequencyWeight δ ξ)
 
+/-- The `i`th frequency coordinate multiplied by the regularized Fourier weight. -/
 @[expose]
 def weightedFrequencyCoordinate (δ : ℝ) (i : Fin 3) : L2Vec3 → ℂ :=
   fun ξ => frequencyCoordinateComplex i ξ * regularizedWeightComplex δ ξ

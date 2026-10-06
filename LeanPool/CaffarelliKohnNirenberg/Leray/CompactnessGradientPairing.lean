@@ -25,7 +25,7 @@ namespace CKN.Leray
 integrals. -/
 theorem tendsto_integral_of_strong_l2
     {α E : Type*} [MeasurableSpace α]
-    [NormedAddCommGroup E] [NormedSpace ℝ E] [CompleteSpace E]
+    [NormedAddCommGroup E] [NormedSpace ℝ E]
     (μ : Measure α) [IsFiniteMeasure μ]
     (F : ℕ → α → E) (G : α → E)
     (hF : ∀ n, MemLp (F n) 2 μ)
@@ -58,7 +58,7 @@ theorem tendsto_integral_of_strong_l2
 strong `L²` convergence. -/
 theorem tendsto_integral_mul_test_of_strong_l2
     {α E : Type*} [MeasurableSpace α]
-    [NormedAddCommGroup E] [NormedSpace ℝ E] [CompleteSpace E]
+    [NormedAddCommGroup E] [NormedSpace ℝ E]
     (μ : Measure α) [IsFiniteMeasure μ]
     (F : ℕ → α → E) (G : α → E) (φ : α → ℝ)
     (hF : ∀ n, MemLp (F n) 2 μ)

@@ -28,9 +28,11 @@ namespace CKN.Leray
 
 open CKN CKN.Foundation.Parabolic
 
+/-- The product normed additive group structure for the regularized `R⁵` space-time argument. -/
 local instance regR12R5NormedAddCommGroup : NormedAddCommGroup ParabolicPoint :=
   inferInstanceAs (NormedAddCommGroup (Vec3 × ℝ))
 
+/-- The real normed-space structure for the regularized `R⁵` space-time argument. -/
 local instance regR12R5NormedSpace : NormedSpace ℝ ParabolicPoint :=
   inferInstanceAs (NormedSpace ℝ (Vec3 × ℝ))
 

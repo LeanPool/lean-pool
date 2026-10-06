@@ -22,7 +22,7 @@ noncomputable section
 namespace CKN
 
 /-- A bounded scalar test preserves convergence of pressure integrals under
-strong local `L³ᐟ²` convergence. -/
+strong local `L^{3/2}` convergence. -/
 theorem stability_tendsto_integral_mul_test_of_LthreeHalves
     {α : Type*} [MeasurableSpace α]
     (μ : Measure α) [IsFiniteMeasure μ]
