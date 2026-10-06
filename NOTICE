@@ -179,6 +179,7 @@ Apache License, Version 2.0, and are redistributed here under the same license.
   LeanPool/MoserLatticeColorings     https://github.com/lyfar/moser-lattice-colorings-lean
   LeanPool/MovingSofa                https://github.com/deancureton/MovingSofa
   LeanPool/MulticolorTriangleRamsey  https://github.com/openai/ten-proofs
+  LeanPool/NFWeakPartition           https://github.com/elliotglazer/nf-not-wpp
   LeanPool/NagataFactoriality        https://github.com/arthur742ramos/nagatafactoriality
   LeanPool/NandakumarRamanaRao       https://github.com/akopjan/nrr-aak
   LeanPool/NashEmbedding             https://github.com/langlerangle/nashembedding
