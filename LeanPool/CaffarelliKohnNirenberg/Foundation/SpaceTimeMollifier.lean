@@ -24,7 +24,8 @@ A normalized smooth bump kernel on `Vec3 × ℝ`, convolution with it, and its
 basic properties: smoothness of the mollified function, control of its
 support, the `L²` contraction bound, and `L²` convergence as the radius
 tends to zero. These are used to extend the Carleman inequalities from
-smooth compactly supported fields to Sobolev fields (`lem:carleman-sobolev` of the Escauriaza–Seregin–Šverák manuscript).
+smooth compactly supported fields to Sobolev fields (`lem:carleman-sobolev`
+of the Escauriaza–Seregin–Šverák manuscript).
 -/
 
 public section
@@ -245,7 +246,8 @@ private lemma lintegral_comp_sub_right (f : Vec3 × ℝ → ℝ≥0∞) (hf : Me
     funext x
     simp [sub_eq_add_neg]
   rw [heq, lintegral_comp hf (measurable_add_const (-t))]
-  have hmap : Measure.map (fun x : Vec3 × ℝ => x + (-t)) (volume : Measure (Vec3 × ℝ)) = volume := by
+  have hmap : Measure.map (fun x : Vec3 × ℝ => x + (-t))
+      (volume : Measure (Vec3 × ℝ)) = volume := by
     rw [show (fun x : Vec3 × ℝ => x + (-t)) = fun x => (-t) + x by
       funext x
       exact add_comm x (-t)]
@@ -504,7 +506,8 @@ private theorem tendsto_eLpNorm_sub_zero_spaceTimeMollify_of_continuous
     have hmeas : AEStronglyMeasurable
         (fun x => spaceTimeMollify f (ε n) (hε_pos n) x - f x) volume :=
       (((spaceTimeMollify_contDiff (f := f) (δ := ε n) (hε_pos n) (n := 0)
-        (hf_cont.integrable_of_hasCompactSupport hf_supp).locallyIntegrable).continuous).sub hf_cont)
+        (hf_cont.integrable_of_hasCompactSupport hf_supp).locallyIntegrable).continuous).sub
+          hf_cont)
         |>.aestronglyMeasurable
     exact eLpNorm_sub_le_of_dist_bdd volume hp_top hK_meas.nullMeasurableSet hδ_pos.le
       hmeas hdist

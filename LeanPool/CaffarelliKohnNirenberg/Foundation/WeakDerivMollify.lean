@@ -403,7 +403,7 @@ theorem memLp_mul_left_of_nnnorm_bound
     {X : Type*} [MeasurableSpace X] {μ : Measure X} {f g : X → ℝ}
     {C : NNReal} (hf : AEStronglyMeasurable f μ) (hg : MemLp g 2 μ)
     (hC : ∀ᵐ x ∂μ, ‖f x‖₊ ≤ C) : MemLp (fun x => f x * g x) 2 μ := by
-  apply hg.of_nnnorm_le_mul (hf.mul hg.aestronglyMeasurable)
+  apply hg.of_nnnorm_le_mul (c := C) (hf.mul hg.aestronglyMeasurable)
   filter_upwards [hC] with x hx
   calc
     ‖f x * g x‖₊ = ‖f x‖₊ * ‖g x‖₊ := nnnorm_mul _ _
@@ -438,7 +438,8 @@ theorem tendsto_toLp_mul_left_of_nnnorm_bound
       (fun n => eLpNorm (fun x => φ x * (f n x - g x)) 2 μ) atTop (𝓝 0) := by
     have hscaled : Tendsto
         (fun n => (C : ENNReal) * eLpNorm (f n - g) 2 μ) atTop (𝓝 0) := by
-      convert ((ENNReal.continuous_mul_const (a := (C : ENNReal)) ENNReal.coe_ne_top).continuousAt.tendsto.comp hconv) using 1
+      convert ((ENNReal.continuous_mul_const (a := (C : ENNReal))
+        ENNReal.coe_ne_top).continuousAt.tendsto.comp hconv) using 1
       · funext n
         simp [mul_comm]
       · simp
@@ -495,6 +496,123 @@ private theorem tendsto_toLp_of_eLpNorm_sub_zero
     filter_upwards [(hf n).coeFn_toLp, hg.coeFn_toLp] with x hx hy
     exact congrArg₂ (fun a b : ℝ => a - b) hx.symm hy.symm
   exact (tendsto_iff_dist_tendsto_zero).2 hdist
+
+private theorem parabolic_weak_spatial_to_product
+    {Ω : Set Vec3} {I : Set ℝ} {δ : ℝ} {z : Vec3 × ℝ}
+    (U : Set (Vec3 × ℝ)) (hU : U = Ω ×ˢ I)
+    (hzU : Metric.closedBall z (3 * δ) ⊆ U)
+    (w D : ParabolicPoint → ℝ) (j : Fin 3)
+    (hweak : ∀ ψ : ParabolicPoint → ℝ, ψ ∈ spaceTimeTestFunction Ω I →
+      (∫ p in spaceTimeSet Ω I, w p * spatialPartial ψ j p
+        ∂(volume : Measure ParabolicPoint)) =
+        -∫ p in spaceTimeSet Ω I, D p * ψ p ∂(volume : Measure ParabolicPoint))
+    (φ : Vec3 × ℝ → ℝ) (hφ : ContDiff ℝ (⊤ : ℕ∞) φ)
+    (hφc : HasCompactSupport φ) (hφz : tsupport φ ⊆ Metric.closedBall z (3 * δ)) :
+    (∫ y in U, w (parabolicHomeomorph.symm y) *
+      (fderiv ℝ φ y) (basisVec j, 0) ∂(volume : Measure (Vec3 × ℝ))) =
+      -∫ y in U, D (parabolicHomeomorph.symm y) * φ y
+        ∂(volume : Measure (Vec3 × ℝ)) := by
+  let φp : ParabolicPoint → ℝ := fun p => φ (parabolicHomeomorph p)
+  have hφpEq : φp = (show ParabolicPoint → ℝ from φ) := by
+    funext p
+    rfl
+  have htest : (show Vec3 × ℝ → ℝ from φp) ∈ spaceTimeTestFunction Ω I := by
+    change (φp : Vec3 × ℝ → ℝ) ∈ spaceTimeTestFunction Ω I
+    rw [hφpEq]
+    exact ⟨hφ, hφc, hφz.trans (by simpa [hU, spaceTimeSet] using hzU)⟩
+  have hsource := hweak φp htest
+  have hleftTrans :
+      (∫ p in spaceTimeSet Ω I, w p * spatialPartial φp j p
+        ∂(volume : Measure ParabolicPoint)) =
+      ∫ y in U, w (parabolicHomeomorph.symm y) *
+        spatialPartial φp j (parabolicHomeomorph.symm y)
+          ∂(volume : Measure (Vec3 × ℝ)) := by
+    simpa [hU] using setIntegral_parabolic_to_product
+      (F := fun p : ParabolicPoint => w p * spatialPartial φp j p)
+  have hrightTrans :
+      (∫ p in spaceTimeSet Ω I, D p * φp p ∂(volume : Measure ParabolicPoint)) =
+      ∫ y in U, D (parabolicHomeomorph.symm y) * φ y
+        ∂(volume : Measure (Vec3 × ℝ)) := by
+    simpa [hU, φp, parabolicHomeomorph] using setIntegral_parabolic_to_product
+      (F := fun p : ParabolicPoint => D p * φp p)
+  have hfactor (y : Vec3 × ℝ) :
+      spatialPartial φp j (parabolicHomeomorph.symm y) =
+        (fderiv ℝ φ y) (basisVec j, 0) := by
+    rw [hφpEq]
+    simpa using spatialPartial_eq_joint_fderiv hφ y j
+  calc
+    (∫ y in U, w (parabolicHomeomorph.symm y) *
+        (fderiv ℝ φ y) (basisVec j, 0) ∂(volume : Measure (Vec3 × ℝ))) =
+      ∫ y in U, w (parabolicHomeomorph.symm y) *
+        spatialPartial φp j (parabolicHomeomorph.symm y)
+          ∂(volume : Measure (Vec3 × ℝ)) := by
+            apply integral_congr_ae
+            filter_upwards [] with y
+            rw [hfactor]
+    _ = ∫ p in spaceTimeSet Ω I, w p * spatialPartial φp j p
+        ∂(volume : Measure ParabolicPoint) := hleftTrans.symm
+    _ = -∫ p in spaceTimeSet Ω I, D p * φp p
+        ∂(volume : Measure ParabolicPoint) := hsource
+    _ = -∫ y in U, D (parabolicHomeomorph.symm y) * φ y
+        ∂(volume : Measure (Vec3 × ℝ)) := by rw [hrightTrans]
+
+private theorem parabolic_weak_time_to_product
+    {Ω : Set Vec3} {I : Set ℝ} {δ : ℝ} {z : Vec3 × ℝ}
+    (U : Set (Vec3 × ℝ)) (hU : U = Ω ×ˢ I)
+    (hzU : Metric.closedBall z (3 * δ) ⊆ U)
+    (w D : ParabolicPoint → ℝ)
+    (hweak : ∀ ψ : ParabolicPoint → ℝ, ψ ∈ spaceTimeTestFunction Ω I →
+      (∫ p in spaceTimeSet Ω I, w p * timePartial ψ p
+        ∂(volume : Measure ParabolicPoint)) =
+        -∫ p in spaceTimeSet Ω I, D p * ψ p ∂(volume : Measure ParabolicPoint))
+    (φ : Vec3 × ℝ → ℝ) (hφ : ContDiff ℝ (⊤ : ℕ∞) φ)
+    (hφc : HasCompactSupport φ) (hφz : tsupport φ ⊆ Metric.closedBall z (3 * δ)) :
+    (∫ y in U, w (parabolicHomeomorph.symm y) *
+      (fderiv ℝ φ y) (0, 1) ∂(volume : Measure (Vec3 × ℝ))) =
+      -∫ y in U, D (parabolicHomeomorph.symm y) * φ y
+        ∂(volume : Measure (Vec3 × ℝ)) := by
+  let φp : ParabolicPoint → ℝ := fun p => φ (parabolicHomeomorph p)
+  have hφpEq : φp = (show ParabolicPoint → ℝ from φ) := by
+    funext p
+    rfl
+  have htest : (show Vec3 × ℝ → ℝ from φp) ∈ spaceTimeTestFunction Ω I := by
+    change (φp : Vec3 × ℝ → ℝ) ∈ spaceTimeTestFunction Ω I
+    rw [hφpEq]
+    exact ⟨hφ, hφc, hφz.trans (by simpa [hU, spaceTimeSet] using hzU)⟩
+  have hsource := hweak φp htest
+  have hleftTrans :
+      (∫ p in spaceTimeSet Ω I, w p * timePartial φp p
+        ∂(volume : Measure ParabolicPoint)) =
+      ∫ y in U, w (parabolicHomeomorph.symm y) *
+        timePartial φp (parabolicHomeomorph.symm y)
+          ∂(volume : Measure (Vec3 × ℝ)) := by
+    simpa [hU] using setIntegral_parabolic_to_product
+      (F := fun p : ParabolicPoint => w p * timePartial φp p)
+  have hrightTrans :
+      (∫ p in spaceTimeSet Ω I, D p * φp p ∂(volume : Measure ParabolicPoint)) =
+      ∫ y in U, D (parabolicHomeomorph.symm y) * φ y
+        ∂(volume : Measure (Vec3 × ℝ)) := by
+    simpa [hU, φp, parabolicHomeomorph] using setIntegral_parabolic_to_product
+      (F := fun p : ParabolicPoint => D p * φp p)
+  have hfactor (y : Vec3 × ℝ) :
+      timePartial φp (parabolicHomeomorph.symm y) = (fderiv ℝ φ y) (0, 1) := by
+    rw [hφpEq]
+    simpa using timePartial_eq_joint_fderiv hφ y
+  calc
+    (∫ y in U, w (parabolicHomeomorph.symm y) *
+        (fderiv ℝ φ y) (0, 1) ∂(volume : Measure (Vec3 × ℝ))) =
+      ∫ y in U, w (parabolicHomeomorph.symm y) *
+        timePartial φp (parabolicHomeomorph.symm y)
+          ∂(volume : Measure (Vec3 × ℝ)) := by
+            apply integral_congr_ae
+            filter_upwards [] with y
+            rw [hfactor]
+    _ = ∫ p in spaceTimeSet Ω I, w p * timePartial φp p
+        ∂(volume : Measure ParabolicPoint) := hleftTrans.symm
+    _ = -∫ p in spaceTimeSet Ω I, D p * φp p
+        ∂(volume : Measure ParabolicPoint) := hsource
+    _ = -∫ y in U, D (parabolicHomeomorph.symm y) * φ y
+        ∂(volume : Measure (Vec3 × ℝ)) := by rw [hrightTrans]
 
 /-- Mollification commutes componentwise with the spatial, second spatial, and time weak
 derivatives on compact subsets of an open space-time domain (manuscript `def:sws`). -/
@@ -577,52 +695,12 @@ theorem spaceTimeMollify_weak_derivatives
           -∫ y in U, Dw (parabolicHomeomorph.symm y) i j * φ y
             ∂(volume : Measure (Vec3 × ℝ)) := by
     intro φ hφ hφc hφq
-    let φp : ParabolicPoint → ℝ := fun p => φ (parabolicHomeomorph p)
-    have hφpEq : φp = (show ParabolicPoint → ℝ from φ) := by
-      funext p
-      rfl
-    have htest : (show Vec3 × ℝ → ℝ from φp) ∈ spaceTimeTestFunction Ω I := by
-      change (φp : Vec3 × ℝ → ℝ) ∈ spaceTimeTestFunction Ω I
-      rw [hφpEq]
-      exact ⟨hφ, hφc, hφq.trans hqU⟩
-    have hsource := (hweak φp htest).1 i j
-    have hleftTrans :
-        (∫ p in spaceTimeSet Ω I, w p i * spatialPartial φp j p
-          ∂(volume : Measure ParabolicPoint)) =
-          ∫ y in U, w (parabolicHomeomorph.symm y) i *
-            spatialPartial φp j (parabolicHomeomorph.symm y)
-              ∂(volume : Measure (Vec3 × ℝ)) := by
-      simpa [U] using
-        (setIntegral_parabolic_to_product
-          (F := fun p : ParabolicPoint => w p i * spatialPartial φp j p))
-    have hrightTrans :
-        (∫ p in spaceTimeSet Ω I, Dw p i j * φp p
-          ∂(volume : Measure ParabolicPoint)) =
-          ∫ y in U, Dw (parabolicHomeomorph.symm y) i j * φ y
-            ∂(volume : Measure (Vec3 × ℝ)) := by
-      simpa [U, φp, parabolicHomeomorph] using
-        (setIntegral_parabolic_to_product
-          (F := fun p : ParabolicPoint => Dw p i j * φp p))
-    have hfactor (y : Vec3 × ℝ) :
-        spatialPartial φp j (parabolicHomeomorph.symm y) =
-          (fderiv ℝ φ y) (basisVec j, 0) := by
-      rw [hφpEq]
-      simpa using spatialPartial_eq_joint_fderiv hφ y j
-    calc
-      (∫ y in U, w (parabolicHomeomorph.symm y) i *
-          (fderiv ℝ φ y) (basisVec j, 0) ∂(volume : Measure (Vec3 × ℝ))) =
-        ∫ y in U, w (parabolicHomeomorph.symm y) i *
-          spatialPartial φp j (parabolicHomeomorph.symm y)
-            ∂(volume : Measure (Vec3 × ℝ)) := by
-              apply integral_congr_ae
-              filter_upwards [] with y
-              rw [hfactor]
-      _ = ∫ p in spaceTimeSet Ω I, w p i * spatialPartial φp j p
-          ∂(volume : Measure ParabolicPoint) := hleftTrans.symm
-      _ = -∫ p in spaceTimeSet Ω I, Dw p i j * φp p
-          ∂(volume : Measure ParabolicPoint) := hsource
-      _ = -∫ y in U, Dw (parabolicHomeomorph.symm y) i j * φ y
-          ∂(volume : Measure (Vec3 × ℝ)) := by rw [hrightTrans]
+    exact parabolic_weak_spatial_to_product U rfl
+      hqU
+      (fun p => w p i)
+      (fun p => Dw p i j) j
+      (fun ψ htest => (hweak ψ htest).1 i j)
+      φ hφ hφc hφq
   have hweakSecond (q : Vec3 × ℝ) (hqU : Metric.closedBall q (3 * δ) ⊆ U)
       (i j k : Fin 3) :
       ∀ φ : Vec3 × ℝ → ℝ, ContDiff ℝ (⊤ : ℕ∞) φ → HasCompactSupport φ →
@@ -632,52 +710,11 @@ theorem spaceTimeMollify_weak_derivatives
           -∫ y in U, D2w (parabolicHomeomorph.symm y) i j k * φ y
             ∂(volume : Measure (Vec3 × ℝ)) := by
     intro φ hφ hφc hφq
-    let φp : ParabolicPoint → ℝ := fun p => φ (parabolicHomeomorph p)
-    have hφpEq : φp = (show ParabolicPoint → ℝ from φ) := by
-      funext p
-      rfl
-    have htest : (show Vec3 × ℝ → ℝ from φp) ∈ spaceTimeTestFunction Ω I := by
-      change (φp : Vec3 × ℝ → ℝ) ∈ spaceTimeTestFunction Ω I
-      rw [hφpEq]
-      exact ⟨hφ, hφc, hφq.trans hqU⟩
-    have hsource := (hweak φp htest).2.1 i j k
-    have hleftTrans :
-        (∫ p in spaceTimeSet Ω I, Dw p i j * spatialPartial φp k p
-          ∂(volume : Measure ParabolicPoint)) =
-          ∫ y in U, Dw (parabolicHomeomorph.symm y) i j *
-            spatialPartial φp k (parabolicHomeomorph.symm y)
-              ∂(volume : Measure (Vec3 × ℝ)) := by
-      simpa [U] using
-        (setIntegral_parabolic_to_product
-          (F := fun p : ParabolicPoint => Dw p i j * spatialPartial φp k p))
-    have hrightTrans :
-        (∫ p in spaceTimeSet Ω I, D2w p i j k * φp p
-          ∂(volume : Measure ParabolicPoint)) =
-          ∫ y in U, D2w (parabolicHomeomorph.symm y) i j k * φ y
-            ∂(volume : Measure (Vec3 × ℝ)) := by
-      simpa [U, φp, parabolicHomeomorph] using
-        (setIntegral_parabolic_to_product
-          (F := fun p : ParabolicPoint => D2w p i j k * φp p))
-    have hfactor (y : Vec3 × ℝ) :
-        spatialPartial φp k (parabolicHomeomorph.symm y) =
-          (fderiv ℝ φ y) (basisVec k, 0) := by
-      rw [hφpEq]
-      simpa using spatialPartial_eq_joint_fderiv hφ y k
-    calc
-      (∫ y in U, Dw (parabolicHomeomorph.symm y) i j *
-          (fderiv ℝ φ y) (basisVec k, 0) ∂(volume : Measure (Vec3 × ℝ))) =
-        ∫ y in U, Dw (parabolicHomeomorph.symm y) i j *
-          spatialPartial φp k (parabolicHomeomorph.symm y)
-            ∂(volume : Measure (Vec3 × ℝ)) := by
-              apply integral_congr_ae
-              filter_upwards [] with y
-              rw [hfactor]
-      _ = ∫ p in spaceTimeSet Ω I, Dw p i j * spatialPartial φp k p
-          ∂(volume : Measure ParabolicPoint) := hleftTrans.symm
-      _ = -∫ p in spaceTimeSet Ω I, D2w p i j k * φp p
-          ∂(volume : Measure ParabolicPoint) := hsource
-      _ = -∫ y in U, D2w (parabolicHomeomorph.symm y) i j k * φ y
-          ∂(volume : Measure (Vec3 × ℝ)) := by rw [hrightTrans]
+    exact parabolic_weak_spatial_to_product U rfl hqU
+      (fun p => Dw p i j)
+      (fun p => D2w p i j k) k
+      (fun ψ htest => (hweak ψ htest).2.1 i j k)
+      φ hφ hφc hφq
   have hweakTime (q : Vec3 × ℝ) (hqU : Metric.closedBall q (3 * δ) ⊆ U)
       (i : Fin 3) :
       ∀ φ : Vec3 × ℝ → ℝ, ContDiff ℝ (⊤ : ℕ∞) φ → HasCompactSupport φ →
@@ -687,52 +724,11 @@ theorem spaceTimeMollify_weak_derivatives
           -∫ y in U, Dtw (parabolicHomeomorph.symm y) i * φ y
             ∂(volume : Measure (Vec3 × ℝ)) := by
     intro φ hφ hφc hφq
-    let φp : ParabolicPoint → ℝ := fun p => φ (parabolicHomeomorph p)
-    have hφpEq : φp = (show ParabolicPoint → ℝ from φ) := by
-      funext p
-      rfl
-    have htest : (show Vec3 × ℝ → ℝ from φp) ∈ spaceTimeTestFunction Ω I := by
-      change (φp : Vec3 × ℝ → ℝ) ∈ spaceTimeTestFunction Ω I
-      rw [hφpEq]
-      exact ⟨hφ, hφc, hφq.trans hqU⟩
-    have hsource := (hweak φp htest).2.2 i
-    have hleftTrans :
-        (∫ p in spaceTimeSet Ω I, w p i * timePartial φp p
-          ∂(volume : Measure ParabolicPoint)) =
-          ∫ y in U, w (parabolicHomeomorph.symm y) i *
-            timePartial φp (parabolicHomeomorph.symm y)
-              ∂(volume : Measure (Vec3 × ℝ)) := by
-      simpa [U] using
-        (setIntegral_parabolic_to_product
-          (F := fun p : ParabolicPoint => w p i * timePartial φp p))
-    have hrightTrans :
-        (∫ p in spaceTimeSet Ω I, Dtw p i * φp p
-          ∂(volume : Measure ParabolicPoint)) =
-          ∫ y in U, Dtw (parabolicHomeomorph.symm y) i * φ y
-            ∂(volume : Measure (Vec3 × ℝ)) := by
-      simpa [U, φp, parabolicHomeomorph] using
-        (setIntegral_parabolic_to_product
-          (F := fun p : ParabolicPoint => Dtw p i * φp p))
-    have hfactor (y : Vec3 × ℝ) :
-        timePartial φp (parabolicHomeomorph.symm y) =
-          (fderiv ℝ φ y) (0, 1) := by
-      rw [hφpEq]
-      simpa using timePartial_eq_joint_fderiv hφ y
-    calc
-      (∫ y in U, w (parabolicHomeomorph.symm y) i *
-          (fderiv ℝ φ y) (0, 1) ∂(volume : Measure (Vec3 × ℝ))) =
-        ∫ y in U, w (parabolicHomeomorph.symm y) i *
-          timePartial φp (parabolicHomeomorph.symm y)
-            ∂(volume : Measure (Vec3 × ℝ)) := by
-              apply integral_congr_ae
-              filter_upwards [] with y
-              rw [hfactor]
-      _ = ∫ p in spaceTimeSet Ω I, w p i * timePartial φp p
-          ∂(volume : Measure ParabolicPoint) := hleftTrans.symm
-      _ = -∫ p in spaceTimeSet Ω I, Dtw p i * φp p
-          ∂(volume : Measure ParabolicPoint) := hsource
-      _ = -∫ y in U, Dtw (parabolicHomeomorph.symm y) i * φ y
-          ∂(volume : Measure (Vec3 × ℝ)) := by rw [hrightTrans]
+    exact parabolic_weak_time_to_product U rfl hqU
+      (fun p => w p i)
+      (fun p => Dtw p i)
+      (fun ψ htest => (hweak ψ htest).2.2 i)
+      φ hφ hφc hφq
   refine ⟨?_, ?_⟩
   · intro i j
     have hcomm := spaceTimeMollify_fderiv_eq_of_local_weak
@@ -790,46 +786,23 @@ theorem spaceTimeMollify_weak_derivatives
         (hweakTime z hz3 i)
       rw [timePartial_eq_fderiv_of_hasFDerivAt hcomm.1, hcomm.2]
 
-/-- The square of a locally square-integrable weak solution has the expected weak time
-derivative on compactly supported tests (manuscript `def:sws`). The formula is written as
-the finite sum of scalar pairings; `u` and `g` are the zero extensions of `w` and `Dtw`.
-The buffer condition keeps every mollification kernel inside the weak-derivative domain. -/
-theorem weak_time_derivative_sq
+private theorem hasSpaceTimeWeakDerivs_indicator
     {Ω : Set Vec3} {I : Set ℝ} (hΩ : IsOpen Ω) (hI : IsOpen I)
     {w : ParabolicPoint → Vec3}
     {Dw : ParabolicPoint → Fin 3 → Vec3}
     {D2w : ParabolicPoint → Fin 3 → Fin 3 → Vec3}
     {Dtw : ParabolicPoint → Vec3}
-    (hderiv : HasSpaceTimeWeakDerivs Ω I w Dw D2w Dtw)
-    (hL2w : ∀ i : Fin 3,
-      MemLp (fun q : Vec3 × ℝ =>
-        ((spaceTimeSet Ω I).indicator w (parabolicHomeomorph.symm q)) i)
-        2 (volume : Measure (Vec3 × ℝ)))
-    (hL2time : ∀ i : Fin 3,
-      MemLp (fun q : Vec3 × ℝ =>
-        ((spaceTimeSet Ω I).indicator Dtw (parabolicHomeomorph.symm q)) i)
-        2 (volume : Measure (Vec3 × ℝ)))
-    {φ : Vec3 × ℝ → ℝ} (hφ : ContDiff ℝ (⊤ : ℕ∞) φ)
-    (hφc : HasCompactSupport φ)
-    {δ₀ : ℝ} (hδ₀ : 0 < δ₀)
-    (hbuffer : ∀ q ∈ tsupport φ, Metric.closedBall q (4 * δ₀) ⊆ Ω ×ˢ I) :
-    (∑ i : Fin 3,
-      ∫ q : Vec3 × ℝ,
-        (((spaceTimeSet Ω I).indicator w (parabolicHomeomorph.symm q)) i) ^ 2 *
-          (fderiv ℝ φ q) (0, 1) ∂(volume : Measure (Vec3 × ℝ))) =
-      -(2 * ∑ i : Fin 3,
-        ∫ q : Vec3 × ℝ,
-          ((spaceTimeSet Ω I).indicator w (parabolicHomeomorph.symm q)) i *
-          ((spaceTimeSet Ω I).indicator Dtw (parabolicHomeomorph.symm q)) i *
-          φ q ∂(volume : Measure (Vec3 × ℝ))) := by
+    (hderiv : HasSpaceTimeWeakDerivs Ω I w Dw D2w Dtw) :
+    HasSpaceTimeWeakDerivs Ω I
+      ((spaceTimeSet Ω I).indicator w)
+      ((spaceTimeSet Ω I).indicator Dw)
+      ((spaceTimeSet Ω I).indicator D2w)
+      ((spaceTimeSet Ω I).indicator Dtw) := by
   let V : Set ParabolicPoint := spaceTimeSet Ω I
-  let U : Set (Vec3 × ℝ) := Ω ×ˢ I
   let w₀ : ParabolicPoint → Vec3 := V.indicator w
   let Dw₀ : ParabolicPoint → Fin 3 → Vec3 := V.indicator Dw
   let D2w₀ : ParabolicPoint → Fin 3 → Fin 3 → Vec3 := V.indicator D2w
   let Dtw₀ : ParabolicPoint → Vec3 := V.indicator Dtw
-  let u : Fin 3 → Vec3 × ℝ → ℝ := fun i q => w₀ (parabolicHomeomorph.symm q) i
-  let g : Fin 3 → Vec3 × ℝ → ℝ := fun i q => Dtw₀ (parabolicHomeomorph.symm q) i
   have hVmeas : MeasurableSet V := by
     dsimp [V, spaceTimeSet]
     exact hΩ.measurableSet.prod hI.measurableSet
@@ -906,6 +879,129 @@ theorem weak_time_derivative_sq
             ∫ p in V, w p i * timePartial ψ p ∂(volume : Measure ParabolicPoint) := hleft
         _ = -∫ p in V, Dtw p i * ψ p ∂(volume : Measure ParabolicPoint) := htime i
         _ = -∫ p in V, Dtw₀ p i * ψ p ∂(volume : Measure ParabolicPoint) := by rw [hright]
+  exact hderiv₀
+
+private theorem mollified_square_time_identity
+    {u g φ : Vec3 × ℝ → ℝ}
+    (hu : ContDiff ℝ (⊤ : ℕ∞) u)
+    (hφ : ContDiff ℝ (⊤ : ℕ∞) φ) (hφc : HasCompactSupport φ)
+    (hcomm : ∀ q ∈ tsupport φ,
+      timePartial (show ParabolicPoint → ℝ from u) (parabolicHomeomorph.symm q) = g q) :
+    (∫ q : Vec3 × ℝ, u q ^ 2 * (fderiv ℝ φ q) (0, 1)
+      ∂(volume : Measure (Vec3 × ℝ))) =
+      -(2 * ∫ q : Vec3 × ℝ, u q * (φ q * g q)
+        ∂(volume : Measure (Vec3 × ℝ))) := by
+  have hIBP := CKN.integral_mul_timePartial_eq_neg_timePartial_mul
+    (show ContDiff ℝ (⊤ : ℕ∞) (fun q : Vec3 × ℝ => u q * u q) from hu.mul hu)
+    hφ hφc
+  have htimeSq (q : Vec3 × ℝ) :
+      timePartial (show ParabolicPoint → ℝ from fun p => u p * u p) q =
+        2 * u q * timePartial (show ParabolicPoint → ℝ from u) q := by
+    have hsq : ContDiff ℝ (⊤ : ℕ∞) (fun z : Vec3 × ℝ => u z * u z) := hu.mul hu
+    have hprod := timePartial_eq_joint_fderiv
+      (g := fun z : Vec3 × ℝ => u z * u z) hsq q
+    have hsingle := timePartial_eq_joint_fderiv (g := u) hu q
+    calc
+      timePartial (show ParabolicPoint → ℝ from fun p => u p * u p) q =
+          fderiv ℝ (fun z : Vec3 × ℝ => u z * u z) q (0, 1) := hprod
+      _ = 2 * u q * fderiv ℝ u q (0, 1) := by
+        rw [fderiv_fun_mul (hu.differentiable (by simp) q)
+          (hu.differentiable (by simp) q)]
+        simp only [add_apply, smul_apply]
+        ring
+      _ = 2 * u q * timePartial (show ParabolicPoint → ℝ from u) q := by rw [← hsingle]
+  have hmul (q : Vec3 × ℝ) :
+      timePartial (show ParabolicPoint → ℝ from fun z => u z * u z) q * φ q =
+        2 * (u q * (φ q * g q)) := by
+    by_cases hq : q ∈ tsupport φ
+    · have hcomm' :
+          timePartial (show ParabolicPoint → ℝ from u) q = g q := by
+        simpa only [parabolicHomeomorph_symm_apply] using hcomm q hq
+      rw [htimeSq q, hcomm']
+      ring
+    · have hφzero : φ q = 0 := image_eq_zero_of_notMem_tsupport hq
+      simp [hφzero]
+  calc
+    (∫ q : Vec3 × ℝ, u q ^ 2 * (fderiv ℝ φ q) (0, 1)
+        ∂(volume : Measure (Vec3 × ℝ))) =
+      ∫ q : Vec3 × ℝ, u q * u q *
+        timePartial (show ParabolicPoint → ℝ from φ) q
+          ∂(volume : Measure (Vec3 × ℝ)) := by
+            apply integral_congr_ae
+            filter_upwards [] with q
+            rw [timePartial_eq_joint_fderiv hφ q]
+            ring
+    _ = -∫ q : Vec3 × ℝ,
+        timePartial (show ParabolicPoint → ℝ from fun z => u z * u z) q * φ q
+          ∂(volume : Measure (Vec3 × ℝ)) := hIBP
+    _ = -(2 * ∫ q : Vec3 × ℝ, u q * (φ q * g q)
+          ∂(volume : Measure (Vec3 × ℝ))) := by
+            congr 1
+            calc
+              (∫ q : Vec3 × ℝ,
+                  timePartial (show ParabolicPoint → ℝ from fun z => u z * u z) q * φ q
+                    ∂(volume : Measure (Vec3 × ℝ))) =
+                ∫ q : Vec3 × ℝ, 2 * (u q * (φ q * g q))
+                  ∂(volume : Measure (Vec3 × ℝ)) := by
+                    apply integral_congr_ae
+                    filter_upwards [] with q
+                    exact hmul q
+              _ = 2 * ∫ q : Vec3 × ℝ, u q * (φ q * g q)
+                  ∂(volume : Measure (Vec3 × ℝ)) := by rw [integral_const_mul]
+
+private theorem inner_real_toLp_eq_integral
+    {α : Type*} [MeasurableSpace α] {μ : Measure α}
+    {f g h : α → ℝ} (hf : MemLp f 2 μ) (hg : MemLp g 2 μ)
+    (hpoint : ∀ x, f x * g x = h x) :
+    inner ℝ (hf.toLp f) (hg.toLp g) = ∫ x, h x ∂μ := by
+  rw [L2.inner_def]
+  apply integral_congr_ae
+  filter_upwards [hf.coeFn_toLp, hg.coeFn_toLp] with x hfx hgx
+  rw [hfx, hgx]
+  simp only [Real.inner_apply]
+  exact hpoint x
+
+/-- The square of a locally square-integrable weak solution has the expected weak time
+derivative on compactly supported tests (manuscript `def:sws`). The formula is written as
+the finite sum of scalar pairings; `u` and `g` are the zero extensions of `w` and `Dtw`.
+The buffer condition keeps every mollification kernel inside the weak-derivative domain. -/
+theorem weak_time_derivative_sq
+    {Ω : Set Vec3} {I : Set ℝ} (hΩ : IsOpen Ω) (hI : IsOpen I)
+    {w : ParabolicPoint → Vec3}
+    {Dw : ParabolicPoint → Fin 3 → Vec3}
+    {D2w : ParabolicPoint → Fin 3 → Fin 3 → Vec3}
+    {Dtw : ParabolicPoint → Vec3}
+    (hderiv : HasSpaceTimeWeakDerivs Ω I w Dw D2w Dtw)
+    (hL2w : ∀ i : Fin 3,
+      MemLp (fun q : Vec3 × ℝ =>
+        ((spaceTimeSet Ω I).indicator w (parabolicHomeomorph.symm q)) i)
+        2 (volume : Measure (Vec3 × ℝ)))
+    (hL2time : ∀ i : Fin 3,
+      MemLp (fun q : Vec3 × ℝ =>
+        ((spaceTimeSet Ω I).indicator Dtw (parabolicHomeomorph.symm q)) i)
+        2 (volume : Measure (Vec3 × ℝ)))
+    {φ : Vec3 × ℝ → ℝ} (hφ : ContDiff ℝ (⊤ : ℕ∞) φ)
+    (hφc : HasCompactSupport φ)
+    {δ₀ : ℝ} (hδ₀ : 0 < δ₀)
+    (hbuffer : ∀ q ∈ tsupport φ, Metric.closedBall q (4 * δ₀) ⊆ Ω ×ˢ I) :
+    (∑ i : Fin 3,
+      ∫ q : Vec3 × ℝ,
+        (((spaceTimeSet Ω I).indicator w (parabolicHomeomorph.symm q)) i) ^ 2 *
+          (fderiv ℝ φ q) (0, 1) ∂(volume : Measure (Vec3 × ℝ))) =
+      -(2 * ∑ i : Fin 3,
+        ∫ q : Vec3 × ℝ,
+          ((spaceTimeSet Ω I).indicator w (parabolicHomeomorph.symm q)) i *
+          ((spaceTimeSet Ω I).indicator Dtw (parabolicHomeomorph.symm q)) i *
+          φ q ∂(volume : Measure (Vec3 × ℝ))) := by
+  let V : Set ParabolicPoint := spaceTimeSet Ω I
+  let U : Set (Vec3 × ℝ) := Ω ×ˢ I
+  let w₀ : ParabolicPoint → Vec3 := V.indicator w
+  let Dw₀ : ParabolicPoint → Fin 3 → Vec3 := V.indicator Dw
+  let D2w₀ : ParabolicPoint → Fin 3 → Fin 3 → Vec3 := V.indicator D2w
+  let Dtw₀ : ParabolicPoint → Vec3 := V.indicator Dtw
+  let u : Fin 3 → Vec3 × ℝ → ℝ := fun i q => w₀ (parabolicHomeomorph.symm q) i
+  let g : Fin 3 → Vec3 × ℝ → ℝ := fun i q => Dtw₀ (parabolicHomeomorph.symm q) i
+  have hderiv₀ := hasSpaceTimeWeakDerivs_indicator hΩ hI hderiv
   have hL2u (i : Fin 3) : MemLp (u i) 2 (volume : Measure (Vec3 × ℝ)) := by
     exact hL2w i
   have hL2g (i : Fin 3) : MemLp (g i) 2 (volume : Measure (Vec3 × ℝ)) := by
@@ -1013,96 +1109,25 @@ theorem weak_time_derivative_sq
           exact hbuffer q hq ((Metric.closedBall_subset_closedBall
             (mul_le_mul_of_nonneg_left (hδle n) (by norm_num : 0 ≤ (4 : ℝ)))) hy))
       have hraw := hresult.2.2 i
-      simpa [u, g, uε, gε, parabolicHomeomorph_symm_apply] using hraw
-    have hIBP := CKN.integral_mul_timePartial_eq_neg_timePartial_mul
-      (show ContDiff ℝ (⊤ : ℕ∞) (fun q : Vec3 × ℝ => uε i n q * uε i n q) from
-        (hUεsmooth i n).mul (hUεsmooth i n)) hφ hφc
-    have htimeSq (q : Vec3 × ℝ) :
-        timePartial (show ParabolicPoint → ℝ from fun p =>
-          uε i n p * uε i n p) q =
-          2 * uε i n q * timePartial (show ParabolicPoint → ℝ from uε i n) q := by
-      have hsq : ContDiff ℝ (⊤ : ℕ∞) (fun z : Vec3 × ℝ => uε i n z * uε i n z) :=
-        (hUεsmooth i n).mul (hUεsmooth i n)
-      have hprod := timePartial_eq_joint_fderiv
-        (g := fun z : Vec3 × ℝ => uε i n z * uε i n z) hsq q
-      have hsingle := timePartial_eq_joint_fderiv (g := uε i n) (hUεsmooth i n) q
-      calc
-        timePartial (show ParabolicPoint → ℝ from fun p =>
-            uε i n p * uε i n p) q =
-            fderiv ℝ (fun z : Vec3 × ℝ => uε i n z * uε i n z) q (0, 1) := hprod
-        _ = 2 * uε i n q * fderiv ℝ (uε i n) q (0, 1) := by
-          rw [fderiv_fun_mul
-            ((hUεsmooth i n).differentiable (by simp) q)
-            ((hUεsmooth i n).differentiable (by simp) q)]
-          simp only [add_apply, smul_apply]
-          ring
-        _ = 2 * uε i n q * timePartial (show ParabolicPoint → ℝ from uε i n) q := by
-          rw [← hsingle]
-    have hmul (q : Vec3 × ℝ) :
-        timePartial (show ParabolicPoint → ℝ from fun z => uε i n z * uε i n z) q * φ q =
-          2 * (uε i n q * (φ q * gε i n q)) := by
-      by_cases hq : q ∈ tsupport φ
-      · have hcomm' :
-            timePartial (show ParabolicPoint → ℝ from uε i n) q = gε i n q := by
-          simpa only [parabolicHomeomorph_symm_apply] using hcomm q hq
-        rw [htimeSq q, hcomm']
-        ring
-      · have hφzero : φ q = 0 := image_eq_zero_of_notMem_tsupport hq
-        simp [hφzero]
-    calc
-      ∫ q : Vec3 × ℝ, uε i n q ^ 2 * ψ q ∂(volume : Measure (Vec3 × ℝ)) =
-          ∫ q : Vec3 × ℝ, uε i n q * uε i n q *
-            timePartial (show ParabolicPoint → ℝ from φ) q
-              ∂(volume : Measure (Vec3 × ℝ)) := by
-                apply integral_congr_ae
-                filter_upwards [] with q
-                rw [timePartial_eq_joint_fderiv hφ q]
-                dsimp [ψ]
-                ring
-      _ = -∫ q : Vec3 × ℝ,
-          timePartial (show ParabolicPoint → ℝ from fun z => uε i n z * uε i n z) q * φ q
-            ∂(volume : Measure (Vec3 × ℝ)) := hIBP
-      _ = -(2 * ∫ q : Vec3 × ℝ, uε i n q * (φ q * gε i n q)
-            ∂(volume : Measure (Vec3 × ℝ))) := by
-              congr 1
-              calc
-                (∫ q : Vec3 × ℝ,
-                    timePartial (show ParabolicPoint → ℝ from fun z => uε i n z * uε i n z) q * φ q
-                    ∂(volume : Measure (Vec3 × ℝ))) =
-                    ∫ q : Vec3 × ℝ, 2 * (uε i n q * (φ q * gε i n q))
-                      ∂(volume : Measure (Vec3 × ℝ)) := by
-                  apply integral_congr_ae
-                  filter_upwards [] with q
-                  exact hmul q
-                _ = 2 * ∫ q : Vec3 × ℝ, uε i n q * (φ q * gε i n q)
-                    ∂(volume : Measure (Vec3 × ℝ)) := by
-                  rw [integral_const_mul]
+      simpa [u, g, uε, gε, w₀, Dtw₀, V, parabolicHomeomorph_symm_apply] using hraw
+    simpa [ψ] using mollified_square_time_identity (hUεsmooth i n) hφ hφc hcomm
   have hAeq (i : Fin 3) (n : ℕ) :
       inner ℝ ((hUεmem i n).toLp (uε i n))
         ((memLp_mul_left_of_nnnorm_bound hψmeas (hUεmem i n)
           (Filter.Eventually.of_forall hCψ)).toLp (fun q => ψ q * uε i n q)) =
         ∫ q : Vec3 × ℝ, uε i n q ^ 2 * ψ q ∂(volume : Measure (Vec3 × ℝ)) := by
-    rw [L2.inner_def]
-    apply integral_congr_ae
-    filter_upwards [(hUεmem i n).coeFn_toLp,
+    exact inner_real_toLp_eq_integral (hUεmem i n)
       (memLp_mul_left_of_nnnorm_bound hψmeas (hUεmem i n)
-        (Filter.Eventually.of_forall hCψ)).coeFn_toLp] with q hu hv
-    rw [hu, hv]
-    simp only [Real.inner_apply]
-    ring
+        (Filter.Eventually.of_forall hCψ)) (fun q => by ring)
   have hBeq (i : Fin 3) (n : ℕ) :
       inner ℝ ((hUεmem i n).toLp (uε i n))
         ((memLp_mul_left_of_nnnorm_bound hφmeas (hGεmem i n)
           (Filter.Eventually.of_forall hCφ)).toLp (fun q => φ q * gε i n q)) =
         ∫ q : Vec3 × ℝ, uε i n q * (φ q * gε i n q)
           ∂(volume : Measure (Vec3 × ℝ)) := by
-    rw [L2.inner_def]
-    apply integral_congr_ae
-    filter_upwards [(hUεmem i n).coeFn_toLp,
+    exact inner_real_toLp_eq_integral (hUεmem i n)
       (memLp_mul_left_of_nnnorm_bound hφmeas (hGεmem i n)
-        (Filter.Eventually.of_forall hCφ)).coeFn_toLp] with q hu hv
-    rw [hu, hv]
-    simp only [Real.inner_apply]
+        (Filter.Eventually.of_forall hCφ)) (fun _ => rfl)
   have hAlim (i : Fin 3) :
       Tendsto (fun n => ∫ q : Vec3 × ℝ, uε i n q ^ 2 * ψ q
         ∂(volume : Measure (Vec3 × ℝ))) atTop
@@ -1111,14 +1136,9 @@ theorem weak_time_derivative_sq
         ((memLp_mul_left_of_nnnorm_bound hψmeas (hL2u i)
           (Filter.Eventually.of_forall hCψ)).toLp (fun q => ψ q * u i q)) =
         ∫ q : Vec3 × ℝ, u i q ^ 2 * ψ q ∂(volume : Measure (Vec3 × ℝ)) := by
-      rw [L2.inner_def]
-      apply integral_congr_ae
-      filter_upwards [(hL2u i).coeFn_toLp,
+      exact inner_real_toLp_eq_integral (hL2u i)
         (memLp_mul_left_of_nnnorm_bound hψmeas (hL2u i)
-          (Filter.Eventually.of_forall hCψ)).coeFn_toLp] with q hu hv
-      rw [hu, hv]
-      simp only [Real.inner_apply]
-      ring
+          (Filter.Eventually.of_forall hCψ)) (fun q => by ring)
     rw [← hAeqLimit]
     refine (hAconv i).congr' ?_
     filter_upwards [] with n
@@ -1132,14 +1152,10 @@ theorem weak_time_derivative_sq
         ((memLp_mul_left_of_nnnorm_bound hφmeas (hL2g i)
           (Filter.Eventually.of_forall hCφ)).toLp (fun q => φ q * g i q)) =
         ∫ q : Vec3 × ℝ, u i q * (φ q * g i q)
-          ∂(volume : Measure (Vec3 × ℝ)) := by
-      rw [L2.inner_def]
-      apply integral_congr_ae
-      filter_upwards [(hL2u i).coeFn_toLp,
+          ∂(volume : Measure (Vec3 × ℝ)) :=
+      inner_real_toLp_eq_integral (hL2u i)
         (memLp_mul_left_of_nnnorm_bound hφmeas (hL2g i)
-          (Filter.Eventually.of_forall hCφ)).coeFn_toLp] with q hu hv
-      rw [hu, hv]
-      simp only [Real.inner_apply]
+          (Filter.Eventually.of_forall hCφ)) (fun _ => rfl)
     rw [← hBeqLimit]
     refine (hBconv i).congr' ?_
     filter_upwards [] with n
