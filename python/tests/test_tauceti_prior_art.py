@@ -188,10 +188,11 @@ def test_pinned_worker_compares_against_pr_base(monkeypatch) -> None:
 
 
 @pytest.mark.parametrize("base_sha", ["base", ""])
-def test_unreadable_pr_base_is_unchecked(monkeypatch, base_sha) -> None:
+def test_unreadable_pr_base_is_unchecked(monkeypatch, tmp_path, base_sha) -> None:
     """A failed base lookup must not use the pinned registry as a fallback."""
     from lean_pool import review
 
+    monkeypatch.setattr(review, "REPO_ROOT", tmp_path)
     monkeypatch.setattr(
         review,
         "fetch_file_at",
@@ -204,6 +205,8 @@ def test_unreadable_pr_base_is_unchecked(monkeypatch, base_sha) -> None:
     assert "could not be read at base" in section
     assert "did not run" in section
     assert "Tau Ceti prior art is unchecked" in section
+    assert "Pool comparison is unchecked" in section
+    assert "Every project already in the pool" not in section
 
 
 @pytest.mark.parametrize("base_available", [True, False])

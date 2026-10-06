@@ -1793,11 +1793,12 @@ def gather_prior_art(
         unreadable_sha = head_sha if not head_text.strip() else base_sha or "base"
         unreadable = f"{registry} could not be read at {unreadable_sha[:8]}"
         print(f"Mathlib prior-art search skipped: {unreadable}", file=sys.stderr)
-        projects = (REPO_ROOT / "LeanPool" / "projects.yml").read_text(encoding="utf-8")
         return (
-            prior_art.render([], {}, projects, unreadable)
+            f"**The Mathlib search did not run:** {unreadable}."
             + "\n\n### Tau Ceti comparison\n\n"
             + f"_Not searched: {unreadable}. Tau Ceti prior art is unchecked._"
+            + "\n\n### Pool comparison\n\n"
+            + "_Pool comparison is unchecked; no complete current registry is available._"
         )
     claims = prior_art.new_claims(head_text, base_text)
     hits, unavailable = prior_art.search_mathlib(claims)
