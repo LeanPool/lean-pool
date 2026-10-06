@@ -8,6 +8,11 @@ module
 
 public import LeanPool.EscauriazaSereginSverak.Main.LadyzhenskayaProdiSerrin
 
+/-!
+# Ladyzhenskaya–Prodi–Serrin regularity
+
+-/
+
 public section
 
 open MeasureTheory Set Filter

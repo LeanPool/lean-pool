@@ -8,6 +8,11 @@ module
 
 public import LeanPool.EscauriazaSereginSverak.Main.EssL5Unique
 
+/-!
+# Endpoint integrability and uniqueness
+
+-/
+
 public section
 
 open MeasureTheory Set Filter

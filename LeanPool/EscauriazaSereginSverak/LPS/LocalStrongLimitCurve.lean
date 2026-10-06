@@ -163,7 +163,7 @@ theorem lps_kernel_limit_curve (hab : a < b)
     have hmono : ∀ {g : Vec3 × ℝ → ℝ}, MemLp g 2 (volume.restrict (vlSlab a b)) →
         MemLp g 2 (volume.restrict (vlSlab s t)) := fun hg =>
       hg.mono_measure (Measure.restrict_mono hsub le_rfl)
-    have hsl : ∀ {g h : ℕ → Vec3 × ℝ → ℝ} {gl : Vec3 × ℝ → ℝ}, 
+    have hsl : ∀ {g h : ℕ → Vec3 × ℝ → ℝ} {gl : Vec3 × ℝ → ℝ},
         (∀ n, MemLp (g n) 2 (volume.restrict (vlSlab a b))) →
         MemLp gl 2 (volume.restrict (vlSlab a b)) →
         Tendsto (fun n => ∫ z in vlSlab a b, (g n z - gl z) ^ 2) atTop (𝓝 0) →

@@ -763,5 +763,5 @@ theorem lps_slice_relative_bound_finite_uniform {s : ℝ} (hs : 3 < s)
       exact add_le_add
         (mul_le_mul_of_nonneg_left hD2 (by norm_num))
         (mul_le_mul_of_nonneg_left hW2 (by positivity))
-  
+
 end ESS

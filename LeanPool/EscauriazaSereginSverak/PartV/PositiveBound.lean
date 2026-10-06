@@ -24,7 +24,7 @@ may end at the terminal time. Far from the origin the tails of |u|³ and of
 |p|^{3/2} for the canonical pressure of `thm:assoc-pressure` make the
 normalized energy small, and `pv_epsilon_bound` gives the bound C / R. On the
 bounded part `thm:ess-local` gives local bounds, and a finite subcover of the
-compact set B̄ × [δ, T] makes them uniform.
+compact set closure B × [δ, T] makes them uniform.
 -/
 
 public section

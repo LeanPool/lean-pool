@@ -8,6 +8,11 @@ module
 
 public import LeanPool.EscauriazaSereginSverak.Main.SerrinCriterion
 
+/-!
+# The Serrin regularity criterion
+
+-/
+
 public section
 
 open MeasureTheory Set Filter

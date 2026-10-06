@@ -17,6 +17,11 @@ public import LeanPool.CaffarelliKohnNirenberg.Statements.SpatialGradientSq
 public import Mathlib.MeasureTheory.Integral.Bochner.Set
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 
+/-!
+# The Gaussian Carleman inequality
+
+-/
+
 public section
 
 open MeasureTheory Set

@@ -8,6 +8,12 @@ module
 
 public import LeanPool.EscauriazaSereginSverak.Main.EssGlobal
 
+/-!
+# Global endpoint regularity
+
+The public theorem exposes the completed endpoint regularity result.
+-/
+
 public section
 
 open MeasureTheory Set Filter

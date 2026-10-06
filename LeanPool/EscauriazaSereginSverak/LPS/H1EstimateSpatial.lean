@@ -484,7 +484,7 @@ theorem lps_h1_gradient_interpolation
           eLpNorm Du 2 volume ^ θ₀ * eLpNorm D2u 2 volume ^ θ₁ := by
       simp [Finset.sum_const, Finset.card_univ, Fintype.card_fin]
       ring
-  
+
 
 private theorem lps_h1_young {θ : ℝ} (hθ0 : 0 < θ) (hθ1 : θ < 1) :
     ∃ C : ℝ, 0 ≤ C ∧ ∀ {A B D : ℝ}, 0 ≤ A → 0 ≤ B → 0 ≤ D →

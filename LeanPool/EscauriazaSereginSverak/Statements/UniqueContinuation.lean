@@ -18,6 +18,11 @@ public import LeanPool.CaffarelliKohnNirenberg.Statements.SpatialGradientSq
 public import Mathlib.MeasureTheory.Integral.Bochner.Set
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 
+/-!
+# Spatial unique continuation
+
+-/
+
 public section
 
 open MeasureTheory Set

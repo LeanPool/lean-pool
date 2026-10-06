@@ -9,6 +9,12 @@ module
 public import LeanPool.EscauriazaSereginSverak.Main.EssLocal
 public import LeanPool.CaffarelliKohnNirenberg.Statements.TimePartial
 
+/-!
+# Local endpoint regularity
+
+The public theorem exposes the completed endpoint regularity result.
+-/
+
 public section
 
 open MeasureTheory Set Filter

@@ -8,6 +8,11 @@ module
 
 public import LeanPool.EscauriazaSereginSverak.Main.EssSmooth
 
+/-!
+# Smoothness from endpoint velocity control
+
+-/
+
 public section
 
 open MeasureTheory Set Filter

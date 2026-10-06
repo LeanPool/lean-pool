@@ -9,6 +9,11 @@ module
 public import LeanPool.CaffarelliKohnNirenberg.Statements.SpaceTimeTestFunction
 public import LeanPool.EscauriazaSereginSverak.Linear.CarlemanHalfSpaceProof
 
+/-!
+# Assembly of the half-space Carleman inequality
+
+-/
+
 public section
 
 open MeasureTheory Set

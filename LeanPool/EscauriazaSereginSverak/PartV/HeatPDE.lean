@@ -144,7 +144,7 @@ theorem heatConvVec3_component_spatialLaplacian_input
       heatConv t (CKN.spatialLaplacian (fun y => b y i)) x := by
   simpa [heatConvVec3] using
     heatConv_spatialLaplacian_input (hb i) (hbc i) ht x
-  
+
 
 end ESS
 
