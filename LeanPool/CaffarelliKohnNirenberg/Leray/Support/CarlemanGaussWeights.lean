@@ -29,7 +29,8 @@ noncomputable section
 
 namespace CKN
 
-/-- The time factor in the Gaussian weight from `prop:carleman-gauss` of the Escauriaza–Seregin–Šverák manuscript. -/
+/-- The time factor in the Gaussian weight from `prop:carleman-gauss` of the
+Escauriaza–Seregin–Šverák manuscript. -/
 @[expose]
 def gaussCarlemanTimeWeight (t : ℝ) : ℝ := t * Real.exp ((1 - t) / 3)
 
@@ -186,7 +187,8 @@ theorem gaussTimeRatio_sq_bounds {t : ℝ} (ht0 : 0 < t) (ht2 : t < 2) :
   have hhi : Real.exp (-2 * r) ≤ Real.exp (2 / 3 : ℝ) := by
     apply (Real.exp_le_exp).2
     linarith only [hrlo]
-  rw [show t / (t * Real.exp ((1 - t) / 3)) = t / (t * Real.exp r) by rw [show (1 - t) / 3 = r by rfl]]
+  rw [show t / (t * Real.exp ((1 - t) / 3)) = t / (t * Real.exp r) by
+    rw [show (1 - t) / 3 = r by rfl]]
   rw [hratio, hsquare]
   exact ⟨hlo, hhi⟩
 

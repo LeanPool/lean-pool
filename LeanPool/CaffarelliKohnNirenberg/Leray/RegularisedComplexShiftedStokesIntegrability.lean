@@ -174,7 +174,8 @@ theorem regularisedComplexShiftedStokesIntegrand_intervalIntegrable
     filter_upwards [ae_restrict_mem measurableSet_Ioc] with τ hτ
     have hτpos : 0 < τ := hτ.1
     by_cases h : 0 < τ ∧ τ < t
-    · simp [regularisedComplexShiftedStokesIntegrand, h]
+    · simp only [regularisedComplexShiftedStokesIntegrand, h, and_self, ↓reduceDIte,
+      ge_iff_le]
       calc
         ‖stokesL2Operator h.1 (F (t - τ))‖ ≤
             (1 / Real.sqrt (2 * Real.exp 1 * τ)) * ‖F (t - τ)‖ :=
@@ -193,7 +194,8 @@ theorem regularisedComplexShiftedStokesIntegrand_intervalIntegrable
           rw [hsqrtKernel]
           dsimp [B]
           ring
-    · simp [regularisedComplexShiftedStokesIntegrand, h]
+    · simp only [regularisedComplexShiftedStokesIntegrand, h, ↓reduceDIte, norm_zero,
+      ge_iff_le]
       exact mul_nonneg hB (Real.rpow_nonneg hτpos.le _)
   have hmajorant : Integrable
       (fun τ : ℝ => B * τ ^ (-(2 : ℝ)⁻¹))

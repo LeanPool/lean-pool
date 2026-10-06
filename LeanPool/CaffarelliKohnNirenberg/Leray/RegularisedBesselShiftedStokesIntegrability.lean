@@ -172,7 +172,8 @@ theorem regularisedBesselShiftedStokesIntegrand_intervalIntegrable
     filter_upwards [ae_restrict_mem measurableSet_Ioc] with τ hτ
     have hτpos : 0 < τ := hτ.1
     by_cases h : 0 < τ ∧ τ < t
-    · simp [regularisedBesselShiftedStokesIntegrand, h]
+    · simp only [regularisedBesselShiftedStokesIntegrand, h, and_self, ↓reduceDIte,
+      ge_iff_le]
       calc
         ‖regularisedBesselStokesOperator h.1 k (F (t - τ))‖ ≤
             (1 / Real.sqrt (2 * Real.exp 1 * τ)) * ‖F (t - τ)‖ :=
@@ -191,7 +192,8 @@ theorem regularisedBesselShiftedStokesIntegrand_intervalIntegrable
           rw [hsqrtKernel]
           dsimp [B]
           ring
-    · simp [regularisedBesselShiftedStokesIntegrand, h]
+    · simp only [regularisedBesselShiftedStokesIntegrand, h, ↓reduceDIte, norm_zero,
+      ge_iff_le]
       exact mul_nonneg hB (Real.rpow_nonneg hτpos.le _)
   have hmajorant : Integrable
       (fun τ : ℝ => B * τ ^ (-(2 : ℝ)⁻¹))

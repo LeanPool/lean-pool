@@ -12,7 +12,8 @@ public import LeanPool.CaffarelliKohnNirenberg.Leray.Support.VorticitySobolevSmo
 /-!
 # Smooth Sobolev inequalities on three-dimensional space
 
-The whole-space estimates used in `lem:vorticity-products` of the Escauriaza–Seregin–Šverák manuscript.
+The whole-space estimates used in `lem:vorticity-products` of the
+Escauriaza–Seregin–Šverák manuscript.
 -/
 
 public section

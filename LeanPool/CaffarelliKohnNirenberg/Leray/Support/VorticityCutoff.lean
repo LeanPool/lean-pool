@@ -14,7 +14,8 @@ public import Mathlib.Analysis.SpecialFunctions.SmoothTransition
 
 Spatial cutoffs between two concentric Euclidean balls and time cutoffs vanishing near the bottom
 of a time interval, with uniform bounds for their derivatives. The bounds depend only on the radii
-and on the time collar, which makes the constants of `thm:vorticity-regularity` of the Escauriaza–Seregin–Šverák manuscript independent of
+and on the time collar, which makes the constants of `thm:vorticity-regularity`
+of the Escauriaza–Seregin–Šverák manuscript independent of
 the centre of the cylinder.
 -/
 

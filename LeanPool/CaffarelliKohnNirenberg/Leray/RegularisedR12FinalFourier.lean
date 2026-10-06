@@ -239,7 +239,8 @@ theorem regR12_weighted_eLpNorm_one_le {E : Type*} [NormedAddCommGroup E] [Norme
           have hwc : Continuous fun ξ : L2Vec3 =>
               (((1 + ‖ξ‖ ^ 2) ^ (-2 : ℝ) : ℝ) : ℂ) :=
             Complex.continuous_ofReal.comp ((continuous_const.add
-              (continuous_norm.pow 2)).rpow_const fun ξ => Or.inl (add_pos_of_pos_of_nonneg one_pos (sq_nonneg _)).ne')
+               (continuous_norm.pow 2)).rpow_const fun ξ =>
+                 Or.inl (add_pos_of_pos_of_nonneg one_pos (sq_nonneg _)).ne')
           exact hM.smul (hwc.aestronglyMeasurable.smul hG)) hpt
     _ ≤ eLpNorm (fun ξ => C * regR12Kernel ξ) 2 volume * eLpNorm G 2 volume :=
         eLpNorm_smul_le_mul_eLpNorm (p := 2) (q := 2) (r := 1)

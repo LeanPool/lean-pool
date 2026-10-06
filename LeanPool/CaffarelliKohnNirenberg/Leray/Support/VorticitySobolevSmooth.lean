@@ -17,7 +17,8 @@ public import LeanPool.CaffarelliKohnNirenberg.Foundation.Parabolic.Vec3Norm
 For a smooth function on space, the value at every point of a closed ball is controlled by the
 `L²` norms of the function and of its first and second coordinate derivatives on a larger open
 ball. This is the three-dimensional embedding of order two used for the pointwise bounds of
-`thm:vorticity-regularity` of the Escauriaza–Seregin–Šverák manuscript: a cutoff reduces it to the whole-space estimate
+`thm:vorticity-regularity` of the Escauriaza–Seregin–Šverák manuscript: a
+cutoff reduces it to the whole-space estimate
 CKN.smooth_global_linf_uniform, and the first derivatives of the cutoff product are placed in
 `L⁶` by CKN.sobolev_L6_global.
 -/

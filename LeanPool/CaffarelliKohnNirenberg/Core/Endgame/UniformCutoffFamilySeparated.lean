@@ -67,7 +67,7 @@ theorem spatialPartial_separatedProduct {g : Vec3 → ℝ} (h : ℝ → ℝ)
       ((h w.2) • (fderiv ℝ g w.1)) w.1 :=
     (hg.differentiable (by simp)).differentiableAt.hasFDerivAt.mul_const (h w.2)
   unfold spatialPartial
-  show (fderiv ℝ (fun x : Vec3 => g x * h w.2) w.1) (basisVec i)
+  change (fderiv ℝ (fun x : Vec3 => g x * h w.2) w.1) (basisVec i)
       = spatialDeriv g i w.1 * h w.2
   rw [hfd.fderiv, smul_apply, smul_eq_mul]
   unfold spatialDeriv
@@ -82,7 +82,7 @@ theorem timePartial_separatedProduct (g : Vec3 → ℝ) {h : ℝ → ℝ}
       ((g w.1) • (fderiv ℝ h w.2)) w.2 :=
     (hh.differentiable (by simp)).differentiableAt.hasFDerivAt.const_mul (g w.1)
   unfold timePartial
-  show (fderiv ℝ (fun s : ℝ => g w.1 * h s) w.2) 1 = g w.1 * deriv h w.2
+  change (fderiv ℝ (fun s : ℝ => g w.1 * h s) w.2) 1 = g w.1 * deriv h w.2
   rw [hfd.fderiv, smul_apply, smul_eq_mul, fderiv_apply_one_eq_deriv]
 
 /-- The second spatial partial derivative of a separated product is the product

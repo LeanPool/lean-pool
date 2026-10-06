@@ -13,7 +13,8 @@ public import Mathlib.Analysis.Calculus.ContDiff.Operations
 /-!
 # Derivatives of the Gaussian Carleman phase
 
-The calculations below specialize `eq:carleman-commutator` of the Escauriaza–Seregin–Šverák manuscript to the phase in
+The calculations below specialize `eq:carleman-commutator` of the
+Escauriaza–Seregin–Šverák manuscript to the phase in
 `prop:carleman-gauss` of the Escauriaza–Seregin–Šverák manuscript.
 -/
 

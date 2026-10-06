@@ -10,7 +10,8 @@ public import LeanPool.CaffarelliKohnNirenberg.Leray.Support.CarlemanCoreSecond
 /-!
 # Conjugation of the backward heat operator
 
-The pointwise change of variables used in `prop:carleman-gauss` of the Escauriaza–Seregin–Šverák manuscript and
+The pointwise change of variables used in `prop:carleman-gauss` of the
+Escauriaza–Seregin–Šverák manuscript and
 `prop:carleman-halfspace` of the Escauriaza–Seregin–Šverák manuscript.
 -/
 

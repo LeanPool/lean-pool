@@ -34,7 +34,8 @@ def regularisedBesselToDistrCLM (s : ℝ) :
       𝓢'(L2Vec3, ComplexVec3) :=
   (TemperedDistribution.besselPotential L2Vec3 ComplexVec3 (-s)).comp
     ((MeasureTheory.Lp.toTemperedDistributionCLM ComplexVec3 volume 2).comp
-      (BesselPotentialSpace.toLpₗᵢ L2Vec3 ComplexVec3 s 2).toContinuousLinearEquiv.toContinuousLinearMap)
+      (ContinuousLinearEquiv.toContinuousLinearMap
+        (BesselPotentialSpace.toLpₗᵢ L2Vec3 ComplexVec3 s 2).toContinuousLinearEquiv))
 
 @[simp]
 theorem regularisedBesselToDistrCLM_apply (s : ℝ)
