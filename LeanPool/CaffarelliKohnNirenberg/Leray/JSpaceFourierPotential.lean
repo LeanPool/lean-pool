@@ -387,15 +387,18 @@ theorem regularizedPotentialCurlComponentLp_toDist
         TemperedDistribution.fourierMultiplierCLM ℂ (regularizedDerivativeEntry δ 1 2)
           (weakFieldFourierComponent ha 1 : 𝓢'(L2Vec3, ℂ))) := by
   fin_cases i
-  · simp [regularizedPotentialCurlComponentLp]
+  · simp only [regularizedPotentialCurlComponentLp, Fin.zero_eta, Fin.isValue,
+      ↓reduceIte]
     rw [toTemperedDistribution_sub_l2,
       regularizedPotentialDerivativeComponentLp_toDist_two,
       regularizedPotentialDerivativeComponentLp_toDist_one]
-  · simp [regularizedPotentialCurlComponentLp]
+  · simp only [regularizedPotentialCurlComponentLp, Fin.mk_one, Fin.isValue,
+      one_ne_zero, ↓reduceIte]
     rw [toTemperedDistribution_sub_l2,
       regularizedPotentialDerivativeComponentLp_toDist_two,
       regularizedPotentialDerivativeComponentLp_toDist_zero]
-  · simp [regularizedPotentialCurlComponentLp]
+  · simp only [regularizedPotentialCurlComponentLp, Fin.reduceFinMk, Fin.isValue,
+      Fin.reduceEq, ↓reduceIte]
     rw [toTemperedDistribution_sub_l2,
       regularizedPotentialDerivativeComponentLp_toDist_zero,
       regularizedPotentialDerivativeComponentLp_toDist_one]

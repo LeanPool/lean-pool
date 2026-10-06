@@ -285,9 +285,11 @@ theorem realPart_isWeakDivFree_of_fourierOrthogonal
         realPartValue (v x) i * ψ.partialDeriv i (l2Vec3Equiv x)) =
         Complex.re (inner ℂ (v x) (gS x)) := by
     rw [PiLp.inner_apply]
-    simp [gS, weakTestGradientSchwartz_apply, realPartValue,
-      realPartValueLinear, RCLike.inner_apply,
-      Complex.mul_re, Complex.conj_re, Complex.conj_im]
+    simp only [realPartValue, realPartValueLinear, LinearMap.mkContinuous_apply,
+      LinearMap.coe_mk, AddHom.coe_mk, weakTestGradientSchwartz_apply,
+      RCLike.inner_apply, Complex.re_sum, Complex.mul_re, Complex.ofReal_re,
+      Complex.conj_re, Complex.ofReal_im, Complex.conj_im, mul_neg, zero_mul,
+      neg_zero, sub_zero, gS]
     apply Finset.sum_congr rfl
     intro i hi
     ring

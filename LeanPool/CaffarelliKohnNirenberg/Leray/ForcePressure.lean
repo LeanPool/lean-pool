@@ -186,7 +186,8 @@ theorem exists_forcePressure (f : ParabolicPoint → Vec3)
   obtain ⟨F, hF, hFf⟩ := forcePressure_exists_modification hf
   refine ⟨forcePressureOfField F, forcePressureOfField_stronglyMeasurable hF, ?_⟩
   intro T hT
-  have hFmem : MemLp F 2 ((volume : Measure Vec3).prod ((volume : Measure ℝ).restrict (Ioo 0 T))) := by
+  have hFmem : MemLp F 2
+      ((volume : Measure Vec3).prod ((volume : Measure ℝ).restrict (Ioo 0 T))) := by
     have h := hf T hT
     rw [forcePressure_slab_measure_eq] at h
     exact h.ae_eq ((hFf T hT).mono fun z hz => hz.symm)

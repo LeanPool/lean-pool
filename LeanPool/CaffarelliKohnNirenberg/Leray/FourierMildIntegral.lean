@@ -191,7 +191,7 @@ theorem mildShiftedStokesIntegral_continuousAt
     filter_upwards [] with τ
     intro hτ
     by_cases h : 0 < τ ∧ τ < t
-    · simp [mildShiftedStokesIntegrand, h]
+    · simp only [mildShiftedStokesIntegrand, h, and_self, ↓reduceDIte]
       have hkernel := realStokesOperator_norm_le h.1 (F (t - τ))
       calc
         ‖realStokesOperator h.1 (F (t - τ))‖ ≤
@@ -202,7 +202,7 @@ theorem mildShiftedStokesIntegral_continuousAt
           rw [mildStokesKernel_rpow_identity h.1]
           dsimp [B]
           ring
-    · simp [mildShiftedStokesIntegrand, h]
+    · simp only [mildShiftedStokesIntegrand, h, ↓reduceDIte, norm_zero]
       rw [Set.uIoc_of_le hT] at hτ
       simpa [norm_zero] using (mul_nonneg hB (Real.rpow_nonneg hτ.1.le _))
   · exact hboundInt
@@ -241,7 +241,7 @@ theorem mildShiftedStokesIntegrand_intervalIntegrable
     filter_upwards [ae_restrict_mem measurableSet_Ioc] with τ hτ
     have hτpos : 0 < τ := hτ.1
     by_cases h : 0 < τ ∧ τ < t
-    · simp [mildShiftedStokesIntegrand, h]
+    · simp only [mildShiftedStokesIntegrand, h, ge_iff_le]
       calc
         ‖realStokesOperator h.1 (F (t - τ))‖ ≤
             (1 / Real.sqrt (2 * Real.exp 1 * τ)) * ‖F (t - τ)‖ :=
@@ -252,7 +252,8 @@ theorem mildShiftedStokesIntegrand_intervalIntegrable
           rw [mildStokesKernel_rpow_identity hτpos]
           dsimp [B]
           ring
-    · simp [mildShiftedStokesIntegrand, h, norm_zero]
+    · simp only [mildShiftedStokesIntegrand, h, ↓reduceDIte, norm_zero,
+        ge_iff_le]
       exact mul_nonneg hB (Real.rpow_nonneg hτpos.le _)
   have hg : Integrable (fun τ : ℝ => B * τ ^ (-(2 : ℝ)⁻¹))
       (volume.restrict (Set.Ioc 0 T)) :=

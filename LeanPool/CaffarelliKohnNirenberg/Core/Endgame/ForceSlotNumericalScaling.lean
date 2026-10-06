@@ -101,7 +101,8 @@ theorem force_slot_morrey_scaling_le {a P τ : ℝ} (ha : 0 < a) (hP : 0 < P)
     unfold morreyCell
     rw [force_slot_power_integral_scaling ha, hJac,
       ENNReal.mul_rpow_of_nonneg _ _ (one_div_nonneg.mpr hP.le), ← ENNReal.rpow_mul,
-      ENNReal.ofReal_mul ha.le, ENNReal.mul_rpow_of_ne_top ENNReal.ofReal_ne_top ENNReal.ofReal_ne_top]
+      ENNReal.ofReal_mul ha.le,
+      ENNReal.mul_rpow_of_ne_top ENNReal.ofReal_ne_top ENNReal.ofReal_ne_top]
     have hexp : (-5 : ℝ) * (1 / P) = -5 / τ + -(5 * (1 - P / τ) / P) := by
       field_simp [hP.ne']
       ring
@@ -183,7 +184,8 @@ theorem force_slot_subcarrier_scaling_le
     (force_slot_indicator_scaling_le a c P τ K ha hP z₀ B f hN)
   intro w
   by_cases hw : w ∈ Q
-  · rw [indicator_of_mem hw, indicator_of_mem (show w ∈ scalingParabolic a z₀ ⁻¹' B from hQB ⟨w, hw, rfl⟩)]
+  · rw [indicator_of_mem hw,
+      indicator_of_mem (show w ∈ scalingParabolic a z₀ ⁻¹' B from hQB ⟨w, hw, rfl⟩)]
   · rw [indicator_of_notMem hw, abs_zero]
     exact abs_nonneg _
 

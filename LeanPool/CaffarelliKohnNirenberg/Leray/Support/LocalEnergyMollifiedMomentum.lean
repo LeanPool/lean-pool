@@ -123,7 +123,7 @@ private theorem mollifierVectorTest_contDiff (z : Vec3 × ℝ) (i : Fin 3)
   intro j
   by_cases hji : j = i
   · subst j
-    simp [mollifierVectorTest, translatedMollifier]
+    simp only [mollifierVectorTest, translatedMollifier, Pi.single_eq_same]
     exact translatedMollifier_contDiff z hδ
   · simpa [mollifierVectorTest, hji] using
       (contDiff_const : ContDiff ℝ (⊤ : ℕ∞) (fun _ : Vec3 × ℝ => (0 : ℝ)))
@@ -385,7 +385,8 @@ theorem spaceTimeMollify_momentum_fderiv_of_weak
             ∂(volume : Measure (Vec3 × ℝ)))
           - (∫ y, p y * energyDirDeriv (translatedMollifier z δ hδ)
               (energySpatialDir i) y ∂(volume : Measure (Vec3 × ℝ))) := by
-    simp only [energyDirDeriv] at hpInt hFInt hGInt hFsumInt hGsumInt hNegUInt hNegUSubFInt hPlusGInt
+    simp only [energyDirDeriv] at hpInt hFInt hGInt hFsumInt hGsumInt
+    simp only [energyDirDeriv] at hNegUInt hNegUSubFInt hPlusGInt
     simp only [energyDirDeriv]
     rw [integral_sub hPlusGInt hpInt,
       integral_add hNegUSubFInt hGsumInt,
