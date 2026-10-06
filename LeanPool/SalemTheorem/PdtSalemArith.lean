@@ -5,7 +5,8 @@ Authors: Stephanie Alexander
 -/
 module
 public import Mathlib.Analysis.Complex.Polynomial.Basic
-public import Mathlib.Tactic
+public import Mathlib.FieldTheory.Minpoly.IsIntegrallyClosed
+public import Mathlib.RingTheory.Polynomial.RationalRoot
 public import LeanPool.SalemTheorem.PdtSalemCircle
 
 /-!
