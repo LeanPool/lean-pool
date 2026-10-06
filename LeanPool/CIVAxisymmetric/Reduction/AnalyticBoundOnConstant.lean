@@ -40,7 +40,7 @@ private lemma spatialPartial_iterate_const (c : ℝ) (j : Fin 3) (m : ℕ) :
     rw [ih]
     by_cases hm : m = 0
     · subst hm
-      simp
+      simp only [↓reduceIte, zero_add, one_ne_zero]
       ext z; exact spatialPartial_const_eq_zero c j z
     · have hzero : spatialPartial (fun _ : ParabolicPoint => (0 : ℝ)) j =
         fun _ : ParabolicPoint => (0 : ℝ) := by
@@ -119,7 +119,8 @@ theorem analyticBoundOn_const {c : Vec3} {M R' a : ℝ} (hM : ∀ i, |c i| ≤ M
       ext i
       fin_cases i <;> assumption
     rw [hα_eq]
-    simp
+    simp only [add_zero, CharP.cast_eq_zero, neg_zero, Real.rpow_zero, mul_one,
+      Nat.factorial_zero, Nat.cast_one, ge_iff_le]
     rw [multiPartial_const_zero_order (c := c i) (x, t)]
     have hMi : |c i| ≤ M := hM i
     simp [hMi]

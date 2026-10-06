@@ -97,12 +97,16 @@ theorem rotZ_sub_vec (φ : ℝ) (x y : Vec3) : rotZ φ (x - y) = rotZ φ x - rot
 
 theorem continuous_rotZ (φ : ℝ) : Continuous (rotZ φ) := by
   refine continuous_pi fun i => ?_
-  fin_cases i <;> simp [rotZ] <;> fun_prop
+  fin_cases i <;>
+    simp only [rotZ] <;>
+    fun_prop
 
 /-- Joint continuity of the rotation in the angle and the point. -/
 theorem continuous_rotZ_uncurry : Continuous fun p : ℝ × Vec3 => rotZ p.1 p.2 := by
   refine continuous_pi fun i => ?_
-  fin_cases i <;> simp [rotZ] <;> fun_prop
+  fin_cases i <;>
+    simp only [rotZ] <;>
+    fun_prop
 
 /-- The rotation `rotZ φ` as a continuous linear automorphism of `Vec3`, with inverse
 `rotZ (-φ)`. -/
@@ -153,7 +157,7 @@ theorem rotZ_mem_vec3Ball_zero_iff (φ r : ℝ) (x : Vec3) :
 
 theorem rotZ_mem_unitCylinder_iff (φ : ℝ) (x : Vec3) (t : ℝ) :
     (rotZ φ x, t) ∈ unitCylinder ↔ (x, t) ∈ unitCylinder := by
-  show (rotZ φ x ∈ vec3Ball 0 1 ∧ t ∈ Ioo (-1) 0) ↔ (x ∈ vec3Ball 0 1 ∧ t ∈ Ioo (-1) 0)
+  change (rotZ φ x ∈ vec3Ball 0 1 ∧ t ∈ Ioo (-1) 0) ↔ (x ∈ vec3Ball 0 1 ∧ t ∈ Ioo (-1) 0)
   rw [rotZ_mem_vec3Ball_zero_iff]
 
 /-- The unit cylinder is invariant under every rotation about the axis. -/
@@ -169,7 +173,7 @@ theorem rotField_apply (φ : ℝ) (u : ParabolicPoint → Vec3) (z : ParabolicPo
 theorem rotField_zero (u : ParabolicPoint → Vec3) : rotField 0 u = u := by
   funext z
   obtain ⟨x, t⟩ := z
-  show rotZ 0 (u (rotZ (-0) x, t)) = u (x, t)
+  change rotZ 0 (u (rotZ (-0) x, t)) = u (x, t)
   rw [neg_zero, rotZ_zero_apply, rotZ_zero_apply]
 
 /-- The rotated fields compose according to the group law, `ℛ_φ ℛ_ψ = ℛ_{φ+ψ}`. -/
@@ -235,7 +239,7 @@ theorem angularMean_eq_of_forall_rotField_eq {u : ParabolicPoint → Vec3}
 theorem rotField_angularMean (ψ : ℝ) (u : ParabolicPoint → Vec3) :
     rotField ψ (angularMean u) = angularMean u := by
   funext z
-  show rotZ ψ ((2 * Real.pi)⁻¹ •
+  change rotZ ψ ((2 * Real.pi)⁻¹ •
       ∫ φ in (0 : ℝ)..(2 * Real.pi), rotField φ u (rotZ (-ψ) z.1, z.2)) =
     (2 * Real.pi)⁻¹ • ∫ φ in (0 : ℝ)..(2 * Real.pi), rotField φ u z
   rw [rotZ_smul, rotZ_intervalIntegral]

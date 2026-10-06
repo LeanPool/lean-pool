@@ -124,7 +124,7 @@ namespace CIV
 /-- A smooth product of finitely many smooth real functions, composed with coordinate
 projections, is smooth. -/
 theorem contDiff_finset_prod {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
-    {ι : Type*} [DecidableEq ι] {n : WithTop ℕ∞} (s : Finset ι) {f : ι → E → ℝ}
+    {ι : Type*} {n : WithTop ℕ∞} (s : Finset ι) {f : ι → E → ℝ}
     (hf : ∀ i ∈ s, ContDiff ℝ n (f i)) :
     ContDiff ℝ n (fun x => ∏ i ∈ s, f i x) := by
   classical
@@ -185,7 +185,7 @@ theorem kappaBump1D_eq_zero (R : ℝ) (hR : 0 < R) {t : ℝ} (ht : 2 * R ≤ |t|
 @[expose] def mollifierCutoff (m : ℕ) (R : ℝ) (x : Vec m) : ℝ := ∏ i : Fin m, kappaBump1D R (x i)
 
 /-- A finite product of real numbers each lying in `[0, 1]` itself lies in `[0, 1]`. -/
-theorem finset_prod_le_one_of_forall_mem_Icc {ι : Type*} [DecidableEq ι] (s : Finset ι)
+theorem finset_prod_le_one_of_forall_mem_Icc {ι : Type*} (s : Finset ι)
     {f : ι → ℝ} (hf : ∀ i ∈ s, 0 ≤ f i ∧ f i ≤ 1) : ∏ i ∈ s, f i ≤ 1 := by
   classical
   induction s using Finset.induction_on with

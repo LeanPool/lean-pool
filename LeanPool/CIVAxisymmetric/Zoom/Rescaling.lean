@@ -105,11 +105,11 @@ theorem continuous_zoomPoint (lam h zc : ℝ) :
     refine continuous_pi ?_
     intro i
     fin_cases i
-    · simp [meridional]
+    · simp only [meridional]
       exact Continuous.mul continuous_const (continuous_fst.comp continuous_fst)
-    · simp [meridional]
+    · simp only [meridional]
       exact continuous_const
-    · simp [meridional]
+    · simp only [meridional]
       refine Continuous.add continuous_const ?_
       exact Continuous.mul continuous_const (continuous_snd.comp continuous_fst)
   · -- time component: lam^2 * p.2

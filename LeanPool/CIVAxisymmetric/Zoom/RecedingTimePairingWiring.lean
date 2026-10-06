@@ -55,7 +55,7 @@ private theorem hasDerivAt_slice_snd_joint {F : (ℝ × ℝ) × ℝ → ℝ} {q 
   exact HasFDerivAt.comp_hasDerivAt_of_eq (hl := hF.hasFDerivAt) (hf := hline) (hy := rfl)
 
 /-- The `fderiv`-based time derivative `Gp`, valued via the basis vector `((0,0),1)`. -/
-@[expose] private noncomputable def zoomThetaTimeDeriv (lam h rc zc : ℝ) (u : ParabolicPoint → Vec3)
+private noncomputable def zoomThetaTimeDeriv (lam h rc zc : ℝ) (u : ParabolicPoint → Vec3)
     (q : (ℝ × ℝ) × ℝ) : ℝ :=
   fderiv ℝ (fun q' : (ℝ × ℝ) × ℝ => zoomTheta lam h rc zc u q') q ((0, 0), 1)
 

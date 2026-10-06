@@ -31,7 +31,7 @@ noncomputable section
 namespace CIV
 
 /-- The parabolic rescaling, read as a homeomorphism of the product `Vec3 × ℝ`. -/
-@[expose] private def scalingHomeomorph (μ : ℝ) (hμ : 0 < μ) (z₀ : ParabolicPoint) :
+private def scalingHomeomorph (μ : ℝ) (hμ : 0 < μ) (z₀ : ParabolicPoint) :
     (Vec3 × ℝ) ≃ₜ (Vec3 × ℝ) :=
   Homeomorph.prodCongr
     ((Homeomorph.smulOfNeZero μ hμ.ne').trans (Homeomorph.addLeft z₀.1))
@@ -72,7 +72,7 @@ theorem preimage_scalingParabolic_parabolicCylinder {μ : ℝ} (hμ : 0 < μ)
   have hμ2 : (0 : ℝ) < μ ^ 2 := pow_pos hμ 2
   ext z
   have hfst : (scalingParabolic μ z₀ z).1 - z₀.1 = μ • z.1 := by
-    show z₀.1 + μ • z.1 - z₀.1 = μ • z.1
+    change z₀.1 + μ • z.1 - z₀.1 = μ • z.1
     rw [add_sub_cancel_left]
   have hsnd : (scalingParabolic μ z₀ z).2 = z₀.2 + μ ^ 2 * z.2 := rfl
   rw [Set.mem_preimage, mem_parabolicCylinder_iff, mem_parabolicCylinder_iff, hfst, hsnd,

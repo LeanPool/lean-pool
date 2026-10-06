@@ -31,7 +31,7 @@ private theorem spatialPartial_congr_of_eqOn_spaceTimeSet' {v u : ParabolicPoint
     (h : ∀ w ∈ spaceTimeSet Ω I, v w = u w) {z : ParabolicPoint} (hz : z ∈ spaceTimeSet Ω I)
     (j : Fin 3) :
     spatialPartial v j z = spatialPartial u j z := by
-  show fderiv ℝ (fun y : Vec3 => v (y, z.2)) z.1 (basisVec j)
+  change fderiv ℝ (fun y : Vec3 => v (y, z.2)) z.1 (basisVec j)
     = fderiv ℝ (fun y : Vec3 => u (y, z.2)) z.1 (basisVec j)
   have _ := hI.mem_nhds hz.2
   have hev : (fun y : Vec3 => v (y, z.2)) =ᶠ[nhds z.1] (fun y : Vec3 => u (y, z.2)) := by

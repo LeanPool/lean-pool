@@ -64,14 +64,14 @@ theorem rescaled_smallness_integrand {μ q : ℝ} (hμ : 0 < μ) (hq : 0 ≤ q)
   have hμ0 : (0 : ℝ) ≤ μ := hμ.le
   have hvel : vec3EuclideanNorm (rescaleVelocity μ z₀ u z) =
       μ * vec3EuclideanNorm (u (scalingParabolic μ z₀ z)) := by
-    show vec3EuclideanNorm (μ • u (scalingParabolic μ z₀ z)) = _
+    change vec3EuclideanNorm (μ • u (scalingParabolic μ z₀ z)) = _
     rw [vec3EuclideanNorm_smul, abs_of_pos hμ]
   have hpre : |rescalePressure μ z₀ p z| = μ ^ 2 * |p (scalingParabolic μ z₀ z)| := by
-    show |μ ^ 2 * p (scalingParabolic μ z₀ z)| = _
+    change |μ ^ 2 * p (scalingParabolic μ z₀ z)| = _
     rw [abs_mul, abs_of_pos (pow_pos hμ 2)]
   have hfor : vec3EuclideanNorm (rescaleForce μ z₀ f z) =
       μ ^ 3 * vec3EuclideanNorm (f (scalingParabolic μ z₀ z)) := by
-    show vec3EuclideanNorm (μ ^ 3 • f (scalingParabolic μ z₀ z)) = _
+    change vec3EuclideanNorm (μ ^ 3 • f (scalingParabolic μ z₀ z)) = _
     rw [vec3EuclideanNorm_smul, abs_of_pos (pow_pos hμ 3)]
   have h32 : (μ ^ 2) ^ (3 / 2 : ℝ) = μ ^ (3 : ℝ) := by
     rw [← Real.rpow_natCast μ 2, ← Real.rpow_mul hμ0]
@@ -122,7 +122,7 @@ theorem ae_norm_le_of_small_L3_cylinder (q : ℝ) (hq : 5 / 2 < q) :
       (isSuitableWeakSolutionIntegrable_of_isSuitableWeakSolution hsol) z₀ hμ)
   have hfst : ∀ z : ParabolicPoint, (scalingParabolic μ z₀ z).1 - z₀.1 = μ • z.1 := by
     intro z
-    show z₀.1 + μ • z.1 - z₀.1 = μ • z.1
+    change z₀.1 + μ • z.1 - z₀.1 = μ • z.1
     rw [add_sub_cancel_left]
   have hsnd : ∀ z : ParabolicPoint, (scalingParabolic μ z₀ z).2 = z₀.2 + μ ^ 2 * z.2 :=
     fun _ => rfl
@@ -137,10 +137,10 @@ theorem ae_norm_le_of_small_L3_cylinder (q : ℝ) (hq : 5 / 2 < q) :
     refine hclo ?_
     rw [closure_parabolicCylinder hμ]
     refine ⟨?_, ?_⟩
-    · show vec3EuclideanNorm ((scalingParabolic μ z₀ z).1 - z₀.1) ≤ μ
+    · change vec3EuclideanNorm ((scalingParabolic μ z₀ z).1 - z₀.1) ≤ μ
       rw [hfst z, vec3EuclideanNorm_smul, abs_of_pos hμ]
       nlinarith only [hz1, hμ, vec3EuclideanNorm_nonneg z.1]
-    · show (scalingParabolic μ z₀ z).2 ∈ Icc (z₀.2 - μ ^ 2) z₀.2
+    · change (scalingParabolic μ z₀ z).2 ∈ Icc (z₀.2 - μ ^ 2) z₀.2
       rw [hsnd z]
       have hμ2 : (0 : ℝ) < μ ^ 2 := pow_pos hμ 2
       have h1 : (-1 : ℝ) ≤ z.2 := by
@@ -188,7 +188,7 @@ theorem ae_norm_le_of_small_L3_cylinder (q : ℝ) (hq : 5 / 2 < q) :
       exact (hbdd z (subset_closure hzmem)).trans (by linarith only [hKc, hBK])
     rw [show vec3EuclideanNorm (rescaleVelocity μ z₀ u z) =
         μ * vec3EuclideanNorm (u (scalingParabolic μ z₀ z)) by
-      show vec3EuclideanNorm (μ • u (scalingParabolic μ z₀ z)) = _
+      change vec3EuclideanNorm (μ • u (scalingParabolic μ z₀ z)) = _
       rw [vec3EuclideanNorm_smul, abs_of_pos hμ]] at h1
     rw [le_div_iff₀ hμ]
     linarith only [h1]
@@ -241,7 +241,7 @@ theorem bounded_of_small_L3_top (q : ℝ) (hq : 5 / 2 < q) :
     have hw1 : vec3EuclideanNorm (w.1 - x₀) < r / 2 := hw.1
     have hw2 : w.2 ∈ Ioo (-(r ^ 2) / 4) 0 := hw.2
     refine ⟨?_, ?_, ?_⟩
-    · show vec3EuclideanNorm (z.1 - x₀) < r
+    · change vec3EuclideanNorm (z.1 - x₀) < r
       have htri : vec3EuclideanNorm (z.1 - x₀) ≤
           vec3EuclideanNorm (z.1 - w.1) + vec3EuclideanNorm (w.1 - x₀) := by
         rw [show z.1 - x₀ = (z.1 - w.1) + (w.1 - x₀) by abel]

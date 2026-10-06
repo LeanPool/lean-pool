@@ -45,7 +45,6 @@ variable {m : ℕ}
 
 theorem setIntegral_restrict_eq_of_subset {g : ℝ → ℝ} {S I : Set ℝ} (hI : MeasurableSet I)
     (hSI : S ⊆ I) : ∫ s in S, g s ∂(volume.restrict I) = ∫ s in S, g s := by
-  show ∫ s, g s ∂((volume.restrict I).restrict S) = ∫ s, g s ∂(volume.restrict S)
   rw [Measure.restrict_restrict' hI, Set.inter_eq_left.mpr hSI]
 
 theorem intervalIntegral_restrict_eq_of_mem {g : ℝ → ℝ} {I : Set ℝ} (hI : IsOpen I)
@@ -56,7 +55,7 @@ theorem intervalIntegral_restrict_eq_of_mem {g : ℝ → ℝ} {I : Set ℝ} (hI 
   have hsub2 : Set.Ioc τ2 τ1 ⊆ I := (Ioc_subset_uIoc'.trans uIoc_subset_uIcc).trans hUIcc
   have h1 := setIntegral_restrict_eq_of_subset (g := g) hI.measurableSet hsub1
   have h2 := setIntegral_restrict_eq_of_subset (g := g) hI.measurableSet hsub2
-  show (∫ s in Set.Ioc τ1 τ2, g s ∂(volume.restrict I))
+  change (∫ s in Set.Ioc τ1 τ2, g s ∂(volume.restrict I))
       - ∫ s in Set.Ioc τ2 τ1, g s ∂(volume.restrict I)
       = (∫ s in Set.Ioc τ1 τ2, g s) - ∫ s in Set.Ioc τ2 τ1, g s
   rw [h1, h2]

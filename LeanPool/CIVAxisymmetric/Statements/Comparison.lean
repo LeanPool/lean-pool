@@ -37,7 +37,7 @@ theorem comparison (m d : ℕ) (hd : 1 ≤ d ∧ d ≤ m) (I : Set ℝ)
     (q : Vec m × ℝ → ℝ) (hq : IsLocallyBoundedOn m I q)
     (heq : IsDistributionalDriftDiffusion m d I B divB q) :
     ∀ᵐ τ₀ ∂(volume.restrict I), ∀ᵐ τ ∂(volume.restrict I), τ₀ < τ →
-      eLpNorm (fun x => q (x, τ)) ⊤ volume ≤ eLpNorm (fun x => q (x, τ₀)) ⊤ volume :=
-by exact CIV.Main.comparison m d hd I hI B divB hB q hq heq
+      eLpNorm (fun x => q (x, τ)) ⊤ volume ≤ eLpNorm (fun x => q (x, τ₀)) ⊤ volume := by
+  exact CIV.Main.comparison m d hd I hI B divB hB q hq heq
 
 end CIV

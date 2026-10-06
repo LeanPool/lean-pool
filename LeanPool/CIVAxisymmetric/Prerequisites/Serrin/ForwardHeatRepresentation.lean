@@ -74,7 +74,7 @@ theorem spatialSecondPartial_reflectTime {ζ : ParabolicPoint → ℝ} (i j : Fi
       reflectTime (CKN.spatialPartial ζ i) := by
     funext w
     exact spatialPartial_reflectTime i w
-  show CKN.spatialPartial (fun w => CKN.spatialPartial (reflectTime ζ) i w) j z = _
+  change CKN.spatialPartial (fun w => CKN.spatialPartial (reflectTime ζ) i w) j z = _
   rw [hcongr]
   exact spatialPartial_reflectTime j z
 

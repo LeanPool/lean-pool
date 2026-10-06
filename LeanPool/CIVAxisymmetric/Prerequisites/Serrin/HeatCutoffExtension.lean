@@ -14,7 +14,7 @@ public import LeanPool.CaffarelliKohnNirenberg.Foundation.Parabolic.Vec3Norm
 /-!
 # Extending the cutoff-times-slice product by zero
 
-For a window `B̄(x, ρ) × [s - ρ², s]` compactly contained in an open set `O` on which `w` is
+For a window `B_bar(x, ρ) × [s - ρ², s]` compactly contained in an open set `O` on which `w` is
 smooth, there is a globally smooth, compactly supported `ζ` agreeing with `serrinCutoff x s ρ · w`
 for every `z` with `z.2 ≤ s`. The construction multiplies `w` by an auxiliary cutoff equal to `1`
 on a slightly larger window, chosen (using a positive margin from the compactness of the window
@@ -199,19 +199,19 @@ theorem HB2b_cutoff_extension {w : ParabolicPoint → ℝ} {O : Set ParabolicPoi
           have h2 : CKN.timeCutoff s ρ Rtime z.2 = 1 :=
             CKN.timeCutoff_eq_one_on hρ.le hRtime ⟨hc2, hz2⟩
           rw [hκ0, h1, h2, one_mul]
-        show serrinCutoff x s ρ z * (κ z * w z) = serrinCutoff x s ρ z * w z
+        change serrinCutoff x s ρ z * (κ z * w z) = serrinCutoff x s ρ z * w z
         rw [hκ1, one_mul]
       · push Not at hc2
         have hz0 : serrinCutoff x s ρ z = 0 := by
           unfold serrinCutoff
           rw [(serrinTimeBump_support (s := s) hρ z.2).2.1 hc2.le, mul_zero]
-        show serrinCutoff x s ρ z * (κ z * w z) = serrinCutoff x s ρ z * w z
+        change serrinCutoff x s ρ z * (κ z * w z) = serrinCutoff x s ρ z * w z
         rw [hz0]; ring
     · push Not at hc1
       have hz0 : serrinCutoff x s ρ z = 0 := by
         unfold serrinCutoff
         rw [(serrinBallCutoff_support x hρ z.1).2.1 hc1, zero_mul]
-      show serrinCutoff x s ρ z * (κ z * w z) = serrinCutoff x s ρ z * w z
+      change serrinCutoff x s ρ z * (κ z * w z) = serrinCutoff x s ρ z * w z
       rw [hz0]; ring
 
 end CIV

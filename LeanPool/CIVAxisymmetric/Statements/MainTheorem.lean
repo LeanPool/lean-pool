@@ -50,7 +50,7 @@ theorem mainTheorem (q : ℝ)
     (C : ℝ) (hC : 0 < C) (hbounds : AnisotropicBounds C h (angularMean u))
     (hcore : ∀ t ∈ Ioo (-1 : ℝ) 0, ∃ ρ ∈ Ioo (0 : ℝ) 1,
       IsAxisymmetricOn u (spaceTimeSet (vec3Ball 0 ρ) {t})) :
-    IsAxisymmetricOn u unitCylinder ∧ BoundedNearOrigin u :=
-by exact CIV.Main.mainTheorem q u Du p f hsol henergy hu hp hf h hh hMf hfa C hC hbounds hcore
+    IsAxisymmetricOn u unitCylinder ∧ BoundedNearOrigin u := by
+  exact CIV.Main.mainTheorem q u Du p f hsol henergy hu hp hf h hh hMf hfa C hC hbounds hcore
 
 end CIV

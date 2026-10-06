@@ -139,7 +139,7 @@ theorem gkt_boundedNearOrigin_of_top_small (q : ℝ) (hq : 5 / 2 < q) :
     rintro ⟨x, t⟩ ⟨hx, ht⟩
     refine ⟨?_, ?_, ht.2⟩
     · have hx' : vec3EuclideanNorm (x - 0) < r := hx
-      show vec3EuclideanNorm (x - 0) < 1
+      change vec3EuclideanNorm (x - 0) < 1
       linarith only [hx', hr2]
     · have hr1 : r ^ 2 < 1 := by nlinarith only [hr, hr2]
       linarith only [ht.1, hr1]

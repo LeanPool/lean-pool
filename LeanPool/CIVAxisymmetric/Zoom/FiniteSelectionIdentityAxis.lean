@@ -42,10 +42,10 @@ theorem neg_t_mul_meridionalQuantity_selection_eq_of_axis {h : ℝ} {u : Parabol
   have hnegt_pos : 0 < -t := by linarith only [ht]
   have hzp_eq : zoomPoint lam h zc p = (meridional (0 : ℝ) zc, t) := by
     have hfst : (zoomPoint lam h zc p).1 = meridional (0 : ℝ) zc := by
-      show meridional (lam * p.1.1) (zc + lam ^ (1 - 2 * h) * p.1.2) = meridional (0 : ℝ) zc
+      change meridional (lam * p.1.1) (zc + lam ^ (1 - 2 * h) * p.1.2) = meridional (0 : ℝ) zc
       simp [hp_def]
     have hsnd : (zoomPoint lam h zc p).2 = t := by
-      show lam ^ 2 * p.2 = t
+      change lam ^ 2 * p.2 = t
       rw [hlamsq]; simp [hp_def]
     exact Prod.ext hfst hsnd
   have hstep1 : dr (zoomV lam h zc u) p

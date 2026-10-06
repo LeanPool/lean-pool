@@ -97,12 +97,12 @@ theorem mem_recSliceSet_of_norm_le {h ρ lam rc zc s : ℝ} (hρ0 : 0 ≤ ρ) (h
       have : 0 ≤ ρ + (|x| + |y|) := by positivity
       nlinarith only [he, this]
     nlinarith only [hexp, hcz, h1, h2, hxx, hmono, hb]
-  show zoomPointRec lam h rc zc (q, -1) ∈ unitCylinder
+  change zoomPointRec lam h rc zc (q, -1) ∈ unitCylinder
   rw [zoomPointRec_mem_unitCylinder_iff]
   refine ⟨hsum, ?_, ?_⟩
-  · show -1 < lam ^ 2 * (-1 : ℝ)
+  · change -1 < lam ^ 2 * (-1 : ℝ)
     nlinarith only [hlam0, hlam1]
-  · show lam ^ 2 * (-1 : ℝ) < 0
+  · change lam ^ 2 * (-1 : ℝ) < 0
     nlinarith only [hlam0]
 
 /-! ### The bump function and the cutoff fields -/
@@ -131,7 +131,7 @@ theorem recCutoffBump_safe {h ρ lam rc zc : ℝ} (hρ0 : 0 ≤ ρ) (hρ1 : ρ <
   rw [mem_closedBall, dist_eq_norm, sub_zero] at hq
   refine mem_recSliceSet_of_norm_le hρ0 hρ1 hcz hlam0 hlam1 ?_ hq
   have hμ : 0 < lam ^ (1 - 2 * h) := Real.rpow_pos_of_pos hlam0 _
-  show (lam + lam ^ (1 - 2 * h)) * recCutoffRadius h ρ lam ≤ (1 - ρ) / 2
+  change (lam + lam ^ (1 - 2 * h)) * recCutoffRadius h ρ lam ≤ (1 - ρ) / 2
   unfold recCutoffRadius
   rw [mul_div_assoc', div_le_div_iff₀ (by positivity) (by norm_num)]
   nlinarith only [hlam0, hμ]
@@ -152,7 +152,7 @@ theorem eventually_lt_recCutoffBump_rIn {h ρ : ℝ} (hh1 : h < 1 / 2) (hρ1 : �
   filter_upwards [hsum.eventually_lt_const hpos] with n hn
   have hμ : 0 < lam n ^ (1 - 2 * h) := Real.rpow_pos_of_pos (hlam0 n) _
   have hS : 0 < lam n + lam n ^ (1 - 2 * h) := by linarith only [hlam0 n, hμ]
-  show r < recCutoffRadius h ρ (lam n) / 2
+  change r < recCutoffRadius h ρ (lam n) / 2
   unfold recCutoffRadius
   have h1 : (lam n + lam n ^ (1 - 2 * h)) * (4 * r') < 1 - ρ :=
     (lt_div_iff₀ (by positivity)).mp hn

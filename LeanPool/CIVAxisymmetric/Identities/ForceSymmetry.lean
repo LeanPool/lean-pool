@@ -50,7 +50,7 @@ partial derivative. -/
 private theorem timePartial_congr_cylinder {v w : ParabolicPoint → ℝ}
     (h : ∀ y ∈ unitCylinder, v y = w y) {z : ParabolicPoint} (hz : z ∈ unitCylinder) :
     timePartial v z = timePartial w z := by
-  show fderiv ℝ (fun s : ℝ => v (z.1, s)) z.2 1 = fderiv ℝ (fun s : ℝ => w (z.1, s)) z.2 1
+  change fderiv ℝ (fun s : ℝ => v (z.1, s)) z.2 1 = fderiv ℝ (fun s : ℝ => w (z.1, s)) z.2 1
   have hev : (fun s : ℝ => v (z.1, s)) =ᶠ[nhds z.2] (fun s : ℝ => w (z.1, s)) := by
     filter_upwards [isOpen_Ioo.mem_nhds hz.2] with s hs using h (z.1, s) ⟨hz.1, hs⟩
   rw [hev.fderiv_eq]
@@ -109,34 +109,34 @@ theorem curlComp_rotField_eq (φ : ℝ) (F : ParabolicPoint → Vec3)
     curlComp (rotField φ F) i z = rotField φ (vorticityField F) z i := by
   have hpyth := Real.cos_sq_add_sin_sq φ
   fin_cases i
-  · show spatialPartial (fun w => rotField φ F w 2) 1 z
+  · change spatialPartial (fun w => rotField φ F w 2) 1 z
         - spatialPartial (fun w => rotField φ F w 1) 2 z
       = rotZ φ (vorticityField F (rotZ (-φ) z.1, z.2)) 0
     rw [spatialPartial_rotField_two φ F hF hz 1, spatialPartial_rotField_one φ F hF hz 2,
       rotZ_apply_zero]
-    show _ = Real.cos φ * (fderiv ℝ (fun y : Vec3 => F (y, z.2) 2) (rotZ (-φ) z.1) (basisVec 1)
+    change _ = Real.cos φ * (fderiv ℝ (fun y : Vec3 => F (y, z.2) 2) (rotZ (-φ) z.1) (basisVec 1)
           - fderiv ℝ (fun y : Vec3 => F (y, z.2) 1) (rotZ (-φ) z.1) (basisVec 2))
         - Real.sin φ * (fderiv ℝ (fun y : Vec3 => F (y, z.2) 0) (rotZ (-φ) z.1) (basisVec 2)
           - fderiv ℝ (fun y : Vec3 => F (y, z.2) 2) (rotZ (-φ) z.1) (basisVec 0))
     simp only [fderiv_apply_rotZ_neg_basisVec_one, fderiv_apply_rotZ_neg_basisVec_two]
     ring
-  · show spatialPartial (fun w => rotField φ F w 0) 2 z
+  · change spatialPartial (fun w => rotField φ F w 0) 2 z
         - spatialPartial (fun w => rotField φ F w 2) 0 z
       = rotZ φ (vorticityField F (rotZ (-φ) z.1, z.2)) 1
     rw [spatialPartial_rotField_zero φ F hF hz 2, spatialPartial_rotField_two φ F hF hz 0,
       rotZ_apply_one]
-    show _ = Real.sin φ * (fderiv ℝ (fun y : Vec3 => F (y, z.2) 2) (rotZ (-φ) z.1) (basisVec 1)
+    change _ = Real.sin φ * (fderiv ℝ (fun y : Vec3 => F (y, z.2) 2) (rotZ (-φ) z.1) (basisVec 1)
           - fderiv ℝ (fun y : Vec3 => F (y, z.2) 1) (rotZ (-φ) z.1) (basisVec 2))
         + Real.cos φ * (fderiv ℝ (fun y : Vec3 => F (y, z.2) 0) (rotZ (-φ) z.1) (basisVec 2)
           - fderiv ℝ (fun y : Vec3 => F (y, z.2) 2) (rotZ (-φ) z.1) (basisVec 0))
     simp only [fderiv_apply_rotZ_neg_basisVec_zero, fderiv_apply_rotZ_neg_basisVec_two]
     ring
-  · show spatialPartial (fun w => rotField φ F w 1) 0 z
+  · change spatialPartial (fun w => rotField φ F w 1) 0 z
         - spatialPartial (fun w => rotField φ F w 0) 1 z
       = rotZ φ (vorticityField F (rotZ (-φ) z.1, z.2)) 2
     rw [spatialPartial_rotField_one φ F hF hz 0, spatialPartial_rotField_zero φ F hF hz 1,
       rotZ_apply_two]
-    show _ = fderiv ℝ (fun y : Vec3 => F (y, z.2) 1) (rotZ (-φ) z.1) (basisVec 0)
+    change _ = fderiv ℝ (fun y : Vec3 => F (y, z.2) 1) (rotZ (-φ) z.1) (basisVec 0)
         - fderiv ℝ (fun y : Vec3 => F (y, z.2) 0) (rotZ (-φ) z.1) (basisVec 1)
     simp only [fderiv_apply_rotZ_neg_basisVec_zero, fderiv_apply_rotZ_neg_basisVec_one]
     linear_combination (fderiv ℝ (fun y : Vec3 => F (y, z.2) 1) (rotZ (-φ) z.1) (basisVec 0)
@@ -183,7 +183,7 @@ private theorem curlComp_congr_of_grad (F G : ParabolicPoint → Vec3) (a b : Pa
   have hcommb : spatialPartial (spatialPartial b (i + 2)) (i + 1) z
       = spatialPartial (spatialPartial b (i + 1)) (i + 2) z :=
     spatialSecondPartial_comm hb hz (i + 2) (i + 1)
-  show spatialPartial (fun w => G w (i + 2)) (i + 1) z
+  change spatialPartial (fun w => G w (i + 2)) (i + 1) z
       - spatialPartial (fun w => G w (i + 1)) (i + 2) z
     = spatialPartial (fun w => F w (i + 2)) (i + 1) z
       - spatialPartial (fun w => F w (i + 1)) (i + 2) z
@@ -241,7 +241,7 @@ theorem rotField_vorticityField_force_eq (φ : ℝ) (u : ParabolicPoint → Vec3
   have hgrad := curlComp_congr_of_grad f (rotField φ f)
     (fun v : ParabolicPoint => p (rotZ (-φ) v.1, v.2)) p hsol.2.2.1 hrotsol.2.1 hsol.2.1
     (rotField_force_sub_eq_grad φ u p f hsol haxi) hz i
-  show rotField φ (vorticityField f) z i = curlComp f i z
+  change rotField φ (vorticityField f) z i = curlComp f i z
   rw [← hequi, hgrad]
 
 end CIV

@@ -95,7 +95,7 @@ theorem weighted_swirl_pde (η : ℝ)
     -- the outer `spatialPartial` unfold to: `show` reaches this form by defeq without letting
     -- `dsimp` unfold the *inner* `spatialPartial` occurrence as well, which would leave no
     -- `spatialPartial`-headed subterm for `h_eventually.fderiv_eq` to rewrite.
-    show fderiv ℝ (fun x : Vec3 => spatialPartial (fun w => (-w.2) ^ η * u w 1) i (x, z.2)) z.1
+    change fderiv ℝ (fun x : Vec3 => spatialPartial (fun w => (-w.2) ^ η * u w 1) i (x, z.2)) z.1
         (basisVec i) =
       (-z.2) ^ η * fderiv ℝ (fun x : Vec3 => spatialPartial (fun w => u w 1) i (x, z.2)) z.1
         (basisVec i)
@@ -138,7 +138,7 @@ theorem weighted_swirl_pde (η : ℝ)
     -- `timePartial g z` unfolds to `deriv (fun s => g (z.1, s)) z.2` on both sides; working
     -- with `deriv` and `HasDerivAt.mul` avoids ever unfolding to the raw `fderiv _ _ 1`
     -- continuous-linear-map application, which is defeq but not syntactically the same term.
-    show deriv (fun s : ℝ => (-s) ^ η * u (z.1, s) 1) z.2 =
+    change deriv (fun s : ℝ => (-s) ^ η * u (z.1, s) 1) z.2 =
         (-z.2) ^ η * (-η / (-z.2)) * u z 1 +
         (-z.2) ^ η * deriv (fun s : ℝ => u (z.1, s) 1) z.2
     have h_prod_hasDeriv : HasDerivAt (fun s : ℝ => (-s) ^ η * u (z.1, s) 1)

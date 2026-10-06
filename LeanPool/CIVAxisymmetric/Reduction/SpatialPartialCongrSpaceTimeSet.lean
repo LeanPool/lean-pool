@@ -39,7 +39,7 @@ theorem spatialPartial_congr_of_eqOn_spaceTimeSet {v u : ParabolicPoint → ℝ}
     (j : Fin 3) :
     spatialPartial v j z = spatialPartial u j z := by
   have _ := hI.mem_nhds hz.2
-  show fderiv ℝ (fun y : Vec3 => v (y, z.2)) z.1 (basisVec j)
+  change fderiv ℝ (fun y : Vec3 => v (y, z.2)) z.1 (basisVec j)
     = fderiv ℝ (fun y : Vec3 => u (y, z.2)) z.1 (basisVec j)
   have hev : (fun y : Vec3 => v (y, z.2)) =ᶠ[nhds z.1] (fun y : Vec3 => u (y, z.2)) := by
     filter_upwards [hΩ.mem_nhds hz.1] with y hy using h (y, z.2) ⟨hy, hz.2⟩
@@ -52,7 +52,7 @@ theorem timePartial_congr_of_eqOn_spaceTimeSet {v u : ParabolicPoint → ℝ} {�
     (h : ∀ w ∈ spaceTimeSet Ω I, v w = u w) {z : ParabolicPoint} (hz : z ∈ spaceTimeSet Ω I) :
     timePartial v z = timePartial u z := by
   have _ := hΩ.mem_nhds hz.1
-  show fderiv ℝ (fun s : ℝ => v (z.1, s)) z.2 1 = fderiv ℝ (fun s : ℝ => u (z.1, s)) z.2 1
+  change fderiv ℝ (fun s : ℝ => v (z.1, s)) z.2 1 = fderiv ℝ (fun s : ℝ => u (z.1, s)) z.2 1
   have hev : (fun s : ℝ => v (z.1, s)) =ᶠ[nhds z.2] (fun s : ℝ => u (z.1, s)) := by
     filter_upwards [hI.mem_nhds hz.2] with s hs using h (z.1, s) ⟨hz.1, hs⟩
   rw [hev.fderiv_eq]

@@ -86,8 +86,8 @@ theorem exists_admissibleDrift_zoomThetaLimit {C h CΓ ρ Rstar tstar : ℝ}
       have hpt := (hconv {planeLiftPoint z} isCompact_singleton
         (fun x hx => by rw [mem_singleton_iff.mp hx]; exact hz)).tendsto_at (mem_singleton _)
       have h1 := abs_le_of_tendsto_zoomTheta hh hρ0 hρ1 hb hu hcz hlam_pos hlam_lim
-        (p := planeLiftPoint z) (by show z.2 < 0; linarith only [hz]) hpt
-      have hτ1 : (1 : ℝ) ≤ -(planeLiftPoint z).2 := by show (1 : ℝ) ≤ -z.2; linarith only [hz]
+        (p := planeLiftPoint z) (by change z.2 < 0; linarith only [hz]) hpt
+      have hτ1 : (1 : ℝ) ≤ -(planeLiftPoint z).2 := by change (1 : ℝ) ≤ -z.2; linarith only [hz]
       have hr : (-(planeLiftPoint z).2) ^ (-1 - h) ≤ 1 :=
         Real.rpow_le_one_of_one_le_of_nonpos hτ1 (by linarith only [hh.1])
       exact h1.trans (mul_le_of_le_one_right hC hr)

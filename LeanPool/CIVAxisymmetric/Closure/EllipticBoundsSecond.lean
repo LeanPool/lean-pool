@@ -287,7 +287,7 @@ private lemma tsupport_smul_subset (w : Vec3 → ℝ) (V : Vec3 → Vec3) :
   refine closure_minimal (fun y hy => ?_) (isClosed_tsupport w)
   by_contra hyn
   refine hy ?_
-  show w y • V y = 0
+  change w y • V y = 0
   rw [image_eq_zero_of_notMem_tsupport hyn, zero_smul]
 
 /-! ### The pointwise bound on one derivative of the curl -/
@@ -449,13 +449,12 @@ private lemma fderiv_div_smul_eq_zero_of_notMem (w : Vec3 → ℝ) (V : Vec3 →
       =ᶠ[nhds x] fun _ : Vec3 => (0 : ℝ) := by
     filter_upwards [(isClosed_tsupport (fun y : Vec3 => w y • V y)).isOpen_compl.mem_nhds hx]
       with y hy
-    show (∑ j : Fin 3, fderiv ℝ (fun z : Vec3 => (w z • V z) j) y (basisVec j)) = 0
     refine Finset.sum_eq_zero fun j _ => ?_
     have hEqj : (fun z : Vec3 => (w z • V z) j) =ᶠ[nhds y] fun _ : Vec3 => (0 : ℝ) := by
       filter_upwards [eventuallyEq_zero_nhds_of_notMem_tsupport
         (fun y' : Vec3 => w y' • V y') hy] with z hz
       have hz' : w z • V z = 0 := hz
-      show (w z • V z) j = 0
+      change (w z • V z) j = 0
       rw [hz']
       rfl
     rw [hEqj.fderiv_eq]

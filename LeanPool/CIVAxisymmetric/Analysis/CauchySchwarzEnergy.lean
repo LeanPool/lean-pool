@@ -47,7 +47,7 @@ theorem integral_abs_mul_abs_le_sqrt_mul_sqrt {m : ℕ} (F c : Vec m → ℝ)
   have hrw : ∀ g : Vec m → ℝ, (∫ x, |g x| ^ (2 : ℝ)) = ∫ x, g x ^ 2 := by
     intro g
     refine integral_congr_ae (Filter.Eventually.of_forall fun x => ?_)
-    show |g x| ^ (2 : ℝ) = g x ^ 2
+    change |g x| ^ (2 : ℝ) = g x ^ 2
     rw [show (2 : ℝ) = ((2 : ℕ) : ℝ) by norm_num, Real.rpow_natCast, sq_abs]
   rw [hrw F, hrw c] at key
   rwa [← Real.sqrt_eq_rpow, ← Real.sqrt_eq_rpow] at key

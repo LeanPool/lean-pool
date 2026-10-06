@@ -44,7 +44,7 @@ namespace CIV
 `x₂ u₁` term of `Γ` drops out. -/
 theorem circulationProfile_apply (u : ParabolicPoint → Vec3) (p : (ℝ × ℝ) × ℝ) :
     circulationProfile u p = p.1.1 * u (meridional p.1.1 p.1.2, p.2) 1 := by
-  show (meridional p.1.1 p.1.2 : Vec3) 0 * u (meridional p.1.1 p.1.2, p.2) 1
+  change (meridional p.1.1 p.1.2 : Vec3) 0 * u (meridional p.1.1 p.1.2, p.2) 1
       - (meridional p.1.1 p.1.2 : Vec3) 1 * u (meridional p.1.1 p.1.2, p.2) 0
     = p.1.1 * u (meridional p.1.1 p.1.2, p.2) 1
   have h0 : (meridional p.1.1 p.1.2 : Vec3) 0 = p.1.1 := rfl
@@ -123,7 +123,7 @@ theorem circulationProfile_meridional_even {u : ParabolicPoint → Vec3}
   rw [circulationProfile_apply, circulationProfile_apply]
   have hkey : u (meridional (-r) z, t) 1 = -u (meridional r z, t) 1 :=
     apply_meridional_reflect_one haxi hz
-  show (-r) * u (meridional (-r) z, t) 1 = r * u (meridional r z, t) 1
+  change (-r) * u (meridional (-r) z, t) 1 = r * u (meridional r z, t) 1
   rw [hkey]
   ring
 

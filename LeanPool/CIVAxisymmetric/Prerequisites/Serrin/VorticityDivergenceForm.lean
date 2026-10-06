@@ -85,7 +85,7 @@ theorem sum_spatialPartial_curlComp_eq_zero {u : ParabolicPoint → Vec3}
   have h12 : (1 : Fin 3) + 2 = 0 := by decide
   have h21 : (2 : Fin 3) + 1 = 0 := by decide
   have h22 : (2 : Fin 3) + 2 = 1 := by decide
-  simp [h01, h02, h11, h12, h21, h22] at h0 h1 h2
+  simp only [h01, h02, h11, h12, h21, h22] at h0 h1 h2
   rw [h0, h1, h2]
   have hc01 : spatialSecondPartial (fun v => u v 0) 2 1 z =
       spatialSecondPartial (fun v => u v 0) 1 2 z :=

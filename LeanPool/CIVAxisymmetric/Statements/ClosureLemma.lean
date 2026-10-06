@@ -45,7 +45,7 @@ theorem closureLemma (q : ℝ)
     (haxi : IsAxisymmetricOn u unitCylinder) (hfaxi : IsAxisymmetricOn f unitCylinder)
     (hMf : ForceC2Bounded f)
     (ρ₀ : ℝ) (hρ₀ : ρ₀ ∈ Ioo (0 : ℝ) 1) (hsmall : MeridionalSmallness ρ₀ u) :
-    BoundedNearOrigin u :=
-by exact CIV.Main.closureLemma q u Du p f hsol henergy hu hp hf haxi hfaxi hMf ρ₀ hρ₀ hsmall
+    BoundedNearOrigin u := by
+  exact CIV.Main.closureLemma q u Du p f hsol henergy hu hp hf haxi hfaxi hMf ρ₀ hρ₀ hsmall
 
 end CIV

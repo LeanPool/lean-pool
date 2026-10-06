@@ -53,7 +53,7 @@ theorem abs_integral_mul_le_sqrt_mul_sqrt {f g : Vec3 → ℝ}
   have hrw : ∀ h : Vec3 → ℝ, (∫ x : Vec3, |h x| ^ (2 : ℝ)) = ∫ x : Vec3, h x ^ 2 := by
     intro h
     refine integral_congr_ae (Filter.Eventually.of_forall fun x => ?_)
-    show |h x| ^ (2 : ℝ) = h x ^ 2
+    change |h x| ^ (2 : ℝ) = h x ^ 2
     rw [show (2 : ℝ) = ((2 : ℕ) : ℝ) by norm_num, Real.rpow_natCast, sq_abs]
   rw [hrw f, hrw g] at h_holder
   have h_sqrt_eq : (∫ x : Vec3, f x ^ 2) ^ ((1 : ℝ) / (2 : ℝ)) = Real.sqrt (∫ x : Vec3, f x ^ 2)
@@ -68,7 +68,7 @@ theorem abs_integral_mul_le_sqrt_mul_sqrt {f g : Vec3 → ℝ}
     |∫ x : Vec3, f x * g x| ≤ ∫ x : Vec3, |f x * g x| := abs_integral_le_integral_abs
     _ = ∫ x : Vec3, |f x| * |g x| := by
       refine integral_congr_ae (Filter.Eventually.of_forall fun x => ?_)
-      show |f x * g x| = |f x| * |g x|
+      change |f x * g x| = |f x| * |g x|
       rw [abs_mul]
     _ ≤ Real.sqrt (∫ x : Vec3, f x ^ 2) * Real.sqrt (∫ x : Vec3, g x ^ 2) := h_holder
 

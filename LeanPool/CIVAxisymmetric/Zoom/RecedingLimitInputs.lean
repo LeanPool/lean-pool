@@ -371,6 +371,178 @@ private theorem continuous_mul_of_tsupport_subset_vec2 {U : Set (Vec 2)} (hU : I
       rw [image_eq_zero_of_notMem_tsupport hz, mul_zero]
     exact ContinuousAt.congr continuousAt_const hev.symm
 
+private theorem recDrift_eventual_bounds
+    {h ρ C : ℝ} (hh : 0 < h ∧ h < 1 / 2) (hρ0 : 0 ≤ ρ) (hρ1 : ρ < 1)
+    {rc zc : ℕ → ℝ} (hcz : ∀ n, rc n ^ 2 + zc n ^ 2 ≤ ρ ^ 2) (hC : 0 ≤ C)
+    {u : ParabolicPoint → Vec3} (hb : AnisotropicBounds C h u)
+    (hu : ContDiffOn ℝ (⊤ : ℕ∞) (fun z : Vec3 × ℝ => u z) unitCylinder)
+    {lam : ℕ → ℝ} (hlam_pos : ∀ n, 0 < lam n)
+    (hlam_lim : Tendsto lam atTop (nhdsWithin 0 (Ioi 0)))
+    (hA : Tendsto (fun n => rc n / lam n) atTop atTop) :
+    ∀ J : Set ℝ, IsCompact J → J ⊆ Iic (-1 : ℝ) → ∃ Λ : ℝ, ∀ r : ℝ, ∀ᶠ n in atTop,
+      ∀ τ ∈ J, ∀ x ∈ Metric.closedBall (0 : Vec 2) r, ∀ y ∈ Metric.closedBall (0 : Vec 2) r,
+        ‖recDrift (lam n) h (rc n) (zc n) u (x, τ)‖ ≤ Λ ∧
+        |recDriftDiv (lam n) h (rc n) (zc n) u (x, τ)| ≤ Λ ∧
+        ‖recDrift (lam n) h (rc n) (zc n) u (x, τ) - recDrift (lam n) h (rc n) (zc n) u (y, τ)‖
+          ≤ Λ * ‖x - y‖ ∧
+        |recDriftDiv (lam n) h (rc n) (zc n) u (x, τ) -
+          recDriftDiv (lam n) h (rc n) (zc n) u (y, τ)| ≤ Λ * ‖x - y‖ := by
+  have hu2 : ContDiffOn ℝ 2 (fun z : Vec3 × ℝ => u z) unitCylinder := hu.of_le (by norm_num)
+  intro J hJ hJsub
+  refine ⟨4 * C, fun r => ?_⟩
+  by_cases hr0 : 0 ≤ r
+  · have hKr : IsCompact (Metric.closedBall (0 : Vec 2) r ×ˢ J) :=
+      (isCompact_closedBall _ _).prod hJ
+    have hKrsub : Metric.closedBall (0 : Vec 2) r ×ˢ J ⊆ univ ×ˢ Iic (-1 : ℝ) :=
+      fun z hz => ⟨mem_univ _, hJsub hz.2⟩
+    have hmem := eventually_mem_unitCylinder_of_isCompact_vec2 hh hρ0 hρ1 hcz lam hlam_lim hKr
+      hKrsub
+    have hApos := eventually_one_le_ratio_add_of_isCompact_vec2 hA hKr
+    have hlamlt : ∀ᶠ n in atTop, lam n < 1 :=
+      (hlam_lim.mono_right nhdsWithin_le_nhds).eventually_mem
+        (isOpen_Iio.mem_nhds (by norm_num : (0 : ℝ) ∈ Iio (1 : ℝ)))
+    filter_upwards [hmem, hApos, hlamlt] with n hmem_n hApos_n hlamlt_n
+    intro τ hτ x hx y hy
+    have hτ1 : τ ≤ -1 := hJsub hτ
+    have hrect : ∀ y' ∈ Icc (-r) r ×ˢ Icc (-r) r,
+        zoomPointRec (lam n) h (rc n) (zc n) (y', τ) ∈ unitCylinder := by
+      rintro ⟨a, bb⟩ ⟨ha, hbb⟩
+      have hxv : (![a, bb] : Vec 2) ∈ Metric.closedBall (0 : Vec 2) r := by
+        rw [Metric.mem_closedBall, dist_eq_norm, sub_zero, pi_norm_le_iff_of_nonneg hr0]
+        intro i
+        fin_cases i
+        · simpa using abs_le.mpr ha
+        · simpa using abs_le.mpr hbb
+      have hm := hmem_n (![a, bb], τ) ⟨hxv, hτ⟩
+      simpa [planeLiftPoint] using hm
+    have hVlip := lipschitzOnWith_zoomVRec (C := C) (h := h) (rc := rc n) (zc := zc n)
+      (hlam_pos n) hb hu2 hC hh.2.le hτ1 hrect
+    have hWlip := lipschitzOnWith_zoomWRec (hlam_pos n) u hb hu2 hC hh.1.le hτ1 hrect
+    have hxmem : (x 0, x 1) ∈ Icc (-r) r ×ˢ Icc (-r) r := by
+      have h0 := abs_apply_sub_le_norm_sub x 0 0
+      have h1 := abs_apply_sub_le_norm_sub x 0 1
+      simp only [Pi.zero_apply, sub_zero] at h0 h1
+      have hxr : ‖x‖ ≤ r := by simpa [dist_eq_norm] using Metric.mem_closedBall.mp hx
+      exact ⟨abs_le.mp (h0.trans hxr), abs_le.mp (h1.trans hxr)⟩
+    have hymem : (y 0, y 1) ∈ Icc (-r) r ×ˢ Icc (-r) r := by
+      have h0 := abs_apply_sub_le_norm_sub y 0 0
+      have h1 := abs_apply_sub_le_norm_sub y 0 1
+      simp only [Pi.zero_apply, sub_zero] at h0 h1
+      have hyr : ‖y‖ ≤ r := by simpa [dist_eq_norm] using Metric.mem_closedBall.mp hy
+      exact ⟨abs_le.mp (h0.trans hyr), abs_le.mp (h1.trans hyr)⟩
+    have hpx : zoomPointRec (lam n) h (rc n) (zc n) (planeLiftPoint (x, τ)) ∈ unitCylinder :=
+      hmem_n (x, τ) ⟨hx, hτ⟩
+    have hpy : zoomPointRec (lam n) h (rc n) (zc n) (planeLiftPoint (y, τ)) ∈ unitCylinder :=
+      hmem_n (y, τ) ⟨hy, hτ⟩
+    have heqx : planeLiftPoint (x, τ) = ((x 0, x 1), τ) := rfl
+    have heqy : planeLiftPoint (y, τ) = ((y 0, y 1), τ) := rfl
+    rw [heqx] at hpx
+    rw [heqy] at hpy
+    have hVbx : |zoomVRec (lam n) h (rc n) (zc n) u (planeLiftPoint (x, τ))| ≤ C := by
+      rw [heqx]; exact abs_zoomVRec_le_of_tau_le_neg_one hC (hlam_pos n) hb hpx hτ1
+    have hVby : |zoomVRec (lam n) h (rc n) (zc n) u (planeLiftPoint (y, τ))| ≤ C := by
+      rw [heqy]; exact abs_zoomVRec_le_of_tau_le_neg_one hC (hlam_pos n) hb hpy hτ1
+    have hWbx : |zoomWRec (lam n) h (rc n) (zc n) u (planeLiftPoint (x, τ))| ≤ C := by
+      rw [heqx]; exact abs_zoomWRec_le_of_tau_le_neg_one hC hh.1.le (hlam_pos n) hb hpx hτ1
+    have hWby : |zoomWRec (lam n) h (rc n) (zc n) u (planeLiftPoint (y, τ))| ≤ C := by
+      rw [heqy]; exact abs_zoomWRec_le_of_tau_le_neg_one hC hh.1.le (hlam_pos n) hb hpy hτ1
+    have hAx1 : (1 : ℝ) ≤ rc n / lam n + x 0 := hApos_n (x, τ) ⟨hx, hτ⟩
+    have hAy1 : (1 : ℝ) ≤ rc n / lam n + y 0 := hApos_n (y, τ) ⟨hy, hτ⟩
+    have hAx0 : (0 : ℝ) < rc n / lam n + x 0 := lt_of_lt_of_le one_pos hAx1
+    have hAy0 : (0 : ℝ) < rc n / lam n + y 0 := lt_of_lt_of_le one_pos hAy1
+    -- the plane distance between the two projected points equals `‖x - y‖`
+    have hdist_le : dist ((x 0, x 1) : ℝ × ℝ) (y 0, y 1) ≤ ‖x - y‖ := by
+      rw [Prod.dist_eq]
+      exact max_le (by simpa [Real.dist_eq] using abs_apply_sub_le_norm_sub x y 0)
+        (by simpa [Real.dist_eq] using abs_apply_sub_le_norm_sub x y 1)
+    have hVdist := lipschitzOnWith_iff_dist_le_mul.mp hVlip _ hxmem _ hymem
+    have hWdist := lipschitzOnWith_iff_dist_le_mul.mp hWlip _ hxmem _ hymem
+    rw [Real.dist_eq] at hVdist hWdist
+    simp only [Real.coe_toNNReal', max_eq_left (by positivity : (0:ℝ) ≤ 2*C)]
+      at hVdist hWdist
+    have hVdiff : |zoomVRec (lam n) h (rc n) (zc n) u (planeLiftPoint (x, τ)) -
+        zoomVRec (lam n) h (rc n) (zc n) u (planeLiftPoint (y, τ))| ≤ 2 * C * ‖x - y‖ := by
+      rw [heqx, heqy]
+      exact hVdist.trans (mul_le_mul_of_nonneg_left hdist_le (by positivity))
+    have hWdiff : |zoomWRec (lam n) h (rc n) (zc n) u (planeLiftPoint (x, τ)) -
+        zoomWRec (lam n) h (rc n) (zc n) u (planeLiftPoint (y, τ))| ≤ 2 * C * ‖x - y‖ := by
+      rw [heqx, heqy]
+      exact hWdist.trans (mul_le_mul_of_nonneg_left hdist_le (by positivity))
+    have hxynn : (0 : ℝ) ≤ ‖x - y‖ := norm_nonneg _
+    refine ⟨?_, ?_, ?_, ?_⟩
+    · rw [pi_norm_le_iff_of_nonneg (by positivity : (0:ℝ) ≤ 4 * C)]
+      intro i
+      fin_cases i
+      · simpa [recDrift, Real.norm_eq_abs] using hVbx.trans (by linarith only [hC])
+      · simpa [recDrift, Real.norm_eq_abs] using hWbx.trans (by linarith only [hC])
+    · have heq : recDriftDiv (lam n) h (rc n) (zc n) u (x, τ)
+          = -(zoomVRec (lam n) h (rc n) (zc n) u (planeLiftPoint (x, τ)) /
+              (rc n / lam n + x 0)) := rfl
+      rw [heq, abs_neg, abs_div, abs_of_pos hAx0]
+      calc |zoomVRec (lam n) h (rc n) (zc n) u (planeLiftPoint (x, τ))| / (rc n / lam n + x 0)
+          ≤ |zoomVRec (lam n) h (rc n) (zc n) u (planeLiftPoint (x, τ))| :=
+            div_le_self (abs_nonneg _) hAx1
+        _ ≤ C := hVbx
+        _ ≤ 4 * C := by linarith only [hC]
+    · rw [pi_norm_le_iff_of_nonneg (by positivity : (0:ℝ) ≤ 4 * C * ‖x - y‖)]
+      intro i
+      fin_cases i
+      · simpa [recDrift, Real.norm_eq_abs] using hVdiff.trans (by nlinarith only [hxynn, hC])
+      · simpa [recDrift, Real.norm_eq_abs] using hWdiff.trans (by nlinarith only [hxynn, hC])
+    · have hAxy : |1 / (rc n / lam n + x 0) - 1 / (rc n / lam n + y 0)|
+          ≤ |x 0 - y 0| := by
+        have hne_x : rc n / lam n + x 0 ≠ 0 := hAx0.ne'
+        have hne_y : rc n / lam n + y 0 ≠ 0 := hAy0.ne'
+        have heq : 1 / (rc n / lam n + x 0) - 1 / (rc n / lam n + y 0)
+            = (y 0 - x 0) / ((rc n / lam n + x 0) * (rc n / lam n + y 0)) := by
+          field_simp
+          ring
+        rw [heq, abs_div]
+        have hprod1 : (1 : ℝ) ≤ (rc n / lam n + x 0) * (rc n / lam n + y 0) := by
+          nlinarith only [hAx1, hAy1]
+        have hprodpos : (0 : ℝ) < (rc n / lam n + x 0) * (rc n / lam n + y 0) :=
+          mul_pos hAx0 hAy0
+        rw [abs_of_pos hprodpos, abs_sub_comm (y 0) (x 0)]
+        exact div_le_self (abs_nonneg _) hprod1
+      have hx0y0 : |x 0 - y 0| ≤ ‖x - y‖ := abs_apply_sub_le_norm_sub x y 0
+      have heqdiv : recDriftDiv (lam n) h (rc n) (zc n) u (x, τ) -
+          recDriftDiv (lam n) h (rc n) (zc n) u (y, τ)
+          = -((zoomVRec (lam n) h (rc n) (zc n) u (planeLiftPoint (x, τ)) -
+                zoomVRec (lam n) h (rc n) (zc n) u (planeLiftPoint (y, τ))) /
+              (rc n / lam n + x 0))
+            - zoomVRec (lam n) h (rc n) (zc n) u (planeLiftPoint (y, τ)) *
+              (1 / (rc n / lam n + x 0) - 1 / (rc n / lam n + y 0)) := by
+        simp only [recDriftDiv]
+        field_simp
+        ring
+      rw [heqdiv]
+      set A : ℝ := (zoomVRec (lam n) h (rc n) (zc n) u (planeLiftPoint (x, τ)) -
+            zoomVRec (lam n) h (rc n) (zc n) u (planeLiftPoint (y, τ))) /
+            (rc n / lam n + x 0) with hA_def
+      set B : ℝ := zoomVRec (lam n) h (rc n) (zc n) u (planeLiftPoint (y, τ)) *
+            (1 / (rc n / lam n + x 0) - 1 / (rc n / lam n + y 0)) with hB_def
+      have hterm1 : |A| ≤ 2 * C * ‖x - y‖ := by
+        rw [hA_def, abs_div, abs_of_pos hAx0]
+        have hle : |zoomVRec (lam n) h (rc n) (zc n) u (planeLiftPoint (x, τ)) -
+            zoomVRec (lam n) h (rc n) (zc n) u (planeLiftPoint (y, τ))| /
+            (rc n / lam n + x 0)
+            ≤ |zoomVRec (lam n) h (rc n) (zc n) u (planeLiftPoint (x, τ)) -
+              zoomVRec (lam n) h (rc n) (zc n) u (planeLiftPoint (y, τ))| :=
+          div_le_self (abs_nonneg _) hAx1
+        exact hle.trans hVdiff
+      have hterm2 : |B| ≤ C * ‖x - y‖ := by
+        rw [hB_def, abs_mul]
+        exact mul_le_mul hVby (hAxy.trans hx0y0) (abs_nonneg _) hC
+      have hrw : -A - B = -(A + B) := by ring
+      rw [hrw, abs_neg]
+      calc |A + B| ≤ |A| + |B| := abs_add_le _ _
+        _ ≤ 2 * C * ‖x - y‖ + C * ‖x - y‖ := add_le_add hterm1 hterm2
+        _ ≤ 4 * C * ‖x - y‖ := by nlinarith only [hxynn, hC]
+  · have hempty : Metric.closedBall (0 : Vec 2) r = ∅ :=
+      Metric.closedBall_eq_empty.mpr (not_le.mp hr0)
+    filter_upwards with n τ hτ x hx
+    simp [hempty] at hx
+
 /-- R2-H: the hypotheses of G-DRIFT at the receding zoom fields. -/
 theorem recDrift_extraction_hypotheses
     {h ρ Rstar C : ℝ} (hh : 0 < h ∧ h < 1 / 2) (hρ0 : 0 ≤ ρ) (hρR : ρ < Rstar) (hR1 : Rstar ≤ 1)
@@ -398,167 +570,12 @@ theorem recDrift_extraction_hypotheses
         ∫ x, recDriftDiv (lam n) h (rc n) (zc n) u (x, τ) * ψ x =
           -∫ x, ∑ i, recDrift (lam n) h (rc n) (zc n) u (x, τ) i * fderiv ℝ ψ x (basisVec i)) := by
   have hρ1 : ρ < 1 := hρR.trans_le hR1
-  have hu2 : ContDiffOn ℝ 2 (fun z : Vec3 × ℝ => u z) unitCylinder := hu.of_le (by norm_num)
-  refine ⟨?_, ?_, ?_⟩
+  refine ⟨?_, recDrift_eventual_bounds hh hρ0 hρ1 hcz hC hb hu hlam_pos hlam_lim hA, ?_⟩
   · intro K hK hKsub
     have hmem := eventually_mem_unitCylinder_of_isCompact_vec2 hh hρ0 hρ1 hcz lam hlam_lim hK hKsub
     have hApos := eventually_one_le_ratio_add_of_isCompact_vec2 hA hK
     filter_upwards [hmem, hApos] with n hmem_n hApos_n
     exact continuousOn_recDrift_recDriftDiv hu hmem_n hApos_n
-  · intro J hJ hJsub
-    refine ⟨4 * C, fun r => ?_⟩
-    by_cases hr0 : 0 ≤ r
-    · have hKr : IsCompact (Metric.closedBall (0 : Vec 2) r ×ˢ J) :=
-        (isCompact_closedBall _ _).prod hJ
-      have hKrsub : Metric.closedBall (0 : Vec 2) r ×ˢ J ⊆ univ ×ˢ Iic (-1 : ℝ) :=
-        fun z hz => ⟨mem_univ _, hJsub hz.2⟩
-      have hmem := eventually_mem_unitCylinder_of_isCompact_vec2 hh hρ0 hρ1 hcz lam hlam_lim hKr
-        hKrsub
-      have hApos := eventually_one_le_ratio_add_of_isCompact_vec2 hA hKr
-      have hlamlt : ∀ᶠ n in atTop, lam n < 1 :=
-        (hlam_lim.mono_right nhdsWithin_le_nhds).eventually_mem
-          (isOpen_Iio.mem_nhds (by norm_num : (0 : ℝ) ∈ Iio (1 : ℝ)))
-      filter_upwards [hmem, hApos, hlamlt] with n hmem_n hApos_n hlamlt_n
-      intro τ hτ x hx y hy
-      have hτ1 : τ ≤ -1 := hJsub hτ
-      have hrect : ∀ y' ∈ Icc (-r) r ×ˢ Icc (-r) r,
-          zoomPointRec (lam n) h (rc n) (zc n) (y', τ) ∈ unitCylinder := by
-        rintro ⟨a, bb⟩ ⟨ha, hbb⟩
-        have hxv : (![a, bb] : Vec 2) ∈ Metric.closedBall (0 : Vec 2) r := by
-          rw [Metric.mem_closedBall, dist_eq_norm, sub_zero, pi_norm_le_iff_of_nonneg hr0]
-          intro i
-          fin_cases i
-          · simpa using abs_le.mpr ha
-          · simpa using abs_le.mpr hbb
-        have hm := hmem_n (![a, bb], τ) ⟨hxv, hτ⟩
-        simpa [planeLiftPoint] using hm
-      have hVlip := lipschitzOnWith_zoomVRec (C := C) (h := h) (rc := rc n) (zc := zc n)
-        (hlam_pos n) hb hu2 hC hh.2.le hτ1 hrect
-      have hWlip := lipschitzOnWith_zoomWRec (hlam_pos n) u hb hu2 hC hh.1.le hτ1 hrect
-      have hxmem : (x 0, x 1) ∈ Icc (-r) r ×ˢ Icc (-r) r := by
-        have h0 := abs_apply_sub_le_norm_sub x 0 0
-        have h1 := abs_apply_sub_le_norm_sub x 0 1
-        simp only [Pi.zero_apply, sub_zero] at h0 h1
-        have hxr : ‖x‖ ≤ r := by simpa [dist_eq_norm] using Metric.mem_closedBall.mp hx
-        exact ⟨abs_le.mp (h0.trans hxr), abs_le.mp (h1.trans hxr)⟩
-      have hymem : (y 0, y 1) ∈ Icc (-r) r ×ˢ Icc (-r) r := by
-        have h0 := abs_apply_sub_le_norm_sub y 0 0
-        have h1 := abs_apply_sub_le_norm_sub y 0 1
-        simp only [Pi.zero_apply, sub_zero] at h0 h1
-        have hyr : ‖y‖ ≤ r := by simpa [dist_eq_norm] using Metric.mem_closedBall.mp hy
-        exact ⟨abs_le.mp (h0.trans hyr), abs_le.mp (h1.trans hyr)⟩
-      have hpx : zoomPointRec (lam n) h (rc n) (zc n) (planeLiftPoint (x, τ)) ∈ unitCylinder :=
-        hmem_n (x, τ) ⟨hx, hτ⟩
-      have hpy : zoomPointRec (lam n) h (rc n) (zc n) (planeLiftPoint (y, τ)) ∈ unitCylinder :=
-        hmem_n (y, τ) ⟨hy, hτ⟩
-      have heqx : planeLiftPoint (x, τ) = ((x 0, x 1), τ) := rfl
-      have heqy : planeLiftPoint (y, τ) = ((y 0, y 1), τ) := rfl
-      rw [heqx] at hpx
-      rw [heqy] at hpy
-      have hVbx : |zoomVRec (lam n) h (rc n) (zc n) u (planeLiftPoint (x, τ))| ≤ C := by
-        rw [heqx]; exact abs_zoomVRec_le_of_tau_le_neg_one hC (hlam_pos n) hb hpx hτ1
-      have hVby : |zoomVRec (lam n) h (rc n) (zc n) u (planeLiftPoint (y, τ))| ≤ C := by
-        rw [heqy]; exact abs_zoomVRec_le_of_tau_le_neg_one hC (hlam_pos n) hb hpy hτ1
-      have hWbx : |zoomWRec (lam n) h (rc n) (zc n) u (planeLiftPoint (x, τ))| ≤ C := by
-        rw [heqx]; exact abs_zoomWRec_le_of_tau_le_neg_one hC hh.1.le (hlam_pos n) hb hpx hτ1
-      have hWby : |zoomWRec (lam n) h (rc n) (zc n) u (planeLiftPoint (y, τ))| ≤ C := by
-        rw [heqy]; exact abs_zoomWRec_le_of_tau_le_neg_one hC hh.1.le (hlam_pos n) hb hpy hτ1
-      have hAx1 : (1 : ℝ) ≤ rc n / lam n + x 0 := hApos_n (x, τ) ⟨hx, hτ⟩
-      have hAy1 : (1 : ℝ) ≤ rc n / lam n + y 0 := hApos_n (y, τ) ⟨hy, hτ⟩
-      have hAx0 : (0 : ℝ) < rc n / lam n + x 0 := lt_of_lt_of_le one_pos hAx1
-      have hAy0 : (0 : ℝ) < rc n / lam n + y 0 := lt_of_lt_of_le one_pos hAy1
-      -- the plane distance between the two projected points equals `‖x - y‖`
-      have hdist_le : dist ((x 0, x 1) : ℝ × ℝ) (y 0, y 1) ≤ ‖x - y‖ := by
-        rw [Prod.dist_eq]
-        exact max_le (by simpa [Real.dist_eq] using abs_apply_sub_le_norm_sub x y 0)
-          (by simpa [Real.dist_eq] using abs_apply_sub_le_norm_sub x y 1)
-      have hVdist := lipschitzOnWith_iff_dist_le_mul.mp hVlip _ hxmem _ hymem
-      have hWdist := lipschitzOnWith_iff_dist_le_mul.mp hWlip _ hxmem _ hymem
-      rw [Real.dist_eq] at hVdist hWdist
-      simp only [Real.coe_toNNReal', max_eq_left (by positivity : (0:ℝ) ≤ 2*C)]
-        at hVdist hWdist
-      have hVdiff : |zoomVRec (lam n) h (rc n) (zc n) u (planeLiftPoint (x, τ)) -
-          zoomVRec (lam n) h (rc n) (zc n) u (planeLiftPoint (y, τ))| ≤ 2 * C * ‖x - y‖ := by
-        rw [heqx, heqy]
-        exact hVdist.trans (mul_le_mul_of_nonneg_left hdist_le (by positivity))
-      have hWdiff : |zoomWRec (lam n) h (rc n) (zc n) u (planeLiftPoint (x, τ)) -
-          zoomWRec (lam n) h (rc n) (zc n) u (planeLiftPoint (y, τ))| ≤ 2 * C * ‖x - y‖ := by
-        rw [heqx, heqy]
-        exact hWdist.trans (mul_le_mul_of_nonneg_left hdist_le (by positivity))
-      have hxynn : (0 : ℝ) ≤ ‖x - y‖ := norm_nonneg _
-      refine ⟨?_, ?_, ?_, ?_⟩
-      · rw [pi_norm_le_iff_of_nonneg (by positivity : (0:ℝ) ≤ 4 * C)]
-        intro i
-        fin_cases i
-        · simpa [recDrift, Real.norm_eq_abs] using hVbx.trans (by linarith only [hC])
-        · simpa [recDrift, Real.norm_eq_abs] using hWbx.trans (by linarith only [hC])
-      · have heq : recDriftDiv (lam n) h (rc n) (zc n) u (x, τ)
-            = -(zoomVRec (lam n) h (rc n) (zc n) u (planeLiftPoint (x, τ)) /
-                (rc n / lam n + x 0)) := rfl
-        rw [heq, abs_neg, abs_div, abs_of_pos hAx0]
-        calc |zoomVRec (lam n) h (rc n) (zc n) u (planeLiftPoint (x, τ))| / (rc n / lam n + x 0)
-            ≤ |zoomVRec (lam n) h (rc n) (zc n) u (planeLiftPoint (x, τ))| :=
-              div_le_self (abs_nonneg _) hAx1
-          _ ≤ C := hVbx
-          _ ≤ 4 * C := by linarith only [hC]
-      · rw [pi_norm_le_iff_of_nonneg (by positivity : (0:ℝ) ≤ 4 * C * ‖x - y‖)]
-        intro i
-        fin_cases i
-        · simpa [recDrift, Real.norm_eq_abs] using hVdiff.trans (by nlinarith only [hxynn, hC])
-        · simpa [recDrift, Real.norm_eq_abs] using hWdiff.trans (by nlinarith only [hxynn, hC])
-      · have hAxy : |1 / (rc n / lam n + x 0) - 1 / (rc n / lam n + y 0)|
-            ≤ |x 0 - y 0| := by
-          have hne_x : rc n / lam n + x 0 ≠ 0 := hAx0.ne'
-          have hne_y : rc n / lam n + y 0 ≠ 0 := hAy0.ne'
-          have heq : 1 / (rc n / lam n + x 0) - 1 / (rc n / lam n + y 0)
-              = (y 0 - x 0) / ((rc n / lam n + x 0) * (rc n / lam n + y 0)) := by
-            field_simp
-            ring
-          rw [heq, abs_div]
-          have hprod1 : (1 : ℝ) ≤ (rc n / lam n + x 0) * (rc n / lam n + y 0) := by
-            nlinarith only [hAx1, hAy1]
-          have hprodpos : (0 : ℝ) < (rc n / lam n + x 0) * (rc n / lam n + y 0) :=
-            mul_pos hAx0 hAy0
-          rw [abs_of_pos hprodpos, abs_sub_comm (y 0) (x 0)]
-          exact div_le_self (abs_nonneg _) hprod1
-        have hx0y0 : |x 0 - y 0| ≤ ‖x - y‖ := abs_apply_sub_le_norm_sub x y 0
-        have heqdiv : recDriftDiv (lam n) h (rc n) (zc n) u (x, τ) -
-            recDriftDiv (lam n) h (rc n) (zc n) u (y, τ)
-            = -((zoomVRec (lam n) h (rc n) (zc n) u (planeLiftPoint (x, τ)) -
-                  zoomVRec (lam n) h (rc n) (zc n) u (planeLiftPoint (y, τ))) /
-                (rc n / lam n + x 0))
-              - zoomVRec (lam n) h (rc n) (zc n) u (planeLiftPoint (y, τ)) *
-                (1 / (rc n / lam n + x 0) - 1 / (rc n / lam n + y 0)) := by
-          simp only [recDriftDiv]
-          field_simp
-          ring
-        rw [heqdiv]
-        set A : ℝ := (zoomVRec (lam n) h (rc n) (zc n) u (planeLiftPoint (x, τ)) -
-              zoomVRec (lam n) h (rc n) (zc n) u (planeLiftPoint (y, τ))) /
-              (rc n / lam n + x 0) with hA_def
-        set B : ℝ := zoomVRec (lam n) h (rc n) (zc n) u (planeLiftPoint (y, τ)) *
-              (1 / (rc n / lam n + x 0) - 1 / (rc n / lam n + y 0)) with hB_def
-        have hterm1 : |A| ≤ 2 * C * ‖x - y‖ := by
-          rw [hA_def, abs_div, abs_of_pos hAx0]
-          have hle : |zoomVRec (lam n) h (rc n) (zc n) u (planeLiftPoint (x, τ)) -
-              zoomVRec (lam n) h (rc n) (zc n) u (planeLiftPoint (y, τ))| /
-              (rc n / lam n + x 0)
-              ≤ |zoomVRec (lam n) h (rc n) (zc n) u (planeLiftPoint (x, τ)) -
-                zoomVRec (lam n) h (rc n) (zc n) u (planeLiftPoint (y, τ))| :=
-            div_le_self (abs_nonneg _) hAx1
-          exact hle.trans hVdiff
-        have hterm2 : |B| ≤ C * ‖x - y‖ := by
-          rw [hB_def, abs_mul]
-          exact mul_le_mul hVby (hAxy.trans hx0y0) (abs_nonneg _) hC
-        have hrw : -A - B = -(A + B) := by ring
-        rw [hrw, abs_neg]
-        calc |A + B| ≤ |A| + |B| := abs_add_le _ _
-          _ ≤ 2 * C * ‖x - y‖ + C * ‖x - y‖ := add_le_add hterm1 hterm2
-          _ ≤ 4 * C * ‖x - y‖ := by nlinarith only [hxynn, hC]
-    · have hempty : Metric.closedBall (0 : Vec 2) r = ∅ :=
-        Metric.closedBall_eq_empty.mpr (not_le.mp hr0)
-      filter_upwards with n τ hτ x hx
-      simp [hempty] at hx
   · intro ψ hψ hψc J hJ hJsub
     have hK : IsCompact (tsupport ψ ×ˢ J) := hψc.prod hJ
     have hKsub : tsupport ψ ×ˢ J ⊆ univ ×ˢ Iic (-1 : ℝ) := fun z hz => ⟨mem_univ _, hJsub hz.2⟩
@@ -706,16 +723,12 @@ theorem recDrift_extraction_hypotheses
         = fun x : Vec 2 => FV x * fderiv ℝ ψ x (basisVec 0) + FW x * fderiv ℝ ψ x (basisVec 1) := by
       funext x
       simp [Fin.sum_univ_two, recDrift, FV, FW]
-    have hstep1 : (∫ x, ∑ i, recDrift (lam n) h (rc n) (zc n) u (x, τ) i * fderiv ℝ ψ x
-      (basisVec i))
-        = ∫ x, FV x * fderiv ℝ ψ x (basisVec 0) + FW x * fderiv ℝ ψ x (basisVec 1) := by
-      rw [hsum_eq]
     have hstep2 : (∫ x, FV x * fderiv ℝ ψ x (basisVec 0) + FW x * fderiv ℝ ψ x (basisVec 1))
         = (∫ x, FV x * fderiv ℝ ψ x (basisVec 0)) + ∫ x, FW x * fderiv ℝ ψ x (basisVec 1) :=
       integral_add hintFVψ0 hintFWψ1
     have hrhs : (-∫ x, ∑ i, recDrift (lam n) h (rc n) (zc n) u (x, τ) i * fderiv ℝ ψ x (basisVec i))
         = (∫ x, GV x * ψ x) + ∫ x, GW x * ψ x := by
-      rw [hstep1, hstep2, hVstep, hWstep]
+      rw [hsum_eq, hstep2, hVstep, hWstep]
       ring
     have hGsum : (∫ x, GV x * ψ x) + ∫ x, GW x * ψ x = ∫ x, (GV x + GW x) * ψ x := by
       have heq : (∫ x, (GV x + GW x) * ψ x) = (∫ x, GV x * ψ x) + ∫ x, GW x * ψ x := by
@@ -746,7 +759,7 @@ theorem recDrift_extraction_hypotheses
             = recDriftDiv (lam n) h (rc n) (zc n) u (x, τ) := by
           simp only [recDriftDiv]
           linarith only [hdiv]
-        show (fderiv ℝ FV x (basisVec 0) + fderiv ℝ FW x (basisVec 1)) * ψ x
+        change (fderiv ℝ FV x (basisVec 0) + fderiv ℝ FW x (basisVec 1)) * ψ x
             = recDriftDiv (lam n) h (rc n) (zc n) u (x, τ) * ψ x
         rw [hVeq, hWeq, heqdiv]
       · rw [image_eq_zero_of_notMem_tsupport hx, mul_zero, mul_zero]

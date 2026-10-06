@@ -16,7 +16,7 @@ public import LeanPool.CIVAxisymmetric.Reduction.AveragedSuitableSolution
 This module proves the statement `CIV.axisymmetricTheorem` (`thm:aniso:main`). The proof is the
 printed one: `prop:aniso:small` at `ρ = 1/2` (`CIV.Main.meridionalSmallness`) gives
 `eq:aniso:closure:small` with `ρ₀ = 1/2`, and the closure lemma `lem:aniso:closure`, applied to the
-rotation-averaged triple `(u, π̄, 𝒫 f)` whose force is axisymmetric
+rotation-averaged triple `(u, π_bar, 𝒫 f)` whose force is axisymmetric
 (`CIV.boundedNearOrigin_of_meridionalSmallness_averaged`), makes `(0,0)` a regular point.
 -/
 

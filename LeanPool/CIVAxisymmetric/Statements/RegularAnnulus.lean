@@ -50,7 +50,7 @@ theorem regularAnnulus (q : ℝ)
         ∀ t ∈ Ioo t₀ 0, ∀ i : Fin 3, ∀ α : Fin 3 → ℕ, α 0 + α 1 + α 2 ≤ 2 →
           |multiPartial (fun w => u w i) α (x, t)| ≤ M) ∧
       ∀ Rstar ∈ Ioo Rm Rp, ∃ CΓ : ℝ,
-        ∀ x ∈ vec3Ball 0 Rstar, ∀ t ∈ Ioo t₀ 0, |circulation u (x, t)| ≤ CΓ :=
-by exact CIV.Main.regularAnnulus q u Du p f hsol henergy hu hp hf haxi hfaxi hMf R₁ R₀ hR
+        ∀ x ∈ vec3Ball 0 Rstar, ∀ t ∈ Ioo t₀ 0, |circulation u (x, t)| ≤ CΓ := by
+  exact CIV.Main.regularAnnulus q u Du p f hsol henergy hu hp hf haxi hfaxi hMf R₁ R₀ hR
 
 end CIV

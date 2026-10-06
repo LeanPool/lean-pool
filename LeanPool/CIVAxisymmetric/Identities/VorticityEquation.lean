@@ -39,7 +39,7 @@ theorem spatialPartial_eq_jointFDeriv {g : ParabolicPoint → ℝ} {z : Paraboli
   have hcomp : HasFDerivAt (fun x : Vec3 => g (x, z.2))
       ((fderiv ℝ (fun w : Vec3 × ℝ => g w) z).comp (ContinuousLinearMap.inl ℝ Vec3 ℝ)) z.1 :=
     hg.hasFDerivAt.comp z.1 (hasFDerivAt_prodMk_left z.1 z.2)
-  show fderiv ℝ (fun x : Vec3 => g (x, z.2)) z.1 (basisVec i) = _
+  change fderiv ℝ (fun x : Vec3 => g (x, z.2)) z.1 (basisVec i) = _
   rw [hcomp.fderiv]
   rfl
 
@@ -51,7 +51,7 @@ theorem timePartial_eq_jointFDeriv {g : ParabolicPoint → ℝ} {z : ParabolicPo
   have hcomp : HasFDerivAt (fun s : ℝ => g (z.1, s))
       ((fderiv ℝ (fun w : Vec3 × ℝ => g w) z).comp (ContinuousLinearMap.inr ℝ Vec3 ℝ)) z.2 :=
     hg.hasFDerivAt.comp z.2 (hasFDerivAt_prodMk_right z.1 z.2)
-  show fderiv ℝ (fun s : ℝ => g (z.1, s)) z.2 1 = _
+  change fderiv ℝ (fun s : ℝ => g (z.1, s)) z.2 1 = _
   rw [hcomp.fderiv]
   rfl
 
@@ -262,7 +262,7 @@ private theorem spatialPartial_congr_of_eqOn {f g : ParabolicPoint → ℝ}
     simpa using hc.tendsto z.1
   have hevSlice : (fun y : Vec3 => f (y, z.2)) =ᶠ[nhds z.1] (fun y : Vec3 => g (y, z.2)) :=
     htend.eventually hev
-  show fderiv ℝ (fun y : Vec3 => f (y, z.2)) z.1 (basisVec k)
+  change fderiv ℝ (fun y : Vec3 => f (y, z.2)) z.1 (basisVec k)
       = fderiv ℝ (fun y : Vec3 => g (y, z.2)) z.1 (basisVec k)
   rw [hevSlice.fderiv_eq]
 
@@ -424,7 +424,7 @@ private theorem raw_theta_axial
     (hdA.div_const ((z.1 0) ^ 2))).sub hdp0 |>.add hdf0
   have hSopen := isOpen_meridional_axial_slice (z.1 0) z.2
   have hSmem : z.1 2 ∈ {s : ℝ | ((meridional (z.1 0) s : Vec3), z.2) ∈ unitCylinder} := by
-    show ((meridional (z.1 0) (z.1 2) : Vec3), z.2) ∈ unitCylinder
+    change ((meridional (z.1 0) (z.1 2) : Vec3), z.2) ∈ unitCylinder
     rw [← hzeq]; exact hz
   have heq : (fun s : ℝ => timePartial (fun w => u w 0) (meridional (z.1 0) s, z.2)
         + u (meridional (z.1 0) s, z.2) 0
@@ -527,7 +527,7 @@ private theorem raw_theta_radial
   have hRHS := ((hdC00.add hdQuot).add hdC22).sub hdp2 |>.add hdf2
   have hSopen := isOpen_meridional_radial_slice (z.1 2) z.2
   have hSmem : z.1 0 ∈ {s : ℝ | ((meridional s (z.1 2) : Vec3), z.2) ∈ unitCylinder} := by
-    show ((meridional (z.1 0) (z.1 2) : Vec3), z.2) ∈ unitCylinder
+    change ((meridional (z.1 0) (z.1 2) : Vec3), z.2) ∈ unitCylinder
     rw [← hzeq]; exact hz
   have heq : (fun s : ℝ => timePartial (fun w => u w 2) (meridional s (z.1 2), z.2)
         + u (meridional s (z.1 2), z.2) 0
@@ -560,7 +560,7 @@ private theorem timePartial_sub {f g : ParabolicPoint → ℝ} {z : ParabolicPoi
     (hf : DifferentiableAt ℝ (fun s : ℝ => f (z.1, s)) z.2)
     (hg : DifferentiableAt ℝ (fun s : ℝ => g (z.1, s)) z.2) :
     timePartial (fun w => f w - g w) z = timePartial f z - timePartial g z := by
-  show fderiv ℝ (fun s : ℝ => f (z.1, s) - g (z.1, s)) z.2 1 = _
+  change fderiv ℝ (fun s : ℝ => f (z.1, s) - g (z.1, s)) z.2 1 = _
   rw [fderiv_fun_sub hf hg]
   rfl
 
@@ -578,9 +578,9 @@ private theorem differentiableAt_timeSlice {g : ParabolicPoint → ℝ}
 private theorem spatialPartial_sq {g : ParabolicPoint → ℝ} {z : ParabolicPoint}
     (hg : DifferentiableAt ℝ (fun y : Vec3 => g (y, z.2)) z.1) (i : Fin 3) :
     spatialPartial (fun w => (g w) ^ 2) i z = 2 * g z * spatialPartial g i z := by
-  show fderiv ℝ (fun x : Vec3 => g (x, z.2) ^ 2) z.1 (basisVec i) = _
+  change fderiv ℝ (fun x : Vec3 => g (x, z.2) ^ 2) z.1 (basisVec i) = _
   rw [(hg.hasFDerivAt.pow 2).fderiv, smul_apply]
-  show (2 • g z ^ (2 - 1)) • spatialPartial g i z = 2 * g z * spatialPartial g i z
+  change (2 • g z ^ (2 - 1)) • spatialPartial g i z = 2 * g z * spatialPartial g i z
   norm_num
 
 /-- The azimuthal vorticity equation `eq:aniso:theta`: away from the axis, the material
@@ -655,7 +655,7 @@ theorem azimuthal_vorticity_pde
   have hΩ00 : spatialSecondPartial (azimuthalVorticity u) 0 0 z
       = spatialPartial (spatialSecondPartial (fun v => u v 0) 2 0) 0 z
         - spatialPartial (spatialSecondPartial (fun v => u v 2) 0 0) 0 z := by
-    show spatialPartial (spatialPartial (azimuthalVorticity u) 0) 0 z = _
+    change spatialPartial (spatialPartial (azimuthalVorticity u) 0) 0 z = _
     rw [spatialPartial_congr_of_eqOn hΩ0eqOn hz 0]
     exact spatialPartial_sub_of_differentiableAt (i := 0)
       (differentiableAt_spatialSlice (hA20.of_le (by norm_num)) hz)
@@ -663,7 +663,7 @@ theorem azimuthal_vorticity_pde
   have hΩ22 : spatialSecondPartial (azimuthalVorticity u) 2 2 z
       = spatialPartial (spatialSecondPartial (fun v => u v 0) 2 2) 2 z
         - spatialPartial (spatialSecondPartial (fun v => u v 2) 0 2) 2 z := by
-    show spatialPartial (spatialPartial (azimuthalVorticity u) 2) 2 z = _
+    change spatialPartial (spatialPartial (azimuthalVorticity u) 2) 2 z = _
     rw [spatialPartial_congr_of_eqOn hΩ2eqOn hz 2]
     exact spatialPartial_sub_of_differentiableAt (i := 2)
       (differentiableAt_spatialSlice (hA22.of_le (by norm_num)) hz)

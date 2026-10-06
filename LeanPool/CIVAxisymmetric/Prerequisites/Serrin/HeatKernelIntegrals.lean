@@ -106,7 +106,7 @@ theorem abs_spatialPartial_serrinCutoff_le : ∃ C : ℝ, 0 ≤ C ∧ ∀ (x : V
   have hsp : spatialPartial (serrinCutoff x s ρ) j z =
       fderiv ℝ (serrinBallCutoff x ρ) z.1 (basisVec j) * T := by
     unfold spatialPartial serrinCutoff
-    show fderiv ℝ (fun y : Vec3 => serrinBallCutoff x ρ y * T) z.1 (basisVec j) = _
+    change fderiv ℝ (fun y : Vec3 => serrinBallCutoff x ρ y * T) z.1 (basisVec j) = _
     rw [fderiv_mul_const ((hB.differentiable (by simp)) z.1)]
     simp only [smul_apply, smul_eq_mul]
     ring
@@ -223,7 +223,7 @@ theorem integrable_and_integral_serrinHeatMajorant {ρ C₁ : ℝ} (hρ : 0 < ρ
     intro q hq
     have h1 : Real.sqrt q.2 ≤ ρ := by
       rw [Real.sqrt_le_left hρ.le]; exact hq.2.2
-    show vec3EuclideanNorm q.1 + Real.sqrt q.2 < 3 * ρ
+    change vec3EuclideanNorm q.1 + Real.sqrt q.2 < 3 * ρ
     linarith only [hq.1, h1, hρ]
   -- integrability of the two kernels on the strip and on `R`
   have hT : 0 < (3 * ρ) ^ 2 := by positivity
@@ -308,14 +308,14 @@ theorem serrinHeatWeight_spatialPartial_integral : ∃ C : ℝ, 0 < C ∧ ∀ (x
     · have ht : 0 < s - z.2 := by linarith only [hz]
       have hmem : a - z ∈ {q : Vec3 × ℝ | vec3EuclideanNorm q.1 ≤ ρ ∧ 0 < q.2 ∧ q.2 ≤ ρ ^ 2} := by
         refine ⟨?_, ht, ?_⟩
-        · show vec3EuclideanNorm (x - z.1) ≤ ρ
+        · change vec3EuclideanNorm (x - z.1) ≤ ρ
           rw [← vec3EuclideanNorm_neg, neg_sub]
           exact hw.1
-        · show s - z.2 ≤ ρ ^ 2
+        · change s - z.2 ≤ ρ ^ 2
           linarith only [hw.2.1]
       unfold serrinHeatMajorant
       rw [indicator_of_mem hmem]
-      show _ ≤ heatKernelGradientNorm (x - z.1) (s - z.2) +
+      change _ ≤ heatKernelGradientNorm (x - z.1) (s - z.2) +
         C₁ / ρ * heatKernelPlus ((x - z.1, s - z.2) : ParabolicPoint)
       rw [spatialPartial_serrinHeatWeight_eq x hρ z hz j]
       have hD : |heatKernelSpaceDerivative (x - z.1) (s - z.2) j| ≤

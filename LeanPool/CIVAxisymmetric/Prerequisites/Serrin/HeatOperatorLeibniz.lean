@@ -49,7 +49,7 @@ derivative. -/
 private theorem spatialPartial_congr_of_eventuallyEq {v u : ParabolicPoint → ℝ}
     {z : Vec3 × ℝ} (h : ∀ᶠ w : Vec3 × ℝ in nhds z, v w = u w) (j : Fin 3) :
     spatialPartial v j z = spatialPartial u j z := by
-  show fderiv ℝ (fun y : Vec3 => v (y, z.2)) z.1 (basisVec j)
+  change fderiv ℝ (fun y : Vec3 => v (y, z.2)) z.1 (basisVec j)
     = fderiv ℝ (fun y : Vec3 => u (y, z.2)) z.1 (basisVec j)
   have hcont : Continuous (fun y : Vec3 => ((y, z.2) : Vec3 × ℝ)) := by fun_prop
   have hev : (fun y : Vec3 => v (y, z.2)) =ᶠ[nhds z.1] (fun y : Vec3 => u (y, z.2)) :=

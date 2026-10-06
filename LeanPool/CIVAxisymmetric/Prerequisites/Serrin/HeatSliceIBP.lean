@@ -157,7 +157,7 @@ theorem serrinHeatWeight_slice (x : Vec3) {s ρ : ℝ} (hρ : 0 < ρ) {τ : ℝ}
     by_contra hout
     apply hy
     have hev := serrinCutoff_eventually_eq_zero x hρ (z := ((y, τ) : Vec3 × ℝ)) hout hτ
-    show heatKernel (x - y) (s - τ) * serrinCutoff x s ρ (y, τ) = 0
+    change heatKernel (x - y) (s - τ) * serrinCutoff x s ρ (y, τ) = 0
     rw [hev.self_of_nhds, mul_zero]
   have hsub : {y : Vec3 | ((y, τ) : Vec3 × ℝ) ∈
       {y : Vec3 | vec3EuclideanNorm (y - x) ≤ ρ} ×ˢ Icc (s - ρ ^ 2) s} ⊆
@@ -207,10 +207,10 @@ theorem integral_serrinHeatWeight_mul_spatialPartial {Y : ParabolicPoint → ℝ
   obtain ⟨CY, hCY⟩ := hWc.exists_bound_of_continuousOn (hYc.mono hwin)
   obtain ⟨CdY, hCdY⟩ := hWc.exists_bound_of_continuousOn (hdYc.mono hwin)
   have hCY0 : 0 ≤ CY := (norm_nonneg _).trans (hCY ((x, s) : Vec3 × ℝ) ⟨by
-    show vec3EuclideanNorm (x - x) ≤ ρ; rw [sub_self, vec3EuclideanNorm_zero]; exact hρ.le,
+    change vec3EuclideanNorm (x - x) ≤ ρ; rw [sub_self, vec3EuclideanNorm_zero]; exact hρ.le,
     by have := sq_nonneg ρ; linarith only [this], le_rfl⟩)
   have hCdY0 : 0 ≤ CdY := (norm_nonneg _).trans (hCdY ((x, s) : Vec3 × ℝ) ⟨by
-    show vec3EuclideanNorm (x - x) ≤ ρ; rw [sub_self, vec3EuclideanNorm_zero]; exact hρ.le,
+    change vec3EuclideanNorm (x - x) ≤ ρ; rw [sub_self, vec3EuclideanNorm_zero]; exact hρ.le,
     by have := sq_nonneg ρ; linarith only [this], le_rfl⟩)
   have hΨc : ContinuousOn (fun z : Vec3 × ℝ => serrinHeatWeight x s ρ z) U :=
     (contDiffOn_serrinHeatWeight x (s := s) hρ).continuousOn
@@ -222,7 +222,7 @@ theorem integral_serrinHeatWeight_mul_spatialPartial {Y : ParabolicPoint → ℝ
   have hΨzero : ∀ z ∈ U, z ∉ W → serrinHeatWeight x s ρ z = 0 := by
     intro z hz hzW
     have hev := serrinCutoff_eventually_eq_zero x hρ hzW hz
-    show heatKernel (x - z.1) (s - z.2) * serrinCutoff x s ρ z = 0
+    change heatKernel (x - z.1) (s - z.2) * serrinCutoff x s ρ z = 0
     rw [hev.self_of_nhds, mul_zero]
   obtain ⟨C₃, _, hC₃⟩ := serrinHeatWeight_spatialPartial_integral
   apply integral_mul_spatialPartial_eq_neg_of_slices j
@@ -249,7 +249,7 @@ theorem integral_serrinHeatWeight_mul_spatialPartial {Y : ParabolicPoint → ℝ
         (heatKernelPlus_eq_heatKernel (((x, s) - z : Vec3 × ℝ) : ParabolicPoint)).symm
       calc |serrinHeatWeight x s ρ z|
           = heatKernel (x - z.1) (s - z.2) * |serrinCutoff x s ρ z| := by
-            show |heatKernel (x - z.1) (s - z.2) * serrinCutoff x s ρ z| = _
+            change |heatKernel (x - z.1) (s - z.2) * serrinCutoff x s ρ z| = _
             rw [abs_mul, abs_of_nonneg (heatKernel_nonneg _ _)]
         _ ≤ heatKernel (x - z.1) (s - z.2) :=
             mul_le_of_le_one_right (heatKernel_nonneg _ _) (abs_serrinCutoff_le_one x s ρ z)
@@ -432,7 +432,7 @@ theorem integral_divergence_mul_serrinCutoffKernel {U : Fin 3 → ParabolicPoint
   have hWm : MeasurableSet W := hWc.isClosed.measurableSet
   have hWfin : volume W < ⊤ := hWc.measure_lt_top
   have hc0 : ((x, s) : Vec3 × ℝ) ∈ W := ⟨by
-    show vec3EuclideanNorm (x - x) ≤ ρ; rw [sub_self, vec3EuclideanNorm_zero]; exact hρ.le,
+    change vec3EuclideanNorm (x - x) ≤ ρ; rw [sub_self, vec3EuclideanNorm_zero]; exact hρ.le,
     by have := sq_nonneg ρ; linarith only [this], le_rfl⟩
   have hVeq : spaceTimeSet univ (Iio s) = V := by
     ext z; exact ⟨fun h => h.2, fun h => ⟨mem_univ _, h⟩⟩

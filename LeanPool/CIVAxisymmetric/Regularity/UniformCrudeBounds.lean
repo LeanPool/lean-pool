@@ -45,7 +45,7 @@ theorem parabolicCylinder_subset_unitCylinder {x : Vec3} {s r : ℝ} (hs : s < 0
     parabolicCylinder x s r ⊆ unitCylinder := by
   have hIoc : Ioc (s - r ^ 2) s ⊆ Ioo (-1 : ℝ) 0 :=
     fun τ hτ => ⟨hlow.trans hτ.1, hτ.2.trans_lt hs⟩
-  show vec3Ball x r ×ˢ Ioc (s - r ^ 2) s ⊆ vec3Ball 0 1 ×ˢ Ioo (-1 : ℝ) 0
+  change vec3Ball x r ×ˢ Ioc (s - r ^ 2) s ⊆ vec3Ball 0 1 ×ˢ Ioo (-1 : ℝ) 0
   exact Set.prod_mono hball hIoc
 
 /-- The Euclidean-norm-squared density of a `Vec3`-valued function is dominated by three
@@ -105,7 +105,7 @@ theorem alpha_le_of_globalEnergyClass (henergy : GlobalEnergyClass u Du p) {x : 
         (volume.restrict (Ioo (-1 : ℝ) 0))).toReal :=
     ENNReal.toReal_mono h3E1fin hmono
   have hrinv : (0 : ℝ) ≤ r⁻¹ := inv_nonneg.mpr hr.le
-  show (r⁻¹ * (timeSliceEnergyEssSup x s r (fun w => vec3EuclideanNorm (u w))).toReal) ^
+  change (r⁻¹ * (timeSliceEnergyEssSup x s r (fun w => vec3EuclideanNorm (u w))).toReal) ^
       (1 / 2 : ℝ) ≤ _
   exact Real.rpow_le_rpow (mul_nonneg hrinv ENNReal.toReal_nonneg)
     (mul_le_mul_of_nonneg_left htoReal hrinv) (by norm_num)
@@ -129,7 +129,7 @@ theorem beta_le_of_globalEnergyClass {x : Vec3} {s r : ℝ} (hr : 0 < r) (hs : s
       (∫⁻ w in unitCylinder, ENNReal.ofReal (spatialGradientSq u Du w)).toReal :=
     ENNReal.toReal_mono hfin hle
   have hrinv : (0 : ℝ) ≤ r⁻¹ := inv_nonneg.mpr hr.le
-  show (r⁻¹ * (∫⁻ w in parabolicCylinder x s r,
+  change (r⁻¹ * (∫⁻ w in parabolicCylinder x s r,
       ENNReal.ofReal (spatialGradientSq u Du w)).toReal) ^ (1/2 : ℝ) ≤ _
   exact Real.rpow_le_rpow (mul_nonneg hrinv ENNReal.toReal_nonneg)
     (mul_le_mul_of_nonneg_left htoReal hrinv) (by norm_num)
@@ -152,7 +152,7 @@ theorem delta_le_of_globalEnergyClass {x : Vec3} {s r : ℝ} (hr : 0 < r) (hs : 
       (∫⁻ w in unitCylinder, ENNReal.ofReal |p w| ^ (3 / 2 : ℝ)).toReal :=
     ENNReal.toReal_mono hfin hle
   have hrpow : (0 : ℝ) ≤ r ^ (-2 : ℝ) := Real.rpow_nonneg hr.le _
-  show (r ^ (-2 : ℝ) * (∫⁻ w in parabolicCylinder x s r,
+  change (r ^ (-2 : ℝ) * (∫⁻ w in parabolicCylinder x s r,
       ENNReal.ofReal |p w| ^ (3 / 2 : ℝ)).toReal) ^ (1/3 : ℝ) ≤ _
   exact Real.rpow_le_rpow (mul_nonneg hrpow ENNReal.toReal_nonneg)
     (mul_le_mul_of_nonneg_left htoReal hrpow) (by norm_num)
@@ -244,7 +244,7 @@ theorem lambda_le_of_forceC2Bounded (q : ℝ) (hq : 5 / 2 < q) (hMf : ForceC2Bou
       ring
     rw [hstep1, hstep2, hstep3, hstep4]
     ring
-  show r ^ (3 - 5 / q : ℝ) * (∫⁻ w in parabolicCylinder x s r,
+  change r ^ (3 - 5 / q : ℝ) * (∫⁻ w in parabolicCylinder x s r,
       ENNReal.ofReal (vec3EuclideanNorm (f w)) ^ q).toReal ^ (1/q : ℝ) ≤ _
   calc r ^ (3 - 5 / q : ℝ) * (∫⁻ w in parabolicCylinder x s r,
         ENNReal.ofReal (vec3EuclideanNorm (f w)) ^ q).toReal ^ (1/q : ℝ)

@@ -174,7 +174,7 @@ private theorem preimage_sub_left_euclideanBall (x : Vec3) (ρ : ℝ) :
     (fun y : Vec3 => x - y) ⁻¹' {z : Vec3 | vec3EuclideanNorm z ≤ ρ} =
       {y : Vec3 | vec3EuclideanNorm (y - x) ≤ ρ} := by
   ext y
-  show vec3EuclideanNorm (x - y) ≤ ρ ↔ vec3EuclideanNorm (y - x) ≤ ρ
+  change vec3EuclideanNorm (x - y) ≤ ρ ↔ vec3EuclideanNorm (y - x) ≤ ρ
   rw [show x - y = -(y - x) from by ring, vec3EuclideanNorm_neg]
 
 private theorem integral_sub_left_euclideanBall (x : Vec3) (ρ : ℝ) (g : Vec3 → ℝ) :

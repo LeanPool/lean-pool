@@ -44,7 +44,7 @@ theorem comparisonAncient (m d : ℕ) (hd : 1 ≤ d ∧ d ≤ m) (T : ℝ)
       ∀ (V : Set (Vec m × ℝ)) (q' : Vec m × ℝ → ℝ), IsOpen V →
         ContinuousOn q' (V ∩ univ ×ˢ Iic T) →
         (∀ᵐ z ∂(volume.restrict (V ∩ univ ×ˢ Iio T)), q' z = q z) →
-        ∀ z ∈ V ∩ univ ×ˢ Iic T, q' z = 0 :=
-by exact CIV.Main.comparisonAncient m d hd T B divB hB q hq heq C κ hκ hdecay
+        ∀ z ∈ V ∩ univ ×ˢ Iic T, q' z = 0 := by
+  exact CIV.Main.comparisonAncient m d hd T B divB hB q hq heq C κ hκ hdecay
 
 end CIV

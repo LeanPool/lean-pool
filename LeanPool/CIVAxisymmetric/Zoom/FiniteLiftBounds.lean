@@ -84,7 +84,7 @@ theorem continuousOn_finLift_fields {lam h zc : ℝ} (hlam : 0 < lam) {u : Parab
         (fun z => lam ^ 3 * lam ^ (2 * h) * (azimuthalVorticity u (P z) / (P z).1 0)) O :=
       continuousOn_const.mul (hω.div hP0c hne)
     refine hmain.congr fun z hz => ?_
-    show zoomOmega lam h zc u (zoomLiftPoint z) = _
+    change zoomOmega lam h zc u (zoomLiftPoint z) = _
     unfold zoomOmega
     rw [potentialVorticity_eq_div u (hne z hz)]
   · refine continuousOn_pi.2 fun i => ?_
@@ -145,7 +145,7 @@ theorem finDrift_bounds {C h ρ : ℝ} (hh : 0 < h ∧ h < 1 / 2) (hρ0 : 0 ≤ 
   have hKLt : ∀ p ∈ zoomLiftPoint '' K, p.2 < 0 := by
     rintro _ ⟨z, hz, rfl⟩
     have := (hKs hz).2
-    show z.2 < 0
+    change z.2 < 0
     linarith only [(show z.2 < -1 from this)]
   filter_upwards [eventually_forall_zoomPoint_mem_unitCylinder_moving hh hρ0 hρ1 hzc hlam_lim
       _ hKL hKLt, eventually_lam_lt_one_and_zoomDelta_le_one hh.1.le hlam_lim] with n hn hl
@@ -255,16 +255,16 @@ theorem tendsto_lintegral_zoomOmegaLift {C h ρ : ℝ} (hh : 0 < h ∧ h < 1 / 2
     have hpt := (hconv {zoomLiftPoint z} isCompact_singleton (fun x hx => by
       rw [mem_singleton_iff.mp hx]; exact ⟨hR, le_of_lt hτ⟩)).tendsto_at (mem_singleton _)
     have h1 := abs_le_of_tendsto_zoomOmega hh hρ0 hρ1 hb hu haxi hzc hlam_pos hlam_lim
-      (show (zoomLiftPoint z).2 < 0 by show z.2 < 0; linarith only [hτ]) hpt
+      (show (zoomLiftPoint z).2 < 0 by change z.2 < 0; linarith only [hτ]) hpt
     have hr : (-(zoomLiftPoint z).2) ^ (-(3 / 2 : ℝ) - h) ≤ 1 :=
-      Real.rpow_le_one_of_one_le_of_nonpos (by show (1 : ℝ) ≤ -z.2; linarith only [hτ])
+      Real.rpow_le_one_of_one_le_of_nonpos (by change (1 : ℝ) ≤ -z.2; linarith only [hτ])
         (by linarith only [hh.1])
     exact h1.trans (mul_le_of_le_one_right hC hr)
   have hMle : ∀ᶠ n in atTop, ∀ z ∈ K, |zoomOmegaLift (lam n) h (zc n) u z| ≤ 2 * C := by
     filter_upwards [eventually_lam_lt_one_and_zoomDelta_le_one hh.1.le hlam_lim,
       eventually_forall_zoomPoint_mem_unitCylinder_moving hh hρ0 hρ1 hzc hlam_lim
         (zoomLiftPoint '' K) (hK.image continuous_zoomLiftPoint) (by
-          rintro _ ⟨z, hz, rfl⟩; show z.2 < 0; linarith only [(show z.2 < -1 from (hKs hz).2)])]
+          rintro _ ⟨z, hz, rfl⟩; change z.2 < 0; linarith only [(show z.2 < -1 from (hKs hz).2)])]
             with n hl hn z hz
     exact abs_zoomOmega_le_two_mul_const hl.1 hb (hu.of_le (by simp)) haxi
       (hn _ (mem_image_of_mem _ hz)) hC hl.2.2 hh.1 hh.2 (le_of_lt (hKs hz).2)

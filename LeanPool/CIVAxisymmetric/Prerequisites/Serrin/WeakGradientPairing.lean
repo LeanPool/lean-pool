@@ -66,7 +66,7 @@ theorem exists_localBox_of_isCompact_subset_unitCylinder {K : Set (Vec3 × ℝ)}
     have hhi := hz₃ hz
     simp only [mem_ofPred_eq] at hn hlo hhi
     refine ⟨?_, ?_, ?_⟩
-    · show vec3EuclideanNorm (z.1 - 0) < _
+    · change vec3EuclideanNorm (z.1 - 0) < _
       rw [sub_zero]
       linarith only [hn, h₁]
     · linarith only [hlo, h₂]
@@ -85,7 +85,7 @@ theorem localBox_ball_Ioo {r a b : ℝ} (hr : 0 < r) (hr1 : r < 1) (ha : -1 < a)
   · rw [closure_vec3Ball hr]
     intro y hy
     simp only [mem_ofPred_eq] at hy
-    show vec3EuclideanNorm (y - 0) < 1
+    change vec3EuclideanNorm (y - 0) < 1
     linarith only [hy, hr1]
   · exact (isCompact_Icc).of_isClosed_subset isClosed_closure (closure_minimal
     Ioo_subset_Icc_self isClosed_Icc)

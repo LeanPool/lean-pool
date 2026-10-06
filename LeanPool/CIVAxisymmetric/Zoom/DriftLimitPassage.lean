@@ -147,7 +147,7 @@ theorem ae_restrict_univ_prod_of_ae {Q : ℝ → Prop} {c d : ℝ}
     ∀ᵐ z ∂((volume : Measure (Vec m × ℝ)).restrict (univ ×ˢ Icc c d)), Q z.2 := by
   have heq : (volume : Measure (Vec m × ℝ)).restrict (univ ×ˢ Icc c d) =
       (volume : Measure (Vec m)).prod (volume.restrict (Icc c d)) := by
-    show (volume.prod volume).restrict (univ ×ˢ Icc c d) = _
+    change (volume.prod volume).restrict (univ ×ˢ Icc c d) = _
     rw [← Measure.prod_restrict, Measure.restrict_univ]
   rw [heq]
   exact (Measure.quasiMeasurePreserving_snd).ae h
@@ -159,7 +159,7 @@ theorem integrableOn_prod_Ioc_of_ae_bound {G : Vec m × ℝ → ℝ} (hGm : Meas
     {A : Set (Vec m)} (hvolA : volume A < ∞) :
     IntegrableOn G (A ×ˢ Ioc s t) := by
   have hvol : (volume : Measure (Vec m × ℝ)) (A ×ˢ Ioc s t) ≠ ∞ := by
-    show (volume.prod volume) (A ×ˢ Ioc s t) ≠ ∞
+    change (volume.prod volume) (A ×ˢ Ioc s t) ≠ ∞
     rw [Measure.prod_prod]
     exact ENNReal.mul_ne_top hvolA.ne measure_Ioc_lt_top.ne
   have hrect : A ×ˢ Ioc s t ⊆ univ ×ˢ Icc s t :=
@@ -280,7 +280,7 @@ theorem tendsto_setIntegral_inter_box_of_primitive (f : ℕ → Vec m × ℝ →
   have hQm : MeasurableSet Q := measurableSet_closedBall.prod measurableSet_Ioc
   have hvolB : volume (Metric.closedBall (0 : Vec m) R) < ∞ := measure_closedBall_lt_top
   have hvolQ : volume Q < ∞ := by
-    show (volume.prod volume) Q < ∞
+    change (volume.prod volume) Q < ∞
     rw [hQ, Measure.prod_prod]
     exact ENNReal.mul_lt_top hvolB measure_Ioc_lt_top
   set c' := min a₀ (T - 1) with hc'
@@ -403,7 +403,7 @@ theorem tendsto_integral_mul_of_forall_setIntegral {α : Type*} [MeasurableSpace
     exact (integral_add (hi₁.mul_bdd hn.1 hn.2) (hi₂.mul_bdd hn.1 hn.2)).symm
   · refine isClosed_of_closure_subset fun F hF => ?_
     rw [Metric.mem_closure_iff] at hF
-    show Tendsto _ _ _
+    change Tendsto _ _ _
     rw [Metric.tendsto_nhds]
     intro ε hε
     set C := |M| + 1 with hC
@@ -774,7 +774,7 @@ theorem weakDiv_of_hasDerivAt_slice (b : ℕ → Vec m × ℝ → Vec m) (divb :
   have hWs : ∀ j, ∀ x, x ∉ Metric.closedBall (0 : Vec m) R → W j x = 0 := by
     rintro (_ | i) x hx
     · exact image_eq_zero_of_notMem_tsupport (fun h => hx (hR h))
-    · show fderiv ℝ ψ x (basisVec i) = 0
+    · change fderiv ℝ ψ x (basisVec i) = 0
       rw [fderiv_of_notMem_tsupport ℝ (fun h => hx (hR h))]
       rfl
   have hbdK := exists_bound_on_compact_of_slice_bounds b divb hbd

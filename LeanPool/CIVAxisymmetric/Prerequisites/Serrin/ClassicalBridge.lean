@@ -255,7 +255,7 @@ theorem integral_momentum_residual_mul_eq_zero {q : ℝ} {u : ParabolicPoint →
   have rBd : ∑ j, ∫ z : Vec3 × ℝ, (u z k * spatialPartial (fun w => u w j) j z) * ψ z = 0 := by
     rw [← integral_finsetSum _ (fun j _ => iBd j)]
     refine (integral_congr_ae (Filter.Eventually.of_forall (fun z => ?_))).trans (integral_zero _ _)
-    show ∑ j, (u z k * spatialPartial (fun w => u w j) j z) * ψ z = 0
+    change ∑ j, (u z k * spatialPartial (fun w => u w j) j z) * ψ z = 0
     by_cases hz : z ∈ unitCylinder
     · have hdiv := classical_divergence_free_of_suitable hsol hu z hz
       calc ∑ j, (u z k * spatialPartial (fun w => u w j) j z) * ψ z

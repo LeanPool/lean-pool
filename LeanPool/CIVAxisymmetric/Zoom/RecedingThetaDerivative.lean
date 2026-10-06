@@ -45,11 +45,11 @@ private theorem spatialPartial_spatialPartial_comm_02 (g : ParabolicPoint → �
     (hD1.differentiableOn (by norm_num) z.1 hz1).differentiableAt (hopen.mem_nhds hz1)
   have heq1 : spatialPartial (fun w => spatialPartial g 0 w) 2 z
       = fderiv ℝ (fun x => fderiv ℝ φ x (basisVec 0)) z.1 (basisVec 2) := by
-    show fderiv ℝ (fun x : Vec3 => spatialPartial g 0 (x, z.2)) z.1 (basisVec 2) = _
+    change fderiv ℝ (fun x : Vec3 => spatialPartial g 0 (x, z.2)) z.1 (basisVec 2) = _
     rfl
   have heq2 : spatialPartial (fun w => spatialPartial g 2 w) 0 z
       = fderiv ℝ (fun x => fderiv ℝ φ x (basisVec 2)) z.1 (basisVec 0) := by
-    show fderiv ℝ (fun x : Vec3 => spatialPartial g 2 (x, z.2)) z.1 (basisVec 0) = _
+    change fderiv ℝ (fun x : Vec3 => spatialPartial g 2 (x, z.2)) z.1 (basisVec 0) = _
     rfl
   have hconv1 : fderiv ℝ (fun x => fderiv ℝ φ x (basisVec 0)) z.1 (basisVec 2)
       = fderiv ℝ (fderiv ℝ φ) z.1 (basisVec 2) (basisVec 0) := by

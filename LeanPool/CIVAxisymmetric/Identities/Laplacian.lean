@@ -91,14 +91,14 @@ theorem spatialSecondPartial_one_one_of_angularGenerator {g s : ParabolicPoint �
 /-- A classical spatial partial derivative is odd under negation of the scalar. -/
 theorem spatialPartial_neg (g : ParabolicPoint → ℝ) (i : Fin 3) (z : ParabolicPoint) :
     spatialPartial (fun w => -g w) i z = -spatialPartial g i z := by
-  show fderiv ℝ (fun y : Vec3 => -g (y, z.2)) z.1 (basisVec i) = _
+  change fderiv ℝ (fun y : Vec3 => -g (y, z.2)) z.1 (basisVec i) = _
   rw [fderiv_fun_neg]
   rfl
 
 /-- The classical spatial partial derivatives of the zero scalar vanish. -/
 theorem spatialPartial_zero_fun (i : Fin 3) (z : ParabolicPoint) :
     spatialPartial (fun _ : ParabolicPoint => (0 : ℝ)) i z = 0 := by
-  show fderiv ℝ (fun _ : Vec3 => (0 : ℝ)) z.1 (basisVec i) = 0
+  change fderiv ℝ (fun _ : Vec3 => (0 : ℝ)) z.1 (basisVec i) = 0
   rw [fderiv_fun_const]
   rfl
 

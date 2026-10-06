@@ -329,7 +329,7 @@ theorem l6_ball_bound_of_enstrophy_bound
     (hu t ht)
   have heq : ∀ x ∈ vec3Ball (0 : Vec3) ρ, (fun x : Vec3 => χ x • u (x, t)) x = u (x, t) := by
     intro x hx
-    show χ x • u (x, t) = u (x, t)
+    change χ x • u (x, t) = u (x, t)
     rw [hχ1 x hx, one_smul]
   have hmain := lintegral_pow_six_euclideanNorm_le_of_gradient_bound hCs_pos hCs
     (v := fun x : Vec3 => u (x, t)) (w := fun x : Vec3 => χ x • u (x, t)) (ρ := ρ)

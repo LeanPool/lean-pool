@@ -362,7 +362,7 @@ theorem exists_subseq_tendstoUniformlyOn_of_lipschitz_of_pairings_plane_eventual
         have h1 : n ≤ g' n := hg'mono.le_apply
         have h2 : g' n ≤ g (g' n) := hg.le_apply
         omega
-      show Θ' (g (g' n)) p = Θ (g (g' n)) p
+      change Θ' (g (g' n)) p = Θ (g (g' n)) p
       dsimp only [Θ']
       split_ifs
       rfl

@@ -90,10 +90,10 @@ theorem kahane_velocity_step : ∃ C : ℝ, 0 < C ∧
   have hmem : ((x, t) : ParabolicPoint) ∈
       {y : Vec3 | vec3EuclideanNorm (y - x) ≤ ρ} ×ˢ Icc (t - ρ ^ 2) t := by
     refine ⟨?_, ?_, le_rfl⟩
-    · show vec3EuclideanNorm (x - x) ≤ ρ
+    · change vec3EuclideanNorm (x - x) ≤ ρ
       rw [sub_self, vec3EuclideanNorm_zero]; exact hρ.le
     · have : 0 ≤ ρ ^ 2 := sq_nonneg ρ
-      show t - ρ ^ 2 ≤ t
+      change t - ρ ^ 2 ≤ t
       linarith only [this]
   have hxt := hwin hmem
   have hshift : multiPartial (fun w => u w i) (α + Pi.single l 1) (x, t) =
@@ -157,7 +157,7 @@ theorem kahane_velocity_step : ∃ C : ℝ, 0 < C ∧
     (contDiffOn_multiPartial_spaceTimeSet hΩ hI (hui i) α) hΛ hM l
 
 /-- One spatial derivative more for the pressure: with bounds `c m` on the velocity derivatives
-of order `m ≤ k + 1` on the time slice of `B̄(x, ρ)`, `Q` on the pressure derivatives of order
+of order `m ≤ k + 1` on the time slice of `B_bar(x, ρ)`, `Q` on the pressure derivatives of order
 `k` and `F` on the force derivatives of order `k + 1` there, every pressure derivative of order
 `k + 1` at `x` is at most `C (ρ (3 F + 9 ∑ₘ C(k,m) c (m+1) c (k+1-m)) + Q / ρ)`. -/
 theorem kahane_pressure_step : ∃ C : ℝ, 0 < C ∧

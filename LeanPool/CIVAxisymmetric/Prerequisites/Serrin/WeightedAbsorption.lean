@@ -15,7 +15,7 @@ public import Mathlib.Analysis.SpecificLimits.Basic
 # Distance-weighted absorption up to the top time
 
 A local estimate `|g(x, s)| ≤ c₁ ρ Λ + c₂ / ρ`, valid whenever `|g| ≤ Λ` on the backward window
-`B̄(x, 2ρ) × [s - ρ², s]` inside an annulus, yields a bound for `g` on every smaller annulus that
+`B_bar(x, 2ρ) × [s - ρ², s]` inside an annulus, yields a bound for `g` on every smaller annulus that
 is uniform up to the top time `t = 0`. The circular term carries the small factor `ρ`; it is
 absorbed with the weight `d(x) = min(|x| - a, b - |x|)`. This is the device that makes the
 interior estimates of the proof of `lem:aniso:annulus` uniform up to the blow-up time.
@@ -56,7 +56,7 @@ theorem isCompact_closedAnnulus_prod_Icc (a b t t' : ℝ) :
   · exact (isClosed_le continuous_const continuous_vec3EuclideanNorm).inter
       (isClosed_le continuous_vec3EuclideanNorm continuous_const)
   · rw [closure_vec3Ball (by positivity)]
-    show vec3EuclideanNorm (x - 0) ≤ |b| + 1
+    change vec3EuclideanNorm (x - 0) ≤ |b| + 1
     rw [sub_zero]
     linarith only [hx.2, le_abs_self b]
 

@@ -206,7 +206,7 @@ theorem gkt_exists_uniform_small_cylinder (q : ℝ) {u : ParabolicPoint → Vec3
   have hs3 : s ∈ Ioo (-(3 * (θ ^ N * ρ₀) ^ 2)) 0 := by
     refine ⟨?_, hs0⟩
     have : 0 ≤ r ^ 2 := by positivity
-    show -(3 * r ^ 2) < s
+    change -(3 * r ^ 2) < s
     linarith only [hsr, this]
   have hr1 : r < 1 := by linarith only [hrρ₀, hρ₀half]
   have hlow : -1 < s - r ^ 2 := by nlinarith only [hsr, hrρ₀, hρ₀half, hr]

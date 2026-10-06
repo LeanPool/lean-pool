@@ -84,7 +84,7 @@ theorem spatialPartial_const_mul_comp_scalingParabolic (c μ : ℝ) (z₀ : Para
     (g : ParabolicPoint → ℝ) (i : Fin 3) (z : ParabolicPoint) :
     spatialPartial (fun w : ParabolicPoint => c * g (scalingParabolic μ z₀ w)) i z
       = c * μ * spatialPartial g i (scalingParabolic μ z₀ z) := by
-  show fderiv ℝ (fun x : Vec3 => c * g (z₀.1 + μ • x, z₀.2 + μ ^ 2 * z.2)) z.1 (basisVec i)
+  change fderiv ℝ (fun x : Vec3 => c * g (z₀.1 + μ • x, z₀.2 + μ ^ 2 * z.2)) z.1 (basisVec i)
       = c * μ *
         fderiv ℝ (fun x : Vec3 => g (x, z₀.2 + μ ^ 2 * z.2)) (z₀.1 + μ • z.1) (basisVec i)
   exact fderiv_apply_const_mul_affine c μ z₀.1 (fun y : Vec3 => g (y, z₀.2 + μ ^ 2 * z.2))
@@ -96,7 +96,7 @@ theorem timePartial_const_mul_comp_scalingParabolic (c μ : ℝ) (z₀ : Parabol
     (g : ParabolicPoint → ℝ) (z : ParabolicPoint) :
     timePartial (fun w : ParabolicPoint => c * g (scalingParabolic μ z₀ w)) z
       = c * μ ^ 2 * timePartial g (scalingParabolic μ z₀ z) := by
-  show fderiv ℝ (fun s : ℝ => c * g (z₀.1 + μ • z.1, z₀.2 + μ ^ 2 * s)) z.2 1
+  change fderiv ℝ (fun s : ℝ => c * g (z₀.1 + μ • z.1, z₀.2 + μ ^ 2 * s)) z.2 1
       = c * μ ^ 2 * fderiv ℝ (fun s : ℝ => g (z₀.1 + μ • z.1, s)) (z₀.2 + μ ^ 2 * z.2) 1
   exact fderiv_apply_const_mul_affine c (μ ^ 2) z₀.2
     (fun s : ℝ => g (z₀.1 + μ • z.1, s)) z.2 1
@@ -125,7 +125,7 @@ theorem spatialSecondPartial_const_mul_comp_scalingParabolic (c μ : ℝ) (z₀ 
     _ = c * μ * μ * spatialPartial (fun w : ParabolicPoint => spatialPartial g i w) j
           (scalingParabolic μ z₀ z) := h2
     _ = c * μ ^ 2 * spatialSecondPartial g i j (scalingParabolic μ z₀ z) := by
-        show c * μ * μ * spatialPartial (fun w : ParabolicPoint => spatialPartial g i w) j
+        change c * μ * μ * spatialPartial (fun w : ParabolicPoint => spatialPartial g i w) j
             (scalingParabolic μ z₀ z)
           = c * μ ^ 2 * spatialPartial (fun w : ParabolicPoint => spatialPartial g i w) j
             (scalingParabolic μ z₀ z)
@@ -167,7 +167,7 @@ theorem meridionalPartial_const_mul_comp_scalingParabolic (c μ : ℝ) (z₀ : P
   have hb := iterate_spatialPartial_const_mul_comp μ z₀ 2 b c g
   have ha := iterate_spatialPartial_const_mul_comp μ z₀ 0 a (c * μ ^ b)
       ((fun k => spatialPartial k 2)^[b] g)
-  show ((fun k => spatialPartial k 0)^[a] ((fun k => spatialPartial k 2)^[b]
+  change ((fun k => spatialPartial k 0)^[a] ((fun k => spatialPartial k 2)^[b]
       (fun w : ParabolicPoint => c * g (scalingParabolic μ z₀ w)))) z
       = c * μ ^ (a + b) *
         ((fun k => spatialPartial k 0)^[a] ((fun k => spatialPartial k 2)^[b] g))
@@ -247,7 +247,7 @@ theorem isClassicalSolutionOn_parabolicRescale (μ : ℝ) (z₀ : ParabolicPoint
       rw [Finset.mul_sum]
       refine Finset.sum_congr rfl fun j _ => ?_
       rw [hB j]
-      show μ * u (scalingParabolic μ z₀ z) j *
+      change μ * u (scalingParabolic μ z₀ z) j *
           (μ * μ * spatialPartial (fun w : ParabolicPoint => u w i) j (scalingParabolic μ z₀ z))
         = μ ^ 3 * (u (scalingParabolic μ z₀ z) j *
             spatialPartial (fun w : ParabolicPoint => u w i) j (scalingParabolic μ z₀ z))

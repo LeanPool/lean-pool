@@ -91,10 +91,12 @@ theorem exists_subseq_forall_tendstoUniformlyOn_of_modulus_finset {X : Type*} [M
 /-- Uniform convergence of every coordinate of a finite-dimensional vector-valued sequence,
 with a shared subsequence and a shared set, glues into joint uniform convergence in the
 (sup-metric) product `ι → ℝ`. -/
-theorem tendstoUniformlyOn_pi_of_forall {X ι : Type*} [Fintype ι] [Nonempty ι] {S : Set X}
+theorem tendstoUniformlyOn_pi_of_forall {X ι : Type*} [Finite ι] [Nonempty ι] {S : Set X}
     {F : ℕ → X → ι → ℝ} {g : X → ι → ℝ}
     (h : ∀ i : ι, TendstoUniformlyOn (fun n x => F n x i) (fun x => g x i) atTop S) :
     TendstoUniformlyOn F g atTop S := by
+  classical
+  let := Fintype.ofFinite ι
   rw [Metric.tendstoUniformlyOn_iff]
   intro ε hε
   have h' : ∀ i ∈ (Finset.univ : Finset ι),
@@ -106,6 +108,25 @@ theorem tendstoUniformlyOn_pi_of_forall {X ι : Type*} [Fintype ι] [Nonempty ι
   exact (dist_pi_lt_iff hε).mpr (fun i => hn i (Finset.mem_univ i) x hx)
 
 /-! ### From a mixed Lipschitz bound on a primitive to its a.e.-Lipschitz time-derivative -/
+
+private theorem measurable_forward_time_slope {m : ℕ} {F : Vec m × ℝ → ℝ}
+    (hFc : Continuous F) (k : ℕ) :
+    Measurable (fun z : Vec m × ℝ =>
+      slope (fun τ' => F (z.1, τ')) z.2 (z.2 + 1 / ((k : ℝ) + 1))) := by
+  let dq : Vec m × ℝ → ℝ :=
+    fun z => slope (fun τ' => F (z.1, τ')) z.2 (z.2 + 1 / ((k : ℝ) + 1))
+  change Measurable dq
+  have h1 : Continuous (fun z : Vec m × ℝ => F (z.1, z.2 + 1 / ((k : ℝ) + 1))) :=
+    hFc.comp (continuous_fst.prodMk (continuous_snd.add continuous_const))
+  have heq : dq = fun z => (F (z.1, z.2 + 1 / ((k : ℝ) + 1)) - F z) * ((k : ℝ) + 1) := by
+    funext z
+    change slope (fun τ' => F (z.1, τ')) z.2 (z.2 + 1 / ((k : ℝ) + 1)) = _
+    rw [slope_def_field]
+    have hk1 : ((k : ℝ) + 1) ≠ 0 := by positivity
+    rw [show z.2 + 1 / ((k : ℝ) + 1) - z.2 = 1 / ((k : ℝ) + 1) from by ring,
+      div_div_eq_mul_div, div_one]
+  rw [heq]
+  exact ((h1.sub hFc).mul continuous_const).measurable
 
 /-- Given `F : Vec m × ℝ → ℝ`, continuous, such that on every compact time-window `Icc c d`
 there is one constant `Λ` bounding both the time-Lipschitz constant of `F(x, ·)` (each `x`) and
@@ -129,19 +150,7 @@ theorem exists_measurable_ae_hasDerivAt_of_lipschitz_mixed {m : ℕ} {F : Vec m 
   classical
   let dq : ℕ → Vec m × ℝ → ℝ :=
     fun k z => slope (fun τ' => F (z.1, τ')) z.2 (z.2 + 1 / ((k : ℝ) + 1))
-  have hdqmeas : ∀ k, Measurable (dq k) := by
-    intro k
-    have h1 : Continuous (fun z : Vec m × ℝ => F (z.1, z.2 + 1 / ((k : ℝ) + 1))) :=
-      hFc.comp (continuous_fst.prodMk (continuous_snd.add continuous_const))
-    have heq : dq k = fun z => (F (z.1, z.2 + 1 / ((k : ℝ) + 1)) - F z) * ((k : ℝ) + 1) := by
-      funext z
-      show slope (fun τ' => F (z.1, τ')) z.2 (z.2 + 1 / ((k : ℝ) + 1)) = _
-      rw [slope_def_field]
-      have hk1 : ((k : ℝ) + 1) ≠ 0 := by positivity
-      rw [show z.2 + 1 / ((k : ℝ) + 1) - z.2 = 1 / ((k : ℝ) + 1) from by ring,
-        div_div_eq_mul_div, div_one]
-    rw [heq]
-    exact ((h1.sub hFc).mul continuous_const).measurable
+  have hdqmeas : ∀ k, Measurable (dq k) := measurable_forward_time_slope hFc
   have hGmeas : Measurable (fun z => limsup (fun k => dq k z) atTop) := Measurable.limsup hdqmeas
   set G : Vec m × ℝ → ℝ := fun z => limsup (fun k => dq k z) atTop with hGdef
   refine ⟨G, hGmeas, ?_⟩
@@ -230,15 +239,15 @@ theorem exists_measurable_ae_hasDerivAt_of_lipschitz_mixed {m : ℕ} {F : Vec m 
     intro x hx y hy
     rw [Real.dist_eq, dist_eq_norm, Real.coe_toNNReal Λ hΛnn]
     exact hgLip x hx y hy
-  obtain ⟨Ĝ, hĜLip, hĜeq⟩ := hgLipOn.extend_real
-  have hĜLipR : ∀ x y : Vec m, |Ĝ x - Ĝ y| ≤ Λ * ‖x - y‖ := by
+  obtain ⟨Ghat, hGhatLip, hGhateq⟩ := hgLipOn.extend_real
+  have hGhatLipR : ∀ x y : Vec m, |Ghat x - Ghat y| ≤ Λ * ‖x - y‖ := by
     intro x y
-    have hthis := hĜLip.dist_le_mul x y
+    have hthis := hGhatLip.dist_le_mul x y
     rwa [Real.dist_eq, dist_eq_norm, Real.coe_toNNReal Λ hΛnn] at hthis
-  have hHasDeriv : ∀ x : Vec m, HasDerivAt (fun τ' => F (x, τ')) (Ĝ x) τ := by
+  have hHasDeriv : ∀ x : Vec m, HasDerivAt (fun τ' => F (x, τ')) (Ghat x) τ := by
     intro x
     rw [hasDerivAt_iff_tendsto_slope]
-    have hupper : limsup (fun τ' => slope (fun τ'' => F (x, τ'')) τ τ') (𝓝[≠] τ) ≤ Ĝ x := by
+    have hupper : limsup (fun τ' => slope (fun τ'' => F (x, τ'')) τ τ') (𝓝[≠] τ) ≤ Ghat x := by
       refine hle_of_forall_le_add _ _ (fun ε hε => ?_)
       obtain ⟨x', hx'D, hx'close⟩ := Metric.mem_closure_iff.mp (hDd x) (ε / (2 * (Λ + 1)))
         (by positivity)
@@ -247,7 +256,7 @@ theorem exists_measurable_ae_hasDerivAt_of_lipschitz_mixed {m : ℕ} {F : Vec m 
         obtain ⟨b, hb⟩ := hbdd_le x'
         rw [Filter.eventually_map] at hb
         exact ⟨b + Λ * ‖x - x'‖, hb.mono (fun τ' h => by
-          show slope (fun τ'' => F (x', τ'')) τ τ' + Λ * ‖x - x'‖ ≤ b + Λ * ‖x - x'‖
+          change slope (fun τ'' => F (x', τ'')) τ τ' + Λ * ‖x - x'‖ ≤ b + Λ * ‖x - x'‖
           linarith only [h])⟩
       have hstep1 : limsup (fun τ' => slope (fun τ'' => F (x, τ'')) τ τ') (𝓝[≠] τ) ≤
           limsup (fun τ' => slope (fun τ'' => F (x', τ'')) τ τ' + Λ * ‖x - x'‖) (𝓝[≠] τ) := by
@@ -261,22 +270,22 @@ theorem exists_measurable_ae_hasDerivAt_of_lipschitz_mixed {m : ℕ} {F : Vec m 
             (𝓝[≠] τ) (𝓝 (g x' + Λ * ‖x - x'‖)) :=
           (hasDerivAt_iff_tendsto_slope.mp ((hτdiff x' hx'D).hasDerivAt)).add_const _
         exact htend.limsup_eq
-      have hstep3 : g x' = Ĝ x' := hĜeq hx'D
-      have hΛnn' : (0:ℝ) < 2 * (Λ + 1) := by linarith only [hΛnn]
+      have hstep3 : g x' = Ghat x' := hGhateq hx'D
+      have hΛnn' : (0 : ℝ) < 2 * (Λ + 1) := by linarith only [hΛnn]
       have hnormlt : ‖x - x'‖ * (2 * (Λ + 1)) < ε := by
         rw [← dist_eq_norm]; exact (lt_div_iff₀ hΛnn').mp hx'close
       calc limsup (fun τ' => slope (fun τ'' => F (x, τ'')) τ τ') (𝓝[≠] τ)
           ≤ g x' + Λ * ‖x - x'‖ := by rw [← hstep2]; exact hstep1
-        _ = Ĝ x' + Λ * ‖x - x'‖ := by rw [hstep3]
-        _ ≤ (Ĝ x + Λ * ‖x - x'‖) + Λ * ‖x - x'‖ := by
-              have := (abs_le.mp (hĜLipR x' x)).2
+        _ = Ghat x' + Λ * ‖x - x'‖ := by rw [hstep3]
+        _ ≤ (Ghat x + Λ * ‖x - x'‖) + Λ * ‖x - x'‖ := by
+              have := (abs_le.mp (hGhatLipR x' x)).2
               rw [norm_sub_rev x' x] at this
               linarith only [this]
-        _ = Ĝ x + 2 * Λ * ‖x - x'‖ := by ring
-        _ ≤ Ĝ x + ε := by nlinarith only [hnormlt, hΛnn, norm_nonneg (x - x')]
-    have hlower : Ĝ x ≤ liminf (fun τ' => slope (fun τ'' => F (x, τ'')) τ τ') (𝓝[≠] τ) := by
+        _ = Ghat x + 2 * Λ * ‖x - x'‖ := by ring
+        _ ≤ Ghat x + ε := by nlinarith only [hnormlt, hΛnn, norm_nonneg (x - x')]
+    have hlower : Ghat x ≤ liminf (fun τ' => slope (fun τ'' => F (x, τ'')) τ τ') (𝓝[≠] τ) := by
       have haux : ∀ ε > 0,
-          liminf (fun τ' => slope (fun τ'' => F (x, τ'')) τ τ') (𝓝[≠] τ) + ε ≥ Ĝ x := by
+          liminf (fun τ' => slope (fun τ'' => F (x, τ'')) τ τ') (𝓝[≠] τ) + ε ≥ Ghat x := by
         intro ε hε
         obtain ⟨x', hx'D, hx'close⟩ := Metric.mem_closure_iff.mp (hDd x) (ε / (2 * (Λ + 1)))
           (by positivity)
@@ -285,7 +294,7 @@ theorem exists_measurable_ae_hasDerivAt_of_lipschitz_mixed {m : ℕ} {F : Vec m 
           obtain ⟨b, hb⟩ := hbdd_ge x'
           rw [Filter.eventually_map] at hb
           exact ⟨b - Λ * ‖x - x'‖, hb.mono (fun τ' h => by
-            show slope (fun τ'' => F (x', τ'')) τ τ' - Λ * ‖x - x'‖ ≥ b - Λ * ‖x - x'‖
+            change slope (fun τ'' => F (x', τ'')) τ τ' - Λ * ‖x - x'‖ ≥ b - Λ * ‖x - x'‖
             linarith only [h])⟩
         have hstep1 : liminf (fun τ' => slope (fun τ'' => F (x', τ'')) τ τ' - Λ * ‖x - x'‖)
             (𝓝[≠] τ) ≤ liminf (fun τ' => slope (fun τ'' => F (x, τ'')) τ τ') (𝓝[≠] τ) := by
@@ -299,11 +308,11 @@ theorem exists_measurable_ae_hasDerivAt_of_lipschitz_mixed {m : ℕ} {F : Vec m 
               (𝓝[≠] τ) (𝓝 (g x' - Λ * ‖x - x'‖)) :=
             (hasDerivAt_iff_tendsto_slope.mp ((hτdiff x' hx'D).hasDerivAt)).sub_const _
           exact htend.liminf_eq
-        have hstep3 : g x' = Ĝ x' := hĜeq hx'D
-        have hΛnn' : (0:ℝ) < 2 * (Λ + 1) := by linarith only [hΛnn]
+        have hstep3 : g x' = Ghat x' := hGhateq hx'D
+        have hΛnn' : (0 : ℝ) < 2 * (Λ + 1) := by linarith only [hΛnn]
         have hnormlt : ‖x - x'‖ * (2 * (Λ + 1)) < ε := by
           rw [← dist_eq_norm]; exact (lt_div_iff₀ hΛnn').mp hx'close
-        have h4 := (abs_le.mp (hĜLipR x' x)).1
+        have h4 := (abs_le.mp (hGhatLipR x' x)).1
         rw [norm_sub_rev x' x] at h4
         have hcalc : g x' - Λ * ‖x - x'‖ ≤ liminf
             (fun τ' => slope (fun τ'' => F (x, τ'')) τ τ') (𝓝[≠] τ) := by
@@ -311,7 +320,7 @@ theorem exists_measurable_ae_hasDerivAt_of_lipschitz_mixed {m : ℕ} {F : Vec m 
         nlinarith only [hcalc, h4, hnormlt, hΛnn, hstep3, norm_nonneg (x - x')]
       exact hle_of_forall_le_add _ _ (fun ε hε => by linarith only [haux ε hε])
     exact tendsto_of_le_liminf_of_limsup_le hlower hupper (hbdd_le x) (hbdd_ge x)
-  have hĜbdd : ∀ x : Vec m, |Ĝ x| ≤ Λ :=
+  have hGhatbdd : ∀ x : Vec m, |Ghat x| ≤ Λ :=
     fun x => le_of_tendsto (hasDerivAt_iff_tendsto_slope.mp (hHasDeriv x)).abs (hslopebd x)
   have htau_tendsto : Tendsto (fun k : ℕ => τ + 1 / ((k : ℝ) + 1)) atTop (𝓝[≠] τ) := by
     rw [tendsto_nhdsWithin_iff]
@@ -322,18 +331,18 @@ theorem exists_measurable_ae_hasDerivAt_of_lipschitz_mixed {m : ℕ} {F : Vec m 
     simp only [Set.mem_compl_iff, Set.mem_singleton_iff]
     intro hcontra
     exact hk1 (by linarith only [hcontra])
-  have hGeq : ∀ x : Vec m, G (x, τ) = Ĝ x := by
+  have hGeq : ∀ x : Vec m, G (x, τ) = Ghat x := by
     intro x
-    have htend : Tendsto (fun k => dq k (x, τ)) atTop (𝓝 (Ĝ x)) :=
+    have htend : Tendsto (fun k => dq k (x, τ)) atTop (𝓝 (Ghat x)) :=
       (hasDerivAt_iff_tendsto_slope.mp (hHasDeriv x)).comp htau_tendsto
-    have hGeq' : limsup (fun k => dq k (x, τ)) atTop = Ĝ x := htend.limsup_eq
-    show limsup (fun k => dq k (x, τ)) atTop = Ĝ x
+    have hGeq' : limsup (fun k => dq k (x, τ)) atTop = Ghat x := htend.limsup_eq
+    change limsup (fun k => dq k (x, τ)) atTop = Ghat x
     exact hGeq'
   refine ⟨?_, ?_, ?_⟩
   · intro x; rw [hGeq x]; exact hHasDeriv x
-  · intro x; rw [hGeq x]; exact hĜbdd x
-  · have : (fun x => G (x, τ)) = Ĝ := funext hGeq
-    rw [this]; exact hĜLip
+  · intro x; rw [hGeq x]; exact hGhatbdd x
+  · have : (fun x => G (x, τ)) = Ghat := funext hGeq
+    rw [this]; exact hGhatLip
 
 /-! ### Time-clamped primitives of a globally space-Lipschitz, space-time-bounded family -/
 
@@ -344,15 +353,7 @@ theorem abs_min_sub_min_le (a b c : ℝ) : |min a c - min b c| ≤ |a - b| := by
     max_eq_left (abs_nonneg (a - b))] at h
   exact h
 
-/-- Given `m + 1` families of scalar fields `φ i n` (indexed by `Option (Fin m)`, standing for
-the `m` components of a drift plus its divergence) that are, eventually in `n`, globally
-`Λ`-Lipschitz in space and `Λ`-bounded on every time-window `J` compact in `Iic T` — the
-structure `hbd` of `eq:aniso:comparison:drift` — the time-`T`-clamped primitives
-`z ↦ ∫_{T-1}^{min(z.2,T)} φ i n (z.1, s) ds` converge, along one common subsequence, locally
-uniformly to continuous limits `p i`, each of which has a Borel, a.e.-Lipschitz-and-bounded
-time-derivative on every compact time-window (via
-`exists_measurable_ae_hasDerivAt_of_lipschitz_mixed`). -/
-theorem exists_subseq_primitives_ae_hasDerivAt {m : ℕ} {T : ℝ}
+private theorem primitive_eventual_lipschitz_box {m : ℕ} {T : ℝ}
     (φ : Option (Fin m) → ℕ → Vec m × ℝ → ℝ)
     (hcontJ : ∀ K : Set (Vec m × ℝ), IsCompact K → K ⊆ univ ×ˢ Iic T →
       ∀ᶠ n in atTop, ∀ i : Option (Fin m), ContinuousOn (φ i n) K)
@@ -360,15 +361,14 @@ theorem exists_subseq_primitives_ae_hasDerivAt {m : ℕ} {T : ℝ}
       ∀ i : Option (Fin m), ∀ τ ∈ J, ∀ x ∈ Metric.closedBall (0 : Vec m) r,
         ∀ y ∈ Metric.closedBall (0 : Vec m) r,
           |φ i n (x, τ)| ≤ Λ ∧ |φ i n (x, τ) - φ i n (y, τ)| ≤ Λ * ‖x - y‖) :
-    ∃ ψ : ℕ → ℕ, StrictMono ψ ∧ ∃ p : Option (Fin m) → Vec m × ℝ → ℝ,
-      (∀ i, Continuous (p i)) ∧
-      (∀ K : Set (Vec m × ℝ), IsCompact K → ∀ i,
-        TendstoUniformlyOn (fun n z => ∫ s in (T - 1)..(min z.2 T), φ i (ψ n) (z.1, s))
-          (p i) atTop K) ∧
-      ∀ i, ∃ B : Vec m × ℝ → ℝ, Measurable B ∧
-        ∀ c d : ℝ, c ≤ d → ∃ Λ : ℝ, 0 ≤ Λ ∧ ∀ᵐ τ ∂(volume.restrict (Icc c d)),
-          (∀ x, HasDerivAt (fun τ' => p i (x, τ')) (B (x, τ)) τ) ∧ (∀ x, |B (x, τ)| ≤ Λ) ∧
-          LipschitzWith Λ.toNNReal (fun x => B (x, τ)) := by
+    let pn : Option (Fin m) → ℕ → Vec m × ℝ → ℝ :=
+      fun i n z => ∫ s in (T - 1)..(min z.2 T), φ i n (z.1, s)
+    let Bx : ℕ → Set (Vec m × ℝ) := fun k =>
+      Metric.closedBall (0 : Vec m) (k : ℝ) ×ˢ
+        Icc (-(k : ℝ) - |T| - 2) ((k : ℝ) + |T| + 2)
+    ∀ k : ℕ, ∃ Λ : ℝ, 0 ≤ Λ ∧ ∀ᶠ n in atTop, ∀ i : Option (Fin m),
+      ∀ z1 ∈ Bx k, ∀ z2 ∈ Bx k, |pn i n z1 - pn i n z2| ≤ Λ * dist z1 z2 := by
+  dsimp only
   classical
   have hsliceOf : ∀ (S : Set (Vec m × ℝ)) (a b : ℝ), ∀ i : Option (Fin m), ∀ n : ℕ,
       ContinuousOn (φ i n) S → ∀ x : Vec m, (∀ s ∈ Icc a b, (x, s) ∈ S) →
@@ -420,7 +420,7 @@ theorem exists_subseq_primitives_ae_hasDerivAt {m : ℕ} {T : ℝ}
     have hsplit : pn i n z1 - pn i n z2 =
         (∫ s in (min z2.2 T)..(min z1.2 T), φ i n (z1.1, s)) +
           ∫ s in (T - 1)..(min z2.2 T), (φ i n (z1.1, s) - φ i n (z2.1, s)) := by
-      show (∫ s in (T - 1)..(min z1.2 T), φ i n (z1.1, s)) -
+      change (∫ s in (T - 1)..(min z1.2 T), φ i n (z1.1, s)) -
           ∫ s in (T - 1)..(min z2.2 T), φ i n (z2.1, s) = _
       have hsub : (∫ s in (T - 1)..(min z2.2 T), (φ i n (z1.1, s) - φ i n (z2.1, s)))
           = (∫ s in (T - 1)..(min z2.2 T), φ i n (z1.1, s)) -
@@ -486,32 +486,272 @@ theorem exists_subseq_primitives_ae_hasDerivAt {m : ℕ} {T : ℝ}
       _ ≤ Λ * dist z1 z2 + Λ * dist z1 z2 * ((k : ℝ) + 2 * |T| + 3) := by
             gcongr
       _ = Λ * (((k : ℝ) + 2 * |T| + 3) + 1) * dist z1 z2 := by ring
-  -- A reference point in `Bx k`, where every `pn i n` vanishes, and a diameter bound.
-  have hz0mem : ∀ k : ℕ, ((0 : Vec m), T - 1) ∈ Bx k := by
-    intro k
-    refine ⟨Metric.mem_closedBall_self (by positivity : (0:ℝ) ≤ (k:ℝ)), ?_, ?_⟩
-    · exact hTbound1 k
-    · nlinarith only [le_abs_self T, Nat.cast_nonneg (α := ℝ) k]
-  have hpnz0 : ∀ (i : Option (Fin m)) (n : ℕ), pn i n ((0 : Vec m), T - 1) = 0 := by
-    intro i n
-    show (∫ s in (T - 1)..(min (T - 1) T), φ i n ((0 : Vec m), s)) = 0
-    rw [min_eq_left (by linarith only [] : T - 1 ≤ T), intervalIntegral.integral_same]
+  exact hkey
+
+private theorem primitive_eventual_time_lipschitz {m : ℕ} {T : ℝ}
+    (φ : Option (Fin m) → ℕ → Vec m × ℝ → ℝ)
+    (hcontJ : ∀ K : Set (Vec m × ℝ), IsCompact K → K ⊆ univ ×ˢ Iic T →
+      ∀ᶠ n in atTop, ∀ i : Option (Fin m), ContinuousOn (φ i n) K)
+    (hbd : ∀ J : Set ℝ, IsCompact J → J ⊆ Iic T → ∃ Λ : ℝ, 0 ≤ Λ ∧ ∀ r : ℝ, ∀ᶠ n in atTop,
+      ∀ i : Option (Fin m), ∀ τ ∈ J, ∀ x ∈ Metric.closedBall (0 : Vec m) r,
+        ∀ y ∈ Metric.closedBall (0 : Vec m) r,
+          |φ i n (x, τ)| ≤ Λ ∧ |φ i n (x, τ) - φ i n (y, τ)| ≤ Λ * ‖x - y‖) :
+    let pn : Option (Fin m) → ℕ → Vec m × ℝ → ℝ :=
+      fun i n z => ∫ s in (T - 1)..(min z.2 T), φ i n (z.1, s)
+    ∀ c d : ℝ, c ≤ d → ∃ Λ : ℝ, 0 ≤ Λ ∧ ∀ r : ℝ, ∀ᶠ n in atTop,
+      ∀ i : Option (Fin m), ∀ x ∈ Metric.closedBall (0 : Vec m) r, ∀ τ ∈ Icc c d, ∀ τ' ∈ Icc c d,
+        |pn i n (x, τ') - pn i n (x, τ)| ≤ Λ * |τ' - τ| := by
+  dsimp only
+  classical
+  have hsliceOf : ∀ (S : Set (Vec m × ℝ)) (a b : ℝ), ∀ i : Option (Fin m), ∀ n : ℕ,
+      ContinuousOn (φ i n) S → ∀ x : Vec m, (∀ s ∈ Icc a b, (x, s) ∈ S) →
+      ContinuousOn (fun s => φ i n (x, s)) (Icc a b) := by
+    intro S a b i n hCn x hx
+    exact hCn.comp (continuous_const.prodMk continuous_id).continuousOn hx
+  set pn : Option (Fin m) → ℕ → Vec m × ℝ → ℝ :=
+    fun i n z => ∫ s in (T - 1)..(min z.2 T), φ i n (z.1, s) with hpndef
+  have htimeLipn : ∀ c d : ℝ, c ≤ d → ∃ Λ : ℝ, 0 ≤ Λ ∧ ∀ r : ℝ, ∀ᶠ n in atTop,
+      ∀ i : Option (Fin m), ∀ x ∈ Metric.closedBall (0 : Vec m) r, ∀ τ ∈ Icc c d, ∀ τ' ∈ Icc c d,
+        |pn i n (x, τ') - pn i n (x, τ)| ≤ Λ * |τ' - τ| := by
+    intro c d hcd
+    obtain ⟨Λ, hΛnn, hΛr⟩ := hbd (Icc (min c (T - 1)) T) isCompact_Icc (fun τ hτ => hτ.2)
+    refine ⟨Λ, hΛnn, fun r => ?_⟩
+    have hΛ := hΛr r
+    have hCr := hcontJ (Metric.closedBall (0 : Vec m) r ×ˢ Icc (min c (T - 1)) T)
+      ((isCompact_closedBall _ _).prod isCompact_Icc) (fun z hz => ⟨mem_univ _, hz.2.2⟩)
+    filter_upwards [hΛ, hCr] with n hn hCn i x hx τ hτ τ' hτ'
+    have hcontx : ContinuousOn (fun s => φ i n (x, s)) (Icc (min c (T - 1)) T) :=
+      hsliceOf (Metric.closedBall (0 : Vec m) r ×ˢ Icc (min c (T - 1)) T) _ _ i n (hCn i) x
+        (fun s hs => ⟨hx, hs⟩)
+    have hT1mem : (T - 1) ∈ Icc (min c (T - 1)) T := ⟨min_le_right _ _, by linarith only []⟩
+    have hmemτ : min τ T ∈ Icc (min c (T - 1)) T :=
+      ⟨min_le_min hτ.1 (by linarith only [] : (T : ℝ) - 1 ≤ T), min_le_right _ _⟩
+    have hmemτ' : min τ' T ∈ Icc (min c (T - 1)) T :=
+      ⟨min_le_min hτ'.1 (by linarith only [] : (T : ℝ) - 1 ≤ T), min_le_right _ _⟩
+    have hA : IntervalIntegrable (fun s => φ i n (x, s)) volume (T - 1) (min τ T) :=
+      (hcontx.mono (uIcc_subset_Icc hT1mem hmemτ)).intervalIntegrable
+    have hC : IntervalIntegrable (fun s => φ i n (x, s)) volume (min τ T) (min τ' T) :=
+      (hcontx.mono (uIcc_subset_Icc hmemτ hmemτ')).intervalIntegrable
+    have hspx : pn i n (x, τ') - pn i n (x, τ) = ∫ s in (min τ T)..(min τ' T), φ i n (x, s) := by
+      change (∫ s in (T - 1)..(min τ' T), φ i n (x, s)) -
+          ∫ s in (T - 1)..(min τ T), φ i n (x, s) = _
+      have hB : IntervalIntegrable (fun s => φ i n (x, s)) volume (T - 1) (min τ' T) :=
+        (hcontx.mono (uIcc_subset_Icc hT1mem hmemτ')).intervalIntegrable
+      have hadj : (∫ s in (T - 1)..(min τ T), φ i n (x, s)) +
+          ∫ s in (min τ T)..(min τ' T), φ i n (x, s)
+          = ∫ s in (T - 1)..(min τ' T), φ i n (x, s) :=
+        intervalIntegral.integral_add_adjacent_intervals hA hC
+      linarith only [hadj]
+    rw [hspx]
+    have hbound : |∫ s in (min τ T)..(min τ' T), φ i n (x, s)| ≤ Λ * |min τ' T - min τ T| := by
+      have hle := intervalIntegral.norm_integral_le_of_norm_le_const
+        (a := min τ T) (b := min τ' T) (f := fun s => φ i n (x, s)) (C := Λ)
+        (fun s hs => by
+          have hsmem : s ∈ Icc (min c (T - 1)) T := by
+            rcases le_total (min τ T) (min τ' T) with hle | hle
+            · rw [Set.uIoc_of_le hle] at hs
+              exact ⟨le_trans hmemτ.1 hs.1.le, le_trans hs.2 hmemτ'.2⟩
+            · rw [Set.uIoc_of_ge hle] at hs
+              exact ⟨le_trans hmemτ'.1 hs.1.le, le_trans hs.2 hmemτ.2⟩
+          rw [Real.norm_eq_abs]
+          exact (hn i s hsmem x hx x hx).1)
+      rwa [Real.norm_eq_abs] at hle
+    calc |∫ s in (min τ T)..(min τ' T), φ i n (x, s)| ≤ Λ * |min τ' T - min τ T| := hbound
+      _ ≤ Λ * |τ' - τ| := mul_le_mul_of_nonneg_left (abs_min_sub_min_le τ' τ T) hΛnn
+  exact htimeLipn
+
+private theorem primitive_eventual_mixed_lipschitz {m : ℕ} {T : ℝ}
+    (φ : Option (Fin m) → ℕ → Vec m × ℝ → ℝ)
+    (hcontJ : ∀ K : Set (Vec m × ℝ), IsCompact K → K ⊆ univ ×ˢ Iic T →
+      ∀ᶠ n in atTop, ∀ i : Option (Fin m), ContinuousOn (φ i n) K)
+    (hbd : ∀ J : Set ℝ, IsCompact J → J ⊆ Iic T → ∃ Λ : ℝ, 0 ≤ Λ ∧ ∀ r : ℝ, ∀ᶠ n in atTop,
+      ∀ i : Option (Fin m), ∀ τ ∈ J, ∀ x ∈ Metric.closedBall (0 : Vec m) r,
+        ∀ y ∈ Metric.closedBall (0 : Vec m) r,
+          |φ i n (x, τ)| ≤ Λ ∧ |φ i n (x, τ) - φ i n (y, τ)| ≤ Λ * ‖x - y‖) :
+    let pn : Option (Fin m) → ℕ → Vec m × ℝ → ℝ :=
+      fun i n z => ∫ s in (T - 1)..(min z.2 T), φ i n (z.1, s)
+    ∀ c d : ℝ, c ≤ d → ∃ Λ : ℝ, 0 ≤ Λ ∧ ∀ r : ℝ, ∀ᶠ n in atTop,
+      ∀ i : Option (Fin m), ∀ x ∈ Metric.closedBall (0 : Vec m) r,
+        ∀ y ∈ Metric.closedBall (0 : Vec m) r, ∀ τ ∈ Icc c d, ∀ τ' ∈ Icc c d,
+          |pn i n (x, τ') - pn i n (x, τ) - (pn i n (y, τ') - pn i n (y, τ))| ≤
+            Λ * ‖x - y‖ * |τ' - τ| := by
+  dsimp only
+  classical
+  have hsliceOf : ∀ (S : Set (Vec m × ℝ)) (a b : ℝ), ∀ i : Option (Fin m), ∀ n : ℕ,
+      ContinuousOn (φ i n) S → ∀ x : Vec m, (∀ s ∈ Icc a b, (x, s) ∈ S) →
+      ContinuousOn (fun s => φ i n (x, s)) (Icc a b) := by
+    intro S a b i n hCn x hx
+    exact hCn.comp (continuous_const.prodMk continuous_id).continuousOn hx
+  set pn : Option (Fin m) → ℕ → Vec m × ℝ → ℝ :=
+    fun i n z => ∫ s in (T - 1)..(min z.2 T), φ i n (z.1, s) with hpndef
+  have hmixedn : ∀ c d : ℝ, c ≤ d → ∃ Λ : ℝ, 0 ≤ Λ ∧ ∀ r : ℝ, ∀ᶠ n in atTop,
+      ∀ i : Option (Fin m), ∀ x ∈ Metric.closedBall (0 : Vec m) r,
+        ∀ y ∈ Metric.closedBall (0 : Vec m) r, ∀ τ ∈ Icc c d, ∀ τ' ∈ Icc c d,
+          |pn i n (x, τ') - pn i n (x, τ) - (pn i n (y, τ') - pn i n (y, τ))| ≤
+            Λ * ‖x - y‖ * |τ' - τ| := by
+    intro c d hcd
+    obtain ⟨Λ, hΛnn, hΛr⟩ := hbd (Icc (min c (T - 1)) T) isCompact_Icc (fun τ hτ => hτ.2)
+    refine ⟨Λ, hΛnn, fun r => ?_⟩
+    have hΛ := hΛr r
+    have hCr := hcontJ (Metric.closedBall (0 : Vec m) r ×ˢ Icc (min c (T - 1)) T)
+      ((isCompact_closedBall _ _).prod isCompact_Icc) (fun z hz => ⟨mem_univ _, hz.2.2⟩)
+    filter_upwards [hΛ, hCr] with n hn hCn i x hx y hy τ hτ τ' hτ'
+    have hcontx : ContinuousOn (fun s => φ i n (x, s)) (Icc (min c (T - 1)) T) :=
+      hsliceOf (Metric.closedBall (0 : Vec m) r ×ˢ Icc (min c (T - 1)) T) _ _ i n (hCn i) x
+        (fun s hs => ⟨hx, hs⟩)
+    have hconty : ContinuousOn (fun s => φ i n (y, s)) (Icc (min c (T - 1)) T) :=
+      hsliceOf (Metric.closedBall (0 : Vec m) r ×ˢ Icc (min c (T - 1)) T) _ _ i n (hCn i) y
+        (fun s hs => ⟨hy, hs⟩)
+    have hT1mem : (T - 1) ∈ Icc (min c (T - 1)) T := ⟨min_le_right _ _, by linarith only []⟩
+    have hmemτ : min τ T ∈ Icc (min c (T - 1)) T :=
+      ⟨min_le_min hτ.1 (by linarith only [] : (T : ℝ) - 1 ≤ T), min_le_right _ _⟩
+    have hmemτ' : min τ' T ∈ Icc (min c (T - 1)) T :=
+      ⟨min_le_min hτ'.1 (by linarith only [] : (T : ℝ) - 1 ≤ T), min_le_right _ _⟩
+    have hAx : IntervalIntegrable (fun s => φ i n (x, s)) volume (T - 1) (min τ T) :=
+      (hcontx.mono (uIcc_subset_Icc hT1mem hmemτ)).intervalIntegrable
+    have hBx : IntervalIntegrable (fun s => φ i n (x, s)) volume (T - 1) (min τ' T) :=
+      (hcontx.mono (uIcc_subset_Icc hT1mem hmemτ')).intervalIntegrable
+    have hCx : IntervalIntegrable (fun s => φ i n (x, s)) volume (min τ T) (min τ' T) :=
+      (hcontx.mono (uIcc_subset_Icc hmemτ hmemτ')).intervalIntegrable
+    have hAy : IntervalIntegrable (fun s => φ i n (y, s)) volume (T - 1) (min τ T) :=
+      (hconty.mono (uIcc_subset_Icc hT1mem hmemτ)).intervalIntegrable
+    have hBy : IntervalIntegrable (fun s => φ i n (y, s)) volume (T - 1) (min τ' T) :=
+      (hconty.mono (uIcc_subset_Icc hT1mem hmemτ')).intervalIntegrable
+    have hCy : IntervalIntegrable (fun s => φ i n (y, s)) volume (min τ T) (min τ' T) :=
+      (hconty.mono (uIcc_subset_Icc hmemτ hmemτ')).intervalIntegrable
+    have hspx : pn i n (x, τ') - pn i n (x, τ) = ∫ s in (min τ T)..(min τ' T), φ i n (x, s) := by
+      change (∫ s in (T - 1)..(min τ' T), φ i n (x, s)) -
+          ∫ s in (T - 1)..(min τ T), φ i n (x, s) = _
+      have hadj : (∫ s in (T - 1)..(min τ T), φ i n (x, s)) +
+          ∫ s in (min τ T)..(min τ' T), φ i n (x, s)
+          = ∫ s in (T - 1)..(min τ' T), φ i n (x, s) :=
+        intervalIntegral.integral_add_adjacent_intervals hAx hCx
+      linarith only [hadj]
+    have hspy : pn i n (y, τ') - pn i n (y, τ) = ∫ s in (min τ T)..(min τ' T), φ i n (y, s) := by
+      change (∫ s in (T - 1)..(min τ' T), φ i n (y, s)) -
+          ∫ s in (T - 1)..(min τ T), φ i n (y, s) = _
+      have hadj : (∫ s in (T - 1)..(min τ T), φ i n (y, s)) +
+          ∫ s in (min τ T)..(min τ' T), φ i n (y, s)
+          = ∫ s in (T - 1)..(min τ' T), φ i n (y, s) :=
+        intervalIntegral.integral_add_adjacent_intervals hAy hCy
+      linarith only [hadj]
+    have heq : pn i n (x, τ') - pn i n (x, τ) - (pn i n (y, τ') - pn i n (y, τ))
+        = ∫ s in (min τ T)..(min τ' T), (φ i n (x, s) - φ i n (y, s)) := by
+      rw [hspx, hspy, intervalIntegral.integral_sub hCx hCy]
+    rw [heq]
+    have hbound : |∫ s in (min τ T)..(min τ' T), (φ i n (x, s) - φ i n (y, s))| ≤
+        Λ * ‖x - y‖ * |min τ' T - min τ T| := by
+      have hle := intervalIntegral.norm_integral_le_of_norm_le_const
+        (a := min τ T) (b := min τ' T) (f := fun s => φ i n (x, s) - φ i n (y, s))
+        (C := Λ * ‖x - y‖)
+        (fun s hs => by
+          have hsmem : s ∈ Icc (min c (T - 1)) T := by
+            rcases le_total (min τ T) (min τ' T) with hle | hle
+            · rw [Set.uIoc_of_le hle] at hs
+              exact ⟨le_trans hmemτ.1 hs.1.le, le_trans hs.2 hmemτ'.2⟩
+            · rw [Set.uIoc_of_ge hle] at hs
+              exact ⟨le_trans hmemτ'.1 hs.1.le, le_trans hs.2 hmemτ.2⟩
+          rw [Real.norm_eq_abs]
+          exact (hn i s hsmem x hx y hy).2)
+      rwa [Real.norm_eq_abs] at hle
+    have hΛxynn : 0 ≤ Λ * ‖x - y‖ := by positivity
+    calc |∫ s in (min τ T)..(min τ' T), (φ i n (x, s) - φ i n (y, s))| ≤
+          Λ * ‖x - y‖ * |min τ' T - min τ T| := hbound
+      _ ≤ Λ * ‖x - y‖ * |τ' - τ| := mul_le_mul_of_nonneg_left (abs_min_sub_min_le τ' τ T) hΛxynn
+  exact hmixedn
+
+private theorem primitive_box_diameter {m : ℕ} (T : ℝ) :
+    let Bx : ℕ → Set (Vec m × ℝ) := fun k => Metric.closedBall (0 : Vec m) (k : ℝ) ×ˢ
+      Icc (-(k : ℝ) - |T| - 2) ((k : ℝ) + |T| + 2)
+    ∀ k : ℕ, ∀ z ∈ Bx k, dist z ((0 : Vec m), T - 1) ≤ 2 * (k : ℝ) + 2 * |T| + 4 := by
+  dsimp only
+  set Bx : ℕ → Set (Vec m × ℝ) := fun k => Metric.closedBall (0 : Vec m) (k : ℝ) ×ˢ
+    Icc (-(k : ℝ) - |T| - 2) ((k : ℝ) + |T| + 2)
   have hdiam : ∀ k : ℕ, ∀ z ∈ Bx k, dist z ((0 : Vec m), T - 1) ≤ 2 * (k : ℝ) + 2 * |T| + 4 := by
     intro k z hz
     rw [Prod.dist_eq]
     refine max_le ?_ ?_
-    · show dist z.1 (0 : Vec m) ≤ 2 * (k : ℝ) + 2 * |T| + 4
+    · change dist z.1 (0 : Vec m) ≤ 2 * (k : ℝ) + 2 * |T| + 4
       have := hz.1
       rw [Metric.mem_closedBall, dist_eq_norm, sub_zero] at this
       rw [dist_eq_norm, sub_zero]
       nlinarith only [this, Nat.cast_nonneg (α := ℝ) k, abs_nonneg T]
-    · show dist z.2 (T - 1) ≤ 2 * (k : ℝ) + 2 * |T| + 4
+    · change dist z.2 (T - 1) ≤ 2 * (k : ℝ) + 2 * |T| + 4
       rw [Real.dist_eq]
       have h1 := hz.2.1
       have h2 := hz.2.2
       rw [abs_le]; constructor <;>
         nlinarith only [h1, h2, abs_nonneg T, le_abs_self T, neg_abs_le T, Nat.cast_nonneg (α :=
           ℝ) k]
+  exact hdiam
+
+private theorem mul_le_modulus : ∀ Λ' : ℝ, 0 ≤ Λ' → ∀ ε : ℝ, 0 < ε →
+    ∀ d : ℝ, d < ε / (Λ' + 1) → 0 ≤ d →
+      Λ' * d ≤ ε := by
+  intro Λ' hΛ'nn ε hε d hd hdnn
+  have h1 : Λ' * d ≤ Λ' * (ε / (Λ' + 1)) := mul_le_mul_of_nonneg_left hd.le hΛ'nn
+  have h2 : Λ' * (ε / (Λ' + 1)) ≤ ε := by
+    rw [mul_div_assoc', div_le_iff₀ (by linarith only [hΛ'nn] : (0 : ℝ) < Λ' + 1)]
+    nlinarith only [hε, hΛ'nn]
+  linarith only [h1, h2]
+
+private theorem eventually_shift_strictMono : ∀ (P : ℕ → Prop), (∀ᶠ n in atTop, P n) →
+    ∀ (g : ℕ → ℕ), StrictMono g →
+      ∃ S : ℕ, ∀ j, P (g (S + j)) := by
+  intro P hP g hg
+  obtain ⟨N, hN⟩ := eventually_atTop.mp hP
+  obtain ⟨S, hS⟩ := eventually_atTop.mp (hg.tendsto_atTop.eventually_ge_atTop N)
+  exact ⟨S, fun j => hN _ (hS (S + j) (by omega))⟩
+
+/-- Given `m + 1` families of scalar fields `φ i n` (indexed by `Option (Fin m)`, standing for
+the `m` components of a drift plus its divergence) that are, eventually in `n`, globally
+`Λ`-Lipschitz in space and `Λ`-bounded on every time-window `J` compact in `Iic T` — the
+structure `hbd` of `eq:aniso:comparison:drift` — the time-`T`-clamped primitives
+`z ↦ ∫_{T-1}^{min(z.2,T)} φ i n (z.1, s) ds` converge, along one common subsequence, locally
+uniformly to continuous limits `p i`, each of which has a Borel, a.e.-Lipschitz-and-bounded
+time-derivative on every compact time-window (via
+`exists_measurable_ae_hasDerivAt_of_lipschitz_mixed`). -/
+theorem exists_subseq_primitives_ae_hasDerivAt {m : ℕ} {T : ℝ}
+    (φ : Option (Fin m) → ℕ → Vec m × ℝ → ℝ)
+    (hcontJ : ∀ K : Set (Vec m × ℝ), IsCompact K → K ⊆ univ ×ˢ Iic T →
+      ∀ᶠ n in atTop, ∀ i : Option (Fin m), ContinuousOn (φ i n) K)
+    (hbd : ∀ J : Set ℝ, IsCompact J → J ⊆ Iic T → ∃ Λ : ℝ, 0 ≤ Λ ∧ ∀ r : ℝ, ∀ᶠ n in atTop,
+      ∀ i : Option (Fin m), ∀ τ ∈ J, ∀ x ∈ Metric.closedBall (0 : Vec m) r,
+        ∀ y ∈ Metric.closedBall (0 : Vec m) r,
+          |φ i n (x, τ)| ≤ Λ ∧ |φ i n (x, τ) - φ i n (y, τ)| ≤ Λ * ‖x - y‖) :
+    ∃ ψ : ℕ → ℕ, StrictMono ψ ∧ ∃ p : Option (Fin m) → Vec m × ℝ → ℝ,
+      (∀ i, Continuous (p i)) ∧
+      (∀ K : Set (Vec m × ℝ), IsCompact K → ∀ i,
+        TendstoUniformlyOn (fun n z => ∫ s in (T - 1)..(min z.2 T), φ i (ψ n) (z.1, s))
+          (p i) atTop K) ∧
+      ∀ i, ∃ B : Vec m × ℝ → ℝ, Measurable B ∧
+        ∀ c d : ℝ, c ≤ d → ∃ Λ : ℝ, 0 ≤ Λ ∧ ∀ᵐ τ ∂(volume.restrict (Icc c d)),
+          (∀ x, HasDerivAt (fun τ' => p i (x, τ')) (B (x, τ)) τ) ∧ (∀ x, |B (x, τ)| ≤ Λ) ∧
+          LipschitzWith Λ.toNNReal (fun x => B (x, τ)) := by
+  classical
+  set pn : Option (Fin m) → ℕ → Vec m × ℝ → ℝ :=
+    fun i n z => ∫ s in (T - 1)..(min z.2 T), φ i n (z.1, s) with hpndef
+  set Bx : ℕ → Set (Vec m × ℝ) :=
+    fun k => Metric.closedBall (0 : Vec m) (k : ℝ) ×ˢ Icc (-(k : ℝ) - |T| - 2) ((k : ℝ) + |T| + 2)
+    with hBxdef
+  have hBxcpt : ∀ k, IsCompact (Bx k) :=
+    fun k => (isCompact_closedBall _ _).prod isCompact_Icc
+  -- The eventual joint (space-time) Lipschitz bound of `pn` on `Bx k`.
+  have hkey : ∀ k : ℕ, ∃ Λ : ℝ, 0 ≤ Λ ∧ ∀ᶠ n in atTop, ∀ i : Option (Fin m),
+      ∀ z1 ∈ Bx k, ∀ z2 ∈ Bx k, |pn i n z1 - pn i n z2| ≤ Λ * dist z1 z2 :=
+    primitive_eventual_lipschitz_box φ hcontJ hbd
+  -- A reference point in `Bx k`, where every `pn i n` vanishes, and a diameter bound.
+  have hz0mem : ∀ k : ℕ, ((0 : Vec m), T - 1) ∈ Bx k := by
+    intro k
+    refine ⟨Metric.mem_closedBall_self (by positivity : (0 : ℝ) ≤ (k : ℝ)), ?_, ?_⟩
+    · nlinarith only [neg_abs_le T, Nat.cast_nonneg (α := ℝ) k]
+    · nlinarith only [le_abs_self T, Nat.cast_nonneg (α := ℝ) k]
+  have hpnz0 : ∀ (i : Option (Fin m)) (n : ℕ), pn i n ((0 : Vec m), T - 1) = 0 := by
+    intro i n
+    change (∫ s in (T - 1)..(min (T - 1) T), φ i n ((0 : Vec m), s)) = 0
+    rw [min_eq_left (by linarith only [] : T - 1 ≤ T), intervalIntegral.integral_same]
+  have hdiam : ∀ k : ℕ, ∀ z ∈ Bx k, dist z ((0 : Vec m), T - 1) ≤
+      2 * (k : ℝ) + 2 * |T| + 4 := primitive_box_diameter T
   -- The eventual bound of `pn` on `Bx k`, from the Lipschitz bound and the reference point.
   have hboundk : ∀ k : ℕ, ∃ M : ℝ, ∀ᶠ n in atTop, ∀ i : Option (Fin m),
       ∀ z ∈ Bx k, |pn i n z| ≤ M := by
@@ -525,39 +765,10 @@ theorem exists_subseq_primitives_ae_hasDerivAt {m : ℕ} {T : ℝ}
       _ ≤ Λk * (2 * (k : ℝ) + 2 * |T| + 4) := by
           gcongr
           exact hdiam k z hz
-  -- Combine the eventual bound and Lipschitz constant into a shared modulus for `pn`.
-  have hmodk : ∀ k : ℕ, ∃ M : ℝ, ∀ᶠ n in atTop, (∀ i : Option (Fin m), ∀ z ∈ Bx k, |pn i n z| ≤ M) ∧
-      ∀ ε > 0, ∃ δ > 0, ∀ i : Option (Fin m), ∀ z1 ∈ Bx k, ∀ z2 ∈ Bx k, dist z1 z2 < δ →
-        |pn i n z1 - pn i n z2| ≤ ε := by
-    intro k
-    obtain ⟨M, hM⟩ := hboundk k
-    obtain ⟨Λk, hΛknn, hΛkev⟩ := hkey k
-    refine ⟨M, ?_⟩
-    filter_upwards [hM, hΛkev] with n hMn hΛn
-    refine ⟨hMn, fun ε hε => ⟨ε / (Λk + 1), by positivity, fun i z1 hz1 z2 hz2 hd => ?_⟩⟩
-    have hb := hΛn i z1 hz1 z2 hz2
-    have hΛpos : (0:ℝ) < Λk + 1 := by linarith only [hΛknn]
-    have : Λk * dist z1 z2 ≤ Λk * (ε / (Λk + 1)) :=
-      mul_le_mul_of_nonneg_left hd.le hΛknn
-    have hfin : Λk * (ε / (Λk + 1)) ≤ ε := by
-      rw [mul_div_assoc']
-      rw [div_le_iff₀ hΛpos]
-      nlinarith only [hε, hΛpos]
-    linarith only [hb, this, hfin]
   have hLtoM : ∀ Λ' : ℝ, 0 ≤ Λ' → ∀ ε : ℝ, 0 < ε → ∀ d : ℝ, d < ε / (Λ' + 1) → 0 ≤ d →
-      Λ' * d ≤ ε := by
-    intro Λ' hΛ'nn ε hε d hd hdnn
-    have h1 : Λ' * d ≤ Λ' * (ε / (Λ' + 1)) := mul_le_mul_of_nonneg_left hd.le hΛ'nn
-    have h2 : Λ' * (ε / (Λ' + 1)) ≤ ε := by
-      rw [mul_div_assoc', div_le_iff₀ (by linarith only [hΛ'nn] : (0:ℝ) < Λ' + 1)]
-      nlinarith only [hε, hΛ'nn]
-    linarith only [h1, h2]
+      Λ' * d ≤ ε := mul_le_modulus
   have hshift : ∀ (P : ℕ → Prop), (∀ᶠ n in atTop, P n) → ∀ (g : ℕ → ℕ), StrictMono g →
-      ∃ S : ℕ, ∀ j, P (g (S + j)) := by
-    intro P hP g hg
-    obtain ⟨N, hN⟩ := eventually_atTop.mp hP
-    obtain ⟨S, hS⟩ := eventually_atTop.mp (hg.tendsto_atTop.eventually_ge_atTop N)
-    exact ⟨S, fun j => hN _ (hS (S + j) (by omega))⟩
+      ∃ S : ℕ, ∀ j, P (g (S + j)) := eventually_shift_strictMono
   -- The refinement step of the box-diagonal extraction.
   have hstep : ∀ (k : ℕ) (g : ℕ → ℕ), StrictMono g →
       ∃ g' : ℕ → ℕ, StrictMono g' ∧ ∃ w : Vec m × ℝ → (Option (Fin m) → ℝ),
@@ -627,128 +838,15 @@ theorem exists_subseq_primitives_ae_hasDerivAt {m : ℕ} {T : ℝ}
   -- spatial ball of radius `r` (matching `hbd`'s own space-restricted shape).
   have htimeLipn : ∀ c d : ℝ, c ≤ d → ∃ Λ : ℝ, 0 ≤ Λ ∧ ∀ r : ℝ, ∀ᶠ n in atTop,
       ∀ i : Option (Fin m), ∀ x ∈ Metric.closedBall (0 : Vec m) r, ∀ τ ∈ Icc c d, ∀ τ' ∈ Icc c d,
-        |pn i n (x, τ') - pn i n (x, τ)| ≤ Λ * |τ' - τ| := by
-    intro c d hcd
-    obtain ⟨Λ, hΛnn, hΛr⟩ := hbd (Icc (min c (T - 1)) T) isCompact_Icc (fun τ hτ => hτ.2)
-    refine ⟨Λ, hΛnn, fun r => ?_⟩
-    have hΛ := hΛr r
-    have hCr := hcontJ (Metric.closedBall (0 : Vec m) r ×ˢ Icc (min c (T - 1)) T)
-      ((isCompact_closedBall _ _).prod isCompact_Icc) (fun z hz => ⟨mem_univ _, hz.2.2⟩)
-    filter_upwards [hΛ, hCr] with n hn hCn i x hx τ hτ τ' hτ'
-    have hcontx : ContinuousOn (fun s => φ i n (x, s)) (Icc (min c (T - 1)) T) :=
-      hsliceOf (Metric.closedBall (0 : Vec m) r ×ˢ Icc (min c (T - 1)) T) _ _ i n (hCn i) x
-        (fun s hs => ⟨hx, hs⟩)
-    have hT1mem : (T - 1) ∈ Icc (min c (T - 1)) T := ⟨min_le_right _ _, by linarith only []⟩
-    have hmemτ : min τ T ∈ Icc (min c (T - 1)) T :=
-      ⟨min_le_min hτ.1 (by linarith only [] : (T : ℝ) - 1 ≤ T), min_le_right _ _⟩
-    have hmemτ' : min τ' T ∈ Icc (min c (T - 1)) T :=
-      ⟨min_le_min hτ'.1 (by linarith only [] : (T : ℝ) - 1 ≤ T), min_le_right _ _⟩
-    have hA : IntervalIntegrable (fun s => φ i n (x, s)) volume (T - 1) (min τ T) :=
-      (hcontx.mono (uIcc_subset_Icc hT1mem hmemτ)).intervalIntegrable
-    have hC : IntervalIntegrable (fun s => φ i n (x, s)) volume (min τ T) (min τ' T) :=
-      (hcontx.mono (uIcc_subset_Icc hmemτ hmemτ')).intervalIntegrable
-    have hspx : pn i n (x, τ') - pn i n (x, τ) = ∫ s in (min τ T)..(min τ' T), φ i n (x, s) := by
-      show (∫ s in (T - 1)..(min τ' T), φ i n (x, s)) -
-          ∫ s in (T - 1)..(min τ T), φ i n (x, s) = _
-      have hB : IntervalIntegrable (fun s => φ i n (x, s)) volume (T - 1) (min τ' T) :=
-        (hcontx.mono (uIcc_subset_Icc hT1mem hmemτ')).intervalIntegrable
-      have hadj : (∫ s in (T - 1)..(min τ T), φ i n (x, s)) +
-          ∫ s in (min τ T)..(min τ' T), φ i n (x, s)
-          = ∫ s in (T - 1)..(min τ' T), φ i n (x, s) :=
-        intervalIntegral.integral_add_adjacent_intervals hA hC
-      linarith only [hadj]
-    rw [hspx]
-    have hbound : |∫ s in (min τ T)..(min τ' T), φ i n (x, s)| ≤ Λ * |min τ' T - min τ T| := by
-      have hle := intervalIntegral.norm_integral_le_of_norm_le_const
-        (a := min τ T) (b := min τ' T) (f := fun s => φ i n (x, s)) (C := Λ)
-        (fun s hs => by
-          have hsmem : s ∈ Icc (min c (T - 1)) T := by
-            rcases le_total (min τ T) (min τ' T) with hle | hle
-            · rw [Set.uIoc_of_le hle] at hs
-              exact ⟨le_trans hmemτ.1 hs.1.le, le_trans hs.2 hmemτ'.2⟩
-            · rw [Set.uIoc_of_ge hle] at hs
-              exact ⟨le_trans hmemτ'.1 hs.1.le, le_trans hs.2 hmemτ.2⟩
-          rw [Real.norm_eq_abs]
-          exact (hn i s hsmem x hx x hx).1)
-      rwa [Real.norm_eq_abs] at hle
-    calc |∫ s in (min τ T)..(min τ' T), φ i n (x, s)| ≤ Λ * |min τ' T - min τ T| := hbound
-      _ ≤ Λ * |τ' - τ| := mul_le_mul_of_nonneg_left (abs_min_sub_min_le τ' τ T) hΛnn
+        |pn i n (x, τ') - pn i n (x, τ)| ≤ Λ * |τ' - τ| :=
+    primitive_eventual_time_lipschitz φ hcontJ hbd
   -- The mixed (double-difference) Lipschitz bound on `pn`, from `hbd`'s space-Lipschitz clause,
   -- restricted to a spatial ball of radius `r`.
   have hmixedn : ∀ c d : ℝ, c ≤ d → ∃ Λ : ℝ, 0 ≤ Λ ∧ ∀ r : ℝ, ∀ᶠ n in atTop,
       ∀ i : Option (Fin m), ∀ x ∈ Metric.closedBall (0 : Vec m) r,
         ∀ y ∈ Metric.closedBall (0 : Vec m) r, ∀ τ ∈ Icc c d, ∀ τ' ∈ Icc c d,
           |pn i n (x, τ') - pn i n (x, τ) - (pn i n (y, τ') - pn i n (y, τ))| ≤
-            Λ * ‖x - y‖ * |τ' - τ| := by
-    intro c d hcd
-    obtain ⟨Λ, hΛnn, hΛr⟩ := hbd (Icc (min c (T - 1)) T) isCompact_Icc (fun τ hτ => hτ.2)
-    refine ⟨Λ, hΛnn, fun r => ?_⟩
-    have hΛ := hΛr r
-    have hCr := hcontJ (Metric.closedBall (0 : Vec m) r ×ˢ Icc (min c (T - 1)) T)
-      ((isCompact_closedBall _ _).prod isCompact_Icc) (fun z hz => ⟨mem_univ _, hz.2.2⟩)
-    filter_upwards [hΛ, hCr] with n hn hCn i x hx y hy τ hτ τ' hτ'
-    have hcontx : ContinuousOn (fun s => φ i n (x, s)) (Icc (min c (T - 1)) T) :=
-      hsliceOf (Metric.closedBall (0 : Vec m) r ×ˢ Icc (min c (T - 1)) T) _ _ i n (hCn i) x
-        (fun s hs => ⟨hx, hs⟩)
-    have hconty : ContinuousOn (fun s => φ i n (y, s)) (Icc (min c (T - 1)) T) :=
-      hsliceOf (Metric.closedBall (0 : Vec m) r ×ˢ Icc (min c (T - 1)) T) _ _ i n (hCn i) y
-        (fun s hs => ⟨hy, hs⟩)
-    have hT1mem : (T - 1) ∈ Icc (min c (T - 1)) T := ⟨min_le_right _ _, by linarith only []⟩
-    have hmemτ : min τ T ∈ Icc (min c (T - 1)) T :=
-      ⟨min_le_min hτ.1 (by linarith only [] : (T : ℝ) - 1 ≤ T), min_le_right _ _⟩
-    have hmemτ' : min τ' T ∈ Icc (min c (T - 1)) T :=
-      ⟨min_le_min hτ'.1 (by linarith only [] : (T : ℝ) - 1 ≤ T), min_le_right _ _⟩
-    have hAx : IntervalIntegrable (fun s => φ i n (x, s)) volume (T - 1) (min τ T) :=
-      (hcontx.mono (uIcc_subset_Icc hT1mem hmemτ)).intervalIntegrable
-    have hBx : IntervalIntegrable (fun s => φ i n (x, s)) volume (T - 1) (min τ' T) :=
-      (hcontx.mono (uIcc_subset_Icc hT1mem hmemτ')).intervalIntegrable
-    have hCx : IntervalIntegrable (fun s => φ i n (x, s)) volume (min τ T) (min τ' T) :=
-      (hcontx.mono (uIcc_subset_Icc hmemτ hmemτ')).intervalIntegrable
-    have hAy : IntervalIntegrable (fun s => φ i n (y, s)) volume (T - 1) (min τ T) :=
-      (hconty.mono (uIcc_subset_Icc hT1mem hmemτ)).intervalIntegrable
-    have hBy : IntervalIntegrable (fun s => φ i n (y, s)) volume (T - 1) (min τ' T) :=
-      (hconty.mono (uIcc_subset_Icc hT1mem hmemτ')).intervalIntegrable
-    have hCy : IntervalIntegrable (fun s => φ i n (y, s)) volume (min τ T) (min τ' T) :=
-      (hconty.mono (uIcc_subset_Icc hmemτ hmemτ')).intervalIntegrable
-    have hspx : pn i n (x, τ') - pn i n (x, τ) = ∫ s in (min τ T)..(min τ' T), φ i n (x, s) := by
-      show (∫ s in (T - 1)..(min τ' T), φ i n (x, s)) -
-          ∫ s in (T - 1)..(min τ T), φ i n (x, s) = _
-      have hadj : (∫ s in (T - 1)..(min τ T), φ i n (x, s)) +
-          ∫ s in (min τ T)..(min τ' T), φ i n (x, s)
-          = ∫ s in (T - 1)..(min τ' T), φ i n (x, s) :=
-        intervalIntegral.integral_add_adjacent_intervals hAx hCx
-      linarith only [hadj]
-    have hspy : pn i n (y, τ') - pn i n (y, τ) = ∫ s in (min τ T)..(min τ' T), φ i n (y, s) := by
-      show (∫ s in (T - 1)..(min τ' T), φ i n (y, s)) -
-          ∫ s in (T - 1)..(min τ T), φ i n (y, s) = _
-      have hadj : (∫ s in (T - 1)..(min τ T), φ i n (y, s)) +
-          ∫ s in (min τ T)..(min τ' T), φ i n (y, s)
-          = ∫ s in (T - 1)..(min τ' T), φ i n (y, s) :=
-        intervalIntegral.integral_add_adjacent_intervals hAy hCy
-      linarith only [hadj]
-    have heq : pn i n (x, τ') - pn i n (x, τ) - (pn i n (y, τ') - pn i n (y, τ))
-        = ∫ s in (min τ T)..(min τ' T), (φ i n (x, s) - φ i n (y, s)) := by
-      rw [hspx, hspy, intervalIntegral.integral_sub hCx hCy]
-    rw [heq]
-    have hbound : |∫ s in (min τ T)..(min τ' T), (φ i n (x, s) - φ i n (y, s))| ≤
-        Λ * ‖x - y‖ * |min τ' T - min τ T| := by
-      have hle := intervalIntegral.norm_integral_le_of_norm_le_const
-        (a := min τ T) (b := min τ' T) (f := fun s => φ i n (x, s) - φ i n (y, s))
-        (C := Λ * ‖x - y‖)
-        (fun s hs => by
-          have hsmem : s ∈ Icc (min c (T - 1)) T := by
-            rcases le_total (min τ T) (min τ' T) with hle | hle
-            · rw [Set.uIoc_of_le hle] at hs
-              exact ⟨le_trans hmemτ.1 hs.1.le, le_trans hs.2 hmemτ'.2⟩
-            · rw [Set.uIoc_of_ge hle] at hs
-              exact ⟨le_trans hmemτ'.1 hs.1.le, le_trans hs.2 hmemτ.2⟩
-          rw [Real.norm_eq_abs]
-          exact (hn i s hsmem x hx y hy).2)
-      rwa [Real.norm_eq_abs] at hle
-    have hΛxynn : 0 ≤ Λ * ‖x - y‖ := by positivity
-    calc |∫ s in (min τ T)..(min τ' T), (φ i n (x, s) - φ i n (y, s))| ≤
-          Λ * ‖x - y‖ * |min τ' T - min τ T| := hbound
-      _ ≤ Λ * ‖x - y‖ * |τ' - τ| := mul_le_mul_of_nonneg_left (abs_min_sub_min_le τ' τ T) hΛxynn
+            Λ * ‖x - y‖ * |τ' - τ| := primitive_eventual_mixed_lipschitz φ hcontJ hbd
   -- Every compact set of space-time points lies inside `Bx k` for `k` large enough.
   have hKsub : ∀ K : Set (Vec m × ℝ), IsCompact K → ∃ k : ℕ, K ⊆ Bx k := by
     intro K hK
@@ -990,7 +1088,7 @@ theorem exists_subseq_admissibleDrift {m : ℕ} {T : ℝ} (b : ℕ → Vec m × 
       intro i
       have hi := ((h1 i).2.2).dist_le_mul x y
       rw [Real.coe_toNNReal (Λall i) (hΛallspec i).1] at hi
-      show ‖(B (x, τ) - B (y, τ)) i‖ ≤ Λcomb * dist x y
+      change ‖(B (x, τ) - B (y, τ)) i‖ ≤ Λcomb * dist x y
       rw [Pi.sub_apply, Real.norm_eq_abs, ← Real.dist_eq]
       exact le_trans hi (mul_le_mul_of_nonneg_right (hΛille i) dist_nonneg)
     · intro x

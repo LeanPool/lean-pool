@@ -368,7 +368,7 @@ theorem momentum_multiPartial_spaceTimeSet {u : ParabolicPoint → Vec3} {p : Pa
         ((x, t) : ParabolicPoint) :=
     multiPartial_congr_of_eqOn_spaceTimeSet hΩ hI (fun w hw => by
       have := hmom w hw i
-      show timePartial (fun w' => u w' i) w = _
+      change timePartial (fun w' => u w' i) w = _
       linarith only [this]) α hz
   have s1 := sl _ (hfi i)
   have s2 := sl _ hconvS

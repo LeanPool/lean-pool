@@ -162,19 +162,16 @@ theorem cutoffStretching_eq_stretchGTerm_add_mixed_sub_angular {u : ParabolicPoi
     by_cases hxb : x ∈ vec3Ball (0 : Vec3) 1
     · have hz : ((x : Vec3), t) ∈ unitCylinder := ⟨hxb, ht⟩
       have hpt := stretching_eq_stretchGTerm haxi hu1 hz hx
-      show χ x ^ 2 * ∑ i : Fin 3, ∑ j : Fin 3,
+      change χ x ^ 2 * ∑ i : Fin 3, ∑ j : Fin 3,
           curlComp u j (x, t) * spatialPartial (fun w => u w i) j (x, t)
             * curlComp u i (x, t) = _
       rw [hpt]
-      show _ = (χ x ^ 2 * stretchGTerm u x t + χ x ^ 2 * stretchMixedTerm u x t)
-        - χ x ^ 2 * (2 * stretchAngularSwirl u x t
-            * curlComp u 1 (meridional (polarR x) (x 2), t))
       unfold stretchMixedTerm
       ring
     · have hχ0 : χ x = 0 := image_eq_zero_of_notMem_tsupport (fun hm => hxb (hχU hm))
       rw [hχ0]
       ring
-  show (∫ x : Vec3, χ x ^ 2 * ∑ i : Fin 3, ∑ j : Fin 3,
+  change (∫ x : Vec3, χ x ^ 2 * ∑ i : Fin 3, ∑ j : Fin 3,
       vorticityField u (x, t) j * spatialPartial (fun w => u w i) j (x, t)
         * vorticityField u (x, t) i) = _
   rw [integral_congr_ae hae]

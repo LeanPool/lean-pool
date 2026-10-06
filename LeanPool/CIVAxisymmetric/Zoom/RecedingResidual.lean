@@ -353,7 +353,8 @@ theorem fderiv_fderiv_comp_planeLiftPoint_basisVec1 {F : (ℝ × ℝ) × ℝ →
 /-- The receding-axis source `(1/(A_n+R))∂_RΘ_n − Θ_n/(A_n+R)² + λ_n⁴δ_n H_n
 + (V_n/(A_n+R))Θ_n` of `eq:aniso:zoom:receding:equation`: the four terms that vanish together
 with the `∂_Z`-part of the swirl flux and the `δ_n²∂_ZZ` term as `n → ∞`. -/
-@[expose] def recedingSourcePlane (lam h rc zc : ℝ) (u : ParabolicPoint → Vec3) (f : ParabolicPoint → Vec3)
+@[expose] def recedingSourcePlane (lam h rc zc : ℝ) (u : ParabolicPoint → Vec3)
+    (f : ParabolicPoint → Vec3)
     (p : (ℝ × ℝ) × ℝ) : ℝ :=
   1 / (rc / lam + p.1.1) * dr (zoomTheta lam h rc zc u) p
     - zoomTheta lam h rc zc u p / (rc / lam + p.1.1) ^ 2
@@ -365,7 +366,7 @@ with the `∂_Z`-part of the swirl flux and the `δ_n²∂_ZZ` term as `n → �
 theorem dz_swirlFluxPlane_eq (lam h rc zc : ℝ) (u : ParabolicPoint → Vec3) (p : (ℝ × ℝ) × ℝ) :
     dz (swirlFluxPlane lam h rc zc u) p
       = 1 / (rc / lam + p.1.1) * dz (fun q => zoomSRec lam h rc zc u q ^ 2) p := by
-  show deriv (fun z => zoomSRec lam h rc zc u ((p.1.1, z), p.2) ^ 2 / (rc / lam + p.1.1)) p.1.2
+  change deriv (fun z => zoomSRec lam h rc zc u ((p.1.1, z), p.2) ^ 2 / (rc / lam + p.1.1)) p.1.2
       = 1 / (rc / lam + p.1.1)
         * deriv (fun z => zoomSRec lam h rc zc u ((p.1.1, z), p.2) ^ 2) p.1.2
   rw [deriv_div_const, div_eq_inv_mul, one_div]
@@ -535,60 +536,33 @@ private theorem recResidual_abs_sub_le_abs_add_abs (a b : ℝ) : |a - b| ≤ |a|
     _ ≤ |a| + |(-b)| := abs_add_le _ _
     _ = |a| + |b| := by rw [abs_neg]
 
-/-! ## R2-R: the residual tends to zero -/
+private theorem abs_sq_div_le_sq_mul_sq {s c δ a : ℝ} (ha : 1 ≤ a)
+    (hs : |s| ≤ c * δ / a) : |s ^ 2 / a| ≤ c ^ 2 * δ ^ 2 := by
+  have ha0 : 0 < a := by linarith only [ha]
+  rw [abs_div, abs_of_pos ha0, abs_of_nonneg (sq_nonneg _)]
+  calc s ^ 2 / a = |s| ^ 2 / a := by rw [sq_abs]
+    _ ≤ (c * δ / a) ^ 2 / a := by gcongr
+    _ = c ^ 2 * δ ^ 2 / a ^ 3 := by
+      rw [div_pow, div_div]
+      ring_nf
+    _ ≤ c ^ 2 * δ ^ 2 := by
+      have h1 : (1 : ℝ) ≤ a ^ 3 := one_le_pow₀ ha
+      rw [div_le_iff₀ (by positivity)]
+      nlinarith only [h1, sq_nonneg c, sq_nonneg δ, sq_nonneg (c * δ)]
 
-/-- R2-R: the residual of the rescaled receding vorticity-quotient equation tends to zero. -/
-theorem tendsto_recResidual
-    {C h CΓ ρ Rstar tstar : ℝ} (hh : 0 < h ∧ h < 1 / 2) (hρ0 : 0 ≤ ρ) (hρR : ρ < Rstar)
-    (hR1 : Rstar ≤ 1) (htstar : tstar < 0) {rc zc : ℕ → ℝ}
-    (hcz : ∀ n, rc n ^ 2 + zc n ^ 2 ≤ ρ ^ 2) (hC : 0 ≤ C)
-    {u : ParabolicPoint → Vec3} (hb : AnisotropicBounds C h u)
-    (hu : ContDiffOn ℝ (⊤ : ℕ∞) (fun z : Vec3 × ℝ => u z) unitCylinder)
-    {pr : ParabolicPoint → ℝ} {f : ParabolicPoint → Vec3}
-    (hsol : IsClassicalSolutionOn u pr f unitCylinder) (haxi : IsAxisymmetricOn u unitCylinder)
-    (hΓ : ∀ x ∈ vec3Ball (0 : Vec3) Rstar, ∀ t ∈ Ioo tstar (0 : ℝ), |circulation u (x, t)| ≤ CΓ)
-    (hforce : ForceC2Bounded f) {lam : ℕ → ℝ} (hlam_pos : ∀ n, 0 < lam n)
-    (hlam_lim : Tendsto lam atTop (nhdsWithin 0 (Ioi 0)))
-    (hA : Tendsto (fun n => rc n / lam n) atTop atTop) :
-    ∀ φ ∈ testFunctions 2 (Iio (-1 : ℝ)), Tendsto (fun n => ∫ z,
-      zoomTheta (lam n) h (rc n) (zc n) u (planeLiftPoint z) *
-        (-(timeDeriv 2 φ z) - gradPair 2 φ z (recDrift (lam n) h (rc n) (zc n) u z)
-          - recDriftDiv (lam n) h (rc n) (zc n) u z * φ z - partialLaplacian 2 1 φ z))
-      atTop (nhds 0) := by
-  rintro φ ⟨hφs, hφc, hφK⟩
-  have hρ1 : ρ < 1 := hρR.trans_le hR1
-  have hu2 : ContDiffOn ℝ 2 (fun z : Vec3 × ℝ => u z) unitCylinder := hu.of_le (by norm_num)
-  have hfC : ContDiffOn ℝ (⊤ : ℕ∞) (fun z : Vec3 × ℝ => f z) unitCylinder := hsol.2.2.1
-  obtain ⟨Mf, hMf0⟩ := hforce
-  have hMf0' : ∀ z ∈ unitCylinder, ∀ i : Fin 3, ∀ α : Fin 3 → ℕ, α 0 + α 1 + α 2 ≤ 2 →
-      |multiPartial (fun w => f w i) α z| ≤ max Mf 0 :=
-    fun z hz i α hα => (hMf0 z hz i α hα).trans (le_max_left _ _)
-  set K : Set (Vec 2 × ℝ) := tsupport φ with hK_def
-  have hKcompact : IsCompact K := hφc
-  have hKsub : K ⊆ univ ×ˢ Iic (-1 : ℝ) :=
-    fun z hz => ⟨mem_univ _, Set.mem_Iic.mpr (le_of_lt (hφK hz).2)⟩
-  have hmem := eventually_mem_unitCylinder_of_isCompact_vec2' hh hρ0 hρ1 hcz lam hlam_lim
-    hKcompact hKsub
-  have hApos := eventually_one_le_ratio_add_of_isCompact_vec2' hA hKcompact
-  have hlamlt : ∀ᶠ n in atTop, lam n < 1 :=
-    (hlam_lim.mono_right nhdsWithin_le_nhds).eventually_mem
-      (isOpen_Iio.mem_nhds (by norm_num : (0 : ℝ) ∈ Iio (1 : ℝ)))
-  have hKplaneC : IsCompact (planeLiftPoint '' K) := hKcompact.image continuous_planeLiftPoint
-  have hKplaneT : ∀ p ∈ planeLiftPoint '' K, p.2 < 0 := by
-    rintro _ ⟨z, hz, rfl⟩
-    exact lt_of_le_of_lt (hKsub hz).2 (by norm_num)
-  have hwindow := eventually_mem_zoomPointRec_moving hh hρ0 hρR htstar hcz hlam_lim
-    (planeLiftPoint '' K) hKplaneC hKplaneT
-  -- global bounds on `φ` and its first two derivatives on `K`
-  have hc0 : Continuous (fun z : Vec 2 × ℝ => z.1 0) := (continuous_apply 0).comp continuous_fst
-  obtain ⟨Rmax, hRmax⟩ := hKcompact.exists_bound_of_continuousOn hc0.continuousOn
-  obtain ⟨Bφ0, hBφ0⟩ := hKcompact.exists_bound_of_continuousOn hφs.continuous.continuousOn
-  obtain ⟨Bφ1', hBφ1'⟩ := hKcompact.exists_bound_of_continuousOn
+private theorem rec_test_derivative_bounds {φ : Vec 2 × ℝ → ℝ}
+    (hφs : ContDiff ℝ (⊤ : ℕ∞) φ) (hφc : HasCompactSupport φ) :
+    ∃ Bφ0 Bφ1 Bφ2 : ℝ,
+      (∀ z ∈ tsupport φ, ‖φ z‖ ≤ Bφ0) ∧
+      (∀ z ∈ tsupport φ, |fderiv ℝ φ z (basisVec 1, 0)| ≤ Bφ1) ∧
+      (∀ z ∈ tsupport φ,
+        |fderiv ℝ (fun w => fderiv ℝ φ w (basisVec 1, 0)) z (basisVec 1, 0)| ≤ Bφ2) := by
+  obtain ⟨Bφ0, hBφ0⟩ := hφc.exists_bound_of_continuousOn hφs.continuous.continuousOn
+  obtain ⟨Bφ1', hBφ1'⟩ := hφc.exists_bound_of_continuousOn
     (hφs.continuous_fderiv (by norm_num)).continuousOn
-  obtain ⟨Bφ2', hBφ2'⟩ := hKcompact.exists_bound_of_continuousOn
+  obtain ⟨Bφ2', hBφ2'⟩ := hφc.exists_bound_of_continuousOn
     ((hφs.fderiv_right (m := (⊤ : ℕ∞)) (by norm_num)).continuous_fderiv
       (by norm_num)).continuousOn
-  set Bφ0' : ℝ := max Bφ0 0 with hBφ0'_def
   set Bφ1 : ℝ := max Bφ1' 0 with hBφ1_def
   set Bφ2 : ℝ := max Bφ2' 0 with hBφ2_def
   have hnorm1 : ‖basisVec (1 : Fin 2)‖ = (1 : ℝ) := by
@@ -602,18 +576,20 @@ theorem tendsto_recResidual
       norm_num at hle
       linarith only [hle]
   have hnormdir : ‖((basisVec 1, (0 : ℝ)) : Vec 2 × ℝ)‖ = 1 := by
-    rw [Prod.norm_def, hnorm1, norm_zero, max_eq_left (by norm_num : (0:ℝ) ≤ 1)]
-  have hBφ1 : ∀ z ∈ K, |fderiv ℝ φ z (basisVec 1, 0)| ≤ Bφ1 := by
+    rw [Prod.norm_def, hnorm1, norm_zero, max_eq_left (by norm_num : (0 : ℝ) ≤ 1)]
+  have hBφ1 : ∀ z ∈ tsupport φ, |fderiv ℝ φ z (basisVec 1, 0)| ≤ Bφ1 := by
     intro z hz
-    have h1 : ‖fderiv ℝ φ z (basisVec 1, 0)‖ ≤ ‖fderiv ℝ φ z‖ * ‖((basisVec 1, (0:ℝ)) : Vec 2 × ℝ)‖ :=
+    have h1 : ‖fderiv ℝ φ z (basisVec 1, 0)‖ ≤
+        ‖fderiv ℝ φ z‖ * ‖((basisVec 1, (0 : ℝ)) : Vec 2 × ℝ)‖ :=
       ContinuousLinearMap.le_opNorm _ _
     rw [hnormdir, mul_one] at h1
     have h2 : ‖fderiv ℝ φ z‖ ≤ Bφ1' := hBφ1' z hz
-    calc |fderiv ℝ φ z (basisVec 1, 0)| = ‖fderiv ℝ φ z (basisVec 1, 0)‖ := (Real.norm_eq_abs _).symm
+    calc |fderiv ℝ φ z (basisVec 1, 0)| = ‖fderiv ℝ φ z (basisVec 1, 0)‖ :=
+        (Real.norm_eq_abs _).symm
       _ ≤ ‖fderiv ℝ φ z‖ := h1
       _ ≤ Bφ1' := h2
       _ ≤ Bφ1 := le_max_left _ _
-  have hBφ2 : ∀ z ∈ K, |fderiv ℝ (fun w => fderiv ℝ φ w (basisVec 1, 0)) z (basisVec 1, 0)|
+  have hBφ2 : ∀ z ∈ tsupport φ, |fderiv ℝ (fun w => fderiv ℝ φ w (basisVec 1, 0)) z (basisVec 1, 0)|
       ≤ Bφ2 := by
     intro z hz
     have hcd : DifferentiableAt ℝ (fderiv ℝ φ) z :=
@@ -638,7 +614,7 @@ theorem tendsto_recResidual
           ≤ 1 := by
         refine ContinuousLinearMap.opNorm_le_bound _ (by norm_num) fun x => ?_
         rw [ContinuousLinearMap.apply_apply, one_mul]
-        calc ‖x (basisVec 1, 0)‖ ≤ ‖x‖ * ‖((basisVec 1, (0:ℝ)) : Vec 2 × ℝ)‖ :=
+        calc ‖x (basisVec 1, 0)‖ ≤ ‖x‖ * ‖((basisVec 1, (0 : ℝ)) : Vec 2 × ℝ)‖ :=
               ContinuousLinearMap.le_opNorm _ _
           _ = ‖x‖ := by rw [hnormdir, mul_one]
       calc ‖(ContinuousLinearMap.apply ℝ ℝ ((basisVec 1, (0 : ℝ)) : Vec 2 × ℝ))
@@ -650,7 +626,7 @@ theorem tendsto_recResidual
         _ = ‖(fderiv ℝ (fderiv ℝ φ) z) (basisVec 1, 0)‖ := one_mul _
     have h2 : ‖fderiv ℝ (fderiv ℝ φ) z‖ ≤ Bφ2' := hBφ2' z hz
     rw [Real.norm_eq_abs] at hb2
-    show |(ContinuousLinearMap.apply ℝ ℝ ((basisVec 1, (0 : ℝ)) : Vec 2 × ℝ)).comp
+    change |(ContinuousLinearMap.apply ℝ ℝ ((basisVec 1, (0 : ℝ)) : Vec 2 × ℝ)).comp
         (fderiv ℝ (fderiv ℝ φ) z) (basisVec 1, 0)| ≤ Bφ2
     rw [ContinuousLinearMap.comp_apply]
     calc |(ContinuousLinearMap.apply ℝ ℝ ((basisVec 1, (0 : ℝ)) : Vec 2 × ℝ))
@@ -659,22 +635,27 @@ theorem tendsto_recResidual
       _ ≤ ‖fderiv ℝ (fderiv ℝ φ) z‖ := hb1
       _ ≤ Bφ2' := h2
       _ ≤ Bφ2 := le_max_left _ _
+  exact ⟨Bφ0, Bφ1, Bφ2, hBφ0, hBφ1, hBφ2⟩
 
-  set Rmax' : ℝ := max Rmax 0 with hRmax'_def
-  have hRmax'0 : 0 ≤ Rmax' := le_max_right _ _
-  have hRmax' : ∀ x ∈ K, ‖x.1 0‖ ≤ Rmax' := fun x hx => (hRmax x hx).trans (le_max_left _ _)
-  have hAmore := hA.eventually_gt_atTop Rmax'
-  -- the bound function and its limit
+private theorem tendsto_rec_remainder_bound {h : ℝ} (hh : 0 < h)
+    {lam rc : ℕ → ℝ} (hlam_lim : Tendsto lam atTop (nhdsWithin 0 (Ioi 0)))
+    (hA : Tendsto (fun n => rc n / lam n) atTop atTop)
+    (C CΓ Bφ0 Bφ1 Bφ2 Mf Rmax' V : ℝ) :
+    Tendsto (fun n => ((lam n ^ (2 * h)) ^ 2 * (2 * C) * Bφ2
+      + CΓ ^ 2 * (lam n ^ (2 * h)) ^ 2 * Bφ1
+      + ((rc n / lam n - Rmax')⁻¹ * (4 * C) + (rc n / lam n - Rmax')⁻¹ ^ 2 * (2 * C)
+          + lam n ^ 4 * lam n ^ (2 * h) * (2 * max Mf 0)
+          + (rc n / lam n - Rmax')⁻¹ * C * (2 * C)) * Bφ0) * V) atTop (nhds 0) := by
   set Fb : ℕ → ℝ := fun n => ((lam n ^ (2 * h)) ^ 2 * (2 * C) * Bφ2
       + CΓ ^ 2 * (lam n ^ (2 * h)) ^ 2 * Bφ1
-      + ((rc n / lam n - Rmax')⁻¹ * (4 * C) + (rc n / lam n - Rmax') ⁻¹ ^ 2 * (2 * C)
+      + ((rc n / lam n - Rmax')⁻¹ * (4 * C) + (rc n / lam n - Rmax')⁻¹ ^ 2 * (2 * C)
           + lam n ^ 4 * lam n ^ (2 * h) * (2 * max Mf 0)
-          + (rc n / lam n - Rmax')⁻¹ * C * (2 * C)) * Bφ0) * (volume K).toReal with hFb_def
+          + (rc n / lam n - Rmax')⁻¹ * C * (2 * C)) * Bφ0) * V with hFb_def
   have hlam0 : Tendsto lam atTop (nhds (0 : ℝ)) := hlam_lim.mono_right nhdsWithin_le_nhds
   have hδtendsto : Tendsto (fun n => lam n ^ (2 * h)) atTop (nhds (0 : ℝ)) := by
     have hcont : Tendsto (fun l : ℝ => l ^ (2 * h)) (nhdsWithin 0 (Ioi 0)) (nhds (0 : ℝ)) := by
-      have h0 := (Real.continuousAt_rpow_const 0 (2 * h) (Or.inr (by linarith only [hh.1]))).tendsto
-      rw [Real.zero_rpow (by linarith only [hh.1])] at h0
+      have h0 := (Real.continuousAt_rpow_const 0 (2 * h) (Or.inr (by linarith only [hh]))).tendsto
+      rw [Real.zero_rpow (by linarith only [hh])] at h0
       exact h0.mono_left nhdsWithin_le_nhds
     exact hcont.comp hlam_lim
   have hlam4tendsto : Tendsto (fun n => lam n ^ 4) atTop (nhds (0 : ℝ)) := by
@@ -707,18 +688,70 @@ theorem tendsto_recResidual
       have := (((h3.add h4).add h5).add h6).mul_const Bφ0
       simpa using this
     have h8 := (h1.add h2).add h7
-    have := h8.mul_const (volume K).toReal
+    have := h8.mul_const V
     simpa [hFb_def] using this
-  refine squeeze_zero_norm' ?_ hFbtendsto
-  -- eventually in `n`: assemble the residual
-  filter_upwards [hmem, hApos, hlamlt, hwindow, hAmore] with n hmem_n hApos_n hlamlt_n hwindow_n
-    hAmore_n
-  set A : ℝ := rc n / lam n with hA_def
-  set δ : ℝ := lam n ^ (2 * h) with hδ_def
-  set D : Set ((ℝ × ℝ) × ℝ) := {p | zoomPointRec (lam n) h (rc n) (zc n) p ∈ unitCylinder}
+  exact hFbtendsto
+
+private theorem zoom_rec_plane_smooth {u : ParabolicPoint → Vec3}
+    (hu : ContDiffOn ℝ (⊤ : ℕ∞) (fun z : Vec3 × ℝ => u z) unitCylinder)
+    (lam h rc zc : ℝ) :
+    let D := {p | zoomPointRec lam h rc zc p ∈ unitCylinder}
+    ContDiffOn ℝ (⊤ : ℕ∞) (zoomTheta lam h rc zc u) D ∧
+    ContDiffOn ℝ (⊤ : ℕ∞) (zoomVRec lam h rc zc u) D ∧
+    ContDiffOn ℝ (⊤ : ℕ∞) (zoomWRec lam h rc zc u) D ∧
+    ContDiffOn ℝ (⊤ : ℕ∞) (zoomSRec lam h rc zc u) D := by
+  dsimp only
+  set D : Set ((ℝ × ℝ) × ℝ) := {p | zoomPointRec lam h rc zc p ∈ unitCylinder}
+  have hΘsmoothPlane : ContDiffOn ℝ (⊤ : ℕ∞) (zoomTheta lam h rc zc u) D := by
+    have hcomp : ContDiffOn ℝ (⊤ : ℕ∞)
+        (fun p => azimuthalVorticity u (zoomPointRec lam h rc zc p)) D :=
+      (contDiffOn_azimuthalVorticity hu).comp
+        (contDiff_zoomPointRec lam h rc zc).contDiffOn (fun p hp => hp)
+    exact contDiffOn_const.mul hcomp
+  have hVsmoothPlane : ContDiffOn ℝ (⊤ : ℕ∞) (zoomVRec lam h rc zc u) D := by
+    have hcomp : ContDiffOn ℝ (⊤ : ℕ∞)
+        (fun p => u (zoomPointRec lam h rc zc p) 0) D :=
+      (contDiffOn_pi.1 hu 0).comp (contDiff_zoomPointRec lam h rc zc).contDiffOn
+        (fun p hp => hp)
+    exact contDiffOn_const.mul hcomp
+  have hWsmoothPlane : ContDiffOn ℝ (⊤ : ℕ∞) (zoomWRec lam h rc zc u) D := by
+    have hcomp : ContDiffOn ℝ (⊤ : ℕ∞)
+        (fun p => u (zoomPointRec lam h rc zc p) 2) D :=
+      (contDiffOn_pi.1 hu 2).comp (contDiff_zoomPointRec lam h rc zc).contDiffOn
+        (fun p hp => hp)
+    exact contDiffOn_const.mul hcomp
+  have hSsmoothPlane : ContDiffOn ℝ (⊤ : ℕ∞) (zoomSRec lam h rc zc u) D := by
+    have hcomp : ContDiffOn ℝ (⊤ : ℕ∞)
+        (fun p => u (zoomPointRec lam h rc zc p) 1) D :=
+      (contDiffOn_pi.1 hu 1).comp (contDiff_zoomPointRec lam h rc zc).contDiffOn
+        (fun p hp => hp)
+    exact contDiffOn_const.mul hcomp
+  exact ⟨hΘsmoothPlane, hVsmoothPlane, hWsmoothPlane, hSsmoothPlane⟩
+
+private theorem integral_rec_residual_eq_remainder
+    {lam h rc zc : ℝ} (hlam_pos : 0 < lam)
+    {u : ParabolicPoint → Vec3} {pr : ParabolicPoint → ℝ} {f : ParabolicPoint → Vec3}
+    (hu : ContDiffOn ℝ (⊤ : ℕ∞) (fun z : Vec3 × ℝ => u z) unitCylinder)
+    (hsol : IsClassicalSolutionOn u pr f unitCylinder) (haxi : IsAxisymmetricOn u unitCylinder)
+    {φ : Vec 2 × ℝ → ℝ} (hφs : ContDiff ℝ (⊤ : ℕ∞) φ) (hφc : HasCompactSupport φ)
+    (hmem_n : ∀ z ∈ tsupport φ, zoomPointRec lam h rc zc (planeLiftPoint z) ∈ unitCylinder)
+    (hApos_n : ∀ z ∈ tsupport φ, 1 ≤ rc / lam + z.1 0) :
+    (∫ z, zoomTheta lam h rc zc u (planeLiftPoint z) *
+      (-(timeDeriv 2 φ z) - gradPair 2 φ z (recDrift lam h rc zc u z)
+        - recDriftDiv lam h rc zc u z * φ z - partialLaplacian 2 1 φ z)) =
+    ∫ z, ((lam ^ (2 * h)) ^ 2 * zoomTheta lam h rc zc u (planeLiftPoint z) *
+      fderiv ℝ (fun w => fderiv ℝ φ w (basisVec 1, 0)) z (basisVec 1, 0)
+      - swirlFluxPlane lam h rc zc u (planeLiftPoint z) * fderiv ℝ φ z (basisVec 1, 0)
+      + recedingSourcePlane lam h rc zc u f (planeLiftPoint z) * φ z) := by
+  set K := tsupport φ
+  have hKcompact : IsCompact K := hφc
+  have hfC := hsol.2.2.1
+  set A : ℝ := rc / lam with hA_def
+  set δ : ℝ := lam ^ (2 * h) with hδ_def
+  set D : Set ((ℝ × ℝ) × ℝ) := {p | zoomPointRec lam h rc zc p ∈ unitCylinder}
     with hD_def
   have hDopen : IsOpen D :=
-    isOpen_unitCylinder_prod.preimage (continuous_zoomPointRec (lam n) h (rc n) (zc n))
+    isOpen_unitCylinder_prod.preimage (continuous_zoomPointRec lam h rc zc)
   have hplSmooth : ContDiff ℝ (⊤ : ℕ∞) planeLiftPoint := planeLiftCLM_eq ▸ planeLiftCLM.contDiff
   set S : Set (Vec 2 × ℝ) := {w | planeLiftPoint w ∈ D ∧ 0 < A + w.1 0} with hS_def
   have hSopen : IsOpen S :=
@@ -728,30 +761,8 @@ theorem tendsto_recResidual
   have hKS : K ⊆ S := fun z hz => ⟨hmem_n z hz, by
     have := hApos_n z hz; simp only [hA_def]; linarith only [this]⟩
   -- smoothness of the plane-level objects on `D`
-  have hΘsmoothPlane : ContDiffOn ℝ (⊤ : ℕ∞) (zoomTheta (lam n) h (rc n) (zc n) u) D := by
-    have hcomp : ContDiffOn ℝ (⊤ : ℕ∞)
-        (fun p => azimuthalVorticity u (zoomPointRec (lam n) h (rc n) (zc n) p)) D :=
-      (contDiffOn_azimuthalVorticity hu).comp
-        (contDiff_zoomPointRec (lam n) h (rc n) (zc n)).contDiffOn (fun p hp => hp)
-    exact contDiffOn_const.mul hcomp
-  have hVsmoothPlane : ContDiffOn ℝ (⊤ : ℕ∞) (zoomVRec (lam n) h (rc n) (zc n) u) D := by
-    have hcomp : ContDiffOn ℝ (⊤ : ℕ∞)
-        (fun p => u (zoomPointRec (lam n) h (rc n) (zc n) p) 0) D :=
-      (contDiffOn_pi.1 hu 0).comp (contDiff_zoomPointRec (lam n) h (rc n) (zc n)).contDiffOn
-        (fun p hp => hp)
-    exact contDiffOn_const.mul hcomp
-  have hWsmoothPlane : ContDiffOn ℝ (⊤ : ℕ∞) (zoomWRec (lam n) h (rc n) (zc n) u) D := by
-    have hcomp : ContDiffOn ℝ (⊤ : ℕ∞)
-        (fun p => u (zoomPointRec (lam n) h (rc n) (zc n) p) 2) D :=
-      (contDiffOn_pi.1 hu 2).comp (contDiff_zoomPointRec (lam n) h (rc n) (zc n)).contDiffOn
-        (fun p hp => hp)
-    exact contDiffOn_const.mul hcomp
-  have hSsmoothPlane : ContDiffOn ℝ (⊤ : ℕ∞) (zoomSRec (lam n) h (rc n) (zc n) u) D := by
-    have hcomp : ContDiffOn ℝ (⊤ : ℕ∞)
-        (fun p => u (zoomPointRec (lam n) h (rc n) (zc n) p) 1) D :=
-      (contDiffOn_pi.1 hu 1).comp (contDiff_zoomPointRec (lam n) h (rc n) (zc n)).contDiffOn
-        (fun p hp => hp)
-    exact contDiffOn_const.mul hcomp
+  obtain ⟨hΘsmoothPlane, hVsmoothPlane, hWsmoothPlane, hSsmoothPlane⟩ :=
+    zoom_rec_plane_smooth hu lam h rc zc
   have hSonD : S ⊆ planeLiftPoint ⁻¹' D := fun w hw => hw.1
   -- the plane-level smoothness of the swirl flux, on the open set where the denominator
   -- does not vanish
@@ -759,30 +770,30 @@ theorem tendsto_recResidual
   have hp11cd : ContDiff ℝ (⊤ : ℕ∞) (fun p : (ℝ × ℝ) × ℝ => p.1.1) := contDiff_fst.comp contDiff_fst
   have hD'open : IsOpen D' :=
     hDopen.inter (isOpen_ne_fun (continuous_const.add hp11cd.continuous) continuous_const)
-  have hSwirlSmoothPlane : ContDiffOn ℝ (⊤ : ℕ∞) (swirlFluxPlane (lam n) h (rc n) (zc n) u) D' := by
-    have hnum : ContDiffOn ℝ (⊤ : ℕ∞) (zoomSRec (lam n) h (rc n) (zc n) u) D' :=
+  have hSwirlSmoothPlane : ContDiffOn ℝ (⊤ : ℕ∞) (swirlFluxPlane lam h rc zc u) D' := by
+    have hnum : ContDiffOn ℝ (⊤ : ℕ∞) (zoomSRec lam h rc zc u) D' :=
       hSsmoothPlane.mono Set.inter_subset_left
     have hden : ContDiffOn ℝ (⊤ : ℕ∞) (fun p : (ℝ × ℝ) × ℝ => A + p.1.1) D' :=
       contDiffOn_const.add hp11cd.contDiffOn
     exact (hnum.pow 2).div hden (fun p hp => hp.2)
   have hSonD' : S ⊆ planeLiftPoint ⁻¹' D' := fun w hw => ⟨hw.1, by
-    show A + (planeLiftPoint w).1.1 ≠ 0
+    change A + (planeLiftPoint w).1.1 ≠ 0
     have heq : (planeLiftPoint w).1.1 = w.1 0 := rfl
     rw [heq]; exact ne_of_gt hw.2⟩
   -- `q`, `B`, `Fz`, `G` on `S`
-  set q : Vec 2 × ℝ → ℝ := fun w => zoomTheta (lam n) h (rc n) (zc n) u (planeLiftPoint w)
+  set q : Vec 2 × ℝ → ℝ := fun w => zoomTheta lam h rc zc u (planeLiftPoint w)
     with hq_def
-  set B : Vec 2 × ℝ → Vec 2 := recDrift (lam n) h (rc n) (zc n) u with hB_def
-  set divB : Vec 2 × ℝ → ℝ := recDriftDiv (lam n) h (rc n) (zc n) u with hdivB_def
-  set Fz : Vec 2 × ℝ → ℝ := fun w => swirlFluxPlane (lam n) h (rc n) (zc n) u (planeLiftPoint w)
+  set B : Vec 2 × ℝ → Vec 2 := recDrift lam h rc zc u with hB_def
+  set divB : Vec 2 × ℝ → ℝ := recDriftDiv lam h rc zc u with hdivB_def
+  set Fz : Vec 2 × ℝ → ℝ := fun w => swirlFluxPlane lam h rc zc u (planeLiftPoint w)
     with hFz_def
   set G : Vec 2 × ℝ → ℝ := fun w =>
-    recedingSourcePlane (lam n) h (rc n) (zc n) u f (planeLiftPoint w) with hG_def
+    recedingSourcePlane lam h rc zc u f (planeLiftPoint w) with hG_def
   have hq : ContDiffOn ℝ (⊤ : ℕ∞) q S :=
     hΘsmoothPlane.comp (hplSmooth.contDiffOn) hSonD
-  have hB0eq : (fun w : Vec 2 × ℝ => B w 0) = fun w => zoomVRec (lam n) h (rc n) (zc n) u
+  have hB0eq : (fun w : Vec 2 × ℝ => B w 0) = fun w => zoomVRec lam h rc zc u
       (planeLiftPoint w) := by funext w; simp [hB_def, recDrift]
-  have hB1eq : (fun w : Vec 2 × ℝ => B w 1) = fun w => zoomWRec (lam n) h (rc n) (zc n) u
+  have hB1eq : (fun w : Vec 2 × ℝ => B w 1) = fun w => zoomWRec lam h rc zc u
       (planeLiftPoint w) := by funext w; simp [hB_def, recDrift]
   have hB0 : ContDiffOn ℝ (⊤ : ℕ∞) (fun w => B w 0) S := by
     rw [hB0eq]; exact hVsmoothPlane.comp hplSmooth.contDiffOn hSonD
@@ -795,15 +806,15 @@ theorem tendsto_recResidual
   have hSdenom_ne : ∀ w ∈ S, A + w.1 0 ≠ 0 := fun w hw => ne_of_gt hw.2
   have hFz : ContDiffOn ℝ (⊤ : ℕ∞) Fz S := by
     have hnumEq : Fz
-        = fun w => zoomSRec (lam n) h (rc n) (zc n) u (planeLiftPoint w) ^ 2 / (A + w.1 0) := by
+        = fun w => zoomSRec lam h rc zc u (planeLiftPoint w) ^ 2 / (A + w.1 0) := by
       funext w
-      show swirlFluxPlane (lam n) h (rc n) (zc n) u (planeLiftPoint w)
-          = zoomSRec (lam n) h (rc n) (zc n) u (planeLiftPoint w) ^ 2 / (A + w.1 0)
+      change swirlFluxPlane lam h rc zc u (planeLiftPoint w)
+          = zoomSRec lam h rc zc u (planeLiftPoint w) ^ 2 / (A + w.1 0)
       have : (planeLiftPoint w).1.1 = w.1 0 := rfl
       simp only [swirlFluxPlane, hA_def, this]
     rw [hnumEq]
     have hnum : ContDiffOn ℝ (⊤ : ℕ∞)
-        (fun w => zoomSRec (lam n) h (rc n) (zc n) u (planeLiftPoint w)) S :=
+        (fun w => zoomSRec lam h rc zc u (planeLiftPoint w)) S :=
       hSsmoothPlane.comp hplSmooth.contDiffOn hSonD
     have hw10cd : ContDiff ℝ (⊤ : ℕ∞) (fun w : Vec 2 × ℝ => w.1 0) :=
       (contDiff_apply ℝ ℝ (0 : Fin 2)).comp contDiff_fst
@@ -811,31 +822,31 @@ theorem tendsto_recResidual
       contDiffOn_const.add hw10cd.contDiffOn
     exact (hnum.pow 2).div hden hSdenom_ne
   have hG : ContinuousOn G S := by
-    have h1 : ContinuousOn (fun w : Vec 2 × ℝ => dr (zoomTheta (lam n) h (rc n) (zc n) u)
+    have h1 : ContinuousOn (fun w : Vec 2 × ℝ => dr (zoomTheta lam h rc zc u)
         (planeLiftPoint w)) S :=
       (continuousOn_dr_of_contDiffOn hDopen
         (hΘsmoothPlane.of_le (by norm_num))).comp
         (continuous_planeLiftPoint.continuousOn) hSonD
     have h2 : ContinuousOn (fun w : Vec 2 × ℝ =>
-        zoomTheta (lam n) h (rc n) (zc n) u (planeLiftPoint w)) S :=
+        zoomTheta lam h rc zc u (planeLiftPoint w)) S :=
       hΘsmoothPlane.continuousOn.comp continuous_planeLiftPoint.continuousOn hSonD
     have h3 : ContinuousOn (fun w : Vec 2 × ℝ =>
-        curlComp f 1 (zoomPointRec (lam n) h (rc n) (zc n) (planeLiftPoint w))) S :=
+        curlComp f 1 (zoomPointRec lam h rc zc (planeLiftPoint w))) S :=
       (contDiffOn_curlComp_unitCylinder hfC 1).continuousOn.comp
-        ((contDiff_zoomPointRec (lam n) h (rc n) (zc n)).continuous.comp_continuousOn
+        ((contDiff_zoomPointRec lam h rc zc).continuous.comp_continuousOn
           continuous_planeLiftPoint.continuousOn) hSonD
     have h4 : ContinuousOn (fun w : Vec 2 × ℝ =>
-        zoomVRec (lam n) h (rc n) (zc n) u (planeLiftPoint w)) S :=
+        zoomVRec lam h rc zc u (planeLiftPoint w)) S :=
       hVsmoothPlane.continuousOn.comp continuous_planeLiftPoint.continuousOn hSonD
     have hden1 : ContinuousOn (fun w : Vec 2 × ℝ => A + w.1 0) S :=
       continuousOn_const.add (((continuous_apply 0).comp continuous_fst).continuousOn)
     have hden2 : ContinuousOn (fun w : Vec 2 × ℝ => (A + w.1 0) ^ 2) S := hden1.pow 2
     have hGeq : G = fun w => 1 / (A + w.1 0) *
-        dr (zoomTheta (lam n) h (rc n) (zc n) u) (planeLiftPoint w)
-        - zoomTheta (lam n) h (rc n) (zc n) u (planeLiftPoint w) / (A + w.1 0) ^ 2
-        + lam n ^ 4 * δ * curlComp f 1 (zoomPointRec (lam n) h (rc n) (zc n) (planeLiftPoint w))
-        + zoomVRec (lam n) h (rc n) (zc n) u (planeLiftPoint w) / (A + w.1 0)
-          * zoomTheta (lam n) h (rc n) (zc n) u (planeLiftPoint w) := by
+        dr (zoomTheta lam h rc zc u) (planeLiftPoint w)
+        - zoomTheta lam h rc zc u (planeLiftPoint w) / (A + w.1 0) ^ 2
+        + lam ^ 4 * δ * curlComp f 1 (zoomPointRec lam h rc zc (planeLiftPoint w))
+        + zoomVRec lam h rc zc u (planeLiftPoint w) / (A + w.1 0)
+          * zoomTheta lam h rc zc u (planeLiftPoint w) := by
       funext w; simp only [hG_def, recedingSourcePlane]; rfl
     rw [hGeq]
     exact ((((continuousOn_const.div hden1 hSdenom_ne).mul h1).sub
@@ -844,25 +855,25 @@ theorem tendsto_recResidual
   -- the divergence identity
   have hdiv : ∀ w ∈ S, ∑ i, fderiv ℝ (fun w' => B w' i) w (basisVec i, 0) = divB w := by
     intro w hw
-    have hVdiffPlane : DifferentiableAt ℝ (zoomVRec (lam n) h (rc n) (zc n) u)
+    have hVdiffPlane : DifferentiableAt ℝ (zoomVRec lam h rc zc u)
         (planeLiftPoint w) := (hVsmoothPlane.differentiableOn (by norm_num) (planeLiftPoint w)
       hw.1).differentiableAt (hDopen.mem_nhds hw.1)
-    have hWdiffPlane : DifferentiableAt ℝ (zoomWRec (lam n) h (rc n) (zc n) u)
+    have hWdiffPlane : DifferentiableAt ℝ (zoomWRec lam h rc zc u)
         (planeLiftPoint w) := (hWsmoothPlane.differentiableOn (by norm_num) (planeLiftPoint w)
       hw.1).differentiableAt (hDopen.mem_nhds hw.1)
     have hV0 : fderiv ℝ (fun w' => B w' 0) w (basisVec 0, 0)
-        = dr (zoomVRec (lam n) h (rc n) (zc n) u) (planeLiftPoint w) := by
+        = dr (zoomVRec lam h rc zc u) (planeLiftPoint w) := by
       rw [hB0eq]; exact fderiv_comp_planeLiftPoint_basisVec0 hVdiffPlane
     have hW1 : fderiv ℝ (fun w' => B w' 1) w (basisVec 1, 0)
-        = dz (zoomWRec (lam n) h (rc n) (zc n) u) (planeLiftPoint w) := by
+        = dz (zoomWRec lam h rc zc u) (planeLiftPoint w) := by
       rw [hB1eq]; exact fderiv_comp_planeLiftPoint_basisVec1 hWdiffPlane
-    have hRne : w.1 0 ≠ -(rc n / lam n) := by
+    have hRne : w.1 0 ≠ -(rc / lam) := by
       intro hc; have hp := hw.2; rw [hA_def] at hp; linarith only [hp, hc]
-    have hRne' : (planeLiftPoint w).1.1 ≠ -(rc n / lam n) := hRne
-    have hdivid := zoomRec_divergence_identity (lam n) h (rc n) (zc n) (hlam_pos n) u pr f hsol
+    have hRne' : (planeLiftPoint w).1.1 ≠ -(rc / lam) := hRne
+    have hdivid := zoomRec_divergence_identity lam h rc zc hlam_pos u pr f hsol
       haxi (planeLiftPoint w) hw.1 hRne'
     have heqdivB : divB w
-        = -(zoomVRec (lam n) h (rc n) (zc n) u (planeLiftPoint w) / (rc n / lam n + w.1 0)) := rfl
+        = -(zoomVRec lam h rc zc u (planeLiftPoint w) / (rc / lam + w.1 0)) := rfl
     have heq11 : (planeLiftPoint w).1.1 = w.1 0 := rfl
     rw [heq11] at hdivid
     rw [Fin.sum_univ_two, hV0, hW1, heqdivB]
@@ -874,51 +885,51 @@ theorem tendsto_recResidual
         + δ ^ 2 * fderiv ℝ (fun w' => fderiv ℝ q w' (basisVec 1, 0)) w (basisVec 1, 0)
         + fderiv ℝ Fz w (basisVec 1, 0) + G w := by
     intro w hw
-    have hΘdiffPlane : DifferentiableAt ℝ (zoomTheta (lam n) h (rc n) (zc n) u)
+    have hΘdiffPlane : DifferentiableAt ℝ (zoomTheta lam h rc zc u)
         (planeLiftPoint w) := (hΘsmoothPlane.differentiableOn (by norm_num) (planeLiftPoint w)
       hw.1).differentiableAt (hDopen.mem_nhds hw.1)
-    have hVdiffPlane : DifferentiableAt ℝ (zoomVRec (lam n) h (rc n) (zc n) u)
+    have hVdiffPlane : DifferentiableAt ℝ (zoomVRec lam h rc zc u)
         (planeLiftPoint w) := (hVsmoothPlane.differentiableOn (by norm_num) (planeLiftPoint w)
       hw.1).differentiableAt (hDopen.mem_nhds hw.1)
-    have hWdiffPlane : DifferentiableAt ℝ (zoomWRec (lam n) h (rc n) (zc n) u)
+    have hWdiffPlane : DifferentiableAt ℝ (zoomWRec lam h rc zc u)
         (planeLiftPoint w) := (hWsmoothPlane.differentiableOn (by norm_num) (planeLiftPoint w)
       hw.1).differentiableAt (hDopen.mem_nhds hw.1)
-    have hFzdiffPlane : DifferentiableAt ℝ (swirlFluxPlane (lam n) h (rc n) (zc n) u)
+    have hFzdiffPlane : DifferentiableAt ℝ (swirlFluxPlane lam h rc zc u)
         (planeLiftPoint w) := (hSwirlSmoothPlane.differentiableOn (by norm_num)
       (planeLiftPoint w) (hSonD' hw)).differentiableAt (hD'open.mem_nhds (hSonD' hw))
     have hqtime : fderiv ℝ q w (0, 1)
-        = dtPast (zoomTheta (lam n) h (rc n) (zc n) u) (planeLiftPoint w) := by
+        = dtPast (zoomTheta lam h rc zc u) (planeLiftPoint w) := by
       rw [hq_def]; exact fderiv_comp_planeLiftPoint_time hΘdiffPlane
     have hq0 : fderiv ℝ q w (basisVec 0, 0)
-        = dr (zoomTheta (lam n) h (rc n) (zc n) u) (planeLiftPoint w) := by
+        = dr (zoomTheta lam h rc zc u) (planeLiftPoint w) := by
       rw [hq_def]; exact fderiv_comp_planeLiftPoint_basisVec0 hΘdiffPlane
     have hq1 : fderiv ℝ q w (basisVec 1, 0)
-        = dz (zoomTheta (lam n) h (rc n) (zc n) u) (planeLiftPoint w) := by
+        = dz (zoomTheta lam h rc zc u) (planeLiftPoint w) := by
       rw [hq_def]; exact fderiv_comp_planeLiftPoint_basisVec1 hΘdiffPlane
     have hqq0 : fderiv ℝ (fun w' => fderiv ℝ q w' (basisVec 0, 0)) w (basisVec 0, 0)
-        = dr (dr (zoomTheta (lam n) h (rc n) (zc n) u)) (planeLiftPoint w) := by
+        = dr (dr (zoomTheta lam h rc zc u)) (planeLiftPoint w) := by
       rw [hq_def]
       exact fderiv_fderiv_comp_planeLiftPoint_basisVec0 hDopen
         (hΘsmoothPlane.of_le (by norm_num)) hw.1
     have hqq1 : fderiv ℝ (fun w' => fderiv ℝ q w' (basisVec 1, 0)) w (basisVec 1, 0)
-        = dz (dz (zoomTheta (lam n) h (rc n) (zc n) u)) (planeLiftPoint w) := by
+        = dz (dz (zoomTheta lam h rc zc u)) (planeLiftPoint w) := by
       rw [hq_def]
       exact fderiv_fderiv_comp_planeLiftPoint_basisVec1 hDopen
         (hΘsmoothPlane.of_le (by norm_num)) hw.1
     have hFztime : fderiv ℝ Fz w (basisVec 1, 0)
-        = dz (swirlFluxPlane (lam n) h (rc n) (zc n) u) (planeLiftPoint w) := by
+        = dz (swirlFluxPlane lam h rc zc u) (planeLiftPoint w) := by
       rw [hFz_def]; exact fderiv_comp_planeLiftPoint_basisVec1 hFzdiffPlane
-    have hRne : w.1 0 ≠ -(rc n / lam n) := by
+    have hRne : w.1 0 ≠ -(rc / lam) := by
       intro hc; have hp := hw.2; rw [hA_def] at hp; linarith only [hp, hc]
-    have hRne' : (planeLiftPoint w).1.1 ≠ -(rc n / lam n) := hRne
-    have hsource := zoomTheta_pde_source_form (hlam_pos n) hsol haxi (planeLiftPoint w) hw.1 hRne'
-    have hBeq0 : B w 0 = zoomVRec (lam n) h (rc n) (zc n) u (planeLiftPoint w) :=
+    have hRne' : (planeLiftPoint w).1.1 ≠ -(rc / lam) := hRne
+    have hsource := zoomTheta_pde_source_form hlam_pos hsol haxi (planeLiftPoint w) hw.1 hRne'
+    have hBeq0 : B w 0 = zoomVRec lam h rc zc u (planeLiftPoint w) :=
       congrFun hB0eq w
-    have hBeq1 : B w 1 = zoomWRec (lam n) h (rc n) (zc n) u (planeLiftPoint w) :=
+    have hBeq1 : B w 1 = zoomWRec lam h rc zc u (planeLiftPoint w) :=
       congrFun hB1eq w
     rw [Fin.sum_univ_two, hBeq0, hBeq1, hqtime, hq0, hq1, sum_fin_two_ite_lt_one, hqq0, hqq1,
       hFztime]
-    have hGeqw : G w = recedingSourcePlane (lam n) h (rc n) (zc n) u f (planeLiftPoint w) := rfl
+    have hGeqw : G w = recedingSourcePlane lam h rc zc u f (planeLiftPoint w) := rfl
     rw [hGeqw, hδ_def]
     linarith only [hsource]
   -- apply the weak-form identity
@@ -926,9 +937,83 @@ theorem tendsto_recResidual
   have hweak := integral_recedingResidual_eq hSopen hKcompact hKS' (δ ^ 2) hq hBcd hFz hG hdiv
     hpde
     hφs hφc subset_rfl
+  exact hweak
+
+/-! ## R2-R: the residual tends to zero -/
+
+/-- R2-R: the residual of the rescaled receding vorticity-quotient equation tends to zero. -/
+theorem tendsto_recResidual
+    {C h CΓ ρ Rstar tstar : ℝ} (hh : 0 < h ∧ h < 1 / 2) (hρ0 : 0 ≤ ρ) (hρR : ρ < Rstar)
+    (hR1 : Rstar ≤ 1) (htstar : tstar < 0) {rc zc : ℕ → ℝ}
+    (hcz : ∀ n, rc n ^ 2 + zc n ^ 2 ≤ ρ ^ 2) (hC : 0 ≤ C)
+    {u : ParabolicPoint → Vec3} (hb : AnisotropicBounds C h u)
+    (hu : ContDiffOn ℝ (⊤ : ℕ∞) (fun z : Vec3 × ℝ => u z) unitCylinder)
+    {pr : ParabolicPoint → ℝ} {f : ParabolicPoint → Vec3}
+    (hsol : IsClassicalSolutionOn u pr f unitCylinder) (haxi : IsAxisymmetricOn u unitCylinder)
+    (hΓ : ∀ x ∈ vec3Ball (0 : Vec3) Rstar, ∀ t ∈ Ioo tstar (0 : ℝ), |circulation u (x, t)| ≤ CΓ)
+    (hforce : ForceC2Bounded f) {lam : ℕ → ℝ} (hlam_pos : ∀ n, 0 < lam n)
+    (hlam_lim : Tendsto lam atTop (nhdsWithin 0 (Ioi 0)))
+    (hA : Tendsto (fun n => rc n / lam n) atTop atTop) :
+    ∀ φ ∈ testFunctions 2 (Iio (-1 : ℝ)), Tendsto (fun n => ∫ z,
+      zoomTheta (lam n) h (rc n) (zc n) u (planeLiftPoint z) *
+        (-(timeDeriv 2 φ z) - gradPair 2 φ z (recDrift (lam n) h (rc n) (zc n) u z)
+          - recDriftDiv (lam n) h (rc n) (zc n) u z * φ z - partialLaplacian 2 1 φ z))
+      atTop (nhds 0) := by
+  rintro φ ⟨hφs, hφc, hφK⟩
+  have hρ1 : ρ < 1 := hρR.trans_le hR1
+  obtain ⟨Mf, hMf0⟩ := hforce
+  have hMf0' : ∀ z ∈ unitCylinder, ∀ i : Fin 3, ∀ α : Fin 3 → ℕ, α 0 + α 1 + α 2 ≤ 2 →
+      |multiPartial (fun w => f w i) α z| ≤ max Mf 0 :=
+    fun z hz i α hα => (hMf0 z hz i α hα).trans (le_max_left _ _)
+  set K : Set (Vec 2 × ℝ) := tsupport φ with hK_def
+  have hKcompact : IsCompact K := hφc
+  have hKsub : K ⊆ univ ×ˢ Iic (-1 : ℝ) :=
+    fun z hz => ⟨mem_univ _, Set.mem_Iic.mpr (le_of_lt (hφK hz).2)⟩
+  have hmem := eventually_mem_unitCylinder_of_isCompact_vec2' hh hρ0 hρ1 hcz lam hlam_lim
+    hKcompact hKsub
+  have hApos := eventually_one_le_ratio_add_of_isCompact_vec2' hA hKcompact
+  have hlamlt : ∀ᶠ n in atTop, lam n < 1 :=
+    (hlam_lim.mono_right nhdsWithin_le_nhds).eventually_mem
+      (isOpen_Iio.mem_nhds (by norm_num : (0 : ℝ) ∈ Iio (1 : ℝ)))
+  have hKplaneC : IsCompact (planeLiftPoint '' K) := hKcompact.image continuous_planeLiftPoint
+  have hKplaneT : ∀ p ∈ planeLiftPoint '' K, p.2 < 0 := by
+    rintro _ ⟨z, hz, rfl⟩
+    exact lt_of_le_of_lt (hKsub hz).2 (by norm_num)
+  have hwindow := eventually_mem_zoomPointRec_moving hh hρ0 hρR htstar hcz hlam_lim
+    (planeLiftPoint '' K) hKplaneC hKplaneT
+  -- global bounds on `φ` and its first two derivatives on `K`
+  have hc0 : Continuous (fun z : Vec 2 × ℝ => z.1 0) := (continuous_apply 0).comp continuous_fst
+  obtain ⟨Rmax, hRmax⟩ := hKcompact.exists_bound_of_continuousOn hc0.continuousOn
+  obtain ⟨Bφ0, Bφ1, Bφ2, hBφ0, hBφ1, hBφ2⟩ :=
+    rec_test_derivative_bounds hφs hφc
+  set Rmax' : ℝ := max Rmax 0 with hRmax'_def
+  have hRmax' : ∀ x ∈ K, ‖x.1 0‖ ≤ Rmax' := fun x hx => (hRmax x hx).trans (le_max_left _ _)
+  have hAmore := hA.eventually_gt_atTop Rmax'
+  -- the bound function and its limit
+  set Fb : ℕ → ℝ := fun n => ((lam n ^ (2 * h)) ^ 2 * (2 * C) * Bφ2
+      + CΓ ^ 2 * (lam n ^ (2 * h)) ^ 2 * Bφ1
+      + ((rc n / lam n - Rmax')⁻¹ * (4 * C) + (rc n / lam n - Rmax') ⁻¹ ^ 2 * (2 * C)
+          + lam n ^ 4 * lam n ^ (2 * h) * (2 * max Mf 0)
+          + (rc n / lam n - Rmax')⁻¹ * C * (2 * C)) * Bφ0) * (volume K).toReal with hFb_def
+  have hFbtendsto : Tendsto Fb atTop (nhds (0 : ℝ)) := by
+    simpa only [hFb_def] using
+      tendsto_rec_remainder_bound hh.1 hlam_lim hA C CΓ Bφ0 Bφ1 Bφ2 Mf Rmax' (volume K).toReal
+  refine squeeze_zero_norm' ?_ hFbtendsto
+  -- eventually in `n`: assemble the residual
+  filter_upwards [hmem, hApos, hlamlt, hwindow, hAmore] with n hmem_n hApos_n hlamlt_n hwindow_n
+    hAmore_n
+  have hweak := integral_rec_residual_eq_remainder (hlam_pos n) hu hsol haxi hφs hφc
+    hmem_n hApos_n
+  set A : ℝ := rc n / lam n with hA_def
+  set δ : ℝ := lam n ^ (2 * h) with hδ_def
+  set q : Vec 2 × ℝ → ℝ := fun w => zoomTheta (lam n) h (rc n) (zc n) u (planeLiftPoint w)
+    with hq_def
+  set Fz : Vec 2 × ℝ → ℝ := fun w => swirlFluxPlane (lam n) h (rc n) (zc n) u (planeLiftPoint w)
+    with hFz_def
+  set G : Vec 2 × ℝ → ℝ := fun w =>
+    recedingSourcePlane (lam n) h (rc n) (zc n) u f (planeLiftPoint w) with hG_def
   rw [Real.norm_eq_abs, hweak]
   -- bound the three-term remainder
-  have hSdenom_ne' : ∀ w ∈ K, A + w.1 0 ≠ 0 := fun w hw => hSdenom_ne w (hKS hw)
   have hApos_n' : ∀ w ∈ K, (0 : ℝ) < A + w.1 0 := fun w hw => by
     have := hApos_n w hw; linarith only [this]
   have hAmore_n' : Rmax' < A := hAmore_n
@@ -972,24 +1057,13 @@ theorem tendsto_recResidual
       rwa [← hA_def, ← hδ_def] at this
     have hFzbound : |Fz z| ≤ CΓ ^ 2 * δ ^ 2 := by
       rw [hFz_def]
-      show |swirlFluxPlane (lam n) h (rc n) (zc n) u (planeLiftPoint z)| ≤ CΓ ^ 2 * δ ^ 2
+      change |swirlFluxPlane (lam n) h (rc n) (zc n) u (planeLiftPoint z)| ≤ CΓ ^ 2 * δ ^ 2
       have heqz : swirlFluxPlane (lam n) h (rc n) (zc n) u (planeLiftPoint z)
           = zoomSRec (lam n) h (rc n) (zc n) u (planeLiftPoint z) ^ 2 / (A + z.1 0) := by
         have hz11 : (planeLiftPoint z).1.1 = z.1 0 := rfl
         simp only [swirlFluxPlane, hz11, hA_def]
-      rw [heqz, abs_div, abs_of_pos hApos_z, abs_of_nonneg (sq_nonneg _)]
-      calc zoomSRec (lam n) h (rc n) (zc n) u (planeLiftPoint z) ^ 2 / (A + z.1 0)
-          = |zoomSRec (lam n) h (rc n) (zc n) u (planeLiftPoint z)| ^ 2 / (A + z.1 0) := by
-            rw [sq_abs]
-        _ ≤ (CΓ * δ / (A + z.1 0)) ^ 2 / (A + z.1 0) := by
-            gcongr
-        _ = CΓ ^ 2 * δ ^ 2 / (A + z.1 0) ^ 3 := by
-            rw [div_pow, div_div]
-            ring_nf
-        _ ≤ CΓ ^ 2 * δ ^ 2 := by
-            have h1 : (1 : ℝ) ≤ (A + z.1 0) ^ 3 := one_le_pow₀ hApos1_z
-            rw [div_le_iff₀ (by positivity)]
-            nlinarith only [h1, sq_nonneg CΓ, sq_nonneg δ, sq_nonneg (CΓ * δ)]
+      rw [heqz]
+      exact abs_sq_div_le_sq_mul_sq hApos1_z hSzbound
     have hVzbound : |zoomVRec (lam n) h (rc n) (zc n) u (planeLiftPoint z)| ≤ C :=
       abs_zoomVRec_le_of_tau_le_neg_one' hC (hlam_pos n) hb (hmem_n z hz) (le_of_lt (hφK hz).2)
     have hdrΘzbound : |dr (zoomTheta (lam n) h (rc n) (zc n) u) (planeLiftPoint z)| ≤ 4 * C :=

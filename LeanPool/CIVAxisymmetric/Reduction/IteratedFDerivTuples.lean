@@ -55,11 +55,11 @@ theorem eqOn_iteratedFDeriv_basis (s : Set Vec3) (hs : IsOpen s) (G : Vec3 → �
           = (fderiv ℝ (iteratedFDeriv ℝ n G) x).flipMultilinear
               (fun i : Fin n => basisVec (v i.succ)) :=
         fderiv_continuousMultilinear_apply_const hDiff (fun i : Fin n => basisVec (v i.succ))
-      show iteratedFDeriv ℝ (n + 1) G x (fun i => basisVec (v i)) =
+      change iteratedFDeriv ℝ (n + 1) G x (fun i => basisVec (v i)) =
         List.foldr axisDeriv G (List.ofFn v) x
       rw [iteratedFDeriv_succ_apply_left, show List.ofFn v = v 0 :: List.ofFn
         (fun i : Fin n => v i.succ) from List.ofFn_succ, List.foldr_cons]
-      show fderiv ℝ (iteratedFDeriv ℝ n G) x (basisVec (v 0))
+      change fderiv ℝ (iteratedFDeriv ℝ n G) x (basisVec (v 0))
           (fun i : Fin n => basisVec (v i.succ)) =
         fderiv ℝ (List.foldr axisDeriv G (List.ofFn (fun i : Fin n => v i.succ))) x
           (basisVec (v 0))

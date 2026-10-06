@@ -53,7 +53,7 @@ theorem forceUnderCore (q : ℝ)
     (hsing : ¬ BoundedNearOrigin u) :
     ¬ ForceSpatiallyAnalytic f ∧ (∃ z ∈ unitCylinder, f z ≠ 0) ∧
       ∀ R' δ' : ℝ, 0 < R' → R' ≤ 1 → 0 < δ' → δ' ≤ 1 →
-        ∃ z ∈ spaceTimeSet (vec3Ball 0 R') (Ioo (-δ') 0), f z ≠ 0 :=
-by exact CIV.Main.forceUnderCore q u Du p f hsol henergy hu hp hf h hh hMf C hC hbounds hcore hsing
+        ∃ z ∈ spaceTimeSet (vec3Ball 0 R') (Ioo (-δ') 0), f z ≠ 0 := by
+  exact CIV.Main.forceUnderCore q u Du p f hsol henergy hu hp hf h hh hMf C hC hbounds hcore hsing
 
 end CIV

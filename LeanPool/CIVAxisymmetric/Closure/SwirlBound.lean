@@ -132,12 +132,12 @@ section Profile
 
 /-- The weighted swirl component `(−t)^η u_θ`, read as a function of the spatial point alone
 at a fixed time `t`. -/
-@[expose] private def swirlSlice (η : ℝ) (u : ParabolicPoint → Vec3) (t : ℝ) (y : Vec3) : ℝ :=
+private def swirlSlice (η : ℝ) (u : ParabolicPoint → Vec3) (t : ℝ) (y : Vec3) : ℝ :=
   (-t) ^ η * u (y, t) 1
 
 /-- The weighted swirl profile `ψ ((r, z), t) = (−t)^η u_θ (meridional r z, t)` on the
 meridional half-plane, the function to which `CIV.axisMaximumPrinciple` is applied. -/
-@[expose] private def swirlProfile (η : ℝ) (u : ParabolicPoint → Vec3) (p : (ℝ × ℝ) × ℝ) : ℝ :=
+private def swirlProfile (η : ℝ) (u : ParabolicPoint → Vec3) (p : (ℝ × ℝ) × ℝ) : ℝ :=
   swirlSlice η u p.2 (meridional p.1.1 p.1.2)
 
 /-- The time slice `s ↦ (−s)^η u_θ (z.1, s)` of the weighted swirl component is differentiable
@@ -176,7 +176,7 @@ private lemma dtPast_swirlProfile_eq (η : ℝ) (u : ParabolicPoint → Vec3)
       = timePartial (fun w => (-w.2) ^ η * u w 1) (meridional p.1.1 p.1.2, p.2) := by
   have hdiff : DifferentiableAt ℝ (fun s : ℝ => (-s) ^ η * u (meridional p.1.1 p.1.2, s) 1) p.2 :=
     differentiableAt_weighted_swirl_time η u hu1 hz
-  show derivWithin (fun t : ℝ => (-t) ^ η * u (meridional p.1.1 p.1.2, t) 1) (Iic p.2) p.2 = _
+  change derivWithin (fun t : ℝ => (-t) ^ η * u (meridional p.1.1 p.1.2, t) 1) (Iic p.2) p.2 = _
   rw [hdiff.derivWithin (uniqueDiffWithinAt_Iic p.2)]
   rfl
 
@@ -186,7 +186,7 @@ private lemma dr_swirlProfile_eq (η : ℝ) (u : ParabolicPoint → Vec3) (p : (
     (hdiff : DifferentiableAt ℝ (swirlSlice η u p.2) (meridional p.1.1 p.1.2)) :
     dr (swirlProfile η u) p
       = spatialPartial (fun w => (-w.2) ^ η * u w 1) 0 (meridional p.1.1 p.1.2, p.2) := by
-  show deriv (fun r : ℝ => swirlSlice η u p.2 (meridional r p.1.2)) p.1.1 = _
+  change deriv (fun r : ℝ => swirlSlice η u p.2 (meridional r p.1.2)) p.1.1 = _
   rw [(hasDerivAt_comp_meridional_fst hdiff).deriv]
   rfl
 
@@ -196,7 +196,7 @@ private lemma dz_swirlProfile_eq (η : ℝ) (u : ParabolicPoint → Vec3) (p : (
     (hdiff : DifferentiableAt ℝ (swirlSlice η u p.2) (meridional p.1.1 p.1.2)) :
     dz (swirlProfile η u) p
       = spatialPartial (fun w => (-w.2) ^ η * u w 1) 2 (meridional p.1.1 p.1.2, p.2) := by
-  show deriv (fun z : ℝ => swirlSlice η u p.2 (meridional p.1.1 z)) p.1.2 = _
+  change deriv (fun z : ℝ => swirlSlice η u p.2 (meridional p.1.1 z)) p.1.2 = _
   rw [(hasDerivAt_comp_meridional_snd hdiff).deriv]
   rfl
 
@@ -207,7 +207,7 @@ private lemma dr_dr_swirlProfile_eq (η : ℝ) (u : ParabolicPoint → Vec3) (p 
     (hmem : meridional p.1.1 p.1.2 ∈ vec3Ball (0 : Vec3) 1) :
     dr (dr (swirlProfile η u)) p
       = spatialSecondPartial (fun w => (-w.2) ^ η * u w 1) 0 0 (meridional p.1.1 p.1.2, p.2) := by
-  show deriv (fun r : ℝ => deriv (fun r' : ℝ => swirlSlice η u p.2 (meridional r' p.1.2)) r)
+  change deriv (fun r : ℝ => deriv (fun r' : ℝ => swirlSlice η u p.2 (meridional r' p.1.2)) r)
       p.1.1 = _
   rw [(hasDerivAt_deriv_comp_meridional_fst hg hmem).deriv]
   rfl
@@ -219,7 +219,7 @@ private lemma dz_dz_swirlProfile_eq (η : ℝ) (u : ParabolicPoint → Vec3) (p 
     (hmem : meridional p.1.1 p.1.2 ∈ vec3Ball (0 : Vec3) 1) :
     dz (dz (swirlProfile η u)) p
       = spatialSecondPartial (fun w => (-w.2) ^ η * u w 1) 2 2 (meridional p.1.1 p.1.2, p.2) := by
-  show deriv (fun z : ℝ => deriv (fun z' : ℝ => swirlSlice η u p.2 (meridional p.1.1 z')) z)
+  change deriv (fun z : ℝ => deriv (fun z' : ℝ => swirlSlice η u p.2 (meridional p.1.1 z')) z)
       p.1.2 = _
   rw [(hasDerivAt_deriv_comp_meridional_snd hg hmem).deriv]
   rfl
@@ -231,19 +231,19 @@ end Profile
 section Pde
 
 /-- The radial drift `u_r`, read on the meridional plane. -/
-@[expose] private def swirlDriftR (u : ParabolicPoint → Vec3) (p : (ℝ × ℝ) × ℝ) : ℝ :=
+private def swirlDriftR (u : ParabolicPoint → Vec3) (p : (ℝ × ℝ) × ℝ) : ℝ :=
   u (meridional p.1.1 p.1.2, p.2) 0
 
 /-- The vertical drift `u_z`, read on the meridional plane. -/
-@[expose] private def swirlDriftZ (u : ParabolicPoint → Vec3) (p : (ℝ × ℝ) × ℝ) : ℝ :=
+private def swirlDriftZ (u : ParabolicPoint → Vec3) (p : (ℝ × ℝ) × ℝ) : ℝ :=
   u (meridional p.1.1 p.1.2, p.2) 2
 
 /-- The zeroth-order coefficient `γ = r⁻² + u_r/r + η/(−t)` of the weighted swirl equation. -/
-@[expose] private def swirlZeroth (η : ℝ) (u : ParabolicPoint → Vec3) (p : (ℝ × ℝ) × ℝ) : ℝ :=
+private def swirlZeroth (η : ℝ) (u : ParabolicPoint → Vec3) (p : (ℝ × ℝ) × ℝ) : ℝ :=
   1 / p.1.1 ^ 2 + u (meridional p.1.1 p.1.2, p.2) 0 / p.1.1 + η / (-p.2)
 
 /-- The weighted source `(−t)^η f_θ`, read on the meridional plane. -/
-@[expose] private def swirlSource (η : ℝ) (f : ParabolicPoint → Vec3) (p : (ℝ × ℝ) × ℝ) : ℝ :=
+private def swirlSource (η : ℝ) (f : ParabolicPoint → Vec3) (p : (ℝ × ℝ) × ℝ) : ℝ :=
   (-p.2) ^ η * f (meridional p.1.1 p.1.2, p.2) 1
 
 /-- The weighted swirl equation, translated into the profile derivatives `dr`, `dz`, `dtPast`
@@ -382,7 +382,7 @@ private lemma haxis_swirlProfile (haxi : IsAxisymmetricOn u unitCylinder)
     meridional_mem_unitCylinder_of_lt_one hR1 hRpos hrz (by linarith only [htη1, htc1])
       (lt_of_le_of_lt htc2 hs0)
   have hzero : u (meridional 0 zc, tc) 1 = 0 := apply_axis_one haxi hmem rfl rfl
-  show (-tc) ^ η * u (meridional 0 zc, tc) 1 = 0
+  change (-tc) ^ η * u (meridional 0 zc, tc) 1 = 0
   rw [hzero, mul_zero]
 
 /-- The swirl profile is `C²` in space and differentiable within `Iic` in time, at every
@@ -433,7 +433,7 @@ private lemma hγ_swirlProfile (Rstar tη : ℝ) (hRpos : 0 < Rstar)
     · rfl
   rw [hrq] at hbound
   have habs := abs_le.mp hbound
-  show 0 ≤ 1 / a ^ 2 + u (meridional a b, t) 0 / a + η / (-t)
+  change 0 ≤ 1 / a ^ 2 + u (meridional a b, t) 0 / a + η / (-t)
   have h1 : (0 : ℝ) ≤ 1 / a ^ 2 := by positivity
   linarith only [h1, habs.1]
 
@@ -455,7 +455,7 @@ private lemma hF_swirlProfile (f : ParabolicPoint → Vec3)
   have hrpow_le : (-t) ^ η ≤ (-tη) ^ η :=
     Real.rpow_le_rpow htpos (by linarith only [ht1]) hη.le
   have hrpow_nonneg : 0 ≤ (-t) ^ η := Real.rpow_nonneg htpos η
-  show |(-t) ^ η * f (meridional a b, t) 1| ≤ (-tη) ^ η * Mf
+  change |(-t) ^ η * f (meridional a b, t) 1| ≤ (-tη) ^ η * Mf
   rw [abs_mul, abs_of_nonneg hrpow_nonneg]
   calc (-t) ^ η * |f (meridional a b, t) 1| ≤ (-t) ^ η * Mf :=
         mul_le_mul_of_nonneg_left hfbound hrpow_nonneg
@@ -531,7 +531,7 @@ private lemma abs_swirlProfile_le_boundary (η : ℝ) (u : ParabolicPoint → Ve
   rcases hp with hinit_piece | hbdry_piece
   · obtain ⟨_ha0, hab, ht⟩ := hinit_piece
     have ht_eq : t = tη := ht
-    show |(-t) ^ η * u (meridional a b, t) 1| ≤ (-tη) ^ η * max Mb Mi
+    change |(-t) ^ η * u (meridional a b, t) 1| ≤ (-tη) ^ η * max Mb Mi
     rw [ht_eq, abs_mul, abs_of_nonneg hrpow_tη_nonneg]
     rcases hab.lt_or_eq with hab' | hab'
     · have hmem : meridional a b ∈ vec3Ball (0 : Vec3) Rstar :=
@@ -548,7 +548,7 @@ private lemma abs_swirlProfile_le_boundary (η : ℝ) (u : ParabolicPoint → Ve
   · obtain ⟨_ha0, hab, ht1, ht2⟩ := hbdry_piece
     have ht0 : t < 0 := lt_of_le_of_lt ht2 hs0
     have hrpow_t_nonneg : 0 ≤ (-t) ^ η := Real.rpow_nonneg (by linarith only [ht0]) η
-    show |(-t) ^ η * u (meridional a b, t) 1| ≤ (-tη) ^ η * max Mb Mi
+    change |(-t) ^ η * u (meridional a b, t) 1| ≤ (-tη) ^ η * max Mb Mi
     rw [abs_mul, abs_of_nonneg hrpow_t_nonneg]
     rcases ht1.lt_or_eq with ht1' | ht1'
     · have htmem : t ∈ Ioo tη (0 : ℝ) := ⟨ht1', ht0⟩

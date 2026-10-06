@@ -53,7 +53,7 @@ theorem timeZeroSingularSetNull (q : ℝ)
     (hp : ContDiffOn ℝ (⊤ : ℕ∞) (fun z : Vec3 × ℝ => p z) unitCylinder)
     (hf : ContDiffOn ℝ (⊤ : ℕ∞) (fun z : Vec3 × ℝ => f z) unitCylinder)
     (hMf : ForceC2Bounded f) :
-    μH[1] (singularSlice u ∩ vec3Ball 0 1) = 0 :=
-by exact CIV.Main.timeZeroSingularSetNull q u Du p f hsol henergy hu hp hf hMf
+    μH[1] (singularSlice u ∩ vec3Ball 0 1) = 0 := by
+  exact CIV.Main.timeZeroSingularSetNull q u Du p f hsol henergy hu hp hf hMf
 
 end CIV

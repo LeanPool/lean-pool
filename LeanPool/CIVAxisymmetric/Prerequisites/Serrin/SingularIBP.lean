@@ -49,9 +49,9 @@ namespace CIV
 
 /-! ## Part 1: the regularized kernel -/
 
-@[expose] private def regQ (ε : ℝ) (z : Vec3) : ℝ := (∑ i : Fin 3, z i ^ 2) + ε ^ 2
+private def regQ (ε : ℝ) (z : Vec3) : ℝ := (∑ i : Fin 3, z i ^ 2) + ε ^ 2
 
-@[expose] private def regKernel (ε : ℝ) (z : Vec3) : ℝ := (4 * Real.pi)⁻¹ * (regQ ε z) ^ (-(1 :
+private def regKernel (ε : ℝ) (z : Vec3) : ℝ := (4 * Real.pi)⁻¹ * (regQ ε z) ^ (-(1 :
   ℝ) / 2)
 
 private theorem regQ_pos {ε : ℝ} (hε : ε ≠ 0) (z : Vec3) : 0 < regQ ε z := by
@@ -237,7 +237,7 @@ private theorem regularized_ibp {F : Vec3 → ℝ} (hF : ContDiff ℝ (⊤ : ℕ
     hf'g hfg' hfg
     (fun y _ => differentiableAt_shift_sub hfdiff x y)
     (fun y _ => hgdiff y)
-  show ∫ y : Vec3, regKernel ε (x - y) * fderiv ℝ F y (basisVec l) =
+  change ∫ y : Vec3, regKernel ε (x - y) * fderiv ℝ F y (basisVec l) =
       ∫ y : Vec3, spatialDeriv (regKernel ε) l (x - y) * F y
   rw [hmain, ← integral_neg]
   apply integral_congr_ae

@@ -52,7 +52,7 @@ private theorem timePartial_eq_of_eqOn_unitCylinder {g h : ParabolicPoint → �
   have hev : (fun s : ℝ => g (z.1, s)) =ᶠ[nhds z.2] fun s : ℝ => h (z.1, s) := by
     filter_upwards [isOpen_Ioo.mem_nhds hz.2] with s hs
     exact heq (z.1, s) ⟨hz.1, hs⟩
-  show fderiv ℝ (fun s : ℝ => g (z.1, s)) z.2 1 = fderiv ℝ (fun s : ℝ => h (z.1, s)) z.2 1
+  change fderiv ℝ (fun s : ℝ => g (z.1, s)) z.2 1 = fderiv ℝ (fun s : ℝ => h (z.1, s)) z.2 1
   rw [hev.fderiv_eq]
 
 /-- Two scalars agreeing on the unit cylinder have the same spatial partial derivatives
@@ -64,7 +64,7 @@ private theorem spatialPartial_eq_of_eqOn_unitCylinder {g h : ParabolicPoint →
   have hev : (fun y : Vec3 => g (y, z.2)) =ᶠ[nhds z.1] fun y : Vec3 => h (y, z.2) := by
     filter_upwards [(isOpen_vec3Ball 0 1).mem_nhds hz.1] with y hy
     exact heq (y, z.2) ⟨hy, hz.2⟩
-  show fderiv ℝ (fun y : Vec3 => g (y, z.2)) z.1 (basisVec a)
+  change fderiv ℝ (fun y : Vec3 => g (y, z.2)) z.1 (basisVec a)
     = fderiv ℝ (fun y : Vec3 => h (y, z.2)) z.1 (basisVec a)
   rw [hev.fderiv_eq]
 
@@ -78,7 +78,7 @@ private theorem spatialSecondPartial_eq_of_eqOn_unitCylinder {g h : ParabolicPoi
       =ᶠ[nhds z.1] fun y : Vec3 => spatialPartial h a (y, z.2) := by
     filter_upwards [(isOpen_vec3Ball 0 1).mem_nhds hz.1] with y hy
     exact spatialPartial_eq_of_eqOn_unitCylinder heq a (z := (y, z.2)) ⟨hy, hz.2⟩
-  show fderiv ℝ (fun y : Vec3 => spatialPartial g a (y, z.2)) z.1 (basisVec b)
+  change fderiv ℝ (fun y : Vec3 => spatialPartial g a (y, z.2)) z.1 (basisVec b)
     = fderiv ℝ (fun y : Vec3 => spatialPartial h a (y, z.2)) z.1 (basisVec b)
   rw [hev.fderiv_eq]
 

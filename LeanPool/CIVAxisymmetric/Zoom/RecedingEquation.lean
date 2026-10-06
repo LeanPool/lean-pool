@@ -228,7 +228,7 @@ theorem zoomTheta_pde (lam h rc zc : ℝ) (hlam : 0 < lam)
       = fun q : (ℝ × ℝ) × ℝ => lam ^ 2 * (lam ^ (2 * h)) ^ 2 *
           (u (zoomPointRec lam h rc zc q) 1 ^ 2) := by
     funext q
-    show (lam * lam ^ (2 * h) * u (zoomPointRec lam h rc zc q) 1) ^ 2 = _
+    change (lam * lam ^ (2 * h) * u (zoomPointRec lam h rc zc q) 1) ^ 2 = _
     ring
   have hswirl : dz (fun q : (ℝ × ℝ) × ℝ => zoomSRec lam h rc zc u q ^ 2) p
       = lam ^ 2 * (lam ^ (2 * h)) ^ 2 *
@@ -311,7 +311,7 @@ theorem dz_zoomSRecSq_div_eq (lam h rc zc : ℝ) (u : ParabolicPoint → Vec3) (
       = fun z : ℝ =>
         (1 / (rc / lam + p.1.1)) * zoomSRec lam h rc zc u ((p.1.1, z), p.2) ^ 2 := by
     funext z; ring
-  show deriv (fun z : ℝ => zoomSRec lam h rc zc u ((p.1.1, z), p.2) ^ 2 / (rc / lam + p.1.1))
+  change deriv (fun z : ℝ => zoomSRec lam h rc zc u ((p.1.1, z), p.2) ^ 2 / (rc / lam + p.1.1))
       p.1.2 = _
   rw [hfun, deriv_const_mul_field]
   rfl

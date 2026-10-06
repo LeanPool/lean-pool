@@ -151,6 +151,47 @@ private theorem hasDerivAt_slice_snd_of_fderiv {ψ : ℝ × ℝ → ℝ} (hψ : 
     rw [hcomp.fderiv]; rfl
   rwa [hval] at hslice
 
+/-- A second directional derivative is bounded by the operator norm of the Hessian when its
+direction has norm at most one. -/
+private theorem abs_fderiv_fderiv_apply_le {ψ : ℝ × ℝ → ℝ} {y v : ℝ × ℝ} {B : ℝ}
+    (hB : ‖fderiv ℝ (fderiv ℝ ψ) y‖ ≤ B) (hv : ‖v‖ ≤ 1) :
+    |fderiv ℝ (fderiv ℝ ψ) y v v| ≤ B := by
+  have hfirst : ‖fderiv ℝ (fderiv ℝ ψ) y v‖ ≤ ‖fderiv ℝ (fderiv ℝ ψ) y‖ := by
+    calc
+      ‖fderiv ℝ (fderiv ℝ ψ) y v‖ ≤ ‖fderiv ℝ (fderiv ℝ ψ) y‖ * ‖v‖ :=
+        ContinuousLinearMap.le_opNorm _ _
+      _ ≤ ‖fderiv ℝ (fderiv ℝ ψ) y‖ * 1 :=
+        mul_le_mul_of_nonneg_left hv (norm_nonneg _)
+      _ = ‖fderiv ℝ (fderiv ℝ ψ) y‖ := by rw [mul_one]
+  calc
+    |fderiv ℝ (fderiv ℝ ψ) y v v| = ‖fderiv ℝ (fderiv ℝ ψ) y v v‖ :=
+      (Real.norm_eq_abs _).symm
+    _ ≤ ‖fderiv ℝ (fderiv ℝ ψ) y v‖ * ‖v‖ := ContinuousLinearMap.le_opNorm _ _
+    _ ≤ ‖fderiv ℝ (fderiv ℝ ψ) y v‖ * 1 :=
+      mul_le_mul_of_nonneg_left hv (norm_nonneg _)
+    _ = ‖fderiv ℝ (fderiv ℝ ψ) y v‖ := by rw [mul_one]
+    _ ≤ ‖fderiv ℝ (fderiv ℝ ψ) y‖ := hfirst
+    _ ≤ B := hB
+
+/-- The support of a second directional derivative of a smooth function lies in the support
+of the function. -/
+private theorem tsupport_fderiv_fderiv_apply_subset {ψ : ℝ × ℝ → ℝ}
+    (hψ : ContDiff ℝ (⊤ : ℕ∞) ψ) (v w : ℝ × ℝ) :
+    tsupport (fun y : ℝ × ℝ => fderiv ℝ (fderiv ℝ ψ) y v w) ⊆ tsupport ψ := by
+  let ψw : ℝ × ℝ → ℝ := fun y => fderiv ℝ ψ y w
+  have heq : (fun y : ℝ × ℝ => fderiv ℝ (fderiv ℝ ψ) y v w) =
+      fun y : ℝ × ℝ => fderiv ℝ ψw y v := by
+    funext y
+    have hgdiff : DifferentiableAt ℝ (fderiv ℝ ψ) y :=
+      ((hψ.fderiv_right (m := 1) (by norm_num)).differentiable (by norm_num)).differentiableAt
+    have hcomp : HasFDerivAt ψw
+        ((ContinuousLinearMap.apply ℝ ℝ w).comp (fderiv ℝ (fderiv ℝ ψ) y)) y :=
+      (ContinuousLinearMap.apply ℝ ℝ w).hasFDerivAt.comp y hgdiff.hasFDerivAt
+    rw [hcomp.fderiv]
+    rfl
+  rw [heq]
+  exact (tsupport_fderiv_apply_subset ℝ v).trans (tsupport_fderiv_apply_subset ℝ w)
+
 /-- The diffusion-term pairing bound at a fixed zoom scale: the integral of
 `∂_R∂_R Θ_n + δ² ∂_Z∂_Z Θ_n`, the diffusion term of `zoomTheta_pde`, against a test
 function supported in the interior of a compact set `K` is bounded by `4C` times the
@@ -168,8 +209,7 @@ theorem diffusion_term_pairing_bound_fixed {C h lam rc zc : ℝ} (hC : 0 ≤ C) 
         (dr (dr (fun q : (ℝ × ℝ) × ℝ => zoomTheta lam h rc zc u q)) (y, τ)
             + (lam ^ (2 * h)) ^ 2 *
               dz (dz (fun q : (ℝ × ℝ) × ℝ => zoomTheta lam h rc zc u q)) (y, τ)) * ψ y|
-      ≤ 4 * C * (volume K).toReal * B :=
-  by
+      ≤ 4 * C * (volume K).toReal * B := by
   set D : Set (ℝ × ℝ) := {y : ℝ × ℝ | zoomPointRec lam h rc zc (y, τ) ∈ unitCylinder} with hD_def
   set Θs : ℝ × ℝ → ℝ := fun y => zoomTheta lam h rc zc u (y, τ) with hΘs_def
   set Gp1R : ℝ × ℝ → ℝ := fun y => fderiv ℝ Θs y (1, 0) with hGp1R_def
@@ -345,60 +385,16 @@ theorem diffusion_term_pairing_bound_fixed {C h lam rc zc : ℝ} (hC : 0 ≤ C) 
   have hΘbound : ∀ y ∈ K, |Θs y| ≤ 2 * C :=
     fun y hy => abs_zoomTheta_le_const_diff hC hh0 hh1 hlam hdelta hb (hu.of_le (by norm_num))
       (hmem y hy) htau
-  have hψRR_bound : ∀ y, |fderiv ℝ (fderiv ℝ ψ) y (1, 0) (1, 0)| ≤ B := by
-    intro y
-    have hle1 : ‖fderiv ℝ (fderiv ℝ ψ) y (1, 0)‖
-        ≤ ‖fderiv ℝ (fderiv ℝ ψ) y‖ * ‖((1, 0) : ℝ × ℝ)‖ := ContinuousLinearMap.le_opNorm _ _
-    have hle2 : ‖fderiv ℝ (fderiv ℝ ψ) y (1, 0) (1, 0)‖
-        ≤ ‖fderiv ℝ (fderiv ℝ ψ) y (1, 0)‖ * ‖((1, 0) : ℝ × ℝ)‖ := ContinuousLinearMap.le_opNorm _ _
-    have hnorm1 : ‖((1, 0) : ℝ × ℝ)‖ = 1 := by rw [Prod.norm_def]; norm_num
-    rw [hnorm1, mul_one] at hle1 hle2
-    calc |fderiv ℝ (fderiv ℝ ψ) y (1, 0) (1, 0)| = ‖fderiv ℝ (fderiv ℝ ψ) y (1, 0) (1, 0)‖ :=
-          (Real.norm_eq_abs _).symm
-      _ ≤ ‖fderiv ℝ (fderiv ℝ ψ) y (1, 0)‖ := hle2
-      _ ≤ ‖fderiv ℝ (fderiv ℝ ψ) y‖ := hle1
-      _ ≤ B := (hψB y).2.2
-  have hψZZ_bound : ∀ y, |fderiv ℝ (fderiv ℝ ψ) y (0, 1) (0, 1)| ≤ B := by
-    intro y
-    have hle1 : ‖fderiv ℝ (fderiv ℝ ψ) y (0, 1)‖
-        ≤ ‖fderiv ℝ (fderiv ℝ ψ) y‖ * ‖((0, 1) : ℝ × ℝ)‖ := ContinuousLinearMap.le_opNorm _ _
-    have hle2 : ‖fderiv ℝ (fderiv ℝ ψ) y (0, 1) (0, 1)‖
-        ≤ ‖fderiv ℝ (fderiv ℝ ψ) y (0, 1)‖ * ‖((0, 1) : ℝ × ℝ)‖ := ContinuousLinearMap.le_opNorm _ _
-    have hnorm1 : ‖((0, 1) : ℝ × ℝ)‖ = 1 := by rw [Prod.norm_def]; norm_num
-    rw [hnorm1, mul_one] at hle1 hle2
-    calc |fderiv ℝ (fderiv ℝ ψ) y (0, 1) (0, 1)| = ‖fderiv ℝ (fderiv ℝ ψ) y (0, 1) (0, 1)‖ :=
-          (Real.norm_eq_abs _).symm
-      _ ≤ ‖fderiv ℝ (fderiv ℝ ψ) y (0, 1)‖ := hle2
-      _ ≤ ‖fderiv ℝ (fderiv ℝ ψ) y‖ := hle1
-      _ ≤ B := (hψB y).2.2
-  have hψRR_fn_eq : (fun y : ℝ × ℝ => fderiv ℝ (fderiv ℝ ψ) y (1, 0) (1, 0))
-      = fun y : ℝ × ℝ => fderiv ℝ ψR' y (1, 0) := by
-    funext y
-    have hgdiff : DifferentiableAt ℝ (fderiv ℝ ψ) y :=
-      ((hψ.fderiv_right (m := 1) (by norm_num)).differentiable (by norm_num)).differentiableAt
-    have hcomp : HasFDerivAt ψR'
-        ((ContinuousLinearMap.apply ℝ ℝ ((1, 0) : ℝ × ℝ)).comp (fderiv ℝ (fderiv ℝ ψ) y)) y :=
-      (ContinuousLinearMap.apply ℝ ℝ ((1, 0) : ℝ × ℝ)).hasFDerivAt.comp y hgdiff.hasFDerivAt
-    rw [hcomp.fderiv]; rfl
-  have hψZZ_fn_eq : (fun y : ℝ × ℝ => fderiv ℝ (fderiv ℝ ψ) y (0, 1) (0, 1))
-      = fun y : ℝ × ℝ => fderiv ℝ ψZ' y (0, 1) := by
-    funext y
-    have hgdiff : DifferentiableAt ℝ (fderiv ℝ ψ) y :=
-      ((hψ.fderiv_right (m := 1) (by norm_num)).differentiable (by norm_num)).differentiableAt
-    have hcomp : HasFDerivAt ψZ'
-        ((ContinuousLinearMap.apply ℝ ℝ ((0, 1) : ℝ × ℝ)).comp (fderiv ℝ (fderiv ℝ ψ) y)) y :=
-      (ContinuousLinearMap.apply ℝ ℝ ((0, 1) : ℝ × ℝ)).hasFDerivAt.comp y hgdiff.hasFDerivAt
-    rw [hcomp.fderiv]; rfl
-  have hdRRψ_supp : tsupport (fun y : ℝ × ℝ => fderiv ℝ (fderiv ℝ ψ) y (1, 0) (1, 0)) ⊆ K := by
-    rw [hψRR_fn_eq]
-    exact ((tsupport_fderiv_apply_subset ℝ (1, 0)).trans hψR'_supp).trans hUsubK
-  have hdZZψ_supp : tsupport (fun y : ℝ × ℝ => fderiv ℝ (fderiv ℝ ψ) y (0, 1) (0, 1)) ⊆ K := by
-    rw [hψZZ_fn_eq]
-    exact ((tsupport_fderiv_apply_subset ℝ (0, 1)).trans hψZ'_supp).trans hUsubK
+  have hnorm : ‖((1, 0) : ℝ × ℝ)‖ ≤ 1 ∧ ‖((0, 1) : ℝ × ℝ)‖ ≤ 1 := by
+    norm_num [Prod.norm_def]
+  have hdRRψ_supp : tsupport (fun y : ℝ × ℝ => fderiv ℝ (fderiv ℝ ψ) y (1, 0) (1, 0)) ⊆ K :=
+    ((tsupport_fderiv_fderiv_apply_subset hψ (1, 0) (1, 0)).trans hψU).trans hUsubK
+  have hdZZψ_supp : tsupport (fun y : ℝ × ℝ => fderiv ℝ (fderiv ℝ ψ) y (0, 1) (0, 1)) ⊆ K :=
+    ((tsupport_fderiv_fderiv_apply_subset hψ (0, 1) (0, 1)).trans hψU).trans hUsubK
   have hboundR := abs_integral_mul_le_of_tsupport_subset hK.measure_lt_top hdRRψ_supp hΘbound
-    hψRR_bound
+    (fun y => abs_fderiv_fderiv_apply_le (hψB y).2.2 hnorm.1)
   have hboundZ := abs_integral_mul_le_of_tsupport_subset hK.measure_lt_top hdZZψ_supp hΘbound
-    hψZZ_bound
+    (fun y => abs_fderiv_fderiv_apply_le (hψB y).2.2 hnorm.2)
   have hδnn : (0 : ℝ) ≤ (lam ^ (2 * h)) ^ 2 := by positivity
   calc |(∫ y : ℝ × ℝ, Θs y * fderiv ℝ (fderiv ℝ ψ) y (1, 0) (1, 0))
         + (lam ^ (2 * h)) ^ 2 * ∫ y : ℝ × ℝ, Θs y * fderiv ℝ (fderiv ℝ ψ) y (0, 1) (0, 1)|
@@ -413,9 +409,8 @@ theorem diffusion_term_pairing_bound_fixed {C h lam rc zc : ℝ} (hC : 0 ≤ C) 
         have hstep := add_le_add hboundR (mul_le_mul_of_nonneg_left hboundZ hδnn)
         linarith only [hstep]
     _ ≤ 2 * C * B * (volume K).toReal + 1 * (2 * C * B * (volume K).toReal) := by
-        have hδsq : (lam ^ (2 * h)) ^ 2 ≤ 1 := by
-          have hδnn' : (0 : ℝ) ≤ lam ^ (2 * h) := Real.rpow_nonneg hlam.le _
-          nlinarith only [hδnn', hdelta]
+        have hδsq : (lam ^ (2 * h)) ^ 2 ≤ 1 :=
+          pow_le_one₀ (Real.rpow_nonneg hlam.le _) hdelta
         have hCB_nonneg : (0 : ℝ) ≤ 2 * C * B * (volume K).toReal := by positivity
         have hstep := mul_le_mul_of_nonneg_right hδsq hCB_nonneg
         linarith only [hstep]

@@ -75,7 +75,7 @@ theorem abs_circulationSource_le (f : ParabolicPoint → Vec3)
       rw [sq_abs]
       nlinarith only [hab, sq_nonneg b]
     exact le_of_sq_le_sq habs hRpos.le
-  show |a * f (meridional a b, t) 1| ≤ Rstar * Mf
+  change |a * f (meridional a b, t) 1| ≤ Rstar * Mf
   rw [abs_mul]
   exact mul_le_mul ha_abs hfbound (abs_nonneg _) (le_trans (abs_nonneg _) ha_abs)
 
@@ -127,7 +127,7 @@ theorem abs_circulationProfile_le_of_nonneg (u : ParabolicPoint → Vec3)
       meridional_mem_unitCylinder_of_sq_le hRpos hR1 hab.le (lt_of_lt_of_le htη1 ht1.le)
         (lt_of_le_of_lt ht2 ht0)
     have hkey := hpde_circulationProfile u pr f hsol haxi hfaxi a b t' hz' ha0.ne'
-    show dtPast (circulationProfile u) ((a, b), t')
+    change dtPast (circulationProfile u) ((a, b), t')
         + u (meridional a b, t') 0 * dr (circulationProfile u) ((a, b), t')
         + u (meridional a b, t') 2 * dz (circulationProfile u) ((a, b), t')
         + (0 : ℝ) * circulationProfile u ((a, b), t')

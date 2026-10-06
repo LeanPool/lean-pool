@@ -48,7 +48,7 @@ private lemma spatialPartial_comp_radius {psi : ℝ → ℝ} {d : ℝ} {z : Para
   have hcomp : HasFDerivAt (fun y : Vec3 => psi (y 0))
       (d • ContinuousLinearMap.proj (R := ℝ) (φ := fun _ : Fin 3 => ℝ) 0) z.1 :=
     hpsi.comp_hasFDerivAt z.1 hproj
-  show fderiv ℝ (fun y : Vec3 => psi (y 0)) z.1 (basisVec i) = _
+  change fderiv ℝ (fun y : Vec3 => psi (y 0)) z.1 (basisVec i) = _
   rw [hcomp.fderiv]
   simp [ContinuousLinearMap.proj_apply]
 
@@ -95,7 +95,7 @@ private lemma spatialPartial_congr_offAxis {g h : ParabolicPoint → ℝ}
     filter_upwards [hopen.mem_nhds (show z.1 ∈ vec3Ball (0 : Vec3) 1 ∩ {y : Vec3 | y 0 ≠ 0} from
       ⟨hz.1, hr⟩)] with y hy
     exact heq (y, z.2) ⟨hy.1, hz.2⟩ hy.2
-  show fderiv ℝ (fun y : Vec3 => g (y, z.2)) z.1 (basisVec i)
+  change fderiv ℝ (fun y : Vec3 => g (y, z.2)) z.1 (basisVec i)
     = fderiv ℝ (fun y : Vec3 => h (y, z.2)) z.1 (basisVec i)
   rw [hev.fderiv_eq]
 
@@ -105,7 +105,7 @@ private lemma spatialSecondPartial_congr_offAxis {g h : ParabolicPoint → ℝ}
     (heq : ∀ w : ParabolicPoint, w ∈ unitCylinder → w.1 0 ≠ 0 → g w = h w)
     {z : ParabolicPoint} (hz : z ∈ unitCylinder) (hr : z.1 0 ≠ 0) (i j : Fin 3) :
     spatialSecondPartial g i j z = spatialSecondPartial h i j z := by
-  show spatialPartial (fun w : ParabolicPoint => spatialPartial g i w) j z
+  change spatialPartial (fun w : ParabolicPoint => spatialPartial g i w) j z
     = spatialPartial (fun w : ParabolicPoint => spatialPartial h i w) j z
   exact spatialPartial_congr_offAxis
     (fun w hw hwr => spatialPartial_congr_offAxis heq hw hwr i) hz hr j
@@ -117,7 +117,7 @@ private lemma timePartial_congr_offAxis {g h : ParabolicPoint → ℝ}
     timePartial g z = timePartial h z := by
   have hfun : (fun s : ℝ => g (z.1, s)) = fun s : ℝ => h (z.1, s) :=
     funext fun s => heq (z.1, s) hr
-  show fderiv ℝ (fun s : ℝ => g (z.1, s)) z.2 1 = fderiv ℝ (fun s : ℝ => h (z.1, s)) z.2 1
+  change fderiv ℝ (fun s : ℝ => g (z.1, s)) z.2 1 = fderiv ℝ (fun s : ℝ => h (z.1, s)) z.2 1
   rw [hfun]
 
 /-- The time slice of a jointly smooth scalar field is differentiable on the cylinder. -/
@@ -183,7 +183,7 @@ private lemma spatialSecondPartial_radQuot_zero {a : ParabolicPoint → ℝ}
   have hstep : spatialSecondPartial (fun v : ParabolicPoint => a v * (v.1 0)⁻¹) 0 0 z
       = spatialPartial (fun w : ParabolicPoint =>
           (spatialPartial a 0 w - a w * (w.1 0)⁻¹) * (w.1 0)⁻¹) 0 z := by
-    show spatialPartial
+    change spatialPartial
         (fun w : ParabolicPoint => spatialPartial (fun v : ParabolicPoint => a v * (v.1 0)⁻¹) 0 w)
         0 z = _
     exact spatialPartial_congr_offAxis hinner hz hr 0
@@ -223,7 +223,7 @@ private lemma spatialSecondPartial_radQuot_two {a : ParabolicPoint → ℝ}
     fun w hw hwr => spatialPartial_radQuot_two (differentiableAt_spatialSlice ha1 hw) hwr
   have hstep : spatialSecondPartial (fun v : ParabolicPoint => a v * (v.1 0)⁻¹) 2 2 z
       = spatialPartial (fun w : ParabolicPoint => spatialPartial a 2 w * (w.1 0)⁻¹) 2 z := by
-    show spatialPartial
+    change spatialPartial
         (fun w : ParabolicPoint => spatialPartial (fun v : ParabolicPoint => a v * (v.1 0)⁻¹) 2 w)
         2 z = _
     exact spatialPartial_congr_offAxis hinner hz hr 2

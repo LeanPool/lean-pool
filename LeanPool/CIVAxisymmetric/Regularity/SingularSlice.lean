@@ -153,7 +153,7 @@ private theorem isBoundedNear_rotZ_of_isBoundedNear {u : ParabolicPoint → Vec3
   have hy'img : y' ∈ rotZ φ '' vec3Ball x r' := (image_rotZ_vec3Ball φ r' x).symm ▸ hy'
   obtain ⟨y, hy, rfl⟩ := hy'img
   have hzUnit : (y, t) ∈ unitCylinder := by
-    show y ∈ vec3Ball 0 1 ∧ t ∈ Ioo (-1 : ℝ) 0
+    change y ∈ vec3Ball 0 1 ∧ t ∈ Ioo (-1 : ℝ) 0
     exact ⟨hsubBall hy, by linarith only [ht.1, hr'sq_le1], ht.2⟩
   rw [haxi.apply_rotZ φ hzUnit, vec3EuclideanNorm_rotZ]
   exact hbound' y hy t ht
@@ -171,7 +171,7 @@ theorem rotZ_mem_singularSlice_iff {u : ParabolicPoint → Vec3} {x : Vec3}
       have := isBoundedNear_rotZ_of_isBoundedNear haxi hφx (-φ) h
       rwa [rotZ_neg_rotZ] at this
     · exact isBoundedNear_rotZ_of_isBoundedNear haxi hx φ
-  show ¬ IsBoundedNear u (rotZ φ x) ↔ ¬ IsBoundedNear u x
+  change ¬ IsBoundedNear u (rotZ φ x) ↔ ¬ IsBoundedNear u x
   rw [hiff]
 
 /-! ### Comparison with `BoundedNearOrigin` -/
@@ -219,7 +219,7 @@ theorem exists_annulus_bound_of_sphere_disjoint {u : ParabolicPoint → Vec3} {R
     refine ⟨![R, 0, 0], ?_⟩
     have hsum : (∑ i : Fin 3, (![R, 0, 0] : Vec3) i ^ 2) = R ^ 2 := by
       simp [Fin.sum_univ_three]
-    show vec3EuclideanNorm (![R, 0, 0] : Vec3) = R
+    change vec3EuclideanNorm (![R, 0, 0] : Vec3) = R
     unfold vec3EuclideanNorm
     rw [hsum, Real.sqrt_sq hR.le]
   have hB : ∀ p : S, ∃ r M : ℝ, 0 < r ∧ r ≤ 1 / 2 ∧
@@ -257,7 +257,7 @@ theorem exists_annulus_bound_of_sphere_disjoint {u : ParabolicPoint → Vec3} {R
     have hxne : vec3EuclideanNorm x ≠ 0 := hxpos.ne'
     set z : Vec3 := (R / vec3EuclideanNorm x) • x with hzdef
     have hzS : z ∈ S := by
-      show vec3EuclideanNorm z = R
+      change vec3EuclideanNorm z = R
       rw [hzdef, vec3EuclideanNorm_smul,
         abs_of_nonneg (div_nonneg hR.le (vec3EuclideanNorm_nonneg x))]
       field_simp

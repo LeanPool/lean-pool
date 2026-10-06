@@ -40,11 +40,11 @@ The `private` modifier hides only the *name* of this declaration outside this fi
 registration itself is global, so typeclass synthesis still sees it in every module that
 imports this one, `import CIV` included. Only this file's own Tonelli argument
 (`lintegral_angularMeanScalar_rpow_lt_top`) makes use of it. -/
-@[expose] private instance : SFinite (volume : Measure ParabolicPoint) :=
+private instance : SFinite (volume : Measure ParabolicPoint) :=
   inferInstanceAs (SFinite (volume : Measure (Vec3 × ℝ)))
 
 /-- The matrix of the rotation `rotZ φ` in the standard basis. -/
-@[expose] private def rotZMatrix (φ : ℝ) : Matrix (Fin 3) (Fin 3) ℝ :=
+private def rotZMatrix (φ : ℝ) : Matrix (Fin 3) (Fin 3) ℝ :=
   !![Real.cos φ, -Real.sin φ, 0; Real.sin φ, Real.cos φ, 0; 0, 0, 1]
 
 private theorem rotZMatrix_mulVec (φ : ℝ) (x : Vec3) : rotZMatrix φ *ᵥ x = rotZ φ x := by
@@ -162,7 +162,7 @@ theorem aestronglyMeasurable_angularMeanScalar {p : ParabolicPoint → ℝ}
 that generic lemmas about measure-preserving maps and Lebesgue integrals can be applied to
 it without the elaborator having to unfold the `ParabolicPoint := Vec3 × ℝ` alias inside a
 raw λ-term under a binder. -/
-@[expose] private def rotSlice (φ : ℝ) (z : ParabolicPoint) : ParabolicPoint := (rotZ φ z.1, z.2)
+private def rotSlice (φ : ℝ) (z : ParabolicPoint) : ParabolicPoint := (rotZ φ z.1, z.2)
 
 /-- A rotated slice of an almost-everywhere strongly measurable scalar field on the unit
 cylinder has the same `∫⁻ ‖·‖ₑ ^ (3/2)` value as the field itself: change of variables along

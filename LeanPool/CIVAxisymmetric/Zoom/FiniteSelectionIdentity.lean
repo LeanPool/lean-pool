@@ -42,10 +42,10 @@ theorem neg_t_mul_meridionalQuantity_selection_eq {h : ℝ} {u : ParabolicPoint 
   have hnegt_pos : 0 < -t := by linarith only [ht]
   have hzp_eq : zoomPoint lam h zc p = (meridional (lam * R) zc, t) := by
     have hfst : (zoomPoint lam h zc p).1 = meridional (lam * R) zc := by
-      show meridional (lam * p.1.1) (zc + lam ^ (1 - 2 * h) * p.1.2) = meridional (lam * R) zc
+      change meridional (lam * p.1.1) (zc + lam ^ (1 - 2 * h) * p.1.2) = meridional (lam * R) zc
       simp [hp_def]
     have hsnd : (zoomPoint lam h zc p).2 = t := by
-      show lam ^ 2 * p.2 = t
+      change lam ^ 2 * p.2 = t
       rw [hlamsq]
       simp [hp_def]
     exact Prod.ext hfst hsnd
@@ -79,7 +79,7 @@ theorem neg_t_mul_meridionalQuantity_selection_eq {h : ℝ} {u : ParabolicPoint 
     set zpt : ParabolicPoint := (meridional (lam * R) zc, t) with hzpt_def
     have hz0 : zpt.1 0 = lam * R := by simp [hzpt_def, meridional]
     have hz_ne : zpt.1 0 ≠ 0 := by rw [hz0]; exact hlamR_ne
-    show radialQuotient u zpt = u zpt 0 / (lam * R)
+    change radialQuotient u zpt = u zpt 0 / (lam * R)
     rw [radialQuotient, ite_eq_right hz_ne, hz0]
   have hstep2 : zoomV lam h zc u p / R
       = (-t) * radialQuotient u (meridional (lam * R) zc, t) := by

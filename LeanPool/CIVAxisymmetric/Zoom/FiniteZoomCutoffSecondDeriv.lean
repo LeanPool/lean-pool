@@ -76,7 +76,7 @@ theorem fderiv_fderiv_apply_radial_radial_eq_drdr {φ : (ℝ × ℝ) × ℝ → 
   have hfinal : HasDerivAt (fun r : ℝ => dr φ ((r, y.2), t))
       (fderiv ℝ (fderiv ℝ g) y (1, 0) (1, 0)) y.1 :=
     hg1'.congr_of_eventuallyEq heqNhds.symm
-  show fderiv ℝ (fderiv ℝ g) y (1, 0) (1, 0) = dr (dr φ) (y, t)
+  change fderiv ℝ (fderiv ℝ g) y (1, 0) (1, 0) = dr (dr φ) (y, t)
   rw [← hfinal.deriv]
   rfl
 
@@ -108,7 +108,7 @@ theorem fderiv_fderiv_apply_radial_axial_eq_drdz {φ : (ℝ × ℝ) × ℝ → �
   have hfinal : HasDerivAt (fun r : ℝ => dz φ ((r, y.2), t))
       (fderiv ℝ (fderiv ℝ g) y (1, 0) (0, 1)) y.1 :=
     hg2'.congr_of_eventuallyEq heqNhds.symm
-  show fderiv ℝ (fderiv ℝ g) y (1, 0) (0, 1) = dr (dz φ) (y, t)
+  change fderiv ℝ (fderiv ℝ g) y (1, 0) (0, 1) = dr (dz φ) (y, t)
   rw [← hfinal.deriv]
   rfl
 
@@ -140,7 +140,7 @@ theorem fderiv_fderiv_apply_axial_axial_eq_dzdz {φ : (ℝ × ℝ) × ℝ → �
   have hfinal : HasDerivAt (fun z : ℝ => dz φ ((y.1, z), t))
       (fderiv ℝ (fderiv ℝ g) y (0, 1) (0, 1)) y.2 :=
     hg2'.congr_of_eventuallyEq heqNhds.symm
-  show fderiv ℝ (fderiv ℝ g) y (0, 1) (0, 1) = dz (dz φ) (y, t)
+  change fderiv ℝ (fderiv ℝ g) y (0, 1) (0, 1) = dz (dz φ) (y, t)
   rw [← hfinal.deriv]
   rfl
 

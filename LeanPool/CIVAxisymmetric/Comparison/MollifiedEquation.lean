@@ -209,7 +209,7 @@ theorem fderiv_slice_mollifierTest {m : ℕ} (ε : ℝ) (x : Vec m) (χ : ℝ �
   have h : fderiv ℝ (fun y' : Vec m => mollifierKernel m ε (x - y') * χ τ) y v
       = -(fderiv ℝ (mollifierKernel m ε) (x - y) v) * χ τ :=
     fderiv_const_sub_mul_const (differentiable_mollifierKernel ε) x (χ τ) y v
-  show fderiv ℝ (fun y' : Vec m => mollifierKernel m ε (x - y') * χ τ) y v = _
+  change fderiv ℝ (fun y' : Vec m => mollifierKernel m ε (x - y') * χ τ) y v = _
   rw [h]
   ring
 

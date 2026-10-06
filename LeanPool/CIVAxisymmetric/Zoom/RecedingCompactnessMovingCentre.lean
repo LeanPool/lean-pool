@@ -155,7 +155,7 @@ theorem eventually_mem_zoomPointRec_moving {h ρ Rstar tstar : ℝ} (hh : 0 < h 
   have hsum : (rc n + c) ^ 2 + (zc n + d) ^ 2 < Rstar ^ 2 := by
     have hρe : ρ * (|c| + |d|) ≤ ρ * ε := mul_le_mul_of_nonneg_left he hρ0
     nlinarith only [hcz n, hac, hbd, hcd, hee, hρe, hεg, hgpos, hg]
-  show meridional (rc n + lam n * p.1.1) (zc n + lam n ^ (1 - 2 * h) * p.1.2) ∈ vec3Ball 0 Rstar
+  change meridional (rc n + lam n * p.1.1) (zc n + lam n ^ (1 - 2 * h) * p.1.2) ∈ vec3Ball 0 Rstar
   rw [meridional_mem_vec3Ball_zero_iff]
   exact ⟨hsum, hRpos⟩
 

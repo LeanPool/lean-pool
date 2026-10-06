@@ -482,7 +482,7 @@ theorem integral_sq_diPernaLionsCommutator_le {ε R M : ℝ} {Λ : NNReal} (hε 
       have hnormeq : ‖y - x‖ = ‖x - y‖ := norm_sub_rev y x
       rw [hnormeq] at hrev
       have hxy : ε < ‖x - y‖ := by linarith only [hxle, hygt, hrev]
-      show commutatorMajorant m ε (Λ : ℝ) (x - y) * (g y) ^ 2 = 0
+      change commutatorMajorant m ε (Λ : ℝ) (x - y) * (g y) ^ 2 = 0
       rw [commutatorMajorant_eq_zero hε hxy, zero_mul]
   have hstep3 : (∫ x in s, ∫ y, commutatorMajorant m ε (Λ : ℝ) (x - y) * (g y) ^ 2)
       = ∫ x in s, ∫ y in t, commutatorMajorant m ε (Λ : ℝ) (x - y) * (g y) ^ 2 :=

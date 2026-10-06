@@ -206,7 +206,7 @@ private theorem integral_sq_mollifierKernel_convolution_le {ε R M : ℝ} (hε :
       have hnormeq : ‖y - x‖ = ‖x - y‖ := norm_sub_rev y x
       rw [hnormeq] at hrev
       have hxy : ε < ‖x - y‖ := by linarith only [hxle, hygt, hrev]
-      show mollifierKernel m ε (x - y) * h y ^ 2 = 0
+      change mollifierKernel m ε (x - y) * h y ^ 2 = 0
       rw [mollifierKernel_eq_zero hε hxy.le, zero_mul]
   have hstep2 : (∫ x in s, ∫ y, mollifierKernel m ε (x - y) * h y ^ 2)
       = ∫ x in s, ∫ y in t, mollifierKernel m ε (x - y) * h y ^ 2 :=
@@ -277,6 +277,66 @@ private theorem integral_sq_mollifierKernel_convolution_le {ε R M : ℝ} (hε :
         setIntegral_congr_fun htMeas hstep4
     _ ≤ ∫ y in t, h y ^ 2 := hRHSfinal
 
+private theorem mollifier_bounded_integrability {M R ε : ℝ} {g : Vec m → ℝ}
+    (hεpos : 0 < ε) (hh : ∀ y, |g y| ≤ M) (hgm : AEStronglyMeasurable g volume) :
+    (∀ x : Vec m, |∫ y, mollifierKernel m ε (x - y) * g y| ≤ M) ∧
+    IntegrableOn (fun x => ((∫ y, mollifierKernel m ε (x - y) * g y) - g x) ^ 2)
+      (Metric.closedBall (0 : Vec m) R) volume ∧
+    IntegrableOn (fun x => (∫ y, mollifierKernel m ε (x - y) * g y) ^ 2)
+      (Metric.closedBall (0 : Vec m) R) volume ∧
+    IntegrableOn (fun x => g x ^ 2) (Metric.closedBall (0 : Vec m) (R + 1)) volume := by
+  have hsFin : IsFiniteMeasure (volume.restrict (Metric.closedBall (0 : Vec m) R)) :=
+    isFiniteMeasure_restrict.2 (isCompact_closedBall (0 : Vec m) R).measure_ne_top
+  have hs1Fin : IsFiniteMeasure (volume.restrict (Metric.closedBall (0 : Vec m) (R + 1))) :=
+    isFiniteMeasure_restrict.2 (isCompact_closedBall (0 : Vec m) (R + 1)).measure_ne_top
+  have hRemFbound : ∀ x : Vec m, |∫ y, mollifierKernel m ε (x - y) * (g y)| ≤ M := by
+    intro x
+    have hthis := abs_mollifySlice_le (q := fun z : Vec m × ℝ => g z.1) (τ := (0 : ℝ))
+      hεpos hgm (Filter.Eventually.of_forall hh) x
+    rwa [mollifySlice_apply] at hthis
+  have hFremmeas : AEStronglyMeasurable
+      (fun x => ∫ y, mollifierKernel m ε (x - y) * (g y)) volume := by
+    have hjcont : Continuous fun p : Vec m × Vec m => mollifierKernel m ε (p.1 - p.2) :=
+      (contDiff_mollifierKernel (m := m) ε).continuous.comp (continuous_fst.sub continuous_snd)
+    have hjoint : AEStronglyMeasurable
+        (fun p : Vec m × Vec m => mollifierKernel m ε (p.1 - p.2) * (g p.2))
+        (volume.prod volume) :=
+      hjcont.aestronglyMeasurable.mul hgm.comp_snd
+    exact hjoint.integral_prod_right'
+  have hIntRemDiffSqOn : IntegrableOn
+      (fun x => ((∫ y, mollifierKernel m ε (x - y) * (g y)) - (g x)) ^ 2)
+      (Metric.closedBall (0 : Vec m) R) volume := by
+    refine (integrable_const ((2 * (M)) ^ 2)).mono' (((hFremmeas.sub hgm).pow
+      2).mono_measure Measure.restrict_le_self)
+      (Filter.Eventually.of_forall fun x => ?_)
+    rw [Real.norm_eq_abs, abs_of_nonneg (sq_nonneg _)]
+    have habs : |(∫ y, mollifierKernel m ε (x - y) * (g y)) - (g x)|
+        ≤ 2 * (M) := by
+      calc |(∫ y, mollifierKernel m ε (x - y) * (g y)) - (g x)|
+          ≤ |∫ y, mollifierKernel m ε (x - y) * (g y)| + |g x| := abs_sub _ _
+        _ ≤ (M) + (M) := add_le_add (hRemFbound x) (hh x)
+        _ = 2 * (M) := by ring
+    obtain ⟨l1, l2⟩ := abs_le.mp habs
+    exact sq_le_sq' l1 l2
+  have hIntRemSqOn : IntegrableOn
+      (fun x => (∫ y, mollifierKernel m ε (x - y) * (g y)) ^ 2)
+      (Metric.closedBall (0 : Vec m) R) volume := by
+    refine (integrable_const ((M) ^ 2)).mono' ((hFremmeas.pow 2).mono_measure
+      Measure.restrict_le_self)
+      (Filter.Eventually.of_forall fun x => ?_)
+    rw [Real.norm_eq_abs, abs_of_nonneg (sq_nonneg _)]
+    obtain ⟨l1, l2⟩ := abs_le.mp (hRemFbound x)
+    exact sq_le_sq' l1 l2
+  have hRemSqOn1 : IntegrableOn (fun x => (g x) ^ 2) (Metric.closedBall (0 : Vec m) (R + 1))
+      volume := by
+    refine (integrable_const ((M) ^ 2)).mono' ((hgm.pow 2).mono_measure
+      Measure.restrict_le_self)
+      (Filter.Eventually.of_forall fun x => ?_)
+    rw [Real.norm_eq_abs, abs_of_nonneg (sq_nonneg _)]
+    obtain ⟨l1, l2⟩ := abs_le.mp (hh x)
+    exact sq_le_sq' l1 l2
+  exact ⟨hRemFbound, hIntRemDiffSqOn, hIntRemSqOn, hRemSqOn1⟩
+
 /-! ### `L²` convergence of the spatial mollification -/
 
 /-- Step 5b's core analytic fact, for a `∀`-bounded function: the spatial mollification of a
@@ -285,7 +345,6 @@ private theorem tendsto_integral_sq_mollifierKernel_sub_of_forall_abs_le {M R : 
     {h : Vec m → ℝ} (hh : ∀ y, |h y| ≤ M) (hhm : AEStronglyMeasurable h volume) :
     Filter.Tendsto (fun ε : ℝ => ∫ x in Metric.closedBall (0 : Vec m) R,
         ((∫ y, mollifierKernel m ε (x - y) * h y) - h x) ^ 2) (𝓝[>] 0) (𝓝 0) := by
-  have hM : 0 ≤ M := (abs_nonneg (h (0 : Vec m))).trans (hh 0)
   have hhae : ∀ᵐ y ∂(volume : Measure (Vec m)), |h y| ≤ M := Filter.Eventually.of_forall hh
   set V : ℝ := (volume : Measure (Vec m)).real (Metric.closedBall (0 : Vec m) R) with hV_def
   have hVnn : 0 ≤ V := measureReal_nonneg
@@ -316,13 +375,10 @@ private theorem tendsto_integral_sq_mollifierKernel_sub_of_forall_abs_le {M R : 
   have hsMeas : MeasurableSet (Metric.closedBall (0 : Vec m) R) := measurableSet_closedBall
   have hsFin : IsFiniteMeasure (volume.restrict (Metric.closedBall (0 : Vec m) R)) :=
     isFiniteMeasure_restrict.2 (isCompact_closedBall (0 : Vec m) R).measure_ne_top
-  have hs1Fin : IsFiniteMeasure (volume.restrict (Metric.closedBall (0 : Vec m) (R + 1))) :=
-    isFiniteMeasure_restrict.2 (isCompact_closedBall (0 : Vec m) (R + 1)).measure_ne_top
   have hRemBound : ∀ y, |h y - φ y| ≤ M + Cφ := fun y => (abs_sub _ _).trans (add_le_add (hh y)
     (hCφ y))
   have hRemm : AEStronglyMeasurable (fun y => h y - φ y) volume := hhm.sub hφm
-  filter_upwards [Ioo_mem_nhdsGT (lt_min hηpos one_pos)] with ε hεmem
-  obtain ⟨hεpos, hεltmin⟩ := hεmem
+  filter_upwards [Ioo_mem_nhdsGT (lt_min hηpos one_pos)] with ε ⟨hεpos, hεltmin⟩
   have hεltη : ε < η := lt_of_lt_of_le hεltmin (min_le_left _ _)
   have hεlt1 : ε < 1 := lt_of_lt_of_le hεltmin (min_le_right _ _)
   have hK_int_y : ∀ x : Vec m, Integrable (fun y => mollifierKernel m ε (x - y)) volume := fun x =>
@@ -377,52 +433,8 @@ private theorem tendsto_integral_sq_mollifierKernel_sub_of_forall_abs_le {M R : 
           setIntegral_mono_on hIntPhiSqOn (integrable_const _) hsMeas (fun x _ => by
             obtain ⟨l1, l2⟩ := abs_le.mp (hUnifPhi x); exact sq_le_sq' l1 l2)
       _ = V * δ ^ 2 := by rw [setIntegral_const, smul_eq_mul]
-  have hRemFbound : ∀ x : Vec m, |∫ y, mollifierKernel m ε (x - y) * (h y - φ y)| ≤ M + Cφ := by
-    intro x
-    have hthis := abs_mollifySlice_le (q := fun z : Vec m × ℝ => h z.1 - φ z.1) (τ := (0 : ℝ))
-      hεpos hRemm (Filter.Eventually.of_forall hRemBound) x
-    rwa [mollifySlice_apply] at hthis
-  have hFremmeas : AEStronglyMeasurable
-      (fun x => ∫ y, mollifierKernel m ε (x - y) * (h y - φ y)) volume := by
-    have hjcont : Continuous fun p : Vec m × Vec m => mollifierKernel m ε (p.1 - p.2) :=
-      (contDiff_mollifierKernel (m := m) ε).continuous.comp (continuous_fst.sub continuous_snd)
-    have hjoint : AEStronglyMeasurable
-        (fun p : Vec m × Vec m => mollifierKernel m ε (p.1 - p.2) * (h p.2 - φ p.2))
-        (volume.prod volume) :=
-      hjcont.aestronglyMeasurable.mul hRemm.comp_snd
-    exact hjoint.integral_prod_right'
-  have hIntRemDiffSqOn : IntegrableOn
-      (fun x => ((∫ y, mollifierKernel m ε (x - y) * (h y - φ y)) - (h x - φ x)) ^ 2)
-      (Metric.closedBall (0 : Vec m) R) volume := by
-    refine (integrable_const ((2 * (M + Cφ)) ^ 2)).mono' (((hFremmeas.sub hRemm).pow
-      2).mono_measure Measure.restrict_le_self)
-      (Filter.Eventually.of_forall fun x => ?_)
-    rw [Real.norm_eq_abs, abs_of_nonneg (sq_nonneg _)]
-    have habs : |(∫ y, mollifierKernel m ε (x - y) * (h y - φ y)) - (h x - φ x)|
-        ≤ 2 * (M + Cφ) := by
-      calc |(∫ y, mollifierKernel m ε (x - y) * (h y - φ y)) - (h x - φ x)|
-          ≤ |∫ y, mollifierKernel m ε (x - y) * (h y - φ y)| + |h x - φ x| := abs_sub _ _
-        _ ≤ (M + Cφ) + (M + Cφ) := add_le_add (hRemFbound x) (hRemBound x)
-        _ = 2 * (M + Cφ) := by ring
-    obtain ⟨l1, l2⟩ := abs_le.mp habs
-    exact sq_le_sq' l1 l2
-  have hIntRemSqOn : IntegrableOn
-      (fun x => (∫ y, mollifierKernel m ε (x - y) * (h y - φ y)) ^ 2)
-      (Metric.closedBall (0 : Vec m) R) volume := by
-    refine (integrable_const ((M + Cφ) ^ 2)).mono' ((hFremmeas.pow 2).mono_measure
-      Measure.restrict_le_self)
-      (Filter.Eventually.of_forall fun x => ?_)
-    rw [Real.norm_eq_abs, abs_of_nonneg (sq_nonneg _)]
-    obtain ⟨l1, l2⟩ := abs_le.mp (hRemFbound x)
-    exact sq_le_sq' l1 l2
-  have hRemSqOn1 : IntegrableOn (fun x => (h x - φ x) ^ 2) (Metric.closedBall (0 : Vec m) (R + 1))
-      volume := by
-    refine (integrable_const ((M + Cφ) ^ 2)).mono' ((hRemm.pow 2).mono_measure
-      Measure.restrict_le_self)
-      (Filter.Eventually.of_forall fun x => ?_)
-    rw [Real.norm_eq_abs, abs_of_nonneg (sq_nonneg _)]
-    obtain ⟨l1, l2⟩ := abs_le.mp (hRemBound x)
-    exact sq_le_sq' l1 l2
+  obtain ⟨hRemFbound, hIntRemDiffSqOn, hIntRemSqOn, hRemSqOn1⟩ :=
+    mollifier_bounded_integrability (R := R) hεpos hRemBound hRemm
   have hcontr : (∫ x in Metric.closedBall (0 : Vec m) R,
       (∫ y, mollifierKernel m ε (x - y) * (h y - φ y)) ^ 2)
       ≤ θ / 32 := by
@@ -545,7 +557,7 @@ private theorem exists_stronglyMeasurable_bound {M : ℝ} (hM : 0 ≤ M) {g : Ve
   have hset : MeasurableSet {y : Vec m | |f y| ≤ M} := measurableSet_le habs measurable_const
   refine ⟨fun y => if |f y| ≤ M then f y else 0, ?_, ?_, ?_⟩
   · intro y
-    show |if |f y| ≤ M then f y else 0| ≤ M
+    change |if |f y| ≤ M then f y else 0| ≤ M
     split_ifs with hy
     · exact hy
     · rw [abs_zero]; exact hM
@@ -554,7 +566,7 @@ private theorem exists_stronglyMeasurable_bound {M : ℝ} (hM : 0 ≤ M) {g : Ve
     have hy3 : |f y| ≤ M := by rw [← hy1]; exact hy2
     have hif : (if |f y| ≤ M then f y else 0) = f y :=
       ite_eq_left_iff.mpr fun hcond => absurd hy3 hcond
-    show g y = if |f y| ≤ M then f y else 0
+    change g y = if |f y| ≤ M then f y else 0
     rw [hif]; exact hy1
 
 /-! ### `L²` convergence of `mollifySlice` -/

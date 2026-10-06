@@ -60,19 +60,19 @@ private theorem abs_rotZ_apply_le (φ : ℝ) (V : Vec3) (i : Fin 3) {M : ℝ}
     (h : ∀ m : Fin 3, |V m| ≤ M) : |rotZ φ V i| ≤ 2 * M := by
   have hM : (0 : ℝ) ≤ M := le_trans (abs_nonneg _) (h 0)
   fin_cases i
-  · show |Real.cos φ * V 0 - Real.sin φ * V 1| ≤ 2 * M
+  · change |Real.cos φ * V 0 - Real.sin φ * V 1| ≤ 2 * M
     refine abs_sub_le_two_mul ?_ ?_
     · have := abs_mul_le_mul_of_abs_le (Real.abs_cos_le_one φ) (h 0)
       linarith only [this]
     · have := abs_mul_le_mul_of_abs_le (Real.abs_sin_le_one φ) (h 1)
       linarith only [this]
-  · show |Real.sin φ * V 0 + Real.cos φ * V 1| ≤ 2 * M
+  · change |Real.sin φ * V 0 + Real.cos φ * V 1| ≤ 2 * M
     refine abs_add_le_two_mul ?_ ?_
     · have := abs_mul_le_mul_of_abs_le (Real.abs_sin_le_one φ) (h 0)
       linarith only [this]
     · have := abs_mul_le_mul_of_abs_le (Real.abs_cos_le_one φ) (h 1)
       linarith only [this]
-  · show |V 2| ≤ 2 * M
+  · change |V 2| ≤ 2 * M
     have := h 2
     linarith only [this, hM]
 
@@ -178,7 +178,7 @@ private theorem hessAt_combo {g₁ g₂ : ParabolicPoint → ℝ} (c d : ℝ)
     filter_upwards [(isOpen_vec3Ball 0 1).mem_nhds hz.1] with y hy using hpt y hy
   have hD1' := differentiableAt_fderiv_slice h₁ hz w
   have hD2' := differentiableAt_fderiv_slice h₂ hz w
-  show fderiv ℝ (fun y : Vec3 =>
+  change fderiv ℝ (fun y : Vec3 =>
       fderiv ℝ (fun y' : Vec3 => c * g₁ (y', z.2) + d * g₂ (y', z.2)) y w) z.1 v = _
   rw [hev.fderiv_eq, fderiv_fun_add (hD1'.const_mul c) (hD2'.const_mul d),
     fderiv_const_mul hD1', fderiv_const_mul hD2']
@@ -204,13 +204,13 @@ private theorem spatialSecondPartial_slice_symm {g : ParabolicPoint → ℝ}
         ((ContinuousLinearMap.apply ℝ ℝ w).comp
           (fderiv ℝ (fderiv ℝ fun y : Vec3 => g (y, z.2)) z.1)) z.1 :=
       (ContinuousLinearMap.apply ℝ ℝ w).hasFDerivAt.comp (z.1 : Vec3) hD.hasFDerivAt
-    show fderiv ℝ (fun y : Vec3 => (fderiv ℝ (fun y' : Vec3 => g (y', z.2)) y) w) z.1 v = _
+    change fderiv ℝ (fun y : Vec3 => (fderiv ℝ (fun y' : Vec3 => g (y', z.2)) y) w) z.1 v = _
     rw [hcomp.fderiv]
     simp
   have hat : ContDiffAt ℝ (⊤ : ℕ∞) (fun y : Vec3 => g (y, z.2)) z.1 :=
     hGsm.contDiffAt (hopen.mem_nhds hz.1)
   have hsym := (ContDiffAt.isSymmSndFDerivAt hat (by simp)).eq (basisVec j) (basisVec i)
-  show hessAt g z.2 z.1 (basisVec j) (basisVec i) = hessAt g z.2 z.1 (basisVec i) (basisVec j)
+  change hessAt g z.2 z.1 (basisVec j) (basisVec i) = hessAt g z.2 z.1 (basisVec i) (basisVec j)
   rw [key (basisVec j) (basisVec i), key (basisVec i) (basisVec j), hsym]
 
 /-- A spatial partial derivative of a component of the rotated field is the corresponding
@@ -223,7 +223,7 @@ private theorem spatialPartial_rotField_apply (φ : ℝ) (f : ParabolicPoint →
           (rotZ (-φ) (basisVec j))) i := by
   have hrot : ContDiffOn ℝ 1 (fun z : Vec3 × ℝ => rotField φ f z) unitCylinder :=
     contDiffOn_rotField φ f hf
-  show fderiv ℝ (fun y : Vec3 => rotField φ f (y, z.2) i) z.1 (basisVec j) = _
+  change fderiv ℝ (fun y : Vec3 => rotField φ f (y, z.2) i) z.1 (basisVec j) = _
   rw [fderiv_spatialSlice_apply hrot hz i (basisVec j),
     fderiv_rotField_spatial φ f hf hz (basisVec j)]
 
@@ -249,11 +249,11 @@ private theorem hessAt_rotField_apply (φ : ℝ) (f : ParabolicPoint → Vec3)
         = fun y : Vec3 × ℝ => Real.cos φ * f (rotZ (-φ) y.1, y.2) 0
             + (-Real.sin φ) * f (rotZ (-φ) y.1, y.2) 1 := by
       funext y
-      show Real.cos φ * f (rotZ (-φ) y.1, y.2) 0 - Real.sin φ * f (rotZ (-φ) y.1, y.2) 1 = _
+      change Real.cos φ * f (rotZ (-φ) y.1, y.2) 0 - Real.sin φ * f (rotZ (-φ) y.1, y.2) 1 = _
       ring
-    show hessAt (fun y : Vec3 × ℝ => rotField φ f y 0) z.2 z.1 v w = _
+    change hessAt (fun y : Vec3 × ℝ => rotField φ f y 0) z.2 z.1 v w = _
     rw [hfun, hessAt_combo (Real.cos φ) (-Real.sin φ) (hc 0) (hc 1) hz v w, hrot 0, hrot 1]
-    show _ = Real.cos φ * hessAt (fun y : Vec3 × ℝ => f y 0) z.2 (rotZ (-φ) z.1)
+    change _ = Real.cos φ * hessAt (fun y : Vec3 × ℝ => f y 0) z.2 (rotZ (-φ) z.1)
           (rotZ (-φ) v) (rotZ (-φ) w)
         - Real.sin φ * hessAt (fun y : Vec3 × ℝ => f y 1) z.2 (rotZ (-φ) z.1) (rotZ (-φ) v)
           (rotZ (-φ) w)
@@ -261,10 +261,10 @@ private theorem hessAt_rotField_apply (φ : ℝ) (f : ParabolicPoint → Vec3)
   · have hfun : (fun y : Vec3 × ℝ => rotField φ f y 1)
         = fun y : Vec3 × ℝ => Real.sin φ * f (rotZ (-φ) y.1, y.2) 0
             + Real.cos φ * f (rotZ (-φ) y.1, y.2) 1 := rfl
-    show hessAt (fun y : Vec3 × ℝ => rotField φ f y 1) z.2 z.1 v w = _
+    change hessAt (fun y : Vec3 × ℝ => rotField φ f y 1) z.2 z.1 v w = _
     rw [hfun, hessAt_combo (Real.sin φ) (Real.cos φ) (hc 0) (hc 1) hz v w, hrot 0, hrot 1]
     rfl
-  · show hessAt (fun y : Vec3 × ℝ => rotField φ f y 2) z.2 z.1 v w = _
+  · change hessAt (fun y : Vec3 × ℝ => rotField φ f y 2) z.2 z.1 v w = _
     have hfun : (fun y : Vec3 × ℝ => rotField φ f y 2)
         = fun y : Vec3 × ℝ => f (rotZ (-φ) y.1, y.2) 2 := rfl
     rw [hfun, hrot 2]
@@ -273,11 +273,11 @@ private theorem hessAt_rotField_apply (φ : ℝ) (f : ParabolicPoint → Vec3)
 /-! #### Differentiation under the angular integral -/
 
 /-- The angular average of an angle-dependent scalar integrand. -/
-@[expose] private def angleAverage (G : ℝ × (Vec3 × ℝ) → ℝ) (z : ParabolicPoint) : ℝ :=
+private def angleAverage (G : ℝ × (Vec3 × ℝ) → ℝ) (z : ParabolicPoint) : ℝ :=
   (2 * Real.pi)⁻¹ * ∫ φ in (0 : ℝ)..(2 * Real.pi), G (φ, z)
 
 /-- A spatial partial derivative of an angle-dependent integrand, in the point variable. -/
-@[expose] private def anglePartial (j : Fin 3) (G : ℝ × (Vec3 × ℝ) → ℝ) : ℝ × (Vec3 × ℝ) → ℝ :=
+private def anglePartial (j : Fin 3) (G : ℝ × (Vec3 × ℝ) → ℝ) : ℝ × (Vec3 × ℝ) → ℝ :=
   fun q => spatialPartial (fun w => G (q.1, w)) j q.2
 
 /-- The parameter domain of the angular integrand is open. -/
@@ -303,7 +303,7 @@ private theorem anglePartial_eq_fderiv {G : ℝ × (Vec3 × ℝ) → ℝ}
       ((fderiv ℝ G q).comp ((0 : Vec3 →L[ℝ] ℝ).prod
         ((ContinuousLinearMap.id ℝ Vec3).prod (0 : Vec3 →L[ℝ] ℝ)))) q.2.1 :=
     hGd.hasFDerivAt.comp q.2.1 hemb
-  show fderiv ℝ (fun y : Vec3 => G (q.1, (y, q.2.2))) q.2.1 (basisVec j) = _
+  change fderiv ℝ (fun y : Vec3 => G (q.1, (y, q.2.2))) q.2.1 (basisVec j) = _
   rw [hcomp.fderiv]
   rfl
 
@@ -340,16 +340,16 @@ private theorem spatialPartial_angleAverage {G : ℝ × (Vec3 × ℝ) → ℝ}
   have hfun : (fun y : Vec3 => angleAverage G (y, t))
       = fun y : Vec3 => (2 * Real.pi)⁻¹ * ∫ φ in Ioc 0 (2 * Real.pi), H (φ, y) := by
     funext y
-    show (2 * Real.pi)⁻¹ * ∫ φ in (0 : ℝ)..(2 * Real.pi), G (φ, (y, t)) = _
+    change (2 * Real.pi)⁻¹ * ∫ φ in (0 : ℝ)..(2 * Real.pi), G (φ, (y, t)) = _
     rw [intervalIntegral.integral_of_le Real.two_pi_pos.le]
   have hderiv := (hasFDerivAt_parametric_integral_Ioc hball hx₀ hHsm 0 (2 * Real.pi)).const_mul
     (2 * Real.pi)⁻¹
   have hDint : IntegrableOn (fun φ => fderiv ℝ (fun y => H (φ, y)) x₀) (Ioc 0 (2 * Real.pi)) :=
     (continuous_section_of_continuousOn (continuousOn_fderiv_section_of_contDiffOn hball hHsm)
       hx₀).integrableOn_Ioc
-  show fderiv ℝ (fun y : Vec3 => angleAverage G (y, t)) x₀ (basisVec j) = _
+  change fderiv ℝ (fun y : Vec3 => angleAverage G (y, t)) x₀ (basisVec j) = _
   rw [hfun, hderiv.fderiv, smul_apply, smul_eq_mul]
-  show _ = (2 * Real.pi)⁻¹ * ∫ φ in (0 : ℝ)..(2 * Real.pi), anglePartial j G (φ, (x₀, t))
+  change _ = (2 * Real.pi)⁻¹ * ∫ φ in (0 : ℝ)..(2 * Real.pi), anglePartial j G (φ, (x₀, t))
   rw [intervalIntegral.integral_of_le Real.two_pi_pos.le,
     ContinuousLinearMap.integral_apply hDint]
   rfl
@@ -368,7 +368,7 @@ private theorem abs_angleAverage_le {G : ℝ × (Vec3 × ℝ) → ℝ} {z : Para
   have hsimp : (2 * Real.pi)⁻¹ * (C * (2 * Real.pi)) = C := by
     field_simp
   rw [hsimp] at hstep
-  show |(2 * Real.pi)⁻¹ * ∫ φ in (0 : ℝ)..(2 * Real.pi), G (φ, z)| ≤ C
+  change |(2 * Real.pi)⁻¹ * ∫ φ in (0 : ℝ)..(2 * Real.pi), G (φ, z)| ≤ C
   rw [abs_mul, abs_of_pos hinv]
   exact hstep
 
@@ -413,7 +413,7 @@ private theorem abs_spatialSecondPartial_rotField_le (φ : ℝ) {f : ParabolicPo
     |spatialSecondPartial (fun w => rotField φ f w i) j k z| ≤ 72 * M := by
   have hz' : (((rotZ (-φ) z.1 : Vec3), z.2) : ParabolicPoint) ∈ unitCylinder :=
     rotZ_mem_unitCylinder (-φ) hz
-  show |hessAt (fun w : Vec3 × ℝ => rotField φ f w i) z.2 z.1 (basisVec k) (basisVec j)|
+  change |hessAt (fun w : Vec3 × ℝ => rotField φ f w i) z.2 z.1 (basisVec k) (basisVec j)|
     ≤ 72 * M
   rw [hessAt_rotField_apply φ f hf hz i (basisVec k) (basisVec j)]
   have hbound : ∀ m : Fin 3, |hessAt (fun y : Vec3 × ℝ => f y m) z.2 (rotZ (-φ) z.1)
@@ -465,7 +465,7 @@ private theorem spatialSecondPartial_angularMean_eq_angleAverage (f : ParabolicP
     (u := fun w : Vec3 × ℝ =>
       angleAverage (anglePartial j fun q : ℝ × (Vec3 × ℝ) => rotField q.1 f q.2 i) w)
     heq hz k
-  show spatialPartial (fun w => spatialPartial (fun w' => angularMean f w' i) j w) k z = _
+  change spatialPartial (fun w => spatialPartial (fun w' => angularMean f w' i) j w) k z = _
   exact hcongr.trans (spatialPartial_angleAverage (hG1.of_le (by norm_num)) k hz)
 
 /-! #### Reading the multi-index derivatives of order at most two -/
@@ -565,10 +565,10 @@ theorem forceC2Bounded_angularMean {f : ParabolicPoint → Vec3}
   intro z hz i α hα
   rcases multiPartial_le_two hα (fun w => angularMean f w i) with h | ⟨a, h⟩ | ⟨a, b, h⟩
   · rw [h]
-    show |angularMean f z i| ≤ 72 * |M|
+    change |angularMean f z i| ≤ 72 * |M|
     have hb : |angularMean f z i| ≤ 2 * |M| := by
       rw [angularMean_apply_eq f hf hz i]
-      show |angleAverage (fun q : ℝ × (Vec3 × ℝ) => rotField q.1 f q.2 i) z| ≤ 2 * |M|
+      change |angleAverage (fun q : ℝ × (Vec3 × ℝ) => rotField q.1 f q.2 i) z| ≤ 2 * |M|
       exact abs_angleAverage_le fun φ => abs_rotField_apply_le φ hM0 hz i
     linarith only [hb, hMnn]
   · rw [h]

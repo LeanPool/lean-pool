@@ -45,8 +45,8 @@ theorem axisMaximumPrinciple (R t₁ s k M : ℝ) (hR : 0 < R) (hts : t₁ < s) 
       dtPast φ p + br p * dr φ p + bz p * dz φ p + γ p * φ p =
         dr (dr φ) p + k / p.1.1 * dr φ p + dz (dz φ) p + F p) :
     ∀ m : ℝ, (∀ p ∈ axisParabolicBoundary R t₁ s, |φ p| ≤ m) →
-      ∀ p ∈ axisClosedDomain R t₁ s, |φ p| ≤ m + M * (p.2 - t₁) :=
-by exact CIV.axisMaximumPrinciple_of_profile R t₁ s k M hR hts hM φ br bz γ F hcont haxis hreg
-  hγ hF hpde
+      ∀ p ∈ axisClosedDomain R t₁ s, |φ p| ≤ m + M * (p.2 - t₁) := by
+  exact CIV.axisMaximumPrinciple_of_profile R t₁ s k M hR hts hM φ br bz γ F hcont haxis hreg
+    hγ hF hpde
 
 end CIV

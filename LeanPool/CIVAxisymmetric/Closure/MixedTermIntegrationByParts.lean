@@ -80,7 +80,7 @@ theorem hasLineDerivAt_comp_polarRRep {F : Vec3 → ℝ} {x : Vec3}
     funext s
     rw [polarR_add_smul_basisVec_two, apply_two_add_smul_basisVec_two,
       meridional_add_smul_basisVec_two]
-  show HasDerivAt (fun s : ℝ => F (meridional (polarR (x + s • (basisVec 2 : Vec3)))
+  change HasDerivAt (fun s : ℝ => F (meridional (polarR (x + s • (basisVec 2 : Vec3)))
       ((x + s • (basisVec 2 : Vec3)) 2))) _ 0
   rw [heq]
   exact hline
@@ -356,10 +356,10 @@ theorem integral_cutoff_sq_stretchMixedTerm_eq {u : ParabolicPoint → Vec3}
     · have hzrep : ((meridional (polarR x) (x 2) : Vec3), t) ∈ unitCylinder :=
         ⟨rep_mem_vec3Ball hxb, ht⟩
       have hplane : ((meridional (polarR x) (x 2) : Vec3), t).1 1 = 0 := by
-        show meridional (polarR x) (x 2) 1 = 0
+        change meridional (polarR x) (x 2) 1 = 0
         simp [meridional]
       have hr : ((meridional (polarR x) (x 2) : Vec3), t).1 0 ≠ 0 := by
-        show meridional (polarR x) (x 2) 0 ≠ 0
+        change meridional (polarR x) (x 2) 0 ≠ 0
         rw [meridional_apply_zero]; exact hx
       have hω := curlComp_zero_meridional haxi hu1 hzrep hplane hr
       unfold stretchMixedTerm mixedTermFactor

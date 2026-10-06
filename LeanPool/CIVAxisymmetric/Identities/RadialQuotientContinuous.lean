@@ -222,3 +222,4 @@ theorem continuousOn_radialQuotient_slice (u : ParabolicPoint → Vec3) (t : ℝ
     simpa using h2
   exact hplane.comp' hemb.continuousOn hmaps
 
+end CIV

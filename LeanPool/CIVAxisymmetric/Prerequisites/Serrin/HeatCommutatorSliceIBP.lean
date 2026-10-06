@@ -204,7 +204,7 @@ theorem integral_serrinHeatWeightDeriv_mul_spatialPartial {w : ParabolicPoint �
   have hWm : MeasurableSet W := hWc.isClosed.measurableSet
   have hWfin : volume W < ⊤ := hWc.measure_lt_top
   have hc0 : ((x, s) : Vec3 × ℝ) ∈ W := ⟨by
-    show vec3EuclideanNorm (x - x) ≤ ρ; rw [sub_self, vec3EuclideanNorm_zero]; exact hρ.le,
+    change vec3EuclideanNorm (x - x) ≤ ρ; rw [sub_self, vec3EuclideanNorm_zero]; exact hρ.le,
     by have := sq_nonneg ρ; linarith only [this], le_rfl⟩
   have hwc : ContinuousOn (fun z : Vec3 × ℝ => w z) O := hw.continuousOn
   have hdwc := continuousOn_spatialPartial_of_isOpen hO hw i
@@ -302,7 +302,7 @@ theorem HB2c_commutator_slice_ibp {w : ParabolicPoint → ℝ} {O : Set Paraboli
   have hWm : MeasurableSet W := hWc.isClosed.measurableSet
   have hWfin : volume W < ⊤ := hWc.measure_lt_top
   have hc0 : ((x, s) : Vec3 × ℝ) ∈ W := ⟨by
-    show vec3EuclideanNorm (x - x) ≤ ρ; rw [sub_self, vec3EuclideanNorm_zero]; exact hρ.le,
+    change vec3EuclideanNorm (x - x) ≤ ρ; rw [sub_self, vec3EuclideanNorm_zero]; exact hρ.le,
     by have := sq_nonneg ρ; linarith only [this], le_rfl⟩
   have hwc : ContinuousOn (fun z : Vec3 × ℝ => w z) O := hw.continuousOn
   obtain ⟨CW, hCW⟩ := hWc.exists_bound_of_continuousOn (hwc.mono hwin)
@@ -427,7 +427,7 @@ theorem HB2c_commutator_slice_ibp {w : ParabolicPoint → ℝ} {O : Set Paraboli
             heatKernel (x - z.1) (s - z.2) * spatialSecondPartial (serrinCutoff x s ρ) i i z) *
             w z)) :=
     setIntegral_congr_fun hUm hpointwise
-  show ∫ z in U, heatKernel (x - z.1) (s - z.2) *
+  change ∫ z in U, heatKernel (x - z.1) (s - z.2) *
       (w z * (timePartial (serrinCutoff x s ρ) z -
           ∑ i, spatialSecondPartial (serrinCutoff x s ρ) i i z) -
         2 * ∑ i, spatialPartial (serrinCutoff x s ρ) i z * spatialPartial w i z) =

@@ -91,7 +91,7 @@ theorem cutoffZoomV_eqOn_ball {h : ℝ} {zc : ℕ → ℝ} {ζ : ℝ} (hzc : ∀
     Set.EqOn (cutoffZoomV h zc hzc hζ u lam hlam0 n)
       (fun q : ℝ × ℝ => zoomV (lam n) h (zc n) u (q, -1)) {q | ‖q‖ ≤ r} := by
   intro q hq
-  show cutoffBump h zc hzc hζ (lam n) (hlam0 n) n q * zoomV (lam n) h (zc n) u (q, -1) = _
+  change cutoffBump h zc hzc hζ (lam n) (hlam0 n) n q * zoomV (lam n) h (zc n) u (q, -1) = _
   rw [hr q hq, one_mul]
 
 theorem cutoffZoomW_eqOn_ball {h : ℝ} {zc : ℕ → ℝ} {ζ : ℝ} (hzc : ∀ n, |zc n| ≤ ζ) (hζ : ζ < 1)
@@ -100,7 +100,7 @@ theorem cutoffZoomW_eqOn_ball {h : ℝ} {zc : ℕ → ℝ} {ζ : ℝ} (hzc : ∀
     Set.EqOn (cutoffZoomW h zc hzc hζ u lam hlam0 n)
       (fun q : ℝ × ℝ => zoomW (lam n) h (zc n) u (q, -1)) {q | ‖q‖ ≤ r} := by
   intro q hq
-  show cutoffBump h zc hzc hζ (lam n) (hlam0 n) n q * zoomW (lam n) h (zc n) u (q, -1) = _
+  change cutoffBump h zc hzc hζ (lam n) (hlam0 n) n q * zoomW (lam n) h (zc n) u (q, -1) = _
   rw [hr q hq, one_mul]
 
 /-! ### Global smoothness -/
@@ -184,7 +184,7 @@ theorem cutoffZoomV_axis_eq_zero {h : ℝ} (hh0 : 0 ≤ h) {zc : ℕ → ℝ} {�
     refine hsafe ?_
     rw [mem_closedBall, dist_eq_norm, sub_zero]
     simpa using (cutoffBump h zc hzc hζ (lam n) (hlam0 n) n).rOut_pos.le
-  show cutoffBump h zc hzc hζ (lam n) (hlam0 n) n (0, 0) *
+  change cutoffBump h zc hzc hζ (lam n) (hlam0 n) n (0, 0) *
       zoomV (lam n) h (zc n) u ((0, 0), (-1 : ℝ)) = 0
   rw [hzero, mul_zero]
 

@@ -160,7 +160,7 @@ theorem integral_partialLaplacian_mul_eq_neg_integral_gradPair_mul
     intro i
     dsimp [A]
     by_cases hi : (i : ℕ) < d
-    · simp [hi]
+    · simp only [ite_eq_left hi]
       have h_cdiff : ContDiff ℝ (⊤ : ℕ∞) (fun x : Vec m =>
           fderiv ℝ (fun y : Vec m => φ (y, τ)) x (basisVec i)) :=
         contDiff_gradPair_of_contDiff hφ i
@@ -201,7 +201,7 @@ theorem integral_partialLaplacian_mul_eq_neg_integral_gradPair_mul
           gradPair m φ (x, τ) (basisVec i) * gradPair m ψ (x, τ) (basisVec i) else 0 := by
     dsimp [A]
     by_cases hi : (i : ℕ) < d
-    · simp [hi]
+    · simp only [ite_eq_left hi]
       simpa [gradPair] using integral_gradPair_deriv_mul_eq_neg_integral_gradPair_mul hφ hψ hφsupp i
     · simp [hi]
   have h_int_gradPair_prod (i : Fin m) : Integrable (fun x : Vec m =>
@@ -209,7 +209,7 @@ theorem integral_partialLaplacian_mul_eq_neg_integral_gradPair_mul
         else 0)
       (μ := volume) := by
     by_cases hi : (i : ℕ) < d
-    · simp [hi]
+    · simp only [ite_eq_left hi]
       have h_cont : Continuous (fun x : Vec m =>
           gradPair m φ (x, τ) (basisVec i) * gradPair m ψ (x, τ) (basisVec i)) :=
         ((contDiff_gradPair_of_contDiff hφ i).continuous.mul

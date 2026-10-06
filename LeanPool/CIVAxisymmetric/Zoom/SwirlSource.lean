@@ -70,7 +70,7 @@ theorem zoomPoint_segment_mem (lam h zc : ℝ) (hlam : 0 < lam) {p : (ℝ × ℝ
       _ = (lam * p.1.1) ^ 2 := by simp
   have hlam' : 0 ≤ lam := hlam.le
   refine ⟨?_, htime⟩
-  show (lam * (s * p.1.1)) ^ 2 + (zc + lam ^ (1 - 2 * h) * p.1.2) ^ 2 < 1
+  change (lam * (s * p.1.1)) ^ 2 + (zc + lam ^ (1 - 2 * h) * p.1.2) ^ 2 < 1
   nlinarith only [hsq, hball]
 
 /-- The radial-segment form of `zoomPoint_segment_mem`: every `s` between `0` and the radius

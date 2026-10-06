@@ -108,9 +108,9 @@ theorem radialQuotient_eq_integral (u : ParabolicPoint → Vec3) (t : ℝ)
     (haxi : IsAxisymmetricOn u unitCylinder) (ht : t ∈ Set.Ioo (-1 : ℝ) 0)
     (x₁ x₃ : ℝ) (hx : x₁ ^ 2 + x₃ ^ 2 < 1) :
     radialQuotient u (meridional x₁ x₃, t) =
-      ∫ s in (0:ℝ)..1, spatialPartial (fun w => u w 0) 0 (meridional (s * x₁) x₃, t) := by
+      ∫ s in (0 : ℝ)..1, spatialPartial (fun w => u w 0) 0 (meridional (s * x₁) x₃, t) := by
   have hx3 : |x₃| < 1 := (sq_lt_one_iff_abs_lt_one x₃).mp (by nlinarith only [hx, sq_nonneg x₁])
-  have hderiv : ∀ s ∈ Set.uIcc (0:ℝ) 1,
+  have hderiv : ∀ s ∈ Set.uIcc (0 : ℝ) 1,
       HasDerivAt (fun s : ℝ => u (meridional (s * x₁) x₃, t) 0)
         (x₁ * spatialPartial (fun w => u w 0) 0 (meridional (s * x₁) x₃, t)) s := by
     intro s hs
@@ -131,7 +131,7 @@ theorem radialQuotient_eq_integral (u : ParabolicPoint → Vec3) (t : ℝ)
     have hcont := continuousOn_spatialPartial_axial_component u t hu ht 0 0
     have hpath : Continuous (fun s : ℝ => meridional (s * x₁) x₃) := by
       unfold meridional; fun_prop
-    have hmaps : Set.MapsTo (fun s : ℝ => meridional (s * x₁) x₃) (Set.uIcc (0:ℝ) 1)
+    have hmaps : Set.MapsTo (fun s : ℝ => meridional (s * x₁) x₃) (Set.uIcc (0 : ℝ) 1)
         (vec3Ball (0 : Vec3) 1) := by
       intro s hs
       rw [Set.uIcc_of_le (by norm_num)] at hs
@@ -160,34 +160,34 @@ theorem abs_radialQuotient_le_of_segment_bound (u : ParabolicPoint → Vec3) (t 
     (hu : ContDiffOn ℝ (⊤ : ℕ∞) (fun z : Vec3 × ℝ => u z) unitCylinder)
     (haxi : IsAxisymmetricOn u unitCylinder) (ht : t ∈ Set.Ioo (-1 : ℝ) 0)
     (x₁ x₃ M : ℝ) (hx : x₁ ^ 2 + x₃ ^ 2 < 1)
-    (hM : ∀ s ∈ Set.Icc (0:ℝ) 1,
+    (hM : ∀ s ∈ Set.Icc (0 : ℝ) 1,
       |spatialPartial (fun w => u w 0) 0 (meridional (s * x₁) x₃, t)| ≤ M) :
     |radialQuotient u (meridional x₁ x₃, t)| ≤ M := by
   rw [radialQuotient_eq_integral u t hu haxi ht x₁ x₃ hx]
   have hbound := intervalIntegral.norm_integral_le_of_norm_le_const
-    (a := (0:ℝ)) (b := 1) (C := M)
+    (a := (0 : ℝ)) (b := 1) (C := M)
     (f := fun s => spatialPartial (fun w => u w 0) 0 (meridional (s * x₁) x₃, t))
     (fun s hs => by
-      rw [uIoc_of_le (show (0:ℝ) ≤ 1 by norm_num)] at hs
+      rw [uIoc_of_le (show (0 : ℝ) ≤ 1 by norm_num)] at hs
       simpa [Real.norm_eq_abs] using hM s ⟨hs.1.le, hs.2⟩)
   simpa [Real.norm_eq_abs] using hbound
 
 /-! ### Second partial derivatives along the meridional segment -/
 
-private lemma sq_le_of_mem_uIcc_zero {x₁ s : ℝ} (hs : s ∈ Set.uIcc (0:ℝ) x₁) : s ^ 2 ≤ x₁ ^ 2 := by
-  rcases le_total (0:ℝ) x₁ with h | h
+private lemma sq_le_of_mem_uIcc_zero {x₁ s : ℝ} (hs : s ∈ Set.uIcc (0 : ℝ) x₁) : s ^ 2 ≤ x₁ ^ 2 := by
+  rcases le_total (0 : ℝ) x₁ with h | h
   · rw [Set.uIcc_of_le h] at hs
     nlinarith only [hs.1, hs.2]
   · rw [Set.uIcc_of_ge h] at hs
     nlinarith only [hs.1, hs.2]
 
 private lemma meridional_shift_mem_vec3Ball {x₁ x₃ s : ℝ} (hx : x₁ ^ 2 + x₃ ^ 2 < 1)
-    (hs : s ∈ Set.uIcc (0:ℝ) x₁) : meridional s x₃ ∈ vec3Ball (0 : Vec3) 1 := by
+    (hs : s ∈ Set.uIcc (0 : ℝ) x₁) : meridional s x₃ ∈ vec3Ball (0 : Vec3) 1 := by
   have hs2 := sq_le_of_mem_uIcc_zero hs
   rw [mem_vec3Ball, sub_zero]
   unfold vec3EuclideanNorm
-  simp [meridional, Fin.sum_univ_three]
-  have hpos : (0:ℝ) ≤ s ^ 2 + x₃ ^ 2 := by positivity
+  simp only [meridional, Fin.sum_univ_three]
+  have hpos : (0 : ℝ) ≤ s ^ 2 + x₃ ^ 2 := by positivity
   rw [Real.sqrt_lt hpos (by norm_num)]
   nlinarith only [hs2, hx]
 
@@ -208,20 +208,20 @@ theorem abs_spatialPartial_two_zero_div_le_of_segment_bound (u : ParabolicPoint 
     (hu : ContDiffOn ℝ (⊤ : ℕ∞) (fun z : Vec3 × ℝ => u z) unitCylinder)
     (haxi : IsAxisymmetricOn u unitCylinder) (ht : t ∈ Set.Ioo (-1 : ℝ) 0)
     (x₁ x₃ M : ℝ) (hx : x₁ ^ 2 + x₃ ^ 2 < 1) (hx1 : x₁ ≠ 0)
-    (hM : ∀ a ∈ Set.uIcc (0:ℝ) x₁,
+    (hM : ∀ a ∈ Set.uIcc (0 : ℝ) x₁,
       |spatialSecondPartial (fun w => u w 0) 2 0 (meridional a x₃, t)| ≤ M) :
     |spatialPartial (fun w => u w 0) 2 (meridional x₁ x₃, t) / x₁| ≤ M := by
   have hu1 : ContDiffOn ℝ (1 : ℕ∞) (fun z : Vec3 × ℝ => u z) unitCylinder :=
     hu.of_le (by exact_mod_cast le_top)
   have hmem0 : ((meridional 0 x₃, t) : ParabolicPoint) ∈ unitCylinder :=
     ⟨meridional_shift_mem_vec3Ball hx Set.left_mem_uIcc, ht⟩
-  have hg0 : spatialPartial (fun w => u w 0) 2 (meridional (0:ℝ) x₃, t) = 0 :=
+  have hg0 : spatialPartial (fun w => u w 0) 2 (meridional (0 : ℝ) x₃, t) = 0 :=
     spatialPartial_two_zero_axis haxi hu1 hmem0 (meridional_apply_zero 0 x₃) (by simp [meridional])
-  have hd : ∀ s ∈ Set.uIcc (0:ℝ) x₁,
+  have hd : ∀ s ∈ Set.uIcc (0 : ℝ) x₁,
       DifferentiableAt ℝ (fun a : ℝ => spatialPartial (fun w => u w 0) 2 (meridional a x₃, t)) s :=
     fun s hs => (hasDerivAt_second_partial_segment u t hu ht 0 2 x₃ s
       (meridional_shift_mem_vec3Ball hx hs)).differentiableAt
-  have hMd : ∀ s ∈ Set.uIcc (0:ℝ) x₁,
+  have hMd : ∀ s ∈ Set.uIcc (0 : ℝ) x₁,
       |deriv (fun a : ℝ => spatialPartial (fun w => u w 0) 2 (meridional a x₃, t)) s| ≤ M :=
     fun s hs => by
       rw [(hasDerivAt_second_partial_segment u t hu ht 0 2 x₃ s
@@ -237,20 +237,20 @@ theorem abs_spatialPartial_zero_two_div_le_of_segment_bound (u : ParabolicPoint 
     (hu : ContDiffOn ℝ (⊤ : ℕ∞) (fun z : Vec3 × ℝ => u z) unitCylinder)
     (haxi : IsAxisymmetricOn u unitCylinder) (ht : t ∈ Set.Ioo (-1 : ℝ) 0)
     (x₁ x₃ M : ℝ) (hx : x₁ ^ 2 + x₃ ^ 2 < 1) (hx1 : x₁ ≠ 0)
-    (hM : ∀ a ∈ Set.uIcc (0:ℝ) x₁,
+    (hM : ∀ a ∈ Set.uIcc (0 : ℝ) x₁,
       |spatialSecondPartial (fun w => u w 2) 0 0 (meridional a x₃, t)| ≤ M) :
     |spatialPartial (fun w => u w 2) 0 (meridional x₁ x₃, t) / x₁| ≤ M := by
   have hu1 : ContDiffOn ℝ (1 : ℕ∞) (fun z : Vec3 × ℝ => u z) unitCylinder :=
     hu.of_le (by exact_mod_cast le_top)
   have hmem0 : ((meridional 0 x₃, t) : ParabolicPoint) ∈ unitCylinder :=
     ⟨meridional_shift_mem_vec3Ball hx Set.left_mem_uIcc, ht⟩
-  have hg0 : spatialPartial (fun w => u w 2) 0 (meridional (0:ℝ) x₃, t) = 0 :=
+  have hg0 : spatialPartial (fun w => u w 2) 0 (meridional (0 : ℝ) x₃, t) = 0 :=
     spatialPartial_zero_two_axis haxi hu1 hmem0 (meridional_apply_zero 0 x₃) (by simp [meridional])
-  have hd : ∀ s ∈ Set.uIcc (0:ℝ) x₁,
+  have hd : ∀ s ∈ Set.uIcc (0 : ℝ) x₁,
       DifferentiableAt ℝ (fun a : ℝ => spatialPartial (fun w => u w 2) 0 (meridional a x₃, t)) s :=
     fun s hs => (hasDerivAt_second_partial_segment u t hu ht 2 0 x₃ s
       (meridional_shift_mem_vec3Ball hx hs)).differentiableAt
-  have hMd : ∀ s ∈ Set.uIcc (0:ℝ) x₁,
+  have hMd : ∀ s ∈ Set.uIcc (0 : ℝ) x₁,
       |deriv (fun a : ℝ => spatialPartial (fun w => u w 2) 0 (meridional a x₃, t)) s| ≤ M :=
     fun s hs => by
       rw [(hasDerivAt_second_partial_segment u t hu ht 2 0 x₃ s
@@ -353,19 +353,19 @@ theorem meridionalQuantity_reflect {u : ParabolicPoint → Vec3}
 `tendsto_zoom_lengths`, whose exponents are the fixed `1/2`, `2h` and `1 - 2h`, this holds
 for an arbitrary positive `h`. -/
 theorem tendsto_neg_rpow_nhdsWithin_zero {h : ℝ} (hh : 0 < h) :
-    Filter.Tendsto (fun t : ℝ => (-t) ^ h) (nhdsWithin (0:ℝ) (Set.Iio 0)) (nhds 0) := by
+    Filter.Tendsto (fun t : ℝ => (-t) ^ h) (nhdsWithin (0 : ℝ) (Set.Iio 0)) (nhds 0) := by
   have h_cont : ContinuousAt (fun x : ℝ => x ^ h) 0 :=
     Real.continuousAt_rpow_const (x := 0) (q := h) (Or.inr hh.le)
-  have h_neg_tendsto : Filter.Tendsto (fun t : ℝ => -t) (nhdsWithin (0:ℝ) (Set.Iio 0)) (nhds 0)
+  have h_neg_tendsto : Filter.Tendsto (fun t : ℝ => -t) (nhdsWithin (0 : ℝ) (Set.Iio 0)) (nhds 0)
     := by
-    have hc : Filter.Tendsto (fun t : ℝ => -t) (nhds (0:ℝ)) (nhds 0) := by
+    have hc : Filter.Tendsto (fun t : ℝ => -t) (nhds (0 : ℝ)) (nhds 0) := by
       have := (continuous_neg (G := ℝ)).continuousAt (x := 0)
       simpa using this.tendsto
     exact hc.mono_left nhdsWithin_le_nhds
-  have h_rpow_tendsto : Filter.Tendsto (fun x : ℝ => x ^ h) (nhds (0:ℝ)) (nhds ((0:ℝ) ^ h)) :=
+  have h_rpow_tendsto : Filter.Tendsto (fun x : ℝ => x ^ h) (nhds (0 : ℝ)) (nhds ((0 : ℝ) ^ h)) :=
     h_cont.tendsto
   have h_zero : (0 : ℝ) ^ h = 0 := Real.zero_rpow (ne_of_gt hh)
-  have h_rpow_tendsto0 : Filter.Tendsto (fun x : ℝ => x ^ h) (nhds (0:ℝ)) (nhds 0) := by
+  have h_rpow_tendsto0 : Filter.Tendsto (fun x : ℝ => x ^ h) (nhds (0 : ℝ)) (nhds 0) := by
     simpa [h_zero] using h_rpow_tendsto
   exact h_rpow_tendsto0.comp h_neg_tendsto
 
@@ -416,7 +416,7 @@ theorem exists_seq_three_terms {ρ h C : ℝ} {u : ParabolicPoint → Vec3}
   have hQ : ∀ n, meridionalQuantity u (meridional (|x₁ n|) (x₃ n), t n)
       = meridionalQuantity u (meridional (x₁ n) (x₃ n), t n) := by
     intro n
-    rcases le_total (0:ℝ) (x₁ n) with hpos | hneg
+    rcases le_total (0 : ℝ) (x₁ n) with hpos | hneg
     · rw [abs_of_nonneg hpos]
     · rw [abs_of_nonpos hneg]
       have hz0 : ((meridional (-(x₁ n)) (x₃ n) : Vec3), t n) ∈ unitCylinder := by
@@ -438,7 +438,7 @@ theorem exists_seq_three_terms {ρ h C : ℝ} {u : ParabolicPoint → Vec3}
     unfold meridionalQuantity at hineq'
     have hb' := hbound n
     nlinarith only [hineq', hb']
-  have ht_within : Filter.Tendsto t Filter.atTop (nhdsWithin (0:ℝ) (Set.Iio 0)) :=
+  have ht_within : Filter.Tendsto t Filter.atTop (nhdsWithin (0 : ℝ) (Set.Iio 0)) :=
     tendsto_nhdsWithin_of_tendsto_nhds_of_eventually_within t ht_tendsto
       (Filter.Eventually.of_forall (fun n => (ht_mem n).2))
   have h_rpow_tendsto : Filter.Tendsto (fun n => C * (-(t n)) ^ h) Filter.atTop (nhds 0) := by
@@ -446,7 +446,7 @@ theorem exists_seq_three_terms {ρ h C : ℝ} {u : ParabolicPoint → Vec3}
     have hC0 : Filter.Tendsto (fun n : ℕ => C * (-(t n)) ^ h) Filter.atTop (nhds (C * 0)) :=
       hcomp.const_mul C
     simpa using hC0
-  have hc₀half : (0:ℝ) < c₀ / 2 := by linarith only [hc₀]
+  have hc₀half : (0 : ℝ) < c₀ / 2 := by linarith only [hc₀]
   have hevent := h_rpow_tendsto.eventually_lt_const hc₀half
   have hfinal : ∀ᶠ n in Filter.atTop, c₀ / 2 < (-(t n)) *
       (|spatialPartial (fun w => u w 0) 0 (meridional (|x₁ n|) (x₃ n), t n)| +

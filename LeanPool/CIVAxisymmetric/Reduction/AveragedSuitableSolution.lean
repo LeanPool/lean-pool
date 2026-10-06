@@ -18,9 +18,9 @@ public import LeanPool.CIVAxisymmetric.Reduction.AveragedForceBound
 
 For an axisymmetric suitable weak solution on `Q`, smooth there, averaging the momentum
 equation over the rotations about the axis leaves the velocity terms unchanged and replaces the
-pressure and the force by their angular means `π̄` and `f̄ = 𝒫 f` (proof of `thm:main`). The pair
-`(u, π̄)` is again suitable with the axisymmetric force `f̄`: the classical equations give
-`∇π̄ - ∇π = f̄ - f` on `Q`, so this is a smooth change of gauge. The closure lemma
+pressure and the force by their angular means `π_bar` and `f_bar = 𝒫 f` (proof of `thm:main`). The pair
+`(u, π_bar)` is again suitable with the axisymmetric force `f_bar`: the classical equations give
+`∇π_bar - ∇π = f_bar - f` on `Q`, so this is a smooth change of gauge. The closure lemma
 `lem:aniso:closure` applied to the averaged triple then gives regularity at the origin from the
 smallness `eq:aniso:closure:small` at one radius, with no symmetry assumed on the force; this is
 the proof of `thm:aniso:main` from `prop:aniso:small`.
@@ -38,7 +38,7 @@ noncomputable section
 namespace CIV
 
 /-- The averaged system is suitable: for an axisymmetric suitable weak solution on `Q` whose
-velocity, pressure and force are smooth there, `(u, π̄)` is a suitable weak solution with the
+velocity, pressure and force are smooth there, `(u, π_bar)` is a suitable weak solution with the
 force `𝒫 f`, with the same weak gradient. -/
 theorem isSuitableWeakSolution_angularMean {q : ℝ} {u : ParabolicPoint → Vec3}
     {Du : ParabolicPoint → Fin 3 → Vec3} {p : ParabolicPoint → ℝ} {f : ParabolicPoint → Vec3}
@@ -61,7 +61,7 @@ theorem isSuitableWeakSolution_angularMean {q : ℝ} {u : ParabolicPoint → Vec
 /-- `thm:aniso:main` from the smallness at one radius: an axisymmetric suitable weak solution on
 `Q`, smooth there, with a force satisfying `eq:interior:force:c-two` (no symmetry of the force is
 assumed) and `lim_{t↑0} (-t) G_{ρ₀}(t) = 0` for some `ρ₀ ∈ (0, 1)`, is regular at the origin.
-The closure lemma is applied to the averaged triple `(u, π̄, 𝒫 f)`. -/
+The closure lemma is applied to the averaged triple `(u, π_bar, 𝒫 f)`. -/
 theorem boundedNearOrigin_of_meridionalSmallness_averaged (q : ℝ)
     (u : ParabolicPoint → Vec3) (Du : ParabolicPoint → Fin 3 → Vec3)
     (p : ParabolicPoint → ℝ) (f : ParabolicPoint → Vec3)

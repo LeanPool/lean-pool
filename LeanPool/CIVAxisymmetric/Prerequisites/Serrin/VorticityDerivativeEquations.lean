@@ -87,7 +87,7 @@ theorem heat_divergence_equation_spatialPartial {w : ParabolicPoint → ℝ}
     have h1 : spatialPartial (fun v => spatialSecondPartial w m m v) j z =
         spatialSecondPartial (fun v => spatialPartial w m v) m j z := rfl
     rw [h1, spatialSecondPartial_comm (hsp hw m) hz m j]
-    show spatialPartial (fun v => spatialPartial (fun v' => spatialPartial w m v') j v) m z =
+    change spatialPartial (fun v => spatialPartial (fun v' => spatialPartial w m v') j v) m z =
       spatialPartial (fun v => spatialPartial (fun v' => spatialPartial w j v') m v) m z
     exact spatialPartial_congr_of_eqOn_spaceTimeSet hΩ hI
       (fun v hv => spatialSecondPartial_comm hw hv m j) hz m

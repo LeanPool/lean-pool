@@ -64,7 +64,7 @@ theorem axisDeriv_iterate_mul_eqOn_antidiagonal {G H : Vec3 → ℝ} {s : Set Ve
       apply HasFDerivAt.fun_sum
       intro ij _
       exact ((hd G hG ij.1 y hy).mul (hd H hH ij.2 y hy)).const_mul _
-    show fderiv ℝ _ y (basisVec j) = _
+    change fderiv ℝ _ y (basisVec j) = _
     rw [hsum.fderiv]
     simp only [FunLike.coe_sum, Finset.sum_apply, FunLike.coe_smul,
       Pi.smul_apply, _root_.add_apply, smul_eq_mul]
@@ -120,7 +120,7 @@ theorem axisDeriv_iterate_finset_sum_eqOn {ι : Type*} (u : Finset ι) {F : ι �
       intro k _
       exact ((((contDiffOn_axisDeriv_iterate hs (hF k) j n).differentiableOn (by simp)) y hy
         |>.differentiableAt (hs.mem_nhds hy)).hasFDerivAt).const_mul _
-    show fderiv ℝ _ y (basisVec j) = _
+    change fderiv ℝ _ y (basisVec j) = _
     rw [hsum.fderiv]
     simp only [FunLike.coe_sum, Finset.sum_apply, FunLike.coe_smul, Pi.smul_apply, smul_eq_mul]
     refine Finset.sum_congr rfl fun k _ => ?_

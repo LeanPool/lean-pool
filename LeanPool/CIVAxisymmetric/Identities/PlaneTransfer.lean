@@ -69,9 +69,9 @@ theorem exists_rotZ_meridional (x : Vec3) :
   rw [rotZ_meridional]
   funext i
   fin_cases i
-  · show x 0 = Real.cos (Complex.arg ⟨x 0, x 1⟩) * ‖(⟨x 0, x 1⟩ : ℂ)‖
+  · change x 0 = Real.cos (Complex.arg ⟨x 0, x 1⟩) * ‖(⟨x 0, x 1⟩ : ℂ)‖
     rw [mul_comm]; exact hcos.symm
-  · show x 1 = Real.sin (Complex.arg ⟨x 0, x 1⟩) * ‖(⟨x 0, x 1⟩ : ℂ)‖
+  · change x 1 = Real.sin (Complex.arg ⟨x 0, x 1⟩) * ‖(⟨x 0, x 1⟩ : ℂ)‖
     rw [mul_comm]; exact hsin.symm
   · rfl
 
@@ -157,7 +157,7 @@ theorem circulation_rotZ_invariant {u : ParabolicPoint → Vec3}
     (h : IsAxisymmetricOn u unitCylinder) {z : ParabolicPoint} (hz : z ∈ unitCylinder) (φ : ℝ) :
     circulation u (rotZ φ z.1, z.2) = circulation u z := by
   have hval : u ((rotZ φ z.1 : Vec3), z.2) = rotZ φ (u z) := h.apply_rotZ φ hz
-  show (rotZ φ z.1 : Vec3) 0 * u ((rotZ φ z.1 : Vec3), z.2) 1
+  change (rotZ φ z.1 : Vec3) 0 * u ((rotZ φ z.1 : Vec3), z.2) 1
       - (rotZ φ z.1 : Vec3) 1 * u ((rotZ φ z.1 : Vec3), z.2) 0
     = z.1 0 * u z 1 - z.1 1 * u z 0
   rw [hval, rotZ_apply_zero, rotZ_apply_one, rotZ_apply_zero, rotZ_apply_one]
@@ -186,7 +186,7 @@ theorem swirlCoeffAt_rotZ_meridional {u : ParabolicPoint → Vec3}
       = x₁ * u (meridional x₁ x₃, t) 1 := by
     have hrot := circulation_rotZ_invariant h (z := ((meridional x₁ x₃ : Vec3), t)) hz' φ
     rw [hrot]
-    show (meridional x₁ x₃ : Vec3) 0 * u (meridional x₁ x₃, t) 1
+    change (meridional x₁ x₃ : Vec3) 0 * u (meridional x₁ x₃, t) 1
         - (meridional x₁ x₃ : Vec3) 1 * u (meridional x₁ x₃, t) 0
       = x₁ * u (meridional x₁ x₃, t) 1
     simp [meridional]
@@ -198,7 +198,7 @@ theorem swirlCoeffAt_rotZ_meridional {u : ParabolicPoint → Vec3}
     rw [hm0, hm1]
     have hpyth := Real.cos_sq_add_sin_sq φ
     linear_combination x₁ ^ 2 * hpyth
-  show circulation u ((rotZ φ (meridional x₁ x₃) : Vec3), t)
+  change circulation u ((rotZ φ (meridional x₁ x₃) : Vec3), t)
       / Real.sqrt ((rotZ φ (meridional x₁ x₃) : Vec3) 0 ^ 2
         + (rotZ φ (meridional x₁ x₃) : Vec3) 1 ^ 2)
     = u (meridional x₁ x₃, t) 1
@@ -337,7 +337,7 @@ private lemma curlComp_zero_rotZ_eq {u : ParabolicPoint → Vec3}
       = Real.cos φ * curlComp u 0 (x, t) - Real.sin φ * curlComp u 1 (x, t) := by
   have hz' : ((rotZ φ x, t) : ParabolicPoint) ∈ unitCylinder :=
     (rotZ_mem_unitCylinder_iff φ x t).2 hz
-  show spatialPartial (fun w => u w 2) 1 (rotZ φ x, t)
+  change spatialPartial (fun w => u w 2) 1 (rotZ φ x, t)
         - spatialPartial (fun w => u w 1) 2 (rotZ φ x, t)
       = Real.cos φ * (spatialPartial (fun w => u w 2) 1 (x, t)
           - spatialPartial (fun w => u w 1) 2 (x, t))
@@ -358,7 +358,7 @@ private lemma curlComp_one_rotZ_eq {u : ParabolicPoint → Vec3}
       = Real.sin φ * curlComp u 0 (x, t) + Real.cos φ * curlComp u 1 (x, t) := by
   have hz' : ((rotZ φ x, t) : ParabolicPoint) ∈ unitCylinder :=
     (rotZ_mem_unitCylinder_iff φ x t).2 hz
-  show spatialPartial (fun w => u w 0) 2 (rotZ φ x, t)
+  change spatialPartial (fun w => u w 0) 2 (rotZ φ x, t)
         - spatialPartial (fun w => u w 2) 0 (rotZ φ x, t)
       = Real.sin φ * (spatialPartial (fun w => u w 2) 1 (x, t)
           - spatialPartial (fun w => u w 1) 2 (x, t))
@@ -378,7 +378,7 @@ private lemma curlComp_two_rotZ_eq {u : ParabolicPoint → Vec3}
     curlComp u 2 (rotZ φ x, t) = curlComp u 2 (x, t) := by
   have hz' : ((rotZ φ x, t) : ParabolicPoint) ∈ unitCylinder :=
     (rotZ_mem_unitCylinder_iff φ x t).2 hz
-  show spatialPartial (fun w => u w 1) 0 (rotZ φ x, t)
+  change spatialPartial (fun w => u w 1) 0 (rotZ φ x, t)
         - spatialPartial (fun w => u w 0) 1 (rotZ φ x, t)
       = spatialPartial (fun w => u w 1) 0 (x, t) - spatialPartial (fun w => u w 0) 1 (x, t)
   rw [spatialPartial_eq_fderiv_apply hu hz' 1 0, spatialPartial_eq_fderiv_apply hu hz' 0 1,
@@ -402,11 +402,11 @@ theorem curlVec_rotZ_eq {u : ParabolicPoint → Vec3}
       = rotZ φ (fun k : Fin 3 => curlComp u k (x, t)) := by
   funext i
   fin_cases i
-  · show curlComp u 0 (rotZ φ x, t) = rotZ φ (fun k : Fin 3 => curlComp u k (x, t)) 0
+  · change curlComp u 0 (rotZ φ x, t) = rotZ φ (fun k : Fin 3 => curlComp u k (x, t)) 0
     rw [curlComp_zero_rotZ_eq h hu hz φ, rotZ_apply_zero]
-  · show curlComp u 1 (rotZ φ x, t) = rotZ φ (fun k : Fin 3 => curlComp u k (x, t)) 1
+  · change curlComp u 1 (rotZ φ x, t) = rotZ φ (fun k : Fin 3 => curlComp u k (x, t)) 1
     rw [curlComp_one_rotZ_eq h hu hz φ, rotZ_apply_one]
-  · show curlComp u 2 (rotZ φ x, t) = rotZ φ (fun k : Fin 3 => curlComp u k (x, t)) 2
+  · change curlComp u 2 (rotZ φ x, t) = rotZ φ (fun k : Fin 3 => curlComp u k (x, t)) 2
     rw [curlComp_two_rotZ_eq h hu hz φ, rotZ_apply_two]
 
 /-! ### The vorticity as a vector field -/
@@ -500,7 +500,7 @@ theorem stretching_rotZ_invariant {u : ParabolicPoint → Vec3}
   have hz' : ((rotZ φ x, t) : ParabolicPoint) ∈ unitCylinder :=
     (rotZ_mem_unitCylinder_iff φ x t).2 hz
   rw [stretching_eq_dot hu hz', stretching_eq_dot hu hz]
-  show ∑ i : Fin 3, (fun k : Fin 3 => curlComp u k (rotZ φ x, t)) i
+  change ∑ i : Fin 3, (fun k : Fin 3 => curlComp u k (rotZ φ x, t)) i
         * fderiv ℝ (fun y : Vec3 => u (y, t)) (rotZ φ x)
             (fun k : Fin 3 => curlComp u k (rotZ φ x, t)) i
       = ∑ i : Fin 3, curlComp u i (x, t)

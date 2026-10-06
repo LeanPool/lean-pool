@@ -171,7 +171,7 @@ theorem gkt_topCylinder_subset_unitCylinder {r : ℝ} (hr : 0 < r) (hr1 : r < 1)
   rintro ⟨x, t⟩ ⟨hx, ht⟩
   refine ⟨?_, ?_, ht.2⟩
   · have hx' : vec3EuclideanNorm (x - 0) < r := hx
-    show vec3EuclideanNorm (x - 0) < 1
+    change vec3EuclideanNorm (x - 0) < 1
     linarith only [hx', hr1]
   · have hr2 : r ^ 2 < 1 := by nlinarith only [hr, hr1]
     linarith only [ht.1, hr2]

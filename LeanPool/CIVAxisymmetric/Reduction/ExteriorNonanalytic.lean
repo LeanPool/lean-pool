@@ -114,7 +114,7 @@ private theorem iterate_spatialPartial_eq_zero_of_eqOn_zero_ball {g : ParabolicP
       rw [Function.iterate_succ']
       rfl
     rw [hstep]
-    show fderiv ℝ (fun w : Vec3 => ((fun k => spatialPartial k i)^[m] g) (w, t)) y
+    change fderiv ℝ (fun w : Vec3 => ((fun k => spatialPartial k i)^[m] g) (w, t)) y
       (basisVec i) = 0
     have hev : (fun w : Vec3 => ((fun k => spatialPartial k i)^[m] g) (w, t))
         =ᶠ[𝓝 y] (fun _ : Vec3 => (0 : ℝ)) := by

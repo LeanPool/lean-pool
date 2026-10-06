@@ -544,7 +544,7 @@ theorem exists_subseq_tendstoUniformlyOn_of_modulus {X : Type*} [MetricSpace X]
     have hrw : dist ((fb n : ↥S → ℝ) x₀) ((fb n : ↥S → ℝ) x) = |f n (x₀ : X) - f n (x : X)| := by
       rw [hfbcoe]
       exact Real.dist_eq _ _
-    show dist ((fb n : ↥S → ℝ) x₀) ((fb n : ↥S → ℝ) x) < ε
+    change dist ((fb n : ↥S → ℝ) x₀) ((fb n : ↥S → ℝ) x) < ε
     rw [hrw]
     calc |f n (x₀ : X) - f n (x : X)| ≤ ε / 2 := hbound
       _ < ε := by linarith only [hε]
@@ -626,7 +626,7 @@ theorem exists_modulus_of_lipschitz_of_pairings (K : Set (ℝ × ℝ)) (hK : IsC
     rwa [Real.dist_eq] at hlt
   have hkey : Θ n p - Θ n q
       = (Θ n (p.1, p.2) - Θ n (q.1, p.2)) + (Θ n (q.1, p.2) - Θ n (q.1, q.2)) := by
-    show Θ n (p.1, p.2) - Θ n (q.1, q.2) = _
+    change Θ n (p.1, p.2) - Θ n (q.1, q.2) = _
     ring
   rw [hkey]
   calc |(Θ n (p.1, p.2) - Θ n (q.1, p.2)) + (Θ n (q.1, p.2) - Θ n (q.1, q.2))|
@@ -717,7 +717,7 @@ theorem exists_subseq_tendstoUniformlyOn_forall {X : Type*} (S : ℕ → Set X) 
         ≤ (Psi (n + 1)).1 ((rho (n + 1) (Psi (n + 1))).1 (n + 1)) := (Psi (n + 1)).2.monotone h2
     have h4 : (Psi (n + 1)).1 n < (Psi (n + 1)).1 (n + 1) :=
       (Psi (n + 1)).2 (Nat.lt_succ_self n)
-    show (Psi (n + 1)).1 n < (Psi (n + 1 + 1)).1 (n + 1)
+    change (Psi (n + 1)).1 n < (Psi (n + 1 + 1)).1 (n + 1)
     rw [h1]
     exact lt_of_lt_of_le h4 h3
   refine ⟨fun n => (Psi (n + 1)).1 n, hφmono,
@@ -734,7 +734,7 @@ theorem exists_subseq_tendstoUniformlyOn_forall {X : Type*} (S : ℕ → Set X) 
     have hstepN := hN (κ n) hNn
     intro x hx
     have h2 := hstepN x hx
-    show (w j (Psi j) x, f ((Psi (n + 1)).1 n) x) ∈ u
+    change (w j (Psi j) x, f ((Psi (n + 1)).1 n) x) ∈ u
     rw [hκeq n]
     exact h2
   refine hmain.congr_right fun x hx => ?_
@@ -745,11 +745,11 @@ theorem exists_subseq_tendstoUniformlyOn_forall {X : Type*} (S : ℕ → Set X) 
 /-! ### Exhaustion of the region by closed rectangles -/
 
 /-- The closed rectangles `[1/(j+1), j+1] × [-(j+1), j+1]` exhausting the open half-plane. -/
-@[expose] private def zoomRectangle (j : ℕ) : Set (ℝ × ℝ) :=
+private def zoomRectangle (j : ℕ) : Set (ℝ × ℝ) :=
   Icc (1 / ((j : ℝ) + 1)) ((j : ℝ) + 1) ×ˢ Icc (-((j : ℝ) + 1)) ((j : ℝ) + 1)
 
 /-- The closed time intervals `[-(j+1), -1]` exhausting `(-∞, -1]`. -/
-@[expose] private def zoomTimeInterval (j : ℕ) : Set ℝ := Icc (-((j : ℝ) + 1)) (-1)
+private def zoomTimeInterval (j : ℕ) : Set ℝ := Icc (-((j : ℝ) + 1)) (-1)
 
 private theorem isCompact_zoomRectangle (j : ℕ) : IsCompact (zoomRectangle j) :=
   isCompact_Icc.prod isCompact_Icc

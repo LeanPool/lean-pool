@@ -45,6 +45,104 @@ theorem sum_range_succ_eq_zero_add_last_add_Icc (g : ℕ → ℝ) {k : ℕ} (hk 
   rw [hset, Finset.sum_insert (by simp; omega)]
   ring
 
+private theorem sum_choose_weight_products (k : ℕ) (A : ℕ → ℝ) (Y κ : ℝ) :
+    let c : ℕ → ℝ := fun j => if j ≤ k then A j * κ ^ j else Y * κ ^ j
+    ∑ m ∈ Finset.range (k + 1), (k.choose m : ℝ) * (c m * c (k + 1 - m)) =
+      κ ^ (k + 1) * (A 0 * Y +
+        ∑ m ∈ Finset.Icc 1 k, (k.choose m : ℝ) * (A m * A (k + 1 - m))) := by
+  dsimp only
+  set c : ℕ → ℝ := fun j => if j ≤ k then A j * κ ^ j else Y * κ ^ j with hcdef
+  set V : ℝ := ∑ m ∈ Finset.Icc 1 k, (k.choose m : ℝ) * (A m * A (k + 1 - m)) with hV
+  rw [sum_range_succ_eq_zero_add_Icc, hV, mul_add, Finset.mul_sum]
+  have h0 : (k.choose 0 : ℝ) * (c 0 * c (k + 1 - 0)) = κ ^ (k + 1) * (A 0 * Y) := by
+    simp only [hcdef, ↓reduceIte, Nat.choose_zero_right, Nat.cast_one, one_mul, Nat.sub_zero,
+      Nat.zero_le k, Nat.not_succ_le_self k, pow_zero, mul_one]
+    ring
+  rw [h0]
+  congr 1
+  refine Finset.sum_congr rfl fun m hm => ?_
+  obtain ⟨hm1, hmk⟩ := Finset.mem_Icc.1 hm
+  simp only [hcdef, ↓reduceIte, hmk, (show k + 1 - m ≤ k by omega)]
+  have hpw : κ ^ m * κ ^ (k + 1 - m) = κ ^ (k + 1) := by
+    rw [← pow_add]; congr 1; omega
+  linear_combination (↑(k.choose m) * A m * A (k + 1 - m)) * hpw
+
+private theorem sum_choose_shifted_weight_products (k : ℕ) (hk : 1 ≤ k)
+    (A : ℕ → ℝ) (Y κ : ℝ) :
+    let c : ℕ → ℝ := fun j => if j ≤ k then A j * κ ^ j else Y * κ ^ j
+    ∑ m ∈ Finset.range (k + 1), (k.choose m : ℝ) * (c (m + 1) * c (k + 1 - m)) =
+      κ ^ (k + 2) * (2 * (A 1 * Y) +
+        ∑ m ∈ Finset.Icc 1 (k - 1), (k.choose m : ℝ) * (A (m + 1) * A (k + 1 - m))) := by
+  dsimp only
+  set c : ℕ → ℝ := fun j => if j ≤ k then A j * κ ^ j else Y * κ ^ j with hcdef
+  set P' : ℝ := ∑ m ∈ Finset.Icc 1 (k - 1), (k.choose m : ℝ) *
+    (A (m + 1) * A (k + 1 - m)) with hP'
+  rw [sum_range_succ_eq_zero_add_last_add_Icc _ hk, hP']
+  have h0 : (k.choose 0 : ℝ) * (c (0 + 1) * c (k + 1 - 0)) = κ ^ (k + 2) * (A 1 * Y) := by
+    simp only [hcdef, ↓reduceIte, Nat.choose_zero_right, Nat.cast_one, one_mul, Nat.sub_zero,
+      zero_add, hk, Nat.not_succ_le_self k]
+    ring
+  have hkk : (k.choose k : ℝ) * (c (k + 1) * c (k + 1 - k)) = κ ^ (k + 2) * (A 1 * Y) := by
+    simp only [hcdef, ↓reduceIte, Nat.choose_self, Nat.cast_one, one_mul,
+      show k + 1 - k = 1 by omega, hk, Nat.not_succ_le_self k]
+    ring
+  rw [h0, hkk]
+  have hmid : ∑ m ∈ Finset.Icc 1 (k - 1), (k.choose m : ℝ) *
+      (c (m + 1) * c (k + 1 - m)) =
+      ∑ m ∈ Finset.Icc 1 (k - 1), κ ^ (k + 2) * ((k.choose m : ℝ) *
+        (A (m + 1) * A (k + 1 - m))) := by
+    refine Finset.sum_congr rfl fun m hm => ?_
+    obtain ⟨hm1, hmk⟩ := Finset.mem_Icc.1 hm
+    simp only [hcdef, ↓reduceIte, (show m + 1 ≤ k by omega),
+      (show k + 1 - m ≤ k by omega)]
+    have hpw : κ ^ (m + 1) * κ ^ (k + 1 - m) = κ ^ (k + 2) := by
+      rw [← pow_add]; congr 1; omega
+    linear_combination (↑(k.choose m) * A (m + 1) * A (k + 1 - m)) * hpw
+  rw [hmid, ← Finset.mul_sum]
+  ring
+
+private theorem scalar_weight_inequalities (D ρ θ κ : ℝ) (k : ℕ)
+    (hD0 : 0 < D) (hD1 : D ≤ 1) (hθ : 0 < θ)
+    (hρeq : ρ = θ / ((k : ℝ) + 1) * D)
+    (hDκ : ∀ j : ℕ, j ≤ k + 2 → D ^ j * κ ^ j ≤ 2) :
+    D ^ (k + 1) * ρ ≤ θ / ((k : ℝ) + 1) ∧
+    D ^ (k + 1) * ρ * κ ^ (k + 1) ≤ 2 * (θ / ((k : ℝ) + 1)) ∧
+    D ^ (k + 1) * ρ * κ ^ (k + 2) ≤ 2 * (θ / ((k : ℝ) + 1)) ∧
+    D ^ (k + 1) * κ ^ k / ρ ≤ 2 * ((k : ℝ) + 1) / θ := by
+  have hθk : 0 ≤ θ / ((k : ℝ) + 1) := by positivity
+  constructor
+  · rw [hρeq]
+    have hDpow : D ^ (k + 1) * D ≤ 1 := by
+      rw [← pow_succ]; exact pow_le_one₀ hD0.le hD1
+    have h := mul_le_mul_of_nonneg_left hDpow hθk
+    linarith only [h]
+  constructor
+  · rw [hρeq]
+    have h1 := hDκ (k + 1) (by omega)
+    have h2 : D ^ (k + 1) * κ ^ (k + 1) * D ≤ 2 * 1 := by
+      have := mul_le_mul h1 hD1 hD0.le (by norm_num)
+      linarith only [this]
+    have h3 := mul_le_mul_of_nonneg_left h2 hθk
+    nlinarith only [h3]
+  constructor
+  · rw [hρeq]
+    have h1 := hDκ (k + 2) le_rfl
+    have hid : D ^ (k + 1) * (θ / ((k : ℝ) + 1) * D) * κ ^ (k + 2) =
+        θ / ((k : ℝ) + 1) * (D ^ (k + 2) * κ ^ (k + 2)) := by ring
+    rw [hid]
+    have := mul_le_mul_of_nonneg_left h1 hθk
+    linarith only [this]
+  · rw [hρeq]
+    have h1 := hDκ k (by omega)
+    have hid : D ^ (k + 1) * κ ^ k / (θ / ((k : ℝ) + 1) * D) =
+        ((k : ℝ) + 1) / θ * (D ^ k * κ ^ k) := by
+      field_simp
+      ring
+    rw [hid]
+    have := mul_le_mul_of_nonneg_left h1 (by positivity : (0 : ℝ) ≤ ((k : ℝ) + 1) / θ)
+    have htwo : ((k : ℝ) + 1) / θ * 2 = 2 * ((k : ℝ) + 1) / θ := by ring
+    linarith only [this, htwo]
+
 /-- The level transfer: from the weighted bounds `A j` at orders `j ≤ k` and a provisional
 bound `Y` at order `k + 1`, all at every depth, the order-`k + 1` weighted bound at every depth is
 at most `X + ε Y` with `ε = C θ (2 + 6 A₀ + 36 A₁) / (k + 1)`. -/
@@ -157,10 +255,10 @@ theorem kahane_level_transfer :
   have hmem : ((x, t) : Vec3 × ℝ) ∈
       {y : Vec3 | vec3EuclideanNorm (y - x) ≤ ρ} ×ˢ Icc (t - ρ ^ 2) t := by
     refine ⟨?_, ?_, le_rfl⟩
-    · show vec3EuclideanNorm (x - x) ≤ ρ
+    · change vec3EuclideanNorm (x - x) ≤ ρ
       rw [sub_self, vec3EuclideanNorm_zero]; exact hρ.le
     · have : 0 ≤ ρ ^ 2 := sq_nonneg ρ
-      show t - ρ ^ 2 ≤ t
+      change t - ρ ^ 2 ≤ t
       linarith only [this]
   have hF0 : ∀ n, 0 ≤ F n := by
     intro n
@@ -176,80 +274,13 @@ theorem kahane_level_transfer :
     have := hA (m + 1); have := hA (k + 1 - m); positivity
   have hSv : ∑ m ∈ Finset.range (k + 1), (k.choose m : ℝ) * (c m * c (k + 1 - m)) =
       κ ^ (k + 1) * (A 0 * Y + V) := by
-    rw [sum_range_succ_eq_zero_add_Icc, hV, mul_add, Finset.mul_sum]
-    have h0 : (k.choose 0 : ℝ) * (c 0 * c (k + 1 - 0)) = κ ^ (k + 1) * (A 0 * Y) := by
-      simp only [hcdef, ↓reduceIte, Nat.choose_zero_right, Nat.cast_one, one_mul, Nat.sub_zero,
-        Nat.zero_le k, Nat.not_succ_le_self k, pow_zero, mul_one]
-      ring
-    rw [h0]
-    congr 1
-    refine Finset.sum_congr rfl fun m hm => ?_
-    obtain ⟨hm1, hmk⟩ := Finset.mem_Icc.1 hm
-    simp only [hcdef, ↓reduceIte, hmk, (show k + 1 - m ≤ k by omega)]
-    have hpw : κ ^ m * κ ^ (k + 1 - m) = κ ^ (k + 1) := by
-      rw [← pow_add]; congr 1; omega
-    linear_combination (↑(k.choose m) * A m * A (k + 1 - m)) * hpw
+    simpa [hcdef, hV] using (sum_choose_weight_products k A Y κ)
   have hSp : ∑ m ∈ Finset.range (k + 1), (k.choose m : ℝ) * (c (m + 1) * c (k + 1 - m)) =
       κ ^ (k + 2) * (2 * (A 1 * Y) + P') := by
-    rw [sum_range_succ_eq_zero_add_last_add_Icc _ hk, hP']
-    have h0 : (k.choose 0 : ℝ) * (c (0 + 1) * c (k + 1 - 0)) = κ ^ (k + 2) * (A 1 * Y) := by
-      simp only [hcdef, ↓reduceIte, Nat.choose_zero_right, Nat.cast_one, one_mul, Nat.sub_zero,
-        zero_add,
-        hk, Nat.not_succ_le_self k]
-      ring
-    have hkk : (k.choose k : ℝ) * (c (k + 1) * c (k + 1 - k)) = κ ^ (k + 2) * (A 1 * Y) := by
-      simp only [hcdef, ↓reduceIte, Nat.choose_self, Nat.cast_one, one_mul,
-        show k + 1 - k = 1 by omega, hk, Nat.not_succ_le_self k]
-      ring
-    rw [h0, hkk]
-    have hmid : ∑ m ∈ Finset.Icc 1 (k - 1), (k.choose m : ℝ) * (c (m + 1) * c (k + 1 - m)) =
-        ∑ m ∈ Finset.Icc 1 (k - 1), κ ^ (k + 2) * ((k.choose m : ℝ) *
-          (A (m + 1) * A (k + 1 - m))) := by
-      refine Finset.sum_congr rfl fun m hm => ?_
-      obtain ⟨hm1, hmk⟩ := Finset.mem_Icc.1 hm
-      simp only [hcdef, ↓reduceIte, (show m + 1 ≤ k by omega),
-        (show k + 1 - m ≤ k by omega)]
-      have hpw : κ ^ (m + 1) * κ ^ (k + 1 - m) = κ ^ (k + 2) := by
-        rw [← pow_add]; congr 1; omega
-      linear_combination (↑(k.choose m) * A (m + 1) * A (k + 1 - m)) * hpw
-    rw [hmid, ← Finset.mul_sum]
-    ring
+    simpa [hcdef, hP'] using (sum_choose_shifted_weight_products k hk A Y κ)
   -- the four weight factors
   have hρeq : ρ = θ / ((k : ℝ) + 1) * D := by rw [hρdef, hDdef]; ring
-  have hθk : 0 ≤ θ / ((k : ℝ) + 1) := by positivity
-  have e1 : D ^ (k + 1) * ρ ≤ θ / ((k : ℝ) + 1) := by
-    rw [hρeq]
-    have : D ^ (k + 1) * D ≤ 1 := by
-      rw [← pow_succ]; exact pow_le_one₀ hD0.le hD1
-    have h := mul_le_mul_of_nonneg_left this hθk
-    linarith only [h]
-  have e2 : D ^ (k + 1) * ρ * κ ^ (k + 1) ≤ 2 * (θ / ((k : ℝ) + 1)) := by
-    rw [hρeq]
-    have h1 := hDκ (k + 1) (by omega)
-    have h2 : D ^ (k + 1) * κ ^ (k + 1) * D ≤ 2 * 1 := by
-      have := mul_le_mul h1 hD1 hD0.le (by norm_num)
-      linarith only [this]
-    have h3 := mul_le_mul_of_nonneg_left h2 hθk
-    nlinarith only [h3]
-  have e4 : D ^ (k + 1) * ρ * κ ^ (k + 2) ≤ 2 * (θ / ((k : ℝ) + 1)) := by
-    rw [hρeq]
-    have h1 := hDκ (k + 2) le_rfl
-    have hid : D ^ (k + 1) * (θ / ((k : ℝ) + 1) * D) * κ ^ (k + 2) =
-        θ / ((k : ℝ) + 1) * (D ^ (k + 2) * κ ^ (k + 2)) := by ring
-    rw [hid]
-    have := mul_le_mul_of_nonneg_left h1 hθk
-    linarith only [this]
-  have e3 : D ^ (k + 1) * κ ^ k / ρ ≤ 2 * ((k : ℝ) + 1) / θ := by
-    rw [hρeq]
-    have h1 := hDκ k (by omega)
-    have hid : D ^ (k + 1) * κ ^ k / (θ / ((k : ℝ) + 1) * D) =
-        ((k : ℝ) + 1) / θ * (D ^ k * κ ^ k) := by
-      field_simp
-      ring
-    rw [hid]
-    have := mul_le_mul_of_nonneg_left h1 (by positivity : (0 : ℝ) ≤ ((k : ℝ) + 1) / θ)
-    have e : ((k : ℝ) + 1) / θ * 2 = 2 * ((k : ℝ) + 1) / θ := by ring
-    linarith only [this, e]
+  obtain ⟨e1, e2, e4, e3⟩ := scalar_weight_inequalities D ρ θ κ k hD0 hD1 hθ hρeq hDκ
   have hA0 := hA 0
   have hA1 := hA 1
   have hAk := hA k

@@ -13,7 +13,7 @@ public import LeanPool.CaffarelliKohnNirenberg.Foundation.Heat.Basic
 /-!
 # The cut-off heat kernels of the backward windows
 
-For a point `(x, s)` and a scale `ρ`, the backward window is `B̄(x, ρ) × [s - ρ², s]`. The cutoff
+For a point `(x, s)` and a scale `ρ`, the backward window is `B_bar(x, ρ) × [s - ρ², s]`. The cutoff
 `χ` is the ball cutoff times the time cutoff; the heat weight is `Ψ = Γ(x - ·, s - ·) χ`, and the
 cutoff commutator kernel is `K₀ = Γ (∂ₜχ + Δχ) + 2 ∇Γ · ∇χ`. Before the time `s`, both kernels
 and their spatial partials vanish off the window. These are the kernels of the heat

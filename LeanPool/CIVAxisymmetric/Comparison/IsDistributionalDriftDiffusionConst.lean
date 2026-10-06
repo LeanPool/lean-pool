@@ -245,7 +245,7 @@ private theorem partialLaplacian_integrable_and_zero {m : ℕ} (d : ℕ) {I : Se
   have hpl : (fun z : Vec m × ℝ => partialLaplacian m d φ z) = fun z =>
       ∑ i : Fin m, if (i : ℕ) < d then fderiv ℝ (Ψ i) z (basisVec i, 0) else 0 := by
     funext z
-    show (∑ i : Fin m, if (i : ℕ) < d then
+    change (∑ i : Fin m, if (i : ℕ) < d then
         fderiv ℝ (fun x : Vec m => fderiv ℝ (fun y : Vec m => φ (y, z.2)) x (basisVec i))
           z.1 (basisVec i) else 0) = _
     refine Finset.sum_congr rfl (fun i _ => ?_)

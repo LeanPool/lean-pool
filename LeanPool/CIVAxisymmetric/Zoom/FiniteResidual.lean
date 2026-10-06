@@ -14,17 +14,17 @@ public import LeanPool.CIVAxisymmetric.Zoom.FiniteAxisCutoff
 `tendsto_finResidual` is the input of the finite branch to the limit equation
 `eq:aniso:zoom:finite:limit` at `(m, d) = (5, 4)` (the lift to `ℝ⁴` together with the
 vanishing terms of the passage to the limit, deviation D17): against a test function `φ` on
-`ℝ⁴ × ℝ × (-∞, -1)`, the pairing of the lifted potential vorticity `Ω̃_n` with the adjoint limit
+`ℝ⁴ × ℝ × (-∞, -1)`, the pairing of the lifted potential vorticity `Ω_tilde_n` with the adjoint limit
 operator `-∂_τ φ - B_n · ∇φ - (div B_n) φ - Δ_X φ` tends to zero.
 
 The test function is split with the axis cutoff `finAxisCutoff ε` as `φ = φ χ_ε + φ (1 - χ_ε)`.
 
-* Near the axis, `Ω̃_n`, `B_n` and `div B_n` are bounded uniformly in `n` (`finDrift_bounds`),
+* Near the axis, `Ω_tilde_n`, `B_n` and `div B_n` are bounded uniformly in `n` (`finDrift_bounds`),
   the derivatives of `φ χ_ε` of order at most two are `O(ε⁻²)`, and the support has volume
   `O(ε⁴)`: this part is `O(ε²)` uniformly in `n` (`abs_integral_residual_nearAxis_le`).
 * Off the axis, the lifted equation holds classically and the integration by parts of
-  `integral_finResidual_eq_of_subset_finLiftDomain` leaves `δ_n² ∫ Ω̃_n ∂_ZZ ψ - ∫ F̃_n ∂_Z ψ
-  + ∫ G̃_n ψ`. Here `|Ω̃_n| ≤ 2C`, the swirl flux obeys `F_n = S_n² / R² ≤ C_Γ² δ_n² / ε⁴` by
+  `integral_finResidual_eq_of_subset_finLiftDomain` leaves `δ_n² ∫ Ω_tilde_n ∂_ZZ ψ - ∫ F_tilde_n ∂_Z ψ
+  + ∫ G_tilde_n ψ`. Here `|Ω_tilde_n| ≤ 2C`, the swirl flux obeys `F_n = S_n² / R² ≤ C_Γ² δ_n² / ε⁴` by
   `eq:aniso:zoom:circulation`, and `|G_n| ≤ C λ_n⁵ δ_n`; all three tend to zero with `λ_n`
   (`tendsto_integral_residual_offAxis`).
 -/
@@ -56,10 +56,10 @@ theorem volume_axisBox (ε r : ℝ) (hε : 0 ≤ ε) (hr : 0 ≤ r) :
     ENNReal.toReal_mul, ENNReal.toReal_prod, ENNReal.toReal_ofReal (by linarith only [hr]),
     Fin.prod_univ_five]
   simp only [Real.volume_Icc]
-  rw [ENNReal.toReal_ofReal (by norm_num; positivity), ENNReal.toReal_ofReal (by norm_num;
-    positivity),
-    ENNReal.toReal_ofReal (by norm_num; positivity), ENNReal.toReal_ofReal (by norm_num;
-      positivity),
+  rw [ENNReal.toReal_ofReal (by norm_num; positivity),
+    ENNReal.toReal_ofReal (by norm_num; positivity),
+    ENNReal.toReal_ofReal (by norm_num; positivity),
+    ENNReal.toReal_ofReal (by norm_num; positivity),
     ENNReal.toReal_ofReal (by norm_num; positivity)]
   norm_num
   ring
@@ -166,7 +166,7 @@ theorem abs_fderiv_apply_basisVec_le {ψ : Vec 5 × ℝ → ℝ} (z : Vec 5 × �
     rw [Prod.norm_def]
     refine max_le ?_ (by simp)
     refine (pi_norm_le_iff_of_nonneg zero_le_one).2 fun j => ?_
-    show ‖basisVec i j‖ ≤ 1
+    change ‖basisVec i j‖ ≤ 1
     rw [basisVec_apply]
     split_ifs <;> simp
   calc ‖fderiv ℝ ψ z‖ * ‖((basisVec i, 0) : Vec 5 × ℝ)‖ ≤ ‖fderiv ℝ ψ z‖ * 1 :=
@@ -188,7 +188,7 @@ theorem abs_fderiv_fderiv_apply_basisVec_le {ψ : Vec 5 × ℝ → ℝ} (hψ : C
     rw [Prod.norm_def]
     refine max_le ?_ (by simp)
     refine (pi_norm_le_iff_of_nonneg zero_le_one).2 fun j => ?_
-    show ‖basisVec i j‖ ≤ 1
+    change ‖basisVec i j‖ ≤ 1
     rw [basisVec_apply]
     split_ifs <;> simp
   rw [hh.fderiv, ContinuousLinearMap.flip_apply, ← Real.norm_eq_abs, ← norm_iteratedFDeriv_fderiv,
@@ -208,7 +208,7 @@ theorem tsupport_one_sub_finAxisCutoff_subset (ε : ℝ) :
   refine closure_minimal (fun z hz => ?_)
     (isClosed_le continuous_const (continuous_norm.comp (ε⁻¹ • finAxisProj).continuous))
   by_contra hlt
-  exact hz (by show 1 - finAxisCutoff ε z = 0; rw [finAxisCutoff_eq_one (le_of_lt (not_le.mp
+  exact hz (by change 1 - finAxisCutoff ε z = 0; rw [finAxisCutoff_eq_one (le_of_lt (not_le.mp
     hlt)), sub_self])
 
 /-- The swirl flux off the axis: `S_n² / R² ≤ C_Γ² δ² / ε⁴` where `R ≥ ε` and the circulation is
@@ -270,7 +270,7 @@ theorem tendsto_integral_residual_offAxis {C h CΓ ρ Rstar tstar : ℝ} {u : Pa
   have hL : IsCompact (zoomLiftPoint '' K2) := hK2.image continuous_zoomLiftPoint
   have hLt : ∀ p ∈ zoomLiftPoint '' K2, p.2 < 0 := by
     rintro _ ⟨z, hz, rfl⟩
-    show z.2 < 0
+    change z.2 < 0
     linarith only [hτK2 z hz]
   have ev1 := eventually_forall_zoomPoint_mem_unitCylinder_moving hh hρ0 hρ1 hzc hlam_lim _ hL hLt
   have hcz : ∀ n, ((fun _ : ℕ => (0 : ℝ)) n) ^ 2 + zc n ^ 2 ≤ ρ ^ 2 := fun n => by

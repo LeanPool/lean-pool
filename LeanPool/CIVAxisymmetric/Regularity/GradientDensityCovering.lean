@@ -57,6 +57,75 @@ private lemma ediam_vec3Ball_le (x : Vec3) (r : ℝ) :
   rw [edist_eq_enorm_sub, ← ofReal_norm]
   exact ENNReal.ofReal_le_ofReal hnorm
 
+private theorem vec3Ball_subset_unitBall_of_radius_lt_margin {x : Vec3} {r : ℝ}
+    (hr : r < 1 - vec3EuclideanNorm x) : vec3Ball x r ⊆ vec3Ball (0 : Vec3) 1 := by
+  intro y hy
+  have hy' : vec3EuclideanNorm (y - x) < r := hy
+  change vec3EuclideanNorm (y - 0) < 1
+  rw [sub_zero]
+  have htri : vec3EuclideanNorm y ≤ vec3EuclideanNorm (y - x) + vec3EuclideanNorm x := by
+    have heq : y = (y - x) + x := by abel
+    calc vec3EuclideanNorm y = vec3EuclideanNorm ((y - x) + x) := by rw [← heq]
+      _ ≤ vec3EuclideanNorm (y - x) + vec3EuclideanNorm x := vec3EuclideanNorm_add_le _ _
+  linarith only [htri, hy', hr]
+
+private theorem mem_vec3Ball_enlargement_of_intersection (a b w : Vec3) (ra rb : ℝ)
+    (hwa' : vec3EuclideanNorm (w - a) < ra) (hwb' : vec3EuclideanNorm (w - b) < rb)
+    (hrad : ra ≤ 4 * rb) : a ∈ vec3Ball b (5 * rb) := by
+  have htri : vec3EuclideanNorm (a - b) < ra + rb := by
+    have heq : a - b = (a - w) + (w - b) := by abel
+    have hswap : vec3EuclideanNorm (a - w) = vec3EuclideanNorm (w - a) := by
+      rw [show a - w = -(w - a) by abel, vec3EuclideanNorm_neg]
+    calc vec3EuclideanNorm (a - b)
+        ≤ vec3EuclideanNorm (a - w) + vec3EuclideanNorm (w - b) := by
+          rw [heq]; exact vec3EuclideanNorm_add_le _ _
+      _ = vec3EuclideanNorm (w - a) + vec3EuclideanNorm (w - b) := by rw [hswap]
+      _ < ra + rb := add_lt_add hwa' hwb'
+  change vec3EuclideanNorm (a - b) < 5 * rb
+  linarith only [htri, hrad]
+
+private theorem countable_of_positive_disjoint_integrals {ι : Type*}
+    (F : ParabolicPoint → ℝ≥0∞) (A : ι → Set ParabolicPoint) (E : Set ParabolicPoint)
+    (g : ι → ℝ≥0∞) (hdisj : Pairwise fun i j => Disjoint (A i) (A j))
+    (hmeas : ∀ i, MeasurableSet (A i)) (hsub : ∀ i, A i ⊆ E)
+    (hbound : ∀ i, g i ≤ ∫⁻ w in A i, F w) (hpos : ∀ i, g i ≠ 0)
+    (hfin : (∫⁻ w in E, F w) < ⊤) : Countable ι := by
+  classical
+  have hsum_le : (∑' i, g i) ≤ ∫⁻ w in E, F w := by
+    rw [ENNReal.tsum_eq_iSup_sum]
+    refine iSup_le fun s => ?_
+    have hd : Set.PairwiseDisjoint (↑s : Set ι) A := fun i _ j _ hij => hdisj hij
+    calc (∑ i ∈ s, g i) ≤ ∑ i ∈ s, ∫⁻ w in A i, F w :=
+          Finset.sum_le_sum fun i _ => hbound i
+      _ = ∫⁻ w in ⋃ i ∈ s, A i, F w :=
+          (lintegral_biUnion_finset hd (fun i _ => hmeas i) F).symm
+      _ ≤ ∫⁻ w in E, F w := lintegral_mono_set (Set.iUnion₂_subset fun i _ => hsub i)
+  have hsumne : (∑' i, g i) ≠ ⊤ := (hsum_le.trans_lt hfin).ne
+  have hsupport : Function.support g = Set.univ := by
+    ext i
+    simp only [Function.mem_support, Set.mem_univ, iff_true]
+    exact hpos i
+  have hcnt := Summable.countable_support_ennreal hsumne
+  rw [hsupport] at hcnt
+  exact Set.countable_univ_iff.mp hcnt
+
+private theorem inverse_successor_scale_bounds :
+    (∀ n : ℕ, 0 < 1 / ((n : ℝ) + 1)) ∧
+      (∀ n : ℕ, 1 / ((n : ℝ) + 1) ≤ 1) ∧
+      Tendsto (fun n : ℕ => 1 / ((n : ℝ) + 1)) atTop (nhds (0 : ℝ)) := by
+  let δ : ℕ → ℝ := fun n => 1 / ((n : ℝ) + 1)
+  have hδdef : δ = fun n => 1 / ((n : ℝ) + 1) := rfl
+  have hδpos : ∀ n : ℕ, 0 < δ n := by
+    intro n; rw [hδdef]; positivity
+  have hδle1 : ∀ n : ℕ, δ n ≤ 1 := by
+    intro n
+    rw [hδdef, div_le_one (by positivity)]
+    have hn0 : (0 : ℝ) ≤ (n : ℝ) := Nat.cast_nonneg n
+    linarith only [hn0]
+  have hδtendsto0 : Tendsto δ atTop (nhds (0 : ℝ)) := by
+    rw [hδdef]; exact tendsto_one_div_add_atTop_nhds_zero_nat
+  exact ⟨hδpos, hδle1, hδtendsto0⟩
+
 /-- **Spatial Vitali covering lemma** (the spatial analogue of CKN's
 `step:thmC-covering`). If `S ⊆ Vec3` carries, at every point `x ∈ S` and every scale `r₀ > 0`,
 a radius `r < r₀` with `ε r ≤ ∫_{B(x,r) × (-r²,0)} |∇u|²` (the same integrand and measure
@@ -82,15 +151,7 @@ theorem hausdorffMeasure_one_null_of_gradient_density
   set F : ParabolicPoint → ℝ≥0∞ := fun z => ‖Du z‖ₑ ^ (2 : ℝ) with hFdef
   -- the shrinking scale `δ n = 1 / (n + 1)`
   set δ : ℕ → ℝ := fun n => 1 / ((n : ℝ) + 1) with hδdef
-  have hδpos : ∀ n : ℕ, 0 < δ n := by
-    intro n; rw [hδdef]; positivity
-  have hδle1 : ∀ n : ℕ, δ n ≤ 1 := by
-    intro n
-    rw [hδdef, div_le_one (by positivity)]
-    have hn0 : (0 : ℝ) ≤ (n : ℝ) := Nat.cast_nonneg n
-    linarith only [hn0]
-  have hδtendsto0 : Tendsto δ atTop (nhds (0 : ℝ)) := by
-    rw [hδdef]; exact tendsto_one_div_add_atTop_nhds_zero_nat
+  obtain ⟨hδpos, hδle1, hδtendsto0⟩ := inverse_successor_scale_bounds
   -- the target set, as a subtype, and a chosen radius at each point and scale
   set ι : Type := ↥(S ∩ vec3Ball (0 : Vec3) 1) with hιdef
   have hsmall : ∀ z : ι, ∀ n : ℕ, ∃ r : ℝ, 0 < r ∧ r < δ n ∧
@@ -124,7 +185,7 @@ theorem hausdorffMeasure_one_null_of_gradient_density
     refine ⟨(z.1, -(radius n z) ^ 2 / 2), ?_⟩
     rw [hballdef]
     refine ⟨?_, ?_⟩
-    · show vec3EuclideanNorm (z.1 - z.1) < radius n z
+    · change vec3EuclideanNorm (z.1 - z.1) < radius n z
       rw [sub_self, vec3EuclideanNorm_zero]
       exact hr.1
     · exact ⟨by nlinarith only [hr.1], by nlinarith only [hr.1]⟩
@@ -161,16 +222,7 @@ theorem hausdorffMeasure_one_null_of_gradient_density
     rw [hballdef]
     unfold unitCylinder CKN.spaceTimeSet
     refine Set.prod_mono ?_ ?_
-    · intro y hy
-      have hy' : vec3EuclideanNorm (y - z.1) < radius n z := hy
-      have hmarg : radius n z < 1 - vec3EuclideanNorm z.1 := hr.2.2.1
-      show vec3EuclideanNorm (y - 0) < 1
-      rw [sub_zero]
-      have htri : vec3EuclideanNorm y ≤ vec3EuclideanNorm (y - z.1) + vec3EuclideanNorm z.1 := by
-        have heq : y = (y - z.1) + z.1 := by abel
-        calc vec3EuclideanNorm y = vec3EuclideanNorm ((y - z.1) + z.1) := by rw [← heq]
-          _ ≤ vec3EuclideanNorm (y - z.1) + vec3EuclideanNorm z.1 := vec3EuclideanNorm_add_le _ _
-      linarith only [htri, hy', hmarg]
+    · exact vec3Ball_subset_unitBall_of_radius_lt_margin hr.2.2.1
     · have hsq : (radius n z) ^ 2 ≤ 1 := by
         have h1 : radius n z < δ n := hr.2.1
         have h2 : (0 : ℝ) < radius n z := hr.1
@@ -180,30 +232,12 @@ theorem hausdorffMeasure_one_null_of_gradient_density
   -- countability of the selected family at each scale, from a finite Dirichlet-integral bound
   have hindex_countable : ∀ n, Countable (index n) := by
     intro n
-    set g : ι → ℝ≥0∞ := fun z => ENNReal.ofReal (ε * radius n z) with hgdef
-    have hsum_le : (∑' z : ↥(selected n), g z.1) ≤ ∫⁻ w in unitCylinder, F w := by
-      rw [ENNReal.tsum_eq_iSup_sum]
-      refine iSup_le (fun s => ?_)
-      have hdisj : Set.PairwiseDisjoint (↑s : Set ↥(selected n)) (fun z => ball n z.1) :=
-        fun i _ j _ hij => (selected_spec n).1 i.2 j.2 (fun h => hij (Subtype.ext h))
-      have hmeas : ∀ z ∈ s, MeasurableSet (ball n z.1) := fun z _ => cylinder_measurable n z.1
-      calc (∑ z ∈ s, g z.1)
-          ≤ ∑ z ∈ s, ∫⁻ w in ball n z.1, F w := by
-            refine Finset.sum_le_sum (fun z _ => ?_)
-            rw [hgdef]; exact (radius_spec n z.1).2.2.2
-        _ = ∫⁻ w in ⋃ z ∈ s, ball n z.1, F w := (lintegral_biUnion_finset hdisj hmeas F).symm
-        _ ≤ ∫⁻ w in unitCylinder, F w :=
-            lintegral_mono_set (Set.iUnion₂_subset (fun z _ => cylinder_subset_unitCylinder n z.1))
-    have hsumne : (∑' z : ↥(selected n), g z.1) ≠ ⊤ := (hsum_le.trans_lt hfin).ne
-    have hsupport : Function.support (fun z : ↥(selected n) => g z.1) = Set.univ := by
-      ext z
-      simp only [Function.mem_support, Set.mem_univ, iff_true]
-      rw [hgdef]
-      exact (ENNReal.ofReal_pos.mpr (mul_pos hε (radius_spec n z.1).1)).ne'
-    have hcnt := Summable.countable_support_ennreal hsumne
-    rw [hsupport] at hcnt
-    rw [hindexdef]
-    exact Set.countable_univ_iff.mp hcnt
+    exact countable_of_positive_disjoint_integrals F (fun i : index n => ball n i.1)
+      unitCylinder (fun i => ENNReal.ofReal (ε * radius n i.1))
+      (fun i j hij => (selected_spec n).1 i.2 j.2 (fun h => hij (Subtype.ext h)))
+      (cylinder_measurable_index n) (fun i => cylinder_subset_unitCylinder n i.1)
+      (fun i => (radius_spec n i.1).2.2.2)
+      (fun i => (ENNReal.ofReal_pos.mpr (mul_pos hε (radius_spec n i.1).1)).ne') hfin
   -- the enlarged spatial balls, and the containment they satisfy
   set enlarged : ∀ n, index n → Set Vec3 := fun n i => vec3Ball i.1.1 (5 * radius n i.1)
     with henldef
@@ -213,22 +247,11 @@ theorem hausdorffMeasure_one_null_of_gradient_density
     intro n a
     obtain ⟨b, hb, hab, hrad⟩ := (selected_spec n).2 a
     obtain ⟨w, hwa, hwb⟩ := hab
-    have hwa' : vec3EuclideanNorm (w.1 - a.1) < radius n a := hwa.1
-    have hwb' : vec3EuclideanNorm (w.1 - b.1) < radius n b := hwb.1
-    have htri : vec3EuclideanNorm (a.1 - b.1) < radius n a + radius n b := by
-      have heq : a.1 - b.1 = (a.1 - w.1) + (w.1 - b.1) := by abel
-      have hswap : vec3EuclideanNorm (a.1 - w.1) = vec3EuclideanNorm (w.1 - a.1) := by
-        rw [show a.1 - w.1 = -(w.1 - a.1) by abel, vec3EuclideanNorm_neg]
-      calc vec3EuclideanNorm (a.1 - b.1)
-          ≤ vec3EuclideanNorm (a.1 - w.1) + vec3EuclideanNorm (w.1 - b.1) := by
-            rw [heq]; exact vec3EuclideanNorm_add_le _ _
-        _ = vec3EuclideanNorm (w.1 - a.1) + vec3EuclideanNorm (w.1 - b.1) := by rw [hswap]
-        _ < radius n a + radius n b := add_lt_add hwa' hwb'
-    have hfinal : vec3EuclideanNorm (a.1 - b.1) < 5 * radius n b := by
-      linarith only [htri, hrad]
+    have hfinal := mem_vec3Ball_enlargement_of_intersection a.1 b.1 w.1
+      (radius n a) (radius n b) hwa.1 hwb.1 hrad
     refine mem_iUnion.2 ⟨⟨b, hb⟩, ?_⟩
     rw [henldef]
-    show vec3EuclideanNorm (a.1 - b.1) < 5 * radius n b
+    change vec3EuclideanNorm (a.1 - b.1) < 5 * radius n b
     exact hfinal
   -- the shrinking backward slab, and the finiteness/limit of its Dirichlet integral
   set Uset : ℕ → Set ParabolicPoint :=
@@ -246,18 +269,7 @@ theorem hausdorffMeasure_one_null_of_gradient_density
     have hr := radius_spec n i.1
     rw [hballdef, hUdef]
     refine Set.prod_mono ?_ ?_
-    · intro y hy
-      have hy' : vec3EuclideanNorm (y - i.1.1) < radius n i.1 := hy
-      have hmarg : radius n i.1 < 1 - vec3EuclideanNorm i.1.1 := hr.2.2.1
-      show vec3EuclideanNorm (y - 0) < 1
-      rw [sub_zero]
-      have htri : vec3EuclideanNorm y ≤ vec3EuclideanNorm (y - i.1.1) + vec3EuclideanNorm i.1.1
-        := by
-        have heq : y = (y - i.1.1) + i.1.1 := by abel
-        calc vec3EuclideanNorm y = vec3EuclideanNorm ((y - i.1.1) + i.1.1) := by rw [← heq]
-          _ ≤ vec3EuclideanNorm (y - i.1.1) + vec3EuclideanNorm i.1.1 :=
-            vec3EuclideanNorm_add_le _ _
-      linarith only [htri, hy', hmarg]
+    · exact vec3Ball_subset_unitBall_of_radius_lt_margin hr.2.2.1
     · have hsq : (radius n i.1) ^ 2 ≤ δ n := by
         have h1 : radius n i.1 < δ n := hr.2.1
         have h2 : (0 : ℝ) < radius n i.1 := hr.1

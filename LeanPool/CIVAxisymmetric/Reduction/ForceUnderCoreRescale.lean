@@ -219,7 +219,7 @@ private theorem unitCylinder_subset_preimage_scalingParabolic {R : ℝ} (hR0 : 0
   obtain ⟨hx, ht⟩ : x ∈ vec3Ball 0 1 ∧ t ∈ Ioo (-1 : ℝ) 0 := hz
   have hR2 : 0 < R ^ 2 := pow_pos hR0 2
   have hR21 : R ^ 2 ≤ 1 := pow_le_one₀ hR0.le hR1
-  show ((0 : Vec3) + R • x, (0 : ℝ) + R ^ 2 * t) ∈ spaceTimeSet (vec3Ball 0 1) (Ioo (-1) 0)
+  change ((0 : Vec3) + R • x, (0 : ℝ) + R ^ 2 * t) ∈ spaceTimeSet (vec3Ball 0 1) (Ioo (-1) 0)
   refine ⟨?_, ?_, ?_⟩
   · simp only [mem_vec3Ball, sub_zero, zero_add] at hx ⊢
     rw [vec3EuclideanNorm_smul, abs_of_pos hR0]
@@ -304,7 +304,7 @@ theorem globalEnergyClass_rescale {R : ℝ} (hR0 : 0 < R) (hR1 : R ≤ 1)
       have hu' : rescaleVelocity R ((0 : Vec3), (0 : ℝ)) u z =
           R • u (scalingParabolic R ((0 : Vec3), (0 : ℝ)) z) := rfl
       rw [hDu, hu']
-      show _ ≤ ‖u (scalingParabolic R ((0 : Vec3), (0 : ℝ)) z)‖ₑ ^ (2 : ℝ) +
+      change _ ≤ ‖u (scalingParabolic R ((0 : Vec3), (0 : ℝ)) z)‖ₑ ^ (2 : ℝ) +
         ‖Du (scalingParabolic R ((0 : Vec3), (0 : ℝ)) z)‖ₑ ^ (2 : ℝ)
       gcongr
       · exact enorm_smul_le_of_abs_le_one hRabs _

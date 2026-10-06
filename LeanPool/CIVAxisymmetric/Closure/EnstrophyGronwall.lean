@@ -119,7 +119,7 @@ private theorem closure_exponential_bound {tη Cstar η Cη : ℝ}
     rw [intervalIntegral.integral_const_mul, h_int_rpow]
   have h_int_k : ∫ s in tη..t, k s = Cstar * η * (Real.log (-tη) - Real.log (-t)) + Cstar * Cη ^
     2 * (((-tη) ^ (1 - 2 * η) - (-t) ^ (1 - 2 * η)) / (1 - 2 * η)) + Cstar * (t - tη) := by
-    show (∫ s in tη..t, Cstar * (η / (-s) + Cη ^ 2 * (-s) ^ (-(2 * η)) + 1)) =
+    change (∫ s in tη..t, Cstar * (η / (-s) + Cη ^ 2 * (-s) ^ (-(2 * η)) + 1)) =
       Cstar * η * (Real.log (-tη) - Real.log (-t)) +
         Cstar * Cη ^ 2 * (((-tη) ^ (1 - 2 * η) - (-t) ^ (1 - 2 * η)) / (1 - 2 * η)) +
         Cstar * (t - tη)
@@ -217,7 +217,7 @@ theorem closure_gronwall_bound {Y : ℝ → ℝ} {tη Cstar η Cη : ℝ} (htη 
   have h_ineq_φ : ∀ x ∈ Ioo tη 0, deriv φ x ≤ k x * φ x := by
     intro x hx
     rw [h_deriv_eq x]
-    show deriv Y x ≤ Cstar * (η / (-x) + Cη ^ 2 * (-x) ^ (-(2 * η)) + 1) * (Y x + 1)
+    change deriv Y x ≤ Cstar * (η / (-x) + Cη ^ 2 * (-x) ^ (-(2 * η)) + 1) * (Y x + 1)
     exact hineq x hx
   -- φ is continuous on [tη, t] for any t ∈ Ioo tη 0
   have h_cont_φ : ∀ t ∈ Ioo tη 0, ContinuousOn φ (Icc tη t) := by
@@ -247,7 +247,7 @@ theorem closure_gronwall_bound {Y : ℝ → ℝ} {tη Cstar η Cη : ℝ} (htη 
     intro t ht s hs
     have hs_lt_0 : s < 0 := lt_of_le_of_lt hs.2 ht.2
     have h_neg_pos : 0 < -s := neg_pos.mpr hs_lt_0
-    show 0 ≤ Cstar * (η / (-s) + Cη ^ 2 * (-s) ^ (-(2 * η)) + 1)
+    change 0 ≤ Cstar * (η / (-s) + Cη ^ 2 * (-s) ^ (-(2 * η)) + 1)
     have h2 : 0 ≤ η / (-s) := div_nonneg hη_pos.le h_neg_pos.le
     have h3 : 0 ≤ Cη ^ 2 * (-s) ^ (-(2 * η)) :=
       mul_nonneg hCη_sq (Real.rpow_nonneg h_neg_pos.le _)
@@ -256,7 +256,7 @@ theorem closure_gronwall_bound {Y : ℝ → ℝ} {tη Cstar η Cη : ℝ} (htη 
   -- Define Φ(t) = φ(t) * exp(-∫_{tη}^{t} k)
   set Φ : ℝ → ℝ := fun x => φ x * Real.exp (-(∫ s in tη..x, k s)) with hΦ_def
   have hΦ_at_tη : Φ tη = φ tη := by
-    show φ tη * Real.exp (-(∫ s in tη..tη, k s)) = φ tη
+    change φ tη * Real.exp (-(∫ s in tη..tη, k s)) = φ tη
     rw [intervalIntegral.integral_same, neg_zero, Real.exp_zero, mul_one]
   -- Φ is continuous on [tη, t] for any t ∈ Ioo tη 0
   have hΦ_cont : ∀ t ∈ Ioo tη 0, ContinuousOn Φ (Icc tη t) := by

@@ -162,6 +162,290 @@ theorem integrable_mul_of_bdd_isCompact_of_vanishing_outside {m : ℕ} {K : Set 
   rw [hindic]
   exact (integrable_indicator_iff hKm).mpr hprodK
 
+private theorem test_operator_bounds {m d : ℕ} {φ : Vec m × ℝ → ℝ}
+    (hφ1 : ContDiff ℝ (⊤ : ℕ∞) φ) (hφ2 : HasCompactSupport φ) :
+    ∃ CT CL : ℝ,
+      Continuous (fun z => timeDeriv m φ z) ∧
+      (∀ z, z ∉ tsupport φ → timeDeriv m φ z = 0) ∧
+      (∀ z ∈ tsupport φ, ‖timeDeriv m φ z‖ ≤ CT) ∧
+      Continuous (fun z => partialLaplacian m d φ z) ∧
+      (∀ z, z ∉ tsupport φ → partialLaplacian m d φ z = 0) ∧
+      (∀ z ∈ tsupport φ, ‖partialLaplacian m d φ z‖ ≤ CL) := by
+  set K := tsupport φ
+  have hK : IsCompact K := hφ2
+  have hΨcont : ∀ i : Fin m,
+      ContDiff ℝ (⊤ : ℕ∞) (fun x : Vec m × ℝ => fderiv ℝ φ x (basisVec i, 0)) := by
+    intro i
+    have h1 : ContDiff ℝ (⊤ : ℕ∞) (fderiv ℝ φ) := hφ1.fderiv_right (by simp)
+    exact (ContinuousLinearMap.apply ℝ ℝ (basisVec i, (0 : ℝ))).contDiff.comp h1
+  -- timeDeriv φ: continuity, vanishing outside K, boundedness on K.
+  have heqT : (fun z => timeDeriv m φ z) = fun z => fderiv ℝ φ z (0, 1) := by
+    funext z; exact timeDeriv_eq_fderiv_apply (hφ1.differentiable (by simp) z)
+  have hTcont : Continuous (fun z => timeDeriv m φ z) := by
+    rw [heqT]
+    have h1 : ContDiff ℝ (⊤ : ℕ∞) (fderiv ℝ φ) := hφ1.fderiv_right (by simp)
+    exact h1.continuous.clm_apply continuous_const
+  have hTsub : tsupport (fun z => timeDeriv m φ z) ⊆ K := by
+    rw [heqT]; exact tsupport_fderiv_apply_subset ℝ (0, 1)
+  have hTvanish : ∀ z, z ∉ K → timeDeriv m φ z = 0 := fun z hz =>
+    image_eq_zero_of_notMem_tsupport (fun hc => hz (hTsub hc))
+  obtain ⟨CT, hCT⟩ := hK.exists_bound_of_continuousOn hTcont.continuousOn
+  -- partialLaplacian m d φ: pointwise second-derivative formula, continuity, vanishing, bound.
+  have hLapEq : ∀ z, partialLaplacian m d φ z = ∑ i : Fin m, if (i : ℕ) < d then
+      fderiv ℝ (fun x : Vec m × ℝ => fderiv ℝ φ x (basisVec i, 0)) z (basisVec i, 0) else 0 := by
+    intro z
+    unfold partialLaplacian
+    refine Finset.sum_congr rfl (fun i _ => ?_)
+    split_ifs with hi
+    · have hinner : (fun x : Vec m => fderiv ℝ (fun y : Vec m => φ (y, z.2)) x (basisVec i))
+          = fun x : Vec m => (fun x' : Vec m × ℝ => fderiv ℝ φ x' (basisVec i, 0)) (x, z.2) := by
+        funext x
+        exact gradPair_eq_fderiv_apply (hφ1.differentiable (by simp) (x, z.2)) (basisVec i)
+      rw [hinner]
+      exact fderiv_slice_fst_eq ((hΨcont i).differentiable (by simp) z) (basisVec i)
+    · rfl
+  have hLcont : Continuous (fun z => partialLaplacian m d φ z) := by
+    have heq2 : (fun z => partialLaplacian m d φ z) = fun z => ∑ i : Fin m, if (i : ℕ) < d then
+        fderiv ℝ (fun x : Vec m × ℝ => fderiv ℝ φ x (basisVec i, 0)) z (basisVec i, 0) else 0 :=
+      funext hLapEq
+    rw [heq2]
+    refine continuous_finsetSum Finset.univ (fun i _ => ?_)
+    split_ifs with hi
+    · have h2 : ContDiff ℝ (⊤ : ℕ∞) (fderiv ℝ (fun x : Vec m × ℝ => fderiv ℝ φ x (basisVec i,
+      0))) :=
+        (hΨcont i).fderiv_right (by simp)
+      exact h2.continuous.clm_apply continuous_const
+    · exact continuous_const
+  have hLvanish : ∀ z, z ∉ K → partialLaplacian m d φ z = 0 := by
+    intro z hz
+    rw [hLapEq z]
+    refine Finset.sum_eq_zero (fun i _ => ?_)
+    split_ifs with hi
+    · have hsub1 : tsupport (fun x : Vec m × ℝ => fderiv ℝ φ x (basisVec i, 0)) ⊆ K :=
+        tsupport_fderiv_apply_subset ℝ (basisVec i, 0)
+      have hsub2 : tsupport (fun x : Vec m × ℝ =>
+          fderiv ℝ (fun x' : Vec m × ℝ => fderiv ℝ φ x' (basisVec i, 0)) x (basisVec i, 0))
+          ⊆ tsupport (fun x : Vec m × ℝ => fderiv ℝ φ x (basisVec i, 0)) :=
+        tsupport_fderiv_apply_subset ℝ (basisVec i, 0)
+      set g : Vec m × ℝ → ℝ := fun x =>
+        fderiv ℝ (fun x' : Vec m × ℝ => fderiv ℝ φ x' (basisVec i, 0)) x (basisVec i, 0) with hgdef
+      change g z = 0
+      exact image_eq_zero_of_notMem_tsupport (fun hc => hz (hsub1 (hsub2 hc)))
+    · rfl
+  obtain ⟨CL, hCL⟩ := hK.exists_bound_of_continuousOn hLcont.continuousOn
+  exact ⟨CT, CL, hTcont, hTvanish, hCT, hLcont, hLvanish, hCL⟩
+
+private theorem integral_gradient_pairing_sum {m : ℕ} {φ q : Vec m × ℝ → ℝ}
+    (hφ1 : ContDiff ℝ (⊤ : ℕ∞) φ) (hφ2 : HasCompactSupport φ) {Mq : ℝ}
+    (hqm : AEStronglyMeasurable q (volume.restrict (tsupport φ)))
+    (hqbd : ∀ᵐ z ∂(volume.restrict (tsupport φ)), |q z| ≤ Mq)
+    (Cg : Fin m → ℝ) (hCg : ∀ i, ∀ z ∈ tsupport φ, |gradPair m φ z (basisVec i)| ≤ Cg i) :
+    let K := tsupport φ
+    ∀ (W : Vec m × ℝ → Vec m) (MW : ℝ),
+      AEStronglyMeasurable W (volume.restrict K) → (∀ᵐ z ∂(volume.restrict K), ‖W z‖ ≤ MW) →
+      ∫ z, q z * gradPair m φ z (W z)
+        = ∑ i : Fin m, ∫ z, gradPair m φ z (basisVec i) * q z * W z i := by
+  dsimp only
+  set K := tsupport φ
+  have hK : IsCompact K := hφ2
+  have hKm : MeasurableSet K := hK.isClosed.measurableSet
+  have hsumIdentity : ∀ (W : Vec m × ℝ → Vec m) (MW : ℝ),
+      AEStronglyMeasurable W (volume.restrict K) → (∀ᵐ z ∂(volume.restrict K), ‖W z‖ ≤ MW) →
+      ∫ z, q z * gradPair m φ z (W z)
+        = ∑ i : Fin m, ∫ z, gradPair m φ z (basisVec i) * q z * W z i := by
+    intro W MW hWm hWbd
+    have hpt : ∀ z, q z * gradPair m φ z (W z)
+        = ∑ i : Fin m, gradPair m φ z (basisVec i) * q z * W z i := by
+      intro z
+      have heq := apply_eq_sum_basisVec (fderiv ℝ (fun x : Vec m => φ (x, z.2)) z.1) (W z)
+      unfold gradPair
+      rw [heq, Finset.mul_sum]
+      exact Finset.sum_congr rfl (fun i _ => by ring)
+    have hint : ∀ i : Fin m, Integrable
+        (fun z => gradPair m φ z (basisVec i) * q z * W z i) volume := by
+      intro i
+      have hwm : AEStronglyMeasurable (fun z => gradPair m φ z (basisVec i) * q z)
+          (volume.restrict K) :=
+        (continuous_gradPair_joint hφ1 (basisVec i)).aestronglyMeasurable.mul hqm
+      have hwbd : ∀ᵐ z ∂(volume.restrict K), |gradPair m φ z (basisVec i) * q z| ≤ Cg i * Mq := by
+        filter_upwards [ae_restrict_mem hKm, hqbd] with z hzK hzq
+        rw [abs_mul]
+        exact mul_le_mul (hCg i z hzK) hzq (abs_nonneg _) (le_trans (abs_nonneg _) (hCg i z hzK))
+      have hwsupp : ∀ z, z ∉ K → gradPair m φ z (basisVec i) * q z = 0 := fun z hz => by
+        rw [image_eq_zero_of_notMem_tsupport
+          (fun hc => hz (tsupport_gradPair_joint_subset hφ1 (basisVec i) hc)), zero_mul]
+      have hfm : AEStronglyMeasurable (fun z => W z i) (volume.restrict K) :=
+        (continuous_apply i).comp_aestronglyMeasurable hWm
+      have hfbd : ∀ᵐ z ∂(volume.restrict K), |W z i| ≤ MW := by
+        filter_upwards [hWbd] with z hz
+        rw [← Real.norm_eq_abs]; exact (norm_le_pi_norm (W z) i).trans hz
+      have := integrable_mul_of_bdd_isCompact_of_vanishing_outside hK hfm hfbd hwm hwbd
+        (fun z hz => by rw [hwsupp z hz, mul_zero])
+      simpa [mul_comm, mul_left_comm, mul_assoc] using this
+    rw [hpt |> funext, integral_finsetSum Finset.univ (fun i _ => hint i)]
+  exact hsumIdentity
+
+private theorem tendsto_negative_pairing_of_difference {m : ℕ}
+    {qn : ℕ → Vec m × ℝ → ℝ} {q F : Vec m × ℝ → ℝ} {Fn : ℕ → Vec m × ℝ → ℝ}
+    {K : Set (Vec m × ℝ)} {Mq Mn MF : ℝ} (hK : IsCompact K)
+    (hqm : AEStronglyMeasurable q (volume.restrict K))
+    (hqbd : ∀ᵐ z ∂(volume.restrict K), |q z| ≤ Mq)
+    (hqn : ∀ᶠ n in atTop, AEStronglyMeasurable (qn n) (volume.restrict K) ∧
+      ∀ z ∈ K, |qn n z| ≤ Mn)
+    (hFn : ∀ᶠ n in atTop, AEStronglyMeasurable (Fn n) (volume.restrict K) ∧
+      ∀ z ∈ K, |Fn n z| ≤ MF)
+    (hFnVanish : ∀ n, ∀ z, z ∉ K → Fn n z = 0)
+    (hvan : Tendsto (fun n => ∫ z, (qn n z - q z) * Fn n z) atTop (nhds 0))
+    (hweak : Tendsto (fun n => (∫ z, q z * Fn n z) - ∫ z, q z * F z) atTop (nhds 0)) :
+    Tendsto (fun n => ∫ z, qn n z * (-(Fn n z))) atTop (nhds (∫ z, q z * (-(F z)))) := by
+  have hKm : MeasurableSet K := hK.isClosed.measurableSet
+  have hT2raw : Tendsto (fun n => (∫ z, qn n z * Fn n z)
+      - ∫ z, q z * F z) atTop (nhds 0) := by
+    have hcomb : Tendsto (fun n => (∫ z, (qn n z - q z) * Fn n z)
+        + ((∫ z, q z * Fn n z) - ∫ z, q z * F z)) atTop
+        (nhds (0 + 0)) := hvan.add hweak
+    rw [zero_add] at hcomb
+    refine hcomb.congr' (?_ : (fun n => _) =ᶠ[atTop] (fun n => _))
+    filter_upwards [hqn, hFn] with n hqn hgn
+    have hInt1 : Integrable (fun z => qn n z * Fn n z) volume :=
+      integrable_mul_of_bdd_isCompact_of_vanishing_outside hK hqn.1
+        (ae_restrict_of_forall_mem hKm hqn.2) hgn.1 (ae_restrict_of_forall_mem hKm hgn.2)
+        (fun z hz => by rw [hFnVanish n z hz, mul_zero])
+    have hInt2 : Integrable (fun z => q z * Fn n z) volume :=
+      integrable_mul_of_bdd_isCompact_of_vanishing_outside hK hqm hqbd hgn.1
+        (ae_restrict_of_forall_mem hKm hgn.2) (fun z hz => by rw [hFnVanish n z hz, mul_zero])
+    have heq : ∫ z, (qn n z - q z) * Fn n z
+        = (∫ z, qn n z * Fn n z) - ∫ z, q z * Fn n z := by
+      have hcong : ∫ z, (qn n z - q z) * Fn n z
+          = ∫ z, (qn n z * Fn n z - q z * Fn n z) :=
+        integral_congr_ae (Eventually.of_forall fun z => by ring)
+      rw [hcong, integral_sub hInt1 hInt2]
+    rw [heq]; ring
+  have hT2mid : Tendsto (fun n => ∫ z, qn n z * Fn n z) atTop
+      (nhds (∫ z, q z * F z)) := by
+    have h := hT2raw.add_const (∫ z, q z * F z)
+    simpa using h
+  have hT2 : Tendsto (fun n => ∫ z, qn n z * (-(Fn n z))) atTop
+      (nhds (∫ z, q z * (-(F z)))) := by
+    have hneg := hT2mid.neg
+    have hL : ∀ n, -(∫ z, qn n z * Fn n z)
+        = ∫ z, qn n z * (-(Fn n z)) := by
+      intro n
+      rw [← integral_neg]
+      exact integral_congr_ae (Eventually.of_forall fun z => by ring)
+    have hR : -(∫ z, q z * F z) = ∫ z, q z * (-(F z)) := by
+      rw [← integral_neg]
+      exact integral_congr_ae (Eventually.of_forall fun z => by ring)
+    rw [hR] at hneg
+    exact hneg.congr' (Eventually.of_forall hL)
+  exact hT2
+
+private theorem integrable_mul_of_bounded_on_support {m : ℕ} {q g : Vec m × ℝ → ℝ}
+    {K : Set (Vec m × ℝ)} {M : ℝ} (hKm : MeasurableSet K)
+    (hqm : AEStronglyMeasurable q (volume.restrict K))
+    (hqbd : ∀ᵐ z ∂(volume.restrict K), |q z| ≤ M) (hg : Integrable g)
+    (hgzero : ∀ z, z ∉ K → g z = 0) : Integrable (fun z => q z * g z) := by
+  have h : IntegrableOn (fun z => q z * g z) K := by
+    have hprod := hg.restrict.mul_bdd hqm (by simpa only [Real.norm_eq_abs] using hqbd)
+    exact hprod.congr (Eventually.of_forall fun z => mul_comm (g z) (q z))
+  have heq : K.indicator (fun z => q z * g z) = fun z => q z * g z := by
+    funext z
+    by_cases hz : z ∈ K
+    · exact indicator_of_mem hz _
+    · rw [indicator_of_notMem hz, hgzero z hz, mul_zero]
+  rw [← heq]
+  exact h.integrable_indicator hKm
+
+private theorem integral_four_pairings {m : ℕ} (q a b c d : Vec m × ℝ → ℝ)
+    (hI1 : Integrable (fun z => q z * (-a z)))
+    (hI2 : Integrable (fun z => q z * (-b z)))
+    (hI3 : Integrable (fun z => q z * (-c z)))
+    (hI4 : Integrable (fun z => q z * (-d z))) :
+    (∫ z, q z * (-a z - b z - c z - d z)) = (∫ z, q z * (-a z)) +
+      (∫ z, q z * (-b z)) + (∫ z, q z * (-c z)) + ∫ z, q z * (-d z) := by
+  have hpt : (fun z => q z * (-a z - b z - c z - d z)) =
+      fun z => q z * (-a z) + q z * (-b z) + q z * (-c z) + q z * (-d z) := by
+    funext z
+    ring
+  rw [hpt]
+  have hsum := integral_add ((hI1.add hI2).add hI3) hI4
+  have h123 := integral_add (hI1.add hI2) hI3
+  have h12 := integral_add hI1 hI2
+  simp only [Pi.add_apply] at hsum h123 h12
+  rw [h123, h12] at hsum
+  exact hsum
+
+private theorem tendsto_weak_gradient_pairing {m : ℕ} {T : ℝ}
+    {φ q : Vec m × ℝ → ℝ} {b : ℕ → Vec m × ℝ → Vec m}
+    {B : Vec m × ℝ → Vec m} {divB : Vec m × ℝ → ℝ}
+    (hφ1 : ContDiff ℝ (⊤ : ℕ∞) φ) (hφ2 : HasCompactSupport φ)
+    (hφ3 : tsupport φ ⊆ univ ×ˢ Iio T) (hq : IsLocallyBoundedOn m (Iio T) q)
+    (hB : IsAdmissibleDrift m (Iio T) B divB)
+    (hweak : ∀ g : Vec m × ℝ → ℝ, Integrable g → HasCompactSupport g →
+      tsupport g ⊆ univ ×ˢ Iio T → ∀ i,
+        Tendsto (fun n => ∫ z, g z * b n z i) atTop (nhds (∫ z, g z * B z i)))
+    {M Mq : ℝ} (hqm : AEStronglyMeasurable q (volume.restrict (tsupport φ)))
+    (hqbd : ∀ᵐ z ∂(volume.restrict (tsupport φ)), |q z| ≤ Mq)
+    (hbbd : ∀ᶠ n in atTop, AEStronglyMeasurable (b n) (volume.restrict (tsupport φ)) ∧
+      ∀ z ∈ tsupport φ, ‖b n z‖ ≤ M)
+    (Cg : Fin m → ℝ) (hCg : ∀ i, ∀ z ∈ tsupport φ, |gradPair m φ z (basisVec i)| ≤ Cg i) :
+    Tendsto (fun n => (∫ z, q z * gradPair m φ z (b n z)) -
+      ∫ z, q z * gradPair m φ z (B z)) atTop (nhds 0) := by
+  set K := tsupport φ
+  have hK : IsCompact K := hφ2
+  have hKm : MeasurableSet K := hK.isClosed.measurableSet
+  have hKI : K ⊆ univ ×ˢ Iio T := hφ3
+  have hsubJ : K ⊆ (univ : Set (Vec m)) ×ˢ (Prod.snd '' K) :=
+    fun z hz => ⟨mem_univ _, mem_image_of_mem _ hz⟩
+  have hsumIdentity := integral_gradient_pairing_sum hφ1 hφ2 hqm hqbd Cg hCg
+  -- Integrability data for `hweak`'s test functions `gradPair φ (·) (basisVec i) * q`.
+  have hgi : ∀ i : Fin m, Integrable (fun z => gradPair m φ z (basisVec i) * q z) volume :=
+    fun i => integrable_mul_of_isLocallyBoundedOn hq (continuous_gradPair_joint hφ1 (basisVec i))
+      (hasCompactSupport_gradPair_joint hφ1 hφ2 (basisVec i))
+      ((tsupport_gradPair_joint_subset hφ1 (basisVec i)).trans hφ3)
+  have hgisupp : ∀ i : Fin m, HasCompactSupport (fun z => gradPair m φ z (basisVec i) * q z) :=
+    fun i => (hasCompactSupport_gradPair_joint hφ1 hφ2 (basisVec i)).mul_right
+  have hgitsupp : ∀ i : Fin m, tsupport (fun z => gradPair m φ z (basisVec i) * q z)
+      ⊆ (univ : Set (Vec m)) ×ˢ Iio T := fun i =>
+    tsupport_mul_subset_left.trans ((tsupport_gradPair_joint_subset hφ1 (basisVec i)).trans hφ3)
+  -- The admissible drift's own global measurability and local boundedness.
+  have hBmeasK : AEStronglyMeasurable B (volume.restrict K) :=
+    hB.1.aestronglyMeasurable.mono_measure (Measure.restrict_mono hKI le_rfl)
+  have hBslice := hB.2.2
+  obtain ⟨ΛB, hΛB⟩ := hBslice (Prod.snd '' K) (hK.image continuous_snd)
+    (by rintro τ ⟨z, hz, rfl⟩; exact (hKI hz).2)
+  have hBnormbdd : ∀ᵐ z ∂(volume.restrict K), ‖B z‖ ≤ (ΛB : ℝ) := by
+    have hvol : (volume : Measure (Vec m)).prod (volume.restrict (Prod.snd '' K))
+        = volume.restrict ((univ : Set (Vec m)) ×ˢ (Prod.snd '' K)) := by
+      rw [← Measure.restrict_univ (μ := (volume : Measure (Vec m))), Measure.prod_restrict,
+        ← Measure.volume_eq_prod]
+    have hae : ∀ᵐ z ∂(volume.restrict ((univ : Set (Vec m)) ×ˢ (Prod.snd '' K))),
+        ‖B z‖ ≤ (ΛB : ℝ) := by
+      rw [← hvol]
+      exact ae_prod_of_ae_forall hΛB (fun τ hτ x => hτ.1 x)
+    exact hae.filter_mono (ae_mono (Measure.restrict_mono hsubJ le_rfl))
+  -- T2: assembling the vanishing and weak-* pieces.
+  have hT2weak : Tendsto (fun n => (∫ z, q z * gradPair m φ z (b n z))
+      - ∫ z, q z * gradPair m φ z (B z)) atTop (nhds 0) := by
+    have heqB : ∫ z, q z * gradPair m φ z (B z)
+        = ∑ i : Fin m, ∫ z, gradPair m φ z (basisVec i) * q z * B z i :=
+      hsumIdentity B (ΛB : ℝ) hBmeasK hBnormbdd
+    have heqn : ∀ᶠ n in atTop, ∫ z, q z * gradPair m φ z (b n z)
+        = ∑ i : Fin m, ∫ z, gradPair m φ z (basisVec i) * q z * b n z i := by
+      filter_upwards [hbbd] with n hbn
+      exact hsumIdentity (b n) M hbn.1 (ae_restrict_of_forall_mem hKm hbn.2)
+    have hwi : ∀ i : Fin m, Tendsto (fun n => ∫ z, gradPair m φ z (basisVec i) * q z * b n z i)
+        atTop (nhds (∫ z, gradPair m φ z (basisVec i) * q z * B z i)) :=
+      fun i => hweak _ (hgi i) (hgisupp i) (hgitsupp i) i
+    have hsum : Tendsto (fun n => ∑ i : Fin m, ∫ z, gradPair m φ z (basisVec i) * q z * b n z i)
+        atTop (nhds (∑ i : Fin m, ∫ z, gradPair m φ z (basisVec i) * q z * B z i)) :=
+      tendsto_finsetSum Finset.univ (fun i _ => hwi i)
+    have hsum' : Tendsto (fun n => (∑ i : Fin m, ∫ z, gradPair m φ z (basisVec i) * q z * b n z i)
+        - ∑ i : Fin m, ∫ z, gradPair m φ z (basisVec i) * q z * B z i) atTop (nhds 0) := by
+      simpa using hsum.sub_const (∑ i : Fin m, ∫ z, gradPair m φ z (basisVec i) * q z * B z i)
+    exact hsum'.congr' (heqn.mono fun n hn => by dsimp only; rw [hn, heqB])
+  exact hT2weak
+
 /-- Passing a factor converging strongly in `L¹(K)` against a fixed weight `w`, bounded and
 vanishing outside `K`, to the limit: the workhorse for the time-derivative and Laplacian
 pairings, which do not involve the drift. -/
@@ -241,66 +525,8 @@ theorem isDistributionalDriftDiffusion_of_tendsto {m d : ℕ} {T : ℝ}
   have hqbd : ∀ᵐ z ∂(volume.restrict K), |q z| ≤ Mq :=
     hqbdJ.filter_mono (ae_mono (Measure.restrict_mono hsubJ le_rfl))
   -- The second-derivative factory used three times below.
-  have hΨcont : ∀ i : Fin m,
-      ContDiff ℝ (⊤ : ℕ∞) (fun x : Vec m × ℝ => fderiv ℝ φ x (basisVec i, 0)) := by
-    intro i
-    have h1 : ContDiff ℝ (⊤ : ℕ∞) (fderiv ℝ φ) := hφ1.fderiv_right (by simp)
-    exact (ContinuousLinearMap.apply ℝ ℝ (basisVec i, (0 : ℝ))).contDiff.comp h1
-  -- timeDeriv φ: continuity, vanishing outside K, boundedness on K.
-  have heqT : (fun z => timeDeriv m φ z) = fun z => fderiv ℝ φ z (0, 1) := by
-    funext z; exact timeDeriv_eq_fderiv_apply (hφ1.differentiable (by simp) z)
-  have hTcont : Continuous (fun z => timeDeriv m φ z) := by
-    rw [heqT]
-    have h1 : ContDiff ℝ (⊤ : ℕ∞) (fderiv ℝ φ) := hφ1.fderiv_right (by simp)
-    exact h1.continuous.clm_apply continuous_const
-  have hTsub : tsupport (fun z => timeDeriv m φ z) ⊆ K := by
-    rw [heqT]; exact tsupport_fderiv_apply_subset ℝ (0, 1)
-  have hTvanish : ∀ z, z ∉ K → timeDeriv m φ z = 0 := fun z hz =>
-    image_eq_zero_of_notMem_tsupport (fun hc => hz (hTsub hc))
-  obtain ⟨CT, hCT⟩ := hK.exists_bound_of_continuousOn hTcont.continuousOn
-  -- partialLaplacian m d φ: pointwise second-derivative formula, continuity, vanishing, bound.
-  have hLapEq : ∀ z, partialLaplacian m d φ z = ∑ i : Fin m, if (i : ℕ) < d then
-      fderiv ℝ (fun x : Vec m × ℝ => fderiv ℝ φ x (basisVec i, 0)) z (basisVec i, 0) else 0 := by
-    intro z
-    unfold partialLaplacian
-    refine Finset.sum_congr rfl (fun i _ => ?_)
-    split_ifs with hi
-    · have hinner : (fun x : Vec m => fderiv ℝ (fun y : Vec m => φ (y, z.2)) x (basisVec i))
-          = fun x : Vec m => (fun x' : Vec m × ℝ => fderiv ℝ φ x' (basisVec i, 0)) (x, z.2) := by
-        funext x
-        exact gradPair_eq_fderiv_apply (hφ1.differentiable (by simp) (x, z.2)) (basisVec i)
-      rw [hinner]
-      exact fderiv_slice_fst_eq ((hΨcont i).differentiable (by simp) z) (basisVec i)
-    · rfl
-  have hLcont : Continuous (fun z => partialLaplacian m d φ z) := by
-    have heq2 : (fun z => partialLaplacian m d φ z) = fun z => ∑ i : Fin m, if (i : ℕ) < d then
-        fderiv ℝ (fun x : Vec m × ℝ => fderiv ℝ φ x (basisVec i, 0)) z (basisVec i, 0) else 0 :=
-      funext hLapEq
-    rw [heq2]
-    refine continuous_finsetSum Finset.univ (fun i _ => ?_)
-    split_ifs with hi
-    · have h2 : ContDiff ℝ (⊤ : ℕ∞) (fderiv ℝ (fun x : Vec m × ℝ => fderiv ℝ φ x (basisVec i,
-      0))) :=
-        (hΨcont i).fderiv_right (by simp)
-      exact h2.continuous.clm_apply continuous_const
-    · exact continuous_const
-  have hLvanish : ∀ z, z ∉ K → partialLaplacian m d φ z = 0 := by
-    intro z hz
-    rw [hLapEq z]
-    refine Finset.sum_eq_zero (fun i _ => ?_)
-    split_ifs with hi
-    · have hsub1 : tsupport (fun x : Vec m × ℝ => fderiv ℝ φ x (basisVec i, 0)) ⊆ K :=
-        tsupport_fderiv_apply_subset ℝ (basisVec i, 0)
-      have hsub2 : tsupport (fun x : Vec m × ℝ =>
-          fderiv ℝ (fun x' : Vec m × ℝ => fderiv ℝ φ x' (basisVec i, 0)) x (basisVec i, 0))
-          ⊆ tsupport (fun x : Vec m × ℝ => fderiv ℝ φ x (basisVec i, 0)) :=
-        tsupport_fderiv_apply_subset ℝ (basisVec i, 0)
-      set g : Vec m × ℝ → ℝ := fun x =>
-        fderiv ℝ (fun x' : Vec m × ℝ => fderiv ℝ φ x' (basisVec i, 0)) x (basisVec i, 0) with hgdef
-      show g z = 0
-      exact image_eq_zero_of_notMem_tsupport (fun hc => hz (hsub1 (hsub2 hc)))
-    · rfl
-  obtain ⟨CL, hCL⟩ := hK.exists_bound_of_continuousOn hLcont.continuousOn
+  obtain ⟨CT, CL, hTcont, hTvanish, hCT, hLcont, hLvanish, hCL⟩ :=
+    test_operator_bounds (d := d) hφ1 hφ2
   have hqnbd1 : ∀ᶠ n in atTop, AEStronglyMeasurable (qn n) (volume.restrict K) ∧
       ∀ z ∈ K, |qn n z| ≤ max M Mq :=
     hbdM.mono fun n h => ⟨h.1, fun z hz => (h.2.2.2 z hz).1.trans (le_max_left M Mq)⟩
@@ -370,125 +596,10 @@ theorem isDistributionalDriftDiffusion_of_tendsto {m d : ℕ} {T : ℝ}
     · intro n z hz; rw [hgradbVanish n z hz, mul_zero]
   -- The generic decomposition of `∫ q * gradPair φ (·) (W ·)` into its basis components,
   -- valid for any vector field `W` that is a.e.-strongly-measurable and a.e.-bounded on `K`.
-  have hsumIdentity : ∀ (W : Vec m × ℝ → Vec m) (MW : ℝ),
-      AEStronglyMeasurable W (volume.restrict K) → (∀ᵐ z ∂(volume.restrict K), ‖W z‖ ≤ MW) →
-      ∫ z, q z * gradPair m φ z (W z)
-        = ∑ i : Fin m, ∫ z, gradPair m φ z (basisVec i) * q z * W z i := by
-    intro W MW hWm hWbd
-    have hpt : ∀ z, q z * gradPair m φ z (W z)
-        = ∑ i : Fin m, gradPair m φ z (basisVec i) * q z * W z i := by
-      intro z
-      have heq := apply_eq_sum_basisVec (fderiv ℝ (fun x : Vec m => φ (x, z.2)) z.1) (W z)
-      unfold gradPair
-      rw [heq, Finset.mul_sum]
-      exact Finset.sum_congr rfl (fun i _ => by ring)
-    have hint : ∀ i : Fin m, Integrable
-        (fun z => gradPair m φ z (basisVec i) * q z * W z i) volume := by
-      intro i
-      have hwm : AEStronglyMeasurable (fun z => gradPair m φ z (basisVec i) * q z)
-          (volume.restrict K) :=
-        (continuous_gradPair_joint hφ1 (basisVec i)).aestronglyMeasurable.mul hqm
-      have hwbd : ∀ᵐ z ∂(volume.restrict K), |gradPair m φ z (basisVec i) * q z| ≤ Cg i * Mq := by
-        filter_upwards [ae_restrict_mem hKm, hqbd] with z hzK hzq
-        rw [abs_mul]
-        exact mul_le_mul (hCg i z hzK) hzq (abs_nonneg _) (le_trans (abs_nonneg _) (hCg i z hzK))
-      have hwsupp : ∀ z, z ∉ K → gradPair m φ z (basisVec i) * q z = 0 := fun z hz => by
-        rw [image_eq_zero_of_notMem_tsupport
-          (fun hc => hz (tsupport_gradPair_joint_subset hφ1 (basisVec i) hc)), zero_mul]
-      have hfm : AEStronglyMeasurable (fun z => W z i) (volume.restrict K) :=
-        (continuous_apply i).comp_aestronglyMeasurable hWm
-      have hfbd : ∀ᵐ z ∂(volume.restrict K), |W z i| ≤ MW := by
-        filter_upwards [hWbd] with z hz
-        rw [← Real.norm_eq_abs]; exact (norm_le_pi_norm (W z) i).trans hz
-      have := integrable_mul_of_bdd_isCompact_of_vanishing_outside hK hfm hfbd hwm hwbd
-        (fun z hz => by rw [hwsupp z hz, mul_zero])
-      simpa [mul_comm, mul_left_comm, mul_assoc] using this
-    rw [hpt |> funext, integral_finsetSum Finset.univ (fun i _ => hint i)]
-  -- Integrability data for `hweak`'s test functions `gradPair φ (·) (basisVec i) * q`.
-  have hgi : ∀ i : Fin m, Integrable (fun z => gradPair m φ z (basisVec i) * q z) volume :=
-    fun i => integrable_mul_of_isLocallyBoundedOn hq (continuous_gradPair_joint hφ1 (basisVec i))
-      (hasCompactSupport_gradPair_joint hφ1 hφ2 (basisVec i))
-      ((tsupport_gradPair_joint_subset hφ1 (basisVec i)).trans hφ3)
-  have hgisupp : ∀ i : Fin m, HasCompactSupport (fun z => gradPair m φ z (basisVec i) * q z) :=
-    fun i => (hasCompactSupport_gradPair_joint hφ1 hφ2 (basisVec i)).mul_right
-  have hgitsupp : ∀ i : Fin m, tsupport (fun z => gradPair m φ z (basisVec i) * q z)
-      ⊆ (univ : Set (Vec m)) ×ˢ Iio T := fun i =>
-    tsupport_mul_subset_left.trans ((tsupport_gradPair_joint_subset hφ1 (basisVec i)).trans hφ3)
-  -- The admissible drift's own global measurability and local boundedness.
-  have hBmeasK : AEStronglyMeasurable B (volume.restrict K) :=
-    hB.1.aestronglyMeasurable.mono_measure (Measure.restrict_mono hKI le_rfl)
-  have hBslice := hB.2.2
-  obtain ⟨ΛB, hΛB⟩ := hBslice (Prod.snd '' K) (hK.image continuous_snd)
-    (by rintro τ ⟨z, hz, rfl⟩; exact (hKI hz).2)
-  have hBnormbdd : ∀ᵐ z ∂(volume.restrict K), ‖B z‖ ≤ (ΛB : ℝ) := by
-    have hvol : (volume : Measure (Vec m)).prod (volume.restrict (Prod.snd '' K))
-        = volume.restrict ((univ : Set (Vec m)) ×ˢ (Prod.snd '' K)) := by
-      rw [← Measure.restrict_univ (μ := (volume : Measure (Vec m))), Measure.prod_restrict,
-        ← Measure.volume_eq_prod]
-    have hae : ∀ᵐ z ∂(volume.restrict ((univ : Set (Vec m)) ×ˢ (Prod.snd '' K))),
-        ‖B z‖ ≤ (ΛB : ℝ) := by
-      rw [← hvol]
-      exact ae_prod_of_ae_forall hΛB (fun τ hτ x => hτ.1 x)
-    exact hae.filter_mono (ae_mono (Measure.restrict_mono hsubJ le_rfl))
-  -- T2: assembling the vanishing and weak-* pieces.
-  have hT2weak : Tendsto (fun n => (∫ z, q z * gradPair m φ z (b n z))
-      - ∫ z, q z * gradPair m φ z (B z)) atTop (nhds 0) := by
-    have heqB : ∫ z, q z * gradPair m φ z (B z)
-        = ∑ i : Fin m, ∫ z, gradPair m φ z (basisVec i) * q z * B z i :=
-      hsumIdentity B (ΛB : ℝ) hBmeasK hBnormbdd
-    have heqn : ∀ᶠ n in atTop, ∫ z, q z * gradPair m φ z (b n z)
-        = ∑ i : Fin m, ∫ z, gradPair m φ z (basisVec i) * q z * b n z i := by
-      filter_upwards [hbbd] with n hbn
-      exact hsumIdentity (b n) M hbn.1 (ae_restrict_of_forall_mem hKm hbn.2)
-    have hwi : ∀ i : Fin m, Tendsto (fun n => ∫ z, gradPair m φ z (basisVec i) * q z * b n z i)
-        atTop (nhds (∫ z, gradPair m φ z (basisVec i) * q z * B z i)) :=
-      fun i => (hweak _ (hgi i) (hgisupp i) (hgitsupp i)).1 i
-    have hsum : Tendsto (fun n => ∑ i : Fin m, ∫ z, gradPair m φ z (basisVec i) * q z * b n z i)
-        atTop (nhds (∑ i : Fin m, ∫ z, gradPair m φ z (basisVec i) * q z * B z i)) :=
-      tendsto_finsetSum Finset.univ (fun i _ => hwi i)
-    have hsum' : Tendsto (fun n => (∑ i : Fin m, ∫ z, gradPair m φ z (basisVec i) * q z * b n z i)
-        - ∑ i : Fin m, ∫ z, gradPair m φ z (basisVec i) * q z * B z i) atTop (nhds 0) := by
-      simpa using hsum.sub_const (∑ i : Fin m, ∫ z, gradPair m φ z (basisVec i) * q z * B z i)
-    exact hsum'.congr' (heqn.mono fun n hn => by dsimp only; rw [hn, heqB])
-  have hT2raw : Tendsto (fun n => (∫ z, qn n z * gradPair m φ z (b n z))
-      - ∫ z, q z * gradPair m φ z (B z)) atTop (nhds 0) := by
-    have hcomb : Tendsto (fun n => (∫ z, (qn n z - q z) * gradPair m φ z (b n z))
-        + ((∫ z, q z * gradPair m φ z (b n z)) - ∫ z, q z * gradPair m φ z (B z))) atTop
-        (nhds (0 + 0)) := hT2van.add hT2weak
-    rw [zero_add] at hcomb
-    refine hcomb.congr' (?_ : (fun n => _) =ᶠ[atTop] (fun n => _))
-    filter_upwards [hqnbd1, hgradbBdd] with n hqn hgn
-    have hInt1 : Integrable (fun z => qn n z * gradPair m φ z (b n z)) volume :=
-      integrable_mul_of_bdd_isCompact_of_vanishing_outside hK hqn.1
-        (ae_restrict_of_forall_mem hKm hqn.2) hgn.1 (ae_restrict_of_forall_mem hKm hgn.2)
-        (fun z hz => by rw [hgradbVanish n z hz, mul_zero])
-    have hInt2 : Integrable (fun z => q z * gradPair m φ z (b n z)) volume :=
-      integrable_mul_of_bdd_isCompact_of_vanishing_outside hK hqm hqbd hgn.1
-        (ae_restrict_of_forall_mem hKm hgn.2) (fun z hz => by rw [hgradbVanish n z hz, mul_zero])
-    have heq : ∫ z, (qn n z - q z) * gradPair m φ z (b n z)
-        = (∫ z, qn n z * gradPair m φ z (b n z)) - ∫ z, q z * gradPair m φ z (b n z) := by
-      have hcong : ∫ z, (qn n z - q z) * gradPair m φ z (b n z)
-          = ∫ z, (qn n z * gradPair m φ z (b n z) - q z * gradPair m φ z (b n z)) :=
-        integral_congr_ae (Eventually.of_forall fun z => by ring)
-      rw [hcong, integral_sub hInt1 hInt2]
-    rw [heq]; ring
-  have hT2mid : Tendsto (fun n => ∫ z, qn n z * gradPair m φ z (b n z)) atTop
-      (nhds (∫ z, q z * gradPair m φ z (B z))) := by
-    have h := hT2raw.add_const (∫ z, q z * gradPair m φ z (B z))
-    simpa using h
-  have hT2 : Tendsto (fun n => ∫ z, qn n z * (-(gradPair m φ z (b n z)))) atTop
-      (nhds (∫ z, q z * (-(gradPair m φ z (B z))))) := by
-    have hneg := hT2mid.neg
-    have hL : ∀ n, -(∫ z, qn n z * gradPair m φ z (b n z))
-        = ∫ z, qn n z * (-(gradPair m φ z (b n z))) := by
-      intro n
-      rw [← integral_neg]
-      exact integral_congr_ae (Eventually.of_forall fun z => by ring)
-    have hR : -(∫ z, q z * gradPair m φ z (B z)) = ∫ z, q z * (-(gradPair m φ z (B z))) := by
-      rw [← integral_neg]
-      exact integral_congr_ae (Eventually.of_forall fun z => by ring)
-    rw [hR] at hneg
-    exact hneg.congr' (Eventually.of_forall hL)
+  have hT2weak := tendsto_weak_gradient_pairing hφ1 hφ2 hφ3 hq hB
+    (fun g hg hc hs => (hweak g hg hc hs).1) hqm hqbd hbbd Cg hCg
+  have hT2 := tendsto_negative_pairing_of_difference hK hqm hqbd hqnbd1 hgradbBdd
+    hgradbVanish hT2van hT2weak
   -- T3: the divergence pairing.
   have hdivphibdd : ∀ᶠ n in atTop, AEStronglyMeasurable (fun z => divb n z * φ z)
       (volume.restrict K) ∧ ∀ z ∈ K, |divb n z * φ z| ≤ M * Cφ := by
@@ -523,88 +634,15 @@ theorem isDistributionalDriftDiffusion_of_tendsto {m d : ℕ} {T : ℝ}
       rw [hfun, ← heqB]
       exact hw
     simpa using hw'.sub_const (∫ z, q z * (divB z * φ z))
-  have hT3raw : Tendsto (fun n => (∫ z, qn n z * (divb n z * φ z))
-      - ∫ z, q z * (divB z * φ z)) atTop (nhds 0) := by
-    have hcomb : Tendsto (fun n => (∫ z, (qn n z - q z) * (divb n z * φ z))
-        + ((∫ z, q z * (divb n z * φ z)) - ∫ z, q z * (divB z * φ z))) atTop
-        (nhds (0 + 0)) := hT3van.add hT3weak
-    rw [zero_add] at hcomb
-    refine hcomb.congr' (?_ : (fun n => _) =ᶠ[atTop] (fun n => _))
-    filter_upwards [hqnbd1, hdivphibdd] with n hqn hdn
-    have hInt1 : Integrable (fun z => qn n z * (divb n z * φ z)) volume :=
-      integrable_mul_of_bdd_isCompact_of_vanishing_outside hK hqn.1
-        (ae_restrict_of_forall_mem hKm hqn.2) hdn.1 (ae_restrict_of_forall_mem hKm hdn.2)
-        (fun z hz => by rw [hdivphivanish n z hz, mul_zero])
-    have hInt2 : Integrable (fun z => q z * (divb n z * φ z)) volume :=
-      integrable_mul_of_bdd_isCompact_of_vanishing_outside hK hqm hqbd hdn.1
-        (ae_restrict_of_forall_mem hKm hdn.2) (fun z hz => by rw [hdivphivanish n z hz, mul_zero])
-    have heq : ∫ z, (qn n z - q z) * (divb n z * φ z)
-        = (∫ z, qn n z * (divb n z * φ z)) - ∫ z, q z * (divb n z * φ z) := by
-      have hcong : ∫ z, (qn n z - q z) * (divb n z * φ z)
-          = ∫ z, (qn n z * (divb n z * φ z) - q z * (divb n z * φ z)) :=
-        integral_congr_ae (Eventually.of_forall fun z => by ring)
-      rw [hcong, integral_sub hInt1 hInt2]
-    rw [heq]; ring
-  have hT3mid : Tendsto (fun n => ∫ z, qn n z * (divb n z * φ z)) atTop
-      (nhds (∫ z, q z * (divB z * φ z))) := by
-    have h := hT3raw.add_const (∫ z, q z * (divB z * φ z))
-    simpa using h
-  have hT3 : Tendsto (fun n => ∫ z, qn n z * (-(divb n z * φ z))) atTop
-      (nhds (∫ z, q z * (-(divB z * φ z)))) := by
-    have hneg := hT3mid.neg
-    have hL : ∀ n, -(∫ z, qn n z * (divb n z * φ z))
-        = ∫ z, qn n z * (-(divb n z * φ z)) := by
-      intro n
-      rw [← integral_neg]
-      exact integral_congr_ae (Eventually.of_forall fun z => by ring)
-    have hR : -(∫ z, q z * (divB z * φ z)) = ∫ z, q z * (-(divB z * φ z)) := by
-      rw [← integral_neg]
-      exact integral_congr_ae (Eventually.of_forall fun z => by ring)
-    rw [hR] at hneg
-    exact hneg.congr' (Eventually.of_forall hL)
+  have hT3 := tendsto_negative_pairing_of_difference hK hqm hqbd hqnbd1 hdivphibdd
+    hdivphivanish hT3van hT3weak
   -- Boundedness/vanishing data for `gradPair φ (B ·)` and `divB · φ`, needed for the final
   -- integrability and limit-uniqueness argument.
-  have hgradBBdd : AEStronglyMeasurable (fun z => gradPair m φ z (B z)) (volume.restrict K) ∧
-      ∀ᵐ z ∂(volume.restrict K), |gradPair m φ z (B z)| ≤ (ΛB : ℝ) * Cgrad := by
-    refine ⟨?_, ?_⟩
-    · have heqz : (fun z => gradPair m φ z (B z))
-          = fun z => ∑ i : Fin m, B z i * gradPair m φ z (basisVec i) := funext hgradEqB
-      rw [heqz]
-      refine aestronglyMeasurable_finsetSum Finset.univ (fun i _ => ?_)
-      exact (((continuous_apply i).comp_aestronglyMeasurable hBmeasK).mul
-        (continuous_gradPair_joint hφ1 (basisVec i)).aestronglyMeasurable)
-    · filter_upwards [hBnormbdd, ae_restrict_mem hKm] with z hz hzK
-      rw [hgradEqB z]
-      have hbi : ∀ i : Fin m, |B z i| ≤ (ΛB : ℝ) := fun i => by
-        rw [← Real.norm_eq_abs]; exact (norm_le_pi_norm (B z) i).trans hz
-      calc |∑ i : Fin m, B z i * gradPair m φ z (basisVec i)|
-          ≤ ∑ i : Fin m, |B z i * gradPair m φ z (basisVec i)| := Finset.abs_sum_le_sum_abs _ _
-        _ ≤ ∑ i : Fin m, (ΛB : ℝ) * Cg i := by
-            refine Finset.sum_le_sum (fun i _ => ?_)
-            rw [abs_mul]
-            exact mul_le_mul (hbi i) (hCg i z hzK) (abs_nonneg _)
-              (le_trans (abs_nonneg _) (hbi i))
-        _ = (ΛB : ℝ) * Cgrad := by rw [hCgraddef, Finset.mul_sum]
   have hgradBvanish : ∀ z, z ∉ K → gradPair m φ z (B z) = 0 := fun z hz => by
     rw [hgradEqB z]
     refine Finset.sum_eq_zero (fun i _ => ?_)
     rw [image_eq_zero_of_notMem_tsupport
       (fun hc => hz (tsupport_gradPair_joint_subset hφ1 (basisVec i) hc)), mul_zero]
-  have hdivBIsLB : IsLocallyBoundedOn m (Iio T) divB :=
-    isLocallyBoundedOn_divB_of_isAdmissibleDrift hB
-  obtain ⟨ΛdivB, hΛdivBJ⟩ := hdivBIsLB.2 (Prod.snd '' K) (hK.image continuous_snd)
-    (by rintro τ ⟨z, hz, rfl⟩; exact (hKI hz).2)
-  have hdivBmK : AEStronglyMeasurable divB (volume.restrict K) :=
-    hdivBIsLB.1.mono_measure (Measure.restrict_mono hKI le_rfl)
-  have hdivBbdK : ∀ᵐ z ∂(volume.restrict K), |divB z| ≤ ΛdivB :=
-    hΛdivBJ.filter_mono (ae_mono (Measure.restrict_mono hsubJ le_rfl))
-  have hdivBphibdd : AEStronglyMeasurable (fun z => divB z * φ z) (volume.restrict K) ∧
-      ∀ᵐ z ∂(volume.restrict K), |divB z * φ z| ≤ ΛdivB * Cφ := by
-    refine ⟨hdivBmK.mul hφ1.continuous.aestronglyMeasurable, ?_⟩
-    filter_upwards [hdivBbdK, ae_restrict_mem hKm] with z hz hzK
-    rw [abs_mul]
-    exact mul_le_mul hz (by rw [← Real.norm_eq_abs]; exact hCφ z hzK) (abs_nonneg _)
-      (le_trans (abs_nonneg _) hz)
   have hdivBphivanish : ∀ z, z ∉ K → divB z * φ z = 0 := fun z hz => by
     rw [image_eq_zero_of_notMem_tsupport hz, mul_zero]
   -- The four limit values `L1, L2, L3, L4` are globally integrable against `q`.
@@ -613,13 +651,13 @@ theorem isDistributionalDriftDiffusion_of_tendsto {m d : ℕ} {T : ℝ}
       (ae_restrict_of_forall_mem hKm fun z hz => by rw [abs_neg]; exact hCT z hz)
       (fun z hz => by rw [hTvanish z hz, neg_zero, mul_zero])
   have hIntL2 : Integrable (fun z => q z * (-(gradPair m φ z (B z)))) volume :=
-    integrable_mul_of_bdd_isCompact_of_vanishing_outside hK hqm hqbd
-      hgradBBdd.1.neg (hgradBBdd.2.mono fun z hz => by rw [abs_neg]; exact hz)
-      (fun z hz => by rw [hgradBvanish z hz, neg_zero, mul_zero])
+    integrable_mul_of_bounded_on_support hKm hqm hqbd
+      (integrable_gradPair_mul_of_isAdmissibleDrift hB ⟨hφ1, hφ2, hφ3⟩).neg
+      (fun z hz => by rw [hgradBvanish z hz, neg_zero])
   have hIntL3 : Integrable (fun z => q z * (-(divB z * φ z))) volume :=
-    integrable_mul_of_bdd_isCompact_of_vanishing_outside hK hqm hqbd
-      hdivBphibdd.1.neg (hdivBphibdd.2.mono fun z hz => by rw [abs_neg]; exact hz)
-      (fun z hz => by rw [hdivBphivanish z hz, neg_zero, mul_zero])
+    integrable_mul_of_bounded_on_support hKm hqm hqbd
+      (integrable_divB_mul_of_isAdmissibleDrift hB ⟨hφ1, hφ2, hφ3⟩).neg
+      (fun z hz => by rw [hdivBphivanish z hz, neg_zero])
   have hIntL4 : Integrable (fun z => q z * (-(partialLaplacian m d φ z))) volume :=
     integrable_mul_of_bdd_isCompact_of_vanishing_outside hK hqm hqbd hLcont.neg.aestronglyMeasurable
       (ae_restrict_of_forall_mem hKm fun z hz => by rw [abs_neg]; exact hCL z hz)
@@ -629,16 +667,7 @@ theorem isDistributionalDriftDiffusion_of_tendsto {m d : ℕ} {T : ℝ}
       partialLaplacian m d φ z) = (∫ z, q z * (-(timeDeriv m φ z)))
       + (∫ z, q z * (-(gradPair m φ z (B z)))) + (∫ z, q z * (-(divB z * φ z)))
       + ∫ z, q z * (-(partialLaplacian m d φ z)) := by
-    have hpt : ∀ z, q z * (-(timeDeriv m φ z) - gradPair m φ z (B z) - divB z * φ z -
-        partialLaplacian m d φ z) = q z * (-(timeDeriv m φ z))
-        + q z * (-(gradPair m φ z (B z))) + q z * (-(divB z * φ z))
-        + q z * (-(partialLaplacian m d φ z)) := fun z => by ring
-    have h12 : Integrable (fun z => q z * (-(timeDeriv m φ z))
-        + q z * (-(gradPair m φ z (B z)))) volume := hIntL1.add hIntL2
-    have h123 : Integrable (fun z => q z * (-(timeDeriv m φ z))
-        + q z * (-(gradPair m φ z (B z))) + q z * (-(divB z * φ z))) volume := h12.add hIntL3
-    rw [integral_congr_ae (Eventually.of_forall hpt), integral_add h123 hIntL4,
-      integral_add h12 hIntL3, integral_add hIntL1 hIntL2]
+    exact integral_four_pairings q _ _ _ _ hIntL1 hIntL2 hIntL3 hIntL4
   -- The finite-`n` residual against `qn n` splits into the four sequences `S1, ..., S4`.
   have hSsplit : ∀ᶠ n in atTop, ∫ z, qn n z * (-(timeDeriv m φ z) - gradPair m φ z (b n z) -
       divb n z * φ z - partialLaplacian m d φ z) = (∫ z, qn n z * (-(timeDeriv m φ z)))
@@ -665,17 +694,7 @@ theorem isDistributionalDriftDiffusion_of_tendsto {m d : ℕ} {T : ℝ}
         (ae_restrict_of_forall_mem hKm hqn.2) hLcont.neg.aestronglyMeasurable
         (ae_restrict_of_forall_mem hKm fun z hz => by rw [abs_neg]; exact hCL z hz)
         (fun z hz => by rw [hLvanish z hz, neg_zero, mul_zero])
-    have hpt : ∀ z, qn n z * (-(timeDeriv m φ z) - gradPair m φ z (b n z) -
-        divb n z * φ z - partialLaplacian m d φ z) = qn n z * (-(timeDeriv m φ z))
-        + qn n z * (-(gradPair m φ z (b n z))) + qn n z * (-(divb n z * φ z))
-        + qn n z * (-(partialLaplacian m d φ z)) := fun z => by ring
-    have h12 : Integrable (fun z => qn n z * (-(timeDeriv m φ z))
-        + qn n z * (-(gradPair m φ z (b n z)))) volume := hI1.add hI2
-    have h123 : Integrable (fun z => qn n z * (-(timeDeriv m φ z))
-        + qn n z * (-(gradPair m φ z (b n z))) + qn n z * (-(divb n z * φ z))) volume :=
-      h12.add hI3
-    rw [integral_congr_ae (Eventually.of_forall hpt), integral_add h123 hI4,
-      integral_add h12 hI3, integral_add hI1 hI2]
+    exact integral_four_pairings (qn n) _ _ _ _ hI1 hI2 hI3 hI4
   have hSTendsto : Tendsto (fun n => (∫ z, qn n z * (-(timeDeriv m φ z)))
       + (∫ z, qn n z * (-(gradPair m φ z (b n z)))) + (∫ z, qn n z * (-(divb n z * φ z)))
       + ∫ z, qn n z * (-(partialLaplacian m d φ z))) atTop
@@ -690,19 +709,13 @@ theorem isDistributionalDriftDiffusion_of_tendsto {m d : ℕ} {T : ℝ}
       + (∫ z, q z * (-(divB z * φ z))) + ∫ z, q z * (-(partialLaplacian m d φ z)) = 0 :=
     tendsto_nhds_unique hSTendsto hSTendstoZero
   refine ⟨?_, ?_⟩
-  · have hgK : Integrable (fun z => -(timeDeriv m φ z) - gradPair m φ z (B z) - divB z * φ z -
-        partialLaplacian m d φ z) (volume.restrict K) := by
-      have h1 := integrable_timeDeriv_of_testFunction (m := m) (I := Iio T) ⟨hφ1, hφ2, hφ3⟩
-      have h2 := integrable_gradPair_mul_of_isAdmissibleDrift hB (I := Iio T) ⟨hφ1, hφ2, hφ3⟩
-      have h3 := integrable_divB_mul_of_isAdmissibleDrift hB (I := Iio T) ⟨hφ1, hφ2, hφ3⟩
-      have h4 := integrable_partialLaplacian_of_testFunction (m := m) d (I := Iio T)
-        ⟨hφ1, hφ2, hφ3⟩
-      exact (((h1.neg).sub h2).sub h3).sub h4 |>.restrict
-    have hfinal : Integrable (fun z => q z * (-(timeDeriv m φ z) - gradPair m φ z (B z) -
-        divB z * φ z - partialLaplacian m d φ z)) (volume.restrict K) := by
-      have := hgK.mul_bdd hqm (by simpa [Real.norm_eq_abs] using hqbd)
-      simpa [mul_comm] using this
-    exact hfinal
+  · have hfinal : Integrable (fun z => q z * (-(timeDeriv m φ z) - gradPair m φ z (B z) -
+        divB z * φ z - partialLaplacian m d φ z)) := by
+      convert ((hIntL1.add hIntL2).add hIntL3).add hIntL4 using 1
+      funext z
+      simp only [Pi.add_apply]
+      ring
+    exact hfinal.restrict
   · rw [hsplit]; exact hzeroSum
 
 end CIV

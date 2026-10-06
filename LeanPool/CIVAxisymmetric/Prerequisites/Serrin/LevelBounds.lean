@@ -55,7 +55,7 @@ theorem level_bound_of_local {g : ParabolicPoint → ℝ} {a b t₁ c₁ c₂ : 
     (hgc.mono (by
       rintro ⟨y, t⟩ ⟨⟨hy1, hy2⟩, ht1, ht2⟩
       refine ⟨?_, ?_, ?_⟩
-      · show vec3EuclideanNorm (y - 0) < 1
+      · change vec3EuclideanNorm (y - 0) < 1
         rw [sub_zero]; linarith only [hy2, hb', hb1]
       · change -1 < t; linarith only [ht1, hta, ht1']
       · exact ht2))
@@ -74,7 +74,7 @@ theorem mem_unitCylinder_of_annulus {b t₁ : ℝ} (hb1 : b < 1) (ht₁ : -1 < t
     {s : ℝ} (hy : vec3EuclideanNorm y < b) (hs : t₁ < s) (hs0 : s < 0) :
     ((y, s) : ParabolicPoint) ∈ unitCylinder := by
   refine ⟨?_, ?_, hs0⟩
-  · show vec3EuclideanNorm (y - 0) < 1
+  · change vec3EuclideanNorm (y - 0) < 1
     rw [sub_zero]; linarith only [hy, hb1]
   · linarith only [hs, ht₁]
 

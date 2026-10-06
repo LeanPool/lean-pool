@@ -84,7 +84,7 @@ private theorem spatialPartial_circulation_zero_gen {u : ParabolicPoint → Vec3
     have h := spatialPartial_coordinate 0 0 w; simpa using h
   have hc1 : spatialPartial (fun v : ParabolicPoint => v.1 1) 0 w = 0 := by
     have h := spatialPartial_coordinate 1 0 w; simpa using h
-  show spatialPartial (fun v : ParabolicPoint => v.1 0 * u v 1 - v.1 1 * u v 0) 0 w = _
+  change spatialPartial (fun v : ParabolicPoint => v.1 0 * u v 1 - v.1 1 * u v 0) 0 w = _
   rw [hsub, hmul1, hmul2, hc0, hc1]
   ring
 
@@ -119,7 +119,7 @@ private theorem spatialPartial_circulation_two_gen {u : ParabolicPoint → Vec3}
     have h := spatialPartial_coordinate 0 2 w; simpa using h
   have hc1 : spatialPartial (fun v : ParabolicPoint => v.1 1) 2 w = 0 := by
     have h := spatialPartial_coordinate 1 2 w; simpa using h
-  show spatialPartial (fun v : ParabolicPoint => v.1 0 * u v 1 - v.1 1 * u v 0) 2 w = _
+  change spatialPartial (fun v : ParabolicPoint => v.1 0 * u v 1 - v.1 1 * u v 0) 2 w = _
   rw [hsub, hmul1, hmul2, hc0, hc1]
   ring
 
@@ -184,7 +184,7 @@ theorem spatialSecondPartial_circulation_zero_zero {u : ParabolicPoint → Vec3}
         u w' 1 + w'.1 0 * spatialPartial (fun v => u v 1) 0 w' - w'.1 1 * spatialPartial (fun v
           => u v 0) 0 w')
         0 w := by
-    show (fderiv ℝ (fun y : Vec3 => spatialPartial (circulation u) 0 (y, w.2)) w.1) (basisVec 0) =
+    change (fderiv ℝ (fun y : Vec3 => spatialPartial (circulation u) 0 (y, w.2)) w.1) (basisVec 0) =
         (fderiv ℝ (fun y : Vec3 => u (y, w.2) 1 + y 0 * spatialPartial (fun v => u v 1) 0 (y, w.2)
           - y 1 * spatialPartial (fun v => u v 0) 0 (y, w.2)) w.1) (basisVec 0)
     rw [h_formula.fderiv_eq]
@@ -265,7 +265,7 @@ theorem spatialSecondPartial_circulation_two_two {u : ParabolicPoint → Vec3}
         w'.1 0 * spatialPartial (fun v => u v 1) 2 w' - w'.1 1 * spatialPartial (fun v => u v 0)
           2 w')
         2 w := by
-    show (fderiv ℝ (fun y : Vec3 => spatialPartial (circulation u) 2 (y, w.2)) w.1) (basisVec 2) =
+    change (fderiv ℝ (fun y : Vec3 => spatialPartial (circulation u) 2 (y, w.2)) w.1) (basisVec 2) =
         (fderiv ℝ (fun y : Vec3 => y 0 * spatialPartial (fun v => u v 1) 2 (y, w.2)
           - y 1 * spatialPartial (fun v => u v 0) 2 (y, w.2)) w.1) (basisVec 2)
     rw [h_formula.fderiv_eq]
@@ -333,7 +333,7 @@ theorem circulation_pde
         z.1 0 * deriv (fun s : ℝ => u (z.1, s) 1) z.2 - z.1 1 * deriv (fun s : ℝ => u (z.1, s)
           0) z.2 :=
       ((hu1_dtime.hasDerivAt.const_mul (z.1 0)).sub (hu0_dtime.hasDerivAt.const_mul (z.1 1))).deriv
-    show deriv (fun s : ℝ => z.1 0 * u (z.1, s) 1 - z.1 1 * u (z.1, s) 0) z.2 =
+    change deriv (fun s : ℝ => z.1 0 * u (z.1, s) 1 - z.1 1 * u (z.1, s) 0) z.2 =
         z.1 0 * deriv (fun s : ℝ => u (z.1, s) 1) z.2
     rw [key, hplane]
     ring

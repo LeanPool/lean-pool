@@ -44,7 +44,7 @@ theorem abs_integral_kernel_mul_le {K F : ParabolicPoint → ℝ} {x : Vec3} {s 
   refine integral_mono_of_nonneg (Filter.Eventually.of_forall (fun z => abs_nonneg _))
     (hK.abs.const_mul Λ) ((ae_restrict_iff' hUm).mpr (Filter.Eventually.of_forall ?_))
   intro z hz
-  show |K z * F z| ≤ Λ * |K z|
+  change |K z * F z| ≤ Λ * |K z|
   by_cases hw : z ∈ {y : Vec3 | vec3EuclideanNorm (y - x) ≤ ρ} ×ˢ Icc (s - ρ ^ 2) s
   · rw [abs_mul, mul_comm Λ]
     exact mul_le_mul_of_nonneg_left (hF z hw) (abs_nonneg _)
@@ -68,9 +68,9 @@ theorem heat_pointwise_bound_of_decomposition : ∃ C : ℝ, 0 < C ∧ ∀ (w : 
   have hc : ((x, s) : ParabolicPoint) ∈
       {y : Vec3 | vec3EuclideanNorm (y - x) ≤ ρ} ×ˢ Icc (s - ρ ^ 2) s := by
     refine ⟨?_, ?_, le_rfl⟩
-    · show vec3EuclideanNorm (x - x) ≤ ρ
+    · change vec3EuclideanNorm (x - x) ≤ ρ
       rw [sub_self, vec3EuclideanNorm_zero]; exact hρ.le
-    · show s - ρ ^ 2 ≤ s
+    · change s - ρ ^ 2 ≤ s
       have := sq_nonneg ρ
       linarith only [this]
   have hΛ : 0 ≤ Λ := (abs_nonneg _).trans (hY _ hc 0)

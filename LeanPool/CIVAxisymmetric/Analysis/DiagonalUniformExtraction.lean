@@ -90,7 +90,6 @@ theorem exists_subseq_tendstoUniformlyOn_forall_of_subseq {X α : Type*} [Unifor
         ≤ (Psi (n + 1)).1 ((rho (n + 1) (Psi (n + 1))).1 (n + 1)) := (Psi (n + 1)).2.monotone h2
     have h4 : (Psi (n + 1)).1 n < (Psi (n + 1)).1 (n + 1) :=
       (Psi (n + 1)).2 (Nat.lt_succ_self n)
-    show (Psi (n + 1)).1 n < (Psi (n + 1 + 1)).1 (n + 1)
     rw [h1]
     exact lt_of_lt_of_le h4 h3
   refine ⟨fun n => (Psi (n + 1)).1 n, hφmono,
@@ -107,7 +106,7 @@ theorem exists_subseq_tendstoUniformlyOn_forall_of_subseq {X α : Type*} [Unifor
     have hstepN := hN (κ n) hNn
     intro x hx
     have h2 := hstepN x hx
-    show (w j (Psi j) x, f ((Psi (n + 1)).1 n) x) ∈ u
+    change (w j (Psi j) x, f ((Psi (n + 1)).1 n) x) ∈ u
     rw [hκeq n]
     exact h2
   refine hmain.congr_right fun x hx => ?_

@@ -223,7 +223,7 @@ theorem zoomOmegaLimit_endpoint_eq_zero {C h : ℝ} (hh : 0 < h)
   intro p hp
   have hz : ((![p.1, 0, 0, 0, p.2] : Vec 5), (-1 : ℝ)) ∈ U ∩ univ ×ˢ Iic (-1) := by
     refine ⟨?_, trivial, by simp⟩
-    show 0 < zoomLiftRadius ![p.1, 0, 0, 0, p.2]
+    change 0 < zoomLiftRadius ![p.1, 0, 0, 0, p.2]
     simp [zoomLiftRadius, Real.sqrt_sq hp.le, hp]
   have h0 := hcont U q hUopen hqc (ae_of_all _ fun _ => rfl) _ hz
   simpa [hq_def, zoomLiftPoint_mk hp.le] using h0

@@ -322,7 +322,7 @@ theorem kahane_analyticBoundOn {R t₁ t₂ : ℝ} {u : ParabolicPoint → Vec3}
       x ∈ vec3Ball 0 R ∧ t ∈ Ioo t₁ t₂ := by
     intro x t hx ht₁ ht₂
     refine ⟨?_, ?_, ?_⟩
-    · show vec3EuclideanNorm (x - 0) < R
+    · change vec3EuclideanNorm (x - 0) < R
       rw [sub_zero]
       linarith only [hx, hdR, hR', hd]
     · linarith only [ht₁, hd2, hdt, hs₁, hd]
@@ -334,7 +334,7 @@ theorem kahane_analyticBoundOn {R t₁ t₂ : ℝ} {u : ParabolicPoint → Vec3}
             ((γ 0 + γ 1 + γ 2).factorial : ℝ) := by
     intro x t hx ht₁ ht₂ γ i
     refine hMfb' γ t ⟨ht₁, ht₂⟩ x ?_ i
-    show vec3EuclideanNorm (x - 0) < R' + 2 * d
+    change vec3EuclideanNorm (x - 0) < R' + 2 * d
     rw [sub_zero]
     linarith only [hx, hd]
   obtain ⟨M, K, hM, hK, hlev⟩ := kahane_levels (isOpen_vec3Ball 0 R) isOpen_Ioo hsol hd hd1 haf

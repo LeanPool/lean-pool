@@ -64,8 +64,8 @@ theorem serrinInteriorEstimates (q : ℝ)
     (Rm' Rp' t₀' : ℝ) (hR' : Rm < Rm' ∧ Rm' < Rp' ∧ Rp' < Rp) (ht₀' : t₀ < t₀' ∧ t₀' < 0) :
     ∃ K : ℝ, ∀ x : Vec3, Rm' < vec3EuclideanNorm x → vec3EuclideanNorm x < Rp' →
       ∀ t ∈ Ioo t₀' 0, ∀ i : Fin 3, ∀ α : Fin 3 → ℕ, α 0 + α 1 + α 2 ≤ 2 →
-        |multiPartial (fun w => u w i) α (x, t)| ≤ K :=
-by exact CIV.Main.serrinInteriorEstimates q u Du p f hsol henergy hu hp hf hMf Rm Rp t₀ hR ht₀
-  Mu hbdd Rm' Rp' t₀' hR' ht₀'
+        |multiPartial (fun w => u w i) α (x, t)| ≤ K := by
+  exact CIV.Main.serrinInteriorEstimates q u Du p f hsol henergy hu hp hf hMf Rm Rp t₀ hR ht₀
+    Mu hbdd Rm' Rp' t₀' hR' ht₀'
 
 end CIV

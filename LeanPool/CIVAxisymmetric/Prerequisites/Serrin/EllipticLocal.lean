@@ -100,7 +100,7 @@ private theorem spatialPartial_eq_of_eqOn_slice {F H : ParabolicPoint → ℝ} {
   intro y hy
   have hev : (fun y' : Vec3 => F (y', t)) =ᶠ[𝓝 y] fun y' => H (y', t) :=
     Filter.eventuallyEq_of_mem (hV.mem_nhds hy) (fun y' hy' => hFH y' hy')
-  show (fderiv ℝ (fun y' : Vec3 => F (y', t)) y) (basisVec j) =
+  change (fderiv ℝ (fun y' : Vec3 => F (y', t)) y) (basisVec j) =
     (fderiv ℝ (fun y' : Vec3 => H (y', t)) y) (basisVec j)
   rw [hev.fderiv_eq]
 
@@ -151,7 +151,7 @@ private theorem spatialLaplacian_spatialDeriv_comm {g : Vec3 → ℝ} (hg : Cont
     fun k => funext fun y' => mixedSecond_swap hg k j y'
   have hdiff : ∀ k : Fin 3, DifferentiableAt ℝ (spatialDeriv (spatialDeriv g k) k) y := fun k =>
     differentiable_of_smooth (contDiff_spatialDeriv_smooth (contDiff_spatialDeriv_smooth hg k) k) y
-  show ∑ k : Fin 3, spatialDeriv (spatialDeriv (spatialDeriv g j) k) k y =
+  change ∑ k : Fin 3, spatialDeriv (spatialDeriv (spatialDeriv g j) k) k y =
     spatialDeriv (fun y' => ∑ k : Fin 3, spatialDeriv (spatialDeriv g k) k y') j y
   rw [spatialDeriv_fun_sum hdiff j]
   refine Finset.sum_congr rfl (fun k _ => ?_)
@@ -222,12 +222,12 @@ private theorem spatialDeriv_eq_neg_integral_split {h : Vec3 → ℝ}
     have hopen : IsOpen {y : Vec3 | vec3EuclideanNorm (y - x) < ρ / 2} :=
       isOpen_lt (continuous_euclideanDist x) continuous_const
     have hx : x ∈ {y : Vec3 | vec3EuclideanNorm (y - x) < ρ / 2} := by
-      show vec3EuclideanNorm (x - x) < ρ / 2
+      change vec3EuclideanNorm (x - x) < ρ / 2
       simp only [sub_self, vec3EuclideanNorm, Pi.zero_apply]
       norm_num
       exact hρ
     refine Filter.eventuallyEq_of_mem (hopen.mem_nhds hx) (fun y hy => ?_)
-    show χ y * h y = h y
+    change χ y * h y = h y
     rw [hχdef, (serrinBallCutoff_support x hρ y).1 (le_of_lt hy), one_mul]
   have hcentre : spatialDeriv (fun y => χ y * h y) l x = spatialDeriv h l x := by
     simp only [spatialDeriv, hloc.fderiv_eq]
@@ -393,7 +393,7 @@ private theorem contDiff_component {G : Vec3 → Vec3} (hG : ContDiff ℝ (⊤ :
 private theorem contDiff_curlComp_lift {G : Vec3 → Vec3} (hG : ContDiff ℝ (⊤ : ℕ∞) G)
     (m : Fin 3) (t : ℝ) :
     ContDiff ℝ (⊤ : ℕ∞) (fun y : Vec3 => curlComp (fun z : ParabolicPoint => G z.1) m (y, t)) := by
-  show ContDiff ℝ (⊤ : ℕ∞) (fun y : Vec3 => spatialDeriv (fun y' => G y' (m + 2)) (m + 1) y -
+  change ContDiff ℝ (⊤ : ℕ∞) (fun y : Vec3 => spatialDeriv (fun y' => G y' (m + 2)) (m + 1) y -
     spatialDeriv (fun y' => G y' (m + 1)) (m + 2) y)
   exact (contDiff_spatialDeriv_smooth (contDiff_component hG _) _).sub
     (contDiff_spatialDeriv_smooth (contDiff_component hG _) _)
@@ -628,7 +628,7 @@ private theorem slice_transfer {u : ParabolicPoint → Vec3} {O : Set ParabolicP
   set U : ParabolicPoint → Vec3 := fun z => G z.1 with hU
   have h0 : ∀ k : Fin 3, ∀ y ∈ V, (fun w => u w k) (y, t) = (fun w => U w k) (y, t) :=
     fun k y hy => by
-      show u (y, t) k = G y k
+      change u (y, t) k = G y k
       rw [(hVG y hy).2]
   have h1 : ∀ k j : Fin 3, ∀ y ∈ V,
       spatialPartial (fun w => u w k) j (y, t) = spatialPartial (fun w => U w k) j (y, t) :=
@@ -819,7 +819,7 @@ theorem EV1_velocity_gradient {u : ParabolicPoint → Vec3} {p : ParabolicPoint 
     hcl.2.2.2.2 (fun y hy i => hu y (hgeom x y hx1 hx2 hy).1 (hgeom x y hx1 hx2 hy).2 s hs i)
     (fun y hy => hω₁ y (hgeom x y hx1 hx2 hy).1 (hgeom x y hx1 hx2 hy).2 s hs)
   refine ⟨?_, ?_, ?_⟩
-  · show vec3EuclideanNorm (y - 0) < 1
+  · change vec3EuclideanNorm (y - 0) < 1
     rw [sub_zero]
     exact (hgeom x y hx1 hx2 hy).2.trans hab.2.2
   · exact ht₁.1.trans hs.1
@@ -845,7 +845,7 @@ theorem EV2_velocity_hessian {u : ParabolicPoint → Vec3} {p : ParabolicPoint �
     hcl.2.2.2.2 (fun y hy i => hu y (hgeom x y hx1 hx2 hy).1 (hgeom x y hx1 hx2 hy).2 s hs i)
     (fun y hy => hω₂ y (hgeom x y hx1 hx2 hy).1 (hgeom x y hx1 hx2 hy).2 s hs)
   refine ⟨?_, ?_, ?_⟩
-  · show vec3EuclideanNorm (y - 0) < 1
+  · change vec3EuclideanNorm (y - 0) < 1
     rw [sub_zero]
     exact (hgeom x y hx1 hx2 hy).2.trans hab.2.2
   · exact ht₁.1.trans hs.1

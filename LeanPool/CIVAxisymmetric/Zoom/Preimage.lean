@@ -199,7 +199,7 @@ theorem tendsto_radialLength_nhdsGT : Tendsto radialLength (𝓝[<] (0 : ℝ)) (
   refine ⟨tendsto_radialLength, ?_⟩
   filter_upwards [self_mem_nhdsWithin] with t ht
   have htneg : t < 0 := ht
-  show (0 : ℝ) < radialLength t
+  change (0 : ℝ) < radialLength t
   exact Real.rpow_pos_of_pos (neg_pos.mpr htneg) _
 
 /-- A sequence of negative times converging to the singular time converges within the negative

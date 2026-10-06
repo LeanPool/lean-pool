@@ -47,7 +47,7 @@ theorem axisymmetricTheorem (q : ℝ)
     (h : ℝ) (hh : 0 < h ∧ h < 1 / 2)
     (hMf : ForceC2Bounded f)
     (C : ℝ) (hC : 0 < C) (hbounds : AnisotropicBounds C h u) :
-    BoundedNearOrigin u :=
-by exact CIV.Main.axisymmetricTheorem q u Du p f hsol henergy hu hp hf haxi h hh hMf C hC hbounds
+    BoundedNearOrigin u := by
+  exact CIV.Main.axisymmetricTheorem q u Du p f hsol henergy hu hp hf haxi h hh hMf C hC hbounds
 
 end CIV

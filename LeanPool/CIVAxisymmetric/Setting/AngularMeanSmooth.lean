@@ -204,7 +204,7 @@ theorem isOpen_unitCylinder_prod : IsOpen (X := Vec3 × ℝ) unitCylinder :=
 theorem contDiff_rotZ_uncurry (n : WithTop ℕ∞) :
     ContDiff ℝ n fun p : ℝ × Vec3 => rotZ p.1 p.2 := by
   refine contDiff_pi.2 fun i => ?_
-  fin_cases i <;> simp [rotZ] <;> fun_prop
+  fin_cases i <;> simp only [rotZ] <;> fun_prop
 
 /-- The rotated field `(φ, z) ↦ (ℛ_φ u)(z)` is jointly `C^n` on `ℝ × Q` when `u` is `C^n`
 on `Q`. -/
@@ -272,7 +272,7 @@ theorem spatialPartial_angularMean (i j : Fin 3) {u : ParabolicPoint → Vec3}
     have hint : IntegrableOn (fun φ => rotField φ u (x, t)) (Ioc 0 (2 * Real.pi)) :=
       (continuous_section_of_continuousOn hrot.continuousOn (x := (x, t))
         ⟨hx, ht⟩).integrableOn_Ioc
-    show ((2 * Real.pi)⁻¹ • ∫ φ in (0 : ℝ)..(2 * Real.pi), rotField φ u (x, t)) i = _
+    change ((2 * Real.pi)⁻¹ • ∫ φ in (0 : ℝ)..(2 * Real.pi), rotField φ u (x, t)) i = _
     rw [Pi.smul_apply, smul_eq_mul, intervalIntegral.integral_of_le Real.two_pi_pos.le]
     congr 1
     exact ((ContinuousLinearMap.proj (R := ℝ) (φ := fun _ : Fin 3 => ℝ) i).integral_comp_comm
@@ -282,7 +282,7 @@ theorem spatialPartial_angularMean (i j : Fin 3) {u : ParabolicPoint → Vec3}
   have hDint : IntegrableOn (fun φ => fderiv ℝ (fun x => G (φ, x)) x₀) (Ioc 0 (2 * Real.pi)) :=
     (continuous_section_of_continuousOn (continuousOn_fderiv_section_of_contDiffOn hball hGsm)
       hx₀).integrableOn_Ioc
-  show fderiv ℝ (fun x => angularMean u (x, t) i) x₀ (basisVec j) = _
+  change fderiv ℝ (fun x => angularMean u (x, t) i) x₀ (basisVec j) = _
   rw [hev.fderiv_eq, hderiv.fderiv, smul_apply, smul_eq_mul,
     intervalIntegral.integral_of_le Real.two_pi_pos.le, ContinuousLinearMap.integral_apply hDint]
   rfl

@@ -33,7 +33,7 @@ noncomputable section
 namespace CIV
 
 /-- Interior gradient bound for the heat operator: on a backward window
-`B̄(x, ρ) × [s - ρ², s]` with `ρ ≤ 1`, `|∂_l v(x, s)| ≤ C (ρ sup |∂_t v - Δv| + sup |v| / ρ)`. -/
+`B_bar(x, ρ) × [s - ρ², s]` with `ρ ≤ 1`, `|∂_l v(x, s)| ≤ C (ρ sup |∂_t v - Δv| + sup |v| / ρ)`. -/
 theorem heat_gradient_bound_spaceTimeSet :
     ∃ C : ℝ, 0 < C ∧ ∀ (v : ParabolicPoint → ℝ) (Ω : Set Vec3)
     (I : Set ℝ) (x : Vec3) (s ρ Λ M : ℝ), IsOpen Ω → IsOpen I → 0 < ρ → ρ ≤ 1 →
@@ -74,11 +74,11 @@ theorem heat_gradient_bound_spaceTimeSet :
   have hmem : ((x, s) : ParabolicPoint) ∈
       {y : Vec3 | vec3EuclideanNorm (y - x) ≤ ρ} ×ˢ Icc (s - ρ ^ 2) s := by
     refine ⟨?_, ?_, le_rfl⟩
-    · show vec3EuclideanNorm (x - x) ≤ ρ
+    · change vec3EuclideanNorm (x - x) ≤ ρ
       rw [sub_self, vec3EuclideanNorm_zero]
       exact hρ.le
     · have : 0 ≤ ρ ^ 2 := sq_nonneg ρ
-      show s - ρ ^ 2 ≤ s
+      change s - ρ ^ 2 ≤ s
       linarith only [this]
   have hΛ0 : 0 ≤ Λ := (abs_nonneg _).trans (hΛ _ hmem)
   have hM0 : 0 ≤ M := (abs_nonneg _).trans (hM _ hmem)
@@ -153,7 +153,7 @@ theorem heat_gradient_bound_spaceTimeSet :
     · exact hM z hz
     · rw [abs_zero]; exact hM0
 
-/-- Interior gradient bound for the Laplacian on a closed ball `B̄(x, ρ)`, `ρ ≤ 1`:
+/-- Interior gradient bound for the Laplacian on a closed ball `B_bar(x, ρ)`, `ρ ≤ 1`:
 `|∂_l P(x)| ≤ C (ρ sup |ΔP| + sup |P| / ρ)`. -/
 theorem laplace_gradient_bound : ∃ C : ℝ, 0 < C ∧ ∀ (P : Vec3 → ℝ) (Ω : Set Vec3)
     (x : Vec3) (ρ Λ M : ℝ), IsOpen Ω → 0 < ρ → ρ ≤ 1 →

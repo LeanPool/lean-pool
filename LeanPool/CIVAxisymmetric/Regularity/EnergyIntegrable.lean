@@ -124,7 +124,7 @@ theorem lintegral_force_lt_top (f : ParabolicPoint → Vec3) (hf : ForceC2Bounde
     _ < ⊤ := by
         apply ENNReal.mul_lt_top (ENNReal.rpow_lt_top_of_nonneg hq ENNReal.ofReal_ne_top)
         unfold unitCylinder CKN.spaceTimeSet
-        show (Measure.prod (volume : Measure Vec3) (volume : Measure ℝ))
+        change (Measure.prod (volume : Measure Vec3) (volume : Measure ℝ))
             (vec3Ball 0 1 ×ˢ Ioo (-1 : ℝ) 0) < ⊤
         rw [Measure.prod_prod, volume_vec3Ball_eq, Real.volume_Ioo]
         exact ENNReal.mul_lt_top (ENNReal.mul_lt_top (ENNReal.pow_lt_top ENNReal.ofReal_lt_top)
@@ -510,7 +510,7 @@ theorem tendsto_lintegral_top_slab (F : ParabolicPoint → ℝ≥0∞)
     with hAdef
   have hvolA : ∀ δ : ℝ, volume (A δ) = volume (vec3Ball (0 : Vec3) 1) * ENNReal.ofReal δ := by
     intro δ
-    show (Measure.prod (volume : Measure Vec3) (volume : Measure ℝ))
+    change (Measure.prod (volume : Measure Vec3) (volume : Measure ℝ))
         (vec3Ball (0 : Vec3) 1 ×ˢ Ioo (-δ) (0 : ℝ)) = _
     rw [Measure.prod_prod, Real.volume_Ioo, show (0 : ℝ) - (-δ) = δ by ring]
   have hl : Tendsto (fun δ => (volume.restrict unitCylinder) (A δ))
@@ -540,7 +540,7 @@ theorem tendsto_lintegral_top_slab (F : ParabolicPoint → ℝ≥0∞)
   have heq2 : (fun δ => ∫⁻ z in A δ, F z ∂(volume.restrict unitCylinder)) =ᶠ[nhdsWithin (0 : ℝ)
       (Ioi 0)] (fun δ => ∫⁻ z in A δ, F z) := by
     filter_upwards [heq] with δ hδ
-    show ∫⁻ z, F z ∂((volume.restrict unitCylinder).restrict (A δ)) =
+    change ∫⁻ z, F z ∂((volume.restrict unitCylinder).restrict (A δ)) =
         ∫⁻ z, F z ∂(volume.restrict (A δ))
     rw [Measure.restrict_restrict_of_subset hδ]
   exact hset.congr' heq2

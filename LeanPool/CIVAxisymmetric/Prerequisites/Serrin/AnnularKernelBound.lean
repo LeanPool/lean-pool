@@ -65,7 +65,7 @@ private theorem multiPartialVec3_eq_foldr (k : Vec3 → ℝ) (γ : Fin 3 → ℕ
     multiPartialVec3 k γ = List.foldr axisDeriv k
       (List.replicate (γ 0) (0 : Fin 3) ++ List.replicate (γ 1) (1 : Fin 3) ++
         List.replicate (γ 2) (2 : Fin 3)) := by
-  show (axisDeriv 0)^[γ 0] ((axisDeriv 1)^[γ 1] ((axisDeriv 2)^[γ 2] k)) = _
+  change (axisDeriv 0)^[γ 0] ((axisDeriv 1)^[γ 1] ((axisDeriv 2)^[γ 2] k)) = _
   simp [foldr_axisDeriv_replicate, List.foldr_append]
 
 private theorem contDiffOn_multiPartialVec3_ne_zero {l : Fin 3} (β : Fin 3 → ℕ) :
@@ -131,7 +131,7 @@ private theorem support_kernelCutoffTerm_subset (l : Fin 3) (β : Fin 3 → ℕ)
       apply hne
       have hz' : multiPartial (fun z : ParabolicPoint => serrinBallCutoff x ρ z.1) γ (y, t) = 0 :=
         hz
-      show multiPartialVec3 (spatialDeriv newtonianKernel l) β (x - y) *
+      change multiPartialVec3 (spatialDeriv newtonianKernel l) β (x - y) *
           multiPartial (fun z : ParabolicPoint => serrinBallCutoff x ρ z.1) γ (y, t) = 0
       rw [hz', mul_zero]
     exact absurd (support_multiPartial_cutoff_subset hρ hγ t hmem).2 (not_le.mpr h)
@@ -312,7 +312,7 @@ private theorem axisDeriv_kernelCutoffTerm_eq (l : Fin 3) (β : Fin 3 → ℕ) (
       -multiPartialVec3 (spatialDeriv newtonianKernel l) (β + Pi.single k 1) (x - y) := by
     have hshift := spatialDeriv_shift (k := multiPartialVec3
       (spatialDeriv newtonianKernel l) β) hdiffK (x := x) (y := y) k
-    show spatialDeriv (fun w : Vec3 => multiPartialVec3
+    change spatialDeriv (fun w : Vec3 => multiPartialVec3
       (spatialDeriv newtonianKernel l) β (x - w)) k y = _
     rw [hshift]
     congr 1
@@ -324,10 +324,10 @@ private theorem axisDeriv_kernelCutoffTerm_eq (l : Fin 3) (β : Fin 3 → ℕ) (
         (y, t) :=
     axisDeriv_multiPartial_slice_eq isOpen_univ t
       ((contDiff_liftedCutoff x hρ).contDiffOn) γ k (mem_univ y)
-  show fderiv ℝ (kernelCutoffTerm l β x ρ γ t) y (basisVec k) = _
+  change fderiv ℝ (kernelCutoffTerm l β x ρ γ t) y (basisVec k) = _
   unfold kernelCutoffTerm
   have hmul := axisDeriv_mul hdiffShift hdiffC k
-  show axisDeriv k (fun w : Vec3 => multiPartialVec3 (spatialDeriv newtonianKernel l) β (x - w) *
+  change axisDeriv k (fun w : Vec3 => multiPartialVec3 (spatialDeriv newtonianKernel l) β (x - w) *
     multiPartial (fun z : ParabolicPoint => serrinBallCutoff x ρ z.1) γ (w, t)) y = _
   rw [hmul, hterm1, hterm2]
   ring
@@ -450,7 +450,7 @@ private theorem abs_multiPartialVec3_le_norm_iteratedFDeriv_on :
           have hu0 : Function.update γ 0 m 0 = m := Function.update_self 0 m γ
           have hstep : multiPartialVec3 K γ z
               = multiPartialVec3 (spatialDeriv K 0) (Function.update γ 0 m) z := by
-            show (fun h => spatialDeriv h 0)^[γ 0] ((fun h => spatialDeriv h 1)^[γ 1]
+            change (fun h => spatialDeriv h 0)^[γ 0] ((fun h => spatialDeriv h 1)^[γ 1]
               ((fun h => spatialDeriv h 2)^[γ 2] K)) z
                 = (fun h => spatialDeriv h 0)^[Function.update γ 0 m 0]
                     ((fun h => spatialDeriv h 1)^[Function.update γ 0 m 1]
@@ -484,7 +484,7 @@ private theorem abs_multiPartialVec3_le_norm_iteratedFDeriv_on :
           have hu1 : Function.update γ 1 p 1 = p := Function.update_self 1 p γ
           have hstep : multiPartialVec3 K γ z
               = multiPartialVec3 (spatialDeriv K 1) (Function.update γ 1 p) z := by
-            show (fun h => spatialDeriv h 0)^[γ 0] ((fun h => spatialDeriv h 1)^[γ 1]
+            change (fun h => spatialDeriv h 0)^[γ 0] ((fun h => spatialDeriv h 1)^[γ 1]
               ((fun h => spatialDeriv h 2)^[γ 2] K)) z
                 = (fun h => spatialDeriv h 0)^[Function.update γ 1 p 0]
                     ((fun h => spatialDeriv h 1)^[Function.update γ 1 p 1]
@@ -518,7 +518,7 @@ private theorem abs_multiPartialVec3_le_norm_iteratedFDeriv_on :
         have hu2 : Function.update γ 2 q 2 = q := Function.update_self 2 q γ
         have hstep : multiPartialVec3 K γ z
             = multiPartialVec3 (spatialDeriv K 2) (Function.update γ 2 q) z := by
-          show (fun h => spatialDeriv h 0)^[γ 0] ((fun h => spatialDeriv h 1)^[γ 1]
+          change (fun h => spatialDeriv h 0)^[γ 0] ((fun h => spatialDeriv h 1)^[γ 1]
             ((fun h => spatialDeriv h 2)^[γ 2] K)) z
               = (fun h => spatialDeriv h 0)^[Function.update γ 2 q 0]
                   ((fun h => spatialDeriv h 1)^[Function.update γ 2 q 1]
@@ -874,6 +874,15 @@ private theorem abs_integral_kernelCutoffTerm_mul_comm_le_C0
   apply mul_le_mul_of_nonneg_right _ hM
   nlinarith only [h2, mul_nonneg (mul_nonneg (le_max_right Ck 0) (le_max_right Ccut 0)) hV0]
 
+private theorem annular_uniform_bound_mono {a Cstep C0 M ρ : ℝ} {n : ℕ}
+    (hρ0 : 0 < ρ) (hM0 : 0 ≤ M) (hCsteple : Cstep ≤ 64 * C0)
+    (hbound : a ≤ Cstep * M * ρ / ρ ^ n) :
+    a ≤ (64 * C0 + 1) * M * ρ / ρ ^ n := by
+  refine hbound.trans ?_
+  apply div_le_div_of_nonneg_right _ (by positivity)
+  apply mul_le_mul_of_nonneg_right _ hρ0.le
+  apply mul_le_mul_of_nonneg_right (by linarith only [hCsteple]) hM0
+
 theorem ELc_annular_kernel_ibp : ∃ C : ℝ, 0 < C ∧ ∀ (g : ParabolicPoint → ℝ)
     (O : Set ParabolicPoint) (x : Vec3) (t ρ M : ℝ) (γ₁ γ₂ : Fin 3 → ℕ) (l : Fin 3),
     IsOpen (X := Vec3 × ℝ) O → 0 < ρ → ρ ≤ 1 →
@@ -895,12 +904,7 @@ theorem ELc_annular_kernel_ibp : ∃ C : ℝ, 0 < C ∧ ∀ (g : ParabolicPoint 
   intro g O x t ρ M γ₁ γ₂ l hO hρ0 hρ1 hball hg hgM hγ1ne hle
   have hγ1sum : γ₁ 0 + γ₁ 1 + γ₁ 2 ≠ 0 := fun hsum => hγ1ne (multiIndex_eq_zero_of_sum_eq_zero hsum)
   have hx0 : vec3EuclideanNorm (x - x) ≤ ρ := by
-    rw [sub_self]
-    have hz0 : vec3EuclideanNorm (0 : Vec3) = 0 := by
-      unfold vec3EuclideanNorm
-      simp only [Pi.zero_apply, ne_eq, OfNat.ofNat_ne_zero, not_false_eq_true, zero_pow,
-        Finset.sum_const_zero, Real.sqrt_zero]
-    rw [hz0]; exact hρ0.le
+    simpa only [sub_self, vec3EuclideanNorm_zero] using hρ0.le
   have hM0 : 0 ≤ M := (abs_nonneg _).trans (hgM x hx0)
   set n1 : ℕ := γ₁ 0 + γ₁ 1 + γ₁ 2 with hn1def
   set n2 : ℕ := γ₂ 0 + γ₂ 1 + γ₂ 2 with hn2def
@@ -913,16 +917,6 @@ theorem ELc_annular_kernel_ibp : ∃ C : ℝ, 0 < C ∧ ∀ (g : ParabolicPoint 
     unfold kernelCutoffTerm
     rw [multiPartialVec3_zero_eq]
   rw [hpteq]
-  have hfinish : ∀ Cstep : ℝ, 0 ≤ Cstep → Cstep ≤ 64 * C0 →
-      |∫ y : Vec3, kernelCutoffTerm l 0 x ρ γ₁ t y * multiPartial g γ₂ (y, t)| ≤
-        Cstep * M * ρ / ρ ^ (n1 + n2) →
-      |∫ y : Vec3, kernelCutoffTerm l 0 x ρ γ₁ t y * multiPartial g γ₂ (y, t)| ≤
-        (64 * C0 + 1) * M * ρ / ρ ^ (n1 + n2) := by
-    intro Cstep hCstep0 hCsteple hbound
-    refine hbound.trans ?_
-    apply div_le_div_of_nonneg_right _ (by positivity)
-    apply mul_le_mul_of_nonneg_right _ hρ0.le
-    apply mul_le_mul_of_nonneg_right (by linarith only [hCsteple]) hM0
   have hn2cases : n2 = 0 ∨ n2 = 1 ∨ n2 = 2 := by omega
   rcases hn2cases with hn2 | hn2 | hn2
   · -- n2 = 0
@@ -931,15 +925,12 @@ theorem ELc_annular_kernel_ibp : ∃ C : ℝ, 0 < C ∧ ∀ (g : ParabolicPoint 
       have h4 : max Ck 0 * max Ccut 0 * 2 ^ (2 + (0 : ℕ)) * V0 = 4 * C0 := by
         rw [hC0def]; norm_num; ring
       rw [h4]; linarith only [hC00]
-    apply hfinish (max Ck 0 * max Ccut 0 * 2 ^ (2 + (0 : ℕ)) * V0) (by positivity) hCsteple
+    apply annular_uniform_bound_mono hρ0 hM0 hCsteple
     have hb := abs_integral_kernelCutoffTerm_mul_le_uniform hCk hCcut l
       (β := (0 : Fin 3 → ℕ)) (by norm_num) x hρ0 (γ := γ₁) hγ1sum (by omega) t M hM0
       (fun y => g (y, t)) hgM
     simp only [Pi.zero_apply] at hb
-    have heq : (fun y : Vec3 => kernelCutoffTerm l 0 x ρ γ₁ t y * multiPartial g γ₂ (y, t)) =
-        (fun y : Vec3 => kernelCutoffTerm l 0 x ρ γ₁ t y * g (y, t)) := by
-      funext y; rw [hγ2zero, multiPartial_slice_zero_eq]
-    rw [heq]
+    simp only [hγ2zero, multiPartial_slice_zero_eq]
     have hexp : (0 : ℕ) + 0 + 0 + (γ₁ 0 + γ₁ 1 + γ₁ 2) = n1 + n2 := by omega
     rw [hexp] at hb
     exact hb
@@ -956,7 +947,7 @@ theorem ELc_annular_kernel_ibp : ∃ C : ℝ, 0 < C ∧ ∀ (g : ParabolicPoint 
       have h8 : max Ck 0 * max Ccut 0 * 2 ^ (2 + (1 : ℕ)) * V0 = 8 * C0 := by rw [hC0def]; ring
       have h4 : max Ck 0 * max Ccut 0 * 2 ^ (2 + (0 : ℕ)) * V0 = 4 * C0 := by rw [hC0def]; ring
       rw [h8, h4]; linarith only [hC00]
-    apply hfinish _ (by positivity) hCsteple
+    apply annular_uniform_bound_mono hρ0 hM0 hCsteple
     rw [← hγ2eq, integral_kernelCutoffTerm_mul_multiPartial_leibniz_split l 0 x hρ0 γ₁ hγ1sum t k1
       hO hball hg (peelRest γ₂), hpeelrest0]
     simp only [multiPartial_slice_zero_eq]
@@ -1019,7 +1010,7 @@ theorem ELc_annular_kernel_ibp : ∃ C : ℝ, 0 < C ∧ ∀ (g : ParabolicPoint 
         (γ₁ + Pi.single k1 1 : Fin 3 → ℕ) 2 ≠ 0 := by
       simp only [Pi.add_apply]; omega
     have hCsteple : 16 * C0 + 16 * C0 + (16 * C0 + 16 * C0) ≤ 64 * C0 := by linarith only [hC00]
-    apply hfinish _ (by positivity) hCsteple
+    apply annular_uniform_bound_mono hρ0 hM0 hCsteple
     rw [← hγ2eq, integral_kernelCutoffTerm_mul_multiPartial_leibniz_split l 0 x hρ0 γ₁ hγ1sum t k1
       hO hball hg γ', ← hγ'eq]
     simp only [zero_add]

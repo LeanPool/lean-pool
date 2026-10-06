@@ -234,7 +234,7 @@ theorem drdr_comp_zoomPoint (lam h zc : ℝ) {D : Set (Vec3 × ℝ)} (hD : IsOpe
     have hval : lam * (lam * spatialPartial (fun w : ParabolicPoint => spatialPartial Phi 0 w) 0
           (zoomPoint lam h zc p))
         = lam ^ 2 * meridionalPartial Phi 2 0 (zoomPoint lam h zc p) := by
-      show lam * (lam * spatialPartial (fun w : ParabolicPoint => spatialPartial Phi 0 w) 0
+      change lam * (lam * spatialPartial (fun w : ParabolicPoint => spatialPartial Phi 0 w) 0
           (zoomPoint lam h zc p))
         = lam ^ 2 * spatialPartial (fun w : ParabolicPoint => spatialPartial Phi 0 w) 0
           (zoomPoint lam h zc p)
@@ -270,7 +270,7 @@ theorem drdz_comp_zoomPoint (lam h zc : ℝ) {D : Set (Vec3 × ℝ)} (hD : IsOpe
           (lam * spatialPartial (fun w : ParabolicPoint => spatialPartial Phi 2 w) 0
             (zoomPoint lam h zc p))
         = lam * lam ^ (1 - 2 * h) * meridionalPartial Phi 1 1 (zoomPoint lam h zc p) := by
-      show lam ^ (1 - 2 * h) *
+      change lam ^ (1 - 2 * h) *
           (lam * spatialPartial (fun w : ParabolicPoint => spatialPartial Phi 2 w) 0
             (zoomPoint lam h zc p))
         = lam * lam ^ (1 - 2 * h) *
@@ -309,7 +309,7 @@ theorem dzdz_comp_zoomPoint (lam h zc : ℝ) {D : Set (Vec3 × ℝ)} (hD : IsOpe
             spatialPartial (fun w : ParabolicPoint => spatialPartial Phi 2 w) 2
               (zoomPoint lam h zc p))
         = (lam ^ (1 - 2 * h)) ^ 2 * meridionalPartial Phi 0 2 (zoomPoint lam h zc p) := by
-      show lam ^ (1 - 2 * h) *
+      change lam ^ (1 - 2 * h) *
           (lam ^ (1 - 2 * h) *
             spatialPartial (fun w : ParabolicPoint => spatialPartial Phi 2 w) 2
               (zoomPoint lam h zc p))

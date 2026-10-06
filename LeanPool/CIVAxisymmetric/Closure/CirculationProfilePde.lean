@@ -133,7 +133,7 @@ theorem dtPast_circulationProfile_eq (u : ParabolicPoint → Vec3)
   have hdiff : DifferentiableAt ℝ
       (fun s : ℝ => circulation u (meridional p.1.1 p.1.2, s)) p.2 :=
     differentiableAt_circulation_time u hu1 hz
-  show derivWithin (fun t => circulation u (meridional p.1.1 p.1.2, t)) (Iic p.2) p.2 = _
+  change derivWithin (fun t => circulation u (meridional p.1.1 p.1.2, t)) (Iic p.2) p.2 = _
   rw [hdiff.derivWithin (uniqueDiffWithinAt_Iic p.2)]
   rfl
 
@@ -143,7 +143,7 @@ theorem dr_circulationProfile_eq (u : ParabolicPoint → Vec3) (p : (ℝ × ℝ)
       (meridional p.1.1 p.1.2)) :
     dr (circulationProfile u) p
       = spatialPartial (circulation u) 0 (meridional p.1.1 p.1.2, p.2) := by
-  show deriv (fun r : ℝ => circulation u (meridional r p.1.2, p.2)) p.1.1 = _
+  change deriv (fun r : ℝ => circulation u (meridional r p.1.2, p.2)) p.1.1 = _
   rw [(hasDerivAt_comp_meridional_fst hdiff).deriv]
   rfl
 
@@ -153,7 +153,7 @@ theorem dz_circulationProfile_eq (u : ParabolicPoint → Vec3) (p : (ℝ × ℝ)
       (meridional p.1.1 p.1.2)) :
     dz (circulationProfile u) p
       = spatialPartial (circulation u) 2 (meridional p.1.1 p.1.2, p.2) := by
-  show deriv (fun z : ℝ => circulation u (meridional p.1.1 z, p.2)) p.1.2 = _
+  change deriv (fun z : ℝ => circulation u (meridional p.1.1 z, p.2)) p.1.2 = _
   rw [(hasDerivAt_comp_meridional_snd hdiff).deriv]
   rfl
 
@@ -163,7 +163,7 @@ theorem dr_dr_circulationProfile_eq (u : ParabolicPoint → Vec3) (p : (ℝ × �
     (hmem : meridional p.1.1 p.1.2 ∈ vec3Ball (0 : Vec3) 1) :
     dr (dr (circulationProfile u)) p
       = spatialSecondPartial (circulation u) 0 0 (meridional p.1.1 p.1.2, p.2) := by
-  show deriv (fun r : ℝ => deriv (fun r' : ℝ => circulation u (meridional r' p.1.2, p.2)) r)
+  change deriv (fun r : ℝ => deriv (fun r' : ℝ => circulation u (meridional r' p.1.2, p.2)) r)
       p.1.1 = _
   rw [(hasDerivAt_deriv_comp_meridional_fst hg hmem).deriv]
   rfl
@@ -174,7 +174,7 @@ theorem dz_dz_circulationProfile_eq (u : ParabolicPoint → Vec3) (p : (ℝ × �
     (hmem : meridional p.1.1 p.1.2 ∈ vec3Ball (0 : Vec3) 1) :
     dz (dz (circulationProfile u)) p
       = spatialSecondPartial (circulation u) 2 2 (meridional p.1.1 p.1.2, p.2) := by
-  show deriv (fun z : ℝ => deriv (fun z' : ℝ => circulation u (meridional p.1.1 z', p.2)) z)
+  change deriv (fun z : ℝ => deriv (fun z' : ℝ => circulation u (meridional p.1.1 z', p.2)) z)
       p.1.2 = _
   rw [(hasDerivAt_deriv_comp_meridional_snd hg hmem).deriv]
   rfl

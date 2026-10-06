@@ -752,7 +752,7 @@ theorem integral_cutoff_vorticity_transport
           ∑ j : Fin 3, fderiv ℝ (fun y : Vec3 => χ y ^ 2) x (basisVec j) * u (x, t) j :=
     integral_congr_ae (Filter.Eventually.of_forall hRpt)
   rw [hleft, hright] at hsum
-  show (∫ x : Vec3, χ x ^ 2 * ∑ i : Fin 3, curlComp u i (x, t) *
+  change (∫ x : Vec3, χ x ^ 2 * ∑ i : Fin 3, curlComp u i (x, t) *
       ∑ j : Fin 3, u (x, t) j *
         fderiv ℝ (fun y : Vec3 => curlComp u i (y, t)) x (basisVec j))
     = -(1 / 2) * ∫ x : Vec3, (∑ i : Fin 3, (curlComp u i (x, t)) ^ 2) *
@@ -766,6 +766,51 @@ end Transport
 section Diffusion
 
 variable {u : ParabolicPoint → Vec3}
+
+private theorem integrable_cutoff_vorticity_mixed
+    (hu : ContDiffOn ℝ (⊤ : ℕ∞) (fun z : Vec3 × ℝ => u z) unitCylinder)
+    {χ : Vec3 → ℝ} (hχ : ContDiff ℝ (⊤ : ℕ∞) χ) (hχs : HasCompactSupport χ)
+    (hχU : tsupport χ ⊆ vec3Ball 0 1) {t : ℝ} (ht : t ∈ Ioo (-1 : ℝ) 0) :
+    Integrable (fun x : Vec3 => ∑ j : Fin 3,
+      fderiv ℝ (fun y : Vec3 => χ y ^ 2) x (basisVec j) *
+        ∑ i : Fin 3, curlComp u i (x, t) *
+          fderiv ℝ (fun y : Vec3 => curlComp u i (y, t)) x (basisVec j)) := by
+  have hsqχ : ContDiff ℝ (⊤ : ℕ∞) (fun x : Vec3 => χ x ^ 2) := hχ.pow 2
+  have hCcont : ContinuousOn (fun x : Vec3 => ∑ j : Fin 3,
+      fderiv ℝ (fun y : Vec3 => χ y ^ 2) x (basisVec j) *
+        ∑ i : Fin 3, curlComp u i (x, t) *
+          fderiv ℝ (fun y : Vec3 => curlComp u i (y, t)) x (basisVec j)) (vec3Ball 0 1) := by
+    have hin : ∀ j : Fin 3, ContinuousOn (fun x : Vec3 => ∑ i : Fin 3, curlComp u i (x, t) *
+        fderiv ℝ (fun y : Vec3 => curlComp u i (y, t)) x (basisVec j)) (vec3Ball 0 1) := by
+      intro j
+      have h : ∀ i : Fin 3, ContinuousOn (fun x : Vec3 => curlComp u i (x, t) *
+          fderiv ℝ (fun y : Vec3 => curlComp u i (y, t)) x (basisVec j)) (vec3Ball 0 1) :=
+        fun i => (continuousOn_curl_slice hu i ht).mul (continuousOn_dcurl_slice hu i j ht)
+      simp only [Fin.sum_univ_three]
+      exact ((h 0).add (h 1)).add (h 2)
+    have h : ∀ j : Fin 3, ContinuousOn (fun x : Vec3 =>
+        fderiv ℝ (fun y : Vec3 => χ y ^ 2) x (basisVec j) *
+          ∑ i : Fin 3, curlComp u i (x, t) *
+            fderiv ℝ (fun y : Vec3 => curlComp u i (y, t)) x (basisVec j)) (vec3Ball 0 1) :=
+      fun j => (continuous_dirDeriv hsqχ j).continuousOn.mul (hin j)
+    exact continuousOn_finsetSum Finset.univ (fun j _ => h j)
+  have hCint : Integrable (fun x : Vec3 => ∑ j : Fin 3,
+      fderiv ℝ (fun y : Vec3 => χ y ^ 2) x (basisVec j) *
+        ∑ i : Fin 3, curlComp u i (x, t) *
+          fderiv ℝ (fun y : Vec3 => curlComp u i (y, t)) x (basisVec j)) := by
+    refine integrable_of_cutoff hχs hχU hCcont (fun x hx => ?_)
+    have h : ∀ j : Fin 3, fderiv ℝ (fun y : Vec3 => χ y ^ 2) x (basisVec j) = 0 :=
+      fun j => dirDeriv_zero_off_tsupport (fun hm => hx (tsupport_sq_subset χ hm)) j
+    simp [h]
+  exact hCint
+
+private theorem integral_mul_sum_mul_sum (a : Vec3 → ℝ) (b : Fin 3 → Vec3 → ℝ)
+    (c : Fin 3 → Fin 3 → Vec3 → ℝ) :
+    (∫ x : Vec3, a x * ∑ i : Fin 3, b i x * ∑ j : Fin 3, c i j x) =
+      ∫ x : Vec3, ∑ i : Fin 3, ∑ j : Fin 3, (a x * b i x) * c i j x := by
+  refine integral_congr_ae (Filter.Eventually.of_forall fun x => ?_)
+  simp only [Fin.sum_univ_three]
+  ring
 
 private theorem integral_cutoff_sumSq_deriv
     (hu : ContDiffOn ℝ (⊤ : ℕ∞) (fun z : Vec3 × ℝ => u z) unitCylinder)
@@ -906,32 +951,7 @@ theorem integral_cutoff_vorticity_diffusion
       ((continuous_dirDeriv (hWi i) j).continuousOn.mul (continuousOn_dcurl_slice hu i j ht))
       (fun x hx => ?_)
     rw [dirDeriv_zero_off_tsupport (hWi0 i x hx) j, zero_mul]
-  have hCcont : ContinuousOn (fun x : Vec3 => ∑ j : Fin 3,
-      fderiv ℝ (fun y : Vec3 => χ y ^ 2) x (basisVec j) *
-        ∑ i : Fin 3, curlComp u i (x, t) *
-          fderiv ℝ (fun y : Vec3 => curlComp u i (y, t)) x (basisVec j)) (vec3Ball 0 1) := by
-    have hin : ∀ j : Fin 3, ContinuousOn (fun x : Vec3 => ∑ i : Fin 3, curlComp u i (x, t) *
-        fderiv ℝ (fun y : Vec3 => curlComp u i (y, t)) x (basisVec j)) (vec3Ball 0 1) := by
-      intro j
-      have h : ∀ i : Fin 3, ContinuousOn (fun x : Vec3 => curlComp u i (x, t) *
-          fderiv ℝ (fun y : Vec3 => curlComp u i (y, t)) x (basisVec j)) (vec3Ball 0 1) :=
-        fun i => (continuousOn_curl_slice hu i ht).mul (continuousOn_dcurl_slice hu i j ht)
-      simp only [Fin.sum_univ_three]
-      exact ((h 0).add (h 1)).add (h 2)
-    have h : ∀ j : Fin 3, ContinuousOn (fun x : Vec3 =>
-        fderiv ℝ (fun y : Vec3 => χ y ^ 2) x (basisVec j) *
-          ∑ i : Fin 3, curlComp u i (x, t) *
-            fderiv ℝ (fun y : Vec3 => curlComp u i (y, t)) x (basisVec j)) (vec3Ball 0 1) :=
-      fun j => (continuous_dirDeriv hsqχ j).continuousOn.mul (hin j)
-    exact continuousOn_finsetSum Finset.univ (fun j _ => h j)
-  have hCint : Integrable (fun x : Vec3 => ∑ j : Fin 3,
-      fderiv ℝ (fun y : Vec3 => χ y ^ 2) x (basisVec j) *
-        ∑ i : Fin 3, curlComp u i (x, t) *
-          fderiv ℝ (fun y : Vec3 => curlComp u i (y, t)) x (basisVec j)) := by
-    refine integrable_of_cutoff hχs hχU hCcont (fun x hx => ?_)
-    have h : ∀ j : Fin 3, fderiv ℝ (fun y : Vec3 => χ y ^ 2) x (basisVec j) = 0 :=
-      fun j => dirDeriv_zero_off_tsupport (fun hm => hx (tsupport_sq_subset χ hm)) j
-    simp [h]
+  have hCint := integrable_cutoff_vorticity_mixed hu hχ hχs hχU ht
   have hEcont : ContinuousOn (fun x : Vec3 => χ x ^ 2 * ∑ i : Fin 3, ∑ j : Fin 3,
       (fderiv ℝ (fun y : Vec3 => curlComp u i (y, t)) x (basisVec j)) ^ 2) (vec3Ball 0 1) := by
     have h : ∀ i j : Fin 3, ContinuousOn (fun x : Vec3 =>
@@ -974,15 +994,10 @@ theorem integral_cutoff_vorticity_diffusion
     rw [dirDeriv_zero_off_tsupport
       (fun hm => hx (tsupport_sq_subset χ ((tsupport_dirDeriv_subset _ j) hm))) j, zero_mul]
   -- assembling the first integration by parts
-  have hD1 : (∫ x : Vec3, χ x ^ 2 * ∑ i : Fin 3, curlComp u i (x, t) *
-        ∑ j : Fin 3, fderiv ℝ (fun y : Vec3 =>
-          fderiv ℝ (fun z : Vec3 => curlComp u i (z, t)) y (basisVec j)) x (basisVec j))
-      = ∫ x : Vec3, ∑ i : Fin 3, ∑ j : Fin 3, (χ x ^ 2 * curlComp u i (x, t)) * fderiv ℝ
-          (fun y : Vec3 => fderiv ℝ (fun z : Vec3 => curlComp u i (z, t)) y (basisVec j)) x
-            (basisVec j) := by
-    refine integral_congr_ae (Filter.Eventually.of_forall (fun x => ?_))
-    simp only [Fin.sum_univ_three]
-    ring
+  have hD1 := integral_mul_sum_mul_sum (fun x => χ x ^ 2)
+    (fun i x => curlComp u i (x, t)) (fun i j x => fderiv ℝ
+      (fun y : Vec3 => fderiv ℝ (fun z : Vec3 => curlComp u i (z, t)) y (basisVec j)) x
+        (basisVec j))
   have hD2 := integral_sum_sum_eq (fun i j x : _ => (χ x ^ 2 * curlComp u i (x, t)) * fderiv ℝ
       (fun y : Vec3 => fderiv ℝ (fun z : Vec3 => curlComp u i (z, t)) y (basisVec j)) x
         (basisVec j)) hAint
@@ -1042,7 +1057,7 @@ theorem integral_cutoff_vorticity_diffusion
     rw [← Finset.sum_mul, mul_comm]
   have hE4 := integral_sum3 hJint
   have hE5 := integral_sum3 hKint
-  show (∫ x : Vec3, χ x ^ 2 * ∑ i : Fin 3, curlComp u i (x, t) *
+  change (∫ x : Vec3, χ x ^ 2 * ∑ i : Fin 3, curlComp u i (x, t) *
         ∑ j : Fin 3, fderiv ℝ (fun y : Vec3 =>
           fderiv ℝ (fun z : Vec3 => curlComp u i (z, t)) y (basisVec j)) x (basisVec j))
       = - (∫ x : Vec3, χ x ^ 2 * ∑ i : Fin 3, ∑ j : Fin 3,
@@ -1323,7 +1338,7 @@ theorem abs_integral_cutoff_gradient_error_le
     have h : ∀ j : Fin 3, fderiv ℝ (fun y : Vec3 => χ y ^ 2) x (basisVec j) = 0 :=
       fun j => dirDeriv_zero_off_tsupport (fun hm => hx (tsupport_sq_subset χ hm)) j
     simp [h]
-  show |∫ x : Vec3, (∑ i : Fin 3, (curlComp u i (x, t)) ^ 2) *
+  change |∫ x : Vec3, (∑ i : Fin 3, (curlComp u i (x, t)) ^ 2) *
       ∑ j : Fin 3, fderiv ℝ (fun y : Vec3 => χ y ^ 2) x (basisVec j) * u (x, t) j| ≤ _
   calc |∫ x : Vec3, (∑ i : Fin 3, (curlComp u i (x, t)) ^ 2) *
         ∑ j : Fin 3, fderiv ℝ (fun y : Vec3 => χ y ^ 2) x (basisVec j) * u (x, t) j|
@@ -1417,7 +1432,7 @@ theorem abs_integral_cutoff_laplacian_error_le
           (continuous_dirDeriv (hPj j) j).continuousOn)))
       (fun x hx => ?_)
     simp [hzero x hx]
-  show |∫ x : Vec3, (∑ i : Fin 3, (curlComp u i (x, t)) ^ 2) *
+  change |∫ x : Vec3, (∑ i : Fin 3, (curlComp u i (x, t)) ^ 2) *
       ∑ j : Fin 3, fderiv ℝ
         (fun y : Vec3 => fderiv ℝ (fun z : Vec3 => χ z ^ 2) y (basisVec j)) x (basisVec j)| ≤ _
   calc |∫ x : Vec3, (∑ i : Fin 3, (curlComp u i (x, t)) ^ 2) *

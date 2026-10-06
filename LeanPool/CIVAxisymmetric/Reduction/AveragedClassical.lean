@@ -146,7 +146,7 @@ theorem timePartial_rotField_zero (φ : ℝ) (u : ParabolicPoint → Vec3)
   have hrot : ContDiffOn ℝ 1 (fun z : Vec3 × ℝ => rotField φ u z) unitCylinder :=
     contDiffOn_rotField φ u hu
   have hz' : (rotZ (-φ) z.1, z.2) ∈ unitCylinder := rotZ_mem_unitCylinder (-φ) hz
-  show fderiv ℝ (fun s : ℝ => rotField φ u (z.1, s) 0) z.2 1 = _
+  change fderiv ℝ (fun s : ℝ => rotField φ u (z.1, s) 0) z.2 1 = _
   rw [fderiv_timeSlice_apply hrot hz 0, fderiv_rotField_time φ u z.1 z.2, rotZ_apply_zero,
     ← fderiv_timeSlice_apply hu hz' 0, ← fderiv_timeSlice_apply hu hz' 1]
   rfl
@@ -161,7 +161,7 @@ theorem timePartial_rotField_one (φ : ℝ) (u : ParabolicPoint → Vec3)
   have hrot : ContDiffOn ℝ 1 (fun z : Vec3 × ℝ => rotField φ u z) unitCylinder :=
     contDiffOn_rotField φ u hu
   have hz' : (rotZ (-φ) z.1, z.2) ∈ unitCylinder := rotZ_mem_unitCylinder (-φ) hz
-  show fderiv ℝ (fun s : ℝ => rotField φ u (z.1, s) 1) z.2 1 = _
+  change fderiv ℝ (fun s : ℝ => rotField φ u (z.1, s) 1) z.2 1 = _
   rw [fderiv_timeSlice_apply hrot hz 1, fderiv_rotField_time φ u z.1 z.2, rotZ_apply_one,
     ← fderiv_timeSlice_apply hu hz' 0, ← fderiv_timeSlice_apply hu hz' 1]
   rfl
@@ -185,7 +185,7 @@ theorem spatialPartial_rotField_zero (φ : ℝ) (u : ParabolicPoint → Vec3)
   have hrot : ContDiffOn ℝ 1 (fun z : Vec3 × ℝ => rotField φ u z) unitCylinder :=
     contDiffOn_rotField φ u hu
   have hz' : (rotZ (-φ) z.1, z.2) ∈ unitCylinder := rotZ_mem_unitCylinder (-φ) hz
-  show fderiv ℝ (fun y : Vec3 => rotField φ u (y, z.2) 0) z.1 (basisVec j) = _
+  change fderiv ℝ (fun y : Vec3 => rotField φ u (y, z.2) 0) z.1 (basisVec j) = _
   rw [fderiv_spatialSlice_apply hrot hz 0 (basisVec j), fderiv_rotField_spatial φ u hu hz
     (basisVec j),
     rotZ_apply_zero, ← fderiv_spatialSlice_apply hu hz' 0 (rotZ (-φ) (basisVec j)),
@@ -203,7 +203,7 @@ theorem spatialPartial_rotField_one (φ : ℝ) (u : ParabolicPoint → Vec3)
   have hrot : ContDiffOn ℝ 1 (fun z : Vec3 × ℝ => rotField φ u z) unitCylinder :=
     contDiffOn_rotField φ u hu
   have hz' : (rotZ (-φ) z.1, z.2) ∈ unitCylinder := rotZ_mem_unitCylinder (-φ) hz
-  show fderiv ℝ (fun y : Vec3 => rotField φ u (y, z.2) 1) z.1 (basisVec j) = _
+  change fderiv ℝ (fun y : Vec3 => rotField φ u (y, z.2) 1) z.1 (basisVec j) = _
   rw [fderiv_spatialSlice_apply hrot hz 1 (basisVec j), fderiv_rotField_spatial φ u hu hz
     (basisVec j),
     rotZ_apply_one, ← fderiv_spatialSlice_apply hu hz' 0 (rotZ (-φ) (basisVec j)),
@@ -218,7 +218,7 @@ theorem spatialPartial_rotField_two (φ : ℝ) (u : ParabolicPoint → Vec3)
   have hrot : ContDiffOn ℝ 1 (fun z : Vec3 × ℝ => rotField φ u z) unitCylinder :=
     contDiffOn_rotField φ u hu
   have hz' : (rotZ (-φ) z.1, z.2) ∈ unitCylinder := rotZ_mem_unitCylinder (-φ) hz
-  show fderiv ℝ (fun y : Vec3 => rotField φ u (y, z.2) 2) z.1 (basisVec j) = _
+  change fderiv ℝ (fun y : Vec3 => rotField φ u (y, z.2) 2) z.1 (basisVec j) = _
   rw [fderiv_spatialSlice_apply hrot hz 2 (basisVec j), fderiv_rotField_spatial φ u hu hz
     (basisVec j),
     rotZ_apply_two, ← fderiv_spatialSlice_apply hu hz' 2 (rotZ (-φ) (basisVec j))]
@@ -270,12 +270,12 @@ private theorem hessAt_eq_spatialSecondPartial (g : ParabolicPoint → ℝ) (z :
 
 theorem hessAt_add_left (g : ParabolicPoint → ℝ) (t : ℝ) (x v1 v2 w : Vec3) :
     hessAt g t x (v1 + v2) w = hessAt g t x v1 w + hessAt g t x v2 w := by
-  show fderiv ℝ (fun y : Vec3 => fderiv ℝ (fun y' : Vec3 => g (y', t)) y w) x (v1 + v2) = _
+  change fderiv ℝ (fun y : Vec3 => fderiv ℝ (fun y' : Vec3 => g (y', t)) y w) x (v1 + v2) = _
   rw [map_add]; rfl
 
 theorem hessAt_smul_left (g : ParabolicPoint → ℝ) (t : ℝ) (x : Vec3) (c : ℝ) (v w : Vec3) :
     hessAt g t x (c • v) w = c * hessAt g t x v w := by
-  show fderiv ℝ (fun y : Vec3 => fderiv ℝ (fun y' : Vec3 => g (y', t)) y w) x (c • v) = _
+  change fderiv ℝ (fun y : Vec3 => fderiv ℝ (fun y' : Vec3 => g (y', t)) y w) x (c • v) = _
   rw [map_smul, smul_eq_mul]; rfl
 
 theorem hessAt_add_right {g : ParabolicPoint → ℝ}
@@ -288,7 +288,7 @@ theorem hessAt_add_right {g : ParabolicPoint → ℝ}
       = (fun y => fderiv ℝ (fun y' : Vec3 => g (y', z.2)) y w1)
         + (fun y => fderiv ℝ (fun y' : Vec3 => g (y', z.2)) y w2) := by
     funext y; simp [map_add]
-  show fderiv ℝ (fun y : Vec3 => fderiv ℝ (fun y' : Vec3 => g (y', z.2)) y (w1 + w2)) z.1 v = _
+  change fderiv ℝ (fun y : Vec3 => fderiv ℝ (fun y' : Vec3 => g (y', z.2)) y (w1 + w2)) z.1 v = _
   rw [hcomb, fderiv_add h1 h2]; rfl
 
 theorem hessAt_const_mul_right {g : ParabolicPoint → ℝ}
@@ -299,13 +299,13 @@ theorem hessAt_const_mul_right {g : ParabolicPoint → ℝ}
   have hcomb : (fun y : Vec3 => fderiv ℝ (fun y' : Vec3 => g (y', z.2)) y (c • w))
       = c • (fun y => fderiv ℝ (fun y' : Vec3 => g (y', z.2)) y w) := by
     funext y; simp [map_smul]
-  show fderiv ℝ (fun y : Vec3 => fderiv ℝ (fun y' : Vec3 => g (y', z.2)) y (c • w)) z.1 v = _
+  change fderiv ℝ (fun y : Vec3 => fderiv ℝ (fun y' : Vec3 => g (y', z.2)) y (c • w)) z.1 v = _
   rw [hcomb, fderiv_const_smul h1]; rfl
 
 theorem hessAt_comp_rotZ (ψ : ℝ) (g : ParabolicPoint → ℝ) (z : ParabolicPoint) (v w : Vec3) :
     hessAt (fun w' => g (rotZ ψ w'.1, w'.2)) z.2 z.1 v w
       = hessAt g z.2 (rotZ ψ z.1) (rotZ ψ v) (rotZ ψ w) := by
-  show fderiv ℝ (fun y : Vec3 => fderiv ℝ (fun y' : Vec3 => g (rotZ ψ y', z.2)) y w) z.1 v = _
+  change fderiv ℝ (fun y : Vec3 => fderiv ℝ (fun y' : Vec3 => g (rotZ ψ y', z.2)) y w) z.1 v = _
   rw [fderiv_fderiv_comp_rotZ]
   rfl
 
@@ -371,7 +371,7 @@ private theorem spatialSecondPartial_combo {f g : ParabolicPoint → ℝ} (c d :
       differentiableAt_spatialSlice hf1 hyz
     have hgD : DifferentiableAt ℝ (fun x : Vec3 => g (x, z.2)) y :=
       differentiableAt_spatialSlice hg1 hyz
-    show fderiv ℝ (fun x : Vec3 => c * f (x, z.2) - d * g (x, z.2)) y (basisVec j) = _
+    change fderiv ℝ (fun x : Vec3 => c * f (x, z.2) - d * g (x, z.2)) y (basisVec j) = _
     rw [fderiv_fun_sub (hfD.const_mul c) (hgD.const_mul d), fderiv_const_mul hfD,
       fderiv_const_mul hgD]
     rfl
@@ -381,7 +381,7 @@ private theorem spatialSecondPartial_combo {f g : ParabolicPoint → ℝ} (c d :
     filter_upwards [(isOpen_vec3Ball 0 1).mem_nhds hz.1] with y hy using hpt y hy
   have hfD2 := differentiableAt_spatialPartial_slice hf hz j
   have hgD2 := differentiableAt_spatialPartial_slice hg hz j
-  show fderiv ℝ (fun y : Vec3 => spatialPartial (fun w => c * f w - d * g w) j (y, z.2)) z.1
+  change fderiv ℝ (fun y : Vec3 => spatialPartial (fun w => c * f w - d * g w) j (y, z.2)) z.1
     (basisVec j) = _
   rw [hev.fderiv_eq, fderiv_fun_sub (hfD2.const_mul c) (hgD2.const_mul d), fderiv_const_mul hfD2,
     fderiv_const_mul hgD2]
@@ -405,7 +405,7 @@ private theorem spatialSecondPartial_combo_add {f g : ParabolicPoint → ℝ} (c
       differentiableAt_spatialSlice hf1 hyz
     have hgD : DifferentiableAt ℝ (fun x : Vec3 => g (x, z.2)) y :=
       differentiableAt_spatialSlice hg1 hyz
-    show fderiv ℝ (fun x : Vec3 => c * f (x, z.2) + d * g (x, z.2)) y (basisVec j) = _
+    change fderiv ℝ (fun x : Vec3 => c * f (x, z.2) + d * g (x, z.2)) y (basisVec j) = _
     rw [fderiv_fun_add (hfD.const_mul c) (hgD.const_mul d), fderiv_const_mul hfD,
       fderiv_const_mul hgD]
     rfl
@@ -415,7 +415,7 @@ private theorem spatialSecondPartial_combo_add {f g : ParabolicPoint → ℝ} (c
     filter_upwards [(isOpen_vec3Ball 0 1).mem_nhds hz.1] with y hy using hpt y hy
   have hfD2 := differentiableAt_spatialPartial_slice hf hz j
   have hgD2 := differentiableAt_spatialPartial_slice hg hz j
-  show fderiv ℝ (fun y : Vec3 => spatialPartial (fun w => c * f w + d * g w) j (y, z.2)) z.1
+  change fderiv ℝ (fun y : Vec3 => spatialPartial (fun w => c * f w + d * g w) j (y, z.2)) z.1
     (basisVec j) = _
   rw [hev.fderiv_eq, fderiv_fun_add (hfD2.const_mul c) (hgD2.const_mul d), fderiv_const_mul hfD2,
     fderiv_const_mul hgD2]
@@ -455,7 +455,7 @@ private theorem sumSecondPartial_rotField_zero (φ : ℝ) (u : ParabolicPoint �
       = Real.cos φ * spatialSecondPartial (fun w => u (rotZ (-φ) w.1, w.2) 0) j j z
         - Real.sin φ * spatialSecondPartial (fun w => u (rotZ (-φ) w.1, w.2) 1) j j z := by
     intro j
-    show spatialSecondPartial
+    change spatialSecondPartial
       (fun w => Real.cos φ * u (rotZ (-φ) w.1, w.2) 0 - Real.sin φ * u (rotZ (-φ) w.1, w.2) 1) j
         j z = _
     exact spatialSecondPartial_combo (Real.cos φ) (Real.sin φ) hrot0 hrot1 hz j
@@ -491,7 +491,7 @@ private theorem sumSecondPartial_rotField_one (φ : ℝ) (u : ParabolicPoint →
       = Real.sin φ * spatialSecondPartial (fun w => u (rotZ (-φ) w.1, w.2) 0) j j z
         + Real.cos φ * spatialSecondPartial (fun w => u (rotZ (-φ) w.1, w.2) 1) j j z := by
     intro j
-    show spatialSecondPartial
+    change spatialSecondPartial
       (fun w => Real.sin φ * u (rotZ (-φ) w.1, w.2) 0 + Real.cos φ * u (rotZ (-φ) w.1, w.2) 1) j
         j z = _
     exact spatialSecondPartial_combo_add (Real.sin φ) (Real.cos φ) hrot0 hrot1 hz j
@@ -518,7 +518,7 @@ private theorem sumSecondPartial_rotField_two (φ : ℝ) (u : ParabolicPoint →
       ∑ a : Fin 3, spatialSecondPartial (fun w => u w 2) a a (rotZ (-φ) z.1, z.2) := by
   have hu2 : ContDiffOn ℝ 2 (fun z : Vec3 × ℝ => u z 2) unitCylinder := contDiffOn_component hu 2
   have hcongr : (fun w => rotField φ u w 2) = (fun w => u (rotZ (-φ) w.1, w.2) 2) := by
-    funext w; show rotZ φ (u (rotZ (-φ) w.1, w.2)) 2 = _; rw [rotZ_apply_two]
+    funext w; change rotZ φ (u (rotZ (-φ) w.1, w.2)) 2 = _; rw [rotZ_apply_two]
   rw [hcongr]
   exact sum_spatialSecondPartial_comp_rotZ hu2 (-φ) hz
 
@@ -593,7 +593,7 @@ private theorem divergence_rotField (φ : ℝ) (u : ParabolicPoint → Vec3)
       = (rotZ φ (fderiv ℝ (fun y : Vec3 => u (y, z.2)) (rotZ (-φ) z.1) (rotZ (-φ) (basisVec
         j)))) j := by
     intro j
-    show fderiv ℝ (fun y : Vec3 => rotField φ u (y, z.2) j) z.1 (basisVec j) = _
+    change fderiv ℝ (fun y : Vec3 => rotField φ u (y, z.2) j) z.1 (basisVec j) = _
     rw [fderiv_spatialSlice_apply hrot hz j (basisVec j), fderiv_rotField_spatial φ u hu hz
       (basisVec j)]
   simp_rw [hstep]
@@ -699,11 +699,11 @@ theorem isClassicalSolutionOn_rotField (φ : ℝ)
         fderiv_apply_eq_convective u hu1 hz' 1
       have hT3 := sumSecondPartial_rotField_zero φ u hu2 hz
       have hT4 := gradient_comp_rotZ φ p z 0
-      show timePartial (fun w => rotField φ u w 0) z +
+      change timePartial (fun w => rotField φ u w 0) z +
           ∑ j : Fin 3, rotField φ u z j * spatialPartial (fun w => rotField φ u w 0) j z -
           ∑ j : Fin 3, spatialSecondPartial (fun w => rotField φ u w 0) j j z +
           spatialPartial (fun w => p (rotZ (-φ) w.1, w.2)) 0 z = rotField φ f z 0
-      show _ = rotZ φ (f (rotZ (-φ) z.1, z.2)) 0
+      change _ = rotZ φ (f (rotZ (-φ) z.1, z.2)) 0
       rw [hT1, hT2, hT3, spatialPartial_comp_rotZ (-φ) p z 0, hT4,
         rotZ_apply_zero, rotZ_apply_zero, rotZ_apply_zero, hconv0, hconv1]
       linear_combination Real.cos φ * hmom0 - Real.sin φ * hmom1
@@ -721,11 +721,11 @@ theorem isClassicalSolutionOn_rotField (φ : ℝ)
         fderiv_apply_eq_convective u hu1 hz' 1
       have hT3 := sumSecondPartial_rotField_one φ u hu2 hz
       have hT4 := gradient_comp_rotZ φ p z 1
-      show timePartial (fun w => rotField φ u w 1) z +
+      change timePartial (fun w => rotField φ u w 1) z +
           ∑ j : Fin 3, rotField φ u z j * spatialPartial (fun w => rotField φ u w 1) j z -
           ∑ j : Fin 3, spatialSecondPartial (fun w => rotField φ u w 1) j j z +
           spatialPartial (fun w => p (rotZ (-φ) w.1, w.2)) 1 z = rotField φ f z 1
-      show _ = rotZ φ (f (rotZ (-φ) z.1, z.2)) 1
+      change _ = rotZ φ (f (rotZ (-φ) z.1, z.2)) 1
       rw [hT1, hT2, hT3, spatialPartial_comp_rotZ (-φ) p z 1, hT4,
         rotZ_apply_one, rotZ_apply_one, rotZ_apply_one, hconv0, hconv1]
       linear_combination Real.sin φ * hmom0 + Real.cos φ * hmom1
@@ -738,11 +738,11 @@ theorem isClassicalSolutionOn_rotField (φ : ℝ)
         fderiv_apply_eq_convective u hu1 hz' 2
       have hT3 := sumSecondPartial_rotField_two φ u hu2 hz
       have hT4 := gradient_comp_rotZ φ p z 2
-      show timePartial (fun w => rotField φ u w 2) z +
+      change timePartial (fun w => rotField φ u w 2) z +
           ∑ j : Fin 3, rotField φ u z j * spatialPartial (fun w => rotField φ u w 2) j z -
           ∑ j : Fin 3, spatialSecondPartial (fun w => rotField φ u w 2) j j z +
           spatialPartial (fun w => p (rotZ (-φ) w.1, w.2)) 2 z = rotField φ f z 2
-      show _ = rotZ φ (f (rotZ (-φ) z.1, z.2)) 2
+      change _ = rotZ φ (f (rotZ (-φ) z.1, z.2)) 2
       rw [hT1, hT2, hT3, spatialPartial_comp_rotZ (-φ) p z 2, hT4,
         rotZ_apply_two, rotZ_apply_two, rotZ_apply_two, hconv2]
       linear_combination hmom2
@@ -802,14 +802,14 @@ theorem spatialPartial_angularMeanScalar {p : ParabolicPoint → ℝ}
   have hev : (fun x => angularMeanScalar p (x, t)) =ᶠ[𝓝 x₀]
       fun x => (2 * Real.pi)⁻¹ * ∫ φ in Ioc 0 (2 * Real.pi), G (φ, x) := by
     filter_upwards [hball.mem_nhds hx₀] with x hx
-    show ((2 * Real.pi)⁻¹ • ∫ φ in (0 : ℝ)..(2 * Real.pi), p (rotZ (-φ) x, t)) = _
+    change ((2 * Real.pi)⁻¹ • ∫ φ in (0 : ℝ)..(2 * Real.pi), p (rotZ (-φ) x, t)) = _
     rw [smul_eq_mul, intervalIntegral.integral_of_le Real.two_pi_pos.le]
   have hderiv := (hasFDerivAt_parametric_integral_Ioc hball hx₀ hGsm 0 (2 * Real.pi)).const_mul
     (2 * Real.pi)⁻¹
   have hDint : IntegrableOn (fun φ => fderiv ℝ (fun x => G (φ, x)) x₀) (Ioc 0 (2 * Real.pi)) :=
     (continuous_section_of_continuousOn (continuousOn_fderiv_section_of_contDiffOn hball hGsm)
       hx₀).integrableOn_Ioc
-  show fderiv ℝ (fun x => angularMeanScalar p (x, t)) x₀ (basisVec j) = _
+  change fderiv ℝ (fun x => angularMeanScalar p (x, t)) x₀ (basisVec j) = _
   rw [hev.fderiv_eq, hderiv.fderiv, smul_apply, smul_eq_mul,
     intervalIntegral.integral_of_le Real.two_pi_pos.le, ContinuousLinearMap.integral_apply hDint]
   rfl
@@ -823,7 +823,7 @@ theorem angularMean_apply_eq (f : ParabolicPoint → Vec3)
   have hrot := contDiffOn_rotField_uncurry (⊤ : ℕ∞) hf
   have hint : IntegrableOn (fun φ => rotField φ f z) (Ioc 0 (2 * Real.pi)) :=
     (continuous_section_of_continuousOn hrot.continuousOn (x := z) hz).integrableOn_Ioc
-  show ((2 * Real.pi)⁻¹ • ∫ φ in (0 : ℝ)..(2 * Real.pi), rotField φ f z) i = _
+  change ((2 * Real.pi)⁻¹ • ∫ φ in (0 : ℝ)..(2 * Real.pi), rotField φ f z) i = _
   rw [Pi.smul_apply, smul_eq_mul]
   congr 1
   rw [intervalIntegral.integral_of_le Real.two_pi_pos.le,
@@ -883,7 +883,7 @@ partial derivative. -/
 private theorem timePartial_congr_of_eqOn {v u : ParabolicPoint → ℝ}
     (h : ∀ w ∈ unitCylinder, v w = u w) {z : ParabolicPoint} (hz : z ∈ unitCylinder) :
     timePartial v z = timePartial u z := by
-  show fderiv ℝ (fun s : ℝ => v (z.1, s)) z.2 1 = fderiv ℝ (fun s : ℝ => u (z.1, s)) z.2 1
+  change fderiv ℝ (fun s : ℝ => v (z.1, s)) z.2 1 = fderiv ℝ (fun s : ℝ => u (z.1, s)) z.2 1
   have hev : (fun s : ℝ => v (z.1, s)) =ᶠ[nhds z.2] (fun s : ℝ => u (z.1, s)) := by
     filter_upwards [isOpen_Ioo.mem_nhds hz.2] with s hs using h (z.1, s) ⟨hz.1, hs⟩
   rw [hev.fderiv_eq]
@@ -893,7 +893,7 @@ partial derivative. -/
 theorem spatialPartial_congr_of_eqOn {v u : ParabolicPoint → ℝ}
     (h : ∀ w ∈ unitCylinder, v w = u w) {z : ParabolicPoint} (hz : z ∈ unitCylinder) (j : Fin 3) :
     spatialPartial v j z = spatialPartial u j z := by
-  show fderiv ℝ (fun y : Vec3 => v (y, z.2)) z.1 (basisVec j)
+  change fderiv ℝ (fun y : Vec3 => v (y, z.2)) z.1 (basisVec j)
     = fderiv ℝ (fun y : Vec3 => u (y, z.2)) z.1 (basisVec j)
   have hev : (fun y : Vec3 => v (y, z.2)) =ᶠ[nhds z.1] (fun y : Vec3 => u (y, z.2)) := by
     filter_upwards [(isOpen_vec3Ball 0 1).mem_nhds hz.1] with y hy using h (y, z.2) ⟨hy, hz.2⟩

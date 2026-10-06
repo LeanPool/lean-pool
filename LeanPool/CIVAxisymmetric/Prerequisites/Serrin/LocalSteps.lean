@@ -16,7 +16,7 @@ public import LeanPool.CIVAxisymmetric.Reduction.SpatialPartialCongrSpaceTimeSet
 /-!
 # The local steps of the interior estimates
 
-At a point `(x, s)` whose backward window `B̄(x, 2ρ) × [s - ρ², s]` lies in the unit cylinder,
+At a point `(x, s)` whose backward window `B_bar(x, 2ρ) × [s - ρ², s]` lies in the unit cylinder,
 where the velocity is bounded by `Mu`, the pointwise heat bound applied to the vorticity
 equation in divergence form (and to its first and second spatial derivatives) bounds the
 vorticity level at `(x, s)` by `C ρ Λ + C / ρ`, where `Λ` bounds the same level on the window.

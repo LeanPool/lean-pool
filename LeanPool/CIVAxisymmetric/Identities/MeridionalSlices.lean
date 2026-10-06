@@ -41,7 +41,7 @@ theorem mem_unitCylinder_meridional (x₃ : ℝ) (hx : |x₃| < 1) (t : ℝ)
   refine ⟨?_, ht⟩
   rw [mem_vec3Ball, sub_zero]
   unfold vec3EuclideanNorm
-  simp [meridional, Fin.sum_univ_three]
+  simp only [meridional, Fin.sum_univ_three]
   have hsq : x₃ ^ 2 < 1 := by
     have habs := abs_lt.mp hx
     nlinarith only [habs.1, habs.2]
@@ -77,19 +77,19 @@ theorem meridional_scale_mem_vec3Ball {x₁ x₃ s : ℝ} (hx : x₁ ^ 2 + x₃ 
     (hs : |s| ≤ 1) : meridional (s * x₁) x₃ ∈ vec3Ball (0 : Vec3) 1 := by
   rw [mem_vec3Ball, sub_zero]
   unfold vec3EuclideanNorm
-  simp [meridional, Fin.sum_univ_three]
+  simp only [meridional, Fin.sum_univ_three]
   have hb := abs_le.mp hs
   have hs2 : s ^ 2 ≤ 1 := by
-    nlinarith only [mul_nonneg (by linarith only [hb.1] : (0:ℝ) ≤ s + 1)
-      (by linarith only [hb.2] : (0:ℝ) ≤ 1 - s)]
+    nlinarith only [mul_nonneg (by linarith only [hb.1] : (0 : ℝ) ≤ s + 1)
+      (by linarith only [hb.2] : (0 : ℝ) ≤ 1 - s)]
   have hkey : (s * x₁) ^ 2 ≤ x₁ ^ 2 := by
     nlinarith only [mul_le_mul_of_nonneg_right hs2 (sq_nonneg x₁)]
-  have hpos : (0:ℝ) ≤ (s * x₁) ^ 2 + x₃ ^ 2 := by positivity
+  have hpos : (0 : ℝ) ≤ (s * x₁) ^ 2 + x₃ ^ 2 := by positivity
   rw [Real.sqrt_lt hpos (by norm_num)]
   nlinarith only [hkey, hx]
 
 /-- The clamp `max 0 (min s 1)` of a real number lands in `[0, 1]`. -/
-theorem clamp_mem_Icc (s : ℝ) : max 0 (min s 1) ∈ Set.Icc (0:ℝ) 1 :=
+theorem clamp_mem_Icc (s : ℝ) : max 0 (min s 1) ∈ Set.Icc (0 : ℝ) 1 :=
   ⟨le_max_left _ _, max_le (by norm_num) (min_le_right s 1)⟩
 
 /-- The clamp of a real number has size at most one. -/
@@ -98,7 +98,7 @@ theorem abs_clamp_le_one (s : ℝ) : |max 0 (min s 1)| ≤ 1 := by
   exact abs_le.mpr ⟨by linarith only [h.1], h.2⟩
 
 /-- The clamp fixes every point of `[0, 1]`. -/
-theorem clamp_eq_self {s : ℝ} (hs : s ∈ Set.Icc (0:ℝ) 1) : max 0 (min s 1) = s := by
+theorem clamp_eq_self {s : ℝ} (hs : s ∈ Set.Icc (0 : ℝ) 1) : max 0 (min s 1) = s := by
   rw [min_eq_left hs.2, max_eq_right hs.1]
 
 end CIV

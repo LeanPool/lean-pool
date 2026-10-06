@@ -106,7 +106,7 @@ private theorem serrinCutoff_eq_zero_off_window' (x : Vec3) {s ρ : ℝ} (hρ : 
     {z : ParabolicPoint} (hz : z.2 < s)
     (hout : z ∉ {y : Vec3 | vec3EuclideanNorm (y - x) ≤ ρ} ×ˢ Icc (s - ρ ^ 2) s) :
     serrinCutoff x s ρ z = 0 := by
-  show serrinBallCutoff x ρ z.1 * serrinTimeCut s ρ z.2 = 0
+  change serrinBallCutoff x ρ z.1 * serrinTimeCut s ρ z.2 = 0
   by_cases hball : vec3EuclideanNorm (z.1 - x) ≤ ρ
   · have htime : z.2 < s - ρ ^ 2 := by
       by_contra htime'; exact hout ⟨hball, le_of_not_gt htime', hz.le⟩
@@ -152,14 +152,14 @@ private theorem integrableOn_serrinHeatWeight_mul_spatialPartial {Y : ParabolicP
   have hdYc := continuousOn_spatialPartial_of_isOpen hO hY j
   obtain ⟨CdY, hCdY⟩ := hWc.exists_bound_of_continuousOn (hdYc.mono hwin)
   have hCdY0 : 0 ≤ CdY := (norm_nonneg _).trans (hCdY ((x, s) : Vec3 × ℝ) ⟨by
-    show vec3EuclideanNorm (x - x) ≤ ρ; rw [sub_self, vec3EuclideanNorm_zero]; exact hρ.le,
+    change vec3EuclideanNorm (x - x) ≤ ρ; rw [sub_self, vec3EuclideanNorm_zero]; exact hρ.le,
     by have := sq_nonneg ρ; linarith only [this], le_rfl⟩)
   have hΨc : ContinuousOn (fun z : Vec3 × ℝ => serrinHeatWeight x s ρ z) U :=
     (contDiffOn_serrinHeatWeight x (s := s) hρ).continuousOn
   have hΨzero : ∀ z ∈ U, z ∉ W → serrinHeatWeight x s ρ z = 0 := by
     intro z hz hzW
     have hev := serrinCutoff_eventually_eq_zero x hρ hzW hz
-    show heatKernel (x - z.1) (s - z.2) * serrinCutoff x s ρ z = 0
+    change heatKernel (x - z.1) (s - z.2) * serrinCutoff x s ρ z = 0
     rw [hev.self_of_nhds, mul_zero]
   refine integrableOn_of_window (g := fun z => CdY * (univ ×ˢ Ioc 0 (ρ ^ 2)).indicator
       (fun q : Vec3 × ℝ => heatKernelPlus q) ((x, s) - z)) hWm hUm
@@ -177,7 +177,7 @@ private theorem integrableOn_serrinHeatWeight_mul_spatialPartial {Y : ParabolicP
       (heatKernelPlus_eq_heatKernel (((x, s) - z : Vec3 × ℝ) : ParabolicPoint)).symm
     calc |serrinHeatWeight x s ρ z|
         = heatKernel (x - z.1) (s - z.2) * |serrinCutoff x s ρ z| := by
-          show |heatKernel (x - z.1) (s - z.2) * serrinCutoff x s ρ z| = _
+          change |heatKernel (x - z.1) (s - z.2) * serrinCutoff x s ρ z| = _
           rw [abs_mul, abs_of_nonneg (heatKernel_nonneg _ _)]
       _ ≤ heatKernel (x - z.1) (s - z.2) :=
           mul_le_of_le_one_right (heatKernel_nonneg _ _) (abs_serrinCutoff_le_one x s ρ z)
@@ -190,58 +190,22 @@ private theorem integrableOn_serrinHeatWeight_mul_spatialPartial {Y : ParabolicP
     _ = CdY * heatKernelPlus ((x, s) - z) := mul_comm _ _
 
 
-theorem HB2_cutoff_decomposition {w : ParabolicPoint → ℝ} {U Y : Fin 3 → ParabolicPoint → ℝ}
-    {O : Set ParabolicPoint} {x : Vec3} {s ρ : ℝ} (hO : IsOpen (X := Vec3 × ℝ) O)
-    (hρ : 0 < ρ) (hρ1 : ρ ≤ 1)
+private theorem cutoff_heat_operator_eq {w ζ : ParabolicPoint → ℝ}
+    {Y : Fin 3 → ParabolicPoint → ℝ} {O : Set ParabolicPoint} {x : Vec3} {s ρ : ℝ}
+    (hO : IsOpen (X := Vec3 × ℝ) O) (hρ : 0 < ρ)
     (hwin : {y : Vec3 | vec3EuclideanNorm (y - x) ≤ ρ} ×ˢ Icc (s - ρ ^ 2) s ⊆ O)
     (hw : ContDiffOn ℝ (⊤ : ℕ∞) (fun z : Vec3 × ℝ => w z) O)
-    (hU : ∀ l, ContDiffOn ℝ (⊤ : ℕ∞) (fun z : Vec3 × ℝ => U l z) O)
-    (hY : ∀ j, ContDiffOn ℝ (⊤ : ℕ∞) (fun z : Vec3 × ℝ => Y j z) O)
-    (hwU : ∀ z ∈ O, w z = ∑ l, spatialPartial (U l) l z)
     (heq : ∀ z ∈ O, timePartial w z - ∑ j, spatialSecondPartial w j j z =
-      ∑ j, spatialPartial (Y j) j z) :
-    w (x, s) =
-      -(∑ j, ∫ z in {z : ParabolicPoint | z.2 < s},
-          spatialPartial (serrinHeatWeight x s ρ) j z * Y j z) -
-        ∑ l, ∫ z in {z : ParabolicPoint | z.2 < s},
-          U l z * spatialPartial (serrinCutoffKernel x s ρ) l z := by
-  obtain ⟨ζ, hζsmooth, hζcs, hζeq⟩ := HB2b_cutoff_extension hO hρ hwin hw
+      ∑ j, spatialPartial (Y j) j z)
+    (hζeq : ∀ z : ParabolicPoint, z.2 ≤ s → ζ z = serrinCutoff x s ρ z * w z) :
+    ∀ z : ParabolicPoint, z.2 < s →
+      heatKernel (x - z.1) (s - z.2) * (timePartial ζ z - ∑ i, spatialSecondPartial ζ i i z) =
+      serrinHeatWeight x s ρ z * (∑ j, spatialPartial (Y j) j z) +
+      heatKernel (x - z.1) (s - z.2) * (w z * (timePartial (serrinCutoff x s ρ) z -
+          ∑ i, spatialSecondPartial (serrinCutoff x s ρ) i i z) -
+        2 * ∑ i, spatialPartial (serrinCutoff x s ρ) i z * spatialPartial w i z) := by
   have hopenLt : IsOpen (X := Vec3 × ℝ) {z' : Vec3 × ℝ | z'.2 < s} :=
     isOpen_lt continuous_snd continuous_const
-  have hcenter1 : serrinCutoff x s ρ (x, s) = 1 := by
-    show serrinBallCutoff x ρ x * serrinTimeCut s ρ s = 1
-    have hb : serrinBallCutoff x ρ x = 1 := by
-      apply (serrinBallCutoff_support x hρ x).1
-      show vec3EuclideanNorm (x - x) ≤ ρ / 2
-      rw [sub_self, vec3EuclideanNorm_zero]; linarith only [hρ]
-    have ht : serrinTimeCut s ρ s = 1 := by
-      unfold serrinTimeCut
-      apply (serrinTimeBump_support (s := s) hρ s).1
-      have := sq_nonneg ρ; linarith only [this]
-    rw [hb, ht, one_mul]
-  have hwxs : w (x, s) = ζ (x, s) := by
-    have h1 := hζeq (x, s) le_rfl
-    show w (x, s) = ζ (x, s)
-    rw [h1, hcenter1, one_mul]
-  have hb1 := HB1_forward_representation hζsmooth hζcs x s
-  have hFeq : (fun z : ParabolicPoint => heatKernel (x - z.1) (s - z.2) *
-      (timePartial ζ z - ∑ i, spatialSecondPartial ζ i i z)) =
-      {z : ParabolicPoint | z.2 < s}.indicator
-        (fun z => heatKernel (x - z.1) (s - z.2) *
-          (timePartial ζ z - ∑ i, spatialSecondPartial ζ i i z)) := by
-    funext z
-    by_cases hz : z ∈ {z : ParabolicPoint | z.2 < s}
-    · rw [Set.indicator_of_mem hz]
-    · rw [Set.indicator_of_notMem hz]
-      have hz' : s - z.2 ≤ 0 := by
-        simp only [Set.mem_ofPred_eq, not_lt] at hz
-        linarith only [hz]
-      rw [heatKernel_eq_zero_of_nonpos hz', zero_mul]
-  have hb1' : ζ (x, s) = ∫ z in {z : ParabolicPoint | z.2 < s}, heatKernel (x - z.1) (s - z.2) *
-      (timePartial ζ z - ∑ i, spatialSecondPartial ζ i i z) := by
-    rw [hb1]
-    rw [congrArg (MeasureTheory.integral (volume : Measure ParabolicPoint)) hFeq]
-    exact integral_indicator (measurableSet_lt measurable_snd measurable_const)
   have hζ0 : ∀ z' : ParabolicPoint, z'.2 < s →
       z' ∉ {y : Vec3 | vec3EuclideanNorm (y - x) ≤ ρ} ×ˢ Icc (s - ρ ^ 2) s → ζ z' = 0 := by
     intro z' hz' hout
@@ -311,7 +275,7 @@ theorem HB2_cutoff_decomposition {w : ParabolicPoint → ℝ} {U Y : Fin 3 → P
       have h5 : ∀ i, spatialPartial (serrinCutoff x s ρ) i z = 0 :=
         fun i => serrinCutoff_spatialPartial_eq_zero_off_window x hρ hz hzw i
       have hΨ0 : serrinHeatWeight x s ρ z = 0 := by
-        show heatKernel (x - z.1) (s - z.2) * serrinCutoff x s ρ z = 0
+        change heatKernel (x - z.1) (s - z.2) * serrinCutoff x s ρ z = 0
         rw [h2, mul_zero]
       have hSsum0 : (∑ i, spatialSecondPartial ζ i i z) = 0 :=
         Finset.sum_eq_zero (fun i _ => h1.2 i)
@@ -321,16 +285,13 @@ theorem HB2_cutoff_decomposition {w : ParabolicPoint → ℝ} {U Y : Fin 3 → P
         Finset.sum_eq_zero (fun i _ => by rw [h5 i, zero_mul])
       rw [h1.1, hSsum0, hΨ0, h3, hSsum0', hDsum0]
       ring
-  have hUmSet : MeasurableSet {z : ParabolicPoint | z.2 < s} :=
-    measurableSet_lt measurable_snd measurable_const
-  have hbig : ∫ z in {z : ParabolicPoint | z.2 < s}, heatKernel (x - z.1) (s - z.2) *
-        (timePartial ζ z - ∑ i, spatialSecondPartial ζ i i z) =
-      ∫ z in {z : ParabolicPoint | z.2 < s},
-        (serrinHeatWeight x s ρ z * (∑ j, spatialPartial (Y j) j z) +
-          heatKernel (x - z.1) (s - z.2) * (w z * (timePartial (serrinCutoff x s ρ) z -
-              ∑ i, spatialSecondPartial (serrinCutoff x s ρ) i i z) -
-            2 * ∑ i, spatialPartial (serrinCutoff x s ρ) i z * spatialPartial w i z)) :=
-    setIntegral_congr_fun hUmSet (fun z hz => hpointwise z hz)
+  exact hpointwise
+
+private theorem integrableOn_heat_operator {ζ : ParabolicPoint → ℝ}
+    (hζsmooth : ContDiff ℝ (⊤ : ℕ∞) (fun z : Vec3 × ℝ => ζ z))
+    (hζcs : HasCompactSupport (fun z : Vec3 × ℝ => ζ z)) (x : Vec3) (s : ℝ) :
+    IntegrableOn (fun z : ParabolicPoint => heatKernel (x - z.1) (s - z.2) *
+      (timePartial ζ z - ∑ i, spatialSecondPartial ζ i i z)) {z : ParabolicPoint | z.2 < s} := by
   have htimeCD : ContDiff ℝ (⊤ : ℕ∞) (fun z : Vec3 × ℝ => timePartial ζ z) :=
     timePartial_contDiff_full hζsmooth
   have hspCD : ∀ i : Fin 3,
@@ -386,6 +347,69 @@ theorem HB2_cutoff_decomposition {w : ParabolicPoint → ℝ} {U Y : Fin 3 → P
       funext z; rw [neg_neg]
     rw [heq'] at hΦintFull
     exact hΦintFull.integrableOn
+  exact hΦint
+
+theorem HB2_cutoff_decomposition {w : ParabolicPoint → ℝ} {U Y : Fin 3 → ParabolicPoint → ℝ}
+    {O : Set ParabolicPoint} {x : Vec3} {s ρ : ℝ} (hO : IsOpen (X := Vec3 × ℝ) O)
+    (hρ : 0 < ρ) (hρ1 : ρ ≤ 1)
+    (hwin : {y : Vec3 | vec3EuclideanNorm (y - x) ≤ ρ} ×ˢ Icc (s - ρ ^ 2) s ⊆ O)
+    (hw : ContDiffOn ℝ (⊤ : ℕ∞) (fun z : Vec3 × ℝ => w z) O)
+    (hU : ∀ l, ContDiffOn ℝ (⊤ : ℕ∞) (fun z : Vec3 × ℝ => U l z) O)
+    (hY : ∀ j, ContDiffOn ℝ (⊤ : ℕ∞) (fun z : Vec3 × ℝ => Y j z) O)
+    (hwU : ∀ z ∈ O, w z = ∑ l, spatialPartial (U l) l z)
+    (heq : ∀ z ∈ O, timePartial w z - ∑ j, spatialSecondPartial w j j z =
+      ∑ j, spatialPartial (Y j) j z) :
+    w (x, s) =
+      -(∑ j, ∫ z in {z : ParabolicPoint | z.2 < s},
+          spatialPartial (serrinHeatWeight x s ρ) j z * Y j z) -
+        ∑ l, ∫ z in {z : ParabolicPoint | z.2 < s},
+          U l z * spatialPartial (serrinCutoffKernel x s ρ) l z := by
+  obtain ⟨ζ, hζsmooth, hζcs, hζeq⟩ := HB2b_cutoff_extension hO hρ hwin hw
+  have hcenter1 : serrinCutoff x s ρ (x, s) = 1 := by
+    change serrinBallCutoff x ρ x * serrinTimeCut s ρ s = 1
+    have hb : serrinBallCutoff x ρ x = 1 := by
+      apply (serrinBallCutoff_support x hρ x).1
+      rw [sub_self, vec3EuclideanNorm_zero]; linarith only [hρ]
+    have ht : serrinTimeCut s ρ s = 1 := by
+      unfold serrinTimeCut
+      apply (serrinTimeBump_support (s := s) hρ s).1
+      have := sq_nonneg ρ; linarith only [this]
+    rw [hb, ht, one_mul]
+  have hwxs : w (x, s) = ζ (x, s) := by
+    have h1 := hζeq (x, s) le_rfl
+    change w (x, s) = ζ (x, s)
+    rw [h1, hcenter1, one_mul]
+  have hb1 := HB1_forward_representation hζsmooth hζcs x s
+  have hFeq : (fun z : ParabolicPoint => heatKernel (x - z.1) (s - z.2) *
+      (timePartial ζ z - ∑ i, spatialSecondPartial ζ i i z)) =
+      {z : ParabolicPoint | z.2 < s}.indicator
+        (fun z => heatKernel (x - z.1) (s - z.2) *
+          (timePartial ζ z - ∑ i, spatialSecondPartial ζ i i z)) := by
+    funext z
+    by_cases hz : z ∈ {z : ParabolicPoint | z.2 < s}
+    · rw [Set.indicator_of_mem hz]
+    · rw [Set.indicator_of_notMem hz]
+      have hz' : s - z.2 ≤ 0 := by
+        simp only [Set.mem_ofPred_eq, not_lt] at hz
+        linarith only [hz]
+      rw [heatKernel_eq_zero_of_nonpos hz', zero_mul]
+  have hb1' : ζ (x, s) = ∫ z in {z : ParabolicPoint | z.2 < s}, heatKernel (x - z.1) (s - z.2) *
+      (timePartial ζ z - ∑ i, spatialSecondPartial ζ i i z) := by
+    rw [hb1]
+    rw [congrArg (MeasureTheory.integral (volume : Measure ParabolicPoint)) hFeq]
+    exact integral_indicator (measurableSet_lt measurable_snd measurable_const)
+  have hpointwise := cutoff_heat_operator_eq hO hρ hwin hw heq hζeq
+  have hUmSet : MeasurableSet {z : ParabolicPoint | z.2 < s} :=
+    measurableSet_lt measurable_snd measurable_const
+  have hbig : ∫ z in {z : ParabolicPoint | z.2 < s}, heatKernel (x - z.1) (s - z.2) *
+        (timePartial ζ z - ∑ i, spatialSecondPartial ζ i i z) =
+      ∫ z in {z : ParabolicPoint | z.2 < s},
+        (serrinHeatWeight x s ρ z * (∑ j, spatialPartial (Y j) j z) +
+          heatKernel (x - z.1) (s - z.2) * (w z * (timePartial (serrinCutoff x s ρ) z -
+              ∑ i, spatialSecondPartial (serrinCutoff x s ρ) i i z) -
+            2 * ∑ i, spatialPartial (serrinCutoff x s ρ) i z * spatialPartial w i z)) :=
+    setIntegral_congr_fun hUmSet (fun z hz => hpointwise z hz)
+  have hΦint := integrableOn_heat_operator hζsmooth hζcs x s
   have hF1int : ∀ j : Fin 3,
       IntegrableOn (fun z => serrinHeatWeight x s ρ z * spatialPartial (Y j) j z)
         {z : ParabolicPoint | z.2 < s} :=
@@ -423,7 +447,7 @@ theorem HB2_cutoff_decomposition {w : ParabolicPoint → ℝ} {U Y : Fin 3 → P
               ∑ i, spatialSecondPartial (serrinCutoff x s ρ) i i z) -
             2 * ∑ i, spatialPartial (serrinCutoff x s ρ) i z * spatialPartial w i z)) := by
       funext z
-      show (serrinHeatWeight x s ρ z * (∑ j, spatialPartial (Y j) j z) +
+      change (serrinHeatWeight x s ρ z * (∑ j, spatialPartial (Y j) j z) +
           heatKernel (x - z.1) (s - z.2) * (w z * (timePartial (serrinCutoff x s ρ) z -
               ∑ i, spatialSecondPartial (serrinCutoff x s ρ) i i z) -
             2 * ∑ i, spatialPartial (serrinCutoff x s ρ) i z * spatialPartial w i z)) -

@@ -309,7 +309,7 @@ theorem exists_increasing_seq_topCylinder (x : Vec3) (ρ σ : ℝ) (hσ : 0 < σ
     have hle : σ / ((j : ℝ) + 2) ≤ σ / ((i : ℝ) + 2) := by
       apply div_le_div_of_nonneg_left hσ.le (hdenpos i)
       linarith only [hij']
-    show -(σ / ((i : ℝ) + 2)) ≤ -(σ / ((j : ℝ) + 2))
+    change -(σ / ((i : ℝ) + 2)) ≤ -(σ / ((j : ℝ) + 2))
     linarith only [hle]
   refine ⟨s, hsmem, hsmono, ?_⟩
   apply Set.Subset.antisymm
@@ -327,7 +327,7 @@ theorem exists_increasing_seq_topCylinder (x : Vec3) (ρ σ : ℝ) (hσ : 0 < σ
       rw [div_lt_iff₀ (hdenpos n)]
       linarith only [hmul2]
     have hτlt : τ < s n := by
-      show τ < -(σ / ((n : ℝ) + 2))
+      change τ < -(σ / ((n : ℝ) + 2))
       linarith only [hslt]
     exact mem_iUnion.2 ⟨n, hy, hτ1, hτlt⟩
 

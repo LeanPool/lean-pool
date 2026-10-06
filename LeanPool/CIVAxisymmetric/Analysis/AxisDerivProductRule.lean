@@ -62,12 +62,13 @@ theorem contDiffOn_mul_of_contDiffOn {F G : Vec3 → ℝ} {s : Set Vec3}
 convective term `∑_j g_j(x) ∂_j h(x)` that appears when differentiating the
 momentum equation in the inductive derivative estimates behind
 `thm:analytic:interior`. -/
-theorem axisDeriv_sum_mul_of_contDiffOn {ι : Type*} [DecidableEq ι] (u : Finset ι)
+theorem axisDeriv_sum_mul_of_contDiffOn {ι : Type*} (u : Finset ι)
     {F G : ι → Vec3 → ℝ} {s : Set Vec3} (hs : IsOpen s)
     (hF : ∀ i ∈ u, ContDiffOn ℝ (⊤ : ℕ∞) (F i) s)
     (hG : ∀ i ∈ u, ContDiffOn ℝ (⊤ : ℕ∞) (G i) s) (k : Fin 3) {x : Vec3} (hx : x ∈ s) :
     axisDeriv k (fun y => ∑ i ∈ u, F i y * G i y) x
       = ∑ i ∈ u, (axisDeriv k (F i) x * G i x + F i x * axisDeriv k (G i) x) := by
+  classical
   induction u using Finset.induction_on with
   | empty =>
       simp [axisDeriv]
@@ -97,7 +98,7 @@ theorem axisDeriv_sum_mul_of_contDiffOn {ι : Type*} [DecidableEq ι] (u : Finse
         convert h using 1
         ext y
         simp
-      simp [Finset.sum_insert ha]
+      simp only [Finset.sum_insert ha]
       have h_add : axisDeriv k (fun y => F a y * G a y + ∑ i ∈ u, F i y * G i y) x =
           axisDeriv k (fun y => F a y * G a y) x +
           axisDeriv k (fun y => ∑ i ∈ u, F i y * G i y) x := by

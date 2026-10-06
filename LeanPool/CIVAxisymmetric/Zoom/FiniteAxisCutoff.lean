@@ -173,7 +173,7 @@ theorem abs_residualIntegrand_le {ψ : Vec 5 × ℝ → ℝ} (hψ : ContDiff ℝ
     rw [Prod.norm_def]
     refine max_le ?_ (by simp)
     refine (pi_norm_le_iff_of_nonneg zero_le_one).2 fun j => ?_
-    show ‖basisVec i j‖ ≤ 1
+    change ‖basisVec i j‖ ≤ 1
     rw [basisVec_apply]
     split_ifs <;> simp
   have h2 : ∀ i : Fin 5, |fderiv ℝ (fun w => fderiv ℝ ψ w (basisVec i, 0)) z (basisVec i, 0)|

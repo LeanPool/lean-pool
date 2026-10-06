@@ -45,7 +45,7 @@ theorem meridionalSmallness (q : ℝ)
     (haxi : IsAxisymmetricOn u unitCylinder)
     (h : ℝ) (hh : 0 < h ∧ h < 1 / 2) (hMf : ForceC2Bounded f)
     (C : ℝ) (hC : 0 < C) (hbounds : AnisotropicBounds C h u) :
-    ∀ ρ ∈ Ioo (0 : ℝ) 1, MeridionalSmallness ρ u :=
-by exact CIV.Main.meridionalSmallness q u Du p f hsol henergy hu hp hf haxi h hh hMf C hC hbounds
+    ∀ ρ ∈ Ioo (0 : ℝ) 1, MeridionalSmallness ρ u := by
+  exact CIV.Main.meridionalSmallness q u Du p f hsol henergy hu hp hf haxi h hh hMf C hC hbounds
 
 end CIV

@@ -43,7 +43,7 @@ theorem spatialPartial_sub_of_differentiableAt {g h : ParabolicPoint → ℝ} {i
     (hg : DifferentiableAt ℝ (fun x : Vec3 => g (x, z.2)) z.1)
     (hh : DifferentiableAt ℝ (fun x : Vec3 => h (x, z.2)) z.1) :
     spatialPartial (fun w => g w - h w) i z = spatialPartial g i z - spatialPartial h i z := by
-  show fderiv ℝ (fun y : Vec3 => g (y, z.2) - h (y, z.2)) z.1 (basisVec i) = _
+  change fderiv ℝ (fun y : Vec3 => g (y, z.2) - h (y, z.2)) z.1 (basisVec i) = _
   rw [fderiv_fun_sub hg hh]
   rfl
 

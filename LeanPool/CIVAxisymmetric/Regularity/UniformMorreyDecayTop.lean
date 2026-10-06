@@ -31,7 +31,7 @@ The proof follows the order fixed by the route review: the absolute decay consta
 the paired `C₂₈`) are obtained once from the CKN manuscript's one-step theta-decay inequality
 and threaded through both the finite descent and the below-`r₅` iteration; a scale `r₄` is
 fixed so small that the force term is controlled at both thresholds; the uniform crude bound
-`Θ̄` at `r₄` is combined with a finite, entrance-controlled descent (the entrance holds only
+`Θ_bar` at `r₄` is combined with a finite, entrance-controlled descent (the entrance holds only
 while the base time is within `ρ²` of the top, which is exactly what bounds the number of
 descent steps) to reach `r₅ := κ^N r₄` with `θ ≤ η`; and the CKN manuscript's iteration
 proposition, which needs no further gradient smallness, supplies the Morrey decay below `r₅`.
@@ -151,7 +151,7 @@ theorem beta_le_epsilonStar_of_top_gradient_small {C₂₇ : ℝ} (hC₂₇ : 0 
   have hβsq : beta u Du (x, s) ρ ^ 2 =
       ρ⁻¹ * (∫⁻ w in parabolicCylinder x s ρ, ENNReal.ofReal (spatialGradientSq u Du w)).toReal
         := by
-    show ((ρ⁻¹ * (∫⁻ w in parabolicCylinder (x, s).1 (x, s).2 ρ,
+    change ((ρ⁻¹ * (∫⁻ w in parabolicCylinder (x, s).1 (x, s).2 ρ,
         ENNReal.ofReal (spatialGradientSq u Du w)).toReal) ^ (1 / 2 : ℝ)) ^ 2 = _
     exact CKN.Foundation.Euclidean.rpow_half_sq_of_nonneg (by positivity)
   have hβsq_le : beta u Du (x, s) ρ ^ 2 ≤ Real.sqrt 2 * iterationEpsilonStar C₂₇ ^ 2 / 4 := by
@@ -216,7 +216,7 @@ theorem exists_r4_le_of_cube_bound {Cf r₀ B : ℝ} (hCf : 0 ≤ Cf) (hr₀ : 0
 /-! ### Helper E: the step count from the descent contraction -/
 
 /-- A pure real-number existence lemma, via the descent contraction of the CKN
-manuscript's iteration proposition: given a nonnegative crude bound `Θ̄` at the initial
+manuscript's iteration proposition: given a nonnegative crude bound `Θ_bar` at the initial
 scale and a sufficiently small forcing budget, there is a step count `N` after which the
 geometric bound, together with its residual forcing slack, sits below `η`. -/
 theorem exists_N_of_theta_bar {C₂₇ C₂₈ Θbar Lbar : ℝ} (hC₂₇ : 0 < C₂₇) (hC₂₈ : 0 < C₂₈)
@@ -253,7 +253,7 @@ theorem exists_N_of_theta_bar {C₂₇ C₂₈ Θbar Lbar : ℝ} (hC₂₇ : 0 <
 
 /-! ### The finite descent, extracted as its own declaration for elaboration budget -/
 
-/-- The finite descent from the crude bound `Θ̄` at scale `r₄` to scale `κ^N r₄`, valid on the
+/-- The finite descent from the crude bound `Θ_bar` at scale `r₄` to scale `κ^N r₄`, valid on the
 time window forced by `N` itself. Extracted from the main proof so that its induction gets an
 independent elaboration budget. -/
 theorem finite_descent_bound {C₂₇ C₂₈ : ℝ} (hC₂₇ : 0 < C₂₇) (hC₂₈ : 0 < C₂₈)
@@ -363,7 +363,7 @@ theorem finite_descent_bound {C₂₇ C₂₈ : ℝ} (hC₂₇ : 0 < C₂₇) (h
 
 /-! ### The crude uniform bound at the fixed scale `r₄`, extracted for elaboration budget -/
 
-/-- The uniform crude bound `Θ̄` on `θ` at the fixed scale `r₄`, valid for every qualifying
+/-- The uniform crude bound `Θ_bar` on `θ` at the fixed scale `r₄`, valid for every qualifying
 time `s`, built from the three uniform crude bounds of `CIV.Regularity.UniformCrudeBounds`. -/
 theorem exists_theta_bar_bound {C₂₇ : ℝ} (hC₂₇ : 0 < C₂₇)
     {u : ParabolicPoint → Vec3} {Du : ParabolicPoint → Fin 3 → Vec3} {p : ParabolicPoint → ℝ}

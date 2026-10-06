@@ -65,7 +65,7 @@ theorem gktCriterion (q : ℝ)
       ∫⁻ t in Ioo (-(r ^ 2)) 0,
         (∫⁻ x in vec3Ball 0 r, ENNReal.ofReal (vec3EuclideanNorm (u (x, t))) ^ (6 : ℝ))
           ^ (2 / 3 : ℝ) ≤ ENNReal.ofReal ε) :
-    BoundedNearOrigin u :=
-by exact CIV.Main.gktCriterion q u Du p f hsol henergy hu hp hf hMf hsmall
+    BoundedNearOrigin u := by
+  exact CIV.Main.gktCriterion q u Du p f hsol henergy hu hp hf hMf hsmall
 
 end CIV

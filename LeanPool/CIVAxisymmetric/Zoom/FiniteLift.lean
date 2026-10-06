@@ -35,7 +35,7 @@ Three of the four remaining pieces of the anisotropic zoom-in lift of `eq:drift:
   `CIV.Zoom.FiniteAxisBounds`.
 * The force term `G_n` of `eq:interior:force:scaled` obeys `|G_n| ≤ C λ^5 λ^{2h}`, and this
   bound tends to zero as `λ → 0⁺`, the limit taken in the zoom scale.
-* The lifted potential vorticity `Ω̃(X, Z, τ) = Ω_n(|X|, Z, τ)` of the paragraph before
+* The lifted potential vorticity `Ω_tilde(X, Z, τ) = Ω_n(|X|, Z, τ)` of the paragraph before
   `eq:aniso:zoom:lifted`, and its finite-axis bound, transported through the lift.
 
 The lifted equation `eq:aniso:zoom:lifted` itself is stated off the axis in
@@ -161,7 +161,7 @@ theorem hasDerivAt_zoomDrift_diag_ray_zero (lam h zc : ℝ) (u : ParabolicPoint 
   have h0S' : (0 : ℝ) ∈ {r : ℝ | zoomPoint lam h zc ((r, Z), τ) ∈ unitCylinder}
       ∩ (Neg.neg ⁻¹' {r : ℝ | zoomPoint lam h zc ((r, Z), τ) ∈ unitCylinder}) := by
     refine ⟨hp, ?_⟩
-    show zoomPoint lam h zc ((-(0:ℝ), Z), τ) ∈ unitCylinder
+    change zoomPoint lam h zc ((-(0:ℝ), Z), τ) ∈ unitCylinder
     simpa using hp
   filter_upwards [hS'.mem_nhds h0S'] with s hs
   have hmem : zoomPoint lam h zc ((|s|, Z), τ) ∈ unitCylinder := by
@@ -254,9 +254,9 @@ theorem tendsto_zoomForce_bound_nhdsWithin_zero {C h : ℝ} (hh0 : 0 ≤ h) :
   rw [hzero, mul_zero] at this
   exact this.mono_left nhdsWithin_le_nhds
 
-/-! ### (b) The lifted scalar `Ω̃` -/
+/-! ### (b) The lifted scalar `Ω_tilde` -/
 
-/-- The lifted potential vorticity `Ω̃(X, Z, τ) = Ω_n(|X|, Z, τ)` of the paragraph before
+/-- The lifted potential vorticity `Ω_tilde(X, Z, τ) = Ω_n(|X|, Z, τ)` of the paragraph before
 `eq:aniso:zoom:lifted`: `zoomOmega` composed with the lift `zoomLiftPoint`, a function of the
 lifted spatial point `(X, Z) ∈ Vec 5` and the rescaled time `τ`. -/
 @[expose] def zoomOmegaLift (lam h zc : ℝ) (u : ParabolicPoint → Vec3) (q : Vec 5 × ℝ) : ℝ :=

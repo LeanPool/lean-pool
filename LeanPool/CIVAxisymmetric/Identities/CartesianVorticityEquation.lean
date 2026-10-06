@@ -41,7 +41,7 @@ private theorem spatialPartial_congr_of_eqOn {f g : ParabolicPoint → ℝ}
     simpa using hc.tendsto z.1
   have hevSlice : (fun y : Vec3 => f (y, z.2)) =ᶠ[nhds z.1] (fun y : Vec3 => g (y, z.2)) :=
     htend.eventually hev
-  show fderiv ℝ (fun y : Vec3 => f (y, z.2)) z.1 (basisVec k)
+  change fderiv ℝ (fun y : Vec3 => f (y, z.2)) z.1 (basisVec k)
       = fderiv ℝ (fun y : Vec3 => g (y, z.2)) z.1 (basisVec k)
   rw [hevSlice.fderiv_eq]
 
@@ -80,7 +80,7 @@ private theorem spatialSecondPartial_sub {f g : ParabolicPoint → ℝ}
     {z : Vec3 × ℝ} (hz : z ∈ unitCylinder) (i j : Fin 3) :
     spatialSecondPartial (fun w => f w - g w) i j z
       = spatialSecondPartial f i j z - spatialSecondPartial g i j z := by
-  show spatialPartial (spatialPartial (fun w => f w - g w) i) j z = _
+  change spatialPartial (spatialPartial (fun w => f w - g w) i) j z = _
   have hEqOn : ∀ w ∈ unitCylinder, spatialPartial (fun w => f w - g w) i w
       = spatialPartial f i w - spatialPartial g i w := fun w hw =>
     spatialPartial_sub_of_differentiableAt (i := i)
@@ -107,7 +107,7 @@ private theorem timePartial_sub {f g : ParabolicPoint → ℝ} {z : ParabolicPoi
     (hf : DifferentiableAt ℝ (fun s : ℝ => f (z.1, s)) z.2)
     (hg : DifferentiableAt ℝ (fun s : ℝ => g (z.1, s)) z.2) :
     timePartial (fun w => f w - g w) z = timePartial f z - timePartial g z := by
-  show fderiv ℝ (fun s : ℝ => f (z.1, s) - g (z.1, s)) z.2 1 = _
+  change fderiv ℝ (fun s : ℝ => f (z.1, s) - g (z.1, s)) z.2 1 = _
   rw [fderiv_fun_sub hf hg]
   rfl
 
@@ -257,7 +257,7 @@ private theorem spatialPartial_momentum {u : ParabolicPoint → Vec3} {p : Parab
     spatialPartial_mul_of_differentiableAt (i := m) d1 dk1,
     spatialPartial_mul_of_differentiableAt (i := m) d2 dk2,
     spatialPartial_timePartial_comm (g := fun v => u v k) hUkTop hz m]
-  show timePartial (spatialPartial (fun v => u v k) m) z
+  change timePartial (spatialPartial (fun v => u v k) m) z
       + (spatialPartial (fun v => u v 0) m z * spatialPartial (fun v => u v k) 0 z
           + u z 0 * spatialPartial (spatialPartial (fun v => u v k) 0) m z
         + (spatialPartial (fun v => u v 1) m z * spatialPartial (fun v => u v k) 1 z
@@ -318,7 +318,7 @@ theorem cartesian_vorticity_pde
       spatialPartial_sub_of_differentiableAt (i := j)
         (differentiableAt_spatialSlice (hFPtop.of_le (by norm_num)) hz)
         (differentiableAt_spatialSlice (hGPtop.of_le (by norm_num)) hz)]
-    show spatialSecondPartial (fun v => u v (i + 2)) (i + 1) j z
+    change spatialSecondPartial (fun v => u v (i + 2)) (i + 1) j z
         - spatialSecondPartial (fun v => u v (i + 1)) (i + 2) j z = _
     rw [spatialSecondPartial_comm (g := fun v => u v (i + 2)) hFtop hz (i + 1) j,
       spatialSecondPartial_comm (g := fun v => u v (i + 1)) hGtop hz (i + 2) j]

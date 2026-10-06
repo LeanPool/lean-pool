@@ -148,7 +148,7 @@ theorem IsAxisymmetricOn.apply_rotZ {u : ParabolicPoint → Vec3}
   have hz' : ((rotZ φ z.1 : Vec3), z.2) ∈ unitCylinder := rotZ_mem_unitCylinder φ hz
   have key := (isAxisymmetricOn_unitCylinder_iff u).1 h φ (rotZ φ z.1, z.2) hz'
   have hval : rotField φ u ((rotZ φ z.1 : Vec3), z.2) = rotZ φ (u z) := by
-    show rotZ φ (u (rotZ (-φ) (rotZ φ z.1), z.2)) = rotZ φ (u z)
+    change rotZ φ (u (rotZ (-φ) (rotZ φ z.1), z.2)) = rotZ φ (u z)
     rw [rotZ_neg_rotZ]
     rfl
   rw [hval] at key

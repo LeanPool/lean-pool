@@ -55,7 +55,7 @@ theorem multiPartial_const_mul_comp_scalingParabolic (c μ : ℝ) (z₀ : Parabo
       ((fun k => spatialPartial k 2)^[α 2] g)
   have h0 := iterate_spatialPartial_const_mul_comp' μ z₀ 0 (α 0) (c * μ ^ (α 2) * μ ^ (α 1))
       ((fun k => spatialPartial k 1)^[α 1] ((fun k => spatialPartial k 2)^[α 2] g))
-  show ((fun k => spatialPartial k 0)^[α 0] ((fun k => spatialPartial k 1)^[α 1]
+  change ((fun k => spatialPartial k 0)^[α 0] ((fun k => spatialPartial k 1)^[α 1]
       ((fun k => spatialPartial k 2)^[α 2]
         (fun w : ParabolicPoint => c * g (scalingParabolic μ z₀ w))))) z
       = c * μ ^ (α 0 + α 1 + α 2) *
@@ -68,7 +68,7 @@ theorem multiPartial_const_mul_comp_scalingParabolic (c μ : ℝ) (z₀ : Parabo
 
 private theorem scalingParabolic_zero (R : ℝ) (z : ParabolicPoint) :
     scalingParabolic R ((0 : Vec3), (0 : ℝ)) z = ((R • z.1 : Vec3), R ^ 2 * z.2) := by
-  show ((0 : Vec3) + R • z.1, (0 : ℝ) + R ^ 2 * z.2) = ((R • z.1 : Vec3), R ^ 2 * z.2)
+  change ((0 : Vec3) + R • z.1, (0 : ℝ) + R ^ 2 * z.2) = ((R • z.1 : Vec3), R ^ 2 * z.2)
   rw [zero_add, zero_add]
 
 /-! ### Shrinking the unit cylinder by parabolic dilation -/
@@ -84,7 +84,7 @@ private theorem mem_unitCylinder_of_scalingParabolic {z : ParabolicPoint} {R : �
     have := hz.2
     simpa [unitCylinder, spaceTimeSet] using this
   have hmem_ball : (R • z.1 : Vec3) ∈ vec3Ball 0 1 := by
-    show vec3EuclideanNorm ((R • z.1 : Vec3) - 0) < 1
+    change vec3EuclideanNorm ((R • z.1 : Vec3) - 0) < 1
     rw [sub_zero, vec3EuclideanNorm_smul, abs_of_pos hR0]
     have hpos : 0 ≤ vec3EuclideanNorm z.1 := vec3EuclideanNorm_nonneg _
     nlinarith only [hz_ball, hR1, hpos]
@@ -106,7 +106,7 @@ private theorem rescaleForce_apply_eq (R : ℝ) (f : ParabolicPoint → Vec3) (w
     (i : Fin 3) :
     rescaleForce R ((0 : Vec3), (0 : ℝ)) f w i
       = R ^ 3 * f (scalingParabolic R ((0 : Vec3), (0 : ℝ)) w) i := by
-  show (R ^ 3 • f (scalingParabolic R ((0 : Vec3), (0 : ℝ)) w)) i
+  change (R ^ 3 • f (scalingParabolic R ((0 : Vec3), (0 : ℝ)) w)) i
       = R ^ 3 * f (scalingParabolic R ((0 : Vec3), (0 : ℝ)) w) i
   simp
 

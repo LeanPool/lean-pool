@@ -35,7 +35,7 @@ private theorem meridional_smul (c x₁ x₃ : ℝ) :
 private theorem scalingParabolic_meridional (R x₁ x₃ t : ℝ) :
     scalingParabolic R ((0 : Vec3), (0 : ℝ)) (meridional x₁ x₃, t) =
       (meridional (R * x₁) (R * x₃), R ^ 2 * t) := by
-  show ((0 : Vec3) + R • meridional x₁ x₃, (0 : ℝ) + R ^ 2 * t) =
+  change ((0 : Vec3) + R • meridional x₁ x₃, (0 : ℝ) + R ^ 2 * t) =
       (meridional (R * x₁) (R * x₃), R ^ 2 * t)
   rw [zero_add, zero_add, meridional_smul]
 
@@ -49,7 +49,7 @@ private theorem mem_unitCylinder_of_mem_meridional {x₁ x₃ t R : ℝ} (hR0 : 
     have := hmem.2
     simpa [unitCylinder, spaceTimeSet] using this
   have hmem_ball : meridional (R * x₁) (R * x₃) ∈ vec3Ball 0 1 := by
-    show vec3EuclideanNorm (meridional (R * x₁) (R * x₃) - 0) < 1
+    change vec3EuclideanNorm (meridional (R * x₁) (R * x₃) - 0) < 1
     rw [sub_zero, ← meridional_smul, vec3EuclideanNorm_smul, abs_of_pos hR0]
     have hpos : 0 ≤ vec3EuclideanNorm (meridional x₁ x₃) := vec3EuclideanNorm_nonneg _
     nlinarith only [hball, hR1, hpos]
@@ -131,7 +131,7 @@ private theorem rescaleVelocity_eq_smul_comp (R : ℝ) (u : ParabolicPoint → V
     rescaleVelocity R ((0 : Vec3), (0 : ℝ)) u =
       fun w : ParabolicPoint => R • u ((R • w.1 : Vec3), R ^ 2 * w.2) := by
   funext w
-  show R • u ((0 : Vec3) + R • w.1, (0 : ℝ) + R ^ 2 * w.2) = R • u ((R • w.1 : Vec3), R ^ 2 * w.2)
+  change R • u ((0 : Vec3) + R • w.1, (0 : ℝ) + R ^ 2 * w.2) = R • u ((R • w.1 : Vec3), R ^ 2 * w.2)
   rw [zero_add, zero_add]
 
 theorem anisotropicBounds_angularMean_rescale {C h R : ℝ} (hC : 0 ≤ C) (hh0 : 0 ≤ h)

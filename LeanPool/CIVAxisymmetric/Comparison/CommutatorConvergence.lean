@@ -353,7 +353,7 @@ theorem diPernaLionsCommutator_eq_of_contDiff {ε : ℝ} (hε : 0 < ε) {b : Vec
             g y * ∑ i, b y i * fderiv ℝ (mollifierKernel m ε) (x - y) (basisVec i) := by
     rw [← integral_sub hA hB]
     refine integral_congr_ae (Filter.Eventually.of_forall fun y => ?_)
-    show g y * ∑ i, (b x i - b y i) * fderiv ℝ (mollifierKernel m ε) (x - y) (basisVec i)
+    change g y * ∑ i, (b x i - b y i) * fderiv ℝ (mollifierKernel m ε) (x - y) (basisVec i)
         = g y * ∑ i, b x i * fderiv ℝ (mollifierKernel m ε) (x - y) (basisVec i)
           - g y * ∑ i, b y i * fderiv ℝ (mollifierKernel m ε) (x - y) (basisVec i)
     rw [← mul_sub, ← Finset.sum_sub_distrib]
@@ -665,7 +665,7 @@ private theorem diPernaLionsCommutator_sub {ε M1 M2 : ℝ} (hε : 0 < ε) {Λ :
           ∑ i, (b x i - b y i) * fderiv ℝ (mollifierKernel m ε) (x - y) (basisVec i) := by
     rw [← integral_sub hA1 hA2]
     refine integral_congr_ae (Filter.Eventually.of_forall fun y => ?_)
-    show (g1 y - g2 y) *
+    change (g1 y - g2 y) *
         ∑ i, (b x i - b y i) * fderiv ℝ (mollifierKernel m ε) (x - y) (basisVec i)
       = g1 y * (∑ i, (b x i - b y i) * fderiv ℝ (mollifierKernel m ε) (x - y) (basisVec i))
         - g2 y * ∑ i, (b x i - b y i)
@@ -676,7 +676,7 @@ private theorem diPernaLionsCommutator_sub {ε M1 M2 : ℝ} (hε : 0 < ε) {Λ :
         - ∫ y : Vec m, mollifierKernel m ε (x - y) * (divb y * g2 y) := by
     rw [← integral_sub hB1 hB2]
     refine integral_congr_ae (Filter.Eventually.of_forall fun y => ?_)
-    show mollifierKernel m ε (x - y) * (divb y * (g1 y - g2 y))
+    change mollifierKernel m ε (x - y) * (divb y * (g1 y - g2 y))
       = mollifierKernel m ε (x - y) * (divb y * g1 y)
         - mollifierKernel m ε (x - y) * (divb y * g2 y)
     ring
@@ -848,7 +848,7 @@ private theorem exists_stronglyMeasurable_bound {M : ℝ} (hM : 0 ≤ M) {g : Ve
     measurableSet_le habs measurable_const
   refine ⟨fun y => if |h y| ≤ M then h y else 0, ?_, ?_, ?_⟩
   · intro y
-    show |if |h y| ≤ M then h y else 0| ≤ M
+    change |if |h y| ≤ M then h y else 0| ≤ M
     split_ifs with hy
     · exact hy
     · rw [abs_zero]
@@ -858,7 +858,7 @@ private theorem exists_stronglyMeasurable_bound {M : ℝ} (hM : 0 ≤ M) {g : Ve
     have hy3 : |h y| ≤ M := by rw [← hy1]; exact hy2
     have hif : (if |h y| ≤ M then h y else 0) = h y :=
       ite_eq_left_iff.mpr fun hcond => absurd hy3 hcond
-    show g y = if |h y| ≤ M then h y else 0
+    change g y = if |h y| ≤ M then h y else 0
     rw [hif]
     exact hy1
 

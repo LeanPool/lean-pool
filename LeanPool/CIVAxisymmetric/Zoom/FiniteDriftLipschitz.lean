@@ -116,7 +116,7 @@ theorem abs_zoomV_le_mul {C h lam zc tau : ℝ} (hlam : 0 < lam) {u : ParabolicP
     rw [zoomV_axis lam h zc u haxi hp]; simp
   · have hq := abs_zoomV_div_le hlam hb hu haxi hp hpos.ne' hC htau
     have hr : (-(y, tau).2) ^ (-(1 / 2 : ℝ)) ≤ 1 :=
-      Real.rpow_le_one_of_one_le_of_nonpos (by show (1 : ℝ) ≤ -tau; linarith only [htau])
+      Real.rpow_le_one_of_one_le_of_nonpos (by change (1 : ℝ) ≤ -tau; linarith only [htau])
         (by norm_num)
     have hq' : |zoomV lam h zc u (y, tau) / y.1| ≤ C := hq.trans (mul_le_of_le_one_right hC hr)
     rw [abs_div, abs_of_pos hpos, div_le_iff₀ hpos] at hq'
@@ -140,7 +140,7 @@ theorem norm_zoomDrift_sub_le {C h lam zc r tau : ℝ} (hlam : 0 < lam)
     refine max_le (abs_zoomLiftRadius_sub_le x y) ?_
     have := norm_le_pi_norm (x - y) 4
     simp only [Pi.sub_apply, Real.norm_eq_abs] at this
-    show |x 4 - y 4| ≤ 2 * ‖x - y‖
+    change |x 4 - y 4| ≤ 2 * ‖x - y‖
     linarith only [this, norm_nonneg (x - y)]
   have hVlip := (lipschitzOnWith_zoomV hlam hb hu2 hC hh1 htau hmem).dist_le_mul _ hxm _ hym
   have hWlip := (lipschitzOnWith_zoomW hlam hb hu2 hC hh0 htau hmem).dist_le_mul _ hxm _ hym

@@ -78,9 +78,9 @@ private lemma rep_eq_self_of_axis {x : Vec3} (h0 : x 0 = 0) (h1 : x 1 = 0) :
   rw [hp]
   ext i
   fin_cases i
-  · show (0 : ℝ) = x 0; exact h0.symm
-  · show (0 : ℝ) = x 1; exact h1.symm
-  · show x 2 = x 2; rfl
+  · change (0 : ℝ) = x 0; exact h0.symm
+  · change (0 : ℝ) = x 1; exact h1.symm
+  · change x 2 = x 2; rfl
 
 /-- Any witness `(φ, r, x₃)` of `exists_rotZ_meridional x` with `r ≥ 0` has `r = polarR x` and
 `x₃ = x 2`: the polar radius and height of `x` are forced by the rotated-meridional relation. -/
@@ -145,7 +145,7 @@ theorem polarRRep_mapsTo :
     simp only [Fin.sum_univ_three, meridional, Matrix.cons_val_zero, Matrix.cons_val_one,
       Matrix.head_cons, Matrix.cons_val_two, Matrix.tail_cons]
     ring
-  show (polarR x, x 2).1 ^ 2 + (polarR x, x 2).2 ^ 2 < 1
+  change (polarR x, x 2).1 ^ 2 + (polarR x, x 2).2 ^ 2 < 1
   rw [← heq]
   exact hsq
 
@@ -195,7 +195,7 @@ theorem contDiffOn_vorticityField {u : ParabolicPoint → Vec3}
     (hu : ContDiffOn ℝ (⊤ : ℕ∞) (fun z : Vec3 × ℝ => u z) unitCylinder) :
     ContDiffOn ℝ (⊤ : ℕ∞) (fun z : Vec3 × ℝ => vorticityField u z) unitCylinder := by
   refine contDiffOn_pi.2 fun i => ?_
-  show ContDiffOn ℝ (⊤ : ℕ∞) (fun z : Vec3 × ℝ => curlComp u i z) unitCylinder
+  change ContDiffOn ℝ (⊤ : ℕ∞) (fun z : Vec3 × ℝ => curlComp u i z) unitCylinder
   exact (contDiffOn_spatialPartial (contDiffOn_component hu (i + 2)) (i + 1)).sub
     (contDiffOn_spatialPartial (contDiffOn_component hu (i + 1)) (i + 2))
 
@@ -435,9 +435,9 @@ private lemma sq_radialQuotient_le_gradientSq {v : ParabolicPoint → Vec3}
     (radialQuotient v (meridional r x₃, t)) ^ 2 ≤
       ∑ i : Fin 3, ∑ j : Fin 3, (spatialPartial (fun w => v w i) j (meridional r x₃, t)) ^ 2 := by
   rcases hr.lt_or_eq with hr0 | hr0
-  · have hplane : (meridional r x₃, t).1 1 = 0 := by show meridional r x₃ 1 = 0; simp [meridional]
+  · have hplane : (meridional r x₃, t).1 1 = 0 := by change meridional r x₃ 1 = 0; simp [meridional]
     have hr0eq : (meridional r x₃, t).1 0 = r := by
-      show meridional r x₃ 0 = r; exact meridional_apply_zero r x₃
+      change meridional r x₃ 0 = r; exact meridional_apply_zero r x₃
     have hrr : (meridional r x₃, t).1 0 ≠ 0 := by rw [hr0eq]; exact hr0.ne'
     have hgrad := gradient_sq_meridional haxi hv hmem hplane hrr
     rw [hr0eq] at hgrad
@@ -459,7 +459,7 @@ private lemma sq_radialQuotient_le_gradientSq {v : ParabolicPoint → Vec3}
       Finset.sum_nonneg fun i _ => by positivity
     linarith only [h1, h2]
   · have hzero : (meridional r x₃, t).1 0 = 0 := by
-      show meridional r x₃ 0 = 0
+      change meridional r x₃ 0 = 0
       rw [meridional_apply_zero, ← hr0]
     have hAeq : radialQuotient v (meridional r x₃, t)
         = spatialPartial (fun w => v w 0) 0 (meridional r x₃, t) := by

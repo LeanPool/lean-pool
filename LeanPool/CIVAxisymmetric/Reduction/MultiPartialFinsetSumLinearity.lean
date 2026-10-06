@@ -39,7 +39,7 @@ theorem multiPartial_finset_sum {ι : Type*} {h : ι → ParabolicPoint → ℝ}
       fun _ : ParabolicPoint => (0 : ℝ) := by
       ext z; simp [Finset.sum_empty]
     rw [hsum_empty]
-    simp [Finset.sum_empty]
+    simp only [Finset.sum_empty]
     by_cases hsum : α 0 + α 1 + α 2 = 0
     · have hα_eq : α = fun _ => 0 := by
         have hsum' : α 0 + α 1 + α 2 = 0 := hsum

@@ -111,7 +111,7 @@ theorem dr_eq_of_hasFDerivAt (phi : (ℝ × ℝ) × ℝ → ℝ) (t : ℝ) {L : 
     dr phi ((R, Z), t) = L (1, 0) := by
   have hd : HasDerivAt (fun r : ℝ => phi ((r, Z), t)) (L (1, 0)) R :=
     hasDerivAt_radial_of_hasFDerivAt (f := fun p : ℝ × ℝ => phi (p, t)) hphi
-  show deriv (fun r : ℝ => phi ((r, Z), t)) R = L (1, 0)
+  change deriv (fun r : ℝ => phi ((r, Z), t)) R = L (1, 0)
   exact hd.deriv
 
 /-- The repository's `dz` of a space-time field, at a fixed time, read off the Fréchet
@@ -121,7 +121,7 @@ theorem dz_eq_of_hasFDerivAt (phi : (ℝ × ℝ) × ℝ → ℝ) (t : ℝ) {L : 
     dz phi ((R, Z), t) = L (0, 1) := by
   have hd : HasDerivAt (fun z : ℝ => phi ((R, z), t)) (L (0, 1)) Z :=
     hasDerivAt_axial_of_hasFDerivAt (f := fun p : ℝ × ℝ => phi (p, t)) hphi
-  show deriv (fun z : ℝ => phi ((R, z), t)) Z = L (0, 1)
+  change deriv (fun z : ℝ => phi ((R, z), t)) Z = L (0, 1)
   exact hd.deriv
 
 /-! ### Step (a): the axial component does not depend on the radius -/
@@ -480,7 +480,7 @@ theorem tendstoUniformlyOn_radial_div (A Z : ℝ) (V : ℕ → ℝ × ℝ → �
       rw [← hslope]
       exact hcabs
     have hdd : dist ((0 : ℝ)) (V n (R, Y) / (R, Y).1) < ε := by
-      show dist ((0 : ℝ)) (V n (R, Y) / R) < ε
+      change dist ((0 : ℝ)) (V n (R, Y) / R) < ε
       rw [Real.dist_eq, zero_sub, abs_neg]
       linarith only [hgoal, hε]
     exact hdd

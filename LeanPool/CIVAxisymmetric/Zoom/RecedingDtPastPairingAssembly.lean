@@ -26,7 +26,7 @@ namespace CIV
 /-- Assembling the five term-pairing bounds (transport/divergence, diffusion, curvature,
 swirl, force — each independently established) via `zoomTheta_pde_divergenceForm` into a
 single domination bound on `∫ (dtPast Θ_n)(·, τ) ψ`, the time-pairing estimate
-`hpair` of the receding compactness. This is the "pointwise-in-`τ` derivative bound coming from the zoom PDE" that
+`hpair` of the receding compactness. This is the pointwise derivative bound from the zoom PDE that
 `CIV.hasDerivAt_integral_mul_testfunction_of_dominated` differentiates under the integral
 sign, and that `CIV.abs_sub_le_of_forall_hasDerivAt_le` then turns into the literal `hpair`
 shape. Each of the five pieces is continuous with compact support (`tsupport ψ`), hence

@@ -112,7 +112,7 @@ private theorem hasDerivAt_dz_zoomSRecSq (lam h rc zc : ℝ) (u : ParabolicPoint
   have hswirlFun : (fun q : (ℝ × ℝ) × ℝ => zoomSRec lam h rc zc u q ^ 2)
       = fun q : (ℝ × ℝ) × ℝ => lam ^ 2 * (lam ^ (2 * h)) ^ 2 *
           (u (zoomPointRec lam h rc zc q) 1 ^ 2) := by
-    funext q; show (lam * lam ^ (2 * h) * u (zoomPointRec lam h rc zc q) 1) ^ 2 = _; ring
+    funext q; change (lam * lam ^ (2 * h) * u (zoomPointRec lam h rc zc q) 1) ^ 2 = _; ring
   have htarget : dz (fun q : (ℝ × ℝ) × ℝ => zoomSRec lam h rc zc u q ^ 2) p
       = lam ^ 2 * (lam ^ (2 * h)) ^ 2 *
         (lam ^ (1 - 2 * h) *

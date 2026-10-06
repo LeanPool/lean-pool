@@ -185,7 +185,7 @@ theorem zoomOmega_pde (lam h zc : ℝ) (hlam : 0 < lam)
     funext q
     have hq0 : (zoomPoint lam h zc q).1 0 = lam * q.1.1 := by simp [zoomPoint, meridional]
     rw [hq0]
-    show (lam * lam ^ (2 * h) * u (zoomPoint lam h zc q) 1) ^ 2 / q.1.1 ^ 2 = _
+    change (lam * lam ^ (2 * h) * u (zoomPoint lam h zc q) 1) ^ 2 / q.1.1 ^ 2 = _
     rcases eq_or_ne q.1.1 0 with hq | hq
     · rw [hq]
       simp

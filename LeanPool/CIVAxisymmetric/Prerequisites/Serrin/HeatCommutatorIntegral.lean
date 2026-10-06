@@ -81,7 +81,7 @@ theorem spatialPartial_separated {B : Vec3 → ℝ} (hB : Differentiable ℝ B) 
       fun z => fderiv ℝ B z.1 (basisVec i) * T z.2 := by
   funext z
   unfold spatialPartial
-  show fderiv ℝ (fun y : Vec3 => B y * T z.2) z.1 (basisVec i) = _
+  change fderiv ℝ (fun y : Vec3 => B y * T z.2) z.1 (basisVec i) = _
   rw [fderiv_mul_const (hB z.1)]
   simp only [smul_apply, smul_eq_mul]
   ring
@@ -92,7 +92,7 @@ theorem timePartial_separated (B : Vec3 → ℝ) {T : ℝ → ℝ} (hT : Differe
       fun z => B z.1 * deriv T z.2 := by
   funext z
   unfold timePartial
-  show fderiv ℝ (fun r : ℝ => B z.1 * T r) z.2 1 = _
+  change fderiv ℝ (fun r : ℝ => B z.1 * T r) z.2 1 = _
   rw [fderiv_const_mul (hT z.2)]
   simp only [smul_apply, smul_eq_mul]
   rfl
@@ -199,7 +199,7 @@ theorem spatialPartial_heatKernel_translate (x : Vec3) (s : ℝ) {z : ParabolicP
   have e : (fun y : Vec3 => heatKernel (x - y) (s - z.2)) =
       (fun w => heatKernel w (s - z.2)) ∘ HSub.hSub x := rfl
   unfold spatialPartial
-  show fderiv ℝ (fun y : Vec3 => heatKernel (x - y) (s - z.2)) z.1 (basisVec i) = _
+  change fderiv ℝ (fun y : Vec3 => heatKernel (x - y) (s - z.2)) z.1 (basisVec i) = _
   rw [e, h]
   simp [heatKernel_fderiv_apply_basisVec ht]
 
@@ -609,7 +609,7 @@ theorem abs_spatialPartial_serrinCutoffKernel_le : ∃ C : ℝ, 0 ≤ C ∧ ∀ 
       Finset.sum_eq_zero (fun i _ => (hz3 i i l).2.2)
     have he0 : ∀ i, e i y₀ = 0 := fun i => by
       have h0 : dB i y₀ = 0 := (hz3 i 0 0).1
-      rw [he]; show dB i y₀ * T z.2 = 0; rw [h0, zero_mul]
+      rw [he]; change dB i y₀ * T z.2 = 0; rw [h0, zero_mul]
     have hde0 : ∀ i, ddB i l y₀ = 0 := fun i => (hz3 i l 0).2.1
     simp only [ha0, hT', hdd0, he0, hde0, mul_zero, zero_mul, add_zero, Finset.sum_const_zero,
       abs_zero]

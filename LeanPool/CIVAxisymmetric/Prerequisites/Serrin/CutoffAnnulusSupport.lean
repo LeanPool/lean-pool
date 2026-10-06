@@ -111,7 +111,7 @@ private theorem multiPartial_lifted_cutoff_inner {x : Vec3} {ρ : ℝ} (hρ : 0 
     have h1 : γ 1 = 0 := by omega
     have h2 : γ 2 = 0 := by omega
     simp only [multiPartial, h0, h1, h2, Function.iterate_zero, id_eq]
-    show serrinBallCutoff x ρ y = 1
+    change serrinBallCutoff x ρ y = 1
     exact (serrinBallCutoff_support x hρ y).1 hy.le
   | succ n ih =>
     intro γ hγ t y hy

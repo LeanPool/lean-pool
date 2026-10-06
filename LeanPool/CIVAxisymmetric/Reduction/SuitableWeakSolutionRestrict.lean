@@ -32,7 +32,7 @@ namespace CIV
 
 theorem spatialPartial_eq_zero_of_notMem_tsupport {φ : Vec3 × ℝ → ℝ} {z : Vec3 × ℝ}
     (hz : z ∉ tsupport φ) (i : Fin 3) : spatialPartial φ i z = 0 := by
-  show fderiv ℝ (fun x : Vec3 => φ (x, z.2)) z.1 (basisVec i) = 0
+  change fderiv ℝ (fun x : Vec3 => φ (x, z.2)) z.1 (basisVec i) = 0
   have hcont : Continuous (fun x : Vec3 => ((x, z.2) : Vec3 × ℝ)) :=
     continuous_id.prodMk continuous_const
   have htendsto := hcont.tendsto z.1
@@ -45,7 +45,7 @@ theorem spatialPartial_eq_zero_of_notMem_tsupport {φ : Vec3 × ℝ → ℝ} {z 
 
 theorem timePartial_eq_zero_of_notMem_tsupport {φ : Vec3 × ℝ → ℝ} {z : Vec3 × ℝ}
     (hz : z ∉ tsupport φ) : timePartial φ z = 0 := by
-  show fderiv ℝ (fun s : ℝ => φ (z.1, s)) z.2 1 = 0
+  change fderiv ℝ (fun s : ℝ => φ (z.1, s)) z.2 1 = 0
   have hcont : Continuous (fun s : ℝ => ((z.1, s) : Vec3 × ℝ)) :=
     continuous_const.prodMk continuous_id
   have htendsto := hcont.tendsto z.2
