@@ -220,7 +220,7 @@ private theorem regularisedBesselShiftedStokesIntegral_continuousAt
     filter_upwards [] with τ
     intro hτ
     by_cases h : 0 < τ ∧ τ < t
-    · simp [regularisedBesselShiftedStokesIntegrand, h]
+    · simp only [regularisedBesselShiftedStokesIntegrand, h, and_self, ↓reduceDIte]
       have hkernel := regularisedBesselStokesOperator_norm_le h.1 k (F (t - τ))
       calc
         ‖regularisedBesselStokesOperator h.1 k (F (t - τ))‖ ≤
@@ -239,7 +239,7 @@ private theorem regularisedBesselShiftedStokesIntegral_continuousAt
           rw [hsqrtKernel]
           dsimp [B]
           ring
-    · simp [regularisedBesselShiftedStokesIntegrand, h]
+    · simp only [regularisedBesselShiftedStokesIntegrand, h, ↓reduceDIte, norm_zero]
       rw [Set.uIoc_of_le hT] at hτ
       simpa [norm_zero] using
         (mul_nonneg hB (Real.rpow_nonneg hτ.1.le _))

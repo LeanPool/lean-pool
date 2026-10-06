@@ -16,7 +16,8 @@ Pairings `∫ c_n F_n G_n` converge when `F_n → F` in `L^p`, `G_n → G` in th
 conjugate `L^q`, and the weights are bounded by one and converge almost
 everywhere; they tend to zero when the weights tend to zero uniformly. These
 are the limit passages removing the mollification and cutoff in
-`lem:pv-serrin-uniqueness` of the Escauriaza–Seregin–Šverák manuscript. Also recorded: interpolation of `L^p` membership.
+`lem:pv-serrin-uniqueness` of the Escauriaza–Seregin–Šverák manuscript. Also
+recorded: interpolation of `L^p` membership.
 -/
 
 public section
@@ -144,7 +145,7 @@ theorem serrin_weighted_pairing_tendsto {p q : ℝ≥0∞} [hpq : ENNReal.Holder
       (fun x => 2 * ‖F x * G x‖ₑ)
       (fun n => (((hcm n).sub hcm').mul hFG.aestronglyMeasurable).enorm)
       (fun n => Eventually.of_forall fun x => by
-        show ‖(cs n x - c x) * (F x * G x)‖ₑ ≤ 2 * ‖F x * G x‖ₑ
+        change ‖(cs n x - c x) * (F x * G x)‖ₑ ≤ 2 * ‖F x * G x‖ₑ
         rw [enorm_mul]
         gcongr
         rw [Real.enorm_eq_ofReal_abs]
@@ -203,7 +204,7 @@ theorem serrin_weighted_pairing_tendsto {p q : ℝ≥0∞} [hpq : ENNReal.Holder
         (fun x => ‖(Fs n x - F x) * Gs n x‖ₑ + ‖F x * (Gs n x - G x)‖ₑ) μ := hm1.add hm2
     rw [← lintegral_add_left' hm1, ← lintegral_add_left' hm12]
     refine lintegral_mono fun x => ?_
-    show ‖cs n x * Fs n x * Gs n x - c x * F x * G x‖ₑ ≤ _
+    change ‖cs n x * Fs n x * Gs n x - c x * F x * G x‖ₑ ≤ _
     have hid : cs n x * Fs n x * Gs n x - c x * F x * G x =
         cs n x * ((Fs n x - F x) * Gs n x) + cs n x * (F x * (Gs n x - G x)) +
           (cs n x - c x) * (F x * G x) := by ring

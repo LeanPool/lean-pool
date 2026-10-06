@@ -17,7 +17,8 @@ versions whose value at `a` is the pairing with `w₀`. Then for every smooth
 compact kernel `k` and every point `x`, the convolution `(k ⋆ w(s))(x)`
 agrees for almost every `s` with the primitive
 `(k ⋆ w₀)(x) + ∫ₐˢ ((Δk) ⋆ w + (∂ⱼk) ⋆ Hⱼ + k ⋆ f)(x)`.
-This is the time step of `lem:localized-vorticity-energy` of the Escauriaza–Seregin–Šverák manuscript.
+This is the time step of `lem:localized-vorticity-energy` of the
+Escauriaza–Seregin–Šverák manuscript.
 -/
 
 public section

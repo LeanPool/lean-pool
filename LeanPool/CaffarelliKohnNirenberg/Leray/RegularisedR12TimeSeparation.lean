@@ -110,7 +110,8 @@ theorem regularisedR12TimeSeparation_eq_zero_of_tests
       filter_upwards [hae'] with x hx
       exact fun _ => hx
     have haeRestr : f =ᵐ[(volume : Measure Vec3).restrict Set.univ] 0 := by
-      have h := (ae_restrict_iff' (MeasurableSet.univ : MeasurableSet (Set.univ : Set Vec3))).2 haeAll
+      have h := (ae_restrict_iff'
+        (MeasurableSet.univ : MeasurableSet (Set.univ : Set Vec3))).2 haeAll
       filter_upwards [h] with x hx
       exact hx
     have hEqOn := Measure.eqOn_open_of_ae_eq haeRestr isOpen_univ

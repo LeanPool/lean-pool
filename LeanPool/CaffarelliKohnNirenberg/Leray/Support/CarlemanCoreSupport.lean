@@ -11,7 +11,8 @@ public import Mathlib.Analysis.SpecialFunctions.ExpDeriv
 /-!
 # Support of conjugated test functions
 
-The exponential change of variables in `prop:carleman-gauss` of the Escauriaza–Seregin–Šverák manuscript
+The exponential change of variables in `prop:carleman-gauss` of the
+Escauriaza–Seregin–Šverák manuscript
 preserves smooth compact support when the phase is smooth near that support.
 -/
 
@@ -42,7 +43,8 @@ theorem hasCompactSupport_exp_mul (φ w : ParabolicPoint → ℝ)
   exact hw.mul_left
 
 /-- Exponential conjugation is globally smooth when the phase is smooth on an
-open neighborhood of the support; this is used by `eq:carleman-commutator` of the Escauriaza–Seregin–Šverák manuscript. -/
+open neighborhood of the support; this is used by `eq:carleman-commutator` of
+the Escauriaza–Seregin–Šverák manuscript. -/
 theorem contDiff_exp_mul_of_tsupport
     {U : Set ParabolicPoint} (hU : IsOpen U)
     {φ w : ParabolicPoint → ℝ}

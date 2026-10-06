@@ -330,7 +330,8 @@ theorem forcedLerayLimit_globalGradient_outputs
         · simp only [indicator_of_notMem hz, enorm_zero]
           exact (ENNReal.zero_rpow_of_pos (by norm_num)).le.trans bot_le
       · have hfin := hw.eLpNorm_lt_top
-        rw [eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num) (by norm_num) hw.aestronglyMeasurable] at hfin
+        rw [eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num) (by norm_num)
+          hw.aestronglyMeasurable] at hfin
         simp only [ENNReal.toReal_ofNat] at hfin
         exact (ENNReal.rpow_lt_top_iff_of_pos (by norm_num)).1 hfin |>.ne
       · filter_upwards [hKcover.ae_eventually_mem] with z hz

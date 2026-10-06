@@ -13,7 +13,8 @@ public import LeanPool.CaffarelliKohnNirenberg.Leray.Support.VorticityDivCurlSmo
 For a smooth function bounded by `M` on a ball, the fourth power of its gradient on a smaller ball
 is controlled by `M²` times the square integrals of its first and second derivatives on the larger
 ball. This is the smooth estimate `‖∇v‖₄² ≤ C ‖v‖_∞ ‖∇²v‖₂` behind the first product bound of
-`lem:vorticity-products` of the Escauriaza–Seregin–Šverák manuscript. With `A = |∇f|²` and a cutoff `η`, one integration by parts gives
+`lem:vorticity-products` of the Escauriaza–Seregin–Šverák manuscript. With
+`A = |∇f|²` and a cutoff `η`, one integration by parts gives
 `∫ η⁴ A² = -Σⱼ ∫ f ∂ⱼ(η⁴ A ∂ⱼ f)`, and a pointwise Young inequality absorbs three quarters of the
 left side.
 -/

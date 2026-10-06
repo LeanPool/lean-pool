@@ -112,7 +112,7 @@ theorem regularisedSchwartzTensorBilinear_bessel_even_norm_le
           ∑ i ∈ Finset.range (m + 1), (m.choose i : ℝ) * K i * V * S x :=
         Finset.sum_le_sum hterm
       _ = c m * V * S x := by
-        show _ = (∑ i ∈ Finset.range (m + 1), (m.choose i : ℝ) * K i) * V * S x
+        change _ = (∑ i ∈ Finset.range (m + 1), (m.choose i : ℝ) * K i) * V * S x
         rw [Finset.sum_mul, Finset.sum_mul]
   let P := regularisedSchwartzBesselStep (F := ComplexTensor3) ((2 * Real.pi) ^ 2)⁻¹
   have hPoint (x : L2Vec3) : ‖(P^[k] T) x‖ ≤ ((L * V) • S) x := by

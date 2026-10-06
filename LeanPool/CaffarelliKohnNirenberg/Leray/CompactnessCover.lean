@@ -119,7 +119,8 @@ theorem exists_weighted_colored_finite_vec3_ball_cover
       (∀ (p q : {p : Σ i : Fin N,
           {x : {x : Vec3 // x ∈ K} // x ∈ s i} // p ∈ t}),
         p ≠ q → p.1.1 = q.1.1 →
-        Disjoint (CKN.Foundation.Parabolic.vec3Ball p.1.2.1.1 r) (CKN.Foundation.Parabolic.vec3Ball q.1.2.1.1 r)) := by
+         Disjoint (CKN.Foundation.Parabolic.vec3Ball p.1.2.1.1 r)
+           (CKN.Foundation.Parabolic.vec3Ball q.1.2.1.1 r)) := by
   classical
   obtain ⟨N, hcoverAll⟩ :=
     exists_uniform_finite_euclidean_ball_cover_with_bounded_overlap hK

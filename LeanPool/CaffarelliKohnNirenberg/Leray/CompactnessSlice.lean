@@ -81,12 +81,12 @@ theorem cutoff_l2_norm_bound_on_time_window
     (hχcompact : HasCompactSupport χ)
     (hχrange : ∀ x, χ x ∈ Icc (0 : ℝ) 1)
     (hmem : ∀ n t, t ∈ J → MemLp
-      (fun x => χ x • WithLp.toLp 2 (u n (x,t)))
+       (fun x => χ x • WithLp.toLp 2 (u n (x, t)))
       2 (volume : Measure Vec3))
     (M : ℝ≥0∞) (hM : M < ⊤)
     (hbound : ∀ n t, t ∈ J →
       (∫⁻ x in tsupport χ,
-        ENNReal.ofReal (vec3EuclideanNorm (u n (x,t))) ^ (2 : ℝ)
+         ENNReal.ofReal (vec3EuclideanNorm (u n (x, t))) ^ (2 : ℝ)
         ∂volume) ≤ M) :
     ∀ n t, (ht : t ∈ J) →
       ‖(hmem n t ht).toLp
@@ -125,7 +125,7 @@ theorem exists_common_subsequence_cutoff_weak_slices
     (hχ : ∀ j, ContDiff ℝ (⊤ : ℕ∞) (χ j) ∧ HasCompactSupport (χ j) ∧
       tsupport (χ j) ⊆ U ∧ ∀ x, χ j x ∈ Icc (0 : ℝ) 1)
     (hmem : ∀ n j (t : I), MemLp
-      (fun x => χ j x • WithLp.toLp 2 (u n (x,t.1)))
+       (fun x => χ j x • WithLp.toLp 2 (u n (x, t.1)))
       2 (volume : Measure Vec3))
     (hbound : ∀ C : Set Vec3, IsCompact C → C ⊆ U →
       ∀ J : Set ℝ, IsCompact J → J ⊆ I →

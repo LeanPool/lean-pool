@@ -73,7 +73,6 @@ private theorem crossVec3_norm_le (u v : Vec3) :
         _ ≤ CKN.vecEuclideanNorm u * ‖v‖ + CKN.vecEuclideanNorm u * ‖v‖ :=
           add_le_add (hterm 1 2) (hterm 2 1)
         _ = 2 * CKN.vecEuclideanNorm u * ‖v‖ := by ring
-
     | calc
         |u 2 * v 0 - u 0 * v 2| ≤ |u 2 * v 0| + |u 0 * v 2| := abs_sub _ _
         _ = |u 2| * ‖v 0‖ + |u 0| * ‖v 2‖ := by simp [abs_mul, Real.norm_eq_abs]
@@ -107,7 +106,6 @@ theorem curlVec3_smul_scalar {η : Vec3 → ℝ} {A : Vec3 → Vec3}
     rw [CKN.spatialDeriv_mul hηd ((hAi 2).differentiable (by simp) x) 1,
       CKN.spatialDeriv_mul hηd ((hAi 1).differentiable (by simp) x) 2]
     ring
-
   · change CKN.spatialDeriv (fun y => η y * A y 0) 2 x -
         CKN.spatialDeriv (fun y => η y * A y 2) 0 x =
       η x * (CKN.spatialDeriv (fun y => A y 0) 2 x -
@@ -206,7 +204,7 @@ theorem curlVec3_contDiff {A : Vec3 → Vec3}
   intro i
   have hAi (j : Fin 3) : ContDiff ℝ (⊤ : ℕ∞) (fun x => A x j) :=
     (contDiff_pi.mp hA) j
-  fin_cases i <;> simp [curlVec3] <;>
+  fin_cases i <;> dsimp only [curlVec3] <;>
     exact (CKN.contDiff_spatialDeriv_smooth (hAi _) _).sub
       (CKN.contDiff_spatialDeriv_smooth (hAi _) _)
 
@@ -227,7 +225,7 @@ theorem curlVec3_divergence_eq_zero {A : Vec3 → Vec3}
   have hAi (i : Fin 3) : ContDiff ℝ (⊤ : ℕ∞) (fun y => A y i) :=
     (contDiff_pi.mp hA) i
   have hcurl (i : Fin 3) : ContDiff ℝ (⊤ : ℕ∞) (fun y => curlVec3 A y i) := by
-    fin_cases i <;> simp [curlVec3] <;>
+    fin_cases i <;> dsimp only [curlVec3] <;>
       exact (CKN.contDiff_spatialDeriv_smooth (hAi _) _).sub
         (CKN.contDiff_spatialDeriv_smooth (hAi _) _)
   have h0 := spatialDeriv_sub_smooth

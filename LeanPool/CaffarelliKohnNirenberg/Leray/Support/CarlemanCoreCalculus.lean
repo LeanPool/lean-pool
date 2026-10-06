@@ -119,7 +119,9 @@ theorem timePartial_exp_mul_at
   ring
 
 /-- The spatial gradient of a field before conjugation is controlled by its
-conjugated gradient and the phase gradient (`eq:carleman-half-gradient-estimate` of the Escauriaza–Seregin–Šverák manuscript). -/
+conjugated gradient and the phase gradient
+(`eq:carleman-half-gradient-estimate` of the Escauriaza–Seregin–Šverák
+manuscript). -/
 theorem exp_sq_scalarGradSq_le
     {U : Set ParabolicPoint} (hU : IsOpen U)
     {φ w : ParabolicPoint → ℝ}
