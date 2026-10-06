@@ -34,11 +34,12 @@ variable {μ : Measure Ω}
 copies on the product probability space preserves independence across the
 index set. -/
 theorem iIndepFun_prodMk_comp_fst_comp_snd_prod
-    [Fintype ι] [IsProbabilityMeasure μ]
+    [Finite ι] [IsProbabilityMeasure μ]
     {X : ι → Ω → ℝ}
     (h_indep : iIndepFun X μ)
     (h_meas : ∀ i, Measurable (X i)) :
     iIndepFun (fun i => fun ω : Ω × Ω => (X i ω.1, X i ω.2)) (μ.prod μ) := by
+  let := Fintype.ofFinite ι
   classical
   let XT : Ω → ι → ℝ := fun ω i => X i ω
   let P : Ω × Ω → ι → ℝ × ℝ := fun ω i => (X i ω.1, X i ω.2)
@@ -171,11 +172,13 @@ theorem iIndepFun_prodMk_comp_fst_comp_snd_prod
 /-- The symmetrized difference family on the product probability space is
 independent across the index set. -/
 theorem iIndepFun_sub_comp_fst_comp_snd_prod
-    [Fintype ι] [IsProbabilityMeasure μ]
+    [Finite ι] [IsProbabilityMeasure μ]
     {X : ι → Ω → ℝ}
     (h_indep : iIndepFun X μ)
     (h_meas : ∀ i, Measurable (X i)) :
     iIndepFun (fun i => fun ω : Ω × Ω => X i ω.1 - X i ω.2) (μ.prod μ) := by
+  classical
+  let := Fintype.ofFinite ι
   let g : ι → ℝ × ℝ → ℝ := fun _ z => z.1 - z.2
   have hg : ∀ i, Measurable (g i) := by
     intro i

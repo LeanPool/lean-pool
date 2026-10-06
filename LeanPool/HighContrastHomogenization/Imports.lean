@@ -2892,6 +2892,9 @@ public import LeanPool.HighContrastHomogenization.Support.Sobolev.H1.Definitions
 public import LeanPool.HighContrastHomogenization.Support.Sobolev.H1.LocalizedZeroTrace
 public import LeanPool.HighContrastHomogenization.Support.Sobolev.H1.OriginCubeBridge
 public import LeanPool.HighContrastHomogenization.Support.Sobolev.H1.OriginCubeSymmetry
+public import LeanPool.HighContrastHomogenization.Support.Sobolev.H1.OriginCubeSymmetry.Geometry
+public import LeanPool.HighContrastHomogenization.Support.Sobolev.H1.OriginCubeSymmetry.H10Actions
+public import LeanPool.HighContrastHomogenization.Support.Sobolev.H1.OriginCubeSymmetry.H1Actions
 public import LeanPool.HighContrastHomogenization.Support.Sobolev.H1.Translation
 public import LeanPool.HighContrastHomogenization.Support.Sobolev.L2Ambient
 public import LeanPool.HighContrastHomogenization.Support.Sobolev.MatchedPair.ScaledPoincare

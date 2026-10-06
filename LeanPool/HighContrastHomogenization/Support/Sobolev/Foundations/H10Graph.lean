@@ -294,6 +294,75 @@ private theorem edist_gradCoordToScalarL2_le_edist_gradToHilbertVectorL2
   rw [← eLpNorm_grad_coord_sub_eq_edist_gradCoordToScalarL2]
   exact eLpNorm_grad_coord_sub_le_edist_gradToHilbertVectorL2 u v i
 
+/-- A closed graph point supplies a convergent sequence of honest graph
+points, with convergence also in each scalar gradient coordinate. -/
+private theorem h10GraphClosedSubmodule_approximatingSequence
+    {z : ScalarL2 U × HilbertVectorL2 U}
+    (hz : z ∈ (h10GraphClosedSubmodule U).toSubmodule) :
+    ∃ v : H1Function U, ∃ φ : ℕ → H10Function U,
+      v.toScalarL2 = z.1 ∧ v.gradToHilbertVectorL2 = z.2 ∧
+      Filter.Tendsto (fun n => (φ n).toH1Function.toScalarL2) Filter.atTop
+        (nhds v.toScalarL2) ∧
+      Filter.Tendsto (fun n => (φ n).toH1Function.gradToHilbertVectorL2) Filter.atTop
+        (nhds v.gradToHilbertVectorL2) ∧
+      ∀ i : Fin d, Filter.Tendsto
+        (fun n => (φ n).toH1Function.gradCoordToScalarL2 i) Filter.atTop
+        (nhds (v.gradCoordToScalarL2 i)) := by
+  have hzH1 : z ∈ h1GraphClosedSubmodule (U := U) :=
+    h10GraphClosedSubmodule_le_h1GraphClosedSubmodule (U := U) hz
+  let v : H1Function U := toH1FunctionOfMemH1Graph (U := U) z hzH1
+  have hv_val : v.toScalarL2 = z.1 :=
+    toH1FunctionOfMemH1Graph_toScalarL2 (U := U) z hzH1
+  have hv_grad : v.gradToHilbertVectorL2 = z.2 :=
+    toH1FunctionOfMemH1Graph_gradToHilbertVectorL2 (U := U) z hzH1
+  have hz_closure :
+      z ∈ closure ((h10GraphSubmodule U : Submodule ℝ
+        (ScalarL2 U × HilbertVectorL2 U)) : Set (ScalarL2 U × HilbertVectorL2 U)) := by
+    have hzSub : z ∈ (h10GraphSubmodule U).topologicalClosure := hz
+    simpa [Submodule.topologicalClosure_coe] using! hzSub
+  obtain ⟨ψ, hψ_mem, hψ_tendsto⟩ := mem_closure_iff_seq_limit.mp hz_closure
+  choose φ hφ_val hφ_grad using hψ_mem
+  have hval_tendsto :
+      Filter.Tendsto (fun n => (φ n).toH1Function.toScalarL2) Filter.atTop
+        (nhds v.toScalarL2) := by
+    rw [hv_val]
+    exact hψ_tendsto.fst_nhds.congr'
+      (Filter.Eventually.of_forall fun n => (hφ_val n).symm)
+  have hgrad_tendsto :
+      Filter.Tendsto (fun n => (φ n).toH1Function.gradToHilbertVectorL2) Filter.atTop
+        (nhds v.gradToHilbertVectorL2) := by
+    rw [hv_grad]
+    exact hψ_tendsto.snd_nhds.congr'
+      (Filter.Eventually.of_forall fun n => (hφ_grad n).symm)
+  have hgrad_edist_zero :
+      Filter.Tendsto
+        (fun n => edist (φ n).toH1Function.gradToHilbertVectorL2 v.gradToHilbertVectorL2)
+        Filter.atTop (nhds 0) := by
+    rw [← edist_self v.gradToHilbertVectorL2]
+    exact (continuous_id.edist continuous_const).continuousAt.tendsto.comp hgrad_tendsto
+  have hgradcoord_edist_zero :
+      ∀ i : Fin d, Filter.Tendsto
+        (fun n => edist ((φ n).toH1Function.gradCoordToScalarL2 i)
+          (v.gradCoordToScalarL2 i)) Filter.atTop (nhds 0) := by
+    intro i
+    refine tendsto_of_tendsto_of_tendsto_of_le_of_le
+      (g := fun _ => (0 : ENNReal))
+      (h := fun n => edist (φ n).toH1Function.gradToHilbertVectorL2
+        v.gradToHilbertVectorL2)
+      tendsto_const_nhds hgrad_edist_zero (fun _ => bot_le) ?_
+    intro n
+    exact edist_gradCoordToScalarL2_le_edist_gradToHilbertVectorL2
+      (φ n).toH1Function v i
+  have hgradcoord_tendsto :
+      ∀ i : Fin d, Filter.Tendsto
+        (fun n => (φ n).toH1Function.gradCoordToScalarL2 i) Filter.atTop
+        (nhds (v.gradCoordToScalarL2 i)) := by
+    intro i
+    refine (EMetric.tendsto_nhds).mpr ?_
+    intro ε hε
+    exact (hgradcoord_edist_zero i).eventually (gt_mem_nhds hε)
+  exact ⟨v, φ, hv_val, hv_grad, hval_tendsto, hgrad_tendsto, hgradcoord_tendsto⟩
+
 /-- Every point of the closed `H¹₀` graph is realized by an honest `H¹₀`
 function on bounded open convex domains. The witness is obtained by
 diagonalising closure approximations against each graph approximant's internal
@@ -307,64 +376,8 @@ theorem exists_h10Function_of_mem_h10GraphClosedSubmodule
         ∧ u.toH1Function.gradToHilbertVectorL2 = z.2 := by
   classical
   have hUopen : IsOpen U := hU.isOpen
-  -- (1) H¹ witness from the weaker graph containment.
-  have hzH1 : z ∈ h1GraphClosedSubmodule (U := U) :=
-    h10GraphClosedSubmodule_le_h1GraphClosedSubmodule (U := U) hz
-  set v : H1Function U := toH1FunctionOfMemH1Graph (U := U) z hzH1 with v_def
-  have hv_val : v.toScalarL2 = z.1 :=
-    toH1FunctionOfMemH1Graph_toScalarL2 (U := U) z hzH1
-  have hv_grad : v.gradToHilbertVectorL2 = z.2 :=
-    toH1FunctionOfMemH1Graph_gradToHilbertVectorL2 (U := U) z hzH1
-  -- (2) Closure → approximating sequence of graph points.
-  have hz_closure :
-      z ∈ closure ((h10GraphSubmodule U : Submodule ℝ
-        (ScalarL2 U × HilbertVectorL2 U)) : Set (ScalarL2 U × HilbertVectorL2 U)) := by
-    have hzSub : z ∈ (h10GraphSubmodule U).topologicalClosure := hz
-    simpa [Submodule.topologicalClosure_coe] using! hzSub
-  obtain ⟨ψ, hψ_mem, hψ_tendsto⟩ := mem_closure_iff_seq_limit.mp hz_closure
-  choose φ hφ_val hφ_grad using hψ_mem
-  -- (3) Component-wise convergence.
-  have hval_tendsto :
-      Filter.Tendsto (fun n => (φ n).toH1Function.toScalarL2) Filter.atTop
-        (nhds v.toScalarL2) := by
-    rw [hv_val]
-    exact hψ_tendsto.fst_nhds.congr'
-      (Filter.Eventually.of_forall fun n => (hφ_val n).symm)
-  have hgrad_tendsto :
-      Filter.Tendsto (fun n => (φ n).toH1Function.gradToHilbertVectorL2) Filter.atTop
-        (nhds v.gradToHilbertVectorL2) := by
-    rw [hv_grad]
-    exact hψ_tendsto.snd_nhds.congr'
-      (Filter.Eventually.of_forall fun n => (hφ_grad n).symm)
-  -- (4) Convergence of `gradCoordToScalarL2 i` for each `i`, via the coord bound.
-  have hgrad_edist_zero :
-      Filter.Tendsto
-        (fun n => edist (φ n).toH1Function.gradToHilbertVectorL2 v.gradToHilbertVectorL2)
-        Filter.atTop (nhds 0) := by
-    rw [← edist_self v.gradToHilbertVectorL2]
-    exact (continuous_id.edist continuous_const).continuousAt.tendsto.comp hgrad_tendsto
-  have hgradcoord_edist_zero :
-      ∀ i : Fin d, Filter.Tendsto
-        (fun n => edist ((φ n).toH1Function.gradCoordToScalarL2 i)
-          (v.gradCoordToScalarL2 i))
-        Filter.atTop (nhds 0) := by
-    intro i
-    refine tendsto_of_tendsto_of_tendsto_of_le_of_le
-      (g := fun _ => (0 : ENNReal))
-      (h := fun n =>
-        edist (φ n).toH1Function.gradToHilbertVectorL2 v.gradToHilbertVectorL2)
-      tendsto_const_nhds hgrad_edist_zero (fun _ => bot_le) ?_
-    intro n
-    exact edist_gradCoordToScalarL2_le_edist_gradToHilbertVectorL2
-      (φ n).toH1Function v i
-  have hgradcoord_tendsto :
-      ∀ i : Fin d, Filter.Tendsto
-        (fun n => (φ n).toH1Function.gradCoordToScalarL2 i) Filter.atTop
-        (nhds (v.gradCoordToScalarL2 i)) := by
-    intro i
-    refine (EMetric.tendsto_nhds).mpr ?_
-    intro ε hε
-    exact (hgradcoord_edist_zero i).eventually (gt_mem_nhds hε)
+  obtain ⟨v, φ, hv_val, hv_grad, hval_tendsto, hgrad_tendsto,
+    hgradcoord_tendsto⟩ := h10GraphClosedSubmodule_approximatingSequence (U := U) hz
   -- (5) Reformulate: we want convergence in `ScalarL2 U` of
   -- `(approxH1 hUopen (φ n) m).toScalarL2 → (φ n).toScalarL2`, which is
   -- directly the content of `tendsto_approxH1_toScalarL2` from `CoerciveH10`.

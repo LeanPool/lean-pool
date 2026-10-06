@@ -50,7 +50,7 @@ private theorem eq_zero_of_tsupport_subset_of_notMem
   image_eq_zero_of_notMem_tsupport fun hxt => hx (hφ_sub hxt)
 
 private theorem hasCompactSupport_finset_sum
-    {α β ι : Type*} [TopologicalSpace α] [AddCommMonoid β] [DecidableEq ι]
+    {α β ι : Type*} [TopologicalSpace α] [AddCommMonoid β]
     (s : Finset ι) (f : ι → α → β)
     (hf : ∀ i ∈ s, HasCompactSupport (f i)) :
     HasCompactSupport (fun x => ∑ i ∈ s, f i x) := by

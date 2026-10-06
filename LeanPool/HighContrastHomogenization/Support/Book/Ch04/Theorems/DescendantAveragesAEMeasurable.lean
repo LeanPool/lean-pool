@@ -103,7 +103,7 @@ private theorem gammaSigmaIndependentSumConst_pos {σ : ℝ} (hσ : 0 < σ) :
         (mul_pos (by norm_num : 0 < (2 : ℝ)) hExpConst_pos)
 
 private theorem inv_mul_const_sum_sqrt_scale_le
-    [DecidableEq κ] (colors : Finset κ) {A C K colorCount totalCount : ℝ}
+    (colors : Finset κ) {A C K colorCount totalCount : ℝ}
     {classCount : κ → ℝ}
     (hA : 0 ≤ A) (hC : 0 ≤ C) (hK : 0 ≤ K) (hTotal : 0 < totalCount)
     (hSqrt :
@@ -111,6 +111,7 @@ private theorem inv_mul_const_sum_sqrt_scale_le
         Real.sqrt colorCount * Real.sqrt totalCount) :
     totalCount⁻¹ * (A * ∑ c ∈ colors, C * Real.sqrt (classCount c) * K) ≤
       A * C * (Real.sqrt colorCount * (Real.sqrt totalCount / totalCount)) * K := by
+  classical
   have hCK_nonneg : 0 ≤ C * K := mul_nonneg hC hK
   have hsum_eq :
       (∑ c ∈ colors, C * Real.sqrt (classCount c) * K) =
@@ -203,7 +204,7 @@ theorem
       (show (0 : ℝ) ≤ Real.exp (-(t ^ σ)) by positivity)
 
 theorem isBigO_finsetAverage_colorClassSums_gammaSigma_aemeasurable
-    [DecidableEq κ] [IsFiniteMeasure μ]
+    [IsFiniteMeasure μ]
     (colors : Finset κ) {Y : κ → Ω → ℝ}
     {classCount : κ → ℝ} {colorCount totalCount C K σ : ℝ}
     (hσ : 0 < σ) (hcolors : colors.Nonempty)
@@ -222,6 +223,7 @@ theorem isBigO_finsetAverage_colorClassSums_gammaSigma_aemeasurable
       (fun ω => totalCount⁻¹ * ∑ c ∈ colors, Y c ω)
       (gammaTriangleConst σ * C *
         (Real.sqrt colorCount * (Real.sqrt totalCount / totalCount)) * K) := by
+  classical
   let a : κ → ℝ := fun c => C * Real.sqrt (classCount c) * K
   have ha : ∀ c ∈ colors, 0 < a c := by
     intro c hc

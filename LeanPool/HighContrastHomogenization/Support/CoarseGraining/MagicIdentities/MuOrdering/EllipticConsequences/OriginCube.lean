@@ -38,8 +38,7 @@ theorem sigmaStarCoarse_le_sigmaCoarse_openCubeSet_originCube_of_isEllipticField
       PotentialSolenoidalL2RecoveryData.MuRecoveryCompatibilityData (a := a) R
         (R.toMuOperatorSystemDataOfIsEllipticFieldOn hEll (by
           rw [volume_openCubeSet_toReal]
-          exact cubeVolume_pos (originCube d n)))
-    )
+          exact cubeVolume_pos (originCube d n))) )
     {sigma sigmaStar kappa : Mat d}
     (hA : IsCoarseBlockMatrix (openCubeSet (originCube d n)) a
       (deterministicCoarseBlockMatrix (openCubeSet (originCube d n)) a))
@@ -78,8 +77,7 @@ theorem sigmaStarCoarse_le_sigmaCoarse_cubeSet_originCube_of_isEllipticFieldOn
       PotentialSolenoidalL2RecoveryData.MuRecoveryCompatibilityData (a := a) R
         (R.toMuOperatorSystemDataOfIsEllipticFieldOn hEll (by
           rw [volume_cubeSet_toReal]
-          exact cubeVolume_pos (originCube d n)))
-    )
+          exact cubeVolume_pos (originCube d n))) )
     {sigma sigmaStar kappa : Mat d}
     (hA : IsCoarseBlockMatrix (cubeSet (originCube d n)) a
       (deterministicCoarseBlockMatrix (cubeSet (originCube d n)) a))
@@ -114,8 +112,7 @@ theorem sigmaCoarse_le_bCoarse_openCubeSet_originCube_of_isEllipticFieldOn
       PotentialSolenoidalL2RecoveryData.MuRecoveryCompatibilityData (a := a) R
         (R.toMuOperatorSystemDataOfIsEllipticFieldOn hEll (by
           rw [volume_openCubeSet_toReal]
-          exact cubeVolume_pos (originCube d n)))
-    )
+          exact cubeVolume_pos (originCube d n))) )
     {sigma sigmaStar kappa : Mat d}
     (hS : IsSigmaStarCoarse (openCubeSet (originCube d n)) a sigmaStar)
     (hK : IsKappaCoarse (openCubeSet (originCube d n)) a sigmaStar kappa)
@@ -143,8 +140,7 @@ theorem sigmaCoarse_le_bCoarse_cubeSet_originCube_of_isEllipticFieldOn
       PotentialSolenoidalL2RecoveryData.MuRecoveryCompatibilityData (a := a) R
         (R.toMuOperatorSystemDataOfIsEllipticFieldOn hEll (by
           rw [volume_cubeSet_toReal]
-          exact cubeVolume_pos (originCube d n)))
-    )
+          exact cubeVolume_pos (originCube d n))) )
     {sigma sigmaStar kappa : Mat d}
     (hS : IsSigmaStarCoarse (cubeSet (originCube d n)) a sigmaStar)
     (hK : IsKappaCoarse (cubeSet (originCube d n)) a sigmaStar kappa)
@@ -172,8 +168,7 @@ theorem kappaCoarse_add_transpose_le_sigmaCoarse_sub_sigmaStarCoarse_openCubeSet
       PotentialSolenoidalL2RecoveryData.MuRecoveryCompatibilityData (a := a) R
         (R.toMuOperatorSystemDataOfIsEllipticFieldOn hEll (by
           rw [volume_openCubeSet_toReal]
-          exact cubeVolume_pos (originCube d n)))
-    )
+          exact cubeVolume_pos (originCube d n))) )
     {sigma sigmaStar kappa : Mat d}
     (hA : IsCoarseBlockMatrix (openCubeSet (originCube d n)) a
       (deterministicCoarseBlockMatrix (openCubeSet (originCube d n)) a))
@@ -219,8 +214,7 @@ theorem kappaCoarse_add_transpose_le_sigmaCoarse_sub_sigmaStarCoarse_cubeSet_ori
       PotentialSolenoidalL2RecoveryData.MuRecoveryCompatibilityData (a := a) R
         (R.toMuOperatorSystemDataOfIsEllipticFieldOn hEll (by
           rw [volume_cubeSet_toReal]
-          exact cubeVolume_pos (originCube d n)))
-    )
+          exact cubeVolume_pos (originCube d n))) )
     {sigma sigmaStar kappa : Mat d}
     (hA : IsCoarseBlockMatrix (cubeSet (originCube d n)) a
       (deterministicCoarseBlockMatrix (cubeSet (originCube d n)) a))

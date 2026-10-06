@@ -345,7 +345,7 @@ theorem cubeFaceReflectionFoldedParentScalarTest_upperFaceProjection_eq_zero_ori
       m i choice x h1 h2)
 
 private theorem hasCompactSupport_finset_sum
-    {α β ι : Type*} [TopologicalSpace α] [AddCommMonoid β] [DecidableEq ι]
+    {α β ι : Type*} [TopologicalSpace α] [AddCommMonoid β]
     (s : Finset ι) (f : ι → α → β)
     (hf : ∀ i ∈ s, HasCompactSupport (f i)) :
     HasCompactSupport (fun x => ∑ i ∈ s, f i x) := by

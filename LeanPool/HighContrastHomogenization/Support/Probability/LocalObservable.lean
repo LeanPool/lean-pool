@@ -513,12 +513,13 @@ theorem integral_eq_of_map_restrictCoeffField_eq
     X.measurable X.isRestrictionLocal hPQ
 
 theorem iIndepFun_of_isRestrictionUnitRangeDependent
-    {ι : Type*} [DecidableEq ι] {γ : ι → Type*} [∀ i, MeasurableSpace (γ i)]
+    {ι : Type*} {γ : ι → Type*} [∀ i, MeasurableSpace (γ i)]
     {P : MeasureTheory.Measure (CoeffField d)} [MeasureTheory.IsProbabilityMeasure P]
     {V : ι → Set (Vec d)} (hP : IsRestrictionUnitRangeDependent P)
     (hsep : Pairwise fun i j => AreUnitSeparated (V i) (V j))
     (X : ∀ i, MeasurableLocalObservable d (V i) (γ i)) :
     ProbabilityTheory.iIndepFun (fun i => X i) P := by
+  classical
   rw [ProbabilityTheory.iIndepFun_iff_iIndep]
   rw [ProbabilityTheory.iIndep_iff]
   intro s f hf
@@ -527,13 +528,14 @@ theorem iIndepFun_of_isRestrictionUnitRangeDependent
     (fun i hi => (Measurable.comap_le (X i).measurable_restrictionSigma) (f i) (hf i hi))
 
 theorem indepFun_finset_of_isRestrictionUnitRangeDependent
-    {ι : Type*} [DecidableEq ι] {γ : ι → Type*} [∀ i, MeasurableSpace (γ i)]
+    {ι : Type*} {γ : ι → Type*} [∀ i, MeasurableSpace (γ i)]
     {P : MeasureTheory.Measure (CoeffField d)} [MeasureTheory.IsProbabilityMeasure P]
     {V : ι → Set (Vec d)} (hP : IsRestrictionUnitRangeDependent P)
     (hsep : Pairwise fun i j => AreUnitSeparated (V i) (V j))
     (X : ∀ i, MeasurableLocalObservable d (V i) (γ i))
     (S T : Finset ι) (hST : Disjoint S T) :
     ProbabilityTheory.IndepFun (fun a (i : S) => X i a) (fun a (i : T) => X i a) P := by
+  classical
   exact (iIndepFun_of_isRestrictionUnitRangeDependent (d := d) hP hsep X).indepFun_finset S T hST
     (fun i => (X i).measurable)
 
@@ -850,11 +852,12 @@ theorem indepFun_comp_of_indep_restrictionSigma
     (Measurable.comap_le (Y.measurable_comp_randomCoeffField_restrictionSigma A))
 
 theorem iIndepFun_comp_of_iIndep_restrictionSigma
-    {ι : Type*} [DecidableEq ι] {β : ι → Type*} [∀ i, MeasurableSpace (β i)]
+    {ι : Type*} {β : ι → Type*} [∀ i, MeasurableSpace (β i)]
     {μ : MeasureTheory.Measure Ω} {U : ι → Set (Vec d)}
     (hμ : ProbabilityTheory.iIndep (fun i => A.restrictionSigma (U i)) μ)
     (X : ∀ i, MeasurableLocalObservable d (U i) (β i)) :
     ProbabilityTheory.iIndepFun (fun i => fun ω => X i (A ω)) μ := by
+  classical
   rw [ProbabilityTheory.iIndepFun_iff_iIndep]
   rw [ProbabilityTheory.iIndep_iff]
   intro s f hf
@@ -864,13 +867,14 @@ theorem iIndepFun_comp_of_iIndep_restrictionSigma
         (f i) (hf i hi))
 
 theorem indepFun_comp_finset_of_iIndep_restrictionSigma
-    {ι : Type*} [DecidableEq ι] {β : ι → Type*} [∀ i, MeasurableSpace (β i)]
+    {ι : Type*} {β : ι → Type*} [∀ i, MeasurableSpace (β i)]
     {μ : MeasureTheory.Measure Ω} {U : ι → Set (Vec d)}
     (hμ : ProbabilityTheory.iIndep (fun i => A.restrictionSigma (U i)) μ)
     (X : ∀ i, MeasurableLocalObservable d (U i) (β i))
     (S T : Finset ι) (hST : Disjoint S T) :
     ProbabilityTheory.IndepFun
       (fun ω (i : S) => X i (A ω)) (fun ω (i : T) => X i (A ω)) μ := by
+  classical
   exact (iIndepFun_comp_of_iIndep_restrictionSigma (A := A) hμ X).indepFun_finset S T hST
     (fun i => (X i).measurable_comp_randomCoeffField A)
 

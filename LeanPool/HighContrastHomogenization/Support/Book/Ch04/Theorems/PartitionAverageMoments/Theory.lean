@@ -38,7 +38,7 @@ noncomputable section
 /-- A finite supremum costs only `card ^ (1 / p)` in an `L^p` root when each
 observable has `L^p` root bounded by the same constant. -/
 theorem integral_finsetSup_abs_pow_rpow_inv_le_card_rpow_mul
-    {Ω ι : Type*} [MeasurableSpace Ω] [DecidableEq ι]
+    {Ω ι : Type*} [MeasurableSpace Ω]
     {μ : Measure Ω} [IsProbabilityMeasure μ]
     {s : Finset ι} (hs : s.Nonempty) {p : ℕ} {K : ℝ}
     (hp : 1 ≤ p) (hK_nonneg : 0 ≤ K)
@@ -49,6 +49,7 @@ theorem integral_finsetSup_abs_pow_rpow_inv_le_card_rpow_mul
       ∀ i ∈ s, (∫ ω, |X i ω| ^ p ∂μ) ^ (1 / (p : ℝ)) ≤ K) :
     (∫ ω, (s.sup' hs (fun i => |X i ω|)) ^ p ∂μ) ^ (1 / (p : ℝ)) ≤
       (s.card : ℝ) ^ (1 / (p : ℝ)) * K := by
+  classical
   have hp_ne_zero : p ≠ 0 := by
     exact Nat.pos_iff_ne_zero.mp (lt_of_lt_of_le zero_lt_one hp)
   have hsum_int :

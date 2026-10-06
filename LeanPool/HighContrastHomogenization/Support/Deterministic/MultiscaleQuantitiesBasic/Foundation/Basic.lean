@@ -189,7 +189,7 @@ theorem matNorm_descendantsAverageMat_le_descendantsAverage_matNorm {d : ℕ}
   unfold finsetSsup
   simp
 
-theorem finsetAverage_le_finsetSsup {α : Type*} [DecidableEq α]
+theorem finsetAverage_le_finsetSsup {α : Type*}
     (s : Finset α) (hs : s.Nonempty) (f : α → ℝ) :
     finsetAverage s f ≤ finsetSsup s f := by
   classical

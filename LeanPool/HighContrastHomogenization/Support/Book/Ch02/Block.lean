@@ -131,7 +131,7 @@ private theorem blockMatrixOfCoarseMatrices_cross_transpose {d : ℕ} (K S : Mat
     (hS : S.IsSymm) :
     matTranspose (-(matTranspose K * S)) = -(S * K) := by
   ext i j
-  simp [matTranspose, Matrix.mul_apply]
+  simp only [matTranspose, Matrix.transpose_apply, Matrix.neg_apply, Matrix.mul_apply, neg_inj]
   refine Finset.sum_congr rfl ?_
   intro x _hx
   rw [hS.apply]

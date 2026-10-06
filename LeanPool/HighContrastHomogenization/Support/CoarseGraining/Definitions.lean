@@ -513,8 +513,8 @@ private theorem sigmaStarInvKappaEntry_eq_of_isSigmaStarInvKappaCoarse {d : ℕ}
     (hM : IsSigmaStarInvKappaCoarse U a M) (i j : Fin d) :
     sigmaStarInvKappaCoarse U a i j = M i j := by
   have hij := hM (Pi.single j 1) (Pi.single i 1)
-  simp [sigmaStarInvKappaCoarse, vecDot_single_left, matVecMul_single, vecDot_single_right] at hij ⊢
-  exact hij
+  simpa [sigmaStarInvKappaCoarse, vecDot_single_left, matVecMul_single,
+    vecDot_single_right] using hij
 
 theorem eq_sigmaStarInvKappaCoarse_of_isSigmaStarInvKappaCoarse {d : ℕ}
     {U : Set (Vec d)} {a : CoeffField d} {M : Mat d}

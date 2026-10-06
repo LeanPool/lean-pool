@@ -140,16 +140,18 @@ theorem specBound_le_iff {M : Mat d} {t : ℝ} (ht : 0 ≤ t) :
 
 /-- The positive semidefinite square root exists on positive semidefinite
 data. -/
-theorem exists_posSemidef_mul_self {n : Type*} [Fintype n] [DecidableEq n]
+theorem exists_posSemidef_mul_self {n : Type*} [Fintype n]
     {M : Matrix n n ℝ} (hM : M.PosSemidef) :
     ∃ B : Matrix n n ℝ, B.PosSemidef ∧ B * B = M := by
+  classical
   have h : (0 : Matrix n n ℝ) ≤ CFC.sqrt M := CFC.sqrt_nonneg M
   exact ⟨CFC.sqrt M, Matrix.nonneg_iff_posSemidef.mp h, CFC.sqrt_mul_sqrt_self M⟩
 
 /-- The positive semidefinite square root is unique. -/
-theorem posSemidef_mul_self_unique {n : Type*} [Fintype n] [DecidableEq n]
+theorem posSemidef_mul_self_unique {n : Type*} [Fintype n]
     {M B B' : Matrix n n ℝ} (hB : B.PosSemidef) (hB' : B'.PosSemidef)
     (h : B * B = M) (h' : B' * B' = M) : B = B' := by
+  classical
   refine (CFC.sq_eq_sq_iff B B' hB.nonneg hB'.nonneg).1 ?_
   rw [sq, sq, h, h']
 

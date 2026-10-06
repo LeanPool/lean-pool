@@ -96,10 +96,11 @@ private theorem norm_toLp_comp_equiv {n : Type*} [Fintype n]
   exact Fintype.sum_equiv e
     (fun i => ‖v (e i)‖ ^ 2) (fun i => ‖v i‖ ^ 2) (by intro i; rfl)
 
-private theorem mulVec_reindex_self {n : Type*} [Fintype n] [DecidableEq n]
+private theorem mulVec_reindex_self {n : Type*} [Fintype n]
     (e : n ≃ n) (M : Matrix n n ℝ) (v : n → ℝ) :
     Matrix.mulVec (Matrix.reindex e e M) v =
       (Matrix.mulVec M (v ∘ e)) ∘ e.symm := by
+  classical
   ext i
   change dotProduct (Matrix.reindex e e M i) v = dotProduct (M (e.symm i)) (v ∘ e)
   rw [dotProduct, dotProduct]

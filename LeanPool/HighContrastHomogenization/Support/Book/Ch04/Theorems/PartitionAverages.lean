@@ -39,7 +39,7 @@ noncomputable section
 variable {Ω κ : Type*} [MeasurableSpace Ω] {μ : Measure Ω}
 
 private theorem inv_mul_const_sum_sqrt_scale_le
-    [DecidableEq κ] (colors : Finset κ) {A C K colorCount totalCount : ℝ}
+    (colors : Finset κ) {A C K colorCount totalCount : ℝ}
     {classCount : κ → ℝ}
     (hA : 0 ≤ A) (hC : 0 ≤ C) (hK : 0 ≤ K) (hTotal : 0 < totalCount)
     (hSqrt :
@@ -47,6 +47,7 @@ private theorem inv_mul_const_sum_sqrt_scale_le
         Real.sqrt colorCount * Real.sqrt totalCount) :
     totalCount⁻¹ * (A * ∑ c ∈ colors, C * Real.sqrt (classCount c) * K) ≤
       A * C * (Real.sqrt colorCount * (Real.sqrt totalCount / totalCount)) * K := by
+  classical
   have hCK_nonneg : 0 ≤ C * K := mul_nonneg hC hK
   have hsum_eq :
       (∑ c ∈ colors, C * Real.sqrt (classCount c) * K) =
@@ -79,7 +80,7 @@ private theorem inv_mul_const_sum_sqrt_scale_le
 /-- Aggregating `Gamma_sigma` color-class sum estimates and then dividing by
 the total cardinality gives the partition-average square-root scale. -/
 theorem isBigO_finsetAverage_colorClassSums_gammaSigma
-    [DecidableEq κ] [IsFiniteMeasure μ]
+    [IsFiniteMeasure μ]
     (colors : Finset κ) {Y : κ → Ω → ℝ}
     {classCount : κ → ℝ} {colorCount totalCount C K σ : ℝ}
     (hσ : 0 < σ) (hcolors : colors.Nonempty)
@@ -98,6 +99,7 @@ theorem isBigO_finsetAverage_colorClassSums_gammaSigma
       (fun ω => totalCount⁻¹ * ∑ c ∈ colors, Y c ω)
       (gammaTriangleConst σ * C *
         (Real.sqrt colorCount * (Real.sqrt totalCount / totalCount)) * K) := by
+  classical
   let a : κ → ℝ := fun c => C * Real.sqrt (classCount c) * K
   have ha : ∀ c ∈ colors, 0 < a c := by
     intro c hc
@@ -137,7 +139,7 @@ theorem isBigO_finsetAverage_colorClassSums_gammaSigma
 /-- Aggregating `Psi_sigma` color-class sum estimates and then dividing by the
 total cardinality gives the partition-average square-root scale. -/
 theorem isBigO_finsetAverage_colorClassSums_psiSigma
-    [DecidableEq κ] [IsFiniteMeasure μ]
+    [IsFiniteMeasure μ]
     (colors : Finset κ) {Y : κ → Ω → ℝ}
     {classCount : κ → ℝ} {colorCount totalCount C K σ : ℝ}
     (hσ : 1 ≤ σ) (hcolors : colors.Nonempty)
@@ -156,6 +158,7 @@ theorem isBigO_finsetAverage_colorClassSums_psiSigma
       (fun ω => totalCount⁻¹ * ∑ c ∈ colors, Y c ω)
       (psiSigmaTriangleConst σ * C *
         (Real.sqrt colorCount * (Real.sqrt totalCount / totalCount)) * K) := by
+  classical
   let a : κ → ℝ := fun c => C * Real.sqrt (classCount c) * K
   have ha : ∀ c ∈ colors, 0 < a c := by
     intro c hc

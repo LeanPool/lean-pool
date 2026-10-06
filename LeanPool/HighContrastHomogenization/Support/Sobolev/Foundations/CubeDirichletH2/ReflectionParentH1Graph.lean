@@ -50,7 +50,7 @@ private theorem memScalarL2_euclideanCoordDeriv_of_contDiff_hasCompactSupport
       (hasCompactSupport_euclideanCoordDeriv hψ_compact i)).restrict U
 
 private theorem hasCompactSupport_finset_sum
-    {α β ι : Type*} [TopologicalSpace α] [AddCommMonoid β] [DecidableEq ι]
+    {α β ι : Type*} [TopologicalSpace α] [AddCommMonoid β]
     (s : Finset ι) (f : ι → α → β)
     (hf : ∀ i ∈ s, HasCompactSupport (f i)) :
     HasCompactSupport (fun x => ∑ i ∈ s, f i x) := by

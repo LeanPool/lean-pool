@@ -527,8 +527,9 @@ theorem energyBilin_eq_volumeAverage_swap_of_memBlockL2
               with x hOp hXae hYae
             let Z := blockMatVecMul (blockCoeffField a x) (Y x)
             rw [hOp, hXae, hYae]
-            simp [hilbertifyBlockField, real_inner_comm,
-              HilbertBlockVec.applyBlockMat_apply, HilbertBlockVec.inner_def]
+            simp only [hilbertifyBlockField, real_inner_comm,
+              HilbertBlockVec.applyBlockMat_apply, HilbertBlockVec.inner_def,
+              HilbertBlockVec.toBlockVec_ofBlockVec]
             have htoBlock :
                 (((MeasureTheory.volume U).toReal⁻¹ • HilbertBlockVec.ofBlockVec Z).toBlockVec) =
                   (MeasureTheory.volume U).toReal⁻¹ • Z := by

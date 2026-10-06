@@ -164,7 +164,7 @@ theorem section52_annealedMomentRoot_positiveExcess_le_scaled_initial
           mul_le_mul_of_nonneg_right hCoeffSum hInitial_nonneg
 
 theorem section52_integrable_positiveExcess_pow_of_one_add_finset_bound
-    {d : ℕ} {P : Ch04.RestrictionCoeffLaw d} {ι : Type*} [DecidableEq ι] {ξ : ℕ}
+    {d : ℕ} {P : Ch04.RestrictionCoeffLaw d} {ι : Type*} {ξ : ℕ}
     {s : Finset ι} {X : RegCoeffField d → ℝ} {base : ℝ}
     {G0 : RegCoeffField d → ℝ} {G : ι → RegCoeffField d → ℝ}
     (hξ : 1 ≤ ξ)
@@ -229,7 +229,7 @@ theorem section52_integrable_positiveExcess_pow_of_one_add_finset_bound
   simp [abs_of_nonneg (le_max_right (X a - base) 0)]
 
 theorem section52_annealedMomentRoot_positiveExcess_le_one_add_finset_scaled
-    {d : ℕ} {P : Ch04.RestrictionCoeffLaw d} {ι : Type*} [DecidableEq ι] {ξ : ℕ}
+    {d : ℕ} {P : Ch04.RestrictionCoeffLaw d} {ι : Type*} {ξ : ℕ}
     {s : Finset ι} {X : RegCoeffField d → ℝ} {base initial finalCoeff coeff0 : ℝ}
     {G0 : RegCoeffField d → ℝ} {G : ι → RegCoeffField d → ℝ} {coeff : ι → ℝ}
     (hξ : 1 ≤ ξ)

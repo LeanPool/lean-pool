@@ -325,11 +325,12 @@ theorem sqrt_sum_sq_le_sum {ι : Type*} (s : Finset ι) (A : ι → ℝ)
     _ = ∑ i ∈ s, A i := by
           rw [Real.sqrt_sq_eq_abs, abs_of_nonneg hsum_nonneg]
 
-theorem sqrt_sum_sq_sum_le_sum_sqrt_sum_sq {ι κ : Type*} [DecidableEq κ]
+theorem sqrt_sum_sq_sum_le_sum_sqrt_sum_sq {ι κ : Type*}
     (s : Finset ι) (t : Finset κ) (A : ι → κ → ℝ)
     (hA : ∀ i ∈ s, ∀ k ∈ t, 0 ≤ A i k) :
     Real.sqrt (∑ i ∈ s, (∑ k ∈ t, A i k) ^ 2) ≤
       ∑ k ∈ t, Real.sqrt (∑ i ∈ s, (A i k) ^ 2) := by
+  classical
   induction t using Finset.induction_on with
   | empty =>
       simp
