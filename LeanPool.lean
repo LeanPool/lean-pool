@@ -212,6 +212,7 @@ public import LeanPool.PoincareThreeBody.Imports
 public import LeanPool.PointwiseBirkhoff.Imports
 public import LeanPool.PolyaEnumerationTheorem.Imports
 public import LeanPool.Polylean.Imports
+public import LeanPool.PolylogIntegrals.Imports
 public import LeanPool.PolynomialMethodRestrictedSums.Imports
 public import LeanPool.Polytopes.Imports
 public import LeanPool.Puiseux.Imports
