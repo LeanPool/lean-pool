@@ -113,7 +113,7 @@ theorem lps_weak_gradient_trace_zero {w : Vec3 → Vec3} {Dw : Vec3 → Fin 3 �
       have e1 : ∫ x, g x * ∑ j : Fin 3, Dw x j j = ∑ j : Fin 3, ∫ x, Dw x j j * g x := by
         rw [← integral_finsetSum _ (fun j _ => hint j)]
         refine integral_congr_ae (Eventually.of_forall fun x => ?_)
-        show g x * ∑ j : Fin 3, Dw x j j = ∑ j : Fin 3, Dw x j j * g x
+        change g x * ∑ j : Fin 3, Dw x j j = ∑ j : Fin 3, Dw x j j * g x
         rw [Finset.mul_sum]
         exact Finset.sum_congr rfl fun j _ => mul_comm _ _
       have e2 : ∫ x, ∑ j : Fin 3, w x j * ψ.partialDeriv j x =

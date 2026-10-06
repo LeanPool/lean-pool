@@ -148,7 +148,7 @@ private theorem serrin_spatialDeriv_mul {f g : Vec3 → ℝ} (hf : ContDiff ℝ 
   have hfd := ((hf.differentiable (by simp)) y).hasFDerivAt
   have hgd := ((hg.differentiable (by simp)) y).hasFDerivAt
   have h := (hfd.mul hgd).fderiv
-  show (fderiv ℝ (f * g) y) (basisVec j) = _
+  change (fderiv ℝ (f * g) y) (basisVec j) = _
   rw [h]
   simp only [add_apply, smul_apply, smul_eq_mul, spatialDeriv]
   ring

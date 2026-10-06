@@ -228,7 +228,7 @@ theorem serrin_slab_measure_eq (T : ℝ) :
     (volume.restrict (spaceTimeSet (Set.univ : Set Vec3) (Ioo 0 T)) :
       Measure ParabolicPoint) =
       ((volume : Measure Vec3).prod (volume.restrict (Ioo 0 T)) : Measure (Vec3 × ℝ)) := by
-  show (volume : Measure (Vec3 × ℝ)).restrict ((Set.univ : Set Vec3) ×ˢ Ioo 0 T) = _
+  change (volume : Measure (Vec3 × ℝ)).restrict ((Set.univ : Set Vec3) ×ˢ Ioo 0 T) = _
   rw [Measure.volume_eq_prod, ← Measure.prod_restrict, Measure.restrict_univ]
 
 /-- Slice-wise spatial mollification converges in space-time `L^p` on the slab. -/

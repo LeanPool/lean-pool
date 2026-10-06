@@ -44,7 +44,7 @@ theorem lps_h1_finite_slice_memLp_ae
     (volume : Measure Vec3).prod (volume.restrict (Ioo t₀ t₁))
   have hslab : (volume.restrict (spaceTimeSet (Set.univ : Set Vec3) (Ioo t₀ t₁)) :
       Measure (Vec3 × ℝ)) = ν := by
-    show (volume : Measure (Vec3 × ℝ)).restrict ((Set.univ : Set Vec3) ×ˢ Ioo t₀ t₁) = ν
+    change (volume : Measure (Vec3 × ℝ)).restrict ((Set.univ : Set Vec3) ×ˢ Ioo t₀ t₁) = ν
     rw [Measure.volume_eq_prod, ← Measure.prod_restrict, Measure.restrict_univ]
   have huν : AEStronglyMeasurable u ν := hslab ▸ hu
   have hscalar : AEStronglyMeasurable

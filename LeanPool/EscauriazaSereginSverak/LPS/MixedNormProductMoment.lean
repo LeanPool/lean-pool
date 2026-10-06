@@ -150,7 +150,7 @@ theorem lps_vector_mixed_slice_memLp_of_raw
     (hF : AEStronglyMeasurable F
       (volume.restrict (spaceTimeSet (Set.univ : Set Vec3) (Ioo 0 T))))
     (hRaw : (∫⁻ t in Ioo 0 T,
-      (∫⁻ x : Vec3, ‖F (x,t)‖ₑ ^ q ∂volume) ^ (p / q)) < ⊤) :
+      (∫⁻ x : Vec3, ‖F (x, t)‖ₑ ^ q ∂volume) ^ (p / q)) < ⊤) :
     ∀ᵐ t ∂(volume.restrict (Ioo 0 T)),
       MemLp (fun x : Vec3 => F (x,t)) (ENNReal.ofReal q) volume := by
   let μt : Measure ℝ := volume.restrict (Ioo 0 T)

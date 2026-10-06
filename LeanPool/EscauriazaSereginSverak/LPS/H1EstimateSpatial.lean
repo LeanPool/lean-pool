@@ -455,8 +455,8 @@ theorem lps_h1_gradient_interpolation
       _ ≤ 3 * gagliardoNirenbergSobolevConstant ^ θ₁ * (2 : ℝ≥0∞) ^ θ₁ *
             eLpNorm Du 2 volume ^ θ₀ * eLpNorm D2u 2 volume ^ θ₁ := by
         gcongr
-        exact hrow2 i
-        exact hrowD2 i
+        · exact hrow2 i
+        · exact hrowD2 i
   have hsum :
       eLpNorm (fun x : Vec3 => ∑ i : Fin 3, ‖Du x i‖)
           (ENNReal.ofReal r) volume ≤
@@ -680,7 +680,7 @@ theorem lps_h1_finite_time_moment_integrable
   have hslab :
       (volume.restrict (spaceTimeSet (Set.univ : Set Vec3) (Ioo t₀ t₁)) :
         Measure (Vec3 × ℝ)) = μ := by
-    show (volume : Measure (Vec3 × ℝ)).restrict
+    change (volume : Measure (Vec3 × ℝ)).restrict
         ((Set.univ : Set Vec3) ×ˢ Ioo t₀ t₁) = μ
     rw [Measure.volume_eq_prod, ← Measure.prod_restrict, Measure.restrict_univ]
   have huProd : AEStronglyMeasurable u μ := hslab ▸ hu

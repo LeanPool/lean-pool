@@ -86,7 +86,7 @@ theorem lps_endpoint_cutoff_pairing_limit_linf_l1
     (hβmeas : AEMeasurable (fun τ => ENNReal.ofReal (β τ))
       (volume.restrict (Ioo 0 T)))
     (hβ : ∀ᵐ τ ∂(volume.restrict (Ioo 0 T)),
-      ∀ᵐ x ∂(volume : Measure Vec3), |f (x,τ)| ≤ β τ)
+      ∀ᵐ x ∂(volume : Measure Vec3), |f (x, τ)| ≤ β τ)
     (hβint : (∫⁻ τ in Ioo 0 T, ENNReal.ofReal (β τ) ^ (2 : ℝ)) < ⊤)
     (hgSlice : ∀ᵐ τ ∂(volume.restrict (Ioo 0 T)),
       Integrable (fun x : Vec3 => g (x,τ)) volume)

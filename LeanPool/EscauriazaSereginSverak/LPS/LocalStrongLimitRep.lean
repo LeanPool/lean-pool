@@ -67,7 +67,7 @@ theorem lps_curve_measurable_rep {a b : ℝ} (hab : a ≤ b)
       have hsub : (g t - g t₀) =ᵐ[volume]
           ((L (proj t) - L (proj t₀) : Lp ℝ 2 (volume : Measure Vec3)) : Vec3 → ℝ) := by
         filter_upwards [Lp.coeFn_sub (L (proj t)) (L (proj t₀))] with x hx
-        show g t x - g t₀ x = _
+        change g t x - g t₀ x = _
         rw [hx]
         rfl
       rw [eLpNorm_congr_ae hsub, ← Lp.norm_def]

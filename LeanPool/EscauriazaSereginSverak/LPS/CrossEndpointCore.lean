@@ -40,9 +40,9 @@ theorem lps_slab_integral_tendsto_of_slice_domination
       (volume.restrict (spaceTimeSet (Set.univ : Set Vec3) (Ioo 0 T))))
     (hD : (∫⁻ t in Ioo 0 T, D t) ≠ ⊤)
     (hbound : ∀ n, ∀ᵐ t ∂(volume.restrict (Ioo 0 T)),
-      ∫⁻ x : Vec3, ‖F n (x,t) - G (x,t)‖ₑ ≤ D t)
+      ∫⁻ x : Vec3, ‖F n (x, t) - G (x, t)‖ₑ ≤ D t)
     (hlim : ∀ᵐ t ∂(volume.restrict (Ioo 0 T)),
-      Tendsto (fun n => ∫⁻ x : Vec3, ‖F n (x,t) - G (x,t)‖ₑ) atTop (𝓝 0)) :
+      Tendsto (fun n => ∫⁻ x : Vec3, ‖F n (x, t) - G (x, t)‖ₑ) atTop (𝓝 0)) :
     (∀ n, Integrable (F n)
       (volume.restrict (spaceTimeSet (Set.univ : Set Vec3) (Ioo 0 T)))) ∧
     Tendsto (fun n => ∫ z in spaceTimeSet (Set.univ : Set Vec3) (Ioo 0 T), F n z)

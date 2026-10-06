@@ -118,7 +118,7 @@ theorem lps_endpoint_product_linf_l2 {T : ℝ} {A B : ParabolicPoint → ℝ} {�
       (volume.restrict (spaceTimeSet (Set.univ : Set Vec3) (Ioo 0 T))))
     (hβmeas : AEMeasurable (fun τ => ENNReal.ofReal (β τ)) (volume.restrict (Ioo 0 T)))
     (hβ : ∀ᵐ τ ∂(volume.restrict (Ioo 0 T)),
-      ∀ᵐ x ∂(volume : Measure Vec3), |A (x,τ)| ≤ β τ)
+      ∀ᵐ x ∂(volume : Measure Vec3), |A (x, τ)| ≤ β τ)
     (hβint : (∫⁻ τ in Ioo 0 T, ENNReal.ofReal (β τ) ^ (2 : ℝ)) < ⊤) :
     (∀ᵐ τ ∂(volume.restrict (Ioo 0 T)),
       MemLp (fun x : Vec3 => A (x,τ) * B (x,τ)) (ENNReal.ofReal 2) volume) ∧

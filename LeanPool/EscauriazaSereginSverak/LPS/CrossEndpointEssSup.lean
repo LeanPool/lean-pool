@@ -67,7 +67,7 @@ theorem lps_aesm_slab_to_prod {a b : ℝ} {E : Type} [TopologicalSpace E]
       ((volume : Measure Vec3).prod (volume.restrict (Ioo a b))) := by
   have hslab : (volume.restrict (spaceTimeSet (Set.univ : Set Vec3) (Ioo a b)) :
       Measure (Vec3 × ℝ)) = (volume : Measure Vec3).prod (volume.restrict (Ioo a b)) := by
-    show (volume : Measure (Vec3 × ℝ)).restrict ((Set.univ : Set Vec3) ×ˢ Ioo a b) = _
+    change (volume : Measure (Vec3 × ℝ)).restrict ((Set.univ : Set Vec3) ×ˢ Ioo a b) = _
     rw [Measure.volume_eq_prod, ← Measure.prod_restrict, Measure.restrict_univ]
   exact hslab ▸ hF
 
@@ -121,10 +121,10 @@ theorem lps_endpoint_norm_slice_facts {a b : ℝ} {u : ParabolicPoint → Vec3}
     filter_upwards [(lps_aesm_slab_to_prod hu).prodMk_right] with τ hτ
     have hmeas : AEStronglyMeasurable (fun x : Vec3 => vec3EuclideanNorm (u (x,τ))) volume :=
       CKN.Foundation.Parabolic.continuous_vec3EuclideanNorm.comp_aestronglyMeasurable hτ
-    show eLpNorm _ ⊤ volume = _
+    change eLpNorm _ ⊤ volume = _
     rw [eLpNorm_exponent_top hmeas]
     refine essSup_congr_ae (Eventually.of_forall fun x => ?_)
-    show ‖vec3EuclideanNorm (u (x,τ))‖ₑ = _
+    change ‖vec3EuclideanNorm (u (x,τ))‖ₑ = _
     rw [Real.enorm_eq_ofReal_abs, abs_of_nonneg (vec3EuclideanNorm_nonneg _)]
   have hNmeas : AEMeasurable N μt := by
     refine (lps_essSup_norm_slice_aemeasurable hu).congr ?_

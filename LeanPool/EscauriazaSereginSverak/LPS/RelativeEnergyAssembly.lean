@@ -122,9 +122,9 @@ theorem lps_relative_convection_bound_integrated
     {T K : ℝ} {u v : ParabolicPoint → Vec3}
     {Du Dv : ParabolicPoint → Fin 3 → Vec3} {m : ℝ → ℝ}
     (hSliceBound : ∀ᵐ τ ∂(volume.restrict (Ioo 0 T)),
-      (∫ x : Vec3, lpsRelativeConvection u v Du Dv (x,τ)) ≤
+      (∫ x : Vec3, lpsRelativeConvection u v Du Dv (x, τ)) ≤
         (1 / 2 : ℝ) *
-          (∫ x : Vec3, lpsRelativeGradientSq Du Dv (x,τ)) +
+          (∫ x : Vec3, lpsRelativeGradientSq Du Dv (x, τ)) +
           K * (m τ * lpsComparisonDistanceSq u v τ))
     (hC : Integrable (lpsRelativeConvection u v Du Dv)
       (volume.restrict (spaceTimeSet (Set.univ : Set Vec3) (Ioo 0 T))))
@@ -182,17 +182,17 @@ theorem lps_relative_energy_inequality_from_identities
     (hU : IsSerrinWeakSolution T a u Du pu)
     (hV : IsSerrinWeakSolution T a v Dv pv)
     (hEnergyEquality : ∀ᵐ t ∂(volume.restrict (Ioo 0 T)),
-      (∫ x : Vec3, ∑ k : Fin 3, u (x,t) k * u (x,t) k) -
+      (∫ x : Vec3, ∑ k : Fin 3, u (x, t) k * u (x, t) k) -
           (∫ x : Vec3, ∑ k : Fin 3, a x k * a x k) =
         -2 * ∫ z in spaceTimeSet (Set.univ : Set Vec3) (Ioo 0 t),
           ∑ k : Fin 3, ∑ j : Fin 3, Du z k j * Du z k j)
     (hEnergyInequality : ∀ᵐ t ∂(volume.restrict (Ioo 0 T)),
-      (∫ x : Vec3, ∑ k : Fin 3, v (x,t) k * v (x,t) k) ≤
+      (∫ x : Vec3, ∑ k : Fin 3, v (x, t) k * v (x, t) k) ≤
         (∫ x : Vec3, ∑ k : Fin 3, a x k * a x k) -
           2 * ∫ z in spaceTimeSet (Set.univ : Set Vec3) (Ioo 0 t),
             ∑ k : Fin 3, ∑ j : Fin 3, Dv z k j * Dv z k j)
     (hRelativeCross : ∀ᵐ t ∂(volume.restrict (Ioo 0 T)),
-      (∫ x : Vec3, ∑ k : Fin 3, v (x,t) k * u (x,t) k) -
+      (∫ x : Vec3, ∑ k : Fin 3, v (x, t) k * u (x, t) k) -
           (∫ x : Vec3, ∑ k : Fin 3, a x k * a x k) =
         -(∫ z in spaceTimeSet (Set.univ : Set Vec3) (Ioo 0 t),
             lpsRelativeConvection u v Du Dv z) -
@@ -334,17 +334,17 @@ theorem lps_relative_energy_zero_from_identities
     (hV : IsSerrinWeakSolution T a v Dv pv)
     (hK : 0 ≤ K)
     (hEnergyEquality : ∀ᵐ t ∂(volume.restrict (Ioo 0 T)),
-      (∫ x : Vec3, ∑ k : Fin 3, u (x,t) k * u (x,t) k) -
+      (∫ x : Vec3, ∑ k : Fin 3, u (x, t) k * u (x, t) k) -
           (∫ x : Vec3, ∑ k : Fin 3, a x k * a x k) =
         -2 * ∫ z in spaceTimeSet (Set.univ : Set Vec3) (Ioo 0 t),
           ∑ k : Fin 3, ∑ j : Fin 3, Du z k j * Du z k j)
     (hEnergyInequality : ∀ᵐ t ∂(volume.restrict (Ioo 0 T)),
-      (∫ x : Vec3, ∑ k : Fin 3, v (x,t) k * v (x,t) k) ≤
+      (∫ x : Vec3, ∑ k : Fin 3, v (x, t) k * v (x, t) k) ≤
         (∫ x : Vec3, ∑ k : Fin 3, a x k * a x k) -
           2 * ∫ z in spaceTimeSet (Set.univ : Set Vec3) (Ioo 0 t),
             ∑ k : Fin 3, ∑ j : Fin 3, Dv z k j * Dv z k j)
     (hRelativeCross : ∀ᵐ t ∂(volume.restrict (Ioo 0 T)),
-      (∫ x : Vec3, ∑ k : Fin 3, v (x,t) k * u (x,t) k) -
+      (∫ x : Vec3, ∑ k : Fin 3, v (x, t) k * u (x, t) k) -
           (∫ x : Vec3, ∑ k : Fin 3, a x k * a x k) =
         -(∫ z in spaceTimeSet (Set.univ : Set Vec3) (Ioo 0 t),
             lpsRelativeConvection u v Du Dv z) -
@@ -388,26 +388,26 @@ theorem lps_relative_energy_zero_from_slice_bound
     (hV : IsSerrinWeakSolution T a v Dv pv)
     (hK : 0 ≤ K)
     (hEnergyEquality : ∀ᵐ t ∂(volume.restrict (Ioo 0 T)),
-      (∫ x : Vec3, ∑ k : Fin 3, u (x,t) k * u (x,t) k) -
+      (∫ x : Vec3, ∑ k : Fin 3, u (x, t) k * u (x, t) k) -
           (∫ x : Vec3, ∑ k : Fin 3, a x k * a x k) =
         -2 * ∫ z in spaceTimeSet (Set.univ : Set Vec3) (Ioo 0 t),
           ∑ k : Fin 3, ∑ j : Fin 3, Du z k j * Du z k j)
     (hEnergyInequality : ∀ᵐ t ∂(volume.restrict (Ioo 0 T)),
-      (∫ x : Vec3, ∑ k : Fin 3, v (x,t) k * v (x,t) k) ≤
+      (∫ x : Vec3, ∑ k : Fin 3, v (x, t) k * v (x, t) k) ≤
         (∫ x : Vec3, ∑ k : Fin 3, a x k * a x k) -
           2 * ∫ z in spaceTimeSet (Set.univ : Set Vec3) (Ioo 0 t),
             ∑ k : Fin 3, ∑ j : Fin 3, Dv z k j * Dv z k j)
     (hRelativeCross : ∀ᵐ t ∂(volume.restrict (Ioo 0 T)),
-      (∫ x : Vec3, ∑ k : Fin 3, v (x,t) k * u (x,t) k) -
+      (∫ x : Vec3, ∑ k : Fin 3, v (x, t) k * u (x, t) k) -
           (∫ x : Vec3, ∑ k : Fin 3, a x k * a x k) =
         -(∫ z in spaceTimeSet (Set.univ : Set Vec3) (Ioo 0 t),
             lpsRelativeConvection u v Du Dv z) -
           2 * ∫ z in spaceTimeSet (Set.univ : Set Vec3) (Ioo 0 t),
             ∑ k : Fin 3, ∑ j : Fin 3, Du z k j * Dv z k j)
     (hSliceBound : ∀ᵐ τ ∂(volume.restrict (Ioo 0 T)),
-      (∫ x : Vec3, lpsRelativeConvection u v Du Dv (x,τ)) ≤
+      (∫ x : Vec3, lpsRelativeConvection u v Du Dv (x, τ)) ≤
         (1 / 2 : ℝ) *
-          (∫ x : Vec3, lpsRelativeGradientSq Du Dv (x,τ)) +
+          (∫ x : Vec3, lpsRelativeGradientSq Du Dv (x, τ)) +
           K * (m τ * lpsComparisonDistanceSq u v τ))
     (hC : Integrable (lpsRelativeConvection u v Du Dv)
       (volume.restrict (spaceTimeSet (Set.univ : Set Vec3) (Ioo 0 T))))

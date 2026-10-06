@@ -344,7 +344,7 @@ theorem lps_h1_finite_nonlinear_pairing_bound
   have hPint : Integrable
       (fun x : Vec3 => ∑ i : Fin 3,
         (∑ j : Fin 3, u x j * Du x i j) * lap x i) volume :=
-    (hProd.const_mul 27).mono' hPmeas (Eventually.of_forall fun x => by
+    (hProd.const_mul 27).mono' hPmeas (Filter.Eventually.of_forall fun x => by
       simpa only [Real.norm_eq_abs] using hPbound x)
   have hPabs : |∫ x : Vec3,
       ∑ i : Fin 3, (∑ j : Fin 3, u x j * Du x i j) * lap x i| ≤
@@ -483,10 +483,10 @@ theorem lps_h1_infinite_nonlinear_pairing_bound
       continuous_vec3EuclideanNorm.comp_aestronglyMeasurable
         hlap2.aestronglyMeasurable
     apply MemLp.of_le_mul hlap2.norm hmeas
-    filter_upwards [] with x
-    rw [Real.norm_eq_abs, abs_of_nonneg (vec3EuclideanNorm_nonneg _),
-      Real.norm_eq_abs, abs_of_nonneg (norm_nonneg _)]
-    exact vec3EuclideanNorm_le_sqrt_three_mul_norm (lap x)
+    · filter_upwards [] with x
+      rw [Real.norm_eq_abs, abs_of_nonneg (vec3EuclideanNorm_nonneg _),
+        Real.norm_eq_abs, abs_of_nonneg (norm_nonneg _)]
+      exact vec3EuclideanNorm_le_sqrt_three_mul_norm (lap x)
   have hHolder : ENNReal.HolderTriple (2 : ℝ≥0∞) 2 1 :=
     ENNReal.HolderConjugate.instTwoTwo
   have hGL : MemLp (fun x : Vec3 => G x * L x) 1 volume :=

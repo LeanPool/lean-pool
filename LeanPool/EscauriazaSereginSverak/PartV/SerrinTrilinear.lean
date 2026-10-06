@@ -73,7 +73,7 @@ theorem serrin_trilinear_vanish {b f g : Vec3 → Vec3} {Db Df Dg : Vec3 → Fin
     have htr : spatialDeriv (M (fun x => g x k) n) j x = M (fun x => Dg x k j) n x :=
       CKN.fderiv_mollify_eq_mollify_of_hasWeakPartialDerivOn isOpen_univ (hgl k)
         (hDgl k j) (hggrad k j) (serrinRadius_pos n) (Set.subset_univ _)
-    show (fderiv ℝ (serrinCutoff n * M (fun x => g x k) n) x) (basisVec j) = _
+    change (fderiv ℝ (serrinCutoff n * M (fun x => g x k) n) x) (basisVec j) = _
     rw [h]
     simp only [add_apply, smul_apply, smul_eq_mul]
     rw [← htr]
