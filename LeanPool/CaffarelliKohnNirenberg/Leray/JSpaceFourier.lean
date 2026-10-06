@@ -133,18 +133,48 @@ private theorem extensionPairing_eq_integral
   filter_upwards [] with x
   simp [extensionDotContinuous, extensionDotLinear]
 
-/-- The weak divergence identity extends from compact tests to every real
-Schwartz test. -/
-theorem isWeakDivFreeL2_schwartz {a : Vec3 → Vec3}
-    (ha : IsWeakDivFreeL2 a) (ψ : 𝓢(Vec3, ℝ)) :
-    ∫ x : Vec3, ∑ i : Fin 3, a x i * spatialDeriv ψ i x = 0 := by
+private theorem cutoffSchwartzGradient_radius_factor_tendsto :
+    Tendsto (fun n : ℕ => ‖(32 : ℝ) / ((n + 1 : ℕ) : ℝ)‖ₑ)
+      atTop (nhds 0) := by
+  have hr : Tendsto (fun n : ℕ => ((n + 1 : ℕ) : ℝ)) atTop atTop := by
+    have hnat : Tendsto (fun n : ℕ => (n : ℝ)) atTop atTop :=
+      tendsto_natCast_atTop_atTop
+    have h := hnat.comp (tendsto_add_atTop_nat (1 : ℕ))
+    simpa [Function.comp_def, Nat.cast_add, Nat.cast_one] using h
+  have hreal : Tendsto (fun n : ℕ => 32 / ((n + 1 : ℕ) : ℝ)) atTop (nhds 0) := by
+    simpa using (tendsto_const_nhds : Tendsto (fun _ : ℕ => (32 : ℝ)) atTop (nhds 32)).div_atTop hr
+  have habs : Tendsto (fun n : ℕ => |(32 : ℝ) / ((n + 1 : ℕ) : ℝ)|)
+      atTop (nhds 0) := hreal.congr' (Filter.Eventually.of_forall fun n =>
+        (abs_of_nonneg (by positivity : 0 ≤ (32 : ℝ) / ((n + 1 : ℕ) : ℝ))).symm)
+  simpa only [Real.enorm_eq_ofReal_abs, ENNReal.ofReal_zero] using
+    ENNReal.tendsto_ofReal habs
+
+private theorem schwartz_abs_eLpNorm (ψ : 𝓢(Vec3, ℝ)) :
+    eLpNorm (fun x : Vec3 => |ψ x|) 2 volume = eLpNorm ψ 2 volume := by
+  have habs : (fun x : Vec3 => |ψ x|) = fun x => ‖ψ x‖ := by
+    funext x
+    simp only [Real.norm_eq_abs]
+  rw [habs]
+  exact eLpNorm_norm ψ (ψ.memLp (2 : ℝ≥0∞) volume).aestronglyMeasurable
+
+private theorem schwartzGradient_cutoff_tail_tendsto (ψ : 𝓢(Vec3, ℝ)) :
+    Tendsto (fun n : ℕ => eLpNorm
+      ((CKN.euclideanBall (0 : Vec3) ((n + 1 : ℕ) : ℝ))ᶜ.indicator
+        (schwartzGradient ψ)) (2 : ℝ≥0∞) volume) atTop (nhds 0) := by
+  have h := eLpNorm_indicator_compl_euclideanBall_tendsto_zero
+    (schwartzGradient_memLp ψ)
+  have hcomp := h.comp (tendsto_add_atTop_nat 1)
+  simpa [Function.comp_def, Nat.cast_add, Nat.cast_one] using hcomp
+
+private theorem cutoffSchwartzGradient_toLp_tendsto (ψ : 𝓢(Vec3, ℝ)) :
+    Tendsto (fun n => (cutoffSchwartzGradient_memLp ψ n).toLp
+      (cutoffSchwartzGradient ψ n)) atTop
+      (nhds ((schwartzGradient_memLp ψ).toLp (schwartzGradient ψ))) := by
   let r : ℕ → ℝ := fun n => ((n + 1 : ℕ) : ℝ)
   let R : ℕ → ℝ := fun n => 2 * r n
   let η : ℕ → Vec3 → ℝ := fun n => CKN.canonicalBallCutoff 0 (r n) (R n)
-  let ψn : ℕ → Vec3 → ℝ := fun n x => η n x * ψ x
   let grad : Vec3 → Vec3 := schwartzGradient ψ
   let gradN : ℕ → Vec3 → Vec3 := cutoffSchwartzGradient ψ
-  let aLp : Lp (α := Vec3) Vec3 (2 : ℝ≥0∞) volume := ha.1.toLp a
   let gradLp : Lp (α := Vec3) Vec3 (2 : ℝ≥0∞) volume :=
     (schwartzGradient_memLp ψ).toLp grad
   let gradNLp : ℕ → Lp (α := Vec3) Vec3 (2 : ℝ≥0∞) volume :=
@@ -229,37 +259,14 @@ theorem isWeakDivFreeL2_schwartz {a : Vec3 → Vec3}
       (fun n : ℕ => eLpNorm
         ((CKN.euclideanBall (0 : Vec3) (r n))ᶜ.indicator grad)
         (2 : ℝ≥0∞) volume) atTop (nhds 0) := by
-    have h := eLpNorm_indicator_compl_euclideanBall_tendsto_zero
-      (schwartzGradient_memLp ψ)
-    have hcomp := h.comp (tendsto_add_atTop_nat 1)
-    simpa [Function.comp_def, r, Nat.cast_add, Nat.cast_one] using hcomp
-  have hfactorRealTendsto : Tendsto (fun n : ℕ => |(32 : ℝ) / r n|)
-      atTop (nhds 0) := by
-    have hr : Tendsto r atTop atTop := by
-      have hnat : Tendsto (fun n : ℕ => (n : ℝ)) atTop atTop :=
-        tendsto_natCast_atTop_atTop
-      have h := hnat.comp (tendsto_add_atTop_nat (1 : ℕ))
-      simpa [Function.comp_def, Nat.cast_add, Nat.cast_one, r] using h
-    have hreal : Tendsto (fun n : ℕ => 32 / r n) atTop (nhds 0) := by
-      simpa using (tendsto_const_nhds : Tendsto (fun _ : ℕ => (32 : ℝ)) atTop (nhds 32)).div_atTop hr
-    exact hreal.congr' (Filter.Eventually.of_forall fun n =>
-      (abs_of_nonneg (by positivity : 0 ≤ (32 : ℝ) / r n)).symm)
-  have hfactorTendsto : Tendsto (fun n : ℕ => ‖(32 : ℝ) / r n‖ₑ)
-      atTop (nhds 0) := by
-    simpa only [Real.enorm_eq_ofReal_abs, ENNReal.ofReal_zero] using
-      ENNReal.tendsto_ofReal hfactorRealTendsto
+    simpa [r, grad] using schwartzGradient_cutoff_tail_tendsto ψ
   have hmajorMemLp (n : ℕ) :
       MemLp (fun x : Vec3 => ‖((CKN.euclideanBall (0 : Vec3) (r n))ᶜ.indicator grad) x‖ +
         (32 / r n) * |ψ x|) (2 : ℝ≥0∞) volume := by
-    exact ((schwartzGradient_memLp ψ).indicator (CKN.measurableSet_euclideanBall 0 (r n)).compl).norm.add
+    exact ((schwartzGradient_memLp ψ).indicator
+      (CKN.measurableSet_euclideanBall 0 (r n)).compl).norm.add
       ((ψ.memLp (2 : ℝ≥0∞) volume).norm.const_mul _)
-  have hψabs : eLpNorm (fun x : Vec3 => |ψ x|) 2 volume =
-      eLpNorm ψ 2 volume := by
-    have habs : (fun x : Vec3 => |ψ x|) = fun x => ‖ψ x‖ := by
-      funext x
-      simp only [Real.norm_eq_abs]
-    rw [habs]
-    exact eLpNorm_norm ψ (ψ.memLp (2 : ℝ≥0∞) volume).aestronglyMeasurable
+  have hψabs := schwartz_abs_eLpNorm ψ
   have hmajorBound (n : ℕ) :
       eLpNorm (fun x : Vec3 => ‖((CKN.euclideanBall (0 : Vec3) (r n))ᶜ.indicator grad) x‖ +
         (32 / r n) * |ψ x|) (2 : ℝ≥0∞) volume ≤
@@ -284,12 +291,12 @@ theorem isWeakDivFreeL2_schwartz {a : Vec3 → Vec3}
       (fun n : ℕ => eLpNorm (fun x : Vec3 =>
         ‖((CKN.euclideanBall (0 : Vec3) (r n))ᶜ.indicator grad) x‖ +
           (32 / r n) * |ψ x|) (2 : ℝ≥0∞) volume) atTop (nhds 0) := by
-    have hψfinite : eLpNorm ψ (2 : ℝ≥0∞) volume ≠ ∞ :=
-      (ψ.memLp (2 : ℝ≥0∞) volume).eLpNorm_ne_top
     have hprod : Tendsto
         (fun n : ℕ => ‖(32 : ℝ) / r n‖ₑ * eLpNorm ψ 2 volume)
-        atTop (nhds 0) :=
-      by simpa using ENNReal.Tendsto.mul_const hfactorTendsto (Or.inr hψfinite)
+        atTop (nhds 0) := by
+      simpa [r] using ENNReal.Tendsto.mul_const
+        cutoffSchwartzGradient_radius_factor_tendsto
+        (Or.inr ((ψ.memLp (2 : ℝ≥0∞) volume).eLpNorm_ne_top))
     have hsum := htailTendsto.add hprod
     have hnonneg : ∀ᶠ n : ℕ in atTop, (0 : ℝ≥0∞) + 0 ≤ eLpNorm
         (fun x : Vec3 => ‖((CKN.euclideanBall (0 : Vec3) (r n))ᶜ.indicator grad) x‖ +
@@ -360,6 +367,29 @@ theorem isWeakDivFreeL2_schwartz {a : Vec3 → Vec3}
     (Lp.tendsto_Lp_iff_tendsto_eLpNorm'' gradN
       (fun n => cutoffSchwartzGradient_memLp ψ n) grad (schwartzGradient_memLp ψ)).2
       herrorTendsto
+  simpa [gradNLp, gradN, gradLp, grad] using hgradLimit
+
+/-- The weak divergence identity extends from compact tests to every real
+Schwartz test. -/
+theorem isWeakDivFreeL2_schwartz {a : Vec3 → Vec3}
+    (ha : IsWeakDivFreeL2 a) (ψ : 𝓢(Vec3, ℝ)) :
+    ∫ x : Vec3, ∑ i : Fin 3, a x i * spatialDeriv ψ i x = 0 := by
+  let r : ℕ → ℝ := fun n => ((n + 1 : ℕ) : ℝ)
+  let R : ℕ → ℝ := fun n => 2 * r n
+  let η : ℕ → Vec3 → ℝ := fun n => CKN.canonicalBallCutoff 0 (r n) (R n)
+  let ψn : ℕ → Vec3 → ℝ := fun n x => η n x * ψ x
+  let grad : Vec3 → Vec3 := schwartzGradient ψ
+  let gradN : ℕ → Vec3 → Vec3 := cutoffSchwartzGradient ψ
+  let aLp : Lp (α := Vec3) Vec3 (2 : ℝ≥0∞) volume := ha.1.toLp a
+  let gradLp : Lp (α := Vec3) Vec3 (2 : ℝ≥0∞) volume :=
+    (schwartzGradient_memLp ψ).toLp grad
+  let gradNLp : ℕ → Lp (α := Vec3) Vec3 (2 : ℝ≥0∞) volume :=
+    fun n => (cutoffSchwartzGradient_memLp ψ n).toLp (gradN n)
+  have hr (n : ℕ) : 0 ≤ r n := by dsimp [r]; positivity
+  have hrR (n : ℕ) : r n < R n := by
+    dsimp [R]
+    linarith only [show 0 < r n by dsimp [r]; positivity]
+  have hgradLimit := cutoffSchwartzGradient_toLp_tendsto ψ
   let P := extensionPairing aLp
   have hPLimit : Tendsto (fun n => P (gradNLp n)) atTop (nhds (P gradLp)) :=
     (P.continuous.tendsto gradLp).comp hgradLimit
@@ -379,7 +409,8 @@ theorem isWeakDivFreeL2_schwartz {a : Vec3 → Vec3}
       ∫ x : Vec3, ∑ i : Fin 3, aLp x i * gradNLp n x i =
           ∫ x : Vec3, ∑ i : Fin 3, a x i * ψtest.partialDeriv i x := by
             apply integral_congr_ae
-            filter_upwards [ha.1.coeFn_toLp, (cutoffSchwartzGradient_memLp ψ n).coeFn_toLp] with x ha' hg'
+            filter_upwards [ha.1.coeFn_toLp, (cutoffSchwartzGradient_memLp ψ n).coeFn_toLp]
+              with x ha' hg'
             rw [ha', hg', hgradEq x]
       _ = 0 := htest
   have hPconstant : (fun n : ℕ => P (gradNLp n)) = fun _ => (0 : ℝ) :=
