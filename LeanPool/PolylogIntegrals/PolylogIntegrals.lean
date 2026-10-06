@@ -5,6 +5,7 @@ Authors: rainrzk
 -/
 module
 
+public import LeanPool.PolylogIntegrals.Lemmas.Zeta
 public import LeanPool.PolylogIntegrals.Statements
 
 /-!

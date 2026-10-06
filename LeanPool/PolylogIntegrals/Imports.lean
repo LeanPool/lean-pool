@@ -21,6 +21,7 @@ public import LeanPool.PolylogIntegrals.Lemmas.Series
 public import LeanPool.PolylogIntegrals.Lemmas.TrilogLogOneAddSq
 public import LeanPool.PolylogIntegrals.Lemmas.TrilogLogSubLogSq
 public import LeanPool.PolylogIntegrals.Lemmas.TrilogValues
+public import LeanPool.PolylogIntegrals.Lemmas.Zeta
 public import LeanPool.PolylogIntegrals.PolylogIntegrals
 public import LeanPool.PolylogIntegrals.Proofs.A001
 public import LeanPool.PolylogIntegrals.Proofs.A002
