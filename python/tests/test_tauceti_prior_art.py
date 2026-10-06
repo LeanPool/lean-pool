@@ -3,6 +3,8 @@
 import json
 import subprocess
 
+import pytest
+
 from lean_pool import tauceti_prior_art
 from lean_pool.prior_art import Claim
 
@@ -144,3 +146,58 @@ def test_project_review_receives_tauceti_even_without_mathlib_key(
     section = review.gather_prior_art("project", "head", "o/r")
     assert "LEANEXPLORE_API_KEY is not set" in section
     assert "TauCeti.adoCharZero : True" in section
+
+
+def test_pinned_worker_compares_against_pr_base(monkeypatch) -> None:
+    """Projects merged after the engine pin must not become new PR claims."""
+    from lean_pool import review
+
+    base = """projects:
+  - slug: accepted
+    title: Accepted project
+    main_results:
+      - declaration: acceptedTheorem
+"""
+    head = (
+        base
+        + """  - slug: new
+    title: New project
+    main_results:
+      - declaration: newTheorem
+"""
+    )
+    fetched = []
+
+    def fetch(path, ref, repository):
+        fetched.append(ref)
+        return head if ref == "head" else base
+
+    claims_seen = []
+    monkeypatch.setattr(review, "fetch_file_at", fetch)
+    monkeypatch.setattr(review.prior_art, "search_mathlib", lambda claims: ({}, None))
+    monkeypatch.setattr(
+        review.tauceti_prior_art,
+        "gather",
+        lambda claims, run_gh: claims_seen.extend(claims) or "TauCeti evidence",
+    )
+    section = review.gather_prior_art("project", "head", "o/r", base_sha="base")
+    assert fetched == ["head", "base"]
+    assert [claim.declaration for claim in claims_seen] == ["newTheorem"]
+    assert "accepted: Accepted project" in section
+
+
+def test_unreadable_pr_base_is_unchecked(monkeypatch) -> None:
+    """A failed base lookup must not use the pinned registry as a fallback."""
+    from lean_pool import review
+
+    monkeypatch.setattr(
+        review,
+        "fetch_file_at",
+        lambda path, ref, repository: "projects: []" if ref == "head" else "",
+    )
+    monkeypatch.setattr(
+        review.prior_art, "search_mathlib", lambda claims: pytest.fail("must skip")
+    )
+    section = review.gather_prior_art("project", "head", "o/r", base_sha="base")
+    assert "could not be read at base" in section
+    assert "did not run" in section

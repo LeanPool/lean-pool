@@ -1760,23 +1760,36 @@ def fetch_file_at(path: str, ref: str, repo_full_name: str) -> str:
         return ""
 
 
-def gather_prior_art(kind: str, head_sha: str, repo_full_name: str) -> str | None:
+def gather_prior_art(
+    kind: str,
+    head_sha: str,
+    repo_full_name: str,
+    *,
+    base_sha: str | None = None,
+) -> str | None:
     """Compare Mathlib, Tau Ceti, and the pool with what this PR claims is new.
 
     Only project PRs add new headlines; refactors change projects whose
     prior art was settled when they merged. A search that cannot run degrades to a
     note saying so — never to a failed review.
+    A pinned worker supplies the PR base SHA to avoid comparing against its
+    potentially older trusted engine checkout.
     """
     if kind != "project":
         return None
     registry = "LeanPool/projects.yml"
     head_text = fetch_file_at(registry, head_sha, repo_full_name)
-    base_text = (REPO_ROOT / registry).read_text(encoding="utf-8")
-    if not head_text.strip():
+    base_text = (
+        fetch_file_at(registry, base_sha, repo_full_name)
+        if base_sha
+        else (REPO_ROOT / registry).read_text(encoding="utf-8")
+    )
+    if not head_text.strip() or not base_text.strip():
         # Distinguish "could not read the registry" from "the PR adds
         # nothing": both yield zero claims, but only one of them means
         # the reviewer should treat prior art as unchecked.
-        unreadable = f"{registry} could not be read at {head_sha[:8]}"
+        unreadable_sha = head_sha if not head_text.strip() else base_sha or "base"
+        unreadable = f"{registry} could not be read at {unreadable_sha[:8]}"
         print(f"Mathlib prior-art search skipped: {unreadable}", file=sys.stderr)
         projects = (REPO_ROOT / "LeanPool" / "projects.yml").read_text(encoding="utf-8")
         return prior_art.render([], {}, projects, unreadable)
@@ -1786,10 +1799,7 @@ def gather_prior_art(kind: str, head_sha: str, repo_full_name: str) -> str | Non
         print(f"Mathlib prior-art search skipped: {unavailable}", file=sys.stderr)
     else:
         print(f"Searched Mathlib for {len(claims)} headline(s).", file=sys.stderr)
-    projects_text = (REPO_ROOT / "LeanPool" / "projects.yml").read_text(
-        encoding="utf-8"
-    )
-    sections = [prior_art.render(claims, hits, projects_text, unavailable)]
+    sections = [prior_art.render(claims, hits, base_text, unavailable)]
     sections.append(tauceti_prior_art.gather(claims, run_gh))
     return "\n\n".join(section for section in sections if section)
 
