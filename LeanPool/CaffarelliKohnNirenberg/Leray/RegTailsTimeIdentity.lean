@@ -247,6 +247,18 @@ theorem regTails_localEnergy_product_test
   rw [hLeft, hRight] at hlocal
   simpa [D] using hlocal
 
+private theorem regTails_integral_double_sum
+    {X : Type*} [MeasurableSpace X] (μ : Measure X) (f : Fin 3 → Fin 3 → X → ℝ)
+    (hf : ∀ i j, Integrable (f i j) μ) :
+    (∫ x, ∑ i : Fin 3, ∑ j : Fin 3, f i j x ∂μ) =
+      ∑ i : Fin 3, ∑ j : Fin 3, ∫ x, f i j x ∂μ := by
+  rw [integral_finsetSum Finset.univ (by
+    intro i hi
+    exact integrable_finsetSum Finset.univ (by intro j hj; exact hf i j))]
+  apply Finset.sum_congr rfl
+  intro i hi
+  rw [integral_finsetSum Finset.univ (by intro j hj; exact hf i j)]
+
 /-- Summing the componentwise spatial integration by parts gives the cutoff
 Laplacian contribution to the localized energy identity. -/
 theorem regTails_laplacian_ibp_sum
@@ -372,54 +384,15 @@ theorem regTails_laplacian_ibp_sum
           (∑ j : Fin 3, qjj j z.1) * η z.2) =
       ∑ i : Fin 3, ∑ j : Fin 3,
           ∫ z in S, u (z.1, z.2) i ^ (2 : ℕ) * qjj j z.1 * η z.2 := by
-    have hpoint (z : Vec3 × ℝ) :
-        (vec3EuclideanNorm (u ((z.1, z.2) : ParabolicPoint))) ^ (2 : ℕ) *
-        (∑ j : Fin 3, qjj j z.1) * η z.2 =
-          ∑ i : Fin 3, ∑ j : Fin 3,
-            u ((z.1, z.2) : ParabolicPoint) i ^ (2 : ℕ) * qjj j z.1 * η z.2 := by
-      rw [regTails_vec3EuclideanNorm_sq]
-      calc
-        (∑ i : Fin 3, u ((z.1, z.2) : ParabolicPoint) i ^ (2 : ℕ)) *
-            (∑ j : Fin 3, qjj j z.1) * η z.2 =
-          ∑ i : Fin 3, u ((z.1, z.2) : ParabolicPoint) i ^ (2 : ℕ) *
-            ((∑ j : Fin 3, qjj j z.1) * η z.2) := by
-              calc
-                _ = (∑ i : Fin 3,
-                    u ((z.1, z.2) : ParabolicPoint) i ^ (2 : ℕ)) *
-                    ((∑ j : Fin 3, qjj j z.1) * η z.2) := by ring
-                _ = _ := by rw [Finset.sum_mul]
-        _ = ∑ i : Fin 3, ∑ j : Fin 3,
-              u ((z.1, z.2) : ParabolicPoint) i ^ (2 : ℕ) * qjj j z.1 * η z.2 := by
-              apply Finset.sum_congr rfl
-              intro i hi
-              calc
-                _ = (u ((z.1, z.2) : ParabolicPoint) i ^ (2 : ℕ) *
-                      (∑ j : Fin 3, qjj j z.1)) * η z.2 := by ring
-                _ = _ := by rw [Finset.mul_sum]
-                _ = _ := by rw [Finset.sum_mul]
-    have hInnerInt (i : Fin 3) : Integrable
-        (fun z : Vec3 × ℝ => ∑ j : Fin 3,
-          u (z.1, z.2) i ^ (2 : ℕ) * qjj j z.1 * η z.2)
-        ((volume : Measure (Vec3 × ℝ)).restrict S) := by
-      exact integrable_finsetSum Finset.univ
-        (by intro j hj; exact hLeftCompIntOn i j)
     calc
       _ = ∫ z in S, ∑ i : Fin 3, ∑ j : Fin 3,
-            u (z.1, z.2) i ^ (2 : ℕ) * qjj j z.1 * η z.2 := by
-          apply setIntegral_congr_fun hSmeas
-          intro z hz
-          exact hpoint z
-      _ = ∑ i : Fin 3, ∫ z in S, ∑ j : Fin 3,
-            u (z.1, z.2) i ^ (2 : ℕ) * qjj j z.1 * η z.2 := by
-          rw [integral_finsetSum Finset.univ (by
-            intro i hi
-            exact hInnerInt i)]
-      _ = ∑ i : Fin 3, ∑ j : Fin 3,
-            ∫ z in S, u (z.1, z.2) i ^ (2 : ℕ) * qjj j z.1 * η z.2 := by
-          apply Finset.sum_congr rfl
-          intro i hi
-          rw [integral_finsetSum Finset.univ
-            (by intro j hj; exact hLeftCompIntOn i j)]
+          u (z.1, z.2) i ^ (2 : ℕ) * qjj j z.1 * η z.2 := by
+        apply integral_congr_ae
+        filter_upwards [] with z
+        rw [regTails_vec3EuclideanNorm_sq]
+        simp only [Finset.sum_mul, Finset.mul_sum]
+        exact Finset.sum_comm
+      _ = _ := regTails_integral_double_sum _ _ hLeftCompIntOn
   have hRhsExpand :
       (∫ z in S,
         (∑ i : Fin 3, ∑ j : Fin 3,
@@ -428,49 +401,14 @@ theorem regTails_laplacian_ibp_sum
       ∑ i : Fin 3, ∑ j : Fin 3,
           ∫ z in S, u (z.1, z.2) i * spatialPartial
             (fun y : ParabolicPoint => u y i) j z * qj j z.1 * η z.2 := by
-    have hInnerInt (i : Fin 3) : Integrable
-        (fun z : Vec3 × ℝ => ∑ j : Fin 3,
-          u (z.1, z.2) i * spatialPartial (fun y : ParabolicPoint => u y i) j z *
-            qj j z.1 * η z.2)
-        ((volume : Measure (Vec3 × ℝ)).restrict S) := by
-      exact integrable_finsetSum Finset.univ
-        (by intro j hj; exact hCrossCompIntOn i j)
-    have hTotalInt : Integrable
-        (fun z : Vec3 × ℝ => ∑ i : Fin 3, ∑ j : Fin 3,
-          u (z.1, z.2) i * spatialPartial (fun y : ParabolicPoint => u y i) j z *
-            qj j z.1 * η z.2)
-        ((volume : Measure (Vec3 × ℝ)).restrict S) := by
-      exact integrable_finsetSum Finset.univ
-        (by intro i hi; exact hInnerInt i)
-    have hpoint (z : Vec3 × ℝ) :
-        (∑ i : Fin 3, ∑ j : Fin 3,
-          u (z.1, z.2) i * spatialPartial (fun y : ParabolicPoint => u y i) j z *
-            spatialPartial qST j z) * η z.2 =
-          ∑ i : Fin 3, ∑ j : Fin 3,
-            u (z.1, z.2) i * spatialPartial (fun y : ParabolicPoint => u y i) j z *
-              qj j z.1 * η z.2 := by
-      simp_rw [hqjEq]
-      simp_rw [Finset.sum_mul]
     calc
       _ = ∫ z in S, ∑ i : Fin 3, ∑ j : Fin 3,
-            u (z.1, z.2) i * spatialPartial (fun y : ParabolicPoint => u y i) j z *
-              qj j z.1 * η z.2 := by
-          apply setIntegral_congr_fun hSmeas
-          intro z hz
-          exact hpoint z
-      _ = ∑ i : Fin 3, ∫ z in S, ∑ j : Fin 3,
-            u (z.1, z.2) i * spatialPartial (fun y : ParabolicPoint => u y i) j z *
-              qj j z.1 * η z.2 := by
-          rw [integral_finsetSum Finset.univ (by
-            intro i hi
-            exact hInnerInt i)]
-      _ = ∑ i : Fin 3, ∑ j : Fin 3,
-            ∫ z in S, u (z.1, z.2) i * spatialPartial
-              (fun y : ParabolicPoint => u y i) j z * qj j z.1 * η z.2 := by
-          apply Finset.sum_congr rfl
-          intro i hi
-          rw [integral_finsetSum Finset.univ
-            (by intro j hj; exact hCrossCompIntOn i j)]
+          u (z.1, z.2) i * spatialPartial (fun y : ParabolicPoint => u y i) j z *
+            qj j z.1 * η z.2 := by
+        apply integral_congr_ae
+        filter_upwards [] with z
+        simp only [Finset.sum_mul]
+      _ = _ := regTails_integral_double_sum _ _ hCrossCompIntOn
   have hCompIBP (i j : Fin 3) :
       (∫ z in S, u (z.1, z.2) i ^ (2 : ℕ) * qjj j z.1 * η z.2) =
       -2 * ∫ z in S, u (z.1, z.2) i * spatialPartial

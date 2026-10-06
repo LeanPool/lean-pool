@@ -153,9 +153,11 @@ noncomputable def regR12PressureBesselMap :
     RegR12TensorH4 →L[ℂ] RegR12ScalarH4 :=
   ((BesselPotentialSpace.toLpₗᵢ (E := L2Vec3) (F := ℂ)
     ((2 * 2 : ℕ) : ℝ) 2).symm.toContinuousLinearEquiv.toContinuousLinearMap).comp
-    (((Lp.fourierTransformₗᵢ (E := L2Vec3) (F := ℂ)).symm.toContinuousLinearEquiv.toContinuousLinearMap).comp
+    (((Lp.fourierTransformₗᵢ (E := L2Vec3)
+      (F := ℂ)).symm.toContinuousLinearEquiv.toContinuousLinearMap).comp
       (regR12PressureFourierCLM.comp
-        (((Lp.fourierTransformₗᵢ (E := L2Vec3) (F := ComplexTensor3)).toContinuousLinearEquiv.toContinuousLinearMap).comp
+        (((Lp.fourierTransformₗᵢ (E := L2Vec3)
+          (F := ComplexTensor3)).toContinuousLinearEquiv.toContinuousLinearMap).comp
           (BesselPotentialSpace.toLpₗᵢ (E := L2Vec3) (F := ComplexTensor3)
             ((2 * 2 : ℕ) : ℝ) 2).toContinuousLinearEquiv.toContinuousLinearMap)))
 
@@ -473,6 +475,22 @@ private theorem regR12Pressure_spatialPartial_eq_model
     (F' := regR12PressureModel ρ ε hε T hT v) z
     (fun x => regR12PressureModel_eq_forcedQuad ρ ε hε a ha T hT v hv hz x) j
 
+private theorem regR12Pressure_sliceC1
+    (ρ : RegMollifierProfile) (ε : ℝ) (hε : 0 < ε)
+    (T : ℝ) (hT : 0 ≤ T)
+    (v : C(RegularizedMildTimeInterval T,
+      BesselPotentialSpace L2Vec3 ComplexVec3 ((2 * 2 : ℕ) : ℝ) 2)) :
+    (∀ z : ParabolicPoint, DifferentiableAt ℝ
+      (fun x : Vec3 => regR12PressureModel ρ ε hε T hT v (x, z.2)) z.1) ∧
+    (∀ j : Fin 3, Continuous (fun z : Vec3 × ℝ =>
+      spatialPartial (regR12PressureModel ρ ε hε T hT v) j z)) := by
+  have h := regR12ScalarPressureField_sliceC1_bound
+    (regR12PressureFreqPath ρ ε hε T hT v)
+    (regR12PressureFreqPath_continuous ρ ε hε T hT v)
+    (regularisedBesselTensorConstant ρ ε hε 2 * ‖v‖ ^ 2)
+    (fun t => regR12PressureFreqPath_norm_le ρ ε hε T hT v t)
+  exact ⟨h.1, h.2.1⟩
+
 /-- The canonical pressure of the global regularized curve is continuously
 differentiable in space on positive times, with uniform strip bounds and
 square integrability on bounded positive-time slabs. -/
@@ -511,27 +529,15 @@ theorem regR12Pressure_regularity
   · intro i
     refine regR12_continuousOn_of_local_models fun T hT => ?_
     obtain ⟨v, hv⟩ := hPath T hT.le
-    let B := regularisedBesselTensorConstant ρ ε hε 2 * ‖v‖ ^ 2
-    have hB : ∀ t, ‖regR12PressureFreqPath ρ ε hε T hT.le v t‖ ≤ B := by
-      intro t
-      exact regR12PressureFreqPath_norm_le ρ ε hε T hT.le v t
-    have hSlice := regR12ScalarPressureField_sliceC1_bound
-      (regR12PressureFreqPath ρ ε hε T hT.le v)
-      (regR12PressureFreqPath_continuous ρ ε hε T hT.le v) B hB
+    have hSlice := regR12Pressure_sliceC1 ρ ε hε T hT.le v
     refine ⟨fun z => spatialPartial (regR12PressureModel ρ ε hε T hT.le v) i z,
       ?_, fun z hz => ?_⟩
-    · exact hSlice.2.1 i
+    · exact hSlice.2 i
     exact regR12Pressure_spatialPartial_eq_model ρ ε hε a ha T hT.le v hv
       (z.1, z.2) ⟨hz.1.le, hz.2.le⟩ i
   · intro z hz
     obtain ⟨v, hv⟩ := hPath z.2 hz.2.le
-    let B := regularisedBesselTensorConstant ρ ε hε 2 * ‖v‖ ^ 2
-    have hB : ∀ t, ‖regR12PressureFreqPath ρ ε hε z.2 hz.2.le v t‖ ≤ B := by
-      intro t
-      exact regR12PressureFreqPath_norm_le ρ ε hε z.2 hz.2.le v t
-    have hSlice := regR12ScalarPressureField_sliceC1_bound
-      (regR12PressureFreqPath ρ ε hε z.2 hz.2.le v)
-      (regR12PressureFreqPath_continuous ρ ε hε z.2 hz.2.le v) B hB
+    have hSlice := regR12Pressure_sliceC1 ρ ε hε z.2 hz.2.le v
     have hm := hSlice.1 z
     refine hm.congr_of_eventuallyEq (Filter.Eventually.of_forall fun x => ?_)
     exact regR12PressureModel_eq_forcedQuad ρ ε hε a ha z.2 hz.2.le v hv
@@ -546,23 +552,16 @@ theorem regR12Pressure_regularity
         (regularisedBesselTensorConstant ρ ε hε 2 * ‖v‖ ^ 2)))
     have hC : 0 ≤ C := by
       dsimp [C]
-      have hKernel : 0 ≤ (eLpNorm regR12Kernel 2 volume).toReal := ENNReal.toReal_nonneg
-      have hfactor : 0 ≤ 1 + 2 * π := by positivity
-      exact mul_nonneg (norm_nonneg _) (mul_nonneg hfactor
-        (mul_nonneg hKernel (mul_nonneg hconstant (sq_nonneg _))))
+      positivity
     refine ⟨C, hC, fun z hz => ?_⟩
     let zPair : Vec3 × ℝ := z
     have hzT : z.2 ∈ Icc 0 T := ⟨le_trans hδ.le hz.2.1, hz.2.2⟩
     let B := regularisedBesselTensorConstant ρ ε hε 2 * ‖v‖ ^ 2
     let G := regR12PressureFreqPath ρ ε hε T hT v
     have hGz : ‖G zPair.2‖ ≤ B := regR12PressureFreqPath_norm_le ρ ε hε T hT v zPair.2
-    have hBnonneg : 0 ≤ B := by
-      dsimp [B]
-      exact mul_nonneg hconstant (sq_nonneg _)
     have hKernel : 0 ≤ (eLpNorm regR12Kernel 2 volume).toReal := ENNReal.toReal_nonneg
     have hone : 1 ≤ 1 + 2 * π := by linarith only [Real.pi_pos]
-    have hfirst : 2 * π ≤ 1 + 2 * π := by linarith only
-    have hfirstNonneg : 0 ≤ 2 * π := mul_nonneg (by norm_num) Real.pi_pos.le
+    have hfirst : 2 * π ≤ 1 + 2 * π := le_add_of_nonneg_left (by norm_num)
     constructor
     · have hpField := regR12SpaceTimeField_abs_le Complex.reCLM
         (fun _ => (1 : ℂ)) aestronglyMeasurable_const 1 zero_le_one
@@ -585,7 +584,7 @@ theorem regR12Pressure_regularity
                   ((eLpNorm regR12Kernel 2 volume).toReal * B) :=
                 by
                   simpa only [one_mul] using
-                    mul_le_mul_of_nonneg_right hone (mul_nonneg hKernel hBnonneg)
+                    mul_le_mul_of_nonneg_right hone (by positivity)
       have hpModel' : |regR12PressureModel ρ ε hε T hT v (zPair.1, zPair.2)| ≤ C := by
         simpa using hpModel
       have hzTpair : zPair.2 ∈ Icc 0 T := by simpa [zPair] using hzT
@@ -623,10 +622,10 @@ theorem regR12Pressure_regularity
                       (2 * π) * ((eLpNorm regR12Kernel 2 volume).toReal * ‖G z.2‖) := by ring
                   _ ≤ (2 * π) * ((eLpNorm regR12Kernel 2 volume).toReal * B) :=
                     mul_le_mul_of_nonneg_left
-                      (mul_le_mul_of_nonneg_left hGz hKernel) hfirstNonneg
+                      (mul_le_mul_of_nonneg_left hGz hKernel) (by positivity)
               _ ≤ (1 + 2 * π) *
                   ((eLpNorm regR12Kernel 2 volume).toReal * B) :=
-                mul_le_mul_of_nonneg_right hfirst (mul_nonneg hKernel hBnonneg)
+                mul_le_mul_of_nonneg_right hfirst (by positivity)
       rw [regR12Pressure_spatialPartial_eq_model ρ ε hε a ha T hT v hv z hzT i]
       exact hdpModel
   · intro δ T hδ hδT

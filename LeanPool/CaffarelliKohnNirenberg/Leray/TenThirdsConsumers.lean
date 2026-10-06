@@ -130,6 +130,72 @@ theorem lerayHopf_tensor_memLp_fiveThirds
   rw [hfun]
   exact hi.mul hj
 
+private theorem vec3Euclidean_mass_lt_top {a : Vec3 → Vec3}
+    (ha : MemLp a 2 volume) :
+    (∫⁻ x : Vec3, ENNReal.ofReal (vec3EuclideanNorm (a x)) ^ (2 : ℝ)) < ⊤ := by
+  have hmass : (∫⁻ x : Vec3, ‖a x‖ₑ ^ (2 : ℝ)) < ⊤ :=
+    (eLpNorm_lt_top_iff_lintegral_rpow_enorm_lt_top
+      (by norm_num : (2 : ℝ≥0∞) ≠ 0)
+      (by norm_num : (2 : ℝ≥0∞) ≠ ⊤)
+      ha.aestronglyMeasurable).mp ha.eLpNorm_lt_top
+  refine lt_of_le_of_lt ?_ (ENNReal.mul_lt_top (by norm_num : (3 : ℝ≥0∞) < ⊤) hmass)
+  calc
+    (∫⁻ x : Vec3, ENNReal.ofReal (vec3EuclideanNorm (a x)) ^ (2 : ℝ)) ≤
+        ∫⁻ x : Vec3, 3 * ‖a x‖ₑ ^ (2 : ℝ) :=
+      lintegral_mono fun x => vec3Euclidean_sq_le_three_enorm_sq (a x)
+    _ = 3 * (∫⁻ x : Vec3, ‖a x‖ₑ ^ (2 : ℝ)) := by
+      rw [lintegral_const_mul' (3 : ℝ≥0∞) _ (by norm_num)]
+
+private theorem lintegral_three_le_two_tenThirds {α : Type*} [MeasurableSpace α]
+    (μ : Measure α) (W : α → ℝ≥0∞) (hW : AEMeasurable W μ) :
+    (∫⁻ q, W q ^ (3 : ℝ) ∂μ) ≤
+      (∫⁻ q, W q ^ (2 : ℝ) ∂μ) ^ (1 / 4 : ℝ) *
+        (∫⁻ q, W q ^ (10 / 3 : ℝ) ∂μ) ^ (3 / 4 : ℝ) := by
+  let f : α → ℝ≥0∞ := fun q => W q ^ (1 / 2 : ℝ)
+  let g : α → ℝ≥0∞ := fun q => W q ^ (5 / 2 : ℝ)
+  have hfmeas : AEMeasurable f μ :=
+    (ENNReal.continuous_rpow_const (y := (1 / 2 : ℝ))).measurable.comp_aemeasurable hW
+  have hgmeas : AEMeasurable g μ :=
+    (ENNReal.continuous_rpow_const (y := (5 / 2 : ℝ))).measurable.comp_aemeasurable hW
+  have hf4 (q : α) : f q ^ (4 : ℝ) = W q ^ (2 : ℝ) := by
+    dsimp [f]
+    rw [← ENNReal.rpow_mul]
+    congr 1
+    norm_num
+  have hgFourThirds (q : α) : g q ^ (4 / 3 : ℝ) = W q ^ (10 / 3 : ℝ) := by
+    dsimp [g]
+    rw [← ENNReal.rpow_mul]
+    congr 1
+    norm_num
+  have hfg (q : α) : f q * g q = W q ^ (3 : ℝ) := by
+    dsimp [f, g]
+    by_cases hzero : W q = 0
+    · simp [hzero]
+    · by_cases htop : W q = ⊤
+      · simp [htop]
+      · rw [← ENNReal.rpow_add _ _ hzero htop]
+        norm_num
+  have hHolder := ENNReal.lintegral_Lp_mul_le_Lq_mul_Lr
+    (p := (1 : ℝ)) (q := (4 : ℝ)) (r := (4 / 3 : ℝ))
+    (by norm_num : (0 : ℝ) < 1)
+    (by norm_num : (1 : ℝ) < 4)
+    (by norm_num : (1 : ℝ) / 1 = (1 : ℝ) / 4 + (1 : ℝ) / (4 / 3))
+    μ hfmeas hgmeas
+  have hF4 : (∫⁻ q, f q ^ (4 : ℝ) ∂μ) = ∫⁻ q, W q ^ (2 : ℝ) ∂μ :=
+    lintegral_congr fun q => hf4 q
+  have hGFourThirds : (∫⁻ q, g q ^ (4 / 3 : ℝ) ∂μ) =
+      ∫⁻ q, W q ^ (10 / 3 : ℝ) ∂μ :=
+    lintegral_congr fun q => hgFourThirds q
+  calc
+    (∫⁻ q, W q ^ (3 : ℝ) ∂μ) = ∫⁻ q, (f q * g q) ^ (1 : ℝ) ∂μ := by
+      apply lintegral_congr
+      intro q
+      rw [ENNReal.rpow_one, hfg q]
+    _ ≤ (∫⁻ q, f q ^ (4 : ℝ) ∂μ) ^ (1 / 4 : ℝ) *
+        (∫⁻ q, g q ^ (4 / 3 : ℝ) ∂μ) ^ (3 / 4 : ℝ) := by
+      simpa [ENNReal.rpow_one] using hHolder
+    _ = _ := by rw [hF4, hGFourThirds]
+
 /-- The finite-time `L³` consequence in `eq:u-three`, with the datum energy
 written as its squared Euclidean `L²` mass. -/
 theorem lerayHopf_memLp_three_with_energy_bound
@@ -162,27 +228,7 @@ theorem lerayHopf_memLp_three_with_energy_bound
   let half : ℝ≥0∞ := ENNReal.ofReal (1 / 2 : ℝ)
   let W : Vec3 × ℝ → ℝ≥0∞ := fun q =>
     ENNReal.ofReal (vec3EuclideanNorm (u (parabolicHomeomorph.symm q)))
-  let f : Vec3 × ℝ → ℝ≥0∞ := fun q => W q ^ (1 / 2 : ℝ)
-  let g : Vec3 × ℝ → ℝ≥0∞ := fun q => W q ^ (5 / 2 : ℝ)
-  have hT : 0 < T := hLH.1
-  have hDataMem : MemLp a 2 volume := hLH.2.1.1
-  have hDataMassTop :
-      (∫⁻ x : Vec3, ‖a x‖ₑ ^ (2 : ℝ)) < ⊤ := by
-    exact (eLpNorm_lt_top_iff_lintegral_rpow_enorm_lt_top
-      (by norm_num : (2 : ℝ≥0∞) ≠ 0)
-      (by norm_num : (2 : ℝ≥0∞) ≠ ⊤)
-      hDataMem.aestronglyMeasurable).mp hDataMem.eLpNorm_lt_top
-  have hAcomparison : A ≤ 3 * (∫⁻ x : Vec3, ‖a x‖ₑ ^ (2 : ℝ)) := by
-    calc
-      A ≤ ∫⁻ x : Vec3, 3 * ‖a x‖ₑ ^ (2 : ℝ) := by
-        apply lintegral_mono
-        intro x
-        exact vec3Euclidean_sq_le_three_enorm_sq (a x)
-      _ = 3 * (∫⁻ x : Vec3, ‖a x‖ₑ ^ (2 : ℝ)) := by
-        rw [lintegral_const_mul' (3 : ℝ≥0∞) _ (by norm_num)]
-  have hAtop : A < ⊤ :=
-    lt_of_le_of_lt hAcomparison
-      (ENNReal.mul_lt_top (by norm_num) hDataMassTop)
+  have hAtop : A < ⊤ := vec3Euclidean_mass_lt_top hLH.2.1.1
   have hCtop : C < ⊤ := by
     dsimp [C]
     unfold energyTenThirdsConstant
@@ -203,14 +249,6 @@ theorem lerayHopf_memLp_three_with_energy_bound
     dsimp [W]
     exact (ENNReal.continuous_ofReal.comp_aestronglyMeasurable
       (hNmeas.comp_quasiMeasurePreserving hQMP))
-  have hfmeas : AEMeasurable f μU := by
-    dsimp [f]
-    exact (ENNReal.continuous_rpow_const (y := (1 / 2 : ℝ))).measurable.comp_aemeasurable
-      hWmeas.aemeasurable
-  have hgmeas : AEMeasurable g μU := by
-    dsimp [g]
-    exact (ENNReal.continuous_rpow_const (y := (5 / 2 : ℝ))).measurable.comp_aemeasurable
-      hWmeas.aemeasurable
   have hEnergy : ∀ t₀ : ℝ, t₀ ∈ Icc 0 T →
       half * (∫⁻ x : Vec3,
         ENNReal.ofReal (vec3EuclideanNorm (u (x, t₀))) ^ (2 : ℝ)) +
@@ -277,64 +315,9 @@ theorem lerayHopf_memLp_three_with_energy_bound
   have hM10energy : M10 ≤ C * (A ^ (2 / 3 : ℝ) * A) := by
     simpa [M10, Q, C, A] using
       (lerayHopf_tenThirds_initial_energy_bound hLH)
-  have hf4 : ∀ q : Vec3 × ℝ, f q ^ (4 : ℝ) = W q ^ (2 : ℝ) := by
-    intro q
-    dsimp [f]
-    calc
-      (W q ^ (1 / 2 : ℝ)) ^ (4 : ℝ) =
-          W q ^ ((1 / 2 : ℝ) * 4) := (ENNReal.rpow_mul _ _ _).symm
-      _ = W q ^ (2 : ℝ) := by congr 1; norm_num
-  have hgFourThirds : ∀ q : Vec3 × ℝ,
-      g q ^ (4 / 3 : ℝ) = W q ^ (10 / 3 : ℝ) := by
-    intro q
-    dsimp [g]
-    calc
-      (W q ^ (5 / 2 : ℝ)) ^ (4 / 3 : ℝ) =
-          W q ^ ((5 / 2 : ℝ) * (4 / 3 : ℝ)) := (ENNReal.rpow_mul _ _ _).symm
-      _ = W q ^ (10 / 3 : ℝ) := by congr 1; norm_num
-  have hfg : ∀ q : Vec3 × ℝ, f q * g q = W q ^ (3 : ℝ) := by
-    intro q
-    dsimp [f, g]
-    by_cases hzero : W q = 0
-    · simp [hzero]
-    · by_cases htop : W q = ⊤
-      · simp [htop]
-      · rw [← ENNReal.rpow_add _ _ hzero htop]
-        norm_num
-  have hHolder := ENNReal.lintegral_Lp_mul_le_Lq_mul_Lr
-    (p := (1 : ℝ)) (q := (4 : ℝ)) (r := (4 / 3 : ℝ))
-    (by norm_num : (0 : ℝ) < 1)
-    (by norm_num : (1 : ℝ) < 4)
-    (by norm_num : (1 : ℝ) / 1 = (1 : ℝ) / 4 + (1 : ℝ) / (4 / 3))
-    μU hfmeas hgmeas
   have hM3holder : M3 ≤ M2 ^ (1 / 4 : ℝ) * M10 ^ (3 / 4 : ℝ) := by
-    calc
-      M3 = ∫⁻ q in U, W q ^ (3 : ℝ) ∂(volume : Measure (Vec3 × ℝ)) :=
-        hM3coordinate
-      _ = ∫⁻ q in U, (f q * g q) ^ (1 : ℝ)
-            ∂(volume : Measure (Vec3 × ℝ)) := by
-        apply lintegral_congr_ae
-        filter_upwards [] with q
-        rw [ENNReal.rpow_one, hfg q]
-      _ ≤ (∫⁻ q in U, f q ^ (4 : ℝ) ∂(volume : Measure (Vec3 × ℝ))) ^
-              (1 / 4 : ℝ) *
-            (∫⁻ q in U, g q ^ (4 / 3 : ℝ)
-              ∂(volume : Measure (Vec3 × ℝ))) ^ (3 / 4 : ℝ) := by
-        simpa [ENNReal.rpow_one] using hHolder
-      _ = M2 ^ (1 / 4 : ℝ) * M10 ^ (3 / 4 : ℝ) := by
-        have hF4 : ∫⁻ q in U, f q ^ (4 : ℝ)
-            ∂(volume : Measure (Vec3 × ℝ)) =
-              ∫⁻ q in U, W q ^ (2 : ℝ) ∂(volume : Measure (Vec3 × ℝ)) := by
-          apply lintegral_congr_ae
-          filter_upwards [] with q
-          exact hf4 q
-        have hGFourThirds : ∫⁻ q in U, g q ^ (4 / 3 : ℝ)
-            ∂(volume : Measure (Vec3 × ℝ)) =
-              ∫⁻ q in U, W q ^ (10 / 3 : ℝ) ∂(volume : Measure (Vec3 × ℝ)) := by
-          apply lintegral_congr_ae
-          filter_upwards [] with q
-          exact hgFourThirds q
-        rw [hF4, hGFourThirds, hM2coordinate, hM10coordinate]
+    rw [hM3coordinate, hM2coordinate, hM10coordinate]
+    exact lintegral_three_le_two_tenThirds μU W hWmeas.aemeasurable
   have hApowTop : A ^ (2 / 3 : ℝ) < ⊤ :=
     ENNReal.rpow_lt_top_of_nonneg (by norm_num) hAtop.ne
   have hM10top : M10 < ⊤ :=
