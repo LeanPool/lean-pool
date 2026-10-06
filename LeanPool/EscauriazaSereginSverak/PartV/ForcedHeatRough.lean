@@ -77,7 +77,6 @@ theorem forcedHeat_rough_weak_of_gradient {τ : ℝ} (hτ : 0 < τ)
       (-(forcedHeat G z i * CKN.timePartial φ z) +
         ∑ j : Fin 3, DZ i j z * CKN.spatialPartial φ j z +
         ∑ j : Fin 3, G i j z * CKN.spatialPartial φ j z) = 0 := by
-
   set Q : Set ParabolicPoint := CKN.spaceTimeSet (Set.univ : Set Vec3) (Ioo 0 τ)
   set μQ : Measure ParabolicPoint := volume.restrict Q
   let ψ : Vec3 × ℝ → ℝ := fun p => φ p

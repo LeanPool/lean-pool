@@ -32,8 +32,10 @@ private lemma forcedHeat_square_error_tendsto
     {α : Type*} [MeasurableSpace α] {μ : Measure α}
     {f : ℕ → α → ℝ} {g : α → ℝ}
     (hm : ∀ k, AEStronglyMeasurable (fun z => f k z - g z) μ)
-    (hlim : Tendsto (fun k => eLpNorm (fun z => f k z - g z) 2 μ) atTop (𝓝 0)) :
+    (hlim : Tendsto (fun k => eLpNorm (f k - g) 2 μ) atTop (𝓝 0)) :
     Tendsto (fun k => ∫⁻ z, ‖f k z - g z‖ₑ ^ (2 : ℝ) ∂μ) atTop (𝓝 0) := by
+  have heq (k) : eLpNorm (f k - g) 2 μ = eLpNorm (fun z => f k z - g z) 2 μ := rfl
+  simp_rw [heq] at hlim
   have h := (ENNReal.continuous_rpow_const (y := (2 : ℝ))).tendsto 0 |>.comp hlim
   rw [ENNReal.zero_rpow_of_pos (by norm_num)] at h
   refine h.congr fun k => ?_
@@ -127,7 +129,8 @@ theorem forcedHeat_slice_weakGradient_of_approx {τ : ℝ} (hτ : 0 < τ)
       ∂((volume : Measure Vec3).prod ν)) atTop (𝓝 0) := by
     apply forcedHeat_square_error_tendsto
       (fun k => (hDZsc k i j).aestronglyMeasurable.sub (hDZm i j))
-    simpa only [← hprod] using hDZlim i j
+    rw [← hprod]
+    exact hDZlim i j
   -- the combined slice quantity
   let F : ℕ → Vec3 × ℝ → ℝ≥0∞ := fun k z =>
     ENNReal.ofReal (forcedHeatWeight z.1) * ‖kernelResponse (gs k) z - kernelResponse g z‖ₑ +
@@ -170,8 +173,8 @@ theorem forcedHeat_slice_weakGradient_of_approx {τ : ℝ} (hτ : 0 < τ)
   -- almost every slice is measurable with a square integrable limit gradient
   have hA2 : ∀ᵐ s ∂ν, ∀ ij : Fin 3 × Fin 3,
       ∫⁻ x, ‖DZ ij.1 ij.2 (x, s)‖ₑ ^ (2 : ℝ) < ∞ :=
-    ae_all_iff.2 fun ij => forcedHeat_square_slice_finite
-      (by simpa only [← hprod] using hDZmem ij.1 ij.2)
+    ae_all_iff.2 fun ij => forcedHeat_square_slice_finite (g := fun z => DZ ij.1 ij.2 z)
+      (by rw [← hprod]; exact hDZmem ij.1 ij.2)
   have hA3 : ∀ᵐ s ∂ν, ∀ ij : Fin 3 × Fin 3,
       AEStronglyMeasurable (fun x : Vec3 => DZ ij.1 ij.2 (x, s)) volume :=
     ae_all_iff.2 fun ij => ae_slice_aestronglyMeasurable (hDZm ij.1 ij.2)
