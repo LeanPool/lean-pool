@@ -11,7 +11,8 @@ public import Mathlib.Analysis.Calculus.FDeriv.Symmetric
 /-!
 # Commutation of space-time coordinate derivatives
 
-The commutator calculation in `eq:carleman-commutator` of the Escauriaza–Seregin–Šverák manuscript uses symmetry of the
+The commutator calculation in `eq:carleman-commutator` of the Escauriaza–Seregin–Šverák manuscript
+uses symmetry of the
 second derivative of a smooth scalar field.
 -/
 

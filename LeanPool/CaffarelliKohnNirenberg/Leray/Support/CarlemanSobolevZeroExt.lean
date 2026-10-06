@@ -12,7 +12,8 @@ public import Mathlib.Analysis.SpecialFunctions.SmoothTransition
 # Global weak derivatives of zero extensions
 
 Compact support inside the product domain allows the weak integration-by-parts
-identities to extend to the ambient space (`lem:carleman-sobolev` of the Escauriaza–Seregin–Šverák manuscript).
+identities to extend to the ambient space (`lem:carleman-sobolev` of the Escauriaza–Seregin–Šverák
+manuscript).
 -/
 
 public section

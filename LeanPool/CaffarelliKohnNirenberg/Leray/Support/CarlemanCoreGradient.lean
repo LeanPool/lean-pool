@@ -14,7 +14,8 @@ public import LeanPool.CaffarelliKohnNirenberg.Foundation.Parabolic.Integration.
 /-!
 # The weighted gradient identity
 
-The space-time integration identity used in `eq:carleman-gradient-integrated` of the Escauriaza–Seregin–Šverák manuscript
+The space-time integration identity used in `eq:carleman-gradient-integrated` of the
+Escauriaza–Seregin–Šverák manuscript
 and `eq:carleman-half-gradient-id` of the Escauriaza–Seregin–Šverák manuscript.
 -/
 

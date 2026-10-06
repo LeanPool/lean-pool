@@ -12,7 +12,8 @@ public import Mathlib.MeasureTheory.Function.LpSeminorm.LpNorm
 # Density extension for weighted Carleman inequalities
 
 This module extends smooth compactly supported inequalities to compactly
-supported fields with space-time weak derivatives (`lem:carleman-sobolev` of the Escauriaza–Seregin–Šverák manuscript).
+supported fields with space-time weak derivatives (`lem:carleman-sobolev` of the
+Escauriaza–Seregin–Šverák manuscript).
 -/
 
 public section

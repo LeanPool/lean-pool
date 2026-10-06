@@ -12,7 +12,8 @@ public import LeanPool.CaffarelliKohnNirenberg.ClassEquivalence.TestSupport
 /-!
 # Vanishing integrals of compactly supported derivatives
 
-Space-time boundary terms in `eq:carleman-commutator` of the Escauriaza–Seregin–Šverák manuscript vanish for smooth
+Space-time boundary terms in `eq:carleman-commutator` of the Escauriaza–Seregin–Šverák manuscript
+vanish for smooth
 compactly supported scalar fields.
 -/
 

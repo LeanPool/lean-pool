@@ -14,7 +14,8 @@ public import LeanPool.CaffarelliKohnNirenberg.Foundation.Parabolic.Vec3Norm
 Conversions between `L²` seminorms and integrals of squares, convergence of integrals of squares,
 Fubini in the time-outer order on space-time boxes, integrability of smooth functions on bounded
 sets, the linearity of the coordinate derivatives on smooth functions, and the geometry of the
-backward kernel balls used in `thm:vorticity-regularity` of the Escauriaza–Seregin–Šverák manuscript.
+backward kernel balls used in `thm:vorticity-regularity` of the Escauriaza–Seregin–Šverák
+manuscript.
 -/
 
 public section

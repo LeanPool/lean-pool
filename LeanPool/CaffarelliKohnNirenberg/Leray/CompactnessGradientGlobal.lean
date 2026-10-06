@@ -34,10 +34,10 @@ theorem exists_measurable_gradient_of_local_weak_partials
     (hgMeas : ∀ j, Measurable (gLocal j))
     (hlocal : ∀ j (i m : Fin 3), ∀ᵐ t ∂(volume.restrict (J j)),
       LocallyIntegrableOn
-        (fun x => gLocal j (x,t) i m) (interior (K j)) volume ∧
+        (fun x => gLocal j (x, t) i m) (interior (K j)) volume ∧
       HasWeakPartialDerivOn (interior (K j)) m
-        (fun x => u (x,t) i)
-        (fun x => gLocal j (x,t) i m)) :
+        (fun x => u (x, t) i)
+        (fun x => gLocal j (x, t) i m)) :
     ∃ g : Vec3 × ℝ → CompactnessGradientFiber,
       Measurable g ∧ ∀ j,
         g =ᵐ[((volume.restrict (interior (K j))).prod

@@ -79,12 +79,13 @@ theorem velocity_norm_memLp_six_on_ball
     MemLp (fun x : Vec3 => vec3EuclideanNorm (u (x, t))) 6
       (volume.restrict (vec3Ball x₀ ρ)) := by
   let μ : Measure Vec3 := volume.restrict (vec3Ball x₀ ρ)
-  have hμtop : μ Set.univ < ∞ := by simpa [μ, Measure.restrict_apply MeasurableSet.univ, univ_inter] using
+  have hμtop : μ Set.univ < ∞ := by
+    simpa [μ, Measure.restrict_apply MeasurableSet.univ, univ_inter] using
       (by
         rw [volume_vec3Ball_eq]
         exact ENNReal.mul_lt_top (ENNReal.pow_lt_top ENNReal.ofReal_lt_top)
           ENNReal.ofReal_lt_top : volume (vec3Ball x₀ ρ) < ∞)
-    letI : IsFiniteMeasure μ := ⟨hμtop⟩
+  let : IsFiniteMeasure μ := ⟨hμtop⟩
   have huB : MemLp (fun x : Vec3 => u (x, t)) 2 μ := by
     simpa [μ] using hts.mono_measure (Measure.restrict_mono_set volume hball)
   have humeas : AEMeasurable (fun x : Vec3 => u (x, t)) μ :=
@@ -93,7 +94,7 @@ theorem velocity_norm_memLp_six_on_ball
       (fun x : Vec3 => vec3EuclideanNorm (u (x, t))) μ :=
     (continuous_vec3EuclideanNorm.measurable.comp_aemeasurable humeas).aestronglyMeasurable
   have hu2 : MemLp (fun x : Vec3 => vec3EuclideanNorm (u (x, t))) 2 μ := by
-    apply huB.of_le_mul humeasNorm
+    apply huB.of_le_mul (c := Real.sqrt 3) humeasNorm
     filter_upwards [] with y
     rw [Real.norm_of_nonneg (vec3EuclideanNorm_nonneg _)]
     exact vec3_norm_le_sqrt_three_sws (u (y, t))
@@ -306,7 +307,7 @@ theorem pressure_force_growth_ae_of_localBox
         rw [volume_vec3Ball_eq]
         exact ENNReal.mul_lt_top (ENNReal.pow_lt_top ENNReal.ofReal_lt_top)
           ENNReal.ofReal_lt_top : volume (vec3Ball x₀ ρ) < ⊤)
-    letI : IsFiniteMeasure μ := ⟨hμtop⟩
+  let : IsFiniteMeasure μ := ⟨hμtop⟩
   have hq : 1 ≤ q := by linarith only [hsol.2.2.2.1]
   have hsource₇support (j : Fin 3) :
       tsupport (fun y : Vec3 => η y * f (y, s) j) ⊆ B :=
@@ -378,7 +379,7 @@ theorem pressure_force_growth_ae_of_localBox
           rw [volume_vec3Ball_eq]
           exact ENNReal.mul_lt_top (ENNReal.pow_lt_top ENNReal.ofReal_lt_top)
             ENNReal.ofReal_lt_top : volume (vec3Ball x₀ ρ) < ⊤)
-      letI : IsFiniteMeasure μ := ⟨hμtop⟩
+    let : IsFiniteMeasure μ := ⟨hμtop⟩
     have hηd : AEStronglyMeasurable (spatialDeriv η j) μ :=
       (contDiff_spatialDeriv_smooth hηsmooth j).continuous.aestronglyMeasurable
         |>.mono_measure Measure.restrict_le_self
