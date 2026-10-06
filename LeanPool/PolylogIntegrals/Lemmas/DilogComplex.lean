@@ -12,7 +12,8 @@ public import Mathlib.Analysis.SpecialFunctions.Complex.LogDeriv
 /-!
 # The complex dilogarithm
 
-Complex counterparts of `LeanPolyLog.Lemmas.Dilog` for the series `LeanPolyLog.Li`, and Landen's
+Complex counterparts of `LeanPool.PolylogIntegrals.Lemmas.Dilog` for the series
+`LeanPolyLog.Li`, and Landen's
 identity on the closed unit disk.
 
 ## Main results

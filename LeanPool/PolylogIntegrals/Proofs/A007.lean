@@ -10,7 +10,8 @@ public import LeanPool.PolylogIntegrals.Lemmas.Fourier
 /-!
 # A007: `∫₀^{π/4} x log cos x dx = πG/8 - (π²/32) log 2 - (21/128) ζ(3)`
 
-`LeanPolyLog.Lemmas.Fourier` computes `∫₀^{π/4} x log (2 + 2 cos 2x) dx = (π/4) G - (21/64) ζ(3)`
+`LeanPool.PolylogIntegrals.Lemmas.Fourier` computes `∫₀^{π/4} x log (2 + 2 cos 2x) dx = (π/4) G
+- (21/64) ζ(3)`
 by integrating the Fourier series of `log (1 + 2r cos 2x + r²)` term by term and letting `r → 1⁻`.
 On `[0, π/4]` we have `2 + 2 cos 2x = 4 cos² x`, so `log (2 + 2 cos 2x) = 2 log 2 + 2 log cos x`,
 and `∫₀^{π/4} x dx = π²/32`.

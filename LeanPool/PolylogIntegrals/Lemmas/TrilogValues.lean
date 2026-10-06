@@ -12,8 +12,8 @@ public import LeanPool.PolylogIntegrals.Lemmas.ArctanTrilog
 # Special values for the trilogarithm integrals of A014
 
 Values of `Li₂`, `Li₃` and `log` at the points `±i` and `(1 ± i)/2` of the closed unit disk, and
-a few elementary facts shared by `LeanPolyLog.Lemmas.TrilogLogOneAddSq` and
-`LeanPolyLog.Lemmas.TrilogLogSubLogSq`.
+a few elementary facts shared by `LeanPool.PolylogIntegrals.Lemmas.TrilogLogOneAddSq` and
+`LeanPool.PolylogIntegrals.Lemmas.TrilogLogSubLogSq`.
 
 ## Main results
 

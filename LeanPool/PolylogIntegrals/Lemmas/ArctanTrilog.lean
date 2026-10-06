@@ -11,7 +11,7 @@ public import LeanPool.PolylogIntegrals.Lemmas.Arctan
 # The trilogarithm, `log²` moments and a symmetric double integral
 
 This file collects the lemmas behind A013, one power of `log` higher than
-`LeanPolyLog.Lemmas.Arctan`.
+`LeanPool.PolylogIntegrals.Lemmas.Arctan`.
 
 ## Main results
 

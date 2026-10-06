@@ -26,17 +26,18 @@ public import LeanPool.PolylogIntegrals.Proofs.A016
 /-!
 # The sixteen identities of *PolyLog Integrals* (rainrzk, 2022)
 
-Each theorem restates one identity from the tutorial (`blueprint/Polylog.pdf`). Two differ from
-the PDF:
+Each theorem restates one identity from the upstream tutorial (`blueprint/Polylog.pdf` in
+https://github.com/rainrzk/LeanPolyLog). Two differ from that PDF:
 * A004 uses the corrected value π²/24 (see `blueprint/ERRATA.md`).
 * A014 uses the equivalent simplified form, which avoids `Li₃(1+i)` outside the unit disk.
 
 Lean checks proofs, not whether a statement says what was meant. Every statement here therefore
-has a numerical twin in `tests/check_statements.py`, checked to 60 digits.
+has a numerical twin in the upstream `tests/check_statements.py`, checked to 60 digits.
 
-Every statement is proven. The proofs live in `LeanPolyLog/Proofs/` and are only referenced here,
-so this file stays a readable list of what is claimed; `tests/Axioms.lean` checks that each one
-depends only on the standard axioms.
+Every statement is proven. The proofs live in `LeanPool/PolylogIntegrals/Proofs/` and are only
+referenced here,
+so this file stays a readable list of what is claimed. Upstream `tests/Axioms.lean` checks
+that each one depends only on the standard axioms; Lean Pool also audits the compiled environment.
 -/
 
 open Real

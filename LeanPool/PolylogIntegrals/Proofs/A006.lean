@@ -14,7 +14,7 @@ public import LeanPool.PolylogIntegrals.Lemmas.LogTrig
 * `LeanPolyLog.Proofs.A006_sin`: `∫₀^{π/4} log sin x dx = -G/2 - (π/4) log 2`.
 
 Both follow from the sum and the difference of the two integrals, which are computed in
-`LeanPolyLog.Lemmas.LogTrig`:
+`LeanPool.PolylogIntegrals.Lemmas.LogTrig`:
 * `∫₀^{π/4} log sin + ∫₀^{π/4} log cos = -(π/2) log 2`;
 * `∫₀^{π/4} log cos - ∫₀^{π/4} log sin = G`.
 -/

@@ -17,7 +17,7 @@ public import Mathlib.Analysis.SpecialFunctions.Log.NegMulLog
 Mathlib has no polylogarithms, so this file collects the facts about `Li_s` that the proofs use,
 with the dilogarithm `Li_2` as the main case. `Lir s` and `Li s` both unfold to the series
 `∑_{n ≥ 0} z^(n+1)/(n+1)^s`, so its basic properties are proved once, over `𝕜 = ℝ` or `ℂ`
-(`RCLike`). The complex counterparts are in `LeanPolyLog.Lemmas.DilogComplex`.
+(`RCLike`). The complex counterparts are in `LeanPool.PolylogIntegrals.Lemmas.DilogComplex`.
 
 ## Main results
 

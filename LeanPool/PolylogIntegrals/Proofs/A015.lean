@@ -11,16 +11,18 @@ public import LeanPool.PolylogIntegrals.Lemmas.Radial
 /-!
 # A015: `∫₀^{π/2} x log² sin x dx = Li₄(1/2) - 19π⁴/2880 + log⁴2/24 + π² log²2/12`
 
-Let `L = ∫₀^{π/2} log² sin x dx = π³/24 + (π/2) log² 2` (`LeanPolyLog.Lemmas.LogSinSq`) and
+Let `L = ∫₀^{π/2} log² sin x dx = π³/24 + (π/2) log² 2`
+(`LeanPool.PolylogIntegrals.Lemmas.LogSinSq`) and
 `C = ∫₀^{π/2} x log² cos x dx`.
 
 * The reflection `x ↦ π/2 - x` gives `A015 = (π/2) L - C`, since `∫₀^{π/2} log² cos = L`.
 * For `|x| < π/2`, `log((1 + e^{2ix})/2) = log cos x + ix`, so
   `Im log³((1 + e^{2ix})/2) = 3x log² cos x - x³`. With `θ = 2x`,
   `C = π⁴/192 + T/6`, where `T = ∫₀^π Im log³((1 + e^{iθ})/2) dθ`.
-* The radial argument of `LeanPolyLog.Lemmas.Radial` (in place of a contour integral over the upper
+* The radial argument of `LeanPool.PolylogIntegrals.Lemmas.Radial` (in place of a contour
+integral over the upper
   half disk) gives `T = ∫₀¹ (log³((1+r)/2) - log³((1-r)/2))/r dr`, and
-  `LeanPolyLog.Lemmas.LogSinSqSeries` evaluates this as
+  `LeanPool.PolylogIntegrals.Lemmas.LogSinSqSeries` evaluates this as
   `2π⁴/15 + π² log² 2 - log⁴ 2/4 - 6 Li₄(1/2)`.
 
 Altogether `A015 = π⁴/48 + (π²/4) log² 2 - π⁴/192 - T/6`, which is the claimed value.
