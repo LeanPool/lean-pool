@@ -35,18 +35,35 @@ abbrev BUGaussianSpace := CKN.Foundation.Parabolic.L2Vec3
 def buGaussianShell (ρ : ℝ) : Set BUGaussianSpace :=
   {y | ρ - 1 < ‖y‖ ∧ ‖y‖ < ρ - 1 / 2}
 
-open Classical in
-/-- A finite shell cover whose doubled balls stay inside the localization ball.
-The overlap constant is Besicovitch.multiplicity squared and is independent of
-`ρ` and `r`. -/
-theorem exists_buGaussian_shell_cover (ρ r : ℝ)
-    (hr : 0 < r) (hrle : r ≤ 1 / 16) :
-    ∃ Y : Finset (Fin (Besicovitch.multiplicity BUGaussianSpace) × BUGaussianSpace),
-      (∀ p ∈ Y, ‖p.2‖ ≤ ρ - 1 / 2) ∧
-      (∀ y ∈ buGaussianShell ρ, ∃ p ∈ Y, dist y p.2 < r) ∧
-      (∀ p ∈ Y, Metric.ball p.2 (2 * r) ⊆ Metric.ball 0 ρ) ∧
-      (∀ z, (Y.filter fun p => dist z p.2 < 2 * r).card ≤
-        Besicovitch.multiplicity BUGaussianSpace ^ 2) := by
+private theorem le_dist_of_disjoint_half_radius {r : ℝ} {x y : BUGaussianSpace}
+    (hdis : Disjoint (closedBall x (r / 2)) (closedBall y (r / 2))) :
+    r ≤ dist x y := by
+  by_contra hnot
+  have hdist : dist x y < r := lt_of_not_ge hnot
+  let m := midpoint ℝ x y
+  have hm₁ : dist x m = dist x y / 2 := by
+    dsimp [m]
+    rw [dist_left_midpoint]
+    norm_num
+    ring
+  have hm₂ : dist y m = dist x y / 2 := by
+    dsimp [m]
+    rw [dist_right_midpoint]
+    norm_num
+    ring
+  have hball₁ : m ∈ closedBall x (r / 2) := by
+    change dist m x ≤ r / 2
+    rw [dist_comm, hm₁]
+    linarith only [hdist]
+  have hball₂ : m ∈ closedBall y (r / 2) := by
+    change dist m y ≤ r / 2
+    rw [dist_comm, hm₂]
+    linarith only [hdist]
+  exact (Set.disjoint_left.mp hdis) hball₁ hball₂
+
+private theorem buGaussianShell_closure_bounds (ρ : ℝ) :
+    IsCompact (closure (buGaussianShell ρ)) ∧
+    closure (buGaussianShell ρ) ⊆ {y : BUGaussianSpace | ‖y‖ ≤ ρ - 1 / 2} := by
   let S := buGaussianShell ρ
   let K := closure S
   have hKball : K ⊆ closedBall (0 : BUGaussianSpace) ρ := by
@@ -61,13 +78,31 @@ theorem exists_buGaussian_shell_cover (ρ r : ℝ)
   have hKcompact : IsCompact K :=
     (isCompact_closedBall (0 : BUGaussianSpace) ρ).of_isClosed_subset
       isClosed_closure hKball
-  obtain ⟨C, hCK, hCfinite, hCcover⟩ :=
-    hKcompact.finite_cover_balls (div_pos hr (by norm_num : 0 < (2 : ℝ)))
   have hKouter : K ⊆ {y : BUGaussianSpace | ‖y‖ ≤ ρ - 1 / 2} := by
     apply closure_minimal
     · intro x hx
       exact le_of_lt hx.2
     · exact isClosed_le continuous_norm continuous_const
+  exact ⟨hKcompact, hKouter⟩
+
+open Classical in
+/-- A finite shell cover whose doubled balls stay inside the localization ball.
+The overlap constant is Besicovitch.multiplicity squared and is independent of
+`ρ` and `r`. -/
+theorem exists_buGaussian_shell_cover (ρ r : ℝ)
+    (hr : 0 < r) (hrle : r ≤ 1 / 16) :
+    ∃ Y : Finset (Fin (Besicovitch.multiplicity BUGaussianSpace) × BUGaussianSpace),
+      (∀ p ∈ Y, ‖p.2‖ ≤ ρ - 1 / 2) ∧
+      (∀ y ∈ buGaussianShell ρ, ∃ p ∈ Y, dist y p.2 < r) ∧
+      (∀ p ∈ Y, Metric.ball p.2 (2 * r) ⊆ Metric.ball 0 ρ) ∧
+      (∀ z, (Y.filter fun p => dist z p.2 < 2 * r).card ≤
+        Besicovitch.multiplicity BUGaussianSpace ^ 2) := by
+  let S := buGaussianShell ρ
+  let K := closure S
+  obtain ⟨hKcompact, hKouter⟩ :=
+    buGaussianShell_closure_bounds ρ
+  obtain ⟨C, hCK, hCfinite, hCcover⟩ :=
+    hKcompact.finite_cover_balls (div_pos hr (by norm_num : 0 < (2 : ℝ)))
   let CFin := hCfinite.toFinset
   let β := {y : BUGaussianSpace // y ∈ CFin}
   let p : Besicovitch.BallPackage β BUGaussianSpace :=
@@ -87,29 +122,7 @@ theorem exists_buGaussian_shell_cover (ρ r : ℝ)
   have hcenterSep : ∀ i (b b' : β), b ∈ family i → b' ∈ family i → b ≠ b' →
       r ≤ dist (p.c b) (p.c b') := by
     intro i b b' hb hb' hne
-    by_contra hnot
-    have hdist : dist (p.c b) (p.c b') < r := lt_of_not_ge hnot
-    let m := midpoint ℝ (p.c b) (p.c b')
-    have hm₁ : dist (p.c b) m = dist (p.c b) (p.c b') / 2 := by
-      dsimp [m]
-      rw [dist_left_midpoint]
-      norm_num
-      ring
-    have hm₂ : dist (p.c b') m = dist (p.c b) (p.c b') / 2 := by
-      dsimp [m]
-      rw [dist_right_midpoint]
-      norm_num
-      ring
-    have hball₁ : m ∈ closedBall (p.c b) (r / 2) := by
-      change dist m (p.c b) ≤ r / 2
-      rw [dist_comm, hm₁]
-      linarith only [hdist]
-    have hball₂ : m ∈ closedBall (p.c b') (r / 2) := by
-      change dist m (p.c b') ≤ r / 2
-      rw [dist_comm, hm₂]
-      linarith only [hdist]
-    have hdis := hdisj i hb hb' hne
-    exact (Set.disjoint_left.mp hdis) hball₁ hball₂
+    exact le_dist_of_disjoint_half_radius (hdisj i hb hb' hne)
   have hperColor (i : Fin M) (z : BUGaussianSpace) :
       (((Set.toFinite (family i)).toFinset.image (fun b => (i, p.c b))).filter
         fun q => dist z q.2 < 2 * r).card ≤ M := by
@@ -273,18 +286,10 @@ theorem exists_buGaussian_shell_cover (ρ r : ℝ)
 def buGaussianTransitionShell (ρ : ℝ) : Set BUGaussianSpace :=
   {y | 13 * ρ / 20 ≤ ‖y‖ ∧ ‖y‖ ≤ 3 * ρ / 4}
 
-open Classical in
-/-- A finite cover of the closed transition annulus for the Gaussian cutoff.
-The overlap constant is Besicovitch.multiplicity squared. -/
-theorem exists_buGaussian_transition_cover (ρ r : ℝ) (hρ : 4 < ρ)
-    (hr : 0 < r) (hrle : r ≤ 1 / 16) :
-    ∃ Y : Finset (Fin (Besicovitch.multiplicity BUGaussianSpace) × BUGaussianSpace),
-      (∀ p ∈ Y, ‖p.2‖ ≤ ρ - 1 / 2) ∧
-      (∀ p ∈ Y, 13 * ρ / 20 ≤ ‖p.2‖) ∧
-      (∀ y ∈ buGaussianTransitionShell ρ, ∃ p ∈ Y, dist y p.2 < r) ∧
-      (∀ p ∈ Y, Metric.ball p.2 (2 * r) ⊆ Metric.ball 0 ρ) ∧
-      (∀ z, (Y.filter fun p => dist z p.2 < 2 * r).card ≤
-        Besicovitch.multiplicity BUGaussianSpace ^ 2) := by
+private theorem buGaussianTransitionShell_closure_bounds (ρ : ℝ) (hρ : 4 < ρ) :
+    IsCompact (closure (buGaussianTransitionShell ρ)) ∧
+    closure (buGaussianTransitionShell ρ) ⊆ {y : BUGaussianSpace | ‖y‖ ≤ 3 * ρ / 4} ∧
+    closure (buGaussianTransitionShell ρ) ⊆ {y : BUGaussianSpace | 13 * ρ / 20 ≤ ‖y‖} := by
   let S := buGaussianTransitionShell ρ
   let K := closure S
   have hKball : K ⊆ closedBall (0 : BUGaussianSpace) ρ := by
@@ -299,8 +304,6 @@ theorem exists_buGaussian_transition_cover (ρ r : ℝ) (hρ : 4 < ρ)
   have hKcompact : IsCompact K :=
     (isCompact_closedBall (0 : BUGaussianSpace) ρ).of_isClosed_subset
       isClosed_closure hKball
-  obtain ⟨C, hCK, hCfinite, hCcover⟩ :=
-    hKcompact.finite_cover_balls (div_pos hr (by norm_num : 0 < (2 : ℝ)))
   have hKouter : K ⊆ {y : BUGaussianSpace | ‖y‖ ≤ 3 * ρ / 4} := by
     apply closure_minimal
     · intro x hx
@@ -311,6 +314,26 @@ theorem exists_buGaussian_transition_cover (ρ r : ℝ) (hρ : 4 < ρ)
     · intro x hx
       exact hx.1
     · exact isClosed_le continuous_const continuous_norm
+  exact ⟨hKcompact, hKouter, hKinner⟩
+
+open Classical in
+/-- A finite cover of the closed transition annulus for the Gaussian cutoff.
+The overlap constant is Besicovitch.multiplicity squared. -/
+theorem exists_buGaussian_transition_cover (ρ r : ℝ) (hρ : 4 < ρ)
+    (hr : 0 < r) (hrle : r ≤ 1 / 16) :
+    ∃ Y : Finset (Fin (Besicovitch.multiplicity BUGaussianSpace) × BUGaussianSpace),
+      (∀ p ∈ Y, ‖p.2‖ ≤ ρ - 1 / 2) ∧
+      (∀ p ∈ Y, 13 * ρ / 20 ≤ ‖p.2‖) ∧
+      (∀ y ∈ buGaussianTransitionShell ρ, ∃ p ∈ Y, dist y p.2 < r) ∧
+      (∀ p ∈ Y, Metric.ball p.2 (2 * r) ⊆ Metric.ball 0 ρ) ∧
+      (∀ z, (Y.filter fun p => dist z p.2 < 2 * r).card ≤
+        Besicovitch.multiplicity BUGaussianSpace ^ 2) := by
+  let S := buGaussianTransitionShell ρ
+  let K := closure S
+  obtain ⟨hKcompact, hKouter, hKinner⟩ :=
+    buGaussianTransitionShell_closure_bounds ρ hρ
+  obtain ⟨C, hCK, hCfinite, hCcover⟩ :=
+    hKcompact.finite_cover_balls (div_pos hr (by norm_num : 0 < (2 : ℝ)))
   let CFin := hCfinite.toFinset
   let β := {y : BUGaussianSpace // y ∈ CFin}
   let p : Besicovitch.BallPackage β BUGaussianSpace :=
@@ -330,29 +353,7 @@ theorem exists_buGaussian_transition_cover (ρ r : ℝ) (hρ : 4 < ρ)
   have hcenterSep : ∀ i (b b' : β), b ∈ family i → b' ∈ family i → b ≠ b' →
       r ≤ dist (p.c b) (p.c b') := by
     intro i b b' hb hb' hne
-    by_contra hnot
-    have hdist : dist (p.c b) (p.c b') < r := lt_of_not_ge hnot
-    let m := midpoint ℝ (p.c b) (p.c b')
-    have hm₁ : dist (p.c b) m = dist (p.c b) (p.c b') / 2 := by
-      dsimp [m]
-      rw [dist_left_midpoint]
-      norm_num
-      ring
-    have hm₂ : dist (p.c b') m = dist (p.c b) (p.c b') / 2 := by
-      dsimp [m]
-      rw [dist_right_midpoint]
-      norm_num
-      ring
-    have hball₁ : m ∈ closedBall (p.c b) (r / 2) := by
-      change dist m (p.c b) ≤ r / 2
-      rw [dist_comm, hm₁]
-      linarith only [hdist]
-    have hball₂ : m ∈ closedBall (p.c b') (r / 2) := by
-      change dist m (p.c b') ≤ r / 2
-      rw [dist_comm, hm₂]
-      linarith only [hdist]
-    have hdis := hdisj i hb hb' hne
-    exact (Set.disjoint_left.mp hdis) hball₁ hball₂
+    exact le_dist_of_disjoint_half_radius (hdisj i hb hb' hne)
   have hperColor (i : Fin M) (z : BUGaussianSpace) :
       (((Set.toFinite (family i)).toFinset.image (fun b => (i, p.c b))).filter
         fun q => dist z q.2 < 2 * r).card ≤ M := by

@@ -186,6 +186,8 @@ theorem regularizedMildTensorField_memLp (ρ : RegMollifierProfile)
     (ε : ℝ) (hε : 0 < ε) (u : RealVectorL2) :
     MemLp (regularizedMildTensorField ρ ε hε u) (2 : ℝ≥0∞) volume := by
   apply (Lp.memLp u).of_le_mul
+    (c := ENNReal.toReal (ENNReal.ofReal (ε ^ (-(3 / 2 : ℝ))) *
+      eLpNorm ρ.rho 2 volume) * ‖u‖)
     (regularizedMildTensorField_aestronglyMeasurable ρ ε hε u)
   filter_upwards [] with x
   exact regularizedMildTensorField_pointwise_bound ρ ε hε u x

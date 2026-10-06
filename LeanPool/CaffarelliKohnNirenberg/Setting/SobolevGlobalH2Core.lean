@@ -152,6 +152,165 @@ private lemma h2Core_kernel_memLp :
   rw [← (integrable_norm_rpow_iff hmeas.restrict (by norm_num) (by norm_num))]
   exact hpow.congr heq.symm
 
+private theorem h2Core_fderiv_eLpNorm_sum
+    (g : Vec3 → ℝ) (hg : ContDiff ℝ (⊤ : ℕ∞) g) (U : Set Vec3) : eLpNorm (fun y => ‖fderiv ℝ g y‖)
+      (ENNReal.ofReal (6 : ℝ)) (volume.restrict U) ≤
+      ∑ i : Fin 3, eLpNorm (fun y =>
+        |(fderiv ℝ g y) (basisVec i)|)
+        (ENNReal.ofReal (6 : ℝ)) (volume.restrict U) := by
+  let S : Vec3 → ℝ := fun y => ∑ i : Fin 3,
+    |(fderiv ℝ g y) (basisVec i)|
+  have hS : (∑ i : Fin 3, fun y : Vec3 =>
+      |(fderiv ℝ g y) (basisVec i)|) = S := by
+    funext y
+    rfl
+  have hmeas : AEStronglyMeasurable (fun y => ‖fderiv ℝ g y‖)
+      (volume.restrict U) :=
+    (hg.continuous_fderiv (by norm_num)).norm.aestronglyMeasurable.restrict
+  calc
+    _ ≤ eLpNorm S (ENNReal.ofReal (6 : ℝ)) (volume.restrict U) := by
+      apply eLpNorm_mono_ae hmeas
+      filter_upwards [] with y
+      have hSnonneg : 0 ≤ S y := by
+        dsimp [S]
+        exact Finset.sum_nonneg (fun i _ => abs_nonneg _)
+      calc
+        ‖‖fderiv ℝ g y‖‖ = ‖fderiv ℝ g y‖ := norm_norm _
+        _ ≤ S y := h2Core_fderiv_norm_le_sum (f := g) y
+        _ = ‖S y‖ := by rw [Real.norm_eq_abs, abs_of_nonneg hSnonneg]
+    _ ≤ _ := by
+      rw [← hS]
+      simpa using (eLpNorm_sum_le
+        (f := fun i : Fin 3 => fun y : Vec3 =>
+          |(fderiv ℝ g y) (basisVec i)|)
+        (p := ENNReal.ofReal (6 : ℝ))
+        (s := Finset.univ) (by norm_num : (1 : ℝ≥0∞) ≤ ENNReal.ofReal 6))
+
+private theorem h2Core_fderiv_memLp
+    (g : Vec3 → ℝ) (hg : ContDiff ℝ (⊤ : ℕ∞) g)
+    (hgi : ∀ i : Fin 3, MemLp (fun y => (fderiv ℝ g y) (basisVec i))
+      (ENNReal.ofReal (6 : ℝ)) volume) (U : Set Vec3) : MemLp (fun y => ‖fderiv ℝ g y‖)
+      (ENNReal.ofReal (6 : ℝ)) (volume.restrict U) := by
+  apply (memLp_iff.mpr ?_)
+  have hmeas : AEStronglyMeasurable (fun y => ‖fderiv ℝ g y‖)
+      (volume.restrict U) :=
+    (hg.continuous_fderiv (by norm_num)).norm.aestronglyMeasurable.restrict
+  have hsum := h2Core_fderiv_eLpNorm_sum g hg U
+  have hsumtop : ∀ i : Fin 3, eLpNorm (fun y =>
+      |(fderiv ℝ g y) (basisVec i)|) (ENNReal.ofReal (6 : ℝ))
+      (volume.restrict U) < ∞ := by
+    intro i
+    calc
+      _ = eLpNorm (fun y => (fderiv ℝ g y) (basisVec i))
+          (ENNReal.ofReal (6 : ℝ)) (volume.restrict U) := by
+        exact eLpNorm_norm _ (hgi i).aestronglyMeasurable.restrict
+      _ ≤ eLpNorm (fun y => (fderiv ℝ g y) (basisVec i))
+          (ENNReal.ofReal (6 : ℝ)) volume :=
+        eLpNorm_mono_measure _ Measure.restrict_le_self
+      _ < ∞ := (hgi i).eLpNorm_lt_top
+  exact hsum.trans_lt (ENNReal.sum_lt_top.2 (fun i _ => hsumtop i))
+
+private theorem h2Core_fderiv_integral_bound
+    (g : Vec3 → ℝ) (hg : ContDiff ℝ (⊤ : ℕ∞) g)
+    (hgi : ∀ i : Fin 3, MemLp (fun y => (fderiv ℝ g y) (basisVec i))
+      (ENNReal.ofReal (6 : ℝ)) volume) (U : Set Vec3) :
+    (∫ y in U, ‖fderiv ℝ g y‖ ^ (6 : ℝ) ∂volume) ^ (1 / 6 : ℝ) ≤
+      ∑ i : Fin 3, lpNorm (fun y => (fderiv ℝ g y) (basisVec i)) 6 volume := by
+  have hsum' := h2Core_fderiv_eLpNorm_sum g hg U
+  have hderMem := h2Core_fderiv_memLp g hg hgi U
+  have hsumtop' : (∑ i : Fin 3, eLpNorm (fun y =>
+      |(fderiv ℝ g y) (basisVec i)|) (ENNReal.ofReal (6 : ℝ))
+      (volume.restrict U)) < ∞ :=
+    ENNReal.sum_lt_top.2 (fun i _ => by
+      calc
+        _ = eLpNorm (fun y => (fderiv ℝ g y) (basisVec i))
+            (ENNReal.ofReal (6 : ℝ)) (volume.restrict U) := by
+          exact eLpNorm_norm _ (hgi i).aestronglyMeasurable.restrict
+        _ ≤ eLpNorm (fun y => (fderiv ℝ g y) (basisVec i))
+            (ENNReal.ofReal (6 : ℝ)) volume :=
+          eLpNorm_mono_measure _ Measure.restrict_le_self
+        _ < ∞ := (hgi i).eLpNorm_lt_top)
+  have hreal := ENNReal.toReal_mono hsumtop'.ne hsum'
+  have hleft : (∫ y in U, ‖fderiv ℝ g y‖ ^ (6 : ℝ) ∂volume) ^ (1 / 6 : ℝ) =
+      (eLpNorm (fun y => ‖fderiv ℝ g y‖) (ENNReal.ofReal (6 : ℝ))
+        (volume.restrict U)).toReal := by
+    have he := hderMem.eLpNorm_eq_integral_rpow_norm (by norm_num) (by norm_num)
+    have ht := congrArg ENNReal.toReal he
+    convert ht.symm using 1; norm_num
+    rw [ENNReal.toReal_ofReal]
+    positivity
+  calc
+    _ = (eLpNorm (fun y => ‖fderiv ℝ g y‖) (ENNReal.ofReal (6 : ℝ))
+        (volume.restrict U)).toReal := hleft
+    _ ≤ (∑ i : Fin 3, (eLpNorm (fun y =>
+        |(fderiv ℝ g y) (basisVec i)|) (ENNReal.ofReal (6 : ℝ))
+        (volume.restrict U))).toReal := hreal
+    _ = ∑ i : Fin 3, (eLpNorm (fun y =>
+        |(fderiv ℝ g y) (basisVec i)|) (ENNReal.ofReal (6 : ℝ))
+        (volume.restrict U)).toReal := by
+      apply ENNReal.toReal_sum
+      intro i hi
+      have hnormRestr : eLpNorm (fun y => |(fderiv ℝ g y) (basisVec i)|)
+          (ENNReal.ofReal (6 : ℝ)) (volume.restrict U) =
+          eLpNorm (fun y => (fderiv ℝ g y) (basisVec i))
+            (ENNReal.ofReal (6 : ℝ)) (volume.restrict U) := by
+        simpa [Real.norm_eq_abs] using eLpNorm_norm
+          (fun y => (fderiv ℝ g y) (basisVec i))
+            (hgi i).aestronglyMeasurable.restrict
+      rw [hnormRestr]
+      exact (lt_of_le_of_lt
+        (eLpNorm_mono_measure _ (Measure.restrict_le_self : volume.restrict U ≤ volume))
+        (hgi i).eLpNorm_lt_top).ne
+    _ ≤ _ := by
+      apply Finset.sum_le_sum
+      intro i hi
+      simp only [lpNorm]
+      have hmono : eLpNorm (fun y => |(fderiv ℝ g y) (basisVec i)|)
+          (ENNReal.ofReal (6 : ℝ)) (volume.restrict U) ≤
+          eLpNorm (fun y => |(fderiv ℝ g y) (basisVec i)|)
+            (ENNReal.ofReal (6 : ℝ)) volume :=
+        eLpNorm_mono_measure _ (Measure.restrict_le_self : volume.restrict U ≤ volume)
+      have hnormRestr : eLpNorm (fun y => |(fderiv ℝ g y) (basisVec i)|)
+          (ENNReal.ofReal (6 : ℝ)) (volume.restrict U) =
+          eLpNorm (fun y => (fderiv ℝ g y) (basisVec i))
+            (ENNReal.ofReal (6 : ℝ)) (volume.restrict U) := by
+        simpa [Real.norm_eq_abs] using eLpNorm_norm
+          (fun y => (fderiv ℝ g y) (basisVec i))
+            (hgi i).aestronglyMeasurable.restrict
+      have hnormVol : eLpNorm (fun y => |(fderiv ℝ g y) (basisVec i)|)
+          (ENNReal.ofReal (6 : ℝ)) volume =
+          eLpNorm (fun y => (fderiv ℝ g y) (basisVec i))
+            (ENNReal.ofReal (6 : ℝ)) volume := by
+        simpa [Real.norm_eq_abs] using eLpNorm_norm
+          (fun y => (fderiv ℝ g y) (basisVec i))
+            (hgi i).aestronglyMeasurable
+      have htop := (hgi i).eLpNorm_ne_top
+      have hmono' : eLpNorm (fun y => |(fderiv ℝ g y) (basisVec i)|)
+          (6 : ℝ≥0∞) (volume.restrict U) ≤
+          eLpNorm (fun y => |(fderiv ℝ g y) (basisVec i)|)
+            (6 : ℝ≥0∞) volume := by simpa using hmono
+      have hnormRestr' : eLpNorm (fun y => |(fderiv ℝ g y) (basisVec i)|)
+          (6 : ℝ≥0∞) (volume.restrict U) =
+          eLpNorm (fun y => (fderiv ℝ g y) (basisVec i))
+            (6 : ℝ≥0∞) (volume.restrict U) := by simpa using hnormRestr
+      have hnormVol' : eLpNorm (fun y => |(fderiv ℝ g y) (basisVec i)|)
+          (6 : ℝ≥0∞) volume =
+          eLpNorm (fun y => (fderiv ℝ g y) (basisVec i))
+            (6 : ℝ≥0∞) volume := by simpa using hnormVol
+      have htop' : eLpNorm (fun y => (fderiv ℝ g y) (basisVec i))
+          (6 : ℝ≥0∞) volume ≠ ∞ := by simpa using htop
+      change (eLpNorm (fun y => |(fderiv ℝ g y) (basisVec i)|)
+        (ENNReal.ofReal (6 : ℝ)) (volume.restrict U)).toReal ≤
+        (eLpNorm (fun y => (fderiv ℝ g y) (basisVec i))
+          (6 : ℝ≥0∞) volume).toReal
+      have hle : eLpNorm (fun y => |(fderiv ℝ g y) (basisVec i)|)
+            (ENNReal.ofReal (6 : ℝ)) (volume.restrict U) ≤
+          eLpNorm (fun y => (fderiv ℝ g y) (basisVec i))
+            (6 : ℝ≥0∞) volume := by
+        simpa using (hmono.trans_eq hnormVol)
+      exact ENNReal.toReal_mono htop'
+        hle
+
 /-- Smooth functions with an `L²` value and coordinate `L⁶` derivatives obey
 the global pointwise estimate used by the weak embedding. -/
 theorem smooth_global_linf_uniform :
@@ -199,61 +358,12 @@ theorem smooth_global_linf_uniform :
   have hUmem : (0 : Vec3) ∈ U := by simp [U, h2CoreBall]
   have hgfU : IntegrableOn g U volume := by
     exact (hgf.mono_measure Measure.restrict_le_self).integrable (by norm_num)
-  have hP := norm_sub_integralAverage_le_volumeAverage_integral_norm_fderiv_mul_rieszKernel_of_isOpenBoundedConvexDomain
+  have hP := norm_sub_average_le_gradient_riesz_integral
     hU (u := g) hgfU (hg.of_le (by norm_num)) hUmem (by
       have hp : 0 < volume U := by simpa [U] using h2CoreBall_pos
       exact ENNReal.toReal_pos hp.ne' (by simpa [U] using h2CoreBall_top.ne))
   have hkernel := h2Core_kernel_memLp
-  have hderMem : MemLp (fun y => ‖fderiv ℝ g y‖)
-      (ENNReal.ofReal (6 : ℝ)) (volume.restrict U) := by
-    apply (memLp_iff.mpr ?_)
-    let S : Vec3 → ℝ := fun y => ∑ i : Fin 3,
-      |(fderiv ℝ g y) (basisVec i)|
-    have hS : (∑ i : Fin 3, fun y : Vec3 =>
-        |(fderiv ℝ g y) (basisVec i)|) = S := by
-      funext y
-      rfl
-    have hmeas : AEStronglyMeasurable (fun y => ‖fderiv ℝ g y‖)
-        (volume.restrict U) :=
-      (hg.continuous_fderiv (by norm_num)).norm.aestronglyMeasurable.restrict
-    have hsum : eLpNorm (fun y => ‖fderiv ℝ g y‖)
-        (ENNReal.ofReal (6 : ℝ)) (volume.restrict U) ≤
-        ∑ i : Fin 3, eLpNorm (fun y =>
-          |(fderiv ℝ g y) (basisVec i)|)
-          (ENNReal.ofReal (6 : ℝ)) (volume.restrict U) := by
-      calc
-        _ ≤ eLpNorm S (ENNReal.ofReal (6 : ℝ)) (volume.restrict U) := by
-          apply eLpNorm_mono_ae hmeas
-          filter_upwards [] with y
-          have hSnonneg : 0 ≤ S y := by
-            dsimp [S]
-            exact Finset.sum_nonneg (fun i _ => abs_nonneg _)
-          calc
-            ‖‖fderiv ℝ g y‖‖ = ‖fderiv ℝ g y‖ := norm_norm _
-            _ ≤ S y := by
-              exact h2Core_fderiv_norm_le_sum (f := g) y
-            _ = ‖S y‖ := by
-              rw [Real.norm_eq_abs, abs_of_nonneg hSnonneg]
-        _ ≤ _ := by
-          rw [← hS]
-          simpa using (eLpNorm_sum_le
-            (f := fun i : Fin 3 => fun y : Vec3 =>
-              |(fderiv ℝ g y) (basisVec i)|)
-            (p := ENNReal.ofReal (6 : ℝ))
-            (s := Finset.univ) (by norm_num : (1 : ℝ≥0∞) ≤ ENNReal.ofReal 6))
-    have hsumtop : ∀ i : Fin 3, eLpNorm (fun y =>
-        |(fderiv ℝ g y) (basisVec i)|) (ENNReal.ofReal (6 : ℝ))
-        (volume.restrict U) < ∞ := by
-      intro i
-      calc
-        _ = eLpNorm (fun y => (fderiv ℝ g y) (basisVec i))
-            (ENNReal.ofReal (6 : ℝ)) (volume.restrict U) := by
-          exact eLpNorm_norm _ (hgi i).aestronglyMeasurable.restrict
-        _ ≤ eLpNorm (fun y => (fderiv ℝ g y) (basisVec i))
-            (ENNReal.ofReal (6 : ℝ)) volume :=
-          eLpNorm_mono_measure _ Measure.restrict_le_self
-        _ < ∞ := (hgi i).eLpNorm_lt_top
-    exact hsum.trans_lt (ENNReal.sum_lt_top.2 (fun i _ => hsumtop i))
+  have hderMem := h2Core_fderiv_memLp g hg hgi U
   have hholder : ∫ y in U, ‖fderiv ℝ g y‖ * ‖rieszKernel 0 y‖ ∂volume ≤
       (∫ y in U, ‖fderiv ℝ g y‖ ^ (6 : ℝ) ∂volume) ^ (1 / 6 : ℝ) *
         (∫ y in U, ‖rieszKernel 0 y‖ ^ (6 / 5 : ℝ) ∂volume) ^ (5 / 6 : ℝ) := by
@@ -263,132 +373,7 @@ theorem smooth_global_linf_uniform :
         exact Real.holderConjugate_iff.mpr ⟨by norm_num, by norm_num⟩)
       hderMem hkernel
     simpa [MeasureTheory.IntegrableOn] using hh
-  have hsum' : eLpNorm (fun y => ‖fderiv ℝ g y‖)
-      (ENNReal.ofReal (6 : ℝ)) (volume.restrict U) ≤
-      ∑ i : Fin 3, eLpNorm (fun y =>
-        |(fderiv ℝ g y) (basisVec i)|)
-        (ENNReal.ofReal (6 : ℝ)) (volume.restrict U) := by
-    let S : Vec3 → ℝ := fun y => ∑ i : Fin 3,
-      |(fderiv ℝ g y) (basisVec i)|
-    have hS : (∑ i : Fin 3, fun y : Vec3 =>
-        |(fderiv ℝ g y) (basisVec i)|) = S := by
-      funext y
-      rfl
-    have hmeas : AEStronglyMeasurable (fun y => ‖fderiv ℝ g y‖)
-        (volume.restrict U) :=
-      (hg.continuous_fderiv (by norm_num)).norm.aestronglyMeasurable.restrict
-    calc
-      _ ≤ eLpNorm S (ENNReal.ofReal (6 : ℝ)) (volume.restrict U) := by
-        apply eLpNorm_mono_ae hmeas
-        filter_upwards [] with y
-        have hSnonneg : 0 ≤ S y := by
-          dsimp [S]
-          exact Finset.sum_nonneg (fun i _ => abs_nonneg _)
-        calc
-          ‖‖fderiv ℝ g y‖‖ = ‖fderiv ℝ g y‖ := norm_norm _
-          _ ≤ S y := h2Core_fderiv_norm_le_sum (f := g) y
-          _ = ‖S y‖ := by rw [Real.norm_eq_abs, abs_of_nonneg hSnonneg]
-      _ ≤ _ := by
-        rw [← hS]
-        simpa using (eLpNorm_sum_le
-          (f := fun i : Fin 3 => fun y : Vec3 =>
-            |(fderiv ℝ g y) (basisVec i)|)
-          (p := ENNReal.ofReal (6 : ℝ))
-          (s := Finset.univ) (by norm_num : (1 : ℝ≥0∞) ≤ ENNReal.ofReal 6))
-  have hgradBound : (∫ y in U, ‖fderiv ℝ g y‖ ^ (6 : ℝ) ∂volume) ^ (1 / 6 : ℝ) ≤
-      ∑ i : Fin 3, lpNorm (fun y => (fderiv ℝ g y) (basisVec i)) 6 volume := by
-    have hsumtop' : (∑ i : Fin 3, eLpNorm (fun y =>
-        |(fderiv ℝ g y) (basisVec i)|) (ENNReal.ofReal (6 : ℝ))
-        (volume.restrict U)) < ∞ :=
-      ENNReal.sum_lt_top.2 (fun i _ => by
-        calc
-          _ = eLpNorm (fun y => (fderiv ℝ g y) (basisVec i))
-              (ENNReal.ofReal (6 : ℝ)) (volume.restrict U) := by
-            exact eLpNorm_norm _ (hgi i).aestronglyMeasurable.restrict
-          _ ≤ eLpNorm (fun y => (fderiv ℝ g y) (basisVec i))
-              (ENNReal.ofReal (6 : ℝ)) volume :=
-            eLpNorm_mono_measure _ Measure.restrict_le_self
-          _ < ∞ := (hgi i).eLpNorm_lt_top)
-    have hreal := ENNReal.toReal_mono hsumtop'.ne hsum'
-    have hleft : (∫ y in U, ‖fderiv ℝ g y‖ ^ (6 : ℝ) ∂volume) ^ (1 / 6 : ℝ) =
-        (eLpNorm (fun y => ‖fderiv ℝ g y‖) (ENNReal.ofReal (6 : ℝ))
-          (volume.restrict U)).toReal := by
-      have he := hderMem.eLpNorm_eq_integral_rpow_norm (by norm_num) (by norm_num)
-      have ht := congrArg ENNReal.toReal he
-      convert ht.symm using 1; norm_num
-      rw [ENNReal.toReal_ofReal]
-      positivity
-    calc
-      _ = (eLpNorm (fun y => ‖fderiv ℝ g y‖) (ENNReal.ofReal (6 : ℝ))
-          (volume.restrict U)).toReal := hleft
-      _ ≤ (∑ i : Fin 3, (eLpNorm (fun y =>
-          |(fderiv ℝ g y) (basisVec i)|) (ENNReal.ofReal (6 : ℝ))
-          (volume.restrict U))).toReal := hreal
-      _ = ∑ i : Fin 3, (eLpNorm (fun y =>
-          |(fderiv ℝ g y) (basisVec i)|) (ENNReal.ofReal (6 : ℝ))
-          (volume.restrict U)).toReal := by
-        apply ENNReal.toReal_sum
-        intro i hi
-        have hnormRestr : eLpNorm (fun y => |(fderiv ℝ g y) (basisVec i)|)
-            (ENNReal.ofReal (6 : ℝ)) (volume.restrict U) =
-            eLpNorm (fun y => (fderiv ℝ g y) (basisVec i))
-              (ENNReal.ofReal (6 : ℝ)) (volume.restrict U) := by
-          simpa [Real.norm_eq_abs] using eLpNorm_norm
-            (fun y => (fderiv ℝ g y) (basisVec i))
-              (hgi i).aestronglyMeasurable.restrict
-        rw [hnormRestr]
-        exact (lt_of_le_of_lt
-          (eLpNorm_mono_measure _ (Measure.restrict_le_self : volume.restrict U ≤ volume))
-          (hgi i).eLpNorm_lt_top).ne
-      _ ≤ _ := by
-        apply Finset.sum_le_sum
-        intro i hi
-        simp only [lpNorm]
-        have hmono : eLpNorm (fun y => |(fderiv ℝ g y) (basisVec i)|)
-            (ENNReal.ofReal (6 : ℝ)) (volume.restrict U) ≤
-            eLpNorm (fun y => |(fderiv ℝ g y) (basisVec i)|)
-              (ENNReal.ofReal (6 : ℝ)) volume :=
-          eLpNorm_mono_measure _ (Measure.restrict_le_self : volume.restrict U ≤ volume)
-        have hnormRestr : eLpNorm (fun y => |(fderiv ℝ g y) (basisVec i)|)
-            (ENNReal.ofReal (6 : ℝ)) (volume.restrict U) =
-            eLpNorm (fun y => (fderiv ℝ g y) (basisVec i))
-              (ENNReal.ofReal (6 : ℝ)) (volume.restrict U) := by
-          simpa [Real.norm_eq_abs] using eLpNorm_norm
-            (fun y => (fderiv ℝ g y) (basisVec i))
-              (hgi i).aestronglyMeasurable.restrict
-        have hnormVol : eLpNorm (fun y => |(fderiv ℝ g y) (basisVec i)|)
-            (ENNReal.ofReal (6 : ℝ)) volume =
-            eLpNorm (fun y => (fderiv ℝ g y) (basisVec i))
-              (ENNReal.ofReal (6 : ℝ)) volume := by
-          simpa [Real.norm_eq_abs] using eLpNorm_norm
-            (fun y => (fderiv ℝ g y) (basisVec i))
-              (hgi i).aestronglyMeasurable
-        have htop := (hgi i).eLpNorm_ne_top
-        have hmono' : eLpNorm (fun y => |(fderiv ℝ g y) (basisVec i)|)
-            (6 : ℝ≥0∞) (volume.restrict U) ≤
-            eLpNorm (fun y => |(fderiv ℝ g y) (basisVec i)|)
-              (6 : ℝ≥0∞) volume := by simpa using hmono
-        have hnormRestr' : eLpNorm (fun y => |(fderiv ℝ g y) (basisVec i)|)
-            (6 : ℝ≥0∞) (volume.restrict U) =
-            eLpNorm (fun y => (fderiv ℝ g y) (basisVec i))
-              (6 : ℝ≥0∞) (volume.restrict U) := by simpa using hnormRestr
-        have hnormVol' : eLpNorm (fun y => |(fderiv ℝ g y) (basisVec i)|)
-            (6 : ℝ≥0∞) volume =
-            eLpNorm (fun y => (fderiv ℝ g y) (basisVec i))
-              (6 : ℝ≥0∞) volume := by simpa using hnormVol
-        have htop' : eLpNorm (fun y => (fderiv ℝ g y) (basisVec i))
-            (6 : ℝ≥0∞) volume ≠ ∞ := by simpa using htop
-        change (eLpNorm (fun y => |(fderiv ℝ g y) (basisVec i)|)
-          (ENNReal.ofReal (6 : ℝ)) (volume.restrict U)).toReal ≤
-          (eLpNorm (fun y => (fderiv ℝ g y) (basisVec i))
-            (6 : ℝ≥0∞) volume).toReal
-        have hle : eLpNorm (fun y => |(fderiv ℝ g y) (basisVec i)|)
-              (ENNReal.ofReal (6 : ℝ)) (volume.restrict U) ≤
-            eLpNorm (fun y => (fderiv ℝ g y) (basisVec i))
-              (6 : ℝ≥0∞) volume := by
-          simpa using (hmono.trans_eq hnormVol)
-        exact ENNReal.toReal_mono htop'
-          hle
+  have hgradBound := h2Core_fderiv_integral_bound g hg hgi U
   have hmean : |integralAverage U g| ≤ C₁ * lpNorm f 2 volume := by
     have havg := h2Core_average_bound (f := g)
       (hgf.mono_measure Measure.restrict_le_self)

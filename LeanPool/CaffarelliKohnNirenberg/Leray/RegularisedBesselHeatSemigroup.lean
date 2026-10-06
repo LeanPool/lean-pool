@@ -58,7 +58,8 @@ theorem regularisedBesselHeat_continuousAt
     funext t
     apply BesselPotentialSpace.injective_toLp L2Vec3 ComplexVec3 s 2
     rw [regularisedBesselHeat, BesselPotentialSpace.toLp_ofLp,
-      ← BesselPotentialSpace.toLpₗᵢ_apply (f := (BesselPotentialSpace.toLpₗᵢ L2Vec3 ComplexVec3 s 2).symm
+      ← BesselPotentialSpace.toLpₗᵢ_apply
+        (f := (BesselPotentialSpace.toLpₗᵢ L2Vec3 ComplexVec3 s 2).symm
         (heatSemigroup t.1 t.2 v.toLp)),
       LinearIsometryEquiv.apply_symm_apply]
   rw [hfun]

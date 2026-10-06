@@ -182,7 +182,7 @@ private theorem mildTensorProductField_memLp
     (hg : MemLp g 2 volume) (c : ℝ)
     (hbound : ∀ x, ‖f x‖ ≤ c) :
     MemLp (mildTensorProductField f g) 2 volume := by
-  apply hg.of_le_mul (mildTensorProductField_aestronglyMeasurable
+  apply hg.of_le_mul (c := c) (mildTensorProductField_aestronglyMeasurable
     hf hg.aestronglyMeasurable)
   filter_upwards [] with x
   rw [mildTensorProductField, regularizedTensorOuter_norm]
