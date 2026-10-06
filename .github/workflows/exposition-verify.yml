@@ -35,6 +35,10 @@ jobs:
       - name: Checkout project
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
 
+      - name: Identify compiled Lean sources
+        id: build-identity
+        run: echo "revision=$(PYTHONPATH=python python3 -m lean_pool.ci_cache revision)" >> "$GITHUB_OUTPUT"
+
       # Match Lean Action CI's cache lookup exactly. This workflow only needs
       # compiled Lean artifacts; restoring doc-gen output here used to make a
       # broad fallback pull an incompatible cache after every toolchain bump.
@@ -48,10 +52,11 @@ jobs:
           key: LeanDependencies-v1-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}
 
       - name: Restore pool build
+        id: pool-build
         uses: actions/cache/restore@27d5ce7f107fe9357f9df03efb73ab90386fccae
         with:
           path: .lake/build
-          key: LeanPoolBuild-v1-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json', 'lakefile.toml') }}-${{ github.sha }}
+          key: LeanPoolBuild-v1-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json', 'lakefile.toml') }}-${{ steps.build-identity.outputs.revision }}
           restore-keys: |
             LeanPoolBuild-v1-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json', 'lakefile.toml') }}-
 
@@ -74,6 +79,7 @@ jobs:
           fi
 
       - name: Reuse matching Lean CI build
+        if: steps.pool-build.outputs.cache-hit != 'true' && github.event_name != 'pull_request'
         env:
           GH_TOKEN: ${{ github.token }}
           BUILD_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
