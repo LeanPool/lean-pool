@@ -23,7 +23,7 @@ additive subgroup.  No Ore, Weyl, or characteristic-variety structure is
 needed.
 -/
 
-@[expose] public section
+public section
 
 namespace AlgebraicAnalysis.FilteredSchreyer
 

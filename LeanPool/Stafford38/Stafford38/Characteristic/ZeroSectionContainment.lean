@@ -23,7 +23,7 @@ radical, it takes a power in the order initial ideal, extracts its fibre-degree
 zero component there, and then uses reducedness of the ground field.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.Characteristic.ZeroSectionContainment
 

@@ -14,7 +14,7 @@ public import LeanPool.Stafford38.Stafford38.Geometry.ScalarExtensionPoints
 # Scalar extension of equation-conormal vanishing
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.Geometry.ConormalScalarExtensionVanishing
 

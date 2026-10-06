@@ -19,7 +19,7 @@ with the free circles split off.  Specialised to the star union
 this is the fragment-level star factorization.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 
@@ -28,6 +28,7 @@ section SortEquiv
 variable {n m : ℕ} (assign : Fin n → Fin m)
 
 /-- The full sort: slots to the block-concatenated enumeration. -/
+@[expose]
 noncomputable def sortEquiv : Fin n ≃ Fin (degList assign).sum :=
   (sortSigma assign).trans (blockSigmaEquiv (degList assign))
 
@@ -80,6 +81,7 @@ noncomputable def multiStarVertexMap {V V' : Type}
   circles_eq := rfl
 
 /-- The star union's assignment, with vertices enumerated. -/
+@[expose]
 noncomputable def starAssignEnum (W : ClosedFragment) :
     Fin (edgeCount W + edgeCount W) →
       Fin (Fintype.card W.Vertex) :=

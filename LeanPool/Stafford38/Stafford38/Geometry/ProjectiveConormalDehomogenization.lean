@@ -22,7 +22,7 @@ Laurent specialization, closure theorem, or coisotropy statement is constructed
 here.  The tangent-space equality and the base equations are explicit inputs.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.Geometry.ProjectiveConormalDehomogenization
 

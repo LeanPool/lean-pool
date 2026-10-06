@@ -27,7 +27,7 @@ an artificial multiplication API for two-sided ideals: membership in the
 relevant product is recorded by an explicit finite sum of products.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.Characteristic.SquareZeroHighPowerReduction
 

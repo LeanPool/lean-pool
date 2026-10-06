@@ -37,7 +37,7 @@ currently lives in `ConfigurationThree.lean`; that is why this file imports
 it.  Neither structure mentions the other.
 -/
 
-@[expose] public section
+public section
 
 namespace AtanasovRanganathan.ConfigurationTwo
 
@@ -55,6 +55,7 @@ open ConfigurationCommon
 open ConfigurationThree
 
 /-- The indicator of "the chip at `v` sits in the contracted class of `r`". -/
+@[expose]
 def chipInd (d : DegSpec 8 12) (r v : Fin 8) : ℤ :=
   if d.rep v = d.rep r then 1 else 0
 
@@ -152,6 +153,7 @@ theorem chip_ne_center {chip center : Fin 8} (hChip : cfg.IsChip chip)
 variable (d : DegSpec 8 12)
 
 /-- One chip on each of the four displayed vertices. -/
+@[expose]
 def divisor : CFDiv d.graph :=
   fourChipDivisor (d.coreVertex cfg.chipOne) (d.coreVertex cfg.chipTwo)
     (d.coreVertex cfg.chipThree) (d.coreVertex cfg.chipFour)

@@ -16,7 +16,7 @@ This removes the commutativity assumption from the faithful-operator proof of
 associativity for `Stafford.OreDivision.rightMul`.
 -/
 
-@[expose] public section
+public section
 
 namespace AlgebraicAnalysis.OreAssociativity
 
@@ -110,6 +110,7 @@ def leftOreShift (D : OreDivisionDerivation B) :
     abel
 
 /-- The faithful left-regular representation of the one-variable Ore model. -/
+@[expose]
 def faithfulAmbient (D : OreDivisionDerivation B) :
     OreAmbient B (AddMonoid.End (Polynomial B)) D where
   embed := coefficientLeft
@@ -210,6 +211,7 @@ theorem rightMul_assoc_of_ring
 /-! ## The concrete associative Ore ring -/
 
 /-- The image of the faithful normal-form representation. -/
+@[expose]
 def faithfulRange (D : OreDivisionDerivation B) :
     Subring (AddMonoid.End (Polynomial B)) where
   carrier := Set.range (OreAmbient.eval D (faithfulAmbient D))
@@ -230,6 +232,7 @@ left-regular action on normal polynomials. -/
 abbrev NormalOre (D : OreDivisionDerivation B) := faithfulRange D
 
 /-- A coefficient-left polynomial regarded as an element of the Ore ring. -/
+@[expose]
 def normalForm (D : OreDivisionDerivation B) (p : Polynomial B) : NormalOre D :=
   ⟨OreAmbient.eval D (faithfulAmbient D) p, ⟨p, rfl⟩⟩
 
@@ -278,6 +281,7 @@ theorem normalForm_mul (D : OreDivisionDerivation B)
   exact OreAmbient.eval_rightMul D (faithfulAmbient D) p q
 
 /-- The normal-form map as an additive homomorphism. -/
+@[expose]
 def normalFormAddHom (D : OreDivisionDerivation B) :
     Polynomial B →+ NormalOre D where
   toFun := normalForm D
@@ -286,12 +290,14 @@ def normalFormAddHom (D : OreDivisionDerivation B) :
 
 /-- Normal forms are additively equivalent to ordinary coefficient-left
 polynomials. -/
+@[expose]
 def normalFormAddEquiv (D : OreDivisionDerivation B) :
     Polynomial B ≃+ NormalOre D :=
   AddEquiv.ofBijective (normalFormAddHom D)
     ⟨normalForm_injective D, normalForm_surjective D⟩
 
 /-- The canonical coefficient embedding. -/
+@[expose]
 def normalCoefficient (D : OreDivisionDerivation B) : B →+* NormalOre D :=
   coefficientLeft.codRestrict (faithfulRange D) fun b => by
     exact ⟨C b, faithful_eval_C D b⟩
@@ -303,6 +309,7 @@ theorem normalForm_C (D : OreDivisionDerivation B) (b : B) :
   exact faithful_eval_C D b
 
 /-- The canonical Ore variable. -/
+@[expose]
 def normalVariable (D : OreDivisionDerivation B) : NormalOre D :=
   normalForm D X
 

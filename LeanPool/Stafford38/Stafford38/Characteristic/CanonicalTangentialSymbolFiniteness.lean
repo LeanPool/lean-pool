@@ -13,7 +13,7 @@ public import LeanPool.Stafford38.Stafford38.Characteristic.CanonicalNormalSymbo
 Finiteness of canonical graded modules over the tangential symbol ring.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.Characteristic.CanonicalTangentialSymbolFiniteness
 

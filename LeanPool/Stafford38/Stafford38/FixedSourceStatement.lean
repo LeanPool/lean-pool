@@ -11,7 +11,7 @@ public import LeanPool.Stafford38.Stafford38.UniversalAssembly
 
 /-! The (actual) Bernstein degree, read directly from checked PBW normal form. -/
 
-@[expose] public section
+public section
 
 
 namespace Stafford38.FixedSource

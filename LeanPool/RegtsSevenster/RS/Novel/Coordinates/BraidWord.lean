@@ -17,7 +17,7 @@ any permutation bundle map conjugates through `stdToOmega` into
 the corresponding word of model braidings.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 
@@ -35,6 +35,7 @@ theorem adjTrans_eq_adjSwap {n : ℕ} (i : Fin n) :
       from Fin.ext rfl]
 
 /-- The model-side braiding word. -/
+@[expose]
 noncomputable def powBraidWord (V : SuperVect) {n : ℕ} :
     List (Fin n) → (superPow V (n + 1) ⟶ superPow V (n + 1))
   | [] => 𝟙 _

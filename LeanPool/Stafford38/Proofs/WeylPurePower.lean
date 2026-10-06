@@ -28,7 +28,7 @@ The remaining universal monic problem is not hidden here: it is the passage
 from a pure power to a general monic polynomial.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford
 

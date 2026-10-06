@@ -21,7 +21,7 @@ endomorphism algebra, and kernels are the splittings of the
 regular idempotents.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 
@@ -72,7 +72,7 @@ decomposition of each matrix entry
 `NilpotentMatTrace.lean`).  The outer Karoubi is still needed:
 the additive envelope of an idempotent-complete category need not
 be idempotent-complete. -/
-@[reducible] def Env := Karoubi (Mat_ (Karoubi (SkeinObj f)))
+@[expose, reducible] def Env := Karoubi (Mat_ (Karoubi (SkeinObj f)))
 
 /-! ### Semisimplicity of envelope endomorphism algebras -/
 
@@ -304,7 +304,7 @@ noncomputable def envNormalEpi {M N : Env f} (e : M ⟶ N) [Epi e] :
 
 /-- **The envelope is abelian**, from the factorial trace
 obstruction and the connection pairing. -/
-@[reducible]
+@[expose, reducible]
 noncomputable def envAbelian :
     Abelian (Env f) := by
   haveI : HasFiniteBiproducts (Env f) := inferInstance

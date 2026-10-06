@@ -43,7 +43,7 @@ Everything is proved over `ℂ`, descended to `ℚ` by `Polynomial.isCoprime_map
 and transported to an arbitrary characteristic-zero field by `IsCoprime.map`.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.Evolution
 

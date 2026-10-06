@@ -13,7 +13,7 @@ public import LeanPool.Stafford38.Stafford38.Characteristic.CanonicalTangentialS
 The polynomial-ring equivalence identifying old and retained tangential variables.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.Characteristic.CanonicalTangentialRingEquivalence
 

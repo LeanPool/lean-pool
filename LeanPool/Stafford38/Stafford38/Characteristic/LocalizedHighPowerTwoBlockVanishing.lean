@@ -25,7 +25,7 @@ displayed product order.  No residue-field action is placed on the deformation
 module.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.Characteristic.LocalizedHighPowerTwoBlockVanishing
 

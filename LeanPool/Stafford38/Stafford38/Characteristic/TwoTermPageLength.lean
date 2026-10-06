@@ -14,7 +14,7 @@ Compatibility exports for length comparison for filtered two-term pages
 from the shared algebraic-analysis library.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.Characteristic.TwoTermPageLength
 

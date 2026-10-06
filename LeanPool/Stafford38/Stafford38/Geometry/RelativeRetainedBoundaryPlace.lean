@@ -22,7 +22,7 @@ No projective normalization, completed projective coordinates, or tangent
 frame is constructed here.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.Geometry.RelativeRetainedBoundaryPlace
 

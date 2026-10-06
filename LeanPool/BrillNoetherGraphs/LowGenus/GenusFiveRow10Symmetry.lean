@@ -52,7 +52,7 @@ which keeps `CoreSymmetry.reindexLength` definitionally transparent, the pattern
 of `GenusFiveRow01Symmetry` and `GenusFiveRow05Symmetry`.
 -/
 
-@[expose] public section
+public section
 
 namespace AtanasovRanganathan.GenusFiveRow10Symmetry
 
@@ -107,15 +107,18 @@ def sigma : CoreSymmetry row10Core :=
     (by decide) (by decide) (by decide) (by decide) (by decide) (by decide)
 
 /-- Chamber 1: AR's first scope, the apex spoke `a` realizes the minimum. -/
+@[expose]
 def ChamberOne (length : Fin 12 → ℕ) : Prop :=
   length 10 ≤ length 4 ∧ length 10 ≤ length 3
 
 /-- Chamber 2: AR's second scope, the spoke `b` realizes the minimum. -/
+@[expose]
 def ChamberTwo (length : Fin 12 → ℕ) : Prop :=
   length 4 ≤ length 10 ∧ length 4 ≤ length 3
 
 /-- The union of the two scopes AR draw.  The third case, `c = min`, is the
 `sigma` image of chamber 2 and needs no proof of its own. -/
+@[expose]
 def Chamber (length : Fin 12 → ℕ) : Prop :=
   ChamberOne length ∨ ChamberTwo length
 

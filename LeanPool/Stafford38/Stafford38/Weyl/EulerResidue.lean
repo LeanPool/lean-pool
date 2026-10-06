@@ -18,7 +18,7 @@ The remaining step for quotient surjectivity is to prove that the displayed
 error term has a right factor `x` lying in the Euler-nonnegative subring.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.WeylEulerResidue
 

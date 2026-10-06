@@ -23,7 +23,7 @@ if `P` is minimal over the annihilator of a finite module, then localization at
 `P` is nonzero and has finite length.
 -/
 
-@[expose] public section
+public section
 
 namespace AlgebraicAnalysis.MinimalPrimeFiniteLengthLocalization
 

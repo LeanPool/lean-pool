@@ -33,7 +33,7 @@ smoothness, or geometric conormal bundles.  Only linear algebra of Kähler
 differentials and derivations over the fraction field of a quotient ring.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.Geometry.GenericPointKaehlerConormal
 

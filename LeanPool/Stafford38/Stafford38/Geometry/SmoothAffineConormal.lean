@@ -19,7 +19,7 @@ equation conormal over those smooth points has the same algebraic closure as
 the full equation conormal.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.Geometry.SmoothAffineConormal
 

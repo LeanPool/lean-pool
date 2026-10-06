@@ -36,7 +36,7 @@ linear-algebra scope. Reusable commutator identities are imported from
 AlgebraicAnalysis.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford
 
@@ -44,6 +44,7 @@ variable {k A ι : Type*} [Field k] [Ring A] [Algebra k A]
   [Fintype ι] [DecidableEq ι]
 
 /-- Historical namespace for the shared ring commutator. -/
+@[expose]
 def commutator (u v : A) : A := AlgebraicAnalysis.ringCommutator u v
 
 @[simp]
@@ -51,6 +52,7 @@ theorem commutator_eq_shared (u v : A) :
     commutator u v = AlgebraicAnalysis.ringCommutator u v := rfl
 
 /-- The linear combination of a family of generators specified by a matrix. -/
+@[expose]
 def linearCombination (M : Matrix ι ι k) (z : ι → A) (i : ι) : A :=
   ∑ j, algebraMap k A (M i j) * z j
 
@@ -196,6 +198,7 @@ argument below proves the form-preserving A₂ map is an automorphism. -/
 
 /-- The generating relation equating each generator commutator with the corresponding scalar
 form entry. -/
+@[expose]
 def freeWeylRelation (omega : Matrix ι ι k)
     (a b : FreeAlgebra k ι) : Prop :=
   ∃ i j,
@@ -208,6 +211,7 @@ abbrev FreeWeyl (k : Type*) [Field k] (ι : Type*)
     (omega : Matrix ι ι k) := RingQuot (freeWeylRelation omega)
 
 /-- The image of a free generator in the Weyl quotient. -/
+@[expose]
 def freeWeylGenerator (omega : Matrix ι ι k) (i : ι) : FreeWeyl k ι omega :=
   RingQuot.mkAlgHom k (freeWeylRelation omega) (FreeAlgebra.ι k i)
 
@@ -247,6 +251,7 @@ theorem freeWeylGenerator_commutator
       rfl
 
 /-- The linear combination of Weyl elements specified by a row of a matrix. -/
+@[expose]
 def freeWeylLinearCombination {omega : Matrix ι ι k}
     (M : Matrix ι ι k) (z : ι → FreeWeyl k ι omega) (i : ι) :
     FreeWeyl k ι omega :=

@@ -23,7 +23,7 @@ selected minor has nonzero constant coefficient.  This file does not assert
 that a suitable minor exists for a geometric tangent family.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.GeometrySplitTangentMatrix
 
@@ -34,6 +34,7 @@ universe u v
 variable {R : Type u} [CommRing R]
 
 /-- The square submatrix obtained by retaining the explicitly selected rows. -/
+@[expose]
 def selectedMinor {ι κ : Type*} (B : Matrix ι κ R) (rows : κ ↪ ι) : Matrix κ κ R :=
   fun a b => B (rows a) b
 

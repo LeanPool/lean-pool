@@ -21,7 +21,7 @@ coordinate is a nonunit.  Consequently, a common projective normalization of
 all affine coordinates cannot have unit homogeneous denominator.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.Geometry.ComponentProjectiveOrder
 

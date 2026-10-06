@@ -27,7 +27,7 @@ falsifier: an arbitrary high-degree representation need not be termwise
 bounded, even though a bounded representation exists.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.Weyl.FilteredScalarLifting
 

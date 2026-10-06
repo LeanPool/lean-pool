@@ -21,7 +21,7 @@ residue extension is finite and separable in characteristic zero.
 No inverse limit, completion, or power-series chart is constructed here.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.Geometry.RelativeCoefficientDVR
 

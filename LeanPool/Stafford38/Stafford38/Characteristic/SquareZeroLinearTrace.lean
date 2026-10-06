@@ -25,7 +25,7 @@ block decomposition.  The off-diagonal block of the displayed commutator is
 a sum of two rectangular commutators, so its trace is zero.
 -/
 
-@[expose] public section
+public section
 
 noncomputable section
 
@@ -43,6 +43,7 @@ lemma mapsTo_range_of_comp_comm (C F : V →ₗ[k] V)
   exact LinearMap.congr_fun hF.symm v
 
 /-- The endomorphism induced by `F` on `V / range C`. -/
+@[expose]
 def quotientEnd (C F : V →ₗ[k] V) (hF : F.comp C = C.comp F) :
     (V ⧸ LinearMap.range C) →ₗ[k] (V ⧸ LinearMap.range C) :=
   (LinearMap.range C).mapQ (LinearMap.range C) F
@@ -54,6 +55,7 @@ def rangeEnd (C F : V →ₗ[k] V) (hF : F.comp C = C.comp F) :
   F.restrict (mapsTo_range_of_comp_comm C F hF)
 
 /-- Exactness makes the map induced by `C` from the quotient to its range an equivalence. -/
+@[expose]
 def quotientToRangeEquiv (C : V →ₗ[k] V) (hExact : LinearMap.ker C = LinearMap.range C) :
     (V ⧸ LinearMap.range C) ≃ₗ[k] LinearMap.range C := by
   let cbar : (V ⧸ LinearMap.range C) →ₗ[k] LinearMap.range C :=

@@ -36,7 +36,7 @@ remaining source-specific action identity; its exact signature is recorded at
 the end, without claiming the final operator trace.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.Characteristic.ConcreteEquation33SourceMatrices
 

@@ -20,7 +20,7 @@ and nonzero scalars. These conditional interfaces are retained for current
 imports; the unconditional theorem is proved in `Stafford38.FoundationClosure`.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford
 namespace Reduction

@@ -24,7 +24,7 @@ No Rees-module action, quotient module, trace package, or Gabber theorem is
 constructed here.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.CharacteristicOrderReesTwoJet
 

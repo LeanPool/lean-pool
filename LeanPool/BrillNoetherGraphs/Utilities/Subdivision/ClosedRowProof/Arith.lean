@@ -39,7 +39,7 @@ multiplier contributes `0` to the equality part.  So the checker is
 fail-closed on malformed indices without spending a comparison on them.
 -/
 
-@[expose] public section
+public section
 
 namespace Utilities.Subdivision.ClosedRowProof
 
@@ -48,6 +48,7 @@ namespace Utilities.Subdivision.ClosedRowProof
 abbrev Form := List ℤ
 
 /-- Dot product, truncating at the shorter list. -/
+@[expose]
 def dot : List ℤ → List ℤ → ℤ
   | [], _ => 0
   | _, [] => 0
@@ -55,6 +56,7 @@ def dot : List ℤ → List ℤ → ℤ
 
 /-- Evaluate a form at a point.  The constant term is the coefficient of the
 leading `1`, which makes `eval` a dot product and hence linear in the form. -/
+@[expose]
 def eval (g : Form) (x : List ℤ) : ℤ := dot g (1 :: x)
 
 @[simp] theorem dot_nil_left (y : List ℤ) : dot [] y = 0 := rfl
@@ -65,15 +67,18 @@ def eval (g : Form) (x : List ℤ) : ℤ := dot g (1 :: x)
 @[simp] theorem eval_nil (x : List ℤ) : eval [] x = 0 := rfl
 
 /-- Sum of two forms, aligned at the constant term. -/
+@[expose]
 def addForm : Form → Form → Form
   | [], b => b
   | a, [] => a
   | a :: as, b :: bs => (a + b) :: addForm as bs
 
 /-- Scalar multiple of a form. -/
+@[expose]
 def smulForm (k : ℤ) (f : Form) : Form := f.map (fun a => k * a)
 
 /-- Difference of two forms. -/
+@[expose]
 def subForm (f g : Form) : Form := addForm f (smulForm (-1) g)
 
 theorem dot_addForm (f g : Form) (y : List ℤ) :
@@ -129,6 +134,7 @@ theorem dot_eq_zero_of_all_zero {l : List ℤ} (h : ∀ a ∈ l, a = 0)
 
 /-- Syntactic equality of forms, up to padding: their difference is zero in
 every coordinate. -/
+@[expose]
 def formEq (f g : Form) : Bool := (subForm f g).all (fun a => a == 0)
 
 theorem eval_eq_of_formEq {f g : Form} (h : formEq f g = true) (x : List ℤ) :
@@ -151,6 +157,7 @@ structure Context where
   eq : List Form
 
 /-- The point `x` satisfies the context. -/
+@[expose]
 def Context.Holds (Γ : Context) (x : List ℤ) : Prop :=
   (∀ g ∈ Γ.ge, 0 ≤ eval g x) ∧ (∀ g ∈ Γ.eq, eval g x = 0)
 
@@ -165,6 +172,7 @@ as an identity of forms.  Nothing searches for `λ`; the generator supplies it.
 -/
 
 /-- A sparse combination of context rows. -/
+@[expose]
 def combineRows (rows : List Form) (w : List (ℕ × ℤ)) : Form :=
   w.foldr (fun p acc => addForm (smulForm p.2 (rows.getD p.1 [])) acc) []
 
@@ -180,11 +188,13 @@ structure Cert where
   c : ℤ
 
 /-- The form the certificate claims equals `k · g`. -/
+@[expose]
 def Cert.combination (w : Cert) (Γ : Context) : Form :=
   addForm [w.c] (addForm (combineRows Γ.ge w.lam) (combineRows Γ.eq w.mu))
 
 /-- The checker of spec §4.1.  One pass over the sparse lists and one vector
 comparison; **no rounding**, deliberately (§13.4). -/
+@[expose]
 def Cert.check (w : Cert) (Γ : Context) (g : Form) : Bool :=
   decide (1 ≤ w.k) && decide (0 ≤ w.c) &&
     w.lam.all (fun p => decide (0 ≤ p.2)) &&

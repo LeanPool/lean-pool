@@ -30,7 +30,7 @@ prime divisor.  Those global existence statements are not presently
 available in Mathlib's algebraic-geometry library.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.Geometry.ProjectiveDivisorOrderGap
 

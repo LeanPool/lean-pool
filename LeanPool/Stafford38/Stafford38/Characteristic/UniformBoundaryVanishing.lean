@@ -14,7 +14,7 @@ Compatibility exports for uniform vanishing of Noetherian boundaries
 from the shared algebraic-analysis library.
 -/
 
-@[expose] public section
+public section
 
 export AlgebraicAnalysis (exists_uniform_zero_of_noetherian
   exists_uniform_subsingleton_of_noetherian exists_uniform_zero_localized

@@ -23,7 +23,7 @@ name the row's lookup tables, check the incidence facts that file asks for,
 and re-export the reach statement in the shape row 12 consumes.
 -/
 
-@[expose] public section
+public section
 
 namespace AtanasovRanganathan.GenusFiveRow12Tripod
 
@@ -40,6 +40,7 @@ open GenusFiveCoreAtlas
 open ConfigurationTwo
 
 /-- The two configuration-2 centers, as a decidable table. -/
+@[expose]
 def isCenter : Fin 8 → Bool
   | 0 | 1 => true
   | _ => false
@@ -87,6 +88,7 @@ def spareChip : Fin 8 → Fin 8
   | _ => 0
 
 /-- The two tripod centres of row 12, read as AR configuration-2 pictures. -/
+@[expose]
 def row12TripodConfig : ConfigTwo where
   core := row12Core
   chipOne := 3
@@ -122,6 +124,7 @@ def row12TripodConfig : ConfigTwo where
 /-! ## The shape row 12 consumes -/
 
 /-- The two configuration-2 centers. -/
+@[expose]
 def IsTripodCenter (v : Fin 8) : Prop := v = 0 ∨ v = 1
 
 instance (v : Fin 8) : Decidable (IsTripodCenter v) := by
@@ -133,6 +136,7 @@ theorem isCenter_of_isTripodCenter {v : Fin 8} (h : IsTripodCenter v) :
   rcases h with rfl | rfl <;> rfl
 
 /-- One chip on the selected bipartition class. -/
+@[expose]
 def rowDivisor (d : DegSpec 8 12) : CFDiv d.graph :=
   fourChipDivisor (d.coreVertex 3) (d.coreVertex 4)
     (d.coreVertex 5) (d.coreVertex 6)

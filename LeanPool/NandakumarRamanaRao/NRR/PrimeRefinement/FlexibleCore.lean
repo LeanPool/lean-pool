@@ -16,7 +16,7 @@ The recursive partition construction uses only that model's site family and the 
 property, independently of a particular top-cell atlas.
 -/
 
-@[expose] public section
+public section
 
 namespace NRR
 
@@ -36,6 +36,7 @@ structure FlexiblePrimeRefinementStep
   certificate : PrimeRefinementSeparator model hA phi
 
 /-- Model-independent prime-refinement theorem. -/
+@[expose]
 def FlexiblePrimeRefinementTheorem : Prop :=
   ∀ (p : Nat) (hp : Nat.Prime p)
     (K : Geometry.ConvexBody Plane) (A : Real) (hA : 0 < A)

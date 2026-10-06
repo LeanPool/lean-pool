@@ -27,7 +27,7 @@ residue coordinates at a chosen divisor generate an intermediate field, or
 produce any completed boundary chart.  Those are separate geometric inputs.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.Geometry.KaehlerSpanSeparableAdjoin
 

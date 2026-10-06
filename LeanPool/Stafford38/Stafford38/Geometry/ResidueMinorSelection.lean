@@ -20,7 +20,7 @@ the column index type into the row index type, matching the input expected by
 `GeometrySplitTangentMatrix`.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.GeometryResidueMinorSelection
 
@@ -96,6 +96,7 @@ theorem exists_selectedMinor_det_ne_zero_of_mulVec_injective
 /-! ## Power-series residue matrices -/
 
 /-- Entrywise constant coefficient of a power-series matrix. -/
+@[expose]
 def residueMatrix
     {ι : Type v} {κ : Type w} (B : Matrix ι κ (PowerSeries k)) : Matrix ι κ k :=
   fun i j => PowerSeries.constantCoeff (B i j)

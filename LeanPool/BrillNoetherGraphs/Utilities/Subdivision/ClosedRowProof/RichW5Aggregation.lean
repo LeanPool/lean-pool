@@ -23,7 +23,7 @@ module, so that `RichLeafFullSound.richLeaf_sound` can consume it; the
 `hTail`/`hHead` hypotheses are produced by `RichChipBridge`.
 -/
 
-@[expose] public section
+public section
 
 namespace Utilities.Subdivision.ClosedRowProof
 
@@ -38,6 +38,7 @@ variable {n p : ℕ}
 
 /-- The actual residual at an original core vertex, parameterized by the
 tail/head endpoint contributions furnished by the closed-face geometry. -/
+@[expose]
 def w5ActualResidual (w : RichWitness) (core : ExplicitPotential.Core n p)
     (mult : ℤ) (a : Fin n) (tail head : Fin p → ℤ) (v : Fin n) : ℤ :=
   w.divisorCore.getD v.val 0 - (if v.val == a.val then mult else 0) +

@@ -17,7 +17,7 @@ assembled star vector acted on by the sort's model permutation word
 and the degree-sum cast — pushed forward once.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 
@@ -32,6 +32,7 @@ variable (e' : P.ω.obj (SkeinObj.mk 1) ⟶ stdSuperPair k ℓ)
 
 /-- The model action of a permutation: trivial at arity zero,
 the braiding word of the adjacent-transposition word above. -/
+@[expose]
 noncomputable def modelPermMap :
     {n : ℕ} → (σ : _root_.Equiv.Perm (Fin n)) →
       (superPow (stdSuperPair k ℓ) n ⟶ superPow (stdSuperPair k ℓ) n)

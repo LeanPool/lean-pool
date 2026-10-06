@@ -24,7 +24,7 @@ graded `SymbolRing`-module equivalence and identify its annihilator/support
 with `orderInitialIdeal`.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.CharacteristicFilteredQuotient
 

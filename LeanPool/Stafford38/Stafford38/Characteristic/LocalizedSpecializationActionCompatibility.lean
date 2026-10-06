@@ -24,7 +24,7 @@ No Artinian descent, characteristic-variety, or involutivity statement is
 made here.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.Characteristic.LocalizedSpecializationActionCompatibility
 

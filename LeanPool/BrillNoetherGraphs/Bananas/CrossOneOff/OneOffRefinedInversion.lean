@@ -26,13 +26,14 @@ immediately before it whenever `(n-1) | x`.  Every ordered pair of compressed
 coordinates gives an inversion, as does each additional adjacent pair.
 -/
 
-@[expose] public section
+public section
 
 namespace Bananas
 
 open Utilities
 
 /-- The three rows in Lemma 4.23, written as one finite row function. -/
+@[expose]
 def oneOffRow (g n b : ℕ) : ℕ :=
   if b % n = 0 then b / n
   else if b % n = n - 1 then g + b / n + 1

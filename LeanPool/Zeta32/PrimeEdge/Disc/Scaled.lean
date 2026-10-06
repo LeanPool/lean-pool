@@ -10,7 +10,7 @@ public import LeanPool.Zeta32.PrimeEdge.Disc.LocValue
 valuation `≥ e`, i.e. `G(p u)` with `G` integral) and the disc factorization predicate `Good`:
 `F(p u - d) = p^E u^E R(u)` with `R` scaled and `R(0)` a `p`-adic unit. -/
 
-@[expose] public section
+public section
 
 open Polynomial
 open scoped BigOperators
@@ -24,9 +24,11 @@ variable {p : ℕ}
 def Scaled (p : ℕ) (f : ℚ[X]) : Prop := ∀ e, VG p (f.coeff e) e
 
 /-- Coefficientwise valuation lower bound for a power series scaled by its degree. -/
+@[expose]
 def ScaledPS (p : ℕ) (f : PowerSeries ℚ) : Prop := ∀ e, VG p (PowerSeries.coeff e f) e
 
 /-- A nonzero rational of valuation `0`. -/
+@[expose]
 def IsUnitV (p : ℕ) (q : ℚ) : Prop := q ≠ 0 ∧ padicValRat p q = 0
 
 lemma IsUnitV.mul [Fact p.Prime] {q q' : ℚ} (h : IsUnitV p q) (h' : IsUnitV p q') :
@@ -149,6 +151,7 @@ end ScaledPS
 /-! ### The disc factorization predicate -/
 
 /-- `F(p u - d) = p^E u^E R(u)`, `R` scaled with unit constant term. -/
+@[expose]
 def Good (p d : ℕ) (F : ℚ[X]) (E : ℕ) : Prop :=
   ∃ R : ℚ[X], F.comp (C (p : ℚ) * X - C (d : ℚ)) = C ((p : ℚ) ^ E) * X ^ E * R ∧
     Scaled p R ∧ IsUnitV p (R.coeff 0)

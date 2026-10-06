@@ -51,7 +51,7 @@ follows from `superPermAction_zero_imp_evenPermRep_zero` in
 `KoszulAction.lean`.
 -/
 
-@[expose] public section
+public section
 
 noncomputable section
 
@@ -64,6 +64,7 @@ open Finset MonoidAlgebra
 /-! ## All-even colourings -/
 
 /-- The all-even colouring: every position gets an even colour. -/
+@[expose]
 def allEvenEmb (k ℓ n : ℕ) (f : Fin n → Fin k) : MixedColouring k ℓ n :=
   fun i => Sum.inl (f i)
 
@@ -261,6 +262,7 @@ theorem evenSectorTr_perm (k ℓ n : ℕ) (σ : Equiv.Perm (Fin n)) :
 /-! ## All-odd colourings (even-n case) -/
 
 /-- The all-odd colouring: every position gets an odd colour. -/
+@[expose]
 def allOddEmb (k ℓ n : ℕ) (g : Fin n → Fin (2 * ℓ)) :
     MixedColouring k ℓ n :=
   fun i => Sum.inr (g i)

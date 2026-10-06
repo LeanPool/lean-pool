@@ -20,7 +20,7 @@ polynomial, and turns the checked PBW coefficient-one bound into
 `Polynomial.Monic`.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.WeylOuterOreMonic
 

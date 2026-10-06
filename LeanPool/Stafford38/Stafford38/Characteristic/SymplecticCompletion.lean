@@ -21,7 +21,7 @@ Combined with homogeneous nonvanishing, this makes the transformed pure-power
 coefficient nonzero over the original characteristic-zero field.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.CharacteristicSymplecticCompletion
 

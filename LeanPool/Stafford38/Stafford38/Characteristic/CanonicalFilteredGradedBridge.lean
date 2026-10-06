@@ -17,7 +17,7 @@ This file records the first genuine page-level bridge: at `p = -m`, the
 zero-page source and target are the actual order-`m` quotient graded piece.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.Characteristic.CanonicalFilteredGradedBridge
 

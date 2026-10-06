@@ -17,13 +17,14 @@ tensor of the vertex-star class with the tail, composed with the
 sum cast.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 
 variable {R : ℕ} (f : EdgeRankParameter R)
 
 /-- The vertex-star class: a `(0, d)`-morphism. -/
+@[expose]
 noncomputable def vertexStarClass (d : ℕ) :
     HomSpace f.val (0 + d) :=
   HomSpace.ofFragment f.val

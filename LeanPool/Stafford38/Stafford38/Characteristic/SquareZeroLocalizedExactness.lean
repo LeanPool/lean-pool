@@ -30,7 +30,7 @@ The only typeclass parameter is Mathlib's `OreSet`; its existence for the
 pulled-back denominators is proved in `SquareZeroOreLocalization`.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.Characteristic.SquareZeroLocalizedExactness
 

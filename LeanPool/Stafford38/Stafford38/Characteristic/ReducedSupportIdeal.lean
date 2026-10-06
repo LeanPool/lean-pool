@@ -19,7 +19,7 @@ polynomial ring.  These definitions make the remaining base-relative Gabber
 statement concrete; no Poisson-closure theorem is asserted here.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.Characteristic.ReducedSupportIdeal
 

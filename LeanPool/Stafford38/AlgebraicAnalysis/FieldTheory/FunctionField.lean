@@ -20,7 +20,7 @@ finite type as an algebra: a transcendental fraction field is generally not
 finitely generated as an algebra over its ground field.
 -/
 
-@[expose] public section
+public section
 
 namespace AlgebraicAnalysis.FunctionField
 

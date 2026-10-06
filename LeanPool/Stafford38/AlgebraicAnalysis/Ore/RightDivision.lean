@@ -26,7 +26,7 @@ The coefficient ring is allowed to be noncommutative.  No commutative
 polynomial division theorem is used.
 -/
 
-@[expose] public section
+public section
 
 namespace AlgebraicAnalysis
 
@@ -122,12 +122,14 @@ The definition is coefficientwise and finite.  It is deliberately not the
 ordinary multiplication of `Polynomial B`: the inner `push` expansion is the
 derivation correction for moving `b` through powers of `x`.
 -/
+@[expose]
 def rightTerm (i : ℕ) (a b : B) (j : ℕ) : Polynomial B :=
   ∑ k ∈ Finset.range (i + 1),
     Polynomial.monomial (i - k + j)
       (a * (Nat.choose i k • (D^[k]) b))
 
 /-- Right multiplication by one coefficient-monomial. -/
+@[expose]
 def rightMulMonomial (p : Polynomial B) (b : B) (j : ℕ) : Polynomial B :=
   p.sum (fun i a => rightTerm D i a b j)
 
@@ -211,6 +213,7 @@ lemma rightMulMonomial_zero_right (p : Polynomial B) (j : ℕ) :
   simp [iterate_zero]
 
 /-- The product `d*q` of a normal polynomial by a normal right quotient. -/
+@[expose]
 def rightMul (d q : Polynomial B) : Polynomial B :=
   q.sum (fun j c => rightMulMonomial D d c j)
 
@@ -645,14 +648,17 @@ theorem pow_mul (b : B) (n : ℕ) :
       rw [hsecond]
 
 /-- A single coefficient moved through a power of the Ore variable. -/
+@[expose]
 def reverseTerm (b : B) (i j : ℕ) : A :=
   O.x ^ j * O.embed ((D^[i]) b)
 
 /-- A signed term for the reverse normal-order expansion. -/
+@[expose]
 def reverseSignedTerm (b : B) (i j : ℕ) : A :=
   (-1 : A) ^ i * reverseTerm D O b i j
 
 /-- The reverse normal-order expansion of `x^n * embed b`. -/
+@[expose]
 def reverseExpansion (b : B) (n : ℕ) : A :=
   ∑ ij ∈ Finset.HasAntidiagonal.antidiagonal n,
     n.choose ij.1 • reverseSignedTerm D O b ij.1 ij.2
@@ -1014,6 +1020,7 @@ theorem commutator_iterate_eval_monomial
   by_cases hjn : j ≤ n <;> simp [hjn]
 
 /-- Evaluation of a normal polynomial in an ambient Ore ring. -/
+@[expose]
 def eval (p : Polynomial B) : A :=
   p.sum (fun i b => O.embed b * O.x ^ i)
 
@@ -1040,6 +1047,7 @@ lemma eval_add (p q : Polynomial B) :
     rw [map_add, add_mul]
 
 /-- The additive evaluation homomorphism. -/
+@[expose]
 def evalAddHom : Polynomial B →+ A where
   toFun := eval D O
   map_zero' := eval_zero D O

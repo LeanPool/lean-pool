@@ -17,7 +17,7 @@ The commuting polynomial action is constructed from the actual right Weyl
 generators. Their commutators have lower order and hence vanish on the pages.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.Characteristic.CanonicalTangentialTotalAction
 

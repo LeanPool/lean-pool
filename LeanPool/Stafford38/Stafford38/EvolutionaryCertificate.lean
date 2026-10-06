@@ -41,7 +41,7 @@ Convention: all ideals here are **right** ideals, matching the repository
 convention.  Statements are written as `d * R + x ^ r * d * S = 1`.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.Evolution
 
@@ -82,11 +82,13 @@ variable {D : Type*} [Ring D] {x p : D}
 def euler (x p : D) : D := x * p
 
 /-- `(E + 1)(E + 2) ⋯ (E + n)`. -/
+@[expose]
 def rising (E : D) : ℕ → D
   | 0 => 1
   | (n + 1) => rising E n * (E + ((n : D) + 1))
 
 /-- `E (E - 1) ⋯ (E - (n-1))`. -/
+@[expose]
 def falling (E : D) : ℕ → D
   | 0 => 1
   | (n + 1) => falling E n * (E - (n : D))
@@ -204,17 +206,20 @@ lemma commute_aeval_euler {a E : D} (h : a * E = E * a) (f : k[X]) :
       exact (c1.mul_right (hc.pow_right m)).eq
 
 /-- The rising factorial as a polynomial. -/
+@[expose]
 noncomputable def risingPoly (k : Type*) [CommRing k] : ℕ → k[X]
   | 0 => 1
   | (n + 1) => risingPoly k n * (X + Polynomial.C ((n : k) + 1))
 
 /-- The falling factorial as a polynomial. -/
+@[expose]
 noncomputable def fallingPoly (k : Type*) [CommRing k] : ℕ → k[X]
   | 0 => 1
   | (n + 1) => fallingPoly k n * (X - Polynomial.C (n : k))
 
 /-- The Euler corner polynomial `C_r = R₊ - R₋`; its evaluation at `E` is the
 commutator `p ^ r x ^ r - x ^ r p ^ r`. -/
+@[expose]
 noncomputable def cornerPoly (k : Type*) [CommRing k] (r : ℕ) : k[X] :=
   risingPoly k r - fallingPoly k r
 
@@ -254,6 +259,7 @@ def potentialSum (x : D) : List (D × ℕ) → D
   | (t :: ts) => t.1 * x ^ t.2 + potentialSum x ts
 
 /-- `∏ⱼ C(X + nⱼ)`, one shift of the corner polynomial per potential term. -/
+@[expose]
 noncomputable def shiftedProd (C : k[X]) : List (D × ℕ) → k[X]
   | [] => 1
   | (t :: ts) => C.comp (X + Polynomial.C ((t.2 : ℕ) : k)) * shiftedProd C ts
@@ -310,6 +316,7 @@ theorem potential_elimination (hw : p * x = x * p + 1) (C : k[X])
 /-! ### The main theorem -/
 
 /-- Shifting every exponent of the potential support by `r`. -/
+@[expose]
 def shiftSupport (terms : List (D × ℕ)) (r : ℕ) : List (D × ℕ) :=
   terms.map fun t => (t.1, t.2 + r)
 

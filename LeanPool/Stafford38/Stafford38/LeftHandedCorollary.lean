@@ -13,7 +13,7 @@ public import LeanPool.Stafford38.Stafford38.Weyl.TranspositionFiltration
 /-! The left-handed form is the formal-adjoint/opposite-ring image of the
     written-order Stafford identity. -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.LeftHandedCorollary
 

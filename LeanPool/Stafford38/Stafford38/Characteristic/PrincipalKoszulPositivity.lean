@@ -15,7 +15,7 @@ Compatibility exports for positivity of the principal Koszul Euler characteristi
 from the shared algebraic-analysis library.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.Characteristic.PrincipalKoszulPositivity
 

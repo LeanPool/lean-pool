@@ -36,7 +36,7 @@ transparent, the pattern of `GenusFiveRow04Symmetry` and
 `GenusFiveRow06Symmetry`.
 -/
 
-@[expose] public section
+public section
 
 namespace AtanasovRanganathan.GenusFiveRow05Symmetry
 
@@ -99,12 +99,15 @@ def tauR : CoreSymmetry row05Core :=
     (by decide) (by decide) (by decide) (by decide) (by decide) (by decide)
 
 /-- The left leg comparison of AR's figure. -/
+@[expose]
 def LeftCond (length : Fin 12 → ℕ) : Prop := length 2 ≤ length 3
 
 /-- The right leg comparison of AR's figure. -/
+@[expose]
 def RightCond (length : Fin 12 → ℕ) : Prop := length 6 ≤ length 8
 
 /-- Chamber A: the scope Atanasov--Ranganathan draw first. -/
+@[expose]
 def Chamber (length : Fin 12 → ℕ) : Prop := LeftCond length ∧ RightCond length
 
 theorem left_normalize (length : Fin 12 → ℕ) :

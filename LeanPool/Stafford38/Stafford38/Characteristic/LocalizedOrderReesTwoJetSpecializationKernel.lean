@@ -25,7 +25,7 @@ particular, the localized parameter is written on the left; centrality is used
 explicitly before applying the unlocalized factorization.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.CharacteristicLocalizedOrderReesTwoJetSpecializationKernel
 

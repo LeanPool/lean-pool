@@ -18,7 +18,7 @@ at a cons: the vocabulary in which the assembled star vector's
 coordinates factor over the vertices.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 
@@ -37,6 +37,7 @@ theorem blockSigmaEquiv_cons_succ_val (d : ℕ) (ds : List ℕ)
 variable {k ℓ : ℕ}
 
 /-- The block restriction of a colouring. -/
+@[expose]
 noncomputable def blockRestrict (ds : List ℕ)
     (c : MixedColouring k ℓ ds.sum) (v : Fin ds.length) :
     MixedColouring k ℓ (ds.get v) := fun j =>

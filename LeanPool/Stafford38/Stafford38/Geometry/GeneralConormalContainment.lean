@@ -17,7 +17,7 @@ Fibre-degree homogeneity supplies its zero-section input through the actual
 Mathlib graded-ideal API.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.Geometry.GeneralConormalContainment
 

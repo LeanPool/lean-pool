@@ -15,7 +15,7 @@ public import LeanPool.Stafford38.Stafford38.Characteristic.CanonicalTangentialR
 Compatibility of tangential polynomial actions with the total-to-graded equivalences.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.Characteristic.CanonicalTotalGradedActionCompatibility
 

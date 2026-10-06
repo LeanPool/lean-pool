@@ -17,7 +17,7 @@ with the actual associated graded module. This is a `k`-linear equivalence
 only. The right order-Rees action and its parameter compatibility are separate.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.CharacteristicFilteredQuotientSpecialFibre
 

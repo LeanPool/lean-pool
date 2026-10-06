@@ -26,7 +26,7 @@ nonzero, so the ambient equation itself spans the unique cotangent direction.
 This produces the Laurent conormal axis for the ambient ideal directly.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.Geometry.OneVariableAmbientConormal
 

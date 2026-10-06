@@ -37,7 +37,7 @@ matrix presentation and proves the projective-closure and tangent-chart
 dictionaries before applying that kernel.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.Geometry.GeneralTangentLimitCriterion
 

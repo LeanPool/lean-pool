@@ -20,7 +20,7 @@ prime affine ideal. The conclusion is a residue-extension Laurent witness;
 its comparison with ground-field projective directions is separate.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.Geometry.GeneralAsymptoticLaurentAxis
 

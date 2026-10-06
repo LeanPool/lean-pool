@@ -20,7 +20,7 @@ ideal yields the exact fixed-source Stafford certificate.
 No theorem proving that the support is empty is assumed or supplied here.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.CharacteristicCanonicalCertificate
 

@@ -23,7 +23,7 @@ its action retains written right Weyl multiplication.
 No trace theorem, minimal-prime statement, or Gabber theorem is asserted.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.CharacteristicFilteredQuotientTwoJet
 

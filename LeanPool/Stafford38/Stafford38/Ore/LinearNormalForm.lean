@@ -21,7 +21,7 @@ killed by the coefficient derivation.  This is the scalar interface needed to
 turn the iterated Ore normal form into a PBW basis.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.OreLinearNormalForm
 
@@ -230,6 +230,7 @@ theorem normalForm_smul (c : k) (p : Polynomial B) :
 
 /-- Ore normal forms are linearly equivalent to ordinary coefficient-left
 polynomials. -/
+@[expose]
 def normalFormLinearEquiv : Polynomial B ≃ₗ[k] NormalOre D :=
   { normalFormAddEquiv D with
     map_smul' := normalForm_smul D hAlg }

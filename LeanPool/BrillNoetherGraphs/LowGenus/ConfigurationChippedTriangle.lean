@@ -58,7 +58,7 @@ class, so `c` lends it the chip it is sitting on.  That transfer is `lend`, and
 it is the only allocation the picture needs.
 -/
 
-@[expose] public section
+public section
 
 namespace AtanasovRanganathan.ConfigurationChippedTriangle
 
@@ -88,6 +88,7 @@ def partnerHeight (al be ga p q r : ℕ) : ℕ :=
 
 /-- The chip `c` lends its partner when the slot between them has collapsed and
 `c` is strictly shallower than the partner's own arm. -/
+@[expose]
 def lend (r hc be : ℕ) : ℤ := if r = 0 ∧ hc < be then 1 else 0
 
 theorem lend_nonneg (r hc be : ℕ) : 0 ≤ lend r hc be := by
@@ -131,6 +132,7 @@ theorem bounds {al be ga p q r hc h0 ht hv : ℕ}
 
 /-- The target delivers its own chip: its arm goes full, or one of the two
 triangle slots at it goes full. -/
+@[expose]
 def Delivers (al p q hc h0 ht : ℕ) : Prop :=
   ht = al ∨ (0 < p ∧ ht = hc + p) ∨ (0 < q ∧ ht = h0 + q)
 

@@ -11,7 +11,7 @@ public import LeanPool.Stafford38.AlgebraicAnalysis.DifferentialOperators.Locali
 
 /-! Compatibility exports for reusable localized polynomial derivations. -/
 
-@[expose] public section
+public section
 namespace Stafford38.LocalizedPolynomialDerivations
 
 export AlgebraicAnalysis.DifferentialOperators.LocalizedPolynomialDerivations

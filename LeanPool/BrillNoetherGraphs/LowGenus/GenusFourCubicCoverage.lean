@@ -19,7 +19,7 @@ row proofs into the classifier-facing coverage theorem consumed by the public
 pseudocore reduction.
 -/
 
-@[expose] public section
+public section
 namespace AtanasovRanganathan.GenusFourCubicCoverage
 
 open Utilities
@@ -31,6 +31,7 @@ open AtanasovRanganathan.GenusFourCubicAtlas
 open AtanasovRanganathan.GenusFourPseudocoreCoverage
 
 /-- The six concrete closed-row obligations. -/
+@[expose]
 def RowClosedCoverage : Prop :=
   ∀ row ∈ atlas,
     ∀ (length : Fin 9 → ℕ)

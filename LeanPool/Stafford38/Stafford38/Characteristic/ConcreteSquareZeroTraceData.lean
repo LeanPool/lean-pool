@@ -23,7 +23,7 @@ No localization, finite-length trace theorem, or radical involutivity theorem
 is asserted here.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.CharacteristicConcreteSquareZeroTraceData
 

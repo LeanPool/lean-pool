@@ -21,7 +21,7 @@ No localization, trace theorem, minimal-prime statement, Gabber theorem, or
 concrete Weyl instance is asserted here.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.Characteristic.SquareZeroTraceData
 
@@ -38,6 +38,7 @@ variable [SMulCommClass k Bᵐᵒᵖ N]
 
 The scalar action is by `Bᵐᵒᵖ`; thus `rightActionEnd k B N b` sends `m` to
 `m b` in ordinary right-module notation. -/
+@[expose]
 def rightActionEnd (b : B) : Module.End k N where
   toFun m := MulOpposite.op b • m
   map_add' _ _ := smul_add _ _ _

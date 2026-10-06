@@ -18,7 +18,7 @@ canonical data introduced at each successor; it does not identify the tower
 with a presented Weyl algebra.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.OreIteratedPairStage
 
@@ -38,6 +38,7 @@ structure RingStage where
 variable (B : Type u) [Ring B]
 
 /-- The recursively constructed ring data after adjoining `n` Weyl pairs. -/
+@[expose]
 def iteratedPairData : Nat → RingStage
   | 0 => ⟨B, inferInstance⟩
   | n + 1 =>
@@ -47,6 +48,7 @@ def iteratedPairData : Nat → RingStage
 
 /-- The ring obtained from `B` after recursively adjoining `n` checked
 coordinate-momentum pairs. -/
+@[expose]
 def IteratedPairStage (n : Nat) : Type u :=
   (iteratedPairData B n).carrier
 
@@ -63,15 +65,18 @@ theorem iteratedPairStage_succ (n : Nat) :
       PairStage (B := IteratedPairStage B n) := rfl
 
 /-- The canonical embedding from stage `n` into stage `n + 1`. -/
+@[expose]
 def stageEmbedding (n : Nat) :
     IteratedPairStage B n →+* IteratedPairStage B (n + 1) :=
   pairCoefficient (B := IteratedPairStage B n)
 
 /-- The coordinate introduced at the successor of stage `n`. -/
+@[expose]
 def stageCoordinate (n : Nat) : IteratedPairStage B (n + 1) :=
   pairCoordinate (B := IteratedPairStage B n)
 
 /-- The momentum introduced at the successor of stage `n`. -/
+@[expose]
 def stageMomentum (n : Nat) : IteratedPairStage B (n + 1) :=
   pairMomentum (B := IteratedPairStage B n)
 

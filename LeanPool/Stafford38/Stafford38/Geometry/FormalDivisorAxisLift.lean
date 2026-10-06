@@ -26,7 +26,7 @@ residue is the pure axis covector.  No normalization, projective divisor,
 formal-chart construction, or global conormal-closure statement is made here.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.GeometryFormalDivisorAxisLift
 

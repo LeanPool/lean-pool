@@ -18,7 +18,7 @@ through the first factor.  It does not assert that a torsion module admits
 such a presentation.
 -/
 
-@[expose] public section
+public section
 
 namespace AlgebraicAnalysis.TorsionProjectiveImage
 

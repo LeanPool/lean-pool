@@ -22,7 +22,7 @@ with the commutative doubled-power quotient.
 No Artinianness, module action, adapted basis, or equation-(3.3) input is used.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.Characteristic.ConcreteLocalizedTwoBlockSpecialFibre
 

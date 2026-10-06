@@ -39,7 +39,7 @@ are stated for an arbitrary slot-value function.  What this file adds is
 The arithmetic lives in `SplitRampArithmetic.lean`.
 -/
 
-@[expose] public section
+public section
 
 namespace Utilities.Certificate.DegenerateSpec.DegSpec
 
@@ -50,15 +50,18 @@ open Finset ExplicitPotential
 variable {n p : ℕ} (d : DegSpec n p)
 
 /-- The rise of the ramp from the tail class up to the mark. -/
+@[expose]
 def markRiseIn (potential : Fin n → ℤ) (markValue : Fin p → ℤ) (e : Fin p) : ℤ :=
   markValue e - potential (d.rep (d.core.tail e))
 
 /-- The rise of the ramp from the mark down to the head class. -/
+@[expose]
 def markRiseOut (potential : Fin n → ℤ) (markValue : Fin p → ℤ) (e : Fin p) : ℤ :=
   potential (d.rep (d.core.head e)) - markValue e
 
 /-- Admissibility of the marks: each sits inside its slot, and a mark at an end
 of its slot carries that end's value. -/
+@[expose]
 def MarksAdmissible (potential : Fin n → ℤ) (mark : Fin p → ℕ)
     (markValue : Fin p → ℤ) : Prop :=
   ∀ e : Fin p, SubdivisionArithmetic.SplitRamp (d.length e) (mark e)

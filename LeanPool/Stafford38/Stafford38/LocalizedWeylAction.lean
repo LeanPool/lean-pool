@@ -20,7 +20,7 @@ operators of a localization of a polynomial ring.  No identification of the
 resulting differential-operator algebra with another presentation is used.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.LocalizedWeylAction
 
@@ -48,10 +48,12 @@ abbrev D (B : Type u) [CommRing B] [Algebra k B] :=
   algebra (k := k) (R := B)
 
 /-- The endomorphism given by multiplication by a localized coordinate. -/
+@[expose]
 def coordinateEnd (i : Fin n) : End (k := k) (R := B) :=
   multiplication (algebraMap (A (k := k) (n := n)) B (MvPolynomial.X i))
 
 /-- The localized partial derivative, regarded as a linear endomorphism. -/
+@[expose]
 def momentumEnd (i : Fin n) : End (k := k) (R := B) :=
   (localizedPderiv S B i).toLinearMap
 
@@ -75,6 +77,7 @@ theorem momentumEnd_mem_order_one (i : Fin n) :
     momentumEnd, mul_comm]
 
 /-- The coordinate multiplication and differentiation operators forming the Weyl generators. -/
+@[expose]
 def differentialGenerator : (Fin n ⊕ Fin n) → D (k := k) B
   | .inl i => ⟨coordinateEnd (B := B) i, 0,
       coordinateEnd_mem_order_zero (B := B) i⟩

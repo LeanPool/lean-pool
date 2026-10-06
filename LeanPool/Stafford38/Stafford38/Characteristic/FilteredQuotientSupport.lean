@@ -22,7 +22,7 @@ support equality, is not proved in this file.  No conclusion about vanishing
 of the ungraded Weyl quotient is made here.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.CharacteristicFilteredQuotientSupport
 

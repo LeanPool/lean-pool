@@ -19,7 +19,7 @@ defined here; the identification is the coordinate workhorse of
 the extraction.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 
@@ -27,6 +27,7 @@ open CategoryTheory MonoidalCategory
 
 /-- The top adjacent braiding on a monoidal power: braid the last
 two factors through the associator. -/
+@[expose]
 noncomputable def topBraid (V : SuperVect) (m : ℕ) :
     superPow V (m + 2) ⟶ superPow V (m + 2) :=
   (α_ (superPow V m) V V).hom ≫
@@ -35,6 +36,7 @@ noncomputable def topBraid (V : SuperVect) (m : ℕ) :
 
 /-- The adjacent braiding at position `i`: swap the factors at
 zero-based positions `i` and `i + 1`. -/
+@[expose]
 noncomputable def powBraid (V : SuperVect) :
     (n : ℕ) → (i : ℕ) → i + 2 ≤ n →
       (superPow V n ⟶ superPow V n)
@@ -86,12 +88,14 @@ theorem MixedColouring.not_isEven_comp {k ℓ d : ℕ}
 
 /-- The Koszul sign of swapping two positions of a colouring:
 `−1` when both are odd. -/
+@[expose]
 def adjSign {k ℓ d : ℕ} (c : MixedColouring k ℓ d)
     (a b : Fin d) : ℂ :=
   if (c a).isRight ∧ (c b).isRight then -1 else 1
 
 /-- The Koszul-signed adjacent position swap on the colouring
 model. -/
+@[expose]
 noncomputable def colourSwap (k ℓ : ℕ) :
     (n : ℕ) → (i : ℕ) → i + 2 ≤ n →
       (colourPower k ℓ n ⟶ colourPower k ℓ n) :=

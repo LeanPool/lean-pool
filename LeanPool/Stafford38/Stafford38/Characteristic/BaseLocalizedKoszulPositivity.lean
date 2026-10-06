@@ -19,7 +19,7 @@ Compatibility exports for Koszul positivity after base localization
 from the shared algebraic-analysis library.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.Characteristic.BaseLocalizedKoszulPositivity
 

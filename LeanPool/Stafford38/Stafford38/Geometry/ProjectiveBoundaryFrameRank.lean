@@ -27,7 +27,7 @@ and no closed-boundary tangent bound is asserted; either conclusion needs an
 additional geometric comparison.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.Geometry.ProjectiveBoundaryFrameRank
 

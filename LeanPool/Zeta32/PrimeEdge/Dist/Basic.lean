@@ -14,7 +14,7 @@ public import LeanPool.Zeta32.Arith.Local.Entry
 * `pf_nat` : partial fractions over the nodes `-m`, `m ∈ M`;
 * `locValue_pf` : value of `locValue` on a partial-fraction form. -/
 
-@[expose] public section
+public section
 
 open Polynomial
 open scoped BigOperators
@@ -25,6 +25,7 @@ open Zeta32.Arith.Local
 noncomputable section
 
 /-- `∏_{m ∈ M} (X + m)`. -/
+@[expose]
 def mprod (M : Finset ℕ) : ℚ[X] := ∏ m ∈ M, (X + C (m : ℚ))
 
 lemma mprod_monic (M : Finset ℕ) : (mprod M).Monic :=
@@ -72,6 +73,7 @@ lemma dist_locValue_sum {ι : Type*} (s : ℚ) (t : Finset ι) (S : ι → ℚ[X
   exact locValue_sum_linear s t S M
 
 /-- Residue of `S / mprod M` at `-m`. -/
+@[expose]
 def resN (S : ℚ[X]) (M : Finset ℕ) (m : ℕ) : ℚ :=
   S.eval (-(m : ℚ)) / ∏ m' ∈ M.erase m, ((m' : ℚ) - m)
 

@@ -22,7 +22,7 @@ predecessor required by `StrictUnitCoordinatePreimage`.
 No noncharacteristic or characteristic-variety theorem is used here.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.CanonicalUnitPreimageFromInitialTop
 

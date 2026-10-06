@@ -20,7 +20,7 @@ required bracket membership in every minimal prime over the original ideal.
 No integrability statement for those minimal primes is asserted here.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.Characteristic.MinimalPrimePoisson
 

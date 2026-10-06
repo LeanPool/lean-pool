@@ -45,7 +45,7 @@ Nothing here proves involutivity of any concrete radical; this is the
 descent step only.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.Characteristic.RadicalMinimalPrimeInvolutivity
 

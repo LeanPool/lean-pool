@@ -14,7 +14,7 @@ bounds over all classes. `normScale_val` and the floor sums are adapted from
 dtq1997/li2-half-irrationality@d5d8206:Li2Unified/Modular/Base/
 DecayMediumClosed.lean and MediumFloorSum.lean (layout `2n, 4n, 3` there, `3n, 5n, 4` here). -/
 
-@[expose] public section
+public section
 
 open Zeta32.Arith.Local
 
@@ -35,6 +35,7 @@ lemma padicValRat_prod_range (p : ℕ) [Fact p.Prime] (f : ℕ → ℚ) (hf : �
       padicValRat.mul (Finset.prod_ne_zero_iff.mpr fun i _ => hf i) (hf N), ih]
 
 /-- Prime-valuation normalization term for the scaled determinant. -/
+@[expose]
 def normVal (p n : ℕ) : ℚ :=
   3 * (n:ℚ) * (((5*n)/p : ℕ) - 4 * ((n/p : ℕ) : ℚ)) -
     2 * ∑ i ∈ Finset.range (3*n), ((i/p : ℕ) : ℚ)

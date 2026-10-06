@@ -19,7 +19,7 @@ uses the localization presentation; it does not use a finite-order
 hypothesis.
 -/
 
-@[expose] public section
+public section
 
 namespace AlgebraicAnalysis.DifferentialOperators.LocalizedPolynomialCommutant
 

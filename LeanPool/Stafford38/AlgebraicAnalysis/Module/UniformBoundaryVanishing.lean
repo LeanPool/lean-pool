@@ -19,7 +19,7 @@ localized statement deliberately assumes Noetherianity only after
 localization.
 -/
 
-@[expose] public section
+public section
 
 open IsNoetherian
 

@@ -25,7 +25,7 @@ mark is the midpoint of a distinct length-two strand, or an explicit divisor
 has negative marked rank difference.
 -/
 
-@[expose] public section
+public section
 
 namespace Bananas
 
@@ -33,6 +33,7 @@ open Utilities
 
 /-- A normalized banana-strand position lies at graph distance at least two
 from each of the two multivalent vertices. -/
+@[expose]
 def FarFromBananaEndpoints {g : ℕ} (B : Banana g) (alpha : Fin (g + 1))
     (p : B.PathPosition alpha) : Prop :=
   2 ≤ p.val ∧ p.val + 2 ≤ B.length alpha
@@ -40,6 +41,7 @@ def FarFromBananaEndpoints {g : ℕ} (B : Banana g) (alpha : Fin (g + 1))
 /-- The extra exceptional family missing from the published Theorem 1.16:
 one of the marks is the midpoint of a length-two strand distinct from the
 strand containing the other mark. -/
+@[expose]
 def CorrectedBananaSimpleException {g : ℕ} (B : Banana g)
     (alpha beta : Fin (g + 1))
     (i : B.PathPosition alpha) (j : B.PathPosition beta) : Prop :=

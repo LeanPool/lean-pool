@@ -21,7 +21,7 @@ No claim is made here that a particular escape family produces the pure
 coordinate vectors.  That is the remaining Stafford correction construction.
 -/
 
-@[expose] public section
+public section
 
 namespace AlgebraicAnalysis.EscapeSpan
 
@@ -32,6 +32,7 @@ noncomputable section
 variable {S : Type*} [Ring S] {n : ℕ}
 
 /-- Coordinatewise right multiplication in the free right `S`-module. -/
+@[expose]
 def rightMulVector (v : Fin n → S) (a : S) : Fin n → S :=
   fun i => v i * a
 
@@ -45,6 +46,7 @@ theorem op_smul_vector (v : Fin n → S) (a : S) :
   rfl
 
 /-- Coordinatewise commutator with the distinguished escape coordinate. -/
+@[expose]
 def commutatorVector (x : S) (v : Fin n → S) : Fin n → S :=
   fun i => commutator x (v i)
 

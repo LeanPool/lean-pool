@@ -22,7 +22,7 @@ has nonzero distinguished coordinate.  These are exactly the affine premises
 of the remaining projective-boundary theorem.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.Characteristic.CanonicalBaseVariety
 

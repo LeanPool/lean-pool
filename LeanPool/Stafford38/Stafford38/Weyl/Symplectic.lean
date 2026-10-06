@@ -20,7 +20,7 @@ of the input, which keeps this theorem independent of matrix inversion APIs
 and makes the exact direction of generator substitution explicit.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.WeylSymplectic
 
@@ -54,6 +54,7 @@ theorem standardSymplecticHpres {n : ℕ}
     (fun i j => freeWeylGenerator_commutator (standardForm k n) i j) hM
 
 /-- The presented Weyl algebra endomorphism induced by a standard symplectic matrix. -/
+@[expose]
 def standardSymplecticAlgHom {n : ℕ}
     (M : Matrix (Fin n ⊕ Fin n) (Fin n ⊕ Fin n) k)
     (hM : M * standardForm k n * Matrix.transpose M = standardForm k n) :

@@ -18,7 +18,7 @@ fibre-side assembled vector.  This is the form on which the
 colouring coordinates evaluate.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 
@@ -32,6 +32,7 @@ variable (e : stdSuperPair k ℓ ⟶ P.ω.obj (SkeinObj.mk 1))
 variable (e' : P.ω.obj (SkeinObj.mk 1) ⟶ stdSuperPair k ℓ)
 
 /-- The assembled star vector, in the model. -/
+@[expose]
 noncomputable def modelStarVec :
     (ds : List ℕ) → (superPow (stdSuperPair k ℓ) ds.sum).even
   | [] => (1 : ℂ)

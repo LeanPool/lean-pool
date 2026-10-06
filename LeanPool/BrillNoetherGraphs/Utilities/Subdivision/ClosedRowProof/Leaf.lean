@@ -60,7 +60,7 @@ slot.  The multi-block half of §4.3 is unexercised by every accepted proof in
 the catalog; see the note at the end of this file for what it would cost.
 -/
 
-@[expose] public section
+public section
 
 namespace Utilities.Subdivision.ClosedRowProof
 
@@ -91,6 +91,7 @@ theorem dot_eq_sum_range (l r : List ℤ) :
 
 /-- A `List ℤ` form, read as an `AffineForm m`: the head is the constant and
 entry `i + 1` is the coefficient of coordinate `i`. -/
+@[expose]
 def toAffineForm (m : ℕ) (g : Form) : ExplicitPotential.AffineForm m where
   fixedValue := g.getD 0 0
   coefficient := fun i => g.getD (i.val + 1) 0
@@ -132,6 +133,7 @@ theorem contextHolds_of_formsHold_toAffineForm {m : ℕ}
 /-! ### The coordinate forms -/
 
 /-- The form `x_e`, as a `List ℤ`: entry `e + 1` is `1` and the rest are `0`. -/
+@[expose]
 def coordForm (e : ℕ) : Form := List.replicate (e + 1) 0 ++ [1]
 
 private theorem dot_replicate_append (e : ℕ) (x : List ℤ) :
@@ -179,6 +181,7 @@ structure Block where
   hi : ℤ
 
 /-- The out-of-range block: every check on it fails. -/
+@[expose]
 def Block.dflt : Block := ⟨[], [], 1, 0⟩
 
 /-- The firing script attached to one anchor: a potential at each core vertex,
@@ -285,17 +288,22 @@ variable (w : RichWitness)
 
 /-- Look up the rich firing plan for an anchor, returning the empty default plan for an absent
 entry. -/
+@[expose]
 def plan (a : ℕ) : RichAnchorPlan := w.anchors.getD a RichAnchorPlan.dflt
 /-- Read an anchor plan’s potential at a core vertex, using the zero affine form for a missing
 entry. -/
+@[expose]
 def pot (a v : ℕ) : Form := (w.plan a).potential.getD v []
 /-- Read the ordered block list for an anchor and slot, using an empty list when it is absent. -/
+@[expose]
 def blockList (a e : ℕ) : List Block := (w.plan a).blocks.getD e []
 /-- Read a specified interpolation block, using the default block with inconsistent slope bounds
 for a missing entry. -/
+@[expose]
 def block (a e i : ℕ) : Block := (w.blockList a e).getD i Block.dflt
 /-- Read an anchor’s receipts for a slot and block, falling back to the default rich block
 certificate. -/
+@[expose]
 def blockReceipt (a e i : ℕ) : RichBlockCert :=
   ((w.plan a).blockCert.getD e []).getD i RichBlockCert.dflt
 /-- Read the strict separation receipt for a run of named points, indexed by anchor, slot, and
@@ -321,15 +329,19 @@ namespace Witness
 variable (w : Witness)
 
 /-- The plan of anchor `a`. -/
+@[expose]
 def plan (a : ℕ) : AnchorPlan := w.anchors.getD a AnchorPlan.dflt
 
 /-- The potential of anchor `a` at core vertex `v`. -/
+@[expose]
 def pot (a v : ℕ) : Form := (w.plan a).potential.getD v []
 
 /-- The block list of anchor `a` on slot `e`. -/
+@[expose]
 def blockList (a e : ℕ) : List Block := (w.plan a).blocks.getD e []
 
 /-- The first (and, once `leafChecks` accepts, only) block of slot `e`. -/
+@[expose]
 def block (a e : ℕ) : Block := (w.blockList a e).getD 0 Block.dflt
 
 end Witness
@@ -346,6 +358,7 @@ variable {m n p : ℕ}
 
 /-- The row `rise_e − lo_e·σ_e ≥ 0`, written so that it is *definitionally*
 `(leafCertificate …).lowerForm`. -/
+@[expose]
 def leafLowerForm (m : ℕ) (core : ExplicitPotential.Core n p) (w : Witness)
     (a : Fin n) (e : Fin p) : ExplicitPotential.AffineForm m :=
   ExplicitPotential.AffineForm.sub
@@ -357,6 +370,7 @@ def leafLowerForm (m : ℕ) (core : ExplicitPotential.Core n p) (w : Witness)
 
 /-- The row `hi_e·σ_e − rise_e ≥ 0`, written so that it is *definitionally*
 `(leafCertificate …).upperForm`. -/
+@[expose]
 def leafUpperForm (m : ℕ) (core : ExplicitPotential.Core n p) (w : Witness)
     (a : Fin n) (e : Fin p) : ExplicitPotential.AffineForm m :=
   ExplicitPotential.AffineForm.sub
@@ -376,6 +390,7 @@ def leafCone (m : ℕ) (core : ExplicitPotential.Core n p) (w : Witness) :
         [leafLowerForm m core w a e, leafUpperForm m core w a e]))
 
 /-- The explicit-potential certificate a single-block leaf denotes. -/
+@[expose]
 def leafCertificate (m : ℕ) (core : ExplicitPotential.Core n p) (w : Witness) :
     ExplicitPotential.CertificateData m n p where
   core := core
@@ -402,6 +417,7 @@ this node; `degree` is the goal's degree.
 
 Restrictions, both fail-closed and both deliberate: no chips, and exactly one
 block per slot.  See the module docstring. -/
+@[expose]
 def Witness.leafChecks (w : Witness) (m : ℕ) (core : ExplicitPotential.Core n p)
     (Γ : Context) (degree : ℤ) : Bool :=
   -- the row itself: a loopless, connected core
@@ -446,6 +462,7 @@ This is where the soundness hazard of `RESULTS.md` §9 is discharged: the
 `rep_loopless` field below is supplied by `hNotLoopy` and by nothing else. -/
 
 /-- The vanishing set of a length vector. -/
+@[expose]
 def zeroSet {p : ℕ} (ℓ : Fin p → ℕ) : Finset (Fin p) :=
   Finset.univ.filter (fun e => ℓ e = 0)
 
@@ -455,6 +472,7 @@ def zeroSet {p : ℕ} (ℓ : Fin p → ℕ) : Finset (Fin p) :=
 `hForest` is genus preservation and `hNotLoopy` is looplessness of the
 contracted core — which is exactly what the strong-separator step needs, and
 is why `DegSpec.strongSeparatorCertificate` can be hypothesis-free. -/
+@[expose]
 def censusSpec (core : ExplicitPotential.Core n p) (hn : 0 < n) (ℓ : Fin p → ℕ)
     (hForest : IsForest core (zeroSet ℓ))
     (hNotLoopy : ¬ IsLoopy core (zeroSet ℓ)) :
@@ -633,6 +651,7 @@ and leaves exactly the row obligation of §3: *for every* `ℓ : Fin p → ℕ` 
 vanishing set is a non-loopy forest, the goal holds. -/
 
 /-- The closed-orthant root context. -/
+@[expose]
 def rootContextClosed (p : ℕ) : Context where
   ge := (List.range p).map coordForm
   eq := []

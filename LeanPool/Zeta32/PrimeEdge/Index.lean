@@ -22,30 +22,36 @@ A basis vector is `a = ⟨b, i⟩ : Idx p` with `i < mult p b`; its greedy level
 `discExp a c d = c_d + kmul a d + kmul c d` is the Lemma 4 exponent of the entry `(a, c)` on
 disc `d`. -/
 
-@[expose] public section
+public section
 
 open scoped BigOperators
 namespace Zeta32.PrimeEdge
 
 /-- Multiplicity `m_b` of the class `b` in the CRT basis. -/
+@[expose]
 def mult (p b : ℕ) : ℕ := if b = 0 then 4 else if b + 5 ≤ p then 3 else 2
 
 /-- Greedy column base `c_b = s N_b - C_b + [b = 0] - 2` for `n = p - 1`. -/
+@[expose]
 def colBase (p b : ℕ) : ℤ := if b = 0 then -5 else if b + 5 ≤ p then -3 else -2
 
 /-- Basis index: a class `b` and an order `i < m_b`. -/
 abbrev Idx (p : ℕ) := (b : Fin p) × Fin (mult p b.val)
 
 /-- Greedy level `π_a = c_b + 2 i`. -/
+@[expose]
 def level (p : ℕ) (a : Idx p) : ℤ := colBase p a.1.val + 2 * (a.2.val : ℤ)
 
 /-- Row/column weight `ρ_a = π_a / 2`. -/
+@[expose]
 def rho (p : ℕ) (a : Idx p) : ℚ := (level p a : ℚ) / 2
 
 /-- Multiplicity of `(t + d)` in the basis vector `a`. -/
+@[expose]
 def kmul (p : ℕ) (a : Idx p) (d : ℕ) : ℕ := if a.1.val = d then a.2.val else mult p d
 
 /-- Lemma 4 exponent of the entry `(a, c)` on the disc `d`. -/
+@[expose]
 def discExp (p : ℕ) (a c : Idx p) (d : ℕ) : ℤ :=
   colBase p d + (kmul p a d : ℤ) + (kmul p c d : ℤ)
 

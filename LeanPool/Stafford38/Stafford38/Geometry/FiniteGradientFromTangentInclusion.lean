@@ -29,7 +29,7 @@ inclusion for the completed boundary chart (and separately handle any
 residue-field transport).
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.Geometry.FiniteGradientFromTangentInclusion
 

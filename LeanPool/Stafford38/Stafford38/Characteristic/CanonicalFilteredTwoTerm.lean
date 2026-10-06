@@ -19,7 +19,7 @@ The filtration is the actual order filtration on the quotient, extended by
 zero in negative order.  No associated-graded identification is assumed here.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.Characteristic.CanonicalFilteredTwoTerm
 

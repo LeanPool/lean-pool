@@ -55,7 +55,7 @@ Nothing here proves any Gabber-type statement; the new predicates are
 theorem-shaped interfaces that a caller must still prove.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.Characteristic.CanonicalResidueExtensionSymbolControlAdapter
 

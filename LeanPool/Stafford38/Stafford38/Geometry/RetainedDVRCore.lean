@@ -26,7 +26,7 @@ not construct a relative coefficient-field map, residue separability, an
 inverse limit, or a power-series chart.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.Geometry.RetainedDVR
 
@@ -39,6 +39,7 @@ noncomputable section
 universe u v w
 
 /-- Finiteness of the residue-field extension induced by a local ring homomorphism. -/
+@[expose]
 def ResidueExtensionFinite
     {A V : Type*} [CommRing A] [IsLocalRing A]
     [CommRing V] [IsLocalRing V] (factor : A →+* V)

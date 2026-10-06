@@ -21,7 +21,7 @@ but sends each basis vector to a strictly deeper maximal-ideal layer. This
 is sufficient to kill its diagonal without replacing coefficients by residues.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.Characteristic.BGab001CoefficientFieldTrace
 

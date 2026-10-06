@@ -21,7 +21,7 @@ Only `k`-linear maps are used here.  In particular, this file introduces no
 Rees-ring action and asserts no special-fibre ring or module equivalence.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.CharacteristicFilteredQuotientReesExact
 

@@ -113,7 +113,7 @@ conditions at `p … p+k−1`.  That stability is what lets the emitter address
 context rows by a fixed index in every certificate it synthesises.
 -/
 
-@[expose] public section
+public section
 
 namespace Utilities.Subdivision.ClosedRowProof
 
@@ -124,6 +124,7 @@ open Utilities.Certificate
 open Utilities.Certificate.ContractionForestCensusGeneral
 
 /-- `−1 − g`: the negation of `g ≥ 0` over the integers. -/
+@[expose]
 def negForm (g : Form) : Form := subForm [-1] g
 
 @[simp] theorem eval_negForm (g : Form) (x : List ℤ) :
@@ -140,6 +141,7 @@ def falseForm : Form := [-1]
 
 /-- Append a form to the inequality part of a context.  Appending, rather than
 prepending, is what keeps context indices stable down a branch. -/
+@[expose]
 def Context.pushGe (Γ : Context) (g : Form) : Context := ⟨Γ.ge ++ [g], Γ.eq⟩
 
 theorem Context.pushGe_holds {Γ : Context} {g : Form} {x : List ℤ}
@@ -229,12 +231,14 @@ context the citation sits in. -/
 subtree's declared entry forms.  Appending keeps the root's `p` coordinate rows
 at indices `0 … p−1`, so a certificate synthesised against the root addresses
 the same rows inside a subtree. -/
+@[expose]
 def subContext (p : ℕ) (entry : List Form) : Context :=
   ⟨(List.range p).map coordForm ++ entry, []⟩
 
 /-- Positional lookup into the list of entry contexts.  Written out rather than
 taken from `List.getElem?` so that `lookup_mem` — the only fact soundness needs
 — is a three-line induction that cannot drift with the library. -/
+@[expose]
 def lookupEntry : List (List Form) → ℕ → Option (List Form)
   | [], _ => none
   | e :: _, 0 => some e
@@ -253,6 +257,7 @@ theorem lookupEntry_mem :
 /-- The citation's obligation: certificate `i` must entail entry form `i`.
 A missing certificate is `Cert.dflt`, which fails `1 ≤ k`, so a `use` with too
 few certificates is a reject rather than a gap. -/
+@[expose]
 def entryChecks (Γ : Context) : List Form → List Cert → Bool
   | [], _ => true
   | g :: gs, cs =>
@@ -293,6 +298,7 @@ inductive PTree where
 
 /-- The tree checker, in scope of the entry contexts `E` of the subtrees this
 node may cite.  One `Bool` for the whole proof. -/
+@[expose]
 def PTree.checksIn {n p : ℕ} (m : ℕ) (core : ExplicitPotential.Core n p)
     (degree : ℤ) (E : List (List Form)) (Γ : Context) : PTree → Bool
   | .leaf w => w.leafChecks m core Γ degree
@@ -329,6 +335,7 @@ structure PProof where
   main : PTree
 
 /-- Check the subtrees in order, each in scope of its predecessors' entries. -/
+@[expose]
 def subsCheck {n p : ℕ} (m : ℕ) (core : ExplicitPotential.Core n p) (degree : ℤ) :
     List (List Form) → List (List Form × PTree) → Bool
   | _, [] => true
@@ -338,6 +345,7 @@ def subsCheck {n p : ℕ} (m : ℕ) (core : ExplicitPotential.Core n p) (degree 
 
 /-- The whole-proof checker: the subtrees, then the main tree in scope of all
 of them. -/
+@[expose]
 def PProof.checks {n p : ℕ} (m : ℕ) (core : ExplicitPotential.Core n p)
     (degree : ℤ) (Γ : Context) (P : PProof) : Bool :=
   subsCheck m core degree [] P.subs &&

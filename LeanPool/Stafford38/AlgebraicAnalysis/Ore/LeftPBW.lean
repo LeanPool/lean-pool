@@ -24,7 +24,7 @@ The iterated tower still needs the commuting derivations to be extended over
 earlier stages.  Nothing in this file postulates such extensions.
 -/
 
-@[expose] public section
+public section
 
 namespace AlgebraicAnalysis.OreLeftPBW
 
@@ -62,6 +62,7 @@ theorem normalForm_smul_left (D : OreDivisionDerivation K)
 
 /-- Coefficient-left Ore normal form as a linear equivalence over the
 coefficient field. -/
+@[expose]
 def leftNormalFormLinearEquiv (D : OreDivisionDerivation K) :
     Polynomial K ≃ₗ[K] NormalOre D :=
   { normalFormAddEquiv D with

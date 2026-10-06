@@ -20,7 +20,7 @@ right coordinate factor after multiplication by `x^N` on either side.  The
 cofactors remain in the concrete Euler subring.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.WeylEulerRemainder
 

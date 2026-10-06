@@ -22,7 +22,7 @@ divisor and Laurent-direction consumers.  It constructs no projective chart,
 normalization, tangent comparison, or conormal-closure theorem.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.Geometry.ProjectiveTangentInclusion
 

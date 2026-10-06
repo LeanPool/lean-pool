@@ -14,7 +14,7 @@ These passive row multipliers are replayed by the corresponding fixed-cover modu
 The ordered blocks and their concatenation retain the global receipt indices used by its tree.
 -/
 
-@[expose] public section
+public section
 
 namespace AtanasovRanganathan.GenusFiveRow14FixedCover
 
@@ -23,6 +23,7 @@ open Utilities
 /-- Farkas receipt block 0 for the row-14 tree, providing global indices 0 through 127. Each
 receipt specifies a positive integer combination of active affine rows for a cell constraint or
 a contradiction. -/
+@[expose]
 def farkasReceipts0 : List Certificate.AffineCover.FarkasData :=
   [
     { terms :=
@@ -287,6 +288,7 @@ def farkasReceipts0 : List Certificate.AffineCover.FarkasData :=
 /-- Farkas receipt block 1 for the row-14 tree, providing global indices 128 through 255. Each
 receipt specifies a positive integer combination of active affine rows for a cell constraint or
 a contradiction. -/
+@[expose]
 def farkasReceipts1 : List Certificate.AffineCover.FarkasData :=
   [
     { terms :=
@@ -568,6 +570,7 @@ def farkasReceipts1 : List Certificate.AffineCover.FarkasData :=
 /-- Farkas receipt block 2 for the row-14 tree, providing global indices 256 through 346. Each
 receipt specifies a positive integer combination of active affine rows for a cell constraint or
 a contradiction. -/
+@[expose]
 def farkasReceipts2 : List Certificate.AffineCover.FarkasData :=
   [
     { terms :=
@@ -769,6 +772,7 @@ def farkasReceipts2 : List Certificate.AffineCover.FarkasData :=
 
 /-- The complete table of 347 row-14 Farkas receipts, concatenated in the global order
 referenced by decision-tree leaves. -/
+@[expose]
 def farkasReceipts : List Certificate.AffineCover.FarkasData :=
   farkasReceipts0 ++ farkasReceipts1 ++ farkasReceipts2
 

@@ -15,7 +15,7 @@ Compatibility exports for naturality of successor-page operators
 from the shared algebraic-analysis library.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.Characteristic.FilteredTwoTermPages
 

@@ -20,7 +20,7 @@ universal Gabber theorem can be run directly over the extension field; no
 unrecorded transport of Poisson closure is needed.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.Characteristic.GeometricSupportScalarExtension
 

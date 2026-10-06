@@ -30,7 +30,7 @@ lower bound on divisorial gonality.  Further headline theorems can be added one
 at a time in the same style.
 -/
 
-@[expose] public section
+public section
 
 namespace Highlights
 
@@ -622,6 +622,7 @@ conversion is where the file deliberately crosses into the implementation
 library. -/
 
 /-- View a public graph in the chip-firing implementation model. -/
+@[expose]
 def libraryGraph (G : CFGraph) : _root_.CFGraph :=
   { V := G.V
     instDecidableEq := G.instDecidableEq

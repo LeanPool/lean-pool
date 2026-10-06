@@ -21,7 +21,7 @@ characteristic ideal of a Weyl module, satisfies this condition.  Supplying
 that fact is the remaining Gabber input.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.Characteristic.BaseRelativePoisson
 

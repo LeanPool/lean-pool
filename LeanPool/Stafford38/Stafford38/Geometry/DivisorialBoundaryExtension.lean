@@ -35,7 +35,7 @@ characteristic zero this is the usual finite transcendence-basis step; no
 such presentation is assumed or named in the theorem proved here.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.Geometry.DivisorialBoundaryExtension
 

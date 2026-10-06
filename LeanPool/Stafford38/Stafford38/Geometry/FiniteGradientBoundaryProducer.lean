@@ -25,7 +25,7 @@ No normalization, projective closure, boundary divisor, or existence of such
 a certificate is asserted here.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.Geometry.FiniteGradientBoundaryProducer
 

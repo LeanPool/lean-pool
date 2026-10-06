@@ -34,7 +34,7 @@ preimages, but do not provide the strict differential-order estimate isolated
 below.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.CanonicalMonicSaturation
 

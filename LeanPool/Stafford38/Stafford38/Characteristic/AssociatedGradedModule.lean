@@ -25,7 +25,7 @@ its annihilator is proved equal (not merely comparable) to that ideal.  No
 Rees algebra, radical involutivity, or Gabber theorem is asserted here.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.CharacteristicAssociatedGradedModule
 

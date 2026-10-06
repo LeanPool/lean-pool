@@ -18,7 +18,7 @@ commutator argument so that the one-sided normal-ordering calculation is an
 independent input.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.WeylPBWFirstContraction
 

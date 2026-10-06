@@ -19,7 +19,7 @@ exceptional rows below are graph-independent once their stated divisor-class
 conditions hold.
 -/
 
-@[expose] public section
+public section
 
 namespace Bananas
 
@@ -279,6 +279,7 @@ theorem transmission_eq_add_two_of_linearEquiv_canonical_sub_u_add_v
 
 /-- Proposition 4.5's `t - 2` exceptional class, stated independently of a
 chosen transmission permutation. -/
+@[expose]
 def ThetaTransmissionSubTwoCase
     (B : Banana 2) (u : B.graph.V) (X : CFDiv B.graph) : Prop :=
   linearEquiv B.graph X (2 • oneChip u)
@@ -286,6 +287,7 @@ def ThetaTransmissionSubTwoCase
 /-- Proposition 4.5's `t - 1` exceptional class.  The two inequalities in
 the paper mean that the residual chip belongs to neither marked degree-one
 class. -/
+@[expose]
 def ThetaTransmissionSubOneCase
     (B : Banana 2) (u v : B.graph.V) (X : CFDiv B.graph) : Prop :=
   ∃ w : B.graph.V,
@@ -296,6 +298,7 @@ def ThetaTransmissionSubOneCase
 /-- Proposition 4.5's `t + 1` exceptional class.  Saying that `w` is
 neither reflected marked point is precisely saying that neither marked pair
 with `w` is canonical. -/
+@[expose]
 def ThetaTransmissionAddOneCase
     (B : Banana 2) (u v : B.graph.V) (X : CFDiv B.graph) : Prop :=
   ∃ w : B.graph.V,
@@ -307,6 +310,7 @@ def ThetaTransmissionAddOneCase
 
 /-- Proposition 4.5's `t + 2` exceptional class, with the reflected class
 `bar u` written coordinate-freely as `K-u`. -/
+@[expose]
 def ThetaTransmissionAddTwoCase
     (B : Banana 2) (u v : B.graph.V) (X : CFDiv B.graph) : Prop :=
   linearEquiv B.graph X

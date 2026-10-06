@@ -24,7 +24,7 @@ residue field into the algebraic closure.  It does not use characteristic
 varieties, Gabber's theorem, or asymptotic geometry.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.Characteristic.GeometricSupportDescent
 

@@ -23,7 +23,7 @@ parameter, that the target is an Artinian quotient, or that a coefficient
 field exists.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.Characteristic.SquareZeroLocalizedRing
 

@@ -22,7 +22,7 @@ the required right action of the order-Rees ring. Kernel equality and that
 action are deliberately left as subsequent theorems.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.CharacteristicFilteredQuotientRees
 

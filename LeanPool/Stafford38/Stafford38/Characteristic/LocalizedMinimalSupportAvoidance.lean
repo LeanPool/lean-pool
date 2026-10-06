@@ -14,7 +14,7 @@ Compatibility exports for minimal support avoidance after localization
 from the shared algebraic-analysis library.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.Characteristic.LocalizedMinimalSupportAvoidance
 

@@ -17,7 +17,7 @@ strict skein unitor eliminated.  Its even and odd evaluations on
 unit-padded vectors are the strand identification itself.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 
@@ -84,6 +84,7 @@ theorem stdToOmega_one_even (x : (stdSuperPair k ℓ).even) :
   exact (TensorProduct.lid_tmul _ _).trans (one_smul _ _)
 
 /-- The unit-padded odd element. -/
+@[expose]
 def oddUnitPad {V : SuperVect} (y : V.odd) :
     (SuperVect.tensorObj SuperVect.tensorUnit V).odd :=
   ((1 : ℂ) ⊗ₜ[ℂ] y, 0)

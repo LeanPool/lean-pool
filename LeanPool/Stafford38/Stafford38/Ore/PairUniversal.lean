@@ -19,7 +19,7 @@ central-coordinate stage.  A momentum satisfying the derivation relation
 against that map then defines a map from `PairStage`.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.OrePairUniversal
 

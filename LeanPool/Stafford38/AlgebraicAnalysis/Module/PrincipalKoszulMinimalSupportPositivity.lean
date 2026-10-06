@@ -18,7 +18,7 @@ finite `C`-module itself.  In particular, no finiteness of `E` over the base
 ring `R` is needed.
 -/
 
-@[expose] public section
+public section
 
 namespace AlgebraicAnalysis.PrincipalKoszulMinimalSupportPositivity
 

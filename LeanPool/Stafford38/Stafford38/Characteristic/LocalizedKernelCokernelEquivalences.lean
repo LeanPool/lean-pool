@@ -14,7 +14,7 @@ Compatibility exports for localization of kernels and cokernels
 from the shared algebraic-analysis library.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.Characteristic.LocalizedKernelCokernelEquivalences
 

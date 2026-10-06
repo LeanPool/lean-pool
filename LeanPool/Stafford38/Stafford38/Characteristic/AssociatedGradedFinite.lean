@@ -19,7 +19,7 @@ to the already checked minimal-prime localization theorem.  No Noetherian,
 trace, or involutivity conclusion is hidden in the construction.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.Characteristic.AssociatedGradedFinite
 

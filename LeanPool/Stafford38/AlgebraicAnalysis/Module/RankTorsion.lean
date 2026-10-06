@@ -35,7 +35,7 @@ Mathlib remains available, but is deliberately not reused as a theorem about
 noncommutative `R`.
 -/
 
-@[expose] public section
+public section
 
 namespace AlgebraicAnalysis
 namespace RankTorsion
@@ -118,6 +118,7 @@ abbrev LocalizedRightModule (R : Type u) (M : Type v)
   M[(Rᵐᵒᵖ)⁰⁻¹]
 
 /-- The rank of a right module after passage to the full fraction ring. -/
+@[expose]
 noncomputable def oreRank (M : Type v) [AddCommGroup M] [Module Rᵐᵒᵖ M] : Cardinal :=
   Module.rank (FractionRingOp R) (LocalizedRightModule R M)
 omit [Nontrivial R] [NoZeroDivisors R] in

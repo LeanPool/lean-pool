@@ -21,7 +21,7 @@ union-find representatives need not commute definitionally with a vertex
 permutation, but their fibres do.
 -/
 
-@[expose] public section
+public section
 
 namespace Utilities.Subdivision.ClosedRowProof
 
@@ -61,29 +61,35 @@ namespace AutoData
 
 /-- Decode a proposed vertex image using zero for missing entries and reduction modulo the
 nonzero vertex count. -/
+@[expose]
 def vertexMap (d : AutoData) (hn : 0 < n) (v : Fin n) : Fin n :=
   ⟨d.vertex.getD v.val 0 % n, Nat.mod_lt _ hn⟩
 
 /-- Decode a proposed inverse vertex image using zero for missing entries and reduction modulo
 the nonzero vertex count. -/
+@[expose]
 def vertexInvMap (d : AutoData) (hn : 0 < n) (v : Fin n) : Fin n :=
   ⟨d.vertexInv.getD v.val 0 % n, Nat.mod_lt _ hn⟩
 
 /-- Decode a proposed slot image using zero for missing entries and reduction modulo the nonzero
 slot count. -/
+@[expose]
 def slotMap (d : AutoData) (hp : 0 < p) (e : Fin p) : Fin p :=
   ⟨d.slot.getD e.val 0 % p, Nat.mod_lt _ hp⟩
 
 /-- Decode a proposed inverse slot image using zero for missing entries and reduction modulo the
 nonzero slot count. -/
+@[expose]
 def slotInvMap (d : AutoData) (hp : 0 < p) (e : Fin p) : Fin p :=
   ⟨d.slotInv.getD e.val 0 % p, Nat.mod_lt _ hp⟩
 
 /-- Read the reversal flag of a source slot, defaulting to false when the list has no entry. -/
+@[expose]
 def reverseAt (d : AutoData) (e : Fin p) : Bool := d.reversed.getD e.val false
 
 /-- Check nonempty vertex and slot sets, both inverse identities, and the two endpoint laws for
 the decoded automorphism data. -/
+@[expose]
 def checks (d : AutoData) (core : ExplicitPotential.Core n p) : Bool :=
   if hn : 0 < n then
     if hp : 0 < p then
@@ -129,11 +135,13 @@ def toSymmetry (d : AutoData) (core : ExplicitPotential.Core n p)
 /-- Pull a form back exactly as `rpfcheck`: the old coefficient at `e` moves
 to `slotMap e`, equivalently the new coefficient at `j` is read at
 `slotInvMap j`.  RPF row proofs have exactly `p` coordinates. -/
+@[expose]
 def pullbackForm (d : AutoData) (hp : 0 < p) (g : Form) : Form :=
   g.getD 0 0 :: List.ofFn (fun e : Fin p => g.getD (d.slotInvMap hp e).val.succ 0)
 
 /-- Pull back every inequality and equality form in the context through the decoded inverse slot
 map. -/
+@[expose]
 def pullbackContext (d : AutoData) (hp : 0 < p) (Γ : Context) : Context :=
   ⟨Γ.ge.map (d.pullbackForm hp), Γ.eq.map (d.pullbackForm hp)⟩
 

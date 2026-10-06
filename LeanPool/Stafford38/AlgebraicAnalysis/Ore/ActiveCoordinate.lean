@@ -21,7 +21,7 @@ The results use only the checked normal-form construction.  They do not
 postulate a PBW basis, a presented Weyl algebra, or an operator realization.
 -/
 
-@[expose] public section
+public section
 
 namespace AlgebraicAnalysis.OreActiveCoordinate
 

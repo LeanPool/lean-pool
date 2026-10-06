@@ -18,7 +18,7 @@ Only the polynomial criterion is recorded here.  This file does not identify
 an asymptotic conormal variety with a projective closure.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.Geometry.ProjectiveConormalDirections
 

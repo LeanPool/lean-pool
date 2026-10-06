@@ -16,7 +16,7 @@ public import LeanPool.Stafford38.Stafford38.Geometry.DivisorialVisibleFrameStag
 Assembly of the verified affine, residue-field, and valuation stages of a visible frame.
 -/
 
-@[expose] public section
+public section
 
 open IsLocalRing Polynomial
 open Stafford38.Geometry.NormalizationHeightOne

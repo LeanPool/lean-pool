@@ -18,7 +18,7 @@ from Stafford38 commit `1585e4c7`, originally
 application-specific hypothesis is used.
 -/
 
-@[expose] public section
+public section
 
 namespace AlgebraicAnalysis.DifferentialOperators
 
@@ -28,6 +28,7 @@ variable {k R : Type*} [CommRing k] [CommRing R] [Algebra k R]
 abbrev End := Module.End k R
 
 /-- Multiplication by an element of `R`, as a `k`-linear endomorphism. -/
+@[expose]
 def multiplication (a : R) : End (k := k) (R := R) :=
   LinearMap.mulLeft k a
 
@@ -36,6 +37,7 @@ theorem multiplication_apply (a x : R) :
     multiplication (k := k) a x = a * x := rfl
 
 /-- The commutator of an endomorphism with multiplication by `a`. -/
+@[expose]
 def commutator (P : End (k := k) (R := R)) (a : R) : End (k := k) (R := R) :=
   P * multiplication (k := k) a - multiplication (k := k) a * P
 
@@ -44,6 +46,7 @@ theorem commutator_apply (P : End (k := k) (R := R)) (a x : R) :
     commutator P a x = P (a * x) - a * P x := rfl
 
 /-- Differential operators of order at most `n`. -/
+@[expose]
 def order : ℕ → Submodule k (End (k := k) (R := R))
   | 0 =>
       { carrier := {P | ∀ a, commutator P a = 0}
@@ -175,6 +178,7 @@ theorem mul_mem_order {P Q : End (k := k) (R := R)} {m n : ℕ}
             (by simpa only [Nat.succ_add, Nat.add_succ] using ihm (hP a) hQ')
 
 /-- The algebra of all finite-order `k`-linear differential operators on `R`. -/
+@[expose]
 def algebra : Subalgebra k (End (k := k) (R := R)) where
   carrier := {P | ∃ n, P ∈ order n}
   zero_mem' := ⟨0, (order 0).zero_mem⟩

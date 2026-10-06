@@ -17,7 +17,7 @@ stable freeness used in filtered-ring arguments.  It is a definition, not a
 claim that any particular ring has the property.
 -/
 
-@[expose] public section
+public section
 
 namespace AlgebraicAnalysis
 namespace StablyFree

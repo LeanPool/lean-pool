@@ -19,7 +19,7 @@ public import LeanPool.Stafford38.Stafford38.Geometry.NormalizationHeightOne
 Normalized affine charts and integral models for a selected divisorial boundary coordinate.
 -/
 
-@[expose] public section
+public section
 
 open IsLocalRing
 open scoped nonZeroDivisors

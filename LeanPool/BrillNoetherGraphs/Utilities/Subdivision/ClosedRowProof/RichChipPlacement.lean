@@ -28,7 +28,7 @@ adding a tail term and a head term would count a chip there twice.
 anyway, so nothing is lost.
 -/
 
-@[expose] public section
+public section
 
 namespace Utilities.Subdivision.ClosedRowProof
 
@@ -229,6 +229,7 @@ tail term and a head term would double count.  By
 `RichChipBridge.rawChipMassAt_eq_zero_of_coord_eq_zero` an accepted rich leaf
 has no chip on such a slot at all, so the suppressed value is `0`; the `if` is
 what makes that visible without a hypothesis. -/
+@[expose]
 def headMassAdj (w : RichWitness) (x : List ℤ) (e : Fin p) : ℤ :=
   if d.length e = 0 then 0 else w.rawChipMassAt x e.val (d.length e)
 

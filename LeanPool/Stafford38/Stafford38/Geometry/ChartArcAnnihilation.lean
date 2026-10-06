@@ -24,7 +24,7 @@ its actual normalized chart, with precisely the coordinate ordering used by
 annihilation; annihilation itself is not a field of the certificate.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.Geometry.ChartArcAnnihilation
 

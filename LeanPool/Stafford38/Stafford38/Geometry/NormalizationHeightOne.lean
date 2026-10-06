@@ -49,7 +49,7 @@ the `haveI` style option, so that the checked artefact is not perturbed for
 cosmetics.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.Geometry.NormalizationHeightOne
 

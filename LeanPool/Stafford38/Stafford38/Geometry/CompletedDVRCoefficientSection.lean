@@ -27,7 +27,7 @@ separability hypothesis in characteristic zero, so the construction applies
 to it directly.  No equivalence with a power-series ring is asserted.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.Geometry.CompletedDVRCoefficientSection
 
@@ -57,6 +57,7 @@ abbrev maximalIdealModel : Ideal V := maximalIdeal V
 abbrev AdicJet (n : ℕ) := V ⧸ ((maximalIdealModel V) ^ (n + 1))
 
 /-- Reduction of a positive adic jet to the residue field. -/
+@[expose]
 def adicJetResidue (n : ℕ) : AdicJet V n →ₐ[E] ResidueFieldModel V :=
   Ideal.Quotient.liftₐ ((maximalIdealModel V) ^ (n + 1))
     (IsScalarTower.toAlgHom E V (ResidueFieldModel V)) (by
@@ -139,6 +140,7 @@ theorem adicJetCoefficientSection_compatible
 
 /-- Convert the usual quotient by `maximalIdealModel^n` to the coordinate quotient used in
 the definition of `AdicCompletion`. -/
+@[expose]
 def exactQuotientToCompletionCoordinate (n : ℕ) :
     (V ⧸ ((maximalIdealModel V) ^ n)) ≃ₐ[E]
       V ⧸ ((maximalIdealModel V) ^ n • ⊤ : Ideal V) := by
@@ -166,6 +168,7 @@ def zeroCompletionCoordinateSection :
 /-- The coefficient section in every coordinate of Mathlib's adic inverse
 limit.  Coordinate zero is trivial; coordinate `n+1` is the formally etale
 section in `V / maximalIdealModel^(n+1)`. -/
+@[expose]
 def completionCoordinateSection
     (hsep : Algebra.IsSeparable E (ResidueFieldModel V)) :
     ∀ n : ℕ, ResidueFieldModel V →ₐ[E] V ⧸ ((maximalIdealModel V) ^ n • ⊤ : Ideal V)
@@ -223,6 +226,7 @@ theorem completionCoordinateSection_compatible
 
 /-- The compatible finite-level sections assemble to an actual
 `E`-algebra coefficient section in the adic completion. -/
+@[expose]
 def completedCoefficientSection
     (hsep : Algebra.IsSeparable E (ResidueFieldModel V)) :
     ResidueFieldModel V →ₐ[E] AdicCompletion (maximalIdealModel V) V where

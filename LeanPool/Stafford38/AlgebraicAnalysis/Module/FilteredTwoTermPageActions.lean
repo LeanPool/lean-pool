@@ -20,7 +20,7 @@ operator is unchanged on pages after adding one that shifts an additional
 filtration level.
 -/
 
-@[expose] public section
+public section
 
 namespace AlgebraicAnalysis.FilteredTwoTermPages
 
@@ -90,6 +90,7 @@ theorem commute_apply (x : M) : K.f (P.g x) = P.g (K.f x) := by
   exact LinearMap.congr_fun P.commute x
 
 /-- The restriction of the operator to a source-page cycle numerator. -/
+@[expose]
 def sourceRestricted (r : ℕ) (p : ℤ) :
     K.cycles r p →ₗ[k] K.cycles r (p - d) :=
   (P.g.comp (K.cycles r p).subtype).codRestrict (K.cycles r (p - d)) (by
@@ -138,6 +139,7 @@ theorem sourcePageCast_mk (r : ℕ) {p q : ℤ} (h : p = q)
   rfl
 
 /-- The restriction of the operator to a target-page filtration piece. -/
+@[expose]
 def targetRestricted (p : ℤ) : K.G p →ₗ[k] K.G (p - d) :=
   (P.g.comp (K.G p).subtype).codRestrict (K.G (p - d))
     (fun x => P.shift p (x : M) x.property)
@@ -169,6 +171,7 @@ private theorem targetRestricted_denominator (r : ℕ) (p : ℤ) :
   exact P.maps_boundaries r p hx
 
 /-- The operator induced on a target page. -/
+@[expose]
 def targetMap (r : ℕ) (p : ℤ) :
     K.TargetPage r p →ₗ[k] K.TargetPage r (p - d) :=
   Submodule.mapQ _ _ (P.targetRestricted p)

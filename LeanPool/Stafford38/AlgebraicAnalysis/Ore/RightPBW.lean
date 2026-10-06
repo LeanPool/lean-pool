@@ -20,7 +20,7 @@ monomials form a genuine right basis; the proof uses finite-support maximal
 degree induction, so no freeness or flatness assumption is introduced.
 -/
 
-@[expose] public section
+public section
 
 namespace AlgebraicAnalysis.OreRightPBW
 
@@ -39,6 +39,7 @@ universe u
 variable {B : Type u} [Ring B]
 
 /-- The candidate right-coefficient PBW monomial of order `n`. -/
+@[expose]
 def rightPBWMonomial (D : OreDivisionDerivation B) (n : ℕ) : NormalOre D :=
   normalForm D (Polynomial.X ^ n)
 

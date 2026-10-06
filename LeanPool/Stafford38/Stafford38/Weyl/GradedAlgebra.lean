@@ -22,7 +22,7 @@ transported multiplication is proved to be the multiplication induced by Weyl
 products of filtered representatives.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.WeylAssociatedGraded
 

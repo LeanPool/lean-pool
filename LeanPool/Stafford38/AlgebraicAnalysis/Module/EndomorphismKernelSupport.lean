@@ -18,7 +18,7 @@ Noetherian ring.  The proof is deliberately made at a prime, using the
 actual `LocalizedModule` support definition.
 -/
 
-@[expose] public section
+public section
 
 namespace AlgebraicAnalysis
 

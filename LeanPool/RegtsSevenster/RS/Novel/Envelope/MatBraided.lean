@@ -16,7 +16,7 @@ When `C` is a braided (resp. symmetric) monoidal preadditive category, so is
 componentwise braidings of `C`, reindexed by the swap `M.ι × N.ι ↔ N.ι × M.ι`.
 -/
 
-@[expose] public section
+public section
 
 noncomputable section
 
@@ -82,6 +82,7 @@ section Braided
 
 open scoped Classical in
 /-- The matrix morphism that swaps tensor factors using the component braidings. -/
+@[expose]
 def matBraidHom [Category.{v} C] [Preadditive C] [MonoidalCategory C]
     [BraidedCategory C]
     (M N : Mat_ C) : (M ⊗ N : Mat_ C) ⟶ (N ⊗ M : Mat_ C) :=
@@ -176,6 +177,7 @@ private theorem matBraid_inv_hom
   · intro b _ hb; simp [show ¬(j₂ = b) from Ne.symm hb]
 
 /-- The braiding isomorphism on matrix objects induced by the component braidings. -/
+@[expose]
 def matBraidIso [Category.{v} C] [Preadditive C] [MonoidalCategory C]
     [BraidedCategory C]
     (M N : Mat_ C) : (M ⊗ N : Mat_ C) ≅ (N ⊗ M : Mat_ C)

@@ -15,7 +15,7 @@ public import LeanPool.Stafford38.Stafford38.PaperInputs
 coordinate variable, so the same empty-support statement excludes the
 coordinate zero locus from the transposed support. -/
 
-@[expose] public section
+public section
 
 
 namespace Stafford38.Characteristic.CanonicalSupportAvoidanceFromCokernel

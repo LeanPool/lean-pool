@@ -16,7 +16,7 @@ final computation evaluates.  Its base case: the zero cap reads
 off the scalar itself.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 
@@ -30,6 +30,7 @@ variable (e : stdSuperPair k ℓ ⟶ P.ω.obj (SkeinObj.mk 1))
 
 /-- The cap value: the cap functional on the transported model
 vector. -/
+@[expose]
 noncomputable def capVal (m : ℕ)
     (v : (superPow (stdSuperPair k ℓ) (m + m)).even) : ℂ :=
   omegaFun f P (bundleCapClass f m)

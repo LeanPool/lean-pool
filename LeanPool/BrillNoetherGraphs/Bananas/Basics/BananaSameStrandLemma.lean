@@ -26,7 +26,7 @@ divisor has rank zero, so the displayed four-alternative claim fails for
 three suitable points on a cycle.
 -/
 
-@[expose] public section
+public section
 
 namespace Bananas
 
@@ -36,11 +36,13 @@ open Utilities.Certificate.SubdivisionGraph.Spec
 
 /-- A physical vertex lies on the normalized strand `alpha`.  Unlike a raw
 coordinate equality, this treats the two common endpoints invariantly. -/
+@[expose]
 def VertexOnBananaStrand {g : ℕ} (B : Banana g) (alpha : Fin (g + 1))
     (x : B.graph.V) : Prop :=
   ∃ p : B.PathPosition alpha, x = strandVertex B alpha p
 
 /-- Three physical vertices lie on one common banana strand. -/
+@[expose]
 def VerticesOnCommonBananaStrand {g : ℕ} (B : Banana g)
     (x y z : B.graph.V) : Prop :=
   ∃ alpha : Fin (g + 1),

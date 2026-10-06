@@ -36,7 +36,7 @@ under the extension (nor the equivalent normalization/height-one-prime
 construction).
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.Geometry.AsymptoticDivisorExistence
 
@@ -69,6 +69,7 @@ theorem transcendental_of_not_mem_range_algebraMap
   exact IntermediateField.subset_adjoin k {x} (Set.mem_singleton x)
 
 /-- The prime ideal `(X)` in the one-variable polynomial ring. -/
+@[expose]
 def coordinateZeroPrime : Ideal (Polynomial k) := Ideal.span {Polynomial.X}
 
 instance coordinateZeroPrime_isPrime : (coordinateZeroPrime k).IsPrime := by

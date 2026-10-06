@@ -29,7 +29,7 @@ normalization chart, asymptotic-conormal producer, or Gabber theorem is proved
 here.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.Geometry.LaurentConormalDirection
 

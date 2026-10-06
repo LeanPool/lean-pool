@@ -16,7 +16,7 @@ unit-padded standard basis vectors: the single-layer computation
 of `colourPowerEquiv 1` on padded pure tensors.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 
@@ -25,10 +25,12 @@ open scoped TensorProduct
 variable {k ℓ : ℕ}
 
 /-- The one-position even colouring. -/
+@[expose]
 def oneColourE (k ℓ : ℕ) (i : Fin k) :
     MixedColouring k ℓ 1 := fun _ => Sum.inl i
 
 /-- The one-position odd colouring. -/
+@[expose]
 def oneColourO (k ℓ : ℕ) (a : Fin (2 * ℓ)) :
     MixedColouring k ℓ 1 := fun _ => Sum.inr a
 
@@ -189,12 +191,7 @@ theorem oddBasisVec_one (a : Fin (2 * ℓ)) :
       {c : MixedColouring k ℓ 1 // ¬ c.IsEven}) =
       oddUnitPad (stdF ℓ a) := by
   apply (colourPowerEquiv k ℓ 1).oddEquiv.injective
-  rw [show (colourPowerEquiv k ℓ 1).oddEquiv
-      (oddBasisVec (⟨oneColourO k ℓ a,
-        oneColourO_not_isEven a⟩ :
-        {c : MixedColouring k ℓ 1 // ¬ c.IsEven})) =
-    Pi.single ⟨oneColourO k ℓ a, oneColourO_not_isEven a⟩ 1 from
-    (colourPowerEquiv k ℓ 1).oddEquiv.apply_symm_apply _]
+  rw [colourPowerEquiv_oddBasisVec]
   funext ⟨c', hc'⟩
   change _ = ((colourPowerEquiv k ℓ 1).oddEquiv
     (oddUnitPad (stdF ℓ a)) ⟨c', hc'⟩)

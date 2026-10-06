@@ -20,7 +20,7 @@ basis only inside the proof produces a column matrix and a retraction matrix.
 The matrices split, and their columns span exactly the original submodule.
 -/
 
-@[expose] public section
+public section
 
 namespace AlgebraicAnalysis.SplitLatticePresentation
 

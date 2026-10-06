@@ -13,7 +13,7 @@ public import LeanPool.Stafford38.Stafford38.Characteristic.CanonicalTangentialR
 Finiteness over the original tangential polynomial ring after changing phase variables.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.Characteristic.CanonicalOldTangentialFiniteness
 

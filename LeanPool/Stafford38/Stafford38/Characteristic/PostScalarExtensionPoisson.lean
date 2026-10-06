@@ -20,7 +20,7 @@ coordinate derivation.  No claim is made that taking a radical after base
 change preserves bracket closure.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.Characteristic.PostScalarExtensionPoisson
 

@@ -25,7 +25,7 @@ projective component.  Those chart, normalization, frame-independence, and
 dimension arguments remain separate geometric obligations.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.Geometry.PowerSeriesArcTangency
 

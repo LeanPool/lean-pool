@@ -27,7 +27,7 @@ contradiction for an arbitrary variable type and arbitrary specialization
 vector.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.GeometryRetractionSpecialization
 
@@ -40,6 +40,7 @@ universe u v w
 variable {R : Type u} [CommRing R]
 
 /-- A row vector multiplied by a matrix on the right. -/
+@[expose]
 def rowMul {ι κ : Type*} [Fintype ι] (a : ι → R) (B : Matrix ι κ R) : κ → R :=
   fun j => ∑ i, a i * B i j
 

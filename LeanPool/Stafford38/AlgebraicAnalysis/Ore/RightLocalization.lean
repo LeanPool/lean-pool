@@ -19,7 +19,7 @@ right-denominator clearing API. Extracted from Stafford38 commit
 c8a513d553b24c7c08da82f496c44dbbaeb1f2fc.
 -/
 
-@[expose] public section
+public section
 
 namespace AlgebraicAnalysis.OreRightLocalization
 

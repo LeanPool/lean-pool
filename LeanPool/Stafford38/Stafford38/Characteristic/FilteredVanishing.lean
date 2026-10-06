@@ -20,7 +20,7 @@ by one.  Exhaustivity of the PBW order filtration then reaches every quotient
 class.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.CharacteristicFilteredVanishing
 

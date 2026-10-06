@@ -17,7 +17,7 @@ colouring data at those flags: participating flags carry the odd
 colour (or its partner on partner slots), the rest the even colour.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 
@@ -26,6 +26,7 @@ open Finset
 variable {k ℓ : ℕ}
 
 /-- The flag of the j-th slot in the v-th block. -/
+@[expose]
 noncomputable def blockFlag (W : ClosedFragment)
     (v : Fin (ds W).length) (j : Fin ((ds W).get v)) : W.Flag :=
   (starFlagEnum W).symm (slotEmbed W v j)

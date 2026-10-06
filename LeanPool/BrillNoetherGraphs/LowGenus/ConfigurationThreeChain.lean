@@ -73,7 +73,7 @@ The one-edge arithmetic itself is `ConfigurationFive`'s and is reused
 unchanged.
 -/
 
-@[expose] public section
+public section
 
 namespace AtanasovRanganathan.ConfigurationThreeChain
 
@@ -138,6 +138,7 @@ theorem positiveChip_add_head_nonneg {L hu hv : ℕ}
 end ChainLedger
 
 /-- The slot read from its core tail. -/
+@[expose]
 def forward : ChainLedger where
   tail := tailContribution
   head := headContribution
@@ -150,6 +151,7 @@ def forward : ChainLedger where
   tail_eq_one_of_full h1 h2 := tailContribution_eq_one_of_full h1 h2
 
 /-- The same slot read from its core head. -/
+@[expose]
 def reverse : ChainLedger where
   tail L hu hv := headContribution L hv hu
   head L hu hv := tailContribution L hv hu

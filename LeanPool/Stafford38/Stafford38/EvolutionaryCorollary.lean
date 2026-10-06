@@ -18,7 +18,7 @@ This file combines the algebraic certificate with Euler-root separation. It
 contains only the unconditional ring-theoretic corollary needed by the paper.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.Evolution
 

@@ -23,7 +23,7 @@ this gives the component split used before the divisorial-boundary
 construction.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.Geometry.AffineComponentCoordinateSplit
 

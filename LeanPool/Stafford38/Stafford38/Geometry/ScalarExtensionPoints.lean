@@ -24,7 +24,7 @@ zero loci agree over every extension field.  No assertion that radicals,
 closures, or ideal contractions commute with base change is made here.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.Geometry.ScalarExtensionPoints
 

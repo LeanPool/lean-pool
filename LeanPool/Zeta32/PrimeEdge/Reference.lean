@@ -12,7 +12,7 @@ public import Mathlib.Tactic.NormNum.Prime
 its determinant `p^{Σπ} · (unit)`. Blocks: `Ref_{⟨b,i⟩,⟨b,k⟩} = p^{c_b+i+k} w_b V⁰(u^{i+k}
 r_type)`. -/
 
-@[expose] public section
+public section
 
 open Polynomial
 open scoped BigOperators
@@ -26,6 +26,7 @@ variable {p : ℕ}
 def exceptional : Finset ℕ := {11, 67, 193, 283, 367, 110731}
 
 /-- The reference matrix for unit weights `w`. -/
+@[expose]
 noncomputable def Ref (p : ℕ) (w : ℕ → ℚ) : Matrix (Idx p) (Idx p) ℚ[X] :=
   Matrix.of fun a c => if a.1 = c.1 then
     C ((p : ℚ) ^ (colBase p a.1.val + a.2.val + c.2.val) * w a.1.val *
@@ -40,6 +41,7 @@ noncomputable def refUnit (p : ℕ) (w : ℕ → ℚ) : ℚ :=
   ∏ b : Fin p, (w b.val ^ mult p b.val * hankelDet p b)
 
 /-- `Σ π` as an integer. -/
+@[expose]
 def levelSum (p : ℕ) : ℤ := ∑ a : Idx p, level p a
 
 /-- **S3a (block diagonal determinant).** Scaling rows by `p^{c_b+i}` and columns by `p^k`

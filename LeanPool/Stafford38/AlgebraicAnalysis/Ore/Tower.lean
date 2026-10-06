@@ -19,7 +19,7 @@ normal form.  The formulas at the coefficient embedding and at the Ore
 variable are part of the interface used by later tower stages.
 -/
 
-@[expose] public section
+public section
 
 namespace AlgebraicAnalysis.OreTower
 

@@ -26,7 +26,7 @@ For a numerator `A`, `Lfun r n A = U_r(A / D_{5n})` (the proof notes, §0):
   `v_p ≥ min_c (e_c + [c = 0] - ℓ_c) - 2`.
 -/
 
-@[expose] public section
+public section
 
 open Finset Polynomial
 
@@ -35,6 +35,7 @@ namespace Zeta32.Arith.Local
 /-! ### The poles -/
 
 /-- The pole set `{-1, …, -5n}`. -/
+@[expose]
 def Pl5 (n : ℕ) : Finset ℤ := (Finset.Icc 1 (5 * n)).image fun j : ℕ => -(j : ℤ)
 
 lemma neg_natCast_injective : Function.Injective fun j : ℕ => -(j : ℤ) := by
@@ -68,6 +69,7 @@ lemma resP_Pl5 (A : ℚ[X]) (n j : ℕ) :
 /-! ### The entry functional -/
 
 /-- `U_r(A / D_{5n})`, as a polynomial in `X`. -/
+@[expose]
 noncomputable def Lfun (r : ℚ) (n : ℕ) (A : ℚ[X]) : ℚ[X] :=
   C (∑ j ∈ Finset.Icc 1 (5 * n), resP A (Pl5 n) (-(j : ℤ)) * (2 * (j : ℚ))) * X +
     C (polynomialMoment r (A /ₘ Zeta32.D (5 * n)) +

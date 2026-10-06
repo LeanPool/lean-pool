@@ -15,7 +15,7 @@ Compatibility exports for principal Koszul positivity at minimal support
 from the shared algebraic-analysis library.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.Characteristic.PrincipalKoszulMinimalSupportPositivity
 

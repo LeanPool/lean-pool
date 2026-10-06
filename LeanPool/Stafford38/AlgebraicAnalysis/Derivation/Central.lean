@@ -23,7 +23,7 @@ visible.  It does not assert that a particular localization has those
 properties.
 -/
 
-@[expose] public section
+public section
 
 namespace AlgebraicAnalysis.NoncommutativeDerivation
 

@@ -25,7 +25,7 @@ previous all-degree cancellation and strict-lower-preimage hypotheses imply
 the unit-only condition.  No converse is asserted.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.CanonicalUnitCoordinatePreimage
 

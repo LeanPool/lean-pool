@@ -17,7 +17,7 @@ identifies the first stage in the recursive Weyl construction with a central
 polynomial extension and transports ordinary differentiation to it.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.OreCoordinateStage
 
@@ -31,6 +31,7 @@ noncomputable section
 variable {B : Type*} [Ring B]
 
 /-- The zero derivation on a ring. -/
+@[expose]
 def zeroDerivation : OreDivisionDerivation B where
   toFun := 0
   map_zero' := rfl

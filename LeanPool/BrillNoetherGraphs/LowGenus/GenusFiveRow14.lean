@@ -41,7 +41,7 @@ The two families are combined exactly as in `GenusFiveRow12`: each names its
 own centres, and between them they cover every chip-free vertex.
 -/
 
-@[expose] public section
+public section
 
 namespace AtanasovRanganathan.GenusFiveRow14
 
@@ -62,6 +62,7 @@ open ConfigurationBananaTail
 /-! ## The divisor -/
 
 /-- The four guarding-set chip vertices 0, 3, 5, and 7 of row 14. -/
+@[expose]
 def IsChipVertex (v : Fin 8) : Prop :=
   v = 0 ∨ v = 3 ∨ v = 5 ∨ v = 7
 

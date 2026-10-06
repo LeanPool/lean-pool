@@ -18,7 +18,7 @@ both parities identify the coordinates; injectivity does the
 rest.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 
@@ -27,6 +27,7 @@ open scoped TensorProduct
 variable {k ℓ : ℕ}
 
 /-- The even coordinate basis vector at a colouring. -/
+@[expose]
 noncomputable def evenBasisVec {n : ℕ}
     (c : {c : MixedColouring k ℓ n // c.IsEven}) :
     (superPow (stdSuperPair k ℓ) n).even :=
@@ -37,6 +38,14 @@ noncomputable def oddBasisVec {n : ℕ}
     (c : {c : MixedColouring k ℓ n // ¬ c.IsEven}) :
     (superPow (stdSuperPair k ℓ) n).odd :=
   (colourPowerEquiv k ℓ n).oddEquiv.symm (Pi.single c 1)
+
+/-- The odd colouring coordinates of an odd coordinate basis vector. -/
+theorem colourPowerEquiv_oddBasisVec {n : ℕ}
+    (c : {c : MixedColouring k ℓ n // ¬ c.IsEven}) :
+    (colourPowerEquiv k ℓ n).oddEquiv (oddBasisVec c) =
+      Pi.single c 1 := by
+  unfold oddBasisVec
+  exact (colourPowerEquiv k ℓ n).oddEquiv.apply_symm_apply _
 
 /-- Colourings are determined by their halves. -/
 theorem MixedColouring.ext_halves {a b : ℕ}

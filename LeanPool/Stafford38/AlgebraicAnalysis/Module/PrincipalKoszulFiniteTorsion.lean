@@ -22,7 +22,7 @@ nonzero.  It proves only the strict length inequality and makes no
 noncharacteristic-support or geometric nonvanishing claim.
 -/
 
-@[expose] public section
+public section
 
 namespace AlgebraicAnalysis.PrincipalKoszulFiniteTorsion
 

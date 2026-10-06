@@ -10,7 +10,7 @@ public import LeanPool.Zeta32.PrimeEdge.Basis
 `det[U_r(φ_a φ_c R_n)] = det(T)^2 · Q_n` for any family of degree `< h`
 (adapted from `det_basis_change` in Arith/Local/Entry.lean and Li₂ Base/Gram.lean). -/
 
-@[expose] public section
+public section
 
 open Polynomial
 open scoped BigOperators
@@ -63,6 +63,7 @@ theorem gram_basis_change (r : ℚ) (n : ℕ) (E : Fin (3 * n) → ℚ[X])
   ring
 
 /-- The entry matrix `G_{ac} = U_r(φ_a φ_c R_n)` in the CRT basis, `n = p - 1`. -/
+@[expose]
 noncomputable def G (r : ℚ) (p : ℕ) : Matrix (Idx p) (Idx p) ℚ[X] :=
   Matrix.of fun a c => Lfun r (p - 1) (Aent p a c)
 

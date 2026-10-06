@@ -29,7 +29,7 @@ instantiate the localized right-Rees ring, identify the reduced matrix with
 the induced `z`-action, or prove the high-power Artinian reduction.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.Characteristic.ArtinianEquation33TraceProducer
 

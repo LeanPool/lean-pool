@@ -20,7 +20,7 @@ that ring and its canonical polynomial Poisson bracket without assuming any
 characteristic-variety theorem.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.Characteristic
 
@@ -37,6 +37,7 @@ def fibreWeight {n : ℕ} : PhaseVar n → ℕ
   | Sum.inr _ => 1
 
 /-- The standard Poisson bracket on affine cotangent space. -/
+@[expose]
 noncomputable def poissonBracket
     {k : Type*} [CommRing k] {n : ℕ}
     (f g : SymbolRing k n) : SymbolRing k n :=
@@ -47,6 +48,7 @@ noncomputable def poissonBracket
         MvPolynomial.pderiv (Sum.inl i : PhaseVar n) g)
 
 /-- An ideal is Poisson when it is stable under bracketing with every symbol. -/
+@[expose]
 def IsPoisson
     {k : Type*} [CommRing k] {n : ℕ}
     (J : Ideal (SymbolRing k n)) : Prop :=

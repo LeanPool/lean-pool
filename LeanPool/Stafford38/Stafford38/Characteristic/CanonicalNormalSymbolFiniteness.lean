@@ -15,7 +15,7 @@ public import LeanPool.Stafford38.Stafford38.Characteristic.MonicAnnihilatorFini
 Finiteness of the canonical graded quotient from a monic normal-symbol annihilator.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.Characteristic.CanonicalNormalSymbolFiniteness
 

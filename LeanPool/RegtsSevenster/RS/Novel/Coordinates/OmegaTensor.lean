@@ -18,7 +18,7 @@ where every rewrite fires — and the strictness of the skein unit
 is exploited only in two small concrete bridging steps.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 
@@ -26,6 +26,7 @@ open CategoryTheory Functor.LaxMonoidal Functor.OplaxMonoidal
 open MonoidalCategory
 
 /-- The even component of a tensor of even vectors. -/
+@[expose]
 def evenPair {V W : SuperVect} (v : V.even) (w : W.even) :
     (SuperVect.tensorObj V W).even := (v ⊗ₜ[ℂ] w, 0)
 

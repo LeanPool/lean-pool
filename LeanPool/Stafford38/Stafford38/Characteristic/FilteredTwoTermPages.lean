@@ -14,7 +14,7 @@ Compatibility exports for filtered two-term cycles, boundaries, and pages
 from the shared algebraic-analysis library.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.Characteristic.FilteredTwoTermPages
 

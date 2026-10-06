@@ -31,7 +31,7 @@ requires expanding the commutator of the two constructed action equations and
 descending the resulting parameter-multiple equality through exactness.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.Characteristic.ConcreteInducedZAction
 

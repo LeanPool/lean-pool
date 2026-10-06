@@ -18,7 +18,7 @@ must eventually prove. It intentionally declares no theorem with an unproved
 hypothesis and introduces no project axiom.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38
 

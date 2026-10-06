@@ -22,7 +22,7 @@ No ambient algebra structure on the residue field is used, and no tangent data
 are constructed here.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.Geometry.RetainedComponentEquationPackage
 

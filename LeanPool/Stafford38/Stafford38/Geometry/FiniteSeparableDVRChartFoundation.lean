@@ -26,7 +26,7 @@ to the inverse limit is outside this module's finite-level scope; the
 completion comparison is supplied by the downstream completed-DVR chart.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.Geometry.FiniteSeparableDVRChartFoundation
 

@@ -38,7 +38,7 @@ in `Bananas/MarkedIso.lean`; `twoEdgeCutCondition_map_iff` in
 `Bananas/GraphIsoCuts.lean`), so no new transport lemma is needed here.
 -/
 
-@[expose] public section
+public section
 
 namespace Bananas
 
@@ -51,6 +51,7 @@ non-recurrent coordinates in one of three families; vertex gluing of two
 equal-torsion-order cycles; vertex gluing of a length-two cycle at both its
 vertices) as an isomorphism-transported disjunction between the theta and
 wedge normal forms. -/
+@[expose]
 def BridgelessGenusTwoKGeneralCharacterization
     (G : CFGraph.{0}) (u v : G.V) (k : ℕ) : Prop :=
   (∃ (B : Banana 2) (φ : CFGraphIso G B.graph)

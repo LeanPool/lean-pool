@@ -18,7 +18,7 @@ The vanishing ideal is radical, and its base contraction describes the base
 projection of a closed fibre-conical set.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.Geometry.GeneralCoisotropicSets
 

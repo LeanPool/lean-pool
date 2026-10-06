@@ -21,7 +21,7 @@ ideal is a submodule of the regular right module, encoded as an
 `Aᵐᵒᵖ`-submodule of `A`.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.EulerSurjectivity
 

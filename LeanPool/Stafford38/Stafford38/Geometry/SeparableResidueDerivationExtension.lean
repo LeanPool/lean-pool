@@ -30,7 +30,7 @@ identify a completion with `K[[t]]`, or extend these derivations continuously
 to power series.  Those remain separate inputs to the completed-chart step.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.Geometry.SeparableResidueDerivationExtension
 
@@ -89,6 +89,7 @@ theorem existsUnique_derivation_extension
   rw [hD', extendDerivation_compAlgebraMap]
 
 /-- Restriction of derivations along `E -> K`, as a `K`-linear map. -/
+@[expose]
 def restrictDerivation :
     Derivation k K K →ₗ[K] Derivation k E K where
   toFun D := D.compAlgebraMap E
@@ -98,6 +99,7 @@ def restrictDerivation :
 /-- Restriction is a linear equivalence for a separable field extension.  In
 particular, finite derivation frames can be transported without losing linear
 relations. -/
+@[expose]
 noncomputable def derivationRestrictionEquiv :
     Derivation k K K ≃ₗ[K] Derivation k E K :=
   LinearEquiv.ofBijective (restrictDerivation k E K) ⟨

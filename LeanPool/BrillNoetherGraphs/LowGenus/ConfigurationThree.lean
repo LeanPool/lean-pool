@@ -49,7 +49,7 @@ and takes it as a hypothesis, the same one
 `Guarding.GuardingSet.closedConstruction` carries.
 -/
 
-@[expose] public section
+public section
 
 namespace AtanasovRanganathan.ConfigurationThree
 
@@ -69,6 +69,7 @@ variable {n p : ℕ}
 /-! ## Unordered incidence -/
 
 /-- The slot `e` joins `u` and `v`, in either orientation. -/
+@[expose]
 def Ends (core : Core n p) (e : Fin p) (u v : Fin n) : Prop :=
   (core.tail e = u ∧ core.head e = v) ∨ (core.tail e = v ∧ core.head e = u)
 
@@ -114,6 +115,7 @@ theorem step_zero {L i : ℕ} (hi : i < L) :
   SubdivisionArithmetic.step_zero_of_lt hi
 
 /-- One chip leaves an arm exactly when its ramp has positive height. -/
+@[expose]
 def drain (height : ℕ) : ℤ := if 0 < height then 1 else 0
 
 theorem drain_bounds (height : ℕ) :
@@ -185,6 +187,7 @@ theorem sum_five (g : Fin p → ℤ) {a b c u v : Fin p}
 
 /-- The two endpoint terms one core slot contributes at one core vertex.
 This is literally the summand of `ConfigurationCommon.endpointContribution`. -/
+@[expose]
 def slotTerm (d : DegSpec n p) (potential : Fin n → ℤ) (e : Fin p)
     (v : Fin n) : ℤ :=
   (if d.core.tail e = v then
@@ -343,6 +346,7 @@ theorem endpointPair_arm (d : DegSpec n p) (potential : Fin n → ℤ)
 
 /-- Membership in a displayed four-chip set.  Spelled out so that the fields
 of `ConfigThree` can refer to it. -/
+@[expose]
 def IsChipOf (a b c e v : Fin n) : Prop := v = a ∨ v = b ∨ v = c ∨ v = e
 
 instance (a b c e v : Fin n) : Decidable (IsChipOf a b c e v) := by
@@ -484,6 +488,7 @@ theorem not_incident_of_ne {center : Fin n} (hCenter : cfg.isCenter center = tru
 /-! ### The displayed divisor -/
 
 /-- The indicator of "the chip at `v` sits in the contracted class of `r`". -/
+@[expose]
 def chipInd (r v : Fin n) : ℤ := if d.rep v = d.rep r then 1 else 0
 
 theorem chipInd_nonneg (r v : Fin n) : 0 ≤ chipInd d r v := by
@@ -491,6 +496,7 @@ theorem chipInd_nonneg (r v : Fin n) : 0 ≤ chipInd d r v := by
   split_ifs <;> omega
 
 /-- One chip on each of the four displayed vertices. -/
+@[expose]
 def divisor : CFDiv d.graph :=
   fourChipDivisor (d.coreVertex cfg.chipOne) (d.coreVertex cfg.chipTwo)
     (d.coreVertex cfg.chipThree) (d.coreVertex cfg.chipFour)

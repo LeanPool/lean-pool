@@ -37,7 +37,7 @@ the trace-zero operator from a square-zero module, or connect it to the
 localized right Rees module.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.Characteristic.ArtinianTriangularTrace
 
@@ -52,6 +52,7 @@ variable {n : ℕ}
 
 /-- A square matrix is strictly upper triangular when every entry on or below
 the diagonal is zero. -/
+@[expose]
 def IsStrictUpperTriangular
     (M : Matrix (Fin (n + 1)) (Fin (n + 1)) K) : Prop :=
   ∀ i j, j ≤ i → M i j = 0

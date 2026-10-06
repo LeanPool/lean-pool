@@ -23,7 +23,7 @@ faithfulness and freeness over a rational Weyl subring are deliberately not
 asserted here.
 -/
 
-@[expose] public section
+public section
 
 namespace AlgebraicAnalysis.OreIteratedTower
 
@@ -44,16 +44,19 @@ variable {B : Type u} [Ring B]
 abbrev Derivation (B : Type u) [Ring B] := OreDivisionDerivation B
 
 /-- Commutation of two coefficient derivations. -/
+@[expose]
 def Commutes (D E : Derivation B) : Prop :=
   ∀ b : B, D (E b) = E (D b)
 
 /-- Pairwise commutation for a finite ordered family. -/
+@[expose]
 def PairwiseCommutes : List (Derivation B) → Prop
   | [] => True
   | D :: Ds =>
       (∀ E ∈ Ds, Commutes D E) ∧ PairwiseCommutes Ds
 
 /-- Commutation of one derivation with every member of a list. -/
+@[expose]
 def CommutesWith (D : Derivation B) : List (Derivation B) → Prop
   | Es => ∀ E ∈ Es, Commutes D E
 
@@ -99,6 +102,7 @@ structure TowerBuild (Ds : List (Derivation B))
     Commutes (B := carrier) (extend D hD) (extend E hE)
 
 /-- Recursively construct the finite commuting derivation-Ore tower. -/
+@[expose]
 def build : (Ds : List (Derivation B)) →
     (hDs : PairwiseCommutes Ds) → TowerBuild Ds hDs
   | [], _ =>

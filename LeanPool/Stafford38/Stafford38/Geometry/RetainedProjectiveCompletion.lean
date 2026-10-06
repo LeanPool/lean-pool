@@ -19,7 +19,7 @@ power series over the actual residue field.  Krull intersection makes this
 coordinate map injective, so projective nonvanishing is preserved.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.Geometry.RetainedProjectiveCompletion
 

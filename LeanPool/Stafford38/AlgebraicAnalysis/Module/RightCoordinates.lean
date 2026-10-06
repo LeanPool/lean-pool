@@ -25,7 +25,7 @@ single-coordinate decomposition.  No freeness of an Ore localization is
 assumed or encoded by an equivalent hypothesis here.
 -/
 
-@[expose] public section
+public section
 
 namespace AlgebraicAnalysis.RightCoordinates
 
@@ -34,6 +34,7 @@ noncomputable section
 variable {S ι α : Type*} [Ring S]
 
 /-- The coordinatewise right action on finitely supported `S`-coordinates. -/
+@[expose]
 def rightCoordinateAction (v : ι →₀ S) (a : S) : ι →₀ S :=
   (MulOpposite.op a : Sᵐᵒᵖ) • v
 

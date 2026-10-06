@@ -28,7 +28,7 @@ This file assumes the spanning hypothesis.  In particular, it does not claim
 that an arbitrary retained DVR or boundary place supplies it.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.Geometry.KaehlerVisibleDerivationFrame
 

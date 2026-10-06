@@ -76,7 +76,7 @@ at `v_0` under the prefix budget reports immediate counterexamples at `g = 2`
 (`ℓ_1 = m_1`, torsion order two, so `2 v_0` has rank one).
 -/
 
-@[expose] public section
+public section
 
 namespace ChainOfLoops
 
@@ -104,6 +104,7 @@ namespace Loop
 
 /-- The loop as a genus-one banana, i.e. a cycle: two parallel strands of
 lengths `top` and `bot` between the two junction vertices. -/
+@[expose]
 noncomputable def banana (P : Loop) : Banana 1 :=
   bananaOfLengths 1 ![P.top, P.bot] (by
     intro i
@@ -118,6 +119,7 @@ noncomputable def banana (P : Loop) : Banana 1 :=
 /-- The torsion order of `(loop, v_{i-1}, v_i)`: the order of the class of
 `v_i - v_{i-1}` in the Jacobian of the cycle, which is `(ℓ+m)/gcd(ℓ,m)`
 (`Bananas.cycle_isTorsionOrder`, Pflueger--Solomon Example 1.11). -/
+@[expose]
 def torsionOrder (P : Loop) : ℕ := (P.top + P.bot) / Nat.gcd P.top P.bot
 
 /-! ### The reduced pair `(ℓ/d, m/d)`
@@ -186,6 +188,7 @@ theorem reduced_mul_eq_mul (P : Loop) {p q : ℕ} (heq : P.top * q = P.bot * p) 
 
 /-- The loop packaged as a chain factor, carrying its `k`-general
 transmission at `k = torsionOrder`. -/
+@[expose]
 noncomputable def factor (P : Loop) : KGeneralChainFactor where
   marked := ⟨P.banana.graph, leftEndpoint P.banana, rightEndpoint P.banana⟩
   period := P.torsionOrder
@@ -220,10 +223,12 @@ on the nose: `List.map_map` is not a definitional equality, so writing the
 list as `(L.map Loop.factor).map KGeneralChainFactor.marked` rather than the
 fused `L.map (·.factor.marked)` is what lets the bananas conclusions and the
 reversal isomorphism apply without any list transport. -/
+@[expose]
 noncomputable def chainMarked (P : Loop) (L : List Loop) : MarkedGraph :=
   P.factor.marked.chain ((L.map Loop.factor).map KGeneralChainFactor.marked)
 
 /-- The underlying graph of a chain of loops. -/
+@[expose]
 noncomputable def chainGraph (P : Loop) (L : List Loop) : CFGraph :=
   (chainMarked P L).graph
 
@@ -285,6 +290,7 @@ the ratio of two positive integers whose sum is at most `2g - 2`.
 
 Cross multiplication avoids a division convention, exactly as in
 `Bananas.EvenlyMarkedTheta`. -/
+@[expose]
 def CDPRGeneric (L : List Loop) : Prop :=
   ∀ P ∈ L, ∀ p q : ℕ, 0 < p → 0 < q → p + q ≤ 2 * L.length - 2 →
     P.top * q ≠ P.bot * p

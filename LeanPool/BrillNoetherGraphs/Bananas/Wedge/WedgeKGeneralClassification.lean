@@ -17,7 +17,7 @@ This is the wedge half of Theorem 4.13.  It is deliberately intrinsic: the
 two genus-one factors are not presented as chosen cycles.
 -/
 
-@[expose] public section
+public section
 
 namespace Bananas
 
@@ -38,6 +38,7 @@ private theorem card_eq_two_of_le_two_rigid
 rigid wedge of two genus-one factors.  The first four are the order-two
 two-vertex same-factor exceptions; the last two are the distinct-factor
 equal-order branch. -/
+@[expose]
 def WedgeKGeneralPlacement
     (G H : CFGraph) (x : G.V) (y : H.V)
     (u v : (vertexWedge G H x y).V) (k : ℕ) : Prop :=

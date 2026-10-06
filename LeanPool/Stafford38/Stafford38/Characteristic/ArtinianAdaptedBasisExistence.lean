@@ -22,7 +22,7 @@ sorting by decreasing labels gives the ordered `Fin` basis used by the
 Artinian trace argument.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.Characteristic.ArtinianAdaptedBasisExistence
 

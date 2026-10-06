@@ -24,7 +24,7 @@ The hypotheses describing the filtration are data, rather than an assertion
 that an arbitrary Ore extension is free or flat.
 -/
 
-@[expose] public section
+public section
 
 namespace AlgebraicAnalysis
 namespace TriangularDenominator

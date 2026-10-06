@@ -15,7 +15,7 @@ public import LeanPool.Stafford38.Stafford38.LocalizedPolynomialCommutant
 Clearing coefficient denominators in localized polynomial differential operators.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.LocalizedDifferentialClearing
 

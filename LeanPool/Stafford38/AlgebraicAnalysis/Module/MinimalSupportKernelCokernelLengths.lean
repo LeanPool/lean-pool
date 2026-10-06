@@ -20,7 +20,7 @@ explicitly; no restriction-of-scalars finiteness of the ambient module is
 used.
 -/
 
-@[expose] public section
+public section
 
 namespace AlgebraicAnalysis
 

@@ -15,7 +15,7 @@ public import LeanPool.Stafford38.Stafford38.Characteristic.FilteredTwoTermTotal
 Equivalences between total two-term pages and the canonical associated graded modules.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.Characteristic.CanonicalTotalGradedBridge
 

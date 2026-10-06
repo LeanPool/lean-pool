@@ -19,7 +19,7 @@ extension of the localized coefficient ring.  It packages data and its
 compatibility law; it does not assert that the data exist.
 -/
 
-@[expose] public section
+public section
 
 namespace AlgebraicAnalysis
 namespace OreLocalizationExtension

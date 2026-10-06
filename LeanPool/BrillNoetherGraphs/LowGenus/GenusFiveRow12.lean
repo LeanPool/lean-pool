@@ -25,7 +25,7 @@ name the row's lookup tables, check the incidence facts, and observe that the
 two tables between them cover every chip-free vertex.
 -/
 
-@[expose] public section
+public section
 
 namespace AtanasovRanganathan.GenusFiveRow12
 
@@ -85,6 +85,7 @@ def middleEdge : Fin 8 → Fin 12
   | _ => 11
 
 /-- The pair `2--7` of row 12, read as an AR configuration-3 picture. -/
+@[expose]
 def row12PairConfig : ConfigThree 8 12 where
   core := row12Core
   chipOne := 3

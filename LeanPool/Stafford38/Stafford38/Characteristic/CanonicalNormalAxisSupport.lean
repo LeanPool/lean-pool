@@ -21,7 +21,7 @@ This is the exact prime-ideal form of normal-axis exclusion.  It proves no
 filtered strictness or noncharacteristic inverse-image theorem.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.Characteristic.CanonicalNormalAxisSupport
 

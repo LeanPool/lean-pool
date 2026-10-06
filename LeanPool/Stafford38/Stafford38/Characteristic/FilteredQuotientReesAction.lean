@@ -20,7 +20,7 @@ opposite of the order-Rees ring, so homogeneous scalar action is written
 right Weyl multiplication and raises filtration degree additively.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.CharacteristicFilteredQuotientReesAction
 

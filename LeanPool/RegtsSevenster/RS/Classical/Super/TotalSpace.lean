@@ -16,7 +16,7 @@ components. Morphisms act componentwise, giving an algebra map on
 endomorphisms.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 
@@ -28,6 +28,7 @@ noncomputable section
 abbrev Tot (V : SuperVect) : Type := V.even × V.odd
 
 /-- The total linear map of a morphism of super vector spaces. -/
+@[expose]
 def tot {V W : SuperVect} (f : V ⟶ W) : Tot V →ₗ[ℂ] Tot W :=
   LinearMap.prodMap (SuperVect.Hom.evenMap f) (SuperVect.Hom.oddMap f)
 
@@ -63,6 +64,7 @@ theorem tot_zero (V W : SuperVect) : tot (0 : V ⟶ W) = 0 := by
   ext v <;> rfl
 
 /-- Forgetting the grading preserves the endomorphism algebra. -/
+@[expose]
 def totAlgHom (V : SuperVect) : End V →ₐ[ℂ] Module.End ℂ (Tot V) where
   toFun := tot
   map_one' := tot_id V
@@ -74,6 +76,7 @@ def totAlgHom (V : SuperVect) : End V →ₐ[ℂ] Module.End ℂ (Tot V) where
     rw [tot_smul, tot_id]
 
 /-- A super isomorphism induces a linear equivalence of total spaces. -/
+@[expose]
 def totIso {V W : SuperVect} (e : V ≅ W) : Tot V ≃ₗ[ℂ] Tot W where
   __ := tot e.hom
   invFun := tot e.inv

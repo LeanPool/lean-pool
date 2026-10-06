@@ -23,7 +23,7 @@ deformation ring.  Membership is tested after specialization in the
 commutative fibre, which is exactly the datum available in the Rees two-jet.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.Characteristic.SquareZeroArtinianTruncation
 

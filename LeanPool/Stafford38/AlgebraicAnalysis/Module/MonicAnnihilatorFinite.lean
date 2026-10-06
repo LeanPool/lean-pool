@@ -20,7 +20,7 @@ over the coefficient ring. This is the algebraic finiteness step for the
 normal covariable; no characteristic-support assertion is assumed.
 -/
 
-@[expose] public section
+public section
 
 namespace AlgebraicAnalysis.MonicAnnihilatorFinite
 

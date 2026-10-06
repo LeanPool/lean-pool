@@ -28,7 +28,7 @@ only transcendental input, applied to the concretely constructed
 envelope.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 
@@ -38,6 +38,7 @@ variable {R : ℕ} (f : EdgeRankParameter R)
 
 /-- The braided linear embedding of the skein category into its
 envelope. -/
+@[expose]
 noncomputable def skeinToEnv : SkeinObj f ⥤ Env f :=
   toKaroubi (SkeinObj f) ⋙
     Mat_.embedding (Karoubi (SkeinObj f)) ⋙

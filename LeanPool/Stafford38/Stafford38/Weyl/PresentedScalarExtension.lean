@@ -37,7 +37,7 @@ comparison is recorded as an explicit contract below and proved in
 definitional.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.Weyl.PresentedScalarExtension
 

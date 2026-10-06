@@ -20,7 +20,7 @@ torsion statement to two-simplicity.  It does not assert the localization or
 rank theorem needed to produce that torsion statement.
 -/
 
-@[expose] public section
+public section
 
 namespace AlgebraicAnalysis.TwoSimplicity
 

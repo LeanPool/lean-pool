@@ -24,7 +24,7 @@ coefficient of the certificate monomial is `±1` (`coeff_graphPoly_certificate`)
 uniqueness of the certificate (`certificate_unique`).
 -/
 
-@[expose] public section
+public section
 
 namespace LeanPool.ListEdgeColoringComplete
 
@@ -101,6 +101,7 @@ noncomputable def starPoly (f : V ≃ Fin n) (u : V) : MvPolynomial (StarVar V) 
     C ((Equiv.Perm.sign π : ℤ) : ℚ) * ∏ k, X (starMember f u k) ^ (π k : ℕ)
 
 /-- The product of the extended-star polynomials over all vertices. -/
+@[expose]
 noncomputable def graphPoly [Fintype V] (f : V ≃ Fin n) : MvPolynomial (StarVar V) ℚ :=
   ∏ u, starPoly f u
 
@@ -172,6 +173,7 @@ theorem degree_expo [Fintype V] (f : V ≃ Fin n) (P : V → Equiv.Perm (Fin n))
   simp
 
 /-- The canonical family of permutations: the rank rows of the certificate. -/
+@[expose]
 noncomputable def canonicalPerm (f : V ≃ Fin n) (u : V) : Equiv.Perm (Fin n) :=
   Equiv.ofBijective (canonicalRow (f u))
     (Finite.injective_iff_bijective.mp (canonicalRow_injective _))

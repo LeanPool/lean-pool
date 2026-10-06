@@ -59,7 +59,7 @@ every step trust-zero.  No Gabber-type statement is proved here; the first
 proposition is a theorem-shaped interface a caller must still supply.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.Characteristic.CanonicalGabberInvolutivityInterface
 

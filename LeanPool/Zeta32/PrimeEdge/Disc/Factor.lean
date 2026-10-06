@@ -14,7 +14,7 @@ public import LeanPool.Zeta32.PrimeEdge.Basis
   depending only on `b`.
 Also: `farProd` is scaled with unit constant term, and the near sets for `n = p - 1`. -/
 
-@[expose] public section
+public section
 
 open Polynomial
 open scoped BigOperators
@@ -25,6 +25,7 @@ open Zeta32.Arith.Local
 variable {p : ℕ}
 
 /-- The CRT basis vector without its own-class factor. -/
+@[expose]
 noncomputable def crt0 (p b : ℕ) : ℚ[X] :=
   ∏ b' ∈ (Finset.range p).erase b, (X + C (b' : ℚ)) ^ mult p b'
 
@@ -35,6 +36,7 @@ lemma crtBasis_eq (a : Idx p) :
 noncomputable def B0 (p b : ℕ) : ℚ[X] := crt0 p b * crt0 p b * Zeta32.D (p - 1) ^ 4
 
 /-- Exponent of the own disc. -/
+@[expose]
 def ownExp (b : ℕ) : ℕ := if b = 0 then 1 else 4
 
 lemma good_crt0 [Fact p.Prime] {d : ℕ} (hd : d < p) (b : ℕ) :

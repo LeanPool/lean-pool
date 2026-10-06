@@ -15,7 +15,7 @@ Rows `a` with `a + 2n + 2 > p` are multiplied by `p` (`rowScale`); then the poly
 The rank-one part follows the Li₂ proof `parameter_raw_Q_GV`
 (dtq1997/li2-half-irrationality@d5d8206:Li2Unified/Modular/Positive/Packed/P045.lean). -/
 
-@[expose] public section
+public section
 
 open Zeta32.Arith.Local
 
@@ -25,6 +25,7 @@ namespace Zeta32.Outer
 noncomputable section
 
 /-- Row scaling: `p` on the last `r_p` rows. -/
+@[expose]
 def rowScale (n p : ℕ) (a : ℕ) : ℚ := if a + 2*n + 2 ≤ p then 1 else p
 
 section Val

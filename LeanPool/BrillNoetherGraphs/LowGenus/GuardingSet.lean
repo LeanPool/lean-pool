@@ -87,7 +87,7 @@ a weight function.  `coreClassDivisor_eq_fourChipDivisor` below is that
 translation, proved for four pairwise-distinct chips.
 -/
 
-@[expose] public section
+public section
 
 namespace AtanasovRanganathan.Guarding
 
@@ -200,6 +200,7 @@ that "chip free" is a statement about the weight and not about a list.  The
 two agree as soon as the four names are pairwise distinct. -/
 
 /-- The weight of the four-chip divisor: one on each named vertex. -/
+@[expose]
 def fourChipWeight (a b c e : Fin n) (v : Fin n) : ℤ :=
   if ConfigurationThree.IsChipOf a b c e v then 1 else 0
 

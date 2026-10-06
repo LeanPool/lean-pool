@@ -19,7 +19,7 @@ divisor and its degree calculation once, so the endpoint-specific decoder is
 the only remaining W5 geometry.
 -/
 
-@[expose] public section
+public section
 
 namespace Utilities.Subdivision.ClosedRowProof
 
@@ -36,6 +36,7 @@ variable {n p : ℕ}
 Unlike a quotient-core vertex, this remains meaningful before any zero-length
 core edges are contracted.  The W5 endpoint bridge identifies this mass with
 the C first-match prefix/suffix accounting on collapsed endpoint runs. -/
+@[expose]
 def rawChipMassAt (w : RichWitness) (x : List ℤ) (slot : ℕ) (coordinate : ℤ) : ℤ :=
   (w.chips.map fun chip =>
     if chip.1 == slot && eval chip.2.1 x == coordinate then chip.2.2 else 0).sum
@@ -157,6 +158,7 @@ endpoint accounting. -/
 
 /-- Push the raw core coefficient list to the quotient core of a degenerate
 subdivision; interior vertices receive no core coefficient. -/
+@[expose]
 def richCoreDivisor
     (d : Utilities.Certificate.DegenerateSpec.DegSpec n p) (w : RichWitness) :
     CFDiv d.graph
@@ -210,6 +212,7 @@ both for W4 runs and for W5 endpoint prefixes/suffixes. -/
 /-- The Boolean predicate by which the C checker assigns a raw chip to a
 named point.  The `range (i - 1)` clause makes this the first syntactic match;
 index zero is excluded separately by `chipAt`. -/
+@[expose]
 def chipMatches (w : RichWitness) (a e i : ℕ) (c : ℕ × Form × ℤ) : Bool :=
   c.1 == e && formEq c.2.1 (w.point a e i) &&
     (List.range (i - 1)).all

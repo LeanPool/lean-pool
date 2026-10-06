@@ -18,7 +18,7 @@ public import LeanPool.Stafford38.Stafford38.Characteristic.MinimalSupportExiste
 The contradiction between the canonical page length inequality and Koszul positivity.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.Characteristic.CanonicalKoszulContradiction
 

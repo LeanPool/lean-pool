@@ -24,7 +24,7 @@ vanishing at the chosen point; it does not prove that hypothesis or any
 homogeneity statement.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.Geometry.PointwiseConormalContainment
 

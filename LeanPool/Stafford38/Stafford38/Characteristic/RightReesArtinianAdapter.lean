@@ -37,7 +37,7 @@ quotient descent and survival of parameter exactness are then separate.  No
 Artinian quotient action is asserted below.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.Characteristic.RightReesArtinianAdapter
 

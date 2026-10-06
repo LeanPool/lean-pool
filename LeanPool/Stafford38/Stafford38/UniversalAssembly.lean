@@ -21,7 +21,7 @@ single remaining hypothesis is the concrete support-vanishing theorem for the
 literal canonical right ideal attached to a normalized PBW-monic operator.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.UniversalAssembly
 

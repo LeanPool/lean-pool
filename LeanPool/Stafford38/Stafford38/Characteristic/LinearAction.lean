@@ -18,7 +18,7 @@ matrix order, matching the Weyl-generator substitution convention. Explicit
 mutual inverse certificates produce an algebra equivalence.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.CharacteristicLinearAction
 
@@ -31,12 +31,14 @@ universe u
 variable (k : Type u) [Field k]
 
 /-- The linear symbol polynomial determined by a row of the change-of-variables matrix. -/
+@[expose]
 def symbolLinearCombination {n : ℕ}
     (M : Matrix (PhaseVar n) (PhaseVar n) k) (i : PhaseVar n) :
     SymbolRing k n :=
   ∑ j, MvPolynomial.C (M i j) * MvPolynomial.X j
 
 /-- The symbol-algebra map induced by a matrix of linear substitutions. -/
+@[expose]
 def symbolLinearAlgHom {n : ℕ}
     (M : Matrix (PhaseVar n) (PhaseVar n) k) :
     SymbolRing k n →ₐ[k] SymbolRing k n :=

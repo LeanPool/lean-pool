@@ -19,7 +19,7 @@ filtration imply pointwise eventual vanishing; finite support then gives the
 same statement on the external direct sum.
 -/
 
-@[expose] public section
+public section
 
 namespace AlgebraicAnalysis.FilteredTwoTermPages
 

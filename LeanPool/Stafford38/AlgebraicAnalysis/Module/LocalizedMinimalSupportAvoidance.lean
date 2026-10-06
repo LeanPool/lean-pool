@@ -20,7 +20,7 @@ Minimal-prime avoidance then follows from the ordinary minimal-prime
 correspondence for a localization.
 -/
 
-@[expose] public section
+public section
 
 namespace AlgebraicAnalysis.LocalizedMinimalSupportAvoidance
 

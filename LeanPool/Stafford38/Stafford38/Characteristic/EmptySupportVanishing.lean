@@ -19,7 +19,7 @@ vanishing.  No action of the symbol ring on that direct sum is transported or
 used here.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.CharacteristicEmptySupportVanishing
 

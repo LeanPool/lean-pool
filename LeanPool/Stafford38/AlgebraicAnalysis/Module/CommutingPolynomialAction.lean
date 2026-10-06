@@ -17,7 +17,7 @@ pairwise commuting endomorphisms therefore gives an evaluation map by first
 landing in the commutative subalgebra which it generates.
 -/
 
-@[expose] public section
+public section
 
 open scoped IsMulCommutative
 

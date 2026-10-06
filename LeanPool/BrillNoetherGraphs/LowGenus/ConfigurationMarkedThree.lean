@@ -53,7 +53,7 @@ the two centres merge, and the chip may have to be charged to the partner.  That
 is the `targetOwner` device every finished row already uses.
 -/
 
-@[expose] public section
+public section
 
 namespace AtanasovRanganathan.ConfigurationMarkedThree
 
@@ -87,6 +87,7 @@ def slotHeadTerm (potential : Fin 8 → ℤ) (mark : Fin 12 → ℕ)
     (d.length e - 1)
 
 /-- The per-vertex endpoint ledger of a marked script. -/
+@[expose]
 def positiveEndpointContribution (potential : Fin 8 → ℤ) (mark : Fin 12 → ℕ)
     (markValue : Fin 12 → ℤ) (v : Fin 8) : ℤ :=
   ∑ e : Fin 12,
@@ -356,6 +357,7 @@ the chip collapses, `mark = length` on the chamber wall where the figure's
 inequality is an equality. -/
 
 /-- Where the chip at the mark of `e` sits, as a weight on core vertices. -/
+@[expose]
 def markChipWeight (mark : Fin 12 → ℕ) (e : Fin 12) (v : Fin 8) : ℤ :=
   if mark e = 0 then (if v = d.core.tail e then 1 else 0)
   else if d.length e ≤ mark e then (if v = d.core.head e then 1 else 0)
@@ -432,6 +434,7 @@ structure PairLedger where
   tail_eq_one_of_full : ∀ {L hu hv : ℕ}, 0 < L → hu = hv + L → tail L hu hv = 1
 
 /-- The slot read from its tail. -/
+@[expose]
 def fwd : PairLedger where
   tail := tailContribution
   tail_nonneg h hUpper := tailContribution_nonneg h hUpper
@@ -441,6 +444,7 @@ def fwd : PairLedger where
   tail_eq_one_of_full h hFull := tailContribution_eq_one_of_full h hFull
 
 /-- The same slot read from its head. -/
+@[expose]
 def rev : PairLedger where
   tail L hu hv := headContribution L hv hu
   tail_nonneg h hUpper := headContribution_nonneg h hUpper

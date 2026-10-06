@@ -33,7 +33,7 @@ hypothesis already implies trace zero. It is not a formalization of equation
 adapter is proved here.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.Characteristic.ArtinianAdaptedBasisTraceAdapter
 
@@ -56,6 +56,7 @@ local notation "𝔪" => IsLocalRing.maximalIdeal R
 
 /-- Left multiplication on the special-fibre module, viewed as a
 `K`-linear endomorphism. -/
+@[expose]
 def leftMultiplicationEnd (r : R) : Module.End K V where
   toFun v := r • v
   map_add' := smul_add r

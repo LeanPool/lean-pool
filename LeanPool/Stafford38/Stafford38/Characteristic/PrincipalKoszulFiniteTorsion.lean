@@ -15,7 +15,7 @@ Compatibility exports for finite torsion in principal Koszul complexes
 from the shared algebraic-analysis library.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.Characteristic.PrincipalKoszulFiniteTorsion
 

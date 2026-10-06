@@ -20,7 +20,7 @@ polynomial multiplier and the homogeneous relation closure proved in
 `FilteredQuotientGraded`.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.CharacteristicInitialIdealHomogeneous
 

@@ -14,7 +14,7 @@ public import LeanPool.Stafford38.AlgebraicAnalysis.Ore.RightLocalization
 /-! Right Ore localization corollaries for the Stafford 3.8 identity.
 The generic unit-denominator transport proof lives in AlgebraicAnalysis. -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.LocalizationCorollaries
 

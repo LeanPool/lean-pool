@@ -23,7 +23,7 @@ coordinate. Zeroth-chart dehomogenization recovers the affine component ideal
 exactly.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.Geometry.ComponentProjectiveClosure
 

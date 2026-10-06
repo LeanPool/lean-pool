@@ -23,7 +23,7 @@ itself.  It does not prove bracket closure of its radical or of any prime ideal
 for inputs that merely lie in that larger ideal.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.Characteristic.SquareZeroAnnihilatorBracket
 

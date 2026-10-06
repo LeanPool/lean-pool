@@ -21,7 +21,7 @@ the two checked universal properties; it does not assume a PBW theorem for
 the quotient presentation.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.WeylIteratedEquivalence
 
@@ -40,7 +40,7 @@ variable (k : Type u) [Field k]
 
 /-- The scalar algebra structure inherited recursively by the iterated Ore
 tower. -/
-@[instance_reducible]
+@[expose, instance_reducible]
 def iteratedPairStageAlgebra :
     (n : Nat) → Algebra k (IteratedPairStage k n)
   | 0 => by
@@ -56,6 +56,7 @@ instance (n : Nat) : Algebra k (IteratedPairStage k n) :=
   iteratedPairStageAlgebra k n
 
 /-- The canonical successor embedding as a scalar-preserving algebra map. -/
+@[expose]
 def stageAlgHom (n : Nat) :
     IteratedPairStage k n →ₐ[k] IteratedPairStage k (n + 1) where
   toRingHom := stageEmbedding k n
@@ -68,6 +69,7 @@ def stageAlgHom (n : Nat) :
     rfl
 
 /-- Coordinates in the final stage, ordered from newest to oldest. -/
+@[expose]
 def iteratedCoordinate :
     (n : Nat) → Fin n → IteratedPairStage k n
   | 0, i => Fin.elim0 i
@@ -76,6 +78,7 @@ def iteratedCoordinate :
         (fun j => stageAlgHom k n (iteratedCoordinate n j)) i
 
 /-- Momenta in the final stage, ordered from newest to oldest. -/
+@[expose]
 def iteratedMomentum :
     (n : Nat) → Fin n → IteratedPairStage k n
   | 0, i => Fin.elim0 i
@@ -84,6 +87,7 @@ def iteratedMomentum :
         (fun j => stageAlgHom k n (iteratedMomentum n j)) i
 
 /-- The combined coordinate-momentum generator family. -/
+@[expose]
 def iteratedGenerator (n : Nat) :
     (Fin n ⊕ Fin n) → IteratedPairStage k n :=
   Sum.elim (iteratedCoordinate k n) (iteratedMomentum k n)
@@ -303,6 +307,7 @@ abbrev PresentedWeyl (n : Nat) :=
   FreeWeyl k (Fin n ⊕ Fin n) (Matrix.J (Fin n) k)
 
 /-- Insert an old index after the newly adjoined coordinate or momentum. -/
+@[expose]
 def oldIndex {n : Nat} :
     (Fin n ⊕ Fin n) → (Fin (n + 1) ⊕ Fin (n + 1))
   | .inl i => .inl i.succ
@@ -643,6 +648,7 @@ theorem iteratedToPresented_comp_presentedToIterated (n : Nat) :
 
 /-- The quotient presentation is canonically equivalent to the recursive
 Ore construction, without using PBW independence for the quotient. -/
+@[expose]
 def presentedIteratedEquiv (n : Nat) :
     PresentedWeyl k n ≃ₐ[k] IteratedPairStage k n :=
   AlgEquiv.ofAlgHom (presentedToIterated k n) (iteratedToPresented k n)

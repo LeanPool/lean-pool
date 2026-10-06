@@ -34,7 +34,7 @@ No new partition structure is introduced and `ConvexPartition` is not redefined.
 * `ConvexPartition.IsFair.mk'` — build `IsFair` from the two components.
 -/
 
-@[expose] public section
+public section
 
 namespace NRR
 
@@ -43,6 +43,7 @@ namespace ConvexPartition
 variable {K : Body} {n : ℕ}
 
 /-- A **fair** partition: all pieces have equal area and all pieces have equal perimeter. -/
+@[expose]
 def IsFair (P : ConvexPartition K n) : Prop :=
   P.IsEqualArea ∧ P.HasEqualPerimeter
 

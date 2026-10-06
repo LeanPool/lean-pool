@@ -34,7 +34,7 @@ completed-boundary local interface.  They construct no projective chart,
 normalization, divisor, or tangent comparison.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.Geometry.LaurentConormalResidueExtension
 

@@ -10,7 +10,7 @@ public import LeanPool.Zeta32.PrimeEdge.Dist.Mult
 local functional `dl` on a general numerator `F` (`discLocal r n p b A = dl r n p b (X A)`),
 the error functional `Err`, and the exactness of the distribution formula on `Q · D_{5n}`. -/
 
-@[expose] public section
+public section
 
 open Polynomial
 open scoped BigOperators
@@ -21,10 +21,12 @@ open Zeta32.Arith.Local
 noncomputable section
 
 /-- Near poles of `S` on the disc `b`. -/
+@[expose]
 def nearS (p b : ℕ) (S : Finset ℕ) : Finset ℕ :=
   (S.filter (fun j => j % p = b)).image (fun j => (j - b) / p)
 
 /-- Far factors of `S` on the disc `b`. -/
+@[expose]
 def farS (p b : ℕ) (S : Finset ℕ) : ℚ[X] :=
   ∏ j ∈ S.filter (fun j => j % p ≠ b), (C ((j : ℚ) - b) + C (p : ℚ) * X)
 
@@ -95,6 +97,7 @@ lemma ps_mul_inv {F : ℚ[X]} (h : F.coeff 0 ≠ 0) : (F : PowerSeries ℚ) * (F
   PowerSeries.mul_inv_cancel _ (by rwa [Polynomial.constantCoeff_coe])
 
 /-- The truncated local functional on a general numerator `F`. -/
+@[expose]
 def dl (r : ℚ) (n p b : ℕ) (F : ℚ[X]) : ℚ :=
   (p : ℚ) ^ (-((nearSet n p b).card : ℤ)) *
     locValue (r * p) (PowerSeries.trunc (truncOrder n)
@@ -114,6 +117,7 @@ lemma dl_C_mul (r : ℚ) (n p b : ℕ) (c : ℚ) (F : ℚ[X]) :
   ring
 
 /-- The error of the truncated distribution formula on a numerator `F`. -/
+@[expose]
 def Err (r : ℚ) (n p : ℕ) (F : ℚ[X]) : ℚ :=
   locValue r F (Finset.Icc 1 (5 * n)) - (p : ℚ) ^ (-2 : ℤ) * ∑ b ∈ Finset.range p, dl r n p b F
 

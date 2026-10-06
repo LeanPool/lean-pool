@@ -19,7 +19,7 @@ lattice.  No matrix basis, retraction, annihilator, position coefficients, or
 separate tangent-chart equality is supplied.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.Geometry.GeneralTangentLimitCriterionTest
 

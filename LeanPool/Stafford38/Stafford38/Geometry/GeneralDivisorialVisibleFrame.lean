@@ -19,7 +19,7 @@ direction with the smooth projective conormal closure is performed downstream
 in the general asymptotic-conormal construction.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.Geometry.GeneralDivisorialVisibleFrame
 

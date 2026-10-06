@@ -16,7 +16,7 @@ A coordinate that never vanishes on an affine zero locus is invertible modulo
 its defining ideal. The ideal need not be prime or radical.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.Geometry.GeneralCoordinateAvoidance
 

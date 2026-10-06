@@ -19,7 +19,7 @@ word's Koszul sign, computed stepwise along the colouring's own
 trajectory.
 -/
 
-@[expose] public section
+public section
 
 namespace RS
 
@@ -28,6 +28,7 @@ open CategoryTheory
 variable {k ℓ : ℕ}
 
 /-- The colour-side braiding word. -/
+@[expose]
 noncomputable def colourSwapWord (k ℓ : ℕ) {n : ℕ} :
     List (Fin n) →
       (colourPower k ℓ (n + 1) ⟶ colourPower k ℓ (n + 1))
@@ -38,6 +39,7 @@ noncomputable def colourSwapWord (k ℓ : ℕ) {n : ℕ} :
 /-- The Koszul sign of a word along a colouring's trajectory:
 each step contributes the adjacent sign at the colouring reached
 so far. -/
+@[expose]
 def wordSign {n : ℕ} :
     List (Fin n) → MixedColouring k ℓ (n + 1) → ℂ
   | [], _ => 1
@@ -48,6 +50,7 @@ def wordSign {n : ℕ} :
           ⟨i.val + 1, by omega⟩)
 
 /-- The permutation of a word of adjacent swaps. -/
+@[expose]
 def wordPerm {n : ℕ} :
     List (Fin n) → _root_.Equiv.Perm (Fin (n + 1))
   | [] => 1

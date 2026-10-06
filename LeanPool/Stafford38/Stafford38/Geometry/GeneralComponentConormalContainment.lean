@@ -17,7 +17,7 @@ public import Mathlib.RingTheory.Ideal.MinimalPrime.Localization
 Containment of a component’s conormal closure in the ambient characteristic variety.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.Geometry.GeneralComponentConormalContainment
 
