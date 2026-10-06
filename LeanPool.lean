@@ -178,6 +178,7 @@ public import LeanPool.MooreBound.Imports
 public import LeanPool.MoserLatticeColorings.Imports
 public import LeanPool.MovingSofa.Imports
 public import LeanPool.MulticolorTriangleRamsey.Imports
+public import LeanPool.NFWeakPartition.Imports
 public import LeanPool.NagataFactoriality.Imports
 public import LeanPool.NandakumarRamanaRao.Imports
 public import LeanPool.NashEmbedding.Imports
