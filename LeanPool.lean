@@ -92,6 +92,7 @@ public import LeanPool.Erdos97ConvexOctagon.Imports
 public import LeanPool.ErdosGinzburgZiv.Imports
 public import LeanPool.ErdosMoser.Imports
 public import LeanPool.ErdosTuzaValtr.Imports
+public import LeanPool.EscauriazaSereginSverak.Imports
 public import LeanPool.EuclideanJordan.Imports
 public import LeanPool.EvenGraphCycles.Imports
 public import LeanPool.EventStructures.Imports
