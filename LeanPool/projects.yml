@@ -13401,7 +13401,7 @@ projects:
       completed on 2026-10-01 at 00:01:57 UTC. The 2022 informal tutorial
       is older; the eligibility date is that of the completed Lean proofs.
     branch: analysis
-    entry_module: LeanPool.PolylogIntegrals.PolylogIntegrals
+    entry_module: LeanPool.PolylogIntegrals
     authors:
       - rainrzk
     source:
