@@ -6,6 +6,7 @@ Authors: Lean Pool contributors
 module  -- shake: keep-all --deprecated_module: ignore
 
 -- Generated project imports; run `lake exe mk_all`.
+public import LeanPool.PolylogIntegrals
 public import LeanPool.PolylogIntegrals.Defs
 public import LeanPool.PolylogIntegrals.Lemmas.Arcsin
 public import LeanPool.PolylogIntegrals.Lemmas.Arctan
@@ -22,7 +23,6 @@ public import LeanPool.PolylogIntegrals.Lemmas.TrilogLogOneAddSq
 public import LeanPool.PolylogIntegrals.Lemmas.TrilogLogSubLogSq
 public import LeanPool.PolylogIntegrals.Lemmas.TrilogValues
 public import LeanPool.PolylogIntegrals.Lemmas.Zeta
-public import LeanPool.PolylogIntegrals.PolylogIntegrals
 public import LeanPool.PolylogIntegrals.Proofs.A001
 public import LeanPool.PolylogIntegrals.Proofs.A002
 public import LeanPool.PolylogIntegrals.Proofs.A003
