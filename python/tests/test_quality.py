@@ -121,11 +121,13 @@ def test_minimal_repo_passes_static_quality_checks(tmp_path: Path) -> None:
 
 
 def test_nested_project_requires_top_level_entry(tmp_path: Path) -> None:
-    """A nested registered entry cannot omit the file consumed by extraction."""
-    _write_minimal_repo(tmp_path)
+    """A nested entry fails without its wrapper and passes once it is supplied."""
+    _write_minimal_repo(tmp_path, basic_body="")
     project = tmp_path / "LeanPool" / "MyProj"
     project.mkdir()
-    (project / "Internal.lean").write_text(f"{HEADER}\ndef hello := 1\n")
+    (project / "Internal.lean").write_text(
+        f"{HEADER}\n{_project_card(_PROJECT_FIXTURE)}\ndef hello := 1\n"
+    )
     (tmp_path / "LeanPool.lean").write_text(
         "import LeanPool.Basic\nimport LeanPool.MyProj.Internal\n"
     )
@@ -133,12 +135,22 @@ def test_nested_project_requires_top_level_entry(tmp_path: Path) -> None:
         tmp_path, [{"slug": "p", "entry_module": "LeanPool.MyProj.Internal"}]
     )
     entry = tmp_path / "LeanPool" / "MyProj.lean"
-    errors = run_checks(tmp_path, skip_lean_axioms=True)
+    errors = run_checks(tmp_path, skip_lean_axioms=True, skip_project_declarations=True)
 
     assert any(
         error.path == entry and "missing top-level project entry" in error.message
         for error in errors
     )
+
+    entry.write_text(f"{HEADER}\nimport LeanPool.MyProj.Internal\n")
+    (tmp_path / "LeanPool.lean").write_text(
+        "import LeanPool.Basic\nimport LeanPool.MyProj\n"
+        "import LeanPool.MyProj.Internal\n"
+    )
+
+    errors = run_checks(tmp_path, skip_lean_axioms=True, skip_project_declarations=True)
+
+    assert errors == []
 
 
 def test_quality_check_rejects_set_option(tmp_path: Path) -> None:

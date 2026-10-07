@@ -980,13 +980,14 @@ def _check_project_entry_imports(
 def _check_top_level_project_modules(
     root: Path, path: Path, projects: list[Any]
 ) -> list[_QualityError]:
-    """Require every top-level LeanPool project module in `projects.yml`."""
+    """Require each top-level module to belong to a registered project namespace."""
     entry_modules = {
         project["entry_module"]
         for project in projects
         if isinstance(project, dict) and isinstance(project.get("entry_module"), str)
     }
-    missing = sorted(_top_level_project_modules(root) - entry_modules)
+    registered_roots = {".".join(module.split(".")[:2]) for module in entry_modules}
+    missing = sorted(_top_level_project_modules(root) - registered_roots)
     return [
         _QualityError(
             path, 1, f"top-level project module {module} missing from projects.yml"
