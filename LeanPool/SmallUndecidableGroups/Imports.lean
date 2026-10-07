@@ -14,6 +14,7 @@ public import LeanPool.SmallUndecidableGroups.AdianRabin.Gordon.Construction
 public import LeanPool.SmallUndecidableGroups.AdianRabin.Gordon.Embedding
 public import LeanPool.SmallUndecidableGroups.AdianRabin.Gordon.Family
 public import LeanPool.SmallUndecidableGroups.AdianRabin.Gordon.LeftNormalForm
+public import LeanPool.SmallUndecidableGroups.AdianRabin.Gordon.RightBasis
 public import LeanPool.SmallUndecidableGroups.AdianRabin.Gordon.RightNormalForm
 public import LeanPool.SmallUndecidableGroups.AdianRabin.MillerTancer.Amalgam
 public import LeanPool.SmallUndecidableGroups.AdianRabin.MillerTancer.Compressed
@@ -23,6 +24,7 @@ public import LeanPool.SmallUndecidableGroups.AdianRabin.MillerTancer.Family
 public import LeanPool.SmallUndecidableGroups.AdianRabin.MillerTancer.LeftInjective
 public import LeanPool.SmallUndecidableGroups.AdianRabin.MillerTancer.LeftNormalForm
 public import LeanPool.SmallUndecidableGroups.AdianRabin.MillerTancer.LeftSplit
+public import LeanPool.SmallUndecidableGroups.AdianRabin.MillerTancer.RightBasis
 public import LeanPool.SmallUndecidableGroups.AdianRabin.MillerTancer.RightNormalForm
 public import LeanPool.SmallUndecidableGroups.Borisov.Assertions.AssertionIV
 public import LeanPool.SmallUndecidableGroups.Borisov.Assertions.AssertionIVBoundary

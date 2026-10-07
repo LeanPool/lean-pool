@@ -7,6 +7,7 @@ Authors: Marc Kegel, Shana Yunsheng Li, Qiuyu Ren
 module
 
 public import LeanPool.SmallUndecidableGroups.AdianRabin.Gordon.Construction
+public import LeanPool.SmallUndecidableGroups.AdianRabin.Gordon.RightBasis
 public import Mathlib.GroupTheory.PushoutI
 public import Mathlib.Tactic.FinCases
 
@@ -25,7 +26,7 @@ abbrev LeftFactor (P : FP n m) :=
   Monoid.Coprod P.Group (FreeGroup (Fin 2))
 
 /-- The right free factor used to construct the amalgam. -/
-abbrev RightFactor := FreeGroup (Fin 2)
+abbrev RightFactor := Gordon.RightFactor
 
 /-- The inclusion of the original presented group into the left factor. -/
 def oldLeft (P : FP n m) : P.Group →* LeftFactor P :=
@@ -40,13 +41,12 @@ def alphaLeft (P : FP n m) : LeftFactor P :=
   Monoid.Coprod.inr (FreeGroup.of 1)
 
 /-- The element `b` in the right factor. -/
-def bRight : RightFactor := FreeGroup.of 0
+abbrev bRight : RightFactor := rightB
 /-- The element `beta` in the right factor. -/
-def betaRight : RightFactor := FreeGroup.of 1
+abbrev betaRight : RightFactor := rightBeta
 
 /-- The conjugate of `b` by the indicated power of `beta`. -/
-def rightConjugate (r : ℕ) : RightFactor :=
-  (betaRight ^ r)⁻¹ * bRight * betaRight ^ r
+abbrev rightConjugate (r : ℕ) : RightFactor := rightU r
 
 /-- The left-hand amalgamating words in Gordon's Lemma 2.1. -/
 def leftBasis (P : FP n m) (data : TorsionData P)
@@ -62,11 +62,8 @@ def leftBasis (P : FP n m) (data : TorsionData P)
         (oldLeft P (P.evalWord w))⁻¹ * (alphaLeft P ^ 2)⁻¹
 
 /-- The corresponding right-hand free basis. -/
-def rightBasis (n : ℕ) : BasisIndex n → RightFactor
-  | .conjugateA => bRight ^ 2
-  | .conjugateAlpha => bRight * betaRight * bRight⁻¹
-  | .old i => rightConjugate (i.1 + 1)
-  | .commutator => rightConjugate (n + 1)
+abbrev rightBasis (n : ℕ) : BasisIndex n → RightFactor :=
+  Gordon.rightBasis
 
 /-- The homomorphism freely extending the left amalgamating basis. -/
 def leftMap (P : FP n m) (data : TorsionData P) (w : Word n) :
@@ -74,8 +71,8 @@ def leftMap (P : FP n m) (data : TorsionData P) (w : Word n) :
   FreeGroup.lift (leftBasis P data w)
 
 /-- The homomorphism freely extending the right amalgamating basis. -/
-def rightMap (n : ℕ) : FreeGroup (BasisIndex n) →* RightFactor :=
-  FreeGroup.lift (rightBasis n)
+abbrev rightMap (n : ℕ) : FreeGroup (BasisIndex n) →* RightFactor :=
+  rightBasisMap n
 
 /-- The two sides of the amalgamation diagram. -/
 inductive Side
@@ -119,7 +116,7 @@ theorem identifies_basis (P : FP n m) (data : TorsionData P)
     (diagram P data w) Side.right (FreeGroup.of i)
   change pushLeft P data w ((leftMap P data w) (FreeGroup.of i)) = _ at hl
   change pushRight P data w (rightMap n (FreeGroup.of i)) = _ at hr
-  simpa [leftMap, rightMap] using hl.trans hr.symm
+  simpa [leftMap, Gordon.rightBasisMap] using hl.trans hr.symm
 
 /-- Interpret the two generators of the compressed presentation. -/
 def witnessGenerator (P : FP n m) (data : TorsionData P)
@@ -141,7 +138,7 @@ theorem eval_alpha_witness (P : FP n m) (data : TorsionData P)
   have h :
       pushLeft P data w (aLeft P * alphaLeft P * (aLeft P)⁻¹) =
         pushRight P data w (bRight ^ 2) := by
-    simpa [leftBasis, rightBasis] using
+    simpa [leftBasis, Gordon.rightBasis] using
       identifies_basis P data w (BasisIndex.conjugateA : BasisIndex n)
   have h' :
       pushLeft P data w (aLeft P) * pushLeft P data w (alphaLeft P) *
@@ -166,7 +163,7 @@ theorem eval_beta_witness (P : FP n m) (data : TorsionData P)
       pushLeft P data w
           (alphaLeft P * aLeft P * (alphaLeft P)⁻¹) =
         pushRight P data w (bRight * betaRight * bRight⁻¹) := by
-    simpa [leftBasis, rightBasis] using
+    simpa [leftBasis, Gordon.rightBasis] using
       identifies_basis P data w
         (BasisIndex.conjugateAlpha : BasisIndex n)
   have h' :
@@ -202,7 +199,7 @@ theorem eval_rightConjugateWord_witness
     (P : FP n m) (data : TorsionData P) (w : Word n) (r : ℕ) :
     Word.eval (witnessGenerator P data w) (rightConjugateWord r) =
       pushRight P data w (rightConjugate r) := by
-  simp [rightConjugateWord, rightConjugate, bWord,
+  simp [rightConjugateWord, Gordon.rightU, bWord,
     eval_beta_witness, witnessGenerator_b, map_mul, map_inv, map_pow,
     mul_assoc]
 
@@ -216,7 +213,7 @@ theorem eval_encodedGenerator_witness
             oldLeft P (PresentedGroup.of i) *
               alphaLeft P ^ data.degree i) =
         pushRight P data w (rightConjugate (i.1 + 1)) := by
-    simpa [leftBasis, rightBasis] using
+    simpa [leftBasis, Gordon.rightBasis] using
       identifies_basis P data w (BasisIndex.old i)
   have h' :
       (pushLeft P data w (aLeft P) ^ data.degree i)⁻¹ *
@@ -279,7 +276,7 @@ theorem eval_additional (P : FP n m) (data : TorsionData P)
       rw [eval_encodeWord_witness, eval_alpha_witness]
       group
     _ = pushRight P data w (rightConjugate (n + 1)) := by
-      simpa [leftBasis, rightBasis, map_mul, map_inv, map_pow,
+      simpa [leftBasis, Gordon.rightBasis, map_mul, map_inv, map_pow,
         mul_assoc] using
           identifies_basis P data w
             (BasisIndex.commutator : BasisIndex n)

@@ -6,6 +6,7 @@ Authors: Marc Kegel, Shana Yunsheng Li, Qiuyu Ren
 
 module
 
+public import LeanPool.SmallUndecidableGroups.AdianRabin.Gordon.RightBasis
 public import LeanPool.SmallUndecidableGroups.Presentation
 public import Mathlib.GroupTheory.Abelianization.Defs
 public import Mathlib.GroupTheory.OrderOfElement
@@ -50,15 +51,6 @@ structure TorsionData (P : FP n m) where
   degree_selected : ∀ i, degree (selected i) = q i
 
 variable {n m : ℕ} {P : FP n m}
-
-/-- The common free basis used to describe Gordon's uncompressed
-free-product-with-amalgamation presentation. -/
-inductive BasisIndex (n : ℕ)
-  | conjugateA
-  | conjugateAlpha
-  | old (i : Fin n)
-  | commutator
-  deriving DecidableEq
 
 /-- The word representing the generator `a` in this presentation. -/
 def aWord : Word 2 := Word.generator 0

@@ -7,6 +7,7 @@ Authors: Marc Kegel, Shana Yunsheng Li, Qiuyu Ren
 module
 
 public import LeanPool.SmallUndecidableGroups.AdianRabin.MillerTancer.Construction
+public import LeanPool.SmallUndecidableGroups.AdianRabin.MillerTancer.RightBasis
 public import Mathlib.GroupTheory.PushoutI
 public import Mathlib.Tactic.FinCases
 
@@ -29,7 +30,7 @@ abbrev LeftFactor (P : FP n m) :=
   Monoid.Coprod P.Group (FreeGroup (Fin 2))
 
 /-- The free factor on the separate copies of `beta` and `gamma`. -/
-abbrev RightFactor := FreeGroup (Fin 2)
+abbrev RightFactor := MillerTancer.RightFactor
 
 /-- The inclusion of the original presented group into the left factor. -/
 def oldLeft (P : FP n m) : P.Group →* LeftFactor P :=
@@ -44,12 +45,10 @@ def betaLeft (P : FP n m) : LeftFactor P :=
   Monoid.Coprod.inr (FreeGroup.of (1 : Fin 2))
 
 /-- The element `beta` in the right factor. -/
-def betaRight : RightFactor :=
-  FreeGroup.of (0 : Fin 2)
+abbrev betaRight : RightFactor := rightBeta
 
 /-- The element `gamma` in the right factor. -/
-def gammaRight : RightFactor :=
-  FreeGroup.of (1 : Fin 2)
+abbrev gammaRight : RightFactor := rightGamma
 
 /-- The five proposed free generators in the left factor. -/
 def leftBasis (P : FP n m) (z w : Word n) : Fin 5 → LeftFactor P :=
@@ -65,12 +64,7 @@ def leftBasis (P : FP n m) (z w : Word n) : Fin 5 → LeftFactor P :=
       (alphaLeft P) ^ 4]
 
 /-- The five proposed free generators in the right factor. -/
-def rightBasis : Fin 5 → RightFactor :=
-  ![betaRight,
-    gammaRight⁻¹ * betaRight⁻¹ * gammaRight * betaRight * gammaRight,
-    (gammaRight ^ 2)⁻¹ * betaRight⁻¹ * gammaRight * betaRight * gammaRight ^ 2,
-    (gammaRight ^ 3)⁻¹ * betaRight * gammaRight ^ 3,
-    (gammaRight ^ 4)⁻¹ * betaRight * gammaRight ^ 4]
+abbrev rightBasis : Fin 5 → RightFactor := MillerTancer.rightBasis
 
 /-- The homomorphism freely extending the left amalgamating basis. -/
 def leftMap (P : FP n m) (z w : Word n) :
@@ -78,8 +72,7 @@ def leftMap (P : FP n m) (z w : Word n) :
   FreeGroup.lift (leftBasis P z w)
 
 /-- The homomorphism freely extending the right amalgamating basis. -/
-def rightMap : FreeGroup (Fin 5) →* RightFactor :=
-  FreeGroup.lift rightBasis
+abbrev rightMap : FreeGroup (Fin 5) →* RightFactor := rightBasisMap
 
 /-- The two sides of the amalgamation diagram. -/
 inductive Side
@@ -122,11 +115,11 @@ theorem identifies_basis (P : FP n m) (z w : Word n) (i : Fin 5) :
     (diagram P z w) Side.right (FreeGroup.of i)
   change pushLeft P z w ((leftMap P z w) (FreeGroup.of i)) = _ at hleft
   change pushRight P z w (rightMap (FreeGroup.of i)) = _ at hright
-  simpa [leftMap, rightMap] using hleft.trans hright.symm
+  simpa [leftMap, MillerTancer.rightBasisMap] using hleft.trans hright.symm
 
 theorem identifies_beta (P : FP n m) (z w : Word n) :
     pushLeft P z w (betaLeft P) = pushRight P z w betaRight := by
-  simpa [leftBasis, rightBasis] using identifies_basis P z w (0 : Fin 5)
+  simpa [leftBasis, MillerTancer.rightBasis] using identifies_basis P z w (0 : Fin 5)
 
 /-- Interpretation of the generators of the transformed presentation in the amalgam. -/
 def witnessGenerator (P : FP n m) (z w : Word n) :
@@ -186,21 +179,21 @@ theorem eval_oldGenerators_witness (P : FP n m) (z w u : Word n) :
 theorem eval_sigma₁_witness (P : FP n m) (z w : Word n) :
     Word.eval (witnessGenerator P z w) (sigma₁ n) = 1 := by
   rw [sigma₁, Word.eval_relation_eq_one_iff]
-  simpa [sigma₁, leftBasis, rightBasis, alphaWord, betaWord, gammaWord,
+  simpa [sigma₁, leftBasis, MillerTancer.rightBasis, alphaWord, betaWord, gammaWord,
     Word.product, identifies_beta P z w, mul_assoc] using
       identifies_basis P z w (1 : Fin 5)
 
 theorem eval_sigma₂_witness (P : FP n m) (z w : Word n) :
     Word.eval (witnessGenerator P z w) (sigma₂ n) = 1 := by
   rw [sigma₂, Word.eval_relation_eq_one_iff]
-  simpa [sigma₂, leftBasis, rightBasis, alphaWord, betaWord, gammaWord,
+  simpa [sigma₂, leftBasis, MillerTancer.rightBasis, alphaWord, betaWord, gammaWord,
     Word.product, identifies_beta P z w, mul_assoc] using
       identifies_basis P z w (2 : Fin 5)
 
 theorem eval_sigma₃_witness (P : FP n m) (z w : Word n) :
     Word.eval (witnessGenerator P z w) (sigma₃ w) = 1 := by
   rw [sigma₃, Word.eval_relation_eq_one_iff]
-  simpa [sigma₃, leftBasis, rightBasis, alphaWord, betaWord, gammaWord,
+  simpa [sigma₃, leftBasis, MillerTancer.rightBasis, alphaWord, betaWord, gammaWord,
     Word.product, identifies_beta P z w, eval_oldWord_witness,
     eval_oldGenerators_witness, mul_assoc] using
       identifies_basis P z w (3 : Fin 5)
@@ -208,7 +201,7 @@ theorem eval_sigma₃_witness (P : FP n m) (z w : Word n) :
 theorem eval_sigma₄_witness (P : FP n m) (z w : Word n) :
     Word.eval (witnessGenerator P z w) (sigma₄ z) = 1 := by
   rw [sigma₄, Word.eval_relation_eq_one_iff]
-  simpa [sigma₄, leftBasis, rightBasis, alphaWord, betaWord, gammaWord,
+  simpa [sigma₄, leftBasis, MillerTancer.rightBasis, alphaWord, betaWord, gammaWord,
     Word.product, identifies_beta P z w, eval_oldWord_witness,
     eval_oldGenerators_witness, mul_assoc] using
       identifies_basis P z w (4 : Fin 5)

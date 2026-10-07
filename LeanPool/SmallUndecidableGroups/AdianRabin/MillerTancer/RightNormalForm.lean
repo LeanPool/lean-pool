@@ -6,9 +6,10 @@ Authors: Marc Kegel, Shana Yunsheng Li, Qiuyu Ren
 
 module
 
-public import LeanPool.SmallUndecidableGroups.AdianRabin.MillerTancer.Construction
+public import LeanPool.SmallUndecidableGroups.AdianRabin.MillerTancer.RightBasis
 public import LeanPool.SmallUndecidableGroups.GroupTheory.CoprodILemmas
 public import Mathlib.Tactic.FinCases
+public import Mathlib.Algebra.Group.Conj
 public import Mathlib.Tactic.Group
 public import Mathlib.Tactic.NormNum
 
@@ -23,26 +24,6 @@ Part of the dependency closure of the small undecidable group constructions.
 namespace Undecidability.MillerTancer
 
 open Monoid
-
-/-- The right free factor used to construct the amalgam. -/
-abbrev RightFactor := FreeGroup (Fin 2)
-
-/-- The right-factor free generator `beta`. -/
-def rightBeta : RightFactor := FreeGroup.of (0 : Fin 2)
-/-- The right-factor free generator `gamma`. -/
-def rightGamma : RightFactor := FreeGroup.of (1 : Fin 2)
-
-/-- The five right-hand amalgamating generators of the Miller–Tancer construction. -/
-def rightBasis : Fin 5 → RightFactor
-  | 0 => rightBeta
-  | 1 => rightGamma⁻¹ * rightBeta⁻¹ * rightGamma * rightBeta * rightGamma
-  | 2 => (rightGamma ^ 2)⁻¹ * rightBeta⁻¹ * rightGamma * rightBeta * rightGamma ^ 2
-  | 3 => (rightGamma ^ 3)⁻¹ * rightBeta * rightGamma ^ 3
-  | 4 => (rightGamma ^ 4)⁻¹ * rightBeta * rightGamma ^ 4
-
-/-- The homomorphism freely extending the five right-hand amalgamating generators. -/
-def rightBasisMap : FreeGroup (Fin 5) →* RightFactor :=
-  FreeGroup.lift rightBasis
 
 /-- The infinite cyclic group, written multiplicatively. -/
 abbrev ZMul := Multiplicative ℤ

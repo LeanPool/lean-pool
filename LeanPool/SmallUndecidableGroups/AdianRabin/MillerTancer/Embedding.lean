@@ -125,20 +125,12 @@ namespace Undecidability.MillerTancer
 
 open Amalgam
 
-/-- The independently proved right normal-form map is exactly the right map
-used by the amalgamated-product construction. -/
-theorem pushout_rightMap_eq : Amalgam.rightMap = rightBasisMap := by
-  apply FreeGroup.ext_hom
-  intro i
-  fin_cases i <;>
-    simp [Amalgam.rightMap, Amalgam.rightBasis,
-      rightBasisMap, rightBasis, Amalgam.betaRight,
-      Amalgam.gammaRight, rightBeta, rightGamma]
+/-- Both models use the same shared right-basis lift. -/
+theorem pushout_rightMap_eq : Amalgam.rightMap = rightBasisMap := rfl
 
 theorem pushout_rightMap_injective :
-    Function.Injective Amalgam.rightMap := by
-  rw [pushout_rightMap_eq]
-  exact RightNormalForm.original_rightBasisMap_injective
+    Function.Injective Amalgam.rightMap :=
+  RightNormalForm.original_rightBasisMap_injective
 
 /-- Reduce the nontriviality implication to injectivity of the left list of
 five amalgamating words. -/

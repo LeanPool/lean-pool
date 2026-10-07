@@ -86,18 +86,11 @@ theorem leftMap_injective (P : FP n m) (data : TorsionData P)
 end LeftBridge
 
 theorem amalgam_rightMap_eq (n : ℕ) :
-    Amalgam.rightMap n = rightBasisMap n := by
-  apply FreeGroup.ext_hom
-  intro i
-  cases i <;>
-    simp [Amalgam.rightMap, Amalgam.rightBasis,
-      Amalgam.rightConjugate, Amalgam.bRight, Amalgam.betaRight,
-      rightBasisMap, rightBasis, rightU, rightB, rightBeta]
+    Amalgam.rightMap n = rightBasisMap n := rfl
 
 theorem amalgam_rightMap_injective (n : ℕ) :
-    Function.Injective (Amalgam.rightMap n) := by
-  rw [amalgam_rightMap_eq n]
-  exact rightBasisMap_injective n
+    Function.Injective (Amalgam.rightMap n) :=
+  rightBasisMap_injective n
 
 /-- The hard implication in Gordon's Lemma 2.1: a nontrivial input word
 remains visible in the amalgamated-product witness. -/

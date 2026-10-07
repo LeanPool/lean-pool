@@ -6,8 +6,9 @@ Authors: Marc Kegel, Shana Yunsheng Li, Qiuyu Ren
 
 module
 
-public import LeanPool.SmallUndecidableGroups.AdianRabin.Gordon.Construction
+public import LeanPool.SmallUndecidableGroups.AdianRabin.Gordon.RightBasis
 public import LeanPool.SmallUndecidableGroups.GroupTheory.CoprodILemmas
+public import Mathlib.Algebra.Group.Conj
 public import Mathlib.Tactic.Group
 
 /-!
@@ -25,29 +26,6 @@ basis elements.
 namespace Undecidability.Gordon
 
 open Monoid
-
-/-- The right free factor used to construct the amalgam. -/
-abbrev RightFactor := FreeGroup (Fin 2)
-
-/-- The free generator `b` of the right-hand factor. -/
-def rightB : RightFactor := FreeGroup.of (0 : Fin 2)
-/-- The free generator `beta` of the right-hand factor. -/
-def rightBeta : RightFactor := FreeGroup.of (1 : Fin 2)
-
-/-- Gordon's right-hand conjugate `beta^(-r) * b * beta^r`. -/
-def rightU (r : ℕ) : RightFactor :=
-  (rightBeta ^ r)⁻¹ * rightB * rightBeta ^ r
-
-/-- The right-hand amalgamating elements in Gordon's construction. -/
-def rightBasis {n : ℕ} : BasisIndex n → RightFactor
-  | .conjugateA => rightB ^ 2
-  | .conjugateAlpha => rightB * rightBeta * rightB⁻¹
-  | .old i => rightU (i.1 + 1)
-  | .commutator => rightU (n + 1)
-
-/-- The homomorphism freely extending Gordon’s right-hand amalgamating basis. -/
-def rightBasisMap (n : ℕ) : FreeGroup (BasisIndex n) →* RightFactor :=
-  FreeGroup.lift rightBasis
 
 namespace RightNormalForm
 
