@@ -9,7 +9,9 @@ public import Mathlib.Algebra.Order.Star.Real
 public import Mathlib.Analysis.Polynomial.Basic
 public import Mathlib.Topology.Algebra.Polynomial
 public import Mathlib.Topology.GDelta.MetrizableSpace
-public import Mathlib.Tactic
+public import Mathlib.Tactic.Linarith -- shake: keep
+public import Mathlib.Tactic.Ring -- shake: keep
+public import Mathlib.Tactic.NormNum -- shake: keep
 
 /-!
 # PdtPisotLadder — the general Pisot ladder
@@ -484,7 +486,7 @@ theorem pisot_ladder_pos_eventually
             mul_le_mul_of_nonneg_left hPx (le_of_lt hpowk)
     have step2 : CQ * x ^ P.natDegree < s ^ K * eta * x ^ P.natDegree :=
       mul_lt_mul_of_pos_right hcore hpowp
-    nlinarith [step1, step2, hQb]
+    linarith only [step1, step2, hQb]
 
 end
 end PisotLadder

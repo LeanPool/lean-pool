@@ -4,7 +4,10 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Stephanie Alexander
 -/
 module
-public import Mathlib.Tactic
+public import Mathlib.Tactic.FieldSimp -- shake: keep
+public import Mathlib.Tactic.FunProp -- shake: keep
+public import Mathlib.Tactic.GCongr -- shake: keep
+public import Mathlib.Tactic.LinearCombination -- shake: keep
 public import LeanPool.SalemTheorem.PdtSalemCircle
 public import LeanPool.SalemTheorem.PdtSalemArith
 public import LeanPool.SalemTheorem.PdtSalemMinus
@@ -469,14 +472,15 @@ lemma eval_above_pos (r : ℤ) {alpha : ℝ} (halpha2 : 2 < alpha)
         ≤ d * (y - alpha⁻¹) * (y ^ m * y ^ m + 1) := by
       have hpos : (0 : ℝ) ≤ d * (y - alpha⁻¹) :=
         mul_nonneg hd0.le (by rw [hy]; linarith)
-      nlinarith [hpos]
-    linarith
+      simpa only [mul_assoc] using
+        mul_le_mul_of_nonneg_left (le_add_of_nonneg_right zero_le_one) hpos
+    exact hstep1.trans_lt (hstep2.trans_le hstep3)
   rw [Bfam_eval_R, hfac y]
   push_cast
   have h2m : y ^ (2 * m) = y ^ m * y ^ m := by rw [two_mul, pow_add]
   have hm1 : y ^ (m + 1) = y * y ^ m := by rw [pow_succ, mul_comm]
   rw [h2m, hm1, hda]
-  nlinarith [hgoal]
+  simpa only [neg_one_mul, sub_eq_add_neg] using sub_pos.mpr hgoal
 
 /-- Below sign: with `y = alpha − d ≥ 2`, `0 < d` and `alpha < d·2^m`,
 the `eps = +1` member is negative at `y`. -/
@@ -503,19 +507,20 @@ lemma eval_below_neg (r : ℤ) {alpha : ℝ} (halpha2 : 2 < alpha)
     have hstep2 : d * 2 ^ m * y ^ m ≤ d * y ^ m * y ^ m :=
       mul_le_mul_of_nonneg_right (mul_le_mul_of_nonneg_left hym hd0.le) hympos.le
     have hstep3 : d * y ^ m * y ^ m ≤ d * (y - alpha⁻¹) * (y ^ m * y ^ m) := by
-      nlinarith [mul_nonneg (mul_nonneg hd0.le
-        (by linarith : (0 : ℝ) ≤ y - alpha⁻¹ - 1)) (mul_nonneg hympos.le hympos.le)]
+      simpa only [mul_one, mul_assoc] using
+        mul_le_mul_of_nonneg_right (mul_le_mul_of_nonneg_left hA1 hd0.le)
+          (mul_nonneg hympos.le hympos.le)
     have hstep4 : d * (y - alpha⁻¹) * (y ^ m * y ^ m)
         ≤ d * (y - alpha⁻¹) * (y ^ m * y ^ m + 1) := by
       have hpos : (0 : ℝ) ≤ d * (y - alpha⁻¹) := mul_nonneg hd0.le (by linarith)
-      nlinarith [hpos]
-    linarith
+      exact mul_le_mul_of_nonneg_left (le_add_of_nonneg_right zero_le_one) hpos
+    exact hstep1.trans_le (hstep2.trans (hstep3.trans hstep4))
   rw [Bfam_eval_R, hfac y]
   push_cast
   have h2m : y ^ (2 * m) = y ^ m * y ^ m := by rw [two_mul, pow_add]
   have hm1 : y ^ (m + 1) = y * y ^ m := by rw [pow_succ, mul_comm]
   rw [h2m, hm1, hda]
-  nlinarith [hgoal]
+  simpa only [neg_mul, one_mul, ← sub_eq_neg_add] using sub_neg.mpr hgoal
 
 /-- The exact trace displacement at a root:
 `(tau + 1/tau − r)·(tau^m + tau^{−m}) = −eps`. -/
@@ -582,64 +587,14 @@ theorem Bfam_trichotomy (r eps : ℤ) (hr : 3 ≤ r) (heps : eps = 1 ∨ eps = -
     intro z hz
     obtain ⟨t, ht, rfl⟩ := Finset.mem_image.mp hz
     exact norm_E t
-  have htaupos : (0 : ℝ) < tau := by linarith
-  have htau0 : ((tau : ℂ)) ≠ 0 := by
-    intro h
-    rw [Complex.ofReal_eq_zero] at h
-    linarith
-  have htau_norm : ‖((tau : ℂ))‖ = tau := by
-    rw [Complex.norm_real, Real.norm_eq_abs, abs_of_pos htaupos]
-  have htauinv_norm : ‖((tau : ℂ))⁻¹‖ = tau⁻¹ := by
-    rw [norm_inv, htau_norm]
-  have htinv1 : tau⁻¹ < 1 := inv_lt_one_of_one_lt₀ htau
-  have htau_ne : ((tau : ℂ)) ≠ ((tau : ℂ))⁻¹ := by
-    intro h
-    have h1 : ‖((tau : ℂ))‖ = ‖((tau : ℂ))⁻¹‖ := by rw [← h]
-    rw [htau_norm, htauinv_norm] at h1
-    linarith
-  have hdisj : Disjoint (T.image fun t => E t)
-      ({((tau : ℂ)), ((tau : ℂ))⁻¹} : Finset ℂ) := by
-    rw [Finset.disjoint_left]
-    intro z hzU hzV
-    have h1 := hUnorm z hzU
-    rcases Finset.mem_insert.mp hzV with h | h
-    · rw [h, htau_norm] at h1; linarith
-    · rw [Finset.mem_singleton.mp h, htauinv_norm] at h1; linarith
-  have hpair : ({((tau : ℂ)), ((tau : ℂ))⁻¹} : Finset ℂ).card = 2 :=
-    Finset.card_pair_eq_two_iff.mpr htau_ne
-  set S : Finset ℂ := (T.image fun t => E t) ∪ {((tau : ℂ)), ((tau : ℂ))⁻¹} with hS
-  have hScard : S.card = 2 * m + 2 := by
-    rw [hS, Finset.card_union_of_disjoint hdisj, hUcard, hpair]
-  have hSroot : ∀ z ∈ S, ((Bfam r eps m).map (Int.castRingHom ℂ)).eval z = 0 := by
-    intro z hz
-    rw [hS, Finset.mem_union] at hz
-    rcases hz with h | h
-    · obtain ⟨t, ht, rfl⟩ := Finset.mem_image.mp h
-      exact (hT t ht).2
-    · rcases Finset.mem_insert.mp h with h1 | h1
-      · rw [h1]; exact hroot
-      · rw [Finset.mem_singleton.mp h1]
-        exact Bfam_root_inv r eps m htau0 hroot
-  have hBCmonic : ((Bfam r eps m).map (Int.castRingHom ℂ)).Monic :=
-    (Bfam_monic r eps hm).map _
-  have hBCdeg : ((Bfam r eps m).map (Int.castRingHom ℂ)).natDegree = 2 * m + 2 := by
-    rw [(Bfam_monic r eps hm).natDegree_map]
-    exact Bfam_natDegree r eps hm
-  have hBne : (Bfam r eps m).map (Int.castRingHom ℂ) ≠ 0 := hBCmonic.ne_zero
-  have heq : S.val = ((Bfam r eps m).map (Int.castRingHom ℂ)).roots :=
-    SalemCircle.finset_val_eq_roots _ hBne S hSroot
-      (by rw [hBCdeg]; exact hScard)
-  intro z hz
-  have hzmem : z ∈ ((Bfam r eps m).map (Int.castRingHom ℂ)).roots :=
-    Polynomial.mem_roots'.mpr ⟨hBne, hz⟩
-  rw [← heq] at hzmem
-  have hzS : z ∈ S := Finset.mem_def.mpr hzmem
-  rw [hS, Finset.mem_union] at hzS
-  rcases hzS with h | h
-  · exact Or.inl (hUnorm z h)
-  · rcases Finset.mem_insert.mp h with h1 | h1
-    · exact Or.inr (Or.inl h1)
-    · exact Or.inr (Or.inr (Finset.mem_singleton.mp h1))
+  refine root_trichotomy_of_unimodular_roots ((Bfam r eps m).map (Int.castRingHom ℂ))
+    ((Bfam_monic r eps hm).map _).ne_zero tau htau _ hUnorm ?_ ?_ hroot
+    (Bfam_root_inv r eps m
+      (Complex.ofReal_ne_zero.mpr (ne_of_gt (zero_lt_one.trans htau))) hroot)
+  · intro z hz
+    obtain ⟨t, ht, rfl⟩ := Finset.mem_image.mp hz
+    exact (hT t ht).2
+  · rw [hUcard, (Bfam_monic r eps hm).natDegree_map, Bfam_natDegree r eps hm]
 
 /-! ### The arithmetic Salem-ness certificate -/
 
@@ -983,9 +938,8 @@ theorem reciprocal_quadratic_of_inv_root
     · rw [← h, inv_inv]
     · exfalso
       have h1 : ‖z⁻¹‖ < 1 := hin _ h
-      have h2 : ‖z‖ * ‖z⁻¹‖ = 1 := by
-        rw [← norm_mul, mul_inv_cancel₀ hz0, norm_one]
-      nlinarith [norm_nonneg z, norm_nonneg (z⁻¹)]
+      rw [norm_inv] at h1
+      exact (not_lt_of_ge ((one_lt_inv₀ (norm_pos_iff.mpr hz0)).mpr hznorm).le) h1
   -- (e) splitting data: the degree is at most 2
   have hQirr : Irreducible (minpoly ℚ alpha) := minpoly.irreducible hQa
   have hsep : (minpoly ℚ alpha).Separable := hQirr.separable
