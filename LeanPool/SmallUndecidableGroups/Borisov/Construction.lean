@@ -6,9 +6,9 @@ Authors: Marc Kegel, Shana Yunsheng Li, Qiuyu Ren
 
 module
 
+public import LeanPool.SmallUndecidableGroups.GroupTheory.CommutatorLemmas
 public import LeanPool.SmallUndecidableGroups.Thue.StandingDatum
 public import Mathlib.Data.Fin.VecNotation
-public import Mathlib.Algebra.Group.Commute.Basic
 
 /-!
 # Construction
@@ -19,25 +19,10 @@ Part of the dependency closure of the small undecidable group constructions.
 @[expose] public section
 
 namespace Undecidability
+
+open CommutatorLemmas
+
 namespace Borisov
-
-private theorem inverse_commutator_eq_one_iff {G : Type*} [Group G]
-    (a b : G) :
-    a⁻¹ * b⁻¹ * a * b = 1 ↔ a * b = b * a := by
-  constructor
-  · intro h
-    have h' : a⁻¹ * b⁻¹ = (a * b)⁻¹ :=
-      mul_eq_one_iff_eq_inv.mp (by simpa [mul_assoc] using h)
-    have hi := congrArg Inv.inv h'
-    simpa only [mul_inv_rev, inv_inv] using hi.symm
-  · intro h
-    rw [mul_assoc, mul_assoc, h]
-    simp
-
-private theorem commute_of_inverse_commutator_eq_one {G : Type*} [Group G]
-    {a b : G} (h : a⁻¹ * b⁻¹ * a * b = 1) :
-    Commute a b :=
-  (inverse_commutator_eq_one_iff a b).mp h
 
 private theorem pow_mul_eq_mul_pow_of_mul_eq {G : Type*} [Group G]
     {a b c : G} (h : a * b = b * c) (n : ℕ) :
@@ -392,8 +377,8 @@ private theorem c_letter_relations (datum : Thue.StandingDatum) :
       gen datum 3 * gen datum 4 = 1 := by
     simpa only [Word.eval_commutator, s2Word, cWord,
       Word.eval_generator, ← mul_assoc] using h₂
-  exact ⟨commute_of_inverse_commutator_eq_one h₁',
-    commute_of_inverse_commutator_eq_one h₂'⟩
+  exact ⟨(inverse_commutator_eq_one_iff_commute _ _).mp h₁',
+    (inverse_commutator_eq_one_iff_commute _ _).mp h₂'⟩
 
 private theorem fixed_commutations (datum : Thue.StandingDatum) :
     Commute (gen datum 5) (gen datum 4) ∧
@@ -406,10 +391,10 @@ private theorem fixed_commutations (datum : Thue.StandingDatum) :
   have hke := presented_relator_eq_one datum 12
   simp only [presentation] at htc htd hkc hke
   simp only [tWord, cWord, dWord, kWord, eWord] at htc htd hkc hke
-  exact ⟨commute_of_inverse_commutator_eq_one htc,
-    commute_of_inverse_commutator_eq_one htd,
-    commute_of_inverse_commutator_eq_one hkc,
-    commute_of_inverse_commutator_eq_one hke⟩
+  exact ⟨(inverse_commutator_eq_one_iff_commute _ _).mp htc,
+    (inverse_commutator_eq_one_iff_commute _ _).mp htd,
+    (inverse_commutator_eq_one_iff_commute _ _).mp hkc,
+    (inverse_commutator_eq_one_iff_commute _ _).mp hke⟩
 
 private theorem simulation_relation_semantic (datum : Thue.StandingDatum)
     (i : Fin 3) :
@@ -461,7 +446,7 @@ private theorem target_commutes (datum : Thue.StandingDatum) :
       Word.eval (gen datum) (pWord datum) = 1 := by
     simpa only [Word.eval_commutator, kWord, Word.eval_generator,
       ← mul_assoc] using h
-  have hc := (commute_of_inverse_commutator_eq_one h').symm
+  have hc := ((inverse_commutator_eq_one_iff_commute _ _).mp h').symm
   simpa [pWord, tWord, mul_assoc] using hc
 
 /-- The test conjugate of `t` commutes with `k`. -/
@@ -582,7 +567,7 @@ theorem criterion_forward
   have hcomm' : Commute a (gen datum 6) := by
     simpa [testCommutes, q, a] using hcomm
   have hone : a⁻¹ * (gen datum 6)⁻¹ * a * gen datum 6 = 1 :=
-    (inverse_commutator_eq_one_iff a (gen datum 6)).mpr hcomm'
+    (inverse_commutator_eq_one_iff_mul_eq_mul a (gen datum 6)).mpr hcomm'
   rw [(presentation datum).wordProblem_iff_evalWord_eq_one]
   change Word.eval (gen datum) (testWord Q) = 1
   simpa [testWord, tWord, kWord, q, a, mul_assoc] using hone

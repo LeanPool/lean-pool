@@ -27,6 +27,9 @@ injective.
 @[expose] public section
 
 namespace Undecidability
+
+open CommutatorLemmas
+
 namespace HostCompressionInjective
 
 open BorisovCStage
@@ -350,14 +353,8 @@ private theorem evalOld_positive_eq_borisov (w : List (Fin 2)) :
 private theorem swapped_commutator_eq_one {G : Type*} [Group G]
     {a b : G} (h : a⁻¹ * b⁻¹ * a * b = 1) :
     b⁻¹ * a⁻¹ * b * a = 1 := by
-  have hab : a * b = b * a := by
-    calc
-      a * b = b * a * (a⁻¹ * b⁻¹ * a * b) := by group
-      _ = b * a := by rw [h]; simp
-  calc
-    b⁻¹ * a⁻¹ * b * a = b⁻¹ * a⁻¹ * (b * a) := by group
-    _ = b⁻¹ * a⁻¹ * (a * b) := by rw [hab]
-    _ = 1 := by group
+  exact (inverse_commutator_eq_one_iff_commute b a).mpr
+    ((inverse_commutator_eq_one_iff_commute a b).mp h).symm
 
 /-- The eight inherited Borisov relations and the last `y`-relation all
 hold before syntactic elimination. -/

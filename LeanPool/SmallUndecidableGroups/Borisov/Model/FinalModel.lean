@@ -20,6 +20,9 @@ Part of the dependency closure of the small undecidable group constructions.
 @[expose] public section
 
 namespace Undecidability
+
+open CommutatorLemmas
+
 namespace BorisovFinalModel
 
 open BorisovCStage
@@ -115,11 +118,6 @@ theorem eval_positiveWord (w : List (Fin 2)) :
       simp only [List.map_cons, List.prod_cons, map_mul]
       rw [ih]
       fin_cases i <;> rfl
-
-private theorem inverse_commutator_eq_one {G : Type*} [Group G]
-    {a b : G} (h : Commute a b) : a⁻¹ * b⁻¹ * a * b = 1 := by
-  rw [mul_assoc, mul_assoc, h.eq]
-  simp
 
 private theorem model_d_four_mul_s1 :
     modelD datum hfree ^ 4 * modelS1 datum hfree =
@@ -267,11 +265,11 @@ theorem model_relators :
   · change Word.eval (modelGenerator datum hfree)
       (Word.commutator Borisov.s1Word Borisov.cWord) = 1
     simp only [Word.eval_commutator]
-    exact inverse_commutator_eq_one (model_c_commutes_s1 datum hfree)
+    exact (inverse_commutator_eq_one_iff_commute _ _).mpr (model_c_commutes_s1 datum hfree)
   · change Word.eval (modelGenerator datum hfree)
       (Word.commutator Borisov.s2Word Borisov.cWord) = 1
     simp only [Word.eval_commutator]
-    exact inverse_commutator_eq_one (model_c_commutes_s2 datum hfree)
+    exact (inverse_commutator_eq_one_iff_commute _ _).mpr (model_c_commutes_s2 datum hfree)
   · change Word.eval (modelGenerator datum hfree)
       (Borisov.simulationRelator datum 0) = 1
     rw [Borisov.simulationRelator, Word.eval_relation_eq_one_iff]
@@ -287,19 +285,19 @@ theorem model_relators :
   · change Word.eval (modelGenerator datum hfree)
       (Word.commutator Borisov.tWord Borisov.cWord) = 1
     simp only [Word.eval_commutator]
-    exact inverse_commutator_eq_one (model_t_commutes_c datum hfree)
+    exact (inverse_commutator_eq_one_iff_commute _ _).mpr (model_t_commutes_c datum hfree)
   · change Word.eval (modelGenerator datum hfree)
       (Word.commutator Borisov.tWord Borisov.dWord) = 1
     simp only [Word.eval_commutator]
-    exact inverse_commutator_eq_one (model_t_commutes_d datum hfree)
+    exact (inverse_commutator_eq_one_iff_commute _ _).mpr (model_t_commutes_d datum hfree)
   · change Word.eval (modelGenerator datum hfree)
       (Word.commutator Borisov.kWord Borisov.cWord) = 1
     simp only [Word.eval_commutator]
-    exact inverse_commutator_eq_one (model_k_commutes_c datum hfree)
+    exact (inverse_commutator_eq_one_iff_commute _ _).mpr (model_k_commutes_c datum hfree)
   · change Word.eval (modelGenerator datum hfree)
       (Word.commutator Borisov.kWord Borisov.eWord) = 1
     simp only [Word.eval_commutator]
-    exact inverse_commutator_eq_one (model_k_commutes_e datum hfree)
+    exact (inverse_commutator_eq_one_iff_commute _ _).mpr (model_k_commutes_e datum hfree)
   · change Word.eval (modelGenerator datum hfree)
       (Word.commutator Borisov.kWord (Borisov.pWord datum)) = 1
     simp only [Word.eval_commutator]
@@ -311,7 +309,8 @@ theorem model_relators :
       simp [modelT, finalConjugatedT, conjugatedT, conjugatedStable,
         centralizerOf, toTStage, tLetter, cStageToFinal, map_mul, map_inv,
         mul_assoc]
-    simpa [hp] using inverse_commutator_eq_one (model_k_commutes_p datum hfree)
+    simpa [hp] using
+      (inverse_commutator_eq_one_iff_commute _ _).mpr (model_k_commutes_p datum hfree)
 
 /-- The canonical homomorphism from Borisov's finite presentation to the
 semantic iterated-HNN model. -/

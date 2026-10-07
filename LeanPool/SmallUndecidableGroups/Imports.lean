@@ -49,6 +49,7 @@ public import LeanPool.SmallUndecidableGroups.Borisov.Model.G0NormalForm
 public import LeanPool.SmallUndecidableGroups.Borisov.Model.HNNModel
 public import LeanPool.SmallUndecidableGroups.Borisov.Model.Intersections
 public import LeanPool.SmallUndecidableGroups.Computability
+public import LeanPool.SmallUndecidableGroups.GroupTheory.CommutatorLemmas
 public import LeanPool.SmallUndecidableGroups.GroupTheory.CoprodILemmas
 public import LeanPool.SmallUndecidableGroups.GroupTheory.HNNLemmas
 public import LeanPool.SmallUndecidableGroups.GroupTheory.MultipleHNN

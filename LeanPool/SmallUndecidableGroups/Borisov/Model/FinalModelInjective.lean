@@ -16,6 +16,9 @@ first four generators of Borisov's full presentation. -/
 @[expose] public section
 
 namespace Undecidability
+
+open CommutatorLemmas
+
 namespace BorisovFinalModelInjective
 
 open BorisovCStage
@@ -142,15 +145,6 @@ def gamma3ToPresented : Gamma3 →* Presented datum :=
       rw [ih]
       fin_cases i <;> simp
 
-private theorem commute_of_inverse_commutator_eq_one
-    {G : Type*} [Group G] {a b : G}
-    (h : a⁻¹ * b⁻¹ * a * b = 1) : Commute a b := by
-  rw [commute_iff_eq]
-  have h' : a⁻¹ * b⁻¹ = (a * b)⁻¹ :=
-    mul_eq_one_iff_eq_inv.mp (by simpa [mul_assoc] using h)
-  have hi := congrArg Inv.inv h'
-  simpa only [mul_inv_rev, inv_inv] using hi.symm
-
 private theorem presented_c_commutes_stable (beta : Fin 2) :
     Commute (presentedGenerator datum (if beta = 0 then 2 else 3))
       (presentedGenerator datum 4) := by
@@ -161,14 +155,14 @@ private theorem presented_c_commutes_stable (beta : Fin 2) :
             (presentedGenerator datum 4)⁻¹ *
             presentedGenerator datum 2 * presentedGenerator datum 4 = 1 := by
       simpa [Borisov.presentation, Borisov.s1Word, Borisov.cWord] using h
-    simpa using commute_of_inverse_commutator_eq_one h'
+    simpa using (inverse_commutator_eq_one_iff_commute _ _).mp h'
   · have h := full_relator_eq_one datum 5
     have h' :
         (presentedGenerator datum 3)⁻¹ *
             (presentedGenerator datum 4)⁻¹ *
             presentedGenerator datum 3 * presentedGenerator datum 4 = 1 := by
       simpa [Borisov.presentation, Borisov.s2Word, Borisov.cWord] using h
-    simpa using commute_of_inverse_commutator_eq_one h'
+    simpa using (inverse_commutator_eq_one_iff_commute _ _).mp h'
 
 private theorem presented_c_conjugates_stable (beta : Fin 2) :
     (presentedGenerator datum 4)⁻¹ *
@@ -292,7 +286,7 @@ private theorem presented_t_commutes_c :
           (presentedGenerator datum 4)⁻¹ *
           presentedGenerator datum 5 * presentedGenerator datum 4 = 1 := by
     simpa [Borisov.presentation, Borisov.tWord, Borisov.cWord] using h
-  exact commute_of_inverse_commutator_eq_one h'
+  exact (inverse_commutator_eq_one_iff_commute _ _).mp h'
 
 private theorem presented_t_commutes_d :
     Commute (presentedGenerator datum 5) (presentedGenerator datum 0) := by
@@ -302,7 +296,7 @@ private theorem presented_t_commutes_d :
           (presentedGenerator datum 0)⁻¹ *
           presentedGenerator datum 5 * presentedGenerator datum 0 = 1 := by
     simpa [Borisov.presentation, Borisov.tWord, Borisov.dWord] using h
-  exact commute_of_inverse_commutator_eq_one h'
+  exact (inverse_commutator_eq_one_iff_commute _ _).mp h'
 
 private theorem CD_le_t_centralizer :
     CD datum hfree ≤
@@ -373,7 +367,7 @@ private theorem presented_k_commutes_c :
           (presentedGenerator datum 4)⁻¹ *
           presentedGenerator datum 6 * presentedGenerator datum 4 = 1 := by
     simpa [Borisov.presentation, Borisov.kWord, Borisov.cWord] using h
-  exact commute_of_inverse_commutator_eq_one h'
+  exact (inverse_commutator_eq_one_iff_commute _ _).mp h'
 
 private theorem presented_k_commutes_e :
     Commute (presentedGenerator datum 6) (presentedGenerator datum 1) := by
@@ -383,7 +377,7 @@ private theorem presented_k_commutes_e :
           (presentedGenerator datum 1)⁻¹ *
           presentedGenerator datum 6 * presentedGenerator datum 1 = 1 := by
     simpa [Borisov.presentation, Borisov.kWord, Borisov.eWord] using h
-  exact commute_of_inverse_commutator_eq_one h'
+  exact (inverse_commutator_eq_one_iff_commute _ _).mp h'
 
 private theorem presented_k_commutes_p :
     Commute (presentedGenerator datum 6)
@@ -408,7 +402,7 @@ private theorem presented_k_commutes_p :
               (presentedGenerator datum 3) datum.P) = 1 := by
     simpa [Borisov.presentation, Borisov.kWord, Borisov.pWord,
       Borisov.tWord, mul_assoc] using h
-  exact commute_of_inverse_commutator_eq_one h'
+  exact (inverse_commutator_eq_one_iff_commute _ _).mp h'
 
 private theorem CE_le_k_centralizer :
     CE datum hfree ≤

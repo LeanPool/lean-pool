@@ -19,6 +19,9 @@ Part of the dependency closure of the small undecidable group constructions.
 @[expose] public section
 
 namespace Undecidability
+
+open CommutatorLemmas
+
 namespace Host
 namespace Compression
 
@@ -89,19 +92,6 @@ theorem eval_word {G : Type*} [Group G] (x : Fin 3 → G)
       Word.eval (fun i => Word.eval x (generatorWord i)) u :=
   Word.eval_substitute x generatorWord u
 
-private theorem commute_of_commutator_eq_one {G : Type*} [Group G]
-    {a b : G} (h : a⁻¹ * b⁻¹ * a * b = 1) : a * b = b * a := by
-  calc
-    a * b = b * a * (a⁻¹ * b⁻¹ * a * b) := by group
-    _ = b * a := by rw [h]; simp
-
-private theorem commutator_eq_one_of_commute {G : Type*} [Group G]
-    {a b : G} (h : a * b = b * a) : a⁻¹ * b⁻¹ * a * b = 1 := by
-  calc
-    a⁻¹ * b⁻¹ * a * b = a⁻¹ * b⁻¹ * (a * b) := by group
-    _ = a⁻¹ * b⁻¹ * (b * a) := by rw [h]
-    _ = 1 := by group
-
 private theorem commute_inv_left {G : Type*} [Group G]
     {a b : G} (h : a * b = b * a) : a⁻¹ * b = b * a⁻¹ :=
   (Commute.inv_left_iff.mpr h).eq
@@ -148,10 +138,10 @@ private theorem transported_relations {G : Type*} [Group G]
           (Z⁻¹ * T * Z) * (Z⁻¹ * C * Z) =
         Z⁻¹ * (T⁻¹ * C⁻¹ * T * C) * Z := by group
       _ = 1 := by rw [hTc]; simp
-  have hDTcomm : D * T = T * D := commute_of_commutator_eq_one hDt
-  have hTCcomm : T * C = C * T := commute_of_commutator_eq_one hTc
-  have hCYcomm : C * Y = Y * C := commute_of_commutator_eq_one hCy
-  have hSCcomm : S * C = C * S := commute_of_commutator_eq_one hSc
+  have hDTcomm : D * T = T * D := (inverse_commutator_eq_one_iff_mul_eq_mul _ _).mp hDt
+  have hTCcomm : T * C = C * T := (inverse_commutator_eq_one_iff_mul_eq_mul _ _).mp hTc
+  have hCYcomm : C * Y = Y * C := (inverse_commutator_eq_one_iff_mul_eq_mul _ _).mp hCy
+  have hSCcomm : S * C = C * S := (inverse_commutator_eq_one_iff_mul_eq_mul _ _).mp hSc
   have hSeBack : S * E ^ 4 * S⁻¹ = E := by
     calc
       S * E ^ 4 * S⁻¹ = S * (S⁻¹ * E * S) * S⁻¹ := by rw [hSe]
@@ -288,7 +278,7 @@ theorem relator_eq_one (datum : Thue.StandingDatum) (i : Fin 14) :
   obtain ⟨hRd, hRe, hRCC, hKCC, hKEcomm, hTc⟩ :=
     transported_relations D E S R C T K Y Z
       hTdef hCdef hYdef hEdef hKdef hRdef hSd hSe hSc hDt hYe
-  have hDTcomm : D * T = T * D := commute_of_commutator_eq_one hDt
+  have hDTcomm : D * T = T * D := (inverse_commutator_eq_one_iff_mul_eq_mul _ _).mp hDt
   have h3raw := hrel (3 : Fin 9)
   change Word.eval x (rho datum.F datum.E datum.P 3) = 1 at h3raw
   simp only [rho, oldSurvivingRelator, oldSimulationRelator, Fin.isValue, Fin.coe_ofNat_eq_mod,
@@ -326,10 +316,10 @@ theorem relator_eq_one (datum : Thue.StandingDatum) (i : Fin 14) :
   let U : (presentationOf datum).Group :=
     (datum.P.map fun j => if j = 0 then S else R).prod
   have hPK : (U⁻¹ * T * U) * K = K * (U⁻¹ * T * U) := by
-    apply commute_of_commutator_eq_one
+    apply (inverse_commutator_eq_one_iff_mul_eq_mul _ _).mp
     simpa [U, mul_assoc] using h7raw
   have hKP : K⁻¹ * (U⁻¹ * T * U)⁻¹ * K * (U⁻¹ * T * U) = 1 :=
-    commutator_eq_one_of_commute hPK.symm
+    (inverse_commutator_eq_one_iff_mul_eq_mul _ _).mpr hPK.symm
   let b : Fin 7 → (presentationOf datum).Group :=
     fun j => Word.eval x (generatorWord j)
   have hb : b = ![D, E, S, R, C, T, K] := by
@@ -351,7 +341,7 @@ theorem relator_eq_one (datum : Thue.StandingDatum) (i : Fin 14) :
   · simpa [Borisov.presentation, Borisov.s1Word, Borisov.cWord,
       Word.eval_product] using hSc
   · simpa [Borisov.presentation, Borisov.s2Word, Borisov.cWord,
-      Word.eval_product] using (commutator_eq_one_of_commute hRCC)
+      Word.eval_product] using ((inverse_commutator_eq_one_iff_mul_eq_mul _ _).mpr hRCC)
   · simpa [Borisov.presentation, Borisov.simulationRelator,
       Borisov.dWord, Borisov.eWord, Borisov.s1Word, Borisov.s2Word,
       Borisov.cWord, Borisov.positiveWord, Word.eval_product] using h3raw
@@ -364,11 +354,11 @@ theorem relator_eq_one (datum : Thue.StandingDatum) (i : Fin 14) :
   · simpa [Borisov.presentation, Borisov.tWord, Borisov.cWord,
       Word.eval_product] using hTc
   · simpa [Borisov.presentation, Borisov.tWord, Borisov.dWord,
-      Word.eval_product] using (commutator_eq_one_of_commute hDTcomm.symm)
+      Word.eval_product] using ((inverse_commutator_eq_one_iff_mul_eq_mul _ _).mpr hDTcomm.symm)
   · simpa [Borisov.presentation, Borisov.kWord, Borisov.cWord,
-      Word.eval_product] using (commutator_eq_one_of_commute hKCC)
+      Word.eval_product] using ((inverse_commutator_eq_one_iff_mul_eq_mul _ _).mpr hKCC)
   · simpa [Borisov.presentation, Borisov.kWord, Borisov.eWord,
-      Word.eval_product] using (commutator_eq_one_of_commute hKEcomm)
+      Word.eval_product] using ((inverse_commutator_eq_one_iff_mul_eq_mul _ _).mpr hKEcomm)
   · simpa [Borisov.presentation, Borisov.pWord, Borisov.kWord,
       Borisov.tWord, Borisov.s1Word, Borisov.s2Word,
       Borisov.positiveWord, U, Word.eval_product, mul_assoc] using hKP

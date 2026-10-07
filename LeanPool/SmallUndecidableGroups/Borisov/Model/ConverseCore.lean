@@ -6,6 +6,7 @@ Authors: Marc Kegel, Shana Yunsheng Li, Qiuyu Ren
 
 module
 
+public import LeanPool.SmallUndecidableGroups.GroupTheory.CommutatorLemmas
 public import LeanPool.SmallUndecidableGroups.GroupTheory.HNNLemmas
 public import LeanPool.SmallUndecidableGroups.Borisov.Model.ContextNormalForm
 
@@ -18,16 +19,14 @@ Part of the dependency closure of the small undecidable group constructions.
 @[expose] public section
 
 namespace Undecidability
+
+open CommutatorLemmas
+
 namespace BorisovDoubleCosetBridge
 
 open HNNLemmas
 
 variable {G : Type*} [Group G]
-
-private theorem inverse_commutator_eq_one_iff_commute (a b : G) :
-    a⁻¹ * b⁻¹ * a * b = 1 ↔ Commute a b := by
-  simpa only [commutatorElement_def, inv_inv, Commute.inv_inv_iff] using
-    (commutatorElement_eq_one_iff_commute (g₁ := a⁻¹) (g₂ := b⁻¹))
 
 /-- Sharp form of the last two HNN reductions in Borisov's converse.
 

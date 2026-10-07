@@ -173,6 +173,7 @@ public import LeanPool.MassFormula.Imports
 public import LeanPool.MatchingLogic.Imports
 public import LeanPool.MaxFlowMinCut.Imports
 public import LeanPool.MetricCodes.Imports
+public import LeanPool.MicrowaveNetworks.Imports
 public import LeanPool.MinModulusUniqueMultisetSum.Imports
 public import LeanPool.MinimumDegreeMatching.Imports
 public import LeanPool.MisereGames.Imports

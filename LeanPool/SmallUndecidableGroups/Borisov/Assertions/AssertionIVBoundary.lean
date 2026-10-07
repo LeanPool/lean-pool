@@ -44,23 +44,18 @@ def eExponent : Base →* Multiplicative ℤ :=
   simp [eExponent, e]
 
 /-- The cyclic-group homomorphism multiplying an exponent by four. -/
-def scaleFour : Multiplicative ℤ →* Multiplicative ℤ where
-  toFun z := Multiplicative.ofAdd (4 * Multiplicative.toAdd z)
-  map_one' := by simp
-  map_mul' x y := by
-    apply Multiplicative.toAdd.injective
-    simp [mul_add]
+abbrev scaleFour : Multiplicative ℤ →* Multiplicative ℤ := intFour
 
 @[simp] theorem eExponent_alpha (x : Base) :
     Multiplicative.toAdd (eExponent (alpha x)) =
       4 * Multiplicative.toAdd (eExponent x) := by
-  have hhom : eExponent.comp alpha = scaleFour.comp eExponent := by
+  have hhom : eExponent.comp alpha = intFour.comp eExponent := by
     rw [alpha_eq_lift]
     apply FreeGroup.ext_hom
     intro i
     fin_cases i <;> simp only [eExponent, Nat.succ_eq_add_one, Nat.reduceAdd, d, Fin.isValue,
       e, Fin.zero_eta,
-      MonoidHom.coe_comp, comp_apply, FreeGroup.lift_apply_of, Matrix.cons_val_zero, scaleFour,
+      MonoidHom.coe_comp, comp_apply, FreeGroup.lift_apply_of, Matrix.cons_val_zero, intFour,
       Int.ofAdd_mul, MonoidHom.coe_mk, OneHom.coe_mk, toAdd_one, zpow_ofNat, pow_zero,
       Fin.mk_one, Matrix.cons_val_one, Matrix.cons_val_fin_one, map_pow, toAdd_ofAdd, pow_one]
     all_goals apply Multiplicative.toAdd.injective
@@ -70,14 +65,14 @@ def scaleFour : Multiplicative ℤ →* Multiplicative ℤ where
 @[simp] theorem dExponent_beta (x : Base) :
     Multiplicative.toAdd (dExponent (beta x)) =
       4 * Multiplicative.toAdd (dExponent x) := by
-  have hhom : dExponent.comp beta = scaleFour.comp dExponent := by
+  have hhom : dExponent.comp beta = intFour.comp dExponent := by
     rw [beta_eq_lift]
     apply FreeGroup.ext_hom
     intro i
     fin_cases i <;> simp only [dExponent, Nat.succ_eq_add_one, Nat.reduceAdd, d, Fin.isValue,
       e, Fin.zero_eta,
       MonoidHom.coe_comp, comp_apply, FreeGroup.lift_apply_of, Matrix.cons_val_zero, map_pow,
-      scaleFour, Int.ofAdd_mul, MonoidHom.coe_mk, OneHom.coe_mk, toAdd_ofAdd, zpow_ofNat,
+      intFour, Int.ofAdd_mul, MonoidHom.coe_mk, OneHom.coe_mk, toAdd_ofAdd, zpow_ofNat,
       pow_one, Fin.mk_one, Matrix.cons_val_one, Matrix.cons_val_fin_one, toAdd_one, pow_zero]
     all_goals apply Multiplicative.toAdd.injective
     all_goals norm_num
