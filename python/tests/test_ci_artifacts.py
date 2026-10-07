@@ -5,6 +5,7 @@ from __future__ import annotations
 import io
 import json
 import os
+import stat
 import subprocess
 import tarfile
 import zipfile
@@ -252,8 +253,10 @@ def test_unchanged_files_share_disk_until_install(repository: Path, monkeypatch)
     """Staging consumes space for changed files while preserving original metadata."""
     archive = repository / "build.tar.gz"
     output = repository / ".lake/build/lib/lean/LeanPool.olean"
+    output.chmod(0o755)
     ci_artifacts.pack_build(repository, archive)
     archived_time = output.stat().st_mtime_ns
+    output.chmod(0o600)
     os.utime(output, ns=(1_000_000_000, 1_000_000_000))
     original = ci_artifacts._extract_build
 
@@ -262,12 +265,14 @@ def test_unchanged_files_share_disk_until_install(repository: Path, monkeypatch)
         staged = temporary / output.relative_to(repository)
         assert staged.samefile(output)
         assert output.stat().st_mtime_ns == 1_000_000_000
+        assert stat.S_IMODE(output.stat().st_mode) == 0o600
         assert output.stat().st_nlink == 2
         return result
 
     monkeypatch.setattr(ci_artifacts, "_extract_build", extract)
     assert ci_artifacts.restore_build(repository, archive)
-    assert output.stat().st_mtime == pytest.approx(archived_time / 1_000_000_000)
+    assert abs(output.stat().st_mtime_ns - archived_time) <= 1_000
+    assert stat.S_IMODE(output.stat().st_mode) == 0o755
     assert output.stat().st_nlink == 1
 
 
