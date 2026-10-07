@@ -6,7 +6,6 @@ Authors: Scott Armstrong, Vlad Vicol
 
 module
 
-public import LeanPool.CaffarelliKohnNirenberg.ExtendedSupport
 public import LeanPool.CaffarelliKohnNirenberg.Statements.TheoremA
 public import LeanPool.CaffarelliKohnNirenberg.Statements.TheoremB
 public import LeanPool.CaffarelliKohnNirenberg.Statements.TheoremC
