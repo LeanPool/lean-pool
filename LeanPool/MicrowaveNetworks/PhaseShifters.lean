@@ -6,9 +6,6 @@ Authors: Matteo Nerini
 module
 
 public import LeanPool.MicrowaveNetworks.Basic
-public import Mathlib.Analysis.Complex.Exponential
-public import Mathlib.Data.Matrix.Block
-public import Mathlib.Data.Matrix.PEquiv
 
 /-!
 # Computing with phase shifters
@@ -37,96 +34,10 @@ public section
 
 namespace MiLAC.PhaseShifters
 
-/-! ## Components -/
-
-/-- A matched network with `n` inputs and `n` outputs, represented by its transmission
-scattering matrix. -/
-abbrev Network (n : ℕ) := Matrix (Fin n) (Fin n) ℂ
-
-/-- An interconnection, directly connecting an input to an output. -/
-def interconnection : Network 1 :=
-  1
-
-/-- A phase shifter with phase shift `φ`. -/
-noncomputable def phaseShifter (φ : ℝ) : Network 1 :=
-  fun _ _ => Complex.exp (φ * Complex.I)
-
-/-- A permutation network, reordering the signals according to `σ`. -/
-def permutationNetwork {n : ℕ} (σ : Equiv.Perm (Fin n)) : Network n :=
-  σ.toPEquiv.toMatrix
-
-/-- An interconnection is a phase shifter with zero phase. -/
-lemma interconnection_eq_phaseShifter_zero :
-    interconnection = phaseShifter 0 := by
-  ext i j
-  fin_cases i
-  fin_cases j
-  simp [interconnection, phaseShifter]
-
-/-! ## Series, parallel, and implementable networks -/
-
-/-- The series of two networks, where `A` is followed by `B`. -/
-def series {n : ℕ} (A B : Network n) : Network n :=
-  B * A
-
-/-- The parallel of two networks. -/
-def parallel {n m : ℕ} (A : Network n) (B : Network m) : Network (n + m) :=
-  Matrix.reindex finSumFinEquiv finSumFinEquiv (Matrix.fromBlocks A 0 0 B)
-
-/-- The ports of the first and of the second network in a parallel are distinct. -/
-lemma castAdd_ne_natAdd {n m : ℕ} (i : Fin n) (j : Fin m) :
-    Fin.castAdd m i ≠ Fin.natAdd n j :=
-  MiLAC.castAdd_ne_natAdd i j
-
-/-- The ports of the second and of the first network in a parallel are distinct. -/
-lemma natAdd_ne_castAdd {n m : ℕ} (i : Fin m) (j : Fin n) :
-    Fin.natAdd n i ≠ Fin.castAdd m j :=
-  MiLAC.natAdd_ne_castAdd i j
-
-/-- The upper-left block of a parallel is the first network. -/
-@[simp] lemma parallel_castAdd_castAdd {n m : ℕ} (A : Network n) (B : Network m)
-    (i j : Fin n) : parallel A B (Fin.castAdd m i) (Fin.castAdd m j) = A i j := by
-  simp [parallel, Matrix.reindex_apply]
-
-/-- The upper-right block of a parallel is zero. -/
-@[simp] lemma parallel_castAdd_natAdd {n m : ℕ} (A : Network n) (B : Network m)
-    (i : Fin n) (j : Fin m) : parallel A B (Fin.castAdd m i) (Fin.natAdd n j) = 0 := by
-  simp [parallel, Matrix.reindex_apply]
-
-/-- The lower-left block of a parallel is zero. -/
-@[simp] lemma parallel_natAdd_castAdd {n m : ℕ} (A : Network n) (B : Network m)
-    (i : Fin m) (j : Fin n) : parallel A B (Fin.natAdd n i) (Fin.castAdd m j) = 0 := by
-  simp [parallel, Matrix.reindex_apply]
-
-/-- The lower-right block of a parallel is the second network. -/
-@[simp] lemma parallel_natAdd_natAdd {n m : ℕ} (A : Network n) (B : Network m)
-    (i j : Fin m) : parallel A B (Fin.natAdd n i) (Fin.natAdd n j) = B i j := by
-  simp [parallel, Matrix.reindex_apply]
-
-/-- A network implementable with interconnections, phase shifters, and permutation networks. -/
-inductive Implementable : {n : ℕ} → Network n → Prop where
-  /-- An interconnection is implementable. -/
-  | ic : Implementable interconnection
-  /-- A phase shifter is implementable. -/
-  | ps (φ : ℝ) : Implementable (phaseShifter φ)
-  /-- A permutation network is implementable. -/
-  | pn {n : ℕ} (σ : Equiv.Perm (Fin n)) : Implementable (permutationNetwork σ)
-  /-- The series of two implementable networks is implementable. -/
-  | series {n : ℕ} {A B : Network n} :
-      Implementable A → Implementable B → Implementable (series A B)
-  /-- The parallel of two implementable networks is implementable. -/
-  | parallel {n m : ℕ} {A : Network n} {B : Network m} :
-      Implementable A → Implementable B → Implementable (parallel A B)
-
 /-! ## Characterization of implementable networks -/
 
-/-- The diagonal matrix `diag(exp(j φ₁), …, exp(j φₙ))`. -/
-noncomputable def phaseDiagonal {n : ℕ}
-    (φ : Fin n → ℝ) : Network n :=
-  Matrix.diagonal (fun i => Complex.exp (φ i * Complex.I))
-
 /-- The permuted diagonal matrix `P_σ diag(exp(j φ₁), …, exp(j φₙ))`. -/
-noncomputable def permutedPhaseDiagonal {n : ℕ}
+@[expose] noncomputable def permutedPhaseDiagonal {n : ℕ}
     (φ : Fin n → ℝ) (σ : Equiv.Perm (Fin n)) : Network n :=
   σ.toPEquiv.toMatrix *
     Matrix.diagonal (fun i => Complex.exp (φ i * Complex.I))
@@ -141,24 +52,6 @@ noncomputable def permutedPhaseDiagonal {n : ℕ}
   rfl
 
 /-! ### Sufficiency -/
-
-/-- A diagonal matrix of phases is implementable. -/
-lemma implementable_if_phaseDiagonal {n : ℕ} (φ : Fin n → ℝ) :
-    Implementable (phaseDiagonal φ) := by
-  induction n with
-  | zero =>
-      convert Implementable.pn (Equiv.refl (Fin 0)) using 1
-      ext i
-      exact Fin.elim0 i
-  | succ n ih =>
-      have hdecomp : phaseDiagonal φ =
-          parallel (phaseDiagonal (fun i => φ (Fin.castAdd 1 i)))
-            (phaseShifter (φ (Fin.natAdd n 0))) := by
-        ext i j
-        induction i using Fin.addCases <;> induction j using Fin.addCases <;>
-          simp [phaseDiagonal, phaseShifter, Matrix.diagonal_apply, Fin.fin_one_eq_zero]
-      rw [hdecomp]
-      exact Implementable.parallel (ih _) (Implementable.ps _)
 
 /-- A permuted diagonal matrix of phases is implementable (sufficient condition). -/
 theorem implementable_if_permutedPhaseDiagonal {n : ℕ}

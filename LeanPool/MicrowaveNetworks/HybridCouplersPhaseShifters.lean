@@ -8,8 +8,6 @@ module
 public import LeanPool.MicrowaveNetworks.Basic
 public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
 public import Mathlib.LinearAlgebra.Matrix.Notation
-public import Mathlib.Data.Matrix.Block
-public import Mathlib.Data.Matrix.PEquiv
 
 /-!
 # Computing with hybrid couplers and phase shifters
@@ -46,75 +44,9 @@ public section
 
 namespace MiLAC.HybridCouplersPhaseShifters
 
-/-! ## Components -/
-
-/-- A matched network with `n` inputs and `n` outputs, represented by its transmission
-scattering matrix. -/
-abbrev Network (n : ℕ) := Matrix (Fin n) (Fin n) ℂ
-
-/-- An interconnection, directly connecting an input to an output. -/
-def interconnection : Network 1 :=
-  1
-
-/-- A phase shifter with phase shift `φ`. -/
-noncomputable def phaseShifter (φ : ℝ) : Network 1 :=
-  fun _ _ => Complex.exp (φ * Complex.I)
-
-/-- A permutation network, reordering the signals according to `σ`. -/
-def permutationNetwork {n : ℕ} (σ : Equiv.Perm (Fin n)) : Network n :=
-  σ.toPEquiv.toMatrix
-
 /-- A hybrid coupler, with transmission scattering matrix `(1/√2) [[j, 1], [1, j]]`. -/
-noncomputable def hybridCoupler : Network 2 :=
+@[expose] noncomputable def hybridCoupler : Network 2 :=
   (1 / Real.sqrt 2 : ℂ) • !![Complex.I, 1; 1, Complex.I]
-
-/-- An interconnection is a phase shifter with zero phase. -/
-lemma interconnection_eq_phaseShifter_zero :
-    interconnection = phaseShifter 0 := by
-  ext i j
-  fin_cases i
-  fin_cases j
-  simp [interconnection, phaseShifter]
-
-/-! ## Series, parallel, and implementable networks -/
-
-/-- The series of two networks, where `A` is followed by `B`. -/
-def series {n : ℕ} (A B : Network n) : Network n :=
-  B * A
-
-/-- The parallel of two networks. -/
-def parallel {n m : ℕ} (A : Network n) (B : Network m) : Network (n + m) :=
-  Matrix.reindex finSumFinEquiv finSumFinEquiv (Matrix.fromBlocks A 0 0 B)
-
-/-- The ports of the first and of the second network in a parallel are distinct. -/
-lemma castAdd_ne_natAdd {n m : ℕ} (i : Fin n) (j : Fin m) :
-    Fin.castAdd m i ≠ Fin.natAdd n j :=
-  MiLAC.castAdd_ne_natAdd i j
-
-/-- The ports of the second and of the first network in a parallel are distinct. -/
-lemma natAdd_ne_castAdd {n m : ℕ} (i : Fin m) (j : Fin n) :
-    Fin.natAdd n i ≠ Fin.castAdd m j :=
-  MiLAC.natAdd_ne_castAdd i j
-
-/-- The upper-left block of a parallel is the first network. -/
-@[simp] lemma parallel_castAdd_castAdd {n m : ℕ} (A : Network n) (B : Network m)
-    (i j : Fin n) : parallel A B (Fin.castAdd m i) (Fin.castAdd m j) = A i j := by
-  simp [parallel, Matrix.reindex_apply]
-
-/-- The upper-right block of a parallel is zero. -/
-@[simp] lemma parallel_castAdd_natAdd {n m : ℕ} (A : Network n) (B : Network m)
-    (i : Fin n) (j : Fin m) : parallel A B (Fin.castAdd m i) (Fin.natAdd n j) = 0 := by
-  simp [parallel, Matrix.reindex_apply]
-
-/-- The lower-left block of a parallel is zero. -/
-@[simp] lemma parallel_natAdd_castAdd {n m : ℕ} (A : Network n) (B : Network m)
-    (i : Fin m) (j : Fin n) : parallel A B (Fin.natAdd n i) (Fin.castAdd m j) = 0 := by
-  simp [parallel, Matrix.reindex_apply]
-
-/-- The lower-right block of a parallel is the second network. -/
-@[simp] lemma parallel_natAdd_natAdd {n m : ℕ} (A : Network n) (B : Network m)
-    (i j : Fin m) : parallel A B (Fin.natAdd n i) (Fin.natAdd n j) = B i j := by
-  simp [parallel, Matrix.reindex_apply]
 
 /-- A network implementable with hybrid couplers, interconnections, phase shifters, and
 permutation networks. -/
@@ -168,7 +100,7 @@ lemma parallel_permutationNetwork {n m : ℕ}
 
 /-- Two networks (possibly of syntactically different sizes) are equal up to a relabelling of
 their ports. -/
-def NetEquiv (X Y : Σ n : ℕ, Network n) : Prop :=
+@[expose] def NetEquiv (X Y : Σ n : ℕ, Network n) : Prop :=
   ∃ e : Fin X.1 ≃ Fin Y.1, X.2 = Y.2.submatrix e e
 
 /-- Equality up to a relabelling of the ports is transitive. -/
@@ -243,16 +175,28 @@ lemma implementable_submatrix {n : ℕ} {A : Network n} (hA : Implementable A)
   exact implementable_mul (implementable_mul (Implementable.pn σ) hA)
     (Implementable.pn τ.symm)
 
-/-- A matrix indexed by a finite type is implementable if it is implementable after any
-relabelling of its ports by `Fin n`. -/
-def ImplementableOn {ι : Type*} (M : Matrix ι ι ℂ) : Prop :=
-  ∀ (n : ℕ) (e : ι ≃ Fin n), Implementable (Matrix.reindex e e M)
+/-- A matrix is implementable on its index type if a finite port relabelling gives
+an implementable network. The relabelling witness rules out infinite index types. -/
+@[expose] def ImplementableOn {ι : Type*} (M : Matrix ι ι ℂ) : Prop :=
+  ∃ (n : ℕ) (e : ι ≃ Fin n), Implementable (Matrix.reindex e e M)
 
-/-- It suffices to check a single relabelling. -/
+/-- An infinite collection of ports cannot be implemented by a finite network. -/
+lemma not_implementableOn_of_infinite {ι : Type*} [Infinite ι] (M : Matrix ι ι ℂ) :
+    ¬ImplementableOn M := by
+  rintro ⟨n, e, _⟩
+  exact (Finite.of_injective e e.injective).false
+
+/-- An implementation after one relabelling witnesses implementability. -/
 lemma ImplementableOn.of_equiv {ι : Type*}
     {M : Matrix ι ι ℂ} {m : ℕ} (g : ι ≃ Fin m)
-    (h : Implementable (Matrix.reindex g g M)) : ImplementableOn M := by
-  intro n e
+    (h : Implementable (Matrix.reindex g g M)) : ImplementableOn M :=
+  ⟨m, g, h⟩
+
+/-- An implementable matrix is implementable after any finite port relabelling. -/
+lemma ImplementableOn.to_equiv {ι : Type*} {M : Matrix ι ι ℂ}
+    (h : ImplementableOn M) (n : ℕ) (e : ι ≃ Fin n) :
+    Implementable (Matrix.reindex e e M) := by
+  obtain ⟨m, g, h⟩ := h
   have hmn : m = n := by simpa using Fintype.card_congr (g.symm.trans e)
   subst hmn
   have hM : Matrix.reindex e e M =
@@ -267,39 +211,37 @@ lemma implementableOn_iff {n : ℕ} (A : Network n) :
     ImplementableOn A ↔ Implementable A := by
   constructor
   · intro h
-    simpa using h n (Equiv.refl _)
+    simpa using h.to_equiv n (Equiv.refl _)
   · intro h
     exact ImplementableOn.of_equiv (Equiv.refl _) (by simpa using h)
 
 /-- Implementability is invariant under a relabelling of the ports. -/
-lemma ImplementableOn.reindex {ι κ : Type*} {M : Matrix ι ι ℂ} (h : ImplementableOn M) (f : ι ≃ κ) :
+lemma ImplementableOn.reindex {ι κ : Type*}
+    {M : Matrix ι ι ℂ} (h : ImplementableOn M) (f : ι ≃ κ) :
     ImplementableOn (Matrix.reindex f f M) := by
-  intro n e
-  have hM : Matrix.reindex e e (Matrix.reindex f f M) =
-      Matrix.reindex (f.trans e) (f.trans e) M := by
-    ext i j
-    simp [Matrix.reindex_apply]
-  rw [hM]
-  exact h n _
+  obtain ⟨n, e, h⟩ := h
+  refine ImplementableOn.of_equiv (f.symm.trans e) ?_
+  convert h using 1
+  ext i j
+  simp [Matrix.reindex_apply]
 
 /-- The product of two implementable matrices is implementable. -/
 lemma ImplementableOn.mul {ι : Type*} [Fintype ι] {A B : Matrix ι ι ℂ}
     (hA : ImplementableOn A) (hB : ImplementableOn B) : ImplementableOn (A * B) := by
-  intro n e
+  obtain ⟨n, e, hA⟩ := hA
+  refine ImplementableOn.of_equiv e ?_
   have hM : Matrix.reindex e e (A * B) = Matrix.reindex e e A * Matrix.reindex e e B := by
     simp [Matrix.reindex_apply, Matrix.submatrix_mul_equiv]
   rw [hM]
-  exact implementable_mul (hA n e) (hB n e)
+  exact implementable_mul hA (hB.to_equiv n e)
 
 /-- A block diagonal matrix of two implementable matrices is implementable. -/
-lemma ImplementableOn.fromBlocks {ι κ : Type*} [Finite ι] [Finite κ]
+lemma ImplementableOn.fromBlocks {ι κ : Type*}
     {A : Matrix ι ι ℂ} {B : Matrix κ κ ℂ}
     (hA : ImplementableOn A) (hB : ImplementableOn B) :
     ImplementableOn (Matrix.fromBlocks A 0 0 B) := by
-  let := Fintype.ofFinite ι
-  let := Fintype.ofFinite κ
-  let eA := Fintype.equivFin ι
-  let eB := Fintype.equivFin κ
+  obtain ⟨n, eA, hA⟩ := hA
+  obtain ⟨m, eB, hB⟩ := hB
   refine ImplementableOn.of_equiv ((Equiv.sumCongr eA eB).trans finSumFinEquiv) ?_
   have hM : Matrix.reindex ((Equiv.sumCongr eA eB).trans finSumFinEquiv)
       ((Equiv.sumCongr eA eB).trans finSumFinEquiv) (Matrix.fromBlocks A 0 0 B) =
@@ -308,7 +250,7 @@ lemma ImplementableOn.fromBlocks {ι κ : Type*} [Finite ι] [Finite κ]
     induction i using Fin.addCases <;> induction j using Fin.addCases <;>
       simp [Matrix.reindex_apply]
   rw [hM]
-  exact Implementable.parallel (hA _ eA) (hB _ eB)
+  exact Implementable.parallel hA hB
 
 /-- A matrix with no ports is implementable. -/
 lemma implementableOn_of_isEmpty {ι : Type*} [IsEmpty ι]
@@ -332,7 +274,7 @@ lemma ImplementableOn.blockDiagonal_one {m : Type*}
   exact h.reindex _
 
 /-- A block diagonal matrix of implementable blocks is implementable. -/
-lemma ImplementableOn.blockDiagonal {m : Type*} [Finite m] :
+lemma ImplementableOn.blockDiagonal {m : Type*} :
     ∀ (N : ℕ) (g : Fin N → Matrix m m ℂ), (∀ c, ImplementableOn (g c)) →
       ImplementableOn (Matrix.blockDiagonal g)
   | 0, g, _ => implementableOn_of_isEmpty _
@@ -363,17 +305,12 @@ lemma ImplementableOn.submatrix_symm {ι : Type*}
     ext i j
     simp [Matrix.reindex_apply]
   rw [hM]
-  exact implementable_mul (h n e₁) (Implementable.pn _)
+  exact implementable_mul (h.to_equiv n e₁) (Implementable.pn _)
 
 /-! ## Characterization of implementable networks -/
 
-/-- The diagonal matrix `diag(exp(j φ₁), …, exp(j φₙ))`. -/
-noncomputable def phaseDiagonal {n : ℕ}
-    (φ : Fin n → ℝ) : Network n :=
-  Matrix.diagonal (fun i => Complex.exp (φ i * Complex.I))
-
 /-- The 2 × 2 block `D(θ₁₁, θ₁₂, θ₂₁)`. -/
-noncomputable def block (θ₁₁ θ₁₂ θ₂₁ : ℝ) : Network 2 :=
+@[expose] noncomputable def block (θ₁₁ θ₁₂ θ₂₁ : ℝ) : Network 2 :=
   (1 / Real.sqrt 2 : ℂ) • !![
     Complex.exp (θ₁₁ * Complex.I),
     Complex.exp (θ₁₂ * Complex.I);
@@ -382,7 +319,7 @@ noncomputable def block (θ₁₁ θ₁₂ θ₂₁ : ℝ) : Network 2 :=
 
 /-- The block diagonal matrix
 `diag(D(θ₁₁⁽¹⁾, θ₁₂⁽¹⁾, θ₂₁⁽¹⁾), …, D(θ₁₁⁽ᶜ⁾, θ₁₂⁽ᶜ⁾, θ₂₁⁽ᶜ⁾), exp(j φ₁), …, exp(j φ_S))`. -/
-noncomputable def blockDiagonal {C S : ℕ}
+@[expose] noncomputable def blockDiagonal {C S : ℕ}
     (θ₁₁ θ₁₂ θ₂₁ : Fin C → ℝ) (φ : Fin S → ℝ) : Network (2 * C + S) :=
   parallel
     (Matrix.reindex finProdFinEquiv finProdFinEquiv
@@ -410,7 +347,7 @@ structure Layer (n : ℕ) where
 
 /-- The product `P_L D_L ⋯ P_1 D_1 P_0`, with layers listed from `L` down to `1`
 (`Matrix.reindex` only renames the `2 C + S` ports of `D_ℓ` as the `n` ports of the network). -/
-noncomputable def layered {n : ℕ} (σ₀ : Equiv.Perm (Fin n)) : List (Layer n) → Network n
+@[expose] noncomputable def layered {n : ℕ} (σ₀ : Equiv.Perm (Fin n)) : List (Layer n) → Network n
   | [] => permutationNetwork σ₀
   | layer :: layers =>
       permutationNetwork layer.σ *
@@ -420,23 +357,20 @@ noncomputable def layered {n : ℕ} (σ₀ : Equiv.Perm (Fin n)) : List (Layer n
 
 /-! ### Sufficiency -/
 
+/-- Every phase-only implementation is also an implementation with hybrid couplers available. -/
+lemma implementable_of_phaseShifters {n : ℕ} {A : Network n}
+    (h : MiLAC.PhaseShifters.Implementable A) : Implementable A := by
+  induction h with
+  | ic => exact Implementable.ic
+  | ps φ => exact Implementable.ps φ
+  | pn σ => exact Implementable.pn σ
+  | series _ _ hA hB => exact Implementable.series hA hB
+  | parallel _ _ hA hB => exact Implementable.parallel hA hB
+
 /-- A diagonal matrix of phases is implementable. -/
 lemma implementable_if_phaseDiagonal {n : ℕ} (φ : Fin n → ℝ) :
-    Implementable (phaseDiagonal φ) := by
-  induction n with
-  | zero =>
-      convert Implementable.pn (Equiv.refl (Fin 0)) using 1
-      ext i
-      exact Fin.elim0 i
-  | succ n ih =>
-      have hdecomp : phaseDiagonal φ =
-          parallel (phaseDiagonal (fun i => φ (Fin.castAdd 1 i)))
-            (phaseShifter (φ (Fin.natAdd n 0))) := by
-        ext i j
-        induction i using Fin.addCases <;> induction j using Fin.addCases <;>
-          simp [phaseDiagonal, phaseShifter, Matrix.diagonal_apply, Fin.fin_one_eq_zero]
-      rw [hdecomp]
-      exact Implementable.parallel (ih _) (Implementable.ps _)
+    Implementable (phaseDiagonal φ) :=
+  implementable_of_phaseShifters (MiLAC.PhaseShifters.implementable_if_phaseDiagonal φ)
 
 /-- A block `D(θ₁₁, θ₁₂, θ₂₁)` is implementable, with a phase shifter, a hybrid coupler, and
 two phase shifters in series. -/
@@ -461,7 +395,7 @@ lemma implementable_if_blockDiagonal {C S : ℕ} (θ₁₁ θ₁₂ θ₂₁ : F
     Implementable (blockDiagonal θ₁₁ θ₁₂ θ₂₁ φ) :=
   Implementable.parallel
     ((ImplementableOn.blockDiagonal C _ fun _ =>
-      (implementableOn_iff _).2 (implementable_if_block _ _ _)) _ finProdFinEquiv)
+      (implementableOn_iff _).2 (implementable_if_block _ _ _)).to_equiv _ finProdFinEquiv)
     (implementable_if_phaseDiagonal φ)
 
 /-- A network admitting a `layered` decomposition is implementable (sufficient condition). -/
@@ -471,14 +405,14 @@ theorem implementable_if_layered {n : ℕ} (σ₀ : Equiv.Perm (Fin n)) (layers 
   | nil => exact Implementable.pn σ₀
   | cons layer layers ih =>
       have hD := ((implementableOn_iff _).2
-        (implementable_if_blockDiagonal layer.θ₁₁ layer.θ₁₂ layer.θ₂₁ layer.φ)) n
+        (implementable_if_blockDiagonal layer.θ₁₁ layer.θ₁₂ layer.θ₂₁ layer.φ)).to_equiv n
           (finCongr layer.size)
       exact implementable_mul (implementable_mul (Implementable.pn _) hD) ih
 
 /-! ### Necessity -/
 
 /-- A network admits a `layered` decomposition. -/
-def IsLayered {n : ℕ} (S : Network n) : Prop :=
+@[expose] def IsLayered {n : ℕ} (S : Network n) : Prop :=
   ∃ σ₀ : Equiv.Perm (Fin n), ∃ layers : List (Layer n), S = layered σ₀ layers
 
 /-- A permutation network admits a `layered` decomposition, with no layers. -/
@@ -507,7 +441,7 @@ lemma IsLayered.series {n : ℕ} {A B : Network n} (hA : IsLayered A) (hB : IsLa
   | cons layer rest ih =>
       obtain ⟨σ₀, layers, h⟩ := ih
       refine ⟨σ₀, layer :: layers, ?_⟩
-      simp only [MiLAC.HybridCouplersPhaseShifters.series, layered, Matrix.mul_assoc] at h ⊢
+      simp only [MiLAC.series, layered, Matrix.mul_assoc] at h ⊢
       rw [h]
 
 /-- The product of two networks admitting a `layered` decomposition admits one. -/
@@ -591,9 +525,9 @@ lemma IsLayered.one_parallel {n : ℕ} {S : Network n}
 /-- The parallel of two networks admitting a `layered` decomposition admits one. -/
 lemma IsLayered.parallel {n m : ℕ} {A : Network n} {B : Network m}
     (hA : IsLayered A) (hB : IsLayered B) : IsLayered (parallel A B) := by
-  have hsplit : MiLAC.HybridCouplersPhaseShifters.parallel A B =
-      MiLAC.HybridCouplersPhaseShifters.parallel A 1 *
-        MiLAC.HybridCouplersPhaseShifters.parallel 1 B := by
+  have hsplit : MiLAC.parallel A B =
+      MiLAC.parallel A 1 *
+        MiLAC.parallel 1 B := by
     rw [parallel_mul, Matrix.mul_one, Matrix.one_mul]
   rw [hsplit]
   exact (hA.parallel_one m).mul (hB.one_parallel n)
@@ -656,13 +590,13 @@ theorem implementable_iff_layered {n : ℕ} {S : Network n} :
 
 /-- The `N × N` DFT matrix, `[F_N]_{i,k} = ω^{ik} / √N` with `ω = exp(-j 2π / N)` (indices
 start from 0 here, from 1 in the paper). -/
-noncomputable def dft (N : ℕ) : Network N :=
+@[expose] noncomputable def dft (N : ℕ) : Network N :=
   fun i k => (1 / Real.sqrt N : ℂ) *
     Complex.exp (-2 * Real.pi * Complex.I * (i : ℕ) * (k : ℕ) / N)
 
 /-- The 2 × 2 butterfly blocks of the radix-2 FFT, `(1/√2) [[1, ω^i], [1, -ω^i]]` with
 `ω = exp(-j 2π / 2^(L+1))`. -/
-noncomputable def butterfly (L : ℕ) (i : Fin (2 ^ L)) : Matrix (Fin 2) (Fin 2) ℂ :=
+@[expose] noncomputable def butterfly (L : ℕ) (i : Fin (2 ^ L)) : Matrix (Fin 2) (Fin 2) ℂ :=
   fun a b => (1 / Real.sqrt 2 : ℂ) * ((-1) ^ ((a : ℕ) * (b : ℕ)) *
     Complex.exp (-2 * Real.pi * Complex.I * (i : ℕ) * (b : ℕ) / 2 ^ (L + 1)))
 
