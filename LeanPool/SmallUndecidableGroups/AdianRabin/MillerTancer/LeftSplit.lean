@@ -99,19 +99,6 @@ def zeroImage (x : FreeGroup Unit) (hx : x ≠ 1) :
     _ = zeroMap (FreeGroup.of () ^ k) := by simp [zeroMap]
     _ = zeroMap x := congrArg zeroMap hxrepr
 
-private theorem neWord_prod_ne_one
-    {I : Type} {H : I → Type} [∀ i, Group (H i)]
-    {i j : I} (u : CoprodI.NeWord H i j) : u.prod ≠ 1 := by
-  classical
-  intro hu
-  have heq : u.toWord = (CoprodI.Word.empty : CoprodI.Word H) := by
-    apply (CoprodI.Word.equiv (M := H)).symm.injective
-    change u.prod = 1
-    exact hu
-  have hlist := congrArg CoprodI.Word.toList heq
-  exact u.toList_ne_nil (by
-    simpa [CoprodI.NeWord.toWord] using hlist)
-
 /-- A reduced representative of a mapped word, together with its evaluation and boundary properties.
 -/
 structure Image (w z : G)
@@ -159,7 +146,7 @@ theorem splitLift_injective_of_tailImage (w z : G)
     Function.Injective (splitLift w z) := by
   apply CoprodI.lift_injective_of_neWord_nontrivial
   intro i j u hu
-  apply neWord_prod_ne_one (image w z tailImage tailImage_prod u).word
+  apply CoprodI.NeWord.prod_ne_one (image w z tailImage tailImage_prod u).word
   calc
     (image w z tailImage tailImage_prod u).word.prod =
         splitLift w z u.prod :=

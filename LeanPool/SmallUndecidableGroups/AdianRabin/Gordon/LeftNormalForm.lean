@@ -763,19 +763,6 @@ noncomputable def imageList
       exact mergedImage degree hdegree hinjective x w hw
         i j r s hp hs rest tail hchain.1
 
-private theorem neWord_prod_ne_one {i j : LeftIndex}
-    (u : CoprodI.NeWord (LeftFactor G) i j) : u.prod ≠ 1 := by
-  classical
-  intro hu
-  have heq : u.toWord =
-      (CoprodI.Word.empty : CoprodI.Word (LeftFactor G)) := by
-    apply (CoprodI.Word.equiv (M := LeftFactor G)).symm.injective
-    change u.prod = 1
-    exact hu
-  have hlist := congrArg CoprodI.Word.toList heq
-  exact u.toList_ne_nil (by
-    simpa [CoprodI.NeWord.toWord] using hlist)
-
 private theorem evalBasis_eq_map_prod
     (degree : Fin d → ℕ) (x : Fin d → G) (w : G)
     (l : List (BasisIndex d × ℤ)) :
@@ -806,6 +793,6 @@ theorem splitBasis_lift_injective
         p rest hp hrest hlchain
       rw [← evalBasis_eq_map_prod]
       rw [← im.prod_eq]
-      exact neWord_prod_ne_one im.packed.word
+      exact CoprodI.NeWord.prod_ne_one im.packed.word
 
 end Undecidability.Gordon.LeftNormalForm
