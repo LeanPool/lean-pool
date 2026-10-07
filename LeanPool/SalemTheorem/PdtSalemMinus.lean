@@ -4,7 +4,6 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Stephanie Alexander
 -/
 module
-public import Mathlib.Tactic
 public import LeanPool.SalemTheorem.PdtSalemCircle
 public import LeanPool.SalemTheorem.PdtSalemArith
 
@@ -204,7 +203,7 @@ lemma exists_interior_grid_anchored (f : ℝ → ℝ) (hf : Continuous f) (L : �
   have hlow : ∀ j : ℕ, f 0 < ((k0 : ℝ) + 1 + (j : ℝ)) * Real.pi := by
     intro j
     have h1 : (0 : ℝ) ≤ (j : ℝ) * Real.pi := mul_nonneg (Nat.cast_nonneg j) hπ.le
-    nlinarith [hk0]
+    linarith only [hk0, hπ, h1]
   have hhigh : ∀ j : ℕ, j < L - 1 →
       ((k0 : ℝ) + 1 + (j : ℝ)) * Real.pi < f (2 * Real.pi) := by
     intro j hj
@@ -212,7 +211,7 @@ lemma exists_interior_grid_anchored (f : ℝ → ℝ) (hf : Continuous f) (L : �
     have hjL : (j : ℝ) + 2 ≤ (L : ℝ) := by exact_mod_cast (by omega : j + 2 ≤ L)
     have h2 : ((j : ℝ) + 2) * Real.pi ≤ (L : ℝ) * Real.pi :=
       mul_le_mul_of_nonneg_right hjL hπ.le
-    nlinarith [hk0]
+    linarith only [hk0, hπ, h2]
   have hIVT := intermediate_value_Icc
     (by positivity : (0 : ℝ) ≤ 2 * Real.pi) hf.continuousOn
   have hex : ∀ j : ℕ, j < L - 1 → ∃ t : ℝ, (0 < t ∧ t < 2 * Real.pi) ∧
@@ -328,13 +327,13 @@ lemma E_ne_one {t : ℝ} (ht : 0 < t) (ht2 : t < 2 * Real.pi) : E t ≠ 1 := by
   have hπ : (0 : ℝ) < Real.pi := Real.pi_pos
   rcases lt_trichotomy n 0 with h | h | h
   · have hn1 : (n : ℝ) ≤ -1 := by exact_mod_cast (by omega : n ≤ -1)
-    nlinarith [mul_le_mul_of_nonneg_right hn1
+    linarith only [hreal, ht, hπ, mul_le_mul_of_nonneg_right hn1
       (by positivity : (0 : ℝ) ≤ 2 * Real.pi)]
   · rw [h] at hreal
     norm_num at hreal
     linarith
   · have hn1 : (1 : ℝ) ≤ (n : ℝ) := by exact_mod_cast (by omega : 1 ≤ n)
-    nlinarith [mul_le_mul_of_nonneg_right hn1
+    linarith only [hreal, ht2, mul_le_mul_of_nonneg_right hn1
       (by positivity : (0 : ℝ) ≤ 2 * Real.pi)]
 
 /-! ### The trichotomy -/
@@ -374,62 +373,23 @@ theorem salem_root_trichotomy_minus (alpha : ℝ) (roots : Multiset ℂ)
     · rw [h, norm_one]
     · obtain ⟨t, ht, rfl⟩ := Finset.mem_image.mp h
       exact norm_E t
-  have htaupos : (0 : ℝ) < tau := by linarith
-  have htau0 : ((tau : ℂ)) ≠ 0 := by
-    intro h
-    rw [Complex.ofReal_eq_zero] at h
-    linarith
-  have htau_norm : ‖((tau : ℂ))‖ = tau := by
-    rw [Complex.norm_real, Real.norm_eq_abs, abs_of_pos htaupos]
-  have htauinv_norm : ‖((tau : ℂ))⁻¹‖ = tau⁻¹ := by
-    rw [norm_inv, htau_norm]
-  have htinv1 : tau⁻¹ < 1 := inv_lt_one_of_one_lt₀ htau
-  have htau_ne : ((tau : ℂ)) ≠ ((tau : ℂ))⁻¹ := by
-    intro h
-    have h1 : ‖((tau : ℂ))‖ = ‖((tau : ℂ))⁻¹‖ := by rw [← h]
-    rw [htau_norm, htauinv_norm] at h1
-    linarith
-  have hdisj : Disjoint (insert (1 : ℂ) (T.image fun t => E t))
-      ({((tau : ℂ)), ((tau : ℂ))⁻¹} : Finset ℂ) := by
-    rw [Finset.disjoint_left]
-    intro z hzU hzV
-    have h1 := hUnorm z hzU
-    rcases Finset.mem_insert.mp hzV with h | h
-    · rw [h, htau_norm] at h1; linarith
-    · rw [Finset.mem_singleton.mp h, htauinv_norm] at h1; linarith
-  have hpair : ({((tau : ℂ)), ((tau : ℂ))⁻¹} : Finset ℂ).card = 2 :=
-    Finset.card_pair_eq_two_iff.mpr htau_ne
+  obtain ⟨hdisj, hpair⟩ := disjoint_reciprocal_pair tau htau _ hUnorm
   set S : Finset ℂ :=
-    insert (1 : ℂ) (T.image fun t => E t) ∪ {((tau : ℂ)), ((tau : ℂ))⁻¹} with hS
+    insert (1 : ℂ) (T.image fun t => E t) ∪ {(tau : ℂ), (tau : ℂ)⁻¹} with hS
   have hScard : S.card = m + (roots.card + 1) := by
     rw [hS, Finset.card_union_of_disjoint hdisj, hUcard, hpair]
     omega
-  have hSroot : ∀ z ∈ S, (Rm alpha roots m).eval z = 0 := by
-    intro z hz
-    rw [hS, Finset.mem_union] at hz
-    rcases hz with h | h
-    · rcases Finset.mem_insert.mp h with h1 | h1
-      · rw [h1]; exact Rm_one_root alpha roots m
-      · obtain ⟨t, ht, rfl⟩ := Finset.mem_image.mp h1
-        exact (hT t ht).2
-    · rcases Finset.mem_insert.mp h with h1 | h1
-      · rw [h1]; exact hroot
-      · rw [Finset.mem_singleton.mp h1]
-        exact salem_root_inv_minus alpha roots m htau0 hroot
-  have hRne : Rm alpha roots m ≠ 0 := (Rm_monic alpha roots m hm).ne_zero
-  have heq : S.val = (Rm alpha roots m).roots :=
-    SalemCircle.finset_val_eq_roots _ hRne S hSroot
-      (by rw [Rm_natDegree alpha roots m hm]; exact hScard)
-  intro z hz
-  have hzmem : z ∈ (Rm alpha roots m).roots := Polynomial.mem_roots'.mpr ⟨hRne, hz⟩
-  rw [← heq] at hzmem
-  have hzS : z ∈ S := Finset.mem_def.mpr hzmem
-  rw [hS, Finset.mem_union] at hzS
-  rcases hzS with h | h
-  · exact Or.inl (hUnorm z h)
-  · rcases Finset.mem_insert.mp h with h1 | h1
-    · exact Or.inr (Or.inl h1)
-    · exact Or.inr (Or.inr (Finset.mem_singleton.mp h1))
+  rw [hS, card_union_reciprocal_pair tau htau _ hUnorm,
+    ← Rm_natDegree alpha roots m hm] at hScard
+  refine root_trichotomy_of_unimodular_roots (Rm alpha roots m)
+    (Rm_monic alpha roots m hm).ne_zero tau htau _ hUnorm ?_ hScard hroot
+    (salem_root_inv_minus alpha roots m
+      (Complex.ofReal_ne_zero.mpr (ne_of_gt (zero_lt_one.trans htau))) hroot)
+  · intro z hz
+    rcases Finset.mem_insert.mp hz with rfl | hz
+    · exact Rm_one_root alpha roots m
+    · obtain ⟨t, ht, rfl⟩ := Finset.mem_image.mp hz
+      exact (hT t ht).2
 
 /-! ### The arithmetic certificate for the minus family -/
 

@@ -10692,7 +10692,8 @@ projects:
       measure of the singular set. Includes the supporting Sobolev, singular
       integral, pressure, heat-potential and parabolic Morrey infrastructure,
       equivalence of suitable-solution formulations, and a nonzero shear-flow
-      example. Imports the dependency closure of these completed results.
+      example. Includes the completed Leray, pressure, and linear regularity support needed
+      by further Navier–Stokes regularity projects.
     branch: Analysis
     entry_module: LeanPool.CaffarelliKohnNirenberg
     authors:
@@ -10700,7 +10701,7 @@ projects:
       - Vlad Vicol
     source:
       github_repo: scottnarmstrong/CaffarelliKohnNirenberg
-      url: https://github.com/scottnarmstrong/CaffarelliKohnNirenberg/tree/635fa6376aa3d46ae5251cb1d276a8589163f332
+      url: https://github.com/scottnarmstrong/CaffarelliKohnNirenberg/tree/381d658ead0f03a18361965cc0427ce3fa5844ab
     license: Apache-2.0
     status: verified
     provenance: AI
@@ -13550,13 +13551,6 @@ projects:
           imaginary part of the cube of the principal complex logarithm
           of (1+exp(i t))/2.
         source_ref: Upstream Lemmas/Radial.lean, radial differentiation and domination.
-      - declaration: LeanPolyLog.ofReal_zeta3_eq_riemannZeta_three
-        informal: >-
-          The real series zeta3, embedded in the complex numbers, equals
-          Mathlib's Riemann zeta function evaluated at 3.
-        source_ref: >-
-          Lean Pool bridge from the upstream series definition to Mathlib's
-          zeta_eq_tsum_one_div_nat_add_one_cpow.
     tags:
       - analysis
       - polylogarithms
@@ -13685,3 +13679,315 @@ projects:
       commit: 38e37da6e147cd0016da1eb05987c3edf7d95b39
     license: Apache-2.0
     status: verified
+  - slug: nf-weak-partition
+    title: New Foundations refutes the Weak Partition Principle
+    summary: >-
+      Constructs a formal first-order derivation of the negation of the Weak
+      Partition Principle from New Foundations, with extensionality and the full
+      integer-stratified comprehension schema. Proves full deductive equivalence
+      with Metamath's Hailperin-derived finite presentation, including its added
+      singleton axiom. Replays the source proof through nominal syntax, explicit
+      freshness certificates, and a de Bruijn calculus.
+      Includes reusable first-order soundness and completeness, stratification,
+      lowering, and proof-translation infrastructure. This is a derivability
+      theorem; it does not assert the consistency of New Foundations.
+    branch: mathematical logic
+    entry_module: LeanPool.NFWeakPartition
+    authors:
+      - Elliot Glazer
+      - NFNotWPP contributors
+      - Jesse Michael Han
+      - Floris van Doorn
+      - Ian Klatzco
+    source:
+      title: NF proves not-WPP, source-complete Lean formalization
+      url: https://github.com/elliotglazer/nf-not-wpp/tree/fa58a7a895a73422042e167391c78e9149979913
+      github_repo: elliotglazer/nf-not-wpp
+      commit: fa58a7a895a73422042e167391c78e9149979913
+    license: Apache-2.0
+    status: verified
+    provenance: mix
+    main_declarations:
+      - NFChoice.Foundation.NFStandard.NF_proves_not_WPP
+    main_results:
+      - declaration: NFChoice.Foundation.NFStandard.NF_proves_not_WPP
+        informal: >-
+          Standard New Foundations formally derives the negation of WPP. WPP
+          says that, for all sets x and y, if a function maps y onto x and an
+          injective function maps y into x, then an injective function maps x
+          into y.
+        source_ref: >-
+          Upstream Proof/NFStandard/NotWPP.lean and the exact source formulation
+          documented in README.md at the pinned commit. Standard-NF completion:
+          commit a9f9867ee379835f91a4f05f9c4a352d44ca1775, 2026-08-25 00:16:27 UTC.
+          Palomar registration
+          PALOMAR-2026-08-27-000005 is dated 2026-08-27, without a verified time of day.
+          The responsible public maintainer is Elliot Glazer. Upstream Flypitch4
+          credits Ian Klatzco and Claude for its Lean 4 port; this import also
+          includes AI-assisted porting and proof repairs, hence mixed provenance.
+          The deterministic Metamath replay is not by itself evidence of AI
+          mathematical authorship. Independent novelty is not claimed by this card.
+      - declaration: NFChoice.Foundation.NFStandard.nf_hailperin_deductivelyEquivalent
+        informal: >-
+          Extensionality together with every integer-stratified comprehension
+          instance and Metamath's Hailperin-derived finite first-order presentation,
+          including its added singleton axiom, derive exactly the same sentences.
+        source_ref: >-
+          Upstream Proof/NFStandard/Equivalence.lean at the pinned commit.
+          Metamath's ax-sn entry credits the singleton addition to SF on
+          2015-01-12 and distinguishes it from Hailperin's original presentation:
+          https://us.metamath.org/nfeuni/ax-sn.html.
+    tags:
+      - new-foundations
+      - weak-partition-principle
+      - first-order-logic
+    msc:
+      - 03E70
+      - 03B35
+  - slug: conway-soifer-three
+    title: Conway–Soifer covering conjecture for n = 3
+    summary: Proves that ten congruent closed equilateral triangles covering a filled equilateral triangle
+      of side three have common side at least one, with arbitrary positions, rotations and overlaps.
+      Consequently ten unit triangles cannot cover a triangle of side 3 + ε for ε > 0. Includes reusable
+      finite halfspace and ray-endpoint geometry, orientation-independent support and area bounds,
+      and verified Bernstein polynomial interval checkers. Four derived contact cases and 100 kernel-checked
+      certificates close the proof without a certificate hypothesis.
+    branch: discrete geometry
+    entry_module: LeanPool.ConwaySoifer
+    authors:
+    - Vladislav Kuznetsov
+    source:
+      title: 'The Conway–Soifer conjecture for n = 3: a Lean formalization'
+      url: https://github.com/AnanasClassic/conway-soifer-n3-lean/tree/b71b1d22b6f7ebb0f0173fc70a66075f44c86ce6
+      github_repo: AnanasClassic/conway-soifer-n3-lean
+      commit: b71b1d22b6f7ebb0f0173fc70a66075f44c86ce6
+      doi: 10.5281/zenodo.22712658
+    license: MIT
+    status: verified
+    provenance: AI
+    main_declarations:
+    - ConwaySoifer.ten_triangle_cover_lower_bound
+    main_results:
+    - declaration: ConwaySoifer.ten_triangle_cover_lower_bound
+      informal: Any ten congruent closed equilateral triangles covering the filled equilateral target
+        of side three have common side at least one. Positions, rotations and overlaps are unrestricted.
+      source_ref: Public v1.0.0 release, 2026-09-11T17:12:25Z; upstream README and Geometry/Basic.lean.
+    - declaration: ConwaySoifer.no_ten_unit_triangle_cover
+      informal: For every ε > 0, ten closed equilateral triangles of side one cannot cover the filled
+        equilateral target of side 3 + ε, regardless of position or rotation.
+      source_ref: Upstream public theorem and its proved scaling corollary.
+    tags:
+    - discrete-geometry
+    - triangle-covering
+    - conway-soifer
+    - bernstein-polynomials
+    msc:
+    - 52C15
+    - 51M16
+  - slug: formalizing-gmt
+    title: Formalizing geometric measure theory
+    summary: >-
+      A development of foundations and central results in geometric measure theory,
+      including Hausdorff content and density bounds, weak convergence and compactness
+      for Radon measures, tangent-measure machinery, Mattila's Lemmas 14.5--14.7,
+      and Marstrand's integrality theorem for positive finite densities.
+    branch: measure theory and geometric analysis
+    entry_module: LeanPool.FormalizingGMT
+    authors:
+      - Theodore Meek
+      - Ignacio Tejeda
+      - Annie Cao
+      - Nathan Pao
+    source:
+      url: https://github.com/uw-math-ai/FormalizingGMT
+      github_repo: uw-math-ai/FormalizingGMT
+      commit: 0acca38a91c4121b813f8e0b6ff719a4590bf126
+      notes: >-
+        The geometric-measure-theory results follow Mattila, Geometry of Sets and
+        Measures in Euclidean Spaces, Chapter 14. The weak-convergence, compactness,
+        covering, and density results follow Evans--Gariepy, Measure Theory and Fine
+        Properties of Functions, revised edition.
+    license: Apache-2.0
+    status: verified
+    provenance: mix
+    main_declarations:
+      - mattila_14_10
+      - mattila_14_11
+    main_results:
+      - declaration: mattila_14_10
+        informal: >-
+          If a Radon measure on Euclidean n-space has positive finite s-dimensional
+          density on a set of positive measure, then s is a natural number.
+        source_ref: Mattila, Theorem 14.10 (Marstrand's theorem).
+      - declaration: mattila_14_11
+        informal: >-
+          Every n-uniform measure on Euclidean n-space is a constant multiple of
+          Lebesgue measure.
+        source_ref: Mattila, Theorem 14.11.
+      - declaration: MeasureTheory.Measure.weaklyConverges_iff_compactOpenBounds
+        informal: >-
+          Vague convergence of Radon measures on Euclidean space is equivalent to
+          the Portmanteau compact-set upper and open-set lower bounds.
+        source_ref: Evans--Gariepy, revised edition, Theorem 1.40.
+      - declaration: MeasureTheory.exists_vaguelyConvergent_subseq_of_compact_bounded
+        informal: >-
+          A sequence of Radon measures on Euclidean space that is uniformly bounded
+          on every compact set has a vaguely convergent subsequence.
+        source_ref: Evans--Gariepy, revised edition, Theorem 1.41.
+    tags:
+      - geometric-measure-theory
+      - Hausdorff-measure
+      - tangent-measures
+      - weak-convergence
+    msc:
+      - 28A75
+      - 28A78
+      - 49Q15
+  - slug: civ-axisymmetric
+    title: Regularity of asymptotically axisymmetric Navier–Stokes solutions
+    summary: >-
+      Proves the Constantin–Ignatova–Vicol regularity theorem for suitable
+      weak solutions of the three-dimensional forced Navier–Stokes equations
+      with analytic forcing, anisotropic Type II bounds on the angular mean,
+      and an axisymmetric core at each time. Includes the fully axisymmetric
+      theorem, meridional smallness, interior spatial analyticity, the
+      nonanalyticity consequence for singular solutions, and the comparison,
+      Serrin, and Gustafson–Kang–Tsai results used in their proofs. Reuses Lean
+      Pool's Caffarelli–Kohn–Nirenberg suitable-solution and analysis library.
+    branch: Analysis
+    entry_module: LeanPool.CIVAxisymmetric
+    authors:
+      - Scott Armstrong
+      - Vlad Vicol
+    source:
+      arxiv: "2609.20803"
+      github_repo: scottnarmstrong/CIVAxisymmetric
+      url: https://github.com/scottnarmstrong/CIVAxisymmetric/tree/9f539dc7bf7ddd414d3ef81df539e1bef229f681
+      commit: 9f539dc7bf7ddd414d3ef81df539e1bef229f681
+    license: Apache-2.0
+    status: verified
+    provenance: AI
+    main_declarations:
+      - CIV.mainTheorem
+      - CIV.axisymmetricTheorem
+    main_results:
+      - declaration: CIV.mainTheorem
+        informal: >-
+          A smooth suitable weak solution on the unit parabolic cylinder with
+          globally finite energy, bounded C^2 spatially analytic force,
+          anisotropic Type II bounds on its angular mean, and a positive
+          axisymmetric core at every time is axisymmetric throughout the
+          cylinder and bounded near the origin up to the terminal time.
+      - declaration: CIV.axisymmetricTheorem
+        informal: >-
+          An axisymmetric smooth suitable weak solution obeying the stated
+          anisotropic Type II bounds and bounded C^2 force is bounded near the
+          origin up to the terminal time.
+      - declaration: CIV.meridionalSmallness
+        informal: >-
+          Under the axisymmetric anisotropic hypotheses, the weighted
+          meridional quantity tends uniformly to zero on a smaller cylinder
+          as the terminal time approaches.
+      - declaration: CIV.interiorAnalyticity
+        informal: >-
+          Smooth solutions with locally uniformly spatially analytic forcing
+          are locally uniformly spatially analytic in the interior.
+      - declaration: CIV.forceUnderCore
+        informal: >-
+          For a smooth suitable weak solution with globally finite energy,
+          bounded C^2 forcing, angular-mean anisotropic bounds, and an
+          axisymmetric core at every time, failure of boundedness near the
+          origin implies that the force is not spatially analytic, is nonzero
+          somewhere in the unit cylinder, and has a nonzero point in every
+          smaller terminal cylinder.
+    tags:
+      - Navier–Stokes
+      - axisymmetry
+      - partial differential equations
+      - regularity
+    msc:
+      - 35Q30
+      - 35B65
+      - 35B33
+  - slug: escauriaza-seregin-sverak
+    title: Escauriaza–Seregin–Šverák and Ladyzhenskaya–Prodi–Serrin regularity
+    summary: >-
+      Endpoint and Serrin regularity criteria for three-dimensional incompressible
+      Navier–Stokes Leray–Hopf solutions: bounded L-infinity-in-time L3 velocity
+      implies L5 integrability, uniqueness, and a smooth representative on positive
+      times including the final time. Includes local endpoint regularity, both
+      Carleman inequalities, spatial unique continuation, and half-space backward
+      uniqueness. Retains the complete ESS production formalization.
+    branch: Analysis
+    entry_module: LeanPool.EscauriazaSereginSverak
+    authors:
+      - Scott Armstrong
+    source:
+      github_repo: scottnarmstrong/EscauriazaSereginSverak
+      url: https://github.com/scottnarmstrong/EscauriazaSereginSverak/tree/ae1a0e46086b9b16179dea76b41da10b01845151
+    license: Apache-2.0
+    status: verified
+    provenance: AI
+    main_declarations:
+      - ESS.essSmooth
+      - ESS.ladyzhenskayaProdiSerrin
+      - ESS.serrinCriterion
+    main_results:
+      - declaration: ESS.essSmooth
+        informal: >-
+          A Leray–Hopf solution whose spatial L3 mass is essentially bounded in
+          time belongs to space-time L5, is unique among Leray–Hopf solutions with
+          the same initial datum, and has an almost-everywhere equal smooth
+          representative on all positive times through the final time.
+      - declaration: ESS.ladyzhenskayaProdiSerrin
+        informal: >-
+          A Leray–Hopf solution satisfying the critical Serrin mixed-norm condition
+          with spatial exponent greater than three, including the L2-in-time
+          L-infinity-in-space endpoint, is unique and has a smooth representative
+          on positive times through the final time.
+      - declaration: ESS.serrinCriterion
+        informal: >-
+          The endpoint L-infinity-in-time L3 criterion and the Serrin criteria for
+          all spatial exponents greater than three jointly imply uniqueness and
+          existence of a smooth representative up to the final time.
+      - declaration: ESS.essLocal
+        informal: >-
+          A weak Navier–Stokes solution on the unit cylinder with finite energy,
+          L3/2 pressure, and velocity essentially bounded in time in spatial L3
+          has an almost-everywhere equal parabolically Holder representative on
+          the closure of the half cylinder.
+      - declaration: ESS.essGlobal
+        informal: >-
+          A Leray–Hopf solution whose spatial L3 mass is essentially bounded in
+          time has no singular point at an interior positive time.
+      - declaration: ESS.essL5Unique
+        informal: >-
+          A Leray–Hopf solution whose spatial L3 mass is essentially bounded in
+          time belongs to space-time L5 and is unique among Leray–Hopf solutions
+          with its initial datum.
+      - declaration: ESS.uniqueContinuation
+        informal: >-
+          A vector field with explicit weak space-time derivatives obeying a
+          parabolic differential inequality has unique continuation across a
+          spatial boundary under the stated decay and boundary hypotheses.
+      - declaration: ESS.backwardUniqueness
+        informal: >-
+          A vector field on a three-dimensional half-space satisfying the heat
+          differential inequality, growth bound, and zero initial trace vanishes.
+      - declaration: ESS.carlemanGaussian
+        informal: >-
+          The Gaussian Carleman inequality bounds weighted field and gradient
+          energies by the weighted heat-operator energy under its support hypotheses.
+      - declaration: ESS.carlemanHalfSpace
+        informal: >-
+          The half-space Carleman inequality bounds weighted field and gradient
+          energies by the weighted heat-operator energy under its support hypotheses.
+    tags:
+      - Navier–Stokes
+      - partial differential equations
+      - regularity
+      - unique continuation
+    msc:
+      - 35Q30
+      - 35B65
+      - 35B60
