@@ -29,6 +29,7 @@ public import LeanPool.BrooksSubcubic.Imports
 public import LeanPool.Brouwer.Imports
 public import LeanPool.BruhatTits.Imports
 public import LeanPool.Burkholder.Imports
+public import LeanPool.CIVAxisymmetric.Imports
 public import LeanPool.CaffarelliKohnNirenberg.Imports
 public import LeanPool.CarlsonFunctions.Imports
 public import LeanPool.CencovPetz.Imports
