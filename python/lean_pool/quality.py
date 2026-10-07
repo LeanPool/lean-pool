@@ -876,6 +876,9 @@ def _check_projects(
     errors.extend(_check_top_level_project_modules(root, path, projects))
     if errors:
         return errors
+    errors.extend(_check_project_wrapper_imports(root, projects))
+    if errors:
+        return errors
 
     for index, project in enumerate(projects, start=1):
         errors.extend(
@@ -994,6 +997,35 @@ def _check_top_level_project_modules(
         )
         for module in missing
     ]
+
+
+def _check_project_wrapper_imports(
+    root: Path, projects: list[Any]
+) -> list[_QualityError]:
+    """Require project extraction wrappers to expose their registered entry."""
+    entry_modules = {
+        project["entry_module"]
+        for project in projects
+        if isinstance(project, dict) and isinstance(project.get("entry_module"), str)
+    }
+    errors = []
+    for entry_module in sorted(entry_modules):
+        wrapper = ".".join(entry_module.split(".")[:2])
+        path = _module_to_path(root, wrapper)
+        if entry_module == wrapper or not path.is_file():
+            continue
+        if _module_to_path(root, entry_module) not in _reachable_leanpool_files(
+            root, wrapper
+        ):
+            errors.append(
+                _QualityError(
+                    path,
+                    1,
+                    f"registered project entry {entry_module} is not reachable "
+                    f"from {wrapper}; import the entry module",
+                )
+            )
+    return errors
 
 
 def _top_level_project_modules(root: Path) -> set[str]:

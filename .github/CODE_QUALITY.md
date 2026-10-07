@@ -54,6 +54,7 @@ Current checks:
 - project `slug` and `entry_module` values are unique
 - every registered project `entry_module` is imported directly by `LeanPool.lean`
 - every project has a top-level entry file `LeanPool/<Project>.lean`, including projects with nested registered entry modules
+- every nested registered entry module is reachable through its top-level entry file's imports
 - every top-level project module `LeanPool/Foo.lean`, except `LeanPool/Basic.lean`, belongs to the namespace of a registered `entry_module`
 - project entry modules and listed main declarations resolve in Lean
 - generated entry-point project cards match `LeanPool/projects.yml`
