@@ -13,7 +13,7 @@ from typing import Any
 
 import yaml
 
-from lean_pool.indexes import requires_project_roots, structure_errors
+from lean_pool.indexes import project_modules, requires_project_roots, structure_errors
 from lean_pool.validation_cache import ValidationCache, pool_units
 
 ALLOWED_AXIOMS = {"propext", "Quot.sound", "Classical.choice"}
@@ -933,6 +933,16 @@ def _check_project_indexes(root: Path) -> list[_QualityError]:
     ]
 
 
+def _check_project_entry_files(root: Path) -> list[_QualityError]:
+    """Require the top-level entry file used by per-project build and extraction."""
+    return [
+        _QualityError(path, 1, "missing top-level project entry module")
+        for project in project_modules(root)
+        for path in [root / "LeanPool" / f"{project}.lean"]
+        if not path.is_file()
+    ]
+
+
 def _check_project_entry_imports(
     root: Path, projects: list[Any]
 ) -> list[_QualityError]:
@@ -1404,6 +1414,7 @@ def run_checks(
     """Run all deterministic quality checks."""
     checks = [
         _check_project_indexes,
+        _check_project_entry_files,
         _check_reachability,
         _check_headers,
         _check_forbidden_lean_text,

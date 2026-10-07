@@ -9,6 +9,7 @@ the ordinary documentation build.
 from __future__ import annotations
 
 import argparse
+import filecmp
 import gzip
 import hashlib
 import io
@@ -16,13 +17,16 @@ import json
 import logging
 import os
 import shutil
+import stat
 import subprocess
 import tarfile
 import tempfile
 import time
 import zipfile
-from contextlib import contextmanager
+from concurrent.futures import ThreadPoolExecutor
+from contextlib import AbstractContextManager, contextmanager
 from pathlib import Path, PurePosixPath
+from typing import BinaryIO
 from urllib.parse import urlencode
 
 LOGGER = logging.getLogger(__name__)
@@ -101,7 +105,33 @@ def pack_build(root: Path, destination: Path) -> None:
             archive.add(root / ".lake/build", arcname=".lake/build")
 
 
-def _extract_build(root: Path, archive: tarfile.TarFile, temporary: Path) -> bool:
+def _reuse_unchanged_file(
+    root: Path,
+    temporary: Path,
+    member: tarfile.TarInfo,
+    reused: dict[Path, os.stat_result],
+) -> None:
+    """Keep identical cached files without retaining a second full build copy."""
+    relative = Path(member.name)
+    cached = root / relative
+    staged = temporary / relative
+    if (
+        cached.is_symlink()
+        or not cached.is_file()
+        or not filecmp.cmp(cached, staged, shallow=False)
+    ):
+        return
+    reused[relative] = staged.stat()
+    staged.unlink()
+    staged.hardlink_to(cached)
+
+
+def _extract_build(
+    root: Path,
+    archive: tarfile.TarFile,
+    temporary: Path,
+    reused: dict[Path, os.stat_result],
+) -> bool:
     """Check the manifest first, then extract only ordinary build files."""
     manifest = archive.next()
     if manifest is None or manifest.name != MANIFEST_NAME or not manifest.isfile():
@@ -110,6 +140,7 @@ def _extract_build(root: Path, archive: tarfile.TarFile, temporary: Path) -> boo
         LOGGER.info("CI build has different sources or configuration; rebuilding")
         return False
     has_files = False
+    seen: set[PurePosixPath] = set()
     for member in archive:
         if member is manifest:
             continue
@@ -117,31 +148,45 @@ def _extract_build(root: Path, archive: tarfile.TarFile, temporary: Path) -> boo
         if (
             path.parts[:2] != (".lake", "build")
             or ".." in path.parts
+            or path in seen
             or not (member.isfile() or member.isdir())
         ):
             raise ValueError(f"Unexpected build archive member: {member.name}")
+        seen.add(path)
         has_files |= member.isfile()
         archive.extract(member, temporary, filter="data")
+        if member.isfile():
+            _reuse_unchanged_file(root, temporary, member, reused)
     if not has_files:
         raise ValueError("Empty Lean build artifact")
     return True
 
 
 def restore_build(root: Path, archive_path: Path) -> bool:
-    """Validate and unpack once, then move the finished build into place."""
+    """Validate and unpack once, sharing unchanged files with the cached build."""
+    return _restore_archive(root, _compressed_stream(archive_path))
+
+
+def _restore_archive(root: Path, payload: AbstractContextManager[BinaryIO]) -> bool:
+    """Install staged output only after the entire compressed payload validates."""
     (root / ".lake").mkdir(exist_ok=True)
     with tempfile.TemporaryDirectory(
         prefix="lean-ci-build-", dir=root / ".lake"
     ) as name:
         temporary = Path(name)
-        with _compressed_stream(archive_path) as stream:
+        reused: dict[Path, os.stat_result] = {}
+        with payload as stream:
             with tarfile.open(fileobj=stream, mode="r|") as archive:
-                if not _extract_build(root, archive, temporary):
+                if not _extract_build(root, archive, temporary, reused):
                     return False
         destination = root / ".lake/build"
         if destination.exists():
             shutil.rmtree(destination)
         (temporary / ".lake/build").rename(destination)
+        for relative, metadata in reused.items():
+            path = root / relative
+            path.chmod(stat.S_IMODE(metadata.st_mode))
+            os.utime(path, ns=(metadata.st_atime_ns, metadata.st_mtime_ns))
     LOGGER.info("Restored Lean CI build for the current source tree")
     return True
 
@@ -178,9 +223,47 @@ def wait_for_artifact(repository: str, run: dict, wait_seconds: int) -> int | No
         time.sleep(min(20, max(0, deadline - time.monotonic())))
 
 
+def _pipe_payload(source: BinaryIO, destination: BinaryIO) -> None:
+    """Feed the ZIP entry into the decompressor without materializing another file."""
+    with destination:
+        shutil.copyfileobj(source, destination)
+
+
+@contextmanager
+def _artifact_payload(source: BinaryIO, name: str):
+    """Stream the compressed ZIP entry and verify decompression and ZIP integrity."""
+    if name.endswith(".gz"):
+        with gzip.GzipFile(fileobj=source) as stream:
+            yield stream
+            while stream.read(1024 * 1024):
+                pass
+        return
+    command = ["zstd", "--quiet", "--decompress", "--stdout"]
+    with subprocess.Popen(
+        command, stdin=subprocess.PIPE, stdout=subprocess.PIPE
+    ) as process:
+        with ThreadPoolExecutor(max_workers=1) as executor:
+            copying = executor.submit(_pipe_payload, source, process.stdin)
+            try:
+                yield process.stdout
+                while process.stdout.read(1024 * 1024):
+                    pass
+                copying.result()
+                if process.wait() != 0:
+                    raise subprocess.CalledProcessError(process.returncode, command)
+            finally:
+                process.stdout.close()
+                if process.poll() is None:
+                    process.terminate()
+                process.wait()
+
+
 def download_build(root: Path, repository: str, artifact: int) -> bool:
     """Download the archive and validate it before installing any build files."""
-    with tempfile.TemporaryDirectory(prefix="lean-ci-download-") as temporary:
+    (root / ".lake").mkdir(exist_ok=True)
+    with tempfile.TemporaryDirectory(
+        prefix="lean-ci-download-", dir=root / ".lake"
+    ) as temporary:
         directory = Path(temporary)
         zipped = directory / "artifact.zip"
         with zipped.open("wb") as output:
@@ -196,9 +279,7 @@ def download_build(root: Path, repository: str, artifact: int) -> bool:
                 raise ValueError("Unexpected files in Lean CI artifact")
             name = names[0]
             with archive.open(name) as source:
-                with (directory / name).open("wb") as destination:
-                    shutil.copyfileobj(source, destination)
-        return restore_build(root, directory / name)
+                return _restore_archive(root, _artifact_payload(source, name))
 
 
 def reuse_build(root: Path, repository: str, head: str, event: str, wait: int) -> bool:

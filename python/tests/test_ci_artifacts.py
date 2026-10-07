@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import io
 import json
+import os
 import subprocess
 import tarfile
 import zipfile
@@ -247,6 +248,53 @@ def test_invalid_member_after_valid_output_preserves_current_build(repository: P
     ).read_bytes() == b"compiled"
 
 
+def test_unchanged_files_share_disk_until_install(repository: Path, monkeypatch):
+    """Staging consumes space for changed files while preserving original metadata."""
+    archive = repository / "build.tar.gz"
+    output = repository / ".lake/build/lib/lean/LeanPool.olean"
+    ci_artifacts.pack_build(repository, archive)
+    archived_time = output.stat().st_mtime_ns
+    os.utime(output, ns=(1_000_000_000, 1_000_000_000))
+    original = ci_artifacts._extract_build
+
+    def extract(root, contents, temporary, reused):
+        result = original(root, contents, temporary, reused)
+        staged = temporary / output.relative_to(repository)
+        assert staged.samefile(output)
+        assert output.stat().st_mtime_ns == 1_000_000_000
+        assert output.stat().st_nlink == 2
+        return result
+
+    monkeypatch.setattr(ci_artifacts, "_extract_build", extract)
+    assert ci_artifacts.restore_build(repository, archive)
+    assert output.stat().st_mtime == pytest.approx(archived_time / 1_000_000_000)
+    assert output.stat().st_nlink == 1
+
+
+def test_duplicate_member_cannot_overwrite_shared_cache(repository: Path):
+    """Reject duplicate paths before extraction could write through a hard link."""
+    destination = repository / "build.tar.gz"
+    output = repository / ".lake/build/lib/lean/LeanPool.olean"
+    metadata = output.stat()
+    with tarfile.open(destination, "w:gz") as archive:
+        for name, payload in (
+            (
+                ci_artifacts.MANIFEST_NAME,
+                json.dumps(ci_artifacts.build_identity(repository)).encode(),
+            ),
+            (".lake/build/lib/lean/LeanPool.olean", b"compiled"),
+            (".lake/build/lib/lean/./LeanPool.olean", b"changed"),
+        ):
+            member = tarfile.TarInfo(name)
+            member.size = len(payload)
+            archive.addfile(member, io.BytesIO(payload))
+    with pytest.raises(ValueError, match="Unexpected build archive member"):
+        ci_artifacts.restore_build(repository, destination)
+    assert output.read_bytes() == b"compiled"
+    assert output.stat().st_mtime_ns == metadata.st_mtime_ns
+    assert output.stat().st_nlink == 1
+
+
 @pytest.mark.parametrize(
     "name", [ci_artifacts.ARCHIVE_NAME, ci_artifacts.LEGACY_ARCHIVE_NAME]
 )
@@ -271,5 +319,41 @@ def test_download_accepts_current_and_previous_compression(
         stdout.write(zipped.getvalue())
 
     monkeypatch.setattr(subprocess, "run", download)
+    original_restore = ci_artifacts._restore_archive
+
+    def restore(root, payload):
+        downloads = list((root / ".lake").glob("lean-ci-download-*"))
+        assert len(downloads) == 1
+        assert [path.name for path in downloads[0].iterdir()] == ["artifact.zip"]
+        return original_restore(root, payload)
+
+    monkeypatch.setattr(ci_artifacts, "_restore_archive", restore)
     assert ci_artifacts.download_build(repository, "owner/repo", 7)
     assert output.read_bytes() == b"compiled"
+    assert not list((repository / ".lake").glob("lean-ci-download-*"))
+
+
+@pytest.mark.parametrize(
+    "name", [ci_artifacts.ARCHIVE_NAME, ci_artifacts.LEGACY_ARCHIVE_NAME]
+)
+def test_download_rejects_truncated_payload(repository: Path, monkeypatch, name):
+    """Decompression must finish before streamed download replaces cached output."""
+    archive = repository / name
+    ci_artifacts.pack_build(repository, archive)
+    zipped = io.BytesIO()
+    with zipfile.ZipFile(zipped, "w") as bundle:
+        bundle.writestr(name, archive.read_bytes()[:-8])
+    output = repository / ".lake/build/lib/lean/LeanPool.olean"
+    output.write_bytes(b"old")
+    original_run = subprocess.run
+
+    def download(command, *, stdout, **kwargs):
+        if command[0] != "gh":
+            return original_run(command, stdout=stdout, **kwargs)
+        stdout.write(zipped.getvalue())
+
+    monkeypatch.setattr(subprocess, "run", download)
+    with pytest.raises((subprocess.SubprocessError, tarfile.TarError, EOFError)):
+        ci_artifacts.download_build(repository, "owner/repo", 7)
+    assert output.read_bytes() == b"old"
+    assert not list((repository / ".lake").glob("lean-ci-*"))
