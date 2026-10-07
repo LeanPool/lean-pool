@@ -331,11 +331,18 @@ def test_restore_checks_sources_before_overlay(
     assert compiled.read_text() == "validated build"
 
 
+@pytest.mark.parametrize("already_present", [False, True])
 def test_new_main_project_reuses_its_merged_pr_artifact(
-    rebased: tuple[Path, str, str, str, str], monkeypatch: pytest.MonkeyPatch
+    rebased: tuple[Path, str, str, str, str],
+    monkeypatch: pytest.MonkeyPatch,
+    already_present: bool,
 ) -> None:
     """The main-cache gap need not force every waiting PR to compile the merger."""
     root, _, previous, base, _ = rebased
+    if already_present:
+        compiled = root / ".lake/build/lib/lean/LeanPool/C.olean"
+        compiled.parent.mkdir(parents=True)
+        compiled.write_text("main cache already contains this project")
     merged_head = "c" * 40
     restored = []
 
@@ -351,5 +358,9 @@ def test_new_main_project_reuses_its_merged_pr_artifact(
         "restore",
         lambda *args: restored.append(args),
     )
-    rebase_fastpath.restore_new_main_projects(root, "owner/repo", previous, base)
-    assert restored == [(root, "owner/repo", 11, merged_head)]
+    rebase_fastpath.restore_new_main_projects(
+        root, "owner/repo", previous, base, missing_only=True
+    )
+    assert restored == (
+        [] if already_present else [(root, "owner/repo", 11, merged_head)]
+    )

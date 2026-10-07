@@ -37,6 +37,7 @@ on:
       - 'python/lean_pool/validation_cache.py'
       - 'python/lean_pool/ci_artifacts.py'
       - 'python/lean_pool/ci_cache.py'
+      - 'python/lean_pool/ci_pr_build.py'
       - 'python/lean_pool/ci_validation_artifacts.py'
       - 'python/lean_pool/rebase_fastpath.py'
       - 'python/pyproject.toml'
@@ -66,6 +67,7 @@ on:
       - 'python/lean_pool/validation_cache.py'
       - 'python/lean_pool/ci_artifacts.py'
       - 'python/lean_pool/ci_cache.py'
+      - 'python/lean_pool/ci_pr_build.py'
       - 'python/lean_pool/ci_validation_artifacts.py'
       - 'python/lean_pool/rebase_fastpath.py'
       - 'python/pyproject.toml'
@@ -242,6 +244,13 @@ jobs:
         with:
           enable-cache: true
 
+      - name: Check compiled artifact dependency tracking with pinned Lean
+        env:
+          LEAN_POOL_REQUIRE_TEST_TOOLCHAIN: '1'
+        run: >-
+          uv run --project python --group test pytest -q
+          python/tests/test_ci_pr_build.py -k 'test_lake_'
+
       - name: Install Mathlib cache
         id: mathlib-cache
         run: |
@@ -270,6 +279,21 @@ jobs:
             PYTHONPATH=python python3 -m lean_pool.rebase_fastpath restore-main \
               --repository "$REPOSITORY" --head "$BEFORE_SHA" --base "$GITHUB_SHA"
           fi
+
+      - name: Reuse compiled files from this PR's successful runs
+        if: github.event_name == 'pull_request' && steps.cache.outputs.cache-hit != 'true'
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_BRANCH: ${{ github.head_ref }}
+          PR_HEAD: ${{ github.event.pull_request.head.sha }}
+          PR_BASE: ${{ github.event.pull_request.base.sha }}
+          CURRENT_RUN: ${{ github.run_id }}
+        run: >-
+          PYTHONPATH=python python3 -m lean_pool.ci_pr_build
+          --number "$PR_NUMBER" --branch "$PR_BRANCH"
+          --head "$PR_HEAD" --base "$PR_BASE" --current-run "$CURRENT_RUN"
 
       - name: Build project
         id: compilation
