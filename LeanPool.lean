@@ -106,6 +106,7 @@ public import LeanPool.FltRegular.Imports
 public import LeanPool.FoZfc.Imports
 public import LeanPool.FormalLearningTheory.Imports
 public import LeanPool.FormalizationOfBoundedArithmetic.Imports
+public import LeanPool.FormalizingGMT.Imports
 public import LeanPool.FourAP.Imports
 public import LeanPool.FriezePatterns.Imports
 public import LeanPool.FrontierMathOpenHypergraphs.Imports
