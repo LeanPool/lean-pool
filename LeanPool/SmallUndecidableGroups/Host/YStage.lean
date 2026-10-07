@@ -590,81 +590,40 @@ private theorem CE_le_CSubgroup :
   · exact (coreC datum 1).property
   · exact (coreE datum 1).property
 
+private theorem map_mem_of_mem_closure
+    {G H : Type*} [Group G] [Group H] {S : Subgroup G} {s : Set G}
+    (hs : Subgroup.closure s ≤ S) (f : S →* H) (T : Subgroup H)
+    (hgen : ∀ x : S, (x : G) ∈ s → f x ∈ T)
+    {x : S} (hx : (x : G) ∈ Subgroup.closure s) : f x ∈ T := by
+  have hclosure : Subgroup.closure s ≤ (T.comap f).map S.subtype := by
+    rw [Subgroup.closure_le]
+    intro g hg
+    exact ⟨⟨g, hs (Subgroup.subset_closure hg)⟩, hgen _ hg, rfl⟩
+  rcases hclosure hx with ⟨y, hy, heq⟩
+  exact (Subtype.ext heq : y = x) ▸ hy
+
 private theorem cSubgroupEquiv_mem_CE_of_mem_CD (x : CSubgroup datum 0)
     (hx : (x : Gamma2 datum (rankFiveFree datum)) ∈
       CD datum (rankFiveFree datum)) :
     ((cSubgroupEquiv datum x : CSubgroup datum 1) :
       Gamma2 datum (rankFiveFree datum)) ∈ CE datum (rankFiveFree datum) := by
-  let p : (g : Gamma2 datum (rankFiveFree datum)) →
-      g ∈ CD datum (rankFiveFree datum) → Prop :=
-    fun g hg ↦
-      ((cSubgroupEquiv datum
-          (⟨g, CD_le_CSubgroup datum hg⟩ : CSubgroup datum 0) :
-        CSubgroup datum 1) : Gamma2 datum (rankFiveFree datum)) ∈
-        CE datum (rankFiveFree datum)
-  have hp : p (x : Gamma2 datum (rankFiveFree datum)) hx := by
-    apply Subgroup.closure_induction
-    · intro q hq
-      simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at hq
-      rcases hq with rfl | rfl
-      · change
-          ((cSubgroupEquiv datum
-              (⟨BorisovCStage.c datum (rankFiveFree datum), _⟩ :
-                CSubgroup datum 0) : CSubgroup datum 1) :
-            Gamma2 datum (rankFiveFree datum)) ∈ CE datum (rankFiveFree datum)
-        rw [show
-          (⟨BorisovCStage.c datum (rankFiveFree datum), _⟩ :
-            CSubgroup datum 0) = coreC datum 0 by apply Subtype.ext; rfl]
-        rw [cSubgroupEquiv_coreC]
-        change BorisovCStage.c datum (rankFiveFree datum) ∈
-          CE datum (rankFiveFree datum)
-        apply Subgroup.subset_closure
-        simp
-      · change
-          ((cSubgroupEquiv datum
-              (⟨of3 datum (rankFiveFree datum) d3, _⟩ :
-                CSubgroup datum 0) : CSubgroup datum 1) :
-            Gamma2 datum (rankFiveFree datum)) ∈ CE datum (rankFiveFree datum)
-        rw [show
-          (⟨of3 datum (rankFiveFree datum) d3, _⟩ : CSubgroup datum 0) =
-            coreD datum 0 by apply Subtype.ext; rfl]
-        rw [cSubgroupEquiv_coreD]
-        apply (CE datum (rankFiveFree datum)).inv_mem
-        change of3 datum (rankFiveFree datum) e3 ∈
-          CE datum (rankFiveFree datum)
-        apply Subgroup.subset_closure
-        simp
-    · change
-        ((cSubgroupEquiv datum
-            (⟨1, _⟩ : CSubgroup datum 0) : CSubgroup datum 1) :
-          Gamma2 datum (rankFiveFree datum)) ∈ CE datum (rankFiveFree datum)
-      rw [show (⟨1, _⟩ : CSubgroup datum 0) = 1 by apply Subtype.ext; simp,
-        map_one]
-      exact (CE datum (rankFiveFree datum)).one_mem
-    · intro a b ha hb hpa hpb
-      change
-        ((cSubgroupEquiv datum
-            (⟨a * b, _⟩ : CSubgroup datum 0) : CSubgroup datum 1) :
-          Gamma2 datum (rankFiveFree datum)) ∈ CE datum (rankFiveFree datum)
-      simpa only [show
-          (⟨a * b, CD_le_CSubgroup datum (Subgroup.mul_mem _ ha hb)⟩ :
-            CSubgroup datum 0) =
-              (⟨a, CD_le_CSubgroup datum ha⟩ : CSubgroup datum 0) *
-                ⟨b, CD_le_CSubgroup datum hb⟩ by rfl,
-        map_mul, Subgroup.coe_mul] using
-          (CE datum (rankFiveFree datum)).mul_mem hpa hpb
-    · intro a ha hpa
-      change
-        ((cSubgroupEquiv datum
-            (⟨a⁻¹, _⟩ : CSubgroup datum 0) : CSubgroup datum 1) :
-          Gamma2 datum (rankFiveFree datum)) ∈ CE datum (rankFiveFree datum)
-      simpa only [show
-          (⟨a⁻¹, CD_le_CSubgroup datum (Subgroup.inv_mem _ ha)⟩ :
-            CSubgroup datum 0) =
-              (⟨a, CD_le_CSubgroup datum ha⟩ : CSubgroup datum 0)⁻¹ by rfl,
-        map_inv, Subgroup.coe_inv] using
-          (CE datum (rankFiveFree datum)).inv_mem hpa
-  exact hp
+  apply map_mem_of_mem_closure (CD_le_CSubgroup datum)
+    ((CSubgroup datum 1).subtype.comp (cSubgroupEquiv datum).toMonoidHom)
+    (CE datum (rankFiveFree datum)) ?_ hx
+  intro y hy
+  change ((cSubgroupEquiv datum y : CSubgroup datum 1) :
+    Gamma2 datum (rankFiveFree datum)) ∈ CE datum (rankFiveFree datum)
+  simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at hy
+  rcases hy with hc | hd
+  · have heq : y = coreC datum 0 := Subtype.ext hc
+    rw [heq, cSubgroupEquiv_coreC]
+    apply Subgroup.subset_closure
+    simp [coreC]
+  · have heq : y = coreD datum 0 := Subtype.ext hd
+    rw [heq, cSubgroupEquiv_coreD]
+    apply (CE datum (rankFiveFree datum)).inv_mem
+    apply Subgroup.subset_closure
+    simp [coreE]
 
 private theorem cSubgroupEquiv_symm_coreC :
     (cSubgroupEquiv datum).symm (coreC datum 1) = coreC datum 0 := by
@@ -684,76 +643,23 @@ private theorem cSubgroupEquiv_symm_mem_CD_of_mem_CE
       CE datum (rankFiveFree datum)) :
     (((cSubgroupEquiv datum).symm x : CSubgroup datum 0) :
       Gamma2 datum (rankFiveFree datum)) ∈ CD datum (rankFiveFree datum) := by
-  let p : (g : Gamma2 datum (rankFiveFree datum)) →
-      g ∈ CE datum (rankFiveFree datum) → Prop :=
-    fun g hg ↦
-      (((cSubgroupEquiv datum).symm
-          (⟨g, CE_le_CSubgroup datum hg⟩ : CSubgroup datum 1) :
-        CSubgroup datum 0) : Gamma2 datum (rankFiveFree datum)) ∈
-        CD datum (rankFiveFree datum)
-  have hp : p (x : Gamma2 datum (rankFiveFree datum)) hx := by
-    apply Subgroup.closure_induction
-    · intro q hq
-      simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at hq
-      rcases hq with rfl | rfl
-      · change
-          (((cSubgroupEquiv datum).symm
-              (⟨BorisovCStage.c datum (rankFiveFree datum), _⟩ :
-                CSubgroup datum 1) : CSubgroup datum 0) :
-            Gamma2 datum (rankFiveFree datum)) ∈ CD datum (rankFiveFree datum)
-        rw [show
-          (⟨BorisovCStage.c datum (rankFiveFree datum), _⟩ :
-            CSubgroup datum 1) = coreC datum 1 by apply Subtype.ext; rfl]
-        rw [cSubgroupEquiv_symm_coreC]
-        change BorisovCStage.c datum (rankFiveFree datum) ∈
-          CD datum (rankFiveFree datum)
-        apply Subgroup.subset_closure
-        simp
-      · change
-          (((cSubgroupEquiv datum).symm
-              (⟨of3 datum (rankFiveFree datum) e3, _⟩ :
-                CSubgroup datum 1) : CSubgroup datum 0) :
-            Gamma2 datum (rankFiveFree datum)) ∈ CD datum (rankFiveFree datum)
-        rw [show
-          (⟨of3 datum (rankFiveFree datum) e3, _⟩ : CSubgroup datum 1) =
-            coreE datum 1 by apply Subtype.ext; rfl]
-        rw [cSubgroupEquiv_symm_coreE]
-        apply (CD datum (rankFiveFree datum)).inv_mem
-        change of3 datum (rankFiveFree datum) d3 ∈
-          CD datum (rankFiveFree datum)
-        apply Subgroup.subset_closure
-        simp
-    · change
-        (((cSubgroupEquiv datum).symm
-            (⟨1, _⟩ : CSubgroup datum 1) : CSubgroup datum 0) :
-          Gamma2 datum (rankFiveFree datum)) ∈ CD datum (rankFiveFree datum)
-      rw [show (⟨1, _⟩ : CSubgroup datum 1) = 1 by apply Subtype.ext; simp,
-        map_one]
-      exact (CD datum (rankFiveFree datum)).one_mem
-    · intro a b ha hb hpa hpb
-      change
-        (((cSubgroupEquiv datum).symm
-            (⟨a * b, _⟩ : CSubgroup datum 1) : CSubgroup datum 0) :
-          Gamma2 datum (rankFiveFree datum)) ∈ CD datum (rankFiveFree datum)
-      simpa only [show
-          (⟨a * b, CE_le_CSubgroup datum (Subgroup.mul_mem _ ha hb)⟩ :
-            CSubgroup datum 1) =
-              (⟨a, CE_le_CSubgroup datum ha⟩ : CSubgroup datum 1) *
-                ⟨b, CE_le_CSubgroup datum hb⟩ by rfl,
-        map_mul, Subgroup.coe_mul] using
-          (CD datum (rankFiveFree datum)).mul_mem hpa hpb
-    · intro a ha hpa
-      change
-        (((cSubgroupEquiv datum).symm
-            (⟨a⁻¹, _⟩ : CSubgroup datum 1) : CSubgroup datum 0) :
-          Gamma2 datum (rankFiveFree datum)) ∈ CD datum (rankFiveFree datum)
-      simpa only [show
-          (⟨a⁻¹, CE_le_CSubgroup datum (Subgroup.inv_mem _ ha)⟩ :
-            CSubgroup datum 1) =
-              (⟨a, CE_le_CSubgroup datum ha⟩ : CSubgroup datum 1)⁻¹ by rfl,
-        map_inv, Subgroup.coe_inv] using
-          (CD datum (rankFiveFree datum)).inv_mem hpa
-  exact hp
+  apply map_mem_of_mem_closure (CE_le_CSubgroup datum)
+    ((CSubgroup datum 0).subtype.comp (cSubgroupEquiv datum).symm.toMonoidHom)
+    (CD datum (rankFiveFree datum)) ?_ hx
+  intro y hy
+  change (((cSubgroupEquiv datum).symm y : CSubgroup datum 0) :
+    Gamma2 datum (rankFiveFree datum)) ∈ CD datum (rankFiveFree datum)
+  simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at hy
+  rcases hy with hc | he
+  · have heq : y = coreC datum 1 := Subtype.ext hc
+    rw [heq, cSubgroupEquiv_symm_coreC]
+    apply Subgroup.subset_closure
+    simp [coreC]
+  · have heq : y = coreE datum 1 := Subtype.ext he
+    rw [heq, cSubgroupEquiv_symm_coreE]
+    apply (CD datum (rankFiveFree datum)).inv_mem
+    apply Subgroup.subset_closure
+    simp [coreD]
 
 theorem cSubgroupEquiv_mem_CD_iff (x : CSubgroup datum 0) :
     (x : Gamma2 datum (rankFiveFree datum)) ∈ CD datum (rankFiveFree datum) ↔
