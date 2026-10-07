@@ -1,0 +1,91 @@
+/-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+module  -- shake: keep-all --deprecated_module: ignore
+
+-- Generated project imports; run `lake exe mk_all`.
+public import LeanPool.SmallUndecidableGroups
+public import LeanPool.SmallUndecidableGroups.AdianRabin
+public import LeanPool.SmallUndecidableGroups.AdianRabin.Gordon.Amalgam
+public import LeanPool.SmallUndecidableGroups.AdianRabin.Gordon.Condition
+public import LeanPool.SmallUndecidableGroups.AdianRabin.Gordon.Construction
+public import LeanPool.SmallUndecidableGroups.AdianRabin.Gordon.Embedding
+public import LeanPool.SmallUndecidableGroups.AdianRabin.Gordon.Family
+public import LeanPool.SmallUndecidableGroups.AdianRabin.Gordon.LeftNormalForm
+public import LeanPool.SmallUndecidableGroups.AdianRabin.Gordon.RightNormalForm
+public import LeanPool.SmallUndecidableGroups.AdianRabin.MillerTancer.Amalgam
+public import LeanPool.SmallUndecidableGroups.AdianRabin.MillerTancer.Compressed
+public import LeanPool.SmallUndecidableGroups.AdianRabin.MillerTancer.Construction
+public import LeanPool.SmallUndecidableGroups.AdianRabin.MillerTancer.Embedding
+public import LeanPool.SmallUndecidableGroups.AdianRabin.MillerTancer.Family
+public import LeanPool.SmallUndecidableGroups.AdianRabin.MillerTancer.LeftInjective
+public import LeanPool.SmallUndecidableGroups.AdianRabin.MillerTancer.LeftNormalForm
+public import LeanPool.SmallUndecidableGroups.AdianRabin.MillerTancer.LeftSplit
+public import LeanPool.SmallUndecidableGroups.AdianRabin.MillerTancer.RightNormalForm
+public import LeanPool.SmallUndecidableGroups.Borisov.Assertions.AssertionIV
+public import LeanPool.SmallUndecidableGroups.Borisov.Assertions.AssertionIVBoundary
+public import LeanPool.SmallUndecidableGroups.Borisov.Assertions.AssertionV
+public import LeanPool.SmallUndecidableGroups.Borisov.Assertions.CoefficientShapes
+public import LeanPool.SmallUndecidableGroups.Borisov.Assertions.CoefficientSigns
+public import LeanPool.SmallUndecidableGroups.Borisov.Assertions.ConditionalConverse
+public import LeanPool.SmallUndecidableGroups.Borisov.Assertions.InputsBridge
+public import LeanPool.SmallUndecidableGroups.Borisov.Assertions.Lemma4Pinch
+public import LeanPool.SmallUndecidableGroups.Borisov.Assertions.PinchCoefficientClassification
+public import LeanPool.SmallUndecidableGroups.Borisov.Construction
+public import LeanPool.SmallUndecidableGroups.Borisov.Criterion
+public import LeanPool.SmallUndecidableGroups.Borisov.Mod5.BaseWords
+public import LeanPool.SmallUndecidableGroups.Borisov.Mod5.Quotient
+public import LeanPool.SmallUndecidableGroups.Borisov.Mod5.Sparsity
+public import LeanPool.SmallUndecidableGroups.Borisov.Mod5.WordLength
+public import LeanPool.SmallUndecidableGroups.Borisov.Model.CStage
+public import LeanPool.SmallUndecidableGroups.Borisov.Model.ContextNormalForm
+public import LeanPool.SmallUndecidableGroups.Borisov.Model.ConverseCore
+public import LeanPool.SmallUndecidableGroups.Borisov.Model.FinalModel
+public import LeanPool.SmallUndecidableGroups.Borisov.Model.FinalModelInjective
+public import LeanPool.SmallUndecidableGroups.Borisov.Model.G0HNN
+public import LeanPool.SmallUndecidableGroups.Borisov.Model.G0NormalForm
+public import LeanPool.SmallUndecidableGroups.Borisov.Model.HNNModel
+public import LeanPool.SmallUndecidableGroups.Borisov.Model.Intersections
+public import LeanPool.SmallUndecidableGroups.Computability
+public import LeanPool.SmallUndecidableGroups.GroupTheory.CoprodILemmas
+public import LeanPool.SmallUndecidableGroups.GroupTheory.HNNLemmas
+public import LeanPool.SmallUndecidableGroups.GroupTheory.MultipleHNN
+public import LeanPool.SmallUndecidableGroups.GroupTheory.MultipleHNN.Flat
+public import LeanPool.SmallUndecidableGroups.GroupTheory.MultipleHNN.FlatUniqueness
+public import LeanPool.SmallUndecidableGroups.Host
+public import LeanPool.SmallUndecidableGroups.Host.Abelianization
+public import LeanPool.SmallUndecidableGroups.Host.Compression
+public import LeanPool.SmallUndecidableGroups.Host.CompressionInjective
+public import LeanPool.SmallUndecidableGroups.Host.Existence
+public import LeanPool.SmallUndecidableGroups.Host.KcModel
+public import LeanPool.SmallUndecidableGroups.Host.Presentation
+public import LeanPool.SmallUndecidableGroups.Host.ThetaCT
+public import LeanPool.SmallUndecidableGroups.Host.Tower
+public import LeanPool.SmallUndecidableGroups.Host.YStage
+public import LeanPool.SmallUndecidableGroups.Host.ZBaseIntersections
+public import LeanPool.SmallUndecidableGroups.Host.ZIntersections
+public import LeanPool.SmallUndecidableGroups.Host.ZStage
+public import LeanPool.SmallUndecidableGroups.Machine.FixedTuringMachine
+public import LeanPool.SmallUndecidableGroups.Machine.PostMachineThue
+public import LeanPool.SmallUndecidableGroups.Machine.SupportedTM1Thue
+public import LeanPool.SmallUndecidableGroups.Machine.TM0PostAdapter
+public import LeanPool.SmallUndecidableGroups.Machine.TM1BinaryAdapter
+public import LeanPool.SmallUndecidableGroups.Machine.ThueBridge
+public import LeanPool.SmallUndecidableGroups.Presentation
+public import LeanPool.SmallUndecidableGroups.Thue
+public import LeanPool.SmallUndecidableGroups.Thue.Core
+public import LeanPool.SmallUndecidableGroups.Thue.FiniteReindex
+public import LeanPool.SmallUndecidableGroups.Thue.FixedSeed
+public import LeanPool.SmallUndecidableGroups.Thue.Matiyasevich.BinaryStage
+public import LeanPool.SmallUndecidableGroups.Thue.Matiyasevich.Compression
+public import LeanPool.SmallUndecidableGroups.Thue.Matiyasevich.ContextualSelection
+public import LeanPool.SmallUndecidableGroups.Thue.Matiyasevich.FinalStage
+public import LeanPool.SmallUndecidableGroups.Thue.Matiyasevich.Padding
+public import LeanPool.SmallUndecidableGroups.Thue.Matiyasevich.PriorityForward
+public import LeanPool.SmallUndecidableGroups.Thue.Matiyasevich.PriorityReflection
+public import LeanPool.SmallUndecidableGroups.Thue.Matiyasevich.PriorityStage
+public import LeanPool.SmallUndecidableGroups.Thue.Matiyasevich.Reduction
+public import LeanPool.SmallUndecidableGroups.Thue.Matiyasevich.RowSelection
+public import LeanPool.SmallUndecidableGroups.Thue.StandingDatum
