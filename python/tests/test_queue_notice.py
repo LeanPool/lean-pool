@@ -1,0 +1,84 @@
+"""Queued content and generated attribution retain separate source checks."""
+
+import subprocess
+
+import pytest
+import yaml
+
+from lean_pool import notice, queue_notice
+
+
+def test_bad_submitted_attribution_is_rejected(tmp_path):
+    """Regeneration cannot conceal an incorrect NOTICE submitted by a PR."""
+    (tmp_path / "LeanPool").mkdir()
+    (tmp_path / "LeanPool/projects.yml").write_text(
+        yaml.safe_dump({"projects": [_card("a")]})
+    )
+    (tmp_path / "NOTICE.extra.yml").write_text("{}\n")
+    _git(tmp_path, "init")
+    _git(tmp_path, "config", "user.name", "Test")
+    _git(tmp_path, "config", "user.email", "test@example.org")
+    _git(tmp_path, "add", ".")
+    _git(tmp_path, "commit", "-m", "base")
+    with pytest.raises(ValueError, match="does not match"):
+        queue_notice.validate_snapshot(tmp_path, "HEAD", "Missing attribution\n")
+
+
+def _card(name):
+    return {
+        "slug": name,
+        "entry_module": f"LeanPool.{name.upper()}",
+        "license": "MIT",
+        "source": {"github_repo": f"example/{name}"},
+    }
+
+
+def _git(root, *arguments):
+    return subprocess.check_output(["git", *arguments], cwd=root, text=True).strip()
+
+
+def test_combined_queue_checks_submitted_snapshot_then_all_new_projects(
+    tmp_path, monkeypatch
+):
+    """A correct metadata PR remains valid when independent content precedes it."""
+    (tmp_path / "LeanPool").mkdir()
+    registry = tmp_path / "LeanPool/projects.yml"
+    registry.write_text(yaml.safe_dump({"projects": [_card("a")]}))
+    extra = tmp_path / "NOTICE.extra.yml"
+    extra.write_text("{}\n")
+    path = tmp_path / "NOTICE"
+    path.write_text(notice.build(tmp_path))
+    _git(tmp_path, "init")
+    _git(tmp_path, "config", "user.name", "Test")
+    _git(tmp_path, "config", "user.email", "test@example.org")
+    _git(tmp_path, "remote", "add", "origin", str(tmp_path))
+    _git(tmp_path, "add", ".")
+    _git(tmp_path, "commit", "-m", "base")
+    base = _git(tmp_path, "rev-parse", "HEAD")
+    extra.write_text("A:\n  note: Additional upstream attribution\n")
+    path.write_text(notice.build(tmp_path))
+    submitted = path.read_text()
+    _git(tmp_path, "add", ".")
+    _git(tmp_path, "commit", "-m", "Refresh attribution")
+    submitted_head = _git(tmp_path, "rev-parse", "HEAD")
+    _git(tmp_path, "checkout", "-b", "queue", base)
+    registry.write_text(yaml.safe_dump({"projects": [_card("a"), _card("b")]}))
+    _git(tmp_path, "add", ".")
+    _git(tmp_path, "commit", "-m", "Add project (#2)")
+    extra.write_text("A:\n  note: Additional upstream attribution\n")
+    path.write_text(submitted)
+    _git(tmp_path, "add", ".")
+    _git(tmp_path, "commit", "-m", "Refresh attribution (#1)")
+    head = _git(tmp_path, "rev-parse", "HEAD")
+    monkeypatch.setattr(
+        queue_notice,
+        "github_json",
+        lambda _: {
+            "head": {"sha": submitted_head},
+            "base": {"repo": {"full_name": "owner/repo"}, "ref": "main"},
+        },
+    )
+    queue_notice.prepare(tmp_path, "owner/repo", base, head)
+    assert path.read_text() == notice.build(tmp_path)
+    assert "https://github.com/example/b" in path.read_text()
+    assert "Additional upstream attribution" in path.read_text()

@@ -1,31 +1,28 @@
 name: Generated metadata
 
-# README.md and NOTICE are deterministic views of repository content. A
-# maintainer credential pushes their refresh directly to main so these small,
-# mechanical updates do not create a second PR for every content merge.
-
+# Generated files travel through the same protected queue as other changes.
+# Keep an existing metadata PR fixed while it is being checked. A subsequent
+# merge or scheduled refresh picks up content accepted since it was created.
 on:
   push:
-    branches:
-      - main
-    # The generated commit changes only README.md and NOTICE, neither of which
-    # is an input below, so it cannot trigger a commit loop.
+    branches: [main]
     paths:
       - 'LeanPool/**'
       - 'NOTICE.extra.yml'
       - 'python/lean_pool/notice.py'
       - 'python/lean_pool/stats.py'
       - '.github/workflows/notice.yml'
+  pull_request_target:
+    types: [closed]
+    paths: ['README.md', 'NOTICE']
+  schedule:
+    - cron: '17 * * * *'
   workflow_dispatch:
 
 concurrency:
-  # README and NOTICE share one writer. Runs queue rather than cancel so a
-  # newer merge cannot interrupt an older run while it is publishing.
   group: generated-metadata-main
   cancel-in-progress: false
 
-# The direct push uses REBASE_TOKEN. Keep the run's automatic GITHUB_TOKEN
-# read-only so it is not a second write credential.
 permissions:
   contents: read
 
@@ -38,53 +35,45 @@ jobs:
         with:
           fetch-depth: 0
           ref: main
-          # REBASE_TOKEN is a maintainer PAT. Main's protection allows the
-          # maintainer identity to publish these generated-only commits.
           token: ${{ secrets.REBASE_TOKEN }}
-
       - uses: astral-sh/setup-uv@d0d8abe699bfb85fec6de9f7adb5ae17292296ff
         with:
           enable-cache: true
-
       - name: Install dependencies
         run: cd python && uv sync --locked
-
-      - name: Regenerate and publish
+      - name: Publish one protected metadata PR
+        env:
+          GH_TOKEN: ${{ secrets.REBASE_TOKEN }}
+          REPO: ${{ github.repository }}
         run: |
           set -euo pipefail
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-
-          # A content merge can advance main after checkout. Each retry starts
-          # from the new tip and regenerates both files, so the eventual commit
-          # includes every merged project and never needs a force-push.
-          for attempt in 1 2 3 4 5; do
-            echo "Publish attempt $attempt of 5."
-            git fetch origin main
-            git checkout --detach origin/main
-
-            (cd python && uv run python -m lean_pool.stats --repo ..)
-            (cd python && uv run python -m lean_pool.notice --repo ..)
-
-            unexpected="$(git diff --name-only \
-              | { grep -vE '^(NOTICE|README\.md)$' || true; })"
-            if [ -n "$unexpected" ]; then
-              echo "::error::Generators changed files outside README.md and NOTICE."
-              printf '%s\n' "$unexpected"
-              exit 1
-            fi
-            if git diff --quiet -- README.md NOTICE; then
-              echo "Generated metadata is already up to date."
-              exit 0
-            fi
-
-            git add README.md NOTICE
-            git commit -m "chore: refresh generated metadata"
-            if git push origin HEAD:main; then
-              exit 0
-            fi
-            echo "Main advanced during publish; regenerating from its new tip."
-          done
-
-          echo "::error::Could not publish generated metadata after five attempts."
-          exit 1
+          existing=$(gh pr list -R "$REPO" --state open --head codex/generated-metadata --json number --jq '.[0].number // empty')
+          if [ -n "$existing" ]; then
+            echo "Metadata PR #$existing is already being checked; retaining its head."
+            exit 0
+          fi
+          git fetch origin main
+          git checkout -b codex/generated-metadata origin/main
+          (cd python && uv run python -m lean_pool.stats --repo ..)
+          (cd python && uv run python -m lean_pool.notice --repo ..)
+          unexpected=$(git diff --name-only | { grep -vE '^(NOTICE|README\.md)$' || true; })
+          if [ -n "$unexpected" ]; then
+            echo '::error::Metadata generators changed other files.'
+            exit 1
+          fi
+          if git diff --quiet; then
+            echo 'Generated metadata is already current.'
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add README.md NOTICE
+          git commit -m 'Refresh generated project statistics and attribution'
+          # The fixed branch may remain after its previous PR merged. Replace
+          # only that completed automation branch, never main or an open PR.
+          git push --force-with-lease origin HEAD:codex/generated-metadata
+          gh pr create -R "$REPO" --head codex/generated-metadata --base main \
+            --title 'Refresh generated project statistics and attribution' \
+            --body 'Regenerates README statistics and NOTICE from the accepted project cards and attribution notes. No proof sources change.'
+          gh pr merge -R "$REPO" codex/generated-metadata --squash --auto \
+            --match-head-commit "$(git rev-parse HEAD)"

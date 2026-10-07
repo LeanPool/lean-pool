@@ -24,6 +24,8 @@ name: Lean Action CI
 # single-job workflow used.
 
 on:
+  merge_group:
+    types: [checks_requested]
   push:
     branches:
       - main
@@ -32,8 +34,12 @@ on:
       - 'lakefile.toml'
       - 'lean-toolchain'
       - 'lake-manifest.json'
+      - 'LeanPool/projects/**'
       - 'LeanPool/projects.yml'
       - 'python/lean_pool/quality.py'
+      - 'python/lean_pool/registry.py'
+      - 'python/lean_pool/indexes.py'
+      - 'python/lean_pool/queue_build.py'
       - 'python/lean_pool/validation_cache.py'
       - 'python/lean_pool/ci_artifacts.py'
       - 'python/lean_pool/ci_cache.py'
@@ -62,8 +68,12 @@ on:
       - 'lakefile.toml'
       - 'lean-toolchain'
       - 'lake-manifest.json'
+      - 'LeanPool/projects/**'
       - 'LeanPool/projects.yml'
       - 'python/lean_pool/quality.py'
+      - 'python/lean_pool/registry.py'
+      - 'python/lean_pool/indexes.py'
+      - 'python/lean_pool/queue_build.py'
       - 'python/lean_pool/validation_cache.py'
       - 'python/lean_pool/ci_artifacts.py'
       - 'python/lean_pool/ci_cache.py'
@@ -116,7 +126,7 @@ jobs:
       - name: Identify compiled Lean sources
         id: build-identity
         env:
-          BASE_REF: ${{ github.event.pull_request.base.sha || github.sha }}
+          BASE_REF: ${{ github.event.merge_group.base_sha || github.event.pull_request.base.sha || github.sha }}
         run: |
           set -euo pipefail
           revision=$(PYTHONPATH=python python3 -m lean_pool.ci_cache revision)
@@ -139,14 +149,14 @@ jobs:
         id: plan
         env:
           EVENT_NAME: ${{ github.event_name }}
-          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          BASE_SHA: ${{ github.event.merge_group.base_sha || github.event.pull_request.base.sha }}
           BEFORE_SHA: ${{ github.event.before }}
           FORCE_FULL: ${{ inputs.force_full }}
           CACHE_MATCHED: ${{ steps.lake-cache.outputs.cache-matched-key }}
           GH_TOKEN: ${{ github.token }}
           REPOSITORY: ${{ github.repository }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
-          PR_HEAD: ${{ github.event.pull_request.head.sha }}
+          PR_HEAD: ${{ github.event.merge_group.head_sha || github.event.pull_request.head.sha }}
         run: |
           set -euo pipefail
           diff_available=true
@@ -155,6 +165,9 @@ jobs:
           changed_files="$RUNNER_TEMP/changed-files.txt"
           : > "$changed_files"
           case "$EVENT_NAME" in
+            merge_group)
+              git diff --name-only "$BASE_SHA"..HEAD > "$changed_files"
+              ;;
             pull_request)
               git diff --name-only "$BASE_SHA"...HEAD > "$changed_files"
               ;;
@@ -249,7 +262,8 @@ jobs:
           LEAN_POOL_REQUIRE_TEST_TOOLCHAIN: '1'
         run: >-
           uv run --project python --group test pytest -q
-          python/tests/test_ci_pr_build.py -k 'test_lake_'
+          python/tests/test_ci_pr_build.py python/tests/test_indexes.py
+          -k 'test_lake_'
 
       - name: Install Mathlib cache
         id: mathlib-cache
@@ -275,7 +289,10 @@ jobs:
           REPOSITORY: ${{ github.repository }}
           BEFORE_SHA: ${{ github.event.before }}
         run: |
-          if git cat-file -e "$BEFORE_SHA" 2>/dev/null; then
+          if PYTHONPATH=python python3 -m lean_pool.queue_build \
+            --repository "$REPOSITORY" --base "$BEFORE_SHA" --head "$GITHUB_SHA" --merged; then
+            echo 'Restored the successfully merged queue build.'
+          elif git cat-file -e "$BEFORE_SHA" 2>/dev/null; then
             PYTHONPATH=python python3 -m lean_pool.rebase_fastpath restore-main \
               --repository "$REPOSITORY" --head "$BEFORE_SHA" --base "$GITHUB_SHA"
           fi
@@ -287,13 +304,24 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
           PR_BRANCH: ${{ github.head_ref }}
-          PR_HEAD: ${{ github.event.pull_request.head.sha }}
-          PR_BASE: ${{ github.event.pull_request.base.sha }}
+          PR_HEAD: ${{ github.event.merge_group.head_sha || github.event.pull_request.head.sha }}
+          PR_BASE: ${{ github.event.merge_group.base_sha || github.event.pull_request.base.sha }}
           CURRENT_RUN: ${{ github.run_id }}
         run: >-
           PYTHONPATH=python python3 -m lean_pool.ci_pr_build
           --number "$PR_NUMBER" --branch "$PR_BRANCH"
           --head "$PR_HEAD" --base "$PR_BASE" --current-run "$CURRENT_RUN"
+
+      - name: Reuse successful queued PR builds
+        if: github.event_name == 'merge_group'
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+          BASE_SHA: ${{ github.event.merge_group.base_sha }}
+          HEAD_SHA: ${{ github.event.merge_group.head_sha }}
+        run: >-
+          PYTHONPATH=python python3 -m lean_pool.queue_build
+          --base "$BASE_SHA" --head "$HEAD_SHA"
 
       - name: Build project
         id: compilation
@@ -308,11 +336,11 @@ jobs:
       # Publish once compilation succeeds, so docs can overlap the later
       # linters/quality checks without compiling the same PR a second time.
       - name: Package build for documentation
-        if: github.event_name != 'pull_request'
+        if: github.ref == 'refs/heads/main'
         run: PYTHONPATH=python python3 -m lean_pool.ci_artifacts pack
 
       - name: Share build with documentation
-        if: github.event_name != 'pull_request'
+        if: github.ref == 'refs/heads/main'
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
           name: lean-pool-build
@@ -344,6 +372,17 @@ jobs:
       - name: Install validation dependencies
         run: cd python && uv sync --locked
 
+      - name: Reuse successful queued PR validation
+        if: github.event_name == 'merge_group'
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+          BASE_SHA: ${{ github.event.merge_group.base_sha }}
+          HEAD_SHA: ${{ github.event.merge_group.head_sha }}
+        run: >-
+          PYTHONPATH=python python3 -m lean_pool.queue_build
+          --base "$BASE_SHA" --head "$HEAD_SHA" --receipts
+
       - name: Lint
         run: |
           cd python
@@ -371,15 +410,15 @@ jobs:
           retention-days: 14
 
       - name: Package PR project build for later rebases
-        if: github.event_name == 'pull_request'
+        if: github.event_name == 'pull_request' || github.event_name == 'merge_group'
         continue-on-error: true
         env:
-          BASE_SHA: ${{ github.event.pull_request.base.sha }}
-          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          BASE_SHA: ${{ github.event.merge_group.base_sha || github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.merge_group.head_sha || github.event.pull_request.head.sha }}
         run: PYTHONPATH=python python3 -m lean_pool.rebase_fastpath pack --base "$BASE_SHA" --head "$HEAD_SHA"
 
       - name: Retain PR project build
-        if: github.event_name == 'pull_request'
+        if: github.event_name == 'pull_request' || github.event_name == 'merge_group'
         continue-on-error: true
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
@@ -591,6 +630,14 @@ jobs:
         with:
           enable-cache: true
 
+      - name: Check compiled artifact dependency tracking with pinned Lean
+        env:
+          LEAN_POOL_REQUIRE_TEST_TOOLCHAIN: '1'
+        run: >-
+          uv run --project python --group test pytest -q
+          python/tests/test_ci_pr_build.py python/tests/test_indexes.py
+          -k 'test_lake_'
+
       - name: Install Mathlib cache
         id: mathlib-cache
         run: |
@@ -626,6 +673,17 @@ jobs:
       # With the shard outputs in place this is mostly cache replay; it
       # builds the root module and anything a shard missed or failed to
       # deliver, so the assembled pool is complete regardless.
+      - name: Reuse successful queued PR builds
+        if: github.event_name == 'merge_group'
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+          BASE_SHA: ${{ github.event.merge_group.base_sha }}
+          HEAD_SHA: ${{ github.event.merge_group.head_sha }}
+        run: >-
+          PYTHONPATH=python python3 -m lean_pool.queue_build
+          --base "$BASE_SHA" --head "$HEAD_SHA"
+
       - name: Build project
         id: compilation
         run: |
@@ -639,11 +697,11 @@ jobs:
       # Publish once compilation succeeds, so docs can overlap the later
       # linters/quality checks without compiling the same PR a second time.
       - name: Package build for documentation
-        if: github.event_name != 'pull_request'
+        if: github.ref == 'refs/heads/main'
         run: PYTHONPATH=python python3 -m lean_pool.ci_artifacts pack
 
       - name: Share build with documentation
-        if: github.event_name != 'pull_request'
+        if: github.ref == 'refs/heads/main'
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
           name: lean-pool-build
@@ -675,6 +733,17 @@ jobs:
       - name: Install validation dependencies
         run: cd python && uv sync --locked
 
+      - name: Reuse successful queued PR validation
+        if: github.event_name == 'merge_group'
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+          BASE_SHA: ${{ github.event.merge_group.base_sha }}
+          HEAD_SHA: ${{ github.event.merge_group.head_sha }}
+        run: >-
+          PYTHONPATH=python python3 -m lean_pool.queue_build
+          --base "$BASE_SHA" --head "$HEAD_SHA" --receipts
+
       - name: Lint
         run: |
           cd python
@@ -702,15 +771,15 @@ jobs:
           retention-days: 14
 
       - name: Package PR project build for later rebases
-        if: github.event_name == 'pull_request'
+        if: github.event_name == 'pull_request' || github.event_name == 'merge_group'
         continue-on-error: true
         env:
-          BASE_SHA: ${{ github.event.pull_request.base.sha }}
-          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          BASE_SHA: ${{ github.event.merge_group.base_sha || github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.merge_group.head_sha || github.event.pull_request.head.sha }}
         run: PYTHONPATH=python python3 -m lean_pool.rebase_fastpath pack --base "$BASE_SHA" --head "$HEAD_SHA"
 
       - name: Retain PR project build
-        if: github.event_name == 'pull_request'
+        if: github.event_name == 'pull_request' || github.event_name == 'merge_group'
         continue-on-error: true
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
@@ -813,7 +882,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           REPOSITORY: ${{ github.repository }}
           PREVIOUS_HEAD: ${{ needs.plan.outputs.previous_head }}
-          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          BASE_SHA: ${{ github.event.merge_group.base_sha || github.event.pull_request.base.sha }}
         run: >-
           PYTHONPATH=python python3 -m lean_pool.rebase_fastpath restore-main
           --repository "$REPOSITORY" --head "$PREVIOUS_HEAD" --base "$BASE_SHA"
@@ -841,6 +910,14 @@ jobs:
         uses: astral-sh/setup-uv@d0d8abe699bfb85fec6de9f7adb5ae17292296ff
         with:
           enable-cache: true
+
+      - name: Check compiled artifact dependency tracking with pinned Lean
+        env:
+          LEAN_POOL_REQUIRE_TEST_TOOLCHAIN: '1'
+        run: >-
+          uv run --project python --group test pytest -q
+          python/tests/test_ci_pr_build.py python/tests/test_indexes.py
+          -k 'test_lake_'
 
       - name: Install Mathlib cache
         run: |
@@ -907,8 +984,8 @@ jobs:
       - name: Package PR project build for later rebases
         continue-on-error: true
         env:
-          BASE_SHA: ${{ github.event.pull_request.base.sha }}
-          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          BASE_SHA: ${{ github.event.merge_group.base_sha || github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.merge_group.head_sha || github.event.pull_request.head.sha }}
         run: PYTHONPATH=python python3 -m lean_pool.rebase_fastpath pack --base "$BASE_SHA" --head "$HEAD_SHA"
 
       - name: Retain PR project build

@@ -14,6 +14,7 @@ from lean_pool.rebase import (
     resolvable,
     split_cards,
 )
+from lean_pool.registry import load_document
 
 BASE = """projects:
   - slug: alpha
@@ -225,7 +226,10 @@ def test_split_cards_rejects_ambiguous_registries(text: str) -> None:
 def test_split_cards_covers_every_real_project() -> None:
     """Every YAML project, including title-first entries, gets a verbatim block."""
     root = Path(__file__).resolve().parents[2]
-    text = (root / "LeanPool/projects.yml").read_text(encoding="utf-8")
+    text = yaml.safe_dump(
+        load_document(root / "LeanPool/projects.yml"), sort_keys=False, indent=2
+    )
+    text = "projects:\n" + "".join("  " + line + "\n" for line in text.splitlines()[1:])
     header, cards = split_cards(text)
     assert [slug for slug, _ in cards] == [
         card["slug"] for card in yaml.safe_load(text)["projects"]

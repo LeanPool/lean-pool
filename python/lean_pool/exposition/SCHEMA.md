@@ -52,7 +52,7 @@ module ("Basic") with no registry card.
 Relative bases from `p/<Project>/index.html`: exposition root `../..`,
 doc-gen4 root `../../..`. doc-gen4 page for a non-private declaration
 `Foo.bar` in module `LeanPool.A.B`: `<docs-root>/LeanPool/A/B.html#Foo.bar`.
-GitHub source: `https://github.com/Vilin97/lean-pool/blob/main/<LeanPool/A/B.lean>#L<line>-L<endLine>`.
+GitHub source: `https://github.com/LeanPool/lean-pool/blob/main/<LeanPool/A/B.lean>#L<line>-L<endLine>`.
 
 ## `data/projects/<Project>.json` (shard)
 

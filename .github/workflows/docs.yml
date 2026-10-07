@@ -1,11 +1,14 @@
 name: Documentation
 
 on:
+  merge_group:
+    types: [checks_requested]
   push:
     branches:
       - main
     paths:
       - '**/*.lean'
+      - 'LeanPool/projects/**'
       - 'LeanPool/projects.yml'
       - 'lakefile.toml'
       - 'lake-manifest.json'
@@ -30,6 +33,7 @@ on:
       - '.github/workflows/lean_action_ci.yml'
       - 'scripts/ci/**'
       - '**/*.lean'
+      - 'LeanPool/projects/**'
       - 'LeanPool/projects.yml'
       - 'lakefile.toml'
       - 'lake-manifest.json'
@@ -91,9 +95,9 @@ jobs:
       - name: Detect README-only change
         id: scope
         env:
-          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          BASE_SHA: ${{ github.event.merge_group.base_sha || github.event.pull_request.base.sha }}
           EVENT_NAME: ${{ github.event_name }}
-          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          HEAD_SHA: ${{ github.event.merge_group.head_sha || github.event.pull_request.head.sha }}
         run: |
           set -euo pipefail
           readme_only=false
@@ -113,8 +117,8 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           REPOSITORY: ${{ github.repository }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
-          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
-          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.merge_group.head_sha || github.event.pull_request.head.sha }}
+          BASE_SHA: ${{ github.event.merge_group.base_sha || github.event.pull_request.base.sha }}
         run: |
           decision=$(PYTHONPATH=python python3 -m lean_pool.rebase_fastpath decide \
             --workflow docs.yml --repository "$REPOSITORY" --number "$PR_NUMBER" \

@@ -5,7 +5,7 @@
 #   1. Clone (or reuse) the external repo into a sibling scratch directory.
 #   2. Create a fresh git worktree of lean-pool on a new branch.
 #   3. Hand both paths to a headless agent (Claude or Codex)
-#      with a detailed prompt covering the bump, vendoring, projects.yml
+#      with a detailed prompt covering the bump, vendoring, project cards
 #      entry, file headers, and CI checks documented in
 #      .github/CODE_QUALITY.md.
 #   4. Whatever progress the agent makes, push the branch and open a PR in
@@ -80,14 +80,13 @@ github_repo_of() {
 
 source_repo_registered() {
   local repo="$1"
-  local projects_file="$LEAN_POOL_ROOT/LeanPool/projects.yml"
-  [[ "$repo" == */* && -f "$projects_file" ]] || return 1
-  local normalized_repo
-  normalized_repo="$(printf '%s' "$repo" | tr '[:upper:]' '[:lower:]')"
-  sed -n 's/^[[:space:]]*github_repo:[[:space:]]*//p' "$projects_file" \
-    | tr -d '"' \
-    | tr '[:upper:]' '[:lower:]' \
-    | grep -Fxq "$normalized_repo"
+  [[ "$repo" == */* ]] || return 1
+  command -v uv >/dev/null || die "uv is required to read the project registry."
+  local sources
+  sources="$(PYTHONPATH="$LEAN_POOL_ROOT/python" uv run \
+    --project "$LEAN_POOL_ROOT/python" python -m lean_pool.registry \
+    --repo "$LEAN_POOL_ROOT" --sources)" || die "Cannot read project registry."
+  printf '%s\n' "$sources" | grep -Fxiq "$repo"
 }
 
 # --- Argument parsing --------------------------------------------------------
@@ -166,7 +165,7 @@ mkdir -p "$BUMPS_DIR"
 RAW_SLUG="${SOURCE_URL%.git}"
 RAW_SLUG="${RAW_SLUG##*/}"
 
-# Lowercase slug used for directories, branch, and projects.yml entry.
+# Lowercase slug used for directories, branch, and project card.
 [[ -n "$SLUG" ]] || SLUG="$(echo "$RAW_SLUG" | tr '[:upper:]' '[:lower:]')"
 [[ "$SLUG" =~ ^[a-z0-9][a-z0-9_-]*$ ]] \
   || die "Derived slug '$SLUG' is not a valid identifier; pass --slug explicitly."
@@ -196,7 +195,7 @@ log "Model:         $MODEL  (effort: $EFFORT)"
 
 if SOURCE_GITHUB_REPO="$(github_repo_of "$SOURCE_URL")" \
    && source_repo_registered "$SOURCE_GITHUB_REPO"; then
-  ok "Source repo $SOURCE_GITHUB_REPO is already registered in LeanPool/projects.yml; skipping."
+  ok "Source repo $SOURCE_GITHUB_REPO is already registered in LeanPool/projects/; skipping."
   exit 0
 fi
 
@@ -346,7 +345,7 @@ You are an autonomous Lean engineer importing an external Lean formalization int
 - Dependencies and the Mathlib cache are already fetched; \`.lake/packages\` may be a symlink to a shared, prebuilt store, so \`lake build LeanPool\` should not need to rebuild Mathlib and you should not run \`lake exe cache get\` or \`lake update\`.
 
 # Goal
-Vendor the source repo's Lean content into LeanPool/${SLUG}/, bump it to lean-pool's toolchain, register it in LeanPool/projects.yml, and make the local CI checks pass.
+Vendor the source repo's Lean content into LeanPool/${SLUG}/, bump it to lean-pool's toolchain, register it in LeanPool/projects/${SLUG}.yaml, and make the local CI checks pass.
 
 # Step-by-step
 1. Read ${SOURCE_DIR}/README.md (and the source repo's lakefile, lean-toolchain, LICENSE) to figure out: title, authors, main declarations, tags, license. lean-pool is Apache-2.0: an Apache-2.0 upstream is redistributed directly, MIT/BSD and similar permissive upstreams are sublicensed under Apache-2.0, and copyleft (GPL/LGPL/AGPL, CC-BY-SA) is incompatible — if the upstream is copyleft, STOP and write IMPORT_NOTES.md explaining (do NOT commit it; see note below). Unless the upstream is Apache-2.0, record its provenance in IMPORT_NOTES.md under a "NOTICE entry" heading — source repo URL, upstream license, and the upstream copyright notice verbatim if present — so the maintainer can add a matching entry to the root NOTICE file after merge; NOTICE is a non-content file and cannot be committed in the import PR.
@@ -359,8 +358,8 @@ Vendor the source repo's Lean content into LeanPool/${SLUG}/, bump it to lean-po
    - Strip diagnostic commands: \`#check\`, \`#print\`, \`#eval\`, \`#reduce\`, \`#guard_msgs\`, \`#lint\`.
    - Reject any file that depends on \`sorry\`, \`admit\`, a new \`axiom\`/\`constant\`, or uses \`unsafe\`/\`partial\`/\`opaque\`/\`@[extern]\`. First try to fix it (complete the proof; replace the unsafe construct). Only if you genuinely cannot, after real effort, may that one file be excluded as a last resort — and record in \`IMPORT_NOTES.md\` exactly what blocked you and what you tried.
 5. For every directory you create under LeanPool/, add an import-only index .lean file with a module docstring (style matches LeanPool/Basic.lean's header).
-6. Run \`lake exe mk_all\` to regenerate LeanPool.lean.
-7. Add a project entry to LeanPool/projects.yml. Required keys: slug, title, entry_module, authors (list), source ({url|arxiv|doi}), status: verified, main_declarations (list of fully-qualified names), tags (list). Optional: msc.
+6. Run \`lake exe mk_all\` to regenerate the project Imports.lean. LeanPool.lean is fixed; do not edit it.
+7. Write one project card mapping in LeanPool/projects/${SLUG}.yaml (no outer projects list). Required keys: slug, title, entry_module, authors (list), source ({url|arxiv|doi}), status: verified, main_declarations (list of fully-qualified names), tags (list). Optional: msc.
 8. Iterate — persistently, as many rounds as it takes — until ALL of these pass cleanly inside ${WORKTREE}:
    - \`lake exe mk_all --check\`
    - \`lake build LeanPool\` — and the build log must contain no warnings (CI greps for \`warning:\`).
@@ -379,7 +378,7 @@ Vendor the source repo's Lean content into LeanPool/${SLUG}/, bump it to lean-po
 - The build must be warning-free (CI fails on any \`warning:\` in the log).
 
 # Stay in your lane — what you may COMMIT
-You may add or modify, AND COMMIT, ONLY: \`LeanPool.lean\` (regenerate via \`lake exe mk_all\`), files under \`LeanPool/\` (including \`LeanPool/projects.yml\`). That's it — the Content-only PR CI gate rejects a PR that touches anything else. You may *write* \`IMPORT_NOTES.md\` locally (the wrapper reads it for the PR body) but you must NOT commit it. Do NOT modify ANYTHING else at all — in particular do NOT touch \`.github/\` (CI workflows, CODE_QUALITY.md), \`python/\` (incl. \`lean_pool/quality.py\`), \`scripts/\` (incl. \`nolints-style.txt\`), \`lakefile.toml\`, \`lean-toolchain\`, \`lake-manifest.json\`, \`AGENTS.md\`, \`CLAUDE.md\`, \`README.md\`, \`CONTRIBUTING.md\`, \`LICENSE\`, \`NOTICE\`, or \`.gitignore\`. Do NOT introduce any waiver/exception/escape-hatch: no \`size-limit-ok\` comment, no entry in \`scripts/nolints-style.txt\`, no \`set_option linter.X false\`, no linter toggle in \`lakefile.toml\`, no editing of \`quality.py\` or a workflow to skip a check. If a check fails, fix the code, not the check. If a proof exceeds 200 lines, split it into lemmas; if a file exceeds 10000 lines, split it into modules. The wrapper script reverts any committed change outside that allowlist (and untracks \`IMPORT_NOTES.md\`) before opening the PR, so out-of-scope edits accomplish nothing.
+You may add or modify, AND COMMIT, ONLY: Lean source files under \`LeanPool/\` and your project card under \`LeanPool/projects/\`. Do not edit \`LeanPool.lean\`. That's it — the Content-only PR CI gate rejects a PR that touches anything else. You may *write* \`IMPORT_NOTES.md\` locally (the wrapper reads it for the PR body) but you must NOT commit it. Do NOT modify ANYTHING else at all — in particular do NOT touch \`.github/\` (CI workflows, CODE_QUALITY.md), \`python/\` (incl. \`lean_pool/quality.py\`), \`scripts/\` (incl. \`nolints-style.txt\`), \`lakefile.toml\`, \`lean-toolchain\`, \`lake-manifest.json\`, \`AGENTS.md\`, \`CLAUDE.md\`, \`README.md\`, \`CONTRIBUTING.md\`, \`LICENSE\`, \`NOTICE\`, or \`.gitignore\`. Do NOT introduce any waiver/exception/escape-hatch: no \`size-limit-ok\` comment, no entry in \`scripts/nolints-style.txt\`, no \`set_option linter.X false\`, no linter toggle in \`lakefile.toml\`, no editing of \`quality.py\` or a workflow to skip a check. If a check fails, fix the code, not the check. If a proof exceeds 200 lines, split it into lemmas; if a file exceeds 10000 lines, split it into modules. The wrapper script reverts any committed change outside that allowlist (and untracks \`IMPORT_NOTES.md\`) before opening the PR, so out-of-scope edits accomplish nothing.
 
 # Do not give up
 A partial import is a failure, not an acceptable stopping point. Bumping pain is expected — work through it: when a Mathlib declaration moved or was renamed, find the current name (grep the Mathlib source under \`.lake/packages/mathlib\`, search for nearby lemmas, check release notes); when a lemma you relied on no longer exists, prove it yourself in your own namespace; when a proof breaks under the new Mathlib, repair it; when \`simp\`/\`omega\`/\`aesop\` no longer closes a goal, find the steps that do. Excluding a file is the absolute last resort, permissible only after you have genuinely exhausted these avenues, and every exclusion must be justified in \`IMPORT_NOTES.md\` (local scratch — not committed) with the specific blocker and what you attempted. Keep iterating — many rounds if that's what it takes — until \`lake build LeanPool\` (warning-free), \`lake exe runLinter LeanPool\`, \`lake exe lint-style LeanPool\`, and the \`quality\` check are all clean. Do not stop early.
@@ -494,7 +493,7 @@ if git ls-files -- "${SCRATCH_FILES[@]}" | grep -q .; then
 fi
 
 # --- Guard: revert anything the agent touched outside the import allowlist ---
-# An import may only add/modify LeanPool.lean and LeanPool/**. If the agent
+# An import may only add/modify project Lean sources and project cards. If the agent
 # edited CI workflows, quality.py, lint allowlists, lakefile/toolchain/manifest,
 # etc. — or *added* any file outside LeanPool/ (a sneak attempt to slip a new
 # script or workflow into the PR) — undo it before the PR goes up. Reverting
@@ -510,7 +509,7 @@ while IFS= read -r -d '' tok; do
   if [[ -z "$status" ]]; then status="$tok"; continue; fi
   p="$tok"; s="$status"; status=""
   case "$p" in
-    LeanPool.lean|LeanPool/*) continue ;;   # allowed
+    LeanPool/*.lean|LeanPool/projects/*.yaml) continue ;;   # allowed
   esac
   case "$s" in
     A|A?*)        # added by the agent: just remove
@@ -543,7 +542,7 @@ if [[ ${#OUT_OF_SCOPE[@]} -gt 0 ]]; then
   git add -A
   unstage_scratch
   git commit -m "Revert agent edits outside the import allowlist" \
-    -m "Auto-reverted by scripts/import-formalization.sh (an import may only touch LeanPool.lean and LeanPool/): ${OUT_OF_SCOPE[*]}" || true
+    -m "Auto-reverted by scripts/import-formalization.sh (an import may only touch project Lean sources and project cards): ${OUT_OF_SCOPE[*]}" || true
 fi
 
 # The allowlist above intentionally permits LeanPool/** because imports live

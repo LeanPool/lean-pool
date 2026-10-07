@@ -32,6 +32,8 @@ from typing import Any
 
 import yaml
 
+from lean_pool.registry import load_document
+
 logger = logging.getLogger(__name__)
 
 # Column at which an entry's URL starts, matching the hand-written original.
@@ -107,7 +109,7 @@ def _load_yaml(path: Path) -> Any:
 
 def load_projects(root: Path) -> list[dict[str, Any]]:
     """Read the project cards from ``LeanPool/projects.yml``."""
-    data = _load_yaml(root / "LeanPool" / "projects.yml")
+    data = load_document(root / "LeanPool" / "projects.yml")
     if isinstance(data, dict):
         data = data.get("projects", [])
     return list(data or [])

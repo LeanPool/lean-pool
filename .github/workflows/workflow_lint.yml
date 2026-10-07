@@ -1,6 +1,8 @@
 name: Workflow Lint
 
 on:
+  merge_group:
+    types: [checks_requested]
   push:
     branches:
       - main
@@ -9,8 +11,7 @@ on:
   pull_request:
     branches:
       - main
-    paths:
-      - '.github/**'
+
   workflow_dispatch:
 
 permissions:

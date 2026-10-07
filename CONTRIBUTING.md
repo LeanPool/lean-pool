@@ -11,7 +11,7 @@ If you would like to withdraw your project from Lean Pool, open an issue.
 There are two paths:
 
 - **Propose a repo.** Open an issue with the GitHub URL and a maintainer can import it. Repos that Reservoir does not index can be added to [`candidates/manual.txt`](candidates/manual.txt).
-- **Open a content PR.** Add your project under `LeanPool/<YourProject>/`, register it in [`LeanPool/projects.yml`](LeanPool/projects.yml) — the card must declare `provenance` (`human`, `AI`, or `mix`; see below) — and regenerate the indexes with `lake exe mk_all`. Commit `LeanPool/<YourProject>/Imports.lean`, which publicly imports every project source, and the single project import added to `LeanPool.lean`.
+- **Open a content PR.** Add your project under `LeanPool/<YourProject>/`, register it in [`LeanPool/projects/<slug>.yaml`](LeanPool/projects/) — the card must declare `provenance` (`human`, `AI`, or `mix`; see below) — and regenerate the indexes with `lake exe mk_all`. Commit `LeanPool/<YourProject>/Imports.lean`, which publicly imports every project source. Lake discovers all pool modules automatically; keep `LeanPool.lean` unchanged. To use a project, import `LeanPool.<YourProject>.Imports`.
 
 Either way the result must pass CI (build, linters, and quality checks — see [Linting and testing](#linting-and-testing)) and an [LLM review](.github/REVIEW_RULES.md) of fit and significance. Accepted projects must be `sorry`-free, introduce no axioms beyond `Classical.choice`/`propext`/`Quot.sound`, and avoid `unsafe`/`partial`. Each project card must also declare its **provenance** — who wrote the Lean proofs — as `human` (written by people), `AI` (mostly produced by an AI system), or `mix` (both contributed substantially). (Proof profiling via `/profile` is available but informational, not a gate: added files get an absolute profile, while modified files get a base→head compile-cost comparison — useful for checking that a refactor doesn't regress compile time.)
 
@@ -36,7 +36,7 @@ The whole-library checks (`lake exe runLinter LeanPool`, `lake exe lint-style Le
 
 ## Pull requests
 
-- **Don't mix content and non-content changes.** A content PR may modify **only** `LeanPool.lean`, `LeanPool/**/*.lean`, and `LeanPool/projects.yml`. Infra / CI / tooling / doc changes may touch other files, but must not be bundled with content. This is enforced by [`content-pr-guard.yml`](.github/workflows/content-pr-guard.yml).
+- **Don't mix content and non-content changes.** A content PR may modify **only** `LeanPool/**/*.lean` and `LeanPool/projects/<slug>.yaml`. Infra / CI / tooling / doc changes may touch other files, but must not be bundled with content. This is enforced by [`content-pr-guard.yml`](.github/workflows/content-pr-guard.yml).
 - **Never change the checks or gates.** Do not modify `.github/workflows/`, `.github/CODE_QUALITY.md`, `python/lean_pool/quality.py`, `scripts/nolints-style.txt`, the `[leanOptions]`/lint settings in `lakefile.toml`, or any other CI step or linter config — and do not add a waiver of any kind (a `size-limit-ok` comment, a `nolints-style.txt` entry, `set_option linter.X false`, etc.) — unless explicitly asked. If a check fails, fix the code, not the check. This applies to everyone, and especially to AI agents.
 - **Branches.** `yourname/description` for solo work; `feature/`/`fix/` prefixes when shared. Open PRs early (draft + `WIP` is fine) and use `Closes #123` to link issues.
 

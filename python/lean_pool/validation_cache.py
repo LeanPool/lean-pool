@@ -28,7 +28,12 @@ SHARED_INPUTS = (
     ".github/workflows/lean_action_ci.yml",
 )
 LINT_INPUTS = ("scripts/nolints.json", "scripts/ci/lint-project.lean")
-QUALITY_INPUTS = ("scripts/nolints-style.txt", "python/lean_pool/quality.py")
+QUALITY_INPUTS = (
+    "scripts/nolints-style.txt",
+    "python/lean_pool/quality.py",
+    "python/lean_pool/registry.py",
+    "python/lean_pool/indexes.py",
+)
 GLOBAL_INPUTS = SHARED_INPUTS + LINT_INPUTS + QUALITY_INPUTS
 
 

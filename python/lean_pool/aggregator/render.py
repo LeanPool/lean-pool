@@ -24,6 +24,7 @@ from typing import TypedDict
 import yaml
 
 from lean_pool.aggregator.reservoir import Build, Package, ReservoirManifest
+from lean_pool.registry import load_document
 
 
 class Decision(TypedDict, total=False):
@@ -207,11 +208,14 @@ def load_pool_repos(projects_yml_path: Path) -> set[str]:
         fields. A malformed file is logged but not fatal so renderer
         output keeps working when ``projects.yml`` is being edited.
     """
-    if not projects_yml_path.is_file():
+    if (
+        not projects_yml_path.is_file()
+        and not (projects_yml_path.parent / "projects").is_dir()
+    ):
         return set()
     try:
-        data = yaml.safe_load(projects_yml_path.read_text()) or {}
-    except yaml.YAMLError as exc:
+        data = load_document(projects_yml_path)
+    except (yaml.YAMLError, ValueError, OSError) as exc:
         logger.warning("%s: invalid YAML: %s", projects_yml_path, exc)
         return set()
     if not isinstance(data, dict):

@@ -114,3 +114,39 @@ def test_single_and_sharded_builds_use_validation_cache() -> None:
         assert "validation_cache lint" in steps[names.index("Lint")]["run"]
         assert "lint-style LeanPool" in steps[names.index("Text style lint")]["run"]
     assert contracts[0] == contracts[1]
+
+
+def test_merge_queue_reports_all_required_gates_without_path_filtered_workflows() -> (
+    None
+):
+    """A filtered-out workflow must never leave the protected queue waiting forever."""
+    import json
+
+    rules = json.loads((WORKFLOWS.parent / "merge-queue-ruleset.json").read_text())[
+        "rules"
+    ]
+    required = {
+        check["context"]
+        for rule in rules
+        if rule["type"] == "required_status_checks"
+        for check in rule["parameters"]["required_status_checks"]
+    }
+    names = set()
+    for filename in (
+        "lean_action_ci.yml",
+        "content-pr-guard.yml",
+        "docs.yml",
+        "python_ci.yml",
+        "workflow_lint.yml",
+        "exposition-verify.yml",
+    ):
+        workflow = yaml.safe_load((WORKFLOWS / filename).read_text())
+        events = workflow.get("on", workflow.get(True))
+        assert "merge_group" in events
+        if filename in {"python_ci.yml", "workflow_lint.yml", "exposition-verify.yml"}:
+            assert "paths" not in events["pull_request"]
+        names.update(job.get("name", key) for key, job in workflow["jobs"].items())
+    assert required <= names
+    queue = next(rule["parameters"] for rule in rules if rule["type"] == "merge_queue")
+    assert queue["grouping_strategy"] == "ALLGREEN"
+    assert queue["merge_method"] == "SQUASH"

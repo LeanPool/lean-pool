@@ -4,16 +4,16 @@
 
 # lean-pool
 
-[![Lean Action CI](https://github.com/Vilin97/lean-pool/actions/workflows/lean_action_ci.yml/badge.svg)](https://github.com/Vilin97/lean-pool/actions/workflows/lean_action_ci.yml)
-[![Documentation](https://img.shields.io/badge/docs-online-blue)](https://vilin97.github.io/lean-pool/)
-[![Exposition](https://img.shields.io/badge/exposition-online-8a4fff)](https://vilin97.github.io/lean-pool/exposition/)
+[![Lean Action CI](https://github.com/LeanPool/lean-pool/actions/workflows/lean_action_ci.yml/badge.svg)](https://github.com/LeanPool/lean-pool/actions/workflows/lean_action_ci.yml)
+[![Documentation](https://img.shields.io/badge/docs-online-blue)](https://leanpool.github.io/lean-pool/)
+[![Exposition](https://img.shields.io/badge/exposition-online-8a4fff)](https://leanpool.github.io/lean-pool/exposition/)
 [![Zulip](https://img.shields.io/badge/Zulip-Lean_Pool-6492FE?logo=zulip&logoColor=white)](https://leanprover.zulipchat.com/#narrow/channel/619231-Lean-Pool)
-[![Semantic Search](https://img.shields.io/badge/semantic_search-Octo-2f80ed)](https://octo.axiomatic-ai.com/search?scopes=repo%3AVilin97%2Flean-pool)
-[![License](https://img.shields.io/github/license/Vilin97/lean-pool)](LICENSE)
+[![Semantic Search](https://img.shields.io/badge/semantic_search-Octo-2f80ed)](https://octo.axiomatic-ai.com/search?scopes=repo%3ALeanPool%2Flean-pool)
+[![License](https://img.shields.io/github/license/LeanPool/lean-pool)](LICENSE)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.20513444.svg)](https://doi.org/10.5281/zenodo.20513444)
 [![arXiv](https://img.shields.io/badge/arXiv-2609.25199-b31b1b)](https://arxiv.org/abs/2609.25199)
 
-Lean Pool sits between [`mathlib`](https://github.com/leanprover-community/mathlib4) and [`merely-true`](https://github.com/merely-true/merely-true), preserving Lean 4 formalizations that don't fit mathlib's scope. Instead of mathlib's high-bar human review, it relies on deterministic linters and LLM judgment, so it can grow faster while staying `sorry`-free and pinned to the latest Mathlib. See [`MOTIVATION.md`](MOTIVATION.md) for the why, browse the API docs at <https://vilin97.github.io/lean-pool/>, and explore each project's dependency graph and declarations in the [exposition site](https://vilin97.github.io/lean-pool/exposition/).
+Lean Pool sits between [`mathlib`](https://github.com/leanprover-community/mathlib4) and [`merely-true`](https://github.com/merely-true/merely-true), preserving Lean 4 formalizations that don't fit mathlib's scope. Instead of mathlib's high-bar human review, it relies on deterministic linters and LLM judgment, so it can grow faster while staying `sorry`-free and pinned to the latest Mathlib. See [`MOTIVATION.md`](MOTIVATION.md) for the why, browse the API docs at <https://leanpool.github.io/lean-pool/>, and explore each project's dependency graph and declarations in the [exposition site](https://leanpool.github.io/lean-pool/exposition/).
 
 Semantic search is also available via the [API](https://search.octo.axiomatic-ai.com/api/search).
 
@@ -55,10 +55,10 @@ compile-cost report. Failed or zero-phase timed runs show unavailable timing
 and are excluded from totals; errors and any successfully measured heartbeat
 counts remain visible.
 
-Import PRs can be refreshed automatically after other projects merge. The
-[rebase helper](python/lean_pool/rebase.py) resolves conflicts in the project registry
-and generated index, preserving module headers and public imports when the index uses them.
-Conflicts in proof files require a manual rebase.
+Accepted PRs enter GitHub’s merge queue. CI checks the combined changes against
+current main without repeatedly updating authors’ branches. Each project owns
+its YAML card and public `Imports.lean`; there is no shared import list to edit.
+Conflicts in the same proof files still require a manual repair.
 
 ### Credits
 

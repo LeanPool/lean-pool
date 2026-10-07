@@ -7,17 +7,14 @@ name: Exposition Verify
 # fast; this is the correctness gate for the builder itself).
 
 on:
+  merge_group:
+    types: [checks_requested]
   schedule:
     - cron: '40 6 * * 1'
   workflow_dispatch:
   pull_request:
     branches:
       - main
-    paths:
-      - 'python/lean_pool/exposition/**'
-      - 'python/lean_pool/ci_artifacts.py'
-      - 'scripts/exposition/**'
-      - '.github/workflows/exposition-verify.yml'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -28,7 +25,36 @@ permissions:
   actions: read
 
 jobs:
+  scope:
+    runs-on: ubuntu-latest
+    outputs:
+      applicable: ${{ steps.scope.outputs.applicable }}
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - id: scope
+        env:
+          EVENT: ${{ github.event_name }}
+          BASE: ${{ github.event.merge_group.base_sha || github.event.pull_request.base.sha }}
+        run: |
+          applicable=true
+          if [ "$EVENT" = merge_group ] || [ "$EVENT" = pull_request ]; then
+            applicable=false
+            if [ "$EVENT" = pull_request ]; then
+              files=$(git diff --name-only "$BASE"...HEAD)
+            else
+              files=$(git diff --name-only "$BASE"..HEAD)
+            fi
+            if printf '%s\n' "$files" | grep -Eq '^(python/lean_pool/(exposition/|ci_artifacts.py$)|scripts/exposition/|.github/workflows/exposition-verify.yml$)'; then
+              applicable=true
+            fi
+          fi
+          echo "applicable=$applicable" >> "$GITHUB_OUTPUT"
   verify:
+    needs: scope
+    if: needs.scope.outputs.applicable == 'true'
     runs-on: ubuntu-latest
     name: Verify minimal Lean files
     steps:
@@ -79,7 +105,7 @@ jobs:
           fi
 
       - name: Reuse matching Lean CI build
-        if: steps.pool-build.outputs.cache-hit != 'true' && github.event_name != 'pull_request'
+        if: steps.pool-build.outputs.cache-hit != 'true' && github.event_name != 'pull_request' && github.event_name != 'merge_group'
         env:
           GH_TOKEN: ${{ github.token }}
           BUILD_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
@@ -87,6 +113,17 @@ jobs:
         run: >-
           PYTHONPATH=python python3 -m lean_pool.ci_artifacts restore
           --head "$BUILD_HEAD" --event "$BUILD_EVENT"
+
+      - name: Reuse successful queued PR builds
+        if: github.event_name == 'merge_group'
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+          BASE_SHA: ${{ github.event.merge_group.base_sha }}
+          HEAD_SHA: ${{ github.event.merge_group.head_sha }}
+        run: >-
+          PYTHONPATH=python python3 -m lean_pool.queue_build
+          --base "$BASE_SHA" --head "$HEAD_SHA"
 
       - name: Build pool
         run: ~/.elan/bin/lake build LeanPool

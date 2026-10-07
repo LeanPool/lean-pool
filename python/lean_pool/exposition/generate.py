@@ -20,8 +20,6 @@ from dataclasses import dataclass
 from datetime import UTC, datetime
 from pathlib import Path
 
-import yaml
-
 from lean_pool.exposition.cones import compute_cone_metrics
 from lean_pool.exposition.layout import compute_layout
 from lean_pool.exposition.source_text import (
@@ -30,6 +28,7 @@ from lean_pool.exposition.source_text import (
     module_skeleton,
     statement_slice,
 )
+from lean_pool.registry import load_document
 
 logger = logging.getLogger(__name__)
 
@@ -136,10 +135,13 @@ def _card_payload(entry: dict) -> dict:
 
 def load_project_cards(projects_yml_path: Path) -> dict[str, ProjectCard]:
     """Load registry metadata per project, keyed by entry-module last component."""
-    if not projects_yml_path.is_file():
+    if (
+        not projects_yml_path.is_file()
+        and not (projects_yml_path.parent / "projects").is_dir()
+    ):
         logger.warning("project registry not found: %s", projects_yml_path)
         return {}
-    data = yaml.safe_load(projects_yml_path.read_text(encoding="utf-8")) or {}
+    data = load_document(projects_yml_path)
     cards: dict[str, ProjectCard] = {}
     for entry in data.get("projects", []):
         entry_module = entry.get("entry_module") or ""

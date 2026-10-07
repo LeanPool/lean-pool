@@ -253,7 +253,7 @@
     footer.append(`generated ${date} · commit `);
     const link = document.createElement("a");
     link.className = "mono";
-    link.href = `https://github.com/Vilin97/lean-pool/commit/${encodeURIComponent(data.commit || "")}`;
+    link.href = `https://github.com/LeanPool/lean-pool/commit/${encodeURIComponent(data.commit || "")}`;
     link.textContent = sha;
     footer.appendChild(link);
   }
