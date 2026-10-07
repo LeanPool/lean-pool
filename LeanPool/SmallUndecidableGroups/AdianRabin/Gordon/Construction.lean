@@ -125,16 +125,6 @@ theorem transform_additional (P : FP n m) (data : TorsionData P)
       additionalRelator data w := by
   simp [transform]
 
-private theorem inverse_primrec : Primrec (@Word.inverse 2) := by
-  have hletterInverse : Primrec fun x : SignedGenerator 2 ↦
-      (x.1, !x.2) :=
-    Primrec.pair Primrec.fst (Primrec.not.comp Primrec.snd)
-  apply Primrec.of_eq
-    (Primrec.list_map Primrec.list_reverse
-      (hletterInverse.comp Primrec.snd).to₂)
-  intro w
-  rfl
-
 theorem encodeWord_primrec (P : FP n m) (data : TorsionData P) :
     Primrec (fun w : Word n ↦ encodeWord data w) := by
   have hgenerator : Primrec (encodedGenerator data) :=
@@ -145,7 +135,7 @@ theorem encodeWord_primrec (P : FP n m) (data : TorsionData P) :
       else Word.inverse (encodedGenerator data x.1) :=
     Primrec.cond Primrec.snd
       (hgenerator.comp Primrec.fst)
-      (inverse_primrec.comp (hgenerator.comp Primrec.fst))
+      ((Word.inverse_primrec 2).comp (hgenerator.comp Primrec.fst))
   apply Primrec.of_eq
     (Primrec.list_flatMap Primrec.id (hletter.comp Primrec.snd).to₂)
   intro w
@@ -168,7 +158,7 @@ private theorem paperCommutator_primrec (v : Word 2) :
   apply Primrec.of_eq
     (Primrec.list_append.comp Primrec.id
       (Primrec.list_append.comp (Primrec.const v)
-        (Primrec.list_append.comp inverse_primrec
+        (Primrec.list_append.comp (Word.inverse_primrec 2)
           (Primrec.const (Word.inverse v)))))
   intro u
   simp [paperCommutator, Word.product]

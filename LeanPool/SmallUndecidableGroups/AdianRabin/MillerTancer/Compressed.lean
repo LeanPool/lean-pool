@@ -98,20 +98,12 @@ def transform (P : FP n m) (k : Fin n) (w : Word n) : FP (n + 1) (m + 2) where
    thetaWord k (MillerTancer.additionalRelators (Word.generator k) w (keptAdditionalIndex j)) := by
  simp [transform]
 
-private theorem inverse_primrec (N : ℕ) : Primrec (@Word.inverse N) := by
-  have hletterInverse : Primrec fun x : SignedGenerator N => (x.1, !x.2) :=
-    Primrec.pair Primrec.fst (Primrec.not.comp Primrec.snd)
-  apply Primrec.of_eq
-    (Primrec.list_map Primrec.list_reverse (hletterInverse.comp Primrec.snd).to₂)
-  intro w
-  rfl
-
 theorem thetaWord_primrec (k : Fin n) : Primrec (thetaWord k) := by
   have hgenerator : Primrec (thetaGenerator k) := Primrec.dom_finite _
   have hletter : Primrec fun x : SignedGenerator (n + 3) =>
       bif x.2 then thetaGenerator k x.1 else Word.inverse (thetaGenerator k x.1) :=
     Primrec.cond Primrec.snd (hgenerator.comp Primrec.fst)
-      ((inverse_primrec (n + 1)).comp (hgenerator.comp Primrec.fst))
+      ((Word.inverse_primrec (n + 1)).comp (hgenerator.comp Primrec.fst))
   apply Primrec.of_eq
     (Primrec.list_flatMap Primrec.id (hletter.comp Primrec.snd).to₂)
   intro w

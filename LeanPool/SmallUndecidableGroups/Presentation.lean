@@ -40,6 +40,15 @@ def generator (i : Fin n) : Word n :=
 def inverse (w : Word n) : Word n :=
   (w.reverse.map fun x => (x.1, !x.2))
 
+/-- Formal word inversion is primitive recursive for the standard word encoding. -/
+theorem inverse_primrec (n : ℕ) : Primrec (@inverse n) := by
+  have hletterInverse : Primrec fun x : SignedGenerator n => (x.1, !x.2) :=
+    Primrec.pair Primrec.fst (Primrec.not.comp Primrec.snd)
+  apply Primrec.of_eq
+    (Primrec.list_map Primrec.list_reverse (hletterInverse.comp Primrec.snd).to₂)
+  intro w
+  rfl
+
 /-- Multiplication of words is concatenation. -/
 def mul (u v : Word n) : Word n :=
   u ++ v

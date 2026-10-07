@@ -250,26 +250,17 @@ theorem testWord_computable : Computable testWord := by
             Primrec.snd).to₂)
     intro Q
     rfl
-  have hletterInverse : Primrec fun x : SignedGenerator 3 =>
-      (x.1, !x.2) :=
-    Primrec.pair Primrec.fst (Primrec.not.comp Primrec.snd)
-  have hinverse : Primrec (@Word.inverse 3) := by
-    apply Primrec.of_eq
-      (Primrec.list_map Primrec.list_reverse
-        (hletterInverse.comp Primrec.snd).to₂)
-    intro w
-    rfl
   have hconjugate : Primrec fun Q =>
       Word.product [Word.inverse (positiveWord Q), tWord, positiveWord Q] := by
     apply Primrec.of_eq
-      (Primrec.list_append.comp (hinverse.comp hpositive)
+      (Primrec.list_append.comp ((Word.inverse_primrec 3).comp hpositive)
         (Primrec.list_append.comp (Primrec.const tWord) hpositive))
     intro Q
     simp [Word.product]
   have hcommutator : Primrec fun u : HostWord =>
       Word.commutator u kWord := by
     apply Primrec.of_eq
-      (Primrec.list_append.comp hinverse
+      (Primrec.list_append.comp (Word.inverse_primrec 3)
         (Primrec.list_append.comp (Primrec.const (Word.inverse kWord))
           (Primrec.list_append.comp Primrec.id (Primrec.const kWord))))
     intro u

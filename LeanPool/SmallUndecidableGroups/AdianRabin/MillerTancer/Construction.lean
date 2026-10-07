@@ -132,19 +132,10 @@ theorem transform_computable (P : FP n m) (z : Word n) :
       (Primrec.list_map Primrec.id (holdLetter.comp Primrec.snd).to₂)
     intro w
     rfl
-  have hletterInverse : Primrec fun x : SignedGenerator (n + 3) =>
-      (x.1, !x.2) :=
-    Primrec.pair Primrec.fst (Primrec.not.comp Primrec.snd)
-  have hinverse : Primrec (@Word.inverse (n + 3)) := by
-    apply Primrec.of_eq
-      (Primrec.list_map Primrec.list_reverse
-        (hletterInverse.comp Primrec.snd).to₂)
-    intro w
-    rfl
   have hcommutator : Primrec fun u : Word (n + 3) =>
       Word.commutator u (betaWord n) := by
     apply Primrec.of_eq
-      (Primrec.list_append.comp hinverse
+      (Primrec.list_append.comp (Word.inverse_primrec (n + 3))
         (Primrec.list_append.comp
           (Primrec.const (Word.inverse (betaWord n)))
           (Primrec.list_append.comp Primrec.id

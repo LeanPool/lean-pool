@@ -246,21 +246,7 @@ theorem positivePowerWord_prod_ne_one {i j : LeftIndex}
     (u : CoprodI.NeWord (LeftFactor G) i j) (hij : j ≠ i) (k : ℕ) :
     u.prod ^ (k + 1) ≠ 1 := by
   rw [← positivePowerWord_prod u hij]
-  intro h
-  classical
-  have hnormal :
-      CoprodI.Word.equiv (M := LeftFactor G) (positivePowerWord u hij k).prod =
-        (positivePowerWord u hij k).toWord := by
-    change (CoprodI.Word.equiv (M := LeftFactor G))
-        ((CoprodI.Word.equiv (M := LeftFactor G)).symm
-          (positivePowerWord u hij k).toWord) = _
-    exact (CoprodI.Word.equiv (M := LeftFactor G)).apply_symm_apply _
-  rw [h] at hnormal
-  have hword : (positivePowerWord u hij k).toWord =
-      (CoprodI.Word.empty : CoprodI.Word (LeftFactor G)) := by
-    simpa [CoprodI.Word.equiv] using hnormal.symm
-  exact (CoprodI.NeWord.toList_ne_nil (positivePowerWord u hij k))
-    (by simpa [CoprodI.NeWord.toWord] using congrArg CoprodI.Word.toList hword)
+  exact CoprodI.NeWord.prod_ne_one (positivePowerWord u hij k)
 
 theorem zpow_ne_one_of_cyclicallyReduced {i j : LeftIndex}
     (u : CoprodI.NeWord (LeftFactor G) i j) (hij : j ≠ i)
