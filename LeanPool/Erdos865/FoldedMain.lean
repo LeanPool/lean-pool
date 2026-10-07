@@ -44,12 +44,8 @@ theorem lowSums_mono {m : ℕ} {B C : Finset ℕ} (h : B ⊆ C) : lowSums m B �
     ( Finset.filter_subset_filter _ ( Finset.product_subset_product h h ) )
 
 theorem highSums_mono {m : ℕ} {B C : Finset ℕ} (h : B ⊆ C) : highSums m B ⊆ highSums m C := by
-  exact Finset.image_subset_iff.mpr fun p hp => Finset.mem_image.mpr
-    ⟨ p, Finset.mem_filter.mpr
-      ⟨ Finset.mem_product.mpr
-        ⟨ h <| Finset.mem_filter.mp hp |>.1 |> Finset.mem_product.mp |>.1,
-          h <| Finset.mem_filter.mp hp |>.1 |> Finset.mem_product.mp |>.2 ⟩,
-        Finset.mem_filter.mp hp |>.2 ⟩, rfl ⟩
+  exact Finset.image_subset_image
+    (Finset.filter_subset_filter _ (Finset.product_subset_product h h))
 
 theorem collisions_mono {m : ℕ} {B C : Finset ℕ} (h : B ⊆ C) :
     collisions m B ⊆ collisions m C :=
@@ -82,8 +78,9 @@ theorem sum_not_lowSums_erase {m : ℕ} {S : Finset ℕ} {α β : ℕ} (hαβ : 
 def reflB (m : ℕ) (B : Finset ℕ) : Finset ℕ := B.image (fun b : ℕ => m - b)
 
 theorem card_reflB {m : ℕ} {B : Finset ℕ} (hB : FoldedOK m B) : (reflB m B).card = B.card := by
-  rw [ reflB, Finset.card_image_of_injOn ];
-  exact fun x hx y hy hxy => by rw [ tsub_right_inj ] at hxy <;> linarith [ hB.1 x hx, hB.1 y hy ] ;
+  apply Finset.card_image_of_injOn
+  intro x hx y hy hxy
+  exact (tsub_right_inj (le_of_lt (hB.1 x hx).2) (le_of_lt (hB.1 y hy).2)).mp hxy
 
 theorem foldedOK_reflB {m : ℕ} (hm : 2 ≤ m) {B : Finset ℕ} (hB : FoldedOK m B) :
     FoldedOK m (reflB m B) := by
@@ -156,12 +153,12 @@ theorem collisions_reflB_card {m : ℕ} (hm : 2 ≤ m) {B : Finset ℕ} (hB : Fo
       exact ⟨a, ⟨ha, by rw [hab]; exact hb⟩, rfl⟩
     · rintro ⟨v, ⟨hv1, hv2⟩, rfl⟩
       exact ⟨⟨v, hv1, rfl⟩, v, hv2, rfl⟩
-  rw [ h_collisions_refl, collisions ];
-  rw [ Finset.inter_comm, Finset.card_image_of_injOn ];
-  exact fun x hx y hy hxy => by
-    rw [ tsub_right_inj ] at hxy <;>
-      linarith [ mem_lowSums_lt ( Finset.mem_of_mem_inter_left hx ),
-        mem_highSums_lt hm hB ( Finset.mem_of_mem_inter_right hy ) ];
+  rw [h_collisions_refl, collisions, Finset.inter_comm]
+  apply Finset.card_image_of_injOn
+  intro x hx y hy hxy
+  exact (tsub_right_inj
+    (le_of_lt (mem_lowSums_lt (Finset.mem_of_mem_inter_left hx)))
+    (le_of_lt (mem_lowSums_lt (Finset.mem_of_mem_inter_left hy)))).mp hxy
 
 /-! ### The core inductive step -/
 
@@ -271,6 +268,6 @@ theorem folded_additive {m : ℕ} (hm : 2 ≤ m) {B : Finset ℕ} (hB : FoldedOK
           exact le_of_not_gt fun h =>
             ih _ ( by linarith [ show #S = #B from card_reflB hB ] ) hm hS' h rfl)
       generalize_proofs at *; (
-      grind +suggestions)))
+      grind only [card_reflB, collisions_reflB_card])))
 
 end Erdos865

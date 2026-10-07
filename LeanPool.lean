@@ -260,6 +260,7 @@ public import LeanPool.SetTheory.Imports
 public import LeanPool.SeveralComplexVariables.Imports
 public import LeanPool.Shannon1948Formalization.Imports
 public import LeanPool.SingularModuli.Imports
+public import LeanPool.SmallUndecidableGroups.Imports
 public import LeanPool.SpectralPositivity.Imports
 public import LeanPool.SpectralTheory.Imports
 public import LeanPool.SpherePacking.Imports

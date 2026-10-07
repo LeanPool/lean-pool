@@ -188,10 +188,13 @@ def test_required_scoped_checks_fail_closed_when_classification_fails() -> None:
                 "needs.scope.outputs.applicable != 'false')"
             )
             guard = job["steps"][0]
-            assert guard["env"] == {
-                "SCOPE_RESULT": "${{ needs.scope.result }}",
-                "APPLICABLE": "${{ needs.scope.outputs.applicable }}",
-            }
+            assert (
+                guard["env"].items()
+                >= {
+                    "SCOPE_RESULT": "${{ needs.scope.result }}",
+                    "APPLICABLE": "${{ needs.scope.outputs.applicable }}",
+                }.items()
+            )
             for result, applicable, accepted in (
                 ("success", "true", True),
                 ("failure", "true", False),
@@ -205,6 +208,8 @@ def test_required_scoped_checks_fail_closed_when_classification_fails() -> None:
                         **os.environ,
                         "SCOPE_RESULT": result,
                         "APPLICABLE": applicable,
+                        "BUILD_READY_RESULT": "success",
+                        "EVENT": "pull_request",
                     },
                     capture_output=True,
                 )
@@ -261,6 +266,44 @@ def test_minimal_verifier_pr_has_an_explicit_full_build_producer(tmp_path):
     reuse = steps["Reuse matching Lean CI build"]
     assert "github.event_name != 'pull_request'" not in reuse["if"]
     assert "--pull-request-artifact" in reuse["run"]
-    assert "--wait-seconds 18000" in reuse["run"]
+    assert "--wait-seconds 0" in reuse["run"]
     assert steps["Build pool"]["run"] == "~/.elan/bin/lake build LeanPool"
     assert "--baseline 214" in steps["Verify minimal files"]["run"]
+
+
+def test_minimal_build_wait_does_not_consume_verification_window() -> None:
+    """A cold producer cannot use the verifier's six-hour execution allowance."""
+    jobs = yaml.safe_load((WORKFLOWS / "exposition-verify.yml").read_text())["jobs"]
+    assert jobs["verify"]["needs"] == ["scope", "build-ready"]
+    waiting = jobs["build-ready"]
+    assert waiting["needs"] == "scope"
+    assert "needs.scope.outputs.applicable == 'true'" in waiting["if"]
+    assert "github.event_name != 'merge_group'" in waiting["if"]
+    commands = [step.get("run", "") for step in waiting["steps"]]
+    assert any("lean_pool.ci_artifacts wait" in command for command in commands)
+    assert any("--wait-seconds 18000" in command for command in commands)
+    assert not any(
+        "lake build" in command or "extract-all" in command for command in commands
+    )
+    guard = jobs["verify"]["steps"][0]
+    for event, result, accepted in (
+        ("pull_request", "success", True),
+        ("pull_request", "failure", False),
+        ("pull_request", "cancelled", False),
+        ("pull_request", "skipped", False),
+        ("pull_request", "", False),
+        ("merge_group", "skipped", True),
+        ("merge_group", "failure", False),
+    ):
+        process = subprocess.run(
+            ["bash", "-e", "-c", guard["run"]],
+            env={
+                **os.environ,
+                "SCOPE_RESULT": "success",
+                "APPLICABLE": "true",
+                "BUILD_READY_RESULT": result,
+                "EVENT": event,
+            },
+            capture_output=True,
+        )
+        assert (process.returncode == 0) == accepted

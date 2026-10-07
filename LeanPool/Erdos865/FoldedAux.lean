@@ -103,8 +103,9 @@ theorem card_T1 {m : ℕ} {B : Finset ℕ} (hB : FoldedOK m B) : (T1 m B).card =
   exact Finset.card_image_of_injOn (cast_injOn hB)
 
 theorem card_T2 {m : ℕ} {B : Finset ℕ} (hB : FoldedOK m B) : (T2 m B).card = B.card := by
-  apply Finset.card_image_of_injOn;
-  intro x hx y hy; have := cast_injOn hB; aesop;
+  apply Finset.card_image_of_injOn
+  intro x hx y hy hxy
+  exact cast_injOn hB hx hy (neg_injective hxy)
 
 theorem card_T3 {m : ℕ} {B : Finset ℕ} (hB : FoldedOK m B) {α : ℕ} (hα : α ∈ B) :
     (T3 m B α).card = B.card - 1 := by
