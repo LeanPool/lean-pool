@@ -86,6 +86,7 @@ jobs:
     outputs:
       build_revision: ${{ steps.build-identity.outputs.revision }}
       base_build_revision: ${{ steps.build-identity.outputs.base_revision }}
+      minimal_build: ${{ steps.plan.outputs.minimal_build }}
       mode: ${{ steps.plan.outputs.mode }}
       matrix: ${{ steps.plan.outputs.matrix }}
       reuse_run_id: ${{ steps.plan.outputs.reuse_run_id }}
@@ -162,6 +163,11 @@ jobs:
               diff_available=false
               ;;
           esac
+          minimal_build=false
+          if [ "$EVENT_NAME" = pull_request ] && grep -Eq '^(python/lean_pool/(exposition/|ci_artifacts.py$)|scripts/exposition/|.github/workflows/exposition-verify.yml$)' "$changed_files"; then
+            minimal_build=true
+          fi
+          echo "minimal_build=$minimal_build" >> "$GITHUB_OUTPUT"
           cold=false
           if [ -z "$CACHE_MATCHED" ]; then cold=true; fi
           plan=$(CHANGED_FILES_PATH="$changed_files" DIFF_AVAILABLE="$diff_available" \
@@ -169,7 +175,7 @@ jobs:
                  python3 scripts/ci/plan-build-shards.py)
           reuse_run_id=""
           previous_head=""
-          if [ "$EVENT_NAME" = "pull_request" ] && [ "$FORCE_FULL" != "true" ]; then
+          if [ "$EVENT_NAME" = "pull_request" ] && [ "$FORCE_FULL" != "true" ] && [ "$minimal_build" != true ]; then
             reuse=$(PYTHONPATH=python uv run --project python --locked python -m lean_pool.rebase_fastpath decide \
               --repository "$REPOSITORY" --number "$PR_NUMBER" \
               --head "$PR_HEAD" --base "$BASE_SHA")
@@ -312,13 +318,14 @@ jobs:
           fi
 
       # Publish once compilation succeeds, so docs can overlap the later
-      # linters/quality checks without compiling the same PR a second time.
+      # linters/quality checks. Rare PRs requiring the minimal-file gate share
+      # this exact-tree output too, avoiding a second cold whole-pool build.
       - name: Package build for documentation
-        if: github.ref == 'refs/heads/main'
+        if: github.ref == 'refs/heads/main' || (github.event_name == 'pull_request' && needs.plan.outputs.minimal_build == 'true')
         run: PYTHONPATH=python python3 -m lean_pool.ci_artifacts pack
 
       - name: Share build with documentation
-        if: github.ref == 'refs/heads/main'
+        if: github.ref == 'refs/heads/main' || (github.event_name == 'pull_request' && needs.plan.outputs.minimal_build == 'true')
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
           name: lean-pool-build
@@ -673,13 +680,14 @@ jobs:
           fi
 
       # Publish once compilation succeeds, so docs can overlap the later
-      # linters/quality checks without compiling the same PR a second time.
+      # linters/quality checks. Rare PRs requiring the minimal-file gate share
+      # this exact-tree output too, avoiding a second cold whole-pool build.
       - name: Package build for documentation
-        if: github.ref == 'refs/heads/main'
+        if: github.ref == 'refs/heads/main' || (github.event_name == 'pull_request' && needs.plan.outputs.minimal_build == 'true')
         run: PYTHONPATH=python python3 -m lean_pool.ci_artifacts pack
 
       - name: Share build with documentation
-        if: github.ref == 'refs/heads/main'
+        if: github.ref == 'refs/heads/main' || (github.event_name == 'pull_request' && needs.plan.outputs.minimal_build == 'true')
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
           name: lean-pool-build

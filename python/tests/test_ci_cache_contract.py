@@ -209,3 +209,58 @@ def test_required_scoped_checks_fail_closed_when_classification_fails() -> None:
                     capture_output=True,
                 )
                 assert (process.returncode == 0) == accepted
+
+
+def test_minimal_verifier_pr_has_an_explicit_full_build_producer(tmp_path):
+    """Cold minimal verification shares compilation while retaining its real gate."""
+    lean = yaml.safe_load((WORKFLOWS / "lean_action_ci.yml").read_text())["jobs"]
+    minimal = yaml.safe_load((WORKFLOWS / "exposition-verify.yml").read_text())["jobs"]
+    assert "minimal_build" in lean["plan"]["outputs"]
+    planning = next(step for step in lean["plan"]["steps"] if step.get("id") == "plan")
+    classifier = minimal["scope"]["steps"][-1]["run"]
+    # Producer scope must include precisely the consumer's heavy trigger paths.
+    pattern = classifier.split("grep -Eq '")[1].split("'")[0]
+    assert pattern in planning["run"]
+    classification = (
+        "minimal_build=false"
+        + planning["run"].split("minimal_build=false", 1)[1].split("cold=false", 1)[0]
+    )
+    changed = tmp_path / "changed-files.txt"
+    output = tmp_path / "output.txt"
+    for path, event, expected in (
+        ("python/lean_pool/ci_artifacts.py", "pull_request", "true"),
+        ("python/lean_pool/exposition/verify.py", "pull_request", "true"),
+        ("scripts/exposition/extract-all.sh", "pull_request", "true"),
+        (".github/workflows/exposition-verify.yml", "pull_request", "true"),
+        ("LeanPool/projects/example.yaml", "pull_request", "false"),
+        ("python/lean_pool/registry.py", "pull_request", "false"),
+        ("python/lean_pool/exposition/verify.py", "merge_group", "false"),
+    ):
+        changed.write_text(path + "\n")
+        output.write_text("")
+        subprocess.run(
+            ["bash", "-e", "-c", classification],
+            env={
+                **os.environ,
+                "changed_files": str(changed),
+                "GITHUB_OUTPUT": str(output),
+                "EVENT_NAME": event,
+            },
+            check=True,
+        )
+        assert output.read_text().strip() == f"minimal_build={expected}"
+    for name in ("build", "finalize"):
+        steps = {step.get("name"): step for step in lean[name]["steps"]}
+        for producer in (
+            "Package build for documentation",
+            "Share build with documentation",
+        ):
+            assert "needs.plan.outputs.minimal_build == 'true'" in steps[producer]["if"]
+            assert "github.event_name == 'pull_request'" in steps[producer]["if"]
+    steps = {step.get("name"): step for step in minimal["verify"]["steps"]}
+    reuse = steps["Reuse matching Lean CI build"]
+    assert "github.event_name != 'pull_request'" not in reuse["if"]
+    assert "--pull-request-artifact" in reuse["run"]
+    assert "--wait-seconds 18000" in reuse["run"]
+    assert steps["Build pool"]["run"] == "~/.elan/bin/lake build LeanPool"
+    assert "--baseline 214" in steps["Verify minimal files"]["run"]

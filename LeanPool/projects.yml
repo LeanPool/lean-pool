@@ -13991,3 +13991,58 @@ projects:
       - 35Q30
       - 35B65
       - 35B60
+  - slug: microwave-networks
+    title: Microwave network synthesis and power-of-two DFT implementation
+    summary: >-
+      Characterizes the complex transmission matrices synthesized from phase
+      shifters and permutations, with or without hybrid couplers, using series
+      and parallel composition. Phase-only networks are permuted phase-diagonal
+      matrices; networks with hybrid couplers are products of permutation and
+      phase-parametrized block-diagonal layers. Proves that the normalized DFT
+      of every power-of-two size is implementable, with reusable finite-type
+      reindexing, independent row and column permutations, and block-diagonal
+      composition infrastructure. Uses the reciprocal matched network matrix
+      model of the source paper; no general scattering-physics theorem is claimed.
+    branch: applied mathematics and signal processing
+    entry_module: LeanPool.MicrowaveNetworks
+    authors:
+      - Matteo Nerini
+      - Claude AI
+    source:
+      title: Toward a Lean Formalization of Analog Computing with Microwaves
+      arxiv: '2610.04774'
+      url: https://github.com/matteonerini/formalizing-analog-computing/tree/a89c1e9263658c20a29046f9ed1a8eeb867dd537
+      github_repo: matteonerini/formalizing-analog-computing
+      commit: a89c1e9263658c20a29046f9ed1a8eeb867dd537
+    license: Apache-2.0
+    status: verified
+    provenance: mix
+    main_declarations:
+      - MiLAC.HybridCouplersPhaseShifters.implementable_dft
+    main_results:
+      - declaration: MiLAC.PhaseShifters.implementable_iff_permutedPhaseDiagonal
+        informal: >-
+          A finite phase-only network is implementable exactly when its matrix
+          is a permutation matrix times a diagonal matrix of complex phases.
+        source_ref: Upstream PhaseShifters.lean.
+      - declaration: MiLAC.HybridCouplersPhaseShifters.implementable_iff_layered
+        informal: >-
+          A finite network is implementable with hybrid couplers and phase
+          shifters exactly when its matrix is an initial permutation preceded
+          by finitely many permutation and phase-parametrized block-diagonal layers.
+        source_ref: Theorem 1 and Section IV of arXiv:2610.04774.
+      - declaration: MiLAC.HybridCouplersPhaseShifters.implementable_dft
+        informal: >-
+          For every natural L, the normalized DFT matrix of size 2^L can be
+          implemented by hybrid couplers, phase shifters, and permutation networks.
+        source_ref: Section V of arXiv:2610.04774.
+    tags:
+      - applied-mathematics
+      - signal-processing
+      - matrix-theory
+      - fourier-transform
+      - network-synthesis
+    msc:
+      - '94A12'
+      - '15A23'
+      - '42A38'

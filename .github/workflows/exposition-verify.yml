@@ -114,7 +114,7 @@ jobs:
           fi
 
       - name: Reuse matching Lean CI build
-        if: steps.pool-build.outputs.cache-hit != 'true' && github.event_name != 'pull_request' && github.event_name != 'merge_group'
+        if: steps.pool-build.outputs.cache-hit != 'true' && github.event_name != 'merge_group'
         env:
           GH_TOKEN: ${{ github.token }}
           BUILD_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
@@ -122,6 +122,7 @@ jobs:
         run: >-
           PYTHONPATH=python python3 -m lean_pool.ci_artifacts restore
           --head "$BUILD_HEAD" --event "$BUILD_EVENT"
+          --pull-request-artifact --wait-seconds 18000
 
       - name: Install uv
         uses: astral-sh/setup-uv@d0d8abe699bfb85fec6de9f7adb5ae17292296ff

@@ -899,6 +899,9 @@ def _check_projects(
     errors.extend(_check_top_level_project_modules(root, path, projects))
     if errors:
         return errors
+    errors.extend(_check_project_wrapper_imports(root, projects))
+    if errors:
+        return errors
 
     for index, project in enumerate(projects, start=1):
         errors.extend(
@@ -958,6 +961,16 @@ def _check_project_indexes(root: Path) -> list[_QualityError]:
     ]
 
 
+def _check_project_entry_files(root: Path) -> list[_QualityError]:
+    """Require the top-level entry file used by per-project build and extraction."""
+    return [
+        _QualityError(path, 1, "missing top-level project entry module")
+        for project in project_modules(root)
+        for path in [root / "LeanPool" / f"{project}.lean"]
+        if not path.is_file()
+    ]
+
+
 def _check_project_entry_imports(
     root: Path, projects: list[Any]
 ) -> list[_QualityError]:
@@ -1006,19 +1019,49 @@ def _check_project_entry_imports(
 def _check_top_level_project_modules(
     root: Path, path: Path, projects: list[Any]
 ) -> list[_QualityError]:
-    """Require every top-level LeanPool project module in `projects.yml`."""
+    """Require each top-level module to belong to a registered project namespace."""
     entry_modules = {
         project["entry_module"]
         for project in projects
         if isinstance(project, dict) and isinstance(project.get("entry_module"), str)
     }
-    missing = sorted(_top_level_project_modules(root) - entry_modules)
+    registered_roots = {".".join(module.split(".")[:2]) for module in entry_modules}
+    missing = sorted(_top_level_project_modules(root) - registered_roots)
     return [
         _QualityError(
             path, 1, f"top-level project module {module} missing from projects.yml"
         )
         for module in missing
     ]
+
+
+def _check_project_wrapper_imports(
+    root: Path, projects: list[Any]
+) -> list[_QualityError]:
+    """Require project extraction wrappers to expose their registered entry."""
+    entry_modules = {
+        project["entry_module"]
+        for project in projects
+        if isinstance(project, dict) and isinstance(project.get("entry_module"), str)
+    }
+    errors = []
+    for entry_module in sorted(entry_modules):
+        wrapper = ".".join(entry_module.split(".")[:2])
+        path = _module_to_path(root, wrapper)
+        if entry_module == wrapper or not path.is_file():
+            continue
+        if _module_to_path(root, entry_module) not in _reachable_leanpool_files(
+            root, wrapper
+        ):
+            errors.append(
+                _QualityError(
+                    path,
+                    1,
+                    f"registered project entry {entry_module} is not reachable "
+                    f"from {wrapper}; import the entry module",
+                )
+            )
+    return errors
 
 
 def _top_level_project_modules(root: Path) -> set[str]:
@@ -1440,6 +1483,7 @@ def run_checks(
     """Run all deterministic quality checks."""
     checks = [
         _check_project_indexes,
+        _check_project_entry_files,
         _check_reachability,
         _check_headers,
         _check_forbidden_lean_text,

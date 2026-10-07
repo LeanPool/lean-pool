@@ -172,6 +172,7 @@ Apache License, Version 2.0, and are redistributed here under the same license.
   LeanPool/MatchingLogic             https://github.com/eveil-labs/matching-logic-lean
   LeanPool/MaxFlowMinCut             https://github.com/jtraverso/erdos-81-chordal-clique-partitions
   LeanPool/MetricCodes               https://github.com/openai/ten-proofs
+  LeanPool/MicrowaveNetworks         https://github.com/matteonerini/formalizing-analog-computing
   LeanPool/MinModulusUniqueMultisetSum
                                      https://github.com/jarfo/min-modulus
   LeanPool/MinimumDegreeMatching     https://github.com/jtraverso/erdos-81-chordal-clique-partitions
