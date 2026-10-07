@@ -102,26 +102,14 @@ theorem cEquiv_on_basis (datum : Thue.StandingDatum)
     ((cEquiv datum hfree
         ⟨uBasis datum q, ⟨FreeGroup.of q, by simp [uLift]⟩⟩ : V datum) : Gamma3) =
       vBasis datum q := by
-  let source : U datum :=
-    ⟨uBasis datum q, ⟨FreeGroup.of q, by simp [uLift]⟩⟩
-  let canonical : U datum :=
-    ⟨uLift datum (FreeGroup.of q), ⟨FreeGroup.of q, rfl⟩⟩
-  have hsource : source = canonical := by
+  have source_eq :
+      (⟨uBasis datum q, ⟨FreeGroup.of q, by simp [uLift]⟩⟩ : U datum) =
+        ⟨uLift datum (FreeGroup.of q), ⟨FreeGroup.of q, rfl⟩⟩ := by
     apply Subtype.ext
-    simp [source, canonical, uLift]
-  change ((cEquiv datum hfree source : V datum) : Gamma3) = _
-  rw [hsource]
-  change vLift datum
-      ((equivRangeOfInjective (uLift datum) hfree.u_injective).symm canonical) =
-    vBasis datum q
-  have hy :
-      (equivRangeOfInjective (uLift datum) hfree.u_injective).symm canonical =
-        FreeGroup.of q := by
-    apply hfree.u_injective
-    exact congrArg Subtype.val
-      ((equivRangeOfInjective (uLift datum) hfree.u_injective).apply_symm_apply
-        canonical)
-  rw [hy]
+    simp [uLift]
+  change ((rangeEquiv (uLift datum) (vLift datum)
+    hfree.u_injective hfree.v_injective _ : V datum) : Gamma3) = _
+  rw [source_eq, rangeEquiv_apply_range]
   simp [vLift]
 
 /-- Borisov's `Γ₂`, with Mathlib's stable letter equal to `c⁻¹`. -/
