@@ -123,8 +123,7 @@ private theorem CD_le_generatedWithStable_d
 /-- The subgroup `CD = ⟨c,d⟩` is exactly the restricted `c`-HNN
 subgroup over the cyclic base `⟨d⟩`. -/
 theorem CD_eq_generatedWithStable_d
-    (datum : Thue.StandingDatum) (hfree : RankFiveFree datum)
-    (_hinter : BaseIntersections datum) :
+    (datum : Thue.StandingDatum) (hfree : RankFiveFree datum) :
     CD datum hfree =
       generatedWithStable
         (A := U datum) (B := V datum) (phi := cEquiv datum hfree)
@@ -166,7 +165,7 @@ def dRestrictedEquivCD
   (restrictedEquivGeneratedWithStable dCyclic
       (cEquiv_mem_dCyclic_iff datum hfree hinter)).trans
     (MulEquiv.subgroupCongr
-      (CD_eq_generatedWithStable_d datum hfree hinter).symm)
+      (CD_eq_generatedWithStable_d datum hfree).symm)
 
 @[simp] theorem dRestrictedEquivCD_of_coe
     (datum : Thue.StandingDatum) (hfree : RankFiveFree datum)

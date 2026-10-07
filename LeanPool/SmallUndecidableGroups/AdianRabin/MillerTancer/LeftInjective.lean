@@ -275,10 +275,8 @@ theorem tailTwo_last (k : ℤ) (hk : k ≠ 0) :
     (tailTwo (G := G) k hk).last = alphaVal 2 := rfl
 
 /-- A reduced word has an append constructor rather than a singleton constructor. -/
-def IsAppend {i j : OuterIndex} :
-    CoprodI.NeWord (OuterFactor G) i j → Prop
-  | .singleton _ _ => False
-  | .append _ _ _ => True
+abbrev IsAppend {i j : OuterIndex} (w : CoprodI.NeWord (OuterFactor G) i j) : Prop :=
+  CoprodI.NeWord.IsAppend w
 
 theorem tailTwo_isAppend (k : ℤ) (hk : k ≠ 0) :
     IsAppend (tailTwo (G := G) k hk) := by
@@ -292,10 +290,8 @@ theorem merge_head_of_isAppend_left {i j k : OuterIndex}
     (u : CoprodI.NeWord (OuterFactor G) i j)
     (v : CoprodI.NeWord (OuterFactor G) j k)
     (h : u.last * v.head ≠ 1) (hu : IsAppend u) :
-    (CoprodI.NeWord.merge u v h).head = u.head := by
-  cases u with
-  | singleton => contradiction
-  | append => rfl
+    (CoprodI.NeWord.merge u v h).head = u.head :=
+  CoprodI.NeWord.merge_head_of_isAppend_left u v h hu
 
 theorem smallWord_isAppend (w z : G) (hw : w ≠ 1)
     (i : SmallIndex) (k : ℤ) (hk : k ≠ 0) :
@@ -494,7 +490,7 @@ theorem special24Word_prod (z : G) (r : ℤ) (hr : r ≠ 0)
 
 /-- The image construction for an exceptional second-to-fourth block boundary. -/
 def special24Image (w z : G) (hw : w ≠ 1) (r s : ℤ)
-    (hr : r ≠ 0) (_hs : s ≠ 0) (hpos : 0 < s)
+    (hr : r ≠ 0) (hpos : 0 < s)
     (rest : List (SmallIndex × ℤ))
     (tail : Image w z hw (.four, s) rest) :
     Image w z hw (.two, r) ((.four, s) :: rest) := by
@@ -525,7 +521,7 @@ theorem negInit_last (z : G) (n : ℕ) :
 
 /-- The image construction for an exceptional fourth-to-second block boundary. -/
 noncomputable def special42Image (w z : G) (hw : w ≠ 1) (n : ℕ)
-    (s : ℤ) (_hs : s ≠ 0) (rest : List (SmallIndex × ℤ))
+    (s : ℤ) (rest : List (SmallIndex × ℤ))
     (tail : Image w z hw (.two, s) rest) :
     Image w z hw (.four, Int.negSucc n) ((.two, s) :: rest) := by
   let pf := tail.prefixTwo rfl
@@ -582,7 +578,7 @@ noncomputable def imageList (w z : G) (hw : w ≠ 1)
         by_cases hj4 : j = .four
         · subst j
           by_cases hpos : 0 < s
-          · exact special24Image w z hw r s hp hs hpos rest tail
+          · exact special24Image w z hw r s hp hpos rest tail
           · exact mergedImage w z hw .two .four r s hp hs rest tail hij (by
               simp [Exceptional, hpos])
         · exact mergedImage w z hw .two j r s hp hs rest tail hij (by
@@ -595,7 +591,7 @@ noncomputable def imageList (w z : G) (hw : w ≠ 1)
             · cases r with
               | ofNat n =>
                   exact (Int.not_lt_of_ge (Int.natCast_nonneg n) hneg).elim
-              | negSucc n => exact special42Image w z hw n s hs rest tail
+              | negSucc n => exact special42Image w z hw n s rest tail
             · exact mergedImage w z hw .four .two r s hp hs rest tail hij (by
                 simp [Exceptional, hneg])
           · exact mergedImage w z hw .four j r s hp hs rest tail hij (by

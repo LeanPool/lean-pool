@@ -1025,7 +1025,7 @@ private lemma generatedWith_mono (Delta : Subgroup G) {H K : Subgroup G}
 /-- Lemma B.5 of the paper: intersection inside a centralizer HNN extension. -/
 theorem centralizer_intersection
     (Delta L B₀ C : Subgroup G)
-    (hCL : C ≤ L) (hCB₀ : C ≤ B₀) (_hCDelta : C ≤ Delta)
+    (hCL : C ≤ L) (hCB₀ : C ≤ B₀)
     (hinter : (L : Set G) ∩ deltaDoubleCoset Delta B₀ = (C : Set G)) :
     generatedWith (L.map (centralizerOf Delta)) (centralizerStable Delta) ⊓
         generatedWith (B₀.map (centralizerOf Delta)) (centralizerStable Delta) =

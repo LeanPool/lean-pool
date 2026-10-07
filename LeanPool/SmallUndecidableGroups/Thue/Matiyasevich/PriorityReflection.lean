@@ -71,7 +71,6 @@ def ContextualReplacement : Prop :=
     (_hp : ∀ i, (leftRows i).length = p)
     (_hq : ∀ i, (rightRows i).length = q)
     (_hleftEnd : ∀ i, ∃ init, leftRows i = init ++ [(1 : Fin 2)])
-    (_hrightEnd : ∀ i, ∃ init, rightRows i = init ++ [(1 : Fin 2)])
     {left right : List Priority.A₂} {B : List (Fin 2)},
     eCount left = u₀ →
     eCount right = 0 →
@@ -153,7 +152,7 @@ private theorem decode_long_forward
       (Precompression.leftWidth F E) (Precompression.rightWidth F E)
       (paddedLeftRows F E) (paddedRightRows F E)
       (paddedLeftRows_length F E) (paddedRightRows_length F E)
-      (paddedLeftRows_ends_b F E) (paddedRightRows_ends_b F E)
+      (paddedLeftRows_ends_b F E)
       hleft hright hclean
   let B' := before ++ paddedRightRows F E j ++ after
   have hbinaryStep : ThueStep (binarySystem F E) B B' := by
@@ -196,7 +195,7 @@ private theorem decode_long_reverse
       (Precompression.rightWidth F E) (Precompression.leftWidth F E)
       (paddedRightRows F E) (paddedLeftRows F E)
       (paddedRightRows_length F E) (paddedLeftRows_length F E)
-      (paddedRightRows_ends_b F E) (paddedLeftRows_ends_b F E)
+      (paddedRightRows_ends_b F E)
       hleft hright hclean
   let B' := before ++ paddedLeftRows F E j ++ after
   have hbinaryStep : ThueStep (binarySystem F E) B B' := by
@@ -336,10 +335,10 @@ theorem compressionTheorem_of_contextual
   exact priorityBridge_of_contextual hselect F E
 
 theorem contextualReplacement : ContextualReplacement := by
-  intro u p q leftRows rightRows hp hq hleftEnd hrightEnd
+  intro u p q leftRows rightRows hp hq hleftEnd
     left right B hleft hright hclean
   exact Priority.ContextualSelection.replace_transpose_clean
-    u p q leftRows rightRows hp hq hleftEnd hrightEnd
+    u p q leftRows rightRows hp hq hleftEnd
       hleft hright hclean
 
 /-- Matiyasevich's complete finite-system compression theorem. -/

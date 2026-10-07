@@ -297,12 +297,6 @@ private theorem HPlus_eq_generatedWith_B0_k :
       subst x
       exact k_mem_HPlus datum
 
-private theorem C0_le_CE :
-    C0 datum ≤ CE datum (FreeInput datum) := by
-  rw [C0_le_iff]
-  apply Subgroup.subset_closure
-  simp
-
 /-- The second equality of Proposition 3.8 of the paper:
 `K_c ∩ H_y^+ = ⟨c,k⟩`. -/
 theorem Kc_inf_HPlus :
@@ -326,13 +320,6 @@ theorem Kc_inf_HPlus :
     (by
       rintro _ ⟨x, hx, rfl⟩
       exact ⟨x, (CD_le_B0 datum) (C0_le_CD datum hx), rfl⟩)
-    (by
-      intro x hx
-      rw [KSubgroup]
-      apply Subgroup.subset_closure
-      left
-      rcases hx with ⟨a, ha, rfl⟩
-      exact ⟨a, C0_le_CE datum ha, rfl⟩)
     hdouble
   rw [HPlus_eq_generatedWith_B0_k datum]
   simpa [Kc, CTInGamma, CKInGamma, CInGamma,

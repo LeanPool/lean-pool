@@ -595,10 +595,8 @@ theorem expected_noncancelling
     (expected_code_noncancelling degree hinjective i j r s hij)
 
 /-- A reduced word has an append constructor rather than a singleton constructor. -/
-def IsAppend {i j : LeftIndex} :
-    CoprodI.NeWord (LeftFactor G) i j → Prop
-  | .singleton _ _ => False
-  | .append _ _ _ => True
+abbrev IsAppend {i j : LeftIndex} (w : CoprodI.NeWord (LeftFactor G) i j) : Prop :=
+  CoprodI.NeWord.IsAppend w
 
 theorem positivePowerWord_isAppend {i j : LeftIndex}
     (u : CoprodI.NeWord (LeftFactor G) i j) (hij : j ≠ i) (n : ℕ)
@@ -629,7 +627,7 @@ theorem oldBlock_isAppend (degree : Fin d → ℕ)
     (hdegree : ∀ i, 0 < degree i) (x : Fin d → G) (i : Fin d) :
     IsAppend (oldBlock degree hdegree x i) := by
   classical
-  by_cases hx : x i = 1 <;> simp [oldBlock, hx, IsAppend]
+  by_cases hx : x i = 1 <;> simp [oldBlock, hx, CoprodI.NeWord.IsAppend]
 
 theorem powerPacked_isAppend
     (degree : Fin d → ℕ) (hdegree : ∀ i, 0 < degree i)
@@ -718,7 +716,7 @@ noncomputable def mergedImage
     (degree : Fin d → ℕ) (hdegree : ∀ i, 0 < degree i)
     (hinjective : Function.Injective degree)
     (x : Fin d → G) (w : G) (hw : w ≠ 1)
-    (i j : BasisIndex d) (r s : ℤ) (hr : r ≠ 0) (_hs : s ≠ 0)
+    (i j : BasisIndex d) (r s : ℤ) (hr : r ≠ 0)
     (rest : List (BasisIndex d × ℤ))
     (tail : Image degree x w (j, s) rest) (hij : i ≠ j) :
     Image degree x w (i, r) ((j, s) :: rest) := by
@@ -761,7 +759,7 @@ noncomputable def imageList
       rw [List.isChain_cons_cons] at hchain
       let tail := ih (j, s) hs hrest' hchain.2
       exact mergedImage degree hdegree hinjective x w hw
-        i j r s hp hs rest tail hchain.1
+        i j r s hp rest tail hchain.1
 
 private theorem evalBasis_eq_map_prod
     (degree : Fin d → ℕ) (x : Fin d → G) (w : G)

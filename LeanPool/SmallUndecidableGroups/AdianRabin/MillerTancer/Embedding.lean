@@ -96,12 +96,9 @@ theorem comparison_comp_leftMap (P : FP n m) (z w : Word n) :
   simp [Amalgam.leftMap, comparison_leftBasis]
 
 /-- Injectivity in the nested normal-form model implies injectivity of the
-paper-like left map.  The nontriviality hypothesis is recorded because it is
-the hypothesis from which the normal-form proof obtains `hinj`; it is not
-needed again by this purely functorial bridge. -/
+paper-like left map. -/
 theorem leftMap_injective_of_outerLeftBasis_injective
     (P : FP n m) (z w : Word n)
-    (_hw : P.evalWord w ≠ 1)
     (hinj : Function.Injective
       (FreeGroup.lift
         (LeftNormalForm.outerLeftBasis
@@ -168,7 +165,7 @@ theorem transform_not_trivial_of_not_wordProblem
       (P.evalWord w) (P.evalWord z) hwEval
   have hleft :=
     LeftBridge.leftMap_injective_of_outerLeftBasis_injective
-      P z w hwEval houter
+      P z w houter
   exact transform_not_trivial_of_leftMap_injective P z w hleft hw
 
 end Undecidability.MillerTancer

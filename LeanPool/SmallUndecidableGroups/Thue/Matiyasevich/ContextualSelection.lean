@@ -416,14 +416,13 @@ theorem split_before_terminal_zero
 left transpose is a clean encoded word, replacing it by any other rectangular
 transpose selects the same row index and leaves both binary contexts fixed.
 
-The terminal-`1` hypotheses distinguish the last letter of a selected row
+The terminal-`1` hypothesis distinguishes the last letter of a selected left row
 from the terminal `a` (binary `0`) marker in `encode`. -/
 theorem replace_transpose_clean (u p q : ℕ)
     (leftRows rightRows : Fin (2 ^ u) → List (Fin 2))
     (hp : ∀ i, (leftRows i).length = p)
     (hq : ∀ i, (rightRows i).length = q)
     (hleftEnd : ∀ i, ∃ init, leftRows i = init ++ [(1 : Fin 2)])
-    (_hrightEnd : ∀ i, ∃ init, rightRows i = init ++ [(1 : Fin 2)])
     {l r : List A₂} {B : List (Fin 2)}
     (hl : eCount l = u) (hr : eCount r = 0)
     (hclean : firstNormal
