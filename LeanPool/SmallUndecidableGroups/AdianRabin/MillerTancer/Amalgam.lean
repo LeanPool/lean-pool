@@ -256,21 +256,9 @@ theorem transform_not_trivial_of_basis_injective
     ((transform P z w).wordProblem_iff_evalWord_eq_one (oldWord w)).mp hwT
   have heval :
       witnessHom P z w ((transform P z w).evalWord (oldWord w)) =
-        Word.eval (witnessGenerator P z w) (oldWord w) := by
-    calc
-      witnessHom P z w ((transform P z w).evalWord (oldWord w)) =
-          Word.eval
-            ((witnessHom P z w) ∘
-              (PresentedGroup.of :
-                Fin (n + 3) → (transform P z w).Group))
-            (oldWord w) := Word.map_eval (witnessHom P z w)
-              (PresentedGroup.of :
-                Fin (n + 3) → (transform P z w).Group)
-              (oldWord w)
-      _ = Word.eval (witnessGenerator P z w) (oldWord w) := by
-        congr 1
-        funext i
-        exact witnessHom_of P z w i
+        Word.eval (witnessGenerator P z w) (oldWord w) :=
+    (transform P z w).homOfRelators_evalWord (witnessGenerator P z w)
+      (transformed_relator_eq_one P z w) (oldWord w)
   have hwWitness : Word.eval (witnessGenerator P z w) (oldWord w) = 1 := by
     rw [← heval, hwEval, map_one]
   rw [eval_oldWord_witness] at hwWitness
