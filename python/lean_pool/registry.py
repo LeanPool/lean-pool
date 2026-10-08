@@ -53,11 +53,16 @@ def combine(cards: dict[str, str]) -> dict[str, Any]:
 
 def load_document(path: Path) -> Any:
     """Read a registry directory or an old file, rejecting ambiguous mixed layouts."""
-    directory = path if path.is_dir() else path.parent / "projects"
+    directory = path
+    if not path.is_dir() and path.name == "projects.yml":
+        directory = path.parent / "projects"
     if directory.is_dir():
         if directory.is_symlink():
             raise ValueError("registry directory must not be a symbolic link")
-        if (directory.parent / "projects.yml").exists():
+        if (
+            directory.name == "projects"
+            and (directory.parent / "projects.yml").exists()
+        ):
             raise ValueError("both registry directory and legacy registry exist")
         entries = list(directory.iterdir())
         if any(p.is_symlink() or not p.is_file() for p in entries):

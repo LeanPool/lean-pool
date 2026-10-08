@@ -28,6 +28,29 @@ def test_directory_and_legacy_have_identical_cards(tmp_path: Path) -> None:
     assert load_document(directory) == load_document(path)
 
 
+def test_explicit_historical_file_ignores_sibling_cards(tmp_path: Path) -> None:
+    """Selecting a different registry must not silently select canonical cards."""
+    directory = tmp_path / "projects"
+    directory.mkdir()
+    (directory / "other.yaml").write_text("slug: other\n")
+    path = tmp_path / "alternate.yml"
+    path.write_text("projects:\n  - slug: selected\n")
+    assert load_document(path) == {"projects": [{"slug": "selected"}]}
+    with pytest.raises(FileNotFoundError):
+        load_document(tmp_path / "missing.yml")
+
+
+def test_explicit_custom_directory_ignores_unrelated_legacy_file(
+    tmp_path: Path,
+) -> None:
+    """Only the canonical cards and legacy file constitute a mixed layout."""
+    directory = tmp_path / "archived-cards"
+    directory.mkdir()
+    (directory / "selected.yaml").write_text("slug: selected\n")
+    (tmp_path / "projects.yml").write_text("projects:\n  - slug: other\n")
+    assert load_document(directory) == {"projects": [{"slug": "selected"}]}
+
+
 @pytest.mark.parametrize(
     "cards",
     [

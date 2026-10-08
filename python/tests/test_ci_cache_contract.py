@@ -278,7 +278,7 @@ def test_minimal_build_wait_does_not_consume_verification_window() -> None:
     waiting = jobs["build-ready"]
     assert waiting["needs"] == "scope"
     assert "needs.scope.outputs.applicable == 'true'" in waiting["if"]
-    assert "github.event_name != 'merge_group'" in waiting["if"]
+    assert "github.event_name == 'pull_request'" in waiting["if"]
     commands = [step.get("run", "") for step in waiting["steps"]]
     assert any("lean_pool.ci_artifacts wait" in command for command in commands)
     assert any("--wait-seconds 18000" in command for command in commands)
@@ -294,6 +294,10 @@ def test_minimal_build_wait_does_not_consume_verification_window() -> None:
         ("pull_request", "", False),
         ("merge_group", "skipped", True),
         ("merge_group", "failure", False),
+        ("schedule", "skipped", True),
+        ("schedule", "failure", False),
+        ("workflow_dispatch", "skipped", True),
+        ("workflow_dispatch", "failure", False),
     ):
         process = subprocess.run(
             ["bash", "-e", "-c", guard["run"]],

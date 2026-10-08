@@ -582,6 +582,22 @@ def test_load_pool_repos_missing_file_returns_empty(tmp_path: Path) -> None:
     assert load_pool_repos(tmp_path / "absent.yml") == set()
 
 
+def test_load_pool_repos_honors_custom_files_next_to_cards(tmp_path: Path) -> None:
+    """Existing and missing explicit files retain their own pool membership."""
+    directory = tmp_path / "projects"
+    directory.mkdir()
+    (directory / "other.yaml").write_text(
+        "slug: other\nsource:\n  github_repo: owner/other\n"
+    )
+    path = tmp_path / "alternate.yml"
+    path.write_text(
+        "projects:\n  - slug: selected\n    source:\n"
+        "      github_repo: owner/selected\n"
+    )
+    assert load_pool_repos(path) == {"owner/selected"}
+    assert load_pool_repos(tmp_path / "missing.yml") == set()
+
+
 def test_load_pool_repos_accepts_a_custom_card_directory(tmp_path: Path) -> None:
     """An explicit archive directory keeps the merged-project markers intact."""
     path = tmp_path / "archived-cards"
