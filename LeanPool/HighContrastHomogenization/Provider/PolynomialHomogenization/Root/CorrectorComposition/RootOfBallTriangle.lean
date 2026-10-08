@@ -313,9 +313,8 @@ theorem polynomial_homogenization_root_of_ballTriangle (d : ℕ) (hd : 2 ≤ d)
     exact ⟨C, hC, fun abar a x hx hgood =>
       hbody abar a x hx
         (CorrectorComposition.reconciledRootGoodScale_of_reconciledRootGoodScaleOn cStar hgood)⟩
-  ·
-    -- the large-scale C¹ slope approximation clause, now conditional on the ball triangle
-    inequality alone
+  · -- the large-scale C¹ slope approximation clause, now conditional on the ball triangle
+    -- inequality alone
     intro g hg κc hκc
     exact CorrectorComposition.largeScaleC1_of_terminal_atCertificate d
       (CorrectorComposition.reconciledRootGoodScaleOn d cStar g κc)

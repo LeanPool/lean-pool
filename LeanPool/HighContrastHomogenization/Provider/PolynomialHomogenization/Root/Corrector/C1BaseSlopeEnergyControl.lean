@@ -37,7 +37,7 @@ open scoped ENNReal
 noncomputable section
 
 private theorem sqrt_normalizedEnergy_grad_eq_h1EnergyNormOnCube_base
-    {d : ℕ} [NeZero d] (a : Book.Ch02.TriadicCoeffFamily d)
+    {d : ℕ} (a : Book.Ch02.TriadicCoeffFamily d)
     (k : ℤ) (u : H1Function (openCubeSet (originCube d k))) :
     Real.sqrt (normalizedLocalSymmetricEnergy
         (Book.Ch03.publicCoeffField_isEllipticFieldOn_openCubeSet

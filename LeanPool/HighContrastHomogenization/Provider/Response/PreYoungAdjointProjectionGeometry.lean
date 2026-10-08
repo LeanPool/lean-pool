@@ -153,7 +153,7 @@ theorem abs_cutoff_projected_adjoint_flux_pairing_subSkew_le_nested_depth_sum
 
 /-- The finite-depth adjoint gradient oscillation. -/
 @[expose]
-def adjoint_gradient_projected_oscillation [NeZero d]
+def adjointGradientProjectedOscillation
     {q : Mat d} (hq : q.PosDef) (s t : ℤ)
     (g : Mat d) (hg : IsSkewMat g) (p r Qcen : Vec d)
     (N : ℕ) (a : CoeffSpace d) : ℝ :=
@@ -169,7 +169,7 @@ def adjoint_gradient_projected_oscillation [NeZero d]
 
 /-- The full physical adjoint gradient oscillation. -/
 @[expose]
-def adjoint_gradient_physical_oscillation [NeZero d]
+def adjointGradientPhysicalOscillation
     {q : Mat d} (hq : q.PosDef) (s t : ℤ)
     (g : Mat d) (hg : IsSkewMat g) (p r Qcen : Vec d)
     (a : CoeffSpace d) : ℝ :=
@@ -185,7 +185,7 @@ def adjoint_gradient_physical_oscillation [NeZero d]
 
 /-- The finite-depth adjoint flux oscillation. -/
 @[expose]
-def adjoint_flux_projected_oscillation [NeZero d]
+def adjointFluxProjectedOscillation
     {q : Mat d} (hq : q.PosDef) (s t : ℤ)
     (g : Mat d) (hg : IsSkewMat g) (p r Pcen : Vec d)
     (N : ℕ) (a : CoeffSpace d) : ℝ :=
@@ -201,7 +201,7 @@ def adjoint_flux_projected_oscillation [NeZero d]
 
 /-- The full physical adjoint flux oscillation. -/
 @[expose]
-def adjoint_flux_physical_oscillation [NeZero d]
+def adjointFluxPhysicalOscillation
     {q : Mat d} (hq : q.PosDef) (s t : ℤ)
     (g : Mat d) (hg : IsSkewMat g) (p r Pcen : Vec d)
     (a : CoeffSpace d) : ℝ :=
@@ -221,7 +221,7 @@ theorem abs_adjoint_gradient_projected_oscillation_le_nested_depth_sum
     [NeZero d] {q : Mat d} (hq : q.PosDef) {s t : ℤ} (hst : s ≤ t)
     (g : Mat d) (hg : IsSkewMat g) (p r Qcen : Vec d)
     (N : ℕ) (a : CoeffSpace d) :
-    |adjoint_gradient_projected_oscillation hq s t g hg p r Qcen N a| ≤
+    |adjointGradientProjectedOscillation hq s t g hg p r Qcen N a| ≤
       ∑ j ∈ Finset.range N,
         (32 * (d : ℝ) ^ 2 * smoothTransitionProfile.derivBound *
           (3 : ℝ) ^ (-((t - s) + (j : ℤ)))) *
@@ -285,7 +285,7 @@ theorem abs_adjoint_flux_projected_oscillation_le_nested_depth_sum
     [NeZero d] {q : Mat d} (hq : q.PosDef) {s t : ℤ} (hst : s ≤ t)
     (g : Mat d) (hg : IsSkewMat g) (p r Pcen : Vec d)
     (N : ℕ) (a : CoeffSpace d) :
-    |adjoint_flux_projected_oscillation hq s t g hg p r Pcen N a| ≤
+    |adjointFluxProjectedOscillation hq s t g hg p r Pcen N a| ≤
       ∑ j ∈ Finset.range N,
         (32 * (d : ℝ) ^ 2 * smoothTransitionProfile.derivBound *
           (3 : ℝ) ^ (-((t - s) + (j : ℤ)))) *
@@ -346,7 +346,7 @@ theorem abs_adjoint_flux_projected_oscillation_le_nested_depth_sum
 /-- The physical adjoint gradient oscillation is the unprojected scalar
 pairing on the reference cube. -/
 theorem adjoint_gradient_cutoff_oscillation_eq_unprojected_pairing
-    [NeZero d] {q : Mat d} (hq : q.PosDef) (s t : ℤ) (w : Fin d → ℤ)
+    {q : Mat d} (hq : q.PosDef) (s t : ℤ) (w : Fin d → ℤ)
     (F : Vec d → BlockVec d) (Qcen : Vec d) :
     let R : TriadicCube d := translateCube w (originCube d s)
     let phi : Vec d → ℝ := fun y ↦
@@ -364,7 +364,7 @@ theorem adjoint_gradient_cutoff_oscillation_eq_unprojected_pairing
 /-- The physical adjoint flux oscillation is the unprojected scalar pairing
 on the reference cube. -/
 theorem adjoint_flux_cutoff_oscillation_eq_unprojected_pairing
-    [NeZero d] {q : Mat d} (hq : q.PosDef) (s t : ℤ) (w : Fin d → ℤ)
+    {q : Mat d} (hq : q.PosDef) (s t : ℤ) (w : Fin d → ℤ)
     (F : Vec d → BlockVec d) (Pcen : Vec d) :
     let R : TriadicCube d := translateCube w (originCube d s)
     let phi : Vec d → ℝ := fun y ↦

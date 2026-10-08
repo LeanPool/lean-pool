@@ -50,7 +50,7 @@ noncomputable section
 variable {d : ℕ}
 
 /-- A local vector test has finite normalized `H^s` norm on an open cube. -/
-private theorem hsNormSq_openCubeSet_ne_top [NeZero d] (Q : TriadicCube d)
+private theorem hsNormSq_openCubeSet_ne_top (Q : TriadicCube d)
     {s : ℝ} (hs : 0 < s) (hsHalf : s < 1 / 2) {G : Vec d → Vec d}
     (hG : IsLocalVecTest (openCubeSet Q) G) :
     hsNormSq (openCubeSet Q) s G ≠ ⊤ := by
@@ -76,7 +76,7 @@ private theorem hsNormSq_openCubeSet_ne_top [NeZero d] (Q : TriadicCube d)
 `Wsp ∩ L²` field.  (The construction of the same content is private at
 its file; it is reproved here rather than imported.) -/
 @[expose]
-public noncomputable def wspL2FieldOfHsNormSq [NeZero d] (Q : TriadicCube d)
+public noncomputable def wspL2FieldOfHsNormSq (Q : TriadicCube d)
     {s : ℝ} (hs : 0 < s) (hsHalf : s < 1 / 2) (G : Vec d → Vec d)
     (hGmeas : AEStronglyMeasurable G (volume.restrict (openCubeSet Q)))
     (hGfinite : hsNormSq (openCubeSet Q) s G ≠ ⊤) :
@@ -144,7 +144,7 @@ public noncomputable def wspL2FieldOfHsNormSq [NeZero d] (Q : TriadicCube d)
         hGmemL2 (lt_top_iff_ne_top.mpr hsemitop)
       euclideanMemL2 := hGmemL2 }
 
-@[simp] private theorem wspL2FieldOfHsNormSq_toField [NeZero d]
+@[simp] private theorem wspL2FieldOfHsNormSq_toField
     (Q : TriadicCube d) {s : ℝ} (hs : 0 < s) (hsHalf : s < 1 / 2)
     (G : Vec d → Vec d)
     (hGmeas : AEStronglyMeasurable G (volume.restrict (openCubeSet Q)))

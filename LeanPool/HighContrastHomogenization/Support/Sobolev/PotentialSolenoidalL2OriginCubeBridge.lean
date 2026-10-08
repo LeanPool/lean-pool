@@ -105,7 +105,7 @@ theorem integrableOn_pairing_affine_openCubeSet_originCube {d : ℕ} {n : ℤ}
 On an open centered cube, the affine perturbation of a zero-trace / zero-normal-trace
 `L²` correction has pairing integral equal to the cube volume times the constant pairing.
 -/
-theorem integral_pairing_affine_openCubeSet_originCube {d : ℕ} [NeZero d] {n : ℤ}
+theorem integral_pairing_affine_openCubeSet_originCube {d : ℕ} {n : ℤ}
     (X : CorrectionFieldData (openCubeSet (originCube d n))) (p q : Vec d) :
     ∫ x in openCubeSet (originCube d n),
         vecDot (p + X.potential x) (q + X.flux x) ∂MeasureTheory.volume =
@@ -201,7 +201,7 @@ theorem integral_pairing_affine_openCubeSet_originCube {d : ℕ} [NeZero d] {n :
 On an open centered cube, the affine potential field `p + correction` has
 componentwise integral equal to the cube volume times `p`.
 -/
-theorem integral_potential_affine_openCubeSet_originCube {d : ℕ} [NeZero d] {n : ℤ}
+theorem integral_potential_affine_openCubeSet_originCube {d : ℕ} {n : ℤ}
     (X : CorrectionFieldData (openCubeSet (originCube d n))) (p : Vec d) :
     (fun i => ∫ x in openCubeSet (originCube d n), (p + X.potential x) i ∂MeasureTheory.volume) =
       (MeasureTheory.volume (openCubeSet (originCube d n))).toReal • p := by
@@ -243,7 +243,7 @@ theorem integral_potential_affine_openCubeSet_originCube {d : ℕ} [NeZero d] {n
 On an open centered cube, the affine flux field `q + correction` has
 componentwise integral equal to the cube volume times `q`.
 -/
-theorem integral_flux_affine_openCubeSet_originCube {d : ℕ} [NeZero d] {n : ℤ}
+theorem integral_flux_affine_openCubeSet_originCube {d : ℕ} {n : ℤ}
     (X : CorrectionFieldData (openCubeSet (originCube d n))) (q : Vec d) :
     (fun i => ∫ x in openCubeSet (originCube d n), (q + X.flux x) i ∂MeasureTheory.volume) =
       (MeasureTheory.volume (openCubeSet (originCube d n))).toReal • q := by

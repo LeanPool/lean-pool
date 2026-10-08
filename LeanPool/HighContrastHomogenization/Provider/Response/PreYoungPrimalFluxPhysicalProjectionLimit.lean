@@ -42,9 +42,9 @@ theorem tendsto_primal_flux_projected_oscillation
     (g : Mat d) (hg : IsSkewMat g) (a : CoeffSpace d)
     (p r Pcen : Vec d) :
     Tendsto
-      (fun n ↦ primal_flux_projected_oscillation
+      (fun n ↦ primalFluxProjectedOscillation
         hq s t g hg p r Pcen (n + 1) a)
-      atTop (nhds (primal_flux_physical_oscillation
+      atTop (nhds (primalFluxPhysicalOscillation
         hq s t g hg p r Pcen a)) := by
   let Z := alignedIndex q s t
   apply tendsto_avsum Z _ _
@@ -82,8 +82,8 @@ theorem tendsto_primal_flux_projected_oscillation
       linarith only [adaptedPreYoungCutoff_nonneg hq t (matVecMul q y),
         adaptedPreYoungCutoff_le_two hq t (matVecMul q y),
         hphiAvg0, hphiAvg2]
-  simpa only [primal_flux_projected_oscillation,
-    primal_flux_physical_oscillation, Z, R, phi, f, F, G] using
+  simpa only [primalFluxProjectedOscillation,
+    primalFluxPhysicalOscillation, Z, R, phi, f, F, G] using
       projected_primal_pairing_tendsto_physical
         R f G 2 hGInt hfInt (by norm_num) hfBound
 
@@ -157,7 +157,7 @@ theorem integrable_primal_flux_physical_oscillation_of_weak
     (g : Mat d) (hg : IsSkewMat g) (p r Pcen : Vec d)
     (hweak : profilePrimalWeakQuantity P m0 hq t
       (fun a ↦ a.subSkew g hg) p r ≠ ⊤) :
-    Integrable (primal_flux_physical_oscillation
+    Integrable (primalFluxPhysicalOscillation
       hq s t g hg p r Pcen) P := by
   let Z := alignedIndex q s t
   let coord : (Fin d → ℤ) → Fin d → CoeffSpace d → ℝ := fun z i a ↦
@@ -175,10 +175,10 @@ theorem integrable_primal_flux_physical_oscillation_of_weak
     exact integrable_finsetSum (Finset.univ : Finset (Fin d)) fun i hi ↦
       (by simpa only [coord, toFullBlockVec] using
         (hread z hz (Sum.inr i)).const_mul (Pcen i))
-  have heq : primal_flux_physical_oscillation hq s t g hg p r Pcen =
+  have heq : primalFluxPhysicalOscillation hq s t g hg p r Pcen =
       fun a ↦ avsum Z (fun z ↦ ∑ i, Pcen i * coord z i a) := by
     funext a
-    unfold primal_flux_physical_oscillation
+    unfold primalFluxPhysicalOscillation
     unfold avsum
     congr 1
     apply Finset.sum_congr rfl

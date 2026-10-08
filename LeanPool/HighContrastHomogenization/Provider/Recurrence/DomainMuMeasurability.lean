@@ -140,7 +140,7 @@ theorem mu_eq_aeeMuCandidate {U : Set (Vec d)} [IsFiniteMeasure (volumeMeasureOn
         (canonicalMuGeneratorAffineField_memBlockL2 (U := U) P0 Y)
   have hs_subset_mu : s ⊆ muValueSet U P0 a := by
     rintro m ⟨Y, rfl⟩
-    show quadraticEnergy H.energyBilin (H.constantField P0 + (gen Y : HilbertBlockL2 U))
+    change quadraticEnergy H.energyBilin (H.constantField P0 + (gen Y : HilbertBlockL2 U))
       ∈ muValueSet U P0 a
     rw [hEnergyGen Y]
     simpa [blockEnergyAverage] using

@@ -102,7 +102,7 @@ theorem coeffSigma_comap_subSkew_le (U : Set (Vec d)) (g : Mat d)
     (hg : IsSkewMat g) :
     MeasurableSpace.comap (fun a : CoeffSpace d => a.subSkew g hg)
         (coeffSigma d U) ≤ coeffSigma d U := by
-  show MeasurableSpace.comap (fun a : CoeffSpace d => a.subSkew g hg)
+  change MeasurableSpace.comap (fun a : CoeffSpace d => a.subSkew g hg)
       (MeasurableSpace.generateFrom
         {s | ∃ (e e' : Vec d) (φ : Vec d → ℝ), IsLocalTest U φ ∧
           ∃ t : Set ℝ, MeasurableSet t ∧ s = coeffPairing e e' φ ⁻¹' t}) ≤

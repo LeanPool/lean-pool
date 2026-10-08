@@ -57,7 +57,7 @@ theorem sum_range_three_pow_succ_le (n : ℕ) :
 /-- A scale-linear normalized oscillation bound above a threshold gives a
 `3^n` bound for the fixed-unit-normalized outer corrector mean. -/
 theorem NormalizedLocalH1Carrier.exists_abs_cubeAverage_le_three_pow_of_oscillation_bound
-    {d : ℕ} [NeZero d] (z : NormalizedLocalH1Carrier d)
+    {d : ℕ} (z : NormalizedLocalH1Carrier d)
     (q₀ : ℕ) (M : ℝ) (hM : 0 ≤ M)
     (hosc : ∀ q : ℕ, q₀ ≤ q →
       cubeBesovOscillation (originCube d (q : ℤ)) (2 : ℝ≥0∞)

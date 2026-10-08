@@ -29,7 +29,7 @@ open MeasureTheory
 noncomputable section
 
 theorem restrictsTo_descendantsDomainPartition_of_aelocallyUniformlyEllipticField
-    {d : ℕ} [NeZero d] {a : RegCoeffField d}
+    {d : ℕ} {a : RegCoeffField d}
     (ha : Ch04.AELocallyUniformlyEllipticField a)
     (Q : TriadicCube d) (j : ℕ) :
     let F : Ch02.TriadicCoeffFamily d :=

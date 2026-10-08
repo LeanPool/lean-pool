@@ -80,7 +80,7 @@ theorem finiteAffineCorrection_toScalarL2_eq_of_aeeq [NeZero d]
     filter_upwards [H1Function.coeFn_gradToVectorL2 w.toH1Function, hzero,
       finiteAffineCorrection_grad_ae_of_aeeq hab m e] with x hgrad h0 haeq
     rw [hgrad, h0, hwH1, H1Function.sub_grad]
-    show (finiteAffineCorrection a m e).toH1Function.grad x -
+    change (finiteAffineCorrection a m e).toH1Function.grad x -
       (finiteAffineCorrection b m e).toH1Function.grad x = 0
     rw [haeq, sub_self]
   have hzero :=

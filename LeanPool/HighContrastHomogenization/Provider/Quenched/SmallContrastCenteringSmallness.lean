@@ -82,7 +82,7 @@ theorem gap_le_smul_of_trace {S SStar : Mat d}
       Matrix.trace (Response.centeredResponseX S SStar) • (1 : Mat d) :=
     psd_le_smul_one hXpsd fun x => psd_quad_le_trace hXpsd x
   have hsmul1Herm : ∀ c : ℝ, (c • (1 : Mat d)).IsHermitian := fun c => by
-    show (c • (1 : Mat d))ᴴ = c • (1 : Mat d)
+    change (c • (1 : Mat d))ᴴ = c • (1 : Mat d)
     rw [Matrix.conjTranspose_smul, Matrix.conjTranspose_one, star_trivial]
   have hXle2 : Response.centeredResponseX S SStar ≤ eps • (1 : Mat d) := by
     refine le_trans hXle (Initialization.le_of_dotProduct_mulVec_le
@@ -172,7 +172,7 @@ theorem centering_smallness_supply [NeZero d]
   rw [hE2] at hfull
   -- the symmetric-skew smallness at `θ = 1 + ε`
   have hsmulHermStar : ∀ c : ℝ, (c • SStar).IsHermitian := fun c => by
-    show (c • SStar)ᴴ = c • SStar
+    change (c • SStar)ᴴ = c • SStar
     rw [Matrix.conjTranspose_smul, hStar.isHermitian.eq, star_trivial]
   have hS_le : S ≤ (1 + eps) • SStar := by
     refine Initialization.le_of_dotProduct_mulVec_le hS.isHermitian

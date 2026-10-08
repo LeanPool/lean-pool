@@ -37,7 +37,7 @@ noncomputable section
 /-- The root scalar-comparator defect localizes to the exact normalized
 average of its descendant flux defects. -/
 theorem centeredCubeRootFluxDefectL2Field_negativeWspSmoothDual_localize
-    {d : ℕ} [NeZero d] (m n : ℤ) (hnm : n < m)
+    {d : ℕ} (m n : ℤ) (hnm : n < m)
     (a : Book.Ch02.CoeffOn (Book.Ch02.cubeDomain (originCube d m)))
     (sigma0 : ℝ) (u : H1Function (openCubeSet (originCube d m)))
     (s : FractionalOrder) (p : FiniteLpExponent) :

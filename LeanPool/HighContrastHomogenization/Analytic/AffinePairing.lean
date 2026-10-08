@@ -62,7 +62,7 @@ theorem IsLocalVecTest.comp_matVecMul {L : Mat d} (hL : IsUnit L.det)
       LinearMap.toContinuousLinearMap (Matrix.mulVecLin L)
     change ContDiff ℝ (⊤ : ℕ∞) (psi ∘ T)
     exact hpsi.contDiff.comp T.contDiff
-  · show HasCompactSupport (psi ∘ e)
+  · change HasCompactSupport (psi ∘ e)
     simpa [e, Function.comp_def] using hpsi.hasCompactSupport.comp_homeomorph e
   · intro y hy
     have hy' : matVecMul L y ∈ tsupport psi := by
@@ -76,7 +76,7 @@ theorem IsLocalVecTest.comp_matVecMul {L : Mat d} (hL : IsUnit L.det)
 /-- Absolute integrability is equivalent before and after an invertible linear
 change of variables. -/
 theorem integrableOn_matImage_iff {F : Type*} [NormedAddCommGroup F]
-    [NormedSpace ℝ F] {L : Mat d} (hL : IsUnit L.det)
+    {L : Mat d} (hL : IsUnit L.det)
     {U : Set (Vec d)} (hU : MeasurableSet U) (f : Vec d → F) :
     IntegrableOn f (matImage L U) volume ↔
       IntegrableOn (fun y ↦ f (matVecMul L y)) U volume := by

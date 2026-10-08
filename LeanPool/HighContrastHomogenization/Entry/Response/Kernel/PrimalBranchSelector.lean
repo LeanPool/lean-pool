@@ -473,6 +473,7 @@ private theorem memLp_one_blockVecDot {U : Set (Vec d)} {X : Vec d → BlockVec 
       simpa [Pi.mul_apply] using! (e2 i).integrable_mul (e2 i)
   simpa [blockVecDot, vecDot] using! hA.add hB
 
+omit [NeZero d] in
 /-- **The summability half.**  The recentred, metric-transported cell-average family of an
 `L²(U_t)` block field is summable with the scale weights of the seminorm.  The engine
 `summable_besov_cellAverageFamily` is applied to the transported recentring

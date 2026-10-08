@@ -167,7 +167,7 @@ private theorem centeredCube_sum_scalar_gagliardoKernel_eq_distance_mul_numerato
       rw [centeredCube_sum_enorm_sq_coordinate_diff_eq_ofReal_numerator]
 
 private theorem centeredCubeEuclideanHsIntegrand_le_sum_scalar_gagliardoKernel
-    {d : ℕ} {m : ℤ} [NeZero d] (s : FractionalOrder)
+    {d : ℕ} {m : ℤ} (s : FractionalOrder)
     (F : CenteredCubeEuclideanL2Field d m) (z : Vec d × Vec d) :
     centeredCubeEuclideanHsIntegrand s F z ≤
       ∑ i : Fin d,
@@ -296,7 +296,7 @@ private theorem centeredCube_sum_scalar_gagliardoKernel_le_mul_euclideanHsIntegr
 /-- The physical Euclidean energy is bounded by the physical coordinate
 Gagliardo energy, with no scale factor. -/
 private theorem centeredCubeEuclideanHsEnergy_le_coordinateGagliardoEnergy
-    {d : ℕ} {m : ℤ} [NeZero d] (s : FractionalOrder)
+    {d : ℕ} {m : ℤ} (s : FractionalOrder)
     (F : CenteredCubeEuclideanL2Field d m) (hF : Measurable F) :
     centeredCubeEuclideanHsEnergy s F ≤ centeredCubeCoordinateGagliardoEnergy s F := by
   rw [centeredCubeEuclideanHsEnergy_eq_lintegral,

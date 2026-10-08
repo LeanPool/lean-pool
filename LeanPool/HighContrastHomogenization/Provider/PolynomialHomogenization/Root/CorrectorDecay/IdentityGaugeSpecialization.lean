@@ -96,7 +96,7 @@ theorem identityCenteredCoeffSpace_ae
 /-- A.e.-equivalent coefficient families have the same scalar-identity weak
 error at every scale and order. -/
 theorem scalarIdentityWeakError_eq_of_aeeq
-    {d : ℕ} [NeZero d] {a b : Book.Ch02.TriadicCoeffFamily d}
+    {d : ℕ} {a b : Book.Ch02.TriadicCoeffFamily d}
     (hab : Book.Ch02.TriadicCoeffFamily.AEEq a b) (s : ℝ) (m : ℤ) :
     scalarIdentityWeakError a s m = scalarIdentityWeakError b s m := by
   unfold scalarIdentityWeakError
@@ -104,7 +104,7 @@ theorem scalarIdentityWeakError_eq_of_aeeq
     (originCube d m) s .infinity (.finite 2) (1 : Mat d)
 
 theorem scalarIdentityPowerTail_of_aeeq
-    {d : ℕ} [NeZero d] {a b : Book.Ch02.TriadicCoeffFamily d}
+    {d : ℕ} {a b : Book.Ch02.TriadicCoeffFamily d}
     {s amplitude kappa x : ℝ}
     (hab : Book.Ch02.TriadicCoeffFamily.AEEq a b)
     (h : ScalarIdentityPowerTail a s amplitude kappa x) :

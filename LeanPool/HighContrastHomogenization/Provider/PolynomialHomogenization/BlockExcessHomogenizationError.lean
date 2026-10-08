@@ -49,7 +49,7 @@ variable {d : ℕ}
 /-- Descendants of an origin cube at a fixed depth are exactly the standard
 cells whose centres lie in that origin cube. -/
 theorem maxDescendantNormalizedBlockResponseAtScale_originCube_eq_alignedIndex
-    [NeZero d] (m : ℤ) (n : ℕ) (aL : TriadicCoeffFamily d) (abar : Mat d) :
+    (m : ℤ) (n : ℕ) (aL : TriadicCoeffFamily d) (abar : Mat d) :
     Book.Ch02.maxDescendantNormalizedBlockResponseAtScale
         (originCube d m) (m - (n : ℤ)) aL abar =
       Book.Ch02.finsetSupReal (Response.alignedIndex (1 : Mat d) (m - (n : ℤ)) m)
@@ -77,7 +77,7 @@ private theorem isSymmetricBlockMat_blockDiag_smul_one
 /-- The constant competitor bounds doubled `mu` on every Chapter 2 domain by
 the pointwise ellipticity upper form. -/
 private theorem doubledMu_le_plainUpper_of_isEllipticFieldOn
-    [NeZero d] (U : Domain d) (b : CoeffOn U) {lam Lam : ℝ}
+    (U : Domain d) (b : CoeffOn U) {lam Lam : ℝ}
     (hEll : IsEllipticFieldOn lam Lam (U : Set (Vec d)) b.toCoeffField)
     (P : BlockVec d) :
     doubledMu U b P ≤
@@ -152,7 +152,7 @@ private theorem doubledMu_le_plainUpper_of_isEllipticFieldOn
 /-- The coarse block is bounded in doubled Loewner order by the same diagonal
 form as the constant competitor estimate. -/
 private theorem coarseBlockMatrix_blockMatLoewnerLE_plainUpper
-    [NeZero d] (U : Domain d) (b : CoeffOn U) {lam Lam : ℝ}
+    (U : Domain d) (b : CoeffOn U) {lam Lam : ℝ}
     (hEll : IsEllipticFieldOn lam Lam (U : Set (Vec d)) b.toCoeffField) :
     BlockMatLoewnerLE (Book.Ch02.coarseBlockMatrix U b)
       (blockDiag

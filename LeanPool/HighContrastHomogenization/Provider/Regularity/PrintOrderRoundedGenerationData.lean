@@ -36,7 +36,7 @@ variable {d : ℕ}
 
 /-- The centered physical coefficient pulled back by a selected rounded grid. -/
 @[expose]
-def roundedCenteredCoefficientAtGeneration [NeZero d]
+def roundedCenteredCoefficientAtGeneration
     (l : ℤ) (hl : (kZero d : ℤ) ≤ l) (abar : Mat d)
     (hS : (symmPart abar).PosDef) (a : CoeffField d) : CoeffField d :=
   affineCoefficient (roundedGrid l (symmPart abar))
@@ -45,7 +45,7 @@ def roundedCenteredCoefficientAtGeneration [NeZero d]
     (fun x ↦ specBound ((symmPart abar)⁻¹) •
       (a x - skewPart abar))
 
-@[simp] theorem roundedCenteredCoefficientAtGeneration_apply [NeZero d]
+@[simp] theorem roundedCenteredCoefficientAtGeneration_apply
     (l : ℤ) (hl : (kZero d : ℤ) ≤ l) (abar : Mat d)
     (hS : (symmPart abar).PosDef) (a : CoeffField d) (y : Vec d) :
     roundedCenteredCoefficientAtGeneration l hl abar hS a y =
@@ -107,7 +107,7 @@ theorem exists_roundedCenteredCoeffFamilyAtGeneration [NeZero d]
 /-- A selected near-identity matrix in the Chapter 3 constant-coefficient
 carrier, using the uniform one-half/two ellipticity window. -/
 @[expose]
-def roundedReferenceConstantCoeffMatrixAtGeneration [NeZero d]
+def roundedReferenceConstantCoeffMatrixAtGeneration
     (l : ℤ) (abar : Mat d) (hS : (symmPart abar).PosDef)
     (hPos : (roundedReferenceMatrixAtGeneration l abar hS).PosDef)
     (hEll : IsEllipticMatrix (1 / 2 : ℝ) 2
@@ -123,7 +123,7 @@ def roundedReferenceConstantCoeffMatrixAtGeneration [NeZero d]
 
 /-- The chosen same-trace comparison for any selected rounded reference. -/
 @[expose]
-def roundedHarmonicReplacementDatumAtGeneration [NeZero d]
+def roundedHarmonicReplacementDatumAtGeneration
     (l : ℤ) (abar : Mat d) (hS : (symmPart abar).PosDef)
     (hPos : (roundedReferenceMatrixAtGeneration l abar hS).PosDef)
     (hEll : IsEllipticMatrix (1 / 2 : ℝ) 2
@@ -140,7 +140,7 @@ def roundedHarmonicReplacementDatumAtGeneration [NeZero d]
       (roundedReferenceConstantCoeffMatrixAtGeneration
         l abar hS hPos hEll) u hu)
 
-@[simp] theorem roundedHarmonicReplacementDatumAtGeneration_u [NeZero d]
+@[simp] theorem roundedHarmonicReplacementDatumAtGeneration_u
     (l : ℤ) (abar : Mat d) (hS : (symmPart abar).PosDef)
     (hPos : (roundedReferenceMatrixAtGeneration l abar hS).PosDef)
     (hEll : IsEllipticMatrix (1 / 2 : ℝ) 2

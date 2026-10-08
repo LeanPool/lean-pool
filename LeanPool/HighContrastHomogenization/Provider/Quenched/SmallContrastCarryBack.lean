@@ -46,8 +46,8 @@ variable {d : ℕ}
 
 /-- **The carry-back.**  The `hcore` inner body at the recentered law is the
 `hcore` inner body at the original law. -/
-theorem hcore_body_carry_back [NeZero d] {P : Measure (CoeffSpace d)}
-    [IsProbabilityMeasure P] {g : Mat d} (hg : IsSkewMat g)
+theorem hcore_body_carry_back {P : Measure (CoeffSpace d)}
+    {g : Mat d} (hg : IsSkewMat g)
     (hint : ∀ m : ℤ, HasFiniteAdaptedMean P (1 : Mat d) m)
     (hpd : ∀ m : ℤ, BlockPosDef (annealedBlock P (centeredCube d m)))
     {base Cdelay alpha : ℝ}

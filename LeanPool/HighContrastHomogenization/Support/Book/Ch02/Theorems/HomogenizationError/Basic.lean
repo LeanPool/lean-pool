@@ -37,14 +37,14 @@ This file proves the public basic properties of the homogenization error
 `\mathcal E_{s,\infty,1}` from Sec. 2.5.
 -/
 
-@[simp] theorem scaleResponseAtScale_infinity_eq {d : ℕ} [NeZero d]
+@[simp] theorem scaleResponseAtScale_infinity_eq {d : ℕ}
     (Q : TriadicCube d) (k : ℤ) (a : TriadicCoeffFamily d) (a0 : Mat d) :
     scaleResponseAtScale Q k .infinity a a0 =
       Real.rpow (maxDescendantNormalizedBlockResponseAtScale Q k a a0)
         (1 / 2 : ℝ) := rfl
 
 @[simp] theorem homogenizationErrorFinite_infinity_one_eq_tsum {d : ℕ}
-    [NeZero d] (Q : TriadicCube d) (n : ℤ) (s : ℝ)
+    (Q : TriadicCube d) (n : ℤ) (s : ℝ)
     (a : TriadicCoeffFamily d) (a0 : Mat d) :
     HomogenizationErrorFinite Q n s .infinity 1 a a0 =
       ∑' l : ℕ,
@@ -54,7 +54,7 @@ This file proves the public basic properties of the homogenization error
   simp
 
 @[simp] theorem homogenizationErrorOnCube_infinity_one_eq_tsum {d : ℕ}
-    [NeZero d] (Q : TriadicCube d) (s : ℝ)
+    (Q : TriadicCube d) (s : ℝ)
     (a : TriadicCoeffFamily d) (a0 : Mat d) :
     HomogenizationErrorOnCube Q s .infinity (.finite 1) a a0 =
       ∑' l : ℕ,
@@ -64,14 +64,14 @@ This file proves the public basic properties of the homogenization error
   simp
 
 @[simp] theorem maxDescendantNormalizedBlockResponseAtScale_self {d : ℕ}
-    [NeZero d] (Q : TriadicCube d) (a : TriadicCoeffFamily d) (a0 : Mat d) :
+    (Q : TriadicCube d) (a : TriadicCoeffFamily d) (a0 : Mat d) :
     maxDescendantNormalizedBlockResponseAtScale Q Q.scale a a0 =
       normalizedBlockResponseMax Q a a0 := by
   unfold maxDescendantNormalizedBlockResponseAtScale finsetSupReal
   rw [descendantsAtScale_self]
   simp
 
-theorem scaleResponseAtScale_infinity_self_eq {d : ℕ} [NeZero d]
+theorem scaleResponseAtScale_infinity_self_eq {d : ℕ}
     (Q : TriadicCube d) (a : TriadicCoeffFamily d) (a0 : Mat d) :
     scaleResponseAtScale Q Q.scale .infinity a a0 =
       Real.rpow (normalizedBlockResponseMax Q a a0) (1 / 2 : ℝ) := by

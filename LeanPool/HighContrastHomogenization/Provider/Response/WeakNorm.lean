@@ -210,7 +210,7 @@ def metricBlockNormSq (m : Mat d) (v : BlockVec d) : ℝ :=
 /-- The defining equation of the metric quadratic form, slot by slot. -/
 theorem metricBlockNormSq_eq (m : Mat d) (v : BlockVec d) :
     metricBlockNormSq m v = vecDot v.1 (matVecMul m v.1) + vecDot v.2 (matVecMul m⁻¹ v.2) := by
-  show vecDot v.1 (matVecMul m v.1 + matVecMul 0 v.2) +
+  change vecDot v.1 (matVecMul m v.1 + matVecMul 0 v.2) +
       vecDot v.2 (matVecMul 0 v.1 + matVecMul m⁻¹ v.2) = _
   rw [zero_matVecMul, zero_matVecMul, add_zero, zero_add]
 

@@ -381,7 +381,7 @@ defect splits as `N = Ncell + Nosc`.  Bilinearity of `vecDot` splits the crossed
 two coordinates into the cell and oscillation halves; the triangle inequality bounds the total by
 the sum of the two half-bounds; `√L √(2τ) = √2 √(τ L)` with `√2 / 2 ≤ 1` absorbs the cell factor;
 and `1 ≤ max 1 c₂` together with `(1 / 2) c₂ ≤ max 1 c₂` absorbs the row's factor `1 / 2`. -/
-theorem cutoffMeanRowMinus_of_halves {d : ℕ} [NeZero d]
+theorem cutoffMeanRowMinus_of_halves {d : ℕ}
     (P : Measure (CoeffSpace d)) (jStar : ℕ) (F : BlockMat d) (H : ℕ) (s t : ℤ) (e : Vec d)
     (φ : Vec d → ℝ)
     (uM : (a : CoeffSpace d) → AHarmonicFunction (respCoeffMinus F a) (respCell jStar F t))
@@ -531,7 +531,7 @@ the two coordinates into the cell and oscillation halves; the triangle inequalit
 by the sum of the two half-bounds; `√L √(2τ) = √2 √(τ L)` with `√2 / 2 ≤ 1` absorbs the cell
 factor; and `1 ≤ max 1 c₂` together with `(1 / 2) c₂ ≤ max 1 c₂` absorbs the row's factor `1 / 2`.
 -/
-theorem cutoffMeanRowPlus_of_halves {d : ℕ} [NeZero d]
+theorem cutoffMeanRowPlus_of_halves {d : ℕ}
     (P : Measure (CoeffSpace d)) (jStar : ℕ) (F : BlockMat d) (H : ℕ) (s t : ℤ) (e : Vec d)
     (φ : Vec d → ℝ)
     (uP : (a : CoeffSpace d) → AHarmonicFunction (respCoeffPlus F a) (respCell jStar F t))

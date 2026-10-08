@@ -85,7 +85,7 @@ noncomputable def seminorm {d : ℕ}
   U.normalizedEuclideanLpNorm p u.grad (u.gradEuclideanMemLp U p)
 
 /-- Characterization of the generic finite-exponent normalized seminorm. -/
-theorem seminorm_eq {d : ℕ} [NeZero d]
+theorem seminorm_eq {d : ℕ}
     (U : BoundedMeasurableDomain d) (p : ℝ≥0∞) (hp_one : 1 ≤ p) (hp_top : p ≠ ∞)
     (u : W1pFunction (U : Set (Vec d)) p) :
     seminorm U p hp_one hp_top u =
@@ -94,7 +94,7 @@ theorem seminorm_eq {d : ℕ} [NeZero d]
 
 /-- The generic finite-exponent seminorm is invariant under an a.e. equality
 of the explicitly stored weak gradients. -/
-theorem seminorm_congr_ae {d : ℕ} [NeZero d]
+theorem seminorm_congr_ae {d : ℕ}
     (U : BoundedMeasurableDomain d) (p : ℝ≥0∞) (hp_one : 1 ≤ p) (hp_top : p ≠ ∞)
     (u v : W1pFunction (U : Set (Vec d)) p)
     (hgrad : u.grad =ᵐ[U.normalizedVolume] v.grad) :
@@ -106,7 +106,7 @@ theorem seminorm_congr_ae {d : ℕ} [NeZero d]
 /-- The generic finite-exponent normalized `W^{1,p}` norm:
 `(‖∇u‖^p + |U|^(-p/d) ‖u‖^p)^(1/p)`. -/
 @[expose]
-noncomputable def norm {d : ℕ} [NeZero d]
+noncomputable def norm {d : ℕ}
     (U : BoundedMeasurableDomain d) (p : ℝ≥0∞) (hp_one : 1 ≤ p) (hp_top : p ≠ ∞)
     (u : W1pFunction (U : Set (Vec d)) p) : ℝ :=
   (seminorm U p hp_one hp_top u ^ p.toReal +
@@ -116,7 +116,7 @@ noncomputable def norm {d : ℕ} [NeZero d]
     p.toReal⁻¹
 
 /-- Characterization of the generic finite-exponent normalized norm. -/
-theorem norm_eq {d : ℕ} [NeZero d]
+theorem norm_eq {d : ℕ}
     (U : BoundedMeasurableDomain d) (p : ℝ≥0∞) (hp_one : 1 ≤ p) (hp_top : p ≠ ∞)
     (u : W1pFunction (U : Set (Vec d)) p) :
     norm U p hp_one hp_top u =
@@ -128,7 +128,7 @@ theorem norm_eq {d : ℕ} [NeZero d]
 
 /-- The generic finite-exponent normalized norm is invariant under separate
 a.e. equalities of the function and its explicitly stored weak gradient. -/
-theorem norm_congr_ae {d : ℕ} [NeZero d]
+theorem norm_congr_ae {d : ℕ}
     (U : BoundedMeasurableDomain d) (p : ℝ≥0∞) (hp_one : 1 ≤ p) (hp_top : p ≠ ∞)
     (u v : W1pFunction (U : Set (Vec d)) p)
     (hfun : u.toFun =ᵐ[U.normalizedVolume] v.toFun)
@@ -147,7 +147,7 @@ noncomputable def seminormTop {d : ℕ}
   U.normalizedEuclideanLpNorm ∞ u.grad (u.gradEuclideanMemLp U ∞)
 
 /-- Characterization of the generic normalized `W^{1,∞}` seminorm. -/
-theorem seminormTop_eq {d : ℕ} [NeZero d]
+theorem seminormTop_eq {d : ℕ}
     (U : BoundedMeasurableDomain d) (u : W1pFunction (U : Set (Vec d)) ∞) :
     seminormTop U u =
       U.normalizedEuclideanLpNorm ∞ u.grad (u.gradEuclideanMemLp U ∞) :=
@@ -155,7 +155,7 @@ theorem seminormTop_eq {d : ℕ} [NeZero d]
 
 /-- The generic endpoint seminorm is invariant under an a.e. equality of the
 explicitly stored weak gradients. -/
-theorem seminormTop_congr_ae {d : ℕ} [NeZero d]
+theorem seminormTop_congr_ae {d : ℕ}
     (U : BoundedMeasurableDomain d) (u v : W1pFunction (U : Set (Vec d)) ∞)
     (hgrad : u.grad =ᵐ[U.normalizedVolume] v.grad) :
     seminormTop U u = seminormTop U v := by
@@ -166,13 +166,13 @@ theorem seminormTop_congr_ae {d : ℕ} [NeZero d]
 /-- The generic endpoint normalized `W^{1,∞}` norm.  The two terms are added,
 rather than combined using a maximum. -/
 @[expose]
-noncomputable def normTop {d : ℕ} [NeZero d]
+noncomputable def normTop {d : ℕ}
     (U : BoundedMeasurableDomain d) (u : W1pFunction (U : Set (Vec d)) ∞) : ℝ :=
   seminormTop U u + U.volumeReal ^ (-(1 / (d : ℝ))) *
     U.normalizedLpNorm ∞ u.toFun ((U.memLp_normalizedVolume_iff ∞ _).mpr u.memLp)
 
 /-- Characterization of the generic endpoint normalized norm. -/
-theorem normTop_eq {d : ℕ} [NeZero d]
+theorem normTop_eq {d : ℕ}
     (U : BoundedMeasurableDomain d) (u : W1pFunction (U : Set (Vec d)) ∞) :
     normTop U u =
       seminormTop U u + U.volumeReal ^ (-(1 / (d : ℝ))) *
@@ -182,7 +182,7 @@ theorem normTop_eq {d : ℕ} [NeZero d]
 
 /-- The generic endpoint normalized norm is invariant under separate a.e.
 equalities of the function and its explicitly stored weak gradient. -/
-theorem normTop_congr_ae {d : ℕ} [NeZero d]
+theorem normTop_congr_ae {d : ℕ}
     (U : BoundedMeasurableDomain d) (u v : W1pFunction (U : Set (Vec d)) ∞)
     (hfun : u.toFun =ᵐ[U.normalizedVolume] v.toFun)
     (hgrad : u.grad =ᵐ[U.normalizedVolume] v.grad) :

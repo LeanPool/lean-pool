@@ -329,7 +329,7 @@ theorem DirichletForcedCubeSolution.zeroTraceDifferenceH10CubeSet_grad_ae_eq
   have hwOpen :
       wOpen.toH1Function.toFun =ᵐ[volumeMeasureOn (openCubeSet Q)]
         zOpen.toFun := by
-    show (castH10Domain (Ch02.cubeDomain_coe Q) u.zeroTraceDifferenceH10).toH1Function.toFun
+    change (castH10Domain (Ch02.cubeDomain_coe Q) u.zeroTraceDifferenceH10).toH1Function.toFun
         =ᵐ[volumeMeasureOn (openCubeSet Q)]
           (castH1Domain (Ch02.cubeDomain_coe Q) (u.toH1 - u.boundaryData)).toFun
     rw [castH10Domain_toH1Function_toFun, castH1Domain_toFun, H1Function.sub_toFun,
@@ -343,13 +343,13 @@ theorem DirichletForcedCubeSolution.zeroTraceDifferenceH10CubeSet_grad_ae_eq
         (isOpen_openCubeSet Q) (u := wOpen.toH1Function)
         (v := zOpen) hwOpen
     have ez : zOpen.grad = fun x => u.toH1.grad x - u.boundaryData.grad x := by
-      show (castH1Domain (Ch02.cubeDomain_coe Q) (u.toH1 - u.boundaryData)).grad =
+      change (castH1Domain (Ch02.cubeDomain_coe Q) (u.toH1 - u.boundaryData)).grad =
         fun x => u.toH1.grad x - u.boundaryData.grad x
       rw [castH1Domain_grad, H1Function.sub_grad]
     rw [ez] at h
     exact h
   have efun : u.zeroTraceDifferenceH10CubeSet.toH1Function.grad = wOpen.toH1Function.grad := by
-    show (publicH10ToCubeSet u.zeroTraceDifferenceH10).toH1Function.grad =
+    change (publicH10ToCubeSet u.zeroTraceDifferenceH10).toH1Function.grad =
       (castH10Domain (Ch02.cubeDomain_coe Q) u.zeroTraceDifferenceH10).toH1Function.grad
     rw [publicH10ToCubeSet_toH1Function_grad, castH10Domain_toH1Function_grad]
   have hmeas : volumeMeasureOn (cubeSet Q) = volumeMeasureOn (openCubeSet Q) :=
@@ -498,7 +498,7 @@ theorem isPotentialZeroTraceOn_cubeSet_of_public_zeroTraceDifference
   have hwOpen :
       wOpen.toH1Function.toFun =ᵐ[volumeMeasureOn (openCubeSet Q)]
         zOpen.toFun := by
-    show (castH10Domain (Ch02.cubeDomain_coe Q) w).toH1Function.toFun
+    change (castH10Domain (Ch02.cubeDomain_coe Q) w).toH1Function.toFun
         =ᵐ[volumeMeasureOn (openCubeSet Q)]
           (castH1Domain (Ch02.cubeDomain_coe Q) (u - v)).toFun
     rw [castH10Domain_toH1Function_toFun, castH1Domain_toFun, H1Function.sub_toFun,
@@ -512,7 +512,7 @@ theorem isPotentialZeroTraceOn_cubeSet_of_public_zeroTraceDifference
         (isOpen_openCubeSet Q) (u := wOpen.toH1Function)
         (v := zOpen) hwOpen
     have ez : zOpen.grad = fun x => u.grad x - v.grad x := by
-      show (castH1Domain (Ch02.cubeDomain_coe Q) (u - v)).grad =
+      change (castH1Domain (Ch02.cubeDomain_coe Q) (u - v)).grad =
         fun x => u.grad x - v.grad x
       rw [castH1Domain_grad, H1Function.sub_grad]
     rw [ez] at h

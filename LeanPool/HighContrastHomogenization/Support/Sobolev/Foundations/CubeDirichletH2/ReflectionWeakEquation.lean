@@ -669,9 +669,10 @@ theorem setIntegral_cubeReflection_vectorDot_oddReflectedField_eq_foldedDerivati
           refine MeasureTheory.setIntegral_congr_fun
             (measurableSet_openCubeSet Q) ?_
           intro y _hy
-          simp [vecDot, cubeFaceReflectionCellFoldLinear_apply,
+          simp only [vecDot, cubeFaceReflectionCellFoldLinear_apply,
             cubeFaceReflectionCellFoldSign, euclideanGradient, euclideanCoordDeriv,
-            Finset.mul_sum, mul_left_comm]
+            Finset.mul_sum, mul_ite, ite_mul, mul_one, mul_neg, neg_mul,
+            mul_left_comm]
           rw [Finset.sum_comm]
 
 /-- The block pairing with the odd-reflected scalar forcing is the

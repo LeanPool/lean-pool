@@ -35,7 +35,7 @@ the geometrically weighted sum of the normalized block-response maxima.
 -/
 
 theorem scaleResponseAtScale_infinity_sq_eq
-    {d : ℕ} [NeZero d] (Q : TriadicCube d) {k : ℤ} (hk : k ≤ Q.scale)
+    {d : ℕ} (Q : TriadicCube d) {k : ℤ} (hk : k ≤ Q.scale)
     (a : TriadicCoeffFamily d) (a0 : Mat d) :
     (scaleResponseAtScale Q k .infinity a a0) ^ 2 =
       maxDescendantNormalizedBlockResponseAtScale Q k a a0 := by
@@ -43,14 +43,14 @@ theorem scaleResponseAtScale_infinity_sq_eq
     Real.sq_sqrt (maxDescendantNormalizedBlockResponseAtScale_nonneg Q hk a a0)
 
 theorem scaleResponseAtScale_infinity_rpow_two_eq
-    {d : ℕ} [NeZero d] (Q : TriadicCube d) {k : ℤ} (hk : k ≤ Q.scale)
+    {d : ℕ} (Q : TriadicCube d) {k : ℤ} (hk : k ≤ Q.scale)
     (a : TriadicCoeffFamily d) (a0 : Mat d) :
     Real.rpow (scaleResponseAtScale Q k .infinity a a0) (2 : ℝ) =
       maxDescendantNormalizedBlockResponseAtScale Q k a a0 := by
   simpa [Real.rpow_two] using scaleResponseAtScale_infinity_sq_eq Q hk a a0
 
 theorem homogenizationErrorFinite_infinity_two_sq_eq_tsum
-    {d : ℕ} [NeZero d] (Q : TriadicCube d) {n : ℤ} (hn : n ≤ Q.scale)
+    {d : ℕ} (Q : TriadicCube d) {n : ℤ} (hn : n ≤ Q.scale)
     {s : ℝ} (hs : 0 < s) (a : TriadicCoeffFamily d) (a0 : Mat d) :
     (HomogenizationErrorFinite Q n s .infinity 2 a a0) ^ 2 =
       ∑' l : ℕ,
@@ -88,7 +88,7 @@ theorem homogenizationErrorFinite_infinity_two_sq_eq_tsum
   simpa [Real.sqrt_eq_rpow] using Real.sq_sqrt hS_nonneg
 
 theorem homogenizationErrorOnCube_infinity_two_sq_eq_tsum
-    {d : ℕ} [NeZero d] (Q : TriadicCube d)
+    {d : ℕ} (Q : TriadicCube d)
     {s : ℝ} (hs : 0 < s) (a : TriadicCoeffFamily d) (a0 : Mat d) :
     (HomogenizationErrorOnCube Q s .infinity (.finite 2) a a0) ^ 2 =
       ∑' l : ℕ,

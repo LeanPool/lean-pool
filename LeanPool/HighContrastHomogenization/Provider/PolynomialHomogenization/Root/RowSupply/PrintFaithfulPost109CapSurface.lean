@@ -68,7 +68,7 @@ def PrintFaithfulDomainFluxDefectDuality
 /-- Generic printed pairing consumption for the physical full-dual row.  In
 particular it applies to the physical flux-defect field without introducing a
 comparison extension. -/
-theorem ofReal_abs_globalPairing_le_printFaithfulFullDualCap [NeZero d]
+theorem ofReal_abs_globalPairing_le_printFaithfulFullDualCap
     {U : Set (Vec d)} {rho Rad s : ℝ}
     (system : EnlargedMarginRuledTriadicWhitneySystem U rho Rad)
     (hd : 1 ≤ d) (hU : IsOpenBoundedConvexDomain U)

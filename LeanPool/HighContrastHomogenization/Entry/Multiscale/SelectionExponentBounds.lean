@@ -116,7 +116,7 @@ theorem gamma_le_rhoMax (d : ℕ) (hd : 2 ≤ d) (γ : ℝ)
   have hnum_nonneg : 0 ≤ (d : ℝ) + (1 - γ) / 4 := by
     have hgap : 0 ≤ 1 - γ := sub_nonneg.mpr hγ.2.le
     positivity
-  simp [rhoMax]
+  simp only [rhoMax, le_add_iff_nonneg_right, ge_iff_le]
   exact mul_nonneg hq_nonneg hnum_nonneg
 
 theorem rhoMax_sub_d_div_bigQ (d : ℕ) (_hd : 2 ≤ d) (γ : ℝ)

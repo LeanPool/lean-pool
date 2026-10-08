@@ -60,7 +60,7 @@ theorem printOrderSpineRoundingTolerance_le_half
   (printOrderSpineRoundingTolerance_le_one_percent d Cid).trans (by norm_num)
 
 theorem printOrderRoundedReferenceDualRegularityAtGeneration_of_absorption
-    (d : ℕ) [NeZero d] (g Cid : ℝ) (hg : g ∈ Ico (0 : ℝ) 1)
+    (d : ℕ) (g Cid : ℝ) (hg : g ∈ Ico (0 : ℝ) 1)
     (hidentity : PrintOrderIdentityCubeDualRegularityWithConstant d g Cid)
     {generation : ℤ}
     (hmatrix : ∀ (abar : Mat d) (hS : (symmPart abar).PosDef),
@@ -141,6 +141,7 @@ absorption tolerance. -/
 structure PrintOrderParametricRoundedCoefficientApplication
     (d : ℕ) [NeZero d] (g : ℝ) (a : CoeffSpace d) (abar : Mat d)
     (sourceAmplitude target kappa Cid : ℝ) (X : CoeffSpace d → ℝ) where
+  /-- Admissible rounding generation selected for the prescribed absorption tolerance. -/
   generation : ℤ
   generation_admissible : (kZero d : ℤ) ≤ generation
   hS : (symmPart abar).PosDef
@@ -191,6 +192,7 @@ structure PrintOrderParametricRoundedCoefficientApplication
       (Quenched.triadicCeilingIndex
         (printOrderCommonQuantitativeAffineScale
           d g sourceAmplitude target kappa abar X a) : ℤ)
+  /-- Triadic coefficient family realizing the centered coefficient rounded at `generation`. -/
   aRounded : Book.Ch03.CoeffFamily d
   aRounded_eq :
     ∀ Q : TriadicCube d,

@@ -84,7 +84,7 @@ negative Besov norms.  This coefficient includes exactly the two parent-scale
 factors needed to convert that estimate back to the note-normalized Ch4 weak
 norms used in the manuscript RHS. -/
 @[expose]
-noncomputable def section53CutoffProductCoeff {d : ℕ} [NeZero d]
+noncomputable def section53CutoffProductCoeff {d : ℕ}
     (Q : TriadicCube d) (s t : ℝ) : ℝ :=
   max
     (cutoffProductScaledWeakNormCoeff Q s t (section53CutoffDerivativeBound Q)
@@ -181,7 +181,7 @@ theorem cubeLpNorm_section53NormalizedCutoff_gradient_le
       (8 * quantitativeCubeCutoffGradientConst d * section53CutoffBound Q) *
         cubeBesovScaleWeight 1 Q := hEq
 
-theorem section53CutoffProductCoeff_nonneg {d : ℕ} [NeZero d]
+theorem section53CutoffProductCoeff_nonneg {d : ℕ}
     (Q : TriadicCube d) (s t : ℝ) :
     0 ≤ section53CutoffProductCoeff Q s t := by
   exact le_max_right _ _
@@ -413,7 +413,6 @@ theorem section53_linearCutoffCoeff_origin_le_dimensional
 
 private theorem scaledCutoffProductCore_le_dimensional
     {d : ℕ}
-    [NeZero d]
     (m : ℕ)
     (s : ℝ)
     (t : ℝ)
@@ -432,15 +431,15 @@ private theorem scaledCutoffProductCore_le_dimensional
       (Fintype.card (Fin d) : ℝ) *
         ((3 : ℝ) ^ ((d : ℝ) + (1 - s)) *
           cubeBesovScaleWeight (-(1 - s - t)) Q)
-    ∀ (hKcut_nonneg : 0 ≤ Kcut),
-    ∀ (hA_le : A ≤ Kcut * cubeBesovScaleWeight 1 Q),
-    ∀ (hWneg_nonneg : 0 ≤ cubeBesovScaleWeight (-(1 - s - t)) Q),
-    ∀ (hpow_flux : (3 : ℝ) ^ ((d : ℝ) + (1 - s)) ≤ (3 : ℝ) ^ ((d : ℝ) + 1)),
-    ∀ (hpow_flux_nonneg : 0 ≤ (3 : ℝ) ^ ((d : ℝ) + (1 - s))),
-    ∀ (hPoinc_nonneg : 0 ≤ Poinc),
-    ∀ (hW_s_nonneg : 0 ≤ cubeBesovScaleWeight (-s) Q),
-    ∀ (hW_t_nonneg : 0 ≤ cubeBesovScaleWeight (-t) Q),
-    ∀ (hweights_cancel : cubeBesovScaleWeight 1 Q *
+    ∀ (_hKcut_nonneg : 0 ≤ Kcut),
+    ∀ (_hA_le : A ≤ Kcut * cubeBesovScaleWeight 1 Q),
+    ∀ (_hWneg_nonneg : 0 ≤ cubeBesovScaleWeight (-(1 - s - t)) Q),
+    ∀ (_hpow_flux : (3 : ℝ) ^ ((d : ℝ) + (1 - s)) ≤ (3 : ℝ) ^ ((d : ℝ) + 1)),
+    ∀ (_hpow_flux_nonneg : 0 ≤ (3 : ℝ) ^ ((d : ℝ) + (1 - s))),
+    ∀ (_hPoinc_nonneg : 0 ≤ Poinc),
+    ∀ (_hW_s_nonneg : 0 ≤ cubeBesovScaleWeight (-s) Q),
+    ∀ (_hW_t_nonneg : 0 ≤ cubeBesovScaleWeight (-t) Q),
+    ∀ (_hweights_cancel : cubeBesovScaleWeight 1 Q *
           cubeBesovScaleWeight (-(1 - s - t)) Q *
           cubeBesovScaleWeight (-s) Q *
           cubeBesovScaleWeight (-t) Q = 1),
@@ -533,8 +532,8 @@ the derivative and gradient cutoff sizes contribute one factor of
 `cubeBesovScaleWeight (-(1 - s - t))`; their product is
 `cubeBesovScaleWeight (s + t) ≤ 1` on origin cubes. -/
 theorem section53CutoffProductCoeff_origin_le_dimensional
-    {d : ℕ} [NeZero d] (m : ℕ) {s t : ℝ}
-    (hs_nonneg : 0 ≤ s) (hst_nonneg : 0 ≤ s + t) :
+    {d : ℕ} (m : ℕ) {s t : ℝ}
+    (hs_nonneg : 0 ≤ s) :
     section53CutoffProductCoeff (originCube d (m : ℤ)) s t ≤
       (((128 * quantitativeCubeCutoffHessianConst d +
               24 * quantitativeCubeCutoffGradientConst d) * (2 : ℝ) ^ d) *

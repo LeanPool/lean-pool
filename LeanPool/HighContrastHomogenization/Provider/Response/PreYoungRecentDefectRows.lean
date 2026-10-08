@@ -89,7 +89,7 @@ private theorem integrable_mat_vec_mul_of_integrable
     (fun j _ ↦ (hF.eval j).const_mul (g i j))
 
 private theorem integrable_central_sub_skew_readout
-    [NeZero d] {P : Measure (CoeffSpace d)} [IsProbabilityMeasure P]
+    {P : Measure (CoeffSpace d)} [IsProbabilityMeasure P]
     {q : Mat d} (hq : q.PosDef) (s : ℤ)
     (hint : HasFiniteAdaptedMean P q s)
     (g : Mat d) (hg : IsSkewMat g) (p r : Vec d) (alpha : BlockCoord d) :
@@ -131,7 +131,7 @@ private theorem integrable_central_sub_skew_readout
   | inr i => simpa only [toFullBlockVec] using hfull'.snd.eval i
 
 private theorem integrable_central_adjoint_sub_skew_readout
-    [NeZero d] {P : Measure (CoeffSpace d)} [IsProbabilityMeasure P]
+    {P : Measure (CoeffSpace d)} [IsProbabilityMeasure P]
     {q : Mat d} (hq : q.PosDef) (s : ℤ)
     (hint : HasFiniteAdaptedMean P q s)
     (g : Mat d) (hg : IsSkewMat g) (p r : Vec d) (alpha : BlockCoord d) :
@@ -188,7 +188,7 @@ private theorem integrable_central_adjoint_sub_skew_readout
   | inr i => simpa only [toFullBlockVec] using hfull'.snd.eval i
 
 theorem integrable_child_sub_skew_readout
-    [NeZero d] {P : Measure (CoeffSpace d)} [IsProbabilityMeasure P]
+    {P : Measure (CoeffSpace d)} [IsProbabilityMeasure P]
     (hstat : HCPoly.Frozen.IsStationaryLaw P)
     {l s : ℤ} {q : Mat d} (hgrid : IsRoundedGrid l q) (hls : l ≤ s)
     (hints : HasFiniteAdaptedMean P q s)
@@ -214,7 +214,7 @@ theorem integrable_child_sub_skew_readout
   exact congrArg (fun X : BlockVec d ↦ toFullBlockVec X alpha) (hcov a).symm
 
 theorem integrable_child_adjoint_sub_skew_readout
-    [NeZero d] {P : Measure (CoeffSpace d)} [IsProbabilityMeasure P]
+    {P : Measure (CoeffSpace d)} [IsProbabilityMeasure P]
     (hstat : HCPoly.Frozen.IsStationaryLaw P)
     {l s : ℤ} {q : Mat d} (hgrid : IsRoundedGrid l q) (hls : l ≤ s)
     (hints : HasFiniteAdaptedMean P q s)
@@ -340,7 +340,7 @@ private theorem integral_sq_schur_load_gradient_hatted_eq
       (blockPosDef_skewBlockCongr (g := g)
         (Recurrence.blockPosDef_coarseBlock_adaptedCellAt hq k w a)))).symm
 
-private theorem primal_recent_cell_pairings_le [NeZero d]
+private theorem primal_recent_cell_pairings_le
     {P : Measure (CoeffSpace d)} [IsProbabilityMeasure P]
     (hstat : HCPoly.Frozen.IsStationaryLaw P)
     {l s t : ℤ} {q : Mat d} (hgrid : IsRoundedGrid l q)
@@ -646,7 +646,7 @@ private theorem profile_schur_load_gradient_adjoint_eq
     blockMatMul_blockDiag_one_neg_one]
   rfl
 
-private theorem adjoint_recent_cell_pairings_le [NeZero d]
+private theorem adjoint_recent_cell_pairings_le
     {P : Measure (CoeffSpace d)} [IsProbabilityMeasure P]
     (hstat : HCPoly.Frozen.IsStationaryLaw P)
     {l s t : ℤ} {q : Mat d} (hgrid : IsRoundedGrid l q)

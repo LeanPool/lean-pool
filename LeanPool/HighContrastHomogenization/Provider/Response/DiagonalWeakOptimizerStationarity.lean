@@ -38,7 +38,7 @@ variable {d : ℕ}
 
 /-- Constant-skew recentering preserves aligned translation covariance. -/
 theorem exists_blockCellAverage_diagonalWeakChildState_subSkew_eq_translateCoeff
-    [NeZero d] {l s : ℤ} {q : Mat d} (hgrid : IsRoundedGrid l q)
+    {l s : ℤ} {q : Mat d} (hgrid : IsRoundedGrid l q)
     (hls : l ≤ s) (w : Fin d → ℤ) (g : Mat d) (hg : IsSkewMat g)
     (p r : Vec d) :
     ∃ z : Fin d → ℤ, adaptedCellCenter q s w = (fun i ↦ (z i : ℝ)) ∧
@@ -62,7 +62,7 @@ theorem exists_blockCellAverage_diagonalWeakChildState_subSkew_eq_translateCoeff
 
 /-- The recentered adjoint optimizer has its own aligned covariance. -/
 theorem exists_blockCellAverage_diagonalWeakChildState_adjointSubSkew_eq_translateCoeff
-    [NeZero d] {l s : ℤ} {q : Mat d} (hgrid : IsRoundedGrid l q)
+    {l s : ℤ} {q : Mat d} (hgrid : IsRoundedGrid l q)
     (hls : l ≤ s) (w : Fin d → ℤ) (g : Mat d) (hg : IsSkewMat g)
     (p r : Vec d) :
     ∃ z : Fin d → ℤ, adaptedCellCenter q s w = (fun i ↦ (z i : ℝ)) ∧
@@ -94,7 +94,7 @@ theorem exists_blockCellAverage_diagonalWeakChildState_adjointSubSkew_eq_transla
     blockCellAverage_diagonalWeakState_eq_response, hshift]
 
 private theorem integrable_toFullBlockVec_blockCellAverage_diagonalWeakState
-    [NeZero d] {P : Measure (CoeffSpace d)} [IsProbabilityMeasure P]
+    {P : Measure (CoeffSpace d)} [IsProbabilityMeasure P]
     {q : Mat d} (hq : q.PosDef) (s : ℤ)
     (hint : HasFiniteAdaptedMean P q s) (p r : Vec d) (α : BlockCoord d) :
     Integrable (fun a ↦ toFullBlockVec (blockCellAverage (adaptedCell q s)
@@ -121,7 +121,7 @@ private theorem integrable_toFullBlockVec_blockCellAverage_diagonalWeakState
       simp only [blockMatVecMul_blockR, Prod.snd_add, Pi.add_apply, toFullBlockVec, X]
 
 private theorem integrable_toFullBlockVec_blockCellAverage_adjointState
-    [NeZero d] {P : Measure (CoeffSpace d)} [IsProbabilityMeasure P]
+    {P : Measure (CoeffSpace d)} [IsProbabilityMeasure P]
     {q : Mat d} (hq : q.PosDef) (s : ℤ) (hint : HasFiniteAdaptedMean P q s)
     (p r : Vec d) (α : BlockCoord d) : Integrable (fun a ↦ toFullBlockVec
       (blockCellAverage (adaptedCell q s)
@@ -156,7 +156,7 @@ private theorem integrable_matVecMul_of_integrable
     (fun j _ ↦ (hF.eval j).const_mul (g i j))
 
 private theorem integrable_toFullBlockVec_blockCellAverage_subSkew
-    [NeZero d] {P : Measure (CoeffSpace d)} [IsProbabilityMeasure P]
+    {P : Measure (CoeffSpace d)} [IsProbabilityMeasure P]
     {q : Mat d} (hq : q.PosDef) (s : ℤ) (hint : HasFiniteAdaptedMean P q s)
     (g : Mat d) (hg : IsSkewMat g) (p r : Vec d) (α : BlockCoord d) :
     Integrable (fun a ↦ toFullBlockVec (blockCellAverage (adaptedCell q s)
@@ -183,7 +183,7 @@ private theorem integrable_toFullBlockVec_blockCellAverage_subSkew
   | inr i => simpa only [toFullBlockVec] using hfull'.snd.eval i
 
 private theorem integrable_toFullBlockVec_blockCellAverage_adjointSubSkew
-    [NeZero d] {P : Measure (CoeffSpace d)} [IsProbabilityMeasure P]
+    {P : Measure (CoeffSpace d)} [IsProbabilityMeasure P]
     {q : Mat d} (hq : q.PosDef) (s : ℤ) (hint : HasFiniteAdaptedMean P q s)
     (g : Mat d) (hg : IsSkewMat g) (p r : Vec d) (α : BlockCoord d) :
     Integrable (fun a ↦ toFullBlockVec (blockCellAverage (adaptedCell q s)
@@ -223,7 +223,7 @@ private theorem integrableOn_adaptedPreYoungCutoff
     (adaptedPreYoungCutoff_hasCompactSupport hq t)).integrableOn
 
 private theorem avsum_cutoffWeight_mul_integral_eq_zero_of_covariance
-    [NeZero d] {P : Measure (CoeffSpace d)} [IsProbabilityMeasure P]
+    [NeZero d] {P : Measure (CoeffSpace d)}
     (hstat : HCPoly.Frozen.IsStationaryLaw P) {q : Mat d} (hq : q.PosDef)
     {s t : ℤ} (hst : s ≤ t) (F : (Fin d → ℤ) → CoeffSpace d → ℝ)
     (G : CoeffSpace d → ℝ) (hG : Integrable G P)

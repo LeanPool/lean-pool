@@ -90,8 +90,8 @@ theorem per_generation_hrec_at_recursionAlpha_sharp_at_jb_src {F : ℕ → ℝ}
 
 /-- `hrec_line_of_one_step_isotropy_sharp_at_jb_src` with the source kept
 explicit. -/
-theorem hrec_line_of_one_step_isotropy_sharp_at_jb_src [NeZero d]
-    {P : Measure (CoeffSpace d)} [IsProbabilityMeasure P]
+theorem hrec_line_of_one_step_isotropy_sharp_at_jb_src
+    {P : Measure (CoeffSpace d)}
     {q : Mat d} {N₀ n H jb : ℕ} (hH : H + 1 ≤ n) (hjbn : jb ≤ n)
     (hFnn : ∀ j, 0 ≤ hatExcess P q N₀ j)
     (hFmono : ∀ p j : ℕ, p ≤ j → hatExcess P q N₀ j ≤ hatExcess P q N₀ p)
@@ -137,8 +137,8 @@ theorem hrec_line_of_one_step_isotropy_sharp_at_jb_src [NeZero d]
     (weakCoefficient_nonneg d hCpre) hW0 hstep hWsplit hwsq hA1 hA2
 
 /-- The released sharp slot line, with the source kept explicit. -/
-theorem hrec_line_of_slots_isotropy_sharp_at_jb_at_level_src [NeZero d]
-    {P : Measure (CoeffSpace d)} [IsProbabilityMeasure P]
+theorem hrec_line_of_slots_isotropy_sharp_at_jb_at_level_src
+    {P : Measure (CoeffSpace d)}
     {q : Mat d} {N₀ n H Hw jb : ℕ}
     (hH : H + 1 ≤ n) (hHw : Hw + 1 ≤ n) (hjbn : jb ≤ n)
     (hFnn : ∀ j, 0 ≤ hatExcess P q N₀ j)
@@ -221,8 +221,8 @@ theorem hrec_line_of_slots_isotropy_sharp_at_jb_at_level_src [NeZero d]
       cD delta cVsum cVm)
 
 /-- The line producer with the source kept explicit. -/
-theorem hline_of_slots_sharp_var_at_jb_at_level_src [NeZero d]
-    {P : Measure (CoeffSpace d)} [IsProbabilityMeasure P]
+theorem hline_of_slots_sharp_var_at_jb_at_level_src
+    {P : Measure (CoeffSpace d)}
     {q : Mat d} {N₀ ns H : ℕ} {Hw : ℕ → ℕ}
     {g Cpre eta cRow kap M L cD delta : ℝ}
     (hconst : IsotropySlotConstants d g Cpre eta cRow kap M cD delta)
@@ -287,8 +287,8 @@ theorem hline_of_slots_sharp_var_at_jb_at_level_src [NeZero d]
     (hVsum n hn) (hVmeanle n hn) (hDrdelta n hn) (hDrdrop n hn) (hbad n)
 
 /-- The released-clause line producer with the source kept explicit. -/
-theorem hline_of_slots_sharp_var_at_jb_of_at_level_clauses_src [NeZero d]
-    {P : Measure (CoeffSpace d)} [IsProbabilityMeasure P]
+theorem hline_of_slots_sharp_var_at_jb_of_at_level_clauses_src
+    {P : Measure (CoeffSpace d)}
     {q : Mat d} {N₀ ns H : ℕ} {Hw : ℕ → ℕ}
     {g Cpre eta cRow kap M L cD delta cfirst cmax : ℝ}
     (hcfirst : 0 ≤ cfirst) (hcmax : 0 ≤ cmax) (hM : 0 ≤ M)
@@ -357,8 +357,8 @@ theorem hline_of_slots_sharp_var_at_jb_of_at_level_clauses_src [NeZero d]
     (hVmean0 n) (hmaj n hn)
 
 /-- **The family block with the explicit source.** -/
-theorem family_hrec_of_line_clauses_src [NeZero d]
-    {P : Measure (CoeffSpace d)} [IsProbabilityMeasure P]
+theorem family_hrec_of_line_clauses_src
+    {P : Measure (CoeffSpace d)}
     {q : Mat d} {N₀ ns H : ℕ} {Hw : ℕ → ℕ}
     {g Cpre eta cRow kap M L cD delta cfirst cmax : ℝ}
     (hcfirst : 0 ≤ cfirst) (hcmax : 0 ≤ cmax) (hM : 0 ≤ M)

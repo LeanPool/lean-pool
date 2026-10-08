@@ -74,7 +74,7 @@ def affineReferenceDualLoad (q : Mat d) (Q : BlockVec d) : BlockVec d :=
 
 /-- The physical-to-reference primal load for exact normalization at `abar`. -/
 @[expose]
-def normalizedReferencePrimalLoad [NeZero d]
+def normalizedReferencePrimalLoad
     (abar : Mat d) (P : BlockVec d) : BlockVec d :=
   let S := symmPart abar
   let g := skewPart abar
@@ -85,7 +85,7 @@ def normalizedReferencePrimalLoad [NeZero d]
 
 /-- The physical-to-reference dual load for exact normalization at `abar`. -/
 @[expose]
-def normalizedReferenceDualLoad [NeZero d]
+def normalizedReferenceDualLoad
     (abar : Mat d) (Q : BlockVec d) : BlockVec d :=
   let S := symmPart abar
   let g := skewPart abar
@@ -155,7 +155,7 @@ theorem doubledResponseJ_subSkew
   congr 1
   · congr 2
     ext i
-    simp [matVecMul]
+    simp only [Pi.sub_apply, matVecMul]
     have hsum :
         (∑ x, g i x * (p x - pStar x)) =
           (∑ x, g i x * p x) - ∑ x, g i x * pStar x := by
@@ -167,7 +167,7 @@ theorem doubledResponseJ_subSkew
     ring
   · congr 2
     ext i
-    simp [matVecMul]
+    simp only [Pi.add_apply, Pi.sub_apply, matVecMul]
     have hsum :
         (∑ x, g i x * (pStar x + p x)) =
           (∑ x, g i x * pStar x) + ∑ x, g i x * p x := by

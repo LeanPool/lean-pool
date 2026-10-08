@@ -67,8 +67,9 @@ private theorem excess_toReal_le_of_rate_fixed
   have hreal := ENNReal.toReal_mono hproduct hdecay
   simpa only [ENNReal.toReal_mul, ENNReal.toReal_ofReal hK] using hreal
 
+/-- Underlying local-gradient field of the finite trial harmonic gradient linear map. -/
 @[expose]
-public noncomputable def finiteTrialGradientLinearMap_field
+public noncomputable def finiteTrialGradientFieldLinearMap
     {d : ℕ} [NeZero d] (a : Book.Ch02.TriadicCoeffFamily d)
     {q m : ℕ} (hqm : q ≤ m) :
     Vec d →ₗ[ℝ] LocalGradientL2 d q where
@@ -87,13 +88,13 @@ private theorem finiteTrialGradientLinearMap_energy
     Real.sqrt (normalizedLocalSymmetricEnergy
         (Book.Ch03.publicCoeffField_isEllipticFieldOn_openCubeSet
           (originCube d (q : ℤ)) a)
-        (finiteTrialGradientLinearMap_field a hqm b)) =
+        (finiteTrialGradientFieldLinearMap a hqm b)) =
       finiteCenteredCubeSolutionEnergy a (m : ℤ)
         (finiteAffineCubeSolution a (m : ℤ) b) (q : ℤ) := by
   let w := finiteCubeSolutionRestriction a
     (show (q : ℤ) ≤ (m : ℤ) by exact_mod_cast hqm)
     (finiteAffineCubeSolution a (m : ℤ) b)
-  have hclass : finiteTrialGradientLinearMap_field a hqm b =
+  have hclass : finiteTrialGradientFieldLinearMap a hqm b =
       w.toH1.gradToHilbertVectorL2 := by rfl
   have hsqrt := sqrt_normalizedEnergy_grad_eq_weightedGradNorm_toReal
     (Book.Ch03.publicCoeffField_isEllipticFieldOn_openCubeSet
@@ -117,13 +118,13 @@ theorem finiteTrialGradientResidual_eq
     (u : Book.Ch03.CubeSolution (originCube d (m : ℤ)) a) (b : Vec d) :
     let J : LocalGradientL2 d q := (finiteCubeSolutionRestriction a
       (show (q : ℤ) ≤ (m : ℤ) by exact_mod_cast hqm) u).toH1.gradToHilbertVectorL2
-    J - finiteTrialGradientLinearMap_field a hqm b =
+    J - finiteTrialGradientFieldLinearMap a hqm b =
         (finiteAffineGradientResidual a
           (show (q : ℤ) ≤ (m : ℤ) by exact_mod_cast hqm) u b).toH1.gradToHilbertVectorL2 := by
   dsimp only
   let uQ := finiteCubeSolutionRestriction a
     (show (q : ℤ) ≤ (m : ℤ) by exact_mod_cast hqm) u
-  have hTfield : finiteTrialGradientLinearMap_field a hqm b =
+  have hTfield : finiteTrialGradientFieldLinearMap a hqm b =
       (finiteCubeSolutionRestriction a
         (show (q : ℤ) ≤ (m : ℤ) by exact_mod_cast hqm)
         (finiteAffineCubeSolution a (m : ℤ) b)).toH1.gradToHilbertVectorL2 := by
@@ -174,17 +175,17 @@ private theorem finite_trial_minimizer_residual_real_decay
     (b : ℤ → Vec d)
     (hb_at : ∀ {j : ℤ} (hjm : j ≤ (m : ℤ)),
       b j = finiteAffineExactMinimizer a hjm u)
-    : Real.sqrt (normalizedLocalSymmetricEnergy
+    : let J : LocalGradientL2 d q := (finiteCubeSolutionRestriction a
+        (show (q : ℤ) ≤ (m : ℤ) by exact_mod_cast hqm) u).toH1.gradToHilbertVectorL2
+      Real.sqrt (normalizedLocalSymmetricEnergy
         (Book.Ch03.publicCoeffField_isEllipticFieldOn_openCubeSet
           (originCube d (q : ℤ)) a)
-        ((finiteCubeSolutionRestriction a
-          (show (q : ℤ) ≤ (m : ℤ) by exact_mod_cast hqm) u).toH1.gradToHilbertVectorL2 -
-          finiteTrialGradientLinearMap_field a hqm (b (q : ℤ)))) ≤
+        (J - finiteTrialGradientFieldLinearMap a hqm (b (q : ℤ)))) ≤
       max 1 Cdec * Real.rpow 3 (-eta * (((m : ℤ) : ℝ) - ((q : ℤ) : ℝ))) *
         (finiteAffineGradientExcess a (m : ℤ) (m : ℤ) u).toReal := by
   let A : ℝ := max 1 Cdec
   let Em : ℝ := (finiteAffineGradientExcess a (m : ℤ) (m : ℤ) u).toReal
-  let T := finiteTrialGradientLinearMap_field a hqm
+  let T := finiteTrialGradientFieldLinearMap a hqm
   let hEll := Book.Ch03.publicCoeffField_isEllipticFieldOn_openCubeSet
     (originCube d (q : ℤ)) a
   have hEm : 0 ≤ Em := ENNReal.toReal_nonneg
@@ -200,6 +201,8 @@ private theorem finite_trial_minimizer_residual_real_decay
         (b (q : ℤ))).toH1.gradToHilbertVectorL2 := by
     simpa only [J, uQ, T] using
       finiteTrialGradientResidual_eq a hqm u (b (q : ℤ))
+  change Real.sqrt (normalizedLocalSymmetricEnergy hEll (J - T (b (q : ℤ)))) ≤
+    A * Real.rpow 3 (-eta * (((m : ℤ) : ℝ) - ((q : ℤ) : ℝ))) * Em
   erw [hres, sqrt_normalizedEnergy_grad_eq_weightedGradNorm_toReal]
   have hbq' : weightedGradNorm
         (a.coeffOn (originCube d (q : ℤ))).toCoeffField
@@ -273,14 +276,14 @@ private theorem finite_trial_minimizer_increment_real_decay
       Real.sqrt (normalizedLocalSymmetricEnergy
           (Book.Ch03.publicCoeffField_isEllipticFieldOn_openCubeSet
             (originCube d (q : ℤ)) a)
-          (finiteTrialGradientLinearMap_field a hqm (b (j + 1) - b j))) ≤
+          (finiteTrialGradientFieldLinearMap a hqm (b (j + 1) - b j))) ≤
         (Cgrow ^ 2 * max 1 Cdec * (1 + 3 * ((3 ^ d : ℕ) : ℝ))) *
           Real.rpow 3 ((((q : ℤ) : ℝ) - (j : ℝ)) / 4) *
           Real.rpow 3 (-eta * (((m : ℤ) : ℝ) - (j : ℝ))) *
           (finiteAffineGradientExcess a (m : ℤ) (m : ℤ) u).toReal := by
   let A : ℝ := max 1 Cdec
   let Em : ℝ := (finiteAffineGradientExcess a (m : ℤ) (m : ℤ) u).toReal
-  let T := finiteTrialGradientLinearMap_field a hqm
+  let T := finiteTrialGradientFieldLinearMap a hqm
   let hEll := Book.Ch03.publicCoeffField_isEllipticFieldOn_openCubeSet
     (originCube d (q : ℤ)) a
   have hEm : 0 ≤ Em := ENNReal.toReal_nonneg
@@ -502,7 +505,7 @@ theorem exists_scalarIdentityFiniteAffineFixedBaseDecayConstants
   intro q hq
   have hnq : n ≤ q := (Finset.mem_Icc.mp hq).1
   have hqm : q ≤ m := (Finset.mem_Icc.mp hq).2
-  let T := finiteTrialGradientLinearMap_field a hqm
+  let T := finiteTrialGradientFieldLinearMap a hqm
   let uQ := finiteCubeSolutionRestriction a
     (show (q : ℤ) ≤ (m : ℤ) by exact_mod_cast hqm) u
   let J : LocalGradientL2 d q := uQ.toH1.gradToHilbertVectorL2

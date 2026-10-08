@@ -230,7 +230,7 @@ private theorem scalarFullBlockInvSqrtDiag_lower_abs_mul_self
     |Ch04.scalarFullBlockInvSqrtDiag (d := d) L L (Sum.inr i)| *
         |Ch04.scalarFullBlockInvSqrtDiag (d := d) L L (Sum.inr j)| =
       L := by
-  simp [Ch04.scalarFullBlockInvSqrtDiag, abs_of_nonneg (Real.sqrt_nonneg L)]
+  simp only [Ch04.scalarFullBlockInvSqrtDiag, abs_of_nonneg (Real.sqrt_nonneg L)]
   rw [← pow_two, Real.sq_sqrt hL.le]
 
 private theorem scalarFullBlockInvSqrtDiag_cross_abs_mul

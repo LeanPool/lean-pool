@@ -164,6 +164,8 @@ theorem exists_affineCoeffSpace (L : Mat d) (hL : IsUnit L.det)
     (isAELocallyUniformlyElliptic_affineCoefficient L hL a.2).congr
       (AEEqFun.coeFn_mk f hf).symm⟩, AEEqFun.coeFn_mk f hf⟩
 
+/-- The coefficient-space sample representing the affine transform of `a`
+under the invertible matrix `L`, up to almost-everywhere equality. -/
 @[expose]
 public noncomputable def affineCoeffSpace (L : Mat d) (hL : IsUnit L.det)
     (a : CoeffSpace d) : CoeffSpace d :=
@@ -612,6 +614,8 @@ theorem affineCoeffSpace_inv_affineCoeffSpace
   rw [houter, affineCoefficient_apply, hinnerx]
   exact affineCoefficient_inv_affineCoefficient L hL (⇑a.1) x
 
+/-- Affine transformation by `L` as a measurable equivalence of coefficient
+space, inverted by the transformation under `L⁻¹`. -/
 @[expose]
 public noncomputable def affineCoeffSpaceEquiv
     (L : Mat d) (hL : IsUnit L.det) : CoeffSpace d ≃ᵐ CoeffSpace d where

@@ -106,7 +106,7 @@ theorem lqSchattenNorm_smul {P : Measure (CoeffSpace d)} {N : ℝ} (hN : 1 ≤ N
   have hInn : (0 : ℝ) ≤ ∫ a, absSchattenNorm N (H a) ^ N ∂P := by
     refine integral_nonneg_of_ae ?_
     filter_upwards [hH.symmetric] with a ha
-    show (0 : ℝ) ≤ absSchattenNorm N (H a) ^ N
+    change (0 : ℝ) ≤ absSchattenNorm N (H a) ^ N
     exact Real.rpow_nonneg
       (Analysis.absSchattenNorm_nonneg ((Analysis.toFullBlockMat_isHermitian_iff _).2 ha) hN) N
   have hpoint : (fun a => absSchattenNorm N (ofFullBlockMat (c • toFullBlockMat (H a))) ^ N)
@@ -125,7 +125,7 @@ theorem lqSchattenNorm_smul {P : Measure (CoeffSpace d)} {N : ℝ} (hN : 1 ≤ N
 /-- **Finite-sum Minkowski** for the mixed norm (group 5 item 2).  Induction on the finset,
 exactly as `Analysis.lqSchattenNorm_sub_le` does for two terms.  The empty sum gives `0 ≤ 0`;
 no nonemptiness premise is added. -/
-theorem lqSchattenNorm_finset_sum_le {ι : Type*} [DecidableEq ι]
+theorem lqSchattenNorm_finset_sum_le {ι : Type*}
     {P : Measure (CoeffSpace d)} {N : ℝ} (hN : 1 ≤ N)
     (t : Finset ι) (H : ι → CoeffSpace d → BlockMat d)
     (hH : ∀ i ∈ t, SchattenMemLp P N (H i)) :
@@ -191,7 +191,7 @@ private theorem inv_mul_rpow_half {n : ℝ} (hn : 0 < n) :
   rw [Real.rpow_neg hn.le]
 
 /-- A nonempty independent class with a common single-cell norm has the printed average bound. -/
-theorem lqSchattenNorm_class_average_le {d : ℕ} {ι : Type*} [DecidableEq ι]
+theorem lqSchattenNorm_class_average_le {d : ℕ} {ι : Type*}
     (P : Measure (CoeffSpace d)) (hP : IsProbabilityMeasure P)
     {N : ℕ} (hN : 2 ≤ N) (hNeven : Even N)
     (C : Finset ι) (hC : C.Nonempty) (Y : ι → CoeffSpace d → BlockMat d)
@@ -205,6 +205,7 @@ theorem lqSchattenNorm_class_average_le {d : ℕ} {ι : Type*} [DecidableEq ι]
     lqSchattenNorm P (N : ℝ)
       (fun a => ofFullBlockMat ((C.card : ℝ)⁻¹ • ∑ i ∈ C, toFullBlockMat (Y i a))) ≤
       (N : ℝ) / (C.card : ℝ) ^ ((1 : ℝ) / 2) * u := by
+  classical
   let := hP
   have hNR : (1 : ℝ) ≤ N := by exact_mod_cast (show 1 ≤ N by omega)
   have hc : (0 : ℝ) < C.card := by exact_mod_cast hC.card_pos
@@ -233,7 +234,7 @@ theorem lqSchattenNorm_class_average_le {d : ℕ} {ι : Type*} [DecidableEq ι]
 
 /-- A finite average is the sum of its class averages weighted by relative class size.
 Empty classes contribute zero; no inverse cancellation is used on them. -/
-theorem average_eq_sum_class_averages {ι κ M : Type*} [DecidableEq ι] [Fintype κ]
+theorem average_eq_sum_class_averages {ι κ M : Type*} [Fintype κ]
     [DecidableEq κ] [AddCommGroup M] [Module ℝ M]
     (Z : Finset ι) (col : ι → κ) (Y : ι → M) :
     (Z.card : ℝ)⁻¹ • ∑ z ∈ Z, Y z =
@@ -253,7 +254,7 @@ theorem average_eq_sum_class_averages {ι κ M : Type*} [DecidableEq ι] [Fintyp
     field_simp
 
 /-- The class weights are nonnegative and sum to one when the original set is nonempty. -/
-theorem class_average_weights {ι κ : Type*} [DecidableEq ι] [Fintype κ] [DecidableEq κ]
+theorem class_average_weights {ι κ : Type*} [Fintype κ] [DecidableEq κ]
     (Z : Finset ι) (hZ : Z.Nonempty) (col : ι → κ) :
     (∀ c, 0 ≤ ((Z.filter (fun z => col z = c)).card : ℝ) / (Z.card : ℝ)) ∧
       (∑ c : κ, ((Z.filter (fun z => col z = c)).card : ℝ) / (Z.card : ℝ)) = 1 := by
@@ -272,7 +273,7 @@ theorem memLqSchatten_smul {d : ℕ} {P : Measure (CoeffSpace d)} {N : ℝ}
 
 /-- Convex recombination of independent class averages gives the square root of the palette size. -/
 theorem lqSchattenNorm_coloured_average_le {d : ℕ} {ι κ : Type*}
-    [DecidableEq ι] [Fintype κ] [DecidableEq κ]
+    [Fintype κ] [DecidableEq κ]
     (P : Measure (CoeffSpace d)) (hP : IsProbabilityMeasure P)
     {N : ℕ} (hN : 2 ≤ N) (hNeven : Even N)
     (Z : Finset ι) (hZ : Z.Nonempty) (col : ι → κ) (Y : ι → CoeffSpace d → BlockMat d)

@@ -110,7 +110,7 @@ theorem isOpenBoundedConvexDomain_adaptedCellTranslate {q : Mat d} (hq : q.PosDe
     (j : ℤ) (y : Vec d) : IsOpenBoundedConvexDomain (adaptedCellTranslate q j y) := by
   have hU := Recurrence.isOpenBoundedConvexDomain_adaptedCell hq j
   refine ⟨?_, ?_, hU.convex.translate y⟩
-  · show IsOpen ((fun x => y + x) '' adaptedCell q j)
+  · change IsOpen ((fun x => y + x) '' adaptedCell q j)
     rw [Set.image_add_left]
     exact hU.isOpen.preimage (continuous_const.add continuous_id)
   · obtain ⟨R, hR, hRU⟩ := hU.isBoundedDomain
@@ -122,7 +122,7 @@ theorem isOpenBoundedConvexDomain_adaptedCellTranslate {q : Mat d} (hq : q.PosDe
       Finset.single_le_sum (f := fun i : Fin d => |y i|)
         (fun _ _ => abs_nonneg _) (Finset.mem_univ i)
     have hsum : |y i + z i| ≤ |y i| + |z i| := abs_add_le _ _
-    show |y i + z i| ≤ R + ∑ i : Fin d, |y i|
+    change |y i + z i| ≤ R + ∑ i : Fin d, |y i|
     linarith only [hsum, hzi, hyi]
 
 /-- A translate of an adapted cell is nonempty. -/
@@ -143,7 +143,7 @@ theorem blockPosDef_coarseBlock_adaptedCellTranslate {q : Mat d} (hq : q.PosDef)
 theorem volume_adaptedCellTranslate_eq_volume_adaptedCell (q : Mat d) (j : ℤ) (y : Vec d) :
     MeasureTheory.volume (adaptedCellTranslate q j y) =
       MeasureTheory.volume (adaptedCell q j) := by
-  show MeasureTheory.volume ((fun x => y + x) '' adaptedCell q j) = _
+  change MeasureTheory.volume ((fun x => y + x) '' adaptedCell q j) = _
   rw [Set.image_add_left]
   exact measure_preimage_add MeasureTheory.volume _ _
 

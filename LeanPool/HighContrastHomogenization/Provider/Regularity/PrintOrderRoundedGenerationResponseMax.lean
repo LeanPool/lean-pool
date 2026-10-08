@@ -36,7 +36,7 @@ variable {d : ℕ}
 /-- The physical doubled response on one cell of a selected rounded grid,
 maximized over normalized primal and dual loads. -/
 @[expose]
-def roundedNormalizedDoubledResponseMaxAtGeneration [NeZero d]
+def roundedNormalizedDoubledResponseMaxAtGeneration
     (l : ℤ) (a : CoeffSpace d) (abar : Mat d)
     (_hS : (symmPart abar).PosDef) (k : ℤ) (w : Fin d → ℤ) : ℝ :=
   sSup {r : ℝ | ∃ e : FullBlockVec d, ∃ P Q : BlockVec d,
@@ -46,7 +46,7 @@ def roundedNormalizedDoubledResponseMaxAtGeneration [NeZero d]
       r = Transport.coeffSpaceDoubledResponse
         (adaptedCellAt (roundedGrid l (symmPart abar)) k w) a P Q}
 
-private theorem constantFullBlockMatrixSqrt_one [NeZero d] :
+private theorem constantFullBlockMatrixSqrt_one :
     Book.Ch02.constantFullBlockMatrixSqrt (1 : Mat d) = 1 := by
   have hone : (1 : Mat d) = scalarMatrix (d := d) 1 := by
     ext i j
@@ -157,7 +157,7 @@ private theorem roundedResponseValueSetAtGeneration_nonempty [NeZero d]
     e, P, Q, he, hP, hQ, rfl⟩
 
 private theorem roundedNormalizedDoubledResponseMaxAtGeneration_nonneg
-    [NeZero d] {l : ℤ} (hl : (kZero d : ℤ) ≤ l)
+    {l : ℤ} (hl : (kZero d : ℤ) ≤ l)
     (a : CoeffSpace d) (abar : Mat d)
     (hS : (symmPart abar).PosDef) (k : ℤ) (w : Fin d → ℤ) :
     0 ≤ roundedNormalizedDoubledResponseMaxAtGeneration

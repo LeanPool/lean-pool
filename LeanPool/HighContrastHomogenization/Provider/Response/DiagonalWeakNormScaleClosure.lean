@@ -58,7 +58,7 @@ theorem diagonalWeak_scale_energy_bound [NeZero d]
 
 end
 
-end HCPolySupport.HighContrast.Response
+end Response
 
 end HighContrast
 

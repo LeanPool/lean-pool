@@ -42,7 +42,9 @@ closed finite terminal induction. -/
 structure PrintOrderDecoupledFiniteTerminalSurface
     (d : ℕ) [NeZero d] (g c kappa Cid : ℝ)
     (abar : Mat d) (a : CoeffSpace d) (x : ℝ) where
+  /-- Source amplitude in the initial quantitative normalized reference certificate. -/
   sourceAmplitude : ℝ
+  /-- Coefficient-dependent scale function used by the initial and final reference certificates. -/
   X : CoeffSpace d → ℝ
   sourceCertificate :
     PrintOrderQuantitativeNormalizedReferenceCertificate
@@ -53,7 +55,9 @@ structure PrintOrderDecoupledFiniteTerminalSurface
       (Transport.roundedOuterResponseAffineConstant d)
       (specBound (symmPart abar) * specBound (symmPart abar)⁻¹)
       kappa X a
+  /-- Rounded spine selected at the tolerance determined by `Cid`. -/
   spine : PrintOrderToleranceSelectedRoundedSpine d Cid
+  /-- Rounded response application joining the source amplitude to the target amplitude. -/
   join : PrintOrderParametricRoundedResponseJoin
     d g a abar sourceAmplitude (correctorTargetAmplitude c kappa)
       kappa Cid X
@@ -63,9 +67,11 @@ structure PrintOrderDecoupledFiniteTerminalSurface
       (correctorTargetAmplitude c kappa) kappa
       (printOrderCommonQuantitativeAffineScale d g sourceAmplitude
         (correctorTargetAmplitude c kappa) kappa abar X a) a
+  /-- Finite recurrence estimates for the selected rounded response join. -/
   recurrenceInputs : PrintOrderParametricFiniteRecurrenceInputs
     d g a abar sourceAmplitude (correctorTargetAmplitude c kappa)
       kappa Cid X join
+  /-- Constant in the terminal finite induction and the inverse target relation. -/
   recurrenceConstant : ℝ
   recurrenceConstant_ge : 1 ≤ recurrenceConstant
   target_eq_inverse : c = (2 * recurrenceConstant)⁻¹

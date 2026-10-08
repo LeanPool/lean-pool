@@ -82,7 +82,7 @@ theorem abs_blockMatEntry_coarseBlock_le_of_blockMatLoewnerLE {U : Set (Vec d)}
 
 /-! ## The centered Schatten size -/
 
-private theorem smul_one_le_smul_one {n : Type*} [Fintype n] [DecidableEq n]
+private theorem smul_one_le_smul_one {n : Type*} [DecidableEq n]
     {s t : ℝ} (h : s ≤ t) :
     s • (1 : Matrix n n ℝ) ≤ t • (1 : Matrix n n ℝ) := by
   refine Matrix.le_iff.mpr ?_

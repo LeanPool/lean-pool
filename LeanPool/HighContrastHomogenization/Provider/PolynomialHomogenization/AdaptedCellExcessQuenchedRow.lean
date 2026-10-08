@@ -57,7 +57,7 @@ theorem blockExcess_coarseBlock_adaptedCellAt_le_quenched_block_row
         (Book.Ch02.constantBlockMatrix abar) ≤
       max 1 (6 * (d : ℝ) * Real.sqrt d * ‖q⁻¹‖) *
         (3 : ℝ) ^ (rho * ((n + G : ℕ) : ℝ)) *
-          Quenched.quenched_block_row rho
+          Quenched.quenchedBlockRow rho
             (Book.Ch02.constantBlockMatrix abar) sourceScale a (t + G) := by
   classical
   let F : BlockMat d := Book.Ch02.constantBlockMatrix abar
@@ -126,8 +126,8 @@ theorem blockExcess_coarseBlock_adaptedCellAt_le_quenched_block_row
   have hrowEq :
       (∑' j : ℕ, (3 : ℝ) ^ (-rho * (j : ℝ)) *
           B (((t + G : ℕ) : ℤ) - (j : ℤ))) =
-        Quenched.quenched_block_row rho F sourceScale a (t + G) := by
-    unfold Quenched.quenched_block_row
+        Quenched.quenchedBlockRow rho F sourceScale a (t + G) := by
+    unfold Quenched.quenchedBlockRow
     rw [ite_eq_left hactive]
   have hfactor0 :
       0 ≤ max 1 (6 * (d : ℝ) * Real.sqrt d * ‖q⁻¹‖) :=
@@ -145,7 +145,7 @@ theorem blockExcess_coarseBlock_adaptedCellAt_le_quenched_block_row
       mul_le_mul_of_nonneg_left hboundaryLe hfactor0
     _ = max 1 (6 * (d : ℝ) * Real.sqrt d * ‖q⁻¹‖) *
           (3 : ℝ) ^ (rho * ((n + G : ℕ) : ℝ)) *
-            Quenched.quenched_block_row rho F sourceScale a (t + G) := by
+            Quenched.quenchedBlockRow rho F sourceScale a (t + G) := by
       rw [show (∑' j : ℕ, (3 : ℝ) ^ (-rho * (j : ℝ)) *
           B ((t : ℤ) - (n : ℤ) + (H : ℤ) - (j : ℤ))) =
           ∑' j : ℕ, (3 : ℝ) ^ (-rho * (j : ℝ)) *

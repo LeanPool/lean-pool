@@ -460,7 +460,7 @@ noncomputable section
 /-- The pathwise response `J(U_u; p, r; a_-)` of the recentred coefficient `a_- = a - g` is
 nonnegative.  It is the response supremum of AK.HC (2.9), whose admissible class contains the
 zero field, so the value at the zero competitor already witnesses nonnegativity. -/
-theorem zero_le_respJ_respCoeffMinus {d : ℕ} [NeZero d] (q : Mat d) (hq : IsUnit q) (u : ℤ)
+theorem zero_le_respJ_respCoeffMinus {d : ℕ} (q : Mat d) (hq : IsUnit q) (u : ℤ)
     (F : BlockMat d) (a : CoeffSpace d) (p r : Vec d) :
     0 ≤ respJ q u p r (respCoeffMinus F a) := by
   have _ := hq
@@ -469,7 +469,7 @@ theorem zero_le_respJ_respCoeffMinus {d : ℕ} [NeZero d] (q : Mat d) (hq : IsUn
 /-- The pathwise response `J(U_u; p, r; a_+)` of the recentred coefficient `a_+ = aᵗ + g` is
 nonnegative.  It is the response supremum of AK.HC (2.9), whose admissible class contains the
 zero field, so the value at the zero competitor already witnesses nonnegativity. -/
-theorem zero_le_respJ_respCoeffPlus {d : ℕ} [NeZero d] (q : Mat d) (hq : IsUnit q) (u : ℤ)
+theorem zero_le_respJ_respCoeffPlus {d : ℕ} (q : Mat d) (hq : IsUnit q) (u : ℤ)
     (F : BlockMat d) (a : CoeffSpace d) (p r : Vec d) :
     0 ≤ respJ q u p r (respCoeffPlus F a) := by
   have _ := hq
@@ -480,7 +480,7 @@ pointwise nonnegative by the pathwise nonnegativity of the response, and the Boc
 a pointwise nonnegative function is nonnegative for every measure, so no integrability hypothesis
 is required.  This is the sign `0 ≤ E[J_t^-]` of the printed display
 `e.response.energy.and.defect`. -/
-theorem zero_le_respEJMinus {d : ℕ} [NeZero d] (P : Measure (CoeffSpace d)) (jStar : ℕ)
+theorem zero_le_respEJMinus {d : ℕ} (P : Measure (CoeffSpace d)) (jStar : ℕ)
     (F : BlockMat d) (t : ℤ) (e : Vec d) (hq : IsUnit (respGrid jStar F)) :
     0 ≤ respEJMinus P jStar F t e := by
   unfold respEJMinus
@@ -493,7 +493,7 @@ pointwise nonnegative by the pathwise nonnegativity of the response, and the Boc
 a pointwise nonnegative function is nonnegative for every measure, so no integrability hypothesis
 is required.  This is the sign `0 ≤ E[J_t^+]` of the printed display
 `e.response.energy.and.defect`. -/
-theorem zero_le_respEJPlus {d : ℕ} [NeZero d] (P : Measure (CoeffSpace d)) (jStar : ℕ)
+theorem zero_le_respEJPlus {d : ℕ} (P : Measure (CoeffSpace d)) (jStar : ℕ)
     (F : BlockMat d) (t : ℤ) (e : Vec d) (hq : IsUnit (respGrid jStar F)) :
     0 ≤ respEJPlus P jStar F t e := by
   unfold respEJPlus
@@ -640,7 +640,7 @@ adapted cell `adaptedCellAtCenter qq j w`.  The class makes `φ` continuous with
 so `φ`
 is integrable on the whole space and hence on any set.  This is the integrability of the cutoff on
 the subcells of the row assembly of `p.response.transfer`. -/
-theorem integrableOn_isResponseCutoff {d : ℕ} [NeZero d] {qq : Mat d} (hq : IsUnit qq) {t : ℤ}
+theorem integrableOn_isResponseCutoff {d : ℕ} {qq : Mat d} (hq : IsUnit qq) {t : ℤ}
     {φ : Vec d → ℝ} (hφ : IsResponseCutoff qq t φ) (j : ℤ) (w : Fin d → ℤ) :
     MeasureTheory.IntegrableOn φ (adaptedCellAtCenter qq j w) := by
   have hcont : Continuous φ := hφ.contDiff.continuous
@@ -654,7 +654,7 @@ every aligned adapted cell `adaptedCellAtCenter qq j w`.  The cutoff is integrab
 the
 constant `1`, because the aligned cell has finite volume.  This is the integrability of the subcell
 weights of the centred cutoff decomposition of `p.response.transfer`. -/
-theorem integrableOn_sub_one_isResponseCutoff {d : ℕ} [NeZero d] {qq : Mat d} (hq : IsUnit qq)
+theorem integrableOn_sub_one_isResponseCutoff {d : ℕ} {qq : Mat d} (hq : IsUnit qq)
     {t : ℤ} {φ : Vec d → ℝ} (hφ : IsResponseCutoff qq t φ) (j : ℤ) (w : Fin d → ℤ) :
     MeasureTheory.IntegrableOn (fun x => φ x - 1) (adaptedCellAtCenter qq j w) := by
   have hVfin : volume (adaptedCellAtCenter qq j w) ≠ ⊤ :=
@@ -665,7 +665,7 @@ theorem integrableOn_sub_one_isResponseCutoff {d : ℕ} [NeZero d] {qq : Mat d} 
 response class confines `φ` to `[0, 2]`, so the fluctuation `φ - 1` lies in `[-1, 1]`; its volume
 average over an aligned adapted cell therefore inherits the bound, because the cell has finite
 nonzero volume.  These are the weights of the row assembly of `p.response.transfer`. -/
-theorem abs_volumeAverage_sub_one_isResponseCutoff_le_one {d : ℕ} [NeZero d] {qq : Mat d}
+theorem abs_volumeAverage_sub_one_isResponseCutoff_le_one {d : ℕ} {qq : Mat d}
     (hq : IsUnit qq) {t : ℤ} {φ : Vec d → ℝ} (hφ : IsResponseCutoff qq t φ) (j : ℤ)
     (w : Fin d → ℤ) :
     |volumeAverage (adaptedCellAtCenter qq j w) (fun x => φ x - 1)| ≤ 1 := by

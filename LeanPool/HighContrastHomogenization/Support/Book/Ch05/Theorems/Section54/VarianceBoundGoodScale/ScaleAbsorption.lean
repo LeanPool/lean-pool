@@ -169,7 +169,8 @@ theorem scaleSeparation_absorbs_widetildeThetaBudget
   let T : ℝ := widetildeThetaAtScale P 0 hP4
   let A : ℝ := 2 + delta⁻¹ * (hP4.xi : ℝ) * T
   have hT_nonneg : 0 ≤ T := by
-    simp [T, Ch04.widetildeThetaAtScale]
+    change 0 ≤ Ch04.LambdaMomentAtScale P 0 hP4.sUpper hP4.xi *
+      Ch04.lambdaInvMomentAtScale P 0 hP4.sLower hP4.xi
     exact mul_nonneg
       (Ch04.LambdaMomentAtScale_nonneg P 0 hP4.xi hP4.sUpper_pos)
       (Ch04.lambdaInvMomentAtScale_nonneg P 0 hP4.xi hP4.sLower_pos)

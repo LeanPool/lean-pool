@@ -660,7 +660,7 @@ noncomputable section
 increment of the cutoff cell averages between a cell and its parent is at most
 `(32 d² Θ 3^{-H}) · 3^{-n}`.  This is the weight of the depth-`n` term of the descendant sum of
 `p.response.transfer`. -/
-theorem abs_cutoff_weight_increment_le {d : ℕ} [NeZero d] {qq : Mat d} (hq : IsUnit qq) {t : ℤ}
+theorem abs_cutoff_weight_increment_le {d : ℕ} {qq : Mat d} (hq : IsUnit qq) {t : ℤ}
     {φ : Vec d → ℝ} (hφ : IsResponseCutoff qq t φ) (H n : ℕ) (W : Fin d → ℤ) :
     |volumeAverage (adaptedCellAtCenter qq (t - ((H + n + 1 : ℕ) : ℤ)) W) (fun x => φ x - 1)
         - volumeAverage (adaptedCellAtCenter qq (t - ((H + n : ℕ) : ℤ)) (Transport.gridParent W))

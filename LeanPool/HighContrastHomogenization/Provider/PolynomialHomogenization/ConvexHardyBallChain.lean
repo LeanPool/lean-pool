@@ -58,7 +58,9 @@ def convexHardyBallChainRadius (rho : ℝ) (N : ℕ)
 /-- Finite geometric ball-chain data at an initial scale `r`. -/
 structure ConvexHardyBallChain (U : Set (Vec d)) (x : Vec d)
     (rho Rad r : ℝ) where
+  /-- Terminal center of the geometric ball chain. -/
   center : Vec d
+  /-- Number of successive radius doublings, giving a chain of one more ball. -/
   length : ℕ
   initial_radius_lower :
     r ≤ convexHardyBallChainRadius rho length 0

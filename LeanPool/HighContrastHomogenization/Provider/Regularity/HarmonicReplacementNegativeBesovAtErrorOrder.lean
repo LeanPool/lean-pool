@@ -32,7 +32,7 @@ namespace HighContrast
 noncomputable section
 
 private theorem coarseGrainingHomogenizationErrorAtDepth_zero_at_error_order
-    {d : ℕ} [NeZero d] (Q : TriadicCube d)
+    {d : ℕ} (Q : TriadicCube d)
     (a : Book.Ch02.TriadicCoeffFamily d)
     (a0 : Book.Ch03.ConstantCoeffMatrix d) (r : ℝ) :
     Book.Ch03.coarseGrainingHomogenizationErrorAtDepth Q a a0 r 0 =

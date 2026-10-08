@@ -31,7 +31,7 @@ noncomputable section
 by the inverse square root and square root of the constant block matrix. -/
 @[expose]
 public noncomputable def normalizedBlockResponseESetOnCube {d : ℕ}
-    [NeZero d] (Q : TriadicCube d) (a : CoeffOn (cubeDomain Q))
+    (Q : TriadicCube d) (a : CoeffOn (cubeDomain Q))
     (a0 : Mat d) : Set ℝ≥0∞ :=
   {y | ∃ e : FullBlockVec d, fullBlockVecNormSq e = 1 ∧
     y = ENNReal.ofReal
@@ -44,7 +44,7 @@ public noncomputable def normalizedBlockResponseESetOnCube {d : ℕ}
 /-- The extended nonnegative supremum of the constant-matrix-normalized doubled responses. -/
 @[expose]
 public noncomputable def normalizedBlockResponseEMaxOnCube {d : ℕ}
-    [NeZero d] (Q : TriadicCube d) (a : CoeffOn (cubeDomain Q))
+    (Q : TriadicCube d) (a : CoeffOn (cubeDomain Q))
     (a0 : Mat d) : ℝ≥0∞ :=
   sSup (normalizedBlockResponseESetOnCube Q a a0)
 
@@ -52,7 +52,7 @@ public noncomputable def normalizedBlockResponseEMaxOnCube {d : ℕ}
 coefficient restricted to each subcube. -/
 @[expose]
 public noncomputable def parentMaxNormalizedBlockResponseAtScale {d : ℕ}
-    [NeZero d] (Q : TriadicCube d) (k : ℤ) (hk : k ≤ Q.scale)
+    (Q : TriadicCube d) (k : ℤ) (hk : k ≤ Q.scale)
     (a : CoeffOn (cubeDomain Q)) (a0 : Mat d) : ℝ≥0∞ := by
   classical
   exact (descendantsAtScale Q k).attach.sup fun R =>
@@ -71,7 +71,7 @@ public noncomputable def homogenizationErrorGeometricEWeight
 in the extended nonnegative reals. -/
 @[expose]
 public noncomputable def parentTruncatedHomogenizationErrorInfinityFinite
-    {d : ℕ} [NeZero d] (Q : TriadicCube d) (n : ℤ)
+    {d : ℕ} (Q : TriadicCube d) (n : ℤ)
     (hn : n ≤ Q.scale) (a : CoeffOn (cubeDomain Q))
     (a0 : Mat d) (s q : ℝ) : ℝ≥0∞ :=
   (∑' j : ℕ,
@@ -85,7 +85,7 @@ At each physical scale it maximizes over descendants of the one parent
 coefficient, and only then performs the weighted scale sum. -/
 @[expose]
 noncomputable def parentTruncatedHomogenizationErrorInfinityOneScalar
-    {d : ℕ} [NeZero d] (Q : TriadicCube d) (n : ℤ)
+    {d : ℕ} (Q : TriadicCube d) (n : ℤ)
     (hn : n ≤ Q.scale) (a : CoeffOn (cubeDomain Q))
     (sigma0 : ℝ) (_hsigma0 : 0 < sigma0)
     (s : FractionalOrder) : ℝ≥0∞ :=
@@ -95,7 +95,7 @@ noncomputable def parentTruncatedHomogenizationErrorInfinityOneScalar
 /-- The source-order, scalar-comparator, `q = 2` truncated response error. -/
 @[expose]
 noncomputable def parentTruncatedHomogenizationErrorInfinityTwoScalar
-    {d : ℕ} [NeZero d] (Q : TriadicCube d) (n : ℤ)
+    {d : ℕ} (Q : TriadicCube d) (n : ℤ)
     (hn : n ≤ Q.scale) (a : CoeffOn (cubeDomain Q))
     (sigma0 : ℝ) (_hsigma0 : 0 < sigma0)
     (s : FractionalOrder) : ℝ≥0∞ :=
@@ -107,7 +107,7 @@ noncomputable def parentTruncatedHomogenizationErrorInfinityTwoScalar
 using literal restrictions of the one parent coefficient. -/
 @[expose]
 noncomputable def parentTruncatedNormalizedBlockResponseScalarEMaxAtScale
-    {d : ℕ} [NeZero d] (Q : TriadicCube d) (k : ℤ) (hk : k ≤ Q.scale)
+    {d : ℕ} (Q : TriadicCube d) (k : ℤ) (hk : k ≤ Q.scale)
     (a : CoeffOn (cubeDomain Q)) (sigma0 : ℝ) (_hsigma0 : 0 < sigma0) : ℝ≥0∞ := by
   classical
   exact (descendantsAtScale Q k).attach.sup fun R =>
@@ -119,7 +119,7 @@ noncomputable def parentTruncatedNormalizedBlockResponseScalarEMaxAtScale
 /-- Exact series characterization of the canonical scalar `q = 1` truncated
 parent error.  This only unfolds its frozen definition. -/
 theorem parentTruncatedHomogenizationErrorInfinityOneScalar_eq_tsum
-    {d : ℕ} [NeZero d] (Q : TriadicCube d) (n : ℤ) (hn : n ≤ Q.scale)
+    {d : ℕ} (Q : TriadicCube d) (n : ℤ) (hn : n ≤ Q.scale)
     (a : CoeffOn (cubeDomain Q)) (sigma0 : ℝ) (hsigma0 : 0 < sigma0)
     (s : FractionalOrder) :
     parentTruncatedHomogenizationErrorInfinityOneScalar Q n hn a sigma0 hsigma0 s =
@@ -137,7 +137,7 @@ theorem parentTruncatedHomogenizationErrorInfinityOneScalar_eq_tsum
 /-- Exact series characterization of the canonical scalar `q = 2` truncated
 parent error.  This only unfolds its frozen definition. -/
 theorem parentTruncatedHomogenizationErrorInfinityTwoScalar_eq_tsum
-    {d : ℕ} [NeZero d] (Q : TriadicCube d) (n : ℤ) (hn : n ≤ Q.scale)
+    {d : ℕ} (Q : TriadicCube d) (n : ℤ) (hn : n ≤ Q.scale)
     (a : CoeffOn (cubeDomain Q)) (sigma0 : ℝ) (hsigma0 : 0 < sigma0)
     (s : FractionalOrder) :
     parentTruncatedHomogenizationErrorInfinityTwoScalar Q n hn a sigma0 hsigma0 s =
@@ -174,7 +174,7 @@ private theorem normalizedBlockResponseESetOnCube_nonempty {d : ℕ}
     simp [hb]
 
 private theorem normalizedBlockResponseESetOnCube_elements_ne_top {d : ℕ}
-    [NeZero d] {Q : TriadicCube d} {a : CoeffOn (cubeDomain Q)}
+    {Q : TriadicCube d} {a : CoeffOn (cubeDomain Q)}
     {a0 : Mat d} {y : ℝ≥0∞}
     (hy : y ∈ normalizedBlockResponseESetOnCube Q a a0) :
     y ≠ ∞ := by
@@ -182,7 +182,7 @@ private theorem normalizedBlockResponseESetOnCube_elements_ne_top {d : ℕ}
   exact ENNReal.ofReal_ne_top
 
 private theorem normalizedBlockResponseESetOnCube_elements_nonneg_real {d : ℕ}
-    [NeZero d] {Q : TriadicCube d} {a : CoeffOn (cubeDomain Q)}
+    {Q : TriadicCube d} {a : CoeffOn (cubeDomain Q)}
     {a0 : Mat d} {e : FullBlockVec d}
     (_he : fullBlockVecNormSq e = 1) :
     0 ≤ doubledResponseJ (cubeDomain Q) a
@@ -196,7 +196,7 @@ private theorem normalizedBlockResponseESetOnCube_elements_nonneg_real {d : ℕ}
 root and inverse square root, used to bound the normalized response. -/
 @[expose]
 public noncomputable def normalizedBlockResponseEUpperBoundOnCube {d : ℕ}
-    [NeZero d] (Q : TriadicCube d) (a : CoeffOn (cubeDomain Q))
+    (Q : TriadicCube d) (a : CoeffOn (cubeDomain Q))
     (a0 : Mat d) : ℝ≥0∞ :=
   let c : ℝ := (a.lam / (1 + 2 * a.Lam ^ 2))⁻¹
   ENNReal.ofReal
@@ -205,7 +205,7 @@ public noncomputable def normalizedBlockResponseEUpperBoundOnCube {d : ℕ}
         fullBlockMatRowAbsSqBound (constantFullBlockMatrixInvSqrt a0))
 
 private theorem normalizedBlockResponseESetOnCube_le_upperBound {d : ℕ}
-    [NeZero d] (Q : TriadicCube d) (a : CoeffOn (cubeDomain Q))
+    (Q : TriadicCube d) (a : CoeffOn (cubeDomain Q))
     (a0 : Mat d) {y : ℝ≥0∞}
     (hy : y ∈ normalizedBlockResponseESetOnCube Q a a0) :
     y ≤ normalizedBlockResponseEUpperBoundOnCube Q a a0 := by
@@ -299,14 +299,14 @@ private theorem normalizedBlockResponseESetOnCube_le_upperBound {d : ℕ}
     ENNReal.ofReal_le_ofReal hreal
 
 private theorem normalizedBlockResponseESetOnCube_bddAbove {d : ℕ}
-    [NeZero d] (Q : TriadicCube d) (a : CoeffOn (cubeDomain Q))
+    (Q : TriadicCube d) (a : CoeffOn (cubeDomain Q))
     (a0 : Mat d) :
     BddAbove (normalizedBlockResponseESetOnCube Q a a0) :=
   ⟨normalizedBlockResponseEUpperBoundOnCube Q a a0,
     fun _ hy => normalizedBlockResponseESetOnCube_le_upperBound Q a a0 hy⟩
 
 private theorem normalizedBlockResponseEMaxOnCube_le_upperBound {d : ℕ}
-    [NeZero d] (Q : TriadicCube d) (a : CoeffOn (cubeDomain Q))
+    (Q : TriadicCube d) (a : CoeffOn (cubeDomain Q))
     (a0 : Mat d) :
     normalizedBlockResponseEMaxOnCube Q a a0 ≤
       normalizedBlockResponseEUpperBoundOnCube Q a a0 := by
@@ -315,7 +315,7 @@ private theorem normalizedBlockResponseEMaxOnCube_le_upperBound {d : ℕ}
     normalizedBlockResponseESetOnCube_le_upperBound Q a a0 hy
 
 private theorem normalizedBlockResponseEMaxOnCube_lt_top {d : ℕ}
-    [NeZero d] (Q : TriadicCube d) (a : CoeffOn (cubeDomain Q))
+    (Q : TriadicCube d) (a : CoeffOn (cubeDomain Q))
     (a0 : Mat d) :
     normalizedBlockResponseEMaxOnCube Q a a0 < ∞ :=
   lt_of_le_of_lt
@@ -323,7 +323,7 @@ private theorem normalizedBlockResponseEMaxOnCube_lt_top {d : ℕ}
     ENNReal.ofReal_lt_top
 
 private theorem normalizedBlockResponseESetOnCube_le_eMax {d : ℕ}
-    [NeZero d] (Q : TriadicCube d) (a : CoeffOn (cubeDomain Q))
+    (Q : TriadicCube d) (a : CoeffOn (cubeDomain Q))
     (a0 : Mat d) {y : ℝ≥0∞}
     (hy : y ∈ normalizedBlockResponseESetOnCube Q a a0) :
     y ≤ normalizedBlockResponseEMaxOnCube Q a a0 := by
@@ -331,7 +331,7 @@ private theorem normalizedBlockResponseESetOnCube_le_eMax {d : ℕ}
   exact le_sSup hy
 
 private theorem normalizedBlockResponseEMaxOnCube_isLUB {d : ℕ}
-    [NeZero d] (Q : TriadicCube d) (a : CoeffOn (cubeDomain Q))
+    (Q : TriadicCube d) (a : CoeffOn (cubeDomain Q))
     (a0 : Mat d) :
     IsLUB (normalizedBlockResponseESetOnCube Q a a0)
       (normalizedBlockResponseEMaxOnCube Q a a0) := by
@@ -350,7 +350,7 @@ particular, it deliberately exposes a supremum API below, rather than claiming
 that a maximizing vector has been constructed. -/
 @[expose]
 noncomputable def normalizedBlockResponseScalarEValueSetOnCube {d : ℕ}
-    [NeZero d] (Q : TriadicCube d) (a : CoeffOn (cubeDomain Q))
+    (Q : TriadicCube d) (a : CoeffOn (cubeDomain Q))
     (sigma0 : ℝ) (_hsigma0 : 0 < sigma0) : Set ℝ≥0∞ :=
   normalizedBlockResponseESetOnCube Q a (scalarMatrix (d := d) sigma0)
 
@@ -358,14 +358,14 @@ noncomputable def normalizedBlockResponseScalarEValueSetOnCube {d : ℕ}
 not assert that the supremum is attained. -/
 @[expose]
 noncomputable def normalizedBlockResponseScalarEMaxOnCube {d : ℕ}
-    [NeZero d] (Q : TriadicCube d) (a : CoeffOn (cubeDomain Q))
+    (Q : TriadicCube d) (a : CoeffOn (cubeDomain Q))
     (sigma0 : ℝ) (hsigma0 : 0 < sigma0) : ℝ≥0∞ :=
   sSup (normalizedBlockResponseScalarEValueSetOnCube Q a sigma0 hsigma0)
 
 /-- Membership in the scalar response value set is exactly the nonnegative
 extended-real encoding of a unit-sphere doubled response. -/
 theorem mem_normalizedBlockResponseScalarEValueSetOnCube_iff {d : ℕ}
-    [NeZero d] {Q : TriadicCube d} {a : CoeffOn (cubeDomain Q)}
+    {Q : TriadicCube d} {a : CoeffOn (cubeDomain Q)}
     {sigma0 : ℝ} {hsigma0 : 0 < sigma0} {y : ℝ≥0∞} :
     y ∈ normalizedBlockResponseScalarEValueSetOnCube Q a sigma0 hsigma0 ↔
       ∃ e : FullBlockVec d, fullBlockVecNormSq e = 1 ∧
@@ -382,7 +382,7 @@ theorem mem_normalizedBlockResponseScalarEValueSetOnCube_iff {d : ℕ}
 /-- Every scalar response value is finite, as follows from its
 `ENNReal.ofReal` representation. -/
 theorem normalizedBlockResponseScalarEValueSetOnCube_ne_top {d : ℕ}
-    [NeZero d] {Q : TriadicCube d} {a : CoeffOn (cubeDomain Q)}
+    {Q : TriadicCube d} {a : CoeffOn (cubeDomain Q)}
     {sigma0 : ℝ} {hsigma0 : 0 < sigma0} {y : ℝ≥0∞}
     (hy : y ∈ normalizedBlockResponseScalarEValueSetOnCube Q a sigma0 hsigma0) :
     y ≠ ∞ :=
@@ -390,7 +390,7 @@ theorem normalizedBlockResponseScalarEValueSetOnCube_ne_top {d : ℕ}
 
 /-- The real response encoded by the scalar value set is nonnegative. -/
 theorem normalizedBlockResponseScalar_nonneg {d : ℕ}
-    [NeZero d] (Q : TriadicCube d) (a : CoeffOn (cubeDomain Q))
+    (Q : TriadicCube d) (a : CoeffOn (cubeDomain Q))
     (sigma0 : ℝ) (_hsigma0 : 0 < sigma0) (e : FullBlockVec d)
     (_he : fullBlockVecNormSq e = 1) :
     0 ≤ doubledResponseJ (cubeDomain Q) a
@@ -413,7 +413,7 @@ theorem normalizedBlockResponseScalarEValueSetOnCube_nonempty {d : ℕ}
 
 /-- The scalar response value set is bounded above in `ℝ≥0∞`. -/
 theorem normalizedBlockResponseScalarEValueSetOnCube_bddAbove {d : ℕ}
-    [NeZero d] (Q : TriadicCube d) (a : CoeffOn (cubeDomain Q))
+    (Q : TriadicCube d) (a : CoeffOn (cubeDomain Q))
     (sigma0 : ℝ) (hsigma0 : 0 < sigma0) :
     BddAbove (normalizedBlockResponseScalarEValueSetOnCube Q a sigma0 hsigma0) :=
   normalizedBlockResponseESetOnCube_bddAbove Q a
@@ -422,7 +422,7 @@ theorem normalizedBlockResponseScalarEValueSetOnCube_bddAbove {d : ℕ}
 /-- Every scalar response value is bounded by the one-cube response
 supremum. -/
 theorem normalizedBlockResponseScalarEValueSetOnCube_le_eMax {d : ℕ}
-    [NeZero d] (Q : TriadicCube d) (a : CoeffOn (cubeDomain Q))
+    (Q : TriadicCube d) (a : CoeffOn (cubeDomain Q))
     (sigma0 : ℝ) (hsigma0 : 0 < sigma0) {y : ℝ≥0∞}
     (hy : y ∈ normalizedBlockResponseScalarEValueSetOnCube Q a sigma0 hsigma0) :
     y ≤ normalizedBlockResponseScalarEMaxOnCube Q a sigma0 hsigma0 :=
@@ -432,7 +432,7 @@ theorem normalizedBlockResponseScalarEValueSetOnCube_le_eMax {d : ℕ}
 /-- The scalar response maximum is the least upper bound of the value set.
 No attainment assertion is included. -/
 theorem normalizedBlockResponseScalarEMaxOnCube_isLUB {d : ℕ}
-    [NeZero d] (Q : TriadicCube d) (a : CoeffOn (cubeDomain Q))
+    (Q : TriadicCube d) (a : CoeffOn (cubeDomain Q))
     (sigma0 : ℝ) (hsigma0 : 0 < sigma0) :
     IsLUB (normalizedBlockResponseScalarEValueSetOnCube Q a sigma0 hsigma0)
       (normalizedBlockResponseScalarEMaxOnCube Q a sigma0 hsigma0) :=
@@ -441,7 +441,7 @@ theorem normalizedBlockResponseScalarEMaxOnCube_isLUB {d : ℕ}
 
 /-- The scalar response supremum is finite. -/
 theorem normalizedBlockResponseScalarEMaxOnCube_lt_top {d : ℕ}
-    [NeZero d] (Q : TriadicCube d) (a : CoeffOn (cubeDomain Q))
+    (Q : TriadicCube d) (a : CoeffOn (cubeDomain Q))
     (sigma0 : ℝ) (hsigma0 : 0 < sigma0) :
     normalizedBlockResponseScalarEMaxOnCube Q a sigma0 hsigma0 < ∞ :=
   normalizedBlockResponseEMaxOnCube_lt_top Q a

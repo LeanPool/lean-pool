@@ -42,7 +42,7 @@ variable {d : ℕ}
 
 /-- **Row `hFdefect`.**  The gauge flux defect of the frozen witness is
 square-integrable on the gauge domain. -/
-theorem frozenWitness_fluxDefect_memVectorL2 [NeZero d] {abar : Mat d}
+theorem frozenWitness_fluxDefect_memVectorL2 {abar : Mat d}
     (hS : (symmPart abar).PosDef) {U : Set (Vec d)} {j : ℤ} {z : Vec d}
     {epsilon : ℝ} {a : CoeffSpace d} (hepsilon : 0 < epsilon)
     (hU : U = (fun x : Vec d => z + matVecMul (matSqrt (symmPart abar)) x) ''

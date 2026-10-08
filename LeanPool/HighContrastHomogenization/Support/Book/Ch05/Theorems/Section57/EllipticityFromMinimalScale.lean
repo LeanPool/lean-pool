@@ -37,7 +37,7 @@ Chapter 2 lemma that controls multiscale ellipticity from `\mathcal E`.
 noncomputable section
 
 private theorem homogenizationErrorOnCube_infinity_two_nonneg
-    {d : ℕ} [NeZero d] (Q : TriadicCube d)
+    {d : ℕ} (Q : TriadicCube d)
     (a : Ch02.TriadicCoeffFamily d) (a0 : Mat d) {s : ℝ} (hs : 0 < s) :
     0 ≤ Ch02.HomogenizationErrorOnCube Q s
         Ch02.MultiscaleExponent.infinity (.finite 2) a a0 := by
@@ -88,7 +88,7 @@ theorem weightedEllipticity_finite_two_le_of_homogenizationError_bound
           exact mul_le_mul_of_nonneg_left (by nlinarith) hconst_nonneg
 
 theorem lambdaSq_inv_le_inv_sigma_mul_of_weightedEllipticity_le
-    {d : ℕ} [NeZero d]
+    {d : ℕ}
     (Q : TriadicCube d) (a : Ch02.TriadicCoeffFamily d) {s σ M : ℝ}
     (hσ : 0 < σ)
     (hM :

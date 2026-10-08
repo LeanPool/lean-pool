@@ -452,7 +452,7 @@ noncomputable instance instNormOfIsFiniteMeasureVecVolumeMeasureOn :
   norm u := u.gradientL2Norm
 
 @[simp] theorem norm_eq_gradientL2Norm
-    [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)] (u : H1MeanZeroFunction U) :
+    (u : H1MeanZeroFunction U) :
     ‖u‖ = u.gradientL2Norm :=
   rfl
 
@@ -517,7 +517,6 @@ noncomputable def gradientPairing {f : Vec d → Vec d}
   inner ℝ (HCPolySupport.toHilbertVectorL2OfVecField hf) u.gradToHilbertVectorL2
 
 theorem gradientPairing_eq_integral {f : Vec d → Vec d}
-    [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     (hf : MemVectorL2 U f) (u : H1MeanZeroFunction U) :
     gradientPairing hf u =
       ∫ x in U, vecDot (f x) (u.toH1Function.grad x) ∂MeasureTheory.volume := by
@@ -532,7 +531,6 @@ theorem gradientPairing_add {f : Vec d → Vec d}
     inner_add_right]
 
 theorem gradientPairing_smul {f : Vec d → Vec d}
-    [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     (hf : MemVectorL2 U f) (c : ℝ) (u : H1MeanZeroFunction U) :
     gradientPairing hf (c • u) = c * gradientPairing hf u := by
   simpa [H1MeanZeroFunction.gradientPairing, H1MeanZeroFunction.gradToHilbertVectorL2_smul] using
@@ -556,7 +554,6 @@ noncomputable def gradientPairingLinear {f : Vec d → Vec d}
   rfl
 
 theorem abs_gradientPairing_le {f : Vec d → Vec d}
-    [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     (hf : MemVectorL2 U f) (u : H1MeanZeroFunction U) :
     |gradientPairing hf u| ≤
       ‖HCPolySupport.toHilbertVectorL2OfVecField hf‖ * ‖u.gradToHilbertVectorL2‖ := by
@@ -572,7 +569,6 @@ theorem gradientL2Norm_le_norm_gradToHilbertVectorL2 (u : H1MeanZeroFunction U) 
   exact H1Function.norm_gradToVectorL2_le_norm_gradToHilbertVectorL2 (U := U) u.toH1Function
 
 theorem abs_gradientPairing_le_gradientL2Norm {f : Vec d → Vec d}
-    [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     (hf : MemVectorL2 U f) (u : H1MeanZeroFunction U) :
     |gradientPairing hf u| ≤
       ((d : ℝ) * ‖HCPolySupport.toHilbertVectorL2OfVecField hf‖) * u.gradientL2Norm := by

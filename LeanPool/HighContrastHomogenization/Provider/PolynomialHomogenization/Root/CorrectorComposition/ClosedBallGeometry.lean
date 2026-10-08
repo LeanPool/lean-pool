@@ -97,7 +97,7 @@ theorem isBounded_closedNormBall (d : ℕ) (r : ℝ) :
 
 /-! ## The two measure facts, with no null-sphere argument -/
 
-theorem volume_closedNormBall_ne_zero [NeZero d] {r : ℝ} (hr : 0 < r) :
+theorem volume_closedNormBall_ne_zero {r : ℝ} (hr : 0 < r) :
     volume (closedNormBall d r) ≠ 0 := by
   have hmono : volume (euclideanBall d r) ≤ volume (closedNormBall d r) :=
     measure_mono (euclideanBall_subset_closedNormBall d r)
@@ -105,7 +105,7 @@ theorem volume_closedNormBall_ne_zero [NeZero d] {r : ℝ} (hr : 0 < r) :
   exact Root.volume_euclideanBall_ne_zero hr
     (le_antisymm (hzero ▸ hmono) (zero_le))
 
-theorem volume_closedNormBall_ne_top [NeZero d] {r : ℝ} (hr : 0 < r) :
+theorem volume_closedNormBall_ne_top {r : ℝ} (hr : 0 < r) :
     volume (closedNormBall d r) ≠ ⊤ := by
   have hmono : volume (closedNormBall d r) ≤ volume (euclideanBall d (2 * r)) :=
     measure_mono (closedNormBall_subset_euclideanBall_two_mul hr)
@@ -129,7 +129,7 @@ theorem matImage_normalizedRoot_inv_ellipsoid_eq_closedNormBall [NeZero d]
 controlled by the energy on any triadic cube containing it, at the price of the
 volume ratio — and the closed ball's two measure facts are the ones proved
 above, with no null-sphere argument. -/
-theorem weightedGradNorm_closedNormBall_le_cube [NeZero d]
+theorem weightedGradNorm_closedNormBall_le_cube
     {r : ℝ} (hr : 0 < r) {m : ℤ}
     (hcube : closedNormBall d r ⊆ openCubeSet (originCube d m))
     (hczero : volume (openCubeSet (originCube d m)) ≠ 0)
@@ -145,7 +145,7 @@ theorem weightedGradNorm_closedNormBall_le_cube [NeZero d]
 
 /-- **(b2), outer side.**  The energy on a triadic cube contained in the closed
 ball of radius `R` is controlled by the energy on that ball. -/
-theorem weightedGradNorm_cube_le_closedNormBall [NeZero d]
+theorem weightedGradNorm_cube_le_closedNormBall
     {R : ℝ} (hR : 0 < R) {m : ℤ}
     (hcube : openCubeSet (originCube d m) ⊆ closedNormBall d R)
     (hczero : volume (openCubeSet (originCube d m)) ≠ 0)

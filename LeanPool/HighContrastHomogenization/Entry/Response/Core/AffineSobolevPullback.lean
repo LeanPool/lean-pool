@@ -375,12 +375,12 @@ def matHomeomorph {q : Mat d} (hq : IsUnit q) : Vec d ≃ₜ Vec d where
   left_inv := by
     intro x
     have hdet : IsUnit q.det := (Matrix.isUnit_iff_isUnit_det q).mp hq
-    show Matrix.mulVec q⁻¹ (Matrix.mulVec q x) = x
+    change Matrix.mulVec q⁻¹ (Matrix.mulVec q x) = x
     rw [Matrix.mulVec_mulVec, Matrix.nonsing_inv_mul q hdet, Matrix.one_mulVec]
   right_inv := by
     intro x
     have hdet : IsUnit q.det := (Matrix.isUnit_iff_isUnit_det q).mp hq
-    show Matrix.mulVec q (Matrix.mulVec q⁻¹ x) = x
+    change Matrix.mulVec q (Matrix.mulVec q⁻¹ x) = x
     rw [Matrix.mulVec_mulVec, Matrix.mul_nonsing_inv q hdet, Matrix.one_mulVec]
   continuous_toFun := (matContinuousLinearMap q).continuous
   continuous_invFun := (matContinuousLinearMap q⁻¹).continuous
@@ -457,7 +457,7 @@ theorem gradMemL2On_matVecMul_comp_matVecMul {q : Mat d} (hq : IsUnit q) (A : Ma
     (hG : GradMemL2On U G) :
     GradMemL2On V (fun y => matVecMul A (G (matVecMul q y))) := by
   intro i
-  show MemL2On V (fun y => matVecMul A (G (matVecMul q y)) i)
+  change MemL2On V (fun y => matVecMul A (G (matVecMul q y)) i)
   have heq : (fun y => matVecMul A (G (matVecMul q y)) i)
       = ∑ j : Fin d, (fun y : Vec d => A i j * G (matVecMul q y) j) := by
     funext y
@@ -507,7 +507,7 @@ theorem fderiv_apply_basisVec_comp_matVecMul_inv {q : Mat d} (hq : IsUnit q)
     rw [hxy] at hderiv
     exact hderiv.fderiv
   rw [hfd]
-  show (fderiv ℝ ψ x) (matVecMul q (basisVec i)) = _
+  change (fderiv ℝ ψ x) (matVecMul q (basisVec i)) = _
   rw [matVecMul_basisVec, map_sum]
   exact Finset.sum_congr rfl fun j _ => by rw [map_smul, smul_eq_mul]
 
@@ -531,7 +531,7 @@ theorem hasWeakGradientOn_comp_matVecMul {q : Mat d} (hq : IsUnit q) {V : Set (V
     hφ.comp (matContinuousLinearMap q⁻¹).contDiff
   have hψ_cont : Continuous ψ := hψ_smooth.continuous
   have hψ_compact : HasCompactSupport ψ := by
-    show HasCompactSupport (φ ∘ (matHomeomorph hq).symm)
+    change HasCompactSupport (φ ∘ (matHomeomorph hq).symm)
     simpa [hψdef, Function.comp] using hφ_compact.comp_homeomorph (matHomeomorph hq).symm
   have hψ_sub : tsupport ψ ⊆ W := by
     intro z hz
@@ -585,7 +585,7 @@ theorem hasWeakGradientOn_comp_matVecMul {q : Mat d} (hq : IsUnit q) {V : Set (V
         _ = ∫ x in W, (∑ j : Fin d, q j i * (Du x j * ψ x)) ∂volume := hstep
         _ = ∫ x in W, matVecMul (matTranspose q) (Du x) i * ψ x ∂volume := by
             refine integral_congr_ae (Filter.Eventually.of_forall fun x => ?_)
-            show ∑ j : Fin d, q j i * (Du x j * ψ x)
+            change ∑ j : Fin d, q j i * (Du x j * ψ x)
               = matVecMul (matTranspose q) (Du x) i * ψ x
             rw [matVecMul_matTranspose_apply, Finset.sum_mul]
             exact Finset.sum_congr rfl fun j _ => by ring
@@ -736,7 +736,7 @@ def affineH1 (m : ℤ) (p : Vec d) : H1Function (openCubeSet (originCube d m)) :
   rw [affineH1, H1Function.sum_grad]
   funext x
   simp only [HCPolySupport.H1Function.smul_grad]
-  show (∑ i : Fin d, p i • basisVec i) = p
+  change (∑ i : Fin d, p i • basisVec i) = p
   funext j
   rw [Finset.sum_apply]
   simp only [Pi.smul_apply, smul_eq_mul, basisVec, Pi.single_apply, mul_ite, mul_one, mul_zero]

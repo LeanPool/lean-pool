@@ -65,7 +65,7 @@ average is nonnegative and the flat sum of the subcell averages equals the termi
 which at a maximizer is twice the terminal response `J_t^-`; the response is `P`-integrable and each
 subcell average is `P`-a.e.-strongly measurable. -/
 theorem integrable_volumeAverage_energy_adaptedCellAtCenter_respCoeffMinus {d : ℕ} [NeZero d]
-    (P : Measure (CoeffSpace d)) [IsProbabilityMeasure P] (jStar : ℕ)
+    (P : Measure (CoeffSpace d)) (jStar : ℕ)
     (hjStar : 2 * d ≤ 3 ^ jStar) (F : BlockMat d) (hm : (explicitCanonicalMetric F).PosDef)
     (H : ℕ) (s t : ℤ) (ht : t = s + (H : ℤ)) (e : Vec d)
     (uM : (a : CoeffSpace d) → AHarmonicFunction (respCoeffMinus F a) (respCell jStar F t))
@@ -123,8 +123,8 @@ theorem integrable_volumeAverage_energy_adaptedCellAtCenter_respCoeffMinus {d : 
 `φ` with `0 ≤ φ ≤ 2`, the `(φ - 1)`-weighted terminal optimizer energy is `P`-integrable: its
 absolute value is at most the terminal energy average, which at a maximizer is twice the terminal
 response `J_t^-`, and the response is `P`-integrable. -/
-theorem integrable_volumeAverage_weighted_energy_respCoeffMinus {d : ℕ} [NeZero d]
-    (P : Measure (CoeffSpace d)) [IsProbabilityMeasure P] (jStar : ℕ)
+theorem integrable_volumeAverage_weighted_energy_respCoeffMinus {d : ℕ}
+    (P : Measure (CoeffSpace d)) (jStar : ℕ)
     (hjStar : 2 * d ≤ 3 ^ jStar) (F : BlockMat d) (hm : (explicitCanonicalMetric F).PosDef)
     (t : ℤ) (e : Vec d) (φ : Vec d → ℝ) (hφ : IsResponseCutoff (respGrid jStar F) t φ)
     (uM : (a : CoeffSpace d) → AHarmonicFunction (respCoeffMinus F a) (respCell jStar F t))
@@ -216,7 +216,7 @@ theorem integrable_volumeAverage_weighted_energy_respCoeffMinus {d : ℕ} [NeZer
 `integrable_volumeAverage_energy_adaptedCellAtCenter_respCoeffMinus` for the adjoint recentred
 coefficient `a_+ = aᵗ + g` and its terminal optimizer. -/
 theorem integrable_volumeAverage_energy_adaptedCellAtCenter_respCoeffPlus {d : ℕ} [NeZero d]
-    (P : Measure (CoeffSpace d)) [IsProbabilityMeasure P] (jStar : ℕ)
+    (P : Measure (CoeffSpace d)) (jStar : ℕ)
     (hjStar : 2 * d ≤ 3 ^ jStar) (F : BlockMat d) (hm : (explicitCanonicalMetric F).PosDef)
     (H : ℕ) (s t : ℤ) (ht : t = s + (H : ℤ)) (e : Vec d)
     (uP : (a : CoeffSpace d) → AHarmonicFunction (respCoeffPlus F a) (respCell jStar F t))
@@ -273,8 +273,8 @@ theorem integrable_volumeAverage_energy_adaptedCellAtCenter_respCoeffPlus {d : �
 /-- **Sample integrability of the weighted terminal energy, plus sign.**  The twin of
 `integrable_volumeAverage_weighted_energy_respCoeffMinus` for the adjoint recentred coefficient
 `a_+ = aᵗ + g`. -/
-theorem integrable_volumeAverage_weighted_energy_respCoeffPlus {d : ℕ} [NeZero d]
-    (P : Measure (CoeffSpace d)) [IsProbabilityMeasure P] (jStar : ℕ)
+theorem integrable_volumeAverage_weighted_energy_respCoeffPlus {d : ℕ}
+    (P : Measure (CoeffSpace d)) (jStar : ℕ)
     (hjStar : 2 * d ≤ 3 ^ jStar) (F : BlockMat d) (hm : (explicitCanonicalMetric F).PosDef)
     (t : ℤ) (e : Vec d) (φ : Vec d → ℝ) (hφ : IsResponseCutoff (respGrid jStar F) t φ)
     (uP : (a : CoeffSpace d) → AHarmonicFunction (respCoeffPlus F a) (respCell jStar F t))
@@ -398,8 +398,8 @@ difference between the cutoff-weighted half-energy of the optimizer and the term
 energy density; its absolute value is at most twice the terminal response, since the terminal energy
 average is twice the response and `|φ| ≤ 2`, so integrability follows by domination from the
 `P`-integrability of the response. -/
-theorem integrable_cutoffHalfEnergyAux_sub_respJ_respCoeffMinus {d : ℕ} [NeZero d]
-    (P : Measure (CoeffSpace d)) [IsProbabilityMeasure P] (jStar : ℕ)
+theorem integrable_cutoffHalfEnergyAux_sub_respJ_respCoeffMinus {d : ℕ}
+    (P : Measure (CoeffSpace d)) (jStar : ℕ)
     (hjStar : 2 * d ≤ 3 ^ jStar) (F : BlockMat d) (hm : (explicitCanonicalMetric F).PosDef)
     (t : ℤ) (e : Vec d) (φ : Vec d → ℝ) (hφ : IsResponseCutoff (respGrid jStar F) t φ)
     (uM : (a : CoeffSpace d) → AHarmonicFunction (respCoeffMinus F a) (respCell jStar F t))
@@ -533,8 +533,8 @@ theorem integrable_cutoffHalfEnergyAux_sub_respJ_respCoeffMinus {d : ℕ} [NeZer
 /-- **Sample integrability of the cutoff half-energy defect, plus sign.**  The twin of
 `integrable_cutoffHalfEnergyAux_sub_respJ_respCoeffMinus` for the adjoint recentred coefficient
 `a_+ = aᵗ + g` and its terminal optimizer. -/
-theorem integrable_cutoffHalfEnergyAux_sub_respJ_respCoeffPlus {d : ℕ} [NeZero d]
-    (P : Measure (CoeffSpace d)) [IsProbabilityMeasure P] (jStar : ℕ)
+theorem integrable_cutoffHalfEnergyAux_sub_respJ_respCoeffPlus {d : ℕ}
+    (P : Measure (CoeffSpace d)) (jStar : ℕ)
     (hjStar : 2 * d ≤ 3 ^ jStar) (F : BlockMat d) (hm : (explicitCanonicalMetric F).PosDef)
     (t : ℤ) (e : Vec d) (φ : Vec d → ℝ) (hφ : IsResponseCutoff (respGrid jStar F) t φ)
     (uP : (a : CoeffSpace d) → AHarmonicFunction (respCoeffPlus F a) (respCell jStar F t))

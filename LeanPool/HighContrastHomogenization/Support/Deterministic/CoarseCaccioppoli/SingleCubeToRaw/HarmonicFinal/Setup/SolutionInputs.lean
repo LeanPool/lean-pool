@@ -136,7 +136,7 @@ cancellation and therefore targets the note's radius-recursion coefficients
 directly. -/
 @[expose]
 def CoarseCaccioppoliBoundaryCanonicalHarmonicVectorNoteRawBridge {d : ℕ}
-    [NeZero d] (Q : TriadicCube d) (a : CoeffField d) (s t C uL2Sq : ℝ)
+    (Q : TriadicCube d) (a : CoeffField d) (s t C uL2Sq : ℝ)
     (baseEnergy : Vec d → ℝ) : Prop :=
   ∀ n : ℕ,
     coarseCaccioppoliLocalizedEnergyRadiusProfile Q baseEnergy
@@ -164,7 +164,7 @@ endpoint.  `Calpha` controls the explicit height/absorption coefficient and
 `Ccross` controls the cross coefficient. -/
 @[expose]
 def CoarseCaccioppoliBoundaryCanonicalHarmonicVectorNoteRawBridgeSplit {d : ℕ}
-    [NeZero d] (Q : TriadicCube d) (a : CoeffField d)
+    (Q : TriadicCube d) (a : CoeffField d)
     (s t Calpha Ccross uL2Sq : ℝ) (baseEnergy : Vec d → ℝ) : Prop :=
   ∀ n : ℕ,
     coarseCaccioppoliLocalizedEnergyRadiusProfile Q baseEnergy
@@ -192,7 +192,7 @@ This is the bridge shape consumed by the standard beta-dependent hole-filling
 iteration. -/
 @[expose]
 def CoarseCaccioppoliBoundaryCanonicalHarmonicVectorNoteRawBridgeSplitAllRadii
-    {d : ℕ} [NeZero d] (Q : TriadicCube d) (a : CoeffField d)
+    {d : ℕ} (Q : TriadicCube d) (a : CoeffField d)
     (s t Calpha Ccross uL2Sq : ℝ) (baseEnergy : Vec d → ℝ) : Prop :=
   CoarseCaccioppoliBoundaryNoteRawEstimateSplit Q a s t
     ((Fintype.card (Fin d) : ℝ) * Calpha)
@@ -206,7 +206,7 @@ interior Caccioppoli backbone reuses the same coefficient shape as the boundary
 case; the distinction is in how the local estimate is produced. -/
 @[expose]
 def CoarseCaccioppoliInteriorCanonicalHarmonicVectorNoteRawBridge {d : ℕ}
-    [NeZero d] (Q : TriadicCube d) (a : CoeffField d) (s t C uL2Sq : ℝ)
+    (Q : TriadicCube d) (a : CoeffField d) (s t C uL2Sq : ℝ)
     (baseEnergy : Vec d → ℝ) : Prop :=
   ∀ n : ℕ,
     coarseCaccioppoliLocalizedEnergyRadiusProfile Q baseEnergy
@@ -234,7 +234,7 @@ boundary bridge, `Calpha` controls the explicit height/absorption coefficient
 and `Ccross` controls the cross coefficient. -/
 @[expose]
 def CoarseCaccioppoliInteriorCanonicalHarmonicVectorNoteRawBridgeSplit {d : ℕ}
-    [NeZero d] (Q : TriadicCube d) (a : CoeffField d)
+    (Q : TriadicCube d) (a : CoeffField d)
     (s t Calpha Ccross uL2Sq : ℝ) (baseEnergy : Vec d → ℝ) : Prop :=
   ∀ n : ℕ,
     coarseCaccioppoliLocalizedEnergyRadiusProfile Q baseEnergy
@@ -260,7 +260,7 @@ def CoarseCaccioppoliInteriorCanonicalHarmonicVectorNoteRawBridgeSplit {d : ℕ}
 /-- All-radii split raw bridge for the centered interior endpoint. -/
 @[expose]
 def CoarseCaccioppoliInteriorCanonicalHarmonicVectorNoteRawBridgeSplitAllRadii
-    {d : ℕ} [NeZero d] (Q : TriadicCube d) (a : CoeffField d)
+    {d : ℕ} (Q : TriadicCube d) (a : CoeffField d)
     (s t Calpha Ccross uL2Sq : ℝ) (baseEnergy : Vec d → ℝ) : Prop :=
   CoarseCaccioppoliBoundaryCanonicalHarmonicVectorNoteRawBridgeSplitAllRadii
     Q a s t Calpha Ccross uL2Sq baseEnergy
@@ -273,7 +273,7 @@ uses the same note-facing coefficients, but the energy profile is centered at
 the boundary/interior patch center and has base scale `Q.scale - 1`. -/
 @[expose]
 def CoarseCaccioppoliBoundaryCanonicalHarmonicVectorLocalPatchNoteRawBridge {d : ℕ}
-    [NeZero d] (Q : TriadicCube d) (center : Vec d) (a : CoeffField d)
+    (Q : TriadicCube d) (center : Vec d) (a : CoeffField d)
     (s t C uL2Sq : ℝ) (baseEnergy : Vec d → ℝ) : Prop :=
   ∀ n : ℕ,
     coarseCaccioppoliLocalEnergyRadiusProfile Q center baseEnergy
@@ -301,7 +301,7 @@ profile.  `Calpha` controls the explicit height/absorption coefficient and
 `Ccross` controls the cross coefficient. -/
 @[expose]
 def CoarseCaccioppoliBoundaryCanonicalHarmonicVectorLocalPatchNoteRawBridgeSplit {d : ℕ}
-    [NeZero d] (Q : TriadicCube d) (center : Vec d) (a : CoeffField d)
+    (Q : TriadicCube d) (center : Vec d) (a : CoeffField d)
     (s t Calpha Ccross uL2Sq : ℝ) (baseEnergy : Vec d → ℝ) : Prop :=
   ∀ n : ℕ,
     coarseCaccioppoliLocalEnergyRadiusProfile Q center baseEnergy
@@ -329,7 +329,7 @@ profile. -/
 @[expose]
 def
     CoarseCaccioppoliBoundaryCanonicalHarmonicVectorLocalPatchNoteRawBridgeSplitAllRadii
-    {d : ℕ} [NeZero d] (Q : TriadicCube d) (center : Vec d) (a : CoeffField d)
+    {d : ℕ} (Q : TriadicCube d) (center : Vec d) (a : CoeffField d)
     (s t Calpha Ccross uL2Sq : ℝ) (baseEnergy : Vec d → ℝ) : Prop :=
   CoarseCaccioppoliBoundaryNoteRawEstimateSplit Q a s t
     ((Fintype.card (Fin d) : ℝ) * Calpha)
@@ -342,7 +342,7 @@ def
 is again identical to the boundary bridge at the radius-recursion level. -/
 @[expose]
 def CoarseCaccioppoliInteriorCanonicalHarmonicVectorLocalPatchNoteRawBridge {d : ℕ}
-    [NeZero d] (Q : TriadicCube d) (center : Vec d) (a : CoeffField d)
+    (Q : TriadicCube d) (center : Vec d) (a : CoeffField d)
     (s t C uL2Sq : ℝ) (baseEnergy : Vec d → ℝ) : Prop :=
   ∀ n : ℕ,
     coarseCaccioppoliLocalEnergyRadiusProfile Q center baseEnergy
@@ -369,7 +369,7 @@ def CoarseCaccioppoliInteriorCanonicalHarmonicVectorLocalPatchNoteRawBridge {d :
 radius-sequence recurrence shape. -/
 theorem
     CoarseCaccioppoliInteriorCanonicalHarmonicVectorLocalPatchNoteRawBridge.of_boundary
-    {d : ℕ} [NeZero d] (Q : TriadicCube d) (center : Vec d) (a : CoeffField d)
+    {d : ℕ} (Q : TriadicCube d) (center : Vec d) (a : CoeffField d)
     (s t C uL2Sq : ℝ) (baseEnergy : Vec d → ℝ)
     (h :
       CoarseCaccioppoliBoundaryCanonicalHarmonicVectorLocalPatchNoteRawBridge
@@ -383,7 +383,7 @@ theorem
 Chapter-3 radius-sequence bridge. -/
 theorem
     CoarseCaccioppoliBoundaryCanonicalHarmonicVectorNoteRawBridge.of_noteRawEstimate
-    {d : ℕ} [NeZero d] (Q : TriadicCube d) (a : CoeffField d)
+    {d : ℕ} (Q : TriadicCube d) (a : CoeffField d)
     (s t C uL2Sq : ℝ) (baseEnergy : Vec d → ℝ)
     (hraw :
       CoarseCaccioppoliBoundaryNoteRawEstimate Q a s t
@@ -409,7 +409,7 @@ theorem
 Chapter-3 radius-sequence bridge. -/
 theorem
     CoarseCaccioppoliInteriorCanonicalHarmonicVectorNoteRawBridge.of_noteRawEstimate
-    {d : ℕ} [NeZero d] (Q : TriadicCube d) (a : CoeffField d)
+    {d : ℕ} (Q : TriadicCube d) (a : CoeffField d)
     (s t C uL2Sq : ℝ) (baseEnergy : Vec d → ℝ)
     (hraw :
       CoarseCaccioppoliInteriorNoteRawEstimate Q a s t
@@ -435,7 +435,7 @@ theorem
 radius-sequence split bridge. -/
 theorem
     CoarseCaccioppoliBoundaryCanonicalHarmonicVectorNoteRawBridgeSplit.of_allRadii
-    {d : ℕ} [NeZero d] (Q : TriadicCube d) (a : CoeffField d)
+    {d : ℕ} (Q : TriadicCube d) (a : CoeffField d)
     (s t Calpha Ccross uL2Sq : ℝ) (baseEnergy : Vec d → ℝ)
     (hraw :
       CoarseCaccioppoliBoundaryCanonicalHarmonicVectorNoteRawBridgeSplitAllRadii
@@ -459,7 +459,7 @@ theorem
 radius-sequence split local-patch bridge. -/
 theorem
     CoarseCaccioppoliBoundaryCanonicalHarmonicVectorLocalPatchNoteRawBridgeSplit.of_allRadii
-    {d : ℕ} [NeZero d] (Q : TriadicCube d) (center : Vec d) (a : CoeffField d)
+    {d : ℕ} (Q : TriadicCube d) (center : Vec d) (a : CoeffField d)
     (s t Calpha Ccross uL2Sq : ℝ) (baseEnergy : Vec d → ℝ)
     (hraw :
       CoarseCaccioppoliBoundaryCanonicalHarmonicVectorLocalPatchNoteRawBridgeSplitAllRadii
@@ -483,7 +483,7 @@ theorem
 recurrence shape at this level. -/
 theorem
     CoarseCaccioppoliInteriorCanonicalHarmonicVectorNoteRawBridge.of_boundary
-    {d : ℕ} [NeZero d] (Q : TriadicCube d) (a : CoeffField d)
+    {d : ℕ} (Q : TriadicCube d) (a : CoeffField d)
     (s t C uL2Sq : ℝ) (baseEnergy : Vec d → ℝ)
     (h :
       CoarseCaccioppoliBoundaryCanonicalHarmonicVectorNoteRawBridge
@@ -497,7 +497,7 @@ theorem
 radius-sequence recurrence shape at this level. -/
 theorem
     CoarseCaccioppoliInteriorCanonicalHarmonicVectorNoteRawBridgeSplit.of_boundary
-    {d : ℕ} [NeZero d] (Q : TriadicCube d) (a : CoeffField d)
+    {d : ℕ} (Q : TriadicCube d) (a : CoeffField d)
     (s t Calpha Ccross uL2Sq : ℝ) (baseEnergy : Vec d → ℝ)
     (h :
       CoarseCaccioppoliBoundaryCanonicalHarmonicVectorNoteRawBridgeSplit

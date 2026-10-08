@@ -176,7 +176,7 @@ theorem upper_unitDescendantSup_aemeasurable
     (fun U (a : RegCoeffField d) => X U a) a).symm
 
 theorem upper_unitDescendantSup_nonneg
-    {d : ℕ} [NeZero d] {s : ℝ} {m : ℕ} (hs : 0 < s) (a : RegCoeffField d) :
+    {d : ℕ} {s : ℝ} {m : ℕ} (hs : 0 < s) (a : RegCoeffField d) :
     let D := descendantsAtScale (originCube d (m : ℤ)) 0
     let hD : D.Nonempty :=
       descendantsAtScale_nonempty (originCube d (m : ℤ)) (by simp [originCube])
@@ -344,7 +344,7 @@ theorem lower_unitDescendantSup_aemeasurable
     (fun U (a : RegCoeffField d) => X U a) a).symm
 
 theorem lower_unitDescendantSup_nonneg
-    {d : ℕ} [NeZero d] {s : ℝ} {m : ℕ} (hs : 0 < s) (a : RegCoeffField d) :
+    {d : ℕ} {s : ℝ} {m : ℕ} (hs : 0 < s) (a : RegCoeffField d) :
     let D := descendantsAtScale (originCube d (m : ℤ)) 0
     let hD : D.Nonempty :=
       descendantsAtScale_nonempty (originCube d (m : ℤ)) (by simp [originCube])

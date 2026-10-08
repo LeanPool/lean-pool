@@ -66,7 +66,7 @@ noncomputable section
 
 /-- The Dirichlet clause is **antitone** in the certificate: it consumes
 `GoodScale` as a hypothesis, so a *stronger* certificate weakens the hole. -/
-theorem dirichletHole_antitone {d : ℕ} [NeZero d]
+theorem dirichletHole_antitone {d : ℕ}
     {G G' : ℝ → ℝ → Mat d → CoeffSpace d → ℝ → Prop}
     (hproj : ∀ (g κ : ℝ) (abar : Mat d) (a : CoeffSpace d) (x : ℝ),
       G' g κ abar a x → G g κ abar a x)

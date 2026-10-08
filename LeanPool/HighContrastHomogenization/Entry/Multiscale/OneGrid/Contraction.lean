@@ -91,7 +91,7 @@ theorem profile_contraction_reduction (d : ℕ) (hd : 2 ≤ d) (γ : ℝ)
   let bigE : ℝ := Real.exp ((bigQ d γ : ℝ) * synchCharge P q (h : ℤ) m)
   let AH : ℝ := (2 : ℝ) ^ (bigQ d γ - 1) * ((3 : ℝ) ^ d * (bigQ d γ : ℝ)) ^ bigQ d γ *
       (3 : ℝ) ^ (-((bigQ d γ : ℝ) * (d : ℝ) / 2) * (h : ℝ))
-  show profile P γ q jStar n (m + (h : ℤ)) ≤
+  change profile P γ q jStar n (m + (h : ℤ)) ≤
       (w (h : ℝ) + AH) * bigE * profile P γ q jStar n m + (C1 + C2 + C3) * (bigE - 1)
   have hsync : detIncrement P q m (m + (h : ℤ)) ≤ synchCharge P q (h : ℤ) m := by
     have hbound := logDetLoss_le_synchronizedLogDetLoss d hd γ hγ P E Ψ K S hP hstat hunit hdag

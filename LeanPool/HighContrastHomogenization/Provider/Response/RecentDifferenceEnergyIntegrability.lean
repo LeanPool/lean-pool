@@ -89,7 +89,7 @@ private theorem integrable_responseJ_adjointSubSkew
   rw [hload] at h
   exact h.symm
 
-private theorem recent_half_energy_le_two_mul_sum_responseJ [NeZero d]
+private theorem recent_half_energy_le_two_mul_sum_responseJ
     {q : Mat d} (hq : q.PosDef) {s t : ℤ} (hst : s ≤ t)
     (a : CoeffSpace d) (p r : Vec d) {w : Fin d → ℤ}
     (hw : w ∈ alignedIndex q s t) :
@@ -142,7 +142,7 @@ private theorem recent_half_energy_le_two_mul_sum_responseJ [NeZero d]
 
 /-- A primal child half-energy is at most twice the sum of the nonnegative
 child responses. -/
-theorem profilePrimalRecentEnergy_le_two_mul_sum_responseJ [NeZero d]
+theorem profilePrimalRecentEnergy_le_two_mul_sum_responseJ
     {q : Mat d} (hq : q.PosDef) {s t : ℤ} (hst : s ≤ t)
     (g : Mat d) (hg : IsSkewMat g) (p r : Vec d)
     {w : Fin d → ℤ} (hw : w ∈ alignedIndex q s t) (a : CoeffSpace d) :
@@ -161,7 +161,7 @@ theorem profilePrimalRecentEnergy_le_two_mul_sum_responseJ [NeZero d]
 
 /-- The literal primal energy is measurable, and finite adapted means imply
 its integrability on every aligned child. -/
-theorem profilePrimalRecentEnergy_integrable [NeZero d]
+theorem profilePrimalRecentEnergy_integrable
     {P : Measure (CoeffSpace d)} [IsProbabilityMeasure P]
     (hstat : HCPoly.Frozen.IsStationaryLaw P) {l s t : ℤ} {q : Mat d}
     (hgrid : IsRoundedGrid l q) (hls : l ≤ s) (hst : s ≤ t)
@@ -204,7 +204,7 @@ theorem profilePrimalRecentEnergy_integrable [NeZero d]
 
 /-- An adjoint child half-energy obeys the same response-sum domination, with
 the transpose retained on the coefficient carrier. -/
-theorem profileAdjointRecentEnergy_le_two_mul_sum_responseJ [NeZero d]
+theorem profileAdjointRecentEnergy_le_two_mul_sum_responseJ
     {q : Mat d} (hq : q.PosDef) {s t : ℤ} (hst : s ≤ t)
     (g : Mat d) (hg : IsSkewMat g) (p r : Vec d)
     {w : Fin d → ℤ} (hw : w ∈ alignedIndex q s t) (a : CoeffSpace d) :
@@ -224,7 +224,7 @@ theorem profileAdjointRecentEnergy_le_two_mul_sum_responseJ [NeZero d]
 
 /-- The independently transformed adjoint responses dominate every adjoint
 child half-energy by an integrable finite sum. -/
-theorem profileAdjointRecentEnergy_integrable [NeZero d]
+theorem profileAdjointRecentEnergy_integrable
     {P : Measure (CoeffSpace d)} [IsProbabilityMeasure P]
     (hstat : HCPoly.Frozen.IsStationaryLaw P) {l s t : ℤ} {q : Mat d}
     (hgrid : IsRoundedGrid l q) (hls : l ≤ s) (hst : s ≤ t)

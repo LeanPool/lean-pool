@@ -49,7 +49,7 @@ private theorem coarseFluxResponseEnvelope_le_dimensionSquare
     (hs_pow52_nonneg : 0 ≤ Real.rpow s (-(5 / 2 : ℝ)))
     (hs_pow3_nonneg : 0 ≤ Real.rpow s (-3 : ℝ))
     (hMhalf_nonneg : 0 ≤ Mhalf) (hM_nonneg : 0 ≤ M)
-    (hP_nonneg : 0 ≤ P) (hL_nonneg : 0 ≤ L) (hLinv_nonneg : 0 ≤ Linv)
+    (hP_nonneg : 0 ≤ P)
     (holdL_nonneg : 0 ≤ oldL) (holdLinv_nonneg : 0 ≤ oldLinv)
     (hH_nonneg' : 0 ≤ H) (hE_nonneg : 0 ≤ E)
     (hMhalf_le : oldMhalf ≤ D * Mhalf) (hM_le : oldM ≤ D * M)
@@ -252,16 +252,6 @@ theorem coarseFluxResponseBound_le_dimSquared_publicRHS
     exact Real.rpow_nonneg
       (Ch02.LambdaSq_nonneg (Q := Q) (a := a)
         (q := Ch02.MultiscaleExponent.finite 2) hs_half (by norm_num)) _
-  have hL_nonneg : 0 ≤ L := by
-    dsimp [L, poincareLowerEllipticityFactor]
-    exact Real.rpow_nonneg
-      (Ch02.lambdaSq_nonneg (Q := Q) (a := a)
-        (q := Ch02.MultiscaleExponent.finite 2) hs_half (by norm_num)) _
-  have hLinv_nonneg : 0 ≤ Linv := by
-    dsimp [Linv]
-    exact Real.rpow_nonneg
-      (Ch02.lambdaSq_nonneg (Q := Q) (a := a)
-        (q := Ch02.MultiscaleExponent.finite 2) hs_half (by norm_num)) _
   have hH_nonneg' : 0 ≤ H := by simpa [H] using hH_nonneg
   have hE_nonneg : 0 ≤ E := by simp [E]
   have hB_nonneg' : 0 ≤ B := by simpa [B] using hB_nonneg
@@ -298,10 +288,9 @@ theorem coarseFluxResponseBound_le_dimSquared_publicRHS
                 Real.rpow s (-(5 / 2 : ℝ)) * P * L +
               Real.rpow s (-3 : ℝ) * M * Linv) * B) :=
     coarseFluxResponseEnvelope_le_dimensionSquare hD_nonneg hD_le_sq hs_inv_nonneg hs_pow52_nonneg
-      hs_pow3_nonneg hMhalf_nonneg hM_nonneg hP_nonneg hL_nonneg hLinv_nonneg
+      hs_pow3_nonneg hMhalf_nonneg hM_nonneg hP_nonneg
       holdL_nonneg holdLinv_nonneg hH_nonneg' hE_nonneg
       hMhalf_le hM_le hP_le hL_le hLinv_le hB_nonneg'
-
   calc
     C * _root_.HCPolySupport.coarseFluxResponseRHSBound Q (publicCoeffField Q a)
         a0.matrix s (forcedSolutionGradientField u) g =

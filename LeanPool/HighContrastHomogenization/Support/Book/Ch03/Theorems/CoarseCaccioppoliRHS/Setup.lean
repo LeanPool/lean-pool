@@ -123,7 +123,7 @@ theorem isZeroTraceDirichletRhsWeakSolution_openCubeSet_of_cubeSet
 /-- On the public open cube, replacing `publicCoeffField` by the deterministic
 `coeffOn` representative preserves zero-trace RHS weak solutions. -/
 theorem isZeroTraceDirichletRhsWeakSolution_coeffOn_openCubeSet_of_publicCoeffField
-    {d : ℕ} [NeZero d] {Q : TriadicCube d} {a : CoeffFamily d}
+    {d : ℕ} {Q : TriadicCube d} {a : CoeffFamily d}
     {u : H10Function (openCubeSet Q)} {g : Vec d → Vec d}
     (h : IsZeroTraceDirichletRhsWeakSolution (publicCoeffField Q a)
       (openCubeSet Q) u g) :

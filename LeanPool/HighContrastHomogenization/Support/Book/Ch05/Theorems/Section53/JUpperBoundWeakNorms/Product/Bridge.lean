@@ -37,7 +37,6 @@ noncomputable section
 
 private theorem centeredCutoffProduct_dualNorm_le_gradientBound
     {d : ℕ}
-    [NeZero d]
     (Q : TriadicCube d)
     {s : ℝ}
     (u : H1Function (openCubeSet Q))
@@ -60,10 +59,10 @@ private theorem centeredCutoffProduct_dualNorm_le_gradientBound
     let productField : Vec d → Vec d :=
       fun x => ((u x - cubeAverage Q (fun y => u y)) • ξ x : Vec d)
     let productBound : ℝ := gradCoeff * scaledGrad
-    ∀ (hr_pos : 0 < r),
-    ∀ (hr_lt_one : r < 1),
-    ∀ (hfront_nonneg : 0 ≤ 2 * cubeScaleFactor Q * B + 3 * cubeLpNorm Q ∞ ξ),
-    ∀ (hpoincare_nonneg : 0 ≤ Ch01.Legacy.fullVectorPoincareConstant Q * (3 : ℝ) ^ ((d : ℝ) + 1)),
+    ∀ (_hr_pos : 0 < r),
+    ∀ (_hr_lt_one : r < 1),
+    ∀ (_hfront_nonneg : 0 ≤ 2 * cubeScaleFactor Q * B + 3 * cubeLpNorm Q ∞ ξ),
+    ∀ (_hpoincare_nonneg : 0 ≤ Ch01.Legacy.fullVectorPoincareConstant Q * (3 : ℝ) ^ ((d : ℝ) + 1)),
     ∀ i : Fin d, ∀ N : ℕ,
         cubeBesovDualTestNorm Q r (2 : ℝ≥0∞) (1 : ℝ≥0∞) N
             (fun x => productField x i) ≤
@@ -173,7 +172,7 @@ side is Ch01's cutoff-product theorem for
 `(u - (u)_Q) ∇φ`, and the negative side is the scaled `t`-weak norm of the
 flux with the exponent comparison `t ≤ 1 - s`. -/
 theorem abs_cubeAverage_vecDot_centered_scalar_cutoff_le_scaledWeakNormProduct
-    {d : ℕ} [NeZero d] (Q : TriadicCube d) {s t : ℝ}
+    {d : ℕ} (Q : TriadicCube d) {s t : ℝ}
     (hs_pos : 0 < s) (hs_lt_one : s < 1) (hst : s + t ≤ 1)
     (flux : Vec d → Vec d) (u : H1Function (openCubeSet Q))
     (ξ : Vec d → Vec d) {B gradWeak fluxWeak : ℝ}
@@ -586,7 +585,7 @@ theorem productTerm_le_cutoffProductBridge_of_dependentCanonicalMaximizer
   let F := Ch04.triadicCoeffFamilyOfAELocallyUniformlyEllipticField a ha
   let aQ : Ch02.CoeffOn (Ch02.cubeDomain Q) := F.coeffOn Q
   exact productTerm_le_cutoffProductBridge_of_canonicalMaximizer
-    (Q := Q) (s := s) (a := aQ) (p0 := p0) (q0 := q0)
+    (Q := Q) (s := s) (a := aQ) (p := p) (q := q) (p0 := p0) (q0 := q0)
     (dualField := dualField) (cutoffGradient := cutoffGradient)
     (fluxWeakOne := Ch04.canonicalScalarResponseFluxWeakNormCubeSet Q 1 p q q0 a.toFun)
     (fluxWeakS := Ch04.canonicalScalarResponseFluxWeakNormCubeSet Q s p q q0 a.toFun)

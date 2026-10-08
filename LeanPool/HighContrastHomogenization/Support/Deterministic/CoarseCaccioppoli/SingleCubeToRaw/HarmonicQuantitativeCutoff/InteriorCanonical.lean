@@ -305,7 +305,7 @@ hypothesis `ρ₂ < 1` discharged automatically on the deterministic radius
 sequence. -/
 theorem
     coarseCaccioppoli_interior_qone_of_quantitativeCutoff_of_scalarCutoffControl
-    {d : ℕ} [NeZero d] (Q : TriadicCube d) (a : CoeffField d)
+    {d : ℕ} (Q : TriadicCube d) (a : CoeffField d)
     (s t C uL2Sq : ℝ) {lam Lam : ℝ}
     (k : ℝ → ℝ → ℕ) {F G₀ : ℝ → ℝ}
     (w : ℝ → ℝ → AHarmonicFunction a (openCubeSet Q))

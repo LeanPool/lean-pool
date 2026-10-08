@@ -157,7 +157,7 @@ theorem three_mul_log_normalizedProbeIndex_univ_card_pos
   positivity
 
 theorem three_mul_log_descendantsAtScale_originCube_nat_shift_card_eq
-    {d : ℕ} [NeZero d] {N m n : ℕ} (hnm : n ≤ m) :
+    {d : ℕ} {N m n : ℕ} (hnm : n ≤ m) :
     3 *
         Real.log
           (((descendantsAtScale

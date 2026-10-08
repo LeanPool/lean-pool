@@ -48,7 +48,7 @@ theorem bridge_fine_ratio_mem_Ico {γ : ℝ} (hγ : γ < 1) :
 /-- Any countable fine family with the Whitney row estimate has the summable
 source penalty. The summable unweighted masses come from disjointness in the
 finite-volume parent; the row estimate is supplied by the two-grid bridge. -/
-theorem bridge_fine_weighted_sum {ι : Type*} [Countable ι]
+theorem bridge_fine_weighted_sum {ι : Type*}
     (w : ι → ℝ) (r : ι → ℤ) (hw0 : ∀ i, 0 ≤ w i) (hw : Summable w)
     (J j : ℤ) (hr : ∀ i, r i < J) (C : ℝ) (hC : 0 ≤ C)
     (hrow : ∀ t : ℤ, (∑' i : {i // r i = t}, w i) ≤ C * (3 : ℝ) ^ ((t : ℝ) - j))
@@ -152,7 +152,7 @@ theorem bridge_block_tsum_bound {d : ℕ} {ι : Type*}
   simpa only [mul_assoc] using h
 
 private theorem bridge_block_integral_scale_bound {d : ℕ}
-    {P : Measure (CoeffSpace d)} [IsProbabilityMeasure P]
+    {P : Measure (CoeffSpace d)}
     {A : CoeffSpace d → BlockMat d} {E : BlockMat d}
     (hEp : Book.Ch02.BlockPosDef E)
     (hA : ∀ α β, Integrable (fun a => blockMatEntry (A a) α β) P)

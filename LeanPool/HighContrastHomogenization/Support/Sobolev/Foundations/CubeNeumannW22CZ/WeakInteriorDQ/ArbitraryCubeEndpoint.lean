@@ -27,6 +27,8 @@ open scoped BigOperators ENNReal
 
 noncomputable section
 
+/-- The centered-cube C.2 depth constant combining inverse square-root volume,
+unit-scale mean-zero coercivity, and the dimension-squared parent solver energy factor. -/
 @[expose]
 noncomputable def originCubeWeakInteriorDepthConstantExact (d : ℕ) (m : ℤ) : ℝ :=
   let Q : TriadicCube d := originCube d m

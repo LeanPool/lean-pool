@@ -39,7 +39,7 @@ noncomputable section
 
 variable {d : ℕ}
 
-private theorem cutoffWeightedTopHalfEnergy_affineResponse [NeZero d]
+private theorem cutoffWeightedTopHalfEnergy_affineResponse
     {q : Mat d} (hq : q.PosDef) (t : ℤ) (a : CoeffSpace d)
     {aRef : Book.Ch02.CoeffOn (Book.Ch02.cubeDomain (originCube d t))}
     (haRef : aRef.toCoeffField = affineCoefficient q

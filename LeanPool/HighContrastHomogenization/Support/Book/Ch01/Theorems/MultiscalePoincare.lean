@@ -39,11 +39,11 @@ namespace Legacy
 /-- Legacy selected constant for the disjoint-positive, totalized-real,
 componentwise-circ compatibility Poincare lane; not an exact manuscript
 overlap/Euclidean constant. -/
-noncomputable abbrev fullVectorPoincareConstant {d : ℕ} [NeZero d]
+noncomputable abbrev fullVectorPoincareConstant {d : ℕ}
     (Q : Cube d) : ℝ :=
   HCPolySupport.fullVectorPoincareCubeConstant Q
 
-theorem fullVectorPoincareConstant_nonneg {d : ℕ} [NeZero d]
+theorem fullVectorPoincareConstant_nonneg {d : ℕ}
     (Q : Cube d) :
     0 ≤ fullVectorPoincareConstant Q := by
   simpa [fullVectorPoincareConstant] using
@@ -51,7 +51,7 @@ theorem fullVectorPoincareConstant_nonneg {d : ℕ} [NeZero d]
 
 /-- Legacy full-dual multiscale Poincare compatibility estimate for `H¹`
 functions on cubes; not an exact manuscript overlap/Euclidean statement. -/
-theorem h1_fullVectorPoincare {d : ℕ} [NeZero d] (Q : Cube d)
+theorem h1_fullVectorPoincare {d : ℕ} (Q : Cube d)
     (u : H1Function (openCubeSet Q)) :
     HCPolySupport.CubeDualFullVectorPoincareEstimate Q
       (fullVectorPoincareConstant Q)
@@ -62,7 +62,7 @@ theorem h1_fullVectorPoincare {d : ℕ} [NeZero d] (Q : Cube d)
 
 /-- Legacy descendant full-dual Poincare compatibility estimate for `H¹`
 functions on cubes; not an exact manuscript overlap/Euclidean statement. -/
-theorem h1_descendantFullVectorPoincare {d : ℕ} [NeZero d] (Q : Cube d)
+theorem h1_descendantFullVectorPoincare {d : ℕ} (Q : Cube d)
     (u : H1Function (openCubeSet Q)) (N : ℕ) :
     HCPolySupport.CubeDescendantDualFullVectorPoincareEstimate Q
       (fullVectorPoincareConstant Q)
@@ -78,7 +78,7 @@ This is the honest full-circ bridge available from the full-dual theorem.  The
 remaining gradient-to-function cleanup is the separate summation step from
 local full-circ control to the finite-partial multiscale corridor, or an
 equivalent direct infinite-depth summation theorem. -/
-theorem h1_descendantLocalFullCircPoincare {d : ℕ} [NeZero d] (Q : Cube d)
+theorem h1_descendantLocalFullCircPoincare {d : ℕ} (Q : Cube d)
     (u : H1Function (openCubeSet Q)) (N : ℕ) :
     HCPolySupport.CubeLocalFullCircPoincareVectorEstimate Q
       (fullVectorPoincareConstant Q * (3 : ℝ) ^ ((d : ℝ) + 1))
@@ -93,7 +93,7 @@ theorem h1_descendantLocalFullCircPoincare {d : ℕ} [NeZero d] (Q : Cube d)
 multiscale Poincare compatibility estimate; not an exact manuscript
 overlap/Euclidean statement. -/
 theorem h1_fluctuation_partialNormTop_two_le_sum_grad_circNorm
-    {d : ℕ} [NeZero d] (Q : Cube d) (s : ℝ) (M : ℕ)
+    {d : ℕ} (Q : Cube d) (s : ℝ) (M : ℕ)
     (u : H1Function (openCubeSet Q)) (hs0 : 0 < s) (hs1 : s < 1) :
     cubeBesovPartialNormTop Q s (2 : ℝ≥0∞) M
         (cubeFluctuation Q (fun x => u x)) ≤

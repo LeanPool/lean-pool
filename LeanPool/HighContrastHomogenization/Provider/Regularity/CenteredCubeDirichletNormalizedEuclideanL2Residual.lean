@@ -51,7 +51,7 @@ private theorem centeredCubeEuclideanL2Field_memLp_normalizedCubeMeasure
 /-- Two identity Dirichlet solutions are nonexpansive on differences in the
 physical normalized Euclidean `L²` norm. -/
 theorem centeredCubeDirichletDivergence_normalizedEuclideanLpENorm_grad_sub_le
-    [NeZero d] (h k : CenteredCubeEuclideanL2Field d m)
+    (h k : CenteredCubeEuclideanL2Field d m)
     (w v : H10Function (openCubeSet (originCube d m)))
     (hw : CubeDirichletDivergenceProblem (originCube d m) w h)
     (hv : CubeDirichletDivergenceProblem (originCube d m) v k) :

@@ -92,10 +92,10 @@ private theorem shiftedEllipticityCoefficients_le_commonDecay
       section52MomentLossCoeff d hP4.xi hP4.sLower rLower
     let decay : ℝ := Real.rpow (3 : ℝ) (-β * (m : ℝ))
     let C0 : ℝ := max (C52 * lowerLoss) (C52 * upperLoss)
-    ∀ (hrLower_gt : hP4.sLower < rLower),
-    ∀ (hrUpper_gt : hP4.sUpper < rUpper),
-    ∀ (hrLower_lt_one : rLower < 1),
-    ∀ (hrUpper_lt_one : rUpper < 1),
+    ∀ (_hrLower_gt : hP4.sLower < rLower),
+    ∀ (_hrUpper_gt : hP4.sUpper < rUpper),
+    ∀ (_hrLower_lt_one : rLower < 1),
+    ∀ (_hrUpper_lt_one : rUpper < 1),
     (0 ≤ C0) ∧
       (upperCoeff ≤ C0 * decay) ∧
       (lowerCoeff ≤ C0 * decay) := by
@@ -117,11 +117,11 @@ private theorem shiftedEllipticityCoefficients_le_commonDecay
   let C0 : ℝ := max (C52 * lowerLoss) (C52 * upperLoss)
   intro hrLower_gt hrUpper_gt hrLower_lt_one hrUpper_lt_one
   have hUpperLoss_nonneg : 0 ≤ upperLoss := by
-    simpa [upperLoss, rUpper] using
+    simpa [upperLoss, rUpper, β] using
       section52MomentLossCoeff_nonneg_at_shift hP4
         hP4.sUpper_pos hrUpper_gt hrUpper_lt_one
   have hLowerLoss_nonneg : 0 ≤ lowerLoss := by
-    simpa [lowerLoss, rLower] using
+    simpa [lowerLoss, rLower, β] using
       section52MomentLossCoeff_nonneg_at_shift hP4
         hP4.sLower_pos hrLower_gt hrLower_lt_one
   have hC0_nonneg : 0 ≤ C0 := by
@@ -204,15 +204,16 @@ private theorem weightedLowerPositiveExcessResponse_le_commonMoment
       section52MomentLossCoeff d hP4.xi hP4.sLower rLower
     let decay : ℝ := Real.rpow (3 : ℝ) (-β * (m : ℝ))
     let C0 : ℝ := max (C52 * lowerLoss) (C52 * upperLoss)
-    ∀ (hLowerHolder : ∫ a, lowerExcess a * J a ∂P ≤
+    ∀ (_hLowerHolder : ∫ a, lowerExcess a * J a ∂P ≤
         lambdaInvPositiveExcessMomentAtScale P (m : ℤ) rLower hP4.xi hP hStruct *
           responseMoment),
-    ∀ (hσ_nonneg : 0 ≤ σ),
-    ∀ (hLower0_nonneg : 0 ≤ Ch04.lambdaInvMomentAtScale P 0 hP4.sLower hP4.xi),
-    ∀ (hResponse_nonneg : 0 ≤ responseMoment),
-    ∀ (hLowerMomentBound : lambdaInvPositiveExcessMomentAtScale P (m : ℤ) rLower hP4.xi hP hStruct ≤
+    ∀ (_hσ_nonneg : 0 ≤ σ),
+    ∀ (_hLower0_nonneg : 0 ≤ Ch04.lambdaInvMomentAtScale P 0 hP4.sLower hP4.xi),
+    ∀ (_hResponse_nonneg : 0 ≤ responseMoment),
+    ∀ (_hLowerMomentBound : lambdaInvPositiveExcessMomentAtScale P (m : ℤ)
+        rLower hP4.xi hP hStruct ≤
         lowerCoeff * Ch04.lambdaInvMomentAtScale P 0 hP4.sLower hP4.xi),
-    ∀ (hLowerCoeff_le : lowerCoeff ≤ C0 * decay),
+    ∀ (_hLowerCoeff_le : lowerCoeff ≤ C0 * decay),
     σ * (∫ a, lowerExcess a * J a ∂P) ≤
         (C0 * decay) *
           (σ * Ch04.lambdaInvMomentAtScale P 0 hP4.sLower hP4.xi) *
@@ -317,15 +318,15 @@ private theorem weightedUpperPositiveExcessResponse_le_commonMoment
       section52MomentLossCoeff d hP4.xi hP4.sLower rLower
     let decay : ℝ := Real.rpow (3 : ℝ) (-β * (m : ℝ))
     let C0 : ℝ := max (C52 * lowerLoss) (C52 * upperLoss)
-    ∀ (hUpperHolder : ∫ a, upperExcess a * J a ∂P ≤
+    ∀ (_hUpperHolder : ∫ a, upperExcess a * J a ∂P ≤
         LambdaPositiveExcessMomentAtScale P (m : ℤ) rUpper hP4.xi hP hStruct *
           responseMoment),
-    ∀ (hσ_inv_nonneg : 0 ≤ σ⁻¹),
-    ∀ (hUpper0_nonneg : 0 ≤ Ch04.LambdaMomentAtScale P 0 hP4.sUpper hP4.xi),
-    ∀ (hResponse_nonneg : 0 ≤ responseMoment),
-    ∀ (hUpperMomentBound : LambdaPositiveExcessMomentAtScale P (m : ℤ) rUpper hP4.xi hP hStruct ≤
+    ∀ (_hσ_inv_nonneg : 0 ≤ σ⁻¹),
+    ∀ (_hUpper0_nonneg : 0 ≤ Ch04.LambdaMomentAtScale P 0 hP4.sUpper hP4.xi),
+    ∀ (_hResponse_nonneg : 0 ≤ responseMoment),
+    ∀ (_hUpperMomentBound : LambdaPositiveExcessMomentAtScale P (m : ℤ) rUpper hP4.xi hP hStruct ≤
         upperCoeff * Ch04.LambdaMomentAtScale P 0 hP4.sUpper hP4.xi),
-    ∀ (hUpperCoeff_le : upperCoeff ≤ C0 * decay),
+    ∀ (_hUpperCoeff_le : upperCoeff ≤ C0 * decay),
     σ⁻¹ * (∫ a, upperExcess a * J a ∂P) ≤
         (C0 * decay) *
           (σ⁻¹ * Ch04.LambdaMomentAtScale P 0 hP4.sUpper hP4.xi) *
@@ -623,10 +624,10 @@ private theorem positiveEllipticityExcesses_memLp_for_childResponse
               (originCube d (m : ℤ)) rUpper (.finite 1) a -
             hP.barSigmaAtScale hStruct 0)
           0
-    ∀ (hrLower_gt : hP4.sLower < rLower),
-    ∀ (hrUpper_gt : hP4.sUpper < rUpper),
-    ∀ (hrLower_lt_one : rLower < 1),
-    ∀ (hrUpper_lt_one : rUpper < 1),
+    ∀ (_hrLower_gt : hP4.sLower < rLower),
+    ∀ (_hrUpper_gt : hP4.sUpper < rUpper),
+    ∀ (_hrLower_lt_one : rLower < 1),
+    ∀ (_hrUpper_lt_one : rUpper < 1),
     (MemLp lowerExcess (ENNReal.ofReal (hP4.xi : ℝ)) P) ∧
       (MemLp upperExcess (ENNReal.ofReal (hP4.xi : ℝ)) P) := by
   classical
@@ -714,9 +715,9 @@ private theorem childResponseMomentRoot_le_originMoment
           (fun R => Ch04.restrictionResponseJObservableCubeSet R p_e q_e a)
     let responseMoment :=
       coarseFluctuationResponseMomentAtScale hP hStruct hP4 k m e
-    ∀ (hζ_pos : 0 < ζ),
-    ∀ (hk_nonneg : (0 : ℤ) ≤ (k : ℤ)),
-    ∀ (hkm_int : (k : ℤ) ≤ (m : ℤ)),
+    ∀ (_hζ_pos : 0 < ζ),
+    ∀ (_hk_nonneg : (0 : ℤ) ≤ (k : ℤ)),
+    ∀ (_hkm_int : (k : ℤ) ≤ (m : ℤ)),
     (∫ a, childAvg a ^ ζ ∂P) ^ (1 / ζ) ≤ responseMoment := by
   classical
   let : IsProbabilityMeasure P := hP.isProbability
@@ -751,8 +752,8 @@ private theorem childResponseMomentRoot_le_originMoment
     Real.rpow_le_rpow hChildPow_nonneg
       (by simpa [childAvg, ζ, p_e, q_e, Real.rpow_eq_pow] using hIntLe)
       hroot_nonneg
-  simpa [responseMoment, coarseFluctuationResponseMomentAtScale, ζ, p_e, q_e,
-    one_div] using hroot
+  simpa [responseMoment, coarseFluctuationResponseMomentAtScale, childAvg, ζ,
+    p_e, q_e, one_div] using hroot
 
 private theorem weightedLowerPositiveExcessChildResponse_le_commonMoment
     {d : ℕ}
@@ -794,14 +795,15 @@ private theorem weightedLowerPositiveExcessChildResponse_le_commonMoment
     let lowerCoeff : ℝ :=
       section52TwoExponentMomentBoundCoeff d hP4.xi C52 hP4.sLower rLower m
     let decay : ℝ := Real.rpow (3 : ℝ) (-β * (m : ℝ))
-    ∀ (hLowerCoeff_le : lowerCoeff ≤ C0 * decay),
-    ∀ (hLowerHolder : ∫ a, lowerExcess a * childAvg a ∂P ≤
+    ∀ (_hLowerCoeff_le : lowerCoeff ≤ C0 * decay),
+    ∀ (_hLowerHolder : ∫ a, lowerExcess a * childAvg a ∂P ≤
         lambdaInvPositiveExcessMomentAtScale P (m : ℤ) rLower hP4.xi hP hStruct *
           responseMoment),
-    ∀ (hσ_nonneg : 0 ≤ σ),
-    ∀ (hLower0_nonneg : 0 ≤ Ch04.lambdaInvMomentAtScale P 0 hP4.sLower hP4.xi),
-    ∀ (hResponse_nonneg : 0 ≤ responseMoment),
-    ∀ (hLowerMomentBound : lambdaInvPositiveExcessMomentAtScale P (m : ℤ) rLower hP4.xi hP hStruct ≤
+    ∀ (_hσ_nonneg : 0 ≤ σ),
+    ∀ (_hLower0_nonneg : 0 ≤ Ch04.lambdaInvMomentAtScale P 0 hP4.sLower hP4.xi),
+    ∀ (_hResponse_nonneg : 0 ≤ responseMoment),
+    ∀ (_hLowerMomentBound : lambdaInvPositiveExcessMomentAtScale P (m : ℤ)
+        rLower hP4.xi hP hStruct ≤
         lowerCoeff * Ch04.lambdaInvMomentAtScale P 0 hP4.sLower hP4.xi),
     σ * (∫ a, lowerExcess a * childAvg a ∂P) ≤
         (C0 * decay) *
@@ -912,14 +914,14 @@ private theorem weightedUpperPositiveExcessChildResponse_le_commonMoment
     let upperCoeff : ℝ :=
       section52TwoExponentMomentBoundCoeff d hP4.xi C52 hP4.sUpper rUpper m
     let decay : ℝ := Real.rpow (3 : ℝ) (-β * (m : ℝ))
-    ∀ (hUpperCoeff_le : upperCoeff ≤ C0 * decay),
-    ∀ (hUpperHolder : ∫ a, upperExcess a * childAvg a ∂P ≤
+    ∀ (_hUpperCoeff_le : upperCoeff ≤ C0 * decay),
+    ∀ (_hUpperHolder : ∫ a, upperExcess a * childAvg a ∂P ≤
         LambdaPositiveExcessMomentAtScale P (m : ℤ) rUpper hP4.xi hP hStruct *
           responseMoment),
-    ∀ (hσ_inv_nonneg : 0 ≤ σ⁻¹),
-    ∀ (hUpper0_nonneg : 0 ≤ Ch04.LambdaMomentAtScale P 0 hP4.sUpper hP4.xi),
-    ∀ (hResponse_nonneg : 0 ≤ responseMoment),
-    ∀ (hUpperMomentBound : LambdaPositiveExcessMomentAtScale P (m : ℤ) rUpper hP4.xi hP hStruct ≤
+    ∀ (_hσ_inv_nonneg : 0 ≤ σ⁻¹),
+    ∀ (_hUpper0_nonneg : 0 ≤ Ch04.LambdaMomentAtScale P 0 hP4.sUpper hP4.xi),
+    ∀ (_hResponse_nonneg : 0 ≤ responseMoment),
+    ∀ (_hUpperMomentBound : LambdaPositiveExcessMomentAtScale P (m : ℤ) rUpper hP4.xi hP hStruct ≤
         upperCoeff * Ch04.LambdaMomentAtScale P 0 hP4.sUpper hP4.xi),
     σ⁻¹ * (∫ a, upperExcess a * childAvg a ∂P) ≤
         (C0 * decay) *
@@ -1013,13 +1015,13 @@ private theorem childResponseEllipticityCoefficients_le_commonDecay
     let lowerCoeff : ℝ :=
       section52TwoExponentMomentBoundCoeff d hP4.xi C52 hP4.sLower rLower m
     let decay : ℝ := Real.rpow (3 : ℝ) (-β * (m : ℝ))
-    ∀ (hrLower_gt : hP4.sLower < rLower),
-    ∀ (hrUpper_gt : hP4.sUpper < rUpper),
-    ∀ (hrLower_lt_one : rLower < 1),
-    ∀ (hrUpper_lt_one : rUpper < 1),
-    ∀ (hC0_ge_lower : C52 * lowerLoss ≤ C0),
-    ∀ (hC0_ge_upper : C52 * upperLoss ≤ C0),
-    ∀ (hdecay_nonneg : 0 ≤ decay),
+    ∀ (_hrLower_gt : hP4.sLower < rLower),
+    ∀ (_hrUpper_gt : hP4.sUpper < rUpper),
+    ∀ (_hrLower_lt_one : rLower < 1),
+    ∀ (_hrUpper_lt_one : rUpper < 1),
+    ∀ (_hC0_ge_lower : C52 * lowerLoss ≤ C0),
+    ∀ (_hC0_ge_upper : C52 * upperLoss ≤ C0),
+    ∀ (_hdecay_nonneg : 0 ≤ decay),
     (upperCoeff ≤ C0 * decay) ∧
       (lowerCoeff ≤ C0 * decay) := by
   classical
@@ -1040,11 +1042,11 @@ private theorem childResponseEllipticityCoefficients_le_commonDecay
   let decay : ℝ := Real.rpow (3 : ℝ) (-β * (m : ℝ))
   intro hrLower_gt hrUpper_gt hrLower_lt_one hrUpper_lt_one hC0_ge_lower hC0_ge_upper hdecay_nonneg
   have hUpperLoss_nonneg : 0 ≤ upperLoss := by
-    simpa [upperLoss, rUpper] using
+    simpa [upperLoss, rUpper, β] using
       section52MomentLossCoeff_nonneg_at_shift hP4
         hP4.sUpper_pos hrUpper_gt hrUpper_lt_one
   have hLowerLoss_nonneg : 0 ≤ lowerLoss := by
-    simpa [lowerLoss, rLower] using
+    simpa [lowerLoss, rLower, β] using
       section52MomentLossCoeff_nonneg_at_shift hP4
         hP4.sLower_pos hrLower_gt hrLower_lt_one
   have hUpperCoeff_le : upperCoeff ≤ C0 * decay := by
@@ -1114,13 +1116,13 @@ private theorem lowerPositiveExcessChildResponse_le_productOfMoments
           0
     let responseMoment :=
       coarseFluctuationResponseMomentAtScale hP hStruct hP4 k m e
-    ∀ (hLower_mem : MemLp lowerExcess (ENNReal.ofReal (hP4.xi : ℝ)) P),
-    ∀ (hζ_pos : 0 < ζ),
-    ∀ (hk_nonneg : (0 : ℤ) ≤ (k : ℤ)),
-    ∀ (hkm_int : (k : ℤ) ≤ (m : ℤ)),
-    ∀ (hChild_nonneg : ∀ᵐ a ∂P, 0 ≤ childAvg a),
-    ∀ (hChild_mem : MemLp childAvg (ENNReal.ofReal ζ) P),
-    ∀ (hLower_nonneg : ∀ᵐ a ∂P, 0 ≤ lowerExcess a),
+    ∀ (_hLower_mem : MemLp lowerExcess (ENNReal.ofReal (hP4.xi : ℝ)) P),
+    ∀ (_hζ_pos : 0 < ζ),
+    ∀ (_hk_nonneg : (0 : ℤ) ≤ (k : ℤ)),
+    ∀ (_hkm_int : (k : ℤ) ≤ (m : ℤ)),
+    ∀ (_hChild_nonneg : ∀ᵐ a ∂P, 0 ≤ childAvg a),
+    ∀ (_hChild_mem : MemLp childAvg (ENNReal.ofReal ζ) P),
+    ∀ (_hLower_nonneg : ∀ᵐ a ∂P, 0 ≤ lowerExcess a),
     ∫ a, lowerExcess a * childAvg a ∂P ≤
         lambdaInvPositiveExcessMomentAtScale P (m : ℤ) rLower hP4.xi hP hStruct *
           responseMoment := by
@@ -1159,8 +1161,8 @@ private theorem lowerPositiveExcessChildResponse_le_productOfMoments
       ∫ a, lowerExcess a * childAvg a ∂P ≤
         lambdaInvPositiveExcessMomentAtScale P (m : ℤ) rLower hP4.xi hP hStruct *
           (∫ a, childAvg a ^ ζ ∂P) ^ (1 / ζ) := by
-    simpa [lowerExcess, lambdaInvPositiveExcessMomentAtScale,
-      Ch04.annealedMomentRoot, rLower, ζ, one_div, Real.rpow_natCast] using hHolderRaw
+    simpa [lowerExcess, childAvg, p_e, q_e, lambdaInvPositiveExcessMomentAtScale,
+      Ch04.annealedMomentRoot, rLower, β, ζ, one_div, Real.rpow_natCast] using hHolderRaw
   exact hHolder.trans
     (mul_le_mul_of_nonneg_left hChildMomentRoot_le
       (Section52.lambdaInvPositiveExcessMomentAtScale_nonneg
@@ -1197,13 +1199,13 @@ private theorem upperPositiveExcessChildResponse_le_productOfMoments
           0
     let responseMoment :=
       coarseFluctuationResponseMomentAtScale hP hStruct hP4 k m e
-    ∀ (hUpper_mem : MemLp upperExcess (ENNReal.ofReal (hP4.xi : ℝ)) P),
-    ∀ (hζ_pos : 0 < ζ),
-    ∀ (hk_nonneg : (0 : ℤ) ≤ (k : ℤ)),
-    ∀ (hkm_int : (k : ℤ) ≤ (m : ℤ)),
-    ∀ (hChild_nonneg : ∀ᵐ a ∂P, 0 ≤ childAvg a),
-    ∀ (hChild_mem : MemLp childAvg (ENNReal.ofReal ζ) P),
-    ∀ (hUpper_nonneg : ∀ᵐ a ∂P, 0 ≤ upperExcess a),
+    ∀ (_hUpper_mem : MemLp upperExcess (ENNReal.ofReal (hP4.xi : ℝ)) P),
+    ∀ (_hζ_pos : 0 < ζ),
+    ∀ (_hk_nonneg : (0 : ℤ) ≤ (k : ℤ)),
+    ∀ (_hkm_int : (k : ℤ) ≤ (m : ℤ)),
+    ∀ (_hChild_nonneg : ∀ᵐ a ∂P, 0 ≤ childAvg a),
+    ∀ (_hChild_mem : MemLp childAvg (ENNReal.ofReal ζ) P),
+    ∀ (_hUpper_nonneg : ∀ᵐ a ∂P, 0 ≤ upperExcess a),
     ∫ a, upperExcess a * childAvg a ∂P ≤
         LambdaPositiveExcessMomentAtScale P (m : ℤ) rUpper hP4.xi hP hStruct *
           responseMoment := by
@@ -1242,8 +1244,8 @@ private theorem upperPositiveExcessChildResponse_le_productOfMoments
       ∫ a, upperExcess a * childAvg a ∂P ≤
         LambdaPositiveExcessMomentAtScale P (m : ℤ) rUpper hP4.xi hP hStruct *
           (∫ a, childAvg a ^ ζ ∂P) ^ (1 / ζ) := by
-    simpa [upperExcess, LambdaPositiveExcessMomentAtScale,
-      Ch04.annealedMomentRoot, rUpper, ζ, one_div, Real.rpow_natCast] using hHolderRaw
+    simpa [upperExcess, childAvg, p_e, q_e, LambdaPositiveExcessMomentAtScale,
+      Ch04.annealedMomentRoot, rUpper, β, ζ, one_div, Real.rpow_natCast] using hHolderRaw
   exact hHolder.trans
     (mul_le_mul_of_nonneg_left hChildMomentRoot_le
       (Section52.LambdaPositiveExcessMomentAtScale_nonneg

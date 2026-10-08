@@ -115,7 +115,7 @@ theorem normalizedRoot_posDef_of_posDef [NeZero d] {m : Mat d}
   exact (norm_pos_iff.mpr hne : 0 < ‖(m⁻¹ : Mat d)‖)
 
 /-- The exact normalized root squares to the scalar-normalized matrix. -/
-theorem normalizedRoot_mul_self [NeZero d] {m : Mat d} (hm : m.PosDef) :
+theorem normalizedRoot_mul_self {m : Mat d} (hm : m.PosDef) :
     Selection.normalizedRoot m * Selection.normalizedRoot m = specBound m⁻¹ • m := by
   rw [Selection.normalizedRoot_eq, Matrix.smul_mul, Matrix.mul_smul, smul_smul,
     Real.mul_self_sqrt (specBound_nonneg _), (matSqrt_spec hm.posSemidef).2]

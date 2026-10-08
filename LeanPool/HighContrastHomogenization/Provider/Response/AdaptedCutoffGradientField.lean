@@ -133,7 +133,7 @@ theorem contDiff_scalarCutoffGradientField_adaptedPreYoungCutoff_pullback
 cutoff bounds leaves a dimension-only prefactor times the reciprocal side
 length; no bound is carried. -/
 theorem divCurlWeakNormCoeff_originCube_adaptedPreYoungCutoff_le (d : ℕ)
-    [NeZero d] (t : ℤ) :
+    (t : ℤ) :
     divCurlWeakNormCoeff (originCube d t)
         (adaptedCutoffDerivativeCoeff d * (3 : ℝ) ^ (-2 * t))
         (adaptedCutoffDerivativeCoeff d * (3 : ℝ) ^ (-t)) ≤

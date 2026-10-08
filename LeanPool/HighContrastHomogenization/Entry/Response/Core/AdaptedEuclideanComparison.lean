@@ -115,7 +115,7 @@ theorem standard_recenter {d : ℕ} {j J : ℤ} (hj : j ≤ J) (w : Fin d → �
 `w`, `j ≤ J`, has a recentered index `u` whose cell lies inside the generation-`J` adapted cell,
 and the annealed block over the two cells agrees, since integer translation of an adapted cell
 does not change its annealed block under a stationary law. -/
-theorem rounded_recenter {d : ℕ} [NeZero d]
+theorem rounded_recenter {d : ℕ}
     (P : Measure (CoeffSpace d)) (hstat : IsStationaryLaw P)
     (J : ℕ) (hJ : 2 * d ≤ 3 ^ J) (m : Mat d) (hm : m.PosDef)
     (j : ℤ) (hj : j ≤ (J : ℤ)) (w : Fin d → ℤ) :
@@ -360,7 +360,7 @@ open MeasureTheory
 3 ^ (t - n)` of a base scale, the row-weighted geometric sum over all indices below the cap is
 summable and bounded by the total mass `D` times the geometric series constant, evaluated at the
 cap. -/
-theorem fine_weight_bound {ι : Type*} [Countable ι]
+theorem fine_weight_bound {ι : Type*}
     (w : ι → ℝ) (r : ι → ℤ) (hw0 : ∀ i, 0 ≤ w i) (hw : Summable w)
     (cap n : ℤ) (D : ℝ) (hD : 0 ≤ D)
     (hrow : ∀ t < cap, (∑' i : {i // r i = t}, w i) ≤ D * (3 : ℝ) ^ ((t : ℝ) - n))
@@ -405,8 +405,8 @@ theorem finite_cap_sum {ι : Type*}
   have htop : (∑ i ∈ F with ¬ r i < cap, w i * f i) ≤ a := by
     calc
       _ ≤ ∑ i ∈ F with ¬ r i < cap, w i * a := Finset.sum_le_sum (fun i hi =>
-        mul_le_mul_of_nonneg_left (hcap i (by have := (Finset.mem_filter.mp hi).2; have := hr i;
-          omega)) (hw0 i))
+        mul_le_mul_of_nonneg_left (hcap i (by
+          have := (Finset.mem_filter.mp hi).2; have := hr i; omega)) (hw0 i))
       _ = (∑ i ∈ F with ¬ r i < cap, w i) * a := (Finset.sum_mul ..).symm
       _ ≤ 1 * a := mul_le_mul_of_nonneg_right
         ((hw.sum_le_tsum _ (fun i _ => hw0 i)).trans hmass) ha

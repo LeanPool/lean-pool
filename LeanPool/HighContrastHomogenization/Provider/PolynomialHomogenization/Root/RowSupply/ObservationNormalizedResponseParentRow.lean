@@ -42,7 +42,7 @@ noncomputable section
 
 variable {d : ℕ}
 
-private theorem constantFullBlockMatrixSqrt_one [NeZero d] :
+private theorem constantFullBlockMatrixSqrt_one :
     Book.Ch02.constantFullBlockMatrixSqrt (1 : Mat d) = 1 := by
   have hone : (1 : Mat d) = scalarMatrix (d := d) 1 := by
     ext i j

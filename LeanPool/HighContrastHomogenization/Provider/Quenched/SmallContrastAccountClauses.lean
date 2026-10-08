@@ -53,8 +53,8 @@ variable {d : ℕ}
 
 /-- **The Schur pack at the terminal mean.**  The Schur data exists, and the
 account's `htr` clause holds with equality at `eps = hatExcessAt P q t`. -/
-theorem schur_pack_at_terminal [NeZero d]
-    {P : Measure (CoeffSpace d)} [IsProbabilityMeasure P]
+theorem schur_pack_at_terminal
+    {P : Measure (CoeffSpace d)}
     {q : Mat d} {t : ℤ}
     (hsym : IsSymmetricBlockMat (adaptedMean P q t))
     (hpd : BlockPosDef (adaptedMean P q t)) :

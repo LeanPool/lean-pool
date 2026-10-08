@@ -166,7 +166,7 @@ theorem aestrongly_measurable_primal_projected_oscillation
     {q : Mat d} (hq : q.PosDef) {s t : ℤ} (hst : s ≤ t)
     (g : Mat d) (hg : IsSkewMat g) (p r Qcen : Vec d) (N : ℕ) :
     AEStronglyMeasurable
-      (primal_projected_oscillation hq s t g hg p r Qcen N) P := by
+      (primalProjectedOscillation hq s t g hg p r Qcen N) P := by
   apply (aemeasurable_avsum (alignedIndex q s t) _ ?_).aestronglyMeasurable
   intro z hz
   exact (aestronglyMeasurable_cutoff_projected_primal_pairing_subSkew

@@ -65,7 +65,7 @@ theorem exists_centeredNeumannCorrector_aHarmonicRemainder_of_h1DirichletRhsWeak
     rw [← ball_cubeCenter_eq_openCubeSet]
     simpa [Metric.mem_ball] using cubeRadius_pos Q
   let ω : MeanZeroNeumannCorrectorData Q a (fun x => g x - cubeAverageVec Q g) :=
-    meanZeroNeumannCorrectorDataOf_h1CoerciveEstimate
+    meanZeroNeumannCorrectorDataOfH1CoerciveEstimate
       (Q := Q) (a := a) (g := fun x => g x - cubeAverageVec Q g)
       (lam := lam) (Lam := Lam) hg_centered hC hne hEll
   rcases

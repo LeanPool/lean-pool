@@ -97,10 +97,10 @@ theorem two_mul_le_cubeScale_of_antipodal_mem [NeZero d] {j : ℤ} {w cc : Vec d
   have hA := h1 i0
   have hB := h2 i0
   have hAval : (cc + e - w) i0 = cc i0 + t - w i0 := by
-    show cc i0 + e i0 - w i0 = cc i0 + t - w i0
+    change cc i0 + e i0 - w i0 = cc i0 + t - w i0
     rw [he0]
   have hBval : (cc + -e - w) i0 = cc i0 - t - w i0 := by
-    show cc i0 + -e i0 - w i0 = cc i0 - t - w i0
+    change cc i0 + -e i0 - w i0 = cc i0 - t - w i0
     rw [he0]
     ring
   rw [hAval] at hA
@@ -152,7 +152,7 @@ theorem two_mul_gaugeInnerRadius_le_cubeScale [NeZero d] {abar : Mat d}
   have hv' : v ∈ matImage (matSqrt (symmPart abar))⁻¹
       (ellipsoid abar (1 / (3 * Real.sqrt (d : ℝ)))) := by
     rw [matImage_matSqrt_inv_ellipsoid_eq hS (1 / (3 * Real.sqrt (d : ℝ)))]
-    show vecNormSq v ≤
+    change vecNormSq v ≤
       specBound ((symmPart abar)⁻¹) * (1 / (3 * Real.sqrt (d : ℝ))) ^ 2
     rw [hsq]
     exact hv
@@ -191,7 +191,7 @@ theorem two_mul_rho_le_cubeScale [NeZero d] {abar : Mat d}
       (cc := cc) (w := matVecMul (matSqrt (symmPart abar))⁻¹ z) (j := j) ?_
     intro v hv
     have hball : cc + v ∈ euclideanBallAt cc rho := by
-      show vecNormSq (cc + v - cc) < rho ^ 2
+      change vecNormSq (cc + v - cc) < rho ^ 2
       have hsimp : cc + v - cc = v := by abel
       rw [hsimp]
       exact lt_of_le_of_lt hv htsq

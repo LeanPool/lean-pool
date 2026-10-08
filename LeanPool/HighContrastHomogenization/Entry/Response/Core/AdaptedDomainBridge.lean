@@ -62,6 +62,7 @@ variable {d : ℕ} [NeZero d]
 
 /-! ## B1. Adapted cells are Chapter-2 domains. -/
 
+omit [NeZero d] in
 /-- `U_t = q(centeredCube t)` is an open bounded convex domain
 (`p.response.transfer`; old `DomainBridge.lean`).  Route:
 `HCPoly/Entry/Annealed/AdaptedDomainLocality.lean` (`isOpenBoundedConvexDomain_affine_openCube`). -/
@@ -165,7 +166,7 @@ private theorem isEllipticMatrix_sub_skew {lam Lam : ℝ} {A : Mat d}
   have hlam_le' : lam ≤ 2 * Lam + 2 * ‖g‖ ^ 2 / lam := by
     linarith only [hlamLam, hLam_pos, hterm_nonneg]
   have hsplit : ∀ η : Vec d, matVecMul (A - g) η = matVecMul A η - matVecMul g η := by
-    intro η; show (A - g).mulVec η = A.mulVec η - g.mulVec η; exact Matrix.sub_mulVec A g η
+    intro η; change (A - g).mulVec η = A.mulVec η - g.mulVec η; exact Matrix.sub_mulVec A g η
   have hlower' : ∀ ξ : Vec d, lam * vecNormSq ξ ≤ vecDot ξ (matVecMul (A - g) ξ) := by
     intro ξ
     rw [hsplit ξ]

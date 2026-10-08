@@ -69,7 +69,7 @@ theorem exists_h10Function_affinePullback {L : Mat d} (hL : IsUnit L.det)
           (u.approx_smooth n).comp
             (LinearMap.toContinuousLinearMap (Matrix.mulVecLin L)).contDiff
       approx_hasCompactSupport := fun n ↦ by
-        show HasCompactSupport (u.approx n ∘ e)
+        change HasCompactSupport (u.approx n ∘ e)
         simpa [e, T, Function.comp_def] using
           (u.approx_hasCompactSupport n).comp_homeomorph e
       approx_support_subset := fun n y hy ↦ by

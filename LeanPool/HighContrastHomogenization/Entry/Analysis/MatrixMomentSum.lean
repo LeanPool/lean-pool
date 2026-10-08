@@ -85,7 +85,7 @@ theorem pow_sum_eq_sum_prod_ofFn {R : Type*} [Ring R] {ι : Type*}
                 M ((p.1 : ι)) * (List.ofFn fun k => M ((p.2 k : ι))).prod := by
         refine (Fintype.sum_equiv (Fin.consEquiv (fun _ => {x // x ∈ s})) _ _ ?_).symm
         intro p
-        show M ((p.1 : ι)) * (List.ofFn fun k => M ((p.2 k : ι))).prod
+        change M ((p.1 : ι)) * (List.ofFn fun k => M ((p.2 k : ι))).prod
           = (List.ofFn fun k => M (((Fin.cons p.1 p.2 : Fin (n + 1) → {x // x ∈ s}) k : ι))).prod
         rw [List.ofFn_succ, List.prod_cons]
         simp
@@ -321,7 +321,7 @@ theorem integral_prod_le_prod_eLpNorm {Ω : Type*} [MeasurableSpace Ω]
 
 /-- A fixed equality partition without singleton blocks contributes at most the N-th power of the
 quadratic sum. -/
-theorem sum_prod_eqPattern_le {κ β ι : Type*} [Fintype κ] [Fintype β] [Fintype ι]
+theorem sum_prod_eqPattern_le {κ β ι : Type*} [Fintype κ] [Fintype ι]
     [DecidableEq κ] [DecidableEq β] [DecidableEq ι]
     (q : κ → β) (hq : Function.Surjective q)
     (hb : ∀ b, 2 ≤ Fintype.card {k // q k = b})
@@ -329,6 +329,7 @@ theorem sum_prod_eqPattern_le {κ β ι : Type*} [Fintype κ] [Fintype β] [Fint
     (∑ f ∈ Finset.univ.filter (fun f : κ → ι => ∀ k l, f k = f l ↔ q k = q l),
       ∏ k, u (f k)) ≤ ((∑ i, u i ^ 2) ^ ((1 : ℝ) / 2)) ^ Fintype.card κ := by
   classical
+  let : Fintype β := Fintype.ofSurjective q hq
   let t := Finset.univ.filter (fun f : κ → ι => ∀ k l, f k = f l ↔ q k = q l)
   let r : β → κ := fun b => Classical.choose (hq b)
   have hr : ∀ b, q (r b) = b := fun b => Classical.choose_spec (hq b)
@@ -535,7 +536,7 @@ theorem lqSchattenNorm_pow_eq_integral_trace {d N : ℕ} {P : Measure (CoeffSpac
 
 /-- The independent centered symmetric matrix sum bound with coefficient exactly N.
 The proof also covers the empty finset: its word sum is empty since N is positive. -/
-theorem lqSchattenNorm_finset_sum_le_of_iIndepFun {d : ℕ} {ι : Type*} [DecidableEq ι]
+theorem lqSchattenNorm_finset_sum_le_of_iIndepFun {d : ℕ} {ι : Type*}
     (P : Measure (CoeffSpace d)) (hP : IsProbabilityMeasure P)
     {N : ℕ} (hN : 2 ≤ N) (hNeven : Even N)
     (s : Finset ι) (Y : ι → CoeffSpace d → BlockMat d)

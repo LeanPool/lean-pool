@@ -166,7 +166,7 @@ theorem abs_cubeAverage_vecDot_le_localized_negative_overlapping_positive_besov
   simpa [C0, K, mul_comm, mul_left_comm, mul_assoc] using hstandard
 
 theorem localizedFluxDefectPositivePairingEstimate_standardOverlap
-    (d : ℕ) [NeZero d] :
+    (d : ℕ) :
     LocalizedFluxDefectPositivePairingEstimate d
       ((1 + (d : ℝ) * Real.rpow (3 : ℝ) ((d : ℝ) + 1)) *
         Real.sqrt (3 ^ d : ℝ)) := by

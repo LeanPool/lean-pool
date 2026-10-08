@@ -93,7 +93,7 @@ theorem annealedResponseJAtScale_le
 /-- Entrywise expectation of the deterministic descendant-average coarse block
 matrix is the annealed origin-cube block matrix at the child scale. -/
 private theorem integral_descendantsAverageBlockMat_entry_eq_annealedBlockMatrixAtScale
-    {d : ℕ} [NeZero d] {P : RestrictionCoeffLaw d} (hP : RestrictionLawCarrier P)
+    {d : ℕ} {P : RestrictionCoeffLaw d} (hP : RestrictionLawCarrier P)
     (hstat : RestrictionStationaryLaw P) {n m : ℤ} (hn : 0 ≤ n) (hnm : n ≤ m)
     (hDescInt :
       ∀ R, R ∈ descendantsAtScale (originCube d m) n →

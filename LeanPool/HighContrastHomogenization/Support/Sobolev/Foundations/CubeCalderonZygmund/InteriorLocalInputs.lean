@@ -180,7 +180,7 @@ theorem hilbertifyVecField_interiorParentDatumExtension
 stopping-ball comparison.  The local equation is derived by restriction from
 the parent equation, with its coefficient and minus sign unchanged. -/
 theorem interiorParent_oneStoppingBall_inputs
-    {d : ℕ} [NeZero d] {depth : ℕ} {m : ℤ} {sigma0 : ℝ}
+    {d : ℕ} {depth : ℕ} {m : ℤ} {sigma0 : ℝ}
     {x : Vec d} {r : ℝ}
     (hx : x ∈ openCubeSet (originCube d m))
     (hr : 0 < r)

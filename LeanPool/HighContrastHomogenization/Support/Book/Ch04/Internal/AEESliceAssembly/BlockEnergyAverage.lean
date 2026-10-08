@@ -962,7 +962,6 @@ theorem aemeasurable_blockEnergyAverage_comp_countable_aeeQuantitativeSlice_cove
               AEEQuantitativeEllipticSlice U k ((fun ω : cover (some k) => A ω.1) ω) := by
           intro ω
           have hω : ω.1 ∈ t k := by
-            simp [cover] at ω
             exact ω.2
           exact hSlice k ω.1 hω
         simpa [f, cover] using

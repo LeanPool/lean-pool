@@ -79,7 +79,7 @@ theorem isSymm_matSqrt {n : Type*} [Fintype n] [DecidableEq n]
 /-- Conjugation by a symmetric matrix preserves symmetry. -/
 theorem isSymm_mul_mul {n : Type*} [Fintype n] {S H : Matrix n n ℝ}
     (hS : S.IsSymm) (hH : H.IsSymm) : (S * H * S).IsSymm := by
-  show (S * H * S).transpose = S * H * S
+  change (S * H * S).transpose = S * H * S
   rw [Matrix.transpose_mul, Matrix.transpose_mul, hS.eq, hH.eq, ← Matrix.mul_assoc]
 
 /-- **Obligation O2, second half.**  The normalized block of a symmetric block is

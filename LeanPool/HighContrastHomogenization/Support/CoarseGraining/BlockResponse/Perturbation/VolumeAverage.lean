@@ -97,14 +97,7 @@ theorem blockFirstVariationIntegrand_pair_half_eq_scalarFirstVariation_sum_on_of
           (vecDot (z.toH1.grad x) (matVecMul (matTranspose (a x)) (v.toH1.grad x)) +
             vecDot (matVecMul (matTranspose (a x)) (z.toH1.grad x)) (v.toH1.grad x)) := by
     simp [symmPart_eq_smul_add_transpose, smul_matVecMul, add_matVecMul,
-      vecDot_add_right, vecDot_smul_right, matTranspose]
-    rw [show
-      vecDot (z.toH1.grad x) (matVecMul (a x) (v.toH1.grad x)) =
-        vecDot (matVecMul (matTranspose (a x)) (z.toH1.grad x)) (v.toH1.grad x) by
-        simpa [matTranspose] using
-          (vecDot_matVecMul_transpose (z.toH1.grad x) (v.toH1.grad x)
-            (matTranspose (a x)))]
-    simp [matTranspose]
+      vecDot_add_right, vecDot_smul_right, vecDot_matVecMul_transpose]
     ring_nf
   have hcross_v_symm :
       vecDot (z.toH1.grad x) (matVecMul (symmPart (a x)) (v.toH1.grad x)) =

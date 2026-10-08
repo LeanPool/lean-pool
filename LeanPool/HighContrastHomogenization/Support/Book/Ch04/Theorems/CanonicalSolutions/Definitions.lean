@@ -208,12 +208,16 @@ noncomputable def canonicalMuHilbertEnergyBilinFixedCubeSet
         (((canonicalAEEMuOperatorSystemData Q k ak).toMuHilbertRealization).minimizerMap P0)
   · exact 0
 
+/-- A block test state with the cube indicator times the `i`th basis vector in its potential
+component and zero flux. -/
 @[expose]
 noncomputable def canonicalUpperImageIndicatorTestStateCubeSet
     {d : ℕ} (R : TriadicCube d) (i : Fin d) : BlockState d :=
   { potential := fun x => (cubeSet R).indicator (fun _ => Pi.single i 1) x
     flux := fun _ => 0 }
 
+/-- A block test state with the cube indicator times the `i`th basis vector in its flux component
+and zero potential. -/
 @[expose]
 noncomputable def canonicalLowerImageIndicatorTestStateCubeSet
     {d : ℕ} (R : TriadicCube d) (i : Fin d) : BlockState d :=

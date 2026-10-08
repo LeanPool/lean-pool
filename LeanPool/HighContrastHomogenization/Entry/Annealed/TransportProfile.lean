@@ -792,13 +792,15 @@ theorem transport_bulk_mean_bound (d : ℕ) (hd : 2 ≤ d)
   have he (j : ℤ) : j - (if j ≤ k + (L : ℤ) then 1 else (L : ℤ)) = cap j := by
     dsimp only [cap, ell]; split_ifs <;> rfl
   have hsum : (∑ j ∈ J, F (cap j)) ≤ 2 * ∑ r ∈ U, F r := by
-    have hh := transport_bulk_generation_sum k L J U F hF (by intro j hjmem; rw [he]; exact hgen
-      j hjmem)
+    have hh := transport_bulk_generation_sum k L J U F hF (by
+      intro j hjmem
+      rw [he]
+      exact hgen j hjmem)
     simpa only [he] using hh
   have hpay : (∑ r ∈ U, F r) ≤
       (2 + 1 / (1 - (3 : ℝ) ^ (-((1 - γ) / 4)))) * profile P γ q jStar k t :=
-    transport_meanHistory_to_profile d hd P γ E Ψ K S hstat hdag jStar hj m hm k t hk (by dsimp
-      only [t]; omega)
+    transport_meanHistory_to_profile d hd P γ E Ψ K S hstat hdag jStar hj m hm k t hk (by
+      dsimp only [t]; omega)
   calc
     _ ≤ ∑ j ∈ J, D * F (cap j) := by
       apply Finset.sum_le_sum

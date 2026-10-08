@@ -164,7 +164,7 @@ private theorem cubeBesovDualFullNorm_finset_sum_le
       · exact cubeBesovConjExponent_two_ne_zero
       · exact cubeBesovConjExponent_two_ne_top
       intro g _hg
-      simp
+      simp only [cubeBesovPairing_zero_left, abs_zero, le_refl]
   | @insert a S ha ih =>
       have hterm : MemLp (fun x ↦ c a * F x a) (2 : ℝ≥0∞)
           (normalizedCubeMeasure Q) := by

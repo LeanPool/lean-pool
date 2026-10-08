@@ -39,7 +39,7 @@ noncomputable section
 centered-cube growth. -/
 theorem
   NormalizedLocalH1Carrier.exists_affineAdd_cubeLpNorm_le_three_pow
-    {d : ℕ} [NeZero d] (z : NormalizedLocalH1Carrier d)
+    {d : ℕ} (z : NormalizedLocalH1Carrier d)
     (q₀ : ℕ) (C : ℝ) (hC : 0 ≤ C)
     (hcube : ∀ q : ℕ, q₀ ≤ q →
       cubeLpNorm (originCube d (q : ℤ)) 2 z.globalValueRepresentative ≤

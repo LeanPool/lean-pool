@@ -135,7 +135,7 @@ theorem mem_potentialZeroTraceSolenoidalZeroNormalTraceHilbertL2_iff {d : ℕ}
 
 /-- A field in the manuscript space `L_sol,0(U)` has zero restricted-volume
 integral. -/
-theorem integral_eq_zero_of_mem_solenoidalZeroNormalTraceHilbertL2 {d : ℕ} [NeZero d]
+theorem integral_eq_zero_of_mem_solenoidalZeroNormalTraceHilbertL2 {d : ℕ}
     {U : Set (Vec d)} (hU : IsOpenBoundedConvexDomain U) (hne : U.Nonempty)
     (g : HilbertVectorL2 U) (hg : g ∈ SolenoidalZeroNormalTraceHilbertL2 U hU hne) :
     ∫ x, g x ∂volumeMeasureOn U = 0 :=
@@ -144,7 +144,7 @@ theorem integral_eq_zero_of_mem_solenoidalZeroNormalTraceHilbertL2 {d : ℕ} [Ne
 /-- The normalized-domain average of a field in the manuscript space
 `L_sol,0(U)` vanishes. -/
 theorem normalizedAverage_eq_zero_of_mem_solenoidalZeroNormalTraceHilbertL2
-    {d : ℕ} [NeZero d] {U : Set (Vec d)} (hU : IsOpenBoundedConvexDomain U)
+    {d : ℕ} {U : Set (Vec d)} (hU : IsOpenBoundedConvexDomain U)
     (hne : U.Nonempty) (g : HilbertVectorL2 U)
     (hg : g ∈ SolenoidalZeroNormalTraceHilbertL2 U hU hne) :
     (hU.toBoundedMeasurableDomain hne).average g (by

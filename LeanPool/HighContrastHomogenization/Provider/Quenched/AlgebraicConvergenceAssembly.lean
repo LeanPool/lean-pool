@@ -73,7 +73,7 @@ theorem constantBlockMatrix_eq_blockMatrixOfCoarseMatrices (a : Mat d) :
 of the coefficient matrix. -/
 theorem schurSigmaStar_constantBlockMatrix {a : Mat d} (ha : (symmPart a).PosDef) :
     schurSigmaStar (Book.Ch02.constantBlockMatrix a) = symmPart a := by
-  show ((symmPart a)⁻¹)⁻¹ = symmPart a
+  change ((symmPart a)⁻¹)⁻¹ = symmPart a
   exact Matrix.nonsing_inv_nonsing_inv _ (isUnit_det_of_posDef ha)
 
 /-- **The Schur block `k` of a constant doubled block** is the antisymmetric part

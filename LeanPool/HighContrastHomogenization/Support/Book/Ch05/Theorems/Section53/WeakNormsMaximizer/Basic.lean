@@ -37,7 +37,7 @@ noncomputable section
 
 /-- The high-scale averaged-gradient term in the weak-norm maximizer estimate. -/
 @[expose]
-noncomputable def gradientAverageTermAtScale {d : ℕ} [NeZero d]
+noncomputable def gradientAverageTermAtScale {d : ℕ}
     (m k : ℤ) (s : ℝ) (p q p0 : Vec d) (a : RegCoeffField d) : ℝ :=
   let Q : TriadicCube d := originCube d m
   ∑ n ∈ Finset.Icc (k + 1) m,
@@ -50,7 +50,7 @@ noncomputable def gradientAverageTermAtScale {d : ℕ} [NeZero d]
 
 /-- The high-scale averaged-flux term in the weak-norm maximizer estimate. -/
 @[expose]
-noncomputable def fluxAverageTermAtScale {d : ℕ} [NeZero d]
+noncomputable def fluxAverageTermAtScale {d : ℕ}
     (m k : ℤ) (t : ℝ) (p q q0 : Vec d) (a : RegCoeffField d) : ℝ :=
   let Q : TriadicCube d := originCube d m
   ∑ n ∈ Finset.Icc (k + 1) m,
@@ -74,7 +74,7 @@ noncomputable def responseDefectAverageAtScale {d : ℕ}
 quantity on the parent cube.  The dimensional constant is inserted by the final
 RHS. -/
 @[expose]
-noncomputable def gradientMismatchTermAtScale {d : ℕ} [NeZero d]
+noncomputable def gradientMismatchTermAtScale {d : ℕ}
     (m k : ℤ) (s s' : ℝ) (p q : Vec d) (a : RegCoeffField d) : ℝ :=
   let Q : TriadicCube d := originCube d m
   Real.sqrt ((Ch04.lambdaSqCoeffField Q s' (.finite 1) a)⁻¹) *
@@ -86,7 +86,7 @@ noncomputable def gradientMismatchTermAtScale {d : ℕ} [NeZero d]
 quantity on the parent cube.  The dimensional constant is inserted by the final
 RHS. -/
 @[expose]
-noncomputable def fluxMismatchTermAtScale {d : ℕ} [NeZero d]
+noncomputable def fluxMismatchTermAtScale {d : ℕ}
     (m k : ℤ) (t t' : ℝ) (p q : Vec d) (a : RegCoeffField d) : ℝ :=
   let Q : TriadicCube d := originCube d m
   Real.sqrt (Ch04.LambdaSqCoeffField Q t' (.finite 1) a) *
@@ -96,7 +96,7 @@ noncomputable def fluxMismatchTermAtScale {d : ℕ} [NeZero d]
 
 /-- The low-scale gradient tail in the weak-norm maximizer estimate. -/
 @[expose]
-noncomputable def gradientLowScaleTailAtScale {d : ℕ} [NeZero d]
+noncomputable def gradientLowScaleTailAtScale {d : ℕ}
     (m k : ℤ) (s s' : ℝ) (p q : Vec d) (a : RegCoeffField d) : ℝ :=
   let Q : TriadicCube d := originCube d m
   (s - s')⁻¹ *
@@ -106,7 +106,7 @@ noncomputable def gradientLowScaleTailAtScale {d : ℕ} [NeZero d]
 
 /-- The low-scale flux tail in the weak-norm maximizer estimate. -/
 @[expose]
-noncomputable def fluxLowScaleTailAtScale {d : ℕ} [NeZero d]
+noncomputable def fluxLowScaleTailAtScale {d : ℕ}
     (m k : ℤ) (t t' : ℝ) (p q : Vec d) (a : RegCoeffField d) : ℝ :=
   let Q : TriadicCube d := originCube d m
   (t - t')⁻¹ *
@@ -129,7 +129,7 @@ noncomputable def fluxConstantTailAtScale {d : ℕ}
 /-- Manuscript right-hand side for the gradient estimate in
 `l.weak.norms.maximizer.homogenization.scale`. -/
 @[expose]
-noncomputable def gradientRHSAtScale {d : ℕ} [NeZero d]
+noncomputable def gradientRHSAtScale {d : ℕ}
     (C : ℝ) (m k : ℤ) (s s' : ℝ)
     (p q p0 : Vec d) (a : RegCoeffField d) : ℝ :=
   gradientAverageTermAtScale m k s p q p0 a +
@@ -140,7 +140,7 @@ noncomputable def gradientRHSAtScale {d : ℕ} [NeZero d]
 /-- Manuscript right-hand side for the flux estimate in
 `l.weak.norms.maximizer.homogenization.scale`. -/
 @[expose]
-noncomputable def fluxRHSAtScale {d : ℕ} [NeZero d]
+noncomputable def fluxRHSAtScale {d : ℕ}
     (C : ℝ) (m k : ℤ) (t t' : ℝ)
     (p q q0 : Vec d) (a : RegCoeffField d) : ℝ :=
   fluxAverageTermAtScale m k t p q q0 a +

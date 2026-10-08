@@ -34,21 +34,25 @@ face, the corresponding one-sided transition is suppressed; this keeps the raw
 weight uniformly positive near `∂Q` when we work relative to `openCubeSet Q`.
 -/
 
+/-- The lower coordinate endpoint of a triadic cube, used to describe its faces and membership. -/
 @[expose]
 noncomputable def cubeCoordLower {d : ℕ}
     (Q : TriadicCube d) (i : Fin d) : ℝ :=
   (((Q.index i : ℝ) - (1 / 2 : ℝ)) * cubeScaleFactor Q)
 
+/-- The upper coordinate endpoint of a triadic cube, used to describe its faces and membership. -/
 @[expose]
 noncomputable def cubeCoordUpper {d : ℕ}
     (Q : TriadicCube d) (i : Fin d) : ℝ :=
   (((Q.index i : ℝ) + (1 / 2 : ℝ)) * cubeScaleFactor Q)
 
+/-- The lower coordinate endpoint of the overlap cube centered at `S`. -/
 @[expose]
 noncomputable def overlapCoordLower {d : ℕ}
     (S : TriadicCube d) (i : Fin d) : ℝ :=
   (((S.index i : ℝ) - (3 / 2 : ℝ)) * cubeScaleFactor S)
 
+/-- The upper coordinate endpoint of the overlap cube centered at `S`. -/
 @[expose]
 noncomputable def overlapCoordUpper {d : ℕ}
     (S : TriadicCube d) (i : Fin d) : ℝ :=
@@ -385,6 +389,8 @@ theorem overlapCubeSet_child_subset_cubeSet_of_digit_safe {d : ℕ}
         nlinarith [hRupperQ, hSscale_pos, hdigit_le_one]
     exact lt_of_lt_of_le hyi.2 hupper_overlap
 
+/-- The child digit used to obtain an overlap weight equal to one at `x`, choosing the middle digit
+near parent faces. -/
 @[expose]
 noncomputable def plateauChildDigit {d : ℕ}
     (Q R : TriadicCube d) (x : Vec d) (i : Fin d) : Fin 3 :=
@@ -452,6 +458,8 @@ theorem plateauChildDigit_two_safe {d : ℕ}
         omega
   · exact hSep
 
+/-- The child of `R` selected by the plateau digits to provide a unit raw overlap weight for points
+of `R`. -/
 @[expose]
 noncomputable def plateauChildCube {d : ℕ}
     (Q R : TriadicCube d) (x : Vec d) : TriadicCube d :=
@@ -491,6 +499,8 @@ theorem contDiff_upperOverlapArgument {d : ℕ}
       (fun x : Vec d => (overlapCoordUpper S i - x i) / cubeScaleFactor S) := by
   fun_prop
 
+/-- Smooth cutoff from the lower overlap face, set to one when that face reaches or lies beyond the
+lower parent face. -/
 @[expose]
 noncomputable def lowerOverlapTransition {d : ℕ}
     (Q S : TriadicCube d) (i : Fin d) (x : Vec d) : ℝ :=
@@ -499,6 +509,8 @@ noncomputable def lowerOverlapTransition {d : ℕ}
   else
     smoothTransitionProfile ((x i - overlapCoordLower S i) / cubeScaleFactor S)
 
+/-- Smooth cutoff from the upper overlap face, set to one when that face reaches or lies beyond the
+upper parent face. -/
 @[expose]
 noncomputable def upperOverlapTransition {d : ℕ}
     (Q S : TriadicCube d) (i : Fin d) (x : Vec d) : ℝ :=

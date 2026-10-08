@@ -83,7 +83,7 @@ theorem ruledCellScale_lt_two_mul_Rad [NeZero d]
       (continuous_id.sub continuous_const)) continuous_const
   have hUsub : U ⊆ {y : Vec d | vecNormSq (y - system.center) ≤ Rad ^ 2} := by
     intro y hy
-    show vecNormSq (y - system.center) ≤ Rad ^ 2
+    change vecNormSq (y - system.center) ≤ Rad ^ 2
     exact le_of_lt (system.outer_ball hy)
   have hzball : vecNormSq (z - system.center) ≤ Rad ^ 2 :=
     closure_minimal hUsub hclosed (frontier_subset_closure hzFrontier)

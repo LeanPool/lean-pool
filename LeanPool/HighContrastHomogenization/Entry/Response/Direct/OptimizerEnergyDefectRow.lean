@@ -68,7 +68,7 @@ subcell, and that the annealed flat average of the deficits `D` is the scale def
 `6 τ + 4 √(τ EJ) + 2 K EJ`.  This is the first error row of `p.response.transfer` assembled from
 its oscillation and subcell-mean halves. -/
 theorem abs_integral_le_row1_of_parts {α : Type*} [MeasurableSpace α] (P : Measure α)
-    [IsProbabilityMeasure P] {d : ℕ} (n : ℕ)
+    {d : ℕ} (n : ℕ)
     (c : (Fin d → ℤ) → ℝ) (Ecell J D : (Fin d → ℤ) → α → ℝ) (Wtot Jt : α → ℝ)
     (K cJ τ EJ : ℝ) (hK : 0 ≤ K)
     (hosc : ∀ a, |Wtot a - (((triadicIndexBox d n).card : ℝ))⁻¹ *
@@ -240,8 +240,8 @@ law-integral of the cutoff half-energy minus the terminal response is at most
 `max 3 (32 d^2 responseCutoffProfileConst)` times
 `τ^- + (τ^- E[J_t^-])^{1/2} + 3^{-H} E[J_t^-]`.  This is the first error row of
 `p.response.transfer` on the carriers of the cutoff estimate. -/
-theorem abs_integral_cutoffHalfEnergy_sub_respJ_le_rowMinus {d : ℕ} [NeZero d]
-    (P : Measure (CoeffSpace d)) [IsProbabilityMeasure P] (jStar : ℕ) (F : BlockMat d)
+theorem abs_integral_cutoffHalfEnergy_sub_respJ_le_rowMinus {d : ℕ}
+    (P : Measure (CoeffSpace d)) (jStar : ℕ) (F : BlockMat d)
     (H : ℕ) (s t : ℤ) (e : Vec d) (φ : Vec d → ℝ)
     (uM : (a : CoeffSpace d) → AHarmonicFunction (respCoeffMinus F a) (respCell jStar F t))
     (hid : ∀ a, cutoffHalfEnergyAux (respCell jStar F t) φ (respCoeffMinus F a) (uM a)
@@ -383,7 +383,7 @@ theorem abs_integral_cutoffHalfEnergy_sub_respJ_le_rowMinus {d : ℕ} [NeZero d]
     exact integral_nonneg (fun a => mul_nonneg hNnonneg
       (Finset.sum_nonneg (fun w hw => hD0 w hw a)))
   have hEJ0 : 0 ≤ respEJMinus P jStar F t e := by
-    show 0 ≤ ∫ a, respJ (respGrid jStar F) t (respP (respMean P jStar F t) e)
+    change 0 ≤ ∫ a, respJ (respGrid jStar F) t (respP (respMean P jStar F t) e)
       (respqMinus P jStar F t e) (respCoeffMinus F a) ∂P
     exact integral_nonneg hJt0
   have h3H : 0 ≤ (3 : ℝ) ^ (-(H : ℝ)) := Real.rpow_nonneg (by norm_num) _
@@ -501,7 +501,7 @@ everywhere with the carrier coefficient.  The maximizer `u` for the carrier coef
 carried along the a.e. equality to a maximizer for the elliptic representative `f`; the identity
 `cutoffHalfEnergy_sub_respJ_eq` is applied there and every quantity is transported back across the
 a.e. equality.  Both sides are unchanged by the replacement, so the conclusion names `c` and `u`. -/
-private theorem cutoffHalfEnergyAux_sub_respJ_eq_of_ae_eq {d : ℕ} [NeZero d] {q : Mat d}
+private theorem cutoffHalfEnergyAux_sub_respJ_eq_of_ae_eq {d : ℕ} {q : Mat d}
     (hq : IsUnit q) (t : ℤ) {c f : CoeffField d} {lam Lam : ℝ}
     (hEll : IsEllipticFieldOn lam Lam (HighContrast.adaptedCell q t) f)
     (hae : c =ᵐ[volumeMeasureOn (HighContrast.adaptedCell q t)] f)
@@ -587,7 +587,7 @@ private theorem cutoffHalfEnergyAux_sub_respJ_eq_of_ae_eq {d : ℕ} [NeZero d] {
   rw [hLHS, hkeyE, hRHS]
 
 /-- The cutoff energy defect of the minus family, with no pointwise ellipticity hypothesis. -/
-theorem cutoffHalfEnergyAux_sub_respJ_eq_respCoeffMinus {d : ℕ} [NeZero d] {jStar : ℕ}
+theorem cutoffHalfEnergyAux_sub_respJ_eq_respCoeffMinus {d : ℕ} {jStar : ℕ}
     (hjStar : 2 * d ≤ 3 ^ jStar) {F : BlockMat d} (hm : (explicitCanonicalMetric F).PosDef) (t : ℤ)
     (φ : Vec d → ℝ) (hφ : IsResponseCutoff (respGrid jStar F) t φ) (p r : Vec d)
     (a : CoeffSpace d) (u : AHarmonicFunction (respCoeffMinus F a) (respCell jStar F t))
@@ -603,7 +603,7 @@ theorem cutoffHalfEnergyAux_sub_respJ_eq_respCoeffMinus {d : ℕ} [NeZero d] {jS
     φ hφ p r u hmax
 
 /-- The adjoint twin. -/
-theorem cutoffHalfEnergyAux_sub_respJ_eq_respCoeffPlus {d : ℕ} [NeZero d] {jStar : ℕ}
+theorem cutoffHalfEnergyAux_sub_respJ_eq_respCoeffPlus {d : ℕ} {jStar : ℕ}
     (hjStar : 2 * d ≤ 3 ^ jStar) {F : BlockMat d} (hm : (explicitCanonicalMetric F).PosDef) (t : ℤ)
     (φ : Vec d → ℝ) (hφ : IsResponseCutoff (respGrid jStar F) t φ) (p r : Vec d)
     (a : CoeffSpace d) (u : AHarmonicFunction (respCoeffPlus F a) (respCell jStar F t))

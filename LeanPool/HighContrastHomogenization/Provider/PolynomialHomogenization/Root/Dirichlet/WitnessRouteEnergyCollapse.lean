@@ -79,7 +79,7 @@ theorem witnessErrorEccentricityExponent_nonneg {g kappaRate : ℝ}
   exact div_nonneg (mul_nonneg hrho hmax) hden
 
 /-- The collapsed law-free constant is monotone in its amplitude. -/
-theorem collapsedEnergyLawFree_mono [NeZero d] (C : ℝ) {s A B : ℝ}
+theorem collapsedEnergyLawFree_mono (C : ℝ) {s A B : ℝ}
     (hs : 0 < s) (hA : 0 ≤ A) (hAB : A ≤ B) :
     collapsedEnergyLawFree C d s A ≤ collapsedEnergyLawFree C d s B := by
   have hsq : A ^ 2 ≤ B ^ 2 := by
@@ -107,7 +107,7 @@ theorem collapsedEnergyLawFree_mono [NeZero d] (C : ℝ) {s A B : ℝ}
 /-- **The fifth factor, in hand.**  The witness-route energy price collapses to
 a law-free constant times a fixed power of the witness eccentricity, at any
 law-free amplitude dominating the route's own. -/
-theorem witnessRouteEnergyPrice_le_collapsed [NeZero d] (C : ℝ)
+theorem witnessRouteEnergyPrice_le_collapsed (C : ℝ)
     {g kappaRate s₀ Claw Cgeo J Alaw : ℝ} {abar : Mat d}
     (hs : 0 < s₀) (hkappa : 0 < kappaRate)
     (hrho : 0 ≤ Certificate.printRowOrder g)

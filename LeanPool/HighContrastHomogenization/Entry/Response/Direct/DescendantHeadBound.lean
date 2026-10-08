@@ -72,7 +72,7 @@ arbitrary family `b` of coefficient fields, if the pathwise head is integrable c
 the annealed block of a descendant cell depends only on the inner index, then the annealed flat
 average of the squared pathwise head over the depth-`(H + n)` index box is at most the depth-`n`
 layer of the source load read on the annealed block. -/
-private theorem integral_avsum_sq_head_descendant_le_aux {d : ℕ} [NeZero d]
+private theorem integral_avsum_sq_head_descendant_le_aux {d : ℕ}
     (P : Measure (CoeffSpace d)) (jStar : ℕ) (F : BlockMat d)
     (b : CoeffSpace d → CoeffField d) (H n : ℕ) (s : ℤ) (Y : BlockVec d)
     (hUL : ∀ W : Fin d → ℤ, Integrable (fun a => vecDot Y.1 (matVecMul
@@ -325,7 +325,7 @@ private theorem integral_avsum_sq_head_descendant_le_aux {d : ℕ} [NeZero d]
 the cutoff-mean row of `p.response.transfer` at depth `n`, minus sign: the annealed flat average
 over the generation-`(s-n)` cells of the terminal cell of the squared pathwise head is at most the
 depth-`n` layer of the source load. -/
-theorem integral_avsum_sq_head_descendant_le_respCoeffMinus {d : ℕ} [NeZero d]
+theorem integral_avsum_sq_head_descendant_le_respCoeffMinus {d : ℕ}
     (P : Measure (CoeffSpace d)) (hstat : IsStationaryLaw P) (jStar : ℕ) (F : BlockMat d)
     (H n : ℕ) (s : ℤ) (hjs : (jStar : ℤ) ≤ s) (Y : BlockVec d)
     (hUL : ∀ W : Fin d → ℤ, Integrable (fun a => vecDot Y.1 (matVecMul
@@ -388,7 +388,7 @@ theorem integral_avsum_sq_head_descendant_le_respCoeffMinus {d : ℕ} [NeZero d]
 /-- **The annealed flat average of the squared pairing head at descendant depth `n`, plus
 sign.**  The adjoint twin of `integral_avsum_sq_head_descendant_le_respCoeffMinus`, for the
 recentred family `a_+ = a^t + g`. -/
-theorem integral_avsum_sq_head_descendant_le_respCoeffPlus {d : ℕ} [NeZero d]
+theorem integral_avsum_sq_head_descendant_le_respCoeffPlus {d : ℕ}
     (P : Measure (CoeffSpace d)) (hstat : IsStationaryLaw P) (jStar : ℕ) (F : BlockMat d)
     (H n : ℕ) (s : ℤ) (hjs : (jStar : ℤ) ≤ s) (Y : BlockVec d)
     (hUL : ∀ W : Fin d → ℤ, Integrable (fun a => vecDot Y.1 (matVecMul

@@ -63,7 +63,7 @@ theorem responseJ_transpose_zero_left {U : Domain d} (a : CoeffOn U) (q : Vec d)
 theorem sigmaStarInvCoarse_transpose {U : Domain d} (a : CoeffOn U) :
     Book.Ch02.sigmaStarInvCoarse U a.transpose = Book.Ch02.sigmaStarInvCoarse U a := by
   ext i j
-  show Book.Ch02.sigmaStarInvEntry U a.transpose i j = Book.Ch02.sigmaStarInvEntry U a i j
+  change Book.Ch02.sigmaStarInvEntry U a.transpose i j = Book.Ch02.sigmaStarInvEntry U a i j
   unfold Book.Ch02.sigmaStarInvEntry
   by_cases h : i = j <;>
     simp [h, responseJ_transpose_zero_left]
@@ -73,7 +73,7 @@ the sign of `κ` cancelling in the quadratic correction. -/
 theorem bCoarse_transpose {U : Domain d} (a : CoeffOn U) :
     Book.Ch02.bCoarse U a.transpose = Book.Ch02.bCoarse U a := by
   have hT := Internal.Ch02.BookCh02.blockCoarseMatrixTheory U a
-  show Book.Ch02.sigmaCoarse U a.transpose +
+  change Book.Ch02.sigmaCoarse U a.transpose +
       matTranspose (Book.Ch02.kappaCoarse U a.transpose) *
           Book.Ch02.sigmaStarInvCoarse U a.transpose *
         Book.Ch02.kappaCoarse U a.transpose =
@@ -119,12 +119,12 @@ theorem coarseBlockMatrix_transpose {U : Domain d} (a : CoeffOn U) :
     simp
   have hLR : Book.Ch02.sigmaStarInvCoarse U a.transpose = Book.Ch02.sigmaStarInvCoarse U a :=
     sigmaStarInvCoarse_transpose a
-  show ({ upperLeft := Book.Ch02.bCoarse U a.transpose
-          upperRight := -(matTranspose (Book.Ch02.kappaCoarse U a.transpose) *
-            Book.Ch02.sigmaStarInvCoarse U a.transpose)
-          lowerLeft := -(Book.Ch02.sigmaStarInvCoarse U a.transpose *
-            Book.Ch02.kappaCoarse U a.transpose)
-          lowerRight := Book.Ch02.sigmaStarInvCoarse U a.transpose } : BlockMat d) = _
+  change ({ upperLeft := Book.Ch02.bCoarse U a.transpose
+            upperRight := -(matTranspose (Book.Ch02.kappaCoarse U a.transpose) *
+              Book.Ch02.sigmaStarInvCoarse U a.transpose)
+            lowerLeft := -(Book.Ch02.sigmaStarInvCoarse U a.transpose *
+              Book.Ch02.kappaCoarse U a.transpose)
+            lowerRight := Book.Ch02.sigmaStarInvCoarse U a.transpose } : BlockMat d) = _
   rw [hUL, hUR, hLL, hLR]
   simp
 

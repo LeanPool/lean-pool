@@ -819,7 +819,7 @@ theorem descendant_lambdaSq_inv_le {d : ℕ} [NeZero d]
   | infinity =>
       exact descendant_lambdaSq_infinity_inv_le (Q := Q) (R := R) (k := k) a hR hs
 
-theorem ThetaRatio_nonneg {d : ℕ} [NeZero d]
+theorem ThetaRatio_nonneg {d : ℕ}
     (Q : TriadicCube d) (a : TriadicCoeffFamily d) {s t : ℝ}
     (hs : 0 < s) (ht : 0 < t) :
     0 ≤ ThetaRatio Q s t a := by

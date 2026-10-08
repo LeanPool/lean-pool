@@ -74,7 +74,7 @@ variable {d : ℕ}
 
 /-- **The Schur data exists at every generation**, from the structural facts
 about the adapted mean alone. -/
-theorem schur_data_at_generation [NeZero d] {P : Measure (CoeffSpace d)}
+theorem schur_data_at_generation {P : Measure (CoeffSpace d)}
     [IsProbabilityMeasure P] {l : ℤ} {q : Mat d} (hq : IsRoundedGrid l q)
     (hfin : ∀ k : ℤ, HasFiniteAdaptedMean P q k) (t : ℤ) :
     ∃ S0 SStar0 K0 : Mat d, S0.PosDef ∧ SStar0.PosDef ∧

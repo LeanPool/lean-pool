@@ -180,7 +180,7 @@ private theorem isLocalTest_inv_smul (r : ℝ) (hr : 0 < r)
   refine ⟨by
       simpa [Function.comp_def] using hphi.contDiff.comp (contDiff_const_smul r⁻¹), ?_,
     Set.subset_univ _⟩
-  show HasCompactSupport (phi ∘ Homeomorph.smulOfNeZero r⁻¹ (inv_ne_zero hr.ne'))
+  change HasCompactSupport (phi ∘ Homeomorph.smulOfNeZero r⁻¹ (inv_ne_zero hr.ne'))
   simpa [Function.comp_def] using
     hphi.hasCompactSupport.comp_homeomorph
       (Homeomorph.smulOfNeZero r⁻¹ (inv_ne_zero hr.ne'))
@@ -228,7 +228,7 @@ private theorem isLocalTest_triadicPullback (n : ℕ) {U : Set (Vec d)}
   have hr : 0 < r := by positivity
   refine ⟨by
       simpa [Function.comp_def] using hphi.contDiff.comp (contDiff_const_smul r⁻¹), ?_, ?_⟩
-  · show HasCompactSupport (phi ∘ Homeomorph.smulOfNeZero r⁻¹ (inv_ne_zero hr.ne'))
+  · change HasCompactSupport (phi ∘ Homeomorph.smulOfNeZero r⁻¹ (inv_ne_zero hr.ne'))
     simpa [Function.comp_def] using
       hphi.hasCompactSupport.comp_homeomorph
         (Homeomorph.smulOfNeZero r⁻¹ (inv_ne_zero hr.ne'))

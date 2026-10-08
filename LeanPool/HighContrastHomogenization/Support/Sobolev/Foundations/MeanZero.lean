@@ -259,7 +259,7 @@ noncomputable def averageGradient {d : ℕ} {U : Set (Vec d)}
 /-- If each gradient coordinate of an `H¹` function has zero integral, then its
 componentwise average gradient vanishes. -/
 theorem averageGradient_eq_zero_of_integral_eq_zero
-    {d : ℕ} {U : Set (Vec d)} [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
+    {d : ℕ} {U : Set (Vec d)}
     (u : H1Function U)
     (hzero : (fun i => ∫ x in U, u.grad x i ∂MeasureTheory.volume) = 0) :
     u.averageGradient = 0 := by
@@ -384,7 +384,7 @@ theorem exists_h1_sub_averageGradient_of_isSobolevRegularDomain
 /-- If the average gradient vanishes and the domain has nonzero volume, then
 the componentwise gradient integrals vanish. -/
 theorem integral_eq_zero_of_averageGradient_eq_zero
-    {d : ℕ} {U : Set (Vec d)} [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
+    {d : ℕ} {U : Set (Vec d)}
     (u : H1Function U) (hvol : (MeasureTheory.volume U).toReal ≠ 0)
     (havg : u.averageGradient = 0) :
     (fun i => ∫ x in U, u.grad x i ∂MeasureTheory.volume) = 0 := by

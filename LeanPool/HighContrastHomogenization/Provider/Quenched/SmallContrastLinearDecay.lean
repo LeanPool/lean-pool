@@ -232,7 +232,7 @@ private theorem linear_source_spacing_bound {A b0 d0 S0 : ℝ} {j : ℕ}
   have hLx : Real.logb 3 (S0 / (2 * A * linLam A d0 j ^ 2)) / b0 ≤
       (Real.logb 3 S0 + 2 * y) / b0 := by
     refine div_le_div_of_nonneg_right ?_ hb0.le
-    show Real.logb 3 (S0 / (2 * A * linLam A d0 j ^ 2)) ≤
+    change Real.logb 3 (S0 / (2 * A * linLam A d0 j ^ 2)) ≤
         Real.logb 3 S0 + 2 * y
     have hbody : Real.logb 3 (S0 / (2 * A * linLam A d0 j ^ 2)) ≤
         Real.logb 3 S0 + 2 * y := by

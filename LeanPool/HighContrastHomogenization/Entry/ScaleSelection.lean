@@ -103,68 +103,69 @@ theorem scale_selection
     fun _ s _ _ => Multiscale.one_le_selectionLength L₀ hL₀ s,
     ⟨L₀, fun e s he hs => Multiscale.selectionLength_bridge_condition L₀ e s
       ⟨he.1, le_trans he.2 hε₀mem.2.le⟩ hs⟩⟩
-  intro ε σ hε hσ B hB P E Ψ K Src hP hstat hunit hdag jStar hj hsrc m hm k n hjk hkn
-    hecc hin1 hin2 mStar mPlus hcont
-  have hε0 : 0 < ε := hε.1
-  have hεle : ε ≤ ε₀ := hε.2
-  have hε4 : ε ∈ Set.Ioc (0 : ℝ) (1 / 4) := ⟨hε0, le_trans hεle hε₀q⟩
-  have hεc : ε ≤ (c₀ / ((d : ℝ) + 1)) ^ 2 := le_trans hεle hε₀c
-  have hεε₁ : ε ≤ ε₁ := le_trans hεle hε₀1
-  have hQε : (bigQ d γ : ℝ) * (d : ℝ) * ε ≤ Real.log 2 :=
-    le_trans (mul_le_mul_of_nonneg_left hεle (mul_nonneg hQ0 hd0)) hε₀Q
-  have hCε : C * ε ^ ((1 - γ) / 8) ≤ 1 :=
-    le_trans (mul_le_mul_of_nonneg_left
-      (Real.rpow_le_rpow hε0.le hεle (by linarith only [hγ.2])) hCpos.le) hε₀C
-  have hLε : 2 * Ctr * ε ≤ (L₀ : ℝ) * Real.log 3 :=
-    le_trans (mul_le_mul_of_nonneg_left hεle (by linarith only [hCtrpos])) hε₀L
-  have hBmax : max (1 : ℝ)
-      (max (B₀b (Real.sqrt ε * σ) (Multiscale.selectionLength L₀ σ))
-        (2 * Ctr * ((Multiscale.selectionLength L₀ σ : ℝ) + 1))) ≤ B := hB
-  have hB1 : B₀b (Real.sqrt ε * σ) (Multiscale.selectionLength L₀ σ) ≤ B :=
-    le_trans (le_trans (le_max_left _ _) (le_max_right _ _)) hBmax
-  have hB2 : 2 * Ctr * ((Multiscale.selectionLength L₀ σ : ℝ) + 1) ≤ B :=
-    le_trans (le_trans (le_max_right _ _) (le_max_right _ _)) hBmax
-  have hecc2 : 1 / 2 * Real.log (‖m‖ * ‖m⁻¹‖) ≤
-      ε / (Multiscale.selectionLength L₀ σ : ℝ) *
-        ((k : ℝ) - (jStar : ℝ) - (⌈B * Real.logb 3 (2 + aspectRatio E)⌉ : ℤ)) := hecc
-  have hin1b : k = n →
-      profile P γ (Geometry.explicitRoundedGrid jStar m) jStar n n +
-        determinantDrift P γ (Geometry.explicitRoundedGrid jStar m) jStar n ≤ 1 := hin1
-  have hin2b : k < n → k + ((2 * bigQ d γ : ℕ) : ℤ) ≤ n := hin2
-  have hcontb : HighContrast.adaptedCell (Geometry.explicitRoundedGrid jStar m)
-        (n + 2 * (Multiscale.selectionLength L₀ σ : ℤ)) ∪
-      HighContrast.adaptedCell
-        (Geometry.explicitRoundedGrid jStar
-          (geometryUpdate ε m
-            (explicitCanonicalMetric
-              (adaptedMean P (Geometry.explicitRoundedGrid jStar m)
-                (n + 2 * (Multiscale.selectionLength L₀ σ : ℤ))))))
-        (n + (Multiscale.selectionLength L₀ σ : ℤ)) ⊆
-      HighContrast.centeredCube d (2 * (jStar : ℤ)) := hcont
-  rcases Multiscale.alternatives_exhaustive k n hkn
-      (profile P γ (Geometry.explicitRoundedGrid jStar m) jStar k n +
-        determinantDrift P γ (Geometry.explicitRoundedGrid jStar m) jStar n)
-      (c₀ * ε * σ)
-      ((d : ℝ)⁻¹ *
-        synchCharge P (Geometry.explicitRoundedGrid jStar m) ((2 * bigQ d γ : ℕ) : ℤ) n)
-      σ
-      ((d : ℝ)⁻¹ *
-        detIncrement P (Geometry.explicitRoundedGrid jStar m) n
-          (n + 2 * (Multiscale.selectionLength L₀ σ : ℤ)))
-      (ε * σ) with hk | ⟨hk, hη, hx⟩ | ⟨hk, hη, hy⟩ | ⟨hk, hη, hx⟩ | ⟨hk, hη, hy⟩
-  · exact Or.inl (Multiscale.startup_alternative d hd γ hγ Csrc C₁ hC₁ hone C hCone L₀ ε σ B
-      P E Ψ K Src hP hstat hunit hdag jStar hj hsrc m hm k n hjk hkn hecc2 hin1b hk)
-  · exact Or.inr (Or.inl (Multiscale.service_alternative d hd γ hγ Csrc C₁ hC₁ hone C hCone
-      L₀ c₀ ε σ B hσ hQε P E Ψ K Src hP hstat hunit hdag jStar hj hsrc m hm k n hjk hkn
-      hecc2 hin2b hk hη hx))
-  · exact Or.inr (Or.inr (Or.inl (Multiscale.transport_alternative d hd γ hγ Csrc C₁ hC₁ hone
-      Ctr hCtr htr C hCtwo L₀ hL₀ hCtrL₀ c₀ hc₀ B₀b hbr ε₁ hsmall ε σ B hε4 hεc hεε₁ hQε hCε
-      hLε hσ hB1 hB2 P E Ψ K Src hP hstat hunit hdag jStar hj hsrc m hm k n hjk hkn hecc2
-      hin2b hcontb hk hη hy)))
-  · exact Or.inr (Or.inr (Or.inr (Or.inl (Multiscale.obstruction_sync_alternative d γ L₀ c₀
-      ε σ B P E jStar m k n hecc2 hk hη hx))))
-  · exact Or.inr (Or.inr (Or.inr (Or.inr (Multiscale.obstruction_long_alternative d γ L₀ c₀
-      ε σ B P E jStar m k n hecc2 hin2b hk hη hy))))
+  focus
+    intro ε σ hε hσ B hB P E Ψ K Src hP hstat hunit hdag jStar hj hsrc m hm k n hjk hkn
+      hecc hin1 hin2 mStar mPlus hcont
+    have hε0 : 0 < ε := hε.1
+    have hεle : ε ≤ ε₀ := hε.2
+    have hε4 : ε ∈ Set.Ioc (0 : ℝ) (1 / 4) := ⟨hε0, le_trans hεle hε₀q⟩
+    have hεc : ε ≤ (c₀ / ((d : ℝ) + 1)) ^ 2 := le_trans hεle hε₀c
+    have hεε₁ : ε ≤ ε₁ := le_trans hεle hε₀1
+    have hQε : (bigQ d γ : ℝ) * (d : ℝ) * ε ≤ Real.log 2 :=
+      le_trans (mul_le_mul_of_nonneg_left hεle (mul_nonneg hQ0 hd0)) hε₀Q
+    have hCε : C * ε ^ ((1 - γ) / 8) ≤ 1 :=
+      le_trans (mul_le_mul_of_nonneg_left
+        (Real.rpow_le_rpow hε0.le hεle (by linarith only [hγ.2])) hCpos.le) hε₀C
+    have hLε : 2 * Ctr * ε ≤ (L₀ : ℝ) * Real.log 3 :=
+      le_trans (mul_le_mul_of_nonneg_left hεle (by linarith only [hCtrpos])) hε₀L
+    have hBmax : max (1 : ℝ)
+        (max (B₀b (Real.sqrt ε * σ) (Multiscale.selectionLength L₀ σ))
+          (2 * Ctr * ((Multiscale.selectionLength L₀ σ : ℝ) + 1))) ≤ B := hB
+    have hB1 : B₀b (Real.sqrt ε * σ) (Multiscale.selectionLength L₀ σ) ≤ B :=
+      le_trans (le_trans (le_max_left _ _) (le_max_right _ _)) hBmax
+    have hB2 : 2 * Ctr * ((Multiscale.selectionLength L₀ σ : ℝ) + 1) ≤ B :=
+      le_trans (le_trans (le_max_right _ _) (le_max_right _ _)) hBmax
+    have hecc2 : 1 / 2 * Real.log (‖m‖ * ‖m⁻¹‖) ≤
+        ε / (Multiscale.selectionLength L₀ σ : ℝ) *
+          ((k : ℝ) - (jStar : ℝ) - (⌈B * Real.logb 3 (2 + aspectRatio E)⌉ : ℤ)) := hecc
+    have hin1b : k = n →
+        profile P γ (Geometry.explicitRoundedGrid jStar m) jStar n n +
+          determinantDrift P γ (Geometry.explicitRoundedGrid jStar m) jStar n ≤ 1 := hin1
+    have hin2b : k < n → k + ((2 * bigQ d γ : ℕ) : ℤ) ≤ n := hin2
+    have hcontb : HighContrast.adaptedCell (Geometry.explicitRoundedGrid jStar m)
+          (n + 2 * (Multiscale.selectionLength L₀ σ : ℤ)) ∪
+        HighContrast.adaptedCell
+          (Geometry.explicitRoundedGrid jStar
+            (geometryUpdate ε m
+              (explicitCanonicalMetric
+                (adaptedMean P (Geometry.explicitRoundedGrid jStar m)
+                  (n + 2 * (Multiscale.selectionLength L₀ σ : ℤ))))))
+          (n + (Multiscale.selectionLength L₀ σ : ℤ)) ⊆
+        HighContrast.centeredCube d (2 * (jStar : ℤ)) := hcont
+    rcases Multiscale.alternatives_exhaustive k n hkn
+        (profile P γ (Geometry.explicitRoundedGrid jStar m) jStar k n +
+          determinantDrift P γ (Geometry.explicitRoundedGrid jStar m) jStar n)
+        (c₀ * ε * σ)
+        ((d : ℝ)⁻¹ *
+          synchCharge P (Geometry.explicitRoundedGrid jStar m) ((2 * bigQ d γ : ℕ) : ℤ) n)
+        σ
+        ((d : ℝ)⁻¹ *
+          detIncrement P (Geometry.explicitRoundedGrid jStar m) n
+            (n + 2 * (Multiscale.selectionLength L₀ σ : ℤ)))
+        (ε * σ) with hk | ⟨hk, hη, hx⟩ | ⟨hk, hη, hy⟩ | ⟨hk, hη, hx⟩ | ⟨hk, hη, hy⟩
+    · exact Or.inl (Multiscale.startup_alternative d hd γ hγ Csrc C₁ hC₁ hone C hCone L₀ ε σ B
+        P E Ψ K Src hP hstat hunit hdag jStar hj hsrc m hm k n hjk hkn hecc2 hin1b hk)
+    · exact Or.inr (Or.inl (Multiscale.service_alternative d hd γ hγ Csrc C₁ hC₁ hone C hCone
+        L₀ c₀ ε σ B hσ hQε P E Ψ K Src hP hstat hunit hdag jStar hj hsrc m hm k n hjk hkn
+        hecc2 hin2b hk hη hx))
+    · exact Or.inr (Or.inr (Or.inl (Multiscale.transport_alternative d hd γ hγ Csrc C₁ hC₁ hone
+        Ctr hCtr htr C hCtwo L₀ hL₀ hCtrL₀ c₀ hc₀ B₀b hbr ε₁ hsmall ε σ B hε4 hεc hεε₁ hQε hCε
+        hLε hσ hB1 hB2 P E Ψ K Src hP hstat hunit hdag jStar hj hsrc m hm k n hjk hkn hecc2
+        hin2b hcontb hk hη hy)))
+    · exact Or.inr (Or.inr (Or.inr (Or.inl (Multiscale.obstruction_sync_alternative d γ L₀ c₀
+        ε σ B P E jStar m k n hecc2 hk hη hx))))
+    · exact Or.inr (Or.inr (Or.inr (Or.inr (Multiscale.obstruction_long_alternative d γ L₀ c₀
+        ε σ B P E jStar m k n hecc2 hin2b hk hη hy))))
   -- **C3 of the successor `Selects` (defect 85)**: the short bridge applied at the tolerance
   -- `δ = ε^{1/2}σ` with the chosen length unchanged (`p.scale.selection`), from the
   -- same `BridgeBody` input and the same four thresholds as `Multiscale.bridge_application`,

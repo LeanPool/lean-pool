@@ -186,7 +186,7 @@ Only the maximizer on `V` is used; the parent need not be a maximizer on `U`.
 The four integrability side conditions are those required by the first- and
 second-variation identities. -/
 theorem difference_energy_eq_response_deficit {U V : Set (Vec d)} (hVU : V ⊆ U)
-    (hU : IsOpen U) (hV : IsOpen V) [IsFiniteMeasure (volumeMeasureOn V)]
+    (hU : IsOpen U) (hV : IsOpen V)
     {a : CoeffField d} {lam Lam : ℝ} (hEll : IsEllipticFieldOn lam Lam V a)
     {p q : Vec d} {u : AHarmonicFunction a U} {v : AHarmonicFunction a V}
     (hmaxV : IsResponseMaximizer V p q a v)
@@ -403,7 +403,6 @@ theorem avg_difference_energy_eq_responseJ_deficit_ae {iota : Type*}
     (Z : Finset iota) (V : iota → Set (Vec d)) (U : Set (Vec d))
     {a : CoeffField d} {lam Lam : ℝ} {p q : Vec d}
     (u : AHarmonicFunction a U) (v : (w : iota) → AHarmonicFunction a (V w))
-    [hfin : ∀ w, IsFiniteMeasure (volumeMeasureOn (V w))]
     (hZ : Z.Nonempty)
     (hU : IsOpen U) (hVopen : ∀ w ∈ Z, IsOpen (V w))
     (hVU : ∀ w ∈ Z, V w ⊆ U)
@@ -463,7 +462,6 @@ theorem avg_difference_energy_eq_responseJ_deficit_adaptedCell_ae
     {a : CoeffField d} {lam Lam : ℝ} {p r : Vec d}
     (u : AHarmonicFunction a (HighContrast.adaptedCell q t))
     (v : (w : Fin d → ℤ) → AHarmonicFunction a (adaptedCellAtCenter q (t - (n : ℤ)) w))
-    [hfin : ∀ w, IsFiniteMeasure (volumeMeasureOn (adaptedCellAtCenter q (t - (n : ℤ)) w))]
     (hEll : ∀ w ∈ triadicIndexBox d n,
       IsEllipticFieldOn lam Lam (adaptedCellAtCenter q (t - (n : ℤ)) w) a)
     (hmaxV : ∀ w ∈ triadicIndexBox d n,

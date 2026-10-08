@@ -104,7 +104,7 @@ private theorem mulVec_reindex_self {n : Type*} [Fintype n]
   ext i
   change dotProduct (Matrix.reindex e e M i) v = dotProduct (M (e.symm i)) (v ∘ e)
   rw [dotProduct, dotProduct]
-  simp [Matrix.reindex_apply]
+  simp only [Matrix.reindex_apply, Matrix.submatrix_apply, Function.comp_apply]
   exact (Fintype.sum_equiv e
     (fun j => M (e.symm i) j * v (e j))
     (fun j => M (e.symm i) (e.symm j) * v j)

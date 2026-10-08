@@ -742,7 +742,7 @@ theorem transport_whitney_mean_identity (d : ℕ) (hd : 2 ≤ d)
   have htu := (Finset.mem_Icc.mp ht).2
   have hz (z) (hz : z ∈ Z t) : z ∈ adaptedLatticeAtScale q t := by
     have h : z ∈ maximalAdaptedCellCenters W q cap t := (hfin t htu).mem_toFinset.mp (by simpa
-      only [Z, dite_eq_left htu] using hz)
+      only [Z, (dite_eq_left htu)] using hz)
     rcases h with ⟨v, _hv, rfl⟩
     exact ⟨v, rfl⟩
   have hmrow := (transport_centered_lattice_row d hd P γ E Ψ K S hstat hdag jStar hjStar m hm

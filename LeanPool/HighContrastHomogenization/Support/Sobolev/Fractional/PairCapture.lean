@@ -171,7 +171,7 @@ theorem mem_descendantsAtDepth_of_index_range {Q : TriadicCube d} :
             ({ scale := Q.scale - (m : ℤ),
                index := fun i => (T.index i + 1) / 3 } : TriadicCube d) := by
         apply mem_childCubes_of_scale_eq_of_index_range
-        · show T.scale = Q.scale - (m : ℤ) - 1
+        · change T.scale = Q.scale - (m : ℤ) - 1
           rw [hscale]
           push_cast
           ring

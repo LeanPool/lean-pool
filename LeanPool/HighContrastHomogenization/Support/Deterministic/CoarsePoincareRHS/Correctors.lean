@@ -63,7 +63,7 @@ structure ZeroTraceDirichletCorrectorData {d : ℕ}
 /-- Package a local zero-trace corrector on one cube from the abstract
 Dirichlet RHS existence theorem. -/
 @[expose]
-public noncomputable def zeroTraceDirichletCorrectorDataOf_potentialZeroTraceClosureRealization
+public noncomputable def zeroTraceDirichletCorrectorDataOfClosureRealization
     {d : ℕ} (Q : TriadicCube d) {a : CoeffField d} {g : Vec d → Vec d}
     {lam Lam : ℝ} (hg : MemVectorL2 (cubeSet Q) g)
     (hRealize :
@@ -72,7 +72,7 @@ public noncomputable def zeroTraceDirichletCorrectorDataOf_potentialZeroTraceClo
     (hEll : IsEllipticFieldOn lam Lam (cubeSet Q) a) :
     ZeroTraceDirichletCorrectorData Q a g := by
   exact
-    ⟨zeroTraceDirichletRhsProblemSolution_of_potentialZeroTraceClosureRealization
+    ⟨zeroTraceDirichletRightHandSideSolutionOfClosureRealization
         (a := a) (U := cubeSet Q) (g := g) (lam := lam) (Lam := Lam)
         hg hRealize hne hEll,
       isZeroTraceDirichletRhsWeakSolution_zeroTraceDirichletRhsProblemSolution
@@ -126,7 +126,7 @@ theorem isZeroTraceDirichletRhsWeakSolution_cubeSet_of_openCubeSet
 solving the Dirichlet problem on the corresponding open cube and transporting
 the weak formulation across the a.e.-equal cube realizations. -/
 @[expose]
-noncomputable def zeroTraceDirichletCorrectorDataOf_isEllipticFieldOn_cubeSet
+noncomputable def zeroTraceDirichletCorrectorDataOfCubeEllipticity
     {d : ℕ} [NeZero d] (Q : TriadicCube d) {a : CoeffField d}
     {g : Vec d → Vec d} {lam Lam : ℝ}
     (hg : MemVectorL2 (cubeSet Q) g)
@@ -145,7 +145,7 @@ noncomputable def zeroTraceDirichletCorrectorDataOf_isEllipticFieldOn_cubeSet
     simpa [volumeMeasureOn] using
       (isOpenBoundedConvexDomain_openCubeSet Q).isFiniteMeasure_restrict_volume
   let uOpen : H10Function (openCubeSet Q) :=
-    zeroTraceDirichletRhsProblemSolution_of_potentialZeroTraceClosureRealization
+    zeroTraceDirichletRightHandSideSolutionOfClosureRealization
       (a := a) (U := openCubeSet Q) (g := g) (lam := lam) (Lam := Lam)
       hgOpen hRealizeOpen (openCubeSet_nonempty_rhs Q) hEllOpen
   refine ⟨uOpen.toCubeSet, ?_⟩
@@ -301,7 +301,7 @@ theorem exists_harmonicCorrectorDecomposition
         ∀ x ∈ cubeSet R,
           u x = w.toH1.grad x + ρ.toH10.toH1Function.grad x := by
   let ρ : ZeroTraceDirichletCorrectorData R a g :=
-    zeroTraceDirichletCorrectorDataOf_isEllipticFieldOn_cubeSet
+    zeroTraceDirichletCorrectorDataOfCubeEllipticity
       (Q := R) (a := a) (g := g) (lam := lam) (Lam := Lam) hg_memR hEllR
   rcases ρ.exists_aHarmonicRemainder_of_parent_potential_solenoidal
       (Q := Q) (u := u) hu_potential hu_residual hR hEllR hu_memR hg_memR with

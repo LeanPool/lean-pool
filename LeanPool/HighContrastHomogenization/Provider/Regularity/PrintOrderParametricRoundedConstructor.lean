@@ -234,8 +234,7 @@ private theorem scalar_mul_vecNormSq_le_of_smul_one_le
 
 private theorem isEllipticMatrix_of_posDef_norm_sub_one_le
     {d : ℕ} {A : Mat d} {eps : ℝ} (heps0 : 0 < eps)
-    (hepsHalf : eps ≤ 1 / 2) (hA : A.PosDef) (
-      hnorm : ‖A - 1‖ ≤ eps) :
+    (hepsHalf : eps ≤ 1 / 2) (hA : A.PosDef) (hnorm : ‖A - 1‖ ≤ eps) :
     IsEllipticMatrix (1 - eps) (1 + eps) A := by
   have hdiffHerm : (A - 1)ᴴ = A - 1 :=
     Matrix.IsHermitian.eq (hA.isHermitian.sub Matrix.PosSemidef.one.isHermitian)

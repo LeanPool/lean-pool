@@ -226,7 +226,7 @@ theorem new_fluctuation_sum_le (d : ℕ) (hd : 2 ≤ d) (γ : ℝ)
         (normalizedFluctuationSelf P q j a) ^ bigQ d γ ∂P)
       (∫ a, absSchattenNorm (bigQ d γ : ℝ)
         (normalizedFluctuationSelf P q (j - (h : ℤ)) a) ^ bigQ d γ ∂P)
-      (3 : ℝ) ^ (-((1 - γ) / 4) * (((m + (h : ℤ) : ℤ) : ℝ) - (j : ℝ)))
+      ((3 : ℝ) ^ (-((1 - γ) / 4) * (((m + (h : ℤ) : ℤ) : ℝ) - (j : ℝ))))
       ((bigQ d γ : ℝ) * detIncrement P q j (m + (h : ℤ)))
       ((bigQ d γ : ℝ) * detIncrement P q (j - (h : ℤ)) j)
       ((bigQ d γ : ℝ) * detIncrement P q (j - (h : ℤ)) (m + (h : ℤ))) ehat
@@ -322,7 +322,7 @@ theorem new_fluctuation_sum_le (d : ℕ) (hd : 2 ≤ d) (γ : ℝ)
         profile P γ q jStar n m := by
       unfold profile
       exact le_add_of_nonneg_left hprofnn
-    exact hstep.trans (hext.trans hcombine)
+    exact hstep.trans hcombine
   -- combine
   calc
     ∑ j ∈ Finset.Icc (m + 1) (m + (h : ℤ)),

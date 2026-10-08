@@ -35,13 +35,13 @@ noncomputable section
 /-- Every scalar identity weak error on the integer interval `[n,m]` is at
 most `δ`. -/
 @[expose]
-def ScalarIdentityGoodMaxOnInterval {d : ℕ} [NeZero d]
+def ScalarIdentityGoodMaxOnInterval {d : ℕ}
     (a : Book.Ch02.TriadicCoeffFamily d) (s δ : ℝ) (n m : ℤ) : Prop :=
   ∀ k ∈ Finset.Icc n m, scalarIdentityWeakError a s k ≤ δ
 
 /-- Extract the pointwise weak-error bound from a finite good-max row. -/
 theorem ScalarIdentityGoodMaxOnInterval.weakError_le
-    {d : ℕ} [NeZero d] {a : Book.Ch02.TriadicCoeffFamily d}
+    {d : ℕ} {a : Book.Ch02.TriadicCoeffFamily d}
     {s δ : ℝ} {n m k : ℤ}
     (h : ScalarIdentityGoodMaxOnInterval a s δ n m)
     (hk : k ∈ Finset.Icc n m) :
@@ -50,7 +50,7 @@ theorem ScalarIdentityGoodMaxOnInterval.weakError_le
 
 /-- Increasing the tolerance preserves a finite good-max row. -/
 theorem ScalarIdentityGoodMaxOnInterval.mono
-    {d : ℕ} [NeZero d] {a : Book.Ch02.TriadicCoeffFamily d}
+    {d : ℕ} {a : Book.Ch02.TriadicCoeffFamily d}
     {s δ δ' : ℝ} {n m : ℤ}
     (h : ScalarIdentityGoodMaxOnInterval a s δ n m) (δh : δ ≤ δ') :
     ScalarIdentityGoodMaxOnInterval a s δ' n m := by
@@ -59,7 +59,7 @@ theorem ScalarIdentityGoodMaxOnInterval.mono
 
 /-- Restricting the scale interval preserves a finite good-max row. -/
 theorem ScalarIdentityGoodMaxOnInterval.mono_interval
-    {d : ℕ} [NeZero d] {a : Book.Ch02.TriadicCoeffFamily d}
+    {d : ℕ} {a : Book.Ch02.TriadicCoeffFamily d}
     {s δ : ℝ} {n n' m' m : ℤ}
     (h : ScalarIdentityGoodMaxOnInterval a s δ n m)
     (hn : n ≤ n') (hm : m' ≤ m) :
@@ -70,7 +70,7 @@ theorem ScalarIdentityGoodMaxOnInterval.mono_interval
 /-- A summable finite weak-error row controls the pointwise maximum row at
 the same tolerance. -/
 theorem ScalarIdentityGoodTailOnInterval.toGoodMax
-    {d : ℕ} [NeZero d] {a : Book.Ch02.TriadicCoeffFamily d}
+    {d : ℕ} {a : Book.Ch02.TriadicCoeffFamily d}
     {s δ : ℝ} {n m : ℤ}
     (h : ScalarIdentityGoodTailOnInterval a s δ n m) :
     ScalarIdentityGoodMaxOnInterval a s δ n m := by
@@ -85,7 +85,7 @@ theorem ScalarIdentityGoodTailOnInterval.toGoodMax
 /-- An infinite summable tail controls the finite good-max row on every
 admissible terminal interval. -/
 theorem ScalarIdentityGoodTail.goodMaxOnInterval
-    {d : ℕ} [NeZero d] {a : Book.Ch02.TriadicCoeffFamily d}
+    {d : ℕ} {a : Book.Ch02.TriadicCoeffFamily d}
     {s δ : ℝ} {n m : ℤ}
     (h : ScalarIdentityGoodTail a s δ n) (hnm : n ≤ m) :
     ScalarIdentityGoodMaxOnInterval a s δ n m :=

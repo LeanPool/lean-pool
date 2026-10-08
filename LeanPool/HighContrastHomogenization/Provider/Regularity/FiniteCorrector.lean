@@ -43,6 +43,8 @@ open scoped ENNReal
 
 noncomputable section
 
+/-- The pointwise elliptic representative of the coefficient family on the scale-`m`
+origin cube. -/
 @[expose]
 public noncomputable def finiteAffinePointwiseCoeff {d : ℕ}
     (a : Book.Ch02.TriadicCoeffFamily d) (m : ℤ) :
@@ -72,14 +74,14 @@ private theorem finiteAffinePointwiseCoeff_ae_eq {d : ℕ}
 
 /-- The affine boundary datum `x ↦ e · x` on a centered triadic cube. -/
 @[expose]
-noncomputable def finiteAffineBoundaryH1 {d : ℕ} [NeZero d]
+noncomputable def finiteAffineBoundaryH1 {d : ℕ}
     (m : ℤ) (e : Vec d) :
     H1Function (Book.Ch02.cubeDomain (originCube d m) : Set (Vec d)) :=
   H1Function.affineOnIsSobolevRegularDomain
     (Book.Ch02.cubeDomain (originCube d m)).isDomain.isSobolevRegularDomain e
 
 /-- The affine boundary datum has the prescribed constant gradient. -/
-@[simp] theorem finiteAffineBoundaryH1_grad {d : ℕ} [NeZero d]
+@[simp] theorem finiteAffineBoundaryH1_grad {d : ℕ}
     (m : ℤ) (e : Vec d) :
     (finiteAffineBoundaryH1 m e).grad = fun _ => e := by
   funext x
@@ -87,7 +89,7 @@ noncomputable def finiteAffineBoundaryH1 {d : ℕ} [NeZero d]
     (Book.Ch02.cubeDomain (originCube d m)).isDomain.isSobolevRegularDomain e x
 
 /-- The affine boundary datum is the Euclidean linear function `x ↦ e · x`. -/
-@[simp] theorem finiteAffineBoundaryH1_toFun {d : ℕ} [NeZero d]
+@[simp] theorem finiteAffineBoundaryH1_toFun {d : ℕ}
     (m : ℤ) (e : Vec d) :
     (finiteAffineBoundaryH1 m e).toFun = fun x => vecDot e x := by
   funext x
@@ -95,6 +97,8 @@ noncomputable def finiteAffineBoundaryH1 {d : ℕ} [NeZero d]
     H1Function.affineOnIsSobolevRegularDomain_apply
       (Book.Ch02.cubeDomain (originCube d m)).isDomain.isSobolevRegularDomain e x
 
+/-- The forcing vector field given by the negative coefficient flux of the constant slope
+`e`. -/
 @[expose]
 public noncomputable def finiteAffineForcing {d : ℕ}
     (a : Book.Ch02.TriadicCoeffFamily d) (m : ℤ) (e : Vec d) :
@@ -164,7 +168,7 @@ private theorem isZeroTraceDirichletRhsWeakSolution_smul {d : ℕ}
 noncomputable def finiteAffineCorrection {d : ℕ} [NeZero d]
     (a : Book.Ch02.TriadicCoeffFamily d) (m : ℤ) (e : Vec d) :
     H10Function (Book.Ch02.cubeDomain (originCube d m) : Set (Vec d)) :=
-  zeroTraceDirichletRhsProblemSolution_of_potentialZeroTraceClosureRealization
+  zeroTraceDirichletRightHandSideSolutionOfClosureRealization
     (a := (finiteAffinePointwiseCoeff a m).toCoeffField)
     (g := finiteAffineForcing a m e)
     (Internal.Ch02.BookCh02.memVectorL2_neg_matVecMul_const
@@ -328,6 +332,8 @@ private theorem finiteAffineCorrection_toFun_smul {d : ℕ} [NeZero d]
     exact hL2
   simpa only [H1Function.smul_toFun] using! hfun
 
+/-- The affine datum `x ↦ e · x` plus the zero-trace finite correction on the scale-`m`
+cube. -/
 @[expose]
 public noncomputable def finiteAffineH1 {d : ℕ} [NeZero d]
     (a : Book.Ch02.TriadicCoeffFamily d) (m : ℤ) (e : Vec d) :
@@ -488,7 +494,7 @@ theorem finiteAffineSolution_isAffineDirichletSolution {d : ℕ} [NeZero d]
     exact (finiteAffineCorrection a m e).isPotentialZeroTraceOn
 
 private theorem exists_finiteAffineCorrection_weakSolution_of_isAffineDirichletSolution
-    {d : ℕ} [NeZero d] (a : Book.Ch02.TriadicCoeffFamily d) (m : ℤ)
+    {d : ℕ} (a : Book.Ch02.TriadicCoeffFamily d) (m : ℤ)
     (e : Vec d)
     (u : H1Function
       (Book.Ch02.cubeDomain (originCube d m) : Set (Vec d)))
@@ -698,7 +704,7 @@ private theorem scaleNormalizedPositiveBesovVectorNormTwo_const
   rw [cubeAverageVec_const, hsemi, add_zero]
 
 theorem finiteAffineBoundaryH1_isConstantCoeffForcedEquation
-    {d : ℕ} [NeZero d] (m : ℤ) (e : Vec d) :
+    {d : ℕ} (m : ℤ) (e : Vec d) :
     Book.Ch03.IsConstantCoeffForcedEquation (originCube d m)
       (identityConstantCoeffMatrix d) (finiteAffineBoundaryH1 m e)
       (0 : Vec d → Vec d) := by
@@ -725,6 +731,8 @@ theorem finiteAffineBoundaryH1_isConstantCoeffForcedEquation
   simpa only [identityConstantCoeffMatrix_matrix, HCPolySupport.matVecMul_one,
     Pi.zero_apply, vecDot_zero_left, integral_zero] using! hsol φ
 
+/-- Comparison data pairing the `a`-harmonic finite affine solution with the affine
+solution for the identity coefficient and zero forcing. -/
 @[expose]
 public noncomputable def finiteAffineComparisonDatum {d : ℕ} [NeZero d]
     (a : Book.Ch02.TriadicCoeffFamily d) (m : ℤ) (e : Vec d) :
@@ -773,7 +781,7 @@ private theorem poincareUpperEllipticityFactor_le_weakError {d : ℕ}
     using hsqrt
 
 private theorem coarseGrainingHomogenizationErrorAtDepth_zero
-    {d : ℕ} [NeZero d] (Q : TriadicCube d)
+    {d : ℕ} (Q : TriadicCube d)
     (a : Book.Ch02.TriadicCoeffFamily d)
     (a0 : Book.Ch03.ConstantCoeffMatrix d) (r : ℝ) :
     Book.Ch03.coarseGrainingHomogenizationErrorAtDepth Q a a0 r 0 =

@@ -65,7 +65,7 @@ jStar F) j w`
 of the squared two-term head of the corresponding annealed block is the head of the single cell
 at the index `0`.  Every subcell is an integer translate of the centred cell and the law is
 translation invariant, so the summand is independent of `w`. -/
-theorem avsum_sq_head_annealed_respCoeffMinus_eq {d : ℕ} [NeZero d]
+theorem avsum_sq_head_annealed_respCoeffMinus_eq {d : ℕ}
     (P : Measure (CoeffSpace d)) (hstat : IsStationaryLaw P) (jStar : ℕ) (F : BlockMat d)
     (j : ℤ) (hj : (jStar : ℤ) ≤ j) (n : ℕ) (Y : BlockVec d)
     (hmeas : ∀ i k : Fin d, AEStronglyMeasurable (fun a =>
@@ -125,7 +125,7 @@ jStar F) j w`
 of the squared two-term head of the corresponding annealed block is the head of the single cell
 at the index `0`.  Every subcell is an integer translate of the centred cell and the law is
 translation invariant, so the summand is independent of `w`. -/
-theorem avsum_sq_head_annealed_respCoeffPlus_eq {d : ℕ} [NeZero d]
+theorem avsum_sq_head_annealed_respCoeffPlus_eq {d : ℕ}
     (P : Measure (CoeffSpace d)) (hstat : IsStationaryLaw P) (jStar : ℕ) (F : BlockMat d)
     (j : ℤ) (hj : (jStar : ℤ) ≤ j) (n : ℕ) (Y : BlockVec d)
     (hmeas : ∀ i k : Fin d, AEStronglyMeasurable (fun a =>
@@ -221,8 +221,8 @@ pairing is at most `√(L_s^-) * √(2 tau^-)`, where `L_s^-` is the source load
 `p.response.transfer` at the recentred coefficient `a_-` and the dual variable `Y^-`.  This is the
 cell half of the cutoff-mean row, with the expectation outside the flat average and no inversion
 of an annealed block and no Jensen step. -/
-theorem abs_integral_avsum_weighted_pairing_le_respLsMinus {d : ℕ} [NeZero d]
-    (P : Measure (CoeffSpace d)) [IsProbabilityMeasure P] (hstat : IsStationaryLaw P)
+theorem abs_integral_avsum_weighted_pairing_le_respLsMinus {d : ℕ}
+    (P : Measure (CoeffSpace d)) (hstat : IsStationaryLaw P)
     (jStar : ℕ) (F : BlockMat d) (H : ℕ) (s t : ℤ) (e : Vec d) (hjs : (jStar : ℤ) ≤ s)
     (c : (Fin d → ℤ) → ℝ) (hc : ∀ w ∈ triadicIndexBox d H, |c w| ≤ 1)
     (pairing D : (Fin d → ℤ) → CoeffSpace d → ℝ)
@@ -386,8 +386,8 @@ theorem abs_integral_avsum_weighted_pairing_le_respLsMinus {d : ℕ} [NeZero d]
 recentred coefficient `a_+ = aᵀ + g`, the dual variable `Y^+`, the annealed head collapse
 `avsum_sq_head_annealed_respCoeffPlus_eq`, the scale defect `tau^+` and the source load `L_s^+` of
 `p.response.transfer`. -/
-theorem abs_integral_avsum_weighted_pairing_le_respLsPlus {d : ℕ} [NeZero d]
-    (P : Measure (CoeffSpace d)) [IsProbabilityMeasure P] (hstat : IsStationaryLaw P)
+theorem abs_integral_avsum_weighted_pairing_le_respLsPlus {d : ℕ}
+    (P : Measure (CoeffSpace d)) (hstat : IsStationaryLaw P)
     (jStar : ℕ) (F : BlockMat d) (H : ℕ) (s t : ℤ) (e : Vec d) (hjs : (jStar : ℤ) ≤ s)
     (c : (Fin d → ℤ) → ℝ) (hc : ∀ w ∈ triadicIndexBox d H, |c w| ≤ 1)
     (pairing D : (Fin d → ℤ) → CoeffSpace d → ℝ)

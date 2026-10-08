@@ -73,9 +73,10 @@ private theorem matSqrt_posDef_full {ι : Type*} [Fintype ι] [DecidableEq ι]
   exact Matrix.isStrictlyPositive_iff_posDef.mp
     (Matrix.isStrictlyPositive_iff_posDef.mpr hM).sqrt
 
-private theorem posDef_conj_same {ι : Type*} [Fintype ι] [DecidableEq ι]
+private theorem posDef_conj_same {ι : Type*} [Fintype ι]
     {A B : Matrix ι ι ℝ} (hA : A.PosDef) (hB : B.PosDef) :
     (B * A * B).PosDef := by
+  classical
   have hBinj : Function.Injective B.mulVec :=
     Matrix.mulVec_injective_iff_isUnit.mpr hB.isUnit
   have h := hA.conjTranspose_mul_mul_same (B := B) hBinj
@@ -99,7 +100,7 @@ private theorem blockPosDef_of_full_posDef {M : FullBlockMat d}
   simpa only [star_trivial] using hq
 
 /-- The reflected inverse `𝐑F⁻¹𝐑` is positive definite for a positive block `F`. -/
-theorem swapConj_inv_posDef [NeZero d] {F : BlockMat d}
+theorem swapConj_inv_posDef {F : BlockMat d}
     (hsymm : IsSymmetricBlockMat F) (hpos : Book.Ch02.BlockPosDef F) :
     (toFullBlockMat (blockSwap d) * (toFullBlockMat F)⁻¹ *
       toFullBlockMat (blockSwap d)).PosDef := by
@@ -114,7 +115,7 @@ theorem swapConj_inv_posDef [NeZero d] {F : BlockMat d}
   simpa [A, R, Matrix.conjTranspose, hRt, mul_assoc] using! h
 
 /-- The inner square-root argument in `explicitCanonicalMetric` is positive definite. -/
-theorem explicitCanonicalMetric_inner_posDef [NeZero d] {F : BlockMat d}
+theorem explicitCanonicalMetric_inner_posDef {F : BlockMat d}
     (hsymm : IsSymmetricBlockMat F) (hpos : Book.Ch02.BlockPosDef F) :
     (matSqrt ((toFullBlockMat F)⁻¹) * toFullBlockMat (blockSwap d) *
       (toFullBlockMat F)⁻¹ * toFullBlockMat (blockSwap d) *
@@ -132,7 +133,7 @@ theorem explicitCanonicalMetric_inner_posDef [NeZero d] {F : BlockMat d}
   simpa [A, R, S, mul_assoc] using h
 
 /-- The middle square root in `explicitCanonicalMetric` is positive definite. -/
-theorem explicitCanonicalMetric_middleSqrt_posDef [NeZero d] {F : BlockMat d}
+theorem explicitCanonicalMetric_middleSqrt_posDef {F : BlockMat d}
     (hsymm : IsSymmetricBlockMat F) (hpos : Book.Ch02.BlockPosDef F) :
     (matSqrt
       (matSqrt ((toFullBlockMat F)⁻¹) * toFullBlockMat (blockSwap d) *
@@ -142,7 +143,7 @@ theorem explicitCanonicalMetric_middleSqrt_posDef [NeZero d] {F : BlockMat d}
 
 /-- The full matrix before taking the lower-right block in `explicitCanonicalMetric` is positive
 definite. -/
-theorem explicitCanonicalMetric_outer_posDef [NeZero d] {F : BlockMat d}
+theorem explicitCanonicalMetric_outer_posDef {F : BlockMat d}
     (hsymm : IsSymmetricBlockMat F) (hpos : Book.Ch02.BlockPosDef F) :
     (matSqrt (toFullBlockMat F) *
       matSqrt
@@ -167,7 +168,7 @@ theorem explicitCanonicalMetric_outer_posDef [NeZero d] {F : BlockMat d}
 
 /-- The lower-right block before the final inverse in `explicitCanonicalMetric` is positive
 definite. -/
-theorem explicitCanonicalMetric_lowerRight_posDef [NeZero d] {F : BlockMat d}
+theorem explicitCanonicalMetric_lowerRight_posDef {F : BlockMat d}
     (hsymm : IsSymmetricBlockMat F) (hpos : Book.Ch02.BlockPosDef F) :
     (ofFullBlockMat
       (matSqrt (toFullBlockMat F) *
@@ -194,7 +195,7 @@ theorem explicitCanonicalMetric_lowerRight_posDef [NeZero d] {F : BlockMat d}
 
 /-- **O4.** The closed printed canonical metric is positive definite on symmetric
 positive doubled blocks. -/
-theorem explicitCanonicalMetric_posDef [NeZero d] {F : BlockMat d}
+theorem explicitCanonicalMetric_posDef {F : BlockMat d}
     (hsymm : IsSymmetricBlockMat F) (hpos : Book.Ch02.BlockPosDef F) :
     (explicitCanonicalMetric F).PosDef := by
   unfold explicitCanonicalMetric
@@ -226,7 +227,7 @@ theorem _root_.HCPolySupport.HighContrast.matSqrt_posSemidef {ι : Type*} [Finty
 /-- The congruence `B A B` of a positive semidefinite `A` by a positive semidefinite `B`;
 `B` is then Hermitian, so this is `Bᴴ A B`.  The positive definite companion is
 `posDef_conj_same` above. -/
-private theorem posSemidef_conj_same {ι : Type*} [Fintype ι] [DecidableEq ι]
+private theorem posSemidef_conj_same {ι : Type*} [Fintype ι]
     {A B : Matrix ι ι ℝ} (hA : A.PosSemidef) (hB : B.PosSemidef) :
     (B * A * B).PosSemidef := by
   have h := hA.conjTranspose_mul_mul_same B

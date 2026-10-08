@@ -49,6 +49,8 @@ It is deliberately an explicit structure rather than an opaque predicate: its
 only analytic data are the stated membership and bound, both quantified over
 all harmonic cube solutions. -/
 structure HarmonicGradientGain (d : ℕ) (r : FiniteLpExponent) (depth : ℕ) where
+  /-- The positive finite factor bounding each gradient coordinate in normalized `L^r`
+  by the sum of the parent cube coordinate `L²` norms. -/
   constantValue : ℝ≥0∞
   constant_pos : 0 < constantValue
   constant_ne_top : constantValue ≠ ∞
@@ -67,6 +69,8 @@ structure HarmonicGradientGain (d : ℕ) (r : FiniteLpExponent) (depth : ℕ) wh
 by vector-valued good-`λ` arguments; no caller supplies coordinate
 measurability data. -/
 structure HarmonicEuclideanGradientGain (d : ℕ) (r : FiniteLpExponent) (depth : ℕ) where
+  /-- The finite factor bounding the Euclidean gradient in normalized `L^r`
+  by the sum of the parent cube coordinate `L²` norms. -/
   constantValue : ℝ≥0∞
   constant_ne_top : constantValue ≠ ∞
   memLp : ∀ (Q : TriadicCube d) (u : H1Function (openCubeSet Q)),
@@ -83,7 +87,7 @@ structure HarmonicEuclideanGradientGain (d : ℕ) (r : FiniteLpExponent) (depth 
 /-- The unraised base of the induction carrier: normalized `L²` control at
 depth zero costs exactly one. -/
 @[expose]
-noncomputable def harmonicGradientGain_two_zero (d : ℕ) :
+noncomputable def harmonicGradientGainL2DepthZero (d : ℕ) :
     HarmonicGradientGain d FiniteLpExponent.two 0 := by
   refine ⟨1, by norm_num, by norm_num, ?_, ?_⟩
   · intro Q u _ i
@@ -98,6 +102,8 @@ noncomputable def harmonicGradientGain_two_zero (d : ℕ) :
           ∑ j : Fin d, MeasureTheory.eLpNorm (fun x => u.grad x j) 2
             (normalizedCubeMeasure Q))
 
+/-- Convert coordinate gradient gains into a Euclidean gain at the same exponent and depth,
+multiplying the scalar bound constant by two dimension factors. -/
 @[expose]
 noncomputable def HarmonicEuclideanGradientGain.fromScalar {d : ℕ}
     {r : FiniteLpExponent} {depth : ℕ} (G : HarmonicGradientGain d r depth) :
@@ -582,6 +588,8 @@ theorem row_sum_le_double_sum {d : ℕ} (f : Fin d → Fin d → ℝ≥0∞) (i 
     (fun k _ => (zero_le : (0 : ℝ≥0∞) ≤ ∑ j : Fin d, f k j))
     (Finset.mem_univ i)
 
+/-- Package gradient coordinate `i` as a `W^{1,p}` function with weak gradient
+given by Hessian row `i`, using the supplied `L^p` membership proofs. -/
 @[expose]
 public noncomputable def hessianGradCoordToW1p {d : ℕ} {U : Set (Vec d)}
     {u : H1Function U} (H : HasWeakHessianOn U u) (i : Fin d) (p : FiniteLpExponent)
@@ -885,18 +893,20 @@ theorem sobolevLadderExponent_zero (d : ℕ) (hd : 2 ≤ d) :
   have hd' : 0 < (d : ℝ) := by exact_mod_cast (lt_of_lt_of_le (by norm_num) hd)
   simp [sobolevLadderExponent, hd'.ne']
 
+/-- Iterate the harmonic gradient Sobolev gain from `L²` to exponent `2 * d / (d - 2 * n)`
+at depth `n`, for `d ≥ 3` and `2 * n < d`. -/
 @[expose]
-public noncomputable def harmonicGradientGain_ladder (d : ℕ) (hd : 3 ≤ d) :
+public noncomputable def harmonicGradientGainLadder (d : ℕ) (hd : 3 ≤ d) :
     ∀ (n : ℕ) (hn : 2 * n < d),
       HarmonicGradientGain d (sobolevLadderExponent d (by omega) n hn) n
   | 0, hn => by
       rw [sobolevLadderExponent_zero d (by omega)]
-      exact harmonicGradientGain_two_zero d
+      exact harmonicGradientGainL2DepthZero d
   | n + 1, hn => by
       exact HarmonicGradientGain.upgrade (by omega)
         (sobolevLadderExponent_step_relation d (by omega) n hn)
         (sobolevLadderExponent_lt_dimension d (by omega) n hn)
-        (harmonicGradientGain_ladder d hd n (by omega))
+        (harmonicGradientGainLadder d hd n (by omega))
 
 theorem terminalLadderDepth_twice_lt (d : ℕ) (hd : 3 ≤ d) :
     2 * ((d - 1) / 2) < d := by omega
@@ -923,6 +933,8 @@ private theorem terminalLadderExponent_ge_dimension (d : ℕ) (hd : 3 ≤ d) :
   simp only [N] at hden ⊢
   nlinarith
 
+/-- The finite source exponent `d * q / (d + q)` whose Sobolev conjugate is the target `q`,
+for dimension at least two and target exponent greater than two. -/
 @[expose]
 public noncomputable def targetSobolevSourceExponent (d : ℕ) (hd2 : 2 ≤ d) (q : FiniteLpExponent)
     (hq : (2 : ℝ) < q.exponent.toReal) : FiniteLpExponent where
@@ -988,25 +1000,27 @@ theorem targetSobolevSourceExponent_le_two_twoDim (q : FiniteLpExponent)
 /-- In dimension two, one final finite Sobolev step from the downgraded `L²`
 base reaches every target above two. -/
 @[expose]
-noncomputable def harmonicGradientGain_finiteTarget_gt_two_twoDim
+noncomputable def harmonicGradientGainAboveTwoInDimensionTwo
     (q : FiniteLpExponent) (hq2 : 2 < q.exponent) :
     HarmonicGradientGain 2 q 1 := by
   have hq : (2 : ℝ) < q.exponent.toReal :=
     (ENNReal.toReal_lt_toReal (by norm_num) q.lt_top.ne).2 hq2
   let r : FiniteLpExponent := targetSobolevSourceExponent 2 (by norm_num) q hq
   let Gr : HarmonicGradientGain 2 r 0 :=
-    (harmonicGradientGain_two_zero 2).downgrade
+    (harmonicGradientGainL2DepthZero 2).downgrade
       (targetSobolevSourceExponent_le_two_twoDim q hq)
   exact HarmonicGradientGain.upgrade (d := 2) (by norm_num)
     (targetSobolevSourceExponent_relation 2 (by norm_num) q hq)
     (targetSobolevSourceExponent_lt_dimension 2 (by norm_num) q hq) Gr
 
+/-- Construct the Euclidean harmonic gradient gain at depth one in dimension two
+for any finite target exponent greater than two. -/
 @[expose]
-noncomputable def harmonicEuclideanGradientGain_finiteTarget_gt_two_twoDim
+noncomputable def harmonicEuclideanGradientGainAboveTwoInDimensionTwo
     (q : FiniteLpExponent) (hq2 : 2 < q.exponent) :
     HarmonicEuclideanGradientGain 2 q 1 :=
   HarmonicEuclideanGradientGain.fromScalar
-    (harmonicGradientGain_finiteTarget_gt_two_twoDim q hq2)
+    (harmonicGradientGainAboveTwoInDimensionTwo q hq2)
 
 theorem targetSobolevSourceExponent_le_terminalLadder (d : ℕ) (hd : 3 ≤ d)
     (q : FiniteLpExponent) (hq : (2 : ℝ) < q.exponent.toReal) :
@@ -1022,13 +1036,13 @@ theorem targetSobolevSourceExponent_le_terminalLadder (d : ℕ) (hd : 3 ≤ d)
 
 /-- The final Sobolev step from the terminal ladder exponent. -/
 @[expose]
-noncomputable def harmonicGradientGain_finiteTarget_gt_two_of_three_le
+noncomputable def harmonicGradientGainAboveTwoInDimensionAtLeastThree
     (d : ℕ) (hd : 3 ≤ d) (q : FiniteLpExponent) (hq2 : 2 < q.exponent) :
     HarmonicGradientGain d q (((d - 1) / 2) + 1) := by
   let n : ℕ := (d - 1) / 2
   let p : FiniteLpExponent := sobolevLadderExponent d (by omega) n
     (terminalLadderDepth_twice_lt d hd)
-  let G : HarmonicGradientGain d p n := harmonicGradientGain_ladder d hd n
+  let G : HarmonicGradientGain d p n := harmonicGradientGainLadder d hd n
     (terminalLadderDepth_twice_lt d hd)
   have hq : (2 : ℝ) < q.exponent.toReal :=
     (ENNReal.toReal_lt_toReal (by norm_num) q.lt_top.ne).2 hq2
@@ -1044,28 +1058,28 @@ theorem nonempty_harmonicGradientGain_finiteTarget_of_three_le
     (d : ℕ) (hd : 3 ≤ d) (q : FiniteLpExponent) :
     Nonempty (Σ depth : ℕ, HarmonicGradientGain d q depth) := by
   by_cases hq2 : q.exponent ≤ 2
-  · exact ⟨⟨0, (harmonicGradientGain_two_zero d).downgrade hq2⟩⟩
+  · exact ⟨⟨0, (harmonicGradientGainL2DepthZero d).downgrade hq2⟩⟩
   · exact ⟨⟨((d - 1) / 2) + 1,
-      harmonicGradientGain_finiteTarget_gt_two_of_three_le d hd q (lt_of_not_ge hq2)⟩⟩
+      harmonicGradientGainAboveTwoInDimensionAtLeastThree d hd q (lt_of_not_ge hq2)⟩⟩
 
 /-- Vector-facing arbitrary finite target gain in dimensions at least three.
 Its membership and bound are in the `HilbertVec.ofVec` representation used by
 the stopping-time layer; all coordinate measurability is discharged inside
 `fromScalar`. -/
 @[expose]
-noncomputable def harmonicEuclideanGradientGain_finiteTarget_gt_two_of_three_le
+noncomputable def harmonicEuclideanGradientGainAboveTwoInDimensionAtLeastThree
     (d : ℕ) (hd : 3 ≤ d) (q : FiniteLpExponent) (hq2 : 2 < q.exponent) :
     HarmonicEuclideanGradientGain d q (((d - 1) / 2) + 1) :=
   HarmonicEuclideanGradientGain.fromScalar
-    (harmonicGradientGain_finiteTarget_gt_two_of_three_le d hd q hq2)
+    (harmonicGradientGainAboveTwoInDimensionAtLeastThree d hd q hq2)
 
 /-- Vector-facing normalized `L^q` gain for every target at or below `L²`. -/
 @[expose]
-noncomputable def harmonicEuclideanGradientGain_finiteTarget_le_two
+noncomputable def harmonicEuclideanGradientGainAtMostTwo
     (d : ℕ) (q : FiniteLpExponent) (hq2 : q.exponent ≤ 2) :
     HarmonicEuclideanGradientGain d q 0 :=
   HarmonicEuclideanGradientGain.fromScalar
-    ((harmonicGradientGain_two_zero d).downgrade hq2)
+    ((harmonicGradientGainL2DepthZero d).downgrade hq2)
 
 /-- Dimension-at-least-two public availability statement for the Euclidean
 gain API.  It is deliberately `Nonempty Σ` because the depth is analytic data
@@ -1074,21 +1088,21 @@ theorem nonempty_harmonicEuclideanGradientGain_finiteTarget_of_two_le
     (d : ℕ) (hd : 2 ≤ d) (q : FiniteLpExponent) :
     Nonempty (Σ depth : ℕ, HarmonicEuclideanGradientGain d q depth) := by
   by_cases hq2 : q.exponent ≤ 2
-  · exact ⟨⟨0, harmonicEuclideanGradientGain_finiteTarget_le_two d q hq2⟩⟩
+  · exact ⟨⟨0, harmonicEuclideanGradientGainAtMostTwo d q hq2⟩⟩
   · by_cases hd2 : d = 2
     · subst d
-      exact ⟨⟨1, harmonicEuclideanGradientGain_finiteTarget_gt_two_twoDim q
+      exact ⟨⟨1, harmonicEuclideanGradientGainAboveTwoInDimensionTwo q
         (lt_of_not_ge hq2)⟩⟩
     · have hd3 : 3 ≤ d := by omega
       exact ⟨⟨((d - 1) / 2) + 1,
-        harmonicEuclideanGradientGain_finiteTarget_gt_two_of_three_le d hd3 q
+        harmonicEuclideanGradientGainAboveTwoInDimensionAtLeastThree d hd3 q
           (lt_of_not_ge hq2)⟩⟩
 
 /-- One-dimensional finite-target carrier, obtained from the source theorem's
 real bound only after the accompanying source-level `MemLp` witness has made
 both ENNReal sides finite. -/
 @[expose]
-noncomputable def harmonicGradientGain_finiteTarget_oneDim
+noncomputable def harmonicGradientGainInDimensionOne
     (p : FiniteLpExponent) : HarmonicGradientGain 1 p 1 := by
   let C : ℝ := Classical.choose (exists_harmonic_gradCoord_finiteLp_bound_oneDim p)
   have hCspec := Classical.choose_spec (exists_harmonic_gradCoord_finiteLp_bound_oneDim p)
@@ -1122,10 +1136,12 @@ noncomputable def harmonicGradientGain_finiteTarget_oneDim
         (fun j _ => zero_le) (Finset.mem_univ (0 : Fin 1))))
     exact hscalar.trans (mul_le_mul_right hsingle _)
 
+/-- Construct the Euclidean harmonic gradient gain at depth one in dimension one
+for any finite target exponent. -/
 @[expose]
-noncomputable def harmonicEuclideanGradientGain_finiteTarget_oneDim
+noncomputable def harmonicEuclideanGradientGainInDimensionOne
     (p : FiniteLpExponent) : HarmonicEuclideanGradientGain 1 p 1 :=
-  HarmonicEuclideanGradientGain.fromScalar (harmonicGradientGain_finiteTarget_oneDim p)
+  HarmonicEuclideanGradientGain.fromScalar (harmonicGradientGainInDimensionOne p)
 
 /-- All positive dimensions now expose the Euclidean finite-target carrier.
 The depth is returned as construction data, not a caller hypothesis. -/
@@ -1134,7 +1150,7 @@ theorem nonempty_harmonicEuclideanGradientGain_finiteTarget_of_pos
     Nonempty (Σ depth : ℕ, HarmonicEuclideanGradientGain d q depth) := by
   by_cases hd1 : d = 1
   · subst d
-    exact ⟨⟨1, harmonicEuclideanGradientGain_finiteTarget_oneDim q⟩⟩
+    exact ⟨⟨1, harmonicEuclideanGradientGainInDimensionOne q⟩⟩
   · exact nonempty_harmonicEuclideanGradientGain_finiteTarget_of_two_le d
       (by omega) q
 

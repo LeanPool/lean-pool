@@ -73,10 +73,11 @@ theorem transport_boundary_mean_row_weights {γ Cw : ℝ} (hγ : 0 ≤ γ) (hCw 
   have hcapmass : lam cap ≤ 1 := (Finset.single_le_sum hlam hc).trans hmass
   have hb (r) (hr : r ∈ Finset.Icc J (cap - 1)) :
       lam r * M r ≤ Cw * ((3 : ℝ) ^ (-(1 - γ) * ((j : ℝ) - r)) * M r) := by
-    have hr' : r ∈ Finset.Icc J cap := Finset.mem_Icc.mpr ⟨(Finset.mem_Icc.mp hr).1, by have :=
-      (Finset.mem_Icc.mp hr).2; omega⟩
-    have hgap : 0 ≤ (j : ℝ) - r := by have := (Finset.mem_Icc.mp hr).2; exact_mod_cast (show 0 ≤
-      j - r by omega)
+    have hr' : r ∈ Finset.Icc J cap := by
+      have hrle : r ≤ cap - 1 := (Finset.mem_Icc.mp hr).2
+      exact Finset.mem_Icc.mpr ⟨(Finset.mem_Icc.mp hr).1, by omega⟩
+    have hgap : 0 ≤ (j : ℝ) - r := by
+      exact_mod_cast (sub_nonneg.mpr ((Finset.mem_Icc.mp hr').2.trans hcap))
     have hw : (3 : ℝ) ^ ((r : ℝ) - j) ≤ (3 : ℝ) ^ (-(1 - γ) * ((j : ℝ) - r)) :=
       Real.rpow_le_rpow_of_exponent_le (by norm_num) (by nlinarith only [mul_nonneg hγ hgap])
     calc
@@ -525,8 +526,11 @@ theorem transport_joint_sum_moment {α ι : Type*} [MeasurableSpace α]
   apply (pow_le_pow_left₀ hsnonneg hs Q).trans
   have hh := transport_weighted_power_sum Q hQ Finset.univ (fun _ : Bool => (1 : ℝ))
     (fun b => if b then I.sup' hI (fun i => f i a) else I.sup' hI (fun i => g i a))
-    (by intro b _; norm_num) (by intro b _; cases b <;> simp only [Bool.false_eq_true,
-      ↓reduceIte]; exact hG; exact hF) (M := 2) (by norm_num) (by norm_num [Fintype.sum_bool])
+    (by intro b _; norm_num)
+    (fun b _ => by
+      cases b with
+      | false => exact hG
+      | true => exact hF) (M := 2) (by norm_num) (by norm_num [Fintype.sum_bool])
   simpa only [Fintype.sum_bool, Bool.false_eq_true, ↓reduceIte, one_mul, add_comm] using hh
 /-- A union of target families is paid by the sum of their moments.
 Either subfamily may be empty; no generation-count factor is introduced. -/

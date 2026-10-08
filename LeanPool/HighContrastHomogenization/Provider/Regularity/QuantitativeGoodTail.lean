@@ -37,7 +37,7 @@ noncomputable section
 /-- The scalar identity weak error decays with a fixed power above a real
 reference scale. -/
 @[expose]
-def ScalarIdentityPowerTail {d : ℕ} [NeZero d]
+def ScalarIdentityPowerTail {d : ℕ}
     (a : Book.Ch02.TriadicCoeffFamily d) (s amplitude kappa x : ℝ) : Prop :=
   ∀ k : ℤ, x ≤ (3 : ℝ) ^ k →
     scalarIdentityWeakError a s k ≤
@@ -45,7 +45,7 @@ def ScalarIdentityPowerTail {d : ℕ} [NeZero d]
 
 /-- Increasing the amplitude preserves a quantitative weak-error tail. -/
 theorem ScalarIdentityPowerTail.mono_amplitude
-    {d : ℕ} [NeZero d] {a : Book.Ch02.TriadicCoeffFamily d}
+    {d : ℕ} {a : Book.Ch02.TriadicCoeffFamily d}
     {s amplitude amplitude' kappa x : ℝ}
     (h : ScalarIdentityPowerTail a s amplitude kappa x)
     (hAmplitude : amplitude ≤ amplitude') (hx : 0 < x) :
@@ -59,7 +59,7 @@ theorem ScalarIdentityPowerTail.mono_amplitude
 /-- Rebasing to a larger positive scale divides the retained amplitude by the
 corresponding power, without changing the exponent or coefficient family. -/
 theorem ScalarIdentityPowerTail.rebase
-    {d : ℕ} [NeZero d] {a : Book.Ch02.TriadicCoeffFamily d}
+    {d : ℕ} {a : Book.Ch02.TriadicCoeffFamily d}
     {s amplitude kappa x y : ℝ}
     (h : ScalarIdentityPowerTail a s amplitude kappa x)
     (hx : 0 < x) (hy : 0 < y) (hxy : x ≤ y) :
@@ -110,7 +110,7 @@ private theorem physical_ratio_rpow_le_geometric_gap
 /-- A positive quantitative power tail is summable from the first triadic
 generation above its real reference scale. -/
 theorem ScalarIdentityPowerTail.goodTail
-    {d : ℕ} [NeZero d] {a : Book.Ch02.TriadicCoeffFamily d}
+    {d : ℕ} {a : Book.Ch02.TriadicCoeffFamily d}
     {s amplitude kappa x : ℝ}
     (h : ScalarIdentityPowerTail a s amplitude kappa x)
     (hAmplitude : 0 ≤ amplitude) (hKappa : 0 < kappa) (hx : 1 ≤ x) :

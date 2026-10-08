@@ -759,7 +759,6 @@ theorem
 
 theorem QuantitativeEllipticSlice.blockEnergyDensity_integrableOn_of_memBlockL2
     {d : ℕ} {U : Set (Vec d)} {a : CoeffField d}
-    [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     {k : ℕ} {X : BlockState d} (hSlice : QuantitativeEllipticSlice U k a)
     (hX : MemBlockL2 U X.eval) :
     MeasureTheory.IntegrableOn (blockEnergyDensity a X) U :=

@@ -213,7 +213,6 @@ condition `n ≤ ℓ` is the complementary high-scale condition; together with
 `n ≤ q` it bounds `n` by the logarithmic offset, so the discount supplies the
 full `t q` gain. -/
 theorem crudeBottom_lam_lower
-    {d : ℕ} [NeZero d]
     {K C θ a t α : ℝ} {q r : ℕ} {j : Fin (q + 1)}
     (hK : 0 < K) (hC : 0 < C) (hθ : 0 < θ)
     (ha : 0 < a) (ht : 0 < t) (hαt : α < t) :

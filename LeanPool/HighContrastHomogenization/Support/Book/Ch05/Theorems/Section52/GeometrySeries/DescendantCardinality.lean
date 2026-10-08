@@ -343,7 +343,7 @@ theorem inv_geometricDiscount_one_le_five_inv_of_pos_lt_one
     (s := s) (p := 1) hs hs_lt_one.le (by norm_num)
 
 theorem upper_unitCube_source_rpow_half_nonneg
-    {d : ℕ} [NeZero d] (m : ℕ) {s : ℝ} (hs : 0 < s) (a : RegCoeffField d) :
+    {d : ℕ} (m : ℕ) {s : ℝ} (hs : 0 < s) (a : RegCoeffField d) :
     0 ≤
       Real.rpow
         ((descendantsAtScale (originCube d (m : ℤ)) 0).sup'
@@ -364,7 +364,7 @@ theorem upper_unitCube_source_rpow_half_nonneg
           (s := D) (f := fun U => Ch04.LambdaSqCoeffField U s (.finite 1) a) hU)) _
 
 theorem lower_unitCube_source_rpow_half_nonneg
-    {d : ℕ} [NeZero d] (m : ℕ) {s : ℝ} (hs : 0 < s) (a : RegCoeffField d) :
+    {d : ℕ} (m : ℕ) {s : ℝ} (hs : 0 < s) (a : RegCoeffField d) :
     0 ≤
       Real.rpow
         ((descendantsAtScale (originCube d (m : ℤ)) 0).sup'

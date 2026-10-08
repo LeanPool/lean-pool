@@ -194,7 +194,7 @@ theorem eLpNorm_belowStartSup_le (Q : ℝ)
     filter_upwards [ae_belowStartSup_le_mul hCd hg hE hEpd hY hnu hq hF hFpd hrho t hZ]
       with a ha
     have hnn : (0 : ℝ) ≤ c * Y a := mul_nonneg hc0 (le_trans zero_le_one (hY.one_le a))
-    show belowStartSup rho (roundedGrid jStar nu) jStar t Z F a ≤ ‖c * Y a‖ₑ
+    change belowStartSup rho (roundedGrid jStar nu) jStar t Z F a ≤ ‖c * Y a‖ₑ
     rwa [Real.enorm_eq_ofReal hnn]
   rwa [eLpNorm_const_smul, Real.enorm_eq_ofReal hc0] at hmono
 

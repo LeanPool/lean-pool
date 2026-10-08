@@ -83,7 +83,7 @@ theorem additivitySumHalfEnergyDensityOnFamilyOnCube_integrableOn
           (matVecMul (symmPart (coeff x)) (topGrad x + childGrad x)))
         (cubeSet R) volume :=
     integrableOn_vecDot_of_memVectorL2 hSumGrad hSymmSum
-  show IntegrableOn
+  change IntegrableOn
     (fun x =>
       (1 / 2 : ℝ) *
         vecDot
@@ -229,7 +229,7 @@ theorem integrable_mul_of_integrable_sq_of_ae_nonneg
 /-- Cauchy-Schwarz in the form needed for the manuscript product of the two
 scaled weak norms. -/
 theorem integral_mul_le_sqrt_integral_sq_mul_sqrt_integral_sq_of_ae_nonneg
-    {α : Type*} [MeasurableSpace α] {μ : Measure α} [IsFiniteMeasure μ]
+    {α : Type*} [MeasurableSpace α] {μ : Measure α}
     {X Y : α → ℝ}
     (hX_sq : Integrable (fun x => (X x) ^ 2) μ)
     (hY_sq : Integrable (fun x => (Y x) ^ 2) μ)
@@ -263,7 +263,7 @@ theorem abs_cubeAverage_le_sqrt_cubeAverage_mul_sqrt_cubeAverage_of_ae_abs_le_sq
     (hSqrtB_mem :
       MemLp (fun x => Real.sqrt (B x)) (2 : ℝ≥0∞) (normalizedCubeMeasure Q))
     (hPoint :
-      ∀ᵐ x ∂ normalizedCubeMeasure Q,
+      ∀ᵐ x ∂normalizedCubeMeasure Q,
         |F x| ≤ Real.sqrt (A x) * Real.sqrt (B x)) :
     |cubeAverage Q F| ≤
       Real.sqrt (cubeAverage Q A) * Real.sqrt (cubeAverage Q B) := by

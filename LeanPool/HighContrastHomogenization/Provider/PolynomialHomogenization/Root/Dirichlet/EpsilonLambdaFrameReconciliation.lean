@@ -75,7 +75,7 @@ theorem affineTranslatedScaledCoeff_lambda_ae_epsilon
     (c : Vec d) (V : Set (Vec d)) :
     (fun y : Vec d ↦ affineCoefficient L hL
         (fun w ↦ scaledCoeff (epsilon * (3 : ℝ) ^ N)
-          (Quenched.physical_scale_coeff N a) w - b) (y + c))
+          (Quenched.physicalScaleCoefficient N a) w - b) (y + c))
       =ᵐ[volumeMeasureOn V]
       fun y : Vec d ↦ affineCoefficient L hL
         (fun w ↦ scaledCoeff epsilon a w - b) (y + c) :=
@@ -95,7 +95,7 @@ theorem witnessObservation_lambdaScaled_of_epsilon
     {epsilon : ℝ} (hepsilon : 0 < epsilon) {N : ℕ} {lambda : ℝ}
     (hlambda : lambda = epsilon * (3 : ℝ) ^ N)
     {a aScaled : CoeffSpace d}
-    (haScaled : aScaled = Quenched.physical_scale_coeff N a)
+    (haScaled : aScaled = Quenched.physicalScaleCoefficient N a)
     {aFam : Book.Ch03.CoeffFamily d} {j : ℤ} {c : Vec d}
     (hObs : (aFam.coeffOn (originCube d j)).toCoeffField
       =ᵐ[volumeMeasureOn (openCubeSet (originCube d j))]

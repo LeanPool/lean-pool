@@ -170,6 +170,7 @@ private theorem roundedPullback_sandwich
       ((Matrix.isUnit_iff_isUnit_det S).mp hSpos.isUnit), matVecMul_one]
   · simpa only [adaptedCell_eq_matVecMul_image_openCubeSet] using! houter
 
+/-- Dimension-only upper bound used for volumes of rounded affine pullbacks. -/
 @[expose]
 public noncomputable def roundedAffineVolumeRatioBound (d : ℕ) : ℝ :=
   (Real.sqrt d * 2) ^ d * ((3 : ℝ) ^ (d + 2)) ^ d
@@ -315,6 +316,7 @@ private theorem roundedPullback_child_volume_ratio_le
     _ = (Real.sqrt d * 2) ^ d * ((3 : ℝ) ^ (d + 2)) ^ d := by
       rw [show G = d + 2 from rfl]
 
+/-- Real-valued square-root factor associated with the rounded affine volume-ratio bound. -/
 @[expose]
 public noncomputable def roundedAffineNormFactor (d : ℕ) : ℝ :=
   ((ENNReal.ofReal (roundedAffineVolumeRatioBound d)) ^ (1 / 2 : ℝ)).toReal

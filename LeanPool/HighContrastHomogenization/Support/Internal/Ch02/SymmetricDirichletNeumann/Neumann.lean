@@ -46,7 +46,7 @@ theorem exists_isConstantFluxNeumannSolution_of_isEllipticFieldOn
   have hg : MemVectorL2 Uset g := by
     simpa [Uset, g] using memVectorL2_const_vec (U := Uset) q
   let hC : H1CoerciveEstimate Uset :=
-    h1CoerciveEstimate_of_isOpenBoundedConvexDomain (U := Uset) U.isDomain
+    h1CoerciveEstimateOfOpenBoundedConvexDomain (U := Uset) U.isDomain
   let u : H1MeanZeroFunction Uset :=
     H1MeanZeroFunction.coeffGradientProblemSolution
       (U := Uset) (a := a.toCoeffField) (lam := a.lam) (Lam := a.Lam)

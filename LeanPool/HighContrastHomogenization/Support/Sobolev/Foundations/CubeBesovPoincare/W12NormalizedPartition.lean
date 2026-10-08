@@ -78,7 +78,7 @@ theorem openCubeSet_boundedMeasurableDomain_normalizedVolume_eq_normalizedCubeMe
 /-- The exact source-facing normalized `W^{1,2}` seminorm on an open cube is
 the normalized cube `L²` norm of the explicit Euclidean gradient magnitude. -/
 theorem openCubeSet_normalizedW1pSeminorm_two_eq_cubeLpNorm_euclideanGrad
-    {d : ℕ} [NeZero d] (Q : TriadicCube d)
+    {d : ℕ} (Q : TriadicCube d)
     (u : W1pFunction (openCubeSet Q) (2 : ℝ≥0∞)) :
     BoundedMeasurableDomain.NormalizedW1pKernel.seminorm
         ((isOpenBoundedConvexDomain_openCubeSet Q).toBoundedMeasurableDomain
@@ -153,7 +153,7 @@ as required by `descendantsAverage`; it is never used on that off-family
 branch. -/
 @[expose]
 noncomputable def descendantOpenCubeSetNormalizedW1pSeminormTwo
-    {d : ℕ} [NeZero d] (Q : TriadicCube d)
+    {d : ℕ} (Q : TriadicCube d)
     (u : W1pFunction (openCubeSet Q) (2 : ℝ≥0∞)) (j : ℕ)
     (R : TriadicCube d) : ℝ :=
   if hR : R ∈ descendantsAtDepth Q j then
@@ -167,7 +167,7 @@ noncomputable def descendantOpenCubeSetNormalizedW1pSeminormTwo
 /-- On an actual descendant, the totalized seminorm is the literal
 source-facing seminorm of the restricted Sobolev witness. -/
 theorem descendantOpenCubeSetNormalizedW1pSeminormTwo_eq_of_mem
-    {d : ℕ} [NeZero d] (Q : TriadicCube d)
+    {d : ℕ} (Q : TriadicCube d)
     (u : W1pFunction (openCubeSet Q) (2 : ℝ≥0∞)) (j : ℕ)
     {R : TriadicCube d} (hR : R ∈ descendantsAtDepth Q j) :
     descendantOpenCubeSetNormalizedW1pSeminormTwo Q u j R =
@@ -181,7 +181,7 @@ theorem descendantOpenCubeSetNormalizedW1pSeminormTwo_eq_of_mem
 /-- The exact source-facing normalized Sobolev energy partitions over the
 open descendants of a triadic cube. -/
 theorem descendantsAverage_openCubeSet_normalizedW1pSeminorm_two_sq_eq
-    {d : ℕ} [NeZero d] (Q : TriadicCube d)
+    {d : ℕ} (Q : TriadicCube d)
     (u : W1pFunction (openCubeSet Q) (2 : ℝ≥0∞)) (j : ℕ) :
     descendantsAverage Q j
       (fun R => descendantOpenCubeSetNormalizedW1pSeminormTwo Q u j R ^ 2) =

@@ -36,7 +36,7 @@ This file proves the public basic properties of the homogenization error
 /-- Translation covariance of descendant normalized-response maxima, reduced
 to one-cube normalized-response covariance. -/
 theorem maxDescendantNormalizedBlockResponseAtScale_translateCube_of_normalizedBlockResponseMax
-    {d : ℕ} [NeZero d] (a b : TriadicCoeffFamily d) (z : Fin d → ℤ)
+    {d : ℕ} (a b : TriadicCoeffFamily d) (z : Fin d → ℤ)
     (Q : TriadicCube d) (a0 : Mat d) {k : ℤ} (hk : k ≤ Q.scale)
     (hJ : ∀ R ∈ descendantsAtScale Q k,
       normalizedBlockResponseMax
@@ -52,7 +52,7 @@ theorem maxDescendantNormalizedBlockResponseAtScale_translateCube_of_normalizedB
 /-- Translation covariance of the scale-level response aggregation, reduced to
 one-cube normalized-response covariance. -/
 theorem scaleResponseAtScale_translateCube_of_normalizedBlockResponseMax
-    {d : ℕ} [NeZero d] (a b : TriadicCoeffFamily d) (z : Fin d → ℤ)
+    {d : ℕ} (a b : TriadicCoeffFamily d) (z : Fin d → ℤ)
     (Q : TriadicCube d) (a0 : Mat d) {k : ℤ} (hk : k ≤ Q.scale)
     (p : MultiscaleExponent)
     (hJ : ∀ R ∈ descendantsAtScale Q k,
@@ -82,7 +82,7 @@ theorem scaleResponseAtScale_translateCube_of_normalizedBlockResponseMax
 one-cube normalized-response covariance on all descendant scales used by the
 series. -/
 theorem HomogenizationErrorFinite_translateCube_of_normalizedBlockResponseMax
-    {d : ℕ} [NeZero d] (a b : TriadicCoeffFamily d) (z : Fin d → ℤ)
+    {d : ℕ} (a b : TriadicCoeffFamily d) (z : Fin d → ℤ)
     (Q : TriadicCube d) {n : ℤ} (hn : n ≤ Q.scale) (s : ℝ)
     (p : MultiscaleExponent) (q : ℝ) (a0 : Mat d)
     (hJ : ∀ (l : ℕ) (R : TriadicCube d),
@@ -114,7 +114,7 @@ theorem HomogenizationErrorFinite_translateCube_of_normalizedBlockResponseMax
 one-cube normalized-response covariance on all descendant scales used by the
 supremum. -/
 theorem HomogenizationErrorInfinity_translateCube_of_normalizedBlockResponseMax
-    {d : ℕ} [NeZero d] (a b : TriadicCoeffFamily d) (z : Fin d → ℤ)
+    {d : ℕ} (a b : TriadicCoeffFamily d) (z : Fin d → ℤ)
     (Q : TriadicCube d) {n : ℤ} (hn : n ≤ Q.scale) (s : ℝ)
     (p : MultiscaleExponent) (a0 : Mat d)
     (hJ : ∀ (l : ℕ) (R : TriadicCube d),
@@ -159,7 +159,7 @@ theorem HomogenizationErrorInfinity_translateCube_of_normalizedBlockResponseMax
 /-- Translation covariance of homogenization error, reduced to one-cube
 normalized-response covariance. -/
 theorem HomogenizationError_translateCube_of_normalizedBlockResponseMax
-    {d : ℕ} [NeZero d] (a b : TriadicCoeffFamily d) (z : Fin d → ℤ)
+    {d : ℕ} (a b : TriadicCoeffFamily d) (z : Fin d → ℤ)
     (Q : TriadicCube d) {n : ℤ} (hn : n ≤ Q.scale) (s : ℝ)
     (p q : MultiscaleExponent) (a0 : Mat d)
     (hJ : ∀ (l : ℕ) (R : TriadicCube d),
@@ -183,7 +183,7 @@ theorem HomogenizationError_translateCube_of_normalizedBlockResponseMax
 /-- Translation covariance of the on-cube homogenization error, reduced to
 one-cube normalized-response covariance. -/
 theorem HomogenizationErrorOnCube_translateCube_of_normalizedBlockResponseMax
-    {d : ℕ} [NeZero d] (a b : TriadicCoeffFamily d) (z : Fin d → ℤ)
+    {d : ℕ} (a b : TriadicCoeffFamily d) (z : Fin d → ℤ)
     (Q : TriadicCube d) (s : ℝ) (p q : MultiscaleExponent) (a0 : Mat d)
     (hJ : ∀ (l : ℕ) (R : TriadicCube d),
       R ∈ descendantsAtScale Q (Q.scale - (l : ℤ)) →

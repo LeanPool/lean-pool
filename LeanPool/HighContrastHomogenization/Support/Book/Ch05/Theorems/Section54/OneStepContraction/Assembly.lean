@@ -35,6 +35,8 @@ Section 5.4 one-step contraction proposition.
 
 open Section53.JUpperBoundCoarseFluctuations
 
+/-- The first coordinate unit vector, used as a fixed unit direction in the
+one-step contraction estimates. -/
 @[expose]
 public def unitCoordinateVector {d : ℕ} [NeZero d] : Vec d :=
   Pi.single (0 : Fin d) 1

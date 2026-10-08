@@ -26,6 +26,8 @@ noncomputable section
 
 namespace MeanZeroNeumannPoissonSolution
 
+/-- The forcing-independent factor under the square root in the reflected Neumann solver bound,
+using cube volume plus one. -/
 @[expose]
 public noncomputable def originCubeParentReducedSolverEnergyInside
     (d : ℕ) (m : ℤ) : ℝ :=

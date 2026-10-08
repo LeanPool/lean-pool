@@ -131,9 +131,9 @@ theorem exists_quenched_minimal_scale_of_coupled_providers
                     (blockScale
                       (1 + 6 * (3 : ℝ) ^ (-alpha * (j : ℝ))) Abar)) →
               ∃ W : CoupledMixingScaleWitness P
-                (fun m a => quenched_block_row ((1 + 3 * g) / 4) Abar
+                (fun m a => quenchedBlockRow ((1 + 3 * g) / 4) Abar
                   (max 1 (S a / (3 : ℝ) ^ Nann))
-                  (physical_scale_coeff Nann a) m)
+                  (physicalScaleCoefficient Nann a) m)
                 cMix cd ((d : ℝ) - 2 * g) kappa delta,
                 W.normalization ≤ (2 + aspectRatio E * K) ^ Cmix) :
     ∃ cd : ℝ, 0 < cd ∧

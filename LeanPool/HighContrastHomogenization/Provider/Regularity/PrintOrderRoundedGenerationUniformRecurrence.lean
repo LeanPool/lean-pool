@@ -104,7 +104,7 @@ theorem exists_printOrderRoundedGenerationUniformFiniteRecurrenceConstant
 /-- A finite recurrence driven by a selected-generation row closes under the
 summable good-tail bound at that same generation and order. -/
 theorem finiteCenteredEnergy_le_of_roundedGenerationGoodTail
-    {d : ℕ} [NeZero d] {generation : ℤ}
+    {d : ℕ} {generation : ℤ}
     {a : CoeffSpace d} {abar : Mat d}
     {hS : (symmPart abar).PosDef} {s : ℝ}
     {aRounded : Book.Ch03.CoeffFamily d}

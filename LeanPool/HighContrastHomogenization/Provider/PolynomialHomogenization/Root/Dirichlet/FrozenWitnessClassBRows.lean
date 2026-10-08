@@ -57,7 +57,7 @@ variable {d : ℕ}
 
 /-- **Row `hUhat`/`hUhatMeas`/`hUhat0`.**  The gauge domain of the frozen
 witness is a bounded open convex domain. -/
-theorem frozenWitness_gaugeDomain_isOpenBoundedConvexDomain [NeZero d]
+theorem frozenWitness_gaugeDomain_isOpenBoundedConvexDomain
     {abar : Mat d} (hS : (symmPart abar).PosDef) {U : Set (Vec d)} {j : ℤ}
     {z : Vec d}
     (hU : U = (fun x : Vec d => z + matVecMul (matSqrt (symmPart abar)) x) ''
@@ -67,7 +67,7 @@ theorem frozenWitness_gaugeDomain_isOpenBoundedConvexDomain [NeZero d]
   exact (isOpenBoundedConvexDomain_openCubeSet (originCube d j)).translateSet _
 
 /-- The gauge domain of the frozen witness is nonempty. -/
-theorem frozenWitness_gaugeDomain_nonempty [NeZero d]
+theorem frozenWitness_gaugeDomain_nonempty
     {abar : Mat d} (hS : (symmPart abar).PosDef) {U : Set (Vec d)} {j : ℤ}
     {z : Vec d}
     (hU : U = (fun x : Vec d => z + matVecMul (matSqrt (symmPart abar)) x) ''
@@ -84,7 +84,7 @@ theorem frozenWitness_gaugeDomain_nonempty [NeZero d]
   exact h0
 
 /-- The gauge domain of the frozen witness has positive volume. -/
-theorem frozenWitness_gaugeDomain_volume_ne_zero [NeZero d]
+theorem frozenWitness_gaugeDomain_volume_ne_zero
     {abar : Mat d} (hS : (symmPart abar).PosDef) {U : Set (Vec d)} {j : ℤ}
     {z : Vec d}
     (hU : U = (fun x : Vec d => z + matVecMul (matSqrt (symmPart abar)) x) ''
@@ -116,7 +116,7 @@ theorem rad_pos_of_hasBallSandwich {V : Set (Vec d)} {rho Rad : ℝ}
 /-- **Row `system`/`hU`/`hUnonempty`/`hRad`.**  The frozen surface produces the
 ruled Whitney carrier at the gauge domain, together with the three companion
 facts that module asks for. -/
-theorem exists_frozenWitnessRuledCarrier [NeZero d]
+theorem exists_frozenWitnessRuledCarrier
     {abar : Mat d} (hS : (symmPart abar).PosDef) {U : Set (Vec d)} {j : ℤ}
     {z : Vec d} {rho Rad : ℝ}
     (hU : U = (fun x : Vec d => z + matVecMul (matSqrt (symmPart abar)) x) ''

@@ -112,6 +112,8 @@ theorem cubeEuclideanWspKernel_sub {d : ℕ} (s : FractionalOrder)
   rw [sub_sub_sub_comm, (HilbertVec.ofVecL d).map_sub, smul_sub]
   simp only [HilbertVec.ofVecL_apply]
 
+/-- Subtract fractional cube fields pointwise, retaining Euclidean `L^p` membership
+and `L^p` membership of the Gagliardo difference kernel. -/
 @[expose]
 public noncomputable def cubeEuclideanWspFieldSub {d : ℕ}
     {Q : TriadicCube d} {s : FractionalOrder} {p : FiniteLpExponent}
@@ -469,8 +471,8 @@ theorem ennreal_ofReal_abs_cubeEuclideanNormalizedFieldPairing_le {d : ℕ}
             ring]
         apply (div_le_iff₀ hdenom).mpr
         apply mul_le_mul_of_nonneg_left
-        linarith
-        exact hepsilon.le
+        · linarith
+        · exact hepsilon.le
   · have hDtop : D = ∞ := ((not_lt.mp hD).antisymm le_top).symm
     by_cases hNzero : N = 0
     · rw [hDtop, hNzero]

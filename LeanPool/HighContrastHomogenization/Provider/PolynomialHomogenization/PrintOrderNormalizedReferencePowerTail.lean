@@ -255,12 +255,12 @@ theorem exists_shiftedNormalizedReferencePowerTail_of_hasAllLaterPhysicalBlockRo
     have hdecayAt := hrow (((k.toNat + G : ℕ) : ℤ)) (by
       simpa only [zpow_natCast] using hXpowAdd)
     have hdecay :
-        Quenched.quenched_block_row rho
+        Quenched.quenchedBlockRow rho
             (Book.Ch02.constantBlockMatrix abar) (S a) a (k.toNat + G) ≤
           delta *
             (((3 : ℝ) ^ (((k.toNat + G : ℕ) : ℤ))) / X a) ^
               (-kappa) := by
-      simpa only [Quenched.physical_block_row_at_int, Int.toNat_natCast] using
+      simpa only [Quenched.physicalBlockRowAtInteger, Int.toNat_natCast] using
         hdecayAt
     have hfill := normalizedRoot_fillingBoundaryFactor_le hd hS
     have hB0 : 0 ≤ B := hBpos.le
@@ -281,7 +281,7 @@ theorem exists_shiftedNormalizedReferencePowerTail_of_hasAllLaterPhysicalBlockRo
     have herr' : scalarIdentityWeakError aRef s k ^ 2 ≤
         max 1 (6 * (d : ℝ) * Real.sqrt d *
             ‖(Selection.normalizedRoot (symmPart abar))⁻¹‖) * B *
-          Quenched.quenched_block_row rho
+          Quenched.quenchedBlockRow rho
             (Book.Ch02.constantBlockMatrix abar) (S a) a (k.toNat + G) := by
       simpa only [scalarIdentityWeakError, hkcast, B, mul_assoc] using herr
     have hsqC : scalarIdentityWeakError aRef s k ^ 2 ≤
@@ -292,7 +292,7 @@ theorem exists_shiftedNormalizedReferencePowerTail_of_hasAllLaterPhysicalBlockRo
         scalarIdentityWeakError aRef s k ^ 2 ≤
             max 1 (6 * (d : ℝ) * Real.sqrt d *
                 ‖(Selection.normalizedRoot (symmPart abar))⁻¹‖) * B *
-              Quenched.quenched_block_row rho
+              Quenched.quenchedBlockRow rho
                 (Book.Ch02.constantBlockMatrix abar) (S a) a
                   (k.toNat + G) := herr'
         _ ≤ max 1 (6 * (d : ℝ) * Real.sqrt d *

@@ -149,7 +149,7 @@ theorem cubeAverage_topHalfEnergyOnFamily_eq_childAdditivityCross_add_responseJO
 
 /-- Averaged finite Cauchy for nonnegative scalar data. -/
 theorem finset_average_sqrt_mul_sqrt_le_sqrt_average_mul_sqrt_average
-    {ι : Type*} [DecidableEq ι] (S : Finset ι) (hS : S.Nonempty)
+    {ι : Type*} (S : Finset ι) (hS : S.Nonempty)
     (A B : ι → ℝ)
     (hA : ∀ i, 0 ≤ A i) (hB : ∀ i, 0 ≤ B i) :
     (S.card : ℝ)⁻¹ * (∑ i ∈ S, Real.sqrt (A i) * Real.sqrt (B i)) ≤
@@ -184,7 +184,7 @@ theorem finset_average_sqrt_mul_sqrt_le_sqrt_average_mul_sqrt_average
 
 /-- Finite averaged Cauchy after a pointwise absolute-value estimate. -/
 theorem abs_finset_average_le_const_mul_sqrt_average_mul_sqrt_average_of_abs_le
-    {ι : Type*} [DecidableEq ι] (S : Finset ι) (hS : S.Nonempty)
+    {ι : Type*} (S : Finset ι) (hS : S.Nonempty)
     {C : ℝ} (A B X : ι → ℝ)
     (hC : 0 ≤ C)
     (hA : ∀ i, 0 ≤ A i) (hB : ∀ i, 0 ≤ B i)
@@ -226,7 +226,7 @@ theorem abs_finset_average_le_const_mul_sqrt_average_mul_sqrt_average_of_abs_le
 
 /-- Descendant response subadditivity for the raw scalar response. -/
 theorem responseJOnCube_le_childResponseJAverageOnFamilyAtDepth
-    {d : ℕ} [NeZero d] (a : Ch02.TriadicCoeffFamily d)
+    {d : ℕ} (a : Ch02.TriadicCoeffFamily d)
     (Q : TriadicCube d) (j : ℕ) (p q : Vec d) :
     Ch02.responseJ (Ch02.cubeDomain Q) (a.coeffOn Q) p q ≤
       childResponseJAverageOnFamilyAtDepth a Q j p q := by

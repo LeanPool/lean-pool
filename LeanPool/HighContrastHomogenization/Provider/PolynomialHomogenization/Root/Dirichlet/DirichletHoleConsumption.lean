@@ -54,7 +54,7 @@ noncomputable section
 /-- **The restated internal Dirichlet clause**, transcribed from the root
 assembly. -/
 @[expose]
-def DirichletHole (d : ℕ) [NeZero d]
+def DirichletHole (d : ℕ)
     (GoodScale : ℝ → ℝ → Mat d → CoeffSpace d → ℝ → Prop) : Prop :=
   ∃ C₀ : ℝ → ℝ → ℝ → ℝ, (∀ s₀ ρ Rad : ℝ, 0 < C₀ s₀ ρ Rad) ∧
     ∀ g : ℝ, g ∈ Set.Ico (0 : ℝ) 1 →

@@ -70,7 +70,7 @@ quadratic readout of the canonical Chapter-2 optimizer state of the two recentre
 families is measurable.  The arbitrary maximizer is identified with the canonical one almost
 everywhere on the cell by a.e. gradient uniqueness (AK.HC (2.9)), so the pairing depends on the
 sample only through the canonical selection. -/
-theorem aestronglyMeasurable_abs_cutoff_pairing_of_maximizer {d : ℕ} [NeZero d]
+theorem aestronglyMeasurable_abs_cutoff_pairing_of_maximizer {d : ℕ}
     (P : Measure (CoeffSpace d)) (jStar : ℕ) (F : BlockMat d) (t : ℤ)
     (hjStar : 2 * d ≤ 3 ^ jStar) (hm : (explicitCanonicalMetric F).PosDef)
     (φ : Vec d → ℝ) (hφ : IsResponseCutoff (respGrid jStar F) t φ)
@@ -308,7 +308,7 @@ by a.e. gradient uniqueness for response maximizers (AK.HC (2.9)), so the pairin
 sample only through the canonically selected optimizer state.  The canonical pairing is expanded
 into its quadratic term and the three linear readouts whose measurability is recorded in
 `aestronglyMeasurable_abs_canonical_cutoff_pairing_minus_of_quadratic` and its plus twin. -/
-theorem aestronglyMeasurable_abs_pairing_of_maximizer {d : ℕ} [NeZero d]
+theorem aestronglyMeasurable_abs_pairing_of_maximizer {d : ℕ}
     (P : Measure (CoeffSpace d)) (jStar : ℕ) (F : BlockMat d) (t : ℤ)
     (hjStar : 2 * d ≤ 3 ^ jStar) (hm : (explicitCanonicalMetric F).PosDef)
     (c : CoeffSpace d → CoeffField d)
@@ -502,7 +502,7 @@ theorem cutoffQuadReadout_eq_weighted_inner {U : Set (Vec d)} {φ : Vec d → �
 
 /-- The cutoff-weighted quadratic readout is continuous in the doubled `L²` field, for any cutoff
 weight bounded a.e. by `2`; this is the analytic input to `e.response.cutoff.estimate`. -/
-theorem continuous_cutoffQuadReadout (U : Set (Vec d)) [IsFiniteMeasure (volumeMeasureOn U)]
+theorem continuous_cutoffQuadReadout (U : Set (Vec d))
     (hvol : 0 < (volume U).toReal) {φ : Vec d → ℝ}
     (hφm : AEStronglyMeasurable φ (volumeMeasureOn U))
     (hφb : ∀ᵐ x ∂volumeMeasureOn U, ‖φ x‖ ≤ 2) :

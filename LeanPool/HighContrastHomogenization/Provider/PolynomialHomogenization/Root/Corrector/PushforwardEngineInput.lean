@@ -65,7 +65,7 @@ with a growth row; this is the bare translation.
 The `0 < theta` binder is necessary: without it the statement is false
 for the additive recentring at every `theta ≤ -1`. -/
 @[expose]
-def RealTranslateLiouville (d : ℕ) [NeZero d] : Prop :=
+def RealTranslateLiouville (d : ℕ) : Prop :=
   ∀ (b : CoeffField d) (theta : ℝ), 0 < theta →
     ∀ (v : Vec d → ℝ) (Dv : Vec d → Vec d) (t : Vec d) (c : ℝ),
       MemLiouvilleClass b theta v Dv →

@@ -135,6 +135,8 @@ private theorem setIntegral_gradCoord_sq_eq_norm_sq
   simpa [H1Function.gradCoordToScalarL2, HCPolySupport.toScalarL2] using
     (toReal_eLpNorm_two_sq_eq_integral_sq (w.gradMemL2 i)).symm
 
+/-- The dimension-dependent square-root constant combining cutoff gradient and mean-zero
+coercivity bounds in the harmonic interior Hessian energy estimate. -/
 @[expose]
 public noncomputable def harmonicInteriorHessianEnergyCoreConstant (d : ℕ) : ℝ :=
   Real.sqrt

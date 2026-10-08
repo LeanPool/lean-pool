@@ -205,7 +205,7 @@ private theorem blockBasis_sub_pairing'
   ring
 
 private theorem aemeasurable_blockMatEntry_coarseBlockMatrix_cubeSet
-    {d : ℕ} [NeZero d] {P : Ch04.RestrictionCoeffLaw d}
+    {d : ℕ} {P : Ch04.RestrictionCoeffLaw d}
     (hP : Ch04.RestrictionLawCarrier P) (Q : TriadicCube d)
     (α β : BlockCoord d) :
     AEMeasurable

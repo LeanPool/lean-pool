@@ -51,7 +51,14 @@ private theorem norm_hilbertVec_ofVec_cubeDirichletOddReflectionCellVectorField
           cubeFaceReflectionCellFoldLinear choice v) =
         vecDot (cubeFaceReflectionCellFoldLinear choice v)
           (cubeFaceReflectionCellFoldLinear choice v) := by
-          simp [vecDot_smul_left, vecDot_smul_right]
+          suffices
+              cubeDirichletOddReflectionCellSign choice *
+                  (cubeDirichletOddReflectionCellSign choice *
+                    vecDot (cubeFaceReflectionCellFoldLinear choice v)
+                      (cubeFaceReflectionCellFoldLinear choice v)) =
+                vecDot (cubeFaceReflectionCellFoldLinear choice v)
+                  (cubeFaceReflectionCellFoldLinear choice v) by
+            simpa only [vecDot_smul_left, vecDot_smul_right] using this
           rw [← mul_assoc, cubeDirichletOddReflectionCellSign_mul_self]
           ring
     _ = vecDot v v := by
@@ -439,7 +446,8 @@ private theorem restrict_openCubeSet_originCube_eq_smul_normalizedCubeMeasure
 private theorem cubeVolume_originCube_succ {d : ℕ} (m : ℤ) :
     cubeVolume (originCube d (m + 1)) =
       (3 : ℝ) ^ d * cubeVolume (originCube d m) := by
-  simp [cubeVolume, cubeScaleFactor, originCube, zpow_add₀]
+  suffices ((3 : ℝ) ^ m * 3) ^ d = (3 : ℝ) ^ d * ((3 : ℝ) ^ m) ^ d by
+    simpa [cubeVolume, cubeScaleFactor, originCube, zpow_add₀] using this
   rw [mul_pow]
   ring
 

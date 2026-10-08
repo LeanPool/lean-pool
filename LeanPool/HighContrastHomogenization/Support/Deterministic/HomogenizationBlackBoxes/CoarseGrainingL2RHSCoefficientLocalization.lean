@@ -877,7 +877,7 @@ theorem CoarseFluxRHSBound_le_coarseGrainingFluxBound_of_boundedAbove_of_summabl
 RHS comparison closed from the coefficient-localization hypotheses.
 -/
 theorem solution_diff_l2_le_coarseGrainingL2Rhs_of_descendant_fluxRHSBound
-    {d : ℕ} [NeZero d] {Cdual : ℝ}
+    {d : ℕ} {Cdual : ℝ}
     (hdual : ScalarSolutionComparisonDualityEstimate d Cdual)
     (Q : TriadicCube d) (a : CoeffField d) (a0 : Mat d) (sigma0 : ℝ)
     (gradU gradV g : Vec d → Vec d) {s : ℝ} (j : ℕ)
@@ -935,7 +935,7 @@ raw parent/descendant positive-Besov boundedness hypotheses from the note-facing
 `H^s` regularity package for the right-hand side.
 -/
 private theorem solution_diff_l2_le_coarseGrainingL2Rhs_of_descendant_fluxRHSBound_of_summable
-    {d : ℕ} [NeZero d] {Cdual : ℝ}
+    {d : ℕ} {Cdual : ℝ}
     (hdual : ScalarSolutionComparisonDualityEstimate d Cdual)
     (Q : TriadicCube d) (a : CoeffField d) (a0 : Mat d) (sigma0 : ℝ)
     (gradU gradV g : Vec d → Vec d) {s : ℝ} (j : ℕ)
@@ -992,7 +992,7 @@ bounds.  The energy-density integrability input is derived from the `H¹`
 solution gradient and ellipticity.
 -/
 private theorem solution_diff_l2_le_coarseGrainingL2Rhs_of_sameRhs_descendant_fluxRHSBound
-    {d : ℕ} [NeZero d] {Cdual : ℝ}
+    {d : ℕ} {Cdual : ℝ}
     (hdual : ScalarSolutionComparisonDualityEstimate d Cdual)
     (Q : TriadicCube d) (a : CoeffField d) (a0 : Mat d) (sigma0 : ℝ)
     (u v : H1Function (cubeSet Q)) (g : Vec d → Vec d) {s : ℝ} (j : ℕ)

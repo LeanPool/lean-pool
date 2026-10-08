@@ -27,7 +27,7 @@ open MeasureTheory
 noncomputable section
 
 private theorem affineBoundary_isIdentityForcedEquation
-    {d : ℕ} [NeZero d] (m : ℤ) (e : Vec d) :
+    {d : ℕ} (m : ℤ) (e : Vec d) :
     Book.Ch03.IsConstantCoeffForcedEquation (originCube d m)
       (identityConstantCoeffMatrix d) (finiteAffineBoundaryH1 m e)
       (0 : Vec d → Vec d) := by

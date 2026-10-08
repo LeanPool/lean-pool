@@ -74,7 +74,7 @@ theorem adaptedPreYoungCutoff_pullback_hasCompactSupport [NeZero d]
         rw [matVecMul_mul, Matrix.mul_nonsing_inv q hdet, matVecMul_one]
       continuous_toFun := continuous_matVecMul q
       continuous_invFun := continuous_matVecMul q⁻¹ }
-  show HasCompactSupport (Response.adaptedPreYoungCutoff q hq t ∘ e)
+  change HasCompactSupport (Response.adaptedPreYoungCutoff q hq t ∘ e)
   simpa [e, Function.comp_def] using
     (Response.adaptedPreYoungCutoff_hasCompactSupport hq t).comp_homeomorph e
 

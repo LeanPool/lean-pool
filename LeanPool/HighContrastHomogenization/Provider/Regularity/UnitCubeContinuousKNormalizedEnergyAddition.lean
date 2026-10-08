@@ -76,6 +76,7 @@ noncomputable def unitCubeEuclideanL2FieldAdd
     unitCubeEuclideanL2FieldAdd F G x = F x + G x :=
   rfl
 
+/-- Coordinatewise addition of continuous `K`-functional competitors. -/
 @[expose]
 public noncomputable def continuousKCompetitorAdd
     (G V : ContinuousKCompetitor d) : ContinuousKCompetitor d where
@@ -435,8 +436,7 @@ theorem continuousKSeminormIntegral_add_le
         lintegral_const_mul' _ _ (by norm_num : (2 : ℝ≥0∞) ≠ ∞),
         lintegral_const_mul' _ _ (by norm_num : (2 : ℝ≥0∞) ≠ ∞)]
 
-@[expose]
-public noncomputable def unitCubeEuclideanL2FieldToCenteredCubeZero
+private noncomputable def unitCubeEuclideanL2FieldToCenteredCubeZero
     (F : UnitCubeEuclideanL2Field d) : CenteredCubeEuclideanL2Field d 0 where
   toField := F
   euclideanMemL2 := by

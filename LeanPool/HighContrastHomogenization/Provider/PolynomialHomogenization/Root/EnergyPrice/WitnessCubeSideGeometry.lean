@@ -123,7 +123,7 @@ theorem cubeScaleFactor_le_two_mul_of_translateSet_subset [NeZero d]
       rw [mem_translateSet_iff_sub_mem, mem_openCubeSet_originCube_iff]
       intro k
       have hcoord : (w + sgn • e - w) k = sgn * e k := by
-        show w k + sgn * e k - w k = sgn * e k
+        change w k + sgn * e k - w k = sgn * e k
         ring
       have hek : e k = t ∨ e k = 0 := by
         by_cases hk : k = hi
@@ -142,10 +142,10 @@ theorem cubeScaleFactor_le_two_mul_of_translateSet_subset [NeZero d]
     have hp := abs_le_of_vecNormSq_le hr (hsub (hmem 1 (Or.inl rfl))) hi
     have hm := abs_le_of_vecNormSq_le hr (hsub (hmem (-1) (Or.inr rfl))) hi
     have hpval : (w + (1 : ℝ) • e) hi = w hi + t := by
-      show w hi + (1 : ℝ) • e hi = w hi + t
+      change w hi + (1 : ℝ) • e hi = w hi + t
       rw [smul_eq_mul, one_mul, hehi]
     have hmval : (w + (-1 : ℝ) • e) hi = w hi - t := by
-      show w hi + (-1 : ℝ) • e hi = w hi - t
+      change w hi + (-1 : ℝ) • e hi = w hi - t
       rw [smul_eq_mul, hehi]
       ring
     rw [hpval] at hp

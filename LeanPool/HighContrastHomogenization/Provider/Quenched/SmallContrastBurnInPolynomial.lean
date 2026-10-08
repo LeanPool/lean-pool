@@ -166,7 +166,7 @@ theorem three_zpow_burnIn_le_rpow {base c1 c2 : ℝ} {sK gap : ℤ}
       zpow_one]
   have hrsplit : Real.rpow base (c1 + c2 + 1) =
       Real.rpow base c1 * Real.rpow base c2 * base := by
-    show base ^ (c1 + c2 + 1) = base ^ c1 * base ^ c2 * base
+    change base ^ (c1 + c2 + 1) = base ^ c1 * base ^ c2 * base
     rw [Real.rpow_add hbase0, Real.rpow_add hbase0, Real.rpow_one]
   have h1 : (0 : ℝ) ≤ Real.rpow base c1 := le_trans hsK0.le hsK
   have h2 : (0 : ℝ) ≤ Real.rpow base c2 := le_trans hgap0.le hgap

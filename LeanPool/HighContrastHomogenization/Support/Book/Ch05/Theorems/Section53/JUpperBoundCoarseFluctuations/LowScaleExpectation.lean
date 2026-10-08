@@ -82,7 +82,7 @@ private theorem aemeasurable_pairedLowScaleTailSquares
     let p_e := specialPAtScale hP hStruct (m : ℤ) e
     let q_e := specialQAtScale hP hStruct (m : ℤ) e
     let σ := sigmaHatAtScale hP hStruct (m : ℤ)
-    let Jm : RegCoeffField d → ℝ :=
+    let _Jm : RegCoeffField d → ℝ :=
       fun a => Ch04.restrictionResponseJObservableCubeSet Q p_e q_e a
     let X : RegCoeffField d → ℝ :=
       fun a =>
@@ -92,9 +92,9 @@ private theorem aemeasurable_pairedLowScaleTailSquares
           σ⁻¹ *
             (WeakNormsMaximizer.fluxLowScaleTailAtScale
               (m : ℤ) (k : ℤ) t t' p_e q_e a) ^ 2
-    ∀ (hLowerAE : AEMeasurable (fun a : RegCoeffField d =>
+    ∀ (_hLowerAE : AEMeasurable (fun a : RegCoeffField d =>
         (Ch04.lambdaSqCoeffField Q s' (.finite 1) a)⁻¹) P),
-    ∀ (hUpperAE : AEMeasurable (fun a : RegCoeffField d =>
+    ∀ (_hUpperAE : AEMeasurable (fun a : RegCoeffField d =>
         Ch04.LambdaSqCoeffField Q t' (.finite 1) a) P),
     AEMeasurable X P := by
   classical
@@ -138,9 +138,13 @@ private theorem aemeasurable_pairedLowScaleTailSquares
     simpa [WeakNormsMaximizer.fluxLowScaleTailAtScale, Q, t, t', Jm] using!
       (((aemeasurable_const.mul aemeasurable_const).mul hUpperAE.sqrt).mul
         hJAE.sqrt)
-  simpa [X, pow_two] using!
-    (aemeasurable_const.mul (hGradAE.mul hGradAE)).add
-      (aemeasurable_const.mul (hFluxAE.mul hFluxAE))
+  change AEMeasurable X P
+  have hσAE : AEMeasurable (fun _ : RegCoeffField d => σ) P := aemeasurable_const
+  have hσInvAE : AEMeasurable (fun _ : RegCoeffField d => σ⁻¹) P := aemeasurable_const
+  refine ((hσAE.mul (hGradAE.mul hGradAE)).add
+    (hσInvAE.mul (hFluxAE.mul hFluxAE))).congr ?_
+  filter_upwards with a
+  simp only [X, Pi.add_apply, Pi.mul_apply, pow_two]
 
 private theorem positiveEllipticityExcesses_memLp_at_shiftedExponents
     {d : ℕ}
@@ -167,10 +171,10 @@ private theorem positiveEllipticityExcesses_memLp_at_shiftedExponents
           (Ch04.LambdaSqCoeffField Q t' (.finite 1) a -
             hP.barSigmaAtScale hStruct 0)
           0
-    ∀ (hβ_pos : 0 < β),
-    ∀ (hLowerAE : AEMeasurable (fun a : RegCoeffField d =>
+    ∀ (_hβ_pos : 0 < β),
+    ∀ (_hLowerAE : AEMeasurable (fun a : RegCoeffField d =>
         (Ch04.lambdaSqCoeffField Q s' (.finite 1) a)⁻¹) P),
-    ∀ (hUpperAE : AEMeasurable (fun a : RegCoeffField d =>
+    ∀ (_hUpperAE : AEMeasurable (fun a : RegCoeffField d =>
         Ch04.LambdaSqCoeffField Q t' (.finite 1) a) P),
     (MemLp lowerExcess (ENNReal.ofReal (hP4.xi : ℝ)) P) ∧
       (MemLp upperExcess (ENNReal.ofReal (hP4.xi : ℝ)) P) := by
@@ -249,7 +253,6 @@ private theorem pairedLowScaleTailSquares_le_responseMajorant
     (hP4 : QuantitativeCoarseGrainedEllipticity P)
     {k : ℕ}
     {m : ℕ}
-    (hkm : k < m)
     (e : Vec d)
     :
     let β := section53CoarseFluctuationBeta hP4
@@ -295,10 +298,10 @@ private theorem pairedLowScaleTailSquares_le_responseMajorant
         tailFactor *
           (coarseFluctuationScalarWeightAtScale hP hStruct m * Jm a +
             (σ * lowerExcess a + σ⁻¹ * upperExcess a) * childAvg a)
-    ∀ (htail_nonneg : 0 ≤ tailFactor),
-    ∀ (hσ_nonneg : 0 ≤ σ),
-    ∀ (hσ_inv_nonneg : 0 ≤ σ⁻¹),
-    ∀ (hParent_le_child : Jm ≤ᵐ[P] childAvg),
+    ∀ (_htail_nonneg : 0 ≤ tailFactor),
+    ∀ (_hσ_nonneg : 0 ≤ σ),
+    ∀ (_hσ_inv_nonneg : 0 ≤ σ⁻¹),
+    ∀ (_hParent_le_child : Jm ≤ᵐ[P] childAvg),
     X ≤ᵐ[P] Y := by
   classical
   let : IsProbabilityMeasure P := hP.isProbability
@@ -350,7 +353,7 @@ private theorem pairedLowScaleTailSquares_le_responseMajorant
   filter_upwards [hParent_le_child] with a hsub
   have hpoint0 :=
     paired_lowScaleTailSquares_special_le_baseline_add_positiveExcess
-      hP hStruct hP4 hkm.le e a
+      (k := k) (m := m) hP hStruct hP4 e a
   have hpoint0' : X a ≤
       tailFactor *
         (coarseFluctuationScalarWeightAtScale hP hStruct m * Jm a +
@@ -419,10 +422,10 @@ private theorem integral_lowScaleTailMajorant_eq_baseline_add_excess
         tailFactor *
           (coarseFluctuationScalarWeightAtScale hP hStruct m * Jm a +
             (σ * lowerExcess a + σ⁻¹ * upperExcess a) * childAvg a)
-    ∀ (hJInt : Integrable Jm P),
-    ∀ (hLowerChildInt : Integrable (fun a : RegCoeffField d => lowerExcess a * childAvg a) P),
-    ∀ (hUpperChildInt : Integrable (fun a : RegCoeffField d => upperExcess a * childAvg a) P),
-    ∀ (hPosInt : Integrable
+    ∀ (_hJInt : Integrable Jm P),
+    ∀ (_hLowerChildInt : Integrable (fun a : RegCoeffField d => lowerExcess a * childAvg a) P),
+    ∀ (_hUpperChildInt : Integrable (fun a : RegCoeffField d => upperExcess a * childAvg a) P),
+    ∀ (_hPosInt : Integrable
         (fun a : RegCoeffField d =>
           (σ * lowerExcess a + σ⁻¹ * upperExcess a) * childAvg a) P),
     ∫ a, Y a ∂P =
@@ -533,8 +536,8 @@ private theorem integrable_weightedPositiveExcessResponse
           (Ch04.LambdaSqCoeffField Q t' (.finite 1) a -
             hP.barSigmaAtScale hStruct 0)
           0
-    ∀ (hLowerChildInt : Integrable (fun a : RegCoeffField d => lowerExcess a * childAvg a) P),
-    ∀ (hUpperChildInt : Integrable (fun a : RegCoeffField d => upperExcess a * childAvg a) P),
+    ∀ (_hLowerChildInt : Integrable (fun a : RegCoeffField d => lowerExcess a * childAvg a) P),
+    ∀ (_hUpperChildInt : Integrable (fun a : RegCoeffField d => upperExcess a * childAvg a) P),
     Integrable
         (fun a : RegCoeffField d =>
           (σ * lowerExcess a + σ⁻¹ * upperExcess a) * childAvg a) P := by
@@ -619,8 +622,8 @@ private theorem integrable_lowScaleTailMajorant
         tailFactor *
           (coarseFluctuationScalarWeightAtScale hP hStruct m * Jm a +
             (σ * lowerExcess a + σ⁻¹ * upperExcess a) * childAvg a)
-    ∀ (hJInt : Integrable Jm P),
-    ∀ (hPosInt : Integrable
+    ∀ (_hJInt : Integrable Jm P),
+    ∀ (_hPosInt : Integrable
         (fun a : RegCoeffField d =>
           (σ * lowerExcess a + σ⁻¹ * upperExcess a) * childAvg a) P),
     Integrable Y P := by
@@ -668,7 +671,8 @@ private theorem integrable_lowScaleTailMajorant
             (σ * lowerExcess a + σ⁻¹ * upperExcess a) * childAvg a) P :=
     (hJInt.const_mul (coarseFluctuationScalarWeightAtScale hP hStruct m)).add
       hPosInt
-  simpa [Y] using hInside.const_mul tailFactor
+  change Integrable Y P
+  exact hInside.const_mul tailFactor
 
 /-- Raw expectation-level low-scale reduction: the paired low-scale tails are
 bounded by the parent-response baseline plus the shifted positive-excess terms
@@ -841,7 +845,7 @@ theorem integral_paired_lowScaleTailSquares_special_le_rawLowScaleTerms
       hP.restrictionResponseJObservableCubeSet_le_descendantsAverage_ae
         (n := (k : ℤ)) (m := (m : ℤ)) hkm_int p_e q_e
   have hPointXY := pairedLowScaleTailSquares_le_responseMajorant (d := d) (P := P) (hP := hP)
-    (hStruct := hStruct) (hP4 := hP4) (k := k) (m := m) (hkm := hkm) (e := e) htail_nonneg
+    (hStruct := hStruct) (hP4 := hP4) (k := k) (m := m) (e := e) htail_nonneg
     hσ_nonneg hσ_inv_nonneg hParent_le_child
   have hXNonneg : ∀ᵐ a ∂P, 0 ≤ X a := by
     filter_upwards with a
@@ -852,7 +856,8 @@ theorem integral_paired_lowScaleTailSquares_special_le_rawLowScaleTerms
   have hXInt : Integrable X P := by
     refine Integrable.mono' hYInt hXAEMeas.aestronglyMeasurable ?_
     filter_upwards [hPointXY, hXNonneg] with a hle hnonneg
-    simpa [Real.norm_eq_abs, abs_of_nonneg hnonneg] using hle
+    change X a ≤ Y a at hle
+    simpa only [Real.norm_eq_abs, abs_of_nonneg hnonneg] using hle
   have hIntegralY := integral_lowScaleTailMajorant_eq_baseline_add_excess (d := d) (P := P) (hP
     := hP)
     (hStruct := hStruct) (hP4 := hP4) (k := k) (m := m) (e := e) hJInt hLowerChildInt
@@ -875,7 +880,8 @@ theorem integral_paired_lowScaleTailSquares_special_le_rawLowScaleTerms
             Ch04.expectedResponseJCubeSet P Q p_e q_e +
           (σ * (∫ a, lowerExcess a * childAvg a ∂P) +
             σ⁻¹ * (∫ a, upperExcess a * childAvg a ∂P))) := by
-        simpa [Jm, Ch04.expectedResponseJCubeSet] using hIntegralY
+        change (∫ a, Y a ∂P) = _ at hIntegralY
+        exact hIntegralY
 
 private theorem lowScaleManuscriptContributions_nonnegative_and_tailBound
     {d : ℕ}
@@ -1085,6 +1091,9 @@ theorem integral_paired_lowScaleTailSquares_special_le_coarseFluctuationTerms_un
     simpa [Q, p_e, q_e, θ] using
       expectedResponseJCubeSet_special_le_thetaAtScale_sub_one_of_vecNormSq_eq_one
         hP hStruct hP4 m e he
+  have hscalar_nonneg :
+      0 ≤ coarseFluctuationScalarWeightAtScale hP hStruct m :=
+    coarseFluctuationScalarWeightAtScale_nonneg hP hStruct hP4 m
   have hbaseline_le :
       tailFactor *
           (coarseFluctuationScalarWeightAtScale hP hStruct m *

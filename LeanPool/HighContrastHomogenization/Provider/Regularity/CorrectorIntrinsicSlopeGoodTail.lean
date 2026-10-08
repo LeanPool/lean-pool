@@ -39,7 +39,7 @@ open scoped ENNReal
 noncomputable section
 
 private theorem poincareLowerEllipticityFactor_finite_two_eq_sqrt_inv
-    {d : ℕ} [NeZero d] (Q : TriadicCube d)
+    {d : ℕ} (Q : TriadicCube d)
     (a : Book.Ch02.TriadicCoeffFamily d) {s : ℝ} :
     Book.Ch03.poincareLowerEllipticityFactor Q a s (.finite 2) =
       Real.sqrt ((Book.Ch02.lambdaSq Q s (.finite 2) a)⁻¹) := by

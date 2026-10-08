@@ -200,7 +200,6 @@ theorem isAHarmonicGradient_of_isAHarmonicPair {d : ℕ} {a : CoeffField d} {U :
 
 theorem IsAHarmonicGradient.restrict_of_isOpen_of_memVectorL2
     {d : ℕ} {a : CoeffField d} {U V : Set (Vec d)}
-    [MeasureTheory.IsFiniteMeasure (volumeMeasureOn V)]
     {f : Vec d → Vec d} (hf : IsAHarmonicGradient a U f) (hU : IsOpen U) (hV : IsOpen V)
     (hVU : V ⊆ U) (hfluxV : MemVectorL2 V (fun x => matVecMul (a x) (f x))) :
     IsAHarmonicGradient a V f := by
@@ -213,7 +212,6 @@ theorem IsAHarmonicGradient.restrict_of_isOpen_of_memVectorL2
 
 theorem IsAHarmonicGradient.restrict_of_isOpen_of_isEllipticFieldOn
     {d : ℕ} {a : CoeffField d} {lam Lam : ℝ} {U V : Set (Vec d)}
-    [MeasureTheory.IsFiniteMeasure (volumeMeasureOn V)]
     {f : Vec d → Vec d} (hf : IsAHarmonicGradient a U f) (hU : IsOpen U) (hV : IsOpen V)
     (hVU : V ⊆ U) (hEllV : IsEllipticFieldOn lam Lam V a) :
     IsAHarmonicGradient a V f := by
@@ -446,7 +444,6 @@ theorem integrableOn_smul {d : ℕ} {a : CoeffField d} {U : Set (Vec d)}
 /-- Restrict a harmonic function to an open subset with square-integrable coefficient flux. -/
 @[expose]
 noncomputable def restrictOfMemVectorL2 {d : ℕ} {a : CoeffField d} {U V : Set (Vec d)}
-    [MeasureTheory.IsFiniteMeasure (volumeMeasureOn V)]
     (u : AHarmonicFunction a U) (hU : IsOpen U) (hV : IsOpen V) (hVU : V ⊆ U)
     (hfluxV : MemVectorL2 V (fun x => matVecMul (a x) (u.toH1.grad x))) :
     AHarmonicFunction a V :=
@@ -454,7 +451,6 @@ noncomputable def restrictOfMemVectorL2 {d : ℕ} {a : CoeffField d} {U V : Set 
     isHarmonic := u.isHarmonic.restrict_of_isOpen_of_memVectorL2 hU hV hVU hfluxV }
 
 @[simp] theorem toH1_restrictOfMemVectorL2 {d : ℕ} {a : CoeffField d} {U V : Set (Vec d)}
-    [MeasureTheory.IsFiniteMeasure (volumeMeasureOn V)]
     (u : AHarmonicFunction a U) (hU : IsOpen U) (hV : IsOpen V) (hVU : V ⊆ U)
     (hfluxV : MemVectorL2 V (fun x => matVecMul (a x) (u.toH1.grad x))) :
     (u.restrictOfMemVectorL2 hU hV hVU hfluxV).toH1 = u.toH1.restrict hV hVU :=
@@ -463,7 +459,7 @@ noncomputable def restrictOfMemVectorL2 {d : ℕ} {a : CoeffField d} {U V : Set 
 /-- Restrict a harmonic function to an open subset where the coefficient field is elliptic. -/
 @[expose]
 noncomputable def restrictOfIsEllipticFieldOn {d : ℕ} {a : CoeffField d} {lam Lam : ℝ}
-    {U V : Set (Vec d)} [MeasureTheory.IsFiniteMeasure (volumeMeasureOn V)]
+    {U V : Set (Vec d)}
     (u : AHarmonicFunction a U) (hU : IsOpen U) (hV : IsOpen V) (hVU : V ⊆ U)
     (hEllV : IsEllipticFieldOn lam Lam V a) :
     AHarmonicFunction a V :=
@@ -471,7 +467,7 @@ noncomputable def restrictOfIsEllipticFieldOn {d : ℕ} {a : CoeffField d} {lam 
     (memVectorL2_matVecMul_of_isEllipticFieldOn hEllV (u.toH1.restrict hV hVU).grad_memVectorL2)
 
 @[simp] theorem toH1_restrictOfIsEllipticFieldOn {d : ℕ} {a : CoeffField d} {lam Lam : ℝ}
-    {U V : Set (Vec d)} [MeasureTheory.IsFiniteMeasure (volumeMeasureOn V)]
+    {U V : Set (Vec d)}
     (u : AHarmonicFunction a U) (hU : IsOpen U) (hV : IsOpen V) (hVU : V ⊆ U)
     (hEllV : IsEllipticFieldOn lam Lam V a) :
     (u.restrictOfIsEllipticFieldOn hU hV hVU hEllV).toH1 = u.toH1.restrict hV hVU :=

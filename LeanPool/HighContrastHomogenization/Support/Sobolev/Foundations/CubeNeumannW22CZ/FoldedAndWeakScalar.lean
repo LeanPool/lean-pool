@@ -849,7 +849,8 @@ theorem weakEquationOnCube_of_compactSupport
     refine MeasureTheory.setIntegral_congr_fun
       (measurableSet_openCubeSet Q) ?_
     intro x _hx
-    simp [ψ, v, H1Function.ofContDiff]
+    change vecDot (W.w.toH1Function.grad x) (v.toMeanZero.toH1Function.grad x) = _
+    rw [H1Function.toMeanZero_grad]
     change vecDot (W.w.toH1Function.grad x) (euclideanGradient φ x) =
       vecDot (W.w.toH1Function.grad x) (euclideanGradient φ x)
     rfl

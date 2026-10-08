@@ -66,8 +66,11 @@ private theorem hasIntegrableCoarseBlock_respGridAdaptedCell {d : ℕ}
     (jStar : ℕ) (hjStar : 2 * d ≤ 3 ^ jStar) (F : BlockMat d)
     (hm : (explicitCanonicalMetric F).PosDef) :
     ∀ (k : ℤ) (w : Fin d → ℤ),
-      HasIntegrableCoarseBlock P (adaptedCellAtCenter (respGrid jStar F) k w) := fun k w =>
-  hasIntegrableCoarseBlock_adaptedCellAtCenter_respGrid hd P γ E Ψ Kg Src hstat hdag jStar hjStar
+      HasIntegrableCoarseBlock P (adaptedCellAtCenter (respGrid jStar F) k w) := by
+  have : NeZero d := ⟨by omega⟩
+  intro k w
+  exact hasIntegrableCoarseBlock_adaptedCellAtCenter_respGrid hd P γ E Ψ Kg Src hstat hdag jStar
+    hjStar
     F hm k w
 
 private theorem respCoeffPlusCarrierIntegrabilityFacts {d : ℕ} [NeZero d]
@@ -81,7 +84,7 @@ private theorem respCoeffPlusCarrierIntegrabilityFacts {d : ℕ} [NeZero d]
     (uP : (a : CoeffSpace d) → AHarmonicFunction (respCoeffPlus F a) (respCell jStar F t))
     (hmax : ∀ a, IsResponseMaximizer (respCell jStar F t) (respP (respMean P jStar F t) e)
       (respqPlus P jStar F t e) (respCoeffPlus F a) (uP a))
-    (hJ : Integrable (fun a => respJ (respGrid jStar F) t (respP (respMean P jStar F t) e)
+    (_hJ : Integrable (fun a => respJ (respGrid jStar F) t (respP (respMean P jStar F t) e)
       (respqPlus P jStar F t e) (respCoeffPlus F a)) P) :
     AEStronglyMeasurable (fun a => volumeAverage (respCell jStar F t)
       (fun x => (φ x - 1) * (vecDot Y.2 (optimizerField (respCoeffPlus F a) (uP a) x).1 +
@@ -94,7 +97,7 @@ private theorem respCoeffPlusCarrierIntegrabilityFacts {d : ℕ} [NeZero d]
       (Real.sqrt (vecDot Y.1 (matVecMul (coarseBlockMatrix
         (adaptedCellAtCenter (respGrid jStar F) k W) (respCoeffPlus F a)).upperLeft Y.1)) +
        Real.sqrt (vecDot Y.2 (matVecMul (coarseBlockMatrix
-        (adaptedCellAtCenter (respGrid jStar F) k W) (respCoeffPlus F a)).lowerRight Y.2)) ^ 2)
+        (adaptedCellAtCenter (respGrid jStar F) k W) (respCoeffPlus F a)).lowerRight Y.2))) ^ 2)
           P) := by
   have hq0 : IsUnit (respGrid jStar F) := hq
   have hUmeas : MeasurableSet (respCell jStar F t) :=
@@ -149,7 +152,7 @@ private theorem respCoeffPlusCarrierIntegrabilityFacts {d : ℕ} [NeZero d]
       (Real.sqrt (vecDot Y.1 (matVecMul (coarseBlockMatrix
             (adaptedCellAtCenter (respGrid jStar F) k W) (respCoeffPlus F a)).upperLeft Y.1)) +
         Real.sqrt (vecDot Y.2 (matVecMul (coarseBlockMatrix
-            (adaptedCellAtCenter (respGrid jStar F) k W) (respCoeffPlus F a)).lowerRight Y.2)) ^ 2)
+            (adaptedCellAtCenter (respGrid jStar F) k W) (respCoeffPlus F a)).lowerRight Y.2))) ^ 2)
       P := by
     intro k W
     have hblk : HasIntegrableCoarseBlock P (adaptedCellAtCenter (respGrid jStar F) k W) :=

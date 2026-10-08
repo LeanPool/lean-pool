@@ -230,7 +230,7 @@ private theorem widetildeThetaAtScale_zero_nonneg
     {d : ℕ} [NeZero d] {P : Ch04.RestrictionCoeffLaw d}
     (hP4 : QuantitativeCoarseGrainedEllipticity P) :
     0 ≤ widetildeThetaAtScale P (0 : ℤ) hP4 := by
-  simp [Ch04.widetildeThetaAtScale]
+  simp only [widetildeThetaAtScale_eq, Ch04.widetildeThetaAtScale]
   exact mul_nonneg
     (Ch04.LambdaMomentAtScale_nonneg P 0 hP4.xi hP4.sUpper_pos)
     (Ch04.lambdaInvMomentAtScale_nonneg P 0 hP4.xi hP4.sLower_pos)

@@ -32,7 +32,7 @@ open FiniteLipschitzCoreInternal
 /-- The exact-identity finite recurrence closes under the same summable-tail
 budget as the available rounded recurrence. -/
 theorem finiteCenteredEnergy_le_of_identityGoodTail
-    {d : ℕ} [NeZero d] {s : ℝ}
+    {d : ℕ} {s : ℝ}
     {a : Book.Ch03.CoeffFamily d} {C : ℝ} (hC : 1 ≤ C)
     {n m : ℤ} (hnm : n ≤ m)
     (u : Book.Ch03.CubeSolution (originCube d m) a)

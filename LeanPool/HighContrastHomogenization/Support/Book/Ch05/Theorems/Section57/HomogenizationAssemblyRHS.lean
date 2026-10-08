@@ -36,13 +36,16 @@ coarse-graining RHS.
 
 noncomputable section
 
+/-- Square-root lower-ellipticity envelope scaled by the inverse of the supplied homogenized
+scalar. -/
 @[expose]
-noncomputable def assemblyLowerEllipticityEnvelopeOfScalar {d : ℕ} [NeZero d]
+noncomputable def assemblyLowerEllipticityEnvelopeOfScalar {d : ℕ}
     (σ0 : ℝ) (α τ r : ℝ) (X : RegCoeffField d → ℝ)
     (aω : RegCoeffField d) (m : ℕ) : ℝ :=
   Real.sqrt
     (σ0⁻¹ * assemblyEllipticityEnvelope (d := d) α τ r X aω m)
 
+/-- Lower-ellipticity envelope specialized to the law's limiting scalar coefficient. -/
 @[expose]
 noncomputable def assemblyLowerEllipticityEnvelope {d : ℕ} [NeZero d]
     {P : Ch04.RestrictionCoeffLaw d} (hP : Ch04.RestrictionLawCarrier P)
@@ -58,7 +61,7 @@ bounds.  The local coefficient/ellipticity factors are controlled at exponent
 `r`, while the forcing is measured at exponent `r₂` and carries the inverse
 depth weight from the repaired Ch3 estimate. -/
 @[expose]
-noncomputable def assemblyCompressedTwoExponentRHSOfScalar {d : ℕ} [NeZero d]
+noncomputable def assemblyCompressedTwoExponentRHSOfScalar {d : ℕ}
     (σ0 : ℝ) (hσ0 : 0 < σ0)
     (Ccg α τ s r r₂ : ℝ) (X : RegCoeffField d → ℝ)
     (aω : RegCoeffField d) (ha : Ch04.AELocallyUniformlyEllipticField aω)
@@ -106,7 +109,7 @@ noncomputable def assemblyCompressedTwoExponentRHS {d : ℕ} [NeZero d]
     Ccg α τ s r r₂ X aω ha m j g w
 
 theorem poincareLowerEllipticityFactor_finite_two_eq_sqrt_inv
-    {d : ℕ} [NeZero d] (Q : TriadicCube d)
+    {d : ℕ} (Q : TriadicCube d)
     (a : Ch02.TriadicCoeffFamily d) {s : ℝ} (_hs : 0 < s) :
     Ch03.poincareLowerEllipticityFactor Q a s (.finite 2) =
       Real.sqrt ((Ch02.lambdaSq Q s (.finite 2) a)⁻¹) := by
@@ -120,7 +123,7 @@ theorem poincareLowerEllipticityFactor_finite_two_eq_sqrt_inv
   simpa [Ch03.poincareLowerEllipticityFactor, hExp] using hleft.symm
 
 theorem poincareUpperEllipticityFactor_finite_two_eq_sqrt
-    {d : ℕ} [NeZero d] (Q : TriadicCube d)
+    {d : ℕ} (Q : TriadicCube d)
     (a : Ch02.TriadicCoeffFamily d) {s : ℝ} (_hs : 0 < s) :
     Ch03.poincareUpperEllipticityFactor Q a s (.finite 2) =
       Real.sqrt (Ch02.LambdaSq Q s (.finite 2) a) := by
@@ -136,7 +139,7 @@ theorem lambdaSq_finite_two_rpow_neg_one_eq_inv
   simpa using (Real.rpow_neg hlam.le (1 : ℝ))
 
 theorem coarseGrainingHomogenizationErrorAtDepth_nonneg
-    {d : ℕ} [NeZero d] (Q : TriadicCube d)
+    {d : ℕ} (Q : TriadicCube d)
     (a : Ch02.TriadicCoeffFamily d) (a0 : Ch03.ConstantCoeffMatrix d)
     {s : ℝ} (hs : 0 < s) (j : ℕ) :
     0 ≤ Ch03.coarseGrainingHomogenizationErrorAtDepth Q a a0 s j := by
@@ -215,7 +218,7 @@ private theorem product_of_lower_and_error_bounds
 
 /-- Substitute the controlled factors into the repaired scale-separated Ch3
 deterministic RHS. -/
-/-- Finite-`sigma` wrapper for the scale-separated deterministic RHS
+/- Finite-`sigma` wrapper for the scale-separated deterministic RHS
 substitution. -/
 theorem assemblyControlledFactors_lhs_le_compressedTwoExponentRHS_ofScalar
     {d : ℕ} [NeZero d] {σ0 : ℝ} (hσ0 : 0 < σ0)

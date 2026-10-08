@@ -39,7 +39,7 @@ noncomputable section
 variable {d : ℕ}
 
 /-- **The single-cell variance at abstract envelopes.** -/
-theorem scaleVariance_le_of_envelopes [NeZero d]
+theorem scaleVariance_le_of_envelopes
     {g : ℝ} (hg : g ∈ Set.Ico (0 : ℝ) 1)
     {P : Measure (CoeffSpace d)} [IsProbabilityMeasure P]
     {E : BlockMat d} {Ψ : ℝ → ℝ} {K : ℝ} {S : CoeffSpace d → ℝ}

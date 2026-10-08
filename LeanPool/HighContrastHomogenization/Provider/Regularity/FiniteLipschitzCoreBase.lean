@@ -47,49 +47,59 @@ noncomputable section
 
 namespace FiniteLipschitzCoreInternal
 
+/-- Restrict a solution on the origin cube at scale `m` to scale `min k m`,
+so the requested local scale never exceeds its domain. -/
 @[expose]
 noncomputable def finiteLipschitzRestriction
-    {d : ℕ} [NeZero d] (a : Book.Ch02.TriadicCoeffFamily d)
+    {d : ℕ} (a : Book.Ch02.TriadicCoeffFamily d)
     (m : ℤ) (u : Book.Ch03.CubeSolution (originCube d m) a) (k : ℤ) :
     Book.Ch03.CubeSolution (originCube d (min k m)) a :=
   finiteCubeSolutionRestriction a (min_le_right k m) u
 
 @[simp] theorem finiteLipschitzRestriction_toFun
-    {d : ℕ} [NeZero d] (a : Book.Ch02.TriadicCoeffFamily d)
+    {d : ℕ} (a : Book.Ch02.TriadicCoeffFamily d)
     (m : ℤ) (u : Book.Ch03.CubeSolution (originCube d m) a) (k : ℤ) :
     (finiteLipschitzRestriction a m u k).toH1.toFun = u.toH1.toFun := by
   rfl
 
 @[simp] theorem finiteLipschitzRestriction_grad
-    {d : ℕ} [NeZero d] (a : Book.Ch02.TriadicCoeffFamily d)
+    {d : ℕ} (a : Book.Ch02.TriadicCoeffFamily d)
     (m : ℤ) (u : Book.Ch03.CubeSolution (originCube d m) a) (k : ℤ) :
     (finiteLipschitzRestriction a m u k).toH1.grad = u.toH1.grad := by
   rfl
 
+/-- The coefficient-weighted H¹ energy norm of the solution on the origin
+cube at scale `min k m`. -/
 @[expose]
 noncomputable def finiteLipschitzEnergyRow
-    {d : ℕ} [NeZero d] (a : Book.Ch02.TriadicCoeffFamily d)
+    {d : ℕ} (a : Book.Ch02.TriadicCoeffFamily d)
     (m : ℤ) (u : Book.Ch03.CubeSolution (originCube d m) a) (k : ℤ) : ℝ :=
   Book.Ch03.h1EnergyNormOnCube (originCube d (min k m)) a
     (finiteLipschitzRestriction a m u k).toH1
 
+/-- The intercept of the L² best affine fit to the restricted solution on the
+origin cube at scale `min k m`. -/
 @[expose]
 noncomputable def finiteLipschitzBestIntercept
-    {d : ℕ} [NeZero d] (a : Book.Ch02.TriadicCoeffFamily d)
+    {d : ℕ} (a : Book.Ch02.TriadicCoeffFamily d)
     (m : ℤ) (u : Book.Ch03.CubeSolution (originCube d m) a) (k : ℤ) : ℝ :=
   originCubeAffineBestFitIntercept d (min k m)
     (finiteLipschitzRestriction a m u k).toH1.toScalarL2
 
+/-- The slope of the L² best affine fit to the restricted solution on the
+origin cube at scale `min k m`. -/
 @[expose]
 noncomputable def finiteLipschitzBestSlope
-    {d : ℕ} [NeZero d] (a : Book.Ch02.TriadicCoeffFamily d)
+    {d : ℕ} (a : Book.Ch02.TriadicCoeffFamily d)
     (m : ℤ) (u : Book.Ch03.CubeSolution (originCube d m) a) (k : ℤ) : Vec d :=
   originCubeAffineBestFitSlope d (min k m)
     (finiteLipschitzRestriction a m u k).toH1.toScalarL2
 
+/-- The normalized affine approximation error of the restricted solution,
+using its best-fit intercept and slope at scale `min k m`. -/
 @[expose]
 noncomputable def finiteLipschitzAffineErrorRow
-    {d : ℕ} [NeZero d] (a : Book.Ch02.TriadicCoeffFamily d)
+    {d : ℕ} (a : Book.Ch02.TriadicCoeffFamily d)
     (m : ℤ) (u : Book.Ch03.CubeSolution (originCube d m) a) (k : ℤ) : ℝ :=
   normalizedAffineCandidateError (originCube d (min k m))
     (finiteLipschitzRestriction a m u k).toH1.toFun
@@ -97,14 +107,14 @@ noncomputable def finiteLipschitzAffineErrorRow
     (finiteLipschitzBestSlope a m u k)
 
 theorem finiteLipschitzEnergyRow_nonneg
-    {d : ℕ} [NeZero d] (a : Book.Ch02.TriadicCoeffFamily d)
+    {d : ℕ} (a : Book.Ch02.TriadicCoeffFamily d)
     (m : ℤ) (u : Book.Ch03.CubeSolution (originCube d m) a) (k : ℤ) :
     0 ≤ finiteLipschitzEnergyRow a m u k := by
   unfold finiteLipschitzEnergyRow Book.Ch03.h1EnergyNormOnCube
   exact Real.sqrt_nonneg _
 
 theorem finiteLipschitzEnergyRow_eq_h1EnergyNormOnCube_of_le
-    {d : ℕ} [NeZero d] (a : Book.Ch02.TriadicCoeffFamily d)
+    {d : ℕ} (a : Book.Ch02.TriadicCoeffFamily d)
     (m : ℤ) (u : Book.Ch03.CubeSolution (originCube d m) a)
     (k : ℤ) (hkm : k ≤ m) :
     finiteLipschitzEnergyRow a m u k =
@@ -123,7 +133,7 @@ theorem finiteLipschitzEnergyRow_eq_h1EnergyNormOnCube_of_le
   rw [hcoeff, hset]
 
 theorem finiteLipschitzEnergyRow_self
-    {d : ℕ} [NeZero d] (a : Book.Ch02.TriadicCoeffFamily d)
+    {d : ℕ} (a : Book.Ch02.TriadicCoeffFamily d)
     (m : ℤ) (u : Book.Ch03.CubeSolution (originCube d m) a) :
     finiteLipschitzEnergyRow a m u m =
       Book.Ch03.h1EnergyNormOnCube (originCube d m) a u.toH1 := by
@@ -137,7 +147,7 @@ theorem finiteLipschitzEnergyRow_self
       simp only [finiteCubeSolutionRestriction_grad]
 
 theorem finiteLipschitzAffineErrorRow_nonneg
-    {d : ℕ} [NeZero d] (a : Book.Ch02.TriadicCoeffFamily d)
+    {d : ℕ} (a : Book.Ch02.TriadicCoeffFamily d)
     (m : ℤ) (u : Book.Ch03.CubeSolution (originCube d m) a) (k : ℤ) :
     0 ≤ finiteLipschitzAffineErrorRow a m u k := by
   exact normalizedAffineCandidateError_nonneg _ _ _ _
@@ -260,7 +270,7 @@ theorem identityReplacement_weakPoisson
     HCPolySupport.matVecMul_one, hpsiGrad, vecDot_zero_left, integral_zero] using hweak
 
 theorem originCubeAffineH1LinearMap_weakPoisson
-    (d : ℕ) [NeZero d] (k : ℤ) (p : AffineCoefficients d) :
+    (d : ℕ) (k : ℤ) (p : AffineCoefficients d) :
     WeakPoissonEquationOn (openCubeSet (originCube d k))
       (originCubeAffineH1LinearMap d k p) (fun _ ↦ 0) := by
   intro phi hphi hcompact hsupport
@@ -323,7 +333,7 @@ theorem normalizedAffineCandidateError_zero_sub_le_add
       ring
 
 theorem exists_originCubeAffineSlopeErrorConstant
-    (d : ℕ) [NeZero d] :
+    (d : ℕ) :
     ∃ C : ℝ, 0 < C ∧ ∀ (k : ℤ) (c : ℝ) (e : Vec d),
       euclideanNorm e ≤ C *
         normalizedAffineCandidateError (originCube d k) (fun _ ↦ 0) c e := by
@@ -366,7 +376,7 @@ theorem exists_originCubeAffineSlopeErrorConstant
   simpa only [mul_assoc] using hbound
 
 theorem finiteLipschitzBestResidual_memLp
-    {d : ℕ} [NeZero d] (a : Book.Ch02.TriadicCoeffFamily d)
+    {d : ℕ} (a : Book.Ch02.TriadicCoeffFamily d)
     (m : ℤ) (u : Book.Ch03.CubeSolution (originCube d m) a)
     {k : ℤ} (hkm : k ≤ m) :
     MemLp
@@ -387,7 +397,7 @@ theorem finiteLipschitzBestResidual_memLp
     originCubeAffineH1LinearMap_toFun] using! hv
 
 theorem finiteLipschitzAffineErrorRow_best_le
-    {d : ℕ} [NeZero d] (a : Book.Ch02.TriadicCoeffFamily d)
+    {d : ℕ} (a : Book.Ch02.TriadicCoeffFamily d)
     (m : ℤ) (u : Book.Ch03.CubeSolution (originCube d m) a)
     {k : ℤ} (hkm : k ≤ m) (c : ℝ) (e : Vec d) :
     finiteLipschitzAffineErrorRow a m u k ≤
@@ -400,7 +410,7 @@ theorem finiteLipschitzAffineErrorRow_best_le
         (finiteLipschitzRestriction a m u k).toH1 c e
 
 theorem exists_finiteLipschitzAdjacentSlopeConstant
-    (d : ℕ) [NeZero d] :
+    (d : ℕ) :
     ∃ C : ℝ, 0 < C ∧
       ∀ (a : Book.Ch02.TriadicCoeffFamily d) (m : ℤ)
         (u : Book.Ch03.CubeSolution (originCube d m) a)
@@ -498,7 +508,7 @@ theorem exists_finiteLipschitzAdjacentSlopeConstant
           finiteLipschitzAffineErrorRow a m u (k + 1)) := rfl
 
 theorem poincareLowerEllipticityFactor_finite_two_eq_sqrt_inv
-    {d : ℕ} [NeZero d] (Q : TriadicCube d)
+    {d : ℕ} (Q : TriadicCube d)
     (a : Book.Ch02.TriadicCoeffFamily d) {s : ℝ} :
     Book.Ch03.poincareLowerEllipticityFactor Q a s (.finite 2) =
       Real.sqrt ((Book.Ch02.lambdaSq Q s (.finite 2) a)⁻¹) := by
@@ -697,7 +707,7 @@ theorem caccioppoliPrefactor_weakError_le_one
         hscale_nonneg
 
 theorem finiteCubeRestriction_sub_two_energy_eq_coreEnergy
-    {d : ℕ} [NeZero d] (a : Book.Ch02.TriadicCoeffFamily d)
+    {d : ℕ} (a : Book.Ch02.TriadicCoeffFamily d)
     (k : ℤ) (u : Book.Ch03.CubeSolution (originCube d k) a) :
     Book.Ch03.h1EnergyNormOnCube (originCube d (k - 2)) a
         (finiteCubeSolutionRestriction a (by omega : k - 2 ≤ k) u).toH1 =

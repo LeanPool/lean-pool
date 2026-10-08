@@ -124,7 +124,7 @@ private theorem integral_centeredOriginObservable_eq_zero_of_integrableMoment
   simpa [Y, μ0, restrictionCenteredOriginObservable] using hY0_mean
 
 private theorem integral_abs_scaledFiniteSum_pow_root_eq
-    {d : ℕ} {P : RestrictionCoeffLaw d} [IsProbabilityMeasure P]
+    {d : ℕ} {P : RestrictionCoeffLaw d}
     {p : ℕ} {c : ℝ} (D : Finset (TriadicCube d))
     (Z : TriadicCube d → RegCoeffField d → ℝ)
     (hp_nat_ne_zero : p ≠ 0) (hc_nonneg : 0 ≤ c)
@@ -526,7 +526,7 @@ theorem integral_abs_centeredDescendantMean_pow_rpow_inv_le_of_of_unitRangeLaw
       intro R hR
       exact hZraw_eq_Z R hR
     filter_upwards [hAll] with a hAll_a
-    simp [Sraw, S]
+    change (∑ R ∈ D, Zraw R a) = ∑ R ∈ D, Z R a
     exact Finset.sum_congr rfl fun R hR => by simp [hAll_a R hR]
   let Aavg : RegCoeffField d → ℝ := c • S
   have hMomentScale :

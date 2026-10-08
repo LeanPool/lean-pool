@@ -247,12 +247,12 @@ theorem memLqSchatten_coarseBlock_adapted (d : ℕ) (hd : 2 ≤ d)
   apply memLqSchatten_of_order_envelope hN hmeas
     (ae_of_all _ (fun a => isSymmetricBlockMat_coarseBlockMatrix W (⇑a.1)))
     (ae_of_all _ (fun a => Annealed.blockPosDef_coarseBlock_adapted q hq j y a)) (hXN N hN) D
-  filter_upwards [hbound] with a ha
-  have hb := ha q (inverseNormLE_roundedGrid hj hm) j y Subset.rfl
-  convert hb using 1
-  congr 1
-  dsimp [D]
-  ring
+  · filter_upwards [hbound] with a ha
+    have hb := ha q (inverseNormLE_roundedGrid hj hm) j y Subset.rfl
+    convert hb using 1
+    congr 1
+    dsimp [D]
+    ring
 
 /-- Deterministic full-matrix congruence preserves finite Schatten membership.
 No annealed identity or positivity normalization is used. -/
@@ -285,8 +285,9 @@ theorem memLqSchatten_congruence {d : ℕ} {P : Measure (CoeffSpace d)} {N : ℝ
   calc
     _ ≤ (‖B.conjTranspose‖ * ‖toFullBlockMat (A a)‖) * ‖B‖ :=
       (norm_mul_le _ _).trans (mul_le_mul_of_nonneg_right (norm_mul_le _ _) (norm_nonneg _))
-    _ = (‖B‖ * blockOpNorm (A a)) * ‖B‖ := by rw [show B.conjTranspose = star B from rfl,
-      norm_star]; rfl
+    _ = (‖B‖ * blockOpNorm (A a)) * ‖B‖ := by
+      rw [show B.conjTranspose = star B from rfl, norm_star]
+      rfl
     _ ≤ (‖B‖ * absSchattenNorm N (A a)) * ‖B‖ := by
       gcongr
       exact Analysis.blockOpNorm_le_absSchattenNorm hh hN
@@ -350,7 +351,7 @@ theorem memLqSchatten_finset_sum {d : ℕ} {ι : Type*} {P : Measure (CoeffSpace
 
 /-- S2 integer stationarity identifies the actual entrywise annealed means.
 This uses only measurable transport and does not assume annealed normalization. -/
-theorem annealedBlock_adapted_add_intTranslation {d : ℕ} [NeZero d]
+theorem annealedBlock_adapted_add_intTranslation {d : ℕ}
     (P : Measure (CoeffSpace d)) (hstat : IsStationaryLaw P)
     (q : Mat d) (hq : IsUnit q) (j : ℤ) (y : Vec d) (z : Fin d → ℤ) :
     annealedBlock P (adaptedCellTranslate q j (y + HCPolySupport.Source.AKL.intTranslation z)) =

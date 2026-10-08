@@ -84,8 +84,7 @@ variable {d : ℕ} [NeZero d]
 
 /-- The zero harmonic function on a set.  It is used only as a total placeholder for the child
 family away from the triadic index box, where the family is never consumed. -/
-@[expose]
-public def zeroAHarmonic (a : CoeffField d) (U : Set (Vec d)) : AHarmonicFunction a U :=
+private def zeroAHarmonic (a : CoeffField d) (U : Set (Vec d)) : AHarmonicFunction a U :=
   { toH1 := 0, isHarmonic := isAHarmonicGradient_zero }
 
 omit [NeZero d] in
@@ -124,6 +123,7 @@ private theorem volumeAverage_diffEnergy_congr_ae {V : Set (Vec d)} {b f : Coeff
   filter_upwards [hae] with x hx
   rw [hx]
 
+omit [NeZero d] in
 /-- Transport the averaged response-deficit identity from an elliptic representative back to the
 recentred coefficient. -/
 private theorem avg_diffEnergy_eq_responseJ_deficit_respCoeffPlus
@@ -262,12 +262,25 @@ private theorem avg_diffEnergy_eq_responseJ_deficit_respCoeffPlus
       = ((Z.card : ℝ)⁻¹ * ∑ w ∈ Z, ResponseJ (adaptedCellAtCenter q (t - (n : ℤ)) w) p r b
         - ResponseJ (HighContrast.adaptedCell q t) p r b) := by
     rw [hsumJ, hparJ]
+  have hcard_normalization : (Z.card : ℝ) ≠ 0 := by
+    have hne : Z.Nonempty := by
+      change (triadicIndexBox d n).Nonempty
+      refine ⟨0, ?_⟩
+      rw [triadicIndexBox, Fintype.mem_piFinset]
+      intro i
+      exact Finset.mem_Icc.mpr ⟨neg_nonpos.mpr (Int.natCast_nonneg _),
+        Int.natCast_nonneg _⟩
+    exact_mod_cast (Finset.card_ne_zero.mpr hne)
   change ((Z.card : ℝ)⁻¹ * ∑ w ∈ Z, G' w) =
     2 * ((Z.card : ℝ)⁻¹ * ∑ w ∈ Z,
-      ResponseJ (adaptedCellAtCenter q (t - (n : ℤ)) w) p r b -
-        ResponseJ (HighContrast.adaptedCell q t) p r b)
-  rw [← hAS, ← hBS]
-  exact hSf
+      (ResponseJ (adaptedCellAtCenter q (t - (n : ℤ)) w) p r b -
+        ResponseJ (HighContrast.adaptedCell q t) p r b))
+  rw [Finset.sum_sub_distrib, Finset.sum_const]
+  simp only [nsmul_eq_mul, mul_sub, ← mul_assoc, inv_mul_cancel₀ hcard_normalization, one_mul]
+  rw [← hAS]
+  have hSf_normalized := hSf
+  rw [hBS] at hSf_normalized
+  simpa only [mul_sub, ← mul_assoc] using hSf_normalized
 
 /-- Bound the response deficit by the normalized Loewner comparison once the energy identity
 has been transported to the recentred coefficient. -/
@@ -303,7 +316,23 @@ private theorem avg_energy_le_weakAverageDefect
       2 * ((Z.card : ℝ)⁻¹ * ∑ w ∈ Z,
         ResponseJ (adaptedCellAtCenter q (t - (n : ℤ)) w) p r b -
           ResponseJ (HighContrast.adaptedCell q t) p r b) := by
-    simpa [Z, q, p, r, b] using hS
+    have hcard_normalization : (Z.card : ℝ) ≠ 0 := by
+      have hne : Z.Nonempty := by
+        change (triadicIndexBox d n).Nonempty
+        refine ⟨0, ?_⟩
+        rw [triadicIndexBox, Fintype.mem_piFinset]
+        intro i
+        exact Finset.mem_Icc.mpr ⟨neg_nonpos.mpr (Int.natCast_nonneg _),
+          Int.natCast_nonneg _⟩
+      exact_mod_cast (Finset.card_ne_zero.mpr hne)
+    have hS_normalized := hS
+    change (Z.card : ℝ)⁻¹ * ∑ w ∈ Z, G' w =
+      2 * ((Z.card : ℝ)⁻¹ * ∑ w ∈ Z,
+        (ResponseJ (adaptedCellAtCenter q (t - (n : ℤ)) w) p r b -
+          ResponseJ (HighContrast.adaptedCell q t) p r b)) at hS_normalized
+    rw [Finset.sum_sub_distrib, Finset.sum_const] at hS_normalized
+    simpa only [nsmul_eq_mul, mul_sub, ← mul_assoc,
+      inv_mul_cancel₀ hcard_normalization, one_mul] using hS_normalized
   let Q : (Fin d → ℤ) → ℝ := fun w =>
     blockVecDot x (blockMatVecMul (coarseBlockMatrix (adaptedCellAtCenter q (t - (n : ℤ)) w) b) x)
   let QU : ℝ := blockVecDot x
@@ -429,8 +458,24 @@ theorem headEnergy_carrier_plus (P : Measure (CoeffSpace d)) (jStar : ℕ) (F : 
       = 2 * ((Z.card : ℝ)⁻¹ * ∑ w ∈ Z,
           ResponseJ (adaptedCellAtCenter q (t - (n : ℤ)) w) p r b
             - ResponseJ (HighContrast.adaptedCell q t) p r b) := by
-    simpa [G', Z, b, p, r, q] using
+    have hcard_normalization : (Z.card : ℝ) ≠ 0 := by
+      have hne : Z.Nonempty := by
+        change (triadicIndexBox d n).Nonempty
+        refine ⟨0, ?_⟩
+        rw [triadicIndexBox, Fintype.mem_piFinset]
+        intro i
+        exact Finset.mem_Icc.mpr ⟨neg_nonpos.mpr (Int.natCast_nonneg _),
+          Int.natCast_nonneg _⟩
+      exact_mod_cast (Finset.card_ne_zero.mpr hne)
+    have hS_normalized :=
       avg_diffEnergy_eq_responseJ_deficit_respCoeffPlus P jStar F t e hgrid a n u hu v hv
+    change (Z.card : ℝ)⁻¹ * ∑ w ∈ Z, G' w =
+      2 * ((Z.card : ℝ)⁻¹ * ∑ w ∈ Z,
+        (ResponseJ (adaptedCellAtCenter q (t - (n : ℤ)) w) p r b -
+          ResponseJ (HighContrast.adaptedCell q t) p r b)) at hS_normalized
+    rw [Finset.sum_sub_distrib, Finset.sum_const] at hS_normalized
+    simpa only [nsmul_eq_mul, mul_sub, ← mul_assoc,
+      inv_mul_cancel₀ hcard_normalization, one_mul] using hS_normalized
   -- Step E.  The goal's integrand is the symmetric scalar difference energy.
   have hpt : ∀ w, (fun y => vecDot (optimizerField b u y - optimizerField b (v w) y).1
         (optimizerField b u y - optimizerField b (v w) y).2)
@@ -449,7 +494,23 @@ theorem headEnergy_carrier_plus (P : Measure (CoeffSpace d)) (jStar : ℕ) (F : 
           (optimizerField b u y - optimizerField b (v w) y).2)) = 2 * G' w := by
     intro w _
     exact congrArg (fun g => 2 * volumeAverage (adaptedCellAtCenter q (t - (n : ℤ)) w) g) (hpt w)
-  have hbound := avg_energy_le_weakAverageDefect P jStar F t e hgrid a n hEhat G' hS
+  have hbound := avg_energy_le_weakAverageDefect P jStar F t e hgrid a n hEhat G' (by
+      have hcard_normalization : (Z.card : ℝ) ≠ 0 := by
+        have hne : Z.Nonempty := by
+          change (triadicIndexBox d n).Nonempty
+          refine ⟨0, ?_⟩
+          rw [triadicIndexBox, Fintype.mem_piFinset]
+          intro i
+          exact Finset.mem_Icc.mpr ⟨neg_nonpos.mpr (Int.natCast_nonneg _),
+            Int.natCast_nonneg _⟩
+        exact_mod_cast (Finset.card_ne_zero.mpr hne)
+      change (Z.card : ℝ)⁻¹ * ∑ w ∈ Z, G' w =
+        2 * ((Z.card : ℝ)⁻¹ * ∑ w ∈ Z,
+          (ResponseJ (adaptedCellAtCenter q (t - (n : ℤ)) w) p r b -
+            ResponseJ (HighContrast.adaptedCell q t) p r b))
+      rw [Finset.sum_sub_distrib, Finset.sum_const]
+      simpa only [nsmul_eq_mul, mul_sub, ← mul_assoc,
+        inv_mul_cancel₀ hcard_normalization, one_mul] using hS)
   calc
     (Z.card : ℝ)⁻¹ * ∑ w ∈ Z,
         (2 * volumeAverage (adaptedCellAtCenter q (t - (n : ℤ)) w)

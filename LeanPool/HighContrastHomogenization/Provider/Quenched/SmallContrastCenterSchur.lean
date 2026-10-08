@@ -43,7 +43,7 @@ noncomputable section
 variable {d : ℕ}
 
 /-- **The primal center in closed Schur form.** -/
-theorem profilePrimalCenter_calibrated_eq [NeZero d]
+theorem profilePrimalCenter_calibrated_eq
     {P : Measure (CoeffSpace d)} [IsProbabilityMeasure P]
     {q : Mat d} (hq : q.PosDef) (t : ℤ)
     (hint : HasFiniteAdaptedMean P q t)
@@ -75,7 +75,7 @@ theorem profilePrimalCenter_calibrated_eq [NeZero d]
   rwa [Response.responseSymmetric_isHermitian K] at hmain
 
 /-- **The adjoint center in closed Schur form.** -/
-theorem profileAdjointCenter_calibrated_eq [NeZero d]
+theorem profileAdjointCenter_calibrated_eq
     {P : Measure (CoeffSpace d)} [IsProbabilityMeasure P]
     {q : Mat d} (hq : q.PosDef) (t : ℤ)
     (hint : HasFiniteAdaptedMean P q t)

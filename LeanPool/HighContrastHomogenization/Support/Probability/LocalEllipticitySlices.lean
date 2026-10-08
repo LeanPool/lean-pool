@@ -643,7 +643,7 @@ theorem measurable_toHilbertMatrixL2_of_norm_eq_iSup_abs_inner {d : ℕ} {U : Se
   exact
     @measurable_of_measurable_inner_denseRange_of_norm_eq_iSup_abs_inner
       {a : CoeffField d // QuantitativeEllipticSlice U k a} H
-      (localMeasurableSpace U k) _ _ _ _ _ u hu
+      (localMeasurableSpace U k) _ _ _ _ u hu
       (F := toHilbertMatrixL2) hNormEq hInner
 
 /-- Strong Borel measurability of the coefficient-field `L²` realization follows from

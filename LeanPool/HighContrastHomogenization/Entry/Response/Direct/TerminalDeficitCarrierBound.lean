@@ -59,7 +59,6 @@ integrand unchanged, so the deficit `J(V) - ⨍_V g_V(u)` is nonnegative.  This 
 the terminal-optimizer replacement of `p.response.transfer`. -/
 theorem volumeAverage_scalarResponseIntegrand_le_responseJ {d : ℕ} {U V : Set (Vec d)}
     (hU : IsOpen U) (hV : IsOpen V) (hVU : V ⊆ U)
-    [MeasureTheory.IsFiniteMeasure (volumeMeasureOn V)]
     {lam Lam : ℝ} {a : CoeffField d} (hEll : IsEllipticFieldOn lam Lam V a)
     (p r : Vec d) (u : AHarmonicFunction a U) (v : AHarmonicFunction a V)
     (hmax : IsResponseMaximizer V p r a v) :
@@ -140,7 +139,7 @@ restricted parent `u` — the terminal optimizer's energy on the subcell is cont
 with `J = J(adaptedCellAtCenter q (t - n) w; p, r; b)` and
 `D = J - ⨍ g_{adaptedCell q t}(u)`.  The caller supplies both the finite-measure instance and the
 subcell maximizer together with the inequality relating them. -/
-theorem abs_half_energy_adaptedCellAtCenter_sub_responseJ_le {d : ℕ} [NeZero d] {q : Mat d}
+theorem abs_half_energy_adaptedCellAtCenter_sub_responseJ_le {d : ℕ} {q : Mat d}
     (hq : IsUnit q) (t : ℤ) (n : ℕ) {lam Lam : ℝ} {b : CoeffField d}
     (hEll : IsEllipticFieldOn lam Lam (HighContrast.adaptedCell q t) b)
     (p r : Vec d) (u : AHarmonicFunction b (HighContrast.adaptedCell q t))
@@ -221,7 +220,7 @@ noncomputable section
 
 /-- The transport core of the subcell comparison: given a pointwise elliptic representative `f`
 of a coefficient `b` on the terminal cell, the comparison holds for `b` itself. -/
-private theorem abs_half_energy_adaptedCellAtCenter_sub_responseJ_le_of_aeRep {d : ℕ} [NeZero d]
+private theorem abs_half_energy_adaptedCellAtCenter_sub_responseJ_le_of_aeRep {d : ℕ}
     {q : Mat d} (hq : IsUnit q) (t : ℤ) (n : ℕ) {lam Lam : ℝ} {b f : CoeffField d}
     (hEll : IsEllipticFieldOn lam Lam (HighContrast.adaptedCell q t) f)
     (hae : b =ᵐ[volumeMeasureOn (HighContrast.adaptedCell q t)] f)
@@ -306,7 +305,7 @@ private theorem abs_half_energy_adaptedCellAtCenter_sub_responseJ_le_of_aeRep {d
 /-- The transport core of the two signs: given a pointwise elliptic representative `f` of a
 coefficient `b` on the terminal cell, the subcell response and the subcell deficit for `b` are
 nonnegative. -/
-private theorem responseJ_nonneg_and_deficit_nonneg_of_aeRep {d : ℕ} [NeZero d]
+private theorem responseJ_nonneg_and_deficit_nonneg_of_aeRep {d : ℕ}
     {q : Mat d} (hq : IsUnit q) (t : ℤ) (n : ℕ) {lam Lam : ℝ} {b f : CoeffField d}
     (hEll : IsEllipticFieldOn lam Lam (HighContrast.adaptedCell q t) f)
     (hae : b =ᵐ[volumeMeasureOn (HighContrast.adaptedCell q t)] f)
@@ -356,7 +355,7 @@ private theorem responseJ_nonneg_and_deficit_nonneg_of_aeRep {d : ℕ} [NeZero d
 
 /-- The subcell comparison on an aligned adapted subcell, for the minus family, with no
 pointwise ellipticity hypothesis. -/
-theorem abs_half_energy_adaptedCellAtCenter_sub_responseJ_le_respCoeffMinus {d : ℕ} [NeZero d]
+theorem abs_half_energy_adaptedCellAtCenter_sub_responseJ_le_respCoeffMinus {d : ℕ}
     {jStar : ℕ} (hjStar : 2 * d ≤ 3 ^ jStar) {F : BlockMat d}
     (hm : (explicitCanonicalMetric F).PosDef) (t : ℤ) (n : ℕ) (p r : Vec d) (a : CoeffSpace d)
     (u : AHarmonicFunction (respCoeffMinus F a) (respCell jStar F t))
@@ -383,7 +382,7 @@ theorem abs_half_energy_adaptedCellAtCenter_sub_responseJ_le_respCoeffMinus {d :
 
 /-- The subcell comparison on an aligned adapted subcell, for the plus family, with no pointwise
 ellipticity hypothesis. -/
-theorem abs_half_energy_adaptedCellAtCenter_sub_responseJ_le_respCoeffPlus {d : ℕ} [NeZero d]
+theorem abs_half_energy_adaptedCellAtCenter_sub_responseJ_le_respCoeffPlus {d : ℕ}
     {jStar : ℕ} (hjStar : 2 * d ≤ 3 ^ jStar) {F : BlockMat d}
     (hm : (explicitCanonicalMetric F).PosDef) (t : ℤ) (n : ℕ) (p r : Vec d) (a : CoeffSpace d)
     (u : AHarmonicFunction (respCoeffPlus F a) (respCell jStar F t))
@@ -408,7 +407,7 @@ theorem abs_half_energy_adaptedCellAtCenter_sub_responseJ_le_respCoeffPlus {d : 
     (q := respGrid jStar F) (Geometry.isUnit_roundedGrid hjStar hm) t n hEll hae p r u hw
 
 /-- Nonnegativity of the subcell response and of the subcell deficit, minus family. -/
-theorem responseJ_nonneg_and_deficit_nonneg_respCoeffMinus {d : ℕ} [NeZero d]
+theorem responseJ_nonneg_and_deficit_nonneg_respCoeffMinus {d : ℕ}
     {jStar : ℕ} (hjStar : 2 * d ≤ 3 ^ jStar) {F : BlockMat d}
     (hm : (explicitCanonicalMetric F).PosDef) (t : ℤ) (n : ℕ) (p r : Vec d) (a : CoeffSpace d)
     (u : AHarmonicFunction (respCoeffMinus F a) (respCell jStar F t))
@@ -424,7 +423,7 @@ theorem responseJ_nonneg_and_deficit_nonneg_respCoeffMinus {d : ℕ} [NeZero d]
     (q := respGrid jStar F) (Geometry.isUnit_roundedGrid hjStar hm) t n hEll hae p r u hw
 
 /-- Nonnegativity of the subcell response and of the subcell deficit, plus family. -/
-theorem responseJ_nonneg_and_deficit_nonneg_respCoeffPlus {d : ℕ} [NeZero d]
+theorem responseJ_nonneg_and_deficit_nonneg_respCoeffPlus {d : ℕ}
     {jStar : ℕ} (hjStar : 2 * d ≤ 3 ^ jStar) {F : BlockMat d}
     (hm : (explicitCanonicalMetric F).PosDef) (t : ℤ) (n : ℕ) (p r : Vec d) (a : CoeffSpace d)
     (u : AHarmonicFunction (respCoeffPlus F a) (respCell jStar F t))
@@ -476,7 +475,7 @@ measurable `V` contained in that cell, both coordinates of the doubled optimizer
 a continuous `η` are integrable on `V`: the weighted gradient coordinate `η · ∇v` and the weighted
 flux coordinate `η · (b ∇v)`.  The coefficient is transported from its almost-everywhere elliptic
 representative, so the statement carries no pointwise ellipticity hypothesis. -/
-theorem integrableOn_weighted_optimizerField_respCell_respCoeffMinus {d : ℕ} [NeZero d]
+theorem integrableOn_weighted_optimizerField_respCell_respCoeffMinus {d : ℕ}
     (jStar : ℕ) (hjStar : 2 * d ≤ 3 ^ jStar) (F : BlockMat d)
     (hm : (explicitCanonicalMetric F).PosDef) (t : ℤ)
     (uM : (a : CoeffSpace d) → AHarmonicFunction (respCoeffMinus F a) (respCell jStar F t))
@@ -526,7 +525,7 @@ theorem integrableOn_weighted_optimizerField_respCell_respCoeffMinus {d : ℕ} [
 `integrableOn_weighted_optimizerField_respCell_respCoeffMinus`: for a terminal maximizer `uP a` of
 `respCoeffPlus F a` on the terminal cell and any measurable `V` contained in that cell, the
 continuous-weight products `η · ∇v` and `η · (b ∇v)` are integrable on `V`. -/
-theorem integrableOn_weighted_optimizerField_respCell_respCoeffPlus {d : ℕ} [NeZero d]
+theorem integrableOn_weighted_optimizerField_respCell_respCoeffPlus {d : ℕ}
     (jStar : ℕ) (hjStar : 2 * d ≤ 3 ^ jStar) (F : BlockMat d)
     (hm : (explicitCanonicalMetric F).PosDef) (t : ℤ)
     (uP : (a : CoeffSpace d) → AHarmonicFunction (respCoeffPlus F a) (respCell jStar F t))

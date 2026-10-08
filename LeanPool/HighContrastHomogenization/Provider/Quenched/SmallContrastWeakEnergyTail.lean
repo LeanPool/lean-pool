@@ -73,7 +73,7 @@ theorem badMomentMajorant_nonneg (K : ℝ) (Delta : ℤ) :
 /-- The `L⁴` norm of a nonnegative extended statistic through its fourth
 moment. -/
 theorem eLpNorm_four_le_of_lintegral_le
-    {P : Measure (CoeffSpace d)} [IsProbabilityMeasure P]
+    {P : Measure (CoeffSpace d)}
     {W : CoeffSpace d → ℝ≥0∞} {h : ℝ} (hh : 0 ≤ h)
     (hmom : ∫⁻ a, W a ^ (4 : ℝ) ∂P ≤ ENNReal.ofReal h) (hW : AEMeasurable W P) :
     eLpNorm W (ENNReal.ofReal 4) P ≤ ENNReal.ofReal (h ^ ((4 : ℝ)⁻¹)) := by

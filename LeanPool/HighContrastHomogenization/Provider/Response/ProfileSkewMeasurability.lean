@@ -90,7 +90,7 @@ private theorem aemeasurable_responseAverage_of_entries
 
 /-- The terminal spatial average of the primal optimizer state is almost
 everywhere measurable. -/
-theorem aemeasurable_blockCellAverage_diagonalWeakState [NeZero d]
+theorem aemeasurable_blockCellAverage_diagonalWeakState
     {P : Measure (CoeffSpace d)} {q : Mat d} (hq : q.PosDef)
     (t : ℤ) (p r : Vec d) :
     AEMeasurable (fun a ↦ blockCellAverage (adaptedCell q t)
@@ -104,7 +104,7 @@ theorem aemeasurable_blockCellAverage_diagonalWeakState [NeZero d]
 
 /-- The terminal spatial average of the adjoint optimizer state is almost
 everywhere measurable. -/
-theorem aemeasurable_blockCellAverage_diagonalWeakAdjointState [NeZero d]
+theorem aemeasurable_blockCellAverage_diagonalWeakAdjointState
     {P : Measure (CoeffSpace d)} {q : Mat d} (hq : q.PosDef)
     (t : ℤ) (p r : Vec d) :
     AEMeasurable (fun a ↦ blockCellAverage (adaptedCell q t)
@@ -135,7 +135,7 @@ theorem aemeasurable_blockCellAverage_diagonalWeakAdjointState [NeZero d]
 
 /-- Constant-skew recentering shears the averaged primal state after the load
 correction. -/
-theorem blockCellAverage_diagonalWeakState_subSkew [NeZero d]
+theorem blockCellAverage_diagonalWeakState_subSkew
     {q : Mat d} (hq : q.PosDef) (t : ℤ) (a : CoeffSpace d)
     (g : Mat d) (hg : IsSkewMat g) (p r : Vec d) :
     blockCellAverage (adaptedCell q t)
@@ -153,7 +153,7 @@ theorem blockCellAverage_diagonalWeakState_subSkew [NeZero d]
 
 /-- The terminal spatial average remains almost everywhere measurable after
 constant-skew recentering. -/
-theorem aemeasurable_blockCellAverage_diagonalWeakState_subSkew [NeZero d]
+theorem aemeasurable_blockCellAverage_diagonalWeakState_subSkew
     {P : Measure (CoeffSpace d)} {q : Mat d} (hq : q.PosDef)
     (t : ℤ) (g : Mat d) (hg : IsSkewMat g) (p r : Vec d) :
     AEMeasurable (fun a ↦ blockCellAverage (adaptedCell q t)
@@ -183,7 +183,7 @@ theorem aemeasurable_blockCellAverage_diagonalWeakState_subSkew [NeZero d]
 /-- The terminal adjoint average remains almost everywhere measurable after
 constant-skew recentering. -/
 theorem aemeasurable_blockCellAverage_diagonalWeakAdjointState_subSkew
-    [NeZero d] {P : Measure (CoeffSpace d)} {q : Mat d} (hq : q.PosDef)
+    {P : Measure (CoeffSpace d)} {q : Mat d} (hq : q.PosDef)
     (t : ℤ) (g : Mat d) (hg : IsSkewMat g) (p r : Vec d) :
     AEMeasurable (fun a ↦ blockCellAverage (adaptedCell q t)
       (diagonalWeakAdjointState hq t (a.subSkew g hg) p r)) P := by
@@ -221,7 +221,7 @@ theorem aemeasurable_blockCellAverage_diagonalWeakAdjointState_subSkew
 
 /-- The primal terminal energy transforms by subtracting the skew action from
 the second load. -/
-theorem diagonalWeakEnergy_subSkew [NeZero d] {q : Mat d}
+theorem diagonalWeakEnergy_subSkew {q : Mat d}
     (hq : q.PosDef) (t : ℤ) (a : CoeffSpace d) (g : Mat d)
     (hg : IsSkewMat g) (p r : Vec d) :
     diagonalWeakEnergy hq t (a.subSkew g hg) p r =
@@ -237,7 +237,7 @@ theorem diagonalWeakEnergy_subSkew [NeZero d] {q : Mat d}
     (diagonalWeakEnergy_nonneg hq t a p (r - matVecMul g p))).mp hsq
 
 /-- The adjoint terminal energy transforms with the opposite load shift. -/
-theorem diagonalWeakAdjointEnergy_subSkew [NeZero d] {q : Mat d}
+theorem diagonalWeakAdjointEnergy_subSkew {q : Mat d}
     (hq : q.PosDef) (t : ℤ) (a : CoeffSpace d) (g : Mat d)
     (hg : IsSkewMat g) (p r : Vec d) :
     diagonalWeakAdjointEnergy hq t (a.subSkew g hg) p r =
@@ -271,7 +271,7 @@ theorem aemeasurable_diagonalWeakCellSum_subSkew
   exact (diagonalWeakCellSum_subSkew hq t H s E a g hg).symm
 
 /-- The recentered all-scale maximum is almost everywhere measurable. -/
-theorem aemeasurable_diagonalWeakMaximum_subSkew [NeZero d]
+theorem aemeasurable_diagonalWeakMaximum_subSkew
     {P : Measure (CoeffSpace d)} {rho : ℝ} {q : Mat d}
     (hq : q.PosDef) {t : ℤ} {E : BlockMat d}
     (hE : IsSymmetricBlockMat E) (hEpd : BlockPosDef E)
@@ -285,7 +285,7 @@ theorem aemeasurable_diagonalWeakMaximum_subSkew [NeZero d]
 
 /-- The recentered primal terminal energy is almost everywhere measurable at
 the correctly shifted load. -/
-theorem aemeasurable_diagonalWeakEnergy_subSkew [NeZero d]
+theorem aemeasurable_diagonalWeakEnergy_subSkew
     {P : Measure (CoeffSpace d)} {q : Mat d} (hq : q.PosDef)
     (t : ℤ) (g : Mat d) (hg : IsSkewMat g) (p r : Vec d) :
     AEMeasurable (fun a ↦
@@ -297,7 +297,7 @@ theorem aemeasurable_diagonalWeakEnergy_subSkew [NeZero d]
 
 /-- The recentered adjoint terminal energy is almost everywhere measurable at
 the correctly shifted load. -/
-theorem aemeasurable_diagonalWeakAdjointEnergy_subSkew [NeZero d]
+theorem aemeasurable_diagonalWeakAdjointEnergy_subSkew
     {P : Measure (CoeffSpace d)} {q : Mat d} (hq : q.PosDef)
     (t : ℤ) (g : Mat d) (hg : IsSkewMat g) (p r : Vec d) :
     AEMeasurable (fun a ↦

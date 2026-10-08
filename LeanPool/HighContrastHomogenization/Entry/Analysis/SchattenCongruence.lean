@@ -53,7 +53,7 @@ nonsingularity hypothesis on `S`, so `S = 0` (the printed "degenerate `B`" case)
 `0 ≤ 0` with no case split. Public replacement for the `private`
 `HCPoly.Entry.Multiscale.DriftAdvance.matrix_congr_le`, which this file does not and cannot reach
 into. -/
-theorem matrix_congr_le {ι : Type*} [Fintype ι] [DecidableEq ι]
+theorem matrix_congr_le {ι : Type*} [Fintype ι]
     {A B : Matrix ι ι ℝ} (hAB : A ≤ B) (S : Matrix ι ι ℝ) :
     Sᵀ * A * S ≤ Sᵀ * B * S := by
   have h := (Matrix.le_iff.mp hAB).conjTranspose_mul_mul_same S

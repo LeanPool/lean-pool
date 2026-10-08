@@ -53,7 +53,7 @@ private theorem blockQuadratic_of_avsum {iota : Type*}
 /-- The difference energy on one child is four times its response deficit,
 with the restricted parent value written as the child average of the parent
 integrand. -/
-theorem diagonalWeak_child_difference_energy_eq_responseAverage [NeZero d]
+theorem diagonalWeak_child_difference_energy_eq_responseAverage
     {q : Mat d} (hq : q.PosDef) {k t : ℤ} (hkt : k ≤ t)
     {w : Fin d → ℤ} (hw : w ∈ alignedIndex q k t)
     (a : CoeffSpace d) (p r : Vec d) :
@@ -84,7 +84,7 @@ theorem diagonalWeak_child_difference_energy_eq_responseAverage [NeZero d]
 
 /-- Averaging the child identities and recombining the parent integrand gives
 four times the averaged response deficit. -/
-theorem diagonalWeak_recent_energy_eq_response_deficit [NeZero d]
+theorem diagonalWeak_recent_energy_eq_response_deficit
     {q : Mat d} (hq : q.PosDef) {k t : ℤ} (hkt : k ≤ t)
     (a : CoeffSpace d) (p r : Vec d) :
     avsum (alignedIndex q k t) (fun w =>
@@ -159,7 +159,7 @@ theorem diagonalWeak_recent_energy_eq_response_deficit [NeZero d]
 
 /-- The averaged response deficit is one half of the quadratic form of the
 averaged coarse-response defect. -/
-theorem diagonalWeak_response_deficit_eq_blockQuadratic [NeZero d]
+theorem diagonalWeak_response_deficit_eq_blockQuadratic
     {q : Mat d} (hq : q.PosDef) {k t : ℤ} (hkt : k ≤ t)
     (a : CoeffSpace d) (p r : Vec d) :
     avsum (alignedIndex q k t) (fun w =>
@@ -244,7 +244,7 @@ theorem diagonalWeak_response_deficit_eq_blockQuadratic [NeZero d]
 
 /-- The exact factor-two identity for the recent optimizer-difference
 energy. -/
-theorem diagonalWeak_recent_difference_energy_eq [NeZero d]
+theorem diagonalWeak_recent_difference_energy_eq
     {q : Mat d} (hq : q.PosDef) {k t : ℤ} (hkt : k ≤ t)
     (a : CoeffSpace d) (p r : Vec d) :
     avsum (alignedIndex q k t) (fun w =>

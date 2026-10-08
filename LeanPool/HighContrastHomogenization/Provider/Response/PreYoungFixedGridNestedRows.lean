@@ -42,7 +42,7 @@ variable {d : ℕ}
 the starting scale it uses stationary finite means; below that scale it uses
 the source-window enclosure and the parent-aligned stationarity relation. -/
 theorem nestedAnnealedCellPairings_primal_le_of_cells
-    {P : Measure (CoeffSpace d)} [IsProbabilityMeasure P] [NeZero d]
+    {P : Measure (CoeffSpace d)} [IsProbabilityMeasure P]
     (hstat : HCPoly.Frozen.IsStationaryLaw P)
     {l : ℤ} {q : Mat d}
     (hgrid : IsRoundedGrid l q)
@@ -159,7 +159,7 @@ theorem nestedAnnealedCellPairings_primal_le_of_cells
 /-- The adjoint nested row pairing remains valid at every fine scale allowed
 by the source-window telescope. -/
 theorem nestedAnnealedCellPairings_adjoint_le_of_cells
-    {P : Measure (CoeffSpace d)} [IsProbabilityMeasure P] [NeZero d]
+    {P : Measure (CoeffSpace d)} [IsProbabilityMeasure P]
     (hstat : HCPoly.Frozen.IsStationaryLaw P)
     {l : ℤ} {q : Mat d}
     (hgrid : IsRoundedGrid l q)

@@ -43,7 +43,7 @@ theorem neumannForcedSolutionEnergyAverage_le_force_scale_noteConstants_expanded
         (lambdaSq Q (s / 2) (.finite 2) (publicCoeffField Q a))⁻¹ *
         ((d : ℝ) * ((3 : ℝ) ^ ((d : ℝ) + s) * Real.sqrt 2)) ^ 2 *
         (cubeBesovPositiveVectorSeminormTwo Q s g) ^ 2 := by
-  let ω := neumannForcedSolutionMeanZeroCorrectorData_publicCoeffField w
+  let ω := publicNeumannForcedMeanZeroCorrectorData w
   have hdet :=
     ω.coefficientEnergy_average_le_force_scale_noteConstants_expanded
       (s := s) (lam := (a.coeffOn Q).lam) (Lam := (a.coeffOn Q).Lam)

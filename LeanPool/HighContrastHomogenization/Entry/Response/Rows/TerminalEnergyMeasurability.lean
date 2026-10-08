@@ -140,7 +140,7 @@ private theorem volumeAverage_energy_eq_two_respJ_of_aeRep {d : ℕ} {U : Set (V
 /-- **Integrability of the terminal optimizer energy, minus sign.**  On the terminal cell the
 variation energy density of a terminal maximizer for `a_- = a - g` is integrable; the coefficient is
 elliptic only almost everywhere, so the fact is transported from an elliptic representative. -/
-theorem integrableOn_energy_respCell_respCoeffMinus {d : ℕ} [NeZero d]
+theorem integrableOn_energy_respCell_respCoeffMinus {d : ℕ}
     (jStar : ℕ) (hjStar : 2 * d ≤ 3 ^ jStar) (F : BlockMat d)
     (hm : (explicitCanonicalMetric F).PosDef) (t : ℤ)
     (uM : (a : CoeffSpace d) → AHarmonicFunction (respCoeffMinus F a) (respCell jStar F t))
@@ -157,7 +157,7 @@ theorem integrableOn_energy_respCell_respCoeffMinus {d : ℕ} [NeZero d]
 /-- **The terminal energy identity, minus sign.**  At a terminal maximizer for `a_- = a - g` the
 volume average of the optimizer energy density over the terminal cell is twice the terminal
 response, the exact energy identity behind the first error row of `p.response.transfer`. -/
-theorem volumeAverage_energy_respCell_respCoeffMinus_eq {d : ℕ} [NeZero d]
+theorem volumeAverage_energy_respCell_respCoeffMinus_eq {d : ℕ}
     (P : Measure (CoeffSpace d)) (jStar : ℕ) (hjStar : 2 * d ≤ 3 ^ jStar) (F : BlockMat d)
     (hm : (explicitCanonicalMetric F).PosDef) (t : ℤ) (e : Vec d)
     (uM : (a : CoeffSpace d) → AHarmonicFunction (respCoeffMinus F a) (respCell jStar F t))
@@ -179,7 +179,7 @@ theorem volumeAverage_energy_respCell_respCoeffMinus_eq {d : ℕ} [NeZero d]
 /-- **Nonnegativity of the subcell energy, minus sign.**  On every aligned subcell of the coarse
 scale the average of the terminal optimizer energy density is nonnegative, because the terminal
 coefficient is elliptic almost everywhere there. -/
-theorem zero_le_volumeAverage_energy_adaptedCellAtCenter_respCoeffMinus {d : ℕ} [NeZero d]
+theorem zero_le_volumeAverage_energy_adaptedCellAtCenter_respCoeffMinus {d : ℕ}
     (jStar : ℕ) (hjStar : 2 * d ≤ 3 ^ jStar) (F : BlockMat d)
     (hm : (explicitCanonicalMetric F).PosDef) (H : ℕ) (s t : ℤ) (ht : t = s + (H : ℤ))
     (uM : (a : CoeffSpace d) → AHarmonicFunction (respCoeffMinus F a) (respCell jStar F t))
@@ -221,7 +221,7 @@ theorem avsum_volumeAverage_energy_adaptedCellAtCenter_respCoeffMinus_eq {d : �
 
 /-- **Integrability of the terminal optimizer energy, plus sign.**  The twin of the minus statement
 for `a_+ = aᵗ + g`. -/
-theorem integrableOn_energy_respCell_respCoeffPlus {d : ℕ} [NeZero d]
+theorem integrableOn_energy_respCell_respCoeffPlus {d : ℕ}
     (jStar : ℕ) (hjStar : 2 * d ≤ 3 ^ jStar) (F : BlockMat d)
     (hm : (explicitCanonicalMetric F).PosDef) (t : ℤ)
     (uP : (a : CoeffSpace d) → AHarmonicFunction (respCoeffPlus F a) (respCell jStar F t))
@@ -237,7 +237,7 @@ theorem integrableOn_energy_respCell_respCoeffPlus {d : ℕ} [NeZero d]
 
 /-- **The terminal energy identity, plus sign.**  The twin of the minus identity for
 `a_+ = aᵗ + g`. -/
-theorem volumeAverage_energy_respCell_respCoeffPlus_eq {d : ℕ} [NeZero d]
+theorem volumeAverage_energy_respCell_respCoeffPlus_eq {d : ℕ}
     (P : Measure (CoeffSpace d)) (jStar : ℕ) (hjStar : 2 * d ≤ 3 ^ jStar) (F : BlockMat d)
     (hm : (explicitCanonicalMetric F).PosDef) (t : ℤ) (e : Vec d)
     (uP : (a : CoeffSpace d) → AHarmonicFunction (respCoeffPlus F a) (respCell jStar F t))
@@ -258,7 +258,7 @@ theorem volumeAverage_energy_respCell_respCoeffPlus_eq {d : ℕ} [NeZero d]
 
 /-- **Nonnegativity of the subcell energy, plus sign.**  The twin of the minus statement for
 `a_+ = aᵗ + g`. -/
-theorem zero_le_volumeAverage_energy_adaptedCellAtCenter_respCoeffPlus {d : ℕ} [NeZero d]
+theorem zero_le_volumeAverage_energy_adaptedCellAtCenter_respCoeffPlus {d : ℕ}
     (jStar : ℕ) (hjStar : 2 * d ≤ 3 ^ jStar) (F : BlockMat d)
     (hm : (explicitCanonicalMetric F).PosDef) (H : ℕ) (s t : ℤ) (ht : t = s + (H : ℤ))
     (uP : (a : CoeffSpace d) → AHarmonicFunction (respCoeffPlus F a) (respCell jStar F t))
@@ -387,7 +387,7 @@ private theorem energyCanonicalState_congr_ae {d : ℕ} {U : Book.Ch02.Domain d}
 
 /-- An arbitrary response maximizer for the recentred coefficient `a_-` on an invertible adapted
 cell has the same doubled optimizer field almost everywhere as the canonical Chapter-2 selection. -/
-private theorem optimizerField_aeeq_canonicalRespCoeffMinus {d : ℕ} [NeZero d]
+private theorem optimizerField_aeeq_canonicalRespCoeffMinus {d : ℕ}
     (q : Mat d) (hq : IsUnit q) (t : ℤ) (F : BlockMat d) (a : CoeffSpace d) (p r : Vec d)
     (u : AHarmonicFunction (respCoeffMinus F a) (HighContrast.adaptedCell q t))
     (hu : IsResponseMaximizer (HighContrast.adaptedCell q t) p r (respCoeffMinus F a) u) :
@@ -439,7 +439,7 @@ private theorem optimizerField_aeeq_canonicalRespCoeffMinus {d : ℕ} [NeZero d]
 
 /-- An arbitrary response maximizer for the recentred coefficient `a_+` on an invertible adapted
 cell has the same doubled optimizer field almost everywhere as the canonical Chapter-2 selection. -/
-private theorem optimizerField_aeeq_canonicalRespCoeffPlus {d : ℕ} [NeZero d]
+private theorem optimizerField_aeeq_canonicalRespCoeffPlus {d : ℕ}
     (q : Mat d) (hq : IsUnit q) (t : ℤ) (F : BlockMat d) (a : CoeffSpace d) (p r : Vec d)
     (u : AHarmonicFunction (respCoeffPlus F a) (HighContrast.adaptedCell q t))
     (hu : IsResponseMaximizer (HighContrast.adaptedCell q t) p r (respCoeffPlus F a) u) :
@@ -494,7 +494,7 @@ coefficient `a_-`, for an arbitrary family of response maximizers, is measurable
 sample.  The energy is the pairing `⟨X.1, X.2⟩ = ∇v · a_- ∇v` of the doubled optimizer field of the
 maximizer; that field is determined almost everywhere by the measurable canonical Chapter-2
 selection, so the weighted energy is a measurable function of the sample. -/
-theorem measurable_volumeAverage_weighted_energy_respCoeffMinus {d : ℕ} [NeZero d]
+theorem measurable_volumeAverage_weighted_energy_respCoeffMinus {d : ℕ}
     (P : Measure (CoeffSpace d)) (jStar : ℕ) (hjStar : 2 * d ≤ 3 ^ jStar) (F : BlockMat d)
     (hm : (explicitCanonicalMetric F).PosDef) (t : ℤ) (e : Vec d)
     (uM : (a : CoeffSpace d) → AHarmonicFunction (respCoeffMinus F a) (respCell jStar F t))
@@ -558,7 +558,7 @@ theorem measurable_volumeAverage_weighted_energy_respCoeffMinus {d : ℕ} [NeZer
 /-- The `η`-weighted terminal optimizer energy of the response functional for the adjoint
 coefficient `a_+`, for an arbitrary family of response maximizers, is measurable in the coefficient
 sample.  This is the adjoint twin of `measurable_volumeAverage_weighted_energy_respCoeffMinus`. -/
-theorem measurable_volumeAverage_weighted_energy_respCoeffPlus {d : ℕ} [NeZero d]
+theorem measurable_volumeAverage_weighted_energy_respCoeffPlus {d : ℕ}
     (P : Measure (CoeffSpace d)) (jStar : ℕ) (hjStar : 2 * d ≤ 3 ^ jStar) (F : BlockMat d)
     (hm : (explicitCanonicalMetric F).PosDef) (t : ℤ) (e : Vec d)
     (uP : (a : CoeffSpace d) → AHarmonicFunction (respCoeffPlus F a) (respCell jStar F t))

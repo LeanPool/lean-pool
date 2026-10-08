@@ -60,7 +60,7 @@ theorem schurSkew_constantBlockMatrix {a0 : Mat d} (hS : (symmPart a0).PosDef) :
     Matrix.nonsing_inv_nonsing_inv _ hdet
   have hmul : symmPart a0 * (symmPart a0)⁻¹ = 1 :=
     Matrix.mul_nonsing_inv _ hdet
-  show -(((symmPart a0)⁻¹)⁻¹ * -((symmPart a0)⁻¹ * skewPart a0)) = skewPart a0
+  change -(((symmPart a0)⁻¹)⁻¹ * -((symmPart a0)⁻¹ * skewPart a0)) = skewPart a0
   rw [hinv, Matrix.mul_neg, neg_neg, ← Matrix.mul_assoc, hmul, Matrix.one_mul]
 
 /-- The Schur block of the doubled block of a coefficient matrix is the matrix's
@@ -68,7 +68,7 @@ symmetric part. -/
 theorem schurSigma_constantBlockMatrix {a0 : Mat d} (hS : (symmPart a0).PosDef) :
     schurSigma (Book.Ch02.constantBlockMatrix a0) = symmPart a0 := by
   rw [schurSigma, schurSkew_constantBlockMatrix hS]
-  show symmPart a0 +
+  change symmPart a0 +
       matTranspose (skewPart a0) * (symmPart a0)⁻¹ * skewPart a0 -
         matTranspose (skewPart a0) * (symmPart a0)⁻¹ * skewPart a0 =
     symmPart a0

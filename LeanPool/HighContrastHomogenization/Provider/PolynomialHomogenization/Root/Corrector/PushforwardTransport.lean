@@ -166,7 +166,7 @@ theorem pushforward_memLiouvilleClass [NeZero d]
       gaugeRoot_apply_inv hS]
   refine (memLiouvilleClass_physical_normalizedPullback_iff a abar hS hb
     (Filter.EventuallyEq.refl _ _) _ _).mpr ?_
-  show MemLiouvilleClass (gaugeCoeff a abar hS) theta
+  change MemLiouvilleClass (gaugeCoeff a abar hS) theta
       (fun y ↦ vecDot e (matVecMul (gaugeRoot abar) y) +
         pushforwardValue abar G (matVecMul (gaugeRoot abar) y))
       (fun y ↦ matVecMul (matTranspose (gaugeRoot abar))

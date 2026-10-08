@@ -249,7 +249,7 @@ noncomputable def localFluxDefectNegativeBesovLpAverage {d : ℕ}
 
 /-- The exact right-hand side of the local finite-`p` coarse-graining bound. -/
 @[expose]
-noncomputable def localCoarseGrainingLpRHS {d : ℕ} [NeZero d]
+noncomputable def localCoarseGrainingLpRHS {d : ℕ}
     (C : ℝ≥0∞) (Q : TriadicCube d) (n : ℤ) (hn : n ≤ Q.scale)
     (a : Book.Ch02.CoeffOn (Book.Ch02.cubeDomain Q))
     (sigma0 : ℝ) (hsigma0 : 0 < sigma0)

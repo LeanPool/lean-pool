@@ -41,12 +41,15 @@ variable {d : ℕ}
 /-- Maximal Whitney rows equipped with coherent chains to one fixed inner
 ball. -/
 structure ConvexHardyWhitneySystem (U : Set (Vec d)) (rho Rad : ℝ) where
+  /-- Common center of the inner and outer balls bounding `U`. -/
   center : Vec d
   inner_ball : euclideanBallAt center rho ⊆ U
   outer_ball : U ⊆ euclideanBallAt center Rad
+  /-- Whitney cutoff generation satisfying `3 ^ topScale ≤ rho < 3 ^ (topScale + 1)`. -/
   topScale : ℤ
   topScale_lower : (3 : ℝ) ^ topScale ≤ rho
   topScale_upper : rho < (3 : ℝ) ^ (topScale + 1)
+  /-- Finite grid indices of the maximal Euclidean Whitney cells in each generation. -/
   rows : ℤ → Finset (Fin d → ℤ)
   rows_eq : ∀ a,
     ↑(rows a) = Transport.fillingIndex (1 : Mat d) topScale U a
@@ -63,6 +66,7 @@ structure ConvexHardyWhitneySystem (U : Set (Vec d)) (rho Rad : ℝ) where
   ae_exhaustion :
     volume (U \ ⋃ a ∈ Set.Iic topScale, ⋃ w ∈ (rows a : Set (Fin d → ℤ)),
       standardCell d a w) = 0
+  /-- Length shared by the Hardy ball chains in each Whitney generation. -/
   chainLength : {a : ℤ // a ≤ topScale} → ℕ
   chainLength_bounds : ∀ a : {a : ℤ // a ≤ topScale},
     (3 : ℝ) ^ (a : ℤ) ≤
@@ -70,6 +74,7 @@ structure ConvexHardyWhitneySystem (U : Set (Vec d)) (rho Rad : ℝ) where
       convexHardyBallChainRadius rho (chainLength a) 0 <
         2 * (3 : ℝ) ^ (a : ℤ)
   chainLength_injective : Function.Injective chainLength
+  /-- A Hardy ball chain from each selected cell center to the common inner ball. -/
   chain : ∀ a : {a : ℤ // a ≤ topScale}, ∀ w : ↑(rows a.1),
     ConvexHardyBallChain U (standardCellCenter a.1 w.1) rho Rad
       ((3 : ℝ) ^ a.1)

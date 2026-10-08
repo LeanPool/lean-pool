@@ -224,7 +224,7 @@ theorem map_eq_map_translateReg_of_isRestrictionTranslationCovariant_aemeasurabl
 /-- Carrier analogue of
 `integral_eq_of_isTranslationCovariant_of_isStationary`. -/
 theorem integral_eq_of_isRestrictionTranslationCovariant_of_stationary {E : Type*}
-    [NormedAddCommGroup E] [NormedSpace ℝ E] [CompleteSpace E]
+    [NormedAddCommGroup E] [NormedSpace ℝ E]
     [MeasurableSpace E] [BorelSpace E] [SecondCountableTopology E]
     {d : ℕ} {P : RestrictionCoeffLaw d} {X : Set (Vec d) → RegCoeffField d → E}
     (hP : RestrictionStationaryLaw P) {U : Set (Vec d)}
@@ -239,8 +239,7 @@ theorem integral_eq_of_isRestrictionTranslationCovariant_of_stationary {E : Type
 /-- A.e.-strongly-measurable carrier analogue of
 `integral_eq_of_isTranslationCovariant_of_isStationary_aestronglyMeasurable`. -/
 theorem integral_eq_of_isRestrictionTranslationCovariant_of_stationary_aestronglyMeasurable
-    {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] [CompleteSpace E]
-    [MeasurableSpace E] [BorelSpace E] [SecondCountableTopology E]
+    {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
     {d : ℕ} {P : RestrictionCoeffLaw d} {X : Set (Vec d) → RegCoeffField d → E}
     (hP : RestrictionStationaryLaw P) {U : Set (Vec d)}
     (hX_aemeas : AEStronglyMeasurable (X U) P)
@@ -286,7 +285,7 @@ theorem expectedResponseJCubeSet_eq_originCube_of_stationary
 /-- Under stationarity, every coarse block matrix entry on a nonnegative-scale
 cube has the same expectation as the corresponding origin-cube entry. -/
 theorem integral_coarseBlockMatrix_entry_cubeSet_eq_originCube_of_stationary
-    {d : ℕ} [NeZero d] {P : RestrictionCoeffLaw d} (hP : RestrictionLawCarrier P)
+    {d : ℕ} {P : RestrictionCoeffLaw d} (hP : RestrictionLawCarrier P)
     (hstat : RestrictionStationaryLaw P) (R : TriadicCube d) (hR_nonneg : 0 ≤ R.scale)
     (α β : BlockCoord d) :
     ∫ a, blockMatEntry (coarseBlockMatrix (cubeSet R) a.toFun) α β ∂P =
@@ -361,7 +360,7 @@ theorem expectedResponseJCubeSet_eq_originCube_of_mem_descendantsAtScale_originC
 origin cube has the same expectation as the corresponding origin-cube entry at
 the child scale. -/
 theorem integral_coarseBlockEntry_eq_origin_on_originDescendant
-    {d : ℕ} [NeZero d] {P : RestrictionCoeffLaw d} (hP : RestrictionLawCarrier P)
+    {d : ℕ} {P : RestrictionCoeffLaw d} (hP : RestrictionLawCarrier P)
     (hstat : RestrictionStationaryLaw P) {n m : ℤ} (hn : 0 ≤ n) (hnm : n ≤ m)
     {R : TriadicCube d} (hR : R ∈ descendantsAtScale (originCube d m) n)
     (α β : BlockCoord d) :
@@ -579,7 +578,7 @@ theorem integral_descendantMean_fullBlockFluctuationNormSq_eq_cube
 is the stationarity source theorem for the descendant integrability hypotheses
 in annealed subadditivity. -/
 theorem integrable_coarseFullBlockMatrixAtCube_of_mem_descendantsAtScale_originCube
-    {d : ℕ} [NeZero d] {P : RestrictionCoeffLaw d} (_hP : RestrictionLawCarrier P)
+    {d : ℕ} {P : RestrictionCoeffLaw d} (_hP : RestrictionLawCarrier P)
     (hstat : RestrictionStationaryLaw P) {n m : ℤ} (hn : 0 ≤ n) (hnm : n ≤ m)
     {R : TriadicCube d} (hR : R ∈ descendantsAtScale (originCube d m) n)
     (hOrigin : Integrable (coarseFullBlockMatrixAtCube (originCube d n)) P) :

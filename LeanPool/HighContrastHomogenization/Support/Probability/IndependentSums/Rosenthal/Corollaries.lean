@@ -86,7 +86,6 @@ private theorem integrable_sup'_abs_pow_of_integrable_abs_pow
       sup'_abs_pow_le_sum_abs_pow (X := X) (s := s) hs (p := p) ω
 
 private theorem integral_sup'_abs_pow_le_sum_integral_abs_pow
-    [IsProbabilityMeasure μ]
     {X : ι → Ω → ℝ} {s : Finset ι} (hs : s.Nonempty) {p : ℕ}
     (h_meas : ∀ i, Measurable (X i))
     (hLp_int : ∀ i ∈ s, Integrable (fun ω => |X i ω| ^ p) μ) :
@@ -491,7 +490,6 @@ private theorem integrable_sup'_abs_rpow_of_integrable_abs_rpow
       sup'_abs_rpow_le_sum_abs_rpow (X := X) (s := s) hs ω
 
 private theorem integral_sup'_abs_rpow_le_sum_integral_abs_rpow
-    [IsProbabilityMeasure μ]
     {X : ι → Ω → ℝ} {s : Finset ι} (hs : s.Nonempty) {p : ℝ}
     (hp : 0 ≤ p) (h_meas : ∀ i, Measurable (X i))
     (hLp_int : ∀ i ∈ s, Integrable (fun ω => |X i ω| ^ p) μ) :

@@ -52,12 +52,12 @@ package, obtained from the reflected-parent depth and component-average
 constants. -/
 @[expose]
 noncomputable def cubeNeumannW22CalderonZygmundConstant
-    (d : ℕ) [NeZero d] : ℝ :=
+    (d : ℕ) : ℝ :=
   originCubeWeakInteriorDepthConstantExact d 0 +
     (d : ℝ) * (originCubeMeanZeroH1CoerciveEstimate d 0).constantValue
 
 theorem cubeNeumannW22CalderonZygmundConstant_nonneg
-    (d : ℕ) [NeZero d] :
+    (d : ℕ) :
     0 ≤ cubeNeumannW22CalderonZygmundConstant d := by
   exact add_nonneg
     (originCubeWeakInteriorDepthConstantExact_nonneg d 0)
@@ -66,7 +66,7 @@ theorem cubeNeumannW22CalderonZygmundConstant_nonneg
 
 /-- Selected legacy positive-test compatibility estimate on a cube. -/
 theorem cubeNeumannW22CalderonZygmundRegularity
-    {d : ℕ} [NeZero d] (Q : TriadicCube d) :
+    {d : ℕ} (Q : TriadicCube d) :
     CubeNeumannW22CalderonZygmundRegularity Q
       (cubeNeumannW22CalderonZygmundConstant d) := by
   have hcore :=
@@ -79,7 +79,7 @@ theorem cubeNeumannW22CalderonZygmundRegularity
 /-- The legacy positive-test compatibility package has the explicit constant
 above in every dimension. -/
 theorem exists_cubeNeumannW22CalderonZygmundRegularityInDimension
-    (d : ℕ) [NeZero d] :
+    (d : ℕ) :
     ∃ C : ℝ, CubeNeumannW22CalderonZygmundRegularityInDimension d C := by
   exact ⟨cubeNeumannW22CalderonZygmundConstant d,
     cubeNeumannW22CalderonZygmundConstant_nonneg d,
@@ -87,7 +87,7 @@ theorem exists_cubeNeumannW22CalderonZygmundRegularityInDimension
 
 /-- Local existence form of the legacy positive-test compatibility input. -/
 theorem exists_cubeNeumannW22CalderonZygmundRegularity
-    {d : ℕ} [NeZero d] (Q : TriadicCube d) :
+    {d : ℕ} (Q : TriadicCube d) :
     ∃ C : ℝ, CubeNeumannW22CalderonZygmundRegularity Q C :=
   ⟨cubeNeumannW22CalderonZygmundConstant d,
     cubeNeumannW22CalderonZygmundRegularity Q⟩
@@ -95,7 +95,7 @@ theorem exists_cubeNeumannW22CalderonZygmundRegularity
 /-- Downstream positive-test core estimate from the legacy compatibility
 package. -/
 theorem exists_cubePoissonGradientDualTestNormL2CoreEstimate
-    {d : ℕ} [NeZero d] (Q : TriadicCube d) :
+    {d : ℕ} (Q : TriadicCube d) :
     ∃ C : ℝ, CubePoissonGradientDualTestNormL2CoreEstimate Q C := by
   exact
     ⟨cubeNeumannW22CalderonZygmundConstant d,

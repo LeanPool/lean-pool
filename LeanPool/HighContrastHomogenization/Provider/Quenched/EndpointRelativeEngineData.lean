@@ -184,8 +184,8 @@ private theorem nonempty_coupledWitnessEngineData_of_fields
     {nstar qfb b N0 : ℕ} {radius F Brow : ℕ → CoeffSpace d → ℝ}
     {Cblk Bconst C1 C2 C3 Cstop Cround : ℝ}
     (hrhoEq : rho = (1 + 3 * g) / 4)
-    (hBrowEq : Brow = fun m a => quenched_block_row rho Abar
-      (max 1 (S a / (3 : ℝ) ^ Nann)) (physical_scale_coeff Nann a) m)
+    (hBrowEq : Brow = fun m a => quenchedBlockRow rho Abar
+      (max 1 (S a / (3 : ℝ) ^ Nann)) (physicalScaleCoefficient Nann a) m)
     (hmuEq : mu = (d : ℝ) / 2 - g) (hmu : 0 < mu)
     (hradiusTail : ∀ n q : ℕ, nstar ≤ n →
       P.real {a : CoeffSpace d | (3 : ℝ) ^ (n + q + b) < radius n a} ≤
@@ -323,11 +323,11 @@ private theorem endpoint_reference_integrability (d : ℕ)
       ((triadicRebasedGauge Nann Psi) ((3 : ℝ) ^
         ((n : ℤ) - (endpointReferenceOffset A D (A + D + 1) n : ℤ))))⁻¹ ≤
           1 / 2) ∧
-    (∀ n : ℕ, IsSymmetricBlockMat ((fun n =>
+    (∀ n : ℕ, IsSymmetricBlockMat ((fun n : ℕ =>
     annealedBlock (triadicRebasedLaw Nann P)
       (centeredCube d ((n : ℤ) - (endpointReferenceOffset A D (A + D + 1) n : ℤ)))) n)) ∧
     (∀ n : ℕ, ((A + D + 1) * ((Qraw + 4) * q)) ≤ n →
-      Book.Ch02.BlockPosDef ((fun n =>
+      Book.Ch02.BlockPosDef ((fun n : ℕ =>
     annealedBlock (triadicRebasedLaw Nann P)
       (centeredCube d ((n : ℤ) - (endpointReferenceOffset A D (A + D + 1) n : ℤ)))) n)) := by
   classical
@@ -336,6 +336,7 @@ private theorem endpoint_reference_integrability (d : ℕ)
   let q0 : ℕ := Q * q
   let nstar : ℕ := L * q0
   let Pbase : Measure (CoeffSpace d) := triadicRebasedLaw Nann P
+  let : IsProbabilityMeasure Pbase := isProbabilityMeasure_triadicRebasedLaw Nann P
   let Sbase : CoeffSpace d → ℝ := triadicRebasedSource Nann S
   let Psibase : ℝ → ℝ := triadicRebasedGauge Nann Psi
   let Ahat : ℕ → BlockMat d := fun n =>
@@ -446,7 +447,7 @@ private theorem endpoint_radius_base_thresholds (d : ℕ)
           (endpointReferenceOffset A D (A + D + 1) n) (endpointWindowLength A (A + D + 1) n) ^ 2 *
             ((3 : ℝ) ^ (2 * ((d : ℝ) / 2 - g)) - 1)) ∧
     (∀ n : ℕ, ((A + D + 1) * ((Qraw + 4) * q)) ≤ n →
-      HasCellRenormalization (triadicRebasedLaw Nann P) (triadicRebasedSource Nann S) ((fun n =>
+      HasCellRenormalization (triadicRebasedLaw Nann P) (triadicRebasedSource Nann S) ((fun n : ℕ =>
     annealedBlock (triadicRebasedLaw Nann P)
       (centeredCube d ((n : ℤ) - (endpointReferenceOffset A D (A + D + 1) n : ℤ)))) n) g ((d : ℝ) /
         2)
@@ -474,6 +475,7 @@ private theorem endpoint_radius_base_thresholds (d : ℕ)
   let nstar : ℕ := L * q0
   let b : ℕ := B * q0
   let Pbase : Measure (CoeffSpace d) := triadicRebasedLaw Nann P
+  let : IsProbabilityMeasure Pbase := isProbabilityMeasure_triadicRebasedLaw Nann P
   let Sbase : CoeffSpace d → ℝ := triadicRebasedSource Nann S
   let Psibase : ℝ → ℝ := triadicRebasedGauge Nann Psi
   let Ahat : ℕ → BlockMat d := fun n =>
@@ -555,7 +557,9 @@ private theorem endpoint_radius_base_thresholds (d : ℕ)
         (endpointReferenceOffset A D L n) (endpointWindowLength A L n))
       hA hq0 hidx hmu hB hBbase hgrowth
     simpa only [endpointWindowLength, b] using hbuf'
-  exact ⟨hbaseN, honeBaseN, hthrN, hcellN, hgrowthN, hbufN⟩
+  exact ⟨hbaseN, honeBaseN, hthrN, hcellN, hgrowthN, (by
+    simpa only [mu, deltaOut, L, Q, q0, nstar, b, Nat.cast_add, Nat.cast_mul,
+      Nat.cast_one, Nat.cast_ofNat] using hbufN)⟩
 
 private theorem endpoint_physical_radius_certificates (d : ℕ)
     [NeZero d] {g eta : ℝ}
@@ -563,6 +567,7 @@ private theorem endpoint_physical_radius_certificates (d : ℕ)
     {P : Measure (CoeffSpace d)} [IsProbabilityMeasure P]
     {E : BlockMat d} {Psi : ℝ → ℝ} {K : ℝ} {S : CoeffSpace d → ℝ}
     {Nann : ℕ}
+    (hA : 1 ≤ A) (hB : 1 ≤ B)
     (hmu : 0 < ((d : ℝ) / 2 - g))
     (hgn : g ≤ (d : ℝ) / 2)
     (hgr : g ≤ ((g + ((1 + 3 * g) / 4)) / 2))
@@ -573,11 +578,11 @@ private theorem endpoint_physical_radius_certificates (d : ℕ)
     (hGain : 0 < renormGain d g E)
     (hqIndex : ∀ n : ℕ, ((A + D + 1) * ((Qraw + 4) * q)) ≤ n →
       ((Qraw + 4) * q) ≤ endpointWindowIndex (A + D + 1) n)
-    (hAhatSymm : ∀ n : ℕ, IsSymmetricBlockMat ((fun n =>
+    (hAhatSymm : ∀ n : ℕ, IsSymmetricBlockMat ((fun n : ℕ =>
     annealedBlock (triadicRebasedLaw Nann P)
       (centeredCube d ((n : ℤ) - (endpointReferenceOffset A D (A + D + 1) n : ℤ)))) n))
     (hAhatPos : ∀ n : ℕ, ((A + D + 1) * ((Qraw + 4) * q)) ≤ n →
-      Book.Ch02.BlockPosDef ((fun n =>
+      Book.Ch02.BlockPosDef ((fun n : ℕ =>
     annealedBlock (triadicRebasedLaw Nann P)
       (centeredCube d ((n : ℤ) - (endpointReferenceOffset A D (A + D + 1) n : ℤ)))) n))
     (honeBaseN : ∀ n : ℕ, ((A + D + 1) * ((Qraw + 4) * q)) ≤ n →
@@ -591,7 +596,7 @@ private theorem endpoint_physical_radius_certificates (d : ℕ)
           (endpointReferenceOffset A D (A + D + 1) n) (endpointWindowLength A (A + D + 1) n) ^ 2 *
             ((3 : ℝ) ^ (2 * ((d : ℝ) / 2 - g)) - 1))
     (hcellN : ∀ n : ℕ, ((A + D + 1) * ((Qraw + 4) * q)) ≤ n →
-      HasCellRenormalization (triadicRebasedLaw Nann P) (triadicRebasedSource Nann S) ((fun n =>
+      HasCellRenormalization (triadicRebasedLaw Nann P) (triadicRebasedSource Nann S) ((fun n : ℕ =>
     annealedBlock (triadicRebasedLaw Nann P)
       (centeredCube d ((n : ℤ) - (endpointReferenceOffset A D (A + D + 1) n : ℤ)))) n) g ((d : ℝ) /
         2)
@@ -607,33 +612,33 @@ private theorem endpoint_physical_radius_certificates (d : ℕ)
             (3 : ℝ) ^ (2 * ((d : ℝ) / 2 - g) * ((B * ((Qraw + 4) * q)) : ℝ)) - 1))
     : (∀ n r : ℕ, ((A + D + 1) * ((Qraw + 4) * q)) ≤ n →
       P.real {a : CoeffSpace d | (3 : ℝ) ^ (n + r + (B * ((Qraw + 4) * q))) < (fun n a =>
-    (fun n =>
-    renormRadius (triadicRebasedSource Nann S) ((fun n =>
+    (fun n : ℕ =>
+    renormRadius (triadicRebasedSource Nann S) ((fun n : ℕ =>
     annealedBlock (triadicRebasedLaw Nann P)
       (centeredCube d ((n : ℤ) - (endpointReferenceOffset A D (A + D + 1) n : ℤ)))) n)
         (endpointTolerance (1 / 2) eta ((Qraw + 4) * q) (A + D + 1) n)
       ((g + ((1 + 3 * g) / 4)) / 2) (endpointWindowLength A (A + D + 1) n) n) n
-        (physical_scale_coeff Nann a)) n a} ≤
+        (physicalScaleCoefficient Nann a)) n a} ≤
         Real.exp (-(frGaugeConst d * (3 : ℝ) ^ (2 * ((d : ℝ) / 2 - g) * (r : ℝ))))) ∧
     (∀ n : ℕ, ((A + D + 1) * ((Qraw + 4) * q)) ≤ n →
-      ∀ᵐ a ∂P, renormScale (triadicRebasedSource Nann S) ((fun n =>
+      ∀ᵐ a ∂P, renormScale (triadicRebasedSource Nann S) ((fun n : ℕ =>
     annealedBlock (triadicRebasedLaw Nann P)
       (centeredCube d ((n : ℤ) - (endpointReferenceOffset A D (A + D + 1) n : ℤ)))) n)
         (endpointTolerance (1 / 2) eta ((Qraw + 4) * q) (A + D + 1) n) ((g + ((1 + 3 * g) / 4)) / 2)
-        (endpointWindowLength A (A + D + 1) n) n (physical_scale_coeff Nann a) ≠ ⊤) ∧
+        (endpointWindowLength A (A + D + 1) n) n (physicalScaleCoefficient Nann a) ≠ ⊤) ∧
     (∀ᵐ a ∂P, ∀ n : ℕ, ((A + D + 1) * ((Qraw + 4) * q)) ≤ n →
-      renormScale (triadicRebasedSource Nann S) ((fun n =>
+      renormScale (triadicRebasedSource Nann S) ((fun n : ℕ =>
     annealedBlock (triadicRebasedLaw Nann P)
       (centeredCube d ((n : ℤ) - (endpointReferenceOffset A D (A + D + 1) n : ℤ)))) n)
         (endpointTolerance (1 / 2) eta ((Qraw + 4) * q) (A + D + 1) n)
         ((g + ((1 + 3 * g) / 4)) / 2) (endpointWindowLength A (A + D + 1) n) n
-          (physical_scale_coeff Nann a) ≠ ⊤) ∧
+          (physicalScaleCoefficient Nann a) ≠ ⊤) ∧
     (∀ᵐ a ∂P,
-      ∀ M : ℤ, (triadicRebasedSource Nann S) (physical_scale_coeff Nann a) ≤ (3 : ℝ) ^ M →
+      ∀ M : ℤ, (triadicRebasedSource Nann S) (physicalScaleCoefficient Nann a) ≤ (3 : ℝ) ^ M →
         ∀ k : ℤ, k ≤ M → ∀ w : Fin d → ℤ,
           standardCellCenter k w ∈ centeredCube d M →
           BlockMatLoewnerLE
-            (coarseBlock (standardCell d k w) (physical_scale_coeff Nann a))
+            (coarseBlock (standardCell d k w) (physicalScaleCoefficient Nann a))
             (blockScale ((3 : ℝ) ^ (g * ((M : ℝ) - (k : ℝ)))) E)) := by
   classical
   let rho : ℝ := (1 + 3 * g) / 4
@@ -646,6 +651,7 @@ private theorem endpoint_physical_radius_certificates (d : ℕ)
   let nstar : ℕ := L * q0
   let b : ℕ := B * q0
   let Pbase : Measure (CoeffSpace d) := triadicRebasedLaw Nann P
+  let : IsProbabilityMeasure Pbase := isProbabilityMeasure_triadicRebasedLaw Nann P
   let Sbase : CoeffSpace d → ℝ := triadicRebasedSource Nann S
   let Psibase : ℝ → ℝ := triadicRebasedGauge Nann Psi
   let Ahat : ℕ → BlockMat d := fun n =>
@@ -655,7 +661,7 @@ private theorem endpoint_physical_radius_certificates (d : ℕ)
     renormRadius Sbase (Ahat n) (endpointTolerance deltaOut eta q0 L n)
       gamma (endpointWindowLength A L n) n
   let radius : ℕ → CoeffSpace d → ℝ := fun n a =>
-    radiusBase n (physical_scale_coeff Nann a)
+    radiusBase n (physicalScaleCoefficient Nann a)
   have hradiusTail : ∀ n r : ℕ, nstar ≤ n →
       P.real {a : CoeffSpace d | (3 : ℝ) ^ (n + r + b) < radius n a} ≤
         Real.exp (-(frGaugeConst d * (3 : ℝ) ^ (2 * mu * (r : ℝ)))) := by
@@ -674,12 +680,13 @@ private theorem endpoint_physical_radius_certificates (d : ℕ)
       (honeBaseN n hn) (hthrN n hn) (hcellN n hn)
       (by
         dsimp only [b]
-        exact Nat.mul_pos (by omega) (Nat.zero_lt_one.trans_le hq0))
+        exact Nat.mul_pos hB (Nat.zero_lt_one.trans_le hq0))
       (by
         dsimp only [endpointWindowLength]
-        exact Nat.mul_pos (by omega)
+        exact Nat.mul_pos hA
           (hq0.trans (hqIndex n hn)))
-      (hbufN n hn) r
+      (by simpa only [mu, deltaOut, L, Q, q0, b, Nat.cast_add, Nat.cast_mul,
+        Nat.cast_one, Nat.cast_ofNat] using hbufN n hn) r
     have hmeas : Measurable (radiusBase n) := by
       dsimp only [radiusBase]
       exact measurable_renormRadius hdagBase.source_measurable (hAhatSymm n)
@@ -690,7 +697,7 @@ private theorem endpoint_physical_radius_certificates (d : ℕ)
   have hfinPhysical : ∀ n : ℕ, nstar ≤ n →
       ∀ᵐ a ∂P, renormScale Sbase (Ahat n)
         (endpointTolerance deltaOut eta q0 L n) gamma
-        (endpointWindowLength A L n) n (physical_scale_coeff Nann a) ≠ ⊤ := by
+        (endpointWindowLength A L n) n (physicalScaleCoefficient Nann a) ≠ ⊤ := by
     intro n hn
     have hbaseAE := ae_renormScale_ne_top (P := Pbase) (S := Sbase)
       (Ahat := Ahat n) (gamma := g) (nu := (d : ℝ) / 2) (mu := mu)
@@ -709,18 +716,18 @@ private theorem endpoint_physical_radius_certificates (d : ℕ)
     simpa only [physical_scale_coeff_eq_triadicDilation] using! hpull
   have hfinAll : ∀ᵐ a ∂P, ∀ n : ℕ, nstar ≤ n →
       renormScale Sbase (Ahat n) (endpointTolerance deltaOut eta q0 L n)
-        gamma (endpointWindowLength A L n) n (physical_scale_coeff Nann a) ≠ ⊤ := by
+        gamma (endpointWindowLength A L n) n (physicalScaleCoefficient Nann a) ≠ ⊤ := by
     rw [ae_all_iff]
     intro n
     by_cases hn : nstar ≤ n
     · exact (hfinPhysical n hn).mono fun _ ha _ => ha
     · exact _root_.Filter.Eventually.of_forall fun _ h => (hn h).elim
   have hcoarsePhysical : ∀ᵐ a ∂P,
-      ∀ M : ℤ, Sbase (physical_scale_coeff Nann a) ≤ (3 : ℝ) ^ M →
+      ∀ M : ℤ, Sbase (physicalScaleCoefficient Nann a) ≤ (3 : ℝ) ^ M →
         ∀ k : ℤ, k ≤ M → ∀ w : Fin d → ℤ,
           standardCellCenter k w ∈ centeredCube d M →
           BlockMatLoewnerLE
-            (coarseBlock (standardCell d k w) (physical_scale_coeff Nann a))
+            (coarseBlock (standardCell d k w) (physicalScaleCoefficient Nann a))
             (blockScale ((3 : ℝ) ^ (g * ((M : ℝ) - (k : ℝ)))) E) := by
     have hpull :=
       ((CoeffSpace.triadicDilationMeasurableEquiv Nann).measurableEmbedding.ae_map_iff).1
@@ -772,37 +779,37 @@ private theorem endpoint_physical_stopped_row_bound (d : ℕ)
         ((n : ℤ) - (endpointReferenceOffset A D (A + D + 1) n : ℤ))))⁻¹ ≤
           1 / 2)
     (hAhatPos : ∀ n : ℕ, ((A + D + 1) * ((Qraw + 4) * q)) ≤ n →
-      Book.Ch02.BlockPosDef ((fun n =>
+      Book.Ch02.BlockPosDef ((fun n : ℕ =>
     annealedBlock (triadicRebasedLaw Nann P)
       (centeredCube d ((n : ℤ) - (endpointReferenceOffset A D (A + D + 1) n : ℤ)))) n))
     (hfinAll : ∀ᵐ a ∂P, ∀ n : ℕ, ((A + D + 1) * ((Qraw + 4) * q)) ≤ n →
-      renormScale (triadicRebasedSource Nann S) ((fun n =>
+      renormScale (triadicRebasedSource Nann S) ((fun n : ℕ =>
     annealedBlock (triadicRebasedLaw Nann P)
       (centeredCube d ((n : ℤ) - (endpointReferenceOffset A D (A + D + 1) n : ℤ)))) n)
         (endpointTolerance (1 / 2) eta ((Qraw + 4) * q) (A + D + 1) n)
         ((g + ((1 + 3 * g) / 4)) / 2) (endpointWindowLength A (A + D + 1) n) n
-          (physical_scale_coeff Nann a) ≠ ⊤)
+          (physicalScaleCoefficient Nann a) ≠ ⊤)
     (hcoarsePhysical : ∀ᵐ a ∂P,
-      ∀ M : ℤ, (triadicRebasedSource Nann S) (physical_scale_coeff Nann a) ≤ (3 : ℝ) ^ M →
+      ∀ M : ℤ, (triadicRebasedSource Nann S) (physicalScaleCoefficient Nann a) ≤ (3 : ℝ) ^ M →
         ∀ k : ℤ, k ≤ M → ∀ w : Fin d → ℤ,
           standardCellCenter k w ∈ centeredCube d M →
           BlockMatLoewnerLE
-            (coarseBlock (standardCell d k w) (physical_scale_coeff Nann a))
+            (coarseBlock (standardCell d k w) (physicalScaleCoefficient Nann a))
             (blockScale ((3 : ℝ) ^ (g * ((M : ℝ) - (k : ℝ)))) E))
     : (∀ᵐ a ∂P, ∀ m : ℕ, ((A + D + 1) * ((Qraw + 4) * q)) ≤ m → (fun m a =>
-    quenched_block_row ((1 + 3 * g) / 4) Abar
-      (max 1 (S a / (3 : ℝ) ^ Nann)) (physical_scale_coeff Nann a) m) m a ≤
+    quenchedBlockRow ((1 + 3 * g) / 4) Abar
+      (max 1 (S a / (3 : ℝ) ^ Nann)) (physicalScaleCoefficient Nann a) m) m a ≤
         (1 + 48 * ((1 - (3 : ℝ) ^ (-(((1 + 3 * g) / 4) - g)))⁻¹) + 4 * (3 : ℝ) ^ eta * ((1 - (3 :
           ℝ) ^ (-(((1 + 3 * g) / 4) - ((g + ((1 + 3 * g) / 4)) / 2))))⁻¹)) * (1 / 2) *
           (3 : ℝ) ^ (-(eta / ((A + D + 1) : ℝ)) *
             ((m : ℝ) - (stoppingGeneration ((A + D + 1) * ((Qraw + 4) * q)) (R * q) (fun n a =>
-    (fun n =>
-    renormRadius (triadicRebasedSource Nann S) ((fun n =>
+    (fun n : ℕ =>
+    renormRadius (triadicRebasedSource Nann S) ((fun n : ℕ =>
     annealedBlock (triadicRebasedLaw Nann P)
       (centeredCube d ((n : ℤ) - (endpointReferenceOffset A D (A + D + 1) n : ℤ)))) n)
         (endpointTolerance (1 / 2) eta ((Qraw + 4) * q) (A + D + 1) n)
       ((g + ((1 + 3 * g) / 4)) / 2) (endpointWindowLength A (A + D + 1) n) n) n
-        (physical_scale_coeff Nann a)) m a : ℝ) -
+        (physicalScaleCoefficient Nann a)) m a : ℝ) -
               (((A + D + 1) * ((Qraw + 4) * q)) : ℝ)))) := by
   classical
   let rho : ℝ := (1 + 3 * g) / 4
@@ -819,6 +826,7 @@ private theorem endpoint_physical_stopped_row_bound (d : ℕ)
   let nstar : ℕ := L * q0
   let qfb : ℕ := R * q
   let Pbase : Measure (CoeffSpace d) := triadicRebasedLaw Nann P
+  let : IsProbabilityMeasure Pbase := isProbabilityMeasure_triadicRebasedLaw Nann P
   let Sbase : CoeffSpace d → ℝ := triadicRebasedSource Nann S
   let Psibase : ℝ → ℝ := triadicRebasedGauge Nann Psi
   let Ahat : ℕ → BlockMat d := fun n =>
@@ -828,10 +836,15 @@ private theorem endpoint_physical_stopped_row_bound (d : ℕ)
     renormRadius Sbase (Ahat n) (endpointTolerance deltaOut eta q0 L n)
       gamma (endpointWindowLength A L n) n
   let radius : ℕ → CoeffSpace d → ℝ := fun n a =>
-    radiusBase n (physical_scale_coeff Nann a)
+    radiusBase n (physicalScaleCoefficient Nann a)
   let Brow : ℕ → CoeffSpace d → ℝ := fun m a =>
-    quenched_block_row rho Abar
-      (max 1 (S a / (3 : ℝ) ^ Nann)) (physical_scale_coeff Nann a) m
+    quenchedBlockRow rho Abar
+      (max 1 (S a / (3 : ℝ) ^ Nann)) (physicalScaleCoefficient Nann a) m
+  have hq0Cast : (q0 : ℝ) = ((Qraw : ℝ) + 4) * (q : ℝ) := by
+    simp only [q0, Q, Nat.cast_mul, Nat.cast_add, Nat.cast_ofNat]
+  have hstartLocal : 6 * (3 : ℝ) ^ (-alpha * (q0 : ℝ)) ≤ deltaOut := by
+    simpa only [hq0Cast, deltaOut, Nat.cast_mul, Nat.cast_add, Nat.cast_ofNat]
+      using hstartAnnealed
   have hrowDecay : ∀ᵐ a ∂P, ∀ m : ℕ, nstar ≤ m → Brow m a ≤
         Cblk * deltaOut *
           (3 : ℝ) ^ (-theta *
@@ -839,10 +852,10 @@ private theorem endpoint_physical_stopped_row_bound (d : ℕ)
               (nstar : ℝ))) := by
     filter_upwards [hfinAll, hcoarsePhysical] with a hfin hcoarse
     intro m hm
-    change quenched_block_row rho Abar
-      (max 1 (S a / (3 : ℝ) ^ Nann)) (physical_scale_coeff Nann a) m ≤ _
+    change quenchedBlockRow rho Abar
+      (max 1 (S a / (3 : ℝ) ^ Nann)) (physicalScaleCoefficient Nann a) m ≤ _
     rw [quenched_block_row_max_one_source]
-    have hsourceEq : Sbase (physical_scale_coeff Nann a) =
+    have hsourceEq : Sbase (physicalScaleCoefficient Nann a) =
         S a / (3 : ℝ) ^ Nann :=
       triadicRebasedSource_physical_scale_coeff Nann S a
     rw [← hsourceEq]
@@ -851,12 +864,12 @@ private theorem endpoint_physical_stopped_row_bound (d : ℕ)
       (eta := eta) (Cblk := Cblk) (E := E) (Abar := Abar)
       (S := Sbase) (Ahat := Ahat) (radius := radiusBase)
       (nstar := nstar) (qfb := qfb) (q0 := q0) (A := A) (L := L)
-      (a := physical_scale_coeff Nann a) rfl hgamma0
+      (a := physicalScaleCoefficient Nann a) rfl hgamma0
       hgr hgammaRho hdeltaOut.1 heta hL
       hAbar hAbarPos hcoarse (fun _ _ => rfl) ?_ hdeltaOut.2.le hCblk
       (by simpa only [geomGamma] using hCblkMain) ?_ m hm
     · apply endpoint_window_certificate (D := D) (alpha := alpha)
-        (a := physical_scale_coeff Nann a) hfin hAhatPos
+        (a := physicalScaleCoefficient Nann a) hfin hAhatPos
       · intro n hn
         simpa only [Ahat] using
           blockMatLoewnerLE_blockScale_annealedBlock_reference hdagBase
@@ -879,7 +892,7 @@ private theorem endpoint_physical_stopped_row_bound (d : ℕ)
         exact annealed_error_le_endpointTolerance
           (q0 := q0) (A := A) (D := D) (L := L) (n := n)
           hdeltaOut.1.le heta.le hetaAlpha (show L = A + D + 1 by rfl)
-          (by simpa only [nstar] using hn) hstartAnnealed
+          (by simpa only [nstar] using hn) hstartLocal
       · exact hburnN
       · exact hAbarPos
     · intro m' hm' hsource
@@ -916,12 +929,12 @@ private theorem endpoint_physical_stopped_row_bound (d : ℕ)
             · simpa only [add_comm] using add_le_add_left herr 1
             · exact hAbarPos
           exact hsand.trans hscale
-        · exact hstartAnnealed
+        · exact hstartLocal
       have hfb := quenched_block_row_le_fallback
         (g := g) (rho := rho) (eps := deltaOut) (E := E)
         (Ahat := Ahat nstar) (Abar := Abar) (S := Sbase)
-        (a := physical_scale_coeff Nann a) (m := m') hg0
-        (by linarith only [hrhoGap])
+        (a := physicalScaleCoefficient Nann a) (m := m') hg0
+        (lt_of_sub_pos hrhoGap)
         (⟨hdeltaOut.1.le, hdeltaOut.2.le⟩ : deltaOut ∈ Set.Icc (0 : ℝ) 1)
         hAbar hAbarPos
         (zero_le_one.trans (Initialization.one_le_kappaRef hdag.refBlock_isSymm
@@ -943,7 +956,9 @@ private theorem endpoint_physical_stopped_row_bound (d : ℕ)
       · rfl
       · exact hthetaR
       · simpa only [geomG] using hfb
-  exact hrowDecay
+  simpa only [Brow, Cblk, geomG, geomGamma, rho, gamma, deltaOut, theta, L,
+    nstar, q0, Q, qfb, radius, radiusBase, Ahat, Pbase, Sbase,
+    Nat.cast_add, Nat.cast_mul, Nat.cast_one, Nat.cast_ofNat] using hrowDecay
 
 private theorem endpoint_initial_renormalization_base (d : ℕ)
     [NeZero d] {g T : ℝ}
@@ -1057,6 +1072,7 @@ private theorem endpoint_initial_window_error_bounds (d : ℕ)
         nlinarith only [hb1]
       simpa only [zpow_natCast] using hbSq.trans hqLow
     have hgapA1 : 1 ≤ (gamma - g) * (A : ℝ) := by
+      dsimp only [gamma, rho]
       linarith only [hAcoef]
     simpa only [deltaOut, q0] using endpoint_initial_burn hdag rfl hbaseq
       hgapA1 hq hQ
@@ -1073,7 +1089,8 @@ private theorem endpoint_initial_window_error_bounds (d : ℕ)
       nlinarith only [(show (1 : ℝ) ≤ q by exact_mod_cast hq)]
     exact hQannealed.trans (Real.rpow_le_rpow_of_exponent_le
       (by norm_num : (1 : ℝ) ≤ 3)
-      (mul_le_mul_of_nonneg_left hq0Q halpha.le))
+      (mul_le_mul_of_nonneg_left (by
+          simpa only [Q, Nat.cast_add, Nat.cast_ofNat] using hq0Q) halpha.le))
   have hstartAnnealed : 6 * (3 : ℝ) ^ (-alpha * (q0 : ℝ)) ≤ deltaOut := by
     have hp : 0 < (3 : ℝ) ^ (alpha * (q0 : ℝ)) := by positivity
     rw [show (3 : ℝ) ^ (-alpha * (q0 : ℝ)) =
@@ -1082,7 +1099,9 @@ private theorem endpoint_initial_window_error_bounds (d : ℕ)
           Real.rpow_neg (by norm_num : (0 : ℝ) ≤ 3)]]
     dsimp only [deltaOut]
     exact (div_le_iff₀ hp).2 (by nlinarith only [hQalpha])
-  exact ⟨hburnStart, hburnN, hQalpha, hstartAnnealed⟩
+  simpa only [rho, gamma, deltaOut, L, Q, q0, nstar, Nat.cast_add, Nat.cast_mul,
+    Nat.cast_one, Nat.cast_ofNat] using
+    (And.intro hburnStart (And.intro hburnN (And.intro hQalpha hstartAnnealed)))
 
 private theorem endpoint_row_summability_and_measurability (d : ℕ)
     [NeZero d] {g eta : ℝ}
@@ -1092,7 +1111,6 @@ private theorem endpoint_row_summability_and_measurability (d : ℕ)
     {Nann : ℕ}
     (hAbar : IsSymmetricBlockMat Abar) (hAbarPos : Book.Ch02.BlockPosDef Abar)
     (hg0 : 0 ≤ g)
-    (hrhoGap : 0 < ((1 + 3 * g) / 4) - g)
     (hmu : 0 < ((d : ℝ) / 2 - g))
     (hdeltaOut : (1 / 2) ∈ Set.Ioo (0 : ℝ) 1)
     (htheta : 0 < (eta / ((A + D + 1) : ℝ)))
@@ -1101,40 +1119,40 @@ private theorem endpoint_row_summability_and_measurability (d : ℕ)
     (hdagBase : HCPoly.Frozen.CoarseEllipticityDagger (triadicRebasedLaw Nann P) g E
       (triadicRebasedGauge Nann Psi) K (triadicRebasedSource Nann S))
     (hrowDecay : ∀ᵐ a ∂P, ∀ m : ℕ, ((A + D + 1) * ((Qraw + 4) * q)) ≤ m → (fun m a =>
-    quenched_block_row ((1 + 3 * g) / 4) Abar
-      (max 1 (S a / (3 : ℝ) ^ Nann)) (physical_scale_coeff Nann a) m) m a ≤
+    quenchedBlockRow ((1 + 3 * g) / 4) Abar
+      (max 1 (S a / (3 : ℝ) ^ Nann)) (physicalScaleCoefficient Nann a) m) m a ≤
         (1 + 48 * ((1 - (3 : ℝ) ^ (-(((1 + 3 * g) / 4) - g)))⁻¹) + 4 * (3 : ℝ) ^ eta * ((1 - (3 :
           ℝ) ^ (-(((1 + 3 * g) / 4) - ((g + ((1 + 3 * g) / 4)) / 2))))⁻¹)) * (1 / 2) *
           (3 : ℝ) ^ (-(eta / ((A + D + 1) : ℝ)) *
             ((m : ℝ) - (stoppingGeneration ((A + D + 1) * ((Qraw + 4) * q)) (R * q) (fun n a =>
-    (fun n =>
-    renormRadius (triadicRebasedSource Nann S) ((fun n =>
+    (fun n : ℕ =>
+    renormRadius (triadicRebasedSource Nann S) ((fun n : ℕ =>
     annealedBlock (triadicRebasedLaw Nann P)
       (centeredCube d ((n : ℤ) - (endpointReferenceOffset A D (A + D + 1) n : ℤ)))) n)
         (endpointTolerance (1 / 2) eta ((Qraw + 4) * q) (A + D + 1) n)
       ((g + ((1 + 3 * g) / 4)) / 2) (endpointWindowLength A (A + D + 1) n) n) n
-        (physical_scale_coeff Nann a)) m a : ℝ) -
+        (physicalScaleCoefficient Nann a)) m a : ℝ) -
               (((A + D + 1) * ((Qraw + 4) * q)) : ℝ))))
     (hradiusTail : ∀ n r : ℕ, ((A + D + 1) * ((Qraw + 4) * q)) ≤ n →
       P.real {a : CoeffSpace d | (3 : ℝ) ^ (n + r + (B * ((Qraw + 4) * q))) < (fun n a =>
-    (fun n =>
-    renormRadius (triadicRebasedSource Nann S) ((fun n =>
+    (fun n : ℕ =>
+    renormRadius (triadicRebasedSource Nann S) ((fun n : ℕ =>
     annealedBlock (triadicRebasedLaw Nann P)
       (centeredCube d ((n : ℤ) - (endpointReferenceOffset A D (A + D + 1) n : ℤ)))) n)
         (endpointTolerance (1 / 2) eta ((Qraw + 4) * q) (A + D + 1) n)
       ((g + ((1 + 3 * g) / 4)) / 2) (endpointWindowLength A (A + D + 1) n) n) n
-        (physical_scale_coeff Nann a)) n a} ≤
+        (physicalScaleCoefficient Nann a)) n a} ≤
         Real.exp (-(frGaugeConst d * (3 : ℝ) ^ (2 * ((d : ℝ) / 2 - g) * (r : ℝ)))))
     : (∀ m a, 0 ≤ (fun m a =>
-    quenched_block_row ((1 + 3 * g) / 4) Abar
-      (max 1 (S a / (3 : ℝ) ^ Nann)) (physical_scale_coeff Nann a) m) m a) ∧
+    quenchedBlockRow ((1 + 3 * g) / 4) Abar
+      (max 1 (S a / (3 : ℝ) ^ Nann)) (physicalScaleCoefficient Nann a) m) m a) ∧
     (∀ᵐ a ∂P, ∀ k : ℕ, Summable fun j : ℕ =>
       (3 : ℝ) ^ ((eta / ((A + D + 1) : ℝ)) / 2 * (j : ℝ)) * (fun m a =>
-    quenched_block_row ((1 + 3 * g) / 4) Abar
-      (max 1 (S a / (3 : ℝ) ^ Nann)) (physical_scale_coeff Nann a) m) (k + j) a) ∧
+    quenchedBlockRow ((1 + 3 * g) / 4) Abar
+      (max 1 (S a / (3 : ℝ) ^ Nann)) (physicalScaleCoefficient Nann a) m) (k + j) a) ∧
     (∀ m, Measurable ((fun m a =>
-    quenched_block_row ((1 + 3 * g) / 4) Abar
-      (max 1 (S a / (3 : ℝ) ^ Nann)) (physical_scale_coeff Nann a) m) m)) := by
+    quenchedBlockRow ((1 + 3 * g) / 4) Abar
+      (max 1 (S a / (3 : ℝ) ^ Nann)) (physicalScaleCoefficient Nann a) m) m)) := by
   classical
   let rho : ℝ := (1 + 3 * g) / 4
   let gamma : ℝ := (g + rho) / 2
@@ -1160,16 +1178,16 @@ private theorem endpoint_row_summability_and_measurability (d : ℕ)
     renormRadius Sbase (Ahat n) (endpointTolerance deltaOut eta q0 L n)
       gamma (endpointWindowLength A L n) n
   let radius : ℕ → CoeffSpace d → ℝ := fun n a =>
-    radiusBase n (physical_scale_coeff Nann a)
+    radiusBase n (physicalScaleCoefficient Nann a)
   let Brow : ℕ → CoeffSpace d → ℝ := fun m a =>
-    quenched_block_row rho Abar
-      (max 1 (S a / (3 : ℝ) ^ Nann)) (physical_scale_coeff Nann a) m
+    quenchedBlockRow rho Abar
+      (max 1 (S a / (3 : ℝ) ^ Nann)) (physicalScaleCoefficient Nann a) m
   have hrowNonnegative : ∀ m a, 0 ≤ Brow m a := fun m a => by
-    change 0 ≤ quenched_block_row rho Abar
-      (max 1 (S a / (3 : ℝ) ^ Nann)) (physical_scale_coeff Nann a) m
+    change 0 ≤ quenchedBlockRow rho Abar
+      (max 1 (S a / (3 : ℝ) ^ Nann)) (physicalScaleCoefficient Nann a) m
     exact quenched_block_row_nonneg (rho := rho)
       (sourceScale := max 1 (S a / (3 : ℝ) ^ Nann))
-      (a := physical_scale_coeff Nann a) hAbar hAbarPos m
+      (a := physicalScaleCoefficient Nann a) hAbar hAbarPos m
   have hsummable : ∀ᵐ a ∂P, ∀ k : ℕ, Summable fun j : ℕ =>
       (3 : ℝ) ^ (theta / 2 * (j : ℝ)) * Brow (k + j) a :=
     ae_summable_weighted_row_of_stoppingGeneration
@@ -1177,27 +1195,32 @@ private theorem endpoint_row_summability_and_measurability (d : ℕ)
       (B := Brow)
       (theta := theta) (mu := mu) (cd := frGaugeConst d)
       (delta := deltaOut) (Cblk := Cblk)
-      htheta hmu (frGaugeConst_pos d) hdeltaOut.1 hCblk hradiusTail hrowDecay
+      (by simpa only [theta, L, Nat.cast_add, Nat.cast_one] using htheta)
+      hmu (frGaugeConst_pos d) hdeltaOut.1 hCblk hradiusTail (by
+        simpa only [Brow, Cblk, geomG, geomGamma, rho, gamma, deltaOut, theta, L,
+          nstar, q0, Q, qfb, radius, radiusBase, Ahat, Pbase, Sbase,
+          Nat.cast_add, Nat.cast_mul, Nat.cast_one, Nat.cast_ofNat] using hrowDecay)
         hrowNonnegative
   have hBmeas : ∀ m, Measurable (Brow m) := by
     intro m
-    have hbaseMeas : Measurable (fun a => quenched_block_row rho Abar
+    have hbaseMeas : Measurable (fun a => quenchedBlockRow rho Abar
         (max 1 (Sbase a)) a m) :=
       measurable_quenched_block_row (rho := rho)
         (sourceScale := fun a => max 1 (Sbase a)) hAbar hAbarPos
         (measurable_const.max hdagBase.source_measurable)
-        (by linarith only [hrhoGap, hg0]) m
+        (by dsimp only [rho]; linarith only [hg0]) m
     have hpull := hbaseMeas.comp (measurable_physical_scale_coeff Nann)
-    change Measurable (fun a => quenched_block_row rho Abar
-      (max 1 (S a / (3 : ℝ) ^ Nann)) (physical_scale_coeff Nann a) m)
-    change Measurable (fun a => quenched_block_row rho Abar
-      (max 1 (Sbase (physical_scale_coeff Nann a)))
-        (physical_scale_coeff Nann a) m) at hpull
+    change Measurable (fun a => quenchedBlockRow rho Abar
+      (max 1 (S a / (3 : ℝ) ^ Nann)) (physicalScaleCoefficient Nann a) m)
+    change Measurable (fun a => quenchedBlockRow rho Abar
+      (max 1 (Sbase (physicalScaleCoefficient Nann a)))
+        (physicalScaleCoefficient Nann a) m) at hpull
     convert hpull using 1
     funext a
-    rw [show Sbase (physical_scale_coeff Nann a) = S a / (3 : ℝ) ^ Nann by
+    rw [show Sbase (physicalScaleCoefficient Nann a) = S a / (3 : ℝ) ^ Nann by
       exact triadicRebasedSource_physical_scale_coeff Nann S a]
-  exact ⟨hrowNonnegative, hsummable, hBmeas⟩
+  refine ⟨hrowNonnegative, ?_, hBmeas⟩
+  simpa only [theta, L, Brow, rho, Nat.cast_add, Nat.cast_one] using hsummable
 
 private theorem endpoint_geometric_row_constants
     {g eta : ℝ}
@@ -1223,14 +1246,14 @@ private theorem endpoint_geometric_row_constants
     apply inv_nonneg.2
     have hp : (3 : ℝ) ^ (-(rho - g)) < 1 := by
       rw [show (1 : ℝ) = (3 : ℝ) ^ (0 : ℝ) by norm_num]
-      exact (Real.rpow_lt_rpow_left_iff (by norm_num)).2 (by linarith only [hrhoGap])
+      exact (Real.rpow_lt_rpow_left_iff (by norm_num)).2 (neg_lt_zero.mpr hrhoGap)
     linarith only [hp]
   have hgeomGamma : 0 ≤ geomGamma := by
     dsimp only [geomGamma]
     apply inv_nonneg.2
     have hp : (3 : ℝ) ^ (-(rho - gamma)) < 1 := by
       rw [show (1 : ℝ) = (3 : ℝ) ^ (0 : ℝ) by norm_num]
-      exact (Real.rpow_lt_rpow_left_iff (by norm_num)).2 (by linarith only [hgammaRho])
+      exact (Real.rpow_lt_rpow_left_iff (by norm_num)).2 (neg_lt_zero.mpr (sub_pos.mpr hgammaRho))
     linarith only [hp]
   let Cblk : ℝ := 1 + 48 * geomG + 4 * (3 : ℝ) ^ eta * geomGamma
   have hCblk : 0 < Cblk := by
@@ -1246,19 +1269,23 @@ private theorem endpoint_geometric_row_constants
   exact ⟨hgeomG, hgeomGamma, hCblk, hCblkMain, hCblkFallback⟩
 
 private theorem endpoint_threshold_and_polynomial_costs (d : ℕ)
-    [NeZero d] {g eta Bconst : ℝ}
+    {g eta Bconst : ℝ}
     {A D B Qraw R Nfix q : ℕ}
     {E : BlockMat d} {K : ℝ}
-    {theta mu Cblk : ℝ}
+    {Cblk : ℝ}
     (hBconst : 1 ≤ Bconst)
-    (hlowFix : (0 : ℝ) + 0 + 1 + rowSplitOffset theta Cblk ≤ (Nfix : ℝ) - 0)
+    (hlowFix : (0 : ℝ) + 0 + 1 +
+      rowSplitOffset (eta / ((A + D + 1) : ℝ)) Cblk ≤ (Nfix : ℝ) - 0)
     (hgainFix : Real.log 2 ≤ frGaugeConst d *
-      (3 : ℝ) ^ (2 * mu * ((Nfix : ℝ) - 0 - badTailOffset theta Cblk 0 0)) *
-        ((3 : ℝ) ^ (mu / 2) - 1))
+      (3 : ℝ) ^ (2 * ((d : ℝ) / 2 - g) * ((Nfix : ℝ) - 0 -
+        badTailOffset (eta / ((A + D + 1) : ℝ)) Cblk 0 0)) *
+        ((3 : ℝ) ^ (((d : ℝ) / 2 - g) / 2) - 1))
     (habsFix : 2 * Real.log 4 ≤ frGaugeConst d *
-      (3 : ℝ) ^ (2 * mu * ((Nfix : ℝ) - 0 - badTailOffset theta Cblk 0 0)))
-    (hrelFix : (3 : ℝ) ^ (2 * mu * (0 + badTailOffset theta Cblk 0 0 - (Nfix : ℝ))) ≤
-      frGaugeConst d / 2 * Bconst ^ (2 * mu))
+      (3 : ℝ) ^ (2 * ((d : ℝ) / 2 - g) * ((Nfix : ℝ) - 0 -
+        badTailOffset (eta / ((A + D + 1) : ℝ)) Cblk 0 0)))
+    (hrelFix : (3 : ℝ) ^ (2 * ((d : ℝ) / 2 - g) *
+      (0 + badTailOffset (eta / ((A + D + 1) : ℝ)) Cblk 0 0 - (Nfix : ℝ))) ≤
+      frGaugeConst d / 2 * Bconst ^ (2 * ((d : ℝ) / 2 - g)))
     (hqCost : (3 : ℝ) ^ q ≤ (2 + aspectRatio E * K) ^ (4 : ℝ))
     (hbase : 3 ≤ (2 + aspectRatio E * K))
     : (((R * q) : ℝ) + ((B * ((Qraw + 4) * q)) : ℝ) + 1 +
@@ -1297,6 +1324,17 @@ private theorem endpoint_threshold_and_polynomial_costs (d : ℕ)
   let qfb : ℕ := R * q
   let b : ℕ := B * q0
   let N0 : ℕ := nstar + qfb + b + Nfix
+  have hthetaEq : theta = eta / ((A : ℝ) + (D : ℝ) + 1) := by
+    simp only [theta, L, Nat.cast_add, Nat.cast_one]
+  rw [← hthetaEq] at hlowFix hgainFix habsFix hrelFix
+  change (0 : ℝ) + 0 + 1 + rowSplitOffset theta Cblk ≤ (Nfix : ℝ) - 0 at hlowFix
+  change Real.log 2 ≤ frGaugeConst d *
+    (3 : ℝ) ^ (2 * mu * ((Nfix : ℝ) - 0 - badTailOffset theta Cblk 0 0)) *
+      ((3 : ℝ) ^ (mu / 2) - 1) at hgainFix
+  change 2 * Real.log 4 ≤ frGaugeConst d *
+    (3 : ℝ) ^ (2 * mu * ((Nfix : ℝ) - 0 - badTailOffset theta Cblk 0 0)) at habsFix
+  change (3 : ℝ) ^ (2 * mu * (0 + badTailOffset theta Cblk 0 0 - (Nfix : ℝ))) ≤
+    frGaugeConst d / 2 * Bconst ^ (2 * mu) at hrelFix
   have hthresholdLow : (qfb : ℝ) + (b : ℝ) + 1 +
       rowSplitOffset theta Cblk ≤ (N0 : ℝ) - (nstar : ℝ) := by
     have hlow := hlowFix
@@ -1327,10 +1365,26 @@ private theorem endpoint_threshold_and_polynomial_costs (d : ℕ)
     ring
   have hgenCost : (3 : ℝ) ^ N0 ≤ base ^ C1 := by
     rw [hN0eq]
-    simpa only [C1] using three_pow_affine_index_le hbase hqCost
+    simpa only [C1] using three_pow_affine_index_le (q := q) (C := Ccoeff) (R := Nfix) hbase
+      (by simpa only [zpow_natCast] using
+        le_of_le_of_eq hqCost (Real.rpow_natCast (2 + aspectRatio E * K) (4 : ℕ)))
   have hnormCost : Bconst ≤ base ^ C2 := by
     exact endpoint_fixed_normalizer_cost hbase hBconst
-  exact ⟨hthresholdLow, hthresholdGain, hthresholdAbs, hnormalizerRel, hN0eq, hgenCost, hnormCost⟩
+  refine ⟨?_, ?_, ?_, ?_, hN0eq, ?_, hnormCost⟩
+  · simpa only [theta, L, N0, nstar, qfb, b, q0, Q, Nat.cast_add, Nat.cast_mul,
+      Nat.cast_one, Nat.cast_ofNat]
+      using hthresholdLow
+  · simpa only [mu, theta, L, N0, nstar, qfb, b, q0, Q, Nat.cast_add, Nat.cast_mul,
+      Nat.cast_one, Nat.cast_ofNat]
+      using hthresholdGain
+  · simpa only [mu, theta, L, N0, nstar, qfb, b, q0, Q, Nat.cast_add, Nat.cast_mul,
+      Nat.cast_one, Nat.cast_ofNat]
+      using hthresholdAbs
+  · simpa only [mu, theta, L, N0, nstar, qfb, b, q0, Q, Nat.cast_add, Nat.cast_mul,
+      Nat.cast_one, Nat.cast_ofNat]
+      using hnormalizerRel
+  · simpa only [N0, nstar, qfb, b, q0, Q, L, base, C1, Ccoeff, Real.rpow_natCast]
+      using hgenCost
 
 private theorem endpoint_bracket_and_gain_bounds (d : ℕ)
     [NeZero d] {g : ℝ}
@@ -1401,29 +1455,17 @@ theorem exists_coupledWitnessEngineData_of_endpoint (d : ℕ) (hd : 2 ≤ d) :
   let deltaOut : ℝ := 1 / 2
   have hg0 : 0 ≤ g := hg.1
   have hg1 : g < 1 := hg.2
-  have hrhoGap : 0 < rho - g := by
-    dsimp only [rho]
-    linarith only [hg1]
-  have hgammaGap : 0 < gamma - g := by
-    dsimp only [gamma]
-    linarith only [hrhoGap]
-  have hgammaRho : gamma < rho := by
-    dsimp only [gamma]
-    linarith only [hrhoGap]
-  have hgamma0 : 0 ≤ gamma := by
-    dsimp only [gamma, rho]
-    linarith only [hg0]
+  have hrhoGap : 0 < rho - g := by dsimp only [rho]; linarith only [hg1]
+  have hgammaGap : 0 < gamma - g := by dsimp only [gamma]; linarith only [hrhoGap]
+  have hgammaRho : gamma < rho := by dsimp only [gamma]; linarith only [hrhoGap]
+  have hgamma0 : 0 ≤ gamma := by dsimp only [gamma, rho]; linarith only [hg0]
   have hmu : 0 < mu := by
     dsimp only [mu]
     have hdR : (2 : ℝ) ≤ d := by exact_mod_cast hd
     linarith only [hdR, hg1]
-  have hgn : g ≤ (d : ℝ) / 2 := by
-    dsimp only [mu] at hmu
-    linarith only [hmu]
+  have hgn : g ≤ (d : ℝ) / 2 := by dsimp only [mu] at hmu; linarith only [hmu]
   have hgr : g ≤ gamma := by linarith only [hgammaGap]
-  have hdeltaOut : deltaOut ∈ Set.Ioo (0 : ℝ) 1 := by
-    dsimp only [deltaOut]
-    norm_num
+  have hdeltaOut : deltaOut ∈ Set.Ioo (0 : ℝ) 1 := by dsimp only [deltaOut]; norm_num
   let G0 : ℝ := 192 * (d : ℝ) ^ 2 * (3 : ℝ) ^ g * frThreshold d *
     (1 + renormShift d)
   have hG0 : 0 < G0 := by
@@ -1441,9 +1483,7 @@ theorem exists_coupledWitnessEngineData_of_endpoint (d : ℕ) (hd : 2 ≤ d) :
   let L : ℕ := A + D + 1
   have hL : 0 < L := by dsimp only [L]; omega
   let theta : ℝ := eta / (L : ℝ)
-  have htheta : 0 < theta := by
-    dsimp only [theta]
-    positivity
+  have htheta : 0 < theta := by dsimp only [theta]; positivity
   obtain ⟨Qraw, hQraw⟩ := exists_shift_of_pos halpha (by norm_num : (0 : ℝ) < 12)
   let Q : ℕ := Qraw + 4
   have hQ : 4 ≤ Q := by dsimp only [Q]; omega
@@ -1465,6 +1505,9 @@ theorem exists_coupledWitnessEngineData_of_endpoint (d : ℕ) (hd : 2 ≤ d) :
       hrelFix, -, hBconstEq⟩ := exists_admissible_thresholds_bounded
     (nstar := 0) (qfb := 0) (b := 0) (theta := theta) (mu := mu)
       (cd := frGaugeConst d) (Cblk := Cblk) hmu (frGaugeConst_pos d)
+  have hthetaCast : theta = eta / ((A : ℝ) + (D : ℝ) + 1) := by simp only [theta, L, Nat.cast_add,
+    Nat.cast_one]
+  rw [hthetaCast] at hthetaR hlowFix hgainFix habsFix hrelFix
   let Ccoeff : ℕ := L * Q + R + B * Q
   let C1 : ℝ := (4 * Ccoeff + Nfix : ℕ)
   let C2 : ℝ := Real.logb 3 Bconst
@@ -1472,19 +1515,14 @@ theorem exists_coupledWitnessEngineData_of_endpoint (d : ℕ) (hd : 2 ≤ d) :
   let Cstop : ℝ := C1 + C2 + C3
   let Cround : ℝ := 1
   let Cmix : ℝ := Cround + Cstop
-  have hC2 : 0 ≤ C2 := by
-    dsimp only [C2]
-    exact Real.logb_nonneg (by norm_num) hBconst
-  have hCmix : 0 < Cmix := by
-    dsimp only [Cmix, Cround, Cstop, C1, C3]
-    positivity
+  have hC2 : 0 ≤ C2 := by dsimp only [C2]; exact Real.logb_nonneg (by norm_num) hBconst
+  have hCmix : 0 < Cmix := by dsimp only [Cmix, Cround, Cstop, C1, C3]; positivity
   refine ⟨Cmix, theta, deltaOut, hCmix, htheta, hdeltaOut, ?_⟩
   intro P E Psi K S Abar Nann hP hstat hunit hdag hAbar hAbarPos
     _hcontrast hsandwich
   let : IsProbabilityMeasure P := hP
   let base : ℝ := 2 + aspectRatio E * K
-  have hbase : 3 ≤ base := by
-    simpa only [base] using three_le_rebaseBase hdag
+  have hbase : 3 ≤ base := by simpa only [base] using three_le_rebaseBase hdag
   obtain ⟨q, hqLow, hqHigh⟩ := Entry.exists_pow_three_bracket (sq_nonneg base)
   obtain ⟨hq, hqCost⟩ := pow_three_bracket_sq_le_four hbase hqLow hqHigh
   let q0 : ℕ := Q * q
@@ -1509,79 +1547,101 @@ theorem exists_coupledWitnessEngineData_of_endpoint (d : ℕ) (hd : 2 ≤ d) :
     renormRadius Sbase (Ahat n) (endpointTolerance deltaOut eta q0 L n)
       gamma (endpointWindowLength A L n) n
   let radius : ℕ → CoeffSpace d → ℝ := fun n a =>
-    radiusBase n (physical_scale_coeff Nann a)
+    radiusBase n (physicalScaleCoefficient Nann a)
   obtain ⟨hq0, hqBase, hGain⟩ :=
-    endpoint_bracket_and_gain_bounds d hdag hqLow hQpos hbase hq
+    endpoint_bracket_and_gain_bounds d (g := g) (Qraw := Qraw) (q := q) (P := P) (E := E)
+      (Psi := Psi) (K := K) (S := S) hdag hqLow hQpos hbase hq
   obtain ⟨hGainBound, hDpow, hbaseInitial, honeBaseInitial⟩ :=
-    endpoint_initial_renormalization_base d hdag hT hDcoef hDbase hmu hdeltaOut hbase
+    endpoint_initial_renormalization_base d (g := g) (T := T) (D := D) (Qraw := Qraw) (q := q)
+      (P := P) (E := E) (Psi := Psi) (K := K) (S := S) hdag hT hDcoef hDbase hmu hdeltaOut hbase
       hq0 hqBase hGain
-  have hnet : 1 ≤ mu * (D : ℝ) - eta := by
-    linarith only [hDcoef, hetaMu]
+  have hnet : 1 ≤ mu * (D : ℝ) - eta := by linarith only [hDcoef, hetaMu]
   obtain ⟨hhalf0, hqIndex, hinnerQ, hhalf, hAhatSymm, hAhatPos⟩ :=
-    endpoint_reference_integrability d hdag hL hQpos hdagBase hqLow
+    endpoint_reference_integrability d (g := g) (A := A) (D := D) (Qraw := Qraw) (q := q) (P := P)
+      (E := E) (Psi := Psi) (K := K) (S := S) (Nann := Nann) hdag hL hQpos hdagBase hqLow
   have hetaD : eta ≤ mu * (D : ℝ) := by
     have hDreal : 1 ≤ (D : ℝ) := by exact_mod_cast hD
     have hm := mul_le_mul_of_nonneg_left hDreal hmu.le
     linarith only [hetaMu, hm]
   obtain ⟨hbaseN, honeBaseN, hthrN, hcellN, hgrowthN, hbufN⟩ :=
-    endpoint_radius_base_thresholds d hT
+    endpoint_radius_base_thresholds d (g := g) (eta := eta) (T := T) (A := A) (D := D) (B := B)
+      (Qraw := Qraw) (q := q) (P := P) (E := E) (Psi := Psi) (K := K) (S := S) (Nann := Nann) hT
       hTthr hB hBbase hmu hdeltaOut hL hstatBase hunitBase hdagBase hq0 hGain hbaseInitial
       honeBaseInitial hnet hetaD hqIndex hhalf hA
   obtain ⟨hradiusTail, hfinPhysical, hfinAll, hcoarsePhysical⟩ :=
-    endpoint_physical_radius_certificates d hmu
+    endpoint_physical_radius_certificates d (g := g) (eta := eta) (A := A) (D := D) (B := B)
+      (Qraw := Qraw) (q := q) (P := P) (E := E) (Psi := Psi) (K := K) (S := S) (Nann := Nann) hA hB
+      hmu
       hgn hgr hdeltaOut hdagBase hq0 hGain hqIndex hAhatSymm hAhatPos honeBaseN hthrN hcellN hbufN
   obtain ⟨hburnStart, hburnN, hQalpha, hstartAnnealed⟩ :=
-    endpoint_initial_window_error_bounds d halpha hdag hAcoef
-      hq hqLow hetaGapA hdeltaOut hL hQ hQannealed hbase
+    endpoint_initial_window_error_bounds d (g := g) (alpha := alpha) (eta := eta) (A := A) (D := D)
+      (Qraw := Qraw) (q := q) (P := P) (E := E) (Psi := Psi) (K := K) (S := S) halpha hdag hAcoef
+      hq hqLow hetaGapA hdeltaOut hL hQ (by
+        simpa only [Q, Nat.cast_add, Nat.cast_ofNat] using hQannealed)
+      hbase
   let Brow : ℕ → CoeffSpace d → ℝ := fun m a =>
-    quenched_block_row rho Abar
-      (max 1 (S a / (3 : ℝ) ^ Nann)) (physical_scale_coeff Nann a) m
-  have hrowDecay :=
-    endpoint_physical_stopped_row_bound d hdag hAbar hAbarPos hsandwich heta hetaAlpha hthetaR
-      hqLow hg0
-      hrhoGap hgammaRho hgamma0 hgr hdeltaOut hL hgeomG hCblk hCblkMain hCblkFallback hbase hdagBase
-      hburnN hstartAnnealed hhalf hAhatPos hfinAll hcoarsePhysical
+    quenchedBlockRow rho Abar
+      (max 1 (S a / (3 : ℝ) ^ Nann)) (physicalScaleCoefficient Nann a) m
+  have hrowDecay : ∀ᵐ a ∂P, ∀ m : ℕ, nstar ≤ m → Brow m a ≤
+      Cblk * deltaOut * (3 : ℝ) ^ (-theta *
+        ((m : ℝ) - (stoppingGeneration nstar qfb radius m a : ℝ) - (nstar : ℝ))) := by
+    simpa only [Brow, Cblk, geomG, geomGamma, rho, gamma, deltaOut, theta, L,
+      nstar, q0, Q, qfb, radius, radiusBase, Ahat, Pbase, Sbase,
+      Nat.cast_add, Nat.cast_mul, Nat.cast_one, Nat.cast_ofNat] using
+      endpoint_physical_stopped_row_bound d (g := g) (alpha := alpha) (eta := eta) (A := A) (D := D)
+        (Qraw := Qraw) (R := R) (q := q) (P := P) (E := E) (Abar := Abar) (Psi := Psi) (K := K)
+        (S := S) (Nann := Nann) hdag hAbar hAbarPos hsandwich heta hetaAlpha
+        (by simpa only [Nat.cast_add, Nat.cast_one] using hthetaR)
+        hqLow hg0
+        hrhoGap hgammaRho hgamma0 hgr hdeltaOut hL hgeomG hCblk hCblkMain hCblkFallback hbase
+          hdagBase
+        hburnN hstartAnnealed hhalf hAhatPos hfinAll hcoarsePhysical
   obtain ⟨hrowNonnegative, hsummable, hBmeas⟩ :=
-    endpoint_row_summability_and_measurability d hAbar hAbarPos hg0 hrhoGap hmu hdeltaOut htheta
+    endpoint_row_summability_and_measurability d (g := g) (eta := eta) (A := A) (D := D) (B := B)
+      (Qraw := Qraw) (R := R) (q := q) (P := P) (E := E) (Abar := Abar) (Psi := Psi) (K := K)
+      (S := S) (Nann := Nann) hAbar hAbarPos hg0 hmu hdeltaOut
+      (by simpa only [theta, L, Nat.cast_add, Nat.cast_one] using htheta)
       hCblk hdagBase
-      hrowDecay hradiusTail
+      (by simpa only [Brow, Cblk, geomG, geomGamma, rho, gamma, deltaOut, theta, L,
+        nstar, q0, Q, qfb, radius, radiusBase, Ahat, Pbase, Sbase,
+        Nat.cast_add, Nat.cast_mul, Nat.cast_one, Nat.cast_ofNat] using hrowDecay) hradiusTail
   obtain ⟨F, hFmeas, hFsum⟩ := exists_measurable_weighted_rowTailSum
-    (P := P) (B := Brow) (kappa := theta / 2) hBmeas hsummable
+    (P := P) (B := Brow) (kappa := theta / 2) hBmeas (by
+      simpa only [Brow, rho, theta, L, Nat.cast_add, Nat.cast_one] using hsummable)
   have hN0star : nstar ≤ N0 := by dsimp only [N0]; omega
   obtain ⟨hthresholdLow, hthresholdGain, hthresholdAbs, hnormalizerRel, hN0eq, hgenCost, hnormCost⟩
     :=
-    endpoint_threshold_and_polynomial_costs d hBconst hlowFix hgainFix habsFix hrelFix hqCost
+    endpoint_threshold_and_polynomial_costs d (g := g) (eta := eta) (A := A) (D := D)
+      (B := B) (Qraw := Qraw) (R := R) (Nfix := Nfix) (q := q) (E := E) (K := K) (Cblk := Cblk)
+        (Bconst := Bconst)
+      hBconst (by simpa only [Nat.cast_add, Nat.cast_one, Nat.cast_zero] using hlowFix)
+        (by simpa only [Nat.cast_add, Nat.cast_one, Nat.cast_zero] using hgainFix)
+      (by simpa only [Nat.cast_add, Nat.cast_one, Nat.cast_zero] using habsFix)
+        (by simpa only [Nat.cast_add, Nat.cast_one, Nat.cast_zero] using hrelFix)
+      (by simpa only [base, zpow_natCast, Nat.cast_ofNat] using
+        le_of_le_of_eq hqCost (Real.rpow_natCast base (4 : ℕ)).symm)
       hbase
-  apply nonempty_coupledWitnessEngineData_of_fields
+  refine nonempty_coupledWitnessEngineData_of_fields
     (P := P) (g := g) (E := E) (Psi := Psi) (K := K) (S := S)
     (Abar := Abar) (Nann := Nann) (theta := theta) (deltaOut := deltaOut)
     (Cmix := Cmix) (rho := rho) (mu := mu) (nstar := nstar)
     (qfb := qfb) (b := b) (N0 := N0)
     (radius := radius) (F := F) (Brow := Brow) (Cblk := Cblk) (Bconst := Bconst)
     (C1 := C1) (C2 := C2) (C3 := C3) (Cstop := Cstop) (Cround := Cround)
-  · exact rfl
-  · exact rfl
-  · exact rfl
-  · exact hmu
-  · exact hradiusTail
-  · exact hCblk
-  · exact hFmeas
-  · exact hrowDecay
-  · exact hrowNonnegative
-  · exact hFsum
-  · exact hN0star
-  · exact hBconst
-  · exact hthresholdLow
-  · exact hthresholdGain
-  · exact hthresholdAbs
-  · exact hnormalizerRel
+    rfl rfl rfl hmu hradiusTail hCblk hFmeas hrowDecay hrowNonnegative hFsum
+    hN0star hBconst ?_ ?_ ?_ ?_ ?_ ?_ ?_ hnormCost le_rfl ?_ le_rfl
+  · simpa only [theta, L, nstar, qfb, b, N0, q0, Q, Nat.cast_add, Nat.cast_mul,
+      Nat.cast_one, Nat.cast_ofNat] using hthresholdLow
+  · simpa only [mu, theta, L, nstar, qfb, b, N0, q0, Q, Nat.cast_add, Nat.cast_mul,
+      Nat.cast_one, Nat.cast_ofNat] using hthresholdGain
+  · simpa only [mu, theta, L, nstar, qfb, b, N0, q0, Q, Nat.cast_add, Nat.cast_mul,
+      Nat.cast_one, Nat.cast_ofNat] using hthresholdAbs
+  · simpa only [mu, theta, L, nstar, qfb, b, N0, q0, Q, Nat.cast_add, Nat.cast_mul,
+      Nat.cast_one, Nat.cast_ofNat] using hnormalizerRel
   · simpa only [base] using ((by norm_num : (1 : ℝ) ≤ 3).trans hbase)
   · simpa only [C3, Real.rpow_one, base] using hbase
-  · simpa only [base] using hgenCost
-  · simpa only [base] using hnormCost
-  · exact le_rfl
+  · simpa only [base, C1, Ccoeff, L, Q, Real.rpow_natCast] using hgenCost
   · simpa only [Cround, Real.rpow_one, base] using hbase
-  · exact le_rfl
 
 end
 

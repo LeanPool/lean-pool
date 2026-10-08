@@ -297,7 +297,8 @@ private theorem abs_symmPartInv_mul_skewPart_toMat_sub_le_norm_of_mem_quantitati
         ∑ p : Fin d,
           (((SA⁻¹ : Mat d) i p - (SB⁻¹ : Mat d) i p) * KA p j +
             (SB⁻¹ : Mat d) i p * (KA p j - KB p j)) := by
-    simp [Matrix.mul_apply]
+    change (∑ p : Fin d, (SA⁻¹ : Mat d) i p * KA p j) -
+      (∑ p : Fin d, (SB⁻¹ : Mat d) i p * KB p j) = _
     rw [← Finset.sum_sub_distrib]
     apply Finset.sum_congr rfl
     intro p _
@@ -502,7 +503,7 @@ private theorem abs_upperLeft_toMat_sub_le_norm_of_mem_quantitative
       (HA * KA) i j - (HB * KB) i j =
         ∑ p : Fin d,
           ((HA i p - HB i p) * KA p j + HB i p * (KA p j - KB p j)) := by
-    simp [Matrix.mul_apply]
+    simp only [Matrix.mul_apply]
     rw [← Finset.sum_sub_distrib]
     apply Finset.sum_congr rfl
     intro p _

@@ -99,7 +99,7 @@ theorem isOpen_witnessDomain {abar : Mat d} (hS : (symmPart abar).PosDef)
 /-- **The `H¹` matrix-and-translation composite at the frozen witness.**  The
 physical boundary datum and the gauge solution both land on the origin cube of
 the witness generation, with literal value and gradient identities. -/
-theorem exists_frozenWitnessGaugeCubePullbacks [NeZero d]
+theorem exists_frozenWitnessGaugeCubePullbacks
     {abar : Mat d} (hS : (symmPart abar).PosDef)
     {U : Set (Vec d)} {j : ℤ} {z : Vec d}
     (hU : U = (fun y : Vec d => z + matVecMul (matSqrt (symmPart abar)) y) ''
@@ -130,10 +130,10 @@ theorem exists_frozenWitnessGaugeCubePullbacks [NeZero d]
     H1Function.untranslate (matVecMul (matSqrt (symmPart abar))⁻¹ z)
       (uHat.restrict htOpen hgauge.symm.subset), ?_, ?_, ?_, ?_⟩
   · intro y
-    show g₀Hat.toFun (y + matVecMul (matSqrt (symmPart abar))⁻¹ z) = _
+    change g₀Hat.toFun (y + matVecMul (matSqrt (symmPart abar))⁻¹ z) = _
     rw [hgf]
   · intro y
-    show g₀Hat.grad (y + matVecMul (matSqrt (symmPart abar))⁻¹ z) = _
+    change g₀Hat.grad (y + matVecMul (matSqrt (symmPart abar))⁻¹ z) = _
     rw [hgg, matTranspose_matSqrt_symmPart hS]
   · intro _
     rfl

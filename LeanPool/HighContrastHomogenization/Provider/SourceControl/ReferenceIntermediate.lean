@@ -375,7 +375,7 @@ theorem one_add_six_mul_refContrast_sub_one_le_six_mul_aspectRatio {E : BlockMat
 
 /-- `Θ ≤ Π` at a reference block of `e.coarse.ellipticity`. -/
 theorem refContrast_le_aspectRatio_of_coarseEllipticityDagger
-    {P : Measure (CoeffSpace d)} [IsProbabilityMeasure P] {g : ℝ} {E : BlockMat d}
+    {P : Measure (CoeffSpace d)} {g : ℝ} {E : BlockMat d}
     {Ψ : ℝ → ℝ} {K : ℝ} {S : CoeffSpace d → ℝ}
     (hdag : HCPoly.Frozen.CoarseEllipticityDagger P g E Ψ K S) :
     refContrast E ≤ aspectRatio E :=
@@ -404,7 +404,7 @@ theorem kappaRef_le_one_add_six_mul_refContrast_sub_one_of_coarseEllipticityDagg
 /-- The printed tail `1 + 6(Θ - 1) ≤ 6 Π` at a reference block of
 `e.coarse.ellipticity`. -/
 theorem one_add_six_mul_refContrast_sub_one_le_six_mul_aspectRatio_of_coarseEllipticityDagger
-    {P : Measure (CoeffSpace d)} [IsProbabilityMeasure P] {g : ℝ} {E : BlockMat d}
+    {P : Measure (CoeffSpace d)} {g : ℝ} {E : BlockMat d}
     {Ψ : ℝ → ℝ} {K : ℝ} {S : CoeffSpace d → ℝ}
     (hdag : HCPoly.Frozen.CoarseEllipticityDagger P g E Ψ K S) :
     1 + 6 * (refContrast E - 1) ≤ 6 * aspectRatio E :=

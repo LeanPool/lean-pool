@@ -38,7 +38,7 @@ private theorem widetildeThetaAtScale_zero_nonneg
     {d : ℕ} [NeZero d] {P : Ch04.RestrictionCoeffLaw d}
     (hP4 : QuantitativeCoarseGrainedEllipticity P) :
     0 ≤ widetildeThetaAtScale P 0 hP4 := by
-  simp [widetildeThetaAtScale, Ch04.widetildeThetaAtScale]
+  simp only [widetildeThetaAtScale, Ch04.widetildeThetaAtScale]
   exact mul_nonneg
     (Ch04.LambdaMomentAtScale_nonneg P 0 hP4.xi hP4.sUpper_pos)
     (Ch04.lambdaInvMomentAtScale_nonneg P 0 hP4.xi hP4.sLower_pos)
@@ -262,6 +262,8 @@ private theorem pairProbeRefinedDescendantAverageK_le_pointwiseConst_delta_one
         simp [pairPointwiseBudgetConst]
         ring
 
+/-- The scale-independent small-contrast budget `1 + 4 * M + 8 * M²`,
+where `M` is the pointwise pair-probe budget constant. -/
 @[expose]
 noncomputable def refinedVarianceBasicBudgetSmallContrastConst
     {d : ℕ} [NeZero d] {P : Ch04.RestrictionCoeffLaw d}
@@ -434,6 +436,8 @@ private theorem centeredOriginNormalizedQuadratic_sq_integral_le_smallContrastCo
           (dotProduct q q) ^ (2 : ℕ) := by
         simp [Dq, mul_assoc]
 
+/-- The small-contrast constant controlling the squared root bound for a
+normalized quadratic probe average, including the fourth-power dependence on the probe norm. -/
 @[expose]
 public noncomputable def normalizedQuadraticProbeAverageRootSqConst
     {d : ℕ} [NeZero d] {P : Ch04.RestrictionCoeffLaw d}
@@ -443,6 +447,8 @@ public noncomputable def normalizedQuadraticProbeAverageRootSqConst
     (refinedMatrixBudgetConst d * refinedVarianceBasicBudgetSmallContrastConst hP4 *
       (dotProduct q q) ^ (2 : ℕ))
 
+/-- A uniform squared root-bound constant for coordinate and plus/minus
+quadratic probes, using the common bound `16` on their squared self-pairings. -/
 @[expose]
 noncomputable def normalizedQuadraticProbeAverageUniformRootSqConst
     {d : ℕ} [NeZero d] {P : Ch04.RestrictionCoeffLaw d}
@@ -451,6 +457,8 @@ noncomputable def normalizedQuadraticProbeAverageUniformRootSqConst
       Ch04.rosenthalDescendantsAtScaleSqrtConst d 0 2) ^ (2 : ℕ) *
     (refinedMatrixBudgetConst d * refinedVarianceBasicBudgetSmallContrastConst hP4 * 16)
 
+/-- The geometric matrix-average budget obtained from the uniform quadratic
+probe constant by multiplying by `9` and the sixth power of the block-coordinate count. -/
 @[expose]
 noncomputable def normalizedMatrixAverageGeometricConst
     {d : ℕ} [NeZero d] {P : Ch04.RestrictionCoeffLaw d}

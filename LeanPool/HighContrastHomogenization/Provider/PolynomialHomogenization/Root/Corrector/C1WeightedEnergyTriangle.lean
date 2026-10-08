@@ -37,7 +37,7 @@ open scoped ENNReal
 noncomputable section
 
 private theorem sqrt_normalizedEnergy_grad_eq_h1EnergyNormOnCube_triangle
-    {d : ℕ} [NeZero d] (a : Book.Ch02.TriadicCoeffFamily d)
+    {d : ℕ} (a : Book.Ch02.TriadicCoeffFamily d)
     (q : ℤ) (u : H1Function (openCubeSet (originCube d q))) :
     Real.sqrt (normalizedLocalSymmetricEnergy
         (Book.Ch03.publicCoeffField_isEllipticFieldOn_openCubeSet
@@ -52,7 +52,7 @@ private theorem sqrt_normalizedEnergy_grad_eq_h1EnergyNormOnCube_triangle
   exact Real.sqrt_nonneg _
 
 private theorem h1EnergyNormOnCube_sub_comm
-    {d : ℕ} [NeZero d] (a : Book.Ch02.TriadicCoeffFamily d) (q : ℤ)
+    {d : ℕ} (a : Book.Ch02.TriadicCoeffFamily d) (q : ℤ)
     (u v : H1Function (openCubeSet (originCube d q))) :
     Book.Ch03.h1EnergyNormOnCube (originCube d q) a (u - v) =
       Book.Ch03.h1EnergyNormOnCube (originCube d q) a (v - u) := by
@@ -91,7 +91,7 @@ private theorem h1EnergyNormOnCube_sub_comm
 /-- The normalized coefficient-energy norm of one difference is invariant
 under reversing the two fields. -/
 theorem weightedGradNorm_sub_comm_h1
-    {d : ℕ} [NeZero d] (a : Book.Ch02.TriadicCoeffFamily d) (q : ℤ)
+    {d : ℕ} (a : Book.Ch02.TriadicCoeffFamily d) (q : ℤ)
     (u v : H1Function (openCubeSet (originCube d q))) :
     weightedGradNorm (a.coeffOn (originCube d q)).toCoeffField
         (openCubeSet (originCube d q))
@@ -110,7 +110,7 @@ theorem weightedGradNorm_sub_comm_h1
 /-- The normalized coefficient-energy norm obeys the triangle inequality
 along three local Sobolev fields. -/
 theorem weightedGradNorm_sub_le_add_sub_h1
-    {d : ℕ} [NeZero d] (a : Book.Ch02.TriadicCoeffFamily d) (q : ℤ)
+    {d : ℕ} (a : Book.Ch02.TriadicCoeffFamily d) (q : ℤ)
     (u v w : H1Function (openCubeSet (originCube d q))) :
     weightedGradNorm (a.coeffOn (originCube d q)).toCoeffField
         (openCubeSet (originCube d q))

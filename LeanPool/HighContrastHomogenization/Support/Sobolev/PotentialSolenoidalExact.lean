@@ -226,7 +226,7 @@ theorem integral_eq_zero_of_mem_solenoidalZeroNormalTrace {d : ℕ}
 
 /-- The normalized-domain average of a zero-normal-trace solenoidal field
 vanishes. -/
-theorem average_eq_zero_of_mem_solenoidalZeroNormalTrace {d : ℕ} [NeZero d]
+theorem average_eq_zero_of_mem_solenoidalZeroNormalTrace {d : ℕ}
     {U : Set (Vec d)} (hU : IsOpenBoundedConvexDomain U) (hne : U.Nonempty)
     (g : HilbertVectorL2 U) (hg : g ∈ solenoidalZeroNormalTrace U) :
     (hU.toBoundedMeasurableDomain hne).average g (by

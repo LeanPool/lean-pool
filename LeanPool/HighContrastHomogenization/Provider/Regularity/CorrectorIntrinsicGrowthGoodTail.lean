@@ -46,6 +46,8 @@ private theorem weightedGradNorm_congr_coeff_ae
   filter_upwards [hbb'] with x hx
   simp only [hx]
 
+/-- The local H¹ approximation obtained by adding the affine function of
+slope `e` to the normalized finite corrector at scale `q + k`. -/
 @[expose]
 public noncomputable def finiteAffineGrowthApproximation
     {d : ℕ} [NeZero d] (a : Book.Ch02.TriadicCoeffFamily d)

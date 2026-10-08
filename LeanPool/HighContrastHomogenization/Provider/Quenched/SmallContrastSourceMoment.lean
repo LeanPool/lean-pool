@@ -68,7 +68,7 @@ theorem one_le_normalizedSourceScale (S : CoeffSpace d → ℝ) (sK : ℤ)
 /-- **The strong tail.**  Above the growth witness, the normalized source
 scale has the strong `Ψ`-tail. -/
 theorem measureReal_normalizedSourceScale_tail
-    {P : Measure (CoeffSpace d)} [IsProbabilityMeasure P] {g : ℝ}
+    {P : Measure (CoeffSpace d)} {g : ℝ}
     {E : BlockMat d} {Ψ : ℝ → ℝ} {K : ℝ} {S : CoeffSpace d → ℝ}
     (hdag : HCPoly.Frozen.CoarseEllipticityDagger P g E Ψ K S)
     {sK : ℤ} (hsK : growthBar K ≤ (3 : ℝ) ^ sK)

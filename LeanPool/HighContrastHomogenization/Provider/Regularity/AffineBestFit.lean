@@ -54,7 +54,7 @@ public noncomputable def originCubeAffineH1OfCoefficients
       p.2
 
 @[simp] private theorem originCubeAffineH1OfCoefficients_toFun
-    (d : ℕ) [NeZero d] (k : ℤ) (p : AffineCoefficients d) :
+    (d : ℕ) (k : ℤ) (p : AffineCoefficients d) :
     (originCubeAffineH1OfCoefficients d k p).toFun =
       fun x => p.1 + vecDot p.2 x := by
   funext x
@@ -62,14 +62,14 @@ public noncomputable def originCubeAffineH1OfCoefficients
     H1Function.const_apply, H1Function.affineOnIsSobolevRegularDomain_apply, vecDot]
 
 @[simp] private theorem originCubeAffineH1OfCoefficients_grad
-    (d : ℕ) [NeZero d] (k : ℤ) (p : AffineCoefficients d) :
+    (d : ℕ) (k : ℤ) (p : AffineCoefficients d) :
     (originCubeAffineH1OfCoefficients d k p).grad = fun _ => p.2 := by
   funext x
   simp only [originCubeAffineH1OfCoefficients, H1Function.add_grad,
     H1Function.grad_const, H1Function.affineOnIsSobolevRegularDomain_grad, zero_add]
 
 theorem originCubeAffineH1OfCoefficients_add
-    (d : ℕ) [NeZero d] (k : ℤ)
+    (d : ℕ) (k : ℤ)
     (p q : AffineCoefficients d) :
     originCubeAffineH1OfCoefficients d k (p + q) =
       originCubeAffineH1OfCoefficients d k p +
@@ -83,7 +83,7 @@ theorem originCubeAffineH1OfCoefficients_add
     simp only [originCubeAffineH1OfCoefficients_grad, H1Function.add_grad, Prod.snd_add]
 
 theorem originCubeAffineH1OfCoefficients_smul
-    (d : ℕ) [NeZero d] (k : ℤ) (r : ℝ)
+    (d : ℕ) (k : ℤ) (r : ℝ)
     (p : AffineCoefficients d) :
     originCubeAffineH1OfCoefficients d k (r • p) =
       r • originCubeAffineH1OfCoefficients d k p := by
@@ -98,7 +98,7 @@ theorem originCubeAffineH1OfCoefficients_smul
 /-- The affine-coefficient embedding into `H¹` on a centered cube. -/
 @[expose]
 noncomputable def originCubeAffineH1LinearMap
-    (d : ℕ) [NeZero d] (k : ℤ) :
+    (d : ℕ) (k : ℤ) :
     AffineCoefficients d →ₗ[ℝ]
       H1Function
         (Book.Ch02.cubeDomain (originCube d k) : Set (Vec d)) where
@@ -108,21 +108,21 @@ noncomputable def originCubeAffineH1LinearMap
 
 /-- The affine embedding has the literal representative `c + e · x`. -/
 theorem originCubeAffineH1LinearMap_toFun
-    (d : ℕ) [NeZero d] (k : ℤ) (p : AffineCoefficients d) :
+    (d : ℕ) (k : ℤ) (p : AffineCoefficients d) :
     (originCubeAffineH1LinearMap d k p).toFun =
       fun x => p.1 + vecDot p.2 x :=
   originCubeAffineH1OfCoefficients_toFun d k p
 
 /-- The weak gradient of the affine embedding is its slope. -/
 theorem originCubeAffineH1LinearMap_grad
-    (d : ℕ) [NeZero d] (k : ℤ) (p : AffineCoefficients d) :
+    (d : ℕ) (k : ℤ) (p : AffineCoefficients d) :
     (originCubeAffineH1LinearMap d k p).grad = fun _ => p.2 :=
   originCubeAffineH1OfCoefficients_grad d k p
 
 /-- The affine-coefficient embedding into scalar `L²` on a centered cube. -/
 @[expose]
 noncomputable def originCubeAffineL2LinearMap
-    (d : ℕ) [NeZero d] (k : ℤ) :
+    (d : ℕ) (k : ℤ) :
     AffineCoefficients d →ₗ[ℝ]
       ScalarL2
         (Book.Ch02.cubeDomain (originCube d k) : Set (Vec d)) where
@@ -135,7 +135,7 @@ noncomputable def originCubeAffineL2LinearMap
 /-- The `L²` affine embedding is the realization of the corresponding `H¹`
 function. -/
 theorem originCubeAffineL2LinearMap_apply
-    (d : ℕ) [NeZero d] (k : ℤ) (p : AffineCoefficients d) :
+    (d : ℕ) (k : ℤ) (p : AffineCoefficients d) :
     originCubeAffineL2LinearMap d k p =
       (originCubeAffineH1LinearMap d k p).toScalarL2 :=
   rfl
@@ -143,7 +143,7 @@ theorem originCubeAffineL2LinearMap_apply
 /-- The `L²` affine embedding has its expected almost-everywhere
 representative. -/
 theorem originCubeAffineL2LinearMap_ae_eq
-    (d : ℕ) [NeZero d] (k : ℤ) (p : AffineCoefficients d) :
+    (d : ℕ) (k : ℤ) (p : AffineCoefficients d) :
     originCubeAffineL2LinearMap d k p
       =ᵐ[volumeMeasureOn
         (Book.Ch02.cubeDomain (originCube d k) : Set (Vec d))]
@@ -204,7 +204,7 @@ private theorem quarterScale_smul_basisVec_mem_originCubeDomain
 /-- Affine coefficients are determined by their `L²` class on a
 positive-dimensional origin cube. -/
 theorem originCubeAffineL2LinearMap_injective
-    (d : ℕ) [NeZero d] (k : ℤ) :
+    (d : ℕ) (k : ℤ) :
     Function.Injective (originCubeAffineL2LinearMap d k) := by
   intro p q hpq
   let U : Set (Vec d) :=
@@ -255,14 +255,14 @@ theorem originCubeAffineL2LinearMap_injective
 functions on an origin cube. -/
 @[expose]
 noncomputable def originCubeAffineL2Submodule
-    (d : ℕ) [NeZero d] (k : ℤ) :
+    (d : ℕ) (k : ℤ) :
     Submodule ℝ
       (ScalarL2
         (Book.Ch02.cubeDomain (originCube d k) : Set (Vec d))) :=
   LinearMap.range (originCubeAffineL2LinearMap d k)
 
 noncomputable local instance originCubeAffineL2SubmoduleHasOrthogonalProjection
-    (d : ℕ) [NeZero d] (k : ℤ) :
+    (d : ℕ) (k : ℤ) :
     (originCubeAffineL2Submodule d k).HasOrthogonalProjection := by
   let : FiniteDimensional ℝ (originCubeAffineL2Submodule d k) :=
     (originCubeAffineL2LinearMap d k).finiteDimensional_range
@@ -274,7 +274,7 @@ noncomputable local instance originCubeAffineL2SubmoduleHasOrthogonalProjection
 affine `L²` embedding. -/
 @[expose]
 noncomputable def originCubeAffineL2EquivRange
-    (d : ℕ) [NeZero d] (k : ℤ) :
+    (d : ℕ) (k : ℤ) :
     AffineCoefficients d ≃ₗ[ℝ] originCubeAffineL2Submodule d k :=
   LinearEquiv.ofInjective (originCubeAffineL2LinearMap d k)
     (originCubeAffineL2LinearMap_injective d k)
@@ -282,7 +282,7 @@ noncomputable def originCubeAffineL2EquivRange
 /-- Coefficients of the orthogonal `L²` projection onto affine functions. -/
 @[expose]
 noncomputable def originCubeAffineBestFitCoefficients
-    (d : ℕ) [NeZero d] (k : ℤ) :
+    (d : ℕ) (k : ℤ) :
     ScalarL2
         (Book.Ch02.cubeDomain (originCube d k) : Set (Vec d)) →ₗ[ℝ]
       AffineCoefficients d :=
@@ -292,7 +292,7 @@ noncomputable def originCubeAffineBestFitCoefficients
 /-- Intercept of the unique affine `L²` best fit. -/
 @[expose]
 noncomputable def originCubeAffineBestFitIntercept
-    (d : ℕ) [NeZero d] (k : ℤ) :
+    (d : ℕ) (k : ℤ) :
     ScalarL2
         (Book.Ch02.cubeDomain (originCube d k) : Set (Vec d)) →ₗ[ℝ]
       ℝ :=
@@ -302,7 +302,7 @@ noncomputable def originCubeAffineBestFitIntercept
 /-- Slope of the unique affine `L²` best fit. -/
 @[expose]
 noncomputable def originCubeAffineBestFitSlope
-    (d : ℕ) [NeZero d] (k : ℤ) :
+    (d : ℕ) (k : ℤ) :
     ScalarL2
         (Book.Ch02.cubeDomain (originCube d k) : Set (Vec d)) →ₗ[ℝ]
       Vec d :=
@@ -311,7 +311,7 @@ noncomputable def originCubeAffineBestFitSlope
 
 /-- The best coefficient pair consists of the exported intercept and slope. -/
 theorem originCubeAffineBestFitCoefficients_eq
-    (d : ℕ) [NeZero d] (k : ℤ)
+    (d : ℕ) (k : ℤ)
     (F : ScalarL2
       (Book.Ch02.cubeDomain (originCube d k) : Set (Vec d))) :
     originCubeAffineBestFitCoefficients d k F =
@@ -322,7 +322,7 @@ theorem originCubeAffineBestFitCoefficients_eq
 /-- Re-embedding the best coefficients gives the orthogonal projection onto
 the affine range. -/
 theorem originCubeAffineL2LinearMap_bestFitCoefficients
-    (d : ℕ) [NeZero d] (k : ℤ)
+    (d : ℕ) (k : ℤ)
     (F : ScalarL2
       (Book.Ch02.cubeDomain (originCube d k) : Set (Vec d))) :
     originCubeAffineL2LinearMap d k
@@ -342,7 +342,7 @@ theorem originCubeAffineL2LinearMap_bestFitCoefficients
 
 /-- The best-fit residual is orthogonal to every affine function. -/
 theorem inner_sub_originCubeAffineBestFit_eq_zero
-    (d : ℕ) [NeZero d] (k : ℤ)
+    (d : ℕ) (k : ℤ)
     (F : ScalarL2
       (Book.Ch02.cubeDomain (originCube d k) : Set (Vec d)))
     (p : AffineCoefficients d) :
@@ -358,7 +358,7 @@ theorem inner_sub_originCubeAffineBestFit_eq_zero
 /-- Pythagorean identity comparing the best affine fit with any affine
 candidate. -/
 theorem norm_sub_originCubeAffineBestFit_sq
-    (d : ℕ) [NeZero d] (k : ℤ)
+    (d : ℕ) (k : ℤ)
     (F : ScalarL2
       (Book.Ch02.cubeDomain (originCube d k) : Set (Vec d)))
     (p : AffineCoefficients d) :
@@ -383,7 +383,7 @@ theorem norm_sub_originCubeAffineBestFit_sq
 
 /-- The projected affine function minimizes `L²` distance. -/
 theorem norm_sub_originCubeAffineBestFit_le
-    (d : ℕ) [NeZero d] (k : ℤ)
+    (d : ℕ) (k : ℤ)
     (F : ScalarL2
       (Book.Ch02.cubeDomain (originCube d k) : Set (Vec d)))
     (p : AffineCoefficients d) :
@@ -408,7 +408,7 @@ private theorem h1Function_toScalarL2_sub
 /-- The normalized affine error is exactly the unnormalized scalar `L²` norm
 times the probability-measure and scale factors. -/
 theorem normalizedAffineCandidateError_eq_affineL2Norm
-    (d : ℕ) [NeZero d] (k : ℤ)
+    (d : ℕ) (k : ℤ)
     (u : H1Function
       (Book.Ch02.cubeDomain (originCube d k) : Set (Vec d)))
     (c : ℝ) (e : Vec d) :
@@ -445,7 +445,7 @@ theorem normalizedAffineCandidateError_eq_affineL2Norm
   have hvL2 :
       v.toScalarL2 =
         u.toScalarL2 - originCubeAffineL2LinearMap d k (c, e) := by
-    show (u - originCubeAffineH1LinearMap d k (c, e)).toScalarL2 =
+    change (u - originCubeAffineH1LinearMap d k (c, e)).toScalarL2 =
         u.toScalarL2 - originCubeAffineL2LinearMap d k (c, e)
     rw [h1Function_toScalarL2_sub, originCubeAffineL2LinearMap_apply]
   unfold normalizedAffineCandidateError normalizedCubeL2Distance
@@ -457,7 +457,7 @@ theorem normalizedAffineCandidateError_eq_affineL2Norm
 /-- The projected coefficients attain the normalized affine-candidate
 error. -/
 theorem normalizedAffineCandidateError_bestFit_le
-    (d : ℕ) [NeZero d] (k : ℤ)
+    (d : ℕ) (k : ℤ)
     (u : H1Function
       (Book.Ch02.cubeDomain (originCube d k) : Set (Vec d)))
     (c : ℝ) (e : Vec d) :

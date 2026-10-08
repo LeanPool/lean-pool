@@ -30,7 +30,7 @@ are controlled by the overlapping positive partial sums and mean term.
 This is proved by the concrete smooth overlap averaging operator and the
 K-functional depth/partial assembly. -/
 theorem cubeKBesovPartialBoundByOverlappingPositive
-    (d : ℕ) [NeZero d] :
+    (d : ℕ) :
     CubeKBesovPartialBoundByOverlappingPositive d :=
   cubeKBesovPartialBoundByOverlappingPositive_concrete d
 
@@ -38,7 +38,7 @@ theorem cubeKBesovPartialBoundByOverlappingPositive
 controlled by the overlapping positive partial sums and mean term with a
 dimension-only constant, independent of `s`. -/
 theorem cubeKBesovPartialBoundByOverlappingPositiveUniform
-    (d : ℕ) [NeZero d] :
+    (d : ℕ) :
     CubeKBesovPartialBoundByOverlappingPositiveUniform d
       (2 * concreteOverlapAveragingCompetitorConstant d) :=
   cubeKBesovPartialBoundByOverlappingPositiveUniform_concrete d
@@ -46,7 +46,7 @@ theorem cubeKBesovPartialBoundByOverlappingPositiveUniform
 /-- Pure/K-interface analytic input: overlapping Besov regularity gives bounded
 canonical K-functional partial sums. -/
 theorem cubeKBesovInputBoundednessOfOverlappingHRegularity
-    (d : ℕ) [NeZero d] :
+    (d : ℕ) :
     CubeKBesovInputBoundednessOfOverlappingHRegularity d :=
   cubeKBesovInputBoundednessOfOverlappingHRegularity_of_partialBoundByOverlappingPositive
     (cubeKBesovPartialBoundByOverlappingPositive d)
@@ -70,7 +70,7 @@ theorem cubeDirichletGradientAverageRegularity
 zero-Dirichlet divergence solutions. This is the formal test-with-the-solution
 argument. -/
 theorem cubeDirichletDivergenceEnergyEstimate
-    (d : ℕ) [NeZero d] :
+    (d : ℕ) :
     CubeDirichletDivergenceEnergyEstimate d := by
   let C0 : ℝ := Fintype.card (Fin d)
   refine ⟨C0, by exact Nat.cast_nonneg _, ?_⟩
@@ -143,7 +143,7 @@ theorem cubeDirichletDivergenceEnergyEstimate
 is available: subtract the two weak equations, then apply the estimate to the
 residual solution. -/
 theorem cubeDirichletDivergenceResidualL2Stability
-    (d : ℕ) [NeZero d] :
+    (d : ℕ) :
     CubeDirichletDivergenceResidualL2Stability d :=
   cubeDirichletDivergenceResidualL2Stability_of_energyEstimate
     (cubeDirichletDivergenceEnergyEstimate d)

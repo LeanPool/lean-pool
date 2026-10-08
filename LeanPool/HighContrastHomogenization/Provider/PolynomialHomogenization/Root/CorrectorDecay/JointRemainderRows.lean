@@ -36,6 +36,8 @@ theorem cubeSolution_weakFluxIntegrable
     (Book.Ch02.Solution.flux_memVectorL2 u)
     phi.toH1Function.grad_memVectorL2
 
+/-- Harmonic cube solution formed by adding the joint local corrector to the affine boundary
+function. -/
 @[expose]
 noncomputable def jointAffineCubeSolution
     {d : ℕ} [NeZero d] (a : Book.Ch02.TriadicCoeffFamily d)
@@ -52,6 +54,7 @@ noncomputable def jointAffineCubeSolution
       simpa only [phiLocal, localGradientCube, Book.Ch02.cubeDomain_coe] using!
         hPhi.2 e q }
 
+/-- Restriction to generation `q` of the finite affine cube solution at generation `m`. -/
 @[expose]
 noncomputable def finiteAffineInnerCubeSolution
     {d : ℕ} [NeZero d] (a : Book.Ch02.TriadicCoeffFamily d)
@@ -60,6 +63,8 @@ noncomputable def finiteAffineInnerCubeSolution
   finiteCubeSolutionRestriction a (by exact_mod_cast hqm)
     (finiteAffineCubeSolution a (m : ℤ) e)
 
+/-- Difference between the joint affine solution and the restricted finite affine solution,
+using their integrable fluxes. -/
 @[expose]
 noncomputable def jointFiniteRemainderCubeSolution
     {d : ℕ} [NeZero d] (a : Book.Ch02.TriadicCoeffFamily d)
@@ -152,7 +157,7 @@ theorem jointFiniteRemainder_energy_eq
     have hsub' : (c + p - f) x = (c + p) x - f x := hsub
     have hadd' : (c + p) x = c x + p x := hadd
     rw [hsub', hadd']
-    show _ = w.gradToHilbertVectorL2 x
+    change _ = w.gradToHilbertVectorL2 x
     rw [hw, hwgrad, jointFiniteRemainder_grad]
     have hc' : c x = hilbertifyVecField (fun _ : Vec d ↦ e) x := hc
     have hf' : f x = hilbertifyVecField

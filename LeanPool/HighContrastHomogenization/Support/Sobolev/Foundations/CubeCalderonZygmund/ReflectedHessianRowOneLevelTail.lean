@@ -165,8 +165,7 @@ private theorem integral_sqNorm_openParentGradientExtension_hessianRow_le
     (i : Fin d)
     (uU : H1Function
       (scaledOpenCubeSet (originCube d (m + 1)) (1 / 2 : ℝ)))
-    (hrow : hilbertifyVecField uU.grad =ᵐ[
-      volume.restrict
+    (hrow : hilbertifyVecField uU.grad =ᵐ[volume.restrict
         (scaledOpenCubeSet (originCube d (m + 1)) (1 / 2 : ℝ))]
       fun x ↦ HilbertVec.ofVec
         (cubeDirichletOddReflectionHessianRowVectorField
@@ -296,8 +295,6 @@ private theorem integral_sqNorm_openParentDatumExtension_single_le
 private theorem origin_cube_subset_inner_half_parent (d : ℕ) (m : ℤ) :
     openCubeSet (originCube d m) ⊆
       scaledOpenCubeSet (originCube d (m + 1)) (1 / 2 : ℝ) := by
-  change openCubeSet (originCube d m) ⊆
-    scaledOpenCubeSet (originCube d (m + 1)) (1 / 2 : ℝ)
   rw [← scaledOpenCubeSet_originCube_succ_one_div_three]
   intro x hx j
   have hxj := hx j
@@ -308,7 +305,7 @@ private theorem origin_cube_subset_inner_half_parent (d : ℕ) (m : ℤ) :
   nlinarith [cubeRadius_pos (originCube d (m + 1))]
 
 private theorem reflected_single_coordinate_datum_tail_le
-    {d : ℕ} [NeZero d] {m : ℤ} (i : Fin d) (F : Vec d → ℝ)
+    {d : ℕ} {m : ℤ} (i : Fin d) (F : Vec d → ℝ)
     (hFmeas : AEStronglyMeasurable F
       (volume.restrict (openCubeSet (originCube d m)))) (a : ℝ) :
     sqWeightedMeasure

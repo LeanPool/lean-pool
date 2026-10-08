@@ -44,8 +44,8 @@ front budget.  `Ccross` controls only the local constant/cross branch, so the
 later note-facing constant can stay dimension-only in that branch. -/
 @[expose]
 def
-    BoundaryCaccioppoliHarmonicVectorSmallCubeCoefficientSplit_localPatch
-    {d : ℕ} [NeZero d] (Q : TriadicCube d) (center : Vec d) (a : CoeffField d)
+    boundaryCaccioppoliSmallCubeLocalPatchCoefficientSplit
+    {d : ℕ} (Q : TriadicCube d) (center : Vec d) (a : CoeffField d)
     (s t Clocal Calpha Ccross : ℝ) : Prop :=
   ∀ n : ℕ,
     let ρ₁ : ℝ := coarseCaccioppoliRadiusSequence n
@@ -85,8 +85,8 @@ arbitrary-center local-patch route.  This is the coefficient package needed by
 the standard beta-dependent radius iteration. -/
 @[expose]
 def
-    BoundaryCaccioppoliHarmonicVectorSmallCubeCoefficientSplit_localPatch_allRadii
-    {d : ℕ} [NeZero d] (Q : TriadicCube d) (center : Vec d) (a : CoeffField d)
+    boundaryCaccioppoliSmallCubeLocalPatchCoefficientSplitAllRadii
+    {d : ℕ} (Q : TriadicCube d) (center : Vec d) (a : CoeffField d)
     (s t Clocal Calpha Ccross : ℝ) : Prop :=
   ∀ ⦃ρ₁ ρ₂ : ℝ⦄, (1 / 3 : ℝ) ≤ ρ₁ → ρ₁ < ρ₂ → ρ₂ ≤ 1 →
     let ρm : ℝ := coarseCaccioppoliBufferedCutoffRadius ρ₁ ρ₂
@@ -121,13 +121,13 @@ def
 /-- The all-radii local-patch split coefficient package restricts to the
 legacy Chapter-3 radius sequence. -/
 theorem
-    BoundaryCaccioppoliHarmonicVectorSmallCubeCoefficientSplit_localPatch.of_allRadii
-    {d : ℕ} [NeZero d] (Q : TriadicCube d) (center : Vec d) (a : CoeffField d)
+    boundaryCaccioppoliSmallCubeLocalPatchCoefficientSplit.of_allRadii
+    {d : ℕ} (Q : TriadicCube d) (center : Vec d) (a : CoeffField d)
     (s t Clocal Calpha Ccross : ℝ)
     (h :
-      BoundaryCaccioppoliHarmonicVectorSmallCubeCoefficientSplit_localPatch_allRadii
+      boundaryCaccioppoliSmallCubeLocalPatchCoefficientSplitAllRadii
         Q center a s t Clocal Calpha Ccross) :
-    BoundaryCaccioppoliHarmonicVectorSmallCubeCoefficientSplit_localPatch
+    boundaryCaccioppoliSmallCubeLocalPatchCoefficientSplit
       Q center a s t Clocal Calpha Ccross := by
   intro n
   have hρ₁ : (1 / 3 : ℝ) ≤ coarseCaccioppoliRadiusSequence n :=
@@ -139,8 +139,8 @@ theorem
   have hρ₂ : coarseCaccioppoliRadiusSequence (n + 1) ≤ 1 :=
     (coarseCaccioppoliRadiusSequence_mem_Icc (n + 1)).2
   simpa [
-    BoundaryCaccioppoliHarmonicVectorSmallCubeCoefficientSplit_localPatch,
-    BoundaryCaccioppoliHarmonicVectorSmallCubeCoefficientSplit_localPatch_allRadii,
+    boundaryCaccioppoliSmallCubeLocalPatchCoefficientSplit,
+    boundaryCaccioppoliSmallCubeLocalPatchCoefficientSplitAllRadii,
     coarseCaccioppoliLocalPatchCutoffHessianBound]
     using h hρ₁ hlt hρ₂
 

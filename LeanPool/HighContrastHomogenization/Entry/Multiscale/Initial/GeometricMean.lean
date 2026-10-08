@@ -192,8 +192,10 @@ theorem norm_le_one_of_le_one {X : Matrix ι ι ℝ} (hX : X.PosSemidef)
   refine norm_le_of_le_smul_one hX zero_le_one ?_
   rwa [one_smul]
 
+omit [DecidableEq ι] in
 theorem posDef_conj_of_posDef {A B : Matrix ι ι ℝ} (hA : A.PosDef) (hB : B.PosDef) :
     (B * A * B).PosDef := by
+  classical
   have hBinj : Function.Injective B.mulVec := Matrix.mulVec_injective_iff_isUnit.mpr hB.isUnit
   have h := hA.conjTranspose_mul_mul_same (B := B) hBinj
   rwa [hB.isHermitian.eq] at h

@@ -271,7 +271,7 @@ theorem norm_cubeAverage_le_scaleWeight_neg_of_cubeBesovDualFullTest_two_two
 /-- Standard, non-overlapping version of the coordinate full-dual bridge. -/
 @[expose]
 def UnitFullDualCoordinateStandardBridge
-    (d : ℕ) [NeZero d] (C : ℝ) : Prop :=
+    (d : ℕ) (C : ℝ) : Prop :=
   0 ≤ C ∧
     ∀ (Q : TriadicCube d) {s : ℝ} (i : Fin d) (g : Vec d → ℝ),
       0 < s →
@@ -282,7 +282,7 @@ def UnitFullDualCoordinateStandardBridge
             C * cubeBesovScaleWeight (-s) Q
 
 theorem unitFullDualCoordinateStandardBridge
-    (d : ℕ) [NeZero d] :
+    (d : ℕ) :
     UnitFullDualCoordinateStandardBridge d 2 := by
   refine ⟨by norm_num, ?_⟩
   intro Q s i g _hs _hs_lt_one hg
@@ -328,7 +328,7 @@ sharp boundary kernel.
 -/
 @[expose]
 def UnitFullDualCoordinateOverlappingBridgeSharpLoss
-    (d : ℕ) [NeZero d] (C : ℝ) : Prop :=
+    (d : ℕ) (C : ℝ) : Prop :=
   0 ≤ C ∧
     ∀ (Q : TriadicCube d) {s : ℝ} (i : Fin d) (g : Vec d → ℝ),
       0 < s →

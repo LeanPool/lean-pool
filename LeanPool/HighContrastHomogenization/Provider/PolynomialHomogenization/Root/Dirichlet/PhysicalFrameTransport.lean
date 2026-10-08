@@ -72,7 +72,7 @@ variable {d : ℕ}
 /-- **The physical pair is the gauge pair at the output factor.**  Both frozen
 negative-Sobolev terms transport at the single constant
 `√(hsAffineFactor L⁻¹ s ‖L‖)`, with no other loss. -/
-theorem negSobolevPhysicalPair_le_outputFactor_mul_gaugePair [NeZero d]
+theorem negSobolevPhysicalPair_le_outputFactor_mul_gaugePair
     {abar : Mat d} (hS : (symmPart abar).PosDef)
     {Uphys Uhat : Set (Vec d)}
     (hUhat : Uhat = matImage (matSqrt (symmPart abar))⁻¹ Uphys)

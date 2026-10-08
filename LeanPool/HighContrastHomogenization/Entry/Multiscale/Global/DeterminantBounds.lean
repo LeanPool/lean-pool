@@ -48,7 +48,7 @@ open scoped MatrixOrder
 
 /-- Local copy of `Analysis.hermitian_smul` (private there): scalar multiples of a Hermitian
 real matrix are Hermitian. -/
-private theorem rc_hermitian_smul {ι : Type*} [Fintype ι] {M : Matrix ι ι ℝ} (hM :
+private theorem rc_hermitian_smul {ι : Type*} {M : Matrix ι ι ℝ} (hM :
   M.IsHermitian) (c : ℝ) :
     (c • M).IsHermitian := by
   change (c • M)ᴴ = c • M

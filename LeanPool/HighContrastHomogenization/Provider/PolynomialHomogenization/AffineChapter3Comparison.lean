@@ -46,7 +46,7 @@ noncomputable section
 variable {d : ℕ}
 
 private theorem isH1DirichletRhsWeakSolutionOn_zero_of_isWeakSolutionOn
-    {U : Set (Vec d)} [IsFiniteMeasure (volumeMeasureOn U)]
+    {U : Set (Vec d)}
     (hU : IsOpen U) {a : CoeffField d} {lam Lam : ℝ}
     (hEll : IsAEEllipticFieldOn lam Lam U a) (u : H1Function U)
     (hweak : IsWeakSolutionOn a U u.grad) :
@@ -88,8 +88,7 @@ theorem coarseGrainingComparisonDatum_zero_of_hcWeakSolutions
     (hv : IsWeakSolutionOn (constantCoeffField a0.matrix)
       (Book.Ch02.cubeDomain Q : Set (Vec d)) v.grad)
     (w : H10Function (Book.Ch02.cubeDomain Q : Set (Vec d)))
-    (hw : w.toH1Function.toFun =ᵐ[
-      volumeMeasureOn (Book.Ch02.cubeDomain Q : Set (Vec d))]
+    (hw : w.toH1Function.toFun =ᵐ[volumeMeasureOn (Book.Ch02.cubeDomain Q : Set (Vec d))]
         fun x => u.toFun x - v.toFun x) :
     ∃ W : Book.Ch03.CoarseGrainingComparisonDatum Q a a0
         (0 : Vec d → Vec d),

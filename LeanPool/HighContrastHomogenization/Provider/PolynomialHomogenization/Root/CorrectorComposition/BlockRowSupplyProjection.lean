@@ -162,7 +162,7 @@ theorem printCertificateOrder_pos {g : ℝ} (hg : g ∈ Ico (0 : ℝ) 1) :
 to what `RootBlockRowSupply` reads: a translation-invariant set carrying the
 sample, and the physical block row on all of it. -/
 @[expose]
-def RootBlockRowEvent (d : ℕ) [NeZero d] (abar : Mat d) (a : CoeffSpace d)
+def RootBlockRowEvent (d : ℕ) (abar : Mat d) (a : CoeffSpace d)
     (rho : ℝ) : Prop :=
   ∃ (Omega : Set (CoeffSpace d)) (kappa delta : ℝ)
     (S X : CoeffSpace d → ℝ),

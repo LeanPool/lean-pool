@@ -46,7 +46,7 @@ noncomputable section
 /-- For a scalar reference coefficient, the Chapter 2 full block matrix is the
 diagonal matrix with entries `σ` and `σ⁻¹`. -/
 theorem constantFullBlockMatrix_scalarMatrix_eq_diagonal
-    {d : ℕ} [NeZero d] {σ : ℝ} (hσ : 0 < σ) :
+    {d : ℕ} {σ : ℝ} (hσ : 0 < σ) :
     Ch02.constantFullBlockMatrix (scalarMatrix (d := d) σ) =
       Matrix.diagonal (fun α : BlockCoord d =>
         match α with
@@ -78,7 +78,7 @@ theorem constantFullBlockMatrix_scalarMatrix_eq_diagonal
 /-- The Chapter 2 square-root normalizer agrees with the Section 5.7 scalar
 normalizer for a scalar reference coefficient. -/
 theorem constantFullBlockMatrixSqrt_scalarMatrix_eq_scalarFullBlockSqrt
-    {d : ℕ} [NeZero d] {σ : ℝ} (hσ : 0 < σ) :
+    {d : ℕ} {σ : ℝ} (hσ : 0 < σ) :
     Ch02.constantFullBlockMatrixSqrt (scalarMatrix (d := d) σ) =
       Matrix.diagonal (Section56.scalarFullBlockSqrtDiag (d := d) σ σ) := by
   let D : FullBlockMat d :=
@@ -99,7 +99,7 @@ theorem constantFullBlockMatrixSqrt_scalarMatrix_eq_scalarFullBlockSqrt
         | inl j =>
             by_cases hij : i = j
             · subst j
-              simp [Section56.scalarFullBlockSqrtDiag, Matrix.diagonal]
+              simp only [Matrix.diagonal_apply_eq, Section56.scalarFullBlockSqrtDiag]
               rw [Real.mul_self_sqrt hσ.le]
             · simp [Section56.scalarFullBlockSqrtDiag, Matrix.diagonal, hij]
         | inr j =>
@@ -111,7 +111,7 @@ theorem constantFullBlockMatrixSqrt_scalarMatrix_eq_scalarFullBlockSqrt
         | inr j =>
             by_cases hij : i = j
             · subst j
-              simp [Section56.scalarFullBlockSqrtDiag, Matrix.diagonal]
+              simp only [Matrix.diagonal_apply_eq, Section56.scalarFullBlockSqrtDiag]
               rw [← mul_inv]
               rw [Real.mul_self_sqrt hσ.le]
             · simp [Section56.scalarFullBlockSqrtDiag, Matrix.diagonal, hij]
@@ -121,7 +121,7 @@ theorem constantFullBlockMatrixSqrt_scalarMatrix_eq_scalarFullBlockSqrt
 /-- Coordinatewise inverse of the scalar square-root diagonal used in Section
 5.7. -/
 theorem ringInverse_scalarFullBlockSqrtDiag_eq_scalarFullBlockInvSqrtDiag
-    {d : ℕ} [NeZero d] {σ : ℝ} (hσ : 0 < σ) :
+    {d : ℕ} {σ : ℝ} (hσ : 0 < σ) :
     Ring.inverse (Section56.scalarFullBlockSqrtDiag (d := d) σ σ) =
       Ch04.scalarFullBlockInvSqrtDiag (d := d) σ σ := by
   let v : BlockCoord d → ℝ := Section56.scalarFullBlockSqrtDiag (d := d) σ σ
@@ -150,7 +150,7 @@ theorem ringInverse_scalarFullBlockSqrtDiag_eq_scalarFullBlockInvSqrtDiag
 /-- The Chapter 2 inverse square-root normalizer agrees with the Section 5.7
 scalar inverse normalizer for a scalar reference coefficient. -/
 theorem constantFullBlockMatrixInvSqrt_scalarMatrix_eq_scalarFullBlockInvSqrt
-    {d : ℕ} [NeZero d] {σ : ℝ} (hσ : 0 < σ) :
+    {d : ℕ} {σ : ℝ} (hσ : 0 < σ) :
     Ch02.constantFullBlockMatrixInvSqrt (scalarMatrix (d := d) σ) =
       Matrix.diagonal (Ch04.scalarFullBlockInvSqrtDiag (d := d) σ σ) := by
   dsimp [Ch02.constantFullBlockMatrixInvSqrt]
@@ -563,7 +563,7 @@ which comes from the localized `J` minimal-scale bound after choosing
 `delta = r - tau / 2`.  The conclusion is the finite-`q` `\ell^q` norm bound
 in the definition of `HomogenizationErrorFinite`. -/
 theorem homogenizationErrorFinite_infinity_le_rpow_of_weighted_geometric_bound
-    {d : ℕ} [NeZero d]
+    {d : ℕ}
     (Q : TriadicCube d) {n : ℤ} (hn : n ≤ Q.scale)
     (a : Ch02.TriadicCoeffFamily d) (a0 : Mat d)
     {r delta q B : ℝ}
@@ -655,7 +655,7 @@ finite `q`": if `delta = r - tau / 2` is positive, the extra
 `3^{tau l / 2}` from taking the square root of a `J`-bound is absorbed by the
 `r`-geometric weight. -/
 theorem weighted_scaleResponse_term_le_of_scaleResponse_le
-    {d : ℕ} [NeZero d]
+    {d : ℕ}
     (Q : TriadicCube d) {n : ℤ} (hn : n ≤ Q.scale)
     (a : Ch02.TriadicCoeffFamily d) (a0 : Mat d)
     {r tau delta q A R : ℝ} {l : ℕ}
@@ -802,7 +802,7 @@ minimal-scale corollary.  The constant is explicit: it is only the ratio of
 the two geometric normalizations, multiplied by the `q`-power of the
 scale-response prefactor. -/
 theorem homogenizationErrorFinite_infinity_le_of_scaleResponse_le
-    {d : ℕ} [NeZero d]
+    {d : ℕ}
     (Q : TriadicCube d) {n : ℤ} (hn : n ≤ Q.scale)
     (a : Ch02.TriadicCoeffFamily d) (a0 : Mat d)
     {r tau delta q A R : ℝ}
@@ -849,7 +849,7 @@ theorem homogenizationErrorFinite_infinity_le_of_scaleResponse_le
 underlying descendant maximum by `B^2` gives a bound on the scale response by
 `B`. -/
 theorem scaleResponseAtScale_infinity_le_of_maxDescendant_le_sq
-    {d : ℕ} [NeZero d]
+    {d : ℕ}
     (Q : TriadicCube d) {k : ℤ} (_hk : k ≤ Q.scale)
     (a : Ch02.TriadicCoeffFamily d) (a0 : Mat d)
     {B : ℝ} (hB : 0 ≤ B)

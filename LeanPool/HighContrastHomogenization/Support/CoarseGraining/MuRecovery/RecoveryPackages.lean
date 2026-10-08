@@ -56,7 +56,7 @@ noncomputable def toLinearMuMinimizerFamily (M : MuMinimizerRecoveryData U a) :
         (X := M.field P)
         (hX := M.mem_blockL2 P)
     rw [M.mu_eq_muCandidate P]
-    show
+    change
       quadraticEnergy
           (energyBilinOfOperator M.system.toMuOperatorRealization.operator)
           (M.system.toMuHilbertRealization.minimizerMap P) =
@@ -422,7 +422,7 @@ theorem mu_ge_vecDot_of_isEllipticFieldOn
       system hEll compat.pairingIntegrable hpotZero hfluxZero hvol_ne compat.mu_eq_muCandidate P)
 
 theorem mu_ge_vecDot_openCubeSet_originCubeOfIsEllipticFieldOn
-    {d : ℕ} [NeZero d] {n : ℤ}
+    {d : ℕ} {n : ℤ}
     (R : PotentialSolenoidalL2RecoveryData (openCubeSet (originCube d n)))
     {a : CoeffField d}
     {lam Lam : ℝ} (hEll : IsEllipticFieldOn lam Lam (openCubeSet (originCube d n)) a)
@@ -440,7 +440,7 @@ theorem mu_ge_vecDot_openCubeSet_originCubeOfIsEllipticFieldOn
       system hEll compat.pairingIntegrable compat.mu_eq_muCandidate P)
 
 theorem mu_ge_vecDot_cubeSet_originCubeOfIsEllipticFieldOn
-    {d : ℕ} [NeZero d] {n : ℤ}
+    {d : ℕ} {n : ℤ}
     (R : PotentialSolenoidalL2RecoveryData (cubeSet (originCube d n)))
     {a : CoeffField d}
     {lam Lam : ℝ} (hEll : IsEllipticFieldOn lam Lam (cubeSet (originCube d n)) a)

@@ -132,7 +132,7 @@ theorem matImage_matSqrt_euclideanBallAt_subset_ellipsoid {abar : Mat d}
   have hz' : vecNormSq z < r ^ 2 := by
     have : vecNormSq (z - 0) < r ^ 2 := hz
     rwa [sub_zero] at this
-  show vecDot (matVecMul (matSqrt (symmPart abar)) z)
+  change vecDot (matVecMul (matSqrt (symmPart abar)) z)
       (matVecMul (symmPart abar)⁻¹ (matVecMul (matSqrt (symmPart abar)) z)) ≤
     specBound ((symmPart abar)⁻¹) * 1 ^ 2
   rw [vecDot_matVecMul_inv_matSqrt hS z, one_pow, mul_one]

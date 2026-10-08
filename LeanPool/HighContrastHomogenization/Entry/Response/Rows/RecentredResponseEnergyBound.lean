@@ -460,7 +460,7 @@ noncomputable section
 /-- The cutoff pairing row `(1 / 2) * cutoffPairingOnCellAux` is bounded in absolute value by
 half of the expected absolute pairing.  No integrability of the pairing is assumed: both sides are
 read through the Bochner integral. -/
-theorem abs_integral_half_cutoffPairingOnCell_le {d : ℕ} [NeZero d]
+theorem abs_integral_half_cutoffPairingOnCell_le {d : ℕ}
     (P : Measure (CoeffSpace d)) (U : Set (Vec d)) (φ : Vec d → ℝ) (Y : BlockVec d)
     (c : CoeffSpace d → CoeffField d) (v : (a : CoeffSpace d) → AHarmonicFunction (c a) U) :
     |∫ a, (1 / 2 : ℝ) * cutoffPairingOnCellAux U φ Y (c a) (v a) ∂P|

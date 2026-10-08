@@ -54,7 +54,7 @@ theorem exists_isAffineDirichletSolution_of_isEllipticFieldOn
     PotentialSolenoidalL2Data.hasPotentialZeroTraceClosureRealization_of_convexDomain
       (U := Uset) U.isDomain
   let φ : H10Function Uset :=
-    zeroTraceDirichletRhsProblemSolution_of_potentialZeroTraceClosureRealization
+    zeroTraceDirichletRightHandSideSolutionOfClosureRealization
       (a := a.toCoeffField) (U := Uset) (g := g) (lam := a.lam) (Lam := a.Lam)
       hg hRealize (by simpa [Uset] using U.nonempty) hEll
   have hφ :

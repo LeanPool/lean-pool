@@ -287,7 +287,7 @@ is
 the `hint1` input of the pathwise cutoff estimate `e.response.cutoff.estimate`: the flux defect and
 the gradient defect are both coordinatewise square integrable on the cell, and the cutoff is bounded
 and measurable. -/
-theorem cutoffPairingIntegrability_of_inputs {d : ℕ} [NeZero d] {jStar : ℕ} {F : BlockMat d} {t : ℤ}
+theorem cutoffPairingIntegrability_of_inputs {d : ℕ} {jStar : ℕ} {F : BlockMat d} {t : ℤ}
     {φ : Vec d → ℝ} {b : CoeffField d}
     (hjStar : 2 * d ≤ 3 ^ jStar) (hm : (explicitCanonicalMetric F).PosDef)
     (hφ : IsResponseCutoff (respGrid jStar F) t φ)
@@ -585,7 +585,7 @@ centred potential `v (q y) - Y.1 · (q y) - c` against the flux defect evaluated
 contracted with the gradient of the cutoff at `q y`.  Both pairings are assumed integrable
 on the adapted cell.  This is the form of the cutoff estimate `e.response.cutoff.estimate`
 (AK.HC Lemma A.1, (A.4)) in which the negative-Besov duality is applied. -/
-theorem cubeAverage_cutoff_pairing_eq_neg {d : ℕ} [NeZero d] {q : Mat d} (hq : IsUnit q) (t : ℤ)
+theorem cubeAverage_cutoff_pairing_eq_neg {d : ℕ} {q : Mat d} (hq : IsUnit q) (t : ℤ)
     (hU : IsOpenBoundedConvexDomain (HighContrast.adaptedCell q t))
     [MeasureTheory.IsFiniteMeasure (volumeMeasureOn (HighContrast.adaptedCell q t))]
     {b : CoeffField d} (u : AHarmonicFunction b (HighContrast.adaptedCell q t))

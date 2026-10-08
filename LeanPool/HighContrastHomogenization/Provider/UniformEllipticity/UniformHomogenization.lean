@@ -135,14 +135,14 @@ theorem isSymmetricBlockMat_uniformRefBlock (lam Lam : ℝ) :
   | inl i =>
       cases β with
       | inl j =>
-          show ((2 * Lam) • (1 : Mat d)) i j = ((2 * Lam) • (1 : Mat d)) j i
+          change ((2 * Lam) • (1 : Mat d)) i j = ((2 * Lam) • (1 : Mat d)) j i
           simp only [Matrix.smul_apply, smul_eq_mul, hone i j]
       | inr j => rfl
   | inr i =>
       cases β with
       | inl j => rfl
       | inr j =>
-          show ((2 * lam⁻¹) • (1 : Mat d)) i j = ((2 * lam⁻¹) • (1 : Mat d)) j i
+          change ((2 * lam⁻¹) • (1 : Mat d)) i j = ((2 * lam⁻¹) • (1 : Mat d)) j i
           simp only [Matrix.smul_apply, smul_eq_mul, hone i j]
 
 theorem blockPosDef_uniformRefBlock {lam Lam : ℝ} (hlam : 0 < lam) (hLam : 0 < Lam) :
@@ -570,7 +570,7 @@ theorem uniform_homogenization_of_polynomial_homogenization (d : ℕ) (hd : 2 �
         Real.exp (-cAbs * (dilation * s) ^ (d : ℝ)) := by
       have hval : (uniformGauge d (cSrc * (dilation * s)))⁻¹ =
           Real.exp (-(cSrc ^ d * (dilation * s) ^ d)) := by
-        show (Real.exp ((cSrc * (dilation * s)) ^ d))⁻¹ = _
+        change (Real.exp ((cSrc * (dilation * s)) ^ d))⁻¹ = _
         rw [← Real.exp_neg, mul_pow]
       rw [hval, ← Real.rpow_natCast (dilation * s) d]
       refine Real.exp_le_exp.2 ?_

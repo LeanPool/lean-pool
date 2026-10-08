@@ -60,15 +60,15 @@ Then `M ≤ (1+η)A ≤ (1+η)(1+δ)·𝐑A⁻¹𝐑 ≤ (1+η)²(1+δ)·𝐑M�
 antitonicity of the inverse and congruence by `𝐑`; finally `(1+η)² ≤ (1+η)³/(1-η)`. -/
 
 /-- A positive semidefinite real matrix is symmetric. -/
-theorem transpose_eq_of_psd {n : Type*} [Fintype n] {P : Matrix n n ℝ}
+theorem transpose_eq_of_psd {n : Type*} {P : Matrix n n ℝ}
     (hP : P.PosSemidef) : Pᵀ = P := by
   rw [← Matrix.conjTranspose_eq_transpose_of_trivial]
   exact hP.isHermitian.eq
 
 /-- `c • 1` is Hermitian, for any real scalar `c`. -/
-theorem isHermitian_smul_one {n : Type*} [Fintype n] [DecidableEq n] (c : ℝ) :
+theorem isHermitian_smul_one {n : Type*} [DecidableEq n] (c : ℝ) :
     ((c • (1 : Matrix n n ℝ))).IsHermitian := by
-  show (c • (1 : Matrix n n ℝ))ᴴ = c • 1
+  change (c • (1 : Matrix n n ℝ))ᴴ = c • 1
   rw [Matrix.conjTranspose_smul, Matrix.conjTranspose_one, star_trivial]
 
 /-- The squared Euclidean-space norm of a vector equals its self dot product. -/
@@ -167,20 +167,24 @@ theorem le_smul_one_of_dot_le {n : Type*} [Fintype n] [DecidableEq n]
 
 /-- A nonnegative scalar multiple of a positive semidefinite matrix is positive
 semidefinite. -/
-theorem psd_smul {n : Type*} [Fintype n] {N : Matrix n n ℝ} (hN : N.PosSemidef)
+theorem psd_smul {n : Type*} [Finite n] {N : Matrix n n ℝ} (hN : N.PosSemidef)
     {c : ℝ} (hc : 0 ≤ c) : (c • N).PosSemidef := by
+  classical
+  let := Fintype.ofFinite n
   refine Matrix.PosSemidef.of_dotProduct_mulVec_nonneg ?_ fun v => ?_
-  · show (c • N)ᴴ = c • N
+  · change (c • N)ᴴ = c • N
     rw [Matrix.conjTranspose_smul, hN.isHermitian.eq, star_trivial]
   · have h := hN.dotProduct_mulVec_nonneg v
     simp only [star_trivial, Matrix.smul_mulVec, dotProduct_smul, smul_eq_mul] at h ⊢
     exact mul_nonneg hc h
 
 /-- A positive scalar multiple of a positive definite matrix is positive definite. -/
-theorem posDef_smul {n : Type*} [Fintype n] {c : ℝ} (hc : 0 < c)
+theorem posDef_smul {n : Type*} [Finite n] {c : ℝ} (hc : 0 < c)
     {X : Matrix n n ℝ} (hX : X.PosDef) : (c • X).PosDef := by
+  classical
+  let := Fintype.ofFinite n
   refine Matrix.PosDef.of_dotProduct_mulVec_pos ?_ fun v hv => ?_
-  · show (c • X)ᴴ = c • X
+  · change (c • X)ᴴ = c • X
     rw [Matrix.conjTranspose_smul, hX.isHermitian.eq, star_trivial]
   · have h := hX.dotProduct_mulVec_pos hv
     simp only [star_trivial, Matrix.smul_mulVec, dotProduct_smul, smul_eq_mul] at h ⊢
@@ -188,23 +192,29 @@ theorem posDef_smul {n : Type*} [Fintype n] {c : ℝ} (hc : 0 < c)
 
 /-- Scalar multiplication by a nonnegative `c` preserves the Loewner order: `X ≤ Y` implies
 `c • X ≤ c • Y`. -/
-theorem smul_le_smul_left {n : Type*} [Fintype n] [DecidableEq n]
+theorem smul_le_smul_left {n : Type*} [Finite n]
     {X Y : Matrix n n ℝ} {c : ℝ} (hc : 0 ≤ c) (h : X ≤ Y) : c • X ≤ c • Y := by
+  classical
+  let := Fintype.ofFinite n
   refine Matrix.le_iff.mpr ?_
   rw [← smul_sub]
   exact psd_smul (Matrix.le_iff.mp h) hc
 
 /-- For `N` positive semidefinite, `a ≤ b` implies `a • N ≤ b • N`. -/
-theorem smul_le_smul_psd {n : Type*} [Fintype n] [DecidableEq n] {N : Matrix n n ℝ}
+theorem smul_le_smul_psd {n : Type*} [Finite n] {N : Matrix n n ℝ}
     (hN : N.PosSemidef) {a b : ℝ} (hab : a ≤ b) : a • N ≤ b • N := by
+  classical
+  let := Fintype.ofFinite n
   refine Matrix.le_iff.mpr ?_
   rw [← sub_smul]
   exact psd_smul hN (sub_nonneg.mpr hab)
 
 /-- A Hermitian matrix above a positive definite one, in the Loewner order, is itself
 positive definite. -/
-theorem posDef_of_le {n : Type*} [Fintype n] [DecidableEq n] {X Y : Matrix n n ℝ}
+theorem posDef_of_le {n : Type*} [Finite n] {X Y : Matrix n n ℝ}
     (hX : X.PosDef) (hY : Y.IsHermitian) (h : X ≤ Y) : Y.PosDef := by
+  classical
+  let := Fintype.ofFinite n
   refine Matrix.PosDef.of_dotProduct_mulVec_pos hY fun x hx => ?_
   have h1 := hX.dotProduct_mulVec_pos hx
   have h2 := (Matrix.le_iff.mp h).dotProduct_mulVec_nonneg x

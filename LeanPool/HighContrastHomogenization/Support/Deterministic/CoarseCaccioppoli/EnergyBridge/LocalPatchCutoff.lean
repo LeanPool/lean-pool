@@ -176,7 +176,7 @@ theorem coarseCaccioppoliLocalCanonicalFun_hasCompactSupport {d : ℕ}
           (coarseCaccioppoliLocalReferenceCube Q) rhoInner rhoOuter) :=
     QuantitativeCubeCutoff.canonicalFun_hasCompactSupport
       (coarseCaccioppoliLocalReferenceCube Q) hinner hinnerOuter
-  show
+  change
     HasCompactSupport
       ((QuantitativeCubeCutoff.canonicalFun
           (coarseCaccioppoliLocalReferenceCube Q) rhoInner rhoOuter) ∘

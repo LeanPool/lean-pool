@@ -101,7 +101,7 @@ plus `w` times the determinant reserve of the retained grid. -/
 def runGauge {d : ℕ} (P : Measure (CoeffSpace d)) (γ : ℝ) (jStar : ℕ) (η a w : ℝ) (h : ℕ)
     (m : Mat d) (k n : ℤ) : ℝ :=
   potential P γ jStar η a m k n +
-    w * run_reserve (fun r => blockLogDet (adaptedMean P (Geometry.explicitRoundedGrid jStar m)
+    w * runReserve (fun r => blockLogDet (adaptedMean P (Geometry.explicitRoundedGrid jStar m)
       r)) h k n
 
 /-! ## §2 Entry premises of `Selects` (landed) -/
@@ -265,7 +265,7 @@ theorem run_initial {d : ℕ} (hd : 2 ≤ d) (γ : ℝ) (hγ : γ ∈ Set.Ico (0
               have hnn : (0 : ℤ) ≤ 2 * (S.L ε σ : ℤ) + (H : ℤ) := by positivity
               omega },
           rfl, rfl, rfl, rfl, ?_⟩
-  show potential P γ jStar (S.eta ε σ) a (1 : Mat d) n₀ (n₀ + (S.h : ℤ)) ≤
+  change potential P γ jStar (S.eta ε σ) a (1 : Mat d) n₀ (n₀ + (S.h : ℤ)) ≤
     C' * Real.logb 3 (2 + aspectRatio E)
   set x : ℝ := profile P γ (Geometry.explicitRoundedGrid jStar (1 : Mat d)) jStar n₀ n₀ +
     determinantDrift P γ (Geometry.explicitRoundedGrid jStar (1 : Mat d)) jStar n₀ with hxdef
@@ -342,7 +342,7 @@ theorem run_initial_reserve {d : ℕ} (hd : 2 ≤ d) (γ : ℝ) (hγ : γ ∈ Se
           toFullBlockMat (blockSwap d))))
       (adaptedMean P (1 : Mat d) n₀))
     (hsand₂ : BlockMatLoewnerLE (adaptedMean P (1 : Mat d) n₀) (blockScale 2 E)) :
-    run_reserve
+    runReserve
         (fun r => blockLogDet (adaptedMean P (Geometry.explicitRoundedGrid jStar (1 : Mat d))
           r)) h n₀
         (n₀ + (h : ℤ)) ≤
@@ -376,7 +376,7 @@ theorem run_initial_reserve {d : ℕ} (hd : 2 ≤ d) (γ : ℝ) (hγ : γ ∈ Se
       (Recurrence.isSymmetricBlockMat_adaptedMean P (1 : Mat d) n₀) hApos hAR
       (refBlock_le_six_aspect E hEs hE) hsand₂
   have hh2 : (0 : ℝ) ≤ (h : ℝ) + 2 := by positivity
-  calc run_reserve
+  calc runReserve
         (fun r => blockLogDet (adaptedMean P (Geometry.explicitRoundedGrid jStar (1 : Mat d))
           r)) h n₀
         (n₀ + (h : ℤ))

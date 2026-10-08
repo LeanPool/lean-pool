@@ -126,7 +126,7 @@ theorem setIntegral_comp_smul_of_pos {d : ℕ} {E : Type*}
 
 /-- Forward raw set-integral form of positive dilation change of variables. -/
 theorem setIntegral_smul_set_eq_comp_smul_of_pos {d : ℕ} {E : Type*}
-    [NormedAddCommGroup E] [NormedSpace ℝ E] [CompleteSpace E]
+    [NormedAddCommGroup E] [NormedSpace ℝ E]
     {r : ℝ} (hr : 0 < r) (U : Set (Vec d)) (f : Vec d → E) :
     ∫ y in r • U, f y ∂MeasureTheory.volume =
       r ^ d • ∫ x in U, f (r • x) ∂MeasureTheory.volume := by
@@ -144,7 +144,7 @@ Raw set-integral form of a positive dilation followed by translation.
 -/
 theorem setIntegral_translateSet_smul_set_eq_comp_affine_of_pos
     {d : ℕ} {E : Type*}
-    [NormedAddCommGroup E] [NormedSpace ℝ E] [CompleteSpace E]
+    [NormedAddCommGroup E] [NormedSpace ℝ E]
     {r : ℝ} (hr : 0 < r) (z : Vec d) (U : Set (Vec d))
     (f : Vec d → E) :
     ∫ y in translateSet z (r • U), f y ∂MeasureTheory.volume =
@@ -162,7 +162,7 @@ theorem setIntegral_translateSet_smul_set_eq_comp_affine_of_pos
 integrals by affine pullback. -/
 theorem setIntegral_euclideanBall_eq_unit_affine_of_pos
     {d : ℕ} {E : Type*}
-    [NormedAddCommGroup E] [NormedSpace ℝ E] [CompleteSpace E]
+    [NormedAddCommGroup E] [NormedSpace ℝ E]
     {r : ℝ} (hr : 0 < r) (z : Vec d) (f : Vec d → E) :
     ∫ y in euclideanBall z r, f y ∂MeasureTheory.volume =
       r ^ d • ∫ x in euclideanBall (0 : Vec d) 1,

@@ -136,7 +136,7 @@ theorem local_lintegral_error_eq_harmonicCorrection
 /-- The correction integral on the descendant is bounded by its exact raw
 parent-cube energy. -/
 theorem stoppingComparison_correction_descendant_le_parent
-    {d : ℕ} [NeZero d] (x : Vec d) {r : ℝ} (hr : 0 < r) (depth : ℕ)
+    {d : ℕ} (x : Vec d) {r : ℝ} (hr : 0 < r) (depth : ℕ)
     (w : H10Function (axisCube (stoppingComparisonParentCorner x r depth)
       (stoppingComparisonParentSide r depth))) {B : ℝ≥0∞}
     (hB : eLpNorm (hilbertifyVecField w.toH1Function.grad) 2
@@ -165,7 +165,7 @@ theorem stoppingComparison_correction_descendant_le_parent
 /-- The harmonic gain gives its raw descendant `L^q` integral with precisely
 the side-`10r` volume factor. -/
 theorem stoppingComparison_harmonic_raw_bound
-    {d : ℕ} [NeZero d] {q : FiniteLpExponent} (x : Vec d) {r : ℝ}
+    {d : ℕ} {q : FiniteLpExponent} (x : Vec d) {r : ℝ}
     (hr : 0 < r) (depth : ℕ) (v : Vec d → HilbertVec d) {B : ℝ≥0∞}
     (hB : eLpNorm v q.exponent (axisCubeNormalizedMeasure
       (axisCubeConcentricDepthCorner (stoppingComparisonParentCorner x r depth)
@@ -203,7 +203,7 @@ private theorem correction_tail_coefficient_eq (d depth : ℕ) :
   ring
 
 private theorem harmonic_tail_scaled_moment_le
-    {d : ℕ} [NeZero d] {q : FiniteLpExponent} (x : Vec d)
+    {d : ℕ} {q : FiniteLpExponent} (x : Vec d)
     {r M level : ℝ} (hr : 0 ≤ r) (hM : 0 < M) (hlevel : 0 < level)
     {A : ℝ≥0∞} (hA : A ≠ ∞) (B : Set (Vec d)) (v : Vec d → HilbertVec d)
     (hharmonic_raw :

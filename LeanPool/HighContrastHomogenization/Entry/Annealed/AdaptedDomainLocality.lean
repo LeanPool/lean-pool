@@ -81,7 +81,7 @@ theorem adaptedCellTranslate_eq_cg_affine
 cell. The constants depend only on this field and region and remain internal to the pathwise
 proof. -/
 theorem exists_elliptic_representative_adapted
-    {d : ℕ} [NeZero d] (q : Mat d) (hq : IsUnit q) (j : ℤ) (y : Vec d)
+    {d : ℕ} (q : Mat d) (hq : IsUnit q) (j : ℤ) (y : Vec d)
     (a : CoeffSpace d) :
     ∃ (lam Lam : ℝ) (f : CoeffField d), 0 < lam ∧ lam ≤ Lam ∧
       IsEllipticFieldOn lam Lam (HighContrast.adaptedCellTranslate q j y) f ∧

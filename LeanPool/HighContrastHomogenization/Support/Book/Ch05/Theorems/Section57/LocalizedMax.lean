@@ -53,7 +53,7 @@ noncomputable def localizedLimitNormalizedJMax
       0
 
 theorem descendantsAtScale_originCube_nat_nonempty
-    {d : ℕ} [NeZero d] {m n : ℕ} (hnm : n ≤ m) :
+    {d : ℕ} {m n : ℕ} (hnm : n ≤ m) :
     (descendantsAtScale (originCube d ((m : ℕ) : ℤ)) ((n : ℕ) : ℤ)).Nonempty := by
   have hnm_int : ((n : ℕ) : ℤ) ≤ ((m : ℕ) : ℤ) := by
     exact_mod_cast hnm

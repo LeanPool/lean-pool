@@ -117,8 +117,10 @@ theorem sq_add_le_weighted_sum_add_tail_sq_div
       _ ≤ T ^ 2 / V := hT_sq_le_div
       _ ≤ A + T ^ 2 / V := by exact le_add_of_nonneg_left hA
 
+/-- The geometrically weighted tail of square roots of maximal descendant B-matrix norms at scales
+`-j` in the scale-`m` origin cube. -/
 @[expose]
-noncomputable def upperSmallSqrtTailCoeffField {d : ℕ} [NeZero d]
+noncomputable def upperSmallSqrtTailCoeffField {d : ℕ}
     (m : ℕ) (s : ℝ) (a : RegCoeffField d) : ℝ :=
   ∑' j : ℕ,
     geometricWeight s 1 (j + m) *
@@ -128,7 +130,7 @@ noncomputable def upperSmallSqrtTailCoeffField {d : ℕ} [NeZero d]
         (1 / 2 : ℝ)
 
 theorem maxDescendantBMatrixNormCoeffFieldAtScale_nonneg_of_le
-    {d : ℕ} [NeZero d] (Q : TriadicCube d) (a : RegCoeffField d)
+    {d : ℕ} (Q : TriadicCube d) (a : RegCoeffField d)
     {k : ℤ} (hk : k ≤ Q.scale) :
     0 ≤ Ch04.maxDescendantBMatrixNormCoeffFieldAtScale Q k a := by
   classical
@@ -139,7 +141,7 @@ theorem maxDescendantBMatrixNormCoeffFieldAtScale_nonneg_of_le
   · simp [Ch04.maxDescendantBMatrixNormCoeffFieldAtScale, ha]
 
 theorem upperSmallSqrtTailCoeffField_nonneg
-    {d : ℕ} [NeZero d] (m : ℕ) {s : ℝ} (hs : 0 ≤ s) (a : RegCoeffField d) :
+    {d : ℕ} (m : ℕ) {s : ℝ} (hs : 0 ≤ s) (a : RegCoeffField d) :
     0 ≤ upperSmallSqrtTailCoeffField (d := d) m s a := by
   unfold upperSmallSqrtTailCoeffField
   refine tsum_nonneg fun j => ?_
@@ -200,7 +202,7 @@ theorem LambdaSqCoeffField_originCube_finite_one_le_two_upperSmallSqrtTail_sq_ad
         (fun n => section52LargeScaleWeight_nonneg m hs.le n)
         (fun n => by
           by_cases hn : n ≤ (m : ℤ)
-          · simp [H, hn]
+          · simp only [H, ite_eq_left hn]
             exact maxDescendantBMatrixNormCoeffFieldAtScale_nonneg_of_le Q a hn
           · simp [H, hn])
         (section52LargeScaleWeight_sum_le_one hs m)
@@ -306,7 +308,7 @@ theorem LambdaSqCoeffField_originCube_finite_one_le_upperSmallSqrtTail_sq_div_ad
         (fun n => section52LargeScaleWeight_nonneg m hs.le n)
         (fun n => by
           by_cases hn : n ≤ (m : ℤ)
-          · simp [H, hn]
+          · simp only [H, ite_eq_left hn]
             exact maxDescendantBMatrixNormCoeffFieldAtScale_nonneg_of_le Q a hn
           · simp [H, hn])
     have hleft :
@@ -384,8 +386,10 @@ theorem LambdaSqCoeffField_originCube_finite_one_le_upperSmallSqrtTail_sq_div_ad
               (originCube d (m : ℤ)) n a) := by
         simp [A, V, Q, htail_eq, add_comm]
 
+/-- The geometrically weighted tail of square roots of maximal descendant inverse Sigma-star matrix
+norms at scales `-j` in the scale-`m` origin cube. -/
 @[expose]
-noncomputable def lowerSmallSqrtTailCoeffField {d : ℕ} [NeZero d]
+noncomputable def lowerSmallSqrtTailCoeffField {d : ℕ}
     (m : ℕ) (s : ℝ) (a : RegCoeffField d) : ℝ :=
   ∑' j : ℕ,
     geometricWeight s 1 (j + m) *
@@ -395,7 +399,7 @@ noncomputable def lowerSmallSqrtTailCoeffField {d : ℕ} [NeZero d]
         (1 / 2 : ℝ)
 
 theorem maxDescendantSigmaStarInvMatrixNormCoeffFieldAtScale_nonneg_of_le
-    {d : ℕ} [NeZero d] (Q : TriadicCube d) (a : RegCoeffField d)
+    {d : ℕ} (Q : TriadicCube d) (a : RegCoeffField d)
     {k : ℤ} (hk : k ≤ Q.scale) :
     0 ≤ Ch04.maxDescendantSigmaStarInvMatrixNormCoeffFieldAtScale Q k a := by
   classical
@@ -406,7 +410,7 @@ theorem maxDescendantSigmaStarInvMatrixNormCoeffFieldAtScale_nonneg_of_le
   · simp [Ch04.maxDescendantSigmaStarInvMatrixNormCoeffFieldAtScale, ha]
 
 theorem lowerSmallSqrtTailCoeffField_nonneg
-    {d : ℕ} [NeZero d] (m : ℕ) {s : ℝ} (hs : 0 ≤ s) (a : RegCoeffField d) :
+    {d : ℕ} (m : ℕ) {s : ℝ} (hs : 0 ≤ s) (a : RegCoeffField d) :
     0 ≤ lowerSmallSqrtTailCoeffField (d := d) m s a := by
   unfold lowerSmallSqrtTailCoeffField
   refine tsum_nonneg fun j => ?_
@@ -471,7 +475,7 @@ theorem
         (fun n => section52LargeScaleWeight_nonneg m hs.le n)
         (fun n => by
           by_cases hn : n ≤ (m : ℤ)
-          · simp [H, hn]
+          · simp only [H, ite_eq_left hn]
             exact maxDescendantSigmaStarInvMatrixNormCoeffFieldAtScale_nonneg_of_le
               Q a hn
           · simp [H, hn])
@@ -581,7 +585,7 @@ theorem lambdaSqCoeffField_originCube_finite_one_inv_le_lowerSmallSqrtTail_sq_di
         (fun n => section52LargeScaleWeight_nonneg m hs.le n)
         (fun n => by
           by_cases hn : n ≤ (m : ℤ)
-          · simp [H, hn]
+          · simp only [H, ite_eq_left hn]
             exact maxDescendantSigmaStarInvMatrixNormCoeffFieldAtScale_nonneg_of_le
               Q a hn
           · simp [H, hn])

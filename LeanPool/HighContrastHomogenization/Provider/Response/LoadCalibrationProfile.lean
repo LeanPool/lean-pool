@@ -60,7 +60,7 @@ theorem posDef_metricBlock {m0 : Mat d} (hm0 : m0.PosDef) :
   exact posDef_schurBlock hm0 hm0
 
 /-- A quadratic form of a positive semidefinite matrix is nonnegative. -/
-theorem quadratic_nonneg {n : Type*} [Fintype n] [DecidableEq n] {A : Matrix n n ℝ}
+theorem quadratic_nonneg {n : Type*} [Fintype n] {A : Matrix n n ℝ}
     (hA : A.PosSemidef) (x : n → ℝ) : 0 ≤ x ⬝ᵥ A *ᵥ x := by
   simpa using hA.dotProduct_mulVec_nonneg x
 

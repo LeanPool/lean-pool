@@ -260,6 +260,8 @@ theorem exists_reflected_parent_weakHessian_energyBound
     Finset.sum_le_sum fun _j _hj =>
       originCubeParentReducedNormEnergyBound_le_solverEnergyBoundExact W hF i
 
+/-- The forcing-independent factor under the square root in the exact reflected Neumann solver
+bound, using the square root of cube volume. -/
 @[expose]
 public noncomputable def originCubeParentReducedSolverEnergyInsideExact
     (d : ℕ) (m : ℤ) : ℝ :=
@@ -327,6 +329,8 @@ private theorem originCubeParentReducedSolverEnergyInsideExact_nonneg
   dsimp [originCubeParentReducedSolverEnergyInsideExact, Q, Qp, C, V, B, Kinner, Kouter]
   exact mul_nonneg (by norm_num) hmain_nonneg
 
+/-- The square-root factor multiplying the normalized L² forcing norm in the exact reflected Neumann
+solver bound. -/
 @[expose]
 noncomputable def originCubeParentReducedSolverEnergyConstantExact
     (d : ℕ) (m : ℤ) : ℝ :=

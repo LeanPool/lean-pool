@@ -85,7 +85,7 @@ Let `ℳ = respAllScaleMax` be the all-scale maximum of `p.response.transfer`, l
 `J ^ 2` is `P`-integrable.  Since `P` is a probability measure and `ℳ ≥ 0`, the bound
 `ℳ ^ 2 ≤ 1 + ℳ ^ Q` gives `ℳ ∈ L²`; with `J ∈ L²` the product `ℳ J` is integrable by Hölder,
 and `(1 + ℳ) J = J + ℳ J` is a sum of integrable functions. -/
-private theorem integrable_one_add_respAllScaleMax_mul_of {d : ℕ} [NeZero d] (γ : ℝ)
+private theorem integrable_one_add_respAllScaleMax_mul_of {d : ℕ} (γ : ℝ)
     (P : Measure (CoeffSpace d)) [IsProbabilityMeasure P]
     (jStar : ℕ) (F : BlockMat d) (t : ℤ)
     (hMmeas : AEStronglyMeasurable (respAllScaleMax P γ jStar F t) P)
@@ -127,7 +127,7 @@ law `P`, the all-scale maximum `ℳ` of `p.response.transfer` with `Q`-th moment
 integrable, `2 ≤ Q`, multiplies the pathwise recentred response `J(U_t; a_-, p, q')` of
 AK.HC (2.15) into a `P`-integrable function: `(1 + ℳ) J` is integrable whenever `ℳ` is
 measurable and `J ^ 2` is integrable and measurable. -/
-theorem integrable_one_add_respAllScaleMax_mul_respJ {d : ℕ} [NeZero d] (hd : 2 ≤ d) (γ : ℝ)
+theorem integrable_one_add_respAllScaleMax_mul_respJ {d : ℕ} (hd : 2 ≤ d) (γ : ℝ)
     (hγ : γ ∈ Set.Ico (0 : ℝ) 1)
     (P : Measure (CoeffSpace d)) [IsProbabilityMeasure P]
     (jStar : ℕ) (F : BlockMat d) (t : ℤ) (p q' : Vec d)
@@ -150,7 +150,7 @@ adjoint twin of `integrable_one_add_respAllScaleMax_mul_respJ`: the same probabi
 argument applies with the pathwise adjoint recentred response `J(U_t; a_+, p, q')` of
 AK.HC (2.15) in place of `J(U_t; a_-, p, q')`, so `(1 + ℳ) J` is `P`-integrable under the
 same envelope-moment, measurability and square-integrability hypotheses. -/
-theorem integrable_one_add_respAllScaleMax_mul_respJPlus {d : ℕ} [NeZero d] (hd : 2 ≤ d) (γ : ℝ)
+theorem integrable_one_add_respAllScaleMax_mul_respJPlus {d : ℕ} (hd : 2 ≤ d) (γ : ℝ)
     (hγ : γ ∈ Set.Ico (0 : ℝ) 1)
     (P : Measure (CoeffSpace d)) [IsProbabilityMeasure P]
     (jStar : ℕ) (F : BlockMat d) (t : ℤ) (p q' : Vec d)

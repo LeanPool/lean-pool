@@ -519,6 +519,8 @@ theorem rawOverlapWeightDenom_pos_of_mem_openCubeSet {d : ℕ}
     0 < rawOverlapWeightDenom Q j x :=
   lt_of_lt_of_le zero_lt_one (one_le_rawOverlapWeightDenom_of_mem_openCubeSet hxQ)
 
+/-- A globally positive smooth normalization denominator agreeing with the raw weight sum on the
+open parent cube. -/
 @[expose]
 noncomputable def overlapWeightDenomSafe {d : ℕ}
     (Q : TriadicCube d) (j : ℕ) (x : Vec d) : ℝ :=
@@ -541,7 +543,9 @@ theorem overlapWeightDenomSafe_pos {d : ℕ}
   by_cases hD : 1 ≤ rawOverlapWeightDenom Q j x
   · have harg : 1 - rawOverlapWeightDenom Q j x ≤ 0 := by
       linarith
-    simp [overlapWeightDenomSafe, smoothTransitionProfile.zero_of_nonpos harg]
+    suffices 0 < rawOverlapWeightDenom Q j x by
+      simpa only [overlapWeightDenomSafe, smoothTransitionProfile.zero_of_nonpos harg,
+        add_zero] using this
     exact lt_of_lt_of_le zero_lt_one hD
   · have hDlt : rawOverlapWeightDenom Q j x < 1 := lt_of_not_ge hD
     have harg_pos : 0 < 1 - rawOverlapWeightDenom Q j x := by
@@ -615,6 +619,8 @@ theorem abs_inv_overlapWeightDenomSafe_coordDeriv_le {d : ℕ}
     _ = |euclideanCoordDeriv i (rawOverlapWeightDenom Q j) x| := by
           ring
 
+/-- The raw overlap cutoff divided by the safe denominator to form a smooth relative partition
+weight. -/
 @[expose]
 noncomputable def overlapPartitionWeight {d : ℕ}
     (Q : TriadicCube d) (j : ℕ) (S : TriadicCube d) (x : Vec d) : ℝ :=
@@ -744,6 +750,8 @@ theorem abs_overlapPartitionWeight_coordDeriv_le {d : ℕ}
               (3 * (cubeScaleFactor Q / (3 : ℝ) ^ j)⁻¹))) := by
           rfl
 
+/-- The dimension-dependent derivative factor for overlap partition weights after division by the
+depth scale. -/
 @[expose]
 noncomputable def smoothOverlapPartitionDerivativeConstant (d : ℕ) : ℝ :=
   (Fintype.card (Fin d) : ℝ) *

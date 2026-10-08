@@ -75,7 +75,7 @@ noncomputable def scheduledRateHead (d : ℕ) (outputFactor Cdual Kflux : ℝ)
 
 /-- **(δ), the core.**  The converted flux rate holds at **any** `C₀` that
 dominates the scheduled head — in particular at a law-free one. -/
-theorem rowConvertedFluxScheduledRateAtWitness_of_head_le [NeZero d]
+theorem rowConvertedFluxScheduledRateAtWitness_of_head_le
     {g kappaRate Cdual : ℝ}
     {capFlux hardyConstant boundaryEnergy : ℝ≥0∞}
     {s rho Rad epsilon Xval outputFactor : ℝ}
@@ -190,7 +190,7 @@ theorem rowConvertedFluxScheduledRateAtWitness_of_head_le [NeZero d]
 /-- **The head, bounded in real terms.**  All four factors of the scheduled head
 are real (the Hardy constant through any real dominating it), so a law-free `C₀`
 built from the modules named above dominates it. -/
-theorem scheduledRateHead_le_ofReal (d : ℕ) [NeZero d]
+theorem scheduledRateHead_le_ofReal (d : ℕ)
     {outputFactor Cdual Kflux hardyReal : ℝ}
     (hout : 0 ≤ outputFactor) (hCdual : 0 ≤ Cdual) (hKflux : 0 ≤ Kflux)
     (hhardyReal : 0 ≤ hardyReal)

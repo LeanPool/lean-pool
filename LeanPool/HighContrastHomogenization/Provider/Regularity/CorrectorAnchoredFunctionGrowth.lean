@@ -39,7 +39,7 @@ scale-linear normalized `L²` bound for the global value representative on
 the centered exhaustion cubes. -/
 theorem
   NormalizedLocalH1Carrier.exists_globalRepresentativeLpBound_of_oscillation
-    {d : ℕ} [NeZero d] (z : NormalizedLocalH1Carrier d)
+    {d : ℕ} (z : NormalizedLocalH1Carrier d)
     (q₀ : ℕ) (M : ℝ) (hM : 0 ≤ M)
     (hosc : ∀ q : ℕ, q₀ ≤ q →
       cubeBesovOscillation (originCube d (q : ℤ)) (2 : ℝ≥0∞)

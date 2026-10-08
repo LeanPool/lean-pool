@@ -46,7 +46,7 @@ theorem integral_primal_flux_physical_oscillation_eq_cutoff_row
     (g : Mat d) (hg : IsSkewMat g) (p r Pcen : Vec d)
     (hweak : profilePrimalWeakQuantity P m0 hq t
       (fun a ↦ a.subSkew g hg) p r ≠ ⊤) :
-    (∫ a, primal_flux_physical_oscillation hq s t g hg p r Pcen a ∂P) =
+    (∫ a, primalFluxPhysicalOscillation hq s t g hg p r Pcen a ∂P) =
       avsum (alignedIndex q s t) (fun z ↦
         ∑ i, Pcen i * ∫ a, volumeAverage (adaptedCellAt q s z) (fun x ↦
           (adaptedPreYoungCutoff q hq t x -
@@ -117,7 +117,7 @@ theorem integral_adjoint_gradient_physical_oscillation_eq_cutoff_row
     (g : Mat d) (hg : IsSkewMat g) (p r Qcen : Vec d)
     (hweak : profileAdjointWeakQuantity P m0 hq t
       (fun a ↦ a.subSkew g hg) p r ≠ ⊤) :
-    (∫ a, adjoint_gradient_physical_oscillation hq s t g hg p r Qcen a ∂P) =
+    (∫ a, adjointGradientPhysicalOscillation hq s t g hg p r Qcen a ∂P) =
       avsum (alignedIndex q s t) (fun z ↦
         ∑ i, Qcen i * ∫ a, volumeAverage (adaptedCellAt q s z) (fun x ↦
           (adaptedPreYoungCutoff q hq t x -
@@ -188,7 +188,7 @@ theorem integral_adjoint_flux_physical_oscillation_eq_cutoff_row
     (g : Mat d) (hg : IsSkewMat g) (p r Pcen : Vec d)
     (hweak : profileAdjointWeakQuantity P m0 hq t
       (fun a ↦ a.subSkew g hg) p r ≠ ⊤) :
-    (∫ a, adjoint_flux_physical_oscillation hq s t g hg p r Pcen a ∂P) =
+    (∫ a, adjointFluxPhysicalOscillation hq s t g hg p r Pcen a ∂P) =
       avsum (alignedIndex q s t) (fun z ↦
         ∑ i, Pcen i * ∫ a, volumeAverage (adaptedCellAt q s z) (fun x ↦
           (adaptedPreYoungCutoff q hq t x -

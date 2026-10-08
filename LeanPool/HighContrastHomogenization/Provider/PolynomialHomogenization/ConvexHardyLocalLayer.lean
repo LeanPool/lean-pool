@@ -219,7 +219,7 @@ theorem hasBallSandwich_inter_metricBall (hd : 1 ≤ d)
         euclideanBallAt b ((4 * r) * Real.sqrt d) := by
     intro y hy
     have hsq := vecNormSq_sub_lt_of_mem_metricBall hdpos (houterMetric hy)
-    show vecNormSq (y - b) < ((4 * r) * Real.sqrt d) ^ 2
+    change vecNormSq (y - b) < ((4 * r) * Real.sqrt d) ^ 2
     calc
       vecNormSq (y - b) < (d : ℝ) * (4 * r) ^ 2 := hsq
       _ = ((4 * r) * Real.sqrt d) ^ 2 := by

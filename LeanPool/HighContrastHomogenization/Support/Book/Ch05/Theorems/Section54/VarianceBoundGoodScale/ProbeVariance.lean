@@ -137,7 +137,7 @@ theorem integrable_abs_sub_dotProduct_sq_fullBlockNormalizedQuadraticObservable_
         (cubeSet (originCube d (j : ℤ))) a
     have hleft_nonneg : 0 ≤ |fullBlockQuadratic M q| ^ (2 : ℕ) :=
       pow_nonneg (abs_nonneg _) (2 : ℕ)
-    show |(|fullBlockQuadratic M q| ^ (2 : ℕ))| ≤
+    change |(|fullBlockQuadratic M q| ^ (2 : ℕ))| ≤
       F a * (dotProduct q q) ^ (2 : ℕ)
     rw [abs_of_nonneg hleft_nonneg]
     calc

@@ -165,7 +165,7 @@ theorem exists_reduced_standardCell (k : ℤ) (w : Fin d → ℤ) :
       have h3 : (0 : ℝ) < (3 : ℝ) ^ (-(p : ℤ)) := by positivity
       have hunit : (3 : ℝ) ^ (-(p : ℤ)) * (3 : ℝ) ^ ((p : ℤ)) = 1 := by
         rw [← zpow_add₀ (by norm_num : (3 : ℝ) ≠ 0), neg_add_cancel, zpow_zero]
-      show |(3 : ℝ) ^ (-(p : ℤ)) * ((w i % (3 : ℤ) ^ p : ℤ) : ℝ)| < 1
+      change |(3 : ℝ) ^ (-(p : ℤ)) * ((w i % (3 : ℤ) ^ p : ℤ) : ℝ)| < 1
       rw [abs_of_nonneg (by positivity)]
       nlinarith only [hloR, hhiR, h3, hunit]
 

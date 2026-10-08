@@ -91,8 +91,9 @@ theorem ceil_mul_le_ceil_mul (B₀ B x : ℝ) (hB : B₀ ≤ B) (hx : 0 ≤ x) :
     ⌈B₀ * x⌉ ≤ ⌈B * x⌉ := by exact Int.ceil_le_ceil (mul_le_mul_of_nonneg_right hB hx)
 
 theorem logb_two_add_aspectRatio_nonneg {d : ℕ} (E : BlockMat d) :
-    0 ≤ Real.logb 3 (2 + aspectRatio E) := by exact Real.logb_nonneg (by norm_num : (1:ℝ) < 3)
-      (by linarith only [aspectRatio_nonneg E])
+    0 ≤ Real.logb 3 (2 + aspectRatio E) := by
+  exact Real.logb_nonneg (by norm_num : (1 : ℝ) < 3)
+    (by linarith only [aspectRatio_nonneg E])
 
 theorem half_le_logb_two_add (Pi : ℝ) (hPi : 0 ≤ Pi) : 1 / 2 ≤ Real.logb 3 (2 + Pi) := by
   have h1 : 1 < (3 : ℝ) := by norm_num
@@ -106,8 +107,8 @@ theorem half_le_logb_two_add (Pi : ℝ) (hPi : 0 ≤ Pi) : 1 / 2 ≤ Real.logb 3
 
 theorem logb_two_mul_nonneg (K : ℝ) (hK : 1 < K) : 0 ≤ Real.logb 3 (2 * K) := by
   apply Real.logb_nonneg
-  norm_num
-  linarith only [hK]
+  · norm_num
+  · linarith only [hK]
 
 theorem bridge_tolerance_mem (ε σ : ℝ) (hε : ε ∈ Set.Ioc (0 : ℝ) 1) (hσ : σ ∈ Set.Ioc (0 : ℝ) ε) :
     Real.sqrt ε * σ ∈ Set.Ioc (0 : ℝ) 1 := by
@@ -244,7 +245,7 @@ theorem rpow_mul_logb_le (α σ : ℝ) (hα : 0 < α) (hσ : σ ∈ Set.Ioc (0 :
     have hh := mul_le_mul_of_nonneg_right key (inv_nonneg.mpr hlog3.le)
     simpa [div_eq_mul_inv] using hh
   rw [div_div] at final
-  show σ ^ α * (Real.log σ⁻¹ / Real.log 3) ≤ 1 / (α * Real.log 3)
+  change σ ^ α * (Real.log σ⁻¹ / Real.log 3) ≤ 1 / (α * Real.log 3)
   rw [← mul_div_assoc]
   exact final
 

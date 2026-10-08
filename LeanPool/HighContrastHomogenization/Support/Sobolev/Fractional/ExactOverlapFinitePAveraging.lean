@@ -666,13 +666,13 @@ noncomputable def averagingCompetitorW1p {d : ℕ} {Q : TriadicCube d} {j : ℕ}
       (isOpenBoundedConvexDomain_openCubeSet Q)
       (P.contDiff_averagingField_coord h i)
 
-@[simp] theorem averagingCompetitorW1p_toField_apply {d : ℕ}
+theorem averagingCompetitorW1p_toField_apply {d : ℕ}
     {Q : TriadicCube d} {j : ℕ} (P : SmoothOverlapPartition Q j)
     (h : Vec d → Vec d) (p : FiniteLpExponent) (x : Vec d) (i : Fin d) :
     (P.averagingCompetitorW1p h p).toField x i = P.averagingField h x i :=
   rfl
 
-@[simp] theorem averagingCompetitorW1p_jacobian_apply {d : ℕ}
+theorem averagingCompetitorW1p_jacobian_apply {d : ℕ}
     {Q : TriadicCube d} {j : ℕ} (P : SmoothOverlapPartition Q j)
     (h : Vec d → Vec d) (p : FiniteLpExponent) (x : Vec d) (i k : Fin d) :
     (P.averagingCompetitorW1p h p).jacobian x i k =
@@ -829,15 +829,15 @@ theorem lintegral_enorm_rpow_averagingCompetitorW1p_jacobian_le_depthENorm
       · apply ENNReal.mul_ne_top
         · apply ENNReal.mul_ne_top
           · apply ENNReal.rpow_ne_top_of_nonneg
-            linarith
-            exact ENNReal.natCast_ne_top _
+            · linarith
+            · exact ENNReal.natCast_ne_top _
           · exact ENNReal.natCast_ne_top _
         · apply ENNReal.rpow_ne_top_of_nonneg
-          positivity
-          exact ENNReal.ofReal_ne_top
+          · positivity
+          · exact ENNReal.ofReal_ne_top
       · apply ENNReal.rpow_ne_top_of_nonneg
-        linarith
-        exact ENNReal.pow_ne_top ENNReal.ofNat_ne_top
+        · linarith
+        · exact ENNReal.pow_ne_top ENNReal.ofNat_ne_top
   calc
     ∫⁻ x,
         ‖HilbertMat.ofMat ((P.averagingCompetitorW1p h p).jacobian x)‖ₑ ^

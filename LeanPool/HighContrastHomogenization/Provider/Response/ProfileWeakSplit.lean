@@ -38,7 +38,7 @@ variable {d : ℕ}
 
 /-- Averaging the metric-root image of a state minus an arbitrary fixed vector
 commutes with both operations. -/
-theorem blockCellAverage_metricRoot_sub_const_diagonalWeakState [NeZero d]
+theorem blockCellAverage_metricRoot_sub_const_diagonalWeakState
     {q : Mat d} (hq : q.PosDef) {k t : ℤ} (hkt : k ≤ t)
     {w : Fin d → ℤ} (hw : w ∈ alignedIndex q k t) {S : Mat d}
     {a : CoeffSpace d} (p r : Vec d) (c : BlockVec d) :
@@ -85,7 +85,7 @@ theorem blockCellAverage_metricRoot_sub_const_diagonalWeakState [NeZero d]
         (blockCellAverage_sub_const (U := adaptedDomainAt hq k w)
           c hne htop hpot hflux)
 
-private theorem normalized_primal_weak_split [NeZero d]
+private theorem normalized_primal_weak_split
     {q : Mat d} (hq : q.PosDef) (t : ℤ) {m : Mat d}
     (hm : m.PosDef) (a : CoeffSpace d) (p r : Vec d)
     (center : BlockVec d) :
@@ -243,7 +243,7 @@ private theorem normalized_primal_weak_split [NeZero d]
 
 /-- The primal normalized weak root splits into its random-centered part and
 the exact constField correction. -/
-theorem profilePrimalWeakRoot_le_randomCentered_add_constant [NeZero d]
+theorem profilePrimalWeakRoot_le_randomCentered_add_constant
     {q : Mat d} (hq : q.PosDef) (t : ℤ) {m : Mat d}
     (hm : m.PosDef) (a : CoeffSpace d) (p r : Vec d)
     (center : BlockVec d) :
@@ -261,7 +261,7 @@ theorem profilePrimalWeakRoot_le_randomCentered_add_constant [NeZero d]
   normalized_primal_weak_split hq t hm a p r center
 
 /-- The adjoint normalized weak root has the analogous split. -/
-theorem profileAdjointWeakRoot_le_randomCentered_add_constant [NeZero d]
+theorem profileAdjointWeakRoot_le_randomCentered_add_constant
     {q : Mat d} (hq : q.PosDef) (t : ℤ) {m : Mat d}
     (hm : m.PosDef) (a : CoeffSpace d) (p r : Vec d)
     (center : BlockVec d) :

@@ -64,6 +64,8 @@ gradient plus the stored corrector-gradient component. -/
     NormalizedLocalH1Carrier.localH1Function_gradToHilbertVectorL2]
   rfl
 
+/-- Add the affine boundary datum to the normalized local correction on
+`localGradientCube d n`. -/
 @[expose]
 public noncomputable def finiteAffineNormalizedLocalFullH1
     {d : ℕ} [NeZero d] (a : Book.Ch02.TriadicCoeffFamily d)
@@ -99,6 +101,8 @@ theorem finiteAffineNormalizedLocalFullH1_grad_eq
     e + (finiteAffineCorrectionLocalSequence a e (n + k)).grad x
   rw [normalizeOnUnitCube_grad]
 
+/-- The normalized finite affine field packaged as an `a`-harmonic solution on
+`originCube d n`. -/
 @[expose]
 public noncomputable def finiteAffineNormalizedLocalCubeSolution
     {d : ℕ} [NeZero d] (a : Book.Ch02.TriadicCoeffFamily d)
@@ -168,7 +172,6 @@ private theorem finiteAffineNormalizedLocalFullH1_tendsto
 
 private theorem isAHarmonicGradient_of_grad_mem_closedSubmodule
     {d : ℕ} {U : Set (Vec d)} {b : CoeffField d} {lam Lam : ℝ}
-    [IsFiniteMeasure (volumeMeasureOn U)]
     (hEll : IsEllipticFieldOn lam Lam U b) (u : H1Function U)
     (hmem : u.gradToHilbertVectorL2 ∈
       AHarmonicGradientHilbert.closedSubmodule

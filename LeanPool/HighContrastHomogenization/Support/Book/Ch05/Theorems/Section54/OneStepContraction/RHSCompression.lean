@@ -214,7 +214,7 @@ theorem oneStepScaleSeparation_m_pos
     exact_mod_cast hP4.xi_pos
   have htheta_tilde_nonneg :
       0 ≤ widetildeThetaAtScale P (0 : ℤ) hP4 := by
-    simp [widetildeThetaAtScale, Ch04.widetildeThetaAtScale]
+    simp only [widetildeThetaAtScale, Ch04.widetildeThetaAtScale]
     exact mul_nonneg
       (Ch04.LambdaMomentAtScale_nonneg P 0 hP4.xi hP4.sUpper_pos)
       (Ch04.lambdaInvMomentAtScale_nonneg P 0 hP4.xi hP4.sLower_pos)

@@ -193,14 +193,12 @@ private theorem cutoffProduct_affine_of_defects {q : Mat d}
     (hdef :
       (canonicalMaximizerGradientDefectOnCube (originCube d t) aRef
           (matVecMul (matTranspose q) p) (matVecMul q⁻¹ r)
-          (matVecMul (matTranspose q) p0) =ᵐ[
-        volumeMeasureOn (cubeSet (originCube d t))]
+          (matVecMul (matTranspose q) p0) =ᵐ[volumeMeasureOn (cubeSet (originCube d t))]
           fun y ↦ matVecMul (matTranspose q)
             (u.toH1.grad (matVecMul q y) - p0)) ∧
       (canonicalMaximizerFluxDefectOnCube (originCube d t) aRef
           (matVecMul (matTranspose q) p) (matVecMul q⁻¹ r)
-          (matVecMul q⁻¹ r0) =ᵐ[
-        volumeMeasureOn (cubeSet (originCube d t))]
+          (matVecMul q⁻¹ r0) =ᵐ[volumeMeasureOn (cubeSet (originCube d t))]
           fun y ↦ matVecMul q⁻¹
             (matVecMul (a.toCoeffField (matVecMul q y))
               (u.toH1.grad (matVecMul q y)) - r0))) :

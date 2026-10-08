@@ -75,7 +75,7 @@ private theorem abs_blockVecDot_le_norm_mul_norm {d : ℕ} (X Y : BlockVec d) :
   simpa [hinner] using abs_real_inner_le_norm x y
 
 private theorem fullBlockMat_mulVec_norm_sq_le_operatorNorm_sq
-    {d : ℕ} [NeZero d] (M : FullBlockMat d) (X : BlockVec d) :
+    {d : ℕ} (M : FullBlockMat d) (X : BlockVec d) :
     blockVecDot (blockMatVecMul (ofFullBlockMat M) X)
         (blockMatVecMul (ofFullBlockMat M) X) ≤
       ‖Matrix.toEuclideanCLM (n := BlockCoord d) (𝕜 := ℝ) M‖ ^ 2 *
@@ -106,7 +106,7 @@ private theorem fullBlockMat_mulVec_norm_sq_le_operatorNorm_sq
 /-- A scalar full-block quadratic probe is controlled by the squared
 Euclidean operator norm of the matrix. -/
 theorem fullBlockQuadratic_abs_sq_le_operatorNorm_sq_mul_dotProduct_sq
-    {d : ℕ} [NeZero d] (M : FullBlockMat d) (q : FullBlockVec d) :
+    {d : ℕ} (M : FullBlockMat d) (q : FullBlockVec d) :
     |fullBlockQuadratic M q| ^ (2 : ℕ) ≤
       ‖Matrix.toEuclideanCLM (n := BlockCoord d) (𝕜 := ℝ) M‖ ^ (2 : ℕ) *
         (dotProduct q q) ^ (2 : ℕ) := by
@@ -191,7 +191,8 @@ private theorem diagonal_quadratic_le_mul_dotProduct
     dotProduct q (Matrix.mulVec (Matrix.diagonal r) q) ≤ C * dotProduct q q := by
   classical
   unfold dotProduct
-  simp [Matrix.mulVec, diagonal_dotProduct]
+  suffices (∑ α, q α * (r α * q α)) ≤ C * ∑ α, q α * q α by
+    simpa [Matrix.mulVec, diagonal_dotProduct] using this
   rw [Finset.mul_sum]
   refine Finset.sum_le_sum ?_
   intro α _hα
@@ -205,7 +206,8 @@ private theorem mul_dotProduct_le_diagonal_quadratic
     C * dotProduct q q ≤ dotProduct q (Matrix.mulVec (Matrix.diagonal r) q) := by
   classical
   unfold dotProduct
-  simp [Matrix.mulVec, diagonal_dotProduct]
+  suffices C * (∑ α, q α * q α) ≤ ∑ α, q α * (r α * q α) by
+    simpa [Matrix.mulVec, diagonal_dotProduct] using this
   rw [Finset.mul_sum]
   refine Finset.sum_le_sum ?_
   intro α _hα
@@ -236,7 +238,7 @@ theorem isSymm_diagonal_mul_fullBlockMat_mul_diagonal
     (Matrix.diagonal r * M * Matrix.diagonal r).IsSymm := by
   rw [Matrix.IsSymm]
   ext α β
-  simp [Matrix.transpose_apply, Matrix.mul_apply, Matrix.diagonal]
+  simp only [Matrix.transpose_apply, Matrix.mul_diagonal, Matrix.diagonal_mul]
   have h := hM.apply α β
   rw [h]
   ring

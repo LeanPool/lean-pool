@@ -38,7 +38,7 @@ small-cube estimates. -/
 @[expose]
 def
     BoundaryCaccioppoliHarmonicVectorSmallCubeCoefficientSplit
-    {d : ℕ} [NeZero d] (Q : TriadicCube d) (a : CoeffField d)
+    {d : ℕ} (Q : TriadicCube d) (a : CoeffField d)
     (s t Clocal Calpha Ccross : ℝ) : Prop :=
   ∀ n : ℕ,
     let ρ₁ : ℝ := coarseCaccioppoliRadiusSequence n
@@ -76,8 +76,8 @@ buffered localized-energy route.  This is the coefficient package needed by
 the standard beta-dependent radius iteration. -/
 @[expose]
 def
-    BoundaryCaccioppoliHarmonicVectorSmallCubeCoefficientSplit_allRadii
-    {d : ℕ} [NeZero d] (Q : TriadicCube d) (a : CoeffField d)
+    boundaryCaccioppoliSmallCubeCoefficientSplitAllRadii
+    {d : ℕ} (Q : TriadicCube d) (a : CoeffField d)
     (s t Clocal Calpha Ccross : ℝ) : Prop :=
   ∀ ⦃ρ₁ ρ₂ : ℝ⦄, (1 / 3 : ℝ) ≤ ρ₁ → ρ₁ < ρ₂ → ρ₂ ≤ 1 →
     let ρm : ℝ := coarseCaccioppoliBufferedCutoffRadius ρ₁ ρ₂
@@ -112,10 +112,10 @@ def
 Chapter-3 radius sequence. -/
 theorem
     BoundaryCaccioppoliHarmonicVectorSmallCubeCoefficientSplit.of_allRadii
-    {d : ℕ} [NeZero d] (Q : TriadicCube d) (a : CoeffField d)
+    {d : ℕ} (Q : TriadicCube d) (a : CoeffField d)
     (s t Clocal Calpha Ccross : ℝ)
     (h :
-      BoundaryCaccioppoliHarmonicVectorSmallCubeCoefficientSplit_allRadii
+      boundaryCaccioppoliSmallCubeCoefficientSplitAllRadii
         Q a s t Clocal Calpha Ccross) :
     BoundaryCaccioppoliHarmonicVectorSmallCubeCoefficientSplit
       Q a s t Clocal Calpha Ccross := by
@@ -130,7 +130,7 @@ theorem
     (coarseCaccioppoliRadiusSequence_mem_Icc (n + 1)).2
   simpa [
     BoundaryCaccioppoliHarmonicVectorSmallCubeCoefficientSplit,
-    BoundaryCaccioppoliHarmonicVectorSmallCubeCoefficientSplit_allRadii]
+    boundaryCaccioppoliSmallCubeCoefficientSplitAllRadii]
     using h hρ₁ hlt hρ₂
 
 

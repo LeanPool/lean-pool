@@ -87,7 +87,7 @@ variable {d : ℕ}
 /-- **The hatted decay past `2N₀`, from a decay at the base.**  The literal
 `hhat` hypothesis of `exists_annealed_decay_of_hhat_and_transfer`, read off a
 geometric bound on the hatted excess rather than off a recursion. -/
-theorem hhat_all_of_hatted_decay [NeZero d]
+theorem hhat_all_of_hatted_decay
     {P : Measure (CoeffSpace d)} {q : Mat d} {N₀ : ℕ} {Kpre gam : ℝ}
     (hKpre : 0 ≤ Kpre) (hgam0 : 0 < gam)
     (hdecay : ∀ n : ℕ,
@@ -123,7 +123,7 @@ theorem hhat_all_of_hatted_decay [NeZero d]
 conclusion,
 with the decay supplied rather than derived — the interface the two-stage scheme
 delivers at the restart base. -/
-theorem hcore_body_of_hatted_decay [NeZero d]
+theorem hcore_body_of_hatted_decay
     {P : Measure (CoeffSpace d)} {q : Mat d} {N₀ : ℕ} {Kpre gam : ℝ}
     (hKpre : 0 ≤ Kpre) (hgam0 : 0 < gam) (hgam1 : gam ≤ 1)
     (hdecay : ∀ n : ℕ,

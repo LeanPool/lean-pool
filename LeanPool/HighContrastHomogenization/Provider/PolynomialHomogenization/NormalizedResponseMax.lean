@@ -38,8 +38,7 @@ noncomputable section
 
 variable {d : ℕ}
 
-@[expose]
-public def physicalNormalizedPrimalLoad [NeZero d]
+private def physicalNormalizedPrimalLoad
     (abar : Mat d) (X : BlockVec d) : BlockVec d :=
   let S := symmPart abar
   let g := skewPart abar
@@ -48,8 +47,7 @@ public def physicalNormalizedPrimalLoad [NeZero d]
   let p := alpha • matVecMul q⁻¹ X.1
   (p, alpha⁻¹ • matVecMul q X.2 + matVecMul g p)
 
-@[expose]
-public def physicalNormalizedDualLoad [NeZero d]
+private def physicalNormalizedDualLoad
     (abar : Mat d) (X : BlockVec d) : BlockVec d :=
   let S := symmPart abar
   let g := skewPart abar
@@ -240,7 +238,7 @@ private theorem blockMatVecMul_constantBlockMatrix_physicalNormalizedPrimalLoad
   rw [symmPart_mul_normalizedPrimalCoordinate hS x,
     symmPart_inv_mul_normalizedDualCoordinate hS y]
 
-private theorem constantFullBlockMatrixSqrt_one [NeZero d] :
+private theorem constantFullBlockMatrixSqrt_one :
     Book.Ch02.constantFullBlockMatrixSqrt (1 : Mat d) = 1 := by
   have hone : (1 : Mat d) = scalarMatrix (d := d) 1 := by
     ext i j

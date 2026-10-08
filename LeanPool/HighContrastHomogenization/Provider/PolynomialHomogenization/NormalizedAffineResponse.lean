@@ -61,8 +61,7 @@ private theorem responseJ_affineResponseCell_of_ae
     (a : CoeffSpace d)
     (aRef : Book.Ch02.CoeffOn
       (Book.Ch02.cubeDomain (translateCube w (originCube d k))))
-    (haRef : aRef.toCoeffField =ᵐ[
-      volumeMeasureOn
+    (haRef : aRef.toCoeffField =ᵐ[volumeMeasureOn
         (Book.Ch02.cubeDomain (translateCube w (originCube d k)) : Set (Vec d))]
       affineCoefficient q
         ((Matrix.isUnit_iff_isUnit_det q).mp hq.isUnit)
@@ -93,8 +92,7 @@ private theorem transpose_affineReference_ae
     (a : CoeffSpace d)
     (aRef : Book.Ch02.CoeffOn
       (Book.Ch02.cubeDomain (translateCube w (originCube d k))))
-    (haRef : aRef.toCoeffField =ᵐ[
-      volumeMeasureOn
+    (haRef : aRef.toCoeffField =ᵐ[volumeMeasureOn
         (Book.Ch02.cubeDomain (translateCube w (originCube d k)) : Set (Vec d))]
       affineCoefficient q
         ((Matrix.isUnit_iff_isUnit_det q).mp hq.isUnit)

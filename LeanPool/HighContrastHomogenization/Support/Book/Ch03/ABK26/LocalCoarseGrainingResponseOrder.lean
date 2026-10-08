@@ -36,7 +36,7 @@ open scoped BigOperators ENNReal
 noncomputable section
 
 private theorem homogenizationErrorOnCube_infinity_two_nonneg
-    {d : ℕ} [NeZero d] (Q : TriadicCube d)
+    {d : ℕ} (Q : TriadicCube d)
     (a : Ch02.TriadicCoeffFamily d) (a0 : Mat d) {s : ℝ} (hs : 0 < s) :
     0 ≤ Ch02.HomogenizationErrorOnCube Q s .infinity (.finite 2) a a0 := by
   unfold Ch02.HomogenizationErrorOnCube Ch02.HomogenizationError

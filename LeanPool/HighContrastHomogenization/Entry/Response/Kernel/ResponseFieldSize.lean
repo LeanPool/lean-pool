@@ -331,7 +331,7 @@ theorem blockCongr_le_smul {Z E : BlockMat d} (G : BlockMat d) {c : ℝ}
 where that supremum is finite.  This is `weighted_excess_le_diagonalWeakMaximum_toReal`, whose
 finiteness hypothesis `hfinite : diagonalWeakMaximum … ≠ ⊤` is here the real-valued `BddAbove` of
 the same set (this tree's `respAllScaleMax` is an `sSup` in `ℝ`, not in `ℝ≥0∞`). -/
-theorem weighted_specBound_le_respAllScaleMax [NeZero d] (P : Measure (CoeffSpace d))
+theorem weighted_specBound_le_respAllScaleMax (P : Measure (CoeffSpace d))
     (γ : ℝ) (jStar : ℕ) (F : BlockMat d) (t : ℤ) (a : CoeffSpace d) (n : ℕ) {w : Fin d → ℤ}
     (hw : w ∈ triadicIndexBox d n)
     (hbdd : BddAbove {y : ℝ | ∃ m : ℕ, ∃ z ∈ triadicIndexBox d m, y =
@@ -362,7 +362,7 @@ This is the `hsize` bound of `diagonalWeak_recent_average_bound`, fed by
 (`ResponseBlockObjects.lean`) is built from, so no excess carrier is needed either.
 `sqrt_le_sqrt_mul_rpow_of_weighted_le` (`RecentHeadDefectHalves.lean`) supplies
 the geometric-weight arithmetic, already in this tree. -/
-theorem coarseBlock_le_sq_smul_respMean [NeZero d] (P : Measure (CoeffSpace d))
+theorem coarseBlock_le_sq_smul_respMean (P : Measure (CoeffSpace d))
     (γ : ℝ) (jStar : ℕ) (F : BlockMat d) (t : ℤ) (a : CoeffSpace d) (n : ℕ) {w : Fin d → ℤ}
     (hw : w ∈ triadicIndexBox d n)
     (hbdd : BddAbove {y : ℝ | ∃ m : ℕ, ∃ z ∈ triadicIndexBox d m, y =
@@ -405,7 +405,7 @@ the recentred field, `Book.Ch02.coarseBlockMatrix U (respCoeffMinus F a)`, is
 `blockCongr (respG F) (coarseBlock U a)` — the shear identity
 `coarseBlockMatrix_sub_skew_eq_blockCongr`
 (`HCPoly/Entry/Response/Core/SkewShearCongruence.lean`, and not restated here). -/
-theorem coarseBlock_congr_le_sq_smul_respEhatMinus [NeZero d] (P : Measure (CoeffSpace d))
+theorem coarseBlock_congr_le_sq_smul_respEhatMinus (P : Measure (CoeffSpace d))
     (γ : ℝ) (jStar : ℕ) (F : BlockMat d) (t : ℤ) (a : CoeffSpace d) (n : ℕ) {w : Fin d → ℤ}
     (hw : w ∈ triadicIndexBox d n)
     (hbdd : BddAbove {y : ℝ | ∃ m : ℕ, ∃ z ∈ triadicIndexBox d m, y =
@@ -433,7 +433,7 @@ restricted to the child cell. -/
 /-- An aligned adapted cell is nonempty.  This is proved from the PUBLIC
 `volume_adaptedCellAtCenter_toReal_pos` (`DiagonalDefectCarriers.lean`), mirroring the
 `private` `adaptedCellAtCenter_nonempty` (`…:366`). -/
-theorem adaptedCellAtCenter_nonempty_of_isUnit_of_neZero [NeZero d] (q : Mat d) (hq : IsUnit q)
+theorem adaptedCellAtCenter_nonempty_of_isUnit_of_neZero (q : Mat d) (hq : IsUnit q)
   (k : ℤ)
     (w : Fin d → ℤ) : (adaptedCellAtCenter q k w).Nonempty := by
   by_contra h
@@ -452,13 +452,13 @@ discharged inside the definition itself, from `isOpenBoundedConvexDomain_adapted
 satisfiability is therefore constructive; it is nevertheless exhibited as an explicit `∃`,
 before any consumer. -/
 @[expose]
-def adaptedDomainAt [NeZero d] (q : Mat d) (hq : IsUnit q) (k : ℤ) (w : Fin d → ℤ) :
+def adaptedDomainAt (q : Mat d) (hq : IsUnit q) (k : ℤ) (w : Fin d → ℤ) :
     Book.Ch02.Domain d :=
   { carrier := adaptedCellAtCenter q k w
     isDomain := isOpenBoundedConvexDomain_adaptedCellAtCenter q hq k w
     nonempty := adaptedCellAtCenter_nonempty_of_isUnit_of_neZero q hq k w }
 
-@[simp] theorem adaptedDomainAt_carrier [NeZero d] (q : Mat d) (hq : IsUnit q) (k : ℤ)
+@[simp] theorem adaptedDomainAt_carrier (q : Mat d) (hq : IsUnit q) (k : ℤ)
     (w : Fin d → ℤ) :
     ((adaptedDomainAt q hq k w : Book.Ch02.Domain d) : Set (Vec d)) = adaptedCellAtCenter q k w
       := rfl
@@ -468,7 +468,7 @@ cell of the triadic subdivision.  This is `exists_restrict_solution_adaptedCellA
 membership hypothesis `hmem : adaptedCellCenter q j w ∈ adaptedCell q p` is here the tree's own
 indexing hypothesis `w ∈ triadicIndexBox d n`, through `adaptedCellAtCenter_subset_adaptedCell`
 . -/
-theorem exists_restrict_solution_adaptedCellAtCenter [NeZero d] (q : Mat d) (hq : IsUnit q)
+theorem exists_restrict_solution_adaptedCellAtCenter (q : Mat d) (hq : IsUnit q)
     (t : ℤ) (n : ℕ) {w : Fin d → ℤ} (hw : w ∈ triadicIndexBox d n) {lam Lam : ℝ}
     {b : CoeffOn (adaptedDomain q hq t)}
     {c : CoeffOn (adaptedDomainAt q hq (t - (n : ℤ)) w)}

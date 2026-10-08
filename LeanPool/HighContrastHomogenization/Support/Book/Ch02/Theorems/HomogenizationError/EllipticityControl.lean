@@ -59,7 +59,7 @@ private theorem blockMatVecMul_ofFullBlockMat_mul
     Matrix.mulVec_mulVec]
 
 theorem constantFullBlockMatrix_posDef_of_isEllipticMatrix
-    {d : ℕ} [NeZero d] {lam Lam : ℝ} {a0 : Mat d}
+    {d : ℕ} {lam Lam : ℝ} {a0 : Mat d}
     (ha0 : IsEllipticMatrix lam Lam a0) :
     (constantFullBlockMatrix a0).PosDef := by
   classical
@@ -105,7 +105,7 @@ theorem constantFullBlockMatrix_posDef_of_isEllipticMatrix
       simpa [constantFullBlockMatrix] using this
     simpa [M, X] using hdot
 
-theorem constantFullBlockMatrixSqrt_isSymm {d : ℕ} [NeZero d]
+theorem constantFullBlockMatrixSqrt_isSymm {d : ℕ}
     (a0 : Mat d) :
     (constantFullBlockMatrixSqrt a0).IsSymm := by
   let M := constantFullBlockMatrix a0
@@ -115,7 +115,7 @@ theorem constantFullBlockMatrixSqrt_isSymm {d : ℕ} [NeZero d]
   simpa [Matrix.IsHermitian, Matrix.IsSymm] using hpsd.isHermitian
 
 theorem fullBlockVecNormSq_constantFullBlockMatrixSqrt_mul_toFullBlockVec_eq
-    {d : ℕ} [NeZero d] {a0 : Mat d} {lam Lam : ℝ}
+    {d : ℕ} {a0 : Mat d} {lam Lam : ℝ}
     (ha0 : IsEllipticMatrix lam Lam a0) (P : BlockVec d) :
     fullBlockVecNormSq
         (Matrix.mulVec (constantFullBlockMatrixSqrt a0) (toFullBlockVec P)) =
@@ -151,7 +151,7 @@ theorem fullBlockVecNormSq_constantFullBlockMatrixSqrt_mul_toFullBlockVec_eq
           simp [M, constantFullBlockMatrix]
 
 theorem normalizedBlockResponseValueSet_mem_of_constantBlockQuadratic_eq_one
-    {d : ℕ} [NeZero d] (Q : TriadicCube d) (a : TriadicCoeffFamily d)
+    {d : ℕ} (Q : TriadicCube d) (a : TriadicCoeffFamily d)
     {a0 : Mat d} {lam Lam : ℝ} (ha0 : IsEllipticMatrix lam Lam a0)
     (P : BlockVec d)
     (hquad :
@@ -333,7 +333,7 @@ private theorem scalarCoordinateProbe_constantBlockQuadratic_eq_one
   field_simp [Real.sqrt_pos.2 hσ]
 
 theorem doubledResponseJ_scalarCoordinateProbe_le_normalizedBlockResponseMax
-    {d : ℕ} [NeZero d]
+    {d : ℕ}
     (Q : TriadicCube d) (a : TriadicCoeffFamily d) {σ : ℝ} (hσ : 0 < σ)
     (i : Fin d) :
     doubledResponseJ (cubeDomain Q) (a.coeffOn Q)
@@ -361,7 +361,7 @@ theorem doubledResponseJ_scalarCoordinateProbe_le_normalizedBlockResponseMax
       (by simp [descendantsAtScale_self])) hmem
 
 theorem specialCoordinateBlockJTraceBudget_le_card_mul_normalizedBlockResponseMax
-    {d : ℕ} [NeZero d]
+    {d : ℕ}
     (Q : TriadicCube d) (a : TriadicCoeffFamily d) {σ : ℝ} (hσ : 0 < σ) :
     specialCoordinateBlockJTraceBudget σ
         (coarseBlockMatrix (cubeDomain Q) (a.coeffOn Q)) ≤
@@ -403,8 +403,11 @@ theorem weightedTrace_coarseBlockMatrix_eq_two_mul_budget_add_card
       2 * (specialCoordinateBlockJTraceBudget σ (coarseBlockMatrix U a) +
         (Fintype.card (Fin d) : ℝ)) := by
   unfold specialCoordinateBlockJTraceBudget
-  simp [Matrix.trace, Finset.sum_add_distrib, Finset.sum_sub_distrib,
-    Finset.sum_const, nsmul_eq_mul]
+  change σ⁻¹ * (∑ i, bCoarse U a i i) + σ * (∑ i, sigmaStarInvCoarse U a i i) = _
+  simp only [one_div, coarseBlockMatrix_upperLeft, coarseBlockMatrix_lowerRight,
+    Finset.sum_sub_distrib, Finset.sum_const, Finset.card_univ, Fintype.card_fin,
+    nsmul_eq_mul, mul_one, sub_add_cancel]
+  rw [Finset.sum_add_distrib]
   have hB :
       (∑ x : Fin d, (2 : ℝ)⁻¹ * (σ⁻¹ * bCoarse U a x x)) =
         (2 : ℝ)⁻¹ * ∑ x : Fin d, σ⁻¹ * bCoarse U a x x := by
@@ -418,7 +421,7 @@ theorem weightedTrace_coarseBlockMatrix_eq_two_mul_budget_add_card
   ring
 
 theorem weightedCoarseEllipticityNorm_le_card_mul_normalizedBlockResponseMax_add_one
-    {d : ℕ} [NeZero d]
+    {d : ℕ}
     (Q : TriadicCube d) (a : TriadicCoeffFamily d) {σ : ℝ} (hσ : 0 < σ) :
     σ⁻¹ * coarseBMatrixNorm Q a + σ * coarseSigmaStarInvMatrixNorm Q a ≤
       2 * (Fintype.card (Fin d) : ℝ) *
@@ -469,7 +472,7 @@ theorem weightedCoarseEllipticityNorm_le_card_mul_normalizedBlockResponseMax_add
   exact hnormTrace.trans htrace
 
 theorem inv_mul_coarseBMatrixNorm_le_card_mul_normalizedBlockResponseMax_add_one
-    {d : ℕ} [NeZero d]
+    {d : ℕ}
     (Q : TriadicCube d) (a : TriadicCoeffFamily d) {σ : ℝ} (hσ : 0 < σ) :
     σ⁻¹ * coarseBMatrixNorm Q a ≤
       2 * (Fintype.card (Fin d) : ℝ) *
@@ -482,7 +485,7 @@ theorem inv_mul_coarseBMatrixNorm_le_card_mul_normalizedBlockResponseMax_add_one
   nlinarith
 
 theorem sigma_mul_coarseSigmaStarInvMatrixNorm_le_card_mul_normalizedBlockResponseMax_add_one
-    {d : ℕ} [NeZero d]
+    {d : ℕ}
     (Q : TriadicCube d) (a : TriadicCoeffFamily d) {σ : ℝ} (hσ : 0 < σ) :
     σ * coarseSigmaStarInvMatrixNorm Q a ≤
       2 * (Fintype.card (Fin d) : ℝ) *

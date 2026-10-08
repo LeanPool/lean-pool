@@ -42,13 +42,13 @@ open Book.Ch05.Section53.JUpperBoundWeakNorms
 
 /-- The dimension-only prefactor of the div-curl coefficient. -/
 @[expose]
-def divCurlDimensionCoeff (d : ℕ) [NeZero d] : ℝ :=
+def divCurlDimensionCoeff (d : ℕ) : ℝ :=
   (6 * (((d : ℝ) * Legacy.cubeNeumannW22CalderonZygmundConstant d *
       (3 : ℝ) ^ ((d : ℝ) + 1)) * (d : ℝ))) *
     ((d : ℝ) * (3 : ℝ) ^ ((d : ℝ) + (1 / 2 : ℝ)))
 
 /-- The dimension-only prefactor is nonnegative. -/
-theorem divCurlDimensionCoeff_nonneg (d : ℕ) [NeZero d] :
+theorem divCurlDimensionCoeff_nonneg (d : ℕ) :
     0 ≤ divCurlDimensionCoeff d := by
   have hcz : 0 ≤ Legacy.cubeNeumannW22CalderonZygmundConstant d :=
     Legacy.cubeNeumannW22CalderonZygmundConstant_nonneg d
@@ -60,7 +60,7 @@ gradient field bounded by `Ccut` times the reciprocal side length and its
 derivative by `Ccut` times the square of the reciprocal side length, the
 coefficient is at most a dimension-only multiple of `Ccut` times the reciprocal
 side length. -/
-theorem divCurlWeakNormCoeff_originCube_le {d : ℕ} [NeZero d] (t : ℤ)
+theorem divCurlWeakNormCoeff_originCube_le {d : ℕ} (t : ℤ)
     {B Bone Ccut : ℝ}
     (hBbound : B ≤ Ccut * (3 : ℝ) ^ (-2 * t))
     (hBonebound : Bone ≤ Ccut * (3 : ℝ) ^ (-t)) :

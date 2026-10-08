@@ -158,14 +158,14 @@ theorem isSymmetricBlockMat_scaledBlockIdentity (c : ℝ) :
   | inl i =>
       cases β with
       | inl j =>
-          show (c • (1 : Mat d)) i j = (c • (1 : Mat d)) j i
+          change (c • (1 : Mat d)) i j = (c • (1 : Mat d)) j i
           simp only [Matrix.smul_apply, smul_eq_mul, hone i j]
       | inr j => rfl
   | inr i =>
       cases β with
       | inl j => rfl
       | inr j =>
-          show (c • (1 : Mat d)) i j = (c • (1 : Mat d)) j i
+          change (c • (1 : Mat d)) i j = (c • (1 : Mat d)) j i
           simp only [Matrix.smul_apply, smul_eq_mul, hone i j]
 
 theorem blockPosDef_scaledBlockIdentity {c : ℝ} (hc : 0 < c) :

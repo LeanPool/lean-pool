@@ -36,14 +36,14 @@ variable {d : ℕ}
 
 /-- The matrix value of the constant rounded symmetric reference. -/
 @[expose]
-def roundedReferenceMatrix [NeZero d]
+def roundedReferenceMatrix
     (abar : Mat d) (hS : (symmPart abar).PosDef) : Mat d :=
   roundedSymmetricReferenceCoefficient abar hS 0
 
 /-- The rounded symmetric reference field is constant with the selected
 matrix value. -/
 theorem roundedSymmetricReferenceCoefficient_apply_eq_roundedReferenceMatrix
-    [NeZero d] (abar : Mat d) (hS : (symmPart abar).PosDef) (y : Vec d) :
+    (abar : Mat d) (hS : (symmPart abar).PosDef) (y : Vec d) :
     roundedSymmetricReferenceCoefficient abar hS y =
       roundedReferenceMatrix abar hS := by
   rfl

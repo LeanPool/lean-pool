@@ -56,7 +56,7 @@ theorem descendantsAverage_const_mul (Q : TriadicCube d) (j : ℕ) (c : ℝ)
     descendantsAverage Q j (fun R => c * F R) =
       c * descendantsAverage Q j F := by
   unfold descendantsAverage
-  show ((descendantsAtDepth Q j).card : ℝ)⁻¹ *
+  change ((descendantsAtDepth Q j).card : ℝ)⁻¹ *
       (descendantsAtDepth Q j).sum (fun R => c * F R) =
     c * (((descendantsAtDepth Q j).card : ℝ)⁻¹ *
       (descendantsAtDepth Q j).sum F)
@@ -69,7 +69,7 @@ theorem descendantsAverage_mono (Q : TriadicCube d) (j : ℕ)
     (h : ∀ R ∈ descendantsAtDepth Q j, F R ≤ G R) :
     descendantsAverage Q j F ≤ descendantsAverage Q j G := by
   unfold descendantsAverage
-  show ((descendantsAtDepth Q j).card : ℝ)⁻¹ * (descendantsAtDepth Q j).sum F ≤
+  change ((descendantsAtDepth Q j).card : ℝ)⁻¹ * (descendantsAtDepth Q j).sum F ≤
     ((descendantsAtDepth Q j).card : ℝ)⁻¹ * (descendantsAtDepth Q j).sum G
   refine mul_le_mul_of_nonneg_left (Finset.sum_le_sum h) ?_
   exact inv_nonneg.mpr (Nat.cast_nonneg _)

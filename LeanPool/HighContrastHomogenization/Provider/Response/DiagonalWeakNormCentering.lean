@@ -37,7 +37,7 @@ variable {d : ℕ}
 
 /-- The average on one child of the metric-root image of the centered
 canonical state is the metric-root image of the difference of averages. -/
-theorem blockCellAverage_metricRoot_centered_diagonalWeakState [NeZero d]
+theorem blockCellAverage_metricRoot_centered_diagonalWeakState
     {q : Mat d} (hq : q.PosDef) {k t : ℤ} (hkt : k ≤ t)
     {w : Fin d → ℤ} (hw : w ∈ alignedIndex q k t) {S : Mat d}
     {a : CoeffSpace d} (p r : Vec d) :
@@ -189,7 +189,7 @@ theorem normalized_scaleTerm_metricRoot_centered_diagonalWeakState_le [NeZero d]
 
 end
 
-end HCPolySupport.HighContrast.Response
+end Response
 
 end HighContrast
 

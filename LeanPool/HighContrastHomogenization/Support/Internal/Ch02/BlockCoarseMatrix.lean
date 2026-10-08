@@ -272,7 +272,8 @@ private theorem weightedBlockAverage_blockReflect {d : ℕ} {U : Domain d}
 private theorem cross_transpose {d : ℕ} (K S : Mat d) (hS : S.IsSymm) :
     matTranspose (-(matTranspose K * S)) = -(S * K) := by
   ext i j
-  simp [matTranspose, Matrix.mul_apply]
+  suffices (∑ x, K x j * S x i) = ∑ x, S i x * K x j by
+    simpa [matTranspose, Matrix.mul_apply] using congrArg (fun t : ℝ => -t) this
   refine Finset.sum_congr rfl ?_
   intro x _hx
   rw [hS.apply]
@@ -750,12 +751,12 @@ private theorem doubled_block_quadratic_algebra {d : ℕ} (A : BlockMat d)
             (blockMatVecMul (blockReflect A) (r, s)) -
         blockVecDot (p, q) (r, s) := by
   rcases A with ⟨ul, ur, ll, lr⟩
-  simp [blockMatFlipFlux, blockReflect, blockMatVecMul, blockVecDot,
-    matVecMul_add, matVecMul_neg, neg_matVecMul,
+  simp only [blockMatFlipFlux, blockReflect, blockMatVecMul, blockVecDot]
+  simp only [sub_eq_add_neg, matVecMul_add, matVecMul_neg, neg_matVecMul,
     vecDot_add_left, vecDot_add_right, vecDot_neg_left, vecDot_neg_right,
-    sub_eq_add_neg]
+    neg_neg]
   rw [vecDot_comm s q]
-  ring_nf
+  ring
 
 private theorem doubled_response_splitting {d : ℕ}
     (U : Domain d) (a : CoeffOn U) (P Q : BlockVec d) :

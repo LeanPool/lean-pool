@@ -142,7 +142,7 @@ theorem blockMatLoewnerLE_blockSharp_of_signed {H : BlockMat d}
       -vecDot X.1 X.2 ≤ 1 / 2 * blockVecDot X (blockMatVecMul H X)) :
     BlockMatLoewnerLE (blockSharp H) H := by
   intro X
-  show 1 / 2 * blockVecDot X (blockMatVecMul (blockSharp H) X) ≤
+  change 1 / 2 * blockVecDot X (blockMatVecMul (blockSharp H) X) ≤
     1 / 2 * blockVecDot X (blockMatVecMul H X)
   by_cases hdet : IsUnit (toFullBlockMat H).det
   · have hHW := blockMatVecMul_blockMatInv hdet ((X.2, X.1) : BlockVec d)

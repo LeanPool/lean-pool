@@ -665,7 +665,7 @@ private theorem hatExcess_floor_nat_add {d : ℕ} {P : Measure (CoeffSpace d)} {
     (Int.natCast_nonneg m))
   simpa only [hatExcess, hatExcessAt] using hfloor ((N₀ : ℤ) + (m : ℤ)) hscale
 
-private theorem capsDeepConstant_le_one_of_kill {d : ℕ} [NeZero d] [Nonempty (Fin d)] (Cd g : ℝ)
+private theorem capsDeepConstant_le_one_of_kill {d : ℕ} [NeZero d] (Cd g : ℝ)
   (q : Mat d) (G H D n : ℕ) (split : ℤ) (N₀ : ℕ) (hCd : 1 ≤ Cd) (hg1 : g < 1) (hq : q.PosDef)
   (hGD : G + 1 = D) (hN₀ : (N₀ : ℤ) = split) (hbC : boundaryConst Cd g q ≤ (3 : ℝ) ^ (G + 1 :
   ℕ)) (hnH : H ≤ n) (hkill : (10 * (3 : ℝ) ^ (2 * D + H) : ℝ) ≤ (3 : ℝ) ^ ((1 / 2 : ℝ) * ((n :
@@ -935,7 +935,7 @@ private theorem two_add_mul_le_rpow_two_add {a k base c : ℝ}
   linarith only [h1, h2.le, h2.ge, h4.le, h4.ge, h5, hx]
 
 private theorem endpoint_reference_ellipticity_bounds (d : ℕ)
-    [NeZero d] [Nonempty (Fin d)]
+    [NeZero d]
     {gB : ℝ}
     {Pbase : Measure (CoeffSpace d)} [IsProbabilityMeasure Pbase]
     {Ebase : BlockMat d} {Ψbase : ℝ → ℝ} {Kbase : ℝ}
@@ -967,7 +967,7 @@ private theorem endpoint_reference_ellipticity_bounds (d : ℕ)
   exact ⟨haspect1, hKbase1, haK1, hbase3, hEsym, hEpd, hEfullpd, hskew⟩
 
 private theorem endpoint_recentered_integrability (d : ℕ)
-    [NeZero d] [Nonempty (Fin d)]
+    [NeZero d]
     {cIso gB : ℝ}
     (hcIso0 : (0 : ℝ) ≤ cIso)
     {Pbase : Measure (CoeffSpace d)} [IsProbabilityMeasure Pbase]
@@ -1061,7 +1061,7 @@ private theorem endpoint_recentered_contrast_geometry (d : ℕ)
     rw [hbcE']
     exact hblock
   have hrefE' : refContrast Erec - 1 ≤ cSc := by
-    show blockContrast _ - 1 ≤ cSc
+    change blockContrast _ - 1 ≤ cSc
     linarith only [hblock']
   have hrefE'48 := hrefE'.trans hcSc48
   have hsharpBase : BlockMatLoewnerLE (blockSharp Ebase) Ebase :=
@@ -1084,7 +1084,6 @@ private theorem endpoint_recentered_contrast_geometry (d : ℕ)
     heccA, hmAlpd', heccA'⟩
 
 private theorem endpoint_burned_growth_bounds (d : ℕ)
-    [NeZero d] [Nonempty (Fin d)]
     {cW : ℝ}
     {gB : ℝ}
     {Cdv : ℝ}
@@ -1157,7 +1156,6 @@ private theorem endpoint_burned_growth_bounds (d : ℕ)
 
 private theorem endpoint_adapted_entry_scale_cost (d : ℕ)
     {lAl : ℤ}
-    [NeZero d] [Nonempty (Fin d)]
     {CBF cSc cburn cW : ℝ}
     {gB : ℝ}
     {Cdv : ℝ}
@@ -1345,7 +1343,6 @@ private theorem endpoint_adapted_entry_scale_cost (d : ℕ)
     hbaseK', hlAlcap⟩
 
 private theorem endpoint_actual_recursion_constant_bounds (d : ℕ)
-    [NeZero d] [Nonempty (Fin d)]
     {Cpre eta delta0 : ℝ} {H : ℕ}
     {cIso M₀ R conv gB Abar : ℝ}
      {cAbar : ℕ}
@@ -1423,7 +1420,7 @@ private theorem endpoint_actual_recursion_constant_bounds (d : ℕ)
   exact ⟨hMsc0, hAle, hA1', hgs3', hcA24'⟩
 
 private theorem endpoint_actual_source_and_rate_bounds (d : ℕ)
-    [NeZero d] [Nonempty (Fin d)]
+    [Nonempty (Fin d)]
     {Cpre eta CsubF delta0 : ℝ} {H : ℕ}
     {cIso L M₀ R Mabs conv gB Abar beta2 MscBar CvBar Ssrc0bar : ℝ}
     {rateBar Cdv : ℝ}
@@ -1680,7 +1677,7 @@ private theorem endpoint_actual_source_and_rate_bounds (d : ℕ)
 
 private theorem endpoint_burned_maximum_envelope (d : ℕ) (hd : 2 ≤ d)
     {lAl : ℤ} {Gacc : ℕ}
-    [NeZero d] [Nonempty (Fin d)]
+    [NeZero d]
     {cIso R gB : ℝ}
     {Cdv : ℝ}
     (hgB : gB ∈ Set.Ico (0 : ℝ) 1)
@@ -1696,9 +1693,10 @@ private theorem endpoint_burned_maximum_envelope (d : ℕ) (hd : 2 ≤ d)
     (hdagR : HCPoly.Frozen.CoarseEllipticityDagger (recenteredLaw Pbase hskew) gB
       (Response.skewBlockCongr (canonicalShear Ebase) Ebase) Ψbase Kbase (recenteredSource Sbase
         hskew))
-    (hkZlAl : (kZero d : ℤ) ≤ sKfd + 1 + gap)
-    (hGaccD : (burnSplitDepth d Cdv gB (aspectRatio Ebase) - 1) + 1 =
-      burnSplitDepth d Cdv gB (aspectRatio Ebase))
+    (_hlAldef : lAl = sKfd + 1 + gap)
+    (hkZlAl : (kZero d : ℤ) ≤ lAl)
+    (hGaccdef : Gacc = burnSplitDepth d Cdv gB (aspectRatio Ebase) - 1)
+    (hGaccD : Gacc + 1 = burnSplitDepth d Cdv gB (aspectRatio Ebase))
     (hw : IsCoupledWindow d 1 Kbase (burnSplitAnchor d 1 Kbase (burnSplitDepth d Cdv gB
       (aspectRatio Ebase))) (burnSplitAnchor d 1 Kbase (burnSplitDepth d Cdv gB (aspectRatio
       Ebase)) + ((2 * burnSplitDepth d Cdv gB (aspectRatio Ebase) : ℕ) : ℤ)))
@@ -1788,7 +1786,6 @@ private theorem endpoint_burned_maximum_envelope (d : ℕ) (hd : 2 ≤ d)
 
 private theorem endpoint_corrected_initial_ledger_bound (d : ℕ) (hd : 2 ≤ d)
     {Gacc : ℕ}
-    [NeZero d] [Nonempty (Fin d)]
     {Cpre eta CsubF delta0 cW CBrev : ℝ} {H : ℕ}
     {cIso M₀ R conv gB beta2 : ℝ}
     {rateBar Cdv CdvZ C5 CE CF cF CnsC cns : ℝ}
@@ -1980,7 +1977,7 @@ private theorem endpoint_corrected_initial_ledger_bound (d : ℕ) (hd : 2 ≤ d)
 
 private theorem endpoint_corrected_entry_power_cap (d : ℕ) (hd : 2 ≤ d)
     {lAl : ℤ} {Gacc : ℕ}
-    [NeZero d] [Nonempty (Fin d)]
+    [NeZero d]
     {cburn cW cC6u : ℝ}
     {gB : ℝ}
     {Cdv iexp CdvZ C5 C6 c6 CentryCap : ℝ}
@@ -2071,7 +2068,7 @@ private theorem endpoint_corrected_entry_power_cap (d : ℕ) (hd : 2 ≤ d)
 
 private theorem endpoint_corrected_outer_transfer_bound (d : ℕ)
     {lAl : ℤ} {Gacc : ℕ}
-    [NeZero d] [Nonempty (Fin d)]
+    [NeZero d]
     {Cpre eta CsubF cSc delta0 CBrev : ℝ} {H : ℕ}
     {cIso M₀ R conv gB beta2 : ℝ}
     {rateBar Cdv : ℝ}
@@ -2341,7 +2338,6 @@ private theorem endpoint_corrected_outer_transfer_bound (d : ℕ)
   exact htransferCap
 
 private theorem endpoint_drop_and_conversion_bounds (d : ℕ)
-    [NeZero d] [Nonempty (Fin d)]
     {delta0 : ℝ}
     {cIso conv : ℝ}
     (hdelta0_ninth : delta0 ≤ 1 / 9)
@@ -2374,7 +2370,7 @@ private theorem endpoint_drop_and_conversion_bounds (d : ℕ)
 
 private theorem endpoint_corrected_prefactor_bound (d : ℕ) (hd : 2 ≤ d)
     {lAl : ℤ}
-    [NeZero d] [Nonempty (Fin d)]
+    [NeZero d]
     {Cpre eta CsubF delta0 CBrev cC8u : ℝ} {H : ℕ}
     {cIso M₀ R conv gB beta2 : ℝ}
     {rateBar Cdv CdvZ C5 CE CF CnsC cns : ℝ}
@@ -2596,6 +2592,7 @@ private theorem endpoint_source_rate_and_offset_bounds {gB beta2 : ℝ}
 
 private theorem endpoint_decay_from_corrected_cadence (d : ℕ) (hd : 2 ≤ d)
     [NeZero d] [Nonempty (Fin d)] {g : ℝ}
+    {lAl : ℤ} {Gacc : ℕ}
     {Cpre eta CsubF cSc delta0 cburn cW CBrev cC6u cC8u : ℝ} {H : ℕ}
     {cIso L M₀ R Mabs conv gB Abar beta2 MscBar CvBar Ssrc0bar : ℝ}
     {rateBar alpha Cdv iexp CdvZ C5 C6 c6 CentryCap CE CF cF CnsC cns : ℝ}
@@ -2798,7 +2795,7 @@ private theorem endpoint_decay_from_corrected_cadence (d : ℕ) (hd : 2 ≤ d)
     (hiexp0 : 0 < iexp)
     (hcns0 : 0 ≤ cns)
     (hct20 : 0 ≤ ct2)
-    (hCprefCap0 : 0 ≤ CprefCap)
+    (_hCprefCap0 : 0 ≤ CprefCap)
     (hLdef : L = isotropyLoadScale cIso (isotropyKap2 cIso))
     (hMabsdef : Mabs = absorbedNormalizer 16 16 (designNormalizer R M₀))
     (hconvdef : conv = meanSlotConversionAt d (1 + cIso) (isotropyKap2 cIso))
@@ -2843,7 +2840,10 @@ private theorem endpoint_decay_from_corrected_cadence (d : ℕ) (hd : 2 ≤ d)
     {Sbase : CoeffSpace d → ℝ}
     (hcStar : cStar ∈ Set.Ioc 0 cSc)
     {nW nsBv nsEv nsFv ns N₀ : ℕ} {sKfd gap sKw : ℤ}
+    (hlAldef : lAl = sKfd + 1 + gap)
+    (_hGaccdef : Gacc = burnSplitDepth d Cdv gB (aspectRatio Ebase) - 1)
     (hskew : IsSkewMat (canonicalShear Ebase))
+    (hdag : HCPoly.Frozen.CoarseEllipticityDagger Pbase g Ebase Ψbase Kbase Sbase)
     (hdagR : HCPoly.Frozen.CoarseEllipticityDagger (recenteredLaw Pbase hskew) gB
       (Response.skewBlockCongr (canonicalShear Ebase) Ebase) Ψbase Kbase (recenteredSource Sbase
         hskew))
@@ -3164,7 +3164,8 @@ private theorem endpoint_decay_from_corrected_cadence (d : ℕ) (hd : 2 ≤ d)
   have hfamAct := fun (m : ℕ) (hm : ns ≤ m) (n : ℕ) (hn : ns ≤ n) =>
     hfamP hgB hdag' hstat' hkZlAl hCdvle hmAlpd' hgrid hqnorm hbC
       hQenvP hrho0 hrho1 hgBrho hsKwG hdelta0pos.le hdelta0_ninth
-      hfloorAt hCsubF0 hsubdiv hnsH hlAlnsH hlAlgen hsKwgen hm2gen 1
+      hfloorAt hCsubF0 (by simpa only [hlAldef] using hsubdiv)
+      hnsH hlAlnsH hlAlgen hsKwgen hm2gen 1
       hMcond hrefE'48 (by norm_num) (by norm_num) (by simpa only [hcIsodef] using hcIso1) hkEnt0
       hlAlsplit hsplitgen hm2split hcapsDeep hR1 hR1 (by simpa only [hcIsodef] using henvMaxP)
       S0f SStar0f K0f hS0f hStar0f hformf m hm n hn
@@ -3224,12 +3225,11 @@ private theorem endpoint_decay_from_corrected_cadence (d : ℕ) (hd : 2 ≤ d)
     exact terminal_decay_mono hrateCmp j
 
 private theorem endpoint_normalized_burn_window (d : ℕ) (hd : 2 ≤ d)
-    [NeZero d] [Nonempty (Fin d)]
     {gB : ℝ}
     {Cdv : ℝ}
     (hgB : gB ∈ Set.Ico (0 : ℝ) 1)
     (hCdvle : max 1 (12 * (d : ℝ) * Real.sqrt d) ≤ Cdv)
-    {Pbase : Measure (CoeffSpace d)} [IsProbabilityMeasure Pbase]
+    {Pbase : Measure (CoeffSpace d)}
     {Ebase : BlockMat d} {Ψbase : ℝ → ℝ} {Kbase : ℝ}
     {Sbase : CoeffSpace d → ℝ}
     (hdag : HCPoly.Frozen.CoarseEllipticityDagger Pbase gB Ebase Ψbase Kbase Sbase)
@@ -3255,7 +3255,7 @@ private theorem endpoint_normalized_burn_window (d : ℕ) (hd : 2 ≤ d)
 
 private theorem endpoint_grid_mean_integrability (d : ℕ)
     {lAl : ℤ}
-    [NeZero d] [Nonempty (Fin d)]
+    [NeZero d]
     {gB : ℝ}
     {Cdv : ℝ}
     {Pbase : Measure (CoeffSpace d)} [IsProbabilityMeasure Pbase]
@@ -3297,7 +3297,7 @@ private theorem endpoint_grid_mean_integrability (d : ℕ)
 
 private theorem endpoint_metric_and_floor_certificates (d : ℕ)
     {lAl : ℤ}
-    [NeZero d] [Nonempty (Fin d)]
+    [NeZero d]
     {cSc delta0 : ℝ}
     {cIso M₀ gB : ℝ}
     {Cdv : ℝ}
@@ -3349,7 +3349,6 @@ private theorem endpoint_metric_and_floor_certificates (d : ℕ)
   exact ⟨hM₀', hgK'2, hgK'0⟩
 
 private theorem endpoint_bootstrap_smallness_bound (d : ℕ)
-    [NeZero d] [Nonempty (Fin d)]
     {cSc delta0 : ℝ}
     (hcSc0 : 0 < cSc)
     (hdelta0def : delta0 = (d : ℝ) * bootstrapTiltPolynomial cSc ((d : ℝ) * cSc))
@@ -3629,7 +3628,7 @@ private theorem corrected_endpoint_decay_of_uniform_parameters (d : ℕ) (hd : 2
     (hkap1 : (1 : ℝ) ≤ isotropyKap2 cIso)
     (hR1 : (1 : ℝ) ≤ R)
     (hAbar1 : (1 : ℝ) ≤ Abar)
-    (hgB0 : (0 : ℝ) ≤ gB)
+    (_hgB0 : (0 : ℝ) ≤ gB)
     (hgB1 : gB < 1)
     (hrho0 : 0 < contrastRho gB)
     (hrho1 : contrastRho gB < 1)
@@ -3650,6 +3649,7 @@ private theorem corrected_endpoint_decay_of_uniform_parameters (d : ℕ) (hd : 2
     (hkap0 : (0 : ℝ) ≤ isotropyKap2 cIso)
     (hLdef : L = isotropyLoadScale cIso (isotropyKap2 cIso))
     (hM₀def : M₀ = isotropyMetricFactor cIso (1 / 48))
+    (hRdef : R = 4 / (1 + cIso))
     (hMabsdef : Mabs = absorbedNormalizer 16 16 (designNormalizer R M₀))
     (hconvdef : conv = meanSlotConversionAt d (1 + cIso) (isotropyKap2 cIso))
     (hgBdef : gB = (1 + g) / 2)
@@ -3761,7 +3761,7 @@ private theorem corrected_endpoint_decay_of_uniform_parameters (d : ℕ) (hd : 2
       omega
     have hkapBase6 : kappaRef Ebase ≤ 1 + 6 * cSc := kappaRef_le_of_refContrast_le hdag
         (by
-          show blockContrast Ebase - 1 ≤ cSc
+          change blockContrast Ebase - 1 ≤ cSc
           linarith only [hblock])
     obtain ⟨hCdv0, hm1nn, hmb0, hpowK'0, hfacnnE, hgapcap', hlAlcap0, hbase0, haspb, hbpos,
       hK'capP, hbaseK', hlAlcap⟩ :=
@@ -3840,15 +3840,21 @@ private theorem corrected_endpoint_decay_of_uniform_parameters (d : ℕ) (hd : 2
     have hdepth : (burnSplitAnchor d 1 Kbase DD + ((2 * DD : ℕ) : ℤ)) - burnSplitAnchor d 1
       Kbase DD = ((2 * DD : ℕ) : ℤ) := by omega
     obtain ⟨hQenvP, hbC', henvMaxP⟩ :=
-      endpoint_burned_maximum_envelope d hd hgB hcIso0 hgBrho hCdvle hCdv1 hskew
-        hdagR hkZlAl hGaccD hw hqnorm hqpd hdepth haspect1 hstat' hmAlpd' heccA' hRdef
-    exact endpoint_decay_from_corrected_cadence d hd hCpre1 heta
+      endpoint_burned_maximum_envelope d hd
+        (lAl := lAl) (Gacc := Gacc) (sKfd := sKfd) (gap := gap)
+        hgB hcIso0 hgBrho hCdvle hCdv1 hskew
+        hdagR hlAldef hkZlAl hGaccdef hGaccD hw hqnorm hqpd hdepth
+        haspect1 hstat' hmAlpd' heccA' hRdef
+    exact endpoint_decay_from_corrected_cadence d hd
+      (g := gB) (lAl := lAl) (Gacc := Gacc) (sKfd := sKfd) (gap := gap)
+      hCpre1 heta
       hCsubF0 hcSc48 hdelta0_ninth hdelta0_gs3 hdelta0pos hcW0 hCBrev0 hcC6uP hcC8uP hfamP hCBrevP
       hgB hcIso0 hcIso1 hkap1 hR1 hAbar1 hgB1 hrho0 hrho1 hgBrho halphaB hbeta20 hrateBar0 hCdvle
       hCdv1 hzetagB hiexp0 hcns0 hct20 hCprefCap0 hLdef hMabsdef hconvdef hAbardef hbeta2def
       hMscBardef hCvBardef hSsrc0bardef hcAbardef hrateBardef hiexpdef hCdvZdef hC5def hC6def hc6def
       hCentryCapdef hCEdef hCFdef hcFdef hCnsCdef hcnsdef hCt1def hCXdef hct2def hCt2udef hC7def
-      hC8def hCprefCapdef hcStar hskew hdagR hsharpE' hS0f hStar0f hformf hrecE' hgrid hkZlAl hlAlN₀
+      hC8def hCprefCapdef hcStar hlAldef hGaccdef
+      hskew hdag hdagR hsharpE' hS0f hStar0f hformf hrecE' hgrid hkZlAl hlAlN₀
       hN₀Z hGaccD hsKwF hsKwG hsKwC hnsH hnsE hnsF hnsSum hnsBvCap hnsEvCap hnsEvKill hnsFvLow
       hnsFvCap hlAlnsH hlAlgen hsKwgen hsplitgen hfloorAt henvC hcompC hsubdiv hw hnn hlAl0 hqnorm
       hkEnt0 hfin' hM₀' hgK'2 hm2gen hMcond haspect1 hbase3 hstat' hunit' hE'sym hE'pd hbS hannR
@@ -4012,7 +4018,8 @@ theorem endpoint_hcore_body_corrected_core (d : ℕ) (hd : 2 ≤ d) : ∀ g : �
       hcSc0 hcSc48 hdelta0def hdelta0_ninth hdelta0_gs3 hdelta0pos hcburn0 hcW0 hCBrev0 hcC6uP
       hcC8uP hfamP hdataP hcburnP hcWP hCBrevP hgB hcIso0 hcIso1 hkap1 hR1 hAbar1 hgB0 hgB1 hrho0
       hrho1 hgBrho halphaB hbeta20 hrateBar0 hCdvle hCdv1 hzetagB hiexp0 hcns0 hct20 hCprefCap0
-      hsigma0 hcEnt0 hcF0 hkap0 hLdef hM₀def hMabsdef hconvdef hgBdef hAbardef hbeta2def hMscBardef
+      hsigma0 hcEnt0 hcF0 hkap0 hLdef hM₀def hRdef hMabsdef hconvdef hgBdef hAbardef
+      hbeta2def hMscBardef
       hCvBardef hSsrc0bardef hcAbardef hrateBardef halphadef hiexpdef hCdvZdef hC5def hC6def hc6def
       hCentryCapdef hCEdef hCFdef hcFdef hCnsCdef hcnsdef hCt1def hCXdef hct2def hCt2udef hC7def
       hC8def hCprefCapdef hCdelaySdef hcIsodef

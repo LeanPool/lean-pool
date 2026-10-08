@@ -70,8 +70,8 @@ annealed CELL part — the flat average over the depth-`H` subcells of `(⨍ φ 
 mean of the coordinate — plus the annealed OSCILLATION part — the flat average over the subcells
 of the subcell mean of `(φ - ⨍ φ)` times the coordinate.  The two parts are kept as separate
 functions added with `+`, as the row assembly consumes them separately. -/
-theorem integral_cutoffStateMeanAux_sub_respYMinus_eq_cell_add_osc {d : ℕ} [NeZero d]
-    (P : Measure (CoeffSpace d)) [IsProbabilityMeasure P] (jStar : ℕ) (F : BlockMat d)
+theorem integral_cutoffStateMeanAux_sub_respYMinus_eq_cell_add_osc {d : ℕ}
+    (P : Measure (CoeffSpace d)) (jStar : ℕ) (F : BlockMat d)
     (H : ℕ) (s t : ℤ) (ht : t = s + (H : ℤ)) (e : Vec d) (φ : Vec d → ℝ)
     (uM : (a : CoeffSpace d) → AHarmonicFunction (respCoeffMinus F a) (respCell jStar F t))
     (hY : respYMinus P jStar F t e
@@ -288,8 +288,8 @@ of the terminal optimizer state for the adjoint recentred coefficient `respCoeff
 annealed cutoff-mean defect splits, in each coordinate, into the annealed CELL part — the flat
 average over the depth-`H` subcells of `(⨍ φ - 1)` times the subcell mean of the coordinate — plus
 the annealed OSCILLATION part, the two kept as separate functions. -/
-theorem integral_cutoffStateMeanAux_sub_respYPlus_eq_cell_add_osc {d : ℕ} [NeZero d]
-    (P : Measure (CoeffSpace d)) [IsProbabilityMeasure P] (jStar : ℕ) (F : BlockMat d)
+theorem integral_cutoffStateMeanAux_sub_respYPlus_eq_cell_add_osc {d : ℕ}
+    (P : Measure (CoeffSpace d)) (jStar : ℕ) (F : BlockMat d)
     (H : ℕ) (s t : ℤ) (ht : t = s + (H : ℤ)) (e : Vec d) (φ : Vec d → ℝ)
     (uP : (a : CoeffSpace d) → AHarmonicFunction (respCoeffPlus F a) (respCell jStar F t))
     (hY : respYPlus P jStar F t e
@@ -564,7 +564,7 @@ the self-pairing of `Y`.  This is the identity consumed by the integrated decomp
 `e.response.cutoff.estimate`; the cell and the coefficient are arbitrary and the only hypotheses
 are the integrabilities of the cutoff, the sample functions and the coordinates of the optimizer
 state. -/
-theorem cutoff_halfPairing_eq_sub_aux {d : ℕ} [NeZero d] (U : Set (Vec d)) (φ : Vec d → ℝ)
+theorem cutoff_halfPairing_eq_sub_aux {d : ℕ} (U : Set (Vec d)) (φ : Vec d → ℝ)
     (Y : BlockVec d) {b : CoeffField d} (v : AHarmonicFunction b U)
     (hmean : volumeAverage U φ = 1)
     (hφ : IntegrableOn φ U)

@@ -126,7 +126,7 @@ theorem real_preYoung_of_compact
 /-- Finite uniform profile bounds and the compact pre-Young estimates give a
 real bound for the calibrated primal--adjoint response supremum. -/
 theorem centered_response_sup_le_of_reabsorbed_compact_preYoung
-    [NeZero d] {P : Measure (CoeffSpace d)} [IsProbabilityMeasure P]
+    [NeZero d] {P : Measure (CoeffSpace d)}
     (U : Domain d) {S SStar K : Mat d}
     {C expo eta D L W Z : ℝ}
     (hC : 0 ≤ C) (hexpo : 0 ≤ expo) (hexpoOne : expo ≤ 1)

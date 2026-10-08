@@ -73,10 +73,10 @@ theorem quenched_block_row_le_stoppingGeneration_of_endpoint_family [NeZero d]
     (hCblk : 4 * (3 : ℝ) ^ eta *
         (1 - (3 : ℝ) ^ (-(rho - gamma)))⁻¹ ≤ Cblk)
     (hfallback : ∀ m : ℕ, nstar ≤ m → S a ≤ (3 : ℝ) ^ m →
-      quenched_block_row rho Abar (S a) a m ≤
+      quenchedBlockRow rho Abar (S a) a m ≤
         Cblk * delta * (3 : ℝ) ^ ((eta / (L : ℝ)) * (qfb : ℝ))) :
     ∀ m : ℕ, nstar ≤ m →
-      quenched_block_row rho Abar (S a) a m ≤
+      quenchedBlockRow rho Abar (S a) a m ≤
         Cblk * delta *
           (3 : ℝ) ^ (-(eta / (L : ℝ)) *
             ((m : ℝ) -
@@ -126,11 +126,11 @@ theorem quenched_block_row_le_stoppingGeneration_of_endpoint_family [NeZero d]
         have ht := htolDecay
         rw [← hnstar] at ht
         linarith only [ht]
-      have hmain : quenched_block_row rho Abar (S a) a m ≤
+      have hmain : quenchedBlockRow rho Abar (S a) a m ≤
           Cblk * delta * (3 : ℝ) ^ (-(eta / (L : ℝ)) *
             ((n : ℝ) - (nstar : ℝ))) := by
         calc
-          quenched_block_row rho Abar (S a) a m ≤
+          quenchedBlockRow rho Abar (S a) a m ≤
               2 * (endpointTolerance delta eta q0 L n +
                 endpointTolerance delta eta q0 L n) *
                 (1 - (3 : ℝ) ^ (-(rho - gamma)))⁻¹ := hrow
@@ -169,7 +169,7 @@ theorem quenched_block_row_le_stoppingGeneration_of_endpoint_family [NeZero d]
       convert hfb using 1
       congr 2
       ring
-  · unfold quenched_block_row
+  · unfold quenchedBlockRow
     rw [ite_eq_right hsource]
     exact mul_nonneg (mul_nonneg hCblkPos.le hdelta.le)
       (Real.rpow_nonneg (by norm_num) _)

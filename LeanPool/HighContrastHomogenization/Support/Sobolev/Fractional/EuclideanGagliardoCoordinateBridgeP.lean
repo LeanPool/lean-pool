@@ -411,7 +411,7 @@ theorem cubeAmbientHilbertWspESeminorm_rpow_eq_lintegral {d : ℕ}
 
 /-- Powered Euclidean fractional energy is bounded by the intermediate
 ambient-distance Hilbert energy. -/
-theorem cubeEuclideanWspESeminorm_rpow_le_ambientHilbert {d : ℕ} [NeZero d]
+theorem cubeEuclideanWspESeminorm_rpow_le_ambientHilbert {d : ℕ}
     (Q : TriadicCube d) (s : FractionalOrder) (p : FiniteLpExponent)
     (F : Vec d → Vec d)
     (hF : AEStronglyMeasurable (cubeEuclideanWspKernel s p F)

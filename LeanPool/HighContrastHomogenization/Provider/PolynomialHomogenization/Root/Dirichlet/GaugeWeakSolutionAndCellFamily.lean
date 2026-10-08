@@ -79,7 +79,7 @@ theorem exists_frozenWitnessGaugeWeakSolution
 row 4′ and the gauge-reduced source of
 `exists_gaugeReducedSource`, the `_v2` cell family exists over the frozen
 witness's ruled system.  This is the `aCell` premise/`wCell`/`hfamily` triple. -/
-theorem exists_frozenWitnessCellFamily [NeZero d]
+theorem exists_frozenWitnessCellFamily
     {abar : Mat d} (hS : (symmPart abar).PosDef)
     {epsilon : ℝ} (hepsilon : 0 < epsilon) {a : CoeffSpace d}
     {Uhat : Set (Vec d)} {rho Rad : ℝ}

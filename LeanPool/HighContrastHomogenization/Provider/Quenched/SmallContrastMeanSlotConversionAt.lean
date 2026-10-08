@@ -60,8 +60,8 @@ theorem meanSlotConversionAt_nonneg (d : ℕ) {cF kap : ℝ} (hcF0 : 0 ≤ cF)
 /-- **The generic half of the conversion.**  Once the reference is dominated by
 a multiple of the adapted mean, the normalized variance transfers with that
 multiple and a dimensional Schatten factor. -/
-theorem scaleVariance_mean_le_of_comparability [NeZero d]
-    {P : Measure (CoeffSpace d)} [IsProbabilityMeasure P]
+theorem scaleVariance_mean_le_of_comparability
+    {P : Measure (CoeffSpace d)}
     {q : Mat d} {t : ℤ}
     (hEt : Book.Ch02.BlockPosDef (adaptedMean P q t))
     {F : BlockMat d} (hFsym : IsSymmetricBlockMat F)
@@ -189,8 +189,8 @@ theorem scaleVariance_mean_le_of_comparability [NeZero d]
 /-- **The conversion at a supplied comparability constant.**  The caller's
 constant replaces the entry route's `kap2Value`, and with it every geometric
 carrier leaves the conversion factor. -/
-theorem entry_scaleVariance_mean_le_reference_at [NeZero d]
-    {P : Measure (CoeffSpace d)} [IsProbabilityMeasure P]
+theorem entry_scaleVariance_mean_le_reference_at
+    {P : Measure (CoeffSpace d)}
     {q : Mat d} {E : BlockMat d} {t : ℤ}
     (hEt : Book.Ch02.BlockPosDef (adaptedMean P q t))
     {F : BlockMat d} (hFsym : IsSymmetricBlockMat F)
@@ -223,8 +223,8 @@ theorem entry_scaleVariance_mean_le_reference_at [NeZero d]
     (mul_nonneg hcF0 hkap0) hF2le hXm
 
 /-- **The mean slot at a supplied comparability constant.** -/
-theorem entry_supply_mean_slot_bound_at [NeZero d]
-    {P : Measure (CoeffSpace d)} [IsProbabilityMeasure P]
+theorem entry_supply_mean_slot_bound_at
+    {P : Measure (CoeffSpace d)}
     {q : Mat d} {E : BlockMat d} {t : ℤ}
     (hEt : Book.Ch02.BlockPosDef (adaptedMean P q t))
     {F : BlockMat d} (hFsym : IsSymmetricBlockMat F)

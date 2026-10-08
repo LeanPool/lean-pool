@@ -87,8 +87,8 @@ theorem exists_physical_scale_of_coupled_mixing_witness
     {rho cMix cd eta kappa delta Cann Cmix C cSrc : ℝ}
     {Abar : BlockMat d} {N : ℕ}
     (W : CoupledMixingScaleWitness P
-      (fun m a => quenched_block_row rho Abar
-        (max 1 (S a / (3 : ℝ) ^ N)) (physical_scale_coeff N a) m)
+      (fun m a => quenchedBlockRow rho Abar
+        (max 1 (S a / (3 : ℝ) ^ N)) (physicalScaleCoefficient N a) m)
       cMix cd eta kappa delta)
     (hkappa : 0 < kappa) (hdelta : delta ∈ Set.Ioo (0 : ℝ) 1)
     (hN : (3 : ℝ) ^ N ≤ (2 + aspectRatio E * K) ^ Cann)
@@ -97,7 +97,7 @@ theorem exists_physical_scale_of_coupled_mixing_witness
     (hC : 1 < C) (hcMix : cMix ≤ C)
     (hcSrcOne : 1 < cSrc) (hcSrcC : cSrc < C) :
     ∃ (Lpoly : ℝ) (Ssrc X : CoeffSpace d → ℝ),
-      Lpoly = coupled_physical_length N W ∧
+      Lpoly = coupledPhysicalLength N W ∧
       (∀ a, Ssrc a = max 1 (S a / (3 : ℝ) ^ N)) ∧
       (∀ a, X a = Lpoly * max 1 (max (W.scale a) (Ssrc a))) ∧
       1 ≤ Lpoly ∧
@@ -113,7 +113,7 @@ theorem exists_physical_scale_of_coupled_mixing_witness
         HasAllLaterPhysicalBlockRow rho kappa C Abar S X a := by
   obtain ⟨Ssrc, hSsrcMeas, hSsrcOne, hSsrcEq, hSsrcTail⟩ :=
     exists_restored_source_scale hdagger N
-  let Lpoly : ℝ := coupled_physical_length N W
+  let Lpoly : ℝ := coupledPhysicalLength N W
   let X : CoeffSpace d → ℝ := fun a =>
     Lpoly * max 1 (max (W.scale a) (Ssrc a))
   have hLpolyOne : 1 ≤ Lpoly := by
@@ -139,7 +139,7 @@ theorem exists_physical_scale_of_coupled_mixing_witness
     calc
       Lpoly ≤ (2 + aspectRatio E * K) ^ Cann *
           (2 + aspectRatio E * K) ^ Cmix := by
-        simpa only [Lpoly, coupled_physical_length] using hproduct
+        simpa only [Lpoly, coupledPhysicalLength] using hproduct
       _ = (2 + aspectRatio E * K) ^ (Cann + Cmix) := by
         rw [Real.rpow_add hbasePos]
       _ ≤ (2 + aspectRatio E * K) ^ C :=
@@ -170,10 +170,10 @@ theorem exists_physical_scale_of_coupled_mixing_witness
     hkappa hdelta.1 hdeltaC
   have hSsrcFun : Ssrc = fun a => max 1 (S a / (3 : ℝ) ^ N) :=
     funext hSsrcEq
-  have hXEq : X = coupled_physical_scale N W Ssrc := by
+  have hXEq : X = coupledPhysicalScale N W Ssrc := by
     funext a
-    simp only [X, Lpoly, coupled_physical_length, coupled_physical_scale,
-      coupled_normalized_scale]
+    simp only [X, Lpoly, coupledPhysicalLength, coupledPhysicalScale,
+      coupledNormalizedScale]
     ring
   have hrowAE' :
       ∀ᵐ a ∂P,

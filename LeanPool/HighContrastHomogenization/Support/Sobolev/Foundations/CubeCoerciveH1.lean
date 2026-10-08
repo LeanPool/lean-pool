@@ -110,7 +110,7 @@ noncomputable def originCubeMeanZeroH1CoerciveEstimate
     simpa [volumeMeasureOn] using
       (isOpenBoundedConvexDomain_openCubeSet (originCube d m)).isFiniteMeasure_restrict_volume
   exact
-    h1CoerciveEstimate_of_isOpenBoundedConvexDomain
+    h1CoerciveEstimateOfOpenBoundedConvexDomain
       (U := openCubeSet (originCube d m))
       (isOpenBoundedConvexDomain_openCubeSet_originCube_scale d m)
 

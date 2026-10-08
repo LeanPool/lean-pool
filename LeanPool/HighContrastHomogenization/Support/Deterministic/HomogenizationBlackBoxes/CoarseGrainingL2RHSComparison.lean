@@ -1093,7 +1093,7 @@ End-to-end localized comparison corridor with the scale-sharp forcing
 localization kept in the final scalar bound.
 -/
 theorem solution_diff_l2_le_dualityConstant_mul_energy_add_weightedParent
-    {d : ℕ} [NeZero d] {Cdual : ℝ}
+    {d : ℕ} {Cdual : ℝ}
     (hdual : ScalarSolutionComparisonDualityEstimate d Cdual)
     (Q : TriadicCube d) (a : CoeffField d) (a0 : Mat d) (sigma0 : ℝ)
     (gradU gradV g : Vec d → Vec d) {s : ℝ} (j : ℕ)
@@ -1261,7 +1261,7 @@ theorem CoarseFluxRHSBound_le_coarseGrainingFluxBound_of_boundedAbove
 component-average bounds.
 -/
 theorem solution_diff_l2_le_coarseGrainingL2Rhs_of_descendant_fluxRHSBound_of_average
-    {d : ℕ} [NeZero d] {Cdual : ℝ}
+    {d : ℕ} {Cdual : ℝ}
     (hdual : ScalarSolutionComparisonDualityEstimate d Cdual)
     (Q : TriadicCube d) (a : CoeffField d) (a0 : Mat d) (sigma0 : ℝ)
     (gradU gradV g : Vec d → Vec d) {s : ℝ} (j : ℕ)

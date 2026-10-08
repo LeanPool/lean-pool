@@ -41,7 +41,7 @@ variable {d : ℕ}
 solution energy is inserted. -/
 @[expose]
 noncomputable def ruledPhysicalFluxResponseCoefficient
-    [NeZero d] {U : Set (Vec d)} {rho Rad : ℝ}
+    {U : Set (Vec d)} {rho Rad : ℝ}
     (system : EnlargedMarginRuledTriadicWhitneySystem U rho Rad)
     (b r Cflux : ℝ) (responseBound : system.CellIndex → ℝ)
     (i : system.CellIndex) : ℝ :=
@@ -55,7 +55,7 @@ noncomputable def ruledPhysicalFluxResponseCoefficient
 coefficient multiplying the cell solution energy. -/
 @[expose]
 def PhysicalFluxEpsilonFrameBound
-    [NeZero d] {U : Set (Vec d)} {rho Rad : ℝ}
+    {U : Set (Vec d)} {rho Rad : ℝ}
     (system : EnlargedMarginRuledTriadicWhitneySystem U rho Rad)
     (b r Cflux : ℝ) (responseBound : system.CellIndex → ℝ)
     (epsilon Xval kappaRate Kframe : ℝ) : Prop :=
@@ -69,7 +69,7 @@ def PhysicalFluxEpsilonFrameBound
 /-- The normalized row of squared cell-solution energies. -/
 @[expose]
 noncomputable def physicalCellSolutionEnergyRow
-    [NeZero d] {U : Set (Vec d)} {rho Rad : ℝ}
+    {U : Set (Vec d)} {rho Rad : ℝ}
     (system : EnlargedMarginRuledTriadicWhitneySystem U rho Rad)
     (aCell : system.CellIndex → CoeffFamily d)
     (wCell : ∀ i, ForcedCubeSolution
@@ -81,7 +81,7 @@ noncomputable def physicalCellSolutionEnergyRow
 
 /-- A uniform response factor pulls out of the normalized physical-cell row. -/
 theorem responseBoundEnergyRow_le_frame_mul_solutionEnergyRow
-    [NeZero d] {U : Set (Vec d)} {rho Rad b r Cflux : ℝ}
+    {U : Set (Vec d)} {rho Rad b r Cflux : ℝ}
     (system : EnlargedMarginRuledTriadicWhitneySystem U rho Rad)
     (responseBound : system.CellIndex → ℝ)
     (aCell : system.CellIndex → CoeffFamily d)
@@ -146,7 +146,7 @@ theorem responseBoundEnergyRow_le_frame_mul_solutionEnergyRow
 /-- The frame estimate and an energy-row estimate give the required squared
 power rate with an explicit product constant. -/
 theorem physicalFluxResponseRateAggregation
-    [NeZero d] {U : Set (Vec d)} {rho Rad b r Cflux : ℝ}
+    {U : Set (Vec d)} {rho Rad b r Cflux : ℝ}
     (system : EnlargedMarginRuledTriadicWhitneySystem U rho Rad)
     (responseBound : system.CellIndex → ℝ)
     (aCell : system.CellIndex → CoeffFamily d)

@@ -80,7 +80,7 @@ theorem responseDefectAverageAtScale_eq_responseJPartitionDefectOnDependentFamil
 
 /-- Deterministic nonnegativity of the raw response partition defect. -/
 theorem responseJPartitionDefectOnFamilyAtDepth_nonneg
-    {d : ℕ} [NeZero d] (F : Ch02.TriadicCoeffFamily d)
+    {d : ℕ} (F : Ch02.TriadicCoeffFamily d)
     (Q : TriadicCube d) (j : ℕ) (p q : Vec d) :
     0 ≤ JUpperBoundWeakNorms.responseJPartitionDefectOnFamilyAtDepth F Q j p q := by
   unfold JUpperBoundWeakNorms.responseJPartitionDefectOnFamilyAtDepth
@@ -217,7 +217,7 @@ the child cube.  This is the deterministic object whose variation energy is
 the additivity defect. -/
 @[expose]
 noncomputable def parentChildCanonicalDifferenceSolutionOnDependentFamily
-    {d : ℕ} [NeZero d] (a : RegCoeffField d)
+    {d : ℕ} (a : RegCoeffField d)
     (ha : Ch04.AELocallyUniformlyEllipticField a)
     (Q : TriadicCube d) {R : TriadicCube d} {j : ℕ}
     (hR : R ∈ descendantsAtDepth Q j) (p q : Vec d) :
@@ -260,7 +260,7 @@ noncomputable def parentChildCanonicalDifferenceSolutionOnDependentFamily
 /-- The gradient of the parent-child difference solution is the raw
 parent-minus-child canonical maximizer gradient. -/
 theorem parentChildCanonicalDifferenceSolutionOnDependentFamily_grad
-    {d : ℕ} [NeZero d] (a : RegCoeffField d)
+    {d : ℕ} (a : RegCoeffField d)
     (ha : Ch04.AELocallyUniformlyEllipticField a)
     (Q : TriadicCube d) {R : TriadicCube d} {j : ℕ}
     (hR : R ∈ descendantsAtDepth Q j) (p q : Vec d) :
@@ -291,7 +291,7 @@ theorem parentChildCanonicalDifferenceSolutionOnDependentFamily_grad
 /-- The averaged gradient of the parent-child difference solution is the raw
 parent-minus-child gradient cube average. -/
 theorem averageGradient_parentChildCanonicalDifferenceSolutionOnDependentFamily_eq_cubeAverageVec
-    {d : ℕ} [NeZero d] (a : RegCoeffField d)
+    {d : ℕ} (a : RegCoeffField d)
     (ha : Ch04.AELocallyUniformlyEllipticField a)
     (Q : TriadicCube d) {R : TriadicCube d} {j : ℕ}
     (hR : R ∈ descendantsAtDepth Q j) (p q : Vec d) :
@@ -312,7 +312,7 @@ theorem averageGradient_parentChildCanonicalDifferenceSolutionOnDependentFamily_
 /-- The averaged flux of the parent-child difference solution is the raw
 parent-minus-child flux cube average. -/
 theorem averageFlux_parentChildCanonicalDifferenceSolutionOnDependentFamily_eq_cubeAverageVec
-    {d : ℕ} [NeZero d] (a : RegCoeffField d)
+    {d : ℕ} (a : RegCoeffField d)
     (ha : Ch04.AELocallyUniformlyEllipticField a)
     (Q : TriadicCube d) {R : TriadicCube d} {j : ℕ}
     (hR : R ∈ descendantsAtDepth Q j) (p q : Vec d) :
@@ -336,7 +336,7 @@ theorem averageFlux_parentChildCanonicalDifferenceSolutionOnDependentFamily_eq_c
 /-- The variation energy of the parent-child difference solution is twice the
 local additivity half-energy. -/
 theorem variationEnergyValue_parentChildCanonicalDifferenceSolutionOnDependentFamily_eq
-    {d : ℕ} [NeZero d] (a : RegCoeffField d)
+    {d : ℕ} (a : RegCoeffField d)
     (ha : Ch04.AELocallyUniformlyEllipticField a)
     (Q : TriadicCube d) {R : TriadicCube d} {j : ℕ}
     (hR : R ∈ descendantsAtDepth Q j) (p q : Vec d) :
@@ -363,7 +363,7 @@ theorem variationEnergyValue_parentChildCanonicalDifferenceSolutionOnDependentFa
 /-- One-child averaged parent-child gradient mismatch is controlled by the
 local `σ_*^{-1}` norm and the additivity defect energy. -/
 theorem vecNormSq_cubeAverageVec_parentChildCanonicalGradientMismatchOnDependentFamily_le
-    {d : ℕ} [NeZero d] (a : RegCoeffField d)
+    {d : ℕ} (a : RegCoeffField d)
     (ha : Ch04.AELocallyUniformlyEllipticField a)
     (Q : TriadicCube d) {R : TriadicCube d} {j : ℕ}
     (hR : R ∈ descendantsAtDepth Q j) (p q : Vec d) :
@@ -404,7 +404,7 @@ theorem vecNormSq_cubeAverageVec_parentChildCanonicalGradientMismatchOnDependent
 /-- One-child averaged parent-child flux mismatch is controlled by the local
 `b` norm and the additivity defect energy. -/
 theorem vecNormSq_cubeAverageVec_parentChildCanonicalFluxMismatchOnDependentFamily_le
-    {d : ℕ} [NeZero d] (a : RegCoeffField d)
+    {d : ℕ} (a : RegCoeffField d)
     (ha : Ch04.AELocallyUniformlyEllipticField a)
     (Q : TriadicCube d) {R : TriadicCube d} {j : ℕ}
     (hR : R ∈ descendantsAtDepth Q j) (p q : Vec d) :
@@ -451,7 +451,7 @@ private theorem cubeAverage_nonneg_of_ae_nonneg {d : ℕ}
   exact MeasureTheory.integral_nonneg_of_ae hf
 
 private theorem cubeAverage_additivityDiffHalfEnergyDensityOnDependentFamily_nonneg
-    {d : ℕ} [NeZero d] (a : RegCoeffField d)
+    {d : ℕ} (a : RegCoeffField d)
     (ha : Ch04.AELocallyUniformlyEllipticField a)
     (Q : TriadicCube d) {R : TriadicCube d} {j : ℕ}
     (_hR : R ∈ descendantsAtDepth Q j) (p q : Vec d) :

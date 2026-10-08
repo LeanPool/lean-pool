@@ -220,8 +220,8 @@ theorem calibrated_pair_skew_abs {b SStar : Mat d}
   · rw [dotProduct_add, hpair, hzero, add_zero, abs_one]
 
 /-- **The recentered hatted mean quadratic in closed Schur form.** -/
-theorem hatMean_blockQuad_eq [NeZero d]
-    {P : Measure (CoeffSpace d)} [IsProbabilityMeasure P]
+theorem hatMean_blockQuad_eq
+    {P : Measure (CoeffSpace d)}
     {q : Mat d} (t : ℤ) {S SStar K : Mat d}
     (hform : toFullBlockMat (adaptedMean P q t) = schurBlock S SStar K)
     (x y : Vec d) :

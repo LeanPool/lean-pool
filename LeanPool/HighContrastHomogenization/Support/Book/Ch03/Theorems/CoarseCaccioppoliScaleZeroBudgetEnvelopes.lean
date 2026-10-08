@@ -44,7 +44,7 @@ open scoped ENNReal
 local-patch route. -/
 @[expose]
 noncomputable def boundaryScaleZeroCrossBudgetEnvelope
-    (d : ℕ) [NeZero d] : ℝ :=
+    (d : ℕ) : ℝ :=
   let Q0 : TriadicCube d := originCube d 0
   let Csol : ℝ := fullVectorPoincareCubeConstant Q0
   let Clocal : ℝ := coarseCaccioppoliLocalPatchBufferedLocalBudget Q0 Csol
@@ -54,14 +54,14 @@ noncomputable def boundaryScaleZeroCrossBudgetEnvelope
 interior route. -/
 @[expose]
 noncomputable def interiorScaleZeroCrossBudgetEnvelope
-    (d : ℕ) [NeZero d] : ℝ :=
+    (d : ℕ) : ℝ :=
   let Q0 : TriadicCube d := originCube d 0
   let Csol : ℝ := fullVectorPoincareCubeConstant Q0
   let Clocal : ℝ := coarseCaccioppoliBufferedLocalBudget Q0 Csol
   max 1 ((81 : ℝ) * 3 * Clocal)
 
 private theorem localPatchBufferedLocalBudget_unit_nonneg
-    (d : ℕ) [NeZero d] :
+    (d : ℕ) :
     0 ≤
       coarseCaccioppoliLocalPatchBufferedLocalBudget (originCube d 0)
         (fullVectorPoincareCubeConstant (originCube d 0)) := by
@@ -69,7 +69,7 @@ private theorem localPatchBufferedLocalBudget_unit_nonneg
   exact le_trans zero_le_one (le_max_left _ _)
 
 private theorem bufferedLocalBudget_unit_nonneg
-    (d : ℕ) [NeZero d] :
+    (d : ℕ) :
     0 ≤
       coarseCaccioppoliBufferedLocalBudget (originCube d 0)
         (fullVectorPoincareCubeConstant (originCube d 0)) := by
@@ -77,7 +77,7 @@ private theorem bufferedLocalBudget_unit_nonneg
   exact le_trans zero_le_one (le_max_left _ _)
 
 private theorem localPatchBufferedCrossBudgetUnit_le_envelope
-    {d : ℕ} [NeZero d] {s : ℝ} (hs_le : s ≤ 1) :
+    {d : ℕ} {s : ℝ} (hs_le : s ≤ 1) :
     coarseCaccioppoliLocalPatchBufferedCrossBudgetUnit d s ≤
       boundaryScaleZeroCrossBudgetEnvelope d := by
   let Q0 : TriadicCube d := originCube d 0
@@ -106,7 +106,7 @@ private theorem localPatchBufferedCrossBudgetUnit_le_envelope
   exact max_le (le_max_left _ _) (hterm.trans (le_max_right _ _))
 
 private theorem bufferedCrossBudgetUnit_le_envelope
-    {d : ℕ} [NeZero d] {s : ℝ} (hs_le : s ≤ 1) :
+    {d : ℕ} {s : ℝ} (hs_le : s ≤ 1) :
     coarseCaccioppoliBufferedCrossBudgetUnit d s ≤
       interiorScaleZeroCrossBudgetEnvelope d := by
   let Q0 : TriadicCube d := originCube d 0
@@ -219,6 +219,9 @@ private theorem two_endpoint_inv_mul_self_one_sub_le_inv {s : ℝ}
       field_simp [hs_ne, hs1_ne]
     _ ≤ s⁻¹ := hone_le_inv
 
+/-- Dimension-dependent envelope for the centered average front, including the cutoff gradient
+factor.
+-/
 @[expose]
 public noncomputable def centeredAverageFrontEnvelope
     (d : ℕ) (C : ℝ) : ℝ :=
@@ -308,6 +311,9 @@ private theorem centeredAverageFront_mul_den_le_envelope_mul_inv
           exact mul_le_mul_of_nonneg_left
             (inv_mul_self_one_sub_le_inv hs hs_le) henv_nonneg
 
+/-- Dimension-dependent envelope for the centered Hessian front, including the cutoff Hessian
+factor.
+-/
 @[expose]
 public noncomputable def centeredHessianFrontEnvelope
     (d : ℕ) (C : ℝ) : ℝ :=
@@ -455,6 +461,9 @@ private theorem triple_endpoint_inv_mul_self_one_sub_eq_inv {s : ℝ}
   have hs1_ne : 1 - s ≠ 0 := hs1_pos.ne'
   field_simp [hs_ne, hs1_ne]
 
+/-- Dimension-dependent envelope for the centered gradient front, including the cutoff gradient
+factor.
+-/
 @[expose]
 public noncomputable def centeredGradientFrontEnvelope
     (d : ℕ) (C : ℝ) : ℝ :=
@@ -560,9 +569,12 @@ private theorem centeredGradientFront_mul_den_le_envelope_mul_inv
       centeredGradientFrontEnvelope d C * s⁻¹ := by
           rw [triple_endpoint_inv_mul_self_one_sub_eq_inv hs hs1]
 
+/-- Boundary scale-zero alpha budget envelope formed from the three centered fronts and bounded
+below by one.
+-/
 @[expose]
 noncomputable def boundaryScaleZeroAlphaBudgetEnvelope
-    (d : ℕ) [NeZero d] : ℝ :=
+    (d : ℕ) : ℝ :=
   let Q0 : TriadicCube d := originCube d 0
   let Csol : ℝ := fullVectorPoincareCubeConstant Q0
   let Ceff : ℝ := coarseCaccioppoliLocalPatchBufferedCeffLocalBudget Q0 Csol
@@ -572,7 +584,7 @@ noncomputable def boundaryScaleZeroAlphaBudgetEnvelope
       6 * centeredGradientFrontEnvelope d Ceff))
 
 private theorem localPatchBufferedCeffLocalBudget_unit_nonneg
-    (d : ℕ) [NeZero d] :
+    (d : ℕ) :
     0 ≤
       coarseCaccioppoliLocalPatchBufferedCeffLocalBudget (originCube d 0)
         (fullVectorPoincareCubeConstant (originCube d 0)) := by
@@ -581,7 +593,7 @@ private theorem localPatchBufferedCeffLocalBudget_unit_nonneg
     (localPatchBufferedLocalBudget_unit_nonneg d)
 
 private theorem localPatchBufferedAlphaBudgetUnit_le_envelope_mul_inv
-    {d : ℕ} [NeZero d] {s : ℝ} (hs : 0 < s) (hs1 : s < 1) :
+    {d : ℕ} {s : ℝ} (hs : 0 < s) (hs1 : s < 1) :
     coarseCaccioppoliLocalPatchBufferedAlphaBudgetUnit d s ≤
       boundaryScaleZeroAlphaBudgetEnvelope d * s⁻¹ := by
   let Q0 : TriadicCube d := originCube d 0
@@ -653,9 +665,12 @@ private theorem localPatchBufferedAlphaBudgetUnit_le_envelope_mul_inv
   dsimp [Q0, Csol, Ceff, A, H, G, den, Env]
   exact max_le hone_le_Env_mul_inv hfront_le_Env
 
+/-- Interior scale-zero alpha budget envelope formed from the three centered fronts and bounded
+below by one.
+-/
 @[expose]
 noncomputable def interiorScaleZeroAlphaBudgetEnvelope
-    (d : ℕ) [NeZero d] : ℝ :=
+    (d : ℕ) : ℝ :=
   let Q0 : TriadicCube d := originCube d 0
   let Csol : ℝ := fullVectorPoincareCubeConstant Q0
   let Ceff : ℝ := coarseCaccioppoliBufferedCeffLocalBudget Q0 Csol
@@ -665,7 +680,7 @@ noncomputable def interiorScaleZeroAlphaBudgetEnvelope
       2 * centeredGradientFrontEnvelope d Ceff))
 
 private theorem bufferedCeffLocalBudget_unit_nonneg
-    (d : ℕ) [NeZero d] :
+    (d : ℕ) :
     0 ≤
       coarseCaccioppoliBufferedCeffLocalBudget (originCube d 0)
         (fullVectorPoincareCubeConstant (originCube d 0)) := by
@@ -674,7 +689,7 @@ private theorem bufferedCeffLocalBudget_unit_nonneg
     (bufferedLocalBudget_unit_nonneg d)
 
 private theorem bufferedAlphaBudgetUnit_le_envelope_mul_inv
-    {d : ℕ} [NeZero d] {s : ℝ} (hs : 0 < s) (hs1 : s < 1) :
+    {d : ℕ} {s : ℝ} (hs : 0 < s) (hs1 : s < 1) :
     coarseCaccioppoliBufferedAlphaBudgetUnit d s ≤
       interiorScaleZeroAlphaBudgetEnvelope d * s⁻¹ := by
   let Q0 : TriadicCube d := originCube d 0
@@ -746,28 +761,32 @@ private theorem bufferedAlphaBudgetUnit_le_envelope_mul_inv
   dsimp [Q0, Csol, Ceff, A, H, G, den, Env]
   exact max_le hone_le_Env_mul_inv hfront_le_Env
 
+/-- Boundary scale-zero alpha budget envelope multiplied by the number of spatial coordinates. -/
 @[expose]
 noncomputable def boundaryScaleZeroAlphaInternalEnvelope
-    (d : ℕ) [NeZero d] : ℝ :=
+    (d : ℕ) : ℝ :=
   (Fintype.card (Fin d) : ℝ) * boundaryScaleZeroAlphaBudgetEnvelope d
 
+/-- Interior scale-zero alpha budget envelope multiplied by the number of spatial coordinates. -/
 @[expose]
 noncomputable def interiorScaleZeroAlphaInternalEnvelope
-    (d : ℕ) [NeZero d] : ℝ :=
+    (d : ℕ) : ℝ :=
   (Fintype.card (Fin d) : ℝ) * interiorScaleZeroAlphaBudgetEnvelope d
 
+/-- Boundary scale-zero cross budget envelope multiplied by the number of spatial coordinates. -/
 @[expose]
 noncomputable def boundaryScaleZeroCrossInternalEnvelope
-    (d : ℕ) [NeZero d] : ℝ :=
+    (d : ℕ) : ℝ :=
   (Fintype.card (Fin d) : ℝ) * boundaryScaleZeroCrossBudgetEnvelope d
 
+/-- Interior scale-zero cross budget envelope multiplied by the number of spatial coordinates. -/
 @[expose]
 noncomputable def interiorScaleZeroCrossInternalEnvelope
-    (d : ℕ) [NeZero d] : ℝ :=
+    (d : ℕ) : ℝ :=
   (Fintype.card (Fin d) : ℝ) * interiorScaleZeroCrossBudgetEnvelope d
 
 private theorem boundaryScaleZeroAlphaInternal_le_envelope_mul_inv
-    {d : ℕ} [NeZero d] {s : ℝ} (hs : 0 < s) (hs1 : s < 1) :
+    {d : ℕ} {s : ℝ} (hs : 0 < s) (hs1 : s < 1) :
     (Fintype.card (Fin d) : ℝ) *
         coarseCaccioppoliLocalPatchBufferedAlphaBudgetUnit d s ≤
       boundaryScaleZeroAlphaInternalEnvelope d * s⁻¹ := by
@@ -781,7 +800,7 @@ private theorem boundaryScaleZeroAlphaInternal_le_envelope_mul_inv
   simpa [mul_assoc] using h
 
 private theorem interiorScaleZeroAlphaInternal_le_envelope_mul_inv
-    {d : ℕ} [NeZero d] {s : ℝ} (hs : 0 < s) (hs1 : s < 1) :
+    {d : ℕ} {s : ℝ} (hs : 0 < s) (hs1 : s < 1) :
     (Fintype.card (Fin d) : ℝ) *
         coarseCaccioppoliBufferedAlphaBudgetUnit d s ≤
       interiorScaleZeroAlphaInternalEnvelope d * s⁻¹ := by
@@ -795,7 +814,7 @@ private theorem interiorScaleZeroAlphaInternal_le_envelope_mul_inv
   simpa [mul_assoc] using h
 
 private theorem boundaryScaleZeroCrossInternal_le_envelope
-    {d : ℕ} [NeZero d] {s : ℝ} (hs_le : s ≤ 1) :
+    {d : ℕ} {s : ℝ} (hs_le : s ≤ 1) :
     (Fintype.card (Fin d) : ℝ) *
         coarseCaccioppoliLocalPatchBufferedCrossBudgetUnit d s ≤
       boundaryScaleZeroCrossInternalEnvelope d := by
@@ -809,7 +828,7 @@ private theorem boundaryScaleZeroCrossInternal_le_envelope
   exact h
 
 private theorem interiorScaleZeroCrossInternal_le_envelope
-    {d : ℕ} [NeZero d] {s : ℝ} (hs_le : s ≤ 1) :
+    {d : ℕ} {s : ℝ} (hs_le : s ≤ 1) :
     (Fintype.card (Fin d) : ℝ) *
         coarseCaccioppoliBufferedCrossBudgetUnit d s ≤
       interiorScaleZeroCrossInternalEnvelope d := by
@@ -823,28 +842,28 @@ private theorem interiorScaleZeroCrossInternal_le_envelope
   exact h
 
 private theorem localPatchBufferedAlphaBudgetUnit_nonneg
-    (d : ℕ) [NeZero d] (s : ℝ) :
+    (d : ℕ) (s : ℝ) :
     0 ≤ coarseCaccioppoliLocalPatchBufferedAlphaBudgetUnit d s := by
   unfold coarseCaccioppoliLocalPatchBufferedAlphaBudgetUnit
     coarseCaccioppoliLocalPatchBufferedAlphaBudget
   exact le_trans (by norm_num : (0 : ℝ) ≤ 1) (le_max_left _ _)
 
 private theorem bufferedAlphaBudgetUnit_nonneg
-    (d : ℕ) [NeZero d] (s : ℝ) :
+    (d : ℕ) (s : ℝ) :
     0 ≤ coarseCaccioppoliBufferedAlphaBudgetUnit d s := by
   unfold coarseCaccioppoliBufferedAlphaBudgetUnit
     coarseCaccioppoliBufferedAlphaBudget
   exact le_trans (by norm_num : (0 : ℝ) ≤ 1) (le_max_left _ _)
 
 private theorem localPatchBufferedCrossBudgetUnit_nonneg
-    (d : ℕ) [NeZero d] (s : ℝ) :
+    (d : ℕ) (s : ℝ) :
     0 ≤ coarseCaccioppoliLocalPatchBufferedCrossBudgetUnit d s := by
   unfold coarseCaccioppoliLocalPatchBufferedCrossBudgetUnit
     coarseCaccioppoliLocalPatchBufferedCrossBudget
   exact le_trans (by norm_num : (0 : ℝ) ≤ 1) (le_max_left _ _)
 
 private theorem bufferedCrossBudgetUnit_nonneg
-    (d : ℕ) [NeZero d] (s : ℝ) :
+    (d : ℕ) (s : ℝ) :
     0 ≤ coarseCaccioppoliBufferedCrossBudgetUnit d s := by
   unfold coarseCaccioppoliBufferedCrossBudgetUnit
     coarseCaccioppoliBufferedCrossBudget
@@ -857,7 +876,7 @@ majorization step is to bound it by one dimension-only constant on `0 < s`,
 `0 < t`, `s + t < 1`. -/
 @[expose]
 noncomputable def boundaryCaccioppoliScaleZeroExplicitConstant
-    (d : ℕ) [NeZero d] (s t : ℝ) : ℝ :=
+    (d : ℕ) (s t : ℝ) : ℝ :=
   let CalphaInternal : ℝ :=
     (Fintype.card (Fin d) : ℝ) *
       coarseCaccioppoliLocalPatchBufferedAlphaBudgetUnit d s
@@ -872,7 +891,7 @@ split deterministic Caccioppoli bridge with the standard beta-dependent radius
 iteration. -/
 @[expose]
 noncomputable def interiorCaccioppoliScaleZeroExplicitConstant
-    (d : ℕ) [NeZero d] (s t : ℝ) : ℝ :=
+    (d : ℕ) (s t : ℝ) : ℝ :=
   let CalphaInternal : ℝ :=
     (Fintype.card (Fin d) : ℝ) *
       coarseCaccioppoliBufferedAlphaBudgetUnit d s
@@ -883,7 +902,7 @@ noncomputable def interiorCaccioppoliScaleZeroExplicitConstant
     caccioppoliStandardExplicitNoteBoundSplit s t CalphaInternal CcrossInternal
 
 theorem boundaryCaccioppoliScaleZeroExplicitConstant_le_envelopeExplicit
-    {d : ℕ} [NeZero d] {s t : ℝ}
+    {d : ℕ} {s t : ℝ}
     (hs : 0 < s) (ht : 0 < t) (hst : s + t < 1) :
     boundaryCaccioppoliScaleZeroExplicitConstant d s t ≤
       (18 : ℝ) ^ d *
@@ -928,7 +947,7 @@ theorem boundaryCaccioppoliScaleZeroExplicitConstant_le_envelopeExplicit
   exact mul_le_mul_of_nonneg_left hnote hfactor_nonneg
 
 theorem interiorCaccioppoliScaleZeroExplicitConstant_le_envelopeExplicit
-    {d : ℕ} [NeZero d] {s t : ℝ}
+    {d : ℕ} {s t : ℝ}
     (hs : 0 < s) (ht : 0 < t) (hst : s + t < 1) :
     interiorCaccioppoliScaleZeroExplicitConstant d s t ≤
       (18 : ℝ) ^ d *

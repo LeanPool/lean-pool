@@ -49,7 +49,7 @@ private theorem cubeLpNorm_eq_of_ae_eq_on_parent_cube
       (cubeSet_subset_of_mem_descendantsAtDepth hR)
       (by simpa only [volumeMeasureOn] using! hfh)
   have hnorm : f =ᵐ[normalizedCubeMeasure R] h := by
-    show ∀ᵐ x ∂normalizedCubeMeasure R, f x = h x
+    change ∀ᵐ x ∂normalizedCubeMeasure R, f x = h x
     simpa only [normalizedCubeMeasure, cubeMeasure] using
       MeasureTheory.Measure.ae_smul_measure hvol
         (ENNReal.ofReal ((cubeVolume R)⁻¹))

@@ -85,7 +85,7 @@ one stopping ball.  The parent equation retains its exact coefficient and
 minus sign; the final equation is its restriction to the comparison parent.
 -/
 theorem reflectedParent_oneStoppingBall_inputs
-    {d : ℕ} [NeZero d] {depth : ℕ} {m : ℤ} {sigma0 : ℝ}
+    {d : ℕ} {depth : ℕ} {m : ℤ} {sigma0 : ℝ}
     {x : Vec d} {r : ℝ}
     (hx : x ∈ openCubeSet (originCube d m))
     (hr : 0 < r)

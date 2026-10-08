@@ -150,14 +150,14 @@ theorem run_output_profile (d : ℕ) (hd : 2 ≤ d) (γ : ℝ)
 /-- The determinant reserve: the sum of `h` trailing generations plus the current and initial
 generations. -/
 @[expose]
-def run_reserve (D : ℤ → ℝ) (h : ℕ) (k n : ℤ) : ℝ :=
+def runReserve (D : ℤ → ℝ) (h : ℕ) (k n : ℤ) : ℝ :=
   (∑ i ∈ Finset.range h, D (n - (i : ℤ))) + D n + D k
 
 /-- The reserve's drop across one `h`-step matches the synchronized plus one-step loss. -/
 theorem run_reserve_sync {d : ℕ} (P : Measure (CoeffSpace d)) (q : Mat d)
     (h : ℕ) (k n : ℤ) :
-    run_reserve (fun r => blockLogDet (adaptedMean P q r)) h k n -
-      run_reserve (fun r => blockLogDet (adaptedMean P q r)) h k (n + h) =
+    runReserve (fun r => blockLogDet (adaptedMean P q r)) h k n -
+      runReserve (fun r => blockLogDet (adaptedMean P q r)) h k (n + h) =
       synchCharge P q h n + detIncrement P q n (n + h) := by
   have hs : (∑ i ∈ Finset.range h,
       detIncrement P q (n - (i : ℤ)) (n + h - (i : ℤ))) =
@@ -180,26 +180,26 @@ theorem run_reserve_sync {d : ℕ} (P : Measure (CoeffSpace d)) (q : Mat d)
       congr 1
       omega
   simp only [detIncrement, Finset.sum_sub_distrib] at hs
-  unfold run_reserve detIncrement
+  unfold runReserve detIncrement
   linarith only [hs]
 
 /-- The reserve is nonnegative when `D` is. -/
 theorem run_reserve_nonneg (D : ℤ → ℝ) (h : ℕ) (k n : ℤ)
-    (hD : ∀ r, 0 ≤ D r) : 0 ≤ run_reserve D h k n := by
+    (hD : ∀ r, 0 ≤ D r) : 0 ≤ runReserve D h k n := by
   exact add_nonneg (add_nonneg (Finset.sum_nonneg fun _ _ => hD _) (hD n)) (hD k)
 
 /-- The reserve's drop over an advancing window bounds `D`'s drop. -/
 theorem run_reserve_advance (D : ℤ → ℝ) (h : ℕ) (j k n t : ℤ)
     (hmono : ∀ r s, j ≤ r → r ≤ s → D s ≤ D r)
     (_hjn : j ≤ n) (hwindow : j + (h : ℤ) ≤ n + 1) (hnt : n ≤ t) :
-    D n - D t ≤ run_reserve D h k n - run_reserve D h k t := by
+    D n - D t ≤ runReserve D h k n - runReserve D h k t := by
   have hs : (∑ i ∈ Finset.range h, D (t - (i : ℤ))) ≤
       ∑ i ∈ Finset.range h, D (n - (i : ℤ)) := by
     apply Finset.sum_le_sum
     intro i hi
     have hi' := Finset.mem_range.mp hi
     exact hmono _ _ (by omega) (by omega)
-  unfold run_reserve
+  unfold runReserve
   linarith only [hs]
 
 /-- The reserve's change across a geometry change, up to a `(h+2)Λ` jump term. -/
@@ -210,7 +210,7 @@ theorem run_reserve_change (D D' : ℤ → ℝ) (h : ℕ) (j k n u s t : ℤ) (�
     (hjs : j ≤ s) (hst : s + (h : ℤ) ≤ t)
     (hjump : D' s ≤ D u + Λ) :
     (D k - D u) + (D' s - D' t) - ((h : ℝ) + 2) * Λ ≤
-      run_reserve D h k n - run_reserve D' h s t := by
+      runReserve D h k n - runReserve D' h s t := by
   have hlo : (h : ℝ) * D u ≤ ∑ i ∈ Finset.range h, D (n - (i : ℤ)) := by
     have hh : (∑ _i ∈ Finset.range h, D u) ≤
         ∑ i ∈ Finset.range h, D (n - (i : ℤ)) := by
@@ -230,13 +230,13 @@ theorem run_reserve_change (D D' : ℤ → ℝ) (h : ℕ) (j k n u s t : ℤ) (�
   have hn := hmono n u hjn hnu
   have hjump' := mul_le_mul_of_nonneg_left hjump
     (show 0 ≤ (h : ℝ) + 2 by positivity)
-  unfold run_reserve
+  unfold runReserve
   nlinarith only [hlo, hhi, hn, hjump']
 
 /-- The reserve at the initial generation is bounded by `(h+2) D k`. -/
 theorem run_reserve_initial (D : ℤ → ℝ) (h : ℕ) (k : ℤ)
     (hmono : ∀ r, k ≤ r → D r ≤ D k) :
-    run_reserve D h k (k + h) ≤ ((h : ℝ) + 2) * D k := by
+    runReserve D h k (k + h) ≤ ((h : ℝ) + 2) * D k := by
   have hh : (∑ i ∈ Finset.range h, D (k + h - (i : ℤ))) ≤ (h : ℝ) * D k := by
     have hh' : (∑ i ∈ Finset.range h, D (k + h - (i : ℤ))) ≤
         ∑ _i ∈ Finset.range h, D k := by
@@ -246,7 +246,7 @@ theorem run_reserve_initial (D : ℤ → ℝ) (h : ℕ) (k : ℤ)
       exact hmono _ (by omega)
     simpa only [Finset.sum_const, Finset.card_range, nsmul_eq_mul] using hh'
   have hn := hmono (k + h) (by omega)
-  unfold run_reserve
+  unfold runReserve
   linarith only [hh, hn]
 
 /-- The potential is nonnegative on the retained geometry. -/
@@ -279,7 +279,7 @@ theorem run_reserve_rounded_nonneg {d : ℕ} (hd : 2 ≤ d)
     (hce : CoarseEllipticityDagger P γ E Ψ K Src)
     (jStar : ℕ) (hj : 2 * d ≤ 3 ^ jStar) (m : Mat d) (hm : m.PosDef)
     (h : ℕ) (k n : ℤ) :
-    0 ≤ run_reserve (fun r => blockLogDet (adaptedMean P (Geometry.explicitRoundedGrid jStar m) r))
+    0 ≤ runReserve (fun r => blockLogDet (adaptedMean P (Geometry.explicitRoundedGrid jStar m) r))
       h k n :=
   run_reserve_nonneg _ h k n
     (run_blockLogDet_adaptedMean_nonneg hd P γ E Ψ K Src hP hst hur hce jStar hj m hm)

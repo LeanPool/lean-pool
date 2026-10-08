@@ -28,6 +28,9 @@ open MeasureTheory
 
 noncomputable section
 
+/-- Sum of half-weighted quadratic responses for two normalizers, with reflection in the second
+response and subtraction of their mixed pairing.
+-/
 @[expose]
 noncomputable def fullBlockJTraceBudgetWithNormalizers
     {d : ℕ} (S T : FullBlockMat d) (A : BlockMat d) : ℝ :=

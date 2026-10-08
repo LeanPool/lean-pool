@@ -216,7 +216,7 @@ private theorem matrixOrder_of_blockMatLoewnerLE {d : ℕ} {A B : BlockMat d}
   simp only [star_trivial, Matrix.sub_mulVec, dotProduct_sub]
   linarith only [h]
 
-private theorem matrix_congr_le {ι : Type*} [Fintype ι] [DecidableEq ι]
+private theorem matrix_congr_le {ι : Type*} [Fintype ι]
     {A B : Matrix ι ι ℝ} (hAB : A ≤ B) (S : Matrix ι ι ℝ) (hS : S.IsHermitian) :
     S * A * S ≤ S * B * S := by
   apply Matrix.le_iff.mpr
@@ -293,9 +293,10 @@ private theorem inv_le_inv_of_le {ι : Type*} [Fintype ι] [DecidableEq ι]
   rw [mul_assoc F⁻¹ G G⁻¹, hGGi, mul_one]
   abel
 
-private theorem trace_mul_mono {ι : Type*} [Fintype ι] [DecidableEq ι]
+private theorem trace_mul_mono {ι : Type*} [Fintype ι]
     {A B H : Matrix ι ι ℝ} (hAB : A ≤ B) (hH : H.PosSemidef) :
     (A * H).trace ≤ (B * H).trace := by
+  classical
   have hR := matSqrt_spec hH
   have h := ((Matrix.le_iff.mp hAB).conjTranspose_mul_mul_same (matSqrt H)).trace_nonneg
   rw [hR.1.isHermitian.eq, Matrix.trace_mul_cycle, hR.2,

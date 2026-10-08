@@ -44,10 +44,14 @@ namespace HighContrast
 open MeasureTheory Set
 open scoped BigOperators ENNReal Matrix MatrixOrder Matrix.Norms.L2Operator
 noncomputable section
+/-- Affine primal-load transform applying the inverse transpose of `q` to the first component
+and `q` to the second. -/
 @[expose]
 public def inverseAffinePrimalLoad {d : ℕ}
     (q : Mat d) (X : BlockVec d) : BlockVec d :=
   (matVecMul (matTranspose q)⁻¹ X.1, matVecMul q X.2)
+/-- Affine dual-load transform applying `q` to the first component and its inverse transpose to
+the second. -/
 @[expose]
 public def inverseAffineDualLoad {d : ℕ}
     (q : Mat d) (X : BlockVec d) : BlockVec d :=
@@ -170,12 +174,12 @@ private theorem blockMatVecMul_constantBlockMatrix_of_isSymm
   have hsymm : symmPart A = A := symmPart_eq_of_isSymm hA
   have hskew : skewPart A = 0 := skewPart_eq_zero_of_isSymm_direct hA
   apply Prod.ext
-  · simp [Book.Ch02.constantBlockMatrix, blockMatVecMul, hsymm, hskew,
-      matTranspose]
+  · simp only [blockMatVecMul, Book.Ch02.constantBlockMatrix, hsymm, matTranspose, hskew,
+      Matrix.transpose_zero, zero_mul, mul_zero, add_zero, neg_zero, add_eq_left]
     ext i
     simp [matVecMul]
-  · simp [Book.Ch02.constantBlockMatrix, blockMatVecMul, hsymm, hskew,
-      matTranspose]
+  · simp only [blockMatVecMul, Book.Ch02.constantBlockMatrix, hsymm, matTranspose, hskew,
+      Matrix.transpose_zero, zero_mul, mul_zero, add_zero, neg_zero, add_eq_right]
     ext i
     simp [matVecMul]
 private theorem roundedAffineLoad_common_iff_constantBlock
@@ -290,14 +294,18 @@ private theorem roundedAffineLoad_common_iff_constantBlock
         _ = matVecMul L (matVecMul (L⁻¹ * L⁻¹) r) := by
           rw [matVecMul_mul]
         _ = matVecMul L pStar := by rw [hpStar]
+/-- Primal load obtained by spectral rescaling and restoration of the skew-centering
+contribution. -/
 @[expose]
-public def inverseCenteredPrimalLoad {d : ℕ} [NeZero d]
+public def inverseCenteredPrimalLoad {d : ℕ}
     (abar : Mat d) (P : BlockVec d) : BlockVec d :=
   let alpha := Real.sqrt (specBound (symmPart abar)⁻¹)
   let p := alpha • P.1
   (p, alpha⁻¹ • P.2 + matVecMul (skewPart abar) p)
+/-- Dual load obtained by rescaling its second component and restoring the skew contribution in
+the first. -/
 @[expose]
-public def inverseCenteredDualLoad {d : ℕ} [NeZero d]
+public def inverseCenteredDualLoad {d : ℕ}
     (abar : Mat d) (Q : BlockVec d) : BlockVec d :=
   let alpha := Real.sqrt (specBound (symmPart abar)⁻¹)
   let pStar := alpha • Q.2
@@ -390,7 +398,7 @@ private theorem doubledResponseJ_normalizedCenteredCoeff_inverseLoads
     centeredDualLoad_inverseCenteredDualLoad hS Q] at hscale
   simpa only [normalizedCenteredCoeff, c] using hscale.trans hskew
 private theorem canonicalNormalizedResponseLoads
-    {d : ℕ} [NeZero d] {A : Mat d} {lam Lam : ℝ}
+    {d : ℕ} {A : Mat d} {lam Lam : ℝ}
     (hA : IsEllipticMatrix lam Lam A) (e : FullBlockVec d)
     (he : Book.Ch02.fullBlockVecNormSq e = 1) :
     let P : BlockVec d := ofFullBlockVec
@@ -443,6 +451,8 @@ private theorem canonicalNormalizedResponseLoads
     change Matrix.mulVec S e = Matrix.mulVec M (Matrix.mulVec S⁻¹ e)
     rw [Matrix.mulVec_mulVec, hMSinv]
   exact ⟨hdual, hquad⟩
+/-- Physical response values on an adapted cell for primal and dual loads corresponding to the
+same unit full-block vector. -/
 @[expose]
 public def baseRoundedPhysicalResponseValueSet {d : ℕ} [NeZero d]
     {geom : RoundedGenerationAnalyticGeometry d}
@@ -1279,7 +1289,7 @@ private theorem responseSeminorm_le_matrixBudget
       (mul_le_mul_of_nonneg_left hsqrt hdiscount) herror) henergy)
 
 private theorem comparisonFlux_ae_eq_referenceGradient_add_defect
-    {d : ℕ} [NeZero d] (Q : TriadicCube d) (aRounded : Book.Ch03.CoeffFamily d)
+    {d : ℕ} (Q : TriadicCube d) (aRounded : Book.Ch03.CoeffFamily d)
     (a0 : Book.Ch03.ConstantCoeffMatrix d)
     (u v : H1Function (Book.Ch02.cubeDomain Q : Set (Vec d))) :
     Book.Ch03.homogenizationComparisonFluxField Q aRounded a0 u v

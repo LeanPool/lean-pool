@@ -88,11 +88,13 @@ theorem norm_le_one_add_trace_sub_one {A : Matrix n n ℝ} (hA : A.PosDef) (h : 
 
 /-! ## Positivity and monotonicity of the trace of a product -/
 
+omit [DecidableEq n] in
 /-- **The trace of a product of two positive semidefinite matrices is
 nonnegative.**  Cyclicity turns `tr(XB)` into the trace of the congruence
 `X^{1/2}BX^{1/2}`. -/
 theorem trace_mul_nonneg {X B : Matrix n n ℝ} (hX : X.PosSemidef) (hB : B.PosSemidef) :
     0 ≤ Matrix.trace (X * B) := by
+  classical
   obtain ⟨hroot, hsq⟩ := matSqrt_spec hX
   have hcong : (matSqrt X * B * matSqrt X).PosSemidef := by
     have h0 := hB.conjTranspose_mul_mul_same (matSqrt X)
@@ -103,6 +105,7 @@ theorem trace_mul_nonneg {X B : Matrix n n ℝ} (hX : X.PosSemidef) (hB : B.PosS
   rw [heq]
   exact hcong.trace_nonneg
 
+omit [DecidableEq n] in
 /-- **The trace against a positive semidefinite matrix is monotone.** -/
 theorem trace_mul_le_trace_mul {X M N : Matrix n n ℝ} (hX : X.PosSemidef) (h : M ≤ N) :
     Matrix.trace (X * M) ≤ Matrix.trace (X * N) := by

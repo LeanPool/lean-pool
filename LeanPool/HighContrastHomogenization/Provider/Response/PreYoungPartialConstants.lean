@@ -32,7 +32,7 @@ noncomputable section
 
 /-- The coefficient in the annealed weak-product estimate. -/
 @[expose]
-def preYoungDivCurlCoefficient (d : ℕ) [NeZero d] : ℝ :=
+def preYoungDivCurlCoefficient (d : ℕ) : ℝ :=
   1 + divCurlDimensionCoeff d * adaptedCutoffDerivativeCoeff d *
     ((51 / 50 : ℝ) * (d : ℝ) ^ 2)
 
@@ -44,7 +44,7 @@ def preYoungRowCoefficient (d : ℕ) : ℝ :=
 
 /-- A common coefficient for the weak-product and boundary-row terms. -/
 @[expose]
-def preYoungComponentCoefficient (d : ℕ) [NeZero d] : ℝ :=
+def preYoungComponentCoefficient (d : ℕ) : ℝ :=
   max (preYoungRowCoefficient d) (preYoungDivCurlCoefficient d)
 
 theorem preYoungRowCoefficient_nonneg (d : ℕ) :
@@ -52,15 +52,15 @@ theorem preYoungRowCoefficient_nonneg (d : ℕ) :
   exact mul_nonneg (adaptedCutoffDerivativeCoeff_nonneg d)
     (Real.sqrt_nonneg _)
 
-theorem preYoungRowCoefficient_le_component (d : ℕ) [NeZero d] :
+theorem preYoungRowCoefficient_le_component (d : ℕ) :
     preYoungRowCoefficient d ≤ preYoungComponentCoefficient d :=
   le_max_left _ _
 
-theorem preYoungDivCurlCoefficient_le_component (d : ℕ) [NeZero d] :
+theorem preYoungDivCurlCoefficient_le_component (d : ℕ) :
     preYoungDivCurlCoefficient d ≤ preYoungComponentCoefficient d :=
   le_max_right _ _
 
-theorem preYoungComponentCoefficient_nonneg (d : ℕ) [NeZero d] :
+theorem preYoungComponentCoefficient_nonneg (d : ℕ) :
     0 ≤ preYoungComponentCoefficient d := by
   exact (preYoungRowCoefficient_nonneg d).trans
     (preYoungRowCoefficient_le_component d)

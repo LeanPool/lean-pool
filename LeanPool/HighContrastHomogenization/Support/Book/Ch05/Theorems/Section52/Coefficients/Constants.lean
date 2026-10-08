@@ -32,6 +32,8 @@ noncomputable section
 Coefficient absorption and large-scale root coefficients.
 -/
 
+/-- Dimension-only factor absorbing the large-scale scalar coefficients after extracting the moment
+exponent and reciprocal exponent gap. -/
 @[expose]
 noncomputable def section52LargeScalarAbsorptionConst (d : ℕ) : ℝ :=
   (Fintype.card (Fin d) : ℝ) * (Fintype.card (Fin d) : ℝ) *
@@ -619,6 +621,8 @@ theorem section52UnitDescendantRosenthalBudget_nonneg {d : ℕ}
     positivity
   positivity
 
+/-- The weighted large-scale root coefficient from the Rosenthal Lp term, including descendant-count
+normalization. -/
 @[expose]
 noncomputable def section52LargeScaleLpRootCoeff
     (d ξ : ℕ) (s : ℝ) (m : ℕ) (n : ℤ) : ℝ :=
@@ -630,6 +634,8 @@ noncomputable def section52LargeScaleLpRootCoeff
           (((descendantsAtScale (originCube d n) 0).card : ℝ) ^
             (1 / (ξ : ℝ))) * 2)))
 
+/-- The weighted large-scale root coefficient from the Rosenthal square-root term, including
+descendant-count normalization. -/
 @[expose]
 noncomputable def section52LargeScaleSqrtRootCoeff
     (d ξ : ℕ) (s : ℝ) (m : ℕ) (n : ℤ) : ℝ :=
@@ -640,6 +646,7 @@ noncomputable def section52LargeScaleSqrtRootCoeff
         (Ch04.rosenthalDescendantsAtScaleSqrtConst d 0 ξ *
           Real.sqrt ((descendantsAtScale (originCube d n) 0).card : ℝ) * 2)))
 
+/-- The combined Lp and square-root contributions to the large-scale root coefficient. -/
 @[expose]
 noncomputable def section52LargeScaleRootCoeff
     (d ξ : ℕ) (s : ℝ) (m : ℕ) (n : ℤ) : ℝ :=

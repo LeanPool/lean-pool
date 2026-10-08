@@ -81,7 +81,7 @@ def activationFoldConstant (d : ℕ) (g kappaRate c : ℝ) : ℝ :=
 /-- **The activation power folds.**  Any nonnegative power of the certificate's
 activation length is a law-free constant times the eccentricity fold factor
 raised to the rate. -/
-theorem rpow_activation_le_foldFactor [NeZero d]
+theorem rpow_activation_le_foldFactor
     {abar : Mat d} {g kappaRate c : ℝ} {G L : ℕ}
     (hkappa : 0 < kappaRate) (hc : 0 ≤ c)
     (hrho : 0 ≤ Certificate.printRowOrder g)

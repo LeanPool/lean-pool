@@ -133,7 +133,7 @@ theorem metricBlockNormSq_blockCellAverage_diagonalWeakState_le [NeZero d]
 
 /-- The normalized average of the canonical state energies on an aligned
 subdivision is exactly twice the squared parent energy. -/
-theorem avsum_diagonalWeakState_energy_eq [NeZero d]
+theorem avsum_diagonalWeakState_energy_eq
     {q : Mat d} (hq : q.PosDef) {k t : ℤ} (hkt : k ≤ t)
     (a : CoeffSpace d) (p r : Vec d) :
     avsum (alignedIndex q k t) (fun w =>

@@ -63,7 +63,7 @@ private theorem ofFullBlockMat_fromBlocks (A B C D : Mat d) :
 omit [NeZero d] in
 private theorem matTranspose_neg_skew {g : Mat d} (hg : matTranspose g = -g) :
     matTranspose (-g) = -(-g) := by
-  show (-g : Mat d)ᵀ = -(-g)
+  change (-g : Mat d)ᵀ = -(-g)
   rw [Matrix.transpose_neg]
   exact congrArg Neg.neg hg
 
@@ -92,35 +92,39 @@ theorem isCoarseBlockMatrix_sub_skew {U : Set (Vec d)} {a : CoeffField d} {g : M
 omit [NeZero d] in
 /-! ### STEP 5a: moving the constant congruence through the annealing integral -/
 
+/-- Integrate a matrix-valued function entrywise with respect to the coefficient measure `P`. -/
 @[expose]
-public noncomputable def matIntegral {ι : Type*} [Fintype ι] (P : Measure (CoeffSpace d))
+public noncomputable def matIntegral {ι : Type*} (P : Measure (CoeffSpace d))
     (f : CoeffSpace d → Matrix ι ι ℝ) : Matrix ι ι ℝ :=
   Matrix.of fun i j => ∫ a, f a i j ∂P
 
 omit [NeZero d] in
-private theorem integrable_entries_mul_left {ι : Type*} [Fintype ι] [DecidableEq ι]
+private theorem integrable_entries_mul_left {ι : Type*} [Fintype ι]
     {P : Measure (CoeffSpace d)} {f : CoeffSpace d → Matrix ι ι ℝ} (c : Matrix ι ι ℝ)
     (hf : ∀ i j, Integrable (fun a => f a i j) P) :
     ∀ i j, Integrable (fun a => (c * f a) i j) P := by
+  classical
   intro i j
   simp only [Matrix.mul_apply]
   exact integrable_finsetSum _ fun k _ => (hf k j).const_mul _
 
 omit [NeZero d] in
-private theorem matIntegral_mul_right {ι : Type*} [Fintype ι] [DecidableEq ι]
+private theorem matIntegral_mul_right {ι : Type*} [Fintype ι]
     {P : Measure (CoeffSpace d)} {f : CoeffSpace d → Matrix ι ι ℝ} (c : Matrix ι ι ℝ)
     (hf : ∀ i j, Integrable (fun a => f a i j) P) :
     matIntegral P (fun a => f a * c) = matIntegral P f * c := by
+  classical
   ext i j
   simp only [matIntegral, Matrix.of_apply, Matrix.mul_apply]
   rw [MeasureTheory.integral_finsetSum _ fun k _ => (hf i k).mul_const (c k j)]
   exact Finset.sum_congr rfl fun k _ => MeasureTheory.integral_mul_const _ _
 
 omit [NeZero d] in
-private theorem matIntegral_mul_left {ι : Type*} [Fintype ι] [DecidableEq ι]
+private theorem matIntegral_mul_left {ι : Type*} [Fintype ι]
     {P : Measure (CoeffSpace d)} {f : CoeffSpace d → Matrix ι ι ℝ} (c : Matrix ι ι ℝ)
     (hf : ∀ i j, Integrable (fun a => f a i j) P) :
     matIntegral P (fun a => c * f a) = c * matIntegral P f := by
+  classical
   ext i j
   simp only [matIntegral, Matrix.of_apply, Matrix.mul_apply]
   rw [MeasureTheory.integral_finsetSum _ fun k _ => (hf k j).const_mul (c i k)]
@@ -167,7 +171,7 @@ omit [NeZero d] in
 `E[A(U_t; a - g)] = G^t E[A(U_t; a)] G`.
 The hypotheses `hquad` and `hint` are needed because `coarseBlockMatrix` is recovered from `Mu`
 only by polarization and `annealedBlockOf` integrates entries. -/
-theorem annealedBlockOf_respCoeffMinus_eq (P : Measure (CoeffSpace d)) [IsProbabilityMeasure P]
+theorem annealedBlockOf_respCoeffMinus_eq (P : Measure (CoeffSpace d))
     (jStar : ℕ) (F : BlockMat d) (t : ℤ)
     (hquad : ∀ a : CoeffSpace d, HasQuadraticMu (respCell jStar F t) (⇑a.1 : CoeffField d))
     (hint : HasIntegrableCoarseBlock P (respCell jStar F t)) :
@@ -220,7 +224,7 @@ omit [NeZero d] in
 /-- The adjoint twin (`p.response.transfer`, `Ehat_t^+ = D Ehat_t^- D`).
 The hypotheses `hquad` and `hint` are needed because `coarseBlockMatrix` is recovered from `Mu`
 only by polarization and `annealedBlockOf` integrates entries. -/
-theorem annealedBlockOf_respCoeffPlus_eq (P : Measure (CoeffSpace d)) [IsProbabilityMeasure P]
+theorem annealedBlockOf_respCoeffPlus_eq (P : Measure (CoeffSpace d))
     (jStar : ℕ) (F : BlockMat d) (t : ℤ)
     (hquad : ∀ a : CoeffSpace d, HasQuadraticMu (respCell jStar F t) (⇑a.1 : CoeffField d))
     (hint : HasIntegrableCoarseBlock P (respCell jStar F t)) :

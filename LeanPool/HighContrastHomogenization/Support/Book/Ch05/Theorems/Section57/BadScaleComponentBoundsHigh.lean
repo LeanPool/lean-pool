@@ -215,7 +215,7 @@ private theorem one_le_tailParameter_of_geometric_lower_bound
   exact hproduct.trans hlower
 
 private theorem highTop_pair_measure_le_descendant_weight
-    {d : ℕ} [NeZero d] {Ω : Type*} [MeasurableSpace Ω]
+    {d : ℕ} {Ω : Type*} [MeasurableSpace Ω]
     {μ : Measure Ω} [IsProbabilityMeasure μ]
     {Hshift : ℕ → ℕ → Ω → ℝ} {K a t αbad S A ρ τ lam : ℝ}
     {N0 q m n r : ℕ} (hnm_le : n ≤ m) (hgap_le : m - n ≤ r)
@@ -462,7 +462,7 @@ theorem shiftedHighTopBadScaleMeasure_le_weightedKernel_of_pairBound
         simpa [K, x, ℓ, N0, Hshift, D, S, τ, scale, T, lam] using
           hraw hℓn hnm hqm hlam_one
       exact highTop_pair_measure_le_descendant_weight
-        (d := d) (N0 := N0) hnm_le (by dsimp [m, n]; omega)
+        (d := d) (N0 := N0) hnm_le (by omega)
         hS_nonneg hA_one_local hρ_gt hτ_pos hlam_lower hbad
     · have hempty :
           highTopPairEvent Hshift K a t αbad q m n = ∅ := by

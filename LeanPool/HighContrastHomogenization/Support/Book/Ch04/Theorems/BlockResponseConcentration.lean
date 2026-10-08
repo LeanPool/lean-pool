@@ -189,6 +189,7 @@ theorem exists_isRestrictionLocalRandomVariable_ae_eq_coarseFullBlockMatrix_cube
     ext α β
     exact ha α β
 
+/-- The cube block-response observable with its four vector inputs packaged as block vectors. -/
 @[expose]
 noncomputable def blockJObservableCubeSetBlockVec {d : ℕ}
     (Q : TriadicCube d) (P Qv : BlockVec d) : RegCoeffField d → ℝ :=
@@ -334,14 +335,18 @@ theorem doubledResponseJ_eq_blockJObservableCubeSetBlockVec_of_aelocallyUniforml
   rw [Ch02.doubledResponseJ_eq_half_responseJ_adjoint_sum]
   simp [blockJObservableCubeSetBlockVec, F, hresp₁, hresp₂]
 
+/-- Block reflection transported to the full-matrix representation used for response quadratics. -/
 @[expose]
 def fullBlockReflect {d : ℕ} (M : FullBlockMat d) : FullBlockMat d :=
   toFullBlockMat (blockReflect (ofFullBlockMat M))
 
+/-- The quadratic form `x · (M x)` used to express block responses in full-matrix coordinates. -/
 @[expose]
 def fullBlockQuadraticCh04 {d : ℕ} (M : FullBlockMat d) (x : FullBlockVec d) : ℝ :=
   dotProduct x (Matrix.mulVec M x)
 
+/-- The block-response quadratic: half the forms for `M` and its reflection, minus the pairing of
+the two block vectors. -/
 @[expose]
 noncomputable def blockJQuadraticFullBlockMat {d : ℕ}
     (M : FullBlockMat d) (P Qv : BlockVec d) : ℝ :=
@@ -458,6 +463,7 @@ theorem exists_isRestrictionLocalRandomVariable_ae_eq_blockJObservableCubeSetBlo
   filter_upwards [hraw, hYmat_eq] with a hJ hM
   simp [g, hJ, hM]
 
+/-- The setwise half-sum of a response and its adjoint response, with block-vector inputs. -/
 @[expose]
 noncomputable def blockJSetObservableBlockVec {d : ℕ}
     (P Qv : BlockVec d) : Set (Vec d) → CoeffField d → ℝ :=
@@ -894,6 +900,7 @@ private theorem descendantsAtScale_originCube_sqrt_card_div_card
           simp [j]
           ring_nf
 
+/-- The dimension- and moment-dependent prefactor in the block-response concentration bound. -/
 @[expose]
 noncomputable def blockJConcentrationConst (d : ℕ) (σ : ℝ) : ℝ :=
   gammaSigmaDescendantsAtScaleConst d 0 σ *

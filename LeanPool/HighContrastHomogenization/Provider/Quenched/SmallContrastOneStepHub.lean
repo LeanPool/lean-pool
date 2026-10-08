@@ -48,14 +48,15 @@ open scoped ENNReal Matrix
 noncomputable section
 
 
-private theorem calibrated_response_energy_bounds (d : ℕ) [NeZero d]
+private theorem calibrated_response_energy_bounds (d : ℕ)
     {P : Measure (CoeffSpace d)} [IsProbabilityMeasure P]
     {t : ℤ} {q S SStar K : Mat d}
     (hintt : HasFiniteAdaptedMean P q t) (hq : q.PosDef)
     (hh0 : IsSkewMat (Response.responseSkew K))
     : (∀ e : Vec d, e ⬝ᵥ e = 1 →
       (fun e ↦
-    ∫ a, responseJ (Response.adaptedDomain hq t) (((fun a ↦ a.subSkew (Response.responseSkew K)
+    ∫ a, responseJ (Response.adaptedDomain hq t) (((fun (a : CoeffSpace d) ↦ a.subSkew
+      (Response.responseSkew K)
       hh0) a).coeffOn (Response.adaptedDomain hq t)) ((Response.centeredResponseLoadP S SStar K) e)
       ((Response.centeredResponseLoadQ S SStar K) e) ∂P) e ≤
         |Response.centeredResponse P (Response.adaptedDomain hq t) ((Response.centeredResponseLoadP
@@ -64,13 +65,15 @@ private theorem calibrated_response_energy_bounds (d : ℕ) [NeZero d]
             (Response.centeredResponseLoadP S SStar K) e)| + (fun e ↦
     (1 / 2 : ℝ) *
       |vecDot
-        (fun i ↦ ∫ a, averageGradient (Response.adaptedDomain hq t) (((fun a ↦ a.subSkew
+        (fun i ↦ ∫ a, averageGradient (Response.adaptedDomain hq t) (((fun (a : CoeffSpace d) ↦
+          a.subSkew
           (Response.responseSkew K) hh0) a).coeffOn (Response.adaptedDomain hq t))
           (Response.centeredResponseOptimizer (Response.adaptedDomain hq t) ((fun a ↦ a.subSkew
             (Response.responseSkew K) hh0) a) ((Response.centeredResponseLoadP S SStar K) e)
             ((Response.centeredResponseLoadQ S SStar K) e))
             i ∂P)
-        (fun i ↦ ∫ a, averageFlux (Response.adaptedDomain hq t) (((fun a ↦ a.subSkew
+        (fun i ↦ ∫ a, averageFlux (Response.adaptedDomain hq t) (((fun (a : CoeffSpace d) ↦
+          a.subSkew
           (Response.responseSkew K) hh0) a).coeffOn (Response.adaptedDomain hq t))
           (Response.centeredResponseOptimizer (Response.adaptedDomain hq t) ((fun a ↦ a.subSkew
             (Response.responseSkew K) hh0) a) ((Response.centeredResponseLoadP S SStar K) e)
@@ -78,7 +81,8 @@ private theorem calibrated_response_energy_bounds (d : ℕ) [NeZero d]
             i ∂P)|) e) ∧
     (∀ e : Vec d, e ⬝ᵥ e = 1 →
       (fun e ↦
-    ∫ a, responseJ (Response.adaptedDomain hq t) (((fun a ↦ a.subSkew (Response.responseSkew K)
+    ∫ a, responseJ (Response.adaptedDomain hq t) (((fun (a : CoeffSpace d) ↦ a.subSkew
+      (Response.responseSkew K)
       hh0) a).transpose.coeffOn (Response.adaptedDomain hq t))
       ((Response.centeredResponseLoadP S SStar K) e) ((Response.centeredResponseLoadQ S SStar K) e)
         ∂P) e ≤
@@ -88,13 +92,15 @@ private theorem calibrated_response_energy_bounds (d : ℕ) [NeZero d]
             (Response.centeredResponseLoadP S SStar K) e)| + (fun e ↦
     (1 / 2 : ℝ) *
       |vecDot
-        (fun i ↦ ∫ a, averageGradient (Response.adaptedDomain hq t) (((fun a ↦ a.subSkew
+        (fun i ↦ ∫ a, averageGradient (Response.adaptedDomain hq t) (((fun (a : CoeffSpace d) ↦
+          a.subSkew
           (Response.responseSkew K) hh0) a).transpose.coeffOn (Response.adaptedDomain hq t))
           (Response.centeredAdjointOptimizer (Response.adaptedDomain hq t) ((fun a ↦ a.subSkew
             (Response.responseSkew K) hh0) a) ((Response.centeredResponseLoadP S SStar K) e)
             ((Response.centeredResponseLoadQ S SStar K) e))
             i ∂P)
-        (fun i ↦ ∫ a, averageFlux (Response.adaptedDomain hq t) (((fun a ↦ a.subSkew
+        (fun i ↦ ∫ a, averageFlux (Response.adaptedDomain hq t) (((fun (a : CoeffSpace d) ↦
+          a.subSkew
           (Response.responseSkew K) hh0) a).transpose.coeffOn (Response.adaptedDomain hq t))
           (Response.centeredAdjointOptimizer (Response.adaptedDomain hq t) ((fun a ↦ a.subSkew
             (Response.responseSkew K) hh0) a) ((Response.centeredResponseLoadP S SStar K) e)

@@ -238,6 +238,7 @@ theorem descendantsAverageFullBlockMat_sub
     descendantsAverageFullBlockMat_eq_smul_sum]
   simp [Finset.sum_sub_distrib, smul_sub]
 
+/-- Linear map multiplying a full block matrix on both sides by a fixed matrix. -/
 @[expose]
 public def diagonalCongrLinearMap {d : ℕ} (D : FullBlockMat d) :
     FullBlockMat d →ₗ[ℝ] FullBlockMat d where
@@ -247,6 +248,7 @@ public def diagonalCongrLinearMap {d : ℕ} (D : FullBlockMat d) :
   map_smul' c M := by
     simp
 
+/-- Linear congruence map sending a matrix `M` to `Sᵀ * M * S` for a fixed matrix `S`. -/
 @[expose]
 public def transposeCongrLinearMap {d : ℕ} (S : FullBlockMat d) :
     FullBlockMat d →ₗ[ℝ] FullBlockMat d where

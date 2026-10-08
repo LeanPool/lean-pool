@@ -145,7 +145,7 @@ private theorem coarseBlockMatrix_neg_lowerLeft_adjoint_cubeSet_originCube_of_ex
 opaque function variable `F`; keeping the heavy `coarseBlockMatrix _ a.toFun`
 term out of this proof avoids the `isDefEq` blow-up that the concrete
 integrand triggers.  See the paper (Armstrong–Kuusi–Loher, to appear). -/
-private theorem matrix_signFlip_conj_integral_eq {d : ℕ} [NeZero d]
+private theorem matrix_signFlip_conj_integral_eq {d : ℕ}
     {P : RestrictionCoeffLaw d} (hIso : RestrictionIsotropicLaw P) (i : Fin d)
     (F : RegCoeffField d → Mat d)
     (hmeas : ∀ r c : Fin d, AEStronglyMeasurable (fun a => F a r c) P)
@@ -179,7 +179,7 @@ private theorem matrix_signFlip_conj_integral_eq {d : ℕ} [NeZero d]
 
 /-- **Hoisted invariance core (swap).**  Opaque block observable `F`, as in
 `matrix_signFlip_conj_integral_eq`. -/
-private theorem matrix_swap_conj_integral_eq {d : ℕ} [NeZero d]
+private theorem matrix_swap_conj_integral_eq {d : ℕ}
     {P : RestrictionCoeffLaw d} (hIso : RestrictionIsotropicLaw P) (i j : Fin d)
     (F : RegCoeffField d → Mat d)
     (hmeas : ∀ r c : Fin d, AEStronglyMeasurable (fun a => F a r c) P)
@@ -210,7 +210,7 @@ private theorem matrix_swap_conj_integral_eq {d : ℕ} [NeZero d]
       ∂P) r c).symm
 
 /-- **Hoisted vanishing core (adjoint).**  Opaque block observable `G`. -/
-private theorem matrix_adjoint_neg_integral_eq_zero {d : ℕ} [NeZero d]
+private theorem matrix_adjoint_neg_integral_eq_zero {d : ℕ}
     {P : RestrictionCoeffLaw d} (hAdj : RestrictionAdjointInvariantLaw P)
     (G : RegCoeffField d → Mat d)
     (hmeas : ∀ r c : Fin d, AEStronglyMeasurable (fun a => G a r c) P)
@@ -232,7 +232,7 @@ private theorem matrix_adjoint_neg_integral_eq_zero {d : ℕ} [NeZero d]
   linarith
 
 private theorem annealedSigmaStarInvAtScale_isSignFlipInvariant_of_covariant_ae
-    {d : ℕ} [NeZero d] (P : RestrictionCoeffLaw d) (n : ℤ)
+    {d : ℕ} (P : RestrictionCoeffLaw d) (n : ℤ)
     (hIso : RestrictionIsotropicLaw P)
     (hmeas : ∀ r c : Fin d,
       AEStronglyMeasurable
@@ -255,7 +255,7 @@ private theorem annealedSigmaStarInvAtScale_isSignFlipInvariant_of_covariant_ae
     (fun a => (coarseBlockMatrix (cubeSet (originCube d n)) a.toFun).lowerRight) hmeas (hcov i)
 
 private theorem annealedSigmaStarInvAtScale_isSwapInvariant_of_covariant_ae
-    {d : ℕ} [NeZero d] (P : RestrictionCoeffLaw d) (n : ℤ)
+    {d : ℕ} (P : RestrictionCoeffLaw d) (n : ℤ)
     (hIso : RestrictionIsotropicLaw P)
     (hmeas : ∀ r c : Fin d,
       AEStronglyMeasurable
@@ -278,7 +278,7 @@ private theorem annealedSigmaStarInvAtScale_isSwapInvariant_of_covariant_ae
     (fun a => (coarseBlockMatrix (cubeSet (originCube d n)) a.toFun).lowerRight) hmeas (hcov i j)
 
 private theorem annealedBAtScale_isSignFlipInvariant_of_covariant_ae
-    {d : ℕ} [NeZero d] (P : RestrictionCoeffLaw d) (n : ℤ)
+    {d : ℕ} (P : RestrictionCoeffLaw d) (n : ℤ)
     (hIso : RestrictionIsotropicLaw P)
     (hmeas : ∀ r c : Fin d,
       AEStronglyMeasurable
@@ -301,7 +301,7 @@ private theorem annealedBAtScale_isSignFlipInvariant_of_covariant_ae
     (fun a => (coarseBlockMatrix (cubeSet (originCube d n)) a.toFun).upperLeft) hmeas (hcov i)
 
 private theorem annealedBAtScale_isSwapInvariant_of_covariant_ae
-    {d : ℕ} [NeZero d] (P : RestrictionCoeffLaw d) (n : ℤ)
+    {d : ℕ} (P : RestrictionCoeffLaw d) (n : ℤ)
     (hIso : RestrictionIsotropicLaw P)
     (hmeas : ∀ r c : Fin d,
       AEStronglyMeasurable
@@ -324,7 +324,7 @@ private theorem annealedBAtScale_isSwapInvariant_of_covariant_ae
     (fun a => (coarseBlockMatrix (cubeSet (originCube d n)) a.toFun).upperLeft) hmeas (hcov i j)
 
 private theorem annealedSigmaStarInvKappaMeanAtScale_eq_zero_of_adjoint_covariant_ae
-    {d : ℕ} [NeZero d] (P : RestrictionCoeffLaw d) (n : ℤ)
+    {d : ℕ} (P : RestrictionCoeffLaw d) (n : ℤ)
     (hAdj : RestrictionAdjointInvariantLaw P)
     (hmeas : ∀ r c : Fin d,
       AEStronglyMeasurable

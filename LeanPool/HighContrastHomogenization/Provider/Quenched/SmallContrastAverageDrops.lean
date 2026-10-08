@@ -47,9 +47,10 @@ private theorem matSqrt_one'' {n : Type*} [Fintype n] [DecidableEq n] :
     matSqrt (1 : Matrix n n ℝ) = 1 :=
   matSqrt_eq Matrix.PosSemidef.one Matrix.PosSemidef.one (by simp)
 
+/-- Evaluation of the `(i, j)` entry of a finite real matrix as a continuous
+linear map. -/
 @[expose]
-
-public def entryCLM' {n : Type*} [Fintype n] [DecidableEq n] (i j : n) :
+public def entryCLM' {n : Type*} [Fintype n] (i j : n) :
     Matrix n n ℝ →L[ℝ] ℝ :=
   LinearMap.toContinuousLinearMap (Matrix.entryLinearMap ℝ ℝ i j)
 
@@ -90,9 +91,11 @@ private theorem isSymmetricBlockMat_averageDefect' (q : Mat d) (k t : ℤ)
     (Recurrence.isSymmetricBlockMat_coarseBlock_adaptedCellAt q k w a)
     (isSymmetricBlockMat_coarseBlock _ _)
 
-private theorem diag_nonneg_of_posSemidef {n : Type*} [Fintype n]
-    [DecidableEq n] {A : Matrix n n ℝ} (hA : A.PosSemidef) (i : n) :
+private theorem diag_nonneg_of_posSemidef {n : Type*} [Finite n]
+    {A : Matrix n n ℝ} (hA : A.PosSemidef) (i : n) :
     0 ≤ A i i := by
+  classical
+  let : Fintype n := Fintype.ofFinite n
   have h := hA.dotProduct_mulVec_nonneg (Pi.single i 1)
   simp only [star_trivial] at h
   have hquad : Pi.single i (1 : ℝ) ⬝ᵥ A *ᵥ Pi.single i 1 = A i i := by
@@ -101,7 +104,7 @@ private theorem diag_nonneg_of_posSemidef {n : Type*} [Fintype n]
   rwa [hquad] at h
 
 private theorem trace_nonneg_of_posSemidef {n : Type*} [Fintype n]
-    [DecidableEq n] {A : Matrix n n ℝ} (hA : A.PosSemidef) :
+    {A : Matrix n n ℝ} (hA : A.PosSemidef) :
     0 ≤ Matrix.trace A :=
   Finset.sum_nonneg fun i _ => diag_nonneg_of_posSemidef hA i
 
@@ -138,8 +141,8 @@ private theorem trace_le_card_mul_norm {n : Type*} [Fintype n]
       rw [Finset.sum_const, Finset.card_univ, nsmul_eq_mul]
 
 
-private theorem integrable_aligned_response_average [NeZero d]
-    {P : Measure (CoeffSpace d)} [IsProbabilityMeasure P]
+private theorem integrable_aligned_response_average
+    {P : Measure (CoeffSpace d)}
     (hstat : HCPoly.Frozen.IsStationaryLaw P)
     {l : ℤ} {q : Mat d} (hgrid : IsRoundedGrid l q) {k t : ℤ}
     (hlk : l ≤ k)
@@ -239,7 +242,7 @@ whose expectation is the trace of the normalized annealed mean drop by
 stationarity of the coefficient law, and the `L²` norm of its root is bounded
 by the root of `2 d` times the size of the mean drop. -/
 theorem eLpNorm_sqrt_blockSize_averageDefect_le_drop [NeZero d]
-    {P : Measure (CoeffSpace d)} [IsProbabilityMeasure P]
+    {P : Measure (CoeffSpace d)}
     (hstat : HCPoly.Frozen.IsStationaryLaw P)
     {l : ℤ} {q : Mat d} (hgrid : IsRoundedGrid l q) {k t : ℤ}
     (hlk : l ≤ k) (hkt : k ≤ t)
@@ -417,7 +420,7 @@ the weighted rooted average-defect sum is bounded by the weighted roots of
 the annealed mean drops — the sharp replacement for the crude per-cell
 variance budget in the printed weak estimate. -/
 theorem eLpNorm_diagonalWeakAverageSum_le_drops [NeZero d]
-    {P : Measure (CoeffSpace d)} [IsProbabilityMeasure P]
+    {P : Measure (CoeffSpace d)}
     (hstat : HCPoly.Frozen.IsStationaryLaw P)
     {l : ℤ} {q : Mat d} (hgrid : IsRoundedGrid l q) {t : ℤ} (H : ℕ)
     {rho : ℝ} (hstart : l ≤ t - (H : ℤ))

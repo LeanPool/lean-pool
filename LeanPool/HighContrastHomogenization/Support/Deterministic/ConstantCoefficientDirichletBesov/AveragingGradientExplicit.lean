@@ -41,6 +41,8 @@ theorem scalarGradientConstant_nonneg {d : ℕ} {Q : TriadicCube d} {j : ℕ}
   unfold scalarGradientConstant
   exact mul_nonneg (Real.sqrt_nonneg _) P.coordDerivConstant_nonneg
 
+/-- The constant bounding the sum of coordinate-gradient L² norms of the overlap averaging
+competitor, including both coordinate sums. -/
 @[expose]
 noncomputable def gradientConstant {d : ℕ} {Q : TriadicCube d} {j : ℕ}
     (P : SmoothOverlapPartition Q j) : ℝ :=

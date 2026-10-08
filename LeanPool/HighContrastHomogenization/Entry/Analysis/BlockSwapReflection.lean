@@ -62,7 +62,7 @@ noncomputable section
 variable {d : ℕ}
 
 /-- A real scalar multiple of a Hermitian matrix is Hermitian. -/
-theorem isHermitian_smul {ι : Type*} [Fintype ι] {M : Matrix ι ι ℝ}
+theorem isHermitian_smul {ι : Type*} {M : Matrix ι ι ℝ}
     (hM : M.IsHermitian) (c : ℝ) : (c • M).IsHermitian := by
   change (c • M)ᴴ = c • M
   rw [Matrix.conjTranspose_smul, star_trivial, hM.eq]

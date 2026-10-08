@@ -37,7 +37,7 @@ open scoped ENNReal
 noncomputable section
 
 private theorem cubeDirichletDivergenceProblem_to_centered_normalized
-    {d : ℕ} [NeZero d] (m : ℤ) {u : H10Function (openCubeSet (originCube d m))}
+    {d : ℕ} (m : ℤ) {u : H10Function (openCubeSet (originCube d m))}
     {h : Vec d → Vec d}
     (hh : MemLp (fun x => HilbertVec.ofVec (h x)) 2
       (normalizedCubeMeasure (originCube d m)))

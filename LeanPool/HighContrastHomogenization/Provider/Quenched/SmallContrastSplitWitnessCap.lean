@@ -306,6 +306,9 @@ private theorem burn_split_threshold_power_bound
       ((3 : ℝ) ^ ((kZero d : ℕ) : ℤ) * 729 + 3) *
         ((3 : ℝ) ^ (D : ℕ)) ^ (3 : ℕ) * growthBar K ^ (9 * d + 13) := by
   classical
+  have hgK0 : (0 : ℝ) ≤ growthBar K :=
+    (by norm_num : (0 : ℝ) ≤ 1).trans (by
+      simpa only [pow_zero, pow_one] using hgKpow 0 1 (by omega))
   have hthr : burnSplitThreshold d K jS (jS + ((2 * D : ℕ) : ℤ)) ≤
       ((3 : ℝ) ^ ((kZero d : ℕ) : ℤ) * 729 + 3) *
         ((3 : ℝ) ^ (D : ℕ)) ^ (3 : ℕ) * growthBar K ^ (9 * d + 13) := by
@@ -556,7 +559,7 @@ theorem exists_burnSplit_witness_exponent (d : ℕ) (hd : 2 ≤ d)
   have hpow0 : (0 : ℝ) ≤ base ^ (9 * d + 19) := by positivity
   have hstep := mul_le_mul_of_nonneg_right hcap hpow0
   refine le_trans hstep (le_of_eq ?_)
-  show base ^ c1 * base ^ (9 * d + 19) = base ^ (c1 + (9 * (d : ℝ) + 19))
+  change base ^ c1 * base ^ (9 * d + 19) = base ^ (c1 + (9 * (d : ℝ) + 19))
   rw [show base ^ (9 * d + 19) = base ^ (((9 * d + 19 : ℕ) : ℝ)) from
     (Real.rpow_natCast base _).symm, ← Real.rpow_add hbase0]
   congr 1

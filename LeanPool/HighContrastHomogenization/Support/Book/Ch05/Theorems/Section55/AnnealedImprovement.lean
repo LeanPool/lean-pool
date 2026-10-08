@@ -571,7 +571,7 @@ private theorem discreteAnnealedWindowCeilingBound
     (hdelta_pos : 0 < delta) (hdelta_le : delta ≤ 1 / 2)
     (hξ_ge_one : 1 ≤ ξ) (hξ_nonneg : 0 ≤ ξ)
     (hsigInv4_nonneg : 0 ≤ sigInv4) (hD_pos : 0 < D) (hD_ge_one : 1 ≤ D)
-    (hAconst_pos : 0 < Aconst) (hKlog_pos : 0 < Klog)
+    (hAconst_pos : 0 < Aconst)
     (hAδ_ge_two : 2 ≤ Aδ) (hlogAδ_nonneg : 0 ≤ Real.log Aδ)
     (hlogBσ_nonneg : 0 ≤ Real.log Bσ)
     (hdelta_inv_eq : delta⁻¹ = Aconst * sigInv4)
@@ -752,7 +752,7 @@ private theorem exponentialTailAbsorptionBound
       field_simp [hB_pos.ne']
 
 private theorem oneStepAnnealedImprovement_scalar_discreteInputs
-    {d : ℕ} [NeZero d]
+    {d : ℕ}
     (params : QuantitativeCoarseGrainedEllipticityParams d)
     {C0 : ℝ} (hC0_pos : 0 < C0) :
     ∃ C : ℝ, 0 < C ∧
@@ -955,7 +955,7 @@ private theorem oneStepAnnealedImprovement_scalar_discreteInputs
   have hgap_nat : (Nat.ceil R + 1) * h ≤ N - k := by
     exact discreteAnnealedWindowCeilingBound hsigma_pos hsigma_le hdelta_pos hdelta_le
       hξ_ge_one hξ_nonneg hsigInv4_nonneg hD_pos (hB_ge_one.trans hD_ge_B)
-      hAconst_pos hKlog_pos hAδ_ge_two hlogAδ_nonneg hlogBσ_nonneg
+      hAconst_pos hAδ_ge_two hlogAδ_nonneg hlogBσ_nonneg
       hdelta_inv_eq hAδ_log_le (by dsimp [C]; exact le_max_left _ _) hgap
   refine ⟨delta, h, hdelta_pos, hdelta_le, ?_, ?_, hsmall_delta, ?_⟩
   · simpa [R] using hgap_nat

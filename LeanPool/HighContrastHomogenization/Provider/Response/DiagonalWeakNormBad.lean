@@ -232,8 +232,8 @@ end
 
 end HCPolySupport.HighContrast.Response
 
-end HighContrast
 
-end HCPolySupport
+
+
 
 end

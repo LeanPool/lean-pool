@@ -317,7 +317,7 @@ theorem integrable_responseJ_adjointSubSkew_of_finiteAdaptedMean
   exact h.symm
 
 private theorem integrable_toFullBlockVec_blockCellAverage_diagonalWeakState
-    [NeZero d] {P : Measure (CoeffSpace d)} [IsProbabilityMeasure P]
+    {P : Measure (CoeffSpace d)} [IsProbabilityMeasure P]
     {q : Mat d} (hq : q.PosDef) (t : ℤ)
     (hint : HasFiniteAdaptedMean P q t) (p r : Vec d) (alpha : BlockCoord d) :
     Integrable (fun a ↦ toFullBlockVec (blockCellAverage (adaptedCell q t)
@@ -346,7 +346,7 @@ private theorem integrable_toFullBlockVec_blockCellAverage_diagonalWeakState
         toFullBlockVec, X]
 
 private theorem integrable_toFullBlockVec_blockCellAverage_adjointState
-    [NeZero d] {P : Measure (CoeffSpace d)} [IsProbabilityMeasure P]
+    {P : Measure (CoeffSpace d)} [IsProbabilityMeasure P]
     {q : Mat d} (hq : q.PosDef) (t : ℤ)
     (hint : HasFiniteAdaptedMean P q t) (p r : Vec d) (alpha : BlockCoord d) :
     Integrable (fun a ↦ toFullBlockVec (blockCellAverage (adaptedCell q t)
@@ -385,7 +385,7 @@ private theorem integrable_matVecMul_of_integrable
     (fun j _ ↦ (hF.eval j).const_mul (g i j))
 
 private theorem integrable_toFullBlockVec_blockCellAverage_subSkew
-    [NeZero d] {P : Measure (CoeffSpace d)} [IsProbabilityMeasure P]
+    {P : Measure (CoeffSpace d)} [IsProbabilityMeasure P]
     {q : Mat d} (hq : q.PosDef) (t : ℤ) (hint : HasFiniteAdaptedMean P q t)
     (g : Mat d) (hg : IsSkewMat g) (p r : Vec d) (alpha : BlockCoord d) :
     Integrable (fun a ↦ toFullBlockVec (blockCellAverage (adaptedCell q t)
@@ -412,7 +412,7 @@ private theorem integrable_toFullBlockVec_blockCellAverage_subSkew
   | inr i => simpa only [toFullBlockVec] using hfull'.snd.eval i
 
 private theorem integrable_toFullBlockVec_blockCellAverage_adjointSubSkew
-    [NeZero d] {P : Measure (CoeffSpace d)} [IsProbabilityMeasure P]
+    {P : Measure (CoeffSpace d)} [IsProbabilityMeasure P]
     {q : Mat d} (hq : q.PosDef) (t : ℤ) (hint : HasFiniteAdaptedMean P q t)
     (g : Mat d) (hg : IsSkewMat g) (p r : Vec d) (alpha : BlockCoord d) :
     Integrable (fun a ↦ toFullBlockVec (blockCellAverage (adaptedCell q t)

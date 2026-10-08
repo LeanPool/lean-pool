@@ -34,6 +34,8 @@ one-step lattice neighborhood of `T`.  That neighborhood has dimension-only
 cardinality, by triadic color injectivity.
 -/
 
+/-- Depth-`m` descendants of `Q` whose indices differ from those of `T` by at most one in each
+coordinate. -/
 @[expose]
 noncomputable def oneStepNeighborParentsAtDepth {d : ℕ}
     (Q : TriadicCube d) (m : ℕ) (T : TriadicCube d) :
@@ -81,7 +83,7 @@ theorem cubeColor_injOn_oneStepNeighborParentsAtDepth {d : ℕ}
   | mk Pscale Pindex =>
   cases R with
   | mk Rscale Rindex =>
-    simp at hscale hindex ⊢
+    simp only [TriadicCube.mk.injEq] at hscale hindex ⊢
     exact ⟨hscale, hindex⟩
 
 theorem oneStepNeighborParentsAtDepth_card_le_pow {d : ℕ}

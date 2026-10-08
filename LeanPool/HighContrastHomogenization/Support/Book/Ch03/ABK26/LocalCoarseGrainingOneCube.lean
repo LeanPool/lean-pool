@@ -453,7 +453,7 @@ private theorem isH1DirichletRhsWeakSolutionOn_congr_coeff_ae
 /-- The public pointwise field built from the canonical root family agrees
 with the original source coefficient on its cube. -/
 private theorem publicCoeffField_rootPointwise_ae_eq_source_cubeSet
-    {d : ℕ} [NeZero d] (R : TriadicCube d)
+    {d : ℕ} (R : TriadicCube d)
     (a : Book.Ch02.CoeffOn (Book.Ch02.cubeDomain R)) :
     publicCoeffField R (rootPointwiseCoeffFamily R a) =ᵐ[
       MeasureTheory.volume.restrict (cubeSet R)] a.toCoeffField := by
@@ -502,7 +502,7 @@ private theorem ENNReal_ofReal_sqrt_cubeAverage_public_energy_eq_localSymmetricE
 form.  Keeping this local avoids exporting a Chapter 5 assembly lemma merely
 for one-cube scalar algebra. -/
 private theorem poincareLowerEllipticityFactor_finite_two_eq_sqrt_inv_local
-    {d : ℕ} [NeZero d] (R : TriadicCube d)
+    {d : ℕ} (R : TriadicCube d)
     (a : Book.Ch02.TriadicCoeffFamily d) {t : ℝ} :
     poincareLowerEllipticityFactor R a t (.finite 2) =
       Real.sqrt ((Book.Ch02.lambdaSq R t (.finite 2) a)⁻¹) := by
@@ -516,7 +516,7 @@ private theorem poincareLowerEllipticityFactor_finite_two_eq_sqrt_inv_local
   simpa [poincareLowerEllipticityFactor, hExp] using hleft.symm
 
 private theorem poincareUpperEllipticityFactor_finite_two_eq_sqrt_local
-    {d : ℕ} [NeZero d] (R : TriadicCube d)
+    {d : ℕ} (R : TriadicCube d)
     (a : Book.Ch02.TriadicCoeffFamily d) {t : ℝ} :
     poincareUpperEllipticityFactor R a t (.finite 2) =
       Real.sqrt (Book.Ch02.LambdaSq R t (.finite 2) a) := by
@@ -1272,7 +1272,7 @@ private theorem localCoarseGrainingComponentSum_le_absorbedEnvelope
   exact hreal
 
 private theorem localCoarseGrainingEnergyComponent_le_scalarEnvelope
-    {d : ℕ} [NeZero d] (R : TriadicCube d) (A : CoeffField d) (a0 : Mat d)
+    {d : ℕ} (R : TriadicCube d) (A : CoeffField d) (a0 : Mat d)
     (s : FractionalOrder) (F : Vec d → Vec d) {sigma0 H1 M : ℝ}
     (hH1eq : HomogenizationErrorOnCube R s.1 .infinity (.finite 1) A a0 = H1)
     (hH1_nonneg : 0 ≤ H1) (hM_nonneg : 0 ≤ M)
@@ -1308,7 +1308,7 @@ private theorem localCoarseGrainingEnergyComponent_le_scalarEnvelope
     _ = (2 * M * (d : ℝ)) * X := by ring
 
 private theorem homogenizationErrorInfinityTwo_nonnegative
-    {d : ℕ} [NeZero d] (R : TriadicCube d) (F : Book.Ch02.TriadicCoeffFamily d)
+    {d : ℕ} (R : TriadicCube d) (F : Book.Ch02.TriadicCoeffFamily d)
     (a0 : Mat d) {t : ℝ} (ht : 0 ≤ t) :
     0 ≤ Book.Ch02.HomogenizationErrorOnCube R t .infinity (.finite 2) F a0 := by
   dsimp [Book.Ch02.HomogenizationErrorOnCube,

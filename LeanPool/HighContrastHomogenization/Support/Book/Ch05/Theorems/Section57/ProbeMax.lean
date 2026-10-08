@@ -38,6 +38,8 @@ pair probes.
 
 noncomputable section
 
+/-- The three finite probe types: coordinate, sum of two coordinates, and
+difference of two coordinates. -/
 inductive NormalizedProbeKind where
   | coord
   | plus

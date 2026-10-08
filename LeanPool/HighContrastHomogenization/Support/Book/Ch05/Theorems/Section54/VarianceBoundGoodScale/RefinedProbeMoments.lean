@@ -102,8 +102,8 @@ private theorem scalarFullBlockInvSqrtDiag_lower_abs_mul_self
     |Ch04.scalarFullBlockInvSqrtDiag (d := d) b c (Sum.inr i)| *
         |Ch04.scalarFullBlockInvSqrtDiag (d := d) b c (Sum.inr i)| =
       c := by
-  have hsqrt_nonneg : 0 ≤ Real.sqrt c := Real.sqrt_nonneg c
-  simp [Ch04.scalarFullBlockInvSqrtDiag, abs_of_nonneg hsqrt_nonneg]
+  change |(Real.sqrt c : ℝ)| * |(Real.sqrt c : ℝ)| = c
+  simp only [abs_mul_abs_self]
   rw [← sq, Real.sq_sqrt hc.le]
 
 /-- Matched pointwise domination for coordinate probes: upper coordinates see

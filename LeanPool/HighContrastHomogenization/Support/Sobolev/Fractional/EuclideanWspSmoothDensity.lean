@@ -82,6 +82,8 @@ theorem contDiff_cubeEuclideanWspConvexApproxSmoothField {d : ℕ}
     (isConvexApproxKernel_unitConvexApproxKernel (d := d)) p.one_lt.le
     (cubeEuclideanWspField_component_memLpOn F i) hr hε
 
+/-- Package coordinatewise convex smoothing with positive radius and smoothing scale
+as a smooth test field for the fractional cube space. -/
 @[expose]
 public noncomputable def cubeEuclideanWspConvexApproxSmoothTest {d : ℕ}
     {Q : TriadicCube d} {s : FractionalOrder} {p : FiniteLpExponent}
@@ -204,7 +206,7 @@ private theorem tendsto_diagonalConvexApproxAverage_apply_of_boundedContinuous
 
 private theorem aestronglyMeasurable_diagonalConvexApproxAverage_of_boundedContinuous
     {d : ℕ} {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
-    [CompleteSpace E] (Q : TriadicCube d)
+    (Q : TriadicCube d)
     (G : BoundedContinuousFunction (Vec d × Vec d) E)
     (x0 : Vec d) (r ε : ℝ) :
     AEStronglyMeasurable
@@ -392,7 +394,7 @@ private theorem tendsto_eLpNorm_diagonalConvexApproxAverage_sub_zero_of_boundedC
   simpa only [Function.comp_apply, ENNReal.zero_rpow_of_pos (inv_pos.mpr hqpos)] using hrpow
 
 private theorem memLp_comp_diagonalConvexApproxJointSample {d : ℕ} {E : Type*}
-    [NormedAddCommGroup E] [TopologicalSpace E] [ContinuousENorm E]
+    [TopologicalSpace E] [ContinuousENorm E]
     (Q : TriadicCube d) (p : FiniteLpExponent) (K : Vec d × Vec d → E)
     (hK : MemLp K p.exponent (Gagliardo.gagliardoCubeMeasure Q))
     {x0 : Vec d} {r ε : ℝ} (hε : ε < 1)
@@ -423,7 +425,7 @@ private theorem memLp_comp_diagonalConvexApproxJointSample {d : ℕ} {E : Type*}
     (measurable_diagonalConvexApproxJointSample x0 r ε).aemeasurable).mp hKmap
 
 private theorem ae_diagonalConvexApproxAverage_sub {d : ℕ} {E : Type*}
-    [NormedAddCommGroup E] [NormedSpace ℝ E] [CompleteSpace E]
+    [NormedAddCommGroup E] [NormedSpace ℝ E]
     (Q : TriadicCube d) (p : FiniteLpExponent)
     (K L : Vec d × Vec d → E)
     (hK : MemLp K p.exponent (Gagliardo.gagliardoCubeMeasure Q))
@@ -469,7 +471,7 @@ private theorem ae_diagonalConvexApproxAverage_sub {d : ℕ} {E : Type*}
 
 private theorem aestronglyMeasurable_diagonalConvexApproxAverage_of_memLp
     {d : ℕ} {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
-    [CompleteSpace E] (Q : TriadicCube d) (p : FiniteLpExponent)
+    (Q : TriadicCube d) (p : FiniteLpExponent)
     (K : Vec d × Vec d → E)
     (hK : MemLp K p.exponent (Gagliardo.gagliardoCubeMeasure Q))
     {x0 : Vec d} {r ε : ℝ} (hε : ε < 1)

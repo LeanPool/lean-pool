@@ -41,7 +41,7 @@ noncomputable section
 variable {d : ℕ}
 
 /-- Measurability of the subdivision-average fluctuation size. -/
-theorem aemeasurable_blockSize_subdivisionDefect [NeZero d]
+theorem aemeasurable_blockSize_subdivisionDefect
     {P : Measure (CoeffSpace d)} {q : Mat d} (hq : q.PosDef)
     (j : ℤ) (Z : Finset (Fin d → ℤ)) {Gj Gp : BlockMat d}
     (hGjsym : IsSymmetricBlockMat Gj)
@@ -81,7 +81,7 @@ theorem aemeasurable_blockSize_subdivisionDefect [NeZero d]
       ((continuous_apply δ).comp (continuous_apply γ))
   have hcomp := hcont.comp_aemeasurable hraw
   refine hcomp.congr (_root_.Filter.Eventually.of_forall fun a => ?_)
-  show ‖matSqrt (toFullBlockMat Gp)⁻¹ *
+  change ‖matSqrt (toFullBlockMat Gp)⁻¹ *
       (Matrix.of fun γ δ : BlockCoord d =>
         (Z.card : ℝ)⁻¹ *
           ∑ w ∈ Z,

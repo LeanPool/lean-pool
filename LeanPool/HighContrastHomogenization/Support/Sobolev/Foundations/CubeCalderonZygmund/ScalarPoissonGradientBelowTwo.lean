@@ -389,9 +389,11 @@ private theorem abs_integral_mul_le_eLpNorm_toReal_mul
     _ ≤ ENNReal.toReal (eLpNorm F p μ * eLpNorm G r μ) := hsecond
     _ = _ := ENNReal.toReal_mul
 
+/-- Package radial truncation at level `n` of a zero-trace solution gradient
+as a cube field with Euclidean `L²` and `L^{q.conjugate}` membership. -/
 @[expose]
 public noncomputable def radialTruncationL2LpField
-    {d : ℕ} [NeZero d] (m : ℤ) (q : FiniteLpExponent)
+    {d : ℕ} (m : ℤ) (q : FiniteLpExponent)
     (u : H10Function (openCubeSet (originCube d m))) (n : ℕ) :
     CubeEuclideanL2LpField (originCube d m) q.conjugate := by
   let U : Set (Vec d) := openCubeSet (originCube d m)
@@ -425,7 +427,7 @@ public noncomputable def radialTruncationL2LpField
       hraw2.smul_measure ENNReal.ofReal_ne_top
 
 private theorem radialTruncation_memVectorL2
-    {d : ℕ} [NeZero d] (m : ℤ) (q : FiniteLpExponent)
+    {d : ℕ} (m : ℤ) (q : FiniteLpExponent)
     (u : H10Function (openCubeSet (originCube d m))) (n : ℕ) :
     MemVectorL2 (openCubeSet (originCube d m))
       (radialTruncationL2LpField m q u n).toField := by

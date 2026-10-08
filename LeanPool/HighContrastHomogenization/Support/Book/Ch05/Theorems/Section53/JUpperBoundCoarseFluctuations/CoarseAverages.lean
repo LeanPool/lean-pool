@@ -142,6 +142,9 @@ private theorem zero_matVecMul {d : ℕ} (x : Vec d) :
   funext i
   simp [matVecMul]
 
+/-- Block diagonal annealed matrix with scalar conductivity and inverse dual conductivity at the
+given scale.
+-/
 @[expose]
 public noncomputable def scalarAnnealedBlockMatrixAtScale
     {d : ℕ} [NeZero d] {P : Ch04.RestrictionCoeffLaw d}
@@ -205,6 +208,9 @@ private theorem vecNormSq_sub_comm {d : ℕ} (x y : Vec d) :
     simp [sub_eq_add_neg]
   rw [h, vecNormSq_neg]
 
+/-- Squared Euclidean operator norm of the reflected coarse block matrix minus its reflected
+annealed matrix.
+-/
 @[expose]
 public noncomputable def reflectedBlockFluctuationOperatorNormSqAtScale
     {d : ℕ} [NeZero d] {P : Ch04.RestrictionCoeffLaw d}
@@ -215,16 +221,25 @@ public noncomputable def reflectedBlockFluctuationOperatorNormSqAtScale
   ‖Matrix.toEuclideanCLM (n := BlockCoord d) (𝕜 := ℝ)
       (toFullBlockMat (blockReflect A) - toFullBlockMat (blockReflect Abar))‖ ^ 2
 
+/-- Diagonal weights for reflected normalization: square root of the dual conductivity on the
+first block and inverse square root of the conductivity on the second.
+-/
 @[expose]
 public noncomputable def starInvSqrtDiag {d : ℕ} (b c : ℝ) : BlockCoord d → ℝ
   | Sum.inl _ => Real.sqrt c
   | Sum.inr _ => (Real.sqrt b)⁻¹
 
+/-- Reciprocal diagonal weights for reflected normalization: inverse square root of the dual
+conductivity on the first block and square root of the conductivity on the second.
+-/
 @[expose]
 public noncomputable def starSqrtDiag {d : ℕ} (b c : ℝ) : BlockCoord d → ℝ
   | Sum.inl _ => (Real.sqrt c)⁻¹
   | Sum.inr _ => Real.sqrt b
 
+/-- Equivalence interchanging the two coordinate blocks and preserving the index within each
+block.
+-/
 @[expose]
 public def blockCoordSwapEquiv (d : ℕ) : BlockCoord d ≃ BlockCoord d where
   toFun
@@ -240,6 +255,9 @@ public def blockCoordSwapEquiv (d : ℕ) : BlockCoord d ≃ BlockCoord d where
     intro α
     cases α <;> rfl
 
+/-- Diagonal weights for full block normalization: inverse square root of the conductivity on the
+first block and square root of the dual conductivity on the second.
+-/
 @[expose]
 public noncomputable def fullBlockInvSqrtDiag {d : ℕ} (b c : ℝ) : BlockCoord d → ℝ
   | Sum.inl _ => (Real.sqrt b)⁻¹
@@ -320,8 +338,9 @@ private theorem norm_sq_starInvSqrtDiag_mulVec_toFullBlockVec
       c * vecNormSq X.1 + b⁻¹ * vecNormSq X.2 := by
   rw [PiLp.norm_sq_eq_of_L2, Fintype.sum_sum_type]
   rcases X with ⟨x, y⟩
-  simp [starInvSqrtDiag, toFullBlockVec, Matrix.mulVec, vecNormSq, vecDot,
-    abs_of_nonneg (Real.sqrt_nonneg c), abs_of_nonneg (Real.sqrt_nonneg b)]
+  simp only [Matrix.mulVec, diagonal_dotProduct, starInvSqrtDiag, toFullBlockVec, norm_mul,
+    Real.norm_eq_abs, abs_of_nonneg (Real.sqrt_nonneg c), norm_inv,
+    abs_of_nonneg (Real.sqrt_nonneg b), vecNormSq, vecDot]
   simp_rw [mul_pow, sq_abs, inv_pow]
   rw [Real.sq_sqrt hc.le]
   have hs : (√b) ^ 2 = b := Real.sq_sqrt hb.le
@@ -337,8 +356,9 @@ private theorem norm_sq_starSqrtDiag_mulVec_toFullBlockVec
       c⁻¹ * vecNormSq X.1 + b * vecNormSq X.2 := by
   rw [PiLp.norm_sq_eq_of_L2, Fintype.sum_sum_type]
   rcases X with ⟨x, y⟩
-  simp [starSqrtDiag, toFullBlockVec, Matrix.mulVec, vecNormSq, vecDot,
-    abs_of_nonneg (Real.sqrt_nonneg c), abs_of_nonneg (Real.sqrt_nonneg b)]
+  simp only [Matrix.mulVec, diagonal_dotProduct, starSqrtDiag, toFullBlockVec, norm_mul, norm_inv,
+    Real.norm_eq_abs, abs_of_nonneg (Real.sqrt_nonneg c), abs_of_nonneg (Real.sqrt_nonneg b),
+    vecNormSq, vecDot]
   simp_rw [mul_pow, sq_abs, inv_pow]
   have hc_sq : (√c) ^ 2 = c := Real.sq_sqrt hc.le
   rw [hc_sq, Real.sq_sqrt hb.le]
@@ -346,7 +366,7 @@ private theorem norm_sq_starSqrtDiag_mulVec_toFullBlockVec
   field_simp [ne_of_gt hc]
 
 private theorem normalized_mulVec_norm_sq_le
-    {d : ℕ} [NeZero d] {b c : ℝ} (hb : 0 < b) (hc : 0 < c)
+    {d : ℕ} {b c : ℝ} (hb : 0 < b) (hc : 0 < c)
     (M : FullBlockMat d) (P : FullBlockVec d) :
     ‖(WithLp.toLp 2
         (Matrix.mulVec (Matrix.diagonal (starInvSqrtDiag (d := d) b c)) (Matrix.mulVec M P)) :
@@ -504,6 +524,9 @@ private theorem weighted_blockVec_norm_sq_eq_sigma_inv_star_mul_normalized_norm_
     _ = (σ * c⁻¹) * (c * vecNormSq X.1 + b⁻¹ * vecNormSq X.2) := by
           field_simp [ne_of_gt hc]
 
+/-- Squared Euclidean operator norm of the reflected fluctuation, multiplied on both sides by its
+diagonal normalization weights.
+-/
 @[expose]
 public noncomputable def reflectedNormalizedBlockFluctuationOperatorNormSqAtScale
     {d : ℕ} [NeZero d] {P : Ch04.RestrictionCoeffLaw d}
@@ -684,7 +707,16 @@ private theorem weighted_special_average_mismatch_le_reflected_normalized_block_
       σ⁻¹ *
         vecNormSq (Ch04.canonicalScalarResponseFluxAverageCubeSet R R p_e q_e a.toFun - q0_e)
       = σ * vecNormSq X.1 + σ⁻¹ * vecNormSq X.2 := by
-          simp [X]
+          suffices
+              σ * vecNormSq
+                  (Ch04.canonicalScalarResponseGradientAverageCubeSet R R p_e q_e a.toFun - p0_e) +
+                σ⁻¹ * vecNormSq
+                  (Ch04.canonicalScalarResponseFluxAverageCubeSet R R p_e q_e a.toFun - q0_e) =
+                σ * vecNormSq
+                  (p0_e - Ch04.canonicalScalarResponseGradientAverageCubeSet R R p_e q_e a.toFun) +
+                σ⁻¹ * vecNormSq
+                  (q0_e - Ch04.canonicalScalarResponseFluxAverageCubeSet R R p_e q_e a.toFun) by
+            simpa only [X, neg_sub] using this
           rw [vecNormSq_sub_comm
               (Ch04.canonicalScalarResponseGradientAverageCubeSet R R p_e q_e a.toFun) p0_e,
             vecNormSq_sub_comm

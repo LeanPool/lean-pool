@@ -133,7 +133,7 @@ noncomputable def translate
       _ = hC.constantValue * u.gradientL2Norm := by
         rw [H1MeanZeroFunction.gradientL2Norm_untranslate_eq (U := U) z u]
 
-@[simp] theorem translate_constant [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
+@[simp] theorem translate_constant
     (hC : H1CoerciveEstimate U) (z : Vec d) :
     (hC.translate z).constantValue = hC.constantValue :=
   rfl

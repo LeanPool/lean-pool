@@ -81,7 +81,7 @@ theorem farBranchConstant_pos [NeZero d] : 0 < farBranchConstant d := by
 
 /-! ## A volume-ratio bound, lifted to the `(1/2)`-power -/
 
-private theorem rpow_half_ratio_le [NeZero d] {U V : Set (Vec d)} {C : ℝ}
+private theorem rpow_half_ratio_le {U V : Set (Vec d)} {C : ℝ}
     (hC : 0 < C) (h : volume V / volume U ≤ ENNReal.ofReal C) :
     (volume V / volume U) ^ (1 / 2 : ℝ) ≤
       ENNReal.ofReal (C ^ (1 / 2 : ℝ)) := by

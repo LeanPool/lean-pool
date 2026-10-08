@@ -399,8 +399,8 @@ private theorem root_le_add_const {α : Type*} [MeasurableSpace α] {μ : Measur
   rw [← scalar_eLpNorm_toReal_eq_root hN0 hu0 hu, ← scalar_eLpNorm_toReal_eq_root hN0 hf0 hf,
     ← scalar_eLpNorm_toReal_eq_root hN0 hg0 hg]
   exact (ENNReal.toReal_mono hsum'.1.eLpNorm_ne_top
-    (eLpNorm_mono_ae hu.aestronglyMeasurable hdom)).trans (hsum'.2.trans (by rw [hconst]; exact
-      add_le_add hsum.2 le_rfl))
+    (eLpNorm_mono_ae hu.aestronglyMeasurable hdom)).trans (hsum'.2.trans (by
+      rw [hconst]; exact add_le_add hsum.2 le_rfl))
 
 /-- `p.two.grid.transport`: the full weighted joint-maximum positive gap. -/
 theorem positiveGap_weighted_joint_max (d : ℕ)

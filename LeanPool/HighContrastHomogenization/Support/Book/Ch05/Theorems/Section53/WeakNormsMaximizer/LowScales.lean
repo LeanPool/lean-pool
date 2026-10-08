@@ -55,7 +55,7 @@ private theorem multiscaleDescendantWeight_sub_nat {d : ℕ}
 
 private theorem
   averageGradient_parentResponseSolutionOnDependentFamilyRestrictedToCube_eq_cubeAverageVec
-    {d : ℕ} [NeZero d] (a : RegCoeffField d)
+    {d : ℕ} (a : RegCoeffField d)
     (ha : Ch04.AELocallyUniformlyEllipticField a)
     (Q : TriadicCube d) {R : TriadicCube d} {j : ℕ}
     (hR : R ∈ descendantsAtDepth Q j) (p q : Vec d) :
@@ -74,7 +74,7 @@ private theorem
 
 private theorem
   averageFlux_parentResponseSolutionOnDependentFamilyRestrictedToCube_eq_cubeAverageVec
-    {d : ℕ} [NeZero d] (a : RegCoeffField d)
+    {d : ℕ} (a : RegCoeffField d)
     (ha : Ch04.AELocallyUniformlyEllipticField a)
     (Q : TriadicCube d) {R : TriadicCube d} {j : ℕ}
     (hR : R ∈ descendantsAtDepth Q j) (p q : Vec d) :
@@ -94,7 +94,7 @@ private theorem
     JUpperBoundWeakNorms.canonicalMaximizerFluxOnCube, F]
 
 private theorem variationEnergyValue_parentResponseSolutionOnDependentFamilyRestrictedToCube_eq
-    {d : ℕ} [NeZero d] (a : RegCoeffField d)
+    {d : ℕ} (a : RegCoeffField d)
     (ha : Ch04.AELocallyUniformlyEllipticField a)
     (Q : TriadicCube d) {R : TriadicCube d} {j : ℕ}
     (hR : R ∈ descendantsAtDepth Q j) (p q : Vec d) :
@@ -119,7 +119,7 @@ private theorem variationEnergyValue_parentResponseSolutionOnDependentFamilyRest
   rw [hpoint, cubeAverage_const_mul]
 
 private theorem descendantsAverage_parentGradient_le_maxSigmaStarInv_mul_responseJ
-    {d : ℕ} [NeZero d] (a : RegCoeffField d)
+    {d : ℕ} (a : RegCoeffField d)
     (ha : Ch04.AELocallyUniformlyEllipticField a)
     (Q : TriadicCube d) (j : ℕ) (p q : Vec d) :
     let F := Ch04.triadicCoeffFamilyOfAELocallyUniformlyEllipticField a ha
@@ -201,7 +201,7 @@ private theorem descendantsAverage_parentGradient_le_maxSigmaStarInv_mul_respons
           rw [JUpperBoundWeakNorms.descendantsAverage_topHalfEnergy_eq_responseJ]
 
 private theorem descendantsAverage_parentFlux_le_maxB_mul_responseJ
-    {d : ℕ} [NeZero d] (a : RegCoeffField d)
+    {d : ℕ} (a : RegCoeffField d)
     (ha : Ch04.AELocallyUniformlyEllipticField a)
     (Q : TriadicCube d) (j : ℕ) (p q : Vec d) :
     let F := Ch04.triadicCoeffFamilyOfAELocallyUniformlyEllipticField a ha

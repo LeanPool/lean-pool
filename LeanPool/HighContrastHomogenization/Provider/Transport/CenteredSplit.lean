@@ -234,7 +234,7 @@ The Schatten dialect is left and re-entered through the two spectral comparisons
 between the
 exchange is `PortableHistory.blockSize_le_mul_blockSize`, which is where the scale factor
 enters and is the only inequality that is not dimension-free. -/
-theorem lqSchattenSize_le_of_smul_le [NeZero d] {P : Measure (CoeffSpace d)}
+theorem lqSchattenSize_le_of_smul_le {P : Measure (CoeffSpace d)}
     {Ej Ep : BlockMat d}
     (hEjs : IsSymmetricBlockMat Ej) (hEjpd : Book.Ch02.BlockPosDef Ej)
     (hEps : IsSymmetricBlockMat Ep) (hEppd : Book.Ch02.BlockPosDef Ep)
@@ -276,7 +276,7 @@ theorem lqSchattenSize_le_of_smul_le [NeZero d] {P : Measure (CoeffSpace d)}
 fresh centred rows from the old terminal normalization to the new one at the cost
 `(2d)^{1/Q}(1-η_x)^{-1}`, which on the printed box `0 ≤ η_x ≤ 1/4` is at most
 `(2d)^{1/Q}·4/3`. -/
-theorem lqSchattenSize_bridge_le [NeZero d] {P : Measure (CoeffSpace d)} {q q' : Mat d}
+theorem lqSchattenSize_bridge_le {P : Measure (CoeffSpace d)} {q q' : Mat d}
     {t n : ℤ}
     {etaX : ℝ} (heta1 : etaX < 1)
     (hEts : IsSymmetricBlockMat (adaptedMean P q t))

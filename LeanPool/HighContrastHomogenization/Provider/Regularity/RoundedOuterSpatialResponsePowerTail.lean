@@ -47,6 +47,7 @@ noncomputable section
 
 variable {d : ℕ}
 
+/-- Squared dimension-only constant for the rounded outer-response affine estimates. -/
 @[expose]
 public noncomputable def roundedOuterResponseAffineConstantSq (d : ℕ) : ℝ :=
   max 1

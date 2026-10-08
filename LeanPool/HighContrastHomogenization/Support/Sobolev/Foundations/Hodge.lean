@@ -247,7 +247,7 @@ theorem hodgeConverseCriterion_of_isOpenBoundedConvexDomain
     (hU : IsOpenBoundedConvexDomain U) :
     HodgeConverseCriterion U :=
   hodgeConverseCriterion_of_h1CoerciveEstimate
-    (h1CoerciveEstimate_of_isOpenBoundedConvexDomain (U := U) hU)
+    (h1CoerciveEstimateOfOpenBoundedConvexDomain (U := U) hU)
 
 /-- Packaged version of
 `hodgeConverseCriterion_of_isOpenBoundedConvexDomain`. -/
@@ -261,7 +261,7 @@ theorem hasHodgeConverse_of_isOpenBoundedConvexDomain
 namespace IsPotentialOn
 
 theorem potential_of_orthogonalL2
-    {d : ℕ} {U : Set (Vec d)} [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
+    {d : ℕ} {U : Set (Vec d)}
     (h : HodgeConverseCriterion U)
     {f : Vec d → Vec d} (hf : MemVectorL2 U f)
     (horth :

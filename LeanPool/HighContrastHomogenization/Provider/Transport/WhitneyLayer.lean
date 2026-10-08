@@ -285,7 +285,7 @@ theorem volume_le_of_escaping_ancestor {p q : Mat d} (hp : p.PosDef) {j c : ℤ}
   have hdet : IsUnit p.det := (Matrix.isUnit_iff_isUnit_det p).mp hp.isUnit
   have hinv : ∀ w : Vec d, matVecMul p (matVecMul p⁻¹ w) = w := by
     intro w
-    show p *ᵥ p⁻¹ *ᵥ w = w
+    change p *ᵥ p⁻¹ *ᵥ w = w
     rw [Matrix.mulVec_mulVec, Matrix.mul_nonsing_inv _ hdet, Matrix.one_mulVec]
   have hsub : A ⊆ (fun z => y + matVecMul p z) ''
       {z : Vec d | z ∈ centeredCube d j ∧
@@ -309,7 +309,7 @@ theorem volume_le_of_escaping_ancestor {p q : Mat d} (hp : p.PosDef) {j c : ℤ}
           sub_eq_add_neg (a := x'), matVecMul_add, matVecMul_neg, hx'eq, hz'eq]
         abel
       have hp2 : matVecMul p⁻¹ (matVecMul p (xt - zt)) = xt - zt := by
-        show p⁻¹ *ᵥ p *ᵥ (xt - zt) = xt - zt
+        change p⁻¹ *ᵥ p *ᵥ (xt - zt) = xt - zt
         rw [Matrix.mulVec_mulVec, Matrix.nonsing_inv_mul _ hdet, Matrix.one_mulVec]
       rw [← hp2, hp1, matVecMul_mul]
     have hcell : ∀ k, |(x' - z') k| ≤ (3 : ℝ) ^ c := by

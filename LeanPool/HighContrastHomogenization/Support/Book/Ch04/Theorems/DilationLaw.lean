@@ -95,8 +95,8 @@ theorem isProbabilityMeasure_restrictionScaleNormalizedLaw {d : ℕ} (k : ℕ) (
 
 /-- Bochner integral under a scale-normalized law. -/
 theorem integral_restrictionScaleNormalizedLaw {d : ℕ} {E : Type*}
-    [NormedAddCommGroup E] [NormedSpace ℝ E] [CompleteSpace E]
-    [MeasurableSpace E] [BorelSpace E] {P : RestrictionCoeffLaw d} (k : ℕ)
+    [NormedAddCommGroup E] [NormedSpace ℝ E]
+    {P : RestrictionCoeffLaw d} (k : ℕ)
     (X : RegCoeffField d → E)
     (hX : AEStronglyMeasurable X (restrictionScaleNormalizedLaw k P)) :
     ∫ a, X a ∂restrictionScaleNormalizedLaw k P =
@@ -108,8 +108,8 @@ theorem integral_restrictionScaleNormalizedLaw {d : ℕ} {E : Type*}
 /-- Integrability under a scale-normalized law is integrability after
 composing with the defining dilation. -/
 theorem integrable_restrictionScaleNormalizedLaw_iff {d : ℕ} {E : Type*}
-    [NormedAddCommGroup E] [NormedSpace ℝ E] [CompleteSpace E]
-    [MeasurableSpace E] {P : RestrictionCoeffLaw d} (k : ℕ)
+    [NormedAddCommGroup E]
+    {P : RestrictionCoeffLaw d} (k : ℕ)
     {X : RegCoeffField d → E}
     (hX : AEStronglyMeasurable X (restrictionScaleNormalizedLaw k P)) :
     Integrable X (restrictionScaleNormalizedLaw k P) ↔
@@ -542,7 +542,7 @@ theorem triadicCoeffFamily_rescaleCoeffField_aeeq_dilate
     (dilatedCoeffFamily_coeffOn_ae_eq_rescaleCoeffField ha k Q).symm
 
 theorem LambdaSqCoeffField_rescaleCoeffField_of_aelocallyUniformlyElliptic
-    {d : ℕ} [NeZero d] {a : RegCoeffField d}
+    {d : ℕ} {a : RegCoeffField d}
     (ha : AELocallyUniformlyEllipticField a) (k : ℕ)
     (Q : TriadicCube d) (s : ℝ) (q : Ch02.MultiscaleExponent) :
     LambdaSqCoeffField Q s q (rescaleReg k a) =
@@ -573,7 +573,7 @@ theorem LambdaSqCoeffField_rescaleCoeffField_of_aelocallyUniformlyElliptic
           simp [LambdaSqCoeffField, F, ha]
 
 theorem lambdaSqCoeffField_rescaleCoeffField_of_aelocallyUniformlyElliptic
-    {d : ℕ} [NeZero d] {a : RegCoeffField d}
+    {d : ℕ} {a : RegCoeffField d}
     (ha : AELocallyUniformlyEllipticField a) (k : ℕ)
     (Q : TriadicCube d) (s : ℝ) (q : Ch02.MultiscaleExponent) :
     lambdaSqCoeffField Q s q (rescaleReg k a) =
@@ -609,7 +609,7 @@ theorem lambdaSqCoeffField_rescaleCoeffField_of_aelocallyUniformlyElliptic
   simp [Ch02.dilateCube, originCube, add_comm]
 
 theorem LambdaSqCoeffField_originCube_rescaleCoeffField_of_aelocallyUniformlyElliptic
-    {d : ℕ} [NeZero d] {a : RegCoeffField d}
+    {d : ℕ} {a : RegCoeffField d}
     (ha : AELocallyUniformlyEllipticField a) (k m : ℕ)
     (s : ℝ) (q : Ch02.MultiscaleExponent) :
     LambdaSqCoeffField (originCube d (m : ℤ)) s q (rescaleReg k a) =
@@ -619,7 +619,7 @@ theorem LambdaSqCoeffField_originCube_rescaleCoeffField_of_aelocallyUniformlyEll
       ha k (originCube d (m : ℤ)) s q
 
 theorem lambdaSqCoeffField_originCube_rescaleCoeffField_of_aelocallyUniformlyElliptic
-    {d : ℕ} [NeZero d] {a : RegCoeffField d}
+    {d : ℕ} {a : RegCoeffField d}
     (ha : AELocallyUniformlyEllipticField a) (k m : ℕ)
     (s : ℝ) (q : Ch02.MultiscaleExponent) :
     lambdaSqCoeffField (originCube d (m : ℤ)) s q (rescaleReg k a) =
@@ -933,7 +933,7 @@ private theorem adjointReg_comp_rescaleReg {d : ℕ} (k : ℕ) :
 theorem scaleNormalized {d : ℕ} {P : RestrictionCoeffLaw d}
     (hP : RestrictionAdjointInvariantLaw P) (k : ℕ) :
     RestrictionAdjointInvariantLaw (restrictionScaleNormalizedLaw k P) := by
-  show Measure.map adjointReg (restrictionScaleNormalizedLaw k P) =
+  change Measure.map adjointReg (restrictionScaleNormalizedLaw k P) =
     restrictionScaleNormalizedLaw k P
   rw [restrictionScaleNormalizedLaw_eq_map_rescaleReg,
     Measure.map_map measurable_adjointReg (measurable_rescaleReg k),

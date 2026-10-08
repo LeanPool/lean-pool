@@ -67,7 +67,7 @@ private theorem cubeTranslationVector_eq_ruledObservationCenter
 /-- Local identifications of the independently constructed observation and
 cell families give the exact translated centered-child response identity. -/
 theorem physicalCellHomogenizationError_eq_centeredChild
-    [NeZero d] {U : Set (Vec d)} {rho Rad b : ℝ}
+    {U : Set (Vec d)} {rho Rad b : ℝ}
     (system : EnlargedMarginRuledTriadicWhitneySystem U rho Rad)
     (aObs aCell : system.CellIndex → Book.Ch02.TriadicCoeffFamily d)
     (f : system.CellIndex → CoeffField d)

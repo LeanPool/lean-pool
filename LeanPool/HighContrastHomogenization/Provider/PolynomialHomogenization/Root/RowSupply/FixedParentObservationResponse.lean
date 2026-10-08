@@ -44,7 +44,7 @@ private theorem triadicCube_eq_translateCube_index_origin_fixed
   simp [translateCube, originCube]
 
 private theorem epsilonAffineTarget_descendant_subset_fixed
-    [NeZero d] {epsilon : ℝ} (abar : Mat d) (center : Vec d)
+    {epsilon : ℝ} (abar : Mat d) (center : Vec d)
     {K k : ℤ} {R : TriadicCube d}
     (hk : k ≤ K) (hR : R ∈ descendantsAtScale (originCube d K) k) :
     adaptedCellTranslate (epsilonAffineGrid epsilon abar) k

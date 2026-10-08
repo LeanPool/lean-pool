@@ -38,7 +38,7 @@ variable {d : ℕ}
 /-- CapObs-free terminal rate on the module-50 response-window witness. -/
 @[expose]
 def RowConvertedFluxScheduledRateAtWitness
-    (d : ℕ) [NeZero d] (C₀ : ℝ → ℝ → ℝ → ℝ)
+    (d : ℕ) (C₀ : ℝ → ℝ → ℝ → ℝ)
     (_g kappaRate Cdual : ℝ)
     (capFlux hardyConstant boundaryEnergy : ℝ≥0∞)
     (s rho Rad epsilon Xval outputFactor : ℝ) : Prop :=

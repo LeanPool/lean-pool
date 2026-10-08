@@ -166,7 +166,7 @@ linear functional on a finite-dimensional space. -/
 theorem integral_blockTrace {P : Measure (CoeffSpace d)} {D : CoeffSpace d → BlockMat d}
     (hint : Integrable (fun a => toFullBlockMat (D a)) P) :
     ∫ a, blockTrace (D a) ∂P = Matrix.trace (∫ a, toFullBlockMat (D a) ∂P) := by
-  show ∫ a, ∑ i : BlockCoord d, toFullBlockMat (D a) i i ∂P =
+  change ∫ a, ∑ i : BlockCoord d, toFullBlockMat (D a) i i ∂P =
     ∑ i : BlockCoord d, (∫ a, toFullBlockMat (D a) ∂P) i i
   rw [integral_finsetSum Finset.univ (fun i _ => integrable_fullBlockMat_iff.mp hint i i)]
   exact Finset.sum_congr rfl fun i _ => (integral_fullBlockMat_apply hint i i).symm
@@ -175,7 +175,7 @@ theorem integral_blockTrace {P : Measure (CoeffSpace d)} {D : CoeffSpace d → B
 theorem integrable_blockTrace {P : Measure (CoeffSpace d)} {D : CoeffSpace d → BlockMat d}
     (hint : Integrable (fun a => toFullBlockMat (D a)) P) :
     Integrable (fun a => blockTrace (D a)) P := by
-  show Integrable (fun a => ∑ i : BlockCoord d, toFullBlockMat (D a) i i) P
+  change Integrable (fun a => ∑ i : BlockCoord d, toFullBlockMat (D a) i i) P
   exact integrable_finsetSum Finset.univ (fun i _ => integrable_fullBlockMat_iff.mp hint i i)
 
 /-- **`E[tr D] = b`, fail-closed.**  For a block that is positive along every

@@ -525,9 +525,12 @@ private theorem enlarged_boundary_gap_upper [NeZero d]
 characterization, together with the ball sandwich already carried by its
 consumers. -/
 structure EnlargedMarginRuledTriadicWhitneySystem (U : Set (Vec d)) (rho Rad : ℝ) where
+  /-- Common center of the inner and outer balls bounding `U`. -/
   center : Vec d
   inner_ball : euclideanBallAt center rho ⊆ U
   outer_ball : U ⊆ euclideanBallAt center Rad
+  /-- Finite grid indices of the maximal cells satisfying the enlarged Whitney interior
+  margin in each generation. -/
   rows : ℤ → Finset (Fin d → ℤ)
   rows_eq : ∀ a w, w ∈ rows a ↔ IsMaximalEnlargedMarginWhitneyCell U a w
 

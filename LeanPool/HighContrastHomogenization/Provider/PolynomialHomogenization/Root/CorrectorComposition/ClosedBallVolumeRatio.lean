@@ -120,7 +120,7 @@ theorem outerCube_closedNormBall_volume_ratio_le [NeZero d] {r : ℝ} (hr : 0 < 
 /-! ## Outer side -/
 
 /-- The exact dilation of the ball volume by a positive factor. -/
-theorem volume_euclideanBall_const_mul [NeZero d] {c x : ℝ} (hc : 0 < c)
+theorem volume_euclideanBall_const_mul {c x : ℝ} (hc : 0 < c)
     (hx : 0 < x) :
     volume (euclideanBall d (c * x)) =
       ENNReal.ofReal (c ^ d) * volume (euclideanBall d x) := by

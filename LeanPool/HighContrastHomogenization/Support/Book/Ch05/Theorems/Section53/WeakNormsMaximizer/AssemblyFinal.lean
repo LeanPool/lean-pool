@@ -36,7 +36,7 @@ open scoped ENNReal BigOperators
 noncomputable section
 
 private theorem fluxScaleGeometricRHS_le_two_fluxRHSAtScale
-    {d : ℕ} [NeZero d] (a : RegCoeffField d)
+    {d : ℕ} (a : RegCoeffField d)
     {k m : ℤ} {t t' : ℝ}
     (ht : 0 < t) (ht_le : t ≤ 1)
     (hgap : 0 < t - t') (hgap_le : t - t' ≤ 1)

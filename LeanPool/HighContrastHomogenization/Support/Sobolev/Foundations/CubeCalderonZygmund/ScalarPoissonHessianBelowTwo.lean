@@ -401,7 +401,7 @@ private theorem exists_localized_mutual_tests
     exact hx
 
 private theorem exists_reflected_source_row_setup
-    {d : ℕ} [NeZero d] {m : ℤ} (q : FiniteLpExponent) {F : Vec d → ℝ}
+    {d : ℕ} {m : ℤ} (q : FiniteLpExponent) {F : Vec d → ℝ}
     (hF : MemLp F 2 (normalizedCubeMeasure (originCube d m)))
     (hFq : MemLp F q.exponent (normalizedCubeMeasure (originCube d m)))
     {B : ℝ≥0∞} (hBtop : B < ∞)
@@ -581,6 +581,8 @@ private theorem mutual_raw_identity {I C J D E A Hterm : ℝ}
     J = D + E - 2 * A - Hterm := by
   linarith
 
+/-- Package radial truncation at level `n` of weak Hessian row `i`
+as an `L²` cube datum at the conjugate of exponent `q`. -/
 @[expose]
 public noncomputable def sourceHessianRowRadialDatum
     {d : ℕ} {m : ℤ} (q : FiniteLpExponent)

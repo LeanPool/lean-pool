@@ -74,7 +74,7 @@ private theorem source_scale_delay_identity
 /-- **The moment package at the matched threshold.**  The excess above `R / 2`,
 its fourth moment against `R ^ 4` times the crude moment — with no residue —
 and the maximum's own `L⁴` norm. -/
-theorem weakMaximum_moment_package_at [NeZero d]
+theorem weakMaximum_moment_package_at
     {g : ℝ} (hg : g ∈ Set.Ico (0 : ℝ) 1)
     {P : Measure (CoeffSpace d)} [IsProbabilityMeasure P]
     {E : BlockMat d} {Ψ : ℝ → ℝ} {K : ℝ} {S : CoeffSpace d → ℝ}
@@ -119,7 +119,7 @@ theorem weakMaximum_moment_package_at [NeZero d]
     exact hMmeas.sub aemeasurable_const
   have hpoint : ∀ a, M a ≤ W a + ENNReal.ofReal (R / 2) := by
     intro a
-    show M a ≤ M a - ENNReal.ofReal (R / 2) + ENNReal.ofReal (R / 2)
+    change M a ≤ M a - ENNReal.ofReal (R / 2) + ENNReal.ofReal (R / 2)
     exact le_tsub_add
   have hmeasSet : MeasurableSet
       {a | (3 : ℝ) ^ Delta < normalizedSourceScale S sK a} := by
@@ -152,7 +152,7 @@ theorem weakMaximum_moment_package_at [NeZero d]
         rw [← zpow_add₀ (by norm_num : (3 : ℝ) ≠ 0)]
         simp]
       exact mul_le_mul_of_nonneg_right (le_of_lt hcase) (by positivity)
-    show M a - ENNReal.ofReal (R / 2) ≤ _
+    change M a - ENNReal.ofReal (R / 2) ≤ _
     refine le_trans tsub_le_self (le_trans hMa (le_of_eq ?_))
     rw [hmax]
     congr 1
@@ -306,7 +306,7 @@ theorem weakMaximum_moment_package_at [NeZero d]
 /-- **The primal bad-event energy at the matched threshold and a free level.**
 The residue-free majorant `R ^ 4 · badMomentMajorant` in place of the scaled
 one, at the threshold pair `(R / 2, lev)`. -/
-theorem profileBadEnergyAt_of_maximum_envelope [NeZero d]
+theorem profileBadEnergyAt_of_maximum_envelope
     {g : ℝ} (hg : g ∈ Set.Ico (0 : ℝ) 1)
     {P : Measure (CoeffSpace d)} [IsProbabilityMeasure P]
     {E : BlockMat d} {Ψ : ℝ → ℝ} {K : ℝ} {S : CoeffSpace d → ℝ}
@@ -346,7 +346,7 @@ theorem profileBadEnergyAt_of_maximum_envelope [NeZero d]
 
 /-- **The adjoint bad-event energy at the matched threshold and a free
 level.**  The same package, the mirrored load. -/
-theorem profileBadEnergyAt_adjoint_of_maximum_envelope [NeZero d]
+theorem profileBadEnergyAt_adjoint_of_maximum_envelope
     {g : ℝ} (hg : g ∈ Set.Ico (0 : ℝ) 1)
     {P : Measure (CoeffSpace d)} [IsProbabilityMeasure P]
     {E : BlockMat d} {Ψ : ℝ → ℝ} {K : ℝ} {S : CoeffSpace d → ℝ}

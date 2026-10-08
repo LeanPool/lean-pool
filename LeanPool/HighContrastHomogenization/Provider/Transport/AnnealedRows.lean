@@ -127,7 +127,7 @@ private theorem sum_Icc_le_of_belowStart {jStar n : ℤ} (hjn : jStar ≤ n) {ro
       rw [Finset.mem_Icc] at hi'
       omega
     have hsplit : Finset.Icc J n = Finset.Ico J jStar ∪ Finset.Icc jStar n := by
-      show Finset.Ico J (n + 1) = Finset.Ico J jStar ∪ Finset.Ico jStar (n + 1)
+      change Finset.Ico J (n + 1) = Finset.Ico J jStar ∪ Finset.Ico jStar (n + 1)
       exact (Finset.Ico_union_Ico_eq_Ico hlt.le (by omega)).symm
     have hbJ := hbelow J
     rw [hsplit, Finset.sum_union hdisj]

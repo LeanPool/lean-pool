@@ -527,7 +527,7 @@ private theorem mixedBottom_row_power_le_branch_maximum
         b * (q : ℝ) - (b - t) * ((q - n : ℕ) : ℝ) +
           (t - αbad) * ((m - q : ℕ) : ℝ) - b * (L + 1) := by
     dsimp [Xhigh]
-    field_simp [hτ_pos.ne']
+    exact mul_div_cancel_left₀ _ (show τ ≠ 0 from hτ_pos.ne')
   have hcrude_exp :
       Xcrude / σ =
         t * ((q - n : ℕ) : ℝ) +
@@ -544,8 +544,8 @@ private theorem mixedBottom_row_power_le_branch_maximum
         (Dhigh := Dhigh) (Dcrude := Dcrude) (Den := Den)
         (η := η) (τ := τ) (σ := σ)
         hη_pos hτ_pos hσ_pos hDhigh_pos hDcrude_pos hDen
-        (by simpa [Dhigh, τ, η] using hDen_high)
-        (by simpa [Dcrude, η] using hDen_crude)
+        (by simpa only [τ, η] using hDen_high)
+        (by simpa only [η] using hDen_crude)
         hcollapse
     rw [hhigh_exp, hcrude_exp] at hgeneric
     simpa [highA, crudeA] using hgeneric

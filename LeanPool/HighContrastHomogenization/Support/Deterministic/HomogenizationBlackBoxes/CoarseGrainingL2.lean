@@ -816,7 +816,7 @@ theorem negativeBesovFluxAverage_le_coarseFluxAverageBound
 
 /-- The full Section 3.3.B right-hand side after applying the duality constant. -/
 @[expose]
-noncomputable def coarseGrainingL2Rhs {d : ℕ} [NeZero d]
+noncomputable def coarseGrainingL2Rhs {d : ℕ}
     (Cdual : ℝ) (Q : TriadicCube d) (a : CoeffField d) (a0 : Mat d)
     (s : ℝ) (j : ℕ) (gradU g : Vec d → Vec d) : ℝ :=
   Cdual * s⁻¹ *
@@ -826,7 +826,7 @@ noncomputable def coarseGrainingL2Rhs {d : ℕ} [NeZero d]
 With depth zero and zero forcing, the full Section 3.3.B RHS collapses to the
 homogeneous RHS after multiplication by the duality constant.
 -/
-@[simp] theorem coarseGrainingL2Rhs_depth_zero_zero_forcing {d : ℕ} [NeZero d]
+@[simp] theorem coarseGrainingL2Rhs_depth_zero_zero_forcing {d : ℕ}
     (Cdual : ℝ) (Q : TriadicCube d) (a : CoeffField d) (a0 : Mat d)
     (s : ℝ) (gradU : Vec d → Vec d) :
     coarseGrainingL2Rhs Cdual Q a a0 s 0 gradU (0 : Vec d → Vec d) =
@@ -848,7 +848,7 @@ is represented by the single hypothesis `hcoarseFluxDefect`.  No quantitative
 uniform ellipticity constants appear in the conclusion.
 -/
 theorem solution_diff_l2_le_coarseGrainingL2Rhs_of_coarseFluxDefect_le
-    {d : ℕ} [NeZero d] {Cdual : ℝ}
+    {d : ℕ} {Cdual : ℝ}
     (hdual : ScalarSolutionComparisonDualityEstimate d Cdual)
     (Q : TriadicCube d) (a : CoeffField d) (a0 : Mat d) (sigma0 : ℝ)
     (gradU gradV g : Vec d → Vec d) {s : ℝ} (j : ℕ)
@@ -889,7 +889,7 @@ This is the form needed when the local flux-defect theorem supplies a
 dimension-only multiple of the displayed Section 3.3.B flux-defect RHS.
 -/
 theorem solution_diff_l2_le_coarseGrainingL2Rhs_mul_const_of_coarseFluxDefect_le
-    {d : ℕ} [NeZero d] {Cdual K : ℝ}
+    {d : ℕ} {Cdual K : ℝ}
     (hdual : ScalarSolutionComparisonDualityEstimate d Cdual)
     (Q : TriadicCube d) (a : CoeffField d) (a0 : Mat d) (sigma0 : ℝ)
     (gradU gradV g : Vec d → Vec d) {s : ℝ} (j : ℕ)
@@ -936,7 +936,7 @@ has bounded that RHS by `coarseGrainingBound`, the comparison estimate is
 immediate with the same dimension-only duality constant.
 -/
 theorem solution_diff_l2_le_dualityConstant_mul_coarseGrainingBound_of_coarseFluxDefect_le
-    {d : ℕ} [NeZero d] {Cdual : ℝ}
+    {d : ℕ} {Cdual : ℝ}
     (hdual : ScalarSolutionComparisonDualityEstimate d Cdual)
     (Q : TriadicCube d) (a : CoeffField d) (a0 : Mat d) (sigma0 : ℝ)
     (gradU gradV g : Vec d → Vec d) {s coarseGrainingBound : ℝ} (j : ℕ)
@@ -973,7 +973,7 @@ potentiality of `∇u - ∇v`.  The local Section-3.2.3 flux-defect estimate sti
 enters as the single quantitative hypothesis `hcoarseFluxDefect`.
 -/
 theorem solution_diff_l2_le_coarseGrainingL2Rhs_of_sameRhs_of_coarseFluxDefect_le
-    {d : ℕ} [NeZero d] {Cdual : ℝ}
+    {d : ℕ} {Cdual : ℝ}
     (hdual : ScalarSolutionComparisonDualityEstimate d Cdual)
     (Q : TriadicCube d) (a : CoeffField d) (a0 : Mat d) (sigma0 : ℝ)
     (u v : H1Function (cubeSet Q)) (g : Vec d → Vec d) {s : ℝ} (j : ℕ)
@@ -1005,7 +1005,7 @@ Same-right-hand-side version with a caller-supplied nonnegative constant in the
 local flux-defect bound.
 -/
 theorem solution_diff_l2_le_coarseGrainingL2Rhs_mul_const_of_sameRhs_of_coarseFluxDefect_le
-    {d : ℕ} [NeZero d] {Cdual K : ℝ}
+    {d : ℕ} {Cdual K : ℝ}
     (hdual : ScalarSolutionComparisonDualityEstimate d Cdual)
     (Q : TriadicCube d) (a : CoeffField d) (a0 : Mat d) (sigma0 : ℝ)
     (u v : H1Function (cubeSet Q)) (g : Vec d → Vec d) {s : ℝ} (j : ℕ)
@@ -1038,7 +1038,7 @@ scalar upper bound for the Section 3.3.B flux-defect RHS.
 -/
 theorem
   solution_diff_l2_le_dualityConstant_mul_coarseGrainingBound_of_sameRhs_of_coarseFluxDefect_le
-    {d : ℕ} [NeZero d] {Cdual : ℝ}
+    {d : ℕ} {Cdual : ℝ}
     (hdual : ScalarSolutionComparisonDualityEstimate d Cdual)
     (Q : TriadicCube d) (a : CoeffField d) (a0 : Mat d) (sigma0 : ℝ)
     (u v : H1Function (cubeSet Q)) (g : Vec d → Vec d)

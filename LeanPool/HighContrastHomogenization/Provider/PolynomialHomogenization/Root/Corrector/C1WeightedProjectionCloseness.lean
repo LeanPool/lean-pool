@@ -39,7 +39,7 @@ noncomputable section
 of an origin cube. -/
 @[expose]
 noncomputable def localHarmonicEnergy
-    {d : ℕ} [NeZero d] (a : Book.Ch02.TriadicCoeffFamily d) (q : ℕ)
+    {d : ℕ} (a : Book.Ch02.TriadicCoeffFamily d) (q : ℕ)
     (F : AHarmonicGradientHilbert.Space
       (PotentialSolenoidalL2Data.ofSubmoduleClosures (localGradientCube d q))
       (Book.Ch03.publicCoeffField_isEllipticFieldOn_openCubeSet
@@ -58,7 +58,7 @@ private theorem normalizedLocalSymmetricEnergy_neg
   ring
 
 private theorem sqrt_normalizedEnergy_grad_eq_h1EnergyNormOnCube_restriction
-    {d : ℕ} [NeZero d] (a : Book.Ch02.TriadicCoeffFamily d)
+    {d : ℕ} (a : Book.Ch02.TriadicCoeffFamily d)
     (k : ℤ) (u : H1Function (openCubeSet (originCube d k))) :
     Real.sqrt (normalizedLocalSymmetricEnergy
         (Book.Ch03.publicCoeffField_isEllipticFieldOn_openCubeSet
@@ -180,7 +180,7 @@ theorem finiteCorrectorWeightedProjection_sub_identity_le
           Real.sqrt (localHarmonicEnergy a q RP) := by
             have hnegEnergy : localHarmonicEnergy a q (-RP) =
                 localHarmonicEnergy a q RP := by
-              show normalizedLocalSymmetricEnergy hEll
+              change normalizedLocalSymmetricEnergy hEll
                   (-(RP : LocalGradientL2 d q)) =
                 normalizedLocalSymmetricEnergy hEll (RP : LocalGradientL2 d q)
               exact normalizedLocalSymmetricEnergy_neg hEll _

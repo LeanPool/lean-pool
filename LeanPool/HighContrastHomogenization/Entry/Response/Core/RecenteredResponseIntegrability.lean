@@ -216,7 +216,7 @@ theorem memLqSchatten_coarseBlock_adaptedCellTranslate [NeZero d]
       (Annealed.coeffSigma_le_global _) le_rfl).aestronglyMeasurable
   set D : ℝ := (12 * (d : ℝ) ^ ((3 : ℝ) / 2) / (1 - (3 : ℝ) ^ (-(1 - γ)))) *
     (3 : ℝ) ^ (γ * max ((J : ℝ) - (j : ℝ)) 0) with hDdef
-  apply Source.memLqSchatten_of_order_envelope hN hmeas
+  apply Source.memLqSchatten_of_order_envelope (E := E) hN hmeas
     (ae_of_all _ (fun a => isSymmetricBlockMat_coarseBlockMatrix W (⇑a.1)))
     (ae_of_all _ (fun a => Annealed.blockPosDef_coarseBlock_adapted q hq j y a)) (hXN N hN) D
   filter_upwards [hbound] with a ha
@@ -320,7 +320,7 @@ private theorem memLp_two_blockMatEntry_of_memLqSchatten
 of the sample coarse block.  The response is the block quadratic `AK.HC (2.15)` of the recentred
 block, so it is an affine function of the entries of the coarse block; being a finite combination
 of square integrable entries it is square integrable, and its square is integrable. -/
-private theorem integrable_respJ_sq_of_blockCongr {d : ℕ} [NeZero d]
+private theorem integrable_respJ_sq_of_blockCongr {d : ℕ}
     (P : Measure (CoeffSpace d)) [IsProbabilityMeasure P]
     (G : BlockMat d) (V : Set (Vec d)) (qq : Mat d) (u : ℤ) (b : CoeffSpace d → CoeffField d)
     (p q' : Vec d)
@@ -506,7 +506,7 @@ theorem memLp_two_coords_blockMatVecMul {V : Set (Vec d)} (S : BlockMat d)
 
 /-- Both slots of the centred doubled optimizer field are square integrable on an adapted cell,
 for a coefficient that agrees almost everywhere on the cell with a uniformly elliptic field. -/
-theorem memLp_two_coords_optimizerField_sub_const [NeZero d] {q : Mat d} (hq : IsUnit q) (t : ℤ)
+theorem memLp_two_coords_optimizerField_sub_const {q : Mat d} (hq : IsUnit q) (t : ℤ)
     {lam Lam : ℝ} {b f : CoeffField d}
     (hEll : IsEllipticFieldOn lam Lam (HighContrast.adaptedCell q t) f)
     (hbf : b =ᵐ[volumeMeasureOn (HighContrast.adaptedCell q t)] f)

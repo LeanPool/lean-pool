@@ -439,7 +439,7 @@ theorem startup_fluctuation_sum_le (d : ℕ) (hd : 2 ≤ d) (γ : ℝ)
         linarith only [this]
       exact mul_nonpos_of_nonpos_of_nonneg h1 h2
     simpa only [he2def] using moment_weight_comparison (d : ℝ) A B H x
-      (3 : ℝ) ^ (-((bigQ d γ : ℝ) * (d : ℝ) / 2) * (r : ℝ))
+      ((3 : ℝ) ^ (-((bigQ d γ : ℝ) * (d : ℝ) / 2) * (r : ℝ)))
       (Real.exp ((bigQ d γ : ℝ) * detIncrement P q n j)) e2
       (∫ a, absSchattenNorm (bigQ d γ : ℝ)
         (normalizedFluctuationSelf P q n a) ^ bigQ d γ ∂P)

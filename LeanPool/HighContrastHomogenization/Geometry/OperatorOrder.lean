@@ -237,10 +237,12 @@ theorem norm_le_norm_of_le {A B : Matrix n n ℝ} (hA : A.PosSemidef) (hB : B.Po
     (h : A ≤ B) : ‖A‖ ≤ ‖B‖ :=
   norm_le_of_le_smul_one hA (norm_nonneg B) (h.trans (le_norm_smul_one hB))
 
-omit [DecidableEq n] in
+omit [Fintype n] [DecidableEq n] in
 /-- A matrix dominating a positive definite matrix is positive definite. -/
-theorem posDef_of_posDef_le {A B : Matrix n n ℝ} (hA : A.PosDef) (hAB : A ≤ B) :
+theorem posDef_of_posDef_le [Finite n] {A B : Matrix n n ℝ} (hA : A.PosDef) (hAB : A ≤ B) :
     B.PosDef := by
+  classical
+  let : Fintype n := Fintype.ofFinite n
   have hPS : (B - A).PosSemidef := Matrix.le_iff.mp hAB
   refine Matrix.PosDef.of_dotProduct_mulVec_pos ?_ ?_
   · have hsum : B = A + (B - A) := by abel

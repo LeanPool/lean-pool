@@ -179,7 +179,7 @@ private theorem responseJ_special_pointwise_le_weighted_factors
           (((sigmaHatAtScale hP hStruct (m : ℤ)) ^ (-(1 / 2 : ℝ))) • e)
           (((sigmaHatAtScale hP hStruct (m : ℤ)) ^ (1 / 2 : ℝ)) • e) = 1
       rw [show sigmaHatAtScale hP hStruct (m : ℤ) = σ by rfl]
-      simp [vecDot_smul_left, vecDot_smul_right]
+      simp only [one_div, vecDot_smul_right, vecDot_smul_left]
       have hcross :
           σ ^ (1 / 2 : ℝ) * (σ ^ (-(1 / 2 : ℝ)) * vecDot e e) = 1 := by
         rw [← mul_assoc, mul_comm (σ ^ (1 / 2 : ℝ)) (σ ^ (-(1 / 2 : ℝ)))]

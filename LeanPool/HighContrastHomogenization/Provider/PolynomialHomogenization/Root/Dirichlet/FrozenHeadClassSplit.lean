@@ -60,7 +60,7 @@ variable {d : ℕ}
 
 /-! ## Nonnegativity of the two flux classes -/
 
-theorem fluxC0Factor_nonneg (d : ℕ) [NeZero d] {s₀ : ℝ} (hs₀ : 0 < s₀)
+theorem fluxC0Factor_nonneg (d : ℕ) {s₀ : ℝ} (hs₀ : 0 < s₀)
     (Rad cnorm : ℝ) : 0 ≤ fluxC0Factor d s₀ Rad cnorm := by
   have hflux0 : (0 : ℝ) ≤ coarseFluxResponseConstant d := by
     rw [coarseFluxResponseConstant]
@@ -82,7 +82,7 @@ theorem fluxC0Factor_nonneg (d : ℕ) [NeZero d] {s₀ : ℝ} (hs₀ : 0 < s₀)
     (mul_nonneg (mul_nonneg (mul_nonneg hflux0 (inv_nonneg.mpr hs₀.le)) hnorm0)
       hm3)
 
-theorem fluxLgFactor_nonneg (d : ℕ) [NeZero d] (g kappaRate : ℝ) :
+theorem fluxLgFactor_nonneg (d : ℕ) (g kappaRate : ℝ) :
     0 ≤ fluxLgFactor d g kappaRate := by
   rw [fluxLgFactor]
   exact mul_nonneg
@@ -93,7 +93,7 @@ theorem fluxLgFactor_nonneg (d : ℕ) [NeZero d] (g kappaRate : ℝ) :
 
 /-! ## The collapsed constant -/
 
-theorem collapsedEnergyLawFree_nonneg (C : ℝ) (d : ℕ) [NeZero d] {s : ℝ}
+theorem collapsedEnergyLawFree_nonneg (C : ℝ) (d : ℕ) {s : ℝ}
     (hs : 0 < s) (A : ℝ) : 0 ≤ collapsedEnergyLawFree C d s A := by
   have hCbesov0 : (0 : ℝ) ≤
       BufferToCell.positiveBesovContinuousComparisonConstant d :=
@@ -106,7 +106,7 @@ theorem collapsedEnergyLawFree_nonneg (C : ℝ) (d : ℕ) [NeZero d] {s : ℝ}
     (mul_nonneg (sq_nonneg C) (inv_nonneg.mpr hs.le)) hd0) hCbesov0) hframe0
 
 /-- **The collapsed law-free constant splits multiplicatively.** -/
-theorem collapsedEnergyLawFree_mul_split (C : ℝ) (d : ℕ) [NeZero d] {s : ℝ}
+theorem collapsedEnergyLawFree_mul_split (C : ℝ) (d : ℕ) {s : ℝ}
     (hs : 0 < s) (A B : ℝ) :
     collapsedEnergyLawFree C d s (A * B) ≤
       collapsedEnergyLawFree C d s A * (B ^ 2 + 1) := by
@@ -153,7 +153,7 @@ theorem sqrt_rpow_eq {E : ℝ} (hE : 0 ≤ E) (t : ℝ) :
 
 /-- The `C₀`-slot class of the head constant: `(d, s, ρ, Rad, cnorm)`-level. -/
 @[expose]
-noncomputable def frozenHeadC0Factor (C : ℝ) (d : ℕ) [NeZero d]
+noncomputable def frozenHeadC0Factor (C : ℝ) (d : ℕ)
     (s rho Rad cnorm Cdual hardyReal : ℝ) : ℝ :=
   gaugeOutputLawFree d s rho * Cdual *
     (2 * ((fractionalDualToBesovConstant d).toReal *
@@ -164,11 +164,11 @@ noncomputable def frozenHeadC0Factor (C : ℝ) (d : ℕ) [NeZero d]
 
 /-- The `Lg`-slot class of the head constant: `(d, g, κ)`-level. -/
 @[expose]
-noncomputable def frozenHeadLgFactor (d : ℕ) [NeZero d] (g kappaRate : ℝ) : ℝ :=
+noncomputable def frozenHeadLgFactor (d : ℕ) (g kappaRate : ℝ) : ℝ :=
   fluxLgFactor d g kappaRate *
     Real.sqrt (witnessAmplitudeLgFactor d g kappaRate ^ 2 + 1)
 
-theorem frozenHeadLgFactor_nonneg (d : ℕ) [NeZero d] (g kappaRate : ℝ) :
+theorem frozenHeadLgFactor_nonneg (d : ℕ) (g kappaRate : ℝ) :
     0 ≤ frozenHeadLgFactor d g kappaRate :=
   mul_nonneg (fluxLgFactor_nonneg d g kappaRate) (Real.sqrt_nonneg _)
 
@@ -190,7 +190,7 @@ theorem headSlot_mono {X Cb F v w hr : ℝ}
 /-- **(ii), part two.**  The head constant from the modules named above, at the `KenergyBound`
 from the modules named above, is below the product of its `C₀` class, a fixed eccentricity power,
 and its `Lg` class. -/
-theorem frozenWitnessHeadConstant_le_classes (C : ℝ) [NeZero d]
+theorem frozenWitnessHeadConstant_le_classes (C : ℝ)
     {g kappaRate s rho Rad cnorm Cdual hardyReal : ℝ} {abar : Mat d}
     (hs : 0 < s) (hsHalf : s ≤ 1 / 2) (hCdual : 0 ≤ Cdual) :
     frozenWitnessHeadConstant d g kappaRate s rho Rad cnorm Cdual hardyReal

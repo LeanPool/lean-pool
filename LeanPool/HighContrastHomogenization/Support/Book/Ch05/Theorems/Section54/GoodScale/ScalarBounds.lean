@@ -249,7 +249,8 @@ theorem expectedJScalarFormula_special_eq_of_P4
       (sigma ^ (-(1 / 2 : ℝ)) • e) (sigma ^ (1 / 2 : ℝ) • e) =
     (1 / 2 : ℝ) * sigma⁻¹ * hP.barSigmaAtScale hStruct (k : ℤ) +
       (1 / 2 : ℝ) * sigma * (hP.barSigmaStarAtScale hStruct (k : ℤ))⁻¹ - 1
-  simp [expectedJScalarFormula, vecDot_smul_left, vecDot_smul_right]
+  simp only [one_div, expectedJScalarFormula_eq]
+  simp only [vecDot_smul_left, vecDot_smul_right]
   rw [hcross2, hq2, hp2]
   ring
 
@@ -301,7 +302,8 @@ theorem tauScalarFormula_special_eq_of_P4
       (1 / 2 : ℝ) * sigma *
         ((hP.barSigmaStarAtScale hStruct (k : ℤ))⁻¹ -
           (hP.barSigmaStarAtScale hStruct (m : ℤ))⁻¹)
-  simp [tauScalarFormula, vecDot_smul_left, vecDot_smul_right]
+  simp only [one_div, tauScalarFormula_eq]
+  simp only [vecDot_smul_left, vecDot_smul_right]
   rw [hq2, hp2]
   ring
 

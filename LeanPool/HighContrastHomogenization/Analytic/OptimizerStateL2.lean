@@ -104,7 +104,6 @@ theorem coeFn_optimizerStateL2 (U : Book.Ch02.Domain d) (aU : Book.Ch02.CoeffOn 
 /-! ## The inner product against a fixed block state -/
 
 theorem inner_optimizerStateL2 {U : Book.Ch02.Domain d}
-    [IsFiniteMeasure (volumeMeasureOn (U : Set (Vec d)))]
     (aU : Book.Ch02.CoeffOn U) (p q : Vec d) {Y : BlockState d}
     (hY : MemBlockL2 (U : Set (Vec d)) Y.eval) :
     inner ℝ (toHilbertBlockL2OfBlockField (U := (U : Set (Vec d))) hY)

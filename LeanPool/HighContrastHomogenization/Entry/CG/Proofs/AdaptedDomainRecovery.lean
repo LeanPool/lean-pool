@@ -60,7 +60,7 @@ theorem exists_recoveryData_of_mu_eq_muCandidate_of_isOpenBoundedConvexDomain
     PotentialSolenoidalL2Data.hasPotentialZeroTraceClosureRealization_of_convexDomain
       hConv
   let R : PotentialSolenoidalL2RecoveryData U :=
-    potentialSolenoidalL2RecoveryData_ofSubmoduleClosures_of_potentialZeroTraceClosureRealization
+    potentialSolenoidalL2RecoveryDataOfClosureRealization
       (U := U) hRealize
   let system : MuOperatorSystemData U a :=
     R.toMuOperatorSystemDataOfIsEllipticFieldOn hEll hvol
@@ -314,7 +314,7 @@ theorem isOpenBoundedConvexDomain_affine_openCube
 
 /-- Every invertible affine open cube has positive finite real volume, for every integer scale. -/
 theorem volume_affine_openCube_toReal_pos
-    {d : ℕ} [NeZero d] (q : Mat d) (hq : IsUnit q) (j : ℤ) (y : Vec d) :
+    {d : ℕ} (q : Mat d) (hq : IsUnit q) (j : ℤ) (y : Vec d) :
     0 < (volume (translateSet y (matVecMul q '' openCubeSet (originCube d j)))).toReal := by
   have hdomain := isOpenBoundedConvexDomain_affine_openCube q hq j y
   apply ENNReal.toReal_pos (hdomain.isOpen.measure_ne_zero volume ?_) hdomain.volume_lt_top.ne

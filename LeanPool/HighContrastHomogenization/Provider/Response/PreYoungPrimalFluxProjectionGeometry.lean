@@ -153,7 +153,7 @@ theorem abs_cutoff_projected_primal_flux_pairing_subSkew_le_nested_depth_sum
 
 /-- The finite-depth primal flux oscillation, averaged over terminal parents. -/
 @[expose]
-def primal_flux_projected_oscillation [NeZero d]
+def primalFluxProjectedOscillation
     {q : Mat d} (hq : q.PosDef) (s t : ℤ)
     (g : Mat d) (hg : IsSkewMat g) (p r Pcen : Vec d)
     (N : ℕ) (a : CoeffSpace d) : ℝ :=
@@ -169,7 +169,7 @@ def primal_flux_projected_oscillation [NeZero d]
 
 /-- The full physical primal flux oscillation, averaged over terminal parents. -/
 @[expose]
-def primal_flux_physical_oscillation [NeZero d]
+def primalFluxPhysicalOscillation
     {q : Mat d} (hq : q.PosDef) (s t : ℤ)
     (g : Mat d) (hg : IsSkewMat g) (p r Pcen : Vec d)
     (a : CoeffSpace d) : ℝ :=
@@ -189,7 +189,7 @@ theorem abs_primal_flux_projected_oscillation_le_nested_depth_sum
     [NeZero d] {q : Mat d} (hq : q.PosDef) {s t : ℤ} (hst : s ≤ t)
     (g : Mat d) (hg : IsSkewMat g) (p r Pcen : Vec d)
     (N : ℕ) (a : CoeffSpace d) :
-    |primal_flux_projected_oscillation hq s t g hg p r Pcen N a| ≤
+    |primalFluxProjectedOscillation hq s t g hg p r Pcen N a| ≤
       ∑ j ∈ Finset.range N,
         (32 * (d : ℝ) ^ 2 * smoothTransitionProfile.derivBound *
           (3 : ℝ) ^ (-((t - s) + (j : ℤ)))) *
@@ -247,7 +247,7 @@ theorem abs_primal_flux_projected_oscillation_le_nested_depth_sum
 /-- The physical primal flux cutoff oscillation is the unprojected Besov
 pairing on the reference cube. -/
 theorem primal_flux_cutoff_oscillation_eq_unprojected_pairing
-    [NeZero d] {q : Mat d} (hq : q.PosDef) (s t : ℤ) (w : Fin d → ℤ)
+    {q : Mat d} (hq : q.PosDef) (s t : ℤ) (w : Fin d → ℤ)
     (F : Vec d → BlockVec d) (Pcen : Vec d) :
     let R : TriadicCube d := translateCube w (originCube d s)
     let phi : Vec d → ℝ := fun y ↦

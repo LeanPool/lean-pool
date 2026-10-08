@@ -266,7 +266,7 @@ theorem translateSet_smul_subset_of_convexApproxSample_mapsTo
   simpa [convexApproxSample] using hx'
 
 theorem setIntegral_comp_smul_add_of_pos {d : ℕ} {E : Type*}
-    [NormedAddCommGroup E] [NormedSpace ℝ E] [CompleteSpace E]
+    [NormedAddCommGroup E] [NormedSpace ℝ E]
     {a : ℝ} (ha : 0 < a) (b : Vec d) (U : Set (Vec d)) (f : Vec d → E) :
     ∫ x in U, f (a • x + b) ∂MeasureTheory.volume =
       (a ^ d)⁻¹ • ∫ y in translateSet b (a • U), f y ∂MeasureTheory.volume := by
@@ -283,7 +283,7 @@ theorem setIntegral_comp_smul_add_of_pos {d : ℕ} {E : Type*}
           rw [setIntegral_comp_addRight_translateSet (d := d) (E := E) b (a • U) f]
 
 theorem setIntegral_comp_inv_smul_sub_of_pos {d : ℕ} {E : Type*}
-    [NormedAddCommGroup E] [NormedSpace ℝ E] [CompleteSpace E]
+    [NormedAddCommGroup E] [NormedSpace ℝ E]
     {a : ℝ} (ha : 0 < a) (b : Vec d) (U : Set (Vec d)) (f : Vec d → E) :
     (a ^ d)⁻¹ •
         ∫ y in translateSet b (a • U), f (a⁻¹ • (y - b)) ∂MeasureTheory.volume =

@@ -162,7 +162,7 @@ theorem mem_euclideanBall_iff {R : ℝ} (x : Vec d) :
 
 theorem center_mem_euclideanBallAt (c : Vec d) {r : ℝ} (hr : 0 < r) :
     c ∈ euclideanBallAt c r := by
-  show vecNormSq (c - c) < r ^ 2
+  change vecNormSq (c - c) < r ^ 2
   rw [sub_self, show vecNormSq (0 : Vec d) = 0 from vecNormSq_eq_zero_iff.mpr rfl]
   exact pow_pos hr 2
 

@@ -89,7 +89,7 @@ theorem dotProduct_mulVec_of_skew {W : Mat d} (hW : Wᴴ = -W) (x : Vec d) :
   linarith only [h]
 
 /-- **Polarization**: the two cross terms cancel. -/
-theorem polarization {n : Type*} [Fintype n] [DecidableEq n] (T : Matrix n n ℝ)
+theorem polarization {n : Type*} [Fintype n] (T : Matrix n n ℝ)
     (u v : n → ℝ) :
     (u + v) ⬝ᵥ T *ᵥ (u + v) + (u - v) ⬝ᵥ T *ᵥ (u - v) =
       2 * (u ⬝ᵥ T *ᵥ u) + 2 * (v ⬝ᵥ T *ᵥ v) := by

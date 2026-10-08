@@ -40,7 +40,7 @@ private theorem sqrt_mul_rpow_two
   ring
 
 private theorem originCube_orderEmbedding_sqrt
-    {d : ℕ} [NeZero d] (s : FractionalOrder)
+    {d : ℕ} (s : FractionalOrder)
     {K : ℝ} (hK : 0 < K)
     (hTest : ∀ (n : ℤ) (psi : Vec d → Vec d),
       IsLocalVecTest (openCubeSet (originCube d n)) psi →

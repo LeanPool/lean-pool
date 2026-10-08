@@ -39,7 +39,7 @@ noncomputable section
 
 variable {d : ℕ}
 
-private theorem aligned_cell_weight_eq_inv_card [NeZero d]
+private theorem aligned_cell_weight_eq_inv_card
     {q : Mat d} (hq : q.PosDef) {k t : ℤ} (hkt : k ≤ t)
     (w : Fin d → ℤ) :
     (volume (adaptedCellAt q k w)).toReal /
@@ -71,7 +71,7 @@ private theorem aligned_cell_weight_eq_inv_card [NeZero d]
 
 /-- **The average over an adapted parent is the normalized average of the
 child averages.** -/
-theorem avsum_volumeAverage_adaptedCellAt_eq [NeZero d]
+theorem avsum_volumeAverage_adaptedCellAt_eq
     {q : Mat d} (hq : q.PosDef) {k t : ℤ} (hkt : k ≤ t)
     {g : Vec d → ℝ} (hg : IntegrableOn g (adaptedCell q t) volume) :
     avsum (alignedIndex q k t)
@@ -101,7 +101,7 @@ theorem avsum_volumeAverage_adaptedCellAt_eq [NeZero d]
 
 /-- **The doubled parent average is the normalized sum of the child
 averages.** -/
-theorem blockCellAverage_adaptedCell_eq_avsum [NeZero d]
+theorem blockCellAverage_adaptedCell_eq_avsum
     {q : Mat d} (hq : q.PosDef) {k t : ℤ} (hkt : k ≤ t)
     {F : Vec d → BlockVec d}
     (hF₁ : ∀ i, IntegrableOn (fun x => (F x).1 i) (adaptedCell q t) volume)

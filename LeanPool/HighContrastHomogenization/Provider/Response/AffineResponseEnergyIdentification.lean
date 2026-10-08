@@ -109,7 +109,7 @@ private theorem translated_originCube_eq (R : TriadicCube d) :
 descendant-averaged difference half-energy has expectation equal to the
 physical primal response defect. -/
 theorem exists_integral_affineSubSkewDifferenceEnergy_eq_profilePrimal
-    [NeZero d] {P : Measure (CoeffSpace d)}
+    {P : Measure (CoeffSpace d)}
     (hP : HCPoly.Frozen.IsStationaryLaw P)
     {q : Mat d} (hq : q.PosDef) {l s t : ℤ} (hqGrid : IsRoundedGrid l q)
     (hls : l ≤ s) (j : ℕ) (hscale : t - (j : ℤ) = s)
@@ -179,7 +179,7 @@ theorem exists_integral_affineSubSkewDifferenceEnergy_eq_profilePrimal
 /-- The independently chosen adjoint affine family satisfies the same actual
 energy identity at the adjoint response defect. -/
 theorem exists_integral_affineAdjointSubSkewDifferenceEnergy_eq_profileAdjoint
-    [NeZero d] {P : Measure (CoeffSpace d)}
+    {P : Measure (CoeffSpace d)}
     (hP : HCPoly.Frozen.IsStationaryLaw P)
     {q : Mat d} (hq : q.PosDef) {l s t : ℤ} (hqGrid : IsRoundedGrid l q)
     (hls : l ≤ s) (j : ℕ) (hscale : t - (j : ℤ) = s)

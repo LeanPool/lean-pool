@@ -270,8 +270,9 @@ theorem bridge_source_bound (d : ℕ) (hd : 2 ≤ d) (γ : ℝ) (hγ : γ ∈ Se
     have hsq := pow_le_pow_left₀ (add_nonneg (Real.sqrt_nonneg _) (Real.sqrt_nonneg _)) hsum 2
     simpa only [mul_pow, D, ← Real.exp_nat_mul] using! hsq
   have he1 : 1 ≤ Real.exp (2 * x) := Real.one_le_exp_iff.mpr (by linarith only [hx])
-  have hDE : 1 ≤ D * Real.exp (2 * x) := by simpa only [one_mul] using mul_le_mul hD he1 (by
-    norm_num : (0 : ℝ) ≤ 1) hD0.le
+  have hDE : 1 ≤ D * Real.exp (2 * x) := by
+    simpa only [one_mul] using
+      (mul_le_mul hD he1 (by norm_num : (0 : ℝ) ≤ 1) hD0.le)
   have hW : 1 + Pi * (Real.sqrt (‖m‖ * ‖m⁻¹‖) + Real.sqrt (‖mPlus‖ * ‖mPlus⁻¹‖)) ^ 2 ≤
       D * (2 + Pi) * Real.exp (2 * x) := by
     have hmul := mul_le_mul_of_nonneg_left hsquare hPi0

@@ -39,7 +39,7 @@ noncomputable section
 variable {d : ℕ}
 
 /-- The all-scale response maximum is an a.e. measurable statistic. -/
-theorem aemeasurable_diagonalWeakMaximum [NeZero d]
+theorem aemeasurable_diagonalWeakMaximum
     {P : Measure (CoeffSpace d)} {rho : ℝ} {q : Mat d} (hq : q.PosDef)
     {t : ℤ} {E : BlockMat d} (hE : IsSymmetricBlockMat E)
     (hEpd : BlockPosDef E) :
@@ -246,7 +246,7 @@ theorem profileGoodEnergyAt_le_of_pointwise
       rw [← ENNReal.ofReal_mul hfac0]
 
 /-- The primal good optimizer energy at a released split level. -/
-theorem profileGoodEnergyAt_diagonalWeakEnergy_le [NeZero d]
+theorem profileGoodEnergyAt_diagonalWeakEnergy_le
     {P : Measure (CoeffSpace d)} [IsProbabilityMeasure P]
     {alpha rho lev : ℝ} {H : ℕ} {q : Mat d} (hq : q.PosDef) {t : ℤ}
     {E : BlockMat d} (hE : IsSymmetricBlockMat E) (hEpd : BlockPosDef E)
@@ -272,7 +272,7 @@ theorem profileGoodEnergyAt_diagonalWeakEnergy_le [NeZero d]
   exact hmain.trans_eq (congrArg ENNReal.ofReal (by ring))
 
 /-- The adjoint good optimizer energy at a released split level. -/
-theorem profileGoodEnergyAt_diagonalWeakAdjointEnergy_le [NeZero d]
+theorem profileGoodEnergyAt_diagonalWeakAdjointEnergy_le
     {P : Measure (CoeffSpace d)} [IsProbabilityMeasure P]
     {alpha rho lev : ℝ} {H : ℕ} {q : Mat d} (hq : q.PosDef) {t : ℤ}
     {E : BlockMat d} (hE : IsSymmetricBlockMat E) (hEpd : BlockPosDef E)

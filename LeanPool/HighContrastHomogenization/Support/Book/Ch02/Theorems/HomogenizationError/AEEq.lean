@@ -35,7 +35,7 @@ This file proves the public basic properties of the homogenization error
 
 /-- The normalized one-cube block-response value set depends only on the
 coefficient family modulo a.e. equality on each triadic cube. -/
-theorem normalizedBlockResponseValueSet_eq_ofAEEq {d : ℕ} [NeZero d]
+theorem normalizedBlockResponseValueSet_eq_ofAEEq {d : ℕ}
     {a b : TriadicCoeffFamily d} (h : TriadicCoeffFamily.AEEq a b)
     (Q : TriadicCube d) (a0 : Mat d) :
     normalizedBlockResponseValueSet Q a a0 =
@@ -52,7 +52,7 @@ theorem normalizedBlockResponseValueSet_eq_ofAEEq {d : ℕ} [NeZero d]
 
 /-- The normalized one-cube block-response maximum is a.e.-representative
 invariant. -/
-theorem normalizedBlockResponseMax_eq_ofAEEq {d : ℕ} [NeZero d]
+theorem normalizedBlockResponseMax_eq_ofAEEq {d : ℕ}
     {a b : TriadicCoeffFamily d} (h : TriadicCoeffFamily.AEEq a b)
     (Q : TriadicCube d) (a0 : Mat d) :
     normalizedBlockResponseMax Q a a0 =
@@ -63,7 +63,7 @@ theorem normalizedBlockResponseMax_eq_ofAEEq {d : ℕ} [NeZero d]
 /-- The descendant normalized block-response maximum is a.e.-representative
 invariant. -/
 theorem maxDescendantNormalizedBlockResponseAtScale_eq_ofAEEq
-    {d : ℕ} [NeZero d] {a b : TriadicCoeffFamily d}
+    {d : ℕ} {a b : TriadicCoeffFamily d}
     (h : TriadicCoeffFamily.AEEq a b) (Q : TriadicCube d) (k : ℤ)
     (a0 : Mat d) :
     maxDescendantNormalizedBlockResponseAtScale Q k a a0 =
@@ -74,7 +74,7 @@ theorem maxDescendantNormalizedBlockResponseAtScale_eq_ofAEEq
 
 /-- The scale-level response aggregation in the homogenization error is
 a.e.-representative invariant. -/
-theorem scaleResponseAtScale_eq_ofAEEq {d : ℕ} [NeZero d]
+theorem scaleResponseAtScale_eq_ofAEEq {d : ℕ}
     {a b : TriadicCoeffFamily d} (h : TriadicCoeffFamily.AEEq a b)
     (Q : TriadicCube d) (k : ℤ) (p : MultiscaleExponent) (a0 : Mat d) :
     scaleResponseAtScale Q k p a a0 =
@@ -104,7 +104,7 @@ theorem scaleResponseAtScale_eq_ofAEEq {d : ℕ} [NeZero d]
 
 /-- The finite-`q` multiscale homogenization error is a.e.-representative
 invariant. -/
-theorem HomogenizationErrorFinite_eq_ofAEEq {d : ℕ} [NeZero d]
+theorem HomogenizationErrorFinite_eq_ofAEEq {d : ℕ}
     {a b : TriadicCoeffFamily d} (h : TriadicCoeffFamily.AEEq a b)
     (Q : TriadicCube d) (n : ℤ) (s : ℝ) (p : MultiscaleExponent)
     (q : ℝ) (a0 : Mat d) :
@@ -118,7 +118,7 @@ theorem HomogenizationErrorFinite_eq_ofAEEq {d : ℕ} [NeZero d]
 
 /-- The endpoint-`q` multiscale homogenization error is a.e.-representative
 invariant. -/
-theorem HomogenizationErrorInfinity_eq_ofAEEq {d : ℕ} [NeZero d]
+theorem HomogenizationErrorInfinity_eq_ofAEEq {d : ℕ}
     {a b : TriadicCoeffFamily d} (h : TriadicCoeffFamily.AEEq a b)
     (Q : TriadicCube d) (n : ℤ) (s : ℝ) (p : MultiscaleExponent)
     (a0 : Mat d) :
@@ -136,7 +136,7 @@ theorem HomogenizationErrorInfinity_eq_ofAEEq {d : ℕ} [NeZero d]
     rw [scaleResponseAtScale_eq_ofAEEq h Q (n - (l : ℤ)) p a0]
 
 /-- The multiscale homogenization error is a.e.-representative invariant. -/
-theorem HomogenizationError_eq_ofAEEq {d : ℕ} [NeZero d]
+theorem HomogenizationError_eq_ofAEEq {d : ℕ}
     {a b : TriadicCoeffFamily d} (h : TriadicCoeffFamily.AEEq a b)
     (Q : TriadicCube d) (n : ℤ) (s : ℝ)
     (p q : MultiscaleExponent) (a0 : Mat d) :
@@ -150,7 +150,7 @@ theorem HomogenizationError_eq_ofAEEq {d : ℕ} [NeZero d]
 
 /-- The untruncated cube homogenization error is a.e.-representative
 invariant. -/
-theorem HomogenizationErrorOnCube_eq_ofAEEq {d : ℕ} [NeZero d]
+theorem HomogenizationErrorOnCube_eq_ofAEEq {d : ℕ}
     {a b : TriadicCoeffFamily d} (h : TriadicCoeffFamily.AEEq a b)
     (Q : TriadicCube d) (s : ℝ) (p q : MultiscaleExponent) (a0 : Mat d) :
     HomogenizationErrorOnCube Q s p q a a0 =

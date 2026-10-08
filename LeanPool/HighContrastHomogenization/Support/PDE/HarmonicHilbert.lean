@@ -412,7 +412,6 @@ noncomputable def vectorPairingCLM
     ((continuousLinearEquivVectorL2 (U := U)).toContinuousLinearMap)
 
 theorem vectorPairingCLM_apply_eq_integral
-    [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     {g : Vec d → Vec d} (hg : MemVectorL2 U g) (F : VectorL2 U) :
     vectorPairingCLM (U := U) hg F =
       ∫ x in U, vecDot (g x) (F x) ∂MeasureTheory.volume := by
@@ -446,7 +445,6 @@ theorem vectorPairingCLM_apply_eq_integral
             (U := U) hg (MeasureTheory.Lp.memLp F)
 
 theorem integral_vecDot_eq_zero_of_mem_potential_closure
-    [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     (F : VectorL2 U)
     (hF : F ∈ (PotentialSolenoidalL2Data.ofSubmoduleClosures U).potential)
     {g : Vec d → Vec d} (hg : MemVectorL2 U g)
@@ -501,7 +499,6 @@ theorem integral_vecDot_eq_zero_of_mem_solenoidal_closure
       (U := U) G hG φ
 
 theorem isPotentialOn_vectorField_of_hodgeConverseCriterion
-    [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     (hHodge : HodgeConverseCriterion U)
     (z : Space (U := U) (a := a) (PotentialSolenoidalL2Data.ofSubmoduleClosures U) hEll) :
     IsPotentialOn U (vectorField z) :=
@@ -510,7 +507,6 @@ theorem isPotentialOn_vectorField_of_hodgeConverseCriterion
       (U := U) (vectorField z) (mem_potential z) hg hsol
 
 theorem isSolenoidalOn_coeffVectorField
-    [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     (z : Space (U := U) (a := a) (PotentialSolenoidalL2Data.ofSubmoduleClosures U) hEll) :
     IsSolenoidalOn U (coeffVectorField z) := by
   intro φ
@@ -530,7 +526,6 @@ theorem ae_coeffVectorField_eq_matVecMul_vectorField
   simp [HilbertVec.applyMat_apply]
 
 theorem isSolenoidalOn_matVecMul_vectorField
-    [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     (z : Space (U := U) (a := a) (PotentialSolenoidalL2Data.ofSubmoduleClosures U) hEll) :
     IsSolenoidalOn U (fun x => matVecMul (a x) (vectorField z x)) := by
   intro φ
@@ -545,7 +540,6 @@ theorem isSolenoidalOn_matVecMul_vectorField
     _ = 0 := isSolenoidalOn_coeffVectorField (U := U) (a := a) z φ
 
 theorem isAHarmonicGradient_vectorField_of_hodgeConverseCriterion
-    [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     (hHodge : HodgeConverseCriterion U)
     (z : Space (U := U) (a := a) (PotentialSolenoidalL2Data.ofSubmoduleClosures U) hEll) :
     IsAHarmonicGradient a U (vectorField z) :=
@@ -557,7 +551,6 @@ theorem isAHarmonicGradient_vectorField_of_hodgeConverseCriterion
 representative. -/
 @[expose]
 noncomputable def toAHarmonicFunction
-    [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     (hHodge : HodgeConverseCriterion U)
     (z : Space (U := U) (a := a) (PotentialSolenoidalL2Data.ofSubmoduleClosures U) hEll) :
     AHarmonicFunction a U := by
@@ -573,7 +566,6 @@ noncomputable def toAHarmonicFunction
             (U := U) (a := a) hHodge z }
 
 @[simp] theorem grad_toAHarmonicFunction
-    [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     (hHodge : HodgeConverseCriterion U)
     (z : Space (U := U) (a := a) (PotentialSolenoidalL2Data.ofSubmoduleClosures U) hEll) :
     (toAHarmonicFunction (U := U) (a := a) hHodge z).toH1.grad = vectorField z := by

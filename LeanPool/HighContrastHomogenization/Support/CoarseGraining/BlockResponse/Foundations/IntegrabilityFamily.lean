@@ -62,7 +62,6 @@ theorem blockResponseIntegrabilityData_zero {d : ℕ} (U : Set (Vec d)) (a : Coe
 
 theorem blockResponseIntegrabilityData_of_flux_memL2_of_mem_responseSpace_of_isEllipticFieldOn
     {d : ℕ} {a : CoeffField d} {U : Set (Vec d)} {X : BlockState d}
-    [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     {lam Lam : ℝ} (hX : BlockResponseSpace a U X)
     (hFlux : MemVectorL2 U X.flux) (hEll : IsEllipticFieldOn lam Lam U a) :
     BlockResponseIntegrabilityData U a X := by
@@ -195,7 +194,6 @@ theorem blockResponse_flux_memL2_of_lowerImage_isPotential_of_mem_responseSpace_
 theorem
   blockResponseIntegrabilityData_of_ellipticField
     {d : ℕ} {a : CoeffField d} {U : Set (Vec d)} {X : BlockState d}
-    [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     {lam Lam : ℝ} (hX : BlockResponseSpace a U X)
     {f : Vec d → Vec d}
     (hLowerPot : IsPotentialOn U f)
@@ -213,7 +211,6 @@ theorem
 theorem
   blockResponseIntegrabilityData_of_lowerImage_isPotential_of_mem_responseSpace_of_isEllipticFieldOn
     {d : ℕ} {a : CoeffField d} {U : Set (Vec d)} {X : BlockState d}
-    [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     {lam Lam : ℝ} (hX : BlockResponseSpace a U X)
     (hLower :
       IsPotentialOn U
@@ -227,7 +224,6 @@ theorem
 theorem
   blockResponseIntegrabilityData_of_lowerImage_memL2
     {d : ℕ} {a : CoeffField d} {U : Set (Vec d)} {X : BlockState d}
-    [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     {lam Lam : ℝ} (hX : BlockResponseSpace a U X)
     (hLowerL2 :
       MemVectorL2 U

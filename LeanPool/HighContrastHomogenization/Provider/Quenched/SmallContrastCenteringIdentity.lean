@@ -105,9 +105,9 @@ theorem centering_pairing_eq
   have hskewzero : p ⬝ᵥ g *ᵥ p = 0 :=
     Response.dotProduct_mulVec_of_skew hgstar p
   have hpq1 : vecDot p q₀ = p ⬝ᵥ r := by
-    show p ⬝ᵥ q₀ = p ⬝ᵥ r
+    change p ⬝ᵥ q₀ = p ⬝ᵥ r
     rw [hq₀]
-    show p ⬝ᵥ (r - g *ᵥ p) = p ⬝ᵥ r
+    change p ⬝ᵥ (r - g *ᵥ p) = p ⬝ᵥ r
     rw [dotProduct_sub, hskewzero, sub_zero]
   have hpq2 : p ⬝ᵥ q₀ = p ⬝ᵥ r := hpq1
   rw [hpq1, hpq2] at hbridge

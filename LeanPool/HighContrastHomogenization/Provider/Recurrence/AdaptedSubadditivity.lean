@@ -147,7 +147,7 @@ theorem toFullBlockMat_coarseBlock_adaptedCell_le_average [NeZero d] {q : Mat d}
   have hHermAvg :
       ((Z.card : ℝ)⁻¹ •
         ∑ w ∈ Z, toFullBlockMat (coarseBlock (adaptedCellAt q j w) a)).IsHermitian := by
-    show ((Z.card : ℝ)⁻¹ • _)ᴴ = _
+    change ((Z.card : ℝ)⁻¹ • _)ᴴ = _
     rw [Matrix.conjTranspose_smul, hHermS, star_trivial]
   have hHermP : (toFullBlockMat (coarseBlock (adaptedCell q p) a)).IsHermitian :=
     isHermitian_toFullBlockMat (isSymmetricBlockMat_coarseBlockMatrix _ _)

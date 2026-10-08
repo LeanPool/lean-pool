@@ -54,12 +54,12 @@ private theorem blockMatVecMul_constantBlockMatrix_of_isSymm
   have hsymm : symmPart A = A := symmPart_eq_of_isSymm hA
   have hskew : skewPart A = 0 := skewPart_eq_zero_of_isSymm hA
   apply Prod.ext
-  · simp [Book.Ch02.constantBlockMatrix, blockMatVecMul, hsymm, hskew,
-      matTranspose]
+  · simp only [blockMatVecMul, Book.Ch02.constantBlockMatrix, hsymm, matTranspose, hskew,
+      Matrix.transpose_zero, zero_mul, mul_zero, add_zero, neg_zero, add_eq_left]
     ext i
     simp [matVecMul]
-  · simp [Book.Ch02.constantBlockMatrix, blockMatVecMul, hsymm, hskew,
-      matTranspose]
+  · simp only [blockMatVecMul, Book.Ch02.constantBlockMatrix, hsymm, matTranspose, hskew,
+      Matrix.transpose_zero, zero_mul, mul_zero, add_zero, neg_zero, add_eq_right]
     ext i
     simp [matVecMul]
 

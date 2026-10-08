@@ -44,7 +44,7 @@ theorem sq_profileEnergyLoad {L : ℝ} {p q : Vec d} :
   exact add_nonneg (sq_nonneg L) (abs_nonneg _)
 
 /-- The terminal maximum controls the primal optimizer energy. -/
-theorem sq_diagonalWeakEnergy_le_maximum [NeZero d]
+theorem sq_diagonalWeakEnergy_le_maximum
     {rho : ℝ} {q : Mat d} (hq : q.PosDef) {t : ℤ}
     {E : BlockMat d} (hE : IsSymmetricBlockMat E) (hEpd : BlockPosDef E)
     {a : CoeffSpace d} (p r : Vec d)
@@ -115,7 +115,7 @@ theorem sq_diagonalWeakEnergy_le_maximum [NeZero d]
 
 /-- The same terminal maximum controls the coefficient-transpose optimizer
 energy with its separate plus load. -/
-theorem sq_diagonalWeakAdjointEnergy_le_maximum [NeZero d]
+theorem sq_diagonalWeakAdjointEnergy_le_maximum
     {rho : ℝ} {q : Mat d} (hq : q.PosDef) {t : ℤ}
     {E : BlockMat d} (hE : IsSymmetricBlockMat E) (hEpd : BlockPosDef E)
     {a : CoeffSpace d} (p r : Vec d)
@@ -141,7 +141,7 @@ theorem sq_diagonalWeakAdjointEnergy_le_maximum [NeZero d]
   exact hmain
 
 /-- On the bad event the primal energy costs one square root of the maximum. -/
-theorem diagonalWeakEnergy_le_sqrt_two_mul_bad [NeZero d]
+theorem diagonalWeakEnergy_le_sqrt_two_mul_bad
     {rho : ℝ} {q : Mat d} (hq : q.PosDef) {t : ℤ}
     {E : BlockMat d} (hE : IsSymmetricBlockMat E) (hEpd : BlockPosDef E)
     {a : CoeffSpace d} (p r : Vec d)
@@ -185,7 +185,7 @@ theorem diagonalWeakEnergy_le_sqrt_two_mul_bad [NeZero d]
     Real.sqrt_sq_eq_abs, abs_of_nonneg hrhs0]
 
 /-- On the good event the primal energy is bounded by its deterministic load. -/
-theorem diagonalWeakEnergy_le_sqrt_two_mul_good [NeZero d]
+theorem diagonalWeakEnergy_le_sqrt_two_mul_good
     {rho : ℝ} {q : Mat d} (hq : q.PosDef) {t : ℤ}
     {E : BlockMat d} (hE : IsSymmetricBlockMat E) (hEpd : BlockPosDef E)
     {a : CoeffSpace d} (p r : Vec d)
@@ -223,7 +223,7 @@ theorem diagonalWeakEnergy_le_sqrt_two_mul_good [NeZero d]
 
 /-- On the bad event the adjoint energy costs one square root of the same
 maximum, with its independent plus load. -/
-theorem diagonalWeakAdjointEnergy_le_sqrt_two_mul_bad [NeZero d]
+theorem diagonalWeakAdjointEnergy_le_sqrt_two_mul_bad
     {rho : ℝ} {q : Mat d} (hq : q.PosDef) {t : ℤ}
     {E : BlockMat d} (hE : IsSymmetricBlockMat E) (hEpd : BlockPosDef E)
     {a : CoeffSpace d} (p r : Vec d)
@@ -272,7 +272,7 @@ theorem diagonalWeakAdjointEnergy_le_sqrt_two_mul_bad [NeZero d]
 
 /-- On the good event the adjoint energy is bounded by its deterministic plus
 load. -/
-theorem diagonalWeakAdjointEnergy_le_sqrt_two_mul_good [NeZero d]
+theorem diagonalWeakAdjointEnergy_le_sqrt_two_mul_good
     {rho : ℝ} {q : Mat d} (hq : q.PosDef) {t : ℤ}
     {E : BlockMat d} (hE : IsSymmetricBlockMat E) (hEpd : BlockPosDef E)
     {a : CoeffSpace d} (p r : Vec d)
@@ -325,7 +325,7 @@ def energyGoodConstantAtLevel (lev : ℝ) : ℝ := Real.sqrt (1 + lev)
 
 /-- On the released bad event the primal energy costs one square root of the
 maximum, with the fixed-level constant. -/
-theorem diagonalWeakEnergy_le_sqrt_two_mul_bad_at_level [NeZero d]
+theorem diagonalWeakEnergy_le_sqrt_two_mul_bad_at_level
     {rho lev : ℝ} {q : Mat d} (hq : q.PosDef) {t : ℤ}
     {E : BlockMat d} (hE : IsSymmetricBlockMat E) (hEpd : BlockPosDef E)
     {a : CoeffSpace d} (p r : Vec d) (hlev : 1 ≤ lev)
@@ -373,7 +373,7 @@ theorem diagonalWeakEnergy_le_sqrt_two_mul_bad_at_level [NeZero d]
 
 /-- On the released good event the primal energy is bounded by its
 deterministic load, at the coefficient `√(1+lev)`. -/
-theorem diagonalWeakEnergy_le_sqrt_two_mul_good_at_level [NeZero d]
+theorem diagonalWeakEnergy_le_sqrt_two_mul_good_at_level
     {rho lev : ℝ} {q : Mat d} (hq : q.PosDef) {t : ℤ}
     {E : BlockMat d} (hE : IsSymmetricBlockMat E) (hEpd : BlockPosDef E)
     {a : CoeffSpace d} (p r : Vec d) (hlev : 1 ≤ lev)
@@ -417,7 +417,7 @@ theorem diagonalWeakEnergy_le_sqrt_two_mul_good_at_level [NeZero d]
     Real.sqrt_sq_eq_abs, abs_of_nonneg hrhs0]
 
 /-- The adjoint mirror on the released bad event. -/
-theorem diagonalWeakAdjointEnergy_le_sqrt_two_mul_bad_at_level [NeZero d]
+theorem diagonalWeakAdjointEnergy_le_sqrt_two_mul_bad_at_level
     {rho lev : ℝ} {q : Mat d} (hq : q.PosDef) {t : ℤ}
     {E : BlockMat d} (hE : IsSymmetricBlockMat E) (hEpd : BlockPosDef E)
     {a : CoeffSpace d} (p r : Vec d) (hlev : 1 ≤ lev)
@@ -467,7 +467,7 @@ theorem diagonalWeakAdjointEnergy_le_sqrt_two_mul_bad_at_level [NeZero d]
     Real.sqrt_sq_eq_abs, abs_of_nonneg hrhs0]
 
 /-- The adjoint mirror on the released good event. -/
-theorem diagonalWeakAdjointEnergy_le_sqrt_two_mul_good_at_level [NeZero d]
+theorem diagonalWeakAdjointEnergy_le_sqrt_two_mul_good_at_level
     {rho lev : ℝ} {q : Mat d} (hq : q.PosDef) {t : ℤ}
     {E : BlockMat d} (hE : IsSymmetricBlockMat E) (hEpd : BlockPosDef E)
     {a : CoeffSpace d} (p r : Vec d) (hlev : 1 ≤ lev)

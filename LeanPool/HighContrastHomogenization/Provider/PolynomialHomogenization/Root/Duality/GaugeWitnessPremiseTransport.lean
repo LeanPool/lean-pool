@@ -55,7 +55,7 @@ variable {d : ℕ}
 /-- The matrix square root of a positive definite matrix is symmetric. -/
 theorem matTranspose_matSqrt {A : Mat d} (hA : A.PosDef) :
     matTranspose (matSqrt A) = matSqrt A := by
-  show Matrix.transpose (matSqrt A) = matSqrt A
+  change Matrix.transpose (matSqrt A) = matSqrt A
   rw [← conjTranspose_eq_transpose']
   exact (matSqrt_spec hA.posSemidef).1.isHermitian
 
@@ -73,7 +73,7 @@ private theorem matTranspose_mul' (A B : Mat d) :
 /-- A symmetric conjugation of a skew matrix is skew. -/
 theorem isSkewMat_conj {M K : Mat d} (hMsymm : matTranspose M = M)
     (hK : IsSkewMat K) : IsSkewMat (M * K * M) := by
-  show matTranspose (M * K * M) = -(M * K * M)
+  change matTranspose (M * K * M) = -(M * K * M)
   rw [matTranspose_mul', matTranspose_mul', hMsymm, hK]
   noncomm_ring
 
@@ -124,7 +124,7 @@ theorem isSolenoidalOn_sub {U : Set (Vec d)} {f g : Vec d → Vec d}
 /-- A compact-test weak equation upgrades to solenoidality of its flux once the
 flux is square integrable. -/
 theorem isSolenoidalOn_of_isWeakSolutionOn {U : Set (Vec d)}
-    [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)] (hU : IsOpen U)
+    (hU : IsOpen U)
     (b : CoeffField d) {F : Vec d → Vec d}
     (hbF : MemVectorL2 U (fun x => matVecMul (b x) (F x)))
     (hweak : IsWeakSolutionOn b U F) :
@@ -181,8 +181,6 @@ solenoidality the duality reduction consumes. -/
 theorem isSolenoidalOn_gaugeFluxDefect {abar : Mat d}
     (hS : (symmPart abar).PosDef) {U : Set (Vec d)} (hU : MeasurableSet U)
     (hVopen : IsOpen (matImage (matSqrt (symmPart abar))⁻¹ U))
-    [MeasureTheory.IsFiniteMeasure
-      (volumeMeasureOn (matImage (matSqrt (symmPart abar))⁻¹ U))]
     (aPhysical : CoeffField d) (u h : H1Function U)
     (huPhys : IsWeakSolutionOn aPhysical U u.grad)
     (hhPhys : IsWeakSolutionOn (fun _ => abar) U h.grad)
@@ -205,7 +203,7 @@ theorem isSolenoidalOn_gaugeFluxDefect {abar : Mat d}
     matTranspose (matSqrt (symmPart abar))⁻¹ with hKhat
   have hKskew : IsSkewMat Khat := by
     have hskew : IsSkewMat (skewPart abar) := by
-      show matTranspose (skewPart abar) = -skewPart abar
+      change matTranspose (skewPart abar) = -skewPart abar
       funext i j
       simp only [matTranspose, Matrix.transpose_apply, skewPart,
         Matrix.neg_apply]

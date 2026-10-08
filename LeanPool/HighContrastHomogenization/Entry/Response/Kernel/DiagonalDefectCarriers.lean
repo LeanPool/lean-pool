@@ -296,17 +296,19 @@ theorem cellAverage_optimizerField_eq_blockResponseMean_of_aeEq
     simp [optimizerField, Response.aHarmonicOfAEEq, hx]
   rw [cellAverage_congr_ae (subset_refl U) hof, hkey, coarseBlockMatrix_congr_of_ae_eq hae]
 
+omit [NeZero d] in
 /-- Every aligned adapted cell is an open bounded convex domain. -/
 theorem isOpenBoundedConvexDomain_adaptedCellAtCenter (q : Mat d) (hq : IsUnit q) (k : ℤ)
     (w : Fin d → ℤ) : IsOpenBoundedConvexDomain (adaptedCellAtCenter q k w) := by
-  show IsOpenBoundedConvexDomain (HighContrast.adaptedCellTranslate q k (adaptedCellCenter q k w))
+  change IsOpenBoundedConvexDomain (HighContrast.adaptedCellTranslate q k (adaptedCellCenter q k w))
   rw [Annealed.adaptedCellTranslate_eq_cg_affine]
   exact isOpenBoundedConvexDomain_affine_openCube q hq k _
 
+omit [NeZero d] in
 /-- Every aligned adapted cell has positive volume. -/
 theorem volume_adaptedCellAtCenter_toReal_pos (q : Mat d) (hq : IsUnit q) (k : ℤ)
     (w : Fin d → ℤ) : 0 < (volume (adaptedCellAtCenter q k w)).toReal := by
-  show 0 < (volume (HighContrast.adaptedCellTranslate q k (adaptedCellCenter q k w))).toReal
+  change 0 < (volume (HighContrast.adaptedCellTranslate q k (adaptedCellCenter q k w))).toReal
   rw [Annealed.adaptedCellTranslate_eq_cg_affine]
   exact volume_affine_openCube_toReal_pos q hq k _
 
@@ -375,6 +377,7 @@ theorem cellAverage_optimizerField_respCoeffMinus_sub_eq
     cellAverage_optimizerField_respCoeffMinus_eq q hq t F a p r u hu,
     blockResponseMean_sub_blockResponseMean]
 
+omit [NeZero d] in
 /-- Nonemptiness of an aligned adapted cell. -/
 private theorem adaptedCellAtCenter_nonempty (q : Mat d) (hq : IsUnit q) (k : ℤ) (w : Fin d → ℤ) :
     (adaptedCellAtCenter q k w).Nonempty := by

@@ -74,10 +74,10 @@ theorem isUnit_det_exactRoot [NeZero d] {abar : Mat d}
 
 /-- The exact normalized root is symmetric: it is a positive scalar multiple of
 the symmetric square root. -/
-theorem matTranspose_exactRoot [NeZero d] (m : Mat d) :
+theorem matTranspose_exactRoot (m : Mat d) :
     matTranspose (Selection.normalizedRoot m) = Selection.normalizedRoot m := by
   have hsq : Matrix.transpose (matSqrt m) = matSqrt m := (isSymm_matSqrt m).eq
-  show Matrix.transpose (Selection.normalizedRoot m) = Selection.normalizedRoot m
+  change Matrix.transpose (Selection.normalizedRoot m) = Selection.normalizedRoot m
   rw [Selection.normalizedRoot_eq, Matrix.transpose_smul, hsq]
 
 /-! ## The `H¹` pullback -/
@@ -138,7 +138,7 @@ equivalence with `baseRoundedGrid` replaced by the exact root; every step of
 the proof is generic in the matrix. -/
 theorem isWeakSolutionOn_exactRootCenteredPullback_iff [NeZero d]
     {abar : Mat d} (hS : (symmPart abar).PosDef)
-    {U : Set (Vec d)} [IsFiniteMeasure (volumeMeasureOn U)]
+    {U : Set (Vec d)}
     (hU : IsOpen U) (a : CoeffField d) {u : Vec d → ℝ}
     {Du : Vec d → Vec d} (hu : MemScalarL2 U u)
     (hDu : ∀ i, MemScalarL2 U fun x ↦ Du x i)

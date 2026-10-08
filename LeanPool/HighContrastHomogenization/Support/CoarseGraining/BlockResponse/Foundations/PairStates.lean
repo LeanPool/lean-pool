@@ -216,7 +216,6 @@ theorem blockResponse_lowerImage_pair_half_ae_eq_gradDiff_of_isEllipticFieldOn
 
 theorem blockResponseIntegrabilityData_pair_half_of_isEllipticFieldOn
     {d : ℕ} {U : Set (Vec d)} {a : CoeffField d}
-    [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     {lam Lam : ℝ} (hEll : IsEllipticFieldOn lam Lam U a)
     (u : AHarmonicFunction a U) (v : AHarmonicFunction (HCPolySupport.adjointCoeffField a) U) :
     BlockResponseIntegrabilityData U a (blockResponsePairHalfState a u v) := by

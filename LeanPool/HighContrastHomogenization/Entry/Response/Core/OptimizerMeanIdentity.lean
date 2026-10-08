@@ -257,7 +257,7 @@ theorem blockMatrixOfCoeff_sub_skew {g : Mat d} (hg : matTranspose g = -g) (A : 
     blockMatrixOfCoeff (A - g) = blockCongr ⟨1, 0, g, 1⟩ (blockMatrixOfCoeff A) := by
   have hgT : (g : Mat d)ᵀ = -g := hg
   have hkT : matTranspose (skewPart A - g) = matTranspose (skewPart A) + g := by
-    show (skewPart A - g)ᵀ = (skewPart A)ᵀ + g
+    change (skewPart A - g)ᵀ = (skewPart A)ᵀ + g
     rw [Matrix.transpose_sub, hgT, sub_neg_eq_add]
   rw [blockMatrixOfCoeff_eq, blockMatrixOfCoeff_eq, blockCongr_shear,
     symmPart_sub_skew hg, skewPart_sub_skew hg, hkT]
@@ -401,7 +401,7 @@ private theorem integral_grad_mul_coordDeriv_comm
   rw [key i j, key j i]
   congr 1
   refine MeasureTheory.integral_congr_ae (Filter.Eventually.of_forall fun x => ?_)
-  show φ.toFun x * euclideanCoordSecondDeriv j i ψ x
+  change φ.toFun x * euclideanCoordSecondDeriv j i ψ x
       = φ.toFun x * euclideanCoordSecondDeriv i j ψ x
   rw [euclideanCoordSecondDeriv_comm hψ j i x]
 
@@ -586,7 +586,7 @@ theorem isBlockMuAdmissible_shearState {g : Mat d} (hg : matTranspose g = -g)
 omit [NeZero d] in
 private theorem matTranspose_neg_skew {g : Mat d} (hg : matTranspose g = -g) :
     matTranspose (-g) = -(-g) := by
-  show (-g : Mat d)ᵀ = -(-g)
+  change (-g : Mat d)ᵀ = -(-g)
   rw [Matrix.transpose_neg]
   exact congrArg Neg.neg hg
 

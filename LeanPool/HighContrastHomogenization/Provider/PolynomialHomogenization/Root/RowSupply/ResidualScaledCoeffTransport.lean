@@ -42,7 +42,7 @@ everywhere as scaling the original sample by `epsilon`. -/
 theorem scaledCoeff_mul_pow_physicalScaleCoeff_ae
     {epsilon : ℝ} (hepsilon : 0 < epsilon) (N : ℕ) (a : CoeffSpace d) :
     scaledCoeff (epsilon * (3 : ℝ) ^ N)
-        (Quenched.physical_scale_coeff N a) =ᵐ[volume]
+        (Quenched.physicalScaleCoefficient N a) =ᵐ[volume]
       scaledCoeff epsilon a := by
   have hlambda : 0 < epsilon * (3 : ℝ) ^ N := by positivity
   have hpull :=
@@ -50,7 +50,7 @@ theorem scaledCoeff_mul_pow_physicalScaleCoeff_ae
       (inv_ne_zero hlambda.ne')).tendsto_ae
         (Quenched.physical_scale_coeff_ae N a)
   filter_upwards [hpull] with x hx
-  change (Quenched.physical_scale_coeff N a).1
+  change (Quenched.physicalScaleCoefficient N a).1
       ((epsilon * (3 : ℝ) ^ N)⁻¹ • x) = a.1 (epsilon⁻¹ • x)
   rw [hx]
   unfold rescaleCoeffField triadicDilateVec

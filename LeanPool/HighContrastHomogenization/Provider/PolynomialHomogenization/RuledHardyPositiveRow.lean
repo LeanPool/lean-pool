@@ -274,6 +274,8 @@ theorem euclideanBoundaryDistance_lt_ruledScaleFactor [NeZero d]
     exact this
   exact (euclideanBoundaryDistance_le_of_not_mem hyU).trans_lt hxy
 
+/-- The extended nonnegative real factor `(41 * Real.sqrt d) ^ (2 * s)` used to compare
+ruled cell-scale weights with boundary weights. -/
 @[expose]
 public def ruledBoundaryScaleFactor (d : ℕ) (s : ℝ) : ℝ≥0∞ :=
   ENNReal.ofReal ((41 * Real.sqrt d) ^ (2 * s))

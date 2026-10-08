@@ -198,7 +198,7 @@ private theorem canonicalCoarseData_primal_and_adjoint_of_ellipticField
   exact ⟨hS, hK, hSigmaCanon, hSAdj, hKAdj, hSigmaAdj, hdet⟩
 
 private theorem response_completedSquare_of_canonicalCoarseData
-    {d : ℕ} [NeZero d] (U : Domain d) (a : CoeffOn U)
+    {d : ℕ} (U : Domain d) (a : CoeffOn U)
     (hS : IsSigmaStarCoarse (U : Set (Vec d)) a.toCoeffField
       (HCPolySupport.sigmaStarCoarse (U : Set (Vec d)) a.toCoeffField))
     (hK : IsKappaCoarse (U : Set (Vec d)) a.toCoeffField

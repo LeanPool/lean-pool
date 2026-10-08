@@ -107,7 +107,7 @@ theorem memLqSchatten_normalizedCentered_sum (d : ℕ) (hd : 2 ≤ d)
 /-- The annealed block of a cell centred at a lattice point of the same generation is the
 adapted mean.  `annealedBlock_adaptedCellAtCenter`, moved to the `adaptedCellTranslate`
 picture. -/
-theorem annealedBlock_adaptedCellTranslate_lattice [NeZero d]
+theorem annealedBlock_adaptedCellTranslate_lattice
     (P : Measure (CoeffSpace d)) (hstat : IsStationaryLaw P)
     (jStar : ℕ) (hjS : 2 * d ≤ 3 ^ jStar) (m : Mat d) (hm : m.PosDef)
     {j : ℤ} (hj : (jStar : ℤ) ≤ j) (w : Fin d → ℤ) :
@@ -120,7 +120,7 @@ theorem annealedBlock_adaptedCellTranslate_lattice [NeZero d]
 mean of `Y z` vanishes.  This is the `hcent` premise, in the
 `Matrix.of fun α β => ∫ …` shape that premise uses; the same object is stated as
 `fun α β => ∫ …`, and the two are bridged here rather than left to coincide. -/
-theorem integral_normalizedCentered_lattice_eq_zero [NeZero d] (hd : 2 ≤ d)
+theorem integral_normalizedCentered_lattice_eq_zero (hd : 2 ≤ d)
     (P : Measure (CoeffSpace d)) [IsProbabilityMeasure P]
     (γ : ℝ) (E : BlockMat d) (Ψ : ℝ → ℝ) (K : ℝ) (S : CoeffSpace d → ℝ)
     (hstat : IsStationaryLaw P) (hdag : CoarseEllipticityDagger P γ E Ψ K S)

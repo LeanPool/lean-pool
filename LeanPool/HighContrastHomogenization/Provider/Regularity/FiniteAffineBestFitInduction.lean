@@ -248,7 +248,7 @@ private theorem normalizedAffineCandidateError_zero_sub_le_add
           cubeBesovScaleWeight 1 Q * cubeLpNorm Q (2 : ℝ≥0∞) r₂ := by ring
 
 private theorem originCubeAffineH1LinearMap_weakPoisson
-    (d : ℕ) [NeZero d] (k : ℤ) (p : AffineCoefficients d) :
+    (d : ℕ) (k : ℤ) (p : AffineCoefficients d) :
     WeakPoissonEquationOn (openCubeSet (originCube d k))
       (originCubeAffineH1LinearMap d k p) (fun _ ↦ 0) := by
   intro phi hphi hcompact hsupport
@@ -261,7 +261,7 @@ private theorem originCubeAffineH1LinearMap_weakPoisson
     integral_zero] using hzero
 
 theorem exists_originCubeAffineSlopeErrorConstant
-    (d : ℕ) [NeZero d] :
+    (d : ℕ) :
     ∃ C : ℝ, 0 < C ∧ ∀ (k : ℤ) (c : ℝ) (e : Vec d),
       euclideanNorm e ≤ C *
         normalizedAffineCandidateError (originCube d k) (fun _ ↦ 0) c e := by
@@ -834,7 +834,7 @@ private theorem finiteAffineForwardSlope_bound
   have := hpbound t ht
   simp only [pseq, dite_eq_left ht, dite_eq_left (Nat.zero_le L), Nat.cast_zero] at this
   have hbase := congrArg euclideanNorm
-    (finiteAffineBestFitSlope_congr_index a (by ring : j + (0 : ℤ) = j)
+    (finiteAffineBestFitSlope_congr_index (m := m) a (by ring : j + (0 : ℤ) = j)
       (by omega) (by omega) b)
   rw [hbase] at this
   exact this

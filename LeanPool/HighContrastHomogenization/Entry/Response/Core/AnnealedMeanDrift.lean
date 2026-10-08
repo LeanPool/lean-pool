@@ -426,7 +426,7 @@ private theorem adaptedCellAtCenter_zero_eq_adaptedCell (q : Mat d) (j : ℤ) :
     have h0 : (fun i => (((0 : Fin d → ℤ) i : ℤ) : ℝ)) = (0 : Vec d) := by
       funext i; simp
     rw [adaptedCellCenter, h0]
-    show (3 : ℝ) ^ j • Matrix.mulVec q (0 : Vec d) = 0
+    change (3 : ℝ) ^ j • Matrix.mulVec q (0 : Vec d) = 0
     rw [Matrix.mulVec_zero, smul_zero]
   rw [adaptedCellAtCenter, hc, HighContrast.adaptedCellTranslate]
   ext x
@@ -587,7 +587,7 @@ theorem respSourceLoad_le_of_loewner_scalewise (P : Measure (CoeffSpace d)) (jSt
 /-- Nonnegativity of the profile at a single generation pair, extracted from the
 inline argument (`HCPoly/Entry/OneGridPropagation.lean`). -/
 theorem profile_nonneg (d : ℕ) (hd : 2 ≤ d) (γ : ℝ) (hγ : γ ∈ Set.Ico (0 : ℝ) 1)
-    (P : Measure (CoeffSpace d)) [IsProbabilityMeasure P]
+    (P : Measure (CoeffSpace d))
     (E : BlockMat d) (Ψ : ℝ → ℝ) (K : ℝ) (Src : CoeffSpace d → ℝ)
     (hP : IsProbabilityMeasure P) (hstat : IsStationaryLaw P) (hunit : IsUnitRangeLaw P)
     (hdag : CoarseEllipticityDagger P γ E Ψ K Src)
@@ -644,14 +644,14 @@ theorem respM0_isSymm_of_canonicalMetric_posDef {F : BlockMat d} (hm : (explicit
   cases α with
   | inl i => cases β with
     | inl j =>
-        show (explicitCanonicalMetric F) i j = (explicitCanonicalMetric F) j i
+        change (explicitCanonicalMetric F) i j = (explicitCanonicalMetric F) j i
         simpa [Matrix.IsHermitian, Matrix.conjTranspose_apply] using
           (congrFun (congrFun h1 i) j).symm
     | inr j => rfl
   | inr i => cases β with
     | inl j => rfl
     | inr j =>
-        show (explicitCanonicalMetric F)⁻¹ i j = (explicitCanonicalMetric F)⁻¹ j i
+        change (explicitCanonicalMetric F)⁻¹ i j = (explicitCanonicalMetric F)⁻¹ j i
         simpa [Matrix.IsHermitian, Matrix.conjTranspose_apply] using
           (congrFun (congrFun h2 i) j).symm
 

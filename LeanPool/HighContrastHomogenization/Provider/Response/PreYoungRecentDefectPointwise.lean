@@ -54,7 +54,7 @@ private theorem upper_left_pos_semidef {H : BlockMat d}
 
 /-- The two coordinate pairings of a recent child--parent difference are
 controlled by its half doubled-energy and the cell Schur loads. -/
-theorem abs_vec_dot_recent_difference_le [NeZero d]
+theorem abs_vec_dot_recent_difference_le
     {q : Mat d} (hq : q.PosDef) {s t : ℤ} (hst : s ≤ t)
     {w : Fin d → ℤ} (hw : w ∈ alignedIndex q s t)
     (a : CoeffSpace d) (p r Pcen Qcen : Vec d) :

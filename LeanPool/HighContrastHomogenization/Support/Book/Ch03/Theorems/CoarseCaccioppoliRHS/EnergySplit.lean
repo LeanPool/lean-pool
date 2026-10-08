@@ -45,7 +45,7 @@ open scoped BigOperators ENNReal
 /-- On subsets of the open cube, public localized energy can be evaluated using
 the pointwise deterministic coefficient representative. -/
 theorem localizedCoeffEnergyValue_eq_volumeAverage_publicCoeffField_of_subset_openCubeSet
-    {d : ℕ} [NeZero d] {Q : TriadicCube d} {a : CoeffFamily d}
+    {d : ℕ} {Q : TriadicCube d} {a : CoeffFamily d}
     {V : Set (Vec d)}
     (hV : V ⊆ openCubeSet Q)
     (u : H1Function (Ch02.cubeDomain Q : Set (Vec d))) :
@@ -275,7 +275,7 @@ theorem boundaryForcedCaccioppoliCorrector_coreEnergy_le_eighteen_pow_mul_parent
 /-- The public zero-Dirichlet RHS is nonnegative under the force regularity
 hypothesis. -/
 theorem zeroDirichletEnergyWithRHSRHS_nonneg
-    {d : ℕ} [NeZero d] {C : ℝ} (hC_nonneg : 0 ≤ C)
+    {d : ℕ} {C : ℝ} (hC_nonneg : 0 ≤ C)
     {Q : TriadicCube d} {a : CoeffFamily d} {t : ℝ}
     {g : Vec d → Vec d}
     (ht : 0 < t) (hg : ForceBesovRegularity Q (2 * t) g) :

@@ -82,7 +82,8 @@ theorem fixed_geometry_positive_gap
             blockTrace
                 (blockSub (ofFullBlockMat (Matrix.of fun α β => ∫ b, blockMatEntry (G b) α β ∂P))
                   (ofFullBlockMat (Matrix.of fun α β => ∫ b, blockMatEntry (F b) α β ∂P))) ^
-              N⁻¹ := by exact HCPolySupport.HighContrast.Entry.fixed_geometry_positive_gap d hd
-                N hN P hP F G hF hG hFpos hGpos hFG
+              N⁻¹ := by
+  exact HCPolySupport.HighContrast.Entry.fixed_geometry_positive_gap d hd
+    N hN P hP F G hF hG hFpos hGpos hFG
 
 end HCPolySupport.HighContrast

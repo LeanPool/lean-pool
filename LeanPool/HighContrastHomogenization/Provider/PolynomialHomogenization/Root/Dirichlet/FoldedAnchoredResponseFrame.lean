@@ -67,7 +67,7 @@ variable {d : ℕ}
 parameter `lambda` and the exact normalized root differ by the scalar
 `lambda * alpha`, with `alpha` the absolute gauge scale of the homogenized
 matrix.  No comparison matrix survives. -/
-theorem crossGrid_gauge_eq [NeZero d]
+theorem crossGrid_gauge_eq
     {abar : Mat d} (hS : (symmPart abar).PosDef) {lambda : ℝ}
     (hlambda : 0 < lambda) :
     (epsilonAffineGrid lambda abar)⁻¹ * Selection.normalizedRoot (symmPart abar) =
@@ -93,7 +93,7 @@ theorem one_le_gaugeSplitFillingConstant (d : ℕ) :
 gauge scale.**  The cross-grid matrix is `lambda * alpha` times the identity, so
 the whole law dependence of the filling coefficient is the truncation at one of
 the absolute gauge scale. -/
-theorem observationFillingCoefficient_le_gaugeSplit [NeZero d]
+theorem observationFillingCoefficient_le_gaugeSplit
     {abar : Mat d} (hS : (symmPart abar).PosDef) {lambda : ℝ}
     (hlambda0 : 0 < lambda) (hlambda3 : lambda ≤ 3) :
     observationFillingCoefficient d lambda abar ≤
@@ -158,7 +158,7 @@ is below a law-free constant times the truncated square root of the absolute
 gauge scale — exactly the truncated gauge power that the absorption of
 `HCPoly.Provider.PolynomialHomogenization.Root.Dirichlet.GaugeMaxPowerFluxFrameAbsorption`
 consumes. -/
-theorem sqrt_observationFilling_le_gaugeSplit [NeZero d]
+theorem sqrt_observationFilling_le_gaugeSplit
     {abar : Mat d} (hS : (symmPart abar).PosDef) {lambda g : ℝ}
     (hlambda0 : 0 < lambda) (hlambda3 : lambda ≤ 3)
     (hbHalf : responseWindowOrder g ≤ 1 / 2) :

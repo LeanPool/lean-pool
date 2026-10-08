@@ -735,7 +735,7 @@ theorem IsSolenoidalOn.of_test_of_contDiff_of_memVectorL2
 namespace IsSolenoidalOn
 
 theorem restrict_of_isOpen_of_memVectorL2
-    {d : ℕ} {U V : Set (Vec d)} [MeasureTheory.IsFiniteMeasure (volumeMeasureOn V)]
+    {d : ℕ} {U V : Set (Vec d)}
     {g : Vec d → Vec d} (hg : IsSolenoidalOn U g) (hU : IsOpen U) (hV : IsOpen V)
     (hVU : V ⊆ U) (hgV : MemVectorL2 V g) :
     IsSolenoidalOn V g := by
@@ -889,7 +889,7 @@ predicate-generated block correction space, assuming the zero-trace potential
 closure has honest `H¹₀` representatives. -/
 @[expose]
 noncomputable def
-    potentialSolenoidalL2RecoveryData_ofSubmoduleClosures_of_potentialZeroTraceClosureRealization
+    potentialSolenoidalL2RecoveryDataOfClosureRealization
     {d : ℕ} {U : Set (Vec d)}
     (hRealize : PotentialSolenoidalL2Data.HasPotentialZeroTraceClosureRealization U) :
     PotentialSolenoidalL2RecoveryData U := by

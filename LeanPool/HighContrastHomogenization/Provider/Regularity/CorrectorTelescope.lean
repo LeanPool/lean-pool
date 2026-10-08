@@ -37,12 +37,12 @@ noncomputable section
 /-- The weak-error expression occurring in the finite-corrector slope
 estimate. -/
 @[expose]
-def scalarIdentityCorrectedWeakError {d : ℕ} [NeZero d]
+def scalarIdentityCorrectedWeakError {d : ℕ}
     (a : Book.Ch02.TriadicCoeffFamily d) (s : ℝ) (k : ℤ) : ℝ :=
   scalarIdentityWeakError a s k * (1 + scalarIdentityWeakError a s k)
 
 /-- The corrected scalar weak error is nonnegative. -/
-theorem scalarIdentityCorrectedWeakError_nonneg {d : ℕ} [NeZero d]
+theorem scalarIdentityCorrectedWeakError_nonneg {d : ℕ}
     (a : Book.Ch02.TriadicCoeffFamily d) (s : ℝ) (k : ℤ) :
     0 ≤ scalarIdentityCorrectedWeakError a s k := by
   exact mul_nonneg (scalarIdentityWeakError_nonneg a s k)
@@ -59,7 +59,7 @@ public def intNatShiftEmbedding (n : ℤ) : ℕ ↪ ℤ where
 
 /-- An infinite scalar good tail gives a summable sequence after reindexing
 the integer scales by natural offsets. -/
-theorem ScalarIdentityGoodTail.summable_nat_shift {d : ℕ} [NeZero d]
+theorem ScalarIdentityGoodTail.summable_nat_shift {d : ℕ}
     {a : Book.Ch02.TriadicCoeffFamily d} {s δ : ℝ} {n : ℤ}
     (h : ScalarIdentityGoodTail a s δ n) :
     Summable (fun j : ℕ => scalarIdentityWeakError a s (n + (j : ℤ))) := by
@@ -93,7 +93,7 @@ theorem ScalarIdentityGoodTail.summable_nat_shift {d : ℕ} [NeZero d]
 
 /-- The quadratic correction of a summable good-tail row remains summable. -/
 theorem ScalarIdentityGoodTail.summable_corrected_nat_shift
-    {d : ℕ} [NeZero d] {a : Book.Ch02.TriadicCoeffFamily d}
+    {d : ℕ} {a : Book.Ch02.TriadicCoeffFamily d}
     {s δ : ℝ} {n : ℤ} (h : ScalarIdentityGoodTail a s δ n) :
     Summable
       (fun j : ℕ => scalarIdentityCorrectedWeakError a s (n + (j : ℤ))) := by
@@ -121,7 +121,7 @@ theorem ScalarIdentityGoodTail.summable_corrected_nat_shift
 /-- Corrected weak errors on every finite natural-offset interval are bounded
 by the good-tail budget. -/
 theorem ScalarIdentityGoodTail.sum_Ico_corrected_nat_shift_le
-    {d : ℕ} [NeZero d] {a : Book.Ch02.TriadicCoeffFamily d}
+    {d : ℕ} {a : Book.Ch02.TriadicCoeffFamily d}
     {s δ : ℝ} {n : ℤ} (h : ScalarIdentityGoodTail a s δ n)
     (k m : ℕ) :
     (∑ j ∈ Finset.Ico k m,

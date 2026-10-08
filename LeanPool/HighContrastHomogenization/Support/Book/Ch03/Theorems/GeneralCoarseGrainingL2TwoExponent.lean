@@ -49,7 +49,7 @@ structure GeneralCoarseGrainingL2TwoExponentTheory (d : ℕ) [NeZero d] : Prop w
             generalCoarseGrainingL2TwoExponentRHS C Q a a0 s r r₂ j g w.u
 
 private theorem generalCoarseGrainingL2TwoExponentFluxDefectRHS_eq_const_mul_one
-    {d : ℕ} [NeZero d] (C : ℝ) (Q : TriadicCube d)
+    {d : ℕ} (C : ℝ) (Q : TriadicCube d)
     (a : CoeffFamily d) (a0 : ConstantCoeffMatrix d) (r r₂ : ℝ) (j : ℕ)
     (g : Vec d → Vec d)
     (u : H1Function (Ch02.cubeDomain Q : Set (Vec d))) :

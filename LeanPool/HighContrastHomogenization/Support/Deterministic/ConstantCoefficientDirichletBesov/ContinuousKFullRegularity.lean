@@ -153,7 +153,7 @@ norm of the solution gradient by that of the datum.  The concrete ambient-norm
 energy theorem is converted here using both directions of the explicit
 finite-dimensional Euclidean/ambient norm comparison. -/
 theorem exists_unitCubeGradientNormalizedEuclideanL2EnergyRegularity
-    (d : ℕ) [NeZero d] :
+    (d : ℕ) :
     ∃ C : ℝ≥0∞, C < ∞ ∧
       ∀ (h : UnitCubeEuclideanL2Field d)
         (w : H10Function (openCubeSet (originCube d 0))),

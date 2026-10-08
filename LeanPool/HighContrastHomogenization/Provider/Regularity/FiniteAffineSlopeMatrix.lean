@@ -125,7 +125,7 @@ noncomputable def finiteAffineBestFitSlopeInverseMatrix
       (finiteAffineBestFitSlopeInverseLinearMap a k m hkm hbij) e
 
 /-- Applying the slope map after its proof-gated inverse recovers the slope. -/
-@[simp] theorem finiteAffineBestFitSlope_apply_inverseMatrix
+theorem finiteAffineBestFitSlope_apply_inverseMatrix
     {d : ℕ} [NeZero d] (a : Book.Ch02.TriadicCoeffFamily d)
     (k m : ℤ) (hkm : k ≤ m)
     (hbij : Function.Bijective (finiteAffineBestFitSlope a k m hkm))

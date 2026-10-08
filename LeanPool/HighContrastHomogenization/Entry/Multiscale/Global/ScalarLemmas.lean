@@ -285,14 +285,11 @@ theorem weight_choice (d : ℕ) (hd : 0 < d) (C Q ε σ c L H h : ℝ) (hC : 0 <
       4 * (Real.log (1 + 2 * C * L) + Real.log (1 + C * H) + c) ≤ a * C * ε * σ := by
   have hd' : (0 : ℝ) < d := Nat.cast_pos.mpr hd
   have h_cεσ : 0 < C * ε * σ := by positivity
-
   let a := max 1 (max (4 * Q * max 1 C * d / C)
     (max (2 * (Real.log (1 + C * h) + c) / ε)
       (4 * (Real.log (1 + 2 * C * L) + Real.log (1 + C * H) + c) / (C * ε * σ))))
-
   use a
   refine ⟨le_max_left 1 _, ?_, ?_, ?_⟩
-
   · rw [le_div_iff₀ hd']
     have ha1 : 4 * Q * max 1 C * d / C ≤ a := by
       calc 4 * Q * max 1 C * d / C
@@ -302,7 +299,6 @@ theorem weight_choice (d : ℕ) (hd : 0 < d) (C Q ε σ c L H h : ℝ) (hC : 0 <
     calc 4 * Q * max 1 C * d
         = (4 * Q * max 1 C * d / C) * C := by field_simp [ne_of_gt hC]
       _ ≤ a * C := mul_le_mul_of_nonneg_right ha1 (le_of_lt hC)
-
   · rw [le_div_iff₀ (by norm_num : (0 : ℝ) < 2)]
     have ha2 : 2 * (Real.log (1 + C * h) + c) / ε ≤ a := by
       calc 2 * (Real.log (1 + C * h) + c) / ε
@@ -315,7 +311,6 @@ theorem weight_choice (d : ℕ) (hd : 0 < d) (C Q ε σ c L H h : ℝ) (hC : 0 <
         = 2 * (Real.log (1 + C * h) + c) := by ring
       _ = (2 * (Real.log (1 + C * h) + c) / ε) * ε := by field_simp [ne_of_gt hε]
       _ ≤ a * ε := mul_le_mul_of_nonneg_right ha2 (le_of_lt hε)
-
   · have ha3 : 4 * (Real.log (1 + 2 * C * L) + Real.log (1 + C * H) + c) / (C * ε * σ) ≤ a := by
       calc 4 * (Real.log (1 + 2 * C * L) + Real.log (1 + C * H) + c) / (C * ε * σ)
           ≤ max (2 * (Real.log (1 + C * h) + c) / ε) (4 * (Real.log (1 + 2 * C * L) + Real.log
@@ -422,7 +417,7 @@ theorem scales_arith (Cinit C₁ L H h : ℝ) (hCi : 0 ≤ Cinit) (hC₁ : 0 ≤
         ((⌈(B + C) * x⌉ : ℤ) : ℝ) := by
   refine ⟨Cinit + (2*L+H+h)*(C₁+6) + 2*(L+H) + 4, ?_, ?_⟩
   · nlinarith only [hCi, hL, hH, mul_nonneg (by linarith only [hL, hH, hh] : (0:ℝ) ≤ 2*L+H+h)
-    (by linarith only [hC₁] : (0:ℝ) ≤ C₁+6)]
+      (by linarith only [hC₁] : (0:ℝ) ≤ C₁+6)]
   · intro x hx B
     have e1 := Int.ceil_lt_add_one (B * x)
     have e2 := Int.ceil_lt_add_one (Cinit * x)

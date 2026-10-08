@@ -41,7 +41,7 @@ variable {d : ℕ}
 /-- A ruled observation target in residual affine coordinates is contained in
 the affine image of the gauge domain. -/
 theorem residualObservationTarget_subset_matImage
-    [NeZero d] {U : Set (Vec d)} {rho Rad lambda : ℝ}
+    {U : Set (Vec d)} {rho Rad lambda : ℝ}
     (system : EnlargedMarginRuledTriadicWhitneySystem U rho Rad)
     (abar : Mat d) (i : system.CellIndex) :
     adaptedCellTranslate (epsilonAffineGrid lambda abar)

@@ -151,8 +151,7 @@ private theorem measurable_weighted_energy_candidate
       Measurable fun w : Om ↦
         R w (Selection.cellMuCandidate (U := (U : Set (Vec d))) P0 Y) := by
   classical
-  intro R
-  intro Y
+  intro R Y
   let Xc : BlockState d :=
     canonicalMuGeneratorAffineField (U := (U : Set (Vec d))) P0 Y
   have hXc : MemBlockL2 (U : Set (Vec d)) Xc.eval :=
@@ -383,7 +382,7 @@ private theorem measurable_cutoffQuad_canonical_of_fixedSlice
 `e.response.cutoff.estimate` is measurable in the coefficient sample, with no hypothesis beyond the
 cutoff class.  This is the `hquadMinus` hypothesis of the family reduction of the cutoff pairing
 (AK.HC Lemma A.1, (A.4)). -/
-theorem measurable_volumeAverage_cutoff_quadratic_canonicalRespCoeffMinus_full [NeZero d]
+theorem measurable_volumeAverage_cutoff_quadratic_canonicalRespCoeffMinus_full
     (q : Mat d) (hq : IsUnit q) (t : ℤ) (F : BlockMat d) (p r : Vec d)
     {φ : Vec d → ℝ} (hφ : IsResponseCutoff q t φ) :
     Measurable fun a : CoeffSpace d =>
@@ -463,7 +462,7 @@ theorem measurable_volumeAverage_cutoff_quadratic_canonicalRespCoeffMinus_full [
 `e.response.cutoff.estimate` is measurable in the coefficient sample, with no hypothesis beyond the
 cutoff class.  This is the `hquadPlus` hypothesis of the family reduction of the cutoff pairing
 (AK.HC Lemma A.1, (A.4)). -/
-theorem measurable_volumeAverage_cutoff_quadratic_canonicalRespCoeffPlus_full [NeZero d]
+theorem measurable_volumeAverage_cutoff_quadratic_canonicalRespCoeffPlus_full
     (q : Mat d) (hq : IsUnit q) (t : ℤ) (F : BlockMat d) (p r : Vec d)
     {φ : Vec d → ℝ} (hφ : IsResponseCutoff q t φ) :
     Measurable fun a : CoeffSpace d =>
@@ -544,7 +543,7 @@ against an arbitrary essentially bounded weight is measurable in the coefficient
 is bounded by `2` in norm, which is the only property of the cutoff class that the fixed-slice
 readout argument consumes; the statement is the `hquadMinus` hypothesis of the family reduction of
 the cutoff pairing (AK.HC Lemma A.1, (A.4)). -/
-theorem measurable_volumeAverage_weighted_quadratic_canonicalRespCoeffMinus [NeZero d]
+theorem measurable_volumeAverage_weighted_quadratic_canonicalRespCoeffMinus
     (q : Mat d) (hq : IsUnit q) (t : ℤ) (F : BlockMat d) (p r : Vec d)
     {eta : Vec d → ℝ}
     (hetam : AEStronglyMeasurable eta (volumeMeasureOn (HighContrast.adaptedCell q t)))
@@ -621,7 +620,7 @@ against an arbitrary essentially bounded weight is measurable in the coefficient
 is bounded by `2` in norm, which is the only property of the cutoff class that the fixed-slice
 readout argument consumes; the statement is the `hquadPlus` hypothesis of the family reduction of
 the cutoff pairing (AK.HC Lemma A.1, (A.4)). -/
-theorem measurable_volumeAverage_weighted_quadratic_canonicalRespCoeffPlus [NeZero d]
+theorem measurable_volumeAverage_weighted_quadratic_canonicalRespCoeffPlus
     (q : Mat d) (hq : IsUnit q) (t : ℤ) (F : BlockMat d) (p r : Vec d)
     {eta : Vec d → ℝ}
     (hetam : AEStronglyMeasurable eta (volumeMeasureOn (HighContrast.adaptedCell q t)))

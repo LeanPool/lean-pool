@@ -124,7 +124,7 @@ private theorem residual_frame_three_power_le
 the uniform physical-frame premise used by RATE-AGG.  This statement isolates
 the geometric input from the stochastic order conversion. -/
 theorem physicalFluxEpsilonFrameBound_of_residualResponsePower
-    [NeZero d] {U : Set (Vec d)} {rho Rad : ℝ}
+    {U : Set (Vec d)} {rho Rad : ℝ}
     (system : EnlargedMarginRuledTriadicWhitneySystem U rho Rad)
     {b r Cflux epsilon Xval kappaRate : ℝ}
     (hb : 0 < b) (hbr : b < r) (hkr : kappaRate ≤ r)

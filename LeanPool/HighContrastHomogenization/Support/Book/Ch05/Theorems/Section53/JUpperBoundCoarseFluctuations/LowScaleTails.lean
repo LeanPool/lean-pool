@@ -81,9 +81,9 @@ private theorem gradientLowScaleTailSquare_eq_weightedResponse
     let tailFactor :=
       (β ^ 2)⁻¹ *
         Real.rpow (3 : ℝ) (-2 * β * (((m - k : ℕ) : ℝ)))
-    ∀ (hβ_ne : β ≠ 0),
-    ∀ (hlower_nonneg : 0 ≤ lowerCoeff),
-    ∀ (hJ_nonneg : 0 ≤ Jm),
+    ∀ (_hβ_ne : β ≠ 0),
+    ∀ (_hlower_nonneg : 0 ≤ lowerCoeff),
+    ∀ (_hJ_nonneg : 0 ≤ Jm),
     (WeakNormsMaximizer.gradientLowScaleTailAtScale
           (m : ℤ) (k : ℤ) s s' p_e q_e a) ^ 2 =
         tailFactor * (lowerCoeff * Jm) := by
@@ -168,9 +168,9 @@ private theorem fluxLowScaleTailSquare_eq_weightedResponse
     let tailFactor :=
       (β ^ 2)⁻¹ *
         Real.rpow (3 : ℝ) (-2 * β * (((m - k : ℕ) : ℝ)))
-    ∀ (hβ_ne : β ≠ 0),
-    ∀ (hupper_nonneg : 0 ≤ upperCoeff),
-    ∀ (hJ_nonneg : 0 ≤ Jm),
+    ∀ (_hβ_ne : β ≠ 0),
+    ∀ (_hupper_nonneg : 0 ≤ upperCoeff),
+    ∀ (_hJ_nonneg : 0 ≤ Jm),
     (WeakNormsMaximizer.fluxLowScaleTailAtScale
           (m : ℤ) (k : ℤ) t t' p_e q_e a) ^ 2 =
         tailFactor * (upperCoeff * Jm) := by
@@ -240,7 +240,7 @@ theorem paired_lowScaleTailSquares_special_le_baseline_add_positiveExcess
     {d : ℕ} [NeZero d] {P : Ch04.RestrictionCoeffLaw d}
     (hP : Ch04.RestrictionLawCarrier P) (hStruct : Ch04.RestrictionStructuralLaw P)
     (hP4 : QuantitativeCoarseGrainedEllipticity P)
-    {k m : ℕ} (hkm : k ≤ m) (e : Vec d) (a : RegCoeffField d) :
+    {k m : ℕ} (e : Vec d) (a : RegCoeffField d) :
     let β := section53CoarseFluctuationBeta hP4
     let s := hP4.sLower + 2 * β
     let s' := hP4.sLower + β

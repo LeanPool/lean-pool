@@ -50,7 +50,7 @@ theorem matTranspose_matSqrt_symmPart {abar : Mat d}
 /-- **Row `uHat`/`hHat`/`huHat`/`hhHat`.**  The frozen affine boundary pair on
 the physical witness domain pulls back to the gauge domain with exactly the
 gradient identities that module requires. -/
-theorem exists_frozenWitnessGaugePullback [NeZero d]
+theorem exists_frozenWitnessGaugePullback
     {abar : Mat d} (hS : (symmPart abar).PosDef) {U : Set (Vec d)} {j : ℤ}
     {z : Vec d}
     (hU : U = (fun x : Vec d => z + matVecMul (matSqrt (symmPart abar)) x) ''

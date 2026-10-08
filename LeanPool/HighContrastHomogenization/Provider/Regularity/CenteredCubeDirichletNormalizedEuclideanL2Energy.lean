@@ -36,6 +36,8 @@ noncomputable section
 
 variable {d : ℕ} {m : ℤ}
 
+/-- View a centered-cube Euclidean `L²` field as an exponent-two `CubeEuclideanL2LpField`
+on `originCube d m`. -/
 @[expose]
 public noncomputable def centeredCubeEuclideanL2FieldAsCubeTwo
     (F : CenteredCubeEuclideanL2Field d m) :
@@ -53,7 +55,7 @@ public noncomputable def centeredCubeEuclideanL2FieldAsCubeTwo
 /-- The identity Dirichlet solution map is nonexpansive in the physical
 normalized Euclidean `L²` norm. -/
 theorem centeredCubeDirichletDivergence_normalizedEuclideanLpENorm_grad_le
-    [NeZero d] (h : CenteredCubeEuclideanL2Field d m)
+    (h : CenteredCubeEuclideanL2Field d m)
     (w : H10Function (openCubeSet (originCube d m)))
     (hproblem : CubeDirichletDivergenceProblem (originCube d m) w h) :
     (centeredCubeDomain d m).normalizedEuclideanLpENorm (2 : ℝ≥0∞)

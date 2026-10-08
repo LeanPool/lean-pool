@@ -98,7 +98,6 @@ private theorem setIntegral_eq_sum_add_remainder_private {d : ℕ} {ι : Type*}
           rw [hSIntegral]
 
 private theorem scalarResponseIntegrand_eqOn_restrict {d : ℕ} {W V : Set (Vec d)}
-    [IsFiniteMeasure (volumeMeasureOn V)]
     (hWopen : IsOpen W) (hVopen : IsOpen V) (hsub : V ⊆ W)
     {a : CoeffField d} {lam Lam : ℝ} (hEllV : IsEllipticFieldOn lam Lam V a)
     (p q : Vec d) (u : AHarmonicFunction a W) :

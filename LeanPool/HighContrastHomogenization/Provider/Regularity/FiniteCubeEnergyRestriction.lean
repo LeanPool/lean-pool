@@ -107,7 +107,7 @@ theorem weightedGradNorm_eq_ofReal_h1EnergyNormOnCube
 /-- Restricting a centered-cube solution to its centered child loses at most
 the number of ordinary children in the normalized energy norm. -/
 theorem h1EnergyNormOnCube_finiteCubeSolutionRestriction_sub_one_le
-    {d : ℕ} [NeZero d] (a : Book.Ch02.TriadicCoeffFamily d)
+    {d : ℕ} (a : Book.Ch02.TriadicCoeffFamily d)
     (m : ℤ) (u : Book.Ch03.CubeSolution (originCube d m) a) :
     Book.Ch03.h1EnergyNormOnCube (originCube d (m - 1)) a
         (finiteCubeSolutionRestriction a (by omega : m - 1 ≤ m) u).toH1 ≤
@@ -192,7 +192,7 @@ theorem h1EnergyNormOnCube_finiteCubeSolutionRestriction_sub_one_le
 /-- Restriction by an arbitrary fixed number of centered scales loses at
 most the corresponding power of the number of ordinary children. -/
 theorem h1EnergyNormOnCube_finiteCubeSolutionRestriction_sub_nat_le
-    {d : ℕ} [NeZero d] (a : Book.Ch02.TriadicCoeffFamily d)
+    {d : ℕ} (a : Book.Ch02.TriadicCoeffFamily d)
     (m : ℤ) (N : ℕ) (u : Book.Ch03.CubeSolution (originCube d m) a) :
     Book.Ch03.h1EnergyNormOnCube (originCube d (m - (N : ℤ))) a
         (finiteCubeSolutionRestriction a (by omega : m - (N : ℤ) ≤ m) u).toH1 ≤

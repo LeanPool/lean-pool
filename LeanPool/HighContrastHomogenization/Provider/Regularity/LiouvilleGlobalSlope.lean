@@ -34,7 +34,7 @@ open scoped ENNReal Topology
 noncomputable section
 
 private theorem cubeSolution_transport_grad
-    {d : ℕ} [NeZero d] (a : Book.Ch02.TriadicCoeffFamily d)
+    {d : ℕ} (a : Book.Ch02.TriadicCoeffFamily d)
     {m m' : ℤ} (h : m = m')
     (u : Book.Ch03.CubeSolution (originCube d m) a) :
     (show Book.Ch03.CubeSolution (originCube d m') a from h ▸ u).toH1.grad =

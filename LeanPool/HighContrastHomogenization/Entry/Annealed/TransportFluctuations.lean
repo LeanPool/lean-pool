@@ -187,11 +187,15 @@ theorem exists_transport_whitney_coefficients (d : ℕ) (hd : 2 ≤ d)
     hj hsrc m mPlus hm hmPlus hratio j ell hell).1 y hy
   refine ⟨hfin, ?_⟩
   intro v
+  have hvol' (r : ℤ) (hr : r ≤ cap) :
+      v r ≤ C₀ * (3 : ℝ) ^ (-((d : ℝ) * ((j : ℝ) - r))) := by
+    change (volume (adaptedCell q r)).toReal / (volume W).toReal ≤ _
+    simpa only [neg_mul] using (hvol r hr)
   refine ⟨hmass, ?_, ?_⟩
   · have hb := transport_row_square_sum_bound (hfin cap le_rfl).toFinset
       (a := (d : ℝ) * ((j : ℝ) - cap)) hC₀.le
       (show 0 ≤ v cap by dsimp only [v]; positivity) hcap
-      (by simpa only [neg_mul] using hvol cap le_rfl)
+      (hvol' cap le_rfl)
     have hexp : ((d : ℝ) * (ell : ℝ)) / 2 - (d : ℝ) * ((j : ℝ) - cap) =
         -(d : ℝ) / 2 * (ell : ℝ) := by
       dsimp only [cap]; simp only [Int.cast_sub, Int.cast_natCast]; ring
@@ -199,8 +203,7 @@ theorem exists_transport_whitney_coefficients (d : ℕ) (hd : 2 ≤ d)
   · intro r hr
     have hb := transport_row_square_sum_bound (hfin r hr.le).toFinset
       (a := (d : ℝ) * ((j : ℝ) - r)) hC₀.le
-      (show 0 ≤ v r by dsimp only [v]; positivity) (hcount r hr) (by simpa only [neg_mul] using
-        hvol r hr.le)
+      (show 0 ≤ v r by dsimp only [v]; positivity) (hcount r hr) (hvol' r hr.le)
     have hexp : (((d : ℝ) - 1) * ((j : ℝ) - r)) / 2 - (d : ℝ) * ((j : ℝ) - r) =
         -((d : ℝ) + 1) / 2 * ((j : ℝ) - r) := by ring
     rw [hexp] at hb; exact ⟨hb.trans (mul_le_mul_of_nonneg_right hC1 (by positivity)),
@@ -778,23 +781,46 @@ theorem exists_transport_high_boundary_profile (d : ℕ) (hd : 2 ≤ d)
     have hb (r) (hr : r ∈ T i.1) : (∫ a, absSchattenNorm (Q : ℝ) (R i r a) ^ Q ∂P) ≤ A * (b i.1
       r ^ Q * V r) := by
       have hrng := Finset.mem_Icc.mp (hT i.1 (himage i hi) hr)
-      have hh := hrow P E Ψ K S hP hstat hunit hdag jStar hj hsrc m hm r t (by omega) (by have
-        ht := hjt i hi; omega) (Z i r) (hZ i hi r hr) (v i r) (hv i hi r hr) (D * b i.1 r)
+      have hr_lower : (jStar : ℤ) ≤ r := by omega
+      have hr_upper : r ≤ t := by
+        dsimp only [t]
+        have hi_upper := hjt i hi
+        omega
+      have hh := hrow P E Ψ K S hP hstat hunit hdag jStar hj hsrc m hm r t hr_lower hr_upper
+        (Z i r) (hZ i hi r hr) (v i r) (hv i hi r hr) (D * b i.1 r)
         (hcoef i hi r hr)
       apply hh.trans_eq
       dsimp only [A, V]
       rw [show (Q : ℝ) * (3 : ℝ) ^ ((d : ℝ) / 2) * (D * b i.1 r) =
         ((Q : ℝ) * (3 : ℝ) ^ ((d : ℝ) / 2) * D) * b i.1 r by ring, mul_pow]
       ring
-    simp only [f, Real.rpow_natCast, mul_pow, integral_const_mul]
+    have hpow : (f i) ^ (Q : ℝ) =
+        fun a : CoeffSpace d => w i.1 ^ Q *
+          (∑ r ∈ T i.1, absSchattenNorm (Q : ℝ) (R i r a)) ^ Q := by
+      funext a
+      simp only [Pi.pow_apply, f, Real.rpow_natCast, mul_pow]
+    have hmoment : (∫ a, f i a ^ (Q : ℝ) ∂P) =
+        w i.1 ^ Q * ∫ a,
+          (∑ r ∈ T i.1, absSchattenNorm (Q : ℝ) (R i r a)) ^ Q ∂P := by
+      calc
+        _ = ∫ a, ((f i) ^ (Q : ℝ)) a ∂P := by simp only [Pi.pow_apply]
+        _ = ∫ a, w i.1 ^ Q *
+            (∑ r ∈ T i.1, absSchattenNorm (Q : ℝ) (R i r a)) ^ Q ∂P := by rw [hpow]
+        _ = _ := integral_const_mul (w i.1 ^ Q)
+          (fun a : CoeffSpace d => (∑ r ∈ T i.1, absSchattenNorm (Q : ℝ) (R i r a)) ^ Q)
+    rw [hmoment]
     apply mul_le_mul_of_nonneg_left _ (by dsimp only [w]; positivity)
     apply hh.trans
     calc
       _ ≤ M ^ Q * ∑ r ∈ T i.1, (θ i.1 r * (θ i.1 r)⁻¹ ^ Q) * (A * (b i.1 r ^ Q * V r)) := by
         apply mul_le_mul_of_nonneg_left _ (pow_nonneg (zero_le_one.trans hM) Q)
         exact Finset.sum_le_sum fun r hr => mul_le_mul_of_nonneg_left (hb r hr) (by positivity)
-      _ = _ := by dsimp only [B]; simp only [Finset.mul_sum]; apply Finset.sum_congr rfl; intro
-        r _; ring
+      _ = _ := by
+        dsimp only [B]
+        simp only [Finset.mul_sum]
+        apply Finset.sum_congr rfl
+        intro r _
+        ring
   have hscale (j) (hjmem : j ∈ I.image Prod.fst) :
       w j ^ Q * (3 : ℝ) ^ ((d : ℝ) * ((n : ℝ) + L - j)) * B j ≤ c * ∑ r ∈ T j, θ j r * F r := by
     obtain ⟨i, hi, rfl⟩ := Finset.mem_image.mp hjmem
@@ -824,11 +850,15 @@ theorem exists_transport_high_boundary_profile (d : ℕ) (hd : 2 ≤ d)
   have hconv : (∑ j ∈ I.image Prod.fst, ∑ r ∈ T j, θ j r * F r) ≤
       M * ∑ r ∈ Finset.Icc (k + 1) t, F r := by
     have hh := transport_geometric_convolution β hβ (I.image Prod.fst) (Finset.Icc (k + 1) t)
-      T (n + (L : ℤ)) (by intro j hjmem; obtain ⟨i, hi, rfl⟩ := Finset.mem_image.mp hjmem; exact
-        hjt i hi)
-      (by intro j hjmem r hr; have hrng := Finset.mem_Icc.mp (hT j hjmem hr)
-          obtain ⟨i, hi, rfl⟩ := Finset.mem_image.mp hjmem
-          exact Finset.mem_Icc.mpr ⟨hrng.1, by have ht := hjt i hi; omega⟩)
+      T (n + (L : ℤ)) (by
+        intro j hjmem
+        obtain ⟨i, hi, rfl⟩ := Finset.mem_image.mp hjmem
+        exact hjt i hi)
+      (by
+        intro j hjmem r hr
+        have hrng := Finset.mem_Icc.mp (hT j hjmem hr)
+        obtain ⟨i, hi, rfl⟩ := Finset.mem_image.mp hjmem
+        exact Finset.mem_Icc.mpr ⟨hrng.1, by have ht := hjt i hi; omega⟩)
       (fun j hjmem r hr => (Finset.mem_Icc.mp (hT j hjmem hr)).2) F (fun r _ => hF r)
     exact hh.trans (mul_le_mul_of_nonneg_right (by dsimp only [M]; linarith only [])
       (Finset.sum_nonneg fun r _ => hF r))

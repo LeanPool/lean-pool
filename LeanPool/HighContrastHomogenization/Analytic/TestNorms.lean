@@ -257,7 +257,7 @@ theorem h1NormSq_ne_top {U : Set (Vec d)} (hUb : IsBoundedDomain U)
       have h := (ContinuousLinearMap.proj (R := ℝ) (φ := fun _ : Fin d => ℝ) j).hasFDerivAt.comp x
         (hdiff x).hasFDerivAt
       exact h.fderiv
-    show |fderiv ℝ (fun y => ψ y j) x (basisVec i)| ≤ C
+    change |fderiv ℝ (fun y => ψ y j) x (basisVec i)| ≤ C
     rw [hfd]
     have hval : ((ContinuousLinearMap.proj (R := ℝ) (φ := fun _ : Fin d => ℝ) j).comp
         (fderiv ℝ ψ x)) (basisVec i) = (fderiv ℝ ψ x (basisVec i)) j := rfl

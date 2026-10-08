@@ -381,7 +381,7 @@ theorem positiveGap_centered_identity {d : ℕ} (F G MF MG : BlockMat d) :
   cases G
   cases MF
   cases MG
-  simp [blockSub]
+  simp only [blockSub, BlockMat.mk.injEq]
   repeat constructor <;> first | abel_nf | trivial
 
 /-- `l.fixed.geometry.positive.gap`: center using two sharp subtraction inequalities,

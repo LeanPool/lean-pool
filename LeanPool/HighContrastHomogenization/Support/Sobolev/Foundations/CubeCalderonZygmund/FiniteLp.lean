@@ -37,12 +37,15 @@ open scoped ENNReal
 
 noncomputable section
 
+/-- A cube field with Euclidean `L^p` and `L²` membership for the normalized cube measure. -/
 structure CubeEuclideanL2LpField {d : ℕ} (Q : TriadicCube d)
     (p : FiniteLpExponent) extends CubeEuclideanLpField Q p where
   euclideanMemL2 :
     MeasureTheory.MemLp (fun x => HilbertVec.ofVec (toField x)) 2
       (normalizedCubeMeasure Q)
 
+/-- A fractional `W^{s,p}` cube field with additional Euclidean `L²` membership
+for the normalized cube measure. -/
 structure CubeEuclideanWspL2Field {d : ℕ} (Q : TriadicCube d)
     (s : FractionalOrder) (p : FiniteLpExponent)
     extends CubeEuclideanWspField Q s p where
@@ -50,6 +53,7 @@ structure CubeEuclideanWspL2Field {d : ℕ} (Q : TriadicCube d)
     MeasureTheory.MemLp (fun x => HilbertVec.ofVec (toField x)) 2
       (normalizedCubeMeasure Q)
 
+/-- View an `L^p` cube field as an `L²` field using its stored Euclidean `L²` witness. -/
 @[expose]
 noncomputable def CubeEuclideanL2LpField.toLpTwo {d : ℕ}
     {Q : TriadicCube d} {p : FiniteLpExponent}
@@ -57,6 +61,7 @@ noncomputable def CubeEuclideanL2LpField.toLpTwo {d : ℕ}
     CubeEuclideanLpField Q FiniteLpExponent.two :=
   ⟨F.toField, F.euclideanMemL2⟩
 
+/-- View a fractional cube field as an `L²` field using its stored Euclidean `L²` witness. -/
 @[expose]
 noncomputable def CubeEuclideanWspL2Field.toLpTwo {d : ℕ}
     {Q : TriadicCube d} {s : FractionalOrder} {p : FiniteLpExponent}
@@ -64,6 +69,8 @@ noncomputable def CubeEuclideanWspL2Field.toLpTwo {d : ℕ}
     CubeEuclideanLpField Q FiniteLpExponent.two :=
   ⟨F.toField, F.euclideanMemL2⟩
 
+/-- The zero-trace weak equation `sigma0 * ∫ grad w · grad phi = -∫ h · grad phi`
+on the centered cube, tested against smooth compactly supported functions. -/
 @[expose]
 def IsCenteredCubeW10pScalarDivergenceSolution {d : ℕ}
     {q : FiniteLpExponent} (m : ℤ) (sigma0 : ℝ)
@@ -76,6 +83,8 @@ def IsCenteredCubeW10pScalarDivergenceSolution {d : ℕ}
       -∫ x, vecDot (h.toField x) (phi.gradient x)
         ∂(centeredCubeDomain d m).normalizedVolume
 
+/-- The energy-space equation `sigma0 * ∫ grad w · grad phi = -∫ h · grad phi`
+on the centered cube, tested against every `H10Function`. -/
 @[expose]
 def IsCenteredCubeH10ScalarDivergenceSolution {d : ℕ}
     (m : ℤ) (sigma0 : ℝ)
@@ -93,6 +102,7 @@ namespace CubeCalderonZygmund
 
 open MeasureTheory Set
 
+/-- Increase a finite exponent by one, retaining the proofs that it lies in `(1, ∞)`. -/
 @[expose]
 public noncomputable def finiteLpExponentSucc (p : FiniteLpExponent) :
     FiniteLpExponent where
@@ -171,8 +181,8 @@ private theorem lintegral_ofReal_norm_rpow_div_ne_top_of_memLp
     (lintegral_ofReal_norm_rpow_ne_top_of_memLp hf)
 
 private theorem toReal_eLpNorm_two_sq_eq_integral_norm_sq
-    {α E : Type*} [MeasurableSpace α] [NormedAddCommGroup E] [MeasurableSpace E]
-    [BorelSpace E] {μ : MeasureTheory.Measure α} {f : α → E}
+    {α E : Type*} [MeasurableSpace α] [NormedAddCommGroup E]
+    {μ : MeasureTheory.Measure α} {f : α → E}
     (hf : MeasureTheory.MemLp f 2 μ) :
     (ENNReal.toReal (MeasureTheory.eLpNorm f 2 μ)) ^ (2 : ℕ) =
       ∫ x, ‖f x‖ ^ (2 : ℕ) ∂μ := by
@@ -444,7 +454,7 @@ private theorem centeredCubeNormalized_eLpNorm_grad_le_scaledDatum
 Calderón--Zygmund interface; this is the base case used by the all-exponent
 assembly. -/
 theorem centeredCubeH10ScalarDivergence_cz_two
-    {d : ℕ} [NeZero d] (m : ℤ) (sigma0 : ℝ)
+    {d : ℕ} (m : ℤ) (sigma0 : ℝ)
     (h : CubeEuclideanL2LpField (originCube d m) FiniteLpExponent.two)
     (u : H10Function (openCubeSet (originCube d m)))
     (hsigma0 : 0 < sigma0)
@@ -566,7 +576,7 @@ private theorem reflectedGoodLambdaCutoff_sq_eq_normalized_energy
           (MeasureTheory.integral_nonneg fun _ => sq_nonneg _)
 
 private theorem reflectedGoodLambdaCutoff_le_normalized_datum_energy
-    {d : ℕ} [NeZero d] {m : ℤ} {q : FiniteLpExponent}
+    {d : ℕ} {m : ℤ} {q : FiniteLpExponent}
     (depth : ℕ) {eps sigma0 : ℝ}
     (hsigma0 : 0 < sigma0) (u : H10Function (openCubeSet (originCube d m)))
     (h : CubeEuclideanL2LpField (originCube d m) q)
@@ -1064,7 +1074,7 @@ private theorem finiteLp_low_term_of_l2_control
   exact finiteLp_low_term_package hq hSq hlamENN le_rfl
 
 private theorem reflectedGoodLambdaCutoff_le_q_datum_norm
-    {d : ℕ} [NeZero d] {m : ℤ} {q : FiniteLpExponent} (depth : ℕ)
+    {d : ℕ} {m : ℤ} {q : FiniteLpExponent} (depth : ℕ)
     {eps sigma0 : ℝ} (hsigma0 : 0 < sigma0)
     (u : H10Function (openCubeSet (originCube d m)))
     (h : CubeEuclideanL2LpField (originCube d m) q)

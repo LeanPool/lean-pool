@@ -49,7 +49,7 @@ namespace HCPolySupport
 namespace HighContrast
 namespace CorrectorComposition
 
-open Real
+open _root_.HCPolySupport.Real
 
 noncomputable section
 

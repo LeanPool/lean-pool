@@ -48,7 +48,7 @@ def cubeDirichletOddReflectionMixedCellSign {d : ℕ}
         if choice i = 1 then 1 else -1 :=
   rfl
 
-@[simp] theorem cubeDirichletOddReflectionMixedCellSign_mul_self
+theorem cubeDirichletOddReflectionMixedCellSign_mul_self
     {d : ℕ} (choice : Fin d → Fin 3) (i : Fin d) :
     cubeDirichletOddReflectionMixedCellSign choice i *
         cubeDirichletOddReflectionMixedCellSign choice i = 1 := by
@@ -66,7 +66,7 @@ def cubeDirichletOddReflectionMixedCellSign {d : ℕ}
       rw [cubeDirichletOddReflectionCellSign_mul_self]
       by_cases hi : choice i = 1 <;> simp [hi]
 
-@[simp] theorem norm_cubeDirichletOddReflectionMixedCellSign
+theorem norm_cubeDirichletOddReflectionMixedCellSign
     {d : ℕ} (choice : Fin d → Fin 3) (i : Fin d) :
     ‖cubeDirichletOddReflectionMixedCellSign choice i‖ = 1 := by
   apply (sq_eq_sq₀ (norm_nonneg _) zero_le_one).mp

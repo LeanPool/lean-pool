@@ -463,6 +463,7 @@ private theorem run_initial_startup_bound {d : ℕ} [NeZero d] (hd : 2 ≤ d)
   let x := Real.logb 3 (2 + aspectRatio E)
   have hjn₀ : (jStar : ℤ) ≤ n₀ := by
     have hceil0 : (0 : ℤ) ≤ ⌈B * x⌉ := Int.ceil_nonneg (mul_nonneg (by linarith only [hB1]) hx0)
+    dsimp only [x] at hceil0
     omega
   have hone1 : (1 : Mat d).PosDef := Geometry.one_posDef d
   have hecc1 : 1 / 2 * Real.log (‖(1 : Mat d)‖ * ‖(1 : Mat d)⁻¹‖) ≤
@@ -635,7 +636,8 @@ private theorem run_initial_gauge_state {d : ℕ} [NeZero d] (hd : 2 ≤ d)
         (n₀ + (S.h : ℤ))) :=
       run_blockLogDet_adaptedMean_nonneg hd P γ E Ψ K Src hP hstat hunit hce jStar hjStar
         (1 : Mat d) hone1 _
-    have h3 : Real.log (24 * aspectRatio E) ≤ 48 * x := log24_le _ hAR0
+    have h3 : Real.log (24 * aspectRatio E) ≤ 48 * x := by
+      simpa only [hxdef] using log24_le _ hAR0
     have h4 : Cdet * Real.log (2 + aspectRatio E) = 48 * (d : ℝ) * x := by
       rw [hCdetdef, ← logb_three_mul (aspectRatio E), ← hxdef]
       field_simp
@@ -665,7 +667,7 @@ private theorem run_initial_gauge_state {d : ℕ} [NeZero d] (hd : 2 ≤ d)
       hinitG hstart hone0
   rw [← hxdef] at hpot
   -- the initial gauge bound
-  have hres : run_reserve
+  have hres : runReserve
       (fun r => blockLogDet (adaptedMean P (Geometry.explicitRoundedGrid jStar st₀.m) r)) S.h st₀.k
       st₀.n ≤ ((S.h : ℝ) + 2) * ((d : ℝ) * Real.log (24 * aspectRatio E)) := by
     rw [hm₀, hk₀, hn₀eq]
@@ -674,10 +676,11 @@ private theorem run_initial_gauge_state {d : ℕ} [NeZero d] (hd : 2 ≤ d)
   have hbound : runGauge P γ jStar (S.eta ε σ) a w S.h st₀.m st₀.k st₀.n ≤ c * (J : ℝ) := by
     have hg : runGauge P γ jStar (S.eta ε σ) a w S.h st₀.m st₀.k st₀.n =
         potential P γ jStar (S.eta ε σ) a st₀.m st₀.k st₀.n +
-          w * run_reserve (fun r => blockLogDet
+          w * runReserve (fun r => blockLogDet
             (adaptedMean P (Geometry.explicitRoundedGrid jStar st₀.m) r)) S.h st₀.k st₀.n := rfl
-    have h3 : Real.log (24 * aspectRatio E) ≤ 48 * x := log24_le _ hAR0
-    have hwr : w * run_reserve (fun r => blockLogDet
+    have h3 : Real.log (24 * aspectRatio E) ≤ 48 * x := by
+      simpa only [hxdef] using log24_le _ hAR0
+    have hwr : w * runReserve (fun r => blockLogDet
         (adaptedMean P (Geometry.explicitRoundedGrid jStar st₀.m) r)) S.h st₀.k st₀.n ≤
         w * (((S.h : ℝ) + 2) * ((d : ℝ) * Real.log (24 * aspectRatio E))) :=
       mul_le_mul_of_nonneg_left hres hw0
@@ -698,7 +701,7 @@ private theorem run_initial_gauge_state {d : ℕ} [NeZero d] (hd : 2 ≤ d)
     have hJx : c * (C₁ * x) ≤ c * (J : ℝ) := mul_le_mul_of_nonneg_left hJge hcpos.le
     rw [hg]
     have hsum : potential P γ jStar (S.eta ε σ) a st₀.m st₀.k st₀.n +
-        w * run_reserve (fun r => blockLogDet
+        w * runReserve (fun r => blockLogDet
           (adaptedMean P (Geometry.explicitRoundedGrid jStar st₀.m) r)) S.h st₀.k st₀.n ≤
         Cpot * x + 48 * w * ((S.h : ℝ) + 2) * (d : ℝ) * x := by
       linarith only [hpot, hwr, hwr2]
@@ -859,6 +862,7 @@ theorem global_run_residue (d : ℕ) (hd : 2 ≤ d) (γ : ℝ) (hγ : γ ∈ Set
   -- the run length
   set J : ℕ := ⌈C₁ * x⌉₊ with hJdef
   obtain ⟨hJZ, hJR, hJge⟩ := run_horizon_ceiling_properties C₁ x hC₁0 hx0
+  rw [← hJdef] at hJZ hJR hJge
   clear_value J
   -- the containment budget
   have hctThr : ⌈Cct * (B + 1) * x⌉ ≤ (jStar : ℤ) :=

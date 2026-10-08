@@ -183,7 +183,7 @@ theorem unitSeparated_adaptedCellAt_of_dvd_sub {l : ℤ} {q : Mat d}
   rw [mem_standardCell_iff] at hs ht
   have hdiff : matVecMul q s - matVecMul q t = matVecMul q (s - t) := by
     funext i
-    show (∑ k, q i k * s k) - (∑ k, q i k * t k) = ∑ k, q i k * (s k - t k)
+    change (∑ k, q i k * s k) - (∑ k, q i k * t k) = ∑ k, q i k * (s k - t k)
     rw [← Finset.sum_sub_distrib]
     exact Finset.sum_congr rfl fun k _ => by ring
   have hcoord : 2 * (3 : ℝ) ^ j < |(s - t) i₀| := by

@@ -94,7 +94,7 @@ theorem localNegOneNorm_correctorGradient_eq_global
 /-- The local identity-flux class reads the literal cube-family coefficient
 times the canonical full gradient. -/
 theorem localNegOneNorm_correctorFlux_eq_global
-    {d : ℕ} [NeZero d]
+    {d : ℕ}
     (a : Book.Ch02.TriadicCoeffFamily d)
     (Phi : Vec d → NormalizedLocalH1Carrier d)
     (e : Vec d) (n : ℤ) :
@@ -125,7 +125,7 @@ theorem localNegOneNorm_correctorFlux_eq_global
 /-- The class-level inverse-scale pair used by the finite-to-limit theorem is
 the raw canonical-gradient/canonical-flux pair used by affine transport. -/
 theorem triadicScaledNegOne_pair_eq_global
-    {d : ℕ} [NeZero d]
+    {d : ℕ}
     (a : Book.Ch02.TriadicCoeffFamily d)
     (Phi : Vec d → NormalizedLocalH1Carrier d)
     (e : Vec d) (n : ℤ) :

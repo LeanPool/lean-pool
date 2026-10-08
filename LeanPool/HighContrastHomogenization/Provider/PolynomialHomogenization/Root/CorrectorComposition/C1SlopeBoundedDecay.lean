@@ -83,7 +83,7 @@ private theorem terminal_affine_excess_le_solution_energy
   simp
 
 private theorem comparison_error_le_energy_of_slope_bound
-    {d : ℕ} [NeZero d] (a : Book.Ch02.TriadicCoeffFamily d)
+    {d : ℕ} (a : Book.Ch02.TriadicCoeffFamily d)
     (m q : ℕ) (u : Book.Ch03.CubeSolution (originCube d (m : ℤ)) a)
     (finiteQ jointQ : H1Function (openCubeSet (originCube d (q : ℤ))))
     {K Cabs eta : ℝ} (hK : 0 < K) (hCabs : 0 < Cabs) (e : Vec d)

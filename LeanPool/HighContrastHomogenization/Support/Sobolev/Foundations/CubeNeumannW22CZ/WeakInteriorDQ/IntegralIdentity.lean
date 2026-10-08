@@ -239,7 +239,13 @@ theorem integral_dot_backwardDifference_cutoffGradient_eq_neg_integral_forwardDi
           ∂MeasureTheory.volume := by
             refine MeasureTheory.integral_congr_ae (Filter.Eventually.of_forall ?_)
             intro x
-            simp [vecDot, euclideanForwardDifferenceQuotient, div_eq_mul_inv]
+            suffices
+                (∑ j, (G (x + step • basisVec i) j - G x j) * step⁻¹ * F.grad x j) =
+                  step⁻¹ *
+                    (∑ j, G (x + step • basisVec i) j * F.grad x j -
+                      ∑ j, G x j * F.grad x j) by
+              simpa only [vecDot, euclideanForwardDifferenceQuotient_apply,
+                euclideanCoordShift_apply, div_eq_mul_inv] using this
             calc
               ∑ j,
                   (G (x + step • basisVec i) j - G x j) * step⁻¹ * F.grad x j =

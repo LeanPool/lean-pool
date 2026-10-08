@@ -109,7 +109,7 @@ theorem fullBlockSharp_integral_le_integral [IsProbabilityMeasure μ]
     rw [hZmean]; exact refl_conj_inv hEpos
   have hright : ∫ a, (Z a)⁻¹ ∂μ ≤ ∫ a, A a ∂μ := by
     refine integral_mono' hZinvInt hint (.of_forall fun a => ?_)
-    show (Z a)⁻¹ ≤ A a
+    change (Z a)⁻¹ ≤ A a
     rw [hZinv a]
     exact hsharp a
   rw [hleft] at hjensen

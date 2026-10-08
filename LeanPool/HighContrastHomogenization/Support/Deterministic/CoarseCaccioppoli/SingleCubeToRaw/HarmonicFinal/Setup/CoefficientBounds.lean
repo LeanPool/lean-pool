@@ -93,12 +93,12 @@ def CoarseCaccioppoliBoundaryCanonicalHarmonicL2SizeControl {d : ℕ}
 /-- The actual squared normalized `L²` size of a single open-cube harmonic
 function, in the units used by the public note RHS. -/
 @[expose]
-noncomputable def coarseCaccioppoliHarmonicL2Sq {d : ℕ} [NeZero d]
+noncomputable def coarseCaccioppoliHarmonicL2Sq {d : ℕ}
     (Q : TriadicCube d) (a : CoeffField d)
     (u : AHarmonicFunction a (openCubeSet Q)) : ℝ :=
   (cubeLpNorm Q (2 : ℝ≥0∞) (fun x => u.toH1 x)) ^ (2 : ℕ)
 
-theorem coarseCaccioppoliHarmonicL2Sq_nonneg {d : ℕ} [NeZero d]
+theorem coarseCaccioppoliHarmonicL2Sq_nonneg {d : ℕ}
     (Q : TriadicCube d) (a : CoeffField d)
     (u : AHarmonicFunction a (openCubeSet Q)) :
     0 ≤ coarseCaccioppoliHarmonicL2Sq Q a u := by
@@ -107,7 +107,7 @@ theorem coarseCaccioppoliHarmonicL2Sq_nonneg {d : ℕ} [NeZero d]
 /-- The constant harmonic family has the note-facing `L²` size control with
 the actual squared normalized `L²` size. -/
 theorem CoarseCaccioppoliBoundaryCanonicalHarmonicL2SizeControl.of_constantFamily
-    {d : ℕ} [NeZero d] (Q : TriadicCube d) (a : CoeffField d)
+    {d : ℕ} (Q : TriadicCube d) (a : CoeffField d)
     (u : AHarmonicFunction a (openCubeSet Q)) :
     CoarseCaccioppoliBoundaryCanonicalHarmonicL2SizeControl Q a
       (coarseCaccioppoliHarmonicL2Sq Q a u) (fun _ _ => u) := by

@@ -39,7 +39,7 @@ operator-norm-square fluctuation.
 noncomputable section
 
 private theorem finset_weighted_sqrt_sum_sq_le_sum_mul_sum
-    {ι : Type*} [DecidableEq ι] (S : Finset ι) (w A : ι → ℝ)
+    {ι : Type*} (S : Finset ι) (w A : ι → ℝ)
     (hw : ∀ i, 0 ≤ w i) (hA : ∀ i, 0 ≤ A i) :
     (∑ i ∈ S, w i * Real.sqrt (A i)) ^ 2 ≤
       (∑ i ∈ S, w i) * ∑ i ∈ S, w i * A i := by
@@ -73,7 +73,7 @@ private theorem finset_weighted_sqrt_sum_sq_le_sum_mul_sum
           rw [mul_pow, Real.sq_sqrt hW_nonneg, Real.sq_sqrt hWA_nonneg]
 
 private theorem finset_weighted_sqrt_sum_sq_le_of_weight_le
-    {ι : Type*} [DecidableEq ι] (S : Finset ι) (v w A : ι → ℝ)
+    {ι : Type*} (S : Finset ι) (v w A : ι → ℝ)
     (hv : ∀ i, 0 ≤ v i) (hw : ∀ i, 0 ≤ w i) (hvw : ∀ i, v i ≤ w i)
     (hA : ∀ i, 0 ≤ A i) :
     (∑ i ∈ S, v i * Real.sqrt (A i)) ^ 2 ≤

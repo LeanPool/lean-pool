@@ -228,14 +228,14 @@ theorem ae_toFullBlockVec_optimizerBlockState {U : Book.Ch02.Domain d}
       filter_upwards
         [Book.Ch02.doubledMuMinimizer_negLeft_eq_canonicalGradient U aU p q hX]
         with x hx
-      show (optimizerBlockState U aU p q x).1 i = _
+      change (optimizerBlockState U aU p q x).1 i = _
       rw [optimizerBlockState, ← hx]
       rfl
   | inr i =>
       filter_upwards
         [Book.Ch02.doubledMuMinimizer_neg_left_extracts_canonicalMaximizerFlux U aU p q hX]
         with x hx
-      show (optimizerBlockState U aU p q x).2 i = _
+      change (optimizerBlockState U aU p q x).2 i = _
       rw [optimizerBlockState, ← hx]
       rfl
 

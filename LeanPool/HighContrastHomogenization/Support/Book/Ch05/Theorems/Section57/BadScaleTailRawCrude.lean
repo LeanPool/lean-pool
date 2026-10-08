@@ -177,7 +177,7 @@ theorem measureReal_shiftedBottomBadScaleProbability_le_weighted_kernel
             have hlam_lower : A * ρ ^ r ≤ lam := by
               exact
                 crudeBottom_lam_lower
-                  (d := d) (K := K) (C := Ccrude)
+                  (K := K) (C := Ccrude)
                   (θ := hΓ.thetaHat) (a := a) (t := t) (α := αbad)
                   (q := q) (r := r) (j := j)
                   hK_pos hCcrude hΓ.thetaHat_pos ha ht hαt

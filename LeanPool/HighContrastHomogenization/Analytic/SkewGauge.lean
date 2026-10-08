@@ -56,7 +56,7 @@ theorem weakPairing_add_const (b : CoeffField d) (k : Mat d)
 /-- A constant skew matrix paired with a weak gradient and a smooth test
 gradient is absolutely integrable and has integral zero. -/
 theorem integrableOn_and_integral_smoothGrad_skew_weakGradient_eq_zero
-    {U : Set (Vec d)} [IsFiniteMeasure (volumeMeasureOn U)]
+    {U : Set (Vec d)}
     (hU : IsOpen U) {u : Vec d → ℝ} {Du : Vec d → Vec d}
     (hu : MemScalarL2 U u) (hDu : ∀ i, MemScalarL2 U fun x => Du x i)
     (hweak : HasWeakGradientOn U u Du) (k : Mat d) (hk : IsSkewMat k)
@@ -96,7 +96,7 @@ theorem integrableOn_and_integral_smoothGrad_skew_weakGradient_eq_zero
 /-- Adding a constant skew matrix to a coefficient field leaves its weak
 solution class unchanged on Sobolev gradients. -/
 theorem isWeakSolutionOn_add_constSkew_iff
-    {U : Set (Vec d)} [IsFiniteMeasure (volumeMeasureOn U)]
+    {U : Set (Vec d)}
     (hU : IsOpen U) (b : CoeffField d) {u : Vec d → ℝ} {Du : Vec d → Vec d}
     (hu : MemScalarL2 U u) (hDu : ∀ i, MemScalarL2 U fun x => Du x i)
     (hweak : HasWeakGradientOn U u Du) (k : Mat d) (hk : IsSkewMat k) :

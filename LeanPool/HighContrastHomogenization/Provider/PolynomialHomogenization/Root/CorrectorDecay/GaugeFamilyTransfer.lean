@@ -271,7 +271,7 @@ theorem closedEuclideanBall_subset_outerCube
           (d := d) (r := 2 * r) (by positivity)))
 
 theorem volume_closedEuclideanBall_pos
-    {d : ℕ} [NeZero d] {r : ℝ} (hr : 0 < r) :
+    {d : ℕ} {r : ℝ} (hr : 0 < r) :
     0 < volume (closedEuclideanBall d r) := by
   exact lt_of_lt_of_le
     (volume_pos_of_isOpenBoundedConvexDomain
@@ -337,6 +337,8 @@ theorem outerCube_volume_ratio_lt_closedBall
       field_simp
       ring
 
+/-- Dimension-dependent prefactor `12 * sqrt ((6 * sqrt d) ^ d)` for the scaled negative-order
+comparison. -/
 @[expose]
 def closedBallScaledNegOneConstant (d : ℕ) : ℝ :=
   12 * Real.sqrt ((6 * Real.sqrt d) ^ d)

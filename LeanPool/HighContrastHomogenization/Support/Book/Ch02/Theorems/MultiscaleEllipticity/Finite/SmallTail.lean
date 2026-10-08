@@ -155,7 +155,7 @@ the local `LambdaSq` square-root series times the global scale factor
 `3^{-sm}`.
 -/
 theorem smallTail_tsum_weighted_scale_zero_B_sqrt_tail_eq_LambdaSq_rpow_half
-    {d : ℕ} [NeZero d] {U : TriadicCube d} (hUscale : U.scale = 0)
+    {d : ℕ} {U : TriadicCube d} (hUscale : U.scale = 0)
     (s : ℝ) (m : ℕ) (a : TriadicCoeffFamily d) (hs : 0 ≤ s) :
     (∑' j : ℕ,
       geometricWeight s 1 (j + m) *
@@ -201,7 +201,7 @@ tail is exactly the local `lambdaSq` inverse square-root series times the
 global scale factor `3^{-sm}`.
 -/
 theorem smallTail_tsum_weighted_scale_zero_sigmaStarInv_sqrt_tail_eq_lambdaSq_rpow_neg_half
-    {d : ℕ} [NeZero d] {U : TriadicCube d} (hUscale : U.scale = 0)
+    {d : ℕ} {U : TriadicCube d} (hUscale : U.scale = 0)
     (s : ℝ) (m : ℕ) (a : TriadicCoeffFamily d) (hs : 0 ≤ s) :
     (∑' j : ℕ,
       geometricWeight s 1 (j + m) *
@@ -303,7 +303,7 @@ by summing the corresponding local maxima over the scale-zero descendants of
 `cu_m`.
 -/
 theorem rpow_half_maxDescendantBMatrixNormAtScale_originCube_neg_nat_le_sum_scale_zero
-    {d : ℕ} [NeZero d] (m j : ℕ) (a : TriadicCoeffFamily d) :
+    {d : ℕ} (m j : ℕ) (a : TriadicCoeffFamily d) :
     Real.rpow
         (maxDescendantBMatrixNormAtScale (originCube d (m : ℤ)) (-(j : ℤ)) a)
         (1 / 2 : ℝ) ≤
@@ -381,7 +381,7 @@ bounded by summing the corresponding local maxima over the scale-zero
 descendants of `cu_m`.
 -/
 theorem rpow_half_maxDescendantSigmaStarInvMatrixNormAtScale_originCube_neg_nat_le_sum_scale_zero
-    {d : ℕ} [NeZero d] (m j : ℕ) (a : TriadicCoeffFamily d) :
+    {d : ℕ} (m j : ℕ) (a : TriadicCoeffFamily d) :
     Real.rpow
         (maxDescendantSigmaStarInvMatrixNormAtScale
           (originCube d (m : ℤ)) (-(j : ℤ)) a)
@@ -471,7 +471,7 @@ At a fixed small depth, the upper square-root maximum below `cu_m` is bounded
 by the scale-zero supremum of the corresponding local maxima.
 -/
 theorem rpow_half_maxDescendantBMatrixNormAtScale_originCube_neg_nat_le_sup_scale_zero
-    {d : ℕ} [NeZero d] (m j : ℕ) (a : TriadicCoeffFamily d) :
+    {d : ℕ} (m j : ℕ) (a : TriadicCoeffFamily d) :
     Real.rpow
         (maxDescendantBMatrixNormAtScale (originCube d (m : ℤ)) (-(j : ℤ)) a)
         (1 / 2 : ℝ) ≤
@@ -552,7 +552,7 @@ At a fixed small depth, the lower inverse square-root maximum below `cu_m` is
 bounded by the scale-zero supremum of the corresponding local maxima.
 -/
 theorem rpow_half_maxDescendantSigmaStarInvMatrixNormAtScale_originCube_neg_nat_le_sup_scale_zero
-    {d : ℕ} [NeZero d] (m j : ℕ) (a : TriadicCoeffFamily d) :
+    {d : ℕ} (m j : ℕ) (a : TriadicCoeffFamily d) :
     Real.rpow
         (maxDescendantSigmaStarInvMatrixNormAtScale
           (originCube d (m : ℤ)) (-(j : ℤ)) a)

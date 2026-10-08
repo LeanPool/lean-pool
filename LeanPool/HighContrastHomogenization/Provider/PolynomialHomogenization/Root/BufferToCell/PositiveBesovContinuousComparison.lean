@@ -74,6 +74,7 @@ noncomputable section
 
 variable {d : ℕ}
 
+/-- Restricted volume on `V`, scaled by the inverse of its total volume. -/
 @[expose]
 public noncomputable def normalizedDomainMeasure
     (V : Set (Vec d)) : Measure (Vec d) :=

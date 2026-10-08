@@ -181,7 +181,7 @@ private theorem paperAdjointSign_center (A : BlockMat d)
 /-! ## The two independently annealed centers -/
 
 /-- The primal hatted center is `(I + R Êₜ)(-p⁻,q⁻)`. -/
-theorem profilePrimalCenter_subSkew_eq [NeZero d]
+theorem profilePrimalCenter_subSkew_eq
     {P : Measure (CoeffSpace d)} [IsProbabilityMeasure P]
     {q : Mat d} (hq : q.PosDef) (t : ℤ)
     (hint : HasFiniteAdaptedMean P q t) (h0 : Mat d)
@@ -253,7 +253,7 @@ theorem profilePrimalCenter_subSkew_eq [NeZero d]
 
 /-- The independently computed adjoint hatted center uses the signed
 congruence of the hatted mean and its own load. -/
-theorem profileAdjointCenter_subSkew_eq [NeZero d]
+theorem profileAdjointCenter_subSkew_eq
     {P : Measure (CoeffSpace d)} [IsProbabilityMeasure P]
     {q : Mat d} (hq : q.PosDef) (t : ℤ)
     (hint : HasFiniteAdaptedMean P q t) (h0 : Mat d)
@@ -343,7 +343,7 @@ theorem profileAdjointCenter_subSkew_eq [NeZero d]
 /-! ## Load-calibration forms -/
 
 /-- Flattened primal identity in the exact `x⁻ + R Êₜx⁻` form. -/
-theorem toFullBlockVec_profilePrimalCenter_subSkew_eq [NeZero d]
+theorem toFullBlockVec_profilePrimalCenter_subSkew_eq
     {P : Measure (CoeffSpace d)} [IsProbabilityMeasure P]
     {q : Mat d} (hq : q.PosDef) (t : ℤ)
     (hint : HasFiniteAdaptedMean P q t) (h0 : Mat d)
@@ -361,7 +361,7 @@ theorem toFullBlockVec_profilePrimalCenter_subSkew_eq [NeZero d]
   rw [add_comm]
 
 /-- The paper-signed adjoint center is exactly `x⁺ - R Êₜx⁺`. -/
-theorem profileAdjointCenter_subSkew_paperSign_eq [NeZero d]
+theorem profileAdjointCenter_subSkew_paperSign_eq
     {P : Measure (CoeffSpace d)} [IsProbabilityMeasure P]
     {q : Mat d} (hq : q.PosDef) (t : ℤ)
     (hint : HasFiniteAdaptedMean P q t) (h0 : Mat d)
@@ -378,7 +378,7 @@ theorem profileAdjointCenter_subSkew_paperSign_eq [NeZero d]
     (skewBlockCongr h0 (adaptedMean P q t)) pPlus qPlus
 
 /-- Flattened adjoint identity in the exact `x⁺ - R Êₜx⁺` form. -/
-theorem toFullBlockVec_profileAdjointCenter_subSkew_eq [NeZero d]
+theorem toFullBlockVec_profileAdjointCenter_subSkew_eq
     {P : Measure (CoeffSpace d)} [IsProbabilityMeasure P]
     {q : Mat d} (hq : q.PosDef) (t : ℤ)
     (hint : HasFiniteAdaptedMean P q t) (h0 : Mat d)

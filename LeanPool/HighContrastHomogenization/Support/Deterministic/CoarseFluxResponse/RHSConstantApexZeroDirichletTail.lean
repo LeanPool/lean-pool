@@ -45,7 +45,7 @@ noncomputable def zeroTraceDirichletGradientTailBudget {d : ℕ}
       ((d : ℝ) * ((3 : ℝ) ^ ((d : ℝ) + s) * Real.sqrt 2)) ^ 2 *
       (cubeBesovPositiveVectorSeminormTwo Q s g) ^ 2
 
-theorem zeroTraceDirichletGradientTailBudget_nonneg {d : ℕ} [NeZero d]
+theorem zeroTraceDirichletGradientTailBudget_nonneg {d : ℕ}
     (Q : TriadicCube d) (a : CoeffField d) {s : ℝ}
     (g : Vec d → Vec d) (hs : 0 < s) :
     0 ≤ zeroTraceDirichletGradientTailBudget Q a s g := by
@@ -108,7 +108,7 @@ theorem zeroTraceDirichletPoincareDisplayedScalarBudget_eq_scalarBudget
   rfl
 
 theorem zeroTraceDirichletPoincareDisplayedScalarBudget_nonneg {d : ℕ}
-    [NeZero d] (Q : TriadicCube d) (a : CoeffField d) (a0 : Mat d)
+    (Q : TriadicCube d) (a : CoeffField d) (a0 : Mat d)
     (s : ℝ) (g : Vec d → Vec d) (hs : 0 < s) :
     0 ≤ zeroTraceDirichletPoincareDisplayedScalarBudget Q a a0 s g := by
   rw [zeroTraceDirichletPoincareDisplayedScalarBudget_eq_scalarBudget]

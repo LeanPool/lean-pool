@@ -62,7 +62,7 @@ variable {d : ℕ}
 travels with the law; the shear vanishes; the canonical metric — and hence the
 adapted geometry — is unchanged. -/
 theorem recentered_certificates [NeZero d] {P : Measure (CoeffSpace d)}
-    [IsProbabilityMeasure P] {gexp : ℝ} {E : BlockMat d} {Ψ : ℝ → ℝ} {K : ℝ}
+    {gexp : ℝ} {E : BlockMat d} {Ψ : ℝ → ℝ} {K : ℝ}
     {S : CoeffSpace d → ℝ}
     (hdag : HCPoly.Frozen.CoarseEllipticityDagger P gexp E Ψ K S)
     (hE : (toFullBlockMat E).PosDef)

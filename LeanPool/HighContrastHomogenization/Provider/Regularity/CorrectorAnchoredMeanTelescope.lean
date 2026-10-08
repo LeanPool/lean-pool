@@ -117,7 +117,7 @@ theorem abs_cubeAverage_originCube_pred_sub_le_card_mul_oscillation
 same one-step oscillation estimate, read through the outer canonical local
 `H¹` representative. -/
 theorem NormalizedLocalH1Carrier.abs_cubeAverage_globalValueRepresentative_succ_sub_le_oscillation
-    {d : ℕ} [NeZero d] (z : NormalizedLocalH1Carrier d) (n : ℕ) :
+    {d : ℕ} (z : NormalizedLocalH1Carrier d) (n : ℕ) :
     |cubeAverage (originCube d (n : ℤ)) z.globalValueRepresentative -
         cubeAverage (originCube d ((n + 1 : ℕ) : ℤ))
           z.globalValueRepresentative| ≤
@@ -134,7 +134,7 @@ theorem NormalizedLocalH1Carrier.abs_cubeAverage_globalValueRepresentative_succ_
 /-- The displacement of the outer mean from the unit-cube mean is bounded by
 the finite sum of the scale-correct one-step oscillation quantities. -/
 theorem NormalizedLocalH1Carrier.abs_cubeAverage_globalValueRepresentative_zero_sub_le_sum
-    {d : ℕ} [NeZero d] (z : NormalizedLocalH1Carrier d) (n : ℕ) :
+    {d : ℕ} (z : NormalizedLocalH1Carrier d) (n : ℕ) :
     |cubeAverage (originCube d 0) z.globalValueRepresentative -
         cubeAverage (originCube d (n : ℤ)) z.globalValueRepresentative| ≤
       ∑ k ∈ Finset.range n, anchoredCorrectorMeanStepBound z k := by
@@ -160,7 +160,7 @@ theorem NormalizedLocalH1Carrier.abs_cubeAverage_globalValueRepresentative_zero_
 /-- Fixed-unit normalization turns the finite telescope into a direct bound
 for the absolute outer mean. -/
 theorem NormalizedLocalH1Carrier.abs_cubeAverage_globalValueRepresentative_le_sum
-    {d : ℕ} [NeZero d] (z : NormalizedLocalH1Carrier d) (n : ℕ) :
+    {d : ℕ} (z : NormalizedLocalH1Carrier d) (n : ℕ) :
     |cubeAverage (originCube d (n : ℤ)) z.globalValueRepresentative| ≤
       ∑ k ∈ Finset.range n, anchoredCorrectorMeanStepBound z k := by
   have h := z.abs_cubeAverage_globalValueRepresentative_zero_sub_le_sum n

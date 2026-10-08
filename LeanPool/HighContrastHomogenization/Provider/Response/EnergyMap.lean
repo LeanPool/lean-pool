@@ -56,7 +56,7 @@ variable {d : ℕ}
 /-- Pairing against the zero doubled vector. -/
 @[simp] theorem blockVecDot_zero_left (X : BlockVec d) :
     blockVecDot (0 : BlockVec d) X = 0 := by
-  show vecDot (0 : Vec d) X.1 + vecDot (0 : Vec d) X.2 = 0
+  change vecDot (0 : Vec d) X.1 + vecDot (0 : Vec d) X.2 = 0
   rw [vecDot_zero_left, vecDot_zero_left, add_zero]
 
 /-! ## Averages of a doubled field against a fixed load -/
@@ -92,7 +92,7 @@ theorem average_vecDot_const {U : Domain d} (c : Vec d) {F : Vec d → Vec d}
     rw [MeasureTheory.integral_finsetSum _
       (fun i _ => (integrableOn_component hF i).const_mul (c i))]
     exact Finset.sum_congr rfl fun i _ => MeasureTheory.integral_const_mul _ _
-  show (MeasureTheory.volume (U : Set (Vec d))).toReal⁻¹ *
+  change (MeasureTheory.volume (U : Set (Vec d))).toReal⁻¹ *
       ∫ x in (U : Set (Vec d)), (∑ i : Fin d, c i * F x i) ∂MeasureTheory.volume =
     ∑ i : Fin d, c i *
       ((MeasureTheory.volume (U : Set (Vec d))).toReal⁻¹ *
@@ -117,7 +117,7 @@ theorem average_blockVecDot_const {U : Domain d} (Q : BlockVec d) (Y : DoubledFi
       (U : Set (Vec d)) MeasureTheory.volume := by
     refine MeasureTheory.integrable_finsetSum _ fun i _ => ?_
     exact (integrableOn_component hf i).const_mul (Q.2 i)
-  show Book.Ch02.average U (fun x => vecDot Q.1 (Y.potential x) + vecDot Q.2 (Y.flux x)) =
+  change Book.Ch02.average U (fun x => vecDot Q.1 (Y.potential x) + vecDot Q.2 (Y.flux x)) =
     vecDot Q.1 (Book.Ch02.averageVec U Y.potential) + vecDot Q.2 (Book.Ch02.averageVec U Y.flux)
   rw [average_add hint1 hint2, average_vecDot_const Q.1 hp, average_vecDot_const Q.2 hf]
 

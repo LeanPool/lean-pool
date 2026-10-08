@@ -55,7 +55,7 @@ theorem IsWeakSolutionOn.translateCoeffField_univ {d : ℕ}
     refine ⟨?_, ?_, fun _ _ => Set.mem_univ _⟩
     · simpa only [psi] using!
         hphi.contDiff.comp (contDiff_id.sub contDiff_const)
-    · show HasCompactSupport (phi ∘ Homeomorph.subRight z)
+    · change HasCompactSupport (phi ∘ Homeomorph.subRight z)
       simpa only [psi, Function.comp_apply] using
         hphi.hasCompactSupport.comp_homeomorph (Homeomorph.subRight z)
   obtain ⟨hint, hzero⟩ := h psi hpsi

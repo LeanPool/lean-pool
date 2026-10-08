@@ -80,7 +80,7 @@ private theorem blockQuad_nonneg' {H : BlockMat d} (hpos : BlockPosDef H)
 the Schur load by twice the quadratic load and then applies the
 congruence transport — with the envelope left abstract, so that the two regions
 of the split can share it. -/
-private theorem row_term_le [NeZero d] {P : Measure (CoeffSpace d)}
+private theorem row_term_le {P : Measure (CoeffSpace d)}
     [IsProbabilityMeasure P] {E : BlockMat d} {q : Mat d} (hq : q.PosDef)
     (hposE : BlockPosDef E)
     {h0 : Mat d} {Pcen Qcen : Vec d} {k s : ℤ} {ck : ℝ} (hck0 : 0 ≤ ck)

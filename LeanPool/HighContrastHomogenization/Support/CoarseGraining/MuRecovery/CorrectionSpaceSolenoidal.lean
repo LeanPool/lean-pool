@@ -289,7 +289,7 @@ theorem recoveredField_mem_responseSpace_zero_right_of_isEllipticFieldOn_of_hodg
     rw [hEq] at hsum
     exact hsum
   refine ⟨?_, hFluxSol, ?_⟩
-  · show IsBlockPotentialOn U X
+  · change IsBlockPotentialOn U X
     unfold IsBlockPotentialOn
     simpa using hAdm.2.1.isPotentialOn
   intro Y hY

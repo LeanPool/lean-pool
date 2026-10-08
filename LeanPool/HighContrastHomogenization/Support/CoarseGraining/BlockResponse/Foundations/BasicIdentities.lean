@@ -311,7 +311,6 @@ theorem blockResponse_upperImage_isSolenoidalOn_of_mem_responseSpace {d : ℕ}
 theorem
   blockResponse_lowerImage_potential_of_hodgeConverse {d : ℕ}
     {a : CoeffField d} {U : Set (Vec d)} {X : BlockState d}
-    [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     (hHodge : HodgeConverseCriterion U)
     (hX : BlockResponseSpace a U X)
     (hLowerL2 :

@@ -61,8 +61,13 @@ structure HighContrastExponents (d : ℕ) where
   /-- The manuscript quantitative coarse-grained ellipticity parameters that the
   source-max gaps are stated against. -/
   params : HCPolySupport.Book.Ch05.QuantitativeCoarseGrainedEllipticityParams d
+  /-- Positive stochastic decay exponent controlling source weights and the subthreshold scale
+  decay.
+  -/
   rhoM : ℝ
+  /-- Positive response exponent used in the localization and small-contrast inputs. -/
   beta : ℝ
+  /-- High-contrast exponent constrained to lie strictly between one and two. -/
   zeta : ℝ
   rhoM_pos : 0 < rhoM
   beta_pos : 0 < beta
@@ -138,16 +143,21 @@ end HighContrastExponents
 Source: `e.localization` and `e.small.contrast`.
 -/
 structure LocalizationSmallContrastConstants where
-  C_loc : ℝ
-  beta_loc : ℝ
+  /-- Nonnegative prefactor of the localization error. -/
+  localizationCoefficient : ℝ
+  /-- Positive decay exponent of the localization error across scales. -/
+  localizationExponent : ℝ
+  /-- Positive small-contrast threshold, bounded above by one. -/
   delta0 : ℝ
-  C_sc : ℝ
+  /-- Positive prefactor of the small-contrast decay bound. -/
+  smallContrastCoefficient : ℝ
+  /-- Positive decay exponent after the small-contrast threshold is met. -/
   alpha0 : ℝ
-  C_loc_nonneg : 0 ≤ C_loc
-  beta_loc_pos : 0 < beta_loc
+  C_loc_nonneg : 0 ≤ localizationCoefficient
+  beta_loc_pos : 0 < localizationExponent
   delta0_pos : 0 < delta0
   delta0_le_one : delta0 ≤ 1
-  C_sc_pos : 0 < C_sc
+  C_sc_pos : 0 < smallContrastCoefficient
   alpha0_pos : 0 < alpha0
 
 /-- Typed external handoff for localization and the small-contrast theorem.
@@ -179,7 +189,7 @@ structure LocalizationSmallContrastInput
           HCPolySupport.Book.Ch05.Section55.shiftedWidetildeThetaAtScale P
               (n : ℤ) hP4 (2 * hc.beta) ≤
             HCPolySupport.Book.Ch05.thetaAtScale hP hStruct (k : ℤ) +
-              C_loc * (3 : ℝ) ^ (-(beta_loc * ((n - k : ℕ) : ℝ))) *
+              localizationCoefficient * (3 : ℝ) ^ (-(localizationExponent * ((n - k : ℕ) : ℝ))) *
                 HCPolySupport.Book.Ch05.widetildeThetaAtScale P (0 : ℤ) hP4
   small_contrast :
     ∀ {P : HCPolySupport.Book.Ch04.RestrictionCoeffLaw d}
@@ -193,7 +203,7 @@ structure LocalizationSmallContrastInput
         ∀ n : ℕ,
           HCPolySupport.Book.Ch05.thetaAtScale hP hStruct
               ((N + n : ℕ) : ℤ) - 1 ≤
-            C_sc * (3 : ℝ) ^ (-(alpha0 * (n : ℝ)))
+            smallContrastCoefficient * (3 : ℝ) ^ (-(alpha0 * (n : ℝ)))
 
 /-- Parameters in the high centered block moment hypothesis.
 
@@ -206,16 +216,24 @@ fixed quantitative coarse-grained ellipticity parameters used by the theorem;
 it is not quantified over every possible witness for every law.
 -/
 structure HighCenteredMomentParameters (d : ℕ) (hc : HighContrastExponents d) where
-  p_hm : ℝ
+  /-- Nonnegative parameter in the high centered block moment data. -/
+  highMomentParameter : ℝ
+  /-- Moment order, at least two, satisfying the dimension and decay threshold. -/
   Q : ℝ
+  /-- Positive scale decay rate in the high centered moment envelope. -/
   gamma : ℝ
-  C_Q : ℝ
+  /-- Nonnegative prefactor of the high centered moment envelope. -/
+  momentCoefficient : ℝ
+  /-- Nonnegative Holder-exponent threshold required to be strictly below the moment order. -/
   holderExponentFloor : ℝ
+  /-- Fixed quantitative ellipticity parameters, with twice the exponent `xi` bounded by the
+  moment order.
+  -/
   p4Params : HCPolySupport.Book.Ch05.QuantitativeCoarseGrainedEllipticityParams d
-  p_hm_nonneg : 0 ≤ p_hm
+  p_hm_nonneg : 0 ≤ highMomentParameter
   two_le_Q : 2 ≤ Q
   gamma_pos : 0 < gamma
-  C_Q_nonneg : 0 ≤ C_Q
+  C_Q_nonneg : 0 ≤ momentCoefficient
   Q_mul_rhoM_gt : Q * hc.rhoM > (d : ℝ) + 4
   holderExponentFloor_nonneg : 0 ≤ holderExponentFloor
   holderExponentFloor_lt_Q : holderExponentFloor < Q
@@ -228,9 +246,11 @@ only the polynomial prefactor before the weak-norm weight is used; the
 geometric buffer absorption is proved in `MomentConsequences.lean`.
 -/
 structure SubthresholdPolynomialMomentParameters where
-  C_sub : ℝ
-  A_sub : ℝ
-  C_sub_nonneg : 0 ≤ C_sub
+  /-- Nonnegative prefactor of the polynomial subthreshold moment envelope. -/
+  polynomialCoefficient : ℝ
+  /-- Exponent of the polynomial factor in the subthreshold moment envelope. -/
+  polynomialExponent : ℝ
+  C_sub_nonneg : 0 ≤ polynomialCoefficient
 
 /-- The deterministic envelope appearing in the high-moment input `a.HM`.
 
@@ -243,7 +263,7 @@ union bound.
 noncomputable def highCenteredMomentEnvelope {d : ℕ} {hc : HighContrastExponents d}
     (hm : HighCenteredMomentParameters d hc) (N j : ℕ) : ENNReal :=
   ENNReal.ofReal
-    (hm.C_Q *
+    (hm.momentCoefficient *
       Real.rpow (3 : ℝ) (-(hm.Q * hm.gamma) * ((j - N : ℕ) : ℝ)))
 
 /-- Moving the initial scale of the high-moment envelope forward only weakens
@@ -329,7 +349,7 @@ noncomputable def subthresholdPolynomialMomentEnvelope
     (sub : SubthresholdPolynomialMomentParameters) (T : ℝ) (n : ℕ) :
     ENNReal :=
   ENNReal.ofReal
-    (sub.C_sub * (((2 + T : ℝ) ^ sub.A_sub) *
+    (sub.polynomialCoefficient * (((2 + T : ℝ) ^ sub.polynomialExponent) *
       (3 : ℝ) ^ (-(2 * hc.rhoM) * (n : ℝ))))
 
 /-- Root-level subthreshold envelope from the old high-contrast input.
@@ -343,7 +363,7 @@ comparison, whose residual local-window terms are controlled as
 noncomputable def subthresholdPolynomialRootEnvelope
     {d : ℕ} (hc : HighContrastExponents d)
     (sub : SubthresholdPolynomialMomentParameters) (T : ℝ) (n : ℕ) : ℝ :=
-  sub.C_sub * (((2 + T : ℝ) ^ sub.A_sub) *
+  sub.polynomialCoefficient * (((2 + T : ℝ) ^ sub.polynomialExponent) *
     (3 : ℝ) ^ (-(hc.rhoM) * (n : ℝ)))
 
 /-- Source-facing old polynomial subthreshold input from `a.HM`.

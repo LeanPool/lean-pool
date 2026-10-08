@@ -146,11 +146,12 @@ theorem publicCoeffField_openCubeDeterministicCoarseData_descendant
   (publicCoeffField_openCubeDescendantDeterministicCoarseData_descendant
     Q a hR).self
 
+/-- The H¹ coercive estimate on the closed triadic cube. -/
 @[expose]
 noncomputable def h1CoerciveEstimateCubeSet
-    {d : ℕ} [NeZero d] (Q : TriadicCube d) :
+    {d : ℕ} (Q : TriadicCube d) :
     H1CoerciveEstimate (cubeSet Q) :=
-  _root_.HCPolySupport.h1CoerciveEstimate_cubeSet Q
+  _root_.HCPolySupport.cubeSetH1CoerciveEstimate Q
 
 theorem publicCoeffField_summable_qtwo_maxDescendantBBlockNormAtScale
     {d : ℕ} [NeZero d] (Q : TriadicCube d) (a : CoeffFamily d)

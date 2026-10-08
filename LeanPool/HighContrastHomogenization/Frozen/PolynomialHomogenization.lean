@@ -121,7 +121,6 @@ norm.
 
 The invariance of `Ω_end` under integer translations is proved with the theorem
 and is carried in the conclusion. -/
-
 theorem HCPoly.Frozen.polynomial_homogenization_random_source
     (d : ℕ) (hd : 2 ≤ d) :
     ∃ (cd : ℝ) (C₀ : ℝ → ℝ → ℝ → ℝ), 0 < cd ∧

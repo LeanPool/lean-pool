@@ -116,6 +116,8 @@ theorem measurableSet_renormBadGeneration [NeZero d]
     Finset.measurableSet_biUnion _ fun w _ =>
       measurableSet_renormBadCell hS hA hApd hdelta m k w
 
+/-- Supremum of `3 ^ m` over bad renormalized generations `m` at or above `n`, expressed as an
+extended nonnegative real. -/
 @[expose]
 public noncomputable def measurableRenormScale (S : CoeffSpace d → ℝ)
     (A : BlockMat d) (delta rho : ℝ) (h n : ℕ)

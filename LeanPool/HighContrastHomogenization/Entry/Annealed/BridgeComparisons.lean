@@ -210,7 +210,7 @@ theorem bridge_annealed_partition_bound {d : ℕ} [NeZero d]
 
 /-- The finite center-row mass is the mass of the corresponding
 fiber of the pair index. This preserves the inclusive reverse cap row. -/
-theorem bridge_maximal_row_mass {d : ℕ} [NeZero d]
+theorem bridge_maximal_row_mass {d : ℕ}
     (W : Set (Vec d)) (q : Mat d) (hq : IsUnit q) (cap t : ℤ)
     (hfin : (maximalAdaptedCellCenters W q cap t).Finite) (V : ℝ) :
     let I := {p : ℤ × (Fin d → ℤ) // IsMaximalAdaptedCellIn W q cap p.1 p.2}
@@ -273,7 +273,7 @@ private theorem bridge_finite_row_bound {ι : Type*}
   rw [Finset.sum_subtype_eq_sum_filter] at hs
   simpa only [mul_assoc] using mul_le_mul_of_nonneg_right (hs.trans (hrow t ht)) (hb t ht)
 
-private theorem bridge_finite_mean_le_series {d : ℕ} {ι : Type*} [Countable ι]
+private theorem bridge_finite_mean_le_series {d : ℕ} {ι : Type*}
     (P : Measure (CoeffSpace d)) (A : ι → CoeffSpace d → BlockMat d)
     (w : ι → ℝ) (hw : ∀ i, 0 ≤ w i)
     (hpos : ∀ i a, Book.Ch02.BlockPosDef (A i a))
@@ -478,7 +478,7 @@ theorem bridge_partition_comparison (d : ℕ) (hd : 2 ≤ d) (γ : ℝ)
     have h := hnorm P E Ψ K S hstat hdag jStar hj hsrcn m hm terminal htJ hTcube
       _ _ (by positivity) htail.2.2
     convert h using 1 <;> try rfl
-    show blockScale ((2 * Ca * Cb) * Cw * aspectRatio E *
+    change blockScale ((2 * Ca * Cb) * Cw * aspectRatio E *
         (Real.sqrt (‖m‖ * ‖m⁻¹‖)) ^ 2 * (3 : ℝ) ^ (-((j : ℝ) - jStar)))
         (adaptedMean P (explicitRoundedGrid jStar m) terminal) = _
     congr 1

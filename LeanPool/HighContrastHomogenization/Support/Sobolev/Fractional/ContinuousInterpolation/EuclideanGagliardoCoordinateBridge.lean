@@ -300,7 +300,7 @@ theorem coordinateGagliardoEnergy_euclideanHsConstant_lt_top (d : ℕ)
 
 /-- Proof-internal positive-dimensional producer: the exact Euclidean energy is bounded by the
 finite family of scalar ambient-distance Gagliardo energies. -/
-theorem euclideanHsEnergy_le_coordinateGagliardoEnergy {d : ℕ} [NeZero d]
+theorem euclideanHsEnergy_le_coordinateGagliardoEnergy {d : ℕ}
     (s : FractionalOrder) (F : UnitCubeEuclideanL2Field d) (hF : Measurable F) :
     euclideanHsEnergy s F ≤ coordinateGagliardoEnergy s F := by
   rw [euclideanHsEnergy_eq_lintegral,

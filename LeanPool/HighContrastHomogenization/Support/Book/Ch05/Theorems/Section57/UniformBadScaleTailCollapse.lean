@@ -66,7 +66,7 @@ theorem two_exp_terms_le_exp_of_prefactor_gap
 
 theorem measureReal_badScaleEvent_le_exp_tail_of_uniformEndpoint_component_sum
     {Ω : Type*} [MeasurableSpace Ω]
-    {μ : Measure Ω} [IsFiniteMeasure μ]
+    {μ : Measure Ω}
     {H : ℕ → ℕ → Ω → ℝ} {t α : ℝ} {q : ℕ}
     {S qPlus Cbottom wq Ktop Kbottom A Alead Atail η : ℝ}
     (hcomponent :

@@ -30,7 +30,7 @@ open scoped Matrix.Norms.Frobenius
 
 noncomputable section
 
-theorem LambdaSq_finite_nonneg {d : ℕ} [NeZero d]
+theorem LambdaSq_finite_nonneg {d : ℕ}
     (Q : TriadicCube d) (a : TriadicCoeffFamily d) {s q : ℝ}
     (hs : 0 < s) (hq : 1 ≤ q) :
     0 ≤ LambdaSq Q s (.finite q) a := by
@@ -39,7 +39,7 @@ theorem LambdaSq_finite_nonneg {d : ℕ} [NeZero d]
   exact Real.rpow_nonneg
     (LambdaSqFinite_series_nonneg Q s q a hq0 (mul_nonneg hs.le hq0)) _
 
-theorem lambdaSq_finite_nonneg {d : ℕ} [NeZero d]
+theorem lambdaSq_finite_nonneg {d : ℕ}
     (Q : TriadicCube d) (a : TriadicCoeffFamily d) {s q : ℝ}
     (hs : 0 < s) (hq : 1 ≤ q) :
     0 ≤ lambdaSq Q s (.finite q) a := by

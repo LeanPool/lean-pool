@@ -109,7 +109,7 @@ theorem selected_tail_parameter_power_le_high
 the synchronized selected-denominator estimate. -/
 theorem measureReal_badScaleEvent_le_exp_tail_of_component_prefactor_gap
     {Ω : Type*} [MeasurableSpace Ω]
-    {μ : Measure Ω} [IsFiniteMeasure μ]
+    {μ : Measure Ω}
     {H : ℕ → ℕ → Ω → ℝ} {t α : ℝ} {q : ℕ}
     {Ctop ChighBottom CcrudeBottom A Acrude Alead Atail η : ℝ}
     (hcomponent :
@@ -156,7 +156,7 @@ theorem measureReal_badScaleEvent_le_exp_tail_of_component_prefactor_gap
 selected-denominator theorem's native factorization. -/
 theorem measureReal_badScaleEvent_le_exp_tail_of_selected_component_sum
     {Ω : Type*} [MeasurableSpace Ω]
-    {μ : Measure Ω} [IsFiniteMeasure μ]
+    {μ : Measure Ω}
     {H : ℕ → ℕ → Ω → ℝ} {t α : ℝ} {q : ℕ}
     {S qPlus Cbottom wq Ktop Kbottom Kcrude A Acrude Alead Atail η : ℝ}
     (hcomponent :

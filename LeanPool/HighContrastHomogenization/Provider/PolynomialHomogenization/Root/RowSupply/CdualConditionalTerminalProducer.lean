@@ -45,7 +45,7 @@ private theorem memVectorL2_of_localVecTest
   simpa only [volumeMeasureOn] using
     hGlobal.mono_measure (Measure.restrict_le_self)
 
-private theorem hsNormSq_ruledCell_ne_top [NeZero d]
+private theorem hsNormSq_ruledCell_ne_top
     {U : Set (Vec d)} {rho Rad s : ℝ}
     (system : EnlargedMarginRuledTriadicWhitneySystem U rho Rad)
     (hs : 0 < s) (hsHalf : s < 1 / 2) {G : Vec d → Vec d}
@@ -132,9 +132,9 @@ theorem negSobolevNorm_le_of_rowConvertedFluxCap [NeZero d]
           (1 / 2 : ℝ) * hardyConstant ^ (1 / 2 : ℝ) := by
       apply mul_le_mul le_rfl
       · apply ENNReal.rpow_le_rpow
-        simpa only [mul_one] using
-          (mul_le_mul_right test.2.2 hardyConstant)
-        norm_num
+        · simpa only [mul_one] using
+            (mul_le_mul_right test.2.2 hardyConstant)
+        · norm_num
       · exact bot_le
       · exact bot_le
 

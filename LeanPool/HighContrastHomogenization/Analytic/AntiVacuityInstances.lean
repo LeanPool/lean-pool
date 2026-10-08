@@ -67,7 +67,7 @@ theorem metricBall_subset_euclideanBallAt (hd : 0 < d) (c : Vec d) {r : ℝ}
   have h3 : (d : ℝ) * (r / Real.sqrt d) ^ 2 = r ^ 2 := by
     rw [div_pow, Real.sq_sqrt (le_of_lt hdpos)]
     field_simp
-  show vecNormSq (x - c) < r ^ 2
+  change vecNormSq (x - c) < r ^ 2
   calc vecNormSq (x - c) ≤ (d : ℝ) * ‖x - c‖ ^ 2 := h1
     _ < (d : ℝ) * (r / Real.sqrt d) ^ 2 := by
         exact mul_lt_mul_of_pos_left h2 hdpos

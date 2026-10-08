@@ -47,12 +47,12 @@ variable {d : ℕ}
 
 namespace CoeffSpace
 
-noncomputable section
+section
 
 /-- The adjoint sample `aᵗ`, obtained by transposing the coefficient matrix
 at almost every point. -/
 @[expose]
-def transpose (a : CoeffSpace d) : CoeffSpace d where
+noncomputable def transpose (a : CoeffSpace d) : CoeffSpace d where
   val := AEEqFun.comp matTranspose continuous_id.matrix_transpose a.1
   property := by
     intro R hR
@@ -105,7 +105,7 @@ theorem exists_pointwise_coeffOn_family_aeeq (a : CoeffSpace d) :
       (fun x hx => hell x (hUR hx))
   refine ⟨b, lam, Lam, hbf, hblam, hbLam, ?_, ?_⟩
   · exact hbEll
-  · show (⇑a.1 : CoeffField d) =ᵐ[volumeMeasureOn (U : Set (Vec d))]
+  · change (⇑a.1 : CoeffField d) =ᵐ[volumeMeasureOn (U : Set (Vec d))]
       b.toCoeffField
     rw [hbf]
     exact ae_restrict_of_ae hae
@@ -118,7 +118,7 @@ namespace Response
 
 open Book.Ch02
 
-noncomputable section
+section
 
 variable {q : Mat d}
 
@@ -146,7 +146,7 @@ theorem adaptedResponse_transpose (hq : q.PosDef) (k : ℤ) (w : Fin d → ℤ)
 /-- The canonical variational maximizer `v_t` on the adapted parent cell
 `U_t = q◇_t`. -/
 @[expose]
-def diagonalWeakOptimizer (hq : q.PosDef) (t : ℤ) (a : CoeffSpace d)
+noncomputable def diagonalWeakOptimizer (hq : q.PosDef) (t : ℤ) (a : CoeffSpace d)
     (p r : Vec d) : Solution (adaptedDomain hq t) (a.coeffOn (adaptedDomain hq t)) :=
   (canonicalMaximizer
     (responseExistenceTheory (adaptedDomain hq t) (a.coeffOn (adaptedDomain hq t))) p r).toSolution
@@ -162,7 +162,7 @@ theorem diagonalWeakOptimizer_isMaximizer (hq : q.PosDef) (t : ℤ)
 
 /-- The doubled optimizer state `X_t = (∇v_t,a∇v_t)`. -/
 @[expose]
-def diagonalWeakState (hq : q.PosDef) (t : ℤ) (a : CoeffSpace d)
+noncomputable def diagonalWeakState (hq : q.PosDef) (t : ℤ) (a : CoeffSpace d)
     (p r : Vec d) : Vec d → BlockVec d :=
   fun x =>
     ((diagonalWeakOptimizer hq t a p r).toH1.grad x,
@@ -180,7 +180,7 @@ theorem diagonalWeakState_eq (hq : q.PosDef) (t : ℤ) (a : CoeffSpace d)
 /-- The normalized optimizer energy
 `ℰ_t = ‖symm(a)¹⁄² ∇v_t‖_{L_underlined²(U_t)}`. -/
 @[expose]
-def diagonalWeakEnergy (hq : q.PosDef) (t : ℤ) (a : CoeffSpace d)
+noncomputable def diagonalWeakEnergy (hq : q.PosDef) (t : ℤ) (a : CoeffSpace d)
     (p r : Vec d) : ℝ :=
   Real.sqrt
     (variationEnergyValue (adaptedDomain hq t) (a.coeffOn (adaptedDomain hq t))
@@ -250,7 +250,7 @@ theorem blockCellAverage_diagonalWeakState (hq : q.PosDef) (t : ℤ)
 
 /-- The source average formula
 `(X_t)_{U_t} = (R A_t + I)(-p,r)`. -/
-theorem blockCellAverage_diagonalWeakState_eq_response [NeZero d]
+theorem blockCellAverage_diagonalWeakState_eq_response
     (hq : q.PosDef) (t : ℤ) (a : CoeffSpace d) (p r : Vec d) :
     blockCellAverage (adaptedCell q t) (diagonalWeakState hq t a p r) =
       blockMatVecMul (blockR d)
@@ -266,13 +266,13 @@ theorem blockCellAverage_diagonalWeakState_eq_response [NeZero d]
 
 /-- The adjoint doubled state `X_t⁺ = (∇v_t⁺,aᵗ∇v_t⁺)`. -/
 @[expose]
-def diagonalWeakAdjointState (hq : q.PosDef) (t : ℤ) (a : CoeffSpace d)
+noncomputable def diagonalWeakAdjointState (hq : q.PosDef) (t : ℤ) (a : CoeffSpace d)
     (p r : Vec d) : Vec d → BlockVec d :=
   diagonalWeakState hq t a.transpose p r
 
 /-- The adjoint optimizer energy. -/
 @[expose]
-def diagonalWeakAdjointEnergy (hq : q.PosDef) (t : ℤ) (a : CoeffSpace d)
+noncomputable def diagonalWeakAdjointEnergy (hq : q.PosDef) (t : ℤ) (a : CoeffSpace d)
     (p r : Vec d) : ℝ :=
   diagonalWeakEnergy hq t a.transpose p r
 

@@ -124,7 +124,7 @@ private theorem bridge_comparison_enlarge {d : ℕ} (A : ℤ → BlockMat d)
       exact mul_nonneg (Real.rpow_nonneg (by norm_num) _) (bridge_full_quadratic_nonneg (hA r) v))
   · exact mul_le_mul_of_nonneg_right ht (bridge_full_quadratic_nonneg hT v)
 
-private theorem bridge_forward_rows {d : ℕ} [NeZero d]
+private theorem bridge_forward_rows {d : ℕ}
     (W : Set (Vec d)) (q : Mat d) (hq : IsUnit q) (cap j : ℤ)
     (Cw : ℝ) (hCw : 0 ≤ Cw)
     (hfin : ∀ t : ℤ, t ≤ cap → (maximalAdaptedCellCenters W q cap t).Finite)
@@ -221,8 +221,8 @@ theorem bridge_upper_comparison (d : ℕ) (hd : 2 ≤ d) (γ : ℝ)
   have _hcapmass := bridge_whitney_cap_mass_le_one
     (adaptedCellTranslate qPlus (n + (L : ℤ)) 0) q hq (n + (L : ℤ) - (L : ℤ))
     (Transport.volume_adaptedCellTranslate_ne_top _ _ _) hfin hmass
-  simp only [add_sub_cancel_right, adaptedCellTranslate, zero_add, Set.image_id'] at hfin hsub
-    hdis hnull hrow
+  simp only [add_sub_cancel_right, adaptedCellTranslate, zero_add,
+    Set.image_id'] at hfin hsub hdis hnull hrow
   have hforward := hcomp P E Ψ K S hstat hdag jStar hj hsrcs m m mPlus hm hm hmPlus
     n n (n + (L : ℤ)) (n + 2 * (L : ℤ)) hn hn (by omega)
     (Set.Subset.trans Set.subset_union_right hcontain)

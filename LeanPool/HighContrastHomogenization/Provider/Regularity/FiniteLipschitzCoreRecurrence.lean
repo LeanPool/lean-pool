@@ -40,7 +40,7 @@ noncomputable section
 namespace FiniteLipschitzCoreInternal
 
 theorem finiteLipschitzTopAffineErrorSum_le
-    {d : ℕ} [NeZero d] (a : Book.Ch02.TriadicCoeffFamily d)
+    {d : ℕ} (a : Book.Ch02.TriadicCoeffFamily d)
     (m : ℤ) (u : Book.Ch03.CubeSolution (originCube d m) a) (N : ℕ) :
     ∑ j ∈ Finset.Ioc (m - (N : ℤ)) m,
         finiteLipschitzAffineErrorRow a m u j ≤

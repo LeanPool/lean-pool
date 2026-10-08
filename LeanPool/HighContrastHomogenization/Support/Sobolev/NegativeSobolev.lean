@@ -168,6 +168,7 @@ noncomputable def meanZeroNegativeSobolevAbsSeminorm (p : ENNReal) (hp_one : 1 <
 
 /-! ## Transparent characterizations -/
 
+omit [NeZero d] in
 theorem smoothNegativeSobolevSeminorm_eq_iSup (p : ENNReal) (hp_one : 1 < p)
     (hp_top : p ≠ ∞) (f : Vec d → ℝ)
     (hf : MeasureTheory.MemLp f (ENNReal.conjExponent p) (domain hU hne).normalizedVolume) :
@@ -176,6 +177,7 @@ theorem smoothNegativeSobolevSeminorm_eq_iSup (p : ENNReal) (hp_one : 1 < p)
         ENNReal.ofReal (smoothPairing hU hne p hp_one f hf φ.1) :=
   rfl
 
+omit [NeZero d] in
 theorem meanZeroNegativeSobolevSeminorm_eq_iSup (p : ENNReal) (hp_one : 1 < p)
     (hp_top : p ≠ ∞) (f : Vec d → ℝ)
     (hf : MeasureTheory.MemLp f (ENNReal.conjExponent p) (domain hU hne).normalizedVolume) :
@@ -185,6 +187,7 @@ theorem meanZeroNegativeSobolevSeminorm_eq_iSup (p : ENNReal) (hp_one : 1 < p)
         ENNReal.ofReal (meanZeroPairing hU hne p hp_one f hf φ.1) :=
   rfl
 
+omit [NeZero d] in
 theorem smoothNegativeSobolevAbsSeminorm_eq_iSup (p : ENNReal) (hp_one : 1 < p)
     (hp_top : p ≠ ∞) (f : Vec d → ℝ)
     (hf : MeasureTheory.MemLp f (ENNReal.conjExponent p) (domain hU hne).normalizedVolume) :
@@ -193,6 +196,7 @@ theorem smoothNegativeSobolevAbsSeminorm_eq_iSup (p : ENNReal) (hp_one : 1 < p)
         ENNReal.ofReal |smoothPairing hU hne p hp_one f hf φ.1| :=
   rfl
 
+omit [NeZero d] in
 theorem meanZeroNegativeSobolevAbsSeminorm_eq_iSup (p : ENNReal) (hp_one : 1 < p)
     (hp_top : p ≠ ∞) (f : Vec d → ℝ)
     (hf : MeasureTheory.MemLp f (ENNReal.conjExponent p) (domain hU hne).normalizedVolume) :
@@ -239,6 +243,7 @@ public noncomputable def zeroW1pFunction (p : ENNReal) : W1pFunction U p :=
     gradMemLp := by intro i; simp
     hasWeakGradient := by intro i φ hφ_smooth hφ_compact hφ_sub; simp }
 
+omit [NeZero d] in
 private theorem normalizedW1pSeminorm_negW1pFunction {p : ENNReal}
     (hp_one : 1 < p) (hp_top : p ≠ ∞) (u : W1pFunction U p) :
     BoundedMeasurableDomain.NormalizedW1pKernel.seminorm
@@ -258,6 +263,7 @@ private theorem normalizedW1pSeminorm_negW1pFunction {p : ENNReal}
     (u.gradEuclideanMemLp (domain hU hne) p)
     (Filter.Eventually.of_forall (congrFun hgrad))
 
+omit [NeZero d] in
 private theorem smoothTestSeminorm_neg (p : ENNReal) (hp_one : 1 < p) (hp_top : p ≠ ∞)
     (φ : SmoothTestFunction hU) :
     smoothTestSeminorm hU hne p hp_one hp_top (-φ) =
@@ -278,6 +284,7 @@ private theorem smoothTestSeminorm_neg (p : ENNReal) (hp_one : 1 < p) (hp_top : 
 @[expose]
 noncomputable def smoothTestZero : SmoothTestFunction hU := 0
 
+omit [NeZero d] in
 theorem smoothTestAdmissible_zero (p : ENNReal) (hp_one : 1 < p) (hp_top : p ≠ ∞) :
     SmoothTestAdmissible hU hne p hp_one hp_top (smoothTestZero hU) := by
   change smoothTestSeminorm hU hne p hp_one hp_top (0 : SmoothTestFunction hU) ≤ 1
@@ -291,6 +298,7 @@ theorem smoothTestAdmissible_zero (p : ENNReal) (hp_one : 1 < p) (hp_top : p ≠
     BoundedMeasurableDomain.normalizedLpFiniteENorm,
     BoundedMeasurableDomain.normalizedLpENorm]
 
+omit [NeZero d] in
 theorem smoothTestAdmissible_neg (p : ENNReal) (hp_one : 1 < p) (hp_top : p ≠ ∞)
     {φ : SmoothTestFunction hU} (hφ : SmoothTestAdmissible hU hne p hp_one hp_top φ) :
     SmoothTestAdmissible hU hne p hp_one hp_top (-φ) := by
@@ -307,6 +315,7 @@ noncomputable def MeanZeroW1pTestFunction.neg {p : ENNReal}
     change ∫ x, -φ.toW1pFunction.toFun x ∂(domain hU hne).normalizedVolume = 0
     rw [MeasureTheory.integral_neg, φ.normalizedIntegral_eq_zero, neg_zero]
 
+omit [NeZero d] in
 theorem meanZeroTestSeminorm_neg (p : ENNReal) (hp_one : 1 < p) (hp_top : p ≠ ∞)
     (φ : MeanZeroW1pTestFunction hU hne p) :
     meanZeroTestSeminorm hU hne p hp_one hp_top φ.neg =
@@ -320,6 +329,7 @@ noncomputable def MeanZeroW1pTestFunction.zero (p : ENNReal) :
   toW1pFunction := zeroW1pFunction p
   normalizedIntegral_eq_zero := by simp [zeroW1pFunction]
 
+omit [NeZero d] in
 theorem meanZeroTestAdmissible_zero (p : ENNReal) (hp_one : 1 < p) (hp_top : p ≠ ∞) :
     MeanZeroTestAdmissible hU hne p hp_one hp_top
       (MeanZeroW1pTestFunction.zero hU hne p) := by
@@ -332,6 +342,7 @@ theorem meanZeroTestAdmissible_zero (p : ENNReal) (hp_one : 1 < p) (hp_top : p �
     BoundedMeasurableDomain.normalizedLpFiniteENorm,
     BoundedMeasurableDomain.normalizedLpENorm]
 
+omit [NeZero d] in
 theorem meanZeroTestAdmissible_neg (p : ENNReal) (hp_one : 1 < p) (hp_top : p ≠ ∞)
     {φ : MeanZeroW1pTestFunction hU hne p}
     (hφ : MeanZeroTestAdmissible hU hne p hp_one hp_top φ) :
@@ -411,6 +422,7 @@ private theorem iSup_ofReal_eq_iSup_ofReal_abs {α : Type*} (q : α → ℝ)
     · rw [abs_of_neg (lt_of_not_ge ha), ← hneg a]
       exact le_iSup (fun a => ENNReal.ofReal (q a)) (neg a)
 
+omit [NeZero d] in
 theorem smoothNegativeSobolevSeminorm_eq_abs (p : ENNReal) (hp_one : 1 < p)
     (hp_top : p ≠ ∞) (f : Vec d → ℝ)
     (hf : MeasureTheory.MemLp f (ENNReal.conjExponent p) (domain hU hne).normalizedVolume) :
@@ -425,6 +437,7 @@ theorem smoothNegativeSobolevSeminorm_eq_abs (p : ENNReal) (hp_one : 1 < p)
         -smoothPairing hU hne p hp_one f hf φ.1
       exact smoothPairing_neg hU hne p hp_one f hf φ.1)
 
+omit [NeZero d] in
 theorem meanZeroNegativeSobolevSeminorm_eq_abs (p : ENNReal) (hp_one : 1 < p)
     (hp_top : p ≠ ∞) (f : Vec d → ℝ)
     (hf : MeasureTheory.MemLp f (ENNReal.conjExponent p) (domain hU hne).normalizedVolume) :
@@ -478,6 +491,7 @@ theorem meanZeroPairing_congr_ae (p : ENNReal) (hp_one : 1 < p)
   unfold meanZeroPairing
   exact normalizedPairing_congr_ae hU hne p hp_one f f' hf hf' hff' φ.toW1pFunction.toFun _
 
+omit [NeZero d] in
 theorem smoothNegativeSobolevSeminorm_congr_ae (p : ENNReal) (hp_one : 1 < p)
     (hp_top : p ≠ ∞) (f f' : Vec d → ℝ)
     (hf : MeasureTheory.MemLp f (ENNReal.conjExponent p) (domain hU hne).normalizedVolume)
@@ -490,6 +504,7 @@ theorem smoothNegativeSobolevSeminorm_congr_ae (p : ENNReal) (hp_one : 1 < p)
   intro φ
   rw [smoothPairing_congr_ae hU hne p hp_one f f' hf hf' hff' φ.1]
 
+omit [NeZero d] in
 theorem meanZeroNegativeSobolevSeminorm_congr_ae (p : ENNReal) (hp_one : 1 < p)
     (hp_top : p ≠ ∞) (f f' : Vec d → ℝ)
     (hf : MeasureTheory.MemLp f (ENNReal.conjExponent p) (domain hU hne).normalizedVolume)

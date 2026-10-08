@@ -112,7 +112,7 @@ private theorem integral_avsum_eq_avsum_integral {P : Measure (CoeffSpace d)}
 /-- The actual primal child--parent half doubled-energy is nonnegative on each
 aligned cell, and its normalized annealed average is twice the physical primal
 response defect. -/
-theorem profilePrimalRecentEnergyDefect [NeZero d]
+theorem profilePrimalRecentEnergyDefect
     {P : Measure (CoeffSpace d)} [IsProbabilityMeasure P]
     (hstat : HCPoly.Frozen.IsStationaryLaw P) {l s t : ℤ} {q : Mat d}
     (hgrid : IsRoundedGrid l q) (hls : l ≤ s) (hst : s ≤ t)
@@ -225,7 +225,7 @@ theorem profilePrimalRecentEnergyDefect [NeZero d]
 
 /-- The coefficient-transpose row has the independently transported physical
 half doubled-energy and the adjoint response defect. -/
-theorem profileAdjointRecentEnergyDefect [NeZero d]
+theorem profileAdjointRecentEnergyDefect
     {P : Measure (CoeffSpace d)} [IsProbabilityMeasure P]
     (hstat : HCPoly.Frozen.IsStationaryLaw P) {l s t : ℤ} {q : Mat d}
     (hgrid : IsRoundedGrid l q) (hls : l ≤ s) (hst : s ≤ t)

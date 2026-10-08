@@ -104,7 +104,6 @@ private theorem integral_additivityCutoffTerm_le_expectedSquareRoots
 
 private theorem integral_manuscriptTerms_eq_sum_integrals
     {d : ℕ}
-    [NeZero d]
     {P : Ch04.RestrictionCoeffLaw d}
     (hP : Ch04.RestrictionLawCarrier P)
     {k : ℤ}
@@ -153,12 +152,12 @@ private theorem integral_manuscriptTerms_eq_sum_integrals
           (((Fintype.card (Fin d) : ℝ) * fluxCoeff) * fluxWeak a)
     let productPoint : RegCoeffField d → ℝ :=
       fun a => Cprod * (scaledGrad a * scaledFlux a)
-    ∀ (hAddInt : Integrable addPoint P),
-    ∀ (hOscInt : Integrable oscPoint P),
-    ∀ (hGradInt : Integrable gradPoint P),
-    ∀ (hFluxInt : Integrable fluxPoint P),
-    ∀ (hProductInt : Integrable productPoint P),
-    ∀ (hRHS_eq : (fun a : RegCoeffField d =>
+    ∀ (_hAddInt : Integrable addPoint P),
+    ∀ (_hOscInt : Integrable oscPoint P),
+    ∀ (_hGradInt : Integrable gradPoint P),
+    ∀ (_hFluxInt : Integrable fluxPoint P),
+    ∀ (_hProductInt : Integrable productPoint P),
+    ∀ (_hRHS_eq : (fun a : RegCoeffField d =>
         jUpperWeakNormManuscriptPointwiseRHSAtScale m k s t
           C Cosc scaleSep BφS BφT Cprod p q p0 q0 a) =
         fun a => (addPoint a + oscPoint a) + ((gradPoint a + fluxPoint a) + productPoint a)),

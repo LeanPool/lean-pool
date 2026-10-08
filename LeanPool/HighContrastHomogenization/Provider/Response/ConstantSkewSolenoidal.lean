@@ -79,7 +79,7 @@ theorem memVectorL2_constMatrix_mul_gradient
 /-- Multiplication of a weak gradient by a constant skew matrix gives a
 solenoidal field. -/
 theorem isSolenoidalOn_constSkew_mul_gradient
-    {U : Set (Vec d)} [IsFiniteMeasure (volumeMeasureOn U)]
+    {U : Set (Vec d)}
     (hU : IsOpen U) (h : Mat d) (hh : IsSkewMat h) (u : H1Function U) :
     IsSolenoidalOn U (fun x ↦ matVecMul h (u.grad x)) := by
   have hmem := memVectorL2_constMatrix_mul_gradient h u

@@ -51,7 +51,7 @@ theorem weightedGradNorm_congr_coeff_ae_on
 /-- The Euclidean magnitude of an `H¹` weak gradient belongs to normalized
 `L²` on its cube. -/
 theorem H1Function.memLp_euclideanGrad_normalizedCubeMeasure
-    {d : ℕ} [NeZero d] {Q : TriadicCube d}
+    {d : ℕ} {Q : TriadicCube d}
     (u : H1Function (openCubeSet Q)) :
     MemLp (fun x => euclideanNorm (u.grad x)) (2 : ℝ≥0∞)
       (normalizedCubeMeasure Q) := by
@@ -80,7 +80,7 @@ private theorem euclideanNorm_sub_le {d : ℕ} (x y : Vec d) :
 /-- Subtracting a constant vector increases the normalized `L²` norm of the
 Euclidean magnitude by at most that vector's Euclidean norm. -/
 theorem cubeLpNorm_euclideanGrad_sub_const_le
-    {d : ℕ} [NeZero d] (Q : TriadicCube d)
+    {d : ℕ} (Q : TriadicCube d)
     (u : H1Function (openCubeSet Q)) (e : Vec d) :
     cubeLpNorm Q (2 : ℝ≥0∞)
         (fun x => euclideanNorm (u.grad x - e)) ≤
@@ -129,7 +129,7 @@ theorem cubeLpNorm_euclideanGrad_sub_const_le
 /-- A weighted-gradient bound on a cube controls the normalized Euclidean
 `L²` norm of the weak gradient, with the expected `lam⁻¹/²` loss. -/
 theorem cubeLpNorm_euclideanGrad_le_div_sqrt_of_weightedGradNorm_le
-    {d : ℕ} [NeZero d] (Q : TriadicCube d)
+    {d : ℕ} (Q : TriadicCube d)
     {b : CoeffField d} {lam Lam B : ℝ}
     (hlam : 0 < lam)
     (hEll : IsEllipticFieldOn lam Lam (openCubeSet Q) b)
@@ -247,7 +247,7 @@ theorem cubeLpNorm_euclideanGrad_le_div_sqrt_of_weightedGradNorm_le
 /-- The conversion remains valid when the available weighted estimate uses an
 a.e.-equivalent local coefficient representative. -/
 theorem cubeLpNorm_euclideanGrad_le_div_sqrt_of_ae_weightedGradNorm_le
-    {d : ℕ} [NeZero d] (Q : TriadicCube d)
+    {d : ℕ} (Q : TriadicCube d)
     {a b : CoeffField d} {lam Lam B : ℝ}
     (hlam : 0 < lam)
     (hEll : IsEllipticFieldOn lam Lam (openCubeSet Q) b)

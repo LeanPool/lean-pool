@@ -291,7 +291,7 @@ private theorem diagonal_cell_defect_pointwise_split
 /-- **The per-scale cell defect in `L²`.**  The recent-cell defect at scale
 `k` is bounded by the two single-cell fluctuation carriers plus the
 deterministic mean drop. -/
-theorem eLpNorm_diagonalWeakCellDefect_le [NeZero d]
+theorem eLpNorm_diagonalWeakCellDefect_le
     {P : Measure (CoeffSpace d)} [IsProbabilityMeasure P]
     (hstat : HCPoly.Frozen.IsStationaryLaw P)
     {l : ℤ} {q : Mat d} (hgrid : IsRoundedGrid l q) {k t : ℤ}
@@ -361,7 +361,7 @@ theorem eLpNorm_diagonalWeakCellDefect_le [NeZero d]
         (f := fun w => fun a => A w a ^ 2) (fun w _ =>
           ((hmeasA w).mul (hmeasA w)).congr
             (_root_.Filter.Eventually.of_forall fun a => by
-              show A w a * A w a = A w a ^ 2
+              change A w a * A w a = A w a ^ 2
               rw [pow_two]))).congr
         (_root_.Filter.Eventually.of_forall fun a => by rw [Finset.sum_apply])
     exact (aestronglyMeasurable_const.mul hsum).congr
@@ -458,7 +458,7 @@ theorem eLpNorm_diagonalWeakCellDefect_le [NeZero d]
           (((hmeasA w).aemeasurable.mul
             (hmeasA w).aemeasurable).congr
             (_root_.Filter.Eventually.of_forall fun a => by
-              show A w a * A w a = A w a ^ 2
+              change A w a * A w a = A w a ^ 2
               rw [pow_two])))
     exact hbound
   have hpart2 : eLpNorm (fun _ : CoeffSpace d => B) 2 P ≤
@@ -488,7 +488,7 @@ theorem eLpNorm_diagonalWeakCellDefect_le [NeZero d]
 
 /-- **The recent cell sum in `L²`.**  The weighted recent cell sum is
 bounded by the weighted per-scale variance carriers and mean drops. -/
-theorem eLpNorm_diagonalWeakCellSum_le_variance [NeZero d]
+theorem eLpNorm_diagonalWeakCellSum_le_variance
     {P : Measure (CoeffSpace d)} [IsProbabilityMeasure P]
     (hstat : HCPoly.Frozen.IsStationaryLaw P)
     {l : ℤ} {q : Mat d} (hgrid : IsRoundedGrid l q) {t : ℤ} (H : ℕ)

@@ -528,7 +528,7 @@ private theorem aemeasurable_gradientHighScaleAverage
     let p_e := specialPAtScale hP hStruct (m : ℤ) e
     let q_e := specialQAtScale hP hStruct (m : ℤ) e
     let p0_e := (hP.barSigmaStarAtScale hStruct (m : ℤ))⁻¹ • q_e - p_e
-    let S := Finset.Icc ((k : ℤ) + 1) (m : ℤ)
+    let _S := Finset.Icc ((k : ℤ) + 1) (m : ℤ)
     AEMeasurable
         (fun a : RegCoeffField d =>
           WeakNormsMaximizer.gradientAverageTermAtScale
@@ -682,9 +682,12 @@ theorem integral_paired_highScaleAverageTerms_special_le_fullBlockSumAtScale
                       hP hStruct (m : ℤ) R a)) P :=
       MeasureTheory.integrable_finsetSum S hTermInt
     simpa [Y] using hsum.const_mul (∑ n ∈ S, w n)
-  have hGradAvgAE := aemeasurable_gradientHighScaleAverage (d := d) (P := P) (hP := hP) (hStruct
-    := hStruct)
-    (hP4 := hP4) (k := k) (m := m) (e := e)
+  have hGradAvgAE :
+      AEMeasurable
+        (fun a : RegCoeffField d =>
+          WeakNormsMaximizer.gradientAverageTermAtScale
+            (m : ℤ) (k : ℤ) s p_e q_e p0_e a) P :=
+    aemeasurable_gradientHighScaleAverage hP hStruct hP4 (k := k) (m := m) e
   have hFluxAvgAE :
       AEMeasurable
         (fun a : RegCoeffField d =>
@@ -718,9 +721,16 @@ theorem integral_paired_highScaleAverageTerms_special_le_fullBlockSumAtScale
               (hP.aemeasurable_canonicalScalarResponseFluxAverage_cubeSet
                 R R p_e q_e) q0_e)).sqrt)
   have hXAE : AEMeasurable X P := by
-    simpa [X, pow_two] using!
-      (aemeasurable_const.mul (hGradAvgAE.mul hGradAvgAE)).add
-        (aemeasurable_const.mul (hFluxAvgAE.mul hFluxAvgAE))
+    change AEMeasurable
+      (fun a : RegCoeffField d =>
+        σ *
+            (WeakNormsMaximizer.gradientAverageTermAtScale
+              (m : ℤ) (k : ℤ) s p_e q_e p0_e a) ^ 2 +
+          σ⁻¹ *
+            (WeakNormsMaximizer.fluxAverageTermAtScale
+              (m : ℤ) (k : ℤ) t p_e q_e q0_e a) ^ 2) P
+    exact ((hGradAvgAE.pow_const (2 : ℕ)).const_mul σ).add
+      ((hFluxAvgAE.pow_const (2 : ℕ)).const_mul σ⁻¹)
   have hX_int : Integrable X P := by
     refine Integrable.mono' hY_int hXAE.aestronglyMeasurable ?_
     filter_upwards [hPoint, hX_nonneg] with a hle hnonneg

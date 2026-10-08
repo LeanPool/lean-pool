@@ -461,6 +461,7 @@ theorem energy_identity
       ∫ x in U, vecDot (g x) (u.toH1Function.grad x) ∂MeasureTheory.volume := by
   simpa [vecDot_comm] using h u
 
+omit [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)] in
 theorem energy_le_rhs_pairing_of_isEllipticFieldOn
     {lam Lam : ℝ} (h : IsMeanZeroNeumannRhsWeakSolution a U u g)
     (hEll : IsEllipticFieldOn lam Lam U a) :

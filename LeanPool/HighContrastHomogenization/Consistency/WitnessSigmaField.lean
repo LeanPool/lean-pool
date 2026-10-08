@@ -106,12 +106,12 @@ theorem tendsto_witnessBump_rOut :
     tendsto_one_div_add_atTop_nhds_zero_nat.const_mul 2
   rw [mul_zero] at h
   refine h.congr fun n => ?_
-  show (2 : ℝ) * (1 / ((n : ℝ) + 1)) = 2 / ((n : ℝ) + 1)
+  change (2 : ℝ) * (1 / ((n : ℝ) + 1)) = 2 / ((n : ℝ) + 1)
   ring
 
 theorem witnessBump_rOut_le (n : ℕ) :
     (witnessBump d n).rOut ≤ 2 * (witnessBump d n).rIn := by
-  show (2 : ℝ) / ((n : ℝ) + 1) ≤ 2 * (1 / ((n : ℝ) + 1))
+  change (2 : ℝ) / ((n : ℝ) + 1) ≤ 2 * (1 / ((n : ℝ) + 1))
   rw [mul_one_div]
 
 /-- **The countable determining family.**  A locally integrable function whose
@@ -128,7 +128,7 @@ theorem ae_eq_zero_of_mollifierTest_eq_zero (f : Vec d → ℝ)
         (contDiff_witnessMollifier n).continuous hf
     refine hcont.ext_on hQ continuous_const ?_
     intro q hq
-    show (witnessMollifier d n ⋆[lsmul ℝ ℝ, volume] f) q = 0
+    change (witnessMollifier d n ⋆[lsmul ℝ ℝ, volume] f) q = 0
     rw [convolution_lsmul_swap]
     simpa [mollifierTest] using h n q hq
   have hae := ContDiffBump.ae_convolution_tendsto_right_of_locallyIntegrable

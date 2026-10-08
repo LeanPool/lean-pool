@@ -83,6 +83,8 @@ private theorem h1Function_finset_sum_grad
       funext x
       simp only [H1Function.add_grad, Finset.sum_insert ha, ih]
 
+/-- Apply the constant matrix `A` to a continuous `K`-functional competitor by taking
+linear combinations of its `H¹` coordinates. -/
 @[expose]
 public noncomputable def continuousKCompetitorConstMatrixMul
     (A : Mat d) (G : ContinuousKCompetitor d) : ContinuousKCompetitor d where
@@ -437,8 +439,7 @@ theorem continuousKSeminormIntegral_constMatrixMul_le
           continuousKSeminormIntegrand sigma F t := by
       rw [lintegral_const_mul' _ _ ENNReal.ofReal_ne_top]
 
-@[expose]
-public noncomputable def unitCubeEuclideanL2FieldToCenteredCubeZero
+private noncomputable def unitCubeEuclideanL2FieldToCenteredCubeZero
     (F : UnitCubeEuclideanL2Field d) : CenteredCubeEuclideanL2Field d 0 where
   toField := F
   euclideanMemL2 := by

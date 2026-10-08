@@ -43,7 +43,7 @@ variable {d : ℕ}
 /-- Multiplying every response bound by a fixed nonnegative scalar multiplies
 the physical-frame constant by the same scalar. -/
 theorem physicalFluxEpsilonFrameBound_const_mul
-    [NeZero d] {U : Set (Vec d)} {rho Rad b r Cflux : ℝ}
+    {U : Set (Vec d)} {rho Rad b r Cflux : ℝ}
     (system : EnlargedMarginRuledTriadicWhitneySystem U rho Rad)
     (responseBound : system.CellIndex → ℝ)
     {epsilon Xval kappaRate Kframe factor : ℝ}

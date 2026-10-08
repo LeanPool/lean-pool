@@ -199,10 +199,10 @@ private theorem pathwise_cutoff_duality_data
     have hz1 : matVecMul (0 : Mat d) Z.2 = 0 := by funext i; simp [matVecMul]
     have hz2 : matVecMul (0 : Mat d) Z.1 = 0 := by funext i; simp [matVecMul]
     refine Prod.ext ?_ ?_
-    · show matVecMul (matSqrt (explicitCanonicalMetric F)) Z.1 + matVecMul (0 : Mat d) Z.2 =
+    · change matVecMul (matSqrt (explicitCanonicalMetric F)) Z.1 + matVecMul (0 : Mat d) Z.2 =
           matVecMul (matSqrt (explicitCanonicalMetric F)) Z.1
       rw [hz1, add_zero]
-    · show matVecMul (0 : Mat d) Z.1 + matVecMul (matSqrt (explicitCanonicalMetric F))⁻¹ Z.2 =
+    · change matVecMul (0 : Mat d) Z.1 + matVecMul (matSqrt (explicitCanonicalMetric F))⁻¹ Z.2 =
           matVecMul (matSqrt (explicitCanonicalMetric F))⁻¹ Z.2
       rw [hz2, zero_add]
   -- The scale-average seminorm of the weak input is the target seminorm.
@@ -319,6 +319,7 @@ theorem abs_cubeAverage_pullback_pairing_le_besov_sq
       hB0, hA0, hFrob1nonneg, hFrob2nonneg, hflux, hξLp, hξ, hderiv,
       hgradWeak, hfluxWeak⟩
   -- The duality bound at the pulled-back data.
+  rw [hξdef] at hξLp hξ hderiv
   have hbridge := abs_cubeAverage_pullback_pairing_le (jStar := jStar) hjStar hm t b u Y
     (φ := φ) (B := B) (gradWeak := (3 : ℝ) ^ (-((t : ℝ) / 2)) * Frob₁ * A)
     (fluxWeak := (3 : ℝ) ^ (-((t : ℝ) / 2)) * Frob₂ * A)
@@ -448,7 +449,7 @@ theorem abs_cubeAverage_pullback_pairing_le_besov_sq
           scalarCutoffGradientField (fun y => φ (matVecMul (respGrid jStar F) y)) y :
             Vec d)))| ≤ (gradCoeff * fluxCoeff) * (scaledGrad * scaledFlux) := by
     refine hbridge.trans_eq ?_
-    simp only [hgcdef, hfcdef, hsgdef, hsfdef]
+    simp only [hgcdef, hfcdef, hsgdef, hsfdef, hξdef]
     ring
   have harith := mul_le_const_mul_rpow_mul_sq (d := d) t hA0 hFrob1nonneg hFrob2nonneg hK0 hL0
     hgc0 hfc0 hsg0 hsf0 hgradCoeffK hfluxCoeff_eq.le hscaledGrad_eq.le
@@ -590,7 +591,7 @@ theorem exists_pathwise_cutoff_pairing_bound (d : ℕ) [NeZero d] :
       (fun i _ => (hflux.eval i).integrable_mul (hξ2.eval i))
     simpa only [vecDot] using! hsum
   have hcube : IntegrableOn (fun y => vecDot (fl y) (ξ y)) (cubeSet (originCube d t)) := by
-    show Integrable (fun y => vecDot (fl y) (ξ y))
+    change Integrable (fun y => vecDot (fl y) (ξ y))
       (volume.restrict (cubeSet (originCube d t)))
     have h := hcube_mu
     rw [normalizedCubeMeasure, cubeMeasure] at h
@@ -617,7 +618,7 @@ theorem exists_pathwise_cutoff_pairing_bound (d : ℕ) [NeZero d] :
     exact Finset.sum_congr rfl (fun i _ => by ring)
   have hcubeProd : IntegrableOn (fun y => w y * vecDot (fl y) (ξ y))
       (cubeSet (originCube d t)) := by
-    show Integrable (fun y => w y * vecDot (fl y) (ξ y))
+    change Integrable (fun y => w y * vecDot (fl y) (ξ y))
       (volume.restrict (cubeSet (originCube d t)))
     have h := hcubeProd_mu
     rw [normalizedCubeMeasure, cubeMeasure] at h

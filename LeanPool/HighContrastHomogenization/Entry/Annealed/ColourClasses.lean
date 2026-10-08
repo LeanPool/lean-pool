@@ -235,7 +235,7 @@ private theorem measurable_normalizedBlock_comp (A R : BlockMat d) :
 
 This instantiates the full-matrix `iIndepFun_of_coeffSigma_measurable`, giving independence of
 the entire family at once rather than one entry at a time. -/
-theorem iIndepFun_coarseBlockNormalized_of_unitSeparated [NeZero d]
+theorem iIndepFun_coarseBlockNormalized_of_unitSeparated
     (P : Measure (CoeffSpace d)) [IsProbabilityMeasure P] (hunit : IsUnitRangeLaw P)
     (q : Mat d) (hq : IsUnit q) (j : ℤ) {ι : Type*} (y : ι → Vec d)
     (hsep : Pairwise fun i i' => UnitSeparated (HighContrast.adaptedCellTranslate q j (y i))
@@ -270,7 +270,7 @@ theorem card_residue_colours : Fintype.card (Fin d → ZMod 3) = 3 ^ d := by
 `∑_c (#C_c)^{1/2} ≤ (#palette)^{1/2} (#Z)^{1/2}`, by Cauchy-Schwarz.  Empty classes contribute
 `0` to both sides; no nonemptiness hypothesis is used.  With the palette `Fin d → ZMod 3` and
 `card_residue_colours` this is the printed `∑_C (#C)^{1/2} ≤ 3^{d/2}(#Z)^{1/2}`. -/
-theorem sum_rpow_card_fiber_le {ι κ : Type*} [DecidableEq ι] [Fintype κ] [DecidableEq κ]
+theorem sum_rpow_card_fiber_le {ι κ : Type*} [Fintype κ] [DecidableEq κ]
     (Z : Finset ι) (col : ι → κ) :
     ∑ c : κ, (((Z.filter fun z => col z = c).card : ℝ)) ^ ((1 : ℝ) / 2)
       ≤ ((Fintype.card κ : ℝ)) ^ ((1 : ℝ) / 2) * ((Z.card : ℝ)) ^ ((1 : ℝ) / 2) := by

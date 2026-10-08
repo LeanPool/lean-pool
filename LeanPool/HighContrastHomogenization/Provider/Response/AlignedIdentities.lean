@@ -106,7 +106,7 @@ theorem exists_solution_grad_sub {U : Domain d} {lam Lam : ℝ} {a : CoeffOn U}
     (weakFluxIntegrable_of_isEllipticFieldOn hEll w) (-1), ?_⟩
   rw [AHarmonicFunction.grad_addSMulOfIntegrable]
   funext x
-  show u.toH1.grad x + (-1 : ℝ) • w.toH1.grad x = u.toH1.grad x - w.toH1.grad x
+  change u.toH1.grad x + (-1 : ℝ) • w.toH1.grad x = u.toH1.grad x - w.toH1.grad x
   rw [neg_one_smul, sub_eq_add_neg]
 
 /-! ## The doubled response space of a cell -/
@@ -133,7 +133,7 @@ theorem isDoubledResponseField_gradFlux {U : Domain d} {a : CoeffOn U}
       show v.toH1.grad x + (0 : Vec d → Vec d) x = v.toH1.grad x
       simp
     · funext x
-      show matVecMul (a.toCoeffField x) (v.toH1.grad x) -
+      change matVecMul (a.toCoeffField x) (v.toH1.grad x) -
           matVecMul (matTranspose (a.toCoeffField x)) ((0 : Vec d → Vec d) x) =
         matVecMul (a.toCoeffField x) (v.toH1.grad x)
       rw [show ((0 : Vec d → Vec d) x) = (0 : Vec d) from rfl, matVecMul_zero, sub_zero]
@@ -160,7 +160,7 @@ theorem isDoubledResponseField_grad_sub {U : Domain d} {a : CoeffOn U}
     rw [hz]
     congr 1
     funext x
-    show matVecMul (a.toCoeffField x) (u.toH1.grad x - w.toH1.grad x) =
+    change matVecMul (a.toCoeffField x) (u.toH1.grad x - w.toH1.grad x) =
       matVecMul (a.toCoeffField x) (u.toH1.grad x) -
         matVecMul (a.toCoeffField x) (w.toH1.grad x)
     rw [sub_eq_add_neg, matVecMul_add, matVecMul_neg, sub_eq_add_neg]
@@ -171,7 +171,7 @@ theorem isDoubledResponseField_grad_sub {U : Domain d} {a : CoeffOn U}
 /-- **The average identity on an aligned cell**, the average of the optimizer
 state at `U_k(z)`: `(X(U_k(z)))_{U_k(z)} = (RA_k(z) + I_{2d})P`, with `A_k(z)`
 the adapted response block of that child cell. -/
-theorem blockAverage_adaptedCellAt [NeZero d] (hq : q.PosDef) (k : ℤ) (w : Fin d → ℤ)
+theorem blockAverage_adaptedCellAt (hq : q.PosDef) (k : ℤ) (w : Fin d → ℤ)
     {a : CoeffSpace d} {c : CoeffOn (adaptedDomainAt hq k w)}
     (hc : Book.Ch02.coarseBlockMatrix (adaptedDomainAt hq k w) c = adaptedResponse q k w a)
     {p₀ q₀ : Vec d} {v : Solution (adaptedDomainAt hq k w) c}
@@ -186,7 +186,7 @@ theorem blockAverage_adaptedCellAt [NeZero d] (hq : q.PosDef) (k : ℤ) (w : Fin
 
 /-- **The average identity on the parent cell**, the average of the optimizer
 state at `U_t`: `(X_t)_{U_t} = (RA_t + I_{2d})P`. -/
-theorem blockAverage_adaptedCell [NeZero d] (hq : q.PosDef) (p : ℤ)
+theorem blockAverage_adaptedCell (hq : q.PosDef) (p : ℤ)
     {a : CoeffSpace d} {b : CoeffOn (adaptedDomain hq p)}
     (hb : Book.Ch02.coarseBlockMatrix (adaptedDomain hq p) b = coarseBlock (adaptedCell q p) a)
     {p₀ q₀ : Vec d} {v : Solution (adaptedDomain hq p) b}
@@ -204,7 +204,7 @@ comparison of the optimizer averages at the pair `(U_k(z), U_t)`:
 `|M_0^{1/2}((X(U_k(z)))_{U_k(z)} - (X_t)_{U_t})|²
   = P·(A_k(z) - A_t)M_0^{-1}(A_k(z) - A_t)P`, the block defect being exactly the
 one averaged in the recent cell defects `C_{k,t}(E)` and `D_{k,t}(E)`. -/
-theorem metricNormSq_blockAverage_sub_adapted [NeZero d] (hq : q.PosDef) (k p : ℤ)
+theorem metricNormSq_blockAverage_sub_adapted (hq : q.PosDef) (k p : ℤ)
     (w : Fin d → ℤ) {a : CoeffSpace d} {c : CoeffOn (adaptedDomainAt hq k w)}
     {b : CoeffOn (adaptedDomain hq p)} (m : Mat d)
     (hc : Book.Ch02.coarseBlockMatrix (adaptedDomainAt hq k w) c = adaptedResponse q k w a)

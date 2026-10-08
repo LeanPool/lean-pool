@@ -57,7 +57,7 @@ theorem adaptedCellAt_subset_centeredCube_succ (hd : 1 ≤ d) {q : Mat d}
   have hcen0 : (3 : ℝ) ^ k • matVecMul q (fun i => (w i : ℝ)) =
       adaptedCellCenter q k w := rfl
   rw [hcen0]
-  show adaptedCellCenter q k w + y ∈ centeredCube d (t + ((G + 1 : ℕ) : ℤ))
+  change adaptedCellCenter q k w + y ∈ centeredCube d (t + ((G + 1 : ℕ) : ℤ))
   rw [Recurrence.mem_centeredCube_iff] at hcenCube hyCube ⊢
   have hpow : ∀ m : ℤ, m ≤ t →
       (3 : ℝ) ^ (m + (G : ℤ)) ≤ (3 : ℝ) ^ (t + (G : ℤ)) := by

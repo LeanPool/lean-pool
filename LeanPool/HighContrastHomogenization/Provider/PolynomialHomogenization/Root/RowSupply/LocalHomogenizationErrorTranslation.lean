@@ -66,15 +66,15 @@ private theorem openCubeSet_translateCube_descendant_eq_translateSet
   rw [mem_openCubeSet_translateCube_iff, mem_translateSet_iff_sub_mem, hvec]
 
 private theorem normalizedBlockResponseMax_translate_of_physical_ae
-    [NeZero d] (z : Fin d → ℤ) (Q : TriadicCube d) (l : ℕ)
+    (z : Fin d → ℤ) (Q : TriadicCube d) (l : ℕ)
     (R : TriadicCube d)
     (hR : R ∈ descendantsAtScale Q (Q.scale - (l : ℤ)))
     (aPhysical aCentered : Book.Ch02.TriadicCoeffFamily d)
     (f : CoeffField d)
     (hPhysical :
       (aPhysical.coeffOn (translateCube z Q)).toCoeffField
-        =ᵐ[ volumeMeasureOn (openCubeSet (translateCube z Q))] f)
-    (hCentered : (aCentered.coeffOn Q).toCoeffField =ᵐ[ volumeMeasureOn (openCubeSet Q)]
+        =ᵐ[volumeMeasureOn (openCubeSet (translateCube z Q))] f)
+    (hCentered : (aCentered.coeffOn Q).toCoeffField =ᵐ[volumeMeasureOn (openCubeSet Q)]
         translateCoeffField (cubeTranslationVector z Q) f)
     (a0 : Mat d) :
     Book.Ch02.normalizedBlockResponseMax
@@ -142,13 +142,13 @@ private theorem normalizedBlockResponseMax_translate_of_physical_ae
 on-cube homogenization errors when their root representatives are the same
 physical coefficient before and after the cube translation. -/
 theorem homogenizationErrorOnCube_translate_of_physical_ae
-    [NeZero d] (z : Fin d → ℤ) (Q : TriadicCube d)
+    (z : Fin d → ℤ) (Q : TriadicCube d)
     (aPhysical aCentered : Book.Ch02.TriadicCoeffFamily d)
     (f : CoeffField d)
     (hPhysical :
       (aPhysical.coeffOn (translateCube z Q)).toCoeffField
-        =ᵐ[ volumeMeasureOn (openCubeSet (translateCube z Q))] f)
-    (hCentered : (aCentered.coeffOn Q).toCoeffField =ᵐ[ volumeMeasureOn (openCubeSet Q)]
+        =ᵐ[volumeMeasureOn (openCubeSet (translateCube z Q))] f)
+    (hCentered : (aCentered.coeffOn Q).toCoeffField =ᵐ[volumeMeasureOn (openCubeSet Q)]
         translateCoeffField (cubeTranslationVector z Q) f)
     (s : ℝ) (p q : Book.Ch02.MultiscaleExponent) (a0 : Mat d) :
     Book.Ch02.HomogenizationErrorOnCube (translateCube z Q) s p q

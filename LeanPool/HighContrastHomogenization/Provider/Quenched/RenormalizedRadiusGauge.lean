@@ -142,7 +142,7 @@ private theorem lower_ceiling_power {t : Real} (ht : 1 <= t) (hthree : 3 <= t) :
 
 /-- The normalized renormalization radius has an ordinary source tail at the
 buffered powered finite-range gauge. -/
-theorem measureReal_normalized_renormRadius_gt_le [NeZero d]
+theorem measureReal_normalized_renormRadius_gt_le
     {P : Measure (CoeffSpace d)} [IsProbabilityMeasure P]
     {S : CoeffSpace d -> Real} {Ahat : BlockMat d}
     {gamma nu mu rho delta Gain : Real} {n l0 h b : Nat}
@@ -223,7 +223,7 @@ theorem measureReal_normalized_renormRadius_gt_le [NeZero d]
 /-- The supremum defining the renormalization scale is finite almost surely.
 This closes the exceptional `top` branch that is deliberately erased by
 `ENNReal.toReal` in the real-valued radius. -/
-theorem ae_renormScale_ne_top [NeZero d]
+theorem ae_renormScale_ne_top
     {P : Measure (CoeffSpace d)} [IsProbabilityMeasure P]
     {S : CoeffSpace d -> Real} {Ahat : BlockMat d}
     {gamma nu mu rho delta Gain : Real} {n l0 h : Nat}

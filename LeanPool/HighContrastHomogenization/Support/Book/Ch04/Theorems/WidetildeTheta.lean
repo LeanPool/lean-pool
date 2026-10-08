@@ -47,7 +47,7 @@ noncomputable def annealedMomentRoot {d : ℕ}
 On the a.e.-elliptic support it uses the canonical dependent Ch2 coefficient
 family; off support it is totalized by `0`. -/
 @[expose]
-noncomputable def LambdaSqCoeffField {d : ℕ} [NeZero d]
+noncomputable def LambdaSqCoeffField {d : ℕ}
     (Q : TriadicCube d) (s : ℝ) (q : Ch02.MultiscaleExponent)
     (a : RegCoeffField d) : ℝ := by
   classical
@@ -61,7 +61,7 @@ noncomputable def LambdaSqCoeffField {d : ℕ} [NeZero d]
 On the a.e.-elliptic support it uses the canonical dependent Ch2 coefficient
 family; off support it is totalized by `0`. -/
 @[expose]
-noncomputable def lambdaSqCoeffField {d : ℕ} [NeZero d]
+noncomputable def lambdaSqCoeffField {d : ℕ}
     (Q : TriadicCube d) (s : ℝ) (q : Ch02.MultiscaleExponent)
     (a : RegCoeffField d) : ℝ := by
   classical
@@ -237,7 +237,7 @@ theorem lambdaSqCoeffField_originCube_zero_translateByInt_ae
     ae_locallyUniformlyEllipticField_translateByInt hP hstat z] with a ha htranslate
   exact lambdaSqCoeffField_originCube_zero_translateByInt_pointwise ha z htranslate s q
 
-theorem LambdaSqCoeffField_finite_nonneg {d : ℕ} [NeZero d]
+theorem LambdaSqCoeffField_finite_nonneg {d : ℕ}
     (Q : TriadicCube d) {s q : ℝ} (a : RegCoeffField d)
     (hs : 0 < s) (hq : 1 ≤ q) :
     0 ≤ LambdaSqCoeffField Q s (.finite q) a := by
@@ -251,7 +251,7 @@ theorem LambdaSqCoeffField_finite_nonneg {d : ℕ} [NeZero d]
     simpa [LambdaSqCoeffField, h] using hnonneg
   · simp [LambdaSqCoeffField, h]
 
-theorem lambdaSqCoeffField_finite_nonneg {d : ℕ} [NeZero d]
+theorem lambdaSqCoeffField_finite_nonneg {d : ℕ}
     (Q : TriadicCube d) {s q : ℝ} (a : RegCoeffField d)
     (hs : 0 < s) (hq : 1 ≤ q) :
     0 ≤ lambdaSqCoeffField Q s (.finite q) a := by
@@ -269,7 +269,7 @@ theorem lambdaSqCoeffField_finite_nonneg {d : ℕ} [NeZero d]
 norm maximum.  It uses the canonical dependent Ch2 coefficient family on the
 a.e.-locally elliptic support and is zero off that support. -/
 @[expose]
-noncomputable def maxDescendantBMatrixNormCoeffFieldAtScale {d : ℕ} [NeZero d]
+noncomputable def maxDescendantBMatrixNormCoeffFieldAtScale {d : ℕ}
     (Q : TriadicCube d) (k : ℤ) (a : RegCoeffField d) : ℝ := by
   classical
   exact
@@ -283,7 +283,7 @@ noncomputable def maxDescendantBMatrixNormCoeffFieldAtScale {d : ℕ} [NeZero d]
 operator-norm maximum. -/
 @[expose]
 noncomputable def maxDescendantSigmaStarInvMatrixNormCoeffFieldAtScale
-    {d : ℕ} [NeZero d] (Q : TriadicCube d) (k : ℤ)
+    {d : ℕ} (Q : TriadicCube d) (k : ℤ)
     (a : RegCoeffField d) : ℝ := by
   classical
   exact
@@ -574,7 +574,7 @@ private theorem aemeasurable_tsum_weighted_maxDescendantSigmaStarInvMatrixNormCo
         ((summable_weightedMaxDescendantSigmaStarInverseMatrixNorm Q a hs).hasSum)
 
 theorem LambdaSqCoeffField_finite_one_eq_tsum_sq
-    {d : ℕ} [NeZero d] (Q : TriadicCube d) (a : RegCoeffField d) (s : ℝ) :
+    {d : ℕ} (Q : TriadicCube d) (a : RegCoeffField d) (s : ℝ) :
     LambdaSqCoeffField Q s (.finite 1) a =
       (∑' n : ℕ,
         Ch02.geometricWeight s 1 n *
@@ -588,7 +588,7 @@ theorem LambdaSqCoeffField_finite_one_eq_tsum_sq
   · simp [LambdaSqCoeffField, maxDescendantBMatrixNormCoeffFieldAtScale, ha]
 
 theorem lambdaSqCoeffField_finite_one_eq_tsum_sq_inv
-    {d : ℕ} [NeZero d] (Q : TriadicCube d) (a : RegCoeffField d)
+    {d : ℕ} (Q : TriadicCube d) (a : RegCoeffField d)
     {s : ℝ} (hs : 0 < s) :
     lambdaSqCoeffField Q s (.finite 1) a =
       ((∑' n : ℕ,
@@ -707,21 +707,21 @@ theorem
 
 /-- Upper multiscale ellipticity moment at scale `n`. -/
 @[expose]
-noncomputable def LambdaMomentAtScale {d : ℕ} [NeZero d]
+noncomputable def LambdaMomentAtScale {d : ℕ}
     (P : RestrictionCoeffLaw d) (n : ℤ) (s : ℝ) (ξ : ℕ) : ℝ :=
   annealedMomentRoot P ξ
     (fun a => LambdaSqCoeffField (originCube d n) s (.finite 1) a)
 
 /-- Lower inverse multiscale ellipticity moment at scale `n`. -/
 @[expose]
-noncomputable def lambdaInvMomentAtScale {d : ℕ} [NeZero d]
+noncomputable def lambdaInvMomentAtScale {d : ℕ}
     (P : RestrictionCoeffLaw d) (n : ℤ) (s : ℝ) (ξ : ℕ) : ℝ :=
   annealedMomentRoot P ξ
     (fun a => (lambdaSqCoeffField (originCube d n) s (.finite 1) a)⁻¹)
 
 /-- The moment-enhanced contrast `\widetilde\Theta_n`. -/
 @[expose]
-noncomputable def widetildeThetaAtScale {d : ℕ} [NeZero d]
+noncomputable def widetildeThetaAtScale {d : ℕ}
     (P : RestrictionCoeffLaw d) (n : ℤ) (sUpper sLower : ℝ) (ξ : ℕ) : ℝ :=
   LambdaMomentAtScale P n sUpper ξ * lambdaInvMomentAtScale P n sLower ξ
 
@@ -757,14 +757,14 @@ theorem annealedMomentRoot_le_of_ae_nonneg_le {d : ℕ} {P : RestrictionCoeffLaw
   simpa [annealedMomentRoot] using
     Real.rpow_le_rpow hIntX_nonneg hInt_le hExp_nonneg
 
-theorem LambdaMomentAtScale_nonneg {d : ℕ} [NeZero d]
+theorem LambdaMomentAtScale_nonneg {d : ℕ}
     (P : RestrictionCoeffLaw d) (n : ℤ) {s : ℝ} (ξ : ℕ)
     (hs : 0 < s) :
     0 ≤ LambdaMomentAtScale P n s ξ :=
   annealedMomentRoot_nonneg_of_nonneg P ξ fun a =>
     LambdaSqCoeffField_finite_nonneg (originCube d n) a hs (by norm_num : (1 : ℝ) ≤ 1)
 
-theorem lambdaInvMomentAtScale_nonneg {d : ℕ} [NeZero d]
+theorem lambdaInvMomentAtScale_nonneg {d : ℕ}
     (P : RestrictionCoeffLaw d) (n : ℤ) {s : ℝ} (ξ : ℕ)
     (hs : 0 < s) :
     0 ≤ lambdaInvMomentAtScale P n s ξ :=

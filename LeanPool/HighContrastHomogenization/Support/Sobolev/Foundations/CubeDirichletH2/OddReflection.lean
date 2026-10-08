@@ -255,8 +255,8 @@ theorem cubeDirichletOddReflectionVectorField_self_pairing {d : ℕ}
         (cubeDirichletOddReflectionVectorField Q G x) =
       vecDot (cubeCoordinateFoldReflectedVectorField Q G x)
         (cubeCoordinateFoldReflectedVectorField Q G x) := by
-  simp [cubeDirichletOddReflectionVectorField, vecDot_smul_left,
-    vecDot_smul_right]
+  simp only [cubeDirichletOddReflectionVectorField_apply,
+    vecDot_smul_left, vecDot_smul_right]
   rw [← mul_assoc, cubeDirichletOddReflectionSign_mul_self]
   ring
 

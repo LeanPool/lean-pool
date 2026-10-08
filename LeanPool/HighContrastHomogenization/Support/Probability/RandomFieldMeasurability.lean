@@ -291,8 +291,7 @@ theorem IsStationary.map_translateByInt {d : ℕ}
 
 theorem integral_comp_translateByInt_eq_of_isStationary {d : ℕ}
     {P : MeasureTheory.Measure (CoeffField d)} (hP : IsStationary P)
-    {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] [CompleteSpace E]
-    [MeasurableSpace E] [BorelSpace E] [SecondCountableTopology E]
+    {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
     (z : Fin d → ℤ) (f : CoeffField d → E)
     (hf : MeasureTheory.AEStronglyMeasurable f P) :
     ∫ a, f (translateByInt z a) ∂P = ∫ a, f a ∂P :=

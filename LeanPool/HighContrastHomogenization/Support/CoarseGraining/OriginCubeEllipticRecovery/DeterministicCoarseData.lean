@@ -231,7 +231,7 @@ private theorem blockEnergyDensity_lowerBound_fluxNormSquare
   have hcoer :=
     blockMatrixOfCoeff_coercive_of_isEllipticMatrix (hEll.2 x hx) (Xq.eval x)
   have hcoeff_nonneg : 0 ≤ lam / (1 + 2 * Lam ^ 2) := by
-    positivity
+    exact div_nonneg hlam_pos.le hden_pos.le
   have hflux_le_block :
       vecNormSq (Xq.flux x) ≤ blockVecDot (Xq.eval x) (Xq.eval x) := by
     change vecNormSq (Xq.flux x) ≤
@@ -261,7 +261,7 @@ private theorem blockEnergyDensity_lowerBound_fluxNormSquare
   exact hhalf
 
 private theorem sigmaStarInvCoarse_determinant_isUnit_of_recoveredEnergy
-    {d : ℕ} [NeZero d] (n : ℤ)
+    {d : ℕ} (n : ℤ)
     [MeasureTheory.IsFiniteMeasure (volumeMeasureOn (openCubeSet (originCube d n)))]
     (R : PotentialSolenoidalL2RecoveryData (openCubeSet (originCube d n)))
     {lam Lam : ℝ} {a0 : CoeffField d}
@@ -428,7 +428,9 @@ private theorem isSigmaCoarse_schurComplement_of_exact_slice
   let sigma0 : Mat d := (coarseBlockMatrix U0 a0).upperLeft -
     matTranspose (kappaCoarse U0 a0) * sigmaStarInvCoarse U0 a0 * kappaCoarse U0 a0
   refine ⟨?_, ?_⟩
-  · have hUpperSymm : ((coarseBlockMatrix U0 a0).upperLeft).IsSymm := by
+  · change sigma0.IsSymm
+    dsimp only [sigma0]
+    have hUpperSymm : ((coarseBlockMatrix U0 a0).upperLeft).IsSymm := by
       rw [Matrix.IsSymm.ext_iff]
       intro i j
       simpa [blockMatEntry] using (hA0coarse.1 (Sum.inl i) (Sum.inl j)).symm
@@ -438,7 +440,7 @@ private theorem isSigmaCoarse_schurComplement_of_exact_slice
       transpose_mul_symm_mul_isSymm (kappaCoarse U0 a0) (sigmaStarInvCoarse U0 a0) hSInv0.1
     rw [Matrix.IsSymm.ext_iff]
     intro i j
-    simp [sigma0, hUpperSymm.apply i j, hCorrSymm.apply i j]
+    simp [hUpperSymm.apply i j, hCorrSymm.apply i j]
   · intro p
     have hRespP :
         ResponseJ U0 p 0 a0 =
@@ -455,7 +457,7 @@ private theorem isSigmaCoarse_schurComplement_of_exact_slice
     have hInvEq : (sigmaStarCoarse U0 a0)⁻¹ = sigmaStarInvCoarse U0 a0 := by
       rw [sigmaStarInvCoarse_eq_inv_of_isSigmaStarCoarse hS0]
     rw [hRespP, hInvEq]
-    simp [sigma0, sub_eq_add_neg, add_matVecMul, neg_matVecMul, vecDot_add_right,
+    simp [sub_eq_add_neg, add_matVecMul, neg_matVecMul, vecDot_add_right,
       vecDot_neg_right, matVecMul_mul, Matrix.mul_assoc]
     ring_nf
 
@@ -468,7 +470,7 @@ This is the exact upstream theorem needed to start removing the remaining
 3 coarse Poincare wrappers.
 -/
 theorem openCubeDeterministicCoarseData_of_triadicCube_of_hasOpenCubeEllipticRecoveryData
-    {d : ℕ} [NeZero d] (Q : TriadicCube d)
+    {d : ℕ} (Q : TriadicCube d)
     (R : PotentialSolenoidalL2RecoveryData (openCubeSet (originCube d Q.scale)))
     {lam Lam : ℝ} {a : CoeffField d}
     (hRec :
@@ -646,7 +648,7 @@ If the coefficient field is self-adjoint, then the canonical coarse
 origin-cube elliptic recovery data is available.
 -/
 theorem kappaCoarse_eq_zero_cube_of_triadicCube_of_hasOpenCubeEllipticRecoveryData
-    {d : ℕ} [NeZero d] (Q : TriadicCube d)
+    {d : ℕ} (Q : TriadicCube d)
     (R : PotentialSolenoidalL2RecoveryData (openCubeSet (originCube d Q.scale)))
     {lam Lam : ℝ} {a : CoeffField d}
     (hRec :
@@ -672,7 +674,7 @@ honest Chapter-2 burden still visible in the top harmonic Chapter-3
 coarse-Poincare wrappers.
 -/
 theorem openCubeDescendantDeterministicCoarseData_of_recoveryFamily
-    {d : ℕ} [NeZero d] {Q : TriadicCube d} {a : CoeffField d} {lam Lam : ℝ}
+    {d : ℕ} {Q : TriadicCube d} {a : CoeffField d} {lam Lam : ℝ}
     (hRec : OpenCubeDescendantEllipticRecoveryFamily Q a (lam := lam) (Lam := Lam)) :
     OpenCubeDescendantDeterministicCoarseData Q a := by
   intro l hl R hR

@@ -309,7 +309,7 @@ closed-cube ellipticity and separate note budgets.
 This is the proof-producing coefficient package used by the standard
 beta-dependent radius iteration. -/
 theorem
-    BoundaryCaccioppoliHarmonicVectorSmallCubeCoefficientSplit_allRadii.of_centeredFronts
+    boundaryCaccioppoliSmallCubeCoefficientSplitAllRadii.of_centeredFronts
     {d : ℕ} [NeZero d] (Q : TriadicCube d) (a : CoeffField d)
     (s t Clocal Calpha Ccross : ℝ) {lam Lam : ℝ}
     (hClocal : 0 ≤ Clocal) (hCalpha : 0 ≤ Calpha) (hCcross : 0 ≤ Ccross)
@@ -335,7 +335,7 @@ theorem
               (cubeRadius Q) ^ (2 : ℕ)) +
           2 * (quantitativeCubeCutoffGradientConst d / cubeRadius Q)) ≤
         (Fintype.card (Fin d) : ℝ) * Clocal) :
-    BoundaryCaccioppoliHarmonicVectorSmallCubeCoefficientSplit_allRadii
+    boundaryCaccioppoliSmallCubeCoefficientSplitAllRadii
       Q a s t Clocal Calpha Ccross := by
   let CeffLocal : ℝ := (Fintype.card (Fin d) : ℝ) * Clocal
   let CeffAlpha : ℝ := (Fintype.card (Fin d) : ℝ) * Calpha

@@ -158,7 +158,7 @@ theorem isCoarseBlockMatrix_respCoeffPlus [NeZero d] (q : Mat d) (hq : IsUnit q)
     rw [coarseBlockMatrix_adjointCoeffField_of_exists hex, ← blockCongr_blockD]
     exact h
   have hgnskew : matTranspose (-(respg F)) = -(-(respg F)) := by
-    show (-(respg F) : Mat d)ᵀ = -(-(respg F))
+    change (-(respg F) : Mat d)ᵀ = -(-(respg F))
     rw [Matrix.transpose_neg]
     exact congrArg Neg.neg (respg_isSkew F)
   have hplus : respCoeffPlus F a
@@ -616,6 +616,7 @@ noncomputable section
 
 variable {d : ℕ} [NeZero d]
 
+omit [NeZero d] in
 /-- The per-cell step of the recent-difference energy map for the adjoint sample, with the two
 Loewner constants abstract.  This is `recent_difference_metric_le`
 (`ResponseFieldSize.lean`) instantiated at an aligned child cell and the doubled

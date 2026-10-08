@@ -71,7 +71,7 @@ private theorem norm_le_norm_of_psd_le' {X Y : FullBlockMat d}
     simpa only [neg_zero, neg_smul] using h2
 
 private theorem average_parent_gap_le_sharp_fluctuation
-    {ι : Type*} [DecidableEq ι] (Z : Finset ι) (hZne : Z.Nonempty)
+    {ι : Type*} (Z : Finset ι) (hZne : Z.Nonempty)
     (A : ι → FullBlockMat d) (hA : ∀ i ∈ Z, (A i).PosDef)
     {Ap Gj avgA : FullBlockMat d} (hAp : Ap.PosDef) (hGj : Gj.PosDef)
     (havgAdef : avgA = (Z.card : ℝ)⁻¹ • ∑ i ∈ Z, A i)
@@ -119,7 +119,7 @@ private theorem average_parent_gap_le_sharp_fluctuation
   exact hgap2
 
 private theorem average_sharp_fluctuation_expansion
-    {ι : Type*} [DecidableEq ι] (Z : Finset ι)
+    {ι : Type*} (Z : Finset ι)
     (A : ι → FullBlockMat d) (hA : ∀ i ∈ Z, (A i).PosDef)
     {Gj R avgA : FullBlockMat d}
     (hRdef : R = fullBlockRefl d)
@@ -175,7 +175,7 @@ private theorem average_sharp_fluctuation_expansion
     · rw [smul_smul, inv_mul_cancel₀ hcard0, one_smul]
   exact hburrito
 
-private theorem normalized_conjugator_norm_squared_bound [NeZero d]
+private theorem normalized_conjugator_norm_squared_bound
     {Gp Gj N R M : FullBlockMat d} (hGp : Gp.PosDef) (hGj : Gj.PosDef)
     {cH cD : ℝ} (hcH0 : 0 ≤ cH) (hcD0 : 0 ≤ cD)
     (hsharpPinv : (fullBlockSharp Gp)⁻¹ ≤ cH • Gp⁻¹)
@@ -213,7 +213,7 @@ private theorem normalized_conjugator_norm_squared_bound [NeZero d]
     have h2 := neg_le_neg h1
     simpa only [neg_zero, neg_smul] using h2
   have hMMt : M * Mᴴ = N * Gj * (R * Gp * R) * Gj * N := by
-    rw [hMdef, hMherm]
+    rw [hMherm, hMdef]
     calc N * Gj * R * matSqrt Gp * (matSqrt Gp * R * Gj * N) =
         N * Gj * R * (matSqrt Gp * matSqrt Gp) * R * Gj * N := by
           noncomm_ring
@@ -317,7 +317,7 @@ private theorem normalized_sharp_gap_norm_bound
     simpa only [neg_zero, neg_smul] using h2
   exact ⟨hgapJherm, hgapN⟩
 
-private theorem normalized_dilation_difference_norm_bound [NeZero d]
+private theorem normalized_dilation_difference_norm_bound
     {Gp Gj N : FullBlockMat d} {cD : ℝ} (hcD0 : 0 ≤ cD)
     (horder : Gp ≤ Gj) (hdil : Gj ≤ (1 + cD) • Gp)
     (hNherm : Nᴴ = N) (hGjherm : Gjᴴ = Gj) (hGpherm : Gpᴴ = Gp)
@@ -357,8 +357,8 @@ private theorem normalized_dilation_difference_norm_bound [NeZero d]
   exact hT3
 
 /-- **The abstract pathwise variance split.** -/
-theorem norm_normalized_parent_fluctuation_le [NeZero d]
-    {ι : Type*} [DecidableEq ι] (Z : Finset ι) (hZne : Z.Nonempty)
+theorem norm_normalized_parent_fluctuation_le
+    {ι : Type*} (Z : Finset ι) (hZne : Z.Nonempty)
     (A : ι → FullBlockMat d) (hA : ∀ i ∈ Z, (A i).PosDef)
     {Ap Gj Gp : FullBlockMat d}
     (hAp : Ap.PosDef) (hGj : Gj.PosDef) (hGp : Gp.PosDef)

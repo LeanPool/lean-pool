@@ -53,8 +53,8 @@ private theorem quad_inl (H : BlockMat d) (u : Vec d) :
     vecDot_zero_left, add_zero]
 
 /-- The recentered terminal mean in structural Schur form. -/
-private theorem hatMean_eq_schur [NeZero d]
-    {P : Measure (CoeffSpace d)} [IsProbabilityMeasure P]
+private theorem hatMean_eq_schur
+    {P : Measure (CoeffSpace d)}
     {q : Mat d} (t : ℤ) {S SStar K : Mat d}
     (hform : toFullBlockMat (adaptedMean P q t) = schurBlock S SStar K) :
     Response.skewBlockCongr (Response.responseSkew K) (adaptedMean P q t) =
@@ -69,8 +69,8 @@ private theorem hatMean_eq_schur [NeZero d]
   simpa using hE2
 
 /-- The gradient-slot quadratic form of the recentered hatted mean. -/
-private theorem hatMean_quad_inl [NeZero d]
-    {P : Measure (CoeffSpace d)} [IsProbabilityMeasure P]
+private theorem hatMean_quad_inl
+    {P : Measure (CoeffSpace d)}
     {q : Mat d} (t : ℤ) {S SStar K : Mat d}
     (hform : toFullBlockMat (adaptedMean P q t) = schurBlock S SStar K)
     (u : Vec d) :
@@ -82,14 +82,14 @@ private theorem hatMean_quad_inl [NeZero d]
         Response.responseSymmetric K) *ᵥ u := by
   rw [Response.profileHattedBlock, hatMean_eq_schur t hform,
     Response.ofFullBlockMat_schurBlock, quad_inl]
-  show vecDot u (matVecMul (S + (Response.responseSymmetric K)ᴴ * SStar⁻¹ *
+  change vecDot u (matVecMul (S + (Response.responseSymmetric K)ᴴ * SStar⁻¹ *
     Response.responseSymmetric K) u) = _
   rw [Response.responseSymmetric_isHermitian]
   rfl
 
 /-- The flux-slot quadratic form of the recentered hatted mean. -/
-private theorem hatMean_quad_inr [NeZero d]
-    {P : Measure (CoeffSpace d)} [IsProbabilityMeasure P]
+private theorem hatMean_quad_inr
+    {P : Measure (CoeffSpace d)}
     {q : Mat d} (t : ℤ) {S SStar K : Mat d}
     (hform : toFullBlockMat (adaptedMean P q t) = schurBlock S SStar K)
     (v : Vec d) :

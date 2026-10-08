@@ -730,6 +730,7 @@ variable {d : ℕ} [NeZero d]
 
 /-! ## The recentred coefficient `a_- = respCoeffMinus F a` -/
 
+omit [NeZero d] in
 /-- **Both slots of the doubled optimizer field are `L²` on the adapted cell, for
 `respCoeffMinus F a`.**  The gradient slot is the weak gradient of the `H¹` function carried by
 the `AHarmonicFunction`, and the flux slot is `L²` through the a.e.-equal pointwise elliptic
@@ -748,6 +749,7 @@ theorem memVectorL2_optimizerField_respCoeffMinus_cell (q : Mat d) (hq : IsUnit 
   · simpa [optimizerField] using
       memVectorL2_optimizerField_flux_of_aeEq (subset_refl _) hEll hae u
 
+omit [NeZero d] in
 /-- **Both slots of the doubled optimizer field are integrable on the adapted cell, for
 `respCoeffMinus F a`.**  Square-integrability on the finite-measure adapted cell gives
 integrability of each component. -/
@@ -767,6 +769,7 @@ theorem integrableOn_optimizerField_respCoeffMinus_cell (q : Mat d) (hq : IsUnit
 
 /-! ## The transposed recentred coefficient `a_+ = respCoeffPlus F a` -/
 
+omit [NeZero d] in
 /-- **Both slots of the doubled optimizer field are `L²` on the adapted cell, for
 `respCoeffPlus F a`.**  The transposed twin of
 `memVectorL2_optimizerField_respCoeffMinus_cell`. -/
@@ -784,6 +787,7 @@ theorem memVectorL2_optimizerField_respCoeffPlus_cell (q : Mat d) (hq : IsUnit q
   · simpa [optimizerField] using
       memVectorL2_optimizerField_flux_of_aeEq (subset_refl _) hEll hae u
 
+omit [NeZero d] in
 /-- **Both slots of the doubled optimizer field are integrable on the adapted cell, for
 `respCoeffPlus F a`.**  The transposed twin of
 `integrableOn_optimizerField_respCoeffMinus_cell`. -/

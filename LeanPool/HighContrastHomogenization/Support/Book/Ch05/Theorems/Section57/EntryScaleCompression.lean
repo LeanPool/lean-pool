@@ -177,7 +177,7 @@ theorem exists_entryScale_le_natCeil_logSq
   have hP4_xi : hP4.xi = params.xi := by
     dsimp [hP4,
       GammaSigmaCoarseGrainedEllipticity.toQuantitativeCoarseGrainedEllipticity,
-      GammaSigmaCoarseGrainedEllipticity.quantitativeEllipticity_of_positiveBarSigma]
+      GammaSigmaCoarseGrainedEllipticity.quantitativeEllipticityOfPositiveBarSigma]
     simp [hparams]
   have hθ_pos : 0 < θ := by simpa [θ] using hΓ.thetaHat_pos
   have hθ_nonneg : 0 ≤ θ := hθ_pos.le

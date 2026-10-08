@@ -64,12 +64,12 @@ theorem image_matVecMul_eq_preimage_inv {q : Mat d} (hq : q.PosDef) (S : Set (Ve
   constructor
   · rintro ⟨y, hy, rfl⟩
     have hyy : matVecMul q⁻¹ (matVecMul q y) = y := by
-      show q⁻¹ *ᵥ q *ᵥ y = y
+      change q⁻¹ *ᵥ q *ᵥ y = y
       rw [Matrix.mulVec_mulVec, Matrix.nonsing_inv_mul _ hdet, Matrix.one_mulVec]
     simpa [Set.mem_preimage, hyy] using hy
   · intro hx
     refine ⟨matVecMul q⁻¹ x, hx, ?_⟩
-    show q *ᵥ q⁻¹ *ᵥ x = x
+    change q *ᵥ q⁻¹ *ᵥ x = x
     rw [Matrix.mulVec_mulVec, Matrix.mul_nonsing_inv _ hdet, Matrix.one_mulVec]
 
 /-- An invertible grid map is an open map. -/

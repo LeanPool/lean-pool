@@ -61,8 +61,7 @@ theorem doubledResponseJ_observation_epsilonAffine_eq
     (hS : (symmPart abar).PosDef) (k : ℤ) (w : Fin d → ℤ)
     (aObs : Book.Ch02.CoeffOn
       (Book.Ch02.cubeDomain (translateCube w (originCube d k))))
-    (hObs : aObs.toCoeffField =ᵐ[
-      volumeMeasureOn
+    (hObs : aObs.toCoeffField =ᵐ[volumeMeasureOn
         (openCubeSet (translateCube w (originCube d k)))]
       fun x ↦ affineCoefficient (matSqrt (symmPart abar))
         (isUnit_det_matSqrt hS)

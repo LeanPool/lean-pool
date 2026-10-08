@@ -98,7 +98,7 @@ private theorem blockBasis_sub_pairing'
   ring
 
 private theorem aemeasurable_blockMatEntry_coarseBlockMatrix_cubeSet
-    {d : ℕ} [NeZero d] {P : Ch04.RestrictionCoeffLaw d}
+    {d : ℕ} {P : Ch04.RestrictionCoeffLaw d}
     (hP : Ch04.RestrictionLawCarrier P) (Q : TriadicCube d)
     (α β : BlockCoord d) :
     AEMeasurable
@@ -430,7 +430,9 @@ theorem memLp_two_restrictionResponseJObservableCubeSet_originCube_from_P4
   have hLR :
       MemLp (fun a : RegCoeffField d => vecDot q (matVecMul (M a).lowerRight q))
         (2 : ENNReal) P := by
-    simp [vecDot, matVecMul]
+    change MemLp
+      (fun a : RegCoeffField d => ∑ i : Fin d, q i * ∑ j : Fin d, (M a).lowerRight i j * q j)
+      (2 : ENNReal) P
     refine memLp_finsetSum (s := (Finset.univ : Finset (Fin d))) ?_
     intro i _hi
     have hinner :
@@ -443,7 +445,9 @@ theorem memLp_two_restrictionResponseJObservableCubeSet_originCube_from_P4
   have hLL :
       MemLp (fun a : RegCoeffField d => vecDot q (matVecMul (M a).lowerLeft p))
         (2 : ENNReal) P := by
-    simp [vecDot, matVecMul]
+    change MemLp
+      (fun a : RegCoeffField d => ∑ i : Fin d, q i * ∑ j : Fin d, (M a).lowerLeft i j * p j)
+      (2 : ENNReal) P
     refine memLp_finsetSum (s := (Finset.univ : Finset (Fin d))) ?_
     intro i _hi
     have hinner :
@@ -456,7 +460,9 @@ theorem memLp_two_restrictionResponseJObservableCubeSet_originCube_from_P4
   have hUL :
       MemLp (fun a : RegCoeffField d => vecDot p (matVecMul (M a).upperLeft p))
         (2 : ENNReal) P := by
-    simp [vecDot, matVecMul]
+    change MemLp
+      (fun a : RegCoeffField d => ∑ i : Fin d, p i * ∑ j : Fin d, (M a).upperLeft i j * p j)
+      (2 : ENNReal) P
     refine memLp_finsetSum (s := (Finset.univ : Finset (Fin d))) ?_
     intro i _hi
     have hinner :
@@ -679,7 +685,7 @@ private theorem integral_descendantResponsePower_eq_originResponsePower
     let ζ := section53CoarseFluctuationZeta hP4
     let Q : TriadicCube d := originCube d m
     let j : ℕ := Int.toNat (m - k)
-    ∀ (hζ_pos : 0 < ζ),
+    ∀ (_hζ_pos : 0 < ζ),
     ∫ a,
           descendantsAverage Q j
             (fun R => Real.rpow (Ch04.restrictionResponseJObservableCubeSet R p q a) ζ) ∂P =
@@ -711,7 +717,7 @@ private theorem integral_descendantResponsePower_eq_originResponsePower
         memLp_zeta_restrictionResponseJObservableCubeSet_cubeSet_from_P4_of_stationary
           hP hstat hStruct hP4 R (by simpa [hRscale] using hk_nonneg) p q
     have hζ_ne_zero : ENNReal.ofReal ζ ≠ 0 := by
-      simp [ENNReal.ofReal_eq_zero, not_le.mpr hζ_pos]
+      exact (ENNReal.ofReal_pos.mpr hζ_pos).ne'
     have hζ_ne_top : ENNReal.ofReal ζ ≠ ⊤ := by simp
     have hint :
         Integrable
@@ -805,7 +811,7 @@ theorem integral_rpow_descendantMean_responseJObservableSet_cube_le_cube
   have hchild_int :
       Integrable (fun a : RegCoeffField d => Real.rpow (childAvg a) ζ) P := by
     have hζ_ne_zero : ENNReal.ofReal ζ ≠ 0 := by
-      simp [ENNReal.ofReal_eq_zero, not_le.mpr hζ_pos]
+      exact (ENNReal.ofReal_pos.mpr hζ_pos).ne'
     have hζ_ne_top : ENNReal.ofReal ζ ≠ ⊤ := by simp
     have hint :
         Integrable
@@ -840,7 +846,7 @@ theorem integral_rpow_descendantMean_responseJObservableSet_cube_le_cube
     have hJ_memζ : MemLp J (ENNReal.ofReal ζ) P :=
       hJ_mem2.mono_exponent hζ_le_two
     have hζ_ne_zero : ENNReal.ofReal ζ ≠ 0 := by
-      simp [ENNReal.ofReal_eq_zero, not_le.mpr hζ_pos]
+      exact (ENNReal.ofReal_pos.mpr hζ_pos).ne'
     have hζ_ne_top : ENNReal.ofReal ζ ≠ ⊤ := by
       simp
     have hint :
@@ -881,7 +887,7 @@ theorem integral_rpow_descendantMean_responseJObservableSet_cube_le_cube
         memLp_zeta_restrictionResponseJObservableCubeSet_cubeSet_from_P4_of_stationary
           hP hstat hStruct hP4 R (by simpa [hRscale] using hk_nonneg) p q
     have hζ_ne_zero : ENNReal.ofReal ζ ≠ 0 := by
-      simp [ENNReal.ofReal_eq_zero, not_le.mpr hζ_pos]
+      exact (ENNReal.ofReal_pos.mpr hζ_pos).ne'
     have hζ_ne_top : ENNReal.ofReal ζ ≠ ⊤ := by simp
     have hint :
         Integrable

@@ -77,6 +77,7 @@ variable {d : ℕ} [NeZero d]
 
 /-! ## The elliptic representative on an adapted cell, for both response coefficients -/
 
+omit [NeZero d] in
 /-- **The elliptic input for the cutoff bound, minus sign.**  For every sample `a` the coefficient
 `a_- = a - g` has, on the adapted cell, an a.e.-equal representative that is uniformly elliptic
 there.  Nothing but invertibility of the grid is needed; the constants belong to the sample and
@@ -97,6 +98,7 @@ theorem exists_elliptic_representative_respCoeffMinus (q : Mat d) (hq : IsUnit q
     filter_upwards [hae] with x hx
     simp [respCoeffMinus, hx]
 
+omit [NeZero d] in
 /-- **The elliptic input for the cutoff bound, plus sign.**  The transposed twin, for `a_+ = a^t +
 g`. -/
 theorem exists_elliptic_representative_respCoeffPlus (q : Mat d) (hq : IsUnit q) (t : ℤ)
@@ -115,6 +117,7 @@ theorem exists_elliptic_representative_respCoeffPlus (q : Mat d) (hq : IsUnit q)
     filter_upwards [hae] with x hx
     simp [respCoeffPlus, hx]
 
+omit [NeZero d] in
 /-- The same datum at the cutoff bound's own grid, from its own premises:
 `2 * d ≤ 3 ^ jStar` and positive definiteness of the canonical metric. -/
 theorem exists_elliptic_representative_respCell_respCoeffMinus {jStar : ℕ}
@@ -126,6 +129,7 @@ theorem exists_elliptic_representative_respCell_respCoeffMinus {jStar : ℕ}
   exists_elliptic_representative_respCoeffMinus (respGrid jStar F)
     (Geometry.isUnit_roundedGrid hjStar hm) t F a
 
+omit [NeZero d] in
 /-- The plus twin of the previous. -/
 theorem exists_elliptic_representative_respCell_respCoeffPlus {jStar : ℕ}
     (hjStar : 2 * d ≤ 3 ^ jStar) {F : BlockMat d} (hm : (explicitCanonicalMetric F).PosDef) (t : ℤ)
@@ -138,6 +142,7 @@ theorem exists_elliptic_representative_respCell_respCoeffPlus {jStar : ℕ}
 
 /-! ## The pulled-back flux is `L²` for the normalized reference-cube measure -/
 
+omit [NeZero d] in
 /-- **The flux slot of the pulled-back centred optimizer field.**  The field
 `y ↦ q⁻¹ ((optimizerField b u (q y) − Y).2)` is square integrable for
 the normalized measure of the reference cube — the `hflux` slot of the generic CG product bridge
@@ -294,6 +299,7 @@ theorem volumeAverage_energyDensity_nonneg_of_aeEq {U : Set (Vec d)}
 
 /-! ## The recentred coefficient `a_- = respCoeffMinus F a` -/
 
+omit [NeZero d] in
 /-- **Integrability of both slots of the doubled optimizer field on a triadic subcell, for
 `respCoeffMinus F a`.**  For an invertible grid `q`, generation `t` and depth `n`, both slots of
 the doubled optimizer field of an arbitrary `AHarmonicFunction` attached to `respCoeffMinus F a`
@@ -331,6 +337,7 @@ theorem integrableOn_optimizerField_respCoeffMinus_box (q : Mat d) (hq : IsUnit 
     simpa [optimizerField] using (MeasureTheory.memLp_pi_iff.mp hflux) j
   exact MemLp.integrable (by norm_num) hmem
 
+omit [NeZero d] in
 /-- **Integrability of the scalar energy density on the parent cell, for
 `respCoeffMinus F a`.**  The energy density `x ↦ ∇u(x) · (respCoeffMinus F a)(x) ∇u(x)` of an
 arbitrary `AHarmonicFunction` attached to `respCoeffMinus F a` on the adapted cell is integrable
@@ -344,6 +351,7 @@ theorem integrableOn_energyDensity_respCoeffMinus (q : Mat d) (hq : IsUnit q)
     exists_elliptic_representative_respCoeffMinus q hq t F a
   exact integrableOn_energyDensity_of_aeEq hEll hae u
 
+omit [NeZero d] in
 /-- **Nonnegativity of the averaged energy density, for `respCoeffMinus F a`.**  The volume
 average over the adapted cell of the energy density of an arbitrary `AHarmonicFunction` attached
 to `respCoeffMinus F a` is nonnegative. -/
@@ -360,6 +368,7 @@ theorem energyDensity_average_nonneg (q : Mat d) (hq : IsUnit q) (t : ℤ)
 
 /-! ## The transposed recentred coefficient `a_+ = respCoeffPlus F a` -/
 
+omit [NeZero d] in
 /-- **Integrability of both slots of the doubled optimizer field on a triadic subcell, for
 `respCoeffPlus F a`.**  The transposed twin of
 `integrableOn_optimizerField_respCoeffMinus_box`. -/
@@ -394,6 +403,7 @@ theorem integrableOn_optimizerField_respCoeffPlus_box (q : Mat d) (hq : IsUnit q
     simpa [optimizerField] using (MeasureTheory.memLp_pi_iff.mp hflux) j
   exact MemLp.integrable (by norm_num) hmem
 
+omit [NeZero d] in
 /-- **Integrability of the scalar energy density on the parent cell, for `respCoeffPlus F a`.**
 The transposed twin of `integrableOn_energyDensity_respCoeffMinus`. -/
 theorem integrableOn_energyDensity_respCoeffPlus (q : Mat d) (hq : IsUnit q)
@@ -405,6 +415,7 @@ theorem integrableOn_energyDensity_respCoeffPlus (q : Mat d) (hq : IsUnit q)
     exists_elliptic_representative_respCoeffPlus q hq t F a
   exact integrableOn_energyDensity_of_aeEq hEll hae u
 
+omit [NeZero d] in
 /-- **Nonnegativity of the averaged energy density, for `respCoeffPlus F a`.**  The transposed
 twin of `energyDensity_average_nonneg`. -/
 theorem energyDensity_average_nonneg_plus (q : Mat d) (hq : IsUnit q) (t : ℤ)

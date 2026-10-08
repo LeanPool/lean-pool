@@ -53,10 +53,10 @@ theorem ae_abs_centeredJMinusCutoffWeightedChildAtScale_le_jUpperWeakNormManuscr
         |1 - cubeAverage R φ| ≤ C)
     (hMean : cubeAverage (originCube d m) φ = 1)
     (hφ_meas : AEStronglyMeasurable φ (volumeMeasureOn (cubeSet (originCube d m))))
-    (hφ_bound : ∀ᵐ x ∂ volumeMeasureOn (cubeSet (originCube d m)), ‖φ x‖ ≤ B)
+    (hφ_bound : ∀ᵐ x ∂volumeMeasureOn (cubeSet (originCube d m)), ‖φ x‖ ≤ B)
     (hOscPoint :
       ∀ R ∈ descendantsAtDepth (originCube d m) (Int.toNat (m - k)),
-        ∀ᵐ x ∂ volumeMeasureOn (cubeSet R),
+        ∀ᵐ x ∂volumeMeasureOn (cubeSet R),
           |cubeAverage R φ - φ x| ≤ Cosc * scaleSep)
     (hφ : ContDiff ℝ (⊤ : ℕ∞) φ)
     (hφ_compact : HasCompactSupport φ)

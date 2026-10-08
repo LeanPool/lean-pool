@@ -128,9 +128,10 @@ theorem loewner_le_blockOpNorm_general (N : BlockMat d) :
   linarith only [h]
 
 /-- Congruence by a symmetric matrix moves through the quadratic form. -/
-private theorem qform_conj_symm {n : Type*} [Fintype n] [DecidableEq n]
+private theorem qform_conj_symm {n : Type*} [Fintype n]
     (Sm M : Matrix n n ℝ) (hS : Smᵀ = Sm) (v : n → ℝ) :
     v ⬝ᵥ ((Sm * M * Sm) *ᵥ v) = (Sm *ᵥ v) ⬝ᵥ (M *ᵥ (Sm *ᵥ v)) := by
+  classical
   rw [← Matrix.mulVec_mulVec, ← Matrix.mulVec_mulVec, Matrix.dotProduct_mulVec,
     ← Matrix.mulVec_transpose, hS]
 

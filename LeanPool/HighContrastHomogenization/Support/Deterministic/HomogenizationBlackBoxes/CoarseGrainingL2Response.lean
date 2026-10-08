@@ -104,7 +104,7 @@ that compares the descendant response average with the manuscript RHS
 `coarseGrainingL2FluxDefectBound`.
 -/
 theorem solution_diff_l2_le_coarseGrainingL2Rhs_of_descendant_coarseFluxResponse
-    {d : ℕ} [NeZero d] {Cdual : ℝ}
+    {d : ℕ} {Cdual : ℝ}
     (hdual : ScalarSolutionComparisonDualityEstimate d Cdual)
     (Q : TriadicCube d) (a : CoeffField d) (a0 : Mat d) (sigma0 : ℝ)
     (gradU gradV g : Vec d → Vec d) (energy : Vec d → ℝ) {s : ℝ} (j : ℕ)
@@ -158,7 +158,7 @@ derived from descendant coarse-flux response data instead of supplied as
 `hcoarseFluxDefect`.
 -/
 theorem solution_diff_l2_le_coarseGrainingL2Rhs_of_sameRhs_of_descendant_coarseFluxResponse
-    {d : ℕ} [NeZero d] {Cdual : ℝ}
+    {d : ℕ} {Cdual : ℝ}
     (hdual : ScalarSolutionComparisonDualityEstimate d Cdual)
     (Q : TriadicCube d) (a : CoeffField d) (a0 : Mat d) (sigma0 : ℝ)
     (u v : H1Function (cubeSet Q)) (g : Vec d → Vec d)
@@ -211,7 +211,7 @@ the descendant `ℓ²` average of the §3.2.4 RHS and the manuscript §3.3.B
 `coarseGrainingL2FluxDefectBound`.
 -/
 theorem solution_diff_l2_le_coarseGrainingL2Rhs_of_descendant_coarseFluxResponseRHSBound
-    {d : ℕ} [NeZero d] {Cdual : ℝ}
+    {d : ℕ} {Cdual : ℝ}
     (hdual : ScalarSolutionComparisonDualityEstimate d Cdual)
     (Q : TriadicCube d) (a : CoeffField d) (a0 : Mat d) (sigma0 : ℝ)
     (gradU gradV g : Vec d → Vec d) {s : ℝ} (j : ℕ)
@@ -259,7 +259,7 @@ Same-right-hand-side version of
 `solution_diff_l2_le_coarseGrainingL2Rhs_of_descendant_coarseFluxResponseRHSBound`.
 -/
 theorem solution_diff_l2_le_coarseGrainingL2Rhs_of_sameRhs_of_descendant_coarseFluxResponseRHSBound
-    {d : ℕ} [NeZero d] {Cdual : ℝ}
+    {d : ℕ} {Cdual : ℝ}
     (hdual : ScalarSolutionComparisonDualityEstimate d Cdual)
     (Q : TriadicCube d) (a : CoeffField d) (a0 : Mat d) (sigma0 : ℝ)
     (u v : H1Function (cubeSet Q)) (g : Vec d → Vec d)
@@ -435,7 +435,7 @@ theorem CoarseFluxRHSBound_le_coarseGrainingFluxBound_of_componentBounds
 descendant-envelope form.
 -/
 theorem solutionDifference_l2_le_coarseGrainingRhs_of_descendantFluxBounds
-    {d : ℕ} [NeZero d] {Cdual : ℝ}
+    {d : ℕ} {Cdual : ℝ}
     (hdual : ScalarSolutionComparisonDualityEstimate d Cdual)
     (Q : TriadicCube d) (a : CoeffField d) (a0 : Mat d) (sigma0 : ℝ)
     (gradU gradV g : Vec d → Vec d) {s : ℝ} (j : ℕ)
@@ -479,7 +479,7 @@ theorem solutionDifference_l2_le_coarseGrainingRhs_of_descendantFluxBounds
 descendant component envelopes.
 -/
 theorem solution_diff_l2_le_coarseGrainingL2Rhs_of_descendant_fluxRHSBound_of_component
-    {d : ℕ} [NeZero d] {Cdual : ℝ}
+    {d : ℕ} {Cdual : ℝ}
     (hdual : ScalarSolutionComparisonDualityEstimate d Cdual)
     (Q : TriadicCube d) (a : CoeffField d) (a0 : Mat d) (sigma0 : ℝ)
     (gradU gradV g : Vec d → Vec d) {s : ℝ} (j : ℕ)
@@ -530,7 +530,7 @@ Bounded-positive-Besov version of the descendant component-envelope §3.3
 wrapper.
 -/
 theorem solution_diff_l2_le_coarseGrainingL2Rhs_of_descendant_fluxRHSBound_of_descendant
-    {d : ℕ} [NeZero d] {Cdual : ℝ}
+    {d : ℕ} {Cdual : ℝ}
     (hdual : ScalarSolutionComparisonDualityEstimate d Cdual)
     (Q : TriadicCube d) (a : CoeffField d) (a0 : Mat d) (sigma0 : ℝ)
     (gradU gradV g : Vec d → Vec d) {s : ℝ} (j : ℕ)
@@ -585,7 +585,7 @@ Depth-zero §3.3 wrapper through the one-cube §3.2.4 RHS flux-response bound.
 At depth zero the scalar descendant-average comparison is closed internally.
 -/
 theorem solution_diff_l2_le_coarseGrainingL2Rhs_of_coarseFluxResponseRHSBound_zero
-    {d : ℕ} [NeZero d] {Cdual : ℝ}
+    {d : ℕ} {Cdual : ℝ}
     (hdual : ScalarSolutionComparisonDualityEstimate d Cdual)
     (Q : TriadicCube d) (a : CoeffField d) (a0 : Mat d) (sigma0 : ℝ)
     (gradU gradV g : Vec d → Vec d) {s : ℝ}
@@ -615,7 +615,7 @@ theorem solution_diff_l2_le_coarseGrainingL2Rhs_of_coarseFluxResponseRHSBound_ze
           cubeBesovNegativeVectorPartialSeminormTwo R s N
             (fluxDefect a a0 gradU)) := by
     intro R hR
-    simp at hR
+    simp only [descendantsAtDepth_zero, Finset.mem_singleton] at hR
     subst R
     exact hdefect_bdd
   have hRhs_desc :
@@ -623,7 +623,7 @@ theorem solution_diff_l2_le_coarseGrainingL2Rhs_of_coarseFluxResponseRHSBound_ze
         cubeBesovNegativeVectorSeminormTwo R s (fluxDefect a a0 gradU) ≤
           coarseFluxResponseRHSBound R a a0 s gradU g := by
     intro R hR
-    simp at hR
+    simp only [descendantsAtDepth_zero, Finset.mem_singleton] at hR
     subst R
     exact hRhs
   have hresponseBound :
@@ -643,7 +643,7 @@ Same-right-hand-side depth-zero wrapper through the one-cube §3.2.4 RHS
 flux-response bound.
 -/
 theorem solution_diff_l2_le_coarseGrainingL2Rhs_of_sameRhs_of_coarseFluxResponseRHSBound_zero
-    {d : ℕ} [NeZero d] {Cdual : ℝ}
+    {d : ℕ} {Cdual : ℝ}
     (hdual : ScalarSolutionComparisonDualityEstimate d Cdual)
     (Q : TriadicCube d) (a : CoeffField d) (a0 : Mat d) (sigma0 : ℝ)
     (u v : H1Function (cubeSet Q)) (g : Vec d → Vec d)
@@ -689,7 +689,7 @@ the note-constant file supplies `hgeom_le`, while later positivity wrappers can
 close the two nonnegativity inputs.
 -/
 theorem solution_diff_l2_le_ten_mul_coarseGrainingL2Rhs_of_descendant_coarseFluxResponse_energy
-    {d : ℕ} [NeZero d] {Cdual : ℝ}
+    {d : ℕ} {Cdual : ℝ}
     (hdual : ScalarSolutionComparisonDualityEstimate d Cdual)
     (Q : TriadicCube d) (a : CoeffField d) (a0 : Mat d) (sigma0 : ℝ)
     (gradU gradV g : Vec d → Vec d) {s : ℝ} (j : ℕ)
@@ -793,7 +793,7 @@ Import-light side conditions in the response-data apex discharged from the
 standard manuscript range and the global positive-Besov boundedness of `g`.
 -/
 theorem solutionDifference_l2_le_ten_coarseGrainingRhs_of_energyBounds
-    {d : ℕ} [NeZero d] {Cdual : ℝ}
+    {d : ℕ} {Cdual : ℝ}
     (hdual : ScalarSolutionComparisonDualityEstimate d Cdual)
     (Q : TriadicCube d) (a : CoeffField d) (a0 : Mat d) (sigma0 : ℝ)
     (gradU gradV g : Vec d → Vec d) {s : ℝ} (j : ℕ)

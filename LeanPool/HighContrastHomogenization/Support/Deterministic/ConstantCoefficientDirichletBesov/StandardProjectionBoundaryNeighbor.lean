@@ -432,7 +432,7 @@ theorem admissible_boundary_neighborEnergy_sum_le_count_mul_parentEnergy_sum
             ∑ T ∈ P,
               if S ∈ boundaryNeighborCentersForParent Q j m T then E T else 0 := by
               rw [Finset.sum_filter]
-    · simp [hcenter]
+    · rw [ite_eq_right hcenter]
       exact Finset.sum_nonneg fun T hT => by
         by_cases hmem : S ∈ boundaryNeighborCentersForParent Q j m T
         · simp [hmem, hE_nonneg T hT]

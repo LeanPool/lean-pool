@@ -51,8 +51,11 @@ structure RowRetainingPrintOrderGoodScale
     (a : CoeffSpace d) (x : ℝ) where
   good : PrintOrderRateBearingCommonAffineGoodScale
     d g c kappaRate abar a x
+  /-- Nonnegative amplitude in the retained physical block-row estimate. -/
   delta : ℝ
+  /-- Coefficient-dependent source scale entering the retained physical block row. -/
   sourceScale : CoeffSpace d → ℝ
+  /-- Coefficient-dependent scale above which the retained physical block-row estimate applies. -/
   activationScale : CoeffSpace d → ℝ
   delta_nonneg : 0 ≤ delta
   activation_one : 1 ≤ activationScale a

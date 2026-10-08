@@ -28,7 +28,7 @@ noncomputable section
 /-- A power tail can be restarted at any natural generation above its real
 reference scale, retaining the exact power price at that generation. -/
 theorem powerTail_goodTail_at_nat
-    {d : ℕ} [NeZero d] {a : Book.Ch02.TriadicCoeffFamily d}
+    {d : ℕ} {a : Book.Ch02.TriadicCoeffFamily d}
     {s amplitude kappa x : ℝ}
     (hPower : ScalarIdentityPowerTail a s amplitude kappa x)
     (hAmplitude : 0 ≤ amplitude) (hKappa : 0 < kappa)

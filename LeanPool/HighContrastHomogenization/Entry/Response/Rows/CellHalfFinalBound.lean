@@ -322,7 +322,11 @@ theorem abs_vecDot_cellPart_respYMinus_le_clean {d : ℕ} [NeZero d]
     (fun w _ a => (hULLR w a).1) (fun w _ a => (hULLR w a).2)
     (fun w _ i j => hent w (Sum.inl i) (Sum.inl j))
     (fun w _ i j => hent w (Sum.inr i) (Sum.inr j))
-    hqUL hqLR hcross hsq hFint hDint hMidint hPint hPint' hmeasBlk
+    hqUL hqLR
+    (fun w hw => integrable_sqrt_mul_sqrt_of_integrable (hqUL w hw) (hqLR w hw))
+    (fun w hw => integrable_sq_sqrt_add_sqrt_gen
+      (fun a => (hULLR w a).1) (fun a => (hULLR w a).2) (hqUL w hw) (hqLR w hw))
+    hFint hDint hMidint hPint hPint' hmeasBlk
     (fun w hw i => hM.1 w hw i) (fun w hw i => hM.2 w hw i)
     (fun w hw i => (hNs w hw).1 i) (fun w hw i => (hNs w hw).2 i) Ncell hNcell
 
@@ -533,7 +537,11 @@ theorem abs_vecDot_cellPart_respYPlus_le_clean {d : ℕ} [NeZero d]
     (fun w _ a => (hULLR w a).1) (fun w _ a => (hULLR w a).2)
     (fun w _ i j => hent w (Sum.inl i) (Sum.inl j))
     (fun w _ i j => hent w (Sum.inr i) (Sum.inr j))
-    hqUL hqLR hcross hsq hFint hDint hMidint hPint hPint' hmeasBlk
+    hqUL hqLR
+    (fun w hw => integrable_sqrt_mul_sqrt_of_integrable (hqUL w hw) (hqLR w hw))
+    (fun w hw => integrable_sq_sqrt_add_sqrt_gen
+      (fun a => (hULLR w a).1) (fun a => (hULLR w a).2) (hqUL w hw) (hqLR w hw))
+    hFint hDint hMidint hPint hPint' hmeasBlk
     (fun w hw i => hM.1 w hw i) (fun w hw i => hM.2 w hw i)
     (fun w hw i => (hNs w hw).1 i) (fun w hw i => (hNs w hw).2 i) Ncell hNcell
 

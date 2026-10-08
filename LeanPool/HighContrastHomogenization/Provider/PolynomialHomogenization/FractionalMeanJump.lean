@@ -38,6 +38,7 @@ noncomputable section
 
 variable {d : ℕ}
 
+/-- Volume restricted to `E` and rescaled by the inverse of `volume E`. -/
 @[expose]
 public noncomputable def normalizedSetMeasure (E : Set (Vec d)) :
     Measure (Vec d) :=
@@ -78,7 +79,7 @@ private theorem eLpNorm_two_eq_rpow
 
 private theorem enorm_integral_rpow_two_le
     {A : Type*} [MeasurableSpace A]
-    {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] [CompleteSpace E]
+    {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
     (mu : Measure A) [IsProbabilityMeasure mu]
     {f : A → E} (hf : Integrable f mu) :
     ‖∫ x, f x ∂mu‖ₑ ^ (2 : ℝ) ≤ ∫⁻ x, ‖f x‖ₑ ^ (2 : ℝ) ∂mu := by
@@ -164,7 +165,7 @@ theorem ofReal_vecNormSq_sub_volumeAverageVec_le_crossAverage
         HilbertVec.ofVec
           (volumeAverageVec E G - volumeAverageVec F G) := by
     rw [integral_sub hGHE (integrable_const _), integral_const]
-    simp
+    simp only [probReal_univ, one_smul, WithLp.toLp_sub]
     change (∫ x, GH x ∂muE) - (∫ y, GH y ∂muF) = _
     rw [show ∫ x, GH x ∂muE =
         HilbertVec.ofVec (∫ x, G x ∂muE) by

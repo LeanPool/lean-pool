@@ -36,7 +36,7 @@ open Set MeasureTheory
 
 /-- The smooth mean-one cutoff on the adapted cell. -/
 @[expose]
-noncomputable def adaptedPreYoungCutoff {d : ℕ} [NeZero d]
+noncomputable def adaptedPreYoungCutoff {d : ℕ}
     (q : Mat d) (_hq : q.PosDef) (t : ℤ) : Vec d → ℝ :=
   let Q : TriadicCube d := originCube d t
   let ρ₁ : ℝ := 1 - 1 / (2 * (d : ℝ))
@@ -46,7 +46,7 @@ noncomputable def adaptedPreYoungCutoff {d : ℕ} [NeZero d]
   fun x => A⁻¹ * η (matVecMul q⁻¹ x)
 
 /-- Defining equation for the adapted cutoff. -/
-@[simp] theorem adaptedPreYoungCutoff_apply {d : ℕ} [NeZero d]
+@[simp] theorem adaptedPreYoungCutoff_apply {d : ℕ}
     (q : Mat d) (hq : q.PosDef) (t : ℤ) (x : Vec d) :
     adaptedPreYoungCutoff q hq t x =
       (cubeAverage (originCube d t)
@@ -90,7 +90,7 @@ theorem adaptedPreYoungCutoff_inv_rawAverage_le_two {d : ℕ} [NeZero d]
 
 /-- Pulling the adapted cutoff back by its grid matrix recovers the normalized
 reference cutoff exactly. -/
-theorem adaptedPreYoungCutoff_pullback_apply {d : ℕ} [NeZero d]
+theorem adaptedPreYoungCutoff_pullback_apply {d : ℕ}
     {q : Mat d} (hq : q.PosDef) (t : ℤ) (y : Vec d) :
     adaptedPreYoungCutoff q hq t (matVecMul q y) =
       (cubeAverage (originCube d t)

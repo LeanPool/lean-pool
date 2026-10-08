@@ -86,7 +86,7 @@ private theorem blockCongr_isSymm (G : BlockMat d) {A : BlockMat d}
     (hA : IsSymmetricBlockMat A) : IsSymmetricBlockMat (blockCongr G A) := by
   rw [blockCongr]
   refine isSymmetricBlockMat_of_isSymm ?_
-  show ((toFullBlockMat G)ᵀ * toFullBlockMat A * toFullBlockMat G)ᵀ
+  change ((toFullBlockMat G)ᵀ * toFullBlockMat A * toFullBlockMat G)ᵀ
     = (toFullBlockMat G)ᵀ * toFullBlockMat A * toFullBlockMat G
   rw [Matrix.transpose_mul, Matrix.transpose_mul, Matrix.transpose_transpose,
     (isSymm_toFullBlockMat hA).eq, Matrix.mul_assoc]
@@ -141,14 +141,14 @@ private theorem respM0_isSymm_of_metric_posDef {F : BlockMat d} (hm : (explicitC
   cases α with
   | inl i => cases β with
     | inl j =>
-        show (explicitCanonicalMetric F) i j = (explicitCanonicalMetric F) j i
+        change (explicitCanonicalMetric F) i j = (explicitCanonicalMetric F) j i
         simpa [Matrix.IsHermitian, Matrix.conjTranspose_apply] using
           (congrFun (congrFun h1 i) j).symm
     | inr j => rfl
   | inr i => cases β with
     | inl j => rfl
     | inr j =>
-        show (explicitCanonicalMetric F)⁻¹ i j = (explicitCanonicalMetric F)⁻¹ j i
+        change (explicitCanonicalMetric F)⁻¹ i j = (explicitCanonicalMetric F)⁻¹ j i
         simpa [Matrix.IsHermitian, Matrix.conjTranspose_apply] using
           (congrFun (congrFun h2 i) j).symm
 

@@ -56,7 +56,7 @@ theorem summable_homogenizationErrorOnCube_infinity_one_terms
   simpa [geometricWeight_eq_old] using hOld
 
 theorem HomogenizationErrorOnCube_infinity_one_nonneg
-    {d : ℕ} [NeZero d] (Q : TriadicCube d)
+    {d : ℕ} (Q : TriadicCube d)
     (a : TriadicCoeffFamily d) (a0 : Mat d) {s : ℝ} (hs : 0 < s) :
     0 ≤ HomogenizationErrorOnCube Q s .infinity (.finite 1) a a0 := by
   rw [homogenizationErrorOnCube_infinity_one_eq_tsum]

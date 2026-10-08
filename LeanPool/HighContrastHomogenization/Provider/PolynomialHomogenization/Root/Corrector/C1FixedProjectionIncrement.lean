@@ -69,7 +69,7 @@ private theorem sqrt_normalizedLocalSymmetricEnergy_sub_le_increment
   exact hraw
 
 private theorem sqrt_normalizedEnergy_grad_eq_h1EnergyNormOnCube
-    {d : ℕ} [NeZero d] (a : Book.Ch02.TriadicCoeffFamily d)
+    {d : ℕ} (a : Book.Ch02.TriadicCoeffFamily d)
     (k : ℤ) (u : H1Function (openCubeSet (originCube d k))) :
     Real.sqrt (normalizedLocalSymmetricEnergy
         (Book.Ch03.publicCoeffField_isEllipticFieldOn_openCubeSet
@@ -272,10 +272,10 @@ theorem finiteAffineExactMinimizerIncrementEnergy_le
     (hgood : ScalarIdentityGoodMaxOnInterval a s delta n m)
     (hj : j ∈ Finset.Ico n q) (hqm : q ≤ m)
     (u : Book.Ch03.CubeSolution (originCube d m) a) :
-    let b0 := finiteAffineExactMinimizer a
+    let b0 := finiteAffineExactMinimizer a (n := j)
       (by exact (Finset.mem_Ico.mp hj).2.le.trans hqm) u
-    let b1 := finiteAffineExactMinimizer a
-      (by exact (Int.add_one_le_iff.mpr (Finset.mem_Ico.mp hj).2).trans hqm) u
+    let b1 := finiteAffineExactMinimizer a (n := j + 1)
+      (by exact (show j + 1 ≤ m from (Int.add_one_le_iff.mpr (Finset.mem_Ico.mp hj).2).trans hqm)) u
     finiteCenteredCubeSolutionEnergy a m
         (finiteAffineCubeSolution a m (b0 - b1)) q ≤
       Cgrow ^ 2 * Real.rpow 3 (((q : ℝ) - (j : ℝ)) / 4) *
@@ -283,14 +283,14 @@ theorem finiteAffineExactMinimizerIncrementEnergy_le
           ((3 ^ d : ℕ) : ℝ) *
             (finiteAffineGradientExcess a (j + 1) m u).toReal) := by
   dsimp only
-  let b0 := finiteAffineExactMinimizer a
+  let b0 := finiteAffineExactMinimizer a (n := j)
     (by exact (Finset.mem_Ico.mp hj).2.le.trans hqm) u
-  let b1 := finiteAffineExactMinimizer a
-    (by exact (Int.add_one_le_iff.mpr (Finset.mem_Ico.mp hj).2).trans hqm) u
-  have hb0 := finiteAffineExactMinimizer_spec a
+  let b1 := finiteAffineExactMinimizer a (n := j + 1)
+    (by exact (show j + 1 ≤ m from (Int.add_one_le_iff.mpr (Finset.mem_Ico.mp hj).2).trans hqm)) u
+  have hb0 := finiteAffineExactMinimizer_spec a (n := j)
     (by exact (Finset.mem_Ico.mp hj).2.le.trans hqm) u
-  have hb1 := finiteAffineExactMinimizer_spec a
-    (by exact (Int.add_one_le_iff.mpr (Finset.mem_Ico.mp hj).2).trans hqm) u
+  have hb1 := finiteAffineExactMinimizer_spec a (n := j + 1)
+    (by exact (show j + 1 ≤ m from (Int.add_one_le_iff.mpr (Finset.mem_Ico.mp hj).2).trans hqm)) u
   have hchild := residualEnergy_at_predecessor_le_exactSuccessor
     a ((Int.add_one_le_iff.mpr (Finset.mem_Ico.mp hj).2).trans hqm) u b1 hb1
   have hbase := finiteAffineDifferenceEnergy_le_exactResiduals

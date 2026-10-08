@@ -62,7 +62,7 @@ theorem exists_recoveryData_of_mu_eq_muCandidate_of_isOpenBoundedConvexDomain
     PotentialSolenoidalL2Data.hasPotentialZeroTraceClosureRealization_of_convexDomain
       hConv
   let R : PotentialSolenoidalL2RecoveryData U :=
-    potentialSolenoidalL2RecoveryData_ofSubmoduleClosures_of_potentialZeroTraceClosureRealization
+    potentialSolenoidalL2RecoveryDataOfClosureRealization
       (U := U) hRealize
   let system : MuOperatorSystemData U a :=
     R.toMuOperatorSystemDataOfIsEllipticFieldOn hEll hvol

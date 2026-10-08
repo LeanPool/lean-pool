@@ -76,7 +76,7 @@ private theorem isSobolevRegularDomain_cubeSet_weakFluxRHS {d : ℕ}
 from the corresponding open cube, since the two realizations differ only by a
 Lebesgue-null boundary. -/
 @[expose]
-noncomputable def h1CoerciveEstimate_cubeSet {d : ℕ}
+noncomputable def cubeSetH1CoerciveEstimate {d : ℕ}
     (Q : TriadicCube d) :
     H1CoerciveEstimate (cubeSet Q) := by
   letI : MeasureTheory.IsFiniteMeasure (volumeMeasureOn (cubeSet Q)) :=
@@ -85,7 +85,7 @@ noncomputable def h1CoerciveEstimate_cubeSet {d : ℕ}
     simpa [volumeMeasureOn] using
       (isOpenBoundedConvexDomain_openCubeSet Q).isFiniteMeasure_restrict_volume
   let hCopen : H1CoerciveEstimate (openCubeSet Q) :=
-    h1CoerciveEstimate_of_isOpenBoundedConvexDomain
+    h1CoerciveEstimateOfOpenBoundedConvexDomain
       (isOpenBoundedConvexDomain_openCubeSet Q)
   refine
     { constantValue := hCopen.constantValue
@@ -144,7 +144,7 @@ private theorem cubeAverageVec_sub_of_memVectorL2 {d : ℕ} (Q : TriadicCube d)
   have hvi_int :
       MeasureTheory.Integrable (fun x => v x i) (volumeMeasureOn (cubeSet Q)) :=
     hvi.integrable (by norm_num : (1 : ENNReal) ≤ (2 : ENNReal))
-  show cubeAverage Q (fun x => (u x - v x) i) =
+  change cubeAverage Q (fun x => (u x - v x) i) =
     cubeAverage Q (fun x => u x i) - cubeAverage Q (fun x => v x i)
   have hfun : (fun x => (u x - v x) i) = fun x => u x i - v x i := by
     funext x
@@ -199,7 +199,7 @@ structure MeanZeroNeumannCorrectorData {d : ℕ}
 estimate on the half-open cube.  A later cube-realization bridge can discharge
 the coercive input from the open-cube Poincare estimate. -/
 @[expose]
-noncomputable def meanZeroNeumannCorrectorDataOf_h1CoerciveEstimate
+noncomputable def meanZeroNeumannCorrectorDataOfH1CoerciveEstimate
     {d : ℕ} (Q : TriadicCube d) {a : CoeffField d} {g : Vec d → Vec d}
     {lam Lam : ℝ}
     (hg : MemVectorL2 (cubeSet Q) g)
@@ -639,7 +639,7 @@ theorem exists_centeredCorrector_harmonicRemainder_of_parentCoercivity
     rw [← ball_cubeCenter_eq_openCubeSet]
     simpa [Metric.mem_ball] using cubeRadius_pos R
   let ω : MeanZeroNeumannCorrectorData R a (fun x => g x - cubeAverageVec R g) :=
-    meanZeroNeumannCorrectorDataOf_h1CoerciveEstimate
+    meanZeroNeumannCorrectorDataOfH1CoerciveEstimate
       (Q := R) (a := a) (g := fun x => g x - cubeAverageVec R g)
       (lam := lam) (Lam := Lam) hg_centered hC hne hEllR
   rcases

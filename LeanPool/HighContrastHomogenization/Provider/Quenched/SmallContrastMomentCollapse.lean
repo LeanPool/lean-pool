@@ -73,7 +73,7 @@ theorem crudeMoment_mono_order {K : ℝ} (M : ℕ) :
       IndependentSums.natTriangular (2 + M) := by
     have h21 : 2 + M = (1 + M) + 1 := by omega
     rw [h21]
-    show IndependentSums.natTriangular (1 + M) ≤
+    change IndependentSums.natTriangular (1 + M) ≤
       IndependentSums.natTriangular (1 + M) + (1 + M)
     omega
   have hpowle : growthBar K ^ IndependentSums.natTriangular (1 + M) ≤
@@ -135,7 +135,7 @@ theorem deepened_excess_le_one {K : ℝ} {M : ℕ} {sKw w : ℤ} {Gacc : ℕ}
 
 /-- **The collapsed second moment**: past the burn-in, the second moment of
 the normalized source scale at the window top is at most `2`. -/
-theorem lintegral_nss_sq_collapsed [NeZero d]
+theorem lintegral_nss_sq_collapsed
     {g : ℝ}
     {P : Measure (CoeffSpace d)} [IsProbabilityMeasure P]
     {E : BlockMat d} {Ψ : ℝ → ℝ} {K : ℝ} {S : CoeffSpace d → ℝ}

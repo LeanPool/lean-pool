@@ -37,7 +37,7 @@ and the public RHS carries the corresponding factor
 shown explicitly. -/
 @[expose]
 def ScalarSolutionComparisonGenuineDualityEstimateSharpLoss
-    (d : ℕ) [NeZero d] (C : ℝ) : Prop :=
+    (d : ℕ) (C : ℝ) : Prop :=
   0 ≤ C ∧
     ∀ (Q : TriadicCube d) (sigma0 : ℝ) (w F : Vec d → Vec d)
       {t : ℝ} (j : ℕ),
@@ -59,7 +59,7 @@ def ScalarSolutionComparisonGenuineDualityEstimateSharpLoss
 measured at `s / 2` and the sharp-boundary bridge loss displayed. -/
 @[expose]
 def ScalarSolutionComparisonDualityEstimateHalfExponentSharpLoss
-    (d : ℕ) [NeZero d] (C : ℝ) : Prop :=
+    (d : ℕ) (C : ℝ) : Prop :=
   0 ≤ C ∧
     ∀ (Q : TriadicCube d) (sigma0 : ℝ) (w F : Vec d → Vec d)
       {s : ℝ} (j : ℕ),
@@ -82,7 +82,7 @@ def ScalarSolutionComparisonDualityEstimateHalfExponentSharpLoss
 loss `s^{-1} t^{-2} (1/2 - t)^{-1}`. -/
 @[expose]
 def ScalarSolutionComparisonDualityEstimateExponentLoss
-    (d : ℕ) [NeZero d] (C : ℝ) : Prop :=
+    (d : ℕ) (C : ℝ) : Prop :=
   0 ≤ C ∧
     ∀ (Q : TriadicCube d) (sigma0 : ℝ) (w F : Vec d → Vec d)
       {s t : ℝ} (j : ℕ),
@@ -600,7 +600,7 @@ theorem scalarSolutionComparisonGenuineDualityEstimateSharpLoss
 /-- Specialize the sharp-loss genuine-dual estimate to `t = s / 2` and compose
 with the proved Ch1 dual-to-circ exponent-loss embedding. -/
 theorem ScalarSolutionComparisonGenuineDualityEstimateSharpLoss.to_halfExponentSharpLoss
-    {d : ℕ} [NeZero d] {C : ℝ}
+    {d : ℕ} {C : ℝ}
     (hdual : ScalarSolutionComparisonGenuineDualityEstimateSharpLoss d C) :
     ScalarSolutionComparisonDualityEstimateHalfExponentSharpLoss d (110 * C) := by
   refine ⟨mul_nonneg (by norm_num) hdual.1, ?_⟩
@@ -878,7 +878,7 @@ theorem ScalarSolutionComparisonGenuineDualityEstimateSharpLoss.to_exponentLoss
 /-- Use the sharp-loss half-exponent scalar-background duality estimate on a
 comparison pair. -/
 theorem solutionNegativeBesovLhs_le_of_halfExponentSharpLoss
-    {d : ℕ} [NeZero d] {C : ℝ}
+    {d : ℕ} {C : ℝ}
     (hduality : ScalarSolutionComparisonDualityEstimateHalfExponentSharpLoss d C)
     (Q : TriadicCube d) (a : CoeffField d) (sigma0 : ℝ)
     (gradU gradV : Vec d → Vec d) {s : ℝ} (j : ℕ)
@@ -904,7 +904,7 @@ theorem solutionNegativeBesovLhs_le_of_halfExponentSharpLoss
 /-- Use the two-exponent scalar-background duality estimate on a comparison
 pair. -/
 theorem solutionComparisonNegativeBesovLhs_le_of_scalarSolutionComparisonDualityEstimateExponentLoss
-    {d : ℕ} [NeZero d] {C : ℝ}
+    {d : ℕ} {C : ℝ}
     (hduality : ScalarSolutionComparisonDualityEstimateExponentLoss d C)
     (Q : TriadicCube d) (a : CoeffField d) (sigma0 : ℝ)
     (gradU gradV : Vec d → Vec d) {s t : ℝ} (j : ℕ)

@@ -41,13 +41,13 @@ private theorem rpow_half_nonneg (x : ℝ) :
 `k`, with identity comparison matrix and the `p = infinity`, `q = 2`
 exponents. -/
 @[expose]
-def scalarIdentityWeakError {d : ℕ} [NeZero d]
+def scalarIdentityWeakError {d : ℕ}
     (a : Book.Ch02.TriadicCoeffFamily d) (s : ℝ) (k : ℤ) : ℝ :=
   Book.Ch02.HomogenizationErrorOnCube (originCube d k) s
     .infinity (.finite 2) a (1 : Mat d)
 
 /-- The identity weak error is nonnegative. -/
-theorem scalarIdentityWeakError_nonneg {d : ℕ} [NeZero d]
+theorem scalarIdentityWeakError_nonneg {d : ℕ}
     (a : Book.Ch02.TriadicCoeffFamily d) (s : ℝ) (k : ℤ) :
     0 ≤ scalarIdentityWeakError a s k := by
   unfold scalarIdentityWeakError Book.Ch02.HomogenizationErrorOnCube
@@ -58,33 +58,33 @@ theorem scalarIdentityWeakError_nonneg {d : ℕ} [NeZero d]
 
 /-- The finite `l¹` weak-error row between two integer scales. -/
 @[expose]
-def ScalarIdentityGoodTailOnInterval {d : ℕ} [NeZero d]
+def ScalarIdentityGoodTailOnInterval {d : ℕ}
     (a : Book.Ch02.TriadicCoeffFamily d) (s δ : ℝ) (n m : ℤ) : Prop :=
   (∑ k ∈ Finset.Icc n m, scalarIdentityWeakError a s k) ≤ δ
 
 /-- The `l¹` weak-error row is bounded on every finite interval beginning at
 `n`. -/
 @[expose]
-def ScalarIdentityGoodTail {d : ℕ} [NeZero d]
+def ScalarIdentityGoodTail {d : ℕ}
     (a : Book.Ch02.TriadicCoeffFamily d) (s δ : ℝ) (n : ℤ) : Prop :=
   ∀ m, n ≤ m → ScalarIdentityGoodTailOnInterval a s δ n m
 
 /-- Increasing the tolerance preserves a finite good-tail bound. -/
-theorem ScalarIdentityGoodTailOnInterval.mono {d : ℕ} [NeZero d]
+theorem ScalarIdentityGoodTailOnInterval.mono {d : ℕ}
     {a : Book.Ch02.TriadicCoeffFamily d} {s δ δ' : ℝ} {n m : ℤ}
     (h : ScalarIdentityGoodTailOnInterval a s δ n m) (hδ : δ ≤ δ') :
     ScalarIdentityGoodTailOnInterval a s δ' n m :=
   h.trans hδ
 
 /-- A good tail supplies its bound on every admissible finite interval. -/
-theorem ScalarIdentityGoodTail.interval {d : ℕ} [NeZero d]
+theorem ScalarIdentityGoodTail.interval {d : ℕ}
     {a : Book.Ch02.TriadicCoeffFamily d} {s δ : ℝ} {n m : ℤ}
     (h : ScalarIdentityGoodTail a s δ n) (hnm : n ≤ m) :
     ScalarIdentityGoodTailOnInterval a s δ n m :=
   h m hnm
 
 /-- Increasing the tolerance preserves an infinite good-tail bound. -/
-theorem ScalarIdentityGoodTail.mono {d : ℕ} [NeZero d]
+theorem ScalarIdentityGoodTail.mono {d : ℕ}
     {a : Book.Ch02.TriadicCoeffFamily d} {s δ δ' : ℝ} {n : ℤ}
     (h : ScalarIdentityGoodTail a s δ n) (hδ : δ ≤ δ') :
     ScalarIdentityGoodTail a s δ' n := by
@@ -92,7 +92,7 @@ theorem ScalarIdentityGoodTail.mono {d : ℕ} [NeZero d]
   exact (h.interval hnm).mono hδ
 
 /-- Discarding initial scales preserves a finite good-tail bound. -/
-theorem ScalarIdentityGoodTailOnInterval.mono_start {d : ℕ} [NeZero d]
+theorem ScalarIdentityGoodTailOnInterval.mono_start {d : ℕ}
     {a : Book.Ch02.TriadicCoeffFamily d} {s δ : ℝ} {n n' m : ℤ}
     (h : ScalarIdentityGoodTailOnInterval a s δ n m)
     (hnn' : n ≤ n') :
@@ -104,7 +104,7 @@ theorem ScalarIdentityGoodTailOnInterval.mono_start {d : ℕ} [NeZero d]
   exact scalarIdentityWeakError_nonneg a s k
 
 /-- Discarding initial scales preserves an infinite good-tail bound. -/
-theorem ScalarIdentityGoodTail.mono_start {d : ℕ} [NeZero d]
+theorem ScalarIdentityGoodTail.mono_start {d : ℕ}
     {a : Book.Ch02.TriadicCoeffFamily d} {s δ : ℝ} {n n' : ℤ}
     (h : ScalarIdentityGoodTail a s δ n) (hnn' : n ≤ n') :
     ScalarIdentityGoodTail a s δ n' := by
@@ -112,7 +112,7 @@ theorem ScalarIdentityGoodTail.mono_start {d : ℕ} [NeZero d]
   exact (h.interval (hnn'.trans hn'm)).mono_start hnn'
 
 /-- Every weak error in a good tail is bounded by its tolerance. -/
-theorem ScalarIdentityGoodTail.weakError_le {d : ℕ} [NeZero d]
+theorem ScalarIdentityGoodTail.weakError_le {d : ℕ}
     {a : Book.Ch02.TriadicCoeffFamily d} {s δ : ℝ} {n k : ℤ}
     (h : ScalarIdentityGoodTail a s δ n) (hnk : n ≤ k) :
     scalarIdentityWeakError a s k ≤ δ := by

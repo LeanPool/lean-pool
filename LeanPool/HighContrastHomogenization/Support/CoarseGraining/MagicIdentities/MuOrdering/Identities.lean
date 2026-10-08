@@ -354,7 +354,7 @@ theorem magic_identity_responseJ_add_mu_sub_vecDot_diagonal_canonical_of_isSigma
       U a hA hS hK hSigma hdet p
 
 theorem sigmaStarCoarse_le_sigmaCoarse_openCubeSet_originCube_of_isSigmaCoarse
-    {d : ℕ} [NeZero d] {n : ℤ} (a : CoeffField d) {lam Lam : ℝ}
+    {d : ℕ} {n : ℤ} (a : CoeffField d) {lam Lam : ℝ}
     (R : MuCorrectionSpaceRecoveryData (openCubeSet (originCube d n)))
     (system : MuOperatorSystemData (openCubeSet (originCube d n)) a)
     (hEll : IsEllipticFieldOn lam Lam (openCubeSet (originCube d n)) a)
@@ -418,7 +418,7 @@ theorem sigmaStarCoarse_le_sigmaCoarse_openCubeSet_originCube_of_isSigmaCoarse
   linarith
 
 theorem sigmaStarCoarse_le_sigmaCoarse_cubeSet_originCube_of_isSigmaCoarse
-    {d : ℕ} [NeZero d] {n : ℤ} (a : CoeffField d) {lam Lam : ℝ}
+    {d : ℕ} {n : ℤ} (a : CoeffField d) {lam Lam : ℝ}
     (R : MuCorrectionSpaceRecoveryData (cubeSet (originCube d n)))
     (system : MuOperatorSystemData (cubeSet (originCube d n)) a)
     (hEll : IsEllipticFieldOn lam Lam (cubeSet (originCube d n)) a)

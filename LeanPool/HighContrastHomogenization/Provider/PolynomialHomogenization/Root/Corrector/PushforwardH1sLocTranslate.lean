@@ -82,7 +82,7 @@ theorem HasWeakGradientOn.sub_const {U : Set (Vec d)} {u : Vec d → ℝ}
     simpa using hc
   have hbase := h i phi hsmooth hcompact hsub
   by_cases hu : IntegrableOn (fun x => u x * (fderiv ℝ phi x) (basisVec i)) U volume
-  · show ∫ x in U, (u x - c) * (fderiv ℝ phi x) (basisVec i) ∂volume =
+  · change ∫ x in U, (u x - c) * (fderiv ℝ phi x) (basisVec i) ∂volume =
       -∫ x in U, Du x i * phi x ∂volume
     simp_rw [sub_mul]
     rw [integral_sub hu hcint, hzero, sub_zero]
@@ -96,7 +96,7 @@ theorem HasWeakGradientOn.sub_const {U : Set (Vec d)} {u : Vec d → ℝ}
       simp only [Pi.add_apply]
       ring
     rw [integral_undef hu] at hbase
-    show ∫ x in U, (u x - c) * (fderiv ℝ phi x) (basisVec i) ∂volume =
+    change ∫ x in U, (u x - c) * (fderiv ℝ phi x) (basisVec i) ∂volume =
       -∫ x in U, Du x i * phi x ∂volume
     simp_rw [sub_mul]
     rw [integral_undef hnot]
@@ -122,7 +122,7 @@ theorem euclideanBallAt_subset_euclideanBall_add (t : Vec d) {r : ℝ} (hr : 0 �
     rwa [hxt] at hh
   have hlt : Real.sqrt (vecNormSq x) < r + Real.sqrt (vecNormSq t) := by
     linarith only [htri, hsub]
-  show vecNormSq (x - 0) < (r + Real.sqrt (vecNormSq t)) ^ 2
+  change vecNormSq (x - 0) < (r + Real.sqrt (vecNormSq t)) ^ 2
   rw [sub_zero, pow_two]
   have hmm := mul_self_lt_mul_self (Real.sqrt_nonneg (vecNormSq x)) hlt
   rwa [Real.mul_self_sqrt (vecNormSq_nonneg x)] at hmm

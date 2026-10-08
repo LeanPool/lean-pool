@@ -47,14 +47,14 @@ variable {d : ℕ}
 /-! #### The conjuncts -/
 
 /-- First conjunct, unconditional (`e.response.energy.and.defect`). -/
-theorem respEJMinus_nonneg [NeZero d] (P : Measure (CoeffSpace d)) (jStar : ℕ)
+theorem respEJMinus_nonneg (P : Measure (CoeffSpace d)) (jStar : ℕ)
     (F : BlockMat d) (t : ℤ) (e : Vec d) (hq : IsUnit (respGrid jStar F))
     (hg : matTranspose (respg F) = -(respg F)) :
     0 ≤ respEJMinus P jStar F t e :=
   integral_nonneg fun a => respJ_respCoeffMinus_nonneg (respGrid jStar F) hq t F hg a _ _
 
 /-- Second conjunct, unconditional. -/
-theorem respEJPlus_nonneg [NeZero d] (P : Measure (CoeffSpace d)) (jStar : ℕ)
+theorem respEJPlus_nonneg (P : Measure (CoeffSpace d)) (jStar : ℕ)
     (F : BlockMat d) (t : ℤ) (e : Vec d) (hq : IsUnit (respGrid jStar F))
     (hg : matTranspose (respg F) = -(respg F)) :
     0 ≤ respEJPlus P jStar F t e :=
@@ -205,7 +205,7 @@ private theorem blockQuad_schur {A : BlockMat d} (hs : IsSymmetricBlockMat A)
       = vecDot z (matVecMul σ z) + vecDot (matVecMul k z) (matVecMul S (matVecMul k z))
         - vecDot (matVecMul k z) (matVecMul S w)
         - vecDot w (matVecMul S (matVecMul k z)) + vecDot w (matVecMul S w) := by
-    show vecDot z (matVecMul A.upperLeft z + matVecMul A.upperRight w)
+    change vecDot z (matVecMul A.upperLeft z + matVecMul A.upperRight w)
         + vecDot w (matVecMul A.lowerLeft z + matVecMul S w) = _
     rw [vecDot_add_right, vecDot_add_right, hUL, hUR, hLL, matVecMul_add_mat,
       matVecMul_neg_mat, matVecMul_neg_mat, vecDot_add_right, vecDot_neg_right,
@@ -240,7 +240,7 @@ private theorem blockVecDot_blockScale (c : ℝ) (A : BlockMat d) (X : BlockVec 
   have hs : ∀ (M : Mat d) (x : Vec d), matVecMul (c • M) x = c • matVecMul M x := by
     intro M x; funext i
     simp [matVecMul, Matrix.smul_apply, Finset.mul_sum, mul_assoc]
-  show vecDot X.1 (matVecMul (c • A.upperLeft) X.1 + matVecMul (c • A.upperRight) X.2)
+  change vecDot X.1 (matVecMul (c • A.upperLeft) X.1 + matVecMul (c • A.upperRight) X.2)
       + vecDot X.2 (matVecMul (c • A.lowerLeft) X.1 + matVecMul (c • A.lowerRight) X.2)
     = c * (vecDot X.1 (matVecMul A.upperLeft X.1 + matVecMul A.upperRight X.2)
       + vecDot X.2 (matVecMul A.lowerLeft X.1 + matVecMul A.lowerRight X.2))
@@ -277,11 +277,11 @@ private theorem swapConj_quad {A : BlockMat d} (hs : IsSymmetricBlockMat A)
   have hSSinv : S * S⁻¹ = 1 := Matrix.mul_nonsing_inv _ hLR
   have hAu : blockMatVecMul A u = (X.2, X.1) := by
     refine Prod.ext ?_ ?_
-    · show matVecMul A.upperLeft 0 + matVecMul A.upperRight (matVecMul S⁻¹ z)
+    · change matVecMul A.upperLeft 0 + matVecMul A.upperRight (matVecMul S⁻¹ z)
         = -matVecMul (matTranspose k) z
       rw [matVecMul_zero_vec, zero_add, hUR, matVecMul_neg_mat, matVecMul_mul,
         Matrix.mul_assoc, hSSinv, Matrix.mul_one]
-    · show matVecMul A.lowerLeft 0 + matVecMul S (matVecMul S⁻¹ z) = z
+    · change matVecMul A.lowerLeft 0 + matVecMul S (matVecMul S⁻¹ z) = z
       rw [matVecMul_zero_vec, zero_add, matVecMul_mul, hSSinv]
       funext i; simp [matVecMul, Matrix.one_apply, Finset.sum_ite_eq]
   have hRsym : (toFullBlockMat (blockSwap d))ᵀ = toFullBlockMat (blockSwap d) := by
@@ -321,10 +321,10 @@ private theorem swapConj_quad {A : BlockMat d} (hs : IsSymmetricBlockMat A)
     rw [← hAu', Matrix.mulVec_mulVec, hAinv, Matrix.one_mulVec, hAu',
       dotProduct_toFullBlockVec]
   rw [key]
-  show vecDot X.2 0 + vecDot X.1 (matVecMul S⁻¹ z) = _
+  change vecDot X.2 0 + vecDot X.1 (matVecMul S⁻¹ z) = _
   have hz : vecDot X.2 (0 : Vec d) = 0 := by simp [vecDot]
   rw [hz, zero_add, hXdef]
-  show vecDot z (matVecMul S⁻¹ z) = vecDot z (matVecMul (schurSigmaStar A) z)
+  change vecDot z (matVecMul S⁻¹ z) = vecDot z (matVecMul (schurSigmaStar A) z)
   rfl
 
 /-! ### Part B, conclusion: `b_t ≤ 𝔡(A)·σ_*` -/
@@ -370,7 +370,7 @@ private theorem respBlockB_quad (A : BlockMat d) (z : Vec d) :
 
 /-- **(b).**  `b_t = σ + r σ_*⁻¹ r ≤ 𝔡(A)·σ_*` pointwise, from
 `loewner_swapConj_of_canonicalImbalance_le` tested at the load `(z, -kᵀz)`. -/
-private theorem respBlockB_le_imbalance [NeZero d] (hd : 2 ≤ d) {A : BlockMat d}
+private theorem respBlockB_le_imbalance (hd : 2 ≤ d) {A : BlockMat d}
     (hs : IsSymmetricBlockMat A) (hp : Book.Ch02.BlockPosDef A) (z : Vec d) :
     vecDot z (matVecMul (respBlockB A) z)
       ≤ canonicalImbalance A * vecDot z (matVecMul (schurSigmaStar A) z) := by
@@ -478,7 +478,7 @@ private theorem riccati_exchange {A : BlockMat d} (hs : IsSymmetricBlockMat A)
       rw [← Matrix.mul_inv_rev, hmm]
     rw [hinvmm, Matrix.mul_assoc, Matrix.nonsing_inv_mul _ hu, Matrix.mul_one]
   have hpq : respP A e = matVecMul (matSqrt (respM A))⁻¹ e := by
-    show matVecMul (matSqrt ((respM A)⁻¹)) e = matVecMul (matSqrt (respM A))⁻¹ e
+    change matVecMul (matSqrt ((respM A)⁻¹)) e = matVecMul (matSqrt (respM A))⁻¹ e
     rw [HCPolySupport.HighContrast.matSqrt_inv hmpd]
   have hqq : respQ A e = matVecMul (matSqrt (respM A)) e := rfl
   have hA1 : matVecMul (respM A)⁻¹ (matVecMul (matSqrt (respM A)) e) = respP A e := by
@@ -510,24 +510,27 @@ private theorem lsq_sum_eq (P : Measure (CoeffSpace d)) (jStar : ℕ) (F : Block
 
 /-! ### Part C: from `b_t ≤ 𝔡 σ_*` to the energy bound -/
 
-private theorem quadG_le_of_mat_le {ι : Type*} [Fintype ι] [DecidableEq ι]
+private theorem quadG_le_of_mat_le {ι : Type*} [Fintype ι]
     {A B : Matrix ι ι ℝ} (h : A ≤ B) (x : ι → ℝ) : x ⬝ᵥ A *ᵥ x ≤ x ⬝ᵥ B *ᵥ x := by
+  classical
   have ht := (Matrix.le_iff.mp h).dotProduct_mulVec_nonneg x
   simp only [star_trivial, Matrix.sub_mulVec, dotProduct_sub] at ht
   linarith only [ht]
 
-private theorem matG_le_of_quad {ι : Type*} [Fintype ι] [DecidableEq ι]
+private theorem matG_le_of_quad {ι : Type*} [Fintype ι]
     {A B : Matrix ι ι ℝ} (hA : A.IsHermitian) (hB : B.IsHermitian)
     (h : ∀ x : ι → ℝ, x ⬝ᵥ A *ᵥ x ≤ x ⬝ᵥ B *ᵥ x) : A ≤ B := by
+  classical
   refine Matrix.le_iff.mpr (Matrix.PosSemidef.of_dotProduct_mulVec_nonneg (hB.sub hA) ?_)
   intro x
   have hx := h x
   simp only [star_trivial, Matrix.sub_mulVec, dotProduct_sub]
   linarith only [hx]
 
-private theorem quadG_smul {ι : Type*} [Fintype ι] [DecidableEq ι]
+private theorem quadG_smul {ι : Type*} [Fintype ι]
     (c : ℝ) (M : Matrix ι ι ℝ) (x : ι → ℝ) :
     x ⬝ᵥ (c • M) *ᵥ x = c * (x ⬝ᵥ M *ᵥ x) := by
+  classical
   simp [Matrix.smul_mulVec, dotProduct_smul]
 
 /-- `Z ≤ c·Z⁻¹` forces `Z ≤ √c·I` for positive definite `Z`. -/
@@ -571,7 +574,7 @@ private theorem canonicalImbalance_nonneg (A : BlockMat d) :
     0 ≤ canonicalImbalance A := norm_nonneg _
 
 /-- The calibrated quadratic form is bounded by the square root of the canonical imbalance. -/
-private theorem respP_quad_le [NeZero d] (hd : 2 ≤ d) {A : BlockMat d}
+private theorem respP_quad_le (hd : 2 ≤ d) {A : BlockMat d}
     (hs : IsSymmetricBlockMat A) (hp : Book.Ch02.BlockPosDef A)
     (e : Vec d) (he : vecDot e e = 1) :
     vecDot (respP A e) (matVecMul (respBlockB A) (respP A e))
@@ -583,7 +586,7 @@ private theorem respP_quad_le [NeZero d] (hd : 2 ≤ d) {A : BlockMat d}
   have hriccati : respM A * (respBlockB A)⁻¹ * respM A = schurSigmaStar A :=
     GeometricMean.geoMean_riccati hbpd hsspd
   have hpq : respP A e = matVecMul (matSqrt (respM A))⁻¹ e := by
-    show matVecMul (matSqrt ((respM A)⁻¹)) e = matVecMul (matSqrt (respM A))⁻¹ e
+    change matVecMul (matSqrt ((respM A)⁻¹)) e = matVecMul (matSqrt (respM A))⁻¹ e
     rw [HCPolySupport.HighContrast.matSqrt_inv hmpd]
   set R := matSqrt (respM A) with hRdef
   have hsqpd : R.PosDef := HCPolySupport.HighContrast.posDef_matSqrt hmpd
@@ -638,7 +641,7 @@ private theorem respP_quad_le [NeZero d] (hd : 2 ≤ d) {A : BlockMat d}
 
 /-! ### Part C, conclusion -/
 
-private theorem lsq_sum_le [NeZero d] (hd : 2 ≤ d) (P : Measure (CoeffSpace d)) (jStar : ℕ)
+private theorem lsq_sum_le (hd : 2 ≤ d) (P : Measure (CoeffSpace d)) (jStar : ℕ)
     (F : BlockMat d) (t : ℤ) (e : Vec d) (he : vecDot e e = 1)
     (hs : IsSymmetricBlockMat (respMean P jStar F t))
     (hp : Book.Ch02.BlockPosDef (respMean P jStar F t)) :
@@ -646,7 +649,7 @@ private theorem lsq_sum_le [NeZero d] (hd : 2 ≤ d) (P : Measure (CoeffSpace d)
       ≤ 4 * Real.sqrt (respKappa P jStar F t) := by
   rw [lsq_sum_eq P jStar F t e hs hp]
   have h := respP_quad_le hd hs hp e he
-  show 4 * vecDot (respP (respMean P jStar F t) e)
+  change 4 * vecDot (respP (respMean P jStar F t) e)
       (matVecMul (respBlockB (respMean P jStar F t)) (respP (respMean P jStar F t) e))
     ≤ 4 * Real.sqrt (canonicalImbalance (respMean P jStar F t))
   linarith only [h]

@@ -117,7 +117,7 @@ private theorem integrable_vecDot_matVecMul_of_integrable_entries
     {d : ℕ} {P : RestrictionCoeffLaw d} {M : RegCoeffField d → Mat d}
     (hM : ∀ i j, Integrable (fun a => M a i j) P) (x y : Vec d) :
     Integrable (fun a => vecDot x (matVecMul (M a) y)) P := by
-  simp [vecDot, matVecMul]
+  change Integrable (fun a => ∑ i, x i * ∑ j, M a i j * y j) P
   exact MeasureTheory.integrable_finsetSum Finset.univ fun i _ =>
     (MeasureTheory.integrable_finsetSum Finset.univ fun j _ =>
       (hM i j).mul_const (y j)).const_mul (x i)
@@ -129,7 +129,7 @@ private theorem integral_vecDot_matVecMul_eq_of_integrable_entries
     (hM : ∀ i j, Integrable (fun a => M a i j) P) (x y : Vec d) :
     ∫ a, vecDot x (matVecMul (M a) y) ∂P =
       vecDot x (matVecMul (fun i j => ∫ a, M a i j ∂P) y) := by
-  simp [vecDot, matVecMul]
+  simp only [vecDot, matVecMul]
   rw [MeasureTheory.integral_finsetSum Finset.univ]
   · congr 1
     ext i

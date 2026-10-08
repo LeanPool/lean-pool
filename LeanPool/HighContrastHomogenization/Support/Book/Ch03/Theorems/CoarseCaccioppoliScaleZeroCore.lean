@@ -43,6 +43,7 @@ noncomputable section
 
 open scoped ENNReal
 
+/-- Pointwise coefficient representative of the coefficient family on the given cube domain. -/
 abbrev pointwiseCoeffFor {d : ℕ} (Q : TriadicCube d)
     (a : CoeffFamily d) : CoeffField d :=
   Internal.Ch02.BookCh02.pointwiseCoeffField (Ch02.cubeDomain Q) (a.coeffOn Q)
@@ -55,6 +56,9 @@ theorem pointwiseCoeffFor_isEllipticFieldOn_cubeSet {d : ℕ}
     Internal.Ch02.BookCh02.pointwiseCoeffField_isEllipticFieldOn_cubeSet
       Q (a.coeffOn Q)
 
+/-- Regard a cube solution as harmonic for the pointwise coefficient representative, retaining its
+Sobolev data.
+-/
 @[expose]
 noncomputable def CubeSolution.toPointwiseAHarmonic {d : ℕ}
     {Q : TriadicCube d} {a : CoeffFamily d} (u : CubeSolution Q a) :
@@ -69,6 +73,9 @@ noncomputable def CubeSolution.toPointwiseAHarmonic {d : ℕ}
         (Internal.Ch02.BookCh02.pointwiseCoeffField_ae_eq U (a.coeffOn Q)).symm
     exact IsAHarmonicGradient.of_ae_eq_coeff hA u.isHarmonic
 
+/-- Regard boundary Caccioppoli data as harmonic for the pointwise coefficient representative,
+retaining its Sobolev data.
+-/
 @[expose]
 noncomputable def BoundaryCaccioppoliDatum.toPointwiseAHarmonic
     {d : ℕ} {Q : TriadicCube d} {a : CoeffFamily d} {x : Vec d}

@@ -30,9 +30,8 @@ open scoped ENNReal
 
 noncomputable section
 
-@[expose]
-public def cubeEuclideanLpFieldOfMemVectorL2
-    {d : ℕ} [NeZero d] (Q : TriadicCube d) (F : Vec d → Vec d)
+private def cubeEuclideanLpFieldOfMemVectorL2
+    {d : ℕ} (Q : TriadicCube d) (F : Vec d → Vec d)
     (hF : MemVectorL2 (cubeSet Q) F) :
     CubeEuclideanLpField Q FiniteLpExponent.two :=
   { toField := F

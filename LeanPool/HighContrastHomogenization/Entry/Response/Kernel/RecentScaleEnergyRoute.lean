@@ -97,11 +97,11 @@ theorem cellAverage_sub {V : Set (Vec d)} (F G : Vec d → BlockVec d)
     cellAverage V (fun x => F x - G x) = cellAverage V F - cellAverage V G := by
   refine Prod.ext ?_ ?_
   · funext i
-    show volumeAverage V (fun x => (F x).1 i - (G x).1 i)
+    change volumeAverage V (fun x => (F x).1 i - (G x).1 i)
       = volumeAverage V (fun x => (F x).1 i) - volumeAverage V (fun x => (G x).1 i)
     exact volumeAverage_sub (h1F i) (h1G i)
   · funext i
-    show volumeAverage V (fun x => (F x).2 i - (G x).2 i)
+    change volumeAverage V (fun x => (F x).2 i - (G x).2 i)
       = volumeAverage V (fun x => (F x).2 i) - volumeAverage V (fun x => (G x).2 i)
     exact volumeAverage_sub (h2F i) (h2G i)
 
@@ -214,9 +214,10 @@ private theorem qform_identity_eq_dotProduct_toFullBlockVec (X : BlockVec d) :
   rw [qform_flat, toFullBlockMat_blockIdentity, Matrix.one_mulVec]
 
 /-- Congruence by a symmetric matrix moves through the quadratic form. -/
-private theorem qform_conj_eq {n : Type*} [Fintype n] [DecidableEq n]
+private theorem qform_conj_eq {n : Type*} [Fintype n]
     (Sm M : Matrix n n ℝ) (hS : Smᵀ = Sm) (v : n → ℝ) :
     v ⬝ᵥ ((Sm * M * Sm) *ᵥ v) = (Sm *ᵥ v) ⬝ᵥ (M *ᵥ (Sm *ᵥ v)) := by
+  classical
   rw [← Matrix.mulVec_mulVec, ← Matrix.mulVec_mulVec, Matrix.dotProduct_mulVec,
     ← Matrix.mulVec_transpose, hS]
 
@@ -401,7 +402,7 @@ private theorem qform_blockScale_energyMap (c : ℝ) (A : BlockMat d) (X : Block
 /-- **E-2.**  Pairing against the zero doubled vector, the identity `blockVecDot_zero_left`. -/
 private theorem blockVecDot_zero_left (X : BlockVec d) :
     blockVecDot (0 : BlockVec d) X = 0 := by
-  show vecDot (0 : Vec d) X.1 + vecDot (0 : Vec d) X.2 = 0
+  change vecDot (0 : Vec d) X.1 + vecDot (0 : Vec d) X.2 = 0
   rw [vecDot_zero_left, vecDot_zero_left, add_zero]
 
 /-! ## E-3 … E-6: averages of a doubled field against a fixed load -/

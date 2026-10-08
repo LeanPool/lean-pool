@@ -62,7 +62,7 @@ variable {d : ℕ}
 /-- **21c, in its usable form.**  The λ-route's law-level tail is below a
 law-free constant — the supplied generation factor times the frame fold
 constant — multiplied by a fixed power of the witness eccentricity. -/
-theorem witnessErrorFactor_le_geo_mul_eccentricityPow [NeZero d]
+theorem witnessErrorFactor_le_geo_mul_eccentricityPow
     {abar : Mat d} {g kappaRate deltaScaled Cgeo : ℝ} {G L J : ℕ} {M j : ℤ}
     (hkappa : 0 < kappaRate)
     (hrho : 0 ≤ Certificate.printRowOrder g)

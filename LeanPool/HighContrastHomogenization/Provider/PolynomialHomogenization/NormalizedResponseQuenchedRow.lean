@@ -77,13 +77,13 @@ theorem homogenizationErrorOnCube_normalizedReference_infinity_two_sq_le_row
           ‖(Selection.normalizedRoot (symmPart abar))⁻¹‖) *
         (3 : ℝ) ^ (rho * (G : ℝ)) *
         (1 / (1 - (3 : ℝ) ^ (-(2 * s - rho)))) *
-          Quenched.quenched_block_row rho
+          Quenched.quenchedBlockRow rho
             (Book.Ch02.constantBlockMatrix abar) sourceScale a (t + G) := by
   classical
   let q : Mat d := Selection.normalizedRoot (symmPart abar)
   let F : BlockMat d := Book.Ch02.constantBlockMatrix abar
   let Cq : ℝ := max 1 (6 * (d : ℝ) * Real.sqrt d * ‖q⁻¹‖)
-  let R : ℝ := Quenched.quenched_block_row rho F sourceScale a (t + G)
+  let R : ℝ := Quenched.quenchedBlockRow rho F sourceScale a (t + G)
   let ratio : ℝ := (3 : ℝ) ^ (-(2 * s - rho))
   let K : ℝ := Cq * (3 : ℝ) ^ (rho * (G : ℝ)) * R
   have hq : q.PosDef := by

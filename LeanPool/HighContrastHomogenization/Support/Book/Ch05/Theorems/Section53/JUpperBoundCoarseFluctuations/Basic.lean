@@ -366,10 +366,11 @@ theorem inv_xi_add_inv_section53CoarseFluctuationZeta {d : ℕ} [NeZero d]
 /-- Weighted finite Cauchy-Schwarz in the square-root form used by the
 expectation-level Section 5.3 RHS conversion. -/
 theorem sq_sum_mul_sqrt_le_sum_mul_sum_mul
-    {ι : Type*} [DecidableEq ι] (s : Finset ι) (w X : ι → ℝ)
+    {ι : Type*} (s : Finset ι) (w X : ι → ℝ)
     (hw : ∀ i ∈ s, 0 ≤ w i) (hX : ∀ i ∈ s, 0 ≤ X i) :
     (∑ i ∈ s, w i * Real.sqrt (X i)) ^ 2 ≤
       (∑ i ∈ s, w i) * (∑ i ∈ s, w i * X i) := by
+  classical
   let f : ι → ℝ := fun i => Real.sqrt (w i)
   let g : ι → ℝ := fun i => Real.sqrt (w i) * Real.sqrt (X i)
   have hcs := Finset.sum_mul_sq_le_sq_mul_sq s f g
@@ -394,7 +395,7 @@ theorem sq_sum_mul_sqrt_le_sum_mul_sum_mul
 /-- Paired weighted finite Cauchy-Schwarz estimate, with separate scalar
 weights on the two components. -/
 theorem weighted_pair_sq_sum_mul_sqrt_le
-    {ι : Type*} [DecidableEq ι] (s : Finset ι)
+    {ι : Type*} (s : Finset ι)
     (wg wf G F : ι → ℝ) {σ τ : ℝ}
     (hσ : 0 ≤ σ) (hτ : 0 ≤ τ)
     (hwg : ∀ i ∈ s, 0 ≤ wg i) (hwf : ∀ i ∈ s, 0 ≤ wf i)
@@ -403,6 +404,7 @@ theorem weighted_pair_sq_sum_mul_sqrt_le
         τ * (∑ i ∈ s, wf i * Real.sqrt (F i)) ^ 2 ≤
       (∑ i ∈ s, wg i) * (∑ i ∈ s, wg i * (σ * G i)) +
         (∑ i ∈ s, wf i) * (∑ i ∈ s, wf i * (τ * F i)) := by
+  classical
   have hg :=
     sq_sum_mul_sqrt_le_sum_mul_sum_mul s wg G hwg hG
   have hf :=

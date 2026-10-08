@@ -118,20 +118,20 @@ noncomputable def coarseCaccioppoliLocalPatchBufferedCrossBudget {d : ℕ}
 /-- Unit-cube split alpha/front budget for the local-patch boundary route. -/
 @[expose]
 noncomputable def coarseCaccioppoliLocalPatchBufferedAlphaBudgetUnit
-    (d : ℕ) [NeZero d] (s : ℝ) : ℝ :=
+    (d : ℕ) (s : ℝ) : ℝ :=
   coarseCaccioppoliLocalPatchBufferedAlphaBudget (originCube d 0) s
     (fullVectorPoincareCubeConstant (originCube d 0))
 
 /-- Unit-cube split constant/cross budget for the local-patch boundary route. -/
 @[expose]
 noncomputable def coarseCaccioppoliLocalPatchBufferedCrossBudgetUnit
-    (d : ℕ) [NeZero d] (s : ℝ) : ℝ :=
+    (d : ℕ) (s : ℝ) : ℝ :=
   coarseCaccioppoliLocalPatchBufferedCrossBudget (originCube d 0) s
     (fullVectorPoincareCubeConstant (originCube d 0))
 
 theorem
     coarseCaccioppoliLocalPatchBufferedAlphaBudget_eq_unit_of_scale_eq_zero
-    {d : ℕ} [NeZero d] {Q : TriadicCube d} (s : ℝ) (hQ : Q.scale = 0) :
+    {d : ℕ} {Q : TriadicCube d} (s : ℝ) (hQ : Q.scale = 0) :
     coarseCaccioppoliLocalPatchBufferedAlphaBudget Q s
         (fullVectorPoincareCubeConstant Q) =
       coarseCaccioppoliLocalPatchBufferedAlphaBudgetUnit d s := by
@@ -148,7 +148,7 @@ theorem
 
 theorem
     coarseCaccioppoliLocalPatchBufferedCrossBudget_eq_unit_of_scale_eq_zero
-    {d : ℕ} [NeZero d] {Q : TriadicCube d} (s : ℝ) (hQ : Q.scale = 0) :
+    {d : ℕ} {Q : TriadicCube d} (s : ℝ) (hQ : Q.scale = 0) :
     coarseCaccioppoliLocalPatchBufferedCrossBudget Q s
         (fullVectorPoincareCubeConstant Q) =
       coarseCaccioppoliLocalPatchBufferedCrossBudgetUnit d s := by
@@ -347,7 +347,7 @@ noncomputable def coarseCaccioppoliBufferedCrossBudget {d : ℕ}
 `s`. -/
 @[expose]
 noncomputable def coarseCaccioppoliBufferedAlphaBudgetUnit
-    (d : ℕ) [NeZero d] (s : ℝ) : ℝ :=
+    (d : ℕ) (s : ℝ) : ℝ :=
   coarseCaccioppoliBufferedAlphaBudget (originCube d 0) s
     (fullVectorPoincareCubeConstant (originCube d 0))
 
@@ -355,12 +355,12 @@ noncomputable def coarseCaccioppoliBufferedAlphaBudgetUnit
 and `s`. -/
 @[expose]
 noncomputable def coarseCaccioppoliBufferedCrossBudgetUnit
-    (d : ℕ) [NeZero d] (s : ℝ) : ℝ :=
+    (d : ℕ) (s : ℝ) : ℝ :=
   coarseCaccioppoliBufferedCrossBudget (originCube d 0) s
     (fullVectorPoincareCubeConstant (originCube d 0))
 
 theorem coarseCaccioppoliBufferedAlphaBudget_eq_unit_of_scale_eq_zero
-    {d : ℕ} [NeZero d] {Q : TriadicCube d} (s : ℝ) (hQ : Q.scale = 0) :
+    {d : ℕ} {Q : TriadicCube d} (s : ℝ) (hQ : Q.scale = 0) :
     coarseCaccioppoliBufferedAlphaBudget Q s
         (fullVectorPoincareCubeConstant Q) =
       coarseCaccioppoliBufferedAlphaBudgetUnit d s := by
@@ -376,7 +376,7 @@ theorem coarseCaccioppoliBufferedAlphaBudget_eq_unit_of_scale_eq_zero
       (Q := originCube d 0) rfl]
 
 theorem coarseCaccioppoliBufferedCrossBudget_eq_unit_of_scale_eq_zero
-    {d : ℕ} [NeZero d] {Q : TriadicCube d} (s : ℝ) (hQ : Q.scale = 0) :
+    {d : ℕ} {Q : TriadicCube d} (s : ℝ) (hQ : Q.scale = 0) :
     coarseCaccioppoliBufferedCrossBudget Q s
         (fullVectorPoincareCubeConstant Q) =
       coarseCaccioppoliBufferedCrossBudgetUnit d s := by
@@ -534,9 +534,9 @@ theorem
     ⟨hCsol_le, hClocal, hCalpha, hCcross, hwork_constant_cross,
       hwork_centered_fronts_alpha, hlarge⟩
   let hrawcoeff :
-      BoundaryCaccioppoliHarmonicVectorSmallCubeCoefficientSplit_localPatch_allRadii
+      boundaryCaccioppoliSmallCubeLocalPatchCoefficientSplitAllRadii
         Q center a s t Clocal Calpha Ccross :=
-    (open BoundaryCaccioppoliHarmonicVectorSmallCubeCoefficientSplit_localPatch_allRadii
+    (open boundaryCaccioppoliSmallCubeLocalPatchCoefficientSplitAllRadii
       (of_closedCubeEllipticity_of_localPatchBufferedCutoffRadiusConst_of_centeredFronts) in
       of_closedCubeEllipticity_of_localPatchBufferedCutoffRadiusConst_of_centeredFronts)
       (Q := Q) (center := center) (a := a) (s := s) (t := t)
@@ -602,9 +602,9 @@ theorem
     ⟨hCsol_le, hClocal, hCalpha, hCcross, hwork_constant_cross,
       hwork_centered_fronts_alpha, hlarge⟩
   let hrawcoeff :
-      BoundaryCaccioppoliHarmonicVectorSmallCubeCoefficientSplit_allRadii
+      boundaryCaccioppoliSmallCubeCoefficientSplitAllRadii
         Q a s t Clocal Calpha Ccross :=
-    BoundaryCaccioppoliHarmonicVectorSmallCubeCoefficientSplit_allRadii.of_centeredFronts
+    boundaryCaccioppoliSmallCubeCoefficientSplitAllRadii.of_centeredFronts
       (Q := Q) (a := a) (s := s) (t := t) (Clocal := Clocal)
       (Calpha := Calpha) (Ccross := Ccross)
       hClocal hCalpha.le hCcross hwork_constant_cross hwork_centered_fronts_alpha
@@ -681,9 +681,9 @@ theorem
     ⟨hCsol_le, hClocal, hCalpha, hCcross, hwork_constant_cross,
       hwork_centered_fronts_alpha, hlarge⟩
   let hrawcoeff :
-      BoundaryCaccioppoliHarmonicVectorSmallCubeCoefficientSplit_allRadii
+      boundaryCaccioppoliSmallCubeCoefficientSplitAllRadii
         Q a s t Clocal Calpha Ccross :=
-    BoundaryCaccioppoliHarmonicVectorSmallCubeCoefficientSplit_allRadii.of_centeredFronts
+    boundaryCaccioppoliSmallCubeCoefficientSplitAllRadii.of_centeredFronts
       (Q := Q) (a := a) (s := s) (t := t) (Clocal := Clocal)
       (Calpha := Calpha) (Ccross := Ccross)
       hClocal hCalpha.le hCcross hwork_constant_cross hwork_centered_fronts_alpha

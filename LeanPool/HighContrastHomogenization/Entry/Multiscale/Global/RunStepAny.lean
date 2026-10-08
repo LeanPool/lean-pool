@@ -345,9 +345,10 @@ theorem run_step_any {d : ℕ} (hd : 2 ≤ d) (γ : ℝ) (hγ : γ ∈ Set.Ico (
             (Real.exp ((bigQ d γ : ℝ) *
               detIncrement P (Geometry.explicitRoundedGrid jStar metric) m (m + Lz)) - 1)) :=
     run_span_propagation_monotone hd γ P E Ψ K Src hstat hce S jStar hjStar Cprop C hCpropC
-      (fun Lz hLz metric hmetric n m hn hnm hguard hone =>
-        (hprovider P E Ψ K Src hP hstat hunit hce S.h hh Lz hLz jStar hjStar hsrcP
-          metric hmetric n m hn hnm).2.2.2.2.2.2.2 hguard hone)
+      (fun Lz hLz metric hmetric n m hn hnm hguard hone => by
+        simpa only [add_sub_assoc] using
+          (hprovider P E Ψ K Src hP hstat hunit hce S.h hh Lz hLz jStar hjStar hsrcP
+            metric hmetric n m hn hnm).2.2.2.2.2.2.2 hguard hone)
   -- (1) the containment clause
   have hcontFull : ∀ st : RunState P γ S ε σ B E H jStar n₀, st.i ≤ J →
       HighContrast.adaptedCell (Geometry.explicitRoundedGrid jStar st.m)

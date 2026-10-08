@@ -402,7 +402,7 @@ is nonnegative: `uM a` restricted to the subcell is an admissible competitor the
 restriction does not change the scalar response integrand.  The coefficient is elliptic only almost
 everywhere, so the competitor argument is run at the pointwise elliptic representative of `a_-` and
 both terms are carried back, which leaves them unchanged. -/
-theorem zero_le_subcellDeficit_respCoeffMinus {d : ℕ} [NeZero d]
+theorem zero_le_subcellDeficit_respCoeffMinus {d : ℕ}
     (P : Measure (CoeffSpace d)) (jStar : ℕ) (hjStar : 2 * d ≤ 3 ^ jStar) (F : BlockMat d)
     (hm : (explicitCanonicalMetric F).PosDef) (H : ℕ) (s t : ℤ) (ht : t = s + (H : ℤ)) (e : Vec d)
     (uM : (a : CoeffSpace d) → AHarmonicFunction (respCoeffMinus F a) (respCell jStar F t))
@@ -467,7 +467,7 @@ the loads `(p, q^+)` and subcell maximisers `v w a` for `a_+`, the subcell defic
 
 is nonnegative on every subcell of the depth-`H` partition of the terminal cell, pathwise in the
 sample `a`.  The a.e.-elliptic representative of `a_+` again makes the competitor argument valid. -/
-theorem zero_le_subcellDeficit_respCoeffPlus {d : ℕ} [NeZero d]
+theorem zero_le_subcellDeficit_respCoeffPlus {d : ℕ}
     (P : Measure (CoeffSpace d)) (jStar : ℕ) (hjStar : 2 * d ≤ 3 ^ jStar) (F : BlockMat d)
     (hm : (explicitCanonicalMetric F).PosDef) (H : ℕ) (s t : ℤ) (ht : t = s + (H : ℤ)) (e : Vec d)
     (uM : (a : CoeffSpace d) → AHarmonicFunction (respCoeffPlus F a) (respCell jStar F t))
@@ -558,7 +558,7 @@ noncomputable section
 /-- The subcell average of the response integrand of a `b`-harmonic field on `U`: the average
 over any subset `V ⊆ U` is minus one half of the average pathwise symmetric energy on `V`, plus
 the pairing of `(-p, r)` with the slot-swapped average of the doubled optimizer field on `V`. -/
-theorem volumeAverage_scalarResponseIntegrand_subset_eq_blockVecDot {d : ℕ} [NeZero d]
+theorem volumeAverage_scalarResponseIntegrand_subset_eq_blockVecDot {d : ℕ}
     {U V : Set (Vec d)} (hVU : V ⊆ U) {b : CoeffField d}
     (v : AHarmonicFunction b U) (p r : Vec d)
     (hEnergy : MeasureTheory.IntegrableOn (scalarVariationEnergyIntegrand b v) V)
@@ -615,7 +615,6 @@ aligned adapted subcell of the terminal cell: minus one half of the subcell ener
 pairing of `(-p, q^-)` with the slot-swapped subcell average of the doubled optimizer field.
 The coefficient is transported from its almost-everywhere elliptic representative. -/
 theorem volumeAverage_scalarResponseIntegrand_adaptedCellAtCenter_respCoeffMinus_eq {d : ℕ}
-  [NeZero d]
     (P : Measure (CoeffSpace d)) (jStar : ℕ) (hjStar : 2 * d ≤ 3 ^ jStar) (F : BlockMat d)
     (hm : (explicitCanonicalMetric F).PosDef) (H : ℕ) (s t : ℤ) (ht : t = s + (H : ℤ))
     (e : Vec d)
@@ -688,7 +687,6 @@ theorem volumeAverage_scalarResponseIntegrand_adaptedCellAtCenter_respCoeffMinus
 /-- The plus twin of the subcell average identity, for the plus response coefficient and the
 load `q^+`. -/
 theorem volumeAverage_scalarResponseIntegrand_adaptedCellAtCenter_respCoeffPlus_eq {d : ℕ}
-  [NeZero d]
     (P : Measure (CoeffSpace d)) (jStar : ℕ) (hjStar : 2 * d ≤ 3 ^ jStar) (F : BlockMat d)
     (hm : (explicitCanonicalMetric F).PosDef) (H : ℕ) (s t : ℤ) (ht : t = s + (H : ℤ))
     (e : Vec d)

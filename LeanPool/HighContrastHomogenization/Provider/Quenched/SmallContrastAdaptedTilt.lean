@@ -287,7 +287,7 @@ theorem integral_indicator_normalizedSourceScale_le
 /-! ## The tilt comparison -/
 
 
-private theorem adapted_filling_tail_row_bound [NeZero d]
+private theorem adapted_filling_tail_row_bound
      {g : ℝ}
     {E : BlockMat d} {S : CoeffSpace d → ℝ}
     {l : ℤ}
@@ -316,7 +316,8 @@ private theorem adapted_filling_tail_row_bound [NeZero d]
             (blockMatVecMul (coarseBlock (standardCell d b w) a) X) ≤
           (3 : ℝ) ^ (g * ((m : ℝ) - (b : ℝ))) * (1 / 2 * blockVecDot X (blockMatVecMul E X)))
     : (∀ u : ℕ,
-        (∑' w : {w // w ∈ Z (k - ((u + 1 : ℕ) : ℤ))}, (fun i =>
+        (∑' w : {w // w ∈ Z (k - ((u + 1 : ℕ) : ℤ))}, (fun i :
+          (Σ u : ℕ, {w // w ∈ Z (k - (u : ℤ))}) =>
       (volume (adaptedCellAt (1 : Mat d) (k - (i.1 : ℤ)) i.2.1)).toReal /
           (volume (adaptedCellTranslate (roundedGrid l nu) r 0)).toReal *
         (1 / 2 * blockVecDot X
@@ -428,7 +429,7 @@ private theorem adapted_filling_tail_row_bound [NeZero d]
         ring
   exact hrowTail
 
-private theorem adapted_filling_union_reindex [NeZero d]
+private theorem adapted_filling_union_reindex
     {k : ℤ}
     {Z : ℤ → Finset (Fin d → ℤ)}
     : ((⋃ i : Σ u : ℕ, {w // w ∈ Z (k - (u : ℤ))},
@@ -459,11 +460,11 @@ private theorem adapted_filling_union_reindex [NeZero d]
         rw [hscale]
         exact hwZ
       refine Set.mem_iUnion.mpr ⟨⟨(k - b).toNat, ⟨w, hwZ'⟩⟩, ?_⟩
-      show x ∈ adaptedCellAt (1 : Mat d) (k - (((k - b).toNat : ℕ) : ℤ)) w
+      change x ∈ adaptedCellAt (1 : Mat d) (k - (((k - b).toNat : ℕ) : ℤ)) w
       rwa [hscale]
   exact hcover
 
-private theorem adapted_filling_integral_identity [NeZero d]
+private theorem adapted_filling_integral_identity
      {g : ℝ}
     {P : Measure (CoeffSpace d)} [IsProbabilityMeasure P]
     {E : BlockMat d} {S : CoeffSpace d → ℝ}
@@ -543,7 +544,7 @@ private theorem adapted_filling_integral_identity [NeZero d]
 
 private theorem adapted_filling_pathwise_quadratic_bound [NeZero d]
      {g : ℝ} (hg : g ∈ Set.Ico (0 : ℝ) 1)
-    {P : Measure (CoeffSpace d)} [IsProbabilityMeasure P]
+    {P : Measure (CoeffSpace d)}
     {E : BlockMat d} {Ψ : ℝ → ℝ} {K : ℝ} {S : CoeffSpace d → ℝ}
     (hdag : HCPoly.Frozen.CoarseEllipticityDagger P g E Ψ K S)
     {l : ℤ}
@@ -804,7 +805,7 @@ theorem adaptedMean_quadratic_le_add_tiltDefect [NeZero d]
       volume (adaptedCellAt (1 : Mat d) (k - (i.1 : ℤ)) i.2.1) ≠ 0 := fun i =>
     (Recurrence.volume_adaptedCellAt_pos Matrix.PosDef.one _ _).ne'
   have hcover :=
-    adapted_filling_union_reindex
+    adapted_filling_union_reindex (d := d) (k := k) (Z := Z)
   have hcnull : volume (adaptedCellTranslate p r 0 \
       ⋃ i : Σ u : ℕ, {w // w ∈ Z (k - (u : ℤ))},
         adaptedCellAt (1 : Mat d) (k - (i.1 : ℤ)) i.2.1) = 0 := by
@@ -883,7 +884,8 @@ theorem adaptedMean_quadratic_le_add_tiltDefect [NeZero d]
     rw [integral_const_mul, ← blockVecDot_blockMatVecMul_annealedBlock hint X]
     rfl
   have hReq :=
-    adapted_filling_integral_identity hintCell hmeanCell hindint
+    adapted_filling_integral_identity (g := g) (E := E) (l := l)
+      (Cd := Cd) (nu := nu) (Z := Z) (X := X) hintCell hmeanCell hindint
   rw [hLeq, hReq] at hmono
   -- the head weight is at most one and the tail moment at most one
   have hwtsum : (∑ w ∈ Z k, wt w) ≤ 1 := by
@@ -930,7 +932,7 @@ theorem adaptedMean_quadratic_le_add_tiltDefect [NeZero d]
       tiltDefect Cd g nu G k r * eQuad := by
     rw [tiltDefect, ← hDcoredef]
     nlinarith only [hmomle, hDbase0]
-  rw [heQdef] at hmono htail_le
+  rw [heQdef] at htail_le
   linarith only [hmono, hhead_le, htail_le]
 
 /-! ## The threshold and the adapted near-identity comparison -/

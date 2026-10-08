@@ -310,7 +310,7 @@ private theorem smoothTest_euclideanNorm_sub_le_lipschitz {d : ℕ}
       mul_le_mul_of_nonneg_left hambient (Nat.cast_nonneg _)
     _ = ((d : ℝ) * L) * ‖x - y‖ := by ring
 
-private theorem smoothTest_kernel_norm_le_lipschitz_majorant {d : ℕ} [NeZero d]
+private theorem smoothTest_kernel_norm_le_lipschitz_majorant {d : ℕ}
     (Q : TriadicCube d) {s : FractionalOrder} {p : FiniteLpExponent}
     (h : CubeEuclideanWspSmoothTest Q s p) :
     ∃ L : ℝ, 0 ≤ L ∧ ∀ x ∈ cubeSet Q, ∀ y ∈ cubeSet Q,

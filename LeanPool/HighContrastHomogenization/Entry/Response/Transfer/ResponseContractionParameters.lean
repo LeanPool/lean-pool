@@ -47,7 +47,7 @@ open scoped Matrix MatrixOrder
 variable {d : ℕ}
 /-! ## The source load bound -/
 
-private def responseSourceLoadCoefficient (γ κ Cc Csc A : ℝ) (N n : ℕ) : ℝ :=
+private noncomputable def responseSourceLoadCoefficient (γ κ Cc Csc A : ℝ) (N n : ℕ) : ℝ :=
   if n ≤ N then 3 / 2 * ((3 : ℝ) ^ Quenched.contrastRho γ) ^ n * (Cc * Real.sqrt κ)
   else Csc * A * ((3 : ℝ) ^ γ) ^ (n - N) * (Cc * Real.sqrt κ)
 
@@ -107,7 +107,8 @@ private theorem responseSourceLoadGeometricSum (γ κ Cc Cs Cl Csc A : ℝ) (N :
     intro n hn
     have : u n = (6 * (Cc * Real.sqrt κ) * Msc) *
         (((3 : ℝ) ^ (-((3 : ℝ) / 2))) * ((3 : ℝ) ^ Quenched.contrastRho γ)) ^ n := by
-      simp [u, responseSourceLoadCoefficient, hn, hmulpow n]
+      simp only [u, responseSourceLoadCoefficient, hn, ite_true]
+      rw [hmulpow n, mul_pow]
       ring
     rw [this, hr1eq]
   have hreg2 : ∀ n : ℕ, N < n →
@@ -123,7 +124,8 @@ private theorem responseSourceLoadGeometricSum (γ κ Cc Cs Cl Csc A : ℝ) (N :
     have hue : u n = (4 * Csc * (Cc * Real.sqrt κ) * Msc) *
         (A * ((3 : ℝ) ^ (-((3 : ℝ) / 2))) ^ N) *
           (((3 : ℝ) ^ (-((3 : ℝ) / 2))) * ((3 : ℝ) ^ γ)) ^ (n - N) := by
-      simp [u, responseSourceLoadCoefficient, hn, mul_pow, hmulpow n, hpowsplit]
+      simp only [u, responseSourceLoadCoefficient, Nat.not_le.mpr hn, ite_false]
+      rw [hmulpow n, hpowsplit, mul_pow]
       ring
     rw [hue, hr2eq]
     refine mul_le_mul_of_nonneg_right ?_ (le_of_lt (pow_pos hr2pos _))
@@ -146,7 +148,8 @@ private theorem responseSourceLoadGeometricSum (γ κ Cc Cs Cl Csc A : ℝ) (N :
   refine ⟨husum, le_trans hubound (le_of_eq ?_)⟩
   have hcube : Real.sqrt κ ^ 3 = κ * Real.sqrt κ := by
     rw [pow_succ, Real.sq_sqrt hκ]
-  rw [Msc, hcube]
+  dsimp only [Msc]
+  rw [hcube]
   ring
 
 private theorem responseSourceBoundConstantPos (γ Cc Cs Cl Csc : ℝ)
@@ -182,10 +185,9 @@ private theorem responseSourceThreshold
     ⌈Csrc0 * Real.logb 3 (2 * Kg)⌉ ≤ (jStar : ℤ) := by
   have hB1 : (1 : ℝ) ≤ B :=
     le_trans (S.one_le_B0 ε σ hε hσ) (le_trans (le_max_left _ _) raw.hB)
-  have hPi := Annealed.aspectRatio_pos_and_three_le raw.ell
-  have hlogPi : (1 : ℝ) ≤ Real.logb 3 (2 + aspectRatio E) := by
-    refine (Real.le_logb_iff_rpow_le (by norm_num) (by linarith only [hPi.2])).mpr ?_
-    rw [Real.rpow_one]; linarith only [hPi.2]
+  have hPi : (0 : ℝ) ≤ aspectRatio E := aspectRatio_nonneg E
+  have hlogPi : (0 : ℝ) ≤ Real.logb 3 (2 + aspectRatio E) :=
+    Real.logb_nonneg (by norm_num) (by linarith only [hPi])
   have h0 : (0 : ℝ) ≤ Cglob * (B + 1) * Real.logb 3 (2 + aspectRatio E) :=
     mul_nonneg (mul_nonneg hCglob (by linarith only [hB1])) (by linarith only [hlogPi])
   refine le_trans (Int.ceil_le_ceil ?_) raw.hsrc
@@ -205,10 +207,12 @@ private theorem responseProfileControlsSourceDrift
     {Kg : ℝ} {Src : CoeffSpace d → ℝ} {B : ℝ} {jStar : ℕ} {F : BlockMat d} {s t : ℤ}
     (raw : RawOutput d γ S ε σ Cglob Cprof Csrc H Bresp P E Ψ Kg Src B jStar F s t)
     (hd : 2 ≤ d) (hγ : γ ∈ Set.Ico (0 : ℝ) 1) (hjs : (jStar : ℤ) ≤ s)
-    (η Cprof σ : ℝ) (hprof : Cprof * σ ^ ((1 - γ) / 8) ≤ η) :
+    (η : ℝ) (hprof : Cprof * σ ^ ((1 - γ) / 8) ≤ η) :
     determinantDrift P γ (respGrid jStar F) jStar s ≤ η := by
+  let : NeZero d := ⟨by omega⟩
+  let : IsProbabilityMeasure P := raw.prob
   have hDt0 : 0 ≤ determinantDrift P γ (respGrid jStar F) jStar t :=
-    determinantDrift_nonneg d hd γ E Ψ Kg Src raw.prob raw.stat raw.unit raw.ell
+    determinantDrift_nonneg d hd γ P E Ψ Kg Src raw.prob raw.stat raw.unit raw.ell
       jStar raw.hj (explicitCanonicalMetric F)
       (Geometry.explicitCanonicalMetric_posDef raw.symm raw.pos) t
   have hpr0 : 0 ≤ profile P γ (respGrid jStar F) jStar s s :=
@@ -245,6 +249,17 @@ private theorem responseSourceCoefficientIdentities (d : ℕ) (γ : ℝ) (S : Se
       (∀ (k : ℤ) (z : Fin d → ℤ),
         annealedBlockOf P (adaptedCellAtCenter (respGrid jStar F) k z) (respCoeffPlus F) =
           blockCongr Gplus (annealedBlock P (adaptedCellAtCenter (respGrid jStar F) k z))) := by
+  by_cases hd0 : d = 0
+  · subst d
+    have hempty (A B : BlockMat 0) : A = B := by
+      rcases A with ⟨A11, A12, A21, A22⟩
+      rcases B with ⟨B11, B12, B21, B22⟩
+      have hmat (M N : Mat 0) : M = N := by
+        funext i
+        exact Fin.elim0 i
+      rw [hmat A11 B11, hmat A12 B12, hmat A21 B21, hmat A22 B22]
+    exact ⟨F, fun _ _ => hempty _ _, fun _ _ => hempty _ _⟩
+  let : NeZero d := ⟨hd0⟩
   have hbMinus : ∀ (k : ℤ) (z : Fin d → ℤ),
       annealedBlockOf P (adaptedCellAtCenter (respGrid jStar F) k z) (respCoeffMinus F) =
         blockCongr (respG F) (annealedBlock P (adaptedCellAtCenter (respGrid jStar F) k z)) :=
@@ -261,8 +276,7 @@ private theorem responseSourceCoefficientIdentities (d : ℕ) (γ : ℝ) (S : Se
           (annealedBlock P (adaptedCellAtCenter (respGrid jStar F) k z))) :=
       annealedBlockOf_respCoeffPlus_adapted (respGrid jStar F) hqU k
         (adaptedCellCenter (respGrid jStar F) k z) F hFfull (hint k _)
-    rw [h, blockAdjoint, blockCongr_blockCongr]
-    rfl
+    simpa only [blockAdjoint, blockCongr_blockCongr, Gplus] using h
   exact ⟨Gplus, hbMinus, hbPlus⟩
 
 /-- **The source load bound** `response_source_load_bound` (`p.response.transfer`):
@@ -326,7 +340,7 @@ theorem response_source_load_bound (d : ℕ) (_hd : 2 ≤ d) (γ : ℝ)
   have hlogK : (0 : ℝ) ≤ Real.logb 3 (2 * Kg) :=
     Real.logb_nonneg (by norm_num) (by linarith only [hKg])
   have hthr := responseSourceThreshold raw hCglob hε hσ
-  have hD := responseProfileControlsSourceDrift raw _hd _hγ hjs η Cprof σ hprof
+  have hD := responseProfileControlsSourceDrift raw _hd _hγ hjs η hprof
   set κ : ℝ := respKappa P jStar F s with hκdef
   have hκ0 : 0 ≤ κ := by
     rw [hκdef]
@@ -420,6 +434,11 @@ theorem response_source_load_bound (d : ℕ) (_hd : 2 ≤ d) (γ : ℝ)
         rw [hmaxe, ← hsubcast, pow_eq γ (n - N)] at h1
         have step1 := blockCongr_mono G' h1
         rw [blockCongr_blockScale] at step1
+        have hscalar : Csc * aspectRatio E *
+            (‖explicitCanonicalMetric F‖ * ‖(explicitCanonicalMetric F)⁻¹‖) *
+            ((3 : ℝ) ^ γ) ^ (n - N) = Csc * A * ((3 : ℝ) ^ γ) ^ (n - N) := by
+          dsimp only [A]; ring
+        rw [hscalar] at step1
         have hfac0 : (0 : ℝ) ≤ Csc * A * ((3 : ℝ) ^ γ) ^ (n - N) :=
           mul_nonneg (mul_nonneg hCsc.le hA0) (hpow2 (n - N))
         have step2 := blockScale_mono_of_loewnerLE hEs hfac0
@@ -462,12 +481,23 @@ theorem response_source_load_bound (d : ℕ) (_hd : 2 ≤ d) (γ : ℝ)
     fun k y => Annealed.hasIntegrableCoarseBlock_adapted d _hd P γ E Ψ Kg Src raw.stat raw.ell
       jStar raw.hj (explicitCanonicalMetric F) hmF k y
   obtain ⟨Gplus, hbMinus, hbPlus⟩ := responseSourceCoefficientIdentities d γ S ε σ Cglob Cprof
-    Csrc0 H Bresp P E Ψ Kg Src B jStar F s t raw hqU hFfull hmF hint
+    Csrc0 Bresp H P E Ψ Kg Src B jStar F s t raw hqU hFfull hmF hint
   have hEsPlus : BlockMatLoewnerLE (blockCongr Gplus (adaptedMean P (respGrid jStar F) s))
       (blockScale (Cc * Real.sqrt κ) (respM0 F)) := by
-    have h := hcal.2.2.2.2.2
-    rw [respEhatPlus, blockAdjoint, respEhatMinus, blockCongr_blockCongr] at h
-    exact h
+    have hmean : annealedBlock P (adaptedCellAtCenter (respGrid jStar F) s 0) =
+        adaptedMean P (respGrid jStar F) s := Annealed.annealedBlock_adaptedCellAtCenter
+      P raw.stat jStar raw.hj (explicitCanonicalMetric F) hmF s hjs 0
+    have hplus := annealedBlockOf_respCoeffPlus_adapted (respGrid jStar F) hqU s
+      (adaptedCellCenter (respGrid jStar F) s 0) F hFfull (hint s _)
+    have hcongr := (hbPlus s 0).symm.trans hplus
+    change blockCongr Gplus (annealedBlock P (adaptedCellAtCenter (respGrid jStar F) s 0)) =
+      blockAdjoint (blockCongr (respG F)
+        (annealedBlock P (adaptedCellAtCenter (respGrid jStar F) s 0))) at hcongr
+    rw [hmean] at hcongr
+    change blockCongr Gplus (adaptedMean P (respGrid jStar F) s) =
+      respEhatPlus P jStar F s at hcongr
+    rw [hcongr]
+    exact hcal.2.2.2.2.2
   have hYm : blockVecDot (respYMinus P jStar F t e)
       (blockMatVecMul (respM0 F) (respYMinus P jStar F t e)) ≤ Cl * κ := by
     rw [← blockSqrt_qform_blockVecDot hM0full.posSemidef]

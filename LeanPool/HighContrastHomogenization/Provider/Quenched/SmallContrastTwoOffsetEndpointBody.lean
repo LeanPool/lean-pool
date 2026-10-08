@@ -44,7 +44,7 @@ noncomputable section
 variable {d : ℕ}
 
 /-- **The `hcore` body from a decay at any offset.** -/
-theorem hcore_body_of_two_offset_decay [NeZero d]
+theorem hcore_body_of_two_offset_decay
     {P : Measure (CoeffSpace d)} {q : Mat d} {N₀ n₀ : ℕ} {Kpre gam : ℝ}
     (hgam0 : 0 < gam) (hgam1 : gam ≤ 1) (hKpre0 : 0 ≤ Kpre)
     (hFnn : ∀ n : ℕ, 0 ≤ hatExcess P q N₀ n)

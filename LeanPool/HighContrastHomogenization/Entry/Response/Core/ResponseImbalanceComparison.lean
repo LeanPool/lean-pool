@@ -439,7 +439,7 @@ theorem respCalib_respg_isSkew {F : BlockMat d} (hA : (toFullBlockMat F).PosDef)
     Matrix.fromBlocks_multiply] at hsd
   simp only [mul_zero, mul_one, zero_add, add_zero] at hsd
   have hid := (Matrix.fromBlocks_inj.mp hsd).2.2.2
-  show (-((canonicalMean F).lowerRight⁻¹ * (canonicalMean F).lowerLeft))ᵀ
+  change (-((canonicalMean F).lowerRight⁻¹ * (canonicalMean F).lowerLeft))ᵀ
       = -(-((canonicalMean F).lowerRight⁻¹ * (canonicalMean F).lowerLeft))
   rw [Matrix.transpose_neg, Matrix.transpose_mul, Matrix.transpose_nonsing_inv, hLRt, neg_neg,
     ← hUR]
@@ -457,7 +457,7 @@ private theorem respCalib_shear_congr {F : BlockMat d} (hA : (toFullBlockMat F).
   have h1' : (canonicalMean F).lowerRight * respg F = -(canonicalMean F).lowerLeft := h1
   have hsig : schurSigma (canonicalMean F)
       = (canonicalMean F).upperLeft + (canonicalMean F).upperRight * respg F := by
-    show (canonicalMean F).upperLeft -
+    change (canonicalMean F).upperLeft -
         ((respg F)ᵀ * (canonicalMean F).lowerRight) * respg F = _
     rw [h2', neg_mul, sub_neg_eq_add]
   rw [respCalib_respG_full, toFullBlockMat_eq_fromBlocks (canonicalMean F),
@@ -478,10 +478,11 @@ private theorem respCalib_shear_congr {F : BlockMat d} (hA : (toFullBlockMat F).
   · simp only [one_mul, mul_one, zero_mul, mul_zero, zero_add]
 
 /-- Abstract congruence of a self-dual matrix by a shear that fixes `R`. -/
-private theorem respCalib_congr_selfDual_aux {n : Type*} [Fintype n] [DecidableEq n]
+private theorem respCalib_congr_selfDual_aux {n : Type*} [Fintype n]
     {G M R : Matrix n n ℝ} (hGRGt : G * R * Gᵀ = R) (hGtRG : Gᵀ * R * G = R)
     (hsd : M * R * M = R) :
     (Gᵀ * M * G) * R * (Gᵀ * M * G) = R := by
+  classical
   calc (Gᵀ * M * G) * R * (Gᵀ * M * G) = Gᵀ * (M * (G * R * Gᵀ) * M) * G := by noncomm_ring
     _ = Gᵀ * (M * R * M) * G := by rw [hGRGt]
     _ = Gᵀ * R * G := by rw [hsd]
@@ -548,12 +549,13 @@ theorem respCalib_ehatPlus_full (P : Measure (CoeffSpace d)) (jStar : ℕ)
 /-- Upper half of `e.response.calibrated.blocks` in abstract form: `A ≤ k • N`, `N ≤ c • N_F`
 and `G^t N_F G = M_0` give `G^t A G ≤ (C k) • M_0` for any `c ≤ C`
 (`e.response.calibrated.blocks`). -/
-theorem respCalib_upper {n : Type*} [Fintype n] [DecidableEq n]
+theorem respCalib_upper {n : Type*} [Fintype n]
     {A N NF Gf M0 : Matrix n n ℝ} {k c C : ℝ}
     (hM0 : M0.PosSemidef) (hGM : Gfᵀ * NF * Gf = M0)
     (hk : 0 ≤ k) (hcC : c ≤ C)
     (h1 : A ≤ k • N) (h2 : N ≤ c • NF) :
     Gfᵀ * A * Gf ≤ (C * k) • M0 := by
+  classical
   have hstep : A ≤ (k * c) • NF := by
     refine h1.trans ?_
     have hs := smul_le_smul_left hk h2
@@ -567,12 +569,13 @@ theorem respCalib_upper {n : Type*} [Fintype n] [DecidableEq n]
 /-- Lower half of `e.response.calibrated.blocks` in abstract form: `N_F ≤ c • N`, `N ≤ A`
 and `G^t N_F G = M_0` give `C⁻¹ • M_0 ≤ G^t A G` for any `c ≤ C`
 (`e.response.calibrated.blocks`). -/
-theorem respCalib_lower {n : Type*} [Fintype n] [DecidableEq n]
+theorem respCalib_lower {n : Type*} [Fintype n]
     {A N NF Gf M0 : Matrix n n ℝ} {c C : ℝ}
     (hN : N.PosSemidef) (hGM : Gfᵀ * NF * Gf = M0)
     (hC : 0 < C) (hcC : c ≤ C)
     (h1 : NF ≤ c • N) (h2 : N ≤ A) :
     C⁻¹ • M0 ≤ Gfᵀ * A * Gf := by
+  classical
   have hGN : (Gfᵀ * N * Gf).PosSemidef := by
     have hx := hN.conjTranspose_mul_mul_same Gf
     simpa only [Matrix.conjTranspose_eq_transpose_of_trivial] using hx

@@ -142,7 +142,7 @@ theorem geometricDiscount_mono_order {s₁ s₂ q : ℝ} (hq : 0 ≤ q) (h : s�
 and at the frozen `cnorm = 1/(3√d)` a function of `(d, s₀, Rad)` — inside
 `C₀ s₀ ρ Rad`'s permitted dependence. -/
 @[expose]
-noncomputable def fluxC0Factor (d : ℕ) [NeZero d] (s₀ Rad cnorm : ℝ) : ℝ :=
+noncomputable def fluxC0Factor (d : ℕ) (s₀ Rad cnorm : ℝ) : ℝ :=
   (max 1 ((2 * Rad) ^ (1 / 2 : ℝ)) *
       (3 * max 1 ((1 + 3 * (2 * Rad)) ^ (1 / 2 : ℝ)))) *
     (coarseFluxResponseConstant d * s₀⁻¹ *
@@ -159,7 +159,7 @@ noncomputable def fluxLgFactor (d : ℕ) (g kappaRate : ℝ) : ℝ :=
       activationFoldConstant d g kappaRate
         (max (responseWindowOrder g) kappaRate))
 
-theorem activationFoldConstant_nonneg (d : ℕ) [NeZero d] (g kappaRate c : ℝ) :
+theorem activationFoldConstant_nonneg (d : ℕ) (g kappaRate c : ℝ) :
     0 ≤ activationFoldConstant d g kappaRate c := by
   have h1 : (1 : ℝ) ≤ max 1 (foldPrefactorBase d g kappaRate) := le_max_left _ _
   rw [activationFoldConstant]
@@ -242,7 +242,7 @@ private theorem geometricDiscount_gap_product_le
 /-- **(α), part two.**  The explicit flux frame constant splits
 into a `(d, s₀, Rad, cnorm)`-level factor and a `(d, g, κ)`-level factor, with
 no factor left in two classes and no dependence on `abar`. -/
-theorem three_rpow_mul_foldedAnchoredFrameConstant_le [NeZero d]
+theorem three_rpow_mul_foldedAnchoredFrameConstant_le
     {g kappaRate s₀ Rad cnorm delta Jr : ℝ}
     (hg : g ∈ Set.Ico (0 : ℝ) 1) (hkappa : 0 < kappaRate)
     (hs₀ : s₀ ∈ Set.Ico ((1 + g) / 4) (1 / 2 : ℝ))
@@ -317,7 +317,7 @@ theorem three_rpow_mul_foldedAnchoredFrameConstant_le [NeZero d]
     activationFoldConstant_nonneg d g kappaRate _
   have hcancel : Real.rpow (3 : ℝ) (responseWindowOrder g) *
       Real.rpow (3 : ℝ) (-responseWindowOrder g) = 1 := by
-    show (3 : ℝ) ^ responseWindowOrder g * (3 : ℝ) ^ (-responseWindowOrder g) = 1
+    change (3 : ℝ) ^ responseWindowOrder g * (3 : ℝ) ^ (-responseWindowOrder g) = 1
     rw [← Real.rpow_add (by norm_num : (0 : ℝ) < 3),
       show responseWindowOrder g + -responseWindowOrder g = 0 by ring,
       Real.rpow_zero]

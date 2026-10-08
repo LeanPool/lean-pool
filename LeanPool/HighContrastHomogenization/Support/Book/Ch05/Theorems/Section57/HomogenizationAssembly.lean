@@ -314,6 +314,7 @@ abbrev assemblyCoeffFamily {d : ℕ} (aω : RegCoeffField d)
     Ch02.TriadicCoeffFamily d :=
   Ch04.triadicCoeffFamilyOfAELocallyUniformlyEllipticField aω ha
 
+/-- Origin cube at the natural-number generation used by the homogenization assembly. -/
 abbrev assemblyOriginCube (d : ℕ) (m : ℕ) : TriadicCube d :=
   originCube d ((m : ℕ) : ℤ)
 
@@ -321,14 +322,16 @@ abbrev assemblyOriginCube (d : ℕ) (m : ℕ) : TriadicCube d :=
 background scalar passed explicitly.  This is the sigma-agnostic Ch3 assembly
 surface; finite-`sigma` and endpoint hypotheses only have to supply the scalar
 and its positivity. -/
-/-- Finite-`sigma` wrapper for the scalar homogenized matrix. -/
+/- Finite-`sigma` wrapper for the scalar homogenized matrix. -/
 @[expose]
-def assemblyConstantCoeffMatrixOfScalar {d : ℕ} [NeZero d]
+def assemblyConstantCoeffMatrixOfScalar {d : ℕ}
     (σ0 : ℝ) (hσ0 : 0 < σ0) :
     Ch03.ConstantCoeffMatrix d :=
   scalarConstantCoeffMatrix σ0 hσ0
 
-abbrev assemblyComparisonDatumOfScalar {d : ℕ} [NeZero d]
+/-- Coarse-graining comparison data on the origin cube for the supplied scalar homogenized
+matrix. -/
+abbrev assemblyComparisonDatumOfScalar {d : ℕ}
     (σ0 : ℝ) (hσ0 : 0 < σ0)
     (aω : RegCoeffField d) (ha : Ch04.AELocallyUniformlyEllipticField aω)
     (m : ℕ) (g : Vec d → Vec d) : Type _ :=
@@ -336,6 +339,7 @@ abbrev assemblyComparisonDatumOfScalar {d : ℕ} [NeZero d]
     (assemblyOriginCube d m) (assemblyCoeffFamily aω ha)
     (assemblyConstantCoeffMatrixOfScalar σ0 hσ0) g
 
+/-- Constant coefficient matrix built from the law's positive limiting scalar coefficient. -/
 @[expose]
 def assemblyConstantCoeffMatrix {d : ℕ} [NeZero d]
     {P : Ch04.RestrictionCoeffLaw d} (hP : Ch04.RestrictionLawCarrier P)
@@ -345,6 +349,7 @@ def assemblyConstantCoeffMatrix {d : ℕ} [NeZero d]
   assemblyConstantCoeffMatrixOfScalar (barSigmaLimit hP hStruct)
     hΓ.barSigmaLimit_pos
 
+/-- Coarse-graining comparison data specialized to the law's limiting scalar coefficient. -/
 abbrev assemblyComparisonDatum {d : ℕ} [NeZero d]
     {P : Ch04.RestrictionCoeffLaw d} (hP : Ch04.RestrictionLawCarrier P)
     (hStruct : Ch04.RestrictionStructuralLaw P)
@@ -354,27 +359,33 @@ abbrev assemblyComparisonDatum {d : ℕ} [NeZero d]
   assemblyComparisonDatumOfScalar
     (barSigmaLimit hP hStruct) hΓ.barSigmaLimit_pos aω ha m g
 
+/-- Response constant determined by the cardinalities of block coordinates and normalized probes. -/
 @[expose]
 noncomputable def assemblyResponseConstant (d : ℕ) : ℝ :=
   Real.sqrt
     (4 * (Fintype.card (BlockCoord d) : ℝ) *
       (Fintype.card (NormalizedProbeIndex d) : ℝ))
 
+/-- Negative-order constant combining the geometric discount with the block-coordinate
+cardinality. -/
 @[expose]
 noncomputable def assemblyNegativeConstant (d : ℕ) (τ : ℝ) : ℝ :=
   (Ch02.geometricDiscount (τ / 2) 1)⁻¹ *
     (2 * Real.sqrt ((Fintype.card (BlockCoord d) : ℝ) ^ (2 : ℕ)))
 
+/-- Maximum of the response and negative-order constants, scaled by `3 ^ (τ / 2)`. -/
 @[expose]
 noncomputable def assemblyAmplitude (d : ℕ) (τ : ℝ) : ℝ :=
   max (assemblyResponseConstant d) (assemblyNegativeConstant d τ) *
     Real.rpow (3 : ℝ) (τ / 2)
 
+/-- Square-root minimal-scale decay at generation `m` and coefficient-dependent scale `X aω`. -/
 @[expose]
 noncomputable def assemblyMinimalScaleDecay {d : ℕ}
     (α : ℝ) (X : RegCoeffField d → ℝ) (aω : RegCoeffField d) (m : ℕ) : ℝ :=
   Real.sqrt (((3 : ℝ) ^ m / X aω) ^ (-α))
 
+/-- Geometric discount ratio used to transfer the weak-error estimate to exponent `r`. -/
 @[expose]
 noncomputable def assemblyErrorDiscount (τ r : ℝ) : ℝ :=
   Real.rpow
@@ -382,6 +393,7 @@ noncomputable def assemblyErrorDiscount (τ r : ℝ) : ℝ :=
       (Ch02.geometricDiscount (r - τ / 2) 1)⁻¹)
     (1 / (1 : ℝ))
 
+/-- Square-root geometric discount ratio used in ellipticity estimates at exponent `r / 2`. -/
 @[expose]
 noncomputable def assemblyEllipticityDiscount (τ r : ℝ) : ℝ :=
   Real.rpow
@@ -389,6 +401,8 @@ noncomputable def assemblyEllipticityDiscount (τ r : ℝ) : ℝ :=
       (Ch02.geometricDiscount (r / 2 - τ / 2) 2)⁻¹)
     (1 / 2 : ℝ)
 
+/-- Weak-error envelope obtained from its discount, the assembly amplitude and the minimal-scale
+decay. -/
 @[expose]
 noncomputable def assemblyErrorEnvelope {d : ℕ}
     (α τ r : ℝ) (X : RegCoeffField d → ℝ) (aω : RegCoeffField d)
@@ -396,6 +410,8 @@ noncomputable def assemblyErrorEnvelope {d : ℕ}
   assemblyErrorDiscount τ r * assemblyAmplitude d τ *
     assemblyMinimalScaleDecay α X aω m
 
+/-- Ellipticity-error envelope obtained from its discount, the assembly amplitude and the
+minimal-scale decay. -/
 @[expose]
 noncomputable def assemblyEllipticityErrorEnvelope {d : ℕ}
     (α τ r : ℝ) (X : RegCoeffField d → ℝ) (aω : RegCoeffField d)
@@ -403,6 +419,8 @@ noncomputable def assemblyEllipticityErrorEnvelope {d : ℕ}
   assemblyEllipticityDiscount τ r * assemblyAmplitude d τ *
     assemblyMinimalScaleDecay α X aω m
 
+/-- Ellipticity bound combining the squared ellipticity-error envelope with the dimensional
+factor. -/
 @[expose]
 noncomputable def assemblyEllipticityEnvelope {d : ℕ}
     (α τ r : ℝ) (X : RegCoeffField d → ℝ) (aω : RegCoeffField d)
@@ -412,9 +430,9 @@ noncomputable def assemblyEllipticityEnvelope {d : ℕ}
 
 /-- The controlled-factor conclusion used by the Phase 4 assembly theorem,
 with the scalar background passed explicitly. -/
-/-- Finite-`sigma` wrapper for the controlled-factor conclusion. -/
+/- Finite-`sigma` wrapper for the controlled-factor conclusion. -/
 @[expose]
-def assemblyControlledFactorsConclusionOfScalar {d : ℕ} [NeZero d]
+def assemblyControlledFactorsConclusionOfScalar {d : ℕ}
     (σ0 : ℝ) (hσ0 : 0 < σ0)
     (Ccg α τ s r : ℝ) (X : RegCoeffField d → ℝ)
     (aω : RegCoeffField d) (ha : Ch04.AELocallyUniformlyEllipticField aω)
@@ -436,6 +454,7 @@ def assemblyControlledFactorsConclusionOfScalar {d : ℕ} [NeZero d]
     Real.sqrt (Ch02.LambdaSq Q (r / 2) (.finite 2) F) *
         Real.sqrt ((Ch02.lambdaSq Q (r / 2) (.finite 2) F)⁻¹) ≤ M
 
+/-- Controlled-factor assembly conclusion specialized to the law's limiting scalar coefficient. -/
 @[expose]
 def assemblyControlledFactorsConclusion {d : ℕ} [NeZero d]
     {P : Ch04.RestrictionCoeffLaw d} (hP : Ch04.RestrictionLawCarrier P)
@@ -452,10 +471,10 @@ def assemblyControlledFactorsConclusion {d : ℕ} [NeZero d]
 /-- Two-exponent controlled-factor conclusion for the repaired Ch3
 coarse-graining estimate.  The response quantities are still localized at
 exponent `r`, while the forcing is measured at the stronger exponent `r₂`. -/
-/-- Finite-`sigma` wrapper for the repaired two-exponent controlled-factor
+/- Finite-`sigma` wrapper for the repaired two-exponent controlled-factor
 conclusion. -/
 @[expose]
-def assemblyControlledFactorsTwoExponentConclusionOfScalar {d : ℕ} [NeZero d]
+def assemblyControlledFactorsTwoExponentConclusionOfScalar {d : ℕ}
     (σ0 : ℝ) (hσ0 : 0 < σ0)
     (Ccg α τ s r r₂ : ℝ) (X : RegCoeffField d → ℝ)
     (aω : RegCoeffField d) (ha : Ch04.AELocallyUniformlyEllipticField aω)
@@ -477,6 +496,8 @@ def assemblyControlledFactorsTwoExponentConclusionOfScalar {d : ℕ} [NeZero d]
     Real.sqrt (Ch02.LambdaSq Q (r / 2) (.finite 2) F) *
         Real.sqrt ((Ch02.lambdaSq Q (r / 2) (.finite 2) F)⁻¹) ≤ M
 
+/-- Controlled-factor assembly conclusion with separate response and forcing exponents for the
+law's limiting scalar coefficient. -/
 @[expose]
 def assemblyControlledFactorsTwoExponentConclusion {d : ℕ} [NeZero d]
     {P : Ch04.RestrictionCoeffLaw d} (hP : Ch04.RestrictionLawCarrier P)
@@ -548,12 +569,12 @@ private theorem ellipticity_controls_of_parent_error_bound
       max (σ0⁻¹ * Ch02.LambdaSq Q (r / 2) (.finite 2) F)
         (σ0 * (Ch02.lambdaSq Q (r / 2) (.finite 2) F)⁻¹) ≤ M :=
     weightedEllipticity_finite_two_le_of_homogenizationError_bound
-      hr_half_pos hσ0 hparent₂
+      Q F hr_half_pos hσ0 hparent₂
   have hM_nonneg : 0 ≤ M := by dsimp [M]; positivity
   exact ⟨hweighted,
-    lambdaSq_inv_le_inv_sigma_mul_of_weightedEllipticity_le hσ0 hweighted,
+    lambdaSq_inv_le_inv_sigma_mul_of_weightedEllipticity_le Q F hσ0 hweighted,
     sqrt_LambdaSq_mul_sqrt_lambdaSq_inv_le_of_weightedEllipticity_le
-      hr_half_pos hσ0 hM_nonneg hweighted⟩
+      Q F hr_half_pos hσ0 hM_nonneg hweighted⟩
 
 /-- Finite-`sigma` assembly of the Ch3 comparison theorem with the collapsed
 minimal-scale controls needed to bound every random coefficient in its RHS.

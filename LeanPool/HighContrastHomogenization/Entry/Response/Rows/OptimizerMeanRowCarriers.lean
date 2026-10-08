@@ -72,8 +72,8 @@ L^-)^{1/2}`
 for the explicit oscillation part, and the nonnegativity of `tau^-` and `L^-`.  Then the named
 obligation `CutoffMeanRowMinus` holds with constant `max 1 c₂`.  The cell-half and
 oscillation-half bounds remain undischarged inputs. -/
-theorem cutoffMeanRowMinus_of_cellSplit {d : ℕ} [NeZero d]
-    (P : Measure (CoeffSpace d)) [IsProbabilityMeasure P] (jStar : ℕ) (F : BlockMat d)
+theorem cutoffMeanRowMinus_of_cellSplit {d : ℕ}
+    (P : Measure (CoeffSpace d)) (jStar : ℕ) (F : BlockMat d)
     (H : ℕ) (s t : ℤ) (ht : t = s + (H : ℤ)) (e : Vec d) (φ : Vec d → ℝ)
     (uM : (a : CoeffSpace d) → AHarmonicFunction (respCoeffMinus F a) (respCell jStar F t))
     (hY : respYMinus P jStar F t e
@@ -198,8 +198,8 @@ theorem cutoffMeanRowMinus_of_cellSplit {d : ℕ} [NeZero d]
 state for `respCoeffPlus F`, the same standing data and the cell-half and oscillation-half bounds
 for the explicit parts of `CutoffPairingRowSplit` give `CutoffMeanRowPlus` with constant `max 1
 c₂`. -/
-theorem cutoffMeanRowPlus_of_cellSplit {d : ℕ} [NeZero d]
-    (P : Measure (CoeffSpace d)) [IsProbabilityMeasure P] (jStar : ℕ) (F : BlockMat d)
+theorem cutoffMeanRowPlus_of_cellSplit {d : ℕ}
+    (P : Measure (CoeffSpace d)) (jStar : ℕ) (F : BlockMat d)
     (H : ℕ) (s t : ℤ) (ht : t = s + (H : ℤ)) (e : Vec d) (φ : Vec d → ℝ)
     (uP : (a : CoeffSpace d) → AHarmonicFunction (respCoeffPlus F a) (respCell jStar F t))
     (hY : respYPlus P jStar F t e
@@ -541,13 +541,13 @@ open MeasureTheory
 noncomputable section
 
 /-- An aligned cell of the response grid is the adapted translate at its own centre. -/
-theorem adaptedCellAtCenter_eq_adaptedCellTranslate {d : ℕ} [NeZero d] (q : Mat d) (j : ℤ)
+theorem adaptedCellAtCenter_eq_adaptedCellTranslate {d : ℕ} (q : Mat d) (j : ℤ)
     (w : Fin d → ℤ) :
     adaptedCellAtCenter q j w
       = HighContrast.adaptedCellTranslate q j (adaptedCellCenter q j w) := rfl
 
 /-- **Coarse-block integrability on every aligned cell of the response grid.** -/
-theorem hasIntegrableCoarseBlock_adaptedCellAtCenter_respGrid {d : ℕ} [NeZero d] (hd : 2 ≤ d)
+theorem hasIntegrableCoarseBlock_adaptedCellAtCenter_respGrid {d : ℕ} (hd : 2 ≤ d)
     (P : Measure (CoeffSpace d)) [IsProbabilityMeasure P]
     (γ : ℝ) (E : BlockMat d) (Ψ : ℝ → ℝ) (Kg : ℝ) (Src : CoeffSpace d → ℝ)
     (hstat : IsStationaryLaw P) (hdag : CoarseEllipticityDagger P γ E Ψ Kg Src)

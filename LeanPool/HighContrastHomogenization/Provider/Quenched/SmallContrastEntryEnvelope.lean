@@ -98,9 +98,9 @@ theorem integrable_sq_normalizedSourceScale
   rw [Real.enorm_eq_ofReal (sq_nonneg _)]
 
 
-private theorem adapted_cell_pathwise_source_envelope [NeZero d]
+private theorem adapted_cell_pathwise_source_envelope
     (hd : 2 ≤ d) {g : ℝ} (hg : g ∈ Set.Ico (0 : ℝ) 1)
-    {P : Measure (CoeffSpace d)} [IsProbabilityMeasure P]
+    {P : Measure (CoeffSpace d)}
     {E : BlockMat d} {Ψ : ℝ → ℝ} {K : ℝ} {S : CoeffSpace d → ℝ}
     (hdag : HCPoly.Frozen.CoarseEllipticityDagger P g E Ψ K S)
     {l : ℤ} (hl : (kZero d : ℤ) ≤ l)

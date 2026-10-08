@@ -150,7 +150,7 @@ namespace HighContrast
 normalized affine error into an oscillation controlled by the Euclidean
 gradient magnitude. -/
 theorem normalizedAffineCandidateError_cubeAverage_le_euclideanGradient
-    {d : ℕ} [NeZero d] (Q : TriadicCube d) (h : Vec d → ℝ)
+    {d : ℕ} (Q : TriadicCube d) (h : Vec d → ℝ)
     (c : ℝ) (e : Vec d) (v : H1Function (openCubeSet Q))
     (hv : v.toFun = fun x => h x - (c + vecDot e x)) :
     normalizedAffineCandidateError Q h (c + cubeAverage Q v.toFun) e ≤

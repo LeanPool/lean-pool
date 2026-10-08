@@ -71,7 +71,7 @@ variable {d : ℕ}
 scale before the response is inserted into the flux price. -/
 @[expose]
 def CellAnchoredObservationRateBound
-    [NeZero d] {U : Set (Vec d)} {rho Rad : ℝ}
+    {U : Set (Vec d)} {rho Rad : ℝ}
     (system : EnlargedMarginRuledTriadicWhitneySystem U rho Rad)
     (b : ℝ) (responseBound : system.CellIndex → ℝ)
     (epsilon Xval kappaRate Kanchor : ℝ) : Prop :=
@@ -82,7 +82,7 @@ def CellAnchoredObservationRateBound
         Kanchor * (epsilon * Xval) ^ kappaRate
 
 private theorem physicalScale_mul_eq_anchorScale_mul_gap
-    [NeZero d] {U : Set (Vec d)} {rho Rad b r : ℝ}
+    {U : Set (Vec d)} {rho Rad b r : ℝ}
     (system : EnlargedMarginRuledTriadicWhitneySystem U rho Rad)
     (i : system.CellIndex) :
     physicalDualBesovScaleFactor

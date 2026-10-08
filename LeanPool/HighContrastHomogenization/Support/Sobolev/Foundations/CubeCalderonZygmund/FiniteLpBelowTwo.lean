@@ -332,8 +332,8 @@ theorem cubeRadialTruncation_memVectorL2
 /-- Package the radial truncation of the gradient of a centered-cube
 `H¹₀` function as simultaneous normalized `L²` and conjugate-`L^p` data. -/
 @[expose]
-noncomputable def centeredCube_radialTruncationL2LpField
-    {d : ℕ} [NeZero d] (m : ℤ) (q : FiniteLpExponent)
+noncomputable def centeredCubeRadialTruncationL2LpField
+    {d : ℕ} (m : ℤ) (q : FiniteLpExponent)
     (u : H10Function (openCubeSet (originCube d m))) (n : ℕ) :
     CubeEuclideanL2LpField (originCube d m) q.conjugate := by
   let U : Set (Vec d) := openCubeSet (originCube d m)
@@ -369,10 +369,10 @@ noncomputable def centeredCube_radialTruncationL2LpField
 /-- The centered-cube radial truncation also has the raw vector `L²`
 membership required by the canonical adjoint solver. -/
 theorem centeredCube_radialTruncation_memVectorL2
-    {d : ℕ} [NeZero d] (m : ℤ) (q : FiniteLpExponent)
+    {d : ℕ} (m : ℤ) (q : FiniteLpExponent)
     (u : H10Function (openCubeSet (originCube d m))) (n : ℕ) :
     MemVectorL2 (openCubeSet (originCube d m))
-      (centeredCube_radialTruncationL2LpField m q u n).toField := by
+      (centeredCubeRadialTruncationL2LpField m q u n).toField := by
   let U : Set (Vec d) := openCubeSet (originCube d m)
   let F : Vec d → Vec d := u.toH1Function.grad
   let : IsFiniteMeasure (volumeMeasureOn U) :=
@@ -384,7 +384,7 @@ theorem centeredCube_radialTruncation_memVectorL2
   have hqone : 1 < q.exponent.toReal := by
     rw [← ENNReal.toReal_one]
     exact (ENNReal.toReal_lt_toReal (by norm_num) q.lt_top.ne).mpr q.one_lt
-  simpa only [centeredCube_radialTruncationL2LpField, F,
+  simpa only [centeredCubeRadialTruncationL2LpField, F,
     vectorRadialTruncation, HilbertVec.ofVec_toVec] using
     memVectorL2_vectorRadialTruncation U hqone n F hFraw
 
@@ -675,7 +675,7 @@ private theorem centeredCubeH10ScalarDivergence_cz_of_one_lt_of_lt_two
     rw [← ENNReal.ofReal_toReal q.lt_top.ne]
     apply INTERNAL.eLpNorm_le_of_truncated_cross_bound hqreal hFmeas
     intro n
-    let Gfield := INTERNAL.centeredCube_radialTruncationL2LpField m q u n
+    let Gfield := INTERNAL.centeredCubeRadialTruncationL2LpField m q u n
     let G : Vec d → Vec d := Gfield.toField
     let v := openCubeSetScalarDivergenceSolution (originCube d m) hsigma0 G
       (INTERNAL.centeredCube_radialTruncation_memVectorL2 m q u n)

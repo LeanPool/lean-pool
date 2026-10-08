@@ -146,7 +146,7 @@ theorem rpow_finite_flux_rhs
     _ = Real.rpow disc (-(1 / q)) * Real.rpow L (1 / 2 : ℝ) * Real.sqrt E := by
           rw [show (q / 2) * (1 / q) = (1 / 2 : ℝ) by field_simp [hq.ne']]
 
-private theorem finite_norm_le_of_depthAverage_tsum {d : ℕ} [NeZero d]
+private theorem finite_norm_le_of_depthAverage_tsum {d : ℕ}
     (Q : TriadicCube d)
     (s q : ℝ) (hs : 0 < s) (hq : 1 ≤ q)
     (F : Vec d → Vec d) (energy : Vec d → ℝ)
@@ -336,7 +336,7 @@ private theorem finite_norm_le_of_depthAverage_tsum {d : ℕ} [NeZero d]
     exact Real.rpow_le_rpow hleft_nonneg hsum_le (one_div_nonneg.mpr hqpos.le)
   exact scaleNormalizedNegativeBesovVectorNorm_finite_le_of_partialBound Q s q F hpartial
 
-theorem finite_gradient_norm_le_of_cubeAverageEnergyControl {d : ℕ} [NeZero d]
+theorem finite_gradient_norm_le_of_cubeAverageEnergyControl {d : ℕ}
     (Q : TriadicCube d) (a : CoeffFamily d)
     (s q : ℝ) (hs : 0 < s) (hq : 1 ≤ q)
     (F : Vec d → Vec d) (energy : Vec d → ℝ)
@@ -410,7 +410,7 @@ theorem finite_gradient_norm_le_of_cubeAverageEnergyControl {d : ℕ} [NeZero d]
       rw [rpow_finite_gradient_rhs hdisc_pos hlambda_nonneg hE_nonneg hqpos]
       rfl
 
-theorem finite_flux_norm_le_of_cubeAverageEnergyControl {d : ℕ} [NeZero d]
+theorem finite_flux_norm_le_of_cubeAverageEnergyControl {d : ℕ}
     (Q : TriadicCube d) (a : CoeffFamily d)
     (s q : ℝ) (hs : 0 < s) (hq : 1 ≤ q)
     (F : Vec d → Vec d) (energy : Vec d → ℝ)

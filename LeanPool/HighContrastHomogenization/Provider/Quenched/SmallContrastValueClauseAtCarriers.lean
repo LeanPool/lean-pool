@@ -67,7 +67,7 @@ theorem designNormalizer_nonneg {lev M : ℝ} (hlev : 1 ≤ lev) (hM : 0 ≤ M) 
 /-- **The value clause at the design carriers, at the pinned coefficients.**
 This is the fused core's value hypothesis, produced from the released chain at
 the spelling the released one-step family reports. -/
-theorem hmaj_at_design_carriers_at_level [NeZero d]
+theorem hmaj_at_design_carriers_at_level
     {P : Measure (CoeffSpace d)} {E : BlockMat d}
     (hE : IsSymmetricBlockMat E) (hEpd : BlockPosDef E)
     (hsharp : BlockMatLoewnerLE (blockSharp E) E)

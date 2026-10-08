@@ -37,7 +37,7 @@ variable {d : ℕ}
 
 /-- The two quotient-level realizations of triadic coefficient dilation agree. -/
 theorem physical_scale_coeff_eq_triadicDilation (N : ℕ) (a : CoeffSpace d) :
-    physical_scale_coeff N a = CoeffSpace.triadicDilation N a := by
+    physicalScaleCoefficient N a = CoeffSpace.triadicDilation N a := by
   apply Subtype.ext
   apply AEEqFun.ext
   filter_upwards [physical_scale_coeff_ae N a,
@@ -49,7 +49,7 @@ theorem physical_scale_coeff_eq_triadicDilation (N : ℕ) (a : CoeffSpace d) :
 the endpoint dilation factor. -/
 theorem triadicRebasedSource_physical_scale_coeff (N : ℕ)
     (S : CoeffSpace d → ℝ) (a : CoeffSpace d) :
-    triadicRebasedSource N S (physical_scale_coeff N a) =
+    triadicRebasedSource N S (physicalScaleCoefficient N a) =
       S a / (3 : ℝ) ^ N := by
   rw [physical_scale_coeff_eq_triadicDilation,
     triadicRebasedSource_triadicDilation]
@@ -60,11 +60,11 @@ theorem measureReal_triadicRebasedLaw_upperTailEvent
     (N : ℕ) {P : Measure (CoeffSpace d)} {F : CoeffSpace d → ℝ}
     (hF : Measurable F) (t : ℝ) :
     (triadicRebasedLaw N P).real {a | t < F a} =
-      P.real {a | t < F (physical_scale_coeff N a)} := by
+      P.real {a | t < F (physicalScaleCoefficient N a)} := by
   rw [triadicRebasedLaw]
   change (Measure.map (CoeffSpace.triadicDilation N) P).real
       (F ⁻¹' Set.Ioi t) =
-    P.real ((fun a => F (physical_scale_coeff N a)) ⁻¹' Set.Ioi t)
+    P.real ((fun a => F (physicalScaleCoefficient N a)) ⁻¹' Set.Ioi t)
   rw [
     map_measureReal_apply (CoeffSpace.measurable_triadicDilation N)
       (hF measurableSet_Ioi)]

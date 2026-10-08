@@ -34,6 +34,8 @@ noncomputable section
 /-- Uniform deterministic geometry attached to one admissible rounded
 generation. -/
 structure RoundedGenerationAnalyticGeometry (d : ℕ) [NeZero d] where
+  /-- Admissible generation at which the reference matrices and deterministic geometry are
+  rounded. -/
   generation : ℤ
   admissible : (kZero d : ℤ) ≤ generation
   reference_posDef :

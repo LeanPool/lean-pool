@@ -101,7 +101,7 @@ theorem triadicDilateVec_mem_openCubeSet (N : ℕ) (Q : TriadicCube d)
 /-- The coefficient restored at generation `N`, represented by
 `x ↦ a(3^N x)` on the a.e.-quotient coefficient space. -/
 @[expose]
-def physical_scale_coeff (N : ℕ) (a : CoeffSpace d) : CoeffSpace d := by
+def physicalScaleCoefficient (N : ℕ) (a : CoeffSpace d) : CoeffSpace d := by
   let f : CoeffField d := rescaleCoeffField N (⇑a.1)
   have hf : AEStronglyMeasurable f volume :=
     a.1.aestronglyMeasurable.comp_quasiMeasurePreserving
@@ -113,19 +113,19 @@ def physical_scale_coeff (N : ℕ) (a : CoeffSpace d) : CoeffSpace d := by
 /-- The quotient representative of the restored coefficient is the literal
 triadic rescaling of the original representative almost everywhere. -/
 theorem physical_scale_coeff_ae (N : ℕ) (a : CoeffSpace d) :
-    (⇑(physical_scale_coeff N a).1 : CoeffField d) =ᵐ[volume]
+    (⇑(physicalScaleCoefficient N a).1 : CoeffField d) =ᵐ[volume]
       rescaleCoeffField N (⇑a.1) := by
-  dsimp [physical_scale_coeff]
+  dsimp [physicalScaleCoefficient]
   exact AEEqFun.coeFn_mk _ _
 
 private theorem coeffPairing_physical_scale_coeff (N : ℕ)
     (e e' : Vec d) (phi : Vec d → ℝ) (a : CoeffSpace d) :
-    coeffPairing e e' phi (physical_scale_coeff N a) =
+    coeffPairing e e' phi (physicalScaleCoefficient N a) =
       (((3 : ℝ) ^ N) ^ d)⁻¹ *
         coeffPairing e e' (fun y => phi (((3 : ℝ) ^ N)⁻¹ • y)) a := by
   rw [coeffPairing]
   calc
-    (∫ x, vecDot e' (matVecMul ((physical_scale_coeff N a).1 x) e) * phi x
+    (∫ x, vecDot e' (matVecMul ((physicalScaleCoefficient N a).1 x) e) * phi x
         ∂volume) =
         localTestObservable e e' phi (rescaleCoeffField N (⇑a.1)) := by
       unfold localTestObservable
@@ -148,7 +148,7 @@ private theorem isLocalTest_triadic_inv_smul (N : ℕ) {phi : Vec d → ℝ}
       simpa [Function.comp_def] using
         hphi.contDiff.comp (contDiff_const_smul (((3 : ℝ) ^ N)⁻¹)), ?_,
     Set.subset_univ _⟩
-  show HasCompactSupport
+  change HasCompactSupport
     (phi ∘ Homeomorph.smulOfNeZero (((3 : ℝ) ^ N)⁻¹) hscale)
   simpa [Function.comp_def] using
     hphi.hasCompactSupport.comp_homeomorph
@@ -157,12 +157,12 @@ private theorem isLocalTest_triadic_inv_smul (N : ℕ) {phi : Vec d → ℝ}
 /-- Triadic restoration is measurable on the a.e.-quotient coefficient
 space, so its pushforward law is well-defined. -/
 theorem measurable_physical_scale_coeff (N : ℕ) :
-    Measurable (physical_scale_coeff (d := d) N) := by
+    Measurable (physicalScaleCoefficient (d := d) N) := by
   change @Measurable (CoeffSpace d) (CoeffSpace d) (coeffSigma d Set.univ)
     (MeasurableSpace.generateFrom
       {s | ∃ (e e' : Vec d) (phi : Vec d → ℝ), IsLocalTest Set.univ phi ∧
         ∃ u : Set ℝ, MeasurableSet u ∧ s = coeffPairing e e' phi ⁻¹' u})
-    (physical_scale_coeff N)
+    (physicalScaleCoefficient N)
   apply measurable_generateFrom
   rintro s ⟨e, e', phi, hphi, u, hu, rfl⟩
   let psi : Vec d → ℝ := fun y => phi (((3 : ℝ) ^ N)⁻¹ • y)
@@ -171,10 +171,10 @@ theorem measurable_physical_scale_coeff (N : ℕ) :
   have hpsi : IsLocalTest Set.univ psi := isLocalTest_triadic_inv_smul N hphi
   have hu' : MeasurableSet u' :=
     hu.preimage ((continuous_const.mul continuous_id).measurable)
-  have hset : physical_scale_coeff (d := d) N ⁻¹'
+  have hset : physicalScaleCoefficient (d := d) N ⁻¹'
       (coeffPairing e e' phi ⁻¹' u) = coeffPairing e e' psi ⁻¹' u' := by
     ext a
-    change coeffPairing e e' phi (physical_scale_coeff N a) ∈ u ↔ _
+    change coeffPairing e e' phi (physicalScaleCoefficient N a) ∈ u ↔ _
     rw [coeffPairing_physical_scale_coeff]
     rfl
   rw [hset]
@@ -184,7 +184,7 @@ theorem measurable_physical_scale_coeff (N : ℕ) :
 /-- The rescaled coefficient, read on the cube shrunk by `N` generations, with
 the ellipticity constants the sample carries on the original cube. -/
 @[expose]
-public def physical_scale_coeffOn (N : ℕ) (a : CoeffSpace d)
+public def physicalScaleCoefficientOn (N : ℕ) (a : CoeffSpace d)
     (Q : TriadicCube d) : CoeffOn (cubeDomain (dilateCube (-(N : ℤ)) Q)) where
   toCoeffField := rescaleCoeffField N (⇑a.1)
   lam := (a.coeffOn (cubeDomain Q)).lam
@@ -235,7 +235,7 @@ private theorem dilateCube_neg_nat_translate_origin_add
 coefficient at the corresponding physical generation. -/
 theorem coarseBlock_standardCell_physical_scale_coeff
     (N : ℕ) (m : ℤ) (w : Fin d → ℤ) (a : CoeffSpace d) :
-    coarseBlock (standardCell d m w) (physical_scale_coeff N a) =
+    coarseBlock (standardCell d m w) (physicalScaleCoefficient N a) =
       coarseBlock (standardCell d ((N : ℤ) + m) w) a := by
   let Qsrc : TriadicCube d := translateCube w (originCube d ((N : ℤ) + m))
   let Qtgt : TriadicCube d := dilateCube (-(N : ℤ)) Qsrc
@@ -245,10 +245,10 @@ theorem coarseBlock_standardCell_physical_scale_coeff
   let Usrc : Book.Ch02.Domain d := cubeDomain Qsrc
   let Utgt : Book.Ch02.Domain d := cubeDomain Qtgt
   have hDilation : CoeffOn.IsCubeDilation (-(N : ℤ))
-      (a.coeffOn Usrc) (physical_scale_coeffOn N a Qsrc) := by
+      (a.coeffOn Usrc) (physicalScaleCoefficientOn N a Qsrc) := by
     change CoeffOn.IsCubeDilation (-(N : ℤ))
       (a.coeffOn (cubeDomain Qsrc))
-      (physical_scale_coeffOn N a Qsrc)
+      (physicalScaleCoefficientOn N a Qsrc)
     refine ⟨?_, ?_, ?_⟩
     · rfl
     · rfl
@@ -258,18 +258,18 @@ theorem coarseBlock_standardCell_physical_scale_coeff
         dilateCoeffField (-(N : ℤ)) (⇑a.1) x
       rw [Book.Ch04.rescaleCoeffField_eq_dilateCoeffField_neg_nat (d := d) N]
   have htarget : CoeffOn.AEEq
-      ((physical_scale_coeff N a).coeffOn Utgt)
-      (physical_scale_coeffOn N a Qsrc) := by
+      ((physicalScaleCoefficient N a).coeffOn Utgt)
+      (physicalScaleCoefficientOn N a Qsrc) := by
     exact ae_restrict_of_ae (physical_scale_coeff_ae N a)
   have hcov := Book.Ch02.coarseBlockMatrix_dilate hDilation
   calc
-    coarseBlock (standardCell d m w) (physical_scale_coeff N a) =
+    coarseBlock (standardCell d m w) (physicalScaleCoefficient N a) =
         Book.Ch02.coarseBlockMatrix Utgt
-          ((physical_scale_coeff N a).coeffOn Utgt) := by
+          ((physicalScaleCoefficient N a).coeffOn Utgt) := by
       simpa [standardCell, Utgt, Book.Ch02.cubeDomain_coe, hcube] using
-        coarseBlock_eq_coarseBlockMatrix (physical_scale_coeff N a) Utgt
+        coarseBlock_eq_coarseBlockMatrix (physicalScaleCoefficient N a) Utgt
     _ = Book.Ch02.coarseBlockMatrix Utgt
-        (physical_scale_coeffOn N a Qsrc) :=
+        (physicalScaleCoefficientOn N a Qsrc) :=
       Book.Ch02.coarseBlockMatrix_eq_ofAEEq htarget
     _ = Book.Ch02.coarseBlockMatrix Usrc (a.coeffOn Usrc) := by
       simpa [Usrc, Utgt, Qtgt] using hcov
@@ -282,7 +282,7 @@ coarse-block transport. -/
 theorem blockExcess_coarseBlock_standardCell_physical_scale_coeff
     (N : ℕ) (m : ℤ) (w : Fin d → ℤ) (a : CoeffSpace d)
     (Abar : BlockMat d) :
-    blockExcess (coarseBlock (standardCell d m w) (physical_scale_coeff N a)) Abar =
+    blockExcess (coarseBlock (standardCell d m w) (physicalScaleCoefficient N a)) Abar =
       blockExcess (coarseBlock (standardCell d ((N : ℤ) + m) w) a) Abar := by
   rw [coarseBlock_standardCell_physical_scale_coeff]
 

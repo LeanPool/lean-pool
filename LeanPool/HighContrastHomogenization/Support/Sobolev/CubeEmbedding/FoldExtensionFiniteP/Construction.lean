@@ -85,7 +85,7 @@ def foldExtensionFiniteP {m : ℕ} (lo hi : Vec (m + 1)) (hlt : ∀ k, lo k < hi
     W1pFunction.convexApproxSmoothW1p hU p.one_lt.le u x0 hr with hA
   have hφ_smooth : ∀ n, ContDiff ℝ (⊤ : ℕ∞) (A n).toFun := by
     intro n
-    simp [A, W1pFunction.convexApproxSmoothW1p,
+    simp only [A, W1pFunction.convexApproxSmoothW1p,
       W1pFunction.ofContDiffOnIsOpenBoundedConvexDomain,
       W1pFunction.ofContDiffOnIsSobolevRegularDomain]
     exact contDiff_convexApproxSmoothRepresentative hU.isOpen.measurableSet
@@ -273,7 +273,7 @@ def foldExtensionFiniteP {m : ℕ} (lo hi : Vec (m + 1)) (hlt : ∀ k, lo k < hi
         have hfold : Fold lo hi x = x :=
           Fold_of_mem fun k => ⟨(Set.mem_univ_pi.1 hxU k).1.le,
             (Set.mem_univ_pi.1 hxU k).2.le⟩
-        show g (Fold lo hi x) = u.toFun x
+        change g (Fold lo hi x) = u.toFun x
         rw [hfold, hgx]
       grad_ae := fun i => by
         filter_upwards [ae_restrict_mem (isOpen_Box lo hi).measurableSet, hgi_ae i]
@@ -285,7 +285,7 @@ def foldExtensionFiniteP {m : ℕ} (lo hi : Vec (m + 1)) (hlt : ∀ k, lo k < hi
         have hsign : foldSign (lo i) (hi i) (x i) = 1 := by
           unfold foldSign
           rw [ite_eq_right (not_lt.mpr hxk.1.le), ite_eq_right (not_lt.mpr hxk.2.le)]
-        show gi i (Fold lo hi x) * foldSign (lo i) (hi i) (x i) = u.grad x i
+        change gi i (Fold lo hi x) * foldSign (lo i) (hi i) (x i) = u.grad x i
         rw [hfold, hsign, mul_one, hgix]
       eLpNorm_le := le_of_eq (by
         rw [eLpNorm_foldComp_finiteLp p hg_meas lo hi hlt, ← eLpNorm_congr_ae hg_ae])

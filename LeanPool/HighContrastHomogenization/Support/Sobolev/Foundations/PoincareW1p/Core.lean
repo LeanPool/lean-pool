@@ -279,7 +279,7 @@ end W1pPoincareEstimate
 estimate for every real exponent `1 < p < ∞`, packaged on the witness-based
 `W1pFunction` API. -/
 @[expose]
-noncomputable def w1pPoincareEstimate_of_isOpenBoundedConvexDomain
+noncomputable def w1pPoincareEstimateOfOpenBoundedConvexDomain
     {d : ℕ} {U : Set (Vec d)} {q : ℝ}
     (hU : IsOpenBoundedConvexDomain U) (hq : 1 < q) :
     W1pPoincareEstimate U (ENNReal.ofReal q) := by

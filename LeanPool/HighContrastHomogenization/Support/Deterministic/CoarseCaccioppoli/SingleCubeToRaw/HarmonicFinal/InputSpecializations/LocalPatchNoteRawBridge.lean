@@ -55,7 +55,7 @@ theorem
       let ρm : ℝ := coarseCaccioppoliBufferedCutoffRadius ρ₁ ρ₂
       coarseCaccioppoliLocalClosedCube Q center ρm ⊆ V)
     (hrawcoeff :
-      BoundaryCaccioppoliHarmonicVectorSmallCubeCoefficientSplit_localPatch
+      boundaryCaccioppoliSmallCubeLocalPatchCoefficientSplit
         Q center a s t Clocal Calpha Ccross) :
     CoarseCaccioppoliBoundaryCanonicalHarmonicVectorLocalPatchNoteRawBridgeSplit
       Q center a s t Calpha Ccross (coarseCaccioppoliHarmonicL2Sq Q a u0)
@@ -139,7 +139,7 @@ theorem
         let ρm : ℝ := coarseCaccioppoliBufferedCutoffRadius ρ₁ ρ₂
         coarseCaccioppoliLocalClosedCube Q center ρm ⊆ V)
     (hrawcoeff :
-      BoundaryCaccioppoliHarmonicVectorSmallCubeCoefficientSplit_localPatch_allRadii
+      boundaryCaccioppoliSmallCubeLocalPatchCoefficientSplitAllRadii
         Q center a s t Clocal Calpha Ccross) :
     CoarseCaccioppoliBoundaryCanonicalHarmonicVectorLocalPatchNoteRawBridgeSplitAllRadii
       Q center a s t Calpha Ccross (coarseCaccioppoliHarmonicL2Sq Q a u0)
@@ -212,7 +212,7 @@ theorem
     (hs : 0 < s) (ht : 0 < t) (hst : s + t < 1)
     (hEllCube : IsEllipticFieldOn lam Lam (cubeSet Q) a)
     (hrawcoeff :
-      BoundaryCaccioppoliHarmonicVectorSmallCubeCoefficientSplit_localPatch_allRadii
+      boundaryCaccioppoliSmallCubeLocalPatchCoefficientSplitAllRadii
         Q center a s t Clocal Calpha Ccross) :
     coarseCaccioppoliLocalEnergyRadiusProfile Q center
         (fun x => scalarVariationEnergyIntegrand a u0 x) (1 / 3 : ℝ) ≤

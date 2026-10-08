@@ -248,8 +248,10 @@ theorem source_whitney_weighted_sum {d : ℕ} [NeZero d]
             ℝ)))) := by
         rw [mul_assoc, ← Real.rpow_intCast, Int.cast_sub]
         exact mul_le_mul_of_nonneg_left
-          (source_penalty_decay γ J j r hγ.1 (by dsimp [r]; push_cast; linarith only
-            [Nat.cast_nonneg (α := ℝ) n])) (by positivity)
+          (source_penalty_decay γ J j r hγ.1 (by
+            dsimp [r]
+            push_cast
+            linarith only [Nat.cast_nonneg (α := ℝ) n])) (by positivity)
       _ = D * ρ ^ n := by
         simp only [D, ρ, r, Int.cast_sub, Int.cast_natCast, ← Real.rpow_natCast,
           ← Real.rpow_mul (by norm_num : (0 : ℝ) ≤ 3)]

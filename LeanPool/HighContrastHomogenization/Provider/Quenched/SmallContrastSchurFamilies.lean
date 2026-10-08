@@ -45,7 +45,7 @@ variable {d : ℕ}
 
 /-- **The Schur families.**  Pointwise Schur data at every generation, chosen
 into three `ℕ`-indexed families with their three properties. -/
-theorem exists_schur_families [NeZero d] {P : Measure (CoeffSpace d)}
+theorem exists_schur_families {P : Measure (CoeffSpace d)}
     [IsProbabilityMeasure P] {l : ℤ} {q : Mat d} (hq : IsRoundedGrid l q)
     (hfin : ∀ k : ℤ, HasFiniteAdaptedMean P q k) (N₀ : ℕ) :
     ∃ S0 SStar0 K0 : ℕ → Mat d,

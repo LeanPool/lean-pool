@@ -185,7 +185,7 @@ noncomputable abbrev legacyCubeW1pNorm {d : ℕ} (Q : Cube d)
 
 /-- The Chapter 1 finite-exponent normalized `W^{1,p}` seminorm on a genuine
 weak-Sobolev witness over a nonempty bounded open convex domain. -/
-noncomputable abbrev normalizedW1pSeminorm {d : ℕ} [NeZero d]
+noncomputable abbrev normalizedW1pSeminorm {d : ℕ}
     (U : Set (Vec d)) (hU : IsOpenBoundedConvexDomain U) (hne : U.Nonempty)
     (p : ℝ≥0∞) (hp_one : 1 ≤ p) (hp_top : p ≠ ∞) (u : W1pFunction U p) : ℝ :=
   BoundedMeasurableDomain.NormalizedW1pKernel.seminorm
@@ -193,7 +193,7 @@ noncomputable abbrev normalizedW1pSeminorm {d : ℕ} [NeZero d]
 
 /-- The Chapter 1 finite-exponent normalized `W^{1,p}` norm on a genuine
 weak-Sobolev witness over a nonempty bounded open convex domain. -/
-noncomputable abbrev normalizedW1pNorm {d : ℕ} [NeZero d]
+noncomputable abbrev normalizedW1pNorm {d : ℕ}
     (U : Set (Vec d)) (hU : IsOpenBoundedConvexDomain U) (hne : U.Nonempty)
     (p : ℝ≥0∞) (hp_one : 1 ≤ p) (hp_top : p ≠ ∞) (u : W1pFunction U p) : ℝ :=
   BoundedMeasurableDomain.NormalizedW1pKernel.norm
@@ -201,7 +201,7 @@ noncomputable abbrev normalizedW1pNorm {d : ℕ} [NeZero d]
 
 /-- The Chapter 1 normalized `W^{1,∞}` seminorm on a genuine weak-Sobolev
 witness over a nonempty bounded open convex domain. -/
-noncomputable abbrev normalizedW1pSeminormTop {d : ℕ} [NeZero d]
+noncomputable abbrev normalizedW1pSeminormTop {d : ℕ}
     (U : Set (Vec d)) (hU : IsOpenBoundedConvexDomain U) (hne : U.Nonempty)
     (u : W1pFunction U ∞) : ℝ :=
   BoundedMeasurableDomain.NormalizedW1pKernel.seminormTop
@@ -210,7 +210,7 @@ noncomputable abbrev normalizedW1pSeminormTop {d : ℕ} [NeZero d]
 /-- The Chapter 1 normalized `W^{1,∞}` norm on a genuine weak-Sobolev witness,
 over a nonempty bounded open convex domain, using the manuscript's additive
 endpoint formula. -/
-noncomputable abbrev normalizedW1pNormTop {d : ℕ} [NeZero d]
+noncomputable abbrev normalizedW1pNormTop {d : ℕ}
     (U : Set (Vec d)) (hU : IsOpenBoundedConvexDomain U) (hne : U.Nonempty)
     (u : W1pFunction U ∞) : ℝ :=
   BoundedMeasurableDomain.NormalizedW1pKernel.normTop
@@ -220,7 +220,7 @@ noncomputable abbrev normalizedW1pNormTop {d : ℕ} [NeZero d]
 
 /-- The normalized zero-boundary `W^{-1,p'}` seminorm on `U`, with `p` the
 positive test exponent. Its test class is literal smooth compact support. -/
-noncomputable abbrev normalizedZeroBoundaryWMinusOneSeminorm {d : ℕ} [NeZero d]
+noncomputable abbrev normalizedZeroBoundaryWMinusOneSeminorm {d : ℕ}
     (U : Set (Vec d)) (hU : IsOpenBoundedConvexDomain U) (hne : U.Nonempty)
     (p : ENNReal) (hp_one : 1 < p) (hp_top : p ≠ ∞) (f : Vec d → ℝ)
     (hf : MeasureTheory.MemLp f (ENNReal.conjExponent p)
@@ -230,7 +230,7 @@ noncomputable abbrev normalizedZeroBoundaryWMinusOneSeminorm {d : ℕ} [NeZero d
 /-- The normalized mean-zero `W^{-1,p'}` seminorm on `U`, with `p` the
 positive test exponent. Its test class consists of genuine mean-zero weak
 `W^{1,p}` witnesses. -/
-noncomputable abbrev normalizedMeanZeroWMinusOneSeminorm {d : ℕ} [NeZero d]
+noncomputable abbrev normalizedMeanZeroWMinusOneSeminorm {d : ℕ}
     (U : Set (Vec d)) (hU : IsOpenBoundedConvexDomain U) (hne : U.Nonempty)
     (p : ENNReal) (hp_one : 1 < p) (hp_top : p ≠ ∞) (f : Vec d → ℝ)
     (hf : MeasureTheory.MemLp f (ENNReal.conjExponent p)
@@ -239,7 +239,7 @@ noncomputable abbrev normalizedMeanZeroWMinusOneSeminorm {d : ℕ} [NeZero d]
 
 /-- The zero-boundary normalized `H^{-1}` seminorm on `U`; this is the
 `p = 2` instance with smooth compactly supported tests. -/
-noncomputable abbrev normalizedZeroBoundaryHMinusOneSeminorm {d : ℕ} [NeZero d]
+noncomputable abbrev normalizedZeroBoundaryHMinusOneSeminorm {d : ℕ}
     (U : Set (Vec d)) (hU : IsOpenBoundedConvexDomain U) (hne : U.Nonempty)
     (f : Vec d → ℝ)
     (hf : MeasureTheory.MemLp f (ENNReal.conjExponent (2 : ENNReal))
@@ -248,7 +248,7 @@ noncomputable abbrev normalizedZeroBoundaryHMinusOneSeminorm {d : ℕ} [NeZero d
 
 /-- The mean-zero normalized `H^{-1}` seminorm on `U`; this is the distinct
 `p = 2` convention with genuine mean-zero weak `W^{1,2}` tests. -/
-noncomputable abbrev normalizedMeanZeroHMinusOneSeminorm {d : ℕ} [NeZero d]
+noncomputable abbrev normalizedMeanZeroHMinusOneSeminorm {d : ℕ}
     (U : Set (Vec d)) (hU : IsOpenBoundedConvexDomain U) (hne : U.Nonempty)
     (f : Vec d → ℝ)
     (hf : MeasureTheory.MemLp f (ENNReal.conjExponent (2 : ENNReal))

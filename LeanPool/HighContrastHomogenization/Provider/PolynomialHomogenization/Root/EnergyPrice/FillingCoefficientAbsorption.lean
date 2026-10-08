@@ -78,11 +78,11 @@ theorem vecNormSq_single (i : Fin d) (t : ℝ) :
   classical
   unfold vecNormSq vecDot
   rw [Finset.sum_eq_single i]
-  · show (if i = i then t else 0) * (if i = i then t else 0) = t ^ 2
+  · change (if i = i then t else 0) * (if i = i then t else 0) = t ^ 2
     rw [ite_eq_left rfl]
     ring
   · intro k _ hk
-    show (if k = i then t else 0) * (if k = i then t else 0) = 0
+    change (if k = i then t else 0) * (if k = i then t else 0) = 0
     rw [ite_eq_right hk]
     ring
   · intro hcon
@@ -112,14 +112,14 @@ theorem normalizedRootScale_mul_le_of_innerEllipsoid_outerBall [NeZero d]
     intro r hr
     have hmem : (fun k : Fin d => if k = i then r else 0) ∈
         {y : Vec d | vecNormSq y ≤ t ^ 2} := by
-      show vecNormSq (fun k : Fin d => if k = i then r else 0) ≤ t ^ 2
+      change vecNormSq (fun k : Fin d => if k = i then r else 0) ≤ t ^ 2
       rw [vecNormSq_single i r, hr]
     have hball := hsub hmem
     have hballu : vecNormSq
         ((fun k : Fin d => if k = i then r else 0) - cc) < Rad ^ 2 := hball
     have hcoord :
         ((fun k : Fin d => if k = i then r else 0) - cc) i = r - cc i := by
-      show (if i = i then r else 0) - cc i = r - cc i
+      change (if i = i then r else 0) - cc i = r - cc i
       rw [ite_eq_left rfl]
     have := abs_lt_of_vecNormSq_lt hRad hballu i
     rwa [hcoord] at this

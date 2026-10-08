@@ -38,10 +38,12 @@ main bad scale.
 
 noncomputable section
 
+/-- Sum of the geometrically weighted kernel `w ^ k * exp (-(R ^ k - 1))`. -/
 @[expose]
 noncomputable def weightedGeometricExpKernelConst (w R : ℝ) : ℝ :=
   ∑' k : ℕ, w ^ k * Real.exp (-(R ^ k - 1))
 
+/-- Sum of the exponential kernel weighted by `(k + 1) * w ^ k`. -/
 @[expose]
 noncomputable def weightedLinearExpKernelConst (w R : ℝ) : ℝ :=
   ∑' k : ℕ, (((k : ℝ) + 1) * w ^ k * Real.exp (-(R ^ k - 1)))

@@ -185,7 +185,7 @@ theorem childAdditivityCrossDensityOnFamilyOnCube_integrableOn
               (matVecMul (symmPart (coeff x)) (childGrad x)))
         (cubeSet R) volume :=
     (hQuad.const_mul (1 / 2 : ℝ)).add hCross
-  show
+  change
     IntegrableOn
       (fun x =>
         (1 / 2 : ℝ) *
@@ -393,7 +393,7 @@ theorem additivityDiffHalfEnergyDensityOnFamilyOnCube_integrableOn
           (matVecMul (symmPart (coeff x)) (topGrad x - childGrad x)))
         (cubeSet R) volume :=
     integrableOn_vecDot_of_memVectorL2 hDiff hSymmDiff
-  show IntegrableOn
+  change IntegrableOn
     (fun x =>
       (1 / 2 : ℝ) *
         vecDot

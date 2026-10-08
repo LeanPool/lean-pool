@@ -174,14 +174,14 @@ theorem volume_restrict_overlapCubeSet_eq_volume_restrict_openOverlapCubeSet
   MeasureTheory.Measure.restrict_congr_set (overlapCubeSet_ae_eq_openOverlapCubeSet S)
 
 theorem integrableOn_overlapCubeSet_iff_integrableOn_openOverlapCubeSet
-    {d : ℕ} {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] [CompleteSpace E]
+    {d : ℕ} {E : Type*} [NormedAddCommGroup E]
     {S : TriadicCube d} {f : Vec d → E} :
     MeasureTheory.IntegrableOn f (overlapCubeSet S) MeasureTheory.volume ↔
       MeasureTheory.IntegrableOn f (openOverlapCubeSet S) MeasureTheory.volume :=
   MeasureTheory.integrableOn_congr_set_ae (overlapCubeSet_ae_eq_openOverlapCubeSet S)
 
 theorem setIntegral_overlapCubeSet_eq_setIntegral_openOverlapCubeSet
-    {d : ℕ} {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] [CompleteSpace E]
+    {d : ℕ} {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
     {S : TriadicCube d} {f : Vec d → E} :
     ∫ x in overlapCubeSet S, f x ∂MeasureTheory.volume =
       ∫ x in openOverlapCubeSet S, f x ∂MeasureTheory.volume :=
@@ -416,7 +416,8 @@ theorem middleChildCube_injective {d : ℕ} :
   | mk scaleQ indexQ =>
   cases R with
   | mk scaleR indexR =>
-  simp [middleChildCube] at hQR ⊢
+  dsimp only [middleChildCube] at hQR
+  simp only [TriadicCube.mk.injEq] at hQR ⊢
   rcases hQR with ⟨hscale, hindex⟩
   constructor
   · omega
@@ -448,7 +449,7 @@ theorem disjoint_overlapCubeSet_of_scale_eq_of_cubeColor_eq_of_ne {d : ℕ}
     | mk scaleR indexR =>
     cases S with
     | mk scaleS indexS =>
-    simp at hscale h ⊢
+    simp only [TriadicCube.mk.injEq] at hscale h ⊢
     exact ⟨hscale, funext h⟩
   rcases hindex_ne with ⟨i, hi⟩
   have hfactor : cubeScaleFactor S = cubeScaleFactor R := by
@@ -620,7 +621,7 @@ theorem lintegral_normalizedOverlapCubeMeasure_eq {d : ℕ}
     overlapCubeMeasure S Set.univ = MeasureTheory.volume (overlapCubeSet S) := by
   rw [overlapCubeMeasure, MeasureTheory.Measure.restrict_apply_univ]
 
-@[simp] theorem overlapCubeMeasure_apply_univ_toReal {d : ℕ} (S : TriadicCube d) :
+theorem overlapCubeMeasure_apply_univ_toReal {d : ℕ} (S : TriadicCube d) :
     (overlapCubeMeasure S Set.univ).toReal = overlapCubeVolume S := by
   simp [overlapCubeMeasure]
 
@@ -635,7 +636,7 @@ theorem overlapCubeMeasure_apply_univ_ne_top {d : ℕ} (S : TriadicCube d) :
     simpa [hvol] using hzero
   exact (overlapCubeVolume_pos S).ne' this
 
-@[simp] theorem overlapCubeMeasure_apply_univ_eq {d : ℕ} (S : TriadicCube d) :
+theorem overlapCubeMeasure_apply_univ_eq {d : ℕ} (S : TriadicCube d) :
     overlapCubeMeasure S Set.univ = ENNReal.ofReal (overlapCubeVolume S) := by
   exact (ENNReal.toReal_eq_toReal_iff' (overlapCubeMeasure_apply_univ_ne_top S)
     ENNReal.ofReal_ne_top).1 (by

@@ -48,11 +48,13 @@ noncomputable section
 open MeasureTheory
 open scoped BigOperators ENNReal
 
+/-- Transport an H¹ function along an equality of its domains. -/
 @[expose]
 noncomputable def castH1Domain {d : ℕ} {U V : Set (Vec d)}
     (hUV : U = V) (u : H1Function U) : H1Function V :=
   hUV ▸ u
 
+/-- Transport a zero-trace H¹ function along an equality of its domains. -/
 @[expose]
 noncomputable def castH10Domain {d : ℕ} {U V : Set (Vec d)}
     (hUV : U = V) (u : H10Function U) : H10Function V :=
@@ -84,6 +86,7 @@ noncomputable def castH10Domain {d : ℕ} {U V : Set (Vec d)}
   subst V
   rfl
 
+/-- Transport a mean-zero H¹ function along an equality of its domains. -/
 @[expose]
 noncomputable def castH1MeanZeroDomain {d : ℕ} {U V : Set (Vec d)}
     (hUV : U = V) (u : H1MeanZeroFunction U) : H1MeanZeroFunction V :=

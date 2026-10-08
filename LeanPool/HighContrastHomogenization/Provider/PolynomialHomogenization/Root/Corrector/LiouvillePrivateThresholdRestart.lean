@@ -40,7 +40,7 @@ noncomputable section
 /-- A summable scalar good tail can be restarted with any positive tolerance.
 The coefficient family and fractional order are unchanged. -/
 theorem ScalarIdentityGoodTail.exists_restart_at_tolerance
-    {d : ℕ} [NeZero d]
+    {d : ℕ}
     {a : Book.Ch02.TriadicCoeffFamily d} {s delta : ℝ} {n : ℤ}
     (hgood : ScalarIdentityGoodTail a s delta n)
     {target : ℝ} (htarget : 0 < target) :

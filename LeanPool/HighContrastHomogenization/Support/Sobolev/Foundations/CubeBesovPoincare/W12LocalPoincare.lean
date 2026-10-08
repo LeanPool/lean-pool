@@ -43,6 +43,7 @@ theorem cubeBesovW12LocalPoincareConstant_nonneg (d : ℕ) :
     0 ≤ cubeBesovW12LocalPoincareConstant d :=
   (originCubeMeanZeroH1CoerciveEstimate d 0).constant_nonneg
 
+/-- View a W¹,² function as an H¹ function with the same value and weak gradient. -/
 @[expose]
 public def W1pFunction.toH1AtTwo {d : ℕ} {U : Set (Vec d)}
     (u : W1pFunction U (2 : ℝ≥0∞)) : H1Function U where
@@ -52,6 +53,7 @@ public def W1pFunction.toH1AtTwo {d : ℕ} {U : Set (Vec d)}
   gradMemL2 := u.gradMemLp
   hasWeakGradient := u.hasWeakGradient
 
+/-- Transport an H¹ function across equality of domains, preserving its value and weak gradient. -/
 @[expose]
 public def castH1Domain {d : ℕ} {U V : Set (Vec d)}
     (hUV : U = V) (u : H1Function U) : H1Function V :=
@@ -97,7 +99,7 @@ private theorem cubeLpNorm_grad_le_cubeLpNorm_euclideanGrad {d : ℕ}
 /-- The local Poincare estimate on a triadic cube in the exact normalized
 `W^{1,2}` carrier used by the Besov embedding. -/
 theorem cubeBesovOscillation_two_le_cubeScaleFactor_mul_normalizedW1pSeminorm
-    {d : ℕ} [NeZero d] (Q : TriadicCube d)
+    {d : ℕ} (Q : TriadicCube d)
     (u : W1pFunction (openCubeSet Q) (2 : ℝ≥0∞)) :
     cubeBesovOscillation Q (2 : ℝ≥0∞) u.toFun ≤
       cubeBesovW12LocalPoincareConstant d * cubeScaleFactor Q *

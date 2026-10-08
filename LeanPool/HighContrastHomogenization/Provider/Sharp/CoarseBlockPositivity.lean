@@ -110,7 +110,7 @@ theorem blockSharp_annealedBlock_le_of_nonempty {P : Measure (CoeffSpace d)}
 
 /-- **The annealed sharp order on the centered triadic cube** `□_m`, the carrier
 the annealed contrast `Θ_m` of `e.Theta.m` is read on. -/
-theorem blockSharp_annealedBlock_le_centeredCube [NeZero d] {P : Measure (CoeffSpace d)}
+theorem blockSharp_annealedBlock_le_centeredCube {P : Measure (CoeffSpace d)}
     [IsProbabilityMeasure P] (m : ℤ)
     (hint : HasIntegrableCoarseBlock P (centeredCube d m)) :
     BlockMatLoewnerLE (blockSharp (annealedBlock P (centeredCube d m)))

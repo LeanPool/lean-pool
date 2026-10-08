@@ -319,7 +319,7 @@ theorem sharpBoundaryDepthTailTerm_nonneg {d : ℕ}
 
 /-- Single-summand scale arithmetic for the sharp boundary tail, in the clean
 `j = m + n` form. -/
-theorem sharpBoundaryDepthTailTerm_le_kernelBase_add {d : ℕ} [NeZero d]
+theorem sharpBoundaryDepthTailTerm_le_kernelBase_add {d : ℕ}
     (Q : TriadicCube d) (t : ℝ) (u : Vec d → Vec d) (m n : ℕ) :
     sharpBoundaryDepthTailTerm Q t u (m + n) m ≤
       sharpBoundaryKernelConstant d * (sharpBoundaryKernelBase d t) ^ n *
@@ -339,7 +339,10 @@ theorem sharpBoundaryDepthTailTerm_le_kernelBase_add {d : ℕ} [NeZero d]
     sharpBoundaryKernelRatio
   have hA : 0 ≤ cubeBesovPositiveVectorDepthAverage Q u m :=
     cubeBesovPositiveVectorDepthAverage_nonneg Q u m
-  simp [mul_pow, descendantsAtDepth_card, Fintype.card_fin, Real.sq_sqrt, hA]
+  simp only [mul_pow, descendantsAtDepth_card, Fintype.card_fin, Real.sq_sqrt, hA]
+  simp only [Nat.cast_add, Real.rpow_eq_pow, Nat.cast_pow, Nat.cast_ofNat,
+    add_tsub_cancel_left, Nat.cast_mul, Nat.ofNat_nonneg, pow_nonneg,
+    Real.sqrt_div, ge_iff_le]
   rw [Real.sq_sqrt (by positivity)]
   rw [Real.sq_sqrt (by positivity)]
   have hweight_mn :
@@ -368,7 +371,7 @@ theorem sharpBoundaryDepthTailTerm_le_kernelBase_add {d : ℕ} [NeZero d]
   exact le_rfl
 
 /-- Single-summand scale arithmetic for the sharp boundary tail. -/
-theorem sharpBoundaryDepthTailTerm_le_kernelBase {d : ℕ} [NeZero d]
+theorem sharpBoundaryDepthTailTerm_le_kernelBase {d : ℕ}
     (Q : TriadicCube d) (t : ℝ) (u : Vec d → Vec d) {j m : ℕ}
     (hmj : m ≤ j) :
     sharpBoundaryDepthTailTerm Q t u j m ≤

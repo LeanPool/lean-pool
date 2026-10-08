@@ -231,7 +231,6 @@ theorem blockResponse_pair_half_averageFlux_eq_of_scalarCanonicalMaximizers_zero
 /-- Bundled basis-data wrapper for the previous average-flux identity. -/
 theorem blockResponse_pair_half_averageFlux_eq_of_scalarCanonicalMaximizers_zero_right_of_basisData
     {d : ℕ} {U : Set (Vec d)} {a : CoeffField d}
-    [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     {sigma sigmaStar kappa : Mat d} {q : Vec d}
     (u : ScalarCanonicalMaximizer U 0 q a)
     (v : ScalarCanonicalMaximizer U 0 (-q) (HCPolySupport.adjointCoeffField a))

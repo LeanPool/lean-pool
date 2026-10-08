@@ -361,8 +361,9 @@ theorem transport_drift_scalar_assembly (a b : ℝ) (ha : 0 < a) (ha1 : a < 1) (
     · have hjj := Finset.mem_Icc.mp hj
       exact add_nonneg (hf _ (Finset.mem_Icc.mpr ⟨by omega, by omega⟩))
         (mul_nonneg hCb (Finset.sum_nonneg fun r hr => mul_nonneg (by positivity)
-          (hf r (Finset.mem_Icc.mpr ⟨(Finset.mem_Icc.mp hr).1, by have := (Finset.mem_Icc.mp
-            hr).2; omega⟩))))
+          (hf r (Finset.mem_Icc.mpr ⟨(Finset.mem_Icc.mp hr).1, by
+            have := (Finset.mem_Icc.mp hr).2
+            omega⟩))))
   have hs0 (j : ℤ) : 0 ≤ src j := by dsimp only [src]; split_ifs <;> positivity
   have hh0 (j : ℤ) (hj : j ∈ U) : 0 ≤ h j := add_nonneg (mul_nonneg hA (ho0 j hj)) (mul_nonneg
     hY (hs0 j))
@@ -389,8 +390,8 @@ theorem transport_drift_scalar_assembly (a b : ℝ) (ha : 0 < a) (ha1 : a < 1) (
   have hbulk := transport_drift_bulk_weights a J n L f hf
   have hboundary := transport_drift_boundary_weights a ha1 J n L f hf
   have hGrow : (3 : ℝ) ^ (a * (L : ℝ)) ≤ (3 : ℝ) ^ (2 * a * (L : ℝ)) :=
-    Real.rpow_le_rpow_of_exponent_le (by norm_num) (by nlinarith only [mul_nonneg ha.le
-      (Nat.cast_nonneg L)])
+    Real.rpow_le_rpow_of_exponent_le (by norm_num) (by
+      nlinarith only [mul_nonneg ha.le (Nat.cast_nonneg L)])
   have hden := (transport_geometric_Icc (1 - a) (by linarith only [ha1]) J n).1
   have hboundary' : (∑ j ∈ V, w j * ∑ r ∈ Finset.Icc J (j - (L : ℤ) - 1),
       (3 : ℝ) ^ ((r : ℝ) - j) * f r) ≤

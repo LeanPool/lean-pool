@@ -51,7 +51,7 @@ The gradient exponent `s` and the flux exponent `t` are only required to satisfy
 `0 < s < 1` and `s + t ≤ 1`; the manuscript's own reading is the symmetric one
 `s = t = 1/2`. -/
 theorem abs_cutoffProductTermOnCube_le_scaledWeakNormProduct
-    {d : ℕ} [NeZero d] (Q : TriadicCube d) {s t : ℝ}
+    {d : ℕ} (Q : TriadicCube d) {s t : ℝ}
     (hs_pos : 0 < s) (hs_lt_one : s < 1) (hst : s + t ≤ 1)
     (a : Book.Ch02.CoeffOn (Book.Ch02.cubeDomain Q))
     {φ : Vec d → ℝ} (p q p0 q0 : Vec d) {B gradWeak fluxWeak : ℝ}
@@ -133,14 +133,14 @@ gradient field has sup norm at most `Bone` and derivative at most `B`.  The
 first factor is the manuscript's scale gain: on a cube of side `3^n` a cutoff
 with `‖∇φ‖ ≲ 3^{-n}` and `‖∇²φ‖ ≲ 3^{-2n}` makes it `O(3^{-n})`. -/
 @[expose]
-def divCurlWeakNormCoeff {d : ℕ} [NeZero d] (Q : TriadicCube d) (B Bone : ℝ) : ℝ :=
+def divCurlWeakNormCoeff {d : ℕ} (Q : TriadicCube d) (B Bone : ℝ) : ℝ :=
   (3 * (cubeScaleFactor Q * B + Bone) *
       ((Book.Ch01.Legacy.fullVectorPoincareConstant Q *
         (3 : ℝ) ^ ((d : ℝ) + 1)) * (d : ℝ))) *
     ((d : ℝ) * (3 : ℝ) ^ ((d : ℝ) + (1 / 2 : ℝ)))
 
 /-- The defining equation of the div-curl coefficient. -/
-theorem divCurlWeakNormCoeff_eq {d : ℕ} [NeZero d] (Q : TriadicCube d)
+theorem divCurlWeakNormCoeff_eq {d : ℕ} (Q : TriadicCube d)
     (B Bone : ℝ) :
     divCurlWeakNormCoeff Q B Bone =
       (3 * (cubeScaleFactor Q * B + Bone) *
@@ -153,7 +153,7 @@ seminorms are read at order `-1/2`, and the cutoff enters only through the sup
 norm `Bone` of its gradient field and the bound `B` on that field's
 derivative. -/
 theorem abs_cutoffProductTermOnCube_le_divCurlWeakNormCoeff
-    {d : ℕ} [NeZero d] (Q : TriadicCube d)
+    {d : ℕ} (Q : TriadicCube d)
     (a : Book.Ch02.CoeffOn (Book.Ch02.cubeDomain Q))
     {φ : Vec d → ℝ} (p q p0 q0 : Vec d) {B Bone gradWeak fluxWeak : ℝ}
     (hB : 0 ≤ B)

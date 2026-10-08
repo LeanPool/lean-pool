@@ -40,8 +40,10 @@ noncomputable section
 /-- The deterministic rounded Dirichlet response with its internally selected
 small order. -/
 structure PrivateRoundedPhysicalDirichletSpine (d : ℕ) [NeZero d] where
+  /-- Fractional order, smaller than one twelfth, used by the private Dirichlet response. -/
   order : FractionalOrder
   order_lt_one_twelfth : order.1 < (1 : ℝ) / 12
+  /-- Finite extended nonnegative constant controlling the rounded Dirichlet response. -/
   responseConstant : ℝ≥0∞
   responseConstant_lt_top : responseConstant < ∞
   respond :

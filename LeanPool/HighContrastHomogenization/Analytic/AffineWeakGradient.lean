@@ -131,7 +131,7 @@ theorem isLocalTest_comp_matVecMul_inv {L : Mat d} (hL : IsUnit L.det)
       continuous_invFun := continuous_matVecMul L }
   refine ⟨?_, ?_, ?_⟩
   · simpa [Function.comp_def] using hf.contDiff.comp (contDiff_matVecMul_top L⁻¹)
-  · show HasCompactSupport (f ∘ e)
+  · change HasCompactSupport (f ∘ e)
     simpa [e, Function.comp_def] using hf.hasCompactSupport.comp_homeomorph e
   · intro x hx
     have hx' : matVecMul L⁻¹ x ∈ tsupport f := by
@@ -157,7 +157,7 @@ theorem isLocalTest_comp_matVecMul {L : Mat d} (hL : IsUnit L.det)
       continuous_invFun := continuous_matVecMul L⁻¹ }
   refine ⟨?_, ?_, ?_⟩
   · simpa [Function.comp_def] using hf.contDiff.comp (contDiff_matVecMul_top L)
-  · show HasCompactSupport (f ∘ e)
+  · change HasCompactSupport (f ∘ e)
     simpa [e, Function.comp_def] using hf.hasCompactSupport.comp_homeomorph e
   · intro y hy
     have hy' : matVecMul L y ∈ tsupport f := by

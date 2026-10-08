@@ -48,7 +48,7 @@ variable {d : ℕ}
 /-- The weak seminorm of the metric-root image of a sampled optimizer state
 minus a fixed vector is a.e. measurable once every aligned child average of the
 state is, coordinatewise. -/
-private theorem aemeasurable_adaptedWeakSeminorm_metricRoot_sub_const [NeZero d]
+private theorem aemeasurable_adaptedWeakSeminorm_metricRoot_sub_const
     {P : Measure (CoeffSpace d)} {q : Mat d} (hq : q.PosDef) (t : ℤ)
     (S : Mat d) (sample : CoeffSpace d → CoeffSpace d) (p r : Vec d)
     (c : BlockVec d)

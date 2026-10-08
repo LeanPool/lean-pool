@@ -105,7 +105,7 @@ private theorem oscConst_arith (d : ℕ) (L EJ HH : ℝ) (hEJ : 0 ≤ EJ) :
 
 /-- Split the cutoff fluctuation against an integrable carrier into its cell oscillation and
 its cell-average contribution. The bounded cutoff keeps each weighted carrier integrable. -/
-private theorem cutoffFluctuation_split {d : ℕ} [NeZero d] (q : Mat d) (hq : IsUnit q)
+private theorem cutoffFluctuation_split {d : ℕ} (q : Mat d) (hq : IsUnit q)
     (t : ℤ) (H : ℕ) (φ g : Vec d → ℝ) (hφ : IsResponseCutoff q t φ)
     (hg : IntegrableOn g (HighContrast.adaptedCell q t)) :
     ((triadicIndexBox d H).card : ℝ)⁻¹ * ∑ w ∈ triadicIndexBox d H,
@@ -119,7 +119,7 @@ private theorem cutoffFluctuation_split {d : ℕ} [NeZero d] (q : Mat d) (hq : I
     ((hg.bdd_mul (c := 1) (hφ.2.2.2.2.2.1.continuous.sub
       continuous_const).measurable.aestronglyMeasurable.restrict)
       (Filter.Eventually.of_forall fun x => by
-        rw [Real.norm_eq_abs, abs_le]
+        rw [Pi.sub_apply, Real.norm_eq_abs, abs_le]
         exact ⟨by linarith only [hφ.1 x], by linarith only [hφ.2.1 x]⟩))
     (fun w hw => by
       have hsub : adaptedCellAtCenter q (t - (H : ℤ)) w ⊆ HighContrast.adaptedCell q t :=
@@ -141,7 +141,7 @@ private theorem cutoffFluctuation_split {d : ℕ} [NeZero d] (q : Mat d) (hq : I
   exact eq_sub_of_add_eq hsplit.symm
 
 /-- Integrating the cell and oscillation decomposition preserves the split. -/
-private theorem integral_cutoffFluctuation_split {d : ℕ} [NeZero d] {α : Type*}
+private theorem integral_cutoffFluctuation_split {d : ℕ} {α : Type*}
     [MeasurableSpace α] (P : Measure α) (q : Mat d) (hq : IsUnit q) (H : ℕ)
     (s t : ℤ) (hst : t - (H : ℤ) = s) (φ : Vec d → ℝ)
     (hφ : IsResponseCutoff q t φ) (g : α → Vec d → ℝ)
@@ -174,7 +174,7 @@ private theorem integral_cutoffFluctuation_split {d : ℕ} [NeZero d] {α : Type
   exact integral_congr_ae (Filter.Eventually.of_forall hpoint)
 
 /-- Move the cell part's cutoff average from the lower cell index to the terminal index. -/
-private theorem integral_cutoffCellPart_shift {d : ℕ} [NeZero d] {α : Type*}
+private theorem integral_cutoffCellPart_shift {d : ℕ} {α : Type*}
     [MeasurableSpace α] (P : Measure α) (q : Mat d) (H : ℕ) (s t : ℤ)
     (hst : t - (H : ℤ) = s) (φ : Vec d → ℝ) (g : α → Vec d → ℝ)
     (hwt : ∀ w, volumeAverage (adaptedCellAtCenter q s w)

@@ -143,7 +143,7 @@ theorem exists_identityCoarseGrainingComparisonDatum_of_hcWeakSolution
                     (Book.Ch02.cubeDomain Q).measurableSet ?_
                   intro x _hx
                   have hgrad : v.grad x = u.grad x - w.toH1Function.grad x := by
-                    show (u - w.toH1Function).grad x = u.grad x - w.toH1Function.grad x
+                    change (u - w.toH1Function).grad x = u.grad x - w.toH1Function.grad x
                     rw [H1Function.sub_grad]
                   simp only [hb0_apply, hpsiGrad, hgrad, sub_eq_add_neg, vecDot_add_right,
                     vecDot_neg_right]
@@ -156,7 +156,7 @@ theorem exists_identityCoarseGrainingComparisonDatum_of_hcWeakSolution
         w.toH1Function.toFun =ᵐ[volumeMeasureOn U]
           fun x => u.toFun x - v.toFun x := by
       filter_upwards with x
-      show w.toH1Function.toFun x = u.toFun x - (u - w.toH1Function).toFun x
+      change w.toH1Function.toFun x = u.toFun x - (u - w.toH1Function).toFun x
       rw [H1Function.sub_toFun]
       change w.toH1Function.toFun x = u.toFun x - (u.toFun x - w.toH1Function.toFun x)
       ring

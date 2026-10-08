@@ -308,7 +308,7 @@ theorem selectedRoundedPhysicalCube_terminalGeneration_subset_ellipsoid
 private theorem isWeakSolutionOn_selectedRoundedCenteredPullback_iff
     (geom : RoundedGenerationAnalyticGeometry d)
     {abar : Mat d} (hS : (symmPart abar).PosDef)
-    {U : Set (Vec d)} [IsFiniteMeasure (volumeMeasureOn U)]
+    {U : Set (Vec d)}
     (hU : IsOpen U) (a : CoeffField d) {u : Vec d → ℝ}
     {Du : Vec d → Vec d} (hu : MemScalarL2 U u)
     (hDu : ∀ i, MemScalarL2 U fun x ↦ Du x i)

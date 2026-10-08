@@ -85,10 +85,14 @@ theorem integrable_of_entries {F : Ω → Matrix n n ℝ}
     Integrable.of_eval fun i => Integrable.of_eval fun j => h i j
   convert hpi using 1
 
+omit [Fintype n] [DecidableEq n] in
 /-- Entrywise measurability is measurability. -/
-theorem aestronglyMeasurable_of_entries {F : Ω → Matrix n n ℝ}
+theorem aestronglyMeasurable_of_entries {n : Type u_1} [Finite n]
+    {Ω : Type u_2} [MeasurableSpace Ω] {μ : Measure Ω} {F : Ω → Matrix n n ℝ}
     (h : ∀ i j, AEStronglyMeasurable (fun a => F a i j) μ) :
     AEStronglyMeasurable F μ := by
+  classical
+  let : Fintype n := Fintype.ofFinite n
   have hEq : F = fun a => ∑ i : n, ∑ j : n, F a i j • Matrix.single i j (1 : ℝ) :=
     funext fun a => matrix_eq_sum_smul_single (F a)
   rw [hEq]

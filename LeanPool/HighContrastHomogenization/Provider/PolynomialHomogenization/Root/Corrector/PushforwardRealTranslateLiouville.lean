@@ -68,7 +68,7 @@ theorem memLiouvilleClass_realTranslate_subConst {b : CoeffField d} {theta : ℝ
     tendsto_growth_realTranslate_subConst htheta v t c hgrowth⟩
 
 /-- **The residue, discharged.** -/
-theorem realTranslateLiouville (d : ℕ) [NeZero d] : RealTranslateLiouville d :=
+theorem realTranslateLiouville (d : ℕ) : RealTranslateLiouville d :=
   fun _ _ htheta _ _ t c h =>
     memLiouvilleClass_realTranslate_subConst htheta h t c
 

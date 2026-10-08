@@ -41,7 +41,7 @@ variable {d : ℕ}
 
 /-- **The burn-split deepened mean envelope.**  The window height is
 `G + 1`, matching the moment interface. -/
-theorem adaptedMean_le_scaled_burnsplit [NeZero d]
+theorem adaptedMean_le_scaled_burnsplit
     (hd : 2 ≤ d) {g : ℝ} (hg : g ∈ Set.Ico (0 : ℝ) 1)
     {P : Measure (CoeffSpace d)} [IsProbabilityMeasure P]
     {E : BlockMat d} {Ψ' : ℝ → ℝ} {K' : ℝ} {Sh : CoeffSpace d → ℝ}
@@ -182,7 +182,7 @@ theorem adaptedMean_le_scaled_burnsplit [NeZero d]
 
 /-- **The collapsed burn-split mean envelope**: past the burn-in the
 coefficient is the absolute constant `4`. -/
-theorem adaptedMean_le_scaled_burnsplit_collapsed [NeZero d]
+theorem adaptedMean_le_scaled_burnsplit_collapsed
     (hd : 2 ≤ d) {g : ℝ} (hg : g ∈ Set.Ico (0 : ℝ) 1)
     {P : Measure (CoeffSpace d)} [IsProbabilityMeasure P]
     {E : BlockMat d} {Ψ' : ℝ → ℝ} {K' : ℝ} {Sh : CoeffSpace d → ℝ}

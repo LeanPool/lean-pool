@@ -56,9 +56,9 @@ private theorem adaptedLowRows_energy_le [NeZero d] {P : Measure (CoeffSpace d)}
     (hstat : HCPoly.Frozen.IsStationaryLaw P)
     (hdag : HCPoly.Frozen.CoarseEllipticityDagger P g E Ψ K S)
     {q : Mat d} (hq : q.PosDef) (hqinv : ‖q⁻¹‖ ≤ 101 / 100)
-    {n m J : ℤ} (hnm : n < m) (hJn : J ≤ n) (hg0 : 0 ≤ g) (hg1 : g < 1)
+    {n m J : ℤ} (hg0 : 0 ≤ g) (hg1 : g < 1)
     {Z : ℤ → Finset (Fin d → ℤ)}
-    (hZ : ∀ r, ↑(Z r) = fillingIndex q n
+    (hZ : ∀ r, ↑(Z r) = Transport.fillingIndex q n
       (adaptedCellTranslate (1 : Mat d) m 0) r)
     (X : BlockVec d)
     (hE0 : 0 ≤ 1 / 2 * blockVecDot X (blockMatVecMul E X)) :
@@ -112,7 +112,7 @@ private theorem adaptedLowRows_energy_le [NeZero d] {P : Measure (CoeffSpace d)}
   exact mul_nonneg (mul_nonneg hCq0 h2) hE0
 
 private theorem reverseCutoffTail_le {g K : ℝ} {n m J : ℤ}
-    (hg0 : 0 ≤ g) (hg1 : g < 1) (hJ0 : J ≤ 0)
+    (hg1 : g < 1) (hJ0 : J ≤ 0)
     (hGam1 : 1 ≤ transferGauge g K n)
     {A B T : ℝ} (hA0 : 0 ≤ A) (hB0 : 0 ≤ B)
     (hT : T ≤ 2 * K ^ 2)
@@ -245,7 +245,10 @@ theorem centeredCube_sub_adaptedMean_le [NeZero d] {P : Measure (CoeffSpace d)}
   obtain ⟨hGint, hGmean⟩ := integrable_affine_fullBlock hSint E
     (A := 6 * (d : ℝ) * Real.sqrt d * ‖q‖)
     (B := 2 * (6 * (d : ℝ) * Real.sqrt d * ‖q⁻¹‖) * (1 - g)⁻¹ + 1)
-    (D := 2 * (1 - g)⁻¹ * ((3 : ℝ) ^ (-m) * (3 : ℝ) ^ ((J : ℝ) * (1 - g)))
+    (D := 2 * (1 - g)⁻¹ * ((3 : ℝ) ^ (-m) * (3 : ℝ) ^ ((J : ℝ) * (1 - g))))
+  have hkey := Transport.annealedBlock_le_of_ae_le hW hcellint hGint
+    (ae_coarseBlock_centeredCube_le_rows hdag hq hm0 hJn hZ)
+  have hmeanS : ∫ a, S a ∂P ≤ 2 * K ^ 2 := integral_source_le hdag
   rw [hGmean] at hkey
   rw [← htarget]
   intro X
@@ -317,7 +320,7 @@ theorem centeredCube_sub_adaptedMean_le [NeZero d] {P : Measure (CoeffSpace d)}
     intro w _
     rw [Recurrence.annealedBlock_adaptedCellAt_eq_adaptedMean hstat hgrid hlAl hmeasn w]
   -- the rows below the starting generation
-  have hlow := adaptedLowRows_energy_le hd hstat hdag hq hqinv hnm hJn hg0 hg1 hZ X hE0
+  have hlow := adaptedLowRows_energy_le (J := J) hd hstat hdag hq hqinv hg0 hg1 hZ X hE0
   -- the tail, under one unit of the printed error
   have hGam1 : (1 : ℝ) ≤ transferGauge g K n := one_le_transferGauge hg0 hg1 n
   have h3nm : (3 : ℝ) ^ (-m) * (3 : ℝ) ^ n = (3 : ℝ) ^ (n - m) := by
@@ -325,7 +328,7 @@ theorem centeredCube_sub_adaptedMean_le [NeZero d] {P : Measure (CoeffSpace d)}
     congr 1
     ring
   have h3nmpos : (0 : ℝ) < (3 : ℝ) ^ (n - m) := by positivity
-  have htailfinal := reverseCutoffTail_le hg0 hg1 hJ0 hGam1
+  have htailfinal := reverseCutoffTail_le hg1 hJ0 hGam1
     (A := 6 * (d : ℝ) * Real.sqrt d * ‖q‖)
     (B := 2 * (6 * (d : ℝ) * Real.sqrt d * ‖q⁻¹‖) * (1 - g)⁻¹ + 1)
     (T := ∫ a, S a ∂P) (by positivity) (by positivity) hmeanS hJmul

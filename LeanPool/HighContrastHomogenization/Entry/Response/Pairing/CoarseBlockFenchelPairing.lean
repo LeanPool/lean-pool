@@ -419,7 +419,7 @@ private theorem cellAverage_optimizerField_eq_canonicalBlockState {d : ℕ}
 
 /-- The minus bridge at an invertible grid: the cell average of the doubled optimizer field of an
 arbitrary response maximizer for `a_-` equals the cell average of the canonical state for `a_-`. -/
-private theorem cellAverage_optimizerField_respCoeffMinus_eq_canonical {d : ℕ} [NeZero d]
+private theorem cellAverage_optimizerField_respCoeffMinus_eq_canonical {d : ℕ}
     {q : Mat d} (hq : IsUnit q) (t : ℤ) (F : BlockMat d) (a : CoeffSpace d) (p r : Vec d)
     (u : AHarmonicFunction (respCoeffMinus F a) (HighContrast.adaptedCell q t))
     (hu : IsResponseMaximizer (HighContrast.adaptedCell q t) p r (respCoeffMinus F a) u)
@@ -436,7 +436,7 @@ private theorem cellAverage_optimizerField_respCoeffMinus_eq_canonical {d : ℕ}
 
 /-- The plus bridge at an invertible grid: the cell average of the doubled optimizer field of an
 arbitrary response maximizer for `a_+` equals the cell average of the canonical state for `a_+`. -/
-private theorem cellAverage_optimizerField_respCoeffPlus_eq_canonical {d : ℕ} [NeZero d]
+private theorem cellAverage_optimizerField_respCoeffPlus_eq_canonical {d : ℕ}
     {q : Mat d} (hq : IsUnit q) (t : ℤ) (F : BlockMat d) (a : CoeffSpace d) (p r : Vec d)
     (u : AHarmonicFunction (respCoeffPlus F a) (HighContrast.adaptedCell q t))
     (hu : IsResponseMaximizer (HighContrast.adaptedCell q t) p r (respCoeffPlus F a) u)
@@ -456,7 +456,7 @@ response maximizers for the recentred coefficient `a_-` is measurable in the coe
 The field need not be measurable in the sample, but its cell average is determined by the
 measurable canonical selection through Chapter-2 a.e. gradient uniqueness, so the subcell average
 entering the weak quantity of `e.response.weak.estimate` is measurable. -/
-theorem measurable_cellAverage_optimizerField_respCoeffMinus {d : ℕ} [NeZero d]
+theorem measurable_cellAverage_optimizerField_respCoeffMinus {d : ℕ}
     (P : Measure (CoeffSpace d)) (jStar : ℕ) (hjStar : 2 * d ≤ 3 ^ jStar) (F : BlockMat d)
     (hm : (explicitCanonicalMetric F).PosDef) (t : ℤ) (e : Vec d) (alpha : BlockCoord d)
     (uM : (a : CoeffSpace d) → AHarmonicFunction (respCoeffMinus F a) (respCell jStar F t))
@@ -485,7 +485,7 @@ theorem measurable_cellAverage_optimizerField_respCoeffMinus {d : ℕ} [NeZero d
 /-- Each coordinate of the cell average of the doubled optimizer field of an arbitrary family of
 response maximizers for the recentred coefficient `a_+` is measurable in the coefficient sample.
 This is the plus twin of `measurable_cellAverage_optimizerField_respCoeffMinus`. -/
-theorem measurable_cellAverage_optimizerField_respCoeffPlus {d : ℕ} [NeZero d]
+theorem measurable_cellAverage_optimizerField_respCoeffPlus {d : ℕ}
     (P : Measure (CoeffSpace d)) (jStar : ℕ) (hjStar : 2 * d ≤ 3 ^ jStar) (F : BlockMat d)
     (hm : (explicitCanonicalMetric F).PosDef) (t : ℤ) (e : Vec d) (alpha : BlockCoord d)
     (uP : (a : CoeffSpace d) → AHarmonicFunction (respCoeffPlus F a) (respCell jStar F t))

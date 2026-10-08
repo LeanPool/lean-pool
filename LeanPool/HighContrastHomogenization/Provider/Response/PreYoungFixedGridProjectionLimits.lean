@@ -58,7 +58,7 @@ theorem of_real_abs_integral_primal_physical_oscillation_le_row
     (hweak : profilePrimalWeakQuantity P m0
       (Recurrence.posDef_of_isRoundedGrid hgrid) t
       (fun a ↦ a.subSkew g hg) p r ≠ ⊤) :
-    ENNReal.ofReal |∫ a, primal_physical_oscillation
+    ENNReal.ofReal |∫ a, primalPhysicalOscillation
         (Recurrence.posDef_of_isRoundedGrid hgrid) s t g hg p r Qcen a ∂P| ≤
       ENNReal.ofReal
           (preYoungRowCoefficient d *
@@ -71,9 +71,9 @@ theorem of_real_abs_integral_primal_physical_oscillation_le_row
         profilePrimalHattedEarlierRow P q g s Pcen Qcen ^ (1 / 2 : ℝ) := by
   let hq := Recurrence.posDef_of_isRoundedGrid hgrid
   apply ofReal_abs_integral_le_of_tendsto_of_uniform_bound
-    (F := fun n ↦ primal_projected_oscillation
+    (F := fun n ↦ primalProjectedOscillation
       hq s t g hg p r Qcen (n + 1))
-    (f := primal_physical_oscillation hq s t g hg p r Qcen)
+    (f := primalPhysicalOscillation hq s t g hg p r Qcen)
   · intro n
     exact (aestrongly_measurable_primal_projected_oscillation
       (P := P) hq hst g hg p r Qcen (n + 1)).aemeasurable
@@ -103,7 +103,7 @@ theorem of_real_abs_integral_primal_flux_physical_oscillation_le_row
     (hweak : profilePrimalWeakQuantity P m0
       (Recurrence.posDef_of_isRoundedGrid hgrid) t
       (fun a ↦ a.subSkew g hg) p r ≠ ⊤) :
-    ENNReal.ofReal |∫ a, primal_flux_physical_oscillation
+    ENNReal.ofReal |∫ a, primalFluxPhysicalOscillation
         (Recurrence.posDef_of_isRoundedGrid hgrid) s t g hg p r Pcen a ∂P| ≤
       ENNReal.ofReal
           (preYoungRowCoefficient d *
@@ -116,9 +116,9 @@ theorem of_real_abs_integral_primal_flux_physical_oscillation_le_row
         profilePrimalHattedEarlierRow P q g s Pcen Qcen ^ (1 / 2 : ℝ) := by
   let hq := Recurrence.posDef_of_isRoundedGrid hgrid
   apply ofReal_abs_integral_le_of_tendsto_of_uniform_bound
-    (F := fun n ↦ primal_flux_projected_oscillation
+    (F := fun n ↦ primalFluxProjectedOscillation
       hq s t g hg p r Pcen (n + 1))
-    (f := primal_flux_physical_oscillation hq s t g hg p r Pcen)
+    (f := primalFluxPhysicalOscillation hq s t g hg p r Pcen)
   · intro n
     exact (aestrongly_measurable_primal_flux_projected_oscillation
       (P := P) hq hst g hg p r Pcen (n + 1)).aemeasurable
@@ -148,7 +148,7 @@ theorem of_real_abs_integral_adjoint_gradient_physical_oscillation_le_row
     (hweak : profileAdjointWeakQuantity P m0
       (Recurrence.posDef_of_isRoundedGrid hgrid) t
       (fun a ↦ a.subSkew g hg) p r ≠ ⊤) :
-    ENNReal.ofReal |∫ a, adjoint_gradient_physical_oscillation
+    ENNReal.ofReal |∫ a, adjointGradientPhysicalOscillation
         (Recurrence.posDef_of_isRoundedGrid hgrid) s t g hg p r Qcen a ∂P| ≤
       ENNReal.ofReal
           (preYoungRowCoefficient d *
@@ -161,9 +161,9 @@ theorem of_real_abs_integral_adjoint_gradient_physical_oscillation_le_row
         profileAdjointHattedEarlierRow P q g s Pcen Qcen ^ (1 / 2 : ℝ) := by
   let hq := Recurrence.posDef_of_isRoundedGrid hgrid
   apply ofReal_abs_integral_le_of_tendsto_of_uniform_bound
-    (F := fun n ↦ adjoint_gradient_projected_oscillation
+    (F := fun n ↦ adjointGradientProjectedOscillation
       hq s t g hg p r Qcen (n + 1))
-    (f := adjoint_gradient_physical_oscillation hq s t g hg p r Qcen)
+    (f := adjointGradientPhysicalOscillation hq s t g hg p r Qcen)
   · intro n
     exact (aestrongly_measurable_adjoint_gradient_projected_oscillation
       (P := P) hq hst g hg p r Qcen (n + 1)).aemeasurable
@@ -193,7 +193,7 @@ theorem of_real_abs_integral_adjoint_flux_physical_oscillation_le_row
     (hweak : profileAdjointWeakQuantity P m0
       (Recurrence.posDef_of_isRoundedGrid hgrid) t
       (fun a ↦ a.subSkew g hg) p r ≠ ⊤) :
-    ENNReal.ofReal |∫ a, adjoint_flux_physical_oscillation
+    ENNReal.ofReal |∫ a, adjointFluxPhysicalOscillation
         (Recurrence.posDef_of_isRoundedGrid hgrid) s t g hg p r Pcen a ∂P| ≤
       ENNReal.ofReal
           (preYoungRowCoefficient d *
@@ -206,9 +206,9 @@ theorem of_real_abs_integral_adjoint_flux_physical_oscillation_le_row
         profileAdjointHattedEarlierRow P q g s Pcen Qcen ^ (1 / 2 : ℝ) := by
   let hq := Recurrence.posDef_of_isRoundedGrid hgrid
   apply ofReal_abs_integral_le_of_tendsto_of_uniform_bound
-    (F := fun n ↦ adjoint_flux_projected_oscillation
+    (F := fun n ↦ adjointFluxProjectedOscillation
       hq s t g hg p r Pcen (n + 1))
-    (f := adjoint_flux_physical_oscillation hq s t g hg p r Pcen)
+    (f := adjointFluxPhysicalOscillation hq s t g hg p r Pcen)
   · intro n
     exact (aestrongly_measurable_adjoint_flux_projected_oscillation
       (P := P) hq hst g hg p r Pcen (n + 1)).aemeasurable

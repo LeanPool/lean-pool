@@ -40,23 +40,30 @@ noncomputable section
 
 open scoped ENNReal
 
+/-- Scalar scale-zero envelope combining the alpha budget with the square of the cross budget. -/
 @[expose]
 public noncomputable def caccioppoliScaleZeroEnvelopeBound
     (A X : ℝ) : ℝ :=
   36 * ((6561 : ℝ) * 6561 * X ^ (2 : ℕ)) +
     36 * Real.exp 1 * ((9 : ℝ) * 4 * 81 * X * X * A) + 1
 
+/-- Boundary scale-zero scalar bound obtained from the internal alpha and cross envelopes with
+factor 18 to the dimension.
+-/
 @[expose]
 noncomputable def boundaryCaccioppoliScaleZeroScalarBound
-    (d : ℕ) [NeZero d] : ℝ :=
+    (d : ℕ) : ℝ :=
   (18 : ℝ) ^ d *
     caccioppoliScaleZeroEnvelopeBound
       (boundaryScaleZeroAlphaInternalEnvelope d)
       (boundaryScaleZeroCrossInternalEnvelope d)
 
+/-- Interior scale-zero scalar bound obtained from the internal alpha and cross envelopes with
+factor 18 to the dimension.
+-/
 @[expose]
 noncomputable def interiorCaccioppoliScaleZeroScalarBound
-    (d : ℕ) [NeZero d] : ℝ :=
+    (d : ℕ) : ℝ :=
   (18 : ℝ) ^ d *
     caccioppoliScaleZeroEnvelopeBound
       (interiorScaleZeroAlphaInternalEnvelope d)
@@ -65,7 +72,7 @@ noncomputable def interiorCaccioppoliScaleZeroScalarBound
 /-- A dimension-only scalar bound dominating both scale-zero bridge constants. -/
 @[expose]
 noncomputable def caccioppoliScaleZeroScalarBound
-    (d : ℕ) [NeZero d] : ℝ :=
+    (d : ℕ) : ℝ :=
   max 1
     (max (boundaryCaccioppoliScaleZeroScalarBound d)
       (interiorCaccioppoliScaleZeroScalarBound d))

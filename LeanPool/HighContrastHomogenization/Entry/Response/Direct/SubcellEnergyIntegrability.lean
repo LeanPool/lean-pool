@@ -460,7 +460,7 @@ private theorem volumeAverage_indicator_mul {d : ℕ} {U V : Set (Vec d)} (hV : 
 every aligned subcell of the coarse scale, the subcell average of the energy density of the
 terminal optimizer of the recentred coefficient `a_- = a - g` is a measurable function of the
 coefficient sample, for an arbitrary family of terminal maximizers. -/
-theorem measurable_volumeAverage_energy_adaptedCellAtCenter_respCoeffMinus {d : ℕ} [NeZero d]
+theorem measurable_volumeAverage_energy_adaptedCellAtCenter_respCoeffMinus {d : ℕ}
     (P : Measure (CoeffSpace d)) (jStar : ℕ) (hjStar : 2 * d ≤ 3 ^ jStar) (F : BlockMat d)
     (hm : (explicitCanonicalMetric F).PosDef) (H : ℕ) (s t : ℤ) (ht : t = s + (H : ℤ)) (e : Vec d)
     (uM : (a : CoeffSpace d) → AHarmonicFunction (respCoeffMinus F a) (respCell jStar F t))
@@ -512,7 +512,7 @@ theorem measurable_volumeAverage_energy_adaptedCellAtCenter_respCoeffMinus {d : 
 
 /-- **The subcell energy of the terminal optimizer is measurable in the sample, plus sign.**  The
 adjoint twin of `measurable_volumeAverage_energy_adaptedCellAtCenter_respCoeffMinus`. -/
-theorem measurable_volumeAverage_energy_adaptedCellAtCenter_respCoeffPlus {d : ℕ} [NeZero d]
+theorem measurable_volumeAverage_energy_adaptedCellAtCenter_respCoeffPlus {d : ℕ}
     (P : Measure (CoeffSpace d)) (jStar : ℕ) (hjStar : 2 * d ≤ 3 ^ jStar) (F : BlockMat d)
     (hm : (explicitCanonicalMetric F).PosDef) (H : ℕ) (s t : ℤ) (ht : t = s + (H : ℤ)) (e : Vec d)
     (uP : (a : CoeffSpace d) → AHarmonicFunction (respCoeffPlus F a) (respCell jStar F t))

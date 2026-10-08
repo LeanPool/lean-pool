@@ -50,7 +50,7 @@ private theorem blockMatVecMul_sub_right (A : BlockMat d)
 
 /-- A centered response matrix controls the reflected optimizer-average
 difference in the diagonal metric. -/
-theorem metricBlockNormSq_responseAverage_sub_le [NeZero d]
+theorem metricBlockNormSq_responseAverage_sub_le
     {m : Mat d} (hm : m.PosDef) {A E : BlockMat d}
     (hA : IsSymmetricBlockMat A) (hE : IsSymmetricBlockMat E)
     (hEpd : BlockPosDef E) (X : BlockVec d) :
@@ -108,7 +108,7 @@ theorem metricBlockNormSq_responseAverage_sub_le [NeZero d]
       ring
 
 /-- The square-root form of the primal centered-average comparison. -/
-theorem sqrt_metricBlockNormSq_responseAverage_sub_le [NeZero d]
+theorem sqrt_metricBlockNormSq_responseAverage_sub_le
     {m : Mat d} (hm : m.PosDef) {A E : BlockMat d}
     (hA : IsSymmetricBlockMat A) (hE : IsSymmetricBlockMat E)
     (hEpd : BlockPosDef E) (p r : Vec d) :

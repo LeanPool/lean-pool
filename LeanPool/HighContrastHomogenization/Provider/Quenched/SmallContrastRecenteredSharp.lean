@@ -94,7 +94,7 @@ theorem blockSharp_skewBlockCongr_annealedBlock_le
         toFullBlockMat (coarseBlock (U : Set (Vec d)) a) *
           fullBlockShear g := by
     intro a
-    show toFullBlockMat (coarseBlock (U : Set (Vec d)) (a.subSkew g hg)) = _
+    change toFullBlockMat (coarseBlock (U : Set (Vec d)) (a.subSkew g hg)) = _
     rw [Response.coarseBlock_subSkew U a g hg, Response.toFullBlockMat_skewBlockCongr]
   have hintF : Integrable
       (fun a => toFullBlockMat (coarseBlock (U : Set (Vec d)) a)) P :=

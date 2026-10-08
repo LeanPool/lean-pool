@@ -54,7 +54,7 @@ theorem aemeasurable_blockSize_adaptedResponse
     hU.isBoundedDomain hvol hF hFpd).aemeasurable
 
 /-- One weighted source-excess term is almost-everywhere measurable. -/
-theorem aemeasurable_source_excess_term [NeZero d]
+theorem aemeasurable_source_excess_term
     {P : Measure (CoeffSpace d)} {rhoMax : ℝ} {q : Mat d} (hq : q.PosDef)
     (t k : ℤ) (w : Fin d → ℤ) {F : BlockMat d}
     (hF : IsSymmetricBlockMat F) (hFpd : BlockPosDef F) :

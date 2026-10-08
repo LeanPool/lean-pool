@@ -77,7 +77,7 @@ theorem openCubeSet_originCube_subset_of_le {d : ℕ} {n m : ℤ}
 /-- Restrict a solution on `Q_m` to the centered subcube `Q_n`, retaining the
 compatible coefficient representative on `Q_n`. -/
 @[expose]
-noncomputable def finiteCubeSolutionRestriction {d : ℕ} [NeZero d]
+noncomputable def finiteCubeSolutionRestriction {d : ℕ}
     (a : Book.Ch02.TriadicCoeffFamily d) {n m : ℤ} (hnm : n ≤ m)
     (u : Book.Ch03.CubeSolution (originCube d m) a) :
     Book.Ch03.CubeSolution (originCube d n) a := by
@@ -108,14 +108,14 @@ noncomputable def finiteCubeSolutionRestriction {d : ℕ} [NeZero d]
   exact Book.Ch02.Solution.ofAEEq hCoeff uR
 
 /-- Restriction preserves the original value representative. -/
-@[simp] theorem finiteCubeSolutionRestriction_toFun {d : ℕ} [NeZero d]
+@[simp] theorem finiteCubeSolutionRestriction_toFun {d : ℕ}
     (a : Book.Ch02.TriadicCoeffFamily d) {n m : ℤ} (hnm : n ≤ m)
     (u : Book.Ch03.CubeSolution (originCube d m) a) :
     (finiteCubeSolutionRestriction a hnm u).toH1.toFun = u.toH1.toFun := by
   rfl
 
 /-- Restriction preserves the original gradient representative. -/
-@[simp] theorem finiteCubeSolutionRestriction_grad {d : ℕ} [NeZero d]
+@[simp] theorem finiteCubeSolutionRestriction_grad {d : ℕ}
     (a : Book.Ch02.TriadicCoeffFamily d) {n m : ℤ} (hnm : n ≤ m)
     (u : Book.Ch03.CubeSolution (originCube d m) a) :
     (finiteCubeSolutionRestriction a hnm u).toH1.grad = u.toH1.grad := by

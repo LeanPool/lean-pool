@@ -114,9 +114,9 @@ theorem translateCoeff_subSkew (z : Fin d → ℤ) (a : CoeffSpace d)
     hqmp.tendsto_ae (CoeffSpace.subSkew_ae a g hg),
     CoeffSpace.subSkew_ae (translateCoeff z a) g hg,
     Source.AKL.translateField_ae z a.1] with x h1 h2 h3 h4
-  show ⇑(Source.AKL.translateField z (a.subSkew g hg).1) x = _
+  change ⇑(Source.AKL.translateField z (a.subSkew g hg).1) x = _
   rw [h1, h2, h3]
-  show _ = ⇑(Source.AKL.translateField z a.1) x - g
+  change _ = ⇑(Source.AKL.translateField z a.1) x - g
   rw [h4]
 
 /-- **Stationarity is invariant under the recentering.** -/
@@ -160,7 +160,7 @@ theorem annealedBlock_recenteredLaw {P : Measure (CoeffSpace d)}
     have h := integrable_mul_left_mul_right (μ := P)
       (fullBlockShear g)ᴴ (fullBlockShear g) hbase
     refine h.congr (Filter.Eventually.of_forall fun a => ?_)
-    show (fullBlockShear g)ᴴ * toFullBlockMat (coarseBlock (U : Set (Vec d)) a) *
+    change (fullBlockShear g)ᴴ * toFullBlockMat (coarseBlock (U : Set (Vec d)) a) *
         fullBlockShear g =
       toFullBlockMat (coarseBlock (U : Set (Vec d)) (a.subSkew g hg))
     rw [Response.coarseBlock_subSkew U a g hg, Response.toFullBlockMat_skewBlockCongr]
@@ -203,7 +203,7 @@ theorem adaptedMean_recenteredLaw {P : Measure (CoeffSpace d)} {q : Mat d}
 
 /-- **The Euclidean annealed contrast is invariant under the recentering.** -/
 theorem annealedContrast_recenteredLaw {P : Measure (CoeffSpace d)}
-    [IsProbabilityMeasure P] (m : ℤ)
+    (m : ℤ)
     (hint : HasFiniteAdaptedMean P (1 : Mat d) m)
     (hpd : BlockPosDef (annealedBlock P (centeredCube d m)))
     {g : Mat d} (hg : IsSkewMat g) :

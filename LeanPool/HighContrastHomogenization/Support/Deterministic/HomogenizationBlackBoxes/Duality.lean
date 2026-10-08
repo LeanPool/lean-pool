@@ -420,7 +420,7 @@ depend on the abandoned Ch1 route.
 -/
 @[expose]
 def SolutionComparisonDualityEstimate
-    (d : ℕ) [NeZero d] (C : ℝ) : Prop :=
+    (d : ℕ) (C : ℝ) : Prop :=
   0 ≤ C ∧
     ∀ (Q : TriadicCube d) (a0 : Mat d) (w F : Vec d → Vec d)
       {s : ℝ} (j : ℕ) {lam0 Lam0 : ℝ},
@@ -482,7 +482,7 @@ theorem IsHomogenizationComparisonPairOn.comparisonPair_solenoidal
 /-- Use the direct arbitrary-matrix solution-comparison duality estimate on a
 homogenization comparison pair. -/
 theorem solutionComparisonNegativeBesovLhs_le_of_solutionComparisonDualityEstimate
-    {d : ℕ} [NeZero d] {C : ℝ}
+    {d : ℕ} {C : ℝ}
     (hduality : SolutionComparisonDualityEstimate d C)
     (Q : TriadicCube d) (a : CoeffField d) (a0 : Mat d)
     (gradU gradV : Vec d → Vec d) {s : ℝ} (j : ℕ)
@@ -504,7 +504,7 @@ Existence of a dimension-only direct duality constant gives the arbitrary-matrix
 Section 3.3.A duality estimate surface.
 -/
 theorem exists_solutionComparisonNegativeBesovLhsBound_of_solutionComparisonDualityEstimate
-    (d : ℕ) [NeZero d]
+    (d : ℕ)
     (hduality : ∃ C : ℝ, SolutionComparisonDualityEstimate d C) :
     ∃ C : ℝ, 0 ≤ C ∧
       ∀ (Q : TriadicCube d) (a : CoeffField d) (a0 : Mat d)
@@ -535,7 +535,7 @@ about the abandoned Ch1 route.
 -/
 @[expose]
 def ScalarSolutionComparisonDualityEstimate
-    (d : ℕ) [NeZero d] (C : ℝ) : Prop :=
+    (d : ℕ) (C : ℝ) : Prop :=
   0 ≤ C ∧
     ∀ (Q : TriadicCube d) (sigma0 : ℝ) (w F : Vec d → Vec d)
       {s : ℝ} (j : ℕ),
@@ -553,7 +553,7 @@ def ScalarSolutionComparisonDualityEstimate
 
 /-- The arbitrary-matrix direct duality estimate specializes to the scalar route. -/
 theorem SolutionComparisonDualityEstimate.to_scalar
-    {d : ℕ} [NeZero d] {C : ℝ}
+    {d : ℕ} {C : ℝ}
     (hduality : SolutionComparisonDualityEstimate d C) :
     ScalarSolutionComparisonDualityEstimate d C := by
   refine ⟨hduality.1, ?_⟩
@@ -573,7 +573,7 @@ theorem SolutionComparisonDualityEstimate.to_scalar
 
 /-- Existence of the arbitrary-matrix direct duality constant implies the scalar one. -/
 theorem exists_scalarSolutionComparisonDualityEstimate_of_solutionComparisonDualityEstimate
-    {d : ℕ} [NeZero d]
+    {d : ℕ}
     (hduality : ∃ C : ℝ, SolutionComparisonDualityEstimate d C) :
     ∃ C : ℝ, ScalarSolutionComparisonDualityEstimate d C := by
   rcases hduality with ⟨C, hC⟩
@@ -581,7 +581,7 @@ theorem exists_scalarSolutionComparisonDualityEstimate_of_solutionComparisonDual
 
 /-- Use the direct scalar-background duality estimate on a comparison pair. -/
 theorem solutionComparisonNegativeBesovLhs_le_of_scalarSolutionComparisonDualityEstimate
-    {d : ℕ} [NeZero d] {C : ℝ}
+    {d : ℕ} {C : ℝ}
     (hduality : ScalarSolutionComparisonDualityEstimate d C)
     (Q : TriadicCube d) (a : CoeffField d) (sigma0 : ℝ)
     (gradU gradV : Vec d → Vec d) {s : ℝ} (j : ℕ)
@@ -604,7 +604,7 @@ Existence of the scalar direct duality constant gives the corrected
 scalar-background Section 3.3.A duality surface.
 -/
 theorem exists_scalarSolutionComparisonDualityConstant_of_scalarSolutionComparisonDualityEstimate
-    (d : ℕ) [NeZero d]
+    (d : ℕ)
     (hduality : ∃ C : ℝ, ScalarSolutionComparisonDualityEstimate d C) :
     ∃ C : ℝ, 0 ≤ C ∧
       ∀ (Q : TriadicCube d) (a : CoeffField d) (sigma0 : ℝ)
@@ -637,7 +637,7 @@ The corrected route exposes the remaining analytic input directly:
 dimension-only theorem data is assumed here.
 -/
 theorem solution_diff_l2_le_dualityConstant_mul_localizedFluxDefect_of_fluxDefect_negativeBesov_le
-    {d : ℕ} [NeZero d] {Cdual : ℝ}
+    {d : ℕ} {Cdual : ℝ}
     (hdual : ScalarSolutionComparisonDualityEstimate d Cdual)
     (Q : TriadicCube d) (a : CoeffField d) (sigma0 : ℝ)
     (gradU gradV : Vec d → Vec d) {s : ℝ} (j : ℕ)
@@ -660,7 +660,7 @@ Scalar-background duality bound with an arbitrary caller-supplied upper bound
 on the localized flux defect.
 -/
 theorem solution_diff_l2_le_dualityConstant_mul_fluxDefectBound_of_localizedFluxDefect_le
-    {d : ℕ} [NeZero d] {Cdual : ℝ}
+    {d : ℕ} {Cdual : ℝ}
     (hdual : ScalarSolutionComparisonDualityEstimate d Cdual)
     (Q : TriadicCube d) (a : CoeffField d) (sigma0 : ℝ)
     (gradU gradV : Vec d → Vec d) {s fluxDefectBound : ℝ} (j : ℕ)
@@ -696,7 +696,7 @@ Besov bound on the flux defect, with nonnegativity supplied separately.
 -/
 theorem
   solution_diff_l2_le_dualityConstant_mul_cubeBesovNegativeFluxDefectBound_of_depth_zero_of_nonneg
-    {d : ℕ} [NeZero d] {Cdual : ℝ}
+    {d : ℕ} {Cdual : ℝ}
     (hdual : ScalarSolutionComparisonDualityEstimate d Cdual)
     (Q : TriadicCube d) (a : CoeffField d) (sigma0 : ℝ)
     (gradU gradV : Vec d → Vec d) {s fluxDefectBound : ℝ}
@@ -729,7 +729,7 @@ Scalar-background duality apex with the Section 3.3.B PDE hypotheses exposed
 directly.
 -/
 theorem solution_diff_l2_le_dualityConstant_mul_localizedFluxDefect_of_sameRhs
-    {d : ℕ} [NeZero d] {Cdual : ℝ}
+    {d : ℕ} {Cdual : ℝ}
     (hdual : ScalarSolutionComparisonDualityEstimate d Cdual)
     (Q : TriadicCube d) (a : CoeffField d) (sigma0 : ℝ)
     (u v : H1Function (cubeSet Q)) (g : Vec d → Vec d) {s : ℝ} (j : ℕ)
@@ -756,7 +756,7 @@ theorem solution_diff_l2_le_dualityConstant_mul_localizedFluxDefect_of_sameRhs
 /-- Scalar-background same-right-hand-side duality bound with a supplied
 localized flux-defect upper bound. -/
 theorem solution_diff_l2_le_dualityConstant_mul_fluxDefectBound_of_sameRhs_of_localizedFluxDefect_le
-    {d : ℕ} [NeZero d] {Cdual : ℝ}
+    {d : ℕ} {Cdual : ℝ}
     (hdual : ScalarSolutionComparisonDualityEstimate d Cdual)
     (Q : TriadicCube d) (a : CoeffField d) (sigma0 : ℝ)
     (u v : H1Function (cubeSet Q)) (g : Vec d → Vec d)
@@ -788,7 +788,7 @@ Scalar-background same-right-hand-side depth-zero duality bound from a direct
 one-cube negative Besov bound on the flux defect.
 -/
 theorem solution_diff_l2_le_dualityConstant_mul_cubeBesovNegativeFluxDefectBound
-    {d : ℕ} [NeZero d] {Cdual : ℝ}
+    {d : ℕ} {Cdual : ℝ}
     (hdual : ScalarSolutionComparisonDualityEstimate d Cdual)
     (Q : TriadicCube d) (a : CoeffField d) (sigma0 : ℝ)
     (u v : H1Function (cubeSet Q)) (g : Vec d → Vec d)

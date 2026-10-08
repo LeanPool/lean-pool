@@ -115,9 +115,9 @@ theorem run_step_service {d : ℕ} (hd : 2 ≤ d) (γ : ℝ) (hγ : γ ∈ Set.I
   have hsync := run_reserve_sync P (Geometry.explicitRoundedGrid jStar st.m) S.h st.k st.n
   have hreserveArg : synchCharge P (Geometry.explicitRoundedGrid jStar st.m) (S.h : ℤ) st.n
       - 0 ≤
-      run_reserve (fun r => blockLogDet (adaptedMean P (Geometry.explicitRoundedGrid jStar st.m) r))
+      runReserve (fun r => blockLogDet (adaptedMean P (Geometry.explicitRoundedGrid jStar st.m) r))
           S.h st.k st.n -
-        run_reserve (fun r => blockLogDet (adaptedMean P (Geometry.explicitRoundedGrid jStar
+        runReserve (fun r => blockLogDet (adaptedMean P (Geometry.explicitRoundedGrid jStar
           st.m) r))
           S.h st.k (st.n + (S.h : ℤ)) := by
     linarith only [hsync, hlogDetLoss_nonneg]
@@ -127,10 +127,10 @@ theorem run_step_service {d : ℕ} (hd : 2 ≤ d) (γ : ℝ) (hγ : γ ∈ Set.I
     exact run_energy_transfer
       (potential P γ jStar (S.eta ε σ) a st.m st.k st.n)
       (potential P γ jStar (S.eta ε σ) a st.m st.k (st.n + (S.h : ℤ)))
-      (run_reserve (fun r => blockLogDet (adaptedMean P (Geometry.explicitRoundedGrid jStar
+      (runReserve (fun r => blockLogDet (adaptedMean P (Geometry.explicitRoundedGrid jStar
         st.m) r))
         S.h st.k st.n)
-      (run_reserve (fun r => blockLogDet (adaptedMean P (Geometry.explicitRoundedGrid jStar
+      (runReserve (fun r => blockLogDet (adaptedMean P (Geometry.explicitRoundedGrid jStar
         st.m) r))
         S.h st.k (st.n + (S.h : ℤ)))
       c w (synchCharge P (Geometry.explicitRoundedGrid jStar st.m) (S.h : ℤ) st.n) 0
@@ -262,9 +262,9 @@ theorem run_step_sync {d : ℕ} (hd : 2 ≤ d) (γ : ℝ) (hγ : γ ∈ Set.Ico 
   have hsync := run_reserve_sync P (Geometry.explicitRoundedGrid jStar st.m) S.h st.k st.n
   have hreserveArg : synchCharge P (Geometry.explicitRoundedGrid jStar st.m) (S.h : ℤ) st.n
       - 0 ≤
-      run_reserve (fun r => blockLogDet (adaptedMean P (Geometry.explicitRoundedGrid jStar st.m) r))
+      runReserve (fun r => blockLogDet (adaptedMean P (Geometry.explicitRoundedGrid jStar st.m) r))
           S.h st.k st.n -
-        run_reserve (fun r => blockLogDet (adaptedMean P (Geometry.explicitRoundedGrid jStar
+        runReserve (fun r => blockLogDet (adaptedMean P (Geometry.explicitRoundedGrid jStar
           st.m) r))
           S.h st.k (st.n + (S.h : ℤ)) := by
     linarith only [hsync, hlogDetLoss_nonneg]
@@ -274,10 +274,10 @@ theorem run_step_sync {d : ℕ} (hd : 2 ≤ d) (γ : ℝ) (hγ : γ ∈ Set.Ico 
     exact run_energy_transfer
       (potential P γ jStar (S.eta ε σ) a st.m st.k st.n)
       (potential P γ jStar (S.eta ε σ) a st.m st.k (st.n + (S.h : ℤ)))
-      (run_reserve (fun r => blockLogDet (adaptedMean P (Geometry.explicitRoundedGrid jStar
+      (runReserve (fun r => blockLogDet (adaptedMean P (Geometry.explicitRoundedGrid jStar
         st.m) r))
         S.h st.k st.n)
-      (run_reserve (fun r => blockLogDet (adaptedMean P (Geometry.explicitRoundedGrid jStar
+      (runReserve (fun r => blockLogDet (adaptedMean P (Geometry.explicitRoundedGrid jStar
         st.m) r))
         S.h st.k (st.n + (S.h : ℤ)))
       c w (synchCharge P (Geometry.explicitRoundedGrid jStar st.m) (S.h : ℤ) st.n) 0
@@ -412,9 +412,9 @@ theorem run_step_long {d : ℕ} (hd : 2 ≤ d) (γ : ℝ) (hγ : γ ∈ Set.Ico 
     (by linarith only [hL0])
   have hreserveArg : detIncrement P (Geometry.explicitRoundedGrid jStar st.m) st.n
       (st.n + 2 * (S.L ε σ : ℤ)) - 0 ≤
-      run_reserve (fun r => blockLogDet (adaptedMean P (Geometry.explicitRoundedGrid jStar st.m) r))
+      runReserve (fun r => blockLogDet (adaptedMean P (Geometry.explicitRoundedGrid jStar st.m) r))
           S.h st.k st.n -
-        run_reserve (fun r => blockLogDet (adaptedMean P (Geometry.explicitRoundedGrid jStar
+        runReserve (fun r => blockLogDet (adaptedMean P (Geometry.explicitRoundedGrid jStar
           st.m) r))
           S.h st.k (st.n + 2 * (S.L ε σ : ℤ)) := by
     have heq : detIncrement P (Geometry.explicitRoundedGrid jStar st.m) st.n
@@ -431,10 +431,10 @@ theorem run_step_long {d : ℕ} (hd : 2 ≤ d) (γ : ℝ) (hγ : γ ∈ Set.Ico 
     exact run_energy_transfer
       (potential P γ jStar (S.eta ε σ) a st.m st.k st.n)
       (potential P γ jStar (S.eta ε σ) a st.m st.k (st.n + 2 * (S.L ε σ : ℤ)))
-      (run_reserve (fun r => blockLogDet (adaptedMean P (Geometry.explicitRoundedGrid jStar
+      (runReserve (fun r => blockLogDet (adaptedMean P (Geometry.explicitRoundedGrid jStar
         st.m) r))
         S.h st.k st.n)
-      (run_reserve (fun r => blockLogDet (adaptedMean P (Geometry.explicitRoundedGrid jStar
+      (runReserve (fun r => blockLogDet (adaptedMean P (Geometry.explicitRoundedGrid jStar
         st.m) r))
         S.h st.k (st.n + 2 * (S.L ε σ : ℤ)))
       c w (detIncrement P (Geometry.explicitRoundedGrid jStar st.m) st.n

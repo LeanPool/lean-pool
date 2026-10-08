@@ -36,7 +36,7 @@ noncomputable section
 variable {d : ℕ}
 
 /-- Each recent optimizer-difference energy is nonnegative. -/
-theorem diagonalWeak_recent_difference_energy_nonneg [NeZero d]
+theorem diagonalWeak_recent_difference_energy_nonneg
     {q : Mat d} (hq : q.PosDef) {k t : ℤ} (hkt : k ≤ t)
     {w : Fin d → ℤ} (hw : w ∈ alignedIndex q k t)
     (a : CoeffSpace d) (p r : Vec d) :

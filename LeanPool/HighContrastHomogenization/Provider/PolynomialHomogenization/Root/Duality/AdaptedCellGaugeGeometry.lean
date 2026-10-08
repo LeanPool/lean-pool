@@ -83,7 +83,7 @@ theorem isOpen_affineImage {L : Mat d} (hL : IsUnit L.det) (z : Vec d)
       exact hy
     · intro hp
       refine ⟨matVecMul L⁻¹ (p - z), hp, ?_⟩
-      show z + matVecMul L (matVecMul L⁻¹ (p - z)) = p
+      change z + matVecMul L (matVecMul L⁻¹ (p - z)) = p
       rw [matVecMul_mul, Matrix.mul_nonsing_inv L hL, matVecMul_one,
         add_sub_cancel]
   rw [hpre]

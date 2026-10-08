@@ -331,7 +331,7 @@ exponent `s` is controlled by genuine dual negative Besov at the smaller
 exponent `t`. -/
 @[expose]
 def ConcreteNegativeFromDualExponentLoss
-    (d : ℕ) [NeZero d] (C : ℝ) : Prop :=
+    (d : ℕ) (C : ℝ) : Prop :=
   0 ≤ C ∧
     ∀ (Q : TriadicCube d) (F : Vec d → Vec d) {s t : ℝ},
       0 < t →
@@ -345,7 +345,7 @@ def ConcreteNegativeFromDualExponentLoss
 /-- The pure Chapter 1 dual-to-circ theorem realizes the deterministic
 exponent-loss bridge with unit prefactor. -/
 theorem concreteNegativeFromDualExponentLoss_geometric
-    (d : ℕ) [NeZero d] :
+    (d : ℕ) :
     ConcreteNegativeFromDualExponentLoss d 1 := by
   refine ⟨by norm_num, ?_⟩
   intro Q F s t ht hts _hs_lt_one hF
@@ -371,7 +371,7 @@ This is the downstream-facing form: the parent concrete negative Besov seminorm
 is controlled by the descendant RMS of note-normalized vector full-dual norms at
 the lower exponent. -/
 theorem cubeBesovNegativeVectorSeminormTwo_le_localizedDualAverage_exponentLoss
-    {d : ℕ} [NeZero d] (Q : TriadicCube d) (F : Vec d → Vec d)
+    {d : ℕ} (Q : TriadicCube d) (F : Vec d → Vec d)
     {s t : ℝ} (j : ℕ)
     (ht : 0 < t) (hts : t < s) (hs_lt_one : s < 1)
     (hF : MemVectorL2 (cubeSet Q) F) :

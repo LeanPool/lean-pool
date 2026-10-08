@@ -125,10 +125,11 @@ theorem transport_pair_mean_bound (d : ℕ) (hd : 2 ≤ d) (γ : ℝ) (hγ : γ 
         apply Finset.sum_le_sum
         intro p hp
         obtain ⟨hpI, hpj⟩ := Finset.mem_filter.mp hp
-        simpa only [hpj] using mul_le_mul_of_nonneg_left (hM p hpI) (by dsimp only [w]; exact
-          three_rpow_rpow_nonneg _ _)
-      _ = (w j * ((I.filter (fun p => p.1 = j)).card : ℝ)) * B j := by rw [Finset.sum_const,
-        nsmul_eq_mul]; ring
+        simpa only [hpj] using mul_le_mul_of_nonneg_left (hM p hpI) (show 0 ≤ w p.1 from
+          three_rpow_rpow_nonneg (-rhoMax d γ * ((t : ℝ) - p.1)) (bigQ d γ : ℝ))
+      _ = (w j * ((I.filter (fun p => p.1 = j)).card : ℝ)) * B j := by
+        rw [Finset.sum_const, nsmul_eq_mul]
+        ring
       _ ≤ (w j * (3 : ℝ) ^ ((d : ℝ) * ((t : ℝ) - j))) * B j := mul_le_mul_of_nonneg_right
         (mul_le_mul_of_nonneg_left hc (by dsimp only [w]; exact three_rpow_rpow_nonneg _ _)) (hB
         j hj)
@@ -252,8 +253,9 @@ theorem transport_weighted_mean_accumulation (d : ℕ) (hd : 2 ≤ d)
       _ ≤ _ := by
         apply mul_le_mul_of_nonneg_right _ hH
         apply mul_le_mul_of_nonneg_left _ (mul_nonneg hG₃ (add_nonneg (by norm_num) hG₁))
-        exact Real.rpow_le_rpow_of_exponent_le (by norm_num) (by dsimp only [a]; nlinarith only
-          [mul_nonneg (sub_pos.mpr hγ.2).le (Nat.cast_nonneg L)])
+        exact Real.rpow_le_rpow_of_exponent_le (by norm_num) (by
+          dsimp only [a]
+          nlinarith only [mul_nonneg (sub_pos.mpr hγ.2).le (Nat.cast_nonneg L)])
   have hdelt : (∑ j ∈ U, w j * δ) ≤ G₁ * δ := by
     simpa only [t, Int.cast_add, Int.cast_natCast] using transport_comparison_error_sum a ha (J
       + (L : ℤ)) t δ hδ
@@ -285,10 +287,13 @@ theorem transport_weighted_mean_accumulation (d : ℕ) (hd : 2 ≤ d)
     have hh1 := Finset.mem_Icc.mp h1
     have hh2 := Finset.mem_Icc.mp h2
     omega
-  have he : (∑ j ∈ V, w j * M j) = ∑ j ∈ V, w j * (Ce * B ^ Q) := Finset.sum_congr rfl fun j hjj
-    => by
-    dsimp only [M]; rw [ite_eq_left (by have := (Finset.mem_Icc.mp hjj).2; dsimp only [J] at
-      this; omega)]
+  have he : (∑ j ∈ V, w j * M j) = ∑ j ∈ V, w j * (Ce * B ^ Q) :=
+    Finset.sum_congr rfl fun j hjj => by
+      dsimp only [M]
+      rw [ite_eq_left (by
+        have := (Finset.mem_Icc.mp hjj).2
+        dsimp only [J] at this
+        omega)]
   have hl : (∑ j ∈ U, w j * M j) = Cm * ((∑ j ∈ U, w j * bulk j) + (∑ j ∈ U, w j * bd j) +
       (∑ j ∈ U, w j * δ) + B ^ Q * ∑ j ∈ U, w j * (decay j + decay j ^ Q)) := by
     calc
@@ -296,8 +301,11 @@ theorem transport_weighted_mean_accumulation (d : ℕ) (hd : 2 ≤ d)
           B ^ Q * (w j * (decay j + decay j ^ Q))) := by
         apply Finset.sum_congr rfl
         intro j hjj
-        dsimp only [M]; rw [ite_eq_right (by have := (Finset.mem_Icc.mp hjj).1; dsimp only [J]
-          at this; omega)]
+        dsimp only [M]
+        rw [ite_eq_right (by
+          have := (Finset.mem_Icc.mp hjj).1
+          dsimp only [J] at this
+          omega)]
         dsimp only [bulk, bd, J]; ring
       _ = _ := by simp only [mul_add, Finset.sum_add_distrib, Finset.mul_sum]
   change (∑ j ∈ Finset.Icc J t, w j * M j) ≤ _
@@ -499,8 +507,14 @@ private theorem transport_profile_fluctuation_history_control {d Q : ℕ}
     exact ae_of_all P fun a => congrArg (fun x : ℝ => x ^ (Q : ℝ)) (hSup a)
   have hgap := transport_weighted_gap_mean Q hQ I hI weight hweight F G hF hG hFpos hFG hmean
   exact hleft.le.trans (hgap.trans
-    (add_le_add (mul_le_mul_of_nonneg_left hflucMoment (by dsimp only [Ag]; positivity))
-      (mul_le_mul_of_nonneg_left hdet (by dsimp only [Bg]; positivity))))
+    (add_le_add (mul_le_mul_of_nonneg_left hflucMoment (by
+      change 0 ≤ (2 : ℝ) ^ ((Q : ℝ) - 1) *
+        (1 + (2 * (d : ℝ)) ^ (Q : ℝ)⁻¹) ^ (Q : ℝ)
+      positivity))
+      (mul_le_mul_of_nonneg_left hdet (by
+        change 0 ≤ (2 : ℝ) ^ (2 * (Q : ℝ) - 1) *
+          (1 + (d : ℝ) ^ (1 - (Q : ℝ)⁻¹)) ^ (Q : ℝ)
+        positivity))))
 
 /-- The reindexed history provides centered boxes and hence a centered cell family. -/
 private theorem transport_reindexed_centered_cells (d : ℕ) (qPlus : Mat d)
@@ -575,7 +589,7 @@ private theorem transport_profile_coefficient_signs (d : ℕ) (γ : ℝ)
   let Bg := (2 : ℝ) ^ (2 * (Q : ℝ) - 1) * (1 + (d : ℝ) ^ (1 - (Q : ℝ)⁻¹)) ^ (Q : ℝ)
   let C := Ag * (Fb + Fs) + (Bg + (3 : ℝ) ^ a) * (Mb + Md + Ms) + 1
   have hG₁ : 0 ≤ G₁ := (one_div_pos.mpr
-    (transport_geometric_Icc a (by linarith only [hγ.2]) 0 0).1).le
+    (transport_geometric_Icc a ha 0 0).1).le
   have hG₃ : 0 ≤ G₃ := (one_div_pos.mpr (transport_geometric_Icc (3 * (1 - γ) / 4)
     (by linarith only [hγ.2]) 0 0).1).le
   have hA : 0 ≤ A := by dsimp only [A]; exact mul_nonneg (by norm_num) (Real.rpow_nonneg
@@ -591,19 +605,28 @@ private theorem transport_profile_coefficient_signs (d : ℕ) (γ : ℝ)
   have hFs : 0 ≤ Fs := by dsimp only [Fs, Xm]; exact mul_nonneg (mul_nonneg (pow_nonneg (by
     norm_num) Q) (pow_nonneg hD Q)) (mul_nonneg (pow_nonneg (by norm_num) Q) (add_nonneg
     (mul_nonneg (by norm_num) (pow_nonneg (by norm_num) Q)) (pow_nonneg (by norm_num) Q)))
-  have hMb : 0 ≤ Mb := by dsimp only [Mb]; exact mul_nonneg (mul_nonneg hCm (add_nonneg (by
-    norm_num) hG₃)) (add_nonneg (by norm_num) hG₁)
+  have hMb : 0 ≤ Mb := by
+    dsimp only [Mb]
+    exact mul_nonneg (mul_nonneg hCm (add_nonneg (by norm_num) hG₃))
+      (add_nonneg (by norm_num) hG₁)
   have hMd : 0 ≤ Md := mul_nonneg hCm hG₁
-  have hMs : 0 ≤ Ms := by dsimp only [Ms]; exact add_nonneg (mul_nonneg (mul_nonneg hCm (by
-    norm_num)) hG₃) (mul_nonneg hEm hG₁)
-  have hAg : 0 ≤ Ag := by dsimp only [Ag]; exact mul_nonneg (Real.rpow_nonneg (by norm_num) _)
-    (Real.rpow_nonneg (add_nonneg (by norm_num) (Real.rpow_nonneg (mul_nonneg (by norm_num)
-    (Nat.cast_nonneg d)) _)) _)
-  have hBg : 0 ≤ Bg := by dsimp only [Bg]; exact mul_nonneg (Real.rpow_nonneg (by norm_num) _)
-    (Real.rpow_nonneg (add_nonneg (by norm_num) (Real.rpow_nonneg (Nat.cast_nonneg d) _)) _)
-  have hC : 0 < C := by dsimp only [C]; exact lt_of_lt_of_le (by norm_num)
-    (le_add_of_nonneg_left (add_nonneg (mul_nonneg hAg (add_nonneg hFb hFs)) (mul_nonneg
-    (add_nonneg hBg (three_rpow_nonneg a)) (add_nonneg (add_nonneg hMb hMd) hMs))))
+  have hMs : 0 ≤ Ms := by
+    dsimp only [Ms]
+    exact add_nonneg (mul_nonneg (mul_nonneg hCm (by norm_num)) hG₃) (mul_nonneg hEm hG₁)
+  have hAg : 0 ≤ Ag := by
+    dsimp only [Ag]
+    exact mul_nonneg (Real.rpow_nonneg (by norm_num) _)
+      (Real.rpow_nonneg (add_nonneg (by norm_num) (Real.rpow_nonneg (mul_nonneg (by norm_num)
+        (Nat.cast_nonneg d)) _)) _)
+  have hBg : 0 ≤ Bg := by
+    dsimp only [Bg]
+    exact mul_nonneg (Real.rpow_nonneg (by norm_num) _)
+      (Real.rpow_nonneg (add_nonneg (by norm_num) (Real.rpow_nonneg (Nat.cast_nonneg d) _)) _)
+  have hC : 0 < C := by
+    dsimp only [C]
+    exact lt_of_lt_of_le (by norm_num)
+      (le_add_of_nonneg_left (add_nonneg (mul_nonneg hAg (add_nonneg hFb hFs)) (mul_nonneg
+        (add_nonneg hBg (three_rpow_nonneg a)) (add_nonneg (add_nonneg hMb hMd) hMs))))
   exact ⟨hQ, hQ1, hQ2, ha, hG₁, hG₃, hA, hD, hEm, hFb, hFs, hMb, hMd, hMs, hAg, hBg, hC⟩
 
 /-- Weighted maxima of the bulk and boundary cell families retain their source moments. -/
@@ -669,7 +692,7 @@ private theorem transport_weighted_V_envelopes {d Q : ℕ} {P : Measure (CoeffSp
 
 /-- Combine early-source and late-Whitney centered bounds into one weighted envelope. -/
 private theorem transport_profile_pointwise_weighted_fluctuation_bound
-    {d : ℕ} {P : Measure (CoeffSpace d)} [IsProbabilityMeasure P]
+    {d : ℕ} {P : Measure (CoeffSpace d)}
     (hd : 2 ≤ d) (γ : ℝ) (hγ : γ ∈ Set.Ico (0 : ℝ) 1)
     (jStar : ℕ) (k n : ℤ) (L : ℕ) (hk : (jStar : ℤ) ≤ k) (hkn : k ≤ n)
     (I : Finset (ℤ × (Fin d → ℤ)))
@@ -772,7 +795,7 @@ private theorem transport_profile_source_amplitudes (β K u v : ℝ)
 
 /-- Selecting the early field or its ordered Whitney comparison preserves integrability. -/
 private theorem transport_profile_selected_ordered_field {d Q : ℕ}
-    {P : Measure (CoeffSpace d)} [IsProbabilityMeasure P] (jStar L : ℕ)
+    {P : Measure (CoeffSpace d)} (jStar L : ℕ)
     (I : Finset (ℤ × (Fin d → ℤ)))
     (F Graw : (ℤ × (Fin d → ℤ)) → CoeffSpace d → BlockMat d)
     (hFmem : ∀ p ∈ I, SchattenMemLp P (Q : ℝ) (F p))
@@ -949,7 +972,8 @@ theorem exists_two_grid_profile_comparison (d : ℕ) (hd : 2 ≤ d)
   let C := Ag * (Fb + Fs) + (Bg + (3 : ℝ) ^ a) * (Mb + Md + Ms) + 1
   obtain ⟨hQ, hQ1, hQ2, ha, hG₁, hG₃, hA, hD, hEm, hFb, hFs, hMb, hMd, hMs, hAg, hBg, hC⟩ := by
     simpa only [Q, a, G₁, G₃, A, D, Em, Xm, Fb, Fs, Mb, Md, Ms, Ag, Bg, C] using
-      transport_profile_coefficient_signs d γ hγ hCf.le hCe.le hCb.le hCd.le hCm.le
+      transport_profile_coefficient_signs d γ hγ (Cf := Cf) (Ce := Ce) (Cb := Cb)
+        (Cd := Cd) (Cm := Cm) hCf.le hCe.le hCb.le hCd.le hCm.le
   let Csrc := max Cr (max Cs (max CbSrc (max CdSrc Co)))
   refine ⟨Csrc, C, hCr.trans_le (le_max_left _ _), hC, ?_⟩
   intro P hP E Ψ K S hstat hunit hdag jStar hj hsrc m mPlus hm hmPlus hratio k n hk hkn L hL
@@ -1066,7 +1090,7 @@ theorem exists_two_grid_profile_comparison (d : ℕ) (hd : 2 ≤ d)
       exact hh.trans (transport_identity_scale_mono (by
         have := mul_le_mul_of_nonneg_left hBnew hCe.le
         have := mul_le_mul_of_nonneg_right this (hY0 aa)
-        simpa only [mul_assoc] using this))) (hIF p hp)
+        simpa only [B, mul_assoc] using this))) (hIF p hp)
   let pen := fun r => meanPenalty Q (relMean P q r s)
   let decay := fun j : ℤ => (3 : ℝ) ^ (-(1 - γ) * ((j : ℝ) - jStar))
   let M := fun j : ℤ => if j < (jStar : ℤ) + L then Em * B ^ Q else Cm *
@@ -1090,9 +1114,9 @@ theorem exists_two_grid_profile_comparison (d : ℕ) (hd : 2 ≤ d)
     hk hkn I (fun p hp => ((hIeq p).mp hp).1) F Graw V cap Xb Xd X Y A Cf Ce B Bf
     hA hCf.le hCe.le hB0 hBf0 hBf hX0 hY0 hXb0 hXd0
     (fun p hp => (hEarly p hp).1) (fun p hp => (hLate p hp).1) hfbMax hfdMax
-  have hdecay : (3 : ℝ) ^ (a * (L : ℝ)) ≤ grow := Real.rpow_le_rpow_of_exponent_le (by
-    norm_num) (by dsimp only [a]; nlinarith only [mul_nonneg (sub_pos.mpr hγ.2).le
-    (Nat.cast_nonneg L)])
+  have hdecay : (3 : ℝ) ^ (a * (L : ℝ)) ≤ grow :=
+    Real.rpow_le_rpow_of_exponent_le (by norm_num) (by
+      dsimp only [a]; nlinarith only [mul_nonneg (sub_pos.mpr hγ.2).le (Nat.cast_nonneg L)])
   have hflucG := transport_profile_fluctuation_moment_control Q hQ I hI f hf0 hf Xb Xd Xs hXb0
     hXd0 hXs0 hXb hXd hXs A D B root Fb Fs Xm grow H R Cb Cd (a * (L : ℝ)) hA hD hCb.le
     hCd.le hH hB0 hroot hXbm hXdm hXsm (by rw [mul_pow, mul_pow, hrootpow]) (by
@@ -1117,8 +1141,8 @@ theorem exists_two_grid_profile_comparison (d : ℕ) (hd : 2 ≤ d)
   have htotal := transport_profile_scalar_accumulation Ag Bg Fb Fs Mb Md Ms a (grow * H) δ
     (B ^ Q * R) Sm _ _ hAg hBg hFb hFs hMb hMd hMs (mul_nonneg hgrow hH) hδ.1
     (mul_nonneg hBpow hR) (by simpa only [mul_assoc] using hSm)
-    (by simpa only [mul_assoc] using hFluc) hMH
-  simpa only [mul_assoc] using htotal
+    (by simpa only [Ag, Bg, mul_assoc] using hFluc) hMH
+  simpa only [C, grow, H, q, qPlus, t, s, R, a, Q, B, mul_assoc] using htotal
 
 end
 end HCPolySupport.HighContrast.Annealed

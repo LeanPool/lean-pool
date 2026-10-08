@@ -64,11 +64,11 @@ public def inlinedRow (rho : ℝ) (Abar : BlockMat d) (S : CoeffSpace d → ℝ)
 private theorem physical_block_row_at_int_eq_inlinedRow
     (rho : ℝ) (Abar : BlockMat d) (S : CoeffSpace d → ℝ) (a : CoeffSpace d)
     {m : ℤ} (hm : 0 ≤ m) :
-    physical_block_row_at_int rho Abar S a m = inlinedRow rho Abar S a m := by
+    physicalBlockRowAtInteger rho Abar S a m = inlinedRow rho Abar S a m := by
   have hcast : ((m.toNat : ℕ) : ℤ) = m := Int.toNat_of_nonneg hm
   have hpow : (3 : ℝ) ^ (m.toNat) = (3 : ℝ) ^ m := by
     rw [← zpow_natCast, hcast]
-  simp only [physical_block_row_at_int, quenched_block_row, inlinedRow, hpow,
+  simp only [physicalBlockRowAtInteger, quenchedBlockRow, inlinedRow, hpow,
     hcast]
 
 /-! ## The tolerance inflation -/
@@ -340,7 +340,7 @@ theorem quenched_convergence_of_coupled_providers (d : ℕ) (hd : 2 ≤ d)
       rw [hsplit, Real.mul_rpow hlampos.le hupos]
     have hcoeff : delta0 * lam ^ (-kappa) ≤ delta :=
       mul_rpow_neg_toleranceDilation_le hkappa hdelta0.1 hdelta.1
-    show inlinedRow ((1 + 3 * g) / 4) Abar S a m ≤ _
+    change inlinedRow ((1 + 3 * g) / 4) Abar S a m ≤ _
     calc inlinedRow ((1 + 3 * g) / 4) Abar S a m
         ≤ delta0 * ((3 : ℝ) ^ m / X a) ^ (-kappa) := hbase
       _ = delta0 * lam ^ (-kappa) *

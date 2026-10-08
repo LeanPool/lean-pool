@@ -74,7 +74,7 @@ theorem weakValueBaseIsotropyAtPar_mono_M {cfirst cmax M M' L rho : ℝ} {Hw : �
 /-! ## The `hmaj` position at a released split level -/
 
 /-- **The `hmaj` position at an abstract envelope scalar, released.** -/
-theorem weak_value_le_baseIsotropyAtPar_sq_at_scalar_at_level [NeZero d]
+theorem weak_value_le_baseIsotropyAtPar_sq_at_scalar_at_level
     {P : Measure (CoeffSpace d)} {E : BlockMat d}
     {c kapc L rho bmaj beta lev cfirst cmax ctail : ℝ} {Hw : ℕ} {t l : ℤ}
     {V : ℕ → ℝ} {V0 : ℝ} {Dr : ℕ → ℝ} {Vmean : ℝ}
@@ -109,7 +109,7 @@ theorem weak_value_le_baseIsotropyAtPar_sq_at_scalar_at_level [NeZero d]
     hrho1 hV hV0 hDr hVmean hbad hbeta hMF2 hMFmean
 
 /-- **The `hmaj` position at the isotropy carriers, released.** -/
-theorem weak_value_le_baseIsotropyAtPar_sq_at_isotropy_at_level [NeZero d]
+theorem weak_value_le_baseIsotropyAtPar_sq_at_isotropy_at_level
     {P : Measure (CoeffSpace d)} {E : BlockMat d}
     {cIso kap rho bmaj beta lev cfirst cmax ctail : ℝ} {Hw : ℕ} {t l : ℤ}
     {V : ℕ → ℝ} {V0 : ℝ} {Dr : ℕ → ℝ} {Vmean : ℝ}
@@ -149,7 +149,7 @@ theorem weak_value_le_baseIsotropyAtPar_sq_at_isotropy_at_level [NeZero d]
     henv hcomp hcfirst hcmax hctail hrho1 hV hV0 hDr hVmean hbad hbeta
 
 /-- **`hmaj` at the isotropy carriers, released.** -/
-theorem hmaj_at_isotropy_at_level [NeZero d]
+theorem hmaj_at_isotropy_at_level
     {P : Measure (CoeffSpace d)} {E : BlockMat d}
     (hE : IsSymmetricBlockMat E) (hEpd : BlockPosDef E)
     (hsharp : BlockMatLoewnerLE (blockSharp E) E)
@@ -196,7 +196,7 @@ theorem hmaj_at_isotropy_at_level [NeZero d]
 
 /-- **`hmaj` at a law-free normalizer, released.**  The normalizer is weakened
 to any upper bound, which is what the endpoint's binder requires of it. -/
-theorem hmaj_at_isotropy_of_metric_bound_at_level [NeZero d]
+theorem hmaj_at_isotropy_of_metric_bound_at_level
     {P : Measure (CoeffSpace d)} {E : BlockMat d}
     (hE : IsSymmetricBlockMat E) (hEpd : BlockPosDef E)
     (hsharp : BlockMatLoewnerLE (blockSharp E) E)

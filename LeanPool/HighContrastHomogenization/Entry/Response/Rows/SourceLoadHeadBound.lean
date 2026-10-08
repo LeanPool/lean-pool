@@ -85,7 +85,7 @@ theorem integral_sqrt_mul_sqrt_le_sqrt_mul_sqrt {alpha : Type*} [MeasurableSpace
       (integral_eq_zero_iff_of_nonneg (fun a => hf0 a) hf).mp hA.symm
     have hprodae : (fun a => Real.sqrt (f a) * Real.sqrt (g a)) =ᵐ[P] 0 :=
       hfae.mono fun a ha => by
-        show Real.sqrt (f a) * Real.sqrt (g a) = 0
+        change Real.sqrt (f a) * Real.sqrt (g a) = 0
         simp only [ha, Pi.zero_apply, Real.sqrt_zero, zero_mul]
     have hI : (∫ a, Real.sqrt (f a) * Real.sqrt (g a) ∂P) = 0 :=
       (integral_eq_zero_iff_of_nonneg
@@ -97,7 +97,7 @@ theorem integral_sqrt_mul_sqrt_le_sqrt_mul_sqrt {alpha : Type*} [MeasurableSpace
         (integral_eq_zero_iff_of_nonneg (fun a => hg0 a) hg).mp hB.symm
       have hprodae : (fun a => Real.sqrt (f a) * Real.sqrt (g a)) =ᵐ[P] 0 :=
         hgae.mono fun a ha => by
-          show Real.sqrt (f a) * Real.sqrt (g a) = 0
+          change Real.sqrt (f a) * Real.sqrt (g a) = 0
           simp only [ha, Pi.zero_apply, Real.sqrt_zero, mul_zero]
       have hI : (∫ a, Real.sqrt (f a) * Real.sqrt (g a) ∂P) = 0 :=
         (integral_eq_zero_iff_of_nonneg
@@ -551,7 +551,7 @@ noncomputable section
 generation `0` the weight `3^{-3n/2}` is `1`, the triadic index box is the singleton box `{0}`,
 and the flat average collapses to the value at the scale-`s` cell itself, so the summand is
 exactly the squared two-term head `(|b_s^{1/2}P| + |(S_{*,s})^{-1/2}Q|)²`. -/
-theorem respSourceLoadSummand_zero {d : ℕ} [NeZero d] (P : Measure (CoeffSpace d)) (jStar : ℕ)
+theorem respSourceLoadSummand_zero {d : ℕ} (P : Measure (CoeffSpace d)) (jStar : ℕ)
     (F : BlockMat d) (s : ℤ) (b : CoeffSpace d → CoeffField d) (Y : BlockVec d) :
     respSourceLoadSummand P jStar F s b Y 0
       = (Real.sqrt (vecDot Y.1 (matVecMul
@@ -567,7 +567,7 @@ theorem respSourceLoadSummand_zero {d : ℕ} [NeZero d] (P : Measure (CoeffSpace
 /-- The squared two-term head `(|b_s^{1/2}P| + |(S_{*,s})^{-1/2}Q|)²` at the terminal scale is
 the `n = 0` summand of the source load `L_s` of `p.response.transfer`, so whenever the defining
 series converges the head is at most the load itself. -/
-theorem sq_head_le_respSourceLoad {d : ℕ} [NeZero d] (P : Measure (CoeffSpace d)) (jStar : ℕ)
+theorem sq_head_le_respSourceLoad {d : ℕ} (P : Measure (CoeffSpace d)) (jStar : ℕ)
     (F : BlockMat d) (s : ℤ) (b : CoeffSpace d → CoeffField d) (Y : BlockVec d)
     (hsum : Summable (respSourceLoadSummand P jStar F s b Y)) :
     (Real.sqrt (vecDot Y.1 (matVecMul
@@ -698,7 +698,7 @@ theorem integral_sq_sqrt_add_sqrt_le {alpha : Type*} [MeasurableSpace alpha]
     hsq.congr (Filter.Eventually.of_forall fun a => hpt a)
   have hcross : Integrable (fun a => 2 * (Real.sqrt (f a) * Real.sqrt (g a))) P :=
     (hsum.sub (hf.add hg)).congr (Filter.Eventually.of_forall fun a => by
-      show (f a + g a + 2 * (Real.sqrt (f a) * Real.sqrt (g a))) - (f a + g a)
+      change (f a + g a + 2 * (Real.sqrt (f a) * Real.sqrt (g a))) - (f a + g a)
         = 2 * (Real.sqrt (f a) * Real.sqrt (g a))
       ring)
   have hA0 : 0 ≤ ∫ a, f a ∂P := integral_nonneg fun a => hf0 a

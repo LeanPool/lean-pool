@@ -153,7 +153,7 @@ theorem exists_integral_abs_pairing_le_respWeak_of_pathwise (d : ℕ) [NeZero d]
              blockMatVecMul (blockSqrt (respM0 F))
                (cellAverage (adaptedCellAtCenter (respGrid jStar F) (t - (n : ℤ)) z)
                  (optimizerField b u) - Y)) ^ 2)) :
-    ∀ (P : Measure (CoeffSpace d)) [IsProbabilityMeasure P] (jStar : ℕ) (F : BlockMat d)
+    ∀ (P : Measure (CoeffSpace d)) (jStar : ℕ) (F : BlockMat d)
       (t : ℤ) (e : Vec d) (φ : Vec d → ℝ),
       2 * d ≤ 3 ^ jStar →
       IsResponseCutoff (respGrid jStar F) t φ →
@@ -171,7 +171,7 @@ theorem exists_integral_abs_pairing_le_respWeak_of_pathwise (d : ℕ) [NeZero d]
               ((optimizerField (respCoeffMinus F a) (uM a) x).2
                 - (respYMinus P jStar F t e).2))| ∂P)
           ≤ C₀ * respWMinus P jStar F t e := by
-  intro P _ jStar F t e φ hjStar hφ uM hu hintegrable
+  intro P jStar F t e φ hjStar hφ uM hu hintegrable
   rcases metric_posDef_or_respGrid_det_eq_zero jStar F with hm | hdet
   · -- Positive-definite branch: integrate the pathwise bound against the law.
     let G : CoeffSpace d → ℝ := fun a => volumeAverage (respCell jStar F t) (fun x =>
@@ -260,7 +260,7 @@ theorem exists_integral_abs_pairing_le_respWeakPlus_of_pathwise (d : ℕ) [NeZer
             blockMatVecMul (blockSqrt (respM0 F))
               (cellAverage (adaptedCellAtCenter (respGrid jStar F) (t - (n : ℤ)) z)
                 (optimizerField b u) - Y)) ^ 2)) :
-    ∀ (P : Measure (CoeffSpace d)) [IsProbabilityMeasure P] (jStar : ℕ) (F : BlockMat d)
+    ∀ (P : Measure (CoeffSpace d)) (jStar : ℕ) (F : BlockMat d)
       (t : ℤ) (e : Vec d) (φ : Vec d → ℝ),
       2 * d ≤ 3 ^ jStar →
       IsResponseCutoff (respGrid jStar F) t φ →
@@ -278,7 +278,7 @@ theorem exists_integral_abs_pairing_le_respWeakPlus_of_pathwise (d : ℕ) [NeZer
               ((optimizerField (respCoeffPlus F a) (uM a) x).2
                 - (respYPlus P jStar F t e).2))| ∂P)
           ≤ C₀ * respWPlus P jStar F t e := by
-  intro P hP jStar F t e φ hjStar hφ uM hu hintegrable
+  intro P jStar F t e φ hjStar hφ uM hu hintegrable
   rcases metric_posDef_or_respGrid_det_eq_zero jStar F with hm | hdet
   · have hgrid : IsUnit (respGrid jStar F) := Geometry.isUnit_roundedGrid hjStar hm
     have hmain := integral_abs_le_respWeakEnergy_of_pathwise P (respGrid jStar F) t (respM0 F)
@@ -495,7 +495,7 @@ theorem memScalarL2_indicator_one {d : ℕ} {U V : Set (Vec d)}
 coefficient sample, for every measurable subcell of the adapted cell.  This is the
 constant-weight case of the localized weighted readout entering the weak quantity `W^-` of
 `e.response.weak.estimate`. -/
-theorem measurable_cellAverage_canonicalRespCoeffMinus {d : ℕ} [NeZero d]
+theorem measurable_cellAverage_canonicalRespCoeffMinus {d : ℕ}
     (q : Mat d) (hq : IsUnit q) (t : ℤ) (F : BlockMat d) (p r : Vec d) (alpha : BlockCoord d)
     {V : Set (Vec d)} (hV : MeasurableSet V) (hVU : V ⊆ HighContrast.adaptedCell q t) :
     Measurable fun a : CoeffSpace d ↦
@@ -511,7 +511,7 @@ theorem measurable_cellAverage_canonicalRespCoeffMinus {d : ℕ} [NeZero d]
 coefficient sample, for every measurable subcell of the adapted cell.  This is the
 constant-weight case of the localized weighted readout entering the weak quantity `W^+` of
 `e.response.weak.estimate`. -/
-theorem measurable_cellAverage_canonicalRespCoeffPlus {d : ℕ} [NeZero d]
+theorem measurable_cellAverage_canonicalRespCoeffPlus {d : ℕ}
     (q : Mat d) (hq : IsUnit q) (t : ℤ) (F : BlockMat d) (p r : Vec d) (alpha : BlockCoord d)
     {V : Set (Vec d)} (hV : MeasurableSet V) (hVU : V ⊆ HighContrast.adaptedCell q t) :
     Measurable fun a : CoeffSpace d ↦

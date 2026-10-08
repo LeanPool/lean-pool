@@ -39,8 +39,9 @@ noncomputable section
 
 namespace Internal
 
-@[expose]
-@[irreducible] noncomputable def specialGradientWeakNormSquare
+/-- The squared gradient weak norm for the special response vectors on the
+scale-`m` origin cube, with exponent `sLower + 2 * β` and centered slope `p0_e`. -/
+@[expose, irreducible] noncomputable def specialGradientWeakNormSquare
     {d : ℕ} [NeZero d] {P : Ch04.RestrictionCoeffLaw d}
     (hP : Ch04.RestrictionLawCarrier P) (hStruct : Ch04.RestrictionStructuralLaw P)
     (hP4 : QuantitativeCoarseGrainedEllipticity P)
@@ -53,8 +54,9 @@ namespace Internal
   let p0_e := (hP.barSigmaStarAtScale hStruct (m : ℤ))⁻¹ • q_e - p_e
   (Ch04.canonicalScalarResponseGradientWeakNormCubeSet Q s p_e q_e p0_e a.toFun) ^ 2
 
-@[expose]
-@[irreducible] noncomputable def specialFluxWeakNormSquare
+/-- The squared flux weak norm for the special response vectors on the
+scale-`m` origin cube, with exponent `sUpper + 2 * β` and centered flux `q0_e`. -/
+@[expose, irreducible] noncomputable def specialFluxWeakNormSquare
     {d : ℕ} [NeZero d] {P : Ch04.RestrictionCoeffLaw d}
     (hP : Ch04.RestrictionLawCarrier P) (hStruct : Ch04.RestrictionStructuralLaw P)
     (hP4 : QuantitativeCoarseGrainedEllipticity P)
@@ -67,8 +69,9 @@ namespace Internal
   let q0_e := q_e - hP.barSigmaAtScale hStruct (m : ℤ) • p_e
   (Ch04.canonicalScalarResponseFluxWeakNormCubeSet Q t p_e q_e q0_e a.toFun) ^ 2
 
-@[expose]
-@[irreducible] noncomputable def specialPairedWeakNormSquare
+/-- The special-vector paired weak-norm square: the gradient square weighted
+by `sigmaHatAtScale` plus the flux square weighted by its inverse. -/
+@[expose, irreducible] noncomputable def specialPairedWeakNormSquare
     {d : ℕ} [NeZero d] {P : Ch04.RestrictionCoeffLaw d}
     (hP : Ch04.RestrictionLawCarrier P) (hStruct : Ch04.RestrictionStructuralLaw P)
     (hP4 : QuantitativeCoarseGrainedEllipticity P)
@@ -77,8 +80,9 @@ namespace Internal
   σ * specialGradientWeakNormSquare hP hStruct hP4 m e a +
     σ⁻¹ * specialFluxWeakNormSquare hP hStruct hP4 m e a
 
-@[expose]
-@[irreducible] noncomputable def specialWeakNormComponentSquareSum
+/-- The special-vector weak-norm square budget combining average, mismatch,
+low-scale, and constant-tail squares, with maximizer weights and an overall factor `16`. -/
+@[expose, irreducible] noncomputable def specialWeakNormComponentSquareSum
     {d : ℕ} [NeZero d] {P : Ch04.RestrictionCoeffLaw d}
     (hP : Ch04.RestrictionLawCarrier P) (hStruct : Ch04.RestrictionStructuralLaw P)
     (hP4 : QuantitativeCoarseGrainedEllipticity P)

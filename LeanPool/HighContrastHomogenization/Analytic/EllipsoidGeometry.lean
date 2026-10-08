@@ -101,14 +101,14 @@ theorem euclideanBallAt_zero_subset_ellipsoid (abar : Mat d) (r : ℝ) :
   have hmul : specBound ((symmPart abar)⁻¹) * vecNormSq x ≤
       specBound ((symmPart abar)⁻¹) * r ^ 2 :=
     mul_le_mul_of_nonneg_left hx'.le hc
-  show vecDot x (matVecMul (symmPart abar)⁻¹ x) ≤ specBound ((symmPart abar)⁻¹) * r ^ 2
+  change vecDot x (matVecMul (symmPart abar)⁻¹ x) ≤ specBound ((symmPart abar)⁻¹) * r ^ 2
   linarith only [hb, hmul]
 
 /-! ## The bridge to `Matrix.PosDef` -/
 
 /-- `symmPart` is Hermitian by construction. -/
 theorem isHermitian_symmPart (A : Mat d) : (symmPart A).IsHermitian := by
-  show (symmPart A)ᴴ = symmPart A
+  change (symmPart A)ᴴ = symmPart A
   ext i j
   simp only [Matrix.conjTranspose_apply, star_trivial, symmPart]
   ring
@@ -149,7 +149,7 @@ theorem measurableSet_ellipsoid (abar : Mat d) (r : ℝ) :
 hypothesis on `abar` is needed. -/
 theorem zero_mem_ellipsoid (abar : Mat d) (r : ℝ) :
     (0 : Vec d) ∈ ellipsoid abar r := by
-  show vecDot (0 : Vec d) (matVecMul (symmPart abar)⁻¹ 0) ≤
+  change vecDot (0 : Vec d) (matVecMul (symmPart abar)⁻¹ 0) ≤
     specBound ((symmPart abar)⁻¹) * r ^ 2
   have hzero : vecDot (0 : Vec d) (matVecMul (symmPart abar)⁻¹ 0) = 0 := by
     simp [vecDot]

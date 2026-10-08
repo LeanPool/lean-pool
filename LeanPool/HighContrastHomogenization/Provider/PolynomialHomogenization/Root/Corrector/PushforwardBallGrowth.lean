@@ -129,7 +129,7 @@ theorem euclideanBallAt_subset_euclideanBall_two_mul (t : Vec d) {r : ℝ}
     calc Real.sqrt (vecNormSq x)
         ≤ Real.sqrt (vecNormSq (x - t)) + Real.sqrt (vecNormSq t) := htri
       _ < 2 * r := by linarith only [hsub, ht]
-  show vecNormSq (x - 0) < (2 * r) ^ 2
+  change vecNormSq (x - 0) < (2 * r) ^ 2
   rw [sub_zero, pow_two]
   have hmm := mul_self_lt_mul_self (Real.sqrt_nonneg (vecNormSq x)) hlt
   rwa [Real.mul_self_sqrt (vecNormSq_nonneg x)] at hmm

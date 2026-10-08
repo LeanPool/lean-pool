@@ -57,6 +57,7 @@ theorem sharp_order_bounds_of_selected_defect
 /-- Uniform data of the generation chosen at the private spine tolerance. -/
 structure PrintOrderToleranceSelectedRoundedSpine
     (d : ℕ) [NeZero d] (Cid : ℝ) where
+  /-- Admissible rounding generation selected at the private spine tolerance. -/
   generation : ℤ
   admissible : (kZero d : ℤ) ≤ generation
   fine : ∀ (abar : Mat d) (hS : (symmPart abar).PosDef),

@@ -89,7 +89,7 @@ theorem vecMulVec_mulVec_self (x y : Vec d) :
 theorem posSemidef_vecMulVec_self (x : Vec d) :
     (Matrix.vecMulVec x x).PosSemidef := by
   have hherm : (Matrix.vecMulVec x x).IsHermitian := by
-    show (Matrix.vecMulVec x x)ᴴ = Matrix.vecMulVec x x
+    change (Matrix.vecMulVec x x)ᴴ = Matrix.vecMulVec x x
     funext i j
     simp [Matrix.vecMulVec_apply, Matrix.conjTranspose_apply, mul_comm]
   refine Matrix.PosSemidef.of_dotProduct_mulVec_nonneg hherm fun y => ?_
@@ -101,7 +101,7 @@ theorem vecMulVec_le_smul_one (x : Vec d) :
     Matrix.vecMulVec x x ≤ (x ⬝ᵥ x) • (1 : Mat d) := by
   refine Initialization.le_of_dotProduct_mulVec_le
     (posSemidef_vecMulVec_self x).isHermitian ?_ fun y => ?_
-  · show ((x ⬝ᵥ x) • (1 : Mat d))ᴴ = (x ⬝ᵥ x) • (1 : Mat d)
+  · change ((x ⬝ᵥ x) • (1 : Mat d))ᴴ = (x ⬝ᵥ x) • (1 : Mat d)
     rw [Matrix.conjTranspose_smul, star_trivial, Matrix.conjTranspose_one]
   · rw [vecMulVec_mulVec_self, dotProduct_smul, smul_eq_mul,
       Matrix.smul_mulVec, Matrix.one_mulVec, dotProduct_smul, smul_eq_mul]
@@ -142,7 +142,7 @@ theorem psd_le_smul_one {T : Mat d} (hT : T.PosSemidef) {c : ℝ}
     (hc : ∀ x : Vec d, x ⬝ᵥ T *ᵥ x ≤ c * (x ⬝ᵥ x)) :
     T ≤ c • (1 : Mat d) := by
   refine Initialization.le_of_dotProduct_mulVec_le hT.isHermitian ?_ fun x => ?_
-  · show (c • (1 : Mat d))ᴴ = c • (1 : Mat d)
+  · change (c • (1 : Mat d))ᴴ = c • (1 : Mat d)
     rw [Matrix.conjTranspose_smul, star_trivial, Matrix.conjTranspose_one]
   · rw [Matrix.smul_mulVec, Matrix.one_mulVec, dotProduct_smul, smul_eq_mul]
     exact hc x

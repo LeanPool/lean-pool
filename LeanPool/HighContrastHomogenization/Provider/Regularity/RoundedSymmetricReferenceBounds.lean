@@ -36,7 +36,7 @@ noncomputable section
 
 variable {d : ℕ}
 
-private theorem baseRoundedGrid_roundingScale_le [NeZero d] :
+private theorem baseRoundedGrid_roundingScale_le :
     (d : ℝ) * (3 : ℝ) ^ (-(kZero d : ℤ)) ≤ 1 / 400 := by
   have hbern : 1 + (d : ℝ) * 2 ≤ (3 : ℝ) ^ d := by
     have h := one_add_mul_le_pow (a := (2 : ℝ)) (by norm_num) d

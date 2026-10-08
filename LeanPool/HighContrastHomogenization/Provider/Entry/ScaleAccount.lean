@@ -243,7 +243,7 @@ private theorem ment_le_mul_of_bounds {d : ℕ} {A Bc th Cexec Csel Cgap LK LP L
 /-- The two printed readings of the entry generation, from the single additive
 bound: the ceiling form and the polynomial form, the latter through
 `3^{log_3 b} = b`. -/
-private theorem exists_ceil_and_pow {C b : ℝ} (hb : 0 < b) {ment : ℤ} (hment0 : 0 ≤ ment)
+theorem exists_ceil_and_pow {C b : ℝ} (hb : 0 < b) {ment : ℤ} (hment0 : 0 ≤ ment)
     (hfin : (ment : ℝ) ≤ C * Real.logb 3 b) :
     ∃ mEnt : ℕ, (mEnt : ℤ) = ment ∧
       (mEnt : ℤ) ≤ ⌈C * Real.logb 3 b⌉ ∧ (3 : ℝ) ^ (mEnt : ℕ) ≤ 3 * b ^ C := by

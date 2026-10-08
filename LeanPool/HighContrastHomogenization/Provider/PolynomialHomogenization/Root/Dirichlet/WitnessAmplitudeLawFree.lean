@@ -79,7 +79,7 @@ noncomputable def witnessAmplitudeC0Factor (d : ℕ) (rho Rad : ℝ) : ℝ :=
 
 /-- The `Lg`-slot half of the law-free witness amplitude: `(d, g, κ)`. -/
 @[expose]
-noncomputable def witnessAmplitudeLgFactor (d : ℕ) [NeZero d]
+noncomputable def witnessAmplitudeLgFactor (d : ℕ)
     (g kappaRate : ℝ) : ℝ :=
   Real.sqrt ((Book.Ch02.geometricDiscount
       (1 - 2 * responseWindowOrder g) 1)⁻¹) *

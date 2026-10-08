@@ -49,7 +49,7 @@ variable {d : ℕ}
 /-! ## Transport between the two Loewner encodings -/
 
 /-- **The quadratic form of a congruence.** -/
-theorem quad_conj {n : Type*} [Fintype n] [DecidableEq n]
+theorem quad_conj {n : Type*} [Fintype n]
     (C M : Matrix n n ℝ) (v : n → ℝ) :
     v ⬝ᵥ (Cᴴ * M * C) *ᵥ v = (C *ᵥ v) ⬝ᵥ M *ᵥ (C *ᵥ v) := by
   rw [conjTranspose_eq_transpose', Matrix.mul_assoc, ← Matrix.mulVec_mulVec,
@@ -62,7 +62,7 @@ theorem elim_comp (v : FullBlockVec d) :
   cases α <;> rfl
 
 /-- **The matrix order from the pointwise comparison of quadratic forms.** -/
-theorem le_of_dotProduct_mulVec_le {n : Type*} [Fintype n] [DecidableEq n]
+theorem le_of_dotProduct_mulVec_le {n : Type*} [Fintype n]
     {A B : Matrix n n ℝ} (hA : A.IsHermitian) (hB : B.IsHermitian)
     (h : ∀ v : n → ℝ, v ⬝ᵥ A *ᵥ v ≤ v ⬝ᵥ B *ᵥ v) : A ≤ B := by
   refine Matrix.le_iff.mpr (Matrix.PosSemidef.of_dotProduct_mulVec_nonneg (hB.sub hA)
@@ -72,7 +72,7 @@ theorem le_of_dotProduct_mulVec_le {n : Type*} [Fintype n] [DecidableEq n]
   linarith only [h v]
 
 /-- **The pointwise comparison of quadratic forms from the matrix order.** -/
-theorem dotProduct_mulVec_le_of_le {n : Type*} [Fintype n] [DecidableEq n]
+theorem dotProduct_mulVec_le_of_le {n : Type*} [Fintype n]
     {A B : Matrix n n ℝ} (h : A ≤ B) (x : n → ℝ) :
     x ⬝ᵥ A *ᵥ x ≤ x ⬝ᵥ B *ᵥ x := by
   have hPS : (B - A).PosSemidef := Matrix.le_iff.mp h

@@ -257,6 +257,7 @@ theorem centered_metric_quadratic_le {M E D : FullBlockMat d}
       rw [hNnorm, hB, hyquad]
       ring
 
+omit [NeZero d] in
 /-- Parent/child decomposition.  Child response maximizers can be chosen
 simultaneously at every depth and cell label. -/
 theorem nonempty_childMaximizerFamily

@@ -110,11 +110,11 @@ private theorem exists_gradCoord_const_ae_on_innerHalf {Q : TriadicCube 1}
       MeasureTheory.Lp.coeFn_zero (Vec 1) (2 : ℝ≥0∞) (volumeMeasureOn V)]
       with x hv hfield hzero
     exact hv.trans (hfield.trans hzero.symm)
-  have hp := (h1CoerciveEstimate_of_isOpenBoundedConvexDomain
+  have hp := (h1CoerciveEstimateOfOpenBoundedConvexDomain
     (isOpenBoundedConvexDomain_scaledOpenCubeSet_of_pos Q (by norm_num))).bound v.toMeanZero
   have hvsubzero_norm : ‖v.subAverage.toScalarL2‖ = 0 := by
     change ‖v.subAverage.toScalarL2‖ ≤
-      (h1CoerciveEstimate_of_isOpenBoundedConvexDomain
+      (h1CoerciveEstimateOfOpenBoundedConvexDomain
         (isOpenBoundedConvexDomain_scaledOpenCubeSet_of_pos Q (by norm_num))).constantValue *
         ‖v.subAverage.gradToVectorL2‖ at hp
     rw [H1Function.gradToVectorL2_subAverage_eq, hvgradzero] at hp

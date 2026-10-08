@@ -86,7 +86,7 @@ one fixed
 generation aligned with a scale `s` under `t = s + H`; every generation `t - m` is that statement
 at `s := t - m` and `H := m`. -/
 theorem integrable_volumeAverage_energy_depth_respCoeffMinus {d : ℕ} [NeZero d]
-    (P : Measure (CoeffSpace d)) [IsProbabilityMeasure P] (jStar : ℕ)
+    (P : Measure (CoeffSpace d)) (jStar : ℕ)
     (hjStar : 2 * d ≤ 3 ^ jStar) (F : BlockMat d) (hm : (explicitCanonicalMetric F).PosDef)
     (t : ℤ) (e : Vec d)
     (uM : (a : CoeffSpace d) → AHarmonicFunction (respCoeffMinus F a) (respCell jStar F t))
@@ -107,7 +107,7 @@ theorem integrable_volumeAverage_energy_depth_respCoeffMinus {d : ℕ} [NeZero d
 /-- **The annealed cell energy of the terminal optimizer on an aligned cell of any generation,
 plus sign.**  The adjoint twin of `integrable_volumeAverage_energy_depth_respCoeffMinus`. -/
 theorem integrable_volumeAverage_energy_depth_respCoeffPlus {d : ℕ} [NeZero d]
-    (P : Measure (CoeffSpace d)) [IsProbabilityMeasure P] (jStar : ℕ)
+    (P : Measure (CoeffSpace d)) (jStar : ℕ)
     (hjStar : 2 * d ≤ 3 ^ jStar) (F : BlockMat d) (hm : (explicitCanonicalMetric F).PosDef)
     (t : ℤ) (e : Vec d)
     (uP : (a : CoeffSpace d) → AHarmonicFunction (respCoeffPlus F a) (respCell jStar F t))
@@ -128,7 +128,7 @@ theorem integrable_volumeAverage_energy_depth_respCoeffPlus {d : ℕ} [NeZero d]
 cell of every generation below the terminal one, the cell average of the scalar crossed pairing of
 the deterministic dual variable with the terminal optimizer state is `P`-integrable. -/
 theorem integrable_volumeAverage_cross_optimizerField_respCoeffMinus {d : ℕ} [NeZero d]
-    (P : Measure (CoeffSpace d)) [IsProbabilityMeasure P] (jStar : ℕ)
+    (P : Measure (CoeffSpace d)) (jStar : ℕ)
     (hjStar : 2 * d ≤ 3 ^ jStar) (F : BlockMat d) (hm : (explicitCanonicalMetric F).PosDef)
     (t : ℤ) (e : Vec d)
     (uM : (a : CoeffSpace d) → AHarmonicFunction (respCoeffMinus F a) (respCell jStar F t))
@@ -207,7 +207,7 @@ theorem integrable_volumeAverage_cross_optimizerField_respCoeffMinus {d : ℕ} [
 /-- **The cell average of the crossed pairing is `P`-integrable, plus sign.**  The adjoint twin of
 `integrable_volumeAverage_cross_optimizerField_respCoeffMinus`. -/
 theorem integrable_volumeAverage_cross_optimizerField_respCoeffPlus {d : ℕ} [NeZero d]
-    (P : Measure (CoeffSpace d)) [IsProbabilityMeasure P] (jStar : ℕ)
+    (P : Measure (CoeffSpace d)) (jStar : ℕ)
     (hjStar : 2 * d ≤ 3 ^ jStar) (F : BlockMat d) (hm : (explicitCanonicalMetric F).PosDef)
     (t : ℤ) (e : Vec d)
     (uP : (a : CoeffSpace d) → AHarmonicFunction (respCoeffPlus F a) (respCell jStar F t))
@@ -355,7 +355,7 @@ noncomputable section
 
 /-- The triadic index box of generation `n` is nonempty: the constant index `0` has every
 coordinate in the interval `[-(3^n - 1)/2, (3^n - 1)/2]`. -/
-theorem triadicIndexBox_nonempty (d : ℕ) [NeZero d] (n : ℕ) : (triadicIndexBox d n).Nonempty := by
+theorem triadicIndexBox_nonempty (d : ℕ) (n : ℕ) : (triadicIndexBox d n).Nonempty := by
   refine ⟨0, ?_⟩
   rw [triadicIndexBox, Fintype.mem_piFinset]
   intro i
@@ -369,7 +369,7 @@ of `g` over the `3^{nd}` triadic subcells `adaptedCellAtCenter q (t - n) w`.  On
 integrability of
 `g` on the parent cell is needed; the subcells cover the parent up to the null grid seams, and
 their equal volumes make the unweighted mean the correct recombination. -/
-theorem volumeAverage_adaptedCell_eq_flat_average {d : ℕ} [NeZero d] (q : Mat d)
+theorem volumeAverage_adaptedCell_eq_flat_average {d : ℕ} (q : Mat d)
     (hq : IsUnit q) (t : ℤ) (n : ℕ) (g : Vec d → ℝ)
     (hint : IntegrableOn g (HighContrast.adaptedCell q t)) :
     volumeAverage (HighContrast.adaptedCell q t) g
@@ -437,7 +437,7 @@ of the split of `(φ - 1) * g` at the level `⨍_{cell} φ - 1` are integrable, 
 `⨍_{cell} (φ - ⨍_{cell} φ) * g` plus the flat average over the subcells of the cell part
 `(⨍_{cell} φ - 1) * ⨍_{cell} g`.  The identity is purely algebraic and needs no positivity of
 either function. -/
-theorem volumeAverage_fluct_eq_osc_add_cell {d : ℕ} [NeZero d] (q : Mat d) (hq : IsUnit q)
+theorem volumeAverage_fluct_eq_osc_add_cell {d : ℕ} (q : Mat d) (hq : IsUnit q)
     (t : ℤ) (n : ℕ) (φ g : Vec d → ℝ)
     (hint : IntegrableOn (fun x => (φ x - 1) * g x) (HighContrast.adaptedCell q t))
     (h1 : ∀ w ∈ triadicIndexBox d n, IntegrableOn
@@ -527,7 +527,7 @@ the depth-`n` triadic subcells of the within-cell oscillation
 `(⨍_{cell} φ - 1) * ⨍_{cell} (X).1 i`.  The identity is purely algebraic: it needs only the
 integrability of the cutoff-weighted coordinate, of the coordinate itself, and of the two
 summands of the split on every subcell. -/
-theorem cutoffStateMeanAux_fst_eq_osc_add_cell {d : ℕ} [NeZero d] (q : Mat d) (hq : IsUnit q)
+theorem cutoffStateMeanAux_fst_eq_osc_add_cell {d : ℕ} (q : Mat d) (hq : IsUnit q)
     (t : ℤ) (n : ℕ) (φ : Vec d → ℝ) {b : CoeffField d}
     (v : AHarmonicFunction b (HighContrast.adaptedCell q t)) (i : Fin d)
     (hφG : IntegrableOn (fun x => φ x * (optimizerField b v x).1 i) (HighContrast.adaptedCell q t))
@@ -573,7 +573,7 @@ the depth-`n` triadic subcells of the within-cell oscillation
 `(⨍_{cell} φ - 1) * ⨍_{cell} (X).2 i`.  The identity is purely algebraic: it needs only the
 integrability of the cutoff-weighted coordinate, of the coordinate itself, and of the two
 summands of the split on every subcell. -/
-theorem cutoffStateMeanAux_snd_eq_osc_add_cell {d : ℕ} [NeZero d] (q : Mat d) (hq : IsUnit q)
+theorem cutoffStateMeanAux_snd_eq_osc_add_cell {d : ℕ} (q : Mat d) (hq : IsUnit q)
     (t : ℤ) (n : ℕ) (φ : Vec d → ℝ) {b : CoeffField d}
     (v : AHarmonicFunction b (HighContrast.adaptedCell q t)) (i : Fin d)
     (hφG : IntegrableOn (fun x => φ x * (optimizerField b v x).2 i) (HighContrast.adaptedCell q t))

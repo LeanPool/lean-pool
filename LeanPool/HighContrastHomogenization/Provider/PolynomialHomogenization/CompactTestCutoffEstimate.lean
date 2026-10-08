@@ -145,7 +145,7 @@ private theorem cubeShrunkSet_subset_scaledClosedCubeSet
     linarith only [hi.2, hscale]
 
 private theorem cutoff_error_bounded_lipschitz
-    {d : ℕ} {M L₀ D t : ℝ} (hM : 0 ≤ M) (hL₀ : 0 ≤ L₀)
+    {d : ℕ} {M L₀ D t : ℝ} (hL₀ : 0 ≤ L₀)
     (hD : 0 ≤ D) (ht : 0 < t) (htOne : t ≤ 1)
     (η : Vec d → ℝ) (h₀ : Vec d → Vec d)
     (hηnonneg : ∀ x, 0 ≤ η x) (hηone : ∀ x, η x ≤ 1)
@@ -201,7 +201,7 @@ private theorem cutoff_error_bounded_lipschitz
       dsimp only [L, B]
       rw [add_mul]
       field_simp [ht.ne']
-      linarith only [hL₀t, hM, hD]
+      linarith only [hL₀t, hD]
     rw [hdecomp]
     calc
       ‖(η x - 1) • (h₀ x - h₀ y) + (η x - η y) • h₀ y‖ ≤
@@ -215,7 +215,7 @@ private theorem cutoff_error_bounded_lipschitz
   exact ⟨hgbound, hglip⟩
 
 private theorem canonical_cutoff_lipschitz_bound
-    {d : ℕ} [NeZero d] (Q : TriadicCube d) {t : ℝ}
+    {d : ℕ} (Q : TriadicCube d) {t : ℝ}
     (ht : 0 < t) (htHalf : t < 1 / 2) :
     let η := QuantitativeCubeCutoff.canonicalFun Q (1 - 2 * t) (1 - t)
     let D := (d : ℝ) * smoothTransitionProfile.derivBound * 2 / cubeRadius Q
@@ -332,7 +332,7 @@ theorem hsNormSq_canonicalCutoff_sub_le
   have hηlip : ∀ x y, |η x - η y| ≤ (D / t) * ‖x - y‖ :=
     canonical_cutoff_lipschitz_bound Q ht htHalf
   obtain ⟨hgbound, hglip⟩ := cutoff_error_bounded_lipschitz
-    hM hL₀ hD ht htOne η h₀ hηnonneg hηone hηlip h₀bound h₀lip
+    hL₀ hD ht htOne η h₀ hηnonneg hηone hηlip h₀bound h₀lip
   have hAU : A ⊆ U := Set.inter_subset_right
   have hzero : ∀ x ∈ U, x ∉ A → g x = 0 := by
     intro x hxU hxA

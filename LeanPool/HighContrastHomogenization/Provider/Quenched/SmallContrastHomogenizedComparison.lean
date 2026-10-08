@@ -205,7 +205,7 @@ def euclideanEntryDefect (K : ℝ) (sK n : ℤ) : ℝ :=
 defect that decays geometrically in the scale.  No aspect-ratio constant
 appears: the Dagger is read at coincident scales, so no adapted-cell boundary
 transfer is performed. -/
-theorem annealedBlock_centeredCube_le_one_add_entryDefect [NeZero d]
+theorem annealedBlock_centeredCube_le_one_add_entryDefect
     {P : Measure (CoeffSpace d)} [IsProbabilityMeasure P] {g : ℝ}
     {E : BlockMat d} {Ψ : ℝ → ℝ} {K : ℝ} {S : CoeffSpace d → ℝ}
     (hdag : HCPoly.Frozen.CoarseEllipticityDagger P g E Ψ K S)

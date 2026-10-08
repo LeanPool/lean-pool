@@ -37,7 +37,7 @@ arbitrary-center local-patch exact small-cube route. Factor and branch estimates
 live in the `LocalPatchConstructor/` submodules.
 -/
 
-namespace BoundaryCaccioppoliHarmonicVectorSmallCubeCoefficientSplit_localPatch
+namespace boundaryCaccioppoliSmallCubeLocalPatchCoefficientSplit
 
 /-- Direct split local-patch exact-to-parent-raw coefficient bounds from
 closed-cube ellipticity.
@@ -71,7 +71,7 @@ theorem
               (cubeRadius Q) ^ (2 : ℕ)) +
           6 * (quantitativeCubeCutoffGradientConst d / cubeRadius Q)) ≤
         (Fintype.card (Fin d) : ℝ) * Clocal) :
-    BoundaryCaccioppoliHarmonicVectorSmallCubeCoefficientSplit_localPatch
+    boundaryCaccioppoliSmallCubeLocalPatchCoefficientSplit
       Q center a s t Clocal Calpha Ccross := by
   let CeffLocal : ℝ := (Fintype.card (Fin d) : ℝ) * Clocal
   let CeffAlpha : ℝ := (Fintype.card (Fin d) : ℝ) * Calpha
@@ -200,9 +200,9 @@ theorem
           hBsum_s hSigmaSum_t hchoice hlt hjk
           (by simpa [Scenter] using hscale) hheight_le_j0)
 
-end BoundaryCaccioppoliHarmonicVectorSmallCubeCoefficientSplit_localPatch
+end boundaryCaccioppoliSmallCubeLocalPatchCoefficientSplit
 
-namespace BoundaryCaccioppoliHarmonicVectorSmallCubeCoefficientSplit_localPatch_allRadii
+namespace boundaryCaccioppoliSmallCubeLocalPatchCoefficientSplitAllRadii
 
 /-- All-radii direct split local-patch exact-to-parent-raw coefficient bounds
 from closed-cube ellipticity.
@@ -236,7 +236,7 @@ theorem
               (cubeRadius Q) ^ (2 : ℕ)) +
           6 * (quantitativeCubeCutoffGradientConst d / cubeRadius Q)) ≤
         (Fintype.card (Fin d) : ℝ) * Clocal) :
-    BoundaryCaccioppoliHarmonicVectorSmallCubeCoefficientSplit_localPatch_allRadii
+    boundaryCaccioppoliSmallCubeLocalPatchCoefficientSplitAllRadii
       Q center a s t Clocal Calpha Ccross := by
   let CeffLocal : ℝ := (Fintype.card (Fin d) : ℝ) * Clocal
   let CeffAlpha : ℝ := (Fintype.card (Fin d) : ℝ) * Calpha
@@ -338,7 +338,7 @@ theorem
       hScenter_nonneg hcentered_alpha hchoice hlt
   constructor
   · intro R hR
-    simpa [BoundaryCaccioppoliHarmonicVectorSmallCubeCoefficientSplit_localPatch_allRadii,
+    simpa [boundaryCaccioppoliSmallCubeLocalPatchCoefficientSplitAllRadii,
       CeffAlpha, CeffCross, hheight, ρm, j, coarseCaccioppoliLocalPatchCutoffHessianBound]
       using hconst hρ₁ hlt hρ₂ R hR
   · intro R hR
@@ -354,7 +354,7 @@ theorem
           hBsum_s hSigmaSum_t hchoice hlt hjk
           (by simpa [Scenter] using hscale) hheight_le_j0)
 
-end BoundaryCaccioppoliHarmonicVectorSmallCubeCoefficientSplit_localPatch_allRadii
+end boundaryCaccioppoliSmallCubeLocalPatchCoefficientSplitAllRadii
 
 end
 

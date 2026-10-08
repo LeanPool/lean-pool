@@ -105,7 +105,7 @@ theorem exists_burnIn_exponent_canonical (d : ℕ) [Nonempty (Fin d)]
         mul_le_mul_of_nonneg_left hGbase hrpow0
       linarith only [ha, hb]
     have hadd : Real.rpow base (cR + 1) = Real.rpow base cR * base := by
-      show base ^ (cR + 1) = base ^ cR * base
+      change base ^ (cR + 1) = base ^ cR * base
       rw [Real.rpow_add hbase0, Real.rpow_one]
     rw [hadd]
     linarith only [hsK, hstep]
@@ -174,7 +174,7 @@ theorem exists_burnIn_exponent_canonical (d : ℕ) [Nonempty (Fin d)]
         (CB * (1 + 6 * sigma) * (3 * (Cd * zetaG g))) *
           (base ^ (2 : ℕ) * base * base) := by ring
     have hpow4 : base ^ (2 : ℕ) * base * base = Real.rpow base 4 := by
-      show base ^ (2 : ℕ) * base * base = base ^ (4 : ℝ)
+      change base ^ (2 : ℕ) * base * base = base ^ (4 : ℝ)
       rw [show (4 : ℝ) = ((4 : ℕ) : ℝ) by norm_num, Real.rpow_natCast]
       ring
     have hdiv : CB * bootstrapAdapterFactor Cd g K E mAl / sigma ≤
@@ -198,7 +198,7 @@ theorem exists_burnIn_exponent_canonical (d : ℕ) [Nonempty (Fin d)]
       mul_le_mul_of_nonneg_right hQval hrp0
     have hadd : Real.rpow base (4 + cQ) =
         Real.rpow base cQ * Real.rpow base 4 := by
-      show base ^ (4 + cQ) = base ^ cQ * base ^ (4 : ℝ)
+      change base ^ (4 + cQ) = base ^ cQ * base ^ (4 : ℝ)
       rw [Real.rpow_add hbase0]
       ring
     rw [hadd]

@@ -212,7 +212,7 @@ theorem aemeasurable_finsetSup_abs_restrictionCenteredDescendantAverageOnCube
 /-- AEMeasurability of the upper-left finite-parent positive excess for the
 operator norm of coarse blocks. -/
 theorem aemeasurable_upperLeft_matrixNorm_positiveExcess_finsetSup
-    {d : ℕ} [NeZero d] {P : RestrictionCoeffLaw d} (hP : RestrictionLawCarrier P)
+    {d : ℕ} {P : RestrictionCoeffLaw d} (hP : RestrictionLawCarrier P)
     {parents : Finset (TriadicCube d)} (hparents : parents.Nonempty)
     (center : Mat d) :
     AEMeasurable
@@ -252,7 +252,7 @@ theorem aemeasurable_upperLeft_matrixNorm_positiveExcess_finsetSup
 /-- AEMeasurability of the lower-right finite-parent positive excess for the
 operator norm of coarse blocks. -/
 theorem aemeasurable_lowerRight_matrixNorm_positiveExcess_finsetSup
-    {d : ℕ} [NeZero d] {P : RestrictionCoeffLaw d} (hP : RestrictionLawCarrier P)
+    {d : ℕ} {P : RestrictionCoeffLaw d} (hP : RestrictionLawCarrier P)
     {parents : Finset (TriadicCube d)} (hparents : parents.Nonempty)
     (center : Mat d) :
     AEMeasurable
@@ -352,7 +352,7 @@ private theorem integrable_abs_pow_excess_of_ae_nonneg_le_entry_sum
     exact Finset.sum_nonneg fun ij _hij => hentryPair_nonneg ij a
   have hpoint_pair : excess ≤ᵐ[P] entrySum := by
     filter_upwards [hpoint] with a ha
-    show excess a ≤ ∑ ij : Fin d × Fin d, entry ij.1 ij.2 a
+    change excess a ≤ ∑ ij : Fin d × Fin d, entry ij.1 ij.2 a
     have hpair_eq :
         (∑ ij : Fin d × Fin d, entry ij.1 ij.2 a) =
           ∑ i : Fin d, ∑ j : Fin d, entry i j a :=
@@ -440,7 +440,7 @@ theorem momentRoot_excess_le_card_mul_entryRootBound
     simp [abs_of_nonneg (hentrySum_nonneg a)]
   have hpoint_pair : excess ≤ᵐ[P] entrySum := by
     filter_upwards [hpoint] with a ha
-    show excess a ≤ ∑ ij : Fin d × Fin d, entry ij.1 ij.2 a
+    change excess a ≤ ∑ ij : Fin d × Fin d, entry ij.1 ij.2 a
     have hpair_eq :
         (∑ ij : Fin d × Fin d, entry ij.1 ij.2 a) =
           ∑ i : Fin d, ∑ j : Fin d, entry i j a :=

@@ -124,7 +124,7 @@ private theorem memLp_fderiv_of_contDiffOnIsOpenBoundedConvexDomain
   exact Filter.Eventually.of_forall fun x hx => hCD x (subset_closure hx)
 
 private theorem toReal_eLpNorm_two_sq_eq_integral_rpow_norm
-    {α E : Type*} [MeasurableSpace α] [NormedAddCommGroup E] [MeasurableSpace E]
+    {α E : Type*} [MeasurableSpace α] [NormedAddCommGroup E]
     {μ : MeasureTheory.Measure α} {f : α → E}
     (hf : MeasureTheory.MemLp f 2 μ) :
     (ENNReal.toReal (MeasureTheory.eLpNorm f 2 μ)) ^ 2 =
@@ -865,7 +865,7 @@ packaged as an `H1CoerciveEstimate`.
 Equivalently, there exists `C ≥ 0` such that every `u : H1MeanZeroFunction U`
 satisfies `u.valueL2Norm ≤ C * u.gradientL2Norm`. -/
 @[expose]
-noncomputable def h1CoerciveEstimate_of_isOpenBoundedConvexDomain
+noncomputable def h1CoerciveEstimateOfOpenBoundedConvexDomain
     {d : ℕ} {U : Set (Vec d)} [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     (hU : IsOpenBoundedConvexDomain U) :
     H1CoerciveEstimate U := by
@@ -909,10 +909,10 @@ noncomputable def h1CoerciveEstimate_of_isOpenBoundedConvexDomain
 theorem h1CoerciveEstimate_of_isOpenBoundedConvexDomain_constant_le_chosenBound
     {d : ℕ} {U : Set (Vec d)} [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     (hU : IsOpenBoundedConvexDomain U) :
-    (h1CoerciveEstimate_of_isOpenBoundedConvexDomain (U := U) hU).constantValue ≤
+    (h1CoerciveEstimateOfOpenBoundedConvexDomain (U := U) hU).constantValue ≤
       H1Function.h1CoerciveEstimateChosenBound (d := d) (U := U) hU := by
   classical
-  unfold h1CoerciveEstimate_of_isOpenBoundedConvexDomain
+  unfold h1CoerciveEstimateOfOpenBoundedConvexDomain
   by_cases hvol0 : (MeasureTheory.volume U).toReal = 0
   · simp [hvol0,
       H1Function.h1CoerciveEstimateChosenBound_nonneg (d := d) (U := U) hU]
@@ -933,11 +933,11 @@ theorem exists_poincare_constant_of_isOpenBoundedConvexDomain
       ∀ u : H1MeanZeroFunction U, u.valueL2Norm ≤ C * u.gradientL2Norm := by
   refine
     ⟨
-      (h1CoerciveEstimate_of_isOpenBoundedConvexDomain (U := U) hU).constantValue,
-      (h1CoerciveEstimate_of_isOpenBoundedConvexDomain (U := U) hU).constant_nonneg,
+      (h1CoerciveEstimateOfOpenBoundedConvexDomain (U := U) hU).constantValue,
+      (h1CoerciveEstimateOfOpenBoundedConvexDomain (U := U) hU).constant_nonneg,
       ?_
     ⟩
   intro u
-  exact (h1CoerciveEstimate_of_isOpenBoundedConvexDomain (U := U) hU).bound u
+  exact (h1CoerciveEstimateOfOpenBoundedConvexDomain (U := U) hU).bound u
 
 end HCPolySupport

@@ -128,7 +128,7 @@ theorem blockPosDef_coarseBlock_of_isOpenBoundedConvexDomain {U : Set (Vec d)}
 theorem schurSkew_blockMatrixOfCoarseMatrices {M : Book.Ch02.CoarseMatrices d}
     (hdet : IsUnit M.sigmaStarInv.det) :
     schurSkew (Book.Ch02.blockMatrixOfCoarseMatrices M) = M.kappa := by
-  show -(M.sigmaStarInv⁻¹ * -(M.sigmaStarInv * M.kappa)) = M.kappa
+  change -(M.sigmaStarInv⁻¹ * -(M.sigmaStarInv * M.kappa)) = M.kappa
   rw [Matrix.mul_neg, neg_neg, ← Matrix.mul_assoc, Matrix.nonsing_inv_mul _ hdet,
     Matrix.one_mul]
 
@@ -138,7 +138,7 @@ theorem schurSigma_blockMatrixOfCoarseMatrices {M : Book.Ch02.CoarseMatrices d}
     (hdet : IsUnit M.sigmaStarInv.det) :
     schurSigma (Book.Ch02.blockMatrixOfCoarseMatrices M) = M.sigma := by
   rw [schurSigma, schurSkew_blockMatrixOfCoarseMatrices hdet]
-  show M.sigma + matTranspose M.kappa * M.sigmaStarInv * M.kappa
+  change M.sigma + matTranspose M.kappa * M.sigmaStarInv * M.kappa
       - matTranspose M.kappa * M.sigmaStarInv * M.kappa = M.sigma
   abel
 

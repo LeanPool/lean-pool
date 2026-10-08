@@ -155,7 +155,7 @@ theorem cubeBesovScaleWeight_mul_cubeLpNorm_fluctuation_le_partialNormTop
 fluctuation `L²` norm is controlled by the public `q = 2` negative-Besov norm
 of the gradient, with the geometric exponent-gap loss left explicit. -/
 theorem cubeBesovScaleWeight_one_mul_cubeLpNorm_fluctuation_le_grad_negativeBesovTwo
-    {d : ℕ} [NeZero d] (Q : TriadicCube d) {t : ℝ}
+    {d : ℕ} (Q : TriadicCube d) {t : ℝ}
     (u : H1Function (openCubeSet Q))
     (ht : 0 < t) (ht_lt : t < 1 / 2) :
     cubeBesovScaleWeight (1 : ℝ) Q *

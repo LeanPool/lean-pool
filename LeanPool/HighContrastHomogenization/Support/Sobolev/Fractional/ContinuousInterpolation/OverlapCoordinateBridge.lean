@@ -356,11 +356,12 @@ private theorem sqrt_sum_sq_add_le {ι : Type*}
       (s := I) (f := f) (g := g) (p := (2 : ℝ)) (by norm_num) hf hg)
 
 private theorem sqrt_sum_sq_sum_le_sum_sqrt_sum_sq
-    {ι κ : Type*} [DecidableEq κ]
+    {ι κ : Type*}
     (I : Finset ι) (J : Finset κ) (A : ι → κ → ℝ)
     (hA : ∀ i ∈ I, ∀ k ∈ J, 0 ≤ A i k) :
     Real.sqrt (∑ i ∈ I, (∑ k ∈ J, A i k) ^ 2) ≤
       ∑ k ∈ J, Real.sqrt (∑ i ∈ I, (A i k) ^ 2) := by
+  classical
   induction J using Finset.induction_on with
   | empty => simp
   | @insert a J ha ih =>

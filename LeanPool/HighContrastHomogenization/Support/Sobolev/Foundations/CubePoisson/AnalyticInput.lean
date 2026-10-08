@@ -82,7 +82,7 @@ theorem dualityConstant_nonneg (h : CubeFullVectorPoincareAnalyticInput Q) :
 /-- Collapse the split corrected full endpoint plus Neumann CZ bundle into the
 direct `L²` endpoint bundle. -/
 @[expose]
-noncomputable def to_l2AnalyticInput (h : CubeFullVectorPoincareAnalyticInput Q) :
+noncomputable def toL2AnalyticInput (h : CubeFullVectorPoincareAnalyticInput Q) :
     CubeFullVectorPoincareL2AnalyticInput Q where
   poisson := h.poisson
   endpointConstant := h.dualityConstant * h.czConstant

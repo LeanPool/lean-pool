@@ -294,7 +294,7 @@ theorem abs_respCenteredJ_le_cutoffRows (d : ℕ) [NeZero d] (hd : 2 ≤ d) :
     intro a
     refine ((hEintM a).bdd_mul (c := 2) hφc.measurable.aestronglyMeasurable.restrict
       (Filter.Eventually.of_forall hφb)).congr (Filter.Eventually.of_forall fun x => ?_)
-    show φ x * scalarVariationEnergyIntegrand (respCoeffMinus F a) (uM a) x
+    change φ x * scalarVariationEnergyIntegrand (respCoeffMinus F a) (uM a) x
       = φ x * vecDot (optimizerField (respCoeffMinus F a) (uM a) x).1
           (optimizerField (respCoeffMinus F a) (uM a) x).2
     rw [hptM a x]
@@ -304,7 +304,7 @@ theorem abs_respCenteredJ_le_cutoffRows (d : ℕ) [NeZero d] (hd : 2 ≤ d) :
     intro a
     refine ((hEintP a).bdd_mul (c := 2) hφc.measurable.aestronglyMeasurable.restrict
       (Filter.Eventually.of_forall hφb)).congr (Filter.Eventually.of_forall fun x => ?_)
-    show φ x * scalarVariationEnergyIntegrand (respCoeffPlus F a) (uP a) x
+    change φ x * scalarVariationEnergyIntegrand (respCoeffPlus F a) (uP a) x
       = φ x * vecDot (optimizerField (respCoeffPlus F a) (uP a) x).1
           (optimizerField (respCoeffPlus F a) (uP a) x).2
     rw [hptP a x]

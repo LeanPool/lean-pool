@@ -122,7 +122,7 @@ theorem toFullBlockMat_diagonalWeakAverageDefect (q : Mat d) (k t : ℤ)
 
 /-- Linearity identifies the printed average with the normalized difference
 between the aligned response average and the parent response. -/
-theorem toFullBlockMat_diagonalWeakAverageDefect_eq_normalized [NeZero d]
+theorem toFullBlockMat_diagonalWeakAverageDefect_eq_normalized
     {q : Mat d} (hq : q.PosDef) {k t : ℤ} (hkt : k ≤ t)
     (E : BlockMat d) (a : CoeffSpace d) :
     toFullBlockMat (diagonalWeakAverageDefect q k t E a) =
@@ -296,7 +296,7 @@ theorem centered_metric_quadratic_le {M E D : FullBlockMat d}
 
 /-- The exact aligned-cell comparison is bounded by the metric factor, the
 primal load factor, and the normalized response defect. -/
-theorem metricNormSq_blockAverage_sub_adapted_le [NeZero d]
+theorem metricNormSq_blockAverage_sub_adapted_le
     {q : Mat d} (hq : q.PosDef) (k t : ℤ) (w : Fin d → ℤ)
     {a : CoeffSpace d} {c : Book.Ch02.CoeffOn (adaptedDomainAt hq k w)}
     {b : Book.Ch02.CoeffOn (adaptedDomain hq t)} {m : Mat d}

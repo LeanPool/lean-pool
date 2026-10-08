@@ -39,17 +39,17 @@ open scoped ENNReal
 
 /-- Legacy selected constant for the downstream Neumann positive-test
 compatibility package on cubes. -/
-noncomputable abbrev cubeNeumannW22Constant (d : ℕ) [NeZero d] : ℝ :=
+noncomputable abbrev cubeNeumannW22Constant (d : ℕ) : ℝ :=
   HCPolySupport.Legacy.cubeNeumannW22CalderonZygmundConstant d
 
-theorem cubeNeumannW22Constant_nonneg (d : ℕ) [NeZero d] :
+theorem cubeNeumannW22Constant_nonneg (d : ℕ) :
     0 ≤ cubeNeumannW22Constant d := by
   simpa [cubeNeumannW22Constant] using
     HCPolySupport.Legacy.cubeNeumannW22CalderonZygmundConstant_nonneg d
 
 /-- Legacy cube Neumann positive-test compatibility theorem.  This is not the
 literal weak-Hessian Calderon--Zygmund theorem. -/
-theorem cubeNeumannW22Regularity {d : ℕ} [NeZero d] (Q : Cube d) :
+theorem cubeNeumannW22Regularity {d : ℕ} (Q : Cube d) :
     HCPolySupport.Legacy.CubeNeumannW22CalderonZygmundRegularity Q
       (cubeNeumannW22Constant d) := by
   simpa [cubeNeumannW22Constant] using
@@ -57,7 +57,7 @@ theorem cubeNeumannW22Regularity {d : ℕ} [NeZero d] (Q : Cube d) :
 
 /-- Dimension-uniform existence form of the legacy cube Neumann positive-test
 compatibility package. -/
-theorem exists_cubeNeumannW22RegularityInDimension (d : ℕ) [NeZero d] :
+theorem exists_cubeNeumannW22RegularityInDimension (d : ℕ) :
     ∃ C : ℝ,
       HCPolySupport.Legacy.CubeNeumannW22CalderonZygmundRegularityInDimension d C :=
   HCPolySupport.Legacy.exists_cubeNeumannW22CalderonZygmundRegularityInDimension d

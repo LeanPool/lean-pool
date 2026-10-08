@@ -83,7 +83,7 @@ private theorem isSymmetricBlockMat_averageDefect (q : Mat d) (k t : ℤ)
 
 /-- Measurability of the identity-size of the average defect at an arbitrary
 normalization. -/
-theorem aemeasurable_blockSize_averageDefect [NeZero d]
+theorem aemeasurable_blockSize_averageDefect
     {P : Measure (CoeffSpace d)} {q : Mat d} (hq : q.PosDef)
     (k t : ℤ) (F : BlockMat d) :
     AEMeasurable (fun a => blockSize
@@ -120,7 +120,7 @@ theorem aemeasurable_blockSize_averageDefect [NeZero d]
       ((continuous_apply δ).comp (continuous_apply γ))
   have hcomp := hcont.comp_aemeasurable hraw
   refine hcomp.congr (_root_.Filter.Eventually.of_forall fun a => ?_)
-  show ‖matSqrt (toFullBlockMat F)⁻¹ *
+  change ‖matSqrt (toFullBlockMat F)⁻¹ *
       (Matrix.of fun γ δ : BlockCoord d =>
         (((Response.alignedIndex q k t).card : ℝ))⁻¹ *
           ∑ w ∈ Response.alignedIndex q k t,

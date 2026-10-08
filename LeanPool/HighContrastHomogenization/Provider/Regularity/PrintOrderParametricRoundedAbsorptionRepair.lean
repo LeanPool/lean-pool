@@ -37,7 +37,7 @@ noncomputable section
 /-- The constant rounded reference obtained from an arbitrary admissible
 rounding generation. -/
 @[expose]
-def roundedReferenceMatrixAtGeneration {d : ℕ} [NeZero d]
+def roundedReferenceMatrixAtGeneration {d : ℕ}
     (l : ℤ) (abar : Mat d) (_hS : (symmPart abar).PosDef) : Mat d :=
   (roundedGrid l (symmPart abar))⁻¹ *
       (specBound ((symmPart abar)⁻¹) • symmPart abar) *
@@ -118,7 +118,7 @@ The first conjunct records the symmetric positive reference required by the
 constant-coefficient carrier. -/
 @[expose]
 def PrintOrderRoundedReferenceConstructorAtTolerance
-    (d : ℕ) [NeZero d] (eps : ℝ) : Prop :=
+    (d : ℕ) (eps : ℝ) : Prop :=
   ∃ l : ℤ, (kZero d : ℤ) ≤ l ∧
     ∀ (abar : Mat d) (hS : (symmPart abar).PosDef),
       (roundedReferenceMatrixAtGeneration l abar hS).PosDef ∧
@@ -130,7 +130,7 @@ def PrintOrderRoundedReferenceConstructorAtTolerance
 after the identity constant. -/
 @[expose]
 def PrintOrderRoundedReferenceDualRegularityAtGeneration
-    (d : ℕ) [NeZero d] (g : ℝ) (l : ℤ) : Prop :=
+    (d : ℕ) (g : ℝ) (l : ℤ) : Prop :=
   ∃ Cdual : ℝ, 0 ≤ Cdual ∧
     ∀ (abar : Mat d) (hS : (symmPart abar).PosDef) (m : ℤ)
       {w F : Vec d → Vec d},

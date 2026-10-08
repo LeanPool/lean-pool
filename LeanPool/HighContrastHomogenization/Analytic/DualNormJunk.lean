@@ -250,7 +250,7 @@ theorem hsNormSq_neg (V : Set (Vec d)) (s : ℝ) (ψ : Vec d → Vec d) :
     intro x y
     have hz : ((-ψ) x - (-ψ) y) = -(ψ x - ψ y) := by
       funext i
-      show -ψ x i - -ψ y i = -(ψ x i - ψ y i)
+      change -ψ x i - -ψ y i = -(ψ x i - ψ y i)
       ring
     rw [hz]
     exact vecNormSq_neg_aux (ψ x - ψ y)

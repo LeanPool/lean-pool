@@ -446,11 +446,21 @@ theorem localizedSqShiftedCutoffBackwardDifferenceQuotientToAmbient_grad_eq_shif
     rfl
   rw [hval]
   ext j
-  simp [localizedSqCutoffForwardDifferenceQuotientToAmbient,
-    euclideanCoordShift, sub_eq_add_neg, neg_smul, add_left_comm, add_comm]
+  simp only [euclideanCoordShift_apply, neg_smul,
+    localizedMulContDiffHasCompactSupportToAmbient_grad,
+    H1Function.backwardDifferenceQuotientOn_grad, Pi.smul_apply, Pi.sub_apply,
+    smul_eq_mul, H1Function.backwardDifferenceQuotientOn_toFun,
+    euclideanBackwardDifferenceQuotient_apply,
+    localizedSqCutoffForwardDifferenceQuotientToAmbient_grad,
+    H1Function.forwardDifferenceQuotientOn_grad, neg_add_cancel_right,
+    euclideanForwardDifferenceQuotient_apply, add_right_inj, mul_eq_mul_left_iff,
+    div_eq_zero_iff]
   left
-  simpa [euclideanCoordDeriv, euclideanCoordShift, sub_eq_add_neg, neg_smul] using
-    euclideanCoordDeriv_comp_euclideanCoordShift (-step) i j (fun x => η x ^ 2) x
+  simpa [euclideanCoordDeriv, euclideanGradient, euclideanCoordShift,
+    sub_eq_add_neg, neg_smul] using
+    (euclideanCoordDeriv_comp_euclideanCoordShift
+      (-step) i j (fun y => η y ^ 2) x).trans
+      (euclideanCoordDeriv_sq hη j (euclideanCoordShift (-step) i x))
 
 /-- Pairing against the shifted localized gradient is supported in the
 translated interior set. -/

@@ -110,7 +110,7 @@ which feeds the direct `L²` full-dual Poisson-gradient endpoint package. -/
 
 /-- Constant for the cube Neumann Calderon-Zygmund `B¹_{2,∞}` estimate. -/
 theorem exists_cubeNeumannPoissonGradientBesovEstimate
-    {d : ℕ} [NeZero d] (Q : TriadicCube d) :
+    {d : ℕ} (Q : TriadicCube d) :
     ∃ C : ℝ, CubeNeumannPoissonGradientBesovEstimate Q C :=
   ⟨cubeNeumannPoissonGradientBesovEnergyConstant Q,
     cubeNeumannPoissonGradientBesovEstimate_of_energy Q⟩
@@ -118,12 +118,12 @@ theorem exists_cubeNeumannPoissonGradientBesovEstimate
 /-- Chosen constant for the cube Neumann Calderon-Zygmund `B¹_{2,∞}` estimate. -/
 @[expose]
 noncomputable def cubeNeumannPoissonGradientBesovConstant
-    {d : ℕ} [NeZero d] (Q : TriadicCube d) : ℝ :=
+    {d : ℕ} (Q : TriadicCube d) : ℝ :=
   Classical.choose (exists_cubeNeumannPoissonGradientBesovEstimate Q)
 
 /-- Cube Neumann Calderon-Zygmund `B¹_{2,∞}` estimate. -/
 theorem cubeNeumannPoissonGradientBesovEstimate
-    {d : ℕ} [NeZero d] (Q : TriadicCube d) :
+    {d : ℕ} (Q : TriadicCube d) :
     CubeNeumannPoissonGradientBesovEstimate Q
       (cubeNeumannPoissonGradientBesovConstant Q) :=
   Classical.choose_spec (exists_cubeNeumannPoissonGradientBesovEstimate Q)
@@ -132,12 +132,12 @@ theorem cubeNeumannPoissonGradientBesovEstimate
 test-norm core estimate. -/
 @[expose]
 noncomputable def cubePoissonGradientDualTestNormL2CoreConstant
-    {d : ℕ} [NeZero d] (_Q : TriadicCube d) : ℝ :=
+    {d : ℕ} (_Q : TriadicCube d) : ℝ :=
   Legacy.cubeNeumannW22CalderonZygmundConstant d
 
 /-- Direct `L²` positive dual test-norm core estimate for Poisson gradients. -/
 theorem cubePoissonGradientDualTestNormL2CoreEstimate
-    {d : ℕ} [NeZero d] (Q : TriadicCube d) :
+    {d : ℕ} (Q : TriadicCube d) :
     CubePoissonGradientDualTestNormL2CoreEstimate Q
       (cubePoissonGradientDualTestNormL2CoreConstant Q) :=
   Legacy.cubeNeumannW22CalderonZygmundRegularity Q
@@ -147,13 +147,13 @@ test-norm estimate. The factor `d` is the cost of converting a componentwise
 core bound into the summed strictly positive `B` package. -/
 @[expose]
 noncomputable def cubePoissonGradientDualTestNormL2Constant
-    {d : ℕ} [NeZero d] (Q : TriadicCube d) : ℝ :=
+    {d : ℕ} (Q : TriadicCube d) : ℝ :=
   (d : ℝ) * cubePoissonGradientDualTestNormL2CoreConstant Q
 
 /-- Direct `L²` positive dual test-norm estimate for Poisson gradients,
 including the strict-positive `B` packaging used by endpoint duality. -/
 theorem cubePoissonGradientDualTestNormL2Estimate
-    {d : ℕ} [NeZero d] (Q : TriadicCube d) :
+    {d : ℕ} (Q : TriadicCube d) :
     CubePoissonGradientDualTestNormL2Estimate Q
       (cubePoissonGradientDualTestNormL2Constant Q) := by
   simpa [cubePoissonGradientDualTestNormL2Constant] using
@@ -163,13 +163,13 @@ theorem cubePoissonGradientDualTestNormL2Estimate
 /-- Chosen constant for the full-dual L² endpoint estimate. -/
 @[expose]
 noncomputable def cubePoissonGradientFullL2EndpointDualityConstant
-    {d : ℕ} [NeZero d] (Q : TriadicCube d) : ℝ :=
+    {d : ℕ} (Q : TriadicCube d) : ℝ :=
   cubePoissonGradientDualTestNormL2Constant Q
 
 /-- Full-dual Poisson-gradient endpoint estimate with the Poisson-gradient
 side already controlled by the normalized `L²` size of the right-hand side. -/
 theorem cubePoissonGradientFullL2EndpointDuality
-    {d : ℕ} [NeZero d] (Q : TriadicCube d) :
+    {d : ℕ} (Q : TriadicCube d) :
     CubePoissonGradientFullL2EndpointDuality Q
       (cubePoissonGradientFullL2EndpointDualityConstant Q) := by
   simpa [cubePoissonGradientFullL2EndpointDualityConstant] using
@@ -180,7 +180,7 @@ theorem cubePoissonGradientFullL2EndpointDuality
 dependencies. -/
 @[expose]
 noncomputable def cubeFullVectorPoincareL2AnalyticInput
-    {d : ℕ} [NeZero d] (Q : TriadicCube d) :
+    {d : ℕ} (Q : TriadicCube d) :
     CubeFullVectorPoincareL2AnalyticInput Q where
   poisson := cubeMeanZeroNeumannPoissonSolverOnCube Q
   endpointConstant := cubePoissonGradientFullL2EndpointDualityConstant Q
@@ -190,22 +190,22 @@ noncomputable def cubeFullVectorPoincareL2AnalyticInput
 input. -/
 @[expose]
 noncomputable def cubeFullVectorPoincareAnalyticConstant
-    {d : ℕ} [NeZero d] (Q : TriadicCube d) : ℝ :=
+    {d : ℕ} (Q : TriadicCube d) : ℝ :=
   cubePoissonGradientFullL2EndpointDualityConstant Q
 
 theorem cubeFullVectorPoincareAnalyticConstant_nonneg
-    {d : ℕ} [NeZero d] (Q : TriadicCube d) :
+    {d : ℕ} (Q : TriadicCube d) :
     0 ≤ cubeFullVectorPoincareAnalyticConstant Q := by
   exact (cubePoissonGradientFullL2EndpointDuality Q).1
 
 theorem cubeFullVectorPoincareAnalyticConstant_eq_fullL2EndpointDualityConstant
-    {d : ℕ} [NeZero d] (Q : TriadicCube d) :
+    {d : ℕ} (Q : TriadicCube d) :
     cubeFullVectorPoincareAnalyticConstant Q =
       cubePoissonGradientFullL2EndpointDualityConstant Q := by
   rfl
 
 theorem cubeFullVectorPoincareAnalyticConstant_eq_dimensionConstant
-    {d : ℕ} [NeZero d] (Q : TriadicCube d) :
+    {d : ℕ} (Q : TriadicCube d) :
     cubeFullVectorPoincareAnalyticConstant Q =
       (d : ℝ) * Legacy.cubeNeumannW22CalderonZygmundConstant d := by
   simp [cubeFullVectorPoincareAnalyticConstant,
@@ -214,7 +214,7 @@ theorem cubeFullVectorPoincareAnalyticConstant_eq_dimensionConstant
     cubePoissonGradientDualTestNormL2CoreConstant]
 
 theorem cubeFullVectorPoincareAnalyticConstant_eq_of_same_dimension
-    {d : ℕ} [NeZero d] (Q R : TriadicCube d) :
+    {d : ℕ} (Q R : TriadicCube d) :
     cubeFullVectorPoincareAnalyticConstant Q =
       cubeFullVectorPoincareAnalyticConstant R := by
   rw [cubeFullVectorPoincareAnalyticConstant_eq_dimensionConstant Q,
@@ -223,7 +223,7 @@ theorem cubeFullVectorPoincareAnalyticConstant_eq_of_same_dimension
 /-- Single-cube full-dual vector Poincare with the exact selected corrected
 analytic constant. -/
 theorem CubeDualFullVectorPoincareEstimate.of_h1Function_analyticConstant
-    {d : ℕ} [NeZero d] (Q : TriadicCube d) (u : H1Function (openCubeSet Q)) :
+    {d : ℕ} (Q : TriadicCube d) (u : H1Function (openCubeSet Q)) :
     CubeDualFullVectorPoincareEstimate Q
       (cubeFullVectorPoincareAnalyticConstant Q)
       (fun x => u x)
@@ -238,7 +238,7 @@ L² endpoint constant. This is definitionally the same constant as
 `cubeFullVectorPoincareAnalyticConstant`, but the statement exposes the
 endpoint package that future proofs should aim to discharge. -/
 theorem CubeDualFullVectorPoincareEstimate.of_h1Function_fullL2EndpointConstant
-    {d : ℕ} [NeZero d] (Q : TriadicCube d) (u : H1Function (openCubeSet Q)) :
+    {d : ℕ} (Q : TriadicCube d) (u : H1Function (openCubeSet Q)) :
     CubeDualFullVectorPoincareEstimate Q
       (cubePoissonGradientFullL2EndpointDualityConstant Q)
       (fun x => u x)
@@ -251,7 +251,7 @@ theorem CubeDualFullVectorPoincareEstimate.of_h1Function_fullL2EndpointConstant
 /-- Single-cube full-dual vector Poincare with any constant dominating the
 exact selected corrected analytic constant. -/
 theorem CubeDualFullVectorPoincareEstimate.of_h1Function_of_analyticConstant_le
-    {d : ℕ} [NeZero d] (Q : TriadicCube d) (u : H1Function (openCubeSet Q))
+    {d : ℕ} (Q : TriadicCube d) (u : H1Function (openCubeSet Q))
     {C : ℝ} (hC : cubeFullVectorPoincareAnalyticConstant Q ≤ C) :
     CubeDualFullVectorPoincareEstimate Q
       C
@@ -267,7 +267,7 @@ theorem CubeDualFullVectorPoincareEstimate.of_h1Function_of_analyticConstant_le
 on the selected corrected analytic constants over the descendants that occur
 up to depth `N`. -/
 theorem CubeDescendantDualFullVectorPoincareEstimate.of_h1Function_of_descendant_analyticConstant_le
-    {d : ℕ} [NeZero d] (Q : TriadicCube d) (u : H1Function (openCubeSet Q))
+    {d : ℕ} (Q : TriadicCube d) (u : H1Function (openCubeSet Q))
     (N : ℕ) {C : ℝ}
     (hC :
       ∀ j ∈ Finset.range (N + 1), ∀ R ∈ descendantsAtDepth Q j,
@@ -292,7 +292,7 @@ full-dual analytic Poincare constants on all descendants of the parent. This is
 now a formal consequence of the dimension-uniform Neumann `W2,2` / CZ
 constant. -/
 theorem exists_cubeFullVectorPoincareUniformAnalyticConstant
-    {d : ℕ} [NeZero d] (Q : TriadicCube d) :
+    {d : ℕ} (Q : TriadicCube d) :
     ∃ C : ℝ, 0 ≤ C ∧
       ∀ j : ℕ, ∀ R ∈ descendantsAtDepth Q j,
         cubeFullVectorPoincareAnalyticConstant R ≤ C := by
@@ -309,18 +309,18 @@ theorem exists_cubeFullVectorPoincareUniformAnalyticConstant
 corrected full-dual analytic constants on all descendants of the parent. -/
 @[expose]
 noncomputable def cubeFullVectorPoincareUniformAnalyticConstant
-    {d : ℕ} [NeZero d] (_Q : TriadicCube d) : ℝ :=
+    {d : ℕ} (_Q : TriadicCube d) : ℝ :=
   (d : ℝ) * Legacy.cubeNeumannW22CalderonZygmundConstant d
 
 theorem cubeFullVectorPoincareUniformAnalyticConstant_nonneg
-    {d : ℕ} [NeZero d] (Q : TriadicCube d) :
+    {d : ℕ} (Q : TriadicCube d) :
     0 ≤ cubeFullVectorPoincareUniformAnalyticConstant Q := by
   simpa [cubeFullVectorPoincareUniformAnalyticConstant] using
     mul_nonneg (Nat.cast_nonneg d)
       (Legacy.cubeNeumannW22CalderonZygmundConstant_nonneg d)
 
 theorem cubeFullVectorPoincareAnalyticConstant_le_uniformAnalyticConstant
-    {d : ℕ} [NeZero d] (Q : TriadicCube d) (j : ℕ)
+    {d : ℕ} (Q : TriadicCube d) (j : ℕ)
     (R : TriadicCube d) (_hR : R ∈ descendantsAtDepth Q j) :
     cubeFullVectorPoincareAnalyticConstant R ≤
       cubeFullVectorPoincareUniformAnalyticConstant Q := by
@@ -333,7 +333,7 @@ theorem cubeFullVectorPoincareAnalyticConstant_le_uniformAnalyticConstant
 /-- All-depth descendant full-dual theorem with the selected corrected uniform
 analytic constant. -/
 theorem CubeDescendantDualFullVectorPoincareEstimate.of_h1Function_uniformAnalyticConstant
-    {d : ℕ} [NeZero d] (Q : TriadicCube d) (u : H1Function (openCubeSet Q))
+    {d : ℕ} (Q : TriadicCube d) (u : H1Function (openCubeSet Q))
     (N : ℕ) :
     CubeDescendantDualFullVectorPoincareEstimate Q
       (cubeFullVectorPoincareUniformAnalyticConstant Q)
@@ -350,23 +350,23 @@ the selected parent-cube constant that dominates the exact full-dual analytic
 constants on all descendants. -/
 @[expose]
 noncomputable def fullVectorPoincareCubeConstant
-    {d : ℕ} [NeZero d] (Q : TriadicCube d) : ℝ :=
+    {d : ℕ} (Q : TriadicCube d) : ℝ :=
   cubeFullVectorPoincareUniformAnalyticConstant Q
 
 theorem fullVectorPoincareCubeConstant_nonneg
-    {d : ℕ} [NeZero d] (Q : TriadicCube d) :
+    {d : ℕ} (Q : TriadicCube d) :
     0 ≤ fullVectorPoincareCubeConstant Q := by
   simpa [fullVectorPoincareCubeConstant] using
     cubeFullVectorPoincareUniformAnalyticConstant_nonneg Q
 
 theorem fullVectorPoincareCubeConstant_eq_dimensionConstant
-    {d : ℕ} [NeZero d] (Q : TriadicCube d) :
+    {d : ℕ} (Q : TriadicCube d) :
     fullVectorPoincareCubeConstant Q =
       (d : ℝ) * Legacy.cubeNeumannW22CalderonZygmundConstant d := by
   rfl
 
 theorem cubeFullVectorPoincareAnalyticConstant_le_fullVectorPoincareCubeConstant
-    {d : ℕ} [NeZero d] (Q : TriadicCube d) :
+    {d : ℕ} (Q : TriadicCube d) :
     cubeFullVectorPoincareAnalyticConstant Q ≤ fullVectorPoincareCubeConstant Q := by
   have hQ : Q ∈ descendantsAtDepth Q 0 := by
     simp [descendantsAtDepth_zero]
@@ -374,7 +374,7 @@ theorem cubeFullVectorPoincareAnalyticConstant_le_fullVectorPoincareCubeConstant
     cubeFullVectorPoincareAnalyticConstant_le_uniformAnalyticConstant Q 0 Q hQ
 
 theorem CubeDualFullVectorPoincareEstimate.of_h1Function
-    {d : ℕ} [NeZero d] (Q : TriadicCube d) (u : H1Function (openCubeSet Q)) :
+    {d : ℕ} (Q : TriadicCube d) (u : H1Function (openCubeSet Q)) :
     CubeDualFullVectorPoincareEstimate Q
       (fullVectorPoincareCubeConstant Q)
       (fun x => u x)
@@ -385,7 +385,7 @@ theorem CubeDualFullVectorPoincareEstimate.of_h1Function
 /-- Descendant infinite-depth full-dual Poincare for an `H¹` function, obtained
 from the corrected parent-cube uniform analytic constant on each descendant. -/
 theorem CubeDescendantDualFullVectorPoincareEstimate.of_h1Function
-    {d : ℕ} [NeZero d] (Q : TriadicCube d) (u : H1Function (openCubeSet Q))
+    {d : ℕ} (Q : TriadicCube d) (u : H1Function (openCubeSet Q))
     (N : ℕ) :
     CubeDescendantDualFullVectorPoincareEstimate Q
       (fullVectorPoincareCubeConstant Q)

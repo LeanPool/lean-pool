@@ -30,6 +30,7 @@ noncomputable section
 
 namespace CubeCalderonZygmund
 
+/-- The finite exponent `2 * d * p` used to control restriction to depth `2 * p * t`. -/
 @[expose]
 public noncomputable def depthTargetExponent (d p : ℕ) [NeZero d] (hp : 0 < p) :
     FiniteLpExponent where
@@ -483,7 +484,7 @@ theorem exists_harmonic_gradient_oscillation_decay_at_integer_rate
         ∑ j : Fin d, MeasureTheory.eLpNorm (fun x => u.grad x j) 2
           (normalizedCubeMeasure Q) := by
     rw [hVfield] at hqRaw
-    convert hqRaw using 1 <;> ring
+    convert hqRaw using 1; ring
   have hresMem : MeasureTheory.MemLp
       (fun x => HilbertVec.ofVec (u.grad x - cubeAverageVec R u.grad)) q.exponent
       (normalizedCubeMeasure R) := by

@@ -46,7 +46,7 @@ theorem normalizedGauge_one {Ψ : ℝ → ℝ} (hΨ1 : 0 < Ψ 1) :
   rw [normalizedGauge, div_self hΨ1.ne', max_self]
 
 /-- **The dagger at the normalized gauge.** -/
-theorem coarseEllipticityDagger_normalizedGauge [NeZero d]
+theorem coarseEllipticityDagger_normalizedGauge
     {P : Measure (CoeffSpace d)} {g : ℝ}
     {E : BlockMat d} {Ψ : ℝ → ℝ} {K : ℝ} {S : CoeffSpace d → ℝ}
     (hdag : HCPoly.Frozen.CoarseEllipticityDagger P g E Ψ K S) :

@@ -293,6 +293,8 @@ theorem mem_descendantBoundaryLayerAtDepth_iff_exists_coord_face {d : ℕ}
     · have hbad := (hsep i).2
       nlinarith [hbad, hface, hscale_pos]
 
+/-- Remove a fixed coordinate from a function, with inverse given by restoring its prescribed value;
+used to count face digits. -/
 @[expose]
 public noncomputable def fixedCoordinateFunctionEquiv {α β : Type*}
     [DecidableEq α] (i : α) (a : β) :
@@ -470,6 +472,7 @@ theorem childCubes_upperFace_card {d : ℕ}
   · exact card_function_fixed_coord_fin_three i 2
   · exact hinj
 
+/-- Depth-`n` descendants whose lower `i`th face coincides with the lower face of `R`. -/
 @[expose]
 noncomputable def descendantLowerFaceAtDepth {d : ℕ}
     (R : TriadicCube d) (n : ℕ) (i : Fin d) : Finset (TriadicCube d) := by
@@ -485,6 +488,7 @@ theorem mem_descendantLowerFaceAtDepth_iff {d : ℕ}
   classical
   simp [descendantLowerFaceAtDepth]
 
+/-- Depth-`n` descendants whose upper `i`th face coincides with the upper face of `R`. -/
 @[expose]
 noncomputable def descendantUpperFaceAtDepth {d : ℕ}
     (R : TriadicCube d) (n : ℕ) (i : Fin d) : Finset (TriadicCube d) := by

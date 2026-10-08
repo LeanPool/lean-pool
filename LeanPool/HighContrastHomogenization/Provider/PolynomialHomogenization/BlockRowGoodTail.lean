@@ -39,6 +39,8 @@ noncomputable section
 
 variable {d : ℕ}
 
+/-- Excess values over the standard cells at relative generation `m - n` whose centers lie in
+the centered cube of generation `m`. -/
 @[expose]
 public def rowCellExcessSet (m n : ℕ) (a : CoeffSpace d)
     (F : BlockMat d) : Set ℝ :=
@@ -47,6 +49,7 @@ public def rowCellExcessSet (m n : ℕ) (a : CoeffSpace d)
     r = blockExcess
       (coarseBlock (standardCell d ((m : ℤ) - (n : ℤ)) w) a) F}
 
+/-- Supremum of the cell excess values in `rowCellExcessSet m n a F`. -/
 @[expose]
 public def rowCellExcessSup (m n : ℕ) (a : CoeffSpace d)
     (F : BlockMat d) : ℝ :=

@@ -48,6 +48,8 @@ def WeakPoissonEquationOn {d : ℕ} (U : Set (Vec d))
 The second derivative convention is: `hess i j` is the weak `j`th derivative
 of the `i`th gradient coordinate. -/
 structure HasWeakHessianOn {d : ℕ} (U : Set (Vec d)) (u : H1Function U) where
+  /-- L² representatives of the weak derivatives of gradient coordinates: `hess i j` differentiates
+  the `i`th coordinate in direction `j`. -/
   hess : Fin d → Fin d → Vec d → ℝ
   hess_memL2 : ∀ i j, MemScalarL2 U (hess i j)
   weak_second :
@@ -100,7 +102,7 @@ end HasWeakHessianOn
 `L²` Hessian witness. This fixes the sign and coordinate convention for the
 future nonsmooth interior theorem. -/
 @[expose]
-noncomputable def hasWeakHessianOn_ofContDiff {d : ℕ} {U : Set (Vec d)}
+noncomputable def weakHessianOfSmoothCompactSupport {d : ℕ} {U : Set (Vec d)}
     (hU : IsOpen U) {f : Vec d → ℝ}
     (hf : ContDiff ℝ (⊤ : ℕ∞) f) (hfs : HasCompactSupport f) :
     HasWeakHessianOn U

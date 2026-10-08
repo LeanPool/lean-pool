@@ -125,7 +125,7 @@ theorem integral_map_restrictCoeffField_eq_of_isRestrictionLocalObservable
 
 /-- Compatibility spelling for the restriction-local integral identity. -/
 theorem integral_map_restrictCoeffField_eq_of_isLocalObservable
-    {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] [CompleteSpace E]
+    {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
     [MeasurableSpace E] [BorelSpace E] [SecondCountableTopology E]
     {d : ℕ} {U : Set (Vec d)} {P : MeasureTheory.Measure (CoeffField d)}
     {X : CoeffField d → E}
@@ -134,7 +134,7 @@ theorem integral_map_restrictCoeffField_eq_of_isLocalObservable
   integral_map_restrictCoeffField_eq_of_isRestrictionLocalObservable hX_meas hX_local
 
 theorem integral_eq_of_map_restrictCoeffField_eq_of_isRestrictionLocalObservable
-    {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] [CompleteSpace E]
+    {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
     [MeasurableSpace E] [BorelSpace E] [SecondCountableTopology E]
     {d : ℕ} {U : Set (Vec d)}
     {P Q : MeasureTheory.Measure (CoeffField d)} {X : CoeffField d → E}
@@ -155,7 +155,7 @@ theorem integral_eq_of_map_restrictCoeffField_eq_of_isRestrictionLocalObservable
 
 /-- Compatibility spelling for the restriction-local integral comparison. -/
 theorem integral_eq_of_map_restrictCoeffField_eq_of_isLocalObservable
-    {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] [CompleteSpace E]
+    {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
     [MeasurableSpace E] [BorelSpace E] [SecondCountableTopology E]
     {d : ℕ} {U : Set (Vec d)}
     {P Q : MeasureTheory.Measure (CoeffField d)} {X : CoeffField d → E}
@@ -258,7 +258,7 @@ theorem map_eq_map_translateByInt_of_isTranslationCovariant_aemeasurable
       rw [hP z]
 
 theorem integral_eq_of_isTranslationCovariant_of_isStationary
-    {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] [CompleteSpace E]
+    {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
     [MeasurableSpace E] [BorelSpace E] [SecondCountableTopology E]
     {d : ℕ} {P : MeasureTheory.Measure (CoeffField d)}
     {X : Set (Vec d) → CoeffField d → E}
@@ -270,8 +270,7 @@ theorem integral_eq_of_isTranslationCovariant_of_isStationary
     (measurable_translateByInt z) (hP z) (X U) hX_meas.aestronglyMeasurable
 
 theorem integral_eq_of_isTranslationCovariant_of_isStationary_aestronglyMeasurable
-    {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] [CompleteSpace E]
-    [MeasurableSpace E] [BorelSpace E] [SecondCountableTopology E]
+    {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
     {d : ℕ} {P : MeasureTheory.Measure (CoeffField d)}
     {X : Set (Vec d) → CoeffField d → E}
     (hP : IsStationary P) {U : Set (Vec d)}
@@ -406,7 +405,7 @@ def sub {β : Type*} [MeasurableSpace β] [Sub β] [MeasurableSub₂ β]
 
 /-- Multiply a measurable local observable by a fixed scalar. -/
 @[expose]
-def const_smul {M : Type*} [SMul M β] [MeasurableConstSMul M β]
+def constantScalarMultiply {M : Type*} [SMul M β] [MeasurableConstSMul M β]
     (c : M) (X : MeasurableLocalObservable d U β) :
     MeasurableLocalObservable d U β where
   toFun := fun a => c • X a
@@ -442,7 +441,7 @@ theorem measurable_subtypeFinsetSum {ι : Type*} (s : Finset ι)
 
 /-- The finite sum of observables, local to the union of their regions. -/
 @[expose]
-noncomputable def finsetSum {ι : Type*} [DecidableEq ι] {γ : Type*}
+noncomputable def finsetSum {ι : Type*} {γ : Type*}
     [MeasurableSpace γ] [AddCommMonoid γ] [MeasurableAdd₂ γ]
     (s : Finset ι) {V : ι → Set (Vec d)}
     (X : ∀ i, MeasurableLocalObservable d (V i) γ) :
@@ -452,13 +451,13 @@ noncomputable def finsetSum {ι : Type*} [DecidableEq ι] {γ : Type*}
 
 /-- The finite sum multiplied by inverse cardinality, local to the union of the regions. -/
 @[expose]
-noncomputable def finsetAverage {ι : Type*} [DecidableEq ι] {γ : Type*}
+noncomputable def finsetAverage {ι : Type*} {γ : Type*}
     [MeasurableSpace γ] [AddCommMonoid γ] [MeasurableAdd₂ γ]
     [SMul ℝ γ] [MeasurableConstSMul ℝ γ]
     (s : Finset ι) {V : ι → Set (Vec d)}
     (X : ∀ i, MeasurableLocalObservable d (V i) γ) :
     MeasurableLocalObservable d (⋃ i ∈ s, V i) γ :=
-  (finsetSum (d := d) (s := s) X).const_smul ((s.card : ℝ)⁻¹)
+  (finsetSum (d := d) (s := s) X).constantScalarMultiply ((s.card : ℝ)⁻¹)
 
 theorem comp_restrictCoeffField_eq (X : MeasurableLocalObservable d U β) :
     X ∘ restrictCoeffField U = X :=
@@ -506,7 +505,7 @@ theorem indepFun_of_indep_restrictionSigma
     (Measurable.comap_le Y.measurable_restrictionSigma)
 
 theorem integral_map_restrictCoeffField_eq
-    {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] [CompleteSpace E]
+    {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
     [MeasurableSpace E] [BorelSpace E] [SecondCountableTopology E]
     {U : Set (Vec d)} (X : MeasurableLocalObservable d U E)
     {P : MeasureTheory.Measure (CoeffField d)} :
@@ -515,7 +514,7 @@ theorem integral_map_restrictCoeffField_eq
     X.isRestrictionLocal
 
 theorem integral_eq_of_map_restrictCoeffField_eq
-    {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] [CompleteSpace E]
+    {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
     [MeasurableSpace E] [BorelSpace E] [SecondCountableTopology E]
     {U : Set (Vec d)} (X : MeasurableLocalObservable d U E)
     {P Q : MeasureTheory.Measure (CoeffField d)}
@@ -553,7 +552,7 @@ theorem indepFun_finset_of_isRestrictionUnitRangeDependent
     (fun i => (X i).measurable)
 
 theorem indepFun_finsetSum_of_isRestrictionUnitRangeDependent
-    {ι : Type*} [DecidableEq ι] {γ : Type*} [MeasurableSpace γ]
+    {ι : Type*} {γ : Type*} [MeasurableSpace γ]
     [AddCommMonoid γ] [MeasurableAdd₂ γ]
     {P : MeasureTheory.Measure (CoeffField d)} [MeasureTheory.IsProbabilityMeasure P]
     {V : ι → Set (Vec d)} (hP : IsRestrictionUnitRangeDependent P)
@@ -567,7 +566,7 @@ theorem indepFun_finsetSum_of_isRestrictionUnitRangeDependent
       (measurable_subtypeFinsetSum S) (measurable_subtypeFinsetSum T)
 
 theorem indepFun_finsetAverage_of_isRestrictionUnitRangeDependent
-    {ι : Type*} [DecidableEq ι] {γ : Type*} [MeasurableSpace γ]
+    {ι : Type*} {γ : Type*} [MeasurableSpace γ]
     [AddCommMonoid γ] [MeasurableAdd₂ γ] [SMul ℝ γ] [MeasurableConstSMul ℝ γ]
     {P : MeasureTheory.Measure (CoeffField d)} [MeasureTheory.IsProbabilityMeasure P]
     {V : ι → Set (Vec d)} (hP : IsRestrictionUnitRangeDependent P)
@@ -757,7 +756,8 @@ abbrev MeasurableRestrictionLocalObservable (d : ℕ) (U : Set (Vec d)) (β : Ty
 namespace MeasurableRestrictionLocalObservable
 
 export MeasurableLocalObservable (measurable measurable_restrictionSigma
-  measurable_restrictionSigma_mono mono mono_apply const comp prod pi neg add sub const_smul
+  measurable_restrictionSigma_mono mono mono_apply const comp prod pi neg add sub
+    constantScalarMultiply
   finsetPi measurable_subtypeFinsetSum finsetSum finsetAverage comp_restrictCoeffField_eq
   map_eq_map_restrictCoeffField map_eq_of_map_restrictCoeffField_eq
   measurable_comp_randomCoeffField measurable_comp_randomCoeffField_restrictionSigma
@@ -804,7 +804,6 @@ theorem law_eq_law_restrictSet_of_isLocalObservable
 
 theorem integral_comp_restrictSet_eq_of_isLocalObservable
     {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
-    [MeasurableSpace E]
     (μ : MeasureTheory.Measure Ω) {U : Set (Vec d)} {X : CoeffField d → E}
     (hX_local : IsRestrictionLocalObservable U X) :
     ∫ ω, X ((A.restrictSet U) ω) ∂μ = ∫ ω, X (A ω) ∂μ := by
@@ -814,7 +813,7 @@ theorem integral_comp_restrictSet_eq_of_isLocalObservable
     simpa [A.restrictSet_apply] using h
 
 theorem integral_law_restrictSet_eq_of_isLocalObservable
-    {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] [CompleteSpace E]
+    {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
     [MeasurableSpace E] [BorelSpace E] [SecondCountableTopology E]
     (μ : MeasureTheory.Measure Ω) {U : Set (Vec d)} {X : CoeffField d → E}
     (hX_meas : Measurable X) (hX_local : IsRestrictionLocalObservable U X) :
@@ -843,7 +842,7 @@ theorem integral_comp_restrictSet_eq
     simpa [A.restrictSet_apply] using h
 
 theorem integral_law_restrictSet_eq
-    {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] [CompleteSpace E]
+    {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
     [MeasurableSpace E] [BorelSpace E] [SecondCountableTopology E]
     (μ : MeasureTheory.Measure Ω) {U : Set (Vec d)}
     (X : MeasurableLocalObservable d U E) :
@@ -892,7 +891,7 @@ theorem indepFun_comp_finset_of_iIndep_restrictionSigma
     (fun i => (X i).measurable_comp_randomCoeffField A)
 
 theorem indepFun_comp_finsetSum_of_iIndep_restrictionSigma
-    {ι : Type*} [DecidableEq ι] {β : Type*} [MeasurableSpace β]
+    {ι : Type*} {β : Type*} [MeasurableSpace β]
     [AddCommMonoid β] [MeasurableAdd₂ β]
     {μ : MeasureTheory.Measure Ω} {U : ι → Set (Vec d)}
     (hμ : ProbabilityTheory.iIndep (fun i => A.restrictionSigma (U i)) μ)
@@ -907,7 +906,7 @@ theorem indepFun_comp_finsetSum_of_iIndep_restrictionSigma
       (MeasurableLocalObservable.measurable_subtypeFinsetSum T)
 
 theorem indepFun_comp_finsetAverage_of_iIndep_restrictionSigma
-    {ι : Type*} [DecidableEq ι] {β : Type*} [MeasurableSpace β]
+    {ι : Type*} {β : Type*} [MeasurableSpace β]
     [AddCommMonoid β] [MeasurableAdd₂ β] [SMul ℝ β] [MeasurableConstSMul ℝ β]
     {μ : MeasureTheory.Measure Ω} {U : ι → Set (Vec d)}
     (hμ : ProbabilityTheory.iIndep (fun i => A.restrictionSigma (U i)) μ)

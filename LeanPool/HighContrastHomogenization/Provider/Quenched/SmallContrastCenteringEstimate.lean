@@ -790,7 +790,7 @@ theorem centering_generic_estimate
       congr 2
       abel
     have hfirst : (SStar *ᵥ p) ⬝ᵥ u = p ⬝ᵥ r + p ⬝ᵥ κ *ᵥ p := by
-      rw [mulVec_dotProduct_symm hStarHerm, hSu, hWdef, dotProduct_add]
+      rw [mulVec_dotProduct_symm hStarHerm, hSu, dotProduct_add]
     have hsecond : ((S - SStar) *ᵥ p) ⬝ᵥ u = gp + A5 := by
       have hup : ((S - SStar) *ᵥ p) ⬝ᵥ p = gp := by
         rw [hgp, dotProduct_comm]

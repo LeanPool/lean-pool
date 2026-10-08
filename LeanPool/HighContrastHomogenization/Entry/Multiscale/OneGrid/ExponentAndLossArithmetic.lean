@@ -485,7 +485,7 @@ theorem profile_geometric_weight_sum_le (γ : ℝ) (hγ : γ ∈ Set.Ico (0 : �
         have h2 := congrArg (fun x : ℤ => (x : ℝ)) h1
         push_cast at h2
         linarith only [h2]
-      show (3 : ℝ) ^ (-((1 - γ) / 4) * ((b : ℝ) - 1 - (j : ℝ))) = r ^ (b - 1 - j).toNat
+      change (3 : ℝ) ^ (-((1 - γ) / 4) * ((b : ℝ) - 1 - (j : ℝ))) = r ^ (b - 1 - j).toNat
       rw [hr_def, ← Real.rpow_natCast ((3 : ℝ) ^ (-((1 - γ) / 4))) (b - 1 - j).toNat,
           ← Real.rpow_mul (by norm_num : (0 : ℝ) ≤ 3)]
       rw [hcast]

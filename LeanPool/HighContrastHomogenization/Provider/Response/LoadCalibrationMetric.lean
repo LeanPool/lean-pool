@@ -59,7 +59,7 @@ variable {d : ℕ}
 /-! ## Scalar dilation helpers -/
 
 /-- Cancel a positive dilation on the left of a Loewner bound. -/
-theorem le_of_smul_inv_le {n : Type*} [Fintype n] {c : ℝ} (hc : 0 < c)
+theorem le_of_smul_inv_le {n : Type*} {c : ℝ} (hc : 0 < c)
     {A B : Matrix n n ℝ} (h : c⁻¹ • A ≤ B) : A ≤ c • B := by
   have := smul_le_smul_of_le hc.le h
   rwa [smul_smul, mul_inv_cancel₀ hc.ne', one_smul] at this

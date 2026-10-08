@@ -38,7 +38,7 @@ theorem cubeAverageVec_eq_of_eq_add_grad_on_cubeSet
     apply cubeAverage_eq_of_eq_on_cubeSet
     intro x hx
     simpa using congrArg (fun z => z i) (huv x hx)
-  show cubeAverage Q (fun x => u x i) = cubeAverage Q (fun x => v x i)
+  change cubeAverage Q (fun x => u x i) = cubeAverage Q (fun x => v x i)
   rw [hui]
   unfold cubeAverage
   have hvi :

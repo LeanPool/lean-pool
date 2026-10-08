@@ -217,7 +217,6 @@ theorem aemeasurable_blockEnergyAverage_comp_countable_quantitativeSlice_cover
               QuantitativeEllipticSlice U k ((fun ω : cover (some k) => A ω.1) ω) := by
           intro ω
           have hω : ω.1 ∈ t k := by
-            simp [cover] at ω
             exact ω.2
           exact hSlice k ω.1 hω
         simpa [f, cover] using
@@ -406,7 +405,7 @@ theorem measurable_blockEnergyAverage_restrictionSigma_of_measurable
 /-- The block energy average for a fixed state, bundled as a measurable observable local to `U`.
 -/
 @[expose]
-noncomputable def measurableLocalObservable_blockEnergyAverage_of_measurable
+noncomputable def blockEnergyAverageLocalObservableOfMeasurable
     {d : ℕ} {U : Set (Vec d)} (hU : MeasurableSet U) (X : BlockState d)
     (hX : Measurable fun a : CoeffField d => blockEnergyAverage U a X) :
     MeasurableRestrictionLocalObservable d U ℝ where

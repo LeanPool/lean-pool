@@ -40,6 +40,8 @@ genuine scalar `W1pFunction` for each coordinate. -/
 @[ext]
 structure CubeVectorW1pFunction {d : ℕ} (Q : TriadicCube d)
     (p : FiniteLpExponent) where
+  /-- Scalar W¹,p witnesses for the vector-field coordinates, whose weak gradients form the
+  Jacobian. -/
   coord : Fin d → W1pFunction (openCubeSet Q) p.exponent
 
 namespace CubeVectorW1pFunction
@@ -200,7 +202,7 @@ noncomputable def toCubeEuclideanLpField
     F.toCubeEuclideanLpField.toField = F.toField :=
   rfl
 
-theorem weakHessianRowGradMemLpOn [NeZero d]
+theorem weakHessianRowGradMemLpOn
     {u : H1Function (openCubeSet Q)}
     (H : HasWeakHessianOn (openCubeSet Q) u)
     (hrows : ∀ i : Fin d,

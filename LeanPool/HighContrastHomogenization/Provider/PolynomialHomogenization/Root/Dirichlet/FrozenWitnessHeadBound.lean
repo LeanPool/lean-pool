@@ -67,7 +67,7 @@ variable {d : ℕ}
 
 /-- **The folded anchored frame constant is nonnegative.**  Needed to split
 `√(X² · Kenergy)` as `X · √Kenergy`; no declaration stated it. -/
-theorem foldedAnchoredFrameConstant_nonneg (d : ℕ) [NeZero d]
+theorem foldedAnchoredFrameConstant_nonneg (d : ℕ)
     {g kappaRate s Rad cnorm delta Jr : ℝ}
     (hg : g ∈ Set.Ico (0 : ℝ) 1) (hs₀ : s ∈ Set.Ico ((1 + g) / 4) (1 / 2 : ℝ))
     (hRad : 0 ≤ Rad) :
@@ -97,7 +97,7 @@ theorem foldedAnchoredFrameConstant_nonneg (d : ℕ) [NeZero d]
     (mul_nonneg hA hB) hflux0) hD) hnorm0) hgap0) (mul_nonneg hresp0 hmax0)
 
 /-- The whole flux head of the frame constant is nonnegative. -/
-theorem three_rpow_mul_foldedAnchoredFrameConstant_nonneg (d : ℕ) [NeZero d]
+theorem three_rpow_mul_foldedAnchoredFrameConstant_nonneg (d : ℕ)
     {g kappaRate s Rad cnorm delta Jr : ℝ}
     (hg : g ∈ Set.Ico (0 : ℝ) 1) (hs₀ : s ∈ Set.Ico ((1 + g) / 4) (1 / 2 : ℝ))
     (hRad : 0 ≤ Rad) :
@@ -112,7 +112,7 @@ theorem three_rpow_mul_foldedAnchoredFrameConstant_nonneg (d : ℕ) [NeZero d]
 /-- The constant at which the `hhead` premise is discharged.  Its only `abar`
 dependence is the output factor's eccentricity fold. -/
 @[expose]
-noncomputable def frozenWitnessHeadConstant (d : ℕ) [NeZero d]
+noncomputable def frozenWitnessHeadConstant (d : ℕ)
     (g kappaRate s rho Rad cnorm Cdual hardyReal KenergyBound : ℝ)
     (abar : Mat d) : ℝ :=
   gaugeOutputLawFree d s rho *

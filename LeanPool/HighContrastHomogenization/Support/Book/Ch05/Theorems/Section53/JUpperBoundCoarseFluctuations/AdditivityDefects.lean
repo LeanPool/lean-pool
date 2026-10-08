@@ -43,7 +43,7 @@ noncomputable section
 /-- The weak-norm maximizer response-defect observable is the same
 parent/descendant response defect used in the first Section 5.3 lemma. -/
 private theorem responseDefectAverageAtScale_eq_responseJAdditivityDefectAtScale
-    {d : ℕ} [NeZero d] (m n : ℤ) (p q : Vec d) (a : RegCoeffField d) :
+    {d : ℕ} (m n : ℤ) (p q : Vec d) (a : RegCoeffField d) :
     WeakNormsMaximizer.responseDefectAverageAtScale m n p q a =
       JUpperBoundWeakNorms.responseJAdditivityDefectAtScale m n p q a := by
   rfl
@@ -51,7 +51,7 @@ private theorem responseDefectAverageAtScale_eq_responseJAdditivityDefectAtScale
 /-- Integrability of the response defect in the notation of the weak-norm
 maximizer RHS. -/
 private theorem integrable_responseDefectAverageAtScale
-    {d : ℕ} [NeZero d] {P : Ch04.RestrictionCoeffLaw d}
+    {d : ℕ} {P : Ch04.RestrictionCoeffLaw d}
     {n m : ℤ} (hnm : n ≤ m) (p q : Vec d)
     (hParent :
       Integrable (Ch04.restrictionResponseJObservableCubeSet (originCube d m) p q) P)

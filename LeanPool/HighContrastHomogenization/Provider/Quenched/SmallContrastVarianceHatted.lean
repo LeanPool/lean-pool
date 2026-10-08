@@ -184,7 +184,7 @@ private theorem shifted_skew_quadratic_le_terminal_primal [NeZero d]
     linarith only [hquadsplit, hΔsmall, hκpiece, hxSp0]
   exact hKhat
 
-private theorem recentered_coarse_block_dominates_sharp [NeZero d]
+private theorem recentered_coarse_block_dominates_sharp
     {q : Mat d} (hqpd : q.PosDef) (p : ℤ) (a : CoeffSpace d)
     (h0 : Mat d) (hh0 : IsSkewMat h0) :
     fullBlockSharp (toFullBlockMat
@@ -234,7 +234,7 @@ private theorem recentered_coarse_block_dominates_sharp [NeZero d]
     simpa only [Response.adaptedDomain_carrier] using h
   exact hparentSharp
 
-private theorem recentered_adapted_mean_dominates_sharp [NeZero d]
+private theorem recentered_adapted_mean_dominates_sharp
     {P : Measure (CoeffSpace d)} [IsProbabilityMeasure P]
     {q : Mat d} (hqpd : q.PosDef) (j : ℤ)
     (hintj : HasFiniteAdaptedMean P q j)
@@ -348,7 +348,7 @@ private theorem recentered_parent_fluctuation_norm_eq_block_size
       Response.blockSub_skewBlockCongr, Transport.toFullBlockMat_blockSub]
   exact hLHSeq
 
-private theorem recentered_average_fluctuation_norm_eq_block_size [NeZero d]
+private theorem recentered_average_fluctuation_norm_eq_block_size
     {P : Measure (CoeffSpace d)} {q : Mat d} (hqpd : q.PosDef) (j p : ℤ)
     (a : CoeffSpace d) (h0 : Mat d) (Z : Finset (Fin d → ℤ))
     {A : (Fin d → ℤ) → FullBlockMat d}
@@ -593,7 +593,7 @@ theorem blockSize_variance_replacement_pathwise [NeZero d]
   have hAfull : ∀ w, A w = Shᴴ *
       toFullBlockMat (coarseBlock (adaptedCellAt q j w) a) * Sh := by
     intro w
-    show toFullBlockMat (Response.skewBlockCongr h0
+    change toFullBlockMat (Response.skewBlockCongr h0
       (coarseBlock (adaptedCellAt q j w) a)) = _
     rw [Response.toFullBlockMat_skewBlockCongr, hShdef]
   have hparentLe := recentered_coarse_parent_le_average hqpd hjp hZ a h0 hShdef

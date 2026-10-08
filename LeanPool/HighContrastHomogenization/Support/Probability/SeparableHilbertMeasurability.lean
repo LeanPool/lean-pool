@@ -106,7 +106,7 @@ theorem measurable_of_measurable_dist_denseSeq
 
 theorem measurable_of_measurable_norm_inner_denseRange
     {Ω H : Type*} [MeasurableSpace Ω] [NormedAddCommGroup H] [InnerProductSpace ℝ H]
-    [MeasurableSpace H] [BorelSpace H] [SecondCountableTopology H]
+    [MeasurableSpace H] [BorelSpace H]
     (u : ℕ → H) (hu : DenseRange u) {F : Ω → H}
     (hNorm : Measurable fun ω => ‖F ω‖)
     (hInner : ∀ n : ℕ, Measurable fun ω => inner ℝ (u n) (F ω)) :
@@ -149,7 +149,7 @@ theorem measurable_norm_of_norm_eq_iSup_abs_inner
 
 theorem measurable_of_measurable_inner_denseRange_of_norm_eq_iSup_abs_inner
     {Ω H : Type*} [MeasurableSpace Ω] [NormedAddCommGroup H] [InnerProductSpace ℝ H]
-    [MeasurableSpace H] [BorelSpace H] [SecondCountableTopology H]
+    [MeasurableSpace H] [BorelSpace H]
     (u : ℕ → H) (hu : DenseRange u) {F : Ω → H}
     (hNormEq : ∀ x : H, ‖x‖ = ⨆ n : ℕ, |inner ℝ (u n) x|)
     (hInner : ∀ n : ℕ, Measurable fun ω => inner ℝ (u n) (F ω)) :

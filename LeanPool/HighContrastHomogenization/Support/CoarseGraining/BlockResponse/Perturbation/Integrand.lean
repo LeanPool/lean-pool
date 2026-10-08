@@ -113,9 +113,30 @@ theorem blockResponse_integrand_add_smul_eq_firstVariation_sub_energy {d : ℕ}
     simpa [blockCoeffField] using
       (blockVecDot_blockMatVecMul_blockMatrixOfCoeff_comm
         (A := a x) (X := X.eval x) (Y := Y.eval x))
-  simp [blockResponseIntegrand, blockFirstVariationIntegrand, blockVariationEnergyIntegrand,
-    blockEnergyDensity, blockMatVecMul_add, blockMatVecMul_smul, blockVecDot_add_left,
-    blockVecDot_add_right, blockVecDot_smul_left, blockVecDot_smul_right, pow_two]
+  simp only [blockVariationEnergyIntegrand_eq_blockEnergyDensity]
+  suffices
+      -(1 / 2 : ℝ) *
+          (blockVecDot (X.eval x) (blockMatVecMul (blockCoeffField a x) (X.eval x)) +
+            c * blockVecDot (X.eval x) (blockMatVecMul (blockCoeffField a x) (Y.eval x)) +
+            c * blockVecDot (Y.eval x) (blockMatVecMul (blockCoeffField a x) (X.eval x)) +
+            c * c * blockVecDot (Y.eval x)
+              (blockMatVecMul (blockCoeffField a x) (Y.eval x))) -
+        (blockVecDot P (blockMatVecMul (blockCoeffField a x) (X.eval x)) +
+          c * blockVecDot P (blockMatVecMul (blockCoeffField a x) (Y.eval x))) +
+        (blockVecDot Q (X.eval x) + c * blockVecDot Q (Y.eval x)) =
+      (-(1 / 2 : ℝ) *
+          blockVecDot (X.eval x) (blockMatVecMul (blockCoeffField a x) (X.eval x)) -
+        blockVecDot P (blockMatVecMul (blockCoeffField a x) (X.eval x)) +
+        blockVecDot Q (X.eval x)) +
+      c * (-blockVecDot P (blockMatVecMul (blockCoeffField a x) (Y.eval x)) +
+        blockVecDot Q (Y.eval x) -
+        blockVecDot (Y.eval x) (blockMatVecMul (blockCoeffField a x) (X.eval x))) -
+      c ^ 2 * ((1 / 2 : ℝ) *
+        blockVecDot (Y.eval x) (blockMatVecMul (blockCoeffField a x) (Y.eval x))) by
+    simpa [blockResponseIntegrand, blockFirstVariationIntegrand, blockEnergyDensity,
+      blockMatVecMul_add, blockMatVecMul_smul, blockVecDot_add_left,
+      blockVecDot_add_right, blockVecDot_smul_left, blockVecDot_smul_right, pow_two,
+      mul_add, add_mul, mul_assoc, add_assoc, add_comm, add_left_comm, neg_add_rev] using this
   rw [hcomm]
   ring
 
@@ -133,8 +154,28 @@ theorem blockResponse_integrand_add_eq_firstVariation_sub_energy {d : ℕ}
     simpa [blockCoeffField] using
       (blockVecDot_blockMatVecMul_blockMatrixOfCoeff_comm
         (A := a x) (X := X.eval x) (Y := Y.eval x))
-  simp [blockResponseIntegrand, blockFirstVariationIntegrand, blockVariationEnergyIntegrand,
-    blockEnergyDensity, blockMatVecMul_add, blockVecDot_add_left, blockVecDot_add_right]
+  simp only [blockVariationEnergyIntegrand_eq_blockEnergyDensity]
+  suffices
+      -(1 / 2 : ℝ) *
+          (blockVecDot (X.eval x) (blockMatVecMul (blockCoeffField a x) (X.eval x)) +
+            blockVecDot (X.eval x) (blockMatVecMul (blockCoeffField a x) (Y.eval x)) +
+            blockVecDot (Y.eval x) (blockMatVecMul (blockCoeffField a x) (X.eval x)) +
+            blockVecDot (Y.eval x) (blockMatVecMul (blockCoeffField a x) (Y.eval x))) -
+        (blockVecDot P (blockMatVecMul (blockCoeffField a x) (X.eval x)) +
+          blockVecDot P (blockMatVecMul (blockCoeffField a x) (Y.eval x))) +
+        (blockVecDot Q (X.eval x) + blockVecDot Q (Y.eval x)) =
+      (-(1 / 2 : ℝ) *
+          blockVecDot (X.eval x) (blockMatVecMul (blockCoeffField a x) (X.eval x)) -
+        blockVecDot P (blockMatVecMul (blockCoeffField a x) (X.eval x)) +
+        blockVecDot Q (X.eval x)) +
+      (-blockVecDot P (blockMatVecMul (blockCoeffField a x) (Y.eval x)) +
+        blockVecDot Q (Y.eval x) -
+        blockVecDot (Y.eval x) (blockMatVecMul (blockCoeffField a x) (X.eval x))) -
+      (1 / 2 : ℝ) *
+        blockVecDot (Y.eval x) (blockMatVecMul (blockCoeffField a x) (Y.eval x)) by
+    simpa [blockResponseIntegrand, blockFirstVariationIntegrand, blockEnergyDensity,
+      blockMatVecMul_add, blockVecDot_add_left, blockVecDot_add_right,
+      mul_add, add_mul, mul_assoc, add_assoc, add_comm, add_left_comm, neg_add_rev] using this
   rw [hcomm]
   ring
 
@@ -429,22 +470,22 @@ theorem blockJ_le_plainUpperBound_of_isEllipticFieldOn_of_integrableOn
     BlockJ U P Q a ≤ blockResponsePlainUpperBound lam Lam P Q := by
   unfold BlockJ
   refine csSup_le ?_ ?_
-  refine ⟨0, ?_⟩
-  have hZeroInt :
-      BlockResponseIntegrabilityData U a ({ potential := 0, flux := 0 } : BlockState d) :=
-    blockResponseIntegrabilityData_of_flux_memL2_of_mem_responseSpace_of_isEllipticFieldOn
-      (blockResponse_zero_mem_responseSpace a U)
-      (by
-        change MemVectorL2 U (0 : Vec d → Vec d)
-        exact MeasureTheory.MemLp.zero)
-      hEll
-  refine ⟨({ potential := 0, flux := 0 } : BlockState d),
-    blockResponse_zero_mem_responseSpace a U, hZeroInt, ?_⟩
-  rw [blockResponse_integrand_zero]
-  simp [volumeAverage]
-  rintro m ⟨X, hX, _, rfl⟩
-  exact volumeAverage_blockResponseIntegrand_le_plainUpperBound_of_isEllipticFieldOn
-    hU hEll P Q X (hInt X hX) hvol
+  · refine ⟨0, ?_⟩
+    have hZeroInt :
+        BlockResponseIntegrabilityData U a ({ potential := 0, flux := 0 } : BlockState d) :=
+      blockResponseIntegrabilityData_of_flux_memL2_of_mem_responseSpace_of_isEllipticFieldOn
+        (blockResponse_zero_mem_responseSpace a U)
+        (by
+          change MemVectorL2 U (0 : Vec d → Vec d)
+          exact MeasureTheory.MemLp.zero)
+        hEll
+    refine ⟨({ potential := 0, flux := 0 } : BlockState d),
+      blockResponse_zero_mem_responseSpace a U, hZeroInt, ?_⟩
+    rw [blockResponse_integrand_zero]
+    simp [volumeAverage]
+  · rintro m ⟨X, hX, _, rfl⟩
+    exact volumeAverage_blockResponseIntegrand_le_plainUpperBound_of_isEllipticFieldOn
+      hU hEll P Q X (hInt X hX) hvol
 
 theorem blockJ_le_plainUpperBound_of_isEllipticFieldOn
     {d : ℕ} {U : Set (Vec d)} {a : CoeffField d} {lam Lam : ℝ}

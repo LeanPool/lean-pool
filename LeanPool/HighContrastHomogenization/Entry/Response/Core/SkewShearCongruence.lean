@@ -77,7 +77,7 @@ private theorem memScalarL2_euclideanCoordDeriv {d : ℕ}
       (hasCompactSupport_euclideanCoordDeriv hu_supp i)).restrict U
 
 private theorem hasCompactSupport_finset_sum
-    {α β ι : Type*} [TopologicalSpace α] [AddCommMonoid β] [DecidableEq ι]
+    {α β ι : Type*} [TopologicalSpace α] [AddCommMonoid β]
     (s : Finset ι) (f : ι → α → β)
     (hf : ∀ i ∈ s, HasCompactSupport (f i)) :
     HasCompactSupport (fun x ↦ ∑ i ∈ s, f i x) := by
@@ -171,8 +171,8 @@ private theorem smooth_skew_gradient_pairing_zero {d : ℕ} {U : Set (Vec d)}
             apply Finset.sum_congr rfl
             intro j _
             rw [fderiv_const_mul]
-            rfl
-            exact (contDiff_euclideanCoordDeriv hu j).differentiable (by simp) x
+            · rfl
+            · exact (contDiff_euclideanCoordDeriv hu j).differentiable (by simp) x
           · intro j _
             exact (contDiff_const.mul (contDiff_euclideanCoordDeriv hu j)).differentiable
               (by simp) x
@@ -193,7 +193,7 @@ private theorem smooth_skew_gradient_pairing_zero {d : ℕ} {U : Set (Vec d)}
                   intro i _
                   have hc := euclideanCoordSecondDeriv_comm hu j i x
                   have hgij := congrArg (fun A : Mat d ↦ A j i) hg
-                  simp [matTranspose] at hgij
+                  simp only [matTranspose, Matrix.transpose_apply, Matrix.neg_apply] at hgij
                   rw [hc]
                   rw [hgij]
                   ring
@@ -325,11 +325,14 @@ private theorem isSolenoidalZeroNormalTraceOn_const_skew_mul_potential
           |>.const_mul (g i j)]
   exact hlimit
 
+/-- Keep the potential of a block state and add `g` times that potential to its flux. -/
 @[expose]
 public def shearStateFluxAdd {d : ℕ} (g : Mat d) (X : BlockState d) : BlockState d :=
   { potential := X.potential
     flux := fun x ↦ X.flux x + matVecMul g (X.potential x) }
 
+/-- Shear a block load by keeping its first component and adding `g` times that component to the
+second. -/
 @[expose]
 public def shearLoad {d : ℕ} (g : Mat d) (P : BlockVec d) : BlockVec d :=
   (P.1, P.2 + matVecMul g P.1)
@@ -490,7 +493,7 @@ theorem isSymmetricBlockMat_blockCongr {d : ℕ} (G : BlockMat d)
     IsSymmetricBlockMat (Multiscale.blockCongr G A) := by
   rw [Multiscale.blockCongr]
   refine isSymmetricBlockMat_of_isSymm ?_
-  show ((toFullBlockMat G)ᵀ * toFullBlockMat A * toFullBlockMat G)ᵀ =
+  change ((toFullBlockMat G)ᵀ * toFullBlockMat A * toFullBlockMat G)ᵀ =
     (toFullBlockMat G)ᵀ * toFullBlockMat A * toFullBlockMat G
   rw [Matrix.transpose_mul, Matrix.transpose_mul, Matrix.transpose_transpose,
     (isSymm_toFullBlockMat hA).eq, Matrix.mul_assoc]

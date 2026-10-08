@@ -201,7 +201,7 @@ private theorem hermSmulOne {d : ℕ} (t : ℝ) : ((t • (1 : Mat d)).IsHermiti
 
 /-- `σ ≤ Λ₀ • 1`.  The derivation of `ReferenceComparison.lean` (inside the public
 `refBlock_le_six_aspectRatio_smul_swapConj`), run on `schurSigma_le_corrected`. -/
-private theorem schurSigma_le_bigLambdaRef {d : ℕ} [NeZero d] {E : BlockMat d}
+private theorem schurSigma_le_bigLambdaRef {d : ℕ} {E : BlockMat d}
     (hs : IsSymmetricBlockMat E) (hp : Book.Ch02.BlockPosDef E) :
     schurSigma E ≤ bigLambdaRef E • (1 : Mat d) := by
   obtain ⟨h, _hh, hLam⟩ := exists_isSkewMat_bigLambdaRef_eq hp

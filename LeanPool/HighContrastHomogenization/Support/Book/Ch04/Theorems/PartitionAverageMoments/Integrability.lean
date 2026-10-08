@@ -35,7 +35,7 @@ corresponding centered origin-cube moment by stationarity and translation
 covariance. -/
 theorem
   integrable_abs_pow_restrictionCenteredDescendantAverage_of_stationary_of_isTranslationCovariant
-    {d : ℕ} {n m : ℤ} {P : RestrictionCoeffLaw d} [IsProbabilityMeasure P]
+    {d : ℕ} {n m : ℤ} {P : RestrictionCoeffLaw d}
     {p : ℕ}
     (hn : 0 ≤ n) (hnm : n ≤ m)
     (hPstat : RestrictionStationaryLaw P)
@@ -135,7 +135,7 @@ theorem
 /-- Integrability of the centered descendant average follows from the
 corresponding centered origin-cube moment by stationarity. -/
 theorem integrable_abs_pow_restrictionCenteredDescendantAverage_of_stationary
-    {d : ℕ} {n m : ℤ} {P : RestrictionCoeffLaw d} [IsProbabilityMeasure P]
+    {d : ℕ} {n m : ℤ} {P : RestrictionCoeffLaw d}
     {p : ℕ}
     (hn : 0 ≤ n) (hnm : n ≤ m)
     (hPstat : RestrictionStationaryLaw P)
@@ -156,7 +156,7 @@ theorem integrable_abs_pow_restrictionCenteredDescendantAverage_of_stationary
 cube follows from the corresponding centered origin-cube moment by
 stationarity and translation covariance. -/
 theorem integrable_abs_pow_centeredDescendantMean_of_stationary
-    {d : ℕ} {Q : TriadicCube d} {n : ℤ} {P : RestrictionCoeffLaw d} [IsProbabilityMeasure P]
+    {d : ℕ} {Q : TriadicCube d} {n : ℤ} {P : RestrictionCoeffLaw d}
     {p : ℕ}
     (hn : 0 ≤ n) (hnQ : n ≤ Q.scale)
     (hPstat : RestrictionStationaryLaw P)
@@ -255,7 +255,7 @@ theorem integrable_abs_pow_centeredDescendantMean_of_stationary
 cube follows from the corresponding centered origin-cube moment by
 stationarity. -/
 theorem integrable_abs_pow_restrictionCenteredDescendantAverageOnCube_of_stationary
-    {d : ℕ} {Q : TriadicCube d} {n : ℤ} {P : RestrictionCoeffLaw d} [IsProbabilityMeasure P]
+    {d : ℕ} {Q : TriadicCube d} {n : ℤ} {P : RestrictionCoeffLaw d}
     {p : ℕ}
     (hn : 0 ≤ n) (hnQ : n ≤ Q.scale)
     (hPstat : RestrictionStationaryLaw P)
@@ -278,7 +278,7 @@ This is the integrability half of the public finite-parent moment estimate; it
 is useful when a downstream theorem first compares another observable to this
 finite maximum and then applies the Ch4 moment bound. -/
 theorem integrable_finsetSup_abs_restrictionCenteredDescendantAverageOnCube_pow_of_stationary
-    {d : ℕ} {n : ℤ} {P : RestrictionCoeffLaw d} [IsProbabilityMeasure P]
+    {d : ℕ} {n : ℤ} {P : RestrictionCoeffLaw d}
     {parents : Finset (TriadicCube d)} (hparents : parents.Nonempty)
     {p : ℕ}
     (hn : 0 ≤ n)

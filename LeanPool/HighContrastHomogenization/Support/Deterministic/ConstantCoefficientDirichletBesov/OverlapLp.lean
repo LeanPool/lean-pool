@@ -40,7 +40,7 @@ theorem overlapCubeAverage_eq_integralAverage_openOverlapCubeSet {d : ℕ}
 
 namespace H1Function
 
-@[simp] theorem toMeanZero_openOverlapCubeSet_apply {d : ℕ}
+theorem toMeanZero_openOverlapCubeSet_apply {d : ℕ}
     (S : TriadicCube d) (u : H1Function (openOverlapCubeSet S)) (x : Vec d) :
     u.toMeanZero x = u x - overlapCubeAverage S (fun y => u y) := by
   have havg :
@@ -49,7 +49,7 @@ namespace H1Function
     (overlapCubeAverage_eq_integralAverage_openOverlapCubeSet S (fun y => u y)).symm
   simp [havg]
 
-@[simp] theorem toMeanZero_openOverlapCubeSet_grad {d : ℕ}
+theorem toMeanZero_openOverlapCubeSet_grad {d : ℕ}
     (S : TriadicCube d) (u : H1Function (openOverlapCubeSet S)) (x : Vec d) :
     u.toMeanZero.toH1Function.grad x = u.grad x := by
   simp
@@ -428,7 +428,7 @@ theorem cubeLpNorm_two_sq_le_lintegral_ofReal_vecNormSq_toReal_of_le
     {d : ℕ} {Q : TriadicCube d} {F : Vec d → Vec d} {B : ℝ≥0∞}
     (hB_ne_top : B ≠ ∞)
     (hbound :
-      ∫⁻ x, ENNReal.ofReal (vecNormSq (F x)) ∂ normalizedCubeMeasure Q ≤ B) :
+      ∫⁻ x, ENNReal.ofReal (vecNormSq (F x)) ∂normalizedCubeMeasure Q ≤ B) :
     (cubeLpNorm Q (2 : ℝ≥0∞) F) ^ 2 ≤ B.toReal := by
   by_cases hF : MeasureTheory.AEStronglyMeasurable F (normalizedCubeMeasure Q)
   swap
@@ -470,7 +470,7 @@ theorem overlapCubeLpNorm_two_sq_le_lintegral_ofReal_vecNormSq_toReal_of_le
     {d : ℕ} {S : TriadicCube d} {F : Vec d → Vec d} {B : ℝ≥0∞}
     (hB_ne_top : B ≠ ∞)
     (hbound :
-      ∫⁻ x, ENNReal.ofReal (vecNormSq (F x)) ∂ normalizedOverlapCubeMeasure S ≤ B) :
+      ∫⁻ x, ENNReal.ofReal (vecNormSq (F x)) ∂normalizedOverlapCubeMeasure S ≤ B) :
     (overlapCubeLpNorm S (2 : ℝ≥0∞) F) ^ 2 ≤ B.toReal := by
   by_cases hF : MeasureTheory.AEStronglyMeasurable F (normalizedOverlapCubeMeasure S)
   swap

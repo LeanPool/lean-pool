@@ -41,7 +41,7 @@ The displayed right-hand side is the geometric summation constant times the
 `q`-power of the single envelope.  In applications `R` is the collapsed
 minimal-scale factor, for instance `sqrt ((3^m / X)^(-alpha))`. -/
 theorem homogenizationErrorFinite_le_of_scaleResponseEnvelope
-    {d : ℕ} [NeZero d]
+    {d : ℕ}
     (Q : TriadicCube d) {n : ℤ} (hn : n ≤ Q.scale)
     (a : Ch02.TriadicCoeffFamily d) (a0 : Mat d)
     {r tau delta q A R : ℝ}
@@ -69,7 +69,7 @@ theorem homogenizationErrorFinite_le_of_scaleResponseEnvelope
 /-- Same as `homogenizationErrorFinite_le_of_scaleResponseEnvelope`, with the
 geometric constant pulled out of the `q`-root. -/
 theorem homogenizationErrorFinite_le_const_mul_of_scaleResponseEnvelope
-    {d : ℕ} [NeZero d]
+    {d : ℕ}
     (Q : TriadicCube d) {n : ℤ} (hn : n ≤ Q.scale)
     (a : Ch02.TriadicCoeffFamily d) (a0 : Mat d)
     {r tau delta q A R : ℝ}
@@ -139,7 +139,7 @@ theorem homogenizationErrorFinite_le_const_mul_of_scaleResponseEnvelope
 
 /-- Closed finite-`q` control on a whole cube. -/
 theorem homogenizationErrorOnCube_le_of_scaleResponseEnvelope
-    {d : ℕ} [NeZero d]
+    {d : ℕ}
     (Q : TriadicCube d)
     (a : Ch02.TriadicCoeffFamily d) (a0 : Mat d)
     {r tau delta q A R : ℝ}
@@ -166,7 +166,7 @@ theorem homogenizationErrorOnCube_le_of_scaleResponseEnvelope
 
 /-- Whole-cube version with the geometric constant pulled out. -/
 theorem homogenizationErrorOnCube_le_const_mul_of_scaleResponseEnvelope
-    {d : ℕ} [NeZero d]
+    {d : ℕ}
     (Q : TriadicCube d)
     (a : Ch02.TriadicCoeffFamily d) (a0 : Mat d)
     {r tau delta q A R : ℝ}
@@ -196,7 +196,7 @@ theorem homogenizationErrorOnCube_le_const_mul_of_scaleResponseEnvelope
 `X`.  This is the deterministic target shape for the Section 5.7 stochastic
 corollary. -/
 theorem homogenizationErrorOnOriginCube_le_of_scaleResponseMinimalEnvelope
-    {d : ℕ} [NeZero d] {m : ℕ}
+    {d : ℕ} {m : ℕ}
     (a : Ch02.TriadicCoeffFamily d) (a0 : Mat d)
     {r tau delta q A X alpha : ℝ}
     (hdelta : delta = r - tau / 2)

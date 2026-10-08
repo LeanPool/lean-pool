@@ -90,7 +90,7 @@ theorem blockCellAverage_diagonalWeakChildState (hq : q.PosDef) (k : ℤ)
     (diagonalWeakChildOptimizer hq k w a p r)
 
 /-- The child average is `(R A_k(z)+I)(-p,r)`. -/
-theorem blockCellAverage_diagonalWeakChildState_eq_response [NeZero d]
+theorem blockCellAverage_diagonalWeakChildState_eq_response
     (hq : q.PosDef) (k : ℤ) (w : Fin d → ℤ)
     (a : CoeffSpace d) (p r : Vec d) :
     blockCellAverage (adaptedCellAt q k w)
@@ -107,7 +107,7 @@ theorem blockCellAverage_diagonalWeakChildState_eq_response [NeZero d]
 /-- The parent optimizer restricts to a solution on each aligned child, with
 exactly the same gradient after transport through a shared pointwise
 coefficient representative. -/
-theorem exists_diagonalWeakOptimizer_restrict_child [NeZero d]
+theorem exists_diagonalWeakOptimizer_restrict_child
     (hq : q.PosDef) {k t : ℤ} (hkt : k ≤ t) {w : Fin d → ℤ}
     (hw : w ∈ alignedIndex q k t) (a : CoeffSpace d) (p r : Vec d) :
     ∃ u : Solution (adaptedDomainAt hq k w)
@@ -140,8 +140,7 @@ end
 
 end HCPolySupport.HighContrast.Response
 
-end HighContrast
 
-end HCPolySupport
+
 
 end

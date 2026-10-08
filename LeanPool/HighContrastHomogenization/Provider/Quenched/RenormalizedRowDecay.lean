@@ -61,7 +61,7 @@ theorem quenched_block_row_le_of_renormRadius_le [NeZero d]
     (hnm : n ≤ m)
     (hradius : renormRadius S Ahat delta gamma h n a ≤ (3 : ℝ) ^ m)
     (hsource : S a ≤ (3 : ℝ) ^ m) :
-    quenched_block_row rho Abar (S a) a m ≤
+    quenchedBlockRow rho Abar (S a) a m ≤
       2 * (delta + eps) *
         (1 - (3 : ℝ) ^ (-(rho - gamma)))⁻¹ := by
   have hcell : ∀ r : ℕ, ∀ w : Fin d → ℤ,
@@ -202,7 +202,7 @@ theorem quenched_block_row_le_fallback [NeZero d]
         BlockMatLoewnerLE (coarseBlock (standardCell d k w) a)
           (blockScale ((3 : ℝ) ^ (g * ((M : ℝ) - (k : ℝ)))) E))
     (hsource : S a ≤ (3 : ℝ) ^ m) :
-    quenched_block_row rho Abar (S a) a m ≤
+    quenchedBlockRow rho Abar (S a) a m ≤
       4 * kappaRef E * (1 - (3 : ℝ) ^ (-(rho - g)))⁻¹ := by
   have hcell : ∀ r : ℕ, ∀ w : Fin d → ℤ,
       standardCellCenter ((m : ℤ) - (r : ℤ)) w ∈ centeredCube d (m : ℤ) →

@@ -67,7 +67,7 @@ private theorem belowSplit_rows_le {g K C Q : ℝ} {J r : ℤ}
   exact mul_le_mul_of_nonneg_left hser hCQ
 
 private theorem cutoff_tail_coefficient_le_one {g C K mean : ℝ}
-    {J M r : ℤ} (hg0 : 0 ≤ g) (hg1 : g < 1) (hJ0 : J ≤ 0)
+    {J M r : ℤ} (hg1 : g < 1) (hJ0 : J ≤ 0)
     (hmean : mean ≤ 2 * K ^ 2) (hC0 : 0 ≤ C)
     (hcut : 2 * C * (1 - g)⁻¹ *
       (1 + (3 : ℝ) ^ M + 6 * K ^ 2) *
@@ -330,10 +330,10 @@ theorem annealedBlock_adaptedCellAt_le [NeZero d] {P : Measure (CoeffSpace d)}
         exact hle
     exact belowSplit_rows_le hg0 hg1 (mul_nonneg hCd0 hE0) hb
   -- the tail, under one unit
-  have htailfinal := cutoff_tail_coefficient_le_one hg0 hg1 hJ0 hmeanS hCd0 hJmul
+  have htailfinal := cutoff_tail_coefficient_le_one hg1 hJ0 hmeanS hCd0 hJmul
   -- the printed constant
   obtain ⟨hB1, hGamB, hGam0, hCdub⟩ :=
-    transferGauge_printed_bound hg0 hg1 hK1 hqinv
+    transferGauge_printed_bound (d := d) hg0 hg1 hK1 hqinv
   have hcoef : (1 + 9 * K ^ 2 * (3 : ℝ) ^ (-r)) ^ g +
       (6 * (d : ℝ) * Real.sqrt d * ‖q⁻¹‖) * (20 * transferGauge g K r) +
       (6 * (d : ℝ) * Real.sqrt d * ‖q⁻¹‖) *
@@ -341,7 +341,9 @@ theorem annealedBlock_adaptedCellAt_le [NeZero d] {P : Measure (CoeffSpace d)}
           ((3 : ℝ) ^ (-r) * (3 : ℝ) ^ ((J : ℝ) * (1 - g)))) ≤
       126 * (d : ℝ) * Real.sqrt d * (1 - g)⁻¹ *
         (1 + 9 * K ^ 2 * (3 : ℝ) ^ (-r)) ^ g := by
-    exact printed_coefficient_le hinv1 hd32 hB1 hGamB hGam0 hCdub htailfinal
+    simpa only [mul_assoc] using
+      (printed_coefficient_le (r := r) hinv1 hd32 hB1 hGamB hGam0
+        (by simpa only [mul_assoc] using hCdub) htailfinal)
   have hmulcoef := mul_le_mul_of_nonneg_right hcoef hE0
   rw [Sharp.blockVecDot_blockMatVecMul_blockScale]
   have hgoal : adaptedCellAt q r w = adaptedCellTranslate q r (adaptedCellCenter q r w) := rfl

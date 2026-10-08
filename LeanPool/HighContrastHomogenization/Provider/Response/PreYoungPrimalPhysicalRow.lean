@@ -42,7 +42,7 @@ theorem integral_primal_physical_oscillation_eq_cutoff_row
     (g : Mat d) (hg : IsSkewMat g) (p r Qcen : Vec d)
     (hweak : profilePrimalWeakQuantity P m0 hq t
       (fun a ↦ a.subSkew g hg) p r ≠ ⊤) :
-    (∫ a, primal_physical_oscillation hq s t g hg p r Qcen a ∂P) =
+    (∫ a, primalPhysicalOscillation hq s t g hg p r Qcen a ∂P) =
       avsum (alignedIndex q s t) (fun z ↦
         ∑ i, Qcen i * ∫ a, volumeAverage (adaptedCellAt q s z) (fun x ↦
           (adaptedPreYoungCutoff q hq t x -

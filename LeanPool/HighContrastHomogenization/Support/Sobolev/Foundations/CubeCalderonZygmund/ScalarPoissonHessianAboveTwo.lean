@@ -40,6 +40,7 @@ namespace CubeCalderonZygmund
 
 open MeasureTheory Set
 
+/-- Increase the Hessian estimate exponent by one, preserving finiteness and the lower bound one. -/
 @[expose]
 public noncomputable def exponentSucc (q : FiniteLpExponent) :
     FiniteLpExponent where

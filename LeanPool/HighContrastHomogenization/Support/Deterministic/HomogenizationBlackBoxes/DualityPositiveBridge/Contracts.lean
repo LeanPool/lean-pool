@@ -124,7 +124,7 @@ positive test budget, with the explicit `s⁻¹` loss from the LaTeX proof.
 -/
 @[expose]
 def LocalizedFluxDefectPositivePairingEstimate
-    (d : ℕ) [NeZero d] (C : ℝ) : Prop :=
+    (d : ℕ) (C : ℝ) : Prop :=
   0 ≤ C ∧
     ∀ (Q : TriadicCube d) {s : ℝ} (j : ℕ)
       (F H : Vec d → Vec d) (B : ℝ),
@@ -138,13 +138,13 @@ def LocalizedFluxDefectPositivePairingEstimate
           C * s⁻¹ * localizedFluxDefectNegativeBesovAverageTwo Q s F j * B
 
 theorem LocalizedFluxDefectPositivePairingEstimate.nonneg
-    {d : ℕ} [NeZero d] {C : ℝ}
+    {d : ℕ} {C : ℝ}
     (hpair : LocalizedFluxDefectPositivePairingEstimate d C) :
     0 ≤ C :=
   hpair.1
 
 theorem LocalizedFluxDefectPositivePairingEstimate.bound
-    {d : ℕ} [NeZero d] {C : ℝ}
+    {d : ℕ} {C : ℝ}
     (hpair : LocalizedFluxDefectPositivePairingEstimate d C)
     (Q : TriadicCube d) {s : ℝ} (j : ℕ)
     (F H : Vec d → Vec d) (B : ℝ)

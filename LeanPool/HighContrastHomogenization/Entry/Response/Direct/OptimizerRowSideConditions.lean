@@ -115,7 +115,7 @@ theorem abs_volumeAverage_sub_one_energy_sub_avsum_le_respCoeffMinus {d : ℕ} [
     integrableOn_cutoff_mul_coord hUmeas hUfin
       (hφ.contDiff.continuous.measurable.sub measurable_const)
       (fun x => by
-        show |φ x - 1| ≤ (1 : ℝ)
+        change |φ x - 1| ≤ (1 : ℝ)
         rw [abs_le]
         exact ⟨by linarith only [hφ.nonneg x], by linarith only [hφ.le_two x]⟩)
       henergy
@@ -227,7 +227,7 @@ theorem abs_volumeAverage_sub_one_energy_sub_avsum_le_respCoeffPlus {d : ℕ} [N
     integrableOn_cutoff_mul_coord hUmeas hUfin
       (hφ.contDiff.continuous.measurable.sub measurable_const)
       (fun x => by
-        show |φ x - 1| ≤ (1 : ℝ)
+        change |φ x - 1| ≤ (1 : ℝ)
         rw [abs_le]
         exact ⟨by linarith only [hφ.nonneg x], by linarith only [hφ.le_two x]⟩)
       henergy
@@ -528,8 +528,8 @@ defect `τ^-`, the expectation of the defect is at most
 `max 3 (32 d² responseCutoffProfileConst) (τ^- + √(τ^- E[J_t^-]) + 3^{-H} E[J_t^-])`.  This is the
 terminal-optimizer replacement row of `p.response.transfer` assembled on the carriers the cutoff
 estimate uses. -/
-theorem abs_integral_cutoffHalfEnergy_sub_respJ_le_rowPlus {d : ℕ} [NeZero d]
-    (P : Measure (CoeffSpace d)) [IsProbabilityMeasure P] (jStar : ℕ) (F : BlockMat d)
+theorem abs_integral_cutoffHalfEnergy_sub_respJ_le_rowPlus {d : ℕ}
+    (P : Measure (CoeffSpace d)) (jStar : ℕ) (F : BlockMat d)
     (H : ℕ) (s t : ℤ) (e : Vec d) (φ : Vec d → ℝ)
     (uP : (a : CoeffSpace d) → AHarmonicFunction (respCoeffPlus F a) (respCell jStar F t))
     (hid : ∀ a, cutoffHalfEnergyAux (respCell jStar F t) φ (respCoeffPlus F a) (uP a)

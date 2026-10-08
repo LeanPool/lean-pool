@@ -305,7 +305,7 @@ theorem exists_entry_generation (d : ℕ) (hd : 2 ≤ d) (γ : ℝ) (hγ : γ �
   have hcancel : max 1 Cmaj * (ηinit / max 1 Cmaj) = ηinit :=
     mul_div_cancel₀ ηinit (ne_of_gt hMpos)
   rw [hself]
-  show fluctuationHistory P γ (1 : Mat d) jStar n₀ +
+  change fluctuationHistory P γ (1 : Mat d) jStar n₀ +
       meanHistory P γ (1 : Mat d) (jStar : ℤ) n₀ +
       determinantDrift P γ (1 : Mat d) jStar n₀ ≤ ηinit
   linarith only [hmaj', hmono, hscale, hcancel.ge, hcancel.le]

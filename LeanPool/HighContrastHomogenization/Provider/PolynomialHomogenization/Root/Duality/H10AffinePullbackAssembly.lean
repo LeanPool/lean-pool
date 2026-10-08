@@ -183,7 +183,7 @@ theorem isPotentialZeroTraceOn_affinePullback {L : Mat d} (hL : IsUnit L.det)
       (fun y => matVecMul (matTranspose L) (f (matVecMul L y))) := by
   obtain ⟨u, hu⟩ := hf
   refine ⟨h10AffinePullback hL hU u, ?_⟩
-  show (fun y => matVecMul (matTranspose L)
+  change (fun y => matVecMul (matTranspose L)
       (u.toH1Function.grad (matVecMul L y))) =
     fun y => matVecMul (matTranspose L) (f (matVecMul L y))
   rw [hu]

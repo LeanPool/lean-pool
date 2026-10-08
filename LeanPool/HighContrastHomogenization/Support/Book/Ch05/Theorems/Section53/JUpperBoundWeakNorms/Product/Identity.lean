@@ -181,10 +181,13 @@ theorem cutoffProductTerm_eq_neg_half_cubeMean_fluxPotentialDefect_smul_cutoffGr
     apply weak_gradient_coordinates_equal_almost_everywhere
       (Ch02.cubeDomain Q).isOpen ψ.toH1Function uφ (fun x => φ x * u x)
     · intro i
-      simpa [hψ_toFun] using ψ.toH1Function.hasWeakGradient i
+      simpa [U, hψ_toFun] using ψ.toH1Function.hasWeakGradient i
     · intro i
-      simpa [uφ, H1Function.mulContDiffHasCompactSupport_toFun] using
-        uφ.hasWeakGradient i
+      have hweak := uφ.hasWeakGradient i
+      have htoFun : uφ.toFun = fun x => φ x * u x :=
+        H1Function.mulContDiffHasCompactSupport_toFun u hφ hφ_compact
+      rw [htoFun] at hweak
+      simpa only [U, Ch02.cubeDomain_coe] using hweak
   have hsol_ψ :
       ∫ x in U, vecDot (fluxDef x) (ψ.toH1Function.grad x)
           ∂MeasureTheory.volume = 0 := by

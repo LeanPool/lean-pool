@@ -352,7 +352,7 @@ theorem forcedSolutionFluxDefect_dualNorm_le_constant_mul_negativeBesovSeminormT
         cubeBesovNegativeVectorSeminormTwo Q s F := hnorm
 
 theorem homogenizationNegativeBesovLHS_eq_solutionComparisonLHS
-    {d : ℕ} [NeZero d] (Q : TriadicCube d) (a : CoeffFamily d)
+    {d : ℕ} (Q : TriadicCube d) (a : CoeffFamily d)
     (a0 : ConstantCoeffMatrix d) (s : ℝ)
     (u v : H1Function (Ch02.cubeDomain Q : Set (Vec d))) :
     homogenizationComparisonNegativeBesovLHS Q a a0 s u v =
@@ -472,7 +472,7 @@ theorem homogenizationNegativeBesovLHS_le_constant_mul_solutionNegativeBesovLhs
           rfl
 
 theorem HomogenizationFluxDefectAverage_eq_negativeBesovFluxAverage
-    {d : ℕ} [NeZero d] (Q : TriadicCube d) (a : CoeffFamily d)
+    {d : ℕ} (Q : TriadicCube d) (a : CoeffFamily d)
     (a0 : ConstantCoeffMatrix d) (s : ℝ) (j : ℕ)
     (u : H1Function (Ch02.cubeDomain Q : Set (Vec d))) :
     localizedHomogenizationFluxDefectAverage Q a a0 s j u =
@@ -510,7 +510,7 @@ theorem HomogenizationFluxDefectAverage_eq_negativeBesovFluxAverage
     congrArg Real.sqrt havg
 
 theorem forcedSolutionFluxFieldNegativeBesovNorm_finite_eq_negativeBesovSeminormTwo
-    {d : ℕ} [NeZero d] (Q : TriadicCube d) (a : CoeffFamily d)
+    {d : ℕ} (Q : TriadicCube d) (a : CoeffFamily d)
     (s : ℝ) {g : Vec d → Vec d} (u : ForcedCubeSolution Q a g) :
     scaleNormalizedNegativeBesovVectorNorm Q s (Ch02.MultiscaleExponent.finite 2)
         (forcedSolutionFluxField Q a u) =

@@ -124,7 +124,7 @@ theorem crudeTopBadScaleEvent_eq_empty_of_large
 variable [MeasurableSpace Ω]
 
 theorem measureReal_crudeTopBadScaleEvent_eq_zero_of_large
-    {μ : Measure Ω} [IsFiniteMeasure μ]
+    {μ : Measure Ω}
     {H : ℕ → ℕ → Ω → ℝ} {K a t α : ℝ} {q : ℕ}
     (ha : 0 < a) (hα_nonneg : 0 ≤ α) (hαt : α < t) (hαa : α < a)
     (hq_large :

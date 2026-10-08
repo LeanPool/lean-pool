@@ -500,9 +500,9 @@ private theorem gradientLinearTerm_le_dimensionalSquareRoot
           cubeBesovScaleWeight (-s) Q *
             JUpperBoundWeakNorms.section53CutoffDualBound Q s)
     let G := ∫ a, (gradWeak a) ^ 2 ∂P
-    ∀ (hs_pos : 0 < s),
-    ∀ (hGradCoeff_nonneg : 0 ≤ gradCoeff),
-    ∀ (hGradCoeff_le : gradCoeff ≤ 2 * Kgrad),
+    ∀ (_hs_pos : 0 < s),
+    ∀ (_hGradCoeff_nonneg : 0 ≤ gradCoeff),
+    ∀ (_hGradCoeff_le : gradCoeff ≤ 2 * Kgrad),
     (1 / 2 : ℝ) * ‖q0_e‖ * (gradCoeff * ∫ a, gradWeak a ∂P) ≤
         Kgrad * ‖q0_e‖ * Real.sqrt G := by
   classical
@@ -547,7 +547,10 @@ private theorem gradientLinearTerm_le_dimensionalSquareRoot
     _ ≤ (gradCoeff / 2) * ‖q0_e‖ * Real.sqrt G := by
       gcongr
     _ ≤ Kgrad * ‖q0_e‖ * Real.sqrt G := by
-      have hhalf : gradCoeff / 2 ≤ Kgrad := by linarith [hGradCoeff_le]
+      have hhalf : gradCoeff / 2 ≤ Kgrad := by
+        apply (div_le_iff₀ (by norm_num : (0 : ℝ) < 2)).2
+        simpa only [mul_comm] using
+          (show gradCoeff ≤ 2 * Kgrad from hGradCoeff_le)
       gcongr
 
 private theorem fluxLinearTerm_le_dimensionalSquareRoot
@@ -589,9 +592,9 @@ private theorem fluxLinearTerm_le_dimensionalSquareRoot
           cubeBesovScaleWeight (-t) Q *
             JUpperBoundWeakNorms.section53CutoffDualBound Q t)
     let F := ∫ a, (fluxWeak a) ^ 2 ∂P
-    ∀ (ht_pos : 0 < t),
-    ∀ (hFluxCoeff_nonneg : 0 ≤ fluxCoeff),
-    ∀ (hFluxCoeff_le : fluxCoeff ≤ 2 * Kflux),
+    ∀ (_ht_pos : 0 < t),
+    ∀ (_hFluxCoeff_nonneg : 0 ≤ fluxCoeff),
+    ∀ (_hFluxCoeff_le : fluxCoeff ≤ 2 * Kflux),
     (1 / 2 : ℝ) * ‖p0_e‖ * (fluxCoeff * ∫ a, fluxWeak a ∂P) ≤
         Kflux * ‖p0_e‖ * Real.sqrt F := by
   classical
@@ -636,7 +639,10 @@ private theorem fluxLinearTerm_le_dimensionalSquareRoot
     _ ≤ (fluxCoeff / 2) * ‖p0_e‖ * Real.sqrt F := by
       gcongr
     _ ≤ Kflux * ‖p0_e‖ * Real.sqrt F := by
-      have hhalf : fluxCoeff / 2 ≤ Kflux := by linarith [hFluxCoeff_le]
+      have hhalf : fluxCoeff / 2 ≤ Kflux := by
+        apply (div_le_iff₀ (by norm_num : (0 : ℝ) < 2)).2
+        simpa only [mul_comm] using
+          (show fluxCoeff ≤ 2 * Kflux from hFluxCoeff_le)
       gcongr
 
 private theorem gradientCutoffCoefficient_le_dimensional
@@ -659,8 +665,8 @@ private theorem gradientCutoffCoefficient_le_dimensional
         ((3 : ℝ) ^ ((d : ℝ) + s) *
           cubeBesovScaleWeight (-s) Q *
             JUpperBoundWeakNorms.section53CutoffDualBound Q s)
-    ∀ (hs_nonneg : 0 ≤ s),
-    ∀ (hs_le : s ≤ 1),
+    ∀ (_hs_nonneg : 0 ≤ s),
+    ∀ (_hs_le : s ≤ 1),
     gradCoeff ≤ 2 * Kgrad := by
   classical
   let : IsProbabilityMeasure P := hP.isProbability
@@ -709,8 +715,8 @@ private theorem fluxCutoffCoefficient_le_dimensional
         ((3 : ℝ) ^ ((d : ℝ) + t) *
           cubeBesovScaleWeight (-t) Q *
             JUpperBoundWeakNorms.section53CutoffDualBound Q t)
-    ∀ (ht_nonneg : 0 ≤ t),
-    ∀ (ht_le : t ≤ 1),
+    ∀ (_ht_nonneg : 0 ≤ t),
+    ∀ (_ht_le : t ≤ 1),
     fluxCoeff ≤ 2 * Kflux := by
   classical
   let : IsProbabilityMeasure P := hP.isProbability
@@ -905,7 +911,7 @@ theorem linearProductTerms_special_le_centering_add_pairedWeakNormSquares
     (hP := hP)
     (hStruct := hStruct) (hP4 := hP4) (m := m)
   rcases hExtractedConclusion with ⟨hs_pos, ht_pos, hs_nonneg, ht_nonneg, hs_le, ht_le,
-    hst_nonneg, hσ_pos⟩
+    _, hσ_pos⟩
   have hcenter_nonneg : 0 ≤ (Real.sqrt θ - 1) ^ 2 := sq_nonneg _
   have hG_nonneg : 0 ≤ G := by
     dsimp [G]
@@ -937,13 +943,15 @@ theorem linearProductTerms_special_le_centering_add_pairedWeakNormSquares
     := hP4) (m := m)
     ht_nonneg ht_le
   have hKgrad_nonneg : 0 ≤ Kgrad := by
-    linarith [hGradCoeff_le, hGradCoeff_nonneg]
+    have hle : gradCoeff ≤ 2 * Kgrad := hGradCoeff_le
+    linarith only [hle, hGradCoeff_nonneg]
   have hKflux_nonneg : 0 ≤ Kflux := by
-    linarith [hFluxCoeff_le, hFluxCoeff_nonneg]
+    have hle : fluxCoeff ≤ 2 * Kflux := hFluxCoeff_le
+    linarith only [hle, hFluxCoeff_nonneg]
   have hProductCoeff_le_dim : productCoeff ≤ KprodDim := by
     simpa [productCoeff, KprodDim, Q, s, t] using
       JUpperBoundWeakNorms.section53CutoffProductCoeff_origin_le_dimensional
-        (d := d) m hs_nonneg hst_nonneg
+        (d := d) (s := s) (t := t) m hs_nonneg
   have hProductCoeff_le : productCoeff ≤ Kprod :=
     hProductCoeff_le_dim.trans (le_max_left KprodDim (0 : ℝ))
   have hKprod_nonneg : 0 ≤ Kprod := le_max_right KprodDim (0 : ℝ)

@@ -63,7 +63,6 @@ noncomputable section
 change the doubled optimizer state. -/
 theorem optimizerField_restrictOfIsEllipticFieldOn {d : ℕ} {U V : Set (Vec d)}
     (hU : IsOpen U) (hV : IsOpen V) (hVU : V ⊆ U)
-    [MeasureTheory.IsFiniteMeasure (volumeMeasureOn V)]
     {lam Lam : ℝ} {a : CoeffField d} (hEll : IsEllipticFieldOn lam Lam V a)
     (u : AHarmonicFunction a U) :
     optimizerField a (u.restrictOfIsEllipticFieldOn hU hV hVU hEll) = optimizerField a u := by
@@ -80,7 +79,6 @@ the half cell energy.  This is the pathwise input of the descendant sum of
 `p.response.transfer`. -/
 theorem abs_volumeAverage_cross_le_head_mul_sqrt {d : ℕ} [NeZero d] {U V : Set (Vec d)}
     (hU : IsOpen U) (hV : IsOpen V) (hVU : V ⊆ U)
-    [MeasureTheory.IsFiniteMeasure (volumeMeasureOn V)]
     (hConv : IsOpenBoundedConvexDomain V)
     {lam Lam : ℝ} {a : CoeffField d} (hEll : IsEllipticFieldOn lam Lam V a)
     (hvol : 0 < (volume V).toReal) (u : AHarmonicFunction a U) (Y : BlockVec d)
@@ -469,7 +467,7 @@ private theorem canonicalOptimizerBlockState_congr_ae {d : ℕ} {U : Book.Ch02.D
 
 /-- An arbitrary response maximizer for the recentred coefficient `a_-` on an invertible adapted
 cell has the same doubled optimizer field almost everywhere as the canonical Chapter-2 selection. -/
-theorem optimizerField_ae_eq_canonicalState_respCoeffMinus {d : ℕ} [NeZero d]
+theorem optimizerField_ae_eq_canonicalState_respCoeffMinus {d : ℕ}
     (q : Mat d) (hq : IsUnit q) (t : ℤ) (F : BlockMat d) (a : CoeffSpace d) (p r : Vec d)
     (u : AHarmonicFunction (respCoeffMinus F a) (HighContrast.adaptedCell q t))
     (hu : IsResponseMaximizer (HighContrast.adaptedCell q t) p r (respCoeffMinus F a) u) :
@@ -521,7 +519,7 @@ theorem optimizerField_ae_eq_canonicalState_respCoeffMinus {d : ℕ} [NeZero d]
 
 /-- An arbitrary response maximizer for the recentred coefficient `a_+` on an invertible adapted
 cell has the same doubled optimizer field almost everywhere as the canonical Chapter-2 selection. -/
-theorem optimizerField_ae_eq_canonicalState_respCoeffPlus {d : ℕ} [NeZero d]
+theorem optimizerField_ae_eq_canonicalState_respCoeffPlus {d : ℕ}
     (q : Mat d) (hq : IsUnit q) (t : ℤ) (F : BlockMat d) (a : CoeffSpace d) (p r : Vec d)
     (u : AHarmonicFunction (respCoeffPlus F a) (HighContrast.adaptedCell q t))
     (hu : IsResponseMaximizer (HighContrast.adaptedCell q t) p r (respCoeffPlus F a) u) :
@@ -576,7 +574,7 @@ family of response maximizers for the recentred coefficient `a_-` is measurable 
 sample.  The field need not be measurable in the sample, but its weighted average is determined by
 the measurable canonical selection through Chapter-2 a.e. gradient uniqueness, so the weighted
 subcell mean entering the weak quantity of `e.response.weak.estimate` is measurable. -/
-theorem measurable_volumeAverage_weighted_optimizerField_respCoeffMinus {d : ℕ} [NeZero d]
+theorem measurable_volumeAverage_weighted_optimizerField_respCoeffMinus {d : ℕ}
     (P : Measure (CoeffSpace d)) (jStar : ℕ) (hjStar : 2 * d ≤ 3 ^ jStar) (F : BlockMat d)
     (hm : (explicitCanonicalMetric F).PosDef) (t : ℤ) (e : Vec d) (alpha : BlockCoord d)
     (uM : (a : CoeffSpace d) → AHarmonicFunction (respCoeffMinus F a) (respCell jStar F t))
@@ -618,7 +616,7 @@ theorem measurable_volumeAverage_weighted_optimizerField_respCoeffMinus {d : ℕ
 family of response maximizers for the recentred coefficient `a_+` is measurable in the coefficient
 sample.  This is the plus twin of
 `measurable_volumeAverage_weighted_optimizerField_respCoeffMinus`. -/
-theorem measurable_volumeAverage_weighted_optimizerField_respCoeffPlus {d : ℕ} [NeZero d]
+theorem measurable_volumeAverage_weighted_optimizerField_respCoeffPlus {d : ℕ}
     (P : Measure (CoeffSpace d)) (jStar : ℕ) (hjStar : 2 * d ≤ 3 ^ jStar) (F : BlockMat d)
     (hm : (explicitCanonicalMetric F).PosDef) (t : ℤ) (e : Vec d) (alpha : BlockCoord d)
     (uP : (a : CoeffSpace d) → AHarmonicFunction (respCoeffPlus F a) (respCell jStar F t))

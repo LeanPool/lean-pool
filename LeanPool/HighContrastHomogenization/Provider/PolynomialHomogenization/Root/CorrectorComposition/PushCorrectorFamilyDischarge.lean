@@ -68,7 +68,7 @@ variable {d : ℕ}
 
 /-- The scalar identity weak-error row is an a.e.-representative invariant, so
 the good tail transfers along an a.e. equality of coefficient families. -/
-theorem scalarIdentityGoodTail_of_aeeq [NeZero d]
+theorem scalarIdentityGoodTail_of_aeeq
     {a b : Book.Ch02.TriadicCoeffFamily d}
     (hab : Book.Ch02.TriadicCoeffFamily.AEEq a b) {s delta : ℝ} {n : ℤ}
     (h : ScalarIdentityGoodTail a s delta n) :

@@ -173,7 +173,7 @@ theorem exists_mem_adaptedCellAt {q : Mat d} (hq : q.PosDef) (a : ℤ) {x : Vec 
     ∃ w : Fin d → ℤ, x ∈ adaptedCellAt q a w := by
   have hdet : IsUnit q.det := (Matrix.isUnit_iff_isUnit_det q).mp hq.isUnit
   have hsurj : matVecMul q (matVecMul q⁻¹ x) = x := by
-    show q *ᵥ q⁻¹ *ᵥ x = x
+    change q *ᵥ q⁻¹ *ᵥ x = x
     rw [Matrix.mulVec_mulVec, Matrix.mul_nonsing_inv _ hdet, Matrix.one_mulVec]
   set x' : Vec d := matVecMul q⁻¹ x with hx'
   have hface : ∀ (i : Fin d) (k : ℤ), x' i ≠ ((k : ℝ) + 1 / 2) * (3 : ℝ) ^ a := by

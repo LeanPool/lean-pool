@@ -125,7 +125,7 @@ theorem coarseBlock_aligned_parent_le {d : ℕ} [NeZero d]
   simpa only [tsum_fintype, aligned_adapted_volume_ratio q hq j h] using hp'
 
 /-- Integer stationarity identifies each aligned child's actual annealed matrix. -/
-theorem annealedBlock_adaptedCellAtCenter {d : ℕ} [NeZero d]
+theorem annealedBlock_adaptedCellAtCenter {d : ℕ}
     (P : Measure (CoeffSpace d)) (hstat : IsStationaryLaw P)
     (jStar : ℕ) (hjStar : 2 * d ≤ 3 ^ jStar) (m : Mat d) (hm : m.PosDef)
     (j : ℤ) (hj : (jStar : ℤ) ≤ j) (w : Fin d → ℤ) :

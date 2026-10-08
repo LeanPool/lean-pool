@@ -131,7 +131,7 @@ private theorem isEllipticMatrix_sub_skew_of_matTranspose {lam Lam : ℝ} {A : M
   have hlam_le' : lam ≤ 2 * Lam + 2 * ‖g‖ ^ 2 / lam := by
     linarith only [hlamLam, hLam_pos, hterm_nonneg]
   have hsplit : ∀ η : Vec d, matVecMul (A - g) η = matVecMul A η - matVecMul g η := by
-    intro η; show (A - g).mulVec η = A.mulVec η - g.mulVec η; exact Matrix.sub_mulVec A g η
+    intro η; change (A - g).mulVec η = A.mulVec η - g.mulVec η; exact Matrix.sub_mulVec A g η
   have hlower' : ∀ ξ : Vec d, lam * vecNormSq ξ ≤ vecDot ξ (matVecMul (A - g) ξ) := by
     intro ξ
     rw [hsplit ξ]
@@ -213,7 +213,7 @@ private theorem adaptedCell_nonempty (q : Mat d) (j : ℤ) :
     constructor <;> dsimp <;> nlinarith only [h3]
   exact ⟨matVecMul q 0, 0, hzero, rfl⟩
 
-private theorem volume_adaptedCell_toReal_pos [NeZero d] (q : Mat d) (hq : IsUnit q) (j : ℤ) :
+private theorem volume_adaptedCell_toReal_pos (q : Mat d) (hq : IsUnit q) (j : ℤ) :
     0 < (volume (HighContrast.adaptedCell q j)).toReal := by
   have hdom := adaptedCell_isOpenBoundedConvexDomain q hq j
   have hne := hdom.isOpen.measure_ne_zero volume (adaptedCell_nonempty q j)
@@ -310,34 +310,39 @@ private theorem coarseBlockMatrix_respCoeffPlus [NeZero d] (q : Mat d) (hq : IsU
 
 /-! #### Passing a constant congruence through the entrywise annealing integrals -/
 
+/-- Matrix whose entries are the integrals of the corresponding entries of `f` with respect to
+`P`. -/
 @[expose]
-public noncomputable def matIntegral_entrywise {ι : Type*} [Fintype ι] (P : Measure (CoeffSpace d))
+public noncomputable def entrywiseMatrixIntegral {ι : Type*} (P : Measure (CoeffSpace d))
     (f : CoeffSpace d → Matrix ι ι ℝ) : Matrix ι ι ℝ :=
   Matrix.of fun i j => ∫ a, f a i j ∂P
 
-private theorem integrable_entries_mul_left_of_matrix {ι : Type*} [Fintype ι] [DecidableEq ι]
+private theorem integrable_entries_mul_left_of_matrix {ι : Type*} [Fintype ι]
     {P : Measure (CoeffSpace d)} {f : CoeffSpace d → Matrix ι ι ℝ} (c : Matrix ι ι ℝ)
     (hf : ∀ i j, Integrable (fun a => f a i j) P) :
     ∀ i j, Integrable (fun a => (c * f a) i j) P := by
+  classical
   intro i j
   simp only [Matrix.mul_apply]
   exact integrable_finsetSum _ fun k _ => (hf k j).const_mul _
 
-private theorem matIntegral_mul_right_const {ι : Type*} [Fintype ι] [DecidableEq ι]
+private theorem matIntegral_mul_right_const {ι : Type*} [Fintype ι]
     {P : Measure (CoeffSpace d)} {f : CoeffSpace d → Matrix ι ι ℝ} (c : Matrix ι ι ℝ)
     (hf : ∀ i j, Integrable (fun a => f a i j) P) :
-    matIntegral_entrywise P (fun a => f a * c) = matIntegral_entrywise P f * c := by
+    entrywiseMatrixIntegral P (fun a => f a * c) = entrywiseMatrixIntegral P f * c := by
+  classical
   ext i j
-  simp only [matIntegral_entrywise, Matrix.of_apply, Matrix.mul_apply]
+  simp only [entrywiseMatrixIntegral, Matrix.of_apply, Matrix.mul_apply]
   rw [MeasureTheory.integral_finsetSum _ fun k _ => (hf i k).mul_const (c k j)]
   exact Finset.sum_congr rfl fun k _ => MeasureTheory.integral_mul_const _ _
 
-private theorem matIntegral_mul_left_const {ι : Type*} [Fintype ι] [DecidableEq ι]
+private theorem matIntegral_mul_left_const {ι : Type*} [Fintype ι]
     {P : Measure (CoeffSpace d)} {f : CoeffSpace d → Matrix ι ι ℝ} (c : Matrix ι ι ℝ)
     (hf : ∀ i j, Integrable (fun a => f a i j) P) :
-    matIntegral_entrywise P (fun a => c * f a) = c * matIntegral_entrywise P f := by
+    entrywiseMatrixIntegral P (fun a => c * f a) = c * entrywiseMatrixIntegral P f := by
+  classical
   ext i j
-  simp only [matIntegral_entrywise, Matrix.of_apply, Matrix.mul_apply]
+  simp only [entrywiseMatrixIntegral, Matrix.of_apply, Matrix.mul_apply]
   rw [MeasureTheory.integral_finsetSum _ fun k _ => (hf k j).const_mul (c i k)]
   exact Finset.sum_congr rfl fun k _ => MeasureTheory.integral_const_mul _ _
 
@@ -359,11 +364,11 @@ private theorem annealedBlockOf_congr (P : Measure (CoeffSpace d)) (V : Set (Vec
     rw [hb a]
     simp only [Multiscale.blockCongr, toFullBlockMat_ofFullBlockMat]
   have hL : annealedBlockOf P V b
-      = ofFullBlockMat (matIntegral_entrywise P
+      = ofFullBlockMat (entrywiseMatrixIntegral P
           (fun a => toFullBlockMat (coarseBlockMatrix V (b a)))) := by
     refine blockMat_ext ?_ ?_ ?_ ?_ <;> rfl
   have hR : annealedBlock P V
-      = ofFullBlockMat (matIntegral_entrywise P (fun a => toFullBlockMat (coarseBlock V a))) := by
+      = ofFullBlockMat (entrywiseMatrixIntegral P (fun a => toFullBlockMat (coarseBlock V a))) := by
     refine blockMat_ext ?_ ?_ ?_ ?_ <;> rfl
   rw [hL, hR, hfull,
     matIntegral_mul_right_const _ (integrable_entries_mul_left_of_matrix _ hint'),
@@ -403,7 +408,7 @@ private theorem integrable_entry_of_congr (P : Measure (CoeffSpace d)) (V : Set 
 
 /-- Pathwise nonnegativity of the recentred response on an adapted cell
 (`e.response.energy.and.defect`). -/
-theorem respJ_respCoeffMinus_nonneg [NeZero d] (q : Mat d) (hq : IsUnit q) (u : ℤ)
+theorem respJ_respCoeffMinus_nonneg (q : Mat d) (hq : IsUnit q) (u : ℤ)
     (F : BlockMat d) (hg : matTranspose (respg F) = -(respg F)) (a : CoeffSpace d) (p r : Vec d) :
     0 ≤ respJ q u p r (respCoeffMinus F a) := by
   obtain ⟨lam, Lam, f, hlam, hle, hEll, hae⟩ :=
@@ -426,7 +431,7 @@ theorem respJ_respCoeffMinus_nonneg [NeZero d] (q : Mat d) (hq : IsUnit q) (u : 
     (fun _ _ => hdom.isOpen) (fun _ _ => subset_rfl) hEll' p r (Set.mem_univ ()) hvol).1
 
 /-- The adjoint twin. -/
-theorem respJ_respCoeffPlus_nonneg [NeZero d] (q : Mat d) (hq : IsUnit q) (u : ℤ)
+theorem respJ_respCoeffPlus_nonneg (q : Mat d) (hq : IsUnit q) (u : ℤ)
     (F : BlockMat d) (hg : matTranspose (respg F) = -(respg F)) (a : CoeffSpace d) (p r : Vec d) :
     0 ≤ respJ q u p r (respCoeffPlus F a) := by
   obtain ⟨lam, Lam, f, hlam, hle, hEll, hae⟩ :=

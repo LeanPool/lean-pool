@@ -69,7 +69,7 @@ of `3^{-3n/2}` subcells of `(√α + √β)^2` integrates to at most the corresp
 quadratic forms and the square roots on the right are taken of their annealed counterparts.  This is
 the step that moves the expectation inside one generation's summand of the source load `L_s` of
 `p.response.transfer`. -/
-theorem integral_avsum_pathwise_head_le {d : ℕ} [NeZero d] (P : Measure (CoeffSpace d))
+theorem integral_avsum_pathwise_head_le {d : ℕ} (P : Measure (CoeffSpace d))
     (jStar : ℕ) (F : BlockMat d) (k : ℤ) (n : ℕ)
     (b : CoeffSpace d → CoeffField d) (Y : BlockVec d)
     (hUL : ∀ w ∈ triadicIndexBox d n, ∀ a : CoeffSpace d, 0 ≤ vecDot Y.1 (matVecMul
@@ -589,7 +589,7 @@ private theorem integral_comp_translateCoeff_eq_aux {d : ℕ} (P : Measure (Coef
 /-- Stationarity of a scalar functional of an aligned cell: an aligned cell is an integer
 translate of the centred cell, and the law is invariant under integer translations, so the
 `P`-integral of the functional is the same at every aligned cell of the scale. -/
-private theorem integral_cellFunctional_adaptedCellAtCenter_eq_aux {d : ℕ} [NeZero d]
+private theorem integral_cellFunctional_adaptedCellAtCenter_eq_aux {d : ℕ}
     (P : Measure (CoeffSpace d)) (hstat : IsStationaryLaw P) (jStar : ℕ) (m : Mat d)
     (j : ℤ) (hj : (jStar : ℤ) ≤ j) (w : Fin d → ℤ)
     (G : Set (Vec d) → CoeffSpace d → ℝ)
@@ -621,7 +621,7 @@ sign.**  For a stationary law `P` and the recentred coefficient `a_- = a - g` of
 `p.response.transfer`, the `P`-entrywise annealed block of the pathwise coarse block on an
 aligned cell of scale `j ≥ j_*` is the annealed block of the centred cell, independently of the
 cell index `w`. -/
-theorem annealedBlockOf_adaptedCellAtCenter_respCoeffMinus_eq {d : ℕ} [NeZero d]
+theorem annealedBlockOf_adaptedCellAtCenter_respCoeffMinus_eq {d : ℕ}
     (P : Measure (CoeffSpace d)) (hstat : IsStationaryLaw P) (jStar : ℕ) (m : Mat d)
     (F : BlockMat d) (j : ℤ) (hj : (jStar : ℤ) ≤ j) (w : Fin d → ℤ)
     (hmeas : ∀ i k : Fin d,
@@ -681,7 +681,7 @@ sign.**  For a stationary law `P` and the recentred coefficient `a_+ = aᵀ + g`
 `p.response.transfer`, the `P`-entrywise annealed block of the pathwise coarse block on an
 aligned cell of scale `j ≥ j_*` is the annealed block of the centred cell, independently of the
 cell index `w`. -/
-theorem annealedBlockOf_adaptedCellAtCenter_respCoeffPlus_eq {d : ℕ} [NeZero d]
+theorem annealedBlockOf_adaptedCellAtCenter_respCoeffPlus_eq {d : ℕ}
     (P : Measure (CoeffSpace d)) (hstat : IsStationaryLaw P) (jStar : ℕ) (m : Mat d)
     (F : BlockMat d) (j : ℤ) (hj : (jStar : ℤ) ≤ j) (w : Fin d → ℤ)
     (hmeas : ∀ i k : Fin d,

@@ -188,7 +188,7 @@ theorem explicitRoundedGrid_metricFrobenius_product_le (l : ℕ) (hl : 2 * d ≤
   have hAform : matTranspose q * S⁻¹ = a • (L⁻¹ * q)ᵀ := by
     have h1 : (L⁻¹ * q)ᵀ = q * L⁻¹ := by
       rw [Matrix.transpose_mul, Matrix.transpose_nonsing_inv, hLsymm, hqsymm]
-    show qᵀ * S⁻¹ = a • (L⁻¹ * q)ᵀ
+    change qᵀ * S⁻¹ = a • (L⁻¹ * q)ᵀ
     rw [h1, hqsymm, hSinv, Matrix.mul_smul]
   have hBform : q⁻¹ * S = a⁻¹ • (q⁻¹ * L) := by
     rw [hSeq, Matrix.mul_smul]
@@ -211,7 +211,7 @@ theorem explicitRoundedGrid_metricFrobenius_product_le (l : ℕ) (hl : 2 * d ≤
     (matTranspose q * S⁻¹)
   have hBf := Book.Ch02.matrixFrobeniusNorm_le_dim_mul_matrixOperatorNorm (q⁻¹ * S)
   rw [Book.Ch02.matrixOperatorNorm_eq_l2_opNorm] at hAf hBf
-  show Book.Ch02.matrixFrobeniusNorm (matTranspose q * S⁻¹) *
+  change Book.Ch02.matrixFrobeniusNorm (matTranspose q * S⁻¹) *
       Book.Ch02.matrixFrobeniusNorm (q⁻¹ * S) ≤ _
   calc Book.Ch02.matrixFrobeniusNorm (matTranspose q * S⁻¹) *
         Book.Ch02.matrixFrobeniusNorm (q⁻¹ * S)
@@ -570,7 +570,7 @@ theorem partialSeminorm_le_tsum_core (t : ℤ) (N : ℕ) (C : ℝ) (hC : 0 ≤ C
       rwa [Real.sqrt_mul (sq_nonneg C), Real.sqrt_sq hC] at h
     have hw : Real.rpow (3 : ℝ) (-(1 / 2 : ℝ) * (n : ℝ))
         = (3 : ℝ) ^ (-((t : ℝ) / 2)) * (3 : ℝ) ^ (((t : ℝ) - (n : ℝ)) / 2) := by
-      show (3 : ℝ) ^ (-(1 / 2 : ℝ) * (n : ℝ)) = _
+      change (3 : ℝ) ^ (-(1 / 2 : ℝ) * (n : ℝ)) = _
       rw [← Real.rpow_add (by norm_num : (0 : ℝ) < 3)]
       congr 1
       ring
@@ -669,7 +669,7 @@ theorem partialSeminorm_pullback_fst_le (q : Mat d) (hq : IsUnit q) (m : Mat d) 
               (matVecMul q y))) := by
     funext y
     rw [matVecMul_mul_apply]
-    show matVecMul (matTranspose q) (X (matVecMul q y)).1
+    change matVecMul (matTranspose q) (X (matVecMul q y)).1
         = matVecMul (matTranspose q)
             (matVecMul (matSqrt m)⁻¹ (matVecMul (matSqrt m) (X (matVecMul q y)).1))
     rw [matVecMul_inv_matVecMul hSunit]
@@ -710,7 +710,7 @@ theorem partialSeminorm_pullback_snd_le (q : Mat d) (hq : IsUnit q) (m : Mat d) 
               (matVecMul q y))) := by
     funext y
     rw [matVecMul_mul_apply]
-    show matVecMul q⁻¹ (X (matVecMul q y)).2
+    change matVecMul q⁻¹ (X (matVecMul q y)).2
         = matVecMul q⁻¹
             (matVecMul (matSqrt m) (matVecMul (matSqrt m)⁻¹ (X (matVecMul q y)).2))
     rw [matVecMul_matVecMul_inv_cancel hSunit]
@@ -753,7 +753,7 @@ noncomputable section
 cell `z + ⋄_j^q` at `z = 3^j q w`, the aligned subcell produced by subdividing the coarse
 scale.  This is the translate of `nonempty_scalarCanonicalMaximizer_respCoeffMinus` to the
 recentred coefficient `a_-`. -/
-theorem nonempty_scalarCanonicalMaximizer_respCoeffMinus_adaptedCellAtCenter {d : ℕ} [NeZero d]
+theorem nonempty_scalarCanonicalMaximizer_respCoeffMinus_adaptedCellAtCenter {d : ℕ}
     (q : Mat d) (hq : IsUnit q) (j : ℤ) (w : Fin d → ℤ) (F : BlockMat d) (a : CoeffSpace d)
     (p r : Vec d) :
     Nonempty (ScalarCanonicalMaximizer (adaptedCellAtCenter q j w) p r (respCoeffMinus F a)) := by
@@ -780,7 +780,7 @@ theorem nonempty_scalarCanonicalMaximizer_respCoeffMinus_adaptedCellAtCenter {d 
 cell `z + ⋄_j^q` at `z = 3^j q w`, the aligned subcell produced by subdividing the coarse
 scale.  This is the translate of `nonempty_scalarCanonicalMaximizer_respCoeffPlus` to the
 recentred coefficient `a_+`. -/
-theorem nonempty_scalarCanonicalMaximizer_respCoeffPlus_adaptedCellAtCenter {d : ℕ} [NeZero d]
+theorem nonempty_scalarCanonicalMaximizer_respCoeffPlus_adaptedCellAtCenter {d : ℕ}
     (q : Mat d) (hq : IsUnit q) (j : ℤ) (w : Fin d → ℤ) (F : BlockMat d) (a : CoeffSpace d)
     (p r : Vec d) :
     Nonempty (ScalarCanonicalMaximizer (adaptedCellAtCenter q j w) p r (respCoeffPlus F a)) := by

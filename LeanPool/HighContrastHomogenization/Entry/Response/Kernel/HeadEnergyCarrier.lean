@@ -80,8 +80,7 @@ variable {d : ℕ} [NeZero d]
 
 /-- The zero harmonic function on a set.  It is used only as a total placeholder for the child
 family away from the triadic index box, where the family is never consumed. -/
-@[expose]
-public def zeroAHarmonic (a : CoeffField d) (U : Set (Vec d)) : AHarmonicFunction a U :=
+private def zeroAHarmonic (a : CoeffField d) (U : Set (Vec d)) : AHarmonicFunction a U :=
   { toH1 := 0, isHarmonic := isAHarmonicGradient_zero }
 
 omit [NeZero d] in
@@ -120,6 +119,7 @@ private theorem volumeAverage_diffEnergy_congr_ae {V : Set (Vec d)} {b f : Coeff
   filter_upwards [hae] with x hx
   rw [hx]
 
+omit [NeZero d] in
 /-- At an elliptic representative of the recentred coefficient, the average of the symmetric
 scalar difference energies is twice the averaged response deficit.  The proof transports both
 maximizers to that representative and uses almost-everywhere invariance to return to the original
@@ -332,7 +332,10 @@ theorem headEnergy_carrier_minus (P : Measure (CoeffSpace d)) (jStar : ℕ) (F :
     simp only [optimizerField, Prod.fst_sub, Prod.snd_sub, hsubmv, vecDot_matVecMul_symmPart]
   have hG : ∀ w ∈ Z, (2 * volumeAverage (adaptedCellAtCenter q (t - (n : ℤ)) w)
         (fun y => vecDot (optimizerField b u y - optimizerField b (v w) y).1
-          (optimizerField b u y - optimizerField b (v w) y).2)) = 2 * G' w := by
+          (optimizerField b u y - optimizerField b (v w) y).2)) = 2 *
+      volumeAverage (adaptedCellAtCenter q (t - (n : ℤ)) w)
+        (fun y => vecDot (u.toH1.grad y - (v w).toH1.grad y)
+          (matVecMul (symmPart (b y)) (u.toH1.grad y - (v w).toH1.grad y))) := by
     intro w _
     exact congrArg (fun g => 2 * volumeAverage (adaptedCellAtCenter q (t - (n : ℤ)) w) g) (hpt w)
   -- Step F.  The algebraic tail: response values as coarse-block quadratics, the averaged
@@ -399,7 +402,10 @@ theorem headEnergy_carrier_minus (P : Measure (CoeffSpace d)) (jStar : ℕ) (F :
           (2 * volumeAverage (adaptedCellAtCenter q (t - (n : ℤ)) w)
             (fun y => vecDot (optimizerField b u y - optimizerField b (v w) y).1
               (optimizerField b u y - optimizerField b (v w) y).2))
-          = 2 * ((Z.card : ℝ)⁻¹ * ∑ w ∈ Z, G' w) := by
+          = 2 * ((Z.card : ℝ)⁻¹ * ∑ w ∈ Z,
+              volumeAverage (adaptedCellAtCenter q (t - (n : ℤ)) w)
+                (fun y => vecDot (u.toH1.grad y - (v w).toH1.grad y)
+                  (matVecMul (symmPart (b y)) (u.toH1.grad y - (v w).toH1.grad y)))) := by
             rw [Finset.sum_congr rfl hG, ← Finset.mul_sum]
             ring
       _ = 2 * (2 * ((Z.card : ℝ)⁻¹ * ∑ w ∈ Z,

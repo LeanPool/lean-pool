@@ -295,7 +295,7 @@ private theorem boxCutoff_finiteLp_data
   exact ⟨hχ_smooth, hχ_one, hχ_sub, hχ_le1, hχ_deriv⟩
 
 private theorem tsupport_mul_subset_left
-    {α : Type*} [TopologicalSpace α] [T2Space α] {f g : α → ℝ} :
+    {α : Type*} [TopologicalSpace α] {f g : α → ℝ} :
     tsupport (fun x => f x * g x) ⊆ tsupport f := by
   intro x hx
   change x ∈ closure (Function.support (fun y => f y * g y)) at hx

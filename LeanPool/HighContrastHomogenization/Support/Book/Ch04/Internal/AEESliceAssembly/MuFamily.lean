@@ -159,7 +159,7 @@ theorem stronglyMeasurable_canonicalMuMinimizer
     have hlt :
         (⨅ n : ℕ, energy a n) < (⨅ n : ℕ, energy a n) + ε m := by
       have hpos : 0 < ε m := by
-        simp [ε]
+        change 0 < 1 / ((m : ℝ) + 1)
         positivity
       exact lt_add_of_le_of_pos (le_refl (⨅ n : ℕ, energy a n)) hpos
     rcases exists_lt_of_ciInf_lt hlt with ⟨n, hn⟩
@@ -301,7 +301,7 @@ theorem measurable_energyBilin_fixed_canonicalAEEMuHilbertMinimizer_aeeQuantitat
     have hlt :
         (⨅ n : ℕ, energy a n) < (⨅ n : ℕ, energy a n) + ε m := by
       have hpos : 0 < ε m := by
-        simp [ε]
+        change 0 < 1 / ((m : ℝ) + 1)
         positivity
       exact lt_add_of_le_of_pos (le_refl (⨅ n : ℕ, energy a n)) hpos
     rcases exists_lt_of_ciInf_lt hlt with ⟨n, hn⟩
@@ -544,7 +544,6 @@ theorem aemeasurable_Mu_comp_countable_aeeQuantitativeSlice_canonical_cubeSet_co
                 ((fun ω : cover (some k) => A ω.1) ω) := by
           intro ω
           have hω : ω.1 ∈ t k := by
-            simp [cover] at ω
             exact ω.2
           exact hSlice k ω.1 hω
         simpa [f, cover] using
@@ -827,7 +826,6 @@ theorem aemeasurable_Mu_comp_countable_aeeQuantitativeSlice_cover
               AEEQuantitativeEllipticSlice U k ((fun ω : cover (some k) => A ω.1) ω) := by
           intro ω
           have hω : ω.1 ∈ t k := by
-            simp [cover] at ω
             exact ω.2
           exact hSlice k ω.1 hω
         simpa [f, cover] using

@@ -474,13 +474,13 @@ theorem cubeTranslationTest_depthAverage_le_depth (d n : ℕ) (t : Vec d) (j : �
     have hRscale : R.scale = ((n : ℤ) + 1) - (j : ℤ) := by
       have hsc := scale_eq_sub_of_mem_descendantsAtDepth hR
       rw [hsc]
-      show ((n + 1 : ℕ) : ℤ) - (j : ℤ) = ((n : ℤ) + 1) - (j : ℤ)
+      change ((n + 1 : ℕ) : ℤ) - (j : ℤ) = ((n : ℤ) + 1) - (j : ℤ)
       push_cast
       ring
     have hRfac : cubeScaleFactor R = rj := by rw [cubeScaleFactor, hRscale, hrj]
     have hle : R.scale ≤ A.scale := by
       rw [hRscale, hA]
-      show ((n : ℤ) + 1) - (j : ℤ) ≤ (n : ℤ)
+      change ((n : ℤ) + 1) - (j : ℤ) ≤ (n : ℤ)
       omega
     have hsubA : cubeSet R ⊆ cubeSet A ∨ Disjoint (cubeSet R) (cubeSet A) := by
       have h0 := cubeSet_subset_or_disjoint_translatedCubeSet (R := R) (A := A)

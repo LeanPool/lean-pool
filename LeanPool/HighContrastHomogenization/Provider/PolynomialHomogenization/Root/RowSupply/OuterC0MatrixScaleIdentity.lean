@@ -39,7 +39,7 @@ variable {d : ℕ}
 the identity.  Its scalar is the residual dilation times the absolute
 normalization scale of the symmetric reference matrix. -/
 theorem epsilonAffineGrid_inv_mul_normalizedRoot_eq
-    [NeZero d] {epsilon : ℝ} (hepsilon : 0 < epsilon)
+    {epsilon : ℝ} (hepsilon : 0 < epsilon)
     {abar : Mat d} (hS : (symmPart abar).PosDef) :
     (epsilonAffineGrid epsilon abar)⁻¹ *
         Selection.normalizedRoot (symmPart abar) =

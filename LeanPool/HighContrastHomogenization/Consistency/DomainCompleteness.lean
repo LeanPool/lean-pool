@@ -64,7 +64,7 @@ theorem exists_outer_ball {U : Set (Vec d)} (hU : IsBoundedDomain U) (c : Vec d)
     linarith only [hRpos, this]
   refine ⟨Real.sqrt ((d : ℝ)) * M + M, by positivity, ?_⟩
   intro x hx
-  show vecNormSq (x - c) < (Real.sqrt ((d : ℝ)) * M + M) ^ 2
+  change vecNormSq (x - c) < (Real.sqrt ((d : ℝ)) * M + M) ^ 2
   have hcoord : ∀ i : Fin d, (x - c) i ^ 2 ≤ M ^ 2 := by
     intro i
     have h1 : |x i| ≤ R := hR x hx i

@@ -74,7 +74,7 @@ theorem boundary_localPatch_deterministic_note_from_public_standardExplicitBudge
       (pointwiseCoeffFor_isEllipticFieldOn_cubeSet Q a)
 
 theorem boundaryCaccioppoliParentL2Sq_eq_harmonicL2Sq_pointwise
-    {d : ℕ} [NeZero d] {Q : TriadicCube d} {a : CoeffFamily d}
+    {d : ℕ} {Q : TriadicCube d} {a : CoeffFamily d}
     {x : Vec d} (u : BoundaryCaccioppoliDatum Q a x) :
     boundaryCaccioppoliParentL2Sq u =
       coarseCaccioppoliHarmonicL2Sq Q (pointwiseCoeffFor Q a)
@@ -119,7 +119,7 @@ theorem boundaryCaccioppoliParentL2Sq_eq_harmonicL2Sq_pointwise
       rw [← mul_assoc, inv_mul_cancel₀ hvol_ne, one_mul]
 
 theorem interiorCaccioppoliParentOscillationL2Sq_eq_harmonicL2Sq_pointwise_normalizeMeanZero
-    {d : ℕ} [NeZero d] {Q : TriadicCube d} {a : CoeffFamily d}
+    {d : ℕ} {Q : TriadicCube d} {a : CoeffFamily d}
     [MeasureTheory.IsFiniteMeasure (volumeMeasureOn (openCubeSet Q))]
     (u : CubeSolution Q a) :
     interiorCaccioppoliParentOscillationL2Sq Q a u =
@@ -183,7 +183,7 @@ theorem interiorCaccioppoliParentOscillationL2Sq_eq_harmonicL2Sq_pointwise_norma
       rfl
 
 private theorem coarseCaccioppoliLocalizedEnergyRadiusProfile_normalizeMeanZero_eq
-    {d : ℕ} [NeZero d] {Q : TriadicCube d} {a : CoeffFamily d}
+    {d : ℕ} {Q : TriadicCube d} {a : CoeffFamily d}
     [MeasureTheory.IsFiniteMeasure (volumeMeasureOn (openCubeSet Q))]
     (u : CubeSolution Q a) (rho : ℝ) :
     coarseCaccioppoliLocalizedEnergyRadiusProfile Q

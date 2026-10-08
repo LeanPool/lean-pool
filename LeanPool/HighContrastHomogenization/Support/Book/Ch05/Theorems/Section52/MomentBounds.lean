@@ -334,7 +334,7 @@ private theorem attached_sum_bound_le_finite_sum
       (∑ i ∈ s.attach, F i) = ∑ i ∈ s.attach, G i.val := by
         exact Finset.sum_congr rfl fun i _ => hF i
       _ = ∑ i ∈ s, G i := Finset.sum_attach s G
-  exact hsplit.trans (by rw [hsum]; exact add_le_add_right hsmall _)
+  exact hsplit.trans (by rw [hsum]; exact add_le_add hsmall le_rfl)
 
 private theorem annealed_upper_scalarization_nonnegative
     {d : ℕ} [NeZero d] {P : Ch04.RestrictionCoeffLaw d}

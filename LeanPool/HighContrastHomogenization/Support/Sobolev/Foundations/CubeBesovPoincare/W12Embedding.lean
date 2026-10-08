@@ -45,7 +45,7 @@ theorem cubeBesovW12EmbeddingConstant_nonneg (d : ℕ) :
 /-- Triadic-cube Poincare embedding of the normalized `W^{1,2}` unit ball
 into the positive Besov `B^1_{2,∞}` ball. Scale-free constant. -/
 theorem cubeBesovPartialSeminormTop_one_two_le_normalizedW1pSeminorm
-    {d : ℕ} [NeZero d] (Q : TriadicCube d) (N : ℕ)
+    {d : ℕ} (Q : TriadicCube d) (N : ℕ)
     (u : W1pFunction (openCubeSet Q) (2 : ℝ≥0∞)) :
     cubeBesovPartialSeminormTop Q 1 (2 : ℝ≥0∞) N u.toFun ≤
       cubeBesovW12EmbeddingConstant d *

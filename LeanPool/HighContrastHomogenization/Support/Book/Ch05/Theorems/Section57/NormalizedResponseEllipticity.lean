@@ -38,7 +38,7 @@ noncomputable section
 
 /-- The two scalar normalizers used in the normalized response are dual. -/
 theorem blockVecDot_scalarConstantNormalizers_eq_fullBlockVecNormSq
-    {d : ℕ} [NeZero d] {σ : ℝ} (hσ : 0 < σ) (e : FullBlockVec d) :
+    {d : ℕ} {σ : ℝ} (hσ : 0 < σ) (e : FullBlockVec d) :
     blockVecDot
         (ofFullBlockVec
           (Matrix.mulVec

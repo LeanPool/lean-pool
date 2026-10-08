@@ -49,7 +49,9 @@ almost surely. -/
 structure GammaInfinityCoarseGrainedEllipticity
     {d : ℕ} [NeZero d] (P : Ch04.RestrictionCoeffLaw d)
     (hP : Ch04.RestrictionLawCarrier P) (hStruct : Ch04.RestrictionStructuralLaw P) : Type where
+  /-- Parameters specifying the coarse-grained upper and lower ellipticity observables. -/
   params : QuantitativeCoarseGrainedEllipticityParams d
+  /-- Uniform almost-sure bound for the unit-cube coarse-grained ellipticity observable. -/
   thetaHat : ℝ
   thetaHat_pos : 0 < thetaHat
   bound :
@@ -61,7 +63,9 @@ exponent `xi`. -/
 structure GammaInfinityCoarseGrainedEllipticityNoXi
     {d : ℕ} [NeZero d] (P : Ch04.RestrictionCoeffLaw d)
     (hP : Ch04.RestrictionLawCarrier P) (hStruct : Ch04.RestrictionStructuralLaw P) : Type where
+  /-- Parameters specifying the coarse-grained upper and lower ellipticity observables. -/
   params : GammaCoarseGrainedEllipticityParams d
+  /-- Uniform almost-sure bound for the unit-cube coarse-grained ellipticity observable. -/
   thetaHat : ℝ
   thetaHat_pos : 0 < thetaHat
   bound :

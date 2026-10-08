@@ -423,7 +423,7 @@ private theorem memVectorL2_optimizer_slots {U : Set (Vec d)} {b : CoeffField d}
     filter_upwards [hae] with x hx; rw [hx]
   exact (MeasureTheory.memLp_congr_ae hcongr).mp h0
 
-private theorem elliptic_respCoeffMinus [NeZero d] (q : Mat d) (hq : IsUnit q) (t : ℤ)
+private theorem elliptic_respCoeffMinus (q : Mat d) (hq : IsUnit q) (t : ℤ)
     (F : BlockMat d) (a : CoeffSpace d) :
     ∃ (lam Lam : ℝ) (f : CoeffField d), 0 < lam ∧ lam ≤ Lam ∧
       IsEllipticFieldOn lam Lam (HighContrast.adaptedCell q t) f ∧
@@ -439,7 +439,7 @@ private theorem elliptic_respCoeffMinus [NeZero d] (q : Mat d) (hq : IsUnit q) (
     filter_upwards [hae] with x hx
     simp [respCoeffMinus, hx]
 
-private theorem elliptic_respCoeffPlus [NeZero d] (q : Mat d) (hq : IsUnit q) (t : ℤ)
+private theorem elliptic_respCoeffPlus (q : Mat d) (hq : IsUnit q) (t : ℤ)
     (F : BlockMat d) (a : CoeffSpace d) :
     ∃ (lam Lam : ℝ) (f : CoeffField d), 0 < lam ∧ lam ≤ Lam ∧
       IsEllipticFieldOn lam Lam (HighContrast.adaptedCell q t) f ∧
@@ -467,7 +467,7 @@ private theorem volume_adaptedCellAtCenter_toReal_ne_zero {q : Mat d} (hq : IsUn
   positivity
 
 /-- The core summability statement. -/
-private theorem summable_centred_core [NeZero d] {q : Mat d} (hq : IsUnit q) (t : ℤ)
+private theorem summable_centred_core {q : Mat d} (hq : IsUnit q) (t : ℤ)
     {b : CoeffField d} (u : AHarmonicFunction b (HighContrast.adaptedCell q t))
     (hb : ∃ (lam Lam : ℝ) (f : CoeffField d), 0 < lam ∧ lam ≤ Lam ∧
       IsEllipticFieldOn lam Lam (HighContrast.adaptedCell q t) f ∧
@@ -522,7 +522,7 @@ private theorem summable_centred_core [NeZero d] {q : Mat d} (hq : IsUnit q) (t 
 /-- Summability of the centred family of the optimizer field
 (`summable_besov_cellAverageFamily`; if that lemma already has this shape this is a one-liner,
 otherwise derive it from `avsum_cellAverageFamily_sq_le` and the geometric weight). -/
-theorem summable_besovTerm_centred_minus [NeZero d] (P : Measure (CoeffSpace d)) (jStar : ℕ)
+theorem summable_besovTerm_centred_minus (P : Measure (CoeffSpace d)) (jStar : ℕ)
     (F : BlockMat d) (t : ℤ) (e : Vec d) (hgrid : IsUnit (respGrid jStar F)) (a : CoeffSpace d)
     (u : AHarmonicFunction (respCoeffMinus F a) (respCell jStar F t))
     (hu : IsResponseMaximizer (respCell jStar F t) (respP (respMean P jStar F t) e)
@@ -536,7 +536,7 @@ theorem summable_besovTerm_centred_minus [NeZero d] (P : Measure (CoeffSpace d))
     (elliptic_respCoeffMinus (respGrid jStar F) hgrid t F a) (blockSqrt (respM0 F))
 
 /-- The plus twin of the centred-family summability. -/
-theorem summable_besovTerm_centred_plus [NeZero d] (P : Measure (CoeffSpace d)) (jStar : ℕ)
+theorem summable_besovTerm_centred_plus (P : Measure (CoeffSpace d)) (jStar : ℕ)
     (F : BlockMat d) (t : ℤ) (e : Vec d) (hgrid : IsUnit (respGrid jStar F)) (a : CoeffSpace d)
     (u : AHarmonicFunction (respCoeffPlus F a) (respCell jStar F t))
     (hu : IsResponseMaximizer (respCell jStar F t) (respP (respMean P jStar F t) e)

@@ -328,7 +328,7 @@ theorem exists_uniform_euclideanBound_finiteAffineSlopes_of_residual_tendsto_zer
 /-- A sequence of project vectors with a uniform explicit Euclidean bound
 has a convergent subsequence in the native project-vector topology. -/
 theorem exists_tendsto_subsequence_of_uniform_euclideanBound
-    {d : ℕ} [NeZero d] (e : ℕ → Vec d)
+    {d : ℕ} (e : ℕ → Vec d)
     (hbound : ∃ R : ℝ, ∀ j, euclideanNorm (e j) ≤ R) :
     ∃ eLim : Vec d, ∃ φ : ℕ → ℕ,
       StrictMono φ ∧ Tendsto (e ∘ φ) atTop (nhds eLim) := by

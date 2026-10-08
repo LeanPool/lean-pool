@@ -40,7 +40,7 @@ variable {d : ℕ}
 reference descendant of any enclosing `q`-grid parent above the filling's
 starting scale. -/
 theorem translateCube_mem_descendantsAtScale_originCube_of_mem_adaptedTarget_filling
-    [NeZero d] {p q : Mat d} (hq : q.PosDef)
+    {p q : Mat d} (hq : q.PosDef)
     {n j M : ℤ} (hnM : n ≤ M) {y : Vec d}
     {Z : ℤ → Finset (Fin d → ℤ)}
     (hZ : ∀ r, ↑(Z r) = Transport.fillingIndex q n

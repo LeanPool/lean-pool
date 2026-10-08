@@ -276,9 +276,11 @@ private theorem both_signs_coarseBlock {d : ℕ} [NeZero d]
   rw [he] at h
   exact h
 
-private theorem abs_entry_le_half_diag {ι : Type*} [Fintype ι] [DecidableEq ι]
+private theorem abs_entry_le_half_diag {ι : Type*} [Finite ι]
     {M : Matrix ι ι ℝ} (hM : M.PosSemidef) (i j : ι) :
     |M i j| ≤ (M i i + M j j) / 2 := by
+  classical
+  let : Fintype ι := Fintype.ofFinite ι
   have hp := hM.dotProduct_mulVec_nonneg (Pi.single i 1 + Pi.single j 1)
   have hn := hM.dotProduct_mulVec_nonneg (Pi.single i 1 - Pi.single j 1)
   have hsym : M j i = M i j := by
@@ -288,7 +290,7 @@ private theorem abs_entry_le_half_diag {ι : Type*} [Fintype ι] [DecidableEq ι
       one_mul, hsym] at hp hn
   exact abs_le.mpr ⟨by linarith only [hp], by linarith only [hn]⟩
 
-private theorem diagonal_mono {ι : Type*} [Fintype ι] [DecidableEq ι]
+private theorem diagonal_mono {ι : Type*}
     {M N : Matrix ι ι ℝ} (h : M ≤ N) (i : ι) : M i i ≤ N i i := by
   have hn := (Matrix.le_iff.mp h).diag_nonneg (i := i)
   exact sub_nonneg.mp hn
@@ -338,7 +340,7 @@ theorem blockMatLoewnerLE_swapConj_coarseBlock {d : ℕ} [NeZero d]
     (Annealed.blockPosDef_coarseBlock_adapted q hq j y a)
   exact (blockMatLoewnerLE_swapConj_inv_iff hs hp).2 (both_signs_coarseBlock q hq j y a)
 
-private theorem matrix_congruence_mono {ι : Type*} [Fintype ι] [DecidableEq ι]
+private theorem matrix_congruence_mono {ι : Type*} [Fintype ι]
     {M N : Matrix ι ι ℝ} (h : M ≤ N) (B : Matrix ι ι ℝ) : Bᴴ * M * B ≤ Bᴴ * N * B := by
   apply Matrix.le_iff.mpr
   simpa only [mul_sub, sub_mul] using (Matrix.le_iff.mp h).conjTranspose_mul_mul_same B

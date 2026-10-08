@@ -132,7 +132,7 @@ theorem integrable_cutoffMeanDefect_coords_respCoeffMinus {d : ℕ} [NeZero d]
       (Filter.Eventually.of_forall fun a => ?_)
     refine congrArg (volumeAverage (adaptedCellAtCenter (respGrid jStar F) (t - (m : ℤ)) W)) ?_
     funext x
-    show vecDot (Pi.single i (1 : ℝ) : Vec d)
+    change vecDot (Pi.single i (1 : ℝ) : Vec d)
         (optimizerField (respCoeffMinus F a) (uM a) x).1
       + vecDot (0 : Vec d) (optimizerField (respCoeffMinus F a) (uM a) x).2 = _
     rw [vecDot_single_left, vecDot_zero_left_local, add_zero]
@@ -144,7 +144,7 @@ theorem integrable_cutoffMeanDefect_coords_respCoeffMinus {d : ℕ} [NeZero d]
       (Filter.Eventually.of_forall fun a => ?_)
     refine congrArg (volumeAverage (adaptedCellAtCenter (respGrid jStar F) (t - (m : ℤ)) W)) ?_
     funext x
-    show vecDot (0 : Vec d) (optimizerField (respCoeffMinus F a) (uM a) x).1
+    change vecDot (0 : Vec d) (optimizerField (respCoeffMinus F a) (uM a) x).1
       + vecDot (Pi.single i (1 : ℝ) : Vec d)
         (optimizerField (respCoeffMinus F a) (uM a) x).2 = _
     rw [vecDot_single_left, vecDot_zero_left_local, zero_add]
@@ -196,7 +196,7 @@ theorem integrable_cutoffMeanDefect_coords_respCoeffMinus {d : ℕ} [NeZero d]
     refine hY.congr (Filter.Eventually.of_forall fun a => ?_)
     refine congrArg (volumeAverage (respCell jStar F t)) ?_
     funext x
-    show (φ x - 1) * (vecDot (Pi.single i (1 : ℝ) : Vec d)
+    change (φ x - 1) * (vecDot (Pi.single i (1 : ℝ) : Vec d)
         (optimizerField (respCoeffMinus F a) (uM a) x).1
       + vecDot (0 : Vec d) (optimizerField (respCoeffMinus F a) (uM a) x).2) = _
     rw [vecDot_single_left, vecDot_zero_left_local, add_zero]
@@ -210,7 +210,7 @@ theorem integrable_cutoffMeanDefect_coords_respCoeffMinus {d : ℕ} [NeZero d]
     refine hY.congr (Filter.Eventually.of_forall fun a => ?_)
     refine congrArg (volumeAverage (respCell jStar F t)) ?_
     funext x
-    show (φ x - 1) * (vecDot (0 : Vec d)
+    change (φ x - 1) * (vecDot (0 : Vec d)
         (optimizerField (respCoeffMinus F a) (uM a) x).1
       + vecDot (Pi.single i (1 : ℝ) : Vec d)
         (optimizerField (respCoeffMinus F a) (uM a) x).2) = _
@@ -374,7 +374,7 @@ theorem integrable_cutoffMeanDefect_coords_respCoeffPlus {d : ℕ} [NeZero d]
       (Filter.Eventually.of_forall fun a => ?_)
     refine congrArg (volumeAverage (adaptedCellAtCenter (respGrid jStar F) (t - (m : ℤ)) W)) ?_
     funext x
-    show vecDot (Pi.single i (1 : ℝ) : Vec d)
+    change vecDot (Pi.single i (1 : ℝ) : Vec d)
         (optimizerField (respCoeffPlus F a) (uP a) x).1
       + vecDot (0 : Vec d) (optimizerField (respCoeffPlus F a) (uP a) x).2 = _
     rw [vecDot_single_left, vecDot_zero_left_local, add_zero]
@@ -386,7 +386,7 @@ theorem integrable_cutoffMeanDefect_coords_respCoeffPlus {d : ℕ} [NeZero d]
       (Filter.Eventually.of_forall fun a => ?_)
     refine congrArg (volumeAverage (adaptedCellAtCenter (respGrid jStar F) (t - (m : ℤ)) W)) ?_
     funext x
-    show vecDot (0 : Vec d) (optimizerField (respCoeffPlus F a) (uP a) x).1
+    change vecDot (0 : Vec d) (optimizerField (respCoeffPlus F a) (uP a) x).1
       + vecDot (Pi.single i (1 : ℝ) : Vec d)
         (optimizerField (respCoeffPlus F a) (uP a) x).2 = _
     rw [vecDot_single_left, vecDot_zero_left_local, zero_add]
@@ -438,7 +438,7 @@ theorem integrable_cutoffMeanDefect_coords_respCoeffPlus {d : ℕ} [NeZero d]
     refine hY.congr (Filter.Eventually.of_forall fun a => ?_)
     refine congrArg (volumeAverage (respCell jStar F t)) ?_
     funext x
-    show (φ x - 1) * (vecDot (Pi.single i (1 : ℝ) : Vec d)
+    change (φ x - 1) * (vecDot (Pi.single i (1 : ℝ) : Vec d)
         (optimizerField (respCoeffPlus F a) (uP a) x).1
       + vecDot (0 : Vec d) (optimizerField (respCoeffPlus F a) (uP a) x).2) = _
     rw [vecDot_single_left, vecDot_zero_left_local, add_zero]
@@ -452,7 +452,7 @@ theorem integrable_cutoffMeanDefect_coords_respCoeffPlus {d : ℕ} [NeZero d]
     refine hY.congr (Filter.Eventually.of_forall fun a => ?_)
     refine congrArg (volumeAverage (respCell jStar F t)) ?_
     funext x
-    show (φ x - 1) * (vecDot (0 : Vec d)
+    change (φ x - 1) * (vecDot (0 : Vec d)
         (optimizerField (respCoeffPlus F a) (uP a) x).1
       + vecDot (Pi.single i (1 : ℝ) : Vec d)
         (optimizerField (respCoeffPlus F a) (uP a) x).2) = _

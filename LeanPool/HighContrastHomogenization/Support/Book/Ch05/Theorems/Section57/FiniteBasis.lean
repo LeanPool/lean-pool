@@ -68,8 +68,8 @@ private theorem fullBlockReflect_isSymm
   ext α β
   cases α <;> cases β
   all_goals
-    simp [Ch04.fullBlockReflect, toFullBlockMat, ofFullBlockMat, blockReflect,
-      Matrix.transpose_apply]
+    simp only [Ch04.fullBlockReflect, blockReflect, ofFullBlockMat, Matrix.transpose_apply,
+      toFullBlockMat]
     try
       exact hM.apply _ _
     try

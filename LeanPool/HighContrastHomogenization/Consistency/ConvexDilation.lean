@@ -98,7 +98,7 @@ theorem dilate_closure_subset_interior_of_convex {U : Set (Vec d)}
   have hkey : (1 - lam) • c + lam • x ∈ interior U :=
     hconv.combo_interior_closure_mem_interior hc hx (sub_pos.mpr hlam.2) hlam.1
       (by ring)
-  show c + lam • (x - c) ∈ interior U
+  change c + lam • (x - c) ∈ interior U
   have heq : c + lam • (x - c) = (1 - lam) • c + lam • x := by
     simp only [smul_sub, sub_smul, one_smul]
     abel
@@ -227,7 +227,7 @@ theorem smoothGrad_congr_of_eqOn_isOpen {S : Set (Vec d)} (hS : IsOpen S)
     smoothGrad f x = smoothGrad g x := by
   have hev : f =ᶠ[nhds x] g := Filter.eventuallyEq_of_mem (hS.mem_nhds hx) h
   have hfd : fderiv ℝ f x = fderiv ℝ g x := hev.fderiv_eq
-  show (fun i => fderiv ℝ f x (basisVec i)) = fun i => fderiv ℝ g x (basisVec i)
+  change (fun i => fderiv ℝ f x (basisVec i)) = fun i => fderiv ℝ g x (basisVec i)
   rw [hfd]
 
 end

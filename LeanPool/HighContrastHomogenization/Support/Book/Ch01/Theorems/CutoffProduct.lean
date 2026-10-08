@@ -200,7 +200,7 @@ private theorem cubeAverage_component_scalar_smul_le_linf_mul_l2
     (norm_cubeAverageVec_scalar_smul_le_cubeLpNorm_infty_mul_cubeLpNorm_two Q v ξ hv hξLp)
 
 theorem cutoffProduct_component_partialNormTop_le_gradient_rhs
-    {d : ℕ} [NeZero d] (Q : Cube d) (s : ℝ) (M : ℕ)
+    {d : ℕ} (Q : Cube d) (s : ℝ) (M : ℕ)
     (u : H1Function (openCubeSet Q)) (ξ : Vec d → Vec d) {B : ℝ}
     (hB : 0 ≤ B)
     (hξLp : MeasureTheory.MemLp ξ ∞ (normalizedCubeMeasure Q))
@@ -335,7 +335,7 @@ theorem cutoffProduct_component_partialNormTop_le_gradient_rhs
           ring
 
 private theorem cutoffProduct_component_positiveBesovNormTop_le_gradient_rhs
-    {d : ℕ} [NeZero d] (Q : Cube d) (s : ℝ)
+    {d : ℕ} (Q : Cube d) (s : ℝ)
     (u : H1Function (openCubeSet Q)) (ξ : Vec d → Vec d) {B : ℝ}
     (hB : 0 ≤ B)
     (hξLp : MeasureTheory.MemLp ξ ∞ (normalizedCubeMeasure Q))
@@ -369,7 +369,7 @@ The vector Besov norm is the componentwise public convention
 `positiveBesovVectorNormTop`.  The estimate has no finite-depth parameter and
 no local-multiscale or projected-Poincare contract hypotheses; all function-side
 control is supplied by the already-proved `H¹` gradient-to-function corridor. -/
-theorem cutoffProductPositiveBesov_infinite_from_h1 {d : ℕ} [NeZero d]
+theorem cutoffProductPositiveBesov_infinite_from_h1 {d : ℕ}
     (Q : Cube d) (s : ℝ) (u : H1Function (openCubeSet Q))
     (ξ : Vec d → Vec d) {B : ℝ}
     (hB : 0 ≤ B)

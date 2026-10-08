@@ -65,7 +65,7 @@ noncomputable section
 sign.**  For the recentred coefficient `a_- = a - g` of `p.response.transfer`, every linear readout
 of the gradient slot and of the flux slot of the doubled state of the terminal optimizer is
 integrable on each depth-`m` aligned descendant cell of the terminal cell. -/
-theorem integrableOn_vecDot_optimizerField_respCoeffMinus_adaptedCellAtCenter {d : ℕ} [NeZero d]
+theorem integrableOn_vecDot_optimizerField_respCoeffMinus_adaptedCellAtCenter {d : ℕ}
     (jStar : ℕ) (hjStar : 2 * d ≤ 3 ^ jStar) (F : BlockMat d)
     (hm : (explicitCanonicalMetric F).PosDef) (t : ℤ) (m : ℕ) (a : CoeffSpace d)
     (u : AHarmonicFunction (respCoeffMinus F a) (respCell jStar F t))
@@ -79,7 +79,7 @@ theorem integrableOn_vecDot_optimizerField_respCoeffMinus_adaptedCellAtCenter {d
   have hq : IsUnit (respGrid jStar F) := Geometry.isUnit_roundedGrid hjStar hm
   set V : Set (Vec d) := adaptedCellAtCenter (respGrid jStar F) (t - (m : ℤ)) W with hVdef
   have hU : IsOpen (respCell jStar F t) := by
-    show IsOpen (HighContrast.adaptedCell (respGrid jStar F) t)
+    change IsOpen (HighContrast.adaptedCell (respGrid jStar F) t)
     have h0 : HighContrast.adaptedCellTranslate (respGrid jStar F) t 0
         = HighContrast.adaptedCell (respGrid jStar F) t := by
       ext x; simp [HighContrast.adaptedCellTranslate]
@@ -90,7 +90,7 @@ theorem integrableOn_vecDot_optimizerField_respCoeffMinus_adaptedCellAtCenter {d
     simp only [adaptedCellAtCenter]
     exact Geometry.isOpen_adaptedCellTranslate hq (t - (m : ℤ)) _
   have hVU : V ⊆ respCell jStar F t := by
-    show V ⊆ HighContrast.adaptedCell (respGrid jStar F) t
+    change V ⊆ HighContrast.adaptedCell (respGrid jStar F) t
     rw [hVdef]
     exact adaptedCellAtCenter_subset_adaptedCell (respGrid jStar F) t m hW
   have : IsFiniteMeasure (volumeMeasureOn V) :=
@@ -125,7 +125,7 @@ theorem integrableOn_vecDot_optimizerField_respCoeffMinus_adaptedCellAtCenter {d
 
 /-- **The state slots of the terminal optimizer are integrable on every descendant cell, plus
 sign.**  The adjoint twin, for the recentred coefficient `a_+ = aᵀ + g`. -/
-theorem integrableOn_vecDot_optimizerField_respCoeffPlus_adaptedCellAtCenter {d : ℕ} [NeZero d]
+theorem integrableOn_vecDot_optimizerField_respCoeffPlus_adaptedCellAtCenter {d : ℕ}
     (jStar : ℕ) (hjStar : 2 * d ≤ 3 ^ jStar) (F : BlockMat d)
     (hm : (explicitCanonicalMetric F).PosDef) (t : ℤ) (m : ℕ) (a : CoeffSpace d)
     (u : AHarmonicFunction (respCoeffPlus F a) (respCell jStar F t))
@@ -139,7 +139,7 @@ theorem integrableOn_vecDot_optimizerField_respCoeffPlus_adaptedCellAtCenter {d 
   have hq : IsUnit (respGrid jStar F) := Geometry.isUnit_roundedGrid hjStar hm
   set V : Set (Vec d) := adaptedCellAtCenter (respGrid jStar F) (t - (m : ℤ)) W with hVdef
   have hU : IsOpen (respCell jStar F t) := by
-    show IsOpen (HighContrast.adaptedCell (respGrid jStar F) t)
+    change IsOpen (HighContrast.adaptedCell (respGrid jStar F) t)
     have h0 : HighContrast.adaptedCellTranslate (respGrid jStar F) t 0
         = HighContrast.adaptedCell (respGrid jStar F) t := by
       ext x; simp [HighContrast.adaptedCellTranslate]
@@ -150,7 +150,7 @@ theorem integrableOn_vecDot_optimizerField_respCoeffPlus_adaptedCellAtCenter {d 
     simp only [adaptedCellAtCenter]
     exact Geometry.isOpen_adaptedCellTranslate hq (t - (m : ℤ)) _
   have hVU : V ⊆ respCell jStar F t := by
-    show V ⊆ HighContrast.adaptedCell (respGrid jStar F) t
+    change V ⊆ HighContrast.adaptedCell (respGrid jStar F) t
     rw [hVdef]
     exact adaptedCellAtCenter_subset_adaptedCell (respGrid jStar F) t m hW
   have : IsFiniteMeasure (volumeMeasureOn V) :=
@@ -186,7 +186,7 @@ theorem integrableOn_vecDot_optimizerField_respCoeffPlus_adaptedCellAtCenter {d 
 /-- **The crossed pairing of the terminal optimizer state is integrable on every descendant cell,
 minus sign.**  The scalar crossed pairing `⟨Y₂, ∇u⟩ + ⟨Y₁, a_-∇u⟩` of the descendant sum of
 `p.response.transfer`, and its modulus, are integrable on each depth-`m` aligned descendant cell. -/
-theorem integrableOn_cross_optimizerField_respCoeffMinus_adaptedCellAtCenter {d : ℕ} [NeZero d]
+theorem integrableOn_cross_optimizerField_respCoeffMinus_adaptedCellAtCenter {d : ℕ}
     (jStar : ℕ) (hjStar : 2 * d ≤ 3 ^ jStar) (F : BlockMat d)
     (hm : (explicitCanonicalMetric F).PosDef) (t : ℤ) (m : ℕ) (a : CoeffSpace d)
     (u : AHarmonicFunction (respCoeffMinus F a) (respCell jStar F t)) (Y : BlockVec d)
@@ -208,7 +208,7 @@ theorem integrableOn_cross_optimizerField_respCoeffMinus_adaptedCellAtCenter {d 
 /-- **The crossed pairing of the terminal optimizer state is integrable on every descendant cell,
 plus sign.**  The adjoint twin, for the recentred coefficient `a_+ = aᵀ + g` and the dual variable
 `Y^+`. -/
-theorem integrableOn_cross_optimizerField_respCoeffPlus_adaptedCellAtCenter {d : ℕ} [NeZero d]
+theorem integrableOn_cross_optimizerField_respCoeffPlus_adaptedCellAtCenter {d : ℕ}
     (jStar : ℕ) (hjStar : 2 * d ≤ 3 ^ jStar) (F : BlockMat d)
     (hm : (explicitCanonicalMetric F).PosDef) (t : ℤ) (m : ℕ) (a : CoeffSpace d)
     (u : AHarmonicFunction (respCoeffPlus F a) (respCell jStar F t)) (Y : BlockVec d)
@@ -306,7 +306,7 @@ private theorem responseLinearIntegrabilityData_of_aeEq
 sample is an a.e. class; its ellipticity is supplied on the cell by an a.e.-equal elliptic
 representative, and the four response pairings are transported to it. -/
 private theorem responseLinearIntegrabilityData_respCell_respCoeffMinus
-    {d : ℕ} [NeZero d] (jStar : ℕ) (F : BlockMat d) (t : ℤ)
+    {d : ℕ} (jStar : ℕ) (F : BlockMat d) (t : ℤ)
     (hq : IsUnit (respGrid jStar F)) (a : CoeffSpace d) :
     ResponseLinearIntegrabilityData (respCell jStar F t) (respCoeffMinus F a) := by
   obtain ⟨lam, Lam, f, _hlam, _hle, hEll, hae⟩ :=
@@ -327,7 +327,7 @@ private theorem responseLinearIntegrabilityData_respCell_respCoeffMinus
 /-- **Integrability data of the adjoint recentred sample `a_+ = a^t + g` on the terminal cell.**
 The transposed twin of `responseLinearIntegrabilityData_respCell_respCoeffMinus`. -/
 private theorem responseLinearIntegrabilityData_respCell_respCoeffPlus
-    {d : ℕ} [NeZero d] (jStar : ℕ) (F : BlockMat d) (t : ℤ)
+    {d : ℕ} (jStar : ℕ) (F : BlockMat d) (t : ℤ)
     (hq : IsUnit (respGrid jStar F)) (a : CoeffSpace d) :
     ResponseLinearIntegrabilityData (respCell jStar F t) (respCoeffPlus F a) := by
   obtain ⟨lam, Lam, f, _hlam, _hle, hEll, hae⟩ :=
@@ -350,7 +350,7 @@ response, minus sign.**  Exact partition averaging collapses the flat average of
 cell energies to the terminal cell energy, and the quadratic-response identity identifies the
 latter with twice `J_t^-`. -/
 theorem integral_avsum_two_mul_halfEnergy_eq_respEJMinus {d : ℕ} [NeZero d]
-    (P : Measure (CoeffSpace d)) [IsProbabilityMeasure P] (jStar : ℕ) (F : BlockMat d)
+    (P : Measure (CoeffSpace d)) (jStar : ℕ) (F : BlockMat d)
     (t : ℤ) (m : ℕ) (e : Vec d) (hq : IsUnit (respGrid jStar F))
     (uM : (a : CoeffSpace d) → AHarmonicFunction (respCoeffMinus F a) (respCell jStar F t))
     (hmax : ∀ a, IsResponseMaximizer (respCell jStar F t) (respP (respMean P jStar F t) e)
@@ -402,7 +402,7 @@ theorem integral_avsum_two_mul_halfEnergy_eq_respEJMinus {d : ℕ} [NeZero d]
 response, plus sign.**  The adjoint twin of
 `integral_avsum_two_mul_halfEnergy_eq_respEJMinus`. -/
 theorem integral_avsum_two_mul_halfEnergy_eq_respEJPlus {d : ℕ} [NeZero d]
-    (P : Measure (CoeffSpace d)) [IsProbabilityMeasure P] (jStar : ℕ) (F : BlockMat d)
+    (P : Measure (CoeffSpace d)) (jStar : ℕ) (F : BlockMat d)
     (t : ℤ) (m : ℕ) (e : Vec d) (hq : IsUnit (respGrid jStar F))
     (uP : (a : CoeffSpace d) → AHarmonicFunction (respCoeffPlus F a) (respCell jStar F t))
     (hmax : ∀ a, IsResponseMaximizer (respCell jStar F t) (respP (respMean P jStar F t) e)
@@ -479,7 +479,7 @@ noncomputable section
 aligned descendant cell of the terminal cell, the cell average of the variation energy integrand of
 the recentred coefficient `a_- = a - g` is nonnegative. -/
 theorem zero_le_volumeAverage_scalarVariationEnergyIntegrand_respCoeffMinus_adaptedCellAtCenter
-    {d : ℕ} [NeZero d] (jStar : ℕ) (hjStar : 2 * d ≤ 3 ^ jStar) (F : BlockMat d)
+    {d : ℕ} (jStar : ℕ) (hjStar : 2 * d ≤ 3 ^ jStar) (F : BlockMat d)
     (hm : (explicitCanonicalMetric F).PosDef) (t : ℤ) (m : ℕ) (a : CoeffSpace d)
     (u : AHarmonicFunction (respCoeffMinus F a) (respCell jStar F t))
     {W : Fin d → ℤ} (hW : W ∈ triadicIndexBox d m) :
@@ -531,7 +531,7 @@ theorem zero_le_volumeAverage_scalarVariationEnergyIntegrand_respCoeffMinus_adap
 /-- **The descendant cell energy of the terminal optimizer is nonnegative, plus sign.**  The
 adjoint twin, for the recentred coefficient `a_+ = aᵀ + g`. -/
 theorem zero_le_volumeAverage_scalarVariationEnergyIntegrand_respCoeffPlus_adaptedCellAtCenter
-    {d : ℕ} [NeZero d] (jStar : ℕ) (hjStar : 2 * d ≤ 3 ^ jStar) (F : BlockMat d)
+    {d : ℕ} (jStar : ℕ) (hjStar : 2 * d ≤ 3 ^ jStar) (F : BlockMat d)
     (hm : (explicitCanonicalMetric F).PosDef) (t : ℤ) (m : ℕ) (a : CoeffSpace d)
     (u : AHarmonicFunction (respCoeffPlus F a) (respCell jStar F t))
     {W : Fin d → ℤ} (hW : W ∈ triadicIndexBox d m) :
@@ -585,7 +585,7 @@ expectation of the flat average over the depth-`m` aligned cells of twice the do
 of the terminal optimizer is `2 * (4 E[J_t^-])`, the value the descendant sum of
 `p.response.transfer` consumes. -/
 theorem integral_avsum_two_mul_doubledEnergy_eq_respEJMinus {d : ℕ} [NeZero d]
-    (P : Measure (CoeffSpace d)) [IsProbabilityMeasure P] (jStar : ℕ) (F : BlockMat d)
+    (P : Measure (CoeffSpace d)) (jStar : ℕ) (F : BlockMat d)
     (t : ℤ) (m : ℕ) (e : Vec d) (hq : IsUnit (respGrid jStar F))
     (uM : (a : CoeffSpace d) → AHarmonicFunction (respCoeffMinus F a) (respCell jStar F t))
     (hmax : ∀ a, IsResponseMaximizer (respCell jStar F t) (respP (respMean P jStar F t) e)
@@ -625,7 +625,7 @@ theorem integral_avsum_two_mul_doubledEnergy_eq_respEJMinus {d : ℕ} [NeZero d]
 /-- **The annealed flat average of the doubled descendant cell energies, plus sign.**  The adjoint
 twin, with `4 E[J_t^+]`. -/
 theorem integral_avsum_two_mul_doubledEnergy_eq_respEJPlus {d : ℕ} [NeZero d]
-    (P : Measure (CoeffSpace d)) [IsProbabilityMeasure P] (jStar : ℕ) (F : BlockMat d)
+    (P : Measure (CoeffSpace d)) (jStar : ℕ) (F : BlockMat d)
     (t : ℤ) (m : ℕ) (e : Vec d) (hq : IsUnit (respGrid jStar F))
     (uP : (a : CoeffSpace d) → AHarmonicFunction (respCoeffPlus F a) (respCell jStar F t))
     (hmax : ∀ a, IsResponseMaximizer (respCell jStar F t) (respP (respMean P jStar F t) e)

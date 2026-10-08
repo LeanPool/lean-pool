@@ -400,7 +400,7 @@ private theorem measurable_blockOpNorm {α : Type*} [MeasurableSpace α]
 /-- Measurability of the two-sided all-scale maximum: the `respAllScaleAbs` twin of
 `respAllScaleMax_measurable` above, with `blockOpNorm` in place of `blockSpecBound` (the norm is
 continuous, so no attained-infimum argument is needed here). -/
-theorem respAllScaleAbs_measurable [NeZero d]
+theorem respAllScaleAbs_measurable
     (P : Measure (CoeffSpace d)) (γ : ℝ) (jStar : ℕ) (F : BlockMat d)
     (hq : IsUnit (respGrid jStar F)) (t : ℤ) :
     Measurable (respAllScaleAbs P γ jStar F t) := by

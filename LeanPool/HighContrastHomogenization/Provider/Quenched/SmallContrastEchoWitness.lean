@@ -65,7 +65,7 @@ theorem echoTower_pos {A d0 : ℝ} (hA : 1 ≤ A) (hd0 : 0 < d0) :
   induction k with
   | zero => exact hd0
   | succ k ih =>
-      show 0 < A * echoTower A d0 k ^ 2
+      change 0 < A * echoTower A d0 k ^ 2
       have hA0 : (0 : ℝ) < A := lt_of_lt_of_le one_pos hA
       positivity
 
@@ -75,7 +75,7 @@ theorem echoTower_le_floor {A d0 : ℝ} (hA : 1 ≤ A) (hd0 : 0 < d0)
   induction k with
   | zero => exact le_refl d0
   | succ k ih =>
-      show A * echoTower A d0 k ^ 2 ≤ d0
+      change A * echoTower A d0 k ^ 2 ≤ d0
       have hpos := echoTower_pos hA hd0 k
       nlinarith only [ih, hpos, hAd, hd0]
 

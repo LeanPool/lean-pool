@@ -190,6 +190,7 @@ noncomputable section
 
 variable {d : ℕ} [NeZero d]
 
+omit [NeZero d] in
 /-- The per-cell step of the parent-optimizer energy map for the adjoint sample, with the two
 Loewner constants abstract.  This is the aligned-subcell Chapter-2 block energy bound for the
 parent optimizer `u`, whose gradient agrees with the restricted solution `z`: the metric square of
@@ -500,7 +501,7 @@ theorem tailCell_of_bridge_plus (P : Measure (CoeffSpace d)) (γ : ℝ) (jStar :
       exact hx.symm
     have hae_w : Book.Ch02.CoeffOn.AEEq (aU w)
         (canonicalRespCoeffPlusOnAt (respGrid jStar F) hgrid (t - (n : ℤ)) w F a) := by
-      show (aU w).toCoeffField =ᵐ[volumeMeasureOn
+      change (aU w).toCoeffField =ᵐ[volumeMeasureOn
         ((adaptedDomainAt (respGrid jStar F) hgrid (t - (n : ℤ)) w) : Set (Vec d))]
         (canonicalRespCoeffPlusOnAt (respGrid jStar F) hgrid (t - (n : ℤ)) w F a).toCoeffField
       rw [canonicalRespCoeffPlusOnAt_toFun]

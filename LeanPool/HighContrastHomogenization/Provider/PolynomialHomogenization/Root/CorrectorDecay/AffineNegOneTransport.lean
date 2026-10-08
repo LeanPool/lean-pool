@@ -35,14 +35,14 @@ variable {d : ℕ}
 noncomputable def h1AffineFactor (L : Mat d) : ℝ :=
   max (|L.det| ^ ((2 : ℝ) / (d : ℝ))) (‖matTranspose L‖ ^ 2)
 
-theorem h1AffineFactor_pos [NeZero d] {L : Mat d}
+theorem h1AffineFactor_pos {L : Mat d}
     (hL : IsUnit L.det) : 0 < h1AffineFactor L := by
   unfold h1AffineFactor
   exact lt_of_lt_of_le (Real.rpow_pos_of_pos (abs_pos.mpr hL.ne_zero) _)
     (le_max_left _ _)
 
 private theorem h1_value_comp_matVecMul
-    [NeZero d] {L : Mat d} (hL : IsUnit L.det)
+    {L : Mat d} (hL : IsUnit L.det)
     {U : Set (Vec d)} (hU : MeasurableSet U) (hU0 : volume U ≠ 0)
     (psi : Vec d → Vec d) :
     volume U ^ (-(2 : ℝ) / (d : ℝ)) *
@@ -125,7 +125,7 @@ private theorem h1_gradient_comp_matVecMul_le
 /-- Pulling an image-domain test back by `L` costs the explicit normalized
 `H¹` affine factor. -/
 theorem h1NormSq_comp_matVecMul_le
-    [NeZero d] {L : Mat d} (hL : IsUnit L.det)
+    {L : Mat d} (hL : IsUnit L.det)
     {U : Set (Vec d)} (hU : MeasurableSet U) (hU0 : volume U ≠ 0)
     (psi : Vec d → Vec d) (hpsi : ContDiff ℝ (⊤ : ℕ∞) psi) :
     h1NormSq U (fun y ↦ psi (matVecMul L y)) ≤
@@ -158,7 +158,7 @@ theorem h1NormSq_comp_matVecMul_le
 
 /-- The normalized negative-one norm under an invertible affine image. -/
 theorem negOneNorm_matImage_le
-    [NeZero d] {L : Mat d} (hL : IsUnit L.det)
+    {L : Mat d} (hL : IsUnit L.det)
     {U : Set (Vec d)} (hU : MeasurableSet U) (hU0 : volume U ≠ 0)
     (F : Vec d → Vec d) :
     negOneNorm (matImage L U) F ≤

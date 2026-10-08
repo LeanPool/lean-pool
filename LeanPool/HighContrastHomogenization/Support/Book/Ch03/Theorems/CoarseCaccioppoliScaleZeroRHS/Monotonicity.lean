@@ -61,7 +61,7 @@ private theorem rhs_const_mul_rpow_le_rpow_of_mul_le
       Real.rpow_le_rpow hMx_nonneg hMxy (by linarith)
 
 private theorem caccioppoliPrefactor_mul_const_le_of_mul_constant_le
-    {d : ℕ} [NeZero d] {M C₁ C₂ : ℝ}
+    {d : ℕ} {M C₁ C₂ : ℝ}
     {Q : TriadicCube d} {a : CoeffFamily d} {s t : ℝ}
     (hM : 1 ≤ M) (hC₁ : 0 ≤ C₁) (hMC₁C₂ : M * C₁ ≤ C₂)
     (hs : 0 < s) (ht : 0 < t) (hst : s + t < 1) :
@@ -115,7 +115,7 @@ private theorem caccioppoliPrefactor_mul_const_le_of_mul_constant_le
       simp [F, p, σ, caccioppoliPrefactor, mul_assoc, mul_left_comm, mul_comm]
 
 theorem boundaryCaccioppoliRHS_mul_const_le_of_mul_constant_le
-    {d : ℕ} [NeZero d] {Q : TriadicCube d} {a : CoeffFamily d}
+    {d : ℕ} {Q : TriadicCube d} {a : CoeffFamily d}
     {x : Vec d} (u : BoundaryCaccioppoliDatum Q a x) {s t M C₁ C₂ : ℝ}
     (hM : 1 ≤ M) (hC₁ : 0 ≤ C₁) (hMC₁C₂ : M * C₁ ≤ C₂)
     (hs : 0 < s) (ht : 0 < t) (hst : s + t < 1) :
@@ -146,7 +146,7 @@ theorem boundaryCaccioppoliRHS_mul_const_le_of_mul_constant_le
       simp [boundaryCaccioppoliRHS]
 
 theorem interiorCaccioppoliRHS_mul_const_le_of_mul_constant_le
-    {d : ℕ} [NeZero d] {Q : TriadicCube d} {a : CoeffFamily d}
+    {d : ℕ} {Q : TriadicCube d} {a : CoeffFamily d}
     (u : CubeSolution Q a) {s t M C₁ C₂ : ℝ}
     (hM : 1 ≤ M) (hC₁ : 0 ≤ C₁) (hMC₁C₂ : M * C₁ ≤ C₂)
     (hs : 0 < s) (ht : 0 < t) (hst : s + t < 1) :

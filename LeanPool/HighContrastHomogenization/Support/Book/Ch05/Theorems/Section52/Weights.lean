@@ -157,6 +157,7 @@ theorem section52_tsum_weighted_scale_function_eq_largeScaleSet_sum_add_tail
             congr 1
             exact (section52LargeScaleSet_weighted_sum_eq_prefix_sum s m F).symm
 
+/-- Total geometric weight of the small-scale tail starting at depth `m`. -/
 @[expose]
 noncomputable def section52SmallTailWeight (s : ℝ) (m : ℕ) : ℝ :=
   ∑' j : ℕ, geometricWeight s 1 (j + m)

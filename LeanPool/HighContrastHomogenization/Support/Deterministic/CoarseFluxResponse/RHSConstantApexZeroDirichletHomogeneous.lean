@@ -99,7 +99,7 @@ private theorem sqrt_le_two_mul_add_sqrt_of_le_two_mul_add
   nlinarith
 
 private theorem cubeAverage_scalarVariationEnergyIntegrand_harmonic_le_two_mul_add
-    {d : ℕ} [NeZero d] {Q : TriadicCube d} {a : CoeffField d}
+    {d : ℕ} {Q : TriadicCube d} {a : CoeffField d}
     {g : Vec d → Vec d} (ρ : ZeroTraceDirichletCorrectorData Q a g)
     (w : AHarmonicFunction a (cubeSet Q)) {gradU : Vec d → Vec d}
     {lam Lam : ℝ}
@@ -147,7 +147,7 @@ private theorem cubeAverage_scalarVariationEnergyIntegrand_harmonic_le_two_mul_a
           rw [hgradAvg]
 
 private theorem sqrt_correction_energy_le_display_scale
-    {d : ℕ} [NeZero d] (Q : TriadicCube d) (a : CoeffField d)
+    {d : ℕ} (Q : TriadicCube d) (a : CoeffField d)
     {s : ℝ} (g : Vec d → Vec d)
     (hs : 0 < s)
     (hG_nonneg : 0 ≤ cubeBesovPositiveVectorSeminormTwo Q s g)

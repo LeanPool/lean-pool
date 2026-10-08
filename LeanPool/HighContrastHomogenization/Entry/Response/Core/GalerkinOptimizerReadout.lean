@@ -56,7 +56,7 @@ variable {d : ℕ}
 
 /-- The doubled operator system on a general positive-volume response cell. -/
 @[expose]
-def responseCellMuSystem {U : Set (Vec d)} [IsFiniteMeasure (volumeMeasureOn U)] {k : ℕ}
+def responseCellMuSystem {U : Set (Vec d)} {k : ℕ}
     (hvol : 0 < (volume U).toReal)
     (a : {a : CoeffField d // AEEQuantitativeEllipticSlice U k a}) :
     AEEMuOperatorSystemData U a.1 :=
@@ -73,7 +73,7 @@ def responseCellMuHilbert {U : Set (Vec d)} [IsFiniteMeasure (volumeMeasureOn U)
 
 /-- The carrier slice datum at a parameter. -/
 @[expose]
-def responseSliceOf {Om : Type*} [MeasurableSpace Om] {U : Set (Vec d)} {k : ℕ}
+def responseSliceOf {Om : Type*} {U : Set (Vec d)} {k : ℕ}
     {A : Om → RegCoeffField d}
     (hSlice : ∀ w : Om, AEEQuantitativeEllipticSlice U k (A w).toFun) (w : Om) :
     {a : CoeffField d // AEEQuantitativeEllipticSlice U k a} :=
@@ -175,7 +175,7 @@ theorem responseMu_eq_quadraticEnergy_minimizer
 
 /-- Near-minimal fixed Galerkin competitors converge pointwise to the response-cell minimizer. -/
 theorem tendsto_responseCellMuCandidate_selected
-    {Om : Type*} [MeasurableSpace Om] {U : Set (Vec d)} {k : ℕ}
+    {Om : Type*} {U : Set (Vec d)} {k : ℕ}
     [IsFiniteMeasure (volumeMeasureOn U)]
     (hvol : 0 < (volume U).toReal) {A : Om → RegCoeffField d}
     (hSlice : ∀ w : Om, AEEQuantitativeEllipticSlice U k (A w).toFun)
@@ -594,14 +594,14 @@ theorem ae_toFullBlockVec_canonicalOptimizerBlockState
       filter_upwards
         [Book.Ch02.doubledMuMinimizer_negLeft_eq_canonicalGradient U aU p q hX]
         with x hx
-      show (canonicalOptimizerBlockState U aU p q x).1 i = _
+      change (canonicalOptimizerBlockState U aU p q x).1 i = _
       rw [canonicalOptimizerBlockState, ← hx]
       rfl
   | inr i =>
       filter_upwards
         [Book.Ch02.doubledMuMinimizer_neg_left_extracts_canonicalMaximizerFlux U aU p q hX]
         with x hx
-      show (canonicalOptimizerBlockState U aU p q x).2 i = _
+      change (canonicalOptimizerBlockState U aU p q x).2 i = _
       rw [canonicalOptimizerBlockState, ← hx]
       rfl
 

@@ -36,7 +36,7 @@ noncomputable section
 variable {d : ℕ}
 
 private theorem exists_restrictedCanonicalResponseSolution_of_commonCoeff
-    [NeZero d] (F : Book.Ch02.TriadicCoeffFamily d) (Q : TriadicCube d)
+    (F : Book.Ch02.TriadicCoeffFamily d) (Q : TriadicCube d)
     {R : TriadicCube d} {j : ℕ} (hR : R ∈ descendantsAtDepth Q j)
     (p r : Vec d)
     (hcoeff : (F.coeffOn R).toCoeffField =
@@ -78,7 +78,7 @@ private theorem exists_restrictedCanonicalResponseSolution_of_commonCoeff
 of its descendants, the averaged gradient-difference half-energy is exactly
 the child-minus-parent response defect. -/
 theorem descendantsAverage_additivityDiffHalfEnergy_eq_responseJPartitionDefect_of_commonCoeff
-    [NeZero d] (F : Book.Ch02.TriadicCoeffFamily d) (Q : TriadicCube d)
+    (F : Book.Ch02.TriadicCoeffFamily d) (Q : TriadicCube d)
     (j : ℕ) (p r : Vec d)
     (hcommon : ∀ R ∈ descendantsAtDepth Q j,
       (F.coeffOn R).toCoeffField = (F.coeffOn Q).toCoeffField) :

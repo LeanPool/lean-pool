@@ -26,7 +26,7 @@ open scoped BigOperators MatrixOrder Pointwise
 
 
 private theorem cubeAverageFluxDefect_pairingSquare_le_responseEnergy
-    {d : ℕ} [NeZero d] (R : TriadicCube d) (a : CoeffField d) (a0 : Mat d)
+    {d : ℕ} (R : TriadicCube d) (a : CoeffField d) (a0 : Mat d)
     {lam Lam : ℝ} (hEll : IsEllipticFieldOn lam Lam (cubeSet R) a)
     (w : AHarmonicFunction a (cubeSet R)) (ξ : Vec d)
     (v : ScalarCanonicalMaximizer (cubeSet R) (-ξ) (-matVecMul (matTranspose a0) ξ) a) :
@@ -229,7 +229,10 @@ theorem cubeAverageFluxDefect_energyForm_le_BlockResponseMax_mul_energyAverage
         rw [show D = matVecMul (symmPart a0) ξ by simpa using hsξ.symm]
         rw [hsplitT]
         ext i
-        simp [matVecMul, sub_eq_add_neg]
+        suffices
+            (∑ j, skewPart a0 i j * ξ j) + -(∑ j, symmPart a0 i j * ξ j) =
+              -(∑ j, (symmPart a0 i j + -skewPart a0 i j) * ξ j) by
+          simpa [matVecMul, sub_eq_add_neg] using this
         have hsum :
             ∑ x, (symmPart a0 i x + -skewPart a0 i x) * ξ x =
               ∑ x, symmPart a0 i x * ξ x + ∑ x, (-skewPart a0 i x) * ξ x := by
@@ -259,9 +262,13 @@ theorem cubeAverageFluxDefect_energyForm_le_BlockResponseMax_mul_energyAverage
           Q0.1 + D = matVecMul a0 ξ := by
         rw [hQ0fst]
         rw [show D = matVecMul (symmPart a0) ξ by simpa using hsξ.symm]
-        rw [hsplit]
+        conv_rhs => rw [hsplit]
         ext i
-        simp [symmPart, skewPart, matVecMul, sub_eq_add_neg]
+        suffices
+            (∑ j, ((a0 i j + -a0 j i) / 2) * ξ j) +
+                (∑ j, ((a0 i j + a0 j i) / 2) * ξ j) =
+              ∑ j, (((a0 i j + a0 j i) / 2) + ((a0 i j + -a0 j i) / 2)) * ξ j by
+          simpa [symmPart, skewPart, matVecMul, sub_eq_add_neg] using this
         rw [← Finset.sum_add_distrib]
         refine Finset.sum_congr rfl ?_
         intro x hx

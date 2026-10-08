@@ -38,7 +38,7 @@ variable {d : ℕ}
 outer generation.  The source scale is a pointwise scalar so the same row can
 be evaluated before or after a change of coefficient coordinates. -/
 @[expose]
-def quenched_block_row (rho : ℝ) (Abar : BlockMat d) (sourceScale : ℝ)
+def quenchedBlockRow (rho : ℝ) (Abar : BlockMat d) (sourceScale : ℝ)
     (a : CoeffSpace d) (m : ℕ) : ℝ :=
   if sourceScale ≤ (3 : ℝ) ^ m then
     ∑' n : ℕ, (3 : ℝ) ^ (-rho * n) *
@@ -106,11 +106,11 @@ generation by `N` and restores the unfloored source scale exactly. -/
 theorem quenched_block_row_physical_scale_coeff
     (rho : ℝ) (Abar : BlockMat d) (sourceScale : ℝ)
     (N m : ℕ) (a : CoeffSpace d) :
-    quenched_block_row rho Abar
+    quenchedBlockRow rho Abar
         (max 1 (sourceScale / (3 : ℝ) ^ N))
-        (physical_scale_coeff N a) m =
-      quenched_block_row rho Abar sourceScale a (N + m) := by
-  unfold quenched_block_row
+        (physicalScaleCoefficient N a) m =
+      quenchedBlockRow rho Abar sourceScale a (N + m) := by
+  unfold quenchedBlockRow
   rw [if_congr (restored_source_cutoff_iff N m sourceScale) rfl rfl]
   split_ifs with hcutoff
   · apply tsum_congr

@@ -506,7 +506,6 @@ def IsAdjointInvariantInLaw {d : ℕ} (P : MeasureTheory.Measure (CoeffField d))
 
 theorem integral_comp_eq_of_map_eq {α : Type*} [MeasurableSpace α]
     {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
-    [MeasurableSpace E]
     {P : MeasureTheory.Measure α} {f : α → α} (hf : Measurable f)
     (hmap : MeasureTheory.Measure.map f P = P) (g : α → E)
     (hg : MeasureTheory.AEStronglyMeasurable g P) :
@@ -557,8 +556,7 @@ theorem IsIsotropicInLaw.map_rotateCoeffField_swap {d : ℕ}
   hP _ (isSignedPermutationMatrix_swap i j)
 
 theorem integral_comp_rotateCoeffField_eq_of_isIsotropicInLaw {d : ℕ}
-    {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] [CompleteSpace E]
-    [MeasurableSpace E] [BorelSpace E] [SecondCountableTopology E]
+    {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
     {P : MeasureTheory.Measure (CoeffField d)} (hP : IsIsotropicInLaw P)
     {R : Mat d} (hR : IsSignedPermutationMatrix R) (f : CoeffField d → E)
     (hf : MeasureTheory.AEStronglyMeasurable f P) :
@@ -576,8 +574,7 @@ theorem integrable_comp_rotateCoeffField_of_isIsotropicInLaw {d : ℕ}
   exact hfMap.comp_measurable (measurable_rotateCoeffField R hR)
 
 theorem integral_comp_adjointCoeffField_eq_of_isAdjointInvariantInLaw {d : ℕ}
-    {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] [CompleteSpace E]
-    [MeasurableSpace E] [BorelSpace E] [SecondCountableTopology E]
+    {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
     {P : MeasureTheory.Measure (CoeffField d)} (hP : IsAdjointInvariantInLaw P)
     (f : CoeffField d → E) (hf : MeasureTheory.AEStronglyMeasurable f P) :
     ∫ a, f (adjointCoeffField a) ∂P = ∫ a, f a ∂P :=

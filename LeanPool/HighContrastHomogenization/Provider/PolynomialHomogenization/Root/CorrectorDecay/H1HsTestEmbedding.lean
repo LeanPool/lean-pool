@@ -28,6 +28,8 @@ open scoped ENNReal
 
 noncomputable section
 
+/-- The coordinatewise `H¹` representation of a smooth local vector test on the origin
+cube. -/
 @[expose]
 public noncomputable def testCubeVectorH1
     {d : ℕ} (n : ℤ) (psi : Vec d → Vec d)
@@ -76,6 +78,8 @@ private theorem centeredEuclideanL2Field_norm_sq
   exact normalizedEuclideanLpENorm_two_sq_eq_eVolumeAverage
     (originCube d n) psi (hcont.comp hpsi.contDiff.continuous).aestronglyMeasurable
 
+/-- A unit-cube continuous `K`-functional competitor obtained by pulling `psi` back along
+`x ↦ centeredCubeScale n • x`. -/
 @[expose]
 public noncomputable def pulledTestCompetitor
     {d : ℕ} (n : ℤ) (psi : Vec d → Vec d)
@@ -96,7 +100,7 @@ public noncomputable def pulledTestCompetitor
   ext i
   rfl
 
-@[simp] private theorem pulledTestCompetitor_gradient
+private theorem pulledTestCompetitor_gradient
     {d : ℕ} (n : ℤ) (psi : Vec d → Vec d)
     (hpsi : IsLocalVecTest (openCubeSet (originCube d n)) psi)
     (x : Vec d) (i j : Fin d) :
@@ -140,11 +144,13 @@ private theorem eLpNorm_two_sq_eq_lintegral_enorm
     ← ENNReal.rpow_mul]
   norm_num
 
+/-- Matrix of coordinate gradients of the components of `psi` at `x`. -/
 @[expose]
 public def physicalGradientMatrix {d : ℕ}
     (psi : Vec d → Vec d) (x : Vec d) : Mat d :=
   fun i j => smoothGrad (fun y => psi y i) x j
 
+/-- Frobenius magnitude of the coordinate-gradient matrix of `psi` at `x`. -/
 @[expose]
 public noncomputable def physicalGradientMagnitude {d : ℕ}
     (psi : Vec d → Vec d) (x : Vec d) : ℝ :=

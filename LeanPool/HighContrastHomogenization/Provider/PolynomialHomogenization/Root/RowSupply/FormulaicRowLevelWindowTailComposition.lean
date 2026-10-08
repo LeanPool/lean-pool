@@ -48,7 +48,7 @@ theorem RowRetainingPrintOrderGoodScale.exists_formulaicScaledResponseWindowTail
         (aScaled : CoeffSpace d) (aRef : Book.Ch03.CoeffFamily d) (L : ℕ),
       lambda = epsilon * (3 : ℝ) ^ N ∧
       lambda ∈ Set.Icc (1 : ℝ) 3 ∧
-      aScaled = Quenched.physical_scale_coeff N a ∧
+      aScaled = Quenched.physicalScaleCoefficient N a ∧
       deltaScaled = triadicallyScaledRowAmplitude h.delta
         (h.activationScale a) N (2 * kappaRate) ∧
       witnessEccentricity (symmPart abar) * Real.sqrt d ≤
@@ -73,7 +73,7 @@ theorem RowRetainingPrintOrderGoodScale.exists_formulaicScaledResponseWindowTail
   obtain ⟨N, hXN, _hInvN, _hNInv, hlambdaOne, hlambdaThree⟩ :=
     exists_triadicScaleBracket_of_commonScale_le_inv hepsilon hx hscale
   let lambda : ℝ := epsilon * (3 : ℝ) ^ N
-  let aScaled : CoeffSpace d := Quenched.physical_scale_coeff N a
+  let aScaled : CoeffSpace d := Quenched.physicalScaleCoefficient N a
   let deltaScaled : ℝ := triadicallyScaledRowAmplitude h.delta
     (h.activationScale a) N (2 * kappaRate)
   have hrowScaled : Quenched.HasAllLaterPhysicalBlockRow

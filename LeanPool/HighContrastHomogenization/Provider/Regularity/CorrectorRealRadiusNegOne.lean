@@ -48,6 +48,8 @@ noncomputable section
 
 /-! ## Restriction of local Hilbert-vector classes -/
 
+/-- The real linear restriction map for Hilbert-vector `L²` classes along the inclusion
+`U ⊆ V`. -/
 @[expose]
 public noncomputable def localHilbertVectorL2RestrictLinear {d : ℕ}
     {U V : Set (Vec d)} (hUV : U ⊆ V) :
@@ -159,7 +161,7 @@ private theorem support_testGradientIntegrand_subset {d : ℕ}
           (R := ℝ) (φ := fun _ : Fin d => ℝ) j).hasFDerivAt.comp x
             (hdiff x).hasFDerivAt).fderiv
     funext i
-    show fderiv ℝ (fun y => psi y j) x (basisVec i) = 0
+    change fderiv ℝ (fun y => psi y j) x (basisVec i) = 0
     rw [hcomp, hfd]
     rfl
   rw [Function.mem_support] at hx

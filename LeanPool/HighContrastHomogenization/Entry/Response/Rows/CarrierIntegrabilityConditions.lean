@@ -106,7 +106,7 @@ private theorem volumeAverage_weighted_cross_eq_sum {d : ℕ} {V : Set (Vec d)}
 For a continuous weight whose indicator is square-integrable on the terminal cell and any
 measurable subcell `V`, the `V`-average of `eta · (⟨Y₂, ∇u⟩ + ⟨Y₁, a_- ∇u⟩)` is a measurable
 function of the coefficient sample, for an arbitrary family of terminal maximizers. -/
-theorem measurable_volumeAverage_weighted_cross_optimizerField_respCoeffMinus {d : ℕ} [NeZero d]
+theorem measurable_volumeAverage_weighted_cross_optimizerField_respCoeffMinus {d : ℕ}
     (P : Measure (CoeffSpace d)) (jStar : ℕ) (hjStar : 2 * d ≤ 3 ^ jStar) (F : BlockMat d)
     (hm : (explicitCanonicalMetric F).PosDef) (t : ℤ) (e : Vec d)
     (uM : (a : CoeffSpace d) → AHarmonicFunction (respCoeffMinus F a) (respCell jStar F t))
@@ -145,7 +145,7 @@ theorem measurable_volumeAverage_weighted_cross_optimizerField_respCoeffMinus {d
 /-- **The weighted cell average of the crossed pairing is measurable in the sample, plus sign.**
 The adjoint twin of
 `measurable_volumeAverage_weighted_cross_optimizerField_respCoeffMinus`. -/
-theorem measurable_volumeAverage_weighted_cross_optimizerField_respCoeffPlus {d : ℕ} [NeZero d]
+theorem measurable_volumeAverage_weighted_cross_optimizerField_respCoeffPlus {d : ℕ}
     (P : Measure (CoeffSpace d)) (jStar : ℕ) (hjStar : 2 * d ≤ 3 ^ jStar) (F : BlockMat d)
     (hm : (explicitCanonicalMetric F).PosDef) (t : ℤ) (e : Vec d)
     (uP : (a : CoeffSpace d) → AHarmonicFunction (respCoeffPlus F a) (respCell jStar F t))
@@ -185,7 +185,7 @@ theorem measurable_volumeAverage_weighted_cross_optimizerField_respCoeffPlus {d 
 sign.**  The constant-weight case of
 `measurable_volumeAverage_weighted_cross_optimizerField_respCoeffMinus`; the indicator of a
 measurable subcell by the constant `1` is square-integrable on the terminal cell. -/
-theorem measurable_volumeAverage_cross_optimizerField_respCoeffMinus {d : ℕ} [NeZero d]
+theorem measurable_volumeAverage_cross_optimizerField_respCoeffMinus {d : ℕ}
     (P : Measure (CoeffSpace d)) (jStar : ℕ) (hjStar : 2 * d ≤ 3 ^ jStar) (F : BlockMat d)
     (hm : (explicitCanonicalMetric F).PosDef) (t : ℤ) (e : Vec d)
     (uM : (a : CoeffSpace d) → AHarmonicFunction (respCoeffMinus F a) (respCell jStar F t))
@@ -206,7 +206,7 @@ theorem measurable_volumeAverage_cross_optimizerField_respCoeffMinus {d : ℕ} [
 /-- **The unweighted cell average of the crossed pairing is measurable in the sample, plus
 sign.**  The adjoint twin of
 `measurable_volumeAverage_cross_optimizerField_respCoeffMinus`. -/
-theorem measurable_volumeAverage_cross_optimizerField_respCoeffPlus {d : ℕ} [NeZero d]
+theorem measurable_volumeAverage_cross_optimizerField_respCoeffPlus {d : ℕ}
     (P : Measure (CoeffSpace d)) (jStar : ℕ) (hjStar : 2 * d ≤ 3 ^ jStar) (F : BlockMat d)
     (hm : (explicitCanonicalMetric F).PosDef) (t : ℤ) (e : Vec d)
     (uP : (a : CoeffSpace d) → AHarmonicFunction (respCoeffPlus F a) (respCell jStar F t))
@@ -518,7 +518,7 @@ noncomputable section
 /-- **The annealed cell energy on a descendant cell, minus sign.**  The cell energy of the terminal
 optimizer on a cell of the generation `t - (H+n+1)` is `P`-integrable. -/
 theorem integrable_volumeAverage_energy_descendant_respCoeffMinus {d : ℕ} [NeZero d]
-    (P : Measure (CoeffSpace d)) [IsProbabilityMeasure P] (jStar : ℕ)
+    (P : Measure (CoeffSpace d)) (jStar : ℕ)
     (hjStar : 2 * d ≤ 3 ^ jStar) (F : BlockMat d) (hm : (explicitCanonicalMetric F).PosDef)
     (H : ℕ) (s t : ℤ) (ht : t = s + (H : ℤ)) (e : Vec d)
     (uM : (a : CoeffSpace d) → AHarmonicFunction (respCoeffMinus F a) (respCell jStar F t))
@@ -544,7 +544,7 @@ theorem integrable_volumeAverage_energy_descendant_respCoeffMinus {d : ℕ} [NeZ
 
 /-- **The annealed cell energy on a descendant cell, plus sign.**  The adjoint twin. -/
 theorem integrable_volumeAverage_energy_descendant_respCoeffPlus {d : ℕ} [NeZero d]
-    (P : Measure (CoeffSpace d)) [IsProbabilityMeasure P] (jStar : ℕ)
+    (P : Measure (CoeffSpace d)) (jStar : ℕ)
     (hjStar : 2 * d ≤ 3 ^ jStar) (F : BlockMat d) (hm : (explicitCanonicalMetric F).PosDef)
     (H : ℕ) (s t : ℤ) (ht : t = s + (H : ℤ)) (e : Vec d)
     (uP : (a : CoeffSpace d) → AHarmonicFunction (respCoeffPlus F a) (respCell jStar F t))

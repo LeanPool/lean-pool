@@ -59,7 +59,7 @@ def cellQuarterEnergy {q : Mat d} (hq : q.PosDef) (k t : ℤ) (w : Fin d → ℤ
 /-- **The equal-volume parent-energy partition.**  The normalized average of the
 pathwise quarter cell energies over one aligned subdivision of the terminal cell
 is exactly the terminal response value. -/
-theorem avsum_cellQuarterEnergy_eq_responseJ [NeZero d] {q : Mat d}
+theorem avsum_cellQuarterEnergy_eq_responseJ {q : Mat d}
     (hq : q.PosDef) {k t : ℤ} (hkt : k ≤ t) (a : CoeffSpace d) (p r : Vec d) :
     avsum (alignedIndex q k t) (fun w ↦ cellQuarterEnergy hq k t w a p r) =
       responseJ (adaptedDomain hq t) (a.coeffOn (adaptedDomain hq t)) p r := by
@@ -81,7 +81,7 @@ def profileAnnealedCellEnergySq (P : Measure (CoeffSpace d)) {q : Mat d}
 /-- **The annealed parent-energy partition.**  The normalized average of the
 annealed quarter cell energies over one aligned subdivision of the terminal cell
 is exactly the annealed terminal response. -/
-theorem avsum_profileAnnealedCellEnergySq_eq [NeZero d]
+theorem avsum_profileAnnealedCellEnergySq_eq
     (P : Measure (CoeffSpace d)) {q : Mat d} (hq : q.PosDef) {k t : ℤ}
     (hkt : k ≤ t) (sample : CoeffSpace d → CoeffSpace d) (p r : Vec d)
     (hint : ∀ w ∈ alignedIndex q k t,
@@ -132,7 +132,7 @@ theorem profileRowCellEnergy_nonneg (P : Measure (CoeffSpace d)) {q : Mat d}
 aligned cells and the cellwise law integrability, the normalized average of the
 squared row cell energies at one scale is exactly the annealed terminal
 response. -/
-theorem avsum_sq_profileRowCellEnergy_eq [NeZero d]
+theorem avsum_sq_profileRowCellEnergy_eq
     (P : Measure (CoeffSpace d)) {q : Mat d} (hq : q.PosDef) {k s t : ℤ}
     (hks : k ≤ s) (hst : s ≤ t) (sample : CoeffSpace d → CoeffSpace d)
     (p r : Vec d)
@@ -178,7 +178,7 @@ theorem avsum_sq_profileRowCellEnergy_eq [NeZero d]
 /-- **The per-scale energy premise of the row closers.**  At the annealed row
 cell energies the premise holds with equality at the annealed terminal response
 root. -/
-theorem sqrt_avsum_sq_profileRowCellEnergy_le [NeZero d]
+theorem sqrt_avsum_sq_profileRowCellEnergy_le
     (P : Measure (CoeffSpace d)) {q : Mat d} (hq : q.PosDef) (Klo s t : ℤ)
     (hst : s ≤ t) (sample : CoeffSpace d → CoeffSpace d) (p r : Vec d)
     (hnonneg : ∀ k ∈ Finset.Icc Klo s, ∀ w ∈ alignedIndex q k t,
@@ -204,7 +204,7 @@ theorem sqrt_avsum_sq_profileRowCellEnergy_le [NeZero d]
 /-- The coefficient-transpose form of the per-scale energy premise: the
 transposed sample carries the adjoint optimizer state and the adjoint terminal
 response. -/
-theorem sqrt_avsum_sq_profileRowCellEnergy_adjoint_le [NeZero d]
+theorem sqrt_avsum_sq_profileRowCellEnergy_adjoint_le
     (P : Measure (CoeffSpace d)) {q : Mat d} (hq : q.PosDef) (Klo s t : ℤ)
     (hst : s ≤ t) (sample : CoeffSpace d → CoeffSpace d) (p r : Vec d)
     (hnonneg : ∀ k ∈ Finset.Icc Klo s, ∀ w ∈ alignedIndex q k t,

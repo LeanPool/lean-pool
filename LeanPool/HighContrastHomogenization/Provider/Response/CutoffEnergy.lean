@@ -237,7 +237,7 @@ theorem descendantsAverage_add {d : ℕ} (Q : TriadicCube d) (j : ℕ)
     descendantsAverage Q j F + descendantsAverage Q j G =
       descendantsAverage Q j fun R => F R + G R := by
   unfold descendantsAverage
-  show ((descendantsAtDepth Q j).card : ℝ)⁻¹ * (descendantsAtDepth Q j).sum F +
+  change ((descendantsAtDepth Q j).card : ℝ)⁻¹ * (descendantsAtDepth Q j).sum F +
       ((descendantsAtDepth Q j).card : ℝ)⁻¹ * (descendantsAtDepth Q j).sum G =
     ((descendantsAtDepth Q j).card : ℝ)⁻¹ *
       (descendantsAtDepth Q j).sum fun R => F R + G R

@@ -172,7 +172,7 @@ algebraic form of the first error row of the centred cutoff decomposition AK.HC 
 the terminal-optimizer replacement costs the `(φ − 1)`-weighted energy, and `φ − 1` has mean
 zero on the cell.  The side conditions are the integrability hypotheses of the CoarseGraining
 energy–response identity together with the integrability of the weighted energy. -/
-theorem cutoffHalfEnergy_sub_respJ_eq {d : ℕ} [NeZero d] {q : Mat d} (hq : IsUnit q) (t : ℤ)
+theorem cutoffHalfEnergy_sub_respJ_eq {d : ℕ} {q : Mat d} (hq : IsUnit q) (t : ℤ)
     {lam Lam : ℝ} {b : CoeffField d}
     (hEll : IsEllipticFieldOn lam Lam (HighContrast.adaptedCell q t) b)
     (φ : Vec d → ℝ) (p r : Vec d) (v : AHarmonicFunction b (HighContrast.adaptedCell q t))
@@ -497,7 +497,6 @@ harmonic function has the same gradient as the parent, so the two functions agre
 integrand identity used in the terminal-optimizer replacement of `p.response.transfer`. -/
 theorem scalarResponseIntegrand_restrictOfIsEllipticFieldOn {d : ℕ} {U V : Set (Vec d)}
     (hU : IsOpen U) (hV : IsOpen V) (hVU : V ⊆ U)
-    [MeasureTheory.IsFiniteMeasure (volumeMeasureOn V)]
     {lam Lam : ℝ} {a : CoeffField d} (hEll : IsEllipticFieldOn lam Lam V a)
     (p r : Vec d) (u : AHarmonicFunction a U) :
     scalarResponseIntegrand V a p r (u.restrictOfIsEllipticFieldOn hU hV hVU hEll)
@@ -515,7 +514,6 @@ restricted harmonic function has the same gradient as the parent.  This is the e
 in the terminal-optimizer replacement of `p.response.transfer`. -/
 theorem scalarVariationEnergyIntegrand_restrictOfIsEllipticFieldOn {d : ℕ} {U V : Set (Vec d)}
     (hU : IsOpen U) (hV : IsOpen V) (hVU : V ⊆ U)
-    [MeasureTheory.IsFiniteMeasure (volumeMeasureOn V)]
     {lam Lam : ℝ} {a : CoeffField d} (hEll : IsEllipticFieldOn lam Lam V a)
     (u : AHarmonicFunction a U) :
     scalarVariationEnergyIntegrand a (u.restrictOfIsEllipticFieldOn hU hV hVU hEll)
@@ -597,7 +595,6 @@ difference-energy identity, the energy--response identity at `v`, the cross inte
 parent's energy integrability. -/
 theorem abs_half_energy_sub_responseJ_le_deficit {d : ℕ} {U V : Set (Vec d)}
     (hU : IsOpen U) (hV : IsOpen V) (hVU : V ⊆ U)
-    [MeasureTheory.IsFiniteMeasure (volumeMeasureOn V)]
     {lam Lam : ℝ} {a : CoeffField d} (hEll : IsEllipticFieldOn lam Lam V a)
     {p r : Vec d} (u : AHarmonicFunction a U) (v : AHarmonicFunction a V)
     (hmax : IsResponseMaximizer V p r a v)

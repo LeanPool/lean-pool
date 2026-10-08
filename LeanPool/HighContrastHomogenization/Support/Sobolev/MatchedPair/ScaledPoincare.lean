@@ -115,12 +115,12 @@ instance isFiniteMeasure_volumeMeasureOn_axisCube
 `axisCube 0 1`.  It depends only on the dimension `d`. -/
 @[expose]
 noncomputable def unitMeanZeroPoincareConst (d : ℕ) : ℝ :=
-  (h1CoerciveEstimate_of_isOpenBoundedConvexDomain
+  (h1CoerciveEstimateOfOpenBoundedConvexDomain
     (isOpenBoundedConvexDomain_axisCube (0 : HCPolySupport.Vec d) 1)).constantValue
 
 theorem unitMeanZeroPoincareConst_nonneg (d : ℕ) :
     0 ≤ unitMeanZeroPoincareConst d :=
-  (h1CoerciveEstimate_of_isOpenBoundedConvexDomain
+  (h1CoerciveEstimateOfOpenBoundedConvexDomain
     (isOpenBoundedConvexDomain_axisCube (0 : HCPolySupport.Vec d) 1)).constant_nonneg
 
 private theorem coercive_constant_eqRec {V U : Set (HCPolySupport.Vec d)}
@@ -139,7 +139,7 @@ noncomputable def axisCubeMeanZeroCoerciveEstimate
     rw [smul_axisCube_zero_one L hL]
     exact isFiniteMeasure_volumeMeasureOn_axisCube 0 L
   (axisCube_eq_translateSet_smul z L hL).symm ▸
-    (((h1CoerciveEstimate_of_isOpenBoundedConvexDomain
+    (((h1CoerciveEstimateOfOpenBoundedConvexDomain
       (isOpenBoundedConvexDomain_axisCube (0 : HCPolySupport.Vec d) 1)).dilate hL).translate z)
 
 theorem axisCubeMeanZeroCoerciveEstimate_constant
@@ -310,13 +310,13 @@ theorem scaled_dirichlet_poincare_norm {d : ℕ} [NeZero d] (z : HCPolySupport.V
       dilationL2Factor d L * ‖w.toH1Function.toScalarL2‖ := by
     have e1 : ‖w4.toH1Function.toScalarL2‖ =
         dilationL2Factor d L * ‖w3.toH1Function.toScalarL2‖ := by
-      show ‖(H10Function.unscale hL w3).toH1Function.toScalarL2‖ = _
+      change ‖(H10Function.unscale hL w3).toH1Function.toScalarL2‖ = _
       rw [H10Function.unscale_toH1Function]
       exact H1Function.norm_toScalarL2_unscale_eq hL w3.toH1Function
     have e2 : ‖w3.toH1Function.toScalarL2‖ = ‖w2.toH1Function.toScalarL2‖ :=
       norm_toScalarL2_h10_congr heq2 w2
     have e3 : ‖w2.toH1Function.toScalarL2‖ = ‖w1.toH1Function.toScalarL2‖ := by
-      show ‖(H10Function.untranslate z w1).toH1Function.toScalarL2‖ = _
+      change ‖(H10Function.untranslate z w1).toH1Function.toScalarL2‖ = _
       rw [H10Function.untranslate_toH1Function]
       exact norm_toScalarL2_untranslate_eq z w1.toH1Function
     have e4 : ‖w1.toH1Function.toScalarL2‖ = ‖w.toH1Function.toScalarL2‖ :=
@@ -327,7 +327,7 @@ theorem scaled_dirichlet_poincare_norm {d : ℕ} [NeZero d] (z : HCPolySupport.V
       L * dilationL2Factor d L * w.toH1Function.gradientCoordL2NormSum := by
     have e1 : w4.toH1Function.gradientCoordL2NormSum =
         L * dilationL2Factor d L * w3.toH1Function.gradientCoordL2NormSum := by
-      show (H10Function.unscale hL w3).toH1Function.gradientCoordL2NormSum = _
+      change (H10Function.unscale hL w3).toH1Function.gradientCoordL2NormSum = _
       rw [H10Function.unscale_toH1Function]
       exact H1Function.gradientCoordL2NormSum_unscale_eq hL w3.toH1Function
     have e2 : w3.toH1Function.gradientCoordL2NormSum =
@@ -335,7 +335,7 @@ theorem scaled_dirichlet_poincare_norm {d : ℕ} [NeZero d] (z : HCPolySupport.V
       gradientCoordL2NormSum_h10_congr heq2 w2
     have e3 : w2.toH1Function.gradientCoordL2NormSum =
         w1.toH1Function.gradientCoordL2NormSum := by
-      show (H10Function.untranslate z w1).toH1Function.gradientCoordL2NormSum = _
+      change (H10Function.untranslate z w1).toH1Function.gradientCoordL2NormSum = _
       rw [H10Function.untranslate_toH1Function]
       exact gradientCoordL2NormSum_untranslate_eq z w1.toH1Function
     have e4 : w1.toH1Function.gradientCoordL2NormSum =

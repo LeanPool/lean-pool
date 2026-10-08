@@ -179,13 +179,13 @@ theorem overlapCentersAverage_lintegral_rpow_enorm_two_le {d : ℕ} {E : Type*}
         MeasureTheory.MemLp R (2 : ℝ≥0∞) (normalizedOverlapCubeMeasure S)) :
     overlapCentersAverage Q j
         (fun S => (∫⁻ x, ‖R x‖ₑ ^ (2 : ℝ)
-          ∂ normalizedOverlapCubeMeasure S).toReal)
+          ∂normalizedOverlapCubeMeasure S).toReal)
       ≤ (3 ^ d : ℝ) *
           (∫⁻ x, ‖R x‖ₑ ^ (2 : ℝ) ∂ normalizedCubeMeasure Q).toReal := by
   classical
   let D := overlapCentersAtDepth Q j
   let I : TriadicCube d → ℝ≥0∞ :=
-    fun S => ∫⁻ x, ‖R x‖ₑ ^ (2 : ℝ) ∂ normalizedOverlapCubeMeasure S
+    fun S => ∫⁻ x, ‖R x‖ₑ ^ (2 : ℝ) ∂normalizedOverlapCubeMeasure S
   let IQ : ℝ≥0∞ := ∫⁻ x, ‖R x‖ₑ ^ (2 : ℝ) ∂ normalizedCubeMeasure Q
   have hfQ :
       AEMeasurable (fun x => ‖R x‖ₑ ^ (2 : ℝ))
@@ -277,7 +277,7 @@ theorem overlapCentersAtDepth_average_lintegral_ofReal_vecNormSq_fluctuation_le
             ∫⁻ x,
               ENNReal.ofReal
                 (vecNormSq (h x - overlapCubeAverageVec S h))
-              ∂ normalizedOverlapCubeMeasure S)
+              ∂normalizedOverlapCubeMeasure S)
       ≤
         (Fintype.card (Fin d) : ℝ≥0∞) *
           ((((overlapCentersAtDepth Q j).card : ℝ≥0∞)⁻¹) *
@@ -285,7 +285,7 @@ theorem overlapCentersAtDepth_average_lintegral_ofReal_vecNormSq_fluctuation_le
               (fun S =>
                 ∫⁻ x,
                   ‖overlapCubeFluctuationVec S h x‖ₑ ^ (2 : ℝ)
-                  ∂ normalizedOverlapCubeMeasure S)) := by
+                  ∂normalizedOverlapCubeMeasure S)) := by
   classical
   let D : Finset (TriadicCube d) := overlapCentersAtDepth Q j
   let cardDim : ℝ≥0∞ := Fintype.card (Fin d)
@@ -293,12 +293,12 @@ theorem overlapCentersAtDepth_average_lintegral_ofReal_vecNormSq_fluctuation_le
     fun S =>
       ∫⁻ x,
         ENNReal.ofReal (vecNormSq (h x - overlapCubeAverageVec S h))
-        ∂ normalizedOverlapCubeMeasure S
+        ∂normalizedOverlapCubeMeasure S
   let J : TriadicCube d → ℝ≥0∞ :=
     fun S =>
       ∫⁻ x,
         ‖overlapCubeFluctuationVec S h x‖ₑ ^ (2 : ℝ)
-        ∂ normalizedOverlapCubeMeasure S
+        ∂normalizedOverlapCubeMeasure S
   have hIJ : ∀ S ∈ D, I S ≤ cardDim * J S := by
     intro S _hS
     calc
@@ -306,7 +306,7 @@ theorem overlapCentersAtDepth_average_lintegral_ofReal_vecNormSq_fluctuation_le
           ≤
             ∫⁻ x,
               cardDim * (‖overlapCubeFluctuationVec S h x‖ₑ ^ (2 : ℝ))
-              ∂ normalizedOverlapCubeMeasure S := by
+              ∂normalizedOverlapCubeMeasure S := by
             refine MeasureTheory.lintegral_mono ?_
             intro x
             simpa [cardDim, overlapCubeFluctuationVec] using
@@ -327,7 +327,7 @@ theorem overlapCentersAtDepth_average_lintegral_ofReal_vecNormSq_fluctuation_le
             ∫⁻ x,
               ENNReal.ofReal
                 (vecNormSq (h x - overlapCubeAverageVec S h))
-              ∂ normalizedOverlapCubeMeasure S)
+              ∂normalizedOverlapCubeMeasure S)
         =
           ((D.card : ℝ≥0∞)⁻¹) * D.sum I := by
           rfl
@@ -346,7 +346,7 @@ theorem overlapCentersAtDepth_average_lintegral_ofReal_vecNormSq_fluctuation_le
               (fun S =>
                 ∫⁻ x,
                   ‖overlapCubeFluctuationVec S h x‖ₑ ^ (2 : ℝ)
-                  ∂ normalizedOverlapCubeMeasure S)) := by
+                  ∂normalizedOverlapCubeMeasure S)) := by
           rfl
 
 theorem overlapCubeAverage_add_of_memLp_two {d : ℕ}
@@ -377,7 +377,7 @@ theorem overlapCubeAverageVec_add_of_memLp_two {d : ℕ}
   have hvi : MeasureTheory.MemLp (fun x => v x i) (2 : ℝ≥0∞)
       (normalizedOverlapCubeMeasure S) := by
     simpa using! (ContinuousLinearMap.proj (R := ℝ) i).comp_memLp' hv
-  show overlapCubeAverage S (fun x => (u x + v x) i) =
+  change overlapCubeAverage S (fun x => (u x + v x) i) =
     overlapCubeAverage S (fun x => u x i) +
       overlapCubeAverage S (fun x => v x i)
   have hfun : (fun x => (u x + v x) i) =
@@ -498,7 +498,7 @@ theorem toReal_overlapCentersAtDepth_average_lintegral_fluctuation_eq_depthAvera
       ∀ S ∈ overlapCentersAtDepth Q j,
         (∫⁻ x,
           ‖overlapCubeFluctuationVec S u x‖ₑ ^ (2 : ℝ)
-          ∂ normalizedOverlapCubeMeasure S) ≠ ∞)
+          ∂normalizedOverlapCubeMeasure S) ≠ ∞)
     (hmeas :
       ∀ S ∈ overlapCentersAtDepth Q j,
         AEStronglyMeasurable u (normalizedOverlapCubeMeasure S)) :
@@ -507,7 +507,7 @@ theorem toReal_overlapCentersAtDepth_average_lintegral_fluctuation_eq_depthAvera
           (fun S =>
             ∫⁻ x,
               ‖overlapCubeFluctuationVec S u x‖ₑ ^ (2 : ℝ)
-              ∂ normalizedOverlapCubeMeasure S)).toReal =
+              ∂normalizedOverlapCubeMeasure S)).toReal =
       cubeBesovOverlappingPositiveVectorDepthAverage Q u j := by
   classical
   let D : Finset (TriadicCube d) := overlapCentersAtDepth Q j
@@ -515,7 +515,7 @@ theorem toReal_overlapCentersAtDepth_average_lintegral_fluctuation_eq_depthAvera
     fun S =>
       ∫⁻ x,
         ‖overlapCubeFluctuationVec S u x‖ₑ ^ (2 : ℝ)
-        ∂ normalizedOverlapCubeMeasure S
+        ∂normalizedOverlapCubeMeasure S
   have hleft_toReal :
       ((((D.card : ℝ≥0∞)⁻¹) * D.sum I).toReal) =
         ((D.card : ℝ)⁻¹) * D.sum (fun S => (I S).toReal) := by
@@ -529,7 +529,7 @@ theorem toReal_overlapCentersAtDepth_average_lintegral_fluctuation_eq_depthAvera
           (fun S =>
             ∫⁻ x,
               ‖overlapCubeFluctuationVec S u x‖ₑ ^ (2 : ℝ)
-              ∂ normalizedOverlapCubeMeasure S)).toReal
+              ∂normalizedOverlapCubeMeasure S)).toReal
         =
           ((D.card : ℝ)⁻¹) * D.sum (fun S => (I S).toReal) := by
           simpa [D, I] using hleft_toReal
@@ -560,7 +560,7 @@ theorem lintegral_overlapCubeFluctuationVec_rpow_enorm_two_ne_top
       (normalizedOverlapCubeMeasure S)) :
     (∫⁻ x,
       ‖overlapCubeFluctuationVec S u x‖ₑ ^ (2 : ℝ)
-      ∂ normalizedOverlapCubeMeasure S) ≠ ∞ := by
+      ∂normalizedOverlapCubeMeasure S) ≠ ∞ := by
   have hfluct :
       MeasureTheory.MemLp (overlapCubeFluctuationVec S u)
         (2 : ℝ≥0∞) (normalizedOverlapCubeMeasure S) :=
@@ -568,7 +568,7 @@ theorem lintegral_overlapCubeFluctuationVec_rpow_enorm_two_ne_top
   have hlt :
       (∫⁻ x,
         ‖overlapCubeFluctuationVec S u x‖ₑ ^ (2 : ℝ)
-        ∂ normalizedOverlapCubeMeasure S) < ∞ := by
+        ∂normalizedOverlapCubeMeasure S) < ∞ := by
     simpa using
       (MeasureTheory.eLpNorm_lt_top_iff_lintegral_rpow_enorm_lt_top
         (p := (2 : ℝ≥0∞))
@@ -588,14 +588,14 @@ theorem overlapCentersAtDepth_average_lintegral_fluctuation_ne_top
         (fun S =>
           ∫⁻ x,
             ‖overlapCubeFluctuationVec S u x‖ₑ ^ (2 : ℝ)
-            ∂ normalizedOverlapCubeMeasure S)) ≠ ∞ := by
+            ∂normalizedOverlapCubeMeasure S)) ≠ ∞ := by
   classical
   let D : Finset (TriadicCube d) := overlapCentersAtDepth Q j
   let I : TriadicCube d → ℝ≥0∞ :=
     fun S =>
       ∫⁻ x,
         ‖overlapCubeFluctuationVec S u x‖ₑ ^ (2 : ℝ)
-        ∂ normalizedOverlapCubeMeasure S
+        ∂normalizedOverlapCubeMeasure S
   have hI : ∀ S ∈ D, I S ≠ ∞ := by
     intro S hS
     exact lintegral_overlapCubeFluctuationVec_rpow_enorm_two_ne_top S u
@@ -622,7 +622,7 @@ theorem overlapCentersAtDepth_average_lintegral_ofReal_vecNormSq_fluctuation_ne_
           ∫⁻ x,
             ENNReal.ofReal
               (vecNormSq (u x - overlapCubeAverageVec S u))
-            ∂ normalizedOverlapCubeMeasure S)) ≠ ∞ := by
+            ∂normalizedOverlapCubeMeasure S)) ≠ ∞ := by
   let A : ℝ≥0∞ :=
     (((overlapCentersAtDepth Q j).card : ℝ≥0∞)⁻¹ *
       (overlapCentersAtDepth Q j).sum
@@ -630,14 +630,14 @@ theorem overlapCentersAtDepth_average_lintegral_ofReal_vecNormSq_fluctuation_ne_
           ∫⁻ x,
             ENNReal.ofReal
               (vecNormSq (u x - overlapCubeAverageVec S u))
-            ∂ normalizedOverlapCubeMeasure S))
+            ∂normalizedOverlapCubeMeasure S))
   let B : ℝ≥0∞ :=
     (((overlapCentersAtDepth Q j).card : ℝ≥0∞)⁻¹ *
       (overlapCentersAtDepth Q j).sum
         (fun S =>
           ∫⁻ x,
             ‖overlapCubeFluctuationVec S u x‖ₑ ^ (2 : ℝ)
-            ∂ normalizedOverlapCubeMeasure S))
+            ∂normalizedOverlapCubeMeasure S))
   have hle : A ≤ (Fintype.card (Fin d) : ℝ≥0∞) * B := by
     simpa [A, B] using
       overlapCentersAtDepth_average_lintegral_ofReal_vecNormSq_fluctuation_le
@@ -662,7 +662,7 @@ theorem residualEuclideanOverlapBound_ne_top_of_memLp_overlap
             ∫⁻ x,
               ENNReal.ofReal
                 (vecNormSq (u x - overlapCubeAverageVec S u))
-              ∂ normalizedOverlapCubeMeasure S))) ≠ ∞ := by
+              ∂normalizedOverlapCubeMeasure S))) ≠ ∞ := by
   have havg :
       (((overlapCentersAtDepth Q j).card : ℝ≥0∞)⁻¹ *
         (overlapCentersAtDepth Q j).sum
@@ -670,7 +670,7 @@ theorem residualEuclideanOverlapBound_ne_top_of_memLp_overlap
             ∫⁻ x,
               ENNReal.ofReal
                 (vecNormSq (u x - overlapCubeAverageVec S u))
-              ∂ normalizedOverlapCubeMeasure S)) ≠ ∞ :=
+              ∂normalizedOverlapCubeMeasure S)) ≠ ∞ :=
     overlapCentersAtDepth_average_lintegral_ofReal_vecNormSq_fluctuation_ne_top
       Q u j hu
   exact ENNReal.mul_ne_top

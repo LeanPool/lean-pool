@@ -65,20 +65,20 @@ noncomputable def constantFullBlockMatrix {d : ℕ} (a0 : Mat d) :
 
 /-- Positive square root used in the normalization of `\mathcal E`. -/
 @[expose]
-noncomputable def constantFullBlockMatrixSqrt {d : ℕ} [NeZero d] (a0 : Mat d) :
+noncomputable def constantFullBlockMatrixSqrt {d : ℕ} (a0 : Mat d) :
     FullBlockMat d :=
   CFC.sqrt (constantFullBlockMatrix a0)
 
 /-- Inverse positive square root used in the normalization of `\mathcal E`. -/
 @[expose]
-noncomputable def constantFullBlockMatrixInvSqrt {d : ℕ} [NeZero d] (a0 : Mat d) :
+noncomputable def constantFullBlockMatrixInvSqrt {d : ℕ} (a0 : Mat d) :
     FullBlockMat d :=
   (constantFullBlockMatrixSqrt a0)⁻¹
 
 /-- The normalized block-response value set
 `max_{|e|=1} J(Q, A0^{-1/2} e, A0^{1/2} e; a)`. -/
 @[expose]
-noncomputable def normalizedBlockResponseValueSet {d : ℕ} [NeZero d]
+noncomputable def normalizedBlockResponseValueSet {d : ℕ}
     (Q : TriadicCube d) (a : TriadicCoeffFamily d) (a0 : Mat d) : Set ℝ :=
   { m | ∃ e : FullBlockVec d, fullBlockVecNormSq e = 1 ∧
       m =
@@ -88,20 +88,20 @@ noncomputable def normalizedBlockResponseValueSet {d : ℕ} [NeZero d]
 
 /-- The one-cube normalized block-response maximum. -/
 @[expose]
-noncomputable def normalizedBlockResponseMax {d : ℕ} [NeZero d]
+noncomputable def normalizedBlockResponseMax {d : ℕ}
     (Q : TriadicCube d) (a : TriadicCoeffFamily d) (a0 : Mat d) : ℝ :=
   sSup (normalizedBlockResponseValueSet Q a a0)
 
 /-- Maximum normalized block response over descendants of `Q` at scale `k`. -/
 @[expose]
-noncomputable def maxDescendantNormalizedBlockResponseAtScale {d : ℕ} [NeZero d]
+noncomputable def maxDescendantNormalizedBlockResponseAtScale {d : ℕ}
     (Q : TriadicCube d) (k : ℤ) (a : TriadicCoeffFamily d) (a0 : Mat d) : ℝ :=
   finsetSupReal (descendantsAtScale Q k) fun R => normalizedBlockResponseMax R a a0
 
 /-- The `p`-aggregation over descendants at one scale in the definition of
 `\mathcal E_{s,p,q}`. -/
 @[expose]
-noncomputable def scaleResponseAtScale {d : ℕ} [NeZero d]
+noncomputable def scaleResponseAtScale {d : ℕ}
     (Q : TriadicCube d) (k : ℤ) (p : MultiscaleExponent)
     (a : TriadicCoeffFamily d) (a0 : Mat d) : ℝ :=
   match p with
@@ -115,7 +115,7 @@ noncomputable def scaleResponseAtScale {d : ℕ} [NeZero d]
 
 /-- Finite-`q` multiscale homogenization error. -/
 @[expose]
-noncomputable def HomogenizationErrorFinite {d : ℕ} [NeZero d]
+noncomputable def HomogenizationErrorFinite {d : ℕ}
     (Q : TriadicCube d) (n : ℤ) (s : ℝ) (p : MultiscaleExponent) (q : ℝ)
     (a : TriadicCoeffFamily d) (a0 : Mat d) : ℝ :=
   Real.rpow
@@ -126,7 +126,7 @@ noncomputable def HomogenizationErrorFinite {d : ℕ} [NeZero d]
 
 /-- Endpoint-`q` multiscale homogenization error. -/
 @[expose]
-noncomputable def HomogenizationErrorInfinity {d : ℕ} [NeZero d]
+noncomputable def HomogenizationErrorInfinity {d : ℕ}
     (Q : TriadicCube d) (n : ℤ) (s : ℝ) (p : MultiscaleExponent)
     (a : TriadicCoeffFamily d) (a0 : Mat d) : ℝ :=
   sSup
@@ -137,7 +137,7 @@ noncomputable def HomogenizationErrorInfinity {d : ℕ} [NeZero d]
 
 /-- Multiscale homogenization error for finite `q` and `q = infinity`. -/
 @[expose]
-noncomputable def HomogenizationError {d : ℕ} [NeZero d]
+noncomputable def HomogenizationError {d : ℕ}
     (Q : TriadicCube d) (n : ℤ) (s : ℝ) (p q : MultiscaleExponent)
     (a : TriadicCoeffFamily d) (a0 : Mat d) : ℝ :=
   match q with
@@ -147,7 +147,7 @@ noncomputable def HomogenizationError {d : ℕ} [NeZero d]
 /-- The untruncated cube quantity `\mathcal E_{s,p,q}(Q; a, a0)`, where the
 truncation scale is the scale of `Q`. -/
 @[expose]
-noncomputable def HomogenizationErrorOnCube {d : ℕ} [NeZero d]
+noncomputable def HomogenizationErrorOnCube {d : ℕ}
     (Q : TriadicCube d) (s : ℝ) (p q : MultiscaleExponent)
     (a : TriadicCoeffFamily d) (a0 : Mat d) : ℝ :=
   HomogenizationError Q Q.scale s p q a a0

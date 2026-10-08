@@ -407,7 +407,7 @@ private theorem smallBottom_prefactor_polynomial_bound
     (hceil_bound : (3 : ℝ) ^ Nat.ceil (max 0 (Real.log Msmall)) ≤
       3 * AM ^ Real.log (3 : ℝ) * G ^ rceil)
     (hBlead_pow : BleadSmall ^ (4 : ℕ) ≤ AB * (max 1 θ) ^ pB)
-    (hAM : 0 < AM) (hAB : 0 < AB) :
+    (hAM : 0 < AM) (_hAB : 0 < AB) :
     let Acoef : ℝ := 18 * (3 : ℝ) ^ Rsmall *
       Real.exp (Real.log 3 *
         ((2 * max 0 (-(Real.log (1 - (2 : ℝ) ^ (-η))))) / (η * Real.log 3))) *
@@ -627,8 +627,8 @@ theorem explicit_smallBottom_prefactor_le_exp_logSq
       rw [← Real.rpow_mul
         (le_trans zero_le_one (le_max_left 1 (K * (Csmall * θ ^ (2 : ℕ)))))]
       congr 1
-      field_simp [hη_pos.ne']
-      ring
+      · field_simp [hη_pos.ne']
+      · ring
     rw [hden_eq]
     simpa [AB, pB, Ascale, rB] using
       rpow_max_one_mul_sq_le_const_mul_rpow

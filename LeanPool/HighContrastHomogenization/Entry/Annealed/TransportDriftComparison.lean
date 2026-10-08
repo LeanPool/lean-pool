@@ -86,7 +86,7 @@ theorem exists_transport_cross_source_mean (d : ℕ) (hd : 2 ≤ d) (γ : ℝ)
   ring
 
 /-- Removing the cap from a maximal-family row cannot increase its mass. -/
-theorem transport_drift_subrow {d : ℕ} [NeZero d] (W : Set (Vec d)) (q : Mat d) (hq : IsUnit q)
+theorem transport_drift_subrow {d : ℕ} (W : Set (Vec d)) (q : Mat d) (hq : IsUnit q)
     (cap r : ℤ)
     (hfin : (maximalAdaptedCellCenters W q cap r).Finite) :
     let I := {p : ℤ × (Fin d → ℤ) // IsMaximalAdaptedCellIn W q cap p.1 p.2}
@@ -421,10 +421,10 @@ private theorem transport_drift_error_absorption (A C Co Cd Ci δ I D T U : ℝ)
     _ = _ := by ring
 
 private theorem transport_cross_eccentricity_bound (Pi e ePlus : ℝ)
-    (hPi : 0 ≤ Pi) (he : 0 ≤ e) (hp : 0 ≤ ePlus) :
+    (hPi : 0 ≤ Pi) (_he : 0 ≤ e) (_hp : 0 ≤ ePlus) :
     0 ≤ 1 + Pi * (e + ePlus) ^ 2 ∧ Pi * e * ePlus ≤ 1 + Pi * (e + ePlus) ^ 2 := by
   have hsq : e * ePlus ≤ (e + ePlus) ^ 2 := by
-    nlinarith only [he, hp, sq_nonneg e, sq_nonneg ePlus]
+    nlinarith only [_he, _hp, sq_nonneg e, sq_nonneg ePlus]
   exact ⟨by positivity, by nlinarith only [mul_le_mul_of_nonneg_left hsq hPi]⟩
 
 private theorem transport_source_growth_bound (Cs C B R : ℝ) (J : ℕ) (n : ℤ) (L : ℕ)
@@ -551,8 +551,10 @@ theorem exists_two_grid_drift_comparison (d : ℕ) (hd : 2 ≤ d)
         exact add_nonneg (hf _ (Finset.mem_Icc.mpr ⟨by omega, by dsimp only [s, t] at *; omega⟩))
           (mul_nonneg (mul_nonneg hCw.le (zero_le_one.trans hK₀)) (Finset.sum_nonneg fun r hr =>
             mul_nonneg (three_rpow_nonneg _)
-            (hf r (Finset.mem_Icc.mpr ⟨(Finset.mem_Icc.mp hr).1, by have := (Finset.mem_Icc.mp
-              hr).2; dsimp only [s, t] at *; omega⟩))))
+            (hf r (Finset.mem_Icc.mpr ⟨(Finset.mem_Icc.mp hr).1, by
+              have := (Finset.mem_Icc.mp hr).2
+              dsimp only [s, t] at *
+              omega⟩))))
     have hz0 : 0 ≤ src := by
       dsimp only [src]; split_ifs with he
       · exact zero_le_one
@@ -562,8 +564,9 @@ theorem exists_two_grid_drift_comparison (d : ℕ) (hd : 2 ≤ d)
         old + Yold * src + Iold := by
       by_cases he : j < (jStar : ℤ) + L
       · have hsrc := hsource P E Ψ K S hstat hdag jStar hj hsN m mPlus hm hmPlus s j
-          (by dsimp only [s]; omega) (Finset.mem_Icc.mp hj').1 hsW' (hjW j (by have :=
-            (Finset.mem_Icc.mp hj').2; omega))
+          (by dsimp only [s]; omega) (Finset.mem_Icc.mp hj').1 hsW' (hjW j (by
+            have := (Finset.mem_Icc.mp hj').2
+            omega))
         have hb := transport_normalized_trace_scalar_bound (adaptedMean P qPlus j) F (hNew
           j).posSemidef hF
           (Cn * aspectRatio E * Real.sqrt (‖m‖ * ‖m⁻¹‖) * Real.sqrt (‖mPlus‖ * ‖mPlus⁻¹‖))
@@ -576,8 +579,9 @@ theorem exists_two_grid_drift_comparison (d : ℕ) (hd : 2 ≤ d)
           nlinarith only [mul_nonneg (mul_nonneg (two_mul_natCast_nonneg d) hCw.le) hB]
         nlinarith only [hb, hbc, hbc', hIold]
       · have hlate := hwhitney P E Ψ K S hstat hdag jStar hj hsW m mPlus hm hmPlus hratio j s
-          (by dsimp only [s]; omega) L hL (by omega) (hjW j (by have := (Finset.mem_Icc.mp
-            hj').2; omega)) hsW'
+          (by dsimp only [s]; omega) L hL (by omega) (hjW j (by
+            have := (Finset.mem_Icc.mp hj').2
+            omega)) hsW'
         have ht := transport_drift_trace_comparison (fun r => adaptedMean P q r) (adaptedMean P
           qPlus j) F
           hOld (hNew j) hF (Finset.Icc (jStar : ℤ) (j - (L : ℤ) - 1)) (j - (L : ℤ))
@@ -646,7 +650,7 @@ theorem exists_two_grid_drift_comparison (d : ℕ) (hd : 2 ≤ d)
         Co * (grow * Dold) + (Cs * B) * ((n : ℝ) + L - jStar) * R +
           (Cd * δ + Ci * (K₀ * (3 : ℝ) ^ (-(L : ℝ)))) := by
       (convert hpay using 1; try rfl)
-      show (4 / 3 : ℝ) * (1 + (Cw * K₀) * Gb) * (1 / (1 - (3 : ℝ) ^ (-a))) * (grow * Dold) +
+      change (4 / 3 : ℝ) * (1 + (Cw * K₀) * Gb) * (1 / (1 - (3 : ℝ) ^ (-a))) * (grow * Dold) +
           (Cs * B) * ((n : ℝ) + L - jStar) * R +
           (Cd * δ + Ci * (K₀ * (3 : ℝ) ^ (-(L : ℝ)))) = _
       ring

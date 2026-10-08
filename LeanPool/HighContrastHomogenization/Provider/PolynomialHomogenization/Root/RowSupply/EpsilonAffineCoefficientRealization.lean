@@ -41,7 +41,7 @@ variable {d : ℕ}
 /-- The translated, skew-centered, microscopic coefficient sample used before
 the affine pullback. -/
 @[expose]
-def epsilonAffinePhysicalCoeff [NeZero d]
+def epsilonAffinePhysicalCoeff
     (epsilon : ℝ) (hepsilon : 0 < epsilon) (center : Vec d)
     (a : CoeffSpace d) (abar : Mat d) : CoeffSpace d :=
   ((realTranslateCoeff
@@ -52,7 +52,7 @@ def epsilonAffinePhysicalCoeff [NeZero d]
 
 /-- The microscopic coefficient sample has the explicit translated and
 rescaled representative. -/
-theorem epsilonAffinePhysicalCoeff_ae [NeZero d]
+theorem epsilonAffinePhysicalCoeff_ae
     {epsilon : ℝ} (hepsilon : 0 < epsilon) (center : Vec d)
     (a : CoeffSpace d) (abar : Mat d) :
     (⇑(epsilonAffinePhysicalCoeff epsilon hepsilon center a abar).1 :
@@ -78,7 +78,7 @@ theorem epsilonAffinePhysicalCoeff_ae [NeZero d]
 /-- The affine pullback of the preceding sample is exactly the translated
 physical gauge coefficient.  In particular, real dilation contributes no
 residual response factor. -/
-theorem affineCoefficient_epsilonAffinePhysicalCoeff_ae [NeZero d]
+theorem affineCoefficient_epsilonAffinePhysicalCoeff_ae
     {epsilon : ℝ} (hepsilon : 0 < epsilon) (center : Vec d)
     (a : CoeffSpace d) (abar : Mat d) (hS : (symmPart abar).PosDef) :
     affineCoefficient (epsilonAffineGrid epsilon abar)

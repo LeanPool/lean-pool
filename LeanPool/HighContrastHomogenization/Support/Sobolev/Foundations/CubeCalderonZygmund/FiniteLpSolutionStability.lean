@@ -35,6 +35,7 @@ noncomputable section
 
 namespace CubeCalderonZygmund
 
+/-- Subtract two cube fields pointwise, retaining their Euclidean `L^q` and `L²` membership. -/
 @[expose]
 public noncomputable def cubeEuclideanL2LpFieldSub
     {d : ℕ} {Q : TriadicCube d} {q : FiniteLpExponent}

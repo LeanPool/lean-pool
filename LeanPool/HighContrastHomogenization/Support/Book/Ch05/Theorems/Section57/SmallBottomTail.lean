@@ -63,7 +63,6 @@ theorem smallBottomBadScaleEvent_antitone
 
 /-- Tail form of small-bottom monotonicity. -/
 theorem badTailEvent_smallBottomBadScaleEvent_subset
-    [MeasurableSpace Ω]
     {H : ℕ → ℕ → Ω → ℝ} {Nentry : ℕ} {t α : ℝ}
     (hα : 0 ≤ α) {N : ℕ} :
     badTailEvent (smallBottomBadScaleEvent H Nentry t α) N ⊆

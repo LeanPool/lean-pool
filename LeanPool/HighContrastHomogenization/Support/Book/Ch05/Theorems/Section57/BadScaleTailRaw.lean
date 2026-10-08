@@ -271,7 +271,7 @@ theorem shiftedHighBottomPairMeasure_le_softMax_of_pairBounds
           simpa [K, x, ell, selectedBadPairScale, N0, Hshift, D, S, tau,
             highScale, T, highLam] using
             hraw hell hnm hqm hlam
-        simpa [pref, mul_assoc] using hbad
+        simpa [pref, S, D, N0, tau, mul_assoc] using hbad
       · intro hlam
         have hraw :=
           hcrudeRaw (t := t) (αbad := αbad)
@@ -284,7 +284,7 @@ theorem shiftedHighBottomPairMeasure_le_softMax_of_pairBounds
                 ((D.card : ℝ) * Real.exp (-(crudeLam ^ σ))) := by
           simpa [K, Hshift, x, D, S, crudeScale, T, crudeLam] using
             hraw hnm hqm hlam
-        simpa [pref, mul_assoc] using hbad
+        simpa [pref, S, D, N0, tau, mul_assoc] using hbad
     · have hempty :
           highBottomPairEvent Hshift K a t αbad q m n = ∅ := by
         ext ω
@@ -428,7 +428,7 @@ private theorem mixedBottom_row_power_le_branch_maximum
         b * (q : ℝ) - (b - t) * ((q - n : ℕ) : ℝ) +
           (t - αbad) * ((m - q : ℕ) : ℝ) - b * (L + 1) := by
     dsimp [Xhigh]
-    field_simp [hτ_pos.ne']
+    exact mul_div_cancel_left₀ _ (show τ ≠ 0 from hτ_pos.ne')
   have hcrude_exp :
       Xcrude / σ =
         t * ((q - n : ℕ) : ℝ) +
@@ -445,8 +445,8 @@ private theorem mixedBottom_row_power_le_branch_maximum
         (Dhigh := Dhigh) (Dcrude := Dcrude) (Den := Den)
         (η := η) (τ := τ) (σ := σ)
         hη_pos hτ_pos hσ_pos hDhigh_pos hDcrude_pos hDen
-        (by simpa [Dhigh, τ, η] using hDen_high)
-        (by simpa [Dcrude, η] using hDen_crude)
+        (by simpa only [τ, η] using hDen_high)
+        (by simpa only [η] using hDen_crude)
         hcollapse
     rw [hhigh_exp, hcrude_exp] at hgeneric
     simpa [highA, crudeA] using hgeneric

@@ -64,7 +64,7 @@ theorem aestrongly_measurable_adjoint_flux_projected_oscillation
     {q : Mat d} (hq : q.PosDef) {s t : ℤ} (hst : s ≤ t)
     (g : Mat d) (hg : IsSkewMat g) (p r Pcen : Vec d) (N : ℕ) :
     AEStronglyMeasurable
-      (adjoint_flux_projected_oscillation hq s t g hg p r Pcen N) P := by
+      (adjointFluxProjectedOscillation hq s t g hg p r Pcen N) P := by
   apply (aemeasurable_avsum (alignedIndex q s t) _ ?_).aestronglyMeasurable
   intro z hz
   exact (aestronglyMeasurable_cutoff_projected_adjoint_flux_pairing_subSkew

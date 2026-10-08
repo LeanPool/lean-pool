@@ -43,7 +43,7 @@ variable {d : ℕ}
 outer-two response bound. -/
 @[expose]
 noncomputable def ruledPhysicalFluxResponseBoundEnergyProduct
-    [NeZero d] {U : Set (Vec d)} {rho Rad : ℝ}
+    {U : Set (Vec d)} {rho Rad : ℝ}
     (system : EnlargedMarginRuledTriadicWhitneySystem U rho Rad)
     (b r Cflux : ℝ) (responseBound : system.CellIndex → ℝ)
     (aCell : system.CellIndex → CoeffFamily d)
@@ -60,7 +60,7 @@ noncomputable def ruledPhysicalFluxResponseBoundEnergyProduct
 /-- The squared physical-cell response--energy contribution. -/
 @[expose]
 noncomputable def ruledPhysicalFluxResponseBoundEnergyCellEnergy
-    [NeZero d] {U : Set (Vec d)} {rho Rad : ℝ}
+    {U : Set (Vec d)} {rho Rad : ℝ}
     (system : EnlargedMarginRuledTriadicWhitneySystem U rho Rad)
     (b r Cflux : ℝ) (responseBound : system.CellIndex → ℝ)
     (aCell : system.CellIndex → CoeffFamily d)

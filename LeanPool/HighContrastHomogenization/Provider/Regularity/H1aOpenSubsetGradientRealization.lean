@@ -41,7 +41,7 @@ noncomputable section
 /-- On an open bounded convex subset of a bounded `MemH1a` carrier, the
 gradient slot is the gradient of an actual local `H1Function`. -/
 theorem isPotentialOn_grad_on_openSubset_of_memH1a
-    {d : ℕ} [NeZero d] {U V : Set (Vec d)}
+    {d : ℕ} {U V : Set (Vec d)}
     (hU : IsOpenBoundedConvexDomain U) (hUV : U ⊆ V)
     (hVb : Bornology.IsBounded V)
     {b : CoeffField d} {lam Lam : ℝ} (hlam : 0 < lam)

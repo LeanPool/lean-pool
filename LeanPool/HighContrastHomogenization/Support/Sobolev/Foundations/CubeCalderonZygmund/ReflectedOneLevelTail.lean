@@ -72,7 +72,7 @@ private theorem weighted_tail_eq_of_restricted_equality
   exact hreplace.trans htail
 
 private theorem reflected_parent_scaled_datum_tail_eq
-    {d : ℕ} [NeZero d] {m : ℤ} (sigma0 : ℝ) (H : Vec d → Vec d)
+    {d : ℕ} {m : ℤ} (sigma0 : ℝ) (H : Vec d → Vec d)
     (hH : MemVectorL2 (openCubeSet (originCube d m)) H) (a : ℝ) :
     sqWeightedMeasure
         (sigma0⁻¹ • hilbertifyVecField (reflectedParentDatumExtension m

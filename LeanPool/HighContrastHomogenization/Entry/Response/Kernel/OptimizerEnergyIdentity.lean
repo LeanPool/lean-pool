@@ -339,7 +339,7 @@ alone. -/
 
 /-- **Step (iii.a)**.  `IsUnit (respGrid jStar F)` is a consequence of `RawOutput`: `raw.hj` is
 `2d ≤ 3^jStar` and `raw.symm`/`raw.pos` give `(explicitCanonicalMetric F).PosDef`. -/
-theorem isUnit_respGrid_of_rawOutput [NeZero d] {γ : ℝ} {S : SelectionData}
+theorem isUnit_respGrid_of_rawOutput {γ : ℝ} {S : SelectionData}
     {ε σ Cglob Cprof Csrc Bresp : ℝ} {H : ℕ} {P : Measure (CoeffSpace d)} {E : BlockMat d}
     {Ψ : ℝ → ℝ} {Kg : ℝ} {Src : CoeffSpace d → ℝ} {B : ℝ} {jStar : ℕ} {F : BlockMat d}
     {s t : ℤ}
@@ -482,9 +482,10 @@ the `private`
 rewritten in the
 `BlockMatLoewnerLE` language so that no `Matrix`-order bridge is needed. -/
 
-private theorem qform_conj {n : Type*} [Fintype n] [DecidableEq n]
+private theorem qform_conj {n : Type*} [Fintype n]
     (Sm M : Matrix n n ℝ) (hS : Smᵀ = Sm) (v : n → ℝ) :
     v ⬝ᵥ ((Sm * M * Sm) *ᵥ v) = (Sm *ᵥ v) ⬝ᵥ (M *ᵥ (Sm *ᵥ v)) := by
+  classical
   rw [← Matrix.mulVec_mulVec, ← Matrix.mulVec_mulVec, Matrix.dotProduct_mulVec,
     ← Matrix.mulVec_transpose, hS]
 
@@ -608,7 +609,7 @@ theorem adaptedCellAtCenter_zero (q : Mat d) (j : ℤ) :
     have h0 : (fun i => (((0 : Fin d → ℤ) i : ℤ) : ℝ)) = (0 : Vec d) := by
       funext i; simp
     rw [adaptedCellCenter, h0]
-    show (3 : ℝ) ^ j • Matrix.mulVec q (0 : Vec d) = 0
+    change (3 : ℝ) ^ j • Matrix.mulVec q (0 : Vec d) = 0
     simp
   rw [adaptedCellAtCenter, hc]
   ext x

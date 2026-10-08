@@ -80,7 +80,7 @@ theorem vecDot_sub_sub_expansion (A B C D : Vec d) :
 paired against a fixed vector is measurable, on a family of Chapter-2 coefficient objects whose
 weighted coordinate volume averages are measurable.  This is the potential linear term in the
 expansion of the cutoff pairing of `e.response.cutoff.estimate` (AK.HC Lemma A.1, (A.4)). -/
-theorem measurable_volumeAverage_cutoff_vecDot_canonical_potential [NeZero d]
+theorem measurable_volumeAverage_cutoff_vecDot_canonical_potential
     (q : Mat d) (hq : IsUnit q) (t : ℤ)
     {aU : CoeffSpace d → Book.Ch02.CoeffOn (adaptedDomain q hq t)}
     (p r : Vec d) {φ : Vec d → ℝ} (hφ : IsResponseCutoff q t φ) (W : Vec d)
@@ -148,7 +148,7 @@ theorem measurable_volumeAverage_cutoff_vecDot_canonical_potential [NeZero d]
 /-- The cutoff-weighted volume average of the flux component of the canonical optimizer state
 paired against a fixed vector is measurable.  This is the flux linear term in the expansion of the
 cutoff pairing of `e.response.cutoff.estimate` (AK.HC Lemma A.1, (A.4)). -/
-theorem measurable_volumeAverage_cutoff_vecDot_canonical_flux [NeZero d]
+theorem measurable_volumeAverage_cutoff_vecDot_canonical_flux
     (q : Mat d) (hq : IsUnit q) (t : ℤ)
     {aU : CoeffSpace d → Book.Ch02.CoeffOn (adaptedDomain q hq t)}
     (p r : Vec d) {φ : Vec d → ℝ} (hφ : IsResponseCutoff q t φ) (W : Vec d)
@@ -213,7 +213,7 @@ theorem measurable_volumeAverage_cutoff_vecDot_canonical_flux [NeZero d]
 
 /-- The flux component of the canonical minus optimizer state is square integrable on the adapted
 cell; the a.e. elliptic representative of the recentred coefficient controls it. -/
-theorem memVectorL2_canonicalRespCoeffMinus_flux [NeZero d]
+theorem memVectorL2_canonicalRespCoeffMinus_flux
     (q : Mat d) (hq : IsUnit q) (t : ℤ) (F : BlockMat d) (p r : Vec d)
     (a : CoeffSpace d) :
     MemVectorL2 (HighContrast.adaptedCell q t)
@@ -245,7 +245,7 @@ theorem memVectorL2_canonicalRespCoeffMinus_flux [NeZero d]
 
 /-- The flux component of the canonical plus optimizer state is square integrable on the adapted
 cell. -/
-theorem memVectorL2_canonicalRespCoeffPlus_flux [NeZero d]
+theorem memVectorL2_canonicalRespCoeffPlus_flux
     (q : Mat d) (hq : IsUnit q) (t : ℤ) (F : BlockMat d) (p r : Vec d)
     (a : CoeffSpace d) :
     MemVectorL2 (HighContrast.adaptedCell q t)
@@ -278,7 +278,7 @@ theorem memVectorL2_canonicalRespCoeffPlus_flux [NeZero d]
 /-- The weighted coordinate volume averages of the canonical minus optimizer state are measurable,
 so the potential linear term of the minus cutoff pairing of `e.response.cutoff.estimate`
 (AK.HC Lemma A.1, (A.4)) is measurable. -/
-theorem measurable_volumeAverage_cutoff_vecDot_canonicalRespCoeffMinus_potential [NeZero d]
+theorem measurable_volumeAverage_cutoff_vecDot_canonicalRespCoeffMinus_potential
     (q : Mat d) (hq : IsUnit q) (t : ℤ) (F : BlockMat d) (p r : Vec d)
     {φ : Vec d → ℝ} (hφ : IsResponseCutoff q t φ) (W : Vec d) :
     Measurable fun a : CoeffSpace d =>
@@ -306,7 +306,7 @@ theorem measurable_volumeAverage_cutoff_vecDot_canonicalRespCoeffMinus_potential
 
 /-- The potential linear term of the plus cutoff pairing of `e.response.cutoff.estimate`
 (AK.HC Lemma A.1, (A.4)) is measurable. -/
-theorem measurable_volumeAverage_cutoff_vecDot_canonicalRespCoeffPlus_potential [NeZero d]
+theorem measurable_volumeAverage_cutoff_vecDot_canonicalRespCoeffPlus_potential
     (q : Mat d) (hq : IsUnit q) (t : ℤ) (F : BlockMat d) (p r : Vec d)
     {φ : Vec d → ℝ} (hφ : IsResponseCutoff q t φ) (W : Vec d) :
     Measurable fun a : CoeffSpace d =>
@@ -334,7 +334,7 @@ theorem measurable_volumeAverage_cutoff_vecDot_canonicalRespCoeffPlus_potential 
 
 /-- The flux linear term of the minus cutoff pairing of `e.response.cutoff.estimate`
 (AK.HC Lemma A.1, (A.4)) is measurable. -/
-theorem measurable_volumeAverage_cutoff_vecDot_canonicalRespCoeffMinus_flux [NeZero d]
+theorem measurable_volumeAverage_cutoff_vecDot_canonicalRespCoeffMinus_flux
     (q : Mat d) (hq : IsUnit q) (t : ℤ) (F : BlockMat d) (p r : Vec d)
     {φ : Vec d → ℝ} (hφ : IsResponseCutoff q t φ) (W : Vec d) :
     Measurable fun a : CoeffSpace d =>
@@ -363,7 +363,7 @@ theorem measurable_volumeAverage_cutoff_vecDot_canonicalRespCoeffMinus_flux [NeZ
 
 /-- The flux linear term of the plus cutoff pairing of `e.response.cutoff.estimate`
 (AK.HC Lemma A.1, (A.4)) is measurable. -/
-theorem measurable_volumeAverage_cutoff_vecDot_canonicalRespCoeffPlus_flux [NeZero d]
+theorem measurable_volumeAverage_cutoff_vecDot_canonicalRespCoeffPlus_flux
     (q : Mat d) (hq : IsUnit q) (t : ℤ) (F : BlockMat d) (p r : Vec d)
     {φ : Vec d → ℝ} (hφ : IsResponseCutoff q t φ) (W : Vec d) :
     Measurable fun a : CoeffSpace d =>
@@ -398,7 +398,7 @@ itself.  The integrand expands into that quadratic term and the three linear rea
 measurability is recorded above; the expansion of `e.response.cutoff.estimate`
 (AK.HC Lemma A.1, (A.4)) is applied pointwise and the four integrands are integrable, so the volume
 average of the sum is the corresponding sum of volume averages. -/
-theorem aestronglyMeasurable_pairing_canonical_of_quadratic [NeZero d]
+theorem aestronglyMeasurable_pairing_canonical_of_quadratic
     (P : Measure (CoeffSpace d)) (q : Mat d) (hq : IsUnit q) (t : ℤ)
     (p r : Vec d) (Y : BlockVec d) {φ : Vec d → ℝ} (hφ : IsResponseCutoff q t φ)
     {aU : CoeffSpace d → Book.Ch02.CoeffOn (adaptedDomain q hq t)}
@@ -518,7 +518,7 @@ theorem aestronglyMeasurable_pairing_canonical_of_quadratic [NeZero d]
 (AK.HC Lemma A.1, (A.4)) is almost-everywhere strongly measurable as soon as the cutoff-weighted
 quadratic self-pairing of the canonical optimizer state is: the modulus is a continuous function of
 the pairing recorded by `aestronglyMeasurable_pairing_canonical_of_quadratic`. -/
-theorem aestronglyMeasurable_abs_pairing_canonical_of_quadratic [NeZero d]
+theorem aestronglyMeasurable_abs_pairing_canonical_of_quadratic
     (P : Measure (CoeffSpace d)) (q : Mat d) (hq : IsUnit q) (t : ℤ)
     (p r : Vec d) (Y : BlockVec d) {φ : Vec d → ℝ} (hφ : IsResponseCutoff q t φ)
     {aU : CoeffSpace d → Book.Ch02.CoeffOn (adaptedDomain q hq t)}
@@ -545,7 +545,7 @@ theorem aestronglyMeasurable_abs_pairing_canonical_of_quadratic [NeZero d]
 strongly measurable, provided the cutoff-weighted volume average of the quadratic self-pairing of
 the canonical minus optimizer state is.  This is the `hcanon_pairing` minus conjunct with the
 quadratic term isolated as an explicit hypothesis. -/
-theorem aestronglyMeasurable_abs_canonical_cutoff_pairing_minus_of_quadratic [NeZero d]
+theorem aestronglyMeasurable_abs_canonical_cutoff_pairing_minus_of_quadratic
     (P : Measure (CoeffSpace d)) (jStar : ℕ) (F : BlockMat d) (t : ℤ)
     (hjStar : 2 * d ≤ 3 ^ jStar) (hm : (explicitCanonicalMetric F).PosDef)
     (φ : Vec d → ℝ) (hφ : IsResponseCutoff (respGrid jStar F) t φ)
@@ -589,7 +589,7 @@ theorem aestronglyMeasurable_abs_canonical_cutoff_pairing_minus_of_quadratic [Ne
 /-- The canonical plus cutoff pairing of `e.response.cutoff.estimate` is almost-everywhere
 strongly measurable, provided the cutoff-weighted volume average of the quadratic self-pairing of
 the canonical plus optimizer state is. -/
-theorem aestronglyMeasurable_abs_canonical_cutoff_pairing_plus_of_quadratic [NeZero d]
+theorem aestronglyMeasurable_abs_canonical_cutoff_pairing_plus_of_quadratic
     (P : Measure (CoeffSpace d)) (jStar : ℕ) (F : BlockMat d) (t : ℤ)
     (hjStar : 2 * d ≤ 3 ^ jStar) (hm : (explicitCanonicalMetric F).PosDef)
     (φ : Vec d → ℝ) (hφ : IsResponseCutoff (respGrid jStar F) t φ)

@@ -171,7 +171,7 @@ theorem symmetricSchurSkew_conj_le_of_sharp_le
     (hS_le : S ≤ theta • SStar) :
     kᴴ * SStar⁻¹ * k ≤ ((theta - 1) ^ 2 / 4) • SStar := by
   have hherm : (kᴴ * SStar⁻¹ * k).IsHermitian := by
-    show (kᴴ * SStar⁻¹ * k)ᴴ = kᴴ * SStar⁻¹ * k
+    change (kᴴ * SStar⁻¹ * k)ᴴ = kᴴ * SStar⁻¹ * k
     calc
       (kᴴ * SStar⁻¹ * k)ᴴ = kᴴ * (SStar⁻¹)ᴴ * (kᴴ)ᴴ := by
         rw [Matrix.conjTranspose_mul, Matrix.conjTranspose_mul,
@@ -179,7 +179,7 @@ theorem symmetricSchurSkew_conj_le_of_sharp_le
       _ = kᴴ * SStar⁻¹ * k := by
         rw [hStar.inv.isHermitian.eq, Matrix.conjTranspose_conjTranspose]
   have hhermR : (((theta - 1) ^ 2 / 4) • SStar).IsHermitian := by
-    show (((theta - 1) ^ 2 / 4) • SStar)ᴴ = ((theta - 1) ^ 2 / 4) • SStar
+    change (((theta - 1) ^ 2 / 4) • SStar)ᴴ = ((theta - 1) ^ 2 / 4) • SStar
     rw [Matrix.conjTranspose_smul, star_trivial, hStar.isHermitian.eq]
   refine Initialization.le_of_dotProduct_mulVec_le hherm hhermR fun x => ?_
   have h := symmetricSchurSkew_quad_le_of_sharp_le hS hStar hk hsharp

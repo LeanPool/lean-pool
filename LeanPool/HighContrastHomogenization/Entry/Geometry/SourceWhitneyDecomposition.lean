@@ -56,7 +56,7 @@ variable {d : ℕ}
 /-- **The maximal cubes exhaust `W` up to a null set.**  For `W = y + q □_j` with `q`
 invertible, the maximal standard aligned cubes of generation `≤ j` inside `W` cover `W`
 up to a Lebesgue-null set. -/
-theorem volume_diff_iUnion_maximalCells [NeZero d] {q : Mat d} {K : ℝ}
+theorem volume_diff_iUnion_maximalCells {q : Mat d} {K : ℝ}
     (hq : InverseNormLE q K) (j : ℤ) (y : Vec d) :
     volume (adaptedCellTranslate q j y \
       ⋃ p ∈ maximalCellPairs (adaptedCellTranslate q j y) j, standardCell d p.1 p.2) = 0 := by

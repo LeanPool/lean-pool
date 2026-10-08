@@ -102,7 +102,7 @@ theorem sqrt_vecNormSq_le_succ_mul_norm {d : ℕ} (v : Vec d) :
     nlinarith
   exact (Real.sqrt_le_iff).2 ⟨mul_nonneg (by positivity) (norm_nonneg v), hsq⟩
 
-private theorem gradientMismatchTermAtScale_nonneg {d : ℕ} [NeZero d]
+private theorem gradientMismatchTermAtScale_nonneg {d : ℕ}
     (m k : ℤ) (s s' : ℝ) (p q : Vec d) (a : RegCoeffField d) :
     0 ≤ gradientMismatchTermAtScale m k s s' p q a := by
   unfold gradientMismatchTermAtScale
@@ -112,7 +112,7 @@ private theorem gradientMismatchTermAtScale_nonneg {d : ℕ} [NeZero d]
   exact mul_nonneg (Real.rpow_nonneg (by norm_num : 0 ≤ (3 : ℝ)) _)
     (Real.sqrt_nonneg _)
 
-theorem fluxMismatchTermAtScale_nonneg {d : ℕ} [NeZero d]
+theorem fluxMismatchTermAtScale_nonneg {d : ℕ}
     (m k : ℤ) (t t' : ℝ) (p q : Vec d) (a : RegCoeffField d) :
     0 ≤ fluxMismatchTermAtScale m k t t' p q a := by
   unfold fluxMismatchTermAtScale
@@ -190,7 +190,7 @@ private theorem sum_range_to_Icc_descending {k m : ℤ} (hkm : k ≤ m)
     simp
 
 private theorem canonicalScalarResponseGradientWeakNormCubeSet_le_of_partialBound
-    {d : ℕ} [NeZero d] (Q : TriadicCube d) (s : ℝ) (p q p0 : Vec d)
+    {d : ℕ} (Q : TriadicCube d) (s : ℝ) (p q p0 : Vec d)
     (a : RegCoeffField d) {B : ℝ}
     (hB :
       ∀ N : ℕ,
@@ -204,7 +204,7 @@ private theorem canonicalScalarResponseGradientWeakNormCubeSet_le_of_partialBoun
     exact hB N
 
 private theorem canonicalScalarResponseFluxWeakNormCubeSet_le_of_partialBound
-    {d : ℕ} [NeZero d] (Q : TriadicCube d) (t : ℝ) (p q q0 : Vec d)
+    {d : ℕ} (Q : TriadicCube d) (t : ℝ) (p q q0 : Vec d)
     (a : RegCoeffField d) {B : ℝ}
     (hB :
       ∀ N : ℕ,
@@ -852,7 +852,7 @@ theorem fluxWeakNorm_le_scaleGeometricRHS
     mul_assoc] using hraw
 
 theorem gradientScaleGeometricRHS_le_two_gradientRHSAtScale
-    {d : ℕ} [NeZero d] (a : RegCoeffField d)
+    {d : ℕ} (a : RegCoeffField d)
     {k m : ℤ} {s s' : ℝ}
     (hs : 0 < s) (hs_le : s ≤ 1)
     (hgap : 0 < s - s') (hgap_le : s - s' ≤ 1)

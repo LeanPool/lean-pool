@@ -53,7 +53,7 @@ private theorem normalizedMat_power_order_characterization {d : ℕ} [NeZero d]
   have hHermPow : (matPow θ N).IsHermitian := (Geometry.matPow_posDef hNPD θ).isHermitian
   have hHermSmul : ∀ t : ℝ, (t • matPow θ N).IsHermitian := by
     intro t
-    show Matrix.conjTranspose (t • matPow θ N) = t • matPow θ N
+    change Matrix.conjTranspose (t • matPow θ N) = t • matPow θ N
     rw [Matrix.conjTranspose_smul, hHermPow]
     simp
   constructor
@@ -203,8 +203,7 @@ theorem partial_change_metric {d : ℕ} (P : Measure (CoeffSpace d)) (jStar : �
         1 / 2 * Real.log ((1 + δ) / (1 - δ))  := by
   classical
   open scoped MatrixOrder in
-  ·
-    set F2L := adaptedMean P (Geometry.explicitRoundedGrid jStar m) (n + 2 * (L : ℤ)) with hF2L_def
+  · set F2L := adaptedMean P (Geometry.explicitRoundedGrid jStar m) (n + 2 * (L : ℤ)) with hF2L_def
     set Fk := adaptedMean P (Geometry.explicitRoundedGrid jStar m) k with hFk_def
     set mStar := explicitCanonicalMetric F2L with hmStar_def
     set mPlus := geometryUpdate ε m mStar with hmPlus_def
@@ -226,7 +225,7 @@ theorem partial_change_metric {d : ℕ} (P : Measure (CoeffSpace d)) (jStar : �
       exfalso
       rw [hMS0] at hfar
       linarith only [hfar, hε]
-    · letI : NeZero d := ⟨hdpos.ne'⟩
+    · let : NeZero d := ⟨hdpos.ne'⟩
       have hF2Lsym : IsSymmetricBlockMat F2L := hsym (n + 2 * (L : ℤ))
       have hF2Lpos : Book.Ch02.BlockPosDef F2L := hpos (n + 2 * (L : ℤ))
       have hFksym : IsSymmetricBlockMat Fk := hsym k

@@ -30,7 +30,7 @@ open scoped Matrix.Norms.Frobenius
 
 noncomputable section
 
-theorem LambdaSqFinite_series_nonneg {d : ℕ} [NeZero d]
+theorem LambdaSqFinite_series_nonneg {d : ℕ}
     (Q : TriadicCube d) (s q : ℝ) (a : TriadicCoeffFamily d)
     (_hq : 0 ≤ q) (hsq : 0 ≤ s * q) :
     0 ≤
@@ -47,7 +47,7 @@ theorem LambdaSqFinite_series_nonneg {d : ℕ} [NeZero d]
   · exact Real.rpow_nonneg
       (maxDescendantBMatrixNormAtScale_nonneg Q (sub_le_self _ hn) a) _
 
-theorem lambdaSqFinite_series_nonneg {d : ℕ} [NeZero d]
+theorem lambdaSqFinite_series_nonneg {d : ℕ}
     (Q : TriadicCube d) (s q : ℝ) (a : TriadicCoeffFamily d)
     (_hq : 0 ≤ q) (hsq : 0 ≤ s * q) :
     0 ≤
@@ -65,7 +65,7 @@ theorem lambdaSqFinite_series_nonneg {d : ℕ} [NeZero d]
       (maxDescendantSigmaStarInvMatrixNormAtScale_nonneg Q
         (sub_le_self _ hn) a) _
 
-theorem LambdaSqFinite_rpow_q_div_two_eq_tsum {d : ℕ} [NeZero d]
+theorem LambdaSqFinite_rpow_q_div_two_eq_tsum {d : ℕ}
     (Q : TriadicCube d) (s q : ℝ) (a : TriadicCoeffFamily d)
     (hq : 0 < q) (hsq : 0 ≤ s * q) :
     Real.rpow (LambdaSq Q s (.finite q) a) (q / 2) =
@@ -101,7 +101,7 @@ theorem LambdaSqFinite_rpow_q_div_two_eq_tsum {d : ℕ} [NeZero d]
               (q / 2) := by
           rfl
 
-theorem lambdaSqFinite_rpow_neg_q_div_two_eq_tsum {d : ℕ} [NeZero d]
+theorem lambdaSqFinite_rpow_neg_q_div_two_eq_tsum {d : ℕ}
     (Q : TriadicCube d) (s q : ℝ) (a : TriadicCoeffFamily d)
     (hq : 0 < q) (hsq : 0 ≤ s * q) :
     Real.rpow (lambdaSq Q s (.finite q) a) (-q / 2) =

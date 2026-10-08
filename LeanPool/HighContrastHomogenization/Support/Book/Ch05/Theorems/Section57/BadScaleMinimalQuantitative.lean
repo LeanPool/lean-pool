@@ -50,7 +50,8 @@ private theorem shifted_badTail_bound_of_badScale_bound
           max 1 Btail) ^ η)) := by
   intro N hQN
   have hmono := measureReal_mono (μ := P)
-    (badTailEvent_badScaleEvent_subset (H := Hshift) (t := t) (α := αbad) hα_nonneg)
+    (badTailEvent_badScaleEvent_subset
+      (H := Hshift) (t := t) (α := αbad) (N := N) hα_nonneg)
   exact hmono.trans ((hQ N hQN).trans
     (exp_neg_rpow_three_nat_div_le_exp_neg_shifted_max_one
       (Q := Q) (N := N) hBtail_pos hη_pos))
@@ -151,16 +152,17 @@ theorem exists_quantitative_shifted_quenchedLocalizedEstimate_interpolated
       (d := d) (σ := σ) hσ_pos params
   refine ⟨Cfluct, Ccrude, Centry, a,
     hCfluct, hCcrude, hCentry, ha, ?_⟩
-  intro t αbad
-  intro K S b L ctop τ η w ρtop ρbottom ρcrude Cbottom Ctop Kbottom Kcrude W M ρgap
-  intro ht htb hα_nonneg hαt hαb hαharm hαa
+  intro t αbad K S b L ctop τ η w ρtop ρbottom ρcrude Cbottom Ctop Kbottom Kcrude W M ρgap _ ht
+    htb hα_nonneg hαt hαb hαharm hαa
   classical
   let C₀ : ℝ := 2 + Real.log W
   obtain ⟨R, hR, hbadR⟩ :=
     hbad (t := t) (αbad := αbad)
       ht htb hα_nonneg hαt hαb hαharm hαa
   refine ⟨R, ?_, ?_⟩
-  · simpa [K, S, b, L, ctop, τ, η, w, ρtop, ρbottom, ρcrude,
+  · change ∀ q : ℕ, R ≤ q → C₀ * (q : ℝ) ≤
+      Real.exp (Real.log ρgap / 2 * (q : ℝ))
+    simpa [K, S, b, L, ctop, τ, η, w, ρtop, ρbottom, ρcrude,
       Cbottom, Ctop, Kbottom, Kcrude, W, M, ρgap, C₀] using hR
   intro P hP hStruct hΓ hσ_eq hparams
   let : IsProbabilityMeasure P := hP.isProbability

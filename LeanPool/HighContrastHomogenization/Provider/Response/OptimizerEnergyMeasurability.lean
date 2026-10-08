@@ -180,7 +180,6 @@ def weightedOptimizerEnergy (U : Book.Ch02.Domain d) (aU : Book.Ch02.CoeffOn U)
 /-- **The localized optimizer energy is a continuous quadratic functional of the
 ambient optimizer state.** -/
 theorem weightedOptimizerEnergy_eq {U : Book.Ch02.Domain d}
-    [IsFiniteMeasure (volumeMeasureOn (U : Set (Vec d)))]
     (aU : Book.Ch02.CoeffOn U) (p q : Vec d) {eta : Vec d → ℝ}
     (hmeas : Measurable eta) {C : ℝ} (hC : 0 ≤ C) (hbound : ∀ x, |eta x| ≤ C) :
     weightedOptimizerEnergy U aU p q eta =
@@ -253,7 +252,7 @@ theorem weightedOptimizerEnergy_eq {U : Book.Ch02.Domain d}
 
 /-- The weighted quadratic functional of the ambient state is continuous. -/
 theorem continuous_weightedEnergyFunctional {U : Set (Vec d)}
-    [IsFiniteMeasure (volumeMeasureOn U)] {eta : Vec d → ℝ} (hmeas : Measurable eta)
+    {eta : Vec d → ℝ} (hmeas : Measurable eta)
     {C : ℝ} (hC : 0 ≤ C) (hbound : ∀ x, |eta x| ≤ C) :
     Continuous fun z : HilbertBlockL2 U =>
       (volume U).toReal⁻¹ * ((1 / 2 : ℝ) *

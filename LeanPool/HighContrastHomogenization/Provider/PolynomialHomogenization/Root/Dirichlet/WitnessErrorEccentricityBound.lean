@@ -68,7 +68,7 @@ variable {d : ℕ}
 theorem with the anchored provider's explicit
 `M = max (max L (J+1)) 1` replaced by the two inequalities it was used through,
 so that the energy route's own parent selection qualifies. -/
-theorem rpow_three_frameExponent_le_fold_of_bounds [NeZero d]
+theorem rpow_three_frameExponent_le_fold_of_bounds
     {abar : Mat d} {g kappaRate : ℝ} {G L J : ℕ} {M : ℤ}
     (hkappa : 0 < kappaRate)
     (hrho : 0 ≤ Certificate.printRowOrder g)
@@ -145,7 +145,7 @@ theorem foldedFrameEccentricityExponent_nonneg_of_orders {g kappaRate : ℝ}
 
 /-- The folded factor raised to the rate is a single power of the truncated
 witness eccentricity, at the law-free exponent above. -/
-theorem eccentricityFoldFactor_rpow_eq_witnessPow [NeZero d] (abar : Mat d)
+theorem eccentricityFoldFactor_rpow_eq_witnessPow (abar : Mat d)
     {g kappaRate : ℝ} (hkappa : 0 < kappaRate)
     (hrho : 0 ≤ Certificate.printRowOrder g) :
     (eccentricityFoldFactor abar

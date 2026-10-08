@@ -102,8 +102,9 @@ theorem transport_boundary_mean_bound (d : ℕ) (hd : 2 ≤ d)
       _ = _ := by rw [hh]; dsimp only [F]; ring
   have hpay : (∑ r ∈ U, F r) ≤
       (2 + 1 / (1 - (3 : ℝ) ^ (-((1 - γ) / 4)))) * profile P γ q jStar k t :=
-    transport_meanHistory_to_profile d hd P γ E Ψ K S hstat hdag jStar hj m hm k t hk (by dsimp
-      only [t]; omega)
+    transport_meanHistory_to_profile d hd P γ E Ψ K S hstat hdag jStar hj m hm k t hk (by
+      dsimp only [t]
+      omega)
   calc
     _ = D * ∑ j ∈ J, ∑ r ∈ T j, (3 : ℝ) ^ (-β * ((j : ℝ) - r)) * F r := by
       rw [Finset.mul_sum]
@@ -143,8 +144,10 @@ theorem transport_fine_weight_sum (γ : ℝ) (hγ : γ < 1) (Q : ℕ) (hQ : 1 �
   have hp (j : ℤ) (hj : j ∈ Finset.Icc (J + (L : ℤ)) (n + L)) :
       (3 : ℝ) ^ (-(Q : ℝ) * (1 - γ) * ((j : ℝ) - J)) ≤
         (3 : ℝ) ^ (-(1 - γ) * ((j : ℝ) - J)) := by
-    have hjJ : (J : ℝ) ≤ j := by exact_mod_cast (show J ≤ j by have := (Finset.mem_Icc.mp hj).1;
-      omega)
+    have hjJ : (J : ℝ) ≤ j := by
+      exact_mod_cast (show J ≤ j by
+        have := (Finset.mem_Icc.mp hj).1
+        omega)
     apply Real.rpow_le_rpow_of_exponent_le (by norm_num)
     nlinarith only [mul_nonneg (sub_nonneg.mpr hq) (mul_nonneg (sub_pos.mpr hγ).le
       (sub_nonneg.mpr hjJ))]
@@ -260,7 +263,8 @@ theorem exists_transport_target_source (d : ℕ) (hd : 2 ≤ d) (γ : ℝ)
   have hn := (transport_normalized_psd_bound hM.posSemidef hR
     (by have := hX0 a; have := aspectRatio_nonneg E; positivity) hnormed).2
   convert hn using 1
-  congr 1; ring_nf
+  · congr 1
+  · ring_nf
 /-- The source L^Q bound gives its actual Bochner moment. -/
 theorem transport_source_moment {α : Type*} [MeasurableSpace α] {P : Measure α} (Q : ℕ) (hQ : 0
   < Q) (X : α → ℝ) (hX0 : ∀ᵐ a ∂P, 0 ≤ X a) (hX : MemLp X (ENNReal.ofReal (Q : ℝ)) P) (M : ℝ)
@@ -505,7 +509,7 @@ theorem exists_transport_bulk_fluctuations (d : ℕ) (hd : 2 ≤ d)
       · intro p hp
         exact hrootcap p (Finset.mem_filter.mp hp).1
     · have hp : 0 ≤ (2 : ℝ) * A * c * profile P γ q jStar k (n + 2 * (L : ℤ)) := mul_nonneg
-      (mul_nonneg (mul_nonneg (by norm_num) hA) hc) hP0
+        (mul_nonneg (mul_nonneg (by norm_num) hA) hc) hP0
       simpa [Finset.not_nonempty_iff_eq_empty.mp hIh, Real.rpow_natCast, zero_pow (Nat.ne_of_gt
         hQ)] using hp
   have ht := transport_joint_union_moment Q hQ Il Ih F (fun p _ => hF0 p) (fun p _ => hFmem p)
@@ -812,14 +816,16 @@ theorem exists_transport_whitney_reduction (d : ℕ) (hd : 2 ≤ d)
         _ = _ := by ring
     have hn := transport_normalized_psd_bound hMpsd hH (by have := hX0 a; positivity)
       (ha.2.trans (Source.blockScale_le_blockScale_of_pos
-        (blockPosDef_annealedBlock
-          (by simpa only [adaptedCellTranslate, zero_add, Set.image_id',
-            HighContrast.adaptedCell, HighContrast.centeredCube] using
-            hasIntegrableCoarseBlock_adapted d hd P γ E Ψ K S hstat hdag jStar hj mPlus hmPlus
-              newEnd 0)
-          (fun a => by simpa only [adaptedCellTranslate, zero_add, Set.image_id',
-            HighContrast.adaptedCell, HighContrast.centeredCube] using
-            blockPosDef_coarseBlock_adapted qPlus hqPlus newEnd 0 a)) hb))
+        (blockPosDef_annealedBlock (P := P) (U := adaptedCell qPlus newEnd)
+          (hint := by
+            simpa only [adaptedCellTranslate, zero_add, Set.image_id',
+              HighContrast.adaptedCell, HighContrast.centeredCube] using
+              (hasIntegrableCoarseBlock_adapted d hd P γ E Ψ K S hstat hdag jStar hj mPlus hmPlus
+                (j := newEnd) (y := 0)))
+          (hpos := fun a => by
+            simpa only [adaptedCellTranslate, zero_add, Set.image_id',
+              HighContrast.adaptedCell, HighContrast.centeredCube] using
+              blockPosDef_coarseBlock_adapted qPlus hqPlus newEnd 0 a)) hb))
     refine ⟨?_, hn.2⟩
     apply (fullBlock_le_iff (by simp only [toFullBlockMat_ofFullBlockMat]; exact
       Matrix.isHermitian_zero) hn.1.isHermitian).1
@@ -837,7 +843,7 @@ theorem exists_transport_whitney_reduction (d : ℕ) (hd : 2 ≤ d)
     transport_finite_whitney_mass q W jStar cap hfin htotal
   constructor
   · have hb := transport_centered_whitney_bound d hd P γ E Ψ K S hstat hdag jStar hj m mPlus hm
-    hmPlus
+      hmPlus
       oldEnd newEnd cap hJcap W hfin (Q : ℝ) hQ X hXi hEX ((Ct * Cw) * B * decay)
       (by positivity) δ hδ hlow hup hGmem hTmem hseries (hTdata.mono fun _ h => h.1)
       (by simpa only [mul_assoc] using hTdata.mono fun _ h => h.2)

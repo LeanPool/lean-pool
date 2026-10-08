@@ -26,6 +26,7 @@ open Set
 
 noncomputable section
 
+/-- Chosen constant for the print-order dual regularity estimate of the identity coefficient. -/
 @[expose]
 noncomputable def canonicalIdentityRegularityConstant
     (d : ℕ) [NeZero d] (g : ℝ) (hg : g ∈ Ico (0 : ℝ) 1) : ℝ :=
@@ -39,6 +40,7 @@ theorem canonicalIdentityRegularity
   Classical.choose_spec
     (exists_printOrderIdentityCubeDualRegularityWithConstant d g hg)
 
+/-- Chosen rounded spine for the canonical identity regularity constant. -/
 @[expose]
 noncomputable def canonicalIdentitySpine
     (d : ℕ) [NeZero d] (g : ℝ) (hg : g ∈ Ico (0 : ℝ) 1) :
@@ -47,6 +49,7 @@ noncomputable def canonicalIdentitySpine
   Classical.choice (nonempty_printOrderToleranceSelectedRoundedSpine d
     (canonicalIdentityRegularityConstant d g hg))
 
+/-- Rounded analytic geometry carried by the canonical identity spine. -/
 @[expose]
 def canonicalIdentityGeometry
     (d : ℕ) [NeZero d] (g : ℝ) (hg : g ∈ Ico (0 : ℝ) 1) :
@@ -62,6 +65,8 @@ theorem canonicalIdentityDualRegularity
       (canonicalIdentityRegularity d g hg)
       (canonicalIdentitySpine d g hg).absorptionProperties
 
+/-- Successor smallness threshold obtained from the canonical identity geometry and its dual
+regularity. -/
 @[expose]
 noncomputable def canonicalCorrectorSmallness
     (d : ℕ) [NeZero d] (g : ℝ) (hg : g ∈ Ico (0 : ℝ) 1) : ℝ :=

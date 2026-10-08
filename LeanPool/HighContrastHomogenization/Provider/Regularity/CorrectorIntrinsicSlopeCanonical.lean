@@ -63,7 +63,7 @@ def HasVanishingCorrectorGradientAverage {d : ℕ}
 
 /-- Vanishing corrector averages imply the intrinsic full-gradient slope. -/
 theorem HasVanishingCorrectorGradientAverage.hasIntrinsicNormalizedSlope
-    {d : ℕ} [NeZero d] {e : Vec d} {z : NormalizedLocalH1Carrier d}
+    {d : ℕ} {e : Vec d} {z : NormalizedLocalH1Carrier d}
     (h : HasVanishingCorrectorGradientAverage z) :
     HasIntrinsicNormalizedSlope e z := by
   have hsum := (tendsto_const_nhds :
@@ -75,7 +75,7 @@ theorem HasVanishingCorrectorGradientAverage.hasIntrinsicNormalizedSlope
 /-- Intrinsic full-gradient slope forces the corrector-class averages to
 vanish. -/
 theorem HasIntrinsicNormalizedSlope.hasVanishingCorrectorGradientAverage
-    {d : ℕ} [NeZero d] {e : Vec d} {z : NormalizedLocalH1Carrier d}
+    {d : ℕ} {e : Vec d} {z : NormalizedLocalH1Carrier d}
     (h : HasIntrinsicNormalizedSlope e z) :
     HasVanishingCorrectorGradientAverage z := by
   have hsub := h.sub (tendsto_const_nhds :

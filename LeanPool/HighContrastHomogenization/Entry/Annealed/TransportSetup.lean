@@ -126,8 +126,7 @@ private theorem transport_normalized_upper {d : ℕ} {F G : BlockMat d} (hF : (t
     intro i
     simpa only [Function.comp_apply, RCLike.ofReal_real_eq_id, id_eq,
       Real.norm_of_nonneg (hN.eigenvalues_pos i).le] using heig i
-  ·
-    have hdet : (toFullBlockMat (normalizedBlock F G)).det ≤ c ^ (2 * d) := by
+  · have hdet : (toFullBlockMat (normalizedBlock F G)).det ≤ c ^ (2 * d) := by
       rw [hN.isHermitian.det_eq_prod_eigenvalues]; simp only [RCLike.ofReal_real_eq_id, id_eq]
       have hp := Finset.prod_le_prod₀ (fun i (_ : i ∈ Finset.univ) => (hN.eigenvalues_pos i).le)
         (fun i (_ : i ∈ Finset.univ) => heig i)

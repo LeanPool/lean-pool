@@ -265,7 +265,7 @@ private theorem cubeAverageVec_const_add (Q : TriadicCube d) (c : Vec d)
     (hG : ∀ i, IntegrableOn (fun x => G x i) (cubeSet Q) volume) :
     cubeAverageVec Q (fun x => c + G x) = c + cubeAverageVec Q G := by
   funext i
-  show cubeAverage Q (fun x => c i + G x i) = c i + cubeAverage Q (fun x => G x i)
+  change cubeAverage Q (fun x => c i + G x i) = c i + cubeAverage Q (fun x => G x i)
   have hvol : (0 : ℝ) < cubeVolume Q := cubeVolume_pos Q
   rw [cubeAverage, cubeAverage,
     integral_add (integrableOn_const_cubeSet Q (c i)) (hG i), setIntegral_const,

@@ -165,7 +165,7 @@ theorem sum_prod_le_prod_sum_rpow {ι : Type*} {N : ℕ} (hN : 0 < N) (t : Finse
       have hbase : (0 : ℝ) ≤ ∑ i ∈ t, f k i ^ (N : ℝ) :=
         Finset.sum_nonneg fun i hi => Real.rpow_nonneg (hf k i hi) _
       have hSk : S k ^ (N : ℝ) = ∑ i ∈ t, f k i ^ (N : ℝ) := by
-        show ((∑ i ∈ t, f k i ^ (N : ℝ)) ^ ((N : ℝ)⁻¹)) ^ (N : ℝ) = _
+        change ((∑ i ∈ t, f k i ^ (N : ℝ)) ^ ((N : ℝ)⁻¹)) ^ (N : ℝ) = _
         rw [← Real.rpow_mul hbase, inv_mul_cancel₀ (ne_of_gt hNR), Real.rpow_one]
       have : ∑ i ∈ t, g k i ^ (N : ℝ) = (∑ i ∈ t, f k i ^ (N : ℝ)) / S k ^ (N : ℝ) := by
         rw [Finset.sum_div]
@@ -211,7 +211,7 @@ theorem sum_prod_le_prod_sum_rpow {ι : Type*} {N : ℕ} (hN : 0 < N) (t : Finse
       rw [← Finset.prod_mul_distrib]
       refine Finset.prod_congr rfl fun k _ => ?_
       have hne : S k ≠ 0 := ne_of_gt (hSpos k)
-      show f k i = S k * (f k i / S k)
+      change f k i = S k * (f k i / S k)
       field_simp
     have hprodS : (0 : ℝ) ≤ ∏ k : Fin N, S k := Finset.prod_nonneg fun k _ => hSnn k
     calc ∑ i ∈ t, ∏ k : Fin N, f k i
@@ -336,7 +336,7 @@ private theorem sum_comp_div_le_card_mul_sum {D N : ℕ} (hN : 0 < N)
             rw [Finset.mul_sum]
 
 theorem sum_block_bound {D N : ℕ} (hN : 0 < N) (u v : ℕ → ℝ)
-    (hu : Antitone u) (hv : ∀ i, 0 ≤ v i) (h : ∀ r, u (N*r) ≤ v r) :
+    (hu : Antitone u) (hv : ∀ i, 0 ≤ v i) (h : ∀ r, u (N * r) ≤ v r) :
     ∑ i ∈ Finset.range D, u i ≤ (N:ℝ) * ∑ r ∈ Finset.range D, v r := by
   calc
     ∑ i ∈ Finset.range D, u i ≤ ∑ i ∈ Finset.range D, v (i / N) := by

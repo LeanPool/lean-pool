@@ -62,7 +62,7 @@ theorem lawFreeCubeEnergyConstantW_eq (C : ℝ) (d : ℕ) {s : ℝ} (hs : 0 < s)
     EnergyPrice.ellipticityWindow_nonneg d Cwit
   have hsq : (Real.rpow (EnergyPrice.ellipticityWindow d Cwit) (1 / 2 : ℝ)) ^ 2 =
       EnergyPrice.ellipticityWindow d Cwit := by
-    show ((EnergyPrice.ellipticityWindow d Cwit) ^ (1 / 2 : ℝ)) ^ 2 =
+    change ((EnergyPrice.ellipticityWindow d Cwit) ^ (1 / 2 : ℝ)) ^ 2 =
       EnergyPrice.ellipticityWindow d Cwit
     rw [← Real.rpow_natCast
       ((EnergyPrice.ellipticityWindow d Cwit) ^ (1 / 2 : ℝ)) 2,
@@ -70,7 +70,7 @@ theorem lawFreeCubeEnergyConstantW_eq (C : ℝ) (d : ℕ) {s : ℝ} (hs : 0 < s)
       show (1 / 2 : ℝ) * ((2 : ℕ) : ℝ) = 1 by push_cast; ring,
       Real.rpow_one]
   have hs2 : (Real.rpow s (-(1 / 2 : ℝ))) ^ 2 = s⁻¹ := by
-    show (s ^ (-(1 / 2 : ℝ))) ^ 2 = s⁻¹
+    change (s ^ (-(1 / 2 : ℝ))) ^ 2 = s⁻¹
     rw [← Real.rpow_natCast (s ^ (-(1 / 2 : ℝ))) 2,
       ← Real.rpow_mul hs.le,
       show (-(1 / 2 : ℝ)) * ((2 : ℕ) : ℝ) = -(1 : ℝ) by push_cast; ring,
@@ -88,7 +88,7 @@ noncomputable def collapsedEnergyLawFree (C : ℝ) (d : ℕ) (s A : ℝ) : ℝ :
 /-- **The `Kenergy` collapse, proved.**  At `Cwit = A · E ^ q` with
 `E = max 1 (witnessEccentricity (symmPart abar))`, the windowed gauge energy
 price is below a law-free constant times `E ^ (d + 2 s + 2 q)`. -/
-theorem gaugeWitnessEnergyPriceW_le_collapsed [NeZero d] (C : ℝ) {s A q : ℝ}
+theorem gaugeWitnessEnergyPriceW_le_collapsed (C : ℝ) {s A q : ℝ}
     (hs : 0 < s) (hq : 0 ≤ q) (hsd : 0 ≤ (d : ℝ) + 2 * s) (abar : Mat d) :
     EnergyPrice.gaugeWitnessEnergyPriceW C d s
         (A * (max 1 (witnessEccentricity (symmPart abar))) ^ q) abar ≤

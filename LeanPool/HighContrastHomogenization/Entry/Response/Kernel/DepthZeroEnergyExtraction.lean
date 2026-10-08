@@ -318,7 +318,7 @@ theorem weakOptimizerEnergy_sq_le_plus (d : ℕ) (hd : 2 ≤ d) (γ : ℝ)
         (hasQuadraticMu_adaptedCell (respGrid jStar F) hq t a))
     have h3 : coarseBlockMatrix (respCell jStar F t) (adjointCoeffField (⇑a.1 : CoeffField d))
         = blockCongr (blockD d) (coarseBlock (respCell jStar F t) a) := by
-      show coarseBlockMatrix (HighContrast.adaptedCell (respGrid jStar F) t)
+      change coarseBlockMatrix (HighContrast.adaptedCell (respGrid jStar F) t)
           (adjointCoeffField (⇑a.1 : CoeffField d))
         = blockCongr (blockD d) (coarseBlock (HighContrast.adaptedCell (respGrid jStar F) t) a)
       rw [coarseBlockMatrix_adjointCoeffField_of_exists
@@ -502,8 +502,11 @@ private theorem quad_le_entryAbsSum (N : BlockMat d) (X : BlockVec d) :
 private theorem quad_scale_identity (c : ℝ) (X : BlockVec d) :
     blockVecDot X (blockMatVecMul (blockScale c (Book.Ch02.blockIdentity d)) X) =
       c * blockVecDot X X := by
-  simp [blockScale, Book.Ch02.blockIdentity, Book.Ch02.blockDiag, blockMatVecMul, blockVecDot,
-    matVecMul, vecDot, Matrix.one_apply, Finset.mul_sum, mul_add]
+  simp only [blockVecDot, vecDot, blockMatVecMul, blockScale, Book.Ch02.blockIdentity,
+    Book.Ch02.blockDiag, smul_zero, Pi.add_apply, matVecMul, Matrix.smul_apply, Matrix.one_apply,
+    smul_eq_mul, mul_ite, mul_one, mul_zero, ite_mul, zero_mul, Finset.sum_ite_eq, Finset.mem_univ,
+    ↓reduceIte, Matrix.zero_apply, Finset.sum_const_zero, add_zero, zero_add, mul_add,
+    Finset.mul_sum]
   refine congrArg₂ (· + ·) (Finset.sum_congr rfl fun i _ => by ring)
     (Finset.sum_congr rfl fun i _ => by ring)
 
@@ -551,8 +554,8 @@ private theorem blockSpecBound_le_of_blockMatLoewnerLE (N : BlockMat d) {c : ℝ
 private theorem blockSpecBound_le_add (N N' : BlockMat d) :
     blockSpecBound N' ≤ blockSpecBound N + entryAbsSum (blockSub N' N) := by
   obtain ⟨h0, hle⟩ := blockSpecBound_mem N
-  refine blockSpecBound_le_of_blockMatLoewnerLE N' (by linarith only [h0, entryAbsSum_nonneg
-    (blockSub N' N)]) ?_
+  refine blockSpecBound_le_of_blockMatLoewnerLE N' (by
+    linarith only [h0, entryAbsSum_nonneg (blockSub N' N)]) ?_
   refine (loewner_iff N' _).mpr fun X => ?_
   have hN := (loewner_iff N _).mp hle X
   have hD := quad_le_entryAbsSum (blockSub N' N) X
@@ -625,7 +628,7 @@ private theorem measurable_blockSpecBound {Ω : Type*} [MeasurableSpace Ω]
 
 /-- Every flattened entry of the coarse response on an aligned adapted cell is measurable for
 the global coefficient sigma-field. -/
-theorem measurable_coarseBlock_entry [NeZero d] {q : Mat d} (hq : IsUnit q) (j : ℤ)
+theorem measurable_coarseBlock_entry {q : Mat d} (hq : IsUnit q) (j : ℤ)
     (w : Fin d → ℤ) (α β : BlockCoord d) :
     Measurable fun a : CoeffSpace d =>
       toFullBlockMat (coarseBlock (adaptedCellAtCenter q j w) a) α β := by
@@ -634,7 +637,7 @@ theorem measurable_coarseBlock_entry [NeZero d] {q : Mat d} (hq : IsUnit q) (j :
       α β).mono (Annealed.coeffSigma_le_global _) le_rfl
 
 /-- The normalized recentred block of the coarse response is entrywise measurable. -/
-theorem measurable_normalized_entry [NeZero d] {q : Mat d} (hq : IsUnit q) (j : ℤ)
+theorem measurable_normalized_entry {q : Mat d} (hq : IsUnit q) (j : ℤ)
     (w : Fin d → ℤ) (E : BlockMat d) (α β : BlockCoord d) :
     Measurable fun a : CoeffSpace d =>
       toFullBlockMat (blockSub
@@ -670,7 +673,7 @@ theorem measurable_normalized_entry [NeZero d] {q : Mat d} (hq : IsUnit q) (j : 
 /-- **Measurability of `M`.**  `M` is the supremum of the countable family indexed
 by the depth `n : ℕ` and the finite index box `triadicIndexBox d n`, each member measurable
 through the coarse block of an aligned adapted cell. -/
-theorem respAllScaleMax_measurable [NeZero d]
+theorem respAllScaleMax_measurable
     (P : Measure (CoeffSpace d)) (γ : ℝ) (jStar : ℕ) (F : BlockMat d)
     (hq : IsUnit (respGrid jStar F)) (t : ℤ) :
     Measurable (respAllScaleMax P γ jStar F t) := by

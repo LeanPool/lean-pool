@@ -37,7 +37,7 @@ noncomputable section
 /-- The intrinsic local-class average is the centered-cube average of the
 glued global full-gradient representative. -/
 theorem localGradientClassAverage_eq_globalFullGradientAverage
-    {d : ℕ} [NeZero d] (e : Vec d) (z : NormalizedLocalH1Carrier d)
+    {d : ℕ} (e : Vec d) (z : NormalizedLocalH1Carrier d)
     (n : ℕ) :
     localGradientClassAverage
         ((show LocalGradientL2 d n from

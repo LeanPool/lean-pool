@@ -162,7 +162,7 @@ noncomputable def finiteAffineSolutionInnerL2LinearMap
       finiteAffineSolutionInnerH1_toFun_smul_ae a k m hkm r e
 
 /-- Application of the inner finite-solution `L²` map. -/
-@[simp] theorem finiteAffineSolutionInnerL2LinearMap_apply
+theorem finiteAffineSolutionInnerL2LinearMap_apply
     {d : ℕ} [NeZero d] (a : Book.Ch02.TriadicCoeffFamily d)
     (k m : ℤ) (hkm : k ≤ m) (e : Vec d) :
     finiteAffineSolutionInnerL2LinearMap a k m hkm e =

@@ -69,7 +69,7 @@ open MeasureTheory
 
 noncomputable section
 
-private theorem aestronglyMeasurable_besovSeminorm_sq_minus {d : ℕ} [NeZero d]
+private theorem aestronglyMeasurable_besovSeminorm_sq_minus {d : ℕ}
     (P : Measure (CoeffSpace d)) (jStar : ℕ) (F : BlockMat d) (t : ℤ)
     (hjStar : 2 * d ≤ 3 ^ jStar) (hm : (explicitCanonicalMetric F).PosDef)
     (p q' : Vec d) (Y : BlockVec d)
@@ -245,7 +245,7 @@ private theorem aestronglyMeasurable_besovSeminorm_sq_minus {d : ℕ} [NeZero d]
   simpa only [pow_two] using! hbase.mul hbase
 
 
-private theorem aestronglyMeasurable_besovSeminorm_sq_plus {d : ℕ} [NeZero d]
+private theorem aestronglyMeasurable_besovSeminorm_sq_plus {d : ℕ}
     (P : Measure (CoeffSpace d)) (jStar : ℕ) (F : BlockMat d) (t : ℤ)
     (hjStar : 2 * d ≤ 3 ^ jStar) (hm : (explicitCanonicalMetric F).PosDef)
     (p q' : Vec d) (Y : BlockVec d)
@@ -426,7 +426,7 @@ private theorem aestronglyMeasurable_besovSeminorm_sq_plus {d : ℕ} [NeZero d]
 an arbitrary family of response maximizers `u`.  The cell averages entering the doubled optimizer
 state are the canonically selected ones up to a null set, and the canonical selection is measurable
 in the sample. -/
-theorem aestronglyMeasurable_besovSeminorm_sq_of_maximizer {d : ℕ} [NeZero d]
+theorem aestronglyMeasurable_besovSeminorm_sq_of_maximizer {d : ℕ}
     (P : Measure (CoeffSpace d)) (jStar : ℕ) (F : BlockMat d) (t : ℤ)
     (hjStar : 2 * d ≤ 3 ^ jStar) (hm : (explicitCanonicalMetric F).PosDef)
     (c : CoeffSpace d → CoeffField d)
@@ -562,7 +562,7 @@ theorem translateCube_zero {d : ℕ} (t : ℤ) :
 normalized average of the pulled-back function `y ↦ f (matVecMul q y)` over the reference cube
 `originCube d t`.  This is the change of variables `x = q y` for normalized averages, behind the
 adapted-to-Euclidean comparison of HC Lemma 2.15, (2.127)--(2.128). -/
-theorem volumeAverage_adaptedCell_eq_cubeAverage_comp {d : ℕ} [NeZero d] {q : Mat d}
+theorem volumeAverage_adaptedCell_eq_cubeAverage_comp {d : ℕ} {q : Mat d}
     (hq : IsUnit q) (t : ℤ) (f : Vec d → ℝ) :
     volumeAverage (HighContrast.adaptedCell q t) f
       = cubeAverage (originCube d t) (fun y => f (matVecMul q y)) := by
@@ -604,7 +604,7 @@ flux defect `y ↦ q⁻¹ ((optimizerField b u (q y) − Y).2)` of an `b`-harmon
 integrable for the normalized measure of the reference cube.  This is the `hflux` slot of the
 generic CG product bridge `abs_cubeAverage_vecDot_centered_scalar_cutoff_le_scaledWeakNormProduct`
 used in the cutoff estimate `e.response.cutoff.estimate`. -/
-theorem memLp_two_pullback_flux_of_exists {d : ℕ} [NeZero d] {q : Mat d} (hq : IsUnit q) (t : ℤ)
+theorem memLp_two_pullback_flux_of_exists {d : ℕ} {q : Mat d} (hq : IsUnit q) (t : ℤ)
     {b : CoeffField d}
     (hb : ∃ (lam Lam : ℝ) (f : CoeffField d), 0 < lam ∧ lam ≤ Lam ∧
       IsEllipticFieldOn lam Lam (HighContrast.adaptedCell q t) f ∧
@@ -622,7 +622,7 @@ a field `f` uniformly elliptic there, then the flux `x ↦ b x · u.toH1.grad x`
 optimizer `u` is square integrable on the cell.  This is the `hflux` hypothesis of the
 integration-by-parts step in the negative-Besov duality bound (`AK.HC` Lemma A.1, (A.4)) behind
 the cutoff estimate `e.response.cutoff.estimate`. -/
-theorem memVectorL2_flux_of_exists {d : ℕ} [NeZero d] {q : Mat d} (hq : IsUnit q) (t : ℤ)
+theorem memVectorL2_flux_of_exists {d : ℕ} {q : Mat d} (hq : IsUnit q) (t : ℤ)
     {b : CoeffField d}
     (hb : ∃ (lam Lam : ℝ) (f : CoeffField d), 0 < lam ∧ lam ≤ Lam ∧
       IsEllipticFieldOn lam Lam (HighContrast.adaptedCell q t) f ∧
@@ -667,7 +667,6 @@ noncomputable section
 integrable vector fields is integrable on a cell.  This is the integrability side condition of
 the cutoff-weighted pairing `e.response.cutoff.estimate` (AK.HC Lemma A.1, (A.4)). -/
 theorem integrableOn_cutoff_pairing_of_coords {d : ℕ} {V : Set (Vec d)}
-    [MeasureTheory.IsFiniteMeasure (MeasureTheory.volume.restrict V)]
     {A B : Vec d → Vec d}
     (hA : ∀ i, MeasureTheory.MemLp (fun x => A x i) 2 (MeasureTheory.volume.restrict V))
     (hB : ∀ i, MeasureTheory.MemLp (fun x => B x i) 2 (MeasureTheory.volume.restrict V))

@@ -71,7 +71,7 @@ theorem oneBall_harmonic_threshold_rpow_factor
 /-- The side-`10r` cube has exactly `5^d` times the volume of the
 sup-metric stopping ball of radius `r`. -/
 theorem oneBall_child_side_volume
-    {d : ℕ} [NeZero d] (x : Vec d) {r : ℝ} (hr : 0 ≤ r) :
+    {d : ℕ} (x : Vec d) {r : ℝ} (hr : 0 ≤ r) :
     ENNReal.ofReal ((10 * r) ^ d) =
       (5 : ℝ≥0∞) ^ d * volume (Metric.closedBall x r) := by
   rw [Real.volume_pi_closedBall x hr]
@@ -84,7 +84,7 @@ theorem oneBall_child_side_volume
 /-- The side of the depth-`n` comparison parent contributes the exact
 relative factor `(5 * 3^n)^d` against the stopping ball of radius `r`. -/
 theorem oneBall_parent_side_volume
-    {d : ℕ} [NeZero d] (x : Vec d) {r : ℝ} (hr : 0 ≤ r) (n : ℕ) :
+    {d : ℕ} (x : Vec d) {r : ℝ} (hr : 0 ≤ r) (n : ℕ) :
     ENNReal.ofReal ((10 * (3 : ℝ) ^ n * r) ^ d) =
       (5 * (3 : ℝ≥0∞) ^ n) ^ d * volume (Metric.closedBall x r) := by
   rw [Real.volume_pi_closedBall x hr]
@@ -101,7 +101,7 @@ theorem oneBall_parent_side_volume
 stopping ball.  Here `A` is the complete harmonic coefficient (for example,
 `2 * G.constant * d`), so no factor is silently discarded. -/
 theorem oneBall_harmonic_tail_scale_factor
-    {d : ℕ} [NeZero d] {qR M level r : ℝ} {A : ℝ≥0∞}
+    {d : ℕ} {qR M level r : ℝ} {A : ℝ≥0∞}
     (x : Vec d) (hr : 0 ≤ r) (hM : 0 < M) (hlevel : 0 < level)
     (hA : A ≠ ∞) :
     2 * ENNReal.ofReal ((M * level / 2) ^ (2 - qR)) *
@@ -123,7 +123,7 @@ theorem oneBall_harmonic_tail_scale_factor
 /-- The correction local-tail scale factor, already expressed relative to the
 stopping ball. -/
 theorem oneBall_correction_tail_scale_factor
-    {d : ℕ} [NeZero d] {eps level r : ℝ} (x : Vec d) (hr : 0 ≤ r)
+    {d : ℕ} {eps level r : ℝ} (x : Vec d) (hr : 0 ≤ r)
     (heps : 0 ≤ eps) (hlevel : 0 ≤ level) (n : ℕ) :
     6 * ENNReal.ofReal ((10 * (3 : ℝ) ^ n * r) ^ d) *
         (ENNReal.ofReal (eps * level) ^ (2 : ℕ)) =

@@ -81,7 +81,7 @@ theorem centering_adjoint_pairing_eq
   -- covariance of the annealed adjoint energy
   have hneg : matVecMul (-g) p = -(matVecMul g p) := by
     funext i
-    show ∑ j, (-g) i j * p j = -(∑ j, g i j * p j)
+    change ∑ j, (-g) i j * p j = -(∑ j, g i j * p j)
     rw [← Finset.sum_neg_distrib]
     refine Finset.sum_congr rfl fun j _ => ?_
     rw [Matrix.neg_apply]
@@ -120,9 +120,9 @@ theorem centering_adjoint_pairing_eq
   have hskewzero : p ⬝ᵥ g *ᵥ p = 0 :=
     Response.dotProduct_mulVec_of_skew hgstar p
   have hpq1 : vecDot p q₀ = p ⬝ᵥ r := by
-    show p ⬝ᵥ q₀ = p ⬝ᵥ r
+    change p ⬝ᵥ q₀ = p ⬝ᵥ r
     rw [hq₀]
-    show p ⬝ᵥ (r + g *ᵥ p) = p ⬝ᵥ r
+    change p ⬝ᵥ (r + g *ᵥ p) = p ⬝ᵥ r
     rw [dotProduct_add, hskewzero, add_zero]
   have hpq2 : p ⬝ᵥ q₀ = p ⬝ᵥ r := hpq1
   rw [hpq1, hpq2] at hbridge

@@ -132,7 +132,7 @@ private theorem summable_burnWeightedRows
     (fun v => ?_) ((hgeomS.mul_left (boundary *
       (3 : ℝ) ^ (-(D : ℝ)))))
   have henv : envu (v + (D + 1)) = (3 : ℝ) ^ (g * ((v : ℝ) + 1)) := by
-    show (3 : ℝ) ^ (g * max (((v + (D + 1) : ℕ) : ℝ) - (D : ℝ)) 0) = _
+    change (3 : ℝ) ^ (g * max (((v + (D + 1) : ℕ) : ℝ) - (D : ℝ)) 0) = _
     congr 1
     have hpos : (0 : ℝ) ≤ ((v + (D + 1) : ℕ) : ℝ) - (D : ℝ) := by
       push_cast
@@ -259,7 +259,7 @@ private theorem burnRowQuadratic_le_relativeVolume
       (3 : ℝ) ^ (g * max ((r : ℝ) - ((r - (u : ℤ) : ℤ) : ℝ) - (D : ℝ)) 0) =
         envu u := by
     intro u
-    show _ = (3 : ℝ) ^ (g * max ((u : ℝ) - (D : ℝ)) 0)
+    change _ = (3 : ℝ) ^ (g * max ((u : ℝ) - (D : ℝ)) 0)
     have harg : (r : ℝ) - ((r - (u : ℤ) : ℤ) : ℝ) - (D : ℝ) =
         (u : ℝ) - (D : ℝ) := by
       push_cast

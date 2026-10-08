@@ -238,7 +238,7 @@ fields is supplied automatically by the `H1Function` structure.
 specialised to a scalar `A`-harmonic function. One-line corollary of the
 corrected `H1Function` full-dual constructor. -/
 theorem CubeDescendantDualFullVectorPoincareEstimate.of_aHarmonicFunction
-    {d : ℕ} [NeZero d] (Q : TriadicCube d) (a : CoeffField d)
+    {d : ℕ} (Q : TriadicCube d) (a : CoeffField d)
     (u : AHarmonicFunction a (openCubeSet Q)) (N : ℕ) :
     CubeDescendantDualFullVectorPoincareEstimate Q
       (fullVectorPoincareCubeConstant Q)
@@ -251,7 +251,7 @@ theorem CubeDescendantDualFullVectorPoincareEstimate.of_aHarmonicFunction
 constant directly. This is definitionally the same constant as
 `fullVectorPoincareCubeConstant Q`. -/
 theorem CubeDescendantDualFullVectorPoincareEstimate.of_harmonicFunction
-    {d : ℕ} [NeZero d] (Q : TriadicCube d) (a : CoeffField d)
+    {d : ℕ} (Q : TriadicCube d) (a : CoeffField d)
     (u : AHarmonicFunction a (openCubeSet Q)) (N : ℕ) :
     CubeDescendantDualFullVectorPoincareEstimate Q
       (cubeFullVectorPoincareUniformAnalyticConstant Q)
@@ -264,7 +264,7 @@ theorem CubeDescendantDualFullVectorPoincareEstimate.of_harmonicFunction
 family is realised on any harmonic family `w` with the public corrected
 cube constant `fullVectorPoincareCubeConstant Q`. -/
 theorem CoarseCaccioppoliBoundaryCanonicalGradientFullDualPoincareVectorFamily.of_aHarmonicFunction
-    {d : ℕ} [NeZero d] (Q : TriadicCube d) (a : CoeffField d)
+    {d : ℕ} (Q : TriadicCube d) (a : CoeffField d)
     (w : ℝ → ℝ → AHarmonicFunction a (openCubeSet Q)) :
     CoarseCaccioppoliBoundaryCanonicalGradientFullDualPoincareVectorFamily Q a
       (fullVectorPoincareCubeConstant Q) w := by
@@ -276,7 +276,7 @@ theorem CoarseCaccioppoliBoundaryCanonicalGradientFullDualPoincareVectorFamily.o
 all descendants of `Q`. -/
 theorem
   CoarseCaccioppoliBoundaryCanonicalGradientFullDualPoincareVectorFamily.of_harmonicFunction
-    {d : ℕ} [NeZero d] (Q : TriadicCube d) (a : CoeffField d)
+    {d : ℕ} (Q : TriadicCube d) (a : CoeffField d)
     (w : ℝ → ℝ → AHarmonicFunction a (openCubeSet Q)) :
     CoarseCaccioppoliBoundaryCanonicalGradientFullDualPoincareVectorFamily Q a
       (cubeFullVectorPoincareUniformAnalyticConstant Q) w := by

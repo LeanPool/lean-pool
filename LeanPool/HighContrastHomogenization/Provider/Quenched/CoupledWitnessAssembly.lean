@@ -46,19 +46,33 @@ structure CoupledWitnessEngineData
     (P : Measure (CoeffSpace d)) (gamma : ℝ) (E : BlockMat d)
     (Psi : ℝ → ℝ) (K : ℝ) (S : CoeffSpace d → ℝ) (Abar : BlockMat d)
     (Nann : ℕ) (theta deltaOut Cmix : ℝ) where
+  /-- Positive exponent `d / 2 - gamma` used in the radius-tail bounds. -/
   mu : ℝ
+  /-- Starting generation for the radius-tail and quenched row-decay estimates. -/
   nstar : ℕ
+  /-- Generation offset supplied to the stopping-generation construction. -/
   qfb : ℕ
+  /-- Additional generation offset in the radius-tail threshold. -/
   b : ℕ
+  /-- Absolute generation threshold satisfying the stopping and tail-gain conditions. -/
   N0 : ℕ
+  /-- Generation-dependent random radius with the prescribed finite-range tail estimate. -/
   radius : ℕ → CoeffSpace d → ℝ
+  /-- Measurable weighted row-tail sum, with weight `3 ^ (theta / 2 * j)`. -/
   F : ℕ → CoeffSpace d → ℝ
+  /-- Positive prefactor in the quenched physical block-row decay estimate. -/
   Cblk : ℝ
+  /-- Normalizer bounded below by one and controlled by the polynomial cost. -/
   Bconst : ℝ
+  /-- Polynomial cost exponent controlling `3 ^ N0`. -/
   C1 : ℝ
+  /-- Polynomial cost exponent controlling the normalizer `Bconst`. -/
   C2 : ℝ
+  /-- Polynomial cost exponent whose base power absorbs the factor three. -/
   C3 : ℝ
+  /-- Total stopping cost bounding the sum `C1 + C2 + C3`. -/
   Cstop : ℝ
+  /-- Rounding cost exponent whose base power absorbs the factor three. -/
   Cround : ℝ
   mu_eq : mu = (d : ℝ) / 2 - gamma
   mu_pos : 0 < mu
@@ -68,22 +82,22 @@ structure CoupledWitnessEngineData
   Cblk_pos : 0 < Cblk
   F_measurable : ∀ n, Measurable (F n)
   row_decay : ∀ᵐ a ∂P, ∀ (m : ℕ), nstar ≤ m →
-    quenched_block_row ((1 + 3 * gamma) / 4) Abar
-        (max 1 (S a / (3 : ℝ) ^ Nann)) (physical_scale_coeff Nann a) m ≤
+    quenchedBlockRow ((1 + 3 * gamma) / 4) Abar
+        (max 1 (S a / (3 : ℝ) ^ Nann)) (physicalScaleCoefficient Nann a) m ≤
       Cblk * deltaOut *
         (3 : ℝ) ^ (-theta *
           ((m : ℝ) -
             (stoppingGeneration nstar qfb radius m a : ℝ) -
             (nstar : ℝ)))
   row_nonnegative : ∀ m a,
-    0 ≤ quenched_block_row ((1 + 3 * gamma) / 4) Abar
-      (max 1 (S a / (3 : ℝ) ^ Nann)) (physical_scale_coeff Nann a) m
+    0 ≤ quenchedBlockRow ((1 + 3 * gamma) / 4) Abar
+      (max 1 (S a / (3 : ℝ) ^ Nann)) (physicalScaleCoefficient Nann a) m
   row_hasSum : ∀ᵐ a ∂P, ∀ k : ℕ,
     HasSum (fun j : ℕ =>
       (3 : ℝ) ^ (theta / 2 * (j : ℝ)) *
-        quenched_block_row ((1 + 3 * gamma) / 4) Abar
+        quenchedBlockRow ((1 + 3 * gamma) / 4) Abar
           (max 1 (S a / (3 : ℝ) ^ Nann))
-          (physical_scale_coeff Nann a) (k + j)) (F k a)
+          (physicalScaleCoefficient Nann a) (k + j)) (F k a)
   nstar_le_N0 : nstar ≤ N0
   one_le_Bconst : 1 ≤ Bconst
   threshold_low :
@@ -174,9 +188,9 @@ theorem exists_coupledWitnessAssembly (d : ℕ) (_hd : 2 ≤ d)
                   (blockScale
                     (1 + 6 * (3 : ℝ) ^ (-alpha * (j : ℝ))) Abar)) →
             ∃ W : CoupledMixingScaleWitness P
-              (fun m a => quenched_block_row ((1 + 3 * g) / 4) Abar
+              (fun m a => quenchedBlockRow ((1 + 3 * g) / 4) Abar
                 (max 1 (S a / (3 : ℝ) ^ Nann))
-                (physical_scale_coeff Nann a) m)
+                (physicalScaleCoefficient Nann a) m)
               cMix cd ((d : ℝ) - 2 * g) kappa delta,
               W.normalization ≤ (2 + aspectRatio E * K) ^ Cmix := by
   refine ⟨1, by norm_num, ?_⟩

@@ -471,7 +471,7 @@ theorem exactRootGaugeTerminal_onReconciled_of_ballTriangle (d : ℕ) [NeZero d]
       obtain ⟨hnq, -, -⟩ := farBranch_bounds (d := d) (rStart := rS) (r := r)
         (R := R) hrSpos hrS_le_r hmRbound hthr hcase
       obtain ⟨qN, hqNcast, hq3, hcubeq, hratioq⟩ :=
-        exists_outer_cube_ball_comparison hrpos (hrS1.trans hrS_le_r)
+        exists_outer_cube_ball_comparison (d := d) hrpos (hrS1.trans hrS_le_r)
       have hqmN : qN ≤ mN := by omega
       have hnqN : nN ≤ qN := by omega
       have hrowAt := hrowq qN (Finset.mem_Icc.mpr ⟨hnqN, hqmN⟩)
@@ -488,7 +488,7 @@ theorem exactRootGaugeTerminal_onReconciled_of_ballTriangle (d : ℕ) [NeZero d]
     · -- near band
       have hnear : R < 108 * (Real.sqrt d * r) := lt_of_not_ge hthr
       obtain ⟨JN, hJNcast, _hJscale, hcubeJ, hratioJ⟩ :=
-        exists_outer_cube_ball_comparison hRpos hR1
+        exists_outer_cube_ball_comparison (d := d) hRpos hR1
       have hnJ : nN ≤ JN := by
         have hmono := outerTriadicGeneration_le_outerTriadicGeneration
           (rStart := rS) (r := R) hrSpos hstartR

@@ -44,7 +44,7 @@ variable {d : ℕ}
 /-- **The centering variance** at the recentered samples is bounded by the
 terminal single-cell fluctuation carrier in the adapted-mean
 normalization. -/
-theorem profilePrimalCenterVariance_le_variance [NeZero d]
+theorem profilePrimalCenterVariance_le_variance
     {P : Measure (CoeffSpace d)} [IsProbabilityMeasure P]
     {m : Mat d} (hm : m.PosDef) {q : Mat d} (hq : q.PosDef) (t : ℤ)
     (hint : HasFiniteAdaptedMean P q t)

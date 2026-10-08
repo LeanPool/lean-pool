@@ -56,7 +56,8 @@ noncomputable def descendantsDomainPartition {d : ℕ}
     have hDne : D.Nonempty := descendantsAtDepth_nonempty Q j
     have hcardD : (D.card : ℝ) ≠ 0 := by
       exact_mod_cast Finset.card_ne_zero.mpr hDne
-    simp [Finset.sum_const, nsmul_eq_mul]
+    simp only [Finset.univ_eq_attach, Fintype.card_coe, Finset.sum_const,
+      Finset.card_attach, nsmul_eq_mul]
     exact mul_inv_cancel₀ hcardD
   triadic_realization := by
     refine ⟨Q, j, rfl, ?_⟩
@@ -94,7 +95,16 @@ theorem descendantsDomainPartition_weightedBlockAverage {d : ℕ}
     (Q : TriadicCube d) (j : ℕ) (F : TriadicCube d → BlockMat d) :
     (descendantsDomainPartition Q j).weightedBlockAverage (fun i => F i.1) =
       descendantsAverageBlockMat Q j F := by
-  simp [DomainPartition.weightedBlockAverage, descendantsAverageBlockMat]
+  suffices
+      (descendantsDomainPartition Q j).weightedMatAverage (fun i => (F i.1).upperLeft) =
+          descendantsAverageMat Q j (fun R => (F R).upperLeft) ∧
+        (descendantsDomainPartition Q j).weightedMatAverage (fun i => (F i.1).upperRight) =
+          descendantsAverageMat Q j (fun R => (F R).upperRight) ∧
+        (descendantsDomainPartition Q j).weightedMatAverage (fun i => (F i.1).lowerLeft) =
+          descendantsAverageMat Q j (fun R => (F R).lowerLeft) ∧
+        (descendantsDomainPartition Q j).weightedMatAverage (fun i => (F i.1).lowerRight) =
+          descendantsAverageMat Q j (fun R => (F R).lowerRight) by
+    simpa [DomainPartition.weightedBlockAverage, descendantsAverageBlockMat] using this
   exact
     ⟨descendantsDomainPartition_weightedMatAverage Q j (fun R => (F R).upperLeft),
       descendantsDomainPartition_weightedMatAverage Q j (fun R => (F R).upperRight),
@@ -113,7 +123,7 @@ theorem doubledResponseJ_nonneg {d : ℕ} (U : Domain d) (a : CoeffOn U)
     responseJ_nonneg U a.transpose (pStar + p) (qStar + q)
   nlinarith
 
-theorem normalizedBlockResponseMax_nonneg {d : ℕ} [NeZero d]
+theorem normalizedBlockResponseMax_nonneg {d : ℕ}
     (Q : TriadicCube d) (a : TriadicCoeffFamily d) (a0 : Mat d) :
     0 ≤ normalizedBlockResponseMax Q a a0 := by
   unfold normalizedBlockResponseMax
@@ -143,7 +153,7 @@ theorem normalizedBlockResponseValueSet_nonempty {d : ℕ} [NeZero d]
 /-- A uniform deterministic bound for normalized block response on descendants
 of `Q`, depending only on the root cube coefficient object and on `a0`. -/
 @[expose]
-noncomputable def normalizedBlockResponseUniformBound {d : ℕ} [NeZero d]
+noncomputable def normalizedBlockResponseUniformBound {d : ℕ}
     (Q : TriadicCube d) (a : TriadicCoeffFamily d) (a0 : Mat d) : ℝ :=
   let c : ℝ := ((a.coeffOn Q).lam / (1 + 2 * (a.coeffOn Q).Lam ^ 2))⁻¹
   c * fullBlockMatRowAbsSqBound (constantFullBlockMatrixSqrt a0) +
@@ -151,7 +161,7 @@ noncomputable def normalizedBlockResponseUniformBound {d : ℕ} [NeZero d]
       fullBlockMatRowAbsSqBound (constantFullBlockMatrixInvSqrt a0)
 
 theorem normalizedBlockResponseValueSet_bddAbove_of_mem_descendantsAtScale
-    {d : ℕ} [NeZero d] (a : TriadicCoeffFamily d)
+    {d : ℕ} (a : TriadicCoeffFamily d)
     {Q R : TriadicCube d} {k : ℤ} (a0 : Mat d)
     (hR : R ∈ descendantsAtScale Q k) :
     BddAbove (normalizedBlockResponseValueSet R a a0) := by
@@ -382,7 +392,7 @@ theorem normalizedBlockResponseMax_le_uniform_of_mem_descendantsAtScale
       linarith
 
 theorem normalizedBlockResponseMax_le_maxDescendantNormalizedBlockResponseAtScale
-    {d : ℕ} [NeZero d] {Q R : TriadicCube d} {k : ℤ}
+    {d : ℕ} {Q R : TriadicCube d} {k : ℤ}
     (a : TriadicCoeffFamily d) (a0 : Mat d)
     (hR : R ∈ descendantsAtScale Q k) :
     normalizedBlockResponseMax R a a0 ≤
@@ -396,7 +406,7 @@ theorem normalizedBlockResponseMax_le_maxDescendantNormalizedBlockResponseAtScal
   exact le_csSup hBdd ⟨R, hR, rfl⟩
 
 theorem maxDescendantNormalizedBlockResponseAtScale_le_of_mem_descendantsAtScale
-    {d : ℕ} [NeZero d] {Q R : TriadicCube d} {k l : ℤ}
+    {d : ℕ} {Q R : TriadicCube d} {k l : ℤ}
     (a : TriadicCoeffFamily d) (a0 : Mat d)
     (hR : R ∈ descendantsAtScale Q k) (hl : l ≤ R.scale) :
     maxDescendantNormalizedBlockResponseAtScale R l a a0 ≤
@@ -555,7 +565,7 @@ theorem normalizedBlockResponseMax_le_maxDescendantNormalizedBlockResponseAtScal
         (fun R => normalizedBlockResponseMax R a a0)
   exact le_trans hresp (le_trans havg hmax)
 
-theorem maxDescendantNormalizedBlockResponseAtScale_nonneg {d : ℕ} [NeZero d]
+theorem maxDescendantNormalizedBlockResponseAtScale_nonneg {d : ℕ}
     (Q : TriadicCube d) {k : ℤ} (hk : k ≤ Q.scale)
     (a : TriadicCoeffFamily d) (a0 : Mat d) :
     0 ≤ maxDescendantNormalizedBlockResponseAtScale Q k a a0 := by
@@ -609,7 +619,7 @@ theorem maxDescendantNormalizedBlockResponseAtScale_le_of_le
       (Q := Q) (R := R) (k := l) (l := k) a a0 hR hkR
   exact le_trans hRle hRQ
 
-theorem scaleResponseAtScale_infinity_nonneg {d : ℕ} [NeZero d]
+theorem scaleResponseAtScale_infinity_nonneg {d : ℕ}
     (Q : TriadicCube d) {k : ℤ} (hk : k ≤ Q.scale)
     (a : TriadicCoeffFamily d) (a0 : Mat d) :
     0 ≤ scaleResponseAtScale Q k .infinity a a0 := by
@@ -618,7 +628,7 @@ theorem scaleResponseAtScale_infinity_nonneg {d : ℕ} [NeZero d]
     (maxDescendantNormalizedBlockResponseAtScale_nonneg Q hk a a0) _
 
 theorem scaleResponseAtScale_infinity_le_of_mem_descendantsAtScale {d : ℕ}
-    [NeZero d] {Q R : TriadicCube d} {k l : ℤ}
+    {Q R : TriadicCube d} {k l : ℤ}
     (a : TriadicCoeffFamily d) (a0 : Mat d)
     (hR : R ∈ descendantsAtScale Q k) (hl : l ≤ R.scale) :
     scaleResponseAtScale R l .infinity a a0 ≤

@@ -38,7 +38,7 @@ noncomputable section
 
 
 private theorem rebased_reference_aspect_bound (d : ℕ)
-    [NeZero d] {g delta : ℝ}
+    {g delta : ℝ}
     (hg : g ∈ Set.Ico (0 : ℝ) 1) (hdelta : delta ∈ Set.Ioo (0 : ℝ) 1)
     {P : Measure (CoeffSpace d)} [IsProbabilityMeasure P]
     {E : BlockMat d} {Psi : ℝ → ℝ} {K : ℝ} {S : CoeffSpace d → ℝ}
@@ -86,7 +86,7 @@ private theorem rebased_reference_aspect_bound (d : ℕ)
       rw [blockVecDot_blockMatVecMul_blockScale]
       exact mul_pos hcApos (hdag.refBlock_posDef X hX)
     have hmono := aspectRatio_mono hAhatSymm hAhatPos hscaledSymm hscaledPos
-      (by simpa only [Ahat, cA] using hAhatUpper)
+      (by simpa only [Ahat, cA, inner, Nat.cast_add] using hAhatUpper)
     rwa [aspectRatio_blockScale hcApos E] at hmono
   have hAspectBound : aspectRatio Ebase ≤ Casp * aspectRatio E := by
     rw [show Ebase = blockScale (1 + delta) Ahat by rfl,
@@ -209,21 +209,27 @@ private theorem rebasing_cell_threshold_certificate (d : ℕ)
     have hsq := sq_le_sq₀ (zero_le_one.trans hT)
       (zero_le_one.trans hl0) |>.2 hren
     have hfac : 0 ≤ frGaugeConst d * ((3 : ℝ) ^ (2 * mu) - 1) := by
-      have hone : 1 ≤ (3 : ℝ) ^ (2 * mu) :=
-        Real.one_le_rpow (by norm_num) (by positivity)
-      exact mul_nonneg (frGaugeConst_pos d).le (sub_nonneg.mpr hone)
+      have hlog : 0 < Real.log 2 := Real.log_pos (by norm_num)
+      by_contra hneg
+      have hnonpos := mul_nonpos_of_nonpos_of_nonneg
+        (le_of_lt (lt_of_not_ge hneg)) (sq_nonneg T)
+      nlinarith only [hTthr, hlog, hnonpos]
     have hmul := mul_le_mul_of_nonneg_right hsq hfac
     nlinarith only [hTthr, hmul]
   have hcell : HasCellRenormalization P S Ahat g ((d : ℝ) / 2)
       (unitRangeCellGain d g E) nBase l0 h := by
-    have hn0 : 0 ≤ (nBase : ℤ) - (l0 : ℤ) := by rw [hinner]; positivity
+    have hn0 : 0 ≤ (nBase : ℤ) - (l0 : ℤ) := by
+      dsimp only [nBase, l0]
+      simp only [Nat.cast_add, Nat.cast_mul, Nat.cast_one]
+      rw [hinner]
+      positivity
     have hhl0 : h ≤ l0 + 1 := by
       dsimp only [h, l0]
       have hAD : A ≤ A + D := Nat.le_add_right A D
       exact (Nat.mul_le_mul_right q hAD).trans (Nat.le_add_right _ 1)
-    simpa only [Ahat, hinner] using
+    simpa only [Ahat, inner, nBase, l0, Nat.cast_add, Nat.cast_mul, Nat.cast_one, hinner] using
       hasCellRenormalization_unitRangeCellGain_of_frozen hstat hunit hdag hn0 hhl0
-        (by simpa only [hinner] using hhalf)
+        (by simpa only [nBase, l0, Nat.cast_add, Nat.cast_mul, Nat.cast_one, hinner] using hhalf)
   exact ⟨hthr, hcell⟩
 /-- The one-time rebase provider used by the annealed-to-quenched step. -/
 theorem exists_prop211_rebase_provider (d : ℕ) (hd : 2 ≤ d) :

@@ -373,7 +373,7 @@ theorem adapted_response_core_of_holes (d : ℕ) (_hd : 2 ≤ d) (γ : ℝ)
   obtain ⟨Bresp, hB1, h10'⟩ := h10 ε hε δad hδad H hH η hη Cprof hCprof σ hσε Cglob hCglob
   refine ⟨Bresp, hB1, ?_⟩
   intro P E Ψ Kg Src B jStar F s t raw
-  show respKappa P jStar F t ≤ 1 + δad
+  change respKappa P jStar F t ≤ 1 + δad
   have hcal := h2 ε σ hε hσε Cglob Cprof Csrc Bresp H P E Ψ Kg Src B jStar F s t raw
   have hss := h10' P E Ψ Kg Src B jStar F s t (rawOutput_le_csrc raw hle10)
   obtain ⟨hk1, hkts, hksr, hr1, hrexp⟩ :=

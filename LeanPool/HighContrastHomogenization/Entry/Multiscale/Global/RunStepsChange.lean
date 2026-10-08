@@ -107,9 +107,9 @@ private theorem run_gauge_step {d : ℕ} (hd : 2 ≤ d)
   have hwc : w * charge = a * C / d * charge := by rw [hwdef]
   have hfinal := run_energy_transfer
     (potential P γ jStar η a m k n) (potential P γ jStar η a mP s t)
-    (run_reserve (fun r => blockLogDet (adaptedMean P (Geometry.explicitRoundedGrid jStar m) r))
+    (runReserve (fun r => blockLogDet (adaptedMean P (Geometry.explicitRoundedGrid jStar m) r))
       h k n)
-    (run_reserve (fun r => blockLogDet (adaptedMean P (Geometry.explicitRoundedGrid jStar mP)
+    (runReserve (fun r => blockLogDet (adaptedMean P (Geometry.explicitRoundedGrid jStar mP)
       r)) h s t)
     c w charge (2 * (d : ℝ) * ((h : ℝ) + 2) * Real.log (1 + δ)) hw0
     (by rw [hwJ, hwc]; exact hstep)

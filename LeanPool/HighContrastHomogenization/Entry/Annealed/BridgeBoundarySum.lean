@@ -121,7 +121,7 @@ private theorem bridge_full_sub {d : ℕ} (A B : BlockMat d) :
     toFullBlockMat (blockSub A B) = toFullBlockMat A - toFullBlockMat B := by
   ext (i | i) (j | j) <;> rfl
 
-private theorem bridge_congr_order {ι : Type*} [Fintype ι] [DecidableEq ι]
+private theorem bridge_congr_order {ι : Type*} [Fintype ι]
     {A B : Matrix ι ι ℝ} (h : A ≤ B) (S : Matrix ι ι ℝ) (hS : S.IsHermitian) :
     S * A * S ≤ S * B * S := by
   apply Matrix.le_iff.mpr
@@ -567,14 +567,14 @@ theorem bridge_endpoint_errors (d : ℕ) (hd : 2 ≤ d) (γ : ℝ)
     dsimp [C]; nlinarith only [hCu, hCv, mul_nonneg hCv.le hK0]
   have hCεv : 45 * Cv * K₀ ≤ C := by
     dsimp [C]; nlinarith only [hCu, hCv, mul_nonneg hCu.le hK0]
-  have hCwu : 5 * Cu ≤ C := by dsimp [C]; nlinarith only [hCu, hCv, mul_nonneg (add_nonneg
-    hCu.le hCv.le) hK0]
-  have hCwv : 5 * Cv ≤ C := by dsimp [C]; nlinarith only [hCu, hCv, mul_nonneg (add_nonneg
-    hCu.le hCv.le) hK0]
-  have hCuC : Cu ≤ C := by dsimp [C]; nlinarith only [hCu, hCv, mul_nonneg (add_nonneg hCu.le
-    hCv.le) hK0]
-  have hCvC : Cv ≤ C := by dsimp [C]; nlinarith only [hCu, hCv, mul_nonneg (add_nonneg hCu.le
-    hCv.le) hK0]
+  have hCwu : 5 * Cu ≤ C := by dsimp [C]; nlinarith only [hCu, hCv, (mul_nonneg (add_nonneg
+    hCu.le hCv.le) hK0)]
+  have hCwv : 5 * Cv ≤ C := by dsimp [C]; nlinarith only [hCu, hCv, (mul_nonneg (add_nonneg
+    hCu.le hCv.le) hK0)]
+  have hCuC : Cu ≤ C := by dsimp [C]; nlinarith only [hCu, hCv, (mul_nonneg (add_nonneg hCu.le
+    hCv.le) hK0)]
+  have hCvC : Cv ≤ C := by dsimp [C]; nlinarith only [hCu, hCv, (mul_nonneg (add_nonneg hCu.le
+    hCv.le) hK0)]
   refine ⟨max CsU CsV, C, hCsU.trans_le (le_max_left _ _), hC, ?_⟩
   intro P hP E Ψ K S hstat hdag jStar hj hsrc m mPlus hm hmPlus hratio n L hn hL
     hcontain ε hε hD hΔ F H T
@@ -588,7 +588,9 @@ theorem bridge_endpoint_errors (d : ℕ) (hd : 2 ≤ d) (γ : ℝ)
   let A := fun r => adaptedMean P q r
   let w := (3 : ℝ) ^ (-(L : ℝ))
   let W := 1 + aspectRatio E * (Real.sqrt (‖m‖ * ‖m⁻¹‖) + Real.sqrt (‖mPlus‖ * ‖mPlus⁻¹‖)) ^ 2
-  have hW : 0 ≤ W := by dsimp [W]; have := one_le_aspectRatio_of_coarseEllipticityDagger hdag;
+  have hW : 0 ≤ W := by
+    dsimp [W]
+    have := one_le_aspectRatio_of_coarseEllipticityDagger hdag
     positivity
   have hLn : (0 : ℝ) ≤ L := Nat.cast_nonneg L
   have hnR : (jStar : ℝ) ≤ n := by exact_mod_cast hn
@@ -687,8 +689,8 @@ theorem bridge_endpoint_errors (d : ℕ) (hd : 2 ≤ d) (γ : ℝ)
     have hbU' := hbU z
     have hbV' := hbV z
     have hAF' := hAF z
-    simp only [bridge_quadratic_sub, bridge_quadratic_add, Source.quadratic_blockScale] at hu'
-      hv' hbU' hbV' hAF'
+    simp only [bridge_quadratic_sub, bridge_quadratic_add, Source.quadratic_blockScale]
+      at hu' hv' hbU' hbV' hAF'
     have htu := mul_le_mul_of_nonneg_right (mul_le_mul_of_nonneg_left (htail L hLn) hCu.le) (hF0 z)
     have htv := mul_le_mul_of_nonneg_right (mul_le_mul_of_nonneg_left (htail (2 * L) (by
       positivity)) hCv.le) (hF0 z)

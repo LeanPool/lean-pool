@@ -441,7 +441,6 @@ theorem blockPairingIntegrand_integrableOn_of_memBlockL2_of_isEllipticFieldOn
 integrable on `U`. -/
 theorem blockEnergyDensity_integrableOn_of_memBlockL2_of_isEllipticFieldOn
     {d : ℕ} {U : Set (Vec d)} {a : CoeffField d}
-    [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     {lam Lam : ℝ} {X : BlockState d}
     (hX : MemBlockL2 U X.eval) (hEll : IsEllipticFieldOn lam Lam U a) :
     MeasureTheory.IntegrableOn (blockEnergyDensity a X) U := by

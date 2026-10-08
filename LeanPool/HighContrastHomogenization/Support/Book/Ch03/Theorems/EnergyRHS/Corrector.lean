@@ -112,12 +112,12 @@ theorem publicZeroTraceDirichletCorrectorData_energyNorm_le_zeroDirichletEnergyW
         (cubeAverage Q
           (coefficientEnergyDensity (publicCoeffField Q a)
             (fun x =>
-              (zeroTraceDirichletCorrectorData_publicCoeffField Q a
+              (publicZeroTraceDirichletCorrectorData Q a
                 (memVectorL2_cubeSet_of_forceBesovRegularity hg)).toH10.toH1Function.grad x))) ≤
       zeroDirichletEnergyWithRHSRHS ((d : ℝ) * C) Q a (s / 2) g :=
   corrector_energyNorm_le_zeroDirichletRHS_half
     (C := C) hC_nonneg hC_zero
-    (ρ := zeroTraceDirichletCorrectorData_publicCoeffField Q a
+    (ρ := publicZeroTraceDirichletCorrectorData Q a
       (memVectorL2_cubeSet_of_forceBesovRegularity hg))
     hs hs_lt hg
 
@@ -251,14 +251,14 @@ theorem publicZeroTraceDirichletCorrectorData_sqrt_two_energyNorm_le_dirichletEn
         (2 * cubeAverage Q
           (coefficientEnergyDensity (publicCoeffField Q a)
             (fun x =>
-              (zeroTraceDirichletCorrectorData_publicCoeffField Q a
+              (publicZeroTraceDirichletCorrectorData Q a
                 (memVectorL2_cubeSet_of_forceBesovRegularity hg)).toH10.toH1Function.grad x))) ≤
       C * Real.rpow s (-(3 / 2 : ℝ)) *
         poincareLowerEllipticityFactor Q a (s / 2) (.finite 2) *
         scaleNormalizedPositiveBesovVectorSeminormTwo Q s g :=
   sqrtTwo_correctorEnergy_le_dirichletFirstTerm
     (C₀ := C₀) (C := C) hC₀_nonneg hC₀_zero hC_absorb
-    (ρ := zeroTraceDirichletCorrectorData_publicCoeffField Q a
+    (ρ := publicZeroTraceDirichletCorrectorData Q a
       (memVectorL2_cubeSet_of_forceBesovRegularity hg))
     hs hs_lt hg
 
@@ -315,7 +315,7 @@ theorem dirichletForcedSolutionEnergyNorm_le_dirichletEnergyWithRHSRHS
     (hgrad :
       v.toH1.grad =ᵐ[MeasureTheory.volume.restrict (cubeSet Q)]
         fun x =>
-          (zeroTraceDirichletCorrectorData_publicCoeffField Q a
+          (publicZeroTraceDirichletCorrectorData Q a
             (memVectorL2_cubeSet_of_forceBesovRegularity hg)).toH10.toH1Function.grad x +
             w.toH1.grad x)
     (hharmonic :
@@ -332,7 +332,7 @@ theorem dirichletForcedSolutionEnergyNorm_le_dirichletEnergyWithRHSRHS
   dirichletForcedSolutionEnergyNorm_le_of_harmonicRemainder
     (C₀ := C₀) (C := C) hC₀_nonneg hC₀_zero hC_absorb
     (Q := Q) (a := a) (s := s) (g := g) v
-    (zeroTraceDirichletCorrectorData_publicCoeffField Q a
+    (publicZeroTraceDirichletCorrectorData Q a
       (memVectorL2_cubeSet_of_forceBesovRegularity hg))
     w hgrad hs hs_lt hg hharmonic
 

@@ -228,7 +228,7 @@ theorem localizedZeroTraceFunctionOn_dilate {d : ℕ} {Ω V Ω' V' : Set (Vec d)
     simpa [ζ] using! hη.comp (contDiff_const_smul r)
   have hζ_compact : HasCompactSupport ζ := by
     have hr_ne : r ≠ 0 := hr.ne'
-    show HasCompactSupport (η ∘ Homeomorph.smulOfNeZero r hr_ne)
+    change HasCompactSupport (η ∘ Homeomorph.smulOfNeZero r hr_ne)
     simpa [ζ, Function.comp] using
       hη_compact.comp_homeomorph (Homeomorph.smulOfNeZero r hr_ne)
   have hζ_sub : tsupport ζ ⊆ V := by
@@ -443,7 +443,7 @@ theorem triadicDilationFactor_neg_scale_sq {d : ℕ} (Q : TriadicCube d) :
     rw [← hcast]
     exact Real.rpow_intCast (3 : ℝ) (-2 * Q.scale)
   rw [hrpow]
-  simp [Ch02.triadicDilationFactor]
+  change ((3 : ℝ) ^ (-Q.scale)) ^ (2 : ℕ) = (3 : ℝ) ^ (-2 * Q.scale)
   rw [← zpow_natCast, ← zpow_mul]
   congr 1
   ring

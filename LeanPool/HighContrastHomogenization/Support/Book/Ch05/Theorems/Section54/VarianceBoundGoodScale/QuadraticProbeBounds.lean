@@ -300,7 +300,7 @@ theorem isSymm_diagonal_mul_toFullBlockMat_mul_diagonal
     simpa using isSymm_toFullBlockMat_of_isSymmetricBlockMat hA
   rw [Matrix.IsSymm]
   ext α β
-  simp [Matrix.transpose_apply, Matrix.mul_apply, Matrix.diagonal]
+  simp only [Matrix.transpose_apply, Matrix.mul_diagonal, Matrix.diagonal_mul]
   have h := hM.apply α β
   rw [h]
   ring

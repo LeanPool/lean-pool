@@ -130,7 +130,7 @@ theorem normalized_adaptedWeakSeminorm_blockDiag_const {q : Mat d}
   rw [normalized_adaptedWeakSeminorm_const hq]
   have hspec := matSqrt_spec hm.posSemidef
   have hsymm : matTranspose (matSqrt m) = matSqrt m := by
-    show (matSqrt m).transpose = matSqrt m
+    change (matSqrt m).transpose = matSqrt m
     rw [← conjTranspose_eq_transpose' (matSqrt m)]
     exact hspec.1.isHermitian
   rw [blockVecDot_self_blockDiag_root hsymm hspec.2]

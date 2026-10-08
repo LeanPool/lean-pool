@@ -43,9 +43,8 @@ theorem memVectorL2_translateSet_of_memVectorL2
 
 /-- The Hodge converse is invariant under translating the domain. -/
 theorem hodgeConverseCriterion_translateSet
-    {d : ℕ} {U : Set (Vec d)} [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
+    {d : ℕ} {U : Set (Vec d)}
     (z : Vec d)
-    [MeasureTheory.IsFiniteMeasure (volumeMeasureOn (translateSet z U))]
     (hHodge : HodgeConverseCriterion U) :
     HodgeConverseCriterion (translateSet z U) := by
   intro f hf horth
@@ -86,7 +85,7 @@ bounded open convex domain.
 -/
 theorem hodgeConverseCriterion_cubeSet_originCube
     {d : ℕ} [NeZero d] {n : ℤ}
-    [MeasureTheory.IsFiniteMeasure (volumeMeasureOn (cubeSet (originCube d n)))] :
+    :
     HodgeConverseCriterion (cubeSet (originCube d n)) := by
   have hfiniteOpen :
       MeasureTheory.IsFiniteMeasure (volumeMeasureOn (openCubeSet (originCube d n))) := by

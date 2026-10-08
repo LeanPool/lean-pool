@@ -36,6 +36,7 @@ noncomputable section
 
 variable {d : ℕ}
 
+/-- Volume restricted to `U`, with normalization factor `(volume U)⁻¹`. -/
 @[expose]
 public noncomputable def normalizedDomainMeasure (U : Set (Vec d)) :
     Measure (Vec d) :=

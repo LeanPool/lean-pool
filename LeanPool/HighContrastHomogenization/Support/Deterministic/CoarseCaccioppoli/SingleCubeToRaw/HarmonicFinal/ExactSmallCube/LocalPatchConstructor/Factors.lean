@@ -427,7 +427,6 @@ theorem
             (coarseCaccioppoliCanonicalGradientAcircOneSub R a s ρ₁ ρm) Ceff) =
         Hbase * WH * Pone + Gbase * WG * Psub := by
     exact localPatchBesovCoefficientSplit a hR
-
   calc
     coarseCaccioppoliFluxEnergyExactCenteredBesovCoeffFactorBound R s
         (coarseCaccioppoliLambdaFactor R a s)

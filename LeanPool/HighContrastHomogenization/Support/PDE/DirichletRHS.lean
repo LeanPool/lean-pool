@@ -915,9 +915,8 @@ theorem exists_isZeroTraceDirichletRhsWeakSolution_of_potentialZeroTraceClosureR
 /-- A chosen zero-trace Dirichlet weak solution under the abstract
 zero-trace-potential closure realization hypothesis. -/
 @[expose]
-noncomputable def zeroTraceDirichletRhsProblemSolution_of_potentialZeroTraceClosureRealization
+noncomputable def zeroTraceDirichletRightHandSideSolutionOfClosureRealization
     {d : ℕ} {a : CoeffField d} {U : Set (Vec d)}
-    [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     {g : Vec d → Vec d} {lam Lam : ℝ}
     (hg : MemVectorL2 U g)
     (hRealize : PotentialSolenoidalL2Data.HasPotentialZeroTraceClosureRealization U)
@@ -931,17 +930,16 @@ noncomputable def zeroTraceDirichletRhsProblemSolution_of_potentialZeroTraceClos
 theorem
     isZeroTraceDirichletRhsWeakSolution_zeroTraceDirichletRhsProblemSolution
     {d : ℕ} {a : CoeffField d} {U : Set (Vec d)}
-    [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     {g : Vec d → Vec d} {lam Lam : ℝ}
     (hg : MemVectorL2 U g)
     (hRealize : PotentialSolenoidalL2Data.HasPotentialZeroTraceClosureRealization U)
     (hne : Set.Nonempty U) (hEll : IsEllipticFieldOn lam Lam U a) :
     IsZeroTraceDirichletRhsWeakSolution a U
-      (zeroTraceDirichletRhsProblemSolution_of_potentialZeroTraceClosureRealization
+      (zeroTraceDirichletRightHandSideSolutionOfClosureRealization
         (a := a) (U := U) (g := g) (lam := lam) (Lam := Lam)
         hg hRealize hne hEll)
       g := by
-  simpa [zeroTraceDirichletRhsProblemSolution_of_potentialZeroTraceClosureRealization]
+  simpa [zeroTraceDirichletRightHandSideSolutionOfClosureRealization]
     using
       (Classical.choose_spec
         (exists_isZeroTraceDirichletRhsWeakSolution_of_potentialZeroTraceClosureRealization
@@ -951,7 +949,6 @@ theorem
 theorem
   gradToVectorL2_eq_zeroTraceDirichletRhsProblemSolution_of_potentialZeroTraceClosureRealization
     {d : ℕ} {a : CoeffField d} {U : Set (Vec d)}
-    [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     {u : H10Function U} {g : Vec d → Vec d} {lam Lam : ℝ}
     (hg : MemVectorL2 U g)
     (hRealize : PotentialSolenoidalL2Data.HasPotentialZeroTraceClosureRealization U)
@@ -959,11 +956,11 @@ theorem
     (hu : IsZeroTraceDirichletRhsWeakSolution a U u g)
     (hEll : IsEllipticFieldOn lam Lam U a) :
     u.toH1Function.gradToVectorL2 =
-      (zeroTraceDirichletRhsProblemSolution_of_potentialZeroTraceClosureRealization
+      (zeroTraceDirichletRightHandSideSolutionOfClosureRealization
         (a := a) (U := U) (g := g) (lam := lam) (Lam := Lam)
         hg hRealize hne hEll).toH1Function.gradToVectorL2 := by
   let v : H10Function U :=
-    zeroTraceDirichletRhsProblemSolution_of_potentialZeroTraceClosureRealization
+    zeroTraceDirichletRightHandSideSolutionOfClosureRealization
       (a := a) (U := U) (g := g) (lam := lam) (Lam := Lam)
       hg hRealize hne hEll
   have hv : IsZeroTraceDirichletRhsWeakSolution a U v g :=

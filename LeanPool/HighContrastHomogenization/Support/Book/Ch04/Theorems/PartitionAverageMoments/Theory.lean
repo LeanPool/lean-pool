@@ -39,7 +39,7 @@ noncomputable section
 observable has `L^p` root bounded by the same constant. -/
 theorem integral_finsetSup_abs_pow_rpow_inv_le_card_rpow_mul
     {Ω ι : Type*} [MeasurableSpace Ω]
-    {μ : Measure Ω} [IsProbabilityMeasure μ]
+    {μ : Measure Ω}
     {s : Finset ι} (hs : s.Nonempty) {p : ℕ} {K : ℝ}
     (hp : 1 ≤ p) (hK_nonneg : 0 ≤ K)
     (X : ι → Ω → ℝ)

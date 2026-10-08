@@ -276,7 +276,7 @@ theorem
     (hs : 0 < s) (ht : 0 < t) (hst : s + t < 1)
     (hEllCube : IsEllipticFieldOn lam Lam (cubeSet Q) a)
     (hrawcoeff :
-      BoundaryCaccioppoliHarmonicVectorSmallCubeCoefficientSplit_allRadii
+      boundaryCaccioppoliSmallCubeCoefficientSplitAllRadii
         Q a s t Clocal Calpha Ccross) :
     CoarseCaccioppoliBoundaryCanonicalHarmonicVectorNoteRawBridgeSplitAllRadii
       Q a s t Calpha Ccross (coarseCaccioppoliHarmonicL2Sq Q a u0)
@@ -431,7 +431,7 @@ theorem
         coarseCaccioppoliFluxEnergyExactCenteredCoeff R a s ξ (Acirc1 R) (AcircS R)
             B CeffLocal ≤ Alpha) := by
     simpa [
-      BoundaryCaccioppoliHarmonicVectorSmallCubeCoefficientSplit_allRadii,
+      boundaryCaccioppoliSmallCubeCoefficientSplitAllRadii,
       CeffLocal, CeffAlpha, CeffCross, hheight, ρm, j, ξ, B, Acirc1, AcircS,
       K, Alpha]
       using hrawcoeff hρ₁ hlt hρ₂

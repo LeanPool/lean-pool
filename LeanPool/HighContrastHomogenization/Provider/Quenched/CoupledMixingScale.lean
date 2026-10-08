@@ -38,11 +38,17 @@ which it was constructed. -/
 structure CoupledMixingScaleWitness
     (P : Measure Ω) (selectedRow : ℕ → Ω → ℝ)
     (cMix cd eta kappa delta : ℝ) where
+  /-- Normalization multiplying the random scale in the eventual exclusion of bad events. -/
   stoppingNormalization : ℝ
+  /-- Final normalization, at least three times the stopping normalization. -/
   normalization : ℝ
+  /-- Measurable random scale with the prescribed stretched-exponential tail bound. -/
   scale : Ω → ℝ
+  /-- Selected nonnegative row sequence whose weighted tails determine the bad events. -/
   row : ℕ → Ω → ℝ
+  /-- Sum of the row tail weighted by `3 ^ (kappa * j)` from each starting generation. -/
   tailSum : ℕ → Ω → ℝ
+  /-- Bad event where the weighted row tail is at least `delta`. -/
   bad : ℕ → Set Ω
   one_le_stoppingNormalization : 1 ≤ stoppingNormalization
   one_le_normalization : 1 ≤ normalization

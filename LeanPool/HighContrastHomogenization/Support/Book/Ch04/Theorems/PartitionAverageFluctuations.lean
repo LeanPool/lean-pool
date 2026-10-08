@@ -107,7 +107,7 @@ private theorem isBigO_psiSigma_iff_of_map_eq_map
     exact h ht
 
 private theorem centered_descendant_map_eq_origin {d : ℕ} {n m : ℤ}
-    {P : RestrictionCoeffLaw d} [IsProbabilityMeasure P]
+    {P : RestrictionCoeffLaw d}
     (hn : 0 ≤ n) (hnm : n ≤ m) (hPstat : RestrictionStationaryLaw P)
     (X : Set (Vec d) → RegCoeffField d → ℝ)
     (hX0_meas : Measurable (X (cubeSet (originCube d n))))
@@ -146,7 +146,7 @@ private theorem centered_descendant_map_eq_origin {d : ℕ} {n m : ℤ}
 partition average with the expectation on the origin cube at the descendant
 scale. -/
 theorem integral_restrictionDescendantAverage_eq_integral_originCube_of_stationary
-    {d : ℕ} {n m : ℤ} {P : RestrictionCoeffLaw d} [IsProbabilityMeasure P]
+    {d : ℕ} {n m : ℤ} {P : RestrictionCoeffLaw d}
     (hn : 0 ≤ n) (hnm : n ≤ m)
     (hPstat : RestrictionStationaryLaw P)
     (X : Set (Vec d) → RegCoeffField d → ℝ)

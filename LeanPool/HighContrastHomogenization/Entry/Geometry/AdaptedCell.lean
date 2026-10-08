@@ -157,7 +157,7 @@ private theorem boundaryStrips_subset_iUnion (j : ℤ) (t : ℝ) :
   · rw [Function.update_of_ne hi']
     exact Set.mem_Ioo.mpr (hv i')
 
-private theorem volume_coordStrip_le [NeZero d] (j : ℤ) {t : ℝ} (ht : 0 ≤ t) (i : Fin d) :
+private theorem volume_coordStrip_le (j : ℤ) {t : ℝ} (ht : 0 ≤ t) (i : Fin d) :
     volume (coordStrip d j t i) ≤ ENNReal.ofReal (2 * t) * ENNReal.ofReal ((3 : ℝ) ^ j) ^ (d -
       1) := by
   classical
@@ -183,7 +183,7 @@ private theorem volume_coordStrip_le [NeZero d] (j : ℤ) {t : ℝ} (ht : 0 ≤ 
     linarith only [ht])]
   exact ENNReal.ofReal_le_ofReal (by linarith only [ht])
 
-theorem volume_boundaryStrips_le [NeZero d] (j : ℤ) {t : ℝ} (ht : 0 ≤ t) :
+theorem volume_boundaryStrips_le (j : ℤ) {t : ℝ} (ht : 0 ≤ t) :
     volume (boundaryStrips d j t)
       ≤ ENNReal.ofReal (2 * (d : ℝ) * t * ((3 : ℝ) ^ j) ^ (d - 1)) := by
   refine (measure_mono (boundaryStrips_subset_iUnion j t)).trans ?_

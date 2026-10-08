@@ -447,7 +447,7 @@ theorem mu_ge_vecDot_of_isEllipticFieldOn_of_integral_eq_zero
       mu_eq_muCandidate P
 
 theorem recoveredField_blockEnergyAverage_ge_vecDot_openCubeSet_originCube
-    {d : ℕ} [NeZero d] {n : ℤ} {a : CoeffField d} {lam Lam : ℝ}
+    {d : ℕ} {n : ℤ} {a : CoeffField d} {lam Lam : ℝ}
     (R : MuCorrectionSpaceRecoveryData (openCubeSet (originCube d n)))
     (system : MuOperatorSystemData (openCubeSet (originCube d n)) a)
     (hEll : IsEllipticFieldOn lam Lam (openCubeSet (originCube d n)) a)
@@ -471,7 +471,7 @@ theorem recoveredField_blockEnergyAverage_ge_vecDot_openCubeSet_originCube
       P
 
 theorem recoveredField_blockEnergyAverage_ge_vecDot_cubeSet_originCube
-    {d : ℕ} [NeZero d] {n : ℤ} {a : CoeffField d} {lam Lam : ℝ}
+    {d : ℕ} {n : ℤ} {a : CoeffField d} {lam Lam : ℝ}
     (R : MuCorrectionSpaceRecoveryData (cubeSet (originCube d n)))
     (system : MuOperatorSystemData (cubeSet (originCube d n)) a)
     (hEll : IsEllipticFieldOn lam Lam (cubeSet (originCube d n)) a)
@@ -495,7 +495,7 @@ theorem recoveredField_blockEnergyAverage_ge_vecDot_cubeSet_originCube
       P
 
 theorem mu_ge_vecDot_openCubeSet_originCube
-    {d : ℕ} [NeZero d] {n : ℤ} {a : CoeffField d} {lam Lam : ℝ}
+    {d : ℕ} {n : ℤ} {a : CoeffField d} {lam Lam : ℝ}
     (R : MuCorrectionSpaceRecoveryData (openCubeSet (originCube d n)))
     (system : MuOperatorSystemData (openCubeSet (originCube d n)) a)
     (hEll : IsEllipticFieldOn lam Lam (openCubeSet (originCube d n)) a)
@@ -524,7 +524,7 @@ theorem mu_ge_vecDot_openCubeSet_originCube
       mu_eq_muCandidate P
 
 theorem mu_ge_vecDot_cubeSet_originCube
-    {d : ℕ} [NeZero d] {n : ℤ} {a : CoeffField d} {lam Lam : ℝ}
+    {d : ℕ} {n : ℤ} {a : CoeffField d} {lam Lam : ℝ}
     (R : MuCorrectionSpaceRecoveryData (cubeSet (originCube d n)))
     (system : MuOperatorSystemData (cubeSet (originCube d n)) a)
     (hEll : IsEllipticFieldOn lam Lam (cubeSet (originCube d n)) a)

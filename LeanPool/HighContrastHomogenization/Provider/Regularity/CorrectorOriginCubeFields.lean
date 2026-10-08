@@ -43,6 +43,8 @@ open MeasureTheory
 
 /-! ## Restriction to integer-scale origin cubes -/
 
+/-- The real linear restriction map for Hilbert-vector `L²` classes from the scale-`m`
+origin cube to the scale-`n` origin cube, for `n ≤ m`. -/
 @[expose]
 public noncomputable def originCubeL2RestrictLinear {d : ℕ}
     {n m : ℤ} (hnm : n ≤ m) :
@@ -306,7 +308,7 @@ theorem correctorFullGradientOnOriginCube_eq_of_gradient_eq
 local a.e. class. -/
 @[expose]
 noncomputable def scalarIdentityCorrectorFluxDefectOnOriginCube
-    {d : ℕ} [NeZero d] (a : Book.Ch02.TriadicCoeffFamily d)
+    {d : ℕ} (a : Book.Ch02.TriadicCoeffFamily d)
     (Phi : Vec d → NormalizedLocalH1Carrier d) (e : Vec d) (n : ℤ) :
     HilbertVectorL2 (openCubeSet (originCube d n)) :=
   hilbertCoeffOperator
@@ -318,7 +320,7 @@ noncomputable def scalarIdentityCorrectorFluxDefectOnOriginCube
 /-- The flux-defect class has the literal raw coefficient-field
 representative whenever the corrector gradient does. -/
 theorem scalarIdentityCorrectorFluxDefectOnOriginCube_toVec_ae
-    {d : ℕ} [NeZero d] (a : Book.Ch02.TriadicCoeffFamily d)
+    {d : ℕ} (a : Book.Ch02.TriadicCoeffFamily d)
     (Phi : Vec d → NormalizedLocalH1Carrier d) (e : Vec d) (n : ℤ)
     {g : Vec d → Vec d}
     (hg : MemVectorL2 (openCubeSet (originCube d n)) g)

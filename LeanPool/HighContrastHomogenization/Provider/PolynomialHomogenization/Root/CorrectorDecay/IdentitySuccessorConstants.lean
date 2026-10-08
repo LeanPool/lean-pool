@@ -26,6 +26,7 @@ open scoped BigOperators
 
 noncomputable section
 
+/-- Chosen local comparison constant for the identity gauge at the supplied rounded geometry. -/
 @[expose]
 noncomputable def identitySuccessorLocalConstant
     (d : ℕ) [NeZero d] (g : ℝ)
@@ -62,6 +63,7 @@ theorem identitySuccessorLocalConstant_spec
   Classical.choose_spec
     (exists_identityGaugeSuccessorLocalConstant d g geom hg)
 
+/-- Chosen constant controlling the identity-gauge finite energy recurrence. -/
 @[expose]
 noncomputable def identitySuccessorRecurrenceConstant
     (d : ℕ) [NeZero d] (g : ℝ)
@@ -103,6 +105,7 @@ theorem identitySuccessorRecurrenceConstant_spec
   Classical.choose_spec
     (exists_identityGaugeSuccessorRecurrenceConstant d g geom hg hdual)
 
+/-- Energy comparison constant given by twice the recurrence constant times the local constant. -/
 @[expose]
 noncomputable def identitySuccessorEnergyConstant
     (d : ℕ) [NeZero d] (g : ℝ)
@@ -113,6 +116,7 @@ noncomputable def identitySuccessorEnergyConstant
   2 * identitySuccessorRecurrenceConstant d g geom hg hdual *
     identitySuccessorLocalConstant d g geom hg
 
+/-- Minimum of one half and the inverse of twice the recurrence constant. -/
 @[expose]
 noncomputable def identitySuccessorSmallness
     (d : ℕ) [NeZero d] (g : ℝ)

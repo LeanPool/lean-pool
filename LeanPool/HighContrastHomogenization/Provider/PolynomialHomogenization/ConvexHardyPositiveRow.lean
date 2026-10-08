@@ -42,6 +42,7 @@ noncomputable section
 
 variable {d : ℕ}
 
+/-- Volume restricted to `U` and rescaled by the inverse of `volume U`. -/
 @[expose]
 public noncomputable def positiveRowNormalizedDomainMeasure
     (U : Set (Vec d)) : Measure (Vec d) :=

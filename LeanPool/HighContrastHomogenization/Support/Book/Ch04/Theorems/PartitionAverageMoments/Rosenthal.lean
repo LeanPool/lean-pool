@@ -430,7 +430,7 @@ theorem integral_abs_finiteSum_pow_rpow_inv_le_rosenthal_uniform_descendants
         _ = 0 := by
               rw [hpow_zero, Real.zero_rpow (by positivity : (1 / (p : ℝ)) ≠ 0)]
     have hconst_nonneg : 0 ≤ rosenthalDescendantsAtScaleLpConst d k p := by
-      simp [rosenthalDescendantsAtScaleLpConst]
+      simp only [rosenthalDescendantsAtScaleLpConst]
       positivity
     have hrhs_nonneg :
         0 ≤ rosenthalDescendantsAtScaleLpConst d k p * 0 ^ ((p : ℝ)⁻¹) * K := by

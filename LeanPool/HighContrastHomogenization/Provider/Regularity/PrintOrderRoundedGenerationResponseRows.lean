@@ -36,7 +36,7 @@ variable {d : ℕ}
 
 /-- The full spatial weak error associated with one selected rounded grid. -/
 @[expose]
-noncomputable def roundedGenerationSpatialWeakError [NeZero d]
+noncomputable def roundedGenerationSpatialWeakError
     (generation : ℤ) (a : CoeffSpace d) (abar : Mat d)
     (_hS : (symmPart abar).PosDef) (s : ℝ) (M : ℤ) : ℝ :=
   Real.sqrt (∑' u : ℕ,
@@ -48,7 +48,7 @@ noncomputable def roundedGenerationSpatialWeakError [NeZero d]
           generation a abar _hS (M - (u : ℤ)) w))
 
 /-- A selected-generation spatial weak error is nonnegative. -/
-theorem roundedGenerationSpatialWeakError_nonneg [NeZero d]
+theorem roundedGenerationSpatialWeakError_nonneg
     (generation : ℤ) (a : CoeffSpace d) (abar : Mat d)
     (hS : (symmPart abar).PosDef) (s : ℝ) (M : ℤ) :
     0 ≤ roundedGenerationSpatialWeakError generation a abar hS s M := by
@@ -57,7 +57,7 @@ theorem roundedGenerationSpatialWeakError_nonneg [NeZero d]
 
 /-- The finite summable response row for a selected rounded generation. -/
 @[expose]
-def RoundedGenerationSpatialGoodTailOnInterval [NeZero d]
+def RoundedGenerationSpatialGoodTailOnInterval
     (generation : ℤ) (a : CoeffSpace d) (abar : Mat d)
     (hS : (symmPart abar).PosDef) (s delta : ℝ) (n m : ℤ) : Prop :=
   (∑ k ∈ Finset.Icc n m,
@@ -65,7 +65,7 @@ def RoundedGenerationSpatialGoodTailOnInterval [NeZero d]
 
 /-- The all-later summable response row for a selected rounded generation. -/
 @[expose]
-def RoundedGenerationSpatialGoodTail [NeZero d]
+def RoundedGenerationSpatialGoodTail
     (generation : ℤ) (a : CoeffSpace d) (abar : Mat d)
     (hS : (symmPart abar).PosDef) (s delta : ℝ) (n : ℤ) : Prop :=
   ∀ m : ℤ, n ≤ m →
@@ -74,14 +74,14 @@ def RoundedGenerationSpatialGoodTail [NeZero d]
 
 /-- The finite pointwise response row for a selected rounded generation. -/
 @[expose]
-def RoundedGenerationSpatialGoodMaxOnInterval [NeZero d]
+def RoundedGenerationSpatialGoodMaxOnInterval
     (generation : ℤ) (a : CoeffSpace d) (abar : Mat d)
     (hS : (symmPart abar).PosDef) (s delta : ℝ) (n m : ℤ) : Prop :=
   ∀ k ∈ Finset.Icc n m,
     roundedGenerationSpatialWeakError generation a abar hS s k ≤ delta
 
 /-- A summable selected-generation row controls its pointwise maximum. -/
-theorem RoundedGenerationSpatialGoodTail.goodMaxOnInterval [NeZero d]
+theorem RoundedGenerationSpatialGoodTail.goodMaxOnInterval
     {generation : ℤ} {a : CoeffSpace d} {abar : Mat d}
     {hS : (symmPart abar).PosDef} {s delta : ℝ} {n m : ℤ}
     (h : RoundedGenerationSpatialGoodTail

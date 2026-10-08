@@ -69,7 +69,7 @@ theorem averageVec_matVecMul {U : Domain d} (A : Mat d) {F : Vec d → Vec d}
   have h : (fun x => matVecMul A (F x) i) = fun x => vecDot (fun j => A i j) (F x) := by
     funext x
     simp [matVecMul, vecDot]
-  show Book.Ch02.average U (fun x => matVecMul A (F x) i) = _
+  change Book.Ch02.average U (fun x => matVecMul A (F x) i) = _
   rw [h, average_vecDot_const (fun j => A i j) hF]
   simp [matVecMul, vecDot]
 
@@ -84,27 +84,27 @@ theorem blockCellAverage_blockDiag {U : Domain d} (A B : Mat d) {F : Vec d → B
   have hfst : ∀ x : Vec d,
       (blockMatVecMul (blockDiag A B) (F x)).1 = matVecMul A (F x).1 := by
     intro x
-    show matVecMul A (F x).1 + matVecMul 0 (F x).2 = matVecMul A (F x).1
+    change matVecMul A (F x).1 + matVecMul 0 (F x).2 = matVecMul A (F x).1
     rw [zero_matVecMul, add_zero]
   have hsnd : ∀ x : Vec d,
       (blockMatVecMul (blockDiag A B) (F x)).2 = matVecMul B (F x).2 := by
     intro x
-    show matVecMul 0 (F x).1 + matVecMul B (F x).2 = matVecMul B (F x).2
+    change matVecMul 0 (F x).1 + matVecMul B (F x).2 = matVecMul B (F x).2
     rw [zero_matVecMul, zero_add]
   have hgoal : blockMatVecMul (blockDiag A B) (blockCellAverage (U : Set (Vec d)) F) =
       (matVecMul A (blockCellAverage (U : Set (Vec d)) F).1,
         matVecMul B (blockCellAverage (U : Set (Vec d)) F).2) := by
     refine Prod.ext ?_ ?_
-    · show matVecMul A _ + matVecMul 0 _ = _
+    · change matVecMul A _ + matVecMul 0 _ = _
       rw [zero_matVecMul, add_zero]
-    · show matVecMul 0 _ + matVecMul B _ = _
+    · change matVecMul 0 _ + matVecMul B _ = _
       rw [zero_matVecMul, zero_add]
   rw [hgoal]
   refine Prod.ext ?_ ?_
-  · show Book.Ch02.averageVec U (fun x => (blockMatVecMul (blockDiag A B) (F x)).1) = _
+  · change Book.Ch02.averageVec U (fun x => (blockMatVecMul (blockDiag A B) (F x)).1) = _
     simp only [hfst]
     exact averageVec_matVecMul A h1
-  · show Book.Ch02.averageVec U (fun x => (blockMatVecMul (blockDiag A B) (F x)).2) = _
+  · change Book.Ch02.averageVec U (fun x => (blockMatVecMul (blockDiag A B) (F x)).2) = _
     simp only [hsnd]
     exact averageVec_matVecMul B h2
 
@@ -144,15 +144,15 @@ theorem blockCellAverage_sub_const {U : Domain d} (c : BlockVec d) {F : Vec d �
         MeasureTheory.volume := integrableOn_component hG i
     have hconst : MeasureTheory.IntegrableOn (fun _ : Vec d => e i) (U : Set (Vec d))
         MeasureTheory.volume := MeasureTheory.integrableOn_const htop (by simp)
-    show Book.Ch02.average U (fun x => G x i - e i) = Book.Ch02.average U (fun x => G x i) - e i
+    change Book.Ch02.average U (fun x => G x i - e i) = Book.Ch02.average U (fun x => G x i) - e i
     unfold Book.Ch02.average
     rw [MeasureTheory.integral_sub hint hconst, MeasureTheory.setIntegral_const,
       MeasureTheory.measureReal_def, smul_eq_mul, mul_sub, ← mul_assoc,
       inv_mul_cancel₀ hvol, one_mul]
   refine Prod.ext ?_ ?_
-  · show Book.Ch02.averageVec U (fun x => (F x).1 - c.1) = _
+  · change Book.Ch02.averageVec U (fun x => (F x).1 - c.1) = _
     rw [haux _ c.1 h1]; rfl
-  · show Book.Ch02.averageVec U (fun x => (F x).2 - c.2) = _
+  · change Book.Ch02.averageVec U (fun x => (F x).2 - c.2) = _
     rw [haux _ c.2 h2]; rfl
 
 /-! ## The metric root -/
@@ -168,19 +168,19 @@ theorem blockVecDot_self_blockDiag_root {m S : Mat d} (hsymm : matTranspose S = 
       metricBlockNormSq m v := by
   have himg : blockMatVecMul (blockDiag S S⁻¹) v = (matVecMul S v.1, matVecMul S⁻¹ v.2) := by
     refine Prod.ext ?_ ?_
-    · show matVecMul S v.1 + matVecMul 0 v.2 = _
+    · change matVecMul S v.1 + matVecMul 0 v.2 = _
       rw [zero_matVecMul, add_zero]
-    · show matVecMul 0 v.1 + matVecMul S⁻¹ v.2 = _
+    · change matVecMul 0 v.1 + matVecMul S⁻¹ v.2 = _
       rw [zero_matVecMul, zero_add]
   have hupper : vecNormSq (matVecMul S v.1) = vecDot v.1 (matVecMul m v.1) := by
     rw [← vecDot_matVecMul_transpose_mul_self S v.1, hsymm, hsq]
   have hinv : matTranspose S⁻¹ * S⁻¹ = m⁻¹ := by
-    show (S⁻¹).transpose * S⁻¹ = m⁻¹
+    change (S⁻¹).transpose * S⁻¹ = m⁻¹
     rw [Matrix.transpose_nonsing_inv, show S.transpose = S from hsymm, ← Matrix.mul_inv_rev, hsq]
   have hlower : vecNormSq (matVecMul S⁻¹ v.2) = vecDot v.2 (matVecMul m⁻¹ v.2) := by
     rw [← vecDot_matVecMul_transpose_mul_self S⁻¹ v.2, hinv]
   rw [himg, metricBlockNormSq_eq]
-  show vecDot (matVecMul S v.1) (matVecMul S v.1) +
+  change vecDot (matVecMul S v.1) (matVecMul S v.1) +
       vecDot (matVecMul S⁻¹ v.2) (matVecMul S⁻¹ v.2) = _
   rw [show vecDot (matVecMul S v.1) (matVecMul S v.1) = vecNormSq (matVecMul S v.1) from rfl,
     show vecDot (matVecMul S⁻¹ v.2) (matVecMul S⁻¹ v.2) = vecNormSq (matVecMul S⁻¹ v.2) from rfl,

@@ -701,7 +701,7 @@ with boundedness of the canonical K partial sums for overlapping-regular
 inputs. -/
 @[expose]
 def CubeKBesovCanonicalOverlappingTheory
-    (d : ℕ) [NeZero d] : Prop :=
+    (d : ℕ) : Prop :=
   CubeKBesovOverlappingEquivalence (cubeKBesovNormModel d) ∧
     CubeKBesovInputBoundednessOfOverlappingHRegularity d
 
@@ -710,12 +710,12 @@ component is finite-level K-partial control by the overlapping-positive partial
 sums, which then implies the boundedness bridge for full K-seminorms. -/
 @[expose]
 def CubeKBesovCanonicalOverlappingTheoryCore
-    (d : ℕ) [NeZero d] : Prop :=
+    (d : ℕ) : Prop :=
   CubeKBesovOverlappingEquivalence (cubeKBesovNormModel d) ∧
     CubeKBesovPartialBoundByOverlappingPositive d
 
 theorem CubeKBesovCanonicalOverlappingTheoryCore.to_canonicalOverlappingTheory
-    {d : ℕ} [NeZero d]
+    {d : ℕ}
     (hcore : CubeKBesovCanonicalOverlappingTheoryCore d) :
     CubeKBesovCanonicalOverlappingTheory d :=
   ⟨hcore.1,
@@ -836,7 +836,7 @@ and one PDE/K-functional regularity input.  This is not the source theorem
 pending the continuum `K`/`H^s` gate. -/
 @[expose]
 def DiscreteConstantCoefficientDirichletBesovKFunctionalRoute
-    (d : ℕ) [NeZero d] : Prop :=
+    (d : ℕ) : Prop :=
   CubeKBesovOverlappingEquivalence (cubeKBesovNormModel d) ∧
     CubeKBesovDirichletRegularity (cubeKBesovNormModel d)
 
@@ -846,7 +846,7 @@ K-functional/overlap machinery.  It is not the source theorem
 `K`/`H^s` gate. -/
 @[expose]
 def DiscreteConstantCoefficientDirichletBesovFunctionSpaces
-    (d : ℕ) [NeZero d] : Prop :=
+    (d : ℕ) : Prop :=
   ∀ {s : ℝ}, 0 < s → s < 1 →
     ∃ C : ℝ, 0 ≤ C ∧
       ∀ (Q : TriadicCube d) (h : Vec d → Vec d)
@@ -863,7 +863,7 @@ compatibility duality route.  It is not the source theorem pending the
 continuum `K`/`H^s` gate. -/
 @[expose]
 def DiscreteConstantCoefficientDirichletBesovFunctionSpacesUniform
-    (d : ℕ) [NeZero d] (C : ℝ) : Prop :=
+    (d : ℕ) (C : ℝ) : Prop :=
   0 ≤ C ∧
     ∀ {s : ℝ}, 0 < s → s < 1 →
       ∀ (Q : TriadicCube d) (h : Vec d → Vec d)
@@ -877,7 +877,7 @@ def DiscreteConstantCoefficientDirichletBesovFunctionSpacesUniform
               C * cubeBesovOverlappingPositiveVectorNormTwo Q s h
 
 theorem DiscreteConstantCoefficientDirichletBesovFunctionSpacesUniform.to_functionSpaces
-    {d : ℕ} [NeZero d] {C : ℝ}
+    {d : ℕ} {C : ℝ}
     (h : DiscreteConstantCoefficientDirichletBesovFunctionSpacesUniform d C) :
     DiscreteConstantCoefficientDirichletBesovFunctionSpaces d := by
   intro s hs_pos hs_lt
@@ -888,7 +888,7 @@ theorem DiscreteConstantCoefficientDirichletBesovFunctionSpacesUniform.to_functi
 /-- Assemble the discrete compatibility Dirichlet Besov statement from the
 discrete K-functional route. -/
 theorem discreteConstantCoefficientDirichletBesovFunctionSpaces_of_discreteKFunctionalRoute
-    {d : ℕ} [NeZero d]
+    {d : ℕ}
     (hroute : DiscreteConstantCoefficientDirichletBesovKFunctionalRoute d) :
     DiscreteConstantCoefficientDirichletBesovFunctionSpaces d := by
   intro s hs_pos hs_lt
@@ -925,7 +925,7 @@ theorem discreteConstantCoefficientDirichletBesovFunctionSpaces_of_discreteKFunc
 statement from the uniform finite-partial K/overlapping comparison.  This is
 not the source theorem pending the continuum `K`/`H^s` gate. -/
 theorem exists_of_partialBoundByOverlappingPositiveUniform
-    {d : ℕ} [NeZero d] {Cpartial : ℝ}
+    {d : ℕ} {Cpartial : ℝ}
     (hpartial : CubeKBesovPartialBoundByOverlappingPositiveUniform d Cpartial)
     (hcomponents : CubeKBesovDirichletRegularityComponents d) :
     ∃ C : ℝ, DiscreteConstantCoefficientDirichletBesovFunctionSpacesUniform d C := by

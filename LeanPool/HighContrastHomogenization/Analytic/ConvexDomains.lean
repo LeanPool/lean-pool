@@ -56,7 +56,7 @@ theorem hasBallSandwich_metricBall {d : ℕ} (c : Vec d) {r : ℝ} (hr : 0 < r) 
     HasBallSandwich (Metric.ball c r) r (r * Real.sqrt d) := by
   refine ⟨hr, by positivity, c, euclideanBallAt_subset_metricBall c hr, ?_⟩
   intro x hx
-  show vecNormSq (x - c) < (r * Real.sqrt d) ^ 2
+  change vecNormSq (x - c) < (r * Real.sqrt d) ^ 2
   have hsq : (r * Real.sqrt d) ^ 2 = (d : ℝ) * r ^ 2 := by
     rw [mul_pow, Real.sq_sqrt (Nat.cast_nonneg d)]
     ring
@@ -70,7 +70,7 @@ theorem hasBallSandwich_metricBall_succ {d : ℕ} (c : Vec d) {r : ℝ} (hr : 0 
     HasBallSandwich (Metric.ball c r) r (r * Real.sqrt ((d : ℝ) + 1)) := by
   refine ⟨hr, by positivity, c, euclideanBallAt_subset_metricBall c hr, ?_⟩
   intro x hx
-  show vecNormSq (x - c) < (r * Real.sqrt ((d : ℝ) + 1)) ^ 2
+  change vecNormSq (x - c) < (r * Real.sqrt ((d : ℝ) + 1)) ^ 2
   have hnn : (0 : ℝ) ≤ (d : ℝ) + 1 := by positivity
   have hsq : (r * Real.sqrt ((d : ℝ) + 1)) ^ 2 = ((d : ℝ) + 1) * r ^ 2 := by
     rw [mul_pow, Real.sq_sqrt hnn]
@@ -90,7 +90,7 @@ theorem convex_euclideanBallAt (c : Vec d) (r : ℝ) : Convex ℝ (euclideanBall
     funext i
     simp only [Pi.sub_apply, Pi.add_apply, Pi.smul_apply, smul_eq_mul]
     linear_combination (c i) * hab
-  show vecNormSq (a • x + b • y - c) < r ^ 2
+  change vecNormSq (a • x + b • y - c) < r ^ 2
   rw [hcomb]
   have hexp : vecNormSq (a • (x - c) + b • (y - c))
       = a ^ 2 * vecNormSq (x - c) + 2 * (a * b * vecDot (x - c) (y - c))
@@ -155,7 +155,7 @@ theorem matImage_eq_preimage {M : Mat d} (hM : IsUnit M.det) (U : Set (Vec d)) :
   ext y
   constructor
   · rintro ⟨x, hx, rfl⟩
-    show matVecMul M⁻¹ (matVecMul M x) ∈ U
+    change matVecMul M⁻¹ (matVecMul M x) ∈ U
     rwa [matVecMul_mul, Matrix.nonsing_inv_mul M hM, matVecMul_one]
   · intro hy
     refine ⟨matVecMul M⁻¹ y, hy, ?_⟩
@@ -275,7 +275,7 @@ radius does not exceed the outer one in positive dimension. -/
 theorem euclideanBallAt_abs (c : Vec d) (r : ℝ) :
     euclideanBallAt c |r| = euclideanBallAt c r := by
   ext x
-  show vecNormSq (x - c) < |r| ^ 2 ↔ vecNormSq (x - c) < r ^ 2
+  change vecNormSq (x - c) < |r| ^ 2 ↔ vecNormSq (x - c) < r ^ 2
   rw [sq_abs]
 
 /-- The radii of a sandwich are their own absolute values. -/
@@ -301,7 +301,7 @@ theorem HasBallSandwich.le_abs_of_pos_dim {d : ℕ} {U : Set (Vec d)} {ρ Rad : 
   have hnorm : vecNormSq (z - c) = t ^ 2 := by
     rw [hzc, vecNormSq_smul, vecNormSq_basisVec, mul_one]
   have hmemin : z ∈ euclideanBallAt c ρ := by
-    show vecNormSq (z - c) < ρ ^ 2
+    change vecNormSq (z - c) < ρ ^ 2
     rw [hnorm]
     calc t ^ 2 = t * t := pow_two t
       _ < ρ * ρ := mul_self_lt_mul_self ht0.le htρ

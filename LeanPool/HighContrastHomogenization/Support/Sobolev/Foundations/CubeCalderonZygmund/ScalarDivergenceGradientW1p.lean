@@ -39,6 +39,7 @@ noncomputable section
 
 namespace CubeCalderonZygmund
 
+/-- The weak divergence of a cube vector `W^{1,q}` function, defined as its Jacobian trace. -/
 @[expose]
 public def vectorW1pDivergence {d : ℕ} {Q : TriadicCube d}
     {q : FiniteLpExponent} (G : CubeVectorW1pFunction Q q) : Vec d → ℝ :=

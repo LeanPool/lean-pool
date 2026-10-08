@@ -147,7 +147,7 @@ theorem volume_adaptedUncoveredPart_diff_interior {q : Mat d}
 
 /-- The packed family and the actual maximal old cells exhaust an open parent.
 The uncovered set itself need not be open. This includes the empty packed family. -/
-theorem volume_diff_adaptedCoveredPart_union_maximalCells [NeZero d]
+theorem volume_diff_adaptedCoveredPart_union_maximalCells
     {q q' : Mat d} (hq : IsUnit q) (hq' : IsUnit q')
     {W : Set (Vec d)} (hW : IsOpen W) (n : ℤ) :
     volume (W \ (adaptedCoveredPart W q' n ∪

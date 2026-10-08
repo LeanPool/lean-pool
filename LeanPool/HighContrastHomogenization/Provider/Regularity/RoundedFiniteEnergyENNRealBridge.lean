@@ -66,7 +66,7 @@ noncomputable section
 /-- The weighted norm on an inner centered cube is exactly the `ENNReal`
 realization of the finite centered energy row. -/
 theorem weightedGradNorm_eq_ofReal_finiteCenteredCubeSolutionEnergy
-    {d : ℕ} [NeZero d] (a : Book.Ch03.CoeffFamily d)
+    {d : ℕ} (a : Book.Ch03.CoeffFamily d)
     (m : ℤ) (u : Book.Ch03.CubeSolution (originCube d m) a)
     (h : ℤ) (hhm : h ≤ m) :
     weightedGradNorm (a.coeffOn (originCube d h)).toCoeffField

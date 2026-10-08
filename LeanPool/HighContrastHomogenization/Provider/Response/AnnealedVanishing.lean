@@ -55,7 +55,7 @@ theorem descendantsAverage_const (Q : TriadicCube d) (j : ℕ) (c : ℝ) :
   have hcardR : ((descendantsAtDepth Q j).card : ℝ) ≠ 0 := by
     positivity
   unfold descendantsAverage
-  show ((descendantsAtDepth Q j).card : ℝ)⁻¹ *
+  change ((descendantsAtDepth Q j).card : ℝ)⁻¹ *
       (descendantsAtDepth Q j).sum (fun _ => c) = c
   rw [Finset.sum_const, nsmul_eq_mul]
   field_simp

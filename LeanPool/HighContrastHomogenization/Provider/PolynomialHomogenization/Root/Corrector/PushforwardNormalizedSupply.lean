@@ -74,7 +74,7 @@ variable {d : ℕ}
 a larger reference scale divides the amplitude by a positive power, and the
 geometric sum of the rebased tail is below any `eps > 0` once the base is far
 enough out. -/
-theorem exists_goodTail_of_powerTail [NeZero d]
+theorem exists_goodTail_of_powerTail
     {aFin : Book.Ch02.TriadicCoeffFamily d} {s A kappa x eps : ℝ}
     (h : ScalarIdentityPowerTail aFin s A kappa x)
     (hA : 0 ≤ A) (hkappa : 0 < kappa) (hx : 1 ≤ x) (heps : 0 < eps) :
@@ -124,7 +124,7 @@ window `rho < 2 * s`.  It is not a global constant, so the provider may choose
 it after the contrast exponent `g` — and nothing downstream of the supply ever
 sees it. -/
 @[expose]
-def RootBlockRowSupply (d : ℕ) [NeZero d]
+def RootBlockRowSupply (d : ℕ)
     (GoodScale : Mat d → CoeffSpace d → ℝ → Prop) : Prop :=
   ∀ (abar : Mat d), (symmPart abar).PosDef →
     ∀ (a : CoeffSpace d) (x : ℝ), GoodScale abar a x →

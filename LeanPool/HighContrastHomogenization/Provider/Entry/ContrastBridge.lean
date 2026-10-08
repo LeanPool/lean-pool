@@ -138,7 +138,7 @@ theorem blockContrast_le_blockImbalance {F : BlockMat d}
 `e.coarse.ellipticity`.  Integrability of the coarse response of a centered
 cube and positivity of its expectation are consequences of the assumption at
 every generation, and the annealed primal-adjoint order applies on the cube. -/
-theorem blockSharp_annealedBlock_centeredCube_le [NeZero d]
+theorem blockSharp_annealedBlock_centeredCube_le
     {P : Measure (CoeffSpace d)} [IsProbabilityMeasure P] {g : ℝ} {E : BlockMat d}
     {Ψ : ℝ → ℝ} {K : ℝ} {S : CoeffSpace d → ℝ}
     (hdag : HCPoly.Frozen.CoarseEllipticityDagger P g E Ψ K S) (m : ℤ) :

@@ -38,7 +38,7 @@ noncomputable section
 at the order selected after `g`. -/
 @[expose]
 def PrintOrderIdentityCubeDualRegularityWithConstant
-    (d : ℕ) [NeZero d] (g Cid : ℝ) : Prop :=
+    (d : ℕ) (g Cid : ℝ) : Prop :=
   0 ≤ Cid ∧
     ∀ (Q : TriadicCube d) {w F : Vec d → Vec d},
       MemVectorL2 (cubeSet Q) F →
@@ -80,7 +80,7 @@ theorem identityActionSmallness_of_opNorm_defect
 The first coefficient also carries an upper bound for the action of `A`; the
 second coefficient is the absorbed identity constant. -/
 theorem printOrder_dual_bounds_of_identity_of_action_absorption
-    {d : ℕ} [NeZero d] {g Cid B : ℝ}
+    {d : ℕ} {g Cid B : ℝ}
     (hg : g ∈ Ico (0 : ℝ) 1)
     (hidentity : PrintOrderIdentityCubeDualRegularityWithConstant d g Cid)
     {A : Mat d} (hAaction : dualBesovMatrixActionSize A ≤ B)

@@ -166,7 +166,7 @@ theorem finiteAffineSuccessorDifferenceInner_energy_eq_coreEnergy
   exact congrArg Real.sqrt henergy
 
 private theorem ScalarIdentityGoodTailOnInterval.weakError_pair_le_one
-    {d : ℕ} [NeZero d] {a : Book.Ch02.TriadicCoeffFamily d}
+    {d : ℕ} {a : Book.Ch02.TriadicCoeffFamily d}
     {s : ℝ} {m : ℤ}
     (h : ScalarIdentityGoodTailOnInterval a s 1 m (m + 1)) :
     scalarIdentityWeakError a s m ≤ 1 ∧

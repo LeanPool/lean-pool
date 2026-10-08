@@ -37,8 +37,8 @@ namespace HasWeakHessianOn
 variable {d : ℕ} {Q : TriadicCube d} {u : H1Function (openCubeSet Q)}
 
 private theorem toReal_eLpNorm_two_sq_eq_integral_norm_sq
-    {α E : Type*} [MeasurableSpace α] [NormedAddCommGroup E] [MeasurableSpace E]
-    [BorelSpace E] {μ : MeasureTheory.Measure α} {f : α → E}
+    {α E : Type*} [MeasurableSpace α] [NormedAddCommGroup E]
+    {μ : MeasureTheory.Measure α} {f : α → E}
     (hf : MeasureTheory.MemLp f 2 μ) :
     (ENNReal.toReal (MeasureTheory.eLpNorm f 2 μ)) ^ 2 =
       ∫ x, ‖f x‖ ^ 2 ∂μ := by

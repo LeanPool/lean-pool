@@ -93,7 +93,7 @@ private theorem quad_conj_ar (D M : Mat d) (x : Vec d) :
 
 private theorem vecNormSq_single_ar (j : Fin d) :
     vecNormSq (Pi.single j (1 : ℝ)) = 1 := by
-  show vecDot (Pi.single j (1 : ℝ)) (Pi.single j (1 : ℝ)) = 1
+  change vecDot (Pi.single j (1 : ℝ)) (Pi.single j (1 : ℝ)) = 1
   simp [vecDot, Pi.single_apply, mul_ite, Finset.sum_ite_eq']
 
 /-- In a nonempty dimension there is a unit vector.  (For `d = 0` every
@@ -167,7 +167,7 @@ theorem blockPosDef_diagBlock {c : ℝ} (hc : 0 < c) :
   rintro ⟨p, q⟩ hX
   have hquad : blockVecDot (p, q) (blockMatVecMul (diagBlock d c) (p, q)) =
       c * vecNormSq p + c * vecNormSq q := by
-    show vecDot p (matVecMul (c • (1 : Mat d)) p + matVecMul (0 : Mat d) q) +
+    change vecDot p (matVecMul (c • (1 : Mat d)) p + matVecMul (0 : Mat d) q) +
         vecDot q (matVecMul (0 : Mat d) p + matVecMul (c • (1 : Mat d)) q) = _
     rw [zero_matVecMul_ar, zero_matVecMul_ar, add_zero, zero_add,
       quad_smul_one_ar, quad_smul_one_ar]
@@ -220,7 +220,7 @@ theorem bigLambdaRef_diagBlock {c : ℝ} (hc : 0 ≤ c) (hd : 0 < d) :
 theorem lambdaRef_diagBlock {c : ℝ} (hc : 0 ≤ c) (hd : 0 < d) :
     lambdaRef (diagBlock d c) = c⁻¹ := by
   rw [lambdaRef]
-  show (specBound (c • (1 : Mat d)))⁻¹ = c⁻¹
+  change (specBound (c • (1 : Mat d)))⁻¹ = c⁻¹
   rw [specBound_smul_one_ar hc hd]
 
 /-- **The aspect ratio of the diagonal block is `c²`.** -/

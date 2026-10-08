@@ -86,7 +86,7 @@ API with the exact middle-child identities.
   unfold overlapCubeLpNorm cubeLpNorm
   simp
 
-@[simp] theorem overlapCubeLpNorm_middleChildCube_fluctuation {d : ℕ}
+theorem overlapCubeLpNorm_middleChildCube_fluctuation {d : ℕ}
     (Q : TriadicCube d) (u : Vec d → Vec d) :
     overlapCubeLpNorm (middleChildCube Q) (2 : ℝ≥0∞)
         (overlapCubeFluctuationVec (middleChildCube Q) u) =

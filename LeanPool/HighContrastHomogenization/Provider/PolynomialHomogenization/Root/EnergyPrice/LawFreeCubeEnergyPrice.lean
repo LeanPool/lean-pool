@@ -78,7 +78,7 @@ theorem rpow_half_nonneg (x : ℝ) : 0 ≤ Real.rpow x (1 / (2 : ℝ)) := by
 
 /-- The multiscale homogenization error at the endpoint spatial exponent and
 the finite `q = 2` scale exponent is nonnegative. -/
-theorem homogenizationErrorOnCube_infinity_two_nonneg [NeZero d]
+theorem homogenizationErrorOnCube_infinity_two_nonneg
     (Q : TriadicCube d) (s : ℝ) (a : Book.Ch02.TriadicCoeffFamily d)
     (a0 : Mat d) :
     0 ≤ Book.Ch02.HomogenizationErrorOnCube Q s .infinity (.finite 2) a a0 := by

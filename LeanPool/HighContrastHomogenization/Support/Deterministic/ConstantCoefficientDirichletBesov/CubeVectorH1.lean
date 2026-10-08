@@ -45,6 +45,7 @@ abbrev CubeKBesovNormModel (d : ℕ) : Type :=
 /-- Coordinatewise `H¹` vector-field competitors on a cube for the
 K-functional. -/
 structure CubeVectorH1Function {d : ℕ} (Q : TriadicCube d) where
+  /-- Scalar Sobolev witnesses for the coordinates of the vector-field K-functional competitor. -/
   coord : Fin d → H1Function (openCubeSet Q)
 
 namespace CubeVectorH1Function
@@ -420,6 +421,8 @@ derivative, and bounded-overlap facts.  The explicit normalized cutoff
 construction will provide a value of this structure. -/
 structure SmoothOverlapPartition {d : ℕ}
     (Q : TriadicCube d) (j : ℕ) where
+  /-- Smooth scalar weights subordinate to the retained overlap cubes, summing to one on the open
+  parent cube. -/
   weight : TriadicCube d → Vec d → ℝ
   contDiff_weight : ∀ S : TriadicCube d, ContDiff ℝ 1 (weight S)
   nonneg :
@@ -443,6 +446,7 @@ structure SmoothOverlapPartition {d : ℕ}
     ∀ {S : TriadicCube d} {x : Vec d} (i : Fin d),
       S ∈ overlapCentersAtDepth Q j → x ∈ openCubeSet Q →
         x ∉ overlapCubeSet S → euclideanCoordDeriv i (weight S) x = 0
+  /-- The nonnegative factor bounding each weight derivative after division by the depth scale. -/
   coordDerivConstant : ℝ
   coordDerivConstant_nonneg : 0 ≤ coordDerivConstant
   coordDeriv_bound :
@@ -450,12 +454,15 @@ structure SmoothOverlapPartition {d : ℕ}
       S ∈ overlapCentersAtDepth Q j → x ∈ openCubeSet Q →
         |euclideanCoordDeriv i (weight S) x| ≤
           coordDerivConstant / (cubeScaleFactor Q / (3 : ℝ) ^ j)
+  /-- A uniform bound on the number of nonzero partition weights at a point of the open cube. -/
   activeCardBound : ℕ
   active_card_bound :
     ∀ {x : Vec d}, x ∈ openCubeSet Q →
       ((overlapCentersAtDepth Q j).filter
         (fun S => weight S x ≠ 0)).card ≤ activeCardBound
 
+/-- The overlap partition built from normalized smooth cutoffs, with explicit derivative and active-
+weight bounds. -/
 @[expose]
 noncomputable def concreteSmoothOverlapPartition {d : ℕ}
     (Q : TriadicCube d) (j : ℕ) : SmoothOverlapPartition Q j where

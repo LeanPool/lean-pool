@@ -141,7 +141,7 @@ private theorem closedNormBall_subset_abs_succ (d : ℕ) (R : ℝ) :
   exact le_trans hy' hsq
 
 /-- The closed pullback ball has finite volume at **every** real radius. -/
-theorem volume_closedNormBall_ne_top' [NeZero d] (R : ℝ) :
+theorem volume_closedNormBall_ne_top' (R : ℝ) :
     volume (closedNormBall d R) ≠ ⊤ := by
   have hpos : (0 : ℝ) < |R| + 1 := by linarith only [abs_nonneg R]
   exact ne_top_of_le_ne_top (volume_closedNormBall_ne_top hpos)
@@ -191,7 +191,7 @@ theorem memVectorL2_pullbackGrad_closedNormBall [NeZero d]
 
 /-- An affine slope plus the global gradient representative of a normalized
 local `H¹` carrier is square-integrable on the closed pullback ball. -/
-theorem memVectorL2_affineCorrector_closedNormBall [NeZero d]
+theorem memVectorL2_affineCorrector_closedNormBall
     (z : NormalizedLocalH1Carrier d) (e : Vec d) (R : ℝ) :
     MemVectorL2 (closedNormBall d R)
       fun y ↦ e + z.globalGradientRepresentative y := by

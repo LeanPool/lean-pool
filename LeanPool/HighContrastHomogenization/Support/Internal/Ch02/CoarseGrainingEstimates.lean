@@ -106,7 +106,7 @@ private theorem average_fluxSubGradient_eq_sub_averages
   exact volumeAverage_sub (hInt.flux p w) (hInt.grad q w)
 
 private theorem averageFlux_energy_le_variationEnergy_of_canonicalCoarseData
-    {d : ℕ} [NeZero d] (U : Domain d) (a : CoeffOn U)
+    {d : ℕ} (U : Domain d) (a : CoeffOn U)
     (hEll : IsEllipticFieldOn a.lam a.Lam (U : Set (Vec d)) a.toCoeffField)
     (hS : IsSigmaStarCoarse (U : Set (Vec d)) a.toCoeffField
       (HCPolySupport.sigmaStarCoarse (U : Set (Vec d)) a.toCoeffField))

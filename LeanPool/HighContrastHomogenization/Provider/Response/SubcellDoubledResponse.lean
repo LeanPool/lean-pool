@@ -36,7 +36,7 @@ variable {d : ℕ}
 
 /-- The parent optimizer state minus the child optimizer state belongs to the
 doubled response space on the child cell. -/
-theorem isDoubledResponseField_diagonalWeakState_sub_childState [NeZero d]
+theorem isDoubledResponseField_diagonalWeakState_sub_childState
     {q : Mat d} (hq : q.PosDef) {k t : ℤ} (hkt : k ≤ t)
     {w : Fin d → ℤ} (hw : w ∈ alignedIndex q k t)
     (a : CoeffSpace d) (p r : Vec d) :

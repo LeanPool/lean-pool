@@ -92,7 +92,7 @@ theorem IsLocalVecTest.translate {V : Set (Vec d)} {psi : Vec d → Vec d}
   refine ⟨?_, ?_, ?_⟩
   · simpa [sub_eq_add_neg, Function.comp_def] using
       h.contDiff.comp (contDiff_id.sub contDiff_const)
-  · show HasCompactSupport (psi ∘ Homeomorph.subRight z)
+  · change HasCompactSupport (psi ∘ Homeomorph.subRight z)
     simpa [Function.comp_def] using
       h.hasCompactSupport.comp_homeomorph (Homeomorph.subRight z)
   · intro x hx

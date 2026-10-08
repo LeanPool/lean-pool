@@ -51,7 +51,7 @@ def frameFoldConstant (d : ℕ) (g kappaRate J : ℝ) : ℝ :=
 frame exponent is the eccentricity fold factor raised to the rate; the
 remaining constant is built from the dimension, the orders and the bracket of
 the outer sandwich radius. -/
-theorem rpow_three_frameExponent_le_fold [NeZero d]
+theorem rpow_three_frameExponent_le_fold
     {abar : Mat d} {g kappaRate : ℝ} {G L J : ℕ} {M : ℤ}
     (hkappa : 0 < kappaRate)
     (hrho : 0 ≤ Certificate.printRowOrder g)

@@ -100,7 +100,7 @@ theorem lintegral_finset_sup_le_sum_of_lintegral_le
     (μ : MeasureTheory.Measure Ω) (s : Finset ι)
     (X : ι → Ω → ENNReal) (B : ι → ENNReal)
     (hX : ∀ i ∈ s, AEMeasurable (X i) μ)
-    (hB : ∀ i ∈ s, ∫⁻ ω, X i ω ∂ μ ≤ B i) :
+    (hB : ∀ i ∈ s, ∫⁻ ω, X i ω ∂μ ≤ B i) :
     ∫⁻ ω, s.sup (fun i => X i ω) ∂ μ ≤ ∑ i ∈ s, B i := by
   calc
     ∫⁻ ω, s.sup (fun i => X i ω) ∂ μ
@@ -124,7 +124,7 @@ theorem lintegral_finset_sup_weighted_rpow_le_sum
     (w : ι → ENNReal) (X : ι → Ω → ENNReal) (B : ι → ENNReal) {q : ℝ}
     (hq_nonneg : 0 ≤ q)
     (hX : ∀ i ∈ s, AEMeasurable (fun ω => X i ω ^ q) μ)
-    (hB : ∀ i ∈ s, ∫⁻ ω, X i ω ^ q ∂ μ ≤ B i) :
+    (hB : ∀ i ∈ s, ∫⁻ ω, X i ω ^ q ∂μ ≤ B i) :
     ∫⁻ ω, s.sup (fun i => (w i * X i ω) ^ q) ∂ μ ≤
       ∑ i ∈ s, w i ^ q * B i := by
   refine lintegral_finset_sup_le_sum_of_lintegral_le μ s
@@ -136,7 +136,7 @@ theorem lintegral_finset_sup_weighted_rpow_le_sum
           fun ω => w i ^ q * (X i ω ^ q) := by
       funext ω
       rw [ENNReal.mul_rpow_of_nonneg _ _ hq_nonneg]
-    show AEMeasurable (fun ω => (w i * X i ω) ^ q) μ
+    change AEMeasurable (fun ω => (w i * X i ω) ^ q) μ
     rw [hfun]
     exact (hX i hi).const_mul (w i ^ q)
   · intro i hi
@@ -164,7 +164,7 @@ theorem lintegral_sup_descendantsAtDepth_weighted_rpow_le_three_pow_mul
     (hX : ∀ R ∈ HCPolySupport.descendantsAtDepth Q n,
       AEMeasurable (fun ω => X R ω ^ q) μ)
     (hB : ∀ R ∈ HCPolySupport.descendantsAtDepth Q n,
-      ∫⁻ ω, X R ω ^ q ∂ μ ≤ B)
+      ∫⁻ ω, X R ω ^ q ∂μ ≤ B)
     (hwB : ∀ R ∈ HCPolySupport.descendantsAtDepth Q n, w R ^ q * B ≤ W) :
     ∫⁻ ω, (HCPolySupport.descendantsAtDepth Q n).sup
         (fun R => (w R * X R ω) ^ q) ∂ μ ≤
@@ -197,7 +197,7 @@ theorem lintegral_sup_descendantsAtDepth_weighted_rpow_le_card_mul_of_bounds
     (hX : ∀ R ∈ HCPolySupport.descendantsAtDepth Q n,
       AEMeasurable (fun ω => X R ω ^ q) μ)
     (hB : ∀ R ∈ HCPolySupport.descendantsAtDepth Q n,
-      ∫⁻ ω, X R ω ^ q ∂ μ ≤ B)
+      ∫⁻ ω, X R ω ^ q ∂μ ≤ B)
     (hw : ∀ R ∈ HCPolySupport.descendantsAtDepth Q n, w R ^ q ≤ V) :
     ∫⁻ ω, (HCPolySupport.descendantsAtDepth Q n).sup
         (fun R => (w R * X R ω) ^ q) ∂ μ ≤
@@ -221,7 +221,7 @@ theorem lintegral_sup_descendantsAtDepth_weighted_highCenteredMoment_le
     (hX : ∀ R ∈ HCPolySupport.descendantsAtDepth Q n,
       AEMeasurable (fun ω => X R ω ^ hm.Q) μ)
     (hB : ∀ R ∈ HCPolySupport.descendantsAtDepth Q n,
-      ∫⁻ ω, X R ω ^ hm.Q ∂ μ ≤ B)
+      ∫⁻ ω, X R ω ^ hm.Q ∂μ ≤ B)
     (hw : ∀ R ∈ HCPolySupport.descendantsAtDepth Q n, w R ^ hm.Q ≤ V) :
     ∫⁻ ω, (HCPolySupport.descendantsAtDepth Q n).sup
         (fun R => (w R * X R ω) ^ hm.Q) ∂ μ ≤
@@ -246,7 +246,7 @@ theorem lintegral_sup_Icc_descendantsAtDepth_weighted_highCenteredMoment_le_sum
         AEMeasurable (fun ω => X j R ω ^ hm.Q) μ)
     (hB : ∀ j ∈ Finset.Icc N m,
       ∀ R ∈ HCPolySupport.descendantsAtDepth Q (m - j),
-        ∫⁻ ω, X j R ω ^ hm.Q ∂ μ ≤ B j)
+        ∫⁻ ω, X j R ω ^ hm.Q ∂μ ≤ B j)
     (hw : ∀ j ∈ Finset.Icc N m,
       ∀ R ∈ HCPolySupport.descendantsAtDepth Q (m - j),
         (w j R) ^ hm.Q ≤ V j) :
@@ -271,7 +271,7 @@ theorem lintegral_sup_Icc_descendantsAtDepth_weighted_highCenteredMoment_le_sum
           fun ω => (w j R) ^ hm.Q * (X j R ω ^ hm.Q) := by
       funext ω
       rw [ENNReal.mul_rpow_of_nonneg _ _ hq_nonneg]
-    show AEMeasurable (fun ω => (w j R * X j R ω) ^ hm.Q) μ
+    change AEMeasurable (fun ω => (w j R * X j R ω) ^ hm.Q) μ
     rw [hfun]
     exact (hX j hj R hR).const_mul ((w j R) ^ hm.Q)
   · intro j hj
@@ -386,7 +386,7 @@ theorem lintegral_sup_Icc_descendants_weighted_highCenteredMoment_le_convolution
           (fun R => (w j R * X j R ω) ^ hm.Q)) ∂ μ ≤
       terminalCost ^ hm.Q *
         ENNReal.ofReal
-          (hm.C_Q * (((m - N + 1 : ℕ) : ℝ) *
+          (hm.momentCoefficient * (((m - N + 1 : ℕ) : ℝ) *
             (3 : ℝ) ^
               (-(min (hm.Q * hc.rhoM - (d : ℝ)) (hm.Q * hm.gamma)) *
                 ((m - N : ℕ) : ℝ)))) := by
@@ -431,7 +431,7 @@ theorem lintegral_sup_Icc_descendants_terminalBlockDeviation_le_convolution
       ENNReal.ofReal
           (HCPolySupport.Book.Ch05.widetildeThetaAtScale P (0 : ℤ) hP4) ^ hm.Q *
         ENNReal.ofReal
-          (hm.C_Q * (((m - N + 1 : ℕ) : ℝ) *
+          (hm.momentCoefficient * (((m - N + 1 : ℕ) : ℝ) *
             (3 : ℝ) ^
               (-(min (hm.Q * hc.rhoM - (d : ℝ)) (hm.Q * hm.gamma)) *
                 ((m - N : ℕ) : ℝ)))) := by
@@ -518,7 +518,7 @@ theorem lintegral_sup_Icc_descendants_terminalBlockDeviation_le_convolution
           MeasureTheory.lintegral_mono hpoint
     _ ≤ T ^ hm.Q *
         ENNReal.ofReal
-          (hm.C_Q * (((m - N + 1 : ℕ) : ℝ) *
+          (hm.momentCoefficient * (((m - N + 1 : ℕ) : ℝ) *
             (3 : ℝ) ^
               (-(min (hm.Q * hc.rhoM - (d : ℝ)) (hm.Q * hm.gamma)) *
                 ((m - N : ℕ) : ℝ)))) := hconv
@@ -526,7 +526,7 @@ theorem lintegral_sup_Icc_descendants_terminalBlockDeviation_le_convolution
       ENNReal.ofReal
           (HCPolySupport.Book.Ch05.widetildeThetaAtScale P (0 : ℤ) hP4) ^ hm.Q *
         ENNReal.ofReal
-          (hm.C_Q * (((m - N + 1 : ℕ) : ℝ) *
+          (hm.momentCoefficient * (((m - N + 1 : ℕ) : ℝ) *
             (3 : ℝ) ^
               (-(min (hm.Q * hc.rhoM - (d : ℝ)) (hm.Q * hm.gamma)) *
                 ((m - N : ℕ) : ℝ)))) := by
@@ -565,7 +565,7 @@ theorem integral_sup_terminalDeviation_le_highMomentConvolution
       ENNReal.ofReal
           (HCPolySupport.Book.Ch05.widetildeThetaAtScale P (0 : ℤ) hP4) ^ hm.Q *
         ENNReal.ofReal
-          (hm.C_Q * (((m - N + 1 : ℕ) : ℝ) *
+          (hm.momentCoefficient * (((m - N + 1 : ℕ) : ℝ) *
             (3 : ℝ) ^
               (-(min (hm.Q * hc.rhoM - (d : ℝ)) (hm.Q * hm.gamma)) *
                 ((m - N : ℕ) : ℝ)))) := by
@@ -606,13 +606,13 @@ theorem lintegral_sup_Icc_descendants_terminalBlockDeviation_le_polynomial_convo
       ENNReal.ofReal
         (((2 +
           HCPolySupport.Book.Ch05.widetildeThetaAtScale P (0 : ℤ) hP4) ^ hm.Q) *
-          (hm.C_Q * (((m - N + 1 : ℕ) : ℝ) *
+          (hm.momentCoefficient * (((m - N + 1 : ℕ) : ℝ) *
             (3 : ℝ) ^
               (-(min (hm.Q * hc.rhoM - (d : ℝ)) (hm.Q * hm.gamma)) *
                 ((m - N : ℕ) : ℝ))))) := by
   let Treal := HCPolySupport.Book.Ch05.widetildeThetaAtScale P (0 : ℤ) hP4
   let envelope : ℝ :=
-    hm.C_Q * (((m - N + 1 : ℕ) : ℝ) *
+    hm.momentCoefficient * (((m - N + 1 : ℕ) : ℝ) *
       (3 : ℝ) ^
         (-(min (hm.Q * hc.rhoM - (d : ℝ)) (hm.Q * hm.gamma)) *
           ((m - N : ℕ) : ℝ)))
@@ -654,7 +654,7 @@ theorem lintegral_sup_Icc_descendants_terminalBlockDeviation_le_polynomial_convo
       ENNReal.ofReal
         (((2 +
           HCPolySupport.Book.Ch05.widetildeThetaAtScale P (0 : ℤ) hP4) ^ hm.Q) *
-          (hm.C_Q * (((m - N + 1 : ℕ) : ℝ) *
+          (hm.momentCoefficient * (((m - N + 1 : ℕ) : ℝ) *
             (3 : ℝ) ^
               (-(min (hm.Q * hc.rhoM - (d : ℝ)) (hm.Q * hm.gamma)) *
                 ((m - N : ℕ) : ℝ))))) := by

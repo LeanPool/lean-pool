@@ -38,9 +38,11 @@ compatibility data remain a.e.-based on open cube domains.
 
 noncomputable section
 
+/-- Cube-indexed coefficient data with a.e. ellipticity and compatibility, as used in Chapter 3. -/
 abbrev CoeffFamily (d : ℕ) :=
   Ch02.TriadicCoeffFamily d
 
+/-- A Chapter 2 solution on the cube domain for the coefficient selected by the family. -/
 abbrev CubeSolution {d : ℕ} (Q : TriadicCube d) (a : CoeffFamily d) :=
   Ch02.Solution (Ch02.cubeDomain Q) (a.coeffOn Q)
 
@@ -166,7 +168,11 @@ theorem openCubeAtScale_eq_pi_Ioo {d : ℕ} (center : Vec d) (m : ℤ) :
 theorem openCubeAtScale_zero_eq_openCubeSet_originCube {d : ℕ} (m : ℤ) :
     openCubeAtScale (0 : Vec d) m = openCubeSet (originCube d m) := by
   rw [openCubeAtScale_eq_pi_Ioo, openCubeSet_eq_pi_Ioo]
-  simp [originCube, cubeScaleFactor]
+  suffices
+      Set.pi Set.univ (fun _ : Fin d => Set.Ioo (-(3 : ℝ) ^ m / 2) ((3 : ℝ) ^ m / 2)) =
+        Set.pi Set.univ (fun _ : Fin d =>
+          Set.Ioo (-(1 / 2 : ℝ) * (3 : ℝ) ^ m) ((1 / 2 : ℝ) * (3 : ℝ) ^ m)) by
+    simpa [originCube, cubeScaleFactor, neg_div] using this
   congr
   funext i
   congr <;> ring_nf

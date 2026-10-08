@@ -292,7 +292,6 @@ theorem stronglyMeasurable_of_tendsto_galerkinAffineMinimizer
 measurable, using the finite-dimensional strong-measurability theorem and
 therefore avoiding any second-countability assumption on the Hilbert target. -/
 theorem stronglyMeasurable_of_tendsto_galerkinAffineMinimizer_of_scalar_probes
-    [MeasurableSpace V]
     {B : Ω → V →L[ℝ] V →L[ℝ] ℝ} {x : Ω → V}
     {e : (m : ℕ) → Fin m → V} {u : Ω → V}
     (hx : StronglyMeasurable x)
@@ -340,7 +339,7 @@ Galerkin minimizers satisfy the deterministic energy-comparison convergence
 hypotheses.  This is the generic "finite Galerkin convergence implies
 measurable maximizer/minimizer" bridge. -/
 theorem stronglyMeasurable_of_galerkin_energy_approximants
-    [MeasurableSpace V] (K : ClosedSubmodule ℝ V)
+    (K : ClosedSubmodule ℝ V)
     {B : Ω → V →L[ℝ] V →L[ℝ] ℝ} {hB : ∀ ω, IsCoercive (B ω)}
     (h_symm : ∀ ω, ∀ u v : V, B ω u v = B ω v u)
     {x : Ω → V} {e : (m : ℕ) → Fin m → V} {v : Ω → ℕ → V}
@@ -379,7 +378,7 @@ theorem stronglyMeasurable_of_galerkin_energy_approximants
 /-- A.e.-strong measurability version of
 `stronglyMeasurable_of_galerkin_energy_approximants`. -/
 theorem aestronglyMeasurable_of_galerkin_energy_approximants
-    [MeasurableSpace V] {μ : Measure Ω} (K : ClosedSubmodule ℝ V)
+    {μ : Measure Ω} (K : ClosedSubmodule ℝ V)
     {B : Ω → V →L[ℝ] V →L[ℝ] ℝ} {hB : ∀ ω, IsCoercive (B ω)}
     (h_symm : ∀ ω, ∀ u v : V, B ω u v = B ω v u)
     {x : Ω → V} {e : (m : ℕ) → Fin m → V} {v : Ω → ℕ → V}

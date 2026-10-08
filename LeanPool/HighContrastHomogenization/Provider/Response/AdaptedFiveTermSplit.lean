@@ -73,7 +73,7 @@ private theorem integrableOn_cutoff_mul_diagonalWeakState_readout [NeZero d]
       · exact adaptedPreYoungCutoff_le_two hq t x
       · exact adaptedPreYoungCutoff_nonneg hq t x
   simpa only [mul_comm] using! hbase.bdd_mul hmeas hbdd
-private theorem annealed_cutoff_readout_split [NeZero d]
+private theorem annealed_cutoff_readout_split
     {P : Measure (CoeffSpace d)} {q : Mat d} (hq : q.PosDef)
     {s t : ℤ} (hst : s ≤ t) (X : CoeffSpace d → Vec d → BlockVec d)
     (Y : (Fin d → ℤ) → CoeffSpace d → Vec d → BlockVec d)
@@ -179,7 +179,7 @@ private theorem annealed_cutoff_readout_split [NeZero d]
   · intro w hw
     exact ((hparent w (by simpa only [Z] using hw)).const_mul _).add
       (hosc w (by simpa only [Z] using hw))
-private theorem vecDot_annealed_cutoff_split [NeZero d]
+private theorem vecDot_annealed_cutoff_split
     {P : Measure (CoeffSpace d)} {q : Mat d} (hq : q.PosDef) {s t : ℤ}
     (hst : s ≤ t) (X : CoeffSpace d → Vec d → BlockVec d)
     (Y : (Fin d → ℤ) → CoeffSpace d → Vec d → BlockVec d)
@@ -214,7 +214,7 @@ private theorem vecDot_annealed_cutoff_split [NeZero d]
     (fun w hw ↦ hparent w hw i) (fun w hw ↦ hosc w hw i) (hzero i)
   simp_rw [hi, mul_add]
   rw [Finset.sum_add_distrib, sum_mul_avsum, sum_mul_avsum]
-  apply congrArg₂ (.+.)
+  apply congrArg₂ (·+·)
   · apply congrArg (avsum (alignedIndex q s t)); funext w
     rw [Finset.mul_sum]
     exact Finset.sum_congr rfl fun i _ ↦ by ring
@@ -225,9 +225,10 @@ private theorem vecDot_annealed_cutoff_split [NeZero d]
     (hstat : HCPoly.Frozen.IsStationaryLaw P) {l s t : ℤ} {q : Mat d}
     (hgrid : IsRoundedGrid l q) (hls : l ≤ s) (hst : s ≤ t)
     (hint : HasFiniteAdaptedMean P q s) (g : Mat d) (hg : IsSkewMat g)
-    (p r Qcen : Vec d) : let hq := Recurrence.posDef_of_isRoundedGrid hgrid; let X := fun a ↦
-      diagonalWeakState hq t (a.subSkew g hg) p r; let Y := fun w a ↦ diagonalWeakChildState hq
-      s w (a.subSkew g hg) p r;
+    (p r Qcen : Vec d) :
+    let hq := Recurrence.posDef_of_isRoundedGrid hgrid;
+    let X := fun a ↦ diagonalWeakState hq t (a.subSkew g hg) p r;
+    let Y := fun w a ↦ diagonalWeakChildState hq s w (a.subSkew g hg) p r;
     ((∀ w ∈ alignedIndex q s t, ∀ alpha, Integrable (fun a ↦ toFullBlockVec
         (blockCellAverage (adaptedCellAt q s w) (X a)) alpha) P) ∧
       (∀ w ∈ alignedIndex q s t, ∀ alpha, Integrable (fun a ↦ volumeAverage
@@ -265,9 +266,10 @@ private theorem vecDot_annealed_cutoff_split [NeZero d]
     (hstat : HCPoly.Frozen.IsStationaryLaw P) {l s t : ℤ} {q : Mat d}
     (hgrid : IsRoundedGrid l q) (hls : l ≤ s) (hst : s ≤ t)
     (hint : HasFiniteAdaptedMean P q s) (g : Mat d) (hg : IsSkewMat g)
-    (p r Pcen : Vec d) : let hq := Recurrence.posDef_of_isRoundedGrid hgrid; let X := fun a ↦
-      diagonalWeakState hq t (a.subSkew g hg) p r; let Y := fun w a ↦ diagonalWeakChildState hq
-      s w (a.subSkew g hg) p r;
+    (p r Pcen : Vec d) :
+    let hq := Recurrence.posDef_of_isRoundedGrid hgrid;
+    let X := fun a ↦ diagonalWeakState hq t (a.subSkew g hg) p r;
+    let Y := fun w a ↦ diagonalWeakChildState hq s w (a.subSkew g hg) p r;
     ((∀ w ∈ alignedIndex q s t, ∀ alpha, Integrable (fun a ↦ toFullBlockVec
         (blockCellAverage (adaptedCellAt q s w) (X a)) alpha) P) ∧
       (∀ w ∈ alignedIndex q s t, ∀ alpha, Integrable (fun a ↦ volumeAverage
@@ -305,9 +307,10 @@ private theorem vecDot_annealed_cutoff_split [NeZero d]
     (hstat : HCPoly.Frozen.IsStationaryLaw P) {l s t : ℤ} {q : Mat d}
     (hgrid : IsRoundedGrid l q) (hls : l ≤ s) (hst : s ≤ t)
     (hint : HasFiniteAdaptedMean P q s) (g : Mat d) (hg : IsSkewMat g)
-    (p r Qcen : Vec d) : let hq := Recurrence.posDef_of_isRoundedGrid hgrid; let X := fun a ↦
-      diagonalWeakState hq t (a.subSkew g hg).transpose p r; let Y := fun w a ↦
-      diagonalWeakChildState hq s w (a.subSkew g hg).transpose p r;
+    (p r Qcen : Vec d) :
+    let hq := Recurrence.posDef_of_isRoundedGrid hgrid;
+    let X := fun a ↦ diagonalWeakState hq t (a.subSkew g hg).transpose p r;
+    let Y := fun w a ↦ diagonalWeakChildState hq s w (a.subSkew g hg).transpose p r;
     ((∀ w ∈ alignedIndex q s t, ∀ alpha, Integrable (fun a ↦ toFullBlockVec
         (blockCellAverage (adaptedCellAt q s w) (X a)) alpha) P) ∧
       (∀ w ∈ alignedIndex q s t, ∀ alpha, Integrable (fun a ↦ volumeAverage
@@ -345,9 +348,10 @@ private theorem vecDot_annealed_cutoff_split [NeZero d]
     (hstat : HCPoly.Frozen.IsStationaryLaw P) {l s t : ℤ} {q : Mat d}
     (hgrid : IsRoundedGrid l q) (hls : l ≤ s) (hst : s ≤ t)
     (hint : HasFiniteAdaptedMean P q s) (g : Mat d) (hg : IsSkewMat g)
-    (p r Pcen : Vec d) : let hq := Recurrence.posDef_of_isRoundedGrid hgrid; let X := fun a ↦
-      diagonalWeakState hq t (a.subSkew g hg).transpose p r; let Y := fun w a ↦
-      diagonalWeakChildState hq s w (a.subSkew g hg).transpose p r;
+    (p r Pcen : Vec d) :
+    let hq := Recurrence.posDef_of_isRoundedGrid hgrid;
+    let X := fun a ↦ diagonalWeakState hq t (a.subSkew g hg).transpose p r;
+    let Y := fun w a ↦ diagonalWeakChildState hq s w (a.subSkew g hg).transpose p r;
     ((∀ w ∈ alignedIndex q s t, ∀ alpha, Integrable (fun a ↦ toFullBlockVec
         (blockCellAverage (adaptedCellAt q s w) (X a)) alpha) P) ∧
       (∀ w ∈ alignedIndex q s t, ∀ alpha, Integrable (fun a ↦ volumeAverage

@@ -59,7 +59,7 @@ variable {d : ℕ}
 witness target at generation `j`, anchored at the gauge centre, is contained in
 the affine image of the gauge domain.  This is the witness analogue of
 `residualObservationTarget_subset_matImage`. -/
-theorem witnessObservationTarget_subset_matImage [NeZero d]
+theorem witnessObservationTarget_subset_matImage
     {abar : Mat d} (hS : (symmPart abar).PosDef) (lambda : ℝ) {j : ℤ}
     {z : Vec d} {U : Set (Vec d)}
     (hU : U = (fun x : Vec d => z + matVecMul (matSqrt (symmPart abar)) x) ''
@@ -92,7 +92,7 @@ theorem witnessObservationTarget_subset_matImage [NeZero d]
   rcases hy with ⟨v, hv, rfl⟩
   rcases hv with ⟨w, hw, rfl⟩
   rw [hcenterZero, add_zero, hpsum]
-  show matVecMul (epsilonAffineGrid lambda abar)
+  change matVecMul (epsilonAffineGrid lambda abar)
         (matVecMul (matSqrt (symmPart abar))⁻¹ z) +
       matVecMul (epsilonAffineGrid lambda abar) w ∈
     matImage (epsilonAffineGrid lambda abar)
@@ -117,7 +117,7 @@ theorem gaugeDomain_subset_normalizedSublevel
   rw [matImage_matSqrt_inv_ellipsoid_eq hS 1] at hmem
   have hmem' : vecNormSq (matVecMul (matSqrt (symmPart abar))⁻¹ x) ≤
       specBound ((symmPart abar)⁻¹) * 1 ^ 2 := hmem
-  show vecNormSq (matVecMul (matSqrt (symmPart abar))⁻¹ x) ≤
+  change vecNormSq (matVecMul (matSqrt (symmPart abar))⁻¹ x) ≤
     specBound ((symmPart abar)⁻¹)
   simpa only [one_pow, mul_one] using hmem'
 

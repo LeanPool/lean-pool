@@ -72,7 +72,7 @@ theorem localGradientClassAverage_eq_cubeAverageVec_of_ae {d n : ℕ}
       ∫ x, G x i ∂volume.restrict U
   rw [Measure.restrict_restrict hU, Set.inter_self]
   apply integral_congr_ae
-  show (fun x => g x i) =ᵐ[volumeMeasureOn (localGradientCube d n)] fun x => G x i
+  change (fun x => g x i) =ᵐ[volumeMeasureOn (localGradientCube d n)] fun x => G x i
   exact hG.mono fun _x hx => congrFun (congrArg HilbertVec.toVec hx) i
 
 /-- Local gradient-class averaging is additive. -/
@@ -117,7 +117,7 @@ theorem localGradientClassAverage_eq_cubeAverageVec_of_ae {d n : ℕ}
 /-- The full affine-plus-corrector local representative attached to an
 intrinsic local carrier. -/
 @[expose]
-noncomputable def affinePlusLocalCarrierH1 {d : ℕ} [NeZero d]
+noncomputable def affinePlusLocalCarrierH1 {d : ℕ}
     (e : Vec d) (z : NormalizedLocalH1Carrier d) (n : ℕ) :
     H1Function (localGradientCube d n) :=
   (show H1Function (localGradientCube d n) from by
@@ -128,7 +128,7 @@ noncomputable def affinePlusLocalCarrierH1 {d : ℕ} [NeZero d]
 /-- The local class of the constant affine gradient has normalized average
 equal to the declared affine slope. -/
 theorem localGradientClassAverage_finiteAffineBoundaryH1
-    {d : ℕ} [NeZero d] (e : Vec d) (n : ℕ) :
+    {d : ℕ} (e : Vec d) (n : ℕ) :
     localGradientClassAverage
       (show LocalGradientL2 d n from
         Eq.mp (by simp only [LocalGradientL2, localGradientCube, Book.Ch02.cubeDomain_coe]; rfl)
@@ -150,7 +150,7 @@ theorem localGradientClassAverage_finiteAffineBoundaryH1
 /-- The recovered full local gradient class is the affine constant class plus
 the stored projective corrector component. -/
 @[simp] theorem affinePlusLocalCarrierH1_gradToHilbertVectorL2
-    {d : ℕ} [NeZero d] (e : Vec d) (z : NormalizedLocalH1Carrier d)
+    {d : ℕ} (e : Vec d) (z : NormalizedLocalH1Carrier d)
     (n : ℕ) :
     (affinePlusLocalCarrierH1 e z n).gradToHilbertVectorL2 =
       (show LocalGradientL2 d n from
@@ -163,7 +163,7 @@ the stored projective corrector component. -/
 
 /-- Intrinsic normalized slope, stated only through local gradient classes. -/
 @[expose]
-def HasIntrinsicNormalizedSlope {d : ℕ} [NeZero d]
+def HasIntrinsicNormalizedSlope {d : ℕ}
     (e : Vec d) (z : NormalizedLocalH1Carrier d) : Prop :=
   Filter.Tendsto
     (fun n => localGradientClassAverage

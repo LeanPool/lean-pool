@@ -53,8 +53,8 @@ theorem cubeBesovDepthSeminorm_gradient_le_depthWeightedHessianRow
       ∑ R ∈ descendantsAtDepth Q j,
         (if hR : R ∈ descendantsAtDepth Q j then
           ‖((H.restrict (isOpen_openCubeSet R)
-              (openCubeSet_subset_of_mem_descendantsAtDepth hR)
-            ).gradCoordH1Function i).gradToVectorL2‖
+              (openCubeSet_subset_of_mem_descendantsAtDepth hR)).gradCoordH1Function
+                i).gradToVectorL2‖
         else
           0) ^ 2 ≤ B ^ 2) :
     cubeBesovDepthSeminorm Q 1 (2 : ℝ≥0∞) (fun x => u.grad x i) j ≤

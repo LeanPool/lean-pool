@@ -31,9 +31,10 @@ noncomputable section
 
 variable {d : ℕ}
 
-@[expose]
-public def cubeEuclideanLpFieldOfMemVectorL2
-    [NeZero d] (Q : TriadicCube d) (F : Vec d → Vec d)
+/-- Package a field in `MemVectorL2 (cubeSet Q)` as a Euclidean `L²` field for the
+normalized cube measure. -/
+private def cubeEuclideanLpFieldOfMemVectorL2
+    (Q : TriadicCube d) (F : Vec d → Vec d)
     (hF : MemVectorL2 (cubeSet Q) F) :
     CubeEuclideanLpField Q FiniteLpExponent.two :=
   { toField := F

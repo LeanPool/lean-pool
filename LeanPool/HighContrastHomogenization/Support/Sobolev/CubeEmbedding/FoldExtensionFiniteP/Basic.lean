@@ -282,6 +282,8 @@ theorem HasWeakGradientOn.of_tendsto_eLpNorm_finiteLp
 /-- Data of the finite-`p` even-fold extension. -/
 structure FoldExtensionFiniteP (lo hi : Vec d) (p : FiniteLpExponent)
     (u : W1pFunction (Box lo hi) p.exponent) where
+  /-- The Sobolev extension to the enlarged box, agreeing a.e. with `u` and its weak gradient on the
+  original box. -/
   Eu : W1pFunction (Box3 lo hi) p.exponent
   toFun_ae : Eu.toFun =ᵐ[volume.restrict (Box lo hi)] u.toFun
   grad_ae : ∀ i, (fun x => Eu.grad x i) =ᵐ[volume.restrict (Box lo hi)]

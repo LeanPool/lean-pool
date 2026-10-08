@@ -69,7 +69,7 @@ theorem RowRetainingPrintOrderGoodScale.exists_formulaicAnchoredResidualFrameRes
         (M : ℤ) (responseBound : system.CellIndex → ℝ) (Kframe : ℝ),
       lambda = epsilon * (3 : ℝ) ^ N ∧
       lambda ∈ Set.Icc (1 : ℝ) 3 ∧
-      aScaled = Quenched.physical_scale_coeff N a ∧
+      aScaled = Quenched.physicalScaleCoefficient N a ∧
       deltaScaled = triadicallyScaledRowAmplitude h.delta
         (h.activationScale a) N (2 * kappaRate) ∧
       witnessEccentricity (symmPart abar) * Real.sqrt d ≤

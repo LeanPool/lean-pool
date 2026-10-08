@@ -55,9 +55,9 @@ theorem integrable_primal_projected_oscillation_and_integral_abs_le_scale_rows
       (Recurrence.posDef_of_isRoundedGrid hgrid) t
       (fun a ↦ a.subSkew g hg) p r ≠ ⊤)
     (N : ℕ) :
-    Integrable (primal_projected_oscillation
+    Integrable (primalProjectedOscillation
         (Recurrence.posDef_of_isRoundedGrid hgrid) s t g hg p r Qcen N) P ∧
-    (∫ a, |primal_projected_oscillation
+    (∫ a, |primalProjectedOscillation
         (Recurrence.posDef_of_isRoundedGrid hgrid) s t g hg p r Qcen N a| ∂P) ≤
       adaptedCutoffDerivativeCoeff d *
         (3 : ℝ) ^ (-((t : ℝ) - (s : ℝ))) *
@@ -93,7 +93,7 @@ theorem integrable_primal_projected_oscillation_and_integral_abs_le_scale_rows
   let rhs : CoeffSpace d → ℝ := fun a ↦
     ∑ j ∈ Finset.range N, coeff j * depth j a
   let projected : CoeffSpace d → ℝ :=
-    primal_projected_oscillation hq s t g hg p r Qcen N
+    primalProjectedOscillation hq s t g hg p r Qcen N
   have hkOfs : ∀ j, kOf j ≤ s := fun j ↦ by
     dsimp only [kOf]
     omega
@@ -183,7 +183,7 @@ theorem integrable_primal_projected_oscillation_and_integral_abs_le_scale_rows
   constructor
   · simpa only [projected] using hintProjected
   · calc
-      (∫ a, |primal_projected_oscillation hq s t g hg p r Qcen N a| ∂P) =
+      (∫ a, |primalProjectedOscillation hq s t g hg p r Qcen N a| ∂P) =
           ∫ a, |projected a| ∂P := by rfl
       _ ≤ ∫ a, rhs a ∂P := hmono
       _ ≤ ∑ j ∈ Finset.range N, coeff j * (2 * row (kOf j)) := hrhsIntegral
@@ -210,7 +210,7 @@ theorem lintegral_primal_projected_oscillation_le_row
       (Recurrence.posDef_of_isRoundedGrid hgrid) t
       (fun a ↦ a.subSkew g hg) p r ≠ ⊤)
     (N : ℕ) :
-    (∫⁻ a, ENNReal.ofReal |primal_projected_oscillation
+    (∫⁻ a, ENNReal.ofReal |primalProjectedOscillation
         (Recurrence.posDef_of_isRoundedGrid hgrid) s t g hg p r Qcen N a| ∂P) ≤
       ENNReal.ofReal
           (preYoungRowCoefficient d *
@@ -228,7 +228,7 @@ theorem lintegral_primal_projected_oscillation_le_row
   let EJ : ℝ := ∫ a, responseJ (adaptedDomain hq t)
     ((sample a).coeffOn (adaptedDomain hq t)) p r ∂P
   let projected : CoeffSpace d → ℝ :=
-    primal_projected_oscillation hq s t g hg p r Qcen N
+    primalProjectedOscillation hq s t g hg p r Qcen N
   have hbase :=
     integrable_primal_projected_oscillation_and_integral_abs_le_scale_rows
       hstat hm0 hgrid hls hst hcells hblocks
@@ -279,7 +279,7 @@ theorem lintegral_primal_projected_oscillation_le_row
   rw [abs_of_nonneg (integral_nonneg fun a ↦ abs_nonneg (projected a)),
     hcoef] at hraw
   calc
-    (∫⁻ a, ENNReal.ofReal |primal_projected_oscillation
+    (∫⁻ a, ENNReal.ofReal |primalProjectedOscillation
         hq s t g hg p r Qcen N a| ∂P) =
       ENNReal.ofReal (∫ a, |projected a| ∂P) := by
         symm
@@ -307,9 +307,9 @@ theorem integrable_primal_flux_projected_oscillation_and_integral_abs_le_scale_r
       (Recurrence.posDef_of_isRoundedGrid hgrid) t
       (fun a ↦ a.subSkew g hg) p r ≠ ⊤)
     (N : ℕ) :
-    Integrable (primal_flux_projected_oscillation
+    Integrable (primalFluxProjectedOscillation
         (Recurrence.posDef_of_isRoundedGrid hgrid) s t g hg p r Pcen N) P ∧
-    (∫ a, |primal_flux_projected_oscillation
+    (∫ a, |primalFluxProjectedOscillation
         (Recurrence.posDef_of_isRoundedGrid hgrid) s t g hg p r Pcen N a| ∂P) ≤
       adaptedCutoffDerivativeCoeff d *
         (3 : ℝ) ^ (-((t : ℝ) - (s : ℝ))) *
@@ -345,7 +345,7 @@ theorem integrable_primal_flux_projected_oscillation_and_integral_abs_le_scale_r
   let rhs : CoeffSpace d → ℝ := fun a ↦
     ∑ j ∈ Finset.range N, coeff j * depth j a
   let projected : CoeffSpace d → ℝ :=
-    primal_flux_projected_oscillation hq s t g hg p r Pcen N
+    primalFluxProjectedOscillation hq s t g hg p r Pcen N
   have hkOfs : ∀ j, kOf j ≤ s := fun j ↦ by
     dsimp only [kOf]
     omega
@@ -435,7 +435,7 @@ theorem integrable_primal_flux_projected_oscillation_and_integral_abs_le_scale_r
   constructor
   · simpa only [projected] using hintProjected
   · calc
-      (∫ a, |primal_flux_projected_oscillation
+      (∫ a, |primalFluxProjectedOscillation
           hq s t g hg p r Pcen N a| ∂P) =
           ∫ a, |projected a| ∂P := by rfl
       _ ≤ ∫ a, rhs a ∂P := hmono
@@ -463,7 +463,7 @@ theorem lintegral_primal_flux_projected_oscillation_le_row
       (Recurrence.posDef_of_isRoundedGrid hgrid) t
       (fun a ↦ a.subSkew g hg) p r ≠ ⊤)
     (N : ℕ) :
-    (∫⁻ a, ENNReal.ofReal |primal_flux_projected_oscillation
+    (∫⁻ a, ENNReal.ofReal |primalFluxProjectedOscillation
         (Recurrence.posDef_of_isRoundedGrid hgrid) s t g hg p r Pcen N a| ∂P) ≤
       ENNReal.ofReal
           (preYoungRowCoefficient d *
@@ -481,7 +481,7 @@ theorem lintegral_primal_flux_projected_oscillation_le_row
   let EJ : ℝ := ∫ a, responseJ (adaptedDomain hq t)
     ((sample a).coeffOn (adaptedDomain hq t)) p r ∂P
   let projected : CoeffSpace d → ℝ :=
-    primal_flux_projected_oscillation hq s t g hg p r Pcen N
+    primalFluxProjectedOscillation hq s t g hg p r Pcen N
   have hbase :=
     integrable_primal_flux_projected_oscillation_and_integral_abs_le_scale_rows
       hstat hm0 hgrid hls hst hcells hblocks
@@ -533,7 +533,7 @@ theorem lintegral_primal_flux_projected_oscillation_le_row
   rw [abs_of_nonneg (integral_nonneg fun a ↦ abs_nonneg (projected a)),
     hcoef] at hraw
   calc
-    (∫⁻ a, ENNReal.ofReal |primal_flux_projected_oscillation
+    (∫⁻ a, ENNReal.ofReal |primalFluxProjectedOscillation
         hq s t g hg p r Pcen N a| ∂P) =
       ENNReal.ofReal (∫ a, |projected a| ∂P) := by
         symm

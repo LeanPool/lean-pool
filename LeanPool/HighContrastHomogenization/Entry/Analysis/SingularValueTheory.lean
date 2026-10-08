@@ -220,10 +220,12 @@ private theorem dot_mulVec_le (A : Matrix n n ℝ) (v : n → ℝ) :
   simp only [sq_abs] at hs
   simpa only [dotProduct, pow_two] using hs
 
+omit [DecidableEq n] in
 private theorem exists_supported_kernel (B : Matrix n n ℝ)
     (e : n ≃ Fin (Fintype.card n)) (r : ℕ) (hr : r < Fintype.card n)
     (hB : B.rank ≤ r) :
     ∃ v : n → ℝ, v ≠ 0 ∧ B *ᵥ v = 0 ∧ ∀ i, r < (e i).val → v i = 0 := by
+  classical
   let f : Fin (r + 1) → n := fun j => e.symm ⟨j.val, lt_of_lt_of_le j.isLt hr⟩
   have hf : Function.Injective f := by
     intro i j hij

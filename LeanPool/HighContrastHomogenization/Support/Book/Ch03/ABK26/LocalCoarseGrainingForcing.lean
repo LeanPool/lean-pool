@@ -2374,7 +2374,7 @@ private theorem forcingGeometricTailRoot_le_discountPower
 The hypotheses deliberately expose only the internal retained-tail factor
 `A`; the public theorem below supplies it in the strict and endpoint cases. -/
 private theorem localCoarseGrainingForcingLp_le_of_sharp_local
-    {d : ℕ} [NeZero d] (Q : TriadicCube d) (n : ℤ) (hn : n ≤ Q.scale)
+    {d : ℕ} (Q : TriadicCube d) (n : ℤ) (hn : n ≤ Q.scale)
     (s1 s s2 : FractionalOrder) (hs1s : s1.1 < s.1) (hss2 : s.1 < s2.1)
     (p : FiniteLpExponent) (hp : (2 : ℝ≥0∞) ≤ p.exponent)
     (g : Vec d → Vec d)

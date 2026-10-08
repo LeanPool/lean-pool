@@ -39,6 +39,8 @@ noncomputable section
 
 variable {d : ℕ}
 
+/-- Volume restricted to the `n`th convex fractional chain ball and rescaled by its
+inverse volume. -/
 @[expose]
 public noncomputable def normalizedChainMeasure
     (c x : Vec d) (rho : ℝ) (n : ℕ) : Measure (Vec d) :=
@@ -192,6 +194,7 @@ private theorem tendsto_chainRadius_zero {rho : ℝ} :
     (by norm_num : (0 : ℝ) ≤ 1 / 2) (by norm_num : (1 : ℝ) / 2 < 1)
   simpa only [convexFractionalChainScale, zero_mul] using hpow.mul_const rho
 
+/-- The Hilbert-vector representation of `F` on `U`, extended by zero outside `U`. -/
 @[expose]
 public def integrableZeroExtension
     (U : Set (Vec d)) (F : Vec d → Vec d) : Vec d → HilbertVec d :=

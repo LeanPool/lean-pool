@@ -63,7 +63,7 @@ theorem zero_le_blockSize {X F : BlockMat d} (hX : IsSymmetricBlockMat X)
 /-- **The Schatten size costs at most `(2d)^{1/Q}` against the scalar size.**
 The scalar size is the spectral norm of the normalized block, whose norm
 sandwich bounds its Schatten size by the dimensional factor. -/
-theorem schattenSize_le_blockSize [NeZero d] {X F : BlockMat d} (hX : IsSymmetricBlockMat X)
+theorem schattenSize_le_blockSize {X F : BlockMat d} (hX : IsSymmetricBlockMat X)
     (hF : IsSymmetricBlockMat F) (hFpd : Book.Ch02.BlockPosDef F) {Q : ℝ} (hQ : 0 < Q) :
     schattenSize Q X F ≤ (2 * d : ℝ) ^ Q⁻¹ * blockSize X F := by
   rw [blockSize_eq_norm hX hF hFpd]

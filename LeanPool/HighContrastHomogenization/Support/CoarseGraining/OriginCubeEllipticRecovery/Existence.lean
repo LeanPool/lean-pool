@@ -206,7 +206,7 @@ theorem
   let : MeasureTheory.IsFiniteMeasure (volumeMeasureOn U) := by
     simpa [volumeMeasureOn, U] using hCube.isFiniteMeasure_restrict_volume
   let R : PotentialSolenoidalL2RecoveryData U :=
-    potentialSolenoidalL2RecoveryData_ofSubmoduleClosures_of_potentialZeroTraceClosureRealization
+    potentialSolenoidalL2RecoveryDataOfClosureRealization
       (U := U) hRealize
   have hvol : (MeasureTheory.volume U).toReal ≠ 0 :=
     (volume_openCubeSet_originCube_toReal_pos (d := d) n).ne'

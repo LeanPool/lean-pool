@@ -77,14 +77,14 @@ noncomputable def rootPointwiseCoeffFamily {d : ℕ}
 
 /-- At its root, the canonical pointwise family agrees a.e. with the supplied
 public coefficient. -/
-theorem rootPointwiseCoeffFamily_root_aeeq {d : ℕ} [NeZero d]
+theorem rootPointwiseCoeffFamily_root_aeeq {d : ℕ}
     (Q : TriadicCube d) (a : Ch02.CoeffOn (Ch02.cubeDomain Q)) :
     Ch02.CoeffOn.AEEq ((rootPointwiseCoeffFamily Q a).coeffOn Q) a := by
   exact Internal.Ch02.BookCh02.pointwiseCoeffField_ae_eq (Ch02.cubeDomain Q) a
 
 /-- On every descendant, the canonical pointwise family agrees a.e. with the
 literal restriction of the supplied root coefficient. -/
-theorem rootPointwiseCoeffFamily_descendant_aeeq {d : ℕ} [NeZero d]
+theorem rootPointwiseCoeffFamily_descendant_aeeq {d : ℕ}
     (Q : TriadicCube d) (a : Ch02.CoeffOn (Ch02.cubeDomain Q))
     {R : TriadicCube d} {k : ℤ} (hk : k ≤ Q.scale)
     (hR : R ∈ descendantsAtScale Q k) :
@@ -424,7 +424,7 @@ theorem parentTruncatedHomogenizationErrorInfinityTwoScalar_eq_ofReal
 /-- The one-scale response comparison used in the exact shifted parent-error
 series.  A descendant's on-cube term at depth `j` is controlled by the root
 family at the matching physical scale `n - (h + j)`. -/
-theorem rootPointwise_scaleResponse_shift_le {d : ℕ} [NeZero d]
+theorem rootPointwise_scaleResponse_shift_le {d : ℕ}
     (Q : TriadicCube d) (n : ℤ) (hn : n ≤ Q.scale)
     (a : Ch02.CoeffOn (Ch02.cubeDomain Q)) (sigma0 : ℝ)
     {R : TriadicCube d} {k : ℤ} (hkn : k ≤ n)

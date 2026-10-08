@@ -112,7 +112,7 @@ theorem ellipsoid_mono_of_nonneg
 /-- The volume ratio of two positive-radius ellipsoids is bounded only by a
 prescribed dilation factor, not by the defining matrix. -/
 theorem volume_ellipsoid_div_le_of_le_mul
-    [NeZero d] (abar : Mat d) {r R q : ℝ}
+    (abar : Mat d) {r R q : ℝ}
     (hS : (symmPart abar).PosDef)
     (hr : 0 < r) (hrR : r ≤ R) (hq : 1 ≤ q) (hRq : R ≤ q * r) :
     volume (ellipsoid abar R) / volume (ellipsoid abar r) ≤

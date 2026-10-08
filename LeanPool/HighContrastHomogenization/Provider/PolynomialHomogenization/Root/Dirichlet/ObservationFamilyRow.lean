@@ -52,7 +52,7 @@ variable {d : ℕ}
 
 /-- **Row 6 — `aObs`, `hObs`.**  One observation coefficient family per ruled
 cell, in exact spelling. -/
-theorem exists_frozenWitnessObservationFamily [NeZero d]
+theorem exists_frozenWitnessObservationFamily
     {abar : Mat d} (hS : (symmPart abar).PosDef)
     {epsilon : ℝ} (hepsilon : 0 < epsilon) {a : CoeffSpace d}
     {Uhat : Set (Vec d)} {rho Rad : ℝ}

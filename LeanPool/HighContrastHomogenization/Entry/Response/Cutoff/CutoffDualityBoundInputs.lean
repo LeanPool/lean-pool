@@ -78,7 +78,7 @@ the pulled-back cutoff.  With `q` the selected grid and the potential centred at
 this is the identity form of the cutoff estimate `e.response.cutoff.estimate` (AK.HC Lemma A.1,
 (A.4)) on which the negative-Besov duality bound is applied. -/
 theorem volumeAverage_cutoff_pairing_eq_neg_cubeAverage_centered
-    {d : ℕ} [NeZero d] {jStar : ℕ} (hjStar : 2 * d ≤ 3 ^ jStar)
+    {d : ℕ} {jStar : ℕ} (hjStar : 2 * d ≤ 3 ^ jStar)
     {F : BlockMat d} (hm : (explicitCanonicalMetric F).PosDef) (t : ℤ)
     {b : CoeffField d} (u : AHarmonicFunction b (HighContrast.adaptedCell (respGrid jStar F) t))
     (Y : BlockVec d) {φ : Vec d → ℝ} (hφ : ContDiff ℝ (⊤ : ℕ∞) φ)
@@ -281,7 +281,7 @@ The conclusion is the generic bound with its four coefficient `let`s expanded: t
 and flux seminorms, the cutoff-product coefficient built from the derivative bound `B` and the
 cutoff gradient, and the flux coefficient carrying the scale weights. -/
 theorem abs_cubeAverage_pullback_pairing_le
-    {d : ℕ} [NeZero d] {jStar : ℕ} (hjStar : 2 * d ≤ 3 ^ jStar)
+    {d : ℕ} {jStar : ℕ} (hjStar : 2 * d ≤ 3 ^ jStar)
     {F : BlockMat d} (hm : (explicitCanonicalMetric F).PosDef) (t : ℤ)
     (b : CoeffField d) (u : AHarmonicFunction b (HighContrast.adaptedCell (respGrid jStar F) t))
     (Y : BlockVec d) {φ : Vec d → ℝ} {B gradWeak fluxWeak : ℝ}

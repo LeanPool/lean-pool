@@ -149,7 +149,7 @@ private theorem isForcedEquation_zero_of_isWeakSolutionOn_cube
 
 /-- A physical weak solution restricts to a zero-forcing solution on every
 triadic cube contained in its domain. -/
-theorem exists_cellCoeffFamily_and_forcedEquation [NeZero d]
+theorem exists_cellCoeffFamily_and_forcedEquation
     {U : Set (Vec d)}
     (aSource : Source.AKL.Field d)
     (haSource : AEUniformlyEllipticField aSource)
@@ -208,7 +208,7 @@ def RuledCellPhysicalForcedFamily
 
 /-- The cell-based physical forced family exists over every enlarged-margin
 ruled Whitney system. -/
-theorem exists_ruledCellPhysicalForcedFamily [NeZero d]
+theorem exists_ruledCellPhysicalForcedFamily
     {U : Set (Vec d)} {rho Rad : ℝ}
     (system : EnlargedMarginRuledTriadicWhitneySystem U rho Rad)
     (aSource : Source.AKL.Field d)
@@ -248,7 +248,7 @@ theorem exists_ruledCellPhysicalForcedFamily [NeZero d]
 
 /-- The explicit constant in the coarse flux-response estimate. -/
 @[expose]
-def coarseFluxResponseConstant (d : ℕ) [NeZero d] : ℝ :=
+def coarseFluxResponseConstant (d : ℕ) : ℝ :=
   (d : ℝ) ^ 2 *
     max 1
       (((d : ℝ) * Real.rpow (3 : ℝ) ((d : ℝ) + 1)) *
@@ -286,7 +286,7 @@ theorem physicalFluxDefectRow_le_coarseResponseRow [NeZero d]
     refine physicalFullDualWhitneyFamilyCellEnergy_congr_ae_on_ruledCell system _ _ ?_
     intro j
     filter_upwards [hcoeff j] with x hx
-    show matVecMul (aPhysical x - (a0 j).matrix) (u.grad x) =
+    change matVecMul (aPhysical x - (a0 j).matrix) (u.grad x) =
       matVecMul (((aCell j).coeffOn (whitneyCellCube system j)).toCoeffField x -
         (a0 j).matrix) ((wCell j).toH1.grad x)
     rw [hx, hgrad j x]
@@ -308,7 +308,7 @@ theorem physicalFluxDefectRow_le_coarseResponseRow [NeZero d]
             (0 : Vec d → Vec d) (wCell i) := by
     rw [physicalFullDualBesovVectorNorm_eq_scaleFactor_mul_normalized]
     exact mul_le_mul_of_nonneg_left hraw hfactor
-  show ENNReal.ofReal (physicalFullDualBesovVectorNorm
+  change ENNReal.ofReal (physicalFullDualBesovVectorNorm
       (whitneyCellCube system i) s _) ^ 2 ≤ _
   exact pow_le_pow_left₀ (by positivity)
     (ENNReal.ofReal_le_ofReal hnorm) 2

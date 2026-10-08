@@ -29,7 +29,7 @@ noncomputable section
 open FiniteLipschitzCoreInternal
 
 private theorem weakError_le_one_of_interval
-    {d : ℕ} [NeZero d] {a : Book.Ch03.CoeffFamily d}
+    {d : ℕ} {a : Book.Ch03.CoeffFamily d}
     {s delta : ℝ} {n m j : ℤ}
     (hdelta : delta ≤ 1)
     (htail : ScalarIdentityGoodTailOnInterval a s delta n m)
@@ -41,7 +41,7 @@ private theorem weakError_le_one_of_interval
   exact hsingle.trans (htail.trans hdelta)
 
 private theorem goodMax_subinterval_of_interval
-    {d : ℕ} [NeZero d] {a : Book.Ch03.CoeffFamily d}
+    {d : ℕ} {a : Book.Ch03.CoeffFamily d}
     {s delta : ℝ} {n q top m : ℤ}
     (hdelta : delta ≤ 1) (hnq : n ≤ q) (htopm : top ≤ m)
     (htail : ScalarIdentityGoodTailOnInterval a s delta n m) :
@@ -52,7 +52,7 @@ private theorem goodMax_subinterval_of_interval
     (Finset.mem_Icc.mpr ⟨hnq.trans hj'.1, hj'.2.trans htopm⟩)
 
 private theorem goodTail_subinterval_of_interval
-    {d : ℕ} [NeZero d] {a : Book.Ch03.CoeffFamily d}
+    {d : ℕ} {a : Book.Ch03.CoeffFamily d}
     {s delta delta' : ℝ} {n q top m : ℤ}
     (hdelta : delta ≤ delta') (hnq : n ≤ q) (htopm : top ≤ m)
     (htail : ScalarIdentityGoodTailOnInterval a s delta n m) :
@@ -94,7 +94,7 @@ private theorem successorTerminal_of_recurrence
 
 
 private theorem finiteCenteredCubeSolutionEnergy_self
-    {d : ℕ} [NeZero d] (a : Book.Ch03.CoeffFamily d)
+    {d : ℕ} (a : Book.Ch03.CoeffFamily d)
     (m : ℤ) (u : Book.Ch03.CubeSolution (originCube d m) a) :
     finiteCenteredCubeSolutionEnergy a m u m =
       Book.Ch03.h1EnergyNormOnCube (originCube d m) a u.toH1 := by

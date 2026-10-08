@@ -569,6 +569,7 @@ theorem weightedGradNorm_selectedRoundedPullbackEllipsoid_le_of_near_terminal
           (selectedRoundedPullbackEllipsoid geom abar R) F :=
       mul_le_mul_left hfactor _
 
+omit [NeZero d] in
 /-- A finite centered-energy estimate lifts to the selected-generation
 coefficient by the application's almost-everywhere identification. -/
 theorem weightedGradNorm_roundedCenteredCoefficientAtGeneration_le_of_finiteEnergy

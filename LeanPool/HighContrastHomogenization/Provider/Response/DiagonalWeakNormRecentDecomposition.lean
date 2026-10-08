@@ -64,7 +64,7 @@ private theorem blockCellAverage_sub_of_memVectorL2
 
 /-- Averaging the recent child/parent state difference is the difference of
 their cell averages. -/
-theorem blockCellAverage_recent_difference [NeZero d]
+theorem blockCellAverage_recent_difference
     {q : Mat d} (hq : q.PosDef) {k t : ℤ} (hkt : k ≤ t)
     {w : Fin d → ℤ} (hw : w ∈ alignedIndex q k t)
     (a : CoeffSpace d) (p r : Vec d) :

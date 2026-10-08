@@ -290,7 +290,7 @@ theorem
       coarseCaccioppoliLocalEnergyRadiusProfile Q center energy ρ₁ ≤
         |cubeAverage Q (fun x => vecDot (flux x) (u x • ξ x))|)
     (hrawcoeff :
-      BoundaryCaccioppoliHarmonicVectorSmallCubeCoefficientSplit_localPatch
+      boundaryCaccioppoliSmallCubeLocalPatchCoefficientSplit
         Q center a s t Clocal Calpha Ccross) :
     CoarseCaccioppoliBoundaryCanonicalHarmonicVectorLocalPatchNoteRawBridgeSplit
       Q center a s t Calpha Ccross (coarseCaccioppoliHarmonicL2Sq Q a u0)
@@ -442,7 +442,7 @@ theorem
         coarseCaccioppoliFluxEnergyExactCenteredCoeff R a s ξ (Acirc1 R) (AcircS R)
             B CeffLocal ≤ Alpha) := by
     simpa [
-      BoundaryCaccioppoliHarmonicVectorSmallCubeCoefficientSplit_localPatch,
+      boundaryCaccioppoliSmallCubeLocalPatchCoefficientSplit,
       CeffLocal, CeffAlpha, CeffCross, hheight, ρ₁, ρ₂, ρm, j, j0, ξ, B, Acirc1,
       AcircS, K, Alpha]
       using hrawcoeff n
@@ -497,7 +497,7 @@ theorem
         coarseCaccioppoliLocalEnergyRadiusProfile Q center energy ρ₁ ≤
           |cubeAverage Q (fun x => vecDot (flux x) (u x • ξ x))|)
     (hrawcoeff :
-      BoundaryCaccioppoliHarmonicVectorSmallCubeCoefficientSplit_localPatch_allRadii
+      boundaryCaccioppoliSmallCubeLocalPatchCoefficientSplitAllRadii
         Q center a s t Clocal Calpha Ccross) :
     CoarseCaccioppoliBoundaryCanonicalHarmonicVectorLocalPatchNoteRawBridgeSplitAllRadii
       Q center a s t Calpha Ccross (coarseCaccioppoliHarmonicL2Sq Q a u0)
@@ -638,7 +638,7 @@ theorem
         coarseCaccioppoliFluxEnergyExactCenteredCoeff R a s ξ (Acirc1 R) (AcircS R)
             B CeffLocal ≤ Alpha) := by
     simpa [
-      BoundaryCaccioppoliHarmonicVectorSmallCubeCoefficientSplit_localPatch_allRadii,
+      boundaryCaccioppoliSmallCubeLocalPatchCoefficientSplitAllRadii,
       CeffLocal, CeffAlpha, CeffCross, hheight, ρm, j, j0, ξ, B, Acirc1,
       AcircS, K, Alpha, coarseCaccioppoliLocalPatchCutoffHessianBound]
       using hrawcoeff hρ₁ hlt hρ₂

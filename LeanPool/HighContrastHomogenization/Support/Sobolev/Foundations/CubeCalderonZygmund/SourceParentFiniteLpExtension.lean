@@ -48,7 +48,8 @@ private theorem normalizedCubeMeasure_originCube_eq_smul_restrict_openCubeSet
 private theorem cubeVolume_originCube_succ {d : ℕ} (m : ℤ) :
     cubeVolume (originCube d (m + 1)) =
       (3 : ℝ) ^ d * cubeVolume (originCube d m) := by
-  simp [cubeVolume, cubeScaleFactor, originCube, zpow_add₀]
+  simp only [cubeVolume, cubeScaleFactor, originCube, ne_eq, OfNat.ofNat_ne_zero, not_false_eq_true,
+    zpow_add₀, zpow_ofNat, pow_one]
   rw [mul_pow]
   ring
 

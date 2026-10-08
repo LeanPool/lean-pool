@@ -32,7 +32,7 @@ Lower bound `Mu` against the scalar product on the centered open cube,
 packaged directly from deterministic recovery-plus-ellipticity data.
 -/
 theorem mu_ge_vecDot_openCubeSet_originCube_of_hasOpenCubeEllipticRecoveryData
-    {d : ℕ} [NeZero d] {n : ℤ}
+    {d : ℕ} {n : ℤ}
     (R : PotentialSolenoidalL2RecoveryData (openCubeSet (originCube d n)))
     {lam Lam : ℝ} {a : CoeffField d}
     (hData : HasOpenCubeEllipticRecoveryData (d := d) n R (lam := lam) (Lam := Lam) a)
@@ -271,7 +271,7 @@ of the `hPairFirst` first-variation clause from recovery data.
 -/
 theorem
     mu_zero_right_eq_responseJ_zero_cube_of_hasOpenCubeEllipticRecoveryData
-    {d : ℕ} [NeZero d] {n : ℤ}
+    {d : ℕ} {n : ℤ}
     (R : PotentialSolenoidalL2RecoveryData (openCubeSet (originCube d n)))
     {lam Lam : ℝ} {a : CoeffField d}
     (hData : HasOpenCubeEllipticRecoveryData (d := d) n R (lam := lam) (Lam := Lam) a)
@@ -371,7 +371,7 @@ identity needed by the deterministic coupling lemma.
 -/
 theorem
     mu_zero_right_eq_responseJ_zero_openCubeSet_originCube_of_hasOpenCubeEllipticRecoveryData
-    {d : ℕ} [NeZero d] {n : ℤ}
+    {d : ℕ} {n : ℤ}
     (R : PotentialSolenoidalL2RecoveryData (openCubeSet (originCube d n)))
     {lam Lam : ℝ} {a : CoeffField d}
     (hData : HasOpenCubeEllipticRecoveryData (d := d) n R (lam := lam) (Lam := Lam) a)
@@ -418,7 +418,7 @@ return the note-facing slice `ResponseJ(U; p0, 0, a)`.
 -/
 theorem
     mu_left_zero_eq_responseJ_zero_openCubeSet_originCube_of_hasOpenCubeEllipticRecoveryData
-    {d : ℕ} [NeZero d] {n : ℤ}
+    {d : ℕ} {n : ℤ}
     (R : PotentialSolenoidalL2RecoveryData (openCubeSet (originCube d n)))
     {lam Lam : ℝ} {a : CoeffField d}
     (hData : HasOpenCubeEllipticRecoveryData (d := d) n R (lam := lam) (Lam := Lam) a)
@@ -515,7 +515,7 @@ identity needed for the full response-side block-quadratic package.
 -/
 theorem
     responseJ_eq_mu_neg_left_sub_vecDot_openCubeSet_originCube_of_hasOpenCubeEllipticRecoveryData
-    {d : ℕ} [NeZero d] {n : ℤ}
+    {d : ℕ} {n : ℤ}
     (R : PotentialSolenoidalL2RecoveryData (openCubeSet (originCube d n)))
     {lam Lam : ℝ} {a : CoeffField d}
     (hData : HasOpenCubeEllipticRecoveryData (d := d) n R (lam := lam) (Lam := Lam) a)
@@ -687,7 +687,7 @@ deterministic coarse block/sigma data.
 -/
 theorem
     mu_zero_right_eq_responseJ_zero_cube_of_of_hasOpenCubeEllipticRecoveryData
-    {d : ℕ} [NeZero d] {n : ℤ}
+    {d : ℕ} {n : ℤ}
     (R : PotentialSolenoidalL2RecoveryData (openCubeSet (originCube d n)))
     {lam Lam : ℝ} {a : CoeffField d}
     (hData : HasOpenCubeEllipticRecoveryData (d := d) n R (lam := lam) (Lam := Lam) a)
@@ -715,7 +715,7 @@ deterministic coarse block/sigma data.
 -/
 theorem
     mu_left_zero_eq_responseJ_zero_cube_of_hasOpenCubeEllipticRecoveryData
-    {d : ℕ} [NeZero d] {n : ℤ}
+    {d : ℕ} {n : ℤ}
     (R : PotentialSolenoidalL2RecoveryData (openCubeSet (originCube d n)))
     {lam Lam : ℝ} {a : CoeffField d}
     (hData : HasOpenCubeEllipticRecoveryData (d := d) n R (lam := lam) (Lam := Lam) a)

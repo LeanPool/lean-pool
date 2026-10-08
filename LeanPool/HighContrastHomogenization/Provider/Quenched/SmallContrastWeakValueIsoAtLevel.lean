@@ -71,7 +71,7 @@ def weakValueBoundSharpIsotropyAt (cfirst cmax ctail : ℝ)
 /-- **The sharp weak value is monotone in the metric factors, at a released
 split level.**  The window tail's coefficient is absorbed into the maximum
 group's, so the parametrized base is read at its pinned tail. -/
-theorem weakValueBoundSharpIsotropyAt_le_baseIsotropyAtPar_sq [NeZero d]
+theorem weakValueBoundSharpIsotropyAt_le_baseIsotropyAtPar_sq
     {P : Measure (CoeffSpace d)} {m0 h0 : Mat d} {n : Mat d}
     {Eref : BlockMat d}
     {cfirst cmax ctail L M rho bmaj beta lev : ℝ} {Hw : ℕ} {t l : ℤ}

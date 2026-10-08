@@ -67,7 +67,7 @@ private theorem blockMatVecMul_blockDiag_snd (A B : Mat d) (X : BlockVec d) :
 
 /-- Applying a fixed block metric preserves the finite-variance contraction
 from child averages to their parent mean. -/
-theorem blockAvsumL2_metricRoot_centered_le [NeZero d]
+theorem blockAvsumL2_metricRoot_centered_le
     {q : Mat d} (hq : q.PosDef) {k t : ℤ} (hkt : k ≤ t)
     {S : Mat d} {F : Vec d → BlockVec d}
     (hF₁ : ∀ i, IntegrableOn (fun x => (F x).1 i) (adaptedCell q t) volume)
@@ -121,7 +121,7 @@ private theorem memVectorL2_integrableOn_component_adaptedCell
 
 /-- The canonical diagonal state satisfies the centered finite-variance
 contraction on every aligned child scale. -/
-theorem blockAvsumL2_metricRoot_centered_diagonalWeakState_le [NeZero d]
+theorem blockAvsumL2_metricRoot_centered_diagonalWeakState_le
     {q : Mat d} (hq : q.PosDef) {k t : ℤ} (hkt : k ≤ t)
     {S : Mat d} {a : CoeffSpace d} (p r : Vec d) :
     blockAvsumL2 (alignedIndex q k t) (fun w =>
@@ -258,7 +258,7 @@ theorem blockAvsumL2_metricRoot_diagonalWeakState_le [NeZero d]
 
 end
 
-end HCPolySupport.HighContrast.Response
+end Response
 
 end HighContrast
 

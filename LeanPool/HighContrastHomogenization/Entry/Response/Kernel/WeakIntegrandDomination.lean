@@ -119,14 +119,17 @@ private theorem response_envelope_absorbs_energy
     _ = (4 * k + 4 + 2 * y) * ((1 + M) * J + 1) := by ring
 
 private theorem besovSeminorm_congr_of_canonicalOptimizerRepresentative
-    {d : ℕ} [NeZero d] (jStar : ℕ) (F : BlockMat d) (hq : IsUnit (respGrid jStar F))
+    {d : ℕ} (jStar : ℕ) (F : BlockMat d) (hq : IsUnit (respGrid jStar F))
     (t : ℤ) (p q' : Vec d) (c f : CoeffField d) (Y : BlockVec d)
     (lam Lam : ℝ) (hlam : 0 < lam) (hle : lam ≤ Lam)
     (hEll : IsEllipticFieldOn lam Lam (respCell jStar F t) f)
     (hae : c =ᵐ[volumeMeasureOn (respCell jStar F t)] f)
     (u : AHarmonicFunction c (respCell jStar F t))
     (hu : IsResponseMaximizer (respCell jStar F t) p q' c u)
-    (v : AHarmonicFunction f (respCell jStar F t)) :
+    (v : AHarmonicFunction f (respCell jStar F t))
+    (hv : v = canonicalAHarmonicFunctionOfCoeffOn
+      (coeffOnOfIsEllipticFieldOn (U := adaptedDomain (respGrid jStar F) hq t)
+        hlam hle hEll) p q') :
     besovSeminorm t (fun n z => blockMatVecMul (blockSqrt (respM0 F))
         (cellAverage (adaptedCellAtCenter (respGrid jStar F) (t - (n : ℤ)) z)
           (optimizerField c u) - Y))
@@ -138,7 +141,8 @@ private theorem besovSeminorm_congr_of_canonicalOptimizerRepresentative
     adaptedCellAtCenter_subset_adaptedCell (respGrid jStar F) t n hw
   have hcell := cellAverage_optimizerField_eq_canonical (U := adaptedDomain (respGrid jStar F) hq t)
     hVU hlam hle hEll hae p q' u hu
-  rw [hcell]
+  simpa only [hv, adaptedDomain, respCell] using congrArg (fun X : BlockVec d =>
+    blockMatVecMul (blockSqrt (respM0 F)) (X - Y)) hcell
 
 /-- **The a.e. domination of the weak-quantity integrand.**  For a recentred coefficient family
 `c` whose samplewise field admits an elliptic representative and whose coarse block is the fixed
@@ -220,7 +224,7 @@ private theorem ae_besovSeminorm_sq_le_envelope_of_recentring {d : ℕ} [NeZero 
   let v : AHarmonicFunction f (respCell jStar F t) := canonicalAHarmonicFunctionOfCoeffOn A p q'
   -- the arbitrary maximizer family is replaced by the canonical maximizer of the representative
   have hsemi := besovSeminorm_congr_of_canonicalOptimizerRepresentative jStar F hq t p q'
-    (c a) f Y lam Lam hlam hle hEll hae (u a) (hu a) v
+    (c a) f Y lam Lam hlam hle hEll hae (u a) (hu a) v rfl
   have hvmax : IsResponseMaximizer (respCell jStar F t) p q' f v := by
     simpa only [v, canonicalAHarmonicFunctionOfCoeffOn] using!
       (scalarCanonicalMaximizerOfCoeffOn A p q').isResponseMaximizer
@@ -354,7 +358,7 @@ private theorem ae_besovSeminorm_sq_le_envelope_of_recentring {d : ℕ} [NeZero 
                 * respJ (respGrid jStar F) t p q' (c a) + 1)) := by
       simp only [Cst]; ring
     rw [hkey2]
-    exact mul_le_mul_of_nonneg_left hinner
+    simpa only [mul_assoc] using mul_le_mul_of_nonneg_left hinner
       (mul_nonneg (mul_nonneg (sq_nonneg _)
         (le_of_lt (Real.rpow_pos_of_pos (by norm_num) _))) hkS)
   rw [hsemi]
@@ -455,8 +459,8 @@ as in `e.response.weak.estimate`.  If `f` is `P`-a.e.-strongly measurable and is
 `P`-a.e. by an integrable function `g`, then `f` is `P`-integrable: the finite-integral half of
 `Integrable` follows from `HasFiniteIntegral.mono'` after replacing `‖f a‖` by `f a` through the
 nonnegativity of the square, and the measurability half is the hypothesis. -/
-theorem integrable_besovSeminorm_sq_of_domination {d : ℕ} [NeZero d]
-    (P : Measure (CoeffSpace d)) [IsProbabilityMeasure P]
+theorem integrable_besovSeminorm_sq_of_domination {d : ℕ}
+    (P : Measure (CoeffSpace d))
     (jStar : ℕ) (F : BlockMat d) (t : ℤ) (Y : BlockVec d)
     (c : CoeffSpace d → CoeffField d)
     (u : (a : CoeffSpace d) → AHarmonicFunction (c a) (respCell jStar F t))
@@ -484,7 +488,7 @@ respJ (respGrid jStar F) t p q' (respCoeffMinus F a) + 1)`.  The response factor
 `(1 + respAllScaleMax) * respJ` is `P`-integrable by `hint` and the constant `1` is `P`-integrable
 because `P` is a probability measure, so `C` times their sum is integrable and the squared
 seminorm inherits integrability from the domination hypothesis. -/
-theorem integrable_besovSeminorm_sq_of_ae_envelope {d : ℕ} [NeZero d]
+theorem integrable_besovSeminorm_sq_of_ae_envelope {d : ℕ}
     (P : Measure (CoeffSpace d)) [IsProbabilityMeasure P]
     (γ : ℝ) (jStar : ℕ) (F : BlockMat d) (t : ℤ) (p q' : Vec d) (Y : BlockVec d)
     (c : CoeffSpace d → CoeffField d)
@@ -516,7 +520,7 @@ theorem integrable_besovSeminorm_sq_of_ae_envelope {d : ℕ} [NeZero d]
 The adjoint twin of `integrable_besovSeminorm_sq_of_ae_envelope`: the same domination argument
 applies with the adjoint recentred response `respJ (respGrid jStar F) t p q' (respCoeffPlus F a)`
 in place of the recentred response. -/
-theorem integrable_besovSeminorm_sq_of_ae_envelope_plus {d : ℕ} [NeZero d]
+theorem integrable_besovSeminorm_sq_of_ae_envelope_plus {d : ℕ}
     (P : Measure (CoeffSpace d)) [IsProbabilityMeasure P]
     (γ : ℝ) (jStar : ℕ) (F : BlockMat d) (t : ℤ) (p q' : Vec d) (Y : BlockVec d)
     (c : CoeffSpace d → CoeffField d)

@@ -134,7 +134,7 @@ theorem measurable_canonicalOptimizerStateReadout_of_sliceCover
 /-! ## The actual transformed coefficient fields -/
 
 /-- The minus transformed coefficient lies in some quantitative slice on every adapted cell. -/
-theorem exists_responseSlice_selectionRespCoeffMinusReg [NeZero d]
+theorem exists_responseSlice_selectionRespCoeffMinusReg
     (q : Mat d) (hq : IsUnit q) (t : ℤ) (F : BlockMat d) (a : CoeffSpace d) :
     ∃ k : ℕ, AEEQuantitativeEllipticSlice (HighContrast.adaptedCell q t) k
       (selectionRespCoeffMinusReg F a).toFun := by
@@ -145,7 +145,7 @@ theorem exists_responseSlice_selectionRespCoeffMinusReg [NeZero d]
     hlam hEll (by simpa only [selectionRespCoeffMinusReg_toFun] using hae)
 
 /-- The plus transformed coefficient lies in some quantitative slice on every adapted cell. -/
-theorem exists_responseSlice_selectionRespCoeffPlusReg [NeZero d]
+theorem exists_responseSlice_selectionRespCoeffPlusReg
     (q : Mat d) (hq : IsUnit q) (t : ℤ) (F : BlockMat d) (a : CoeffSpace d) :
     ∃ k : ℕ, AEEQuantitativeEllipticSlice (HighContrast.adaptedCell q t) k
       (selectionRespCoeffPlusReg F a).toFun := by
@@ -157,32 +157,32 @@ theorem exists_responseSlice_selectionRespCoeffPlusReg [NeZero d]
 
 /-- Canonical Chapter-2 coefficient object for the minus transformed response field. -/
 @[expose]
-def canonicalRespCoeffMinusOn [NeZero d] (q : Mat d) (hq : IsUnit q) (t : ℤ)
+def canonicalRespCoeffMinusOn (q : Mat d) (hq : IsUnit q) (t : ℤ)
     (F : BlockMat d) (a : CoeffSpace d) : Book.Ch02.CoeffOn (adaptedDomain q hq t) :=
   responseCoeffOnFromSliceCover (adaptedDomain q hq t) (selectionRespCoeffMinusReg F a)
     (exists_responseSlice_selectionRespCoeffMinusReg q hq t F a)
 
-@[simp] theorem canonicalRespCoeffMinusOn_toFun [NeZero d]
+@[simp] theorem canonicalRespCoeffMinusOn_toFun
     (q : Mat d) (hq : IsUnit q) (t : ℤ) (F : BlockMat d) (a : CoeffSpace d) :
     (canonicalRespCoeffMinusOn q hq t F a).toCoeffField = respCoeffMinus F a := by
-  show (selectionRespCoeffMinusReg F a).toFun = respCoeffMinus F a
+  change (selectionRespCoeffMinusReg F a).toFun = respCoeffMinus F a
   exact selectionRespCoeffMinusReg_toFun F a
 
 /-- Canonical Chapter-2 coefficient object for the plus transformed response field. -/
 @[expose]
-def canonicalRespCoeffPlusOn [NeZero d] (q : Mat d) (hq : IsUnit q) (t : ℤ)
+def canonicalRespCoeffPlusOn (q : Mat d) (hq : IsUnit q) (t : ℤ)
     (F : BlockMat d) (a : CoeffSpace d) : Book.Ch02.CoeffOn (adaptedDomain q hq t) :=
   responseCoeffOnFromSliceCover (adaptedDomain q hq t) (selectionRespCoeffPlusReg F a)
     (exists_responseSlice_selectionRespCoeffPlusReg q hq t F a)
 
-@[simp] theorem canonicalRespCoeffPlusOn_toFun [NeZero d]
+@[simp] theorem canonicalRespCoeffPlusOn_toFun
     (q : Mat d) (hq : IsUnit q) (t : ℤ) (F : BlockMat d) (a : CoeffSpace d) :
     (canonicalRespCoeffPlusOn q hq t F a).toCoeffField = respCoeffPlus F a := by
-  show (selectionRespCoeffPlusReg F a).toFun = respCoeffPlus F a
+  change (selectionRespCoeffPlusReg F a).toFun = respCoeffPlus F a
   exact selectionRespCoeffPlusReg_toFun F a
 
 /-- Adapted cells have positive real volume, in the exact form used by the Galerkin selector. -/
-theorem adaptedCell_volume_toReal_pos [NeZero d]
+theorem adaptedCell_volume_toReal_pos
     (q : Mat d) (hq : IsUnit q) (t : ℤ) :
     0 < (volume (HighContrast.adaptedCell q t)).toReal := by
   have hset : HighContrast.adaptedCell q t =
@@ -194,7 +194,7 @@ theorem adaptedCell_volume_toReal_pos [NeZero d]
 
 /-- Every weighted coordinate readout of the canonical minus optimizer is measurable in the
 coefficient sample. -/
-theorem measurable_canonicalRespCoeffMinusReadout [NeZero d]
+theorem measurable_canonicalRespCoeffMinusReadout
     (q : Mat d) (hq : IsUnit q) (t : ℤ) (F : BlockMat d)
     (p r : Vec d) (alpha : BlockCoord d) {η : Vec d → ℝ}
     (hη : MemScalarL2 (HighContrast.adaptedCell q t) η) :
@@ -211,7 +211,7 @@ theorem measurable_canonicalRespCoeffMinusReadout [NeZero d]
 
 /-- Every weighted coordinate readout of the canonical plus optimizer is measurable in the
 coefficient sample. -/
-theorem measurable_canonicalRespCoeffPlusReadout [NeZero d]
+theorem measurable_canonicalRespCoeffPlusReadout
     (q : Mat d) (hq : IsUnit q) (t : ℤ) (F : BlockMat d)
     (p r : Vec d) (alpha : BlockCoord d) {η : Vec d → ℝ}
     (hη : MemScalarL2 (HighContrast.adaptedCell q t) η) :
@@ -246,7 +246,7 @@ theorem volumeAverage_weighted_canonicalOptimizerBlockState
   · by_cases hxu : x ∈ (U : Set (Vec d)) <;> simp [hx, hxu]
 
 /-- Localized weighted averages of the canonical minus optimizer are measurable. -/
-theorem measurable_volumeAverage_weighted_canonicalRespCoeffMinus [NeZero d]
+theorem measurable_volumeAverage_weighted_canonicalRespCoeffMinus
     (q : Mat d) (hq : IsUnit q) (t : ℤ) (F : BlockMat d)
     (p r : Vec d) (alpha : BlockCoord d) {V : Set (Vec d)}
     (hV : MeasurableSet V) (hVU : V ⊆ HighContrast.adaptedCell q t)
@@ -270,7 +270,7 @@ theorem measurable_volumeAverage_weighted_canonicalRespCoeffMinus [NeZero d]
   exact (measurable_canonicalRespCoeffMinusReadout q hq t F p r alpha heta).const_mul _
 
 /-- Localized weighted averages of the canonical plus optimizer are measurable. -/
-theorem measurable_volumeAverage_weighted_canonicalRespCoeffPlus [NeZero d]
+theorem measurable_volumeAverage_weighted_canonicalRespCoeffPlus
     (q : Mat d) (hq : IsUnit q) (t : ℤ) (F : BlockMat d)
     (p r : Vec d) (alpha : BlockCoord d) {V : Set (Vec d)}
     (hV : MeasurableSet V) (hVU : V ⊆ HighContrast.adaptedCell q t)
@@ -331,7 +331,7 @@ variable {d : ℕ}
 /-- The minus transformed coefficient `a_- = a - g` has, on the aligned adapted subcell
 `adaptedCellAtCenter q k w`, an a.e.-equal representative that is uniformly elliptic there.  The
 constants depend on the sample and on the cell only and enter no estimate. -/
-theorem exists_elliptic_representative_respCoeffMinusAt [NeZero d] (q : Mat d) (hq : IsUnit q)
+theorem exists_elliptic_representative_respCoeffMinusAt (q : Mat d) (hq : IsUnit q)
     (k : ℤ) (w : Fin d → ℤ) (F : BlockMat d) (a : CoeffSpace d) :
     ∃ (lam Lam : ℝ) (f : CoeffField d), 0 < lam ∧ lam ≤ Lam ∧
       IsEllipticFieldOn lam Lam (adaptedCellAtCenter q k w) f ∧
@@ -348,7 +348,7 @@ theorem exists_elliptic_representative_respCoeffMinusAt [NeZero d] (q : Mat d) (
 
 /-- The plus transformed coefficient `a_+ = aᵀ + g` has, on the aligned adapted subcell
 `adaptedCellAtCenter q k w`, an a.e.-equal representative that is uniformly elliptic there. -/
-theorem exists_elliptic_representative_respCoeffPlusAt [NeZero d] (q : Mat d) (hq : IsUnit q)
+theorem exists_elliptic_representative_respCoeffPlusAt (q : Mat d) (hq : IsUnit q)
     (k : ℤ) (w : Fin d → ℤ) (F : BlockMat d) (a : CoeffSpace d) :
     ∃ (lam Lam : ℝ) (f : CoeffField d), 0 < lam ∧ lam ≤ Lam ∧
       IsEllipticFieldOn lam Lam (adaptedCellAtCenter q k w) f ∧
@@ -367,7 +367,7 @@ theorem exists_elliptic_representative_respCoeffPlusAt [NeZero d] (q : Mat d) (h
 
 /-- The minus transformed coefficient lies in some quantitative slice on every aligned adapted
 subcell. -/
-theorem exists_responseSlice_selectionRespCoeffMinusRegAt [NeZero d]
+theorem exists_responseSlice_selectionRespCoeffMinusRegAt
     (q : Mat d) (hq : IsUnit q) (k : ℤ) (w : Fin d → ℤ) (F : BlockMat d) (a : CoeffSpace d) :
     ∃ j : ℕ, AEEQuantitativeEllipticSlice (adaptedCellAtCenter q k w) j
       (selectionRespCoeffMinusReg F a).toFun := by
@@ -379,7 +379,7 @@ theorem exists_responseSlice_selectionRespCoeffMinusRegAt [NeZero d]
 
 /-- The plus transformed coefficient lies in some quantitative slice on every aligned adapted
 subcell. -/
-theorem exists_responseSlice_selectionRespCoeffPlusRegAt [NeZero d]
+theorem exists_responseSlice_selectionRespCoeffPlusRegAt
     (q : Mat d) (hq : IsUnit q) (k : ℤ) (w : Fin d → ℤ) (F : BlockMat d) (a : CoeffSpace d) :
     ∃ j : ℕ, AEEQuantitativeEllipticSlice (adaptedCellAtCenter q k w) j
       (selectionRespCoeffPlusReg F a).toFun := by
@@ -394,31 +394,31 @@ theorem exists_responseSlice_selectionRespCoeffPlusRegAt [NeZero d]
 /-- Canonical Chapter-2 coefficient object for the minus transformed response field on the aligned
 adapted subcell `adaptedCellAtCenter q k w`. -/
 @[expose]
-def canonicalRespCoeffMinusOnAt [NeZero d] (q : Mat d) (hq : IsUnit q) (k : ℤ)
+def canonicalRespCoeffMinusOnAt (q : Mat d) (hq : IsUnit q) (k : ℤ)
     (w : Fin d → ℤ) (F : BlockMat d) (a : CoeffSpace d) :
     Book.Ch02.CoeffOn (adaptedDomainAt q hq k w) :=
   responseCoeffOnFromSliceCover (adaptedDomainAt q hq k w) (selectionRespCoeffMinusReg F a)
     (exists_responseSlice_selectionRespCoeffMinusRegAt q hq k w F a)
 
-@[simp] theorem canonicalRespCoeffMinusOnAt_toFun [NeZero d] (q : Mat d) (hq : IsUnit q)
+@[simp] theorem canonicalRespCoeffMinusOnAt_toFun (q : Mat d) (hq : IsUnit q)
     (k : ℤ) (w : Fin d → ℤ) (F : BlockMat d) (a : CoeffSpace d) :
     (canonicalRespCoeffMinusOnAt q hq k w F a).toCoeffField = respCoeffMinus F a := by
-  show (selectionRespCoeffMinusReg F a).toFun = respCoeffMinus F a
+  change (selectionRespCoeffMinusReg F a).toFun = respCoeffMinus F a
   exact selectionRespCoeffMinusReg_toFun F a
 
 /-- Canonical Chapter-2 coefficient object for the plus transformed response field on the aligned
 adapted subcell `adaptedCellAtCenter q k w`. -/
 @[expose]
-def canonicalRespCoeffPlusOnAt [NeZero d] (q : Mat d) (hq : IsUnit q) (k : ℤ)
+def canonicalRespCoeffPlusOnAt (q : Mat d) (hq : IsUnit q) (k : ℤ)
     (w : Fin d → ℤ) (F : BlockMat d) (a : CoeffSpace d) :
     Book.Ch02.CoeffOn (adaptedDomainAt q hq k w) :=
   responseCoeffOnFromSliceCover (adaptedDomainAt q hq k w) (selectionRespCoeffPlusReg F a)
     (exists_responseSlice_selectionRespCoeffPlusRegAt q hq k w F a)
 
-@[simp] theorem canonicalRespCoeffPlusOnAt_toFun [NeZero d] (q : Mat d) (hq : IsUnit q)
+@[simp] theorem canonicalRespCoeffPlusOnAt_toFun (q : Mat d) (hq : IsUnit q)
     (k : ℤ) (w : Fin d → ℤ) (F : BlockMat d) (a : CoeffSpace d) :
     (canonicalRespCoeffPlusOnAt q hq k w F a).toCoeffField = respCoeffPlus F a := by
-  show (selectionRespCoeffPlusReg F a).toFun = respCoeffPlus F a
+  change (selectionRespCoeffPlusReg F a).toFun = respCoeffPlus F a
   exact selectionRespCoeffPlusReg_toFun F a
 
 end
@@ -457,6 +457,7 @@ variable {d : ℕ} [NeZero d]
 
 /-! ## The recentred coefficient `a_- = respCoeffMinus F a` on its child -/
 
+omit [NeZero d] in
 /-- **Integrability of both slots of the doubled optimizer field on the child, for
 `respCoeffMinus F a`.**  For an invertible grid `q` and an aligned adapted child
 `adaptedCellAtCenter q k w`, both slots of the doubled optimizer field of an arbitrary
@@ -488,6 +489,7 @@ theorem integrableOn_optimizerField_respCoeffMinus_at (q : Mat d) (hq : IsUnit q
 
 /-! ## The transposed recentred coefficient `a_+ = respCoeffPlus F a` on its child -/
 
+omit [NeZero d] in
 /-- **Integrability of both slots of the doubled optimizer field on the child, for
 `respCoeffPlus F a`.**  The transposed twin of
 `integrableOn_optimizerField_respCoeffMinus_at`. -/
@@ -595,7 +597,7 @@ theorem blockEnergyDensity_primal {A : Mat d} (hdet : IsUnit (symmPart A).det) (
         (blockMatVecMul (blockMatrixOfCoeff A) ((ξ, matVecMul A ξ) : BlockVec d)) =
       2 * vecDot ξ (matVecMul A ξ) := by
   rw [blockMatVecMul_blockMatrixOfCoeff_primal_of_isUnit_det_symmPart A hdet ξ]
-  show vecDot ξ (matVecMul A ξ) + vecDot (matVecMul A ξ) ξ = _
+  change vecDot ξ (matVecMul A ξ) + vecDot (matVecMul A ξ) ξ = _
   rw [vecDot_comm (matVecMul A ξ) ξ]
   ring
 
@@ -659,17 +661,17 @@ theorem average_blockEnergyDensity_optimizerField {U : Domain d} (a : CoeffOn U)
       isUnit_det_symmPart_of_isEllipticMatrix (hEll.2 x hx)
     have hY : Y.eval x =
         ((u.toH1.grad x, matVecMul (a.toCoeffField x) (u.toH1.grad x)) : BlockVec d) := by
-      show (Y.potential x, Y.flux x) = _
+      change (Y.potential x, Y.flux x) = _
       rw [hpot, hflux]
     rw [hY, blockMatrixField_apply a x,
       blockEnergyDensity_primal hdet (u.toH1.grad x)]
     rfl
   rw [hpt]
-  show (MeasureTheory.volume (U : Set (Vec d))).toReal⁻¹ *
+  change (MeasureTheory.volume (U : Set (Vec d))).toReal⁻¹ *
       ∫ x in (U : Set (Vec d)), 2 * vecDot (optimizerField a.toCoeffField u x).1
         (optimizerField a.toCoeffField u x).2 ∂MeasureTheory.volume = _
   rw [MeasureTheory.integral_const_mul]
-  show _ = 2 * ((MeasureTheory.volume (U : Set (Vec d))).toReal⁻¹ * _)
+  change _ = 2 * ((MeasureTheory.volume (U : Set (Vec d))).toReal⁻¹ * _)
   ring
 
 omit [NeZero d] in
@@ -766,6 +768,7 @@ The copy of `adaptedDomainAt` that stood here has been deleted as a duplicate.  
 were signature-identical and differed only in how the `Nonempty` field was proved, which is a
 `Prop`.  **This module now introduces NO definition of its own.** -/
 
+omit [NeZero d] in
 /-- **The cell energy bound on an aligned adapted subcell, for the PARENT optimizer.**  The
 left-hand side is the cell average of the PARENT state
 `X_t = (∇u, a∇u)` over the subcell, and the right-hand side is the actual state energy THERE,
@@ -795,7 +798,7 @@ theorem blockSq_cellAverage_optimizerField_adaptedCellAtCenter_le
         (2 * weakOptimizerEnergy (adaptedCellAtCenter q k w) a.toCoeffField z ^ 2) := by
   have hfield : optimizerField a.toCoeffField z = optimizerField a.toCoeffField u := by
     funext x
-    show (z.toH1.grad x, matVecMul (a.toCoeffField x) (z.toH1.grad x)) = _
+    change (z.toH1.grad x, matVecMul (a.toCoeffField x) (z.toH1.grad x)) = _
     rw [hz]
     rfl
   have h := blockSq_cellAverage_optimizerField_le a hEll z hm hE hc he hEM hAE

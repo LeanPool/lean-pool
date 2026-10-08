@@ -40,8 +40,13 @@ This record remembers only the manuscript parameters and inequalities for
 integrability data.  It is useful for stating constants with the manuscript
 dependency `C(d,s_1,s_2,\xi)`. -/
 structure QuantitativeCoarseGrainedEllipticityParams (d : ℕ) : Type where
+  /-- The upper regularity exponent `s_1` in the quantitative coarse-grained ellipticity parameters.
+  -/
   sUpper : ℝ
+  /-- The lower regularity exponent `s_2` in the quantitative coarse-grained ellipticity parameters.
+  -/
   sLower : ℝ
+  /-- The integer moment exponent constrained to exceed twice the dimension in `(P4)`. -/
   xi : ℕ
   two_le_dim : 2 ≤ d
   sUpper_nonneg : 0 ≤ sUpper
@@ -118,8 +123,11 @@ The fields `sUpper`, `sLower`, and `xi` are the manuscript parameters
 moments in `(P4)` as integrability of the corresponding powers. -/
 structure QuantitativeCoarseGrainedEllipticity {d : ℕ} [NeZero d]
     (P : Ch04.RestrictionCoeffLaw d) : Type where
+  /-- The regularity exponent `s_1` used in the upper coarse-grained ellipticity moment. -/
   sUpper : ℝ
+  /-- The regularity exponent `s_2` used in the inverse lower coarse-grained ellipticity moment. -/
   sLower : ℝ
+  /-- The common integer power whose upper and inverse lower unit-cube moments are integrable. -/
   xi : ℕ
   two_le_dim : 2 ≤ d
   sUpper_nonneg : 0 ≤ sUpper

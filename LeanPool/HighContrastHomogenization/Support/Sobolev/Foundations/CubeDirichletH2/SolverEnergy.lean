@@ -367,6 +367,8 @@ noncomputable def originCubeParentReducedSolverEnergyBoundExact
               ((3 : ℝ) ^ d * (C * (C * B)) ^ 2))))) ^
     (1 / (2 : ℝ))
 
+/-- The forcing-independent factor under the square root in the exact reflected Dirichlet solver
+bound, using the square root of cube volume. -/
 @[expose]
 public noncomputable def originCubeParentReducedSolverEnergyInsideExact
     (d : ℕ) [NeZero d] (m : ℤ) : ℝ :=

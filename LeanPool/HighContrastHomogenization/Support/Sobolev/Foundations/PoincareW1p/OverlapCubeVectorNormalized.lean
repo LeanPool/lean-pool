@@ -54,7 +54,7 @@ private theorem scalarOverlap_cubeAverage_eq_integralAverage_open {d : ℕ}
     ScalarOverlap.cubeSet, ScalarOverlap.scaleFactor] using!
     overlapCubeAverage_eq_integralAverage_openOverlapCubeSet S f
 
-private theorem scalar_overlap_coordinate_normalized_bound {d : ℕ} [NeZero d]
+private theorem scalar_overlap_coordinate_normalized_bound {d : ℕ}
     (q : FiniteLpExponent) (C : ℝ)
     (hPoincare : ∀ (S : TriadicCube d) (u : W1pFunction (openOverlapCubeSet S) q.exponent),
       u.subAverageLpSeminorm ≤

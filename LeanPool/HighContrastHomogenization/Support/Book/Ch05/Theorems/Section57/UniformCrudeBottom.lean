@@ -263,7 +263,7 @@ theorem measureReal_shiftedCrudeBottomPairEvent_quenchedProbeEnvelope_le_weighte
       have hlam_lower : A * ρ ^ r ≤ lam := by
         exact
           crudeBottom_lam_lower
-            (d := d) (K := K) (C := Ccrude)
+            (K := K) (C := Ccrude)
             (θ := hInf.thetaHat) (a := a) (t := t) (α := αbad)
             (q := q) (r := r) (j := j)
             hK_pos hCcrude hInf.thetaHat_pos ha ht hαt
@@ -400,7 +400,7 @@ theorem measureReal_shiftedCrudeBottomPairEvent_quenchedProbeEnvelope_eq_zero_ga
       have hlam_lower : A * ρ ^ r ≤ lam := by
         exact
           crudeBottom_lam_lower
-            (d := d) (K := K) (C := Ccrude)
+            (K := K) (C := Ccrude)
             (θ := hInf.thetaHat) (a := a) (t := t) (α := αbad)
             (q := q) (r := r) (j := j)
             hK_pos hCcrude hInf.thetaHat_pos ha ht hαt

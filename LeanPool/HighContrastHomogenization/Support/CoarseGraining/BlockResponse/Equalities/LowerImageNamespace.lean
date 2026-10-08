@@ -594,7 +594,7 @@ theorem blockResponse_integrand_add {d : ℕ} (a : CoeffField d) (P Q : BlockVec
         blockVecDot Q (Y.eval x)) -
       blockVecDot (Y.eval x) (blockMatVecMul (blockCoeffField a x) (X.eval x)) by
     simpa [blockResponseIntegrand, blockEnergyDensity, blockMatVecMul_add, blockVecDot_add_left,
-      blockVecDot_add_right] using h
+      blockVecDot_add_right, add_comm, add_left_comm, add_assoc] using h
   rw [hcomm]
   ring
 

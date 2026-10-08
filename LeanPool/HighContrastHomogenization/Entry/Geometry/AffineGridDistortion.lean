@@ -213,7 +213,7 @@ theorem adaptedCell_volume_ratio_eq
     ← triadic_volume_scale_ratio d j r]
   field_simp [abs_ne_zero.mpr hq'det, h3j]
 
-theorem adaptedCell_volume_ratio_two_sided_of_gridRatio [NeZero d]
+theorem adaptedCell_volume_ratio_two_sided_of_gridRatio
     {q q' : Mat d} {K₀ : ℝ} (hd : 2 ≤ d) (hK₀ : 1 ≤ K₀)
     (hq : IsUnit q) (hq' : IsUnit q') (hK : gridRatio q q' ≤ K₀)
     (j r : ℤ) (y : Vec d) :

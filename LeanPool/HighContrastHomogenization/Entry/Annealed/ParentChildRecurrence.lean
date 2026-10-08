@@ -83,7 +83,7 @@ theorem alignedChildren_nonempty (q : Mat d) (j : ℤ) (hn : ℕ) :
     (alignedChildren q j hn).Nonempty := by
   refine ⟨adaptedCellCenter q j 0, Finset.mem_image.mpr ⟨0, ?_, rfl⟩⟩
   rw [Set.Finite.mem_toFinset]
-  show standardCellCenter j (0 : Fin d → ℤ) ∈ centeredCube d (j + (hn : ℤ))
+  change standardCellCenter j (0 : Fin d → ℤ) ∈ centeredCube d (j + (hn : ℤ))
   have hpos : (0 : ℝ) < (3 : ℝ) ^ (j + (hn : ℤ)) := by positivity
   rw [Recurrence.mem_centeredCube_iff]
   intro i
@@ -146,7 +146,7 @@ theorem coarseBlock_adaptedCell_posSemidef [NeZero d] (q : Mat d) (hq : IsUnit q
 same annealed matrix as its parent's own generation-`j` adapted mean. -/
 theorem annealedBlock_alignedChildren {P : Measure (CoeffSpace d)} (hstat : IsStationaryLaw P)
     (jStar : ℕ) (hjStar : 2 * d ≤ 3 ^ jStar) (m : Mat d) (hm : m.PosDef)
-    {j : ℤ} (hj : (jStar : ℤ) ≤ j) (hn : ℕ) [NeZero d] {z : Vec d}
+    {j : ℤ} (hj : (jStar : ℤ) ≤ j) (hn : ℕ) {z : Vec d}
     (hz : z ∈ alignedChildren (Geometry.explicitRoundedGrid jStar m) j hn) :
     annealedBlock P (adaptedCellTranslate (Geometry.explicitRoundedGrid jStar m) j z) =
       adaptedMean P (Geometry.explicitRoundedGrid jStar m) j := by
@@ -249,9 +249,10 @@ variable {d : ℕ}
 generalized to any finite index type, rather than reaching into that file's private
 namespace. -/
 
-private theorem posDef_sqrt_full {ι : Type*} [Fintype ι] [DecidableEq ι] {m : Matrix ι ι ℝ}
-    (hm : m.PosDef) : (CFC.sqrt m).PosDef :=
-  Matrix.IsStrictlyPositive.posDef
+private theorem posDef_sqrt_full {ι : Type*} [Fintype ι] {m : Matrix ι ι ℝ}
+    (hm : m.PosDef) : (open scoped Classical in (CFC.sqrt m).PosDef) := by
+  classical
+  exact Matrix.IsStrictlyPositive.posDef
     (IsStrictlyPositive.sqrt m (Matrix.isStrictlyPositive_iff_posDef.mpr hm))
 
 private theorem cfc_sqrt_inv_full {ι : Type*} [Fintype ι] [DecidableEq ι] {m : Matrix ι ι ℝ}

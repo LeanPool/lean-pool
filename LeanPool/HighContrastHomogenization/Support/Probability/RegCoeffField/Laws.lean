@@ -60,8 +60,7 @@ def IsStationaryR (P : RegCoeffLaw d) : Prop :=
 
 /-- Integral transfer under integer translation for a stationary carrier law. -/
 theorem IsStationaryR.integral_comp_translateReg
-    {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] [CompleteSpace E]
-    [MeasurableSpace E] [BorelSpace E] [SecondCountableTopology E]
+    {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
     {P : RegCoeffLaw d} (hP : IsStationaryR P) (z : Fin d → ℤ)
     (f : RegCoeffField d → E) (hf : AEStronglyMeasurable f P) :
     ∫ a, f (translateReg (intVecToRealVec z) a) ∂P = ∫ a, f a ∂P :=
@@ -90,8 +89,7 @@ def IsIsotropicInLawR (P : RegCoeffLaw d) : Prop :=
 
 /-- Integral transfer under a signed-permutation rotation for an isotropic law. -/
 theorem IsIsotropicInLawR.integral_comp_rotateReg
-    {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] [CompleteSpace E]
-    [MeasurableSpace E] [BorelSpace E] [SecondCountableTopology E]
+    {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
     {P : RegCoeffLaw d} (hP : IsIsotropicInLawR P) {R : Mat d}
     (hR : IsSignedPermutationMatrix R) (f : RegCoeffField d → E)
     (hf : AEStronglyMeasurable f P) :
@@ -108,8 +106,7 @@ def IsAdjointInvariantInLawR (P : RegCoeffLaw d) : Prop :=
 
 /-- Integral transfer under the adjoint for an adjoint-invariant law. -/
 theorem IsAdjointInvariantInLawR.integral_comp_adjointReg
-    {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] [CompleteSpace E]
-    [MeasurableSpace E] [BorelSpace E] [SecondCountableTopology E]
+    {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
     {P : RegCoeffLaw d} (hP : IsAdjointInvariantInLawR P)
     (f : RegCoeffField d → E) (hf : AEStronglyMeasurable f P) :
     ∫ a, f (adjointReg a) ∂P = ∫ a, f a ∂P :=

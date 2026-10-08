@@ -37,7 +37,7 @@ noncomputable section
 
 variable {d : ℕ}
 
-private theorem schatten_parent_le_normalized_variance_majorant [NeZero d]
+private theorem schatten_parent_le_normalized_variance_majorant
     {P : Measure (CoeffSpace d)} {q : Mat d} {j p : ℤ}
     (Z : Finset (Fin d → ℤ)) {F : BlockMat d}
     (hFsym : IsSymmetricBlockMat F) (hFpd : Book.Ch02.BlockPosDef F)
@@ -257,7 +257,7 @@ private theorem subdivision_variance_majorant_two_norm
     rw [Real.enorm_eq_ofReal (mul_nonneg hα0 hc10)]
   exact hsmulpiece
 
-private theorem subdivision_block_size_two_norm_le_schatten [NeZero d]
+private theorem subdivision_block_size_two_norm_le_schatten
     {P : Measure (CoeffSpace d)} {q : Mat d} (hq : q.PosDef)
     (j p : ℤ) (Z : Finset (Fin d → ℤ))
     (hmeanpsym : IsSymmetricBlockMat (adaptedMean P q p))
@@ -316,7 +316,7 @@ private theorem subdivision_block_size_two_norm_le_schatten [NeZero d]
       (by norm_num)
   exact hgs
 
-private theorem schatten_two_norm_le_variance_majorant [NeZero d]
+private theorem schatten_two_norm_le_variance_majorant
     {P : Measure (CoeffSpace d)} {q : Mat d} (hq : q.PosDef) (j p : ℤ)
     (Z : Finset (Fin d → ℤ)) {F : BlockMat d} {cN c1 c2 drop : ℝ}
     (hmeanpsym : IsSymmetricBlockMat (adaptedMean P q p))

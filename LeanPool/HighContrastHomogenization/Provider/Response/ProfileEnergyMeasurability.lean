@@ -59,7 +59,7 @@ theorem aemeasurable_blockQuadratic_coarseBlock
 
 /-- The primal optimizer energy squared is its terminal block quadratic form
 minus the load product. -/
-theorem sq_diagonalWeakEnergy_eq_coarseBlock [NeZero d]
+theorem sq_diagonalWeakEnergy_eq_coarseBlock
     {q : Mat d} (hq : q.PosDef) (t : ℤ) (a : CoeffSpace d)
     (p r : Vec d) :
     diagonalWeakEnergy hq t a p r ^ 2 =
@@ -78,7 +78,7 @@ theorem sq_diagonalWeakEnergy_eq_coarseBlock [NeZero d]
 
 /-- The adjoint optimizer energy squared is the plus-load quadratic reading
 of the original terminal block. -/
-theorem sq_diagonalWeakAdjointEnergy_eq_coarseBlock [NeZero d]
+theorem sq_diagonalWeakAdjointEnergy_eq_coarseBlock
     {q : Mat d} (hq : q.PosDef) (t : ℤ) (a : CoeffSpace d)
     (p r : Vec d) :
     diagonalWeakAdjointEnergy hq t a p r ^ 2 =
@@ -114,7 +114,7 @@ theorem sq_diagonalWeakAdjointEnergy_eq_coarseBlock [NeZero d]
       norm_num
 
 /-- The primal terminal optimizer energy is almost everywhere measurable. -/
-theorem aemeasurable_diagonalWeakEnergy [NeZero d]
+theorem aemeasurable_diagonalWeakEnergy
     {P : Measure (CoeffSpace d)} {q : Mat d} (hq : q.PosDef)
     (t : ℤ) (p r : Vec d) :
     AEMeasurable (fun a ↦ diagonalWeakEnergy hq t a p r) P := by
@@ -134,7 +134,7 @@ theorem aemeasurable_diagonalWeakEnergy [NeZero d]
   exact (hquad.sub aemeasurable_const).sqrt
 
 /-- The adjoint terminal optimizer energy is almost everywhere measurable. -/
-theorem aemeasurable_diagonalWeakAdjointEnergy [NeZero d]
+theorem aemeasurable_diagonalWeakAdjointEnergy
     {P : Measure (CoeffSpace d)} {q : Mat d} (hq : q.PosDef)
     (t : ℤ) (p r : Vec d) :
     AEMeasurable (fun a ↦ diagonalWeakAdjointEnergy hq t a p r) P := by

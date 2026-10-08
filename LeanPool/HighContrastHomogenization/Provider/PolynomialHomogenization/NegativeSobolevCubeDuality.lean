@@ -65,9 +65,11 @@ private theorem memLp_hilbert_normalizedCubeMeasure_of_memLp_openCubeSet
   unfold cubeMeasure
   rwa [volume_restrict_cubeSet_eq_volume_restrict_openCubeSet]
 
+/-- Package almost everywhere strongly measurable, finite `hsNormSq` data as a Euclidean
+fractional Sobolev `L²` field on `Q`. -/
 @[expose]
 public noncomputable def cubeEuclideanWspL2FieldOfHsNormSq
-    {d : ℕ} [NeZero d] (Q : TriadicCube d)
+    {d : ℕ} (Q : TriadicCube d)
     {s : ℝ} (hs : 0 < s) (hsHalf : s < 1 / 2)
     (G : Vec d → Vec d)
     (hGmeas : AEStronglyMeasurable G

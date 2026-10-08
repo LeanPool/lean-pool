@@ -58,8 +58,8 @@ theorem transport_weighted_smallness (γ p D ρ L : ℝ) (hγ : γ < 1) (hL : 0 
     (3 : ℝ) ^ ((1 - γ) / 2 * L) * p ≤ ρ ∧
     (3 : ℝ) ^ ((1 - γ) / 4 * L) * D ≤ ρ := by
   have hw : (3 : ℝ) ^ ((1 - γ) / 4 * L) ≤ (3 : ℝ) ^ ((1 - γ) / 2 * L) :=
-    Real.rpow_le_rpow_of_exponent_le (by norm_num) (by nlinarith only [mul_nonneg (sub_pos.mpr
-      hγ).le hL])
+    Real.rpow_le_rpow_of_exponent_le (by norm_num) (by
+      nlinarith only [mul_nonneg (sub_pos.mpr hγ).le hL])
   have hh := mul_le_mul_of_nonneg_left hsmall
     (by positivity : 0 ≤ (3 : ℝ) ^ ((1 - γ) / 2 * L))
   have he : (3 : ℝ) ^ ((1 - γ) / 2 * L) * (3 : ℝ) ^ (-(1 / 2) * (1 - γ) * L) = 1 := by
@@ -137,7 +137,8 @@ theorem exists_transport_source_absorption (a Q : ℝ) (ha : 0 < a) (hQ : 0 ≤ 
       conv_lhs => lhs; rw [← Real.rpow_logb (by norm_num : (0 : ℝ) < 3) (by norm_num : (3 : ℝ) ≠
         1) (zero_lt_one.trans_le hA)]
       rw [← Real.rpow_add (by norm_num : (0 : ℝ) < 3)]
-      exact Real.rpow_le_one_of_one_le_of_nonpos (by norm_num) (by dsimp only [y] at hquarter;
+      exact Real.rpow_le_one_of_one_le_of_nonpos (by norm_num) (by
+        dsimp only [y] at hquarter
         linarith only [hquarter, hL])
     have hdecay : (3 : ℝ) ^ (-(a / 4) * x) ≤ (3 : ℝ) ^ (-L) :=
       Real.rpow_le_rpow_of_exponent_le (by norm_num) (by linarith only [hquarter, hy])
@@ -158,8 +159,9 @@ theorem exists_transport_source_absorption (a Q : ℝ) (ha : 0 < a) (hQ : 0 ≤ 
         rw [he]
         ring
       _ ≤ 1 * Cpoly * (3 : ℝ) ^ (-L) := mul_le_mul
-        (mul_le_mul hAexp hpoly hnonneg (by norm_num)) hdecay (by positivity) (by dsimp only
-          [Cpoly]; positivity)
+        (mul_le_mul hAexp hpoly hnonneg (by norm_num)) hdecay (by positivity) (by
+          dsimp only [Cpoly]
+          positivity)
       _ = _ := by rw [one_mul]
 
 /-- Projective proximity bounds the two distinct source brackets by one geometric base. -/
@@ -194,8 +196,8 @@ theorem transport_source_brackets (K₀ : ℝ) (hK₀ : 1 ≤ K₀) :
     simpa only [mul_pow, b₂] using pow_le_pow_left₀ (add_nonneg he0 hep) hh 2
   have hmajor (b : ℝ) (hb : b ≤ B) : 1 + Pi * (b * e ^ 2) ≤ B * ((2 + Pi) * e ^ 2) := by
     have hterm := mul_le_mul_of_nonneg_left (mul_le_mul_of_nonneg_right hb (sq_nonneg e)) hPi0
-    have hBe : 1 ≤ B * e ^ 2 := by nlinarith only [hB, he2, mul_nonneg (sub_nonneg.mpr hB)
-      (sub_nonneg.mpr he2)]
+    have hBe : 1 ≤ B * e ^ 2 := by
+      nlinarith only [hB, he2, mul_nonneg (sub_nonneg.mpr hB) (sub_nonneg.mpr he2)]
     nlinarith only [hterm, hBe]
   constructor
   · apply le_trans _ (hmajor b₁ hb₁B)

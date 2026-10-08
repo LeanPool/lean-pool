@@ -509,8 +509,10 @@ theorem abs_cutoff_projected_primal_pairing_subSkew_le_nested_depth_sum
     exact integrableOn_diagonalWeakState_fst_component_of_aligned
       hq (hks.trans hst) hmem (a.subSkew g hg) p r i
 
+/-- The aligned-cell average of the centered cutoff paired with the depth-`N`
+projection of the primal state component in direction `Qcen`, after skew subtraction. -/
 @[expose]
-def primal_projected_oscillation [NeZero d]
+def primalProjectedOscillation
     {q : Mat d} (hq : q.PosDef) (s t : ℤ)
     (g : Mat d) (hg : IsSkewMat g) (p r Qcen : Vec d)
     (N : ℕ) (a : CoeffSpace d) : ℝ :=
@@ -524,8 +526,10 @@ def primal_projected_oscillation [NeZero d]
     let G : Vec d → ℝ := fun y ↦ vecDot Qcen (F (matVecMul q y)).1
     cubeBesovPairing R f (cubeProjection R N G)
 
+/-- The aligned-cell average of the centered cutoff paired with the full
+primal state component in direction `Qcen`, after skew subtraction. -/
 @[expose]
-def primal_physical_oscillation [NeZero d]
+def primalPhysicalOscillation
     {q : Mat d} (hq : q.PosDef) (s t : ℤ)
     (g : Mat d) (hg : IsSkewMat g) (p r Qcen : Vec d)
     (a : CoeffSpace d) : ℝ :=
@@ -543,7 +547,7 @@ theorem abs_primal_projected_oscillation_le_nested_depth_sum
     [NeZero d] {q : Mat d} (hq : q.PosDef) {s t : ℤ} (hst : s ≤ t)
     (g : Mat d) (hg : IsSkewMat g) (p r Qcen : Vec d)
     (N : ℕ) (a : CoeffSpace d) :
-    |primal_projected_oscillation hq s t g hg p r Qcen N a| ≤
+    |primalProjectedOscillation hq s t g hg p r Qcen N a| ≤
       ∑ j ∈ Finset.range N,
         (32 * (d : ℝ) ^ 2 * smoothTransitionProfile.derivBound *
           (3 : ℝ) ^ (-((t - s) + (j : ℤ)))) *
@@ -599,7 +603,7 @@ theorem abs_primal_projected_oscillation_le_nested_depth_sum
       rw [avsum_const_mul]
 
 theorem primal_cutoff_oscillation_eq_unprojected_pairing
-    [NeZero d] {q : Mat d} (hq : q.PosDef) (s t : ℤ) (w : Fin d → ℤ)
+    {q : Mat d} (hq : q.PosDef) (s t : ℤ) (w : Fin d → ℤ)
     (F : Vec d → BlockVec d) (Qcen : Vec d) :
     let R : TriadicCube d := translateCube w (originCube d s)
     let phi : Vec d → ℝ := fun y ↦

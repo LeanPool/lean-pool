@@ -50,7 +50,7 @@ variable {d : ℕ}
 
 /-- **A block inside a positive multiple of itself.**  The relative size is at
 most the reciprocal of the multiple. -/
-theorem blockSize_blockScale_self_le [NeZero d] {E : BlockMat d}
+theorem blockSize_blockScale_self_le {E : BlockMat d}
     (hE : IsSymmetricBlockMat E) (hEpd : BlockPosDef E) {c : ℝ} (hc : 0 < c) :
     blockSize E (blockScale c E) ≤ c⁻¹ := by
   have hscaleSym : IsSymmetricBlockMat (blockScale c E) :=
@@ -88,7 +88,7 @@ theorem blockSize_blockScale_self_le [NeZero d] {E : BlockMat d}
   rwa [toFullBlockMat_blockScale (-(c⁻¹))] at h
 
 /-- **The drop constant at the isotropy reference is at most four.** -/
-theorem dropConstantIsotropy_isotropyReference_le [NeZero d] {E : BlockMat d}
+theorem dropConstantIsotropy_isotropyReference_le {E : BlockMat d}
     (hE : IsSymmetricBlockMat E) (hEpd : BlockPosDef E) {cIso : ℝ}
     (hcIso : 0 ≤ cIso) :
     dropConstantIsotropy (1 + cIso) E (isotropyReference cIso E) ≤ 4 := by

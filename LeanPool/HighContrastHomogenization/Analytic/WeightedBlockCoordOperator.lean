@@ -120,7 +120,7 @@ theorem inner_weightedCoordOperator {U : Set (Vec d)} {eta : Vec d → ℝ}
           toFullBlockVec ((G : Vec d → HilbertBlockVec d) x).toBlockVec beta ∂volume := by
   rw [weightedCoordOperator, inner_pointwiseOperator_eq_integral]
   refine integral_congr_ae (Filter.Eventually.of_forall fun x => ?_)
-  show inner ℝ (eta x • coordOperator alpha beta ((F : Vec d → HilbertBlockVec d) x))
+  change inner ℝ (eta x • coordOperator alpha beta ((F : Vec d → HilbertBlockVec d) x))
     ((G : Vec d → HilbertBlockVec d) x) = _
   rw [real_inner_smul_left, inner_coordOperator]
   ring

@@ -48,7 +48,7 @@ noncomputable section
 variable {d : ℕ}
 
 /-- **The `hcore` body from the corrected family clause.** -/
-theorem hcore_body_of_corrected_family [NeZero d]
+theorem hcore_body_of_corrected_family
     {P : Measure (CoeffSpace d)} {q : Mat d} {N₀ : ℕ}
     {A alpha d0 S0 S1 S2 b0 bA b2 : ℝ} {src : ℕ → ℕ → ℝ} {ns cA : ℕ}
     (hA : 1 ≤ A) (halpha : 0 < alpha)

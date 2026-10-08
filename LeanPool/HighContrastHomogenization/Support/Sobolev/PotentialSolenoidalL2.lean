@@ -711,7 +711,6 @@ public noncomputable def vectorPairingCLM
     ((continuousLinearEquivVectorL2 (U := U)).toContinuousLinearMap)
 
 private theorem vectorPairingCLM_apply_eq_integral
-    [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     {g : Vec d → Vec d} (hg : MemVectorL2 U g) (F : VectorL2 U) :
     vectorPairingCLM (U := U) hg F =
       ∫ x in U, vecDot (g x) (F x) ∂MeasureTheory.volume := by
@@ -781,7 +780,6 @@ private theorem scalarIntegralCLMLocal_apply
 /-- Members of the canonical closed zero-trace potential subspace are
 orthogonal to every zero-normal-trace solenoidal test field. -/
 theorem integral_vecDot_eq_zero_of_mem_potentialZeroTrace_ofSubmoduleClosures
-    [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     (F : VectorL2 U) (hF : F ∈ (ofSubmoduleClosures U).potentialZeroTrace)
     {g : Vec d → Vec d} (hg : MemVectorL2 U g)
     (hsol : IsSolenoidalZeroNormalTraceOn U g) :
@@ -960,14 +958,14 @@ end MuCorrectionSpaceData
 /-- Canonical packaged `L²` potential/solenoidal data on a Sobolev-regular
 domain. -/
 @[expose]
-noncomputable def potentialSolenoidalL2Data_of_isSobolevRegularDomain
+noncomputable def potentialSolenoidalL2DataOfSobolevRegularDomain
     {d : ℕ} {U : Set (Vec d)} (hU : IsSobolevRegularDomain U) :
     PotentialSolenoidalL2Data U :=
   PotentialSolenoidalL2Data.ofIsSobolevRegularDomain hU
 
 /-- Canonical packaged Hilbert correction space on a Sobolev-regular domain. -/
 @[expose]
-noncomputable def muCorrectionSpaceData_of_isSobolevRegularDomain
+noncomputable def muCorrectionSpaceDataOfSobolevRegularDomain
     {d : ℕ} {U : Set (Vec d)} (hU : IsSobolevRegularDomain U) :
     MuCorrectionSpaceData U :=
   MuCorrectionSpaceData.ofIsSobolevRegularDomain hU
@@ -975,7 +973,7 @@ noncomputable def muCorrectionSpaceData_of_isSobolevRegularDomain
 /-- Canonical packaged `L²` potential/solenoidal data on a bounded open convex
 domain. -/
 @[expose]
-noncomputable def potentialSolenoidalL2Data_of_isOpenBoundedConvexDomain
+noncomputable def potentialSolenoidalL2DataOfOpenBoundedConvexDomain
     {d : ℕ} {U : Set (Vec d)} (hU : IsOpenBoundedConvexDomain U) :
     PotentialSolenoidalL2Data U :=
   PotentialSolenoidalL2Data.ofIsOpenBoundedConvexDomain hU
@@ -983,7 +981,7 @@ noncomputable def potentialSolenoidalL2Data_of_isOpenBoundedConvexDomain
 /-- Canonical packaged Hilbert correction space on a bounded open convex
 domain. -/
 @[expose]
-noncomputable def muCorrectionSpaceData_of_isOpenBoundedConvexDomain
+noncomputable def muCorrectionSpaceDataOfOpenBoundedConvexDomain
     {d : ℕ} {U : Set (Vec d)} (hU : IsOpenBoundedConvexDomain U) :
     MuCorrectionSpaceData U :=
   MuCorrectionSpaceData.ofIsOpenBoundedConvexDomain hU

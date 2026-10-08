@@ -334,7 +334,7 @@ theorem exists_bufferExponent_subthresholdPolynomialMomentEnvelope_le
         subthresholdPolynomialMomentEnvelope hc sub T n ≤ ENNReal.ofReal η := by
   obtain ⟨B, hB_one, hB⟩ :=
     exists_bufferExponent_for_polynomial_geometric_envelope_no_linear_le
-      (C := sub.C_sub) (A := sub.A_sub) (c := 2 * hc.rhoM)
+      (C := sub.polynomialCoefficient) (A := sub.polynomialExponent) (c := 2 * hc.rhoM)
       (η := η) sub.C_sub_nonneg (by nlinarith [hc.rhoM_pos]) hη
   refine ⟨B, hB_one, ?_⟩
   intro T n hT hbuf
@@ -447,14 +447,14 @@ theorem exists_bufferExponent_highCenteredMoment_convolutionEnvelope_le
     (hm : HighCenteredMomentParameters d hc) {η : ℝ} (hη : 0 < η) :
     ∃ B : ℝ, 1 ≤ B ∧ ∀ {T : ℝ} {n : ℕ}, 1 ≤ T →
       B * Real.logb 3 (2 + T) ≤ (n : ℝ) →
-        hm.C_Q * (((2 + T : ℝ) ^ hm.Q) *
+        hm.momentCoefficient * (((2 + T : ℝ) ^ hm.Q) *
           (((n : ℝ) + 1) *
             (3 : ℝ) ^
               (-(min (hm.Q * hc.rhoM - (d : ℝ)) (hm.Q * hm.gamma)) *
                 (n : ℝ)))) ≤ η := by
   exact
     exists_bufferExponent_for_polynomial_geometric_envelope_le
-      (C := hm.C_Q) (A := hm.Q)
+      (C := hm.momentCoefficient) (A := hm.Q)
       (c := min (hm.Q * hc.rhoM - (d : ℝ)) (hm.Q * hm.gamma))
       hm.C_Q_nonneg (highCenteredMoment_min_decay_pos hm) hη
 
@@ -642,8 +642,8 @@ theorem real_descendant_count_mul_highCenteredMoment_decay_eq
     (hm : HighCenteredMomentParameters d hc) {N m j : ℕ} :
     (((((3 ^ d) ^ (m - j) : ℕ) : ℝ) *
         (3 : ℝ) ^ (-(hm.Q * hc.rhoM) * ((m - j : ℕ) : ℝ))) *
-      (hm.C_Q * (3 : ℝ) ^ (-(hm.Q * hm.gamma) * ((j - N : ℕ) : ℝ)))) =
-      hm.C_Q *
+      (hm.momentCoefficient * (3 : ℝ) ^ (-(hm.Q * hm.gamma) * ((j - N : ℕ) : ℝ)))) =
+      hm.momentCoefficient *
         ((3 : ℝ) ^
             (-(hm.Q * hc.rhoM - (d : ℝ)) * ((m - j : ℕ) : ℝ)) *
           (3 : ℝ) ^ (-(hm.Q * hm.gamma) * ((j - N : ℕ) : ℝ))) := by
@@ -661,30 +661,30 @@ theorem real_descendant_count_mul_highCenteredMoment_decay_eq
   change
     (((((3 ^ d) ^ (m - j) : ℕ) : ℝ) *
         (3 : ℝ) ^ (-(hm.Q * hc.rhoM) * leftGap)) *
-      (hm.C_Q * (3 : ℝ) ^ (-(hm.Q * hm.gamma) * rightGap))) =
-      hm.C_Q *
+      (hm.momentCoefficient * (3 : ℝ) ^ (-(hm.Q * hm.gamma) * rightGap))) =
+      hm.momentCoefficient *
         ((3 : ℝ) ^ (-(hm.Q * hc.rhoM - (d : ℝ)) * leftGap) *
           (3 : ℝ) ^ (-(hm.Q * hm.gamma) * rightGap))
   calc
     (((((3 ^ d) ^ (m - j) : ℕ) : ℝ) *
         (3 : ℝ) ^ (-(hm.Q * hc.rhoM) * leftGap)) *
-      (hm.C_Q * (3 : ℝ) ^ (-(hm.Q * hm.gamma) * rightGap)))
+      (hm.momentCoefficient * (3 : ℝ) ^ (-(hm.Q * hm.gamma) * rightGap)))
         =
       (((3 : ℝ) ^ ((d : ℝ) * leftGap) *
         (3 : ℝ) ^ (-(hm.Q * hc.rhoM) * leftGap)) *
-      (hm.C_Q * (3 : ℝ) ^ (-(hm.Q * hm.gamma) * rightGap))) := by
+      (hm.momentCoefficient * (3 : ℝ) ^ (-(hm.Q * hm.gamma) * rightGap))) := by
         rw [hcount]
     _ =
       ((3 : ℝ) ^ (((d : ℝ) * leftGap) + (-(hm.Q * hc.rhoM) * leftGap)) *
-      (hm.C_Q * (3 : ℝ) ^ (-(hm.Q * hm.gamma) * rightGap))) := by
+      (hm.momentCoefficient * (3 : ℝ) ^ (-(hm.Q * hm.gamma) * rightGap))) := by
         rw [← Real.rpow_add h3_pos]
     _ =
       ((3 : ℝ) ^ (-(hm.Q * hc.rhoM - (d : ℝ)) * leftGap) *
-      (hm.C_Q * (3 : ℝ) ^ (-(hm.Q * hm.gamma) * rightGap))) := by
+      (hm.momentCoefficient * (3 : ℝ) ^ (-(hm.Q * hm.gamma) * rightGap))) := by
         congr 2
         ring
     _ =
-      hm.C_Q *
+      hm.momentCoefficient *
         ((3 : ℝ) ^ (-(hm.Q * hc.rhoM - (d : ℝ)) * leftGap) *
           (3 : ℝ) ^ (-(hm.Q * hm.gamma) * rightGap)) := by
         ring
@@ -703,7 +703,7 @@ theorem terminalWeak_highCenteredMoment_summand_eq_convolution
           highCenteredMomentEnvelope hm N j) =
       terminalCost ^ hm.Q *
         ENNReal.ofReal
-          (hm.C_Q *
+          (hm.momentCoefficient *
             ((3 : ℝ) ^
                 (-(hm.Q * hc.rhoM - (d : ℝ)) * ((m - j : ℕ) : ℝ)) *
               (3 : ℝ) ^ (-(hm.Q * hm.gamma) * ((j - N : ℕ) : ℝ)))) := by
@@ -718,7 +718,7 @@ theorem terminalWeak_highCenteredMoment_summand_eq_convolution
   have hweak_nonneg : 0 ≤ weakDecay := by
     dsimp [weakDecay]
     positivity
-  have hmoment_nonneg : 0 ≤ hm.C_Q * momentDecay := by
+  have hmoment_nonneg : 0 ≤ hm.momentCoefficient * momentDecay := by
     dsimp [momentDecay]
     exact mul_nonneg hm.C_Q_nonneg (by positivity)
   have hcount_coe :
@@ -734,19 +734,19 @@ theorem terminalWeak_highCenteredMoment_summand_eq_convolution
         =
       terminalCost ^ hm.Q *
         ((ENNReal.ofReal count * ENNReal.ofReal weakDecay) *
-          ENNReal.ofReal (hm.C_Q * momentDecay)) := by
+          ENNReal.ofReal (hm.momentCoefficient * momentDecay)) := by
         rw [terminalWeakMomentWeight, highCenteredMomentEnvelope, hcount_coe]
         dsimp [weakDecay, momentDecay]
         ac_rfl
     _ =
       terminalCost ^ hm.Q *
-        ENNReal.ofReal ((count * weakDecay) * (hm.C_Q * momentDecay)) := by
+        ENNReal.ofReal ((count * weakDecay) * (hm.momentCoefficient * momentDecay)) := by
         rw [← ENNReal.ofReal_mul hcount_nonneg]
         rw [← ENNReal.ofReal_mul (mul_nonneg hcount_nonneg hweak_nonneg)]
     _ =
       terminalCost ^ hm.Q *
         ENNReal.ofReal
-          (hm.C_Q *
+          (hm.momentCoefficient *
             ((3 : ℝ) ^
                 (-(hm.Q * hc.rhoM - (d : ℝ)) * ((m - j : ℕ) : ℝ)) *
               (3 : ℝ) ^ (-(hm.Q * hm.gamma) * ((j - N : ℕ) : ℝ)))) := by
@@ -767,7 +767,7 @@ theorem sum_Icc_terminalWeak_highCenteredMomentEnvelope_le_convolution
           highCenteredMomentEnvelope hm N j)) ≤
       terminalCost ^ hm.Q *
         ENNReal.ofReal
-          (hm.C_Q * (((m - N + 1 : ℕ) : ℝ) *
+          (hm.momentCoefficient * (((m - N + 1 : ℕ) : ℝ) *
             (3 : ℝ) ^
               (-(min (hm.Q * hc.rhoM - (d : ℝ)) (hm.Q * hm.gamma)) *
                 ((m - N : ℕ) : ℝ)))) := by
@@ -776,15 +776,15 @@ theorem sum_Icc_terminalWeak_highCenteredMomentEnvelope_le_convolution
         (-(hm.Q * hc.rhoM - (d : ℝ)) * ((m - j : ℕ) : ℝ)) *
       (3 : ℝ) ^ (-(hm.Q * hm.gamma) * ((j - N : ℕ) : ℝ))
   have hterm_nonneg :
-      ∀ j, j ∈ Finset.Icc N m → 0 ≤ hm.C_Q * convTerm j := by
+      ∀ j, j ∈ Finset.Icc N m → 0 ≤ hm.momentCoefficient * convTerm j := by
     intro j _hj
     dsimp [convTerm]
     exact mul_nonneg hm.C_Q_nonneg (mul_nonneg (by positivity) (by positivity))
   have hconv :=
     sum_Icc_rpow_three_highCenteredMoment_convolution_le hm hNm
   have hscaled :
-      hm.C_Q * (∑ j ∈ Finset.Icc N m, convTerm j) ≤
-        hm.C_Q * (((m - N + 1 : ℕ) : ℝ) *
+      hm.momentCoefficient * (∑ j ∈ Finset.Icc N m, convTerm j) ≤
+        hm.momentCoefficient * (((m - N + 1 : ℕ) : ℝ) *
           (3 : ℝ) ^
             (-(min (hm.Q * hc.rhoM - (d : ℝ)) (hm.Q * hm.gamma)) *
               ((m - N : ℕ) : ℝ))) := by
@@ -796,27 +796,27 @@ theorem sum_Icc_terminalWeak_highCenteredMomentEnvelope_le_convolution
           highCenteredMomentEnvelope hm N j))
         =
       ∑ j ∈ Finset.Icc N m,
-        terminalCost ^ hm.Q * ENNReal.ofReal (hm.C_Q * convTerm j) := by
+        terminalCost ^ hm.Q * ENNReal.ofReal (hm.momentCoefficient * convTerm j) := by
         refine Finset.sum_congr rfl ?_
         intro j _hj
         exact terminalWeak_highCenteredMoment_summand_eq_convolution
           (d := d) (hc := hc) hm terminalCost (N := N) (m := m) (j := j)
     _ =
       terminalCost ^ hm.Q *
-        (∑ j ∈ Finset.Icc N m, ENNReal.ofReal (hm.C_Q * convTerm j)) := by
+        (∑ j ∈ Finset.Icc N m, ENNReal.ofReal (hm.momentCoefficient * convTerm j)) := by
         rw [Finset.mul_sum]
     _ =
       terminalCost ^ hm.Q *
-        ENNReal.ofReal (∑ j ∈ Finset.Icc N m, hm.C_Q * convTerm j) := by
+        ENNReal.ofReal (∑ j ∈ Finset.Icc N m, hm.momentCoefficient * convTerm j) := by
         rw [ENNReal.ofReal_sum_of_nonneg hterm_nonneg]
     _ =
       terminalCost ^ hm.Q *
-        ENNReal.ofReal (hm.C_Q * (∑ j ∈ Finset.Icc N m, convTerm j)) := by
+        ENNReal.ofReal (hm.momentCoefficient * (∑ j ∈ Finset.Icc N m, convTerm j)) := by
         rw [Finset.mul_sum]
     _ ≤
       terminalCost ^ hm.Q *
         ENNReal.ofReal
-          (hm.C_Q * (((m - N + 1 : ℕ) : ℝ) *
+          (hm.momentCoefficient * (((m - N + 1 : ℕ) : ℝ) *
             (3 : ℝ) ^
               (-(min (hm.Q * hc.rhoM - (d : ℝ)) (hm.Q * hm.gamma)) *
                 ((m - N : ℕ) : ℝ)))) := by
@@ -873,7 +873,7 @@ theorem lintegral_enorm_rpow_two_le_lintegral_enorm_rpow_rpow_of_two_le
     [MeasureTheory.IsProbabilityMeasure μ] {X : Ω → ℝ} {Q : ℝ} {B : ENNReal}
     (hQ : (2 : ℝ) ≤ Q)
     (hX : MeasureTheory.AEStronglyMeasurable X μ)
-    (hB : ∫⁻ ω, ‖X ω‖ₑ ^ Q ∂ μ ≤ B) :
+    (hB : ∫⁻ ω, ‖X ω‖ₑ ^ Q ∂μ ≤ B) :
     ∫⁻ ω, ‖X ω‖ₑ ^ (2 : ℝ) ∂ μ ≤ B ^ ((2 : ℝ) / Q) := by
   have hQ_pos : 0 < Q := by linarith
   have hQ_nonneg : 0 ≤ Q := le_of_lt hQ_pos
@@ -929,7 +929,7 @@ theorem lintegral_enorm_rpow_two_le_lintegral_enorm_rpow_rpow_highCenteredMoment
     {d : ℕ} {hc : HighContrastExponents d}
     (hm : HighCenteredMomentParameters d hc)
     (hX : MeasureTheory.AEStronglyMeasurable X μ) {B : ENNReal}
-    (hB : ∫⁻ ω, ‖X ω‖ₑ ^ hm.Q ∂ μ ≤ B) :
+    (hB : ∫⁻ ω, ‖X ω‖ₑ ^ hm.Q ∂μ ≤ B) :
     ∫⁻ ω, ‖X ω‖ₑ ^ (2 : ℝ) ∂ μ ≤ B ^ ((2 : ℝ) / hm.Q) :=
   lintegral_enorm_rpow_two_le_lintegral_enorm_rpow_rpow_of_two_le
     hm.two_le_Q hX hB
@@ -953,7 +953,7 @@ theorem lintegral_enorm_rpow_two_le_of_lintegral_ennreal_envelope_highCenteredMo
     (hm : HighCenteredMomentParameters d hc)
     (hX : MeasureTheory.AEStronglyMeasurable X μ) {B : ENNReal}
     (hpoint : ∀ ω, ‖X ω‖ₑ ^ hm.Q ≤ Z ω)
-    (hB : ∫⁻ ω, Z ω ∂ μ ≤ B) :
+    (hB : ∫⁻ ω, Z ω ∂μ ≤ B) :
     ∫⁻ ω, ‖X ω‖ₑ ^ (2 : ℝ) ∂ μ ≤ B ^ ((2 : ℝ) / hm.Q) := by
   have hQ :
       ∫⁻ ω, ‖X ω‖ₑ ^ hm.Q ∂ μ ≤ B :=

@@ -37,7 +37,7 @@ open FiniteLipschitzCoreInternal
 /-- The normalized energy of the solution restricted to a centered cube. -/
 @[expose]
 noncomputable def finiteCenteredCubeSolutionEnergy
-    {d : ℕ} [NeZero d] (a : Book.Ch02.TriadicCoeffFamily d)
+    {d : ℕ} (a : Book.Ch02.TriadicCoeffFamily d)
     (m : ℤ) (u : Book.Ch03.CubeSolution (originCube d m) a) (k : ℤ) : ℝ :=
   Book.Ch03.h1EnergyNormOnCube (originCube d (min k m)) a
     (finiteCubeSolutionRestriction a (min_le_right k m) u).toH1
@@ -45,7 +45,7 @@ noncomputable def finiteCenteredCubeSolutionEnergy
 /-- On an inner scale, the centered energy is the energy of the exact cube
 restriction. -/
 theorem finiteCenteredCubeSolutionEnergy_eq_of_le
-    {d : ℕ} [NeZero d] (a : Book.Ch02.TriadicCoeffFamily d)
+    {d : ℕ} (a : Book.Ch02.TriadicCoeffFamily d)
     (m : ℤ) (u : Book.Ch03.CubeSolution (originCube d m) a)
     (k : ℤ) (hkm : k ≤ m) :
     finiteCenteredCubeSolutionEnergy a m u k =
@@ -59,14 +59,14 @@ theorem finiteCenteredCubeSolutionEnergy_eq_of_le
 an inner centered cube. -/
 @[expose]
 noncomputable def finiteCenteredCubeBestFitErrorAt
-    {d : ℕ} [NeZero d] (a : Book.Ch02.TriadicCoeffFamily d)
+    {d : ℕ} (a : Book.Ch02.TriadicCoeffFamily d)
     (m : ℤ) (u : Book.Ch03.CubeSolution (originCube d m) a)
     (k : ℤ) (_hkm : k ≤ m) : ℝ :=
   finiteLipschitzAffineErrorRow a m u k
 
 /-- The centered-cube best-fit row is no larger than any affine candidate. -/
 theorem finiteCenteredCubeBestFitErrorAt_le
-    {d : ℕ} [NeZero d] (a : Book.Ch02.TriadicCoeffFamily d)
+    {d : ℕ} (a : Book.Ch02.TriadicCoeffFamily d)
     (m : ℤ) (u : Book.Ch03.CubeSolution (originCube d m) a)
     (k : ℤ) (hkm : k ≤ m) (c : ℝ) (e : Vec d) :
     finiteCenteredCubeBestFitErrorAt a m u k hkm ≤
@@ -75,7 +75,7 @@ theorem finiteCenteredCubeBestFitErrorAt_le
 
 /-- The centered-cube best-fit row is attained by affine coefficients. -/
 theorem finiteCenteredCubeBestFitErrorAt_exists_eq
-    {d : ℕ} [NeZero d] (a : Book.Ch02.TriadicCoeffFamily d)
+    {d : ℕ} (a : Book.Ch02.TriadicCoeffFamily d)
     (m : ℤ) (u : Book.Ch03.CubeSolution (originCube d m) a)
     (k : ℤ) (hkm : k ≤ m) :
     ∃ c : ℝ, ∃ e : Vec d,
@@ -90,7 +90,7 @@ theorem finiteCenteredCubeBestFitErrorAt_exists_eq
 cube. -/
 @[expose]
 noncomputable def finiteCenteredCubeBestFitInterceptAt
-    {d : ℕ} [NeZero d] (a : Book.Ch02.TriadicCoeffFamily d)
+    {d : ℕ} (a : Book.Ch02.TriadicCoeffFamily d)
     (m : ℤ) (u : Book.Ch03.CubeSolution (originCube d m) a)
     (k : ℤ) : ℝ :=
   finiteLipschitzBestIntercept a m u k
@@ -98,14 +98,14 @@ noncomputable def finiteCenteredCubeBestFitInterceptAt
 /-- The canonical slope of the affine best fit on an inner centered cube. -/
 @[expose]
 noncomputable def finiteCenteredCubeBestFitSlopeAt
-    {d : ℕ} [NeZero d] (a : Book.Ch02.TriadicCoeffFamily d)
+    {d : ℕ} (a : Book.Ch02.TriadicCoeffFamily d)
     (m : ℤ) (u : Book.Ch03.CubeSolution (originCube d m) a)
     (k : ℤ) : Vec d :=
   finiteLipschitzBestSlope a m u k
 
 /-- The canonical coefficients attain the centered-cube best-fit error. -/
 theorem finiteCenteredCubeBestFitErrorAt_eq_candidate
-    {d : ℕ} [NeZero d] (a : Book.Ch02.TriadicCoeffFamily d)
+    {d : ℕ} (a : Book.Ch02.TriadicCoeffFamily d)
     (m : ℤ) (u : Book.Ch03.CubeSolution (originCube d m) a)
     (k : ℤ) (hkm : k ≤ m) :
     finiteCenteredCubeBestFitErrorAt a m u k hkm =

@@ -691,6 +691,8 @@ chooses representatives for the dense generating submodule, not for every
 element of the closed correction space. -/
 structure CanonicalMuGeneratorRepresentativeData
     (U : Set (Vec d)) (Y : canonicalMuBlockCorrectionGeneratorSubmodule U) where
+  /-- Pointwise potential and flux correction representing the canonical dense generator `Y` in L².
+  -/
   correction : CorrectionFieldData U
   toBlockL2_eq : correction.toBlockL2 = (Y : BlockL2 U)
 

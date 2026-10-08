@@ -225,7 +225,7 @@ theorem exists_scalarIdentityGoodTailCorrectorOscillationConstant
       _ = ((d : ℝ) / 2) * euclideanNorm e * (3 : ℝ) ^ q := by ring
   calc cubeBesovOscillation Q (2 : ℝ≥0∞) phi.toFun
       = cubeLpNorm Q (2 : ℝ≥0∞) (cubeFluctuation Q g) := by
-        show cubeLpNorm Q (2 : ℝ≥0∞) (cubeFluctuation Q phi.toFun) =
+        change cubeLpNorm Q (2 : ℝ≥0∞) (cubeFluctuation Q phi.toFun) =
           cubeLpNorm Q (2 : ℝ≥0∞) (cubeFluctuation Q g)
         rw [hfluctEq]
     _ ≤ 2 * cubeLpNorm Q (2 : ℝ≥0∞) g :=

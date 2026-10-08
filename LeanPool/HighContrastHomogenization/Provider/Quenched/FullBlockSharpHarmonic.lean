@@ -46,7 +46,7 @@ private theorem fullBlockArithmeticMean_posDef {N d : ℕ} [NeZero N]
   exact hsum.smul (inv_pos.mpr (by
     exact_mod_cast Nat.pos_of_ne_zero (NeZero.ne N)))
 
-private theorem fullBlockArithmeticMean_reflConj {N d : ℕ} [NeZero N]
+private theorem fullBlockArithmeticMean_reflConj {N d : ℕ}
     (A : Fin N → FullBlockMat d) :
     fullBlockArithmeticMean
         (fun i ↦ fullBlockRefl d * A i * fullBlockRefl d) =
@@ -115,7 +115,7 @@ theorem fullBlockArithmeticMean_sharp_sub_parentSharp_le_averageQuadratic
 /-- Finset-indexed form of the sharp arithmetic-harmonic gap.  This avoids an
 enumeration choice when the children are supplied by an aligned subdivision. -/
 theorem fullBlockFinsetAverage_sharp_sub_parentSharp_le_averageQuadratic
-    {ι : Type*} [DecidableEq ι] {d : ℕ} (Z : Finset ι) (hZ : Z.Nonempty)
+    {ι : Type*} {d : ℕ} (Z : Finset ι) (hZ : Z.Nonempty)
     (A : ι → FullBlockMat d) (G P : FullBlockMat d)
     (hA : ∀ i ∈ Z, (A i).PosDef) (hG : G.IsSymm) (hP : P.PosDef)
     (hle : P ≤ (Z.card : ℝ)⁻¹ • ∑ i ∈ Z, A i) :

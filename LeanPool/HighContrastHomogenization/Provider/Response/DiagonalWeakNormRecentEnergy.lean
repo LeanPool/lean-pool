@@ -85,7 +85,7 @@ theorem responseIntegrand_diagonalWeakOptimizer_integrableOn
 
 /-- On one aligned child, the optimizer-difference block energy is four times
 the child response deficit of the restricted parent optimizer. -/
-theorem diagonalWeak_child_difference_energy_eq [NeZero d]
+theorem diagonalWeak_child_difference_energy_eq
     {q : Mat d} (hq : q.PosDef) {k t : ℤ} (hkt : k ≤ t)
     {w : Fin d → ℤ} (hw : w ∈ alignedIndex q k t)
     (a : CoeffSpace d) (p r : Vec d) :
@@ -160,8 +160,6 @@ end
 
 end HCPolySupport.HighContrast.Response
 
-end HighContrast
 
-end HCPolySupport
 
 end

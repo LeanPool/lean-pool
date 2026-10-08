@@ -38,24 +38,32 @@ noncomputable section
 
 variable {Ω : Type*}
 
+/-- The fixed-pair bad event in the top branch `q ≤ n`, with the selected
+bad-pair scale strictly below `n`. -/
 @[expose]
 def highTopPairEvent
     (H : ℕ → ℕ → Ω → ℝ) (K a t α : ℝ) (q m n : ℕ) : Set Ω :=
   {ω | q ≤ n ∧ selectedBadPairScale K a t α q m n < n ∧
     ω ∈ badPairEvent H t α q m n}
 
+/-- The fixed-pair bad event in the bottom branch `n ≤ q`, with the selected
+bad-pair scale strictly below `n`. -/
 @[expose]
 def highBottomPairEvent
     (H : ℕ → ℕ → Ω → ℝ) (K a t α : ℝ) (q m n : ℕ) : Set Ω :=
   {ω | n ≤ q ∧ selectedBadPairScale K a t α q m n < n ∧
     ω ∈ badPairEvent H t α q m n}
 
+/-- The fixed-pair bad event in the bottom branch `n ≤ q`, with `n` no larger
+than the selected bad-pair scale. -/
 @[expose]
 def crudeBottomPairEvent
     (H : ℕ → ℕ → Ω → ℝ) (K a t α : ℝ) (q m n : ℕ) : Set Ω :=
   {ω | n ≤ q ∧ n ≤ selectedBadPairScale K a t α q m n ∧
     ω ∈ badPairEvent H t α q m n}
 
+/-- The fixed-pair bad event in the top branch `q ≤ n`, with `n` no larger
+than the selected bad-pair scale. -/
 @[expose]
 def crudeTopPairEvent
     (H : ℕ → ℕ → Ω → ℝ) (K a t α : ℝ) (q m n : ℕ) : Set Ω :=

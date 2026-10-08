@@ -95,7 +95,7 @@ theorem profileBadEnergyAt_le_of_complete_maximum
       rw [← ENNReal.ofReal_mul hC]
 
 /-- The primal bad optimizer energy at a released level. -/
-theorem profileBadEnergyAt_diagonalWeakEnergy_le [NeZero d]
+theorem profileBadEnergyAt_diagonalWeakEnergy_le
     {P : Measure (CoeffSpace d)} [IsProbabilityMeasure P]
     {Q h beta lev rho : ℝ} (hQ : 2 < Q) (hh : 0 ≤ h) (hbeta : 0 ≤ beta)
     (hlev : 1 ≤ lev)
@@ -141,7 +141,7 @@ theorem profileBadEnergyAt_diagonalWeakEnergy_le [NeZero d]
       ring
 
 /-- The adjoint bad optimizer energy at a released level. -/
-theorem profileBadEnergyAt_diagonalWeakAdjointEnergy_le [NeZero d]
+theorem profileBadEnergyAt_diagonalWeakAdjointEnergy_le
     {P : Measure (CoeffSpace d)} [IsProbabilityMeasure P]
     {Q h beta lev rho : ℝ} (hQ : 2 < Q) (hh : 0 ≤ h) (hbeta : 0 ≤ beta)
     (hlev : 1 ≤ lev)

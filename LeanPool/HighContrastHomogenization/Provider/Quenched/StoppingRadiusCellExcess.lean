@@ -52,7 +52,7 @@ theorem blockScale_blockScale (c c' : ℝ) (A : BlockMat d) :
 /-- A discounted Loewner bound against a reference block, together with a
 comparison of that block with the homogenized one, bounds the normalized
 excess. -/
-theorem blockExcess_le_of_blockMatLoewnerLE [NeZero d]
+theorem blockExcess_le_of_blockMatLoewnerLE
     {H E Abar : BlockMat d} (hH : IsSymmetricBlockMat H)
     (hHps : (toFullBlockMat H).PosSemidef)
     (hAbar : IsSymmetricBlockMat Abar) (hAbarpd : Book.Ch02.BlockPosDef Abar)

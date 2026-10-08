@@ -37,7 +37,7 @@ theorem exists_overlapCube_meanZero_poincare_constant {d : ℕ} {q : ℝ}
         u.valueLpSeminorm ≤
           (C * overlapCubeScaleFactor S) * u.gradientCoordLpSeminormSum := by
   let hCunit : W1pPoincareEstimate (openCubeSet (originCube d 0)) (ENNReal.ofReal q) :=
-    w1pPoincareEstimate_of_isOpenBoundedConvexDomain
+    w1pPoincareEstimateOfOpenBoundedConvexDomain
       (isOpenBoundedConvexDomain_openCubeSet (originCube d 0)) hq
   refine ⟨hCunit.constantValue, hCunit.constant_nonneg, ?_⟩
   intro S
@@ -86,6 +86,8 @@ theorem exists_overlapCube_meanZero_poincare_constant_finite {d : ℕ}
 the one local transport needed to retain the source-facing subaverage form of
 Poincare on overlap cubes. -/
 
+/-- Transport a `W^{1,p}` function along equality of its domains,
+preserving its value and gradient. -/
 @[expose]
 public noncomputable def castW1pDomain {d : ℕ} {U V : Set (Vec d)} {p : ENNReal}
     (hUV : U = V) (u : W1pFunction U p) : W1pFunction V p :=
@@ -103,6 +105,8 @@ public noncomputable def castW1pDomain {d : ℕ} {U V : Set (Vec d)} {p : ENNRea
   subst V
   rfl
 
+/-- Return a function on `translateSet z U` to `U` by translation through `-z`;
+its value and gradient at `x` are those of the original function at `x + z`. -/
 @[expose]
 public noncomputable def untranslateForOverlapPoincare {d : ℕ}
     {U : Set (Vec d)} {p : ENNReal} (z : Vec d)

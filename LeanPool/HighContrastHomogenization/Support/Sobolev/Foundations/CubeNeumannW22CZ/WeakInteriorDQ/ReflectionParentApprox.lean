@@ -31,8 +31,8 @@ variable {d : ℕ} {m : ℤ}
 /-- For Hilbert-valued `L²` functions, the square of the `toReal` `eLpNorm`
 is the integral of the pointwise squared norm. -/
 theorem toReal_eLpNorm_two_sq_eq_integral_norm_sq
-    {α E : Type*} [MeasurableSpace α] [NormedAddCommGroup E] [MeasurableSpace E]
-    [BorelSpace E] {μ : MeasureTheory.Measure α} {f : α → E}
+    {α E : Type*} [MeasurableSpace α] [NormedAddCommGroup E]
+    {μ : MeasureTheory.Measure α} {f : α → E}
     (hf : MeasureTheory.MemLp f 2 μ) :
     (ENNReal.toReal (MeasureTheory.eLpNorm f 2 μ)) ^ 2 =
       ∫ x, ‖f x‖ ^ 2 ∂μ := by

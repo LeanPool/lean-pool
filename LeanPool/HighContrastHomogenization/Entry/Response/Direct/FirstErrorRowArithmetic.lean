@@ -72,7 +72,7 @@ noncomputable section
 /-- **The canonical signed cutoff pairing is measurable, minus recentring.**  With no hypothesis
 beyond the cutoff class: the three linear readouts of the canonical optimizer state are measurable,
 and so is the quadratic one. -/
-theorem aestronglyMeasurable_canonical_cutoff_pairing_respCoeffMinus {d : ℕ} [NeZero d]
+theorem aestronglyMeasurable_canonical_cutoff_pairing_respCoeffMinus {d : ℕ}
     (P : Measure (CoeffSpace d)) (jStar : ℕ) (F : BlockMat d) (t : ℤ)
     (hjStar : 2 * d ≤ 3 ^ jStar) (hm : (explicitCanonicalMetric F).PosDef)
     (φ : Vec d → ℝ) (hφ : IsResponseCutoff (respGrid jStar F) t φ)
@@ -106,7 +106,7 @@ theorem aestronglyMeasurable_canonical_cutoff_pairing_respCoeffMinus {d : ℕ} [
 
 /-- **The canonical signed cutoff pairing is measurable, plus recentring.**  The adjoint twin of
 `aestronglyMeasurable_canonical_cutoff_pairing_respCoeffMinus`. -/
-theorem aestronglyMeasurable_canonical_cutoff_pairing_respCoeffPlus {d : ℕ} [NeZero d]
+theorem aestronglyMeasurable_canonical_cutoff_pairing_respCoeffPlus {d : ℕ}
     (P : Measure (CoeffSpace d)) (jStar : ℕ) (F : BlockMat d) (t : ℤ)
     (hjStar : 2 * d ≤ 3 ^ jStar) (hm : (explicitCanonicalMetric F).PosDef)
     (φ : Vec d → ℝ) (hφ : IsResponseCutoff (respGrid jStar F) t φ)
@@ -141,7 +141,7 @@ theorem aestronglyMeasurable_canonical_cutoff_pairing_respCoeffPlus {d : ℕ} [N
 /-- **The signed cutoff pairing of an arbitrary maximizer family is measurable, minus
 recentring.**  The doubled optimizer state of the maximizer agrees almost everywhere on the
 terminal cell with the canonical Chapter-2 selection, so the two pairings agree sample by sample. -/
-theorem aestronglyMeasurable_cutoffPairingOnCell_respCoeffMinus {d : ℕ} [NeZero d]
+theorem aestronglyMeasurable_cutoffPairingOnCell_respCoeffMinus {d : ℕ}
     (P : Measure (CoeffSpace d)) (jStar : ℕ) (F : BlockMat d) (t : ℤ)
     (hjStar : 2 * d ≤ 3 ^ jStar) (hm : (explicitCanonicalMetric F).PosDef)
     (φ : Vec d → ℝ) (hφ : IsResponseCutoff (respGrid jStar F) t φ)
@@ -180,7 +180,7 @@ theorem aestronglyMeasurable_cutoffPairingOnCell_respCoeffMinus {d : ℕ} [NeZer
 /-- **The signed cutoff pairing of an arbitrary maximizer family is measurable, plus
 recentring.**  The adjoint twin of
 `aestronglyMeasurable_cutoffPairingOnCell_respCoeffMinus`. -/
-theorem aestronglyMeasurable_cutoffPairingOnCell_respCoeffPlus {d : ℕ} [NeZero d]
+theorem aestronglyMeasurable_cutoffPairingOnCell_respCoeffPlus {d : ℕ}
     (P : Measure (CoeffSpace d)) (jStar : ℕ) (F : BlockMat d) (t : ℤ)
     (hjStar : 2 * d ≤ 3 ^ jStar) (hm : (explicitCanonicalMetric F).PosDef)
     (φ : Vec d → ℝ) (hφ : IsResponseCutoff (respGrid jStar F) t φ)
@@ -222,7 +222,7 @@ cutoff pairing is `P`-integrable: its modulus is integrable by the premise that
 stated through `cutoffPairingOnCellAux`, which is the same function as the kernel's
 `hc3CutoffPairingOnCell` -- the two definitions have identical bodies, so the premise
 discharges `habs` directly. -/
-theorem integrable_half_cutoffPairingOnCell_respCoeffMinus {d : ℕ} [NeZero d]
+theorem integrable_half_cutoffPairingOnCell_respCoeffMinus {d : ℕ}
     (P : Measure (CoeffSpace d)) (jStar : ℕ) (F : BlockMat d) (t : ℤ)
     (hjStar : 2 * d ≤ 3 ^ jStar) (hm : (explicitCanonicalMetric F).PosDef)
     (φ : Vec d → ℝ) (hφ : IsResponseCutoff (respGrid jStar F) t φ)
@@ -241,7 +241,7 @@ theorem integrable_half_cutoffPairingOnCell_respCoeffMinus {d : ℕ} [NeZero d]
 
 /-- **The `hA` side condition of the row assembly, plus recentring.**  The adjoint twin of
 `integrable_half_cutoffPairingOnCell_respCoeffMinus`. -/
-theorem integrable_half_cutoffPairingOnCell_respCoeffPlus {d : ℕ} [NeZero d]
+theorem integrable_half_cutoffPairingOnCell_respCoeffPlus {d : ℕ}
     (P : Measure (CoeffSpace d)) (jStar : ℕ) (F : BlockMat d) (t : ℤ)
     (hjStar : 2 * d ≤ 3 ^ jStar) (hm : (explicitCanonicalMetric F).PosDef)
     (φ : Vec d → ℝ) (hφ : IsResponseCutoff (respGrid jStar F) t φ)
@@ -546,7 +546,7 @@ flat deficit `τ`, the expectation of the weighted average of the half-energies 
 `τ + 2 √(τ cJ)`.  This is the bookkeeping content of the terminal-optimizer replacement of the
 first error row of `p.response.transfer`. -/
 theorem abs_integral_avsum_weighted_energy_le {α : Type*} [MeasurableSpace α]
-    (P : Measure α) [IsProbabilityMeasure P] {d : ℕ} (n : ℕ)
+    (P : Measure α) {d : ℕ} (n : ℕ)
     (c : (Fin d → ℤ) → ℝ) (E J D : (Fin d → ℤ) → α → ℝ) (cJ τ : ℝ)
     (hc0 : (((triadicIndexBox d n).card : ℝ))⁻¹ * ∑ w ∈ triadicIndexBox d n, c w = 0)
     (hc1 : ∀ w ∈ triadicIndexBox d n, |c w| ≤ 1)

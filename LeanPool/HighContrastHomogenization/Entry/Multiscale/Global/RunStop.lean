@@ -268,10 +268,13 @@ stopping index is extracted with `exists_stop_of_potential` (`FiniteRun.lean`) a
 `charge = 0`, `Bud = 0`. -/
 
 open Classical in
+/-- Choose a successor whose index increases by one and whose gauge drops by at least `c`;
+retain `x` if no such successor exists. -/
 @[expose]
 public def runSucc {α : Type*} (idx : α → ℕ) (G : α → ℝ) (c : ℝ) (x : α) : α :=
   if h : ∃ y : α, idx y = idx x + 1 ∧ G y - G x ≤ -c then h.choose else x
 
+/-- Iterate the chosen successor map from `x₀`, with the initial state at iteration zero. -/
 @[expose]
 public def runIter {α : Type*} (idx : α → ℕ) (G : α → ℝ) (c : ℝ) (x₀ : α) : ℕ → α :=
   fun i => Nat.rec x₀ (fun _ x => runSucc idx G c x) i

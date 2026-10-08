@@ -68,7 +68,7 @@ theorem cubeEuclideanNegativeBesovESeminorm_rpow_eq_tsum_depthEnergy {d : ℕ}
 
 /-- Raising the weighted local symmetric-energy aggregation to the finite
 exponent exposes its exact running physical-scale series. -/
-theorem weightedLocalSymmetricEnergyLp_rpow_eq_tsum {d : ℕ} [NeZero d]
+theorem weightedLocalSymmetricEnergyLp_rpow_eq_tsum {d : ℕ}
     (Q : TriadicCube d) (n : ℤ) (hn : n ≤ Q.scale)
     (a : Book.Ch02.CoeffOn (Book.Ch02.cubeDomain Q))
     (u : H1Function (openCubeSet Q))

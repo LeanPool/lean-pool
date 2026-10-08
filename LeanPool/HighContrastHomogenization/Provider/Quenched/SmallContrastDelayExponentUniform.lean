@@ -76,7 +76,7 @@ theorem exists_rpow_ge_uniform (x : ℝ) :
     ∃ C : ℝ, 0 ≤ C ∧ ∀ base : ℝ, (3 : ℝ) ≤ base → x ≤ Real.rpow base C := by
   rcases le_or_gt x 1 with hle | hgt
   · refine ⟨0, le_rfl, fun base _ => ?_⟩
-    show x ≤ base ^ (0 : ℝ)
+    change x ≤ base ^ (0 : ℝ)
     rw [Real.rpow_zero]
     exact hle
   · refine ⟨Real.logb 3 x, Real.logb_nonneg (by norm_num) hgt.le, fun base hbase => ?_⟩
@@ -103,7 +103,7 @@ theorem entry_exponent_of_burnIn {base cburn : ℝ} {N₀ : ℕ}
     rw [two_mul, pow_add]
   have hrsplit : Real.rpow base (2 * cburn) =
       Real.rpow base cburn * Real.rpow base cburn := by
-    show base ^ (2 * cburn) = base ^ cburn * base ^ cburn
+    change base ^ (2 * cburn) = base ^ cburn * base ^ cburn
     rw [two_mul, Real.rpow_add hbase0]
   have h30 : (0 : ℝ) ≤ (3 : ℝ) ^ N₀ := by positivity
   rw [hsplit, hrsplit]
@@ -160,7 +160,7 @@ theorem three_mul_max_one_le_rpow {base c x : ℝ}
       mul_le_mul_of_nonneg_right hbase (by linarith only [hone])
     linarith only [h1, h2]
   have hadd : Real.rpow base (c + 1) = Real.rpow base c * base := by
-    show base ^ (c + 1) = base ^ c * base
+    change base ^ (c + 1) = base ^ c * base
     rw [Real.rpow_add hbase0, Real.rpow_one]
   rw [hadd]
   linarith only [hstep]

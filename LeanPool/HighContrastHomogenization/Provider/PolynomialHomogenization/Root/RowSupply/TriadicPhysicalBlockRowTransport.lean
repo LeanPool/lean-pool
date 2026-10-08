@@ -56,7 +56,7 @@ theorem hasAllLaterPhysicalBlockRow_physicalScaleCoeff
     (hactive : X a ≤ (3 : ℝ) ^ N) :
     Quenched.HasAllLaterPhysicalBlockRow rho kappa
       (triadicallyScaledRowAmplitude delta (X a) N kappa) Abar
-      (fun _ ↦ 1) (fun _ ↦ 1) (Quenched.physical_scale_coeff N a) := by
+      (fun _ ↦ 1) (fun _ ↦ 1) (Quenched.physicalScaleCoefficient N a) := by
   intro m hm
   have hm0 : 0 ≤ m := by
     by_contra hmneg
@@ -79,17 +79,17 @@ theorem hasAllLaterPhysicalBlockRow_physicalScaleCoeff
           (by omega)
   have hsource := hrow ((N : ℤ) + m) hsourceActive
   have hrowEq :
-      Quenched.physical_block_row_at_int rho Abar (fun _ ↦ 1)
-          (Quenched.physical_scale_coeff N a) m =
-        Quenched.physical_block_row_at_int rho Abar S a ((N : ℤ) + m) := by
-    unfold Quenched.physical_block_row_at_int
+      Quenched.physicalBlockRowAtInteger rho Abar (fun _ ↦ 1)
+          (Quenched.physicalScaleCoefficient N a) m =
+        Quenched.physicalBlockRowAtInteger rho Abar S a ((N : ℤ) + m) := by
+    unfold Quenched.physicalBlockRowAtInteger
     rw [show ((N : ℤ) + m).toNat = N + m.toNat by omega]
     simpa only [hsourceFloor] using
       (Quenched.quenched_block_row_physical_scale_coeff
         rho Abar (S a) N m.toNat a)
   rw [hrowEq]
   calc
-    Quenched.physical_block_row_at_int rho Abar S a ((N : ℤ) + m) ≤
+    Quenched.physicalBlockRowAtInteger rho Abar S a ((N : ℤ) + m) ≤
         delta *
           (((3 : ℝ) ^ ((N : ℤ) + m)) / X a) ^ (-kappa) := hsource
     _ = triadicallyScaledRowAmplitude delta (X a) N kappa *

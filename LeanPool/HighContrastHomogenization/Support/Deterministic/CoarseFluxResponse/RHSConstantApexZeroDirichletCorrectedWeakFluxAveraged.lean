@@ -417,7 +417,7 @@ private theorem exists_descendantCorrectorGradient_harmonicDecomposition
         (n := j) (lam := lam) (Lam := Lam)
         (u := fun x => ρ.toH10.toH1Function.grad x)
         ρ.toH10.toH1Function.isPotentialOn hresidual hR hEllR
-        hρMemR hgMemR (h1CoerciveEstimate_cubeSet R)
+        hρMemR hgMemR (cubeSetH1CoerciveEstimate R)
   let z : TriadicCube d → Vec d → Vec d :=
     fun R =>
       if hR : IsDescendantOfQ R then

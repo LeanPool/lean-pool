@@ -565,8 +565,7 @@ theorem sigmaCoarse_adjointCoeffField_eq_of_isCoarseBlockMatrix
   rw [kappaCoarse_adjointCoeffField_eq_neg_of_isCoarseBlockMatrix (U := U) (a := a) hA hAadj,
     sigmaStarInvCoarse_adjointCoeffField_eq_of_isCoarseBlockMatrix (U := U) (a := a) hA hAadj]
       at hupper
-  simp [Matrix.transpose_neg, matTranspose, Matrix.mul_assoc] at hupper
-  exact hupper
+  simpa [Matrix.transpose_neg, matTranspose, Matrix.mul_assoc] using hupper
 
 /-- Note-facing transpose compatibility for `\sigma(U; a)`. -/
 theorem sigmaCoarse_adjointCoeffField_eq {d : ℕ}

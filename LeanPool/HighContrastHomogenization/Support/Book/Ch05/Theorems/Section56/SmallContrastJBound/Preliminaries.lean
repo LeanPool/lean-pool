@@ -55,6 +55,8 @@ noncomputable def smallContrastFinalRHSAtScale
       C * Real.rpow (3 : ℝ) (-β * (m : ℝ)) +
         C * (thetaAtScale hP hStruct (m : ℤ) - 1) ^ (2 : ℕ)
 
+/-- The reduced small-contrast response bound at scales `k` and `m`, combining
+coarse fluctuations, the special-vector tau term, scale decay, and squared contrast defect. -/
 @[expose]
 noncomputable def smallContrastReducedRHSAtScale
     {d : ℕ} [NeZero d] {P : Ch04.RestrictionCoeffLaw d}

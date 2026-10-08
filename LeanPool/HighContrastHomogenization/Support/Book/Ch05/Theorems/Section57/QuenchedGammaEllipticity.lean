@@ -46,7 +46,9 @@ Unlike the Chapter 5 `(P4)` parameter bundle, this record carries no moment
 exponent `xi`: a finite `xi` can be chosen internally from the positivity of
 `sUpper` and `sLower` whenever the older moment-based API is needed. -/
 structure GammaCoarseGrainedEllipticityParams (d : ℕ) : Type where
+  /-- The upper-ellipticity exponent, required to lie strictly between zero and one. -/
   sUpper : ℝ
+  /-- The lower-ellipticity exponent, required to lie strictly between zero and one. -/
   sLower : ℝ
   two_le_dim : 2 ≤ d
   sUpper_pos : 0 < sUpper
@@ -160,9 +162,12 @@ itself; later estimates should quantify their constants before the law.
 structure GammaSigmaCoarseGrainedEllipticity
     {d : ℕ} [NeZero d] (P : Ch04.RestrictionCoeffLaw d)
     (hP : Ch04.RestrictionLawCarrier P) (hStruct : Ch04.RestrictionStructuralLaw P) : Type where
+  /-- The positive parameter of the `gammaSigma` tail bound. -/
   sigma : ℝ
   sigma_pos : 0 < sigma
+  /-- The coarse-grained ellipticity exponents and their finite moment parameter. -/
   params : QuantitativeCoarseGrainedEllipticityParams d
+  /-- The positive size parameter in the tail bound for the unit-cube ellipticity observable. -/
   thetaHat : ℝ
   thetaHat_pos : 0 < thetaHat
   tail :
@@ -176,9 +181,12 @@ moment exponent `xi`. -/
 structure GammaSigmaCoarseGrainedEllipticityNoXi
     {d : ℕ} [NeZero d] (P : Ch04.RestrictionCoeffLaw d)
     (hP : Ch04.RestrictionLawCarrier P) (hStruct : Ch04.RestrictionStructuralLaw P) : Type where
+  /-- The positive parameter of the `gammaSigma` tail bound. -/
   sigma : ℝ
   sigma_pos : 0 < sigma
+  /-- The coarse-grained ellipticity exponents, without an exposed moment parameter. -/
   params : GammaCoarseGrainedEllipticityParams d
+  /-- The positive size parameter in the tail bound for the unit-cube ellipticity observable. -/
   thetaHat : ℝ
   thetaHat_pos : 0 < thetaHat
   tail :
@@ -262,13 +270,13 @@ theorem aemeasurable_unitEllipticityObservable
   exact
     if hbar : 0 < hP.barSigmaAtScale hStruct (0 : ℤ) then
       by
-        simp [gammaSigmaUnitEllipticityObservable, hbar]
+        simp only [gammaSigmaUnitEllipticityObservable, ite_eq_left hbar]
         exact
           (hUpper.const_mul (hP.barSigmaAtScale hStruct (0 : ℤ))⁻¹).add
             (hLower.const_mul (hP.barSigmaAtScale hStruct (0 : ℤ)))
     else
       by
-        simp [gammaSigmaUnitEllipticityObservable, hbar]
+        simp only [gammaSigmaUnitEllipticityObservable, ite_eq_right hbar]
         exact hUpper.add hLower
 
 /-- The Γσ tail assumption gives finite moments of the normalized unit-cube
@@ -411,7 +419,7 @@ The extra input is exactly the positivity of the normalizing scalar
 Lean's inverse is total, so the positivity must be supplied or proved before
 the two normalized summands can be split. -/
 @[expose]
-def quantitativeEllipticity_of_positiveBarSigma
+def quantitativeEllipticityOfPositiveBarSigma
     (hΓ : GammaSigmaCoarseGrainedEllipticity P hP hStruct)
     (hbar : 0 < hP.barSigmaAtScale hStruct (0 : ℤ)) :
     QuantitativeCoarseGrainedEllipticity P := by
@@ -546,7 +554,7 @@ def quantitativeEllipticity_of_positiveBarSigma
 def toQuantitativeCoarseGrainedEllipticity
     (hΓ : GammaSigmaCoarseGrainedEllipticity P hP hStruct) :
     QuantitativeCoarseGrainedEllipticity P :=
-  hΓ.quantitativeEllipticity_of_positiveBarSigma
+  hΓ.quantitativeEllipticityOfPositiveBarSigma
     hΓ.barSigmaAtScale_zero_pos
 
 theorem unitEllipticityObservable_nonneg
@@ -798,7 +806,7 @@ theorem thetaAtScale_zero_le_unitEllipticityMomentRoot
       Ch04.lambdaInvMomentAtScale P (0 : ℤ) hP4.sLower hP4.xi ≤ b⁻¹ * R := by
     simpa [hP4, b, R,
       GammaSigmaCoarseGrainedEllipticity.toQuantitativeCoarseGrainedEllipticity,
-      GammaSigmaCoarseGrainedEllipticity.quantitativeEllipticity_of_positiveBarSigma]
+      GammaSigmaCoarseGrainedEllipticity.quantitativeEllipticityOfPositiveBarSigma]
       using
       hΓ.lambdaInvMomentAtScale_zero_le_inv_barSigma_mul_unitEllipticityMomentRoot
   have hStarInv_le : (hP.barSigmaStarAtScale hStruct (0 : ℤ))⁻¹ ≤ b⁻¹ * R :=
@@ -835,21 +843,21 @@ theorem widetildeThetaAtScale_zero_le_unitEllipticityMomentRoot_sq
       Ch04.LambdaMomentAtScale P (0 : ℤ) hP4.sUpper hP4.xi ≤ b * R := by
     simpa [hP4, b, R,
       GammaSigmaCoarseGrainedEllipticity.toQuantitativeCoarseGrainedEllipticity,
-      GammaSigmaCoarseGrainedEllipticity.quantitativeEllipticity_of_positiveBarSigma]
+      GammaSigmaCoarseGrainedEllipticity.quantitativeEllipticityOfPositiveBarSigma]
       using
       hΓ.LambdaMomentAtScale_zero_le_barSigma_mul_unitEllipticityMomentRoot
   have hI :
       Ch04.lambdaInvMomentAtScale P (0 : ℤ) hP4.sLower hP4.xi ≤ b⁻¹ * R := by
     simpa [hP4, b, R,
       GammaSigmaCoarseGrainedEllipticity.toQuantitativeCoarseGrainedEllipticity,
-      GammaSigmaCoarseGrainedEllipticity.quantitativeEllipticity_of_positiveBarSigma]
+      GammaSigmaCoarseGrainedEllipticity.quantitativeEllipticityOfPositiveBarSigma]
       using
       hΓ.lambdaInvMomentAtScale_zero_le_inv_barSigma_mul_unitEllipticityMomentRoot
   have hI_nonneg :
       0 ≤ Ch04.lambdaInvMomentAtScale P (0 : ℤ) hP4.sLower hP4.xi := by
     simpa [hP4,
       GammaSigmaCoarseGrainedEllipticity.toQuantitativeCoarseGrainedEllipticity,
-      GammaSigmaCoarseGrainedEllipticity.quantitativeEllipticity_of_positiveBarSigma]
+      GammaSigmaCoarseGrainedEllipticity.quantitativeEllipticityOfPositiveBarSigma]
       using
       Ch04.lambdaInvMomentAtScale_nonneg P (0 : ℤ)
         (ξ := hΓ.params.xi) hΓ.sLower_pos

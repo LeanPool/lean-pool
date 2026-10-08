@@ -199,6 +199,8 @@ theorem subSkew_neg_subSkew
   rw [hleft, hright]
   abel
 
+/-- Subtract a fixed skew matrix from a coefficient sample as a measurable
+equivalence, with inverse given by subtracting its negative. -/
 @[expose]
 public noncomputable def subSkewEquiv (g : Mat d) (hg : IsSkewMat g) :
     CoeffSpace d ≃ᵐ CoeffSpace d where
@@ -212,6 +214,7 @@ public noncomputable def subSkewEquiv (g : Mat d) (hg : IsSkewMat g) :
   measurable_toFun := Selection.measurable_subSkew g hg
   measurable_invFun := Selection.measurable_subSkew (-g) (isSkewMat_neg hg)
 
+/-- Transpose coefficient samples as an involutive measurable equivalence. -/
 @[expose]
 public noncomputable def transposeEquiv : CoeffSpace d ≃ᵐ CoeffSpace d where
   toFun := CoeffSpace.transpose
@@ -221,6 +224,8 @@ public noncomputable def transposeEquiv : CoeffSpace d ≃ᵐ CoeffSpace d where
   measurable_toFun := Selection.measurable_transpose
   measurable_invFun := Selection.measurable_transpose
 
+/-- The measurable equivalence that subtracts a fixed skew matrix and then
+transposes the resulting coefficient sample. -/
 @[expose]
 public noncomputable def adjointSubSkewEquiv (g : Mat d) (hg : IsSkewMat g) :
     CoeffSpace d ≃ᵐ CoeffSpace d :=

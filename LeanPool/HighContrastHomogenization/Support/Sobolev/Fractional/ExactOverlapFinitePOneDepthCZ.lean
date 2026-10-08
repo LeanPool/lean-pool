@@ -41,7 +41,7 @@ noncomputable section
 cube.  The overlap API is stated on the equivalent normalized cube measure,
 so keep this transport private to the one-depth assembly. -/
 private theorem cubeDirichletDivergenceProblem_to_centered_normalized
-    {d : ℕ} [NeZero d] (m : ℤ) {u : H10Function (openCubeSet (originCube d m))}
+    {d : ℕ} (m : ℤ) {u : H10Function (openCubeSet (originCube d m))}
     {h : Vec d → Vec d}
     (hh : MemLp (fun x => HilbertVec.ofVec (h x)) 2
       (normalizedCubeMeasure (originCube d m)))
@@ -229,7 +229,7 @@ private theorem exactOverlapFiniteP_residual_rpow_le
     _ = _ := by ring
 
 private theorem exactOverlapFiniteP_smooth_rpow_le
-    {d : ℕ} [NeZero d] (q : FiniteLpExponent) {m : ℤ} {j : ℕ}
+    {d : ℕ} (q : FiniteLpExponent) {m : ℤ} {j : ℕ}
     (h : Vec d → Vec d)
     (hhq : MemLp (fun x => HilbertVec.ofVec (h x)) q.exponent
       (normalizedCubeMeasure (originCube d m)))

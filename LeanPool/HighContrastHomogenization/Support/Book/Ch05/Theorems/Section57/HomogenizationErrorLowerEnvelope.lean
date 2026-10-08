@@ -237,7 +237,7 @@ theorem weighted_negative_scaleResponse_le_of_scaleZero_collapsed
 /-- Weighted negative-scale response control gives the unweighted algebraic
 scale envelope, paying only the fixed geometric-discount constant. -/
 theorem negative_scaleResponse_le_of_weighted_envelope
-    {d : ℕ} [NeZero d]
+    {d : ℕ}
     (m j : ℕ) {s σ A R : ℝ} (hs : 0 < s) (hA : 0 ≤ A) (hR : 0 ≤ R)
     (a : Ch02.TriadicCoeffFamily d)
     (hweighted :

@@ -36,7 +36,7 @@ variable {d : ℕ}
 
 /-- The normalized square sum of child-optimizer average differences is
 bounded by the recent cell defect. -/
-theorem diagonalWeak_recent_cell_bound [NeZero d]
+theorem diagonalWeak_recent_cell_bound
     {q : Mat d} (hq : q.PosDef) (k t : ℤ) {S m : Mat d}
     (hsymm : matTranspose S = S) (hsq : S * S = m) (hm : m.PosDef)
     {E : BlockMat d} (hE : IsSymmetricBlockMat E) (hEpd : BlockPosDef E)
@@ -146,8 +146,6 @@ end
 
 end HCPolySupport.HighContrast.Response
 
-end HighContrast
 
-end HCPolySupport
 
 end

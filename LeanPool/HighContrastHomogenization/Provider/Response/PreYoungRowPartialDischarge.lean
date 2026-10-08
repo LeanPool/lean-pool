@@ -55,7 +55,7 @@ variable {d : ℕ}
 
 /-- A child quarter-energy is a fixed multiple of the terminal optimizer
 energy localized to that child. -/
-theorem cellQuarterEnergy_eq_weightedOptimizerEnergy [NeZero d]
+theorem cellQuarterEnergy_eq_weightedOptimizerEnergy
     {q : Mat d} (hq : q.PosDef) {k t : ℤ} (hkt : k ≤ t)
     {w : Fin d → ℤ} (hw : w ∈ alignedIndex q k t)
     (a : CoeffSpace d) (p r : Vec d) :
@@ -136,7 +136,7 @@ theorem cellQuarterEnergy_eq_weightedOptimizerEnergy [NeZero d]
   field_simp
 
 /-- The child quarter-energy is measurable on coefficient space. -/
-theorem measurable_cellQuarterEnergy [NeZero d]
+theorem measurable_cellQuarterEnergy
     {q : Mat d} (hq : q.PosDef) {k t : ℤ} (hkt : k ≤ t)
     {w : Fin d → ℤ} (hw : w ∈ alignedIndex q k t) (p r : Vec d) :
     Measurable fun a : CoeffSpace d ↦ cellQuarterEnergy hq k t w a p r := by
@@ -165,7 +165,7 @@ theorem measurable_cellQuarterEnergy [NeZero d]
 
 /-- A single cell energy is bounded by the subdivision cardinality times the
 terminal response. -/
-theorem cellQuarterEnergy_le_card_mul_responseJ [NeZero d]
+theorem cellQuarterEnergy_le_card_mul_responseJ
     {q : Mat d} (hq : q.PosDef) {k t : ℤ} (hkt : k ≤ t)
     {w : Fin d → ℤ} (hw : w ∈ alignedIndex q k t)
     (a : CoeffSpace d) (p r : Vec d) :
@@ -197,7 +197,7 @@ theorem cellQuarterEnergy_le_card_mul_responseJ [NeZero d]
 
 /-- Integrability of the terminal response controls every measurable child
 quarter-energy. -/
-theorem integrable_cellQuarterEnergy_of_integrable_responseJ [NeZero d]
+theorem integrable_cellQuarterEnergy_of_integrable_responseJ
     {P : Measure (CoeffSpace d)} {q : Mat d} (hq : q.PosDef)
     {k t : ℤ} (hkt : k ≤ t) {w : Fin d → ℤ}
     (hw : w ∈ alignedIndex q k t) (sample : CoeffSpace d → CoeffSpace d)
@@ -222,7 +222,7 @@ theorem integrable_cellQuarterEnergy_of_integrable_responseJ [NeZero d]
 /-- A finite adapted mean makes every constant-skew primal child energy
 integrable. -/
 theorem integrable_cellQuarterEnergy_subSkew_of_finiteAdaptedMean
-    [NeZero d] {P : Measure (CoeffSpace d)} [IsFiniteMeasure P]
+    {P : Measure (CoeffSpace d)} [IsFiniteMeasure P]
     {q : Mat d} (hq : q.PosDef) {k t : ℤ} (hkt : k ≤ t)
     {w : Fin d → ℤ} (hw : w ∈ alignedIndex q k t)
     (hint : HasFiniteAdaptedMean P q t)
@@ -235,7 +235,7 @@ theorem integrable_cellQuarterEnergy_subSkew_of_finiteAdaptedMean
 /-- A finite adapted mean independently controls the coefficient-transpose
 child energy. -/
 theorem integrable_cellQuarterEnergy_adjointSubSkew_of_finiteAdaptedMean
-    [NeZero d] {P : Measure (CoeffSpace d)} [IsFiniteMeasure P]
+    {P : Measure (CoeffSpace d)} [IsFiniteMeasure P]
     {q : Mat d} (hq : q.PosDef) {k t : ℤ} (hkt : k ≤ t)
     {w : Fin d → ℤ} (hw : w ∈ alignedIndex q k t)
     (hint : HasFiniteAdaptedMean P q t)
@@ -334,7 +334,7 @@ theorem abs_vecDot_averageVec_flux_coeffSpace_le
 /-- The two cell-average pairings for the restricted diagonal optimizer.  The
 pointwise elliptic representative is selected inside the proof, so the result
 applies directly to a coefficient-space sample and to its transpose. -/
-theorem abs_vecDot_blockCellAverage_diagonalWeakState_le [NeZero d]
+theorem abs_vecDot_blockCellAverage_diagonalWeakState_le
     {q : Mat d} (hq : q.PosDef) {k t : ℤ} (hkt : k ≤ t)
     {w : Fin d → ℤ} (hw : w ∈ alignedIndex q k t)
     (a : CoeffSpace d) (p r Pcen Qcen : Vec d) :
@@ -475,7 +475,7 @@ private theorem profileSchurLoadGradient_profileAdjointBlock
   rfl
 
 private theorem aestronglyMeasurable_abs_vecDot_potential
-    {P : Measure (CoeffSpace d)} [NeZero d]
+    {P : Measure (CoeffSpace d)}
     {q : Mat d} (hq : q.PosDef) {k t : ℤ} (hkt : k ≤ t)
     (g : Mat d) (hg : IsSkewMat g) (p r Qcen : Vec d)
     {w : Fin d → ℤ} (hw : w ∈ alignedIndex q k t) :
@@ -492,7 +492,7 @@ private theorem aestronglyMeasurable_abs_vecDot_potential
   simpa only [vecDot, Real.norm_eq_abs] using hsum.norm
 
 private theorem aestronglyMeasurable_abs_vecDot_flux
-    {P : Measure (CoeffSpace d)} [NeZero d]
+    {P : Measure (CoeffSpace d)}
     {q : Mat d} (hq : q.PosDef) {k t : ℤ} (hkt : k ≤ t)
     (g : Mat d) (hg : IsSkewMat g) (p r Pcen : Vec d)
     {w : Fin d → ℤ} (hw : w ∈ alignedIndex q k t) :
@@ -509,7 +509,7 @@ private theorem aestronglyMeasurable_abs_vecDot_flux
   simpa only [vecDot, Real.norm_eq_abs] using hsum.norm
 
 private theorem aestronglyMeasurable_abs_vecDot_potential_adjoint
-    {P : Measure (CoeffSpace d)} [NeZero d]
+    {P : Measure (CoeffSpace d)}
     {q : Mat d} (hq : q.PosDef) {k t : ℤ} (hkt : k ≤ t)
     (g : Mat d) (hg : IsSkewMat g) (p r Qcen : Vec d)
     {w : Fin d → ℤ} (hw : w ∈ alignedIndex q k t) :
@@ -526,7 +526,7 @@ private theorem aestronglyMeasurable_abs_vecDot_potential_adjoint
   simpa only [vecDot, Real.norm_eq_abs] using hsum.norm
 
 private theorem aestronglyMeasurable_abs_vecDot_flux_adjoint
-    {P : Measure (CoeffSpace d)} [NeZero d]
+    {P : Measure (CoeffSpace d)}
     {q : Mat d} (hq : q.PosDef) {k t : ℤ} (hkt : k ≤ t)
     (g : Mat d) (hg : IsSkewMat g) (p r Pcen : Vec d)
     {w : Fin d → ℤ} (hw : w ∈ alignedIndex q k t) :
@@ -698,7 +698,7 @@ private theorem integral_sq_profileSchurLoadGradient_hatted_adaptedCellAt_eq
 /-- Annealed primal cell pairings are controlled by the square root of the
 localized optimizer energy and the corresponding annealed Schur loads. -/
 theorem half_integral_cellPairings_primal_le_of_integrable_energy
-    {P : Measure (CoeffSpace d)} [IsProbabilityMeasure P] [NeZero d]
+    {P : Measure (CoeffSpace d)} [IsProbabilityMeasure P]
     {q : Mat d} (hq : q.PosDef) {k t : ℤ} (hkt : k ≤ t)
     {w : Fin d → ℤ} (hw : w ∈ alignedIndex q k t)
     (g : Mat d) (hg : IsSkewMat g) (p r Pcen Qcen : Vec d)
@@ -788,7 +788,7 @@ theorem half_integral_cellPairings_primal_le_of_integrable_energy
 /-- Annealed adjoint cell pairings obey the same estimate after transporting
 the transposed coefficient response through the hatted adjoint block. -/
 theorem half_integral_cellPairings_adjoint_le_of_integrable_energy
-    {P : Measure (CoeffSpace d)} [IsProbabilityMeasure P] [NeZero d]
+    {P : Measure (CoeffSpace d)} [IsProbabilityMeasure P]
     {q : Mat d} (hq : q.PosDef) {k t : ℤ} (hkt : k ≤ t)
     {w : Fin d → ℤ} (hw : w ∈ alignedIndex q k t)
     (g : Mat d) (hg : IsSkewMat g) (p r Pcen Qcen : Vec d)

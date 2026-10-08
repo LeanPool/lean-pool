@@ -48,7 +48,7 @@ noncomputable section
 
 /-- `tr(AB) ≤ (tr A)(tr B)` for positive semidefinite `A`, `B`: the positivity step behind the
 printed trace inequality (`p.fixed.geometry.one.grid.propagation`). -/
-theorem trace_mul_le_trace_mul_trace {ι : Type*} [Fintype ι] [DecidableEq ι]
+theorem trace_mul_le_trace_mul_trace {ι : Type*} [Fintype ι]
     {A B : Matrix ι ι ℝ} (hA : A.PosSemidef) (hB : B.PosSemidef) :
     (A * B).trace ≤ A.trace * B.trace := by
   classical

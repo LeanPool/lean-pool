@@ -96,7 +96,7 @@ private theorem split_term_le (A Ak Et : BlockMat d) :
     rw [Recurrence.toFullBlockMat_blockSub, Recurrence.toFullBlockMat_blockSub,
       full_normalizedBlock_sub]
     abel
-  show ‖toFullBlockMat (blockSub (normalizedBlock A Et) (Book.Ch02.blockIdentity d))‖ ≤ _
+  change ‖toFullBlockMat (blockSub (normalizedBlock A Et) (Book.Ch02.blockIdentity d))‖ ≤ _
   rw [hsplit]
   exact norm_add_le _ _
 
@@ -138,7 +138,7 @@ private theorem blockOpNorm_le_of_loewner_of_posSemidef {N : BlockMat d}
     (hN : (toFullBlockMat N).PosSemidef) {c : ℝ} (hc : 0 ≤ c)
     (h : BlockMatLoewnerLE N (blockScale c (Book.Ch02.blockIdentity d))) :
     blockOpNorm N ≤ c := by
-  show ‖toFullBlockMat N‖ ≤ c
+  change ‖toFullBlockMat N‖ ≤ c
   refine opNorm_le_of_psd_dot_le hN hc fun v => ?_
   have hX := h (ofFullBlockVec v)
   rw [qform_blockScale_smul] at hX
@@ -171,7 +171,7 @@ private theorem blockOpNorm_sub_identity_le {N : BlockMat d}
   have h1 : ‖toFullBlockMat N‖ ≤ c := blockOpNorm_le_of_loewner_of_posSemidef hN hc h
   have h2 : blockOpNorm (blockSub N (Book.Ch02.blockIdentity d)) ≤
       ‖toFullBlockMat N‖ + ‖(1 : FullBlockMat d)‖ := by
-    show ‖toFullBlockMat (blockSub N (Book.Ch02.blockIdentity d))‖ ≤ _
+    change ‖toFullBlockMat (blockSub N (Book.Ch02.blockIdentity d))‖ ≤ _
     rw [Recurrence.toFullBlockMat_blockSub, toFullBlockMat_blockIdentity]
     exact norm_sub_le _ _
   have h3 := norm_one_le_fullBlockMat (d := d)

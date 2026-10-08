@@ -321,7 +321,6 @@ theorem
             (coarseCaccioppoliCanonicalGradientAcircOneSub R a s ρ₁ ρ₂) Ceff) =
         Hbase * WH * Pone + Gbase * WG * Psub := by
     exact centeredBesovCoefficientSplit a hR
-
   calc
     coarseCaccioppoliFluxEnergyExactCenteredBesovCoeffFactorBound R s
         (coarseCaccioppoliLambdaFactor R a s)
@@ -486,7 +485,6 @@ theorem
             (coarseCaccioppoliCanonicalGradientAcircOneSub R a s ρ₁ ρm) Ceff) =
         Hbase * WH * Pone + Gbase * WG * Psub := by
     exact centeredBesovCoefficientSplit a hR
-
   calc
     coarseCaccioppoliFluxEnergyExactCenteredBesovCoeffFactorBound R s
         (coarseCaccioppoliLambdaFactor R a s)

@@ -33,7 +33,7 @@ open scoped ENNReal
 noncomputable section
 
 private theorem ScalarIdentityGoodTailOnInterval.mono_interval
-    {d : ℕ} [NeZero d] {a : Book.Ch02.TriadicCoeffFamily d}
+    {d : ℕ} {a : Book.Ch02.TriadicCoeffFamily d}
     {s δ : ℝ} {n n' m' m : ℤ}
     (h : ScalarIdentityGoodTailOnInterval a s δ n m)
     (hn : n ≤ n') (hm : m' ≤ m) :

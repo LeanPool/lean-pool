@@ -48,6 +48,7 @@ theorem fullBlockQuadratic_smul
   rw [Matrix.smul_mulVec, dotProduct_smul]
   simp [smul_eq_mul]
 
+/-- Linear functional evaluating a full block matrix at a fixed quadratic probe vector. -/
 @[expose]
 public def fullBlockQuadraticLinearMap
     {d : ℕ} (q : FullBlockVec d) : FullBlockMat d →ₗ[ℝ] ℝ where
@@ -192,6 +193,9 @@ theorem aemeasurable_fullBlockNormalizedQuadraticObservable_descendants_of_P4
   exact aemeasurable_fullBlockNormalizedQuadraticObservable_cubeSet_of_P4
     hP hStruct center q R
 
+/-- Rosenthal root bound for averaged centered normalized quadratic probes, using the second
+moment at the child scale and the descendant count.
+-/
 @[expose]
 noncomputable def normalizedQuadraticProbeAverageRootBound
     {d : ℕ} [NeZero d] {P : Ch04.RestrictionCoeffLaw d}
@@ -417,6 +421,9 @@ theorem descendantsAverageNormalizedFluctuationOperatorNormSq_le_probeSqBudget_a
   simpa [descendantsAverageNormalizedFluctuationOperatorNormSq] using
     fullBlock_operatorNorm_sq_le_probeSqBudget hM
 
+/-- Matrix average budget assembled from squared root bounds for coordinate, sum, and difference
+probes.
+-/
 @[expose]
 noncomputable def normalizedMatrixAverageProbeRootBudget
     {d : ℕ} [NeZero d] {P : Ch04.RestrictionCoeffLaw d}

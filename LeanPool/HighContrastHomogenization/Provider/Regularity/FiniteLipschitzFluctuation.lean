@@ -65,7 +65,7 @@ theorem cubeLpNorm_two_cubeFluctuation_le_two_mul
 /-- The normalized fluctuation is controlled by the error from a specified
 affine function and the Euclidean magnitude of its slope. -/
 theorem normalized_fluctuation_le_affine_error_add_slope
-    {d : ℕ} [NeZero d] (Q : TriadicCube d)
+    {d : ℕ} (Q : TriadicCube d)
     (u : H1Function (openCubeSet Q)) (c : ℝ) (e : Vec d) :
     cubeBesovScaleWeight 1 Q *
         cubeLpNorm Q (2 : ℝ≥0∞) (cubeFluctuation Q u.toFun) ≤

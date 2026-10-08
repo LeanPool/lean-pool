@@ -557,21 +557,17 @@ theorem scale_decay_of_hs_lo (jStar : ℕ) (s : ℤ) (B Pival ρ : ℝ) (hPival 
   have one_le_3 : (1 : ℝ) ≤ 3 := by norm_num
   have logb_rpow : (2 + Pival : ℝ) = 3 ^ Real.logb 3 (2 + Pival) :=
     (Real.rpow_logb pos_3 (by norm_num) pos_P).symm
-
   have key_ineq : B * Real.logb 3 (2 + Pival) ≤ (s : ℝ) - (jStar : ℝ) := by
     have h1 : B * Real.logb 3 (2 + Pival) ≤ (⌈B * Real.logb 3 (2 + Pival)⌉ : ℝ) := Int.le_ceil _
     have h2 : (⌈B * Real.logb 3 (2 + Pival)⌉ : ℝ) ≤ (s : ℝ) - (jStar : ℝ) := by
       norm_cast
       omega
     exact le_trans h1 h2
-
   have exp_ineq : -(ρ * ((s : ℝ) - (jStar : ℝ))) ≤ -(ρ * B * Real.logb 3 (2 + Pival)) := by
     nlinarith only [key_ineq, hρ]
-
   have eq_rearrange : (-(ρ * B * Real.logb 3 (2 + Pival)) : ℝ) = -(ρ * B) * Real.logb 3 (2 +
     Pival) := by
     ring
-
   calc (3 : ℝ) ^ (-(ρ * ((s : ℝ) - (jStar : ℝ))))
       ≤ (3 : ℝ) ^ (-(ρ * B * Real.logb 3 (2 + Pival))) :=
         Real.rpow_le_rpow_of_exponent_le one_le_3 exp_ineq

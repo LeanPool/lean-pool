@@ -41,7 +41,7 @@ theorem dilateCube_dilateCube_neg {d : ℕ} (k : ℤ) (Q : TriadicCube d) :
   simp [dilateCube]
 
 /-- Normalizing a cube by dilation through `-Q.scale` gives a scale-zero cube. -/
-@[simp] theorem dilateCube_neg_scale_scale {d : ℕ} (Q : TriadicCube d) :
+theorem dilateCube_neg_scale_scale {d : ℕ} (Q : TriadicCube d) :
     (dilateCube (-Q.scale) Q).scale = 0 := by
   simp [dilateCube]
 
@@ -734,7 +734,7 @@ theorem maxDescendantLowerEllipticityInvAtScale_dilate {d : ℕ} {k : ℤ}
   exact finsetSupReal_image _ _ _ _ fun R _hR => by
     rw [lambdaSq_dilate h R s q]
 
-theorem normalizedBlockResponseValueSet_dilate {d : ℕ} [NeZero d] {k : ℤ}
+theorem normalizedBlockResponseValueSet_dilate {d : ℕ} {k : ℤ}
     {a b : TriadicCoeffFamily d}
     (h : TriadicCoeffFamily.IsDilation k a b) (Q : TriadicCube d) (a0 : Mat d) :
     normalizedBlockResponseValueSet (dilateCube k Q) b a0 =
@@ -746,7 +746,7 @@ theorem normalizedBlockResponseValueSet_dilate {d : ℕ} [NeZero d] {k : ℤ}
   · rintro ⟨e, he, rfl⟩
     exact ⟨e, he, by rw [doubledResponseJ_dilate (h Q)]⟩
 
-theorem normalizedBlockResponseMax_dilate {d : ℕ} [NeZero d] {k : ℤ}
+theorem normalizedBlockResponseMax_dilate {d : ℕ} {k : ℤ}
     {a b : TriadicCoeffFamily d}
     (h : TriadicCoeffFamily.IsDilation k a b) (Q : TriadicCube d) (a0 : Mat d) :
     normalizedBlockResponseMax (dilateCube k Q) b a0 =
@@ -754,7 +754,7 @@ theorem normalizedBlockResponseMax_dilate {d : ℕ} [NeZero d] {k : ℤ}
   unfold normalizedBlockResponseMax
   rw [normalizedBlockResponseValueSet_dilate h Q a0]
 
-theorem maxDescendantNormalizedBlockResponseAtScale_dilate {d : ℕ} [NeZero d]
+theorem maxDescendantNormalizedBlockResponseAtScale_dilate {d : ℕ}
     {k : ℤ} {a b : TriadicCoeffFamily d}
     (h : TriadicCoeffFamily.IsDilation k a b) (Q : TriadicCube d)
     (n : ℤ) (a0 : Mat d) :
@@ -765,7 +765,7 @@ theorem maxDescendantNormalizedBlockResponseAtScale_dilate {d : ℕ} [NeZero d]
   exact finsetSupReal_image _ _ _ _ fun R _hR =>
     normalizedBlockResponseMax_dilate h R a0
 
-theorem scaleResponseAtScale_dilate {d : ℕ} [NeZero d] {k : ℤ}
+theorem scaleResponseAtScale_dilate {d : ℕ} {k : ℤ}
     {a b : TriadicCoeffFamily d}
     (h : TriadicCoeffFamily.IsDilation k a b) (Q : TriadicCube d)
     (n : ℤ) (p : MultiscaleExponent) (a0 : Mat d) :
@@ -785,7 +785,7 @@ theorem scaleResponseAtScale_dilate {d : ℕ} [NeZero d] {k : ℤ}
       exact congrArg (fun x : ℝ => Real.rpow x (1 / 2))
         (maxDescendantNormalizedBlockResponseAtScale_dilate h Q n a0)
 
-theorem HomogenizationErrorFinite_dilate {d : ℕ} [NeZero d] {k : ℤ}
+theorem HomogenizationErrorFinite_dilate {d : ℕ} {k : ℤ}
     {a b : TriadicCoeffFamily d}
     (h : TriadicCoeffFamily.IsDilation k a b) (Q : TriadicCube d)
     (n : ℤ) (s : ℝ) (p : MultiscaleExponent) (q : ℝ) (a0 : Mat d) :
@@ -801,7 +801,7 @@ theorem HomogenizationErrorFinite_dilate {d : ℕ} [NeZero d] {k : ℤ}
   simpa [hscale] using
     congrArg (fun x => geometricWeight s q l * Real.rpow x q) hresp
 
-theorem HomogenizationErrorInfinity_dilate {d : ℕ} [NeZero d] {k : ℤ}
+theorem HomogenizationErrorInfinity_dilate {d : ℕ} {k : ℤ}
     {a b : TriadicCoeffFamily d}
     (h : TriadicCoeffFamily.IsDilation k a b) (Q : TriadicCube d)
     (n : ℤ) (s : ℝ) (p : MultiscaleExponent) (a0 : Mat d) :
@@ -826,7 +826,7 @@ theorem HomogenizationErrorInfinity_dilate {d : ℕ} [NeZero d] {k : ℤ}
     simpa [hscale] using
       congrArg (fun x => Real.rpow (3 : ℝ) (-s * (l : ℝ)) * x) hresp.symm
 
-theorem HomogenizationError_dilate {d : ℕ} [NeZero d] {k : ℤ}
+theorem HomogenizationError_dilate {d : ℕ} {k : ℤ}
     {a b : TriadicCoeffFamily d}
     (h : TriadicCoeffFamily.IsDilation k a b) (Q : TriadicCube d)
     (n : ℤ) (s : ℝ) (p q : MultiscaleExponent) (a0 : Mat d) :
@@ -838,7 +838,7 @@ theorem HomogenizationError_dilate {d : ℕ} [NeZero d] {k : ℤ}
   | infinity =>
       exact HomogenizationErrorInfinity_dilate h Q n s p a0
 
-theorem HomogenizationErrorOnCube_dilate {d : ℕ} [NeZero d] {k : ℤ}
+theorem HomogenizationErrorOnCube_dilate {d : ℕ} {k : ℤ}
     {a b : TriadicCoeffFamily d}
     (h : TriadicCoeffFamily.IsDilation k a b) (Q : TriadicCube d)
     (s : ℝ) (p q : MultiscaleExponent) (a0 : Mat d) :

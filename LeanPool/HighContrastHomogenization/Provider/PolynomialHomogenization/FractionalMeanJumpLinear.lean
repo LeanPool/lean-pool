@@ -31,6 +31,7 @@ noncomputable section
 
 variable {d : ℕ}
 
+/-- Volume restricted to `E` and rescaled by the inverse of `volume E` for mean jumps. -/
 @[expose]
 public noncomputable def normalizedJumpMeasure (E : Set (Vec d)) :
     Measure (Vec d) :=

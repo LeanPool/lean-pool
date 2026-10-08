@@ -331,7 +331,7 @@ theorem summable_public_B_series {d : ℕ} [NeZero d]
       (Q := Q) (a := a) hs hq
   simpa [A] using hOld
 
-theorem tsum_public_sigmaStar_series_eq_lambdaSq {d : ℕ} [NeZero d]
+theorem tsum_public_sigmaStar_series_eq_lambdaSq {d : ℕ}
     (Q : TriadicCube d) (a : CoeffFamily d) {s q : ℝ}
     (hs : 0 < s) (hq : 0 < q) :
     (∑' n : ℕ,
@@ -343,7 +343,7 @@ theorem tsum_public_sigmaStar_series_eq_lambdaSq {d : ℕ} [NeZero d]
   exact (Ch02.lambdaSqFinite_rpow_neg_q_div_two_eq_tsum
     Q s q a hq (mul_nonneg hs.le hq.le)).symm
 
-theorem tsum_public_B_series_eq_LambdaSq {d : ℕ} [NeZero d]
+theorem tsum_public_B_series_eq_LambdaSq {d : ℕ}
     (Q : TriadicCube d) (a : CoeffFamily d) {s q : ℝ}
     (hs : 0 < s) (hq : 0 < q) :
     (∑' n : ℕ,

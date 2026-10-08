@@ -79,7 +79,7 @@ private theorem coarseBlockMatrix_respCoeffMinus_of_ellipticRepresentative
     (t : ℤ) (n : ℕ) (a : CoeffSpace d) (lam0 Lam' : ℝ)
     (hlam0 : 0 < lam0) (hle' : lam0 ≤ Lam')
     (f : CoeffField d) (hae : respCoeffMinus F a =ᵐ[volumeMeasureOn (respCell jStar F t)] f)
-    (hEllOf : ∀ (S : Set (Vec d)) (hS : MeasurableSet S),
+    (hEllOf : ∀ (S : Set (Vec d)) (_hS : MeasurableSet S),
       IsEllipticFieldOn lam0 Lam' S f) :
     ∀ w ∈ triadicIndexBox d n,
       Book.Ch02.coarseBlockMatrix
@@ -104,7 +104,7 @@ private theorem coarseBlockMatrix_respCoeffMinus_of_ellipticRepresentative
         (hEllOf (adaptedCellAtCenter (respGrid jStar F) (t - (n : ℤ)) w)
           (isOpen_adaptedCellAtCenter_of_isUnit hgrid (t - (n : ℤ)) w).measurableSet))
       (canonicalRespCoeffMinusOnAt (respGrid jStar F) hgrid (t - (n : ℤ)) w F a) := by
-    show (coeffOnOfIsEllipticFieldOn hlam0 hle'
+    change (coeffOnOfIsEllipticFieldOn hlam0 hle'
         (hEllOf (adaptedCellAtCenter (respGrid jStar F) (t - (n : ℤ)) w)
           (isOpen_adaptedCellAtCenter_of_isUnit hgrid (t - (n : ℤ)) w).measurableSet)).toCoeffField
       =ᵐ[volumeMeasureOn
@@ -117,6 +117,7 @@ private theorem coarseBlockMatrix_respCoeffMinus_of_ellipticRepresentative
     (canonicalRespCoeffMinusOnAt (respGrid jStar F) hgrid (t - (n : ℤ)) w F a)
     (canonicalRespCoeffMinusOnAt_toFun (respGrid jStar F) hgrid (t - (n : ℤ)) w F a)
 
+omit [NeZero d] in
 private theorem doubledFieldEnergy_average_congr_of_ae_eq
     (jStar : ℕ) (F : BlockMat d) (t : ℤ) (n : ℕ)
     (X X' : (w : Fin d → ℤ) → Vec d → BlockVec d)
@@ -130,10 +131,11 @@ private theorem doubledFieldEnergy_average_congr_of_ae_eq
   intro w hw
   unfold volumeAverage
   congr 1
-  exact MeasureTheory.integral_congr_ae (by
-    filter_upwards [hX w hw] with x hx
-    rw [hx])
+  congr 1
+  exact MeasureTheory.integral_congr_ae
+    ((hX w hw).fun_comp (fun z => vecDot z.1 z.2))
 
+omit [NeZero d] in
 private theorem cellAverage_congr_ae_on_recentCells
     (jStar : ℕ) (F : BlockMat d) (t : ℤ) (n : ℕ)
     (X X' : (w : Fin d → ℤ) → Vec d → BlockVec d)
@@ -145,6 +147,7 @@ private theorem cellAverage_congr_ae_on_recentCells
   intro w hw
   exact cellAverage_congr_ae (subset_refl _) (hX w hw)
 
+omit [NeZero d] in
 private theorem optimizerDifference_ae_eq_of_field_and_gradient
     (U V : Set (Vec d)) (f c : CoeffField d)
     (uRep : AHarmonicFunction f U) (u : AHarmonicFunction c U)
@@ -506,9 +509,10 @@ theorem headCell_of_bridge (P : Measure (CoeffSpace d)) (γ : ℝ) (jStar : ℕ)
   have hXae : ∀ w ∈ triadicIndexBox d n,
       Xf w =ᵐ[volumeMeasureOn (adaptedCellAtCenter (respGrid jStar F) (t - (n : ℤ)) w)] Xr w := by
     intro w hw
-    exact optimizerDifference_ae_eq_of_field_and_gradient
-      (respCell jStar F t) (adaptedCellAtCenter (respGrid jStar F) (t - (n : ℤ)) w)
-      f (respCoeffMinus F a) uRep u (vFam w) (v w) (haeSub w hw) rfl (hvFam w hw)
+    simpa only [Xf, Xr, optimizerField, aU, coeffOnOfIsEllipticFieldOn, hzFam w hw] using
+      optimizerDifference_ae_eq_of_field_and_gradient
+        (respCell jStar F t) (adaptedCellAtCenter (respGrid jStar F) (t - (n : ℤ)) w)
+        f (respCoeffMinus F a) uRep u (vFam w) (v w) (haeSub w hw).symm rfl (hvFam w hw)
   -- The Chapter-2 difference energy is the doubled pointwise energy on the representative.
   have hAve_f : ∀ w ∈ triadicIndexBox d n,
       Book.Ch02.average (adaptedDomainAt (respGrid jStar F) hgrid (t - (n : ℤ)) w)
@@ -535,7 +539,8 @@ theorem headCell_of_bridge (P : Measure (CoeffSpace d)) (γ : ℝ) (jStar : ℕ)
       rw [hX, blockMatrixField_apply (aU w) x,
         blockEnergyDensity_primal hdet (Xf w x).1]
     rw [hpt]
-    show (MeasureTheory.volume (adaptedCellAtCenter (respGrid jStar F) (t - (n : ℤ)) w)).toReal⁻¹ *
+    change
+      (MeasureTheory.volume (adaptedCellAtCenter (respGrid jStar F) (t - (n : ℤ)) w)).toReal⁻¹ *
         ∫ x in (adaptedCellAtCenter (respGrid jStar F) (t - (n : ℤ)) w),
           2 * vecDot (Xf w x).1 (Xf w x).2
       = 2 * ((MeasureTheory.volume (adaptedCellAtCenter (respGrid jStar F) (t - (n : ℤ))

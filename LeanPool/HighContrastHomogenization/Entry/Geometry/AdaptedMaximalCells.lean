@@ -179,7 +179,7 @@ theorem exists_isMaximalAdaptedCellIn_of_isAdaptedCellIn {W : Set (Vec d)} {q : 
   rw [adaptedCellAtCenter_eq_affine_standardCell]
   exact ⟨u, hu', rfl⟩
 
-theorem volume_diff_iUnion_maximalAdaptedCells_of_isOpen [NeZero d]
+theorem volume_diff_iUnion_maximalAdaptedCells_of_isOpen
     {W : Set (Vec d)} {q : Mat d} (hq : IsUnit q) (hW : IsOpen W) (n : ℤ) :
     volume (W \
       ⋃ p ∈ {p : ℤ × (Fin d → ℤ) | IsMaximalAdaptedCellIn W q n p.1 p.2},

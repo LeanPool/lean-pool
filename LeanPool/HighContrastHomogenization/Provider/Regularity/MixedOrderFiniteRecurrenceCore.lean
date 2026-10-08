@@ -67,7 +67,7 @@ open FiniteLipschitzCoreInternal
 imply the finite energy recurrence, without assigning a fractional order to
 the response row. -/
 theorem exists_mixedResponseFiniteLipschitzEnergyRecurrenceConstant
-    (d : ℕ) [NeZero d]
+    (d : ℕ)
     (N : ℕ) (hN : 0 < N) (Cstep : ℝ) (hCstep : 0 ≤ Cstep)
     (Cc : ℝ) (hCc : 0 < Cc) (Ct : ℝ) (hCt : 0 < Ct)
     (Ce : ℝ) (hCe : 0 < Ce) :

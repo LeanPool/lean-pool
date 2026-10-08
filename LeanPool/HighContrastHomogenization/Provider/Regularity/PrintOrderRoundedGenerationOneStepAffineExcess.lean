@@ -65,7 +65,7 @@ private theorem isWeakSolutionOn_mono_roundStep
     _ = 0 := hzero
 
 private theorem isWeakSolutionOn_of_constantCoeffForcedEquation_zero
-    {d : ℕ} [NeZero d] (Q : TriadicCube d)
+    {d : ℕ} (Q : TriadicCube d)
     (a₀ : Book.Ch03.ConstantCoeffMatrix d)
     (v : H1Function (Book.Ch02.cubeDomain Q : Set (Vec d)))
     (hv : Book.Ch03.IsConstantCoeffForcedEquation Q a₀ v

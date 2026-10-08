@@ -54,7 +54,7 @@ noncomputable def observationFillingCoefficient
 /-- The honest pointwise majorant for the observation descendant row. -/
 @[expose]
 noncomputable def observationParentRowMajorant
-    [NeZero d] (epsilon : ℝ) (abar : Mat d)
+    (epsilon : ℝ) (abar : Mat d)
     (aRef : Book.Ch03.CoeffFamily d) (M K : ℤ) (l : ℕ) : ℝ :=
   ∑' u : ℕ,
     (observationFillingCoefficient d epsilon abar *

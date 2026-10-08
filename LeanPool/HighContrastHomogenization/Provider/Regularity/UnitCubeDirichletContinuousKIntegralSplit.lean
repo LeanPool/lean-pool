@@ -34,8 +34,7 @@ open scoped ENNReal
 
 noncomputable section
 
-@[expose]
-public noncomputable def unitCubeEuclideanL2FieldToCenteredCubeZero
+private noncomputable def unitCubeEuclideanL2FieldToCenteredCubeZero
     {d : ℕ} (F : UnitCubeEuclideanL2Field d) :
     CenteredCubeEuclideanL2Field d 0 where
   toField := F
@@ -48,7 +47,7 @@ public noncomputable def unitCubeEuclideanL2FieldToCenteredCubeZero
   rfl
 
 private theorem unitCubeDirichletDivergence_normalizedEuclideanLpENorm_grad_le
-    {d : ℕ} [NeZero d] (h : UnitCubeEuclideanL2Field d)
+    {d : ℕ} (h : UnitCubeEuclideanL2Field d)
     (w : H10Function (openCubeSet (originCube d 0)))
     (hproblem : CubeDirichletDivergenceProblem (originCube d 0) w h) :
     (unitCenteredCubeDomain d).normalizedEuclideanLpENorm (2 : ℝ≥0∞)

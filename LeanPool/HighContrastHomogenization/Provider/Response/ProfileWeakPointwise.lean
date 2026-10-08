@@ -138,7 +138,7 @@ theorem profilePrimalWeakRoot_randomCentered_le [NeZero d]
               ENNReal.ofReal (diagonalWeakEnergy hq t a p r)) := by
   have hrootSpec := matSqrt_spec hm.posSemidef
   have hsymm : matTranspose (matSqrt m) = matSqrt m := by
-    show (matSqrt m).transpose = matSqrt m
+    change (matSqrt m).transpose = matSqrt m
     rw [← conjTranspose_eq_transpose']
     exact hrootSpec.1.isHermitian
   have hraw := diagonalWeakNorm_primal_le hq t H hsymm hrootSpec.2 hm
@@ -231,7 +231,7 @@ theorem profileAdjointWeakRoot_randomCentered_le [NeZero d]
               ENNReal.ofReal (diagonalWeakAdjointEnergy hq t a p r)) := by
   have hrootSpec := matSqrt_spec hm.posSemidef
   have hsymm : matTranspose (matSqrt m) = matSqrt m := by
-    show (matSqrt m).transpose = matSqrt m
+    change (matSqrt m).transpose = matSqrt m
     rw [← conjTranspose_eq_transpose']
     exact hrootSpec.1.isHermitian
   have hraw := diagonalWeakNorm_adjoint_le hq t H hsymm hrootSpec.2 hm
@@ -406,7 +406,7 @@ theorem profilePrimalWeakRoot_randomCentered_at_level_le [NeZero d]
               ENNReal.ofReal (diagonalWeakEnergy hq t a p r)) := by
   have hrootSpec := matSqrt_spec hm.posSemidef
   have hsymm : matTranspose (matSqrt m) = matSqrt m := by
-    show (matSqrt m).transpose = matSqrt m
+    change (matSqrt m).transpose = matSqrt m
     rw [← conjTranspose_eq_transpose']
     exact hrootSpec.1.isHermitian
   have hraw := diagonalWeakNorm_primal_at_level_le hq t H hsymm hrootSpec.2 hm
@@ -501,7 +501,7 @@ theorem profileAdjointWeakRoot_randomCentered_at_level_le [NeZero d]
               ENNReal.ofReal (diagonalWeakAdjointEnergy hq t a p r)) := by
   have hrootSpec := matSqrt_spec hm.posSemidef
   have hsymm : matTranspose (matSqrt m) = matSqrt m := by
-    show (matSqrt m).transpose = matSqrt m
+    change (matSqrt m).transpose = matSqrt m
     rw [← conjTranspose_eq_transpose']
     exact hrootSpec.1.isHermitian
   have hraw := diagonalWeakNorm_adjoint_at_level_le hq t H hsymm hrootSpec.2 hm

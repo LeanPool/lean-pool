@@ -40,6 +40,8 @@ open scoped ENNReal
 
 noncomputable section
 
+/-- The harmonic Hilbert-space gradient on cube `n` of the finite affine
+solution with slope `e` on cube `m`, for `n ≤ m`. -/
 @[expose]
 public noncomputable def finiteAffineHarmonicGradient
     {d : ℕ} [NeZero d] (a : Book.Ch02.TriadicCoeffFamily d)
@@ -129,6 +131,8 @@ theorem finiteAffineHarmonicGradient_smul
   rw [hsmulx]
   simp
 
+/-- The linear map sending a slope to the restricted finite affine harmonic
+gradient on the smaller origin cube. -/
 @[expose]
 public noncomputable def finiteAffineHarmonicGradientLinearMap
     {d : ℕ} [NeZero d] (a : Book.Ch02.TriadicCoeffFamily d)
@@ -143,9 +147,11 @@ public noncomputable def finiteAffineHarmonicGradientLinearMap
   map_add' := finiteAffineHarmonicGradient_add a hnm
   map_smul' := finiteAffineHarmonicGradient_smul a hnm
 
+/-- The harmonic Hilbert-space gradient of a cube solution restricted from
+scale `m` to scale `n ≤ m`. -/
 @[expose]
 public noncomputable def restrictedSolutionHarmonicGradient
-    {d : ℕ} [NeZero d] (a : Book.Ch02.TriadicCoeffFamily d)
+    {d : ℕ} (a : Book.Ch02.TriadicCoeffFamily d)
     {n m : ℤ} (hnm : n ≤ m)
     (u : Book.Ch03.CubeSolution (originCube d m) a) :=
   AHarmonicGradientHilbert.ofAHarmonicFunction
@@ -155,6 +161,8 @@ public noncomputable def restrictedSolutionHarmonicGradient
       (originCube d n) a)
     (finiteCubeSolutionRestriction a hnm u).toPointwiseAHarmonic
 
+/-- The harmonic gradient of the residual after subtracting the finite affine
+solution with slope `e`, restricted to the smaller origin cube. -/
 @[expose]
 public noncomputable def affineResidualHarmonicGradient
     {d : ℕ} [NeZero d] (a : Book.Ch02.TriadicCoeffFamily d)

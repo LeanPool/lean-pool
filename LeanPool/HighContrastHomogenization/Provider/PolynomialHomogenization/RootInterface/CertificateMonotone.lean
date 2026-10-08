@@ -123,7 +123,7 @@ theorem max_one_mul_rpow_le_fold {abar : Mat d} {A t p : ℝ}
 /-! ## The certificate is upward closed in the scale -/
 
 theorem ScalarIdentityPowerTail.mono_scale
-    [NeZero d] {a : Book.Ch02.TriadicCoeffFamily d} {s amplitude kappa x y : ℝ}
+    {a : Book.Ch02.TriadicCoeffFamily d} {s amplitude kappa x y : ℝ}
     (h : ScalarIdentityPowerTail a s amplitude kappa x)
     (hamp : 0 ≤ amplitude) (hkappa : 0 < kappa) (hx : 0 < x) (hxy : x ≤ y) :
     ScalarIdentityPowerTail a s amplitude kappa y := by
@@ -140,7 +140,7 @@ theorem ScalarIdentityPowerTail.mono_scale
 /-! ## The certificate is downward closed in the rate -/
 
 theorem ScalarIdentityPowerTail.mono_rate
-    [NeZero d] {a : Book.Ch02.TriadicCoeffFamily d} {s amplitude kappa kappa' x : ℝ}
+    {a : Book.Ch02.TriadicCoeffFamily d} {s amplitude kappa kappa' x : ℝ}
     (h : ScalarIdentityPowerTail a s amplitude kappa x)
     (hamp : 0 ≤ amplitude) (hx : 0 < x) (hkappa : kappa' ≤ kappa) :
     ScalarIdentityPowerTail a s amplitude kappa' x := by

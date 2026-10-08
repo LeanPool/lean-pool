@@ -45,12 +45,14 @@ natural generation. -/
 theorem quenched_block_row_max_one_source
     (rho : ℝ) (F : BlockMat d) (sourceScale : ℝ)
     (a : CoeffSpace d) (m : ℕ) :
-    quenched_block_row rho F (max 1 sourceScale) a m =
-      quenched_block_row rho F sourceScale a m := by
-  unfold quenched_block_row
+    quenchedBlockRow rho F (max 1 sourceScale) a m =
+      quenchedBlockRow rho F sourceScale a m := by
+  unfold quenchedBlockRow
   have hone : (1 : ℝ) ≤ (3 : ℝ) ^ m := one_le_pow₀ (by norm_num)
   rw [if_congr (max_le_iff.trans (and_iff_right hone)) rfl rfl]
 
+/-- Excess values over standard cells at relative generation `m - n` whose centers lie in the
+centered cube of generation `m`. -/
 @[expose]
 public def endpointCellExcessSet (m n : ℕ) (a : CoeffSpace d)
     (F : BlockMat d) : Set ℝ :=
@@ -59,6 +61,7 @@ public def endpointCellExcessSet (m n : ℕ) (a : CoeffSpace d)
     r = blockExcess
       (coarseBlock (standardCell d ((m : ℤ) - (n : ℤ)) w) a) F}
 
+/-- Supremum of the excess values in `endpointCellExcessSet m n a F`. -/
 @[expose]
 public def endpointCellExcessSup (m n : ℕ) (a : CoeffSpace d)
     (F : BlockMat d) : ℝ :=
@@ -213,8 +216,8 @@ private theorem endpointCellExcessSup_data [NeZero d]
 theorem quenched_block_row_nonneg [NeZero d]
     {F : BlockMat d} (hF : IsSymmetricBlockMat F) (hFpd : BlockPosDef F)
     (rho sourceScale : ℝ) (a : CoeffSpace d) (m : ℕ) :
-    0 ≤ quenched_block_row rho F sourceScale a m := by
-  unfold quenched_block_row
+    0 ≤ quenchedBlockRow rho F sourceScale a m := by
+  unfold quenchedBlockRow
   split_ifs
   · exact tsum_nonneg fun n => mul_nonneg (Real.rpow_nonneg (by norm_num) _)
       (endpointCellExcessSup_data m a hF hFpd |>.choose_spec.2 n |>.1)
@@ -252,7 +255,7 @@ theorem summable_endpoint_block_row [NeZero d]
 
 /-- A Loewner comparison by a factor at least one bounds the normalized
 positive excess by that factor minus one. -/
-theorem blockExcess_le_sub_one_of_blockMatLoewnerLE [NeZero d]
+theorem blockExcess_le_sub_one_of_blockMatLoewnerLE
     {H F : BlockMat d} (hH : IsSymmetricBlockMat H)
     (hHps : (toFullBlockMat H).PosSemidef)
     (hF : IsSymmetricBlockMat F) (hFpd : BlockPosDef F)
@@ -277,7 +280,7 @@ theorem quenched_block_row_le_of_cellExcess [NeZero d]
       blockExcess
           (coarseBlock (standardCell d ((m : ℤ) - (n : ℤ)) w) a) F ≤
         D * (3 : ℝ) ^ (gamma * (n : ℝ)) * decay) :
-    quenched_block_row rho F sourceScale a m ≤
+    quenchedBlockRow rho F sourceScale a m ≤
       D * decay * (1 - (3 : ℝ) ^ (-(rho - gamma)))⁻¹ := by
   let q : ℝ := (3 : ℝ) ^ (-(rho - gamma))
   have hq0 : 0 ≤ q := by positivity
@@ -324,7 +327,7 @@ theorem quenched_block_row_le_of_cellExcess [NeZero d]
   have hsum := hleft.tsum_le_tsum hterm hright
   have hgeom : ∑' n : ℕ, D * decay * q ^ n = D * decay * (1 - q)⁻¹ := by
     rw [tsum_mul_left, tsum_geometric_of_lt_one hq0 hq1]
-  unfold quenched_block_row
+  unfold quenchedBlockRow
   split_ifs
   · simpa only [endpointCellExcessSup, endpointCellExcessSet, hgeom, q] using hsum
   · have hinv0 : 0 ≤ (1 - q)⁻¹ := inv_nonneg.mpr (by linarith only [hq1])
@@ -335,7 +338,7 @@ theorem measurable_quenched_block_row [NeZero d]
     {F : BlockMat d} (hF : IsSymmetricBlockMat F) (hFpd : BlockPosDef F)
     {sourceScale : CoeffSpace d → ℝ} (hsource : Measurable sourceScale)
     {rho : ℝ} (hrho : 0 < rho) (m : ℕ) :
-    Measurable fun a => quenched_block_row rho F (sourceScale a) a m := by
+    Measurable fun a => quenchedBlockRow rho F (sourceScale a) a m := by
   let term : ℕ → CoeffSpace d → ℝ := fun n a =>
     (3 : ℝ) ^ (-rho * (n : ℝ)) * endpointCellExcessSup m n a F
   have hterm : ∀ n, Measurable (term n) := fun n =>
@@ -359,10 +362,10 @@ theorem measurable_quenched_block_row [NeZero d]
       simp only [ENNReal.toReal_ofReal (hterm0 _ _)]
     rw [heq]
     exact ENNReal.measurable_toReal.comp henn
-  have hrow : (fun a => quenched_block_row rho F (sourceScale a) a m) =
+  have hrow : (fun a => quenchedBlockRow rho F (sourceScale a) a m) =
       fun a => if sourceScale a ≤ (3 : ℝ) ^ m then ∑' n, term n a else 0 := by
     funext a
-    unfold quenched_block_row
+    unfold quenchedBlockRow
     congr 1
   rw [hrow]
   exact Measurable.ite (measurableSet_le hsource measurable_const) hreal measurable_const

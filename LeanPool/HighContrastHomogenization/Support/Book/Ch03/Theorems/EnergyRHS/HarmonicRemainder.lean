@@ -148,7 +148,7 @@ private theorem geometricDiscount_two_mul_sqrt_LambdaSqFinite_public_le_dim_publ
     (Real.sqrt_nonneg E)
 
 private theorem geometricDiscount_two_scale_mul_publicUpper_le
-    {d : ℕ} [NeZero d] (Q : TriadicCube d) (a : CoeffFamily d)
+    {d : ℕ} (Q : TriadicCube d) (a : CoeffFamily d)
     {s E : ℝ} (hs : 0 < s) (hs_le : s ≤ 1) :
     Real.rpow (geometricDiscount s 2) (-1 / 2 : ℝ) *
         ((d : ℝ) * poincareUpperEllipticityFactor Q a s (.finite 2)) *
@@ -214,7 +214,7 @@ in the manuscript: the weak-testing/Besov-duality pairing and the homogeneous
 coarse-grained flux estimate.  This deliberately keeps the route through
 `poincareUpperEllipticityFactor` and contains no raw `Lam` absorption. -/
 theorem dirichletHarmonicRemainder_sqrt_two_energy_le_of_boundary_pairing_and_flux_bound
-    {d : ℕ} [NeZero d] {C Cpair Cflux : ℝ}
+    {d : ℕ} {C Cpair Cflux : ℝ}
     (hCpair_nonneg : 0 ≤ Cpair) (hCflux_nonneg : 0 ≤ Cflux)
     (hC_absorb : Real.sqrt 2 * Cpair * Cflux ≤ C)
     {Q : TriadicCube d} {a : CoeffFamily d} {s : ℝ}
@@ -831,7 +831,7 @@ homogeneous equation gives the energy-to-pairing inequality, and Besov duality
 bounds that pairing by the negative flux seminorm times the positive boundary
 norm. -/
 theorem dirichletHarmonicRemainder_boundary_pairing_le_of_weak_testing_and_besov_duality
-    {d : ℕ} [NeZero d] {Cpair : ℝ}
+    {d : ℕ} {Cpair : ℝ}
     {Q : TriadicCube d} {a : CoeffFamily d} {s : ℝ}
     {g : Vec d → Vec d} (v : DirichletForcedCubeSolution Q a g)
     (w : AHarmonicFunction (publicCoeffField Q a) (cubeSet Q))

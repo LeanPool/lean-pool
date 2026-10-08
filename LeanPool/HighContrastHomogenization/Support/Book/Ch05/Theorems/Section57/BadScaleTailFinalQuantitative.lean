@@ -129,9 +129,8 @@ theorem
       (d := d) (σ := σ) hσ_pos params
   refine ⟨Cfluct, Ccrude, Centry, a,
     hCfluct, hCcrude, hCentry, ha, ?_⟩
-  intro t αbad
-  intro K S b L ctop τ η w ρtop ρbottom ρcrude Cbottom Ctop Kbottom Kcrude W M ρgap
-  intro ht htb hα_nonneg hαt hαb hαharm hαa
+  intro t αbad K S b L ctop τ η w ρtop ρbottom ρcrude Cbottom Ctop Kbottom Kcrude W M ρgap _ ht htb
+    hα_nonneg hαt hαb hαharm hαa
   classical
   let C₀ : ℝ := 2 + Real.log W
   have hη_pos : 0 < η := by
@@ -146,10 +145,11 @@ theorem
       (Kbottom := Kbottom) (Kcrude := Kcrude)
       (w := w) (η := η) hη_pos hw_nonneg
   refine ⟨R, ?_, ?_⟩
-  · simpa [ρgap, W, C₀, w, η] using hR
-  intro P hP hStruct hΓ hσ_eq hparams
-  intro N0 Hshift Dhigh Dcrude Den Ohigh Ocrude Blead Btail cgap Qpref Qlead Qcut Q
-  intro q hQq
+  · change ∀ q : ℕ, R ≤ q → C₀ * (q : ℝ) ≤
+      Real.exp (Real.log ρgap / 2 * (q : ℝ))
+    simpa [ρgap, W, C₀, w, η] using hR
+  intro P hP hStruct hΓ hσ_eq hparams N0 Hshift Dhigh Dcrude Den Ohigh Ocrude Blead Btail cgap Qpref
+    Qlead Qcut Q q hQq
   obtain ⟨hBlead_pos, hBtail_pos, hBlead_lt_Btail⟩ :=
     doubled_mixed_denominator_bounds
       (Dhigh := Dhigh) (Dcrude := Dcrude) (η := η) (τ := τ) (σ := σ)
@@ -281,9 +281,8 @@ theorem exists_threshold_badScaleProbability_le_interpolatedTail_annealedExponen
   obtain ⟨Cfluct, Ccrude, hCfluct, hCcrude, htail⟩ :=
     htailBase hσ_pos
   refine ⟨Cfluct, Ccrude, hCfluct, hCcrude, ?_⟩
-  intro t αbad
-  intro K S b L ctop τ η w ρtop ρbottom ρcrude Cbottom Ctop Kbottom Kcrude W M ρgap
-  intro ht htb hα_nonneg hαt hαb hαharm hαa
+  intro t αbad K S b L ctop τ η w ρtop ρbottom ρcrude Cbottom Ctop Kbottom Kcrude W M ρgap _ ht htb
+    hα_nonneg hαt hαb hαharm hαa
   classical
   let C₀ : ℝ := 2 + Real.log W
   have hη_pos : 0 < η := by
@@ -298,10 +297,11 @@ theorem exists_threshold_badScaleProbability_le_interpolatedTail_annealedExponen
       (Kbottom := Kbottom) (Kcrude := Kcrude)
       (w := w) (η := η) hη_pos hw_nonneg
   refine ⟨R, ?_, ?_⟩
-  · simpa [ρgap, W, C₀, w, η] using hR
-  intro P hP hStruct hΓ hσ_eq hparams
-  intro N0 Hshift Dhigh Dcrude Den Ohigh Ocrude Blead Btail cgap Qpref Qlead Qcut Q
-  intro q hQq
+  · change ∀ q : ℕ, R ≤ q → C₀ * (q : ℝ) ≤
+      Real.exp (Real.log ρgap / 2 * (q : ℝ))
+    simpa [ρgap, W, C₀, w, η] using hR
+  intro P hP hStruct hΓ hσ_eq hparams N0 Hshift Dhigh Dcrude Den Ohigh Ocrude Blead Btail cgap Qpref
+    Qlead Qcut Q q hQq
   obtain ⟨hBlead_pos, hBtail_pos, hBlead_lt_Btail⟩ :=
     doubled_mixed_denominator_bounds
       (Dhigh := Dhigh) (Dcrude := Dcrude) (η := η) (τ := τ) (σ := σ)

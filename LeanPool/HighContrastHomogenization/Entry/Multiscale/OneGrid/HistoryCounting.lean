@@ -71,8 +71,7 @@ theorem meanHistory_nonneg (d : ℕ) (hd : 2 ≤ d) (γ : ℝ) (hγ : γ ∈ Set
     exact le_of_lt (Finset.mem_Ico.mp hj).2
   apply mul_nonneg
   · exact Real.rpow_nonneg (le_trans hγ.1 (le_of_lt (lt_trans hγ.2 (by norm_num)))) _
-  ·
-    exact
+  · exact
       (HCPolySupport.HighContrast.Annealed.normalizedBlock_order_consequences
         (HCPolySupport.HighContrast.bigQ d γ)
         (HCPolySupport.HighContrast.adaptedMean P

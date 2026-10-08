@@ -55,8 +55,9 @@ private theorem isLocalRandomVariable_fullBlockMat_of_entries
   intro β
   exact hX α β
 
+/-- The linear map sending a full-block matrix `M` to the Euclidean operator of `D * M * D`. -/
 @[expose]
-public def normalizedFullBlockCLMLinearMap {d : ℕ} [NeZero d]
+public def normalizedFullBlockCLMLinearMap {d : ℕ}
     (D : FullBlockMat d) :
     FullBlockMat d →ₗ[ℝ]
       (EuclideanSpace ℝ (BlockCoord d) →L[ℝ] EuclideanSpace ℝ (BlockCoord d)) :=
@@ -73,13 +74,13 @@ public def normalizedFullBlockCLMLinearMap {d : ℕ} [NeZero d]
         |>.toAlgEquiv |>.toLinearEquiv)
   toCLM.comp sandwich
 
-private theorem normalizedFullBlockCLMLinearMap_apply {d : ℕ} [NeZero d]
+private theorem normalizedFullBlockCLMLinearMap_apply {d : ℕ}
     (D M : FullBlockMat d) :
     normalizedFullBlockCLMLinearMap D M =
       Matrix.toEuclideanCLM (n := BlockCoord d) (𝕜 := ℝ) (D * M * D) := by
   rfl
 
-private theorem measurable_normalizedFullBlockFluctuationMap {d : ℕ} [NeZero d]
+private theorem measurable_normalizedFullBlockFluctuationMap {d : ℕ}
     (D Abar : FullBlockMat d) :
     Measurable
       (fun M : FullBlockMat d =>
@@ -92,6 +93,7 @@ private theorem measurable_normalizedFullBlockFluctuationMap {d : ℕ} [NeZero d
       (continuous_id.sub continuous_const)
   exact ((continuous_norm.comp hcont).pow 2).measurable
 
+/-- The linear map sending a full-block matrix `M` to the normalized matrix `D * M * D`. -/
 @[expose]
 public def normalizedFullBlockMatLinearMap {d : ℕ}
     (D : FullBlockMat d) : FullBlockMat d →ₗ[ℝ] FullBlockMat d :=
@@ -107,7 +109,7 @@ private theorem normalizedFullBlockMatLinearMap_apply {d : ℕ}
   rfl
 
 private theorem measurable_normalizedFullBlockQuadraticMap {d : ℕ}
-    [NeZero d] (D : FullBlockMat d) (q : FullBlockVec d) :
+    (D : FullBlockMat d) (q : FullBlockVec d) :
     Measurable
       (fun M : FullBlockMat d => fullBlockQuadratic (D * M * D) q) := by
   have hcont :
@@ -269,7 +271,7 @@ theorem section54_annealedMomentRoot_abs_sub_integral_le_two_mul
     _ = 2 * Ch04.annealedMomentRoot P ξ (fun a => |X a|) := by ring
 
 theorem section54_annealedMomentRoot_add_le
-    {d : ℕ} {P : Ch04.RestrictionCoeffLaw d} [IsProbabilityMeasure P]
+    {d : ℕ} {P : Ch04.RestrictionCoeffLaw d}
     {ξ : ℕ} {X Y : RegCoeffField d → ℝ}
     (hξ : 1 ≤ ξ)
     (hX_nonneg : ∀ a, 0 ≤ X a) (hY_nonneg : ∀ a, 0 ≤ Y a)

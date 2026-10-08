@@ -33,10 +33,14 @@ probability kernels in the quantitative minimal-scale proof.
 
 noncomputable section
 
+/-- The sum of the geometric exponential kernel `exp (-k * (ρ ^ η - 1))`
+over natural indices, used in bad-scale probability summation. -/
 @[expose]
 noncomputable def geometricExpKernelConst (ρ η : ℝ) : ℝ :=
   ∑' k : ℕ, Real.exp ((k : ℝ) * (-(ρ ^ η - 1)))
 
+/-- The sum of the exponential kernel weighted by `k + 1`, accounting for
+linear multiplicity in bad-scale probability summation. -/
 @[expose]
 noncomputable def linearExpKernelConst (ρ η : ℝ) : ℝ :=
   ∑' k : ℕ, (((k : ℝ) + 1) *

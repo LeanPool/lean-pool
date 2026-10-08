@@ -190,7 +190,7 @@ private theorem scale_mono {A B : BlockMat d} (h : BlockMatLoewnerLE A B)
   rw [Source.quadratic_blockScale, Source.quadratic_blockScale]
   exact mul_le_mul_of_nonneg_left (h x) hc
 
-private theorem matrix_congruence_mono {ι : Type*} [Fintype ι] [DecidableEq ι]
+private theorem matrix_congruence_mono {ι : Type*} [Fintype ι]
     {A B : Matrix ι ι ℝ} (h : A ≤ B) (T : Matrix ι ι ℝ) : Tᴴ * A * T ≤ Tᴴ * B * T := by
   apply Matrix.le_iff.mpr
   simpa only [mul_sub, sub_mul] using (Matrix.le_iff.mp h).conjTranspose_mul_mul_same T

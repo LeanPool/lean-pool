@@ -278,7 +278,7 @@ theorem normalizedFluctuationSelf_one_sandwich (d : ℕ) (hd : 2 ≤ d) (γ : �
   have hSelfEq : normalizedFluctuationSelf P (1 : Mat d) j a =
       normalizedBlock (blockSub (coarseBlock (HighContrast.adaptedCell (1 : Mat d) j) a) Aj) Aj
         := by
-    show normalizedFluctuation P (1 : Mat d) j j 0 a = _
+    change normalizedFluctuation P (1 : Mat d) j j 0 a = _
     rw [normalizedFluctuation, hcell]
   rw [hSelfEq]
   set Cb := coarseBlock (HighContrast.adaptedCell (1 : Mat d) j) a with hCbdef
@@ -375,7 +375,7 @@ theorem normalizedFluctuationSelf_one_sandwich (d : ℕ) (hd : 2 ≤ d) (γ : �
   rw [hUscale] at hUpperCongr
   have hNormEq : toFullBlockMat (normalizedBlock (blockSub Cb Aj) Aj) =
       S * (toFullBlockMat Cb - toFullBlockMat Aj) * S := by
-    show toFullBlockMat (ofFullBlockMat (matSqrt (toFullBlockMat Aj)⁻¹ *
+    change toFullBlockMat (ofFullBlockMat (matSqrt (toFullBlockMat Aj)⁻¹ *
       toFullBlockMat (blockSub Cb Aj) * matSqrt (toFullBlockMat Aj)⁻¹)) = _
     rw [toFullBlockMat_ofFullBlockMat, hSubFull]
   rw [← hNormEq] at hLowerCongr hUpperCongr
@@ -562,7 +562,7 @@ theorem fluctuationHistory_one_jStar_le_moment (d : ℕ) (hd : 2 ≤ d) (γ : �
     rw [hcellEq, Recurrence.mem_centeredCube_iff] at hzmem
     have hw0 : w = 0 := by
       funext i
-      show w i = (0 : ℤ)
+      change w i = (0 : ℤ)
       have hzi : z i = (3 : ℝ) ^ (jStar : ℤ) * (w i : ℝ) := by
         rw [← hw]
         simp [adaptedCellCenter, Geometry.matVecMul_eq_mulVec, Matrix.one_mulVec]
@@ -658,7 +658,7 @@ theorem fluctuationHistory_one_jStar_le_moment (d : ℕ) (hd : 2 ≤ d) (γ : �
       · intro hzmem
         have hz0 : z = 0 := hSet_sub z hzmem
         subst hz0
-        show blockOpNorm (normalizedFluctuationSelf P (1 : Mat d) (jStar : ℤ) a) ^ Q ≤ _
+        change blockOpNorm (normalizedFluctuationSelf P (1 : Mat d) (jStar : ℤ) a) ^ Q ≤ _
         exact pow_le_pow_left₀ (norm_nonneg _)
           (Analysis.blockOpNorm_le_absSchattenNorm hHerm hQreal1) Q
       · intro _; exact htarget_nonneg

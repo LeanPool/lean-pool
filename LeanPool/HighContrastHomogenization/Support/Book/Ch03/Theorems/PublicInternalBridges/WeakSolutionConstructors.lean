@@ -42,8 +42,10 @@ open MeasureTheory
 open scoped BigOperators ENNReal
 open ZeroTraceDirichletCorrectorData
 
+/-- Realize a forced Neumann solution as mean-zero corrector data on the closed cube,
+with the public coefficient field and the force centered by its cube average. -/
 @[expose]
-noncomputable def neumannForcedSolutionMeanZeroCorrectorData_publicCoeffField
+noncomputable def publicNeumannForcedMeanZeroCorrectorData
     {d : ℕ} [NeZero d] {Q : TriadicCube d} {a : CoeffFamily d}
     {g : Vec d → Vec d} (w : NeumannForcedCubeSolution Q a g) :
     MeanZeroNeumannCorrectorData Q (publicCoeffField Q a)
@@ -56,9 +58,9 @@ noncomputable def neumannForcedSolutionMeanZeroCorrectorData_publicCoeffField
 @[simp] theorem neumannForcedSolutionMeanZeroCorrectorData_publicCoeffField_grad
     {d : ℕ} [NeZero d] {Q : TriadicCube d} {a : CoeffFamily d}
     {g : Vec d → Vec d} (w : NeumannForcedCubeSolution Q a g) :
-    (neumannForcedSolutionMeanZeroCorrectorData_publicCoeffField w).toH1MeanZero.toH1Function.grad =
+    (publicNeumannForcedMeanZeroCorrectorData w).toH1MeanZero.toH1Function.grad =
       w.toH1MeanZero.toH1Function.grad := by
-  simp [neumannForcedSolutionMeanZeroCorrectorData_publicCoeffField]
+  simp [publicNeumannForcedMeanZeroCorrectorData]
 
 theorem forcedSolutionGradientField_coarsePoincareRHSSn_le_expanded_publicCoeffField
     {d : ℕ} [NeZero d] {Q : TriadicCube d} {a : CoeffFamily d}
@@ -133,11 +135,11 @@ theorem forcedCubeSolution_is_zeroTraceDirichletWeakSolution
 cube.  This is the public Chapter 3 bridge for the auxiliary zero-boundary
 solution `v₀` used in the Dirichlet energy argument. -/
 @[expose]
-noncomputable def zeroTraceDirichletCorrectorData_publicCoeffField
+noncomputable def publicZeroTraceDirichletCorrectorData
     {d : ℕ} [NeZero d] (Q : TriadicCube d) (a : CoeffFamily d)
     {g : Vec d → Vec d} (hg : MemVectorL2 (cubeSet Q) g) :
     ZeroTraceDirichletCorrectorData Q (publicCoeffField Q a) g :=
-  zeroTraceDirichletCorrectorDataOf_isEllipticFieldOn_cubeSet
+  zeroTraceDirichletCorrectorDataOfCubeEllipticity
     (Q := Q) (a := publicCoeffField Q a) (g := g)
     (lam := (a.coeffOn Q).lam) (Lam := (a.coeffOn Q).Lam)
     hg (publicCoeffField_isEllipticFieldOn_cubeSet Q a)

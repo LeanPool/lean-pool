@@ -36,8 +36,7 @@ open scoped ENNReal
 
 noncomputable section
 
-@[expose]
-public noncomputable def unitCubeEuclideanL2FieldToCenteredCubeZero
+private noncomputable def unitCubeEuclideanL2FieldToCenteredCubeZero
     {d : ℕ} (F : UnitCubeEuclideanL2Field d) :
     CenteredCubeEuclideanL2Field d 0 where
   toField := F
@@ -49,6 +48,7 @@ public noncomputable def unitCubeEuclideanL2FieldToCenteredCubeZero
     unitCubeEuclideanL2FieldToCenteredCubeZero F x = F x :=
   rfl
 
+/-- The unit-cube Euclidean `L²` field underlying a continuous `K`-functional competitor. -/
 @[expose]
 public noncomputable def continuousKCompetitorToUnitCubeEuclideanL2Field
     {d : ℕ} (G : ContinuousKCompetitor d) : UnitCubeEuclideanL2Field d where

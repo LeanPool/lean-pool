@@ -43,8 +43,10 @@ Dirichlet response.  No equality between the two fractional orders occurs. -/
 structure PrintOrderParametricRoundedResponseJoin
     (d : ℕ) [NeZero d] (g : ℝ) (a : CoeffSpace d) (abar : Mat d)
     (sourceAmplitude target kappa Cid : ℝ) (X : CoeffSpace d → ℝ) where
+  /-- Rounded coefficient application at the selected absorption generation. -/
   application : PrintOrderParametricRoundedCoefficientApplication
     d g a abar sourceAmplitude target kappa Cid X
+  /-- Fixed private rounded Dirichlet response used alongside the coefficient application. -/
   responseSpine : PrivateRoundedPhysicalDirichletSpine d
   responseSpine_eq : responseSpine = privateRoundedPhysicalDirichletSpine d
   privateOrder_lt_printOrder :
@@ -72,8 +74,10 @@ structure PrintOrderParametricFiniteRecurrenceInputs
     (sourceAmplitude target kappa Cid : ℝ) (X : CoeffSpace d → ℝ)
     (join : PrintOrderParametricRoundedResponseJoin
       d g a abar sourceAmplitude target kappa Cid X) where
+  /-- Positive number of generations dropped in the one-step best-fit contraction. -/
   step : ℕ
   step_pos : 0 < step
+  /-- Nonnegative coefficient of the weak-error energy term in the one-step contraction. -/
   stepConstant : ℝ
   stepConstant_nonneg : 0 ≤ stepConstant
   oneStep :
@@ -89,6 +93,8 @@ structure PrintOrderParametricFiniteRecurrenceInputs
                 (printCertificateOrder g) k *
             finiteCenteredCubeSolutionEnergy
               join.application.aRounded m u k
+  /-- Positive constant controlling the inner-cube H1 norm by affine approximation error and
+  slope. -/
   caccioppoliConstant : ℝ
   caccioppoliConstant_pos : 0 < caccioppoliConstant
   caccioppoli :
@@ -103,6 +109,7 @@ structure PrintOrderParametricFiniteRecurrenceInputs
           caccioppoliConstant *
             (normalizedAffineCandidateError
               (originCube d k) u.toH1.toFun c e + euclideanNorm e)
+  /-- Positive constant bounding the terminal best slope by its finite Lipschitz energy row. -/
   terminalConstant : ℝ
   terminalConstant_pos : 0 < terminalConstant
   terminalSlope :
@@ -114,6 +121,7 @@ structure PrintOrderParametricFiniteRecurrenceInputs
             (finiteLipschitzBestSlope join.application.aRounded m u m) ≤
           terminalConstant *
             finiteLipschitzEnergyRow join.application.aRounded m u m
+  /-- Positive constant bounding the finite Lipschitz affine error row by the energy row. -/
   affineErrorConstant : ℝ
   affineErrorConstant_pos : 0 < affineErrorConstant
   affineErrorEnergy :

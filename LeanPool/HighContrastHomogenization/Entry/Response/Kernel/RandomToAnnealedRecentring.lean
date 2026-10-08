@@ -564,6 +564,7 @@ theorem cellAverage_optimizerField_respCoeffPlus_sub_eq
 
 /-! ## Adjoint child maximizer selection -/
 
+omit [NeZero d] in
 /-- Nonemptiness of an aligned adapted subcell. -/
 private theorem adaptedCellAtCenter_nonempty_of_isUnit (q : Mat d) (hq : IsUnit q) (k : ℤ)
     (w : Fin d → ℤ) : (adaptedCellAtCenter q k w).Nonempty := by
@@ -573,6 +574,7 @@ private theorem adaptedCellAtCenter_nonempty_of_isUnit (q : Mat d) (hq : IsUnit 
   rw [h] at hpos
   simp at hpos
 
+omit [NeZero d] in
 /-- Child response maximizers for the adjoint coefficient can be chosen simultaneously at every
 depth and cell label. -/
 theorem nonempty_childMaximizerFamily_plus

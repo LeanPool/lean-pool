@@ -187,7 +187,7 @@ theorem isForcedEquation_zero_of_isWeakSolutionOn
 /-- **the analytic inputs (b), closed modulo the zero-trace datum.**  The gauge solution of
 the frozen witness *is* a Dirichlet forced cube solution on the origin cube of
 the witness generation, with the prescribed boundary datum. -/
-theorem exists_frozenWitnessDirichletCubeSolution [NeZero d]
+theorem exists_frozenWitnessDirichletCubeSolution
     {abar : Mat d} (hS : (symmPart abar).PosDef)
     {U : Set (Vec d)} {j : ℤ} {z : Vec d}
     (hU : U = (fun y : Vec d => z + matVecMul (matSqrt (symmPart abar)) y) ''

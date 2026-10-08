@@ -52,7 +52,7 @@ variable {d : ℕ}
 theorem memScalarL2_indicator_subset {V W : Set (Vec d)} (hV : MeasurableSet V)
     (hVW : V ⊆ W) {f : Vec d → ℝ} (hf : MemScalarL2 V f) :
     MemScalarL2 W (Set.indicator V f) := by
-  show MeasureTheory.MemLp (Set.indicator V f) 2 (volumeMeasureOn W)
+  change MeasureTheory.MemLp (Set.indicator V f) 2 (volumeMeasureOn W)
   rw [MeasureTheory.memLp_indicator_iff_restrict hV]
   rwa [volumeMeasureOn, MeasureTheory.Measure.restrict_restrict hV,
     Set.inter_eq_self_of_subset_left hVW]
@@ -151,7 +151,6 @@ theorem coeFn_optimizerDifferenceL2 {V W : Book.Ch02.Domain d}
 /-! ## Inner products of the difference against fixed block states -/
 
 theorem inner_optimizerDifferenceL2 {V W : Book.Ch02.Domain d}
-    [IsFiniteMeasure (volumeMeasureOn (V : Set (Vec d)))]
     (hV : MeasurableSet (V : Set (Vec d))) (hVW : (V : Set (Vec d)) ⊆ (W : Set (Vec d)))
     (aV : Book.Ch02.CoeffOn V) (aW : Book.Ch02.CoeffOn W) (p q : Vec d)
     {Y : BlockState d} (hY : MemBlockL2 (V : Set (Vec d)) Y.eval) :
@@ -302,7 +301,6 @@ def recentDifferenceEnergy (V W : Book.Ch02.Domain d) (aV : Book.Ch02.CoeffOn V)
 halves of the difference field.**  The difference of two aligned states is
 aligned, so the doubled operator returns its own swap. -/
 theorem recentDifferenceEnergy_eq {V W : Book.Ch02.Domain d}
-    [IsFiniteMeasure (volumeMeasureOn (V : Set (Vec d)))]
     (hV : MeasurableSet (V : Set (Vec d))) (hVW : (V : Set (Vec d)) ⊆ (W : Set (Vec d)))
     (aV : Book.Ch02.CoeffOn V) (aW : Book.Ch02.CoeffOn W)
     (hfield : aV.toCoeffField = aW.toCoeffField) (p q : Vec d) :
@@ -325,13 +323,13 @@ theorem recentDifferenceEnergy_eq {V W : Book.Ch02.Domain d}
     have hsnd : (optimizerDifferenceState V W aV aW p q).flux x =
         matVecMul (aV.toCoeffField x)
           ((optimizerDifferenceState V W aV aW p q).potential x) := by
-      show (optimizerBlockState V aV p q x).2 - (optimizerBlockState W aW p q x).2 = _
+      change (optimizerBlockState V aV p q x).2 - (optimizerBlockState W aW p q x).2 = _
       rw [optimizerBlockState_snd, optimizerBlockState_snd, ← hfield]
       show matVecMul (aV.toCoeffField x) _ - matVecMul (aV.toCoeffField x) _ =
         matVecMul (aV.toCoeffField x) _
       funext i
       simp [matVecMul, optimizerDifferenceState, mul_sub, Finset.sum_sub_distrib]
-    show ((optimizerDifferenceState V W aV aW p q).potential x,
+    change ((optimizerDifferenceState V W aV aW p q).potential x,
       (optimizerDifferenceState V W aV aW p q).flux x) = _
     rw [hsnd]
   have hpt : ∀ᵐ x ∂volumeMeasureOn (V : Set (Vec d)),
@@ -435,7 +433,7 @@ theorem recentDifferenceEnergy_congr {V W : Book.Ch02.Domain d}
 
 /-- The coordinate pairing functional is continuous. -/
 theorem continuous_coordPairingFunctional {V : Set (Vec d)}
-    [IsFiniteMeasure (volumeMeasureOn V)] {eta : Vec d → ℝ} (hmeas : Measurable eta)
+    {eta : Vec d → ℝ} (hmeas : Measurable eta)
     {C : ℝ} (hC : 0 ≤ C) (hbound : ∀ x, |eta x| ≤ C) :
     Continuous fun z : HilbertBlockL2 V =>
       (volume V).toReal⁻¹ * ∑ i : Fin d,
@@ -526,7 +524,7 @@ theorem measurable_recentDifferenceEnergy_coeffSpace {V W : Book.Ch02.Domain d}
 
 /-- **The measurability half of the per-cell recent difference energy binder**,
 in the shape the profile estimate consumes. -/
-theorem aestronglyMeasurable_recentDifferenceEnergy_alignedIndex [NeZero d] {q : Mat d}
+theorem aestronglyMeasurable_recentDifferenceEnergy_alignedIndex {q : Mat d}
     (hq : q.PosDef) {s t : ℤ} (hst : s ≤ t) (P : Measure (CoeffSpace d)) (g : Mat d)
     (hg : IsSkewMat g) (p r : Vec d) {w : Fin d → ℤ}
     (hw : w ∈ Response.alignedIndex q s t) :
@@ -556,7 +554,7 @@ theorem aestronglyMeasurable_recentDifferenceEnergy_alignedIndex [NeZero d] {q :
 
 /-- **The measurability half of the adjoint per-cell recent difference energy
 binder**, in the shape the transposed profile estimate consumes. -/
-theorem aestronglyMeasurable_adjointRecentDifferenceEnergy_alignedIndex [NeZero d]
+theorem aestronglyMeasurable_adjointRecentDifferenceEnergy_alignedIndex
     {q : Mat d} (hq : q.PosDef) {s t : ℤ} (hst : s ≤ t) (P : Measure (CoeffSpace d))
     (g : Mat d) (hg : IsSkewMat g) (p r : Vec d) {w : Fin d → ℤ}
     (hw : w ∈ Response.alignedIndex q s t) :

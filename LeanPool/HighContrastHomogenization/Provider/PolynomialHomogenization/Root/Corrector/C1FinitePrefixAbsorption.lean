@@ -77,6 +77,7 @@ private theorem zero_slope_gradient_ae_of_linear
   filter_upwards [hlinear (-1) 0 0] with y hy
   simpa only [smul_zero, zero_add, neg_one_smul, neg_add_cancel] using hy
 
+omit [NeZero d] in
 /-- A delayed physical C1 estimate extends through a bounded homothetic
 prefix.  The same slope is retained whenever the delayed range is nonempty;
 when the whole interval lies in the prefix, the zero slope is used. -/

@@ -421,7 +421,7 @@ theorem recoveredField_integrableOn_pairing_cubeSet_originCube
     Y.integrableOn_pairing_affine P.1 P.2
 
 theorem recoveredField_average_pairing_openCubeSet_originCube
-    {d : ℕ} [NeZero d] {n : ℤ} {a : CoeffField d}
+    {d : ℕ} {n : ℤ} {a : CoeffField d}
     (R : MuCorrectionSpaceRecoveryData (openCubeSet (originCube d n)))
     (system : MuOperatorSystemData (openCubeSet (originCube d n)) a)
     (P : BlockVec d) :
@@ -438,7 +438,7 @@ theorem recoveredField_average_pairing_openCubeSet_originCube
   field_simp [hvol]
 
 theorem recoveredField_average_pairing_cubeSet_originCube
-    {d : ℕ} [NeZero d] {n : ℤ} {a : CoeffField d}
+    {d : ℕ} {n : ℤ} {a : CoeffField d}
     (R : MuCorrectionSpaceRecoveryData (cubeSet (originCube d n)))
     (system : MuOperatorSystemData (cubeSet (originCube d n)) a)
     (P : BlockVec d) :

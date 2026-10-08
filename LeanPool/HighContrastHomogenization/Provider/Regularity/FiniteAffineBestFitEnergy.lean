@@ -122,7 +122,7 @@ private theorem finiteAffineMeanResidual_memLp_energy
 private theorem finiteAffineSlope_le_energy_of_small_error
     {d : ℕ} [NeZero d] (a : Book.Ch02.TriadicCoeffFamily d)
     (k m : ℤ) (hkm : k ≤ m) (b : Vec d) (s B delta Ks Kp C : ℝ)
-    (hKs : 0 < Ks) (hKp : 0 < Kp) (hKsBdelta : Ks * B * delta ≤ 1 / 2)
+    (hKs : 0 < Ks) (hKsBdelta : Ks * B * delta ≤ 1 / 2)
     (hKsKpC : 2 * Ks * Kp ≤ C) (hweak : scalarIdentityWeakError a s k ≤ 1)
     (herror : finiteAffineBestFitError a k m hkm b ≤
       B * delta * euclideanNorm (finiteAffineBestFitSlope a k m hkm b))
@@ -207,7 +207,7 @@ private theorem finiteAffineSlope_le_energy_of_small_error
     have hE_nonneg := finiteAffineBestFitError_nonneg a k m
       hkm b
     nlinarith only [hraw, herr, hsmall, hE_nonneg, henergy_nonneg,
-      hKs.le, hKp.le]
+      hKs.le]
   exact habsorb.trans (mul_le_mul_of_nonneg_right hKsKpC henergy_nonneg)
 
 private theorem nearTerminalAffineEnergy_le_slope
@@ -487,7 +487,7 @@ theorem exists_scalarIdentityFiniteAffineBestFitEnergyConstants
       C * finiteCenteredCubeSolutionEnergy a m
         (finiteAffineCubeSolution a m b) k :=
     finiteAffineSlope_le_energy_of_small_error a k m (Finset.mem_Icc.mp hk).2 b
-      s B delta Ks Kp C hKs hKp hKsBdelta hKsKpC
+      s B delta Ks Kp C hKs hKsBdelta hKsKpC
       ((hgood.weakError_le hk).trans hdelta_one) hpack.1 hpoincare hslopeError
   exact ⟨hupper, hlower⟩
 

@@ -186,8 +186,9 @@ noncomputable def cubeFaceReflectionCellFold {d : ℕ} {Q : TriadicCube d}
           refine MeasureTheory.setIntegral_congr_fun
             (measurableSet_openCubeSet Q) ?_
           intro y _hy
-          have hy := hderiv y
-          simp [h1] at hy
+          have hy :
+              euclideanCoordDeriv i ψ y = -euclideanCoordDeriv i φ (T y) := by
+            simpa only [ite_eq_right h1, neg_mul, one_mul] using hderiv y
           have hy' :
               euclideanCoordDeriv i φ (T y) =
                 -euclideanCoordDeriv i ψ y := by

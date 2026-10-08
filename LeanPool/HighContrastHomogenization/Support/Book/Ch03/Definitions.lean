@@ -69,18 +69,21 @@ def IsForcedEquation {d : ℕ} (Q : TriadicCube d) (a : CoeffFamily d)
 /-- Forced cube solution for the public Chapter 3.2 estimates. -/
 structure ForcedCubeSolution {d : ℕ} (Q : TriadicCube d)
     (a : CoeffFamily d) (g : Vec d → Vec d) where
+  /-- The Sobolev function satisfying the forced weak equation on the cube. -/
   toH1 : H1Function (Ch02.cubeDomain Q : Set (Vec d))
   weakSolution : IsForcedEquation Q a toH1 g
 
 /-- Zero-trace forced solution used by the auxiliary Dirichlet estimate. -/
 structure ZeroTraceForcedCubeSolution {d : ℕ} (Q : TriadicCube d)
     (a : CoeffFamily d) (g : Vec d → Vec d) where
+  /-- The zero-trace Sobolev function satisfying the forced weak equation on the cube. -/
   toH10 : H10Function (Ch02.cubeDomain Q : Set (Vec d))
   weakSolution : IsForcedEquation Q a toH10.toH1Function g
 
 /-- Boundary-patch forced solution for the RHS Caccioppoli estimate. -/
 structure BoundaryForcedCaccioppoliDatum {d : ℕ} (Q : TriadicCube d)
     (a : CoeffFamily d) (x : Vec d) (g : Vec d → Vec d) where
+  /-- The forced Sobolev solution whose trace vanishes on the specified boundary patch. -/
   toH1 : H1Function (Ch02.cubeDomain Q : Set (Vec d))
   weakSolution : IsForcedEquation Q a toH1 g
   zeroTraceOnBoundaryPatch :
@@ -93,7 +96,9 @@ structure BoundaryForcedCaccioppoliDatum {d : ℕ} (Q : TriadicCube d)
 `v - h ∈ H¹₀(Q)`. -/
 structure DirichletForcedCubeSolution {d : ℕ} (Q : TriadicCube d)
     (a : CoeffFamily d) (g : Vec d → Vec d) where
+  /-- The Sobolev solution of the forced Dirichlet problem on the cube. -/
   toH1 : H1Function (Ch02.cubeDomain Q : Set (Vec d))
+  /-- Sobolev boundary datum whose difference from the solution has zero trace. -/
   boundaryData : H1Function (Ch02.cubeDomain Q : Set (Vec d))
   weakSolution : IsForcedEquation Q a toH1 g
   zeroTraceDifference :
@@ -121,6 +126,7 @@ The forcing is centered, matching the variational Neumann statement in the
 notes.  The sign follows the codebase's RHS convention. -/
 structure NeumannForcedCubeSolution {d : ℕ} (Q : TriadicCube d)
     (a : CoeffFamily d) (g : Vec d → Vec d) where
+  /-- The mean-zero Sobolev solution tested against mean-zero functions with centered forcing. -/
   toH1MeanZero : H1MeanZeroFunction (Ch02.cubeDomain Q : Set (Vec d))
   weakSolution :
     IsMeanZeroNeumannForcedEquation Q a toH1MeanZero
@@ -212,9 +218,12 @@ noncomputable def forcedSolutionFluxField {d : ℕ} (Q : TriadicCube d)
 
 /-- A constant symmetric uniformly elliptic comparison matrix. -/
 structure ConstantCoeffMatrix (d : ℕ) where
+  /-- The symmetric elliptic matrix used to compare the variable-coefficient flux. -/
   matrix : Mat d
   isSymm : matrix.IsSymm
+  /-- The positive lower ellipticity bound for the comparison matrix. -/
   lam : ℝ
+  /-- The upper ellipticity bound for the comparison matrix. -/
   Lam : ℝ
   lam_pos : 0 < lam
   lam_le_Lam : lam ≤ Lam
@@ -294,7 +303,10 @@ noncomputable def homogenizationComparisonFluxDefectField {d : ℕ}
 `div(a∇u - a0∇v) = 0` and `u - v ∈ H¹₀(Q)`. -/
 structure HomogenizationComparisonDatum {d : ℕ} (Q : TriadicCube d)
     (a : CoeffFamily d) (a0 : ConstantCoeffMatrix d) where
+  /-- The Sobolev function contributing the variable-coefficient flux to the duality comparison. -/
   u : H1Function (Ch02.cubeDomain Q : Set (Vec d))
+  /-- The Sobolev comparison function contributing the constant-coefficient flux and sharing the
+  trace of `u`. -/
   v : H1Function (Ch02.cubeDomain Q : Set (Vec d))
   fluxComparisonSolenoidal :
     IsSolenoidalOn (Ch02.cubeDomain Q : Set (Vec d))
@@ -308,7 +320,9 @@ structure HomogenizationComparisonDatum {d : ℕ} (Q : TriadicCube d)
 right-hand side and zero-trace difference. -/
 structure CoarseGrainingComparisonDatum {d : ℕ} (Q : TriadicCube d)
     (a : CoeffFamily d) (a0 : ConstantCoeffMatrix d) (g : Vec d → Vec d) where
+  /-- The variable-coefficient solution with forcing `g` in the coarse-graining comparison. -/
   u : H1Function (Ch02.cubeDomain Q : Set (Vec d))
+  /-- The constant-coefficient solution with forcing `g` and the same trace as `u`. -/
   v : H1Function (Ch02.cubeDomain Q : Set (Vec d))
   uWeakSolution : IsForcedEquation Q a u g
   vWeakSolution : IsConstantCoeffForcedEquation Q a0 v g
@@ -352,6 +366,7 @@ condition `u = 0` on `(∂cu_m) ∩ (x + cu_{m-1})`; it deliberately does not us
 gradient-only potential condition, since gradients cannot see constants. -/
 structure BoundaryCaccioppoliDatum {d : ℕ} (Q : TriadicCube d)
     (a : CoeffFamily d) (x : Vec d) where
+  /-- The Sobolev function with an a-harmonic gradient and zero trace on the boundary patch. -/
   toH1 : H1Function (Ch02.cubeDomain Q : Set (Vec d))
   isHarmonic :
     IsAHarmonicGradient (a.coeffOn Q).toCoeffField
@@ -454,7 +469,7 @@ noncomputable def coarsePoincareFluxRHS {d : ℕ} (Q : TriadicCube d)
 
 /-- Right-hand side in the coarse flux-response estimate. -/
 @[expose]
-noncomputable def coarseFluxResponseRHS {d : ℕ} [NeZero d] (C : ℝ)
+noncomputable def coarseFluxResponseRHS {d : ℕ} (C : ℝ)
     (Q : TriadicCube d) (a : CoeffFamily d) (a0 : ConstantCoeffMatrix d)
     (s : ℝ) (u : CubeSolution Q a) : ℝ :=
   C * s⁻¹ * constantCoeffMatrixNormHalf a0 *
@@ -519,7 +534,7 @@ noncomputable def weakFluxWithRHSRHS {d : ℕ}
 
 /-- Right-hand side in the coarse flux-response estimate with forcing. -/
 @[expose]
-noncomputable def coarseFluxResponseWithRHSRHS {d : ℕ} [NeZero d]
+noncomputable def coarseFluxResponseWithRHSRHS {d : ℕ}
     (C : ℝ) (Q : TriadicCube d) (a : CoeffFamily d)
     (a0 : ConstantCoeffMatrix d) (s : ℝ) (g : Vec d → Vec d)
     (u : ForcedCubeSolution Q a g) : ℝ :=
@@ -570,7 +585,7 @@ natural depths `j`.
 This is the Ch3.3 localized envelope: the supremum of the Ch2 one-cube
 homogenization error over the depth-`j` descendants of the parent cube. -/
 @[expose]
-noncomputable def coarseGrainingHomogenizationErrorAtDepth {d : ℕ} [NeZero d]
+noncomputable def coarseGrainingHomogenizationErrorAtDepth {d : ℕ}
     (Q : TriadicCube d) (a : CoeffFamily d) (a0 : ConstantCoeffMatrix d)
     (s : ℝ) (j : ℕ) : ℝ :=
   Ch02.finsetSupReal (descendantsAtDepth Q j) fun R =>
@@ -619,7 +634,6 @@ coarse-graining estimate.  The flux-response quantities are measured at
 exponent `r`, while the force is measured at the stronger exponent `r₂`. -/
 @[expose]
 noncomputable def generalCoarseGrainingL2TwoExponentFluxDefectRHS {d : ℕ}
-    [NeZero d]
     (C : ℝ) (Q : TriadicCube d) (a : CoeffFamily d)
     (a0 : ConstantCoeffMatrix d) (r r₂ : ℝ) (j : ℕ)
     (g : Vec d → Vec d)
@@ -647,7 +661,7 @@ noncomputable def generalCoarseGrainingL2TwoExponentFluxDefectRHS {d : ℕ}
 comparison is measured at exponent `s`, the flux response at `r`, and the
 forcing at `r₂`. -/
 @[expose]
-noncomputable def generalCoarseGrainingL2TwoExponentRHS {d : ℕ} [NeZero d]
+noncomputable def generalCoarseGrainingL2TwoExponentRHS {d : ℕ}
     (C : ℝ) (Q : TriadicCube d) (a : CoeffFamily d)
     (a0 : ConstantCoeffMatrix d) (s r r₂ : ℝ) (j : ℕ)
     (g : Vec d → Vec d)

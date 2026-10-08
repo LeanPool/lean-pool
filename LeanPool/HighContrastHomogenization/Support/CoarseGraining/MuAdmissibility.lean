@@ -364,6 +364,7 @@ section OriginCube
 
 variable {d : ℕ} [NeZero d] {n : ℤ} {P : BlockVec d} {a : CoeffField d} {X : BlockState d}
 
+omit [NeZero d] in
 theorem average_pairing_openCubeSet_originCube
     (hX : IsBlockMuAdmissible (openCubeSet (originCube d n)) P X) :
     volumeAverage (openCubeSet (originCube d n))
@@ -407,6 +408,7 @@ theorem average_pairing_cubeSet_originCube
     exact (cubeVolume_pos (originCube d n)).ne'
   exact hX.average_pairing_of_integral_eq_zero hpotZero hfluxZero hvol
 
+omit [NeZero d] in
 theorem blockEnergyAverage_ge_vecDot_openCubeSet_originCube_of_isEllipticFieldOn
     {lam Lam : ℝ}
     (hX : IsBlockMuAdmissible (openCubeSet (originCube d n)) P X)
@@ -458,6 +460,7 @@ theorem blockEnergyAverage_ge_vecDot_cubeSet_originCube_of_isEllipticFieldOn
     hX.blockEnergyAverage_ge_vecDot_of_integral_eq_zero_of_isEllipticFieldOn
       (a := a) hInt hEll hpotZero hfluxZero hvol
 
+omit [NeZero d] in
 theorem mu_ge_vecDot_openCubeSet_originCube_of_isEllipticFieldOn_of_integrabilityBridge
     {lam Lam : ℝ}
     (hEll : IsEllipticFieldOn lam Lam (openCubeSet (originCube d n)) a)

@@ -79,11 +79,14 @@ private theorem quadFormCLM_apply (x : n → ℝ) (A : Matrix n n ℝ) :
 public def entryCLM (i j : n) : Matrix n n ℝ →L[ℝ] ℝ :=
   LinearMap.toContinuousLinearMap (Matrix.entryLinearMap ℝ ℝ i j)
 
-omit [DecidableEq n] in
+omit [Fintype n] [DecidableEq n] in
 /-- **The positive semidefinite cone is closed.**  Symmetry is an intersection of
 equalities between entries, and positivity is an intersection of inequalities
 between continuous quadratic forms. -/
-theorem isClosed_setOf_nonneg : IsClosed {A : Matrix n n ℝ | (0 : Matrix n n ℝ) ≤ A} := by
+theorem isClosed_setOf_nonneg [Finite n] :
+    IsClosed {A : Matrix n n ℝ | (0 : Matrix n n ℝ) ≤ A} := by
+  classical
+  let : Fintype n := Fintype.ofFinite n
   have hset : {A : Matrix n n ℝ | (0 : Matrix n n ℝ) ≤ A} =
       (⋂ i : n, ⋂ j : n, {A : Matrix n n ℝ | A j i = A i j}) ∩
         ⋂ x : n → ℝ, {A : Matrix n n ℝ | 0 ≤ quadFormCLM x A} := by
@@ -97,12 +100,14 @@ theorem isClosed_setOf_nonneg : IsClosed {A : Matrix n n ℝ | (0 : Matrix n n �
   · exact isClosed_eq (entryCLM j i).continuous (entryCLM i j).continuous
   · exact isClosed_le continuous_const (quadFormCLM x).continuous
 
-omit [DecidableEq n] in
+omit [Fintype n] [DecidableEq n] in
 /-- **The Loewner order is closed.**  Scoped rather than global: the order itself
 is only available after `open scoped MatrixOrder`, and a consumer outside this
 namespace can enable the instance with `attribute [local instance]`. -/
-theorem instOrderClosedTopology : OrderClosedTopology (Matrix n n ℝ) :=
-  ⟨isClosed_le_of_isClosed_nonneg isClosed_setOf_nonneg⟩
+theorem instOrderClosedTopology [Finite n] : OrderClosedTopology (Matrix n n ℝ) := by
+  classical
+  let : Fintype n := Fintype.ofFinite n
+  exact ⟨isClosed_le_of_isClosed_nonneg isClosed_setOf_nonneg⟩
 
 attribute [scoped instance] instOrderClosedTopology
 
@@ -191,10 +196,12 @@ public def conjCLM (L R : Matrix n n ℝ) : Matrix n n ℝ →L[ℝ] Matrix n n 
       map_smul' := fun c M => by
         simp only [RingHom.id_apply, Matrix.mul_smul, Matrix.smul_mul] }
 
+omit [DecidableEq n] in
 /-- Multiplying an integrable function by fixed matrices keeps it integrable. -/
 theorem integrable_mul_left_mul_right (L R : Matrix n n ℝ) {F : α → Matrix n n ℝ}
-    (hF : Integrable F μ) : Integrable (fun a => L * F a * R) μ :=
-  ContinuousLinearMap.integrable_comp matToPiCLM
+    (hF : Integrable F μ) : Integrable (fun a => L * F a * R) μ := by
+  classical
+  exact ContinuousLinearMap.integrable_comp matToPiCLM
     ((conjCLM L R).integrable_comp (ContinuousLinearMap.integrable_comp piToMatCLM hF))
 
 /-- **Fixed two-sided factors pass through the integral.** -/

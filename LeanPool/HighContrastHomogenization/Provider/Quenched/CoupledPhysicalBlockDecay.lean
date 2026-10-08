@@ -37,7 +37,7 @@ variable {d : ℕ}
 
 /-- The common normalized scale before restoring the annealed dilation. -/
 @[expose]
-def coupled_normalized_scale
+def coupledNormalizedScale
     {P : Measure (CoeffSpace d)} {selectedRow : ℕ → CoeffSpace d → ℝ}
     {cMix cd eta kappa delta : ℝ}
     (W : CoupledMixingScaleWitness
@@ -47,7 +47,7 @@ def coupled_normalized_scale
 
 /-- The physical replay length obtained by undoing `N` triadic dilations. -/
 @[expose]
-def coupled_physical_length
+def coupledPhysicalLength
     {P : Measure (CoeffSpace d)} {selectedRow : ℕ → CoeffSpace d → ℝ}
     {cMix cd eta kappa delta : ℝ}
     (N : ℕ)
@@ -57,14 +57,14 @@ def coupled_physical_length
 
 /-- The physical random scale obtained by undoing `N` triadic dilations. -/
 @[expose]
-def coupled_physical_scale
+def coupledPhysicalScale
     {P : Measure (CoeffSpace d)} {selectedRow : ℕ → CoeffSpace d → ℝ}
     {cMix cd eta kappa delta : ℝ}
     (N : ℕ)
     (W : CoupledMixingScaleWitness
       P selectedRow cMix cd eta kappa delta)
     (Ssrc : CoeffSpace d → ℝ) (a : CoeffSpace d) : ℝ :=
-  (3 : ℝ) ^ N * coupled_normalized_scale W Ssrc a
+  (3 : ℝ) ^ N * coupledNormalizedScale W Ssrc a
 
 /-- Every natural generation above the restored annealed scale has the
 source-restricted block-row decay. -/
@@ -74,17 +74,17 @@ def HasAllLaterPhysicalBlockRowFromAnnealedScale
     (S : CoeffSpace d → ℝ) (N : ℕ)
     (X : CoeffSpace d → ℝ) (a : CoeffSpace d) : Prop :=
   ∀ m : ℕ, X a ≤ (3 : ℝ) ^ (N + m) →
-    quenched_block_row rho Abar (S a) a (N + m) ≤
+    quenchedBlockRow rho Abar (S a) a (N + m) ≤
       C * (((3 : ℝ) ^ (N + m)) / X a) ^ (-kappa)
 
 /-- The physical block row at an integer generation.  Negative generations
 are represented by generation zero; when the random scale is at least one,
 the defining scale premise makes that branch impossible. -/
 @[expose]
-def physical_block_row_at_int
+def physicalBlockRowAtInteger
     (rho : ℝ) (Abar : BlockMat d) (S : CoeffSpace d → ℝ)
     (a : CoeffSpace d) (m : ℤ) : ℝ :=
-  quenched_block_row rho Abar (S a) a m.toNat
+  quenchedBlockRow rho Abar (S a) a m.toNat
 
 /-- Block-row decay at every admissible integer physical generation. -/
 @[expose]
@@ -92,7 +92,7 @@ def HasAllLaterPhysicalBlockRow
     (rho kappa C : ℝ) (Abar : BlockMat d)
     (S X : CoeffSpace d → ℝ) (a : CoeffSpace d) : Prop :=
   ∀ m : ℤ, X a ≤ (3 : ℝ) ^ m →
-    physical_block_row_at_int rho Abar S a m ≤
+    physicalBlockRowAtInteger rho Abar S a m ≤
       C * (((3 : ℝ) ^ m) / X a) ^ (-kappa)
 
 private theorem physical_ratio_eq_normalized_ratio
@@ -109,13 +109,13 @@ theorem CoupledMixingScaleWitness.eventually_hasAllLaterPhysicalBlockRowFromAnne
     {cMix cd eta kappa delta rho C : ℝ}
     {Abar : BlockMat d} {S : CoeffSpace d → ℝ} {N : ℕ}
     (W : CoupledMixingScaleWitness P
-      (fun m a => quenched_block_row rho Abar
-        (max 1 (S a / (3 : ℝ) ^ N)) (physical_scale_coeff N a) m)
+      (fun m a => quenchedBlockRow rho Abar
+        (max 1 (S a / (3 : ℝ) ^ N)) (physicalScaleCoefficient N a) m)
       cMix cd eta kappa delta)
     (hkappa : 0 < kappa) (hdelta : 0 < delta) (hdeltaC : delta ≤ C) :
     ∀ᵐ a ∂P,
       HasAllLaterPhysicalBlockRowFromAnnealedScale rho kappa C Abar S N
-        (coupled_physical_scale N W
+        (coupledPhysicalScale N W
           (fun a => max 1 (S a / (3 : ℝ) ^ N))) a := by
   let commonScale : CoeffSpace d → ℝ :=
     fun a => max 1 (max (W.scale a) (max 1 (S a / (3 : ℝ) ^ N)))
@@ -136,7 +136,7 @@ theorem CoupledMixingScaleWitness.eventually_hasAllLaterPhysicalBlockRowFromAnne
   have hnormalized_m :
       W.normalization * commonScale a ≤ (3 : ℝ) ^ m := by
     apply le_of_mul_le_mul_left _ hthreeN
-    simpa only [coupled_physical_scale, coupled_normalized_scale,
+    simpa only [coupledPhysicalScale, coupledNormalizedScale,
       commonScale, pow_add, mul_assoc] using hm
   have hrowBound := hrow m hnormalized_m
   have hcoefficient :
@@ -146,9 +146,9 @@ theorem CoupledMixingScaleWitness.eventually_hasAllLaterPhysicalBlockRowFromAnne
           (((3 : ℝ) ^ m) / (W.normalization * commonScale a)) ^ (-kappa) :=
     mul_le_mul_of_nonneg_right hdeltaC (Real.rpow_nonneg (by positivity) _)
   calc
-    quenched_block_row rho Abar (S a) a (N + m) =
-        quenched_block_row rho Abar
-          (max 1 (S a / (3 : ℝ) ^ N)) (physical_scale_coeff N a) m :=
+    quenchedBlockRow rho Abar (S a) a (N + m) =
+        quenchedBlockRow rho Abar
+          (max 1 (S a / (3 : ℝ) ^ N)) (physicalScaleCoefficient N a) m :=
       (quenched_block_row_physical_scale_coeff rho Abar (S a) N m a).symm
     _ = W.row m a :=
       (W.row_eq_selected m a).symm
@@ -160,9 +160,9 @@ theorem CoupledMixingScaleWitness.eventually_hasAllLaterPhysicalBlockRowFromAnne
       hcoefficient
     _ = C *
         (((3 : ℝ) ^ (N + m)) /
-          coupled_physical_scale N W
+          coupledPhysicalScale N W
             (fun x => max 1 (S x / (3 : ℝ) ^ N)) a) ^ (-kappa) := by
-      rw [coupled_physical_scale, coupled_normalized_scale]
+      rw [coupledPhysicalScale, coupledNormalizedScale]
       rw [physical_ratio_eq_normalized_ratio N m hnormalized]
 
 /-- The natural offset estimate extends to every integer physical generation:
@@ -172,13 +172,13 @@ theorem CoupledMixingScaleWitness.eventually_hasAllLaterPhysicalBlockRow
     {cMix cd eta kappa delta rho C : ℝ}
     {Abar : BlockMat d} {S : CoeffSpace d → ℝ} {N : ℕ}
     (W : CoupledMixingScaleWitness P
-      (fun m a => quenched_block_row rho Abar
-        (max 1 (S a / (3 : ℝ) ^ N)) (physical_scale_coeff N a) m)
+      (fun m a => quenchedBlockRow rho Abar
+        (max 1 (S a / (3 : ℝ) ^ N)) (physicalScaleCoefficient N a) m)
       cMix cd eta kappa delta)
     (hkappa : 0 < kappa) (hdelta : 0 < delta) (hdeltaC : delta ≤ C) :
     ∀ᵐ a ∂P,
       HasAllLaterPhysicalBlockRow rho kappa C Abar S
-        (coupled_physical_scale N W
+        (coupledPhysicalScale N W
           (fun a => max 1 (S a / (3 : ℝ) ^ N))) a := by
   filter_upwards
     [W.eventually_hasAllLaterPhysicalBlockRowFromAnnealedScale
@@ -190,18 +190,18 @@ theorem CoupledMixingScaleWitness.eventually_hasAllLaterPhysicalBlockRow
   have hcommon_one :
       1 ≤ max 1 (max (W.scale a) (Ssrc a)) := le_max_left _ _
   have hnormalized_one :
-      1 ≤ coupled_normalized_scale W Ssrc a := by
+      1 ≤ coupledNormalizedScale W Ssrc a := by
     exact one_le_mul_of_one_le_of_one_le W.one_le_normalization hcommon_one
-  have hX_one : 1 ≤ coupled_physical_scale N W Ssrc a := by
+  have hX_one : 1 ≤ coupledPhysicalScale N W Ssrc a := by
     exact one_le_mul_of_one_le_of_one_le (one_le_pow₀ (by norm_num))
       hnormalized_one
   have hN_le_X :
-      (3 : ℝ) ^ N ≤ coupled_physical_scale N W Ssrc a := by
+      (3 : ℝ) ^ N ≤ coupledPhysicalScale N W Ssrc a := by
     calc
       (3 : ℝ) ^ N = (3 : ℝ) ^ N * 1 := by ring
-      _ ≤ (3 : ℝ) ^ N * coupled_normalized_scale W Ssrc a :=
+      _ ≤ (3 : ℝ) ^ N * coupledNormalizedScale W Ssrc a :=
         mul_le_mul_of_nonneg_left hnormalized_one (by positivity)
-      _ = coupled_physical_scale N W Ssrc a := rfl
+      _ = coupledPhysicalScale N W Ssrc a := rfl
   have hM_nonneg : 0 ≤ M := by
     by_contra hnegative
     have hpow_lt_one : (3 : ℝ) ^ M < 1 :=
@@ -228,7 +228,7 @@ theorem CoupledMixingScaleWitness.eventually_hasAllLaterPhysicalBlockRow
     rw [Int.toNat_of_nonneg hM_nonneg]
     exact hgeneration.symm
   simpa only [HasAllLaterPhysicalBlockRow,
-    physical_block_row_at_int, Ssrc, hM_toNat, hpow_generation] using
+    physicalBlockRowAtInteger, Ssrc, hM_toNat, hpow_generation] using
     hnatural_at_m
 
 end

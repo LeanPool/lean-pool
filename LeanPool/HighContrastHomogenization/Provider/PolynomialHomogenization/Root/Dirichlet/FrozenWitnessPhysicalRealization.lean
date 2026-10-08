@@ -62,7 +62,7 @@ theorem exists_scaledCoeff_sourceField {ε : ℝ} (hε : 0 < ε) (a : CoeffSpace
     (isAELocallyUniformlyElliptic_scaledCoeff hε a).congr hae.symm, hae⟩
 
 /-- The physical frozen witness domain is a bounded open convex domain. -/
-theorem frozenWitness_physicalDomain_isOpenBoundedConvexDomain [NeZero d]
+theorem frozenWitness_physicalDomain_isOpenBoundedConvexDomain
     {abar : Mat d} (hS : (symmPart abar).PosDef) {U : Set (Vec d)} {j : ℤ}
     {z : Vec d}
     (hU : U = (fun x : Vec d => z + matVecMul (matSqrt (symmPart abar)) x) ''

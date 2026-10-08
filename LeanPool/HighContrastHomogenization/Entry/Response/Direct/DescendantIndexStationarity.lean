@@ -351,7 +351,7 @@ private abbrev groupedIndex {d : ℕ} (n : ℕ) (p : (Fin d → ℤ) × (Fin d �
 /-- **The index box of depth `H + n` is the grouped product of the boxes of depths `H` and
 `n`.**  Summing a function over the depth-`(H+n)` box is summing it over the outer box of the
 depth-`H` cells and, inside each, over the inner box of the depth-`n` descendants. -/
-theorem sum_triadicIndexBox_add {d : ℕ} [NeZero d] (H n : ℕ) (F : (Fin d → ℤ) → ℝ) :
+theorem sum_triadicIndexBox_add {d : ℕ} (H n : ℕ) (F : (Fin d → ℤ) → ℝ) :
     ∑ W ∈ triadicIndexBox d (H + n), F W
       = ∑ w ∈ triadicIndexBox d H, ∑ z ∈ triadicIndexBox d n,
           F (fun i => 3 ^ n * w i + z i) := by
@@ -562,7 +562,7 @@ private theorem integral_comp_translateCoeff_eq_aux {d : ℕ} (P : Measure (Coef
 j_*` aligned cell is an integer translation and the law is invariant under integer translations,
 so the `P`-integral of the functional of the grouped descendant cell equals that of the inner
 cell. -/
-private theorem integral_descendantCell_eq_aux {d : ℕ} [NeZero d]
+private theorem integral_descendantCell_eq_aux {d : ℕ}
     (P : Measure (CoeffSpace d)) (hstat : IsStationaryLaw P) (jStar : ℕ) (m : Mat d)
     (j : ℤ) (hj : (jStar : ℤ) ≤ j) (n : ℕ) (w z : Fin d → ℤ)
     (G : Set (Vec d) → CoeffSpace d → ℝ)
@@ -592,7 +592,7 @@ private theorem integral_descendantCell_eq_aux {d : ℕ} [NeZero d]
 it, minus sign.**  For a stationary law and a scale `j >= j_*`, the annealed block of the
 generation-`(j - n)` aligned cell at the grouped index `3^n w + z` is the annealed block of the
 generation-`(j - n)` aligned cell at the inner index `z`. -/
-theorem annealedBlockOf_descendant_respCoeffMinus_eq {d : ℕ} [NeZero d]
+theorem annealedBlockOf_descendant_respCoeffMinus_eq {d : ℕ}
     (P : Measure (CoeffSpace d)) (hstat : IsStationaryLaw P) (jStar : ℕ) (m : Mat d)
     (F : BlockMat d) (j : ℤ) (hj : (jStar : ℤ) ≤ j) (n : ℕ) (w z : Fin d → ℤ)
     (hmeas : ∀ i k : Fin d, AEStronglyMeasurable (fun a =>
@@ -652,7 +652,7 @@ theorem annealedBlockOf_descendant_respCoeffMinus_eq {d : ℕ} [NeZero d]
 /-- **The annealed block of a descendant cell is independent of the scale-`j` cell containing
 it, plus sign.**  The adjoint twin of `annealedBlockOf_descendant_respCoeffMinus_eq`, for the
 recentred family `a_+ = a^t + g`. -/
-theorem annealedBlockOf_descendant_respCoeffPlus_eq {d : ℕ} [NeZero d]
+theorem annealedBlockOf_descendant_respCoeffPlus_eq {d : ℕ}
     (P : Measure (CoeffSpace d)) (hstat : IsStationaryLaw P) (jStar : ℕ) (m : Mat d)
     (F : BlockMat d) (j : ℤ) (hj : (jStar : ℤ) ≤ j) (n : ℕ) (w z : Fin d → ℤ)
     (hmeas : ∀ i k : Fin d, AEStronglyMeasurable (fun a =>

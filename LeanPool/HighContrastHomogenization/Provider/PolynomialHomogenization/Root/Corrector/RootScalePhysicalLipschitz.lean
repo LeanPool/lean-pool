@@ -40,6 +40,7 @@ noncomputable section
 
 variable {d : ℕ} [NeZero d]
 
+omit [NeZero d] in
 /-- A bounded ratio of positive ellipsoid radii gives a matrix-uniform
 weighted-norm comparison. -/
 theorem weightedGradNorm_ellipsoid_le_of_le_mul

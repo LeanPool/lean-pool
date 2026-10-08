@@ -152,7 +152,7 @@ theorem blockTrace_nonneg {H : BlockMat d} (hH : (toFullBlockMat H).PosSemidef) 
   unfold blockTrace
   exact hH.trace_nonneg
 
-private theorem finite_rpow_sum_le_sum {ι : Type*} [DecidableEq ι] (s : Finset ι)
+private theorem finite_rpow_sum_le_sum {ι : Type*} (s : Finset ι)
     (f : ι → ℝ) {N : ℝ} (hN : 1 ≤ N) (hf : ∀ i ∈ s, 0 ≤ f i) :
     (∑ i ∈ s, f i ^ N) ^ (1 / N) ≤ ∑ i ∈ s, f i := by
   classical
@@ -182,7 +182,7 @@ private theorem finite_rpow_sum_le_sum {ι : Type*} [DecidableEq ι] (s : Finset
         _ ≤ f a + ∑ i ∈ s, f i := by
             simpa [add_comm, add_left_comm, add_assoc] using add_le_add_left (ih hfs) (f a)
 
-private theorem finite_abs_rpow_sum_le_abs_sum {ι : Type*} [DecidableEq ι] (s : Finset ι)
+private theorem finite_abs_rpow_sum_le_abs_sum {ι : Type*} (s : Finset ι)
     (f : ι → ℝ) {N : ℝ} (hN : 1 ≤ N) :
     (∑ i ∈ s, |f i| ^ N) ^ N⁻¹ ≤ ∑ i ∈ s, |f i| := by
   rw [← one_div]

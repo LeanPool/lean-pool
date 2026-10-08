@@ -62,7 +62,7 @@ private theorem trace_one_blockCoord :
 
 /-- The trace gap of the transported block is the trace of the positive
 part. -/
-private theorem trace_gap_eq_trace_posPart {Mblk Phat : BlockMat d}
+theorem trace_gap_eq_trace_posPart {Mblk Phat : BlockMat d}
     (hPhat : toFullBlockMat Phat = 1 + toFullBlockMat (blockPosPart Mblk)) :
     blockTrace Phat - 2 * (d : ℝ) =
       Matrix.trace (cfc (fun x : ℝ => max x 0) (toFullBlockMat Mblk)) := by

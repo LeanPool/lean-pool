@@ -66,10 +66,10 @@ theorem isSymmetricBlockMat_coarseStarredBlockMatrix {U : Domain d}
         toFullBlockMat (Book.Ch02.coarseStarredBlockMatrixInv U c) := hfull
   have hinv :
       ((toFullBlockMat (Book.Ch02.coarseStarredBlockMatrixInv U c))⁻¹).IsSymm := by
-    show Matrix.transpose
+    change Matrix.transpose
         ((toFullBlockMat (Book.Ch02.coarseStarredBlockMatrixInv U c))⁻¹) = _
     rw [Matrix.transpose_nonsing_inv, hfullEq]
-  show IsSymmetricBlockMat
+  change IsSymmetricBlockMat
     (ofFullBlockMat ((toFullBlockMat (Book.Ch02.coarseStarredBlockMatrixInv U c))⁻¹))
   exact isSymmetricBlockMat_of_isSymm hinv
 

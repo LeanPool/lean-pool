@@ -125,7 +125,7 @@ theorem finite_fillingIndex {q : Mat d} (hq : q.PosDef) {W : Set (Vec d)}
     exact ⟨standardCellCenter a w, Recurrence.standardCellCenter_mem_standardCell a w, rfl⟩
   have hpull : matVecMul q⁻¹ (adaptedCellCenter q a w) = standardCellCenter a w := by
     rw [Recurrence.adaptedCellCenter_eq]
-    show q⁻¹ *ᵥ q *ᵥ standardCellCenter a w = standardCellCenter a w
+    change q⁻¹ *ᵥ q *ᵥ standardCellCenter a w = standardCellCenter a w
     rw [Matrix.mulVec_mulVec, Matrix.nonsing_inv_mul _ hdet, Matrix.one_mulVec]
   have hbound : ∀ i, |standardCellCenter a w i| ≤ ‖q⁻¹‖ * (Real.sqrt d * R) := by
     intro i

@@ -46,7 +46,7 @@ variable {d : ℕ}
 cancels the cell index in the parent-anchored response formula, leaving the
 frame exponent. -/
 theorem printCellScaleFactor_mul_responseBound_eq
-    [NeZero d] {U : Set (Vec d)} {rho Rad : ℝ}
+    {U : Set (Vec d)} {rho Rad : ℝ}
     (system : EnlargedMarginRuledTriadicWhitneySystem U rho Rad)
     {s deltaScaled Cresponse kappaRate : ℝ} {M : ℤ} {L : ℕ}
     (responseBound : system.CellIndex → ℝ)

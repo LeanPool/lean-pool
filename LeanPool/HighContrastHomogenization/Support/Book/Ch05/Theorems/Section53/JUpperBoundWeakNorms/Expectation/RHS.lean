@@ -195,7 +195,7 @@ theorem descendantsAverage_restrictionResponseJObservableCubeSet_nonneg
 /-- The private additivity-defect observable is integrable when the parent and
 child response observables are integrable. -/
 theorem integrable_responseJAdditivityDefectAtScale
-    {d : ℕ} [NeZero d] {P : Ch04.RestrictionCoeffLaw d}
+    {d : ℕ} {P : Ch04.RestrictionCoeffLaw d}
     {k m : ℤ} (hkm : k ≤ m) (p q : Vec d)
     (hParent :
       Integrable (Ch04.restrictionResponseJObservableCubeSet (originCube d m) p q) P)

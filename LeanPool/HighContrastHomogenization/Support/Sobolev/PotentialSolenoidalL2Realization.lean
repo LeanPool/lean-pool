@@ -125,7 +125,7 @@ theorem hasPotentialZeroTraceClosureRealization_of_convexDomain
       -- via hu_grad. We need: gradientCLM z = z.1.2.
       have := hu_grad
       -- gradientCLM z = z.1.2 by definition
-      simp [H10GraphClosed.gradientCLM]
+      simp only [H10GraphClosed.gradientCLM_apply]
       exact this.symm
     rw [← this, hz]
   have hF_back :

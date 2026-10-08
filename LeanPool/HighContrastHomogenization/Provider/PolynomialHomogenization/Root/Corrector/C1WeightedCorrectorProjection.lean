@@ -38,6 +38,8 @@ open MeasureTheory
 
 noncomputable section
 
+/-- The finite affine trial gradient at scale `m`, viewed in the harmonic
+Hilbert space on the local cube at scale `q ≤ m`. -/
 @[expose]
 public noncomputable def finiteTrialHarmonicGradient
     {d : ℕ} [NeZero d] (a : Book.Ch02.TriadicCoeffFamily d)
@@ -129,7 +131,7 @@ theorem finiteTrialHarmonicGradient_smul
   simp
 
 private theorem finiteAffineBoundaryH1_gradClass_eq_constantGradient
-    {d : ℕ} [NeZero d] (q : ℕ) (e : Vec d) :
+    {d : ℕ} (q : ℕ) (e : Vec d) :
     (show LocalGradientL2 d q from by
       simp only [LocalGradientL2, localGradientCube]
       exact (finiteAffineBoundaryH1 (q : ℤ) e).gradToHilbertVectorL2) =

@@ -115,7 +115,7 @@ private theorem gradToHilbertVectorL2_sub_additive
   simp only [neg_smul, one_smul, sub_eq_add_neg]
 
 private theorem finiteAffineBoundaryH1_gradClass_eq_constantGradient
-    {d : ℕ} [NeZero d] (q : ℕ) (e : Vec d) :
+    {d : ℕ} (q : ℕ) (e : Vec d) :
     (show H1Function (localGradientCube d q) from
         finiteAffineBoundaryH1 (q : ℤ) e).gradToHilbertVectorL2 =
       (show LocalGradientL2 d q from

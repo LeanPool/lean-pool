@@ -49,7 +49,7 @@ noncomputable def zeroTraceDirichletPoincareScalarBudget {d : ℕ}
         ((d : ℝ) * ((3 : ℝ) ^ ((d : ℝ) + s) * Real.sqrt 2)) ^ 2 *
         (cubeBesovPositiveVectorSeminormTwo Q s g) ^ 2)
 
-theorem zeroTraceDirichletEnergyEnvelope_nonneg {d : ℕ} [NeZero d]
+theorem zeroTraceDirichletEnergyEnvelope_nonneg {d : ℕ}
     (Q : TriadicCube d) (a : CoeffField d) (s : ℝ) (g : Vec d → Vec d)
     (hs : 0 < s) :
     0 ≤ zeroTraceDirichletEnergyEnvelope Q a s g := by
@@ -82,7 +82,7 @@ theorem zeroTraceDirichletEnergyEnvelope_nonneg {d : ℕ} [NeZero d]
   unfold zeroTraceDirichletEnergyEnvelope
   exact add_nonneg (mul_nonneg (sq_nonneg _) hA_nonneg) hforce_nonneg
 
-theorem zeroTraceDirichletPoincareScalarBudget_nonneg {d : ℕ} [NeZero d]
+theorem zeroTraceDirichletPoincareScalarBudget_nonneg {d : ℕ}
     (Q : TriadicCube d) (a : CoeffField d) (a0 : Mat d)
     (s : ℝ) (g : Vec d → Vec d) (hs : 0 < s) :
     0 ≤ zeroTraceDirichletPoincareScalarBudget Q a a0 s g := by
@@ -159,7 +159,7 @@ named zero-trace Poincare scalar budget once the correction energy is bounded
 by the zero-trace energy envelope.
 -/
 theorem matNorm_sq_mul_fluxPoincareRadicand_le_zeroTraceDirichletPoincareScalarBudget
-    {d : ℕ} [NeZero d] (Q : TriadicCube d) (a : CoeffField d) (a0 : Mat d)
+    {d : ℕ} (Q : TriadicCube d) (a : CoeffField d) (a0 : Mat d)
     {s : ℝ} (g gradV : Vec d → Vec d)
     (hs : 0 < s)
     (henergy :
@@ -206,7 +206,7 @@ theorem matNorm_sq_mul_fluxPoincareRadicand_le_zeroTraceDirichletPoincareScalarB
 Poincare square-radicand closure from the named zero-trace scalar budget.
 -/
 theorem matNorm_sq_mul_fluxPoincareRadicand_le_const_mul_correctionBound_sq_of_envelope
-    {d : ℕ} [NeZero d] (Q : TriadicCube d) (a : CoeffField d) (a0 : Mat d)
+    {d : ℕ} (Q : TriadicCube d) (a : CoeffField d) (a0 : Mat d)
     (C : ℝ) {s : ℝ} (g gradV : Vec d → Vec d)
     (hs : 0 < s)
     (henergy :
@@ -226,7 +226,7 @@ Poincare square-root absorption from the zero-trace energy envelope and the
 named Poincare scalar budget.
 -/
 theorem matNorm_mul_fluxPoincareBound_le_const_mul_correctionBound_of_correctionBound
-    {d : ℕ} [NeZero d] (Q : TriadicCube d) (a : CoeffField d) (a0 : Mat d)
+    {d : ℕ} (Q : TriadicCube d) (a : CoeffField d) (a0 : Mat d)
     {C s : ℝ} (g gradV : Vec d → Vec d)
     (hC_nonneg : 0 ≤ C) (hs : 0 < s)
     (havg_nonneg : 0 ≤ cubeAverage Q (coefficientEnergyDensity a gradV))

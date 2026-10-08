@@ -627,7 +627,7 @@ private theorem measurable_Mu_coeffSigma_open
 measurable for its support-local coefficient sigma algebra. The proof
 uses CG's countable variational infimum and proves the carrier comparison. -/
 theorem measurable_coarseBlock_entry_adapted
-    {d : ℕ} [NeZero d] (q : Mat d) (hq : IsUnit q) (j : ℤ) (y : Vec d)
+    {d : ℕ} (q : Mat d) (hq : IsUnit q) (j : ℤ) (y : Vec d)
     (α β : BlockCoord d) :
     @Measurable (CoeffSpace d) ℝ
       (coeffSigma d (HighContrast.adaptedCellTranslate q j y)) inferInstance
@@ -665,7 +665,7 @@ theorem measurable_coarseBlock_entry_adapted
 
 /-- The full unfolded matrix retains the same local sigma algebra. -/
 theorem measurable_coarseBlock_matrix_adapted
-    {d : ℕ} [NeZero d] (q : Mat d) (hq : IsUnit q) (j : ℤ) (y : Vec d) :
+    {d : ℕ} (q : Mat d) (hq : IsUnit q) (j : ℤ) (y : Vec d) :
     @Measurable (CoeffSpace d) (FullBlockMat d)
       (coeffSigma d (HighContrast.adaptedCellTranslate q j y)) inferInstance
       (fun a => toFullBlockMat (coarseBlock (HighContrast.adaptedCellTranslate q j y) a)) := by

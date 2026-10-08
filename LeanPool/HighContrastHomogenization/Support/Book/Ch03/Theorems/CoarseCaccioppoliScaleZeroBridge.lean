@@ -270,7 +270,7 @@ private theorem interior_centeredCoreEnergy_le_eighteen_power_mulRHS
     using And.intro hCnote hbound
 
 private theorem boundary_publicCoreEnergy_le_publicRHS_of_scale_zero_of_noteConstant_mul_le
-    {d : ℕ} [NeZero d] {Q : TriadicCube d} {a : CoeffFamily d}
+    {d : ℕ} {Q : TriadicCube d} {a : CoeffFamily d}
     {x : Vec d} (u : BoundaryCaccioppoliDatum Q a x) {s t Cnote C : ℝ}
     (hs : 0 < s) (ht : 0 < t) (hst : s + t < 1)
     (hCnote : 0 ≤ Cnote)
@@ -293,7 +293,7 @@ private theorem boundary_publicCoreEnergy_le_publicRHS_of_scale_zero_of_noteCons
       hfactor hD_Cnote_nonneg hCnote_le hs ht hst)
 
 private theorem interior_centered_publicCoreEnergy_le_publicRHS_of_scale_zero_of_noteConstant_mul_le
-    {d : ℕ} [NeZero d] {Q : TriadicCube d} {a : CoeffFamily d}
+    {d : ℕ} {Q : TriadicCube d} {a : CoeffFamily d}
     (u : CubeSolution Q a) {s t Cnote C : ℝ}
     (hs : 0 < s) (ht : 0 < t) (hst : s + t < 1)
     (hCnote : 0 ≤ Cnote)

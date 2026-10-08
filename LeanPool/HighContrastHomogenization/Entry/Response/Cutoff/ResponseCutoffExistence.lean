@@ -257,6 +257,7 @@ private theorem cutoff_half_le_volumeAverage {q : Mat d} [NeZero d] (hq : IsUnit
         field_simp
     _ ≤ _ := mul_le_mul_of_nonneg_left hJ (inv_nonneg.mpr hPS.le)
 
+omit [NeZero d] in
 private theorem cutoff_reference_cube_geometry (Q0 : TriadicCube d) (t : ℤ)
     (ρ₁ ρ₂ : ℝ) (hρ₁pos : 0 < ρ₁) (hρ₂lt : ρ₂ < 1)
     (hcenter : ∀ i, cubeCenter Q0 i = 0)

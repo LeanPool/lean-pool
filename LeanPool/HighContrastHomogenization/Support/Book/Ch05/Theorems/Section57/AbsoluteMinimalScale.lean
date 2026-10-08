@@ -216,9 +216,8 @@ theorem exists_quantitative_absolute_quenchedLocalizedEstimate_interpolated
       (d := d) (σ := σ) hσ_pos params
   refine ⟨Cfluct, CcrudeShift, Csmall, Centry, a,
     hCfluct, hCcrudeShift, hCsmall, hCentry, ha, ?_⟩
-  intro t α
-  intro K S b L ctop τ η w ρtop ρbottom ρcrude Cbottom Ctop Kbottom Kcrude Mshift ρgap
-  intro ht htb hα_nonneg hαt hαb hαharm hαa
+  intro t α K S b L ctop τ η w ρtop ρbottom ρcrude Cbottom Ctop Kbottom Kcrude Mshift ρgap ht htb
+    hα_nonneg hαt hαb hαharm hαa
   classical
   obtain ⟨Rshift, Rsmall, Runion, htailLaw⟩ :=
     htailBase (t := t) (α := α)
@@ -380,9 +379,8 @@ theorem exists_quantitative_absolute_quenchedLocalizedEstimate_interpolated_unif
     htailBaseUniform hσ_pos
   refine ⟨Cfluct, CcrudeShift, Csmall,
     hCfluct, hCcrudeShift, hCsmall, ?_⟩
-  intro t α
-  intro K S b L ctop τ η w ρtop ρbottom ρcrude Cbottom Ctop Kbottom Kcrude Mshift ρgap
-  intro ht htb hα_nonneg hαt hαb hαharm hαa
+  intro t α K S b L ctop τ η w ρtop ρbottom ρcrude Cbottom Ctop Kbottom Kcrude Mshift ρgap ht htb
+    hα_nonneg hαt hαb hαharm hαa
   classical
   obtain ⟨Rshift, Rsmall, Runion, htailLaw⟩ :=
     htailBase (t := t) (α := α)

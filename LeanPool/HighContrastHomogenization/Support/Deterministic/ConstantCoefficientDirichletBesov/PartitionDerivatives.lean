@@ -91,7 +91,7 @@ theorem norm_fderiv_lowerOverlapTransition_le {d : ℕ}
       funext y
       simp [lowerOverlapTransition, hboundary]
     rw [hfun]
-    simp
+    simp only [fderiv_fun_const, Pi.zero_apply, norm_zero, ge_iff_le]
     exact mul_nonneg smoothTransitionProfile.derivBound_nonneg
       (inv_nonneg.mpr (cubeScaleFactor_pos' S).le)
   · have harg_diff :
@@ -121,7 +121,7 @@ theorem norm_fderiv_upperOverlapTransition_le {d : ℕ}
       funext y
       simp [upperOverlapTransition, hboundary]
     rw [hfun]
-    simp
+    simp only [fderiv_fun_const, Pi.zero_apply, norm_zero, ge_iff_le]
     exact mul_nonneg smoothTransitionProfile.derivBound_nonneg
       (inv_nonneg.mpr (cubeScaleFactor_pos' S).le)
   · have harg_diff :

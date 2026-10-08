@@ -91,6 +91,7 @@ theorem nonempty_scalarCanonicalMaximizer_of_aeEq {U : Set (Vec d)} {a b : Coeff
   rw [h1, ← h2]
   exact key
 
+omit [NeZero d] in
 /-- Existence of a canonical maximizer for `a_- = a - g` on `U_t`
 (`p.response.transfer`, `e.response.energy.and.defect`). -/
 theorem nonempty_scalarCanonicalMaximizer_respCoeffMinus (q : Mat d) (hq : IsUnit q) (t : ℤ)
@@ -110,6 +111,7 @@ theorem nonempty_scalarCanonicalMaximizer_respCoeffMinus (q : Mat d) (hq : IsUni
   filter_upwards [hae] with x hx
   simp [respCoeffMinus, hx]
 
+omit [NeZero d] in
 /-- The adjoint twin for `a_+ = a^t + g`. -/
 theorem nonempty_scalarCanonicalMaximizer_respCoeffPlus (q : Mat d) (hq : IsUnit q) (t : ℤ)
     (F : BlockMat d) (a : CoeffSpace d) (p r : Vec d) :
@@ -274,6 +276,7 @@ theorem cellAverage_congr_ae {V U : Set (Vec d)} (hVU : V ⊆ U) {X Z : Vec d �
       (h2.mono fun x hx => congrArg (fun v : BlockVec d => v.2 i) hx)
   simp only [cellAverage, hfst, hsnd]
 
+omit [NeZero d] in
 /-- The defining set of `respWeakEnergy` is bounded above: by Chapter-2 a.e. gradient
 uniqueness any two admissible maximizer families give the same value. -/
 theorem bddAbove_respWeakEnergySet (P : Measure (CoeffSpace d)) (qq : Mat d) (hq : IsUnit qq)
@@ -343,6 +346,7 @@ theorem bddAbove_respWeakEnergySet (P : Measure (CoeffSpace d)) (qq : Mat d) (hq
   · rw [he]; exact bddAbove_empty
   · exact ⟨c, fun y hy => le_of_eq (hsub hy hc)⟩
 
+omit [NeZero d] in
 /-- The defining set of `respWeakEnergy` for `a_- = a - g` is bounded above. -/
 theorem bddAbove_respWeakEnergySet_respCoeffMinus (P : Measure (CoeffSpace d)) (qq : Mat d)
     (hq : IsUnit qq) (t : ℤ) (M0 : BlockMat d) (p q' : Vec d) (F : BlockMat d) (Y : BlockVec d) :
@@ -360,6 +364,7 @@ theorem bddAbove_respWeakEnergySet_respCoeffMinus (P : Measure (CoeffSpace d)) (
     filter_upwards [hae] with x hx
     simp [respCoeffMinus, hx]
 
+omit [NeZero d] in
 /-- The defining set of `respWeakEnergy` for `a_+ = a^t + g` is bounded above. -/
 theorem bddAbove_respWeakEnergySet_respCoeffPlus (P : Measure (CoeffSpace d)) (qq : Mat d)
     (hq : IsUnit qq) (t : ℤ) (M0 : BlockMat d) (p q' : Vec d) (F : BlockMat d) (Y : BlockVec d) :
@@ -377,6 +382,7 @@ theorem bddAbove_respWeakEnergySet_respCoeffPlus (P : Measure (CoeffSpace d)) (q
     filter_upwards [hae] with x hx
     simp [respCoeffPlus, hx]
 
+omit [NeZero d] in
 /-- The `sSup` in `respWMinus` is over a set bounded above. -/
 theorem bddAbove_respWeakEnergySet_respWMinus (P : Measure (CoeffSpace d)) (jStar : ℕ)
     (F : BlockMat d) (t : ℤ) (e : Vec d) (hgrid : IsUnit (respGrid jStar F)) :
@@ -385,6 +391,7 @@ theorem bddAbove_respWeakEnergySet_respWMinus (P : Measure (CoeffSpace d)) (jSta
       (respYMinus P jStar F t e)) :=
   bddAbove_respWeakEnergySet_respCoeffMinus _ _ hgrid _ _ _ _ _ _
 
+omit [NeZero d] in
 /-- The `sSup` in `respWPlus` is over a set bounded above. -/
 theorem bddAbove_respWeakEnergySet_respWPlus (P : Measure (CoeffSpace d)) (jStar : ℕ)
     (F : BlockMat d) (t : ℤ) (e : Vec d) (hgrid : IsUnit (respGrid jStar F)) :

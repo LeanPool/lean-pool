@@ -42,6 +42,8 @@ theorem memVectorL2_const_varyingSlope {d : ℕ}
       (μ := volumeMeasureOn (openCubeSet (originCube d (q : ℤ))))
       (p := (2 : ENNReal)) (c := e))
 
+/-- The linear map embedding a slope as a constant L² gradient field on the
+local origin cube at scale `q`. -/
 @[expose]
 public noncomputable def constantLocalGradientLinearMap
     (d q : ℕ) : Vec d →ₗ[ℝ] LocalGradientL2 d q where
@@ -83,6 +85,8 @@ public noncomputable def constantLocalGradientLinearMap
     rw [hcoeSmul, Pi.smul_apply, he]
     rfl
 
+/-- The linear map assigning a slope its constant gradient plus the normalized
+finite corrector gradient at scale `q + k`, on the cube at scale `q`. -/
 @[expose]
 public noncomputable def finiteAffineFullGradientLinearMap
     {d : ℕ} [NeZero d] (a : Book.Ch02.TriadicCoeffFamily d)
@@ -188,6 +192,8 @@ theorem localGradientRestrict_jointAffineFullGradientLinearMap
     (LocalGradientCarrier.restrict_component
       (finiteAffineCorrectionJointLocalLimit a hCauchy e).gradient hqr)
 
+/-- The affine function of slope `e` plus the normalized finite corrector,
+realizing the full finite gradient on the local cube at scale `q`. -/
 @[expose]
 public noncomputable def finiteAffineFullGradientApproximationH1
     {d : ℕ} [NeZero d] (a : Book.Ch02.TriadicCoeffFamily d)
@@ -226,7 +232,7 @@ private theorem gradToHilbertVectorL2_eq_of_grad_eq_varyingSlope
   rw [hu, hv, hgrad]
 
 private theorem finiteAffineBoundary_gradToHilbertVectorL2_eq_constant
-    {d q : ℕ} [NeZero d] (e : Vec d) :
+    {d q : ℕ} (e : Vec d) :
     (show LocalGradientL2 d q from by
       simp only [localGradientCube]
       exact (finiteAffineBoundaryH1 (q : ℤ) e).gradToHilbertVectorL2) =

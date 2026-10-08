@@ -64,7 +64,7 @@ def fullBlockSharp (H : FullBlockMat d) : FullBlockMat d :=
   rw [fullBlockRefl, Matrix.fromBlocks_multiply]
   simp [Matrix.fromBlocks_one]
 
-@[simp] theorem conjTranspose_fullBlockRefl :
+theorem conjTranspose_fullBlockRefl :
     (fullBlockRefl d)ᴴ = fullBlockRefl d := by
   rw [fullBlockRefl, Matrix.fromBlocks_conjTranspose]
   simp

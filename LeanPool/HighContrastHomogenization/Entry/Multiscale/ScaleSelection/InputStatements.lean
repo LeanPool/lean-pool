@@ -75,9 +75,10 @@ theorem profile_add_determinantDrift_nonneg (d : ℕ) (hd : 2 ≤ d)
     (jStar : ℕ) (hj : 2 * d ≤ 3 ^ jStar) (m : Mat d) (hm : m.PosDef)
     (k n : ℤ) (hk : (jStar : ℤ) ≤ k) (hkn : k ≤ n) :
     0 ≤ profile P γ (Geometry.explicitRoundedGrid jStar m) jStar k n +
-      determinantDrift P γ (Geometry.explicitRoundedGrid jStar m) jStar n := by exact add_nonneg
-        (Annealed.bridge_profile_nonneg d hd P γ E Ψ K S hstat hdag jStar hj m hm k n hk hkn)
-        (Annealed.bridge_determinantDrift_nonneg d hd P γ E Ψ K S hstat hdag jStar hj m hm n)
+      determinantDrift P γ (Geometry.explicitRoundedGrid jStar m) jStar n := by
+  exact add_nonneg
+    (Annealed.bridge_profile_nonneg d hd P γ E Ψ K S hstat hdag jStar hj m hm k n hk hkn)
+    (Annealed.bridge_determinantDrift_nonneg d hd P γ E Ψ K S hstat hdag jStar hj m hm n)
 
 /-- `p.successful.short.bridge`: the short-bridge statement with its `B₀(σ,L)` Skolemized. -/
 theorem bridge_skolem (d : ℕ) (hd : 2 ≤ d) (γ : ℝ) (hγ : γ ∈ Set.Ico (0 : ℝ) 1) :

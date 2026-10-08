@@ -39,9 +39,9 @@ theorem tendsto_primal_projected_oscillation
     (g : Mat d) (hg : IsSkewMat g) (a : CoeffSpace d)
     (p r Qcen : Vec d) :
     Tendsto
-      (fun n ↦ primal_projected_oscillation
+      (fun n ↦ primalProjectedOscillation
         hq s t g hg p r Qcen (n + 1) a)
-      atTop (nhds (primal_physical_oscillation
+      atTop (nhds (primalPhysicalOscillation
         hq s t g hg p r Qcen a)) := by
   let Z := alignedIndex q s t
   apply tendsto_avsum Z _ _
@@ -79,8 +79,8 @@ theorem tendsto_primal_projected_oscillation
       linarith only [adaptedPreYoungCutoff_nonneg hq t (matVecMul q y),
         adaptedPreYoungCutoff_le_two hq t (matVecMul q y),
         hphiAvg0, hphiAvg2]
-  simpa only [primal_projected_oscillation,
-    primal_physical_oscillation, Z, R, phi, f, F, G] using
+  simpa only [primalProjectedOscillation,
+    primalPhysicalOscillation, Z, R, phi, f, F, G] using
       projected_primal_pairing_tendsto_physical
         R f G 2 hGInt hfInt (by norm_num) hfBound
 
@@ -152,7 +152,7 @@ theorem integrable_primal_physical_oscillation_of_weak
     (g : Mat d) (hg : IsSkewMat g) (p r Qcen : Vec d)
     (hweak : profilePrimalWeakQuantity P m0 hq t
       (fun a ↦ a.subSkew g hg) p r ≠ ⊤) :
-    Integrable (primal_physical_oscillation
+    Integrable (primalPhysicalOscillation
       hq s t g hg p r Qcen) P := by
   let Z := alignedIndex q s t
   let coord : (Fin d → ℤ) → Fin d → CoeffSpace d → ℝ := fun z i a ↦
@@ -170,10 +170,10 @@ theorem integrable_primal_physical_oscillation_of_weak
     exact integrable_finsetSum (Finset.univ : Finset (Fin d)) fun i hi ↦
       (by simpa only [coord, toFullBlockVec] using
         (hread z hz (Sum.inl i)).const_mul (Qcen i))
-  have heq : primal_physical_oscillation hq s t g hg p r Qcen =
+  have heq : primalPhysicalOscillation hq s t g hg p r Qcen =
       fun a ↦ avsum Z (fun z ↦ ∑ i, Qcen i * coord z i a) := by
     funext a
-    unfold primal_physical_oscillation
+    unfold primalPhysicalOscillation
     unfold avsum
     congr 1
     apply Finset.sum_congr rfl

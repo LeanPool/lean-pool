@@ -141,7 +141,10 @@ theorem parentChildEnergy_sum_le_card_mul_cubeLpNorm_cubeFluctuationVec_sq
         ∑ R ∈ childCubes T, cubeAverage R f =
           (3 ^ d : ℝ) * cubeAverage T f := by
       have hpow_ne : (3 ^ d : ℝ) ≠ 0 := by positivity
-      simp [descendantsAverage, childCubes_card] at havg
+      have havg_child :
+          cubeAverage T f = (3 ^ d : ℝ)⁻¹ * ∑ R ∈ childCubes T, cubeAverage R f := by
+        simpa only [descendantsAverage, descendantsAtDepth_one, childCubes_card,
+          Nat.cast_pow, Nat.cast_ofNat] using havg
       calc
         ∑ R ∈ childCubes T, cubeAverage R f
             = (3 ^ d : ℝ) *
@@ -149,7 +152,7 @@ theorem parentChildEnergy_sum_le_card_mul_cubeLpNorm_cubeFluctuationVec_sq
                   ∑ R ∈ childCubes T, cubeAverage R f) := by
               field_simp [hpow_ne]
         _ = (3 ^ d : ℝ) * cubeAverage T f := by
-              rw [← havg]
+              rw [← havg_child]
     have hnorm :
         (cubeLpNorm T (2 : ℝ≥0∞) (fun y => v y i)) ^ 2 =
           cubeAverage T f := by

@@ -37,7 +37,7 @@ noncomputable section
 /-- The affine-plus-global-corrector pair, with an arbitrary additive
 constant, belongs to `H¹_{s,loc}`. -/
 theorem NormalizedLocalH1Carrier.memH1sLoc_affineAdd_globalRepresentatives
-    {d : ℕ} [NeZero d] (z : NormalizedLocalH1Carrier d)
+    {d : ℕ} (z : NormalizedLocalH1Carrier d)
     {b : CoeffField d} (hb : IsAELocallyUniformlyElliptic b)
     (e : Vec d) (c : ℝ) :
     MemH1sLoc b

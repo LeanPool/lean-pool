@@ -161,7 +161,7 @@ theorem pathwise_bound (d : ℕ) (hd : 2 ≤ d) (γ : ℝ)
 private theorem respAllScaleAbs_moment_of_majorant {d : ℕ}
     (γ : ℝ) (P : Measure (CoeffSpace d)) [IsProbabilityMeasure P]
     (jStar : ℕ) (F : BlockMat d) (t : ℤ) (Q : ℕ) (η C₀ Cn Cs : ℝ)
-    (F0 X : CoeffSpace d → ℝ) (hQ2 : 2 ≤ Q) (hQ0 : Q ≠ 0)
+    (F0 X : CoeffSpace d → ℝ) (hQ2 : 2 ≤ Q)
     (hη : η ∈ Set.Ioo (0 : ℝ) (1 / 2)) (hCs : 0 < Cs)
     (hKsrc : 0 < C₀ * Cn / Cs)
     (hF0int : Integrable F0 P) (hF0le : ∫ a, F0 a ∂P ≤ η)
@@ -199,7 +199,7 @@ private theorem respAllScaleAbs_moment_of_majorant {d : ℕ}
   rw [hgval] at hmain
   refine hmain.trans ?_
   have hetaQ : η ^ Q ≤ η := by
-    have h1 := pow_le_pow_of_le_one hη.1.le (by linarith only [hη.2]) hQ2
+    have h1 := pow_le_pow_of_le_one hη.1.le (by linarith only [hη.2]) (by omega : 1 ≤ Q)
     simpa using h1
   have h3Q : (0 : ℝ) < (3 : ℝ) ^ Q := pow_pos (by norm_num) _
   have hKpow : (0 : ℝ) < (C₀ * Cn / Cs) ^ Q := pow_pos hKsrc _
@@ -409,7 +409,7 @@ theorem response_allscale_abs (d : ℕ) (_hd : 2 ≤ d) (γ : ℝ) (_hγ : γ �
           nlinarith only [e2, h3]
   have hF0i : ∫ a, F0 a ∂P ≤ η := by rw [hF0eq]; exact hfhle
   exact respAllScaleAbs_moment_of_majorant γ P jStar F t (bigQ d γ) η C₀ Cn Cs F0 X
-    hQ2 hQ0 hη _hCs hKsrc hfint hF0i hXint hXmom hkey
+    hQ2 hη _hCs hKsrc hfint hF0i hXint hXmom hkey
 
 /-! ## Helpers for the source load bound
 
@@ -613,11 +613,11 @@ theorem hasQuadraticMu_adaptedCellTranslate [NeZero d]
 
 /-- Entrywise integral of a matrix-valued function. -/
 @[expose]
-public noncomputable def matIntegral_entrywiseP {ι : Type*} [Fintype ι] (P : Measure (CoeffSpace d))
+public noncomputable def sourceLoadEntrywiseMatrixIntegral {ι : Type*} (P : Measure (CoeffSpace d))
     (f : CoeffSpace d → Matrix ι ι ℝ) : Matrix ι ι ℝ :=
   Matrix.of fun i j => ∫ a, f a i j ∂P
 
-private theorem integrable_entries_mul_left_ofMatrixP {ι : Type*} [Fintype ι] [DecidableEq ι]
+private theorem integrable_entries_mul_left_ofMatrixP {ι : Type*} [Fintype ι]
     {P : Measure (CoeffSpace d)} {f : CoeffSpace d → Matrix ι ι ℝ} (c : Matrix ι ι ℝ)
     (hf : ∀ i j, Integrable (fun a => f a i j) P) :
     ∀ i j, Integrable (fun a => (c * f a) i j) P := by
@@ -625,21 +625,23 @@ private theorem integrable_entries_mul_left_ofMatrixP {ι : Type*} [Fintype ι] 
   simp only [Matrix.mul_apply]
   exact integrable_finsetSum _ fun k _ => (hf k j).const_mul _
 
-private theorem matIntegral_mul_right_constP {ι : Type*} [Fintype ι] [DecidableEq ι]
+private theorem matIntegral_mul_right_constP {ι : Type*} [Fintype ι]
     {P : Measure (CoeffSpace d)} {f : CoeffSpace d → Matrix ι ι ℝ} (c : Matrix ι ι ℝ)
     (hf : ∀ i j, Integrable (fun a => f a i j) P) :
-    matIntegral_entrywiseP P (fun a => f a * c) = matIntegral_entrywiseP P f * c := by
+    sourceLoadEntrywiseMatrixIntegral P (fun a => f a * c) =
+      sourceLoadEntrywiseMatrixIntegral P f * c := by
   ext i j
-  simp only [matIntegral_entrywiseP, Matrix.of_apply, Matrix.mul_apply]
+  simp only [sourceLoadEntrywiseMatrixIntegral, Matrix.of_apply, Matrix.mul_apply]
   rw [MeasureTheory.integral_finsetSum _ fun k _ => (hf i k).mul_const (c k j)]
   exact Finset.sum_congr rfl fun k _ => MeasureTheory.integral_mul_const _ _
 
-private theorem matIntegral_mul_left_constP {ι : Type*} [Fintype ι] [DecidableEq ι]
+private theorem matIntegral_mul_left_constP {ι : Type*} [Fintype ι]
     {P : Measure (CoeffSpace d)} {f : CoeffSpace d → Matrix ι ι ℝ} (c : Matrix ι ι ℝ)
     (hf : ∀ i j, Integrable (fun a => f a i j) P) :
-    matIntegral_entrywiseP P (fun a => c * f a) = c * matIntegral_entrywiseP P f := by
+    sourceLoadEntrywiseMatrixIntegral P (fun a => c * f a) =
+      c * sourceLoadEntrywiseMatrixIntegral P f := by
   ext i j
-  simp only [matIntegral_entrywiseP, Matrix.of_apply, Matrix.mul_apply]
+  simp only [sourceLoadEntrywiseMatrixIntegral, Matrix.of_apply, Matrix.mul_apply]
   rw [MeasureTheory.integral_finsetSum _ fun k _ => (hf k j).const_mul (c i k)]
   exact Finset.sum_congr rfl fun k _ => MeasureTheory.integral_const_mul _ _
 
@@ -648,7 +650,7 @@ theorem ofFullBlockMat_fromBlocks_mk (A B C D : Mat d) :
 
 theorem matTranspose_neg_of_skew {g : Mat d} (hg : matTranspose g = -g) :
     matTranspose (-g) = -(-g) := by
-  show (-g : Mat d)ᵀ = -(-g)
+  change (-g : Mat d)ᵀ = -(-g)
   rw [Matrix.transpose_neg]
   exact congrArg Neg.neg hg
 

@@ -385,12 +385,19 @@ noncomputable def localizedSqCutoffForwardDifferenceQuotientToAmbient
           euclideanForwardDifferenceQuotient step i u.toFun x *
             (2 * η x * euclideanGradient η x j) := by
   funext x j
-  simp [localizedSqCutoffForwardDifferenceQuotientToAmbient]
+  change
+    η x ^ 2 *
+          (u.forwardDifferenceQuotientOn step i hV.isOpen hVU hVshift).grad x j +
+        (u.forwardDifferenceQuotientOn step i hV.isOpen hVU hVshift).toFun x *
+          (fderiv ℝ (fun x => η x ^ 2) x) (basisVec j) =
+      η x ^ 2 *
+          (u.forwardDifferenceQuotientOn step i hV.isOpen hVU hVshift).grad x j +
+        euclideanForwardDifferenceQuotient step i u.toFun x *
+          (2 * η x * euclideanGradient η x j)
+  rw [H1Function.forwardDifferenceQuotientOn_toFun]
   rw [show (fderiv ℝ (fun x => η x ^ 2) x) (basisVec j) =
       2 * η x * euclideanGradient η x j by
         simpa [euclideanCoordDeriv] using! euclideanCoordDeriv_sq hη j x]
-  ring_nf
-  exact Or.inl trivial
 
 /-- Each coordinate of the localized squared-cutoff forward quotient gradient
 is supported inside the interior set carrying the cutoff. -/

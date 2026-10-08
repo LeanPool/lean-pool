@@ -38,7 +38,7 @@ noncomputable section
 the same as taking the original solution's best-fit error on that inner
 cube. -/
 theorem finiteCenteredCubeBestFitErrorAt_restriction_eq
-    {d : ℕ} [NeZero d] (a : Book.Ch02.TriadicCoeffFamily d)
+    {d : ℕ} (a : Book.Ch02.TriadicCoeffFamily d)
     (m : ℤ) (u : Book.Ch03.CubeSolution (originCube d m) a)
     (k : ℤ) (hkm : k ≤ m) :
     let uk := finiteCubeSolutionRestriction a hkm u

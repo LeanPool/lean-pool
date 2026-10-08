@@ -58,8 +58,8 @@ noncomputable section
 
 variable {d : ℕ}
 
-private theorem cutoffBudget {d : ℕ} {g K c T : ℝ} {k J M : ℤ}
-    (hg1 : g < 1) (hJ0 : J ≤ 0) (hmean : T ≤ 2 * K ^ 2)
+private theorem cutoffBudget {g K c T : ℝ} {k J M : ℤ}
+    (hc : 0 ≤ c) (hJ0 : J ≤ 0) (hmean : T ≤ 2 * K ^ 2)
     (hJmul : 2 * c * (1 + (3 : ℝ) ^ M + 6 * K ^ 2) *
       (3 : ℝ) ^ ((J : ℝ) * (1 - g)) ≤ 4 / 5 * (3 : ℝ) ^ k) :
     2 * c * ((3 : ℝ) ^ J + (3 : ℝ) ^ M + 3 * T) *
@@ -84,7 +84,8 @@ private theorem forwardRowsBounds [NeZero d] {P : Measure (CoeffSpace d)}
     (hdag : HCPoly.Frozen.CoarseEllipticityDagger P g E Ψ K S) {q : Mat d}
     (hq : q.PosDef) {k n J : ℤ} (hk : 0 ≤ k) (hkn : k < n)
     {Z : ℤ → Finset (Fin d → ℤ)}
-    (hZ : ∀ r, ↑(Z r) = fillingIndex (1 : Mat d) n (adaptedCellTranslate q n 0) r)
+    (hZ : ∀ r, ↑(Z r) =
+      Transport.fillingIndex (1 : Mat d) n (adaptedCellTranslate q n 0) r)
     (X : BlockVec d)
     (hE0 : 0 ≤ 1 / 2 * blockVecDot X (blockMatVecMul E X))
     (hF0 : 0 ≤ 1 / 2 * blockVecDot X
@@ -219,7 +220,7 @@ private theorem cutoffTailBound {d : ℕ} {g K a c b : ℝ} {k n : ℤ}
   have h45 : (0 : ℝ) ≤ 4 / 5 * (3 : ℝ) ^ (k - n) := by positivity
   have h1 := mul_le_mul_of_nonneg_right hinvGam h45
   have hgampos : (0 : ℝ) ≤ transferGauge g K k * (3 : ℝ) ^ (k - n) :=
-    mul_nonneg hgam1.le (by positivity)
+    mul_nonneg (le_trans (by norm_num : (0 : ℝ) ≤ 1) hgam1) (by positivity)
   have h2 : transferGauge g K k * (4 / 5 * (3 : ℝ) ^ (k - n)) ≤
       4 / 5 * ((d : ℝ) * Real.sqrt d) * transferGauge g K k *
         (3 : ℝ) ^ (k - n) := by
@@ -350,11 +351,11 @@ theorem adaptedMean_sub_centeredCube_le [NeZero d] {P : Measure (CoeffSpace d)}
     rw [Finset.mem_Icc] at hi'
     omega
   have hsplit : Finset.Icc J n = Finset.Ico J k ∪ Finset.Icc k n := by
-    show Finset.Ico J (n + 1) = Finset.Ico J k ∪ Finset.Ico k (n + 1)
+    change Finset.Ico J (n + 1) = Finset.Ico J k ∪ Finset.Ico k (n + 1)
     exact (Finset.Ico_union_Ico_eq_Ico hJk (by omega)).symm
   rw [hsplit, Finset.sum_union hdisj] at hstep1
   -- the rows at or above the comparison generation
-  obtain ⟨hhigh, hlow⟩ := forwardRowsBounds hstat hdag hq hk hkn hZ X hE0 hF0
+  obtain ⟨hhigh, hlow⟩ := forwardRowsBounds (J := J) hstat hdag hq hk hkn hZ X hE0 hF0
   -- the tail, under one unit of the printed error
   have hGam1 : (1 : ℝ) ≤ transferGauge g K k := one_le_transferGauge hg0 hg1 k
   have hinvGam : (1 - g)⁻¹ ≤ transferGauge g K k := inv_le_transferGauge hg0 hg1 k
@@ -363,9 +364,9 @@ theorem adaptedMean_sub_centeredCube_le [NeZero d] {P : Measure (CoeffSpace d)}
     congr 1
     ring
   have h3knpos : (0 : ℝ) < (3 : ℝ) ^ (k - n) := by positivity
-  have hcut := cutoffBudget (d := d) (g := g) (K := K)
+  have hcut := cutoffBudget (g := g) (K := K)
     (c := 6 * (d : ℝ) * Real.sqrt d * ‖q⁻¹‖)
-    (T := ∫ a, S a ∂P) (k := k) (J := J) (M := M) hg1 hJ0 hmeanS hJmul
+    (T := ∫ a, S a ∂P) (k := k) (J := J) (M := M) (by positivity) hJ0 hmeanS hJmul
   have htailfinal := cutoffTailBound (d := d) (g := g) (K := K)
     (a := (3 : ℝ) ^ J + (3 : ℝ) ^ M + 3 * ∫ a, S a ∂P)
     (c := 6 * (d : ℝ) * Real.sqrt d * ‖q⁻¹‖)
@@ -406,7 +407,7 @@ theorem adaptedMean_sub_centeredCube_le [NeZero d] {P : Measure (CoeffSpace d)}
       blockVecDot_blockMatVecMul_eq_dotProduct, Recurrence.toFullBlockMat_blockSub,
       Matrix.sub_mulVec, dotProduct_sub]
   rw [hsubq]
-  linarith only [hstep1, hhigh, hlow, hP1, hP2]
+  linear_combination hstep1 + hhigh + hlow + hP1 + hP2
 
 end
 
