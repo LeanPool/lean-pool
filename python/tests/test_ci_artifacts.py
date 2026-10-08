@@ -7,6 +7,7 @@ import json
 import os
 import stat
 import subprocess
+import sys
 import tarfile
 import zipfile
 from pathlib import Path
@@ -14,6 +15,77 @@ from pathlib import Path
 import pytest
 
 from lean_pool import ci_artifacts
+
+
+def test_wait_command_only_waits_for_exact_head_build(monkeypatch) -> None:
+    """The prerequisite polls the producer without installing or compiling output."""
+    calls = []
+    monkeypatch.setattr(
+        sys,
+        "argv",
+        [
+            "ci_artifacts",
+            "wait",
+            "--repository",
+            "owner/repo",
+            "--head",
+            "abc123",
+            "--event",
+            "pull_request",
+            "--wait-seconds",
+            "18000",
+        ],
+    )
+
+    def matching(repository, head, event):
+        calls.append((repository, head, event))
+        return {"id": 7}
+
+    def waiting(repository, run, seconds):
+        calls.append((repository, run, seconds))
+        return 9
+
+    def unexpected(*args, **kwargs):
+        pytest.fail("Build waiting must not restore or compile output")
+
+    monkeypatch.setattr(ci_artifacts, "matching_run", matching)
+    monkeypatch.setattr(ci_artifacts, "wait_for_artifact", waiting)
+    monkeypatch.setattr(ci_artifacts, "reuse_build", unexpected)
+    monkeypatch.setattr(ci_artifacts, "download_build", unexpected)
+    ci_artifacts.main()
+    assert calls[0] == ("owner/repo", "abc123", "pull_request")
+    assert calls[1][:2] == ("owner/repo", {"id": 7})
+    assert 17999 <= calls[1][2] <= 18000
+
+
+def test_build_wait_handles_late_producer_with_one_deadline(monkeypatch) -> None:
+    """Starting before Lean CI appears must not trigger another cold pool build."""
+    clock = [0]
+    runs = iter([None, {"id": 7}])
+    monkeypatch.setattr(ci_artifacts.time, "monotonic", lambda: clock[0])
+    monkeypatch.setattr(
+        ci_artifacts.time,
+        "sleep",
+        lambda seconds: clock.__setitem__(0, clock[0] + seconds),
+    )
+    monkeypatch.setattr(ci_artifacts, "matching_run", lambda *args: next(runs))
+    calls = []
+
+    def waiting(repository, run, seconds):
+        calls.append((repository, run, seconds))
+        return 9
+
+    monkeypatch.setattr(ci_artifacts, "wait_for_artifact", waiting)
+    assert ci_artifacts.wait_for_build("owner/repo", "abc123", "pull_request", 100) == 9
+    assert calls == [("owner/repo", {"id": 7}, 80)]
+
+
+def test_build_wait_stops_when_producer_never_appears(monkeypatch) -> None:
+    """Unavailable output retains bounded waiting and the regular build fallback."""
+    monkeypatch.setattr(ci_artifacts, "matching_run", lambda *args: None)
+    assert (
+        ci_artifacts.wait_for_build("owner/repo", "abc123", "pull_request", 0) is None
+    )
 
 
 @pytest.fixture
@@ -362,3 +434,36 @@ def test_download_rejects_truncated_payload(repository: Path, monkeypatch, name)
         ci_artifacts.download_build(repository, "owner/repo", 7)
     assert output.read_bytes() == b"old"
     assert not list((repository / ".lake").glob("lean-ci-*"))
+
+
+def test_opted_in_minimal_verifier_reuses_exact_pr_build(repository, monkeypatch):
+    """The rare full-pool PR consumer can reuse its matching producer output."""
+    archive = repository / "build.tar.gz"
+    ci_artifacts.pack_build(repository, archive)
+    output = repository / ".lake/build/lib/lean/LeanPool.olean"
+    output.unlink()
+    calls = []
+
+    def matching(repository_name, head, event):
+        calls.append((repository_name, head, event))
+        return {"id": 7, "html_url": "https://github.com/owner/repo/actions/runs/7"}
+
+    monkeypatch.setattr(ci_artifacts, "matching_run", matching)
+    monkeypatch.setattr(ci_artifacts, "wait_for_artifact", lambda *args: 9)
+    monkeypatch.setattr(
+        ci_artifacts,
+        "download_build",
+        lambda root, repository_name, artifact: ci_artifacts.restore_build(
+            root, archive
+        ),
+    )
+    assert ci_artifacts.reuse_build(
+        repository,
+        "owner/repo",
+        "head",
+        "pull_request",
+        0,
+        pull_request_artifact=True,
+    )
+    assert calls == [("owner/repo", "head", "pull_request")]
+    assert output.exists()

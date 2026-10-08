@@ -190,3 +190,47 @@ def test_default_generation_only_writes_pool_indexes(tmp_path: Path) -> None:
     assert (tmp_path / "LeanPool.lean").exists()
     assert not (tmp_path / "Challenge.lean").exists()
     assert not (tmp_path / "Solution.lean").exists()
+
+
+def test_lake_directory_build_cannot_omit_unlisted_source(tmp_path: Path) -> None:
+    """A fixed root still builds new modules and rejects an unlisted broken proof."""
+    import os
+    import subprocess
+
+    pin = (Path(__file__).resolve().parents[2] / "lean-toolchain").read_text().strip()
+    lake = (
+        Path.home()
+        / ".elan/toolchains"
+        / pin.replace("/", "--").replace(":", "---")
+        / "bin/lake"
+    )
+    if not lake.is_file():
+        if os.environ.get("LEAN_POOL_REQUIRE_TEST_TOOLCHAIN") == "1":
+            pytest.fail("required pinned Lean toolchain unavailable")
+        pytest.skip("pinned Lean toolchain unavailable")
+    _sources(tmp_path)
+    (tmp_path / "lean-toolchain").write_text(pin + "\n")
+    (tmp_path / "lakefile.toml").write_text(
+        'name = "test"\ndefaultTargets = ["LeanPool"]\nrequiresModuleSystem = true\n'
+        '[[lean_lib]]\nname = "LeanPool"\nglobs = ["LeanPool.*"]\n'
+    )
+    _generate(tmp_path)
+    original = (tmp_path / "LeanPool.lean").read_text()
+    result = subprocess.run(
+        [str(lake), "build"], cwd=tmp_path, capture_output=True, text=True
+    )
+    assert result.returncode == 0, result.stdout + result.stderr
+    assert (tmp_path / ".lake/build/lib/lean/LeanPool/Beta/Nested/Other.olean").exists()
+    (tmp_path / "LeanPool/Independent.lean").write_text(
+        "module\ntheorem broken : False := by trivial\n"
+    )
+    # Do not regenerate any index: Lake must still discover this new broken module.
+    result = subprocess.run(
+        [str(lake), "build"], cwd=tmp_path, capture_output=True, text=True
+    )
+    assert result.returncode != 0
+    assert "LeanPool.Independent" in result.stdout + result.stderr
+    _generate(tmp_path)
+    assert (tmp_path / "LeanPool.lean").read_text() == original
+    assert indexes.structure_errors(tmp_path) == []
+    assert _check_project_indexes(tmp_path) == []

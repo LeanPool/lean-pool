@@ -34,7 +34,7 @@ The generated module-system indexes import every library file, so building them 
 
 Current checks:
 
-- every `.lean` file under `LeanPool/`, plus `LeanPool.lean`, is reachable from `LeanPool.lean`
+- Lake discovers every `.lean` file under `LeanPool/`; every project source is also reachable from its public `Imports.lean`
 - every content `.lean` file except `LeanPool.lean` has the exact four-line file header
 - content files do not contain `set_option`, `nolint` waivers, broad `import Mathlib`, `sorry`, `admit`, unchecked declarations (`axiom`, `constant`, `unsafe`, `partial`, `opaque`, `@[extern]`), or diagnostic commands (`#check`, `#print`, `#eval`, `#reduce`, `#guard_msgs`, `#lint`)
 - content files do not manipulate elaborator options programmatically: option-API tokens (`withOptions`, `modifyOptions`, `withRecDepth`, `withCurrHeartbeats`, `KVMap`/`Options`/`Option` setters, ...) and gated option names (`maxRecDepth`, `maxHeartbeats`, `maxSynthPendingDepth`, `linter.*`) are forbidden in code (comments are fine) — ``withOptions (fun o => o.set `maxRecDepth 100000)`` inside an elaborator is still `set_option maxRecDepth 100000`
@@ -42,7 +42,7 @@ Current checks:
 - the style-linter allowlist `scripts/nolints-style.txt` has no active entries
 - no Lean content file exceeds 10000 non-blank, non-comment code lines
 - no theorem/lemma proof body exceeds 200 non-blank, non-comment code lines, using the current text heuristic
-- `LeanPool/projects.yml` exists, is valid YAML, and contains a `projects` list
+- `LeanPool/projects/` contains one valid YAML mapping per project, with its filename matching the unique slug; duplicate fields, nested cards, and mixed old/new registries fail validation
 - project entries have required fields: `slug`, `title`, `entry_module`, `authors`, `source`, `status`, `provenance`, `main_declarations`, and `tags`
 - project entries also carry documentation metadata: `summary`, `branch`, `main_results`, and `msc`
 - project `status` is `verified`
@@ -52,16 +52,16 @@ Current checks:
 - project summaries and branches are nonempty strings, MSC codes are a nonempty string list, and `main_results` is a nonempty list of `declaration` / `informal` entries
 - project `main_results[*].declaration` values include every `main_declarations` entry, so compact project cards and richer documentation metadata cannot drift
 - project `slug` and `entry_module` values are unique
-- every registered project `entry_module` is imported directly by `LeanPool.lean`
+- every registered project `entry_module` is imported by its project’s public `Imports.lean`
 - every project has a top-level entry file `LeanPool/<Project>.lean`, including projects with nested registered entry modules
 - every nested registered entry module is reachable through its top-level entry file's imports
 - every top-level project module `LeanPool/Foo.lean`, except `LeanPool/Basic.lean`, belongs to the namespace of a registered `entry_module`
 - project entry modules and listed main declarations resolve in Lean
-- generated entry-point project cards match `LeanPool/projects.yml`
+- generated entry-point project cards match `LeanPool/projects/*.yaml`
 - public declarations depend only on the allowed axiom set: `Classical.choice`, `propext`, and `Quot.sound`
 - a Lean environment audit (run via `lake env lean --run` with extensions disabled, so project notation cannot interfere) walks **every** declaration compiled into a pool module — including elaborator auxiliaries and generated declarations the textual scans cannot see — and rejects any that references option-manipulating constants, embeds a gated option-name literal (however the `Name` was assembled), directly references an axiom-injecting constant (`sorryAx`, `ofReduceBool`, ...), or is itself an axiom declared inside a pool module (which is how `native_decide` and `addDecl`-of-an-axiom backdoors surface)
 
-The checker also has `--write-project-cards` to regenerate entry-point module docstrings from `LeanPool/projects.yml`.
+The checker also has `--write-project-cards` to regenerate entry-point module docstrings from `LeanPool/projects/*.yaml`.
 
 ### 3. PR Separation
 
@@ -69,13 +69,12 @@ The checker also has `--write-project-cards` to regenerate entry-point module do
 
 Content files are:
 
-- `LeanPool.lean`
 - `LeanPool/**/*.lean`
-- `LeanPool/projects.yml`
+- `LeanPool/projects/*.yaml`
 
 A PR may touch only content files or only non-content files. Mixing these categories fails CI, except that a Lean/Mathlib version bump may pair content with the toolchain, manifest, lakefile, their `docbuild/` equivalents, and this workflow.
 
-Branch protection to require these checks before merge is future work.
+Branch protection requires the build, separation and documentation gates; the merge queue validates their combined result on current main.
 
 ### 4. Python CI
 
@@ -148,7 +147,7 @@ The following items are documented goals but are not fully implemented or enforc
 - branch protection requiring the CI gates before merge
 - scheduled Lean/Mathlib update checks
 - LeanExplore semantic dedup comments in PRs; the prototype CLI is [`python/lean_pool/semantic_dedup.py`](../python/lean_pool/semantic_dedup.py)
-- controlled tag vocabulary for `LeanPool/projects.yml`; tags are currently only checked as nonempty strings
+- controlled tag vocabulary for `LeanPool/projects/*.yaml`; tags are currently only checked as nonempty strings
 - generated domain/status indexes
 - directory index-file policy: every directory under `LeanPool/` containing Lean files should have an import-only index file with a module docstring
 - AST-aware proof-size measurement; the current 200-line proof cap uses a text heuristic

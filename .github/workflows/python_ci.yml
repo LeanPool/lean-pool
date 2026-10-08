@@ -1,6 +1,8 @@
 name: Python CI
 
 on:
+  merge_group:
+    types: [checks_requested]
   push:
     branches:
       - main
@@ -14,19 +16,7 @@ on:
   pull_request:
     branches:
       - main
-    paths:
-      - 'python/**'
-      # NOTICE is generated (notice.yml); the pytest suite asserts the
-      # committed file matches its inputs, which catches hand-edits to
-      # either. LeanPool/projects.yml is deliberately absent: it is a
-      # content path, and a content PR cannot also update NOTICE, so
-      # gating on it here would be unsatisfiable. notice.yml regenerates
-      # after merge instead.
-      - 'NOTICE'
-      - 'NOTICE.extra.yml'
-      - '.github/workflows/python_ci.yml'
-      - '.github/workflows/lean_action_ci.yml'
-      - '.github/workflows/docs.yml'
+
   workflow_dispatch:
 
 concurrency:
@@ -37,10 +27,48 @@ permissions:
   contents: read
 
 jobs:
+  scope:
+    runs-on: ubuntu-latest
+    outputs:
+      applicable: ${{ steps.scope.outputs.applicable }}
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - id: scope
+        env:
+          EVENT: ${{ github.event_name }}
+          BASE: ${{ github.event.merge_group.base_sha || github.event.pull_request.base.sha }}
+        run: |
+          applicable=true
+          if [ "$EVENT" = merge_group ] || [ "$EVENT" = pull_request ]; then
+            applicable=false
+            if [ "$EVENT" = pull_request ]; then
+              files=$(git diff --name-only "$BASE"...HEAD)
+            else
+              files=$(git diff --name-only "$BASE"..HEAD)
+            fi
+            if printf '%s\n' "$files" | grep -Eq '^(python/|NOTICE$|NOTICE.extra.yml$|.github/workflows/(python_ci|lean_action_ci|docs).yml$)'; then
+              applicable=true
+            fi
+          fi
+          echo "applicable=$applicable" >> "$GITHUB_OUTPUT"
   lint:
+    needs: scope
+    if: always() && (needs.scope.result != 'success' || needs.scope.outputs.applicable != 'false')
     runs-on: ubuntu-latest
     name: Lint (ruff)
     steps:
+      - name: Require successful change classification
+        env:
+          SCOPE_RESULT: ${{ needs.scope.result }}
+          APPLICABLE: ${{ needs.scope.outputs.applicable }}
+        run: |
+          if [ "$SCOPE_RESULT" != success ] || [ "$APPLICABLE" != true ]; then
+            echo "::error::Change classification failed; required validation cannot be skipped."
+            exit 1
+          fi
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
         with:
           persist-credentials: false
@@ -59,11 +87,23 @@ jobs:
         run: cd python && uv run ruff format --check .
 
   test:
+    needs: scope
+    if: always() && (needs.scope.result != 'success' || needs.scope.outputs.applicable != 'false')
     runs-on: ubuntu-latest
     name: Test (pytest)
     steps:
+      - name: Require successful change classification
+        env:
+          SCOPE_RESULT: ${{ needs.scope.result }}
+          APPLICABLE: ${{ needs.scope.outputs.applicable }}
+        run: |
+          if [ "$SCOPE_RESULT" != success ] || [ "$APPLICABLE" != true ]; then
+            echo "::error::Change classification failed; required validation cannot be skipped."
+            exit 1
+          fi
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
         with:
+          fetch-depth: 0
           persist-credentials: false
 
       - uses: astral-sh/setup-uv@d0d8abe699bfb85fec6de9f7adb5ae17292296ff
@@ -72,6 +112,20 @@ jobs:
 
       - name: Install test dependencies
         run: cd python && uv sync --locked --group test
+
+      - name: Validate authored attribution and regenerate the combined test view
+        if: github.event_name == 'pull_request' || github.event_name == 'merge_group' || github.event_name == 'push'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          EVENT: ${{ github.event_name }}
+          BASE_SHA: ${{ github.event.merge_group.base_sha || github.event.pull_request.base.sha || github.event.before }}
+          HEAD_SHA: ${{ github.event.merge_group.head_sha || github.event.pull_request.head.sha || github.sha }}
+        run: |
+          arguments=()
+          if [ "$EVENT" = pull_request ]; then arguments+=(--pull-request); fi
+          if [ "$EVENT" = push ]; then arguments+=(--main-push); fi
+          PYTHONPATH=python uv run --project python --locked python -m lean_pool.queue_notice \
+            --base "$BASE_SHA" --head "$HEAD_SHA" "${arguments[@]}"
 
       - name: Pytest
         run: |

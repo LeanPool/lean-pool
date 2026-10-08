@@ -13,9 +13,8 @@ from dataclasses import asdict, dataclass
 from pathlib import Path
 from typing import Any
 
-import yaml
-
 from lean_pool.quality import FORBIDDEN_SOUNDNESS, _strip_lean_comments
+from lean_pool.registry import read_revision
 
 DEFAULT_LOC_TOLERANCE = 0.10
 DEFAULT_MIN_UPSTREAM_LOC = 200
@@ -111,7 +110,7 @@ def changed_paths(repo: Path, base_ref: str, head_ref: str) -> list[str]:
 
 def load_projects(repo: Path, head_ref: str) -> list[dict[str, Any]]:
     """Load ``LeanPool/projects.yml`` from ``head_ref``."""
-    data = yaml.safe_load(git_show(repo, head_ref, PROJECTS_YML)) or {}
+    data = read_revision(repo, head_ref)
     projects = data.get("projects") or []
     return [project for project in projects if isinstance(project, dict)]
 

@@ -4,6 +4,8 @@ name: PR Separation Guard
 # Lean/Mathlib version bumps may also include their Lake/toolchain metadata.
 
 on:
+  merge_group:
+    types: [checks_requested]
   pull_request:
     types: [opened, synchronize, reopened]
   workflow_dispatch:
@@ -22,7 +24,7 @@ concurrency:
   # the input PR number; otherwise group by the live PR number as before.
   group: >-
     content-pr-guard-${{ github.event.pull_request.number ||
-      inputs.pr_number }}
+      inputs.pr_number || github.ref }}
   cancel-in-progress: true
 
 jobs:
@@ -30,7 +32,22 @@ jobs:
     runs-on: ubuntu-latest
     name: Content / non-content separation
     steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Check every PR in the combined queue commit
+        if: github.event_name == 'merge_group'
+        env:
+          BASE_SHA: ${{ github.event.merge_group.base_sha }}
+          HEAD_SHA: ${{ github.event.merge_group.head_sha }}
+        run: >-
+          PYTHONPATH=python python3 -m lean_pool.queue_guard
+          --base "$BASE_SHA" --head "$HEAD_SHA"
+
       - name: Reject mixed content and non-content changes
+        if: github.event_name != 'merge_group'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           REPO: ${{ github.repository }}
@@ -42,7 +59,13 @@ jobs:
           printf '%s\n' "$files" | sed 's/^/  /'
           echo
 
-          content_re='^(LeanPool\.lean|LeanPool/.+\.lean|LeanPool/projects\.yml)$'
+          base=$(gh api "repos/$REPO/pulls/$PR_NUMBER" --jq '.base.sha')
+          content_re='^(LeanPool\.lean|LeanPool/.+\.lean|LeanPool/projects\.yml|LeanPool/projects/[A-Za-z0-9_-]+\.yaml)$'
+          if ! git cat-file -e "$base:LeanPool/projects.yml" 2>/dev/null \
+            && printf '%s\n' "$files" | grep -qx 'LeanPool.lean'; then
+            echo '::error::LeanPool.lean is fixed; PRs must not edit the shared root.'
+            exit 1
+          fi
           content="$(printf '%s\n' "$files" | { grep -E "$content_re" || true; })"
           non_content="$(printf '%s\n' "$files" | { grep -vE "$content_re" || true; })"
 
@@ -63,9 +86,8 @@ jobs:
 
             echo "::error::This PR mixes content and non-content changes."
             echo "Content files may be changed only in content-only PRs:"
-            echo "  - LeanPool.lean"
             echo "  - LeanPool/**/*.lean"
-            echo "  - LeanPool/projects.yml"
+            echo "  - LeanPool/projects/*.yaml"
             echo "(Exception: a version bump may also touch lean-toolchain,"
             echo " lake-manifest.json, and lakefile.toml.)"
             echo
