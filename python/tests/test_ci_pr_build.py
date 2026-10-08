@@ -13,7 +13,7 @@ from pathlib import Path
 
 import pytest
 
-from lean_pool import ci_pr_build, rebase_fastpath
+from lean_pool import ci_artifacts, ci_pr_build, rebase_fastpath
 
 TOOLCHAIN = (Path(__file__).resolve().parents[2] / "lean-toolchain").read_text().strip()
 
@@ -128,6 +128,30 @@ def _archive(root: Path, base: str, previous: str) -> tuple[Path, Path]:
     rebase_fastpath.pack(root, base, previous, archive)
     compiled.unlink()
     return archive, compiled
+
+
+def test_lake_project_verifier_overlay_replays_without_recompilation(repository):
+    """A real project-only verifier artifact layers on main's unchanged traces."""
+    root, base, head = repository
+    lake = _lake()
+    subprocess.run(
+        [str(lake), "build", "LeanPool.B"], cwd=root, check=True, capture_output=True
+    )
+    shared = root / ".lake/build/lib/lean/LeanPool/A.olean"
+    shared_time = shared.stat().st_mtime_ns
+    archive = root / "verifier.tar.gz"
+    ci_artifacts.pack_build(root, archive, base=base, head=head)
+    build = root / ".lake/build"
+    for path in build.rglob("B.*"):
+        path.unlink()
+    assert ci_artifacts.restore_build(root, archive)
+    compiled = build / "lib/lean/LeanPool/B.olean"
+    compiled_time = compiled.stat().st_mtime_ns
+    subprocess.run(
+        [str(lake), "build", "LeanPool.B"], cwd=root, check=True, capture_output=True
+    )
+    assert shared.stat().st_mtime_ns == shared_time
+    assert compiled.stat().st_mtime_ns == compiled_time
 
 
 def test_metadata_edit_reuses_build_without_skipping_validation(
