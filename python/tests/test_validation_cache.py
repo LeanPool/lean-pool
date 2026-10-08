@@ -103,7 +103,12 @@ def test_checker_edits_invalidate_only_dependent_checks(
     for kind in kinds:
         for modules in pool_units(repository):
             cache.check(kind, modules, lambda: calls.append((kind, modules[0])) or [])
-    if name in {"python/lean_pool/quality.py", "scripts/nolints-style.txt"}:
+    if name in {
+        "python/lean_pool/quality.py",
+        "scripts/nolints-style.txt",
+        "python/lean_pool/registry.py",
+        "python/lean_pool/indexes.py",
+    }:
         fresh_kinds = ("axioms", "backdoors", "declarations", "future-check")
     elif name in {"scripts/ci/lint-project.lean", "scripts/nolints.json"}:
         fresh_kinds = ("lint", "future-check")

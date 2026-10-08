@@ -6,9 +6,9 @@ about 88 minutes for Mathlib and 94–101 minutes for pool documentation data.
 Two per-commit Lean caches were about 5 GiB each against a 10 GB cache limit.
 HTML rendering itself took about four minutes.
 
-Examples: [warm main run](https://github.com/Vilin97/lean-pool/actions/runs/35231792853),
-[cold main run](https://github.com/Vilin97/lean-pool/actions/runs/35253856245),
-[project PR run](https://github.com/Vilin97/lean-pool/actions/runs/35263858983).
+Examples: [warm main run](https://github.com/LeanPool/lean-pool/actions/runs/35231792853),
+[cold main run](https://github.com/LeanPool/lean-pool/actions/runs/35253856245),
+[project PR run](https://github.com/LeanPool/lean-pool/actions/runs/35263858983).
 
 ## Cache ownership
 

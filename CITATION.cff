@@ -31,8 +31,8 @@ keywords:
   - theorem proving
   - interactive theorem proving
 license: Apache-2.0
-repository-code: "https://github.com/Vilin97/lean-pool"
-url: "https://vilin97.github.io/lean-pool/"
+repository-code: "https://github.com/LeanPool/lean-pool"
+url: "https://leanpool.github.io/lean-pool/"
 version: 0.1.0
 date-released: "2026-06-02"
 

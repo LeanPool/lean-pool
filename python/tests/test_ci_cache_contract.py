@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import os
+import subprocess
 from pathlib import Path
 
 import yaml
@@ -114,3 +116,198 @@ def test_single_and_sharded_builds_use_validation_cache() -> None:
         assert "validation_cache lint" in steps[names.index("Lint")]["run"]
         assert "lint-style LeanPool" in steps[names.index("Text style lint")]["run"]
     assert contracts[0] == contracts[1]
+
+
+def test_merge_queue_reports_all_required_gates_without_path_filtered_workflows() -> (
+    None
+):
+    """A filtered-out workflow must never leave the protected queue waiting forever."""
+    import json
+
+    rules = json.loads((WORKFLOWS.parent / "merge-queue-ruleset.json").read_text())[
+        "rules"
+    ]
+    required = {
+        check["context"]
+        for rule in rules
+        if rule["type"] == "required_status_checks"
+        for check in rule["parameters"]["required_status_checks"]
+    }
+    names = set()
+    for filename in (
+        "lean_action_ci.yml",
+        "content-pr-guard.yml",
+        "docs.yml",
+        "python_ci.yml",
+        "workflow_lint.yml",
+        "exposition-verify.yml",
+    ):
+        workflow = yaml.safe_load((WORKFLOWS / filename).read_text())
+        events = workflow.get("on", workflow.get(True))
+        assert "merge_group" in events
+        if filename != "content-pr-guard.yml":
+            assert "paths" not in events["pull_request"]
+        names.update(job.get("name", key) for key, job in workflow["jobs"].items())
+    assert required <= names
+    queue = next(rule["parameters"] for rule in rules if rule["type"] == "merge_queue")
+    assert queue["grouping_strategy"] == "ALLGREEN"
+    assert queue["merge_method"] == "SQUASH"
+
+
+def test_yaml_aware_recovery_has_a_declared_runtime_in_every_job() -> None:
+    """Early planning and restore steps cannot depend on runner-global PyYAML."""
+    modules = ("rebase_fastpath", "ci_pr_build", "queue_build")
+    for filename in ("lean_action_ci.yml", "docs.yml", "exposition-verify.yml"):
+        workflow = yaml.safe_load((WORKFLOWS / filename).read_text())
+        for job in workflow["jobs"].values():
+            runtime_available = False
+            for step in job["steps"]:
+                if str(step.get("uses", "")).startswith("astral-sh/setup-uv@"):
+                    runtime_available = True
+                command = step.get("run", "")
+                if any(f"-m lean_pool.{module}" in command for module in modules):
+                    assert runtime_available, (filename, step)
+                    assert "uv run --project python --locked python -m" in command
+                    assert not any(
+                        f"python3 -m lean_pool.{module}" in command
+                        for module in modules
+                    )
+
+
+def test_required_scoped_checks_fail_closed_when_classification_fails() -> None:
+    """A broken classifier cannot turn a required validation into a passing skip."""
+    for filename, names in (
+        ("python_ci.yml", ("lint", "test")),
+        ("exposition-verify.yml", ("verify",)),
+    ):
+        workflow = yaml.safe_load((WORKFLOWS / filename).read_text())
+        for name in names:
+            job = workflow["jobs"][name]
+            assert job["if"] == (
+                "always() && (needs.scope.result != 'success' || "
+                "needs.scope.outputs.applicable != 'false')"
+            )
+            guard = job["steps"][0]
+            assert (
+                guard["env"].items()
+                >= {
+                    "SCOPE_RESULT": "${{ needs.scope.result }}",
+                    "APPLICABLE": "${{ needs.scope.outputs.applicable }}",
+                }.items()
+            )
+            for result, applicable, accepted in (
+                ("success", "true", True),
+                ("failure", "true", False),
+                ("failure", "", False),
+                ("cancelled", "false", False),
+                ("success", "", False),
+            ):
+                process = subprocess.run(
+                    ["bash", "-e", "-c", guard["run"]],
+                    env={
+                        **os.environ,
+                        "SCOPE_RESULT": result,
+                        "APPLICABLE": applicable,
+                        "BUILD_READY_RESULT": "success",
+                        "EVENT": "pull_request",
+                    },
+                    capture_output=True,
+                )
+                assert (process.returncode == 0) == accepted
+
+
+def test_minimal_verifier_pr_has_an_explicit_full_build_producer(tmp_path):
+    """Cold minimal verification shares compilation while retaining its real gate."""
+    lean = yaml.safe_load((WORKFLOWS / "lean_action_ci.yml").read_text())["jobs"]
+    minimal = yaml.safe_load((WORKFLOWS / "exposition-verify.yml").read_text())["jobs"]
+    assert "minimal_build" in lean["plan"]["outputs"]
+    planning = next(step for step in lean["plan"]["steps"] if step.get("id") == "plan")
+    classifier = minimal["scope"]["steps"][-1]["run"]
+    # Producer scope must include precisely the consumer's heavy trigger paths.
+    pattern = classifier.split("grep -Eq '")[1].split("'")[0]
+    assert pattern in planning["run"]
+    classification = (
+        "minimal_build=false"
+        + planning["run"].split("minimal_build=false", 1)[1].split("cold=false", 1)[0]
+    )
+    changed = tmp_path / "changed-files.txt"
+    output = tmp_path / "output.txt"
+    for path, event, expected in (
+        ("python/lean_pool/ci_artifacts.py", "pull_request", "true"),
+        ("python/lean_pool/exposition/verify.py", "pull_request", "true"),
+        ("scripts/exposition/extract-all.sh", "pull_request", "true"),
+        (".github/workflows/exposition-verify.yml", "pull_request", "true"),
+        ("LeanPool/projects/example.yaml", "pull_request", "false"),
+        ("python/lean_pool/registry.py", "pull_request", "false"),
+        ("python/lean_pool/exposition/verify.py", "merge_group", "false"),
+    ):
+        changed.write_text(path + "\n")
+        output.write_text("")
+        subprocess.run(
+            ["bash", "-e", "-c", classification],
+            env={
+                **os.environ,
+                "changed_files": str(changed),
+                "GITHUB_OUTPUT": str(output),
+                "EVENT_NAME": event,
+            },
+            check=True,
+        )
+        assert output.read_text().strip() == f"minimal_build={expected}"
+    for name in ("build", "finalize"):
+        steps = {step.get("name"): step for step in lean[name]["steps"]}
+        for producer in (
+            "Package build for documentation",
+            "Share build with documentation",
+        ):
+            assert "needs.plan.outputs.minimal_build == 'true'" in steps[producer]["if"]
+            assert "github.event_name == 'pull_request'" in steps[producer]["if"]
+    steps = {step.get("name"): step for step in minimal["verify"]["steps"]}
+    reuse = steps["Reuse matching Lean CI build"]
+    assert "github.event_name != 'pull_request'" not in reuse["if"]
+    assert "--pull-request-artifact" in reuse["run"]
+    assert "--wait-seconds 0" in reuse["run"]
+    assert steps["Build pool"]["run"] == "~/.elan/bin/lake build LeanPool"
+    assert "--baseline 214" in steps["Verify minimal files"]["run"]
+
+
+def test_minimal_build_wait_does_not_consume_verification_window() -> None:
+    """A cold producer cannot use the verifier's six-hour execution allowance."""
+    jobs = yaml.safe_load((WORKFLOWS / "exposition-verify.yml").read_text())["jobs"]
+    assert jobs["verify"]["needs"] == ["scope", "build-ready"]
+    waiting = jobs["build-ready"]
+    assert waiting["needs"] == "scope"
+    assert "needs.scope.outputs.applicable == 'true'" in waiting["if"]
+    assert "github.event_name == 'pull_request'" in waiting["if"]
+    commands = [step.get("run", "") for step in waiting["steps"]]
+    assert any("lean_pool.ci_artifacts wait" in command for command in commands)
+    assert any("--wait-seconds 18000" in command for command in commands)
+    assert not any(
+        "lake build" in command or "extract-all" in command for command in commands
+    )
+    guard = jobs["verify"]["steps"][0]
+    for event, result, accepted in (
+        ("pull_request", "success", True),
+        ("pull_request", "failure", False),
+        ("pull_request", "cancelled", False),
+        ("pull_request", "skipped", False),
+        ("pull_request", "", False),
+        ("merge_group", "skipped", True),
+        ("merge_group", "failure", False),
+        ("schedule", "skipped", True),
+        ("schedule", "failure", False),
+        ("workflow_dispatch", "skipped", True),
+        ("workflow_dispatch", "failure", False),
+    ):
+        process = subprocess.run(
+            ["bash", "-e", "-c", guard["run"]],
+            env={
+                **os.environ,
+                "SCOPE_RESULT": "success",
+                "APPLICABLE": "true",
+                "BUILD_READY_RESULT": result,
+                "EVENT": event,
+            },
+            capture_output=True,
+        )
+        assert (process.returncode == 0) == accepted

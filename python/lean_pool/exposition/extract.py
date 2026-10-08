@@ -21,6 +21,7 @@ from dataclasses import asdict, dataclass
 from pathlib import Path
 
 from lean_pool.exposition.source_text import SourceFile, module_skeleton
+from lean_pool.indexes import discovers_modules, project_modules
 
 LOGGER = logging.getLogger(__name__)
 OUTPUTS = ("declarations.jsonl", "commands.jsonl")
@@ -43,6 +44,11 @@ def file_digest(path: Path) -> str:
 
 def projects(root: Path) -> list[str]:
     """Read the generated index, including module-system import modifiers."""
+    if discovers_modules(root):
+        names = sorted(project_modules(root))
+        if any(not (root / f"LeanPool/{name}.lean").is_file() for name in names):
+            raise ValueError("project is missing its entry module")
+        return names
     source = SourceFile.from_text((root / "LeanPool.lean").read_text())
     names = sorted(
         {name.split(".")[1] for name in module_skeleton(source).local_imports}
