@@ -467,3 +467,93 @@ def test_opted_in_minimal_verifier_reuses_exact_pr_build(repository, monkeypatch
     )
     assert calls == [("owner/repo", "head", "pull_request")]
     assert output.exists()
+
+
+@pytest.mark.parametrize("content_change", [False, True])
+def test_project_archive_preserves_shared_main_build(repository, content_change):
+    """Infrastructure emits a manifest only; content overlays its own project."""
+    base = subprocess.check_output(
+        ["git", "rev-parse", "HEAD"], cwd=repository, text=True
+    ).strip()
+    sources = repository / "LeanPool"
+    sources.mkdir()
+    (repository / "README.md").write_text("infrastructure change")
+    if content_change:
+        (sources / "New.lean").write_text("def value := 1")
+    subprocess.run(["git", "add", "."], cwd=repository, check=True)
+    subprocess.run(
+        [
+            "git",
+            "-c",
+            "user.name=Test",
+            "-c",
+            "user.email=test@example.com",
+            "commit",
+            "-qm",
+            "PR change",
+        ],
+        cwd=repository,
+        check=True,
+    )
+    head = subprocess.check_output(
+        ["git", "rev-parse", "HEAD"], cwd=repository, text=True
+    ).strip()
+    build = repository / ".lake/build/lib/lean/LeanPool"
+    build.mkdir()
+    shared = build / "Existing.olean"
+    shared.write_bytes(b"main build")
+    changed = build / "New.olean"
+    changed.write_bytes(b"PR build")
+    archive = repository / "projects.tar.gz"
+    ci_artifacts.pack_build(repository, archive, base=base, head=head)
+    with tarfile.open(archive) as contents:
+        names = contents.getnames()
+        assert shared.relative_to(repository).as_posix() not in names
+        assert (changed.relative_to(repository).as_posix() in names) == content_change
+        assert len(names) == (2 if content_change else 1)
+    shared.write_bytes(b"newer shared main build")
+    changed.unlink()
+    assert ci_artifacts.restore_build(repository, archive)
+    assert shared.read_bytes() == b"newer shared main build"
+
+    assert changed.exists() == content_change
+    # Exact checkout identity still guards even empty project archives.
+    (repository / "README.md").write_text("later change")
+    subprocess.run(["git", "add", "."], cwd=repository, check=True)
+    subprocess.run(
+        [
+            "git",
+            "-c",
+            "user.name=Test",
+            "-c",
+            "user.email=test@example.com",
+            "commit",
+            "-qm",
+            "later",
+        ],
+        cwd=repository,
+        check=True,
+    )
+    assert not ci_artifacts.restore_build(repository, archive)
+    assert shared.read_bytes() == b"newer shared main build"
+
+
+def test_project_overlay_rejects_unowned_outputs_before_install(repository):
+    """A bad overlay cannot replace an unrelated main-cache module."""
+    destination = repository / "malformed.tar.gz"
+    identity = ci_artifacts.build_identity(repository) | {"projects": ["New"]}
+    with tarfile.open(destination, "w:gz") as archive:
+        payload = json.dumps(identity).encode()
+        entry = tarfile.TarInfo(ci_artifacts.MANIFEST_NAME)
+        entry.size = len(payload)
+        archive.addfile(entry, io.BytesIO(payload))
+        for name in ("New", "Existing"):
+            entry = tarfile.TarInfo(f".lake/build/lib/lean/LeanPool/{name}.olean")
+            entry.size = 3
+            archive.addfile(entry, io.BytesIO(b"bad"))
+    with pytest.raises(ValueError, match="Unexpected build archive member"):
+        ci_artifacts.restore_build(repository, destination)
+    assert not (repository / ".lake/build/lib/lean/LeanPool/New.olean").exists()
+    assert (
+        repository / ".lake/build/lib/lean/LeanPool.olean"
+    ).read_bytes() == b"compiled"

@@ -216,8 +216,8 @@ def test_required_scoped_checks_fail_closed_when_classification_fails() -> None:
                 assert (process.returncode == 0) == accepted
 
 
-def test_minimal_verifier_pr_has_an_explicit_full_build_producer(tmp_path):
-    """Cold minimal verification shares compilation while retaining its real gate."""
+def test_minimal_verifier_pr_has_an_explicit_project_build_producer(tmp_path):
+    """Minimal verification overlays only the PR's projects and retains its gate."""
     lean = yaml.safe_load((WORKFLOWS / "lean_action_ci.yml").read_text())["jobs"]
     minimal = yaml.safe_load((WORKFLOWS / "exposition-verify.yml").read_text())["jobs"]
     assert "minimal_build" in lean["plan"]["outputs"]
@@ -262,6 +262,9 @@ def test_minimal_verifier_pr_has_an_explicit_full_build_producer(tmp_path):
         ):
             assert "needs.plan.outputs.minimal_build == 'true'" in steps[producer]["if"]
             assert "github.event_name == 'pull_request'" in steps[producer]["if"]
+        package = steps["Package build for documentation"]["run"]
+        assert 'if [ "$BUILD_EVENT" = pull_request ]' in package
+        assert 'pack --base "$BASE_SHA" --head "$HEAD_SHA"' in package
     steps = {step.get("name"): step for step in minimal["verify"]["steps"]}
     reuse = steps["Reuse matching Lean CI build"]
     assert "github.event_name != 'pull_request'" not in reuse["if"]
@@ -269,6 +272,24 @@ def test_minimal_verifier_pr_has_an_explicit_full_build_producer(tmp_path):
     assert "--wait-seconds 0" in reuse["run"]
     assert steps["Build pool"]["run"] == "~/.elan/bin/lake build LeanPool"
     assert "--baseline 214" in steps["Verify minimal files"]["run"]
+
+
+def test_shards_restore_projects_before_building_and_main_owns_full_cache():
+    """Large PRs and queue groups reuse their outputs without saving full PR caches."""
+    jobs = yaml.safe_load((WORKFLOWS / "lean_action_ci.yml").read_text())["jobs"]
+    steps = jobs["shard"]["steps"]
+    names = [step.get("name") for step in steps]
+    for reuse in (
+        "Reuse compiled files from this PR's successful runs",
+        "Reuse successful queued PR builds",
+    ):
+        assert names.index(reuse) < names.index("Build this shard's projects")
+    for job in jobs.values():
+        for step in job["steps"]:
+            if step.get("uses", "").startswith("actions/cache/save@"):
+                key = step["with"]["key"]
+                if key.startswith(("LeanPoolBuild-", "LeanDependencies-")):
+                    assert "github.ref == 'refs/heads/main'" in step["if"]
 
 
 def test_minimal_build_wait_does_not_consume_verification_window() -> None:

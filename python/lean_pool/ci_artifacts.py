@@ -1,9 +1,11 @@
-"""Share the current Lean CI build with documentation without sharing mutable caches.
+"""Share main's full build and PR project overlays with independent consumers.
 
 Only the matching Lean Action CI run is queried. A source-tree/configuration
 manifest is verified before any artifact is installed; Lake still checks its
 normal build traces afterwards. Missing or incompatible artifacts fall back to
-the ordinary documentation build.
+the ordinary Lake build. PR overlays preserve the shared main cache and contain
+only projects changed in the author's diff, including a manifest-only archive
+for infrastructure changes.
 """
 
 from __future__ import annotations
@@ -16,6 +18,7 @@ import io
 import json
 import logging
 import os
+import re
 import shutil
 import stat
 import subprocess
@@ -34,6 +37,43 @@ ARTIFACT_NAME = "lean-pool-build"
 ARCHIVE_NAME = "lean-pool-build.tar.zst"
 LEGACY_ARCHIVE_NAME = "lean-pool-build.tar.gz"
 MANIFEST_NAME = "build-manifest.json"
+PROJECT = re.compile(r"[A-Za-z][A-Za-z0-9_]*\Z")
+
+
+def _project_output(path: PurePosixPath, projects: list[str]) -> bool:
+    """Restrict overlays to the changed projects' Lean library and IR files."""
+    for prefix in (
+        (".lake", "build", "ir", "LeanPool"),
+        (".lake", "build", "lib", "lean", "LeanPool"),
+    ):
+        if path.parts[: len(prefix)] == prefix and len(path.parts) > len(prefix):
+            module = path.parts[len(prefix)]
+            return any(
+                module == name or module.startswith(name + ".") for name in projects
+            )
+    return False
+
+
+def _changed_projects(root: Path, base: str, head: str) -> list[str]:
+    """Select PR-owned projects from the author diff, excluding changes on main."""
+    paths = (
+        subprocess.check_output(
+            ["git", "diff", "--name-only", "-z", f"{base}...{head}", "--", "LeanPool"],
+            cwd=root,
+        )
+        .decode()
+        .split("\0")
+    )
+    projects = sorted(
+        {
+            path.split("/")[1].removesuffix(".lean")
+            for path in paths
+            if path.startswith("LeanPool/") and path.endswith(".lean")
+        }
+    )
+    if not all(PROJECT.fullmatch(name) for name in projects):
+        raise ValueError("invalid changed project")
+    return projects
 
 
 def _file_digest(path: Path) -> str:
@@ -93,16 +133,31 @@ def _compressed_stream(path: Path, *, writing: bool = False):
             process.wait()
 
 
-def pack_build(root: Path, destination: Path) -> None:
-    """Package all completed build files using fast, bounded-memory compression."""
+def pack_build(
+    root: Path, destination: Path, *, base: str = "", head: str = ""
+) -> None:
+    """Package main's full build or only PR-owned projects for a verifier overlay."""
     subprocess.run(["git", "diff", "--exit-code", "HEAD", "--"], cwd=root, check=True)
-    payload = json.dumps(build_identity(root)).encode()
+    identity = build_identity(root)
+    if bool(base) != bool(head):
+        raise ValueError("project packaging requires both base and head")
+    if base:
+        identity["projects"] = _changed_projects(root, base, head)
+    payload = json.dumps(identity).encode()
     manifest = tarfile.TarInfo(MANIFEST_NAME)
     manifest.size = len(payload)
     with _compressed_stream(destination, writing=True) as stream:
         with tarfile.open(fileobj=stream, mode="w|", dereference=True) as archive:
             archive.addfile(manifest, io.BytesIO(payload))
-            archive.add(root / ".lake/build", arcname=".lake/build")
+            if "projects" not in identity:
+                archive.add(root / ".lake/build", arcname=".lake/build")
+            else:
+                for path in sorted((root / ".lake/build").rglob("*")):
+                    relative = PurePosixPath(path.relative_to(root).as_posix())
+                    if path.is_file() and _project_output(
+                        relative, identity["projects"]
+                    ):
+                        archive.add(path, arcname=str(relative), recursive=False)
 
 
 def _reuse_unchanged_file(
@@ -131,14 +186,26 @@ def _extract_build(
     archive: tarfile.TarFile,
     temporary: Path,
     reused: dict[Path, os.stat_result],
-) -> bool:
+) -> str | None:
     """Check the manifest first, then extract only ordinary build files."""
     manifest = archive.next()
     if manifest is None or manifest.name != MANIFEST_NAME or not manifest.isfile():
         raise ValueError("Missing build archive manifest")
-    if json.load(archive.extractfile(manifest)) != build_identity(root):
+    identity = json.load(archive.extractfile(manifest))
+    if not isinstance(identity, dict):
+        raise ValueError("invalid build archive manifest")
+    project_overlay = "projects" in identity
+    projects = identity.pop("projects", None)
+    if project_overlay and (
+        not isinstance(projects, list)
+        or not all(
+            isinstance(name, str) and PROJECT.fullmatch(name) for name in projects
+        )
+    ):
+        raise ValueError("invalid project overlay")
+    if identity != build_identity(root):
         LOGGER.info("CI build has different sources or configuration; rebuilding")
-        return False
+        return None
     has_files = False
     seen: set[PurePosixPath] = set()
     for member in archive:
@@ -150,6 +217,10 @@ def _extract_build(
             or ".." in path.parts
             or path in seen
             or not (member.isfile() or member.isdir())
+            or (
+                projects is not None
+                and (not member.isfile() or not _project_output(path, projects))
+            )
         ):
             raise ValueError(f"Unexpected build archive member: {member.name}")
         seen.add(path)
@@ -157,9 +228,9 @@ def _extract_build(
         archive.extract(member, temporary, filter="data")
         if member.isfile():
             _reuse_unchanged_file(root, temporary, member, reused)
-    if not has_files:
+    if not has_files and projects is None:
         raise ValueError("Empty Lean build artifact")
-    return True
+    return "full" if projects is None else "projects"
 
 
 def restore_build(root: Path, archive_path: Path) -> bool:
@@ -177,12 +248,20 @@ def _restore_archive(root: Path, payload: AbstractContextManager[BinaryIO]) -> b
         reused: dict[Path, os.stat_result] = {}
         with payload as stream:
             with tarfile.open(fileobj=stream, mode="r|") as archive:
-                if not _extract_build(root, archive, temporary, reused):
+                mode = _extract_build(root, archive, temporary, reused)
+                if not mode:
                     return False
         destination = root / ".lake/build"
-        if destination.exists():
-            shutil.rmtree(destination)
-        (temporary / ".lake/build").rename(destination)
+        if mode == "full":
+            if destination.exists():
+                shutil.rmtree(destination)
+            (temporary / ".lake/build").rename(destination)
+        else:
+            for staged in (temporary / ".lake/build").rglob("*"):
+                if staged.is_file():
+                    target = root / staged.relative_to(temporary)
+                    target.parent.mkdir(parents=True, exist_ok=True)
+                    os.replace(staged, target)
         for relative, metadata in reused.items():
             path = root / relative
             path.chmod(stat.S_IMODE(metadata.st_mode))
@@ -343,6 +422,8 @@ def main() -> None:
     commands = parser.add_subparsers(dest="command", required=True)
     pack = commands.add_parser("pack")
     pack.add_argument("--output", type=Path, default=Path(ARCHIVE_NAME))
+    pack.add_argument("--base", default="")
+    pack.add_argument("--head", default="")
     restore = commands.add_parser("restore")
     waiting = commands.add_parser("wait")
     for command in (restore, waiting):
@@ -356,7 +437,9 @@ def main() -> None:
     arguments = parser.parse_args()
     logging.basicConfig(level=logging.INFO, format="ci-artifacts: %(message)s")
     if arguments.command == "pack":
-        pack_build(Path.cwd(), arguments.output)
+        pack_build(
+            Path.cwd(), arguments.output, base=arguments.base, head=arguments.head
+        )
     elif arguments.command == "wait":
         wait_for_build(
             arguments.repository,
