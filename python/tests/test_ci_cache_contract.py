@@ -298,6 +298,35 @@ def test_assembly_restores_projects_once_and_main_owns_full_cache():
                     assert "github.ref == 'refs/heads/main'" in step["if"]
 
 
+def test_extraction_caches_survive_failure_and_retry_keys_can_advance():
+    """Failed batches save verified siblings; immutable retry keys can gain work."""
+    for workflow, job in (
+        ("docs.yml", "exposition"),
+        ("exposition-verify.yml", "verify"),
+    ):
+        steps = yaml.safe_load((WORKFLOWS / workflow).read_text())["jobs"][job]["steps"]
+        names = {step.get("name"): step for step in steps}
+        restored = names["Restore project extraction cache"]
+        saved = names["Save project extraction cache"]
+        assert saved["if"].startswith("always() &&")
+        assert "steps.extraction-cache.outcome == 'success'" in saved["if"]
+        assert (
+            "${{ github.run_id }}-${{ github.run_attempt }}" in restored["with"]["key"]
+        )
+        assert "github.run_id" not in restored["with"]["restore-keys"]
+        # Builder/UI/tests do not produce extraction records; their edits must
+        # still verify minimal files without throwing away valid extraction.
+        extraction_key = restored["with"]["key"]
+        assert "scripts/exposition/**" not in extraction_key
+        assert "scripts/exposition/build-minimal.mjs" not in extraction_key
+        assert "scripts/exposition/Extract.lean" in extraction_key
+        assert "scripts/exposition/extract-all.sh" in extraction_key
+        if workflow == "docs.yml":
+            pruned = names["Prune old copies of project extraction cache"]
+            assert "steps.extraction-cache-save.outcome == 'success'" in pruned["if"]
+            assert "github.ref == 'refs/heads/main'" in pruned["if"]
+
+
 def test_minimal_build_wait_does_not_consume_verification_window() -> None:
     """A cold producer cannot use the verifier's six-hour execution allowance."""
     jobs = yaml.safe_load((WORKFLOWS / "exposition-verify.yml").read_text())["jobs"]

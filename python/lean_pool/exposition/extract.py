@@ -16,7 +16,7 @@ import shutil
 import subprocess
 import tempfile
 import time
-from concurrent.futures import ThreadPoolExecutor
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from dataclasses import asdict, dataclass
 from pathlib import Path
 
@@ -204,6 +204,30 @@ def prune_cache(cache: Path, results: list[Extraction]) -> None:
                 shutil.rmtree(path)
 
 
+def write_timings(
+    destination: Path | None, started: float, results: list[Extraction], state: str
+) -> None:
+    """Keep atomic progress diagnostics even if another project never finishes."""
+    if destination is None:
+        return
+    destination.parent.mkdir(parents=True, exist_ok=True)
+    report = {
+        "seconds": time.monotonic() - started,
+        "state": state,
+        "projects": [asdict(item) for item in sorted(results, key=lambda x: x.project)],
+    }
+    with tempfile.NamedTemporaryFile(
+        mode="w", dir=destination.parent, delete=False
+    ) as output:
+        temporary = Path(output.name)
+        try:
+            output.write(json.dumps(report, default=str, indent=2) + "\n")
+            output.close()
+            temporary.replace(destination)
+        finally:
+            temporary.unlink(missing_ok=True)
+
+
 def run_extraction(
     root: Path,
     cache: Path,
@@ -211,25 +235,54 @@ def run_extraction(
     jobs: int = 2,
     lean: str = "lean",
     refresh: bool = False,
+    timings: Path | None = None,
 ) -> list[Extraction]:
     """Extract every indexed project, reusing only matching content-addressed data."""
     if jobs < 1:
         raise ValueError("jobs must be positive")
-    names = projects(root)
-    digests: dict[Path, str] = {}
-    fingerprints = {name: fingerprint(root, name, digests) for name in names}
-    LOGGER.info("Extracting %d projects (%d at a time)", len(names), jobs)
-    with ThreadPoolExecutor(max_workers=jobs) as executor:
-        futures = [
-            executor.submit(
-                extract_project, root, cache, name, fingerprints[name], lean, refresh
-            )
-            for name in names
-        ]
-        results = [future.result() for future in futures]
-    combine(results, destinations)
-    prune_cache(cache, results)
-    return results
+    started = time.monotonic()
+    results: list[Extraction] = []
+    try:
+        write_timings(timings, started, results, "in_progress")
+        names = projects(root)
+        digests: dict[Path, str] = {}
+        fingerprints = {name: fingerprint(root, name, digests) for name in names}
+        LOGGER.info("Extracting %d projects (%d at a time)", len(names), jobs)
+        with ThreadPoolExecutor(max_workers=jobs) as executor:
+            futures = [
+                executor.submit(
+                    extract_project,
+                    root,
+                    cache,
+                    name,
+                    fingerprints[name],
+                    lean,
+                    refresh,
+                )
+                for name in names
+            ]
+            failure: Exception | None = None
+            for future in as_completed(futures):
+                try:
+                    results.append(future.result())
+                except Exception as error:
+                    failure = failure or error
+                write_timings(
+                    timings, started, results, "failed" if failure else "in_progress"
+                )
+            if failure is not None:
+                raise failure
+        results.sort(key=lambda result: result.project)
+        combine(results, destinations)
+        prune_cache(cache, results)
+        write_timings(timings, started, results, "complete")
+        return results
+    except BaseException:
+        try:
+            write_timings(timings, started, results, "failed")
+        except Exception:
+            LOGGER.exception("Could not write failed extraction timings")
+        raise
 
 
 def main() -> None:
@@ -259,17 +312,11 @@ def main() -> None:
         arguments.jobs,
         arguments.lean,
         arguments.refresh,
-    )
-    report = {
-        "seconds": time.monotonic() - started,
-        "projects": [asdict(item) for item in results],
-    }
-    Path(".lake/exposition-timings.json").write_text(
-        json.dumps(report, default=str, indent=2) + "\n"
+        Path(".lake/exposition-timings.json"),
     )
     LOGGER.info(
         "Finished in %.1fs; %d/%d cache hits",
-        report["seconds"],
+        time.monotonic() - started,
         sum(item.cached for item in results),
         len(results),
     )
