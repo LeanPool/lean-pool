@@ -242,19 +242,25 @@ def run_extraction(
         raise ValueError("jobs must be positive")
     started = time.monotonic()
     results: list[Extraction] = []
-    write_timings(timings, started, results, "in_progress")
-    names = projects(root)
-    digests: dict[Path, str] = {}
-    fingerprints = {name: fingerprint(root, name, digests) for name in names}
-    LOGGER.info("Extracting %d projects (%d at a time)", len(names), jobs)
-    with ThreadPoolExecutor(max_workers=jobs) as executor:
-        futures = [
-            executor.submit(
-                extract_project, root, cache, name, fingerprints[name], lean, refresh
-            )
-            for name in names
-        ]
-        try:
+    try:
+        write_timings(timings, started, results, "in_progress")
+        names = projects(root)
+        digests: dict[Path, str] = {}
+        fingerprints = {name: fingerprint(root, name, digests) for name in names}
+        LOGGER.info("Extracting %d projects (%d at a time)", len(names), jobs)
+        with ThreadPoolExecutor(max_workers=jobs) as executor:
+            futures = [
+                executor.submit(
+                    extract_project,
+                    root,
+                    cache,
+                    name,
+                    fingerprints[name],
+                    lean,
+                    refresh,
+                )
+                for name in names
+            ]
             failure: Exception | None = None
             for future in as_completed(futures):
                 try:
@@ -266,14 +272,17 @@ def run_extraction(
                 )
             if failure is not None:
                 raise failure
-        except BaseException:
+        results.sort(key=lambda result: result.project)
+        combine(results, destinations)
+        prune_cache(cache, results)
+        write_timings(timings, started, results, "complete")
+        return results
+    except BaseException:
+        try:
             write_timings(timings, started, results, "failed")
-            raise
-    results.sort(key=lambda result: result.project)
-    combine(results, destinations)
-    prune_cache(cache, results)
-    write_timings(timings, started, results, "complete")
-    return results
+        except Exception:
+            LOGGER.exception("Could not write failed extraction timings")
+        raise
 
 
 def main() -> None:

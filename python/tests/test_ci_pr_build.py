@@ -455,3 +455,34 @@ def test_required_toolchain_cannot_be_silently_skipped(monkeypatch):
     monkeypatch.setattr(Path, "is_file", lambda path: False)
     with pytest.raises(pytest.fail.Exception, match="required pinned Lean"):
         _lake()
+
+
+def test_lake_exposition_embedded_names_preserve_semantics_without_dag_replay(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """The required pinned-Lean lane exercises the actual shared-expression oracle."""
+    root = Path(__file__).resolve().parents[2]
+    lean = _lake().with_name("lean")
+    script = root / "scripts/exposition/Extract.lean"
+    subprocess.run(
+        [str(lean), "-j2", "-o", str(tmp_path / "Extract.olean"), script.name],
+        cwd=script.parent,
+        capture_output=True,
+        text=True,
+        check=True,
+        timeout=60,
+    )
+    monkeypatch.setenv("LEAN_PATH", str(tmp_path))
+    result = subprocess.run(
+        [str(lean), "-j2", str(script.parent / "tests/EmbeddedNames.lean")],
+        cwd=root,
+        capture_output=True,
+        text=True,
+        check=False,
+        timeout=30,
+    )
+    assert result.returncode == 0, result.stdout + result.stderr
+    assert (
+        "embedded-name semantics and shared-expression regression passed"
+        in result.stdout
+    )

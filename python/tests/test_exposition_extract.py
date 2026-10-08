@@ -11,6 +11,7 @@ from pathlib import Path
 
 import pytest
 
+from lean_pool.exposition import extract as extraction
 from lean_pool.exposition.extract import GLOBAL_INPUTS, OUTPUTS, run_extraction
 
 
@@ -267,3 +268,86 @@ def test_additional_source_invalidates_project(repository: Path) -> None:
     directory.mkdir()
     (directory / "New.lean").write_text("-- new module\n")
     assert [item.cached for item in _run(repository)] == [False, True]
+
+
+@pytest.mark.parametrize(
+    ("path", "exception", "message"),
+    [
+        ("LeanPool/A.lean", ValueError, "existing project entry modules"),
+        ("scripts/exposition/Extract.lean", FileNotFoundError, r"Extract\.lean"),
+    ],
+)
+def test_pre_worker_failure_marks_timings_failed(
+    repository: Path, path: str, exception: type[Exception], message: str
+) -> None:
+    """Discovery and fingerprint errors fail before any extraction can start."""
+    (repository / path).unlink()
+    with pytest.raises(exception, match=message):
+        _run(repository)
+    report = json.loads((repository / ".lake/exposition-timings.json").read_text())
+    assert report["state"] == "failed"
+    assert report["projects"] == []
+    assert not (repository / "calls").exists()
+    assert not any((repository / name).exists() for name in OUTPUTS)
+
+
+@pytest.mark.parametrize("stage", ["combine", "prune"])
+def test_publication_failure_preserves_completed_project_diagnostics(
+    repository: Path, monkeypatch: pytest.MonkeyPatch, stage: str
+) -> None:
+    """An actual publication or pruning I/O failure retains completed projects."""
+    _run(repository)
+    published = _outputs(repository)
+    failure = OSError(f"{stage} I/O failure")
+    if stage == "combine":
+        replace = Path.replace
+
+        def reject_publication(path, target):
+            if Path(target) == repository / OUTPUTS[0]:
+                raise failure
+            return replace(path, target)
+
+        monkeypatch.setattr(Path, "replace", reject_publication)
+    else:
+        obsolete = repository / ".lake/exposition-cache/v1/obsolete/generation"
+        obsolete.mkdir(parents=True)
+        remove = extraction.shutil.rmtree
+
+        def reject_pruning(path, *arguments, **keywords):
+            if Path(path) == obsolete:
+                raise failure
+            return remove(path, *arguments, **keywords)
+
+        monkeypatch.setattr(extraction.shutil, "rmtree", reject_pruning)
+    with pytest.raises(OSError, match=f"{stage} I/O failure") as error:
+        _run(repository)
+    assert error.value is failure
+    report = json.loads((repository / ".lake/exposition-timings.json").read_text())
+    assert report["state"] == "failed"
+    assert [item["project"] for item in report["projects"]] == ["A", "B"]
+    assert all(item["cached"] for item in report["projects"])
+    assert _outputs(repository) == published
+
+
+def test_failed_timing_write_cannot_replace_original_failure(
+    repository: Path, monkeypatch: pytest.MonkeyPatch, caplog: pytest.LogCaptureFixture
+) -> None:
+    """Failure diagnostics are best effort when their destination also fails."""
+    failure = ValueError("original discovery failure")
+    write_timings = extraction.write_timings
+
+    def reject_discovery(root):
+        raise failure
+
+    def reject_failed_timings(destination, started, results, state):
+        if state == "failed":
+            raise OSError("timings destination unavailable")
+        write_timings(destination, started, results, state)
+
+    monkeypatch.setattr(extraction, "projects", reject_discovery)
+    monkeypatch.setattr(extraction, "write_timings", reject_failed_timings)
+    with pytest.raises(ValueError, match="original discovery failure") as error:
+        _run(repository)
+    assert error.value is failure
+    assert "Could not write failed extraction timings" in caplog.text
+    assert not (repository / "calls").exists()
