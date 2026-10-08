@@ -17,7 +17,7 @@
   const MAX_LABEL_PX = 400; // widen the left label cull by one label width
   const KINDS = ['theorem', 'lemma', 'def', 'abbrev', 'instance', 'structure',
     'class', 'inductive', 'axiom', 'opaque'];
-  const GITHUB_BLOB = 'https://github.com/Vilin97/lean-pool/blob/main/';
+  const GITHUB_BLOB = 'https://github.com/LeanPool/lean-pool/blob/main/';
   const MONO = 'ui-monospace, SFMono-Regular, Menlo, Consolas, monospace';
 
   // ----- DOM ----------------------------------------------------------------
@@ -1424,7 +1424,7 @@
 
   // ----- minimal Lean file --------------------------------------------------------
 
-  const RAW_BASE = 'https://raw.githubusercontent.com/Vilin97/lean-pool/';
+  const RAW_BASE = 'https://raw.githubusercontent.com/LeanPool/lean-pool/';
   const PLAYGROUND_URL_LIMIT = 128000; // characters; beyond this, download only
 
   function fetchModuleSource(moduleIndex) {

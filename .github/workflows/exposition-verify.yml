@@ -7,17 +7,14 @@ name: Exposition Verify
 # fast; this is the correctness gate for the builder itself).
 
 on:
+  merge_group:
+    types: [checks_requested]
   schedule:
     - cron: '40 6 * * 1'
   workflow_dispatch:
   pull_request:
     branches:
       - main
-    paths:
-      - 'python/lean_pool/exposition/**'
-      - 'python/lean_pool/ci_artifacts.py'
-      - 'scripts/exposition/**'
-      - '.github/workflows/exposition-verify.yml'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -28,10 +25,75 @@ permissions:
   actions: read
 
 jobs:
+  scope:
+    runs-on: ubuntu-latest
+    outputs:
+      applicable: ${{ steps.scope.outputs.applicable }}
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - id: scope
+        env:
+          EVENT: ${{ github.event_name }}
+          BASE: ${{ github.event.merge_group.base_sha || github.event.pull_request.base.sha }}
+        run: |
+          applicable=true
+          if [ "$EVENT" = merge_group ] || [ "$EVENT" = pull_request ]; then
+            applicable=false
+            if [ "$EVENT" = pull_request ]; then
+              files=$(git diff --name-only "$BASE"...HEAD)
+            else
+              files=$(git diff --name-only "$BASE"..HEAD)
+            fi
+            if printf '%s\n' "$files" | grep -Eq '^(python/lean_pool/(exposition/|ci_artifacts.py$)|scripts/exposition/|.github/workflows/exposition-verify.yml$)'; then
+              applicable=true
+            fi
+          fi
+          echo "applicable=$applicable" >> "$GITHUB_OUTPUT"
+  # Waiting for another workflow must not consume the six-hour runner window
+  # needed by extraction and real minimal-file verification.
+  build-ready:
+    needs: scope
+    if: needs.scope.outputs.applicable == 'true' && github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
+        with:
+          persist-credentials: false
+      - name: Wait for matching Lean CI build
+        env:
+          GH_TOKEN: ${{ github.token }}
+          BUILD_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+          BUILD_EVENT: ${{ github.event_name }}
+        run: >-
+          PYTHONPATH=python python3 -m lean_pool.ci_artifacts wait
+          --head "$BUILD_HEAD" --event "$BUILD_EVENT" --wait-seconds 18000
   verify:
+    needs: [scope, build-ready]
+    if: always() && (needs.scope.result != 'success' || needs.scope.outputs.applicable != 'false')
     runs-on: ubuntu-latest
     name: Verify minimal Lean files
     steps:
+      - name: Require successful change classification
+        env:
+          SCOPE_RESULT: ${{ needs.scope.result }}
+          APPLICABLE: ${{ needs.scope.outputs.applicable }}
+          BUILD_READY_RESULT: ${{ needs.build-ready.result }}
+          EVENT: ${{ github.event_name }}
+        run: |
+          if [ "$SCOPE_RESULT" != success ] || [ "$APPLICABLE" != true ]; then
+            echo "::error::Change classification failed; required validation cannot be skipped."
+            exit 1
+          fi
+          case "$EVENT:$BUILD_READY_RESULT" in
+            pull_request:success|merge_group:skipped|schedule:skipped|workflow_dispatch:skipped) ;;
+            *)
+              echo "::error::Build preparation failed; required validation cannot be skipped."
+              exit 1
+              ;;
+          esac
       - name: Checkout project
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
 
@@ -79,7 +141,7 @@ jobs:
           fi
 
       - name: Reuse matching Lean CI build
-        if: steps.pool-build.outputs.cache-hit != 'true' && github.event_name != 'pull_request'
+        if: steps.pool-build.outputs.cache-hit != 'true' && github.event_name != 'merge_group'
         env:
           GH_TOKEN: ${{ github.token }}
           BUILD_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
@@ -87,6 +149,23 @@ jobs:
         run: >-
           PYTHONPATH=python python3 -m lean_pool.ci_artifacts restore
           --head "$BUILD_HEAD" --event "$BUILD_EVENT"
+          --pull-request-artifact --wait-seconds 0
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@d0d8abe699bfb85fec6de9f7adb5ae17292296ff
+        with:
+          enable-cache: true
+
+      - name: Reuse successful queued PR builds
+        if: github.event_name == 'merge_group'
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+          BASE_SHA: ${{ github.event.merge_group.base_sha }}
+          HEAD_SHA: ${{ github.event.merge_group.head_sha }}
+        run: >-
+          PYTHONPATH=python uv run --project python --locked python -m lean_pool.queue_build
+          --base "$BASE_SHA" --head "$HEAD_SHA"
 
       - name: Build pool
         run: ~/.elan/bin/lake build LeanPool
@@ -129,11 +208,6 @@ jobs:
             .lake/exposition-cache/v1/**/failed.log
           include-hidden-files: true
           retention-days: 7
-
-      - name: Install uv
-        uses: astral-sh/setup-uv@d0d8abe699bfb85fec6de9f7adb5ae17292296ff
-        with:
-          enable-cache: true
 
       - name: Generate site data
         run: |

@@ -29,7 +29,7 @@ lint-fix:
 	cd python && uv run ruff check --fix
 	cd python && uv run ruff format
 
-# Verify LeanPool.lean imports the full file set (CI gate).
+# Verify every project aggregate contains its complete source set (CI gate).
 check:
 	lake exe mk_all --check
 

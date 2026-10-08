@@ -54,7 +54,7 @@ def project_weights() -> dict[str, int]:
     """
     weights: dict[str, int] = {}
     for entry in Path("LeanPool").iterdir():
-        if entry.is_dir():
+        if entry.is_dir() and entry.name != "projects":
             count = sum(1 for _ in entry.rglob("*.lean"))
             if Path(f"LeanPool/{entry.name}.lean").exists():
                 count += 1

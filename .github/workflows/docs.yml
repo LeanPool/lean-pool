@@ -1,11 +1,14 @@
 name: Documentation
 
 on:
+  merge_group:
+    types: [checks_requested]
   push:
     branches:
       - main
     paths:
       - '**/*.lean'
+      - 'LeanPool/projects/**'
       - 'LeanPool/projects.yml'
       - 'lakefile.toml'
       - 'lake-manifest.json'
@@ -22,28 +25,6 @@ on:
   pull_request:
     branches:
       - main
-    paths:
-      - 'README.md'
-      # Attribution-only and CI-only PRs must still produce the required
-      # `Documentation preflight` check.
-      - 'NOTICE.extra.yml'
-      - '.github/workflows/lean_action_ci.yml'
-      - 'scripts/ci/**'
-      - '**/*.lean'
-      - 'LeanPool/projects.yml'
-      - 'lakefile.toml'
-      - 'lake-manifest.json'
-      - 'lean-toolchain'
-      - 'docbuild/**'
-      - 'python/lean_pool/exposition/**'
-      - 'python/lean_pool/quality.py'
-      - 'python/lean_pool/validation_cache.py'
-      - 'python/lean_pool/ci_artifacts.py'
-      - 'python/lean_pool/ci_cache.py'
-      - 'python/lean_pool/rebase_fastpath.py'
-      - 'scripts/exposition/**'
-      - '.github/workflows/notice.yml'
-      - '.github/workflows/docs.yml'
   workflow_dispatch:
     inputs:
       preview:
@@ -81,6 +62,11 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Install Python tooling runtime
+        uses: astral-sh/setup-uv@d0d8abe699bfb85fec6de9f7adb5ae17292296ff
+        with:
+          enable-cache: true
+
       - name: Identify compiled Lean sources
         id: build-identity
         run: |
@@ -91,9 +77,9 @@ jobs:
       - name: Detect README-only change
         id: scope
         env:
-          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          BASE_SHA: ${{ github.event.merge_group.base_sha || github.event.pull_request.base.sha }}
           EVENT_NAME: ${{ github.event_name }}
-          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          HEAD_SHA: ${{ github.event.merge_group.head_sha || github.event.pull_request.head.sha }}
         run: |
           set -euo pipefail
           readme_only=false
@@ -113,10 +99,10 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           REPOSITORY: ${{ github.repository }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
-          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
-          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.merge_group.head_sha || github.event.pull_request.head.sha }}
+          BASE_SHA: ${{ github.event.merge_group.base_sha || github.event.pull_request.base.sha }}
         run: |
-          decision=$(PYTHONPATH=python python3 -m lean_pool.rebase_fastpath decide \
+          decision=$(PYTHONPATH=python uv run --project python --locked python -m lean_pool.rebase_fastpath decide \
             --workflow docs.yml --repository "$REPOSITORY" --number "$PR_NUMBER" \
             --head "$HEAD_SHA" --base "$BASE_SHA")
           echo "rebase_only=$(echo "$decision" | python3 -c 'import json,sys; print(str(json.load(sys.stdin)["eligible"]).lower())')" >> "$GITHUB_OUTPUT"
@@ -188,7 +174,7 @@ jobs:
 
       - name: Check regenerated LeanPool root without Lean
         if: steps.rebase.outputs.rebase_only == 'true'
-        run: PYTHONPATH=python python3 -m lean_pool.rebase_fastpath check-index
+        run: PYTHONPATH=python uv run --project python --locked python -m lean_pool.rebase_fastpath check-index
 
   # Runs in parallel with the doc-gen4 build; its (small) artifact is merged
   # into the Pages tree by the `deploy` job. Restores the root build cache but

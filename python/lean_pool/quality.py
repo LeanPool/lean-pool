@@ -13,12 +13,18 @@ from typing import Any
 
 import yaml
 
-from lean_pool.indexes import requires_project_roots, structure_errors
+from lean_pool.indexes import (
+    discovers_modules,
+    project_modules,
+    requires_project_roots,
+    structure_errors,
+)
+from lean_pool.registry import load_document
 from lean_pool.validation_cache import ValidationCache, pool_units
 
 ALLOWED_AXIOMS = {"propext", "Quot.sound", "Classical.choice"}
 CODE_QUALITY_URL = (
-    "https://github.com/Vilin97/lean-pool/blob/main/.github/CODE_QUALITY.md"
+    "https://github.com/LeanPool/lean-pool/blob/main/.github/CODE_QUALITY.md"
 )
 FILE_HEADERS_DOC = f"{CODE_QUALITY_URL}#7-file-headers"
 STATUS_VALUES = {"verified"}
@@ -202,6 +208,8 @@ def _parse_imports(text: str) -> list[str]:
 def _reachable_leanpool_files(root: Path, entry_module: str = "LeanPool") -> set[Path]:
     reachable: set[Path] = set()
     pending = [entry_module]
+    if entry_module == "LeanPool" and discovers_modules(root):
+        pending.extend(f"LeanPool.{name}.Imports" for name in project_modules(root))
     root_module = entry_module.split(".")[0]
 
     while pending:
@@ -602,7 +610,12 @@ def main (args : List String) : IO UInt32 := do
 
 def _check_option_backdoors(root: Path) -> list[_QualityError]:
     """Audit every compiled pool declaration for backdoors."""
-    return _run_option_audit(root, ["LeanPool"])
+    return _run_option_audit(
+        root,
+        [m for unit in pool_units(root) for m in unit]
+        if discovers_modules(root)
+        else ["LeanPool"],
+    )
 
 
 def _run_option_audit(
@@ -679,7 +692,13 @@ def _parse_option_audit_output(
 
 def _check_axioms(root: Path) -> list[_QualityError]:
     """Audit pooled declarations: allowlisted axioms only, never `sorry`."""
-    return _audit_axioms(root, _parse_declarations(root), "LeanPool")
+    return _audit_axioms(
+        root,
+        _parse_declarations(root),
+        [m for unit in pool_units(root) for m in unit]
+        if discovers_modules(root)
+        else "LeanPool",
+    )
 
 
 def _audit_axioms(
@@ -840,14 +859,16 @@ def _load_projects_yaml(
     root: Path,
 ) -> tuple[dict[str, Any] | None, list[_QualityError]]:
     path = root / "LeanPool" / "projects.yml"
-    if not path.exists():
+    if not path.exists() and not (path.parent / "projects").is_dir():
         return None, [_QualityError(path, 1, "missing LeanPool/projects.yml")]
+    if (path.parent / "projects").is_dir():
+        path = path.parent / "projects"
     try:
-        data = yaml.safe_load(path.read_text()) or {}
-    except yaml.YAMLError as error:
+        data = load_document(path)
+    except (yaml.YAMLError, ValueError, OSError) as error:
         return None, [_QualityError(path, 1, f"invalid YAML: {error}")]
     if not isinstance(data, dict):
-        return None, [_QualityError(path, 1, "projects.yml must contain a mapping")]
+        return None, [_QualityError(path, 1, "project registry must contain a mapping")]
     return data, []
 
 
@@ -862,6 +883,8 @@ def _check_projects(
         return errors
 
     path = root / "LeanPool" / "projects.yml"
+    if (path.parent / "projects").is_dir():
+        path = path.parent / "projects"
     projects = data.get("projects", [])
     errors.extend(_check_project_container(path, projects))
     if errors:
@@ -876,12 +899,17 @@ def _check_projects(
     errors.extend(_check_top_level_project_modules(root, path, projects))
     if errors:
         return errors
+    errors.extend(_check_project_wrapper_imports(root, projects))
+    if errors:
+        return errors
 
     for index, project in enumerate(projects, start=1):
         errors.extend(
             _check_project(
                 root,
-                path,
+                (root / "LeanPool/projects" / f"{project['slug']}.yaml")
+                if (root / "LeanPool/projects").is_dir()
+                else path,
                 index,
                 project,
                 validation_cache,
@@ -933,6 +961,16 @@ def _check_project_indexes(root: Path) -> list[_QualityError]:
     ]
 
 
+def _check_project_entry_files(root: Path) -> list[_QualityError]:
+    """Require the top-level entry file used by per-project build and extraction."""
+    return [
+        _QualityError(path, 1, "missing top-level project entry module")
+        for project in project_modules(root)
+        for path in [root / "LeanPool" / f"{project}.lean"]
+        if not path.is_file()
+    ]
+
+
 def _check_project_entry_imports(
     root: Path, projects: list[Any]
 ) -> list[_QualityError]:
@@ -945,7 +983,11 @@ def _check_project_entry_imports(
         # Each project root directly imports its registered entry and all sources.
         imports = {
             imported
-            for module in imports
+            for module in (
+                {f"LeanPool.{name}.Imports" for name in project_modules(root)}
+                if discovers_modules(root)
+                else imports
+            )
             if module.endswith(".Imports")
             for path in [_module_to_path(root, module)]
             if path.exists()
@@ -958,10 +1000,17 @@ def _check_project_entry_imports(
     }
     return [
         _QualityError(
-            index_path,
+            root / "LeanPool" / module.split(".")[1] / "Imports.lean"
+            if discovers_modules(root) and module.startswith("LeanPool.")
+            else index_path,
             1,
-            f"project entry module {module} is not imported by LeanPool.lean; "
-            "run `lake exe mk_all`",
+            f"project entry module {module} is not imported by "
+            + (
+                "a project Imports module; "
+                if discovers_modules(root)
+                else "LeanPool.lean; "
+            )
+            + "run `lake exe mk_all`",
         )
         for module in sorted(entry_modules - imports)
     ]
@@ -970,19 +1019,49 @@ def _check_project_entry_imports(
 def _check_top_level_project_modules(
     root: Path, path: Path, projects: list[Any]
 ) -> list[_QualityError]:
-    """Require every top-level LeanPool project module in `projects.yml`."""
+    """Require each top-level module to belong to a registered project namespace."""
     entry_modules = {
         project["entry_module"]
         for project in projects
         if isinstance(project, dict) and isinstance(project.get("entry_module"), str)
     }
-    missing = sorted(_top_level_project_modules(root) - entry_modules)
+    registered_roots = {".".join(module.split(".")[:2]) for module in entry_modules}
+    missing = sorted(_top_level_project_modules(root) - registered_roots)
     return [
         _QualityError(
             path, 1, f"top-level project module {module} missing from projects.yml"
         )
         for module in missing
     ]
+
+
+def _check_project_wrapper_imports(
+    root: Path, projects: list[Any]
+) -> list[_QualityError]:
+    """Require project extraction wrappers to expose their registered entry."""
+    entry_modules = {
+        project["entry_module"]
+        for project in projects
+        if isinstance(project, dict) and isinstance(project.get("entry_module"), str)
+    }
+    errors = []
+    for entry_module in sorted(entry_modules):
+        wrapper = ".".join(entry_module.split(".")[:2])
+        path = _module_to_path(root, wrapper)
+        if entry_module == wrapper or not path.is_file():
+            continue
+        if _module_to_path(root, entry_module) not in _reachable_leanpool_files(
+            root, wrapper
+        ):
+            errors.append(
+                _QualityError(
+                    path,
+                    1,
+                    f"registered project entry {entry_module} is not reachable "
+                    f"from {wrapper}; import the entry module",
+                )
+            )
+    return errors
 
 
 def _top_level_project_modules(root: Path) -> set[str]:
@@ -1404,6 +1483,7 @@ def run_checks(
     """Run all deterministic quality checks."""
     checks = [
         _check_project_indexes,
+        _check_project_entry_files,
         _check_reachability,
         _check_headers,
         _check_forbidden_lean_text,
@@ -1474,7 +1554,7 @@ def _parse_args(argv: list[str]) -> argparse.Namespace:
     parser.add_argument(
         "--write-project-cards",
         action="store_true",
-        help="Rewrite project-card module docstrings from LeanPool/projects.yml.",
+        help="Rewrite project-card module docstrings from the project registry.",
     )
     return parser.parse_args(argv)
 
