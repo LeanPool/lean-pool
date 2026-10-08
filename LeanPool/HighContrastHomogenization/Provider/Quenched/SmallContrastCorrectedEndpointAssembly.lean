@@ -17,7 +17,7 @@ Imported from the Apache-2.0 HighContrastHomogenization development at commit
 
 public section
 
-open HCPolySupport.HighContrast.Quenched HCPolySupport.HighContrast
+open HCPolySupport.HighContrast
   HCPolySupport MeasureTheory
 
 open scoped Matrix MatrixOrder Matrix.Norms.L2Operator
