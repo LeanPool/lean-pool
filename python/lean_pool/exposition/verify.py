@@ -24,7 +24,8 @@ from dataclasses import dataclass
 from pathlib import Path
 
 import click
-import yaml
+
+from lean_pool.registry import load_document
 
 logger = logging.getLogger(__name__)
 
@@ -50,9 +51,7 @@ class Outcome:
 
 def main_declaration_targets(repo_root: Path, site_dir: Path) -> list[Target]:
     """Every project card ``main_declarations`` entry with a generated shard."""
-    registry = yaml.safe_load(
-        (repo_root / "LeanPool" / "projects.yml").read_text(encoding="utf-8")
-    )
+    registry = load_document(repo_root / "LeanPool" / "projects.yml")
     targets: list[Target] = []
     for entry in registry.get("projects", []):
         entry_module = entry.get("entry_module") or ""

@@ -21,6 +21,28 @@ AGGREGATE_HEADER = (
 # Production module-system packages must never revert to a flat index.
 REQUIRE_PROJECT_ROOTS = True
 
+DISCOVERY_ROOT = MODULE_HEADER + (
+    "-- Lake builds every LeanPool module directly. Import a project's\n"
+    "-- Imports module to use its complete public API.\n"
+)
+
+
+def discovers_modules(root: Path) -> bool:
+    """Recognize the layout whose build enumerates all sources without a root list."""
+    config = root / "lakefile.toml"
+    if not config.exists():
+        return False
+    try:
+        libraries = tomllib.loads(config.read_text()).get("lean_lib", [])
+    except tomllib.TOMLDecodeError:
+        # Lake rejects malformed configurations. Do not interpret them as
+        # permission to omit the existing aggregate coverage check.
+        return False
+    return any(
+        library.get("name") == "LeanPool" and library.get("globs") == ["LeanPool.*"]
+        for library in libraries
+    )
+
 
 def project_modules(root: Path) -> dict[str, list[str]]:
     """Group all source modules by their first component below LeanPool."""
@@ -64,8 +86,11 @@ def render_project_indexes(root: Path) -> dict[Path, str]:
         + "".join(f"public import {module}\n" for module in modules)
         for project, modules in projects.items()
     }
-    result[root / "LeanPool.lean"] = MODULE_HEADER + "".join(
-        f"public import LeanPool.{project}.Imports\n" for project in projects
+    result[root / "LeanPool.lean"] = (
+        DISCOVERY_ROOT
+        if discovers_modules(root) and not (root / "LeanPool/projects.yml").exists()
+        else MODULE_HEADER
+        + "".join(f"public import LeanPool.{project}.Imports\n" for project in projects)
     )
     return result
 

@@ -24,6 +24,7 @@ from typing import Any
 from urllib.parse import urlencode
 
 from lean_pool.indexes import requires_project_roots, structure_errors
+from lean_pool.registry import card_path, read_revision
 
 ARTIFACT = "rebase-project-build"
 ARCHIVE = f"{ARTIFACT}.tar.gz"
@@ -66,8 +67,10 @@ def github_json(endpoint: str) -> Any:
 
 
 def _content_path(path: str) -> bool:
-    return path in {INDEX, REGISTRY} or (
-        path.startswith("LeanPool/") and path.endswith(".lean")
+    return (
+        path in {INDEX, REGISTRY}
+        or card_path(path)
+        or (path.startswith("LeanPool/") and path.endswith(".lean"))
     )
 
 
@@ -91,6 +94,11 @@ def _exists_at(root: Path, revision: str, path: str) -> bool:
 
 def _registry_cards(root: Path, revision: str) -> dict[str, str]:
     """Split the repository's slug-first registry, rejecting unfamiliar layouts."""
+    if not _exists_at(root, revision, REGISTRY):
+        return {
+            card["slug"]: json.dumps(card, sort_keys=True)
+            for card in read_revision(root, revision)["projects"]
+        }
     source = git(root, "show", f"{revision}:{REGISTRY}")
     if not source.startswith("projects:\n"):
         raise ValueError("unrecognized project registry layout")

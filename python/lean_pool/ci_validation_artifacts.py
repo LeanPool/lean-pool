@@ -52,6 +52,9 @@ def source_runs(
     """Promote merged PR passes on main; otherwise recover main's published passes."""
     result = []
     if event == "push":
+        queued = successful_queue_run(repository, head)
+        if queued is not None:
+            result.append((queued, True))
         for pull in github_json(f"repos/{repository}/commits/{head}/pulls"):
             if (
                 pull.get("merged_at")
@@ -74,6 +77,20 @@ def source_runs(
             if run.get("conclusion") == "success" and run.get("head_branch") == "main"
         )
     return result
+
+
+def successful_queue_run(repository: str, head: str) -> int | None:
+    """Find the latest exact-head queue attempt; never hide a newer failure."""
+    query = urlencode({"event": "merge_group", "head_sha": head, "per_page": 10})
+    runs = github_json(
+        f"repos/{repository}/actions/workflows/lean_action_ci.yml/runs?{query}"
+    )["workflow_runs"]
+    latest = max(
+        (run for run in runs if run["head_sha"] == head),
+        key=lambda run: run["id"],
+        default=None,
+    )
+    return latest["id"] if latest and latest.get("conclusion") == "success" else None
 
 
 def download_receipts(repository: str, run: int) -> dict | None:

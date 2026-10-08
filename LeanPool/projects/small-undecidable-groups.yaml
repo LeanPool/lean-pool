@@ -1,0 +1,57 @@
+slug: small-undecidable-groups
+title: Small undecidable groups and effective Adian–Rabin families
+summary: Proves the existence of a finitely presented group with three generator slots
+  and nine relator slots whose word problem is undecidable, and effective families
+  with undecidable triviality having respectively four generators and eleven relators,
+  and two generators and ten relators. The dependency closure includes computable
+  machine-to-Thue reductions, synchronized rewriting, Borisov’s group simulator, injective
+  HNN and Tietze compression, and general Miller–Tancer and Gordon constructions.
+  Formalizes the algebraic results of the cited paper; its four-manifold consequences
+  are outside this project.
+branch: combinatorial group theory and computability
+entry_module: LeanPool.SmallUndecidableGroups
+authors:
+- Marc Kegel
+- Shana Yunsheng Li
+- Qiuyu Ren
+source:
+  title: Small undecidable groups and unrecognizable 4-manifolds
+  arxiv: '2609.10461'
+  url: https://github.com/32805433/Adian-Rabin
+  github_repo: 32805433/Adian-Rabin
+  commit: fb4a401e8fbdba36e7b35c11fde2baa15592e185
+license: MIT
+status: verified
+provenance: AI
+main_declarations:
+- Undecidability.exists_small_undecidable_presentations
+main_results:
+- declaration: Undecidability.exists_three_generator_nine_relator_group_with_unsolvable_word_problem
+  informal: There is a finite presentation with three generator slots and nine relator
+    slots whose word problem is not a computable predicate.
+  source_ref: arXiv:2609.10461v1, Theorem 1.1.
+- declaration: Undecidability.exists_four_generator_eleven_relator_adian_rabin_family
+  informal: There is a uniformly computable family of finite presentations with four
+    generator slots and eleven relator slots for which the set of indices presenting
+    the trivial group is not computable.
+  source_ref: arXiv:2609.10461v1, Theorem 1.3.
+- declaration: Undecidability.exists_two_generator_ten_relator_adian_rabin_family
+  informal: There is a uniformly computable family of finite presentations with two
+    generator slots and ten relator slots for which the set of indices presenting
+    the trivial group is not computable.
+  source_ref: arXiv:2609.10461v1, Theorem 1.4.
+- declaration: Undecidability.exists_small_undecidable_presentations
+  informal: 'The three small-presentation bounds hold together: an undecidable word
+    problem with three generators and nine relators, and effective families with undecidable
+    triviality with four generators and eleven relators and with two generators and
+    ten relators.'
+  source_ref: arXiv:2609.10461v1, Theorems 1.1, 1.3, and 1.4.
+tags:
+- group-theory
+- undecidability
+- finite-presentations
+- hnn-extensions
+- rewriting-systems
+msc:
+- 20F10
+- 03D35

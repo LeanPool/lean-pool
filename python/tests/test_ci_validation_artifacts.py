@@ -116,6 +116,8 @@ def test_only_associated_merged_main_pull_is_promoted(monkeypatch):
     }
 
     def response(endpoint):
+        if "event=merge_group" in endpoint:
+            return {"workflow_runs": []}
         if endpoint.endswith("/commits/merge/pulls"):
             return [
                 valid | {"merged_at": None},

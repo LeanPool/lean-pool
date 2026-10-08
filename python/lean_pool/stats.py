@@ -24,7 +24,7 @@ import sys
 from dataclasses import dataclass
 from pathlib import Path
 
-import yaml
+from lean_pool.registry import load_document
 
 BEGIN_MARKER = "<!-- BEGIN STATS -->"
 END_MARKER = "<!-- END STATS -->"
@@ -59,9 +59,12 @@ def count_projects(projects_yml_path: Path) -> int:
         The length of the top-level ``projects`` list, or ``0`` if the
         file is missing, malformed, or has no ``projects`` key.
     """
-    if not projects_yml_path.is_file():
+    if (
+        not projects_yml_path.is_file()
+        and not (projects_yml_path.parent / "projects").is_dir()
+    ):
         return 0
-    data = yaml.safe_load(projects_yml_path.read_text()) or {}
+    data = load_document(projects_yml_path)
     if not isinstance(data, dict):
         return 0
     projects = data.get("projects") or []
