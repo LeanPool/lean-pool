@@ -37,7 +37,7 @@ def test_evidence_fetches_sources_at_inventory_revision() -> None:
     """A moving main branch cannot mix candidates and later source text."""
     calls = []
 
-    def run_gh(*args):
+    def run_gh(*args, **kwargs):
         calls.append(args)
         if "commits/main" in args[1]:
             return "fixed-commit\n"
@@ -58,7 +58,7 @@ def test_truncated_inventory_is_unchecked() -> None:
     """A partial GitHub tree must not be mistaken for a complete search."""
     section = tauceti_prior_art.gather(
         [Claim("Ado.adoCharZero", "")],
-        lambda *args: (
+        lambda *args, **kwargs: (
             "fixed-commit"
             if "commits/main" in args[1]
             else _tree([ADO], truncated=True)
@@ -72,7 +72,7 @@ def test_truncated_inventory_is_unchecked() -> None:
 def test_inventory_failure_degrades_without_failing_review() -> None:
     """GitHub outages leave explicit uncertainty rather than empty prior art."""
 
-    def run_gh(*args):
+    def run_gh(*args, **kwargs):
         raise subprocess.CalledProcessError(1, "gh")
 
     section = tauceti_prior_art.gather([Claim("Ado.adoCharZero", "")], run_gh)
@@ -82,7 +82,7 @@ def test_inventory_failure_degrades_without_failing_review() -> None:
 def test_failed_source_fetch_and_missing_match_remain_unverifiable() -> None:
     """Neither a failed fetch nor lexical silence proves novelty."""
 
-    def run_gh(*args):
+    def run_gh(*args, **kwargs):
         if "commits/main" in args[1]:
             return "fixed-commit"
         if "git/trees" in args[1]:
@@ -100,7 +100,7 @@ def test_failed_source_fetch_and_missing_match_remain_unverifiable() -> None:
 def test_long_source_preserves_head_and_tail_with_omission_notice() -> None:
     """A long module's endpoint theorem remains visible within the budget."""
     source = "HEAD" + "x" * 20_000 + "TAIL"
-    section = tauceti_prior_art._source(ADO, "commit", lambda *args: source)
+    section = tauceti_prior_art._source(ADO, "commit", lambda *args, **kwargs: source)
     assert "HEAD" in section and "TAIL" in section
     assert "Middle of source omitted" in section
     assert len(section) < tauceti_prior_art.SOURCE_CHARACTERS + 500
@@ -109,7 +109,7 @@ def test_long_source_preserves_head_and_tail_with_omission_notice() -> None:
 def test_no_headlines_do_not_call_github() -> None:
     """Deletion-only PRs need no Tau Ceti source lookup."""
 
-    def run_gh(*args):
+    def run_gh(*args, **kwargs):
         raise AssertionError("No GitHub calls expected")
 
     assert "No new headline" in tauceti_prior_art.gather([], run_gh)
@@ -137,7 +137,7 @@ def test_project_review_receives_tauceti_even_without_mathlib_key(
     monkeypatch.setattr(
         review,
         "run_gh",
-        lambda *args: (
+        lambda *args, **kwargs: (
             "fixed-commit"
             if "commits/main" in args[1]
             else _tree([ADO])
@@ -231,7 +231,7 @@ def test_standalone_reviewer_supplies_pr_base(monkeypatch, base_available) -> No
         assert kwargs["prior_art_section"] == "TauCeti evidence"
         return [SimpleNamespace(result=result)]
 
-    def run_gh(*args):
+    def run_gh(*args, **kwargs):
         assert args[-1] == ".base.sha"
         if not base_available:
             raise subprocess.CalledProcessError(1, "gh")
@@ -326,3 +326,93 @@ def test_local_engine_reads_cards_without_legacy_registry(
     section = review.gather_prior_art("project", "head", "o/r")
     assert [claim.declaration for claim in claims_seen] == ["newTheorem"]
     assert "Tau Ceti evidence" in section
+
+
+def test_optional_lookup_requests_have_finite_timeout() -> None:
+    """Both inventory requests and the source request opt into a deadline."""
+    calls = []
+
+    def run_gh(*args, timeout=None):
+        calls.append((args, timeout))
+        if "commits/main" in args[1]:
+            return "fixed-commit"
+        if "git/trees" in args[1]:
+            return _tree([ADO])
+        return "theorem Ado.adoCharZero : True := trivial"
+
+    section = tauceti_prior_art.gather([Claim("Ado.adoCharZero", "")], run_gh)
+    assert "Ado.adoCharZero : True" in section
+    assert len(calls) == 3
+    assert all(
+        timeout == tauceti_prior_art.LOOKUP_TIMEOUT_SECONDS and 0 < timeout < 60
+        for _, timeout in calls
+    )
+
+
+@pytest.mark.parametrize("timed_out_request", ["commits/main", "git/trees"])
+def test_inventory_timeout_is_unchecked(timed_out_request) -> None:
+    """Either inventory request can time out without aborting the review."""
+
+    def run_gh(*args, timeout=None):
+        assert timeout == tauceti_prior_art.LOOKUP_TIMEOUT_SECONDS
+        if timed_out_request in args[1]:
+            raise subprocess.TimeoutExpired("gh", timeout)
+        if "commits/main" in args[1]:
+            return "fixed-commit"
+        return _tree([ADO])
+
+    section = tauceti_prior_art.gather([Claim("Ado.adoCharZero", "")], run_gh)
+    assert "source inventory unavailable (TimeoutExpired)" in section
+    assert "prior art is unchecked; say unverifiable" in section
+    assert "### " + ADO not in section
+
+
+def test_source_timeout_is_unchecked_and_later_source_is_kept() -> None:
+    """One timed-out optional source does not suppress another candidate."""
+    other = "TauCeti/RepresentationTheory/Lie/Ado/Other.lean"
+
+    def run_gh(*args, timeout=None):
+        assert timeout == tauceti_prior_art.LOOKUP_TIMEOUT_SECONDS
+        if "commits/main" in args[1]:
+            return "fixed-commit"
+        if "git/trees" in args[1]:
+            return _tree([ADO, other])
+        if ADO in args[1]:
+            raise subprocess.TimeoutExpired("gh", timeout)
+        return "theorem Ado.other : True := trivial"
+
+    section = tauceti_prior_art.gather([Claim("Ado.adoCharZero", "")], run_gh)
+    assert "Source fetch failed; statement unchecked" in section
+    assert "Ado.other : True" in section
+    assert "say unverifiable" in section
+
+
+@pytest.mark.parametrize("timeout", [None, 3.0])
+def test_run_gh_preserves_default_and_forwards_opt_in_timeout(
+    monkeypatch, timeout
+) -> None:
+    """Existing callers stay unbounded; explicit optional limits reach subprocess."""
+    from lean_pool import review
+
+    calls = []
+
+    def run(argv, **kwargs):
+        calls.append((argv, kwargs))
+        return SimpleNamespace(stdout="result")
+
+    monkeypatch.setattr(review.subprocess, "run", run)
+    result = (
+        review.run_gh("api", "repos/o/r")
+        if timeout is None
+        else review.run_gh("api", "repos/o/r", timeout=timeout)
+    )
+    assert result == "result"
+    expected_arguments = {
+        "check": True,
+        "capture_output": True,
+        "text": True,
+        "input": None,
+    }
+    if timeout is not None:
+        expected_arguments["timeout"] = timeout
+    assert calls == [(["gh", "api", "repos/o/r"], expected_arguments)]

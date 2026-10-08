@@ -360,25 +360,29 @@ SYSTEM_PROMPT_RUBRIC = dedent(
 )
 
 
-def run_gh(*args: str, stdin: str | None = None) -> str:
+def run_gh(*args: str, stdin: str | None = None, timeout: float | None = None) -> str:
     """Run ``gh`` with the given arguments and return stdout.
 
     Args:
         *args: Arguments to pass after ``gh``.
         stdin: Optional string piped to the subprocess on stdin.
+        timeout: Optional subprocess time limit in seconds; None preserves no limit.
 
     Returns:
         The captured stdout, decoded as text.
 
     Raises:
         subprocess.CalledProcessError: If gh exits non-zero.
+        subprocess.TimeoutExpired: If an explicit time limit expires.
     """
+    optional_arguments = {"timeout": timeout} if timeout is not None else {}
     result = subprocess.run(
         ["gh", *args],
         check=True,
         capture_output=True,
         text=True,
         input=stdin,
+        **optional_arguments,
     )
     return result.stdout
 

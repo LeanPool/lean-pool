@@ -13,6 +13,7 @@ from lean_pool.prior_art import Claim
 REPOSITORY = "TauCetiProject/TauCeti"
 MAX_MODULES = 8
 SOURCE_CHARACTERS = 12_000
+LOOKUP_TIMEOUT_SECONDS = 15
 STOP_WORDS = {
     "admits",
     "all",
@@ -78,8 +79,9 @@ def _source(path: str, revision: str, run_gh: Callable[..., str]) -> str:
             f"repos/{REPOSITORY}/contents/{path}?ref={revision}",
             "--header",
             "Accept: application/vnd.github.raw+json",
+            timeout=LOOKUP_TIMEOUT_SECONDS,
         )
-    except subprocess.CalledProcessError:
+    except (subprocess.CalledProcessError, subprocess.TimeoutExpired):
         return f"### {path}\n{url}\n_Source fetch failed; statement unchecked._"
     if len(source) > SOURCE_CHARACTERS:
         half = SOURCE_CHARACTERS // 2
@@ -91,9 +93,19 @@ def _source(path: str, revision: str, run_gh: Callable[..., str]) -> str:
 
 def _inventory(run_gh: Callable[..., str]) -> tuple[str, list[str]]:
     """Read a complete module inventory at an immutable library revision."""
-    revision = run_gh("api", f"repos/{REPOSITORY}/commits/main", "--jq", ".sha").strip()
+    revision = run_gh(
+        "api",
+        f"repos/{REPOSITORY}/commits/main",
+        "--jq",
+        ".sha",
+        timeout=LOOKUP_TIMEOUT_SECONDS,
+    ).strip()
     tree = json.loads(
-        run_gh("api", f"repos/{REPOSITORY}/git/trees/{revision}?recursive=1")
+        run_gh(
+            "api",
+            f"repos/{REPOSITORY}/git/trees/{revision}?recursive=1",
+            timeout=LOOKUP_TIMEOUT_SECONDS,
+        )
     )
     if not isinstance(tree, dict):
         raise ValueError("GitHub returned a malformed source inventory")
@@ -117,7 +129,13 @@ def gather(claims: list[Claim], run_gh: Callable[..., str]) -> str:
         return "### Tau Ceti comparison\n\nNo new headline; no Tau Ceti search run."
     try:
         revision, paths = _inventory(run_gh)
-    except (subprocess.CalledProcessError, ValueError, KeyError, TypeError) as error:
+    except (
+        subprocess.CalledProcessError,
+        subprocess.TimeoutExpired,
+        ValueError,
+        KeyError,
+        TypeError,
+    ) as error:
         return (
             "### Tau Ceti comparison\n\n"
             f"_Not searched: source inventory unavailable ({type(error).__name__}). "
