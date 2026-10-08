@@ -529,37 +529,6 @@ jobs:
             echo "Mathlib already present from cache"
           fi
 
-      - name: Install uv
-        uses: astral-sh/setup-uv@d0d8abe699bfb85fec6de9f7adb5ae17292296ff
-        with:
-          enable-cache: true
-
-      - name: Reuse compiled files from this PR's successful runs
-        if: github.event_name == 'pull_request' && steps.cache.outputs.cache-hit != 'true'
-        continue-on-error: true
-        env:
-          GH_TOKEN: ${{ github.token }}
-          PR_NUMBER: ${{ github.event.pull_request.number }}
-          PR_BRANCH: ${{ github.head_ref }}
-          PR_HEAD: ${{ github.event.pull_request.head.sha }}
-          PR_BASE: ${{ github.event.pull_request.base.sha }}
-          CURRENT_RUN: ${{ github.run_id }}
-        run: >-
-          PYTHONPATH=python uv run --project python --locked python -m lean_pool.ci_pr_build
-          --number "$PR_NUMBER" --branch "$PR_BRANCH"
-          --head "$PR_HEAD" --base "$PR_BASE" --current-run "$CURRENT_RUN"
-
-      - name: Reuse successful queued PR builds
-        if: github.event_name == 'merge_group'
-        continue-on-error: true
-        env:
-          GH_TOKEN: ${{ github.token }}
-          BASE_SHA: ${{ github.event.merge_group.base_sha }}
-          HEAD_SHA: ${{ github.event.merge_group.head_sha }}
-        run: >-
-          PYTHONPATH=python uv run --project python --locked python -m lean_pool.queue_build
-          --base "$BASE_SHA" --head "$HEAD_SHA"
-
       - name: Build this shard's projects
         env:
           PROJECTS: ${{ matrix.projects }}
@@ -670,6 +639,22 @@ jobs:
           else
             echo "Mathlib already present from cache"
           fi
+
+      # Recover PR outputs once; fresh shard files are layered on afterwards.
+      - name: Reuse compiled files from this PR's successful runs
+        if: github.event_name == 'pull_request' && steps.cache.outputs.cache-hit != 'true'
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_BRANCH: ${{ github.head_ref }}
+          PR_HEAD: ${{ github.event.pull_request.head.sha }}
+          PR_BASE: ${{ github.event.pull_request.base.sha }}
+          CURRENT_RUN: ${{ github.run_id }}
+        run: >-
+          PYTHONPATH=python uv run --project python --locked python -m lean_pool.ci_pr_build
+          --number "$PR_NUMBER" --branch "$PR_BRANCH"
+          --head "$PR_HEAD" --base "$PR_BASE" --current-run "$CURRENT_RUN"
 
       - name: Download shard build outputs
         uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093

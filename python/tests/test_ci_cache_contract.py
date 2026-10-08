@@ -274,16 +274,22 @@ def test_minimal_verifier_pr_has_an_explicit_project_build_producer(tmp_path):
     assert "--baseline 214" in steps["Verify minimal files"]["run"]
 
 
-def test_shards_restore_projects_before_building_and_main_owns_full_cache():
-    """Large PRs and queue groups reuse their outputs without saving full PR caches."""
+def test_assembly_restores_projects_once_and_main_owns_full_cache():
+    """Assembly recovers PR outputs once before fresh shard files are applied."""
     jobs = yaml.safe_load((WORKFLOWS / "lean_action_ci.yml").read_text())["jobs"]
-    steps = jobs["shard"]["steps"]
+    assert not any(
+        "lean_pool.ci_pr_build" in step.get("run", "")
+        or "lean_pool.queue_build" in step.get("run", "")
+        for step in jobs["shard"]["steps"]
+    )
+    steps = jobs["finalize"]["steps"]
     names = [step.get("name") for step in steps]
-    for reuse in (
-        "Reuse compiled files from this PR's successful runs",
-        "Reuse successful queued PR builds",
-    ):
-        assert names.index(reuse) < names.index("Build this shard's projects")
+    assert names.index(
+        "Reuse compiled files from this PR's successful runs"
+    ) < names.index("Download shard build outputs")
+    assert names.index("Reuse successful queued PR builds") < names.index(
+        "Build project"
+    )
     for job in jobs.values():
         for step in job["steps"]:
             if step.get("uses", "").startswith("actions/cache/save@"):
