@@ -8,7 +8,7 @@ module
 public import Mathlib.Data.Finset.Max
 public import Mathlib.Algebra.BigOperators.Group.Finset.Defs
 public import Mathlib.Data.Finset.Union
-public meta import Mathlib.Tactic.Basic
+public meta import Mathlib.Tactic.Basic -- shake: keep
 public meta import Mathlib.Tactic.ToAdditive
 import Mathlib.Algebra.Order.BigOperators.Group.Finset
 import Mathlib.CategoryTheory.Category.Init
@@ -335,11 +335,13 @@ def FL : SplitFormula → SplitSequent
 
 lemma FL_SplitFormula_left_eq_FL_Formula_map (φ : Formula) :
   FL (Sum.inl φ) = φ.FL.map ⟨Sum.inl, Sum.inl_injective⟩ := by
-  induction φ <;> simp_all [FL, Formula.FL, Finset.map_union]
+  induction φ <;>
+    simp only [FL, Formula.FL, Finset.map_union, Finset.map_singleton, *] <;> rfl
 
 lemma FL_SplitFormula_right_eq_FL_Formula_map (φ : Formula) :
   FL (Sum.inr φ) = φ.FL.map ⟨Sum.inr, Sum.inr_injective⟩ := by
-  induction φ <;> simp_all [FL, Formula.FL, Finset.map_union]
+  induction φ <;>
+    simp only [FL, Formula.FL, Finset.map_union, Finset.map_singleton, *] <;> rfl
 
 lemma in_FL_SplitFormula_left {φ : Formula} {ψ : SplitFormula}
   (ψ_sub_φ : ψ ∈ FL (Sum.inl φ)) : ψ.isLeft := by
@@ -481,7 +483,9 @@ def single (n : Nat) (ψ : Formula) : Formula → Formula
 
 /- Single substitution preserves negation. -/
 lemma single_neg (n : Nat) (φ ψ : Formula) : single n ψ (~φ) = (~ (single n ψ φ)) := by
-  induction φ <;> simp [Formula.neg, single] <;> aesop
+  induction φ <;>
+    simp only [single, Formula.neg, apply_ite, Formula.neg_neg_eq, *] <;>
+    split <;> simp_all only
 
 /- Single substitution preserves implication. -/
 lemma single_imp (n : Nat) (C D E : Formula) :
@@ -561,7 +565,17 @@ lemma in_single_voc (m n : Nat) (φ ψ : Formula) :
 lemma not_in_single_voc (n : Nat) (φ ψ : Formula) :
   n ∉ φ.vocab → (single n ψ φ) = φ := by
   intro h
-  induction φ <;> simp_all [single, Formula.vocab] <;> aesop
+  induction φ with
+  | bottom | top => rfl
+  | atom k | negAtom k =>
+    have hk : (k == n) = false := beq_eq_false_iff_ne.mpr
+      (Ne.symm (Finset.notMem_singleton.mp h))
+    simp only [single, hk, Bool.false_eq_true, ite_false]
+  | and φ χ ihφ ihχ | or φ χ ihφ ihχ =>
+    have components := Finset.notMem_union.mp h
+    simp only [single, ihφ components.1, ihχ components.2]
+  | box φ ih | diamond φ ih =>
+    simp only [single, ih h]
 
 lemma not_in_single_top_voc (n : ℕ) (φ : Formula) : n ∉ (single n ⊤ φ).vocab := by
   apply in_single_voc n n ⊤ φ
@@ -596,17 +610,13 @@ lemma lt_and_le_imp_add_lt {a b c : ℕ} : b ≤ a → c < b → (a - b) + c < a
 lemma Finset.sum_diff_singleton_lt {α : Type} [DecidableEq α] {A C : Finset α} {b : α} {f : α → Nat}
   : b ∈ A → C.sum f < f b → Finset.sum ((A \ {b}) ∪ C) f < Finset.sum A f := by
   intro b_in_A C_lt_B
+  have union_sum : ((A \ {b}) ∪ C).sum f + ((A \ {b}) ∩ C).sum f =
+      (A \ {b}).sum f + C.sum f := Finset.sum_union_inter
+  have remaining_sum : (A \ {b}).sum f + f b = A.sum f := by
+    simpa only [Finset.sum_singleton] using
+      (@Finset.sum_sdiff α Nat {b} A _ f _ (Finset.singleton_subset_iff.2 b_in_A))
   calc
-    _ ≤ Finset.sum (A \ {b}) f + Finset.sum C f := by
-      simp [sub_add_left <| @Finset.sum_union_inter _ _ (A \ {b}) C _ f _]
-    _ = Finset.sum A f - Finset.sum {b} f + Finset.sum C f := by
-      have singleton_subset : {b} ⊆ A := Finset.singleton_subset_iff.2 b_in_A
-      simp [sub_add_left <| @Finset.sum_sdiff α Nat {b} A _ f _ singleton_subset]
-    _ < Finset.sum A f := by
-      apply lt_and_le_imp_add_lt
-      · exact
-          Finset.sum_le_sum_of_subset_of_nonneg
-            (Finset.singleton_subset_iff.2 b_in_A)
-            (by simp)
-      · exact C_lt_B
+    _ ≤ (A \ {b}).sum f + C.sum f := (Nat.le_add_right _ _).trans_eq union_sum
+    _ < (A \ {b}).sum f + f b := Nat.add_lt_add_left C_lt_B _
+    _ = A.sum f := remaining_sum
 end Lean4GlCoalgebras
