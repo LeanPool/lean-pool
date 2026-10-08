@@ -223,6 +223,19 @@ def wait_for_artifact(repository: str, run: dict, wait_seconds: int) -> int | No
         time.sleep(min(20, max(0, deadline - time.monotonic())))
 
 
+def wait_for_build(repository: str, head: str, event: str, wait: int) -> int | None:
+    """Allow the producer workflow to appear, within one bounded waiting window."""
+    deadline = time.monotonic() + wait
+    while True:
+        run = matching_run(repository, head, event)
+        remaining = max(0, deadline - time.monotonic())
+        if run is not None:
+            return wait_for_artifact(repository, run, int(remaining))
+        if remaining == 0:
+            return None
+        time.sleep(min(20, remaining))
+
+
 def _pipe_payload(source: BinaryIO, destination: BinaryIO) -> None:
     """Feed the ZIP entry into the decompressor without materializing another file."""
     with destination:
@@ -282,10 +295,18 @@ def download_build(root: Path, repository: str, artifact: int) -> bool:
                 return _restore_archive(root, _artifact_payload(source, name))
 
 
-def reuse_build(root: Path, repository: str, head: str, event: str, wait: int) -> bool:
+def reuse_build(
+    root: Path,
+    repository: str,
+    head: str,
+    event: str,
+    wait: int,
+    *,
+    pull_request_artifact: bool = False,
+) -> bool:
     """Best-effort reuse; unavailable CI never removes the regular Lake build step."""
-    # PRs retain project rebase artifacts but do not publish this full archive.
-    if event == "pull_request":
+    # Only PRs requiring full minimal-file verification publish this archive.
+    if event == "pull_request" and not pull_request_artifact:
         LOGGER.info(
             "PRs do not publish full build artifacts; using the regular Lake build"
         )
@@ -323,14 +344,26 @@ def main() -> None:
     pack = commands.add_parser("pack")
     pack.add_argument("--output", type=Path, default=Path(ARCHIVE_NAME))
     restore = commands.add_parser("restore")
-    restore.add_argument("--repository", default=os.environ.get("GITHUB_REPOSITORY"))
-    restore.add_argument("--head", required=True)
-    restore.add_argument("--event", required=True)
-    restore.add_argument("--wait-seconds", type=int, default=7200)
+    waiting = commands.add_parser("wait")
+    for command in (restore, waiting):
+        command.add_argument(
+            "--repository", default=os.environ.get("GITHUB_REPOSITORY")
+        )
+        command.add_argument("--head", required=True)
+        command.add_argument("--event", required=True)
+        command.add_argument("--wait-seconds", type=int, default=7200)
+    restore.add_argument("--pull-request-artifact", action="store_true")
     arguments = parser.parse_args()
     logging.basicConfig(level=logging.INFO, format="ci-artifacts: %(message)s")
     if arguments.command == "pack":
         pack_build(Path.cwd(), arguments.output)
+    elif arguments.command == "wait":
+        wait_for_build(
+            arguments.repository,
+            arguments.head,
+            arguments.event,
+            arguments.wait_seconds,
+        )
     else:
         reuse_build(
             Path.cwd(),
@@ -338,6 +371,7 @@ def main() -> None:
             arguments.head,
             arguments.event,
             arguments.wait_seconds,
+            pull_request_artifact=arguments.pull_request_artifact,
         )
 
 

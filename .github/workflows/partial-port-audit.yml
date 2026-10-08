@@ -5,7 +5,7 @@ on:
     paths:
       - 'LeanPool.lean'
       - 'LeanPool/**/*.lean'
-      - 'LeanPool/projects.yml'
+      - 'LeanPool/projects/**'
 
 permissions:
   contents: read

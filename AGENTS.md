@@ -6,21 +6,21 @@ This file is a concatenation of README.md and CONTRIBUTING.md.
 
 # lean-pool
 
-[![Lean Action CI](https://github.com/Vilin97/lean-pool/actions/workflows/lean_action_ci.yml/badge.svg)](https://github.com/Vilin97/lean-pool/actions/workflows/lean_action_ci.yml)
-[![Documentation](https://img.shields.io/badge/docs-online-blue)](https://vilin97.github.io/lean-pool/)
-[![Exposition](https://img.shields.io/badge/exposition-online-8a4fff)](https://vilin97.github.io/lean-pool/exposition/)
+[![Lean Action CI](https://github.com/LeanPool/lean-pool/actions/workflows/lean_action_ci.yml/badge.svg)](https://github.com/LeanPool/lean-pool/actions/workflows/lean_action_ci.yml)
+[![Documentation](https://img.shields.io/badge/docs-online-blue)](https://leanpool.github.io/lean-pool/)
+[![Exposition](https://img.shields.io/badge/exposition-online-8a4fff)](https://leanpool.github.io/lean-pool/exposition/)
 [![Zulip](https://img.shields.io/badge/Zulip-Lean_Pool-6492FE?logo=zulip&logoColor=white)](https://leanprover.zulipchat.com/#narrow/channel/619231-Lean-Pool)
-[![Semantic Search](https://img.shields.io/badge/semantic_search-Octo-2f80ed)](https://octo.axiomatic-ai.com/search?scopes=repo%3AVilin97%2Flean-pool)
-[![License](https://img.shields.io/github/license/Vilin97/lean-pool)](LICENSE)
+[![Semantic Search](https://img.shields.io/badge/semantic_search-Octo-2f80ed)](https://octo.axiomatic-ai.com/search?scopes=repo%3ALeanPool%2Flean-pool)
+[![License](https://img.shields.io/github/license/LeanPool/lean-pool)](LICENSE)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.20513444.svg)](https://doi.org/10.5281/zenodo.20513444)
 [![arXiv](https://img.shields.io/badge/arXiv-2609.25199-b31b1b)](https://arxiv.org/abs/2609.25199)
 
-Lean Pool sits between [`mathlib`](https://github.com/leanprover-community/mathlib4) and [`merely-true`](https://github.com/merely-true/merely-true), preserving Lean 4 formalizations that don't fit mathlib's scope. Instead of mathlib's high-bar human review, it relies on deterministic linters and LLM judgment, so it can grow faster while staying `sorry`-free and pinned to the latest Mathlib. See [`MOTIVATION.md`](MOTIVATION.md) for the why, browse the API docs at <https://vilin97.github.io/lean-pool/>, and explore each project's dependency graph and declarations in the [exposition site](https://vilin97.github.io/lean-pool/exposition/).
+Lean Pool sits between [`mathlib`](https://github.com/leanprover-community/mathlib4) and [`merely-true`](https://github.com/merely-true/merely-true), preserving Lean 4 formalizations that don't fit mathlib's scope. Instead of mathlib's high-bar human review, it relies on deterministic linters and LLM judgment, so it can grow faster while staying `sorry`-free and pinned to the latest Mathlib. See [`MOTIVATION.md`](MOTIVATION.md) for the why, browse the API docs at <https://leanpool.github.io/lean-pool/>, and explore each project's dependency graph and declarations in the [exposition site](https://leanpool.github.io/lean-pool/exposition/).
 
 Semantic search is also available via the [API](https://search.octo.axiomatic-ai.com/api/search).
 
 <!-- BEGIN STATS -->
-**273** formalization projects · **5,801,081** lines of Lean
+**289** formalization projects · **9,933,135** lines of Lean
 <!-- END STATS -->
 
 <sub>(stats above are refreshed automatically by the [generated-metadata workflow](.github/workflows/notice.yml) — edit [`python/lean_pool/stats.py`](python/lean_pool/stats.py), not the numbers)</sub>
@@ -57,10 +57,10 @@ compile-cost report. Failed or zero-phase timed runs show unavailable timing
 and are excluded from totals; errors and any successfully measured heartbeat
 counts remain visible.
 
-Import PRs can be refreshed automatically after other projects merge. The
-[rebase helper](python/lean_pool/rebase.py) resolves conflicts in the project registry
-and generated index, preserving module headers and public imports when the index uses them.
-Conflicts in proof files require a manual rebase.
+Accepted PRs enter GitHub’s merge queue. CI checks the combined changes against
+current main without repeatedly updating authors’ branches. Each project owns
+its YAML card and public `Imports.lean`; there is no shared import list to edit.
+Conflicts in the same proof files still require a manual repair.
 
 ### Credits
 
@@ -110,7 +110,7 @@ If you would like to withdraw your project from Lean Pool, open an issue.
 There are two paths:
 
 - **Propose a repo.** Open an issue with the GitHub URL and a maintainer can import it. Repos that Reservoir does not index can be added to [`candidates/manual.txt`](candidates/manual.txt).
-- **Open a content PR.** Add your project under `LeanPool/<YourProject>/`, register it in [`LeanPool/projects.yml`](LeanPool/projects.yml) — the card must declare `provenance` (`human`, `AI`, or `mix`; see below) — and regenerate the indexes with `lake exe mk_all`. Commit `LeanPool/<YourProject>/Imports.lean`, which publicly imports every project source, and the single project import added to `LeanPool.lean`.
+- **Open a content PR.** Add your project under `LeanPool/<YourProject>/`, register it in [`LeanPool/projects/<slug>.yaml`](LeanPool/projects/) — the card must declare `provenance` (`human`, `AI`, or `mix`; see below) — and regenerate the indexes with `lake exe mk_all`. Commit `LeanPool/<YourProject>/Imports.lean`, which publicly imports every project source. Lake discovers all pool modules automatically; keep `LeanPool.lean` unchanged. To use a project, import `LeanPool.<YourProject>.Imports`.
 
 Either way the result must pass CI (build, linters, and quality checks — see [Linting and testing](#linting-and-testing)) and an [LLM review](.github/REVIEW_RULES.md) of fit and significance. Accepted projects must be `sorry`-free, introduce no axioms beyond `Classical.choice`/`propext`/`Quot.sound`, and avoid `unsafe`/`partial`. Each project card must also declare its **provenance** — who wrote the Lean proofs — as `human` (written by people), `AI` (mostly produced by an AI system), or `mix` (both contributed substantially). (Proof profiling via `/profile` is available but informational, not a gate: added files get an absolute profile, while modified files get a base→head compile-cost comparison — useful for checking that a refactor doesn't regress compile time.)
 
@@ -135,7 +135,7 @@ The whole-library checks (`lake exe runLinter LeanPool`, `lake exe lint-style Le
 
 ## Pull requests
 
-- **Don't mix content and non-content changes.** A content PR may modify **only** `LeanPool.lean`, `LeanPool/**/*.lean`, and `LeanPool/projects.yml`. Infra / CI / tooling / doc changes may touch other files, but must not be bundled with content. This is enforced by [`content-pr-guard.yml`](.github/workflows/content-pr-guard.yml).
+- **Don't mix content and non-content changes.** A content PR may modify **only** `LeanPool/**/*.lean` and `LeanPool/projects/<slug>.yaml`. Infra / CI / tooling / doc changes may touch other files, but must not be bundled with content. This is enforced by [`content-pr-guard.yml`](.github/workflows/content-pr-guard.yml).
 - **Never change the checks or gates.** Do not modify `.github/workflows/`, `.github/CODE_QUALITY.md`, `python/lean_pool/quality.py`, `scripts/nolints-style.txt`, the `[leanOptions]`/lint settings in `lakefile.toml`, or any other CI step or linter config — and do not add a waiver of any kind (a `size-limit-ok` comment, a `nolints-style.txt` entry, `set_option linter.X false`, etc.) — unless explicitly asked. If a check fails, fix the code, not the check. This applies to everyone, and especially to AI agents.
 - **Branches.** `yourname/description` for solo work; `feature/`/`fix/` prefixes when shared. Open PRs early (draft + `WIP` is fine) and use `Closes #123` to link issues.
 

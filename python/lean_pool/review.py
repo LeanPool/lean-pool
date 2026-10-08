@@ -81,9 +81,11 @@ from types import SimpleNamespace
 from typing import Any
 from urllib.parse import quote
 
+import yaml
 from openai import APIStatusError, BadRequestError, OpenAI, RateLimitError
 
 from lean_pool import codex_review, prior_art, review_portions
+from lean_pool.registry import load_document, remote_text
 
 logger = logging.getLogger(__name__)
 
@@ -1770,15 +1772,27 @@ def gather_prior_art(kind: str, head_sha: str, repo_full_name: str) -> str | Non
     if kind != "project":
         return None
     registry = "LeanPool/projects.yml"
-    head_text = fetch_file_at(registry, head_sha, repo_full_name)
-    base_text = (REPO_ROOT / registry).read_text(encoding="utf-8")
+    try:
+        head_text = (
+            remote_text(
+                repo_full_name,
+                head_sha,
+                lambda repo, path, ref: fetch_file_at(path, ref, repo) or None,
+            )
+            or ""
+        )
+    except (ValueError, subprocess.SubprocessError):
+        head_text = ""
+    base_text = yaml.safe_dump(load_document(REPO_ROOT / registry))
     if not head_text.strip():
         # Distinguish "could not read the registry" from "the PR adds
         # nothing": both yield zero claims, but only one of them means
         # the reviewer should treat prior art as unchecked.
         unreadable = f"{registry} could not be read at {head_sha[:8]}"
         print(f"Mathlib prior-art search skipped: {unreadable}", file=sys.stderr)
-        projects = (REPO_ROOT / "LeanPool" / "projects.yml").read_text(encoding="utf-8")
+        projects = yaml.safe_dump(
+            load_document(REPO_ROOT / "LeanPool" / "projects.yml")
+        )
         return prior_art.render([], {}, projects, unreadable)
     claims = prior_art.new_claims(head_text, base_text)
     hits, unavailable = prior_art.search_mathlib(claims)
@@ -1786,8 +1800,8 @@ def gather_prior_art(kind: str, head_sha: str, repo_full_name: str) -> str | Non
         print(f"Mathlib prior-art search skipped: {unavailable}", file=sys.stderr)
     else:
         print(f"Searched Mathlib for {len(claims)} headline(s).", file=sys.stderr)
-    projects_text = (REPO_ROOT / "LeanPool" / "projects.yml").read_text(
-        encoding="utf-8"
+    projects_text = yaml.safe_dump(
+        load_document(REPO_ROOT / "LeanPool" / "projects.yml")
     )
     return prior_art.render(claims, hits, projects_text, unavailable)
 

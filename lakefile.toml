@@ -17,6 +17,7 @@ rev = "v4.35.0-rc3"
 
 [[lean_lib]]
 name = "LeanPool"
+globs = ["LeanPool.*"]
 
 [[lean_exe]]
 name = "mk_all"

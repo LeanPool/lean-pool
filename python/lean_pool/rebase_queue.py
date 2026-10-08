@@ -9,6 +9,8 @@ import sys
 from pathlib import Path
 from typing import Any
 
+from lean_pool.registry import card_path
+
 
 def checks_finished(pull: dict[str, Any]) -> bool:
     """Require observed checks to finish before replacing the checked revision."""
@@ -57,6 +59,7 @@ def content_only(root: Path, base: str, head: str) -> bool:
     paths = [path.decode() for path in changed if path]
     return bool(paths) and all(
         path in {"LeanPool.lean", "LeanPool/projects.yml"}
+        or card_path(path)
         or (path.startswith("LeanPool/") and path.endswith(".lean"))
         for path in paths
     )
