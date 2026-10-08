@@ -89,15 +89,15 @@ github_repo_of() {
 }
 
 is_registered_source() {
-  local repo normalized_repo
+  local repo
   repo="$(github_repo_of "$1")" || return 1
   [[ "$repo" == */* ]] || return 1
-  [[ -f "$LEAN_POOL_ROOT/LeanPool/projects.yml" ]] || return 1
-  normalized_repo="$(printf '%s' "$repo" | tr '[:upper:]' '[:lower:]')"
-  sed -n 's/^[[:space:]]*github_repo:[[:space:]]*//p' "$LEAN_POOL_ROOT/LeanPool/projects.yml" \
-    | tr -d '"' \
-    | tr '[:upper:]' '[:lower:]' \
-    | grep -Fxq "$normalized_repo"
+  command -v uv >/dev/null || die "uv is required to read the project registry."
+  local sources
+  sources="$(PYTHONPATH="$LEAN_POOL_ROOT/python" uv run \
+    --project "$LEAN_POOL_ROOT/python" python -m lean_pool.registry \
+    --repo "$LEAN_POOL_ROOT" --sources)" || die "Cannot read project registry."
+  printf '%s\n' "$sources" | grep -Fxiq "$repo"
 }
 
 # --- One import (also the worker invoked by the parallel fan-out) ------------
@@ -113,7 +113,7 @@ if [[ "${1:-}" == "--run-one" ]]; then
   QUEUE_DIR="$BUMPS_DIR/queue-logs"; mkdir -p "$QUEUE_DIR"
   LOGF="$QUEUE_DIR/$SLUG-import.log"
   if is_registered_source "$URL"; then
-    log "SKIP  $SLUG — source already registered in LeanPool/projects.yml."
+    log "SKIP  $SLUG — source already registered in LeanPool/projects/."
     exit 0
   fi
   # Skip if the branch already exists upstream (resume support).

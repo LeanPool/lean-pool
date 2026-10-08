@@ -24,6 +24,7 @@ from typing import Any
 from urllib.parse import urlencode
 
 from lean_pool.indexes import requires_project_roots, structure_errors
+from lean_pool.registry import card_path, read_revision
 
 ARTIFACT = "rebase-project-build"
 ARCHIVE = f"{ARTIFACT}.tar.gz"
@@ -66,8 +67,10 @@ def github_json(endpoint: str) -> Any:
 
 
 def _content_path(path: str) -> bool:
-    return path in {INDEX, REGISTRY} or (
-        path.startswith("LeanPool/") and path.endswith(".lean")
+    return (
+        path in {INDEX, REGISTRY}
+        or card_path(path)
+        or (path.startswith("LeanPool/") and path.endswith(".lean"))
     )
 
 
@@ -91,6 +94,11 @@ def _exists_at(root: Path, revision: str, path: str) -> bool:
 
 def _registry_cards(root: Path, revision: str) -> dict[str, str]:
     """Split the repository's slug-first registry, rejecting unfamiliar layouts."""
+    if not _exists_at(root, revision, REGISTRY):
+        return {
+            card["slug"]: json.dumps(card, sort_keys=True)
+            for card in read_revision(root, revision)["projects"]
+        }
     source = git(root, "show", f"{revision}:{REGISTRY}")
     if not source.startswith("projects:\n"):
         raise ValueError("unrecognized project registry layout")
@@ -316,6 +324,23 @@ def pack(root: Path, base: str, head: str, output: Path) -> None:
                         archive.add(path, arcname=relative.as_posix(), recursive=False)
 
 
+def _restore_build_files(
+    root: Path, archive: tarfile.TarFile, members: list[tarfile.TarInfo]
+) -> None:
+    build_parent = root / ".lake"
+    build_parent.mkdir(exist_ok=True)
+    # Stage on the destination filesystem, so publication uses atomic renames.
+    with tempfile.TemporaryDirectory(
+        prefix="lean-project-stage-", dir=build_parent
+    ) as name:
+        staging = Path(name)
+        archive.extractall(staging, members=members, filter="data")
+        for entry in members:
+            destination = root / entry.name
+            destination.parent.mkdir(parents=True, exist_ok=True)
+            os.replace(staging / entry.name, destination)
+
+
 def restore(root: Path, repository: str, run_id: int, previous_head: str) -> None:
     """Download a prior green run's project artifacts and validate before overlay."""
     endpoint = f"repos/{repository}/actions/runs/{run_id}/artifacts?per_page=100"
@@ -380,11 +405,11 @@ def restore(root: Path, repository: str, run_id: int, previous_head: str) -> Non
                     or not _build_file_for_project(relative, set(projects))
                 ):
                     raise ValueError(f"unexpected project artifact: {entry.name}")
-            archive.extractall(root, members=members, filter="data")
+            _restore_build_files(root, archive, members)
 
 
 def restore_new_main_projects(
-    root: Path, repository: str, previous: str, base: str
+    root: Path, repository: str, previous: str, base: str, *, missing_only: bool = False
 ) -> None:
     """Overlay merged PR artifacts before main's own large cache is published."""
     old_base = git(root, "merge-base", previous, base)
@@ -395,7 +420,15 @@ def restore_new_main_projects(
         parent = git(root, "rev-parse", f"{commit}^1")
         changed = paths(root, parent, commit)
         if not any(
-            path.startswith("LeanPool/") and path.endswith(".lean") for path in changed
+            path.startswith("LeanPool/")
+            and path.endswith(".lean")
+            and (
+                not missing_only
+                or not (root / ".lake/build/lib/lean" / path)
+                .with_suffix(".olean")
+                .is_file()
+            )
+            for path in changed
         ):
             continue
         try:

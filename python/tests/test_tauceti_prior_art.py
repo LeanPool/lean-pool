@@ -5,6 +5,7 @@ import subprocess
 from types import SimpleNamespace
 
 import pytest
+import yaml
 
 from lean_pool import tauceti_prior_art
 from lean_pool.prior_art import Claim
@@ -199,6 +200,11 @@ def test_unreadable_pr_base_is_unchecked(monkeypatch, tmp_path, base_sha) -> Non
         lambda path, ref, repository: "projects: []" if ref == "head" else "",
     )
     monkeypatch.setattr(
+        review,
+        "remote_text",
+        lambda repository, ref, fetch: "projects: []" if ref == "head" else None,
+    )
+    monkeypatch.setattr(
         review.prior_art, "search_mathlib", lambda claims: pytest.fail("must skip")
     )
     section = review.gather_prior_art("project", "head", "o/r", base_sha=base_sha)
@@ -250,3 +256,73 @@ def test_standalone_reviewer_supplies_pr_base(monkeypatch, base_available) -> No
         monkeypatch.setattr(review, name, value)
     assert review.main() == 0
     assert fetched == [("project", "head", "o/r", "base" if base_available else "")]
+
+
+def test_pinned_worker_reads_project_cards_at_both_revisions(monkeypatch) -> None:
+    """The card migration retains exact PR baselines and Tau Ceti evidence."""
+    from lean_pool import registry, review
+
+    accepted = {
+        "slug": "accepted",
+        "main_results": [{"declaration": "acceptedTheorem"}],
+    }
+    added = {"slug": "new", "main_results": [{"declaration": "newTheorem"}]}
+    calls = []
+
+    def card_registry(repository, ref, fetch):
+        calls.append((repository, ref))
+        entries = [accepted, added] if ref == "head" else [accepted]
+        return yaml.safe_dump(
+            registry.combine(
+                {entry["slug"] + ".yaml": yaml.safe_dump(entry) for entry in entries}
+            )
+        )
+
+    monkeypatch.setattr(review, "remote_text", card_registry, raising=False)
+    monkeypatch.setattr(
+        review, "fetch_file_at", lambda *args: pytest.fail("legacy read")
+    )
+    monkeypatch.setattr(review.prior_art, "search_mathlib", lambda claims: ({}, None))
+    claims_seen = []
+    monkeypatch.setattr(
+        review.tauceti_prior_art,
+        "gather",
+        lambda claims, run_gh: claims_seen.extend(claims) or "Tau Ceti evidence",
+    )
+    section = review.gather_prior_art("project", "head", "o/r", base_sha="base")
+    assert calls == [("o/r", "head"), ("o/r", "base")]
+    assert [claim.declaration for claim in claims_seen] == ["newTheorem"]
+    assert "Tau Ceti evidence" in section
+
+
+def test_local_engine_reads_cards_without_legacy_registry(
+    monkeypatch, tmp_path
+) -> None:
+    """Standalone baseline fallback reads complete local project cards."""
+    from lean_pool import review
+
+    directory = tmp_path / "LeanPool/projects"
+    directory.mkdir(parents=True)
+    accepted = "slug: accepted\nmain_results:\n- declaration: acceptedTheorem\n"
+    (directory / "accepted.yaml").write_text(accepted)
+    head = """projects:
+- slug: accepted
+  main_results:
+  - declaration: acceptedTheorem
+- slug: new
+  main_results:
+  - declaration: newTheorem
+"""
+    monkeypatch.setattr(review, "REPO_ROOT", tmp_path)
+    monkeypatch.setattr(review, "remote_text", lambda *args: head, raising=False)
+    monkeypatch.setattr(review, "fetch_file_at", lambda *args: head)
+    monkeypatch.setattr(review.prior_art, "search_mathlib", lambda claims: ({}, None))
+    claims_seen = []
+    monkeypatch.setattr(
+        review.tauceti_prior_art,
+        "gather",
+        lambda claims, run_gh: claims_seen.extend(claims) or "Tau Ceti evidence",
+    )
+    section = review.gather_prior_art("project", "head", "o/r")
+    assert [claim.declaration for claim in claims_seen] == ["newTheorem"]
+    assert "Tau Ceti evidence" in section

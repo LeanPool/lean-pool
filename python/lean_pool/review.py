@@ -81,9 +81,11 @@ from types import SimpleNamespace
 from typing import Any
 from urllib.parse import quote
 
+import yaml
 from openai import APIStatusError, BadRequestError, OpenAI, RateLimitError
 
 from lean_pool import codex_review, prior_art, review_portions, tauceti_prior_art
+from lean_pool.registry import load_document, remote_text
 
 logger = logging.getLogger(__name__)
 
@@ -1760,6 +1762,21 @@ def fetch_file_at(path: str, ref: str, repo_full_name: str) -> str:
         return ""
 
 
+def _prior_art_registry(revision: str, repo_full_name: str) -> str:
+    """Read complete cards or a historical registry at one pinned revision."""
+    try:
+        return (
+            remote_text(
+                repo_full_name,
+                revision,
+                lambda repo, path, ref: fetch_file_at(path, ref, repo) or None,
+            )
+            or ""
+        )
+    except (ValueError, subprocess.SubprocessError):
+        return ""
+
+
 def gather_prior_art(
     kind: str,
     head_sha: str,
@@ -1779,13 +1796,14 @@ def gather_prior_art(
     if kind != "project":
         return None
     registry = "LeanPool/projects.yml"
-    head_text = fetch_file_at(registry, head_sha, repo_full_name)
+    head_text = _prior_art_registry(head_sha, repo_full_name)
     if base_sha is None:
-        base_text = (REPO_ROOT / registry).read_text(encoding="utf-8")
+        try:
+            base_text = yaml.safe_dump(load_document(REPO_ROOT / registry))
+        except (OSError, ValueError, yaml.YAMLError):
+            base_text = ""
     else:
-        base_text = (
-            fetch_file_at(registry, base_sha, repo_full_name) if base_sha else ""
-        )
+        base_text = _prior_art_registry(base_sha, repo_full_name) if base_sha else ""
     if not head_text.strip() or not base_text.strip():
         # Distinguish "could not read the registry" from "the PR adds
         # nothing": both yield zero claims, but only one of them means

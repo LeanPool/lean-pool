@@ -1,7 +1,7 @@
 """Post project metadata advisory comments on open pull requests.
 
 The advisory is intentionally deterministic and does not execute pull request
-code. It reads ``LeanPool/projects.yml`` from the PR base and head commits via
+code. It reads the project registry from the PR base and head commits via
 the GitHub API, detects added or changed project entries, enriches those
 entries with source-repository metadata, then creates or updates a sticky PR
 conversation comment.
@@ -32,6 +32,8 @@ from urllib.parse import quote
 
 import yaml
 
+from lean_pool.registry import remote_text
+
 ADVISORY_MARKER = "<!-- lean-pool-project-advisory -->"
 PROJECTS_PATH = "LeanPool/projects.yml"
 TOOLCHAIN_PATH = "lean-toolchain"
@@ -42,7 +44,7 @@ _TOOLCHAIN_PREFIX_RE = re.compile(r"^leanprover/lean4:", re.IGNORECASE)
 
 @dataclass(frozen=True)
 class ProjectEntry:
-    """Project metadata read from ``LeanPool/projects.yml``."""
+    """Project metadata read from the project registry."""
 
     slug: str
     title: str
@@ -201,8 +203,8 @@ def advisory_rows_for_pr(
 ) -> list[AdvisoryRow]:
     """Build advisory rows for a pull request."""
     pr_ref = _fetch_pr_ref(repo_full_name, pr_number)
-    base_projects = _fetch_file_text(pr_ref.base_repo, PROJECTS_PATH, pr_ref.base_sha)
-    head_projects = _fetch_file_text(pr_ref.head_repo, PROJECTS_PATH, pr_ref.head_sha)
+    base_projects = remote_text(pr_ref.base_repo, pr_ref.base_sha, _fetch_file_text)
+    head_projects = remote_text(pr_ref.head_repo, pr_ref.head_sha, _fetch_file_text)
     if base_projects is None or head_projects is None:
         return []
 

@@ -46,6 +46,7 @@ permissions:
 
 jobs:
   list:
+    if: vars.USE_MERGE_QUEUE != 'true'
     runs-on: ubuntu-latest
     name: List open PRs
     outputs:
