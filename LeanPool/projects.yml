@@ -10692,7 +10692,8 @@ projects:
       measure of the singular set. Includes the supporting Sobolev, singular
       integral, pressure, heat-potential and parabolic Morrey infrastructure,
       equivalence of suitable-solution formulations, and a nonzero shear-flow
-      example. Imports the dependency closure of these completed results.
+      example. Includes the completed Leray, pressure, and linear regularity support needed
+      by further Navier–Stokes regularity projects.
     branch: Analysis
     entry_module: LeanPool.CaffarelliKohnNirenberg
     authors:
@@ -10700,7 +10701,7 @@ projects:
       - Vlad Vicol
     source:
       github_repo: scottnarmstrong/CaffarelliKohnNirenberg
-      url: https://github.com/scottnarmstrong/CaffarelliKohnNirenberg/tree/635fa6376aa3d46ae5251cb1d276a8589163f332
+      url: https://github.com/scottnarmstrong/CaffarelliKohnNirenberg/tree/381d658ead0f03a18361965cc0427ce3fa5844ab
     license: Apache-2.0
     status: verified
     provenance: AI
@@ -13344,6 +13345,766 @@ projects:
     - 35D40
     - 35J60
     - 26B25
+  - slug: polylog-integrals
+    title: Polylogarithms and sixteen log-trigonometric integral identities
+    summary: >-
+      Formalizes the sixteen A-series identities from rainrzk's PolyLog
+      Integrals tutorial, together with reusable real and complex
+      polylogarithm series, absolute convergence on the closed unit disk,
+      differentiation, duplication, Euler reflection and Landen identities,
+      logarithmic moments, Fubini kernels and radial integration machinery.
+      The formulas involve Catalan's constant, zeta(3), Li_4(1/2) and
+      Im Li_3((1+i)/2). These are classical identities, not new informal
+      results. A004 uses the corrected factor pi^2/24; A014 uses a proved
+      expression entirely inside the unit disk, replacing the tutorial's
+      invalid series expansion. A015 uses radial differentiation instead
+      of a half-disc contour integral. The formalization was materially
+      completed on 2026-10-01 at 00:01:57 UTC. The 2022 informal tutorial
+      is older; the eligibility date is that of the completed Lean proofs.
+    branch: analysis
+    entry_module: LeanPool.PolylogIntegrals
+    authors:
+      - rainrzk
+    source:
+      title: LeanPolyLog, completed formalization of PolyLog Integrals
+      url: https://github.com/rainrzk/LeanPolyLog/tree/056b7b42fd1a26f241e2945c67ae821ec5bdc49b
+      github_repo: rainrzk/LeanPolyLog
+      commit: 056b7b42fd1a26f241e2945c67ae821ec5bdc49b
+    license: Apache-2.0
+    status: verified
+    provenance: AI
+    main_declarations:
+      - LeanPolyLog.Proofs.A016
+    main_results:
+      - declaration: LeanPolyLog.Proofs.A001
+        informal: >-
+          Li_2(i) equals -pi^2/48 plus i times Catalan's constant.
+        source_ref: >-
+          Upstream Statements.lean and Proofs/A001.lean at the pinned commit;
+          README prior-appearance table and blueprint/ERRATA.md label classical
+          sources and corrections. Lean proofs were written with Claude assistance
+          and reviewed by rainrzk; the informal tutorial is rainrzk (2022).
+      - declaration: LeanPolyLog.Proofs.A002
+        informal: >-
+          Li_2(1/(1+i)) equals 5 pi^2/96 - log^2(2)/8 plus i times (pi
+          log(2)/8 - G).
+        source_ref: >-
+          Upstream Statements.lean and Proofs/A002.lean at the pinned commit;
+          README prior-appearance table and blueprint/ERRATA.md label classical
+          sources and corrections. Lean proofs were written with Claude assistance
+          and reviewed by rainrzk; the informal tutorial is rainrzk (2022).
+      - declaration: LeanPolyLog.Proofs.A003
+        informal: >-
+          Li_2((sqrt(5)-1)/2) equals pi^2/10 - log^2((1+sqrt(5))/2).
+        source_ref: >-
+          Upstream Statements.lean and Proofs/A003.lean at the pinned commit;
+          README prior-appearance table and blueprint/ERRATA.md label classical
+          sources and corrections. Lean proofs were written with Claude assistance
+          and reviewed by rainrzk; the informal tutorial is rainrzk (2022).
+      - declaration: LeanPolyLog.Proofs.A004
+        informal: >-
+          The integral from 0 to 1 of log(1+x^2)/x equals pi^2/24,
+          correcting the tutorial's factor of two.
+        source_ref: >-
+          Upstream Statements.lean and Proofs/A004.lean at the pinned commit;
+          README prior-appearance table and blueprint/ERRATA.md label classical
+          sources and corrections. Lean proofs were written with Claude assistance
+          and reviewed by rainrzk; the informal tutorial is rainrzk (2022).
+      - declaration: LeanPolyLog.Proofs.A005
+        informal: >-
+          The integral from 0 to 1 of log^2(1+x^2)/x^3 equals pi^2/12 -
+          log^2(2).
+        source_ref: >-
+          Upstream Statements.lean and Proofs/A005.lean at the pinned commit;
+          README prior-appearance table and blueprint/ERRATA.md label classical
+          sources and corrections. Lean proofs were written with Claude assistance
+          and reviewed by rainrzk; the informal tutorial is rainrzk (2022).
+      - declaration: LeanPolyLog.Proofs.A006_cos
+        informal: >-
+          The integral from 0 to pi/4 of log(cos x) equals G/2 - (pi/4)
+          log(2).
+        source_ref: >-
+          Upstream Statements.lean and Proofs/A006.lean at the pinned commit;
+          README prior-appearance table and blueprint/ERRATA.md label classical
+          sources and corrections. Lean proofs were written with Claude assistance
+          and reviewed by rainrzk; the informal tutorial is rainrzk (2022).
+      - declaration: LeanPolyLog.Proofs.A006_sin
+        informal: >-
+          The integral from 0 to pi/4 of log(sin x) equals -G/2 - (pi/4)
+          log(2).
+        source_ref: >-
+          Upstream Statements.lean and Proofs/A006.lean at the pinned commit;
+          README prior-appearance table and blueprint/ERRATA.md label classical
+          sources and corrections. Lean proofs were written with Claude assistance
+          and reviewed by rainrzk; the informal tutorial is rainrzk (2022).
+      - declaration: LeanPolyLog.Proofs.A007
+        informal: >-
+          The integral from 0 to pi/4 of x log(cos x) equals pi G/8 - pi^2
+          log(2)/32 - 21 zeta(3)/128.
+        source_ref: >-
+          Upstream Statements.lean and Proofs/A007.lean at the pinned commit;
+          README prior-appearance table and blueprint/ERRATA.md label classical
+          sources and corrections. Lean proofs were written with Claude assistance
+          and reviewed by rainrzk; the informal tutorial is rainrzk (2022).
+      - declaration: LeanPolyLog.Proofs.A008
+        informal: >-
+          The integral from 0 to pi/4 of x log(1+tan x) equals pi^2
+          log(2)/64 - pi G/8 + 21 zeta(3)/64.
+        source_ref: >-
+          Upstream Statements.lean and Proofs/A008.lean at the pinned commit;
+          README prior-appearance table and blueprint/ERRATA.md label classical
+          sources and corrections. Lean proofs were written with Claude assistance
+          and reviewed by rainrzk; the informal tutorial is rainrzk (2022).
+      - declaration: LeanPolyLog.Proofs.A009
+        informal: >-
+          The integral from 0 to pi/2 of x^2 cot x equals pi^2 log(2)/4 - 7
+          zeta(3)/8.
+        source_ref: >-
+          Upstream Statements.lean and Proofs/A009.lean at the pinned commit;
+          README prior-appearance table and blueprint/ERRATA.md label classical
+          sources and corrections. Lean proofs were written with Claude assistance
+          and reviewed by rainrzk; the informal tutorial is rainrzk (2022).
+      - declaration: LeanPolyLog.Proofs.A010
+        informal: >-
+          The integral from 0 to pi/4 of x^2 tan^2 x equals -G + pi^2/16 -
+          pi^3/192 + pi log(2)/4.
+        source_ref: >-
+          Upstream Statements.lean and Proofs/A010.lean at the pinned commit;
+          README prior-appearance table and blueprint/ERRATA.md label classical
+          sources and corrections. Lean proofs were written with Claude assistance
+          and reviewed by rainrzk; the informal tutorial is rainrzk (2022).
+      - declaration: LeanPolyLog.Proofs.A011
+        informal: >-
+          The integral from 0 to 1 of Li_2(x)/(x sqrt(1-x^2)) equals 3 pi^2
+          log(2)/8 - 7 zeta(3)/16.
+        source_ref: >-
+          Upstream Statements.lean and Proofs/A011.lean at the pinned commit;
+          README prior-appearance table and blueprint/ERRATA.md label classical
+          sources and corrections. Lean proofs were written with Claude assistance
+          and reviewed by rainrzk; the informal tutorial is rainrzk (2022).
+      - declaration: LeanPolyLog.Proofs.A012
+        informal: >-
+          The integral from 0 to 1 of arctan(x) log(x)/(1+x) equals -pi^3/64
+          + G log(2)/2.
+        source_ref: >-
+          Upstream Statements.lean and Proofs/A012.lean at the pinned commit;
+          README prior-appearance table and blueprint/ERRATA.md label classical
+          sources and corrections. Lean proofs were written with Claude assistance
+          and reviewed by rainrzk; the informal tutorial is rainrzk (2022).
+      - declaration: LeanPolyLog.Proofs.A013
+        informal: >-
+          The integral from 0 to 1 of arctan(x) log^2(x)/(1+x) equals -pi^2
+          G/24 - pi^3 log(2)/32 + 21 pi zeta(3)/64.
+        source_ref: >-
+          Upstream Statements.lean and Proofs/A013.lean at the pinned commit;
+          README prior-appearance table and blueprint/ERRATA.md label classical
+          sources and corrections. Lean proofs were written with Claude assistance
+          and reviewed by rainrzk; the informal tutorial is rainrzk (2022).
+      - declaration: LeanPolyLog.Proofs.A014
+        informal: >-
+          The integral from 0 to 1 of log(x) log(1+x)/(1+x^2) equals 11
+          pi^3/128 + 3 pi log^2(2)/32 - 2 G log(2) - 3 Im Li_3((1+i)/2).
+        source_ref: >-
+          Upstream Statements.lean and Proofs/A014.lean at the pinned commit;
+          README prior-appearance table and blueprint/ERRATA.md label classical
+          sources and corrections. Lean proofs were written with Claude assistance
+          and reviewed by rainrzk; the informal tutorial is rainrzk (2022).
+      - declaration: LeanPolyLog.Proofs.A015
+        informal: >-
+          The integral from 0 to pi/2 of x log^2(sin x) equals Li_4(1/2) -
+          19 pi^4/2880 + log^4(2)/24 + pi^2 log^2(2)/12.
+        source_ref: >-
+          Upstream Statements.lean and Proofs/A015.lean at the pinned commit;
+          README prior-appearance table and blueprint/ERRATA.md label classical
+          sources and corrections. Lean proofs were written with Claude assistance
+          and reviewed by rainrzk; the informal tutorial is rainrzk (2022).
+      - declaration: LeanPolyLog.Proofs.A016
+        informal: >-
+          The integral from 0 to 1 of Li_3(x)/(x sqrt(1-x^2)) equals
+          Li_4(1/2)/2 + 41 pi^4/5760 + log^4(2)/48 + pi^2 log^2(2)/6.
+        source_ref: >-
+          Upstream Statements.lean and Proofs/A016.lean at the pinned commit;
+          README prior-appearance table and blueprint/ERRATA.md label classical
+          sources and corrections. Lean proofs were written with Claude assistance
+          and reviewed by rainrzk; the informal tutorial is rainrzk (2022).
+      - declaration: LeanPolyLog.Dilog.hasDerivAt_Li_succ
+        informal: >-
+          For every natural s and nonzero complex z in the open unit disk,
+          Li_(s+1) has derivative Li_s(z)/z at z.
+        source_ref: Upstream Lemmas/DilogComplex.lean, termwise differentiation.
+      - declaration: LeanPolyLog.Dilog.Li_two_add_Li_two_div_sub_one
+        informal: >-
+          For complex z of norm at most 1 and real part at most 1/2,
+          Li_2(z) + Li_2(z/(z-1)) = -log^2(1-z)/2, with the principal logarithm.
+        source_ref: Upstream Lemmas/DilogComplex.lean, complex Landen identity.
+      - declaration: LeanPolyLog.Arcsin.integral_Lir_div_mul_sqrt
+        informal: >-
+          For s at least 2 and a measurable nonnegative weight w on (0,1]
+          with integrable moments equal to 1/(n+1)^s, the integral from
+          0 to 1 of Li_s(x)/(x sqrt(1-x^2)) equals the integral from 0 to
+          pi/2 of w(sin t) times (pi/2+t).
+        source_ref: Upstream Lemmas/Arcsin.lean, moment representation and Fubini.
+      - declaration: LeanPolyLog.Radial.integral_im_logCube
+        informal: >-
+          If (log^3((1+r)/2)-log^3((1-r)/2))/r is interval integrable from
+          0 to 1, its integral equals the integral from 0 to pi of the
+          imaginary part of the cube of the principal complex logarithm
+          of (1+exp(i t))/2.
+        source_ref: Upstream Lemmas/Radial.lean, radial differentiation and domination.
+    tags:
+      - analysis
+      - polylogarithms
+      - special-functions
+      - integration
+      - complex-analysis
+    msc:
+      - 33B30
+      - 26A36
+      - 30B10
+  - slug: anomalous-diffusion-fractal-homogenization
+    title: Anomalous diffusion by fractal homogenization
+    summary: >-
+      For each positive Hölder exponent below one third, constructs a
+      divergence-free periodic drift on the two-dimensional torus exhibiting
+      anomalous dissipation for every mean-zero periodic H1 initial datum.
+      The same drift admits
+      uniform Hölder time estimates along a sequence of diffusivity intervals
+      and two distinct vanishing-diffusivity limits for an explicit nonempty
+      class of smooth data. Includes weak existence and uniqueness, Sobolev
+      and Fourier/Galerkin infrastructure, flow derivatives, quantitative
+      homogenization, and the multiscale construction. The no-selection result
+      is the corrected version documented upstream, not the printed generality
+      of the original paper's Proposition 5.5.
+    branch: analysis of partial differential equations
+    entry_module: LeanPool.AnomalousDiffusion
+    authors:
+      - Scott Armstrong
+      - Vlad Vicol
+    source:
+      title: Anomalous diffusion by fractal homogenization, Lean formalization
+      arxiv: '2305.05048'
+      url: https://github.com/scottnarmstrong/AVAnomalousDiffusion/tree/fad71d10bff031522cc598a37770238248186964
+      github_repo: scottnarmstrong/AVAnomalousDiffusion
+      commit: fad71d10bff031522cc598a37770238248186964
+    license: Apache-2.0
+    status: verified
+    provenance: AI
+    main_declarations:
+      - AVenhance.anomalous_dissipation_full
+    main_results:
+      - declaration: AVenhance.anomalous_dissipation_full
+        informal: >-
+          For every alpha strictly between zero and one third, one periodic,
+          divergence-free drift has joint spatial and temporal alpha-Hölder
+          regularity and continuity into the spatial Hölder class. It exhibits
+          anomalous dissipation with a positive rate depending only on the
+          initial L2-to-gradient ratio, uniform Hölder-in-time L2 bounds along
+          diffusivity intervals accumulating at zero, and two distinct
+          transport limits along separated diffusivity sequences for a smooth
+          mean-zero data class containing arbitrarily high cosine modes.
+        source_ref: >-
+          Upstream Statements/FullTheorem/AnomalousDissipationFull.lean and
+          CITATION.cff, date-released 2026-10-02; the pinned completion commit is
+          fad71d10bff031522cc598a37770238248186964, with committer timestamp
+          2026-10-02 16:04:04 UTC. Anomalous dissipation is the dimension-two
+          case of Theorem 1.1 of arXiv:2305.05048;
+          uniform time regularity and no-selection use upstream's documented
+          corrections to Sections 5.4 and 5.5. The README explicitly records
+          predominantly AI-produced proofs under the authors' supervision.
+      - declaration: AVenhance.anomalous_dissipation
+        informal: >-
+          For every positive alpha below one third there exists a periodic,
+          divergence-free alpha-Hölder drift and a rate function taking values
+          in (0,1], depending only on the initial L2-to-gradient ratio, such that
+          the limsup as positive diffusivity tends to zero of integrated gradient
+          dissipation is at least the squared rate times the initial L2 energy,
+          for every mean-zero periodic H1 datum and corresponding weak solutions.
+      - declaration: AVenhance.weak_wellposed
+        informal: >-
+          Every bounded measurable periodic drift with positive diffusivity
+          and periodic-cell L2 initial datum has a weak solution, unique
+          up to spatial almost-everywhere equality at every time in [0,1].
+    tags:
+      - anomalous-dissipation
+      - homogenization
+      - advection-diffusion
+    msc:
+      - 35B27
+      - 35Q35
+      - 76F30
+  - title: Davis–Kahan rotation of eigenvectors
+    summary: Formalizes the sin-Theta, tan-Theta, sin-two-Theta, and tan-two-Theta theorem families
+      from Section 2 of Davis and Kahan (1970), for real or complex separable Hilbert spaces, including
+      common-domain unbounded operators and symmetric-norm estimates. The tan-Theta endpoint requires
+      Rayleigh–Ritz trial data with residual orthogonal to the trial subspace.
+    branch: operator theory
+    main_declarations:
+    - RotationOfEigenvectors.sinTheta_mem_and_bound
+    main_results:
+    - declaration: RotationOfEigenvectors.sinTheta_mem_and_bound
+      informal: With finite symmetric residual norm, a spectral gap gives sine-angle ideal membership
+        and controls its symmetric norm by the corresponding residual norm.
+    - declaration: RotationOfEigenvectors.tanTheta
+      informal: For Rayleigh–Ritz trial data with residual orthogonal to the trial subspace,
+        a positive directed spectral gap between the trial compression and the unwanted
+        reducing block gives the symmetric-norm tangent-angle residual estimate and
+        tangent pole exclusion, assuming the residual has finite symmetric norm.
+    - declaration: RotationOfEigenvectors.sinTwoTheta_directed_mem_and_bound
+      informal: Under the printed oriented gap and common-domain self-adjointness hypotheses, finite
+        symmetric residual norm gives directed sine-double-angle ideal membership, and twice the
+        residual norm bounds the gap times its norm.
+    - declaration: RotationOfEigenvectors.sinTwoTheta_ambient_mem_and_bound
+      informal: Finite symmetric perturbation norm gives ambient sine-double-angle ideal membership
+        and the whole-space gap bound under the theorem's reducing and perturbed-gap hypotheses.
+    - declaration: RotationOfEigenvectors.tanTwoTheta
+      informal: The residual tangent-double-angle estimate holds with the theorem’s source-facing block
+        hypotheses.
+    tags:
+    - operator-theory
+    - spectral-perturbation
+    - hilbert-spaces
+    msc:
+    - 47A55
+    - 47A15
+    - 15A42
+    provenance: AI
+    slug: aiq-davis-kahan-1970-rotation-eigenvectgors-perturbation-formalization
+    entry_module: LeanPool.DavisKahan
+    authors:
+    - Jon Crall
+    - Edward Wang
+    source:
+      url: https://github.com/aiq-kitware/aiq-davis-kahan-1970-rotation-eigenvectgors-perturbation-formalization
+      github_repo: aiq-kitware/aiq-davis-kahan-1970-rotation-eigenvectgors-perturbation-formalization
+      commit: 38e37da6e147cd0016da1eb05987c3edf7d95b39
+    license: Apache-2.0
+    status: verified
+  - slug: nf-weak-partition
+    title: New Foundations refutes the Weak Partition Principle
+    summary: >-
+      Constructs a formal first-order derivation of the negation of the Weak
+      Partition Principle from New Foundations, with extensionality and the full
+      integer-stratified comprehension schema. Proves full deductive equivalence
+      with Metamath's Hailperin-derived finite presentation, including its added
+      singleton axiom. Replays the source proof through nominal syntax, explicit
+      freshness certificates, and a de Bruijn calculus.
+      Includes reusable first-order soundness and completeness, stratification,
+      lowering, and proof-translation infrastructure. This is a derivability
+      theorem; it does not assert the consistency of New Foundations.
+    branch: mathematical logic
+    entry_module: LeanPool.NFWeakPartition
+    authors:
+      - Elliot Glazer
+      - NFNotWPP contributors
+      - Jesse Michael Han
+      - Floris van Doorn
+      - Ian Klatzco
+    source:
+      title: NF proves not-WPP, source-complete Lean formalization
+      url: https://github.com/elliotglazer/nf-not-wpp/tree/fa58a7a895a73422042e167391c78e9149979913
+      github_repo: elliotglazer/nf-not-wpp
+      commit: fa58a7a895a73422042e167391c78e9149979913
+    license: Apache-2.0
+    status: verified
+    provenance: mix
+    main_declarations:
+      - NFChoice.Foundation.NFStandard.NF_proves_not_WPP
+    main_results:
+      - declaration: NFChoice.Foundation.NFStandard.NF_proves_not_WPP
+        informal: >-
+          Standard New Foundations formally derives the negation of WPP. WPP
+          says that, for all sets x and y, if a function maps y onto x and an
+          injective function maps y into x, then an injective function maps x
+          into y.
+        source_ref: >-
+          Upstream Proof/NFStandard/NotWPP.lean and the exact source formulation
+          documented in README.md at the pinned commit. Standard-NF completion:
+          commit a9f9867ee379835f91a4f05f9c4a352d44ca1775, 2026-08-25 00:16:27 UTC.
+          Palomar registration
+          PALOMAR-2026-08-27-000005 is dated 2026-08-27, without a verified time of day.
+          The responsible public maintainer is Elliot Glazer. Upstream Flypitch4
+          credits Ian Klatzco and Claude for its Lean 4 port; this import also
+          includes AI-assisted porting and proof repairs, hence mixed provenance.
+          The deterministic Metamath replay is not by itself evidence of AI
+          mathematical authorship. Independent novelty is not claimed by this card.
+      - declaration: NFChoice.Foundation.NFStandard.nf_hailperin_deductivelyEquivalent
+        informal: >-
+          Extensionality together with every integer-stratified comprehension
+          instance and Metamath's Hailperin-derived finite first-order presentation,
+          including its added singleton axiom, derive exactly the same sentences.
+        source_ref: >-
+          Upstream Proof/NFStandard/Equivalence.lean at the pinned commit.
+          Metamath's ax-sn entry credits the singleton addition to SF on
+          2015-01-12 and distinguishes it from Hailperin's original presentation:
+          https://us.metamath.org/nfeuni/ax-sn.html.
+    tags:
+      - new-foundations
+      - weak-partition-principle
+      - first-order-logic
+    msc:
+      - 03E70
+      - 03B35
+  - slug: conway-soifer-three
+    title: Conway–Soifer covering conjecture for n = 3
+    summary: Proves that ten congruent closed equilateral triangles covering a filled equilateral triangle
+      of side three have common side at least one, with arbitrary positions, rotations and overlaps.
+      Consequently ten unit triangles cannot cover a triangle of side 3 + ε for ε > 0. Includes reusable
+      finite halfspace and ray-endpoint geometry, orientation-independent support and area bounds,
+      and verified Bernstein polynomial interval checkers. Four derived contact cases and 100 kernel-checked
+      certificates close the proof without a certificate hypothesis.
+    branch: discrete geometry
+    entry_module: LeanPool.ConwaySoifer
+    authors:
+    - Vladislav Kuznetsov
+    source:
+      title: 'The Conway–Soifer conjecture for n = 3: a Lean formalization'
+      url: https://github.com/AnanasClassic/conway-soifer-n3-lean/tree/b71b1d22b6f7ebb0f0173fc70a66075f44c86ce6
+      github_repo: AnanasClassic/conway-soifer-n3-lean
+      commit: b71b1d22b6f7ebb0f0173fc70a66075f44c86ce6
+      doi: 10.5281/zenodo.22712658
+    license: MIT
+    status: verified
+    provenance: AI
+    main_declarations:
+    - ConwaySoifer.ten_triangle_cover_lower_bound
+    main_results:
+    - declaration: ConwaySoifer.ten_triangle_cover_lower_bound
+      informal: Any ten congruent closed equilateral triangles covering the filled equilateral target
+        of side three have common side at least one. Positions, rotations and overlaps are unrestricted.
+      source_ref: Public v1.0.0 release, 2026-09-11T17:12:25Z; upstream README and Geometry/Basic.lean.
+    - declaration: ConwaySoifer.no_ten_unit_triangle_cover
+      informal: For every ε > 0, ten closed equilateral triangles of side one cannot cover the filled
+        equilateral target of side 3 + ε, regardless of position or rotation.
+      source_ref: Upstream public theorem and its proved scaling corollary.
+    tags:
+    - discrete-geometry
+    - triangle-covering
+    - conway-soifer
+    - bernstein-polynomials
+    msc:
+    - 52C15
+    - 51M16
+  - slug: formalizing-gmt
+    title: Formalizing geometric measure theory
+    summary: >-
+      A development of foundations and central results in geometric measure theory,
+      including Hausdorff content and density bounds, weak convergence and compactness
+      for Radon measures, tangent-measure machinery, Mattila's Lemmas 14.5--14.7,
+      and Marstrand's integrality theorem for positive finite densities.
+    branch: measure theory and geometric analysis
+    entry_module: LeanPool.FormalizingGMT
+    authors:
+      - Theodore Meek
+      - Ignacio Tejeda
+      - Annie Cao
+      - Nathan Pao
+    source:
+      url: https://github.com/uw-math-ai/FormalizingGMT
+      github_repo: uw-math-ai/FormalizingGMT
+      commit: 0acca38a91c4121b813f8e0b6ff719a4590bf126
+      notes: >-
+        The geometric-measure-theory results follow Mattila, Geometry of Sets and
+        Measures in Euclidean Spaces, Chapter 14. The weak-convergence, compactness,
+        covering, and density results follow Evans--Gariepy, Measure Theory and Fine
+        Properties of Functions, revised edition.
+    license: Apache-2.0
+    status: verified
+    provenance: mix
+    main_declarations:
+      - mattila_14_10
+      - mattila_14_11
+    main_results:
+      - declaration: mattila_14_10
+        informal: >-
+          If a Radon measure on Euclidean n-space has positive finite s-dimensional
+          density on a set of positive measure, then s is a natural number.
+        source_ref: Mattila, Theorem 14.10 (Marstrand's theorem).
+      - declaration: mattila_14_11
+        informal: >-
+          Every n-uniform measure on Euclidean n-space is a constant multiple of
+          Lebesgue measure.
+        source_ref: Mattila, Theorem 14.11.
+      - declaration: MeasureTheory.Measure.weaklyConverges_iff_compactOpenBounds
+        informal: >-
+          Vague convergence of Radon measures on Euclidean space is equivalent to
+          the Portmanteau compact-set upper and open-set lower bounds.
+        source_ref: Evans--Gariepy, revised edition, Theorem 1.40.
+      - declaration: MeasureTheory.exists_vaguelyConvergent_subseq_of_compact_bounded
+        informal: >-
+          A sequence of Radon measures on Euclidean space that is uniformly bounded
+          on every compact set has a vaguely convergent subsequence.
+        source_ref: Evans--Gariepy, revised edition, Theorem 1.41.
+    tags:
+      - geometric-measure-theory
+      - Hausdorff-measure
+      - tangent-measures
+      - weak-convergence
+    msc:
+      - 28A75
+      - 28A78
+      - 49Q15
+  - slug: civ-axisymmetric
+    title: Regularity of asymptotically axisymmetric Navier–Stokes solutions
+    summary: >-
+      Proves the Constantin–Ignatova–Vicol regularity theorem for suitable
+      weak solutions of the three-dimensional forced Navier–Stokes equations
+      with analytic forcing, anisotropic Type II bounds on the angular mean,
+      and an axisymmetric core at each time. Includes the fully axisymmetric
+      theorem, meridional smallness, interior spatial analyticity, the
+      nonanalyticity consequence for singular solutions, and the comparison,
+      Serrin, and Gustafson–Kang–Tsai results used in their proofs. Reuses Lean
+      Pool's Caffarelli–Kohn–Nirenberg suitable-solution and analysis library.
+    branch: Analysis
+    entry_module: LeanPool.CIVAxisymmetric
+    authors:
+      - Scott Armstrong
+      - Vlad Vicol
+    source:
+      arxiv: "2609.20803"
+      github_repo: scottnarmstrong/CIVAxisymmetric
+      url: https://github.com/scottnarmstrong/CIVAxisymmetric/tree/9f539dc7bf7ddd414d3ef81df539e1bef229f681
+      commit: 9f539dc7bf7ddd414d3ef81df539e1bef229f681
+    license: Apache-2.0
+    status: verified
+    provenance: AI
+    main_declarations:
+      - CIV.mainTheorem
+      - CIV.axisymmetricTheorem
+    main_results:
+      - declaration: CIV.mainTheorem
+        informal: >-
+          A smooth suitable weak solution on the unit parabolic cylinder with
+          globally finite energy, bounded C^2 spatially analytic force,
+          anisotropic Type II bounds on its angular mean, and a positive
+          axisymmetric core at every time is axisymmetric throughout the
+          cylinder and bounded near the origin up to the terminal time.
+      - declaration: CIV.axisymmetricTheorem
+        informal: >-
+          An axisymmetric smooth suitable weak solution obeying the stated
+          anisotropic Type II bounds and bounded C^2 force is bounded near the
+          origin up to the terminal time.
+      - declaration: CIV.meridionalSmallness
+        informal: >-
+          Under the axisymmetric anisotropic hypotheses, the weighted
+          meridional quantity tends uniformly to zero on a smaller cylinder
+          as the terminal time approaches.
+      - declaration: CIV.interiorAnalyticity
+        informal: >-
+          Smooth solutions with locally uniformly spatially analytic forcing
+          are locally uniformly spatially analytic in the interior.
+      - declaration: CIV.forceUnderCore
+        informal: >-
+          For a smooth suitable weak solution with globally finite energy,
+          bounded C^2 forcing, angular-mean anisotropic bounds, and an
+          axisymmetric core at every time, failure of boundedness near the
+          origin implies that the force is not spatially analytic, is nonzero
+          somewhere in the unit cylinder, and has a nonzero point in every
+          smaller terminal cylinder.
+    tags:
+      - Navier–Stokes
+      - axisymmetry
+      - partial differential equations
+      - regularity
+    msc:
+      - 35Q30
+      - 35B65
+      - 35B33
+  - slug: escauriaza-seregin-sverak
+    title: Escauriaza–Seregin–Šverák and Ladyzhenskaya–Prodi–Serrin regularity
+    summary: >-
+      Endpoint and Serrin regularity criteria for three-dimensional incompressible
+      Navier–Stokes Leray–Hopf solutions: bounded L-infinity-in-time L3 velocity
+      implies L5 integrability, uniqueness, and a smooth representative on positive
+      times including the final time. Includes local endpoint regularity, both
+      Carleman inequalities, spatial unique continuation, and half-space backward
+      uniqueness. Retains the complete ESS production formalization.
+    branch: Analysis
+    entry_module: LeanPool.EscauriazaSereginSverak
+    authors:
+      - Scott Armstrong
+    source:
+      github_repo: scottnarmstrong/EscauriazaSereginSverak
+      url: https://github.com/scottnarmstrong/EscauriazaSereginSverak/tree/ae1a0e46086b9b16179dea76b41da10b01845151
+    license: Apache-2.0
+    status: verified
+    provenance: AI
+    main_declarations:
+      - ESS.essSmooth
+      - ESS.ladyzhenskayaProdiSerrin
+      - ESS.serrinCriterion
+    main_results:
+      - declaration: ESS.essSmooth
+        informal: >-
+          A Leray–Hopf solution whose spatial L3 mass is essentially bounded in
+          time belongs to space-time L5, is unique among Leray–Hopf solutions with
+          the same initial datum, and has an almost-everywhere equal smooth
+          representative on all positive times through the final time.
+      - declaration: ESS.ladyzhenskayaProdiSerrin
+        informal: >-
+          A Leray–Hopf solution satisfying the critical Serrin mixed-norm condition
+          with spatial exponent greater than three, including the L2-in-time
+          L-infinity-in-space endpoint, is unique and has a smooth representative
+          on positive times through the final time.
+      - declaration: ESS.serrinCriterion
+        informal: >-
+          The endpoint L-infinity-in-time L3 criterion and the Serrin criteria for
+          all spatial exponents greater than three jointly imply uniqueness and
+          existence of a smooth representative up to the final time.
+      - declaration: ESS.essLocal
+        informal: >-
+          A weak Navier–Stokes solution on the unit cylinder with finite energy,
+          L3/2 pressure, and velocity essentially bounded in time in spatial L3
+          has an almost-everywhere equal parabolically Holder representative on
+          the closure of the half cylinder.
+      - declaration: ESS.essGlobal
+        informal: >-
+          A Leray–Hopf solution whose spatial L3 mass is essentially bounded in
+          time has no singular point at an interior positive time.
+      - declaration: ESS.essL5Unique
+        informal: >-
+          A Leray–Hopf solution whose spatial L3 mass is essentially bounded in
+          time belongs to space-time L5 and is unique among Leray–Hopf solutions
+          with its initial datum.
+      - declaration: ESS.uniqueContinuation
+        informal: >-
+          A vector field with explicit weak space-time derivatives obeying a
+          parabolic differential inequality has unique continuation across a
+          spatial boundary under the stated decay and boundary hypotheses.
+      - declaration: ESS.backwardUniqueness
+        informal: >-
+          A vector field on a three-dimensional half-space satisfying the heat
+          differential inequality, growth bound, and zero initial trace vanishes.
+      - declaration: ESS.carlemanGaussian
+        informal: >-
+          The Gaussian Carleman inequality bounds weighted field and gradient
+          energies by the weighted heat-operator energy under its support hypotheses.
+      - declaration: ESS.carlemanHalfSpace
+        informal: >-
+          The half-space Carleman inequality bounds weighted field and gradient
+          energies by the weighted heat-operator energy under its support hypotheses.
+    tags:
+      - Navier–Stokes
+      - partial differential equations
+      - regularity
+      - unique continuation
+    msc:
+      - 35Q30
+      - 35B65
+      - 35B60
+  - slug: microwave-networks
+    title: Microwave network synthesis and power-of-two DFT implementation
+    summary: >-
+      Characterizes the complex transmission matrices synthesized from phase
+      shifters and permutations, with or without hybrid couplers, using series
+      and parallel composition. Phase-only networks are permuted phase-diagonal
+      matrices; networks with hybrid couplers are products of permutation and
+      phase-parametrized block-diagonal layers. Proves that the normalized DFT
+      of every power-of-two size is implementable, with reusable finite-type
+      reindexing, independent row and column permutations, and block-diagonal
+      composition infrastructure. Uses the reciprocal matched network matrix
+      model of the source paper; no general scattering-physics theorem is claimed.
+    branch: applied mathematics and signal processing
+    entry_module: LeanPool.MicrowaveNetworks
+    authors:
+      - Matteo Nerini
+      - Claude AI
+    source:
+      title: Toward a Lean Formalization of Analog Computing with Microwaves
+      arxiv: '2610.04774'
+      url: https://github.com/matteonerini/formalizing-analog-computing/tree/a89c1e9263658c20a29046f9ed1a8eeb867dd537
+      github_repo: matteonerini/formalizing-analog-computing
+      commit: a89c1e9263658c20a29046f9ed1a8eeb867dd537
+    license: Apache-2.0
+    status: verified
+    provenance: mix
+    main_declarations:
+      - MiLAC.HybridCouplersPhaseShifters.implementable_dft
+    main_results:
+      - declaration: MiLAC.PhaseShifters.implementable_iff_permutedPhaseDiagonal
+        informal: >-
+          A finite phase-only network is implementable exactly when its matrix
+          is a permutation matrix times a diagonal matrix of complex phases.
+        source_ref: Upstream PhaseShifters.lean.
+      - declaration: MiLAC.HybridCouplersPhaseShifters.implementable_iff_layered
+        informal: >-
+          A finite network is implementable with hybrid couplers and phase
+          shifters exactly when its matrix is an initial permutation preceded
+          by finitely many permutation and phase-parametrized block-diagonal layers.
+        source_ref: Theorem 1 and Section IV of arXiv:2610.04774.
+      - declaration: MiLAC.HybridCouplersPhaseShifters.implementable_dft
+        informal: >-
+          For every natural L, the normalized DFT matrix of size 2^L can be
+          implemented by hybrid couplers, phase shifters, and permutation networks.
+        source_ref: Section V of arXiv:2610.04774.
+    tags:
+      - applied-mathematics
+      - signal-processing
+      - matrix-theory
+      - fourier-transform
+      - network-synthesis
+    msc:
+      - '94A12'
+      - '15A23'
+      - '42A38'
+
+  - slug: small-undecidable-groups
+    title: Small undecidable groups and effective Adian–Rabin families
+    summary: Proves the existence of a finitely presented group with three generator
+      slots and nine relator slots whose word problem is undecidable, and effective
+      families with undecidable triviality having respectively four generators and eleven
+      relators, and two generators and ten relators. The dependency closure includes
+      computable machine-to-Thue reductions, synchronized rewriting, Borisov’s group
+      simulator, injective HNN and Tietze compression, and general Miller–Tancer and
+      Gordon constructions. Formalizes the algebraic results of the cited paper; its
+      four-manifold consequences are outside this project.
+    branch: combinatorial group theory and computability
+    entry_module: LeanPool.SmallUndecidableGroups
+    authors:
+    - Marc Kegel
+    - Shana Yunsheng Li
+    - Qiuyu Ren
+    source:
+      title: Small undecidable groups and unrecognizable 4-manifolds
+      arxiv: '2609.10461'
+      url: https://github.com/32805433/Adian-Rabin
+      github_repo: 32805433/Adian-Rabin
+      commit: fb4a401e8fbdba36e7b35c11fde2baa15592e185
+    license: MIT
+    status: verified
+    provenance: AI
+    main_declarations:
+    - Undecidability.exists_small_undecidable_presentations
+    main_results:
+    - declaration: Undecidability.exists_three_generator_nine_relator_group_with_unsolvable_word_problem
+      informal: There is a finite presentation with three generator slots and nine relator
+        slots whose word problem is not a computable predicate.
+      source_ref: arXiv:2609.10461v1, Theorem 1.1.
+    - declaration: Undecidability.exists_four_generator_eleven_relator_adian_rabin_family
+      informal: There is a uniformly computable family of finite presentations with
+        four generator slots and eleven relator slots for which the set of indices presenting
+        the trivial group is not computable.
+      source_ref: arXiv:2609.10461v1, Theorem 1.3.
+    - declaration: Undecidability.exists_two_generator_ten_relator_adian_rabin_family
+      informal: There is a uniformly computable family of finite presentations with
+        two generator slots and ten relator slots for which the set of indices presenting
+        the trivial group is not computable.
+      source_ref: arXiv:2609.10461v1, Theorem 1.4.
+    - declaration: Undecidability.exists_small_undecidable_presentations
+      informal: 'The three small-presentation bounds hold together: an undecidable word
+        problem with three generators and nine relators, and effective families with
+        undecidable triviality with four generators and eleven relators and with two
+        generators and ten relators.'
+      source_ref: arXiv:2609.10461v1, Theorems 1.1, 1.3, and 1.4.
+    tags:
+    - group-theory
+    - undecidability
+    - finite-presentations
+    - hnn-extensions
+    - rewriting-systems
+    msc:
+    - 20F10
+    - 03D35
+
   - slug: high-contrast-homogenization
     title: Homogenization at a polynomial scale in high contrast
     summary: >-

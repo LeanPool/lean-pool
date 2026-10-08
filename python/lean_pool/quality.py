@@ -13,7 +13,7 @@ from typing import Any
 
 import yaml
 
-from lean_pool.indexes import requires_project_roots, structure_errors
+from lean_pool.indexes import project_modules, requires_project_roots, structure_errors
 from lean_pool.validation_cache import ValidationCache, pool_units
 
 ALLOWED_AXIOMS = {"propext", "Quot.sound", "Classical.choice"}
@@ -79,6 +79,22 @@ FORBIDDEN_OPTION_NAMES = re.compile(
 FORBIDDEN_SOUNDNESS = re.compile(
     r"\b(?:axiom|constant|unsafe|partial|opaque)\b|@\[\s*extern\b"
 )
+FORBIDDEN_TEXT_RULES = (
+    (re.compile(r"\bset_option\b"), "set_option is forbidden"),
+    (re.compile(r"\bnolint\b"), "nolint waiver is forbidden"),
+    (FORBIDDEN_OPTION_APIS, "programmatic option manipulation is forbidden"),
+    (FORBIDDEN_OPTION_NAMES, "gated option name in code is forbidden"),
+    (
+        re.compile(r"^\s*(?:public\s+)?import\s+Mathlib\s*$"),
+        "broad import Mathlib is forbidden",
+    ),
+    (re.compile(r"\b(?:admit|sorry)\b"), None),
+    (FORBIDDEN_SOUNDNESS, "unchecked declaration is forbidden"),
+    (FORBIDDEN_DIAGNOSTICS, "diagnostic command is forbidden"),
+)
+FORBIDDEN_TEXT_CANDIDATES = re.compile(
+    "|".join(pattern.pattern for pattern, _ in FORBIDDEN_TEXT_RULES)
+)
 # Strict four-line header. Anchored at the start of the file, no extra lines
 # allowed inside the block: this forbids ad-hoc Source/MSC/Tags/Status fields
 # (those belong in projects.yml per CODE_QUALITY.md §7) and enforces the
@@ -91,6 +107,9 @@ HEADER_PATTERN = re.compile(
     r"-/\n"
 )
 POOL_CODE_LINE_LIMIT = 10000
+LEAN_TEXT_TOKENS = re.compile(r'--|/-|"')
+LEAN_BLOCK_TOKENS = re.compile(r"/-|-/")
+LEAN_STRING_TOKENS = re.compile(r'\\[\s\S]|"')
 
 
 @dataclass(frozen=True)
@@ -116,66 +135,39 @@ class _Declaration:
 def _strip_lean_comments(text: str) -> str:
     result: list[str] = []
     index = 0
-    block_depth = 0
-    in_line_comment = False
-    in_string = False
-    escaped = False
-
-    while index < len(text):
-        char = text[index]
-        pair = text[index : index + 2]
-
-        if in_line_comment:
-            if char == "\n":
-                in_line_comment = False
-                result.append("\n")
-            else:
-                result.append(" ")
-            index += 1
-            continue
-
-        if block_depth > 0:
-            if pair == "/-":
-                block_depth += 1
-                result.append("  ")
-                index += 2
-            elif pair == "-/":
-                block_depth -= 1
-                result.append("  ")
-                index += 2
-            else:
-                result.append("\n" if char == "\n" else " ")
-                index += 1
-            continue
-
-        if in_string:
-            result.append("\n" if char == "\n" else " ")
-            if escaped:
-                escaped = False
-            elif char == "\\":
-                escaped = True
-            elif char == '"':
-                in_string = False
-            index += 1
-            continue
-
-        if pair == "--":
-            in_line_comment = True
-            result.append("  ")
-            index += 2
-        elif pair == "/-":
-            block_depth = 1
-            result.append("  ")
-            index += 2
-        elif char == '"':
-            in_string = True
-            result.append(" ")
-            index += 1
+    while match := LEAN_TEXT_TOKENS.search(text, index):
+        start = match.start()
+        result.append(text[index:start])
+        if match[0] == "--":
+            end = text.find("\n", match.end())
+            end = len(text) if end == -1 else end
+        elif match[0] == "/-":
+            end = _block_comment_end(text, match.end())
         else:
-            result.append(char)
-            index += 1
-
+            end = _string_end(text, match.end())
+        # Preserve every character offset and newline for localized errors.
+        result.append(
+            "\n".join(" " * len(line) for line in text[start:end].split("\n"))
+        )
+        index = end
+    result.append(text[index:])
     return "".join(result)
+
+
+def _block_comment_end(text: str, start: int) -> int:
+    depth = 1
+    for match in LEAN_BLOCK_TOKENS.finditer(text, start):
+        depth += 1 if match[0] == "/-" else -1
+        if depth == 0:
+            return match.end()
+    return len(text)
+
+
+def _string_end(text: str, start: int) -> int:
+    for match in LEAN_STRING_TOKENS.finditer(text, start):
+        if match[0] == '"':
+            return match.end()
+    return len(text)
 
 
 def _line_number(text: str, offset: int) -> int:
@@ -277,41 +269,14 @@ def _forbidden_text_errors(path: Path) -> list[_QualityError]:
     errors: list[_QualityError] = []
     stripped = _strip_lean_comments(path.read_text())
     for line_number, line in enumerate(stripped.splitlines(), start=1):
-        if re.search(r"\bset_option\b", line):
-            errors.append(_QualityError(path, line_number, "set_option is forbidden"))
-        if re.search(r"\bnolint\b", line):
-            errors.append(
-                _QualityError(path, line_number, "nolint waiver is forbidden")
-            )
-        if FORBIDDEN_OPTION_APIS.search(line):
-            errors.append(
-                _QualityError(
-                    path,
-                    line_number,
-                    "programmatic option manipulation is forbidden",
-                )
-            )
-        if FORBIDDEN_OPTION_NAMES.search(line):
-            errors.append(
-                _QualityError(
-                    path,
-                    line_number,
-                    "gated option name in code is forbidden",
-                )
-            )
-        if re.match(r"^\s*(?:public\s+)?import\s+Mathlib\s*$", line):
-            errors.append(
-                _QualityError(path, line_number, "broad import Mathlib is forbidden")
-            )
-        errors.extend(_sorry_errors(path, line_number, line))
-        if FORBIDDEN_SOUNDNESS.search(line):
-            errors.append(
-                _QualityError(path, line_number, "unchecked declaration is forbidden")
-            )
-        if FORBIDDEN_DIAGNOSTICS.search(line):
-            errors.append(
-                _QualityError(path, line_number, "diagnostic command is forbidden")
-            )
+        if not FORBIDDEN_TEXT_CANDIDATES.search(line):
+            continue
+        for pattern, message in FORBIDDEN_TEXT_RULES:
+            if pattern.search(line):
+                if message is None:
+                    errors.extend(_sorry_errors(path, line_number, line))
+                else:
+                    errors.append(_QualityError(path, line_number, message))
     return errors
 
 
@@ -911,6 +876,9 @@ def _check_projects(
     errors.extend(_check_top_level_project_modules(root, path, projects))
     if errors:
         return errors
+    errors.extend(_check_project_wrapper_imports(root, projects))
+    if errors:
+        return errors
 
     for index, project in enumerate(projects, start=1):
         errors.extend(
@@ -968,6 +936,16 @@ def _check_project_indexes(root: Path) -> list[_QualityError]:
     ]
 
 
+def _check_project_entry_files(root: Path) -> list[_QualityError]:
+    """Require the top-level entry file used by per-project build and extraction."""
+    return [
+        _QualityError(path, 1, "missing top-level project entry module")
+        for project in project_modules(root)
+        for path in [root / "LeanPool" / f"{project}.lean"]
+        if not path.is_file()
+    ]
+
+
 def _check_project_entry_imports(
     root: Path, projects: list[Any]
 ) -> list[_QualityError]:
@@ -1005,19 +983,49 @@ def _check_project_entry_imports(
 def _check_top_level_project_modules(
     root: Path, path: Path, projects: list[Any]
 ) -> list[_QualityError]:
-    """Require every top-level LeanPool project module in `projects.yml`."""
+    """Require each top-level module to belong to a registered project namespace."""
     entry_modules = {
         project["entry_module"]
         for project in projects
         if isinstance(project, dict) and isinstance(project.get("entry_module"), str)
     }
-    missing = sorted(_top_level_project_modules(root) - entry_modules)
+    registered_roots = {".".join(module.split(".")[:2]) for module in entry_modules}
+    missing = sorted(_top_level_project_modules(root) - registered_roots)
     return [
         _QualityError(
             path, 1, f"top-level project module {module} missing from projects.yml"
         )
         for module in missing
     ]
+
+
+def _check_project_wrapper_imports(
+    root: Path, projects: list[Any]
+) -> list[_QualityError]:
+    """Require project extraction wrappers to expose their registered entry."""
+    entry_modules = {
+        project["entry_module"]
+        for project in projects
+        if isinstance(project, dict) and isinstance(project.get("entry_module"), str)
+    }
+    errors = []
+    for entry_module in sorted(entry_modules):
+        wrapper = ".".join(entry_module.split(".")[:2])
+        path = _module_to_path(root, wrapper)
+        if entry_module == wrapper or not path.is_file():
+            continue
+        if _module_to_path(root, entry_module) not in _reachable_leanpool_files(
+            root, wrapper
+        ):
+            errors.append(
+                _QualityError(
+                    path,
+                    1,
+                    f"registered project entry {entry_module} is not reachable "
+                    f"from {wrapper}; import the entry module",
+                )
+            )
+    return errors
 
 
 def _top_level_project_modules(root: Path) -> set[str]:
@@ -1439,6 +1447,7 @@ def run_checks(
     """Run all deterministic quality checks."""
     checks = [
         _check_project_indexes,
+        _check_project_entry_files,
         _check_reachability,
         _check_headers,
         _check_forbidden_lean_text,

@@ -9,23 +9,30 @@ the ordinary documentation build.
 from __future__ import annotations
 
 import argparse
+import filecmp
+import gzip
 import hashlib
 import io
 import json
 import logging
 import os
 import shutil
+import stat
 import subprocess
 import tarfile
 import tempfile
 import time
 import zipfile
+from concurrent.futures import ThreadPoolExecutor
+from contextlib import AbstractContextManager, contextmanager
 from pathlib import Path, PurePosixPath
+from typing import BinaryIO
 from urllib.parse import urlencode
 
 LOGGER = logging.getLogger(__name__)
 ARTIFACT_NAME = "lean-pool-build"
-ARCHIVE_NAME = "lean-pool-build.tar.gz"
+ARCHIVE_NAME = "lean-pool-build.tar.zst"
+LEGACY_ARCHIVE_NAME = "lean-pool-build.tar.gz"
 MANIFEST_NAME = "build-manifest.json"
 
 
@@ -49,47 +56,137 @@ def build_identity(root: Path) -> dict:
     }
 
 
+@contextmanager
+def _compressed_stream(path: Path, *, writing: bool = False):
+    """Stream compression and verify completion before accepting an archive."""
+    if path.suffix == ".gz":
+        with gzip.open(path, "wb" if writing else "rb", compresslevel=1) as stream:
+            yield stream
+            if not writing:
+                while stream.read(1024 * 1024):
+                    pass
+        return
+    command = (
+        ["zstd", "--quiet", "-1", "-T2"]
+        if writing
+        else ["zstd", "--quiet", "--decompress", "--stdout", str(path)]
+    )
+    with path.open("wb") if writing else open(os.devnull, "wb") as output:
+        process = subprocess.Popen(
+            command,
+            stdin=subprocess.PIPE if writing else subprocess.DEVNULL,
+            stdout=output if writing else subprocess.PIPE,
+        )
+        stream = process.stdin if writing else process.stdout
+        try:
+            yield stream
+            if not writing:
+                while stream.read(1024 * 1024):
+                    pass
+            stream.close()
+            if process.wait() != 0:
+                raise subprocess.CalledProcessError(process.returncode, command)
+        finally:
+            stream.close()
+            if process.poll() is None:
+                process.terminate()
+            process.wait()
+
+
 def pack_build(root: Path, destination: Path) -> None:
-    """Package the completed root build; toolchains and dependencies stay in caches."""
+    """Package all completed build files using fast, bounded-memory compression."""
     subprocess.run(["git", "diff", "--exit-code", "HEAD", "--"], cwd=root, check=True)
     payload = json.dumps(build_identity(root)).encode()
     manifest = tarfile.TarInfo(MANIFEST_NAME)
     manifest.size = len(payload)
-    with tarfile.open(
-        destination, "w:gz", compresslevel=1, dereference=True
-    ) as archive:
-        archive.addfile(manifest, io.BytesIO(payload))
-        archive.add(root / ".lake/build", arcname=".lake/build")
+    with _compressed_stream(destination, writing=True) as stream:
+        with tarfile.open(fileobj=stream, mode="w|", dereference=True) as archive:
+            archive.addfile(manifest, io.BytesIO(payload))
+            archive.add(root / ".lake/build", arcname=".lake/build")
+
+
+def _reuse_unchanged_file(
+    root: Path,
+    temporary: Path,
+    member: tarfile.TarInfo,
+    reused: dict[Path, os.stat_result],
+) -> None:
+    """Keep identical cached files without retaining a second full build copy."""
+    relative = Path(member.name)
+    cached = root / relative
+    staged = temporary / relative
+    if (
+        cached.is_symlink()
+        or not cached.is_file()
+        or not filecmp.cmp(cached, staged, shallow=False)
+    ):
+        return
+    reused[relative] = staged.stat()
+    staged.unlink()
+    staged.hardlink_to(cached)
+
+
+def _extract_build(
+    root: Path,
+    archive: tarfile.TarFile,
+    temporary: Path,
+    reused: dict[Path, os.stat_result],
+) -> bool:
+    """Check the manifest first, then extract only ordinary build files."""
+    manifest = archive.next()
+    if manifest is None or manifest.name != MANIFEST_NAME or not manifest.isfile():
+        raise ValueError("Missing build archive manifest")
+    if json.load(archive.extractfile(manifest)) != build_identity(root):
+        LOGGER.info("CI build has different sources or configuration; rebuilding")
+        return False
+    has_files = False
+    seen: set[PurePosixPath] = set()
+    for member in archive:
+        if member is manifest:
+            continue
+        path = PurePosixPath(member.name)
+        if (
+            path.parts[:2] != (".lake", "build")
+            or ".." in path.parts
+            or path in seen
+            or not (member.isfile() or member.isdir())
+        ):
+            raise ValueError(f"Unexpected build archive member: {member.name}")
+        seen.add(path)
+        has_files |= member.isfile()
+        archive.extract(member, temporary, filter="data")
+        if member.isfile():
+            _reuse_unchanged_file(root, temporary, member, reused)
+    if not has_files:
+        raise ValueError("Empty Lean build artifact")
+    return True
 
 
 def restore_build(root: Path, archive_path: Path) -> bool:
-    """Validate identity and archive paths before replacing the root build."""
-    with tarfile.open(archive_path, "r:gz") as archive:
-        manifest = archive.extractfile(MANIFEST_NAME)
-        if manifest is None or json.load(manifest) != build_identity(root):
-            LOGGER.info(
-                "CI build has a different source tree or configuration; rebuilding"
-            )
-            return False
-        members = [
-            member for member in archive.getmembers() if member.name != MANIFEST_NAME
-        ]
-        for member in members:
-            path = PurePosixPath(member.name)
-            if (
-                path.parts[:2] != (".lake", "build")
-                or ".." in path.parts
-                or not (member.isfile() or member.isdir())
-            ):
-                raise ValueError(f"Unexpected build archive member: {member.name}")
-        if not any(member.isfile() for member in members):
-            raise ValueError("Empty Lean build artifact")
-        with tempfile.TemporaryDirectory(prefix="lean-ci-build-") as temporary:
-            archive.extractall(temporary, members=members, filter="data")
-            destination = root / ".lake/build"
-            if destination.exists():
-                shutil.rmtree(destination)
-            shutil.copytree(Path(temporary) / ".lake/build", destination)
+    """Validate and unpack once, sharing unchanged files with the cached build."""
+    return _restore_archive(root, _compressed_stream(archive_path))
+
+
+def _restore_archive(root: Path, payload: AbstractContextManager[BinaryIO]) -> bool:
+    """Install staged output only after the entire compressed payload validates."""
+    (root / ".lake").mkdir(exist_ok=True)
+    with tempfile.TemporaryDirectory(
+        prefix="lean-ci-build-", dir=root / ".lake"
+    ) as name:
+        temporary = Path(name)
+        reused: dict[Path, os.stat_result] = {}
+        with payload as stream:
+            with tarfile.open(fileobj=stream, mode="r|") as archive:
+                if not _extract_build(root, archive, temporary, reused):
+                    return False
+        destination = root / ".lake/build"
+        if destination.exists():
+            shutil.rmtree(destination)
+        (temporary / ".lake/build").rename(destination)
+        for relative, metadata in reused.items():
+            path = root / relative
+            path.chmod(stat.S_IMODE(metadata.st_mode))
+            os.utime(path, ns=(metadata.st_atime_ns, metadata.st_mtime_ns))
     LOGGER.info("Restored Lean CI build for the current source tree")
     return True
 
@@ -126,9 +223,47 @@ def wait_for_artifact(repository: str, run: dict, wait_seconds: int) -> int | No
         time.sleep(min(20, max(0, deadline - time.monotonic())))
 
 
+def _pipe_payload(source: BinaryIO, destination: BinaryIO) -> None:
+    """Feed the ZIP entry into the decompressor without materializing another file."""
+    with destination:
+        shutil.copyfileobj(source, destination)
+
+
+@contextmanager
+def _artifact_payload(source: BinaryIO, name: str):
+    """Stream the compressed ZIP entry and verify decompression and ZIP integrity."""
+    if name.endswith(".gz"):
+        with gzip.GzipFile(fileobj=source) as stream:
+            yield stream
+            while stream.read(1024 * 1024):
+                pass
+        return
+    command = ["zstd", "--quiet", "--decompress", "--stdout"]
+    with subprocess.Popen(
+        command, stdin=subprocess.PIPE, stdout=subprocess.PIPE
+    ) as process:
+        with ThreadPoolExecutor(max_workers=1) as executor:
+            copying = executor.submit(_pipe_payload, source, process.stdin)
+            try:
+                yield process.stdout
+                while process.stdout.read(1024 * 1024):
+                    pass
+                copying.result()
+                if process.wait() != 0:
+                    raise subprocess.CalledProcessError(process.returncode, command)
+            finally:
+                process.stdout.close()
+                if process.poll() is None:
+                    process.terminate()
+                process.wait()
+
+
 def download_build(root: Path, repository: str, artifact: int) -> bool:
     """Download the archive and validate it before installing any build files."""
-    with tempfile.TemporaryDirectory(prefix="lean-ci-download-") as temporary:
+    (root / ".lake").mkdir(exist_ok=True)
+    with tempfile.TemporaryDirectory(
+        prefix="lean-ci-download-", dir=root / ".lake"
+    ) as temporary:
         directory = Path(temporary)
         zipped = directory / "artifact.zip"
         with zipped.open("wb") as output:
@@ -139,16 +274,22 @@ def download_build(root: Path, repository: str, artifact: int) -> bool:
                 timeout=600,
             )
         with zipfile.ZipFile(zipped) as archive:
-            if archive.namelist() != [ARCHIVE_NAME]:
+            names = archive.namelist()
+            if names not in ([ARCHIVE_NAME], [LEGACY_ARCHIVE_NAME]):
                 raise ValueError("Unexpected files in Lean CI artifact")
-            with archive.open(ARCHIVE_NAME) as source:
-                with (directory / ARCHIVE_NAME).open("wb") as destination:
-                    shutil.copyfileobj(source, destination)
-        return restore_build(root, directory / ARCHIVE_NAME)
+            name = names[0]
+            with archive.open(name) as source:
+                return _restore_archive(root, _artifact_payload(source, name))
 
 
 def reuse_build(root: Path, repository: str, head: str, event: str, wait: int) -> bool:
     """Best-effort reuse; unavailable CI never removes the regular Lake build step."""
+    # PRs retain project rebase artifacts but do not publish this full archive.
+    if event == "pull_request":
+        LOGGER.info(
+            "PRs do not publish full build artifacts; using the regular Lake build"
+        )
+        return False
     try:
         run = matching_run(repository, head, event)
         if run is None:
@@ -168,6 +309,7 @@ def reuse_build(root: Path, repository: str, head: str, event: str, wait: int) -
         ValueError,
         KeyError,
         tarfile.TarError,
+        EOFError,
         zipfile.BadZipFile,
     ):
         LOGGER.exception("Could not reuse CI output; using the regular Lake build")

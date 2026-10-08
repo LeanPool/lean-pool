@@ -27,9 +27,9 @@ Apache License, Version 2.0, and are redistributed here under the same license.
   LeanPool/ACMax                     https://github.com/MerLeanProver/ACMaxConjecture
   LeanPool/AFormalizationOfBorelDeterminacyInLean
                                      https://github.com/sven-manthe/A-formalization-of-Borel-determinacy-in-Lean
-  LeanPool/Ado                       https://github.com/TauCetiProject/TauCeti
   LeanPool/AharoniKorman             https://github.com/b-mehta/AharoniKorman
   LeanPool/AndersonConjecture        https://github.com/frenzymath/Anderson-Conjecture
+  LeanPool/AnomalousDiffusion        https://github.com/scottnarmstrong/AVAnomalousDiffusion
   LeanPool/Apportionment             https://github.com/mdbrnowski/apportionmentlib
   LeanPool/ArchonFirstProofResults   https://github.com/frenzymath/Archon-FirstProof-Results
   LeanPool/AsymptoticTrianglePacking https://github.com/jtraverso/erdos-81-chordal-clique-partitions
@@ -47,6 +47,7 @@ Apache License, Version 2.0, and are redistributed here under the same license.
   LeanPool/BrooksSubcubic            https://github.com/jtraverso/lean-pool
   LeanPool/BruhatTits                https://github.com/chrisflav/bruhat-tits
   LeanPool/Burkholder                https://github.com/SmaniaD/Burkholder
+  LeanPool/CIVAxisymmetric           https://github.com/scottnarmstrong/CIVAxisymmetric
   LeanPool/CaffarelliKohnNirenberg   https://github.com/scottnarmstrong/CaffarelliKohnNirenberg
   LeanPool/CarlsonFunctions          https://github.com/bjbraams/lean-codes
   LeanPool/CencovPetz                https://github.com/abenenson/cencov-petz
@@ -69,6 +70,7 @@ Apache License, Version 2.0, and are redistributed here under the same license.
   LeanPool/ConwayRefinement          https://github.com/gaearon/conway-refinement
   LeanPool/CramerWold                https://github.com/Lemmy00/lean-pool
   LeanPool/CriticalPortraits         https://github.com/no-way-labs/lean-critical-portraits
+  LeanPool/DavisKahan                https://github.com/aiq-kitware/aiq-davis-kahan-1970-rotation-eigenvectgors-perturbation-formalization
   LeanPool/DemazureOperatorsLean     https://github.com/bolito2/DemazureOperatorsLean
   LeanPool/DemazureProduct           https://github.com/npflueger/demazure
   LeanPool/DensityHalesJewett        https://github.com/gdahia/densityhalesjewett
@@ -100,6 +102,7 @@ Apache License, Version 2.0, and are redistributed here under the same license.
   LeanPool/Erdos97ConvexOctagon      https://github.com/lyfar/erdos-97-octagon-lean
   LeanPool/ErdosMoser                https://github.com/lyfar/erdos-moser-distinct-subset-sums-lean
   LeanPool/ErdosTuzaValtr            https://github.com/jcpaik/erdos-tuza-valtr
+  LeanPool/EscauriazaSereginSverak   https://github.com/scottnarmstrong/EscauriazaSereginSverak
   LeanPool/EuclideanJordan           https://github.com/ehrlich-b/euclidean-jordan
   LeanPool/EvenGraphCycles           https://github.com/jtraverso/erdos-81-chordal-clique-partitions
   LeanPool/EventStructures           https://github.com/vikraman/event-structures
@@ -113,6 +116,7 @@ Apache License, Version 2.0, and are redistributed here under the same license.
   LeanPool/FltRegular                https://github.com/leanprover-community/flt-regular
   LeanPool/FoZfc                     https://github.com/ishiut/fo_zfc
   LeanPool/FormalLearningTheory      https://github.com/Zetetic-Dhruv/formal-learning-theory-kernel
+  LeanPool/FormalizingGMT            https://github.com/uw-math-ai/FormalizingGMT
   LeanPool/FriezePatterns            https://github.com/Antoine-dSG/frieze_patterns
   LeanPool/FrontierMathOpenHypergraphs
                                      https://github.com/math-inc/FrontierMathOpen-Hypergraphs
@@ -178,6 +182,7 @@ Apache License, Version 2.0, and are redistributed here under the same license.
   LeanPool/MoserLatticeColorings     https://github.com/lyfar/moser-lattice-colorings-lean
   LeanPool/MovingSofa                https://github.com/deancureton/MovingSofa
   LeanPool/MulticolorTriangleRamsey  https://github.com/openai/ten-proofs
+  LeanPool/NFWeakPartition           https://github.com/elliotglazer/nf-not-wpp
   LeanPool/NagataFactoriality        https://github.com/arthur742ramos/nagatafactoriality
   LeanPool/NandakumarRamanaRao       https://github.com/akopjan/nrr-aak
   LeanPool/NashEmbedding             https://github.com/langlerangle/nashembedding
@@ -210,6 +215,7 @@ Apache License, Version 2.0, and are redistributed here under the same license.
   LeanPool/PoincareThreeBody         https://github.com/gersh/lean-pool
   LeanPool/PointwiseBirkhoff         https://github.com/lua-vr/pointwise-birkhoff
   LeanPool/Polylean                  https://github.com/siddhartha-gadgil/Polylean
+  LeanPool/PolylogIntegrals          https://github.com/rainrzk/LeanPolyLog
   LeanPool/PolynomialMethodRestrictedSums
                                      https://github.com/NickAdfor/The-polynomial-method-and-restricted-sums-of-congruence-classes
   LeanPool/Polytopes                 https://github.com/Jun2M/Main-theorem-of-polytopes
@@ -295,6 +301,7 @@ MIT permission notice that follows them.
 
   LeanPool/Chvatal                   https://github.com/boonsuan/chvatal
   LeanPool/CommonNeighbourConjecture https://github.com/alunik/common-neighbour-conjecture
+  LeanPool/ConwaySoifer              https://github.com/AnanasClassic/conway-soifer-n3-lean
   LeanPool/CutAndProject             https://github.com/dkunert/cut-and-project
       Copyright (c) 2026 Dirk Kunert
 

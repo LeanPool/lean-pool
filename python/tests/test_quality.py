@@ -92,11 +92,96 @@ def test_strip_lean_comments_preserves_code_not_comments() -> None:
     assert "def safe := 1" in stripped
 
 
+@pytest.mark.parametrize(
+    ("text", "expected"),
+    [
+        ("α /- outer /- sorry -/ end -/ β", "α " + " " * 27 + " β"),
+        ('"a\\"sorry" def safe := 1', " " * 10 + " def safe := 1"),
+        ('"a\\\\"sorry', " " * 5 + "sorry"),
+        ('"α\nβ"\ndef safe := 1', "  \n  \ndef safe := 1"),
+        ("-- sorry\r\ndef safe := 1", " " * 9 + "\ndef safe := 1"),
+        ("/- α\n/- nested -/", " " * 4 + "\n" + " " * 12),
+        ('"unfinished\\', " " * 12),
+        ("def safe := 1 -- sorry", "def safe := 1 " + " " * 8),
+    ],
+)
+def test_strip_comments_preserves_offsets_with_nested_and_escaped_tokens(
+    text: str, expected: str
+) -> None:
+    """Nested comments, escapes, and unfinished tokens retain diagnostic locations."""
+    assert _strip_lean_comments(text) == expected
+    assert len(expected) == len(text)
+
+
 def test_minimal_repo_passes_static_quality_checks(tmp_path: Path) -> None:
     """A compliant minimal repo passes without invoking Lean."""
     _write_minimal_repo(tmp_path)
 
     assert run_checks(tmp_path, skip_lean_axioms=True) == []
+
+
+def test_nested_project_requires_top_level_entry(tmp_path: Path) -> None:
+    """A nested entry fails without its wrapper and passes once it is supplied."""
+    _write_minimal_repo(tmp_path, basic_body="")
+    project = tmp_path / "LeanPool" / "MyProj"
+    project.mkdir()
+    (project / "Internal.lean").write_text(
+        f"{HEADER}\n{_project_card(_PROJECT_FIXTURE)}\ndef hello := 1\n"
+    )
+    (tmp_path / "LeanPool.lean").write_text(
+        "import LeanPool.Basic\nimport LeanPool.MyProj.Internal\n"
+    )
+    _write_project_yaml(
+        tmp_path, [{"slug": "p", "entry_module": "LeanPool.MyProj.Internal"}]
+    )
+    entry = tmp_path / "LeanPool" / "MyProj.lean"
+    errors = run_checks(tmp_path, skip_lean_axioms=True, skip_project_declarations=True)
+
+    assert any(
+        error.path == entry and "missing top-level project entry" in error.message
+        for error in errors
+    )
+
+    entry.write_text(HEADER)
+    (tmp_path / "LeanPool.lean").write_text(
+        "import LeanPool.Basic\nimport LeanPool.MyProj\n"
+        "import LeanPool.MyProj.Internal\n"
+    )
+    errors = run_checks(tmp_path, skip_lean_axioms=True, skip_project_declarations=True)
+
+    assert any(
+        error.path == entry and "not reachable" in error.message for error in errors
+    )
+
+    entry.write_text(f"{HEADER}\nimport LeanPool.MyProj.Internal\n")
+    errors = run_checks(tmp_path, skip_lean_axioms=True, skip_project_declarations=True)
+
+    assert errors == []
+
+
+def test_nested_project_wrapper_allows_transitive_imports(tmp_path: Path) -> None:
+    """A wrapper can export its registered entry through an intermediate module."""
+    _write_minimal_repo(tmp_path, basic_body="")
+    project = tmp_path / "LeanPool" / "MyProj"
+    project.mkdir()
+    (project / "Internal.lean").write_text(
+        f"{HEADER}\n{_project_card(_PROJECT_FIXTURE)}\ndef hello := 1\n"
+    )
+    (project / "Bridge.lean").write_text(f"{HEADER}\nimport LeanPool.MyProj.Internal\n")
+    (tmp_path / "LeanPool" / "MyProj.lean").write_text(
+        f"{HEADER}\nimport LeanPool.MyProj.Bridge\n"
+    )
+    (tmp_path / "LeanPool.lean").write_text(
+        "import LeanPool.Basic\nimport LeanPool.MyProj\n"
+        "import LeanPool.MyProj.Internal\n"
+    )
+    _write_project_yaml(
+        tmp_path, [{"slug": "p", "entry_module": "LeanPool.MyProj.Internal"}]
+    )
+
+    errors = run_checks(tmp_path, skip_lean_axioms=True, skip_project_declarations=True)
+
+    assert errors == []
 
 
 def test_quality_check_rejects_set_option(tmp_path: Path) -> None:

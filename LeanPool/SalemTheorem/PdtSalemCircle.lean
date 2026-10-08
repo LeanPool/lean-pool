@@ -8,7 +8,12 @@ public import Mathlib.Algebra.Polynomial.Roots
 public import Mathlib.Analysis.CStarAlgebra.Classes
 public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Complex
 public import Mathlib.RingTheory.SimpleRing.Principal
-public import Mathlib.Tactic
+public import Mathlib.Tactic.Linarith -- shake: keep
+public import Mathlib.Tactic.Ring -- shake: keep
+public import Mathlib.Tactic.NormNum -- shake: keep
+public import Mathlib.Tactic.FieldSimp -- shake: keep
+public import Mathlib.Tactic.FunProp -- shake: keep
+public import Mathlib.Tactic.LinearCombination -- shake: keep
 
 /-!
 # PdtSalemCircle — the circle count
@@ -632,7 +637,7 @@ lemma exists_interior_grid (f : ℝ → ℝ) (hf : Continuous f) (L : ℕ)
       rw [div_lt_iff₀ hπ] at h1
       exact h1
     have h3 : (0 : ℝ) ≤ (j : ℝ) * Real.pi := mul_nonneg (Nat.cast_nonneg j) hπ.le
-    nlinarith [h2, h3]
+    linarith only [h2, h3]
   have hstrict : Real.pi / 2 + (k0 : ℝ) * Real.pi < f 0 := by
     have h1 : (k0 : ℝ) ≤ (f 0 - Real.pi / 2) / Real.pi := by
       rw [hk0]; exact Int.floor_le _
@@ -648,8 +653,7 @@ lemma exists_interior_grid (f : ℝ → ℝ) (hf : Continuous f) (L : ℕ)
     intro j hj
     rw [hclimb]
     have hjL : (j : ℝ) + 1 ≤ (L : ℝ) := by exact_mod_cast Nat.succ_le_of_lt hj
-    nlinarith [hstrict,
-      mul_nonneg (by linarith : (0 : ℝ) ≤ (L : ℝ) - (j : ℝ) - 1) hπ.le]
+    linarith only [hstrict, mul_le_mul_of_nonneg_right hjL hπ.le]
   have hIVT := intermediate_value_Icc
     (by positivity : (0 : ℝ) ≤ 2 * Real.pi) hf.continuousOn
   have hex : ∀ j : ℕ, j < L → ∃ t : ℝ, (0 < t ∧ t < 2 * Real.pi) ∧
@@ -808,12 +812,12 @@ lemma E_inj {t s : ℝ} (ht : 0 < t) (ht2 : t < 2 * Real.pi) (hs : 0 < s)
     rcases lt_trichotomy n 0 with h | h | h
     · exfalso
       have hn1 : (n : ℝ) ≤ -1 := by exact_mod_cast (by omega : n ≤ -1)
-      nlinarith [mul_le_mul_of_nonneg_right hn1
+      linarith only [hreal, ht, hs2, mul_le_mul_of_nonneg_right hn1
         (by positivity : (0 : ℝ) ≤ 2 * Real.pi)]
     · exact h
     · exfalso
       have hn1 : (1 : ℝ) ≤ (n : ℝ) := by exact_mod_cast (by omega : 1 ≤ n)
-      nlinarith [mul_le_mul_of_nonneg_right hn1
+      linarith only [hreal, ht2, hs, mul_le_mul_of_nonneg_right hn1
         (by positivity : (0 : ℝ) ≤ 2 * Real.pi)]
   rw [hn0] at hreal
   simpa using hreal
@@ -824,20 +828,65 @@ lemma E_inj {t s : ℝ} (ht : 0 < t) (ht2 : t < 2 * Real.pi) (hs : 0 < s)
 theorem finset_val_eq_roots {K : Type*} [Field K] (P : Polynomial K) (hP : P ≠ 0)
     (S : Finset K) (hS : ∀ z ∈ S, P.eval z = 0) (hcard : S.card = P.natDegree) :
     S.val = P.roots := by
+  apply Multiset.eq_of_le_of_card_le
+  · exact (Multiset.le_iff_subset S.nodup).mpr fun z hz =>
+      Polynomial.mem_roots'.mpr ⟨hP, hS z (Finset.mem_def.mpr hz)⟩
+  · change P.roots.card ≤ S.card
+    rw [hcard]
+    exact Polynomial.card_roots' P
+
+/-- A reciprocal pair lies off the unit circle and contains two distinct points. -/
+lemma disjoint_reciprocal_pair (tau : ℝ) (htau : 1 < tau) (U : Finset ℂ)
+    (hUnorm : ∀ z ∈ U, ‖z‖ = 1) :
+    Disjoint U ({(tau : ℂ), (tau : ℂ)⁻¹} : Finset ℂ) ∧
+      ({(tau : ℂ), (tau : ℂ)⁻¹} : Finset ℂ).card = 2 := by
   classical
-  have hle : S.val ≤ P.roots := by
-    rw [Multiset.le_iff_count]
-    intro z
-    by_cases hz : z ∈ S
-    · rw [Multiset.count_eq_one_of_mem S.nodup (Finset.mem_def.mp hz),
-        Polynomial.count_roots]
-      exact (Polynomial.rootMultiplicity_pos hP).mpr (hS z hz)
-    · rw [Multiset.count_eq_zero.mpr (fun hv => hz (Finset.mem_def.mpr hv))]
-      exact Nat.zero_le _
-  apply Multiset.eq_of_le_of_card_le hle
-  change P.roots.card ≤ S.card
-  rw [hcard]
-  exact Polynomial.card_roots' P
+  have htau_norm : ‖(tau : ℂ)‖ = tau := by
+    rw [Complex.norm_real, Real.norm_eq_abs, abs_of_pos (zero_lt_one.trans htau)]
+  have htauinv_norm : ‖(tau : ℂ)⁻¹‖ = tau⁻¹ := by rw [norm_inv, htau_norm]
+  have htinv1 : tau⁻¹ < 1 := inv_lt_one_of_one_lt₀ htau
+  have htau_ne : (tau : ℂ) ≠ (tau : ℂ)⁻¹ := by
+    intro h
+    exact (ne_of_gt (htinv1.trans htau))
+      (htau_norm.symm.trans ((congrArg norm h).trans htauinv_norm))
+  have hdisj : Disjoint U ({(tau : ℂ), (tau : ℂ)⁻¹} : Finset ℂ) := by
+    refine Finset.disjoint_left.mpr fun z hz hzpair => ?_
+    rcases (Finset.mem_insert.trans (or_congr_right Finset.mem_singleton)).mp hzpair with rfl | rfl
+    · exact (ne_of_gt htau) (htau_norm.symm.trans (hUnorm _ hz))
+    · exact (ne_of_lt htinv1) (htauinv_norm.symm.trans (hUnorm _ hz))
+  exact ⟨hdisj, Finset.card_pair htau_ne⟩
+
+/-- Adding a reciprocal pair to unimodular points increases the cardinality by two. -/
+lemma card_union_reciprocal_pair (tau : ℝ) (htau : 1 < tau) (U : Finset ℂ)
+    (hUnorm : ∀ z ∈ U, ‖z‖ = 1) :
+    (U ∪ {(tau : ℂ), (tau : ℂ)⁻¹}).card = U.card + 2 := by
+  obtain ⟨hdisj, hpair⟩ := disjoint_reciprocal_pair tau htau U hUnorm
+  rw [Finset.card_union_of_disjoint hdisj, hpair]
+
+/-- A unimodular root set and a reciprocal pair exhaust the degree of a nonzero polynomial. -/
+lemma root_trichotomy_of_unimodular_roots (P : Polynomial ℂ) (hP : P ≠ 0)
+    (tau : ℝ) (htau : 1 < tau) (U : Finset ℂ)
+    (hUnorm : ∀ z ∈ U, ‖z‖ = 1) (hUroot : ∀ z ∈ U, P.eval z = 0)
+    (hcard : U.card + 2 = P.natDegree)
+    (hroot : P.eval (tau : ℂ) = 0) (hinvroot : P.eval (tau : ℂ)⁻¹ = 0) :
+    ∀ z : ℂ, P.eval z = 0 → ‖z‖ = 1 ∨ z = (tau : ℂ) ∨ z = (tau : ℂ)⁻¹ := by
+  classical
+  have hSroot : ∀ z ∈ U ∪ {(tau : ℂ), (tau : ℂ)⁻¹}, P.eval z = 0 := by
+    intro z hz
+    rcases Finset.mem_union.mp hz with hz | hz
+    · exact hUroot z hz
+    · rcases (Finset.mem_insert.trans (or_congr_right Finset.mem_singleton)).mp hz with rfl | rfl
+      · exact hroot
+      · exact hinvroot
+  have hScard : (U ∪ {(tau : ℂ), (tau : ℂ)⁻¹}).card = P.natDegree := by
+    rw [card_union_reciprocal_pair tau htau U hUnorm, hcard]
+  have heq := finset_val_eq_roots P hP _ hSroot hScard
+  intro z hz
+  have hzS : z ∈ U ∪ {(tau : ℂ), (tau : ℂ)⁻¹} :=
+    Finset.mem_def.mpr (heq.symm ▸ (Polynomial.mem_roots'.mpr ⟨hP, hz⟩))
+  rcases Finset.mem_union.mp hzS with hzU | hzpair
+  · exact Or.inl (hUnorm z hzU)
+  · exact Or.inr ((Finset.mem_insert.trans (or_congr_right Finset.mem_singleton)).mp hzpair)
 
 /-- **The trichotomy**: if `τ > 1` is a root of `R_m` (with
 `1 ≤ m` and `3 ≤ m + p`), then EVERY root of `R_m` is unimodular or
@@ -863,59 +912,20 @@ theorem salem_root_trichotomy (alpha : ℝ) (roots : Multiset ℂ) (halpha : 1 <
     intro z hz
     obtain ⟨t, ht, rfl⟩ := Finset.mem_image.mp hz
     exact norm_E t
-  have htaupos : (0 : ℝ) < tau := by linarith
-  have htau0 : ((tau : ℂ)) ≠ 0 := by
-    intro h
-    rw [Complex.ofReal_eq_zero] at h
-    linarith
-  have htau_norm : ‖((tau : ℂ))‖ = tau := by
-    rw [Complex.norm_real, Real.norm_eq_abs, abs_of_pos htaupos]
-  have htauinv_norm : ‖((tau : ℂ))⁻¹‖ = tau⁻¹ := by
-    rw [norm_inv, htau_norm]
-  have htinv1 : tau⁻¹ < 1 := inv_lt_one_of_one_lt₀ htau
-  have htau_ne : ((tau : ℂ)) ≠ ((tau : ℂ))⁻¹ := by
-    intro h
-    have h1 : ‖((tau : ℂ))‖ = ‖((tau : ℂ))⁻¹‖ := by rw [← h]
-    rw [htau_norm, htauinv_norm] at h1
-    linarith
-  have hdisj : Disjoint (T.image fun t => E t)
-      ({((tau : ℂ)), ((tau : ℂ))⁻¹} : Finset ℂ) := by
-    rw [Finset.disjoint_left]
-    intro z hzU hzV
-    have h1 := hUnorm z hzU
-    rcases Finset.mem_insert.mp hzV with h | h
-    · rw [h, htau_norm] at h1; linarith
-    · rw [Finset.mem_singleton.mp h, htauinv_norm] at h1; linarith
-  have hpair : ({((tau : ℂ)), ((tau : ℂ))⁻¹} : Finset ℂ).card = 2 :=
-    Finset.card_pair_eq_two_iff.mpr htau_ne
-  set S : Finset ℂ := (T.image fun t => E t) ∪ {((tau : ℂ)), ((tau : ℂ))⁻¹} with hS
+  obtain ⟨hdisj, hpair⟩ := disjoint_reciprocal_pair tau htau _ hUnorm
+  set S : Finset ℂ := (T.image fun t => E t) ∪ {(tau : ℂ), (tau : ℂ)⁻¹} with hS
   have hScard : S.card = m + (roots.card + 1) := by
     rw [hS, Finset.card_union_of_disjoint hdisj, hUcard, hpair]
     omega
-  have hSroot : ∀ z ∈ S, (R alpha roots m).eval z = 0 := by
-    intro z hz
-    rw [hS, Finset.mem_union] at hz
-    rcases hz with h | h
-    · obtain ⟨t, ht, rfl⟩ := Finset.mem_image.mp h
-      exact (hT t ht).2
-    · rcases Finset.mem_insert.mp h with h1 | h1
-      · rw [h1]; exact hroot
-      · rw [Finset.mem_singleton.mp h1]
-        exact salem_root_inv alpha roots m htau0 hroot
-  have hRne : R alpha roots m ≠ 0 := (R_monic alpha roots m hm).ne_zero
-  have heq : S.val = (R alpha roots m).roots :=
-    SalemCircle.finset_val_eq_roots _ hRne S hSroot
-      (by rw [R_natDegree alpha roots m hm]; exact hScard)
-  intro z hz
-  have hzmem : z ∈ (R alpha roots m).roots := Polynomial.mem_roots'.mpr ⟨hRne, hz⟩
-  rw [← heq] at hzmem
-  have hzS : z ∈ S := Finset.mem_def.mpr hzmem
-  rw [hS, Finset.mem_union] at hzS
-  rcases hzS with h | h
-  · exact Or.inl (hUnorm z h)
-  · rcases Finset.mem_insert.mp h with h1 | h1
-    · exact Or.inr (Or.inl h1)
-    · exact Or.inr (Or.inr (Finset.mem_singleton.mp h1))
+  rw [hS, card_union_reciprocal_pair tau htau _ hUnorm,
+    ← R_natDegree alpha roots m hm] at hScard
+  refine root_trichotomy_of_unimodular_roots (R alpha roots m)
+    (R_monic alpha roots m hm).ne_zero tau htau _ hUnorm ?_ hScard hroot
+    (salem_root_inv alpha roots m
+      (Complex.ofReal_ne_zero.mpr (ne_of_gt (zero_lt_one.trans htau))) hroot)
+  · intro z hz
+    obtain ⟨t, ht, rfl⟩ := Finset.mem_image.mp hz
+    exact (hT t ht).2
 
 end
 end SalemCircle
