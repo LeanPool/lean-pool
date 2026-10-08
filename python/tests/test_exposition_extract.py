@@ -5,6 +5,8 @@ from __future__ import annotations
 import json
 import subprocess
 import sys
+import time
+from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
 import pytest
@@ -56,6 +58,7 @@ def _run(root: Path, refresh: bool = False):
         tuple(root / name for name in OUTPUTS),
         lean=str(root / "lean"),
         refresh=refresh,
+        timings=root / ".lake/exposition-timings.json",
     )
 
 
@@ -167,6 +170,77 @@ def test_invalid_jsonl_is_not_cached(repository: Path) -> None:
     assert not list(
         (repository / ".lake/exposition-cache/v1").glob("*/*/manifest.json")
     )
+
+
+def test_partial_batch_reuses_completed_project_after_failure(repository: Path) -> None:
+    """A retry preserves verified siblings without accepting the failed project."""
+    _run(repository)
+    published = _outputs(repository)
+    executable = repository / "lean"
+    executable.write_text(
+        executable.read_text().replace(
+            "if pathlib.Path('fail').exists(): raise SystemExit(1)",
+            "if pathlib.Path('fail').exists() and module == 'LeanPool.B': "
+            "raise SystemExit(1)",
+        )
+    )
+    for name in ("A", "B"):
+        (repository / f"LeanPool/{name}.lean").write_text(f"-- {name} changed\n")
+    (repository / "fail").touch()
+    with pytest.raises(subprocess.CalledProcessError):
+        _run(repository)
+    assert _outputs(repository) == published
+    report = json.loads((repository / ".lake/exposition-timings.json").read_text())
+    assert report["state"] == "failed"
+    assert [item["project"] for item in report["projects"]] == ["A"]
+    (repository / "fail").unlink()
+    assert [item.cached for item in _run(repository)] == [True, False]
+    calls = (repository / "calls").read_text().splitlines()
+    assert calls.count("LeanPool.A") == 2
+    assert calls.count("LeanPool.B") == 3
+    recovered = _outputs(repository)
+    _run(repository, refresh=True)
+    assert _outputs(repository) == recovered
+
+
+def test_timings_record_completed_sibling_before_batch_finishes(
+    repository: Path,
+) -> None:
+    """Cancellation can leave useful progress even while a project is stalled."""
+    executable = repository / "lean"
+    executable.write_text(
+        executable.read_text().replace(
+            "source = pathlib.Path",
+            "import time\n"
+            "deadline = time.monotonic() + 5\n"
+            "while module == 'LeanPool.B' and not pathlib.Path('release').exists():\n"
+            "    if time.monotonic() > deadline: raise SystemExit(1)\n"
+            "    time.sleep(0.01)\n"
+            "source = pathlib.Path",
+        )
+    )
+    with ThreadPoolExecutor(max_workers=1) as executor:
+        future = executor.submit(_run, repository)
+        try:
+            deadline = time.monotonic() + 4
+            while time.monotonic() < deadline:
+                report_path = repository / ".lake/exposition-timings.json"
+                if report_path.exists():
+                    report = json.loads(report_path.read_text())
+                    if report["projects"]:
+                        break
+                time.sleep(0.01)
+            else:
+                pytest.fail("completed project was missing from progress diagnostics")
+            assert report["state"] == "in_progress"
+            assert [item["project"] for item in report["projects"]] == ["A"]
+            assert not future.done()
+        finally:
+            (repository / "release").touch()
+        future.result(timeout=5)
+    complete = json.loads(report_path.read_text())
+    assert complete["state"] == "complete"
+    assert [item["project"] for item in complete["projects"]] == ["A", "B"]
 
 
 def test_empty_extraction_is_not_cached(repository: Path) -> None:

@@ -251,9 +251,9 @@ jobs:
         uses: actions/cache/restore@27d5ce7f107fe9357f9df03efb73ab90386fccae
         with:
           path: .lake/exposition-cache/v1
-          key: Exposition-v1-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json', 'lakefile.toml', 'scripts/exposition/**', 'python/lean_pool/exposition/extract.py', 'python/lean_pool/exposition/source_text.py') }}-${{ github.sha }}
+          key: Exposition-v1-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json', 'lakefile.toml', 'scripts/exposition/Extract.lean', 'scripts/exposition/extract-all.sh', 'python/lean_pool/exposition/extract.py', 'python/lean_pool/exposition/source_text.py') }}-${{ github.sha }}-${{ github.run_id }}-${{ github.run_attempt }}
           restore-keys: |
-            Exposition-v1-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json', 'lakefile.toml', 'scripts/exposition/**', 'python/lean_pool/exposition/extract.py', 'python/lean_pool/exposition/source_text.py') }}-
+            Exposition-v1-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json', 'lakefile.toml', 'scripts/exposition/Extract.lean', 'scripts/exposition/extract-all.sh', 'python/lean_pool/exposition/extract.py', 'python/lean_pool/exposition/source_text.py') }}-
 
       - name: Extract declarations
         # Per-project environments (see extract-all.sh); 2-way parallel to
@@ -266,14 +266,17 @@ jobs:
           exposition-dump.jsonl exposition-commands.jsonl
 
       - name: Save project extraction cache
-        if: steps.extraction-cache.outputs.cache-hit != 'true'
+        id: extraction-cache-save
+        # A failed project must not discard its completed siblings. The reader
+        # accepts only fingerprinted, digest-verified output pairs.
+        if: always() && steps.extraction-cache.outcome == 'success' && steps.extraction-cache.outputs.cache-hit != 'true'
         uses: actions/cache/save@27d5ce7f107fe9357f9df03efb73ab90386fccae
         with:
           path: .lake/exposition-cache/v1
           key: ${{ steps.extraction-cache.outputs.cache-primary-key }}
 
       - name: Prune old copies of project extraction cache
-        if: steps.extraction-cache.outputs.cache-hit != 'true' && github.ref == 'refs/heads/main'
+        if: always() && steps.extraction-cache-save.outcome == 'success' && github.ref == 'refs/heads/main'
         continue-on-error: true
         env:
           GH_TOKEN: ${{ github.token }}

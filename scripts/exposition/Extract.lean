@@ -158,20 +158,16 @@ partial def evalNameExpr? (e : Expr) : Option Name := do
     | _ => none
   | _ => none
 
-/-- Every `Name` value embedded anywhere in `e`. -/
-partial def collectEmbeddedNames (e : Expr) : Array Name := Id.run do
-  let mut acc : Array Name := #[]
-  if let some n := evalNameExpr? e then acc := acc.push n
-  match e with
-  | .app f a => return acc ++ collectEmbeddedNames f ++ collectEmbeddedNames a
-  | .lam _ t b _ => return acc ++ collectEmbeddedNames t ++ collectEmbeddedNames b
-  | .forallE _ t b _ => return acc ++ collectEmbeddedNames t ++ collectEmbeddedNames b
-  | .letE _ t v b _ =>
-    return acc ++ collectEmbeddedNames t ++ collectEmbeddedNames v
-      ++ collectEmbeddedNames b
-  | .mdata _ b => return acc ++ collectEmbeddedNames b
-  | .proj _ _ b => return acc ++ collectEmbeddedNames b
-  | _ => return acc
+/-- Every embedded `Name`, visiting shared expression nodes only once.
+Lean expressions are DAGs: expanding a shared subtree at every occurrence can
+take exponential time even when its serialized expression is small. The
+notation scan only needs membership, so repeated occurrences add no evidence. -/
+def collectEmbeddedNames (e : Expr) : Array Name := runST fun world => do
+  let names ← ST.mkRef (σ := world) (#[] : Array Name)
+  e.forEach (ω := world) (m := ST world) fun expression => do
+    if let some name := evalNameExpr? expression then
+      names.modify (·.push name)
+  names.get
 
 /-- Expand a seed set of used constants, tunnelling through generated pool
 auxiliaries, until exposed pool declarations (edges) or non-pool constants
@@ -801,16 +797,25 @@ public unsafe def main (args : List String) : IO UInt32 := do
   -- them, parse-error recovery silently truncates commands.
   Lean.enableInitializersExecution
   let imports := modules.toArray.map fun module => ({ module } : Lean.Import)
+  let importStarted ← IO.monoMsNow
+  IO.eprintln s!"exposition: importing {modules}"
   let env ← Lean.importModules imports {} (trustLevel := 1024) (loadExts := true)
+  IO.eprintln s!"exposition: imports loaded in {(← IO.monoMsNow) - importStarted}ms"
   let coreContext : Lean.Core.Context := {
     fileName := "<exposition-extract>",
     fileMap := default,
     maxHeartbeats := 0
   }
   let run : Lean.CoreM Unit := do
+    let declarationsStarted ← IO.monoMsNow
     let (exposed, names) ← Exposition.exposedDecls env
+    IO.eprintln s!"exposition: indexed {names.size} declarations in {(← IO.monoMsNow) - declarationsStarted}ms"
+    let dependenciesStarted ← IO.monoMsNow
     Exposition.extract outPath exposed names
+    IO.eprintln s!"exposition: declaration dependencies written in {(← IO.monoMsNow) - dependenciesStarted}ms"
+    let commandsStarted ← IO.monoMsNow
     Exposition.Commands.emitCommands commandsPath exposed names
+    IO.eprintln s!"exposition: command tables written in {(← IO.monoMsNow) - commandsStarted}ms"
   let (result, _) ← run.toIO coreContext { env }
   let _ := result
   return 0
