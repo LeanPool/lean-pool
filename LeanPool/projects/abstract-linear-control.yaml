@@ -1,0 +1,68 @@
+slug: abstract-linear-control
+title: Continuity and zero-class properties of abstract linear control systems
+summary: Proves that every abstract linear control system with bounded L-infinity
+  inputs between real or complex Banach spaces is zero-class, and hence has continuous
+  input-response trajectories. No integral representation or reflexivity assumption
+  is required. Includes finite-p continuity, a finite-p system with constant response
+  norm, and a scalar zero-class system without integral representation or Orlicz-heart
+  admissibility. Reusable infrastructure includes Phillips' lemma, strongly continuous
+  semigroup bounds, half-line Lp concatenation and shifts, invariant Hahn-Banach
+  extensions, and periodic invariant means.
+branch: functional analysis and control theory
+entry_module: LeanPool.AbstractLinearControl
+authors:
+- Frédéric Marbach
+- GPT-6 Pro
+- Claude Opus 5.5
+source:
+  title: Continuity of solutions to abstract linear control systems
+  url: https://github.com/frederic-marbach/alcs/tree/bda56576f8b2730b73a55f273511c80fabbe56f4
+  github_repo: frederic-marbach/alcs
+  commit: bda56576f8b2730b73a55f273511c80fabbe56f4
+  paper: https://hexagonmath.org/pdf/2610.00022v2
+license: Apache-2.0
+status: verified
+provenance: AI
+main_declarations:
+- AbstractLinearControl.ALCS.zero_class
+main_results:
+- declaration: AbstractLinearControl.ALCS.zero_class
+  informal: For every abstract linear control system with L-infinity inputs between
+    real or complex Banach spaces, the norms of its input-response operators tend
+    to zero as time tends to zero from the right.
+  source_ref: Theorem 1.5 of version 2, completed in Lean on 2026-10-03.
+- declaration: AbstractLinearControl.ALCS.continuousOn_Phi
+  informal: For every bounded input of such a system, its input-response trajectory
+    is continuous on the nonnegative half-line.
+  source_ref: Corollary 1.6.
+- declaration: AbstractLinearControl.ALCS.continuousOn_Phi_of_ne_top
+  informal: For every abstract linear control system with finite exponent p at
+    least one and complete state space, each Lp input has a continuous input-response
+    trajectory on the nonnegative half-line.
+  source_ref: Proposition 1.3.
+- declaration: AbstractLinearControl.exists_system_norm_Phi_eq_one
+  informal: For every finite exponent p at least one, there exist real Banach input
+    and state spaces and an abstract linear control system whose input-response
+    operator has norm one at every positive time.
+  source_ref: Proposition 3.1.
+- declaration: AbstractLinearControl.ExoticMean.Counterexample.no_representation
+  informal: There exists a scalar abstract linear control system with identity
+    semigroup and response norm equal to time, which has no integral representation
+    and is not admissible for any of the formalized Young-function Orlicz hearts.
+  source_ref: Proposition 3.3; formal Young functions include the paper's class.
+- declaration: AbstractLinearControl.Phillips.full
+  informal: For a pointwise null sequence of bounded linear functionals on real or
+    complex bounded sequences, each sequence of atomic coefficients is absolutely
+    summable, its sum of norms tends to zero, and its diagonal coefficient tends
+    to zero.
+  source_ref: Lemma 2.2.
+tags:
+- functional-analysis
+- control-theory
+- semigroups
+- lp-spaces
+- hahn-banach
+msc:
+- 47D06
+- 93C25
+- 46E30
