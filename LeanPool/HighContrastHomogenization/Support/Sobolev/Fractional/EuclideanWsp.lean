@@ -1,0 +1,210 @@
+/-
+Copyright (c) 2026 Scott Armstrong, Tuomo Kuusi. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Scott Armstrong, Tuomo Kuusi
+-/
+
+module
+
+public import LeanPool.HighContrastHomogenization.Support.Sobolev.FiniteLpExponent
+public import LeanPool.HighContrastHomogenization.Support.Sobolev.Fractional.Definitions
+
+/-!
+# Coarse-graining support: Support.Sobolev.Fractional.EuclideanWsp
+
+Imported from the Apache-2.0 CoarseGraining development at commit
+`c7ddd76c08ade64fed1b8d2ca51be14dfee8deb4`.
+-/
+
+public section
+
+/-!
+# Euclidean fractional Sobolev core
+
+The exact Chapter 3 Euclidean `W^(s,p)` kernel and full power norm on a
+triadic cube.
+-/
+
+namespace HCPolySupport
+
+open MeasureTheory
+open scoped ENNReal
+
+noncomputable section
+
+/-- The Hilbert-vector difference kernel `(F(x) - F(y)) / |x - y|^(s + d/p)` using Euclidean
+distance. -/
+@[expose]
+noncomputable def cubeEuclideanWspKernel {d : ℕ} (s : FractionalOrder)
+    (p : FiniteLpExponent) (F : Vec d → Vec d) :
+    Vec d × Vec d → HilbertVec d :=
+  fun z =>
+    (euclideanDist z.1 z.2 ^
+      (-(s.1 + (d : ℝ) / p.exponent.toReal))) •
+        HilbertVec.ofVec (F z.1 - F z.2)
+
+@[simp] theorem cubeEuclideanWspKernel_apply {d : ℕ}
+    (s : FractionalOrder) (p : FiniteLpExponent) (F : Vec d → Vec d)
+    (z : Vec d × Vec d) :
+    cubeEuclideanWspKernel s p F z =
+      (euclideanDist z.1 z.2 ^
+        (-(s.1 + (d : ℝ) / p.exponent.toReal))) •
+          HilbertVec.ofVec (F z.1 - F z.2) := rfl
+
+theorem norm_cubeEuclideanWspKernel {d : ℕ}
+    (s : FractionalOrder) (p : FiniteLpExponent) (F : Vec d → Vec d)
+    (z : Vec d × Vec d) :
+    ‖cubeEuclideanWspKernel s p F z‖ =
+      (euclideanDist z.1 z.2 ^
+        (-(s.1 + (d : ℝ) / p.exponent.toReal))) *
+          euclideanNorm (F z.1 - F z.2) := by
+  rw [cubeEuclideanWspKernel_apply, norm_smul, Real.norm_eq_abs,
+    abs_of_nonneg (Real.rpow_nonneg (euclideanDist_nonneg _ _) _),
+    ← euclideanNorm_eq_norm_ofVec]
+
+/-- The Euclidean fractional difference kernel of `F` belongs to Lᵖ for the cube Gagliardo pair
+measure. -/
+@[expose]
+def MemCubeEuclideanWsp {d : ℕ} (Q : TriadicCube d)
+    (s : FractionalOrder) (p : FiniteLpExponent)
+    (F : Vec d → Vec d) : Prop :=
+  MemLp (cubeEuclideanWspKernel s p F) p.exponent
+    (Gagliardo.gagliardoCubeMeasure Q)
+
+/-- The extended Lᵖ norm of the Euclidean fractional difference kernel for the cube Gagliardo pair
+measure. -/
+@[expose]
+noncomputable def cubeEuclideanWspESeminorm {d : ℕ}
+    (Q : TriadicCube d) (s : FractionalOrder) (p : FiniteLpExponent)
+    (F : Vec d → Vec d) : ℝ≥0∞ :=
+  eLpNorm (cubeEuclideanWspKernel s p F) p.exponent
+    (Gagliardo.gagliardoCubeMeasure Q)
+
+theorem cubeEuclideanWspESeminorm_eq_lintegral {d : ℕ}
+    (Q : TriadicCube d) (s : FractionalOrder) (p : FiniteLpExponent)
+    (F : Vec d → Vec d)
+    (hF : AEStronglyMeasurable (cubeEuclideanWspKernel s p F)
+      (Gagliardo.gagliardoCubeMeasure Q)) :
+    cubeEuclideanWspESeminorm Q s p F =
+      (∫⁻ z, ‖cubeEuclideanWspKernel s p F z‖ₑ ^ p.exponent.toReal
+        ∂Gagliardo.gagliardoCubeMeasure Q) ^
+          (1 / p.exponent.toReal) := by
+  unfold cubeEuclideanWspESeminorm
+  exact eLpNorm_eq_lintegral_rpow_enorm_toReal
+    (ne_of_gt (lt_trans zero_lt_one p.one_lt)) p.lt_top.ne hF
+
+theorem memCubeEuclideanWsp_iff {d : ℕ} {Q : TriadicCube d}
+    {s : FractionalOrder} {p : FiniteLpExponent} {F : Vec d → Vec d} :
+    MemCubeEuclideanWsp Q s p F ↔
+      AEStronglyMeasurable (cubeEuclideanWspKernel s p F)
+          (Gagliardo.gagliardoCubeMeasure Q) ∧
+        cubeEuclideanWspESeminorm Q s p F < ∞ :=
+  ⟨fun h => ⟨MemLp.aestronglyMeasurable h, h⟩, fun h => h.2⟩
+
+theorem MemCubeEuclideanWsp.aestronglyMeasurable {d : ℕ}
+    {Q : TriadicCube d} {s : FractionalOrder} {p : FiniteLpExponent}
+    {F : Vec d → Vec d} (hF : MemCubeEuclideanWsp Q s p F) :
+    AEStronglyMeasurable (cubeEuclideanWspKernel s p F)
+      (Gagliardo.gagliardoCubeMeasure Q) :=
+  MemLp.aestronglyMeasurable hF
+
+theorem MemCubeEuclideanWsp.eSeminorm_lt_top {d : ℕ}
+    {Q : TriadicCube d} {s : FractionalOrder} {p : FiniteLpExponent}
+    {F : Vec d → Vec d} (hF : MemCubeEuclideanWsp Q s p F) :
+    cubeEuclideanWspESeminorm Q s p F < ∞ :=
+  hF.eLpNorm_lt_top
+
+/-- A vector field with cube Euclidean Lᵖ integrability and an Lᵖ fractional difference kernel of
+order `s`. -/
+structure CubeEuclideanWspField {d : ℕ} (Q : TriadicCube d)
+    (s : FractionalOrder) (p : FiniteLpExponent)
+    extends CubeEuclideanLpField Q p where
+  euclideanMemWsp : MemCubeEuclideanWsp Q s p toField
+
+namespace CubeEuclideanWspField
+
+
+instance {d : ℕ} {Q : TriadicCube d} {s : FractionalOrder}
+    {p : FiniteLpExponent} :
+    CoeFun (CubeEuclideanWspField Q s p) (fun _ => Vec d → Vec d) where
+  coe F := F.toField
+
+theorem kernel_aestronglyMeasurable {d : ℕ} {Q : TriadicCube d}
+    {s : FractionalOrder} {p : FiniteLpExponent}
+    (F : CubeEuclideanWspField Q s p) :
+    AEStronglyMeasurable
+      (cubeEuclideanWspKernel s p F.toField)
+      (Gagliardo.gagliardoCubeMeasure Q) :=
+  F.euclideanMemWsp.aestronglyMeasurable
+
+theorem eSeminorm_lt_top {d : ℕ} {Q : TriadicCube d}
+    {s : FractionalOrder} {p : FiniteLpExponent}
+    (F : CubeEuclideanWspField Q s p) :
+    cubeEuclideanWspESeminorm Q s p F.toField < ∞ :=
+  F.euclideanMemWsp.eSeminorm_lt_top
+
+end CubeEuclideanWspField
+
+
+/-- The extended nonnegative scale weight given by the cube scale factor to the power `-s p`. -/
+@[expose]
+noncomputable def cubeEuclideanWspScalePowerWeight {d : ℕ}
+    (Q : TriadicCube d) (s : FractionalOrder)
+    (p : FiniteLpExponent) : ℝ≥0∞ :=
+  (ENNReal.ofReal (cubeScaleFactor Q)) ^
+    (-s.1 * p.exponent.toReal)
+
+theorem cubeEuclideanWspScalePowerWeight_lt_top {d : ℕ}
+    (Q : TriadicCube d) (s : FractionalOrder)
+    (p : FiniteLpExponent) :
+    cubeEuclideanWspScalePowerWeight Q s p < ∞ := by
+  unfold cubeEuclideanWspScalePowerWeight
+  have hscale : 0 < cubeScaleFactor Q := by
+    simpa [cubeScaleFactor] using
+      (zpow_pos (show (0 : ℝ) < 3 by norm_num) Q.scale)
+  exact lt_top_iff_ne_top.mpr
+    (ENNReal.rpow_ne_top_of_ne_zero
+      (ENNReal.ofReal_ne_zero_iff.mpr hscale)
+      ENNReal.ofReal_ne_top)
+
+
+/-- The extended full fractional norm: the pth root of the sum of the scale-weighted normalized Lᵖ
+norm to power `p` and the fractional seminorm to power `p`. -/
+@[expose]
+noncomputable def cubeEuclideanWspFullENorm {d : ℕ}
+    (Q : TriadicCube d) (s : FractionalOrder) (p : FiniteLpExponent)
+    (F : Vec d → Vec d) : ℝ≥0∞ :=
+  (cubeEuclideanWspScalePowerWeight Q s p *
+        ((cubeBoundedMeasurableDomain Q).normalizedEuclideanLpENorm
+          p.exponent F) ^ p.exponent.toReal +
+      (cubeEuclideanWspESeminorm Q s p F) ^ p.exponent.toReal) ^
+    (p.exponent.toReal)⁻¹
+
+theorem CubeEuclideanWspField.normalizedEuclideanLpENorm_lt_top
+    {d : ℕ} {Q : TriadicCube d} {s : FractionalOrder}
+    {p : FiniteLpExponent} (F : CubeEuclideanWspField Q s p) :
+    (cubeBoundedMeasurableDomain Q).normalizedEuclideanLpENorm
+        p.exponent F.toField < ∞ := by
+  unfold BoundedMeasurableDomain.normalizedEuclideanLpENorm
+  unfold BoundedMeasurableDomain.normalizedLpENorm
+  rw [cubeBoundedMeasurableDomain_normalizedVolume_eq_normalizedCubeMeasure]
+  simpa only [euclideanNorm_eq_norm_ofVec] using
+      F.euclideanMemLp.norm.eLpNorm_lt_top
+
+theorem CubeEuclideanWspField.fullENorm_lt_top {d : ℕ}
+    {Q : TriadicCube d} {s : FractionalOrder} {p : FiniteLpExponent}
+    (F : CubeEuclideanWspField Q s p) :
+    cubeEuclideanWspFullENorm Q s p F.toField < ∞ := by
+  unfold cubeEuclideanWspFullENorm
+  apply ENNReal.rpow_lt_top_of_nonneg (inv_nonneg.mpr ENNReal.toReal_nonneg)
+  exact (ENNReal.add_lt_top.mpr ⟨
+    ENNReal.mul_lt_top
+      (cubeEuclideanWspScalePowerWeight_lt_top Q s p)
+      (ENNReal.rpow_lt_top_of_nonneg ENNReal.toReal_nonneg
+        F.normalizedEuclideanLpENorm_lt_top.ne),
+    ENNReal.rpow_lt_top_of_nonneg ENNReal.toReal_nonneg
+      F.eSeminorm_lt_top.ne⟩).ne
+
+end
+
+end HCPolySupport

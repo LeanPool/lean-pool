@@ -1,0 +1,29 @@
+/-
+Copyright (c) 2026 Scott Armstrong, Tuomo Kuusi. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Scott Armstrong, Tuomo Kuusi
+-/
+
+module
+
+public import LeanPool.HighContrastHomogenization.Support.Deterministic.ConstantCoefficientDirichletBesov.PublicTheorems
+public import LeanPool.HighContrastHomogenization.Support.Deterministic.ConstantCoefficientDirichletBesov.StandardProjectionVector
+public import LeanPool.HighContrastHomogenization.Support.Deterministic.ConstantCoefficientDirichletBesov.StandardProjectionIncrementEnergy
+public import LeanPool.HighContrastHomogenization.Support.Deterministic.ConstantCoefficientDirichletBesov.StandardProjectionResidual
+public import LeanPool.HighContrastHomogenization.Support.Deterministic.ConstantCoefficientDirichletBesov.StandardProjectionBoundary
+public import LeanPool.HighContrastHomogenization.Support.Deterministic.ConstantCoefficientDirichletBesov.StandardProjectionBoundaryNeighbor
+public import LeanPool.HighContrastHomogenization.Support.Deterministic.ConstantCoefficientDirichletBesov.StandardProjectionBoundaryNeighborCount
+public import LeanPool.HighContrastHomogenization.Support.Deterministic.ConstantCoefficientDirichletBesov.StandardProjectionBoundaryGap
+public import LeanPool.HighContrastHomogenization.Support.Deterministic.ConstantCoefficientDirichletBesov.StandardOverlapComparison
+public import LeanPool.HighContrastHomogenization.Support.Deterministic.ConstantCoefficientDirichletBesov.DiscreteConvolution
+public import LeanPool.HighContrastHomogenization.Support.Deterministic.ConstantCoefficientDirichletBesov.StandardProjectionSummation
+public import LeanPool.HighContrastHomogenization.Support.Deterministic.ConstantCoefficientDirichletBesov.StandardProjectionSharpKernel
+
+/-!
+# Coarse-graining support: Support.Deterministic.ConstantCoefficientDirichletBesov
+
+Imported from the Apache-2.0 CoarseGraining development at commit
+`c7ddd76c08ade64fed1b8d2ca51be14dfee8deb4`.
+-/
+
+public section

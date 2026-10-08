@@ -1,0 +1,66 @@
+slug: high-contrast-homogenization
+title: Homogenization at a polynomial scale in high contrast
+summary: >-
+  Formalizes polynomial entry into the small-contrast regime, algebraic
+  convergence of coarse blocks, and quantitative stochastic homogenization
+  with correctors, Liouville classification and large-scale regularity.
+  Uses locally uniformly elliptic measurable coefficient fields modulo
+  almost-everywhere equality. The Dirichlet estimate has the documented
+  negative-Sobolev formulation on adapted cells; the random radius is at
+  least one and the effective matrix is existentially produced. Includes
+  the complete production library and its pinned CoarseGraining dependency
+  closure in an isolated support namespace.
+branch: partial differential equations and probability
+entry_module: LeanPool.HighContrastHomogenization
+authors:
+  - Scott Armstrong
+  - Tuomo Kuusi
+  - Amélie Loher
+source:
+  arxiv: '2609.27647'
+  url: https://github.com/scottnarmstrong/HighContrastHomogenization/tree/7a13dbcd8d6609264a713373f5c69ceeac870472
+  github_repo: scottnarmstrong/HighContrastHomogenization
+  commit: 7a13dbcd8d6609264a713373f5c69ceeac870472
+  dependency_url: https://github.com/scottnarmstrong/CoarseGraining/tree/c7ddd76c08ade64fed1b8d2ca51be14dfee8deb4
+  dependency_commit: c7ddd76c08ade64fed1b8d2ca51be14dfee8deb4
+license: Apache-2.0
+status: verified
+provenance: AI
+main_declarations:
+  - HCPoly.polynomial_homogenization
+main_results:
+  - declaration: HCPoly.polynomial_entry
+    informal: >-
+      Under stationary unit-range assumptions and the source-tail bound,
+      every generation beyond a scale of polynomial length has annealed
+      contrast at most one plus the prescribed tolerance.
+  - declaration: HCPoly.algebraic_convergence
+    informal: >-
+      The annealed coarse blocks converge algebraically to a limiting
+      positive-definite block, with two-sided order estimates.
+  - declaration: HCPoly.uniform_homogenization
+    informal: >-
+      Uniformly elliptic stationary unit-range laws satisfy the
+      negative-Sobolev Dirichlet estimate, corrector estimates, Liouville
+      classification and first-order approximation obtained by specializing
+      the polynomial homogenization theorem.
+  - declaration: HCPoly.polynomial_homogenization
+    informal: >-
+      High-contrast stationary unit-range laws admit an effective matrix
+      and a random homogenization radius with polynomial length and
+      quantitative tails, negative-Sobolev Dirichlet estimates on adapted
+      cells, correctors, Liouville classification and large-scale regularity.
+  - declaration: HCPoly.quenched_convergence
+    informal: >-
+      Coarse coefficients converge almost surely beyond a quantitative
+      random scale, with the documented source-tail and stretched-exponential
+      tail estimates.
+tags:
+  - homogenization
+  - elliptic-equations
+  - probability
+  - high-contrast
+msc:
+  - 35B27
+  - 35J15
+  - 60K37
