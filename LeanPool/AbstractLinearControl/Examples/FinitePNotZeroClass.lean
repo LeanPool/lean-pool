@@ -53,18 +53,16 @@ namespace ShiftExample
 section Raw
 
 /-- Extension by zero of `f` from `[0, ∞)` to `ℝ`. -/
-def zext (f : ℝ → ℝ) : ℝ → ℝ := (Set.Ici (0 : ℝ)).indicator f
+def zext (f : ℝ → ℝ) : ℝ → ℝ := ALCS.zeroExt f
 
 /-- The raw operator: `s ↦ 1_A(s) · (zext f)(φ s)`. -/
 def rawOp (φ : ℝ → ℝ) (A : Set ℝ) (f : ℝ → ℝ) : ℝ → ℝ := A.indicator (zext f ∘ φ)
 
-lemma zext_of_nonneg (f : ℝ → ℝ) (y : ℝ) (h : 0 ≤ y) : zext f y = f y := by
-  have h' : y ∈ Set.Ici (0 : ℝ) := h
-  exact Set.indicator_of_mem h' f
+lemma zext_of_nonneg (f : ℝ → ℝ) (y : ℝ) (h : 0 ≤ y) : zext f y = f y :=
+  ALCS.zeroExt_of_nonneg f h
 
-lemma zext_of_neg (f : ℝ → ℝ) (y : ℝ) (h : y < 0) : zext f y = 0 := by
-  have h' : y ∉ Set.Ici (0 : ℝ) := not_le.2 h
-  exact Set.indicator_of_notMem h' f
+lemma zext_of_neg (f : ℝ → ℝ) (y : ℝ) (h : y < 0) : zext f y = 0 :=
+  ALCS.zeroExt_of_neg f h
 
 variable {φ : ℝ → ℝ} {A : Set ℝ}
 
@@ -72,9 +70,9 @@ lemma rawOp_add (f g : ℝ → ℝ) (x : ℝ) :
     rawOp φ A (f + g) x = rawOp φ A f x + rawOp φ A g x := by
   by_cases hx : x ∈ A
   · by_cases hy : φ x ∈ Set.Ici (0 : ℝ)
-    · simp only [rawOp, zext, Function.comp_apply, Set.indicator_of_mem hx,
+    · simp only [rawOp, zext, ALCS.zeroExt, Function.comp_apply, Set.indicator_of_mem hx,
         Set.indicator_of_mem hy, Pi.add_apply]
-    · simp only [rawOp, zext, Function.comp_apply, Set.indicator_of_mem hx,
+    · simp only [rawOp, zext, ALCS.zeroExt, Function.comp_apply, Set.indicator_of_mem hx,
         Set.indicator_of_notMem hy, add_zero]
   · simp only [rawOp, Set.indicator_of_notMem hx, add_zero]
 
@@ -82,9 +80,9 @@ lemma rawOp_smul (c : ℝ) (f : ℝ → ℝ) (x : ℝ) :
     rawOp φ A (c • f) x = c • rawOp φ A f x := by
   by_cases hx : x ∈ A
   · by_cases hy : φ x ∈ Set.Ici (0 : ℝ)
-    · simp only [rawOp, zext, Function.comp_apply, Set.indicator_of_mem hx,
+    · simp only [rawOp, zext, ALCS.zeroExt, Function.comp_apply, Set.indicator_of_mem hx,
         Set.indicator_of_mem hy, Pi.smul_apply]
-    · simp only [rawOp, zext, Function.comp_apply, Set.indicator_of_mem hx,
+    · simp only [rawOp, zext, ALCS.zeroExt, Function.comp_apply, Set.indicator_of_mem hx,
         Set.indicator_of_notMem hy, smul_zero]
   · simp only [rawOp, Set.indicator_of_notMem hx, smul_zero]
 
@@ -97,8 +95,8 @@ lemma rawOp_congr (hφ : MeasurePreserving φ volume volume) (A : Set ℝ) {f g 
   have h2 : zext f =ᵐ[volume] zext g := by
     filter_upwards [h1] with x hx
     by_cases hx0 : x ∈ Set.Ici (0 : ℝ)
-    · simp only [zext, Set.indicator_of_mem hx0, hx hx0]
-    · simp only [zext, Set.indicator_of_notMem hx0]
+    · simp only [zext, ALCS.zeroExt, Set.indicator_of_mem hx0, hx hx0]
+    · simp only [zext, ALCS.zeroExt, Set.indicator_of_notMem hx0]
   -- composing with a measure-preserving map keeps a.e. equality
   have h3 : zext f ∘ φ =ᵐ[volume] zext g ∘ φ := hφ.quasiMeasurePreserving.ae_eq_comp h2
   have h4 : rawOp φ A f =ᵐ[volume] rawOp φ A g := by
@@ -189,11 +187,11 @@ variable {φ : ℝ → ℝ} {A : Set ℝ}
 
 omit [Fact (1 ≤ p)] in
 lemma memLp_zext (f : Lp ℝ p muPlus) : MemLp (zext ⇑f) p volume :=
-  (memLp_indicator_iff_restrict measurableSet_Ici).2 (Lp.memLp f)
+  ALCS.memLp_zeroExt f
 
 omit [Fact (1 ≤ p)] in
 lemma eLpNorm_zext (f : Lp ℝ p muPlus) : eLpNorm (zext ⇑f) p volume = eLpNorm (⇑f) p muPlus :=
-  eLpNorm_indicator_eq_eLpNorm_restrict measurableSet_Ici
+  ALCS.eLpNorm_zeroExt f
 
 omit [Fact (1 ≤ p)] in
 lemma memLp_rawOp (hφ : MeasurePreserving φ volume volume) (hA : MeasurableSet A)
@@ -248,10 +246,8 @@ lemma opFun_smul (hφ : MeasurePreserving φ volume volume) (hA : MeasurableSet 
 
 omit [Fact (1 ≤ p)] in
 lemma norm_opFun_le (hφ : MeasurePreserving φ volume volume) (hA : MeasurableSet A)
-    (f : Lp ℝ p muPlus) : ‖opFun φ hφ A hA f‖ ≤ ‖f‖ := by
-  unfold opFun
-  rw [Lp.norm_toLp, Lp.norm_def]
-  exact ENNReal.toReal_mono (Lp.eLpNorm_ne_top f) (eLpNorm_rawOp_le hφ hA f)
+    (f : Lp ℝ p muPlus) : ‖opFun φ hφ A hA f‖ ≤ ‖f‖ :=
+  ALCS.norm_toLp_le_of_eLpNorm_le (memLp_rawOp hφ hA f) f (eLpNorm_rawOp_le hφ hA f)
 
 /-- `f ↦ rawOp φ A f`, as a bounded linear operator on `L^p(ℝ₊)`, of norm at most `1`. -/
 def op (φ : ℝ → ℝ) (hφ : MeasurePreserving φ volume volume) (A : Set ℝ)
@@ -319,70 +315,25 @@ theorem shiftT_add {t s : ℝ} (_ht : 0 ≤ t) (hs : 0 ≤ s) :
   · rw [zext_of_nonneg _ (x - t) hx, rawT_apply, show x - t - s = x - (t + s) by ring]
   · rw [zext_of_neg _ (x - t) (not_le.1 hx), zext_of_neg (⇑f) (x - (t + s)) (by linarith)]
 
-/-! ### Strong continuity, from the continuity of translations in `L^p(ℝ)` -/
+/-! ### Strong continuity, from the generic half-line translation theorem -/
 
-/-- The translations `x ↦ x - t`, as continuous maps depending continuously on `t`. -/
-def transl : C(ℝ, C(ℝ, ℝ)) :=
-  ContinuousMap.curry ⟨fun q : ℝ × ℝ => q.2 - q.1, continuous_snd.sub continuous_fst⟩
-
-lemma transl_apply (t x : ℝ) : transl t x = x - t := by
-  simp [transl]
-
-lemma measurePreserving_transl (t : ℝ) : MeasurePreserving (transl t) volume volume := by
-  have h : ⇑(transl t) = fun x => x - t := funext (transl_apply t)
-  rw [h]
-  exact measurePreserving_sub_right volume t
-
-/-- The zero extension of `y`, as an element of `L^p(ℝ)`. -/
-def zextLp (y : Lp ℝ p muPlus) : Lp ℝ p (volume : Measure ℝ) :=
-  (memLp_zext y).toLp (zext ⇑y)
-
-omit [Fact (1 ≤ p)] in
-lemma zextLp_ae (y : Lp ℝ p muPlus) : ⇑(zextLp y) =ᵐ[volume] zext ⇑y :=
-  (memLp_zext y).coeFn_toLp
-
-/-- The zero extension of `y`, translated by `t`, as an element of `L^p(ℝ)`. -/
-def transLp (y : Lp ℝ p muPlus) (t : ℝ) : Lp ℝ p (volume : Measure ℝ) :=
-  Lp.compMeasurePreserving (transl t) (measurePreserving_transl t) (zextLp y)
-
-omit [Fact (1 ≤ p)] in
-lemma transLp_ae (y : Lp ℝ p muPlus) (t : ℝ) :
-    ⇑(transLp y t) =ᵐ[volume] zext ⇑y ∘ transl t := by
-  have h1 : ⇑(transLp y t) =ᵐ[volume] ⇑(zextLp y) ∘ transl t :=
-    Lp.coeFn_compMeasurePreserving (zextLp y) (measurePreserving_transl t)
-  exact h1.trans ((measurePreserving_transl t).quasiMeasurePreserving.ae_eq_comp (zextLp_ae y))
-
-/-- `‖T t y - y‖_{L^p(ℝ₊)} ≤ ‖τ_t Y - Y‖_{L^p(ℝ)}`, where `Y` is the zero extension of `y`. -/
-lemma norm_shiftT_sub_le (y : Lp ℝ p muPlus) (t : ℝ) :
-    ‖shiftT p t y - y‖ ≤ ‖transLp y t - transLp y 0‖ := by
-  have hae : ⇑(shiftT p t y - y) =ᵐ[muPlus] ⇑(transLp y t - transLp y 0) := by
-    have a1 := Lp.coeFn_sub (shiftT p t y) y
-    have a2 := shiftT_ae t y
-    have a3 := ae_restrict_of_ae (s := Set.Ici (0 : ℝ))
-      (Lp.coeFn_sub (transLp y t) (transLp y 0))
-    have a4 := ae_restrict_of_ae (s := Set.Ici (0 : ℝ)) (transLp_ae y t)
-    have a5 := ae_restrict_of_ae (s := Set.Ici (0 : ℝ)) (transLp_ae y 0)
-    have a6 : ∀ᵐ x ∂muPlus, x ∈ Set.Ici (0 : ℝ) := ae_restrict_mem measurableSet_Ici
-    filter_upwards [a1, a2, a3, a4, a5, a6] with x e1 e2 e3 e4 e5 hx
-    rw [e1, Pi.sub_apply, e2, e3, Pi.sub_apply, e4, e5, Function.comp_apply,
-      Function.comp_apply, transl_apply, transl_apply, rawT_apply, sub_zero,
-      zext_of_nonneg (⇑y) x hx]
-  rw [Lp.norm_def, Lp.norm_def, eLpNorm_congr_ae hae]
-  exact ENNReal.toReal_mono (Lp.eLpNorm_ne_top _)
-    (eLpNorm_mono_measure _ Measure.restrict_le_self)
+/-- The right shift is the half-line left shift with a negative translation parameter. -/
+lemma shiftT_eq_shiftLeft (t : ℝ) (f : Lp ℝ p muPlus) :
+    shiftT p t f = ALCS.shiftLeft (-t) f := by
+  apply Lp.ext
+  filter_upwards [shiftT_ae t f, ALCS.shiftLeft_ae (-t) f] with x hright hleft
+  rw [hright, rawT_apply, hleft]
+  simp only [zext, Function.comp_apply, sub_eq_neg_add]
 
 /-- Strong continuity of the right shift (uses `p ≠ ∞`). -/
 theorem shiftT_tendsto (hp : p ≠ ∞) (y : Lp ℝ p muPlus) :
     Tendsto (fun t => shiftT p t y) (nhdsWithin 0 (Set.Ici 0)) (𝓝 y) := by
-  -- continuity of translations in `L^p(ℝ)`
-  have hlim : Tendsto (fun t => transLp y t) (𝓝 0) (𝓝 (transLp y 0)) := by
-    unfold transLp
-    exact Filter.Tendsto.compMeasurePreservingLp tendsto_const_nhds
-      (transl.continuous.tendsto 0) measurePreserving_transl (measurePreserving_transl 0) hp
-  have hlim' : Tendsto (fun t => ‖transLp y t - transLp y 0‖) (nhdsWithin 0 (Set.Ici 0)) (𝓝 0) :=
-    (tendsto_iff_norm_sub_tendsto_zero.1 hlim).mono_left nhdsWithin_le_nhds
+  have hneg : Tendsto (fun t : ℝ => -t) (nhdsWithin 0 (Set.Ici 0)) (𝓝 0) := by
+    simpa only [neg_zero] using
+      (continuous_neg.tendsto (0 : ℝ)).mono_left nhdsWithin_le_nhds
   apply tendsto_iff_norm_sub_tendsto_zero.2
-  exact squeeze_zero (fun t => norm_nonneg _) (fun t => norm_shiftT_sub_le y t) hlim'
+  simpa only [shiftT_eq_shiftLeft, Function.comp_def] using
+    (ALCS.tendsto_norm_shiftLeft_sub hp y).comp hneg
 
 /-- The right-shift semigroup on `L^p(ℝ₊)`, for `p < ∞`. -/
 def rightShift (hp : p ≠ ∞) : C0Semigroup ℝ (Lp ℝ p muPlus) where

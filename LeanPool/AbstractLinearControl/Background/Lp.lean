@@ -5,6 +5,7 @@ Authors: Frédéric Marbach
 -/
 module
 
+public import LeanPool.AbstractLinearControl.Background.Linfty
 public import Mathlib.MeasureTheory.Function.LpSpace.Complete
 public import Mathlib.MeasureTheory.Function.LpSpace.ContinuousCompMeasurePreserving
 public import Mathlib.MeasureTheory.Function.LpSpace.Indicator
@@ -313,28 +314,6 @@ section Infinity
 lemma memLp_of_bound {f : ℝ → U} (hf : StronglyMeasurable f)
     {C : ℝ} (hb : ∀ t, ‖f t‖ ≤ C) : MemLp f ∞ muPlus :=
   memLp_top_of_bound hf.aestronglyMeasurable C (Filter.Eventually.of_forall hb)
-
-/-- The `L^∞` norm is bounded by any nonnegative a.e. bound. -/
-lemma lp_norm_le {u : Lp U ∞ muPlus} {C : ℝ} (hC : 0 ≤ C)
-    (hb : ∀ᵐ t ∂muPlus, ‖u t‖ ≤ C) : ‖u‖ ≤ C := by
-  have htop : eLpNorm (⇑u) ∞ muPlus = eLpNormEssSup (⇑u) muPlus :=
-    eLpNorm_exponent_top (Lp.aestronglyMeasurable u)
-  rw [Lp.norm_def, htop]
-  calc
-    (eLpNormEssSup (⇑u) muPlus).toReal ≤ (ENNReal.ofReal C).toReal :=
-      ENNReal.toReal_mono ENNReal.ofReal_ne_top (eLpNormEssSup_le_of_ae_bound hb)
-    _ = C := ENNReal.toReal_ofReal hC
-
-/-- The representative of an `L^∞` class obeys its norm bound a.e. -/
-lemma ae_norm_le (u : Lp U ∞ muPlus) : ∀ᵐ t ∂muPlus, ‖u t‖ ≤ ‖u‖ := by
-  have htop : eLpNorm (⇑u) ∞ muPlus = eLpNormEssSup (⇑u) muPlus :=
-    eLpNorm_exponent_top (Lp.aestronglyMeasurable u)
-  have hfinite : eLpNormEssSup (⇑u) muPlus ≠ ∞ := by
-    rw [← htop]
-    exact Lp.eLpNorm_ne_top u
-  filter_upwards [enorm_ae_le_eLpNormEssSup (⇑u) muPlus] with t ht
-  have ht' := ENNReal.toReal_mono hfinite ht
-  simpa only [Lp.norm_def, htop, toReal_enorm] using ht'
 
 /-- An everywhere bounded, strongly measurable representative. The representative is
 only modified where it exceeds `C`. -/

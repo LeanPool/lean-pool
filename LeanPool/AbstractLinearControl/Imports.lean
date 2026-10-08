@@ -8,6 +8,7 @@ module  -- shake: keep-all --deprecated_module: ignore
 -- Generated project imports; run `lake exe mk_all`.
 public import LeanPool.AbstractLinearControl
 public import LeanPool.AbstractLinearControl.Background.InvariantHahnBanach
+public import LeanPool.AbstractLinearControl.Background.Linfty
 public import LeanPool.AbstractLinearControl.Background.Lp
 public import LeanPool.AbstractLinearControl.Background.Phillips
 public import LeanPool.AbstractLinearControl.Background.Semigroup

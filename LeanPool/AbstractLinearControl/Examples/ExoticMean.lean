@@ -6,6 +6,7 @@ Authors: Frédéric Marbach
 module
 
 public import LeanPool.AbstractLinearControl.Background.InvariantHahnBanach
+public import LeanPool.AbstractLinearControl.Background.Linfty
 public import Mathlib.MeasureTheory.Integral.IntervalIntegral.Periodic
 public import Mathlib.Topology.Separation.CompletelyRegular
 
@@ -58,25 +59,12 @@ local instance : Fact (1 ≤ (∞ : ℝ≥0∞)) := ⟨le_top⟩
 
 lemma linfty_norm_le {α : Type*} [MeasurableSpace α] {μ : Measure α}
     (f : Lp ℝ ∞ μ) {C : ℝ} (hC : 0 ≤ C)
-    (hf : ∀ᵐ x ∂μ, ‖f x‖ ≤ C) : ‖f‖ ≤ C := by
-  have htop : eLpNorm (⇑f) ∞ μ = eLpNormEssSup (⇑f) μ :=
-    eLpNorm_exponent_top (Lp.aestronglyMeasurable f)
-  rw [Lp.norm_def, htop]
-  calc
-    (eLpNormEssSup (⇑f) μ).toReal ≤ (ENNReal.ofReal C).toReal :=
-      ENNReal.toReal_mono ENNReal.ofReal_ne_top (eLpNormEssSup_le_of_ae_bound hf)
-    _ = C := ENNReal.toReal_ofReal hC
+    (hf : ∀ᵐ x ∂μ, ‖f x‖ ≤ C) : ‖f‖ ≤ C :=
+  ALCS.lp_norm_le hC hf
 
 lemma linfty_ae_norm_le {α : Type*} [MeasurableSpace α] {μ : Measure α}
-    (f : Lp ℝ ∞ μ) : ∀ᵐ x ∂μ, ‖f x‖ ≤ ‖f‖ := by
-  have htop : eLpNorm (⇑f) ∞ μ = eLpNormEssSup (⇑f) μ :=
-    eLpNorm_exponent_top (Lp.aestronglyMeasurable f)
-  have hfinite : eLpNormEssSup (⇑f) μ ≠ ∞ := by
-    rw [← htop]
-    exact Lp.eLpNorm_ne_top f
-  filter_upwards [enorm_ae_le_eLpNormEssSup (⇑f) μ] with x hx
-  have h := ENNReal.toReal_mono hfinite hx
-  simpa only [Lp.norm_def, htop, toReal_enorm] using h
+    (f : Lp ℝ ∞ μ) : ∀ᵐ x ∂μ, ‖f x‖ ≤ ‖f‖ :=
+  ALCS.ae_norm_le f
 
 /-- A constant is in L∞ even if the underlying measure has infinite mass. -/
 def linftyConst {α : Type*} [MeasurableSpace α] (μ : Measure α) (c : ℝ) :
