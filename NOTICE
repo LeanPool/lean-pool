@@ -132,6 +132,8 @@ Apache License, Version 2.0, and are redistributed here under the same license.
   LeanPool/HansonWright              https://github.com/Lean-MoDS/StatsMLlib
   LeanPool/HardSphereNBC             https://github.com/ukiyois/hs-virial-nbc-identity
   LeanPool/HasseMinkowski            https://github.com/jayyswan/hasse-minkowski
+  LeanPool/HighContrastHomogenization
+                                     https://github.com/scottnarmstrong/HighContrastHomogenization
   LeanPool/HopfProblem               https://github.com/plby/HopfProblem
   LeanPool/Incompleteness            https://github.com/FormalizedFormalLogic/Incompleteness
   LeanPool/InfinitaryLogic           https://github.com/cameronfreer/infinitary-logic
