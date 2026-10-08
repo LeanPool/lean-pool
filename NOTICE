@@ -27,6 +27,7 @@ Apache License, Version 2.0, and are redistributed here under the same license.
   LeanPool/ACMax                     https://github.com/MerLeanProver/ACMaxConjecture
   LeanPool/AFormalizationOfBorelDeterminacyInLean
                                      https://github.com/sven-manthe/A-formalization-of-Borel-determinacy-in-Lean
+  LeanPool/AbstractLinearControl     https://github.com/frederic-marbach/alcs
   LeanPool/AharoniKorman             https://github.com/b-mehta/AharoniKorman
   LeanPool/AndersonConjecture        https://github.com/frenzymath/Anderson-Conjecture
   LeanPool/AnomalousDiffusion        https://github.com/scottnarmstrong/AVAnomalousDiffusion
