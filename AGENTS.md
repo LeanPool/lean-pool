@@ -15,7 +15,7 @@ This file is a concatenation of README.md and CONTRIBUTING.md.
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.20513444.svg)](https://doi.org/10.5281/zenodo.20513444)
 [![arXiv](https://img.shields.io/badge/arXiv-2609.25199-b31b1b)](https://arxiv.org/abs/2609.25199)
 
-Lean Pool sits between [`mathlib`](https://github.com/leanprover-community/mathlib4) and [`merely-true`](https://github.com/merely-true/merely-true), preserving Lean 4 formalizations that don't fit mathlib's scope. Instead of mathlib's high-bar human review, it relies on deterministic linters and LLM judgment, so it can grow faster while staying `sorry`-free and pinned to the latest Mathlib. See [`MOTIVATION.md`](MOTIVATION.md) for the why, browse the API docs at <https://leanpool.github.io/lean-pool/>, and explore each project's dependency graph and declarations in the [exposition site](https://leanpool.github.io/lean-pool/exposition/).
+Lean Pool sits between [`mathlib`](https://github.com/leanprover-community/mathlib4) and [`merely-true`](https://github.com/merely-true/merely-true), preserving Lean 4 formalizations that don't fit mathlib's scope. Instead of mathlib's high-bar human review, it relies on deterministic linters and LLM judgment, so it can grow faster while staying `sorry`-free and pinned to the latest Mathlib. Tau Ceti is also a pinned Lake dependency; import its modules directly instead of vendoring projects already in Tau Ceti or Mathlib. See [`MOTIVATION.md`](MOTIVATION.md) for the why, browse the API docs at <https://leanpool.github.io/lean-pool/>, and explore each project's dependency graph and declarations in the [exposition site](https://leanpool.github.io/lean-pool/exposition/).
 
 Semantic search is also available via the [API](https://search.octo.axiomatic-ai.com/api/search).
 
@@ -106,6 +106,11 @@ Lean Pool welcomes serious, medium- to large-scale formalizations of mathematics
 If you would like to withdraw your project from Lean Pool, open an issue.
 
 ## Submitting a project
+
+Do not vendor projects that are already in TauCeti or Mathlib. Both are Lake
+dependencies: reuse their modules directly, and submit independent formalizations
+or substantive extensions instead. Novelty review compares against Mathlib, Tau
+Ceti, and the pool.
 
 There are two paths:
 

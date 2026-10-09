@@ -84,7 +84,7 @@ from urllib.parse import quote
 import yaml
 from openai import APIStatusError, BadRequestError, OpenAI, RateLimitError
 
-from lean_pool import codex_review, prior_art, review_portions
+from lean_pool import codex_review, prior_art, review_portions, tauceti_prior_art
 from lean_pool.registry import load_document, remote_text
 
 logger = logging.getLogger(__name__)
@@ -313,7 +313,7 @@ class RubricSpec:
         blocking: Whether this rubric's ``block`` can force
             ``request_changes``. An advisory rubric's ``block`` is
             recorded as ``discuss`` — it informs, it does not veto.
-        wants_prior_art: Whether the pre-computed Mathlib/pool search
+        wants_prior_art: Whether the pre-computed Mathlib/Tau Ceti/pool search
             evidence is included in this rubric's prompt.
     """
 
@@ -360,25 +360,29 @@ SYSTEM_PROMPT_RUBRIC = dedent(
 )
 
 
-def run_gh(*args: str, stdin: str | None = None) -> str:
+def run_gh(*args: str, stdin: str | None = None, timeout: float | None = None) -> str:
     """Run ``gh`` with the given arguments and return stdout.
 
     Args:
         *args: Arguments to pass after ``gh``.
         stdin: Optional string piped to the subprocess on stdin.
+        timeout: Optional subprocess time limit in seconds; None preserves no limit.
 
     Returns:
         The captured stdout, decoded as text.
 
     Raises:
         subprocess.CalledProcessError: If gh exits non-zero.
+        subprocess.TimeoutExpired: If an explicit time limit expires.
     """
+    optional_arguments = {"timeout": timeout} if timeout is not None else {}
     result = subprocess.run(
         ["gh", *args],
         check=True,
         capture_output=True,
         text=True,
         input=stdin,
+        **optional_arguments,
     )
     return result.stdout
 
@@ -1762,48 +1766,71 @@ def fetch_file_at(path: str, ref: str, repo_full_name: str) -> str:
         return ""
 
 
-def gather_prior_art(kind: str, head_sha: str, repo_full_name: str) -> str | None:
-    """Search Mathlib and the pool for what this PR claims is new.
-
-    Only project PRs add new headlines; refactors change projects whose
-    prior art was settled when they merged. A search that cannot run degrades to a
-    note saying so — never to a failed review.
-    """
-    if kind != "project":
-        return None
-    registry = "LeanPool/projects.yml"
+def _prior_art_registry(revision: str, repo_full_name: str) -> str:
+    """Read complete cards or a historical registry at one pinned revision."""
     try:
-        head_text = (
+        return (
             remote_text(
                 repo_full_name,
-                head_sha,
+                revision,
                 lambda repo, path, ref: fetch_file_at(path, ref, repo) or None,
             )
             or ""
         )
     except (ValueError, subprocess.SubprocessError):
-        head_text = ""
-    base_text = yaml.safe_dump(load_document(REPO_ROOT / registry))
-    if not head_text.strip():
+        return ""
+
+
+def gather_prior_art(
+    kind: str,
+    head_sha: str,
+    repo_full_name: str,
+    *,
+    base_sha: str | None = None,
+) -> str | None:
+    """Compare Mathlib, Tau Ceti, and the pool with what this PR claims is new.
+
+    Only project PRs add new headlines; refactors change projects whose
+    prior art was settled when they merged. A search that cannot run degrades to a
+    note saying so — never to a failed review.
+    A pinned worker supplies the PR base SHA to avoid comparing against its
+    potentially older trusted engine checkout. An empty base SHA records a failed
+    lookup and never falls back to that local registry.
+    """
+    if kind != "project":
+        return None
+    registry = "LeanPool/projects.yml"
+    head_text = _prior_art_registry(head_sha, repo_full_name)
+    if base_sha is None:
+        try:
+            base_text = yaml.safe_dump(load_document(REPO_ROOT / registry))
+        except (OSError, ValueError, yaml.YAMLError):
+            base_text = ""
+    else:
+        base_text = _prior_art_registry(base_sha, repo_full_name) if base_sha else ""
+    if not head_text.strip() or not base_text.strip():
         # Distinguish "could not read the registry" from "the PR adds
         # nothing": both yield zero claims, but only one of them means
         # the reviewer should treat prior art as unchecked.
-        unreadable = f"{registry} could not be read at {head_sha[:8]}"
+        unreadable_sha = head_sha if not head_text.strip() else base_sha or "base"
+        unreadable = f"{registry} could not be read at {unreadable_sha[:8]}"
         print(f"Mathlib prior-art search skipped: {unreadable}", file=sys.stderr)
-        projects = yaml.safe_dump(
-            load_document(REPO_ROOT / "LeanPool" / "projects.yml")
+        return (
+            f"**The Mathlib search did not run:** {unreadable}."
+            + "\n\n### Tau Ceti comparison\n\n"
+            + f"_Not searched: {unreadable}. Tau Ceti prior art is unchecked._"
+            + "\n\n### Pool comparison\n\n"
+            + "_Pool comparison is unchecked; the current registry is unavailable._"
         )
-        return prior_art.render([], {}, projects, unreadable)
     claims = prior_art.new_claims(head_text, base_text)
     hits, unavailable = prior_art.search_mathlib(claims)
     if unavailable is not None:
         print(f"Mathlib prior-art search skipped: {unavailable}", file=sys.stderr)
     else:
         print(f"Searched Mathlib for {len(claims)} headline(s).", file=sys.stderr)
-    projects_text = yaml.safe_dump(
-        load_document(REPO_ROOT / "LeanPool" / "projects.yml")
-    )
-    return prior_art.render(claims, hits, projects_text, unavailable)
+    sections = [prior_art.render(claims, hits, base_text, unavailable)]
+    sections.append(tauceti_prior_art.gather(claims, run_gh))
+    return "\n\n".join(section for section in sections if section)
 
 
 def render_infra_skip_comment(reviewed_head_sha: str) -> str:
@@ -1939,12 +1966,20 @@ def main() -> int:
         return 0
 
     if kind == "project":
+        try:
+            base_sha = run_gh(
+                "api", f"repos/{repo_full_name}/pulls/{pr_number}", "--jq", ".base.sha"
+            ).strip()
+        except subprocess.CalledProcessError:
+            base_sha = ""
         outcomes = run_project_rubrics(
             model=model,
             diff=diff,
             effort=effort,
             context=fetch_pr_context(pr_number, repo_full_name),
-            prior_art_section=gather_prior_art(kind, reviewed_head_sha, repo_full_name),
+            prior_art_section=gather_prior_art(
+                kind, reviewed_head_sha, repo_full_name, base_sha=base_sha
+            ),
         )
         _write_review_evidence([outcome.result for outcome in outcomes])
         truncated = any(o.result.truncation is not None for o in outcomes)

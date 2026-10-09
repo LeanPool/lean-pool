@@ -11,6 +11,12 @@ weak.linter.mathlibStandardSet = true
 maxSynthPendingDepth = 3
 
 [[require]]
+name = "TauCeti"
+git = "https://github.com/TauCetiProject/TauCeti"
+rev = "5189e8a380bdf5740cc1fe4123cc9cbe635724c2"
+
+# Keep Mathlib last so its transitive dependency pins take precedence.
+[[require]]
 name = "mathlib"
 scope = "leanprover-community"
 rev = "v4.35.0-rc3"
