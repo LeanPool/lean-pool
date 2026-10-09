@@ -44,7 +44,7 @@ main_results:
 - declaration: Nock.Verb.runProgram_adequate_complete
   informal: A subject and formula evaluate to a result under the small-step program machine with some finite fuel if and only if the derived paper evaluator produces that result with some finite fuel.
 - declaration: Nock.Verb.runTraceProgram_certificate
-  informal: Every successfully emitted program trace is consistent and complete, every adjacent transition and its final completion edge passes the Nock checker.
+  informal: Every successfully emitted program trace is consistent and complete, every adjacent transition passes the Nock checker, and the final state is either terminal or has a crash edge accepted by the checker.
 - declaration: Nock.paper_field_bridge
   informal: For a modulus greater than one and inputs whose atoms are below the modulus, successful guarded evaluation produces the same bounded result under natural-number paper evaluation, modular paper evaluation, the full modular evaluator, the natural-number reference evaluator, and the small-step program machine with some finite fuel.
 - declaration: Nock.NPR.collision_prob_le

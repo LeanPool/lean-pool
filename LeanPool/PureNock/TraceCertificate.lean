@@ -221,7 +221,7 @@ theorem runTrace_final_edge {fuel : Nat} {v : Verb} {T : List Verb}
 
 /-- **`runTraceProgram` emits a certified trace of the program.**  Its head is the program verb,
     it is consistent and complete, every adjacent step passes the checker `Nock`, and the final
-    edge is `Nock`-checked (terminal completion, or a validated crash to ⊥). -/
+    state is terminal or has a crash edge accepted by the checker. -/
 theorem runTraceProgram_certificate {fuel : Nat} {subject formula : Noun} {T : List Verb}
     (h : runTraceProgram fuel subject formula = some T) :
     TraceOf (program subject formula) T ∧ Complete T ∧ AdjNockCheck T ∧
