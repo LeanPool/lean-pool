@@ -7,7 +7,6 @@ Authors: Pure Nock formalization contributors
 module
 
 public import LeanPool.PureNock.NPR
-public import Mathlib.Algebra.Field.ZMod
 
 /-!
 # Computable noun fingerprint
@@ -52,28 +51,13 @@ def fnHorner (r : K) (n : Noun) : K × K × K :=
   (r ^ n.leaves, hornerEval r (leafF n), hornerEval r (dyckBits n))
 
 /-- **`fnHorner` computes `NPR.fn`.**  The extractable Horner fingerprint equals the polynomial
-    fingerprint `fn` (`main.tex:1180–1184`), so `lem:ion_univariate_sec` / `corr:ion_single_security`
+    fingerprint `fn` (`main.tex:1180–1184`), so `lem:ion_univariate_sec` /
+    `corr:ion_single_security`
     (`Nock/NPR.lean`) transfer verbatim to the running code. -/
 theorem fnHorner_eq_fn (n : Noun) (r : K) : fnHorner r n = fn n r := by
   simp only [fnHorner, fn, hornerEval_eq_listPoly_eval]
 
 end Horner
-
-/-! ### Real extraction at a concrete prime field
-
-`ZMod q` for a prime `q` is a computable field (`Fin q` arithmetic, `DecidableEq`, `Fintype`),
-so `fnHorner` compiles and evaluates there.  Primality is a caller-supplied instance, not an
-axiom. -/
-
-section Extraction
-
-/-- A concrete prime modulus, for extraction witnesses (`Nat.Prime 5` by `decide`). -/
-instance : Fact (Nat.Prime 5) := ⟨by decide⟩
-
-/-- The extractable fingerprint agrees with `NPR.fn` at the concrete field `ZMod 5`. -/
-example (n : Noun) (r : ZMod 5) : fnHorner r n = fn n r := fnHorner_eq_fn n r
-
-end Extraction
 
 end NPR
 end Nock

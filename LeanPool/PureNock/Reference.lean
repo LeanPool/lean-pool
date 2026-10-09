@@ -118,7 +118,8 @@ def evalN : Nat → Noun → Noun → Option Noun
              | none => none
            | _ => none
     | 9 => match tail with               -- *[a 9 b c] = *[*[a c] 2 [0 1] 0 b]
-           | .cell (.atom ax) c =>       --   ≡ fetch arm at axis b of core *[a c], run core against it
+           | .cell (.atom ax) c =>       --   ≡ fetch arm at axis b of core *[a c], run core against
+             -- it
              match evalN fuel subj c with
              | some core =>
                match slot ax core with

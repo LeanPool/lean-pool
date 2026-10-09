@@ -92,11 +92,16 @@ theorem den_right_defined_of_editOk {a : Action} {l r : Verb} {f : Nat} {x : Nou
               cases hod : den f od with
               | none => rw [hnw, hod] at h; simp at h
               | some o => exact ⟨f + 1, .cell n o, by simp [den, hnw, hod]⟩
-  | null => cases hr : den f r with | some y => exact ⟨f, y, hr⟩ | none => exfalso; simp [den, hr] at h
-  | star => cases hr : den f r with | some y => exact ⟨f, y, hr⟩ | none => exfalso; simp [den, hr] at h
-  | slot => cases hr : den f r with | some y => exact ⟨f, y, hr⟩ | none => exfalso; simp [den, hr] at h
-  | equal => cases hr : den f r with | some y => exact ⟨f, y, hr⟩ | none => exfalso; simp [den, hr] at h
-  | minus => cases hr : den f r with | some y => exact ⟨f, y, hr⟩ | none => exfalso; simp [den, hr] at h
+  | null => cases hr : den f r with | some y => exact ⟨f, y, hr⟩ | none => exfalso; simp [den, hr]
+    at h
+  | star => cases hr : den f r with | some y => exact ⟨f, y, hr⟩ | none => exfalso; simp [den, hr]
+    at h
+  | slot => cases hr : den f r with | some y => exact ⟨f, y, hr⟩ | none => exfalso; simp [den, hr]
+    at h
+  | equal => cases hr : den f r with | some y => exact ⟨f, y, hr⟩ | none => exfalso; simp [den, hr]
+    at h
+  | minus => cases hr : den f r with | some y => exact ⟨f, y, hr⟩ | none => exfalso; simp [den, hr]
+    at h
 
 theorem enum_den_defined :
     ∀ (v : Verb), editOk v = true → ∀ (c f : Nat) (x : Noun),
@@ -150,11 +155,26 @@ theorem den_right_F {a : Action} {l r : Verb} {f : Nat} {x : Noun}
               cases hod : den f od with
               | none => rw [hnw, hod] at h; simp at h
               | some o => exact ⟨.cell n o, by simp [den, hnw, hod]⟩
-  | null => cases hr : den f r with | some y => exact ⟨y, den_succ hr⟩ | none => simp [den, hr] at h
-  | star => cases hr : den f r with | some y => exact ⟨y, den_succ hr⟩ | none => simp [den, hr] at h
-  | slot => cases hr : den f r with | some y => exact ⟨y, den_succ hr⟩ | none => simp [den, hr] at h
-  | equal => cases hr : den f r with | some y => exact ⟨y, den_succ hr⟩ | none => simp [den, hr] at h
-  | minus => cases hr : den f r with | some y => exact ⟨y, den_succ hr⟩ | none => simp [den, hr] at h
+  | null =>
+      cases hr : den f r with
+      | some y => exact ⟨y, den_succ hr⟩
+      | none => simp [den, hr] at h
+  | star =>
+      cases hr : den f r with
+      | some y => exact ⟨y, den_succ hr⟩
+      | none => simp [den, hr] at h
+  | slot =>
+      cases hr : den f r with
+      | some y => exact ⟨y, den_succ hr⟩
+      | none => simp [den, hr] at h
+  | equal =>
+      cases hr : den f r with
+      | some y => exact ⟨y, den_succ hr⟩
+      | none => simp [den, hr] at h
+  | minus =>
+      cases hr : den f r with
+      | some y => exact ⟨y, den_succ hr⟩
+      | none => simp [den, hr] at h
 
 theorem den_children_F {a : Action} {l r : Verb} {F : Nat} {x : Noun}
     (hok : editOk (Verb.node a l r) = true) (h : den F (Verb.node a l r) = some x) :
@@ -316,7 +336,7 @@ theorem ncost_succ {n : Nat} {a b : Noun} {r : Noun}
   induction n, a, b using evalN.induct generalizing r <;>
     simp_all only [evalN, ncost, Option.map_eq_some_iff, Option.bind_eq_some_iff,
       Option.some.injEq, reduceCtorEq] <;>
-    grind [evalN_succ]
+    grind only [evalN_succ]
 
 theorem ncost_mono {n m : Nat} {a b r : Noun} (hle : n ≤ m) (hb : evalN n a b = some r) :
     ncost m a b = ncost n a b := by
@@ -445,7 +465,8 @@ theorem op6_decreaseN {g : Nat} {L b thn els : Verb} {x : Noun} {rn2 rc : Action
     have hsb1 : evalN (g + 1) L.noun b.noun = some sbv := evalN_succ hsb
     have eqLb : ncost g L.noun b.noun = ncost (g + 1) L.noun b.noun :=
       ncost_align hsb (Nat.le_refl g) (by omega)
-    have hSFinner : ncost (g + 1 + 1) L.noun (Noun.cell (Noun.atom 4) (Noun.cell (Noun.atom 4) b.noun))
+    have hSFinner : ncost (g + 1 + 1) L.noun (Noun.cell (Noun.atom 4) (Noun.cell (Noun.atom 4)
+      b.noun))
         = 4 + ncost g L.noun b.noun := by simp only [ncost]; omega
     have hbound : ∀ (branchNoun : Verb),
         (sbv = Noun.atom 0 ∧ branchNoun = thn ∨ sbv = Noun.atom 1 ∧ branchNoun = els) →
@@ -476,24 +497,28 @@ theorem op6_decreaseN {g : Nat} {L b thn els : Verb} {x : Noun} {rn2 rc : Action
         vcostN_terminal (Verb.leaf 0) hleaf0, hdL, h4b, Nat.add_zero, Nat.zero_add]
       have hc0le : (match den (g + 1 + 1) (Verb.node .null (Verb.leaf 2) (Verb.leaf 3)),
             den (g + 1 + 1) (Verb.node .null (Verb.leaf 0)
-              (Verb.node .star L (Verb.node .null (Verb.leaf 4) (Verb.node .null (Verb.leaf 4) b)))) with
+              (Verb.node .star L (Verb.node .null (Verb.leaf 4) (Verb.node .null (Verb.leaf 4) b))))
+                with
           | some sa, some fo => ncost (g + 1 + 1) sa fo | _, _ => 0) ≤ 2 := by
         rw [h23]
         cases hd0 : den (g + 1 + 1) (Verb.node .null (Verb.leaf 0)
-            (Verb.node .star L (Verb.node .null (Verb.leaf 4) (Verb.node .null (Verb.leaf 4) b)))) with
+            (Verb.node .star L (Verb.node .null (Verb.leaf 4) (Verb.node .null (Verb.leaf 4) b))))
+              with
         | none => simp
         | some dv => obtain ⟨w, rfl⟩ := den_null_leaf0 hd0; simp only [ncost]; omega
       have ha0le : (match den (g + 1 + 1) (Verb.node rc thn els),
             den (g + 1 + 1) (Verb.node .null (Verb.leaf 0)
               (Verb.node .star (Verb.node .null (Verb.leaf 2) (Verb.leaf 3))
                 (Verb.node .null (Verb.leaf 0)
-                  (Verb.node .star L (Verb.node .null (Verb.leaf 4) (Verb.node .null (Verb.leaf 4) b)))))) with
+                  (Verb.node .star L (Verb.node .null (Verb.leaf 4) (Verb.node .null (Verb.leaf 4)
+                    b)))))) with
           | some sa, some fo => ncost (g + 1 + 1) sa fo | _, _ => 0) ≤ 2 := by
         rw [hdc]
         cases hb0 : den (g + 1 + 1) (Verb.node .null (Verb.leaf 0)
             (Verb.node .star (Verb.node .null (Verb.leaf 2) (Verb.leaf 3))
               (Verb.node .null (Verb.leaf 0)
-                (Verb.node .star L (Verb.node .null (Verb.leaf 4) (Verb.node .null (Verb.leaf 4) b)))))) with
+                (Verb.node .star L (Verb.node .null (Verb.leaf 4) (Verb.node .null (Verb.leaf 4)
+                  b)))))) with
         | none => simp
         | some bv => obtain ⟨w, rfl⟩ := den_null_leaf0 hb0; simp only [ncost]; omega
       have hrrle : (match some L.noun,
@@ -501,14 +526,16 @@ theorem op6_decreaseN {g : Nat} {L b thn els : Verb} {x : Noun} {rn2 rc : Action
               (Verb.node .null (Verb.leaf 0)
                 (Verb.node .star (Verb.node .null (Verb.leaf 2) (Verb.leaf 3))
                   (Verb.node .null (Verb.leaf 0)
-                    (Verb.node .star L (Verb.node .null (Verb.leaf 4) (Verb.node .null (Verb.leaf 4) b))))))) with
+                    (Verb.node .star L (Verb.node .null (Verb.leaf 4) (Verb.node .null (Verb.leaf 4)
+                      b))))))) with
           | some sa, some fo => ncost (g + 1 + 1) sa fo | _, _ => 0)
           ≤ ncost (g + 1) L.noun branchNoun.noun := by
         cases haa : den (g + 1 + 1) (Verb.node .star (Verb.node rc thn els)
             (Verb.node .null (Verb.leaf 0)
               (Verb.node .star (Verb.node .null (Verb.leaf 2) (Verb.leaf 3))
                 (Verb.node .null (Verb.leaf 0)
-                  (Verb.node .star L (Verb.node .null (Verb.leaf 4) (Verb.node .null (Verb.leaf 4) b))))))) with
+                  (Verb.node .star L (Verb.node .null (Verb.leaf 4) (Verb.node .null (Verb.leaf 4)
+                    b))))))) with
         | none => simp
         | some aa =>
             simp only
@@ -516,7 +543,8 @@ theorem op6_decreaseN {g : Nat} {L b thn els : Verb} {x : Noun} {rn2 rc : Action
                 (Verb.node .null (Verb.leaf 0)
                   (Verb.node .star (Verb.node .null (Verb.leaf 2) (Verb.leaf 3))
                     (Verb.node .null (Verb.leaf 0)
-                      (Verb.node .star L (Verb.node .null (Verb.leaf 4) (Verb.node .null (Verb.leaf 4) b))))))) aa :=
+                      (Verb.node .star L (Verb.node .null (Verb.leaf 4) (Verb.node .null (Verb.leaf
+                        4) b))))))) aa :=
               ⟨g + 1 + 1, haa⟩
             rw [Den_star] at hDa0
             obtain ⟨cv, b0v, hDc0, hDb0, hEva0⟩ := hDa0
@@ -579,16 +607,19 @@ theorem op6_decreaseN {g : Nat} {L b thn els : Verb} {x : Noun} {rn2 rc : Action
               exact eqBr.le
       rw [hSFinner]
       cases evaluatedZero : den (g + 1 + 1) (Verb.node .null (Verb.leaf 0)
-                      (Verb.node .star L (Verb.node .null (Verb.leaf 4) (Verb.node .null (Verb.leaf 4) b))))
+                      (Verb.node .star L (Verb.node .null (Verb.leaf 4) (Verb.node .null (Verb.leaf
+                        4) b))))
         <;> cases evaluatedOne : den (g + 1 + 1) (Verb.node .null (Verb.leaf 0)
                       (Verb.node .star (Verb.node .null (Verb.leaf 2) (Verb.leaf 3))
                         (Verb.node .null (Verb.leaf 0)
-                          (Verb.node .star L (Verb.node .null (Verb.leaf 4) (Verb.node .null (Verb.leaf 4) b))))))
+                          (Verb.node .star L (Verb.node .null (Verb.leaf 4) (Verb.node .null
+                            (Verb.leaf 4) b))))))
         <;> cases evaluatedTwo : den (g + 1 + 1) (Verb.node .star (Verb.node rc thn els)
                       (Verb.node .null (Verb.leaf 0)
                         (Verb.node .star (Verb.node .null (Verb.leaf 2) (Verb.leaf 3))
                           (Verb.node .null (Verb.leaf 0)
-                            (Verb.node .star L (Verb.node .null (Verb.leaf 4) (Verb.node .null (Verb.leaf 4) b)))))))
+                            (Verb.node .star L (Verb.node .null (Verb.leaf 4) (Verb.node .null
+                              (Verb.leaf 4) b)))))))
         <;> simp only [hdc, h23, evaluatedZero, evaluatedOne, evaluatedTwo]
           at hc0le ha0le hrrle ⊢
         <;> omega
@@ -601,6 +632,451 @@ theorem op6_decreaseN {g : Nat} {L b thn els : Verb} {x : Noun} {rn2 rc : Action
         | (k + 2), hvv => simp at hvv
 
 /-! ### (e) `cost_localN` — strict local decrease at a `redexHint` redex -/
+
+private theorem hint_composition_cost_decrease {L rr : Verb} {x : Noun} (hL : L.isTerminal = true)
+  (n2 : Verb)
+  (htn2 : n2.isTerminal = true) (g : ℕ) (hfL : den (g + 1) L = some L.noun) (hdL : den (g + 1 + 1) L
+    = some L.noun)
+  (hgn2 : den g n2 = some n2.noun) (hr : (node Action.star L (node Action.null (leaf 2)
+    n2)).redexHint = some rr)
+  (hvv : evalN (g + 1) L.noun ((atom 2).cell n2.noun) = some x) :
+  vcostN (g + 1 + 1) rr < ncost (g + 1 + 1) L.noun (node Action.null (leaf 2) n2).noun := by
+  cases n2 with
+  | leaf k => simp [redexHint, hintExpand, reduce, redex] at hr
+  | node rn2 b c =>
+      have hn2t : isTerminal (Verb.node rn2 b c) = true := htn2
+      simp only [isTerminal, Bool.and_eq_true] at htn2
+      obtain ⟨⟨hrn2, htb⟩, htc⟩ := htn2
+      simp only [redexHint, hintExpand, reduce, redex] at hr; obtain rfl := Option.some.inj hr
+      obtain ⟨hg1b, hg1c⟩ :=
+        den_term_children (editOk_of_terminal hn2t) (den_succ hgn2) htb htc
+      have hdb_f1 : den (g + 1 + 1) b = some b.noun := den_succ hg1b
+      have hdc_f1 : den (g + 1 + 1) c = some c.noun := den_succ hg1c
+      simp only [noun, evalN] at hvv
+      cases hb : evalN g L.noun b.noun with
+      | none => rw [hb] at hvv; simp at hvv
+      | some sb =>
+        cases hc : evalN g L.noun c.noun with
+        | none => rw [hb, hc] at hvv; simp at hvv
+        | some sc =>
+          rw [hb, hc] at hvv
+          have hb' : evalN (g + 1) L.noun b.noun = some sb := evalN_succ hb
+          have hc' : evalN (g + 1) L.noun c.noun = some sc := evalN_succ hc
+          have hd_Lb : den (g + 1 + 1) (Verb.node .star L b) = some sb :=
+            den_star_val hfL hg1b hb'
+          have hd_Lc : den (g + 1 + 1) (Verb.node .star L c) = some sc :=
+            den_star_val hfL hg1c hc'
+          have eq_b : ncost (g + 1 + 1) L.noun b.noun = ncost (g + 1) L.noun b.noun :=
+            ncost_align hb (by omega) (by omega)
+          have eq_c : ncost (g + 1 + 1) L.noun c.noun = ncost (g + 1) L.noun c.noun :=
+            ncost_align hc (by omega) (by omega)
+          have eq_sbsc : ncost (g + 1 + 1) sb sc = ncost (g + 1) sb sc :=
+            ncost_align hvv (by omega) (by omega)
+          simp only [vcostN_star_eq, hd_Lb, hd_Lc,
+            vcostN_star_terminal hL htb hdL hdb_f1,
+            vcostN_star_terminal hL htc hdL hdc_f1]
+          simp only [noun, ncost, hb', hc']
+          rw [eq_b, eq_c, eq_sbsc]
+          omega
+
+private theorem hint_conditional_cost_decrease {L rr : Verb} {x : Noun} (hL : L.isTerminal = true)
+  (n2 : Verb)
+  (htn2 : n2.isTerminal = true) (g : ℕ) (hdL : den (g + 1 + 1) L = some L.noun) (hgn2 : den g n2 =
+    some n2.noun)
+  (hr : (node Action.star L (node Action.null (leaf 6) n2)).redexHint = some rr)
+  (hvv : evalN (g + 1) L.noun ((atom 6).cell n2.noun) = some x) :
+  vcostN (g + 1 + 1) rr < ncost (g + 1 + 1) L.noun (node Action.null (leaf 6) n2).noun := by
+  cases n2 with
+  | leaf k => simp [redexHint, hintExpand, reduce, redex] at hr
+  | node rn2 b c =>
+      have hn2t : isTerminal (Verb.node rn2 b c) = true := htn2
+      simp only [isTerminal, Bool.and_eq_true] at htn2
+      obtain ⟨⟨hrn2, htb⟩, htc⟩ := htn2
+      have hct : isTerminal c = true := htc
+      simp only [redexHint, hintExpand, reduce, redex] at hr; obtain rfl := Option.some.inj hr
+      obtain ⟨hgb, hgcv⟩ :=
+        den_term_children (editOk_of_terminal hn2t) hgn2 htb htc
+      have hdb_f1 : den (g + 1 + 1) b = some b.noun := den_succ (den_succ hgb)
+      have h4a : den (g + 1) (Verb.node .null (Verb.leaf 4) b)
+          = some (Noun.cell (Noun.atom 4) b.noun) :=
+        den_null_val (by simp only [den]) hgb
+      have h4b : den (g + 1 + 1)
+          (Verb.node .null (Verb.leaf 4) (Verb.node .null (Verb.leaf 4) b))
+          = some (Noun.cell (Noun.atom 4) (Noun.cell (Noun.atom 4) b.noun)) :=
+        den_null_val (by simp only [den]) h4a
+      have ht4 : isTerminal
+          (Verb.node .null (Verb.leaf 4) (Verb.node .null (Verb.leaf 4) b)) = true := by
+        simp [isTerminal, Action.isNull, htb]
+      have ht23 : isTerminal (Verb.node .null (Verb.leaf 2) (Verb.leaf 3)) = true := by
+        simp [isTerminal, Action.isNull]
+      cases c with
+      | leaf ck => exfalso; simp only [noun, evalN] at hvv; simp at hvv
+      | node rc thn els =>
+          have hct2 : isTerminal (Verb.node rc thn els) = true := hct
+          rw [isTerminal_node] at hct; simp only [Bool.and_eq_true] at hct
+          obtain ⟨⟨hrc, hthn⟩, htels⟩ := hct
+          exact op6_decreaseN hL hct2 hthn htels hgcv hdL h4b ht4 ht23 hvv
+
+private theorem hint_arm_cost_decrease {L rr : Verb} {x : Noun} (hL : L.isTerminal = true) (n2 :
+  Verb)
+  (htn2 : n2.isTerminal = true) (g : ℕ) (hfL : den (g + 1) L = some L.noun) (hdL : den (g + 1 + 1) L
+    = some L.noun)
+  (hgn2 : den g n2 = some n2.noun) (hr : (node Action.star L (node Action.null (leaf 9)
+    n2)).redexHint = some rr)
+  (hvv : evalN (g + 1) L.noun ((atom 9).cell n2.noun) = some x) :
+  vcostN (g + 1 + 1) rr < ncost (g + 1 + 1) L.noun (node Action.null (leaf 9) n2).noun := by
+  cases n2 with
+  | leaf k => simp [redexHint, hintExpand, reduce, redex] at hr
+  | node rn2 b c =>
+      have hn2t : isTerminal (Verb.node rn2 b c) = true := htn2
+      simp only [isTerminal, Bool.and_eq_true] at htn2
+      obtain ⟨⟨hrn2, htb⟩, htc⟩ := htn2
+      have hrn2' : rn2 = Action.null := by cases rn2 <;> simp_all [Action.isNull]
+      subst hrn2'
+      simp only [redexHint, hintExpand, reduce, redex] at hr; obtain rfl := Option.some.inj hr
+      obtain ⟨g', rfl⟩ : ∃ g', g = g' + 1 := by
+        cases g with | zero => simp [den] at hgn2 | succ n => exact ⟨n, rfl⟩
+      obtain ⟨hhb, hhc⟩ := den_term_split htb htc hgn2
+      cases b with
+      | node bb bc bd => simp [noun, evalN] at hvv
+      | leaf ax0 =>
+          simp only [noun, evalN] at hvv
+          cases hcor : evalN (g' + 1) L.noun c.noun with
+          | none => simp [hcor] at hvv
+          | some cor =>
+            simp only [hcor] at hvv
+            cases harm : Noun.slot ax0 cor with
+            | none => simp [harm] at hvv
+            | some arm =>
+              simp only [harm] at hvv
+              have hg2c : den (g' + 1 + 1) c = some c.noun := den_succ (den_succ hhc)
+              have hdc_f1 : den (g' + 1 + 1 + 1) c = some c.noun := den_succ hg2c
+              have hcor2 : evalN (g' + 2) L.noun c.noun = some cor :=
+                evalN_succ hcor
+              have hd_core : den (g' + 1 + 1 + 1) (Verb.node .star L c) = some cor :=
+                den_star_val hfL hg2c hcor2
+              have hb0 : den g' (Verb.leaf 0) = some (Noun.atom 0) := by simp only [den]
+              have hb1 : den g' (Verb.leaf 1) = some (Noun.atom 1) := by simp only [den]
+              have hf0h : den (g' + 1) (Verb.node .null (Verb.leaf 0) (Verb.leaf ax0))
+                  = some (Noun.cell (Noun.atom 0) (Noun.atom ax0)) := den_null_val hb0 hhb
+              have hf01 : den (g' + 1) (Verb.node .null (Verb.leaf 0) (Verb.leaf 1))
+                  = some (Noun.cell (Noun.atom 0) (Noun.atom 1)) := den_null_val hb0 hb1
+              have hM : den (g' + 1 + 1)
+                    (Verb.node .null (Verb.node .null (Verb.leaf 0) (Verb.leaf 1))
+                      (Verb.node .null (Verb.leaf 0) (Verb.leaf ax0)))
+                  = some (Noun.cell (Noun.cell (Noun.atom 0) (Noun.atom 1))
+                      (Noun.cell (Noun.atom 0) (Noun.atom ax0))) := den_null_val hf01 hf0h
+              have h2 : den (g' + 1 + 1) (Verb.leaf 2) = some (Noun.atom 2) := by
+                simp only [den]
+              have hform : den (g' + 1 + 1 + 1)
+                    (Verb.node .null (Verb.leaf 2)
+                      (Verb.node .null (Verb.node .null (Verb.leaf 0) (Verb.leaf 1))
+                        (Verb.node .null (Verb.leaf 0) (Verb.leaf ax0))))
+                  = some (Noun.cell (Noun.atom 2)
+                      (Noun.cell (Noun.cell (Noun.atom 0) (Noun.atom 1))
+                        (Noun.cell (Noun.atom 0) (Noun.atom ax0)))) := den_null_val h2 hM
+              have hformT : isTerminal
+                  (Verb.node .null (Verb.leaf 2)
+                    (Verb.node .null (Verb.node .null (Verb.leaf 0) (Verb.leaf 1))
+                      (Verb.node .null (Verb.leaf 0) (Verb.leaf ax0)))) = true := by
+                simp [isTerminal, Action.isNull]
+              have hev01 : evalN (g' + 2) cor
+                  (Noun.cell (Noun.atom 0) (Noun.atom 1)) = some cor := by
+                simp only [evalN]; exact slot_one
+              have hev0h : evalN (g' + 2) cor
+                  (Noun.cell (Noun.atom 0) (Noun.atom ax0)) = some arm := by
+                simp only [evalN]; exact harm
+              have eq_c1 : ncost (g' + 1 + 1 + 1) L.noun c.noun
+                  = ncost (g' + 2) L.noun c.noun := ncost_align hcor (by omega) (by omega)
+              have hRHS : ncost (g' + 1 + 1 + 1) L.noun
+                  (Verb.node .null (Verb.leaf 9) (Verb.node .null (Verb.leaf ax0) c)).noun
+                  = 20 + ncost (g' + 2) L.noun c.noun + ncost (g' + 2) cor arm := by
+                simp only [noun, ncost, hcor2, harm]
+              rw [hRHS]
+              simp only [vcostN_star_eq, hd_core, hform,
+                vcostN_star_terminal hL htc hdL hdc_f1, vcostN_terminal _ hformT]
+              simp only [ncost, hev01, hev0h]
+              change 1 + 2 + 2 + ncost (g' + 2) cor arm
+                  + ncost (g' + 1 + 1 + 1) L.noun c.noun + 0
+                < 20 + ncost (g' + 2) L.noun c.noun + ncost (g' + 2) cor arm
+              rw [eq_c1]
+              omega
+
+private theorem hint_edit_cost_decrease {L rr : Verb} {x : Noun} (hL : L.isTerminal = true) (n2 :
+  Verb)
+  (htn2 : n2.isTerminal = true) (g : ℕ) (hdL : den (g + 1 + 1) L = some L.noun) (hgn2 : den g n2 =
+    some n2.noun)
+  (hr : (node Action.star L (node Action.null (leaf 10) n2)).redexHint = some rr)
+  (hvv : evalN (g + 1) L.noun ((atom 10).cell n2.noun) = some x) :
+  vcostN (g + 1 + 1) rr < ncost (g + 1 + 1) L.noun (node Action.null (leaf 10) n2).noun := by
+  cases n2 with
+  | leaf k => simp [redexHint, hintExpand, reduce, redex] at hr
+  | node rn2 hd d =>
+      cases hd with
+      | leaf k => simp [redexHint, hintExpand, reduce, redex] at hr
+      | node rhd axv c =>
+          have hn2t : isTerminal (Verb.node rn2 (Verb.node rhd axv c) d) = true := htn2
+          rw [isTerminal_node] at htn2; simp only [Bool.and_eq_true] at htn2
+          obtain ⟨⟨hrn2, hthd⟩, htd⟩ := htn2
+          have hhdt : isTerminal (Verb.node rhd axv c) = true := hthd
+          rw [isTerminal_node] at hthd; simp only [Bool.and_eq_true] at hthd
+          obtain ⟨⟨hrhd, htaxv⟩, htc⟩ := hthd
+          simp only [redexHint, hintExpand, reduce, redex] at hr; obtain rfl := Option.some.inj hr
+          obtain ⟨hg1hd, hg1d⟩ :=
+            den_term_children (editOk_of_terminal hn2t) (den_succ hgn2) hhdt htd
+          obtain ⟨hg1axv, hg1c⟩ :=
+            den_term_children (editOk_of_terminal hhdt) hg1hd htaxv htc
+          have hdc_f1 : den (g + 1 + 1) c = some c.noun := den_succ hg1c
+          have hdd_f1 : den (g + 1 + 1) d = some d.noun := den_succ hg1d
+          cases axv with
+          | node b0 c0 d0 => simp [noun, evalN] at hvv
+          | leaf a0 =>
+              simp only [noun, evalN] at hvv
+              cases hnew : evalN g L.noun c.noun with
+              | none => rw [hnew] at hvv; simp at hvv
+              | some new =>
+                cases hold : evalN g L.noun d.noun with
+                | none => rw [hnew, hold] at hvv; simp at hvv
+                | some old =>
+                    have eq_c : ncost (g + 1 + 1) L.noun c.noun
+                        = ncost (g + 1) L.noun c.noun := ncost_align hnew (by omega) (by omega)
+                    have eq_d : ncost (g + 1 + 1) L.noun d.noun
+                        = ncost (g + 1) L.noun d.noun := ncost_align hold (by omega) (by omega)
+                    rw [vcostN_edit_eq, vcostN_null_eq,
+                      vcostN_star_terminal hL htc hdL hdc_f1,
+                      vcostN_star_terminal hL htd hdL hdd_f1]
+                    simp only [vcostN, noun, ncost]
+                    rw [eq_c, eq_d]; omega
+
+private theorem hint_opcode_cost_decrease {L rr : Verb} {x : Noun} (hL : L.isTerminal = true) (n2 :
+  Verb)
+  (htn2 : n2.isTerminal = true) (g : ℕ) (hdL : den (g + 1 + 1) L = some L.noun) (hgn2 : den g n2 =
+    some n2.noun)
+  (hr : (node Action.star L (node Action.null (leaf 11) n2)).redexHint = some rr)
+  (hvv : evalN (g + 1) L.noun ((atom 11).cell n2.noun) = some x) :
+  vcostN (g + 1 + 1) rr < ncost (g + 1 + 1) L.noun (node Action.null (leaf 11) n2).noun := by
+  cases n2 with
+  | leaf k =>
+      simp [noun, evalN] at hvv
+  | node rn2 h2 b2 =>
+      have hn2t : isTerminal (Verb.node rn2 h2 b2) = true := htn2
+      simp only [isTerminal, Bool.and_eq_true] at htn2
+      obtain ⟨⟨hrn2, hth2⟩, htb2⟩ := htn2
+      have hgb2 : den g b2 = some b2.noun :=
+        (den_term_children (editOk_of_terminal hn2t) hgn2 hth2 htb2).2
+      cases h2 with
+      | leaf t3 =>
+          -- static hint: rr = *[L body]
+          have hrr : redexHint (Verb.node .star L
+              (Verb.node .null (Verb.leaf 11) (Verb.node rn2 (Verb.leaf t3) b2)))
+              = some (Verb.node .star L b2) := by
+            simp [redexHint, hintExpand, hL, hn2t, Action.isNull]
+          rw [hrr] at hr
+          obtain rfl := Option.some.inj hr
+          simp only [noun, evalN] at hvv
+          have hd2b2 : den (g + 1 + 1) b2 = some b2.noun := den_succ (den_succ hgb2)
+          have hLHS : vcostN (g + 1 + 1) (Verb.node .star L b2)
+              = ncost (g + 1 + 1) L.noun b2.noun :=
+            vcostN_star_terminal hL htb2 hdL hd2b2
+          have hRHS : ncost (g + 1 + 1) L.noun
+              (Noun.cell (Noun.atom 11) (Noun.cell (Noun.atom t3) b2.noun))
+              = 50 + ncost (g + 1) L.noun b2.noun := by simp only [ncost]
+          have halign : ncost (g + 1 + 1) L.noun b2.noun = ncost (g + 1) L.noun b2.noun :=
+            ncost_align hvv (by omega) (by omega)
+          rw [hLHS]
+          simp only [noun]
+          rw [hRHS, halign]
+          omega
+      | node r3 t3 clue =>
+          -- dynamic hint: rr = *[L (8 clue (7 [0 3] body))]
+          have hh2t : isTerminal (Verb.node r3 t3 clue) = true := hth2
+          simp only [isTerminal, Bool.and_eq_true] at hth2
+          obtain ⟨⟨hr3, ht3⟩, htclue⟩ := hth2
+          have hrr : redexHint (Verb.node .star L
+              (Verb.node .null (Verb.leaf 11) (Verb.node rn2 (Verb.node r3 t3 clue) b2)))
+              = some (Verb.node .star L
+                  (Verb.node .null (Verb.leaf 8)
+                    (Verb.node .null clue
+                      (Verb.node .null (Verb.leaf 7)
+                        (Verb.node .null (Verb.node .null (Verb.leaf 0) (Verb.leaf 3)) b2))))) := by
+            simp [redexHint, hintExpand, hL, hn2t, Action.isNull]
+          rw [hrr] at hr
+          obtain rfl := Option.some.inj hr
+          simp only [noun, evalN] at hvv
+          cases hclue : evalN g L.noun clue.noun with
+          | none => rw [hclue] at hvv; simp at hvv
+          | some cv =>
+              rw [hclue] at hvv
+              obtain ⟨g0, rfl⟩ : ∃ g0, g = g0 + 1 := by
+                cases g with
+                | zero => simp [evalN] at hclue
+                | succ n => exact ⟨n, rfl⟩
+              have hclue1 : evalN (g0 + 2) L.noun clue.noun = some cv := evalN_succ hclue
+              have hslot3 : evalN (g0 + 1) (Noun.cell cv L.noun)
+                  (Noun.cell (Noun.atom 0) (Noun.atom 3)) = some L.noun := by
+                simp [evalN, slot_three]
+              have hMt : isTerminal
+                  (Verb.node .null (Verb.leaf 8)
+                    (Verb.node .null clue
+                      (Verb.node .null (Verb.leaf 7)
+                        (Verb.node .null (Verb.node .null (Verb.leaf 0) (Verb.leaf 3)) b2)))) = true
+                          := by
+                simp [isTerminal, Action.isNull, htclue, htb2]
+              have hLHSle : vcostN (g0 + 1 + 1 + 1)
+                  (Verb.node .star L
+                    (Verb.node .null (Verb.leaf 8)
+                      (Verb.node .null clue
+                        (Verb.node .null (Verb.leaf 7)
+                          (Verb.node .null (Verb.node .null (Verb.leaf 0) (Verb.leaf 3)) b2)))))
+                  ≤ ncost (g0 + 1 + 1 + 1) L.noun
+                      (Verb.node .null (Verb.leaf 8)
+                        (Verb.node .null clue
+                          (Verb.node .null (Verb.leaf 7)
+                            (Verb.node .null (Verb.node .null (Verb.leaf 0) (Verb.leaf 3))
+                              b2)))).noun := by
+                rw [vcostN_star_eq, vcostN_terminal L hL, vcostN_terminal _ hMt,
+                  Nat.add_zero, Nat.add_zero]
+                cases hdL3 : den (g0 + 1 + 1 + 1) L with
+                | none => simp
+                | some sa =>
+                    cases hdM : den (g0 + 1 + 1 + 1)
+                        (Verb.node .null (Verb.leaf 8)
+                          (Verb.node .null clue
+                            (Verb.node .null (Verb.leaf 7)
+                              (Verb.node .null (Verb.node .null (Verb.leaf 0) (Verb.leaf 3)) b2))))
+                                with
+                    | none => simp
+                    | some Mv =>
+                        have e1 : sa = L.noun := den_terminal_val hL hdL3
+                        have e2 : Mv = (Verb.node .null (Verb.leaf 8)
+                            (Verb.node .null clue
+                              (Verb.node .null (Verb.leaf 7)
+                                (Verb.node .null (Verb.node .null (Verb.leaf 0) (Verb.leaf 3))
+                                  b2)))).noun :=
+                          den_terminal_val hMt hdM
+                        subst e1; subst e2; simp
+              have hLHSval' : ncost (g0 + 1 + 1 + 1) L.noun
+                  (Verb.node .null (Verb.leaf 8)
+                    (Verb.node .null clue
+                      (Verb.node .null (Verb.leaf 7)
+                        (Verb.node .null (Verb.node .null (Verb.leaf 0) (Verb.leaf 3)) b2)))).noun
+                  = 4 + ncost (g0 + 2) L.noun clue.noun + ncost (g0 + 1) L.noun b2.noun := by
+                simp only [noun, ncost, hclue1, hslot3]
+                generalize ncost (g0 + 2) L.noun clue.noun = A
+                generalize ncost (g0 + 1) L.noun b2.noun = B
+                exact op11_arith A B
+              have hRHS' : ncost (g0 + 1 + 1 + 1) L.noun
+                  (Verb.node .null (Verb.leaf 11) (Verb.node rn2 (Verb.node r3 t3 clue) b2)).noun
+                  = 50 + ncost (g0 + 2) L.noun clue.noun + ncost (g0 + 2) L.noun b2.noun := by
+                simp only [noun, ncost, hclue1]
+              have halign : ncost (g0 + 1) L.noun b2.noun = ncost (g0 + 2) L.noun b2.noun :=
+                ncost_align hvv (by omega) (by omega)
+              rw [hRHS']
+              have key := hLHSval' ▸ hLHSle
+              omega
+
+private theorem hint_equality_cost_decrease {L rr : Verb} {x : Noun} (hL : L.isTerminal = true) (n2
+  : Verb)
+  (htn2 : n2.isTerminal = true) (g : ℕ) (hdL : den (g + 1 + 1) L = some L.noun) (hgn2 : den g n2 =
+    some n2.noun)
+  (hr : (node Action.star L (node Action.null (leaf 5) n2)).redexHint = some rr)
+  (hvv : evalN (g + 1) L.noun ((atom 5).cell n2.noun) = some x) :
+  vcostN (g + 1 + 1) rr < ncost (g + 1 + 1) L.noun (node Action.null (leaf 5) n2).noun := by
+  cases n2 with
+  | leaf k => simp [redexHint, hintExpand, reduce, redex] at hr
+  | node rn2 b c =>
+      have hn2t : isTerminal (Verb.node rn2 b c) = true := htn2
+      simp only [isTerminal, Bool.and_eq_true] at htn2
+      obtain ⟨⟨hrn2, htb⟩, htc⟩ := htn2
+      simp only [redexHint, hintExpand, reduce, redex] at hr; obtain rfl :=
+        Option.some.inj hr
+      obtain ⟨hg1b, hg1c⟩ :=
+        den_term_children (editOk_of_terminal hn2t) (den_succ hgn2) htb htc
+      have hdb_f1 : den (g + 1 + 1) b = some b.noun := den_succ hg1b
+      have hdc_f1 : den (g + 1 + 1) c = some c.noun := den_succ hg1c
+      simp only [noun, evalN] at hvv
+      cases hb : evalN g L.noun b.noun with
+      | none => rw [hb] at hvv; simp at hvv
+      | some sb =>
+        cases hc : evalN g L.noun c.noun with
+        | none => rw [hb, hc] at hvv; simp at hvv
+        | some sc =>
+          have eq_b : ncost (g + 1 + 1) L.noun b.noun = ncost (g + 1) L.noun b.noun :=
+            ncost_align hb (by omega) (by omega)
+          have eq_c : ncost (g + 1 + 1) L.noun c.noun = ncost (g + 1) L.noun c.noun :=
+            ncost_align hc (by omega) (by omega)
+          rw [vcostN_equal_eq, vcostN_star_terminal hL htb hdL hdb_f1,
+            vcostN_star_terminal hL htc hdL hdc_f1]
+          simp only [noun, ncost]
+          rw [eq_b, eq_c]; omega
+
+private theorem hint_push_cost_decrease {L rr : Verb} {x : Noun} (hL : L.isTerminal = true) (n2 :
+  Verb)
+  (htn2 : n2.isTerminal = true) (g : ℕ) (hfL : den (g + 1) L = some L.noun) (hdL : den (g + 1 + 1) L
+    = some L.noun)
+  (hgn2 : den g n2 = some n2.noun) (hr : (node Action.star L (node Action.null (leaf 8)
+    n2)).redexHint = some rr)
+  (hvv : evalN (g + 1) L.noun ((atom 8).cell n2.noun) = some x) :
+  vcostN (g + 1 + 1) rr < ncost (g + 1 + 1) L.noun (node Action.null (leaf 8) n2).noun := by
+  cases n2 with
+  | leaf k => simp [redexHint, hintExpand, reduce, redex] at hr
+  | node rn2 b c =>
+      have hn2t : isTerminal (Verb.node rn2 b c) = true := htn2
+      simp only [isTerminal, Bool.and_eq_true] at htn2
+      obtain ⟨⟨hrn2, htb⟩, htc⟩ := htn2
+      simp only [redexHint, hintExpand, reduce, redex] at hr; obtain rfl :=
+        Option.some.inj hr
+      obtain ⟨hgb, hgc⟩ :=
+        den_term_children (editOk_of_terminal hn2t) hgn2 htb htc
+      have hg1b : den (g + 1) b = some b.noun := den_succ hgb
+      have hdb_f1 : den (g + 1 + 1) b = some b.noun := den_succ hg1b
+      have hg1c : den (g + 1) c = some c.noun := den_succ hgc
+      have hdc_f1 : den (g + 1 + 1) c = some c.noun := den_succ hg1c
+      simp only [noun, evalN] at hvv
+      cases hb : evalN g L.noun b.noun with
+      | none => rw [hb] at hvv; simp at hvv
+      | some sb =>
+          rw [hb] at hvv
+          have hb' : evalN (g + 1) L.noun b.noun = some sb := evalN_succ hb
+          have eq_Lb : ncost (g + 1 + 1) L.noun b.noun = ncost (g + 1) L.noun b.noun
+            :=
+            ncost_align hb (by omega) (by omega)
+          have eq_sbLc : ncost (g + 1 + 1) (Noun.cell sb L.noun) c.noun
+              = ncost (g + 1) (Noun.cell sb L.noun) c.noun := ncost_align hvv (by
+                omega) (by omega)
+          have hRHS : ncost (g + 1 + 1) L.noun
+              (Verb.node .null (Verb.leaf 8) (Verb.node rn2 b c)).noun
+              = 1 + ncost (g + 1) L.noun b.noun
+                  + ncost (g + 1) (Noun.cell sb L.noun) c.noun := by
+            simp only [noun, ncost, hb']
+          rw [hRHS]
+          have hvcnull : vcostN (g + 1 + 1) (Verb.node .null (Verb.node .star L b) L)
+              = ncost (g + 1 + 1) L.noun b.noun := by
+            rw [vcostN_null_eq, vcostN_star_terminal hL htb hdL hdb_f1,
+              vcostN_terminal L hL,
+              Nat.add_zero]
+          cases hgL : den g L with
+          | none =>
+              have hnone : den (g + 1) (Verb.node .star L b) = none := by
+                simp only [den, hgL]
+              have hsubjn : den (g + 1 + 1) (Verb.node .null (Verb.node .star L b) L)
+                = none :=
+                den_null_none hnone
+              rw [vcostN_star_eq]
+              simp only [hsubjn, hvcnull, vcostN_terminal c htc]
+              rw [eq_Lb]
+              omega
+          | some vL =>
+              have hvL : vL = L.noun := den_terminal_val hL hgL
+              subst hvL
+              have hd_Lb_g : den (g + 1) (Verb.node .star L b) = some sb :=
+                den_star_val hgL hgb hb
+              have hd_subj : den (g + 1 + 1) (Verb.node .null (Verb.node .star L b) L)
+                  = some (Noun.cell sb L.noun) := den_null_val hd_Lb_g hfL
+              rw [vcostN_star_eq]
+              simp only [hd_subj, hdc_f1, hvcnull, vcostN_terminal c htc]
+              rw [eq_Lb, eq_sbLc]
+              omega
 
 theorem cost_localN {F : Nat} {L R rr : Verb} {x : Noun}
     (hL : isTerminal L = true) (hR : isTerminal R = true)
@@ -679,53 +1155,20 @@ theorem cost_localN {F : Nat} {L R rr : Verb} {x : Noun}
               simp only [noun] at hvv
               interval_cases op
               · -- OP0
-                simp only [redexHint, hintExpand, reduce, redex] at hr; obtain rfl := Option.some.inj hr
+                simp only [redexHint, hintExpand, reduce, redex] at hr; obtain rfl :=
+                  Option.some.inj hr
                 rw [vcostN_slot_eq, vcostN_terminal n2 htn2, vcostN_terminal L hL]
                 simp only [noun, ncost]; omega
               · -- OP1
-                simp only [redexHint, hintExpand, reduce, redex] at hr; obtain rfl := Option.some.inj hr
+                simp only [redexHint, hintExpand, reduce, redex] at hr; obtain rfl :=
+                  Option.some.inj hr
                 rw [vcostN_terminal n2 htn2]
                 simp only [noun, ncost]; omega
               · -- OP2
-                cases n2 with
-                | leaf k => simp [redexHint, hintExpand, reduce, redex] at hr
-                | node rn2 b c =>
-                    have hn2t : isTerminal (Verb.node rn2 b c) = true := htn2
-                    simp only [isTerminal, Bool.and_eq_true] at htn2
-                    obtain ⟨⟨hrn2, htb⟩, htc⟩ := htn2
-                    simp only [redexHint, hintExpand, reduce, redex] at hr; obtain rfl := Option.some.inj hr
-                    obtain ⟨hg1b, hg1c⟩ :=
-                      den_term_children (editOk_of_terminal hn2t) (den_succ hgn2) htb htc
-                    have hdb_f1 : den (g + 1 + 1) b = some b.noun := den_succ hg1b
-                    have hdc_f1 : den (g + 1 + 1) c = some c.noun := den_succ hg1c
-                    simp only [noun, evalN] at hvv
-                    cases hb : evalN g L.noun b.noun with
-                    | none => rw [hb] at hvv; simp at hvv
-                    | some sb =>
-                      cases hc : evalN g L.noun c.noun with
-                      | none => rw [hb, hc] at hvv; simp at hvv
-                      | some sc =>
-                        rw [hb, hc] at hvv
-                        have hb' : evalN (g + 1) L.noun b.noun = some sb := evalN_succ hb
-                        have hc' : evalN (g + 1) L.noun c.noun = some sc := evalN_succ hc
-                        have hd_Lb : den (g + 1 + 1) (Verb.node .star L b) = some sb :=
-                          den_star_val hfL hg1b hb'
-                        have hd_Lc : den (g + 1 + 1) (Verb.node .star L c) = some sc :=
-                          den_star_val hfL hg1c hc'
-                        have eq_b : ncost (g + 1 + 1) L.noun b.noun = ncost (g + 1) L.noun b.noun :=
-                          ncost_align hb (by omega) (by omega)
-                        have eq_c : ncost (g + 1 + 1) L.noun c.noun = ncost (g + 1) L.noun c.noun :=
-                          ncost_align hc (by omega) (by omega)
-                        have eq_sbsc : ncost (g + 1 + 1) sb sc = ncost (g + 1) sb sc :=
-                          ncost_align hvv (by omega) (by omega)
-                        simp only [vcostN_star_eq, hd_Lb, hd_Lc,
-                          vcostN_star_terminal hL htb hdL hdb_f1,
-                          vcostN_star_terminal hL htc hdL hdc_f1]
-                        simp only [noun, ncost, hb', hc']
-                        rw [eq_b, eq_c, eq_sbsc]
-                        omega
+                exact hint_composition_cost_decrease hL n2 htn2 g hfL hdL hgn2 hr hvv
               · -- OP3
-                simp only [redexHint, hintExpand, reduce, redex] at hr; obtain rfl := Option.some.inj hr
+                simp only [redexHint, hintExpand, reduce, redex] at hr; obtain rfl :=
+                  Option.some.inj hr
                 simp only [evalN, Option.map_eq_some_iff] at hvv
                 obtain ⟨y, hy, _⟩ := hvv
                 have e_n2 : ncost (g + 1 + 1) L.noun n2.noun = ncost (g + 1) L.noun n2.noun :=
@@ -734,7 +1177,8 @@ theorem cost_localN {F : Nat} {L R rr : Verb} {x : Noun}
                 simp only [vcostN, noun, ncost]
                 rw [e_n2]; omega
               · -- OP4
-                simp only [redexHint, hintExpand, reduce, redex] at hr; obtain rfl := Option.some.inj hr
+                simp only [redexHint, hintExpand, reduce, redex] at hr; obtain rfl :=
+                  Option.some.inj hr
                 simp only [evalN, Option.bind_eq_some_iff] at hvv
                 obtain ⟨y, hy, _⟩ := hvv
                 have e_n2 : ncost (g + 1 + 1) L.noun n2.noun = ncost (g + 1) L.noun n2.noun :=
@@ -743,63 +1187,9 @@ theorem cost_localN {F : Nat} {L R rr : Verb} {x : Noun}
                 simp only [vcostN, noun, ncost]
                 rw [e_n2]; omega
               · -- OP5
-                cases n2 with
-                | leaf k => simp [redexHint, hintExpand, reduce, redex] at hr
-                | node rn2 b c =>
-                    have hn2t : isTerminal (Verb.node rn2 b c) = true := htn2
-                    simp only [isTerminal, Bool.and_eq_true] at htn2
-                    obtain ⟨⟨hrn2, htb⟩, htc⟩ := htn2
-                    simp only [redexHint, hintExpand, reduce, redex] at hr; obtain rfl := Option.some.inj hr
-                    obtain ⟨hg1b, hg1c⟩ :=
-                      den_term_children (editOk_of_terminal hn2t) (den_succ hgn2) htb htc
-                    have hdb_f1 : den (g + 1 + 1) b = some b.noun := den_succ hg1b
-                    have hdc_f1 : den (g + 1 + 1) c = some c.noun := den_succ hg1c
-                    simp only [noun, evalN] at hvv
-                    cases hb : evalN g L.noun b.noun with
-                    | none => rw [hb] at hvv; simp at hvv
-                    | some sb =>
-                      cases hc : evalN g L.noun c.noun with
-                      | none => rw [hb, hc] at hvv; simp at hvv
-                      | some sc =>
-                        have eq_b : ncost (g + 1 + 1) L.noun b.noun = ncost (g + 1) L.noun b.noun :=
-                          ncost_align hb (by omega) (by omega)
-                        have eq_c : ncost (g + 1 + 1) L.noun c.noun = ncost (g + 1) L.noun c.noun :=
-                          ncost_align hc (by omega) (by omega)
-                        rw [vcostN_equal_eq, vcostN_star_terminal hL htb hdL hdb_f1,
-                          vcostN_star_terminal hL htc hdL hdc_f1]
-                        simp only [noun, ncost]
-                        rw [eq_b, eq_c]; omega
+                exact hint_equality_cost_decrease hL n2 htn2 g hdL hgn2 hr hvv
               · -- OP6
-                cases n2 with
-                | leaf k => simp [redexHint, hintExpand, reduce, redex] at hr
-                | node rn2 b c =>
-                    have hn2t : isTerminal (Verb.node rn2 b c) = true := htn2
-                    simp only [isTerminal, Bool.and_eq_true] at htn2
-                    obtain ⟨⟨hrn2, htb⟩, htc⟩ := htn2
-                    have hct : isTerminal c = true := htc
-                    simp only [redexHint, hintExpand, reduce, redex] at hr; obtain rfl := Option.some.inj hr
-                    obtain ⟨hgb, hgcv⟩ :=
-                      den_term_children (editOk_of_terminal hn2t) hgn2 htb htc
-                    have hdb_f1 : den (g + 1 + 1) b = some b.noun := den_succ (den_succ hgb)
-                    have h4a : den (g + 1) (Verb.node .null (Verb.leaf 4) b)
-                        = some (Noun.cell (Noun.atom 4) b.noun) :=
-                      den_null_val (by simp only [den]) hgb
-                    have h4b : den (g + 1 + 1)
-                        (Verb.node .null (Verb.leaf 4) (Verb.node .null (Verb.leaf 4) b))
-                        = some (Noun.cell (Noun.atom 4) (Noun.cell (Noun.atom 4) b.noun)) :=
-                      den_null_val (by simp only [den]) h4a
-                    have ht4 : isTerminal
-                        (Verb.node .null (Verb.leaf 4) (Verb.node .null (Verb.leaf 4) b)) = true := by
-                      simp [isTerminal, Action.isNull, htb]
-                    have ht23 : isTerminal (Verb.node .null (Verb.leaf 2) (Verb.leaf 3)) = true := by
-                      simp [isTerminal, Action.isNull]
-                    cases c with
-                    | leaf ck => exfalso; simp only [noun, evalN] at hvv; simp at hvv
-                    | node rc thn els =>
-                        have hct2 : isTerminal (Verb.node rc thn els) = true := hct
-                        rw [isTerminal_node] at hct; simp only [Bool.and_eq_true] at hct
-                        obtain ⟨⟨hrc, hthn⟩, htels⟩ := hct
-                        exact op6_decreaseN hL hct2 hthn htels hgcv hdL h4b ht4 ht23 hvv
+                exact hint_conditional_cost_decrease hL n2 htn2 g hdL hgn2 hr hvv
               · -- OP7
                 cases n2 with
                 | leaf k => simp [redexHint, hintExpand, reduce, redex] at hr
@@ -807,7 +1197,8 @@ theorem cost_localN {F : Nat} {L R rr : Verb} {x : Noun}
                     have hn2t : isTerminal (Verb.node rn2 b c) = true := htn2
                     simp only [isTerminal, Bool.and_eq_true] at htn2
                     obtain ⟨⟨hrn2, htb⟩, htc⟩ := htn2
-                    simp only [redexHint, hintExpand, reduce, redex] at hr; obtain rfl := Option.some.inj hr
+                    simp only [redexHint, hintExpand, reduce, redex] at hr; obtain rfl :=
+                      Option.some.inj hr
                     obtain ⟨hg1b, hg1c⟩ :=
                       den_term_children (editOk_of_terminal hn2t) (den_succ hgn2) htb htc
                     have hdb_f1 : den (g + 1 + 1) b = some b.noun := den_succ hg1b
@@ -829,293 +1220,13 @@ theorem cost_localN {F : Nat} {L R rr : Verb} {x : Noun}
                         simp only [noun, ncost, hb']
                         rw [eq_b, eq_sbc]; omega
               · -- OP8
-                cases n2 with
-                | leaf k => simp [redexHint, hintExpand, reduce, redex] at hr
-                | node rn2 b c =>
-                    have hn2t : isTerminal (Verb.node rn2 b c) = true := htn2
-                    simp only [isTerminal, Bool.and_eq_true] at htn2
-                    obtain ⟨⟨hrn2, htb⟩, htc⟩ := htn2
-                    simp only [redexHint, hintExpand, reduce, redex] at hr; obtain rfl := Option.some.inj hr
-                    obtain ⟨hgb, hgc⟩ :=
-                      den_term_children (editOk_of_terminal hn2t) hgn2 htb htc
-                    have hg1b : den (g + 1) b = some b.noun := den_succ hgb
-                    have hdb_f1 : den (g + 1 + 1) b = some b.noun := den_succ hg1b
-                    have hg1c : den (g + 1) c = some c.noun := den_succ hgc
-                    have hdc_f1 : den (g + 1 + 1) c = some c.noun := den_succ hg1c
-                    simp only [noun, evalN] at hvv
-                    cases hb : evalN g L.noun b.noun with
-                    | none => rw [hb] at hvv; simp at hvv
-                    | some sb =>
-                        rw [hb] at hvv
-                        have hb' : evalN (g + 1) L.noun b.noun = some sb := evalN_succ hb
-                        have eq_Lb : ncost (g + 1 + 1) L.noun b.noun = ncost (g + 1) L.noun b.noun :=
-                          ncost_align hb (by omega) (by omega)
-                        have eq_sbLc : ncost (g + 1 + 1) (Noun.cell sb L.noun) c.noun
-                            = ncost (g + 1) (Noun.cell sb L.noun) c.noun := ncost_align hvv (by omega) (by omega)
-                        have hRHS : ncost (g + 1 + 1) L.noun
-                            (Verb.node .null (Verb.leaf 8) (Verb.node rn2 b c)).noun
-                            = 1 + ncost (g + 1) L.noun b.noun
-                                + ncost (g + 1) (Noun.cell sb L.noun) c.noun := by
-                          simp only [noun, ncost, hb']
-                        rw [hRHS]
-                        have hvcnull : vcostN (g + 1 + 1) (Verb.node .null (Verb.node .star L b) L)
-                            = ncost (g + 1 + 1) L.noun b.noun := by
-                          rw [vcostN_null_eq, vcostN_star_terminal hL htb hdL hdb_f1, vcostN_terminal L hL,
-                            Nat.add_zero]
-                        cases hgL : den g L with
-                        | none =>
-                            have hnone : den (g + 1) (Verb.node .star L b) = none := by
-                              simp only [den, hgL]
-                            have hsubjn : den (g + 1 + 1) (Verb.node .null (Verb.node .star L b) L) = none :=
-                              den_null_none hnone
-                            rw [vcostN_star_eq]
-                            simp only [hsubjn, hvcnull, vcostN_terminal c htc]
-                            rw [eq_Lb]
-                            omega
-                        | some vL =>
-                            have hvL : vL = L.noun := den_terminal_val hL hgL
-                            subst hvL
-                            have hd_Lb_g : den (g + 1) (Verb.node .star L b) = some sb :=
-                              den_star_val hgL hgb hb
-                            have hd_subj : den (g + 1 + 1) (Verb.node .null (Verb.node .star L b) L)
-                                = some (Noun.cell sb L.noun) := den_null_val hd_Lb_g hfL
-                            rw [vcostN_star_eq]
-                            simp only [hd_subj, hdc_f1, hvcnull, vcostN_terminal c htc]
-                            rw [eq_Lb, eq_sbLc]
-                            omega
+                exact hint_push_cost_decrease hL n2 htn2 g hfL hdL hgn2 hr hvv
               · -- OP9
-                cases n2 with
-                | leaf k => simp [redexHint, hintExpand, reduce, redex] at hr
-                | node rn2 b c =>
-                    have hn2t : isTerminal (Verb.node rn2 b c) = true := htn2
-                    simp only [isTerminal, Bool.and_eq_true] at htn2
-                    obtain ⟨⟨hrn2, htb⟩, htc⟩ := htn2
-                    have hrn2' : rn2 = Action.null := by cases rn2 <;> simp_all [Action.isNull]
-                    subst hrn2'
-                    simp only [redexHint, hintExpand, reduce, redex] at hr; obtain rfl := Option.some.inj hr
-                    obtain ⟨g', rfl⟩ : ∃ g', g = g' + 1 := by
-                      cases g with | zero => simp [den] at hgn2 | succ n => exact ⟨n, rfl⟩
-                    obtain ⟨hhb, hhc⟩ := den_term_split htb htc hgn2
-                    cases b with
-                    | node bb bc bd => simp [noun, evalN] at hvv
-                    | leaf ax0 =>
-                        simp only [noun, evalN] at hvv
-                        cases hcor : evalN (g' + 1) L.noun c.noun with
-                        | none => simp [hcor] at hvv
-                        | some cor =>
-                          simp only [hcor] at hvv
-                          cases harm : Noun.slot ax0 cor with
-                          | none => simp [harm] at hvv
-                          | some arm =>
-                            simp only [harm] at hvv
-                            have hg2c : den (g' + 1 + 1) c = some c.noun := den_succ (den_succ hhc)
-                            have hdc_f1 : den (g' + 1 + 1 + 1) c = some c.noun := den_succ hg2c
-                            have hcor2 : evalN (g' + 2) L.noun c.noun = some cor :=
-                              evalN_succ hcor
-                            have hd_core : den (g' + 1 + 1 + 1) (Verb.node .star L c) = some cor :=
-                              den_star_val hfL hg2c hcor2
-                            have hb0 : den g' (Verb.leaf 0) = some (Noun.atom 0) := by simp only [den]
-                            have hb1 : den g' (Verb.leaf 1) = some (Noun.atom 1) := by simp only [den]
-                            have hf0h : den (g' + 1) (Verb.node .null (Verb.leaf 0) (Verb.leaf ax0))
-                                = some (Noun.cell (Noun.atom 0) (Noun.atom ax0)) := den_null_val hb0 hhb
-                            have hf01 : den (g' + 1) (Verb.node .null (Verb.leaf 0) (Verb.leaf 1))
-                                = some (Noun.cell (Noun.atom 0) (Noun.atom 1)) := den_null_val hb0 hb1
-                            have hM : den (g' + 1 + 1)
-                                  (Verb.node .null (Verb.node .null (Verb.leaf 0) (Verb.leaf 1))
-                                    (Verb.node .null (Verb.leaf 0) (Verb.leaf ax0)))
-                                = some (Noun.cell (Noun.cell (Noun.atom 0) (Noun.atom 1))
-                                    (Noun.cell (Noun.atom 0) (Noun.atom ax0))) := den_null_val hf01 hf0h
-                            have h2 : den (g' + 1 + 1) (Verb.leaf 2) = some (Noun.atom 2) := by
-                              simp only [den]
-                            have hform : den (g' + 1 + 1 + 1)
-                                  (Verb.node .null (Verb.leaf 2)
-                                    (Verb.node .null (Verb.node .null (Verb.leaf 0) (Verb.leaf 1))
-                                      (Verb.node .null (Verb.leaf 0) (Verb.leaf ax0))))
-                                = some (Noun.cell (Noun.atom 2)
-                                    (Noun.cell (Noun.cell (Noun.atom 0) (Noun.atom 1))
-                                      (Noun.cell (Noun.atom 0) (Noun.atom ax0)))) := den_null_val h2 hM
-                            have hformT : isTerminal
-                                (Verb.node .null (Verb.leaf 2)
-                                  (Verb.node .null (Verb.node .null (Verb.leaf 0) (Verb.leaf 1))
-                                    (Verb.node .null (Verb.leaf 0) (Verb.leaf ax0)))) = true := by
-                              simp [isTerminal, Action.isNull]
-                            have hev01 : evalN (g' + 2) cor
-                                (Noun.cell (Noun.atom 0) (Noun.atom 1)) = some cor := by
-                              simp only [evalN]; exact slot_one
-                            have hev0h : evalN (g' + 2) cor
-                                (Noun.cell (Noun.atom 0) (Noun.atom ax0)) = some arm := by
-                              simp only [evalN]; exact harm
-                            have eq_c1 : ncost (g' + 1 + 1 + 1) L.noun c.noun
-                                = ncost (g' + 2) L.noun c.noun := ncost_align hcor (by omega) (by omega)
-                            have hRHS : ncost (g' + 1 + 1 + 1) L.noun
-                                (Verb.node .null (Verb.leaf 9) (Verb.node .null (Verb.leaf ax0) c)).noun
-                                = 20 + ncost (g' + 2) L.noun c.noun + ncost (g' + 2) cor arm := by
-                              simp only [noun, ncost, hcor2, harm]
-                            rw [hRHS]
-                            simp only [vcostN_star_eq, hd_core, hform,
-                              vcostN_star_terminal hL htc hdL hdc_f1, vcostN_terminal _ hformT]
-                            simp only [ncost, hev01, hev0h]
-                            show 1 + 2 + 2 + ncost (g' + 2) cor arm
-                                + ncost (g' + 1 + 1 + 1) L.noun c.noun + 0
-                              < 20 + ncost (g' + 2) L.noun c.noun + ncost (g' + 2) cor arm
-                            rw [eq_c1]
-                            omega
+                exact hint_arm_cost_decrease hL n2 htn2 g hfL hdL hgn2 hr hvv
               · -- OP10
-                cases n2 with
-                | leaf k => simp [redexHint, hintExpand, reduce, redex] at hr
-                | node rn2 hd d =>
-                    cases hd with
-                    | leaf k => simp [redexHint, hintExpand, reduce, redex] at hr
-                    | node rhd axv c =>
-                        have hn2t : isTerminal (Verb.node rn2 (Verb.node rhd axv c) d) = true := htn2
-                        rw [isTerminal_node] at htn2; simp only [Bool.and_eq_true] at htn2
-                        obtain ⟨⟨hrn2, hthd⟩, htd⟩ := htn2
-                        have hhdt : isTerminal (Verb.node rhd axv c) = true := hthd
-                        rw [isTerminal_node] at hthd; simp only [Bool.and_eq_true] at hthd
-                        obtain ⟨⟨hrhd, htaxv⟩, htc⟩ := hthd
-                        simp only [redexHint, hintExpand, reduce, redex] at hr; obtain rfl := Option.some.inj hr
-                        obtain ⟨hg1hd, hg1d⟩ :=
-                          den_term_children (editOk_of_terminal hn2t) (den_succ hgn2) hhdt htd
-                        obtain ⟨hg1axv, hg1c⟩ :=
-                          den_term_children (editOk_of_terminal hhdt) hg1hd htaxv htc
-                        have hdc_f1 : den (g + 1 + 1) c = some c.noun := den_succ hg1c
-                        have hdd_f1 : den (g + 1 + 1) d = some d.noun := den_succ hg1d
-                        cases axv with
-                        | node b0 c0 d0 => simp [noun, evalN] at hvv
-                        | leaf a0 =>
-                            simp only [noun, evalN] at hvv
-                            cases hnew : evalN g L.noun c.noun with
-                            | none => rw [hnew] at hvv; simp at hvv
-                            | some new =>
-                              cases hold : evalN g L.noun d.noun with
-                              | none => rw [hnew, hold] at hvv; simp at hvv
-                              | some old =>
-                                  have eq_c : ncost (g + 1 + 1) L.noun c.noun
-                                      = ncost (g + 1) L.noun c.noun := ncost_align hnew (by omega) (by omega)
-                                  have eq_d : ncost (g + 1 + 1) L.noun d.noun
-                                      = ncost (g + 1) L.noun d.noun := ncost_align hold (by omega) (by omega)
-                                  rw [vcostN_edit_eq, vcostN_null_eq,
-                                    vcostN_star_terminal hL htc hdL hdc_f1,
-                                    vcostN_star_terminal hL htd hdL hdd_f1]
-                                  simp only [vcostN, noun, ncost]
-                                  rw [eq_c, eq_d]; omega
+                exact hint_edit_cost_decrease hL n2 htn2 g hdL hgn2 hr hvv
               · -- OP11 (hint expansion)
-                cases n2 with
-                | leaf k =>
-                    simp [noun, evalN] at hvv
-                | node rn2 h2 b2 =>
-                    have hn2t : isTerminal (Verb.node rn2 h2 b2) = true := htn2
-                    simp only [isTerminal, Bool.and_eq_true] at htn2
-                    obtain ⟨⟨hrn2, hth2⟩, htb2⟩ := htn2
-                    have hgb2 : den g b2 = some b2.noun :=
-                      (den_term_children (editOk_of_terminal hn2t) hgn2 hth2 htb2).2
-                    cases h2 with
-                    | leaf t3 =>
-                        -- static hint: rr = *[L body]
-                        have hrr : redexHint (Verb.node .star L
-                            (Verb.node .null (Verb.leaf 11) (Verb.node rn2 (Verb.leaf t3) b2)))
-                            = some (Verb.node .star L b2) := by
-                          simp [redexHint, hintExpand, hL, hn2t, Action.isNull]
-                        rw [hrr] at hr
-                        obtain rfl := Option.some.inj hr
-                        simp only [noun, evalN] at hvv
-                        have hd2b2 : den (g + 1 + 1) b2 = some b2.noun := den_succ (den_succ hgb2)
-                        have hLHS : vcostN (g + 1 + 1) (Verb.node .star L b2)
-                            = ncost (g + 1 + 1) L.noun b2.noun :=
-                          vcostN_star_terminal hL htb2 hdL hd2b2
-                        have hRHS : ncost (g + 1 + 1) L.noun
-                            (Noun.cell (Noun.atom 11) (Noun.cell (Noun.atom t3) b2.noun))
-                            = 50 + ncost (g + 1) L.noun b2.noun := by simp only [ncost]
-                        have halign : ncost (g + 1 + 1) L.noun b2.noun = ncost (g + 1) L.noun b2.noun :=
-                          ncost_align hvv (by omega) (by omega)
-                        rw [hLHS]
-                        simp only [noun]
-                        rw [hRHS, halign]
-                        omega
-                    | node r3 t3 clue =>
-                        -- dynamic hint: rr = *[L (8 clue (7 [0 3] body))]
-                        have hh2t : isTerminal (Verb.node r3 t3 clue) = true := hth2
-                        simp only [isTerminal, Bool.and_eq_true] at hth2
-                        obtain ⟨⟨hr3, ht3⟩, htclue⟩ := hth2
-                        have hrr : redexHint (Verb.node .star L
-                            (Verb.node .null (Verb.leaf 11) (Verb.node rn2 (Verb.node r3 t3 clue) b2)))
-                            = some (Verb.node .star L
-                                (Verb.node .null (Verb.leaf 8)
-                                  (Verb.node .null clue
-                                    (Verb.node .null (Verb.leaf 7)
-                                      (Verb.node .null (Verb.node .null (Verb.leaf 0) (Verb.leaf 3)) b2))))) := by
-                          simp [redexHint, hintExpand, hL, hn2t, Action.isNull]
-                        rw [hrr] at hr
-                        obtain rfl := Option.some.inj hr
-                        simp only [noun, evalN] at hvv
-                        cases hclue : evalN g L.noun clue.noun with
-                        | none => rw [hclue] at hvv; simp at hvv
-                        | some cv =>
-                            rw [hclue] at hvv
-                            obtain ⟨g0, rfl⟩ : ∃ g0, g = g0 + 1 := by
-                              cases g with
-                              | zero => simp [evalN] at hclue
-                              | succ n => exact ⟨n, rfl⟩
-                            have hclue1 : evalN (g0 + 2) L.noun clue.noun = some cv := evalN_succ hclue
-                            have hslot3 : evalN (g0 + 1) (Noun.cell cv L.noun)
-                                (Noun.cell (Noun.atom 0) (Noun.atom 3)) = some L.noun := by
-                              simp [evalN, slot_three]
-                            have hMt : isTerminal
-                                (Verb.node .null (Verb.leaf 8)
-                                  (Verb.node .null clue
-                                    (Verb.node .null (Verb.leaf 7)
-                                      (Verb.node .null (Verb.node .null (Verb.leaf 0) (Verb.leaf 3)) b2)))) = true := by
-                              simp [isTerminal, Action.isNull, htclue, htb2]
-                            have hLHSle : vcostN (g0 + 1 + 1 + 1)
-                                (Verb.node .star L
-                                  (Verb.node .null (Verb.leaf 8)
-                                    (Verb.node .null clue
-                                      (Verb.node .null (Verb.leaf 7)
-                                        (Verb.node .null (Verb.node .null (Verb.leaf 0) (Verb.leaf 3)) b2)))))
-                                ≤ ncost (g0 + 1 + 1 + 1) L.noun
-                                    (Verb.node .null (Verb.leaf 8)
-                                      (Verb.node .null clue
-                                        (Verb.node .null (Verb.leaf 7)
-                                          (Verb.node .null (Verb.node .null (Verb.leaf 0) (Verb.leaf 3)) b2)))).noun := by
-                              rw [vcostN_star_eq, vcostN_terminal L hL, vcostN_terminal _ hMt,
-                                Nat.add_zero, Nat.add_zero]
-                              cases hdL3 : den (g0 + 1 + 1 + 1) L with
-                              | none => simp
-                              | some sa =>
-                                  cases hdM : den (g0 + 1 + 1 + 1)
-                                      (Verb.node .null (Verb.leaf 8)
-                                        (Verb.node .null clue
-                                          (Verb.node .null (Verb.leaf 7)
-                                            (Verb.node .null (Verb.node .null (Verb.leaf 0) (Verb.leaf 3)) b2)))) with
-                                  | none => simp
-                                  | some Mv =>
-                                      have e1 : sa = L.noun := den_terminal_val hL hdL3
-                                      have e2 : Mv = (Verb.node .null (Verb.leaf 8)
-                                          (Verb.node .null clue
-                                            (Verb.node .null (Verb.leaf 7)
-                                              (Verb.node .null (Verb.node .null (Verb.leaf 0) (Verb.leaf 3)) b2)))).noun :=
-                                        den_terminal_val hMt hdM
-                                      subst e1; subst e2; simp
-                            have hLHSval' : ncost (g0 + 1 + 1 + 1) L.noun
-                                (Verb.node .null (Verb.leaf 8)
-                                  (Verb.node .null clue
-                                    (Verb.node .null (Verb.leaf 7)
-                                      (Verb.node .null (Verb.node .null (Verb.leaf 0) (Verb.leaf 3)) b2)))).noun
-                                = 4 + ncost (g0 + 2) L.noun clue.noun + ncost (g0 + 1) L.noun b2.noun := by
-                              simp only [noun, ncost, hclue1, hslot3]
-                              generalize ncost (g0 + 2) L.noun clue.noun = A
-                              generalize ncost (g0 + 1) L.noun b2.noun = B
-                              exact op11_arith A B
-                            have hRHS' : ncost (g0 + 1 + 1 + 1) L.noun
-                                (Verb.node .null (Verb.leaf 11) (Verb.node rn2 (Verb.node r3 t3 clue) b2)).noun
-                                = 50 + ncost (g0 + 2) L.noun clue.noun + ncost (g0 + 2) L.noun b2.noun := by
-                              simp only [noun, ncost, hclue1]
-                            have halign : ncost (g0 + 1) L.noun b2.noun = ncost (g0 + 2) L.noun b2.noun :=
-                              ncost_align hvv (by omega) (by omega)
-                            rw [hRHS']
-                            have key := hLHSval' ▸ hLHSle
-                            omega
-
+                exact hint_opcode_cost_decrease hL n2 htn2 g hdL hgn2 hr hvv
 /-! ### (f) step congruence and `cost_stepN` -/
 
 theorem enum_den_F {F : Nat} : ∀ (v : Verb), editOk v = true → ∀ (c : Nat) (x : Noun),
@@ -1166,12 +1277,13 @@ theorem vcostN_replace_cong (F i : Nat) (sub r₀ : Verb) (hpend : sub.isPending
         rw [hrepl, ← hsub]
         omega
       · have hine : ¬ (i = c) := fun h => hci h.symm
-        have hcL : (replaceAux i r₀ l (c + 1)).1 = (enum l (c + 1)).1 := replaceAux_counter i r₀ l (c + 1)
+        have hcL : (replaceAux i r₀ l (c + 1)).1 = (enum l (c + 1)).1 := replaceAux_counter i r₀ l
+          (c + 1)
         have hfind' : findAt i (enum l (c + 1)).2 = some sub ∧
               findAt i (enum r (enum l (c + 1)).1).2 = none
             ∨ findAt i (enum l (c + 1)).2 = none ∧
               findAt i (enum r (enum l (c + 1)).1).2 = some sub := by
-          simp only [enum, findAt, if_neg hine] at hfind
+          simp only [enum, findAt, ite_eq_right hine] at hfind
           rw [findAt_append] at hfind
           cases hl : findAt i (enum l (c + 1)).2 with
           | some s => rw [hl] at hfind; exact Or.inl ⟨hfind, by
@@ -1186,13 +1298,15 @@ theorem vcostN_replace_cong (F i : Nat) (sub r₀ : Verb) (hpend : sub.isPending
         obtain ⟨⟨xl, hxl⟩, ⟨xr, hxr⟩⟩ := den_children_F hok hdv
         have hok' : editOk (replaceAux i r₀ (Verb.node a l r) c).2 = true := by
           apply editOk_replaceAux i r₀ hr0 (Verb.node a l r) c hok
-          intro s hs; have : s = sub := Option.some.inj (hs.symm.trans hfind); rw [this]; exact hpend
-        simp only [replaceAux, if_neg hci] at hdv' hok' ⊢
+          intro s hs; have : s = sub := Option.some.inj (hs.symm.trans hfind); rw [this]; exact
+            hpend
+        simp only [replaceAux, ite_eq_right hci] at hdv' hok' ⊢
         rw [hcL] at hdv' hok' ⊢
         obtain ⟨⟨xl', hxl'⟩, ⟨xr', hxr'⟩⟩ := den_children_F hok' hdv'
         rcases hfind' with ⟨hLsub, hRnone⟩ | ⟨hLnone, hRsub⟩
         · have hrIH := ihl (c + 1) xl xl' hokl hLsub hxl hxl'
-          have hreq : (replaceAux i r₀ r (enum l (c + 1)).1).2 = r := replaceAux_notMem i r₀ r _ hRnone
+          have hreq : (replaceAux i r₀ r (enum l (c + 1)).1).2 = r := replaceAux_notMem i r₀ r _
+            hRnone
           rw [hreq] at hxr' ⊢
           have hrelL : Rel l (replaceAux i r₀ l (c + 1)).2 := by
             apply replaceAux_rel i r₀ l (c + 1)
@@ -1201,7 +1315,8 @@ theorem vcostN_replace_cong (F i : Nat) (sub r₀ : Verb) (hpend : sub.isPending
             rw [this]; exact ⟨hpend, hgraph⟩
           have hlEq : xl = xl' := den_F_swap_eq hokl hrelL hxl hxl'
           cases a <;>
-            simp only [vcostN_star_eq, vcostN_null_eq, vcostN_wut_eq, vcostN_slot_eq, vcostN_equal_eq,
+            simp only [vcostN_star_eq, vcostN_null_eq, vcostN_wut_eq, vcostN_slot_eq,
+              vcostN_equal_eq,
               vcostN_minus_eq, vcostN_edit_eq, hxl, hxl', hxr, hlEq] <;> omega
         · have hrIH := ihr (enum l (c + 1)).1 xr xr' hokr hRsub hxr hxr'
           have hleq : (replaceAux i r₀ l (c + 1)).2 = l := replaceAux_notMem i r₀ l _ hLnone
@@ -1213,7 +1328,8 @@ theorem vcostN_replace_cong (F i : Nat) (sub r₀ : Verb) (hpend : sub.isPending
             rw [this]; exact ⟨hpend, hgraph⟩
           have hrEq : xr = xr' := den_F_swap_eq hokr hrelR hxr hxr'
           cases a <;>
-            simp only [vcostN_star_eq, vcostN_null_eq, vcostN_wut_eq, vcostN_slot_eq, vcostN_equal_eq,
+            simp only [vcostN_star_eq, vcostN_null_eq, vcostN_wut_eq, vcostN_slot_eq,
+              vcostN_equal_eq,
               vcostN_minus_eq, vcostN_edit_eq, hxr, hxr', hxl, hrEq] <;> omega
 
 theorem cost_stepN {F : Nat} {v v' : Verb} {x x' : Noun}
@@ -1387,49 +1503,59 @@ theorem progressN {v : Verb} {x : Noun} (hwf : editOk v = true) (hd : Den v x)
                       rw [evalN_op_ge12_none f L.noun n2.noun op h] at hf
                       exact absurd hf (by simp)
                   interval_cases op
-                  · exact hstepN (inDomainHint_of_inDomain (inDomain_star_of hL hrb rfl hn2 (by decide)))
+                  · exact hstepN (inDomainHint_of_inDomain (inDomain_star_of hL hrb rfl hn2 (by
+                    decide)))
                       (by simp [redexHint, hintExpand, reduce, redex])
-                  · exact hstepN (inDomainHint_of_inDomain (inDomain_star_of hL hrb rfl hn2 (by decide)))
+                  · exact hstepN (inDomainHint_of_inDomain (inDomain_star_of hL hrb rfl hn2 (by
+                    decide)))
                       (by simp [redexHint, hintExpand, reduce, redex])
                   · obtain ⟨hb, hc, _, _, hn2eq, _⟩ := EvN_op2.1 hev
                     cases n2 with
                     | leaf k => rw [noun] at hn2eq; exact absurd hn2eq (by simp)
                     | node b2 c2 d2 =>
-                        exact hstepN (inDomainHint_of_inDomain (inDomain_star_of hL hrb rfl hn2 (by decide)))
+                        exact hstepN (inDomainHint_of_inDomain (inDomain_star_of hL hrb rfl hn2 (by
+                          decide)))
                           (by simp [redexHint, hintExpand, reduce, redex])
-                  · exact hstepN (inDomainHint_of_inDomain (inDomain_star_of hL hrb rfl hn2 (by decide)))
+                  · exact hstepN (inDomainHint_of_inDomain (inDomain_star_of hL hrb rfl hn2 (by
+                    decide)))
                       (by simp [redexHint, hintExpand, reduce, redex])
-                  · exact hstepN (inDomainHint_of_inDomain (inDomain_star_of hL hrb rfl hn2 (by decide)))
+                  · exact hstepN (inDomainHint_of_inDomain (inDomain_star_of hL hrb rfl hn2 (by
+                    decide)))
                       (by simp [redexHint, hintExpand, reduce, redex])
                   · obtain ⟨hb, hc, _, _, hn2eq, _⟩ := EvN_op5.1 hev
                     cases n2 with
                     | leaf k => rw [noun] at hn2eq; exact absurd hn2eq (by simp)
                     | node b2 c2 d2 =>
-                        exact hstepN (inDomainHint_of_inDomain (inDomain_star_of hL hrb rfl hn2 (by decide)))
+                        exact hstepN (inDomainHint_of_inDomain (inDomain_star_of hL hrb rfl hn2 (by
+                          decide)))
                           (by simp [redexHint, hintExpand, reduce, redex])
                   · obtain ⟨b, c, d, cv, hn2eq, _⟩ := EvN_op6.1 hev
                     cases n2 with
                     | leaf k => rw [noun] at hn2eq; exact absurd hn2eq (by simp)
                     | node b2 c2 d2 =>
-                        exact hstepN (inDomainHint_of_inDomain (inDomain_star_of hL hrb rfl hn2 (by decide)))
+                        exact hstepN (inDomainHint_of_inDomain (inDomain_star_of hL hrb rfl hn2 (by
+                          decide)))
                           (by simp [redexHint, hintExpand, reduce, redex])
                   · obtain ⟨hb, hc, _, hn2eq, _⟩ := EvN_op7.1 hev
                     cases n2 with
                     | leaf k => rw [noun] at hn2eq; exact absurd hn2eq (by simp)
                     | node b2 c2 d2 =>
-                        exact hstepN (inDomainHint_of_inDomain (inDomain_star_of hL hrb rfl hn2 (by decide)))
+                        exact hstepN (inDomainHint_of_inDomain (inDomain_star_of hL hrb rfl hn2 (by
+                          decide)))
                           (by simp [redexHint, hintExpand, reduce, redex])
                   · obtain ⟨hb, hc, _, hn2eq, _⟩ := EvN_op8.1 hev
                     cases n2 with
                     | leaf k => rw [noun] at hn2eq; exact absurd hn2eq (by simp)
                     | node b2 c2 d2 =>
-                        exact hstepN (inDomainHint_of_inDomain (inDomain_star_of hL hrb rfl hn2 (by decide)))
+                        exact hstepN (inDomainHint_of_inDomain (inDomain_star_of hL hrb rfl hn2 (by
+                          decide)))
                           (by simp [redexHint, hintExpand, reduce, redex])
                   · obtain ⟨ax, c, _, _, hn2eq, _⟩ := EvN_op9.1 hev
                     cases n2 with
                     | leaf k => rw [noun] at hn2eq; exact absurd hn2eq (by simp)
                     | node b2 c2 d2 =>
-                        exact hstepN (inDomainHint_of_inDomain (inDomain_star_of hL hrb rfl hn2 (by decide)))
+                        exact hstepN (inDomainHint_of_inDomain (inDomain_star_of hL hrb rfl hn2 (by
+                          decide)))
                           (by simp [redexHint, hintExpand, reduce, redex])
                   · obtain ⟨ax, c, d, new, old, hn2eq, _⟩ := EvN_op10.1 hev
                     cases n2 with
@@ -1440,7 +1566,8 @@ theorem progressN {v : Verb} {x : Noun} (hwf : editOk v = true) (hd : Den v x)
                         cases hdd with
                         | leaf k => rw [noun] at hhd; exact absurd hhd (by simp)
                         | node bhd axv cc =>
-                            exact hstepN (inDomainHint_of_inDomain (inDomain_star_of hL hrb rfl hn2 (by decide)))
+                            exact hstepN (inDomainHint_of_inDomain (inDomain_star_of hL hrb rfl hn2
+                              (by decide)))
                               (by simp [redexHint, hintExpand, reduce, redex])
                   · -- OP₁₁ hint redex
                     cases n2 with
@@ -1452,14 +1579,17 @@ theorem progressN {v : Verb} {x : Noun} (hwf : editOk v = true) (hd : Den v x)
                         | succ ff => simp [evalN] at hf
                     | node rn2 h2 b2 =>
                         have hdomN : inDomainHint
-                            (Verb.node .star L (Verb.node rb (Verb.leaf 11) (Verb.node rn2 h2 b2))) = true := by
+                            (Verb.node .star L (Verb.node rb (Verb.leaf 11) (Verb.node rn2 h2 b2)))
+                              = true := by
                           rw [inDomainHint]
                           have hhr : isHintRedex
-                              (Verb.node .star L (Verb.node rb (Verb.leaf 11) (Verb.node rn2 h2 b2))) = true := by
+                              (Verb.node .star L (Verb.node rb (Verb.leaf 11) (Verb.node rn2 h2
+                                b2))) = true := by
                             simp [isHintRedex, hL, hrb, hn2]
                           rw [hhr]; simp
                         have hredN : (redexHint
-                            (Verb.node .star L (Verb.node rb (Verb.leaf 11) (Verb.node rn2 h2 b2)))).isSome = true := by
+                            (Verb.node .star L (Verb.node rb (Verb.leaf 11) (Verb.node rn2 h2
+                              b2)))).isSome = true := by
                           cases h2 <;> simp [redexHint, hintExpand, hL, hrb, hn2]
                         exact hstepN hdomN hredN
 
@@ -1480,7 +1610,7 @@ theorem run_completeN {v : Verb} {x : Noun} (hok : editOk v = true) (hv : Den v 
       · refine ⟨1, ?_⟩
         have hx : x = v.noun := den_terminal_val hterm hF
         subst hx
-        simp only [runHint, nextHint_none_of_terminal hterm, result, hterm, if_true]
+        simp only [runHint, nextHint_none_of_terminal hterm, result, hterm, ite_true]
       · have hntf : isTerminal v = false := by
           cases hh : isTerminal v with
           | true => exact absurd hh hterm
@@ -1491,7 +1621,8 @@ theorem run_completeN {v : Verb} {x : Noun} (hok : editOk v = true) (hv : Den v 
         have hGv : den (max F F') v = some x := den_mono (Nat.le_max_left _ _) hF
         have hGv' : den (max F F') v' = some x := den_mono (Nat.le_max_right _ _) hF'
         have hvcv : vcostN (max F F') v = vcostN F v := vcostN_mono (Nat.le_max_left _ _) hok hF
-        have hvcv' : vcostN (max F F') v' = vcostN F' v' := vcostN_mono (Nat.le_max_right _ _) hokv' hF'
+        have hvcv' : vcostN (max F F') v' = vcostN F' v' := vcostN_mono (Nat.le_max_right _ _) hokv'
+          hF'
         have hdec : vcostN (max F F') v' < vcostN (max F F') v := cost_stepN hok hGv hGv' hnext
         have hlt' : vcostN F' v' < bound := by
           rw [hvcv'] at hdec; rw [hvcv] at hdec; omega

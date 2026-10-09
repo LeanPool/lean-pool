@@ -38,10 +38,7 @@ status: verified
 provenance: human
 main_declarations:
 - Nock.Verb.runProgram_adequate_complete
-- Nock.Verb.runTraceProgram_certificate
-- Nock.paper_field_bridge
 - Nock.NPR.collision_prob_le
-- Nock.NPR.fnHorner_eq_fn
 main_results:
 - declaration: Nock.Verb.runProgram_adequate_complete
   informal: A subject and formula evaluate to a result under the small-step program machine with some finite fuel if and only if the derived paper evaluator produces that result with some finite fuel.
@@ -59,10 +56,9 @@ main_results:
   informal: For a finite table of bounded-length nouns evaluated at one shared random field point, the probability that some pair with distinct field-valued data collides is at most the single-pair error times k times (k minus 1) divided by 2.
 tags:
 - operational-semantics
-- verified-evaluation
 - execution-traces
 - finite-fields
-- polynomial-fingerprints
+- fingerprints
 msc:
 - 68Q55
 - 68Q60

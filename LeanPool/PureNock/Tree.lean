@@ -6,8 +6,6 @@ Authors: Pure Nock formalization contributors
 
 module
 
-
-
 /-!
 # Nouns
 
@@ -34,6 +32,7 @@ def isCell : Noun → Bool
   | .cell _ _ => true
   | .atom _   => false
 
+/-- Test whether a noun is an atomic value rather than a cell. -/
 def isAtom (n : Noun) : Bool := !n.isCell
 
 -- main.tex:329–331  (Def:tree_nodes)
@@ -110,7 +109,8 @@ The paper includes this unused generalization for completeness. -/
 
 -- main.tex:355–363  (Def: Proper n-ary Tree)
 /-- **`Def` proper n-ary** (`main.tex:355–363`).
-    `L_full_T,n = { t ∈ T^n | (size(t)=1) ∪ ((⋂_{1≤i≤n} child_i(t) ∈ L_full_T^n) ∩ (∅ = ⋂_{1≤i≤n} child_i(t))) }`;
+    `L_full_T,n = { t ∈ T^n | (size(t)=1) ∪ ((⋂_{1≤i≤n} child_i(t) ∈ L_full_T^n) ∩ (∅ =
+    ⋂_{1≤i≤n} child_i(t))) }`;
     `L^λ_full_T,n = { t ∈ L_full_T^n | size(t)=λ }`.
     Unused in paper body. -/
 inductive NAryTree (k : Nat) where
@@ -120,6 +120,7 @@ inductive NAryTree (k : Nat) where
 namespace NAryTree
 
 -- main.tex:353  (`child_i : T^n → T^n`)
+/-- Return the indexed child of an internal n-ary tree, or none at a leaf. -/
 def childi {k : Nat} (i : Fin k) : NAryTree k → Option (NAryTree k)
   | .leaf   => none
   | .node f => some (f i)

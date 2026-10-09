@@ -96,7 +96,8 @@ def isTerminal : Verb → Bool
 
 -- main.tex:1103  (DFS enumeration of internal nodes)
 /-- **Selection** (`main.tex:1103–1112`).
-    `map := DFS`; index of each internal node is the order a DFS from the root first explores it, excluding leaves. -/
+    `map := DFS`; index of each internal node is the order a DFS from the root first explores
+    it, excluding leaves. -/
 def enum : Verb → Nat → Nat × List (Nat × Verb)
   | .leaf _,     c => (c, [])
   | .node a l r, c =>
@@ -107,6 +108,7 @@ def enum : Verb → Nat → Nat × List (Nat × Verb)
 /-- All `(index, subverb)` pairs of internal nodes, in DFS pre-order. -/
 def nodes (v : Verb) : List (Nat × Verb) := (enum v 0).2
 
+/-- Find the verb at an index in a list of enumerated internal nodes. -/
 def findAt : Nat → List (Nat × Verb) → Option Verb
   | _, []          => none
   | i, (j, v) :: t => if i = j then some v else findAt i t
@@ -116,10 +118,11 @@ def findAt : Nat → List (Nat × Verb) → Option Verb
     `map := DFS`: returns the verb at internal-node index `i ∈ [λ−1]`. -/
 def map (i : Nat) (v : Verb) : Option Verb := findAt i (nodes v)
 
-def maxPendingIdx : List (Nat × Verb) → Option Nat
+/-- Greatest index of a pending verb in an enumerated list of internal nodes. -/
+def maximumPendingIndex : List (Nat × Verb) → Option Nat
   | []          => none
   | (i, v) :: t =>
-      let rest := maxPendingIdx t
+      let rest := maximumPendingIndex t
       if v.isPending then
         some (match rest with | none => i | some j => Nat.max i j)
       else rest
@@ -127,7 +130,7 @@ def maxPendingIdx : List (Nat × Verb) → Option Nat
 -- main.tex:1109–1112  (`getIndex^Λ(F) = argmax …`; `F₁ >_F F₂ ⇔ i₁ > i₂`)
 /-- **Selection** (`main.tex:1103–1112`).
     `getIndex^Λ(F) = argmax_{map(i,F) ∈ NockProgram^Λ}(map(i,F))`; `F₁ >_F F₂ ⇔ i₁ > i₂`. -/
-def getIndex (v : Verb) : Option Nat := maxPendingIdx (nodes v)
+def getIndex (v : Verb) : Option Nat := maximumPendingIndex (nodes v)
 
 /-- Rebuild `v`, replacing the internal node at DFS index `i` by `new`. -/
 def replaceAux (i : Nat) (new : Verb) : Verb → Nat → Nat × Verb
@@ -192,9 +195,11 @@ def redex : Verb → Option Verb
                  | .node _ b c =>
                      some (.node .star (.node .star n1 b) (.node .star n1 c))
                  | _ => none
-          | 3 =>                                        -- main.tex:1064  OP₃ : → -[3, *[n₁,n₂]] = ?(*[n₁,n₂])
+          | 3 =>                                        -- main.tex:1064  OP₃ : → -[3, *[n₁,n₂]] =
+            -- ?(*[n₁,n₂])
               some (.node .minus (.leaf 3) (.node .star n1 n2))
-          | 4 =>                                        -- main.tex:1065  OP₄ : → -[4, *[n₁,n₂]] = +(*[n₁,n₂])
+          | 4 =>                                        -- main.tex:1065  OP₄ : → -[4, *[n₁,n₂]] =
+            -- +(*[n₁,n₂])
               some (.node .minus (.leaf 4) (.node .star n1 n2))
           | 5 => match n2 with                          -- main.tex:1066  OP₅ : → =(*[n₁,h],*[n₁,t])
                  | .node _ b c =>
@@ -219,7 +224,8 @@ def redex : Verb → Option Verb
                  | .node _ b c =>
                      some (.node .star (.node .null (.node .star n1 b) n1) c)
                  | _ => none
-          | 9 => match n2 with                          -- main.tex:1070  OP₉ : → *[*[n₁,t], 2, [[0,1],0,h]]
+          | 9 => match n2 with                          -- main.tex:1070  OP₉ : → *[*[n₁,t], 2,
+            -- [[0,1],0,h]]
                  | .node _ b c =>
                      -- b = head(n₂), c = tail(n₂)
                      let core := Verb.node .star n1 c
@@ -228,7 +234,8 @@ def redex : Verb → Option Verb
                      let form := Verb.node .null (.leaf 2) (.node .null f01 f0h)
                      some (.node .star core form)
                  | _ => none
-          | 10 => match n2 with                         -- main.tex:1071  OP₁₀ : → #[hh(n₂), *[n₁,th(n₂)], *[n₁,t(n₂)]]
+          | 10 => match n2 with                         -- main.tex:1071  OP₁₀ : → #[hh(n₂),
+            -- *[n₁,th(n₂)], *[n₁,t(n₂)]]
                   | .node _ hd d =>
                       match hd with
                       | .node _ ax c =>
@@ -250,7 +257,8 @@ def ofNoun : Noun → Verb
 
 -- main.tex:1514–1626  (Algorithm:Noun_Operators / Unroll_Operator; opcodes via redex)
 /-- **`Algorithm:Noun_Operators`** / **`Unroll_Operator`** (`main.tex:1514–1626`).
-    Local rewrite: `*` via opcodes, or `=`, `/`, `#`, `-` (`-[3,·]=?`, `-[4,·]=+`) on terminal args. -/
+    Local rewrite: `*` via opcodes, or `=`, `/`, `#`, `-` (`-[3,·]=?`, `-[4,·]=+`) on terminal
+    args. -/
 def reduce : Verb → Option Verb
   | .node .star n1 t     => redex (.node .star n1 t)                    -- opcode step
   | .node .equal l r     => some (ofNoun (Noun.tis l.noun r.noun))      -- main.tex:1525  =
@@ -364,7 +372,7 @@ theorem findAt_append (i : Nat) :
       simp only [List.cons_append, findAt]
       by_cases h : i = j
       · simp [h]
-      · simp only [if_neg h]; exact findAt_append i t L2
+      · simp only [ite_eq_right h]; exact findAt_append i t L2
 
 /-- If no pair in `L` carries index `i`, then `findAt i L = none`. -/
 theorem findAt_eq_none {i : Nat} :
@@ -372,7 +380,7 @@ theorem findAt_eq_none {i : Nat} :
   | [],            _ => rfl
   | (j, w) :: t, h => by
       have hj : ¬ (i = j) := fun heq => (h (j, w) (by simp)) heq.symm
-      simp only [findAt, if_neg hj]
+      simp only [findAt, ite_eq_right hj]
       exact findAt_eq_none (fun p hp => h p (List.mem_cons_of_mem _ hp))
 
 /-- `findAt i L = some v` witnesses membership `(i, v) ∈ L`. -/
@@ -404,11 +412,11 @@ private theorem enum_findAt (v : Verb) (c : Nat) :
       · subst hroot; simp
       · have hb := enum_index_range l (c + 1) p hleft
         have hpc : p.1 ≠ c := by omega
-        rw [if_neg hpc, findAt_append]
+        rw [ite_eq_right hpc, findAt_append]
         rw [ihl (c + 1) p hleft]
       · have hb := enum_index_range r (enum l (c + 1)).1 p hright
         have hpc : p.1 ≠ c := by omega
-        rw [if_neg hpc, findAt_append]
+        rw [ite_eq_right hpc, findAt_append]
         have hnone : findAt p.1 (enum l (c + 1)).2 = none := by
           apply findAt_eq_none
           intro q hq
@@ -429,22 +437,22 @@ theorem mem_nodes_of_map {a : Verb} {i : Nat} {v : Verb}
     (h : map i a = some v) : (i, v) ∈ nodes a :=
   findAt_some_mem h
 
-/-! ### `getIndex` = numeric argmax of pending indices (spec of `maxPendingIdx`) -/
+/-! ### `getIndex` = numeric argmax of pending indices (spec of `maximumPendingIndex`) -/
 
-/-- `maxPendingIdx L = none` iff no pair in `L` has a pending action. -/
-private theorem maxPendingIdx_eq_none :
+/-- `maximumPendingIndex L = none` iff no pair in `L` has a pending action. -/
+private theorem maximumPendingIndex_eq_none :
     ∀ {L : List (Nat × Verb)},
-      maxPendingIdx L = none ↔ ∀ p ∈ L, p.2.isPending = false
-  | [] => by simp [maxPendingIdx]
+      maximumPendingIndex L = none ↔ ∀ p ∈ L, p.2.isPending = false
+  | [] => by simp [maximumPendingIndex]
   | (i, w) :: t => by
-      simp only [maxPendingIdx]
+      simp only [maximumPendingIndex]
       by_cases hw : w.isPending = true
-      · rw [if_pos hw]
+      · rw [ite_eq_left hw]
         constructor
-        · intro h; cases maxPendingIdx t <;> simp at h
+        · intro h; cases maximumPendingIndex t <;> simp at h
         · intro h; exact absurd (h (i, w) (by simp)) (by simp [hw])
-      · rw [if_neg hw]
-        rw [maxPendingIdx_eq_none]
+      · rw [ite_eq_right hw]
+        rw [maximumPendingIndex_eq_none]
         constructor
         · intro h p hp
           rcases List.mem_cons.1 hp with heq | hmem
@@ -452,16 +460,16 @@ private theorem maxPendingIdx_eq_none :
           · exact h p hmem
         · intro h p hp; exact h p (List.mem_cons_of_mem _ hp)
 
-/-- The numeric argmax is achieved: `maxPendingIdx L = some i` names a pending pair at `i`. -/
-private theorem maxPendingIdx_mem :
+/-- The numeric argmax is achieved: `maximumPendingIndex L = some i` names a pending pair at `i`. -/
+private theorem maximumPendingIndex_mem :
     ∀ {L : List (Nat × Verb)} {i : Nat},
-      maxPendingIdx L = some i → ∃ v, (i, v) ∈ L ∧ v.isPending = true
-  | [], i, h => by simp [maxPendingIdx] at h
+      maximumPendingIndex L = some i → ∃ v, (i, v) ∈ L ∧ v.isPending = true
+  | [], i, h => by simp [maximumPendingIndex] at h
   | (j, w) :: t, i, h => by
-      simp only [maxPendingIdx] at h
+      simp only [maximumPendingIndex] at h
       by_cases hw : w.isPending = true
-      · rw [if_pos hw] at h
-        cases hr : maxPendingIdx t with
+      · rw [ite_eq_left hw] at h
+        cases hr : maximumPendingIndex t with
         | none => rw [hr] at h; simp only [Option.some.injEq] at h; subst h; exact ⟨w, by simp, hw⟩
         | some k =>
             rw [hr] at h; simp only [Option.some.injEq] at h
@@ -470,33 +478,33 @@ private theorem maxPendingIdx_mem :
             · have hmx : Nat.max j k = k := Nat.max_eq_right hjk
               have hik : i = k := hmx ▸ h.symm
               subst hik
-              obtain ⟨v, hv, hvp⟩ := maxPendingIdx_mem hr
+              obtain ⟨v, hv, hvp⟩ := maximumPendingIndex_mem hr
               exact ⟨v, List.mem_cons_of_mem _ hv, hvp⟩
             · have hmx : Nat.max j k = j := Nat.max_eq_left hkj
               have hij : i = j := hmx ▸ h.symm
               subst hij
               exact ⟨w, by simp, hw⟩
-      · rw [if_neg hw] at h
-        obtain ⟨v, hv, hvp⟩ := maxPendingIdx_mem h
+      · rw [ite_eq_right hw] at h
+        obtain ⟨v, hv, hvp⟩ := maximumPendingIndex_mem h
         exact ⟨v, List.mem_cons_of_mem _ hv, hvp⟩
 
 /-- Every pending index is `≤` the numeric argmax. -/
-private theorem maxPendingIdx_ge :
+private theorem maximumPendingIndex_ge :
     ∀ {L : List (Nat × Verb)} {i : Nat},
-      maxPendingIdx L = some i → ∀ j v, (j, v) ∈ L → v.isPending = true → j ≤ i
-  | [], i, h => by simp [maxPendingIdx] at h
+      maximumPendingIndex L = some i → ∀ j v, (j, v) ∈ L → v.isPending = true → j ≤ i
+  | [], i, h => by simp [maximumPendingIndex] at h
   | (p, w) :: t, i, h => by
       intro j v hmem hvp
-      simp only [maxPendingIdx] at h
+      simp only [maximumPendingIndex] at h
       by_cases hw : w.isPending = true
-      · rw [if_pos hw] at h
-        cases hr : maxPendingIdx t with
+      · rw [ite_eq_left hw] at h
+        cases hr : maximumPendingIndex t with
         | none =>
             rw [hr] at h; simp only [Option.some.injEq] at h
             -- h : p = i
             rcases List.mem_cons.1 hmem with heq | hmem'
             · simp only [Prod.mk.injEq] at heq; have hjp := heq.1; omega
-            · have hnone := (maxPendingIdx_eq_none).1 hr
+            · have hnone := (maximumPendingIndex_eq_none).1 hr
               exact absurd (hnone (j, v) hmem') (by simp [hvp])
         | some k =>
             rw [hr] at h; simp only [Option.some.injEq] at h
@@ -505,29 +513,29 @@ private theorem maxPendingIdx_ge :
             · simp only [Prod.mk.injEq] at heq
               have hjp : j = p := heq.1
               have hle : p ≤ Nat.max p k := Nat.le_max_left p k; omega
-            · have hjk := maxPendingIdx_ge hr j v hmem' hvp
+            · have hjk := maximumPendingIndex_ge hr j v hmem' hvp
               have hle : k ≤ Nat.max p k := Nat.le_max_right p k; omega
-      · rw [if_neg hw] at h
+      · rw [ite_eq_right hw] at h
         rcases List.mem_cons.1 hmem with heq | hmem'
         · simp only [Prod.mk.injEq] at heq
           obtain ⟨_, rfl⟩ := heq; simp [hvp] at hw
-        · exact maxPendingIdx_ge h j v hmem' hvp
+        · exact maximumPendingIndex_ge h j v hmem' hvp
 
 /-- Characterization of the numeric argmax: if `(i, v)` is pending and no pending index
-    exceeds `i`, then `maxPendingIdx L = some i`. -/
-private theorem maxPendingIdx_of {L : List (Nat × Verb)} {i : Nat}
+    exceeds `i`, then `maximumPendingIndex L = some i`. -/
+private theorem maximumPendingIndex_of {L : List (Nat × Verb)} {i : Nat}
     (hmem : ∃ v, (i, v) ∈ L ∧ v.isPending = true)
     (hmax : ∀ j v, (j, v) ∈ L → v.isPending = true → j ≤ i) :
-    maxPendingIdx L = some i := by
+    maximumPendingIndex L = some i := by
   obtain ⟨v, hv, hvp⟩ := hmem
-  cases hm : maxPendingIdx L with
+  cases hm : maximumPendingIndex L with
   | none =>
-      have hnone := (maxPendingIdx_eq_none).1 hm
+      have hnone := (maximumPendingIndex_eq_none).1 hm
       exact absurd (hnone (i, v) hv) (by simp [hvp])
   | some m =>
-      obtain ⟨w, hw, hwp⟩ := maxPendingIdx_mem hm
+      obtain ⟨w, hw, hwp⟩ := maximumPendingIndex_mem hm
       have h1 : m ≤ i := hmax m w hw hwp
-      have h2 : i ≤ m := maxPendingIdx_ge hm i v hv hvp
+      have h2 : i ≤ m := maximumPendingIndex_ge hm i v hv hvp
       have : m = i := by omega
       rw [this]
 
@@ -608,22 +616,22 @@ theorem isPendingIdx_iff_mem {a : Verb} {i : Nat} :
   · rintro ⟨v, hmem, hp⟩; exact ⟨v, map_of_mem_nodes hmem, hp⟩
 
 /-- `getIndex` is exactly the DFS argmax: `getIndex a = some i ↔ i` is the maximal pending
-    index under `dfsLt`.  (Combines the `maxPendingIdx` spec with DFS distinctness.) -/
+    index under `dfsLt`.  (Combines the `maximumPendingIndex` spec with DFS distinctness.) -/
 theorem getIndex_eq_some_iff {a : Verb} {i : Nat} :
     getIndex a = some i ↔ IsMaxPending dfsLt a i := by
   unfold getIndex IsMaxPending dfsLt
   constructor
   · intro h
     refine ⟨?_, ?_⟩
-    · obtain ⟨v, hv, hvp⟩ := maxPendingIdx_mem h
+    · obtain ⟨v, hv, hvp⟩ := maximumPendingIndex_mem h
       exact isPendingIdx_iff_mem.2 ⟨v, hv, hvp⟩
     · intro j hj
       rw [Nat.not_lt]
       obtain ⟨w, hw, hwp⟩ := isPendingIdx_iff_mem.1 hj
-      exact maxPendingIdx_ge h j w hw hwp
+      exact maximumPendingIndex_ge h j w hw hwp
   · rintro ⟨hip, hmax⟩
     obtain ⟨v, hv, hvp⟩ := isPendingIdx_iff_mem.1 hip
-    apply maxPendingIdx_of ⟨v, hv, hvp⟩
+    apply maximumPendingIndex_of ⟨v, hv, hvp⟩
     intro j w hjw hwp
     have hj : IsPendingIdx a j := isPendingIdx_iff_mem.2 ⟨w, hjw, hwp⟩
     have := hmax j hj
@@ -647,13 +655,14 @@ theorem next_eq_some_iff {a b : Verb} : next a = some b ↔ SelStep dfsLt a b :=
         · rename_i hdom
           split at h
           · rename_i r hred
-            exact ⟨i, sub, r, getIndex_eq_some_iff.1 hgi, hmap, hdom, hred, (Option.some.inj h).symm⟩
+            exact ⟨i, sub, r, getIndex_eq_some_iff.1 hgi, hmap, hdom, hred, (Option.some.inj
+              h).symm⟩
           · simp at h
         · simp at h
   · rintro ⟨i, sub, r, hmax, hmap, hdom, hred, hb⟩
     have hgi : getIndex a = some i := getIndex_eq_some_iff.2 hmax
     unfold next
-    simp only [hgi, hmap, hdom, hred, if_true]
+    simp only [hgi, hmap, hdom, hred, ite_true]
     rw [hb]
 
 /-! ### Non-strict selection witness (main.tex:2325) -/
@@ -701,7 +710,7 @@ theorem enum_nonpending_of_terminal : ∀ (v : Verb), isTerminal v = true →
 /-- `getIndex` of a terminal verb is `none`: no internal node carries a pending action. -/
 theorem getIndex_none_of_terminal {v : Verb} (h : isTerminal v = true) : getIndex v = none := by
   unfold getIndex nodes
-  rw [maxPendingIdx_eq_none]
+  rw [maximumPendingIndex_eq_none]
   exact enum_nonpending_of_terminal v h 0
 
 -- main.tex:1122  (`tₙ` terminal ⇒ the trace is complete: `next` bottoms out)
@@ -745,13 +754,13 @@ theorem terminal_of_enum_nonpending :
 
 -- main.tex:1039,1122  (halting condition: `getIndex F = ⊥ ⇔ F` terminal)
 /-- **`getIndex` is `none` iff terminal.**  The `←` is `getIndex_none_of_terminal`; the `→`
-    is `terminal_of_enum_nonpending` fed the `maxPendingIdx` emptiness spec. -/
+    is `terminal_of_enum_nonpending` fed the `maximumPendingIndex` emptiness spec. -/
 theorem getIndex_none_iff_terminal {v : Verb} : getIndex v = none ↔ isTerminal v = true := by
   constructor
   · intro h
     apply terminal_of_enum_nonpending v 0
     unfold getIndex nodes at h
-    exact maxPendingIdx_eq_none.1 h
+    exact maximumPendingIndex_eq_none.1 h
   · exact getIndex_none_of_terminal
 
 /-- **Subtree enumeration embeds.**  If `sub` is enumerated at index `i` within `v` (counter
@@ -870,14 +879,14 @@ theorem next_of_nextROM {v w : Verb} (h : nextROM v = some w) : next v = some w 
       | some sub =>
           simp only [hm] at h ⊢
           by_cases hd : inDomain sub = true
-          · simp only [if_pos hd] at h ⊢
+          · simp only [ite_eq_left hd] at h ⊢
             cases hr : reduceROM sub with
             | none => simp only [hr] at h; simp at h
             | some r =>
                 simp only [hr] at h
                 simp only [reduce_of_reduceROM hr]
                 exact h
-          · simp only [if_neg hd] at h ⊢; exact h
+          · simp only [ite_eq_right hd] at h ⊢; exact h
 
 /-! ### Two-verb transition checker `Nock` (`main.tex:1639–1661`) -/
 -- main.tex:1639–1661  (Algorithm:Transition_Function)
@@ -914,7 +923,7 @@ theorem map_some_of_getIndex {a : Verb} {i : Nat} (h : getIndex a = some i) :
   exact ⟨v, hmap⟩
 
 -- main.tex:1639  (the checker is 1-1 with the forward semantics `next` plus the crash branch)
-/-- **`NockCheck` ⟺ forward semantics + crash.**  The two-verb checker accepts `(a, b)`
+/-- **`NockCheck` ↔ forward semantics + crash.**  The two-verb checker accepts `(a, b)`
     (returns `true` = the paper's `0`) iff `b` is a genuine one-step successor of `a`
     (`next a = some v`, i.e. `Step a v`) OR `a` crashes and `b = ⊥` (`b = none`).  This is a
     genuine biconditional: `NockCheck` is 1-1 with `next` (on non-⊥ successors) together with
@@ -934,7 +943,7 @@ theorem nockCheck_eq_true_iff {a : Verb} {b : Option Verb} :
       · cases hr : reduce Fi with
         | some Fnext =>
             have hnext : next a = some (replaceAt i a Fnext) := by
-              unfold next; simp only [hgi, hmap, if_pos hd, hr]
+              unfold next; simp only [hgi, hmap, ite_eq_left hd, hr]
             simp only [hd]
             constructor
             · intro h
@@ -947,7 +956,7 @@ theorem nockCheck_eq_true_iff {a : Verb} {b : Option Verb} :
               · rw [hnext] at hcr; simp at hcr
         | none =>
             have hnext : next a = none := by
-              unfold next; simp only [hgi, hmap, if_pos hd, hr]
+              unfold next; simp only [hgi, hmap, ite_eq_left hd, hr]
             simp only [hd]
             constructor
             · intro h
@@ -958,7 +967,7 @@ theorem nockCheck_eq_true_iff {a : Verb} {b : Option Verb} :
               · simp [hb]
       · have hd' : inDomain Fi = false := by simpa using hd
         have hnext : next a = none := by
-          unfold next; simp only [hgi, hmap, if_neg hd]
+          unfold next; simp only [hgi, hmap, ite_eq_right hd]
         simp only [hd']
         constructor
         · intro h
@@ -993,7 +1002,8 @@ theorem nockCheck_frameAgree {a b : Verb} (h : NockCheck a (some b) = true) :
 
 `run`/`runProgram` return `Option Noun`, collapsing a genuine crash (a stuck, non-terminal ⊥ state,
 `main.tex:1124`) and fuel exhaustion into the same `none`.  `eval` refines that: it mirrors `run`'s
-fuel structure exactly, but at a halt (`next v = none`) it reports `value` (a terminal completion) or
+fuel structure exactly, but at a halt (`next v = none`) it reports `value` (a terminal completion)
+or
 `crash` (a *checked* ⊥) instead of `some`/`none`; only a genuinely-steppable state can `timeout`.  A
 crash thus becomes a positive, kernel-checkable outcome, not merely the absence of a value. -/
 

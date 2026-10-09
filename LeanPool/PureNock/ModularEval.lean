@@ -31,7 +31,7 @@ never declares a project axiom).  It defines:
                     (`q`-bounded) noun.
 
 Everything is `q`-generic; the ZMod injectivity fact `zmod_natCast_inj_of_lt`
-needs only `NeZero q`.  Axioms stay within `{propext, Classical.choice, Quot.sound}`.
+requires no primality assumption.  Axioms stay within `{propext, Classical.choice, Quot.sound}`.
 -/
 
 @[expose] public section
@@ -75,6 +75,7 @@ constants `0`/`1`, so over field nouns they coincide with the Nat versions; henc
 reuses `Noun.slot`, `Noun.edit`, `Noun.wut`, `Noun.tis` from `Nock/Reference.lean`.  Equality
 (OP₅, `main.tex:1525`) compares nouns structurally; over `q`-bounded nouns this is field
 equality (distinct `< q` atoms are distinct in `ZMod q`). -/
+/-- Fuel-indexed Nock evaluation with increment reduced modulo the supplied modulus. -/
 def evalFBy (q : ℕ) : Nat → Noun → Noun → Option Noun
   | 0, _, _ => none
   | _ + 1, _, .atom _ => none
@@ -148,6 +149,7 @@ def evalFBy (q : ℕ) : Nat → Noun → Noun → Option Noun
 /-! ## The guarded (no-overflow) evaluator `evalGBy`
 
 `evalGBy q` is `Nock.evalN` verbatim EXCEPT that OP₄ uses `lusGBy q`, which crashes on overflow. -/
+/-- Fuel-indexed Nock evaluation that rejects increments reaching the supplied modulus. -/
 def evalGBy (q : ℕ) : Nat → Noun → Noun → Option Noun
   | 0, _, _ => none
   | _ + 1, _, .atom _ => none
@@ -249,7 +251,8 @@ theorem edit_boundedBy (q : ℕ) (ax : Nat) (new old : Noun) :
       ∀ {m : Noun}, edit ax new old = some m → BoundedBy q m := by
   induction ax, new, old using Nock.Noun.edit.induct with
   | case1 x y => intro _ _ m h; simp [edit] at h
-  | case2 new x => intro hnew _ m h; simp only [edit] at h; obtain rfl := Option.some.inj h; exact hnew
+  | case2 new x => intro hnew _ m h; simp only [edit] at h; obtain rfl := Option.some.inj h; exact
+    hnew
   | case3 a new old sibAxis sib hsib paired ih =>
       intro hnew hold m h
       have hsibB : BoundedBy q sib := slot_boundedBy q _ _ hold hsib
@@ -298,6 +301,71 @@ be carried through the recursion simultaneously:
 The ONLY place the three evaluators differ is OP₄ (`+`): there `evalGBy q` succeeds exactly when
 `n + 1 < q`, and under that guard the Nat increment (`n+1`) and the modular increment
 (`(n+1) mod q`) coincide — this is where no-overflow discharges the divergence. -/
+private theorem guarded_hint_agreement (q fuel : ℕ)
+  (ih :
+    ∀ (s f r : Noun),
+      BoundedBy q s →
+        BoundedBy q f →
+          evalGBy q fuel s f = some r → evalN fuel s f = some r ∧ evalFBy q fuel s f = some r ∧
+            BoundedBy q r)
+  (s r : Noun) (hs : BoundedBy q s) (tail : Noun) (hft : BoundedBy q tail)
+  (hG : evalGBy q (fuel + 1) s ((atom 11).cell tail) = some r) :
+  evalN (fuel + 1) s ((atom 11).cell tail) = some r ∧
+    evalFBy q (fuel + 1) s ((atom 11).cell tail) = some r ∧ BoundedBy q r := by
+  match tail with
+  | .cell (.cell hd clue) body =>
+      obtain ⟨⟨-, hfclue⟩, hfbody⟩ := hft
+      simp only [evalGBy] at hG
+      cases hcl : evalGBy q fuel s clue with
+      | none => rw [hcl] at hG; simp at hG
+      | some vc =>
+        rw [hcl] at hG
+        obtain ⟨hNcl, hFcl, _⟩ := ih s clue vc hs hfclue hcl
+        obtain ⟨hNb, hFb, hBr⟩ := ih s body r hs hfbody hG
+        exact ⟨by simp only [evalN, hNcl, hNb],
+               by simp only [evalFBy, hFcl, hFb], hBr⟩
+  | .cell (.atom hint) body =>
+      obtain ⟨-, hfbody⟩ := hft
+      simp only [evalGBy] at hG
+      obtain ⟨hNb, hFb, hBr⟩ := ih s body r hs hfbody hG
+      exact ⟨by simp only [evalN, hNb],
+             by simp only [evalFBy, hFb], hBr⟩
+  | .atom _ => simp [evalGBy] at hG
+
+private theorem guarded_conditional_agreement (q fuel : ℕ)
+  (ih :
+    ∀ (s f r : Noun),
+      BoundedBy q s →
+        BoundedBy q f →
+          evalGBy q fuel s f = some r → evalN fuel s f = some r ∧ evalFBy q fuel s f = some r ∧
+            BoundedBy q r)
+  (s r : Noun) (hs : BoundedBy q s) (tail : Noun) (hft : BoundedBy q tail)
+  (hG : evalGBy q (fuel + 1) s ((atom 6).cell tail) = some r) :
+  evalN (fuel + 1) s ((atom 6).cell tail) = some r ∧
+    evalFBy q (fuel + 1) s ((atom 6).cell tail) = some r ∧ BoundedBy q r := by
+  match tail with
+  | .cell b (.cell c d) =>
+      obtain ⟨hfb, hfc, hfd⟩ := hft
+      simp only [evalGBy] at hG
+      cases hb : evalGBy q fuel s b with
+      | none => rw [hb] at hG; simp at hG
+      | some vb =>
+        obtain ⟨hNb, hFb, _⟩ := ih s b vb hs hfb hb
+        rw [hb] at hG
+        match vb, hNb, hFb, hG with
+        | .atom 0, hNb, hFb, hG =>
+            obtain ⟨hNc, hFc, hBr⟩ := ih s c r hs hfc hG
+            exact ⟨by simp only [evalN, hNb, hNc],
+                   by simp only [evalFBy, hFb, hFc], hBr⟩
+        | .atom 1, hNb, hFb, hG =>
+            obtain ⟨hNd, hFd, hBr⟩ := ih s d r hs hfd hG
+            exact ⟨by simp only [evalN, hNb, hNd],
+                   by simp only [evalFBy, hFb, hFd], hBr⟩
+        | .atom (n+2), _, _, hG => simp at hG
+        | .cell _ _, _, _, hG => simp at hG
+  | .cell b (.atom _) => simp [evalGBy] at hG
+  | .atom _ => simp [evalGBy] at hG
+
 theorem agreeBy (q : ℕ) (hq : 1 < q) :
     ∀ (fuel : Nat) (s f r : Noun), BoundedBy q s → BoundedBy q f →
       evalGBy q fuel s f = some r →
@@ -409,28 +477,7 @@ theorem agreeBy (q : ℕ) (hq : 1 < q) :
                            by simp only [evalFBy, hFb, hFc], tis_boundedBy hq sb sc⟩
             | .atom _ => simp [evalGBy] at hG
         | 6 =>
-            match tail with
-            | .cell b (.cell c d) =>
-                obtain ⟨hfb, hfc, hfd⟩ := hft
-                simp only [evalGBy] at hG
-                cases hb : evalGBy q fuel s b with
-                | none => rw [hb] at hG; simp at hG
-                | some vb =>
-                  obtain ⟨hNb, hFb, _⟩ := ih s b vb hs hfb hb
-                  rw [hb] at hG
-                  match vb, hNb, hFb, hG with
-                  | .atom 0, hNb, hFb, hG =>
-                      obtain ⟨hNc, hFc, hBr⟩ := ih s c r hs hfc hG
-                      exact ⟨by simp only [evalN, hNb, hNc],
-                             by simp only [evalFBy, hFb, hFc], hBr⟩
-                  | .atom 1, hNb, hFb, hG =>
-                      obtain ⟨hNd, hFd, hBr⟩ := ih s d r hs hfd hG
-                      exact ⟨by simp only [evalN, hNb, hNd],
-                             by simp only [evalFBy, hFb, hFd], hBr⟩
-                  | .atom (n+2), _, _, hG => simp at hG
-                  | .cell _ _, _, _, hG => simp at hG
-            | .cell b (.atom _) => simp [evalGBy] at hG
-            | .atom _ => simp [evalGBy] at hG
+            exact guarded_conditional_agreement q fuel ih s r hs tail hft hG
         | 7 =>
             match tail with
             | .cell b c =>
@@ -502,25 +549,7 @@ theorem agreeBy (q : ℕ) (hq : 1 < q) :
             | .cell (.atom _) _ => simp [evalGBy] at hG
             | .atom _ => simp [evalGBy] at hG
         | 11 =>
-            match tail with
-            | .cell (.cell hd clue) body =>
-                obtain ⟨⟨-, hfclue⟩, hfbody⟩ := hft
-                simp only [evalGBy] at hG
-                cases hcl : evalGBy q fuel s clue with
-                | none => rw [hcl] at hG; simp at hG
-                | some vc =>
-                  rw [hcl] at hG
-                  obtain ⟨hNcl, hFcl, _⟩ := ih s clue vc hs hfclue hcl
-                  obtain ⟨hNb, hFb, hBr⟩ := ih s body r hs hfbody hG
-                  exact ⟨by simp only [evalN, hNcl, hNb],
-                         by simp only [evalFBy, hFcl, hFb], hBr⟩
-            | .cell (.atom hint) body =>
-                obtain ⟨-, hfbody⟩ := hft
-                simp only [evalGBy] at hG
-                obtain ⟨hNb, hFb, hBr⟩ := ih s body r hs hfbody hG
-                exact ⟨by simp only [evalN, hNb],
-                       by simp only [evalFBy, hFb], hBr⟩
-            | .atom _ => simp [evalGBy] at hG
+            exact guarded_hint_agreement q fuel ih s r hs tail hft hG
         | (n+12) => simp [evalGBy] at hG
 
 /-! ## The guarded evaluator refines `evalN`: the guard only removes behaviours -/
@@ -706,10 +735,10 @@ theorem evalFBy_boundedBy {q : ℕ} (hq : 1 < q) :
 
 On `q`-bounded nouns the structural Nock equality used by OP₅ (`main.tex:1525`) coincides with
 field equality in `ZMod q`: distinct canonical residues `< q` stay distinct.  Primality is not
-needed for this representative-level fact — only `NeZero q`. -/
+needed for this representative-level fact. -/
 
 /-- The `Nat` cast into `ZMod q` is injective on canonical representatives `[0,q)`. -/
-theorem zmod_natCast_inj_of_lt {q m n : ℕ} [NeZero q] (hm : m < q) (hn : n < q)
+theorem zmod_natCast_inj_of_lt {q m n : ℕ} (hm : m < q) (hn : n < q)
     (h : (m : ZMod q) = (n : ZMod q)) : m = n := by
   have := congrArg ZMod.val h
   rwa [ZMod.val_natCast_of_lt hm, ZMod.val_natCast_of_lt hn] at this

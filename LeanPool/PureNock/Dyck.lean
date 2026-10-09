@@ -33,7 +33,8 @@ inductive Dyck : List Bool → Prop
 
 -- main.tex:318–327  (Def:Proper_BT)
 /-- **`Def:Proper_BT`** (`main.tex:318–327`).
-    `L_full_BT = { t ∈ T | (size(t)=1) ∪ (left(t) ∈ L_full_BT ∩ right(t) ∈ L_full_BT ∩ (left(t) ∩ right(t)=∅)) }`;
+    `L_full_BT = { t ∈ T | (size(t)=1) ∪ (left(t) ∈ L_full_BT ∩ right(t) ∈ L_full_BT ∩ (left(t)
+    ∩ right(t)=∅)) }`;
     `L^λ_full_BT = { t ∈ L_full_BT | size(t)=λ }`. -/
 inductive BTree where
   | leaf : BTree
@@ -87,6 +88,7 @@ theorem exists_encode_of_dyck {w : List Bool} (h : Dyck w) : ∃ t : BTree, enco
     unconsumed suffix.  A leading `0` (`false`) starts a `node`; anything else (a leading `1`
     or the empty word) is a `leaf` consuming nothing.  This is the algorithmic inverse of
     `encode`; `decode_encode` proves the round-trip, which yields injectivity. -/
+/-- Parse one binary tree from a Dyck prefix, returning the tree and unconsumed suffix. -/
 def decode : Nat → List Bool → Option (BTree × List Bool)
   | 0,         _                => none
   | fuel + 1, (false :: rest) =>

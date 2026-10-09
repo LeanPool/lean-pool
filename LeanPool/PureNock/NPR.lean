@@ -265,7 +265,7 @@ theorem Phi3_cons (l r : Noun) :
   ring
 
 /-- **`Lem:NPR_decomp` (main.tex:1218).**  The three algebraic identities characterizing
-    `cons`.  We state the paper's `⟺ n = cons(nL,nR)` as `Φ n = Φ (cons nL nR)` — *field-noun*
+    `cons`.  We state the paper's `↔ n = cons(nL,nR)` as `Φ n = Φ (cons nL nR)` — *field-noun*
     equality: `Φ n = Φ n'` is equality of the pair (leaf-count, leaf polynomial, Dyck polynomial),
     i.e. of the `(dyck word, 𝔽-valued leaf array)`, which is the paper's notion of noun equality
     over `𝔽` (the paper's nouns are field-valued, `main.tex:347–349`, `1023`).  (Structural
@@ -295,7 +295,7 @@ theorem NPR_decomp (n nL nR : Noun) :
       rw [h3, Phi3_cons]
     exact Prod.ext_iff.mpr ⟨e1, Prod.ext_iff.mpr ⟨e2, e3⟩⟩
 
-/-- Structural `⟸` direction of `Lem:NPR_decomp`: if `n` is literally `cons(nL,nR)` then its
+/-- Structural `←` direction of `Lem:NPR_decomp`: if `n` is literally `cons(nL,nR)` then its
     NPR satisfies the three identities. -/
 theorem NPR_decomp_of_cons {n nL nR : Noun} (h : n = Noun.cell nL nR) :
     (Φ (K := K) n).1 = (Φ (K := K) nL).1 * (Φ (K := K) nR).1
@@ -495,7 +495,7 @@ theorem collision_card_le_tight (Λ : ℕ) (n₁ n₂ : Noun)
     refine ⟨X ^ n₁.leaves - X ^ n₂.leaves, ?_, ?_, ?_⟩
     · intro h
       have hcoeff := congrArg (fun q => Polynomial.coeff q n₁.leaves) h
-      simp only [coeff_sub, coeff_X_pow, coeff_zero, if_neg hlam, sub_zero] at hcoeff
+      simp only [coeff_sub, coeff_X_pow, coeff_zero, ite_eq_right hlam, sub_zero] at hcoeff
       exact one_ne_zero hcoeff
     · refine le_trans (natDegree_sub_le _ _) ?_
       rw [natDegree_X_pow, natDegree_X_pow, max_le_iff]; omega
@@ -526,14 +526,14 @@ theorem collision_prob_le (Λ : ℕ) (n₁ n₂ : Noun)
         / (Fintype.card K)
       ≤ ((2 * (2 * Λ - 1) : ℕ) : ℚ) / (Fintype.card K) := by
   have hpos : (0 : ℚ) < Fintype.card K := by
-    haveI : Nonempty K := ⟨0⟩
+    have : Nonempty K := ⟨0⟩
     exact_mod_cast Fintype.card_pos
   rw [div_le_div_iff_of_pos_right hpos]
   exact_mod_cast collision_card_le Λ n₁ n₂ h₁ h₂ hne
 
 /-- **lem:ion_univariate_sec (main.tex:1192), probability form in terms of `ε_col`.**
     Restatement of `collision_prob_le` against the named constant `epsCol` (main.tex:1204):
-    `Pr_{r∈K}[fn n₁ = fn n₂ ; n₁ ≠ n₂] ≤ ε_col^{Λ,𝔽}`. -/
+    `Pr_{r∈K}[fn n₁ = fn n₂; n₁ ≠ n₂] ≤ ε_col^{Λ,𝔽}`. -/
 theorem collision_prob_le_epsCol (Λ : ℕ) (n₁ n₂ : Noun)
     (h₁ : n₁.leaves ≤ Λ) (h₂ : n₂.leaves ≤ Λ)
     (hne : (NPR.leafF (K := K) n₁, NPR.dyckBits (K := K) n₁)
@@ -560,7 +560,7 @@ private theorem sq_sub_self (k : ℕ) : k * k - k = k * (k - 1) := by
     nouns of length `≤ Λ`, the number of `r ∈ K` for which *some* pair of distinct nouns
     collides is `≤ k(k−1)·(2Λ−1)`.  (Union bound over ordered distinct index pairs, each
     contributing `≤ 2Λ−1` by `collision_card_le_tight`.) -/
-theorem collision_table_card_le {ι : Type*} [DecidableEq ι] (Λ : ℕ)
+theorem collision_table_card_le {ι : Type*} (Λ : ℕ)
     (s : Finset ι) (f : ι → Noun) (hf : ∀ i ∈ s, (f i).leaves ≤ Λ) :
     (Finset.univ.filter (fun r : K => ∃ ij ∈ s.offDiag,
         NPR.fn (f ij.1) r = NPR.fn (f ij.2) r ∧
@@ -637,8 +637,8 @@ private theorem natCast_mul_pred (k : ℕ) : ((k * (k - 1) : ℕ) : ℚ) = (k : 
     only in the degenerate `ε = 0` / `m ≤ 1` cases, strict for `m ≥ 2, ε > 0`), so the tight
     expression is a stronger claim that this model cannot license.  The union bound below is the
     rigorous, model-faithful claim; the paper describes a "non-optimal but easier to show" bound
-    (main.tex:2361) which is what we prove here.  -/
-theorem collision_table_prob_le {ι : Type*} [DecidableEq ι] (Λ : ℕ)
+    (main.tex:2361) which is what we prove here. -/
+theorem collision_table_prob_le {ι : Type*} (Λ : ℕ)
     (s : Finset ι) (f : ι → Noun) (hf : ∀ i ∈ s, (f i).leaves ≤ Λ) :
     ((Finset.univ.filter (fun r : K => ∃ ij ∈ s.offDiag,
         NPR.fn (f ij.1) r = NPR.fn (f ij.2) r ∧
@@ -648,7 +648,7 @@ theorem collision_table_prob_le {ι : Type*} [DecidableEq ι] (Λ : ℕ)
       ≤ (((2 * (2 * Λ - 1) : ℕ) : ℚ) / (Fintype.card K))
           * ((s.card : ℚ) * ((s.card : ℚ) - 1) / 2) := by
   have hpos : (0 : ℚ) < Fintype.card K := by
-    haveI : Nonempty K := ⟨0⟩
+    have : Nonempty K := ⟨0⟩
     exact_mod_cast Fintype.card_pos
   have hcard := collision_table_card_le (K := K) Λ s f hf
   have hne0 : (Fintype.card K : ℚ) ≠ 0 := ne_of_gt hpos
@@ -668,7 +668,7 @@ theorem collision_table_prob_le {ι : Type*} [DecidableEq ι] (Λ : ℕ)
 /-- **corr:ion_single_security (main.tex:1197), union bound in terms of `ε_col`.**
     Restatement of `collision_table_prob_le` against the named constant `epsCol`
     (main.tex:1204): `Pr[∃ colliding pair] ≤ ε_col^{Λ,𝔽} · k(k−1)/2`. -/
-theorem collision_table_prob_le_epsCol {ι : Type*} [DecidableEq ι] (Λ : ℕ)
+theorem collision_table_prob_le_epsCol {ι : Type*} (Λ : ℕ)
     (s : Finset ι) (f : ι → Noun) (hf : ∀ i ∈ s, (f i).leaves ≤ Λ) :
     ((Finset.univ.filter (fun r : K => ∃ ij ∈ s.offDiag,
         NPR.fn (f ij.1) r = NPR.fn (f ij.2) r ∧

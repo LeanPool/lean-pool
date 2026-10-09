@@ -137,8 +137,10 @@ theorem denP_iff_evalPaper (s f r : Noun) :
     rw [denP_program s f _ hs hf]
     exact evalPaper_mono hm h
 
+/-- A verb has a paper-fragment denotation at some finite fuel. -/
 def DenP (v : Verb) (x : Noun) : Prop := ∃ fuel, denP fuel v = some x
 
+/-- Paper-fragment Nock evaluation succeeds with some finite fuel. -/
 def EvP (a b x : Noun) : Prop := ∃ fuel, evalPaper fuel a b = some x
 
 theorem denP_pair {l r a b} (hl : DenP l a) (hr : DenP r b) :
@@ -165,7 +167,8 @@ theorem ev2P {s1 f1 x1 s2 f2 x2} (h1 : EvP s1 f1 x1) (h2 : EvP s2 f2 x2) :
 
 theorem ev3P {s1 f1 x1 s2 f2 x2 s3 f3 x3}
     (h1 : EvP s1 f1 x1) (h2 : EvP s2 f2 x2) (h3 : EvP s3 f3 x3) :
-    ∃ f, evalPaper f s1 f1 = some x1 ∧ evalPaper f s2 f2 = some x2 ∧ evalPaper f s3 f3 = some x3 := by
+    ∃ f, evalPaper f s1 f1 = some x1 ∧ evalPaper f s2 f2 = some x2 ∧ evalPaper f s3 f3 = some x3 :=
+      by
   obtain ⟨a, h1⟩ := h1; obtain ⟨b, h2⟩ := h2; obtain ⟨c, h3⟩ := h3
   exact ⟨max a (max b c), evalPaper_mono (by omega) h1, evalPaper_mono (by omega) h2,
     evalPaper_mono (by omega) h3⟩
@@ -410,7 +413,8 @@ theorem DenP_leaf {k x} : DenP (.leaf k) x ↔ x = .atom k := by
   · rintro ⟨fuel, h⟩; simp only [denP] at h; exact (Option.some.inj h).symm
   · rintro rfl; exact ⟨0, by simp [denP]⟩
 
-theorem DenP_null {l r x} : DenP (.node .null l r) x ↔ ∃ a b, x = .cell a b ∧ DenP l a ∧ DenP r b := by
+theorem DenP_null {l r x} : DenP (.node .null l r) x ↔ ∃ a b, x = .cell a b ∧ DenP l a ∧ DenP r b :=
+  by
   constructor
   · rintro ⟨fuel, h⟩
     cases fuel with
@@ -448,7 +452,8 @@ theorem DenP_star {l r x} : DenP (.node .star l r) x ↔ ∃ a b, DenP l a ∧ D
     obtain ⟨f, hl, hr⟩ := denP_pair hl hr
     obtain ⟨fe, hev⟩ := hev
     refine ⟨max f fe + 1, ?_⟩
-    simp only [denP, denP_mono (show f ≤ max f fe by omega) hl, denP_mono (show f ≤ max f fe by omega) hr]
+    simp only [denP, denP_mono (show f ≤ max f fe by omega) hl, denP_mono (show f ≤ max f fe by
+      omega) hr]
     exact evalPaper_mono (by omega) hev
 
 theorem DenP_slot {l r x} : DenP (.node .slot l r) x ↔
@@ -484,7 +489,8 @@ theorem DenP_equal {l r x} : DenP (.node .equal l r) x ↔
     exact ⟨f + 1, by simp only [denP, hl, hr]⟩
 
 theorem DenP_minus {l r x} : DenP (.node .minus l r) x ↔
-    ∃ b, DenP r b ∧ ((DenP l (.atom 3) ∧ x = Noun.wut b) ∨ (DenP l (.atom 4) ∧ Noun.lus b = some x)) := by
+    ∃ b, DenP r b ∧ ((DenP l (.atom 3) ∧ x = Noun.wut b) ∨ (DenP l (.atom 4) ∧ Noun.lus b = some x))
+      := by
   constructor
   · rintro ⟨fuel, h⟩
     cases fuel with
@@ -813,13 +819,14 @@ theorem nextHint_eq_some_iff {a b : Verb} : nextHint a = some b ↔
         · rename_i hdom
           split at h
           · rename_i r hred
-            exact ⟨i, sub, r, getIndex_eq_some_iff.1 hgi, hmap, hdom, hred, (Option.some.inj h).symm⟩
+            exact ⟨i, sub, r, getIndex_eq_some_iff.1 hgi, hmap, hdom, hred, (Option.some.inj
+              h).symm⟩
           · simp at h
         · simp at h
   · rintro ⟨i, sub, r, hmax, hmap, hdom, hred, hb⟩
     have hgi : getIndex a = some i := getIndex_eq_some_iff.2 hmax
     unfold nextHint
-    simp only [hgi, hmap, hdom, hred, if_true]
+    simp only [hgi, hmap, hdom, hred, ite_true]
     rw [hb]
 
 /-- `editOk` is preserved by `nextHint` (the invariant discharging `denHint_step`). -/
@@ -947,7 +954,8 @@ theorem runProgram_hint_crash (subj n2 : Noun) :
       rw [run, next_hintProg_none subj n2]
       simp [result, program, isTerminal, ofNoun, Action.isNull]
 
-theorem runHint_hintStatic : runHintProgram 32 (Noun.atom 42) hintProgStatic = some (Noun.atom 42) := by
+theorem runHint_hintStatic : runHintProgram 32 (Noun.atom 42) hintProgStatic = some (Noun.atom 42)
+  := by
   decide +kernel
 
 theorem runHint_hintDyn : runHintProgram 64 (Noun.atom 42) hintProgDyn = some (Noun.atom 42) := by
@@ -965,8 +973,10 @@ theorem paper_hint_separation :
 /-- **Positive verifiable crash.**  A `*[subj 11 …]` program — a non-opcode head atom `11`
     (`11 ∉ [11] = {0,…,10}`, `main.tex:1052,1083`), outside the paper's opcode domain — reports
     `Outcome.crash` under `eval`, not merely `none` under `run`: the first step is stuck
-    (`next_hintProg_none`) and the crashed `*`-root is non-terminal, so `haltOutcome` is `crash`.  By
-    `eval_crash_invalid` the evaluated program is `Invalid` (the paper's ⊥, `main.tex:1124`), not fuel
+    (`next_hintProg_none`) and the crashed `*`-root is non-terminal, so `haltOutcome` is
+    `crash`.  By
+    `eval_crash_invalid` the evaluated program is `Invalid` (the paper's ⊥, `main.tex:1124`),
+    not fuel
     exhaustion. -/
 theorem evalProgram_hint_crash (subj n2 : Noun) :
     evalProgram 1 subj (.cell (.atom 11) n2) = .crash := by
@@ -1082,7 +1092,117 @@ theorem den_localP_opReady {sub r₀ x} (hor : opReady sub = true) (hr : reduce 
                   rw [(hDnw _).1 hn, (hDod _).1 ho] at he
                   rw [he] at hedit; exact (Option.some.inj hedit)
                 · rintro rfl
-                  exact ⟨ax, nw.noun, od.noun, (hDl _).2 hln.symm, (hDnw _).2 rfl, (hDod _).2 rfl, hedit⟩
+                  exact ⟨ax, nw.noun, od.noun, (hDl _).2 hln.symm, (hDnw _).2 rfl, (hDod _).2 rfl,
+                    hedit⟩
+
+private theorem paper_denotation_conditional_reduction {r₀ : Verb} {x : Noun} (n1 n2 : Verb) (htn2 :
+  n2.isTerminal = true)
+  (hn1 : ∀ (v : Noun), n1.DenP v ↔ v = n1.noun)
+  (star_term : ∀ (W : Verb) (p : Noun), W.isTerminal = true → ((node Action.star n1 W).DenP p ↔ EvP
+    n1.noun W.noun p))
+  (hr :
+    (match (generalizing := false) n2 with
+      | node _ b c =>
+        some
+          (node Action.star n1
+            (node Action.star c
+              (node Action.null (leaf 0)
+                (node Action.star (node Action.null (leaf 2) (leaf 3))
+                  (node Action.null (leaf 0)
+                    (node Action.star n1 (node Action.null (leaf 4) (node Action.null (leaf 4)
+                      b))))))))
+      | _ => none) =
+      some r₀) :
+  EvP n1.noun ((atom 6).cell n2.noun) x ↔ r₀.DenP x := by
+  cases n2 with
+  | leaf => simp at hr
+  | node bn b c =>
+      obtain rfl := Option.some.inj hr
+      simp only [noun, isTerminal, Bool.and_eq_true] at htn2 ⊢
+      obtain ⟨⟨_, htb⟩, htc⟩ := htn2
+      have dStar : ∀ (W : Verb) y,
+          (DenP (Verb.node .star n1 W) y ↔ ∃ q, DenP W q ∧ EvP n1.noun q y) := by
+        intro W y; rw [DenP_star]
+        exact ⟨fun ⟨p,q,hp,hq,hev⟩ => ⟨q, hq, (hn1 p).1 hp ▸ hev⟩,
+               fun ⟨q,hq,hev⟩ => ⟨n1.noun, q, (hn1 _).2 rfl, hq, hev⟩⟩
+      have dStarC : ∀ (W : Verb) y,
+          (DenP (Verb.node .star c W) y ↔ ∃ q, DenP W q ∧ EvP c.noun q y) := by
+        intro W y; rw [DenP_star]
+        exact ⟨fun ⟨p,q,hp,hq,hev⟩ => ⟨q, hq, (DenP_terminal_iff htc).1 hp ▸ hev⟩,
+               fun ⟨q,hq,hev⟩ => ⟨c.noun, q, (DenP_terminal_iff htc).2 rfl, hq, hev⟩⟩
+      have hIarg : isTerminal (Verb.node .null (.leaf 4) (.node .null (.leaf 4) b)) = true := by
+        simp [isTerminal, Action.isNull, htb]
+      rw [EvP_op6]
+      constructor
+      · rintro ⟨B, C, D, cv, heq, hcv, hor⟩
+        obtain ⟨hBeq, hCDeq⟩ := Noun.cell.inj heq
+        subst hBeq
+        rcases hor with ⟨rfl, hCx⟩ | ⟨rfl, hDx⟩
+        · refine (dStar _ _).2 ⟨C, ?_, hCx⟩
+          refine (dStarC _ _).2 ⟨Noun.cell (.atom 0) (.atom 2), ?_,
+                  (EvP_op0).2 ⟨2, rfl, hCDeq ▸ slot_two⟩⟩
+          refine (DenP_null).2 ⟨.atom 0, .atom 2, rfl, DenP_leaf.2 rfl, ?_⟩
+          refine (DenP_star).2 ⟨Noun.cell (.atom 2) (.atom 3), Noun.cell (.atom 0) (.atom 2),
+                  (DenP_null).2 ⟨.atom 2, .atom 3, rfl, DenP_leaf.2 rfl, DenP_leaf.2 rfl⟩, ?_,
+                  (EvP_op0).2 ⟨2, rfl, slot_two⟩⟩
+          refine (DenP_null).2 ⟨.atom 0, .atom 2, rfl, DenP_leaf.2 rfl, ?_⟩
+          refine (dStar _ _).2 ⟨_, (DenP_terminal_iff hIarg).2 rfl, ?_⟩
+          exact (EvP_op4).2 ⟨.atom 1, (EvP_op4).2 ⟨.atom 0, hcv, lus_atom⟩, lus_atom⟩
+        · refine (dStar _ _).2 ⟨D, ?_, hDx⟩
+          refine (dStarC _ _).2 ⟨Noun.cell (.atom 0) (.atom 3), ?_,
+                  (EvP_op0).2 ⟨3, rfl, hCDeq ▸ slot_three⟩⟩
+          refine (DenP_null).2 ⟨.atom 0, .atom 3, rfl, DenP_leaf.2 rfl, ?_⟩
+          refine (DenP_star).2 ⟨Noun.cell (.atom 2) (.atom 3), Noun.cell (.atom 0) (.atom 3),
+                  (DenP_null).2 ⟨.atom 2, .atom 3, rfl, DenP_leaf.2 rfl, DenP_leaf.2 rfl⟩, ?_,
+                  (EvP_op0).2 ⟨3, rfl, slot_three⟩⟩
+          refine (DenP_null).2 ⟨.atom 0, .atom 3, rfl, DenP_leaf.2 rfl, ?_⟩
+          refine (dStar _ _).2 ⟨_, (DenP_terminal_iff hIarg).2 rfl, ?_⟩
+          exact (EvP_op4).2 ⟨.atom 2, (EvP_op4).2 ⟨.atom 1, hcv, lus_atom⟩, lus_atom⟩
+      · intro hmacro
+        obtain ⟨qa0, ha0, hC4⟩ := (dStar _ _).1 hmacro
+        obtain ⟨qb0, hb0, hC3⟩ := (dStarC _ _).1 ha0
+        rw [DenP_null] at hb0; obtain ⟨v0, vc0, rfl, hv0, hc0⟩ := hb0
+        rw [DenP_leaf] at hv0; subst hv0
+        rw [DenP_star] at hc0; obtain ⟨p23, qd0, hp23, hd0, hC2⟩ := hc0
+        rw [DenP_null] at hp23; obtain ⟨w2, w3, rfl, hw2, hw3⟩ := hp23
+        rw [DenP_leaf] at hw2 hw3; subst hw2; subst hw3
+        rw [DenP_null] at hd0; obtain ⟨u0, vinner, rfl, hu0, hinner⟩ := hd0
+        rw [DenP_leaf] at hu0; subst hu0
+        rw [star_term _ _ hIarg] at hinner
+        obtain ⟨y, hy1, hly⟩ := (EvP_op4).1 hinner
+        obtain ⟨z, hz1, hlz⟩ := (EvP_op4).1 hy1
+        cases z with
+        | cell => simp [Noun.lus] at hlz
+        | atom k =>
+            rw [lus_atom] at hlz; obtain rfl := Option.some.inj hlz
+            rw [lus_atom] at hly; obtain rfl := Option.some.inj hly
+            obtain ⟨ax, hax, hs23⟩ := (EvP_op0).1 hC2
+            have haxv : ax = k + 2 := by injection hax with h; omega
+            subst haxv
+            rcases slot_pair_some _ _ hs23 with h1 | h2 | h3
+            · omega
+            · have hk : k = 0 := by omega
+              subst hk
+              rw [slot_two] at hs23; obtain rfl := Option.some.inj hs23
+              obtain ⟨ax', hax', hs3⟩ := (EvP_op0).1 hC3
+              have : ax' = 2 := by injection hax' with h; omega
+              subst this
+              cases hcn : c.noun with
+              | atom => rw [hcn, slot_two_atom] at hs3; simp at hs3
+              | cell C D =>
+                  rw [hcn, slot_two] at hs3; obtain rfl := Option.some.inj hs3
+                  exact ⟨b.noun, C, D, .atom 0, rfl, hz1, Or.inl ⟨rfl, hC4⟩⟩
+            · have hk : k = 1 := by omega
+              subst hk
+              rw [slot_three] at hs23; obtain rfl := Option.some.inj hs23
+              obtain ⟨ax', hax', hs3⟩ := (EvP_op0).1 hC3
+              have : ax' = 3 := by injection hax' with h; omega
+              subst this
+              cases hcn : c.noun with
+              | atom => rw [hcn, slot_three_atom] at hs3; simp at hs3
+              | cell C D =>
+                  rw [hcn, slot_three] at hs3; obtain rfl := Option.some.inj hs3
+                  exact ⟨b.noun, C, D, .atom 1, rfl, hz1, Or.inr ⟨rfl, hC4⟩⟩
 
 theorem den_localP_opcode {sub r₀ x} (hd : inOpcodeDomain sub = true) (hr : reduce sub = some r₀) :
     (DenP sub x ↔ DenP r₀ x) := by
@@ -1114,7 +1234,8 @@ theorem den_localP_opcode {sub r₀ x} (hd : inOpcodeDomain sub = true) (hr : re
           · rintro ⟨va, vb, hva, hvb, hev⟩
             rw [(DenP_terminal_iff htn1).1 hva, (DenP_terminal_iff htW).1 hvb] at hev; exact hev
           · intro hev
-            exact ⟨n1.noun, W.noun, (DenP_terminal_iff htn1).2 rfl, (DenP_terminal_iff htW).2 rfl, hev⟩
+            exact ⟨n1.noun, W.noun, (DenP_terminal_iff htn1).2 rfl, (DenP_terminal_iff htW).2 rfl,
+              hev⟩
         have hsub : (DenP (Verb.node .star n1 (.node ra i n2)) x
                      ↔ EvP n1.noun (Noun.cell i.noun n2.noun) x) := by
           rw [star_term (Verb.node ra i n2) x htt]; simp only [noun]
@@ -1192,95 +1313,8 @@ theorem den_localP_opcode {sub r₀ x} (hd : inOpcodeDomain sub = true) (hr : re
                   · rintro ⟨sb, sc, hsb, hsc, rfl⟩
                     exact ⟨b.noun, c.noun, sb, sc, rfl, (star_term _ _ htb).1 hsb,
                            (star_term _ _ htc).1 hsc, rfl⟩
-            · cases n2 with
-              | leaf => simp at hr
-              | node bn b c =>
-                  obtain rfl := Option.some.inj hr
-                  simp only [noun, isTerminal, Bool.and_eq_true] at htn2 ⊢
-                  obtain ⟨⟨_, htb⟩, htc⟩ := htn2
-                  have dStar : ∀ (W : Verb) y,
-                      (DenP (Verb.node .star n1 W) y ↔ ∃ q, DenP W q ∧ EvP n1.noun q y) := by
-                    intro W y; rw [DenP_star]
-                    exact ⟨fun ⟨p,q,hp,hq,hev⟩ => ⟨q, hq, (hn1 p).1 hp ▸ hev⟩,
-                           fun ⟨q,hq,hev⟩ => ⟨n1.noun, q, (hn1 _).2 rfl, hq, hev⟩⟩
-                  have dStarC : ∀ (W : Verb) y,
-                      (DenP (Verb.node .star c W) y ↔ ∃ q, DenP W q ∧ EvP c.noun q y) := by
-                    intro W y; rw [DenP_star]
-                    exact ⟨fun ⟨p,q,hp,hq,hev⟩ => ⟨q, hq, (DenP_terminal_iff htc).1 hp ▸ hev⟩,
-                           fun ⟨q,hq,hev⟩ => ⟨c.noun, q, (DenP_terminal_iff htc).2 rfl, hq, hev⟩⟩
-                  have hIarg : isTerminal (Verb.node .null (.leaf 4) (.node .null (.leaf 4) b)) = true := by
-                    simp [isTerminal, Action.isNull, htb]
-                  rw [EvP_op6]
-                  constructor
-                  · rintro ⟨B, C, D, cv, heq, hcv, hor⟩
-                    obtain ⟨hBeq, hCDeq⟩ := Noun.cell.inj heq
-                    subst hBeq
-                    rcases hor with ⟨rfl, hCx⟩ | ⟨rfl, hDx⟩
-                    · refine (dStar _ _).2 ⟨C, ?_, hCx⟩
-                      refine (dStarC _ _).2 ⟨Noun.cell (.atom 0) (.atom 2), ?_,
-                              (EvP_op0).2 ⟨2, rfl, hCDeq ▸ slot_two⟩⟩
-                      refine (DenP_null).2 ⟨.atom 0, .atom 2, rfl, DenP_leaf.2 rfl, ?_⟩
-                      refine (DenP_star).2 ⟨Noun.cell (.atom 2) (.atom 3), Noun.cell (.atom 0) (.atom 2),
-                              (DenP_null).2 ⟨.atom 2, .atom 3, rfl, DenP_leaf.2 rfl, DenP_leaf.2 rfl⟩, ?_,
-                              (EvP_op0).2 ⟨2, rfl, slot_two⟩⟩
-                      refine (DenP_null).2 ⟨.atom 0, .atom 2, rfl, DenP_leaf.2 rfl, ?_⟩
-                      refine (dStar _ _).2 ⟨_, (DenP_terminal_iff hIarg).2 rfl, ?_⟩
-                      exact (EvP_op4).2 ⟨.atom 1, (EvP_op4).2 ⟨.atom 0, hcv, lus_atom⟩, lus_atom⟩
-                    · refine (dStar _ _).2 ⟨D, ?_, hDx⟩
-                      refine (dStarC _ _).2 ⟨Noun.cell (.atom 0) (.atom 3), ?_,
-                              (EvP_op0).2 ⟨3, rfl, hCDeq ▸ slot_three⟩⟩
-                      refine (DenP_null).2 ⟨.atom 0, .atom 3, rfl, DenP_leaf.2 rfl, ?_⟩
-                      refine (DenP_star).2 ⟨Noun.cell (.atom 2) (.atom 3), Noun.cell (.atom 0) (.atom 3),
-                              (DenP_null).2 ⟨.atom 2, .atom 3, rfl, DenP_leaf.2 rfl, DenP_leaf.2 rfl⟩, ?_,
-                              (EvP_op0).2 ⟨3, rfl, slot_three⟩⟩
-                      refine (DenP_null).2 ⟨.atom 0, .atom 3, rfl, DenP_leaf.2 rfl, ?_⟩
-                      refine (dStar _ _).2 ⟨_, (DenP_terminal_iff hIarg).2 rfl, ?_⟩
-                      exact (EvP_op4).2 ⟨.atom 2, (EvP_op4).2 ⟨.atom 1, hcv, lus_atom⟩, lus_atom⟩
-                  · intro hmacro
-                    obtain ⟨qa0, ha0, hC4⟩ := (dStar _ _).1 hmacro
-                    obtain ⟨qb0, hb0, hC3⟩ := (dStarC _ _).1 ha0
-                    rw [DenP_null] at hb0; obtain ⟨v0, vc0, rfl, hv0, hc0⟩ := hb0
-                    rw [DenP_leaf] at hv0; subst hv0
-                    rw [DenP_star] at hc0; obtain ⟨p23, qd0, hp23, hd0, hC2⟩ := hc0
-                    rw [DenP_null] at hp23; obtain ⟨w2, w3, rfl, hw2, hw3⟩ := hp23
-                    rw [DenP_leaf] at hw2 hw3; subst hw2; subst hw3
-                    rw [DenP_null] at hd0; obtain ⟨u0, vinner, rfl, hu0, hinner⟩ := hd0
-                    rw [DenP_leaf] at hu0; subst hu0
-                    rw [star_term _ _ hIarg] at hinner
-                    obtain ⟨y, hy1, hly⟩ := (EvP_op4).1 hinner
-                    obtain ⟨z, hz1, hlz⟩ := (EvP_op4).1 hy1
-                    cases z with
-                    | cell => simp [Noun.lus] at hlz
-                    | atom k =>
-                        rw [lus_atom] at hlz; obtain rfl := Option.some.inj hlz
-                        rw [lus_atom] at hly; obtain rfl := Option.some.inj hly
-                        obtain ⟨ax, hax, hs23⟩ := (EvP_op0).1 hC2
-                        have haxv : ax = k + 2 := by injection hax with h; omega
-                        subst haxv
-                        rcases slot_pair_some _ _ hs23 with h1 | h2 | h3
-                        · omega
-                        · have hk : k = 0 := by omega
-                          subst hk
-                          rw [slot_two] at hs23; obtain rfl := Option.some.inj hs23
-                          obtain ⟨ax', hax', hs3⟩ := (EvP_op0).1 hC3
-                          have : ax' = 2 := by injection hax' with h; omega
-                          subst this
-                          cases hcn : c.noun with
-                          | atom => rw [hcn, slot_two_atom] at hs3; simp at hs3
-                          | cell C D =>
-                              rw [hcn, slot_two] at hs3; obtain rfl := Option.some.inj hs3
-                              exact ⟨b.noun, C, D, .atom 0, rfl, hz1, Or.inl ⟨rfl, hC4⟩⟩
-                        · have hk : k = 1 := by omega
-                          subst hk
-                          rw [slot_three] at hs23; obtain rfl := Option.some.inj hs23
-                          obtain ⟨ax', hax', hs3⟩ := (EvP_op0).1 hC3
-                          have : ax' = 3 := by injection hax' with h; omega
-                          subst this
-                          cases hcn : c.noun with
-                          | atom => rw [hcn, slot_three_atom] at hs3; simp at hs3
-                          | cell C D =>
-                              rw [hcn, slot_three] at hs3; obtain rfl := Option.some.inj hs3
-                              exact ⟨b.noun, C, D, .atom 1, rfl, hz1, Or.inr ⟨rfl, hC4⟩⟩
+            · -- op6
+              exact paper_denotation_conditional_reduction n1 n2 htn2 hn1 star_term hr
             · cases n2 with
               | leaf => simp at hr
               | node bn b c =>
@@ -1291,7 +1325,8 @@ theorem den_localP_opcode {sub r₀ x} (hd : inOpcodeDomain sub = true) (hr : re
                   constructor
                   · rintro ⟨hb, hc, sb, heq, hsb, hev⟩
                     obtain ⟨rfl, rfl⟩ := Noun.cell.inj heq
-                    exact ⟨sb, c.noun, (star_term _ _ htb).2 hsb, (DenP_terminal_iff htc).2 rfl, hev⟩
+                    exact ⟨sb, c.noun, (star_term _ _ htb).2 hsb, (DenP_terminal_iff htc).2 rfl,
+                      hev⟩
                   · rintro ⟨p, q, hp, hq, hev⟩
                     rw [(DenP_terminal_iff htc).1 hq] at hev
                     exact ⟨b.noun, c.noun, p, rfl, (star_term _ _ htb).1 hp, hev⟩
@@ -1321,7 +1356,8 @@ theorem den_localP_opcode {sub r₀ x} (hd : inOpcodeDomain sub = true) (hr : re
                   simp only [noun, isTerminal, Bool.and_eq_true] at htn2 ⊢
                   obtain ⟨⟨_, htb⟩, htc⟩ := htn2
                   have htform : isTerminal (Verb.node .null (.leaf 2)
-                      (.node .null (.node .null (.leaf 0) (.leaf 1)) (.node .null (.leaf 0) b))) = true := by
+                      (.node .null (.node .null (.leaf 0) (.leaf 1)) (.node .null (.leaf 0) b))) =
+                        true := by
                     simp [isTerminal, Action.isNull, htb]
                   rw [EvP_op9, DenP_star]
                   constructor
@@ -1365,6 +1401,7 @@ theorem den_localP_opcode {sub r₀ x} (hd : inOpcodeDomain sub = true) (hr : re
                         rw [(hax _).1 haxd]
             · simp at hr
 
+/-- Congruence generated by equal denotations of pending subverbs in the paper fragment. -/
 inductive RelP : Verb → Verb → Prop where
   | leaf {k} : RelP (.leaf k) (.leaf k)
   | base {v w} : v.isPending = true → (∀ x, DenP v x ↔ DenP w x) → RelP v w
@@ -1390,21 +1427,21 @@ theorem replaceAux_relP (i : Nat) (r₀ : Verb) :
         have hf : findAt c (enum (.node a l r) c).2 = some (.node a l r) := by
           simp [enum, findAt]
         obtain ⟨hp, hd⟩ := hyp _ hf
-        rw [if_pos rfl]
+        rw [ite_eq_left rfl]
         exact RelP.base hp hd
-      · simp only [if_neg hci]
+      · simp only [ite_eq_right hci]
         have hine : ¬ (i = c) := fun h => hci h.symm
         have hcL : (replaceAux i r₀ l (c+1)).1 = (enum l (c+1)).1 := replaceAux_counter i r₀ l (c+1)
         refine RelP.cong (ihl (c+1) ?_) ?_
         · intro sub hsub
           apply hyp sub
-          simp only [enum, findAt, if_neg hine]
+          simp only [enum, findAt, ite_eq_right hine]
           rw [findAt_append, hsub]
         · rw [hcL]
           apply ihr
           intro sub hsub
           apply hyp sub
-          simp only [enum, findAt, if_neg hine]
+          simp only [enum, findAt, ite_eq_right hine]
           rw [findAt_append]
           have hnone : findAt i (enum l (c+1)).2 = none := by
             apply findAt_eq_none
@@ -1464,8 +1501,10 @@ theorem Rel_denP : ∀ (n : Nat) (v w : Verb), v.noun.size ≤ n → RelP v w �
                   simp only [Verb.noun, Noun.size] at hn
                   simp only [editOk, Bool.and_eq_true] at hokr
                   obtain ⟨⟨_, hoknw⟩, hokod⟩ := hokr
-                  have Enw : ∀ y, DenP nw y ↔ DenP nw' y := fun y => ih nw nw' (by omega) hnw hoknw y
-                  have Eod : ∀ y, DenP od y ↔ DenP od' y := fun y => ih od od' (by omega) hod hokod y
+                  have Enw : ∀ y, DenP nw y ↔ DenP nw' y := fun y => ih nw nw' (by omega) hnw hoknw
+                    y
+                  have Eod : ∀ y, DenP od y ↔ DenP od' y := fun y => ih od od' (by omega) hod hokod
+                    y
                   rw [DenP_edit_node, DenP_edit_node]
                   exact ⟨fun ⟨ax,nn,oo,ha,hn2,ho,he⟩ =>
                           ⟨ax,nn,oo,(El _).1 ha,(Enw _).1 hn2,(Eod _).1 ho,he⟩,
@@ -1569,11 +1608,16 @@ theorem denP_right_defined_of_editOk {a : Action} {l r : Verb} {f : Nat} {x : No
               cases hod : denP f od with
               | none => rw [hnw, hod] at h; simp at h
               | some o => exact ⟨f + 1, .cell n o, by simp [denP, hnw, hod]⟩
-  | null => cases hr : denP f r with | some y => exact ⟨f, y, hr⟩ | none => exfalso; simp [denP, hr] at h
-  | star => cases hr : denP f r with | some y => exact ⟨f, y, hr⟩ | none => exfalso; simp [denP, hr] at h
-  | slot => cases hr : denP f r with | some y => exact ⟨f, y, hr⟩ | none => exfalso; simp [denP, hr] at h
-  | equal => cases hr : denP f r with | some y => exact ⟨f, y, hr⟩ | none => exfalso; simp [denP, hr] at h
-  | minus => cases hr : denP f r with | some y => exact ⟨f, y, hr⟩ | none => exfalso; simp [denP, hr] at h
+  | null => cases hr : denP f r with | some y => exact ⟨f, y, hr⟩ | none => exfalso; simp [denP, hr]
+    at h
+  | star => cases hr : denP f r with | some y => exact ⟨f, y, hr⟩ | none => exfalso; simp [denP, hr]
+    at h
+  | slot => cases hr : denP f r with | some y => exact ⟨f, y, hr⟩ | none => exfalso; simp [denP, hr]
+    at h
+  | equal => cases hr : denP f r with | some y => exact ⟨f, y, hr⟩ | none => exfalso; simp [denP,
+    hr] at h
+  | minus => cases hr : denP f r with | some y => exact ⟨f, y, hr⟩ | none => exfalso; simp [denP,
+    hr] at h
 
 /-- **`denP`-definedness descends to every enumerated subnode** (given `editOk`). -/
 theorem enum_denP_defined :
@@ -1626,6 +1670,84 @@ theorem inDomain_star_of {L I n2 : Verb} {rb : Action}
     (hn2 : isTerminal n2 = true) (hhead : opHeadOk I = true) :
     inDomain (Verb.node .star L (Verb.node rb I n2)) = true := by
   simp [inDomain, inOpcodeDomain, hL, hrb, hI, hn2, hhead]
+
+private theorem paper_progress_for_evaluation {v : Verb} (L R : Verb) (hL
+  : L.isTerminal = true)
+  (hR : R.isTerminal = true) (y : Noun) (hsuby : (node Action.star L R).DenP y)
+  (hstep :
+    (node Action.star L R).inDomain = true → (node Action.star L R).reduce.isSome = true → ∃ v',
+      v.next = some v') :
+  ∃ v', v.next = some v' := by
+  obtain ⟨a', b', hLa, hRb, hev⟩ := DenP_star.1 hsuby
+  have haL : a' = L.noun := (DenP_terminal_iff hL).1 hLa
+  have hbR : b' = R.noun := (DenP_terminal_iff hR).1 hRb
+  subst haL; subst hbR
+  cases R with
+  | leaf k =>
+      exfalso; obtain ⟨f, hf⟩ := hev
+      simp [noun, evalPaper_atom_none] at hf
+  | node rb fi n2 =>
+      simp only [isTerminal, Bool.and_eq_true] at hR
+      obtain ⟨⟨hrb, hfi_t⟩, hn2⟩ := hR
+      simp only [noun] at hev
+      cases fi with
+      | node bi ic id =>
+          exact hstep (inDomain_star_of hL hrb hfi_t hn2 rfl) (by simp [reduce, redex])
+      | leaf op =>
+          simp only [noun] at hev
+          have hop : op < 11 := by
+            rcases Nat.lt_or_ge op 11 with h | h
+            · exact h
+            · exfalso
+              obtain ⟨f, hf⟩ := hev
+              rw [evalPaper_op_ge11 f L.noun n2.noun op h] at hf
+              exact absurd hf (by simp)
+          interval_cases op
+          · exact hstep (inDomain_star_of hL hrb rfl hn2 (by decide)) (by simp [reduce, redex])
+          · exact hstep (inDomain_star_of hL hrb rfl hn2 (by decide)) (by simp [reduce, redex])
+          · obtain ⟨hb, hc, _, _, hn2eq, _⟩ := EvP_op2.1 hev
+            cases n2 with
+            | leaf k => rw [noun] at hn2eq; exact absurd hn2eq (by simp)
+            | node b2 c2 d2 =>
+                exact hstep (inDomain_star_of hL hrb rfl hn2 (by decide)) (by simp [reduce, redex])
+          · exact hstep (inDomain_star_of hL hrb rfl hn2 (by decide)) (by simp [reduce, redex])
+          · exact hstep (inDomain_star_of hL hrb rfl hn2 (by decide)) (by simp [reduce, redex])
+          · obtain ⟨hb, hc, _, _, hn2eq, _⟩ := EvP_op5.1 hev
+            cases n2 with
+            | leaf k => rw [noun] at hn2eq; exact absurd hn2eq (by simp)
+            | node b2 c2 d2 =>
+                exact hstep (inDomain_star_of hL hrb rfl hn2 (by decide)) (by simp [reduce, redex])
+          · obtain ⟨b, c, d, cv, hn2eq, _⟩ := EvP_op6.1 hev
+            cases n2 with
+            | leaf k => rw [noun] at hn2eq; exact absurd hn2eq (by simp)
+            | node b2 c2 d2 =>
+                exact hstep (inDomain_star_of hL hrb rfl hn2 (by decide)) (by simp [reduce, redex])
+          · obtain ⟨hb, hc, _, hn2eq, _⟩ := EvP_op7.1 hev
+            cases n2 with
+            | leaf k => rw [noun] at hn2eq; exact absurd hn2eq (by simp)
+            | node b2 c2 d2 =>
+                exact hstep (inDomain_star_of hL hrb rfl hn2 (by decide)) (by simp [reduce, redex])
+          · obtain ⟨hb, hc, _, hn2eq, _⟩ := EvP_op8.1 hev
+            cases n2 with
+            | leaf k => rw [noun] at hn2eq; exact absurd hn2eq (by simp)
+            | node b2 c2 d2 =>
+                exact hstep (inDomain_star_of hL hrb rfl hn2 (by decide)) (by simp [reduce, redex])
+          · obtain ⟨ax, c, _, _, hn2eq, _⟩ := EvP_op9.1 hev
+            cases n2 with
+            | leaf k => rw [noun] at hn2eq; exact absurd hn2eq (by simp)
+            | node b2 c2 d2 =>
+                exact hstep (inDomain_star_of hL hrb rfl hn2 (by decide)) (by simp [reduce, redex])
+          · obtain ⟨ax, c, d, new, old, hn2eq, _⟩ := EvP_op10.1 hev
+            cases n2 with
+            | leaf k => rw [noun] at hn2eq; exact absurd hn2eq (by simp)
+            | node b2 hd d2 =>
+                rw [noun] at hn2eq
+                have hhd : hd.noun = Noun.cell (Noun.atom ax) c := (Noun.cell.inj hn2eq).1
+                cases hd with
+                | leaf k => rw [noun] at hhd; exact absurd hhd (by simp)
+                | node bhd axv cc =>
+                    exact hstep (inDomain_star_of hL hrb rfl hn2 (by decide)) (by simp [reduce,
+                      redex])
 
 /-- A `denP`-defined, `editOk`, non-terminal verb has a `next` successor. -/
 theorem progressP {v : Verb} {x : Noun} (hwf : editOk v = true) (hd : DenP v x)
@@ -1695,76 +1817,7 @@ theorem progressP {v : Verb} {x : Noun} (hwf : editOk v = true) (hd : DenP v x)
                       isTerminal, hrb, hnw, hod]
               exact hstep hdom (by simp [reduce, hLn, hedit])
       | star =>
-          obtain ⟨a', b', hLa, hRb, hev⟩ := DenP_star.1 hsuby
-          have haL : a' = L.noun := (DenP_terminal_iff hL).1 hLa
-          have hbR : b' = R.noun := (DenP_terminal_iff hR).1 hRb
-          subst haL; subst hbR
-          cases R with
-          | leaf k =>
-              exfalso; obtain ⟨f, hf⟩ := hev
-              simp [noun, evalPaper_atom_none] at hf
-          | node rb fi n2 =>
-              simp only [isTerminal, Bool.and_eq_true] at hR
-              obtain ⟨⟨hrb, hfi_t⟩, hn2⟩ := hR
-              simp only [noun] at hev
-              cases fi with
-              | node bi ic id =>
-                  exact hstep (inDomain_star_of hL hrb hfi_t hn2 rfl) (by simp [reduce, redex])
-              | leaf op =>
-                  simp only [noun] at hev
-                  have hop : op < 11 := by
-                    rcases Nat.lt_or_ge op 11 with h | h
-                    · exact h
-                    · exfalso
-                      obtain ⟨f, hf⟩ := hev
-                      rw [evalPaper_op_ge11 f L.noun n2.noun op h] at hf
-                      exact absurd hf (by simp)
-                  interval_cases op
-                  · exact hstep (inDomain_star_of hL hrb rfl hn2 (by decide)) (by simp [reduce, redex])
-                  · exact hstep (inDomain_star_of hL hrb rfl hn2 (by decide)) (by simp [reduce, redex])
-                  · obtain ⟨hb, hc, _, _, hn2eq, _⟩ := EvP_op2.1 hev
-                    cases n2 with
-                    | leaf k => rw [noun] at hn2eq; exact absurd hn2eq (by simp)
-                    | node b2 c2 d2 =>
-                        exact hstep (inDomain_star_of hL hrb rfl hn2 (by decide)) (by simp [reduce, redex])
-                  · exact hstep (inDomain_star_of hL hrb rfl hn2 (by decide)) (by simp [reduce, redex])
-                  · exact hstep (inDomain_star_of hL hrb rfl hn2 (by decide)) (by simp [reduce, redex])
-                  · obtain ⟨hb, hc, _, _, hn2eq, _⟩ := EvP_op5.1 hev
-                    cases n2 with
-                    | leaf k => rw [noun] at hn2eq; exact absurd hn2eq (by simp)
-                    | node b2 c2 d2 =>
-                        exact hstep (inDomain_star_of hL hrb rfl hn2 (by decide)) (by simp [reduce, redex])
-                  · obtain ⟨b, c, d, cv, hn2eq, _⟩ := EvP_op6.1 hev
-                    cases n2 with
-                    | leaf k => rw [noun] at hn2eq; exact absurd hn2eq (by simp)
-                    | node b2 c2 d2 =>
-                        exact hstep (inDomain_star_of hL hrb rfl hn2 (by decide)) (by simp [reduce, redex])
-                  · obtain ⟨hb, hc, _, hn2eq, _⟩ := EvP_op7.1 hev
-                    cases n2 with
-                    | leaf k => rw [noun] at hn2eq; exact absurd hn2eq (by simp)
-                    | node b2 c2 d2 =>
-                        exact hstep (inDomain_star_of hL hrb rfl hn2 (by decide)) (by simp [reduce, redex])
-                  · obtain ⟨hb, hc, _, hn2eq, _⟩ := EvP_op8.1 hev
-                    cases n2 with
-                    | leaf k => rw [noun] at hn2eq; exact absurd hn2eq (by simp)
-                    | node b2 c2 d2 =>
-                        exact hstep (inDomain_star_of hL hrb rfl hn2 (by decide)) (by simp [reduce, redex])
-                  · obtain ⟨ax, c, _, _, hn2eq, _⟩ := EvP_op9.1 hev
-                    cases n2 with
-                    | leaf k => rw [noun] at hn2eq; exact absurd hn2eq (by simp)
-                    | node b2 c2 d2 =>
-                        exact hstep (inDomain_star_of hL hrb rfl hn2 (by decide)) (by simp [reduce, redex])
-                  · obtain ⟨ax, c, d, new, old, hn2eq, _⟩ := EvP_op10.1 hev
-                    cases n2 with
-                    | leaf k => rw [noun] at hn2eq; exact absurd hn2eq (by simp)
-                    | node b2 hd d2 =>
-                        rw [noun] at hn2eq
-                        have hhd : hd.noun = Noun.cell (Noun.atom ax) c := (Noun.cell.inj hn2eq).1
-                        cases hd with
-                        | leaf k => rw [noun] at hhd; exact absurd hhd (by simp)
-                        | node bhd axv cc =>
-                            exact hstep (inDomain_star_of hL hrb rfl hn2 (by decide)) (by simp [reduce, redex])
-
+          exact paper_progress_for_evaluation L R hL hR y hsuby hstep
 /-! ### Denotation-keyed cost measure -/
 
 /-- Weighted `evalPaper`-derivation cost: mirrors `evalPaper` clause-for-clause (same recursive
@@ -1858,7 +1911,7 @@ theorem pcost_succ {n : Nat} {a b : Noun} {r : Noun}
   induction n, a, b using evalPaper.induct generalizing r <;>
     simp_all only [evalPaper, pcost, Option.map_eq_some_iff, Option.bind_eq_some_iff,
       Option.some.injEq, reduceCtorEq] <;>
-    grind [evalPaper_succ]
+    grind only [evalPaper_succ]
 
 /-- `pcost` stabilizes for any fuel `≥ n` once `evalPaper n` succeeds. -/
 theorem pcost_mono {n m : Nat} {a b r : Noun} (hle : n ≤ m) (hb : evalPaper n a b = some r) :

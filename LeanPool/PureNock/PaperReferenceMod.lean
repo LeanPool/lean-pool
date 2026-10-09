@@ -107,7 +107,8 @@ def evalPaperMod (q : Nat) : Nat → Noun → Noun → Option Noun
     | _ => none                          -- op ≥ 11 (incl. OP₁₁ hints) ⇒ crash (paper fragment)
 
 /-- Convenience wrapper with a large fuel budget, for `#eval` sanity checks. -/
-def evalPaperModTop (q : Nat) (subj formula : Noun) : Option Noun := evalPaperMod q 100000 subj formula
+def evalPaperModTop (q : Nat) (subj formula : Noun) : Option Noun := evalPaperMod q 100000 subj
+  formula
 
 /-- **Fuel monotonicity (single step)** for `evalPaperMod`. -/
 theorem evalPaperMod_succ {q n : Nat} {s form r : Noun}

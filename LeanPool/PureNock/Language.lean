@@ -29,4 +29,3 @@ excluding the paper's §5 zkVM/AIR/RAP/table stack.
 
 @[expose] public section
 
-

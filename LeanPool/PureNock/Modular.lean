@@ -30,4 +30,3 @@ No project-declared axioms; capstones stay within `{propext, Classical.choice, Q
 
 @[expose] public section
 
-

@@ -148,7 +148,8 @@ theorem equiv_continuations (F : Verb) : Finite F ↔ FiniteTransition F := by
 
 /-! ### `Thm:deterministic_Trace` (`main.tex:1156–1157`) -/
 
-/-- Inductive core of determinism: `Step` is functional, so equal heads and lengths force equality. -/
+/-- Inductive core of determinism: `Step` is functional, so equal heads and lengths force equality.
+-/
 theorem trace_unique (T1 : List Verb) : ∀ (T2 : List Verb),
     Consistent T1 → Consistent T2 → T1.head? = T2.head? → T1.length = T2.length → T1 = T2 := by
   induction T1 with
@@ -418,8 +419,8 @@ theorem finite_of_validROM {F : Verb} (h : ValidROM F) : Finite F := by
 
 /-! ### The two-verb checker `Nock` matches `Step` (App A, main.tex:1639) -/
 
--- main.tex:1118,1639  (`Nock(tᵢ,tᵢ₊₁)=0` ⟺ `Step` ∨ crash: the checker is 1-1 with `Step`)
-/-- **`Nock` checker ⟺ trace consistency (`Step`) + crash.**  `NockCheck a b = true` (paper's
+-- main.tex:1118,1639  (`Nock(tᵢ,tᵢ₊₁)=0` ↔ `Step` ∨ crash: the checker is 1-1 with `Step`)
+/-- **`Nock` checker ↔ trace consistency (`Step`) + crash.**  `NockCheck a b = true` (paper's
     accept `0`, main.tex:1118) iff `b` is a `Step`-successor of `a` (`Step a v`, i.e. a
     consistent transition `Nock(a,v)=0`) or `a` crashes and `b = ⊥` (`b = none`).  This is the
     genuine biconditional making the two-verb checker 1-1 with the forward semantics `Step`
@@ -429,7 +430,7 @@ theorem nockCheck_iff_step {a : Verb} {b : Option Verb} :
     NockCheck a b = true ↔ (∃ v, b = some v ∧ Step a v) ∨ (b = none ∧ Crashes a) :=
   nockCheck_eq_true_iff
 
-/-! ### Verifiable crash ⟺ the paper's ⊥ (`Invalid`, `main.tex:1124`)
+/-! ### Verifiable crash ↔ the paper's ⊥ (`Invalid`, `main.tex:1124`)
 
 `Nock.Verb.eval` reports a three-way `Outcome`; a `crash` result is tied here to the paper's
 program-level ⊥: the *evaluated* program `v` is `Invalid` — its trace is complete and ends at a
@@ -440,7 +441,8 @@ exactly that object; `eval_crash_checked` further exhibits the reached ⊥ state
 
 -- main.tex:1114–1127  (a crash trace: consistent, ending stuck non-terminal, length = fuel)
 /-- If `S` is a consistent trace of `u` (head `u`, `Consistent S`) whose last state `w` is a stuck
-    non-terminal (`next w = none`, `¬terminal`), then `eval` reports a `crash` at fuel `S.length`. -/
+    non-terminal (`next w = none`, `¬terminal`), then `eval` reports a `crash` at fuel
+    `S.length`. -/
 theorem crash_of_trace :
     ∀ (S : List Verb) (u w : Verb),
       S.head? = some u → Consistent S → S.getLast? = some w →
@@ -466,7 +468,8 @@ theorem crash_of_trace :
 -- main.tex:1124  (`Invalid`: complete trace ending in the null state ⊥)
 /-- **Crash soundness (program-tied).**  A `crash` reported by `eval` for the program `v` means `v`
     is `Invalid`: its evaluation trace is complete and ends at a stuck non-terminal — the paper's ⊥
-    (`main.tex:1124`).  Unlike a bare "some crashing verb exists", the witness is the trace *of `v`*. -/
+    (`main.tex:1124`).  Unlike a bare "some crashing verb exists", the witness is the trace *of
+    `v`*. -/
 theorem eval_crash_invalid {n : Nat} {v : Verb} (h : eval n v = .crash) : Invalid v := by
   induction n generalizing v with
   | zero => simp [eval] at h
@@ -493,7 +496,7 @@ theorem eval_crash_invalid {n : Nat} {v : Verb} (h : eval n v = .crash) : Invali
           simp only [hnv, haltOutcome] at h
           have hnt : v.isTerminal = false := by
             by_cases ht : v.isTerminal
-            · rw [if_pos ht] at h; exact Outcome.noConfusion h
+            · rw [ite_eq_left ht] at h; exact Outcome.noConfusion h
             · simpa using ht
           exact ⟨[v], v, ⟨rfl, trivial⟩, rfl, hnv, hnt⟩
 
@@ -504,8 +507,8 @@ theorem eval_crash_complete {v : Verb} (h : Invalid v) : ∃ n, eval n v = .cras
   obtain ⟨T, w, ⟨hhead, hcons⟩, hlast, hnext, hnt⟩ := h
   exact ⟨T.length, crash_of_trace T v w hhead hcons hlast hnext hnt⟩
 
--- main.tex:1124  (`eval` crash ⟺ the paper's ⊥ object)
-/-- **Verifiable crash ⟺ ⊥.**  `eval` crashes on `v` (at some fuel) iff `v` is `Invalid` — the
+-- main.tex:1124  (`eval` crash ↔ the paper's ⊥ object)
+/-- **Verifiable crash ↔ ⊥.**  `eval` crashes on `v` (at some fuel) iff `v` is `Invalid` — the
     clean soundness/completeness biconditional at the paper's ⊥ (`main.tex:1124`). -/
 theorem eval_crash_iff_invalid {v : Verb} : (∃ n, eval n v = .crash) ↔ Invalid v :=
   ⟨fun ⟨_, h⟩ => eval_crash_invalid h, eval_crash_complete⟩

@@ -131,7 +131,8 @@ theorem runTrace_adjacent_nockCheck {fuel : Nat} {v : Verb} {T : List Verb}
   adjNockCheck_of_consistent T (runTrace_traceOf h).2
 
 /-- **The executable checker accepts every emitted trace.**  Running `adjNockCheckB` on the
-    output of `runTrace` returns `true` — the certificate is machine-checkable, not just a `Prop`. -/
+    output of `runTrace` returns `true` — the certificate is machine-checkable, not just a
+    `Prop`. -/
 theorem runTrace_adjNockCheckB {fuel : Nat} {v : Verb} {T : List Verb}
     (h : runTrace fuel v = some T) : adjNockCheckB T = true :=
   (adjNockCheckB_iff T).mpr (runTrace_adjacent_nockCheck h)

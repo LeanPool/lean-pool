@@ -29,10 +29,11 @@ crashing increment `lusGBy q`) and threads one conditional through every layer, 
 machine, `evalPaper`, `evalPaperMod q`, `evalFBy q`, and `evalN` all return the *same* noun, itself
 `q`-bounded.
 
-The conditional is no-overflow; injectivity is the payoff, not a second hypothesis: the `BoundedBy q`
+The conditional is no-overflow; injectivity is the payoff, not a second hypothesis: the `BoundedBy
+q`
 conclusion makes the leaf cast `ℕ → ZMod q` injective (`embBy_inj_of_boundedBy`), so the structural
 noun equality used by OP₅ (`main.tex:1525`) *is* field equality on bridged results.  Primality is
-never used — `1 < q` and `NeZero q` suffice — so nothing here declares or pulls a project axiom.
+never used — `1 < q` suffices — so nothing here declares or pulls a project axiom.
 
 The conditional is STRICTLY STRONGER than the paper's own total modular language: `evalGPaper q`
 crashes where the paper's modular OP₄ merely wraps, so this identifies the five evaluators on the
@@ -134,13 +135,14 @@ The guard is the only place the three fragment evaluators can differ: a successf
 pins `n + 1 < q`, and there the unbounded increment `Noun.lus` and the modular increment
 `lusFBy q` produce the same atom. -/
 
-/-- A successful guarded increment is the unbounded increment (`main.tex:1531–1534` vs `Noun.lus`). -/
+/-- A successful guarded increment is the unbounded increment (`main.tex:1531–1534` vs `Noun.lus`).
+-/
 theorem lusGBy_le_lus {q : Nat} {x m : Noun}
     (h : FieldEmbedding.lusGBy q x = some m) : Noun.lus x = some m := by
   cases x with
   | atom n =>
       by_cases hlt : n + 1 < q
-      · simp only [FieldEmbedding.lusGBy, if_pos hlt, Option.some.injEq] at h
+      · simp only [FieldEmbedding.lusGBy, ite_eq_left hlt, Option.some.injEq] at h
         simp [Noun.lus, ← h]
       · simp [FieldEmbedding.lusGBy, hlt] at h
   | cell _ _ => simp [FieldEmbedding.lusGBy] at h
@@ -151,7 +153,7 @@ theorem lusGBy_le_lusFBy {q : Nat} {x m : Noun}
   cases x with
   | atom n =>
       by_cases hlt : n + 1 < q
-      · simp only [FieldEmbedding.lusGBy, if_pos hlt, Option.some.injEq] at h
+      · simp only [FieldEmbedding.lusGBy, ite_eq_left hlt, Option.some.injEq] at h
         simp [FieldEmbedding.lusFBy, ← h, Nat.mod_eq_of_lt hlt]
       · simp [FieldEmbedding.lusGBy, hlt] at h
   | cell _ _ => simp [FieldEmbedding.lusGBy] at h
@@ -170,7 +172,7 @@ theorem evalGPaper_le_evalGBy {q n : Nat} {s form r : Noun}
 
 /-- **`evalGPaper q` refines `evalPaper`.**  Under the guard the fragment's modular-range OP₄ and
     the unbounded Nat OP₄ coincide, so a successful guarded run is a `evalPaper` run with the same
-    value — the entry point into the unconditional `runProgram ⟺ evalPaper` adequacy. -/
+    value — the entry point into the unconditional `runProgram ↔ evalPaper` adequacy. -/
 theorem evalGPaper_le_evalPaper {q n : Nat} {s form r : Noun}
     (h : evalGPaper q n s form = some r) : evalPaper n s form = some r := by
   induction n, s, form using evalGPaper.induct q generalizing r <;>
@@ -212,7 +214,7 @@ def embBy (q : Nat) : Noun → FNounBy q
 
 /-- **`embBy q` is injective on `q`-bounded nouns.**  Distinct canonical residues `< q` stay
     distinct in `ZMod q`, so structural Nock equality is field equality there (`main.tex:1525`). -/
-theorem embBy_inj_of_boundedBy {q : Nat} [NeZero q] :
+theorem embBy_inj_of_boundedBy {q : Nat} :
     ∀ {a b : Noun}, BoundedBy q a → BoundedBy q b → embBy q a = embBy q b → a = b := by
   intro a
   induction a with
@@ -278,7 +280,7 @@ theorem evalFBy_of_evalGPaper {q fuel : Nat} {s f r : Noun}
 /-- **The bridge carries the equivalence through the field embedding.**  Two guarded fragment runs
     on `q`-bounded inputs whose results have the same field image have the *same result noun*: the
     no-overflow conditional yields boundedness, and boundedness yields injectivity. -/
-theorem bridge_reflects_field_equality (q : Nat) [NeZero q] (hq : 1 < q)
+theorem bridge_reflects_field_equality (q : Nat) (hq : 1 < q)
     {fuel₁ fuel₂ : Nat} {s₁ f₁ s₂ f₂ r₁ r₂ : Noun}
     (hs₁ : FieldEmbedding.BoundedBy q s₁) (hf₁ : FieldEmbedding.BoundedBy q f₁)
     (hs₂ : FieldEmbedding.BoundedBy q s₂) (hf₂ : FieldEmbedding.BoundedBy q f₂)

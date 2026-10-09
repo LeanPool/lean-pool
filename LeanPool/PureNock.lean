@@ -14,8 +14,8 @@ public import LeanPool.PureNock.FingerprintLayer
 Source: url:https://github.com/nockchain/pure-nock-lean
 Authors: Pure Nock formalization contributors
 Status: verified
-Main declarations: `Nock.Verb.runProgram_adequate_complete`, `Nock.Verb.runTraceProgram_certificate`, `Nock.paper_field_bridge`, `Nock.NPR.collision_prob_le`, `Nock.NPR.fnHorner_eq_fn`
-Tags: operational-semantics, verified-evaluation, execution-traces, finite-fields, polynomial-fingerprints
+Main declarations: `Nock.Verb.runProgram_adequate_complete`, `Nock.NPR.collision_prob_le`
+Tags: operational-semantics, execution-traces, finite-fields, fingerprints
 MSC: 68Q55, 68Q60, 11T71
 -/
 
@@ -26,6 +26,10 @@ The source is `nockchain/pure-nock-lean` at Apache-2.0 commit
 `4838863baa2d49e38573efa3474e77bf1154f300`, first publicly released on 26 August 2026.
 The original release commit credits Akis (Assimakis A. Kattis); the upstream NOTICE attributes
 copyright to the formalization contributors. This port retains that collective attribution.
+
+Upstream notice: Nock Pure (pure-nock-lean), copyright contributors to this formalization,
+licensed under the Apache License, Version 2.0. Mathlib4 and other Lake dependencies retain
+their own licenses. The repository LICENSE supplies the Apache license text.
 
 The imported scope is the 23-module fingerprint release closure: language semantics,
 modular evaluation, guarded bridges, execution trace certificates, and polynomial fingerprints.
