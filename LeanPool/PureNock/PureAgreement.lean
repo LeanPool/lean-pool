@@ -73,7 +73,7 @@ theorem denP_succ {n : Nat} {v : Verb} {r : Noun}
       simp only [denP, hla, hrb] at h
       simp only [denP, hla', hrb']
       exact evalPaper_succ h
-  | _ => simp_all [denP]
+  | _ => simp_all only [denP, Option.some.injEq, reduceCtorEq]
 
 theorem denP_mono {n m : Nat} {v : Verb} {r : Noun}
     (hle : n ≤ m) (h : denP n v = some r) : denP m v = some r := by

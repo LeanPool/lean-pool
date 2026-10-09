@@ -75,7 +75,7 @@ theorem den_succ {n : Nat} {v : Verb} {r : Noun}
       simp only [den, hla, hrb] at h
       simp only [den, hla', hrb']
       exact evalN_succ h
-  | _ => simp_all [den]
+  | _ => simp_all only [den, Option.some.injEq, reduceCtorEq]
 
 theorem den_mono {n m : Nat} {v : Verb} {r : Noun}
     (hle : n ≤ m) (h : den n v = some r) : den m v = some r := by
