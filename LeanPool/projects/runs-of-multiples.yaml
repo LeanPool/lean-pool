@@ -1,0 +1,48 @@
+slug: runs-of-multiples
+title: Sharp asymptotic bounds for runs of multiples in finite sets
+summary: >-
+  For a finite set S of n positive integers, let k(S,a) be the least positive
+  integer k for which k*a is outside S. Proves an upper bound for every such S
+  and a matching positive lower bound attained by some set of every sufficiently
+  large cardinality n, establishing the extremal order n log n log log n.
+  Contains entropy and chain-compression upper bounds and two lower-bound
+  constructions, sharing definitions, prime estimates and padding. Preserves
+  prime-weighted entropy estimates, smooth-number constructions and abstract
+  cardinality-preserving compression lemmas.
+branch: number theory
+entry_module: LeanPool.RunsOfMultiples
+authors:
+  - Jason Hoelscher-Obermaier
+  - Claude Opus 5.5 (Lean proofs)
+source:
+  title: Runs of multiples in a finite set of integers
+  authors:
+    - Claude Opus 5.5 (AI; published by Jason Hoelscher-Obermaier)
+  url: https://github.com/jas-ho/runs-of-multiples-lean/blob/8b7e5f23534c321722725f78b6e64981557f0ef5/docs/runs-of-multiples.pdf
+  github_repo: jas-ho/runs-of-multiples-lean
+license: Apache-2.0
+status: verified
+provenance: AI
+main_declarations:
+  - RunsOfMultiples.main_theorem
+  - RunsOfMultiples.main_theorem_alt
+main_results:
+  - declaration: RunsOfMultiples.main_theorem
+    informal: >-
+      Every sufficiently large finite set S of positive integers has sum of its
+      first missing multiple indices at most C*n*log(n)*log(log(n)); for every
+      sufficiently large n, a set of exactly n positive integers attains at least
+      c*n*log(n)*log(log(n)), for a fixed c>0. This proof uses entropy and smooth numbers.
+  - declaration: RunsOfMultiples.main_theorem_alt
+    informal: >-
+      The identical sharp asymptotic statement, proved using compression
+      to divisor-closed, prime-shift-closed sets and a box-times-simplex construction.
+tags:
+  - extremal-number-theory
+  - smooth-numbers
+  - entropy
+  - compression
+msc:
+  - 11N25
+  - 11B75
+  - 05D05
