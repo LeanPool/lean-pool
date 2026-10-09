@@ -26,14 +26,14 @@ namespace NPR
 
 open Polynomial
 
-section Horner
-variable {K : Type*} [Field K]
-
 /-- Horner evaluation of a coefficient list: `hornerEval r [a₀,…,aₙ] = a₀ + r·(a₁ + r·(…))`,
     i.e. `Σᵢ aᵢ rⁱ`.  Computable (no `Polynomial`); the extractable core of the fingerprint. -/
-def hornerEval (r : K) : List K → K
+def hornerEval {K : Type*} [Semiring K] (r : K) : List K → K
   | []     => 0
   | a :: l => a + r * hornerEval r l
+
+section Horner
+variable {K : Type*} [Field K]
 
 /-- **Horner = polynomial evaluation.**  `hornerEval r l = (listPoly l).eval r`: the computable
     Horner scheme agrees with evaluating the coefficient polynomial `Σᵢ lᵢ Xⁱ` at `r`. -/
