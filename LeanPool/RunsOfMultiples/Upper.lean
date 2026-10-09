@@ -212,7 +212,7 @@ theorem upper_core (S : Finset ℕ) (hS : ∀ a ∈ S, 0 < a) {K q₀ : ℕ} {c�
     (fun q hq m hm => mul_mem_of_mem_A hm (mem_filter.1 hq).2.one_le le_rfl)
   have hsumA : ∑ q ∈ PB, ((A S q).card : ℝ) ≤ 2 / log 2 * (S.card * log S.card) := by
     rw [div_mul_eq_mul_div, le_div_iff₀ hlog2]
-    linarith
+    linarith only [hedge]
   have hsumD : ∑ q ∈ PB, D S q ≤ S.card * log S.card :=
     sum_D_le S hS hSB PB (filter_subset _ _)
   -- the weighted sum
@@ -226,7 +226,7 @@ theorem upper_core (S : Finset ℕ) (hS : ∀ a ∈ S, 0 < a) {K q₀ : ℕ} {c�
           rw [sum_add_distrib, mul_sum, mul_sum]
       _ ≤ _ := by
           have := mul_le_mul_of_nonneg_left hsumA hc
-          nlinarith
+          nlinarith only [this, hsumD]
   rw [double_count S hS hPI.K_pos] at hPhi
   -- θ lower bound for each element
   have hKpos : (0 : ℝ) < K := by exact_mod_cast hPI.K_pos
@@ -241,7 +241,7 @@ theorem upper_core (S : Finset ℕ) (hS : ∀ a ∈ S, 0 < a) {K q₀ : ℕ} {c�
         exact_mod_cast h.symm
       have hmod' : ((L S a % K : ℕ) : ℝ) < K := by exact_mod_cast hmod
       rw [div_sub_one hKpos.ne', div_le_iff₀ hKpos]
-      nlinarith
+      linarith only [h', hmod']
     have hc₁ := hPI.c₁_pos
     calc c₁ / K * (L S a : ℝ) - (c₁ + C₁) = c₁ * ((L S a : ℝ) / K - 1) - C₁ := by
           field_simp
@@ -250,7 +250,7 @@ theorem upper_core (S : Finset ℕ) (hS : ∀ a ∈ S, 0 < a) {K q₀ : ℕ} {c�
       _ ≤ _ := ht
   have hsum := sum_le_sum helt
   rw [sum_sub_distrib, sum_const, nsmul_eq_mul, ← mul_sum] at hsum
-  linarith
+  linarith only [hsum, hPhi]
 
 /-- The upper bound in asymptotic form, given the prime-number input. -/
 theorem upper_of_primeInput {K q₀ : ℕ} {c₁ C₁ : ℝ} (hPI : PrimeInput K c₁ C₁ q₀) :
