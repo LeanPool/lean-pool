@@ -241,6 +241,7 @@ Apache License, Version 2.0, and are redistributed here under the same license.
   LeanPool/RiemannRochFunctionFields https://github.com/vaca22/riemann-roch-function-fields
   LeanPool/RootSystem                https://github.com/Antoine-dSG/root_system
   LeanPool/RungeKuttaOrderConditions https://github.com/karlesmarin/runge-kutta-order-conditions-lean
+  LeanPool/RunsOfMultiples           https://github.com/jas-ho/runs-of-multiples-lean
   LeanPool/Rupert                    https://github.com/dwrensha/Rupert.lean
   LeanPool/SNumbers                  https://github.com/mario-ullrich/lean-snumbers
   LeanPool/Sabidussi                 https://github.com/gexahedron/sabidussi-lean
