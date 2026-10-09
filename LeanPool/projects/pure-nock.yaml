@@ -1,0 +1,69 @@
+slug: pure-nock
+title: Pure Nock semantics, trace certificates, and polynomial fingerprints
+summary: >-
+  Formalizes Pure Nock nouns, operational semantics, evaluator soundness and
+  completeness, verifiable crash behavior, modular evaluation and guarded
+  natural-number bridges, execution trace certificates, and polynomial
+  fingerprints over arbitrary finite fields. Distinct field-valued noun data
+  have bounded fingerprint collision probability, with a union bound for
+  tables sharing one random evaluation point. A computable Horner evaluator
+  agrees with the polynomial fingerprint. The language and fingerprint
+  closure excludes the framework's zkVM, AIR, RAP, table security theorem,
+  and concrete Goldilocks field. Manuscript line references concern the
+  upstream bundled draft v0.1.6, rather than the posted ePrint revision.
+branch: computer science
+entry_module: LeanPool.PureNock
+authors:
+- Pure Nock formalization contributors
+contributors:
+- Assimakis A. Kattis
+source:
+  title: A Generic Compilation Framework for Efficiently Verifiable Virtual Machine Architectures (draft v0.1.6)
+  authors:
+  - Assimakis A. Kattis
+  - Brian Klatt
+  - Philip Quirk
+  - Logan Allen
+  url: https://github.com/nockchain/pure-nock-lean
+  github_repo: nockchain/pure-nock-lean
+  commit: 4838863baa2d49e38573efa3474e77bf1154f300
+  manuscript: https://github.com/nockchain/pure-nock-lean/blob/4838863baa2d49e38573efa3474e77bf1154f300/paper/main.tex
+  announcement: https://github.com/nockchain/pure-nock-lean/commit/4838863baa2d49e38573efa3474e77bf1154f300
+  announcement_date: '2026-08-26T15:48:50Z'
+license: Apache-2.0
+status: verified
+# Classified by the repository's evidence-based rubric: the original release
+# credits Akis; commits, source, README, manuscript and publisher supply no AI disclosure.
+# Absence of such evidence does not establish exclusively human authorship.
+provenance: human
+main_declarations:
+- Nock.Verb.runProgram_adequate_complete
+- Nock.Verb.runTraceProgram_certificate
+- Nock.paper_field_bridge
+- Nock.NPR.collision_prob_le
+- Nock.NPR.fnHorner_eq_fn
+main_results:
+- declaration: Nock.Verb.runProgram_adequate_complete
+  informal: A subject and formula evaluate to a result under the small-step program machine with some finite fuel if and only if the derived paper evaluator produces that result with some finite fuel.
+- declaration: Nock.Verb.runTraceProgram_certificate
+  informal: Every successfully emitted program trace is consistent and complete, every adjacent transition and its final completion edge passes the Nock checker.
+- declaration: Nock.paper_field_bridge
+  informal: For a modulus greater than one and inputs whose atoms are below the modulus, successful guarded evaluation produces the same bounded result under natural-number paper evaluation, modular paper evaluation, the full modular evaluator, the natural-number reference evaluator, and the small-step program machine with some finite fuel.
+- declaration: Nock.NPR.collision_prob_le
+  informal: For nouns with at most Lambda leaves and distinct field-valued coefficient data or tree shapes, a uniformly selected point of a finite field makes their polynomial fingerprints coincide with probability at most 2 times (2 Lambda minus 1) divided by the field cardinality.
+- declaration: Nock.NPR.fnHorner_eq_fn
+  informal: The computable Horner fingerprint of every noun at every field evaluation point equals its polynomial fingerprint.
+- declaration: Nock.Verb.eval_crash_iff_invalid
+  informal: The three-valued evaluator reports a crash at some finite fuel exactly when the initial verb has a complete trace ending at a stuck nonterminal state.
+- declaration: Nock.NPR.collision_table_prob_le
+  informal: For a finite table of bounded-length nouns evaluated at one shared random field point, the probability that some pair with distinct field-valued data collides is at most the single-pair error times k times (k minus 1) divided by 2.
+tags:
+- operational-semantics
+- verified-evaluation
+- execution-traces
+- finite-fields
+- polynomial-fingerprints
+msc:
+- 68Q55
+- 68Q60
+- 11T71
