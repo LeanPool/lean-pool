@@ -225,6 +225,7 @@ Apache License, Version 2.0, and are redistributed here under the same license.
   LeanPool/Polytopes                 https://github.com/Jun2M/Main-theorem-of-polytopes
   LeanPool/Puiseux                   https://github.com/deancureton/Puiseux
   LeanPool/PumpingCfg                https://github.com/AlexLoitzl/pumping_cfg
+  LeanPool/PureNock                  https://github.com/nockchain/pure-nock-lean
   LeanPool/PythagoreanPolynomialParametrization
                                      https://github.com/epfl-lara/AutoformalizedProjects
   LeanPool/QECCertificates           https://github.com/QCL-SUAT/QECCertificates
