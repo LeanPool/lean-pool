@@ -107,7 +107,7 @@ theorem den_terminal : ∀ (v : Verb) (fuel : Nat),
       intro fuel hterm hsize
       simp only [isTerminal, Bool.and_eq_true] at hterm
       obtain ⟨⟨hnull, hl⟩, hr⟩ := hterm
-      have ha : a = Action.null := by cases a <;> simp_all [Action.isNull]
+      have ha : a = Action.null := by cases a <;> simp_all only [Action.isNull, reduceCtorEq]
       subst ha
       simp only [noun, Noun.size] at hsize ⊢
       obtain ⟨f, rfl⟩ : ∃ f, fuel = f + 1 := ⟨fuel - 1, by omega⟩

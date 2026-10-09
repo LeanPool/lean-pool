@@ -92,7 +92,7 @@ theorem denP_terminal : ∀ (v : Verb) (fuel : Nat),
       intro fuel hterm hsize
       simp only [isTerminal, Bool.and_eq_true] at hterm
       obtain ⟨⟨hnull, hl⟩, hr⟩ := hterm
-      have ha : a = Action.null := by cases a <;> simp_all [Action.isNull]
+      have ha : a = Action.null := by cases a <;> simp_all only [Action.isNull, reduceCtorEq]
       subst ha
       simp only [noun, Noun.size] at hsize ⊢
       obtain ⟨f, rfl⟩ : ∃ f, fuel = f + 1 := ⟨fuel - 1, by omega⟩
@@ -703,7 +703,7 @@ theorem denHint_expand {sub e x} (he : hintExpand sub = some e) : Den sub x ↔ 
     · rename_i hguard
       simp only [Bool.and_eq_true] at hguard
       obtain ⟨⟨h1, hra⟩, hn2⟩ := hguard
-      have hraN : ra = Action.null := by cases ra <;> simp_all [Action.isNull]
+      have hraN : ra = Action.null := by cases ra <;> simp_all only [Action.isNull, reduceCtorEq]
       subst hraN
       have hform : isTerminal (Verb.node .null (.leaf 11) n2) = true := by
         simp [isTerminal, Action.isNull, hn2]
@@ -741,7 +741,7 @@ theorem editOk_of_terminal : ∀ {v : Verb}, isTerminal v = true → editOk v = 
       intro h
       simp only [isTerminal, Bool.and_eq_true] at h
       obtain ⟨⟨ha, hl⟩, hr⟩ := h
-      have haN : a = Action.null := by cases a <;> simp_all [Action.isNull]
+      have haN : a = Action.null := by cases a <;> simp_all only [Action.isNull, reduceCtorEq]
       subst haN
       simp [editOk_null_eq, ihl hl, ihr hr]
 
@@ -1599,7 +1599,7 @@ theorem denP_right_defined_of_editOk {a : Action} {l r : Verb} {f : Nat} {x : No
       | node rb nw od =>
           have hrb : rb = Action.null := by
             simp only [isPending] at hrp
-            cases rb <;> simp_all [Action.isNull]
+            cases rb <;> simp_all only [Action.isNull, Bool.not_false, reduceCtorEq]
           subst hrb
           simp only [denP] at h
           cases hnw : denP f nw with
@@ -1909,7 +1909,8 @@ def vcost (F : Nat) : Verb → Nat
 theorem pcost_succ {n : Nat} {a b : Noun} {r : Noun}
     (hb : evalPaper n a b = some r) : pcost (n + 1) a b = pcost n a b := by
   induction n, a, b using evalPaper.induct generalizing r <;>
-    simp_all only [evalPaper, pcost, Option.map_eq_some_iff, Option.bind_eq_some_iff,
+    simp only [evalPaper] at hb <;>
+    simp_all only [pcost, Option.map_eq_some_iff, Option.bind_eq_some_iff,
       Option.some.injEq, reduceCtorEq] <;>
     grind only [evalPaper_succ]
 
@@ -1929,7 +1930,7 @@ theorem vcost_terminal : ∀ (v : Verb), isTerminal v = true → ∀ F, vcost F 
       intro hterm F
       simp only [isTerminal, Bool.and_eq_true] at hterm
       obtain ⟨⟨hnull, hl⟩, hr⟩ := hterm
-      have ha : a = Action.null := by cases a <;> simp_all [Action.isNull]
+      have ha : a = Action.null := by cases a <;> simp_all only [Action.isNull, reduceCtorEq]
       subst ha
       simp only [vcost]; rw [ihl hl F, ihr hr F]
 

@@ -1,8 +1,9 @@
 slug: pure-nock
 title: Pure Nock semantics, trace certificates, and polynomial fingerprints
 summary: >-
-  Formalizes Pure Nock nouns, operational semantics, evaluator soundness and
-  completeness, verifiable crash behavior, modular evaluation and guarded
+  Formalizes Pure Nock nouns with natural-number leaves, operational semantics,
+  evaluator soundness and completeness, verifiable crash behavior, modular
+  evaluation and guarded
   natural-number bridges, execution trace certificates, and polynomial
   fingerprints over arbitrary finite fields. Distinct field-valued noun data
   have bounded fingerprint collision probability, with a union bound for
