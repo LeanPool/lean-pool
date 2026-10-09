@@ -15,6 +15,8 @@ on:
       - 'lean-toolchain'
       - 'docbuild/**'
       - 'python/lean_pool/exposition/**'
+      - 'python/lean_pool/documentation.py'
+      - 'python/lean_pool/indexes.py'
       - 'python/lean_pool/quality.py'
       - 'python/lean_pool/validation_cache.py'
       - 'python/lean_pool/ci_artifacts.py'
@@ -574,14 +576,10 @@ jobs:
           --repository "$REPOSITORY" --key "$CACHE_KEY"
 
       - name: Build documentation
-        run: cd docbuild && ~/.elan/bin/lake build LeanPool:docs
+        run: PYTHONPATH=python python3 -m lean_pool.documentation build
 
       - name: Validate documentation site
-        run: |
-          set -euo pipefail
-          test -s docbuild/.lake/build/doc/index.html
-          test -s docbuild/.lake/build/doc/LeanPool.html
-          test -s docbuild/.lake/build/doc/declarations/declaration-data.bmp
+        run: PYTHONPATH=python python3 -m lean_pool.documentation validate
 
       - name: Remove cached exposition
         if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
