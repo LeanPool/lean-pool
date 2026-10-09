@@ -1909,8 +1909,7 @@ def vcost (F : Nat) : Verb → Nat
 theorem pcost_succ {n : Nat} {a b : Noun} {r : Noun}
     (hb : evalPaper n a b = some r) : pcost (n + 1) a b = pcost n a b := by
   induction n, a, b using evalPaper.induct generalizing r <;>
-    simp only [evalPaper] at hb <;>
-    simp_all only [pcost, Option.map_eq_some_iff, Option.bind_eq_some_iff,
+    simp_all only [evalPaper, pcost, Option.map_eq_some_iff, Option.bind_eq_some_iff,
       Option.some.injEq, reduceCtorEq] <;>
     grind only [evalPaper_succ]
 

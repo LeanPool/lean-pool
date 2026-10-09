@@ -334,8 +334,7 @@ def vcostN (F : Nat) : Verb → Nat
 theorem ncost_succ {n : Nat} {a b : Noun} {r : Noun}
     (hb : evalN n a b = some r) : ncost (n + 1) a b = ncost n a b := by
   induction n, a, b using evalN.induct generalizing r <;>
-    simp only [evalN] at hb <;>
-    simp_all only [ncost, Option.map_eq_some_iff, Option.bind_eq_some_iff,
+    simp_all only [evalN, ncost, Option.map_eq_some_iff, Option.bind_eq_some_iff,
       Option.some.injEq, reduceCtorEq] <;>
     grind only [evalN_succ]
 
