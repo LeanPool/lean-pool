@@ -5,7 +5,7 @@ Authors: Jeffrey Li
 -/
 module
 
-public import Mathlib.Tactic
+public import Mathlib.Tactic -- shake: keep
 public import Mathlib.GroupTheory.Perm.Sign
 public import Mathlib.Order.Fin.Basic
 
@@ -103,9 +103,9 @@ private lemma coordSum_lt {p q : ℕ} (u : Shuffle p q)
   obtain ⟨h1, h2⟩ := hmono
   -- Extract val-level inequalities for omega
   rcases Nat.lt_or_eq_of_le h1 with h1' | h1'
-  · grind
+  · grind only []
   · rcases Nat.lt_or_eq_of_le h2 with h2' | h2'
-    · grind
+    · grind only []
     · exact absurd (Prod.ext (Fin.ext h1') (Fin.ext h2')) hinj
 
 /-- At every position `r`, the coordinate sum equals `r.val`. -/
@@ -274,22 +274,19 @@ section
 A shuffle path starts at (0,0).
 -/
 lemma apply_zero {p q : ℕ} (u : Shuffle p q) : u.1 0 = (0, 0) := by
-  -- Since u is injective and monotone, it must map the least element 0 to itself.
-  have h_least : ∀ x : Fin (p + q + 1), (u.1 x).1.val + (u.1 x).2.val = x.val := by
-    -- Apply the lemma that states the coordinate sum equals the position for any shuffle.
-    apply coordSum_eq;
-  specialize h_least 0; aesop;
+  have h := Nat.add_eq_zero_iff.mp (coordSum_eq u 0)
+  exact Prod.ext (Fin.ext h.1) (Fin.ext h.2)
 
 /-
 A shuffle path ends at (p,q).
 -/
 lemma apply_last {p q : ℕ} (u : Shuffle p q) : u.1 (Fin.last (p + q)) = (Fin.last p,
     Fin.last q) := by
-  have := @coordSum_eq p q u ( Fin.last ( p + q ) );
-  exact Prod.ext ( Fin.ext ( by linarith! [ Fin.is_lt ( u.1 ( Fin.last ( p + q ) ) |>.1 ),
-                                 Fin.is_lt ( u.1 ( Fin.last ( p + q ) ) |>.2 ) ] ) ) ( Fin.ext (
-                                 by linarith! [ Fin.is_lt ( u.1 ( Fin.last ( p + q ) ) |>.1 ),
-                                     Fin.is_lt ( u.1 ( Fin.last ( p + q ) ) |>.2 ) ] ) )
+  have hsum := coordSum_eq u (Fin.last (p + q))
+  have h1 := (u.1 (Fin.last (p + q))).1.isLt
+  have h2 := (u.1 (Fin.last (p + q))).2.isLt
+  exact Prod.ext (Fin.ext (by simp only [Fin.val_last] at hsum ⊢; omega))
+    (Fin.ext (by simp only [Fin.val_last] at hsum ⊢; omega))
 
 /-
 Express invCount as a sum of y * dx.
@@ -299,7 +296,7 @@ lemma invCount_eq_sum_mul_diff {p q : ℕ} (u : Shuffle p q) :
         r.castSucc).1.val) := by
       refine Finset.sum_congr rfl fun i hi => ?_
       have := shuffle_step u i;
-      grind
+      grind only []
 
 /-
 Express swap.invCount as a sum of x * dy.
@@ -310,7 +307,7 @@ lemma swap_invCount_eq_sum_mul_diff {p q : ℕ} (u : Shuffle p q) :
       rw [ invCount_swap_eq, Finset.sum_congr rfl ];
       intro x hx; split_ifs <;> simp_all +decide [] ;
       have := shuffle_step u x;
-      grind
+      grind only []
 
 /-
 The change in the product of coordinates equals y*dx + x*dy.
@@ -319,8 +316,13 @@ lemma xy_diff_eq_sum_mixed {p q : ℕ} (u : Shuffle p q) (r : Fin (p + q)) :
     (u.1 r.succ).1.val * (u.1 r.succ).2.val - (u.1 r.castSucc).1.val * (u.1 r.castSucc).2.val =
     (u.1 r.castSucc).2.val * ((u.1 r.succ).1.val - (u.1 r.castSucc).1.val) +
     (u.1 r.castSucc).1.val * ((u.1 r.succ).2.val - (u.1 r.castSucc).2.val) := by
-      rw [ Nat.mul_sub_left_distrib, Nat.mul_sub_left_distrib ];
-      cases shuffle_step u r <;> simp_all +decide [ mul_comm ]
+  rcases shuffle_step u r with ⟨hf, hs⟩ | ⟨hf, hs⟩
+  · rw [← hf, ← hs]
+    simp only [Nat.add_mul, one_mul, Nat.add_sub_cancel_left, Nat.sub_self,
+      mul_one, mul_zero, add_zero]
+  · rw [← hf, ← hs]
+    simp only [Nat.mul_add, mul_one, Nat.add_sub_cancel_left, Nat.sub_self,
+      mul_zero, zero_add]
 
 end
 
@@ -356,7 +358,7 @@ lemma invCount_add_invCount_swap {p q : ℕ} (u : Shuffle p q) :
   convert h_telescope using 1;
   · rw [ Shuffle.invCount_eq_sum_mul_diff, Shuffle.swap_invCount_eq_sum_mul_diff,
         ← Finset.sum_add_distrib ];
-    exact Finset.sum_congr rfl fun _ _ => by rw [ Shuffle.xy_diff_eq_sum_mixed ] ;
+    exact Finset.sum_congr rfl fun _ _ => by rw [ Shuffle.xy_diff_eq_sum_mixed ];
   · rw [ eq_tsub_iff_add_eq_of_le ] <;> norm_num [ Shuffle.apply_zero, Shuffle.apply_last ]
 
 /-- Swapping a `(p,q)`-shuffle changes the sign by the Koszul factor `(-1)^(p*q)`. -/
@@ -525,23 +527,17 @@ private lemma insertLeftIndex_ge {p q : ℕ} (ν : Shuffle p q) (j : Fin (p + 2)
 /-- Symmetric lower bound: the right insertion index satisfies `k ≤ t`. -/
 private lemma insertRightIndex_ge {p q : ℕ} (ν : Shuffle p q) (k : Fin (q + 2)) :
     k.val ≤ (insertRightIndex ν k).val := by
-  -- Since `ν` is a monotone function, for any `r` with `r.val < k`, we have `ν.1 r ≤ r`. Therefore,
-  -- the filter includes all `r < k`, so the cardinality is at least `k`.
-  have h_filter : ∀ r : Fin (p + q + 1), r.val < k.val → (ν.1 r).2.val < k.val := by
-    -- By the properties of ν, we know that the second coordinate of ν(r) is less than or equal to
-    -- r.val.
-    have h_second_coord_le_r : ∀ r : Fin (p + q + 1), (ν.1 r).2.val ≤ r.val := by
-      exact fun r => by linarith [ coordSum_eq ν r ] ;
-    exact fun r hr => lt_of_le_of_lt ( h_second_coord_le_r r ) hr;
-  have h_filter_card : (Finset.univ.filter fun r : Fin (p + q + 1) => r.val <
-      k.val).card ≤ (Finset.univ.filter fun r : Fin (p + q + 1) => (ν.1 r).2.val < k.val).card := by
-    exact Finset.card_le_card fun x hx => by aesop;
-  refine le_trans ?_ h_filter_card;
-  rw [Finset.card_eq_of_bijective]
-  · exact fun i hi => ⟨i, by linarith [Fin.is_lt k]⟩
-  · aesop;
-  · aesop;
-  · aesop
+  change k.val ≤ (Finset.univ.filter fun r : Fin (p + q + 1) =>
+    (ν.1 r).2.val < k.val).card
+  calc
+    k.val = (Finset.univ.filter fun r : Fin (p + q + 1) =>
+        r.val < k.val).card := by
+      rw [Fin.card_filter_val_lt, min_eq_right (by have := k.isLt; omega)]
+    _ ≤ _ := Finset.card_le_card fun r hr => by
+      refine Finset.mem_filter.mpr ⟨Finset.mem_univ _, ?_⟩
+      have hlt := (Finset.mem_filter.mp hr).2
+      have hsum := coordSum_eq ν r
+      omega
 
 /-- The filter `{r | fst(r) < j}` is a downward-closed initial segment:
 `fst(ν r) < j ↔ r.val < t` where `t = insertLeftIndex`. -/
@@ -567,7 +563,7 @@ private lemma insertLeftIndex_iff {p q : ℕ} (ν : Shuffle p q) (j : Fin (p + 2
         x |>.1 : ℕ ) < j ) Finset.univ ⊆ Finset.Iio r from fun x hx => Finset.mem_Iio.mpr <|
         lt_of_not_ge fun hx' => by linarith [ Finset.mem_filter.mp hx,
                                     show ( ν.1 x |>.1 : ℕ ) ≥ ( ν.1 r |>.1 : ℕ )
-                                    by exact ν.1.monotone hx' |>.1 ] ) <| by simp +decide [] ;
+                                    by exact ν.1.monotone hx' |>.1 ] ) <| by simp +decide [];
 
 /-- Symmetric: `snd(ν r) < k ↔ r.val < insertRightIndex`. -/
 private lemma insertRightIndex_iff {p q : ℕ} (ν : Shuffle p q) (k : Fin (q + 2))
@@ -967,7 +963,7 @@ lemma insertLeftStep_face {p q : ℕ} (ν : Shuffle p q) (j : Fin (p + 2)) :
   · exact False.elim <| ‹¬_› <| Nat.lt_of_succ_lt ‹_›;
   · split_ifs <;> simp_all +decide [ Fin.ext_iff];
     · have := insertLeftIndex_ge ν j; have := insertLeftIndex_le ν j;
-          simp_all +decide [ Fin.le_iff_val_le_val ] ; omega;
+          simp_all +decide [ Fin.le_iff_val_le_val ]; omega;
     · have := insertLeftIndex_iff ν j k; simp_all +decide [ Fin.le_def ] ;
       grind
 
@@ -982,19 +978,19 @@ lemma insertRightStep_face {p q : ℕ} (ν : Shuffle p q) (k : Fin (q + 2)) :
   intro i
   generalize_proofs at *;
   unfold LeanPool.EilenbergZilber.Shuffle.insertRightStep; simp +decide only [Fin.succAbove,
-      Fin.cast_eq_self, Fin.eta, OrderHom.coe_mk] ;
+      Fin.cast_eq_self, Fin.eta, OrderHom.coe_mk];
   unfold LeanPool.EilenbergZilber.Shuffle.insertRightStepFun; split_ifs <;>
       simp_all +decide only [Order.lt_add_one_iff, Fin.val_castSucc, Fin.eta, Prod.mk.injEq,
-      Fin.ext_iff, true_and, not_lt, Fin.val_succ, add_tsub_cancel_right] ;
+      Fin.ext_iff, true_and, not_lt, Fin.val_succ, add_tsub_cancel_right];
   all_goals split_ifs <;> simp_all +decide only [Fin.val_castSucc, Fin.succAbove, ↓reduceIte,
-      not_lt, Fin.val_succ, Std.le_refl] ;
+      not_lt, Fin.val_succ, Std.le_refl];
   any_goals split_ifs <;> simp_all +decide [ Fin.castSucc, Fin.succ ] ; omega;
-  any_goals linarith [ show ( i : ℕ ) < ν.insertRightIndex k from by assumption ] ;
+  any_goals linarith [ show ( i : ℕ ) < ν.insertRightIndex k from by assumption ];
   · exact False.elim <| ‹¬Fin.castSucc i < ν.insertRightIndex k› <| Nat.lt_of_succ_lt ‹_›;
   · have := Fin.le_iff_val_le_val.mp ‹_›; simp_all +decide [] ; omega;
   · exact absurd ‹_› ( by linarith [ show ( i : ℕ ) + 1 > ( ν.insertRightIndex k : ℕ ) from
                            by linarith [ show ( i : ℕ ) ≥ ( ν.insertRightIndex k : ℕ ) from
-                               by assumption ] ] ) ;
+                               by assumption ] ] );
 
 /-- The insert-left map `(j, ν) ↦ (insertLeftStep ν j, insertLeftIndex ν j)` is
 injective: distinct `(j, ν)` pairs produce distinct `(μ, vertex)` pairs. -/
@@ -1003,21 +999,23 @@ lemma insertLeftStep_injective {p q : ℕ}
     (hμ : insertLeftStep ν₁ j₁ = insertLeftStep ν₂ j₂)
     (hr : insertLeftIndex ν₁ j₁ = insertLeftIndex ν₂ j₂) :
     j₁ = j₂ ∧ ν₁ = ν₂ := by
-  have h_eq : ν₁.insertLeftStep j₁ = ν₂.insertLeftStep j₂ → j₁ = j₂ := by
-    intro h_eq
-    have h_eq_fun : ∀ r : Fin (p + 1 + q + 1), (insertLeftStepFun ν₁ j₁ r).1 = (insertLeftStepFun ν₂
-        j₂ r).1 := by
-      intro r
-      have := congr_arg (fun f => f.1 r) h_eq
-      generalize_proofs at *; (
-      exact congr_arg Prod.fst this)
-    generalize_proofs at *; (
-    have := h_eq_fun ⟨(insertLeftIndex ν₁ j₁).val, by
-      exact Nat.lt_succ_of_le ( by linarith [ Fin.is_lt ( ν₁.insertLeftIndex j₁ ) ] ) ;⟩
-    generalize_proofs at *; (
-    unfold insertLeftStepFun at this; aesop;))
-  generalize_proofs at *; exact ⟨h_eq hμ, by
-    have := insertLeftStep_face ν₁ j₁; have := insertLeftStep_face ν₂ j₂; aesop;⟩;
+  have hj : j₁ = j₂ := by
+    have hcoordinate := congrArg (fun μ : Shuffle (p + 1) q =>
+      (μ.1 ((insertLeftIndex ν₁ j₁).cast (by omega))).1) hμ
+    simpa only [insertLeftStep, OrderHom.coe_mk, insertLeftStepFun, Fin.val_cast,
+      hr, lt_self_iff_false, ↓reduceDIte] using hcoordinate
+  subst j₂
+  refine ⟨rfl, Subtype.ext ?_⟩
+  apply OrderHom.ext
+  funext k
+  have hfirst := insertLeftStep_face ν₁ j₁ k
+  have hsecond := insertLeftStep_face ν₂ j₁ k
+  simp only [← hμ, ← hr] at hsecond
+  have hcoordinates := hfirst.symm.trans hsecond
+  apply Prod.ext
+  · exact Fin.succAbove_right_injective
+      (congrArg (fun z : Index (p + 1) × Index q => z.1) hcoordinates)
+  · exact congrArg (fun z : Index (p + 1) × Index q => z.2) hcoordinates
 
 /-- The insert-right map is injective. -/
 lemma insertRightStep_injective {p q : ℕ}
@@ -1030,7 +1028,7 @@ lemma insertRightStep_injective {p q : ℕ}
     unfold Shuffle.insertRightStep at hμ;
     simp_all +decide only [insertRightStepFun, Fin.val_fin_lt, Subtype.mk.injEq, OrderHom.mk.injEq,
         Fin.ext_iff];
-    replace hμ := congr_fun hμ ( ν₂.insertRightIndex k₂ ) ; aesop;
+    replace hμ := congr_fun hμ ( ν₂.insertRightIndex k₂ ); aesop;
   have := insertRightStep_face ν₁ k₁; have := insertRightStep_face ν₂ k₁; aesop;
 
 /-! ##### Helper lemmas for `sign_insertLeftStep`
@@ -1459,16 +1457,16 @@ lemma insertLeftStep_not_diagonal {p q : ℕ}
   generalize_proofs at *;
   unfold Shuffle.isDiagonalVertex at h_contra
   generalize_proofs at *;
-  split_ifs at h_contra ; simp_all +decide only [isLeftStep, Fin.val_cast, Fin.castSucc_mk,
+  split_ifs at h_contra; simp_all +decide only [isLeftStep, Fin.val_cast, Fin.castSucc_mk,
       Fin.succ_mk, Fin.val_fin_lt, not_lt];
   cases h : ( ν.insertLeftIndex j : ℕ ) <;> simp_all +decide only [zero_tsub, Fin.zero_eta,
       zero_add, Fin.val_eq_zero_iff, add_tsub_cancel_right];
   · grind;
-  · unfold Shuffle.insertLeftStep at * ; simp_all +decide only [OrderHom.coe_mk] ;
-    unfold Shuffle.insertLeftStepFun at * ; simp_all +decide only [lt_add_iff_pos_right,
+  · unfold Shuffle.insertLeftStep at *; simp_all +decide only [OrderHom.coe_mk];
+    unfold Shuffle.insertLeftStepFun at *; simp_all +decide only [lt_add_iff_pos_right,
         ↓reduceDIte, lt_self_iff_false, Fin.succAbove_lt_iff, Fin.castSucc,
         Order.lt_add_one_iff, Order.add_one_le_iff, add_lt_iff_neg_left, Nat.add_eq_left,
-        add_tsub_cancel_right, Fin.succAbove_le_iff] ;
+        add_tsub_cancel_right, Fin.succAbove_le_iff];
     cases h_contra <;> try simp_all +decide only [Fin.succAbove]
     · -- Both neighbours lie before `j`, but the right one sits at `insertLeftIndex ν j` itself.
       rename_i n hlt
@@ -1481,12 +1479,12 @@ lemma insertLeftStep_not_diagonal {p q : ℕ}
     · split_ifs at * <;> simp_all +decide only [Fin.lt_def, Fin.val_castSucc, Fin.le_iff_val_le_val,
           not_lt, Fin.val_succ, Order.lt_add_one_iff, and_true]
       · omega
-      · linarith! [ Fin.is_lt j ] ;
+      · linarith! [ Fin.is_lt j ];
       · linarith! [ ν.1.monotone ( show ⟨ ‹_›, by linarith ⟩ ≤ ⟨ ‹_› + 1,
-            by linarith ⟩ from Nat.le_succ _ ) ] ;
+            by linarith ⟩ from Nat.le_succ _ ) ];
       · have := insertLeftIndex_iff ν j ⟨ ‹_›,
-            by omega ⟩ ; simp_all +decide only [lt_add_iff_pos_right, iff_true] ;
-        linarith! [ Fin.is_lt j ] ;
+            by omega ⟩; simp_all +decide only [lt_add_iff_pos_right, iff_true];
+        linarith! [ Fin.is_lt j ];
 
 /-- Right insertion always produces a non-diagonal vertex: the two steps
 adjacent to the inserted vertex are both right steps (RR pattern). -/
@@ -1495,28 +1493,28 @@ lemma insertRightStep_not_diagonal {p q : ℕ}
     ¬isDiagonalVertex (insertRightStep ν k)
       ((insertRightIndex ν k).cast (by omega)) := by
   unfold Shuffle.isDiagonalVertex; simp +decide only [Fin.cast_eq_self, Fin.val_pos_iff,
-      insertRightStep, dite_false_right, not_exists, not_or, not_and, Decidable.not_not] ;
+      insertRightStep, dite_false_right, not_exists, not_or, not_and, Decidable.not_not];
   unfold Shuffle.isLeftStep; intros; simp_all +decide only [insertRightStepFun, Fin.val_fin_lt,
       Fin.castSucc_mk, OrderHom.coe_mk, Fin.succ_mk, add_tsub_cancel_right, Fin.eta,
-      lt_self_iff_false, ↓reduceDIte, Nat.add_eq_left, not_lt] ;
+      lt_self_iff_false, ↓reduceDIte, Nat.add_eq_left, not_lt];
   split_ifs at * <;> simp_all +decide only [not_lt, Fin.eta, lt_self_iff_false, not_false_eq_true,
       IsEmpty.forall_iff, Std.le_refl, forall_const, true_and, not_true_eq_false, Nat.add_eq_left];
   all_goals erw [ Fin.lt_def ] at *; simp_all +decide only [Fin.coe_ofNat_eq_mod,
       lt_add_iff_pos_left, Order.lt_add_one_iff, zero_le, Nat.mod_eq_of_lt, Fin.val_pos_iff,
       tsub_lt_self_iff, and_self, add_lt_iff_neg_left, Fin.val_fin_lt, Nat.add_eq_left,
-      implies_true, true_and] ;
+      implies_true, true_and];
   any_goals omega;
   · constructor <;> intro h <;> have := ν.1.monotone ( show ⟨ ( ν.insertRightIndex k : ℕ ) - 1,
         by omega ⟩ ≤ ⟨ ( ν.insertRightIndex k : ℕ ), by omega ⟩ from Nat.sub_le _ _
         ) <;> simp_all +decide [ Fin.le_iff_val_le_val ] ;
     · have := insertRightIndex_iff ν k ⟨ ( ν.insertRightIndex k : ℕ ) - 1,
-          by omega ⟩ ; simp_all +decide [] ;
+          by omega ⟩; simp_all +decide [];
       have := coordSum_eq ν ⟨ ( ν.insertRightIndex k : ℕ ) - 1,
-          by omega ⟩ ; have := coordSum_eq ν ⟨ ( ν.insertRightIndex k : ℕ ),
-          by omega ⟩ ; simp_all +decide [] ; omega;
-    · have := coordSum_eq ν ⟨ ( ν.insertRightIndex k : ℕ ), by omega ⟩ ; simp_all +decide [] ;
+          by omega ⟩; have := coordSum_eq ν ⟨ ( ν.insertRightIndex k : ℕ ),
+          by omega ⟩; simp_all +decide []; omega;
+    · have := coordSum_eq ν ⟨ ( ν.insertRightIndex k : ℕ ), by omega ⟩; simp_all +decide [];
       have := ( insertRightIndex_iff ν k ⟨ ( ν.insertRightIndex k : ℕ ),
-          by omega ⟩ ) ; simp_all +decide [] ;
+          by omega ⟩ ); simp_all +decide [];
       omega;
   · exact absurd ‹_› ( not_le_of_gt ( Nat.pred_lt ( ne_bot_of_gt ‹_› ) ) )
 
@@ -1595,7 +1593,7 @@ lemma finRemove_strictMono_on {n : ℕ} (p : Fin (n + 2)) :
           have h_val : i.val < j.val - 1 := by
             grind
           generalize_proofs at *;
-          split_ifs ; aesop
+          split_ifs; aesop
       · split_ifs <;> simp_all +decide only [Fin.ext_iff, not_lt, Fin.mk_lt_mk]
         · omega
         · generalize_proofs at *
@@ -1621,7 +1619,7 @@ lemma ne_fst_of_isLeftVertex {p q : ℕ} {μ : Shuffle (p + 1) q} {r : Index ((p
         have h_left_vertex : (μ.1 r).1.val < (μ.1 (Fin.mk (r.val + 1) (by
         linarith [ Fin.is_lt r, Fin.is_lt k ]))).1.val := by
           all_goals generalize_proofs at *;
-          have := h.2 ⟨ r.val, by linarith ⟩ ; aesop;
+          have := h.2 ⟨ r.val, by linarith ⟩; aesop;
         generalize_proofs at *;
         exact ne_of_gt ( lt_of_lt_of_le h_left_vertex ( μ.1.monotone ( Nat.succ_le_of_lt h_k_gt_r )
             |> And.left ) )
@@ -1684,7 +1682,7 @@ lemma removeLeft_is_shuffle {p q : ℕ} {μ : Shuffle (p + 1) q} {r : Fin (p + q
         · have := μ.2;
           intro H; have := @this ( Fin.succAbove ( Fin.cast ( by omega ) r ) ( Fin.cast (
               by omega ) i ) ) ( Fin.succAbove ( Fin.cast ( by omega ) r ) ( Fin.cast (
-              by omega ) j ) ) ; simp_all +decide only [Fin.succAbove_inj, Fin.cast_inj] ;
+              by omega ) j ) ); simp_all +decide only [Fin.succAbove_inj, Fin.cast_inj];
           exact absurd ( this H ) hij.ne;
       -- Since `v₁.1 ≠ (μ.1 r).1` and `v₂.1 ≠ (μ.1 r).1` by `ne_fst_of_isLeftVertex`, we can apply
       -- `finRemove_strictMono_on`.
@@ -1742,7 +1740,7 @@ lemma removeRight_is_shuffle {p q : ℕ} {μ : Shuffle p (q + 1)} {r : Fin (p + 
           aesop;
         have := μ.2; simp_all +decide [ Function.Injective ] ;
         specialize this ( show μ.1 ( r.succAbove k ) = μ.1 ( r.succAbove l ) from Prod.ext h_eq.1
-            h_eq.2 ) ; simp_all +decide [] ;
+            h_eq.2 ); simp_all +decide [];
 
 /-- The shuffle obtained by removing a left step. -/
 def removeLeft {p q : ℕ} (μ : Shuffle (p + 1) q) (r : Fin (p + q + 2))
@@ -1806,9 +1804,9 @@ lemma insertIndex_removeLeft {p q : ℕ} {μ : Shuffle (p + 1) q} {r : Fin (p + 
           rw [ finRemove_val_lt_iff ];
           intro H; have := ne_fst_of_isLeftVertex h; simp_all +decide only [Fin.val_fin_lt,
               Subtype.forall, Finset.mem_filter, Finset.mem_univ, true_and, Fin.ext_iff, ne_eq,
-              Fin.val_cast] ;
+              Fin.val_cast];
           specialize this ( Fin.succAbove ( Fin.cast ( by omega ) r ) ( Fin.cast (
-              by omega ) a ) ) ; simp_all +decide only [Fin.succAbove, not_true_eq_false, imp_false,
+              by omega ) a ) ); simp_all +decide only [Fin.succAbove, not_true_eq_false, imp_false,
               Decidable.not_not];
           split_ifs at this <;> simp_all +decide only [↓reduceIte, Fin.val_castSucc, Fin.val_cast,
               not_lt, Fin.val_succ];
@@ -1935,9 +1933,9 @@ lemma isRightVertex_swap {p q : ℕ} {μ : Shuffle p q} {r : Fin (p + q + 1)} :
         · convert h.1 ⟨ k, by linarith [ Fin.is_lt k ] ⟩ _ using 1;
           · simp +decide only [Fin.succ, Fin.cast, Fin.mk.injEq, OrderHom.coe_mk, Fin.val_castSucc,
                 Prod.fst_swap, Fin.val_fin_lt, Fin.castSucc_mk, not_lt] at hk ⊢;
-            have := coordSum_eq μ ⟨ k, by linarith [ Fin.is_lt k ] ⟩ ; have := coordSum_eq μ ⟨ k +
-                1, by linarith [ Fin.is_lt k ] ⟩ ; simp_all +decide only [Fin.val_fin_lt, not_lt,
-                Fin.eta] ;
+            have := coordSum_eq μ ⟨ k, by linarith [ Fin.is_lt k ] ⟩; have := coordSum_eq μ ⟨ k +
+                1, by linarith [ Fin.is_lt k ] ⟩; simp_all +decide only [Fin.val_fin_lt, not_lt,
+                Fin.eta];
             constructor <;> intro <;> omega;
           · exact Fin.ext ( by simpa [ Fin.ext_iff ] using congr_arg Fin.val hk );
         · -- castSucc case: ¬isLeftStep at k ⇒ snd increases ⇒ isLeftStep for swap
@@ -1955,10 +1953,10 @@ lemma isRightVertex_swap {p q : ℕ} {μ : Shuffle p q} {r : Fin (p + q + 1)} :
             Fin.val_fin_lt, Fin.val_castSucc, not_lt];
         · contrapose! h;
           intro h; specialize h ⟨ k, by linarith [ Fin.is_lt k ] ⟩ hk; simp_all +decide [ Fin.cast,
-              Fin.castSucc ] ;
-          have := coordSum_eq μ ( Fin.castAdd 1 k ) ; have := coordSum_eq μ k.succ ;
-              simp_all +decide [ Fin.castAdd, Fin.succ ] ;
-          grind;
+              Fin.castSucc ];
+          have := coordSum_eq μ ( Fin.castAdd 1 k ); have := coordSum_eq μ k.succ;
+              simp_all +decide [ Fin.castAdd, Fin.succ ];
+          grind only [];
         · contrapose! h;
           intro h';
           use ⟨ r.val, by
@@ -1969,7 +1967,7 @@ lemma isRightVertex_swap {p q : ℕ} {μ : Shuffle p q} {r : Fin (p + q + 1)} :
           simp_all +decide only [Fin.castAdd, Fin.succ];
           convert le_of_not_gt fun h'' => _;
           have := coordSum_eq μ r; have := coordSum_eq μ ⟨ r.val + 1,
-              by linarith ⟩ ; simp_all +decide [ Fin.castLE ] ;
+              by linarith ⟩; simp_all +decide [ Fin.castLE ];
           linarith [ show ( μ.1 r |>.1 : ℕ ) < ( μ.1 ⟨ r.val + 1, by linarith ⟩ |>.1 : ℕ ) from h,
               show ( μ.1 r |>.2 : ℕ ) < ( μ.1 ⟨ r.val + 1, by linarith ⟩ |>.2 : ℕ ) from h'' ]
 
@@ -1986,16 +1984,16 @@ lemma removeRight_eq_swap_removeLeft {p q : ℕ} (μ : Shuffle p (q + 1)) (r : F
       · simp +decide only [Fin.cast_eq_self, OrderHom.coe_mk, Fin.cast_cast]
         unfold LeanPool.EilenbergZilber.Shuffle.swap; simp +decide only [Fin.castOrderIso_apply,
             OrderHom.coe_mk, Fin.cast_cast, Fin.cast_eq_self, Prod.fst_swap, Prod.snd_swap,
-            Prod.swap_prod_mk, Fin.cast_mk] ;
+            Prod.swap_prod_mk, Fin.cast_mk];
         congr! 2
         generalize_proofs at *; simp +arith +decide only [Fin.succAbove, Fin.castSucc_mk,
-            Fin.succ_mk] ; (
+            Fin.succ_mk]; (
         congr! 2
         generalize_proofs at *; simp +arith +decide only [Fin.cast, Fin.mk_lt_mk] ; (
         split_ifs <;> simp +decide [ *, Fin.lt_def ] at * ;));
       · unfold LeanPool.EilenbergZilber.Shuffle.swap; simp +decide only [Fin.cast_eq_self,
             OrderHom.coe_mk, Fin.castOrderIso_apply, Fin.cast_cast, Prod.fst_swap, Prod.snd_swap,
-            Prod.swap_prod_mk, Fin.cast_mk] ;
+            Prod.swap_prod_mk, Fin.cast_mk];
         congr! 2;
         congr! 2; simp +decide [ Fin.succAbove ] ; ring_nf;
         split_ifs <;> simp +decide only [Fin.cast, Fin.mk.injEq, Nat.right_eq_add,
@@ -2083,7 +2081,7 @@ lemma insertLeftStep_isLeftType {p q : ℕ}
   cases min_cases ( ν.insertLeftIndex j : ℕ ) ( p + 1 + ( q ) - 1
       ) <;> simp_all +decide only [Nat.succ_add_sub_one, inf_eq_left, and_self, isLeftStep,
       inf_of_le_left, Fin.castSucc_mk, Fin.succ_mk, Fin.val_fin_lt, inf_eq_right, inf_of_le_right];
-  · have := insertLeftStep_isLeftStep_at ν j ( by omega ) ; aesop;
+  · have := insertLeftStep_isLeftStep_at ν j ( by omega ); aesop;
   · -- Since the first component of the last element is (insertLeftIndex ν j).val, which is j.val +
     -- (q ), and the second component is 0, the pair (j, 0) is indeed the last element.
     have h_last : (insertLeftIndex ν j).val = j.val + (q) := by
@@ -2116,18 +2114,18 @@ lemma insertRightStep_not_isLeftType {p q : ℕ}
   any_goals omega;
   · have := ν.1.monotone ( show ⟨ Min.min ( ν.insertRightIndex k : ℕ ) ( p + q ),
         by omega ⟩ ≤ ⟨ p + q, by omega ⟩ from Nat.min_le_right _ _
-        ) ; simp_all +decide only [lt_self_iff_false, not_false_eq_true] ;
+        ); simp_all +decide only [lt_self_iff_false, not_false_eq_true];
     have h_last : ν.1 ⟨p + q, by omega⟩ = (Fin.last (p), Fin.last q) := by
       exact Shuffle.apply_last ν
     generalize_proofs at *; simp_all +decide only [Nat.add_succ_sub_one, min_lt_iff,
-        add_lt_add_iff_left, lt_add_iff_pos_right, or_true] ;
+        add_lt_add_iff_left, lt_add_iff_pos_right, or_true];
     simp_all +decide only [min_eq_right (by linarith : p + q ≤ (ν.insertRightIndex k : ℕ)),
         Std.le_refl];
     exact h_left_step.not_ge ( Nat.le_of_lt_succ <| by simp +arith +decide [ *] );
   · cases min_cases ( ν.insertRightIndex k : ℕ ) ( p + q ) <;> simp_all +decide [ Fin.lt_def ];
     have := insertRightIndex_iff ν k ⟨ ( ν.insertRightIndex k : ℕ ),
-        by omega ⟩ ; simp_all +decide [] ;
-    have := coordSum_eq ν ⟨ ( ν.insertRightIndex k : ℕ ), by omega ⟩ ; simp_all +decide [] ; omega;
+        by omega ⟩; simp_all +decide [];
+    have := coordSum_eq ν ⟨ ( ν.insertRightIndex k : ℕ ), by omega ⟩; simp_all +decide []; omega;
 
 
 /-- Extract the two facts from `isDiagonalVertex`: `0 < r` and `r < (p+1)+(q+1)`. -/
@@ -2297,7 +2295,7 @@ private lemma swapDiagonalStepsFun_local_bounds {p q : ℕ}
             Nat.succ_eq_add_one, Fin.is_lt] ) ) ) ⟩,
             ⟨(μ.1 ⟨r.val - 1, by
           omega⟩).2.val, by
-          grind⟩) := by
+          grind only []⟩) := by
           all_goals generalize_proofs at *;
           have h_step : μ.1 (Fin.succ ⟨r.val - 1, by
             omega⟩) = (⟨(μ.1 ⟨r.val - 1, by
@@ -2361,7 +2359,7 @@ private lemma swapDiagonalStepsFun_local_bounds {p q : ℕ}
           · linarith! [ shuffle_step μ ⟨ r, by linarith ⟩ ]
         generalize_proofs at *;
         have h_left_step : (μ.1 ⟨r.val + 1, by
-          grind⟩).1.val = (μ.1 r).1.val + 1 := by
+          grind only []⟩).1.val = (μ.1 r).1.val + 1 := by
           have := shuffle_step μ ⟨ r.val, by
             linarith [ Fin.is_lt r ] ⟩
           generalize_proofs at *;
@@ -2370,8 +2368,8 @@ private lemma swapDiagonalStepsFun_local_bounds {p q : ℕ}
         -- By definition of `swapDiagonalStepsFun`, we need to consider the two cases for the
         -- diagonal vertex. Since `hL` is false, we have `¬isLeftStep μ ⟨r.val - 1, _⟩`.
         have h_swap : swapDiagonalStepsFun μ r hr r = (⟨(μ.1 r).1.val + 1, by
-          grind⟩, ⟨(μ.1 r).2.val - 1, by
-          grind⟩) := by
+          grind only []⟩, ⟨(μ.1 r).2.val - 1, by
+          grind only []⟩) := by
           -- By definition of swapDiagonalStepsFun, when i = r and hL is false, we have:
           simp [swapDiagonalStepsFun, hL]
         generalize_proofs at *;
@@ -2483,7 +2481,7 @@ lemma swapDiagonalSteps_apply_r_of_right {p q : ℕ} (μ : Shuffle (p) (q))
       (⟨(μ.1 r).1.val + 1, by
         -- By definition of `isDiagonalVertex`, we know that `isLeftStep μ ⟨r.val, h₂⟩` is false.
         unfold isDiagonalVertex at hr; simp_all +decide [];
-        split_ifs at hr ; simp_all +decide [ isLeftStep ];
+        split_ifs at hr; simp_all +decide [ isLeftStep ];
         grind⟩, ⟨(μ.1 r).2.val - 1, by
         exact Nat.lt_succ_of_le ( Nat.sub_le_of_le_add <| by linarith [ Fin.is_lt ( μ.1 r |>.2 ) ]
                                                               )⟩) := by
@@ -2530,9 +2528,9 @@ lemma swapDiagonalSteps_flip_prev {p q : ℕ} (μ : Shuffle (p) (q))
               rotate_left;
               · exact ( μ.1 ⟨ r + 1, by linarith ⟩ |>.1 : ℕ ) - 1
               (generalize_proofs at *; (simp_all +decide only [add_tsub_cancel_right, Fin.le_def,
-                  tsub_le_iff_right, Std.le_refl, iff_true] ) ;);
+                  tsub_le_iff_right, Std.le_refl, iff_true] ););
               rw [ swapDiagonalSteps_apply_ne ] <;> norm_num [ h ];
-              have := shuffle_step μ ⟨ r, by linarith ⟩ ; aesop;
+              have := shuffle_step μ ⟨ r, by linarith ⟩; aesop;
             · exact hL
           · exact hL;
       · rcases r with ⟨ _ | r, hr ⟩ <;> simp_all +decide only [zero_tsub, Fin.zero_eta, zero_add,
@@ -2588,17 +2586,17 @@ lemma swapDiagonalSteps_flip_curr {p q : ℕ} (μ : Shuffle (p) (q))
       all_goals generalize_proofs at *;
       · have h_step : (μ.1 (Fin.succ ⟨r.val, by
           assumption⟩)).1.val = (μ.1 ⟨r.val, by
-          grind⟩).1.val := by
+          grind only []⟩).1.val := by
           have := shuffle_step μ ⟨r.val, by
             assumption⟩
           generalize_proofs at *;
           unfold isDiagonalVertex at hr; simp_all +decide [] ;
           unfold Shuffle.isLeftStep at hr; simp_all +decide [] ;
-          grind
+          grind only []
         generalize_proofs at *;
         have := swapDiagonalSteps_apply_r_of_left μ r hr h; simp_all +decide only [Fin.succ,
             Fin.eta, Fin.castSucc, Fin.castAdd_mk, lt_self_iff_false, not_false_eq_true, iff_true,
-            gt_iff_lt] ;
+            gt_iff_lt];
         convert Nat.sub_lt ( diagonal_left_fst_pos hr h ) zero_lt_one using 1
         generalize_proofs at *;
         convert h_step using 1
@@ -2613,23 +2611,23 @@ lemma swapDiagonalSteps_flip_curr {p q : ℕ} (μ : Shuffle (p) (q))
             ( ⟨ ( μ.1 r ).1.val + 1, by
               unfold LeanPool.EilenbergZilber.Shuffle.isDiagonalVertex at hr; simp_all +decide [] ;
               have := μ.1 r |>.1.isLt; have := μ.1 r |>.2.isLt;
-                  simp_all +arith +decide [ LeanPool.EilenbergZilber.Shuffle.isLeftStep ] ;
-              grind ⟩, ⟨ ( μ.1 r ).2.val - 1, by
+                  simp_all +arith +decide [ LeanPool.EilenbergZilber.Shuffle.isLeftStep ];
+              grind only [] ⟩, ⟨ ( μ.1 r ).2.val - 1, by
               exact Nat.lt_succ_of_le ( Nat.sub_le_of_le_add <| by linarith [ Fin.is_lt ( μ.1 r |>.2
                                                                     ) ] ) ⟩ ) from ?_ ]
         all_goals generalize_proofs at *;
         · rw [ show ( μ.swapDiagonalSteps r hr : LeanPool.EilenbergZilber.Index ( p + ( q ) ) →o
               LeanPool.EilenbergZilber.Index ( p ) × LeanPool.EilenbergZilber.Index ( q ) ) ⟨ r.val
               + 1, by linarith ⟩ = μ.1 ⟨ r.val + 1, by linarith ⟩ from ?_ ];
-          · rw [ Fin.lt_def, Fin.le_iff_val_le_val ] ; simp +arith +decide only [Fin.val_fin_le];
+          · rw [ Fin.lt_def, Fin.le_iff_val_le_val ]; simp +arith +decide only [Fin.val_fin_le];
             constructor <;> intro <;> simp_all +decide only [Order.lt_add_one_iff,
                 Order.add_one_le_iff, tsub_le_iff_right, Fin.is_le', Nat.succ_le_iff];
             · unfold isDiagonalVertex at hr; simp_all +decide [] ;
               exact le_of_not_gt fun h => h.not_ge <| by have := shuffle_step μ ⟨ r,
-                                                          by linarith ⟩ ; unfold isLeftStep at hr;
+                                                          by linarith ⟩; unfold isLeftStep at hr;
                                                           aesop;
             · unfold isDiagonalVertex at hr; simp_all +decide only [Fin.val_pos_iff, ↓reduceDIte,
-                  false_and, not_false_eq_true, true_and, false_or, dite_eq_ite, ite_false_right] ;
+                  false_and, not_false_eq_true, true_and, false_or, dite_eq_ite, ite_false_right];
               exact absurd ‹_› ( not_le_of_gt hr.2 );
           · exact swapDiagonalSteps_apply_ne _ _ _ _ ( ne_of_gt ( Nat.lt_succ_self _ ) );
         · exact swapDiagonalSteps_apply_r_of_right μ r hr h
@@ -2641,9 +2639,9 @@ lemma swapDiagonalSteps_vertex {p q : ℕ}
     (hr : isDiagonalVertex μ r) :
     isDiagonalVertex (swapDiagonalSteps μ r hr) r := by
   unfold isDiagonalVertex at *; simp_all +decide only [Fin.val_pos_iff, isLeftStep, Fin.castSucc_mk,
-      Fin.succ_mk, Fin.val_fin_lt, Fin.eta, not_lt, dite_false_right] ;
-  split_ifs at hr ; simp_all +decide only [isLeftStep, Fin.castSucc_mk, Fin.succ_mk, Fin.val_fin_lt,
-      Fin.eta, not_lt, exists_true_left] ;
+      Fin.succ_mk, Fin.val_fin_lt, Fin.eta, not_lt, dite_false_right];
+  split_ifs at hr; simp_all +decide only [isLeftStep, Fin.castSucc_mk, Fin.succ_mk, Fin.val_fin_lt,
+      Fin.eta, not_lt, exists_true_left];
   -- Apply the lemmas swapDiagonalSteps_flip_prev and swapDiagonalSteps_flip_curr to show that the
   -- step types are different.
   have h_diff : ¬isLeftStep (swapDiagonalSteps μ r ‹_›) ⟨r.val - 1,
@@ -2654,7 +2652,7 @@ lemma swapDiagonalSteps_vertex {p q : ℕ}
                            omega⟩ ∧ ¬isLeftStep (swapDiagonalSteps μ r ‹_›) ⟨r.val,
                            by have := (isDiagonalVertex_bounds ‹_›).2; omega⟩ := by
     have := swapDiagonalSteps_flip_prev μ r ‹_›; have := swapDiagonalSteps_flip_curr μ r ‹_›;
-        simp_all +decide [ isLeftStep ] ;
+        simp_all +decide [ isLeftStep ];
   generalize_proofs at *; (
   cases h_diff <;> simp_all +decide [ isLeftStep ])
 
@@ -2669,8 +2667,7 @@ lemma swapDiagonalSteps_apply_ne_r {p q : ℕ}
     (μ : Shuffle (p) (q)) (r : Index (p + (q)))
     (hr : isDiagonalVertex μ r) (i : Index (p + (q))) (h : i ≠ r) :
     (swapDiagonalSteps μ r hr).1 i = μ.1 i := by
-      unfold LeanPool.EilenbergZilber.Shuffle.swapDiagonalSteps;
-      unfold LeanPool.EilenbergZilber.Shuffle.swapDiagonalStepsFun; aesop;
+  exact ite_eq_right h
 
 /-
 The value of the swapped shuffle at the diagonal vertex `r` is given
@@ -2695,9 +2692,9 @@ lemma swapDiagonalSteps_val_r {p q : ℕ}
                                                            omega⟩ := by
                 convert h using 1
                 generalize_proofs at *; (
-                exact Fin.ext ( by aesop ) ;)
+                exact Fin.ext ( by aesop );)
               generalize_proofs at *; (
-              split_ifs at this ; tauto;)
+              split_ifs at this; tauto;)
             (generalize_proofs at *; (
             exact h_snd_lt))
           generalize_proofs at *; (
@@ -2713,7 +2710,7 @@ lemma swapDiagonalSteps_val_r {p q : ℕ}
           · contrapose! h;
             unfold isDiagonalVertex at hr; simp_all +decide only [Fin.val_pos_iff, isLeftStep,
                 Fin.castSucc_mk, Fin.succ_mk, Fin.val_fin_lt, Fin.eta, not_lt, dite_false_right,
-                add_le_add_iff_right] ;
+                add_le_add_iff_right];
             rw [ show rm1.castSucc = ⟨ r.val - 1, by omega ⟩ from ?_, show rm1.succ = r from ?_ ];
             · grind;
             · exact Fin.ext ( by simp +decide [ h_rm1, Nat.sub_add_cancel ( show 1 ≤ ( r : ℕ ) from
@@ -2757,18 +2754,18 @@ lemma swapDiagonalSteps_isLeftStep_toggle {p q : ℕ}
                                                 by linarith ⟩ |>.1 : ℕ ) ≤ ( μ.1 ⟨ r,
                                                 by linarith ⟩ |>.1 : ℕ ) + 1 from by
                                                             have := shuffle_step μ ⟨ r,
-                                                                by linarith ⟩ ; aesop; ] ;
+                                                                by linarith ⟩; aesop; ];
           · exact ne_of_lt ( Nat.pred_lt ( ne_bot_of_gt ( isDiagonalVertex_bounds hr |>.1 ) ) );
-        · cases r ; aesop
+        · cases r; aesop
       · rw [ swapDiagonalSteps_apply_ne_r μ r hr ⟨ r.val - 1, by omega ⟩ ( by
           rcases r with ⟨ _ | r, hr ⟩ <;> norm_num at *;
-          unfold Shuffle.isDiagonalVertex at hr ; aesop ( simp_config := { decide := true } ) ; ) ]
+          unfold Shuffle.isDiagonalVertex at hr; aesop ( simp_config := { decide := true } ); ) ]
         generalize_proofs at *;
         rcases r with ⟨ _ | r, hr ⟩ <;> simp_all +decide only [zero_tsub, Fin.zero_eta,
             Order.lt_add_one_iff, Order.add_one_le_iff, zero_add, not_false_eq_true, forall_const,
             add_tsub_cancel_right, implies_true];
         · exact absurd (isDiagonalVertex_bounds hr).1 (lt_irrefl _)
-        · unfold Shuffle.isLeftStep at * ; simp_all +decide only [Fin.castSucc_mk, Fin.succ_mk,
+        · unfold Shuffle.isLeftStep at *; simp_all +decide only [Fin.castSucc_mk, Fin.succ_mk,
               Fin.val_fin_lt, not_lt, isEmpty_Prop, IsEmpty.forall_iff, iff_true, gt_iff_lt];
           exact Nat.lt_succ_of_le ( by exact le_trans ( by aesop ) ( μ.1.monotone ( Nat.le_succ _ )
                                         |>.1 ) )
@@ -2787,7 +2784,7 @@ lemma swapDiagonalSteps_involutive {p q : ℕ}
     have h_swap : ∀ i : Index ((p) + (q)), (swapDiagonalSteps (swapDiagonalSteps μ r hr) r
         (swapDiagonalSteps_vertex μ r hr)).1 i = μ.1 i := by
       intro i; by_cases hi : i = r <;> simp +decide only [hi, ne_eq, not_false_eq_true,
-          swapDiagonalSteps_apply_ne_r] ;
+          swapDiagonalSteps_apply_ne_r];
       let rm1 : Fin ((p) + (q)) := ⟨r.val - 1, by
         have := isDiagonalVertex_bounds hr
         omega⟩
@@ -2811,7 +2808,7 @@ lemma swapDiagonalSteps_involutive {p q : ℕ}
         exact Prod.ext rfl (Fin.ext <| Nat.sub_add_cancel <| Nat.pos_of_ne_zero <| by
           have := diagonal_right_snd_pos hr (by simpa [rm1] using hL)
           aesop)
-    aesop;
+    exact OrderHom.ext _ _ (funext h_swap)
   · rfl
 
 
