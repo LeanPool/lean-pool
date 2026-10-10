@@ -127,8 +127,9 @@ theorem IsProbability.compl {B : Type u} [BooleanAlgebra B] {μ : B → ℝ}
   rw [sup_compl_eq_top, hμ.top] at h
   linarith
 
-theorem IsProbability.mono_of_nonnegative {B : Type u} [BooleanAlgebra B]
-    {μ : B → ℝ} (hμ : IsProbability μ) (hn : IsNonnegative μ)
+/-- A nonnegative signed charge is monotone on events. -/
+theorem IsSignedCharge.mono_of_nonnegative {B : Type u} [BooleanAlgebra B]
+    {μ : B → ℝ} (hμ : IsSignedCharge μ) (hn : IsNonnegative μ)
     ⦃x y : B⦄ (hxy : x ≤ y) : μ x ≤ μ y := by
   classical
   have hd : Disjoint x (y \ x) := by
@@ -144,17 +145,11 @@ theorem IsProbability.mono_of_nonnegative {B : Type u} [BooleanAlgebra B]
 theorem IsProbability.mono {B : Type u} [BooleanAlgebra B]
     {μ : B → ℝ} (hμ : IsProbability μ) ⦃x y : B⦄ (hxy : x ≤ y) :
     μ x ≤ μ y :=
-  hμ.mono_of_nonnegative hμ.nonnegative hxy
-
-theorem IsProbability.le_one_of_nonnegative {B : Type u} [BooleanAlgebra B]
-    {μ : B → ℝ} (hμ : IsProbability μ) (hn : IsNonnegative μ) (x : B) :
-    μ x ≤ 1 := by
-  classical
-  simpa [hμ.top] using hμ.mono_of_nonnegative hn (show x ≤ (⊤ : B) from le_top)
+  hμ.isSignedCharge.mono_of_nonnegative hμ.nonnegative hxy
 
 theorem IsProbability.le_one {B : Type u} [BooleanAlgebra B]
     {μ : B → ℝ} (hμ : IsProbability μ) (x : B) : μ x ≤ 1 :=
-  hμ.le_one_of_nonnegative hμ.nonnegative x
+  by simpa [hμ.top] using hμ.mono (show x ≤ (⊤ : B) from le_top)
 
 theorem RealizableProbability.nonnegative {B : Type u} [BooleanAlgebra B]
     {R : B → B → Prop} (hR : RealizableProbability R) :

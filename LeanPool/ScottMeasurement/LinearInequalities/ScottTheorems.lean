@@ -22,10 +22,10 @@ open Set
 
 namespace Scott1964.MeasurementStructures.LinearInequalities
 
-variable {L : Type*} [NormedAddCommGroup L] [NormedSpace ℝ L]
-  [FiniteDimensional ℝ L]
+section Algebraic
 
-omit [FiniteDimensional ℝ L] in
+variable {L : Type*} [AddCommGroup L] [Module ℝ L]
+
 /-- The sequence formulation may be used with any nonempty finite index type. -/
 theorem WeightedSequenceCancellation.fintype {X N : Set L}
     (h : WeightedSequenceCancellation X N) {I : Type*} [Fintype I] [Nonempty I]
@@ -47,7 +47,6 @@ theorem WeightedSequenceCancellation.fintype {X N : Set L}
   intro i
   simpa using he (e.symm i)
 
-omit [FiniteDimensional ℝ L] in
 /-- Scott's positive-weight sequence condition is
 equivalent to the geometric cancellation condition. -/
 theorem weightedCancellation_of_sequence {X N : Set L}
@@ -146,6 +145,79 @@ theorem weightedCancellation_of_sequence {X N : Set L}
   have hnot := (ha i).2.2
   exact hnot (by
     simpa [v] using hall (Sum.inl (show I₁ from ⟨i, hi⟩)))
+
+/-- A realizing functional supplies Scott's strictly monotonic extension to
+the additive closure. This is the forward half of Theorem 1.4. -/
+theorem scott_theorem_1_4_forward {Y : Set L} {R : L → L → Prop}
+    (hreal : RelationRealizable Y R) :
+    ∃ Rplus : L → L → Prop,
+      ExtendsOn Y (additiveClosure Y) R Rplus ∧
+        StrictlyMonotonic (additiveClosure Y) Rplus := by
+  obtain ⟨φ, hφ⟩ := hreal
+  let Rplus : L → L → Prop := fun x y ↦ φ y ≤ φ x
+  refine ⟨Rplus, ⟨AddSubmonoid.subset_closure, ?_⟩, ?_⟩
+  · intro x hx y hy
+    exact (hφ x hx y hy).symm
+  · refine ⟨?_, ?_, ?_⟩
+    · intro x hx y hy
+      exact le_total (φ y) (φ x)
+    · intro x₀ y₀ x₁ y₁ hx₀ hy₀ hx₁ hy₁ h₀ h₁
+      dsimp [Rplus] at h₀ h₁ ⊢
+      simp only [map_add]
+      linarith
+    · intro x₀ y₀ x₁ y₁ hx₀ hy₀ hx₁ hy₁ heq h₁
+      dsimp [Rplus] at h₁ ⊢
+      have hsum : φ x₀ + φ x₁ = φ y₀ + φ y₁ := by
+        simpa only [map_add] using congrArg φ heq
+      linarith
+
+end Algebraic
+
+section Additive
+
+variable {L : Type*} [AddCommGroup L]
+
+/-- A strictly monotonic extension implies Scott's literal condition (6). -/
+theorem StrictlyMonotonic.relationSequenceCancellation
+    {Y : Set L} {R Rplus : L → L → Prop}
+    (hext : ExtendsOn Y (additiveClosure Y) R Rplus)
+    (hmono : StrictlyMonotonic (additiveClosure Y) Rplus) :
+    RelationSequenceCancellation Y R := by
+  intro n x y hx hy hR hsum
+  have hsumRel :
+      ∀ s : Finset (Fin (n + 1)),
+        Rplus (∑ i ∈ s, x i) (∑ i ∈ s, y i) := by
+    intro s
+    classical
+    induction s using Finset.induction_on with
+    | empty =>
+        simpa using (hmono.complete
+          (show (0 : L) ∈ additiveClosure Y from AddSubmonoid.zero_mem _)
+          (show (0 : L) ∈ additiveClosure Y from AddSubmonoid.zero_mem _)).elim id id
+    | @insert i s hi ih =>
+        rw [Finset.sum_insert hi, Finset.sum_insert hi]
+        apply hmono.add (hext.1 (hx i)) (hext.1 (hy i))
+          (AddSubmonoid.sum_mem _ fun j hj ↦ hext.1 (hx j))
+          (AddSubmonoid.sum_mem _ fun j hj ↦ hext.1 (hy j))
+          ((hext.2 (hx i) (hy i)).mpr (hR i)) ih
+  intro j
+  let t : Finset (Fin (n + 1)) := Finset.univ.erase j
+  have htail := hsumRel t
+  apply (hext.2 (hy j) (hx j)).mp
+  apply hmono.cancel (hext.1 (hx j)) (hext.1 (hy j))
+    (AddSubmonoid.sum_mem _ fun i hi ↦ hext.1 (hx i))
+    (AddSubmonoid.sum_mem _ fun i hi ↦ hext.1 (hy i))
+    ?_ htail
+  have hxsplit : x j + ∑ i ∈ t, x i = ∑ i, x i := by
+    rw [add_comm, ← Finset.sum_erase_add _ _ (Finset.mem_univ j)]
+  have hysplit : y j + ∑ i ∈ t, y i = ∑ i, y i := by
+    rw [add_comm, ← Finset.sum_erase_add _ _ (Finset.mem_univ j)]
+  rw [hxsplit, hysplit, hsum]
+
+end Additive
+
+variable {L : Type*} [NormedAddCommGroup L] [NormedSpace ℝ L]
+  [FiniteDimensional ℝ L]
 
 /-- Scott (1964), Theorem 1.1. -/
 theorem scott_theorem_1_1 {X N : Set L} (hX : X.Finite) (hsym : Symmetric X) :
@@ -325,70 +397,6 @@ theorem scott_theorem_1_3 {S : Type*} [Finite S]
           intro i
           fin_cases i <;> simp [xs, ys, hx'y', hyx]) hsum2
       exact hnxy (by simpa [xs, ys] using hback (1 : Fin 2))
-
-omit [FiniteDimensional ℝ L] in
-/-- A realizing functional supplies Scott's strictly monotonic extension to
-the additive closure. This is the forward half of Theorem 1.4. -/
-theorem scott_theorem_1_4_forward {Y : Set L} {R : L → L → Prop}
-    (hreal : RelationRealizable Y R) :
-    ∃ Rplus : L → L → Prop,
-      ExtendsOn Y (additiveClosure Y) R Rplus ∧
-        StrictlyMonotonic (additiveClosure Y) Rplus := by
-  obtain ⟨φ, hφ⟩ := hreal
-  let Rplus : L → L → Prop := fun x y ↦ φ y ≤ φ x
-  refine ⟨Rplus, ⟨AddSubmonoid.subset_closure, ?_⟩, ?_⟩
-  · intro x hx y hy
-    exact (hφ x hx y hy).symm
-  · refine ⟨?_, ?_, ?_⟩
-    · intro x hx y hy
-      exact le_total (φ y) (φ x)
-    · intro x₀ y₀ x₁ y₁ hx₀ hy₀ hx₁ hy₁ h₀ h₁
-      dsimp [Rplus] at h₀ h₁ ⊢
-      simp only [map_add]
-      linarith
-    · intro x₀ y₀ x₁ y₁ hx₀ hy₀ hx₁ hy₁ heq h₁
-      dsimp [Rplus] at h₁ ⊢
-      have hsum : φ x₀ + φ x₁ = φ y₀ + φ y₁ := by
-        simpa only [map_add] using congrArg φ heq
-      linarith
-
-omit [NormedSpace ℝ L] [FiniteDimensional ℝ L] in
-/-- A strictly monotonic extension implies Scott's literal condition (6). -/
-theorem StrictlyMonotonic.relationSequenceCancellation
-    {Y : Set L} {R Rplus : L → L → Prop}
-    (hext : ExtendsOn Y (additiveClosure Y) R Rplus)
-    (hmono : StrictlyMonotonic (additiveClosure Y) Rplus) :
-    RelationSequenceCancellation Y R := by
-  intro n x y hx hy hR hsum
-  have hsumRel :
-      ∀ s : Finset (Fin (n + 1)),
-        Rplus (∑ i ∈ s, x i) (∑ i ∈ s, y i) := by
-    intro s
-    classical
-    induction s using Finset.induction_on with
-    | empty =>
-        simpa using (hmono.complete
-          (show (0 : L) ∈ additiveClosure Y from AddSubmonoid.zero_mem _)
-          (show (0 : L) ∈ additiveClosure Y from AddSubmonoid.zero_mem _)).elim id id
-    | @insert i s hi ih =>
-        rw [Finset.sum_insert hi, Finset.sum_insert hi]
-        apply hmono.add (hext.1 (hx i)) (hext.1 (hy i))
-          (AddSubmonoid.sum_mem _ fun j hj ↦ hext.1 (hx j))
-          (AddSubmonoid.sum_mem _ fun j hj ↦ hext.1 (hy j))
-          ((hext.2 (hx i) (hy i)).mpr (hR i)) ih
-  intro j
-  let t : Finset (Fin (n + 1)) := Finset.univ.erase j
-  have htail := hsumRel t
-  apply (hext.2 (hy j) (hx j)).mp
-  apply hmono.cancel (hext.1 (hx j)) (hext.1 (hy j))
-    (AddSubmonoid.sum_mem _ fun i hi ↦ hext.1 (hx i))
-    (AddSubmonoid.sum_mem _ fun i hi ↦ hext.1 (hy i))
-    ?_ htail
-  have hxsplit : x j + ∑ i ∈ t, x i = ∑ i, x i := by
-    rw [add_comm, ← Finset.sum_erase_add _ _ (Finset.mem_univ j)]
-  have hysplit : y j + ∑ i ∈ t, y i = ∑ i, y i := by
-    rw [add_comm, ← Finset.sum_erase_add _ _ (Finset.mem_univ j)]
-  rw [hxsplit, hysplit, hsum]
 
 /-- Scott (1964), Theorem 1.4: realizability is equivalent to extendability
 to a strictly monotonic relation on the additive closure. -/
