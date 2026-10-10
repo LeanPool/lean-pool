@@ -2,8 +2,11 @@
 
 import importlib.util
 import json
+import os
 import subprocess
+from functools import partial
 from pathlib import Path
+from types import SimpleNamespace
 
 import pytest
 
@@ -316,3 +319,300 @@ def test_completion_marker_failure_resumes_same_run(
         ("git", "rev-parse", "HEAD"),
     ]
     assert_completed_recording(completion_run, checkpoint, publications)
+
+
+@pytest.fixture(autouse=True)
+def profile_disk_space(monkeypatch):
+    """Keep the disk admission deterministic without affecting its policy."""
+    monkeypatch.setattr(
+        weekly_profile.shutil,
+        "disk_usage",
+        lambda path: SimpleNamespace(free=31 * 1024**3),
+    )
+
+
+def mocked_checkout_command(recording, *arguments, directory, capture=False):
+    """Model clone interruption and local Git checks without running Git."""
+    recording["commands"].append((arguments, directory, capture))
+    if arguments[:2] == ("git", "clone"):
+        destination = Path(arguments[-1])
+        destination.mkdir()
+        (destination / "tracked").write_text("cloned content")
+        recording["clones"] += 1
+        if recording["interrupt"] and recording["clones"] == 1:
+            raise subprocess.CalledProcessError(1, arguments)
+        (destination / "head").write_text("pinned-commit")
+    elif arguments[:2] == ("git", "rev-parse"):
+        if not (directory / "head").exists():
+            raise subprocess.CalledProcessError(1, arguments)
+        return (directory / "head").read_text()
+    elif arguments[:2] == ("git", "diff") and directory.name in recording["dirty"]:
+        raise subprocess.CalledProcessError(1, arguments)
+    elif arguments[:3] == ("git", "remote", "get-url"):
+        return recording["url"]
+    return ""
+
+
+@pytest.fixture
+def checkout_commands(monkeypatch):
+    """Collect local checkout operations and inject a single partial clone."""
+    recording = {
+        "commands": [],
+        "clones": 0,
+        "interrupt": False,
+        "dirty": set(),
+        "url": "https://example.invalid/pool.git",
+    }
+    monkeypatch.setattr(
+        weekly_profile, "command", partial(mocked_checkout_command, recording)
+    )
+    return recording
+
+
+def test_interrupted_clone_retries_owned_staging(checkout_commands, tmp_path):
+    """A failed partial clone never becomes the destination and can resume."""
+    checkout_commands["interrupt"] = True
+    url = checkout_commands["url"]
+    temporary = tmp_path / ".repository.clone"
+    with pytest.raises(subprocess.CalledProcessError):
+        weekly_profile.checkout(tmp_path, "repository", url)
+    assert not (tmp_path / "repository").exists()
+    assert (temporary / "tracked").read_text() == "cloned content"
+    assert (tmp_path / ".repository.clone-owner.json").exists()
+
+    assert weekly_profile.checkout(tmp_path, "repository", url) == "pinned-commit"
+    assert checkout_commands["clones"] == 2
+    assert (tmp_path / "repository/tracked").read_text() == "cloned content"
+    assert not temporary.exists()
+    assert not (tmp_path / ".repository.clone-owner.json").exists()
+    assert all(
+        arguments[-1] == str(temporary)
+        for arguments, _, _ in checkout_commands["commands"]
+        if arguments[:2] == ("git", "clone")
+    )
+
+
+def test_old_incomplete_checkout_is_preserved(checkout_commands, tmp_path):
+    """Retry an old direct-clone interruption without deleting its contents."""
+    repository = tmp_path / "repository"
+    repository.mkdir()
+    (repository / "partial").write_text("retained content")
+    assert (
+        weekly_profile.checkout(tmp_path, "repository", checkout_commands["url"])
+        == "pinned-commit"
+    )
+    preserved = tmp_path / "repository.incomplete/partial"
+    assert preserved.read_text() == "retained content"
+    assert (repository / "head").read_text() == "pinned-commit"
+
+
+@pytest.mark.parametrize("name", ["repository", ".repository.clone"])
+def test_dirty_checkout_or_staging_is_preserved(checkout_commands, tmp_path, name):
+    """A usable dirty checkout must never be reset, replaced or quarantined."""
+    repository = tmp_path / name
+    repository.mkdir()
+    (repository / "head").write_text("existing-commit")
+    (repository / "tracked").write_text("local change")
+    checkout_commands["dirty"].add(name)
+    if name.startswith("."):
+        weekly_profile.write_json(
+            tmp_path / ".repository.clone-owner.json",
+            {
+                "repository": "repository",
+                "url": checkout_commands["url"],
+                "temporary": str(repository),
+            },
+        )
+    with pytest.raises(subprocess.CalledProcessError):
+        weekly_profile.checkout(tmp_path, "repository", checkout_commands["url"])
+    assert (repository / "head").read_text() == "existing-commit"
+    assert (repository / "tracked").read_text() == "local change"
+    assert checkout_commands["clones"] == 0
+    assert not (tmp_path / "repository.incomplete").exists()
+
+
+def test_unowned_clone_staging_is_preserved(checkout_commands, tmp_path):
+    """An unrelated staging directory is not permission to delete its files."""
+    temporary = tmp_path / ".repository.clone"
+    temporary.mkdir()
+    (temporary / "partial").write_text("unowned content")
+    with pytest.raises(RuntimeError, match="Unowned clone staging"):
+        weekly_profile.checkout(tmp_path, "repository", checkout_commands["url"])
+    assert (temporary / "partial").read_text() == "unowned content"
+    assert checkout_commands["clones"] == 0
+
+
+@pytest.fixture
+def profile_main_environment(monkeypatch, completion_run):
+    """Keep main's environment changes local and allow only this test root."""
+    root = completion_run["root"].resolve()
+    monkeypatch.setenv("LEAN_POOL_PROFILE_ROOT", str(root))
+    monkeypatch.setenv("TMPDIR", str(root / "previous-tmp"))
+    if not root.is_relative_to(Path("/data")):
+        original = Path.is_relative_to
+
+        def test_root_is_relative_to(path, *other):
+            if path == root and other == (Path("/data"),):
+                return True
+            return original(path, *other)
+
+        monkeypatch.setattr(Path, "is_relative_to", test_root_is_relative_to)
+    return root
+
+
+def test_low_disk_publish_resumes_and_finishes(
+    monkeypatch, completion_run, completion_operations, profile_main_environment
+):
+    """Real main finalizes a saved publication below the profiling watermark."""
+    root, state = completion_run["root"], completion_run["state"]
+    assert root == profile_main_environment
+    state["phase"] = "publish"
+    weekly_profile.write_json(root / "active.json", state)
+    monkeypatch.setattr(
+        weekly_profile.shutil, "disk_usage", lambda path: SimpleNamespace(free=1)
+    )
+    commands, publications = completion_operations
+    weekly_profile.main()
+    assert commands == [("git", "rev-parse", "HEAD")] * 2
+    assert publications == [state]
+    complete = weekly_profile.read_json(completion_run["run"] / "complete.json")
+    assert complete == weekly_profile.read_json(root / "active.json")
+    assert complete == {
+        **state,
+        "phase": "complete",
+        "publicationCommit": "publication-commit",
+    }
+    assert (root / "job.lock").exists()
+    assert (root / "tmp").is_dir()
+    assert os.environ["TMPDIR"] == str(root / "tmp")
+    assert not (root / "pending").exists()
+    assert sorted(path.name for path in (root / "runs").iterdir()) == [
+        "02",
+        "03-test-run",
+        "unfinished",
+    ]
+
+
+@pytest.mark.parametrize("phase", [None, "prepare", "capture", "export", "complete"])
+def test_low_disk_refuses_nonpublication_state(monkeypatch, tmp_path, phase):
+    """No new checkout or nonpublication profiling starts below the watermark."""
+    if phase is not None:
+        weekly_profile.write_json(
+            tmp_path / "active.json",
+            {
+                "phase": phase,
+                "runId": "test-run",
+                "commit": "pool",
+                "profilerCommit": "profiler",
+            },
+        )
+    calls = []
+    monkeypatch.setattr(
+        weekly_profile, "command", lambda *args, **kwargs: calls.append(args)
+    )
+    monkeypatch.setattr(
+        weekly_profile.shutil, "disk_usage", lambda path: SimpleNamespace(free=1)
+    )
+    with pytest.raises(RuntimeError, match="30 GiB"):
+        weekly_profile.checked_run_state(tmp_path)
+    assert calls == []
+
+
+@pytest.mark.parametrize("phase", ["prepare", "capture", "export"])
+def test_low_disk_refuses_each_profiling_stage(monkeypatch, tmp_path, phase):
+    """Direct execution and later stage transitions retain the profiling guard."""
+    calls = []
+    monkeypatch.setattr(
+        weekly_profile, "command", lambda *args, **kwargs: calls.append(args)
+    )
+    monkeypatch.setattr(
+        weekly_profile.shutil, "disk_usage", lambda path: SimpleNamespace(free=1)
+    )
+    state = {
+        "phase": phase,
+        "runId": "test-run",
+        "commit": "pool",
+        "profilerCommit": "profiler",
+    }
+    with pytest.raises(RuntimeError, match="30 GiB"):
+        weekly_profile.execute(tmp_path, state)
+    assert calls == []
+    assert state["phase"] == phase
+
+
+def test_completed_staging_promotes_without_recloning(checkout_commands, tmp_path):
+    """A crash after cloning can resume the verified staging checkout."""
+    temporary = tmp_path / ".repository.clone"
+    temporary.mkdir()
+    (temporary / "head").write_text("staged-commit")
+    (temporary / "tracked").write_text("staged content")
+    weekly_profile.write_json(
+        tmp_path / ".repository.clone-owner.json",
+        {
+            "repository": "repository",
+            "url": checkout_commands["url"],
+            "temporary": str(temporary),
+        },
+    )
+    assert (
+        weekly_profile.checkout(tmp_path, "repository", checkout_commands["url"])
+        == "staged-commit"
+    )
+    assert checkout_commands["clones"] == 0
+    assert (tmp_path / "repository/tracked").read_text() == "staged content"
+    assert not temporary.exists()
+
+
+def test_disk_drop_stops_before_capture(monkeypatch, completion_run):
+    """Completed preparation is retained when the next stage loses admission."""
+    root, state = completion_run["root"], completion_run["state"]
+    commands, space = [], {"free": 31 * 1024**3}
+    monkeypatch.setattr(
+        weekly_profile.shutil,
+        "disk_usage",
+        lambda path: SimpleNamespace(free=space["free"]),
+    )
+
+    def command(*arguments, directory, capture=False):
+        commands.append(arguments)
+        if arguments[1:4] == ("exe", "cache", "get"):
+            space["free"] = 1
+        return ""
+
+    monkeypatch.setattr(weekly_profile, "command", command)
+    with pytest.raises(RuntimeError, match="30 GiB"):
+        weekly_profile.execute(root, state)
+    assert len(commands) == 3
+    assert all(arguments[0] not in ("node", "python3") for arguments in commands)
+    assert state["phase"] == "capture"
+    assert weekly_profile.read_json(root / "active.json")["phase"] == "capture"
+
+
+def test_existing_incomplete_backup_is_not_overwritten(checkout_commands, tmp_path):
+    """An ambiguous old checkout requires review without destroying either copy."""
+    repository, preserved = tmp_path / "repository", tmp_path / "repository.incomplete"
+    repository.mkdir()
+    preserved.mkdir()
+    (repository / "partial").write_text("current partial clone")
+    (preserved / "retained").write_text("previous retained content")
+    with pytest.raises(RuntimeError, match="already preserved"):
+        weekly_profile.checkout(tmp_path, "repository", checkout_commands["url"])
+    assert (repository / "partial").read_text() == "current partial clone"
+    assert (preserved / "retained").read_text() == "previous retained content"
+    assert checkout_commands["clones"] == 0
+
+
+def test_low_disk_publish_keeps_pinned_checkout_guard(monkeypatch, completion_run):
+    """The publication exception does not admit a changed pinned checkout."""
+    root, state = completion_run["root"], completion_run["state"]
+    state["phase"] = "publish"
+    weekly_profile.write_json(root / "active.json", state)
+    monkeypatch.setattr(
+        weekly_profile.shutil, "disk_usage", lambda path: SimpleNamespace(free=1)
+    )
+    monkeypatch.setattr(
+        weekly_profile, "command", lambda *args, **kwargs: "changed-commit"
+    )
+    with pytest.raises(RuntimeError, match="pinned repository"):
+        weekly_profile.checked_run_state(root)
+    assert weekly_profile.read_json(root / "active.json") == state
