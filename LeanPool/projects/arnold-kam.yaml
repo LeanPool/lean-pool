@@ -1,0 +1,55 @@
+slug: arnold-kam
+title: Analytic Hamiltonian KAM on compact action domains
+summary: >-
+  Proves a nondegenerate analytic Hamiltonian KAM theorem on compact complex action
+  domains whose real slice is the closure of a nonempty open set with null boundary.
+  A positive perturbation threshold, chosen independently of the perturbation,
+  yields a pairwise disjoint family of analytic invariant tori covering all but a
+  prescribed relative measure error. Includes Fourier estimates, generating
+  transformations, resonance measure bounds, infinite iteration, global Hamiltonian
+  trajectories, and examples with a noninjective frequency map. The final torus
+  interface asserts nonresonance but does not additionally assert a quantitative
+  Diophantine bound or the Lagrangian property.
+branch: Analysis
+entry_module: LeanPool.ArnoldKAM
+authors:
+  - Bingqi Yu
+source:
+  github_repo: ybq1415926-droid/arnold1963-kam
+  commit: 69c10c07bcd0a65f8965bc58c37eea2700bafafb
+  doi: 10.5281/zenodo.23232025
+license: Apache-2.0
+status: verified
+provenance: AI
+main_declarations:
+  - KamProject.Arnold1963.theorem1
+main_results:
+  - declaration: KamProject.Arnold1963.theorem1
+    informal: >-
+      For a positive-dimensional analytic, real-compatible unperturbed Hamiltonian
+      with nonzero Hessian determinant on the real interior of the specified compact
+      domain, and any positive angle width and tolerance, a positive uniform
+      perturbation threshold gives a compact positive-measure good set partitioned
+      into pairwise disjoint analytic nonresonant invariant tori. The complementary
+      bad set has measure less than the tolerance times the initial phase volume.
+      Each torus has a closed embedding, an injective derivative, small displacement,
+      and trajectories solving the original perturbed Hamiltonian equation for all
+      real time. The analytic width is a positive output bounded by the input width.
+  - declaration: KamProject.Arnold1963.theorem1_of_pointwise
+    informal: >-
+      The same KAM conclusion holds when the perturbation is pointwise strictly
+      below the chosen threshold throughout its prescribed phase domain.
+  - declaration: KamProject.Arnold1963.AnalyticPhaseFunction.canonical_pullback
+    informal: >-
+      A differentiable symplectic transformation mapping into the analytic
+      Hamiltonian's phase domain carries the vector field of the pulled-back
+      Hamiltonian to the original Hamiltonian vector field.
+tags:
+  - Hamiltonian dynamics
+  - KAM theory
+  - Fourier analysis
+  - symplectic geometry
+msc:
+  - 37J40
+  - 37J35
+  - 42A16
