@@ -375,6 +375,9 @@ def scope_repository(tmp_path: Path) -> tuple[Path, str]:
     """Create a real diff for executing the workflow classifiers."""
     subprocess.run(["git", "init", "-q"], cwd=tmp_path, check=True)
     subprocess.run(
+        ["git", "config", "core.quotePath", "true"], cwd=tmp_path, check=True
+    )
+    subprocess.run(
         [
             "git",
             "-c",
@@ -403,6 +406,8 @@ def scope_repository(tmp_path: Path) -> tuple[Path, str]:
         ("docs.yml", "LeanPool/projects/example.yaml", False),
         ("docs.yml", "README.md", False),
         ("docs.yml", "docbuild/lakefile.toml", True),
+        ("docs.yml", "docbuild/名前.lean", True),
+        ("docs.yml", "docbuild/line\nbreak.lean", True),
         ("docs.yml", "lean-toolchain", True),
         ("docs.yml", "lake-manifest.json", True),
         ("docs.yml", "python/lean_pool/exposition/generate.py", True),
@@ -411,6 +416,8 @@ def scope_repository(tmp_path: Path) -> tuple[Path, str]:
         ("workflow_lint.yml", "LeanPool/Example/Proof.lean", False),
         ("workflow_lint.yml", "python/lean_pool/ci_cache.py", False),
         ("workflow_lint.yml", ".github/workflows/cache-maintenance.yml", True),
+        ("workflow_lint.yml", ".github/workflows/名前.yml", True),
+        ("workflow_lint.yml", ".github/workflows/line\nbreak.yml", True),
     ],
 )
 def test_scoped_checks_classify_real_diffs(
@@ -661,6 +668,7 @@ def test_scoped_checks_handle_large_diffs(tmp_path, filename):
         ("lake-manifest.json", "true", "false", True),
         ("python/lean_pool/ci_pr_build.py", "true", "false", True),
         ("python/tests/test_ci_pr_build.py", "true", "false", True),
+        ('"python/lean_pool/quoted.py"', "true", "false", True),
         ("scripts/ProjectIndexes.lean", "true", "false", True),
         (".github/workflows/lean_action_ci.yml", "true", "false", True),
         ("", "false", "false", True),

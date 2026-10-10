@@ -41,7 +41,8 @@ jobs:
             else
               files=$(git diff --name-only --no-renames "$BASE"..HEAD)
             fi
-            if grep -Eq '^\.github/' <<< "$files"; then
+            # Git may quote names containing Unicode or control characters.
+            if grep -Eq '^"?\.github/' <<< "$files"; then
               applicable=true
             fi
           fi

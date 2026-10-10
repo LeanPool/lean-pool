@@ -172,7 +172,8 @@ jobs:
           dependency_tests=true
           if [ "$diff_available" = true ] && [ "$FORCE_FULL" != true ]; then
             dependency_tests=false
-            if grep -Eq '^(lean-toolchain$|lakefile\.toml$|lake-manifest\.json$|python/|scripts/ci/|scripts/ProjectIndexes\.lean$|\.github/workflows/lean_action_ci\.yml$)' "$changed_files"; then
+            # Git may quote names containing Unicode or control characters.
+            if grep -Eq '^"?(lean-toolchain$|lakefile\.toml$|lake-manifest\.json$|python/|scripts/ci/|scripts/ProjectIndexes\.lean$|\.github/workflows/lean_action_ci\.yml$)' "$changed_files"; then
               dependency_tests=true
             fi
           fi

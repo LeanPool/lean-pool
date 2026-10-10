@@ -69,7 +69,8 @@ jobs:
             else
               files=$(git diff --name-only --no-renames "$BASE"..HEAD)
             fi
-            if grep -Eq '^(docbuild/|lean-toolchain$|lakefile\.toml$|lake-manifest\.json$|python/lean_pool/(exposition/|quality\.py$|validation_cache\.py$|ci_artifacts\.py$|ci_cache\.py$|rebase_fastpath\.py$)|python/(pyproject\.toml|uv\.lock)$|scripts/exposition/|\.github/workflows/docs\.yml$)' <<< "$files"; then
+            # Git may quote names containing Unicode or control characters.
+            if grep -Eq '^"?(docbuild/|lean-toolchain$|lakefile\.toml$|lake-manifest\.json$|python/lean_pool/(exposition/|quality\.py$|validation_cache\.py$|ci_artifacts\.py$|ci_cache\.py$|rebase_fastpath\.py$)|python/(pyproject\.toml|uv\.lock)$|scripts/exposition/|\.github/workflows/docs\.yml$)' <<< "$files"; then
               applicable=true
             fi
           fi
