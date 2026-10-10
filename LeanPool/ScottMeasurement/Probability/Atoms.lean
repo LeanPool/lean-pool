@@ -153,13 +153,8 @@ their masses. -/
 theorem IsProbability.finset_sup_atoms
     {B : Type u} [BooleanAlgebra B] {μ : B → ℝ}
     (hμ : IsProbability μ) (s : Finset {a : B // IsAtom a}) :
-    μ (s.sup fun a ↦ (a : B)) = ∑ a ∈ s, μ a := by
-  classical
-  induction s using Finset.induction_on with
-  | empty => simp [hμ.bot]
-  | @insert a s ha ih =>
-      rw [Finset.sup_insert, hμ.additive _ _ (disjoint_atom_finset_sup a s ha),
-        Finset.sum_insert ha, ih]
+    μ (s.sup fun a ↦ (a : B)) = ∑ a ∈ s, μ a :=
+  hμ.isSignedCharge.finset_sup_atoms s
 
 open Classical in
 /-- The atoms below an event. -/
@@ -197,13 +192,8 @@ theorem IsSignedCharge.eq_sum_atoms
 theorem IsProbability.eq_sum_atoms
     {B : Type u} [BooleanAlgebra B] [Fintype B] {μ : B → ℝ}
     (hμ : IsProbability μ) (x : B) :
-    μ x = ∑ a ∈ atomsBelow x, μ a := by
-  classical
-  calc
-    μ x = μ ((atomsBelow x).sup fun a ↦ (a : B)) := by
-      classical
-      rw [sup_atomsBelow]
-    _ = ∑ a ∈ atomsBelow x, μ a := hμ.finset_sup_atoms (atomsBelow x)
+    μ x = ∑ a ∈ atomsBelow x, μ a :=
+  hμ.isSignedCharge.eq_sum_atoms x
 
 open Classical in
 /-- Pointwise equality of sums of event vectors is exactly Scott's

@@ -41,6 +41,11 @@ structure IsSignedCharge {B : Type u} [BooleanAlgebra B] (μ : B → ℝ) : Prop
   bot : μ ⊥ = 0
   additive : ∀ x y, Disjoint x y → μ (x ⊔ y) = μ x + μ y
 
+/-- Forgetting positivity and normalization preserves finite additivity. -/
+theorem IsProbability.isSignedCharge {B : Type u} [BooleanAlgebra B]
+    {μ : B → ℝ} (hμ : IsProbability μ) : IsSignedCharge μ :=
+  ⟨hμ.bot, hμ.additive⟩
+
 /-- Nonnegativity of a finitely additive set function. -/
 def IsNonnegative {B : Type u} (μ : B → ℝ) : Prop :=
   ∀ x, 0 ≤ μ x
@@ -58,6 +63,12 @@ charge, with no normalization or positivity requirement. -/
 def RealizableSignedCharge {B : Type u} [BooleanAlgebra B]
     (R : B → B → Prop) : Prop :=
   ∃ μ : B → ℝ, IsSignedCharge μ ∧ ∀ x y, R x y ↔ μ x ≥ μ y
+
+/-- A probability representation is also a signed-charge representation. -/
+theorem RealizableProbability.realizableSignedCharge {B : Type u} [BooleanAlgebra B]
+    {R : B → B → Prop} (hR : RealizableProbability R) : RealizableSignedCharge R := by
+  rcases hR with ⟨μ, hμ, hrep⟩
+  exact ⟨μ, hμ.isSignedCharge, hrep⟩
 
 /-- Scott's strict notation: `x ≻ y` means that `y` is not weakly preferred to `x`. -/
 def StrictlyPreferred {B : Type u} (R : B → B → Prop) (x y : B) : Prop :=

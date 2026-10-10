@@ -32,15 +32,16 @@ public import LeanPool.ScottMeasurement.Probability.Infinite.Reconstructed
 
 Primary source: Dana S. Scott, *Measurement Structures and Linear
 Inequalities*, Journal of Mathematical Psychology 1 (1964), 233–247.
-Working transcription: `sources/ScottMeasurement1964_vision.md`.
+Working transcription in the pinned upstream repository:
+`sources/ScottMeasurement1964_vision.md`.
 
 The paper applies the general solvability criterion for finite systems of
 linear inequalities (Theorems 1.1–1.4) to three measurement problems:
 intransitive indifference (Theorem 2.1), ordered differences (Theorems 3.1
 and 3.2), and subjective probability (Theorem 4.1).
 
-This module re-exports the complete sorry-free development imported by
-`Solution.lean`: Scott's eight published theorems, the finite KPS
+This module re-exports the complete development used by upstream
+`Solution.lean` (not included here): Scott's eight published theorems, the finite KPS
 counterexample, and the separately labelled modern reconstruction of the
 infinite probability theorem.
 -/

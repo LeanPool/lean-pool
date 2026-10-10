@@ -34,8 +34,7 @@ def AtomLinearRepresentation {B : Type u} [BooleanAlgebra B]
     ∀ x y, R x y ↔ φ (atomVector x) ≥ φ (atomVector y)
 
 open Classical in
-/-- Integration of atom vectors against the atom masses of a finite
-probability. -/
+/-- Integration of atom vectors against arbitrary real-valued atom weights. -/
 def atomWeightFunctional {B : Type u} [BooleanAlgebra B] [Fintype B]
     (μ : B → ℝ) : ({a : B // IsAtom a} → ℝ) →ₗ[ℝ] ℝ where
   toFun v := ∑ a, v a * μ a
@@ -59,18 +58,6 @@ theorem atomWeightFunctional_apply
     atomWeightFunctional μ v = ∑ a, v a * μ a :=
   rfl
 
-theorem atomWeightFunctional_atomVector
-    {B : Type u} [BooleanAlgebra B] [Fintype B]
-    {μ : B → ℝ} (hμ : IsProbability μ) (x : B) :
-    atomWeightFunctional μ (atomVector x) = μ x := by
-  classical
-  rw [hμ.eq_sum_atoms x]
-  simp only [atomWeightFunctional_apply, atomVector_apply, atomsBelow]
-  rw [Finset.sum_filter]
-  apply Finset.sum_congr rfl
-  intro a ha
-  by_cases hax : (a : B) ≤ x <;> simp [hax]
-
 /-- Atom-weight integration also recovers an arbitrary signed charge. -/
 theorem atomWeightFunctional_atomVector_signed
     {B : Type u} [BooleanAlgebra B] [Fintype B]
@@ -84,18 +71,11 @@ theorem atomWeightFunctional_atomVector_signed
   intro a ha
   by_cases hax : (a : B) ≤ x <;> simp [hax]
 
-theorem RealizableProbability.atomLinearRepresentation
-    {B : Type u} [BooleanAlgebra B] [Finite B]
-    {R : B → B → Prop} (hR : RealizableProbability R) :
-    AtomLinearRepresentation R := by
-  classical
-  let := Fintype.ofFinite B
-  rcases hR with ⟨μ, hμ, hrep⟩
-  refine ⟨atomWeightFunctional μ, ?_⟩
-  intro x y
-  rw [atomWeightFunctional_atomVector hμ,
-    atomWeightFunctional_atomVector hμ]
-  exact hrep x y
+theorem atomWeightFunctional_atomVector
+    {B : Type u} [BooleanAlgebra B] [Fintype B]
+    {μ : B → ℝ} (hμ : IsProbability μ) (x : B) :
+    atomWeightFunctional μ (atomVector x) = μ x :=
+  atomWeightFunctional_atomVector_signed hμ.isSignedCharge x
 
 theorem RealizableSignedCharge.atomLinearRepresentation
     {B : Type u} [BooleanAlgebra B] [Finite B]
@@ -109,6 +89,12 @@ theorem RealizableSignedCharge.atomLinearRepresentation
   rw [atomWeightFunctional_atomVector_signed hμ,
     atomWeightFunctional_atomVector_signed hμ]
   exact hrep x y
+
+theorem RealizableProbability.atomLinearRepresentation
+    {B : Type u} [BooleanAlgebra B] [Finite B]
+    {R : B → B → Prop} (hR : RealizableProbability R) :
+    AtomLinearRepresentation R :=
+  hR.realizableSignedCharge.atomLinearRepresentation
 
 /-- A linear representation on atom vectors induces a signed charge directly.
 No division by the charge of `⊤` is needed. -/
@@ -478,17 +464,9 @@ theorem probability_of_finite_axioms
     {R : B → B → Prop}
     (hnt : ProbNontrivial R) (hn : ProbNonneg R)
     (htotal : ProbTotal R) (hcancel : ProbCancellation R) :
-    RealizableProbability R := by
-  classical
-  have hreal : RelationRealizable
-      (Set.range (atomVector :
-        B → ({a : B // IsAtom a} → ℝ)))
-      (AtomVectorRelation R) :=
-    (scott_theorem_1_3 atomVector_range_finite atomVector_range_rational).2
-      ⟨atomVectorRelation_complete htotal,
-        atomVectorRelation_sequenceCancellation hcancel⟩
-  exact probability_of_atomLinearRepresentation
-    (atomLinearRepresentation_of_relationRealizable hreal) hnt hn
+    RealizableProbability R :=
+  probability_of_atomLinearRepresentation
+    (atomLinearRepresentation_of_total_cancellation htotal hcancel) hnt hn
 
 /-- **Scott 1964, Theorem 4.1 (subjective probability).** -/
 theorem theorem_4_1 {B : Type u} [BooleanAlgebra B] [Finite B]
