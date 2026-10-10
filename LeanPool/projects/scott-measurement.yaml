@@ -1,0 +1,121 @@
+slug: scott-measurement
+title: Scott's measurement representation theorems
+summary: >-
+  Formalizes all eight numbered finite representation theorems of Dana Scott's
+  1964 Measurement Structures and Linear Inequalities. Develops a shared finite
+  separation and rational-cancellation engine, unit-threshold semiorder
+  representations, additive utility on pairs, ordered utility differences, and
+  normalized finitely additive probabilities on finite Boolean algebras. Includes
+  the Kraft-Pratt-Seidenberg five-atom counterexample to de Finetti's weaker
+  axioms and local real embeddings of finite subsets of ordered abelian groups.
+  A separately labelled modern infinite analogue assumes a generalized Kelley
+  condition: strict-comparison vectors have a countable cover by closed convex
+  upper sets avoiding zero above the weak-comparison cone. It is neither a
+  countably additive measure theorem nor an attribution of Scott's unpublished
+  infinite theorem. The infinite construction uses universal probability
+  evaluation vectors, with a proved faithful Stone representation and
+  probability-state correspondence. The upstream proofs were produced primarily
+  by AI agents under Lars Warren Ericson's direction and review.
+branch: measurement theory
+entry_module: LeanPool.ScottMeasurement
+authors:
+- Lars Warren Ericson
+source:
+  title: Measurement Structures and Linear Inequalities
+  authors:
+  - Dana Scott
+  url: https://github.com/catskillsresearch/scott1964
+  github_repo: catskillsresearch/scott1964
+  commit: 591e8a6a5d7d1ebf4cc761b4a1cb749b6480dfeb
+  announcement: https://palomar-registry.org/entry?id=PALOMAR-2026-09-25-000015&version=1
+  announcement_date: '2026-09-25T12:54:19Z'
+  completion_commit: 295e5620cb6193774a4ab8cd568b8003a3b582d6
+  completion_date: '2026-08-31T03:38:56Z'
+  citation: Journal of Mathematical Psychology 1 (1964), 233-247
+license: Apache-2.0
+status: verified
+provenance: AI
+main_declarations:
+- Scott1964.MeasurementStructures.theorem_4_1_vector
+main_results:
+- declaration: Scott1964.MeasurementStructures.LinearInequalities.scott_theorem_1_1
+  informal: >-
+    For a finite symmetric subset X of a finite-dimensional real normed space,
+    membership in an arbitrary set N on X is represented by nonnegativity of a
+    linear functional if and only if every x in X has x or -x in N and every
+    zero sum of positively real-weighted vectors from X intersect N has all
+    their negatives in N.
+- declaration: Scott1964.MeasurementStructures.LinearInequalities.scott_theorem_1_2
+  informal: >-
+    For a finite symmetric set of rational-valued vectors on a finite coordinate
+    type, the same linear realizability criterion uses unweighted zero sums,
+    with repetitions allowed, instead of arbitrary positive real weights.
+- declaration: Scott1964.MeasurementStructures.LinearInequalities.scott_theorem_1_3
+  informal: >-
+    A relation on a finite set of rational-valued vectors on a finite coordinate
+    type is represented exactly by comparison of one real linear functional if
+    and only if it is complete and, whenever two equally indexed finite lists
+    have equal sums and every left vector is related to its right partner,
+    all the reverse comparisons also hold.
+- declaration: Scott1964.MeasurementStructures.LinearInequalities.scott_theorem_1_4
+  informal: >-
+    A relation on a finite rational vector set is represented by one real linear
+    functional if and only if it extends to its zero-inclusive additive submonoid closure
+    as a complete
+    relation preserving addition and satisfying Scott's cancellation axiom.
+- declaration: Scott1964.MeasurementStructures.theorem_2_1
+  informal: >-
+    On any finite set (allowing the empty case, unlike the source), a relation P admits real scores with P x y exactly
+    when the score of x is at least the score of y plus one if and only if P
+    is irreflexive and satisfies Scott's two four-alternative semiorder axioms.
+- declaration: Scott1964.MeasurementStructures.theorem_3_1
+  informal: >-
+    On the product of any two finite sets (also allowing empty coordinate types),
+    a relation admits an additive
+    representation f(x)+g(x') exactly when it is total and satisfies Scott's
+    cancellation scheme for independent permutations of the two coordinates.
+- declaration: Scott1964.MeasurementStructures.theorem_3_2
+  informal: >-
+    On any finite set (also allowing the empty case), a quaternary relation D is represented exactly by
+    comparisons f(x)-f(y) >= f(z)-f(w) for one real utility f if and only if D
+    is total and satisfies permutation cancellation and reversal.
+- declaration: Scott1964.MeasurementStructures.theorem_4_1_vector
+  informal: >-
+    A relation on a finite Boolean algebra is represented exactly by a
+    nonnegative normalized finitely additive real probability if and only if
+    the certain event is strictly above null, every event is at least null,
+    comparisons are total, and Scott's cancellation scheme holds whenever two
+    finite lists have equal sums of atom characteristic vectors.
+- declaration: Scott1964.MeasurementStructures.LinearInequalities.finite_local_real_embedding
+  informal: >-
+    Every finite subset of a linearly ordered abelian group has a real-valued
+    map reflecting its order and preserving every addition equation whose
+    three terms lie in the subset; this asserts a local map, not an embedding
+    of the entire group.
+- declaration: Scott1964.MeasurementStructures.Probability.KPSCounterexample.deFinetti_axioms_insufficient
+  informal: >-
+    The explicit Kraft-Pratt-Seidenberg order on the 32 events of five atoms
+    satisfies de Finetti's five qualitative-probability axioms but has no
+    normalized finitely additive real probability representing all comparisons.
+- declaration: Scott1964.MeasurementStructures.Probability.Infinite.reconstructed_infinite_theorem_4_1
+  informal: >-
+    On an arbitrary Boolean algebra, a relation admits an exact normalized
+    finitely additive real probability representation if and only if it is
+    nontrivial, nonnegative relative to null, total, and satisfies the stated
+    generalized Kelley cover condition on its universal event-span comparison
+    vectors. This is a modern analogue with an explicit extra analytic condition.
+- declaration: Scott1964.MeasurementStructures.Probability.Infinite.probabilityStateEquiv
+  informal: >-
+    Finitely additive probabilities on an arbitrary Boolean algebra are
+    canonically equivalent to positive normalized continuous linear
+    functionals on the real span of its universal probability-evaluation
+    vectors, equipped with the inherited supremum norm.
+tags:
+- measurement-theory
+- utility-representation
+- qualitative-probability
+msc:
+- 91B16
+- 91B06
+- 60A05
+- 52A20
