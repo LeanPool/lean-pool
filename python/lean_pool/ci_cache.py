@@ -79,9 +79,32 @@ def obsolete_caches(caches: list[dict[str, Any]], key: str) -> list[int]:
     ]
 
 
-def prune_cache(repository: str, key: str) -> None:
-    """Retain the replacement and remove older copies after a successful upload."""
-    cache_family(key)
+def obsolete_main_caches(caches: list[dict[str, Any]]) -> list[int]:
+    """Retain the newest main cache per known family and operating system."""
+    newest: dict[str, dict[str, Any]] = {}
+    for cache in caches:
+        if cache.get("ref") != "refs/heads/main" or not cache.get("created_at"):
+            continue
+        try:
+            family = cache_family(cache.get("key", ""))
+        except ValueError:
+            continue
+        previous = newest.get(family)
+        if previous is None or cache["created_at"] > previous["created_at"]:
+            newest[family] = cache
+    return sorted(
+        {
+            identifier
+            for cache in newest.values()
+            for identifier in obsolete_caches(caches, cache["key"])
+        }
+    )
+
+
+def prune_cache(repository: str, key: str | None = None) -> None:
+    """Remove older main caches after a specific or the newest replacement."""
+    if key is not None:
+        cache_family(key)
     pages = json.loads(
         subprocess.check_output(
             [
@@ -96,7 +119,12 @@ def prune_cache(repository: str, key: str) -> None:
         )
     )
     caches = [cache for page in pages for cache in page["actions_caches"]]
-    for identifier in obsolete_caches(caches, key):
+    obsolete = (
+        obsolete_caches(caches, key)
+        if key is not None
+        else obsolete_main_caches(caches)
+    )
+    for identifier in obsolete:
         subprocess.run(
             [
                 "gh",
@@ -119,7 +147,9 @@ def main() -> None:
     revision.add_argument("--ref", default="HEAD")
     prune = commands.add_parser("prune")
     prune.add_argument("--repository", required=True)
-    prune.add_argument("--key", required=True)
+    prune.add_argument(
+        "--key", help="Replacement key; omit to prune all known families"
+    )
     arguments = parser.parse_args()
     logging.basicConfig(level=logging.INFO, format="cache: %(message)s")
     if arguments.command == "revision":

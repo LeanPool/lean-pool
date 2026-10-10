@@ -8,7 +8,13 @@ from pathlib import Path
 
 import pytest
 
-from lean_pool.ci_cache import build_revision, obsolete_caches, prune_cache
+from lean_pool.ci_cache import (
+    CACHE_PREFIXES,
+    build_revision,
+    obsolete_caches,
+    obsolete_main_caches,
+    prune_cache,
+)
 
 
 def _commit(root: Path) -> None:
@@ -182,3 +188,69 @@ def test_unknown_cache_family_is_rejected_before_api_calls(monkeypatch) -> None:
     )
     with pytest.raises(ValueError, match="unsupported cache key"):
         prune_cache("owner/repo", "unknown")
+
+
+def test_scheduled_pruning_preserves_newest_main_cache_per_family_and_platform():
+    """All supported families retain a replacement; PR and unknown caches survive."""
+    keys = [
+        (f"{prefix}Linux-{age}", "refs/heads/main", f"2026-10-10T0{age}:00:00Z")
+        for prefix in CACHE_PREFIXES
+        for age in range(2)
+    ] + [
+        ("LeanPoolBuild-v1-Windows-only", "refs/heads/main", "2026-10-10T00:00:00Z"),
+        ("LeanPoolBuild-v1-Linux-pr", "refs/pull/1/merge", "2026-10-10T02:00:00Z"),
+        ("unknown-cache", "refs/heads/main", "2026-10-10T00:00:00Z"),
+    ]
+    caches = [
+        {
+            "id": index,
+            "key": key,
+            "ref": reference,
+            "created_at": created,
+        }
+        for index, (key, reference, created) in enumerate(keys)
+    ]
+    assert obsolete_main_caches(caches) == list(range(0, len(CACHE_PREFIXES) * 2, 2))
+    caches.reverse()
+    assert obsolete_main_caches(caches) == list(range(0, len(CACHE_PREFIXES) * 2, 2))
+
+
+def test_scheduled_pruning_ignores_incomplete_timestamps():
+    """Unordered API data cannot choose an arbitrary replacement without timestamps."""
+    caches = [
+        {
+            "id": index,
+            "key": f"LeanPoolBuild-v1-Linux-{index}",
+            "ref": "refs/heads/main",
+        }
+        for index in range(2)
+    ]
+    assert obsolete_main_caches(caches) == []
+
+
+def test_scheduled_pruning_uses_a_single_snapshot(monkeypatch):
+    """Maintenance deletes only older main entries found in its API snapshot."""
+    pages = [
+        {
+            "actions_caches": [
+                {
+                    "id": index,
+                    "key": f"LeanPoolBuild-v1-Linux-{index}",
+                    "ref": "refs/heads/main",
+                    "created_at": f"2026-10-10T0{index}:00:00Z",
+                }
+                for index in range(2)
+            ]
+        }
+    ]
+    calls = []
+    monkeypatch.setattr(
+        subprocess, "check_output", lambda *args, **kwargs: json.dumps(pages)
+    )
+    monkeypatch.setattr(
+        subprocess, "run", lambda command, **kwargs: calls.append(command)
+    )
+    prune_cache("owner/repo")
+    assert calls == [
+        ["gh", "api", "--method", "DELETE", "repos/owner/repo/actions/caches/0"]
+    ]
