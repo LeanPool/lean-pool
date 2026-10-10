@@ -1,0 +1,22 @@
+[Unit]
+Description=Capture, audit and publish the whole LeanPool source profile
+Wants=network-online.target
+After=network-online.target
+StartLimitIntervalSec=0
+
+[Service]
+Type=oneshot
+WorkingDirectory=/data/lean-pool-profile
+Environment=PATH=/data/.elan/bin:/home/vasil/.local/bin:/usr/local/bin:/usr/bin:/bin
+Environment=TMPDIR=/data/lean-pool-profile/tmp
+Environment=LEAN_NUM_THREADS=4
+EnvironmentFile=-/data/lean-pool-profile/environment
+ExecStart=/usr/bin/python3 /data/lean-pool-profile/bin/run.py
+TimeoutStartSec=infinity
+TimeoutStopSec=30s
+KillMode=control-group
+Restart=on-failure
+RestartSec=1h
+Nice=10
+CPUWeight=20
+IOWeight=20
