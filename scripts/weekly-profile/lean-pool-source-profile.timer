@@ -1,0 +1,10 @@
+[Unit]
+Description=Weekly whole LeanPool source profiling on the Azure VM
+
+[Timer]
+OnCalendar=Mon *-*-* 02:00:00 UTC
+Persistent=true
+Unit=lean-pool-source-profile.service
+
+[Install]
+WantedBy=timers.target

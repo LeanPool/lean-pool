@@ -1,0 +1,10 @@
+[Unit]
+Description=Resume an interrupted LeanPool source profile after VM reboot
+ConditionPathExists=/data/lean-pool-profile/pending
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/systemctl --user start --no-block lean-pool-source-profile.service
+
+[Install]
+WantedBy=default.target

@@ -7,6 +7,7 @@
 [![Lean Action CI](https://github.com/LeanPool/lean-pool/actions/workflows/lean_action_ci.yml/badge.svg)](https://github.com/LeanPool/lean-pool/actions/workflows/lean_action_ci.yml)
 [![Documentation](https://img.shields.io/badge/docs-online-blue)](https://leanpool.github.io/lean-pool/)
 [![Exposition](https://img.shields.io/badge/exposition-online-8a4fff)](https://leanpool.github.io/lean-pool/exposition/)
+[![Source profile](https://img.shields.io/endpoint?url=https%3A%2F%2Fvilin97.github.io%2Flean-source-profiler%2Fpool%2Fbadge.json)](https://vilin97.github.io/lean-source-profiler/pool/)
 [![Zulip](https://img.shields.io/badge/Zulip-Lean_Pool-6492FE?logo=zulip&logoColor=white)](https://leanprover.zulipchat.com/#narrow/channel/619231-Lean-Pool)
 [![Semantic Search](https://img.shields.io/badge/semantic_search-Octo-2f80ed)](https://octo.axiomatic-ai.com/search?scopes=repo%3ALeanPool%2Flean-pool)
 [![License](https://img.shields.io/github/license/LeanPool/lean-pool)](LICENSE)
@@ -16,6 +17,11 @@
 Lean Pool sits between [`mathlib`](https://github.com/leanprover-community/mathlib4) and [`merely-true`](https://github.com/merely-true/merely-true), preserving Lean 4 formalizations that don't fit mathlib's scope. Instead of mathlib's high-bar human review, it relies on deterministic linters and LLM judgment, so it can grow faster while staying `sorry`-free and pinned to the latest Mathlib. Tau Ceti is also a pinned Lake dependency; import its modules directly instead of vendoring projects already in Tau Ceti or Mathlib. See [`MOTIVATION.md`](MOTIVATION.md) for the why, browse the API docs at <https://leanpool.github.io/lean-pool/>, and explore each project's dependency graph and declarations in the [exposition site](https://leanpool.github.io/lean-pool/exposition/).
 
 Semantic search is also available via the [API](https://search.octo.axiomatic-ai.com/api/search).
+
+Explore compile costs in the [LeanPool source profile](https://vilin97.github.io/lean-source-profiler/pool/),
+from projects and files down to declarations and source lines. The
+[weekly profiling job](scripts/weekly-profile/README.md) runs on our Azure VM;
+the badge shows the date of the latest completed recording.
 
 <!-- BEGIN STATS -->
 **295** formalization projects · **10,939,627** lines of Lean
