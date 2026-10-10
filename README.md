@@ -24,7 +24,7 @@ from projects and files down to declarations and source lines. The
 the badge shows the date of the latest completed recording.
 
 <!-- BEGIN STATS -->
-**296** formalization projects · **10,956,869** lines of Lean
+**297** formalization projects · **10,961,384** lines of Lean
 <!-- END STATS -->
 
 <sub>(stats above are refreshed automatically by the [generated-metadata workflow](.github/workflows/notice.yml) — edit [`python/lean_pool/stats.py`](python/lean_pool/stats.py), not the numbers)</sub>
