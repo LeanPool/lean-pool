@@ -17,18 +17,6 @@ noncomputable section
 open Set
 namespace KamProject.Arnold1963
 
-/-- Evaluation of an action covector on the coordinate basis as a continuous linear map. -/
-def actionFrequencyCLM (n : ℕ) :
-    (ComplexSpace n →L[ℂ] ℂ) →L[ℂ] ComplexSpace n :=
-  ContinuousLinearMap.pi (fun j => ContinuousLinearMap.apply ℂ ℂ (Pi.single j 1))
-
-theorem fderiv_actionFrequency_apply {n : ℕ} {h : ComplexSpace n → ℂ}
-    {p : ComplexSpace n} (ha : AnalyticAt ℂ h p) (v : ComplexSpace n) (j : Fin n) :
-    fderiv ℂ (actionFrequency h) p v j =
-      fderiv ℂ (fderiv ℂ h) p v (Pi.single j 1) := by
-  exact congrArg (fun L : ComplexSpace n →L[ℂ] ComplexSpace n => L v j)
-    (((actionFrequencyCLM n).hasFDerivAt.comp p ha.fderiv.differentiableAt.hasFDerivAt).fderiv)
-
 theorem IntegrableData.of_frequency_bound {n : ℕ} {G : Set (ComplexSpace n)}
     {h : ComplexSpace n → ℂ} {Θ : ℝ} (ha : AnalyticOnNhd ℂ h G)
     (hc : ∀ p ∈ G, h (conjVec p) = star (h p))

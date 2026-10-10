@@ -24,6 +24,18 @@ namespace KamProject.Arnold1963
 def actionFrequency {n : ℕ} (h : ComplexSpace n → ℂ) (p : ComplexSpace n) :
     ComplexSpace n := fun j => fderiv ℂ h p (Pi.single j 1)
 
+/-- Evaluation of an action covector on the coordinate basis as a continuous linear map. -/
+def actionFrequencyCLM (n : ℕ) :
+    (ComplexSpace n →L[ℂ] ℂ) →L[ℂ] ComplexSpace n :=
+  ContinuousLinearMap.pi (fun j => ContinuousLinearMap.apply ℂ ℂ (Pi.single j 1))
+
+theorem fderiv_actionFrequency_apply {n : ℕ} {h : ComplexSpace n → ℂ}
+    {p : ComplexSpace n} (ha : AnalyticAt ℂ h p) (v : ComplexSpace n) (j : Fin n) :
+    fderiv ℂ (actionFrequency h) p v j =
+      fderiv ℂ (fderiv ℂ h) p v (Pi.single j 1) := by
+  exact congrArg (fun L : ComplexSpace n →L[ℂ] ComplexSpace n => L v j)
+    (((actionFrequencyCLM n).hasFDerivAt.comp p ha.fderiv.differentiableAt.hasFDerivAt).fderiv)
+
 theorem fderiv_eq_actionFrequency {n : ℕ} (h : ComplexSpace n → ℂ)
     (p v : ComplexSpace n) :
     fderiv ℂ h p v = ∑ j, actionFrequency h p j * v j := by

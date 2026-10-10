@@ -30,10 +30,7 @@ theorem frequency_derivative_apply {n : ℕ} {H₀ : ComplexSpace n → ℂ}
     {p : ComplexSpace n} (ha : AnalyticAt ℂ H₀ p) (v : ComplexSpace n) (j : Fin n) :
     fderiv ℂ (actionFrequency H₀) p v j =
       fderiv ℂ (fderiv ℂ H₀) p v (Pi.single j 1) := by
-  let L : (ComplexSpace n →L[ℂ] ℂ) →L[ℂ] ComplexSpace n :=
-    ContinuousLinearMap.pi (fun i => ContinuousLinearMap.apply ℂ ℂ (Pi.single i 1))
-  exact congrArg (fun D : ComplexSpace n →L[ℂ] ComplexSpace n => D v j)
-    ((L.hasFDerivAt.comp p ha.fderiv.differentiableAt.hasFDerivAt).fderiv)
+  exact fderiv_actionFrequency_apply ha v j
 
 theorem hessianDet_eq_matrix {n : ℕ} {H₀ : ComplexSpace n → ℂ}
     {p : ComplexSpace n} (ha : AnalyticAt ℂ H₀ p) :
@@ -42,7 +39,7 @@ theorem hessianDet_eq_matrix {n : ℕ} {H₀ : ComplexSpace n → ℂ}
   rw [hessianDet, ← LinearMap.det_toMatrix']
   congr 1
   ext i j
-  exact frequency_derivative_apply ha (Pi.single j 1) i
+  exact fderiv_actionFrequency_apply ha (Pi.single j 1) i
 
 theorem isUnit_frequency_derivative_iff {n : ℕ} (H₀ : ComplexSpace n → ℂ)
     (p : ComplexSpace n) :

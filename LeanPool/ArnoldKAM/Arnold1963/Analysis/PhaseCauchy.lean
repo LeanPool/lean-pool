@@ -8,6 +8,7 @@ module
 
 public import LeanPool.ArnoldKAM.Arnold1963.Analysis.SecondCauchy
 public import LeanPool.ArnoldKAM.Arnold1963.Analysis.DomainBuffer
+public import LeanPool.ArnoldKAM.Arnold1963.Basic.Symplectic
 
 /-!
 Coordinate second-derivative bounds and rectangular buffers in complex phase space.
@@ -20,12 +21,10 @@ open scoped NNReal
 namespace KamProject.Arnold1963
 
 /-- The coordinate basis of phase space, with action coordinates preceding angle coordinates. -/
-def phaseBasis {n : ℕ} : Fin n ⊕ Fin n → ComplexPhaseSpace n
-  | .inl j => (Pi.single j 1, 0)
-  | .inr j => (0, Pi.single j 1)
+abbrev phaseBasis {n : ℕ} : Fin n ⊕ Fin n → ComplexPhaseSpace n := phaseDirection
 
 theorem norm_phaseBasis {n : ℕ} (j : Fin n ⊕ Fin n) : ‖phaseBasis j‖ = 1 := by
-  cases j <;> simp [phaseBasis, Pi.norm_single]
+  cases j <;> simp [phaseBasis, phaseDirection]
 
 private theorem norm_single_add_le {n : ℕ} {i j : Fin n} (h : i ≠ j) :
     ‖(Pi.single i 1 : ComplexSpace n) + Pi.single j 1‖ ≤ 1 := by
@@ -44,24 +43,32 @@ theorem norm_phaseBasis_add_le {n : ℕ} {i j : Fin n ⊕ Fin n} (h : i ≠ j) :
   cases i with
   | inl i =>
     cases j with
-    | inl j => simpa [phaseBasis, phase_norm_eq] using norm_single_add_le (by simpa using h)
-    | inr j => simp [phaseBasis, Pi.norm_single]
+    | inl j =>
+      simpa [phaseBasis, phaseDirection, pDirection, phase_norm_eq] using
+        norm_single_add_le (by simpa using h)
+    | inr j => simp [phaseBasis, phaseDirection, pDirection, qDirection, Pi.norm_single]
   | inr i =>
     cases j with
-    | inl j => simp [phaseBasis, Pi.norm_single]
-    | inr j => simpa [phaseBasis, phase_norm_eq] using norm_single_add_le (by simpa using h)
+    | inl j => simp [phaseBasis, phaseDirection, pDirection, qDirection, Pi.norm_single]
+    | inr j =>
+      simpa [phaseBasis, phaseDirection, qDirection, phase_norm_eq] using
+        norm_single_add_le (by simpa using h)
 
 theorem norm_phaseBasis_sub_le {n : ℕ} {i j : Fin n ⊕ Fin n} (h : i ≠ j) :
     ‖phaseBasis i - phaseBasis j‖ ≤ 1 := by
   cases i with
   | inl i =>
     cases j with
-    | inl j => simpa [phaseBasis, phase_norm_eq] using norm_single_sub_le (by simpa using h)
-    | inr j => simp [phaseBasis, Pi.norm_single]
+    | inl j =>
+      simpa [phaseBasis, phaseDirection, pDirection, phase_norm_eq] using
+        norm_single_sub_le (by simpa using h)
+    | inr j => simp [phaseBasis, phaseDirection, pDirection, qDirection, Pi.norm_single]
   | inr i =>
     cases j with
-    | inl j => simp [phaseBasis, Pi.norm_single]
-    | inr j => simpa [phaseBasis, phase_norm_eq] using norm_single_sub_le (by simpa using h)
+    | inl j => simp [phaseBasis, phaseDirection, pDirection, qDirection, Pi.norm_single]
+    | inr j =>
+      simpa [phaseBasis, phaseDirection, qDirection, phase_norm_eq] using
+        norm_single_sub_le (by simpa using h)
 
 theorem norm_second_phaseCoordinate_le {n : ℕ} {f : ComplexPhaseSpace n → ℂ}
     {U : Set (ComplexPhaseSpace n)} {r : ℝ≥0} {M : ℝ} {x : ComplexPhaseSpace n}
