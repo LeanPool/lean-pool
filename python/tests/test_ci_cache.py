@@ -276,3 +276,24 @@ def test_scheduled_pruning_requires_complete_cache_metadata():
     assert obsolete_main_caches(caches) == [0]
     caches[1]["key"] = None
     assert obsolete_main_caches(caches) == []
+
+
+@pytest.mark.parametrize("reverse", [False, True])
+def test_retention_selects_a_record_when_versions_share_a_key(reverse):
+    """A newer version replaces older versions regardless of API list order."""
+    caches = [
+        {
+            "id": index,
+            "key": f"LeanPoolBuild-v1-Linux-{key}",
+            "version": version,
+            "ref": "refs/heads/main",
+            "created_at": f"2026-10-10T0{index}:00:00Z",
+            "size_in_bytes": 1024,
+        }
+        for index, (key, version) in enumerate([("A", "v1"), ("B", "v1"), ("A", "v2")])
+    ]
+    if reverse:
+        caches.reverse()
+    assert obsolete_main_caches(caches) == [0, 1]
+    assert obsolete_caches(caches, "LeanPoolBuild-v1-Linux-A") == [0, 1]
+    assert obsolete_caches(caches, "LeanPoolBuild-v1-Linux-B") == [0]

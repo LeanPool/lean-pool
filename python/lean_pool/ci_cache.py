@@ -59,7 +59,7 @@ def cache_family(key: str) -> str:
 
 def obsolete_caches(caches: list[dict[str, Any]], key: str) -> list[int]:
     """Prune old copies only after the replacement is visible on main."""
-    family = cache_family(key)
+    cache_family(key)
     replacements = [
         cache
         for cache in caches
@@ -67,20 +67,28 @@ def obsolete_caches(caches: list[dict[str, Any]], key: str) -> list[int]:
     ]
     if not replacements:
         return []
-    created = replacements[0].get("created_at", "")
-    return [
+    replacement = max(replacements, key=lambda cache: cache.get("created_at", ""))
+    return _obsolete_before(caches, replacement)
+
+
+def _obsolete_before(
+    caches: list[dict[str, Any]], replacement: dict[str, Any]
+) -> list[int]:
+    family = cache_family(replacement["key"])
+    created = replacement.get("created_at", "")
+    return sorted(
         cache["id"]
         for cache in caches
         if cache.get("ref") == "refs/heads/main"
         and isinstance(cache.get("key"), str)
         and cache["key"].startswith(family)
-        and cache["key"] != key
+        and cache["id"] != replacement["id"]
         and (not created or cache.get("created_at", "") < created)
-    ]
+    )
 
 
 def obsolete_main_caches(caches: list[dict[str, Any]]) -> list[int]:
-    """Retain the newest main cache per known family and operating system."""
+    """Retain the newest completed main record per family/OS across cache versions."""
     completed = [
         cache
         for cache in caches
@@ -104,7 +112,7 @@ def obsolete_main_caches(caches: list[dict[str, Any]]) -> list[int]:
         {
             identifier
             for cache in newest.values()
-            for identifier in obsolete_caches(completed, cache["key"])
+            for identifier in _obsolete_before(completed, cache)
         }
     )
 

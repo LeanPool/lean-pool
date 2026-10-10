@@ -92,6 +92,16 @@ def test_docs_generate_on_main_and_explicit_preview_only() -> None:
     )
 
 
+def test_documentation_helper_changes_trigger_main_publishing() -> None:
+    """Documentation's preparation/rendering helpers also trigger publication."""
+    workflow = yaml.safe_load((WORKFLOWS / "docs.yml").read_text())
+    events = workflow.get("on", workflow.get(True))
+    assert {
+        "python/lean_pool/documentation.py",
+        "python/lean_pool/indexes.py",
+    } <= set(events["push"]["paths"])
+
+
 def test_single_and_sharded_builds_use_validation_cache() -> None:
     """Both execution paths validate before saving receipts and keep the same gate."""
     jobs = yaml.safe_load((WORKFLOWS / "lean_action_ci.yml").read_text())["jobs"]
@@ -411,6 +421,8 @@ def scope_repository(tmp_path: Path) -> tuple[Path, str]:
         ("docs.yml", "lean-toolchain", True),
         ("docs.yml", "lake-manifest.json", True),
         ("docs.yml", "python/lean_pool/exposition/generate.py", True),
+        ("docs.yml", "python/lean_pool/documentation.py", True),
+        ("docs.yml", "python/lean_pool/indexes.py", True),
         ("docs.yml", "scripts/exposition/extract-all.sh", True),
         ("docs.yml", ".github/workflows/docs.yml", True),
         ("workflow_lint.yml", "LeanPool/Example/Proof.lean", False),
@@ -670,6 +682,8 @@ def test_scoped_checks_handle_large_diffs(tmp_path, filename):
         ("python/tests/test_ci_pr_build.py", "true", "false", True),
         ('"python/lean_pool/quoted.py"', "true", "false", True),
         ("scripts/ProjectIndexes.lean", "true", "false", True),
+        ("scripts/exposition/Extract.lean", "true", "false", True),
+        ("scripts/exposition/tests/EmbeddedNames.lean", "true", "false", True),
         (".github/workflows/lean_action_ci.yml", "true", "false", True),
         ("", "false", "false", True),
         ("LeanPool/Example/Proof.lean", "true", "true", True),
