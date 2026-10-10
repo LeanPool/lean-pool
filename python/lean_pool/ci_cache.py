@@ -59,7 +59,7 @@ def cache_family(key: str) -> str:
 
 def obsolete_caches(caches: list[dict[str, Any]], key: str) -> list[int]:
     """Prune old copies only after the replacement is visible on main."""
-    family = cache_family(key)
+    cache_family(key)
     replacements = [
         cache
         for cache in caches
@@ -67,21 +67,60 @@ def obsolete_caches(caches: list[dict[str, Any]], key: str) -> list[int]:
     ]
     if not replacements:
         return []
-    created = replacements[0].get("created_at", "")
-    return [
+    replacement = max(replacements, key=lambda cache: cache.get("created_at", ""))
+    return _obsolete_before(caches, replacement)
+
+
+def _obsolete_before(
+    caches: list[dict[str, Any]], replacement: dict[str, Any]
+) -> list[int]:
+    family = cache_family(replacement["key"])
+    created = replacement.get("created_at", "")
+    return sorted(
         cache["id"]
         for cache in caches
         if cache.get("ref") == "refs/heads/main"
         and isinstance(cache.get("key"), str)
         and cache["key"].startswith(family)
-        and cache["key"] != key
+        and cache["id"] != replacement["id"]
         and (not created or cache.get("created_at", "") < created)
+    )
+
+
+def obsolete_main_caches(caches: list[dict[str, Any]]) -> list[int]:
+    """Retain the newest completed main record per family/OS across cache versions."""
+    completed = [
+        cache
+        for cache in caches
+        if cache.get("ref") == "refs/heads/main"
+        and isinstance(cache.get("created_at"), str)
+        and cache["created_at"]
+        and isinstance(cache.get("size_in_bytes"), int)
+        and cache["size_in_bytes"] > 0
+        and isinstance(cache.get("key"), str)
     ]
+    newest: dict[str, dict[str, Any]] = {}
+    for cache in completed:
+        try:
+            family = cache_family(cache.get("key", ""))
+        except ValueError:
+            continue
+        previous = newest.get(family)
+        if previous is None or cache["created_at"] > previous["created_at"]:
+            newest[family] = cache
+    return sorted(
+        {
+            identifier
+            for cache in newest.values()
+            for identifier in _obsolete_before(completed, cache)
+        }
+    )
 
 
-def prune_cache(repository: str, key: str) -> None:
-    """Retain the replacement and remove older copies after a successful upload."""
-    cache_family(key)
+def prune_cache(repository: str, key: str | None = None) -> None:
+    """Remove older main caches after a specific or the newest replacement."""
+    if key is not None:
+        cache_family(key)
     pages = json.loads(
         subprocess.check_output(
             [
@@ -96,7 +135,12 @@ def prune_cache(repository: str, key: str) -> None:
         )
     )
     caches = [cache for page in pages for cache in page["actions_caches"]]
-    for identifier in obsolete_caches(caches, key):
+    obsolete = (
+        obsolete_caches(caches, key)
+        if key is not None
+        else obsolete_main_caches(caches)
+    )
+    for identifier in obsolete:
         subprocess.run(
             [
                 "gh",
@@ -119,7 +163,9 @@ def main() -> None:
     revision.add_argument("--ref", default="HEAD")
     prune = commands.add_parser("prune")
     prune.add_argument("--repository", required=True)
-    prune.add_argument("--key", required=True)
+    prune.add_argument(
+        "--key", help="Replacement key; omit to prune all known families"
+    )
     arguments = parser.parse_args()
     logging.basicConfig(level=logging.INFO, format="cache: %(message)s")
     if arguments.command == "revision":

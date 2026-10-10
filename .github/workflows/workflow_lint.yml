@@ -18,10 +18,50 @@ permissions:
   contents: read
 
 jobs:
+  scope:
+    runs-on: ubuntu-latest
+    outputs:
+      applicable: ${{ steps.scope.outputs.applicable }}
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - id: scope
+        env:
+          EVENT: ${{ github.event_name }}
+          BASE: ${{ github.event.merge_group.base_sha || github.event.pull_request.base.sha }}
+        run: |
+          set -euo pipefail
+          applicable=true
+          if [ "$EVENT" = merge_group ] || [ "$EVENT" = pull_request ]; then
+            applicable=false
+            if [ "$EVENT" = pull_request ]; then
+              files=$(git diff --name-only --no-renames "$BASE"...HEAD)
+            else
+              files=$(git diff --name-only --no-renames "$BASE"..HEAD)
+            fi
+            # Git may quote names containing Unicode or control characters.
+            if grep -Eq '^"?\.github/' <<< "$files"; then
+              applicable=true
+            fi
+          fi
+          echo "applicable=$applicable" >> "$GITHUB_OUTPUT"
   actionlint:
+    needs: scope
+    if: always() && (needs.scope.result != 'success' || needs.scope.outputs.applicable != 'false')
     runs-on: ubuntu-latest
     name: actionlint
     steps:
+      - name: Require successful change classification
+        env:
+          SCOPE_RESULT: ${{ needs.scope.result }}
+          APPLICABLE: ${{ needs.scope.outputs.applicable }}
+        run: |
+          if [ "$SCOPE_RESULT" != success ] || [ "$APPLICABLE" != true ]; then
+            echo "::error::Change classification failed; required validation cannot be skipped."
+            exit 1
+          fi
       - name: Checkout
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
 
@@ -31,9 +71,20 @@ jobs:
           fail_level: any
 
   pinned-actions:
+    needs: scope
+    if: always() && (needs.scope.result != 'success' || needs.scope.outputs.applicable != 'false')
     runs-on: ubuntu-latest
     name: SHA-pinned Actions
     steps:
+      - name: Require successful change classification
+        env:
+          SCOPE_RESULT: ${{ needs.scope.result }}
+          APPLICABLE: ${{ needs.scope.outputs.applicable }}
+        run: |
+          if [ "$SCOPE_RESULT" != success ] || [ "$APPLICABLE" != true ]; then
+            echo "::error::Change classification failed; required validation cannot be skipped."
+            exit 1
+          fi
       - name: Checkout
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
 

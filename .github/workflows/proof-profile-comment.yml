@@ -1,13 +1,8 @@
 name: Proof Profile Comment
 
-# Companion to the `Proof Profile` workflow. That workflow runs the PR's Lean
-# code to profile it, so it must run on the `pull_request` event — where a PR
-# from a fork only gets a read-only GITHUB_TOKEN and cannot post a comment.
-# This workflow fires when it finishes, runs in the base-repo context with a
-# writable token, and posts the already-rendered profile for every PR, fork or
-# not. It never checks out or runs PR code; it only downloads the pre-rendered
-# `proof-profile-comment` artifact and posts it, so the writable token is never
-# exposed to untrusted PR code.
+# Retries comment publication when an on-demand `Proof Profile` run could not
+# post directly. It only downloads the rendered artifact and never executes
+# PR code with its writable token.
 on:
   workflow_run:
     workflows: ["Proof Profile"]

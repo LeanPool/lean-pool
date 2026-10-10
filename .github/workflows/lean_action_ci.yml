@@ -87,6 +87,7 @@ jobs:
       build_revision: ${{ steps.build-identity.outputs.revision }}
       base_build_revision: ${{ steps.build-identity.outputs.base_revision }}
       minimal_build: ${{ steps.plan.outputs.minimal_build }}
+      dependency_tests: ${{ steps.plan.outputs.dependency_tests }}
       mode: ${{ steps.plan.outputs.mode }}
       matrix: ${{ steps.plan.outputs.matrix }}
       reuse_run_id: ${{ steps.plan.outputs.reuse_run_id }}
@@ -145,16 +146,16 @@ jobs:
           : > "$changed_files"
           case "$EVENT_NAME" in
             merge_group)
-              git diff --name-only "$BASE_SHA"..HEAD > "$changed_files"
+              git diff --name-only --no-renames "$BASE_SHA"..HEAD > "$changed_files"
               ;;
             pull_request)
-              git diff --name-only "$BASE_SHA"...HEAD > "$changed_files"
+              git diff --name-only --no-renames "$BASE_SHA"...HEAD > "$changed_files"
               ;;
             push)
               if [ -n "$BEFORE_SHA" ] \
                  && ! printf '%s' "$BEFORE_SHA" | grep -q '^0*$' \
                  && git cat-file -e "$BEFORE_SHA" 2>/dev/null; then
-                git diff --name-only "$BEFORE_SHA"..HEAD > "$changed_files"
+                git diff --name-only --no-renames "$BEFORE_SHA"..HEAD > "$changed_files"
               else
                 diff_available=false
               fi
@@ -168,6 +169,15 @@ jobs:
             minimal_build=true
           fi
           echo "minimal_build=$minimal_build" >> "$GITHUB_OUTPUT"
+          dependency_tests=true
+          if [ "$diff_available" = true ] && [ "$FORCE_FULL" != true ]; then
+            dependency_tests=false
+            # Git may quote names containing Unicode or control characters.
+            if grep -Eq '^"?(lean-toolchain$|lakefile\.toml$|lake-manifest\.json$|python/|scripts/ci/|scripts/exposition/|scripts/ProjectIndexes\.lean$|\.github/workflows/lean_action_ci\.yml$)' "$changed_files"; then
+              dependency_tests=true
+            fi
+          fi
+          echo "dependency_tests=$dependency_tests" >> "$GITHUB_OUTPUT"
           cold=false
           if [ -z "$CACHE_MATCHED" ]; then cold=true; fi
           plan=$(CHANGED_FILES_PATH="$changed_files" DIFF_AVAILABLE="$diff_available" \
@@ -242,6 +252,7 @@ jobs:
           enable-cache: true
 
       - name: Check compiled artifact dependency tracking with pinned Lean
+        if: needs.plan.outputs.dependency_tests == 'true'
         env:
           LEAN_POOL_REQUIRE_TEST_TOOLCHAIN: '1'
         run: >-
@@ -428,17 +439,6 @@ jobs:
           path: .lake/validation-cache/v1
           key: LeanValidation-v1-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json', 'lakefile.toml') }}-${{ github.sha }}
 
-      - name: Prune old copies of project validation
-        if: success() && github.ref == 'refs/heads/main'
-        continue-on-error: true
-        env:
-          GH_TOKEN: ${{ github.token }}
-          REPOSITORY: ${{ github.repository }}
-          CACHE_KEY: LeanValidation-v1-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json', 'lakefile.toml') }}-${{ github.sha }}
-        run: >-
-          PYTHONPATH=python python3 -m lean_pool.ci_cache prune
-          --repository "$REPOSITORY" --key "$CACHE_KEY"
-
       - name: Save Lean dependencies
         if: always() && github.ref == 'refs/heads/main' && steps.mathlib-cache.outcome == 'success' && steps.dependency-cache.outputs.cache-hit != 'true'
         uses: actions/cache/save@27d5ce7f107fe9357f9df03efb73ab90386fccae
@@ -448,34 +448,12 @@ jobs:
             .lake/packages
           key: LeanDependencies-v1-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}
 
-      - name: Prune old copies of lean dependencies
-        if: always() && github.ref == 'refs/heads/main' && steps.mathlib-cache.outcome == 'success' && steps.dependency-cache.outputs.cache-hit != 'true'
-        continue-on-error: true
-        env:
-          GH_TOKEN: ${{ github.token }}
-          REPOSITORY: ${{ github.repository }}
-          CACHE_KEY: LeanDependencies-v1-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}
-        run: >-
-          PYTHONPATH=python python3 -m lean_pool.ci_cache prune
-          --repository "$REPOSITORY" --key "$CACHE_KEY"
-
       - name: Save pool build
         if: always() && github.ref == 'refs/heads/main' && steps.compilation.outcome == 'success' && steps.cache.outputs.cache-hit != 'true'
         uses: actions/cache/save@27d5ce7f107fe9357f9df03efb73ab90386fccae
         with:
           path: .lake/build
           key: LeanPoolBuild-v1-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json', 'lakefile.toml') }}-${{ needs.plan.outputs.build_revision }}
-
-      - name: Prune old copies of pool build
-        if: always() && github.ref == 'refs/heads/main' && steps.compilation.outcome == 'success' && steps.cache.outputs.cache-hit != 'true'
-        continue-on-error: true
-        env:
-          GH_TOKEN: ${{ github.token }}
-          REPOSITORY: ${{ github.repository }}
-          CACHE_KEY: LeanPoolBuild-v1-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json', 'lakefile.toml') }}-${{ needs.plan.outputs.build_revision }}
-        run: >-
-          PYTHONPATH=python python3 -m lean_pool.ci_cache prune
-          --repository "$REPOSITORY" --key "$CACHE_KEY"
 
   shard:
     needs: plan
@@ -624,6 +602,7 @@ jobs:
           enable-cache: true
 
       - name: Check compiled artifact dependency tracking with pinned Lean
+        if: needs.plan.outputs.dependency_tests == 'true'
         env:
           LEAN_POOL_REQUIRE_TEST_TOOLCHAIN: '1'
         run: >-
@@ -814,17 +793,6 @@ jobs:
           path: .lake/validation-cache/v1
           key: LeanValidation-v1-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json', 'lakefile.toml') }}-${{ github.sha }}
 
-      - name: Prune old copies of project validation
-        if: success() && github.ref == 'refs/heads/main'
-        continue-on-error: true
-        env:
-          GH_TOKEN: ${{ github.token }}
-          REPOSITORY: ${{ github.repository }}
-          CACHE_KEY: LeanValidation-v1-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json', 'lakefile.toml') }}-${{ github.sha }}
-        run: >-
-          PYTHONPATH=python python3 -m lean_pool.ci_cache prune
-          --repository "$REPOSITORY" --key "$CACHE_KEY"
-
       - name: Save Lean dependencies
         if: always() && github.ref == 'refs/heads/main' && steps.mathlib-cache.outcome == 'success' && steps.dependency-cache.outputs.cache-hit != 'true'
         uses: actions/cache/save@27d5ce7f107fe9357f9df03efb73ab90386fccae
@@ -833,17 +801,6 @@ jobs:
             ~/.elan
             .lake/packages
           key: LeanDependencies-v1-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}
-
-      - name: Prune old copies of lean dependencies
-        if: always() && github.ref == 'refs/heads/main' && steps.mathlib-cache.outcome == 'success' && steps.dependency-cache.outputs.cache-hit != 'true'
-        continue-on-error: true
-        env:
-          GH_TOKEN: ${{ github.token }}
-          REPOSITORY: ${{ github.repository }}
-          CACHE_KEY: LeanDependencies-v1-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}
-        run: >-
-          PYTHONPATH=python python3 -m lean_pool.ci_cache prune
-          --repository "$REPOSITORY" --key "$CACHE_KEY"
 
       - name: Save pool build
         if: always() && github.ref == 'refs/heads/main' && steps.compilation.outcome == 'success' && steps.cache.outputs.cache-hit != 'true'
@@ -854,17 +811,6 @@ jobs:
 
   # Reuse the prior green project's compiled modules and current main's cache.
   # A missing artifact falls back to the full validation sequence in this job.
-      - name: Prune old copies of pool build
-        if: always() && github.ref == 'refs/heads/main' && steps.compilation.outcome == 'success' && steps.cache.outputs.cache-hit != 'true'
-        continue-on-error: true
-        env:
-          GH_TOKEN: ${{ github.token }}
-          REPOSITORY: ${{ github.repository }}
-          CACHE_KEY: LeanPoolBuild-v1-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json', 'lakefile.toml') }}-${{ needs.plan.outputs.build_revision }}
-        run: >-
-          PYTHONPATH=python python3 -m lean_pool.ci_cache prune
-          --repository "$REPOSITORY" --key "$CACHE_KEY"
-
   rebase:
     needs: plan
     if: needs.plan.outputs.mode == 'rebase'
@@ -930,6 +876,7 @@ jobs:
           use-mathlib-cache: false
 
       - name: Check compiled artifact dependency tracking with pinned Lean
+        if: needs.plan.outputs.dependency_tests == 'true'
         env:
           LEAN_POOL_REQUIRE_TEST_TOOLCHAIN: '1'
         run: >-

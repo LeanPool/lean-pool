@@ -6,6 +6,7 @@ import os
 import subprocess
 from pathlib import Path
 
+import pytest
 import yaml
 
 WORKFLOWS = Path(__file__).resolve().parents[2] / ".github/workflows"
@@ -62,10 +63,10 @@ def _docs_condition(condition: str, event: str, ref: str, preview: bool, readme:
 
 
 def test_docs_generate_on_main_and_explicit_preview_only() -> None:
-    """A PR runs its protected preflight without allocating heavy docs runners."""
+    """PRs scope preflight without allocating heavy docs runners."""
     jobs = yaml.safe_load((WORKFLOWS / "docs.yml").read_text())["jobs"]
     assert jobs["preflight"]["name"] == "Documentation preflight"
-    assert "if" not in jobs["preflight"]
+    assert jobs["preflight"]["needs"] == "scope"
     scenarios = [
         ("pull_request", "refs/pull/123/merge", False, False, False),
         ("push", "refs/heads/main", False, False, True),
@@ -89,6 +90,16 @@ def test_docs_generate_on_main_and_explicit_preview_only() -> None:
         True,
         False,
     )
+
+
+def test_documentation_helper_changes_trigger_main_publishing() -> None:
+    """Documentation's preparation/rendering helpers also trigger publication."""
+    workflow = yaml.safe_load((WORKFLOWS / "docs.yml").read_text())
+    events = workflow.get("on", workflow.get(True))
+    assert {
+        "python/lean_pool/documentation.py",
+        "python/lean_pool/indexes.py",
+    } <= set(events["push"]["paths"])
 
 
 def test_single_and_sharded_builds_use_validation_cache() -> None:
@@ -179,6 +190,8 @@ def test_required_scoped_checks_fail_closed_when_classification_fails() -> None:
     for filename, names in (
         ("python_ci.yml", ("lint", "test")),
         ("exposition-verify.yml", ("verify",)),
+        ("docs.yml", ("preflight",)),
+        ("workflow_lint.yml", ("actionlint", "pinned-actions")),
     ):
         workflow = yaml.safe_load((WORKFLOWS / filename).read_text())
         for name in names:
@@ -228,7 +241,9 @@ def test_minimal_verifier_pr_has_an_explicit_project_build_producer(tmp_path):
     assert pattern in planning["run"]
     classification = (
         "minimal_build=false"
-        + planning["run"].split("minimal_build=false", 1)[1].split("cold=false", 1)[0]
+        + planning["run"]
+        .split("minimal_build=false", 1)[1]
+        .split("dependency_tests=true", 1)[0]
     )
     changed = tmp_path / "changed-files.txt"
     output = tmp_path / "output.txt"
@@ -321,10 +336,6 @@ def test_extraction_caches_survive_failure_and_retry_keys_can_advance():
         assert "scripts/exposition/build-minimal.mjs" not in extraction_key
         assert "scripts/exposition/Extract.lean" in extraction_key
         assert "scripts/exposition/extract-all.sh" in extraction_key
-        if workflow == "docs.yml":
-            pruned = names["Prune old copies of project extraction cache"]
-            assert "steps.extraction-cache-save.outcome == 'success'" in pruned["if"]
-            assert "github.ref == 'refs/heads/main'" in pruned["if"]
 
 
 def test_minimal_build_wait_does_not_consume_verification_window() -> None:
@@ -367,3 +378,369 @@ def test_minimal_build_wait_does_not_consume_verification_window() -> None:
             capture_output=True,
         )
         assert (process.returncode == 0) == accepted
+
+
+@pytest.fixture
+def scope_repository(tmp_path: Path) -> tuple[Path, str]:
+    """Create a real diff for executing the workflow classifiers."""
+    subprocess.run(["git", "init", "-q"], cwd=tmp_path, check=True)
+    subprocess.run(
+        ["git", "config", "core.quotePath", "true"], cwd=tmp_path, check=True
+    )
+    subprocess.run(
+        [
+            "git",
+            "-c",
+            "user.name=Test",
+            "-c",
+            "user.email=test@example.com",
+            "commit",
+            "--allow-empty",
+            "-qm",
+            "base",
+        ],
+        cwd=tmp_path,
+        check=True,
+    )
+    base = subprocess.check_output(
+        ["git", "rev-parse", "HEAD"], cwd=tmp_path, text=True
+    ).strip()
+    return tmp_path, base
+
+
+@pytest.mark.parametrize("event", ["pull_request", "merge_group"])
+@pytest.mark.parametrize(
+    "filename,changed,expected",
+    [
+        ("docs.yml", "LeanPool/Example/Proof.lean", False),
+        ("docs.yml", "LeanPool/projects/example.yaml", False),
+        ("docs.yml", "README.md", False),
+        ("docs.yml", "docbuild/lakefile.toml", True),
+        ("docs.yml", "docbuild/名前.lean", True),
+        ("docs.yml", "docbuild/line\nbreak.lean", True),
+        ("docs.yml", "lean-toolchain", True),
+        ("docs.yml", "lake-manifest.json", True),
+        ("docs.yml", "python/lean_pool/exposition/generate.py", True),
+        ("docs.yml", "python/lean_pool/documentation.py", True),
+        ("docs.yml", "python/lean_pool/indexes.py", True),
+        ("docs.yml", "scripts/exposition/extract-all.sh", True),
+        ("docs.yml", ".github/workflows/docs.yml", True),
+        ("workflow_lint.yml", "LeanPool/Example/Proof.lean", False),
+        ("workflow_lint.yml", "python/lean_pool/ci_cache.py", False),
+        ("workflow_lint.yml", ".github/workflows/cache-maintenance.yml", True),
+        ("workflow_lint.yml", ".github/workflows/名前.yml", True),
+        ("workflow_lint.yml", ".github/workflows/line\nbreak.yml", True),
+    ],
+)
+def test_scoped_checks_classify_real_diffs(
+    scope_repository, filename, changed, expected, event
+) -> None:
+    """Only relevant PR and queue changes allocate expensive validation jobs."""
+    root, base = scope_repository
+    path = root / changed
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text("change\n")
+    subprocess.run(["git", "add", "."], cwd=root, check=True)
+    subprocess.run(
+        [
+            "git",
+            "-c",
+            "user.name=Test",
+            "-c",
+            "user.email=test@example.com",
+            "commit",
+            "-qm",
+            "change",
+        ],
+        cwd=root,
+        check=True,
+    )
+    workflow = yaml.safe_load((WORKFLOWS / filename).read_text())
+    command = workflow["jobs"]["scope"]["steps"][-1]["run"]
+    output = root / "output"
+    subprocess.run(
+        ["bash", "-e", "-c", command],
+        cwd=root,
+        check=True,
+        env={**os.environ, "EVENT": event, "BASE": base, "GITHUB_OUTPUT": str(output)},
+    )
+    assert output.read_text().strip() == f"applicable={str(expected).lower()}"
+
+
+@pytest.mark.parametrize("event", ["pull_request", "merge_group"])
+@pytest.mark.parametrize(
+    "filename,original",
+    [
+        ("docs.yml", "docbuild/lean-toolchain"),
+        ("workflow_lint.yml", ".github/workflows/example.yml"),
+    ],
+)
+def test_moving_files_out_of_scope_still_runs_validation(
+    scope_repository, filename, original, event
+):
+    """Renaming a configuration outside its directory must validate its removal."""
+    root, _ = scope_repository
+    base = _move_scope_file(root, original)
+    workflow = yaml.safe_load((WORKFLOWS / filename).read_text())
+    output = root / "output"
+    subprocess.run(
+        ["bash", "-e", "-c", workflow["jobs"]["scope"]["steps"][-1]["run"]],
+        cwd=root,
+        check=True,
+        env={**os.environ, "EVENT": event, "BASE": base, "GITHUB_OUTPUT": str(output)},
+    )
+    assert output.read_text().strip() == "applicable=true"
+    if filename == "docs.yml" and event == "pull_request":
+        detection = next(
+            step
+            for step in workflow["jobs"]["preflight"]["steps"]
+            if step.get("name") == "Detect README-only change"
+        )
+        output.write_text("")
+        subprocess.run(
+            ["bash", "-e", "-c", detection["run"]],
+            cwd=root,
+            check=True,
+            env={
+                **os.environ,
+                "EVENT_NAME": event,
+                "BASE_SHA": base,
+                "HEAD_SHA": "HEAD",
+                "GITHUB_OUTPUT": str(output),
+            },
+        )
+        assert output.read_text().strip() == "readme_only=false"
+
+
+def _scope_commit(root: Path) -> None:
+    subprocess.run(
+        [
+            "git",
+            "-c",
+            "user.name=Test",
+            "-c",
+            "user.email=test@example.com",
+            "commit",
+            "-qm",
+            "configuration change",
+        ],
+        cwd=root,
+        check=True,
+    )
+
+
+def _move_scope_file(root: Path, original: str) -> str:
+    path = root / original
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text("original configuration\n")
+    subprocess.run(["git", "add", "."], cwd=root, check=True)
+    _scope_commit(root)
+    base = subprocess.check_output(
+        ["git", "rev-parse", "HEAD"], cwd=root, text=True
+    ).strip()
+    path.rename(root / "README.md")
+    subprocess.run(["git", "add", "-A"], cwd=root, check=True)
+    _scope_commit(root)
+    return base
+
+
+@pytest.mark.parametrize("event", ["pull_request", "merge_group", "push"])
+def test_lean_planner_retains_removed_configuration_after_rename(
+    scope_repository, event
+):
+    """A renamed toolchain remains a build and dependency-test input."""
+    root, _ = scope_repository
+    base = _move_scope_file(root, "lean-toolchain")
+    jobs = yaml.safe_load((WORKFLOWS / "lean_action_ci.yml").read_text())["jobs"]
+    planning = next(step for step in jobs["plan"]["steps"] if step.get("id") == "plan")
+    command = (
+        'case "$EVENT_NAME" in'
+        + planning["run"].split('case "$EVENT_NAME" in', 1)[1].split("esac", 1)[0]
+        + "esac"
+    )
+    changed_files = root / "changed"
+    subprocess.run(
+        ["bash", "-e", "-c", command],
+        cwd=root,
+        check=True,
+        env={
+            **os.environ,
+            "EVENT_NAME": event,
+            "BASE_SHA": base,
+            "BEFORE_SHA": base,
+            "changed_files": str(changed_files),
+        },
+    )
+    assert set(changed_files.read_text().splitlines()) == {
+        "README.md",
+        "lean-toolchain",
+    }
+    command = (
+        "dependency_tests=true"
+        + planning["run"].split("dependency_tests=true", 1)[1].split("cold=false", 1)[0]
+    )
+    output = root / "output"
+    subprocess.run(
+        ["bash", "-e", "-c", command],
+        cwd=root,
+        check=True,
+        env={
+            **os.environ,
+            "changed_files": str(changed_files),
+            "diff_available": "true",
+            "FORCE_FULL": "false",
+            "GITHUB_OUTPUT": str(output),
+        },
+    )
+    assert output.read_text().strip() == "dependency_tests=true"
+
+
+@pytest.mark.parametrize("filename", ["docs.yml", "workflow_lint.yml"])
+def test_scoped_checks_do_not_skip_when_git_diff_fails(scope_repository, filename):
+    """An unavailable base produces failure rather than a false skip decision."""
+    root, _ = scope_repository
+    workflow = yaml.safe_load((WORKFLOWS / filename).read_text())
+    command = workflow["jobs"]["scope"]["steps"][-1]["run"]
+    output = root / "output"
+    process = subprocess.run(
+        ["bash", "-e", "-c", command],
+        cwd=root,
+        capture_output=True,
+        env={
+            **os.environ,
+            "EVENT": "pull_request",
+            "BASE": "missing-base",
+            "GITHUB_OUTPUT": str(output),
+        },
+    )
+    assert process.returncode != 0
+    assert not output.exists()
+
+
+@pytest.mark.parametrize("filename", ["docs.yml", "workflow_lint.yml"])
+@pytest.mark.parametrize("event", ["push", "workflow_dispatch"])
+def test_scoped_checks_run_for_main_and_manual_requests(tmp_path, filename, event):
+    """Publishing and explicit requests retain validation without needing a diff."""
+    workflow = yaml.safe_load((WORKFLOWS / filename).read_text())
+    command = workflow["jobs"]["scope"]["steps"][-1]["run"]
+    output = tmp_path / "output"
+    subprocess.run(
+        ["bash", "-e", "-c", command],
+        cwd=tmp_path,
+        check=True,
+        env={
+            **os.environ,
+            "EVENT": event,
+            "BASE": "missing-base",
+            "GITHUB_OUTPUT": str(output),
+        },
+    )
+    assert output.read_text().strip() == "applicable=true"
+
+
+@pytest.mark.parametrize("filename", ["docs.yml", "workflow_lint.yml"])
+def test_scoped_checks_handle_large_diffs(tmp_path, filename):
+    """An early match cannot become a false skip through a broken shell pipe."""
+    commands = tmp_path / "commands"
+    commands.mkdir()
+    git = commands / "git"
+    git.write_text('#!/bin/bash\ncat "$CHANGED_FILES"\n')
+    git.chmod(0o755)
+    changed_files = tmp_path / "changed"
+    changed_files.write_text(
+        ".github/workflows/docs.yml\n"
+        + "LeanPool/Example/LongPath/Proof.lean\n" * 10000
+    )
+    workflow = yaml.safe_load((WORKFLOWS / filename).read_text())
+    command = workflow["jobs"]["scope"]["steps"][-1]["run"]
+    output = tmp_path / "output"
+    subprocess.run(
+        ["bash", "-e", "-c", command],
+        cwd=tmp_path,
+        check=True,
+        env={
+            **os.environ,
+            "PATH": f"{commands}:{os.environ['PATH']}",
+            "EVENT": "pull_request",
+            "BASE": "base",
+            "CHANGED_FILES": str(changed_files),
+            "GITHUB_OUTPUT": str(output),
+        },
+    )
+    assert output.read_text().strip() == "applicable=true"
+
+
+@pytest.mark.parametrize(
+    "changed,diff_available,force_full,expected",
+    [
+        ("LeanPool/Example/Proof.lean", "true", "false", False),
+        ("LeanPool/projects/example.yaml", "true", "false", False),
+        ("lean-toolchain", "true", "false", True),
+        ("lakefile.toml", "true", "false", True),
+        ("lake-manifest.json", "true", "false", True),
+        ("python/lean_pool/ci_pr_build.py", "true", "false", True),
+        ("python/tests/test_ci_pr_build.py", "true", "false", True),
+        ('"python/lean_pool/quoted.py"', "true", "false", True),
+        ("scripts/ProjectIndexes.lean", "true", "false", True),
+        ("scripts/exposition/Extract.lean", "true", "false", True),
+        ("scripts/exposition/tests/EmbeddedNames.lean", "true", "false", True),
+        (".github/workflows/lean_action_ci.yml", "true", "false", True),
+        ("", "false", "false", True),
+        ("LeanPool/Example/Proof.lean", "true", "true", True),
+    ],
+)
+def test_dependency_tracking_tests_scope(
+    tmp_path, changed, diff_available, force_full, expected
+):
+    """Dependency tracking is tested for tooling changes and unknown/manual scopes."""
+    jobs = yaml.safe_load((WORKFLOWS / "lean_action_ci.yml").read_text())["jobs"]
+    planning = next(step for step in jobs["plan"]["steps"] if step.get("id") == "plan")
+    command = (
+        "dependency_tests=true"
+        + planning["run"].split("dependency_tests=true", 1)[1].split("cold=false", 1)[0]
+    )
+    changed_files = tmp_path / "changed"
+    changed_files.write_text(changed + "\n")
+    output = tmp_path / "output"
+    subprocess.run(
+        ["bash", "-e", "-c", command],
+        check=True,
+        env={
+            **os.environ,
+            "changed_files": str(changed_files),
+            "diff_available": diff_available,
+            "FORCE_FULL": force_full,
+            "GITHUB_OUTPUT": str(output),
+        },
+    )
+    assert output.read_text().strip() == f"dependency_tests={str(expected).lower()}"
+    for name in ("build", "finalize", "rebase"):
+        tracking = next(
+            step
+            for step in jobs[name]["steps"]
+            if step.get("name")
+            == "Check compiled artifact dependency tracking with pinned Lean"
+        )
+        assert tracking["if"] == "needs.plan.outputs.dependency_tests == 'true'"
+
+
+def test_profiling_is_opt_in_and_cache_pruning_is_scheduled() -> None:
+    """Advisory compilation and maintenance do not run on ordinary PR events."""
+    profiling = yaml.safe_load((WORKFLOWS / "proof-profile.yml").read_text())
+    assert set(profiling.get("on", profiling.get(True))) == {
+        "issue_comment",
+        "workflow_dispatch",
+    }
+    maintenance = yaml.safe_load((WORKFLOWS / "cache-maintenance.yml").read_text())
+    assert set(maintenance.get("on", maintenance.get(True))) == {
+        "schedule",
+        "workflow_dispatch",
+    }
+    assert maintenance["permissions"]["actions"] == "write"
+    for filename in ("lean_action_ci.yml", "docs.yml"):
+        workflow = yaml.safe_load((WORKFLOWS / filename).read_text())
+        assert not any(
+            "lean_pool.ci_cache prune" in step.get("run", "")
+            for job in workflow["jobs"].values()
+            for step in job["steps"]
+        )

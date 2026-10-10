@@ -15,6 +15,8 @@ on:
       - 'lean-toolchain'
       - 'docbuild/**'
       - 'python/lean_pool/exposition/**'
+      - 'python/lean_pool/documentation.py'
+      - 'python/lean_pool/indexes.py'
       - 'python/lean_pool/quality.py'
       - 'python/lean_pool/validation_cache.py'
       - 'python/lean_pool/ci_artifacts.py'
@@ -46,10 +48,41 @@ permissions:
   actions: read
 
 jobs:
+  scope:
+    runs-on: ubuntu-latest
+    outputs:
+      applicable: ${{ steps.scope.outputs.applicable }}
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - id: scope
+        env:
+          EVENT: ${{ github.event_name }}
+          BASE: ${{ github.event.merge_group.base_sha || github.event.pull_request.base.sha }}
+        run: |
+          set -euo pipefail
+          applicable=true
+          if [ "$EVENT" = merge_group ] || [ "$EVENT" = pull_request ]; then
+            applicable=false
+            if [ "$EVENT" = pull_request ]; then
+              files=$(git diff --name-only --no-renames "$BASE"...HEAD)
+            else
+              files=$(git diff --name-only --no-renames "$BASE"..HEAD)
+            fi
+            # Git may quote names containing Unicode or control characters.
+            if grep -Eq '^"?(docbuild/|lean-toolchain$|lakefile\.toml$|lake-manifest\.json$|python/lean_pool/(exposition/|documentation\.py$|indexes\.py$|quality\.py$|validation_cache\.py$|ci_artifacts\.py$|ci_cache\.py$|rebase_fastpath\.py$)|python/(pyproject\.toml|uv\.lock)$|scripts/exposition/|\.github/workflows/docs\.yml$)' <<< "$files"; then
+              applicable=true
+            fi
+          fi
+          echo "applicable=$applicable" >> "$GITHUB_OUTPUT"
   # Fail cheap consistency checks before either multi-hour documentation job
   # starts. In particular, a stale generated root should not spend runner time
   # building documentation that cannot be merged.
   preflight:
+    needs: scope
+    if: always() && (needs.scope.result != 'success' || needs.scope.outputs.applicable != 'false')
     runs-on: ubuntu-latest
     name: Documentation preflight
     outputs:
@@ -57,6 +90,15 @@ jobs:
       readme_only: ${{ steps.scope.outputs.readme_only }}
       rebase_only: ${{ steps.rebase.outputs.rebase_only }}
     steps:
+      - name: Require successful change classification
+        env:
+          SCOPE_RESULT: ${{ needs.scope.result }}
+          APPLICABLE: ${{ needs.scope.outputs.applicable }}
+        run: |
+          if [ "$SCOPE_RESULT" != success ] || [ "$APPLICABLE" != true ]; then
+            echo "::error::Change classification failed; required validation cannot be skipped."
+            exit 1
+          fi
       - name: Checkout project
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
         with:
@@ -84,7 +126,7 @@ jobs:
           set -euo pipefail
           readme_only=false
           if [ "$EVENT_NAME" = "pull_request" ]; then
-            files="$(git diff --name-only "$BASE_SHA"..."$HEAD_SHA")"
+            files="$(git diff --name-only --no-renames "$BASE_SHA"..."$HEAD_SHA")"
             if [ "$files" = "README.md" ]; then
               readme_only=true
             fi
@@ -275,17 +317,6 @@ jobs:
           path: .lake/exposition-cache/v1
           key: ${{ steps.extraction-cache.outputs.cache-primary-key }}
 
-      - name: Prune old copies of project extraction cache
-        if: always() && steps.extraction-cache-save.outcome == 'success' && github.ref == 'refs/heads/main'
-        continue-on-error: true
-        env:
-          GH_TOKEN: ${{ github.token }}
-          REPOSITORY: ${{ github.repository }}
-          CACHE_KEY: ${{ steps.extraction-cache.outputs.cache-primary-key }}
-        run: >-
-          PYTHONPATH=python python3 -m lean_pool.ci_cache prune
-          --repository "$REPOSITORY" --key "$CACHE_KEY"
-
       - name: Upload extraction timings and logs
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
@@ -419,17 +450,6 @@ jobs:
             .lake/packages/MD4Lean
           key: DocsInfoMathlib-v3-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lakefile.toml', 'lake-manifest.json', 'docbuild/lean-toolchain', 'docbuild/lakefile.toml', 'docbuild/lake-manifest.json') }}
 
-      - name: Prune old copies of mathlib documentation checkpoint
-        if: steps.mathlib-doc-cache.outputs.cache-hit != 'true' && github.ref == 'refs/heads/main'
-        continue-on-error: true
-        env:
-          GH_TOKEN: ${{ github.token }}
-          REPOSITORY: ${{ github.repository }}
-          CACHE_KEY: DocsInfoMathlib-v3-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lakefile.toml', 'lake-manifest.json', 'docbuild/lean-toolchain', 'docbuild/lakefile.toml', 'docbuild/lake-manifest.json') }}
-        run: >-
-          PYTHONPATH=python python3 -m lean_pool.ci_cache prune
-          --repository "$REPOSITORY" --key "$CACHE_KEY"
-
   build:
     needs:
       - preflight
@@ -561,17 +581,6 @@ jobs:
             .lake/packages/BibtexQuery
             .lake/packages/MD4Lean
           key: DocsInfo-v3-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lakefile.toml', 'lake-manifest.json', 'docbuild/lean-toolchain', 'docbuild/lakefile.toml', 'docbuild/lake-manifest.json') }}-${{ needs.preflight.outputs.build_revision }}
-
-      - name: Prune old copies of pool documentation checkpoint
-        if: steps.pool-doc-cache.outputs.cache-hit != 'true' && github.ref == 'refs/heads/main'
-        continue-on-error: true
-        env:
-          GH_TOKEN: ${{ github.token }}
-          REPOSITORY: ${{ github.repository }}
-          CACHE_KEY: DocsInfo-v3-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lakefile.toml', 'lake-manifest.json', 'docbuild/lean-toolchain', 'docbuild/lakefile.toml', 'docbuild/lake-manifest.json') }}-${{ needs.preflight.outputs.build_revision }}
-        run: >-
-          PYTHONPATH=python python3 -m lean_pool.ci_cache prune
-          --repository "$REPOSITORY" --key "$CACHE_KEY"
 
       - name: Build documentation
         run: cd docbuild && ~/.elan/bin/lake build LeanPool:docs
