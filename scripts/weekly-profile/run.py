@@ -206,8 +206,8 @@ def execute(root: Path, state: dict) -> None:
         advance("publish")
     if state["phase"] == "publish":
         state["publicationCommit"] = publish(run, state)
+        write_json(run / "complete.json", {**state, "phase": "complete"})
         advance("complete")
-        write_json(run / "complete.json", state)
         (root / "pending").unlink(missing_ok=True)
         try:
             prune_recordings(root)

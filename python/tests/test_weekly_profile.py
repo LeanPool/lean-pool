@@ -149,3 +149,170 @@ def test_retention_preserves_unfinished_runs_and_two_completed_runs(tmp_path):
         "03",
         "unfinished",
     ]
+
+
+@pytest.fixture
+def completion_run(tmp_path):
+    """Prepare pinned state and retained recordings for finalization recovery."""
+    state = {
+        "runId": "03-test-run",
+        "commit": "pinned-pool-commit",
+        "profilerCommit": "pinned-profiler-commit",
+        "phase": "prepare",
+    }
+    run = tmp_path / "runs" / state["runId"]
+    run.mkdir(parents=True)
+    (tmp_path / "pending").touch()
+    for name in ("01", "02", "unfinished"):
+        previous = tmp_path / "runs" / name
+        previous.mkdir()
+        if name != "unfinished":
+            (previous / "complete.json").write_text("{}")
+    weekly_profile.write_json(tmp_path / "active.json", state)
+    return {"root": tmp_path, "state": state, "run": run}
+
+
+@pytest.fixture
+def completion_operations(monkeypatch, completion_run):
+    """Record mocked commands and publications without invoking external work."""
+    root = completion_run["root"]
+    state = completion_run["state"]
+    run = completion_run["run"]
+    commands, publications = [], []
+    monkeypatch.setenv("LAKE", "test-lake")
+
+    def command(*arguments, directory, capture=False):
+        commands.append(arguments)
+        if arguments[:3] == ("git", "rev-parse", "HEAD"):
+            assert capture
+            assert directory in (root / "repository", root / "profiler")
+            return {
+                "repository": state["commit"],
+                "profiler": state["profilerCommit"],
+            }[directory.name]
+        assert not capture
+        name = "repository" if arguments[0] == "test-lake" else "profiler"
+        assert directory == root / name
+        return ""
+
+    def publish(recording, checkpoint):
+        assert recording == run
+        assert checkpoint["runId"] == state["runId"]
+        assert checkpoint["commit"] == "pinned-pool-commit"
+        assert checkpoint["profilerCommit"] == "pinned-profiler-commit"
+        assert checkpoint["phase"] == "publish"
+        publications.append(dict(checkpoint))
+        return "publication-commit"
+
+    monkeypatch.setattr(weekly_profile, "command", command)
+    monkeypatch.setattr(weekly_profile, "publish", publish)
+    return commands, publications
+
+
+@pytest.fixture
+def completion_marker_failure(monkeypatch, completion_run):
+    """Install a single failure before or after atomic marker publication."""
+    write_json = weekly_profile.write_json
+    marker = completion_run["run"] / "complete.json"
+    interrupted = False
+
+    def install(marker_persisted):
+        def interrupted_write(path, value):
+            nonlocal interrupted
+            if path == marker and not interrupted:
+                interrupted = True
+                if marker_persisted:
+                    write_json(path, value)
+                raise OSError("interrupted completion marker write")
+            write_json(path, value)
+
+        monkeypatch.setattr(weekly_profile, "write_json", interrupted_write)
+
+    return install
+
+
+def assert_interrupted_completion(completion_run, marker_persisted):
+    """Keep the same pinned publish checkpoint until finalization can finish."""
+    root, state = completion_run["root"], completion_run["state"]
+    marker = completion_run["run"] / "complete.json"
+    checkpoint = json.loads((root / "active.json").read_text())
+    assert checkpoint["phase"] == state["phase"] == "publish"
+    assert checkpoint["runId"] == state["runId"]
+    assert checkpoint["commit"] == "pinned-pool-commit"
+    assert checkpoint["profilerCommit"] == "pinned-profiler-commit"
+    assert marker.exists() is marker_persisted
+    if marker_persisted:
+        assert json.loads(marker.read_text()) == {
+            **checkpoint,
+            "phase": "complete",
+            "publicationCommit": "publication-commit",
+        }
+    assert (root / "pending").exists()
+    assert (root / "runs/01").exists()
+    return checkpoint
+
+
+def assert_completed_profile_commands(completion_run, commands):
+    """Prepare, capture and export exactly once before the publish-only retry."""
+    root, run = completion_run["root"], completion_run["run"]
+    assert commands == [
+        ("npm", "ci", "--cache", str(root / "npm-cache")),
+        ("npm", "run", "build"),
+        ("test-lake", "exe", "cache", "get"),
+        (
+            "node",
+            "scripts/capture-whole-pool.cjs",
+            str(root / "repository"),
+            str(run / "recording"),
+        ),
+        (
+            "python3",
+            "scripts/export-whole-pool.py",
+            str(run / "recording"),
+            str(run / "export"),
+        ),
+    ]
+
+
+def assert_completed_recording(completion_run, checkpoint, publications):
+    """Finish both checkpoints, remove pending and retain exactly two runs."""
+    root, run = completion_run["root"], completion_run["run"]
+    assert len(publications) == 2
+    complete = json.loads((run / "complete.json").read_text())
+    assert complete == json.loads((root / "active.json").read_text())
+    assert complete == {
+        **checkpoint,
+        "phase": "complete",
+        "publicationCommit": "publication-commit",
+    }
+    assert not (root / "pending").exists()
+    assert sorted(path.name for path in (root / "runs").iterdir()) == [
+        "02",
+        "03-test-run",
+        "unfinished",
+    ]
+
+
+@pytest.mark.parametrize("marker_persisted", [False, True])
+def test_completion_marker_failure_resumes_same_run(
+    completion_run, completion_operations, completion_marker_failure, marker_persisted
+):
+    """A finalization interruption must not strand a captured recording."""
+    root, state = completion_run["root"], completion_run["state"]
+    commands, publications = completion_operations
+    completion_marker_failure(marker_persisted)
+    with pytest.raises(OSError, match="completion marker"):
+        weekly_profile.execute(root, state)
+    checkpoint = assert_interrupted_completion(completion_run, marker_persisted)
+    completed_commands = list(commands)
+    assert_completed_profile_commands(completion_run, completed_commands)
+
+    resumed = weekly_profile.run_state(root)
+    assert resumed == checkpoint
+    weekly_profile.execute(root, resumed)
+    assert commands[:5] == completed_commands
+    assert commands[5:] == [
+        ("git", "rev-parse", "HEAD"),
+        ("git", "rev-parse", "HEAD"),
+    ]
+    assert_completed_recording(completion_run, checkpoint, publications)
