@@ -75,7 +75,7 @@ def test_docs_generate_on_main_and_explicit_preview_only() -> None:
         ("pull_request", "refs/pull/123/merge", True, False, False),
         ("push", "refs/heads/main", False, True, False),
     ]
-    for name in ("exposition", "mathlib_doc_info", "build"):
+    for name in ("exposition", "mathlib_doc_info", "pool_doc_info", "build"):
         for event, ref, preview, readme, expected in scenarios:
             assert (
                 _docs_condition(jobs[name]["if"], event, ref, preview, readme)
@@ -88,6 +88,46 @@ def test_docs_generate_on_main_and_explicit_preview_only() -> None:
         "refs/heads/topic",
         True,
         False,
+    )
+
+
+def test_documentation_resumes_serially_before_rendering() -> None:
+    """A time-bounded checkpoint never bypasses the complete target or HTML check."""
+    jobs = yaml.safe_load((WORKFLOWS / "docs.yml").read_text())["jobs"]
+    preparation = jobs["pool_doc_info"]
+    build = jobs["build"]
+    assert "mathlib_doc_info" in preparation["needs"]
+    assert "pool_doc_info" in build["needs"]
+    assert "always()" not in build["if"]
+    steps = {step["name"]: step for step in preparation["steps"]}
+    assert (
+        "--time-budget 18000"
+        in steps["Prepare documentation data within checkpoint budget"]["run"]
+    )
+    save = steps["Save resumable pool documentation checkpoint"]
+    assert "always()" not in save["if"]
+    identity = steps["Identify checkpoint handoff"]
+    assert "github.run_id" in identity["run"]
+    assert "github.run_attempt" in identity["run"]
+    assert "checkpoint-identity.outputs.key" in save["with"]["key"]
+    assert not any("Prune" in step["name"] for step in preparation["steps"])
+    final = {step["name"]: step for step in build["steps"]}
+    restore = final["Restore pool documentation checkpoint"]["with"]
+    assert "pool_doc_info.outputs.checkpoint_key" in restore["key"]
+    assert restore["fail-on-cache-miss"] is True
+    assert "restore-keys" not in restore
+    assert "complete_checkpoint" in final["Save pool documentation checkpoint"]["if"]
+    assert final["Build documentation data"]["run"].endswith(
+        "lake build LeanPool:docInfo"
+    )
+    assert "if" not in final["Build documentation data"]
+    assert "if" not in final["Validate documentation site"]
+    upload = final["Upload documentation artifact"]
+    assert _docs_condition(
+        upload["if"], "workflow_dispatch", "refs/heads/topic", True, False
+    )
+    assert not _docs_condition(
+        upload["if"], "pull_request", "refs/pull/123/merge", True, False
     )
 
 

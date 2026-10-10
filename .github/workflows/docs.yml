@@ -432,7 +432,7 @@ jobs:
           PYTHONPATH=python python3 -m lean_pool.ci_cache prune
           --repository "$REPOSITORY" --key "$CACHE_KEY"
 
-  build:
+  pool_doc_info:
     needs:
       - preflight
       - mathlib_doc_info
@@ -441,7 +441,10 @@ jobs:
       ((github.ref == 'refs/heads/main' && github.event_name != 'pull_request') ||
        (github.event_name == 'workflow_dispatch' && inputs.preview))
     runs-on: ubuntu-latest
-    name: Build doc-gen4 site
+    name: Prepare pool documentation data
+    outputs:
+      checkpoint_key: ${{ steps.checkpoint-identity.outputs.key }}
+      complete_checkpoint: ${{ steps.pool-doc-cache.outputs.cache-hit }}
     permissions:
       contents: read
       actions: write
@@ -467,9 +470,8 @@ jobs:
           restore-keys: |
             LeanPoolBuild-v1-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json', 'lakefile.toml') }}-
 
-      # Prefer the latest complete docInfo database from this compatibility
-      # boundary. On a cold boundary, the preceding job has just produced the
-      # Mathlib-only checkpoint used by the conditional fallback below.
+      # Compatible partial inputs are safe to resume: Lake still checks every
+      # module, and HTML publication requires the complete target downstream.
       - name: Restore pool documentation checkpoint
         id: pool-doc-cache
         uses: actions/cache/restore@27d5ce7f107fe9357f9df03efb73ab90386fccae
@@ -527,32 +529,128 @@ jobs:
           PYTHONPATH=python python3 -m lean_pool.ci_artifacts restore
           --head "$BUILD_HEAD" --event "$BUILD_EVENT"
 
-      # This incrementally extends either a previous pool checkpoint or the
-      # Mathlib checkpoint produced by the preceding job. doc-gen serializes
-      # writes through one WAL database, so these targets intentionally share a
-      # single job instead of unsafe parallel shards.
+      # Leave time to stop all SQLite writers and save valid partial inputs.
+      # The next serial job still requires the complete Lake target to succeed.
+      - name: Prepare documentation data within checkpoint budget
+        run: >-
+          PYTHONPATH=python python3 -m lean_pool.documentation prepare
+          --time-budget 18000
+
+      - name: Identify checkpoint handoff
+        id: checkpoint-identity
+        env:
+          CHECKPOINT_KEY: DocsInfo-v3-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lakefile.toml', 'lake-manifest.json', 'docbuild/lean-toolchain', 'docbuild/lakefile.toml', 'docbuild/lake-manifest.json') }}-${{ needs.preflight.outputs.build_revision }}
+          COMPLETE_CHECKPOINT: ${{ steps.pool-doc-cache.outputs.cache-hit }}
+        run: |
+          key="$CHECKPOINT_KEY"
+          if [ "$COMPLETE_CHECKPOINT" != 'true' ]; then
+            key="$key-${{ github.run_id }}-${{ github.run_attempt }}-prepare"
+          fi
+          echo "key=$key" >> "$GITHUB_OUTPUT"
+
+      - name: Save resumable pool documentation checkpoint
+        if: steps.pool-doc-cache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@27d5ce7f107fe9357f9df03efb73ab90386fccae
+        with:
+          path: |
+            docbuild/.lake/build
+            .lake/packages/doc-gen4
+            .lake/packages/leansqlite
+            .lake/packages/UnicodeBasic
+            .lake/packages/BibtexQuery
+            .lake/packages/MD4Lean
+          key: ${{ steps.checkpoint-identity.outputs.key }}
+
+  build:
+    needs:
+      - preflight
+      - mathlib_doc_info
+      - pool_doc_info
+    if: >-
+      needs.preflight.outputs.readme_only != 'true' &&
+      ((github.ref == 'refs/heads/main' && github.event_name != 'pull_request') ||
+       (github.event_name == 'workflow_dispatch' && inputs.preview))
+    runs-on: ubuntu-latest
+    name: Build doc-gen4 site
+    permissions:
+      contents: read
+      actions: write
+    steps:
+      - name: Checkout project
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
+
+      - name: Restore Lean dependencies
+        id: dependency-cache
+        uses: actions/cache/restore@27d5ce7f107fe9357f9df03efb73ab90386fccae
+        with:
+          path: |
+            ~/.elan
+            .lake/packages
+          key: LeanDependencies-v1-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}
+
+      - name: Restore pool build
+        id: pool-build
+        uses: actions/cache/restore@27d5ce7f107fe9357f9df03efb73ab90386fccae
+        with:
+          path: .lake/build
+          key: LeanPoolBuild-v1-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json', 'lakefile.toml') }}-${{ needs.preflight.outputs.build_revision }}
+          restore-keys: |
+            LeanPoolBuild-v1-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json', 'lakefile.toml') }}-
+
+      # Use the exact checked checkpoint from preparation. A missing handoff
+      # fails here instead of silently repeating the whole cold build.
+      - name: Restore pool documentation checkpoint
+        id: pool-doc-cache
+        uses: actions/cache/restore@27d5ce7f107fe9357f9df03efb73ab90386fccae
+        with:
+          path: |
+            docbuild/.lake/build
+            .lake/packages/doc-gen4
+            .lake/packages/leansqlite
+            .lake/packages/UnicodeBasic
+            .lake/packages/BibtexQuery
+            .lake/packages/MD4Lean
+          key: ${{ needs.pool_doc_info.outputs.checkpoint_key }}
+          fail-on-cache-miss: true
+
+      - name: Install Lean
+        uses: leanprover/lean-action@38fbc41a8c28c4cbaec22d7f7de508ec2e7c0dd9
+        with:
+          auto-config: false
+          use-github-cache: false
+          use-mathlib-cache: false
+
+      - name: Install Mathlib cache
+        run: |
+          set -euo pipefail
+          ~/.elan/bin/lake exe cache get
+          expected=$(jq -r '.packages[] | select(.name == "mathlib") | .rev' lake-manifest.json)
+          actual=$(git -C .lake/packages/mathlib rev-parse HEAD)
+          if [ "$actual" != "$expected" ]; then
+            echo "::error::Mathlib checkout $actual does not match lake-manifest.json ($expected)."
+            exit 1
+          fi
+
+      - name: Reuse matching Lean CI build
+        if: steps.pool-build.outputs.cache-hit != 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          BUILD_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+          BUILD_EVENT: ${{ github.event_name }}
+        run: >-
+          PYTHONPATH=python python3 -m lean_pool.ci_artifacts restore
+          --head "$BUILD_HEAD" --event "$BUILD_EVENT"
+
+      # Resume the preparation checkpoint in order. doc-gen serializes writes
+      # through one WAL database, so the two stages never run concurrently.
       - name: Build documentation data
         run: cd docbuild && ~/.elan/bin/lake build LeanPool:docInfo
 
       - name: Validate pool documentation checkpoint
-        run: |
-          set -euo pipefail
-          test -s docbuild/.lake/build/api-docs.db
-          test -n "$(find docbuild/.lake/build/doc-data -type f -name 'LeanPool*.doc' -print -quit)"
-          python3 - <<'PY'
-          import sqlite3
-
-          with sqlite3.connect("docbuild/.lake/build/api-docs.db") as connection:
-              checkpoint = connection.execute("PRAGMA wal_checkpoint(TRUNCATE)").fetchone()
-              integrity = connection.execute("PRAGMA quick_check").fetchone()
-          if checkpoint is None or checkpoint[0] != 0:
-              raise SystemExit(f"SQLite WAL checkpoint failed: {checkpoint!r}")
-          if integrity != ("ok",):
-              raise SystemExit(f"SQLite quick_check failed: {integrity!r}")
-          PY
+        run: PYTHONPATH=python python3 -m lean_pool.documentation checkpoint
 
       - name: Save pool documentation checkpoint
-        if: steps.pool-doc-cache.outputs.cache-hit != 'true'
+        if: needs.pool_doc_info.outputs.complete_checkpoint != 'true'
         uses: actions/cache/save@27d5ce7f107fe9357f9df03efb73ab90386fccae
         with:
           path: |
@@ -565,7 +663,7 @@ jobs:
           key: DocsInfo-v3-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lakefile.toml', 'lake-manifest.json', 'docbuild/lean-toolchain', 'docbuild/lakefile.toml', 'docbuild/lake-manifest.json') }}-${{ needs.preflight.outputs.build_revision }}
 
       - name: Prune old copies of pool documentation checkpoint
-        if: steps.pool-doc-cache.outputs.cache-hit != 'true' && github.ref == 'refs/heads/main'
+        if: needs.pool_doc_info.outputs.complete_checkpoint != 'true' && github.ref == 'refs/heads/main'
         continue-on-error: true
         env:
           GH_TOKEN: ${{ github.token }}
@@ -586,7 +684,9 @@ jobs:
         run: rm -rf docbuild/.lake/build/doc/exposition
 
       - name: Upload documentation artifact
-        if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+        if: >-
+          (github.ref == 'refs/heads/main' && github.event_name != 'pull_request') ||
+          (github.event_name == 'workflow_dispatch' && inputs.preview)
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
           name: documentation-site
