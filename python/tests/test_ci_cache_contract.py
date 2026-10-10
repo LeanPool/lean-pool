@@ -448,6 +448,134 @@ def test_scoped_checks_classify_real_diffs(
     assert output.read_text().strip() == f"applicable={str(expected).lower()}"
 
 
+@pytest.mark.parametrize("event", ["pull_request", "merge_group"])
+@pytest.mark.parametrize(
+    "filename,original",
+    [
+        ("docs.yml", "docbuild/lean-toolchain"),
+        ("workflow_lint.yml", ".github/workflows/example.yml"),
+    ],
+)
+def test_moving_files_out_of_scope_still_runs_validation(
+    scope_repository, filename, original, event
+):
+    """Renaming a configuration outside its directory must validate its removal."""
+    root, _ = scope_repository
+    base = _move_scope_file(root, original)
+    workflow = yaml.safe_load((WORKFLOWS / filename).read_text())
+    output = root / "output"
+    subprocess.run(
+        ["bash", "-e", "-c", workflow["jobs"]["scope"]["steps"][-1]["run"]],
+        cwd=root,
+        check=True,
+        env={**os.environ, "EVENT": event, "BASE": base, "GITHUB_OUTPUT": str(output)},
+    )
+    assert output.read_text().strip() == "applicable=true"
+    if filename == "docs.yml" and event == "pull_request":
+        detection = next(
+            step
+            for step in workflow["jobs"]["preflight"]["steps"]
+            if step.get("name") == "Detect README-only change"
+        )
+        output.write_text("")
+        subprocess.run(
+            ["bash", "-e", "-c", detection["run"]],
+            cwd=root,
+            check=True,
+            env={
+                **os.environ,
+                "EVENT_NAME": event,
+                "BASE_SHA": base,
+                "HEAD_SHA": "HEAD",
+                "GITHUB_OUTPUT": str(output),
+            },
+        )
+        assert output.read_text().strip() == "readme_only=false"
+
+
+def _scope_commit(root: Path) -> None:
+    subprocess.run(
+        [
+            "git",
+            "-c",
+            "user.name=Test",
+            "-c",
+            "user.email=test@example.com",
+            "commit",
+            "-qm",
+            "configuration change",
+        ],
+        cwd=root,
+        check=True,
+    )
+
+
+def _move_scope_file(root: Path, original: str) -> str:
+    path = root / original
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text("original configuration\n")
+    subprocess.run(["git", "add", "."], cwd=root, check=True)
+    _scope_commit(root)
+    base = subprocess.check_output(
+        ["git", "rev-parse", "HEAD"], cwd=root, text=True
+    ).strip()
+    path.rename(root / "README.md")
+    subprocess.run(["git", "add", "-A"], cwd=root, check=True)
+    _scope_commit(root)
+    return base
+
+
+@pytest.mark.parametrize("event", ["pull_request", "merge_group", "push"])
+def test_lean_planner_retains_removed_configuration_after_rename(
+    scope_repository, event
+):
+    """A renamed toolchain remains a build and dependency-test input."""
+    root, _ = scope_repository
+    base = _move_scope_file(root, "lean-toolchain")
+    jobs = yaml.safe_load((WORKFLOWS / "lean_action_ci.yml").read_text())["jobs"]
+    planning = next(step for step in jobs["plan"]["steps"] if step.get("id") == "plan")
+    command = (
+        'case "$EVENT_NAME" in'
+        + planning["run"].split('case "$EVENT_NAME" in', 1)[1].split("esac", 1)[0]
+        + "esac"
+    )
+    changed_files = root / "changed"
+    subprocess.run(
+        ["bash", "-e", "-c", command],
+        cwd=root,
+        check=True,
+        env={
+            **os.environ,
+            "EVENT_NAME": event,
+            "BASE_SHA": base,
+            "BEFORE_SHA": base,
+            "changed_files": str(changed_files),
+        },
+    )
+    assert set(changed_files.read_text().splitlines()) == {
+        "README.md",
+        "lean-toolchain",
+    }
+    command = (
+        "dependency_tests=true"
+        + planning["run"].split("dependency_tests=true", 1)[1].split("cold=false", 1)[0]
+    )
+    output = root / "output"
+    subprocess.run(
+        ["bash", "-e", "-c", command],
+        cwd=root,
+        check=True,
+        env={
+            **os.environ,
+            "changed_files": str(changed_files),
+            "diff_available": "true",
+            "FORCE_FULL": "false",
+            "GITHUB_OUTPUT": str(output),
+        },
+    )
+    assert output.read_text().strip() == "dependency_tests=true"
+
+
 @pytest.mark.parametrize("filename", ["docs.yml", "workflow_lint.yml"])
 def test_scoped_checks_do_not_skip_when_git_diff_fails(scope_repository, filename):
     """An unavailable base produces failure rather than a false skip decision."""

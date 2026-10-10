@@ -81,10 +81,18 @@ def obsolete_caches(caches: list[dict[str, Any]], key: str) -> list[int]:
 
 def obsolete_main_caches(caches: list[dict[str, Any]]) -> list[int]:
     """Retain the newest main cache per known family and operating system."""
+    completed = [
+        cache
+        for cache in caches
+        if cache.get("ref") == "refs/heads/main"
+        and isinstance(cache.get("created_at"), str)
+        and cache["created_at"]
+        and isinstance(cache.get("size_in_bytes"), int)
+        and cache["size_in_bytes"] > 0
+        and isinstance(cache.get("key"), str)
+    ]
     newest: dict[str, dict[str, Any]] = {}
-    for cache in caches:
-        if cache.get("ref") != "refs/heads/main" or not cache.get("created_at"):
-            continue
+    for cache in completed:
         try:
             family = cache_family(cache.get("key", ""))
         except ValueError:
@@ -96,7 +104,7 @@ def obsolete_main_caches(caches: list[dict[str, Any]]) -> list[int]:
         {
             identifier
             for cache in newest.values()
-            for identifier in obsolete_caches(caches, cache["key"])
+            for identifier in obsolete_caches(completed, cache["key"])
         }
     )
 

@@ -146,16 +146,16 @@ jobs:
           : > "$changed_files"
           case "$EVENT_NAME" in
             merge_group)
-              git diff --name-only "$BASE_SHA"..HEAD > "$changed_files"
+              git diff --name-only --no-renames "$BASE_SHA"..HEAD > "$changed_files"
               ;;
             pull_request)
-              git diff --name-only "$BASE_SHA"...HEAD > "$changed_files"
+              git diff --name-only --no-renames "$BASE_SHA"...HEAD > "$changed_files"
               ;;
             push)
               if [ -n "$BEFORE_SHA" ] \
                  && ! printf '%s' "$BEFORE_SHA" | grep -q '^0*$' \
                  && git cat-file -e "$BEFORE_SHA" 2>/dev/null; then
-                git diff --name-only "$BEFORE_SHA"..HEAD > "$changed_files"
+                git diff --name-only --no-renames "$BEFORE_SHA"..HEAD > "$changed_files"
               else
                 diff_available=false
               fi

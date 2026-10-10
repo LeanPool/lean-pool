@@ -37,9 +37,9 @@ jobs:
           if [ "$EVENT" = merge_group ] || [ "$EVENT" = pull_request ]; then
             applicable=false
             if [ "$EVENT" = pull_request ]; then
-              files=$(git diff --name-only "$BASE"...HEAD)
+              files=$(git diff --name-only --no-renames "$BASE"...HEAD)
             else
-              files=$(git diff --name-only "$BASE"..HEAD)
+              files=$(git diff --name-only --no-renames "$BASE"..HEAD)
             fi
             if grep -Eq '^\.github/' <<< "$files"; then
               applicable=true

@@ -65,9 +65,9 @@ jobs:
           if [ "$EVENT" = merge_group ] || [ "$EVENT" = pull_request ]; then
             applicable=false
             if [ "$EVENT" = pull_request ]; then
-              files=$(git diff --name-only "$BASE"...HEAD)
+              files=$(git diff --name-only --no-renames "$BASE"...HEAD)
             else
-              files=$(git diff --name-only "$BASE"..HEAD)
+              files=$(git diff --name-only --no-renames "$BASE"..HEAD)
             fi
             if grep -Eq '^(docbuild/|lean-toolchain$|lakefile\.toml$|lake-manifest\.json$|python/lean_pool/(exposition/|quality\.py$|validation_cache\.py$|ci_artifacts\.py$|ci_cache\.py$|rebase_fastpath\.py$)|python/(pyproject\.toml|uv\.lock)$|scripts/exposition/|\.github/workflows/docs\.yml$)' <<< "$files"; then
               applicable=true
@@ -123,7 +123,7 @@ jobs:
           set -euo pipefail
           readme_only=false
           if [ "$EVENT_NAME" = "pull_request" ]; then
-            files="$(git diff --name-only "$BASE_SHA"..."$HEAD_SHA")"
+            files="$(git diff --name-only --no-renames "$BASE_SHA"..."$HEAD_SHA")"
             if [ "$files" = "README.md" ]; then
               readme_only=true
             fi

@@ -207,6 +207,7 @@ def test_scheduled_pruning_preserves_newest_main_cache_per_family_and_platform()
             "key": key,
             "ref": reference,
             "created_at": created,
+            "size_in_bytes": 1024,
         }
         for index, (key, reference, created) in enumerate(keys)
     ]
@@ -238,6 +239,7 @@ def test_scheduled_pruning_uses_a_single_snapshot(monkeypatch):
                     "key": f"LeanPoolBuild-v1-Linux-{index}",
                     "ref": "refs/heads/main",
                     "created_at": f"2026-10-10T0{index}:00:00Z",
+                    "size_in_bytes": 1024,
                 }
                 for index in range(2)
             ]
@@ -254,3 +256,23 @@ def test_scheduled_pruning_uses_a_single_snapshot(monkeypatch):
     assert calls == [
         ["gh", "api", "--method", "DELETE", "repos/owner/repo/actions/caches/0"]
     ]
+
+
+def test_scheduled_pruning_requires_complete_cache_metadata():
+    """Empty uploads and missing metadata cannot replace or erase a saved build."""
+    caches = [
+        {
+            "id": index,
+            "key": f"LeanPoolBuild-v1-Linux-{index}",
+            "ref": "refs/heads/main",
+            "created_at": f"2026-10-10T0{index}:00:00Z",
+            "size_in_bytes": 1024,
+        }
+        for index in range(5)
+    ]
+    caches[2]["size_in_bytes"] = 0
+    del caches[3]["created_at"]
+    del caches[4]["size_in_bytes"]
+    assert obsolete_main_caches(caches) == [0]
+    caches[1]["key"] = None
+    assert obsolete_main_caches(caches) == []
