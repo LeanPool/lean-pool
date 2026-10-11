@@ -26,7 +26,7 @@ main_declarations:
 main_results:
 - declaration: PersistentSOS.persistent_failure
   informal: For every positive sigma, a, and b, the explicit fourteen-variable
-    quartic sigma/4 times the squared Euclidean norm to the fourth power minus
+    quartic sigma/4 times the Euclidean norm to the fourth power minus
     a/2 times the squared norm minus b times the displayed cubic has the stated
     attained global minimum, and subtracting that minimum is not an ordinary
     finite sum of squares of real polynomials.
