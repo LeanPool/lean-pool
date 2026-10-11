@@ -50,7 +50,7 @@ MSC: 90C22, 90C26, 14P10
 /-!
 ## Mathematical context and certificate data
 
-This explicit example addresses the zero-gradient, indefinite-Hessian case in
+This explicit example addresses the zero-gradient, negative-definite-Hessian case in
 Cartis and Zhu, [Remark 2.3](https://arxiv.org/html/2601.20418v2#S2.SS3).
 It does not contradict their sufficient conditions with nonzero gradient or
 positive-definite Hessian at the origin. Positive curvature in the companion

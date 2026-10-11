@@ -34,16 +34,19 @@ SOFTWARE.
 
 module
 
-public import LeanPool.PersistentSOS.Definitions
+public import Mathlib.Algebra.MvPolynomial.Degrees
+public import Mathlib.Basic.Real.Basic
 public import Mathlib.LinearAlgebra.Finsupp.LinearCombination
 public import Mathlib.Tactic.Convert
 public import Mathlib.Tactic.Positivity
 public import Mathlib.Tactic.Ring
 
 /-!
-# Moment Bridge
+# Finite monomial moment matrices
 
-Part of the explicit persistent quartic SOS counterexample.
+A complete finite monomial basis spans bounded-degree polynomials over any
+commutative semiring. For real coefficients, positivity of its moment matrix
+implies positivity on every quadratic square, for any polynomial variable type.
 -/
 
 @[expose] public section
@@ -53,36 +56,36 @@ open scoped BigOperators
 
 /-- A complete finite list of monomials of degree at most two spans every
 quadratic polynomial. Repeated entries in the list are allowed. -/
-theorem quadratic_eq_sum_monomials {ι : Type*} [Fintype ι]
-    (basis : ι → (Fin 14 →₀ ℕ))
-    (hcover : ∀ d : Fin 14 →₀ ℕ, d.sum (fun _ n => n) ≤ 2 → ∃ i, basis i = d)
-    (p : Poly) (hp : p.totalDegree ≤ 2) :
-    ∃ x : ι → ℝ, p = ∑ i, x i • (monomial (basis i) (1 : ℝ) : Poly) := by
+theorem quadratic_eq_sum_monomials {σ R ι : Type*} [CommSemiring R] [Fintype ι]
+    (basis : ι → (σ →₀ ℕ))
+    (hcover : ∀ d : σ →₀ ℕ, d.sum (fun _ n => n) ≤ 2 → ∃ i, basis i = d)
+    (p : MvPolynomial σ R) (hp : p.totalDegree ≤ 2) :
+    ∃ x : ι → R, p = ∑ i, x i • (monomial (basis i) (1 : R) : MvPolynomial σ R) := by
   classical
-  suffices hmem : p ∈ Submodule.span ℝ
-      (Set.range fun i => (monomial (basis i) (1 : ℝ) : Poly)) by
-    obtain ⟨x, hx⟩ := (Submodule.mem_span_range_iff_exists_fun ℝ).mp hmem
+  suffices hmem : p ∈ Submodule.span R
+      (Set.range fun i => (monomial (basis i) (1 : R) : MvPolynomial σ R)) by
+    obtain ⟨x, hx⟩ := (Submodule.mem_span_range_iff_exists_fun R).mp hmem
     exact ⟨x, hx.symm⟩
   rw [p.as_sum]
   apply Submodule.sum_mem
   intro d hd
   obtain ⟨i, hi⟩ := hcover d ((le_totalDegree hd).trans hp)
   rw [← hi]
-  have hmem : (monomial (basis i) (1 : ℝ) : Poly) ∈
-      Submodule.span ℝ (Set.range fun j => (monomial (basis j) (1 : ℝ) : Poly)) :=
+  have hmem : (monomial (basis i) (1 : R) : MvPolynomial σ R) ∈
+      Submodule.span R (Set.range fun j => (monomial (basis j) (1 : R) : MvPolynomial σ R)) :=
     Submodule.subset_span (Set.mem_range_self i)
   simpa only [smul_monomial, smul_eq_mul, mul_one] using
     Submodule.smul_mem _ (p.coeff (basis i)) hmem
 
 /-- Positivity of the genuine monomial moment matrix implies positivity
 on the square of every quadratic polynomial. -/
-theorem nonneg_quadratic_square_of_momentMatrix {ι : Type*} [Fintype ι]
-    (basis : ι → (Fin 14 →₀ ℕ))
-    (hcover : ∀ d : Fin 14 →₀ ℕ, d.sum (fun _ n => n) ≤ 2 → ∃ i, basis i = d)
-    (L : Poly →ₗ[ℝ] ℝ)
+theorem nonneg_quadratic_square_of_momentMatrix {σ ι : Type*} [Fintype ι]
+    (basis : ι → (σ →₀ ℕ))
+    (hcover : ∀ d : σ →₀ ℕ, d.sum (fun _ n => n) ≤ 2 → ∃ i, basis i = d)
+    (L : MvPolynomial σ ℝ →ₗ[ℝ] ℝ)
     (hpsd : ∀ x : ι → ℝ,
       0 ≤ ∑ i, ∑ j, x i * L (monomial (basis i + basis j) 1) * x j)
-    (p : Poly) (hp : p.totalDegree ≤ 2) : 0 ≤ L (p ^ 2) := by
+    (p : MvPolynomial σ ℝ) (hp : p.totalDegree ≤ 2) : 0 ≤ L (p ^ 2) := by
   classical
   obtain ⟨x, rfl⟩ := quadratic_eq_sum_monomials basis hcover p hp
   convert hpsd x using 1
