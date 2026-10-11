@@ -15,7 +15,6 @@ import Mathlib.Tactic.Linarith.Frontend
 import Mathlib.Tactic.NormNum.Abs
 import Mathlib.Tactic.NormNum.DivMod
 import Mathlib.Tactic.NormNum.OfScientific
-import Mathlib.Tactic.Ring.RingNF
 
 /-!
 # LeanPool.FriezePatterns.Chapter1
@@ -56,34 +55,20 @@ lemma pattern_nContinuant1 (F : Type*) [Field F] (f : ℕ × ℕ → F) (n : ℕ
     have ih₁ : f (k + 2, m + 1) = f (2, m + 1 + k) * f (k + 1, m + 1) - f (k, m + 1) :=
       ih hh' (m + 1)
     have h₂ : f (k + 1, m + 1) ≠ 0 := nzPattern_n.non_zero (k + 1) (m + 1) h'
-    have h₃ : f (k + 3, m) * f (k + 1, m + 1) =
-        (f (k + 2, m) * f (2, m + k + 1) - f (k + 1, m)) * f (k + 1, m + 1) :=
-      calc f (k + 3, m) * f (k + 1, m + 1)
-          = f (k + (2 + 1), m) * f (k + 1, m + 1) := by rw [two_add_one_eq_three]
-        _ = f ((k + 1) + 2, m) * f (k + 1, m + 1) := by congr
-        _ = f ((k + 1) + 1, m) * f ((k + 1) + 1, m + 1) - 1 := by
-              rw [← pattern_n.diamond (k + 1) m h]
-        _ = f ((k + 1) + 1, m) * f (k + 2, m + 1) - 1 := by simp
-        _ = f (k + 2, m) * (f (2, m + 1 + k) * f (k + 1, m + 1) - f (k, m + 1)) - 1 := by rw [ih₁]
-        _ = f (k + 2, m) * (f (2, m + k + 1) * f (k + 1, m + 1) - f (k, m + 1)) - 1 := by
-              rw [add_right_comm]
-        _ = f (k + 2, m) * (f (2, m + k + 1) * f (k + 1, m + 1))
-              - f (k + 2, m) * f (k, m + 1) - 1 := by
-              rw [mul_sub_left_distrib]
-        _ = f (k + 2, m) * f (2, m + k + 1) * f (k + 1, m + 1)
-              - (f (k + 2, m) * f (k, m + 1) + 1) := by
-              rw [mul_assoc, sub_sub]
-        _ = f (k + 2, m) * f (2, m + k + 1) * f (k + 1, m + 1)
-              - (f (k + 1, m) * f (k + 1, m + 1) - 1 + 1) := by
-              rw [← pattern_n.diamond k m hh']
-        _ = f (k + 2, m) * f (2, m + k + 1) * f (k + 1, m + 1)
-              - f (k + 1, m) * f (k + 1, m + 1) := by
-              rw [add_comm_sub, sub_self, add_zero]
-        _ = (f (k + 2, m) * f (2, m + k + 1) - f (k + 1, m)) * f (k + 1, m + 1) := by rw [← sub_mul]
-    change f (k + 1 + 2, m) = f (2, m + (k + 1)) * f (k + 1 + 1, m) - f (k + 1, m)
-    have hgoal : f (k + 3, m) = f (2, m + (k + 1)) * f (k + 2, m) - f (k + 1, m) :=
-      mul_right_cancel₀ h₂ (by rw [h₃]; ring_nf)
-    convert hgoal using 2
+    -- Cancel the nonzero interior entry before expanding the diamond relations.
+    apply mul_right_cancel₀ h₂
+    calc
+      f (k + 1 + 2, m) * f (k + 1, m + 1)
+          = f (k + 2, m) * f (k + 2, m + 1) - 1 :=
+            (pattern_n.diamond (k + 1) m h).symm
+      _ = f (k + 2, m) *
+          (f (2, m + 1 + k) * f (k + 1, m + 1) - f (k, m + 1)) - 1 := by rw [ih₁]
+      _ = (f (2, m + (k + 1)) * f (k + 1 + 1, m) - f (k + 1, m)) *
+          f (k + 1, m + 1) := by
+        rw [add_right_comm m 1 k, ← add_assoc m k 1,
+          mul_sub_left_distrib, ← pattern_n.diamond k m hh']
+        rw [← mul_assoc, sub_sub, sub_add_cancel, ← sub_mul,
+          mul_comm (f (k + 2, m))]
 
 -- The second continuant lemma is proved like the first
 lemma pattern_nContinuant2 (F : Type*) [Field F] (f : ℕ × ℕ → F) (n : ℕ) [nzPattern_n F f n] :
@@ -124,43 +109,31 @@ lemma pattern_nContinuant2 (F : Type*) [Field F] (f : ℕ × ℕ → F) (n : ℕ
       have a₁₀ : n - (k + 1) - 1 + 1 ≤ n - 1 := by omega
       have h₂ : f (n - (k + 1) - 1 + 2, m + 1) ≠ 0 :=
         nzPattern_n.non_zero (n - (k + 1) - 1 + 2) (m + 1) a₃
-      calc f (n - (k + 1) - 1, m + 2)
-          = f (n - (k + 1) - 1, m + 2) * f (n - (k + 1) - 1 + 2, m + 1)
-              * (f (n - (k + 1) - 1 + 2, m + 1))⁻¹ := by
-              rw [mul_inv_cancel_right₀ h₂ (f (n - (k + 1) - 1, m + 2))]
-        _ = f (n - (k + 1) - 1 + 2, m + 1) * f (n - (k + 1) - 1, (m + 1) + 1)
-              * (f (n - (k + 1) - 1 + 2, m + 1))⁻¹ := by ring
-        _ = (f (n - (k + 1) - 1 + 1, m + 1) * f (n - (k + 1) - 1 + 1, (m + 1) + 1) - 1)
-              * (f (n - (k + 1) - 1 + 2, m + 1))⁻¹ := by
-              rw [pattern_n.diamond (n - (k + 1) - 1) (m + 1) a₇]
-        _ = (f (n - (k + 1) - 1 + 1, m + 1) * f (n - (k + 1) - 1 + 1, m + 2) - 1)
-              * (f (n - (k + 1) - 1 + 2, m + 1))⁻¹ := by simp
-        _ = (f (n - (k + 1) - 1 + 1, m + 1) * f (n - k - 1, m + 2) - 1)
-              * (f (n - (k + 1) - 1 + 2, m + 1))⁻¹ := by rw [a₂]
-        _ = (f (n - (k + 1) - 1 + 1, m + 1)
-              * (f (n - 1, m + 2) * f (n - k, m + 1) - f (n - k + 1, m)) - 1)
-              * (f (n - (k + 1) - 1 + 2, m + 1))⁻¹ := by rw [← ih a₅]
-        _ = (f (n - 1, m + 2) * f (n - (k + 1) - 1 + 1, m + 1) * f (n - k, m + 1)
-              - f (n - k + 1, m) * f (n - (k + 1) - 1 + 1, m + 1) - 1)
-              * (f (n - (k + 1) - 1 + 2, m + 1))⁻¹ := by ring
-        _ = (f (n - 1, m + 2) * f (n - (k + 1) - 1 + 1, m + 1) * f (n - k, m + 1)
-              - f (n - (k + 1) - 1 + 1 + 2, m) * f (n - (k + 1) - 1 + 1, m + 1) - 1)
-              * (f (n - (k + 1) - 1 + 2, m + 1))⁻¹ := by rw [a₉]
-        _ = (f (n - 1, m + 2) * f (n - (k + 1) - 1 + 1, m + 1) * f (n - k, m + 1)
-              - (f (n - (k + 1) - 1 + 1 + 1, m) * f (n - (k + 1) - 1 + 1 + 1, m + 1) - 1) - 1)
-              * (f (n - (k + 1) - 1 + 2, m + 1))⁻¹ := by
+      -- The induction step needs cancellation, so no field inverses are introduced.
+      apply mul_right_cancel₀ h₂
+      calc
+        f (n - (k + 1) - 1, m + 2) * f (n - (k + 1) - 1 + 2, m + 1)
+            = f (n - (k + 1) - 1 + 1, m + 1) *
+                f (n - (k + 1) - 1 + 1, m + 2) - 1 := by
+              rw [mul_comm, ← pattern_n.diamond (n - (k + 1) - 1) (m + 1) a₇]
+        _ = f (n - (k + 1) - 1 + 1, m + 1) *
+            (f (n - 1, m + 2) * f (n - k, m + 1) - f (n - k + 1, m)) - 1 := by
+              rw [a₂, ← ih a₅]
+        _ = f (n - 1, m + 2) * f (n - (k + 1) - 1 + 1, m + 1) * f (n - k, m + 1) -
+            f (n - (k + 1) - 1 + 1 + 2, m) * f (n - (k + 1) - 1 + 1, m + 1) - 1 := by
+              rw [a₉, mul_sub_left_distrib, ← mul_assoc,
+                mul_comm (f (n - (k + 1) - 1 + 1, m + 1)) (f (n - 1, m + 2)),
+                mul_comm (f (n - (k + 1) - 1 + 1, m + 1)) (f (n - k + 1, m))]
+        _ = f (n - 1, m + 2) * f (n - (k + 1) - 1 + 1, m + 1) * f (n - k, m + 1) -
+            (f (n - (k + 1) - 1 + 1 + 1, m) *
+              f (n - (k + 1) - 1 + 1 + 1, m + 1) - 1) - 1 := by
               rw [pattern_n.diamond (n - (k + 1) - 1 + 1) m a₁₀]
-        _ = f (n - 1, m + 2) * f (n - (k + 1) - 1 + 1, m + 1) * f (n - k, m + 1)
-              * (f (n - (k + 1) - 1 + 2, m + 1))⁻¹
-              - f (n - (k + 1) - 1 + 2, m) * f (n - (k + 1) - 1 + 2, m + 1)
-              * (f (n - (k + 1) - 1 + 2, m + 1))⁻¹ := by ring
-        _ = f (n - 1, m + 2) * f (n - (k + 1), m + 1) * f (n - (k + 1) - 1 + 2, m + 1)
-              * (f (n - (k + 1) - 1 + 2, m + 1))⁻¹
-              - f (n - (k + 1) - 1 + 2, m) * f (n - (k + 1) - 1 + 2, m + 1)
-              * (f (n - (k + 1) - 1 + 2, m + 1))⁻¹ := by rw [a₁₁, a₁]
-        _ = f (n - 1, m + 2) * f (n - (k + 1), m + 1) - f (n - (k + 1) - 1 + 2, m) := by
-              simp_all
-        _ = f (n - 1, m + 2) * f (n - (k + 1), m + 1) - f (n - (k + 1) + 1, m) := by rw [a₁₂]
+        _ = (f (n - 1, m + 2) * f (n - (k + 1), m + 1) - f (n - (k + 1) + 1, m)) *
+            f (n - (k + 1) - 1 + 2, m + 1) := by
+              rw [a₁₁, ← a₁]
+              conv_lhs => rw [a₁₂]
+              conv_rhs => rw [a₁₂]
+              rw [sub_sub, sub_add_cancel, ← sub_mul]
   · -- Have proved it in the case 1 ≤ n; now do n = 0
     have n_eq_zero : n = 0 := by linarith
     intro i h m
