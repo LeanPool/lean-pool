@@ -1,0 +1,54 @@
+slug: persistent-sos
+title: Persistent failure of quartic sum-of-squares exactness
+summary: Constructs explicit rational cubics in fourteen real variables whose
+  Euclidean quartic regularizations have a strict ordinary sum-of-squares gap
+  for every positive regularization, quadratic, and cubic parameter. A companion
+  construction has a unique global minimizer and a positive-definite Hessian
+  there. Exact moment certificates and a general SOS degree bridge certify the
+  gap for arbitrary finite sums of squares of real polynomials.
+branch: polynomial optimization and real algebraic geometry
+entry_module: LeanPool.PersistentSOS
+authors:
+- JD Jones
+source:
+  title: Persistent SOS failure with an explicit unique global minimizer
+  authors:
+  - JD Jones
+  url: https://github.com/JD-Jones-ASES/persistent-sos
+  github_repo: JD-Jones-ASES/persistent-sos
+  commit: d432ff9a67594cc0fa7a7af1913320b46d2a86db
+license: MIT
+status: verified
+provenance: AI
+main_declarations:
+- PersistentSOS.persistent_failure
+- PersistentSOS.unique_persistent_failure
+main_results:
+- declaration: PersistentSOS.persistent_failure
+  informal: For every positive sigma, a, and b, the explicit fourteen-variable
+    quartic sigma/4 times the squared Euclidean norm to the fourth power minus
+    a/2 times the squared norm minus b times the displayed cubic has the stated
+    attained global minimum, and subtracting that minimum is not an ordinary
+    finite sum of squares of real polynomials.
+- declaration: PersistentSOS.unique_persistent_failure
+  informal: For all three positive parameters, the companion quartic has exactly
+    one global minimizer, its actual polynomial Hessian is positive definite
+    there, and its shift by the attained minimum is not an ordinary sum of squares.
+- declaration: PersistentSOS.quantitative_sos_gap
+  informal: For positive sigma and a and any real b, every ordinary
+    sum-of-squares lower bound is at most the stated minimum-value expression
+    minus b times 753357629/500000000000 times the cube of the stated radius.
+    When b is positive, that expression is the attained global minimum.
+- declaration: PersistentSOS.sphere_moment_gap
+  informal: An explicit linear functional on real polynomials has normalized
+    radial moments, is nonnegative on all quadratic squares, annihilates the
+    quadratic sphere localizers, and evaluates the cubic to
+    500753357629/500000000000, strictly above its sphere maximum of one.
+tags:
+- sum-of-squares
+- polynomial-optimization
+- exact-certificates
+msc:
+- 90C22
+- 90C26
+- 14P10
