@@ -1069,6 +1069,72 @@ theorem symmetricToEuclidean_trace_eq_sum_eigenvalues_fin
     _ = ∑ i, hT.eigenvalues hn i := by
       simpa using hT.trace_eq_sum_eigenvalues hn
 
+private theorem positiveEigenCoordinateData_of_sorted_segment
+    {d : Type*} [Fintype d] [DecidableEq d] {N m : ℕ}
+    (hN : m + 1 ≤ N)
+    (A : Matrix d d ℝ) (hSym : RealSymmetric A)
+    (τ : ℝ)
+    (hn : Module.finrank ℝ (EuclideanSpace ℝ d) = N)
+    (hpos :
+      let hT := Matrix.isSymmetric_toEuclideanLin_iff.mpr
+        (realSymmetric_isHermitian A hSym)
+      ∀ r : Fin (m + 1), 0 ≤ hT.eigenvalues hn (Fin.castLE hN r))
+    (htrace :
+      let hT := Matrix.isSymmetric_toEuclideanLin_iff.mpr
+        (realSymmetric_isHermitian A hSym)
+      τ = ∑ r : Fin (m + 1), hT.eigenvalues hn (Fin.castLE hN r)) :
+    HasPositiveEigenCoordinateData A τ := by
+  classical
+  let hT := Matrix.isSymmetric_toEuclideanLin_iff.mpr
+    (realSymmetric_isHermitian A hSym)
+  let embed : Fin (m + 1) → Fin (N) := Fin.castLE hN
+  let v : Fin (m + 1) → d → ℝ :=
+    fun i => ⇑(hT.eigenvectorBasis hn (embed i))
+  let s : ℕ → ℝ :=
+    fun k =>
+      if hk : k ≤ m then
+        hT.eigenvalues hn (embed ⟨k, Nat.lt_succ_of_le hk⟩)
+      else 0
+  refine ⟨m, v, s, ?_, ?_, ?_, ?_, ?_⟩
+  · intro i k
+    have horth := (orthonormal_iff_ite.mp (hT.eigenvectorBasis hn).orthonormal)
+      (embed i) (embed k)
+    rw [realDot_euclidean_eq_inner]
+    simpa [v, embed, Fin.ext_iff] using horth
+  · intro r j
+    have hr : (r : ℕ) ≤ m := Nat.lt_succ_iff.mp r.isLt
+    have hidx : embed ⟨(r : ℕ), Nat.lt_succ_of_le hr⟩ = embed r := by
+      ext
+      simp [embed]
+    have h := congrArg (fun y : EuclideanSpace ℝ d => y j)
+      (hT.apply_eigenvectorBasis hn (embed r))
+    rw [toEuclideanLin_apply_eq_sum A (hT.eigenvectorBasis hn (embed r)) j] at h
+    simpa [v, s, hr, hidx, Pi.smul_apply, smul_eq_mul] using h
+  · intro i k hik
+    by_cases hk : k ≤ m
+    · have hi : i ≤ m := le_trans hik hk
+      have hfin : (embed ⟨i, Nat.lt_succ_of_le hi⟩ : Fin (N)) ≤
+          embed ⟨k, Nat.lt_succ_of_le hk⟩ := by
+        exact hik
+      have hanti := hT.eigenvalues_antitone hn hfin
+      simpa [s, hi, hk] using hanti
+    · by_cases hi : i ≤ m
+      · have hnonneg := hpos ⟨i, Nat.lt_succ_of_le hi⟩
+        change 0 ≤ hT.eigenvalues hn
+          (Fin.castLE hN (⟨i, Nat.lt_succ_of_le hi⟩ : Fin (m + 1))) at hnonneg
+        simpa [s, hi, hk, embed] using hnonneg
+      · simp [s, hi, hk]
+  · simp [s]
+  · rw [htrace]
+    apply Finset.sum_congr rfl
+    intro i _hi
+    have hi : (i : ℕ) ≤ m := Nat.lt_succ_iff.mp i.isLt
+    have hidx :
+        embed ⟨(i : ℕ), Nat.lt_succ_of_le hi⟩ = Fin.castLE hN i := by
+      ext
+      simp [embed]
+    simp [s, hi, hidx]
+
 /--
 Mathlib's sorted Euclidean spectral data gives the project's positive
 eigen-coordinate data once the trace has been identified with the sorted
@@ -1084,42 +1150,10 @@ theorem hasPositiveEigenCoordinateData_of_realPSD_fin_sorted_of_trace
         finrank_euclideanSpace_fin
       A.trace = ∑ i, hT.eigenvalues hn i) :
     HasPositiveEigenCoordinateData A A.trace := by
-  classical
-  let hT := Matrix.isSymmetric_toEuclideanLin_iff.mpr
-    (realSymmetric_isHermitian A hSym)
-  let hn : Module.finrank ℝ (EuclideanSpace ℝ (Fin (m + 1))) = m + 1 :=
-    finrank_euclideanSpace_fin
-  let v : Fin (m + 1) → Fin (m + 1) → ℝ :=
-    fun i => ⇑(hT.eigenvectorBasis hn i)
-  let s : ℕ → ℝ :=
-    fun k => if hk : k ≤ m then hT.eigenvalues hn ⟨k, Nat.lt_succ_of_le hk⟩ else 0
-  refine ⟨m, v, s, ?_, ?_, ?_, ?_, ?_⟩
-  · intro i k
-    simpa [v] using symmetricToEuclidean_eigenvectorBasis_realDot A hSym i k
-  · intro r j
-    have hr : (r : ℕ) ≤ m := Nat.lt_succ_iff.mp r.isLt
-    simpa [v, s, hr] using symmetricToEuclidean_eigenvectorBasis_coord A hSym r j
-  · intro i k hik
-    by_cases hk : k ≤ m
-    · have hi : i ≤ m := le_trans hik hk
-      have hfin : (⟨i, Nat.lt_succ_of_le hi⟩ : Fin (m + 1)) ≤
-          ⟨k, Nat.lt_succ_of_le hk⟩ := by
-        exact hik
-      have hanti :=
-        symmetricToEuclidean_eigenvalues_antitone_fin A hSym hfin
-      simpa [s, hi, hk] using hanti
-    · by_cases hi : i ≤ m
-      · have hnonneg :=
-          symmetricToEuclidean_eigenvalues_nonneg_of_realPSD_fin A hSym hPSD
-            ⟨i, Nat.lt_succ_of_le hi⟩
-        simpa [s, hi, hk] using hnonneg
-      · simp [s, hi, hk]
-  · simp [s]
-  · rw [htraceSorted]
-    apply Finset.sum_congr rfl
-    intro i _hi
-    have hi : (i : ℕ) ≤ m := Nat.lt_succ_iff.mp i.isLt
-    simp [s, hi]
+  apply positiveEigenCoordinateData_of_sorted_segment
+    (Nat.le_refl (m + 1)) A hSym A.trace finrank_euclideanSpace_fin
+  · simpa using symmetricToEuclidean_eigenvalues_nonneg_of_realPSD_fin A hSym hPSD
+  · simpa using htraceSorted
 
 /-- Mathlib's sorted Euclidean spectral data gives the positive eigen-coordinate data. -/
 theorem hasPositiveEigenCoordinateData_of_realPSD_fin_sorted
@@ -1221,72 +1255,6 @@ theorem antitone_fin_nonpos_or_initial_nonneg_segment
         simp [S, hinonneg]
       have hile : (i : ℕ) ≤ m := himax_max i hi_mem
       omega
-
-private theorem positiveEigenCoordinateData_of_sorted_segment
-    {d : Type*} [Fintype d] [DecidableEq d] {N m : ℕ}
-    (hN : m + 1 ≤ N)
-    (A : Matrix d d ℝ) (hSym : RealSymmetric A)
-    (τ : ℝ)
-    (hn : Module.finrank ℝ (EuclideanSpace ℝ d) = N)
-    (hpos :
-      let hT := Matrix.isSymmetric_toEuclideanLin_iff.mpr
-        (realSymmetric_isHermitian A hSym)
-      ∀ r : Fin (m + 1), 0 ≤ hT.eigenvalues hn (Fin.castLE hN r))
-    (htrace :
-      let hT := Matrix.isSymmetric_toEuclideanLin_iff.mpr
-        (realSymmetric_isHermitian A hSym)
-      τ = ∑ r : Fin (m + 1), hT.eigenvalues hn (Fin.castLE hN r)) :
-    HasPositiveEigenCoordinateData A τ := by
-  classical
-  let hT := Matrix.isSymmetric_toEuclideanLin_iff.mpr
-    (realSymmetric_isHermitian A hSym)
-  let embed : Fin (m + 1) → Fin (N) := Fin.castLE hN
-  let v : Fin (m + 1) → d → ℝ :=
-    fun i => ⇑(hT.eigenvectorBasis hn (embed i))
-  let s : ℕ → ℝ :=
-    fun k =>
-      if hk : k ≤ m then
-        hT.eigenvalues hn (embed ⟨k, Nat.lt_succ_of_le hk⟩)
-      else 0
-  refine ⟨m, v, s, ?_, ?_, ?_, ?_, ?_⟩
-  · intro i k
-    have horth := (orthonormal_iff_ite.mp (hT.eigenvectorBasis hn).orthonormal)
-      (embed i) (embed k)
-    rw [realDot_euclidean_eq_inner]
-    simpa [v, embed, Fin.ext_iff] using horth
-  · intro r j
-    have hr : (r : ℕ) ≤ m := Nat.lt_succ_iff.mp r.isLt
-    have hidx : embed ⟨(r : ℕ), Nat.lt_succ_of_le hr⟩ = embed r := by
-      ext
-      simp [embed]
-    have h := congrArg (fun y : EuclideanSpace ℝ d => y j)
-      (hT.apply_eigenvectorBasis hn (embed r))
-    rw [toEuclideanLin_apply_eq_sum A (hT.eigenvectorBasis hn (embed r)) j] at h
-    simpa [v, s, hr, hidx, Pi.smul_apply, smul_eq_mul] using h
-  · intro i k hik
-    by_cases hk : k ≤ m
-    · have hi : i ≤ m := le_trans hik hk
-      have hfin : (embed ⟨i, Nat.lt_succ_of_le hi⟩ : Fin (N)) ≤
-          embed ⟨k, Nat.lt_succ_of_le hk⟩ := by
-        exact hik
-      have hanti := hT.eigenvalues_antitone hn hfin
-      simpa [s, hi, hk] using hanti
-    · by_cases hi : i ≤ m
-      · have hnonneg := hpos ⟨i, Nat.lt_succ_of_le hi⟩
-        change 0 ≤ hT.eigenvalues hn
-          (Fin.castLE hN (⟨i, Nat.lt_succ_of_le hi⟩ : Fin (m + 1))) at hnonneg
-        simpa [s, hi, hk, embed] using hnonneg
-      · simp [s, hi, hk]
-  · simp [s]
-  · rw [htrace]
-    apply Finset.sum_congr rfl
-    intro i _hi
-    have hi : (i : ℕ) ≤ m := Nat.lt_succ_iff.mp i.isLt
-    have hidx :
-        embed ⟨(i : ℕ), Nat.lt_succ_of_le hi⟩ = Fin.castLE hN i := by
-      ext
-      simp [embed]
-    simp [s, hi, hidx]
 
 /--
 Positive initial segment construction for an arbitrary finite coordinate
@@ -1808,13 +1776,7 @@ theorem supportInequality_of_cfc_posPart_trace_zero
       ∀ G : Matrix (Fin N) (Fin N) ℝ,
         RealSymmetric G → RealLoewnerBetweenZeroAndOne G →
           (A * G).trace ≤ realQuadraticForm A x := by
-  refine ⟨0, ?_, ?_⟩
-  · intro i
-    simp
-  · intro G hGsym hGbetween
-    have hupper := supportUpperBound_cfc_posPart A hSym G hGsym hGbetween
-    rw [htrace0] at hupper
-    simpa [realQuadraticForm] using hupper
+  exact supportInequality_of_cfc_posPart_trace_zero_card A hSym htrace0
 
 /--
 Ball--Prodromou in matrix form for a positive semidefinite real symmetric matrix

@@ -327,12 +327,6 @@ theorem finite_moment_constraints_nonempty
         Measure.dirac.isProbabilityMeasure⟩
     exact ⟨ν, by simp⟩
   · let T : Finset J := pairCoordinateFinset S
-    have hS_nonempty : S.Nonempty := Finset.nonempty_iff_ne_empty.2 hS_empty
-    have hT_nonempty : T.Nonempty := by
-      exact pairCoordinateFinset_nonempty_of_nonempty hS_nonempty
-    let : Nonempty {j // j ∈ T} := by
-      rcases hT_nonempty with ⟨j, hj⟩
-      exact ⟨⟨j, hj⟩⟩
     have hhT :
         FiniteHermitianPositiveContraction
           (fun a b : {j // j ∈ T} => h a b) :=

@@ -624,7 +624,6 @@ theorem activeEndpointWithNewActiveConstraint
     (a : ι → n → ℝ)
     (hspan : Submodule.span ℝ (Set.range a) = ⊤)
     (x₀ : n → ℝ) :
-    activeConstraintSpan a x₀ ≠ ⊤ →
     (h : n → ℝ) →
     h ≠ 0 →
     (∀ j, |realDot x₀ (a j)| = 1 → realDot h (a j) = 0) →
@@ -643,7 +642,7 @@ theorem activeEndpointWithNewActiveConstraint
       |realDot xPlus (a jNew)| = 1 := by
   classical
   let : Fintype ι := Fintype.ofFinite ι
-  intro hproper h hhne hhortho δ hδpos hlocal
+  intro h hhne hhortho δ hδpos hlocal
   have hx₀ : x₀ ∈ constraintPolytope a := by
     simpa using hlocal 0 (by simpa using le_of_lt hδpos)
   let activeDerivativeSet : Finset ι :=
@@ -741,7 +740,6 @@ theorem activeEndpointWithMoreActiveConstraints
     (a : ι → n → ℝ)
     (hspan : Submodule.span ℝ (Set.range a) = ⊤)
     (x₀ : n → ℝ) :
-    activeConstraintSpan a x₀ ≠ ⊤ →
     (h : n → ℝ) →
     h ≠ 0 →
     (∀ j, |realDot x₀ (a j)| = 1 → realDot h (a j) = 0) →
@@ -756,9 +754,9 @@ theorem activeEndpointWithMoreActiveConstraints
       c + d = 1 ∧
       x₀ = c • xPlus + d • xMinus ∧
       activeConstraintCount a x₀ < activeConstraintCount a xPlus := by
-  intro hproper h hhne hhortho δ hδpos hlocal
+  intro h hhne hhortho δ hδpos hlocal
   rcases activeEndpointWithNewActiveConstraint a hspan x₀
-      hproper h hhne hhortho δ hδpos hlocal with
+      h hhne hhortho δ hδpos hlocal with
     ⟨xPlus, xMinus, c, d, jNew, hxPlus, hxMinus, hc, hd, hcd, hcomb,
       hold, hjOldInactive, hjNewActive⟩
   exact ⟨xPlus, xMinus, c, d, hxPlus, hxMinus, hc, hd, hcd, hcomb,
@@ -778,7 +776,6 @@ theorem activeEndpointContradiction
     (∀ x : n → ℝ,
       IsConstraintPolytopeMaximizer a Φ x →
         activeConstraintCount a x ≤ activeConstraintCount a x₀) →
-    activeConstraintSpan a x₀ ≠ ⊤ →
     (h : n → ℝ) →
     h ≠ 0 →
     (∀ j, |realDot x₀ (a j)| = 1 → realDot h (a j) = 0) →
@@ -786,9 +783,9 @@ theorem activeEndpointContradiction
     0 < δ →
     (∀ t : ℝ, |t| ≤ δ → x₀ + t • h ∈ constraintPolytope a) →
     False := by
-  intro hx₀max hx₀card hproper h hhne hhortho δ hδpos hlocal
+  intro hx₀max hx₀card h hhne hhortho δ hδpos hlocal
   rcases activeEndpointWithMoreActiveConstraints a hspan x₀
-      hproper h hhne hhortho δ hδpos hlocal with
+      h hhne hhortho δ hδpos hlocal with
     ⟨xPlus, xMinus, c, d, hxPlus, hxMinus, hc, hd, hcd, hcomb, hcount_lt⟩
   have hxPlusMax :
       IsConstraintPolytopeMaximizer a Φ xPlus :=
@@ -810,16 +807,15 @@ theorem activePerturbationContradiction
     (∀ x : n → ℝ,
       IsConstraintPolytopeMaximizer a Φ x →
         activeConstraintCount a x ≤ activeConstraintCount a x₀) →
-    activeConstraintSpan a x₀ ≠ ⊤ →
     (h : n → ℝ) →
     h ≠ 0 →
     (∀ j, |realDot x₀ (a j)| = 1 → realDot h (a j) = 0) →
     False := by
-  intro hx₀max hx₀card hproper h hhne hhortho
+  intro hx₀max hx₀card h hhne hhortho
   rcases constraintPolytope_has_local_line_segment a x₀ h hx₀max.1 hhortho with
     ⟨δ, hδpos, hlocal⟩
   exact activeEndpointContradiction a Φ hspan hconv x₀
-    hx₀max hx₀card hproper h hhne hhortho δ hδpos hlocal
+    hx₀max hx₀card h hhne hhortho δ hδpos hlocal
 
 /--
 A maximal-active-cardinality maximizer has full active span via the endpoint
@@ -841,7 +837,7 @@ theorem activeSpanTopOfMaximalActiveMaximizer
   rcases exists_nonzero_annihilating_activeSpan a x₀ hproper with
     ⟨h, hhne, hhortho⟩
   exact activePerturbationContradiction a Φ hspan hconv x₀
-    hx₀max hx₀card hproper h hhne hhortho
+    hx₀max hx₀card h hhne hhortho
 
 /--
 The active-constraint maximizer lemma, proved using the perturbation argument.
@@ -1588,19 +1584,8 @@ theorem hasPositivePartSupportFunction_of_posNegProjection
     (hAneg_mul_Ppos : Aneg * Ppos = 0) :
     HasPositivePartSupportFunction A Apos := by
   constructor
-  · intro G hGsym hGbetween
-    have hposUpper : (Apos * G).trace ≤ Apos.trace :=
-      (hasPositivePartSupportFunction_of_realPSD Apos hAposSym hAposPSD).1
-        G hGsym hGbetween
-    have hnegNonneg : 0 ≤ (Aneg * G).trace :=
-      positiveSemidefinite_trace_mul_nonneg Aneg G
-        hAnegSym hGsym hAnegPSD hGbetween.1
-    have hsplit :
-        (A * G).trace = (Apos * G).trace - (Aneg * G).trace := by
-      rw [hAeq]
-      simp [Matrix.sub_mul]
-    rw [hsplit]
-    linarith
+  · exact supportUpperBound_of_posNegDecomposition A Apos Aneg hAeq
+      hAposSym hAnegSym hAposPSD hAnegPSD
   · refine ⟨Ppos, hPposSym, hPposBetween, ?_⟩
     rw [hAeq]
     simp [Matrix.sub_mul, hApos_mul_Ppos, hAneg_mul_Ppos]
