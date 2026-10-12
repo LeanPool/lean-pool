@@ -25,23 +25,6 @@ open scoped ENNReal NNReal
 
 namespace LiebThirring.Assembly
 
-private theorem double_triangle {α : Type*} [Fintype α] [LinearOrder α]
-    (f : α → α → ℝ≥0∞) (hf : ∀ i j, f i j = f j i) :
-    (∑ i, ∑ j, if i ≠ j then f i j else 0) =
-      2 * (∑ i, ∑ j ∈ Finset.univ.filter (fun j => i < j), f i j) := by
-  have hp (i j : α) : (if i ≠ j then f i j else 0) =
-      (if i < j then f i j else 0) + (if j < i then f j i else 0) := by
-    rcases lt_trichotomy i j with h | h | h
-    · simp only [h.ne, ne_eq, not_false_eq_true, ite_true, h, ite_false,
-        not_lt.mpr h.le, add_zero]
-    · subst j
-      simp only [ne_eq, not_true_eq_false, ite_false, lt_self_iff_false, add_zero]
-    · simp only [h.ne', ne_eq, not_false_eq_true, ite_true, h, ite_false,
-        not_lt.mpr h.le, zero_add, hf i j]
-  simp_rw [hp, Finset.sum_add_distrib]
-  rw [Finset.sum_comm (f := fun i j => if j < i then f j i else 0)]
-  simp only [Finset.sum_filter, two_mul]
-
 private theorem sum_support {α : Type*} [Fintype α] (I : Set α) [Fintype I] (f : α → ℝ≥0∞)
     (hf : ∀ k, k ∉ I → f k = 0) :
     (∑ k, f k) = ∑ k : I, f k.val := by
@@ -55,7 +38,7 @@ theorem nuclearRepulsion_double_sum {M : ℕ} (z : Fin M → ℝ≥0) (R : Fin M
     (∑ k, ∑ l, if k ≠ l then
       ((z k : ℝ≥0∞) * (z l : ℝ≥0∞)) * coulombKernel (R k) (R l) else 0) =
       2 * nuclearRepulsion z R := by
-  apply double_triangle
+  apply sum_ne_eq_two_sum_lt
   intro k l
   simp only [coulombKernel, norm_sub_rev (R k) (R l)]
   ac_rfl

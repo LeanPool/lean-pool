@@ -45,28 +45,7 @@ theorem symmetric_sum_eq_diagonal_add {n : ℕ} (f : Fin n → Fin n → ℝ≥0
     (∑ i : Fin n, ∑ j : Fin n, f i j) =
       (∑ i : Fin n, f i i) +
         2 * ∑ i : Fin n, ∑ j ∈ Finset.univ.filter (fun j => i < j), f i j := by
-  classical
-  have hsplit (i j : Fin n) : f i j =
-      (if j = i then f i i else 0) + (if i < j then f i j else 0) +
-        (if j < i then f j i else 0) := by
-    rcases lt_trichotomy i j with h | h | h
-    · simp only [h, h.ne.symm, not_lt_of_ge h.le, ↓reduceIte, zero_add, add_zero]
-    · subst j
-      simp only [↓reduceIte, lt_self_iff_false, add_zero]
-    · simp only [h, h.ne, not_lt_of_ge h.le, ↓reduceIte, add_zero, zero_add, hf i j]
-  have hswap : (∑ i : Fin n, ∑ j : Fin n, if j < i then f j i else 0) =
-      ∑ i : Fin n, ∑ j : Fin n, if i < j then f i j else 0 :=
-    Finset.sum_comm
-  calc
-    _ = (∑ i : Fin n, f i i) +
-        (∑ i : Fin n, ∑ j : Fin n, if i < j then f i j else 0) +
-        (∑ i : Fin n, ∑ j : Fin n, if j < i then f j i else 0) := by
-      conv_lhs => arg 2; ext i; arg 2; ext j; rw [hsplit i j]
-      simp only [Finset.sum_add_distrib, Finset.sum_ite_eq', Finset.mem_univ, ↓reduceIte]
-    _ = _ := by
-      rw [hswap]
-      simp only [← Finset.sum_filter]
-      rw [two_mul, add_assoc]
+  exact sum_eq_diag_add_two_sum_lt f hf
 
 /-- A finite sum of positive-radius electron shells has finite Coulomb energy. -/
 theorem coulombEnergy_sum_shell_ne_top {N : ℕ} (a : Fin N → Position)

@@ -66,6 +66,46 @@ namespace LiebThirring
     (R : Fin M → Position) : ℝ≥0∞ :=
   (Z : ℝ≥0∞) ^ 2 / 4 * ∑ k : Fin M, (nearestOtherNucleusDistance R k)⁻¹
 
+/-- An off-diagonal symmetric finite sum counts each upper-triangular term twice. -/
+theorem sum_ne_eq_two_sum_lt {α : Type*} [Fintype α] [LinearOrder α]
+    (f : α → α → ℝ≥0∞) (hf : ∀ i j, f i j = f j i) :
+    (∑ i, ∑ j, if i ≠ j then f i j else 0) =
+      2 * ∑ i, ∑ j ∈ Finset.univ.filter (fun j => i < j), f i j := by
+  have hs (i j : α) : (if i ≠ j then f i j else 0) =
+      (if i < j then f i j else 0) + (if j < i then f j i else 0) := by
+    rcases lt_trichotomy i j with h | h | h
+    · simp only [h.ne, ne_eq, not_false_eq_true, ite_true, h, ite_false,
+        not_lt.mpr h.le, add_zero]
+    · subst j
+      simp only [ne_eq, not_true_eq_false, ite_false, lt_self_iff_false, add_zero]
+    · simp only [h.ne', ne_eq, not_false_eq_true, ite_true, h, ite_false,
+        not_lt.mpr h.le, zero_add, hf i j]
+  simp_rw [hs, Finset.sum_add_distrib]
+  rw [Finset.sum_comm (f := fun i j => if j < i then f j i else 0)]
+  simp only [Finset.sum_filter, two_mul]
+
+/-- A symmetric finite sum is its diagonal plus twice the upper triangle. -/
+theorem sum_eq_diag_add_two_sum_lt {α : Type*} [Fintype α] [LinearOrder α]
+    (f : α → α → ℝ≥0∞) (hf : ∀ i j, f i j = f j i) :
+    (∑ i, ∑ j, f i j) =
+      (∑ i, f i i) + 2 * ∑ i, ∑ j ∈ Finset.univ.filter (fun j => i < j), f i j := by
+  classical
+  calc
+    (∑ i, ∑ j, f i j) =
+        (∑ i, f i i) + ∑ i, ∑ j, if i ≠ j then f i j else 0 := by
+      have hsplit (i j : α) : f i j =
+          (if j = i then f i i else 0) + (if i ≠ j then f i j else 0) := by
+        by_cases h : j = i
+        · subst j
+          simp
+        · have h' : i ≠ j := fun hij => h hij.symm
+          simp [h, h']
+      conv_lhs => arg 2; ext i; arg 2; ext j; rw [hsplit i j]
+      simp only [Finset.sum_add_distrib]
+      simp
+    _ = (∑ i, f i i) + 2 * ∑ i, ∑ j ∈ Finset.univ.filter (fun j => i < j), f i j := by
+      rw [sum_ne_eq_two_sum_lt f hf]
+
 end LiebThirring
 
 end

@@ -36,17 +36,12 @@ theorem sum_erase_eq_two_sum_upper {M : ℕ} (f : Fin M → Fin M → ℝ≥0∞
     (∑ k : Fin M, ∑ l ∈ Finset.univ.erase k, f k l) =
       2 * ∑ k : Fin M, ∑ l ∈ Finset.univ.filter (fun l => k < l), f k l := by
   classical
-  have hs (k l : Fin M) : (if l ≠ k then f k l else 0) =
-      (if k < l then f k l else 0) + (if l < k then f l k else 0) := by
-    rcases lt_trichotomy k l with h | h | h
-    · rw [ite_eq_left (ne_of_gt h)]
-      simp only [h, not_lt_of_ge h.le, ↓reduceIte, add_zero]
-    · subst l
-      simp only [ne_eq, not_true_eq_false, lt_self_iff_false, ↓reduceIte, add_zero]
-    · rw [ite_eq_left (ne_of_lt h)]
-      simp only [h, not_lt_of_ge h.le, ↓reduceIte, zero_add, hf k l]
-  simp_rw [← Finset.filter_ne', Finset.sum_filter, hs, Finset.sum_add_distrib]
-  rw [Finset.sum_comm (f := fun k l => if l < k then f l k else 0), two_mul]
+  calc
+    (∑ k : Fin M, ∑ l ∈ Finset.univ.erase k, f k l) =
+        ∑ k, ∑ l, if l ≠ k then f k l else 0 := by
+      simp_rw [← Finset.filter_ne', Finset.sum_filter]
+    _ = 2 * ∑ k : Fin M, ∑ l ∈ Finset.univ.filter (fun l => k < l), f k l := by
+      simpa [ne_comm] using sum_ne_eq_two_sum_lt f hf
 
 /-- At a nucleus the screened potential omits that nucleus. -/
 theorem screenedPotential_at_nucleus_eq_sum {M : ℕ} (Z : ℝ≥0)
