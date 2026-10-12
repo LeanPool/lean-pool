@@ -119,16 +119,6 @@ theorem restExchange_ae {N q : ℕ} (i j : Fin N) (v : RestState i q) :
   rw [hb, ha]
   rfl
 
-/-- Simultaneous particle permutation packaged as a unitary on `State`. -/
-@[expose] noncomputable def statePermutationLinearIsometryEquiv {N q : ℕ}
-    (σ : Equiv.Perm (Fin N)) : State N q ≃ₗᵢ[ℂ] State N q :=
-  (l2PullbackEquiv (permutationLinearIsometryEquiv σ).toHomeomorph.toMeasurableEquiv
-    (permutationLinearIsometryEquiv σ).measurePreserving).trans
-      (l2TargetEquiv (volume : Measure (Configuration N)) (spinPermutationLinearIsometryEquiv σ))
-
-@[simp] theorem statePermutationLinearIsometryEquiv_apply {N q : ℕ}
-    (σ : Equiv.Perm (Fin N)) (ψ : State N q) :
-    statePermutationLinearIsometryEquiv σ ψ = simultaneousPermutation σ ψ := rfl
 
 end LiebThirring
 

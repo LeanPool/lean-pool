@@ -14,11 +14,11 @@ public import LeanPool.LiebThirring.Kinetic.ContractionState
 /-!
 # Density of smooth one-particle tensors
 
-Continuous linear maps out of a finite-spin Hilbert-valued `L²` space are determined by their
+Continuous linear maps out of a finite-spin normed-space-valued `L²` space are determined by their
 values on elementary tensors.
 
-Applying a linear isometry componentwise to the Hilbert-valued factor of an elementary tensor is
-the same as applying it before insertion.
+Applying a linear isometry componentwise to the normed factor of an elementary tensor
+is the same as applying it before insertion.
 -/
 
 public section
@@ -29,11 +29,11 @@ open scoped ENNReal SchwartzMap
 namespace LiebThirring
 
 variable {ι α H K : Type*} [Fintype ι] [MeasurableSpace α]
-  [NormedAddCommGroup H] [InnerProductSpace ℂ H]
+  [NormedAddCommGroup H] [NormedSpace ℂ H]
   [NormedAddCommGroup K] [NormedSpace ℂ K]
   {μ : Measure α}
 
-/-- Continuous linear maps out of a finite-spin Hilbert-valued `L²` space are
+/-- Continuous linear maps out of a finite-spin normed-space-valued `L²` space are
 determined by their values on elementary tensors. -/
 theorem continuousLinearMap_ext_tensorInsertion
     (A B : Lp (PiLp 2 (fun _ : ι => H)) 2 μ →L[ℂ] K)
@@ -83,11 +83,11 @@ theorem continuousLinearMap_ext_tensorInsertion
     simpa only [map_add] using congrArg₂ (· + ·) hAf hAg
   · exact isClosed_eq A.continuous B.continuous
 
-/-- Applying a linear isometry componentwise to the Hilbert-valued factor of
+/-- Applying a linear isometry componentwise to the normed-space-valued factor of
 an elementary tensor is the same as applying it before insertion. -/
 theorem piLpCongrRight_compLp_tensorInsertion
-    {E F : Type*} [NormedAddCommGroup E] [InnerProductSpace ℂ E]
-    [NormedAddCommGroup F] [InnerProductSpace ℂ F]
+    {E F : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]
+    [NormedAddCommGroup F] [NormedSpace ℂ F]
     (T : E ≃ₗᵢ[ℂ] F) (f : Lp (EuclideanSpace ℂ ι) 2 μ) (v : E) :
     (LinearIsometryEquiv.piLpCongrRight 2
       (fun _ : ι => T)).toContinuousLinearEquiv.toContinuousLinearMap.compLp

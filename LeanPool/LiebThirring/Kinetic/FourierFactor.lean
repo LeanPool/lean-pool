@@ -12,6 +12,7 @@ public import LeanPool.LiebThirring.Defs.KineticEnergy
 public import LeanPool.LiebThirring.Kinetic.DensityBasic
 public import LeanPool.LiebThirring.Fourier.Covariance
 public import LeanPool.LiebThirring.Kinetic.Permutation
+public import LeanPool.LiebThirring.Kinetic.CurryingTransport
 
 /-!
 # Particle Fourier energies
@@ -60,13 +61,21 @@ theorem kineticEnergy_eq_sum_particleFourierEnergy {N q : ℕ} (ψ : State N q) 
     ((measurable_particlePosition i).nnnorm.coe_nnreal_ennreal.pow_const 2)).mul
     (measurable_state_norm_sq (Lp.fourierTransformₗᵢ _ _ ψ)))
 
+/-- Simultaneous particle permutation packaged as a unitary on `State`. -/
+@[expose] noncomputable def statePermutationLinearIsometryEquiv {N q : ℕ}
+    (σ : Equiv.Perm (Fin N)) : State N q ≃ₗᵢ[ℂ] State N q :=
+  (l2PullbackEquiv (permutationLinearIsometryEquiv σ).toHomeomorph.toMeasurableEquiv
+    (permutationLinearIsometryEquiv σ).measurePreserving).trans
+      (l2TargetEquiv (volume : Measure (Configuration N)) (spinPermutationLinearIsometryEquiv σ))
+
 /-- The L² simultaneous spatial and spin permutation from the formulas. -/
 @[expose] noncomputable def simultaneousPermutation {N q : ℕ}
     (σ : Equiv.Perm (Fin N)) (ψ : State N q) : State N q :=
-  (spinPermutationLinearIsometryEquiv (q := q)
-    σ).toContinuousLinearEquiv.toContinuousLinearMap.compLp
-    (Lp.compMeasurePreserving (permutationLinearIsometryEquiv σ)
-      (permutationLinearIsometryEquiv σ).measurePreserving ψ)
+  statePermutationLinearIsometryEquiv σ ψ
+
+@[simp] theorem statePermutationLinearIsometryEquiv_apply {N q : ℕ}
+    (σ : Equiv.Perm (Fin N)) (ψ : State N q) :
+    statePermutationLinearIsometryEquiv σ ψ = simultaneousPermutation σ ψ := rfl
 
 /-- The permutation operator has exactly the simultaneous representative. -/
 theorem simultaneousPermutation_apply_ae {N q : ℕ} (σ : Equiv.Perm (Fin N))
@@ -93,8 +102,13 @@ theorem simultaneousPermutation_apply_ae {N q : ℕ} (σ : Equiv.Perm (Fin N))
 theorem fourier_simultaneousPermutation {N q : ℕ} (σ : Equiv.Perm (Fin N))
     (ψ : State N q) :
     𝓕 (simultaneousPermutation σ ψ) = simultaneousPermutation σ (𝓕 ψ) := by
-  unfold simultaneousPermutation
+  unfold simultaneousPermutation statePermutationLinearIsometryEquiv
+  change 𝓕
+    ((spinPermutationLinearIsometryEquiv σ).toContinuousLinearEquiv.toContinuousLinearMap.compLp
+      (Lp.compMeasurePreserving (permutationLinearIsometryEquiv σ)
+        (permutationLinearIsometryEquiv σ).measurePreserving ψ)) = _
   rw [Fourier.fourier_compLp, Fourier.fourier_compMeasurePreserving]
+  rfl
 
 /-- An antisymmetric state is an eigenvector of each simultaneous permutation. -/
 theorem simultaneousPermutation_eq_sign_smul {N q : ℕ} (σ : Equiv.Perm (Fin N))
