@@ -229,7 +229,7 @@ functions on `(0,1)`.
 -/
 theorem stepFunctionRealization
     {n : Type*}
-    {m : ℕ} (_hm : 0 < m)
+    {m : ℕ}
     (p : Fin m → ℝ) (ζ : Fin m → n → ℂ) :
     (∀ r, 0 ≤ p r) →
     (∑ r, p r = 1) →
@@ -255,7 +255,7 @@ Lebesgue integral.
 -/
 theorem stepFunctionRealizationOnUnitInterval
     {n : Type*}
-    {m : ℕ} (_hm : 0 < m)
+    {m : ℕ}
     (p : Fin m → ℝ) (ζ : Fin m → n → ℂ) :
     (∀ r, 0 ≤ p r) →
     (∑ r, p r = 1) →

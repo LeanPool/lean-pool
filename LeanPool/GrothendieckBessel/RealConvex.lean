@@ -862,13 +862,13 @@ theorem activeConstraintMaximizer
   exact ⟨x₀, hx₀max.1, hx₀max.2,
     activeSpanTopOfMaximalActiveMaximizer a Φ hspan hconv x₀ hx₀max hx₀card⟩
 
-/-- Support-function separation of compact convex sets. -/
+/-- A compact set lies in a nonempty compact convex set when its support function
+is smaller. -/
 theorem supportFunctionSeparation
     {V : Type*} [NormedAddCommGroup V] [InnerProductSpace ℝ V]
     (K L : Set V)
     (hKcpt : IsCompact K) (hLcpt : IsCompact L)
-    (_hKconv : Convex ℝ K) (hLconv : Convex ℝ L)
-    (_hKnonempty : K.Nonempty) (hLnonempty : L.Nonempty)
+    (hLconv : Convex ℝ L) (hLnonempty : L.Nonempty)
     (hsupport :
       ∀ a : V,
         sSup ((fun x : V => inner ℝ a x) '' K) ≤

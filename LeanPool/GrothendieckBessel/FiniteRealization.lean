@@ -109,8 +109,8 @@ theorem finite_complex_olevskii_gram_realization
     hh.toComplexLoewner
   rcases OlevskiiGram.finiteComplexDecomposition h
       (OlevskiiGram.hasRealConvexDecomposition (Sum F F)) hHerm hLoewner with
-    ⟨m, hm, p, ζ, hp, hpsum, hζ, hentry⟩
-  rcases OlevskiiGram.stepFunctionRealizationOnUnitInterval hm p ζ hp hpsum hζ with
+    ⟨m, _hm, p, ζ, hp, hpsum, hζ, hentry⟩
+  rcases OlevskiiGram.stepFunctionRealizationOnUnitInterval p ζ hp hpsum hζ with
     ⟨a, haMeas, haBound, haMoment⟩
   refine ⟨a, haMeas, ?_, ?_⟩
   · intro j t _ht

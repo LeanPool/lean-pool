@@ -1222,108 +1222,25 @@ theorem antitone_fin_nonpos_or_initial_nonneg_segment
       have hile : (i : ℕ) ≤ m := himax_max i hi_mem
       omega
 
-/--
-An initial segment of Mathlib's sorted Euclidean eigenbasis gives the positive
-eigen-coordinate data consumed by Ball--Prodromou.  The hypotheses say that the
-selected `m+1` sorted eigenvalues are nonnegative and have total `τ`.
--/
-theorem hasPositiveEigenCoordinateData_of_sorted_positiveInitialSegment
-    {N m : ℕ} (hN : m + 1 ≤ N)
-    (A : Matrix (Fin N) (Fin N) ℝ) (hSym : RealSymmetric A)
-    (τ : ℝ)
-    (hpos :
-      let hT := Matrix.isSymmetric_toEuclideanLin_iff.mpr
-        (realSymmetric_isHermitian A hSym)
-      let hn : Module.finrank ℝ (EuclideanSpace ℝ (Fin N)) = N :=
-        finrank_euclideanSpace_fin
-      ∀ r : Fin (m + 1), 0 ≤ hT.eigenvalues hn (Fin.castLE hN r))
-    (htrace :
-      let hT := Matrix.isSymmetric_toEuclideanLin_iff.mpr
-        (realSymmetric_isHermitian A hSym)
-      let hn : Module.finrank ℝ (EuclideanSpace ℝ (Fin N)) = N :=
-        finrank_euclideanSpace_fin
-      τ = ∑ r : Fin (m + 1), hT.eigenvalues hn (Fin.castLE hN r)) :
-    HasPositiveEigenCoordinateData A τ := by
-  classical
-  let hT := Matrix.isSymmetric_toEuclideanLin_iff.mpr
-    (realSymmetric_isHermitian A hSym)
-  let hn : Module.finrank ℝ (EuclideanSpace ℝ (Fin N)) = N :=
-    finrank_euclideanSpace_fin
-  let embed : Fin (m + 1) → Fin N := Fin.castLE hN
-  let v : Fin (m + 1) → Fin N → ℝ :=
-    fun i => ⇑(hT.eigenvectorBasis hn (embed i))
-  let s : ℕ → ℝ :=
-    fun k =>
-      if hk : k ≤ m then
-        hT.eigenvalues hn (embed ⟨k, Nat.lt_succ_of_le hk⟩)
-      else 0
-  refine ⟨m, v, s, ?_, ?_, ?_, ?_, ?_⟩
-  · intro i k
-    have horth := (orthonormal_iff_ite.mp (hT.eigenvectorBasis hn).orthonormal)
-      (embed i) (embed k)
-    rw [realDot_euclidean_eq_inner]
-    simpa [v, embed, Fin.ext_iff] using horth
-  · intro r j
-    have hr : (r : ℕ) ≤ m := Nat.lt_succ_iff.mp r.isLt
-    have hidx : embed ⟨(r : ℕ), Nat.lt_succ_of_le hr⟩ = embed r := by
-      ext
-      simp [embed]
-    have h := congrArg (fun y : EuclideanSpace ℝ (Fin N) => y j)
-      (hT.apply_eigenvectorBasis hn (embed r))
-    rw [toEuclideanLin_apply_eq_sum A (hT.eigenvectorBasis hn (embed r)) j] at h
-    simpa [v, s, hr, hidx, Pi.smul_apply, smul_eq_mul] using h
-  · intro i k hik
-    by_cases hk : k ≤ m
-    · have hi : i ≤ m := le_trans hik hk
-      have hfin : (embed ⟨i, Nat.lt_succ_of_le hi⟩ : Fin N) ≤
-          embed ⟨k, Nat.lt_succ_of_le hk⟩ := by
-        exact hik
-      have hanti := hT.eigenvalues_antitone hn hfin
-      simpa [s, hi, hk] using hanti
-    · by_cases hi : i ≤ m
-      · have hnonneg := hpos ⟨i, Nat.lt_succ_of_le hi⟩
-        change 0 ≤ hT.eigenvalues hn
-          (Fin.castLE hN (⟨i, Nat.lt_succ_of_le hi⟩ : Fin (m + 1))) at hnonneg
-        simpa [s, hi, hk, embed] using hnonneg
-      · simp [s, hi, hk]
-  · simp [s]
-  · rw [htrace]
-    apply Finset.sum_congr rfl
-    intro i _hi
-    have hi : (i : ℕ) ≤ m := Nat.lt_succ_iff.mp i.isLt
-    have hidx : embed ⟨(i : ℕ), Nat.lt_succ_of_le hi⟩ = Fin.castLE hN i := by
-      ext
-      simp [embed]
-    simp [s, hi, hidx]
-
-/--
-The same positive initial segment construction for an arbitrary finite
-coordinate type, indexed through Mathlib's canonical sorted eigenvalue list.
--/
-theorem hasPositiveEigenCoordinateData_of_sorted_positiveInitialSegment_card
-    {d : Type*} [Fintype d] [DecidableEq d] {m : ℕ}
-    (hN : m + 1 ≤ Fintype.card d)
+private theorem positiveEigenCoordinateData_of_sorted_segment
+    {d : Type*} [Fintype d] [DecidableEq d] {N m : ℕ}
+    (hN : m + 1 ≤ N)
     (A : Matrix d d ℝ) (hSym : RealSymmetric A)
     (τ : ℝ)
+    (hn : Module.finrank ℝ (EuclideanSpace ℝ d) = N)
     (hpos :
       let hT := Matrix.isSymmetric_toEuclideanLin_iff.mpr
         (realSymmetric_isHermitian A hSym)
-      let hn : Module.finrank ℝ (EuclideanSpace ℝ d) = Fintype.card d :=
-        finrank_euclideanSpace
       ∀ r : Fin (m + 1), 0 ≤ hT.eigenvalues hn (Fin.castLE hN r))
     (htrace :
       let hT := Matrix.isSymmetric_toEuclideanLin_iff.mpr
         (realSymmetric_isHermitian A hSym)
-      let hn : Module.finrank ℝ (EuclideanSpace ℝ d) = Fintype.card d :=
-        finrank_euclideanSpace
       τ = ∑ r : Fin (m + 1), hT.eigenvalues hn (Fin.castLE hN r)) :
     HasPositiveEigenCoordinateData A τ := by
   classical
   let hT := Matrix.isSymmetric_toEuclideanLin_iff.mpr
     (realSymmetric_isHermitian A hSym)
-  let hn : Module.finrank ℝ (EuclideanSpace ℝ d) = Fintype.card d :=
-    finrank_euclideanSpace
-  let embed : Fin (m + 1) → Fin (Fintype.card d) := Fin.castLE hN
+  let embed : Fin (m + 1) → Fin (N) := Fin.castLE hN
   let v : Fin (m + 1) → d → ℝ :=
     fun i => ⇑(hT.eigenvectorBasis hn (embed i))
   let s : ℕ → ℝ :=
@@ -1349,7 +1266,7 @@ theorem hasPositiveEigenCoordinateData_of_sorted_positiveInitialSegment_card
   · intro i k hik
     by_cases hk : k ≤ m
     · have hi : i ≤ m := le_trans hik hk
-      have hfin : (embed ⟨i, Nat.lt_succ_of_le hi⟩ : Fin (Fintype.card d)) ≤
+      have hfin : (embed ⟨i, Nat.lt_succ_of_le hi⟩ : Fin (N)) ≤
           embed ⟨k, Nat.lt_succ_of_le hk⟩ := by
         exact hik
       have hanti := hT.eigenvalues_antitone hn hfin
@@ -1370,6 +1287,56 @@ theorem hasPositiveEigenCoordinateData_of_sorted_positiveInitialSegment_card
       ext
       simp [embed]
     simp [s, hi, hidx]
+
+/--
+Positive initial segment construction for an arbitrary finite coordinate
+type, indexed through Mathlib's canonical sorted eigenvalue list.
+-/
+theorem hasPositiveEigenCoordinateData_of_sorted_positiveInitialSegment_card
+    {d : Type*} [Fintype d] [DecidableEq d] {m : ℕ}
+    (hN : m + 1 ≤ Fintype.card d)
+    (A : Matrix d d ℝ) (hSym : RealSymmetric A)
+    (τ : ℝ)
+    (hpos :
+      let hT := Matrix.isSymmetric_toEuclideanLin_iff.mpr
+        (realSymmetric_isHermitian A hSym)
+      let hn : Module.finrank ℝ (EuclideanSpace ℝ d) = Fintype.card d :=
+        finrank_euclideanSpace
+      ∀ r : Fin (m + 1), 0 ≤ hT.eigenvalues hn (Fin.castLE hN r))
+    (htrace :
+      let hT := Matrix.isSymmetric_toEuclideanLin_iff.mpr
+        (realSymmetric_isHermitian A hSym)
+      let hn : Module.finrank ℝ (EuclideanSpace ℝ d) = Fintype.card d :=
+        finrank_euclideanSpace
+      τ = ∑ r : Fin (m + 1), hT.eigenvalues hn (Fin.castLE hN r)) :
+    HasPositiveEigenCoordinateData A τ := by
+  exact positiveEigenCoordinateData_of_sorted_segment hN A hSym τ
+    finrank_euclideanSpace hpos htrace
+
+/--
+An initial segment of Mathlib's sorted Euclidean eigenbasis gives the positive
+eigen-coordinate data consumed by Ball--Prodromou.  The hypotheses say that the
+selected `m+1` sorted eigenvalues are nonnegative and have total `τ`.
+-/
+theorem hasPositiveEigenCoordinateData_of_sorted_positiveInitialSegment
+    {N m : ℕ} (hN : m + 1 ≤ N)
+    (A : Matrix (Fin N) (Fin N) ℝ) (hSym : RealSymmetric A)
+    (τ : ℝ)
+    (hpos :
+      let hT := Matrix.isSymmetric_toEuclideanLin_iff.mpr
+        (realSymmetric_isHermitian A hSym)
+      let hn : Module.finrank ℝ (EuclideanSpace ℝ (Fin N)) = N :=
+        finrank_euclideanSpace_fin
+      ∀ r : Fin (m + 1), 0 ≤ hT.eigenvalues hn (Fin.castLE hN r))
+    (htrace :
+      let hT := Matrix.isSymmetric_toEuclideanLin_iff.mpr
+        (realSymmetric_isHermitian A hSym)
+      let hn : Module.finrank ℝ (EuclideanSpace ℝ (Fin N)) = N :=
+        finrank_euclideanSpace_fin
+      τ = ∑ r : Fin (m + 1), hT.eigenvalues hn (Fin.castLE hN r)) :
+    HasPositiveEigenCoordinateData A τ := by
+  exact positiveEigenCoordinateData_of_sorted_segment hN A hSym τ
+    finrank_euclideanSpace_fin hpos htrace
 
 /--
 The explicit eigen-coordinate data obtained from a positive spectral subspace
