@@ -1128,18 +1128,16 @@ private lemma insertLeftStep_invCount_term_skip {p q : ℕ}
     split_ifs <;> try omega
     all_goals simp only at *
     -- Goal 1: .2 values match (Fin proof-irrelevance)
-    · congr 2;
+    · rfl
     -- Goal 2: contradiction (succAbove preserves ordering)
     · exfalso; rename_i h_sa h_not
       exact h_not (Fin.succAbove_lt_succAbove_iff.mp (by
-        convert h_sa using 2 <;>
-          (congr 1)))
+        exact h_sa))
     -- Goal 3: contradiction (same)
     · exfalso; rename_i h_sa h_orig
       apply h_sa
       exact Fin.succAbove_lt_succAbove_iff.mpr (by
-        convert h_orig using 2 <;>
-          (congr 1))
+        exact h_orig)
   · by_cases h2 : i.val < t
     · -- Case 2: i < t ≤ i+1 (castSucc before, succ at insertion point)
       simp only [h2]
@@ -1152,7 +1150,7 @@ private lemma insertLeftStep_invCount_term_skip {p q : ℕ}
         simp [Fin.val_mk]
       split_ifs <;> try omega
       all_goals simp only at *
-      · congr 2;
+      · rfl
       · exfalso; rename_i h_sa h_not
         simp only [hcs_val, hsu_val] at *
         apply h_not
@@ -1187,17 +1185,15 @@ private lemma insertLeftStep_invCount_term_skip {p q : ℕ}
         simp [Fin.val_mk]
       split_ifs <;> try omega
       all_goals simp only at *
-      · congr 2;
+      · rfl
       · exfalso; rename_i h_sa h_not
         apply h_not
         exact Fin.succAbove_lt_succAbove_iff.mp (by
-          convert h_sa using 2 <;>
-            (congr 1))
+          exact h_sa)
       · exfalso; rename_i h_sa h_orig
         apply h_sa
         exact Fin.succAbove_lt_succAbove_iff.mpr (by
-          convert h_orig using 2 <;>
-            (congr 1))
+          exact h_orig)
 
 /-- **Key inversion-count identity** (additive form, avoiding ℕ subtraction):
 `invCount(insertLeftStep ν j) + j = invCount(ν) + insertLeftIndex(ν, j)`.
@@ -1389,7 +1385,7 @@ private lemma insertRightStep_eq_swap {p q : ℕ}
     simp only [← hidx]
     simp only [swap, OrderHom.coe_mk, Fin.castOrderIso, Prod.swap, RelIso.coe_fn_mk,
       Equiv.coe_fn_mk, Fin.val_cast]
-    split_ifs <;> simp_all [Fin.cast]
+    split_ifs <;> simp_all only [Fin.cast]
 
 
 /-- Sign relation for right insertion:
@@ -1967,9 +1963,9 @@ lemma isRightVertex_swap {p q : ℕ} {μ : Shuffle p q} {r : Fin (p + q + 1)} :
           simp_all +decide only [Fin.castAdd, Fin.succ];
           convert le_of_not_gt fun h'' => _;
           have := coordSum_eq μ r; have := coordSum_eq μ ⟨ r.val + 1,
-              by linarith ⟩; simp_all +decide [ Fin.castLE ];
-          linarith [ show ( μ.1 r |>.1 : ℕ ) < ( μ.1 ⟨ r.val + 1, by linarith ⟩ |>.1 : ℕ ) from h,
-              show ( μ.1 r |>.2 : ℕ ) < ( μ.1 ⟨ r.val + 1, by linarith ⟩ |>.2 : ℕ ) from h'' ]
+              by omega ⟩; simp_all +decide [ Fin.castLE ];
+          linarith [ show ( μ.1 r |>.1 : ℕ ) < ( μ.1 ⟨ r.val + 1, by omega ⟩ |>.1 : ℕ ) from h,
+              show ( μ.1 r |>.2 : ℕ ) < ( μ.1 ⟨ r.val + 1, by omega ⟩ |>.2 : ℕ ) from h'' ]
 
 lemma removeRight_eq_swap_removeLeft {p q : ℕ} (μ : Shuffle p (q + 1)) (r : Fin (p + q + 2))
     (h : isRightVertex μ (r.cast (by omega))) :
@@ -2412,8 +2408,14 @@ lemma swapDiagonalStepsFun_injective {p q : ℕ}
     (μ : Shuffle (p) (q)) (r : Index (p + (q)))
     (hr : isDiagonalVertex μ r) :
     Function.Injective (swapDiagonalStepsFun μ r hr) := by
-  intros i j hij; have := swapDiagonalStepsFun_coordSum μ r hr i;
-      have := swapDiagonalStepsFun_coordSum μ r hr j; aesop;
+  intro i j hij
+  apply Fin.ext
+  calc i.val = (swapDiagonalStepsFun μ r hr i).1.val +
+      (swapDiagonalStepsFun μ r hr i).2.val :=
+        (swapDiagonalStepsFun_coordSum μ r hr i).symm
+    _ = (swapDiagonalStepsFun μ r hr j).1.val +
+      (swapDiagonalStepsFun μ r hr j).2.val := congrArg (fun x => x.1.val + x.2.val) hij
+    _ = j.val := swapDiagonalStepsFun_coordSum μ r hr j
 
 
 /-- The sign-reversing involution on diagonal terms.  Given a `(p+1, q+1)`-shuffle
@@ -2439,9 +2441,7 @@ lemma swapDiagonalSteps_apply_ne {p q : ℕ} (μ : Shuffle (p) (q))
     (r : Index (p + (q))) (hr : isDiagonalVertex μ r)
     (i : Index (p + (q))) (hi : i ≠ r) :
     (swapDiagonalSteps μ r hr).1 i = μ.1 i := by
-      -- Since $i \neq r$, the else part of the definition of `swapDiagonalStepsFun` applies.
-      simp only [swapDiagonalSteps, OrderHom.coe_mk];
-      unfold LeanPool.EilenbergZilber.Shuffle.swapDiagonalStepsFun; aesop;
+  exact ite_eq_right hi
 
 /-
 If the step entering the diagonal vertex `r` is a Left step, then `swapDiagonalSteps` modifies the
@@ -2526,11 +2526,11 @@ lemma swapDiagonalSteps_flip_prev {p q : ℕ} (μ : Shuffle (p) (q))
           · constructor <;> intro h <;> contrapose! h;
             · convert Nat.le_refl _ using 1;
               rotate_left;
-              · exact ( μ.1 ⟨ r + 1, by linarith ⟩ |>.1 : ℕ ) - 1
+              · exact ( μ.1 ⟨ r + 1, by omega ⟩ |>.1 : ℕ ) - 1
               (generalize_proofs at *; (simp_all +decide only [add_tsub_cancel_right, Fin.le_def,
                   tsub_le_iff_right, Std.le_refl, iff_true] ););
               rw [ swapDiagonalSteps_apply_ne ] <;> norm_num [ h ];
-              have := shuffle_step μ ⟨ r, by linarith ⟩; aesop;
+              have := shuffle_step μ ⟨ r, by omega ⟩; aesop;
             · exact hL
           · exact hL;
       · rcases r with ⟨ _ | r, hr ⟩ <;> simp_all +decide only [zero_tsub, Fin.zero_eta, zero_add,
@@ -2618,13 +2618,13 @@ lemma swapDiagonalSteps_flip_curr {p q : ℕ} (μ : Shuffle (p) (q))
         all_goals generalize_proofs at *;
         · rw [ show ( μ.swapDiagonalSteps r hr : LeanPool.EilenbergZilber.Index ( p + ( q ) ) →o
               LeanPool.EilenbergZilber.Index ( p ) × LeanPool.EilenbergZilber.Index ( q ) ) ⟨ r.val
-              + 1, by linarith ⟩ = μ.1 ⟨ r.val + 1, by linarith ⟩ from ?_ ];
+              + 1, by omega ⟩ = μ.1 ⟨ r.val + 1, by omega ⟩ from ?_ ];
           · rw [ Fin.lt_def, Fin.le_iff_val_le_val ]; simp +arith +decide only [Fin.val_fin_le];
             constructor <;> intro <;> simp_all +decide only [Order.lt_add_one_iff,
                 Order.add_one_le_iff, tsub_le_iff_right, Fin.is_le', Nat.succ_le_iff];
             · unfold isDiagonalVertex at hr; simp_all +decide [] ;
               exact le_of_not_gt fun h => h.not_ge <| by have := shuffle_step μ ⟨ r,
-                                                          by linarith ⟩; unfold isLeftStep at hr;
+                                                          by omega ⟩; unfold isLeftStep at hr;
                                                           aesop;
             · unfold isDiagonalVertex at hr; simp_all +decide only [Fin.val_pos_iff, ↓reduceDIte,
                   false_and, not_false_eq_true, true_and, false_or, dite_eq_ite, ite_false_right];
@@ -2792,22 +2792,20 @@ lemma swapDiagonalSteps_involutive {p q : ℕ}
       have h₂ := swapDiagonalSteps_val_r (swapDiagonalSteps μ r hr) r (swapDiagonalSteps_vertex μ r
           hr) rm1 rfl
       have htoggle : isLeftStep (swapDiagonalSteps μ r hr) rm1 ↔ ¬ isLeftStep μ rm1 := by
-        simpa [rm1] using swapDiagonalSteps_isLeftStep_toggle μ r hr
+        simpa only [rm1] using swapDiagonalSteps_isLeftStep_toggle μ r hr
       by_cases hL : isLeftStep μ rm1
       · have hS : ¬ isLeftStep (swapDiagonalSteps μ r hr) rm1 := by
           exact fun hs => (htoggle.mp hs) hL
         rw [h₂]
         simp only [hS, ↓reduceDIte, h₁, hL, add_tsub_cancel_right, Fin.eta, rm1]
-        exact Prod.ext (Fin.ext <| Nat.sub_add_cancel <| Nat.pos_of_ne_zero <| by
-          have := diagonal_left_fst_pos hr (by simpa [rm1] using hL)
-          aesop) rfl
+        exact Prod.ext (Fin.ext (Nat.sub_add_cancel
+          (Nat.one_le_of_lt (diagonal_left_fst_pos hr hL)))) rfl
       · have hS : isLeftStep (swapDiagonalSteps μ r hr) rm1 := by
           exact htoggle.mpr hL
         rw [h₂]
         simp only [hS, ↓reduceDIte, h₁, hL, add_tsub_cancel_right, Fin.eta, rm1]
-        exact Prod.ext rfl (Fin.ext <| Nat.sub_add_cancel <| Nat.pos_of_ne_zero <| by
-          have := diagonal_right_snd_pos hr (by simpa [rm1] using hL)
-          aesop)
+        exact Prod.ext rfl (Fin.ext (Nat.sub_add_cancel
+          (Nat.one_le_of_lt (diagonal_right_snd_pos hr hL))))
     exact OrderHom.ext _ _ (funext h_swap)
   · rfl
 
