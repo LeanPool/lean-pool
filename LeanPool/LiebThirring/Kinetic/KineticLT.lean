@@ -30,7 +30,7 @@ namespace LiebThirring.Kinetic
 as its sole extra premise. The final theorem supplies it from the unconditional low-momentum
 theorem. -/
 theorem kinetic_lieb_thirring_of_lowMomentumBound (q : ℕ) (hq : 1 ≤ q)
-    (N : ℕ) (ψ : State N q) (hanti : antisymmetric ψ) (_hnorm : ‖ψ‖ = 1)
+    (N : ℕ) (ψ : State N q) (hanti : antisymmetric ψ)
     (hLow : ∀ i : Fin N, ∀ E : ℝ, 0 ≤ E → ∀ x : Position,
       ‖lowFourierField (densityField i ψ) E x‖ ^ 2 ≤
         (q : ℝ) * (1 / (6 * Real.pi ^ 2)) * E ^ ((3 : ℝ) / 2)) :
@@ -49,7 +49,7 @@ theorem kinetic_lieb_thirring (q : ℕ) (hq : 1 ≤ q) (N : ℕ) (ψ : State N q
     (hanti : antisymmetric ψ) (hnorm : ‖ψ‖ = 1) :
     (ruminConstant : ℝ≥0∞) * (q : ℝ≥0∞) ^ (-(2 : ℝ) / 3) *
       (∫⁻ x : Position, density ψ x ^ ((5 : ℝ) / 3)) ≤ kineticEnergy ψ :=
-  kinetic_lieb_thirring_of_lowMomentumBound q hq N ψ hanti hnorm
+  kinetic_lieb_thirring_of_lowMomentumBound q hq N ψ hanti
     (fun i E hE x => lowFourierField_density_bound i ψ hanti hnorm E hE x)
 
 end LiebThirring.Kinetic
