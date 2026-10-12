@@ -25,9 +25,12 @@ open scoped InnerProduct
 namespace LiebThirring
 
 variable {ι α E F : Type*} [Fintype ι] [MeasurableSpace α]
-  [NormedAddCommGroup E] [InnerProductSpace ℂ E]
-  [NormedAddCommGroup F] [InnerProductSpace ℂ F]
+  [NormedAddCommGroup E] [NormedAddCommGroup F]
   {μ : Measure α}
+
+section Normed
+
+variable [NormedSpace ℂ E] [NormedSpace ℂ F]
 
 /-- Apply a bounded complex linear operator to each finite-spin amplitude. -/
 @[expose] noncomputable def piLpMap (T : E →L[ℂ] F) :
@@ -81,9 +84,12 @@ theorem tensorTargetLift_comp_tensorInsertion
     tensorInsertion (H := F) f (T v) x s
   rw [hl s, hi s, hr s, map_smul]
 
+end Normed
+
 section Complete
 
-variable [CompleteSpace E] [CompleteSpace F]
+variable [InnerProductSpace ℂ E] [InnerProductSpace ℂ F]
+  [CompleteSpace E] [CompleteSpace F]
 
 theorem piLpMap_adjoint (T : E →L[ℂ] F) :
     (piLpMap (ι := ι) T).adjoint = piLpMap (ι := ι) T.adjoint := by
@@ -121,7 +127,7 @@ end Complete
 
 section Factors
 
-variable {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
+variable {H : Type*} [NormedAddCommGroup H]
 
 /-- The L² carrier of one finite-spin factor over the residual measure. -/
 noncomputable abbrev FirstFactorSpace (ι α H : Type*) [Fintype ι] [MeasurableSpace α]
@@ -132,6 +138,10 @@ noncomputable abbrev FirstFactorSpace (ι α H : Type*) [Fintype ι] [Measurable
 noncomputable abbrev SecondFactorSpace (ι α H : Type*) [Fintype ι] [MeasurableSpace α]
     [NormedAddCommGroup H] (μ : Measure α) : Type _ :=
   Lp (PiLp 2 (fun _ : ι => FirstFactorSpace ι α H μ)) 2 μ
+
+section NormedFactors
+
+variable [NormedSpace ℂ H]
 
 /-- Insert a wavefunction into the outer finite-spin L² factor. -/
 @[expose] noncomputable def firstFactorInsertion
@@ -151,12 +161,16 @@ noncomputable abbrev SecondFactorSpace (ι α H : Type*) [Fintype ι] [Measurabl
     H →L[ℂ] SecondFactorSpace ι α H μ :=
   (firstFactorInsertion (H := H) f).comp (tensorInsertion (H := H) f)
 
-omit [CompleteSpace H] in theorem secondFactorInsertion_comp_tensorInsertion
+theorem secondFactorInsertion_comp_tensorInsertion
     (f : Lp (EuclideanSpace ℂ ι) 2 μ) :
     secondFactorInsertion (H := H) f ∘L tensorInsertion (H := H) f =
       doubleFactorInsertion (H := H) f := by
   exact tensorTargetLift_comp_tensorInsertion (ι := ι) (μ := μ)
     (E := H) (F := FirstFactorSpace ι α H μ) (tensorInsertion (H := H) f) f
+
+end NormedFactors
+
+variable [InnerProductSpace ℂ H] [CompleteSpace H]
 
 /-- The operator obtained by composing outer insertion with its adjoint. -/
 @[expose] noncomputable def firstFactorProjection

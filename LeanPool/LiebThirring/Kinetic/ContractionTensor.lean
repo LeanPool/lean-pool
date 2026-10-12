@@ -12,12 +12,12 @@ public import Mathlib.Analysis.InnerProductSpace.Adjoint
 public import Mathlib.MeasureTheory.Function.L2Space
 
 /-!
-# Hilbert-valued tensor insertion and contraction
+# Normed-space tensor insertion and Hilbert-space contraction
 
-Pointwise tensoring of a Hilbert vector with a finite complex spin vector, as a continuous
+Pointwise tensoring of a normed-space vector with a finite complex spin vector, as a continuous
 bilinear map.
 
-Insert a finite-spin `L²` function into a Hilbert-valued `L²` space.
+Insert a finite-spin `L²` function into a normed-space-valued `L²` space.
 -/
 
 public section
@@ -28,9 +28,13 @@ open scoped ENNReal NNReal InnerProduct
 namespace LiebThirring
 
 variable {ι α H : Type*} [Fintype ι] [MeasurableSpace α]
-  [NormedAddCommGroup H] [InnerProductSpace ℂ H] {μ : Measure α}
+  [NormedAddCommGroup H] {μ : Measure α}
 
-/-- Pointwise tensoring of a Hilbert vector with a finite complex spin vector,
+section Normed
+
+variable [NormedSpace ℂ H]
+
+/-- Pointwise tensoring of a normed-space vector with a finite complex spin vector,
 as a continuous bilinear map. -/
 @[expose] noncomputable def tensorInsertionBilinear :
     H →L[ℂ] EuclideanSpace ℂ ι →L[ℂ] PiLp 2 (fun _ : ι => H) :=
@@ -63,7 +67,7 @@ as a continuous bilinear map. -/
         rw [heq, Real.sqrt_mul (sq_nonneg ‖a‖), Real.sqrt_sq_eq_abs, abs_norm,
           Real.sqrt_sq_eq_abs, abs_norm, mul_comm])
 
-/-- Insert a finite-spin `L²` function into a Hilbert-valued `L²` space. -/
+/-- Insert a finite-spin `L²` function into a normed-space-valued `L²` space. -/
 @[expose] noncomputable def tensorInsertion (f : Lp (EuclideanSpace ℂ ι) 2 μ) :
     H →L[ℂ] Lp (PiLp 2 (fun _ : ι => H)) 2 μ :=
   (tensorInsertionBilinear (ι := ι) (H := H)).compLpL₂ 2 μ |>.flip f
@@ -118,9 +122,11 @@ theorem tensorInsertion_smul (a : ℂ) (f : Lp (EuclideanSpace ℂ ι) 2 μ) :
   exact map_smul
     ((tensorInsertionBilinear (ι := ι) (H := H)).compLpL₂ 2 μ).flip a f
 
+end Normed
+
 section Complete
 
-variable [CompleteSpace H]
+variable [InnerProductSpace ℂ H] [CompleteSpace H]
 
 /-- The abstract contraction against `f`, defined as the adjoint of tensor
 insertion. -/

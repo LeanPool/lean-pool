@@ -12,8 +12,8 @@ public import LeanPool.LiebThirring.Assembly.Coulomb
 
 /-! # Finite Coulomb forms and extended-to-real arithmetic
 
-Elementary finite-sum and arithmetic steps for the approved surface-v2 real
-form corollary. The electron estimate is supplied by `RealFormPairs`.
+Elementary finite-sum and arithmetic steps for the real quadratic-form corollary.
+The electron estimate is supplied by `RealFormPairs`.
 -/
 
 public section

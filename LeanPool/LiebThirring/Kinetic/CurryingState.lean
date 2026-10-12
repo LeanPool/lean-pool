@@ -29,22 +29,6 @@ open scoped ENNReal NNReal
 
 namespace LiebThirring
 
-/-- The one-particle currying isometry on the spatial and spin carriers. -/
-@[expose] noncomputable def oneParticleCurrying {N q : ℕ} (i : Fin N) :
-    State N q →ₗᵢ[ℂ] Lp (OneParticleFiber i q) 2 (volume : Measure Position) := by
-  let : Fact ((2 : ℝ≥0∞) ≠ ⊤) := ⟨by norm_num⟩
-  let A := l2PullbackEquiv (E := SpinAmplitudes N q)
-    (insertionMeasurableEquiv i) (measurePreserving_insertion i)
-  let B := l2TargetEquiv (volume : Measure (Position × OtherConfiguration i))
-    (spinCurryingLinearIsometryEquiv (q := q) i)
-  let C := l2CurryLinearIsometry (μ := (volume : Measure Position))
-    (ν := (volume : Measure (OtherConfiguration i)))
-    (E := PiLp 2 (fun _ : Fin q => EuclideanSpace ℂ (OtherSpinLabels i q)))
-  let D := l2TargetEquiv (volume : Measure Position)
-    (finiteLpPiLpEquiv (volume : Measure (OtherConfiguration i))
-      (fun _ : Fin q => EuclideanSpace ℂ (OtherSpinLabels i q)))
-  exact D.toLinearIsometry.comp (C.comp (B.toLinearIsometry.comp A.toLinearIsometry))
-
 /-- The full currying complex linear isometric equivalence, with the original state
 as its source and the literal one-particle fiber as its target. -/
 @[expose] noncomputable def oneParticleCurryingLinearIsometryEquiv {N q : ℕ} (i : Fin N) :
@@ -61,6 +45,11 @@ as its source and the literal one-particle fiber as its target. -/
     (finiteLpPiLpEquiv (volume : Measure (OtherConfiguration i))
       (fun _ : Fin q => EuclideanSpace ℂ (OtherSpinLabels i q)))
   exact ((A.trans B).trans C).trans D
+
+/-- The one-particle currying isometry on the spatial and spin carriers. -/
+@[expose] noncomputable def oneParticleCurrying {N q : ℕ} (i : Fin N) :
+    State N q →ₗᵢ[ℂ] Lp (OneParticleFiber i q) 2 (volume : Measure Position) :=
+  (oneParticleCurryingLinearIsometryEquiv i).toLinearIsometry
 
 /-- The currying representative identity, on one common full-measure outer set. -/
 theorem oneParticleCurrying_ae {N q : ℕ} (i : Fin N) (ψ : State N q) :
