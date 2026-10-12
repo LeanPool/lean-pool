@@ -1,0 +1,47 @@
+slug: grothendieck-bessel
+title: Grothendieck's theorem for Bessel sequences
+summary: Every Bessel sequence with bound one in a complex Hilbert space has its Gram kernel
+  represented by correlations of measurable functions bounded by one on the unit interval.
+  The proof includes real and complex finite matrix decompositions, a Ball--Prodromou argument,
+  and a countable moment-measure construction followed by standard Borel realization.
+branch: functional analysis
+entry_module: LeanPool.GrothendieckBessel
+authors:
+- Lukas Liehr
+- Mitchell A. Taylor
+- Peiyang Yu
+source:
+  title: Grothendieck's theorem for Bessel sequences
+  authors:
+  - Lukas Liehr
+  - Mitchell A. Taylor
+  - Peiyang Yu
+  arxiv: '2608.12280'
+  url: https://github.com/lukasliehr/GrothendieckBessel/tree/f1ad1c7680bce2b1ab4218a02bddd694fb57062a
+  github_repo: lukasliehr/GrothendieckBessel
+  commit: f1ad1c7680bce2b1ab4218a02bddd694fb57062a
+license: Apache-2.0
+status: verified
+provenance: AI
+main_declarations:
+- GrothendieckBessel.main
+main_results:
+- declaration: GrothendieckBessel.main
+  informal: Every countable Bessel sequence with bound one in a complex Hilbert space admits
+    measurable functions on the unit interval, pointwise bounded by one, whose Lebesgue correlations
+    equal its Gram kernel.
+- declaration: GrothendieckBessel.countable_unit_interval_realization
+  informal: Every complex kernel on a countable index type whose finite quadratic forms are
+    Hermitian positive contractions has a bounded measurable realization on the unit interval
+    with exactly the prescribed correlations.
+- declaration: OlevskiiGram.hasRealConvexDecomposition
+  informal: Every finite real symmetric matrix between zero and the identity is a finite convex
+    combination of rank-one matrices formed from vectors in the coordinate unit cube.
+tags:
+- functional-analysis
+- bessel-sequences
+- gram-matrices
+msc:
+- 46B15
+- 46B25
+- 46C05
