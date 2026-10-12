@@ -43,13 +43,12 @@ def directedNuclearPairEquiv (M : ℕ) :
       dsimp only
       rw [dite_eq_right (not_lt_of_gt p.property)]
 
-/-- A symmetric directed sum is twice its sum over increasing pairs. -/
-theorem sum_directedNuclearPairs {M : ℕ} {A : Type*} [AddCommMonoid A]
-    (f : ∀ k l : Fin M, k ≠ l → A)
-    (hf : ∀ (k l : Fin M) (hkl : k ≠ l), f k l hkl = f l k hkl.symm) :
+/-- Group each directed pair with its reverse orientation. -/
+theorem sum_directedNuclearPairs_oriented {M : ℕ} {A : Type*} [AddCommMonoid A]
+    (f : ∀ k l : Fin M, k ≠ l → A) :
     (∑ k : Fin M, ∑ l : {l : Fin M // l ≠ k}, f k l.val l.property.symm) =
-      (∑ p : NuclearPair M, f p.val.1 p.val.2 (ne_of_lt p.property)) +
-      ∑ p : NuclearPair M, f p.val.1 p.val.2 (ne_of_lt p.property) := by
+      ∑ p : NuclearPair M, (f p.val.1 p.val.2 (ne_of_lt p.property) +
+        f p.val.2 p.val.1 (ne_of_lt p.property).symm) := by
   classical
   let g : NuclearPair M ⊕ NuclearPair M → A := Sum.elim
     (fun p => f p.val.1 p.val.2 (ne_of_lt p.property))
@@ -65,12 +64,21 @@ theorem sum_directedNuclearPairs {M : ℕ} {A : Type*} [AddCommMonoid A]
       · simp only [dite_eq_left h, g, Sum.elim_inl]
       · simp only [dite_eq_right h, g, Sum.elim_inr]
     _ = _ := by
-      rw [Fintype.sum_sum_type]
-      dsimp only [g, Sum.elim_inl, Sum.elim_inr]
-      congr 1
-      apply Finset.sum_congr rfl
-      intro p _
-      exact (hf _ _ (ne_of_lt p.property)).symm
+      rw [Fintype.sum_sum_type, Finset.sum_add_distrib]
+      rfl
+
+/-- A symmetric directed sum is twice its sum over increasing pairs. -/
+theorem sum_directedNuclearPairs {M : ℕ} {A : Type*} [AddCommMonoid A]
+    (f : ∀ k l : Fin M, k ≠ l → A)
+    (hf : ∀ (k l : Fin M) (hkl : k ≠ l), f k l hkl = f l k hkl.symm) :
+    (∑ k : Fin M, ∑ l : {l : Fin M // l ≠ k}, f k l.val l.property.symm) =
+      (∑ p : NuclearPair M, f p.val.1 p.val.2 (ne_of_lt p.property)) +
+      ∑ p : NuclearPair M, f p.val.1 p.val.2 (ne_of_lt p.property) := by
+  classical
+  rw [sum_directedNuclearPairs_oriented, ← Finset.sum_add_distrib]
+  apply Finset.sum_congr rfl
+  intro p _
+  rw [← hf p.val.1 p.val.2 (ne_of_lt p.property)]
 
 end LiebThirring
 

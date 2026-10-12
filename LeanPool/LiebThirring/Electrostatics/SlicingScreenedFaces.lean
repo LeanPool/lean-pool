@@ -32,29 +32,6 @@ theorem bisectorNormal_reverse {M : ℕ} (R : Fin M → Position) (k l : Fin M) 
   unfold bisectorNormal
   rw [norm_sub_rev (R k) (R l), ← neg_sub (R l) (R k), smul_neg]
 
-theorem sum_directedNuclearPairs_oriented {M : ℕ} {A : Type*} [AddCommMonoid A]
-    (f : ∀ k l : Fin M, k ≠ l → A) :
-    (∑ k : Fin M, ∑ l : {l : Fin M // l ≠ k}, f k l.val l.property.symm) =
-      ∑ p : NuclearPair M, (f p.val.1 p.val.2 (ne_of_lt p.property) +
-        f p.val.2 p.val.1 (ne_of_lt p.property).symm) := by
-  classical
-  let g : NuclearPair M ⊕ NuclearPair M → A := Sum.elim
-    (fun p => f p.val.1 p.val.2 (ne_of_lt p.property))
-    (fun p => f p.val.2 p.val.1 (ne_of_lt p.property).symm)
-  calc
-    _ = ∑ p : (Σ k : Fin M, {l : Fin M // l ≠ k}), f p.1 p.2.val p.2.property.symm :=
-      (Fintype.sum_sigma _).symm
-    _ = ∑ p : NuclearPair M ⊕ NuclearPair M, g p := by
-      apply Fintype.sum_equiv (directedNuclearPairEquiv M)
-      rintro ⟨k, l, hl⟩
-      dsimp only [directedNuclearPairEquiv, Equiv.coe_fn_mk]
-      by_cases h : k < l
-      · simp only [dite_eq_left h, g, Sum.elim_inl]
-      · simp only [dite_eq_right h, g, Sum.elim_inr]
-    _ = _ := by
-      rw [Fintype.sum_sum_type, Finset.sum_add_distrib]
-      rfl
-
 theorem screenedCellBoundaryTerm_pair {M : ℕ} (Z : ℝ≥0)
     (R : Fin M → Position) (hR : Function.Injective R) (k l : Fin M)
     (f : Position → ℝ) {x : Position} (hx : x ∈ voronoiFace R k l) :
