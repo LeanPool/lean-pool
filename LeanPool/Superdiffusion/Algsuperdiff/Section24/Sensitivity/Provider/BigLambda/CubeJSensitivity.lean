@@ -66,6 +66,7 @@ noncomputable section
 
 variable {d : ℕ}
 
+/-- A common threshold constant for gauge and potential sensitivity estimates. -/
 def bigLambdaGateConst (d : ℕ) [NeZero d] : ℝ :=
   max (gaugeGateConst d) (4 * potCubeConstB d)
 

@@ -64,7 +64,7 @@ variable {d : ℕ}
 
 /-- Integrability of the finite probe square budget, generic in the matrix
 family. -/
-theorem integrable_fullBlockProbeSqBudget {P : RestrictionCoeffLaw d} [IsProbabilityMeasure P]
+theorem integrable_fullBlockProbeSqBudget {P : RestrictionCoeffLaw d}
     {M : RegCoeffField d → FullBlockMat d}
     (hint : ∀ q : FullBlockVec d,
       Integrable (fun a => (fullBlockQuadratic (M a) q) ^ 2) P) :
@@ -78,7 +78,7 @@ theorem integrable_fullBlockProbeSqBudget {P : RestrictionCoeffLaw d} [IsProbabi
 
 /-- The finite probe square budget integrates to a finite sum of per-probe
 second moments, generic in the matrix family. -/
-theorem integral_fullBlockProbeSqBudget_eq {P : RestrictionCoeffLaw d} [IsProbabilityMeasure P]
+theorem integral_fullBlockProbeSqBudget_eq {P : RestrictionCoeffLaw d}
     {M : RegCoeffField d → FullBlockMat d}
     (hint : ∀ q : FullBlockVec d,
       Integrable (fun a => (fullBlockQuadratic (M a) q) ^ 2) P) :

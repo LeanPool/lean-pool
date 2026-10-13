@@ -26,7 +26,6 @@ Source sentence and display in ABK26:
 
 * the `X_z` display, which defines the cell field as the `argmin` of
   `fint_{z+cu_n} (1/2) X . bfA_m X` over
-
   ```
   bfAhom_{m-h}^{-1/2} ( e' + grad w_{D,e}^{(K)} ,
                         e  + grad w_{N,e'}^{(K)} + shom_{m-h}^{-1} h e' )

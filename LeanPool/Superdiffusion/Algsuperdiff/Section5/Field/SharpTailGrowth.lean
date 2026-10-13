@@ -41,10 +41,13 @@ noncomputable section
 
 variable {d : ℕ}
 
+/-- The fixed spatial decay ratio in the sharp stream-tail estimate. -/
 def sharpSpatialRatio : ℝ := Real.rpow 3 (-(3 / 4 : ℝ))
 
+/-- The low-frequency geometric ratio in the sharp stream-tail estimate. -/
 def sharpLowerRatio (M : ABKModel d) : ℝ := Real.rpow 3 (-M.gamma)
 
+/-- The high-frequency geometric ratio in the sharp stream-tail estimate. -/
 def sharpUpperRatio (M : ABKModel d) : ℝ := Real.rpow 3 (M.gamma - 1)
 
 private theorem sharpSpatialRatio_pos : 0 < sharpSpatialRatio :=

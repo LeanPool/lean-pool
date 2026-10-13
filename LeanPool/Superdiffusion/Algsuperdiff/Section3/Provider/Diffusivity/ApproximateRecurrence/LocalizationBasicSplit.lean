@@ -26,7 +26,6 @@ Module imports, support namespace and local option directives adapted for Lean P
 Source display in ABK26:
 
 * `e.lower.bound.basic.split` (label; display):
-
   ```
   P . bfA_m(cu_K) P
     <=  avsum_{z} fint_{z+cu_n} X_z . bfA_m X_z
@@ -34,7 +33,6 @@ Source display in ABK26:
                     + 2 P_z . fint_{z+cu_n} bfA_m tilde S_z
                     + fint_{z+cu_n} tilde S_z . bfA_m tilde S_z ) ,
   ```
-
   where `X_z = S_z + tilde S_z`, `S_z` is the minimizer of
   `e.variational.mu.U.P` (label) on `z + cu_n` at the constant load `P_z` of
   `e.Pz.def`, and `tilde S_z` is the minimizer of the same energy over the

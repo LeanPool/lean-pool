@@ -91,10 +91,8 @@ the printed derivation are recorded, both in the direction of *less* loss:
    absorption inequality.  The printed device is therefore *sufficient but not
    necessary*, and is **not consumed** by the collapse.  This is
    a presentational observation about the printed proof, not a defect in it.
-
    The lossy alternative is real: replacing the `min` by the *linear* envelope
    `min{a²,1} ≤ a` (valid for `a ≥ 0`) collapses to `C(γ h + γ s^{-1})`.
-
    **That claim is false and is withdrawn.**  The frozen unit-M `Γ₂` amplitude
    is `Cms · E · s^{-1} · √(ε γ)`
    (`Algsuperdiff/Frozen/Section3/MultiscaleEstimate.lean`), which squares to
@@ -104,7 +102,6 @@ the printed derivation are recorded, both in the direction of *less* loss:
    unboundedly large as `ε ↓ 0` for `Cms > 1/2`, against `h ≍ Cms |log ε|`.
    So the `γ¹` shape **clears** the budget as well: the `γ`-power heuristic
    silently dropped the `ε`/`E` factors that actually supply the margin.
-
    The genuine reason the quadratic route is required is **fidelity**: the
    printed fifth summand is `C γ²(h² + s^{-2} + E⁴|log γ|⁴)`, so a `γ¹` result
    would be a *different, weaker statement* than the one this module must

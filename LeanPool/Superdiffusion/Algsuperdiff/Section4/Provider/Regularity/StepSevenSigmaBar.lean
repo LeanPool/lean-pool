@@ -29,7 +29,6 @@ The Step-7d chain hard-codes the printed comparison
 ```text
   e.shom.m.vs.shom.n :   σ_{n'}  ≤  2 σ_m
 ```
-
  at the literal constant `2` in five places along the Step-7d chain — the
 data-leg merge, the merged and the pinned energy-density estimates, the end
 chain and its narrowed form — while the only comparison proved here is

@@ -25,7 +25,6 @@ Module imports, support namespace and local option directives adapted for Lean P
 Let `Q` be the continuous-path process of a conservative Feller kernel semigroup and let `U` be an
 open set with exit time `tau`.  A function `h` is *represented by the exit distribution of `U`*
 when
-
   `h y = E_y[h(X_tau)]`  for every `y` of `U`
 
 (`HasExitMeanValueOn`).  This is the mean-value formulation of harmonicity relative to the
@@ -36,9 +35,7 @@ Two identities for the stopped process follow, for every deterministic horizon `
 
 * A function represented by the exit distribution is also represented by the *stopped* position
   (`integral_eval_exitTimeTrunc_eq_of_hasExitMeanValueOn`):
-
     `E_x[h(X_{t and tau})] = h x`.
-
   The proof splits the path space at the survival event `{t < tau}`.  Off it the stopped position
   is already the exit position.  On it the stopped position is `X_t`, where the representation is
   available because `X_t` lies in `U`; the restricted Markov property at the deterministic time
@@ -47,13 +44,9 @@ Two identities for the stopped process follow, for every deterministic horizon `
 
 * Subtracting a multiple of the expected exit time `w y = E_y[tau]` produces the second stopped
   identity (`integral_eval_exitTimeTrunc_eq_add_of_hasExitMeanValueOn`): if
-
     `u = h - sigma * w`,
-
   then
-
     `E_x[u(X_{t and tau})] = u x + sigma * E_x[t and tau]`.
-
   The whole content of the second identity beyond the first is the remaining-exit-time identity of
   `StoppedDirichlet.lean`, whose proof needs no generator either.  The expected stopped time is
   also written with the horizon exposed, `E_x[t and tau] = t - E_x[(t - tau) on {tau <= t}]`.

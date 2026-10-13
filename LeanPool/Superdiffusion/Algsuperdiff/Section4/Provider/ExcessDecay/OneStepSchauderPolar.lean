@@ -56,7 +56,6 @@ private theorem smul_homeomorphUnitSphereProd_eq (z : ({0}ᶜ : Set 𝔼)) :
 
 /-- **The general polar-coordinate bridge.**  For an integrable scalar function `G` on
 `EuclideanSpace ℝ (Fin d)` (`d ≥ 1`),
-
   `∫ z, G z = ∫ r in (0, ∞), r ^ (d - 1) • (∫ ω, G (r • ω) dσ(ω))`,
 
 the disintegration of Lebesgue measure into the surface measure `sphereMeasure d` on the unit sphere
@@ -135,7 +134,7 @@ variable {d : ℕ}
 
 /-- **Continuity of the radial flux (at a point).**  For `C¹` `u`, the average radial flux
 `r ↦ sphereFlux x r u` is continuous at every `r₀`. -/
-theorem continuousAt_sphereFlux [NeZero d] {u : EuclideanSpace ℝ (Fin d) → ℝ}
+theorem continuousAt_sphereFlux {u : EuclideanSpace ℝ (Fin d) → ℝ}
     (hu : ContDiff ℝ 1 u) (x : EuclideanSpace ℝ (Fin d)) (r₀ : ℝ) :
     ContinuousAt (fun r : ℝ => sphereFlux x r u) r₀ := by
   set μ := sphereMeasure d with hμ

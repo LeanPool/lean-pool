@@ -20,6 +20,7 @@ Module imports, support namespace and local option directives adapted for Lean P
 open HCPolySupport HCPolySupport.Book.Ch02
 
 -- FROZEN-STATEMENT-BEGIN
+/-- The twice-induced second-derivative norm for the frozen sensitivity statements. -/
 noncomputable def Algsuperdiff.Frozen.Section24.matrixSecondDerivativeNorm {d : ℕ}
     (H : Vec d →L[ℝ] (Vec d →L[ℝ] Mat d)) : ℝ :=
   sSup (Set.range fun v : {v : Vec d // vecNorm v ≤ 1} =>

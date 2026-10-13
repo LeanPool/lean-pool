@@ -38,7 +38,6 @@ the competitor construction:
    **at the simplex carrier**, with the same `sigmabar` arithmetic, the same
    correction `cstar^{-1}`, and the constants `80 -> 160 C(d,s)`, `40 -> 80
    C(d,s)`, `320 -> 640 C(d,s)`, `160 -> 320 C(d,s)`.
-
    The `1/2 -> C(d,s)` substitution is isolated in two **abstract-real** cores
    (`normalized_flux_core`, `normalized_slope_core`) which carry no cube, no
    sample and no `rpow`: they take the four proved inequalities (`Lambda <= 10

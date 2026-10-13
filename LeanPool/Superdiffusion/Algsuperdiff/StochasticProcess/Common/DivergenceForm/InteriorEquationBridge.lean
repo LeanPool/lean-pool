@@ -85,7 +85,7 @@ theorem interiorScalarSource_coeFn (alpha : ℝ) {C : ℝ} (q : Vec d → ℝ)
 /-- The interior equation on the whole domain, with the zero-trace solution
 read through an `H¹₀` witness. -/
 theorem isMatrixDivFormWeakSolutionZerothOrderOn_domain_of_isPotentialWeakSolution
-    [NeZero d] (a : CoeffField d)
+    (a : CoeffField d)
     {alpha C : ℝ} (q : Vec d → ℝ) (hq : IsBoundedNonnegativePotential U q C)
     (f : ScalarL2 U) {u : ZeroTraceSobolev U}
     (hu : IsPotentialWeakSolution a alpha q U u f)

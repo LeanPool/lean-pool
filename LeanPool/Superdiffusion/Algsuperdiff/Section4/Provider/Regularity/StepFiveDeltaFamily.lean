@@ -84,6 +84,7 @@ variable {d : ℕ} {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
 
 /-! ## 1. The two geometric ratios -/
 
+/-- The geometric ratio for the gradient contribution in the fifth regularity step. -/
 def stepFiveRatioG (M : ABKModel d) : ℝ := (3 : ℝ) ^ (-(1 / 2 - M.gamma))
 
 /-- `r₂ := 3^{-1/2}`, the geometric ratio of `δ_j`'s `∇h`-leg. -/

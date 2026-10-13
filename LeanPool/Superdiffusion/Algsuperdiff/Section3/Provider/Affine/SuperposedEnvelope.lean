@@ -261,7 +261,7 @@ This is Step 2 of `l.piecewise.affine.approx` read at the component's own
 common coarse mesh: the final `e.SW.def` cell sits inside a single cell `U` of
 that mesh, `U` has side `ρ_𝒞`, and the Step-2 vertex bound applies at `U`
 because `U` is a triadic descendant of the Whitney cube. -/
-theorem vecNormSq_globalCompetitorCellSlope_sub_le_diam [NeZero d] {m : ℤ} {hn : ℕ → ℕ}
+theorem vecNormSq_globalCompetitorCellSlope_sub_le_diam {m : ℤ} {hn : ℕ → ℕ}
     (hmono : Monotone hn) {I : Set (TriadicCube d)} (hI : I ⊆ whitneyPartition m hn)
     (hwin : ∀ C ∈ badComponents I, (whitneyNeighborhood m hn C).Finite ∧
       ∀ R ∈ whitneyNeighborhood m hn C,

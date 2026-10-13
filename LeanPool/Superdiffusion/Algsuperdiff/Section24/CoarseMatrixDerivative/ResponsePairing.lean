@@ -37,24 +37,28 @@ noncomputable section
 
 variable {d : ℕ}
 
+/-- The canonical response gradient for the transposed coefficient. -/
 def adjointResponseGradient (U : Domain d) (a : CoeffOn U) :
     BlockVec d → Vec d → Vec d :=
   fun P =>
     (canonicalMaximizer
       (responseExistenceTheory U a.transpose) P.1 P.2).toSolution.toH1.grad
 
+/-- The canonical response gradient for the primal coefficient. -/
 def primalResponseGradient (U : Domain d) (a : CoeffOn U) :
     BlockVec d → Vec d → Vec d :=
   fun P =>
     (canonicalMaximizer
       (responseExistenceTheory U a) P.1 (-P.2)).toSolution.toH1.grad
 
+/-- The averaged perturbation pairing of adjoint and primal response gradients. -/
 def pairing (U : Domain d) (a : CoeffOn U) (h : LInfMatrixFieldOn U)
     (P Q : BlockVec d) : ℝ :=
   volumeAverage (U : Set (Vec d)) (fun x =>
     vecDot (adjointResponseGradient U a P x)
       (matVecMul (h.1 x) (primalResponseGradient U a Q x)))
 
+/-- The diagonal quadratic form of the response-gradient perturbation pairing. -/
 def quadraticForm (U : Domain d) (a : CoeffOn U) (h : LInfMatrixFieldOn U)
     (P : BlockVec d) : ℝ :=
   pairing U a h P P

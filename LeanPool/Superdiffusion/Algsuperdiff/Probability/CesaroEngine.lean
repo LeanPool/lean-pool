@@ -25,12 +25,10 @@ ABK26, proof of `l.minimal.scale.sep`.
 
 Each of the paper's three Steps ends, after a deterministic rearrangement, with a
 Cesàro average over the window `[n, m]` of the shape
-
   `(m − n + 1)⁻¹ ( a · Σ_{k = n}^{m} X_k(ω)  +  T(ω) )`,
 
 where `{X_k}` is an independent family with `X_k ≤ O_{Γ₂}(K)` and `E[X_k] ≤ μ₀`,
 and `T` is a boundary/tail term with `T ≤ O_{Γ₂}(b)`. The Step's conclusion is
-
   `≤  a·μ₀  +  O_{Γ₂}( C (a K + b) (m − n + 1)^{-1/2} )`.
 
 This module **proves** that implication for genuinely independent families. Its

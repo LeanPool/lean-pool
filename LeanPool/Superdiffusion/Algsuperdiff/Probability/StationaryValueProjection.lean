@@ -150,6 +150,7 @@ theorem zeroShellRegLaw_vaddInvariant
 
 /-! ## The literal origin forcing and its `L²` projection -/
 
+/-- Evaluate matrix-vector multiplication at a fixed vector as a linear map. -/
 noncomputable def matVecMulLinear (e : Vec d) : Mat d →ₗ[ℝ] Vec d where
   toFun := fun A ↦ matVecMul A e
   map_add' := by

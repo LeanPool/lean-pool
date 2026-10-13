@@ -21,6 +21,7 @@ open HCPolySupport HCPolySupport.Book.Ch02 MeasureTheory
 open scoped ENNReal
 
 -- FROZEN-STATEMENT-BEGIN
+/-- Matrix fields whose entries are essentially bounded on a domain. -/
 def Algsuperdiff.Frozen.Section24.LInfMatrixFieldOn {d : ℕ}
     (U : Domain d) :=
   { h : CoeffField d // ∀ i j : Fin d,

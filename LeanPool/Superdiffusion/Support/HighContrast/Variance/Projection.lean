@@ -23,7 +23,6 @@ Module imports, support namespace and local option directives adapted for Lean P
 
 Two elementary `L²` facts underlying the opening step in the proof of
 `t.block.variance`:
-
   `Var[F] ≤ 𝔼[(F − 𝔼[F_σ])²] ≤ 2·𝔼[|F − F_σ|²] + 2·Var[F_σ]`.
 
 * `variance_le_integral_sub_const` : `Var[F] ≤ ∫ (F − c)²` for any constant `c`

@@ -135,7 +135,7 @@ theorem map_shellObservable_translate_eq (M : ABKModel d) (k : ℤ) (z : Vec d)
 push-forward identity.  The weak-Orlicz upper-tail relation only sees the law
 of the random variable. -/
 theorem isBigOWith_gammaSigma_of_law_eq
-    {Omega : Type*} [MeasurableSpace Omega] {mu : Measure Omega} [IsFiniteMeasure mu]
+    {Omega : Type*} [MeasurableSpace Omega] {mu : Measure Omega}
     {X Y : Omega → ℝ} {sigma A : ℝ}
     (hX : Measurable X) (hY : Measurable Y)
     (hmap : Measure.map X mu = Measure.map Y mu)

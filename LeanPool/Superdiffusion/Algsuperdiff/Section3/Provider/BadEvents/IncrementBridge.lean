@@ -74,17 +74,21 @@ variable {d : ℕ}
 
 /-! ## Entry and evaluation continuous linear maps -/
 
+/-- Extract a matrix entry as a linear functional. -/
 def entryLinearMap (i j : Fin d) : Mat d →ₗ[ℝ] ℝ where
   toFun A := A i j
   map_add' _ _ := rfl
   map_smul' _ _ := rfl
 
+/-- Extract a matrix entry as a continuous linear functional. -/
 def entryCLM (i j : Fin d) : Mat d →L[ℝ] ℝ :=
   ⟨entryLinearMap i j, (entryLinearMap i j).continuous_of_finiteDimensional⟩
 
+/-- Evaluate a first derivative at a fixed direction as a continuous linear map. -/
 def evalCLM (v : Vec d) : (Vec d →L[ℝ] Mat d) →L[ℝ] Mat d :=
   ContinuousLinearMap.apply ℝ (Mat d) v
 
+/-- Evaluate a second derivative at its first direction as a continuous linear map. -/
 def evalCLM₂ (v : Vec d) :
     (Vec d →L[ℝ] (Vec d →L[ℝ] Mat d)) →L[ℝ] (Vec d →L[ℝ] Mat d) :=
   ContinuousLinearMap.apply ℝ (Vec d →L[ℝ] Mat d) v

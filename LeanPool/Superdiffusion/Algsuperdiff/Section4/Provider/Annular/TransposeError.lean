@@ -142,7 +142,7 @@ matrix square root never has to be computed.
 
 This is a forced, disclosed re-derivation of the `private` upstream helper
 `BlockResponse.blockProbe_of_mem_valueSet`. -/
-theorem blockProbe_normalization [NeZero d] {a0 : Mat d} {lam Lam : ℝ}
+theorem blockProbe_normalization {a0 : Mat d} {lam Lam : ℝ}
     (ha0 : IsEllipticMatrix lam Lam a0) {e : FullBlockVec d}
     (he : Ch02.fullBlockVecNormSq e = 1) :
     ofFullBlockVec (Matrix.mulVec (Ch02.constantFullBlockMatrixSqrt a0) e) =

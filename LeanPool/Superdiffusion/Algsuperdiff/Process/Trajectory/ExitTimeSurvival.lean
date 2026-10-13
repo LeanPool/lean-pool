@@ -35,7 +35,6 @@ second-moment bound `E_x tau_U ^ 2 ≤ 288 * M ^ 2`
 
 Fed into the Paley--Zygmund inequality, the second moment turns a *lower* bound `mLow ≤ E_x tau_U`
 into a lower bound on the probability of surviving a fraction of `mLow`,
-
   `(1 - rho) ^ 2 * mLow ^ 2 ≤ 288 * M ^ 2 * Q_x {rho * mLow ≤ tau_U}`
 
 (`IsConservative.sq_le_mul_measure_le_exitTime_of_lintegral_le`), which at `rho = 1 / 2` reads

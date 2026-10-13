@@ -48,6 +48,7 @@ variable {d : ℕ} [NeZero d]
 
 /-! ## Deterministic depth transport -/
 
+/-- The sum of a depth-energy profile with the prescribed geometric weights. -/
 def weightedDepthEnergySq (s : ℝ) (H : ℕ → ℝ) : ℝ :=
   ∑' n : ℕ, Ch02.geometricWeight s 2 n * H n
 

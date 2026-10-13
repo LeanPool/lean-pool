@@ -65,6 +65,7 @@ private theorem sqWeightedMeasure_smul_measure_finitePNeumann
   rw [MeasureTheory.withDensity_smul_measure]
   rfl
 
+/-- The finite exponent one larger than the supplied finite exponent. -/
 noncomputable def finiteLpExponentSuccNeumann (p : FiniteLpExponent) :
     FiniteLpExponent where
   exponent := p.exponent + 1
@@ -570,7 +571,7 @@ private theorem finiteLp_low_term_of_l2_control_neumann
 
 private theorem toReal_eLpNorm_two_sq_eq_integral_finitePNeumann
     {α E : Type*} [MeasurableSpace α] [NormedAddCommGroup E] [MeasurableSpace E]
-    [BorelSpace E] {μ : Measure α} {f : α → E} (hf : MemLp f 2 μ) :
+    {μ : Measure α} {f : α → E} (hf : MemLp f 2 μ) :
     (ENNReal.toReal (eLpNorm f 2 μ)) ^ (2 : ℕ) =
       ∫ x, ‖f x‖ ^ (2 : ℕ) ∂μ := by
   have hpow : (2 : ℝ≥0∞).toReal = (2 : ℝ) := by norm_num

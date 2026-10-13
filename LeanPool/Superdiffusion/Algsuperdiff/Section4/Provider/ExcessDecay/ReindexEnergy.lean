@@ -59,7 +59,7 @@ variable {d : ℕ}
 /-- **The sharpened interior Caccioppoli right-hand side at the `n+3` slot.**
 The sharpened interior right-hand side with the comparator index
 moved to `n+3`; the cube and both `3`-power weights are unchanged. -/
-def constantDatumEnergyRHS_addThree (M : ABKModel d) (n : ℤ) (s : ℝ)
+def constantDatumEnergyRHSAddThree (M : ABKModel d) (n : ℤ) (s : ℝ)
     (u : H1Function (Ch02.cubeDomain (originCube d (n + 2)) : Set (Vec d)))
     (g : Vec d → Vec d) : ℝ :=
   (Annealed.sigmaBar M (n + 3) : ℝ) *
@@ -244,7 +244,7 @@ Dirichlet patch `w + □_{n+1}` sits inside `□_{n+2}`, and every `H¹(□_{n+2
 solution of `-∇·ã_{L,n+3}∇u = ∇·g`,
 
 ```text
-  ⨍_{□_{n+2} ∩ (w+□_n)} ∇u · ã_{L,n+3} ∇u ≤ Cout · constantDatumEnergyRHS_addThree M n s u g .
+  ⨍_{□_{n+2} ∩ (w+□_n)} ∇u · ã_{L,n+3} ∇u ≤ Cout · constantDatumEnergyRHSAddThree M n s u g .
 ```
 -/
 theorem ae_constantDatumEnergy_harmonicSlot_addThree (d : ℕ) [NeZero d] :
@@ -273,7 +273,7 @@ theorem ae_constantDatumEnergy_harmonicSlot_addThree (d : ℕ) [NeZero d] :
                         (originCube d (n + 3))
                         (Cutoff.translateCutoffSample z omega)).coeffOn
                         (originCube d (n + 2))) u ≤
-                    Cout * constantDatumEnergyRHS_addThree M n s u g := by
+                    Cout * constantDatumEnergyRHSAddThree M n s u g := by
   obtain ⟨C₁, KC, hC₁, hKC, hcore⟩ := exists_constantDatumCoreEnergy d
   obtain ⟨C, Kc, hCpos, hKcpos, hcaps⟩ := ae_boundLambdasByEs_centreChild d
   set Pb : ℝ := (2 * max 1 C₁) ^ (4 : ℕ) * 4 * (Kc ^ (2 : ℕ)) ^ (2 : ℕ) with hPbdef
@@ -387,7 +387,7 @@ theorem ae_constantDatumEnergy_harmonicSlot_addThree (d : ℕ) [NeZero d] :
   have hscaleeq : (((originCube d (n + 2)).scale : ℤ) : ℝ) = (((n + 2 : ℤ)) : ℝ) := by
     rw [scale_originCube]
   rw [hscaleeq] at hmain
-  rw [constantDatumEnergyRHS_addThree]
+  rw [constantDatumEnergyRHSAddThree]
   exact constantDatum_cap_arith hmain hP hPbpos.le hlam1 hlam10 hlinv hlinv0 ht3
     hs3s6 hs30 hs32 hB hBnn hS0 hX0 hsig hKcpos.le hKC.le (le_refl _)
 
@@ -395,7 +395,7 @@ theorem ae_constantDatumEnergy_harmonicSlot_addThree (d : ℕ) [NeZero d] :
 
 /-- **The sharpened right-hand side at the `n+3` slot, in the anchor's own
 carriers.** -/
-def constantDatumAnchorEnergyRHSOn_addThree (M : ABKModel d) (n : ℤ) (s : ℝ) (W : Set (Vec d))
+def constantDatumAnchorEnergyRHSOnAddThree (M : ABKModel d) (n : ℤ) (s : ℝ) (W : Set (Vec d))
     (f : Vec d → ℝ) (g : Vec d → Vec d) : ℝ :=
   (Annealed.sigmaBar M (n + 3) : ℝ) *
       Real.rpow (3 : ℝ) (-2 * (((n + 2 : ℤ)) : ℝ)) *
@@ -442,9 +442,9 @@ theorem constantDatumEnergyRHS_le_anchorRHS_addThree [NeZero d] (M : ABKModel d)
     (hgW : MemLp (Gagliardo.gagliardoKernel s 2 g) 2
       (Support.normalizedGagliardoMeasureOn
         ((fun y' => z + y') '' openCubeSet (originCube d (n + 2))))) :
-    constantDatumEnergyRHS_addThree M n s v (fun y => -g (y + z)) ≤
+    constantDatumEnergyRHSAddThree M n s v (fun y => -g (y + z)) ≤
       (besovGagliardoConstant d ^ (2 : ℕ) + 1) *
-        constantDatumAnchorEnergyRHSOn_addThree M n s
+        constantDatumAnchorEnergyRHSOnAddThree M n s
           ((fun y' => z + y') '' openCubeSet (originCube d (n + 2))) f g := by
   have hsig : (0 : ℝ) < (Annealed.sigmaBar M (n + 3) : ℝ) :=
     (Annealed.sigmaBar M (n + 3)).2
@@ -456,7 +456,7 @@ theorem constantDatumEnergyRHS_le_anchorRHS_addThree [NeZero d] (M : ABKModel d)
       (originCube d (n + 2)) s (fun y => -g (y + z)) :=
     cubeBesovPositiveVectorSeminormTwo_nonneg_of_bddAbove _ s _
       hgreg.partialSeminorms_bddAbove
-  rw [constantDatumEnergyRHS_addThree, constantDatumAnchorEnergyRHSOn_addThree]
+  rw [constantDatumEnergyRHSAddThree, constantDatumAnchorEnergyRHSOnAddThree]
   simp only [hv]
   rw [normalizedL2SqOnSet_translate_sub_average_eq_eLpNorm_sq_image_add
       (originCube d (n + 2)) f hmem,
@@ -518,7 +518,7 @@ theorem ae_constantDatumEnergy_anchorWindow_addThree (d : ℕ) [NeZero d] :
                             (u.restrict (isOpen_translateSet_openCubeSet z (n + 2))
                               (translateSet_openCubeSet_subset_of_frontier_inter_empty
                                 hz hfr))) ≤
-                        Cout * constantDatumAnchorEnergyRHSOn_addThree M n s
+                        Cout * constantDatumAnchorEnergyRHSOnAddThree M n s
                           (((fun y' => z + y') ''
                               openCubeSet (originCube d (n + 2))) ∩
                             openCubeSet (originCube d m)) u.toFun g := by
@@ -558,17 +558,17 @@ theorem ae_constantDatumEnergy_anchorWindow_addThree (d : ℕ) [NeZero d] :
         (translateSet_openCubeSet_subset_of_frontier_inter_empty hz hfr)))
     rfl hmemL2 g hgL2 hgW
   refine le_trans hstep ?_
-  calc Cout * constantDatumEnergyRHS_addThree M n s
+  calc Cout * constantDatumEnergyRHSAddThree M n s
         (H1Function.untranslate z
           (u.restrict (isOpen_translateSet_openCubeSet z (n + 2))
             (translateSet_openCubeSet_subset_of_frontier_inter_empty hz hfr)))
         (fun y => -g (y + z))
       ≤ Cout * ((besovGagliardoConstant d ^ (2 : ℕ) + 1) *
-          constantDatumAnchorEnergyRHSOn_addThree M n s
+          constantDatumAnchorEnergyRHSOnAddThree M n s
             ((fun y' => z + y') '' openCubeSet (originCube d (n + 2))) u.toFun g) :=
         mul_le_mul_of_nonneg_left hRHS hCoutpos.le
     _ = Cout * (besovGagliardoConstant d ^ (2 : ℕ) + 1) *
-          constantDatumAnchorEnergyRHSOn_addThree M n s
+          constantDatumAnchorEnergyRHSOnAddThree M n s
             ((fun y' => z + y') '' openCubeSet (originCube d (n + 2))) u.toFun g := by
         ring
 

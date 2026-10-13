@@ -25,21 +25,17 @@ Module imports, support namespace and local option directives adapted for Lean P
 Fix a translated triadic cube `cubeSetAt y n`, a positive shift `mu` and a continuous datum `g`
 vanishing at infinity, and write `psi = R_mu g` for the analytic resolvent supplied with the
 process.  The vanishing-shift family of `ExitMeanValueCubeSetAtProcess.lean`,
-
   `psi - R^V_lam g + (mu - lam) R^V_lam psi`,
 
 is rewritten here by linearity of the Dirichlet resolvent in its datum.  With the *residual*
-
   `cubeSetAtResolventResidual = g - mu psi`   (restricted to the cube),
 
 which does not depend on the shift, the family is
-
   `psi - R^V_lam (residual) - lam R^V_lam psi`   (`cubeSetAtHarmonicApprox_eq`).
 
 The first Dirichlet resolvent converges to the Green potential of the residual as the shift
 decreases to zero, and the second term carries a factor of the shift against a bound uniform in
 the shift, so it vanishes.  The limit is therefore
-
   `cubeSetAtHarmonicPart = psi - partGreenPotential (residual)`,
 
 which agrees with `psi` off the cube because the Green potential does.  This discharges the

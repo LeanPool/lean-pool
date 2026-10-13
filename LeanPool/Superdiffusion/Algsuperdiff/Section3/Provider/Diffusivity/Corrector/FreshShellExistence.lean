@@ -31,7 +31,6 @@ ABK26 introduces, on the large cube `cu_K`, the two perturbative correctors
 ```
   { -Delta w_D = div (shom_{m-h}^{-1} h e)   in cu_K ,
   {  w_D = 0                                 on d cu_K ,
-
   { -Delta w_N = div (shom_{m-h}^{-1} h e')  in cu_K ,
   {  n . (grad w_N + shom_{m-h}^{-1} h e') = 0  on d cu_K ,
 ```

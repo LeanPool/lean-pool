@@ -51,6 +51,7 @@ theorem memVectorL2_of_memVectorLpOn_of_subset
     (HilbertVec.continuousLinearEquivVec d).toContinuousLinearMap.comp_memLp'
       hfHilbert2W
 
+/-- Volume restricted to a set and scaled by the inverse of its volume. -/
 noncomputable def normalizedVolumeOn (W : Set (Vec d)) : Measure (Vec d) :=
   (volume W)⁻¹ • volume.restrict W
 

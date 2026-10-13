@@ -38,6 +38,7 @@ open scoped ENNReal
 
 variable {d : ℕ}
 
+/-- The clipped derivative used to form a square with bounded slope. -/
 def clippedSquareSlope (M t : ℝ) : ℝ :=
   max (-2 * M) (min (2 * t) (2 * M))
 
@@ -45,6 +46,7 @@ private theorem continuous_clippedSquareSlope (M : ℝ) :
     Continuous (clippedSquareSlope M) := by
   exact continuous_const.max ((continuous_const.mul continuous_id).min continuous_const)
 
+/-- The primitive of the clipped square slope, normalized to vanish at zero. -/
 noncomputable def boundedSquare (M t : ℝ) : ℝ :=
   ∫ s in (0 : ℝ)..t, clippedSquareSlope M s
 
@@ -99,6 +101,7 @@ theorem boundedSquare_eq_sq {M t : ℝ} (hM : 0 ≤ M)
   rw [hcongr, intervalIntegral.integral_const_mul, integral_id]
   ring
 
+/-- The H¹ composition with the bounded-slope square function. -/
 noncomputable def boundedSquareH1 {U : Set (Vec d)}
     (hU : IsOpenBoundedConvexDomain U) (u : H1Function U) (M : ℝ)
     (hM : 0 ≤ M) (hu : ∀ᵐ x ∂volumeMeasureOn U, |u.toFun x| ≤ M) :

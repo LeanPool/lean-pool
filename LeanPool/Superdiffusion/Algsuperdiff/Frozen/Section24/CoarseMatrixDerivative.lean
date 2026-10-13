@@ -21,6 +21,7 @@ open HCPolySupport HCPolySupport.Book.Ch02 MeasureTheory
 open scoped ENNReal
 
 -- FROZEN-STATEMENT-BEGIN
+/-- The unique block matrix representing the coarse response derivative. -/
 noncomputable def Algsuperdiff.Frozen.Section24.coarseMatrixDerivative
     {d : ℕ} (U : Domain d) (a : CoeffOn U)
     (h : Algsuperdiff.Frozen.Section24.LInfMatrixFieldOn U) : BlockMat d :=

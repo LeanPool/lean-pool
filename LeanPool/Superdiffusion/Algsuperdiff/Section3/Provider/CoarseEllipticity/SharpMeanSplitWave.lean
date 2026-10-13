@@ -149,9 +149,11 @@ theorem waveL4Amplitude_le_head_deepBand_sharpUpper_tail_probe
   rw [hupper] at hscaled
   linarith
 
+/-- The lower anchor scale for a sharp layer with its prescribed separation gap. -/
 def probeSharpLayerAnchor (m : ℤ) (b : ℝ) (k₀ n : ℕ) : ℤ :=
   m - (n : ℤ) - (⌈b * (1 - b)⁻¹ * (n : ℝ)⌉₊ : ℤ) - (k₀ : ℤ)
 
+/-- The natural-number separation gap assigned to a sharp layer. -/
 def probeSharpLayerGap (b : ℝ) (n : ℕ) : ℕ :=
   n + ⌈b * (1 - b)⁻¹ * (n : ℝ)⌉₊
 

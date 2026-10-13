@@ -33,11 +33,9 @@ which the proof of ABK26's `l.bad.clusters.geometry` rests.
   descendants).  With `b ≤ 1/8` and `n_min ≤ n' ≤ n_min + 3` the count is at
   most `6`.
 * `four_mul_three_rpow_whitneyDepth_lt_two_thirds`: the **corrected** gate
-
   ```
   4 · 3^{b(n+h_n)} · 3^{m-n-h_n}  <  (2/3) · 3^{m-n}    (b ≤ 1/8, k₀ ≥ 3).
   ```
-
   The manuscript writes `3^{b(n+h_n)}·3^{m-n-h_n} ≤ 3^{m-n}·3^{-(1-b)k₀}` and
   then chooses `k₀` with `3^{-(1-b)k₀} < c`.
 

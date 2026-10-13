@@ -281,7 +281,7 @@ theorem geometricWeight_rpow_succ {s q : ℝ} (hsq : 0 ≤ s * q) (hq : q ≠ 0)
 /-! ## 3. The pathwise bridge at CoarseGraining's deterministic carriers -/
 
 
-theorem maxSigmaStarInv_sub_nonneg [NeZero d] (Q : TriadicCube d) (n : ℕ)
+theorem maxSigmaStarInv_sub_nonneg (Q : TriadicCube d) (n : ℕ)
     (a : Book.Ch02.TriadicCoeffFamily d) :
     0 ≤ Book.Ch02.maxDescendantSigmaStarInvMatrixNormAtScale Q (Q.scale - (n : ℤ)) a :=
   Book.Ch02.maxDescendantSigmaStarInvMatrixNormAtScale_nonneg Q (by omega) a
@@ -313,7 +313,7 @@ theorem lambdaSqFinite_inv_eq_rpow [NeZero d] (Q : TriadicCube d) {s q : ℝ}
 observable at the cutoff field.  `NeZero d` is a `Prop` class, so the instance
 carried inside the observable's definition and the one supplied here are
 definitionally equal. -/
-theorem cutoffUpperEllipticityLiteral_eq_coeffField [NeZero d] (M : ABKModel d)
+theorem cutoffUpperEllipticityLiteral_eq_coeffField (M : ABKModel d)
     (m L : ℤ) (s : ℝ) (q : CoarseEllipticityExponent)
     (omega : Cutoff.CutoffSample d) :
     Observable.cutoffUpperEllipticityLiteral M m L s q omega
@@ -323,7 +323,7 @@ theorem cutoffUpperEllipticityLiteral_eq_coeffField [NeZero d] (M : ABKModel d)
 
 /-- The Section 3 **literal** lower observable is the inverse of the Chapter 4
 ambient observable at the cutoff field. -/
-theorem cutoffLowerEllipticityInvLiteral_eq_coeffField [NeZero d] (M : ABKModel d)
+theorem cutoffLowerEllipticityInvLiteral_eq_coeffField (M : ABKModel d)
     (m L : ℤ) (s : ℝ) (q : CoarseEllipticityExponent)
     (omega : Cutoff.CutoffSample d) :
     Observable.cutoffLowerEllipticityInvLiteral M m L s q omega

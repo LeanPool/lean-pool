@@ -55,6 +55,7 @@ theorem cubeSet_partitionCube_subset_closedPartitionCube {d : ℕ} (n : ℤ)
   simpa only [closedPartitionCube, partitionCube, rescaleSite, cubeCenter,
     cubeRadius, cubeScaleFactor] using! hclosed
 
+/-- The finite neighborhood containing all coordinatewise unit offsets of a site. -/
 def neighboringSites {d : ℕ} (v : Section5.Percolation.Site d) :
     Finset (Section5.Percolation.Site d) :=
   (Section5.Percolation.cubeSites d 1).image fun delta => v + delta

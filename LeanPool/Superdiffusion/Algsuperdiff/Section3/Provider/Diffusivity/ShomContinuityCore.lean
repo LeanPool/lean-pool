@@ -35,7 +35,6 @@ that use only the two-sided envelope `e.shom.h.bounds`.
 ## Source
 
 `e.shom.h.bounds` (ABK26) reads
-
   `¼ max{c⋆ γ⁻¹ 3^{2γm}, ν²} ≤ σ_m² ≤ 4 max{c⋆ γ⁻¹ 3^{2γm}, ν²}`,
 
 and `diffMax` below is exactly the bracketed maximum.
@@ -182,7 +181,6 @@ theorem quarter_le_of_twoSided {nu gamma cstar : ℝ} {s : ℤ → ℝ} {n m : �
 
 /-- **Far branch** (ABK26).  From the two-sided envelope at both scales, `σ_n ≤
 4σ_m` and `σ_m ≤ 4·3^{γ(m−n)}σ_n`, whence
-
   `|σ_m σ_n⁻¹ − 1| + |σ_n σ_m⁻¹ − 1| ≤ 8·3^{γ(m−n)}`.
 
 The manuscript states this with an unnamed `C`; `8` is an explicit witness (the

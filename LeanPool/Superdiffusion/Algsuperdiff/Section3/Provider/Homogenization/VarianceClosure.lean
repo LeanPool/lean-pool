@@ -35,10 +35,8 @@ Two proved carriers had no seam between them.
 * The **variance-split carriers** of `VarianceSplit.lean` are squared Euclidean
   operator norms of two *single blocks* of the coarse block matrix, centred at
   the annealed block matrix:
-
   `starInverseCenteredFluctuationSq      = |σ_*^{-1}(R;a) - σ_{L,*}^{-1}(□_n)|²`
   `starInverseKappaCenteredFluctuationSq = |(σ_*^{-1}κ)(R;a) - E[(σ_*^{-1}κ)(□_n)]|²`
-
   (`starInverseCenteredFluctuationSq` and
   `starInverseKappaCenteredFluctuationSq` in `VarianceSplit.lean`).
 * The **Step-3 corridor carrier** of `CombineFiniteCarrierTransport.lean` is the
@@ -102,14 +100,11 @@ over the descendants `R` of `originCube d m`.  Both are supplied here.
   multiscale ellipticity and with the good-event clause `Λ_{1/4,1}(□_m) ≤
   2σ_L` --- which is what `CombineBadEvent.mem_observationScaleBadEvent_iff`
   reads off the complement of `observationScaleBadEvent M L m` --- it gives
-
   `c_{1/4,1}3^{-j/4} · |(σ_*^{-1}κ)(R)| ≤ √(2σ_L · 4dν^{-1})`
-
   for every descendant `R` of `□_m` at depth `j`, off the bad event.  Since
   `c_{1/4,1}3^{-j/4}` is bounded below on `j ≤ m - L`, this is the
   `K(d, σ_L, m - L, ν)` shape the producer asks for.  That composite is not
   assembled in this module.
-
   The deterministic route for this channel does **not** terminate in a
   *deterministic constant*:
   `Cutoff.maxDescendantBMatrixNormAtScale_le_cutoffEnvelope` bounds the

@@ -36,7 +36,6 @@ series of Step 3 of `p.bfA.multiscalebound`.
    count** `#{R ∈ descendantsAtDepth Q j : R.index i = c} ≤ 3^{j(d-1)}`, itself an
    induction on `j` from the single-generation fact that prescribing one index
    coordinate of a child forces one triadic digit.
-
    The naive recursion "a boundary cube has at most `3^d - 2^d` boundary
    children" is *not* enough: it gives the decay `(1 - (2/3)^d)^j`, not the
    `3^{-j}` the manuscript needs.  The union bound over faces is what produces
@@ -47,14 +46,11 @@ series of Step 3 of `p.bfA.multiscalebound`.
    inside `□_m`, i.e. `LayerMassBound d m hn (6 d)`.  Route: a layer-`n` cube is
    a depth-`(1+h_n)` descendant of a *touching* depth-`(n-1)` descendant of
    `□_m` (`whitneyLayer_subset_collar`), so
-
    ```
    # 𝒲(□_m,n) ≤ (2 d 3^{(n-1)(d-1)}) · (3^d)^{1+h_n} ,
    ```
-
    and each layer cube carries mass `(3^d)^{-(n+h_n)}`; the two powers collapse
    to `2 d 3^{-(n-1)} = 6 d 3^{-n}` exactly (`three_pow_collar_identity`).
-
    The constant `6 d` is the one the `ConclusionAssembly` docstring predicts.
    It is not claimed sharp: keeping the extra factor `2/3` from "a touching
    cube has at most `2 · 3^{d-1}` non-touching children" would give `4 d`,

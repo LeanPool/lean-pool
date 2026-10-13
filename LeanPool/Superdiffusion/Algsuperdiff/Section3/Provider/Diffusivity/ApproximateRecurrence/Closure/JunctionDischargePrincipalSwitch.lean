@@ -43,7 +43,6 @@ h)`.  Two things separate the two statements, and this module supplies both.
    one and the same pair has to serve all four junctions at every localization
    cube.  So the terminal's conclusion has to be transported from *its* witness
    pair to *the caller's* pair.
-
    That transport is legitimate, and unconditional: the two problems of
    `e.def.w` determine their solutions' gradients
    (`Corrector.FreshShellUniqueness`), and both

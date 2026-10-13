@@ -207,7 +207,6 @@ step produces
 * `h`, the zero-boundary solution of `-Δ h = -∇·(w ∇·k)` on `y + □_n`, stated
   in the equivalent antisymmetric form `-∇·(k ∇w)` that the antisymmetry
   transfer supplies, with
-
   ```text
     ‖∇h‖_{L^∞(y+□_n)} ≤ C 3^{n/2} ([wRep] ‖∇·k‖_∞ + ‖wRep‖_∞ [∇·k]) ,
     [∇h]_{C^{0,1/2}(y+□_n)} ≤ C ([wRep] ‖∇·k‖_∞ + ‖wRep‖_∞ [∇·k]);

@@ -58,7 +58,6 @@ Two things.
 `exists_constant_principalEnergy_bound_of_centering`,
    is the display at the manuscript's own load `P_z` of `e.Pz.def`, in which
    none of `hswitch`, `hshell`, `hellip`, `hellipInt`, `hlam0` is a binder:
-
    * `hswitch` was already discharged inside
      `ApproximateRecurrence.PrincipalResponseSwitchActualDisplay`;
    * `hlam0` is discharged from item 1;

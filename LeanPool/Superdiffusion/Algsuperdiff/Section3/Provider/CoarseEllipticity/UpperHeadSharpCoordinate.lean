@@ -407,6 +407,7 @@ theorem collar_head_coordinate_is_big_o_with
   exact isBigOWith_gammaSigma_of_le hpoint (by
     simpa only [D, D₀, P, G, alpha, AP, AG] using hmajor)
 
+/-- The collar-head constant converting separation height into a linear budget. -/
 def collarHeadHsepOneConst : ℝ :=
   (((7 : ℝ) / 8 * bfaProfileB * Real.log 3)⁻¹) *
     superposedFluxHsepConst

@@ -24,7 +24,6 @@ Module imports, support namespace and local option directives adapted for Lean P
 # The torsion function of an exhaustion cube and its uniform bound
 
 The unshifted Dirichlet problem with constant forcing on an exhaustion cube,
-
   `-div (a grad w) = 1` in `V`,  `w = 0` on the boundary of `V`,
 
 is solvable, and this file fixes one measurable solution and bounds it

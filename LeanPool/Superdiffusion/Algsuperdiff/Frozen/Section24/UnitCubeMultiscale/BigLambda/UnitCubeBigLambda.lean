@@ -20,6 +20,7 @@ Module imports, support namespace and local option directives adapted for Lean P
 open HCPolySupport HCPolySupport.Book.Ch02 MeasureTheory
 
 -- FROZEN-STATEMENT-BEGIN
+/-- The upper multiscale ellipticity quantity on the origin unit cube. -/
 noncomputable def Algsuperdiff.Frozen.Section24.unitCubeBigLambda
     {d : ℕ} (s : ℝ) (q : Book.Ch02.MultiscaleExponent)
     (a : CoeffOn (cubeDomain (originCube d 0))) : ℝ :=

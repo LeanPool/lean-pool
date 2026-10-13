@@ -84,7 +84,6 @@ where `c_{2s} = 1 - 3^{-2s}` is `Homogenization.Book.Ch02.geometricDiscount s 2`
   the localization wire the loading vector `v = e₁ ∓ e₂` has Euclidean length
   up to `√2`, so each leg is **twice** the printed `max_{|e|=1}` object.  This
   file carries the frame-sup form.
-
   **The doubling and the `1/2` of the splitting cancel here, and the
   cancellation is performed rather than asserted.**  The `1/2` of
   `doubledResponseJ = ½ J(·;a) + ½ J(·;a^t)` is retained in
@@ -92,7 +91,6 @@ where `c_{2s} = 1 - 3^{-2s}` is `Homogenization.Book.Ch02.geometricDiscount s 2`
   therefore a bound by `½ (legA + legB)`, not by `legA + legB`), and it is
   carried through the per-scale power mean by its positive homogeneity
   (`legScaleAverage_smul`) into the constant of both endpoints.
-
   The paired shape and the size bound `|v|^2 ≤ 2` are *proved* here at the
   isotropic comparator (`breakdownLegAValueSet_isotropic_eq` and its twin), so
   the deviation is exhibited rather than asserted.  What the cancellation

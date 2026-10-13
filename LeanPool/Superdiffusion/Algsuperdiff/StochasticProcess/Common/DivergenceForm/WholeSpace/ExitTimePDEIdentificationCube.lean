@@ -25,7 +25,6 @@ Module imports, support namespace and local option directives adapted for Lean P
 The limit of the Dirichlet resolvents of the constant datum on `y + □_n` as the
 shift decreases to zero is identified here with any bounded continuous
 representative of the zero-trace solution of
-
   `-div (a grad w) = 1` in `y + □_n`,  `w = 0` on the boundary,
 
 at every point of the cube.  The identification on the centred exhaustion cubes

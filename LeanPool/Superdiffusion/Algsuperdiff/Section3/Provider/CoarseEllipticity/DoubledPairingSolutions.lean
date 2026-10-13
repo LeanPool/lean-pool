@@ -27,7 +27,6 @@ Source displays in ABK26:
 * `e.findSfull` and `e.bfS`, the characterization of the double-variable
   solution space `S(cu_m)` used in Remark `r.cg.poincare.doubled.variables`;
 * `e.bfA.magic.swapping`,
-
   ```
   bfA ( p + p^* , a p - a^t p^* ) = ( a p + a^t p^* , p - p^* );
   ```

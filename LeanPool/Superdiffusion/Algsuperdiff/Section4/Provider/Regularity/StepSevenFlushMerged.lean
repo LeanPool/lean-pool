@@ -79,6 +79,7 @@ theorem mem_goodEventAtHalf_of_stepThree {M : ABKModel d} {delta : ℝ} {j : ℤ
 
 /-! ## 2. The flush conclusion record -/
 
+/-- The uniform solution estimate assembled in the seventh regularity step. -/
 def StepSevenFlushBound (M : ABKModel d) (K1 K2 : ℝ) (L m n : ℤ) (z : Vec d)
     (omega : Cutoff.CutoffSample d) : Prop :=
   ∀ (u hdat : H1Function (openCubeSet (originCube d m))) (g : Vec d → Vec d),

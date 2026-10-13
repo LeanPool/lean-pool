@@ -45,11 +45,9 @@ This module proves that display, and then the endpoint.
   `IsZeroTraceDirichletRhsWeakSolution` tests against all of `H10Function U`
   and the solution is one --- gives, with the identity coefficient field and
   the forcing `g = -streamForcing shom_n^{-1} omega n (n+h) e`,
-
   ```
     fint_{cu_K} |grad w_D|^2 = shom_n^{-1} fint_{cu_K} e . (h grad w_D) ,
   ```
-
   the sign being fixed by the pointwise skew-symmetry of the fresh shell
   (`Cutoff.finiteShellIncrement_skew`), through `vecDot_matVecMul_skew`.  This is
   the manuscript's own second equality in `e.what.nablaw.really.is`.

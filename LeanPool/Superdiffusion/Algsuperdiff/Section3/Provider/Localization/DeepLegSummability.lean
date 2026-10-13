@@ -113,7 +113,7 @@ theorem fullBlockMatRowAbsSqBound_diagonal (v : BlockCoord d → ℝ) :
 /-- **The square-root normalizer of the isotropic comparator.**  At
 `a0 = sigma * 1` the Chapter 2 normalizer is the diagonal gauge
 `diag(sigma^{1/2}, sigma^{-1/2})`, whose row bound is `d (sigma + sigma^{-1})`. -/
-theorem fullBlockMatRowAbsSqBound_constantFullBlockMatrixSqrt_isotropic [NeZero d]
+theorem fullBlockMatRowAbsSqBound_constantFullBlockMatrixSqrt_isotropic
     (sigma : Observable.PositiveScalar) :
     fullBlockMatRowAbsSqBound (Ch02.constantFullBlockMatrixSqrt
         (Observable.isotropicComparatorMatrix (d := d) sigma)) =
@@ -133,7 +133,7 @@ theorem fullBlockMatRowAbsSqBound_constantFullBlockMatrixSqrt_isotropic [NeZero 
 
 /-- **The inverse square-root normalizer of the isotropic comparator.**  Its row
 bound is the same `d (sigma + sigma^{-1})`. -/
-theorem fullBlockMatRowAbsSqBound_constantFullBlockMatrixInvSqrt_isotropic [NeZero d]
+theorem fullBlockMatRowAbsSqBound_constantFullBlockMatrixInvSqrt_isotropic
     (sigma : Observable.PositiveScalar) :
     fullBlockMatRowAbsSqBound (Ch02.constantFullBlockMatrixInvSqrt
         (Observable.isotropicComparatorMatrix (d := d) sigma)) =
@@ -185,7 +185,7 @@ theorem sigmaBar_le_plateauCeiling (M : ABKModel d) {k m : ℤ} (hkm : k ≤ m) 
 
 /-- The explicit form of CoarseGraining's uniform descendant bound: it is a
 `let`-free restatement of `Ch02.normalizedBlockResponseUniformBound`. -/
-theorem normalizedBlockResponseUniformBound_eq [NeZero d] (Q : TriadicCube d)
+theorem normalizedBlockResponseUniformBound_eq (Q : TriadicCube d)
     (a : Ch02.TriadicCoeffFamily d) (a0 : Mat d) :
     Ch02.normalizedBlockResponseUniformBound Q a a0 =
       ((a.coeffOn Q).lam / (1 + 2 * (a.coeffOn Q).Lam ^ 2))⁻¹ *

@@ -73,7 +73,6 @@ private theorem isBigOWith_of_map_eq
     {Omega Omega' : Type*} [MeasurableSpace Omega] [MeasurableSpace Omega']
     {mu : Measure Omega} {mu' : Measure Omega'}
     {f : Omega → ℝ} {g : Omega' → ℝ} {Psi : ℝ → ℝ} {A : ℝ}
-    [IsFiniteMeasure mu] [IsFiniteMeasure mu']
     (hf : Measurable f) (hg : Measurable g)
     (hmap : Measure.map f mu = Measure.map g mu')
     (hg_tail : IsBigOWith mu' Psi g A) :

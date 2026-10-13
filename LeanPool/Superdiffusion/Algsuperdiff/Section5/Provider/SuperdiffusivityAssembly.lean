@@ -137,7 +137,9 @@ bound, and the C4/C6 removal estimates have been supplied.  The remaining three 
 random-scale estimates used by the two Holder splits. -/
 structure SuperdiffusivityV2Components {d : ℕ} [NeZero d]
     (M : ABKModel d) (cstar t p C0 : ℝ) where
+  /-- The samplewise renormalization error used in the superdiffusivity assembly. -/
   renormalizationError : FullSample d M.gamma → ℝ
+  /-- The samplewise confinement radius used in the superdiffusivity assembly. -/
   confinementRadius : FullSample d M.gamma → ℝ
   renormalizationError_nonneg : ∀ omega, 0 ≤ renormalizationError omega
   confinementRadius_nonneg : ∀ omega, 0 ≤ confinementRadius omega

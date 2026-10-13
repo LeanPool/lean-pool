@@ -26,7 +26,6 @@ Source displays in ABK26:
 
 * `e.Fz.def`, the background field `bfF_z`;
 * the `tilde S_z` display;
-
   ```
   fint_{z+cu_n} tilde S_z . bfA_m tilde S_z = fint_{z+cu_n} bfF_z . bfA_m tilde S_z .
   ```

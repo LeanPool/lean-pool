@@ -107,7 +107,7 @@ variable {d : ℕ}
 
 /-- The `p = q = 2` reading of `scaleResponseAtScale`, by definitional
 unfolding of the `MultiscaleExponent` match. -/
-private theorem scaleResponseAtScale_finite_eq [NeZero d]
+private theorem scaleResponseAtScale_finite_eq
     (Q : TriadicCube d) (k : ℤ) (p : ℝ) (F : TriadicCoeffFamily d) (a0 : Mat d) :
     scaleResponseAtScale Q k (.finite p) F a0 =
       Real.rpow

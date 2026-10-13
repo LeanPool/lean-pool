@@ -144,7 +144,7 @@ private theorem negNormSqrtFactor_pos {s : ℝ} (hs1 : s ≤ 1) :
 /-! ## 2. The negative-norm step at the parameter choice `t = s/4` -/
 
 /-- The dimensional constant of CoarseGraining's zero-trace value estimate. -/
-def negNormBaseConst (d : ℕ) [NeZero d] : ℝ :=
+def negNormBaseConst (d : ℕ) : ℝ :=
   ((d : ℝ) * Legacy.cubeNeumannW22CalderonZygmundConstant d *
       (3 : ℝ) ^ ((d : ℝ) + 1) * (d : ℝ)) + 2 * (3 : ℝ) ^ ((d : ℝ) + 1)
 

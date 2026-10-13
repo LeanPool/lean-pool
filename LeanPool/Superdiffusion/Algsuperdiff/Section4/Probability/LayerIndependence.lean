@@ -66,7 +66,7 @@ mutually independent.
 A finite intersection is regrouped by the *second* (layer) coordinate: the
 independence of `kappa` multiplies across distinct layers, and the row
 independence multiplies inside a single layer. -/
-theorem iIndep_prod_of_iIndep_rows [IsProbabilityMeasure mu] {iota L : Type*}
+theorem iIndep_prod_of_iIndep_rows {iota L : Type*}
     {kappa : L → MeasurableSpace Omega} {A : iota → L → MeasurableSpace Omega}
     (hkappa : iIndep kappa mu) (hle : ∀ i l, A i l ≤ kappa l)
     (hrow : ∀ l, iIndep (fun i => A i l) mu) :

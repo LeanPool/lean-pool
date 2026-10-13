@@ -495,7 +495,6 @@ theorem interiorSecondDerivEstimateL2_ball (d : ℕ) [NeZero d] :
 /-- **Interior gradient-Lipschitz estimate from the `L²` deviation (native).**  For `u` harmonic on
 `B(x, R)` and `0 < r < R`, the gradient of `u` is Lipschitz on the half-radius ball `B(x, r/2)` with
 constant `C·r⁻²·√( msd_{B(x,r)}(u, c) )`:
-
   `‖∇u(y) − ∇u(z)‖ ≤ C·r⁻¹·r⁻¹·√( msd_{B(x,r)}(u, c) ) · ‖y − z‖`  for `y, z ∈ B(x, r/2)`.
 
 This is the convex mean-value inequality `Convex.norm_image_sub_le_of_norm_fderiv_le` applied to the

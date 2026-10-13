@@ -170,6 +170,7 @@ theorem gradInnerE_eq_wsumE (M : ABKModel d) (k : ℤ) (omega : Cutoff.CutoffSam
 
 /-! ## 3. The majorant layer series -/
 
+/-- The geometric gradient weight at one minimal-scale depth. -/
 def gradWeight (M : ABKModel d) (p : ℕ) : ℝ := (3 : ℝ) ^ (-((1 - M.gamma) * (p : ℝ)))
 
 theorem gradWeight_pos (M : ABKModel d) (p : ℕ) : 0 < gradWeight M p :=

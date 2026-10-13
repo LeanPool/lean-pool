@@ -24,7 +24,6 @@ Module imports, support namespace and local option directives adapted for Lean P
 
 The proof of the unconditional sensitivity estimate
 (`l.J.sensitivity.no.conditions` of ABK26) opens with the display
-
   `J(cu_0, P, Q; a) <= avsum_{z in 3^{-h} Zd cap cu_0} J(z + cu_{-h}, P, Q; a)`,
 
 that is, the root response at a fixed loading is dominated by the *unweighted*

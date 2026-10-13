@@ -47,6 +47,7 @@ noncomputable def cubeEuclideanNegativeWspSmoothDualBesovConstant (d : ℕ) : �
   d * (3 : ℝ≥0∞) ^ ((d : ℝ) + 1) *
     cubeEuclideanWspExactOverlapFullControlConstant d
 
+/-- The dimension-dependent scalar constant for the smooth negative Sobolev dual bound. -/
 noncomputable def cubeEuclideanNegativeWspSmoothDualBesovScalarConstant
     (d : ℕ) : ℝ≥0∞ :=
   (3 : ℝ≥0∞) ^ ((d : ℝ) + 1) *

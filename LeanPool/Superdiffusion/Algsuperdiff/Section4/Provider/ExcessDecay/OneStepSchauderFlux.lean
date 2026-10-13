@@ -99,7 +99,6 @@ private theorem support_laplacian_subset' {ψ : 𝔼 → ℝ} :
 test `ψ(w) = φ(‖w − x‖²)` (`φ ∈ C^∞`, compactly supported inside `Metric.ball x r`, `0 < r < R`),
 the local weak identity `∫ u · Δψ = 0` (`CutoffLocalize`) reduces, via the general polar bridge
 (piece 2) and the radial Laplacian profile (piece 1), to the **one-dimensional** vanishing
-
   `∫₀^∞ s^{d−1} · (4 s² φ''(s²) + 2 d φ'(s²)) · sphereAverage x s u ds = 0`.
 
 This is the entry point of the du Bois-Reymond endgame: the integrand's weight
@@ -260,7 +259,6 @@ private theorem radialTest_eq_zero_of_ge [NeZero d] {φ : ℝ → ℝ} {x : 𝔼
 /-- **Flux test identity (integration by parts).**  For `u ∈ C²` harmonic on `Metric.ball x R` and a
 radial test `ψ = φ(‖· − x‖²)` (`φ ∈ C^∞`, compactly supported inside
 `Metric.ball x r`, `0 < r < R`),
-
   `∫₀^∞ (2 s φ'(s²)) · (s^{d−1} · sphereFlux x s u) ds = 0`.
 
 This is `RadialLaplacian.hasDerivAt_weighted_radialProfile` integrated by parts against

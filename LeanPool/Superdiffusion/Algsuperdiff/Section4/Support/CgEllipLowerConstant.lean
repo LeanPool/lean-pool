@@ -31,6 +31,7 @@ mismatch is possible.  The full defining property is
 `(coarse_ellipticity_bounds d).choose_spec`.
 -/
 
+/-- The positive lower coarse-ellipticity constant selected from the quantitative bound. -/
 noncomputable def Algsuperdiff.Section4.Support.cgEllipLowerConstant (d : ℕ) : ℝ :=
   (Algsuperdiff.Frozen.Section3.coarse_ellipticity_bounds d).choose
 

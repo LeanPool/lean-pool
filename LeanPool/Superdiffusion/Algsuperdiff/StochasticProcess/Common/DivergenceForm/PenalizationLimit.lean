@@ -59,6 +59,7 @@ private theorem exists_weaklyConvergent_subsequence
     InnerProductSpace.toDual_apply_apply, z,
     InnerProductSpace.toDual_symm_apply] using! hev
 
+/-- Restrict a domain L² class to the exterior of the specified part domain. -/
 noncomputable def exteriorRestriction
     (hU : MeasurableSet U) : ScalarL2 U →L[ℝ] ScalarL2 (U \ V) :=
   (restrictToDomain (U \ V)).comp

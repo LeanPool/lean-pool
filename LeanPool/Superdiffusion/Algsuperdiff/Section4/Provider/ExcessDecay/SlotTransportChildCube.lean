@@ -125,7 +125,7 @@ This is the manuscript's own shorthand — the display carries
 the parent cube `z+□_{n+2}` on the smaller cube.  Translated centres are
 realized, as everywhere in Section 4, by translating the *sample* (resolution
 A4). -/
-def fluxCorrectedErrorOn [NeZero d] (M : ABKModel d) (L m : ℤ) (Q : TriadicCube d)
+def fluxCorrectedErrorOn (M : ABKModel d) (L m : ℤ) (Q : TriadicCube d)
     (s : ℝ) (omega : Cutoff.CutoffSample d) : ℝ :=
   Ch02.HomogenizationErrorOnCube Q s .infinity (.finite 2)
     (Support.fluxCorrectedCoeffFamily M L m (originCube d m) omega)

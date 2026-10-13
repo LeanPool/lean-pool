@@ -171,7 +171,7 @@ theorem isScalarForcedWeakSolution_sub_same_potential
 /-- A homogeneous potential difference with a compactly supported positive
 part is bounded by its boundary-collar level. -/
 theorem ae_le_add_of_homogeneous_difference_boundary
-    [NeZero d] (hU : IsOpenBoundedConvexDomain U)
+    (hU : IsOpenBoundedConvexDomain U)
     {a : CoeffField d} {lam Lam alpha eps : ℝ} (halpha : 0 < alpha)
     (heps : 0 ≤ eps) (hEll : IsEllipticFieldOn lam Lam U a)
     {q : Vec d → ℝ} (hq : ∀ᵐ x ∂volumeMeasureOn U, 0 ≤ q x)

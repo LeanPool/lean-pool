@@ -61,6 +61,7 @@ def probeFramedLayerWaveFactor (M : ABKModel d) (m : ℤ)
       Real.sqrt (layerSimplexFourthMass m hn n
         (m - (n : ℤ) - (hn n : ℤ)) L omega))
 
+/-- The good Whitney-layer mean budget combining its mass and wave contributions. -/
 def probeFramedGoodLayerMeanRhs (M : ABKModel d) (m : ℤ)
     (hn : ℕ → ℕ) (n : ℕ) (i L : ℤ) (omega : CutoffSample d)
     (p : Vec d) : ℝ :=
@@ -72,6 +73,7 @@ def probeFramedGoodLayerMeanRhs (M : ABKModel d) (m : ℤ)
         cubeMassRatio (originCube d m) Q) *
       probeFramedLayerWaveFactor M m hn n i L omega
 
+/-- The collar-layer mean budget including the amplified gradient factor. -/
 def probeFramedCollarLayerMeanRhs (M : ABKModel d) (m : ℤ)
     (hn : ℕ → ℕ) (n : ℕ) (i L : ℤ) (omega : CutoffSample d)
     (p : Vec d) (Cgrad b : ℝ) : ℝ :=

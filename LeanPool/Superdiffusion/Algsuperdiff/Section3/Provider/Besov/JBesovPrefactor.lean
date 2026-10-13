@@ -140,7 +140,7 @@ depending only on its dimension-only Caccioppoli constant, times the three
 factors displayed in the manuscript: the coarse ellipticity ratio raised to
 `s/(1-2s)`, the coarse upper ellipticity `\Lambda_s`, and the scale weight
 `3^{-2m}`. -/
-theorem caccioppoliPrefactor_diag_le_jBesovEnvelope {d : ℕ} [NeZero d] (C : ℝ)
+theorem caccioppoliPrefactor_diag_le_jBesovEnvelope {d : ℕ} (C : ℝ)
     (hC : 0 ≤ C) (Q : TriadicCube d) (a : Ch03.CoeffFamily d) {s : ℝ} (hs : 0 < s)
     (hs_quarter : s ≤ 1 / 4) :
     Ch03.caccioppoliPrefactor C Q a s s ≤

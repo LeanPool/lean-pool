@@ -171,14 +171,14 @@ theorem geodesicPoint_siteDist {d : ℕ} (x y : Site d) :
   simp only [geodesic, List.length_map, List.length_range]
 
 /-- The synchronous geodesic starts at `x`. -/
-@[simp] theorem head?_geodesic {d : ℕ} (x y : Site d) :
+@[simp] theorem headOption_geodesic {d : ℕ} (x y : Site d) :
     (geodesic x y).head? = some x := by
   have hpos : siteDist x y + 1 ≠ 0 := Nat.ne_of_gt (Nat.zero_lt_succ _)
   simp only [geodesic, List.head?_map, List.head?_range, ite_eq_right hpos,
     Option.map_some, geodesicPoint_zero]
 
 /-- The synchronous geodesic ends at `y`. -/
-@[simp] theorem getLast?_geodesic {d : ℕ} (x y : Site d) :
+@[simp] theorem lastOption_geodesic {d : ℕ} (x y : Site d) :
     (geodesic x y).getLast? = some y := by
   rw [geodesic, List.getLast?_map]
   have hpos : 0 < siteDist x y + 1 := Nat.zero_lt_succ _

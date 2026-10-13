@@ -141,6 +141,7 @@ theorem isDivFormWeakSolutionOn_def {a : CoeffField d} {W : Set (Vec d)}
           -∫ x in W, vecDot (g x) (φ.toH1Function.grad x) ∂volume :=
   Iff.rfl
 
+/-- Two H¹ functions differ by a zero-trace H¹ function, including their gradients. -/
 def HasZeroTraceDifferenceOn (W : Set (Vec d)) (u h : H1Function W) : Prop :=
   ∃ w : H10Function W,
     (∀ x, u.toFun x = h.toFun x + w.toH1Function.toFun x) ∧

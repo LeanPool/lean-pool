@@ -223,7 +223,6 @@ private theorem sqrt_four_mul_add_le_two_mul_add {p L : ℝ} :
 /-- The `2p` moment of the selected renormalization error, in exactly the
 proposition used by `SuperdiffusivityV2Components`. -/
 theorem selectedRenormalizationError_moment_two (M : ABKModel d)
-    [NeZero d]
     {cstar t p C0 CS Cren K : ℝ} (hcstar : 0 < cstar) (ht : 0 < t)
     (hp : 1 ≤ p) (hCS : 1 ≤ CS) (hCren : 0 < Cren) (hK : 1 ≤ K)
     (hC0 : superdiffusivityV2ComponentConstant CS Cren K ≤ C0)
@@ -307,7 +306,6 @@ theorem selectedRenormalizationError_moment_two (M : ABKModel d)
 /-- The `4p` moment of the selected renormalization error, in exactly the
 proposition used by `SuperdiffusivityV2Components`. -/
 theorem selectedRenormalizationError_moment_four (M : ABKModel d)
-    [NeZero d]
     {cstar t p C0 CS Cren K : ℝ} (hcstar : 0 < cstar) (ht : 0 < t)
     (hp : 1 ≤ p) (hCS : 1 ≤ CS) (hCren : 0 < Cren) (hK : 1 ≤ K)
     (hC0 : superdiffusivityV2ComponentConstant CS Cren K ≤ C0)
@@ -387,7 +385,6 @@ theorem selectedRenormalizationError_moment_four (M : ABKModel d)
 /-- The `4p` moment of the selected triadic confinement radius, in exactly the
 proposition used by `SuperdiffusivityV2Components`. -/
 theorem selectedConfinementRadius_moment_four (M : ABKModel d)
-    [NeZero d]
     {cstar t p C0 CS K Cren : ℝ} (hcstar : 0 < cstar) (ht : 0 < t)
     (hp : 1 ≤ p) (hCS : 1 ≤ CS) (hK : 1 ≤ K)
     (hC0 : superdiffusivityV2ComponentConstant CS Cren K ≤ C0)
@@ -446,7 +443,7 @@ theorem selectedConfinementRadius_moment_four (M : ABKModel d)
 /-- Build the full component structure from the scale and renormalization
 families once the two quenched inequalities have been supplied by the quenched
 composer. -/
-def superdiffusivityV2Components_of_quenched (M : ABKModel d)
+def superdiffusivityV2ComponentsOfQuenched (M : ABKModel d)
     [NeZero d]
     {cstar t p C0 CS Cren K : ℝ} (hcstar : 0 < cstar) (ht : 0 < t)
     (hp : 1 ≤ p) (hCS : 1 ≤ CS) (hCren : 0 < Cren) (hK : 1 ≤ K)

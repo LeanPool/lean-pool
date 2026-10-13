@@ -357,6 +357,7 @@ theorem triadicCoeffFamily_dilateReg_aeeq_dilate
   simpa [Ch02.cubeDomain_coe] using
     (dilatedCoeffFamily_coeffOn_ae_eq_dilateReg ha k Q).symm
 
+/-- Triadic dilation of regular coefficient fields as a measurable equivalence. -/
 noncomputable def dilateRegMeasurableEquiv (k : ℤ) :
     RegCoeffField d ≃ᵐ RegCoeffField d where
   toEquiv :=

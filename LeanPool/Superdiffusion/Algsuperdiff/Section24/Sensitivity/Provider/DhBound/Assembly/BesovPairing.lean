@@ -25,7 +25,6 @@ Module imports, support namespace and local option directives adapted for Lean P
 
 Source: ABK26 (`e.sensitivity.basic.split1` and `e.split.besov.stuff.begin`).
 Both terms of the `D_h` split are estimated by the *same* mechanism:
-
   `|⨍_Q F · H| ≤ C ‖H‖_{B^{3/8}_{2,2}(Q)} ‖F‖_{B^{-3/8}_{2,2}(Q)}`,
 
 applied with `F = ∇v` and then combined with the coarse Poincaré inequality
@@ -89,7 +88,6 @@ theorem cubeBesovNegativeVectorPartialSeminormTwo_le_scaleNormalizedNegativeBeso
 /-- **Besov pairing against a response gradient.**
 
 For every field `H` with positive Besov budget `B` at smoothness `3/8`,
-
   `|⨍_Q ∇v · H| ≤ (1 + d 3^{d+1}) · (2 c_{3/8,2}^{-1/2}) · B · λ_{3/8,2}^{-1/2} · J^{1/2}`,
 
 where `v` is any response maximizer for `(a, p, q)` on `Q`.

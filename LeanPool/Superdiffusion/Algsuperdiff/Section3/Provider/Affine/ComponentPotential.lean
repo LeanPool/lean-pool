@@ -339,7 +339,7 @@ theorem memH10_componentCorrectionPotential
 /-- The open cells of a uniform root mesh cover the open root cube up to a
 Lebesgue-null set. -/
 theorem volume_openCubeSet_diff_iUnion_openCarrier_rootCoarseMesh
-    [NeZero d] {m s : ℤ} (hsm : s ≤ m) :
+    {m s : ℤ} (hsm : s ≤ m) :
     volume (openCubeSet (originCube d m) \
       ⋃ T ∈ (rootCoarseMesh (d := d) m s : Set (KuhnCell d)), T.openCarrier) = 0 := by
   have hsub :

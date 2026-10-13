@@ -102,7 +102,7 @@ variable {d : ℕ}
 root on the gradient leg and in full on the data leg.  This is the `lamInv`
 slot's `hcg`, and the object `e.lambda.stability.applied` must bound by `C
 σ^{-1}`.  It is coarse-grained: no bare ellipticity of `𝐚` occurs. -/
-noncomputable def stepSevenCgLamInv [NeZero d] (Q : TriadicCube d)
+noncomputable def stepSevenCgLamInv (Q : TriadicCube d)
     (a : CoeffFamily d) (s : ℝ) : ℝ :=
   Real.rpow (Ch02.lambdaSq Q (s / 2) (Ch02.MultiscaleExponent.finite 2) a) (-1 : ℝ)
 
@@ -206,6 +206,7 @@ theorem exists_stepSevenCgPoincareInput (d : ℕ) [NeZero d] :
     rw [stepSevenCgLamInv]; ring
   linarith only [hmain, hleg1, hleg2.ge, hleg2.le]
 
+/-- The coarse-graining exponent matched to the first regularity step. -/
 noncomputable def stepSevenCgS : ℝ := stepOneS
 
 @[simp] theorem stepSevenCgS_eq : stepSevenCgS = 1 / 4 := rfl

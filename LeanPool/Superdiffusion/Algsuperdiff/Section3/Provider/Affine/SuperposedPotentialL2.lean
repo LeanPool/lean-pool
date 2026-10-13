@@ -571,6 +571,7 @@ theorem integral_vecNormSq_badFamilyPotentialApproximation_sub_succ_le
   dsimp [A, r]
   ring_nf
 
+/-- The explicit L² budget for potential increments over a bad family. -/
 def badFamilyPotentialIncrementConst
     (M : ABKModel d) (m : ℤ) (E b : ℝ) (k₀ : ℕ)
     (omega : Cutoff.CutoffSample d) (p : Vec d) : ℝ :=

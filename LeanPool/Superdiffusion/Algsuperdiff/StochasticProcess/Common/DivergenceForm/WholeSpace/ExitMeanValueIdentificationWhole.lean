@@ -30,7 +30,6 @@ its values pointwise.
 
 Passing to the limit in the level equations identifies the forcing: the whole-space resolvent
 `psi = R_mu f` solves
-
   `-div (a grad psi) = f - mu psi`   weakly on every exhaustion cube.
 
 Subtracting the Green potential of that residual leaves the whole-space harmonic part, which is

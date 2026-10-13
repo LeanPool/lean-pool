@@ -190,7 +190,7 @@ theorem relativeNormalizedCutoff_barSigmaLimit_eq_sigmaBar
   let hP := Cutoff.relativeNormalizedCutoffLaw_lawCarrier M cutoff
   let hStruct := Cutoff.relativeNormalizedCutoffLaw_structuralLaw M cutoff
   let hP4 :=
-    Cutoff.relativeNormalizedCutoffLaw_quantitativeCoarseGrainedEllipticity
+    Cutoff.relativeNormalizedCutoffLawQuantitativeCoarseGrainedEllipticity
       M cutoff
   let L : ℝ := Ch05.Section57.barSigmaLimit hP hStruct
   let s : ℤ := cutoff + (Cutoff.cutoffRelativeNormalizationShift d : ℤ)

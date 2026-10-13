@@ -203,6 +203,7 @@ transversally. -/
 def cornerFaceSlabLo (x : Vec d) (m k : ℤ) (i : Fin d) (delta : ℝ) : Fin d → ℝ :=
   fun l => if l = i then (1 / 2 : ℝ) * (3 : ℝ) ^ m - delta else hugLo x m k l
 
+/-- Upper coordinates of the slab meeting one upper cube face. -/
 def cornerFaceSlabHi (x : Vec d) (m k : ℤ) (i : Fin d) : Fin d → ℝ :=
   fun l => if l = i then (1 / 2 : ℝ) * (3 : ℝ) ^ m else hugHi x m k l
 
@@ -210,6 +211,7 @@ def cornerFaceSlabHi (x : Vec d) (m k : ℤ) (i : Fin d) : Fin d → ℝ :=
 def cornerFaceTaylorLo (x : Vec d) (m k : ℤ) (i : Fin d) (delta : ℝ) : Fin d → ℝ :=
   fun l => if l = i then (1 / 2 : ℝ) * (3 : ℝ) ^ m - 2 * delta else hugLo x m k l
 
+/-- Upper coordinates of the Taylor box extending across one upper cube face. -/
 def cornerFaceTaylorHi (x : Vec d) (m k : ℤ) (i : Fin d) (delta : ℝ) : Fin d → ℝ :=
   fun l => if l = i then (1 / 2 : ℝ) * (3 : ℝ) ^ m + delta else hugHi x m k l
 
@@ -218,6 +220,7 @@ def cornerPairSlabLo (x : Vec d) (m k : ℤ) (i j : Fin d) (delta : ℝ) : Fin d
   fun l => if l = i ∨ l = j then (1 / 2 : ℝ) * (3 : ℝ) ^ m - delta
     else hugLo x m k l
 
+/-- Upper coordinates of the slab meeting two upper cube faces. -/
 def cornerPairSlabHi (x : Vec d) (m k : ℤ) (i j : Fin d) : Fin d → ℝ :=
   fun l => if l = i ∨ l = j then (1 / 2 : ℝ) * (3 : ℝ) ^ m else hugHi x m k l
 
@@ -228,6 +231,7 @@ def cornerPairTaylorLo (x : Vec d) (m k : ℤ) (i j : Fin d) (delta : ℝ) : Fin
     else if l = j then (1 / 2 : ℝ) * (3 : ℝ) ^ m - 2 * delta
     else hugLo x m k l
 
+/-- Upper coordinates of the Taylor box for the second face of a corner step. -/
 def cornerPairTaylorHi (x : Vec d) (m k : ℤ) (i j : Fin d) (delta : ℝ) : Fin d → ℝ :=
   fun l => if l = i then (1 / 2 : ℝ) * (3 : ℝ) ^ m
     else if l = j then (1 / 2 : ℝ) * (3 : ℝ) ^ m + delta

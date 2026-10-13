@@ -292,7 +292,6 @@ theorem inv_lambdaSq_le_of_mem_goodLocalEvent_ae (M : ABKModel d) {Ccg : ℝ}
   field_simp
 
 /-! ## 3. The composed gate, in both consumer spellings
-
  The chain, end to end.  The premise list is `l.shom.continuity`'s own, which is
  where the
 `shom_{n-1} -> shom_n` passage comes from. -/

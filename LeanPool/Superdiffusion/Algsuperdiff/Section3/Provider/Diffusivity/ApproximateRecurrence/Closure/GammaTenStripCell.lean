@@ -104,12 +104,10 @@ supplies from the cell's geometric membership alone.
   statement about a **nonnegative** grid family --- no minimizer, no Besov datum,
   no interior restriction --- namely the sample integrability of the majorant at
   each cell together with
-
   ```
     cubeFamilyAverage (mesoCubeGrid d Kc (Kc - j))
       (fun R => (int_omega stripCellMajorant ... R omega)^2)  <=  Cstrip .
   ```
-
   That residual is **not** proved here.
 
 ## Binders
@@ -204,7 +202,7 @@ Besov envelope, so neither is restricted to the interior mesh.
 
 only on the cell's geometric membership `hR`, which is used solely to type the
 two background legs as vector-`L^2` on the cell. -/
-theorem abs_meshFluctuationCellIntegrand_le_stripCellMajorant [NeZero d]
+theorem abs_meshFluctuationCellIntegrand_le_stripCellMajorant
     (M : ABKModel d) (n : ℤ) (h : ℕ) (Kc : ℤ) (e e' : Vec d)
     (wD : ShellSeq d → H10Function (openCubeSet (originCube d Kc)))
     (wN : ShellSeq d → H1MeanZeroFunction (openCubeSet (originCube d Kc)))

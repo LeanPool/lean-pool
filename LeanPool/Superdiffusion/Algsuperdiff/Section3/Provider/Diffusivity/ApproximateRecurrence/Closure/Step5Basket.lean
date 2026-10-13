@@ -84,7 +84,6 @@ exactly the legs that this lane did **not** reach:
 * `hintP`, `hsampDef` --- two integrability side conditions on the cube and on
   the sample;
 * `hmeasX`, `hmeasS` --- the sample measurability of the two per-cube pairings.
-
   Both legs are now proved at the full sigma-algebra, at the closure's own
   families, as
   `Closure.Step5InputSideConditions.aestronglyMeasurable_step5PairingX` and
@@ -432,7 +431,7 @@ theorem integrable_rpow_two_of_memLp_four {Omega : Type*} [MeasurableSpace Omega
 /-- **Cauchy--Schwarz in the sample at the second moment**, in the fourth-moment
 spelling. -/
 theorem integral_rpow_two_mul_rpow_two_le {Omega : Type*} [MeasurableSpace Omega]
-    (mu : Measure Omega) [IsProbabilityMeasure mu] {a b : Omega → ℝ}
+    (mu : Measure Omega) {a b : Omega → ℝ}
     (ha : ∀ omega, 0 ≤ a omega) (hb : ∀ omega, 0 ≤ b omega)
     (ham : MemLp a 4 mu) (hbm : MemLp b 4 mu) :
     ∫ omega, a omega ^ (2 : ℝ) * b omega ^ (2 : ℝ) ∂mu ≤
@@ -570,7 +569,7 @@ theorem descendantsAverage_integral_vecNormSq_matVecMul_le {Omega : Type*}
 /-- **`hsampS`**, from the two fourth-moment legs and the measurability of the
 quantity itself. -/
 theorem integrable_vecNormSq_matVecMul_of_memLp_four {Omega : Type*}
-    [MeasurableSpace Omega] (mu : Measure Omega) [IsFiniteMeasure mu]
+    [MeasurableSpace Omega] (mu : Measure Omega)
     {A : Omega → Mat d} {v : Omega → Vec d}
     (hA : MemLp (fun omega => matrixOperatorNorm (A omega)) 4 mu)
     (hv : MemLp (fun omega => vecNorm (v omega)) 4 mu)

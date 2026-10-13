@@ -39,6 +39,7 @@ noncomputable section
 
 variable {d : ℕ}
 
+/-- The target scale combining the large-cube moment budget and spatial decay. -/
 noncomputable def momentBoostedLargeCubeTargetScale
     (M : ABKModel d) (p : ℝ) (l n m : ℤ) : ℝ :=
   ((4 * momentBoostedLargeCubeEnvelope d) * p) ^ (p / 2) *

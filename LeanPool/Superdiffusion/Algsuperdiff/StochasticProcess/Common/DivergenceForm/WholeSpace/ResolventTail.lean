@@ -51,12 +51,14 @@ radius may depend on the shift; only the cubic layer-cake budget and the growth 
 radius are uniform. -/
 structure WholeSpaceVariableExhaustionResolventTailInput
     (R : PositiveC0ContractiveResolvent (Vec d)) where
+  /-- The positive exhaustion weight used for the one-point metric. -/
   rho : Vec d → ℝ
   continuous_rho : Continuous rho
   rho_pos : ∀ x, 0 < rho x
   lipschitz_rho : LipschitzWith 1 rho
   isCompact_superlevel : ∀ epsilon > 0, IsCompact {x | epsilon ≤ rho x}
   rho_le_one : ∀ x, rho x ≤ 1
+  /-- The nonnegative tail envelope indexed by the resolvent shift and distance. -/
   phi : ℝ → ℝ → ℝ
   phi_nonneg : ∀ lam s, 0 ≤ phi lam s
   hasTail : ∀ mu : PositiveShift, 1 ≤ (mu : ℝ) →
@@ -65,16 +67,20 @@ structure WholeSpaceVariableExhaustionResolventTailInput
     Algsuperdiff.Process.SubMarkovKernelSemigroup.HasResolventTail R.onePointKernelSemigroup (mu :
       ℝ)
       (phi (mu : ℝ))
+  /-- The lower integration cutoff for each resolvent shift's tail bound. -/
   cutoff : ℝ → ℝ
   cutoff_nonneg : ∀ lam, 0 ≤ cutoff lam
+  /-- The common bound for the cubic-weighted resolvent-tail integrals. -/
   budget : ℝ
   budget_nonneg : 0 ≤ budget
   integral_le : ∀ mu : PositiveShift, 1 ≤ (mu : ℝ) →
     ∫⁻ s in Set.Ioi (cutoff (mu : ℝ)),
       ENNReal.ofReal (phi (mu : ℝ) s * s ^ 3) ≤ ENNReal.ofReal budget
+  /-- The exponent controlling the time regularity obtained from the resolvent tails. -/
   timeExponent : ℝ
   one_lt_timeExponent : 1 < timeExponent
   timeExponent_le_two : timeExponent ≤ 2
+  /-- The constant bounding the fourth power of the shift-dependent tail cutoff. -/
   cutoffGrowth : ℝ
   cutoffGrowth_nonneg : 0 ≤ cutoffGrowth
   cutoff_pow_le : ∀ mu : PositiveShift, 1 ≤ (mu : ℝ) →
@@ -88,7 +94,7 @@ variable {R : PositiveC0ContractiveResolvent (Vec d)}
 data used by the canonical process construction. -/
 def toOnePointRegular (H : WholeSpaceVariableExhaustionResolventTailInput R) :
     R.OnePointRegular :=
-  Algsuperdiff.Process.PositiveC0ContractiveResolvent.OnePointRegular.of_variableResolventTail R
+  Algsuperdiff.Process.PositiveC0ContractiveResolvent.OnePointRegular.ofVariableResolventTail R
     H.rho
     H.continuous_rho H.rho_pos H.lipschitz_rho H.isCompact_superlevel H.rho_le_one
     H.phi_nonneg H.hasTail H.cutoff_nonneg H.budget_nonneg H.integral_le

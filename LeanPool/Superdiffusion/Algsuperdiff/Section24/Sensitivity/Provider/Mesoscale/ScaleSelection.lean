@@ -25,17 +25,14 @@ The unconditional Section 2.4 sensitivity estimates (ABK26, Lemma
 `l.J.sensitivity.no.conditions`) remove the smallness assumption of the
 conditional estimates by choosing a *mesoscopic* scale `3^{-h}` as a function of
 the dimensionless quantity
-
   `X = ||grad h||_{W^{1,infinity}(cube_0)} * lambda_{s,2}^{-1}(cube_0; a)`,
 
 applying the conditional estimates on every triadic cube of that scale, and
 reassembling.  The source's choice is
-
   `h := ceil ( (1 - 2 s)^{-1} log_3 u )`,  `u = 1 + >= 1`,
 
 and the only property of `h` used afterwards is the two-sided bound
 `e.another.way.to.say.h`
-
   `3^{(1-2s) h - 1} <= u <= 3^{(1-2s) h}`.
 
 This module contains **only** that pure real-analysis arithmetic together with

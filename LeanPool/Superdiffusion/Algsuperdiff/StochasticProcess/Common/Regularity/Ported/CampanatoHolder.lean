@@ -37,6 +37,7 @@ noncomputable section
 
 variable {d : ℕ}
 
+/-- The common constant in the local small-contrast Hölder estimate. -/
 def smallContrastLocalHolderConstant (d : ℕ) : ℝ :=
   16 * ballVolumePrice 2 d * smallContrastCampanatoConstant d +
     12 * ballVolumePrice 3 d * smallContrastCampanatoConstant d
@@ -256,6 +257,7 @@ theorem local_holder_smallContrastCampanatoRepresentative [NeZero d]
 
 /-! ## Finite convex chaining -/
 
+/-- The number of links used to compare points in the small-contrast Hölder estimate. -/
 def smallContrastHolderChainLength (d : ℕ) : ℕ := 12 * d + 1
 
 theorem smallContrastHolderChainLength_pos (d : ℕ) :

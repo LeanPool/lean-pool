@@ -48,7 +48,9 @@ exhaustion.  The field has the form `a = nu I + k`, where `nu > 0` and `k` is
 continuous and skew with arbitrary size; no whole-space small-contrast
 hypothesis is included. -/
 structure WholeSpaceAnalyticData (d : ℕ) [NeZero d] where
+  /-- The measurable whole-space coefficient field with fixed symmetric part. -/
   a : CoeffField d
+  /-- The positive molecular diffusivity determining the symmetric coefficient part. -/
   nu : ℝ
   hnu : 0 < nu
   hsymm : ∀ y, symmPart (a y) = nu • (1 : Mat d)

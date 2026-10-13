@@ -51,6 +51,7 @@ theorem boundedPotential_memLp
   filter_upwards [hq.2.1, hq.2.2] with x hq0 hqC
   simpa only [Real.norm_eq_abs, abs_of_nonneg hq0] using hqC
 
+/-- The L∞ class of a bounded nonnegative potential on the domain. -/
 noncomputable def boundedPotentialLp
     (q : Vec d → ℝ) (hq : IsBoundedNonnegativePotential U q C) :
     Lp ℝ ∞ (volumeMeasureOn U) :=

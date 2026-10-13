@@ -30,7 +30,6 @@ integration by parts.
 A vector field `t` on an open bounded convex carrier `U` that is coordinatewise
 square integrable, supported in a compact subset of `U`, and weakly divergence
 free (it annihilates every smooth compactly supported test gradient) satisfies
-
   `∫ t · ∇w = 0`  for every `w ∈ H¹(U)`.
 
 The compact interior support substitutes for the vanishing normal trace.  The

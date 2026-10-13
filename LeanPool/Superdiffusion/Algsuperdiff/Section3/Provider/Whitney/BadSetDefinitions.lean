@@ -153,6 +153,7 @@ theorem le_whitneyScaleSeq_cast (b : ℝ) (hs k₀ n : ℕ) :
   push_cast
   linarith
 
+/-- The Whitney depth sequence anchored at the sample's separation height. -/
 def whitneyScale (M : ABKModel d) (m : ℤ) (E b : ℝ) (k₀ : ℕ)
     (omega : CutoffSample d) : ℕ → ℕ :=
   whitneyScaleSeq b (Percolation.hsep M m E b omega) k₀

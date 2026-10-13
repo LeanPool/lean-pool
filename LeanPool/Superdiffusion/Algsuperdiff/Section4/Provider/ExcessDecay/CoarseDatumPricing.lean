@@ -118,7 +118,7 @@ theorem grad_ae_eq_of_toFun_ae_eq {U : Set (Vec d)} (hU : IsOpen U)
 
 /-- The value and gradient of the structural zero-trace difference of a
 `DirichletForcedCubeSolution`, in a.e. form on the half-open cube. -/
-theorem exists_h10_datumDifference [NeZero d] (Q : TriadicCube d)
+theorem exists_h10_datumDifference (Q : TriadicCube d)
     {a : CoeffFamily d} {g : Vec d → Vec d} (v : DirichletForcedCubeSolution Q a g) :
     ∃ w : H10Function (openCubeSet Q),
       w.toH1Function.toFun =ᵐ[MeasureTheory.volume.restrict (cubeSet Q)]

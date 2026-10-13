@@ -65,7 +65,6 @@ private theorem sandwich_max_of_sq_sandwich {x a b : ℝ} (ha : 0 ≤ a) (hb : 0
 
 If the running diffusivity at scale `m` deviates from
 `√(ν² + c⋆ γ⁻¹ 3^{2γm})` by at most `θ · σ_m` with `0 ≤ θ ≤ 1/4`, then
-
   `¼ max (c⋆ γ⁻¹ 3^{2γm}) ν² ≤ σ_m² ≤ 4 max (c⋆ γ⁻¹ 3^{2γm}) ν²`.
 
 The deviation hypothesis is an explicit input; no producer of it is asserted

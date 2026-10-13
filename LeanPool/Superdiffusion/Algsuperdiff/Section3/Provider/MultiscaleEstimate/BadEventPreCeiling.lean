@@ -120,7 +120,6 @@ cu_l`.  That identification is **not** performed here.
 Printed step 1 is a pure majorant extraction over ONE index set: it relates no
 grid to `cu_m` and needs no `hcube` at all.  What is delivered is that form
 composed with
-
     grid maximum  <=  scale-`l` descendant maximum
 
 whose hypothesis is exactly `hcube` (it is CoarseGraining's

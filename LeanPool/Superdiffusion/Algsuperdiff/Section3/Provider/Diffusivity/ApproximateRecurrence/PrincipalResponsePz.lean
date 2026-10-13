@@ -26,7 +26,6 @@ Module imports, support namespace and local option directives adapted for Lean P
 Source displays in ABK26:
 
 * `e.Pz.def` (label; display):
-
   ```
   P_z = (p_z; q_z)
     := bfAhom_{m-h}^{-1/2} ( e' + (grad w_{D,e}^{(K)})_{z+cu_n};
@@ -35,14 +34,12 @@ Source displays in ABK26:
   ```
 
 * `e.Fz.def` (label; display):
-
   ```
   F_z := bfAhom_{m-h}^{-1/2}
            ( grad w_{D,e}^{(K)} - (grad w_{D,e}^{(K)})_{z+cu_n};
   grad w_{N,e'}^{(K)} + shom_{m-h}^{-1} h e'
                - (grad w_{N,e'}^{(K)} + shom_{m-h}^{-1} h e')_{z+cu_n} ) ,
   ```
-
   where `h = k_m - k_{m-h}` is the fresh shell and `(.)_{z+cu_n}` is the
   average over the localization cube.
 

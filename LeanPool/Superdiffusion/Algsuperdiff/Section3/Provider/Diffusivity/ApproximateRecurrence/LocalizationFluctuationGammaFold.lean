@@ -76,7 +76,6 @@ uniformly in `N`.  That is `cubeBesovPositiveVectorPartialSeminormTwo_le_of_dept
 whose conclusion is exactly the envelope `Bg` of the per-cube bound.
 
 ## 3.  The annealed Hoelder fold
-
  ABK26 combines an ellipticity moment `C gamma^{-1}`, a load moment `C` and an
 oscillation moment `C gamma^{14}` by Hoelder into `gamma^{10}`.
 `integral_mul_mul_le_L4_L4_L2` is the pairing itself, at the exponents `1/4 +

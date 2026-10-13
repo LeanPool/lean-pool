@@ -35,12 +35,10 @@ and isolates exactly one layer that the shape does not yet cover.
 
 * **The deep block** `Σ_{i ≥ j}` -- every layer whose shell index is at least the
   cube scale -- carries the display
-
   ```
   3^{2j} Σ_{i ≥ j} ‖∇ j_i‖_{W^{1,∞}(3^j v + □_j)}
       = 𝒪_{Γ₂}( gammaTriangleConst 2 · (1 − 3^{γ−1})^{-1} · 3^{γ j} ) .
   ```
-
   The per-layer amplitude is `3^{j} 3^{(γ−1)i}` (`TailSummability`'s
   cross-scale reading of `e.nabla.jk.O`), the geometric sum over `i ≥ j` is
   `3^{γj}(1 − 3^{γ−1})^{-1}`, and the `Γ₂` triangle inequality for countable

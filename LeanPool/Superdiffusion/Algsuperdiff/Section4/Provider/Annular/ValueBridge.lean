@@ -241,7 +241,7 @@ This is the manuscript's "Poincare inequality" step, in the `L^infinity`
 reading its own right-hand side forces.  The supremum point `x` and the
 averaging cube are decoupled, which is what the annular chain needs: there the
 point runs over the small cube `z + cu_n` while the average is over `cu_m`. -/
-theorem matrixNorm_sub_cubeAverageMat_originCube_le [NeZero d] (m : ℤ)
+theorem matrixNorm_sub_cubeAverageMat_originCube_le (m : ℤ)
     (g : ShellField d) {x : Vec d} (hx : x ∈ openCubeSet (originCube d m)) :
     matrixNorm (g x - cubeAverageMat (originCube d m) fun y => g y) ≤
       centeringConst d *

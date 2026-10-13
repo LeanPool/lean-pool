@@ -45,7 +45,6 @@ The **coefficient stays `a_m` on both sides**; only the comparator moves.
   `e.switchtheshoms.betterer.again` carries an **un-cancelled** `3^{cgamma
   Delta}` and `e.shaking.lambda` squares it.  The corrected per-cube remainder,
   delivered by every statement below, is
-
   ```
   C min{cgamma^2 Delta^2, 1} 3^{2 cgamma Delta}
     + C E^4 cgamma^2 |log cgamma|^4 3^{2 cgamma Delta} ,   Delta = m - l + h .
@@ -90,7 +89,6 @@ front of the gate level `Cev` (the printed display, stated at `|e| = 1`,
 carries `1`).
 
 ## The `lambda`-gate is a conditional input
-
  ABK26 justifies the last inequality by the chain
 
 ```
@@ -396,7 +394,6 @@ theorem responseJ_comparator_switch_of_gate (U : Book.Ch02.Domain d)
   linarith [hcore, hleg, hrem]
 
 /-! ## 4. The gate at the printed `lambda_{s,2}` carrier
-
  ABK26 clamps `|s_{m,*}^{-1}(z+cu_l)|` through `lambda_{1/8,2}^{-1}(z+cu_l;
  a_m)`.
 The two bridges below convert a gate stated at that carrier into the matrix-norm

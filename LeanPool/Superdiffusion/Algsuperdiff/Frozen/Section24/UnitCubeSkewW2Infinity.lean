@@ -23,11 +23,15 @@ open HCPolySupport HCPolySupport.Book.Ch02 MeasureTheory
 open scoped ENNReal
 
 -- FROZEN-STATEMENT-BEGIN
+/-- A skew field with essentially bounded weak derivatives through order two on the unit cube. -/
 structure Algsuperdiff.Frozen.Section24.UnitCubeSkewW2Infinity (d : ℕ) where
+  /-- The underlying essentially bounded skew field. -/
   toLInfSkewMatrixFieldOn :
     Algsuperdiff.Frozen.Section24.LInfSkewMatrixFieldOn
       (cubeDomain (originCube d 0))
+  /-- The stored first weak derivative. -/
   firstDeriv : Vec d → Vec d →L[ℝ] Mat d
+  /-- The stored second weak derivative. -/
   secondDeriv : Vec d → Vec d →L[ℝ] (Vec d →L[ℝ] Mat d)
   firstDeriv_memLp : ∀ k i j : Fin d,
     MemLp (fun x => firstDeriv x (basisVec k) i j) ∞

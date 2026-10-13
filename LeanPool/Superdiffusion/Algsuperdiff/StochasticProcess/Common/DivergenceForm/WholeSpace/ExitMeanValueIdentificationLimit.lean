@@ -28,7 +28,6 @@ value component of the limit with the Green potential of `ExitMeanValueHarmonicP
 
 The convergence is a genuine energy estimate, not a compactness argument.  Subtracting the weak
 equations at two shifts and testing against the difference gives
-
   `nu * ‖grad (Z_s - Z_t)‖² ≤ t ⟪Z_t, Z_s - Z_t⟫ - s ⟪Z_s, Z_s - Z_t⟫`,
 
 whose right-hand side is at most `(s + t)` times a constant, because the shift-uniform

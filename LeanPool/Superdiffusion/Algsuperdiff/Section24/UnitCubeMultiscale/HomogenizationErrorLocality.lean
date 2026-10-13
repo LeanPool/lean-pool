@@ -31,7 +31,7 @@ open HCPolySupport HCPolySupport.Book.Ch02 MeasureTheory
 
 variable {d : ℕ}
 
-private theorem normalizedBlockResponseMax_eq_of_root_aeeq [NeZero d]
+private theorem normalizedBlockResponseMax_eq_of_root_aeeq
     (a : CoeffOn (cubeDomain (originCube d 0)))
     (F G : TriadicCoeffFamily d)
     (hF : CoeffOn.AEEq (F.coeffOn (originCube d 0)) a)

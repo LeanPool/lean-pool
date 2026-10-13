@@ -19,6 +19,7 @@ Module imports, support namespace and local option directives adapted for Lean P
 @[expose] public section
 
 -- FROZEN-STATEMENT-BEGIN
+/-- The Borel measurable structure induced by the shell's compact-open topology. -/
 @[instance_reducible] noncomputable def
     Algsuperdiff.Frozen.Assumptions.shellFieldBorelMeasurableSpace
     (d : ℕ) :

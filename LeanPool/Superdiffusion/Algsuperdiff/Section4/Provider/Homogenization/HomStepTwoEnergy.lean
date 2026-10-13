@@ -136,7 +136,7 @@ theorem homRpowNegHalf {x : ℝ} (hx : 0 < x) :
 
 /-- The `𝓔`-envelope `√(2d(𝓔² + 1))` of the display bounding the `Λ`'s by the `𝓔`'s, at the cube
 `Q`, the family `A`, the index `t` and the comparator `σ Id`. -/
-def homErrorEnvelope (d : ℕ) [NeZero d] (Q : TriadicCube d) (A : CoeffFamily d)
+def homErrorEnvelope (d : ℕ) (Q : TriadicCube d) (A : CoeffFamily d)
     (t sigma : ℝ) : ℝ :=
   Real.sqrt (2 * (d : ℝ) *
     (Ch02.HomogenizationErrorOnCube Q t .infinity (.finite 2) A

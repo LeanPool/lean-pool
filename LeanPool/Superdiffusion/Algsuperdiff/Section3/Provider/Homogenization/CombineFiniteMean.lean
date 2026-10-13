@@ -45,6 +45,7 @@ open scoped MatrixOrder
 
 noncomputable section
 
+/-- The square-root-conjugated quadratic difference from a coarse comparator matrix. -/
 noncomputable def starredComparatorQuadraticRaw
     {d : ℕ} (B : FullBlockMat d) (C : BlockMat d) (q : FullBlockVec d)
     (U : Set (Vec d)) (a : CoeffField d) : ℝ :=
@@ -54,11 +55,13 @@ noncomputable def starredComparatorQuadraticRaw
         toFullBlockMat (blockReflect C)) *
       CFC.sqrt B) q
 
+/-- The coarse comparator quadratic evaluated on a regular coefficient field. -/
 noncomputable def starredComparatorQuadratic
     {d : ℕ} (B : FullBlockMat d) (C : BlockMat d) (q : FullBlockVec d)
     (U : Set (Vec d)) (a : RegCoeffField d) : ℝ :=
   starredComparatorQuadraticRaw B C q U a.toFun
 
+/-- The combined second- and fourth-moment budget for two stretched-exponential tails. -/
 noncomputable def twoTermSecondFourthBudget (A D : ℝ) : ℝ :=
   2 *
       ((gammaMomentConst 2 * (2 : ℝ) ^ ((2 : ℝ)⁻¹) * A) ^ (2 : ℕ) +

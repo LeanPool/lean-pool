@@ -37,6 +37,7 @@ noncomputable section
 variable {d : ℕ}
 
 
+/-- The normalized wave factor determined by the layer's fourth-moment simplex mass. -/
 def probeLayerWaveFactor (M : ABKModel d) (m : ℤ) (hn : ℕ → ℕ)
     (n : ℕ) (L : ℤ) (omega : CutoffSample d) : ℝ :=
   M.gamma * (3 : ℝ) ^ (-(2 * M.gamma *

@@ -26,7 +26,6 @@ Source displays in ABK26:
 * `e.form.of.A.naught`, the scalar reference matrix `bfA_0 = diag(sigma_0,
   sigma_0^{-1})` with `kappa_0 = 0`;
 * the first display of Step 2 of `l.approximate.recurrence.formula`,
-
   ```
   fint_{z+cu_n} bfF_z . bfA_m tilde S_z
     <= [ bfAhom^{1/2} bfF_z ]_{H^1(z+cu_n)}

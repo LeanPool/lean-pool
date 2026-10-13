@@ -70,7 +70,7 @@ variable {d : ℕ}
 /-! ## 1. The window dictionary -/
 
 /-- The open cube of scale `k` about `x` is the sup-ball of radius `3 ^ k / 2`. -/
-theorem openCubeAtScale_eq_ball [NeZero d] (x : Vec d) (k : ℤ) :
+theorem openCubeAtScale_eq_ball (x : Vec d) (k : ℤ) :
     openCubeAtScale x k = Metric.ball x ((3 : ℝ) ^ k / 2) := by
   have hr : (0 : ℝ) < (3 : ℝ) ^ k / 2 := by
     have := zpow_pos (by norm_num : (0 : ℝ) < 3) k

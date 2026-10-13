@@ -35,7 +35,6 @@ ABK26, §4.2.  The chain is the one the manuscript performs:
    lemma splits the average into `Xdet ≤ C c⋆^{−1}s^{−7/2}√γ` and a `Γ₂`
    fluctuation at scale `C c⋆^{−1}s^{−9/2}√γ j^{−1/2}`; at the level `t = √(A j)`
    the weak-Orlicz definition returns `exp(−A j)` with
-
    `A = c⋆² s⁹ δ² / (4 C_kick² γ)`.
 
 4. **The centre union and the geometric closure** —

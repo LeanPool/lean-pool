@@ -55,6 +55,7 @@ private theorem abs_le_norm_identification (f : C₀(Vec d, ℝ)) (y : Vec d) :
 /-- Inputs needed by the S-free monotone-class identification: agreement on
 `C₀` data and the analytic and kernel constant-one normalizations. -/
 structure KernelIdentificationInput where
+  /-- The positive contractive resolvent to be identified with the analytic resolvent. -/
   R : PositiveC0ContractiveResolvent (Vec d)
   operator_eq : ∀ (mu : PositiveShift) (f : C₀(Vec d, ℝ)) (x : Vec d),
     R.toContractiveResolvent.operator mu f x =
@@ -183,6 +184,7 @@ theorem abs_indicator_le_one (T : Set (Vec d)) (y : Vec d) :
   rw [Set.indicator_apply]
   split_ifs <;> norm_num
 
+/-- Agreement of the kernel and analytic resolvents on a measurable-set indicator. -/
 def IndicatorAgreement (S : KernelIdentificationInput A)
     (mu : PositiveShift) (x : Vec d) (T : Set (Vec d))
     (hT : MeasurableSet T) : Prop :=

@@ -141,6 +141,7 @@ def clauseOneTermOne (M : ABKModel d) (m : ℤ) (s : {s : ℝ // 0 < s})
           (Cutoff.translateCutoffSample (Support.triadicLatticePoint n.1 v.1)
             omega) ^ 2)
 
+/-- The squared shell-gradient sum forming the third term of the annular bound. -/
 def clauseOneTermThree (M : ABKModel d) (m : ℤ)
     (omega : Cutoff.CutoffSample d) : ℝ≥0∞ :=
   (∑' k : {k : ℤ // m ≤ k},

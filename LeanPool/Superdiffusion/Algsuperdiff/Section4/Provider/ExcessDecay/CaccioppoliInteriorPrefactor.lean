@@ -36,22 +36,18 @@ supplies the two missing pieces:
 1. **the `q = 1 ← q = 2` comparison for `Λ` and `λ⁻¹`** (§1).  The weights of
    the two definitions coincide, `w_{u,1} = w_{u/2,2}`, and CoarseGraining's
    own Jensen split then gives
-
    ```text
      Λ_{u,1} ≤ Λ_{u/2,2} ,      λ_{u,1}^{-1} ≤ λ_{u/2,2}^{-1}
    ```
-
    with **no constant**.
 2. **the parameter choice that makes the prefactor a dimensional constant**
    (§2--§3).  The Caccioppoli's first exponent is a *free parameter* of the
    lemma; taking it to be the absolute constant `1/4` and the second to be
    `t = s/4` gives, for every `s ∈ (0,1]`,
-
    ```text
      σ = 3/4 - s/4 ∈ [1/2, 3/4) ,   2 + 4·(1/4)/σ ≤ 4 ,
      (1/4)^{-2·(1/4)/σ} ≤ 4 ,       (1-t)/σ ≤ 2 ,
    ```
-
    so the prefactor is at most `(2 max(1,C))^4 · 4 · Θ_0^2` — **no transcendental
    estimate is needed anywhere**, and the whole `s`-dependence of the estimate is
    pushed into the forcing factor `t^{-8}(1-2t)^{-1} ≤ 131072 s^{-8}` (§3).
@@ -99,7 +95,7 @@ private theorem weight_two_half_eq (u : ℝ) (l : ℕ) :
   exact h
 
 /-- `Λ_{u,2}` is the weighted shell series of the operator norms. -/
-theorem LambdaSq_finite_two_eq_tsum [NeZero d] (Q : TriadicCube d)
+theorem LambdaSq_finite_two_eq_tsum (Q : TriadicCube d)
     (a : CoeffFamily d) {u : ℝ} (hu : 0 < u) :
     Ch02.LambdaSq Q u (.finite 2) a =
       ∑' n : ℕ, Ch02.geometricWeight u 2 n *
@@ -111,7 +107,7 @@ theorem LambdaSq_finite_two_eq_tsum [NeZero d] (Q : TriadicCube d)
   exact h
 
 /-- `λ_{u,2}⁻¹` is the weighted shell series of the inverse lower norms. -/
-theorem lambdaSq_finite_two_inv_eq_tsum [NeZero d] (Q : TriadicCube d)
+theorem lambdaSq_finite_two_inv_eq_tsum (Q : TriadicCube d)
     (a : CoeffFamily d) {u : ℝ} (hu : 0 < u) :
     (Ch02.lambdaSq Q u (.finite 2) a)⁻¹ =
       ∑' n : ℕ, Ch02.geometricWeight u 2 n *
@@ -200,7 +196,7 @@ theorem lambdaS_le_LambdaS [NeZero d] (Q : TriadicCube d) (a : CoeffFamily d)
   exact (one_le_div hpos).mp h1
 
 /-- **The contrast `Θ` is capped by the product of the two `q = 1` caps.** -/
-theorem thetaRatio_le_of_caps [NeZero d] (Q : TriadicCube d) (a : CoeffFamily d)
+theorem thetaRatio_le_of_caps (Q : TriadicCube d) (a : CoeffFamily d)
     {s t B1 B2 : ℝ} (hs : 0 < s) (ht : 0 < t) (hB1 : Ch02.LambdaS Q s a ≤ B1)
     (hB2 : (Ch02.lambdaS Q t a)⁻¹ ≤ B2) :
     Ch02.ThetaRatio Q s t a ≤ B1 * B2 := by

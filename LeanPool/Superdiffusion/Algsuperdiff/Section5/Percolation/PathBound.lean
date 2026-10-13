@@ -90,6 +90,7 @@ private theorem cast_card_pathsOfLength_le_exp {d k n : ℕ}
     _ ≤ Real.exp (4 * ((d : ℝ) + 1) * n) :=
       Real.exp_le_exp.mpr hexponent
 
+/-- The event that a path of the prescribed length meets the weighted bad-cube threshold. -/
 noncomputable def fixedLengthWeightedPathEvent
     {Ω : Type*} {d : ℕ} (B : ℕ → Site d → Set Ω)
     (lam : ℝ) (k n : ℕ) : Set Ω := by

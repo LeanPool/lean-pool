@@ -383,7 +383,6 @@ theorem mem_goodLocalEvent_negateCutoffSample_ae (M : ABKModel d) (Ccg : ℝ)
     exact hell
 
 /-! ## 3. The transposed priced injection endpoint
-
  The gate at the transposed representative, by the `(J3)` law-level negation
  symmetry. -/
 

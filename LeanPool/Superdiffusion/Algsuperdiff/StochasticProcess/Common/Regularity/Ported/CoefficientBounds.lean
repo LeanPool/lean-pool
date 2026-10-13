@@ -50,6 +50,7 @@ instance hilbertVecOperatorBorelSpace :
     BorelSpace (HilbertVec d →L[ℝ] HilbertVec d) :=
   ⟨rfl⟩
 
+/-- The linear map taking a matrix to its Euclidean Hilbert-space operator. -/
 noncomputable def matrixToHilbertOperatorLinear :
     Mat d →ₗ[ℝ] (HilbertVec d →L[ℝ] HilbertVec d) where
   toFun := HilbertVec.applyMat
@@ -62,6 +63,7 @@ noncomputable def matrixToHilbertOperatorLinear :
     ext x i
     simp [HilbertVec.applyMat_apply, matVecMul, Finset.mul_sum, mul_assoc]
 
+/-- The continuous linear map taking a matrix to its Euclidean Hilbert-space operator. -/
 noncomputable def matrixToHilbertOperator :
     Mat d →L[ℝ] (HilbertVec d →L[ℝ] HilbertVec d) :=
   ⟨matrixToHilbertOperatorLinear,

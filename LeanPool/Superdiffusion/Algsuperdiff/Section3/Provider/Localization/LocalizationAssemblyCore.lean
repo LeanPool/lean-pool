@@ -46,14 +46,12 @@ live in the sibling `Provider/Localization/LocalizationAssembly.lean`.
 
 3. For one grid cube `R` of the printed tiling, on one probability-one event
    and uniformly in the cube,
-
    ```text
    legA(R; a_m, σ_m)
      ≤ 24 · legA(R; a_{l-h}, σ_{l-h})
        + 8·Cinj(Ccg) · c⋆⁻¹ γ · waveSizeW2(m,h,R)²
        + Cs·48Ccg · switchRemainder γ E h j
    ```
-
    with `l = R.scale = m - j`.  The three summands are the printed first, third
    and fifth terms of `e.localization.mathcalE.estimate` before the
    `z`-average and the `l`-sum.

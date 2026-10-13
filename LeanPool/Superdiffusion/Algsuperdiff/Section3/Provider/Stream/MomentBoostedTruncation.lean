@@ -123,7 +123,7 @@ theorem momentBoosted_tail_kernel_pointwise
 observable with strengthened moment tail at unit scale. -/
 theorem momentBoosted_tail_integrand_pointwise_of_isBigOWith
     {Omega : Type*} [MeasurableSpace Omega] {mu : Measure Omega}
-    [IsProbabilityMeasure mu] {X : Omega → ℝ} {sigma l L t : ℝ}
+    {X : Omega → ℝ} {sigma l L t : ℝ}
     (hsigma : 0 < sigma) (hsigma_one : sigma < 1)
     (hX : IsBigOWith mu (momentBoostedGammaSigma sigma) X 1)
     (hl : 0 ≤ l)

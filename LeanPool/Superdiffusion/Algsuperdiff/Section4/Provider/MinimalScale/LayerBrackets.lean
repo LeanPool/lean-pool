@@ -124,6 +124,7 @@ theorem gradCross_le (M : ABKModel d) {k l : ℤ} (hkl : k ≤ l)
 
 /-! ## 3. The Step-3 lattice maximum (`e.maxy.bound`) -/
 
+/-- The dimension-dependent amplitude for the lattice maximum estimate. -/
 def latticeMaxAmp (d : ℕ) : ℝ := Real.sqrt (1 + (d : ℝ) * Real.log 3) * atomG1bScale
 
 theorem latticeMaxAmp_pos (d : ℕ) : 0 < latticeMaxAmp d := by

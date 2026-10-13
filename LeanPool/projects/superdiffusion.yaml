@@ -31,7 +31,6 @@ status: verified
 provenance: AI
 main_declarations:
   - Algsuperdiff.superdiffusivity
-  - Algsuperdiff.generator_renormalization
   - Algsuperdiff.anomalous_regularity
 main_results:
   - declaration: Algsuperdiff.superdiffusivity

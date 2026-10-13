@@ -70,7 +70,7 @@ variable {d : ℕ}
 /-! ## 1. The right-hand side, transferred -/
 
 /-- **The printed right-hand side, at this repository's real-valued spelling.** -/
-theorem localCoarseGrainingLpRHS_le_ofReal [NeZero d]
+theorem localCoarseGrainingLpRHS_le_ofReal
     {Q : TriadicCube d} {n : ℤ} (hn : n ≤ Q.scale)
     {C : ℝ≥0∞} (a : Book.Ch02.CoeffOn (Book.Ch02.cubeDomain Q))
     {sigma0 : ℝ} (hsigma0 : 0 < sigma0) (g : Vec d → Vec d) (u : H1Function (openCubeSet Q))

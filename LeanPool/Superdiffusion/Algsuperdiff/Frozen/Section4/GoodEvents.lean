@@ -33,6 +33,7 @@ Definition; no proof obligation.
 -/
 
 -- FROZEN-STATEMENT-BEGIN
+/-- The Section 4 good event transported to a translated cutoff sample. -/
 noncomputable def Algsuperdiff.Frozen.Section4.goodEventAt
     {d : ℕ} (M : Algsuperdiff.Section3.ABKModel d) (Ccg : ℝ) (m : ℤ)
     (y : HCPolySupport.Vec d) (s : {s : ℝ // 0 < s}) (ep : ℝ) :

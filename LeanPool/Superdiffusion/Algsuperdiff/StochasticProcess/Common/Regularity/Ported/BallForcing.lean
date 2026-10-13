@@ -40,7 +40,7 @@ theorem smallContrastUnitBallVolumePrice_nonneg (d : ℕ) :
     0 ≤ smallContrastUnitBallVolumePrice d :=
   le_trans zero_le_one (le_max_left _ _)
 
-theorem unitBallVolume_rpow_neg_inv_le_price [NeZero d]
+theorem unitBallVolume_rpow_neg_inv_le_price
     {p : ℝ} (hp : 1 ≤ p) :
     (volume (smallContrastUnitBall d)).toReal ^ (-1 / p) ≤
       smallContrastUnitBallVolumePrice d := by

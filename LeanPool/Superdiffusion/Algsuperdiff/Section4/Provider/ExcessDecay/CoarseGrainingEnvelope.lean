@@ -86,7 +86,7 @@ variable {d : ℕ}
 `|a₀|^{1/2} 𝓔_{r,∞,1}(Q; a, a₀) ‖∇u‖_{a,L²(Q)}`.  For the ABK operator
 `a_L = ν Id + κ_L` with `κ_L` antisymmetric, the coefficient-energy norm on the
 right *is* `ν^{1/2}‖∇u‖_{L²}`, which is what the display prints. -/
-def coarseGrainingEnergyTerm [NeZero d] (Q : TriadicCube d) (a : Ch03.CoeffFamily d)
+def coarseGrainingEnergyTerm (Q : TriadicCube d) (a : Ch03.CoeffFamily d)
     (a0 : Ch03.ConstantCoeffMatrix d) (r : ℝ)
     (u : H1Function (Ch02.cubeDomain Q : Set (Vec d))) : ℝ :=
   Ch03.constantCoeffMatrixNormHalf a0 *
@@ -96,7 +96,7 @@ def coarseGrainingEnergyTerm [NeZero d] (Q : TriadicCube d) (a : Ch03.CoeffFamil
 /-- CoarseGraining's forcing bracket, the replacement for the printed `(1 +
 𝓔²_{s_1/2,∞,2})`: it is built from the coarse-grained ellipticity factors
 `λ^{-1/2}_{r/2,2}`, `Λ^{1/2}_{r/2,2}` and `λ^{-1}_{r/2,2}`. -/
-def coarseGrainingForceBracket [NeZero d] (Q : TriadicCube d) (a : Ch03.CoeffFamily d)
+def coarseGrainingForceBracket (Q : TriadicCube d) (a : Ch03.CoeffFamily d)
     (a0 : Ch03.ConstantCoeffMatrix d) (r : ℝ) : ℝ :=
   Ch03.constantCoeffMatrixNormHalf a0 *
       Ch03.poincareLowerEllipticityFactor Q a (r / 2) (.finite 2) *
@@ -134,7 +134,7 @@ theorem h1EnergyNormOnCube_nonneg (Q : TriadicCube d) (a : Ch03.CoeffFamily d)
   exact Real.sqrt_nonneg _
 
 /-- Nonnegativity of the coarse-graining homogenization error at depth `j`. -/
-theorem coarseGrainingHomogenizationErrorAtDepth_nonneg [NeZero d] (Q : TriadicCube d)
+theorem coarseGrainingHomogenizationErrorAtDepth_nonneg (Q : TriadicCube d)
     (a : Ch03.CoeffFamily d) (a0 : Ch03.ConstantCoeffMatrix d) {r : ℝ} (hr : 0 < r)
     (j : ℕ) :
     0 ≤ Ch03.coarseGrainingHomogenizationErrorAtDepth Q a a0 r j := by

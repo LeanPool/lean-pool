@@ -113,7 +113,7 @@ the proved data Poincaré on `h` alone — and the open scalar `S =
 
 `hmean` is a conditional A obligation (the mean-comparison bound); every
 other input is the anchor's own data. -/
-theorem normalizedL2On_coveringCube_sub_datum_le_meanControl [NeZero d]
+theorem normalizedL2On_coveringCube_sub_datum_le_meanControl
     {n m : ℤ} {x z : Vec d} {S : ℝ} (hnm : n + 2 ≤ m)
     (hx : x ∈ openCubeSet (originCube d m))
     (hgeom : (fun y => x + y) '' openCubeSet (originCube d n) ⊆

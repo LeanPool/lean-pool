@@ -24,7 +24,6 @@ Module imports, support namespace and local option directives adapted for Lean P
 # The regime arithmetic of the Step-2 annealed Hoelder fold
 
 ## The discrepancy this module settles
-
  ABK26 quotes the ellipticity moment of the annealed Hoelder fold as `C
  cgamma^{-1}`.
 The proved producer
@@ -211,7 +210,6 @@ theorem gammaRegime_ellipticityLeg_pow_four_le {C cstarM E gamma : ℝ} (hC : 0 
 /-! ## The numerical obligation -/
 
 /-- **The annealed Hoelder fold at the regime exponents.**
-
  ABK26 combines the ellipticity moment, the load moment `C` and the oscillation
 moment `C cgamma^{14}`.  With the ellipticity leg at `cgamma^{-2}`
 (`gammaRegime_ellipticityLeg_le`) rather than the printed `cgamma^{-1}`, the

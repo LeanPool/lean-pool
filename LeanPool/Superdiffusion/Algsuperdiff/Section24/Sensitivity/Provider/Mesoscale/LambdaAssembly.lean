@@ -27,7 +27,6 @@ This module assembles the mesoscopic scale selection
 (`Mesoscale.Patching`) and the root transfer of
 `Multiscale.UnitCubeTransfer`, producing the exact shape of the frozen
 `lambda_sensitivity_unconditional` conclusion
-
   `(unitCubeLambda t q b)⁻¹ ≤ 6 * (1 + X)^{2t/(1-2s)} * (unitCubeLambda t q a)⁻¹`
 
 for `0 < s, t ≤ 1/4`, every admissible `q` (including `q = infinity`) and every

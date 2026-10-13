@@ -90,21 +90,25 @@ def probeSharpWaveTailTunedRareLayer
     (omega : CutoffSample d) : ℝ :=
   probeSharpAfterBandHsepResidual M root E omega *
     probeSharpWaveTailTunedBaseTerm M root E k n omega
+/-- The doubled base stochastic scale for a bounded wave-tail layer. -/
 def probeSharpWaveTailTunedBoundedLayerScale
     (M : ABKModel d) (root : ℤ) (E sigma : ℝ) (k n : ℕ) : ℝ :=
   2 * probeSharpWaveTailTunedBaseScale M root E sigma k n
+/-- The product-tail stochastic scale for a rare wave-tail layer. -/
 def probeSharpWaveTailTunedRareLayerScale
     (M : ABKModel d) (root : ℤ) (E sigma : ℝ) (k n : ℕ) : ℝ :=
   HCPolySupport.Book.Ch04.gammaProductConst
       (upperProfileHsepTau sigma) (upperProfileTailSigma sigma) *
     upperHsepResidualScale sigma M.gamma *
     probeSharpWaveTailTunedBaseScale M root E sigma k n
+/-- The deterministic geometric budget for a bounded wave-tail layer. -/
 def probeSharpWaveTailTunedBoundedLayerBound
     (M : ABKModel d) (E sigma : ℝ) (n : ℕ) : ℝ :=
   probeSharpWaveTailBoundedLayerConst d *
     ((3 : ℝ) ^ (-(1 / 2 : ℝ))) ^ n * sigma⁻¹ ^ 2 *
     Real.exp (-(probeSharpWaveTailTunedRate d *
       (E⁻¹ ^ 2 * M.gamma⁻¹)))
+/-- The deterministic geometric budget for a rare wave-tail layer. -/
 def probeSharpWaveTailTunedRareLayerBound
     (M : ABKModel d) (E sigma : ℝ) (n : ℕ) : ℝ :=
   probeSharpWaveTailRareLayerConst d *
@@ -703,21 +707,25 @@ private theorem tsum_probeSharpWaveTailTunedRareLayerBound_eq
   simp only [probeSharpWaveTailTunedRareLayerBound]
   rw [tsum_mul_right, tsum_mul_right, tsum_mul_left,
     tsum_geometric_of_lt_one hr0 hr1, probeSharpWaveTailRareSumConst]
+/-- A common constant for the bounded and rare wave-tail trace sums. -/
 def probeSharpWaveTailTunedTraceRawConst (d : ℕ) : ℝ :=
   max
     ((d : ℝ) * probeMeanGoodWaveDimensionConst d *
       superposedFluxTriangleConst * probeSharpWaveTailBoundedSumConst d)
     ((d : ℝ) * probeMeanGoodWaveDimensionConst d *
       upperAfterBandRareTriangleConst * probeSharpWaveTailRareSumConst d)
+/-- The stochastic scale for the full tuned wave-tail trace. -/
 def probeSharpWaveTailTunedTraceScale
     (M : ABKModel d) (E sigma : ℝ) : ℝ :=
   probeSharpWaveTailTunedTraceRawConst d *
     (((Algsuperdiff.Section3.Disorder.cstar M)⁻¹ * sigma⁻¹ ^ 2) *
       Real.exp (-(probeSharpWaveTailTunedRate d *
         (E⁻¹ ^ 2 * M.gamma⁻¹))))
+/-- The prefactor obtained by absorbing the wave-tail trace's exponential decay. -/
 def probeSharpWaveTailTunedFrozenPrefactor (d : ℕ) : ℝ :=
   probeSharpWaveTailTunedTraceRawConst d *
     (probeSharpWaveTailTunedRate d / 2)⁻¹
+/-- A common output constant for the tuned wave-tail bounds. -/
 def probeSharpWaveTailTunedOutputConst (d : ℕ) : ℝ :=
   max (profileAuxiliaryConst d)
     (1 + 2 * (probeSharpWaveTailTunedFrozenPrefactor d + 8) *

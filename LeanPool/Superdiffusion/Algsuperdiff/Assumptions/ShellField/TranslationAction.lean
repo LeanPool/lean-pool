@@ -154,7 +154,6 @@ theorem valuePath_translate (z : Vec d) (j : ShellField d) :
   intro x
   rfl
 
-@[simp]
 theorem valuePath_negate_apply (j : ShellField d) (x : Vec d) :
     valuePath (negate j) x = -valuePath j x := by
   exact negate_apply j x

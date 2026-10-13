@@ -31,11 +31,9 @@ triadic cube are needed for that.
 
 * **Descendant scaling of the gauge.**  On every triadic descendant `S` of a
   cube `Q`, the scale-normalized coarse gauge is monotone:
-
   ```
   |S| lambda_{s,q}^{-1}(S; A)  <=  |Q| lambda_{s,q}^{-1}(Q; A)   (2 s <= 1) ,
   ```
-
   where `|Q| = cubeScaleFactor Q = 3^{Q.scale}`.  This is
   `Book.Ch02.maxDescendant_lambdaSq_inv_le` (CoarseGraining's form of
   `e.bound.one.cube.by.lambdas`) combined with the elementary exponent

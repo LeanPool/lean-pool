@@ -204,6 +204,7 @@ theorem log_card_latticeAnnulusFinset_le (d : ℕ) {j outer inner : ℤ} :
         = (d : ℝ) * (((outer - j).toNat : ℝ) + 1) := by push_cast; ring
     rw [hcast]
 
+/-- The annular counting penalty in the proportion tail estimate. -/
 def annulusPenalty (d : ℕ) (sigma : ℝ) (p : ℕ) : ℝ :=
   (1 + (d : ℝ) * ((p : ℝ) + 1) * Real.log 3) ^ sigma⁻¹
 

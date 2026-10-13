@@ -123,7 +123,7 @@ private abbrev reindexComposed_comparisonBounds1_statement : Prop :=
                       (u.restrict (isOpen_translateSet_openCubeSet z (n + (2 : ℤ)))
                         (translateSet_openCubeSet_subset_of_frontier_inter_empty hz hfr))) ≤
                   Cout *
-                    constantDatumAnchorEnergyRHSOn_addThree M n s
+                    constantDatumAnchorEnergyRHSOnAddThree M n s
                       ((fun (y' : Vec d) => z + y') '' openCubeSet (originCube d (n + (2 : ℤ))) ∩
                         openCubeSet (originCube d m))
                       u.toFun g)
@@ -297,7 +297,7 @@ private abbrev reindexComposed_comparisonBounds3_statement : Prop :=
                                   (translateSet_openCubeSet_subset_of_frontier_inter_empty hz
                                     hfr))) ≤
                             Cout *
-                              constantDatumAnchorEnergyRHSOn_addThree M n s
+                              constantDatumAnchorEnergyRHSOnAddThree M n s
                                 ((fun (y' : Vec d) => z + y') '' openCubeSet (originCube d (n + (2
                                   : ℤ))) ∩
                                   openCubeSet (originCube d m))
@@ -506,9 +506,9 @@ private abbrev reindexComposed_comparisonBounds3_statement : Prop :=
       ≤ σ_{n+3}^{1/2} 3^{-(n+2)} X  +  s^{-3} σ_{n+3}^{-1/2} 3^{s(n+2)} Y .
 ```
 -/
-theorem sqrt_constantDatumAnchorEnergyRHSOn_addThree_le [NeZero d] (M : ABKModel d) (n : ℤ)
+theorem sqrt_constantDatumAnchorEnergyRHSOn_addThree_le (M : ABKModel d) (n : ℤ)
     {s : ℝ} (hs : 0 < s) (W : Set (Vec d)) (f : Vec d → ℝ) (g : Vec d → Vec d) :
-    Real.sqrt (constantDatumAnchorEnergyRHSOn_addThree M n s W f g) ≤
+    Real.sqrt (constantDatumAnchorEnergyRHSOnAddThree M n s W f g) ≤
       Real.sqrt (Annealed.sigmaBar M (n + 3) : ℝ) *
           Real.rpow (3 : ℝ) (-(((n + 2 : ℤ)) : ℝ)) *
           (eLpNorm (fun y => f y - volumeAverage W f) 2
@@ -557,7 +557,7 @@ theorem sqrt_constantDatumAnchorEnergyRHSOn_addThree_le [NeZero d] (M : ABKModel
     have h1 : (0 : ℝ) ≤ PS * SIG⁻¹ := mul_nonneg hPSnn (inv_nonneg.mpr hsig.le)
     rw [Real.sqrt_mul (mul_nonneg h1 hP3snn) (Y ^ (2 : ℕ)), Real.sqrt_sq hY,
       Real.sqrt_mul h1 P3s, Real.sqrt_mul hPSnn SIG⁻¹, hPSsqrt, hP3ssqrt]
-  rw [constantDatumAnchorEnergyRHSOn_addThree]
+  rw [constantDatumAnchorEnergyRHSOnAddThree]
   exact le_trans (sqrt_add_le_sqrt_add_sqrt hAnn hBnn)
     (le_of_eq (by rw [hA, hB]))
 

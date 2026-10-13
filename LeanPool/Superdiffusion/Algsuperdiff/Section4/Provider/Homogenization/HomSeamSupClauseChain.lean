@@ -202,7 +202,7 @@ def SpineDatumRecutCoreFluxAtHalfSupGrad [NeZero d] (M : ABKModel d) (Cgap : ℝ
 
 /-- The gradient-threaded re-cut bundle, at the sup
 clause. -/
-def SpineDatumCoarseGrainingRecutFluxHalfSupGrad [NeZero d] (M : ABKModel d) (Cgap : ℝ)
+def SpineDatumCoarseGrainingRecutFluxHalfSupGrad (M : ABKModel d) (Cgap : ℝ)
     (Y : Cutoff.CutoffSample d → ℝ≥0∞) (m : ℤ) (sb : {s : ℝ // 0 < s})
     (sigmaBarM : ℝ) (hsig : 0 < sigmaBarM) (Kabs : ℝ)
     (omega : Cutoff.CutoffSample d) : Prop :=

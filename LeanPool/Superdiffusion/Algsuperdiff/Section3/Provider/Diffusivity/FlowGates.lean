@@ -26,7 +26,6 @@ scalar bookkeeping that turns a calibration inequality on a flow constant
 `Cflow`, together with the two smallness conditions `Cflow c⋆⁻¹ ≤ E` and
 `γ ≤ (E⁻¹)¹⁰`, into the three numerical facts that a Section 3.4 assembly needs
 when it substitutes the recurrence parameters
-
   `Eint = Cshell E² |log γ|²`,  `Fint = Cshell`
 
 into `integrate_approx_recurrence`:
@@ -43,7 +42,6 @@ space, or analytic producer is referenced.
 ## The calibration hypothesis
 
 All gates share one input inequality on the flow constant,
-
   `256 * recurrenceIntegrationConstant² * (Cshell (1 + Cshell + cstarPlus)) ≤ Cflow²`.
 
 It is the squared form of the two separate requirements that the arithmetic

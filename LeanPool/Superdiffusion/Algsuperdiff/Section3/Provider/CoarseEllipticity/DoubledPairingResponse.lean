@@ -253,7 +253,7 @@ theorem bddAbove_doubledFluxField_fst [NeZero d] (Q : TriadicCube d) (a : CoeffF
     (solutionFluxField_bddAbove Q (adjointFamily a) hs vStar)
 
 /-- The second component of the flux carrier is bounded in the seminorm scale. -/
-theorem bddAbove_doubledFluxField_snd [NeZero d] (Q : TriadicCube d) (a : CoeffFamily d)
+theorem bddAbove_doubledFluxField_snd (Q : TriadicCube d) (a : CoeffFamily d)
     {s : ℝ} (hs : 0 < s) (v : CubeSolution Q a) (vStar : CubeSolution Q (adjointFamily a))
     (sig0 : ℝ) :
     BddAbove (Set.range fun N : ℕ =>
@@ -330,7 +330,7 @@ def doubledPoincareEllipticityFactor (sig0 : ℝ) (Q : TriadicCube d) (a : Coeff
     (Real.sqrt sig0 * poincareLowerEllipticityFactor Q a s (.finite 2) +
       (Real.sqrt sig0)⁻¹ * poincareUpperEllipticityFactor Q a s (.finite 2))
 
-theorem doubledPoincareEllipticityFactor_nonneg [NeZero d] (sig0 : ℝ) (Q : TriadicCube d)
+theorem doubledPoincareEllipticityFactor_nonneg (sig0 : ℝ) (Q : TriadicCube d)
     (a : CoeffFamily d) {s : ℝ} (hs : 0 < s) :
     0 ≤ doubledPoincareEllipticityFactor sig0 Q a s := by
   have hc : 0 ≤ poincareDiscountFactor s (.finite 2) := by
@@ -358,7 +358,7 @@ theorem doubledPoincareEllipticityFactor_nonneg [NeZero d] (sig0 : ℝ) (Q : Tri
 /-- **The arithmetic link.**  The square of the display's ellipticity factor is `32
 c_{s,2}^{-1}` times the gauged ellipticity sum `sigma_0^{-1} Lambda_{s,2} +
 sigma_0 lambda_{s,2}^{-1}`. -/
-theorem doubledPoincareEllipticityFactor_sq_le [NeZero d] {sig0 : ℝ} (Q : TriadicCube d)
+theorem doubledPoincareEllipticityFactor_sq_le {sig0 : ℝ} (Q : TriadicCube d)
     (a : CoeffFamily d) {s : ℝ} (hs : 0 < s) (hsig0 : 0 < sig0) :
     doubledPoincareEllipticityFactor sig0 Q a s *
         doubledPoincareEllipticityFactor sig0 Q a s ≤

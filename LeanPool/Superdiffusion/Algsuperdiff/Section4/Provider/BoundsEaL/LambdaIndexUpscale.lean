@@ -91,7 +91,7 @@ private theorem coarseTwoValue :
 `λ_{s,q}^{-1}(□_domain; 𝐚_cutoff)` of the Chapter 2 carrier.  This is a
 re-derivation, under a distinct name, of `LambdaSlotB5.literal_eq_inv_lambdaSq`,
 whose module is not in this file's import closure. -/
-private theorem literalEqInvLambdaSqScales [NeZero d] (M : ABKModel d)
+private theorem literalEqInvLambdaSqScales (M : ABKModel d)
     (domainScale cutoffScale : ℤ) (s : ℝ) (q : CoarseEllipticityExponent)
     (omega : Cutoff.CutoffSample d) :
     Observable.cutoffLowerEllipticityInvLiteral M domainScale cutoffScale s q omega =

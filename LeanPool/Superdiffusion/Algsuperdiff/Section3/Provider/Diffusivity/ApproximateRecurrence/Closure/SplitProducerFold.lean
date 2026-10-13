@@ -123,7 +123,7 @@ theorem isZeroTraceDirichletRhsWeakSolution_closureDirichletAlong [NeZero d]
         (n + (h : ℤ)) e x) :=
   isZeroTraceDirichletRhsWeakSolution_alongIncrementPath _ e K n h omega
 
-theorem isMeanZeroNeumannRhsWeakSolution_closureNeumannAlong [NeZero d]
+theorem isMeanZeroNeumannRhsWeakSolution_closureNeumannAlong
     (M : ABKModel d) (n : ℤ) (h : ℕ) (K : ℕ) (e' : Vec d) (omega : ShellSeq d) :
     IsMeanZeroNeumannRhsWeakSolution
       (fun _ : Vec d => (1 : Matrix (Fin d) (Fin d) ℝ))

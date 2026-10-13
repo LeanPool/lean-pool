@@ -111,9 +111,11 @@ def pathLinearConstL {U : Domain d} (a : CoeffOn U) (h : LInfMatrixFieldOn U) : 
   ((d : ℝ) * (d : ℝ) * (lInfEntryBound h) ^ 2) *
     blockCoercivityConst a.lam a.Lam
 
+/-- The coefficient-dependent constant for the right path pairing estimate. -/
 def pathLinearConstR {U : Domain d} (a : CoeffOn U) : ℝ :=
   blockMatrixOfCoeffNormSqBound a.lam a.Lam * blockCoercivityConst a.lam a.Lam
 
+/-- The coefficient-dependent constant for the quadratic path pairing estimate. -/
 def pathQuadConst {U : Domain d} (a : CoeffOn U) (h : LInfMatrixFieldOn U) : ℝ :=
   a.lam⁻¹ * pathLinearConstL a h
 

@@ -101,7 +101,7 @@ This is the comparison
 applied on every descendant, aggregated through the `ℓ^p` average, and
 renormalized by the `3^{-s n}` that `CoarseGraining`'s negative-Besov average
 carries. -/
-theorem localFluxDefect_smoothDualAverage_le [NeZero d] {m n : ℤ} (hnm : n < m)
+theorem localFluxDefect_smoothDualAverage_le {m n : ℤ} (hnm : n < m)
     (hn : n ≤ (originCube d m).scale)
     (a : Book.Ch02.CoeffOn (Book.Ch02.cubeDomain (originCube d m))) (sigma0 : ℝ)
     (u : H1Function (openCubeSet (originCube d m)))

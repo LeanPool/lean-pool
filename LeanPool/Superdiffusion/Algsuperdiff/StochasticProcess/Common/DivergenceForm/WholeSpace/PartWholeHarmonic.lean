@@ -23,7 +23,6 @@ Module imports, support namespace and local option directives adapted for Lean P
 # The whole-space resolvent and its harmonic part on a bounded part domain
 
 The whole-space resolvent `psi = R_mu f` is an `H¹` function of every exhaustion cube and solves
-
   `-div (a grad psi) = f - mu psi`   weakly there.
 
 A bounded open convex domain lies inside an exhaustion cube, and both the `H¹` membership and the

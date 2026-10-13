@@ -110,7 +110,7 @@ theorem finsetAverageReal_le {α : Type*} (s : Finset α) {f : α → ℝ} {C : 
 /-! ## The finite-`p` one-scale response -/
 
 /-- Definitional form of the finite-`p` one-scale response. -/
-theorem scaleResponseAtScale_finite_eq {d : ℕ} [NeZero d] (Q : TriadicCube d)
+theorem scaleResponseAtScale_finite_eq {d : ℕ} (Q : TriadicCube d)
     (k : ℤ) (p : ℝ) (F : Book.Ch02.TriadicCoeffFamily d) (a0 : Mat d) :
     Book.Ch02.scaleResponseAtScale Q k (.finite p) F a0 =
       Real.rpow
@@ -120,7 +120,7 @@ theorem scaleResponseAtScale_finite_eq {d : ℕ} [NeZero d] (Q : TriadicCube d)
   rfl
 
 /-- The average appearing in the finite-`p` one-scale response is nonnegative. -/
-theorem finsetAverage_normalizedBlockResponseMax_rpow_nonneg {d : ℕ} [NeZero d]
+theorem finsetAverage_normalizedBlockResponseMax_rpow_nonneg {d : ℕ}
     (Q : TriadicCube d) (k : ℤ) (F : Book.Ch02.TriadicCoeffFamily d)
     (a0 : Mat d) (p : ℝ) :
     0 ≤
@@ -259,7 +259,7 @@ theorem card_descendantsAtScale_eq_rpow {d : ℕ} (Q : TriadicCube d) {k : ℤ}
 
 /-- Definitional form of the finite-`q` homogenization error with truncation
 scale `n`. -/
-theorem homogenizationError_finite_eq_rpow_tsum {d : ℕ} [NeZero d]
+theorem homogenizationError_finite_eq_rpow_tsum {d : ℕ}
     (Q : TriadicCube d) (n : ℤ) (s : ℝ) (P : Book.Ch02.MultiscaleExponent)
     (q : ℝ) (F : Book.Ch02.TriadicCoeffFamily d) (a0 : Mat d) :
     Book.Ch02.HomogenizationError Q n s P (.finite q) F a0 =

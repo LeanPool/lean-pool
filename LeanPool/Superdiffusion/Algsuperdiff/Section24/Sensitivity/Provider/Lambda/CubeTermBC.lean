@@ -82,7 +82,7 @@ theorem cubeBesovScaleWeight_neg_half_sq (R : TriadicCube d) :
 /-! ## The zero-trace `L²` estimate at a general cube -/
 
 /-- The constant of the zero-trace `L²` estimate at the gauge exponent. -/
-def fluxZeroTraceConst (d : ℕ) [NeZero d] : ℝ :=
+def fluxZeroTraceConst (d : ℕ) : ℝ :=
   (((d : ℝ) * Legacy.cubeNeumannW22CalderonZygmundConstant d * (3 : ℝ) ^ ((d : ℝ) + 1) *
         (d : ℝ)) + 2 * (3 : ℝ) ^ ((d : ℝ) + 1)) *
     Real.sqrt ((1 - Real.rpow (3 : ℝ) (-2 * ((1 / 2 : ℝ) - 3 / 16)))⁻¹)
@@ -129,7 +129,7 @@ theorem cubeLpNorm_two_h10_cube_le [NeZero d] (R : TriadicCube d)
 /-! ## The function-from-gradient estimate at a general cube -/
 
 /-- The multiscale Poincaré constant of CoarseGraining does not depend on the cube. -/
-theorem fullVectorPoincareConstant_eq_origin [NeZero d] (R : TriadicCube d) :
+theorem fullVectorPoincareConstant_eq_origin (R : TriadicCube d) :
     Ch01.Legacy.fullVectorPoincareConstant R =
       Ch01.Legacy.fullVectorPoincareConstant (originCube d 0) :=
   rfl
@@ -253,7 +253,7 @@ def fluxTermBCField (h : UnitCubeSkewW2Infinity d) {R : TriadicCube d}
     (u : H10Function ((cubeDomain R : Domain d) : Set (Vec d))) : Vec d → Vec d :=
   fun x => u.toH1Function.toFun x • matWeakDiv (unitCubeDerivData h) x
 
-theorem memLp_u_two_cube [NeZero d] {R : TriadicCube d}
+theorem memLp_u_two_cube {R : TriadicCube d}
     (u : H10Function ((cubeDomain R : Domain d) : Set (Vec d))) :
     MemLp (fun x => u.toH1Function.toFun x) (2 : ℝ≥0∞) (normalizedCubeMeasure R) :=
   H1Function.memL2_normalizedCubeMeasure u.toH1Function

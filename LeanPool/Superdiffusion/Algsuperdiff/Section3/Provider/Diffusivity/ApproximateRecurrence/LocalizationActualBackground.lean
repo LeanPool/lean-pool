@@ -37,7 +37,6 @@ Source displays in ABK26:
   `w_{N,e'}^{(K)} in H^1(cu_K)`;
 * `e.Pz.def` and `e.Fz.def`;
 * the `X_z` display, whose affine background is
-
   ```
   bfAhom_{m-h}^{-1/2} ( e' + grad w_{D,e}^{(K)};
   e  + grad w_{N,e'}^{(K)} + shom_{m-h}^{-1} h e' );

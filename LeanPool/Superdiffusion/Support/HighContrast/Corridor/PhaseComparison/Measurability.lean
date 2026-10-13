@@ -293,7 +293,7 @@ theorem lawCarrier_map_corridorReg {L : RestrictionCoeffLaw d} (hP : Restriction
 /-- **M1 (per-phase measurability).**  For a fixed grid phase `σ`, the coarse
 observable at the corridor-modified coefficient is a.e.-strongly-measurable under
 any `RestrictionLawCarrier` law. -/
-theorem aestronglyMeasurable_phaseObservable [NeZero d] {L : RestrictionCoeffLaw d}
+theorem aestronglyMeasurable_phaseObservable {L : RestrictionCoeffLaw d}
     (hP : RestrictionLawCarrier L) (m : ℤ) (ℓ : ℝ) (σ : Vec d) (P : BlockVec d) :
     AEStronglyMeasurable
       (fun a : RegCoeffField d =>

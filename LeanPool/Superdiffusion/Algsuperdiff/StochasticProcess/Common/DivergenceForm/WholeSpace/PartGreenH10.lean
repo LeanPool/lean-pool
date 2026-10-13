@@ -25,7 +25,6 @@ Module imports, support namespace and local option directives adapted for Lean P
 The vanishing-shift limit `partGreenPotential` of the Dirichlet resolvents of a bounded
 measurable datum on a bounded open convex domain is identified here: it is the value function of
 an honest zero-trace Sobolev function on the domain solving
-
   `-div (a grad w) = f`   weakly, with zero trace.
 
 The representative is exact: `partGreenH10` is an `H10Function` whose value function *is*

@@ -35,6 +35,7 @@ noncomputable section
 
 variable {d : ℕ}
 
+/-- The affine mass-plus-wave expression used to compare sharp mean budgets. -/
 def probeSharpMeanAffine (B C mass wave : ℝ) : ℝ :=
   B * mass + C * Real.sqrt mass * wave
 
@@ -51,6 +52,7 @@ theorem probeSharpMeanAffine_mono {B C mass mass' wave wave' : ℝ}
     (mul_le_mul_of_nonneg_left hmass_le hB)
     (by simpa [mul_assoc] using mul_le_mul_of_nonneg_left hprod hC)
 
+/-- The geometric envelope for the mass of a Whitney layer. -/
 def probeSharpLayerMassEnvelope (d n : ℕ) : ℝ :=
   6 * (d : ℝ) * (3 : ℝ) ^ (-(n : ℝ))
 

@@ -54,6 +54,7 @@ noncomputable section
 
 variable {d : ℕ}
 
+/-- Smooth bumps with outer radius tending to zero inside the prescribed spatial radius. -/
 def shrinkingBump (epsilon : ℝ) (hepsilon : 0 < epsilon) (n : ℕ) :
     ContDiffBump (0 : Vec d) where
   rIn := (epsilon / ((n : ℝ) + 1)) / 2
@@ -69,6 +70,7 @@ private theorem shrinkingBump_rOut_tendsto (epsilon : ℝ) (hepsilon : 0 < epsil
   simpa [shrinkingBump, div_eq_mul_inv] using
     (tendsto_one_div_add_atTop_nhds_zero_nat (𝕜 := ℝ)).const_mul epsilon
 
+/-- Normalized translated bumps used to probe local coefficient averages. -/
 def mollifierProbe (epsilon : ℝ) (hepsilon : 0 < epsilon)
     (n : ℕ) (x y : Vec d) : ℝ :=
   (shrinkingBump (d := d) epsilon hepsilon n).normed volume (x - y)

@@ -30,7 +30,6 @@ the source uses subadditivity together with `e.bound.one.cube.by.lambdas`.
 This module proves the exact Lean form of that patching step.  The multiscale
 aggregate `lambda_{t,q}^{-1}(Q; .)` is a normalized weighted aggregate over all
 depths `n >= 0` of the descendant maxima
-
   `M_n(A) = maxDescendantSigmaStarInvMatrixNormAtScale Q (Q.scale - n) A`,
 
 and the two structural facts are:

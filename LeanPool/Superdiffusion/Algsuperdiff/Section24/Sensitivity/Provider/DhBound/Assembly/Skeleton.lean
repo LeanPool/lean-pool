@@ -36,7 +36,6 @@ The proof of the frozen target
 
 This module performs the algebraic assembly of the first two, leaving the two
 budgets as explicit premises of an internal helper.
-
   `B_A`  bounds the positive `B^{3/8}_{2,2}` norm of `x ↦ hᵀ(x) p`,
   `B_BC` bounds the positive `B^{3/8}_{2,2}` norm of
          `x ↦ (w + w* + ℓ_p)(x) (∇·h)(x)`.
@@ -93,7 +92,6 @@ theorem average_congr_funext {U : Domain d} {f g : Vec d → ℝ}
 
 Given the splitting witness `u` and the two positive Besov budgets `B_A`,
 `B_BC`, the frozen quadratic form is bounded by
-
   `4 K(d) (B_A + B_BC) λ_{3/8,2}^{-1/2} J^{1/2}`,
   `K(d) = (1 + d 3^{d+1}) c_{3/8,2}^{-1/2}`. -/
 theorem abs_quadForm_coarseMatrixDerivative_le_of_positiveBesov_budgets

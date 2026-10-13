@@ -66,6 +66,7 @@ noncomputable section
 
 variable {d : ℕ}
 
+/-- The Euclidean norm expressed through the squared vector norm. -/
 noncomputable def euclideanNorm (x : Vec d) : ℝ := Real.sqrt (vecNormSq x)
 
 theorem euclideanNorm_nonneg (x : Vec d) : 0 ≤ euclideanNorm x := Real.sqrt_nonneg _

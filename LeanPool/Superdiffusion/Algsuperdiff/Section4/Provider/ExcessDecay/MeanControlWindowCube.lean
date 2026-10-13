@@ -60,11 +60,9 @@ three facts are proved.
 * **`K` is flush against `∂□_m`** (`wellPlacedCentre_flush`,
   `faceLevel_sub_lt_of_mem_wellPlacedCube`): on the boundary branch there are a
   coordinate `i` and a sign `σ = ±1` with
-
   ```text
     σ · (wellPlacedCentre z m (n+2))ᵢ + ½·3^{n+2} = ½·3^m ,
   ```
-
   i.e. the `σeᵢ` face of `K` lies *exactly* in the frontier hyperplane of `□_m`,
   and consequently every point of `K` is within `3^{n+2}` of that hyperplane.
 

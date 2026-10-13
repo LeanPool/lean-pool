@@ -86,7 +86,7 @@ theorem rhs_const_mul_rpow_le_rpow_of_mul_le {M x y p : ℝ}
 /-- Multiplicative enlargement of the dimension constant absorbs the same
 constant multiple of the homogeneous Caccioppoli prefactor. -/
 theorem caccioppoliPrefactor_mul_const_le_of_mul_constant_le
-    {d : ℕ} [NeZero d] {M C₁ C₂ : ℝ}
+    {d : ℕ} {M C₁ C₂ : ℝ}
     {Q : TriadicCube d} {a : CoeffFamily d} {s t : ℝ}
     (hM : 1 ≤ M) (hC₁ : 0 ≤ C₁) (hMC₁C₂ : M * C₁ ≤ C₂)
     (hs : 0 < s) (ht : 0 < t) (hst : s + t < 1) :
@@ -142,7 +142,7 @@ theorem caccioppoliPrefactor_mul_const_le_of_mul_constant_le
 /-- Multiplicative enlargement also absorbs the same constant multiple of the
 forced Caccioppoli prefactor. -/
 theorem caccioppoliWithRHSPrefactor_mul_const_le_of_mul_constant_le
-    {d : ℕ} [NeZero d] {M C₁ C₂ : ℝ}
+    {d : ℕ} {M C₁ C₂ : ℝ}
     {Q : TriadicCube d} {a : CoeffFamily d} {s t : ℝ}
     (hM : 1 ≤ M) (hC₁ : 0 ≤ C₁) (hMC₁C₂ : M * C₁ ≤ C₂)
     (hs : 0 < s) (ht : 0 < t) (hst : s + t < 1) :

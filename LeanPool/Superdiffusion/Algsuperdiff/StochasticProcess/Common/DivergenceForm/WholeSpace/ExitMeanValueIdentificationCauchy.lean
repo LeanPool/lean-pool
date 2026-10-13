@@ -30,7 +30,6 @@ are controlled by the Caccioppoli inequality at level zero: on two consecutive c
 `V ⊆ V'` the difference of two exhaustion levels solves the homogeneous shifted equation, whose
 forcing is a negative multiple of the difference, so the forcing pairing in the Caccioppoli
 estimate is nonpositive and
-
   `∫_V |grad (psi_k - psi_m)|² ≤ C ∫_{V'} (psi_k - psi_m)²`.
 
 The right-hand side goes to zero by dominated convergence, so the gradients are Cauchy in `L²(V)`

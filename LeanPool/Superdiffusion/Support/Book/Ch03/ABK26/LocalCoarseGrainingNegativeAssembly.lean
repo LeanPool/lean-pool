@@ -174,7 +174,7 @@ private theorem descendantsAtScaleENNAverage_negativeDepth_tsum_eq
 /-- Raising the local finite-`p` flux-defect negative Besov average exposes
 the exact physical-scale depth series. -/
 theorem localFluxDefectNegativeBesovLpAverage_rpow_eq_tsum_descendantsAtScale
-    {d : ℕ} [NeZero d] (Q : TriadicCube d) (n : ℤ) (hn : n ≤ Q.scale)
+    {d : ℕ} (Q : TriadicCube d) (n : ℤ) (hn : n ≤ Q.scale)
     (a : Book.Ch02.CoeffOn (Book.Ch02.cubeDomain Q))
     (sigma0 : ℝ) (u : H1Function (openCubeSet Q))
     (s : FractionalOrder) (p : FiniteLpExponent) :

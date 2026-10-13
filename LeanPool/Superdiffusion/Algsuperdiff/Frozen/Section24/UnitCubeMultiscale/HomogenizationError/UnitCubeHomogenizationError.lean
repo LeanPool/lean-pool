@@ -20,6 +20,7 @@ Module imports, support namespace and local option directives adapted for Lean P
 open HCPolySupport HCPolySupport.Book.Ch02 MeasureTheory
 
 -- FROZEN-STATEMENT-BEGIN
+/-- The multiscale homogenization error on the origin unit cube. -/
 noncomputable def Algsuperdiff.Frozen.Section24.unitCubeHomogenizationError
     {d : ℕ} [NeZero d] (s : ℝ) (p q : Book.Ch02.MultiscaleExponent)
     (a : CoeffOn (cubeDomain (originCube d 0))) (a0 : Mat d) : ℝ :=

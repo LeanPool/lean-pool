@@ -174,7 +174,7 @@ theorem scalarResponseMax_congr_aeeq {U : Domain d} {a b : CoeffOn U}
   · rintro ⟨e, he, rfl⟩
     exact ⟨e, he, responseJ_eq_ofAEEq h.symm _ _⟩
 
-theorem jLegField_negateCutoffSample [NeZero d] (M : ABKModel d) (L m : ℤ)
+theorem jLegField_negateCutoffSample (M : ABKModel d) (L m : ℤ)
     (omega : Cutoff.CutoffSample d) (n : ℤ) :
     jLegField M L m (Cutoff.negateCutoffSample omega) n =
       jLegTranspose M L m omega n := by

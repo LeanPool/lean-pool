@@ -23,6 +23,7 @@ Module imports, support namespace and local option directives adapted for Lean P
 open scoped Matrix.Norms.Elementwise
 
 -- FROZEN-STATEMENT-BEGIN
+/-- Skew matrix fields with continuous first and second derivatives. -/
 noncomputable def Algsuperdiff.Frozen.Assumptions.ShellField (d : ℕ) :=
   { p :
       ContinuousMap (HCPolySupport.Vec d) (HCPolySupport.Mat d) ×

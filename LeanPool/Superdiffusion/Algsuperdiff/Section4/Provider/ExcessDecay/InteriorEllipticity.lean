@@ -74,7 +74,7 @@ private theorem isotropicComparator_eq_scalarMatrix (sigma : PositiveScalar) :
 
 Exact; no constant.  The family hypothesis of `InteriorGlueFrame` is the frame
 identity. -/
-theorem homogenizationErrorOnCube_parentRebasedFamily_eq_offGrid [NeZero d]
+theorem homogenizationErrorOnCube_parentRebasedFamily_eq_offGrid
     (M : ABKModel d) (L k n : ℤ) (x z : Vec d) (omega : Cutoff.CutoffSample d)
     {t : ℝ} (ht : 0 < t) (a0 : Mat d) :
     Ch02.HomogenizationErrorOnCube (originCube d n) t .infinity (.finite 2)

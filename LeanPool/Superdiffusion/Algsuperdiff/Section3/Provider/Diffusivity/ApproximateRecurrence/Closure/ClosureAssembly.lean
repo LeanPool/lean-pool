@@ -47,11 +47,9 @@ The skeletons `upperDisplay_of_junctions` / `lowerDisplay_of_junctions` of
 
 2. **Their quantification over the localization cube does not match the
    producers.**  The skeletons consume the junctions as
-
    ```
      {j : ℕ}   and   (hswitch : ∀ K : ℕ, PrincipalSwitchEndpoint M n h (K : ℤ) j ...)
    ```
-
    i.e. at *one fixed descendant depth `j`* and at *every* cube scale `K`.
    Both producers of `hswitch` and `hsplit` --- the proved principal-response
    terminal
@@ -59,17 +57,14 @@ The skeletons `upperDisplay_of_junctions` / `lowerDisplay_of_junctions` of
    and the proved structural split
 `LocalizationRecurrenceMesh.exists_localizationRecurrenceMeshSplit_le_descendantsAverage_expanded`
    --- carry the depth-naming identity
-
    ```
      ((originCube d Kc).scale : ℤ) - (j : ℤ)
        = recurrenceMesoScale recurrenceGapMultiplier M.gamma m (hgap : ℤ)
    ```
-
    and `(originCube d Kc).scale = Kc`, so at a fixed `j` that identity pins `Kc`
    to the single value `j + recurrenceMesoScale ...`.  Both producers also carry
    the localization gap `10^10 cgamma^{-1} <= Kc - m`, which fails for small
    `Kc`.  A `∀ K` premise at fixed `j` is therefore not obtainable from them.
-
    Exactly two changes are needed, both harmless for the limit passage: the depth
    becomes a **family** `jf : ℕ → ℕ` (one depth per cube scale), and the junctions are
    consumed **eventually** in `K` rather than for all `K` (`ge_of_tendsto` in place of

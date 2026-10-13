@@ -166,7 +166,7 @@ private theorem centeredCubeNormalized_eLpNorm_meanZeroGrad_le_scaledDatum
 centered cube.  The datum is only the normalized Euclidean `L²` field exposed by
 the finite-exponent API. -/
 theorem centeredCubeH1MeanZeroScalarDivergence_cz_two
-    {d : ℕ} [NeZero d] (m : ℤ) (sigma0 : ℝ)
+    {d : ℕ} (m : ℤ) (sigma0 : ℝ)
     (h : CubeEuclideanLpField (originCube d m) FiniteLpExponent.two)
     (u : H1MeanZeroFunction (openCubeSet (originCube d m)))
     (hsigma0 : 0 < sigma0)
@@ -232,7 +232,7 @@ theorem isEllipticFieldOn_scalarMatrix_centeredCube
 /-- The canonical mean-zero solution of the scalar divergence equation with
 datum `-G` on a centered cube. -/
 noncomputable def centeredCubeMeanZeroScalarDivergenceSolution
-    {d : ℕ} [NeZero d] (m : ℤ) {sigma0 : ℝ}
+    {d : ℕ} (m : ℤ) {sigma0 : ℝ}
     (hsigma0 : 0 < sigma0) (G : Vec d → Vec d)
     (hG : MemVectorL2 (openCubeSet (originCube d m)) G) :
     H1MeanZeroFunction (openCubeSet (originCube d m)) := by

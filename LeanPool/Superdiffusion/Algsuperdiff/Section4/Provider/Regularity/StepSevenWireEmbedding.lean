@@ -218,7 +218,7 @@ oscillation of the translated sample:
 The mean is replaced for free (it minimizes the deviation) and the normalized
 `L²` square transports under translation — no constant, no new analysis. -/
 theorem normalizedL2On_image_add_sub_average_le_cubeBesovOscillation
-    [NeZero d] {Q : TriadicCube d} {c : Vec d} {w : Vec d → ℝ}
+    {Q : TriadicCube d} {c : Vec d} {w : Vec d → ℝ}
     (v : H1Function (openCubeSet Q)) (hv : ∀ y, v.toFun y = w (y + c))
     (hTm : MeasurableSet ((fun y => c + y) '' openCubeSet Q))
     (hTpos : 0 < (volume ((fun y => c + y) '' openCubeSet Q)).toReal)

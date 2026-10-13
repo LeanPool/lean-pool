@@ -62,7 +62,7 @@ theorem existsUnique_sigmaBar (M : ABKModel d) (m : ℤ) :
     (coefficientCutoffLaw_lawCarrier M m)
     (cutoffNormalizationDepth d m)
     (cutoffNormalization_structuralLaw M m)
-    (cutoffNormalization_quantitativeCoarseGrainedEllipticity M m)
+    (cutoffNormalizationQuantitativeCoarseGrainedEllipticity M m)
 
 end
 

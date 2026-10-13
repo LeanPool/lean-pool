@@ -53,6 +53,7 @@ noncomputable section
 
 variable {d : ℕ} [NeZero d]
 
+/-- The common constant for squaring the two-term observation-scale tail estimate. -/
 def twoTermSquareConst : ℝ :=
   1 + 4 * (3 * max 1 (Real.log 2)) ^ ((1 / 4 : ℝ)⁻¹)
 
@@ -183,6 +184,7 @@ private theorem cutoffCellErrorSq_isBigOWith_gammaQuarter
 
 /-! ## Raw/representative finite cover -/
 
+/-- The squared homogenization error for one cutoff cell against the isotropic comparator. -/
 def cutoffCellErrorRawSq (M : ABKModel d) (L : ℤ) (u : ℝ)
     (R : HCPolySupport.TriadicCube d) : Cutoff.CutoffSample d → ℝ :=
   fun omega =>
@@ -219,6 +221,7 @@ private theorem cutoffCellErrorRawSq_ae_eq_cutoffCellErrorSq
   rw [← hchar]
   exact congrArg (fun x : ℝ => x ^ 2) homega
 
+/-- The geometrically weighted block-response error at one observation depth. -/
 def observationScaleErrorLayerRaw (M : ABKModel d) (L m : ℤ)
     (t : ℝ) (ell : ℕ) (omega : Cutoff.CutoffSample d) : ℝ :=
   Ch02.geometricWeight t 2 ell *
@@ -226,11 +229,13 @@ def observationScaleErrorLayerRaw (M : ABKModel d) (L m : ℤ)
       (m - (ell : ℤ)) (Cutoff.coefficientCutoffTriadicCoeffFamily M L omega)
       (Observable.isotropicComparatorMatrix (Annealed.sigmaBar M L))
 
+/-- The infinite error tail below the cutoff scale. -/
 def observationScaleFineTailRaw (M : ABKModel d) (L m : ℤ)
     (t : ℝ) (omega : Cutoff.CutoffSample d) : ℝ :=
   ∑' n : ℕ, observationScaleErrorLayerRaw M L m t
     (Int.toNat (m - L) + n) omega
 
+/-- The largest parent-cube average of normalized cutoff-cell errors at one depth. -/
 def observationScaleCoarseParentAverage
     (M : ABKModel d) (L m : ℤ) {u : ℝ} (hu : 0 < u)
     (ell : ℕ) (omega : Cutoff.CutoffSample d) : ℝ :=
@@ -238,6 +243,7 @@ def observationScaleCoarseParentAverage
     (fun P => descendantsAverage P (Int.toNat (m - (ell : ℤ) - L))
       (fun R => cutoffCellErrorSq M L hu R omega))
 
+/-- The finite weighted envelope of coarse parent-cube error averages. -/
 def observationScaleCoarseEnvelope
     (M : ABKModel d) (L m : ℤ) (t : ℝ) {u : ℝ} (hu : 0 < u)
     (omega : Cutoff.CutoffSample d) : ℝ :=
@@ -245,6 +251,7 @@ def observationScaleCoarseEnvelope
     Ch02.geometricWeight t 2 ell *
       observationScaleCoarseParentAverage M L m hu ell omega
 
+/-- The maximum normalized cutoff-cell error at the cutoff scale. -/
 def observationScaleCellErrorSup
     (M : ABKModel d) (L m : ℤ) {u : ℝ} (hu : 0 < u)
     (omega : Cutoff.CutoffSample d) : ℝ :=
@@ -765,6 +772,7 @@ private theorem coarseParentAverage_isBigOWith_gammaQuarter
       (fun P => X P omega)).symm
   simpa only [hfun, hDcard] using hmax
 
+/-- The dimension- and depth-dependent stochastic scale for the observation error. -/
 def observationDepthScale (d ell : ℕ) : ℝ :=
   Ch02.geometricWeight (1 / 8) 2 ell *
     (3 * ((1 + (d : ℝ) * Real.log 3) * (1 + (ell : ℝ)))) ^ ((1 / 4 : ℝ)⁻¹) *
@@ -1019,6 +1027,7 @@ private theorem observationScaleCellErrorSup_isBigOWith_gammaQuarter
         (by norm_num : (0 : ℝ) < 1 / 16) R omega)).symm
   simpa only [hfun, hDcard] using hmax
 
+/-- The geometric depth factor bounding the fine part of the observation error. -/
 def observationScaleFineDepthFactor (d r : ℕ) : ℝ :=
   Real.rpow 3 (-(2 * (1 / 8 : ℝ) * (r : ℝ))) *
     (Ch02.geometricDiscount (1 / 8 : ℝ) 2 *
@@ -1122,6 +1131,7 @@ private theorem fineCoverTerm_isBigOWith_gammaQuarter
   simpa only [mul_assoc] using mul_le_mul_of_nonneg_right
     (mul_le_mul_of_nonneg_left hpowLe hcoef) hdelta
 
+/-- The common constant for the observation-scale finite-cover estimate. -/
 def observationScaleFiniteCoverConst (d : ℕ) : ℝ :=
   1 + 2 * (3 * max 1 (Real.log 2)) ^ ((1 / 4 : ℝ)⁻¹) *
     twoTermSquareConst *

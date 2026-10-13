@@ -302,7 +302,7 @@ theorem measurable_errorFunctionalAtCube_local [NeZero d] (M : ABKModel d) (L : 
 
 /-! ### The functional IS the manuscript's literal, a.e. -/
 
-private theorem scaleResponse_finite_nonneg [NeZero d] (Q : TriadicCube d) (k : ℤ)
+private theorem scaleResponse_finite_nonneg (Q : TriadicCube d) (k : ℤ)
     (p : ℝ) (F : Ch02.TriadicCoeffFamily d) (a0 : Mat d) :
     0 ≤ Ch02.scaleResponseAtScale Q k (.finite p) F a0 := by
   change (0 : ℝ) ≤ Real.rpow (Ch02.finsetAverageReal (descendantsAtScale Q k)

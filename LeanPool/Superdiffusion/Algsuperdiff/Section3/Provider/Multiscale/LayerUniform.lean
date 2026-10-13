@@ -52,7 +52,6 @@ the two things that stand between those legs and `hlayer`.
    `blockVecDot_coarseBlockMatrix_whitneySimplexCells_le_ae`, which is the exact
    per-cell datum `Step3Seams.sum_sum_ofReal_cellWeight_le_ofReal_mul` consumes
    on the good leg.
-
    Note the binder economy of the lift: the proved legs carry `hm: Q.scale ≤
    m0` *and* `hji: Q.scale ≤ i` *and* `hi: i ≤ m0`; the first is implied by the
    other two, so the uniform statements carry only two.
@@ -61,11 +60,9 @@ the two things that stand between those legs and `hlayer`.
    `|∇ℓ̂_p(𝔰) - p| ≤ Cgrad |p| 3^{b(k+h_k)}` on the cells of a layer-`k` collar
    cube, which is what leaves standing of the printed component-local display
    -- the normalized display
-
    ```
    |(∇·D̂_q)(𝔰)|²/|q|² + |∇ℓ̂_p(𝔰)|²/|p|² ≤ 8 Cgrad² 3^{2 b (k + h_k)}
    ```
-
    is `bounds_on_slopes_when_bad`.  The `8` is's own `2 × (2 + 2)`: the per-leg
    step `|∇ℓ̂_p|² ≤ 2(1 + ratio²)|p|² ≤ 4 Cgrad² 3^{2b(k+h_k)} |p|²`
    (`vecNormSq_le_four_mul_of_slope_error`, which uses `1 ≤ Cgrad` and `1 ≤

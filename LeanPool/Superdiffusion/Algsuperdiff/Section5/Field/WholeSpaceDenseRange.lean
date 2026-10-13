@@ -205,9 +205,11 @@ theorem mul_streamAnalyticMinimalResolventReal_one_eq
   simpa only [ENNReal.toReal_mul, ENNReal.toReal_ofReal mu.property.le,
     ENNReal.toReal_one] using h
 
+/-- The centered function restricted to a ball by an indicator. -/
 def streamBallPart (f : Vec d → ℝ) (x : Vec d) (r : ℝ) : Vec d → ℝ :=
   (Metric.ball x r).indicator fun y ↦ f y - f x
 
+/-- The centered function restricted to the complement of a ball by an indicator. -/
 def streamComplementBallPart (f : Vec d → ℝ) (x : Vec d) (r : ℝ) :
     Vec d → ℝ :=
   (Metric.ball x r)ᶜ.indicator fun y ↦ f y - f x

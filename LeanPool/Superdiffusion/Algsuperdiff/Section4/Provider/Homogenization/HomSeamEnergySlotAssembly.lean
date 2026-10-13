@@ -141,7 +141,7 @@ theorem regularityDataBracket_ne_top (M : ABKModel d) {m : ℤ}
 Both binder mismatches of the module docstring are resolved in the statement:
 the sup gate is met at `seamShiftedKh`, and `hgrad` is the theorem's own
 classical-gradient binder. -/
-theorem regularityEnergyDisplay_of_regularityDisplayAt [NeZero d] (M : ABKModel d)
+theorem regularityEnergyDisplay_of_regularityDisplayAt (M : ABKModel d)
     {Creg alpha : ℝ} {m : ℤ} {X : Cutoff.CutoffSample d → ℕ∞}
     {omega : Cutoff.CutoffSample d}
     (hdisp : RegularityDisplayAt M Creg alpha m X omega) {k : ℕ}

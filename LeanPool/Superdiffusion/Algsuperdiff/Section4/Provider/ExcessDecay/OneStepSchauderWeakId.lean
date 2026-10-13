@@ -296,7 +296,6 @@ theorem dirDeriv2_radial {φ : ℝ → ℝ} (hφ : ContDiff ℝ ∞ φ) (x₀ y 
   ring
 
 /-- **The radial Laplacian profile.**  For `φ ∈ C^∞` and the radial test `ψ(y) = φ(‖y − x₀‖²)`,
-
   `Δψ(y) = 4 ‖y − x₀‖² · φ''(‖y−x₀‖²) + 2 d · φ'(‖y−x₀‖²)`.
 
 Obtained by summing `dirDeriv2_radial` over the standard orthonormal basis and using Parseval
@@ -349,7 +348,6 @@ theorem deriv_radialProfile {φ : ℝ → ℝ} (hφ : ContDiff ℝ ∞ φ) (r : 
 /-- **The load-bearing 1-D radial identity** `(r^{d−1} p'(r))' = r^{d−1} m(r)`, in IBP-ready
 `HasDerivAt` form.  Here `p(r) = φ(r²)` is the radial profile of `ψ(y) = φ(‖y − x₀‖²)` (so
 `p'(r) = 2 r φ'(r²)`, cf. `deriv_radialProfile`) and
-
   `m(r) = 4 r² φ''(r²) + 2 d φ'(r²)`
 
 is the radial profile of `Δψ` (cf. `laplacian_radial`, evaluated at `‖y − x₀‖ = r`).  This is the

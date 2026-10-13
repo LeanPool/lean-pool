@@ -129,7 +129,7 @@ theorem solutionGradientField_memVectorL2 (Q : TriadicCube d) (a : CoeffFamily d
 /-- The flux of a cube solution is in `L^2` of the closed cube: the pointwise
 representative of the coefficient field is uniformly elliptic on the cube, and
 the flux agrees with the representative's flux almost everywhere. -/
-theorem solutionFluxField_memVectorL2 [NeZero d] (Q : TriadicCube d) (a : CoeffFamily d)
+theorem solutionFluxField_memVectorL2 (Q : TriadicCube d) (a : CoeffFamily d)
     (u : CubeSolution Q a) : MemVectorL2 (cubeSet Q) (solutionFluxField Q a u) := by
   classical
   set U : Ch02.Domain d := Ch02.cubeDomain Q with hU

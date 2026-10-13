@@ -169,7 +169,7 @@ theorem coarseGrainingP2_estimate [NeZero d] {Q : TriadicCube d}
       ha0 w hs hr hrs hs1 hr₂ hg
 
 /-- The right-hand side is linear in its constant. -/
-theorem generalCoarseGrainingL2TwoExponentRHS_eq_const_mul [NeZero d] (C : ℝ)
+theorem generalCoarseGrainingL2TwoExponentRHS_eq_const_mul (C : ℝ)
     (Q : TriadicCube d) (a : Ch03.CoeffFamily d) (a0 : Ch03.ConstantCoeffMatrix d)
     (s r r₂ : ℝ) (j : ℕ) (g : Vec d → Vec d)
     (u : H1Function (Ch02.cubeDomain Q : Set (Vec d))) :

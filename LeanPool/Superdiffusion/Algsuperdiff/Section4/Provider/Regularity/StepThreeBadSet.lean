@@ -66,6 +66,7 @@ variable {d : ℕ}
 
 /-! ## 1. The Step-3 good event -/
 
+/-- The translated good event at the parameters of the third regularity step. -/
 noncomputable def stepThreeGoodEvent (M : ABKModel d) (delta : ℝ) (j : ℤ)
     (z : Vec d) : Set (Cutoff.CutoffSample d) :=
   Algsuperdiff.Frozen.Section4.goodEventAt M (Support.cgEllipLowerConstant d) j z

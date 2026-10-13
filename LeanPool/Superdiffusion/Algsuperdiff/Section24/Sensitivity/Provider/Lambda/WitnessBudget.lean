@@ -95,7 +95,7 @@ theorem ae_normalizedCubeMeasure_of_ae_cubeDomain {P : Vec d → Prop}
 /-- A.e. equality on the open-cube carrier transfers to the normalized cube
 measure, at an arbitrary triadic cube. -/
 theorem ae_cubeDomain_iff_normalizedCubeMeasure {E : Type*}
-    [NormedAddCommGroup E] {f g : Vec d → E} (Q : TriadicCube d)
+    {f g : Vec d → E} (Q : TriadicCube d)
     (h : f =ᵐ[volumeMeasureOn ((cubeDomain Q : Domain d) : Set (Vec d))] g) :
     f =ᵐ[normalizedCubeMeasure Q] g :=
   ae_normalizedCubeMeasure_of_ae_cubeDomain (P := fun x => f x = g x) Q h

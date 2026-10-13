@@ -22,7 +22,6 @@ Module imports, support namespace and local option directives adapted for Lean P
 # The `D_h` splitting identity `e.sensitivity.basic.split`
 
 Source: ABK26.  With `w = ½ v(·, U, p, q; a)` and `w* = ½ v(·, U, p, -q; aᵗ)`,
-
   `⨍ ∇w* · h ∇w = -p · ⨍ h ∇w - ⨍ (w + w* + ℓ_p) (∇·h) · ∇w`.
 
 The two ingredients are already proved upstream: the pointwise skew
@@ -31,7 +30,6 @@ weak integration by parts
 (`integral_grad_dot_matVecMul_grad_eq_neg_of_hasWeakDeriv`).  What this module
 adds is the bookkeeping that turns the two into a single identity for the
 frozen quadratic form at the *unscaled* maximizers `vAdj`, `v`, namely
-
   `P · D_h P = -2 p · ⨍ h ∇v - 2 ⨍ u (∇·h) · ∇v`,
 
 where `u ∈ H¹₀(U)` is any zero-trace witness for the source combination

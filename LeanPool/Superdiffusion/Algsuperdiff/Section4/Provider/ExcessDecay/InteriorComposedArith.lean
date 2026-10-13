@@ -77,7 +77,7 @@ theorem sqrt_mul_sqrt_inv {a : ℝ} (ha : 0 < a) :
   ( σ 3^{-2(n+2)} X² + s^{-11} σ^{-1} 3^{2s(n+2)} Y² )^{1/2}
       ≤ σ^{1/2} 3^{-(n+2)} X  +  s^{-11/2} σ^{-1/2} 3^{s(n+2)} Y .
 ``` -/
-theorem sqrt_interiorAnchorEnergyRHSOn_le [NeZero d] (M : ABKModel d) (n : ℤ) {s : ℝ}
+theorem sqrt_interiorAnchorEnergyRHSOn_le (M : ABKModel d) (n : ℤ) {s : ℝ}
     (hs : 0 < s) (W : Set (Vec d)) (f : Vec d → ℝ) (g : Vec d → Vec d) :
     Real.sqrt (interiorAnchorEnergyRHSOn M n s W f g) ≤
       Real.sqrt (Annealed.sigmaBar M (n + 2) : ℝ) *

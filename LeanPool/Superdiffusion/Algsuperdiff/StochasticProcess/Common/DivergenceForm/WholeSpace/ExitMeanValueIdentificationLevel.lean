@@ -27,7 +27,6 @@ Fix two exhaustion cubes `V ⊆ W` and a positive shift.  The Dirichlet resolven
 to a bounded measurable datum is an honest `H¹` function of `W` — this is the level-`W` solution
 of `ExitTimePDEIdentification.lean`, with its value function replaced by the exact continuous
 representative — and it solves
-
   `-div (a grad psi) = f - mu psi`   weakly on `W`, hence also weakly on `V`.
 
 Subtracting the Green potential on `V` of the same residual `f - mu psi`, which is the zero-trace

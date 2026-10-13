@@ -230,7 +230,6 @@ theorem memVectorL2_flux_of_isDoubledMuAdmissibleField {U : Domain d}
 decomposition into slope plus correction.  Field-slope analogue of upstream's
 `IsBlockMuAdmissible.toHilbertBlockL2OfBlockField_eq_blockVecToHilbertBlockL2Const_add`. -/
 private theorem hilbert_eq_add_of_components {U : Set (Vec d)}
-    [IsFiniteMeasure (volumeMeasureOn U)]
     {F W : Vec d → BlockVec d} (hF : MemBlockL2 U F) (hW : MemBlockL2 U W)
     {p q : Vec d → Vec d} (hp : MemVectorL2 U p) (hq : MemVectorL2 U q)
     (hpe : ∀ x, (W x).1 = (F x).1 + p x) (hqe : ∀ x, (W x).2 = (F x).2 + q x) :

@@ -120,12 +120,14 @@ private theorem momentBoostedStreamPointEnvelope_le_allPConst (d : ℕ) :
       _ = 16 * (Real.exp 1) ^ (2 : ℕ) * L ^ (2 : ℕ) * S ^ (2 : ℕ) * P0 := by ring
   exact hPW.trans (lowPowerWindowEnvelope_le_allPConst d)
 
+/-- The head moment budget for a stream increment on a large cube. -/
 def momentBoostedLargeCubeAllPHead
     (M : ABKModel d) (p : ℝ) (n m : ℤ) : ℝ :=
   (momentBoostedLargeCubeAllPConst d * p) ^ (p / 2) *
     (min M.gamma⁻¹ ((m : ℝ) - (n : ℝ)) *
       (3 : ℝ) ^ (2 * M.gamma * (m : ℝ))) ^ (p / 2)
 
+/-- The head moment budget with the spatial averaging decay factor. -/
 def momentBoostedLargeCubeAllPTail
     (M : ABKModel d) (p : ℝ) (l n m : ℤ) : ℝ :=
   momentBoostedLargeCubeAllPHead M p n m *

@@ -27,20 +27,16 @@ Step 4 has four ingredients.  Two of them are identities and
 both are proved here, unconditionally:
 
 1. **The pointwise bilinear split**
-
    ```text
      ∇u·a∇u - ∇v·σ∇v  =  (a∇u - σ∇v)·∇v + a∇u·(∇u - ∇v),
    ```
-
    an identity of `vecDot`, true for every matrix `A`, scalar `σ` and pair of
    vectors.
 
 2. **The testing identity**
-
    ```text
      ⨍_{□_m} (∇u - ∇v)·a_L∇u  =  ⨍_{□_m} ∇v·σ_m(∇u - ∇v),
    ```
-
    `testing_identity` / `volumeAverage_testing_identity`.  Both Dirichlet
    problems of the Dirichlet-pair display are tested against the SAME
    `H¹₀(□_m)` element `u - v` and the two weak identities are subtracted; the

@@ -106,7 +106,7 @@ def sigmaStarInvSeries (Q : TriadicCube d) (s q : ℝ)
     Real.rpow (Book.Ch02.maxDescendantSigmaStarInvMatrixNormAtScale Q
       (Q.scale - (i : ℤ)) a) (q / 2)
 
-theorem sigmaStarInvSeries_nonneg [NeZero d] (Q : TriadicCube d) {s q : ℝ}
+theorem sigmaStarInvSeries_nonneg (Q : TriadicCube d) {s q : ℝ}
     (hs : 0 < s) (hq : 0 < q) (a : Book.Ch02.TriadicCoeffFamily d) :
     0 ≤ sigmaStarInvSeries Q s q a :=
   Book.Ch02.lambdaSqFinite_series_nonneg Q s q a hq.le (mul_nonneg hs.le hq.le)
@@ -204,7 +204,7 @@ inside one of them, so its one-cube norm is priced by the `j`-th per-depth
 maximum of that descendant.  Passing to the `q/2` power turns the maximum over
 the descendants into a sum over them (the "max of sums versus sum of maxima"
 defect, paid here in full). -/
-theorem maxDescendantSigmaStarInv_rpow_le_sum_descendants [NeZero d]
+theorem maxDescendantSigmaStarInv_rpow_le_sum_descendants
     (Q : TriadicCube d) {n : ℤ} (hn : n ≤ Q.scale)
     (a : Book.Ch02.TriadicCoeffFamily d) {q : ℝ} (hq : 0 < q) (j : ℕ) :
     Real.rpow (Book.Ch02.maxDescendantSigmaStarInvMatrixNormAtScale Q

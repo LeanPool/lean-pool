@@ -42,19 +42,15 @@ One bridge and one consumer.
 
 1. `principalSwitchLoadConst_mul_gridSwitchDiscount_mul_le_half_gamma_pow_six`
    turns the numerical smallness
-
    ```
      C_load(d) . (3/2) . Cell . cgamma  <=  1/2
    ```
-
    into the exact proposition that
    `ApproximateRecurrence.PrincipalResponseLamWire` binds as `hbudget`,
-
    ```
      C_load(d) . ( (3/2) Delta ) . Cell  <=  cgamma^6 / 2 ,
      Delta = gridSwitchDiscount cu_K j (m-h) ,
    ```
-
    at the manuscript's own mesoscale `n = m - h - a ceil|log_3 cgamma|`.
 
 2.
@@ -65,18 +61,14 @@ One bridge and one consumer.
    with the same types.  Nothing replaces it: no binder is added, and the two
    binders `W` and `hindep` that the consumer also carries are left exactly as
    they were.
-
    The smallness is discharged by shrinking the theorem's own already-existential
    threshold `gamma0`.  `PrincipalResponseLamWire` produces a pair
    `(Cell, gamma0)`; this module keeps that `Cell` and returns the smaller
    threshold
-
    ```
      min gamma0 ( (1/2) / ( C_load(d) . (3/2) . Cell ) ) ,
    ```
-
    which is positive, still at most `1/4`, and at most `gamma0`.
-
    The implication runs in one direction only, and this is the direction:
    **every model satisfying the new, smaller threshold `M.gamma <= min gamma0
    ((1/2) / (C_load(d). (3/2). Cell))` also satisfies the old threshold
@@ -88,7 +80,6 @@ One bridge and one consumer.
    earlier version of this paragraph asserted that the produced statement "is
    applied at every model it was applied at before"; that reversed the
    implication and is withdrawn.
-
    This is the manuscript's own device and no other: `e.cgamma.constraints`
    bounds `cgamma` by `E^{-5}` with `E >= M cstar^{-1}`, so "increasing `M` if
    necessary" *is* a threshold on `cgamma` depending on the dimension and on

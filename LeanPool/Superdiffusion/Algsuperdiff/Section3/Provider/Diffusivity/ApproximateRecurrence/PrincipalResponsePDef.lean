@@ -24,21 +24,17 @@ Source displays in ABK26:
 
 * `e.recurrence.P.def` (label; display) sets, for `e, e'` in `R^d` with `|e|,
   |e'| <= 1`,
-
   ```
   P := bfAhom_{m-h}^{-1/2} (e'; e)   in R^{2d} .
   ```
-
   The manuscript's column has `e'` on the potential leg and `e` on the flux leg;
   that order is preserved below.
 * Step 6 of the proof of `l.approximate.recurrence.formula` opens with the
   identity
-
   ```
   (e'; e) . bfAhom_{m-h}^{-1/2} bfAhom_m bfAhom_{m-h}^{-1/2} (e'; e)
       = P . bfAhom_m P ,
   ```
-
   then splits into the two cases `e = 0` and `e' = 0`.  The reason the whole
   construction is set up this way is that with `bfAhom_k = ((shom_k, 0), (0,
   shom_k^{-1}))` the conjugated matrix is again a scalar block diagonal, with

@@ -170,7 +170,7 @@ the print's volume passage, assembled into the shape
 `StepSevenMean.exists_stepSevenEnd_chain_of_lambda_hmeanFree` consumes, at
 `shomNp := σ_{n+3}`, `dataOsc := oscData + 3^{m/2}K_h` and `dataM:=
 √σ_m^{-1}·3^{m/2}·K_g`. -/
-theorem stepSevenFlushHgrad (d : ℕ) [NeZero d] {M : ABKModel d}
+theorem stepSevenFlushHgrad (d : ℕ) {M : ABKModel d}
     {nroot n m : ℤ} {z : Vec d}
     (uglob : H1Function (openCubeSet (originCube d m)))
     {K1 K2 Khol Kh Cosc oscHi oscData C1 alpha delta : ℝ} {B : ℕ}

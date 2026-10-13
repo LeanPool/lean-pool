@@ -36,11 +36,14 @@ open scoped ENNReal NNReal
 
 namespace Algsuperdiff.Section5.Trace
 
+/-- The integer half-radius of a triadic cube in the lattice. -/
 def cubeSiteRadius (k : ℕ) : ℕ := 3 ^ k / 2
 
+/-- Clamp an integer coordinate to the closed interval with the specified half-radius. -/
 def clampCoord (r : ℕ) (z : ℤ) : ℤ :=
   if z < -(r : ℤ) then -(r : ℤ) else if (r : ℤ) < z then (r : ℤ) else z
 
+/-- Clamp every site coordinate to the triadic lattice cube. -/
 def clampSite {d : ℕ} (k : ℕ) (z : Section5.Percolation.Site d) :
     Section5.Percolation.Site d :=
   fun i => clampCoord (cubeSiteRadius k) (z i)
@@ -139,6 +142,7 @@ theorem exists_inCube_siteDist_nearestTriadicSite_le_one {d : ℕ}
   rw [← Int.natCast_natAbs] at habsZ
   exact_mod_cast habsZ
 
+/-- Move one site coordinate to the first lattice point outside the chosen cube face. -/
 def outsideSite {d : ℕ} (k : ℕ) (z : Section5.Percolation.Site d)
     (i : Fin d) (positive : Bool) : Section5.Percolation.Site d :=
   Function.update z i

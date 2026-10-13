@@ -44,10 +44,12 @@ theorem cubeSetAt_zero (n : ℤ) :
   ext x
   simp [cubeSetAt]
 
+/-- Pull a Sobolev witness on a translated cube back to the cube at the origin. -/
 def toOriginWitness (n : ℤ) (y : Vec d) (u : H1Function (cubeSetAt y n)) :
     H1Function (cubeSetAt (0 : Vec d) n) :=
   castH1 (cubeSetAt_zero n).symm (originPullback y n u)
 
+/-- Translate a Sobolev witness from the origin cube to the specified cube. -/
 def fromOriginWitness (n : ℤ) (y : Vec d)
     (u : H1Function (cubeSetAt (0 : Vec d) n)) : H1Function (cubeSetAt y n) :=
   translateSolution y n (castH1 (cubeSetAt_zero n) u)

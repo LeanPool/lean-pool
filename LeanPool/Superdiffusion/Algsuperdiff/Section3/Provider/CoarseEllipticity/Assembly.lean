@@ -42,12 +42,10 @@ consumer normalize the frozen constant.
   assembly**.  From the two legs, each in its own `∃ C > 0` form, it derives the
   frozen statement **verbatim**, at `Ccg = max Clow Cup`.  The proved frozen
   export now uses the exact application
-
   ```
   exact Algsuperdiff.Section3.Provider.CoarseEllipticity.coarse_ellipticity_bounds_of_legs
     d hlower hupper
   ```
-
   at the assembly layer, with `hlower` and `hupper` supplied by the proved
   production legs.
 

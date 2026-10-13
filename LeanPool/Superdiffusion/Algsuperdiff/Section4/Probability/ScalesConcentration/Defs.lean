@@ -55,7 +55,6 @@ are pairwise at distance `≥ r`, and `{i}` is at distance `≥ r` from
 yields mutual independence by induction.  We therefore take as the hypothesis
 the mutual independence of each residue class, phrased with mathlib's
 `iIndepFun` over the whole columns viewed as `(ℤ → ℝ)`-valued random variables:
-
   `∀ b : ℤ, iIndepFun (fun j : ℤ => fun ω k => X k (j * r + b) ω) P`.
 
 This is the weakest faithful hypothesis mathlib's independence A supports

@@ -46,11 +46,9 @@ P[ sensitivity clause of Q(m,n,z) fails ]  <=  exp( - c c_star gamma^{-1} 3^{-5(
 * On this branch the printed bound is not derivable from the cited inputs at
   the printed admissibility for unrestricted `m`; the correction is the
   *self-consistent* restriction
-
   ```
   3^{5 (m-n)_+}  <=  c c_star gamma^{-1} ,
   ```
-
   i.e. the display's own exponent is at least one.  It is carried here by the
   binder `hrestrict : 1 <= badEventOscFullRate M Ccg Q n`, which is literally
   that inequality, and it is the *only* hypothesis of this module beyond the
@@ -60,13 +58,11 @@ P[ sensitivity clause of Q(m,n,z) fails ]  <=  exp( - c c_star gamma^{-1} 3^{-5(
 
 1. **The weight conversion** `shellOscGauge_le_translatedLargeCubeDerivGauge`:
    for `k <= m`,
-
    ```
    3^{2m} ||grad j_k||_{W^{1,infinity}(z+square_m)}
      <=  3^{2(m-k)} ( 3^k ||grad j_k||_{L^infinity(z+square_m)}
                       + 3^{2k} ||grad^2 j_k||_{L^infinity(z+square_m)} ) ,
    ```
-
    the intrinsic factor between the `e.BoscL.def` gauge at cube scale `m` and
    the `e.W.1.inf.bound` summand of a shell at scale `k < m`.
 2. **The translated `e.W1inf.jL.bound.smaller`**

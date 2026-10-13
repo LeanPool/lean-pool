@@ -134,6 +134,7 @@ open `Matrix.Norms.Elementwise` and integrate matrix-valued observables, so the 
 scoped to that norm, and never inside a manifest-pinned file. -/
 namespace Matrix.Norms.Elementwise
 
+/-- Continuity of the extended norm for the elementwise matrix norm. -/
 scoped instance instContinuousENormMatrixElementwise {m n : Type*} [Fintype m] [Fintype n] :
     ContinuousENorm (Matrix m n ℝ) := by
   change ContinuousENorm (m → n → ℝ)

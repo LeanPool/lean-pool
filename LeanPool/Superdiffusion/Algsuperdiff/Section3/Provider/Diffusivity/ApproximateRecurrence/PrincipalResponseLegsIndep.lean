@@ -27,7 +27,6 @@ Source display in ABK26:
 
 * `e.lower.bound.principal.one.pre` (label; display), whose derivation is the
   sentence:
-
   ```
   Therefore, by independence of bfA_{m-h} and G_{-(h)_{z+cu_n}} P_z
   (the latter is a function of k_m - k_{m-h}), ...

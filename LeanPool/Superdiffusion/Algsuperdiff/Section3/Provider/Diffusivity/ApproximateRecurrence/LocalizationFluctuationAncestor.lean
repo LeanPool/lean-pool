@@ -56,7 +56,6 @@ gives nothing here; and a descendant ellipticity display gated by a literal cap
   `Provider.Disorder.cstar_le_three_halves` caps that at `22`.
 
 ## D against the printed constant
-
  ABK26 quotes `m - n <= 8 gamma^{-1}`, i.e. `2 gamma (m - n) <= 16`, which is
  the
 manuscript's `c_star <= 1`.  This is why the display is restated at a free cap

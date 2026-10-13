@@ -139,7 +139,7 @@ private theorem mul_csSup_le_of_forall {S : Set ℝ} (hS : S.Nonempty) {c B : �
 /-- **The endpoint lower constant is the source's supremum**, at the Chapter 4
 ambient coefficient field, non-elliptic branch included (there both sides are
 the supremum of `{0}`, i.e. `0`).  Unconditional in `s`. -/
-theorem lambdaSqCoeffField_inv_infinity_eq_sSup [NeZero d] (Q : TriadicCube d)
+theorem lambdaSqCoeffField_inv_infinity_eq_sSup (Q : TriadicCube d)
     (a : RegCoeffField d) (s : ℝ) :
     (Book.Ch04.lambdaSqCoeffField Q s .infinity a)⁻¹
       = sSup {N : ℝ | ∃ n : ℕ, N = Real.rpow (3 : ℝ) (-2 * s * (n : ℝ)) *
@@ -161,7 +161,7 @@ theorem lambdaSqCoeffField_inv_infinity_eq_sSup [NeZero d] (Q : TriadicCube d)
 
 /-- **The endpoint upper constant is the source's supremum**, at the Chapter 4
 ambient coefficient field, non-elliptic branch included. -/
-theorem LambdaSqCoeffField_infinity_eq_sSup [NeZero d] (Q : TriadicCube d)
+theorem LambdaSqCoeffField_infinity_eq_sSup (Q : TriadicCube d)
     (a : RegCoeffField d) (s : ℝ) :
     Book.Ch04.LambdaSqCoeffField Q s .infinity a
       = sSup {N : ℝ | ∃ n : ℕ, N = Real.rpow (3 : ℝ) (-2 * s * (n : ℝ)) *

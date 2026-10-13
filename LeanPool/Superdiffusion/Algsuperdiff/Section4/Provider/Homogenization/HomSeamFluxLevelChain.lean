@@ -111,7 +111,7 @@ BASE.**
 `HomSeamSqrtTwoChain`'s level leg with the coarse-graining constant
 freed; the proof is unchanged; it uses the pinned constant only through
 its nonnegativity. -/
-theorem seamLegOf_ofReal_le [NeZero d] (M : ABKModel d) {Cgap : ℝ}
+theorem seamLegOf_ofReal_le (M : ABKModel d) {Cgap : ℝ}
     (Y : Cutoff.CutoffSample d → ℝ≥0∞) (m : ℤ) (omega : Cutoff.CutoffSample d)
     (p : FiniteLpExponent) (s2 : FractionalOrder)
     {Ccg sbase kappa theta Cen0 E1 E2 : ℝ} (hCcg0 : 0 ≤ Ccg) (hs : 0 < homS M)

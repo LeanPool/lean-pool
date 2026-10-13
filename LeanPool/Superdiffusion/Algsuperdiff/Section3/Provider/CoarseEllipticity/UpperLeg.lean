@@ -61,10 +61,12 @@ open Algsuperdiff.Section3
 open Algsuperdiff.Section3.Cutoff
 open Algsuperdiff.Section3.Provider.Scales
 
+/-- The dimension-dependent budget for the rare coarse-ellipticity contribution. -/
 noncomputable def coarseEllipticityRareBudgetConst (d : ℕ) : ℝ := 4 *
   upperAfterBandRareTriangleConst ^ 2 * (1658880 : ℝ) ^ 2 *
     upperAfterBandRareGridNetConst d
 
+/-- A common constant joining the upper coarse-ellipticity estimates. -/
 noncomputable def coarseEllipticityUpperMergeConst (d : ℕ) : ℝ :=
   max 4 (max
     (147456 * HCPolySupport.IndependentSums.gammaTriangleConst 1 *
@@ -417,6 +419,7 @@ private theorem LambdaSqCoeffField_finite_le_four_mul_infinity_half
 private theorem neZero_of_model {d : ℕ} (M : ABKModel d) : NeZero d :=
   ⟨Nat.ne_of_gt (lt_of_lt_of_le (by omega) M.shellPrefix.dimension)⟩
 
+/-- The dimension-dependent mass constant in the direct small-scale upper estimate. -/
 noncomputable def directSmallUpperMassConst (d : ℕ) : ℝ :=
   320 * Provider.Base.cutoffMassSqrtConst d ^ 2 *
     (1 + 12 * (d : ℝ) * Real.log 3)

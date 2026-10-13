@@ -203,7 +203,7 @@ theorem lintegral_rpow_lFreeValueSlot_le (M : ABKModel d) {m : ℤ} (R : Triadic
 
 /-- The `λ`-slot and the two shell slots, packaged: the a.e. measurability
 ingredients every summand of `step3DisplayAt` is built from. -/
-theorem slotMeasurableTriple [NeZero d] (M : ABKModel d) (m : ℤ) (R : TriadicCube d) :
+theorem slotMeasurableTriple (M : ABKModel d) (m : ℤ) (R : TriadicCube d) :
     AEMeasurable (fun omega : Cutoff.CutoffSample d =>
         (unitCubeLambda (2 * M.gamma) (.finite 2)
           (unitRescaledCutoffCoeff M R (R.scale - 2) omega))⁻¹)

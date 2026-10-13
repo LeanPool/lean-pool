@@ -23,7 +23,6 @@ Module imports, support namespace and local option directives adapted for Lean P
 
 The homogenization error `mathcal E_{s,p,q}(cu_m; a, a0)` of ABK26, Definition
 `d.mathcal.E`, is built from the *doubled* local responses
-
   `bfJ(z + cu_l, bfA_0^{-1/2} e, bfA_0^{1/2} e; a)`,  `e in R^{2d}`, `|e| = 1`,
 
 whereas the subadditivity display opening the proof of
@@ -33,7 +32,6 @@ cu_{-h}, sigma0^{-1/2} e, sigma0^{1/2} e; a)` with `e in R^d`.
 This module supplies the exact passage between the two.  For `a0 = sigma0 I`
 one has `kappa0 = 0`, hence `bfA_0 = diag(sigma0, sigma0^{-1})` and, for a unit
 vector `e in R^d`, the doubled unit probe
-
   `E := (e / sqrt 2, - e / sqrt 2) in R^{2d}`,  `|E| = 1`,
 
 produces `bfA_0^{-1/2} E = (c sigma0^{-1/2} e, -c sigma0^{1/2} e)` and
@@ -43,7 +41,6 @@ adjoint half-sum completely: the `a`-transpose summand is evaluated at the zero
 loading, and the `a`-summand carries the loading `(sqrt 2 sigma0^{-1/2} e, sqrt
 2 sigma0^{1/2} e)`, whose quadratic homogeneity contributes exactly the factor
 `2` that cancels the `1/2`.  Consequently
-
   `J(R, sigma0^{-1/2} e, sigma0^{1/2} e; a)
      = bfJ(R, bfA_0^{-1/2} E, bfA_0^{1/2} E; a)`
 
@@ -181,7 +178,7 @@ response.**  For a positive scalar background `sigma0` and a unit vector `e` in
 `R^d`, the scalar response with loading `(sigma0^{-1/2} e, sigma0^{1/2} e)` on a
 triadic cube is bounded by the normalized block-response maximum of that cube,
 i.e. by the one-cube building block of `mathcal E_{s,p,q}( .; a, sigma0)`. -/
-theorem responseJ_scalarLoading_le_normalizedBlockResponseMax [NeZero d]
+theorem responseJ_scalarLoading_le_normalizedBlockResponseMax
     (F : TriadicCoeffFamily d) (R : TriadicCube d) {σ0 : ℝ} (hσ0 : 0 < σ0)
     {e : Vec d} (he : vecNorm e = 1) :
     responseJ (cubeDomain R) (F.coeffOn R)

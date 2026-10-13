@@ -668,7 +668,7 @@ theorem mul_lambdaSq_inv_le {d : ℕ} [NeZero d] (Q : TriadicCube d)
 /-! ## The upper half of `e.bound.Lambdas.by.Es` at `q = 2` -/
 
 /-- Nonnegativity of the multiscale homogenization error at `p = ∞`, `q = 2`. -/
-theorem homogenizationErrorOnCube_infinity_two_nonneg {d : ℕ} [NeZero d]
+theorem homogenizationErrorOnCube_infinity_two_nonneg {d : ℕ}
     (Q : TriadicCube d) (F : Book.Ch02.TriadicCoeffFamily d) (a0 : Mat d)
     {s : ℝ} (hs : 0 < s) :
     0 ≤ Book.Ch02.HomogenizationErrorOnCube Q s .infinity (.finite 2) F a0 := by

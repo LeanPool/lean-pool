@@ -177,7 +177,7 @@ theorem printedLocalEnergy_fluxCorrected (M : ABKModel d) (L m : ℤ)
 /-- The `𝓔₁` slot at the PRINTED coefficient `ã_{L,m}` and the low order `s/8`.
 The sibling of the pinned `𝓔₁` slot at the uncut `a_L`, with the print's own
 coefficient in its place. -/
-def recutPinnedE1Flux [NeZero d] (M : ABKModel d) (L : ℤ) (omega : Cutoff.CutoffSample d)
+def recutPinnedE1Flux (M : ABKModel d) (L : ℤ) (omega : Cutoff.CutoffSample d)
     (m : ℤ) (jn : ℕ) {sigmaBarM : ℝ} (hsig : 0 < sigmaBarM) (s : FractionalOrder) : ℝ :=
   (Ch02.parentTruncatedHomogenizationErrorInfinityOneScalar (originCube d m)
       ((originCube d m).scale - (jn : ℤ)) (recutParentScale m jn)
@@ -186,7 +186,7 @@ def recutPinnedE1Flux [NeZero d] (M : ABKModel d) (L : ℤ) (omega : Cutoff.Cuto
 
 /-- The `𝓔₂` slot at the PRINTED coefficient `ã_{L,m}` and the half order
 `s/16`. -/
-def recutPinnedE2Flux [NeZero d] (M : ABKModel d) (L : ℤ) (omega : Cutoff.CutoffSample d)
+def recutPinnedE2Flux (M : ABKModel d) (L : ℤ) (omega : Cutoff.CutoffSample d)
     (m : ℤ) (jn : ℕ) {sigmaBarM : ℝ} (hsig : 0 < sigmaBarM) (s : FractionalOrder) : ℝ :=
   (Ch02.parentTruncatedHomogenizationErrorInfinityTwoScalar (originCube d m)
       ((originCube d m).scale - (jn : ℤ)) (recutParentScale m jn)
@@ -225,7 +225,7 @@ statement unprovable off the pin.  The §4.5 spine instantiates the whole chain
 only at `Annealed.sigmaBar M m` (`HomSpineInstallPins`),
 so the pin costs nothing downstream.  The `𝓔₁`/`𝓔₂` slot definitions above stay
 general, because `SpineDatumRecutCoreFlux` consumes them at a free `σ`. -/
-def FluxCorrectedParentIdentification [NeZero d] (M : ABKModel d) (m : ℤ) (jn : ℕ)
+def FluxCorrectedParentIdentification (M : ABKModel d) (m : ℤ) (jn : ℕ)
     (omega : Cutoff.CutoffSample d) : Prop :=
   ∀ L : ℤ, m ≤ L → ∀ t : FractionalOrder,
     Ch02.parentTruncatedHomogenizationErrorInfinityTwoScalar (originCube d m)

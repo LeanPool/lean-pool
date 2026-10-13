@@ -60,7 +60,7 @@ open HCPolySupport
 /-! ## The `p = ∞` scale response along the descending scales of a cube -/
 
 /-- Nonnegativity of the `p = ∞` scale response at depth `l` below `Q`. -/
-theorem scaleResponse_depth_nonneg {d : ℕ} [NeZero d] (Q : TriadicCube d)
+theorem scaleResponse_depth_nonneg {d : ℕ} (Q : TriadicCube d)
     (F : Book.Ch02.TriadicCoeffFamily d) (a0 : Mat d) (l : ℕ) :
     0 ≤ Book.Ch02.scaleResponseAtScale Q (Q.scale - (l : ℤ)) .infinity F a0 :=
   Book.Ch02.scaleResponseAtScale_infinity_nonneg Q
@@ -132,7 +132,7 @@ theorem summable_geometricWeight_mul_scaleResponse_rpow {d : ℕ} [NeZero d]
 /-- The finite-`q`, `p = ∞` homogenization error of a cube, written out as the
 `1/q`-th power of a geometrically weighted sum. -/
 theorem homogenizationErrorOnCube_infinity_finite_eq_rpow_tsum {d : ℕ}
-    [NeZero d] (Q : TriadicCube d) (F : Book.Ch02.TriadicCoeffFamily d)
+    (Q : TriadicCube d) (F : Book.Ch02.TriadicCoeffFamily d)
     (a0 : Mat d) (s q : ℝ) :
     Book.Ch02.HomogenizationErrorOnCube Q s .infinity (.finite q) F a0 =
       Real.rpow

@@ -33,9 +33,7 @@ vanishing-shift argument of `ExitMeanValueLimit.lean` consumes.
 * `eq_killedResolvent_add_lintegralDiscountedExit` restates the library decomposition: if the
   expected discounted occupation of the observable is the function `phi` at every starting point,
   then
-
     `phi x = R^U_lam f (x) + E_x[1_{tau < infinity} e^{-lam tau} phi(X_tau)]`.
-
   The hypothesis names the whole-space resolvent of the observable; it is discharged by the
   identification of the process resolvent with the analytic one, which the caller supplies.
 -/

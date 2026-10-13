@@ -33,7 +33,7 @@ noncomputable section
 variable {d : ℕ}
 
 /-- The additional dimension coefficient paid by the scalar source. -/
-def smallContrastZerothGradientExtraConstant (d : ℕ) [NeZero d] : ℝ :=
+def smallContrastZerothGradientExtraConstant (d : ℕ) : ℝ :=
   8 * ((1 / 2 : ℝ) ^ (-(d : ℝ) / 2)) ^ 2 *
     unitCubeDirichletPoincareExplicit d * (d : ℝ)
 

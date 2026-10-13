@@ -27,19 +27,16 @@ Module imports, support namespace and local option directives adapted for Lean P
 Source displays in ABK26:
 
 * The first moment of Step 3's bad-event estimate,
-
   ```
   E[ | bfAhom_{m-1}^{-1/2} bfA_m(cu_n) bfAhom_{m-1}^{-1/2} |^8 ]^{1/8} <= C gamma^{-1} ,
   ```
 
 * The second moment,
-
   ```
   ( avsum_{z} E[ | bfAhom_{m-1}^{1/2} P_z |^4 ] )^{1/4} <= C ,
   ```
 
 * The conclusion
-
   ```
   avsum_z E[ P_z . bfA_m(z+cu_n) P_z 1_{not Q_z} ] <= C gamma^{-2} exp(-gamma^{-1})
                                                   <= (1/2) gamma^6 .

@@ -26,12 +26,10 @@ Module imports, support namespace and local option directives adapted for Lean P
 
 Let `Q` be the continuous-path process of a conservative Feller kernel semigroup, let `U` be an
 open set, let `tau` be the first exit time from `U`, and let
-
   `w y = E_y[tau]`
 
 be the expected exit time from the starting point `y`.  This file proves the identity that
 governs the stopped process at a deterministic horizon `t`:
-
   `E_x[w(X_{t and tau})] + E_x[t and tau] = w x`   (`lintegral_expectedExitTime_add`),
 
 for every starting point `x` of `U`.  In words: the expected time still to be spent in `U` after

@@ -19,7 +19,7 @@ public import LeanPool.Superdiffusion.Algsuperdiff.Section5.Provider.Displacemen
 Source: arxiv:2601.22142, url:https://github.com/scottnarmstrong/Superdiffusion/tree/7f20476385d4af418f110303085ad0740c9eba46
 Authors: Scott Armstrong, Tuomo Kuusi
 Status: verified
-Main declarations: `Algsuperdiff.superdiffusivity`, `Algsuperdiff.generator_renormalization`, `Algsuperdiff.anomalous_regularity`
+Main declarations: `Algsuperdiff.superdiffusivity`, `Algsuperdiff.anomalous_regularity`
 Tags: superdiffusion, stochastic-homogenization, random-incompressible-flows, anomalous-regularity
 MSC: 60K37, 35B27, 60J60
 -/

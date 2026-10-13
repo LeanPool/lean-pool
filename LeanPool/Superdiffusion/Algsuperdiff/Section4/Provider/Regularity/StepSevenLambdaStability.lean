@@ -104,6 +104,7 @@ variable {d : ℕ}
 
 /-! ## 1. The re-specified stability index and the printed prefactor -/
 
+/-- The fixed exponent used for the seventh-step stability comparison. -/
 noncomputable def stepSevenStabilityIndex : ℝ := 1 / 16
 
 @[simp] theorem stepSevenStabilityIndex_eq : stepSevenStabilityIndex = 1 / 16 := rfl
@@ -111,6 +112,7 @@ noncomputable def stepSevenStabilityIndex : ℝ := 1 / 16
 theorem stepSevenStabilityIndex_pos : 0 < stepSevenStabilityIndex := by
   rw [stepSevenStabilityIndex_eq]; norm_num
 
+/-- The fixed multiplicative constant used for the seventh-step stability comparison. -/
 noncomputable def stepSevenStabilityConst : ℝ := 2
 
 @[simp] theorem stepSevenStabilityConst_eq : stepSevenStabilityConst = 2 := rfl
@@ -129,6 +131,7 @@ noncomputable def stepSevenStabilityExponentFactor (s t : ℝ) :
 @[simp] theorem stepSevenStabilityExponentFactor_infinity (s t : ℝ) :
     stepSevenStabilityExponentFactor s t .infinity = 1 := rfl
 
+/-- The stability prefactor including the scale-gap exponent factor. -/
 noncomputable def stepSevenStabilityPrefactor (C s t : ℝ)
     (q : Ch02.MultiscaleExponent) : ℝ :=
   C / (1 - 2 * s) * stepSevenStabilityExponentFactor s t q

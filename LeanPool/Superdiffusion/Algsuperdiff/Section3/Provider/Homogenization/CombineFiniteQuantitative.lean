@@ -669,7 +669,7 @@ private theorem constantBlockMatrix_sigmaBar_blockMatLoewnerLE_scalarAnnealed
       (Book.Ch04.scalarAnnealedBlockMatrixAtScale hP hStruct (n : ℤ)) := by
   let hP := Cutoff.relativeNormalizedCutoffLaw_lawCarrier M L
   let hStruct := Cutoff.relativeNormalizedCutoffLaw_structuralLaw M L
-  let hP4 := Cutoff.relativeNormalizedCutoffLaw_quantitativeCoarseGrainedEllipticity M L
+  let hP4 := Cutoff.relativeNormalizedCutoffLawQuantitativeCoarseGrainedEllipticity M L
   let sigma := Annealed.sigmaBar M L
   let b := hP.barSigmaAtScale hStruct (n : ℤ)
   let c := hP.barSigmaStarAtScale hStruct (n : ℤ)
@@ -718,7 +718,7 @@ private theorem constantBlockMatrix_sigmaBar_blockMatLoewnerLE_scalarAnnealed_in
   let P := Cutoff.relativeNormalizedCutoffLaw M L
   let hP := Cutoff.relativeNormalizedCutoffLaw_lawCarrier M L
   let hStruct := Cutoff.relativeNormalizedCutoffLaw_structuralLaw M L
-  let hP4 := Cutoff.relativeNormalizedCutoffLaw_quantitativeCoarseGrainedEllipticity M L
+  let hP4 := Cutoff.relativeNormalizedCutoffLawQuantitativeCoarseGrainedEllipticity M L
   let sigma := Annealed.sigmaBar M L
   by_cases hr : 0 ≤ r
   · have hrNat : (r.toNat : ℤ) = r := Int.toNat_of_nonneg hr
@@ -774,7 +774,7 @@ private theorem relativeMeanDefect_nonneg_and_le_originMean
   let P := Cutoff.relativeNormalizedCutoffLaw M L
   let hP := Cutoff.relativeNormalizedCutoffLaw_lawCarrier M L
   let hStruct := Cutoff.relativeNormalizedCutoffLaw_structuralLaw M L
-  let hP4 := Cutoff.relativeNormalizedCutoffLaw_quantitativeCoarseGrainedEllipticity M L
+  let hP4 := Cutoff.relativeNormalizedCutoffLawQuantitativeCoarseGrainedEllipticity M L
   let center : ℤ := n - L - c
   let sigma := Annealed.sigmaBar M L
   let a0 : Mat d := Observable.isotropicComparatorMatrix sigma

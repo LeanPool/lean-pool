@@ -47,7 +47,7 @@ variable {d : ℕ}
 
 /-- The Chapter 4 finite upper ellipticity is its defining weighted
 `ell^(q / 2)` aggregate, including the totalized non-elliptic branch. -/
-theorem LambdaSqCoeffField_finite_eq_rpow [NeZero d] (Q : TriadicCube d)
+theorem LambdaSqCoeffField_finite_eq_rpow (Q : TriadicCube d)
     (a : RegCoeffField d) (s : ℝ) {q : ℝ} (hq : 0 < q) :
     Book.Ch04.LambdaSqCoeffField Q s (.finite q) a =
       (∑' n : ℕ, Book.Ch02.geometricWeight s q n *

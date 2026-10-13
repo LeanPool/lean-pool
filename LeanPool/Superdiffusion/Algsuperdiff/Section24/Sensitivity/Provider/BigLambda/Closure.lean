@@ -46,6 +46,7 @@ noncomputable section
 
 /-! ## The frozen constant -/
 
+/-- A common constant for the upper multiscale ellipticity sensitivity estimates. -/
 def bigLambdaConst (d : ℕ) [NeZero d] : ℝ :=
   max (bigLambdaGateConst d) (max (2 * potCubeConstA d ^ 2) (2 * potCubeConstB d))
 

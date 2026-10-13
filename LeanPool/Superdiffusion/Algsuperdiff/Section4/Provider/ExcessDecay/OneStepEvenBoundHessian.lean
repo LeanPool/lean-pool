@@ -29,11 +29,9 @@ supplies the two atoms that argument consumes:
 
 1. **Second-order Taylor with a Hessian remainder on a convex set.**  For `u` twice
    differentiable on a convex `S` with `‖D²u‖ ≤ M` there,
-
    ```text
      |u(q) − u(p) − Du(p)(q − p)| ≤ M · ‖q − p‖² ,     p, q ∈ S .
    ```
-
    The route is the mean-value inequality applied **twice** on the segment `[p, q] ⊆ S`: once to
    `Du` (giving `‖Du(z) − Du(p)‖ ≤ M‖q − p‖` along the segment) and once, in the `φ`-corrected
    form `Convex.norm_image_sub_le_of_norm_fderiv_le'`, to `u` itself.  The constant is `M` rather
@@ -51,11 +49,9 @@ supplies the two atoms that argument consumes:
    p (r/2)|`, which the scale-free lower bound `volume_toReal_euclideanBall_ge`
    converts into the explicit factor `(|W| / rᵈ) · (2(d+1))ᵈ`; taking square
    roots gives
-
    ```text
      ‖D²V(p)‖ ≤ C(d) · r⁻¹ · r⁻¹ · √(|W| / rᵈ) · ‖V‖_{L²(W)} ,
    ```
-
    with `C(d) = 4 · C_native(d) · √((2(d+1))ᵈ)`, the `4` absorbing `(r/2)⁻¹(r/2)⁻¹ = 4r⁻¹r⁻¹`.
 -/
 

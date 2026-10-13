@@ -54,16 +54,19 @@ noncomputable instance instSecondCountableHilbertVectorL2 :
     SecondCountableTopology (HilbertVectorL2 U) := by
   exact MeasureTheory.Lp.SecondCountableTopology
 
+/-- The L² value-gradient product with its Hilbert product norm. -/
 noncomputable abbrev zeroTraceAmbient :=
   WithLp 2 (ScalarL2 U × HilbertVectorL2 U)
 
 noncomputable instance instSecondCountableZeroTraceAmbient :
     SecondCountableTopology (zeroTraceAmbient (U := U)) := inferInstance
 
+/-- The continuous linear equivalence to the ordinary value-gradient product. -/
 noncomputable abbrev zeroTraceAmbientEquiv :
     zeroTraceAmbient (U := U) ≃L[ℝ] ScalarL2 U × HilbertVectorL2 U :=
   WithLp.prodContinuousLinearEquiv 2 ℝ (ScalarL2 U) (HilbertVectorL2 U)
 
+/-- The closed value-gradient submodule defining the zero-trace Sobolev completion. -/
 noncomputable abbrev zeroTraceClosedSubmodule :
     ClosedSubmodule ℝ (zeroTraceAmbient (U := U)) :=
   (h10GraphClosedSubmodule U).comap
@@ -147,7 +150,7 @@ theorem norm_toL2_le (u : ZeroTraceSobolev U) : ‖toL2 u‖ ≤ ‖u‖ := by
 
 /-- Recover an honest zero-trace Sobolev representative on the domains where
 the pinned CoarseGraining graph-realization theorem applies. -/
-theorem exists_h10Function [NeZero d] (hU : IsOpenBoundedConvexDomain U)
+theorem exists_h10Function (hU : IsOpenBoundedConvexDomain U)
     (z : ZeroTraceSobolev U) :
     ∃ u : H10Function U,
       u.toH1Function.toScalarL2 = toL2 z ∧

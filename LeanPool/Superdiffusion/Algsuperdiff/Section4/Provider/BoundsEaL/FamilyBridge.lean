@@ -121,7 +121,7 @@ theorem fluxCorrectedCoeffFamily_aeEq_subConstFluxFamily (M : ABKModel d) (L m :
 /-- Together with the proved primal/adjoint split
 `Annular.normalizedBlockResponseMax_isotropicComparator_le` this is what lets
 Step 3's `J`-display bound the Step-1 endpoint's per-cube object. -/
-theorem normalizedBlockResponseMax_fluxCorrected_eq [NeZero d] (M : ABKModel d)
+theorem normalizedBlockResponseMax_fluxCorrected_eq (M : ABKModel d)
     (L m : ℤ) (omega : Cutoff.CutoffSample d) (R : TriadicCube d) (a0 : Mat d) :
     Ch02.normalizedBlockResponseMax R
         (Support.fluxCorrectedCoeffFamily M L m (originCube d m) omega) a0 =

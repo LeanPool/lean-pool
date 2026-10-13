@@ -253,7 +253,7 @@ This is *not* `Provider.Tail.isTwoTermBigOWith_of_ae_le`
 `Probability.IsDeterministicShiftTwoTermOneSidedOrlicz`, whose domination
 clause carries the deterministic shift `b` that the source's additive notation
 needs. -/
-theorem isDeterministicShiftTwoTermOneSidedOrlicz_of_ae_le [IsFiniteMeasure μ]
+theorem isDeterministicShiftTwoTermOneSidedOrlicz_of_ae_le
     {X Y Z : Ω → ℝ} {b A₁ A₂ sigma₁ sigma₂ : ℝ}
     (hs₁ : 0 < sigma₁) (hs₂ : 0 < sigma₂) (hA₁ : 0 < A₁) (hA₂ : 0 < A₂)
     (hXm : Measurable X) (hYm : Measurable Y) (hZm : Measurable Z)

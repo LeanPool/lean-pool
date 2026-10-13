@@ -20,6 +20,7 @@ Module imports, support namespace and local option directives adapted for Lean P
 open HCPolySupport HCPolySupport.Book.Ch02 MeasureTheory
 
 -- FROZEN-STATEMENT-BEGIN
+/-- Essentially bounded matrix fields that are skew almost everywhere on a domain. -/
 def Algsuperdiff.Frozen.Section24.LInfSkewMatrixFieldOn {d : ℕ}
     (U : Domain d) :=
   { h : Algsuperdiff.Frozen.Section24.LInfMatrixFieldOn U //

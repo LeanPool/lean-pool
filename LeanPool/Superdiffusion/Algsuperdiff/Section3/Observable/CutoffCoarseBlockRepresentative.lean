@@ -197,7 +197,7 @@ theorem ae_forall_blockJObservableCubeSet_eq_cutoffCoarseRepresentative
 This is deliberately the same maximum domain as CoarseGraining's literal
 `normalizedBlockResponseMax`: the doubled Euclidean normalization is written
 with `fullBlockVecNormSq`, rather than replacing it by a convenient norm. -/
-noncomputable def normalizedBlockResponseMaxFromFullCoarseBlock {d : ℕ} [NeZero d]
+noncomputable def normalizedBlockResponseMaxFromFullCoarseBlock {d : ℕ}
     (a0 : Mat d) (A : FullBlockMat d) : ℝ :=
   sSup { value | ∃ e : FullBlockVec d, Ch02.fullBlockVecNormSq e = 1 ∧
     value = blockJQuadraticFullBlockMat A
@@ -233,7 +233,7 @@ theorem fullBlockVecNormSq_fullBlockVecOfUnitSphere {d : ℕ}
 
 /-- The joint finite-dimensional quadratic response on the exact compact
 direction sphere. -/
-noncomputable def normalizedBlockResponseQuadraticOnUnitSphere {d : ℕ} [NeZero d]
+noncomputable def normalizedBlockResponseQuadraticOnUnitSphere {d : ℕ}
     (a0 : Mat d) (A : FullBlockMat d) (u : FullBlockUnitSphere d) : ℝ :=
   blockJQuadraticFullBlockMat A
     (ofFullBlockVec
@@ -245,7 +245,7 @@ noncomputable def normalizedBlockResponseQuadraticOnUnitSphere {d : ℕ} [NeZero
 
 /-- The finite-dimensional response is jointly continuous in the full coarse
 matrix and compact direction. -/
-private theorem continuous_normalizedBlockVector {d : ℕ} [NeZero d]
+private theorem continuous_normalizedBlockVector {d : ℕ}
     (C : FullBlockMat d) :
     Continuous (fun u : FullBlockUnitSphere d =>
       ofFullBlockVec (Matrix.mulVec C (fullBlockVecOfUnitSphere u))) := by

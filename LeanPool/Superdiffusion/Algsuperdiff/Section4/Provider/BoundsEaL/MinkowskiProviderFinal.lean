@@ -62,7 +62,7 @@ open HCPolySupport HCPolySupport.Book MeasureTheory
 open Algsuperdiff.Section3
 open scoped ENNReal
 
-noncomputable section
+section
 
 variable {d : ℕ}
 
@@ -70,7 +70,7 @@ variable {d : ℕ}
 
 /-- **The three per-scale shapes, named.**  `K p γ (s^{-2} + (D+l)3^{2γ(D+l)} +
 3^{2γ(D+l)})`, with `D = m − n` and `l` the descendant depth below `n`. -/
-def minkowskiScaleMajorant (K p gam s D : ℝ) (l : ℕ) : ℝ :=
+noncomputable def minkowskiScaleMajorant (K p gam s D : ℝ) (l : ℕ) : ℝ :=
   K * p * (gam * (s⁻¹ * s⁻¹) +
     (gam * (D + (l : ℝ)) * Real.rpow 3 (2 * gam * (D + (l : ℝ))) +
       gam * Real.rpow 3 (2 * gam * (D + (l : ℝ)))))

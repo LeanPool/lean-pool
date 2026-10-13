@@ -45,11 +45,9 @@ windows, and this file proves both directions at the frozen carriers.  Write
   (whose ratio bound `|W₃| ≤ 81^d |W₂|` is the anchor's own geometry binder).
 * `eLpNorm_windowThree_le_volumeAverageVec_windowTwo_add_gagliardo` — the
   **norm ≤ average + seminorm** direction:
-
   ```text
     ‖f‖_{L²(W₃)}  ≤  |(f)_{W₂}|  +  C(d)·3^{ns}·[f]_{H^s(W₃)} ,
   ```
-
   by the proved mean-zero fractional Poincaré inequality on `W₃`
   (`FractionalPoincareWindow`, `s`-uniform constant `2^{d/2}·27·3^{ns}`)
   together with the same Jensen/transport pair used to move the `W₃` mean to

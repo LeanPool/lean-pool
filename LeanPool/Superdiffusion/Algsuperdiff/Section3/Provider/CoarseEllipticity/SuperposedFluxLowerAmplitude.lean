@@ -88,7 +88,7 @@ theorem superposedFluxDepthAmpProfile_pos (hd : 2 ≤ d)
 /-- The exact representative amplitude is bounded by the uniform depth
 profile.  Every scalar gate is discharged from the frozen max/fifth-root
 hypotheses. -/
-theorem superposedFluxSharpDepthAmp_le_profile [NeZero d]
+theorem superposedFluxSharpDepthAmp_le_profile
     (hd : 2 ≤ d) (M : ABKModel d) (m : ℤ)
     (E : {E : ℝ // 1 ≤ E}) {sigma : ℝ}
     (hsigma : 0 < sigma) (hsigmaHalf : sigma ≤ 1 / 2)

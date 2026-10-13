@@ -60,7 +60,7 @@ private theorem descendantsAverage_dilateCube_trace
   exact Book.Ch02.dilateCube_injective k hRS
 
 private theorem sum_doubledResponseJ_constantIsotropic_le_normalizedBlockResponseMax_trace
-    {d : ℕ} [NeZero d] (Q : TriadicCube d)
+    {d : ℕ} (Q : TriadicCube d)
     (F : Book.Ch02.TriadicCoeffFamily d)
     (sigma : Observable.PositiveScalar) :
     (∑ alpha : BlockCoord d,

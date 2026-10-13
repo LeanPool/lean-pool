@@ -250,7 +250,7 @@ theorem sqrt_vecNormSq_le_sqrt_card_mul_norm (w : Vec d) :
 /-! ## The two `u`-estimates -/
 
 /-- The constant of the zero-trace `L²` estimate at the gauge exponent. -/
-def zeroTraceValueConst (d : ℕ) [NeZero d] : ℝ :=
+def zeroTraceValueConst (d : ℕ) : ℝ :=
   (((d : ℝ) * Legacy.cubeNeumannW22CalderonZygmundConstant d * (3 : ℝ) ^ ((d : ℝ) + 1) *
         (d : ℝ)) + 2 * (3 : ℝ) ^ ((d : ℝ) + 1)) *
     Real.sqrt ((1 - Real.rpow (3 : ℝ) (-2 * ((1 / 2 : ℝ) - 3 / 16)))⁻¹)
@@ -293,7 +293,7 @@ def termBCField (h : UnitCubeSkewW2Infinity d)
     Vec d → Vec d :=
   fun x => u.toH1Function.toFun x • matWeakDiv (unitCubeDerivData h) x
 
-theorem memLp_u_two [NeZero d]
+theorem memLp_u_two
     (u : H10Function ((cubeDomain (originCube d 0) : Domain d) : Set (Vec d))) :
     MemLp (fun x => u.toH1Function.toFun x) (2 : ℝ≥0∞)
       (normalizedCubeMeasure (originCube d 0)) :=

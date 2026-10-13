@@ -68,7 +68,6 @@ whose *square* has a three-term one-sided bound.
    inequality fails removes the mismatch without changing either tail.  On the
    centered cube the two observables reduce pointwise to the same literal, so
    the same witness transports there with no null-set surgery.
-
    Off centre, the translate identity `lambdaSq_cutoff_translateCutoffSample`
    is a pathwise equality read at a *different* sample, so no definitional
    identification bridges it.  Since the observable bodies are their literals
@@ -262,7 +261,7 @@ The Section 3 observables are measurable representatives of their literal
 manuscript definitions, so every identification of an observable with an
 analytic quantity is only almost-everywhere; without this lemma no such
 identification can transport a `Probability.IsTwoTermBigOWith` conclusion. -/
-theorem isTwoTermBigOWith_of_ae_le [IsFiniteMeasure μ]
+theorem isTwoTermBigOWith_of_ae_le
     {Ψ₁ Ψ₂ : ℝ → ℝ} {X Y Z : Ω → ℝ} {A₁ A₂ : ℝ}
     (hΨ₁ : IsAdmissibleTail Ψ₁) (hΨ₂ : IsAdmissibleTail Ψ₂)
     (hA₁ : 0 < A₁) (hA₂ : 0 < A₂)

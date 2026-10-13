@@ -367,7 +367,7 @@ measure --- a probability measure --- the `L^2` norm is below the `L^8` one.
 
 only on the geometry `hsub`, the sign of the gauge and the direction bound.
 Anchor-free. -/
-theorem volumeAverage_vecNormSq_streamForcing_le [NeZero d] {l : ℤ}
+theorem volumeAverage_vecNormSq_streamForcing_le {l : ℤ}
     {R : TriadicCube d} (hsub : openCubeSet R ⊆ openCubeSet (originCube d l))
     {sinv : ℝ} (hsinv : 0 ≤ sinv) (omega : ShellSeq d) (n m : ℤ) {e' : Vec d}
     (he' : Book.Ch02.vecNorm e' ≤ 1) :

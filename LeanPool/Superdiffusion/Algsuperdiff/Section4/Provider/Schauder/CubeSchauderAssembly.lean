@@ -195,7 +195,7 @@ its own gradient field is `C^{0,1/2}` with constant `campanatoHolderConst d · K
 and bounded by `(√(3d) · KG + √3 · campanatoHolderConst d · K) · 3^{m/2}`.
 
 Both hypotheses are displayed; nothing about them is claimed here. -/
-theorem exists_zeroDatumWitness_of_campanato [NeZero d] (hd : 0 < d) {m : ℤ}
+theorem exists_zeroDatumWitness_of_campanato (hd : 0 < d) {m : ℤ}
     {G : Vec d → Vec d} {KG : ℝ} (hKG : 0 ≤ KG)
     (hG : HolderSeminormBoundOn (openCubeSet (originCube d m)) (1 / 2) KG G)
     (w : H10Function (openCubeSet (originCube d m)))

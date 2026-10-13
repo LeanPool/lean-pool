@@ -52,7 +52,6 @@ boundary conditions `e.hat.linear.1` and `e.hat.D.bc`,
   distinct open cells of a triangulation are disjoint, and the union of the
   closed cells is the cube, so only the faces — a null set — are missed).  No
   simplicial structure is used by the proof and none is assumed.
-
   **Finite-carrier form.**  `[Fintype ι]` restricts this file's statement to
   *finite* partitions.  The paper's own Whitney partition `W(cu_m)` and hence
   its simplicial refinement `SW(cu_m)` are countably infinite, and the

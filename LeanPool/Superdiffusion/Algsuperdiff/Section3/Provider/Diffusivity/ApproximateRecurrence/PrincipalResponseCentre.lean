@@ -212,6 +212,7 @@ private theorem abs_cubeAverage_sub_le_of_openCubeSet (R : TriadicCube d)
 
 /-! ## Regularity of the entries of a shell field -/
 
+/-- Extract a matrix entry as a continuous linear functional for the recurrence estimate. -/
 def matEntryCLM (i j : Fin d) : Mat d →L[ℝ] ℝ :=
   ⟨{ toFun := fun A => A i j
      map_add' := fun _ _ => rfl

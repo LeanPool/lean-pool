@@ -67,7 +67,7 @@ namespace Algsuperdiff.Section3.Provider.Orlicz
 open MeasureTheory
 open HCPolySupport.IndependentSums
 
-noncomputable section
+section
 
 variable {Ω : Type*} [MeasurableSpace Ω] {μ : Measure Ω}
 

@@ -147,24 +147,19 @@ carries.
 
 * The wave lane's extended carrier `MultiscaleEstimate.waveGaugeW2` and this
   file's `underlineW2Gauge` are NOT the same normalization of the same object:
-
   - `waveGaugeW2 m h R` is a SUM,
     `cubeSupBound R (l-h) m + waveGauge l m h (cubeCenter R)`, at the `3^{2l}`
     normalization `‖f‖_∞ + 3^l‖∇f‖_∞ + 3^{2l}‖∇²f‖_∞`;
   - `underlineW2Gauge Q` is a MAX, at the reciprocal normalization
     `max{‖∇²f‖_∞, 3^{-l}‖∇f‖_∞, 3^{-2l}‖f‖_∞}`, and is at the suprema
     throughout.
-
   The bridge that the injection will eventually need,
-
   `3 ^ (2 * Q.scale) * underlineW2Gauge Q (shellIncrement omega n L)
      ≤ waveGaugeW2 L h Q omega`,
-
   is not carried out in this module.  It is proved, at the constant `1`, as
   `LambdaGateChain.three_zpow_mul_underlineW2Gauge_le_waveGaugeW2` (with its
   squared form `three_zpow_mul_underlineW2Gauge_sq_le_waveGaugeW2_sq`, which is
   the shape the injection remainder meets).
-
   No passage from a pointwise fidelity statement to the three suprema is
   needed: `waveGauge`'s own summands are already at the suprema.  They are
   `Stream.localCubeDerivNorm` and `Stream.localCubeSecondDerivNorm`, which are

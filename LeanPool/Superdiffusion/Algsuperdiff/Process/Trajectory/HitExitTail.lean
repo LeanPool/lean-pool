@@ -25,7 +25,6 @@ Module imports, support namespace and local option directives adapted for Lean P
 Composing the Chernoff bound of `Trajectory/ExitTimeLaplace.lean` with the geometric estimate of
 `Trajectory/HitExitChaining.lean` turns the discounted chaining bound into a bound on the
 probability of leaving the open set `U` before a deterministic time,
-
   `Q_x {τ_U ≤ t} ≤ e^{λ t} ρ ^ N`
 
 (`IsConservative.measure_exitTime_le_le_rho_pow_hitExit`).  The hypotheses are those of the

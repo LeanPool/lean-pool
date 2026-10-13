@@ -55,7 +55,7 @@ theorem besovPerturbConst_pos {s : ℝ} (hs : s < 1) : 0 < besovPerturbConst s :
 
 /-! ## The unit-cube statement -/
 
-@[simp] theorem cubeScaleFactor_originCube_zero (d : ℕ) :
+theorem cubeScaleFactor_originCube_zero (d : ℕ) :
     cubeScaleFactor (originCube d 0) = 1 := by
   simp [cubeScaleFactor_originCube]
 

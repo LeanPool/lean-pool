@@ -84,7 +84,7 @@ def step3FirstTerm [NeZero d] (C : ℝ) (M : ABKModel d) (m : ℤ) (R : TriadicC
 /-- The S summand of `MajorantSlots.step3DisplayAt`: the `λ^{-1}`-weighted
 value/ratio leg.  Named here for the decomposition only; NO moment bound for it
 is asserted on this tree. -/
-def step3SecondTerm [NeZero d] (C : ℝ) (M : ABKModel d) (m : ℤ) (R : TriadicCube d)
+def step3SecondTerm (C : ℝ) (M : ABKModel d) (m : ℤ) (R : TriadicCube d)
     (omega : Cutoff.CutoffSample d) (grad val : ℝ) : ℝ :=
   C * ((Annealed.sigmaBar M m : ℝ)⁻¹ * (Annealed.sigmaBar M (R.scale - 2) : ℝ) ^ 2) *
     (unitCubeLambda (2 * M.gamma) (.finite 2)
@@ -97,7 +97,7 @@ def step3SecondTerm [NeZero d] (C : ℝ) (M : ABKModel d) (m : ℤ) (R : Triadic
       ((Annealed.sigmaBar M m : ℝ) * (Annealed.sigmaBar M (R.scale - 2) : ℝ)⁻¹ - 1) ^ 2)
 
 /-- The third summand of `MajorantSlots.step3DisplayAt`: the pure gradient leg. -/
-def step3ThirdTerm [NeZero d] (C : ℝ) (M : ABKModel d) (m : ℤ) (R : TriadicCube d)
+def step3ThirdTerm (C : ℝ) (M : ABKModel d) (m : ℤ) (R : TriadicCube d)
     (omega : Cutoff.CutoffSample d) (grad : ℝ) : ℝ :=
   C * (((Annealed.sigmaBar M m : ℝ)⁻¹ +
       (unitCubeLambda (2 * M.gamma) (.finite 2)

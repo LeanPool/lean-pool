@@ -65,12 +65,10 @@ the frozen (J1) unit-range-dependence assumption.
    Lemma~\ref{l.percolation.bound.general}" is implemented locally by the
    explicit shift `sepShift d = d`, which satisfies `sqrt(d) <= 3 ^ (sepShift
    d)`:
-
    ```
    siteBadEvent M base l u = if l < sepShift d then ∅
                              else badScaleEvent M (siteCube base u) (l - sepShift d)
    ```
-
    The shift costs exactly a factor `3 ^ (-a * sepShift d)` in the tail
    parameter `T ^ 2` (a `d`-dependent constant, which is what the manuscript's
    `C(d)` absorbs) and nothing else: the union `⋃ l, siteBadEvent M base l u`

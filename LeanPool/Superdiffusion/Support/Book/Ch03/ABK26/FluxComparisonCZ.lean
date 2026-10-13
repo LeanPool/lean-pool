@@ -55,6 +55,7 @@ private theorem memVectorL2_cubeSet_of_cubeEuclideanLpField_two
   simpa only [FiniteLpExponent.two_exponent] using
     memLp_vec_of_memLp_hilbert_two F.euclideanMemLp
 
+/-- View a smooth fractional Sobolev test as a fractional Sobolev field with an L² bound. -/
 noncomputable def smoothTestToCubeEuclideanWspL2Field
     {d : ℕ} {Q : TriadicCube d} {s : FractionalOrder} {p : FiniteLpExponent}
     (h : CubeEuclideanWspSmoothTest Q s p) : CubeEuclideanWspL2Field Q s p where
@@ -63,6 +64,7 @@ noncomputable def smoothTestToCubeEuclideanWspL2Field
   euclideanMemWsp := h.toCubeEuclideanWspField.euclideanMemWsp
   euclideanMemL2 := h.euclideanMemLp_two
 
+/-- View a smooth fractional Sobolev test as a field with L² and Lp bounds. -/
 noncomputable def smoothTestToCubeEuclideanL2LpField
     {d : ℕ} {Q : TriadicCube d} {s : FractionalOrder} {p : FiniteLpExponent}
     (h : CubeEuclideanWspSmoothTest Q s p) : CubeEuclideanL2LpField Q p where

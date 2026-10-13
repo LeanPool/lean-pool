@@ -89,7 +89,7 @@ CoarseGraining's restriction of solenoidality along the extension by zero, and
 splits the pairing back into its two halves. -/
 theorem forall_h10Function_integral_vecDot_grad_eq_of_subset {U V : Set (Vec d)}
     (hU : IsOpen U) (hV : IsOpen V) (hVU : V ⊆ U)
-    [IsFiniteMeasure (volumeMeasureOn V)] {A G : Vec d → Vec d}
+    {A G : Vec d → Vec d}
     (hA : MemVectorL2 U A) (hG : MemVectorL2 U G)
     (hw : ∀ ψ : H10Function U,
       ∫ x in U, vecDot (A x) (ψ.toH1Function.grad x) ∂volume =

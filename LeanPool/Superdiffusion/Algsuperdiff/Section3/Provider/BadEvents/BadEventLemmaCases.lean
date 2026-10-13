@@ -54,11 +54,9 @@ assembly or confer graph status:
   exponentTwo (1/8) hsWindow`, verbatim.  The discharge of `hcg` from the proved
   frozen theorem is exactly that term.
 * The needed lemma, in the exact form the branch consumes, is
-
   ```
   lambda^{-1}_{1/8,2}(z + square_m; a_n) <= lambda^{-1}_{1/8,2}(square_n; a_n)
   ```
-
   for `m <= n`, pointwise in the sample.  At an off-centre cube it also absorbs
   the manuscript's `z = 0` stationarity reduction, since the frozen observable
   lives at the centered cube; at the centered cube of scale `m` it is exactly

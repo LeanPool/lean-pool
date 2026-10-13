@@ -235,7 +235,7 @@ theorem blockVecNormSum_blockGaugeUp_le_gaugeRatio (sigmaLow sigmaTop : Positive
         Real.sqrt_mul (by positivity) _
 
 /-- The load-leg identification at the closure's two gauges. -/
-theorem blockVecNormSum_blockGaugeUp_le_gammaTenGaugeConst [NeZero d] (M : ABKModel d)
+theorem blockVecNormSum_blockGaugeUp_le_gammaTenGaugeConst (M : ABKModel d)
     (n : ℤ) (h : ℕ)
     (hgauge : gaugeRatio (Annealed.sigmaBar M n) (Annealed.sigmaBar M (n + (h : ℤ) - 1)) ≤
       4 * (3 : ℝ) ^ (9 : ℕ))

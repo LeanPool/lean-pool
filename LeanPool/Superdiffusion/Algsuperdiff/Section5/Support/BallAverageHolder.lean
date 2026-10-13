@@ -88,7 +88,7 @@ theorem mem_ball_zero_iff_add_mem_ball {x w : Vec d} {r : ℝ} :
 
 /-- **The difference of two ball averages of the same radius is one integral over
 the ball at the origin.** -/
-theorem setAverage_ball_sub [NeZero d] {f : Vec d → ℝ} (hf : Integrable f volume)
+theorem setAverage_ball_sub {f : Vec d → ℝ} (hf : Integrable f volume)
     (x z : Vec d) (r : ℝ) :
     (⨍ w in Metric.ball x r, f w ∂volume) - ⨍ w in Metric.ball z r, f w ∂volume =
       (volume.real (Metric.ball (0 : Vec d) r))⁻¹ *

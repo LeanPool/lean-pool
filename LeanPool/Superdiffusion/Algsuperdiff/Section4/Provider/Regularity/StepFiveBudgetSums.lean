@@ -29,7 +29,6 @@ ABK26 `t.regularity` Step 5, the displays
 ```text
   e.sum.eps.j.bound
       ∑_{j=n}^{m-1} ε_j  ≤  C δ (m-n)  =  C C₁^{-1}(1-α)(m-n)
-
   e.sum.delta.j.bound
       ∑_{j=n}^{m-1} δ_j  ≤  C 3^{m/2} σ_m^{-1} [g]_{W^{1/2,∞}(□_m)}
         + C ( 3^{m/2} [∇h]_{W^{1/2,∞}(□_m)}

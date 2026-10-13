@@ -196,11 +196,13 @@ private theorem three_rpow_neg_nat_half_eq_good_head (n : ℕ) :
   rw [show -(n : ℝ) / 2 = (-(1 / 2 : ℝ)) * (n : ℝ) by ring,
     Real.rpow_mul (by norm_num : (0 : ℝ) ≤ 3), Real.rpow_natCast]
 
+/-- The depth-decay factor in the tuned good-head estimate. -/
 def goodHeadTunedDepthDecay
     (M : ABKModel d) (E : ℝ) (k : ℕ) : ℝ :=
   (3 : ℝ) ^ (-(M.gamma *
     ((k : ℝ) + (collarBandMeanDepth M E : ℝ))))
 
+/-- The deterministic per-layer base in the tuned good-head estimate. -/
 def goodHeadTunedLayerBase
     (M : ABKModel d) (n : ℕ) : ℝ :=
   5 * (d : ℝ) ^ 2 * Real.sqrt (probeSharpLayerMassEnvelope d n) *
@@ -214,38 +216,45 @@ def goodHeadTunedBaseTerm
     (M : ABKModel d) (E : ℝ) (k n : ℕ) : ℝ :=
   goodHeadTunedDepthDecay M E k * goodHeadTunedLayerBase M n
 
+/-- The deterministic coefficient for one coordinate of the tuned good-head estimate. -/
 def goodHeadTunedCoordinateCoeff
     (M : ABKModel d) (E : ℝ) (k : ℕ) (j : Fin d) : ℝ :=
   probeMeanGoodWaveConst M * vecNormSq (basisVec j) *
     goodHeadTunedDepthDecay M E k *
     ∑' n : ℕ, goodHeadTunedLayerBase M n
 
+/-- The coordinate budget proportional to the sample's separation height. -/
 def goodHeadTunedCoordinateLane
     (M : ABKModel d) (root : ℤ) (E : ℝ) (k : ℕ) (j : Fin d)
     (omega : CutoffSample d) : ℝ :=
   goodHeadTunedCoordinateCoeff M E k j *
     (M.gamma * (hsep M root E bfaProfileB omega : ℝ))
 
+/-- The doubled coordinate budget used for the ordinary good-head contribution. -/
 def goodHeadTunedOrdinaryCoordinateLane
     (M : ABKModel d) (root : ℤ) (E : ℝ) (k : ℕ) (j : Fin d)
     (omega : CutoffSample d) : ℝ :=
   2 * goodHeadTunedCoordinateLane M root E k j omega
 
+/-- The coordinate budget multiplied by the residual rare-event factor. -/
 def goodHeadTunedRareCoordinateLane
     (M : ABKModel d) (root : ℤ) (E : ℝ) (k : ℕ) (j : Fin d)
     (omega : CutoffSample d) : ℝ :=
   probeSharpAfterBandHsepResidual M root E omega *
     goodHeadTunedCoordinateLane M root E k j omega
 
+/-- The stochastic scale assigned to one tuned good-head coordinate. -/
 def goodHeadTunedCoordinateScale
     (M : ABKModel d) (E sigma : ℝ) (k : ℕ) (j : Fin d) : ℝ :=
   goodHeadTunedCoordinateCoeff M E k j *
     upperHeadHsepOneScale sigma M.gamma
 
+/-- The doubled stochastic scale for the ordinary coordinate contribution. -/
 def goodHeadTunedOrdinaryCoordinateScale
     (M : ABKModel d) (E sigma : ℝ) (k : ℕ) (j : Fin d) : ℝ :=
   2 * goodHeadTunedCoordinateScale M E sigma k j
 
+/-- The product-tail stochastic scale for the rare coordinate contribution. -/
 def goodHeadTunedRareCoordinateScale
     (M : ABKModel d) (E sigma : ℝ) (k : ℕ) (j : Fin d) : ℝ :=
   HCPolySupport.Book.Ch04.gammaProductConst
@@ -253,6 +262,7 @@ def goodHeadTunedRareCoordinateScale
     upperHsepResidualScale sigma M.gamma *
     goodHeadTunedCoordinateScale M E sigma k j
 
+/-- The Whitney layer sum for one coordinate of the tuned good-head contribution. -/
 def goodHeadTunedCoordinateWhitneySum
     (M : ABKModel d) (m : ℤ) (R : TriadicCube d) (E : ℝ)
     (j : Fin d) (omega : CutoffSample d) : ℝ :=
@@ -722,22 +732,27 @@ theorem isBigOWith_upperProfileTarget_good_head_tuned_rare_coordinate_lane_comp
         M R.scale (E : ℝ) k j) hcentered
   simpa only [upperProfileTargetSigma] using htranslated
 
+/-- The constant bounding the sum of tuned good-head layer masses. -/
 def goodHeadTunedMassSumConst (d : ℕ) : ℝ :=
   (5 * (d : ℝ) ^ 2 * Real.sqrt (6 * (d : ℝ)) *
       waveL4HeadConst d ^ 2) *
     (1 - (3 : ℝ) ^ (-(1 / 2 : ℝ)))⁻¹
 
+/-- The good-head constant converting separation height into a linear budget. -/
 def goodHeadTunedHsepOneConst : ℝ :=
   (((7 : ℝ) / 8 * bfaProfileB * Real.log 3)⁻¹) *
     superposedFluxHsepConst
 
+/-- The dimension-dependent constant for the tuned coordinate estimate. -/
 def goodHeadTunedCoordinateConst (d : ℕ) : ℝ :=
   probeMeanGoodWaveDimensionConst d * goodHeadTunedMassSumConst d *
     goodHeadTunedHsepOneConst
 
+/-- The prefactor assigned to the rare part of the tuned coordinate estimate. -/
 def goodHeadTunedRarePrefactor (d : ℕ) : ℝ :=
   64 * upperHsepResidualConst * goodHeadTunedCoordinateConst d
 
+/-- A common output constant dominating the tuned good-head budgets. -/
 def goodHeadTunedOutputConst (d : ℕ) : ℝ :=
   max (profileAuxiliaryConst d)
     (1 + max

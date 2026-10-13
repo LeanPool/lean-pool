@@ -53,11 +53,9 @@ to `EdBridgeStepFour`.
   `eLpNorm`-shaped version is the one the anchor's display literally carries.
 * **The contraction absorption** (residue 4).  `exists_edBridgeStep` produces
   the step size `k₀(d)`: for every `k ≥ k₀`,
-
   ```text
      C_t(d) · C_sch(d) · κ(d,2) · κ(d,1) · (3^{-k})^{1/2} ≤ ½ · 3^{-(k+1)/4} ,
   ```
-
   `κ(d,1) = windowRatioConst d 1` being the price of the excess
   quasi-monotonicity `E(u,U_{j-1}) ≤ κ(d,1) E(u,U_j)` that residue 3 pays for
   the one-scale re-index.

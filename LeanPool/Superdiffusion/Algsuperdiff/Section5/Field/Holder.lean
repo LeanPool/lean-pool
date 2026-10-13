@@ -60,10 +60,13 @@ theorem streamSharpConst_spec (M : ABKModel d) (omega : FullSample d M.gamma) :
     SharpTailBounded M.gamma (streamSharpConst M omega) omega.1 :=
   Classical.choose_spec (fullTailGood_sharp omega.2)
 
+/-- The geometric ratio for the low-frequency part of the Hölder estimate. -/
 def holderLowerRatio (M : ABKModel d) : ℝ := Real.rpow 3 (-M.gamma)
 
+/-- The geometric ratio for the high-frequency part of the Hölder estimate. -/
 def holderUpperRatio (M : ABKModel d) : ℝ := Real.rpow 3 (M.gamma - 1)
 
+/-- The geometric ratio determined by the stream Hölder exponent. -/
 def holderGapRatio (M : ABKModel d) : ℝ :=
   Real.rpow 3 (-streamHolderExponent M)
 
@@ -88,12 +91,15 @@ private theorem holderGapRatio_lt_one (M : ABKModel d) : holderGapRatio M < 1 :=
   Real.rpow_lt_one_of_one_lt_of_neg (by norm_num)
     (neg_neg_of_pos (streamHolderExponent_pos M))
 
+/-- The weighted geometric sum for the low-frequency Hölder bound. -/
 def holderLowerSum (M : ABKModel d) : ℝ :=
   ∑' r : ℕ, ((r : ℝ) + 1) * holderLowerRatio M ^ r
 
+/-- The weighted geometric sum for the high-frequency Hölder bound. -/
 def holderUpperSum (M : ABKModel d) : ℝ :=
   ∑' r : ℕ, ((r : ℝ) + 1) * holderUpperRatio M ^ r
 
+/-- The weighted geometric sum for the Hölder-exponent gap bound. -/
 def holderGapSum (M : ABKModel d) : ℝ :=
   ∑' r : ℕ, ((r : ℝ) + 1) * holderGapRatio M ^ r
 

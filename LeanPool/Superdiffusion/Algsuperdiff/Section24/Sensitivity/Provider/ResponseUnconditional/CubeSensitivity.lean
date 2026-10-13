@@ -302,7 +302,7 @@ theorem cubeGauge_le_two_mul_zero [NeZero d] (dimension : 2 ≤ d)
 /-! ## The two ODE coefficients -/
 
 /-- The Term A coefficient of the path ODE at a mesoscopic cube. -/
-def jTermACoeff (d : ℕ) [NeZero d] (h : UnitCubeSkewW2Infinity d)
+def jTermACoeff (d : ℕ) (h : UnitCubeSkewW2Infinity d)
     (F : TriadicCoeffFamily d) (R : TriadicCube d) (p : Vec d) : ℝ :=
   (1 / 2 : ℝ) * pqCubeConstA d *
       (vecNorm p * (Real.sqrt (valueBudget h R) +

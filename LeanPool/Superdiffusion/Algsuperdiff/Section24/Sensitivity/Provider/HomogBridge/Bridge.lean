@@ -24,7 +24,6 @@ Module imports, support namespace and local option directives adapted for Lean P
 # From averaged local responses to the squared homogenization error
 
 This module proves the display of ABK26,
-
   `avsum_{z in 3^{-h} Zd cap cu_0} J(z + cu_{-h}, sigma0^{-1/2} e, sigma0^{1/2} e; a)
      <= 3^{2 t h} mathcal E_{t,2,2}(cu_0; a, sigma0)^2`,
 
@@ -39,7 +38,6 @@ Ch02.normalizedBlockResponseMax a0` for the one-cube quantity `max_{|e| = 1}
 bfJ(R, bfA_0^{-1/2} e, bfA_0^{1/2} e; a)` of Definition `d.mathcal.E`, the `p =
 2` scale response is the square root of the descendant average of `N`, so
 squaring removes every root and leaves
-
   `mathcal E_{t,2,2}(Q; a, a0)^2
      = sum_{l = 0}^infty c_{t,2} 3^{-2 t l} avsum_{R at depth l} N(R)`,
   `c_{t,2} = 1 - 3^{-2 t}`,
@@ -51,7 +49,6 @@ degenerates as `t -> 0`.  The sharp constant `3^{2 t h}` of the source display
 comes from using the whole tail `l >= h`, together with the monotonicity in the
 depth of the averaged responses, which is exactly the subadditivity patching of
 `ResponseSubadditivity.lean`:
-
   `avsum_h J <= avsum_l J <= avsum_l N`  for every `l >= h`,
   `sum_{l >= h} c_{t,2} 3^{-2 t l} = 3^{-2 t h}`.
 

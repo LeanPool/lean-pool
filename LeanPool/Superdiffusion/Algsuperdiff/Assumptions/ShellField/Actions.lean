@@ -79,6 +79,7 @@ noncomputable instance instModuleDerivCarrier (d : ℕ) :
 -- notation search for the Hessian type times out at default heartbeats.
 -- Kept as a named `def` purely so the explicit `@HasFDerivAt.const_smul`
 -- applications below can still pass it in directly.
+/-- The distributive scalar action on the shell derivative carrier. -/
 @[instance_reducible] noncomputable def instDistribMulActionDerivCarrier (d : ℕ) :
     DistribMulAction ℝ (Vec d →L[ℝ] Mat d) :=
   (instModuleDerivCarrier d).toDistribMulAction
@@ -157,18 +158,22 @@ variable {d : ℕ}
 
 /-! ## Amplitude scaling -/
 
+/-- Continuous scalar multiplication of matrix values. -/
 def valueScaleMap (c : ℝ) : C(Mat d, Mat d) :=
   ⟨fun M ↦ c • M, continuous_id.const_smul c⟩
 
+/-- Continuous scalar multiplication of first derivatives. -/
 def derivScaleMap (c : ℝ) :
     C(Vec d →L[ℝ] Mat d, Vec d →L[ℝ] Mat d) :=
   ⟨fun D ↦ c • D, continuous_id.const_smul c⟩
 
+/-- Continuous scalar multiplication of second derivatives. -/
 def secondDerivScaleMap (c : ℝ) :
     C(Vec d →L[ℝ] (Vec d →L[ℝ] Mat d),
       Vec d →L[ℝ] (Vec d →L[ℝ] Mat d)) :=
   ⟨fun H ↦ c • H, continuous_id.const_smul c⟩
 
+/-- Scale the values and both stored derivatives of an ambient shell. -/
 def scaleAmbient (c : ℝ) :
     ShellAmbient d → ShellAmbient d := fun p ↦
   ((valueScaleMap c).comp p.1,
@@ -235,9 +240,11 @@ theorem continuous_scale (c : ℝ) :
 
 /-! ## Real spatial translations -/
 
+/-- Continuous translation of the spatial argument. -/
 def translateMap (z : Vec d) : C(Vec d, Vec d) :=
   ⟨fun x ↦ x + z, continuous_id.add continuous_const⟩
 
+/-- Translate the values and both stored derivatives of an ambient shell. -/
 def translateAmbient (z : Vec d) :
     ShellAmbient d → ShellAmbient d := fun p ↦
   (p.1.comp (translateMap z),
@@ -301,9 +308,11 @@ theorem measurable_translate (z : Vec d) :
 
 /-! ## Spatial scaling and triadic shell scaling -/
 
+/-- Continuous dilation of the spatial argument. -/
 def spatialMap (r : ℝ) : C(Vec d, Vec d) :=
   ⟨fun x ↦ r • x, continuous_id.const_smul r⟩
 
+/-- The second-derivative chain rule for spatial dilation. -/
 def spatialSecondDerivativeMap (r : ℝ) :
     (Vec d →L[ℝ] (Vec d →L[ℝ] Mat d)) →L[ℝ]
       (Vec d →L[ℝ] (Vec d →L[ℝ] Mat d)) :=
@@ -315,6 +324,7 @@ def spatialSecondDerivativeMap (r : ℝ) :
       (Vec d →L[ℝ] Mat d)).flip
         (r • ContinuousLinearMap.id ℝ (Vec d) : Vec d →L[ℝ] Vec d))
 
+/-- The continuous-map bundle for the second-derivative dilation action. -/
 def spatialSecondDerivativeContinuousMap (r : ℝ) :
     C(Vec d →L[ℝ] (Vec d →L[ℝ] Mat d),
       Vec d →L[ℝ] (Vec d →L[ℝ] Mat d)) :=
@@ -329,6 +339,7 @@ private theorem spatialSecondDerivativeMap_eq_smul (r : ℝ)
   change r * (r * H v w i k) = r ^ 2 * H v w i k
   ring
 
+/-- Dilate a shell's spatial argument with the corresponding derivative factors. -/
 def spatialScaleAmbient (r : ℝ) :
     ShellAmbient d → ShellAmbient d := fun p ↦
   (p.1.comp (spatialMap r),
@@ -470,6 +481,7 @@ theorem measurable_negate : Measurable (negate (d := d)) :=
 
 /-! ## Signed-permutation conjugation -/
 
+/-- Matrix multiplication bundled as a continuous linear map on vectors. -/
 def matVecContinuousLinearMap (R : Mat d) : Vec d →L[ℝ] Vec d :=
   ⟨Matrix.toLin' R, (Matrix.toLin' R).continuous_of_finiteDimensional⟩
 
@@ -478,6 +490,7 @@ theorem matVecContinuousLinearMap_apply (R : Mat d) (x : Vec d) :
     matVecContinuousLinearMap R x = matVecMul R x :=
   rfl
 
+/-- The linear map sending a matrix to its conjugate by `R`. -/
 def conjugateLinearMap (R : Mat d) : Mat d →ₗ[ℝ] Mat d where
   toFun M := matTranspose R * M * R
   map_add' M N := by
@@ -485,6 +498,7 @@ def conjugateLinearMap (R : Mat d) : Mat d →ₗ[ℝ] Mat d where
   map_smul' c M := by
     simp only [RingHom.id_apply, Matrix.mul_smul, Matrix.smul_mul]
 
+/-- Matrix conjugation bundled as a continuous linear map. -/
 def conjugateContinuousLinearMap (R : Mat d) : Mat d →L[ℝ] Mat d :=
   ⟨conjugateLinearMap R,
     (conjugateLinearMap R).continuous_of_finiteDimensional⟩
@@ -521,21 +535,26 @@ def rotateSecondDerivativeMap (R : Mat d) :
       (Vec d →L[ℝ] Mat d)).flip
         (matVecContinuousLinearMap R : Vec d →L[ℝ] Vec d))
 
+/-- The continuous matrix-value map used by the rotation action. -/
 def rotateValueMap (R : Mat d) : C(Mat d, Mat d) :=
   ⟨conjugateContinuousLinearMap R, (conjugateContinuousLinearMap R).continuous⟩
 
+/-- The continuous spatial map used by the rotation action. -/
 def rotateDomainMap (R : Mat d) : C(Vec d, Vec d) :=
   ⟨matVecContinuousLinearMap R, (matVecContinuousLinearMap R).continuous⟩
 
+/-- The continuous first-derivative map used by the rotation action. -/
 def rotateDerivativeContinuousMap (R : Mat d) :
     C(Vec d →L[ℝ] Mat d, Vec d →L[ℝ] Mat d) :=
   ⟨rotateDerivativeMap R, (rotateDerivativeMap R).continuous⟩
 
+/-- The continuous second-derivative map used by the rotation action. -/
 def rotateSecondDerivativeContinuousMap (R : Mat d) :
     C(Vec d →L[ℝ] (Vec d →L[ℝ] Mat d),
       Vec d →L[ℝ] (Vec d →L[ℝ] Mat d)) :=
   ⟨rotateSecondDerivativeMap R, (rotateSecondDerivativeMap R).continuous⟩
 
+/-- Rotate a shell's argument, values and stored derivatives together. -/
 def rotateAmbient (R : Mat d) :
     ShellAmbient d → ShellAmbient d := fun p ↦
   ((rotateValueMap R).comp (p.1.comp (rotateDomainMap R)),

@@ -34,7 +34,7 @@ namespace Algsuperdiff.Section3.Cutoff
 open Filter MeasureTheory Set
 open HCPolySupport HCPolySupport.Book
 
-noncomputable section
+section
 
 variable {d : ℕ} [NeZero d]
 
@@ -150,12 +150,12 @@ theorem integrable_relativeNormalized_lambdaSqCoeffField_inv_pow
 
 end
 
-noncomputable section
+section
 
 variable {d : ℕ}
 
 /-- Exact evidence for the same-cutoff relative normalization. -/
-noncomputable def relativeNormalizedCutoffLaw_quantitativeCoarseGrainedEllipticity
+noncomputable def relativeNormalizedCutoffLawQuantitativeCoarseGrainedEllipticity
     (M : ABKModel d) (m : ℤ) :
     @Ch05.QuantitativeCoarseGrainedEllipticity d
       ⟨Nat.ne_of_gt (lt_of_lt_of_le (by omega) M.shellPrefix.dimension)⟩

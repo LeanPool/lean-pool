@@ -226,7 +226,7 @@ theorem corridorField_extendById_eqOn {ℓ : ℝ} (hℓ : 0 < ℓ) (σ : Vec d)
 /-- **Part 1c (exact `G`-factorization).**  With `U := cubeSet (originCube d m)`
 and `K` the core indices meeting `U`, reconstructing the fixed-phase observable
 from the per-core restrictions of `a` reproduces `F_σ(a)` exactly. -/
-theorem phaseObservable_corePatch_restrict_eq [NeZero d] {ℓ : ℝ} (hℓ : 0 < ℓ)
+theorem phaseObservable_corePatch_restrict_eq {ℓ : ℝ} (hℓ : 0 < ℓ)
     {m : ℤ} {σ : Vec d} (P : BlockVec d) {K : Finset (Fin d → ℤ)}
     (hK : ∀ k : Fin d → ℤ,
       (coreBox ℓ σ k ∩ cubeSet (originCube d m)).Nonempty → k ∈ K)

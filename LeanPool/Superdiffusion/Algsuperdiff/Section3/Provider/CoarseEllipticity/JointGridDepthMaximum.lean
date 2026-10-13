@@ -175,7 +175,7 @@ private theorem tsum_exp_neg_two_mul_succ_le {t : ℝ} (ht : 1 ≤ t) :
     _ ≤ u := by nlinarith
 
 private theorem measureReal_gradedFiniteRowEvent_le
-    [MeasurableSpace Omega] {mu : Measure Omega} [IsFiniteMeasure mu]
+    [MeasurableSpace Omega] {mu : Measure Omega}
     (I : ℕ → Finset ι) (X : ℕ → ι → Omega → ℝ) (a : ℕ → ℝ)
     {growth t : ℝ} (hgrowth : 0 ≤ growth) (ht : 1 ≤ t)
     (hcard : ∀ k, ((I k).card : ℝ) ≤

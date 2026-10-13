@@ -87,7 +87,7 @@ def recutOrderTop : FractionalOrder := ⟨49 / 100, by norm_num, by norm_num⟩
 /-! ## 2. The four printed carriers, at their own `toReal` -/
 
 /-- The `D_g` slot, pinned to the printed positive-Besov overlap seminorm. -/
-def recutPinnedDg [NeZero d] (m : ℤ) (s2 : FractionalOrder) (p : FiniteLpExponent)
+def recutPinnedDg (m : ℤ) (s2 : FractionalOrder) (p : FiniteLpExponent)
     (g : Vec d → Vec d) : ℝ :=
   (ABK26.cubeEuclideanPositiveBesovOverlapESeminorm (originCube d m) s2 p g).toReal
 

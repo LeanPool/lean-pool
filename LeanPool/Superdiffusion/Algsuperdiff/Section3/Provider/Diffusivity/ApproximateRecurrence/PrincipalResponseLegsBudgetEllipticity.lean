@@ -42,12 +42,10 @@ slope pair, the two normalizations cancel exactly against the two weights
 *unnormalized* quantity:
 
 * `ellipticityBudget_eq` -- the exact collapse
-
   ```
   shom |p_z|^2 + shom^{-1}|q_z|^2
     = |e' + (grad w_D)_R|^2 + |e + (grad w_N + shom^{-1} h e')_R|^2 ,
   ```
-
   an unconditional identity, with `R` the localization cube.
 
 The per-cube Jensen step, the grid average over the triadic subcubes of `cu_K`

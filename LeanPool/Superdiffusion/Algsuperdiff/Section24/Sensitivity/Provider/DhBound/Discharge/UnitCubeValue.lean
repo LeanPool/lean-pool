@@ -79,7 +79,7 @@ theorem ae_normalizedCubeMeasure_of_ae_frozen_carrier {P : Vec d → Prop}
   exact MeasureTheory.Measure.ae_smul_measure hcube _
 
 theorem ae_frozen_carrier_iff_normalizedCubeMeasure {E : Type*}
-    [NormedAddCommGroup E] {f g : Vec d → E}
+    {f g : Vec d → E}
     (h : f =ᵐ[volumeMeasureOn
       ((cubeDomain (originCube d 0) : Domain d) : Set (Vec d))] g) :
     f =ᵐ[normalizedCubeMeasure (originCube d 0)] g := by

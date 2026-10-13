@@ -198,7 +198,7 @@ theorem hasCenteredCubeH10Difference_iff {m : ℤ}
 /-! ## 2. Scaling bookkeeping -/
 
 /-- The printed right-hand side is homogeneous of degree one in its constant. -/
-theorem localCoarseGrainingLpRHS_const_mul [NeZero d] (K C : ℝ≥0∞)
+theorem localCoarseGrainingLpRHS_const_mul (K C : ℝ≥0∞)
     (Q : TriadicCube d) (n : ℤ) (hn : n ≤ Q.scale)
     (a : Book.Ch02.CoeffOn (Book.Ch02.cubeDomain Q)) (sigma0 : ℝ)
     (hsigma0 : 0 < sigma0) (g : Vec d → Vec d)

@@ -29,11 +29,9 @@ Two consequences of `ResidueInterface.exists_scalarControl_boundaryBranch_`
 * `exists_scalarControl_of_boundaryBranch_harmonicResidue` — the `∀`-budget
   form.  For any real `R` that dominates `‖u − w‖_{L²(K')}` for *every*
   `Δ`-harmonic comparator `w = u + ρ`, `ρ ∈ H¹₀(K')`, the boundary scalar obeys
-
   ```text
     S ≤ C(d)·( ‖u − (u)_{W'}‖_{L²(W')} + 3^n·Σᵢ‖∂ᵢh‖_{L²(W')} + R ) .
   ```
-
   This is the shape the boundary assembly consumes; `R` is a caller
   obligation and is disclosed as such.
 

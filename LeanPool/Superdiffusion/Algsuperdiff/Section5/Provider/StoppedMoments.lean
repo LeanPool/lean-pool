@@ -30,17 +30,13 @@ a function reproduced by the exit distribution of `U`.
 
 * **The stopped mean.**  If `u` is reproduced by the exit distribution of `U`, if
   `|b - u| <= K` everywhere and `b x = 0`, then
-
     `|E_x[b(X_theta)]| <= 2K` .
-
   The two summands are the value `u x`, which is within `K` of `b x = 0`, and the expectation
   of `b - u`, which is within `K` because the law is a probability measure.
 
 * **The stopped second moment.**  If `u = h - sigma * w` with `h` reproduced by the exit
   distribution and `w` the expected exit time, if `|q - u| <= K` everywhere and `q x = 0`, then
-
     `|E_x[q(X_theta)] - sigma * t| <= 2K + sigma * t * P_x[tau <= t]` .
-
   The second identity of the stopped-Dirichlet file turns `E_x[u(X_theta)]` into
   `u x + sigma E_x[theta]`, and the expected stopped time is the horizon less a shortfall
   supported on the event that the exit has already occurred.

@@ -23,7 +23,6 @@ Module imports, support namespace and local option directives adapted for Lean P
 Source displays in ABK26, inside Step 2 of `l.approximate.recurrence.formula`:
 
 * The Euler--Lagrange identity followed by the block Besov duality bound
-
   ```
   fint tilde S_z . bfA_m tilde S_z
     = fint bfF_z . bfA_m tilde S_z

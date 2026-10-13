@@ -32,7 +32,7 @@ namespace Algsuperdiff.Section3.Cutoff
 open Filter MeasureTheory Set
 open HCPolySupport HCPolySupport.Book
 
-noncomputable section
+section
 
 variable {d : ℕ} [NeZero d]
 
@@ -87,7 +87,7 @@ theorem integrable_scaleNormalized_lambdaSqCoeffField_inv_pow
 
 end
 
-noncomputable section
+section
 
 variable {d : ℕ}
 
@@ -95,7 +95,7 @@ variable {d : ℕ}
 `QuantitativeCoarseGrainedEllipticity` is a `Type`-valued CoarseGraining
 evidence record, so this must be a definition rather than a proposition-valued
 theorem.  No unnormalized `(P4)` or structural law is assumed. -/
-noncomputable def cutoffNormalization_quantitativeCoarseGrainedEllipticity
+noncomputable def cutoffNormalizationQuantitativeCoarseGrainedEllipticity
     (M : ABKModel d) (m : ℤ) :
     @Ch05.QuantitativeCoarseGrainedEllipticity d
       ⟨Nat.ne_of_gt (lt_of_lt_of_le (by omega) M.shellPrefix.dimension)⟩

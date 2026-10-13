@@ -203,7 +203,7 @@ converges), the block-energy average splits as the corridor constant plus the
 per-core single-coordinate energies — i.e. it equals `phaseSplitEnergy`. -/
 theorem blockEnergyAverage_glueField_corePatch_eq_phaseSplitEnergy
     {ℓ : ℝ} {σ : Vec d} {Θ : ℝ} {U : Set (Vec d)} (hℓ : 0 < ℓ) (hΘ : 1 ≤ Θ)
-    (hUmeas : MeasurableSet U) [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
+    (hUmeas : MeasurableSet U)
     (X : BlockState d) (hXbl : MemBlockL2 U X.eval)
     (K : Finset (Fin d → ℤ))
     (hK : ∀ k : Fin d → ℤ, (coreBox ℓ σ k ∩ U).Nonempty → k ∈ K)

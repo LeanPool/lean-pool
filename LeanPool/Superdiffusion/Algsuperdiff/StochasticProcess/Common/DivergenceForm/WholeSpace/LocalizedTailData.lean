@@ -49,26 +49,34 @@ tail estimate.  The local constants may grow with the centre and radius; the
 localized family theorem is uniform in the exhaustion index because these
 constants do not depend on that index. -/
 structure WholeSpaceLocalizedSplitData (A : WholeSpaceAnalyticData d) where
+  /-- The rough skew component of the whole-space coefficient split. -/
   ks : CoeffField d
+  /-- The differentiable skew component of the whole-space coefficient split. -/
   kl : CoeffField d
   split : ∀ y, A.a y = A.nu • (1 : Mat d) + ks y + kl y
   ksSkew : ∀ y, matTranspose (ks y) = -ks y
   klSkew : ∀ y, matTranspose (kl y) = -kl y
   klContDiff : ∀ p q : Fin d, ContDiff ℝ 1 fun y ↦ kl y p q
+  /-- The upper ellipticity bound for the rough component on each exhaustion cube. -/
   roughEllipticityUpper : ℕ → ℝ
   roughEllipticity : ∀ m, IsEllipticFieldOn A.nu (roughEllipticityUpper m)
     (wholeSpaceCube d m) (fun y ↦ A.nu • (1 : Mat d) + ks y)
+  /-- The Hölder exponent used in the local small-contrast estimate. -/
   holderExponent : ℝ
   holderExponent_mem : holderExponent ∈ Set.Ico (1 / 2 : ℝ) 1
+  /-- The allowed deviation from the frozen identity coefficient. -/
   delta : ℝ
   delta_nonneg : 0 ≤ delta
   delta_le : delta ≤ smallContrastThreshold d holderExponent
+  /-- The positive radius on which the normalized coefficient has small contrast. -/
   freezingRadius : Vec d → ℝ
   freezingRadius_pos : ∀ x, 0 < freezingRadius x
   smallContrast : ∀ x, CoefficientIdentityDistanceLE
     (euclideanBall x (freezingRadius x))
     (normalizedFrozenCoeff A.nu A.a x) delta
+  /-- The local operator-norm bound for the rough skew component. -/
   roughBound : Vec d → ℝ → ℝ
+  /-- The local divergence bound for the differentiable skew component. -/
   smoothDivBound : Vec d → ℝ → ℝ
   roughBound_nonneg : ∀ x r, 0 ≤ r → 0 ≤ roughBound x r
   smoothDivBound_nonneg : ∀ x r, 0 ≤ r → 0 ≤ smoothDivBound x r

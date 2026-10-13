@@ -101,7 +101,6 @@ lane).  Both halves elaborate:
 ```
   example ... : principalSwitchEnergyAverage M n h Kc j e e' wD wN
                   = Closure.principalEnergyAverage M n h Kc j e e' wD wN := rfl
-
   example ... (hstep2 : fluctuationEnergyAverage M n h Kc j e e' wD wN
                           <= M.gamma ^ (10 : Nat)) :
       Closure.AnnealedSplitEndpoint M n h Kc j e e' wD wN :=

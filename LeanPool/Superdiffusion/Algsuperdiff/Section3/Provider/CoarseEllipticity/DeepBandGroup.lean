@@ -37,12 +37,15 @@ variable {d : ℕ}
 geometric partition of the band `(top-k₀, top]`; they are not proposed public
 A. -/
 
+/-- The upper scale index of a truncated geometric band. -/
 def probeBandIndex (top : ℤ) (k₀ p : ℕ) : ℤ :=
   top - ((min (3 ^ p - 1) k₀ : ℕ) : ℤ)
 
+/-- The number of scales in a truncated geometric band. -/
 def probeBandLength (k₀ p : ℕ) : ℕ :=
   min (3 ^ (p + 1) - 1) k₀ - min (3 ^ p - 1) k₀
 
+/-- The nonempty truncated bands among the first `N` bands. -/
 def probeBandGroups (top : ℤ) (k₀ N : ℕ) : Finset ℕ :=
   (Finset.range N).filter fun p => probeBandIndex top k₀ (p + 1) < probeBandIndex top k₀ p
 
@@ -190,6 +193,7 @@ theorem cubeStreamIncrementLpNorm_probeBand_ladder_of_cover {p : ℝ}
     rw [heq, cubeStreamIncrementLpNorm_self_probe
       (lt_of_lt_of_le zero_lt_one hp) Q]
 
+/-- The sum of fourth-moment stream tails over the selected deep bands. -/
 def probeDeepBandTail (M : ABKModel d) (Q : TriadicCube d)
     (top : ℤ) (k₀ N : ℕ) (omega : CutoffSample d) : ℝ :=
   ∑ r ∈ probeBandGroups top k₀ N,
@@ -636,8 +640,10 @@ theorem probeBandGainSum (t : ℝ) (N g₀ : ℕ) {k₀ : ℕ} (hk₀ : 2 ≤ k�
         mul_nonneg hg0nn (Real.sqrt_nonneg 2)
       nlinarith
 
+/-- The gain from one scale in the deep-band estimate. -/
 def probeBandUnitGain (d : ℕ) : ℝ := (3 : ℝ) ^ (-(d : ℝ) / 8)
 
+/-- The gain over a block of scales in the deep-band estimate. -/
 def probeBandBlockGain (d : ℕ) (g : ℤ) : ℝ :=
   (3 : ℝ) ^ (-(d : ℝ) / 8 * (g : ℝ))
 
@@ -670,6 +676,7 @@ theorem probeBandUnitGain_le (hd : 2 ≤ d) : probeBandUnitGain d ≤ 0.76 := by
   rw [hpow]
   exact hexp.trans_eq hval
 
+/-- The dimension-dependent mean amplitude for the deep-band estimate. -/
 def probeDeepBandMeanAmplitude (d : ℕ) : ℝ :=
   3.7 * deepBandAmplitude d 4
 
@@ -678,13 +685,16 @@ theorem probeDeepBandMeanAmplitude_nonneg (d : ℕ) :
   unfold probeDeepBandMeanAmplitude
   exact mul_nonneg (by norm_num) (deepBandAmplitude_nonneg d (by norm_num))
 
+/-- The unnormalized mean budget for a finite deep-band range. -/
 def probeDeepBandRawMean (d : ℕ) (gamma : ℝ) (top : ℤ) (k₀ : ℕ) : ℝ :=
   probeDeepBandMeanAmplitude d * Real.sqrt (k₀ : ℝ) *
     (3 : ℝ) ^ (gamma * (top : ℝ))
 
+/-- The fourth-root gain constant used to bound deep-band fluctuations. -/
 def probeDeepBandGainRootConst (d : ℕ) : ℝ :=
   streamIncrementLpGainConst d (1 / 2) ^ (4 : ℝ)⁻¹ * deepBandAmplitude d 4
 
+/-- The unnormalized fluctuation budget after the initial depth cutoff. -/
 def probeDeepBandRawFluct (d : ℕ) (gamma : ℝ) (top : ℤ) (g₀ : ℕ) : ℝ :=
   IndependentSums.gammaTriangleConst 2 *
     (probeDeepBandGainRootConst d * 3 *

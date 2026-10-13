@@ -58,6 +58,7 @@ theorem zeroExtendFromDomain_memLp (hU : MeasurableSet U)
   rw [memLp_indicator_iff_restrict hU]
   exact Lp.memLp f
 
+/-- Extension by zero from a domain as a linear map on L² classes. -/
 noncomputable def zeroExtendFromDomainLinearMap (hU : MeasurableSet U) :
     ScalarL2 U →ₗ[ℝ] AmbientScalarL2 d where
   toFun f := (zeroExtendFromDomain_memLp hU f).toLp (U.indicator fun x ↦ f x)

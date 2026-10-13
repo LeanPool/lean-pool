@@ -71,11 +71,9 @@ The centered shell is then built in two steps.
 2. `centeredShellUnitCube` replaces the value field of
    `cubeUnitCube Q (subConstShell hbar _ (shellIncrement omega lowScale highScale))`
    by the literal difference
-
    ```
    x  |->  a_hi^resc(x) - a_lo^resc(x) - hbar
    ```
-
    of the two rescaled coefficient objects.  The replacement is legitimate
    because the two fields agree almost everywhere on the open unit cube, by the
    proved `unitRescaledCutoffCoeff_toCoeffField_ae_eq` at both scales together

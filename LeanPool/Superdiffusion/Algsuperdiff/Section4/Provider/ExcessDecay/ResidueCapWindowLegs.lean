@@ -124,7 +124,7 @@ boundary covering cube the `L²` distance between the solution and its own
 boundary datum is priced by the frozen clause's leg (mean-minimality and the
 window transport of section 1), the frozen leg (the proved data Poincaré on `h`
 alone), and the open scalar `S = |(u−h)_{cc}|` at coefficient `1`. -/
-theorem normalizedL2On_coveringCube_sub_datum_le_meanControl_atWindow [NeZero d]
+theorem normalizedL2On_coveringCube_sub_datum_le_meanControl_atWindow
     {n m : ℤ} {x z : Vec d} {S : ℝ} (hnm : n + 2 ≤ m)
     (hcov : (fun y => wellPlacedCentre x m (n + 2) + y) ''
         openCubeSet (originCube d (n + 2)) ⊆

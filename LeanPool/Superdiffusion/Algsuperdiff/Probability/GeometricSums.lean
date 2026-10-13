@@ -152,7 +152,7 @@ theorem isBigOWith_of_isBigO_of_nonneg {X : Ω → ℝ} {Ψ : ℝ → ℝ} {A : 
 
 /-- A variable that vanishes identically is `O_{Γ_σ}` at every nonnegative
 scale — used for the empty-window layers. -/
-theorem isBigO_gammaSigma_of_eq_zero [IsFiniteMeasure μ] {X : Ω → ℝ} {σ A : ℝ}
+theorem isBigO_gammaSigma_of_eq_zero {X : Ω → ℝ} {σ A : ℝ}
     (hA : 0 ≤ A) (hX : ∀ ω, X ω = 0) : IsBigO μ (gammaSigma σ) X A := by
   have h := HCPolySupport.Book.Ch04.isBigO_gammaSigma_const_of_abs_le
     (μ := μ) (σ := σ) (c := (0 : ℝ)) hA (by simpa using hA)

@@ -148,6 +148,7 @@ private theorem lam_mul_norm_sq_le_pairing
       MeasureTheory.integral_mono_ae (hsqInt.const_mul lam) henergyInt hpoint
     _ = coefficientPairing a U F F := by rfl
 
+/-- The continuous coefficient-gradient bilinear form on zero-trace Sobolev functions. -/
 noncomputable def coefficientBilin
     (hEll : IsEllipticFieldOn lam Lam U a) :
     ZeroTraceSobolev U →L[ℝ] ZeroTraceSobolev U →L[ℝ] ℝ :=
@@ -155,6 +156,7 @@ noncomputable def coefficientBilin
     (isBoundedBilinearMap_inner (𝕜 := ℝ)).toContinuousLinearMap
     ((hilbertCoeffOperator hEll).comp gradient) gradient
 
+/-- The continuous L² mass bilinear form on zero-trace Sobolev functions. -/
 noncomputable def massBilin :
     ZeroTraceSobolev U →L[ℝ] ZeroTraceSobolev U →L[ℝ] ℝ :=
   ContinuousLinearMap.bilinearComp
@@ -217,10 +219,12 @@ theorem shiftedBilin_coercive
     IsCoercive (shiftedBilin hEll α) :=
   ⟨min α lam, lt_min hα hlam, shiftedBilin_lower_bound hEll⟩
 
+/-- The continuous functional induced by an L² forcing term. -/
 noncomputable def forcing (f : ScalarL2 U) :
     ZeroTraceSobolev U →L[ℝ] ℝ :=
   (InnerProductSpace.toDual ℝ (ScalarL2 U) f).comp toL2
 
+/-- The Riesz representative of the L² forcing functional in zero-trace Sobolev space. -/
 noncomputable def forcingRep (f : ScalarL2 U) : ZeroTraceSobolev U :=
   (InnerProductSpace.toDual ℝ (ZeroTraceSobolev U)).symm (forcing f)
 

@@ -184,7 +184,7 @@ theorem doubledResponseJ_scalarNormalized_le {d : ℕ} (U : Book.Ch02.Domain d)
 
 /-- Coordinates of the scalar inverse-square-root normalizer. -/
 theorem ofFullBlockVec_constantFullBlockMatrixInvSqrt_scalarMatrix {d : ℕ}
-    [NeZero d] {σ : ℝ} (hσ : 0 < σ) (e : FullBlockVec d) :
+    {σ : ℝ} (hσ : 0 < σ) (e : FullBlockVec d) :
     ofFullBlockVec
         (Matrix.mulVec
           (Book.Ch02.constantFullBlockMatrixInvSqrt (scalarMatrix (d := d) σ)) e) =
@@ -198,7 +198,7 @@ theorem ofFullBlockVec_constantFullBlockMatrixInvSqrt_scalarMatrix {d : ℕ}
 
 /-- Coordinates of the scalar square-root normalizer. -/
 theorem ofFullBlockVec_constantFullBlockMatrixSqrt_scalarMatrix {d : ℕ}
-    [NeZero d] {σ : ℝ} (hσ : 0 < σ) (e : FullBlockVec d) :
+    {σ : ℝ} (hσ : 0 < σ) (e : FullBlockVec d) :
     ofFullBlockVec
         (Matrix.mulVec
           (Book.Ch02.constantFullBlockMatrixSqrt (scalarMatrix (d := d) σ)) e) =

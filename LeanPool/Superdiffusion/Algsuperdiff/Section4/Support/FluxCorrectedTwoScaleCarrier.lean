@@ -80,7 +80,7 @@ families have a.e. equal representatives on `R`, their normalized block-response
 maxima on `R` agree.  The whole content is `Ch02.doubledResponseJ_eq_ofAEEq`:
 the response is an infimum/supremum of integrals of the coefficient, so it
 factors through the a.e. class. -/
-theorem normalizedBlockResponseMax_congr_of_aeeq [NeZero d] (R : TriadicCube d)
+theorem normalizedBlockResponseMax_congr_of_aeeq (R : TriadicCube d)
     {F G : Ch02.TriadicCoeffFamily d} (a0 : Mat d)
     (h : Ch02.CoeffOn.AEEq (F.coeffOn R) (G.coeffOn R)) :
     Ch02.normalizedBlockResponseMax R F a0 = Ch02.normalizedBlockResponseMax R G a0 := by
@@ -98,7 +98,7 @@ theorem normalizedBlockResponseMax_congr_of_aeeq [NeZero d] (R : TriadicCube d)
 /-- The proved canonical family of the flux-corrected field and CoarseGraining's
 root pointwise family of the flux-corrected `CoeffOn` are a.e. equal on every
 descendant cube: both representatives are literally the flux-corrected field. -/
-theorem fluxCorrectedCoeffFamily_coeffOn_aeeq_rootPointwise [NeZero d]
+theorem fluxCorrectedCoeffFamily_coeffOn_aeeq_rootPointwise
     (M : ABKModel d) (L m : ℤ) (Q : TriadicCube d) (omega : Cutoff.CutoffSample d)
     {R : TriadicCube d} {k : ℤ} (hk : k ≤ Q.scale) (hR : R ∈ descendantsAtScale Q k) :
     Ch02.CoeffOn.AEEq ((fluxCorrectedCoeffFamily M L m Q omega).coeffOn R)

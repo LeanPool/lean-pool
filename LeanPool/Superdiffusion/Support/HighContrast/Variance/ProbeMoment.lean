@@ -86,7 +86,7 @@ theorem fluctuation_probe_eq_centered_blockQuadratic [NeZero d] {L : Restriction
 
 /-- **M-factor bound.**  With `½ ≤ b`, `0 ≤ c ≤ 2Θ`, the centered weight of the
 diagonally rescaled probe is at most `2Θ·⟪q,q⟫`. -/
-private theorem mfactor_le [NeZero d] {b c Θ : ℝ}
+private theorem mfactor_le {b c Θ : ℝ}
     (hb : (1 / 2 : ℝ) ≤ b) (hc0 : 0 ≤ c) (hc : c ≤ 2 * Θ) (hΘ : 1 ≤ Θ)
     (q : FullBlockVec d) :
     Θ * vecNormSq (ofFullBlockVec (Matrix.mulVec

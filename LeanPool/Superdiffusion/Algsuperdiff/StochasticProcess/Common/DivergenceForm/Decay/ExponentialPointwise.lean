@@ -51,7 +51,7 @@ open scoped ENNReal
 variable {d : ℕ}
 
 /-- The unit ball carries positive volume. -/
-theorem unitBallVolume_pos [NeZero d] :
+theorem unitBallVolume_pos :
     0 < (volume (smallContrastUnitBall d)).toReal := by
   have hne : (volume (smallContrastUnitBall d)).toReal ≠ 0 := by
     simpa only [smallContrastUnitBall] using

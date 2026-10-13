@@ -97,6 +97,7 @@ theorem momentBoostedIndependentVariance_dominates {sigma : ℝ}
 def momentBoostedIndependentTilt (sigma D R t : ℝ) : ℝ :=
   t ^ (sigma - 1) / (4 * Real.sqrt D * Real.sqrt R)
 
+/-- The truncation cutoff associated with the independent moment-boosted tilt. -/
 def momentBoostedIndependentCutoff (sigma D R t : ℝ) : ℝ :=
   (Real.sqrt D * Real.sqrt R / sigma) ^ (1 / (1 - sigma)) * t
 

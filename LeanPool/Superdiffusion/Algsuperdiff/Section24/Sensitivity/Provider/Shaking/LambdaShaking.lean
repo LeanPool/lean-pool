@@ -227,7 +227,6 @@ theorem responseJ_shaking_lambda (U : Domain d) (a : CoeffOn U) (p q : Vec d)
 
 /-- **The pre-optimization (`eps`) form of `e.shaking.lambda`**: for every `eps
 > 0`,
-
   `J(U, lam^{-1/2} p, lam^{1/2} q; a)
      <= (1+eps)/lam J(U,p,q;a)
         + (1+eps)/(2 eps lam) (lam-1)^2 (q. sigma_*^{-1}(U;a) q)`.

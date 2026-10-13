@@ -80,6 +80,7 @@ theorem abs_volumeAverage_sub_windowAverage_le {W V : Set (Vec d)}
   rw [hsubavg] at hJ
   exact hJ.trans (normalizedL2On_le_of_subset hsub hWpos hVpos hfW2)
 
+/-- The dyadic contraction ratio for the Campanato oscillation estimate. -/
 def smallContrastCampanatoRatio (alpha : ℝ) : ℝ := (1 / 2 : ℝ) ^ alpha
 
 theorem smallContrastCampanatoRatio_nonneg (alpha : ℝ) :
@@ -129,10 +130,12 @@ theorem smallContrastDyadicRadius_rpow
   congr 2
   ring
 
+/-- The averages over shrinking dyadic balls used to construct a pointwise representative. -/
 def smallContrastCampanatoAverage (u : Vec d → ℝ) (x : Vec d) (n : ℕ) : ℝ :=
   volumeAverage
     (Metric.ball x (smallContrastDyadicRadius (smallContrastCampanatoRadius d) n)) u
 
+/-- The pointwise representative obtained as the limit of dyadic Campanato averages. -/
 def smallContrastCampanatoRepresentative
     (u : Vec d → ℝ) (x : Vec d) : ℝ :=
   limUnder atTop (smallContrastCampanatoAverage (d := d) u x)

@@ -64,7 +64,6 @@ one exposed binder, `hstrip`.
   - the strip second moment `hstrip`, and
   - the absorption gate `hgate`, `target + sqrt(d 3^{g-p}) sqrt(Cstrip) <=
     cgamma^{10}`.
-
   As in the proved bridge, **no** integrability or measurability of the cell
   integrand itself is assumed: `integral_mono_ae` where it is integrable and
   `integral_undef` where it is not.
@@ -196,7 +195,7 @@ values are ever compared with the majorant.
 As in `Closure.GammaTenAssemblyBridge.fluctuationEnergyAverage_le_of_cell_fold`,
 no integrability and no measurability of the cell integrand is assumed:
 `integral_mono_ae` where it is integrable, `integral_undef` where it is not. -/
-theorem fluctuationEnergyAverage_le_of_interior_cell_fold_grid_load [NeZero d]
+theorem fluctuationEnergyAverage_le_of_interior_cell_fold_grid_load
     (M : ABKModel d) (n : ℤ) (h : ℕ) (Kc : ℤ) (j : ℕ) (e e' : Vec d)
     (wD : ShellSeq d → H10Function (openCubeSet (originCube d Kc)))
     (wN : ShellSeq d → H1MeanZeroFunction (openCubeSet (originCube d Kc)))

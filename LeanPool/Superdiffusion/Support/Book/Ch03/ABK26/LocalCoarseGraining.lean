@@ -42,7 +42,7 @@ noncomputable section
 /-- A one-cube response maximum is invariant under a coefficient-family
 comparison available on that cube alone. -/
 private theorem normalizedBlockResponseMax_eq_of_localAEEq
-    {d : ℕ} [NeZero d] {A B : Book.Ch02.TriadicCoeffFamily d}
+    {d : ℕ} {A B : Book.Ch02.TriadicCoeffFamily d}
     {S : TriadicCube d} (hS : Book.Ch02.CoeffOn.AEEq (A.coeffOn S) (B.coeffOn S))
     (a0 : Mat d) :
     Book.Ch02.normalizedBlockResponseMax S A a0 =
@@ -632,7 +632,7 @@ private theorem localCoarseGraining_forcing_series_eq_localForcing
 factorization; this version works directly with the attached finite sum so
 the restriction proof remains available. -/
 private theorem localCoarseGraining_energy_series_eq_weightedEnergy
-    {d : ℕ} [NeZero d] (Q : TriadicCube d) (n : ℤ) (hn : n ≤ Q.scale)
+    {d : ℕ} (Q : TriadicCube d) (n : ℤ) (hn : n ≤ Q.scale)
     (a : Book.Ch02.CoeffOn (Book.Ch02.cubeDomain Q))
     (u : H1Function (openCubeSet Q))
     (s1 s : FractionalOrder) (p : FiniteLpExponent)

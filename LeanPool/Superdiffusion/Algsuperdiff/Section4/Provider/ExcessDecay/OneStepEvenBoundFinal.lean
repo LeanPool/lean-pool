@@ -43,11 +43,9 @@ the odd class.
    `i`-slope keeps half of its `L²(U₂)` size on the transversally halved slab
    (`OneStepEvenBoundBox.normalizedL2On_coordBox_affineEval_half_le` — the
    reverse-Chebyshev step), gives
-
    ```text
      (1/2) N ≤ 3 ((3^{n-2}/delta)^d)^{1/2} E + 3 M delta² ,
    ```
-
    with `N = ‖e‖_{L²(U₂)}`, `E = ‖V - ℓ*‖_{L²(U₂)}` and `M` any bound for the
    Hessian of `V - ℓ*` on the Taylor box.  The two `f`-terms cost only the volume
    ratio because the deep comparison point is a **translate** of the slab, of the
@@ -61,11 +59,9 @@ the odd class.
    even part's `L²(R)` and `L²(U₂)` sizes are *equal*, since it has vanishing
    `i`-slope and the two boxes differ only in the `i`-edge.  Taking
    `delta = t·3^{n-2}` with
-
    ```text
      t = min (1/16) (1 / (1 + 24 K)) ,   K = C₁ (2^d + 1) ,
    ```
-
    makes `3 M delta² ≤ (1/8)(E + N)`, and `(★)` closes at
    `C(d) = 8 ((1/t)^d)^{1/2} + 1/3` with no case split.
 
@@ -146,7 +142,7 @@ theorem volume_toReal_coordBox_deep_ge {x : Vec d} {m k : ℤ} {i : Fin d} {delt
 
 /-- **The slab comparison.**  The even part of the affine minimizer is priced on
 the near-face slab by the affine residual and the Hessian remainder. -/
-theorem normalizedL2On_evenAffinePart_le_of_hessian_bound [NeZero d] {m n : ℤ} {x : Vec d}
+theorem normalizedL2On_evenAffinePart_le_of_hessian_bound {m n : ℤ} {x : Vec d}
     (hx : x ∈ openCubeSet (originCube d m)) (hmn : n - 2 < m) {i : Fin d}
     (hup : MeetsUpperFace x m (n - 2) i)
     (hother : ∀ j, j ≠ i → ¬ MeetsUpperFace x m (n - 2) j ∧ ¬ MeetsLowerFace x m (n - 2) j)

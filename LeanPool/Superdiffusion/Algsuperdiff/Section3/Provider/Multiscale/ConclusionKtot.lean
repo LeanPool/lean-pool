@@ -69,11 +69,9 @@ cube `□` (`mem_openCubeSet_of_mem_unitOpenCube`).
   `(1/5)Σ_{n≥1}3^{-n/5} ≤ 1` is settled in `BadEvents/Definitions.lean`) gives
   `3^{2j}‖∇(k_L−k_j)‖_{W^{1,∞}(□)} ≤ δ_osc c⋆^{1/2} γ^{-1/2} 3^{γ j}`, and
   `rpow_mul_oscThreshold_sq` records the design identity behind the whole step:
-
   ```
   3^{−2γ j} . oscThreshold(j)²  =  δ_osc² c⋆ / γ ,      for EVERY scale j.
   ```
-
   So the oscillation half contributes a constant to `Ktot` with no `j`- and no
   layer-dependence at all.  `oscThreshold_mono` makes the layer-to-root
   comparison `oscThreshold(□.scale) ≤ oscThreshold(m)` for a layer cube.

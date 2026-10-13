@@ -18,6 +18,7 @@ Module imports, support namespace and local option directives adapted for Lean P
 @[expose] public section
 
 -- FROZEN-STATEMENT-BEGIN
+/-- The topology induced by the compact-open topologies on the three shell components. -/
 @[instance_reducible] noncomputable def
     Algsuperdiff.Frozen.Assumptions.shellFieldCompactOpenTopology
     (d : ℕ) :

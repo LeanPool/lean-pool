@@ -264,7 +264,7 @@ theorem descendantTranslationShift_physical (z : Fin d → ℤ) (n : ℕ) (m : �
 /-! ## The gauged ellipticity sum is covariant -/
 
 /-- **The pathwise covariance of the gauged ellipticity sum.**  Unconditional. -/
-theorem gaugedEllipticitySum_translateCube_coefficientCutoff [NeZero d] (M : ABKModel d)
+theorem gaugedEllipticitySum_translateCube_coefficientCutoff (M : ABKModel d)
     (L m : ℤ) (omega : CutoffSample d) (z : Fin d → ℤ) (sigmaBar s : ℝ) :
     gaugedEllipticitySum sigmaBar
         (translateCube z (originCube d m)) s

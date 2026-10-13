@@ -25,7 +25,6 @@ Module imports, support namespace and local option directives adapted for Lean P
 Source: ABK26.  The `D_h` splitting identity
 `quadForm_coarseMatrixDerivative_eq_split` consumes a single input, namely that
 the combination
-
   `∇w + ∇w* + p = ½ (∇v(·,U,p,q;a) + ∇v(·,U,p,-q;aᵗ)) + p`
 
 belongs to `L²_{pot,0}(U)`, i.e. is a.e. the gradient of an honest `H¹₀(U)`

@@ -113,6 +113,7 @@ variable {Omega : Type*}
 variable {d : ℕ}
 
 
+/-- Geometric endpoint weights for summing the scale profile. -/
 noncomputable def endpointWeight (rho : ℝ) (n : ℕ) : ℝ := ((3 : ℝ) ^ (-rho)) ^ n
 
 theorem endpointWeight_pos (rho : ℝ) (n : ℕ) : 0 < endpointWeight rho n :=

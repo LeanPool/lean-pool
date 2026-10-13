@@ -96,7 +96,7 @@ def hilbertBlockInr (d : ℕ) : HilbertVec d →L[ℝ] HilbertBlockVec d :=
 /-- **The doubled class of a pair of vector fields is the sum of the two
 post-composed vector classes.** -/
 theorem toHilbertBlockL2OfComponents_eq_compLp_add {U : Set (Vec d)}
-    [IsFiniteMeasure (volumeMeasureOn U)] {f g : Vec d → Vec d}
+    {f g : Vec d → Vec d}
     (hf : MemVectorL2 U f) (hg : MemVectorL2 U g) :
     toHilbertBlockL2OfComponents hf hg =
       (hilbertBlockInl d).compLp (toHilbertVectorL2OfVecField hf) +
@@ -124,7 +124,6 @@ theorem toHilbertBlockL2OfComponents_eq_compLp_add {U : Set (Vec d)}
 theorem measurable_toHilbertBlockL2OfComponents {Omega : Type*} [MeasurableSpace Omega]
     {U : Set (Vec d)} [IsFiniteMeasure (volumeMeasureOn U)]
     [MeasurableSpace (HilbertVectorL2 U)] [BorelSpace (HilbertVectorL2 U)]
-    [SecondCountableTopology (HilbertVectorL2 U)]
     [MeasurableSpace (HilbertBlockL2 U)] [BorelSpace (HilbertBlockL2 U)]
     [SecondCountableTopology (HilbertBlockL2 U)]
     {f g : Omega → Vec d → Vec d}

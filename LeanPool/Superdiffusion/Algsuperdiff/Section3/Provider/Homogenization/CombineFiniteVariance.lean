@@ -36,18 +36,21 @@ open _root_.HCPolySupport.IndependentSums
 
 noncomputable section
 
+/-- The second-moment constant for the normalized finite-corridor tail bounds. -/
 noncomputable def finiteCorridorSecondConst : ℝ :=
   2 *
     ((gammaMomentConst 2 * (2 : ℝ) ^ ((2 : ℝ)⁻¹) * 16) ^ (2 : ℕ) +
       (gammaMomentConst (1 / 2) *
         (2 : ℝ) ^ (((1 / 2 : ℝ))⁻¹) * 256) ^ (2 : ℕ))
 
+/-- The fourth-moment constant for the normalized finite-corridor tail bounds. -/
 noncomputable def finiteCorridorFourthConst : ℝ :=
   8 *
     ((gammaMomentConst 2 * (4 : ℝ) ^ ((2 : ℝ)⁻¹) * 16) ^ (4 : ℕ) +
       (gammaMomentConst (1 / 2) *
         (4 : ℝ) ^ (((1 / 2 : ℝ))⁻¹) * 256) ^ (4 : ℕ))
 
+/-- The combined second- and fourth-moment constant for the finite-corridor estimate. -/
 noncomputable def finiteCorridorBudgetConst : ℝ :=
   finiteCorridorSecondConst + 2 * finiteCorridorFourthConst
 
@@ -234,12 +237,14 @@ private theorem finiteCorridor_momentBudgets_le
       _ = (finiteCorridorSecondConst + 2 * finiteCorridorFourthConst) * delta := by ring
   exact ⟨hdeltaNonneg, hdeltaLe, hsecond, hfourth, hbudget⟩
 
+/-- The squared Rosenthal constant at the finite-corridor normalization shift. -/
 noncomputable def finiteCorridorRosenthalConst (d : ℕ) : ℝ :=
   (Book.Ch04.rosenthalDescendantsAtScaleLpConst d
       (-(Cutoff.cutoffRelativeNormalizationShift d : ℤ)) 2 +
     Book.Ch04.rosenthalDescendantsAtScaleSqrtConst d
       (-(Cutoff.cutoffRelativeNormalizationShift d : ℤ)) 2) ^ (2 : ℕ)
 
+/-- The common finite-probe moment budget in the finite-corridor estimate. -/
 noncomputable def finiteCorridorProbeConst (d : ℕ) : ℝ :=
   192 * finiteCorridorRosenthalConst d * finiteCorridorBudgetConst +
     128 * finiteCorridorSecondConst ^ (2 : ℕ)
@@ -260,7 +265,7 @@ private theorem finiteCorridorProbeConst_nonneg (d : ℕ) :
   linarith only [h1, h2]
 
 private theorem finiteCorridor_probeRhs_le
-    {d : ℕ} [NeZero d]
+    {d : ℕ}
     (N delta geom budget secondBudget : ℝ)
     (hNpos : 0 < N) (hNinv : N⁻¹ = geom)
     (hdelta : 0 ≤ delta) (hbudget : 0 ≤ budget)
@@ -406,6 +411,7 @@ private theorem finiteCorridor_probeRhs_le
     _ = finiteCorridorProbeConst d * delta * (delta + geom) := by
       simp only [finiteCorridorProbeConst, CR, CB, CS]
 
+/-- The dimension-dependent variance constant obtained from the finite-probe budgets. -/
 noncomputable def finiteCorridorVarianceConst (d : ℕ) : ℝ :=
   max 1
     (18 * (Fintype.card (BlockCoord d) : ℝ) ^ (6 : ℕ) *

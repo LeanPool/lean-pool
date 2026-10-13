@@ -85,7 +85,7 @@ def quarter : {s : ℝ // 0 < s} := ⟨1 / 4, by norm_num⟩
 the actual coefficient cutoff at an arbitrary triadic cube.  On the centered
 cube it is almost surely the proved observable
 `Observable.cutoffHomogenizationError`. -/
-def cubeHomogenizationErrorLiteral [NeZero d] (M : ABKModel d) (Q : TriadicCube d)
+def cubeHomogenizationErrorLiteral (M : ABKModel d) (Q : TriadicCube d)
     (omega : CutoffSample d) : ℝ :=
   Ch02.HomogenizationErrorOnCube Q (1 / 4) .infinity (.finite 2)
     (coefficientCutoffTriadicCoeffFamily M Q.scale omega)
@@ -95,7 +95,7 @@ def cubeHomogenizationErrorLiteral [NeZero d] (M : ABKModel d) (Q : TriadicCube 
 
 /-- The literal inverse lower ellipticity of the cutoff is the Chapter 2
 quantity of the canonical Chapter 4 coefficient family. -/
-theorem cubeLowerEllipticityInvLiteral_eq [NeZero d] (M : ABKModel d)
+theorem cubeLowerEllipticityInvLiteral_eq (M : ABKModel d)
     (Q : TriadicCube d) (cutoffScale : ℤ) (s : ℝ)
     (q : Algsuperdiff.Section3.CoarseEllipticityExponent) (omega : CutoffSample d) :
     cubeLowerEllipticityInvLiteral M Q cutoffScale s q omega =
@@ -112,7 +112,7 @@ theorem cubeLowerEllipticityInvLiteral_eq [NeZero d] (M : ABKModel d)
 
 /-- The literal upper ellipticity of the cutoff is the Chapter 2 quantity of the
 canonical Chapter 4 coefficient family. -/
-theorem cubeUpperEllipticityLiteral_eq [NeZero d] (M : ABKModel d)
+theorem cubeUpperEllipticityLiteral_eq (M : ABKModel d)
     (Q : TriadicCube d) (cutoffScale : ℤ) (s : ℝ)
     (q : Algsuperdiff.Section3.CoarseEllipticityExponent) (omega : CutoffSample d) :
     cubeUpperEllipticityLiteral M Q cutoffScale s q omega =

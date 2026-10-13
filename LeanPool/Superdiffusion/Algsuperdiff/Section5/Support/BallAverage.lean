@@ -190,7 +190,7 @@ theorem le_ballAverageSupNormOn {U D : Set (Vec d)} {f : Vec d → ℝ} {x : Vec
       ballAverageSupNormOn U D f :=
   le_iSup_of_le x (le_iSup_of_le hx (le_iSup_of_le k (le_iSup_of_le hball le_rfl)))
 
-private theorem abs_setAverage_ball_le_of_ae [NeZero d] {U : Set (Vec d)} {f : Vec d → ℝ}
+private theorem abs_setAverage_ball_le_of_ae {U : Set (Vec d)} {f : Vec d → ℝ}
     {C : ℝ} (hae : ∀ᵐ z ∂(volume : Measure (Vec d)), z ∈ U → |f z| ≤ C)
     {x : Vec d} {r : ℝ} (hr : 0 < r) (hball : Metric.ball x r ⊆ U) :
     |⨍ z in Metric.ball x r, f z ∂volume| ≤ C := by

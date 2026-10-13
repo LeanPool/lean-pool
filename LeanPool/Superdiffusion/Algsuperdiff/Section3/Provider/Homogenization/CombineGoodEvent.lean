@@ -318,7 +318,7 @@ private theorem stepOne_assembly {J1 Jm X T1 T2 T3 T4 pref C9 sigma Sd Sv Nc D w
 /-- The literal depth-one digging room of the `l.J.bound.by.Besov` composite is
 the printed response defect at the single scale `n = m - 1`, times the
 dimensional cardinality of the child family. -/
-private theorem depthOneDiggingRoom_eq {d : ℕ} [NeZero d] (a : RegCoeffField d)
+private theorem depthOneDiggingRoom_eq {d : ℕ} (a : RegCoeffField d)
     (m : ℤ) (p q : Vec d) :
     ∑ R ∈ descendantsAtDepth (originCube d m) 1,
         2 * (Ch04.restrictionResponseJObservableCubeSet R p q a -

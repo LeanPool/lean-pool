@@ -53,6 +53,7 @@ elementwise matrix norm fixed by the frozen carrier; exact Euclidean sizes are
 measured separately by `matrixDerivativeNorm`. -/
 abbrev MatrixDerivative (d : ℕ) := Vec d →L[ℝ] Mat d
 
+/-- The closed Euclidean unit ball used to index induced derivative norms. -/
 abbrev EuclideanUnitVector (d : ℕ) :=
   {v : Vec d // vecNorm v ≤ 1}
 
@@ -63,6 +64,7 @@ def matrixDerivativeNormValue (D : MatrixDerivative d) :
   | none => 0
   | some v => matrixOperatorNorm (D v.1)
 
+/-- The range of first-derivative norm samples, including the zero sample. -/
 def matrixDerivativeNormValueSet (D : MatrixDerivative d) : Set ℝ :=
   Set.range (matrixDerivativeNormValue D)
 
@@ -277,6 +279,7 @@ def matrixSecondDerivativeNormValue (H : MatrixSecondDerivative d) :
   | none => 0
   | some u => matrixDerivativeNorm (H u.1)
 
+/-- The range of second-derivative norm samples, including the zero sample. -/
 def matrixSecondDerivativeNormValueSet (H : MatrixSecondDerivative d) : Set ℝ :=
   Set.range (matrixSecondDerivativeNormValue H)
 
@@ -444,16 +447,19 @@ theorem matrixSecondDerivativeNorm_le_iff
 abbrev UnitOpenCubePoint (d : ℕ) :=
   {x : Vec d // x ∈ openCubeSet (originCube d 0)}
 
+/-- Matrix-value norm samples on the open unit cube, with zero at `none`. -/
 def unitCubeValueAtIndex (j : ShellField d) :
     Option (UnitOpenCubePoint d) → ℝ
   | none => 0
   | some x => matrixOperatorNorm (j x.1)
 
+/-- First-derivative norm samples on the open unit cube, with zero at `none`. -/
 def unitCubeDerivAtIndex (j : ShellField d) :
     Option (UnitOpenCubePoint d) → ℝ
   | none => 0
   | some x => matrixDerivativeNorm (ShellField.deriv j x.1)
 
+/-- Second-derivative norm samples on the open unit cube, with zero at `none`. -/
 def unitCubeSecondDerivAtIndex (j : ShellField d) :
     Option (UnitOpenCubePoint d) → ℝ
   | none => 0

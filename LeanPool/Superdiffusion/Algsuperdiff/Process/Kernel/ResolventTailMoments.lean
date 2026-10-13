@@ -269,7 +269,7 @@ function and a local fourth-moment estimate for the compactified semigroup in th
 function determines give the data from which the continuous-path process of the compactified
 semigroup is formed.  This is the common core of the tail criteria below: they differ only in
 how the local moment estimate is produced. -/
-def OnePointRegular.of_hasLocalKolmogorovMoments (R : PositiveC0ContractiveResolvent X)
+def OnePointRegular.ofHasLocalKolmogorovMoments (R : PositiveC0ContractiveResolvent X)
     (rho : X → ℝ) (hrho_cont : Continuous rho) (hrho_pos : ∀ x, 0 < rho x)
     (hrho_lipschitz : LipschitzWith 1 rho)
     (hrho_compact : ∀ epsilon > 0, IsCompact {x | epsilon ≤ rho x})

@@ -225,7 +225,7 @@ this repository's `blockGridSup` at the per-cube Chapter 4 norms --- on the
 a.e.-locally elliptic branch by the Chapter 2 identification, off it because
 both sides are the supremum of the zero family.  This is the equality
 `GridWeights.lean` flags as "an additional, unlanded step". -/
-theorem maxDescendantSigmaStarInvCoeffField_eq_blockGridSup [NeZero d] (m : ℤ)
+theorem maxDescendantSigmaStarInvCoeffField_eq_blockGridSup (m : ℤ)
     (k : ℕ) (a : RegCoeffField d) :
     Book.Ch04.maxDescendantSigmaStarInvMatrixNormCoeffFieldAtScale
         (originCube d m) (m - 1 - (k : ℤ)) a
@@ -248,7 +248,7 @@ theorem maxDescendantSigmaStarInvCoeffField_eq_blockGridSup [NeZero d] (m : ℤ)
 
 /-- **The, upper half**: the `b` twin of
 `maxDescendantSigmaStarInvCoeffField_eq_blockGridSup`. -/
-theorem maxDescendantBCoeffField_eq_blockGridSup [NeZero d] (m : ℤ) (k : ℕ)
+theorem maxDescendantBCoeffField_eq_blockGridSup (m : ℤ) (k : ℕ)
     (a : RegCoeffField d) :
     Book.Ch04.maxDescendantBMatrixNormCoeffFieldAtScale
         (originCube d m) (m - 1 - (k : ℤ)) a
@@ -272,7 +272,7 @@ theorem maxDescendantBCoeffField_eq_blockGridSup [NeZero d] (m : ℤ) (k : ℕ)
 
 /-- At its own scale a cube's only descendant is itself, so the grid maximum there
 is the one-cube norm. -/
-theorem maxDescendantSigmaStarInvMatrixNormAtScale_top_eq [NeZero d]
+theorem maxDescendantSigmaStarInvMatrixNormAtScale_top_eq
     (Q : TriadicCube d) (a : Book.Ch02.TriadicCoeffFamily d) :
     Book.Ch02.maxDescendantSigmaStarInvMatrixNormAtScale Q Q.scale a
       = Book.Ch02.coarseSigmaStarInvMatrixNorm Q a := by
@@ -280,7 +280,7 @@ theorem maxDescendantSigmaStarInvMatrixNormAtScale_top_eq [NeZero d]
     finsetSupReal_eq_sup'_aux _ (Finset.singleton_nonempty Q), Finset.sup'_singleton]
 
 /-- The `b` twin of `maxDescendantSigmaStarInvMatrixNormAtScale_top_eq`. -/
-theorem maxDescendantBMatrixNormAtScale_top_eq [NeZero d]
+theorem maxDescendantBMatrixNormAtScale_top_eq
     (Q : TriadicCube d) (a : Book.Ch02.TriadicCoeffFamily d) :
     Book.Ch02.maxDescendantBMatrixNormAtScale Q Q.scale a
       = Book.Ch02.coarseBMatrixNorm Q a := by

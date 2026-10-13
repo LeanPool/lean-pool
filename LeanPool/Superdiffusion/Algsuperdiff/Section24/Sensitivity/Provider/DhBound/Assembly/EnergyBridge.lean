@@ -24,7 +24,6 @@ Module imports, support namespace and local option directives adapted for Lean P
 # Energy bridge: `solutionEnergyNorm` versus the response functional
 
 Source: ABK26 (`e.Jenergyv.nosymm` as used in the proof of `l.Dh.bound`):
-
   `‖σ^{1/2} ∇w‖²_{L²(□₀)} = 2 J(□₀, p, q; a)`,  `w = ½ v(·, □₀, p, q; a)`.
 
 In the CoarseGraining vocabulary the left-hand side of that display, for the

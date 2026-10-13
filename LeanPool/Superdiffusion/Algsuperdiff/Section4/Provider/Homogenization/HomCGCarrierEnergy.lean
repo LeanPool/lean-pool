@@ -171,7 +171,7 @@ per-cell energy, and every partial `ℓ^p` sum of this repository's slot is belo
 The hypothesis `hw` is the order constraint recorded in the module docstring:
 the `CoarseGraining` pair `(s₁, s)` must have order gap at least this
 repository pair's `wgap`. -/
-theorem weightedLocalSymmetricEnergyLp_le_ofReal [NeZero d]
+theorem weightedLocalSymmetricEnergyLp_le_ofReal
     {Q : TriadicCube d} {n : ℤ} (hn : n ≤ Q.scale)
     (a : Book.Ch02.CoeffOn (Book.Ch02.cubeDomain Q)) (u : H1Function (openCubeSet Q))
     (s1 s : FractionalOrder) (p : FiniteLpExponent) {wgap : ℝ}

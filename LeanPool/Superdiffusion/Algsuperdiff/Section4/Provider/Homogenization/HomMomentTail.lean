@@ -62,11 +62,9 @@ layer-cake identity and no series inversion:
    `3^{cN₀} + Σ_N 3^{cN} μ{X ≥ N}`.
 3. **The geometric tail**: the tail `μ{X ≥ N} ≤ B e^{-θN}` makes the
    `N`-th term `B ρ^N` with `ρ = 3^c e^{-θ}`, and the three DISPLAYED gates
-
    * `hratio`: `ρ ≤ 1/2`   (the `p`-range: `2p(1-α)log 3 ≤ θ/2`),
    * `htrunc`: `3^{c·2p·N₀} ≤ 2^p`   (the `γ`-smallness `N₀ s log 3 ≤ log 2`),
    * `hsmall`: `2 B ρ^{N₀+1} ≤ 1`   (the cut is past the tail's turn-on),
-
    give `≤ 2^p + 1 ≤ 2^{2p}`.
 
 The three gates are stated, not absorbed: they are exactly the `γ`-smallness

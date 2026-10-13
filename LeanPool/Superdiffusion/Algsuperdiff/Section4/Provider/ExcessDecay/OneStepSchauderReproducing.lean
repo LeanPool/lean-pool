@@ -45,7 +45,6 @@ local notation "𝔼" => EuclideanSpace ℝ (Fin d)
 let `K` be a continuous, radial, compactly supported kernel of unit mass whose
 support sits inside the
 ball of radius `ρ ≤ R` (i.e. `K z = 0` whenever `ρ ≤ ‖z‖`).  Then `K` reproduces `u` at the center:
-
   `∫ y, K (y - x) · u y = u x`. -/
 theorem reproducing_of_radial [NeZero d] {u : 𝔼 → ℝ} (hu : ContDiff ℝ 2 u)
     {x : 𝔼} {R : ℝ} (hharm : HarmonicOnNhd u (ball x R))

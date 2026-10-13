@@ -26,7 +26,6 @@ diffusion stays in an open set `U` for a time comparable to `T`: an upper bound
 `E_y tau_U ≤ Cup * T` valid from every starting point, and a lower bound `clow * T ≤ E_x tau_U`
 at the starting point under consideration.  The upper bound controls the second moment, and the
 Paley--Zygmund inequality at the level one half then gives
-
   `clow ^ 2 / (1152 * Cup ^ 2) ≤ Q_x {clow * T / 2 ≤ tau_U}`.
 
 The bound is uniform over any set of starting points at which the lower bound holds, which is the

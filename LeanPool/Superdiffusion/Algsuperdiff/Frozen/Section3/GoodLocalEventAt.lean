@@ -19,6 +19,7 @@ Module imports, support namespace and local option directives adapted for Lean P
 @[expose] public section
 
 -- FROZEN-STATEMENT-BEGIN
+/-- The local good event transported to a translated cutoff sample. -/
 noncomputable def Algsuperdiff.Frozen.Section3.goodLocalEventAt
     {d : ℕ} (M : Algsuperdiff.Section3.ABKModel d) (Ccg : ℝ) (m n : ℤ)
     (z : HCPolySupport.Vec d) :

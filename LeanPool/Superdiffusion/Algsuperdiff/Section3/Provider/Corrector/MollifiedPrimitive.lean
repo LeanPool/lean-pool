@@ -78,7 +78,7 @@ theorem integrable_kernelDeriv {κ : Vec d → ℝ} (hκc : HasCompactSupport κ
 Mathlib's `HasCompactSupport.hasFDerivAt_convolution_right` transported through
 `convolution_flip` and `convolution_precompR_apply`. -/
 theorem fderiv_convolution_apply {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
-    [CompleteSpace E] {κ : Vec d → ℝ} (hκc : HasCompactSupport κ)
+    {κ : Vec d → ℝ} (hκc : HasCompactSupport κ)
     (hκ : ContDiff ℝ (⊤ : ℕ∞) κ) {u : Vec d → E} (hu : LocallyIntegrable u volume)
     (x : Vec d) (i : Fin d) :
     fderiv ℝ (convolution κ u (ContinuousLinearMap.lsmul ℝ ℝ) volume) x (basisVec i)

@@ -144,7 +144,7 @@ The clause-(ii) route with the `∀ᵐ` peeled off both sides:
 every step of it is sample-wise, so a *single* sample satisfying the `ε`-free
 clause-(i) display satisfies the clause-(ii) bound for **every** admissible `ε`.
 That is what lets the target's `∀ ε` sit inside its `∀ᵐ`. -/
-private theorem clauseTwo_pointwise_of_display [NeZero d] (M : ABKModel d) (Ccg : ℝ)
+private theorem clauseTwo_pointwise_of_display (M : ABKModel d) (Ccg : ℝ)
     (m : ℤ) (s : {s : ℝ // 0 < s}) {ep C : ℝ} (hC0 : 0 ≤ C)
     (hep : ep ∈ Set.Ioc (0 : ℝ) (1 / 2)) (hsep : (s : ℝ) * ep ≤ 1)
     (hsmall : M.gamma * |Real.log M.gamma| ^ 2

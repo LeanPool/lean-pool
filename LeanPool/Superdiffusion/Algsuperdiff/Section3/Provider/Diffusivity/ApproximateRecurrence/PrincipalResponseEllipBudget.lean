@@ -30,12 +30,10 @@ Source displays in ABK26:
 
 * the ellipticity budget itself: the sentence
   `By~\eqref{e.nablaw.in.L.eight} we have` and the display
-
   ```
     avsum_{z in 3^n Zd cap cu_K}
       E[ shom_{m-h} |p_z|^2 + shom_{m-h}^{-1} |q_z|^2 ]  <=  C ,
   ```
-
   which sits between the gauge-switch chain that ends and the independence
   sentence;
 * `e.nablaw.in.L.eight` (label; display), the input the manuscript names;

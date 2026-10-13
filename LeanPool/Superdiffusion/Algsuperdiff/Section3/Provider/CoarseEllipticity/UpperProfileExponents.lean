@@ -34,14 +34,18 @@ namespace Algsuperdiff.Section3.Provider.CoarseEllipticity
 
 noncomputable section
 
+/-- The reduced profile exponent used in upper coarse-ellipticity estimates. -/
 def upperProfileSigma (sigma : ℝ) : ℝ := sigma / 4
 
+/-- The complementary exponent for the upper profile's base contribution. -/
 def upperProfileBaseSigma (sigma : ℝ) : ℝ :=
   1 - upperProfileSigma sigma
 
+/-- The product-tail exponent associated with the reduced upper profile exponent. -/
 def upperProfileTailSigma (sigma : ℝ) : ℝ :=
   1 / (1 + upperProfileSigma sigma)
 
+/-- The target exponent in the upper coarse-ellipticity tail estimate. -/
 def upperProfileTargetSigma (sigma : ℝ) : ℝ :=
   (1 - sigma) / 3
 

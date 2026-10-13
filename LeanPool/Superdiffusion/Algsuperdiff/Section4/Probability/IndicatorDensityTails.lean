@@ -44,14 +44,12 @@ and both are proved here over an abstract probability space.
    `p.concentration.for.scales`, requires `M ≥ r` ("`m ∈ ℕ` with `m ≥ r`").
    The gap is closed here **without any new hypothesis**, from the
    concentration output itself:
-
    * for a single scale `k ∈ {0,…,r}`, the bad event `(Ev k)ᶜ` already forces the
      bad-scale *density over the longer window* `{0,…,r}` to be `≥ 1/(r+1)`,
      hence `> θ` as soon as `θ(r+1) < 1`, so
      `P[(Ev k)ᶜ] ≤ exp(-a(r+1))` (`measure_compl_le_of_concEvent`);
    * a union bound over the `n+1 ≤ r` scales of the short window then gives
      `P[θ < density over {0,…,n}] ≤ (n+1)·exp(-a(r+1))`,
-
    and the single rate hypothesis `log(Qr) + c₁ r ≤ a` dominates *both*
    regimes.
 
@@ -209,7 +207,6 @@ together with the level conditions `0 < θ`, `θ(r+1) < 1` and the single rate
 condition `log(Qr) + c₁ r ≤ s p θ/(16 r)`, the bad-scale density over **every**
 window `{0,…,n}`, `n : ℕ` — including the short windows `n < r` that
 `p.concentration.for.scales` does not reach — obeys
-
   `P[θ < density of bad scales over {0,…,n}] ≤ exp(-c₁ n)/Q`.
 
 The prefactor `Q ≥ 1` is free: `Q = 3` for a lane that is run once, `Q = 6` for

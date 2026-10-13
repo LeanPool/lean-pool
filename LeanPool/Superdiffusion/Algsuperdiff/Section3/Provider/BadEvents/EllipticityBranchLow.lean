@@ -45,7 +45,6 @@ then `p.cg.ellipticity.bounds` at each translate and `l.maximums.Gamma.s`.
   `ErrorComparison.lambdaSq_eighth_inv_le_two_mul_max_descendants_sixteenth`
   (`lambda^{-1}_{1/8,2}(Q) <= 2 max_{R in descendantsAtScale Q n}
   lambda^{-1}_{1/16,2}(R)`, gap constant `G(1/8,1/16,2) = 1 + 3^{-1/8} <= 2`).
-
   This is exactly the accounting recorded in the header of
   `FiniteQTransfer.lean`.
 
@@ -56,19 +55,15 @@ then `p.cg.ellipticity.bounds` at each translate and `l.maximums.Gamma.s`.
   E^{-2} gamma^{-1}))` does not.  Accordingly the headline theorem here,
   `measureReal_coarseEllipticityFailure_le_of_translateCoarseBounds`, is stated
   with **no gate at all** and **carries** the loss,
-
   ```
   P[ lambda^{-1}_{1/8,2}(square_m; a_n) sigmabar_{n-1} > 2 . 2 Ccg ]
     <= 3^{d(m-n)} exp( - exp( (1/4) Ccg^{-1} E^{-2} gamma^{-1} ) ) ,
   ```
-
   and the passage to the printed shape is a separate, explicitly gated step
   (`..._of_absorb`, `..._printed_of_gap`), whose gate
-
   ```
   d (m - n) log 3 + T <= exp( (1/4) Ccg^{-1} E^{-2} gamma^{-1} )
   ```
-
   is the exact and only inequality the absorption needs.  Nothing in this
   module hides it: the loss-carrying theorem is unconditional, and every
   printed-shape statement carries the gate as a named binder.
@@ -96,7 +91,6 @@ Two remarks fix its size.
   replaced by the general-cube observable `cubeLowerEllipticityInv M ...`.  Two
   things are carried by this single binder, both of them steps the manuscript
   itself takes:
-
   1. the helper keeps the frozen theorem's specialization explicit as a
      conditional A binder, exactly as in `BadEventLemmaCases.lean`; the frozen
      theorem is now proved and may discharge the centered instance in a
@@ -110,7 +104,6 @@ Two remarks fix its size.
      conclusion to this binder even at that one translate, because
      `IsLowerIntegerFamilyOrliczWithWitness.dominates` is a pointwise (`∀ ω`)
      clause, which an a.e. route cannot reach.  Both halves are resolved below.
-
      * *Centered.*  The exported general-cube and centered observables both
        reduce pointwise to the same literal by
        `cubeLowerEllipticityInv_eq_literal`,
@@ -130,12 +123,10 @@ Two remarks fix its size.
        instance at scale `n` (`ObservableSwapPayoff`'s
        `isLowerIntegerFamilyOrlicz_cubeLowerEllipticityInv_forall_descendant`),
        which is precisely the manuscript's stationarity reduction.
-
      The binder remains as stated because this module exposes the translated
      statement rather than assembling its upstream input.  The frozen theorem
      discharges the centered instance, and the *transport* is what is proved
      here.
-
   The exponent is `1/16`, not the printed `1/8`, by the `q = infinity` reading
   described above.  `1/16` lies
   in the frozen `s`-window `Set.Icc (gamma/2 + exp(-Ccg^{-1} E^{-2}

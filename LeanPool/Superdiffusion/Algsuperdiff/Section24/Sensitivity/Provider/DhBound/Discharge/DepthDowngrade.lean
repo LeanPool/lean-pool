@@ -210,7 +210,7 @@ theorem sensitivityGapConst_nonneg : 0 ≤ sensitivityGapConst :=
 
 /-- The explicit constant of the origin-cube function-from-gradient estimate at
 the sensitivity exponents. -/
-def depthDowngradeConst (d : ℕ) [NeZero d] : ℝ :=
+def depthDowngradeConst (d : ℕ) : ℝ :=
   sensitivityGapConst *
     ((Ch01.Legacy.fullVectorPoincareConstant (originCube d 0) * (3 : ℝ) ^ ((d : ℝ) + 1)) *
       ((d : ℝ) * sensitivityGapConst))
@@ -218,7 +218,7 @@ def depthDowngradeConst (d : ℕ) [NeZero d] : ℝ :=
 /-- The componentwise circ norm of the gradient, at the exponent produced by the
 multiscale Poincaré estimate, is controlled by the gauge-exponent negative
 seminorm of the full gradient. -/
-theorem cubeBesovCircNorm_half_grad_originCube_le [NeZero d]
+theorem cubeBesovCircNorm_half_grad_originCube_le
     (G : Vec d → Vec d) (i : Fin d)
     (hBdd : BddAbove (Set.range fun N : ℕ =>
       cubeBesovNegativeVectorPartialSeminormTwo (originCube d 0) (3 / 8) N G)) :

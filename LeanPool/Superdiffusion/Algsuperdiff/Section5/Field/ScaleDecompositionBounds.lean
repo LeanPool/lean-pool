@@ -127,13 +127,17 @@ theorem mem_openOriginCube_streamObservationScale {R : ℝ} (hR : 1 ≤ R)
   · linarith only [hxi, hhalf, neg_abs_le (x i)]
   · linarith only [hxi, hhalf, le_abs_self (x i)]
 
+/-- The geometric ratio for the small-scale stream contribution. -/
 def streamSmallRatio (M : ABKModel d) : ℝ := Real.rpow 3 (-M.gamma)
 
+/-- The geometric ratio for the large-scale stream contribution. -/
 def streamLargeRatio (M : ABKModel d) : ℝ := Real.rpow 3 (M.gamma - 1)
 
+/-- The weighted geometric series for the small-scale stream contribution. -/
 def streamSmallSeries (M : ABKModel d) : ℝ :=
   ∑' r : ℕ, ((r : ℝ) + 1) * streamSmallRatio M ^ r
 
+/-- The weighted geometric series for the large-scale stream contribution. -/
 def streamLargeSeries (M : ABKModel d) : ℝ :=
   ∑' r : ℕ, ((r : ℝ) + 1) * streamLargeRatio M ^ r
 

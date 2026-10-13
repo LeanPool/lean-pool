@@ -60,7 +60,6 @@ information about the representative exists.  The rest of the chain -- the
 transport, the Young absorption, the shell decomposition -- is pointwise.
 
 ## The `3/2`, and the deviation from the printed factor
-
  ABK26 prints the switch factor as `1 + 3^{-(1/4)(m-h-n)}`, i.e. `1 + 2 delta`
  at the
 manuscript's own `delta = (1/2) 3^{-(1/4)(m-h-n)}`.  `l.J.sensitivity` (label)

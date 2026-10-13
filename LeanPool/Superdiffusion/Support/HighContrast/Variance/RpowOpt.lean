@@ -22,12 +22,10 @@ Module imports, support namespace and local option directives adapted for Lean P
 
 This file isolates the pure real-analysis optimization that turns the two-error
 bound
-
   `Var[F] ≤ C₀·(Θ³·(ℓ/L)^{d-2} + Θ/ℓ)·Msq²`      (`4 ≤ ℓ ≤ L`)
 
 together with the deterministic bound `Var[F] ≤ 4·Msq²` into the `min`-form of
 the scalar block variance estimate `e.scalar.block.variance`:
-
   `Var[F] ≤ C·Msq²·min{1, Θ²·L^{-(d-2)/(d-1)}}`.
 
 The optimal corridor width is `ℓ₀ = (L^{d-2}/Θ²)^{1/(d-1)}`, put here in the

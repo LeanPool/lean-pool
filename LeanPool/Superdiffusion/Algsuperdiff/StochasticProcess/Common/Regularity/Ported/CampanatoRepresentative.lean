@@ -40,6 +40,7 @@ noncomputable section
 
 variable {d : ℕ}
 
+/-- The Sobolev value extended by zero from the small-contrast unit ball. -/
 def smallContrastValueIndicator
     (u : H1Function (smallContrastUnitBall d)) : Vec d → ℝ :=
   Set.indicator (smallContrastUnitBall d) u.toFun

@@ -48,13 +48,11 @@ which the display's own forcing term is already written.
 * `openCubeAtScale_subset_of_le` --- concentric open cubes are monotone in the
   scale.
 * `meshOscillationCell_streamForcing_le` --- **the bound**: for `n <= lowScale`,
-
   ```
     meshOscillationCell n (streamForcing sigmaInv omega lo hi e') R
       <=  3^n * (sigmaInv * d * |e'|_2 *
             shellDerivNormSum lo hi (triadicCubeShift R) omega) .
   ```
-
   The dimensional factor is `d`, not `sqrt d`: one `sqrt d` is the
   sup-to-Euclidean conversion on the *input* of the coordinate differential
   (`StreamForcingDeriv.norm_fderiv_streamForcing_coord_le`) and the second is the

@@ -36,6 +36,7 @@ open scoped ENNReal NNReal BigOperators
 
 noncomputable section
 
+/-- The finite exponent `4 / 3` used in the De Giorgi iteration. -/
 noncomputable def fourThirds : FiniteLpExponent where
   exponent := ENNReal.ofReal (4 / 3 : ℝ)
   one_lt := by
@@ -44,6 +45,7 @@ noncomputable def fourThirds : FiniteLpExponent where
     · positivity
   lt_top := ENNReal.ofReal_lt_top
 
+/-- The finite exponent `4` used in the De Giorgi iteration. -/
 noncomputable def four : FiniteLpExponent where
   exponent := 4
   one_lt := by norm_num

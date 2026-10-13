@@ -33,6 +33,7 @@ noncomputable section
 
 variable {d : ℕ}
 
+/-- Coordinates of a block vector in the two-component basis. -/
 def blockVecComp (P : BlockVec d) : BlockCoord d → ℝ
   | Sum.inl i => P.1 i
   | Sum.inr i => P.2 i
@@ -54,10 +55,12 @@ theorem blockVec_eq_sum_blockBasis (P : BlockVec d) :
     rw [Finset.sum_ite_eq]
     simp
 
+/-- A polarized matrix entry reconstructed from a quadratic form. -/
 def blockQuadFormEntry (B : BlockVec d → ℝ) (α β : BlockCoord d) : ℝ :=
   if α = β then B (blockBasis α)
   else (B (blockBasis α + blockBasis β) - B (blockBasis α) - B (blockBasis β)) / 2
 
+/-- The block matrix reconstructed by polarizing a quadratic form. -/
 def blockMatOfQuadForm (B : BlockVec d → ℝ) : BlockMat d :=
   { upperLeft := fun i j => blockQuadFormEntry B (Sum.inl i) (Sum.inl j)
     upperRight := fun i j => blockQuadFormEntry B (Sum.inl i) (Sum.inr j)

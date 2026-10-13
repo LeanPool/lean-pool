@@ -59,7 +59,7 @@ open HCPolySupport
 /-- Descending `l` scales below a descendant `R` of `Q` at scale `k` proves on the
 scale `Q.scale - (l + (Q.scale - k))`, so the `p = ∞` one-scale responses
 compare. -/
-theorem scaleResponse_depth_descendant_le {d : ℕ} [NeZero d]
+theorem scaleResponse_depth_descendant_le {d : ℕ}
     {Q R : TriadicCube d} {k : ℤ} (F : Book.Ch02.TriadicCoeffFamily d)
     (a0 : Mat d) (hR : R ∈ descendantsAtScale Q k) (l : ℕ) :
     Book.Ch02.scaleResponseAtScale R (R.scale - (l : ℤ)) .infinity F a0 ≤

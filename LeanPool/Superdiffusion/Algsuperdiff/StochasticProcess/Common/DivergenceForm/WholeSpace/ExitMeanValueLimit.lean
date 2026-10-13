@@ -24,7 +24,6 @@ Module imports, support namespace and local option directives adapted for Lean P
 Let `Q` be the continuous-path process of a conservative Feller kernel semigroup, let `U` be an
 open set with exit time `tau`, and let `psi` be a bounded measurable function.  The *discounted
 exit average* at the shift `lam` is
-
   `E_y[1_{tau < infinity} e^{-lam tau} psi(X_tau)]`   (`discountedExitAverage`),
 
 the quantity produced by the resolvent decomposition at the first exit from `U`.  This file

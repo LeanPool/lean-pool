@@ -461,7 +461,7 @@ theorem depthRoot_cutoffSample_closureDirichlet (d : ℕ) [NeZero d] (hd : 2 ≤
 
 /-- The flux per-depth grid root on the closure's carrier, at the constant `2 d`
 the flux transport costs. -/
-theorem depthRoot_cutoffSample_closureFlux (d : ℕ) [NeZero d] (hd : 2 ≤ d)
+theorem depthRoot_cutoffSample_closureFlux (d : ℕ) (hd : 2 ≤ d)
     (M : ABKModel d) (n : ℤ) (h : ℕ) (K : ℕ) (e' : Vec d) (he' : vecNorm e' ≤ 1)
     (hhpos : 0 < h) {nmesh : ℤ} (hnK : nmesh ≤ (K : ℤ)) (hnmn : nmesh ≤ n)
     (hoscInt : ∀ i : ℕ, ∀ R' ∈ interiorMesoCubeGrid d (K : ℤ) (nmesh - (i : ℤ)) (n - 1),

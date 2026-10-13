@@ -44,7 +44,6 @@ This module does two things and nothing else.
   shom_{n+h} shom_n^{-1}
     <= 1 + (log 3) cstar shom_n^{-2} sum_{k=n+1}^{n+h} 3^{2 cgamma k}
          + C E^2 |log cgamma|^2 cgamma ,
-
   shom_n shom_{n+h}^{-1}
     <= 1 - (log 3) cstar shom_n^{-2} sum_{k=n+1}^{n+h} 3^{2 cgamma k}
          + C h^2 shom_n^{-4} 3^{4 cgamma (n+h)}

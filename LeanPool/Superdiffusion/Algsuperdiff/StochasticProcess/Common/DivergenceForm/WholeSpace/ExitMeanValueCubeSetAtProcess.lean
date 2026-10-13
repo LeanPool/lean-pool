@@ -65,7 +65,6 @@ variable (A : WholeSpaceAnalyticData d)
 cube.**  Write `psi = R_mu g` for the analytic resolvent supplied with the process.  A function
 `h` on the live space is the *harmonic part of `psi` on the cube* when it agrees with `psi` off
 the cube and, on the cube, is the limit as the shift decreases to zero of
-
   `psi - R^V_lam g + (mu - lam) R^V_lam psi`,
 
 where `R^V_lam` is the Dirichlet resolvent of the cube.  Only the analytic Dirichlet resolvents

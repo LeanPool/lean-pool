@@ -40,7 +40,7 @@ theorem stepSevenCaccConst_nonneg (C : ℝ) (Q : TriadicCube d) (a : CoeffFamily
     0 ≤ stepSevenCaccConst C Q a := Real.sqrt_nonneg _
 
 /-- **The Caccioppoli's own data leg at the §4.4 pin**, `dataM`. -/
-def stepSevenCaccDataM [NeZero d] (Q : TriadicCube d) (a : CoeffFamily d)
+def stepSevenCaccDataM (Q : TriadicCube d) (a : CoeffFamily d)
     (g : Vec d → Vec d) : ℝ :=
   Real.sqrt (stepSevenCaccForcingFactor * (Ch02.lambdaS Q stepSevenCaccT a)⁻¹) *
     scaleNormalizedPositiveBesovVectorSeminormTwo Q stepOneS g

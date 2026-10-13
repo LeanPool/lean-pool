@@ -105,6 +105,7 @@ private theorem rpow_three_two_mul_eq_sq (a : ℝ) :
 
 /-! ## The tex probe is a probe of `mathcal E` -/
 
+omit [NeZero d] in
 /-- **ABK26 against `d.mathcal.E`.**  The pair
 `(bfAhom^{-1/2} e, bfAhom^{1/2} e)` at the isotropic comparator `sigma Id`
 realizes the doubled response `bfJ` as an element of the normalized

@@ -167,7 +167,7 @@ private theorem nonneg_of_forall_unit_responseJ_le {U : Ch02.Domain d} (hd : 0 <
 
 /-- The half of a frame-supremum leg is bounded by every uniform bound on the
 paired unit responses of the SAME representative. -/
-private theorem half_breakdownLegA_le [NeZero d] (hd : 0 < d) (R : TriadicCube d)
+private theorem half_breakdownLegA_le (hd : 0 < d) (R : TriadicCube d)
     (a : Ch02.TriadicCoeffFamily d) (sigma : Observable.PositiveScalar) {c : ℝ}
     (h : ∀ e : Vec d, Ch02.vecNorm e = 1 →
       Ch02.responseJ (Ch02.cubeDomain R) (a.coeffOn R)
@@ -185,7 +185,7 @@ private theorem half_breakdownLegA_le [NeZero d] (hd : 0 < d) (R : TriadicCube d
 /-- This is the `(J3)` symmetry in the shape the lane aggregation consumes: the
 transposed value at the negated sample is the primal value at the sample
 (`responseJ_cutoffFamily_negateCutoffSample` at the involution). -/
-private theorem half_breakdownLegB_negate_le [NeZero d] (hd : 0 < d)
+private theorem half_breakdownLegB_negate_le (hd : 0 < d)
     (M : ABKModel d) (L : ℤ) (R : TriadicCube d) (omega : CutoffSample d)
     (sigma : Observable.PositiveScalar) {c : ℝ}
     (h : ∀ e : Vec d, Ch02.vecNorm e = 1 →

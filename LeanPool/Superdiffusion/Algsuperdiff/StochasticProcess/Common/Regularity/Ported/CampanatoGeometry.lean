@@ -40,7 +40,7 @@ noncomputable section
 
 variable {d : ℕ}
 
-theorem euclideanBall_half_subset_unit_of_mem_half [NeZero d]
+theorem euclideanBall_half_subset_unit_of_mem_half
     {z : Vec d} (hz : z ∈ smallContrastBall d (1 / 2)) :
     euclideanBall z (1 / 2) ⊆ smallContrastUnitBall d := by
   apply euclideanBall_subset_of_center_distance_add_lt

@@ -25,7 +25,6 @@ Module imports, support namespace and local option directives adapted for Lean P
 The vanishing-shift limit of the Dirichlet resolvents of a bounded
 measurable datum on an exhaustion cube is here identified analytically: it is the value function
 of an honest zero-trace Sobolev function on the cube solving
-
   `-div (a grad w) = f`   weakly, with zero trace,
 
 and it is the only such value function up to almost-everywhere equality.

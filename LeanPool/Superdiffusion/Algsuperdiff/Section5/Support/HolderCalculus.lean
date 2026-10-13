@@ -23,7 +23,6 @@ Module imports, support namespace and local option directives adapted for Lean P
 
 This file retains two explicit two-point estimates: interpolation of a Hölder
 bound between a supremum bound and a Lipschitz bound,
-
   ```text
     [F]_{C^{0,1/2}(U)} ≤ ( 2 ‖F‖_{L^∞(U)} · L )^{1/2} ,
   ```

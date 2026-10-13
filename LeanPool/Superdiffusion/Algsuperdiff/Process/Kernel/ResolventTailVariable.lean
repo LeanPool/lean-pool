@@ -36,10 +36,10 @@ free for every `q < 2`, and the library charges nothing for the smaller exponent
 criterion, its passage to the global one, and the continuous-path construction are all stated
 for a general `q > 1`.
 
-`PositiveC0ContractiveResolvent.OnePointRegular.of_variableResolventTail` is the resulting
+`PositiveC0ContractiveResolvent.OnePointRegular.ofVariableResolventTail` is the resulting
 regularity data of the compactified process, obtained from the local criterion through the
 shared core
-`OnePointRegular.of_hasLocalKolmogorovMoments`.  Nothing here asserts an analytic estimate for a
+`OnePointRegular.ofHasLocalKolmogorovMoments`.  Nothing here asserts an analytic estimate for a
 particular generator: the tail decay, the budget and the growth of the cutting radius are the
 consumer's hypotheses.
 -/
@@ -146,7 +146,7 @@ function bounded by one, tail decay of the compactified potential measures at ev
 least one with a profile and a trivial cutting radius that may both depend on the shift, a
 uniform cubic budget and a uniform growth bound for the cutting radius together give the data
 from which the continuous-path process of the compactified semigroup is formed. -/
-def OnePointRegular.of_variableResolventTail (R : PositiveC0ContractiveResolvent X)
+def OnePointRegular.ofVariableResolventTail (R : PositiveC0ContractiveResolvent X)
     (rho : X → ℝ) (hrho_cont : Continuous rho) (hrho_pos : ∀ x, 0 < rho x)
     (hrho_lipschitz : LipschitzWith 1 rho)
     (hrho_compact : ∀ epsilon > 0, IsCompact {x | epsilon ≤ rho x})
@@ -163,7 +163,7 @@ def OnePointRegular.of_variableResolventTail (R : PositiveC0ContractiveResolvent
       cut (mu : ℝ) ^ 4 ≤ A * (mu : ℝ) ^ (2 - q)) :
     R.OnePointRegular :=
   letI := OnePoint.exhaustionMetricSpace rho hrho_cont hrho_pos hrho_lipschitz hrho_compact
-  OnePointRegular.of_hasLocalKolmogorovMoments R rho hrho_cont hrho_pos hrho_lipschitz
+  OnePointRegular.ofHasLocalKolmogorovMoments R rho hrho_cont hrho_pos hrho_lipschitz
     hrho_compact
     (hasLocalKolmogorovMoments_of_variableResolventTail R.onePointResolvent
       R.isConservative_onePointKernelSemigroup hphi htail hcut hI hint hq1 hq2 hA hgrowth

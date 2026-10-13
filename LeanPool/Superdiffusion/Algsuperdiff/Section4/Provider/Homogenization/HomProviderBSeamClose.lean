@@ -103,7 +103,7 @@ theorem one_le_reciprocal_range {C gam : ℝ} (hC : 0 < C) (hg : 0 < gam) (hg1 :
 The `p = 1` instance of the seam display.  This is the input of the `ã`
 bundle's `hfin` slot that the residue cannot see (it needs the Theorem-C tail),
 so it is produced here and threaded to the residue by the assembly. -/
-theorem ae_ethmB_seam_ne_top (d : ℕ) [NeZero d] (cstar : ℝ) (hcstar : 0 < cstar)
+theorem ae_ethmB_seam_ne_top (d : ℕ) (cstar : ℝ) (hcstar : 0 < cstar)
     {Cst Cgap Ctop : ℝ} (hCst : 1 ≤ Cst) (hCgap : 0 ≤ Cgap) (hCtop : 0 ≤ Ctop) :
     ∃ gamma0 : ℝ, 0 < gamma0 ∧
       ∀ M : ABKModel d, Disorder.cstar M = cstar → M.gamma ≤ gamma0 →

@@ -48,7 +48,7 @@ private theorem isPath_spliceGeodesic {d : ℕ} {Γ : List (Site d)}
     intro x hx y hy
     have hyEq : y = Γ.get i := by
       have hyRev : Γ.get i = y := by
-        simpa only [head?_geodesic, Option.mem_some_iff] using hy
+        simpa only [headOption_geodesic, Option.mem_some_iff] using hy
       exact hyRev.symm
     subst y
     by_cases hi : i.1 = 0
@@ -81,7 +81,7 @@ private theorem isPath_spliceGeodesic {d : ℕ} {Γ : List (Site d)}
     have hxEq : x = Γ.get j := by
       rw [List.getLast?_append] at hx
       have hxRev : Γ.get j = x := by
-        simpa only [getLast?_geodesic, Option.some_or,
+        simpa only [lastOption_geodesic, Option.some_or,
           Option.mem_some_iff] using hx
       exact hxRev.symm
     subst x
@@ -93,7 +93,7 @@ private theorem head?_spliceGeodesic {d : ℕ} {Γ : List (Site d)}
   unfold spliceGeodesic
   rw [List.head?_append, List.head?_append, List.head?_take]
   by_cases hi : i.1 = 0
-  · simp only [ite_eq_left hi, Option.none_or, head?_geodesic, Option.some_or]
+  · simp only [ite_eq_left hi, Option.none_or, headOption_geodesic, Option.some_or]
     rw [List.head?_eq_getElem?, List.getElem?_eq_getElem (by omega)]
     let i0 : Fin Γ.length := ⟨0, by omega⟩
     have hiFin : i = i0 := Fin.ext (by simp only [i0]; exact hi)
@@ -109,7 +109,7 @@ private theorem getLast?_spliceGeodesic {d : ℕ} {Γ : List (Site d)}
   rw [List.getLast?_append]
   by_cases hj : j.1 + 1 = Γ.length
   · rw [List.drop_eq_nil_iff.mpr (by omega), List.getLast?_nil,
-      Option.none_or, List.getLast?_append, getLast?_geodesic,
+      Option.none_or, List.getLast?_append, lastOption_geodesic,
       Option.some_or]
     rw [List.getLast?_eq_getElem?, List.getElem?_eq_getElem (by omega)]
     let jlast : Fin Γ.length := ⟨Γ.length - 1, by omega⟩
@@ -167,6 +167,7 @@ private theorem mem_inflatedBadSet_of_mem_latticeCubeSites
   rw [centerIndex_eq_of_mem_latticeCubeSites hz]
   exact hω
 
+/-- Convert a list satisfying the lattice path relation into a graph walk. -/
 def pathWalk {d : ℕ} (x : Site d) :
     (xs : List (Site d)) → IsPath (x :: xs) →
       (latticeGraph d).Walk x ((x :: xs).getLast (List.cons_ne_nil x xs))
@@ -398,6 +399,7 @@ noncomputable def pathVerticesInCube {d : ℕ} (L : ℕ)
   Γ.toFinset.filter fun z => z ∈ latticeCubeSites L v
 
 open Classical in
+/-- The positions along a path whose vertices lie in the specified lattice cube. -/
 noncomputable def cubeVisitIndices {d : ℕ} (L : ℕ)
     (Γ : List (Site d)) (v : Site d) : Finset (Fin Γ.length) :=
   Finset.univ.filter fun i => Γ.get i ∈ latticeCubeSites L v

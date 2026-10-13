@@ -37,7 +37,7 @@ variable {d : ℕ}
 
 /-- The one-step remainder's weight at a general Schauder constant `Cs`:
 `C_r(d, Cs, k) · √((3²)^d)`.  At `Cs = schauderWindowConst d` this is `edBridgeRemWeight`. -/
-def edBridgeRemWeightGen (d : ℕ) [NeZero d] (Cs : ℝ) (k : ℕ) : ℝ :=
+def edBridgeRemWeightGen (d : ℕ) (Cs : ℝ) (k : ℕ) : ℝ :=
   triangleRemainderConst d Cs k * Real.sqrt (((3 : ℝ) ^ (2 : ℤ)) ^ d)
 
 theorem edBridgeRemWeightGen_nonneg (d : ℕ) [NeZero d] {Cs : ℝ} (hCs : 0 ≤ Cs) (k : ℕ) :
@@ -53,7 +53,7 @@ def edBridgeEpsConstGen (d : ℕ) [NeZero d] (Cs C : ℝ) (k : ℕ) : ℝ :=
 `EdBridgeFolds.exists_edBridgeStep` with `schauderWindowConst d` replaced by an arbitrary `Cs`:
 the step size `k₀` depends on `Cs`, nothing else in the argument does.  The join runs at
 `Cs = max (schauderWindowConst d) C_bdry`. -/
-theorem exists_edBridgeStepGen (d : ℕ) [NeZero d] (Cs : ℝ) :
+theorem exists_edBridgeStepGen (d : ℕ) (Cs : ℝ) :
     ∃ k₀ : ℕ, 3 ≤ k₀ ∧ ∀ k : ℕ, k₀ ≤ k →
       taylorContractionConst d * Cs * windowRatioConst d 2
             * windowRatioConst d 1 * ((3 : ℝ) ^ (-(k : ℤ))) ^ (1 / 2 : ℝ)

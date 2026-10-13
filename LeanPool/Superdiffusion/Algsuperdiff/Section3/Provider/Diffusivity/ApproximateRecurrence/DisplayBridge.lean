@@ -84,7 +84,6 @@ declared rather than hidden:
   `m_star_star <= n`, while `integrate_approx_recurrence_cstarPlus` demands
   them at every pair `n <= m <= m_0`.  The binders here follow the consumer and
   impose no lower floor, so they are *stronger* than what delivers.
-
   **This deviation is now paid, and the note above is retained only for
   provenance.**  `ApproximateRecurrence.SubLandmarkDisplays` proves the two
   binders outright below the landmark, so a caller need supply them only for

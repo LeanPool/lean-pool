@@ -93,6 +93,7 @@ theorem ZeroTraceSobolev.eq_of_toL2_eq [NeZero d]
     exact congrArg HilbertVec.ofVec hx
   exact ZeroTraceSobolev.ext huv hgradient
 
+/-- An H¹ representative that vanishes pointwise outside the specified part domain. -/
 noncomputable def supportedRepresentative
     (w : H10Function U)
     (hzero : ∀ᵐ x ∂volumeMeasureOn U,
@@ -118,6 +119,7 @@ noncomputable def supportedRepresentative
         filter_upwards [hg] with x hx
         rw [hx] }
 
+/-- A zero-trace H¹ representative that vanishes pointwise outside the part domain. -/
 noncomputable def supportedH10Representative
     (w : H10Function U)
     (hzero : ∀ᵐ x ∂volumeMeasureOn U,
@@ -142,6 +144,7 @@ noncomputable def supportedH10Representative
         rw [hx]
       tendsto_approx_grad := w.tendsto_approx_grad }
 
+/-- The inward mollifications used to approximate a zero-trace function on a part domain. -/
 noncomputable def inwardPartApproximation
     (w : H10Function U) (x0 : Vec d) (r : ℝ) (n : ℕ) : Vec d → ℝ :=
   inwardMollification (unitConvexApproxKernel (d := d)) w.zeroExtension

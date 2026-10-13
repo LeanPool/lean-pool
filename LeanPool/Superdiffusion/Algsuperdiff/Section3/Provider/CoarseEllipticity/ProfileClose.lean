@@ -55,7 +55,6 @@ observable, no measure and no source step enters.
    `LambdaGridBridge.gridSumConst_two_le`) and
    `LowerLegProfile.lowerEllipticityProfile_finite_of_two_le`.  The output gate
    is `4 (ctop + 1) Cdet <= Clow`.
-
    **The *upper* leg's deterministic slot must not take the collar.**  On the
    frozen window `c_{s,2} (2s - gamma)^{-1}` is unbounded (at
    `s = gamma/2 + eps` it is `~

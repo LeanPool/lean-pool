@@ -48,11 +48,9 @@ This module removes all three, using the quartic measurability of
 1. **A measurable fluctuation dominated by the given one.**  Write
    `G(omega) = fint_{cu_K} |u(omega)|^4` for the global fourth energy.  This is
    a measurable function of the sample, by the quartic layer.  Put
-
    ```
      T'(omega) = max( sqrt(G(omega)) - Chead , 0 ) .
    ```
-
    Then `T'` is measurable and nonnegative by construction; it satisfies
    `G <= (Chead + T')^2` by construction; and `T' <= T` pointwise, because the
    spatial `L^4 <= L^8` bridge turns the caller's `L^8` bound into

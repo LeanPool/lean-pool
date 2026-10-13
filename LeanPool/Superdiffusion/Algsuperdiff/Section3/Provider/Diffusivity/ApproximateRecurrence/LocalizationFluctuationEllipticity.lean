@@ -77,7 +77,7 @@ def gaugedEllipticitySum (sigmaBar : ℝ) (Q : TriadicCube d) (s : ℝ)
     sigmaBar * (Ch02.lambdaSq Q s (.finite 2) a)⁻¹
 
 /-- The gauged ellipticity sum is nonnegative for a nonnegative gauge. -/
-theorem gaugedEllipticitySum_nonneg [NeZero d] (Q : TriadicCube d)
+theorem gaugedEllipticitySum_nonneg (Q : TriadicCube d)
     (a : Ch02.TriadicCoeffFamily d) {sigmaBar s : ℝ} (hsig : 0 ≤ sigmaBar)
     (hs : 0 < s) : 0 ≤ gaugedEllipticitySum sigmaBar Q s a := by
   have h1 : 0 ≤ Ch02.LambdaSq Q s (.finite 2) a :=

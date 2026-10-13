@@ -25,7 +25,6 @@ Source: ABK26 (proof of `l.Dh.bound`, `e.sensitivity.basic.split`), first step.
 The splitting of the `D_h` quadratic form begins with the purely algebraic
 observation that an antisymmetric matrix annihilates its own quadratic form, so
 that
-
   `⨍ ∇w* · h ∇w = ⨍ ∇(w* + w) · h ∇w`.
 
 This step involves **no integration by parts**: it is a pointwise algebraic

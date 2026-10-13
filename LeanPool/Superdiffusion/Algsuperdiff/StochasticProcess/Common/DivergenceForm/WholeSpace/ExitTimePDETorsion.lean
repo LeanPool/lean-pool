@@ -24,7 +24,6 @@ Module imports, support namespace and local option directives adapted for Lean P
 
 The exit-time problem of a divergence-form operator on a bounded domain `V` is
 the unshifted Dirichlet problem
-
   `-div (a grad w) = 1` in `V`,  `w = 0` on the boundary of `V`,
 
 whose solution is sought in the zero-trace Sobolev space of `V`.  This file

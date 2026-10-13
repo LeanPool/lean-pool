@@ -90,7 +90,7 @@ instance instPseudoMetricSpaceMat : PseudoMetricSpace (Mat d) :=
 
 /-- The Borel structure on the continuous matrix fields over a compact carrier. -/
 noncomputable instance continuousMatrixFieldMeasurableSpace (K : Set (Vec d))
-    [CompactSpace K] : MeasurableSpace C(K, Mat d) := borel _
+     : MeasurableSpace C(K, Mat d) := borel _
 
 instance continuousMatrixFieldBorelSpace (K : Set (Vec d)) [CompactSpace K] :
     BorelSpace C(K, Mat d) := ⟨rfl⟩

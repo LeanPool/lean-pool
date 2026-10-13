@@ -206,7 +206,7 @@ a subtype with a deliberately nontrivial induced law. -/
 private theorem isBigOWith_gammaSigma_of_map_eq
     {Ω Ω' : Type*} [MeasurableSpace Ω] [MeasurableSpace Ω']
     {μ : Measure Ω} {μ' : Measure Ω'} {X : Ω → ℝ} {Y : Ω' → ℝ}
-    {σ A : ℝ} [IsFiniteMeasure μ] [IsFiniteMeasure μ']
+    {σ A : ℝ}
     (hX : Measurable X) (hY : Measurable Y)
     (hmap : Measure.map X μ = Measure.map Y μ')
     (hYtail : IndependentSums.IsBigOWith μ' (IndependentSums.gammaSigma σ) Y A) :

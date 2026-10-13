@@ -33,13 +33,11 @@ E := |p|² ‖h‖_{W^{1,∞}}² λ⁻¹ + |p·q| ‖∇h‖_{W^{1,∞}}² λ⁻
 1. the coarse-grained derivative bound `l.Dh.bound` at the point `a + t h`,
    together with the conditional `lambda` sensitivity estimate (which keeps the
    gauge along the segment within a factor two of the base gauge), gives
-
    ```
    |d/dt J(a + t h)| ≤ C E^{1/2} M^{1/2} + C ‖∇h‖ λ⁻¹ M   for all t ∈ [0,1];
    ```
 
 2. integration in `t` turns this into the self-referential bound
-
    ```
    M ≤ J(a) + C E^{1/2} M^{1/2} + C ‖∇h‖ λ⁻¹ M;
    ```

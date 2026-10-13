@@ -23,6 +23,7 @@ open HCPolySupport HCPolySupport.Book.Ch02 MeasureTheory
 open scoped ENNReal
 
 -- FROZEN-STATEMENT-BEGIN
+/-- The matrix-value L² norm on the unit cube. -/
 noncomputable def Algsuperdiff.Frozen.Section24.UnitCubeSkewW2Infinity.valueL2
     {d : ℕ} (h : Algsuperdiff.Frozen.Section24.UnitCubeSkewW2Infinity d) : ℝ :=
   ENNReal.toReal

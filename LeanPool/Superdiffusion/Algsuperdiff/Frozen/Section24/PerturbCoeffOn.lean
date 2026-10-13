@@ -23,6 +23,7 @@ open HCPolySupport HCPolySupport.Book.Ch02 MeasureTheory Set
 open scoped BigOperators ENNReal Matrix.Norms.Elementwise
 
 -- FROZEN-STATEMENT-BEGIN
+/-- Perturb a coefficient by an essentially bounded skew field while retaining ellipticity. -/
 noncomputable def Algsuperdiff.Frozen.Section24.perturbCoeffOn
     {d : ℕ} (U : Domain d) (a : CoeffOn U)
     (h : Algsuperdiff.Frozen.Section24.LInfSkewMatrixFieldOn U)

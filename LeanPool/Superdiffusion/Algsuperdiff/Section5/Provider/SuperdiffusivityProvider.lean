@@ -40,6 +40,7 @@ open scoped ENNReal NNReal
 
 noncomputable section
 
+/-- A common constant for assembling process, renormalization and cutoff-removal estimates. -/
 def providerComponentConstant (d : ℕ) (CS Cren K C4 C6 : ℝ) : ℝ :=
   max (superdiffusivityV2ComponentConstant CS Cren K)
     (max ((d : ℝ) * 10)
@@ -345,7 +346,7 @@ theorem superdiffusivity_v2_provider_of_removalBounds
           hCbody)
         ((meanTailCoefficient_le_providerComponentConstant d CSbar Cren Ktop C4 C6).trans
           hCbody)
-    exact ⟨superdiffusivityV2Components_of_quenched M hcstar ht hp hCS hCren hK hcomponent
+    exact ⟨superdiffusivityV2ComponentsOfQuenched M hcstar ht hp hCS hCren hK hcomponent
       hpRange hSmeas hSnn (hSmom p hp hpPS).1 (hSmom p hp hpPS).2 hEBnn hEBmeas hEBmom
       hsecond hmeanSq⟩
   · refine ⟨1, 1, zero_lt_one, zero_lt_one, ?_⟩

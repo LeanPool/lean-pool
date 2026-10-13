@@ -24,7 +24,6 @@ Module imports, support namespace and local option directives adapted for Lean P
 
 The exit-time problem on a bounded domain `V` is the Dirichlet problem with
 constant forcing,
-
   `-div (a grad w) = 1` in `V`,  `w = 0` on the boundary of `V`,
 
 and its shifted approximations are the Dirichlet resolvents `R^V_lam 1` at the

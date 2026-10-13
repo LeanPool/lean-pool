@@ -188,7 +188,7 @@ theorem cubeLowerEllipticity_nonneg (M : ABKModel d) (Q : TriadicCube d)
 
 /-- The inverse of the literal inverse lower ellipticity is the literal lower
 ellipticity `lambda_{s,q}(Q; a_r)` of the actual cutoff. -/
-theorem cubeLowerEllipticityInvLiteral_inv_eq [NeZero d] (M : ABKModel d)
+theorem cubeLowerEllipticityInvLiteral_inv_eq (M : ABKModel d)
     (Q : TriadicCube d) (cutoffScale : ℤ) (s : ℝ)
     (q : Algsuperdiff.Section3.CoarseEllipticityExponent)
     (omega : CutoffSample d) :

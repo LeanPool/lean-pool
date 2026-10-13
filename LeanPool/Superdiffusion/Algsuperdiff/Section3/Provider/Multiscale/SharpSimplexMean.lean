@@ -350,6 +350,7 @@ theorem probe_w1Infinity_incrementUnitCube₂_le_simplexMean_add_cubeOscGauge
             (matrixOperatorNorm (simplexIncrementValue n L omega.1 T) +
               Real.sqrt (d : ℝ) * cubeOscGauge Q (shellIncrement omega.1 n L)) := rfl
 
+/-- The dimension-dependent Sobolev constant for the simplex probe. -/
 def probeSimplexW1Const (d : ℕ) : ℝ :=
   1 + (d : ℝ) ^ 2 * (1 + Real.sqrt (d : ℝ))
 
@@ -446,6 +447,7 @@ theorem probe_inv_cstar_mul_gamma_mul_rpow_mul_oscThreshold_sq
     _ = deltaOsc d ^ 2 := by
       field_simp [ne_of_gt hc, ne_of_gt hg]
 
+/-- The sensitivity constant for the mean simplex probe. -/
 def probeSimplexMeanSensitivityConst (d : ℕ) : ℝ :=
   16 * bigLambdaSensitivityConst d * probeSimplexW1Const d ^ 2
 
@@ -484,6 +486,7 @@ private theorem probe_sum_weight_mul_sq_le_sqrt_mul_sqrt {alpha : Type*}
         rw [mul_pow, Real.sq_sqrt (hw a ha)]
         ring
 
+/-- The weighted sum of squared simplex increment norms over a Whitney layer. -/
 def probeLayerSimplexMeanSq (m : ℤ) (hn : ℕ → ℕ) (n : ℕ)
     (n1 n2 : ℤ) (omega : CutoffSample d) : ℝ :=
   ∑ Q ∈ whitneyLayer (d := d) m hn n,
@@ -525,10 +528,12 @@ theorem probeLayerSimplexMeanSq_le_sqrt_mass_mul_sqrt_fourth
 
 /-! ## The actual weighted good-cell layer -/
 
+/-- The dimension-dependent constant for the good-layer base mean contribution. -/
 def probeMeanGoodBaseConst (d : ℕ) : ℝ :=
   1920 * simplexCrudeConst d (1 / 4) *
     (1 + probeSimplexMeanSensitivityConst d * deltaOsc d ^ 2)
 
+/-- The model-dependent constant for the good-layer wave mean contribution. -/
 def probeMeanGoodWaveConst (M : ABKModel d) : ℝ :=
   1920 * simplexCrudeConst d (1 / 4) *
     probeSimplexMeanSensitivityConst d *

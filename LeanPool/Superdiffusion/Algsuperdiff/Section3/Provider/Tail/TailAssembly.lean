@@ -67,7 +67,6 @@ checks exact type compatibility against the two blocks; no other node is used.
    `lambdaSq_eq_ofA transport the inequality.  All three observables are
    measurable representatives, so the conclusion is **almost everywhere**; this
    is what `Provider.Tail.isTwoTermBigOWith_of_ae_le` exists to bridge.
-
    ** (normalization).**  Every leg here is normalized at `sigmaBar M (m-1)`:
    the error at comparator scale `m-1`, the upper leg by `sigmaBar M (m-1)⁻¹`,
    the lower leg by `sigmaBar M (m-1)`.  This is forced, because
@@ -86,12 +85,9 @@ checks exact type compatibility against the two blocks; no other node is used.
    `Gamma_{1/2}`.
 
 4. The output constant is chosen after the input constant as
-
    `Ctail = exp(4 Ccg) + 646 Ccg + 2 Ccg^2 + 2`,
-
    and the four places it is spent are isolated as `tailAmplitudeGate_det`,
    `tailAmplitudeGate_middle`, `tailAmplitudeGate_heavy`, and `tailWindowGate`:
-
    * `exp(4 Ccg) <= Ctail` opens `e.percolation.admissibility` at `sigma = 1/4`
      from `e.percolation.admissibility.tails`;
    * `2 Ccg^2 <= Ctail` turns the printed floor `4 gamma <= s` into the
@@ -103,7 +99,6 @@ checks exact type compatibility against the two blocks; no other node is used.
      `e.percolation.admissibility.tails`;
    * `4 Ccg <= Ctail^2` and `2 Ccg <= Ctail^2` pay the deterministic and
      `Gamma_2` lanes.
-
    ** (respected, and independently reconfirmed).**  The deterministic and
    middle gates below are proved under `gamma <= s` alone; the printed `4 gamma
    <= s` is spent **only** in `tailWindowGate`.

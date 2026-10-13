@@ -38,11 +38,9 @@ G`:
 * `affineExcess_le_taylor` — dividing by the `|W|^{-1/d}` normalizer (which the
   truncated-window sandwich of `OneStepWindows` bounds by `9·3^{-k}`) turns this
   into
-
   ```text
     E(v, (x+□_k) ∩ □_m)  ≤  taylorContractionConst d · K · (3^k)^{1/2} ,
   ```
-
   which at `k = n-k'` is the printed `C 3^{(n-k')/2} [∇v]_{C^{0,1/2}}` exactly.
 
 The two proved atoms consumed are

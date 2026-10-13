@@ -48,7 +48,6 @@ elementary:
 * the row divergence of its realization is, **at every point of space and with no
   error term**, the realization of an explicit `Ω`-level field
   (`streamDivergence_kernelStream`):
-
   `Σ_m ∂_m S_{im} = A_{Σ_m ∂_m g_m} X_i − Σ_m A_{∂_m g_i} X_m`;
 
 * the second, "cross", term vanishes almost surely for a field in the stationary
@@ -390,7 +389,7 @@ variable {Ω : Type*} [AddAction (Vec d) Ω]
 /-- Smoothness of a mollified realization, for an arbitrary smooth compactly
 supported kernel. -/
 theorem contDiff_realize_mollify_of_hasCompactSupport {E : Type*} [NormedAddCommGroup E]
-    [NormedSpace ℝ E] [CompleteSpace E] {κ : Vec d → ℝ} (hκc : HasCompactSupport κ)
+    [NormedSpace ℝ E] {κ : Vec d → ℝ} (hκc : HasCompactSupport κ)
     (hκ : ContDiff ℝ (⊤ : ℕ∞) κ) {X : Ω → E} {ω : Ω}
     (hloc : LocallyIntegrable (realize (d := d) X ω) volume) :
     ContDiff ℝ (⊤ : ℕ∞) (realize (d := d) (mollify κ X) ω) := by
@@ -406,7 +405,7 @@ theorem realize_mollify_apply {E : Type*} [NormedAddCommGroup E] [NormedSpace �
 
 /-- **Kernel additivity of the mollified realization**, at every point of space. -/
 theorem realize_mollify_eq_sum {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
-    [CompleteSpace E] {κ : Fin d → (Vec d → ℝ)} {ν : Vec d → ℝ}
+    {κ : Fin d → (Vec d → ℝ)} {ν : Vec d → ℝ}
     (hκc : ∀ m, Continuous (κ m)) (hκs : ∀ m, HasCompactSupport (κ m))
     (hν : ∀ y, ν y = ∑ m : Fin d, κ m y) {X : Ω → E} {ω : Ω}
     (hloc : LocallyIntegrable (realize (d := d) X ω) volume) (x : Vec d) :

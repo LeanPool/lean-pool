@@ -104,7 +104,7 @@ theorem sphereAverage_def (x : EuclideanSpace ℝ (Fin d)) (r : ℝ)
 /-- **Continuity in the radius (at a point).**  For continuous `u`, the spherical average
 `r ↦ sphereAverage x r u` is continuous at every `r₀`.  Proof: dominated convergence with the
 local bound obtained from continuity of `u` on the compact ball `closedBall x (|r₀| + 1)`. -/
-theorem continuousAt_sphereAverage [NeZero d] {u : EuclideanSpace ℝ (Fin d) → ℝ}
+theorem continuousAt_sphereAverage {u : EuclideanSpace ℝ (Fin d) → ℝ}
     (huc : Continuous u) (x : EuclideanSpace ℝ (Fin d)) (r₀ : ℝ) :
     ContinuousAt (fun r : ℝ => sphereAverage x r u) r₀ := by
   -- Reduce to continuity of the un-normalized integral.
@@ -173,7 +173,7 @@ the radial directional derivative `ω ↦ ⟨∇u(x + r₀ ω), ω⟩`.
 This is proved by differentiation under the integral sign, with the local gradient bound coming from
 continuity of `fderiv u` on the compact ball `closedBall x (|r₀| + 1)`.  It is the half of the
 mean-value property that does *not* need the divergence theorem. -/
-theorem hasDerivAt_sphereAverage [NeZero d] {u : EuclideanSpace ℝ (Fin d) → ℝ}
+theorem hasDerivAt_sphereAverage {u : EuclideanSpace ℝ (Fin d) → ℝ}
     (hu : ContDiff ℝ 1 u) (x : EuclideanSpace ℝ (Fin d)) (r₀ : ℝ) :
     HasDerivAt (fun r => sphereAverage x r u)
       (((sphereMeasure d).real Set.univ)⁻¹ •

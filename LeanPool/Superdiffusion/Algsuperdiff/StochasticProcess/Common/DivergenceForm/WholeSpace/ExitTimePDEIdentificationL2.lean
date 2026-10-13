@@ -25,7 +25,6 @@ Module imports, support namespace and local option directives adapted for Lean P
 
 The Dirichlet resolvent of the constant datum on an exhaustion cube at the
 positive shift `lam` is the solution of
-
   `-div (a grad u) + lam u = 1` in `V`,  `u = 0` on the boundary of `V`,
 
 and the torsion function is the solution of the same problem without the

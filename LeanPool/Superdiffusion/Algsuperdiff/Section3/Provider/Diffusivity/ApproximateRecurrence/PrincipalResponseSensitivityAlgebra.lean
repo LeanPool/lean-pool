@@ -24,14 +24,12 @@ Module imports, support namespace and local option directives adapted for Lean P
 Source displays in ABK26:
 
 * `e.J.by.means.of.bfA` (label; display):
-
   ```
   J(U, p, q; a) = 1/2 (p; -q) . bfA(U; a) (p; -q) - p . q ,
   ```
 
 * the opening two equalities of Step 3 of `l.approximate.recurrence.formula`:
   with `hbar = (h)_{z+cu_n}` the averaged fresh shell,
-
   ```
   P_z . bfA_m(z+cu_n) P_z 1_{Q_z}
     = bfG_{-hbar} P_z . bfA(z+cu_n; a_m - hbar) bfG_{-hbar} P_z 1_{Q_z}

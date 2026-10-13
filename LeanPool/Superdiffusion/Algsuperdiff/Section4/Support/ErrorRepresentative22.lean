@@ -92,7 +92,7 @@ private theorem rpow_half_sq {x : ℝ} (hx : 0 ≤ x) :
 /-- The `p = 2` reading of `scaleResponseAtScale`: the finite branch at `p = 2`
 has inner exponent `p / 2 = 1`, so the aggregated quantity is the plain
 descendant *average* of the normalized block-response maxima. -/
-private theorem scaleResponseAtScale_two_eq [NeZero d]
+private theorem scaleResponseAtScale_two_eq
     (Q : TriadicCube d) (k : ℤ) (F : TriadicCoeffFamily d) (a0 : Mat d) :
     scaleResponseAtScale Q k (.finite 2) F a0 =
       (finsetAverageReal (descendantsAtScale Q k)
@@ -104,7 +104,7 @@ private theorem scaleResponseAtScale_two_eq [NeZero d]
   rw [h]
   simp only [show ((2 : ℝ) / 2) = 1 from by norm_num, Real.rpow_one]
 
-private theorem finsetAverageReal_normalizedBlockResponseMax_nonneg [NeZero d]
+private theorem finsetAverageReal_normalizedBlockResponseMax_nonneg
     (Q : TriadicCube d) (k : ℤ) (F : TriadicCoeffFamily d) (a0 : Mat d) :
     0 ≤ finsetAverageReal (descendantsAtScale Q k)
       (fun R => normalizedBlockResponseMax R F a0) :=

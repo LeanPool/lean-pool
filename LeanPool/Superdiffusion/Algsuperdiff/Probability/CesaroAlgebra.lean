@@ -21,7 +21,6 @@ Module imports, support namespace and local option directives adapted for Lean P
 # Elementary algebra of the Cesàro window average
 
 `Algsuperdiff/Probability/CesaroWindow.lean` defines the §4.2 window average
-
   `cesaroAvg f n m = (m − n + 1)⁻¹ · ∑_{k ∈ [n, m]} f k`
 
 (`avsum_{k=n}^m` in ABK26, §4.2) together with the `rpow` bookkeeping and the

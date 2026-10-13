@@ -24,6 +24,7 @@ open Algsuperdiff.Section3
 open HCPolySupport MeasureTheory
 
 -- FROZEN-STATEMENT-BEGIN
+/-- The diffusivity and quantitative estimates required through the induction scale. -/
 noncomputable def Algsuperdiff.Frozen.Section3.inductionState
     {d : ℕ} (M : ABKModel d) (m0 : ℤ)
     (E : {E : ℝ // 1 ≤ E}) : Prop :=

@@ -174,6 +174,7 @@ theorem stepThreeWindow_subset_outer_cube (z : Vec d) (m j : ℤ) :
 
 /-! ## 3. The iteration lemma's window binder block -/
 
+/-- Measurable nested windows with inner and outer translated cube bounds. -/
 def IterationWindowFamily (U : ℤ → Set (Vec d)) (m : ℤ) : Prop :=
   (∀ j : ℤ, j ≤ m → MeasurableSet (U j)) ∧
     (∀ j : ℤ, j ≤ m → U (j - 1) ⊆ U j) ∧

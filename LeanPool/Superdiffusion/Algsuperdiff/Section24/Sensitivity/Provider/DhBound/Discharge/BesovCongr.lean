@@ -46,14 +46,14 @@ variable {d : ℕ}
 null sets -/
 
 theorem ae_normalizedCubeMeasure_of_ae_cubeMeasure {E : Type*}
-    [NormedAddCommGroup E] (Q : TriadicCube d) {f g : Vec d → E}
+    (Q : TriadicCube d) {f g : Vec d → E}
     (h : f =ᵐ[volumeMeasureOn (cubeSet Q)] g) :
     f =ᵐ[normalizedCubeMeasure Q] g := by
   rw [normalizedCubeMeasure]
   exact MeasureTheory.Measure.ae_smul_measure h _
 
 /-- An a.e. identity on a parent cube holds a.e. on every descendant cube. -/
-theorem ae_eq_on_descendant {E : Type*} [NormedAddCommGroup E]
+theorem ae_eq_on_descendant {E : Type*}
     {Q R : TriadicCube d} {j : ℕ} (hR : R ∈ descendantsAtDepth Q j)
     {f g : Vec d → E} (h : f =ᵐ[normalizedCubeMeasure Q] g) :
     f =ᵐ[normalizedCubeMeasure R] g := by

@@ -30,7 +30,6 @@ ABK26, `l.minimal.scale.sep` Steps 1 and 2.  The minimal-scale separation bound
 sums, over a window of scales `k ∈ [n, m]`, a geometric layer tail.  Upward
 (Step 2) the tail is `∑_{l ≥ k} 3^{−α(l−k)} Y_l`; downward (Step 1) it is `∑_{l
 ≤ k} 3^{−α(k−l)} X_l`.  Both rearrange into
-
   `(1 − 3^{−α})⁻¹ · ∑_{l ∈ [n,m]} Y_l  +  min(m − n + 1, (1 − 3^{−α})⁻¹) · (tail)`,
 
 i.e. a **window part** carrying the geometric constant `Cgeo = (1 − 3^{−α})⁻¹`
@@ -169,7 +168,6 @@ private theorem tsum_layer_succ {r : ℝ} (hr0 : 0 < r) {Y : ℤ → ℝ} (k : �
 
 /-- **The window induction.** If a nonnegative `T` obeys the one-step recursion
 `T k = Y k + r · T (k+1)` for all `k ≥ n`, then over the window `[n, n+M]`
-
   `∑_{k=n}^{n+M} T k ≤ (1−r)⁻¹ · ∑_{l=n}^{n+M} Y l + r·(∑_{s ≤ M} r^s)·T (n+M+1)`.
 
 The tail coefficient is kept as the **partial** geometric sum — this is what later
@@ -285,7 +283,6 @@ private theorem rearrange_pow {r : ℝ} (hr0 : 0 < r) (hr1 : r < 1)
 /-- **The Step-2 window rearrangement** (ABK26, `l.minimal.scale.sep` Step
 2).  For a nonnegative layer field `Y : ℤ → ℝ` and a geometric decay rate `α
 > 0`,
-
   `∑_{k=n}^{m} ∑_{l ≥ k} 3^{−α(l−k)} Y_l`
 
 rearranges into a window sum with constant `Cgeo = (1 − 3^{−α})⁻¹` plus a

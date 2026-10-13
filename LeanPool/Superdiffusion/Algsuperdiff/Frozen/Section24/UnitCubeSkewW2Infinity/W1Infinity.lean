@@ -23,6 +23,7 @@ open HCPolySupport HCPolySupport.Book.Ch02 MeasureTheory
 open scoped ENNReal
 
 -- FROZEN-STATEMENT-BEGIN
+/-- The maximum of the value and first derivative essential-supremum norms. -/
 noncomputable def Algsuperdiff.Frozen.Section24.UnitCubeSkewW2Infinity.w1Infinity
     {d : ℕ} (h : Algsuperdiff.Frozen.Section24.UnitCubeSkewW2Infinity d) : ℝ :=
   max

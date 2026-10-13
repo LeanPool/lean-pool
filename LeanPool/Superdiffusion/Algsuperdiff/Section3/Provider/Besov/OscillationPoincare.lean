@@ -126,7 +126,7 @@ variable {d : ℕ}
 /-- The scale-free dimensional constant of the function-level multiscale
 Poincare estimate: the cube full-dual vector Poincare constant times the
 upstream full-dual-to-circ comparison constant at `s = 1`. -/
-noncomputable def oscillationMultiscalePoincareConstant (d : ℕ) [NeZero d] : ℝ :=
+noncomputable def oscillationMultiscalePoincareConstant (d : ℕ) : ℝ :=
   (d : ℝ) * HCPolySupport.Legacy.cubeNeumannW22CalderonZygmundConstant d *
     (3 : ℝ) ^ ((d : ℝ) + 1)
 
@@ -146,6 +146,7 @@ private theorem conjExponent_two_eq : cubeBesovConjExponent (2 : ℝ≥0∞) = (
   simpa [cubeBesovConjExponent] using
     (ENNReal.HolderConjugate.conjExponent_eq (p := (2 : ℝ≥0∞)) (q := (2 : ℝ≥0∞)))
 
+omit [NeZero d] in
 /-- **The function-level multiscale Poincare estimate.**  The normalized `L²`
 oscillation of a `W^{1,2}` function on a triadic cube is bounded by a scale-free
 dimensional constant times the sum over coordinates of the negative circ Besov

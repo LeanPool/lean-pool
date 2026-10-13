@@ -135,7 +135,7 @@ theorem normalizedL2On_axisCube_sub_average_le_vectorGradient
         (mul_nonneg (unitMeanZeroPoincareConst_nonneg d) hL.le)))
 
 /-- The same Poincare row on the open sup-ball realization. -/
-theorem normalizedL2On_metricBall_sub_average_le_vectorGradient [NeZero d]
+theorem normalizedL2On_metricBall_sub_average_le_vectorGradient
     (x : Vec d) {r : ℝ} (hr : 0 < r)
     (u : H1Function (Metric.ball x r)) :
     normalizedL2On (Metric.ball x r)

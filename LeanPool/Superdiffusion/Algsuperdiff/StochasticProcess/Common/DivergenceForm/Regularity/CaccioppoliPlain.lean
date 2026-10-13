@@ -25,7 +25,6 @@ The De Giorgi cutoff estimates of `CaccioppoliIdentity.lean`, `CaccioppoliInequa
 `CaccioppoliAbsorbed.lean` are stated for the positive part of a solution above a level.  The
 statement below is the same estimate at the solution itself, with no truncation: testing
 `-div (a grad u) = g` against `eta^2 u` and absorbing half of the elliptic energy leaves
-
   `lam / 2 * ∫ eta^2 |grad u|^2 ≤ ∫ g eta^2 u + (2 Lam^2 / lam) * ∫ u^2 |grad eta|^2`.
 
 The forcing term is kept signed, because the intended consumer has a nonpositive forcing (the

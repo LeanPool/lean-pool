@@ -39,6 +39,7 @@ open scoped ENNReal BigOperators
 
 noncomputable section
 
+/-- The tail constant after the site-path separation shift. -/
 def siteShiftedTailConstV2 (d : ℕ) (c : ℝ) : ℝ :=
   c / 2 *
     (3 : ℝ) ^ (-(sitePathExponent * (Provider.Percolation.sepShift d : ℝ)))

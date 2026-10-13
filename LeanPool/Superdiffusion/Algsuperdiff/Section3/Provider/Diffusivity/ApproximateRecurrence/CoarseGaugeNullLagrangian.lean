@@ -130,7 +130,7 @@ field `f = grad u` on `U`, the field `H f` is weakly divergence free on `U`.
 This is the exact vanishing that makes the shift `a |-> a - hbar` of ABK26
 preserve the admissible class. -/
 theorem isSolenoidalOn_matVecMul_of_isPotentialOn_of_transpose_eq_neg
-    {U : Set (Vec d)} [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
+    {U : Set (Vec d)}
     (hU : IsOpen U) {H : Mat d} (hH : matTranspose H = -H)
     {f : Vec d → Vec d} (hf : IsPotentialOn U f) :
     IsSolenoidalOn U (fun x => matVecMul H (f x)) := by

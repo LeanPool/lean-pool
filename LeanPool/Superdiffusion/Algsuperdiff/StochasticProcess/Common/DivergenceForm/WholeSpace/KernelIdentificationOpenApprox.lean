@@ -37,6 +37,7 @@ variable {d : ℕ} [NeZero d]
 
 namespace WholeSpaceAnalyticData
 
+/-- A compactly supported continuous distance cutoff for an open set. -/
 def rawOpenApprox (G : Set (Vec d)) (n : ℕ) (x : Vec d) : ℝ :=
   min 1 (((n : ℝ) + 1) * Metric.infDist x Gᶜ) * cubeBoundaryCutoff n x
 
@@ -52,6 +53,7 @@ private theorem hasCompactSupport_rawOpenApprox (G : Set (Vec d)) (n : ℕ) :
     HasCompactSupport (rawOpenApprox G n) := by
   exact (hasCompactSupport_cubeBoundaryCutoff n).mul_left
 
+/-- The bounded cumulative sum of open-set distance cutoffs. -/
 def wholeSpaceOpenApprox (G : Set (Vec d)) (n : ℕ) (x : Vec d) : ℝ :=
   min 1 (∑ k ∈ Finset.range (n + 1), rawOpenApprox G k x)
 
@@ -76,6 +78,7 @@ theorem hasCompactSupport_wholeSpaceOpenApprox (G : Set (Vec d)) (n : ℕ) :
           (hasCompactSupport_rawOpenApprox G k).add ih
   exact hsum.comp_left (by norm_num)
 
+/-- The cumulative open-set cutoff bundled as a function vanishing at infinity. -/
 def wholeSpaceOpenApproxC0 (G : Set (Vec d)) (n : ℕ) : C₀(Vec d, ℝ) where
   toFun := wholeSpaceOpenApprox G n
   continuous_toFun := continuous_wholeSpaceOpenApprox G n

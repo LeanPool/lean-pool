@@ -99,7 +99,6 @@ variable {d : ℕ}
 classes.  A re-proof of the `private` lemma of the same name in
 `LocalizationFluctuationMuMeasCore`. -/
 theorem toHilbertBlockL2OfBlockField_add {U : Set (Vec d)}
-    [IsFiniteMeasure (volumeMeasureOn U)]
     {F G H : Vec d → BlockVec d} (hF : MemBlockL2 U F) (hG : MemBlockL2 U G)
     (hH : MemBlockL2 U H) (hpt : ∀ x, H x = F x + G x) :
     toHilbertBlockL2OfBlockField hH =

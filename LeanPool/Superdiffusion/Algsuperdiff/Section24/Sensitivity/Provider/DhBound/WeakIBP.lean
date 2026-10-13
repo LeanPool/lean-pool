@@ -23,7 +23,6 @@ Module imports, support namespace and local option directives adapted for Lean P
 Source: ABK26 (`e.sensitivity.basic.split`), second step.  For an a.e.
 antisymmetric matrix field `h` with essentially bounded weak first derivatives
 and every `u ∈ H¹₀(U)`, `w ∈ H¹(U)`,
-
   `∫ ∇u · h ∇w = -∫ u (∇·h) · ∇w`,  `(∇·h)_j = ∑ i ∂_i h_{ij}`.
 
 This is the genuine weak integration by parts of the splitting identity: it
@@ -109,7 +108,6 @@ theorem memScalarL2_matVecMul_coord {U : Set (Vec d)}
 /-- **Weak integration by parts at a smooth compactly supported test.**  For
 a.e. antisymmetric `h` with square-integrable weak first derivatives and every
 smooth compactly supported `φ` with support in `U`,
-
   `∫ ∇φ · h ∇w = -∫ φ (∇·h) · ∇w`.
 
 Only `L²` control of `h` and `Dh` is used at this stage. -/
@@ -201,7 +199,6 @@ theorem integral_euclideanGradient_dot_matVecMul_grad_eq_neg
 a.e. antisymmetric matrix field `h` with essentially bounded entries and
 essentially bounded weak first derivatives `Dh`, every `u ∈ H¹₀(U)` and every
 `w ∈ H¹(U)` on an open bounded convex carrier satisfy
-
   `∫ ∇u · h ∇w = -∫ u (∇·h) · ∇w`.
 
 The zero-trace hypothesis on `u` is the exact structural input demanded by the

@@ -152,7 +152,7 @@ variable {d : ℕ}
 coefficient *field* and the Chapter-2 family of the cutoff are a.e. equal on
 every cube: they carry the very same underlying coefficient field, and differ
 only in the locally derived ellipticity witness. -/
-theorem aeeq_triadicCoeffFamily_coefficientCutoff [NeZero d] (M : ABKModel d) (L : ℤ)
+theorem aeeq_triadicCoeffFamily_coefficientCutoff (M : ABKModel d) (L : ℤ)
     (omega : Cutoff.CutoffSample d) :
     Ch02.TriadicCoeffFamily.AEEq
       (Ch04.triadicCoeffFamilyOfAELocallyUniformlyEllipticField

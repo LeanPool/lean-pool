@@ -67,6 +67,7 @@ noncomputable def matrixToHilbertOperator :
   ⟨matrixToHilbertOperatorLinear,
     matrixToHilbertOperatorLinear.continuous_of_finiteDimensional⟩
 
+/-- The normalized skew coefficient represented as an operator on Euclidean Hilbert space. -/
 def normalizedSkewOperator (nu : ℝ) (a : CoeffField d) :
     Vec d → (HilbertVec d →L[ℝ] HilbertVec d) :=
   fun y ↦ matrixToHilbertOperator (nu⁻¹ • (a y - nu • (1 : Mat d)))

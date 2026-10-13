@@ -35,7 +35,6 @@ cube `x + □_n` (`w ∈ H¹₀`), satisfies **two** displays.
 
 * **The general clause**, at every centre `z`, gated on the good event
   `𝒢(n+3, z; s/8, C⁻¹ s⁴)`:
-
   ```text
     1_𝒢 ‖u − v‖_{L²(x+□_n)}
         ≤ C s^{-4} 𝓔_{n+3} ( ‖u − (u)_{W'}‖_{L²(W')} + s^{-3/2} 3^n |(∇h)_W| )

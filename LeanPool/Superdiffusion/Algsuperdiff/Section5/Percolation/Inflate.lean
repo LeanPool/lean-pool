@@ -411,7 +411,7 @@ theorem measureReal_inflatedBadEvent_le_exp_half
       linarith only [hlogAbsorb]
 
 private theorem measurableSet_inflatedBadEvent_generated {Ω : Type*}
-    [MeasurableSpace Ω] {d L : ℕ} {B : ℕ → Site d → Set Ω} (v : Site d) :
+    {d L : ℕ} {B : ℕ → Site d → Set Ω} (v : Site d) :
     MeasurableSet[MeasurableSpace.generateFrom
       {S | ∃ z ∈ (latticeCubeSites L v : Set (Site d)),
         ∃ L' ≤ L, S = B L' z}] (inflatedBadEvent B L v) := by

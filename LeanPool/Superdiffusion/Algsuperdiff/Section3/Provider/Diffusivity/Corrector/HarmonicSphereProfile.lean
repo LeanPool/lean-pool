@@ -63,6 +63,7 @@ noncomputable section
 
 variable {m : ℕ} {k : ℝ → ℝ} {a b : ℝ}
 
+/-- The weighted radial integral defining the harmonic-sphere profile. -/
 noncomputable def radialMoment (m : ℕ) (k : ℝ → ℝ) (t : ℝ) : ℝ := ∫ s in (0 : ℝ)..t, s ^ m * k s
 
 /-- The radial derivative determined by the moment. -/

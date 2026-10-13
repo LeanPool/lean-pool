@@ -26,7 +26,6 @@ integration by parts.
 
 For a smooth compactly supported `φ` and an a.e. antisymmetric matrix field
 `h` with weak first derivatives `Dh`, the auxiliary vector field
-
   `t_j := ∑ i (∂_i φ · h_{ij} + φ · ∂_i h_{ij})`  (weakly, `t_j = ∑ i ∂_i (φ h_{ij})`)
 
 is divergence free in the weak sense: it annihilates every smooth compactly
@@ -260,7 +259,6 @@ theorem skewTestField_eq_zero_of_notMem_tsupport
 antisymmetric `h` with weak first derivatives `Dh`, a smooth compactly
 supported `φ` with support in `U`, and every smooth compactly supported test
 `ψ` with support in `U`,
-
   `∑ j ∫ t_j ∂_j ψ = 0`,  `t_j = ∑ i (∂_i φ h_{ij} + φ ∂_i h_{ij})`.
 
 The proof pairs the weak Leibniz rule with the second-derivative symmetry of

@@ -49,12 +49,10 @@ transfer between them therefore has to be redone without the sign.
 
 * `cubeFamilyAverage_le_max_add_sqrt_boundaryFraction` --- **the signed boundary
   split**.  For `J subset I` and an arbitrary real family `F`,
-
   ```
     avsum_I F  <=  max (avsum_J F) 0
                     + sqrt (1 - |J|/|I|) . sqrt (avsum_I F^2) .
   ```
-
   Two things replace the sign hypothesis: on `J` the ratio `|J|/|I| <= 1` and the
   nonnegativity of `max (.) 0` do the work `inv_anti` used to do, and on the
   strip `I \ J` the Cauchy--Schwarz step is run at `|F|`, whose square is `F^2`.

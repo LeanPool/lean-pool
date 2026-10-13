@@ -25,7 +25,6 @@ Module imports, support namespace and local option directives adapted for Lean P
 
 Assembly of the scalar estimate: for any origin cube `𝒰_m` and block
 vector `P = (p, q)`,
-
   `Var[P · 𝐀(𝒰_m) P] ≤ C_d·(Θ|p|² + |q|²)²·min{1, Θ²·3^{-β_d·m}}`,
   `β_d = (d-2)/(d-1)`.
 
