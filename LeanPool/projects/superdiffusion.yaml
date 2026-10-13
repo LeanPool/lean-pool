@@ -1,0 +1,74 @@
+slug: superdiffusion
+title: Superdiffusion and anomalous regularization in self-similar random flows
+summary: >-
+  Proves quenched displacement-moment estimates, quantitative generator
+  renormalization and anomalous large-scale elliptic regularity for random
+  incompressible flows satisfying the ABK shell-law assumptions. The shell
+  carrier has continuous second derivatives, a stronger qualitative
+  regularity assumption than the paper's local C^{1,1} assumption. The model
+  hypotheses are explicit; the Gaussian example is not constructed.
+  Preserves the production dependency closure, including sensitivity,
+  diffusivity recursion, concentration and divergence-form process theory.
+  Reuses the pooled homogenization and Markov-process libraries. A public
+  companion theorem proves finiteness of the first and second displacement
+  observables used in the superdiffusivity statement. Additional proofs
+  establish measurable dependence of the transition law and quenched
+  displacement expectations on the environment.
+branch: probability and partial differential equations
+entry_module: LeanPool.Superdiffusion
+authors:
+  - Scott Armstrong
+  - Tuomo Kuusi
+source:
+  arxiv: '2601.22142'
+  url: https://github.com/scottnarmstrong/Superdiffusion/tree/7f20476385d4af418f110303085ad0740c9eba46
+  github_repo: scottnarmstrong/Superdiffusion
+  commit: 7f20476385d4af418f110303085ad0740c9eba46
+  dependency_url: https://github.com/scottnarmstrong/CoarseGraining/tree/c7ddd76c08ade64fed1b8d2ca51be14dfee8deb4
+  dependency_commit: c7ddd76c08ade64fed1b8d2ca51be14dfee8deb4
+license: Apache-2.0
+status: verified
+provenance: AI
+main_declarations:
+  - Algsuperdiff.superdiffusivity
+  - Algsuperdiff.generator_renormalization
+  - Algsuperdiff.anomalous_regularity
+main_results:
+  - declaration: Algsuperdiff.superdiffusivity
+    informal: >-
+      For each dimension and positive nondegeneracy constant, sufficiently
+      small coupling gives annealed moment bounds for the quenched second
+      displacement moment about the intrinsic superdiffusive scale and
+      for the squared quenched mean displacement, uniformly at all positive
+      times and throughout the stated coupling-dependent moment range.
+  - declaration: Algsuperdiff.generator_renormalization
+    informal: >-
+      At every triadic scale, the effective diffusivity tracks the predicted
+      superdiffusive profile. One measurable random error with quantitative
+      moment bounds controls both the essential uniform difference and
+      the energy difference between random and homogenized Dirichlet
+      solutions for all admissible forcing and boundary data.
+  - declaration: Algsuperdiff.anomalous_regularity
+    informal: >-
+      At every scale and admissible Hölder exponent, a random minimal scale
+      with an exponential tail yields large-scale excess-decay estimates
+      for Dirichlet solutions, uniformly in molecular diffusivity, with
+      the boundary-data term absent in the interior subcube.
+  - declaration: Algsuperdiff.Section5.Provider.exists_ae_integrable_streamProcess_displacement
+    informal: >-
+      For dimensions at least two and sufficiently small coupling, at every
+      positive time the first and second displacement observables of the
+      constructed process are integrable for almost every environment.
+  - declaration: Algsuperdiff.Section5.Measurability.measurable_streamProcess_displacement_expectations
+    informal: >-
+      The first and second quenched displacement expectations of the
+      constructed process are measurable functions of the environment.
+tags:
+  - superdiffusion
+  - stochastic-homogenization
+  - random-incompressible-flows
+  - anomalous-regularity
+msc:
+  - 60K37
+  - 35B27
+  - 60J60
