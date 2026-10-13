@@ -82,6 +82,7 @@ section Generic
 
 /-- **A zero-trace solution of the constant forcing is the shifted resolvent of
 the shifted datum.**  This is the identity `w = R_lam (1 + lam w)`. -/
+omit [NeZero d] in
 theorem toScalarL2_eq_alphaShiftedResolvent_add_smul
     (a : CoeffField d) {U : Set (Vec d)} (hU : IsOpenBoundedConvexDomain U)
     {nu Lam : ℝ} (hnu : 0 < nu) (hEll : IsEllipticFieldOn nu Lam U a)
@@ -109,6 +110,7 @@ theorem toScalarL2_eq_alphaShiftedResolvent_add_smul
 
 /-- The gap between the solution and the shifted resolvent of the constant
 datum is the shift times the shifted resolvent of the solution. -/
+omit [NeZero d] in
 theorem toScalarL2_sub_alphaShiftedResolvent
     (a : CoeffField d) {U : Set (Vec d)} (hU : IsOpenBoundedConvexDomain U)
     {nu Lam : ℝ} (hnu : 0 < nu) (hEll : IsEllipticFieldOn nu Lam U a)
