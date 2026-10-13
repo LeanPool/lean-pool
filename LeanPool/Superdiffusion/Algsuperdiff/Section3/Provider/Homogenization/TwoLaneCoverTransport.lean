@@ -501,7 +501,6 @@ private theorem twoLaneTransport_cell_ae_bound :
 
 private theorem twoLaneTransport_pointwiseDomination :
     ∀ (d : ℕ) (M : ABKModel d) (_ L n : ℤ),
-      let this : NeZero d := ⟨by have := M.shellPrefix.dimension; omega⟩;
       ∀ (Yw Zw : (R : TriadicCube d) → Cutoff.CutoffSample d → ℝ),
         let Ycell : TriadicCube d → Cutoff.CutoffSample d → ℝ := fun (R : TriadicCube d) (omega :
           Cutoff.CutoffSample d) =>
@@ -523,7 +522,7 @@ private theorem twoLaneTransport_pointwiseDomination :
             Observable.cutoffHomogenizationErrorRepresentative (s := (1 / 8 : ℝ)) M L n (by
               norm_num) (Annealed.sigmaBar M L) omega ≤
               √(laneTotal L n Ycell omega) + √(laneTotal L n Zcell omega) := by
-  intro _ M m L n _ _ _ Ycell Zcell hRepAE hUnonneg hVnonneg
+  intro _ M m L n _ _ Ycell Zcell hRepAE hUnonneg hVnonneg
   filter_upwards [hRepAE] with omega homega
   have h0 : 0 ≤ Observable.cutoffHomogenizationErrorRepresentative M L n
       (by norm_num : (0 : ℝ) < 1 / 8) (Annealed.sigmaBar M L) omega :=
@@ -580,9 +579,6 @@ theorem exists_twoLaneObservationScaleTransport (d : ℕ) :
                 Real.exp (-(((E : ℝ)⁻¹) ^ 3 * M.gamma⁻¹)))) →
         (1 / 16 : ℝ) ∈ Set.Icc (8 * M.gamma) 1 →
         ∀ L n : ℤ, L ≤ m - 1 → L ≤ n →
-          let hd : NeZero d :=
-            ⟨Nat.ne_of_gt
-              (lt_of_lt_of_le (by omega) M.shellPrefix.dimension)⟩
           Probability.IsTwoTermBigOWith (Cutoff.cutoffSampleLaw M).toMeasure
             (gammaSigma 2) (gammaSigma (1 / 2))
             (@Observable.cutoffHomogenizationErrorRepresentative d M L n

@@ -224,8 +224,8 @@ private theorem boundsEaLProviderFinal_comparisonBounds1 :
                             (0 : ℝ) ≤ Cd * A1 * (p / (2 : ℝ) * (M.gamma * (s⁻¹ * s⁻¹))) ∧
                               (0 : ℝ) ≤ (3 : ℝ) ^ ((2 : ℝ) * (M.gamma * ((↑m : ℝ) - (↑R.scale :
                                 ℝ)))) := by
-  intro d _ Cd hCd Cr1 A1 hCr1 hA1 hfirst Cr2 A2 hCr2 hsecond Cr3 A3 hCr3 hthird M hcs hreg m n
-    _ s hsmem p hpmem l R hR hd2
+  intro d cstar Cd hCd Cr1 A1 hCr1 hA1 hfirst Cr2 A2 hCr2 hsecond Cr3 A3 hCr3 hthird M hcs hreg m n
+    hnm s hsmem p hpmem l R hR hd2
   have hgam0 : (0 : ℝ) < M.gamma := M.shellPrefix.gamma_pos
   have h3le : (3 : ℝ) ≤ max (max (max Cr1 Cr2) (max Cr3 3))
       (max (Cd * (A1 + A3)) (Cd * A2)) :=

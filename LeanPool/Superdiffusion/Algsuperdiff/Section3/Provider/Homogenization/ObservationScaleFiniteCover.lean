@@ -869,6 +869,7 @@ private theorem summable_observationDepthScale (d : ℕ) :
   norm_num
   ring
 
+omit [NeZero d] in
 private theorem coarseEnvelope_isBigOWith_gammaQuarter
     (M : ABKModel d) (L m : ℤ) (hLm : L ≤ m)
     {A B : ℝ} (hA : 0 < A) (hB : 0 < B)
@@ -1186,9 +1187,6 @@ theorem observationScaleFiniteCover_sq_isBigOWith_gammaQuarter
                 Real.exp (-(((E : ℝ)⁻¹) ^ 3 * M.gamma⁻¹)))) →
         (1 / 16 : ℝ) ∈ Set.Icc (8 * M.gamma) 1 →
         ∀ L : ℤ, L ≤ m - 1 →
-          let hd : NeZero d :=
-            ⟨Nat.ne_of_gt
-              (lt_of_lt_of_le (by omega) M.shellPrefix.dimension)⟩
           IsBigOWith (Cutoff.cutoffSampleLaw M).toMeasure
             (gammaSigma (1 / 4))
             (fun omega =>
